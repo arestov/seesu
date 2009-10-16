@@ -1,0 +1,15 @@
+
+body{
+		background:#ddd;
+		
+		border:2px solid #999;
+		margin:0;
+		height:196px;
+		font-family:Verdana,sans-serif;
+	}
+	#prayer{
+		overflow-y:scroll;
+		height:176px;
+		
+		padding:10px;
+	}
