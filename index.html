@@ -3,6 +3,7 @@
   <head>
     <title>Music is here!</title>
 	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" charset="utf-8"/>
+	<script src="js/xhr.js"></script>
   </head>
   <body>
 	<div id="prayer" class="name">
@@ -56,19 +57,5 @@
 			</ul>
 		</div>
 	</div>
-	
-  <script>
-  // XHR example
-  var xhr = new XMLHttpRequest ();
-  xhr.onreadystatechange = function () {
-    if ( this.readyState == 4 ) {
-      document.body.style.background = '#CEC';
-      opera.postError('XHR working!');
-      opera.postError(xhr.responseText);
-    }
-  }
-  xhr.open( 'GET', 'http://vk.com/', false );
-  xhr.send();
-  </script>
-  </body>
+</body>
 </html>
