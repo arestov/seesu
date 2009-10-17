@@ -3,7 +3,7 @@
   <widgetname>Seesu</widgetname>
   <description>Get music you like from last.fm and play it with vk.com</description>
   <width>440</width>
-  <height>200</height>
+  <height>600</height>
   <icon>images/favicon.png</icon>
   <author>
     <name>Gleb Arestov</name>
