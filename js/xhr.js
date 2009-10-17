@@ -36,7 +36,10 @@ var getMusic = function(trackname){
 	
 	xhr.onreadystatechange = function () {
 	  if ( this.readyState == 4 ) {
-    document.getElementById('search_result').innerHTML = JSON.parse(xhr.responseText).rows;
+		var srd = document.createElement('div');
+		srd.innerHTML = JSON.parse(xhr.responseText).rows;
+		var rows = $(".audioRow ", srd);
+		
 		for (var i=0, l = rows.length; i < l; i++) {
 			var row = rows[i],
 				text = $('.audioText', row)[0],
@@ -48,6 +51,10 @@ var getMusic = function(trackname){
 			obj.track = track;
 			musicList.push(obj);
 		};
+		var searchres = document.getElementById('search_result');
+		searchres.innerHTML = ''
+		searchres.appendChild(srd);
+		
 	  }
 	};
 	xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
@@ -55,6 +62,7 @@ var getMusic = function(trackname){
 	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 	xhr.send(param);
+	
 	return musicList
 }
 
