@@ -30,7 +30,7 @@ xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 window.onload = function(){
   //логин
   document.getElementById('auth').onsubmit = function(){
-    loginxhr.xhrparams += '&email=' + encodeURIComponent($('#login')[0].value) + '&pass=' + encodeURIComponent($('#pass')[0].value);
+    loginxhr.xhrparams += '&email=' + encodeURIComponent($('#email')[0].value) + '&pass=' + encodeURIComponent($('#pass')[0].value);
     loginxhr.send(loginxhr.xhrparams);
     return false;
   };
