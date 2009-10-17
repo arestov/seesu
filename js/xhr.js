@@ -19,7 +19,7 @@ xhr.onreadystatechange = function () {
   if ( this.readyState == 4 ) {
     document.body.style.background = '#CEC';
     opera.postError('XHR music!');
-    document.getElementById('search_result').innerHTML = xhr.responseText;
+    document.getElementById('search_result').innerHTML = JSON.parse(xhr.responseText).rows;
   }
 };
 xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
