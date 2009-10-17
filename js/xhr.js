@@ -4,7 +4,7 @@ var loginxhr = new XMLHttpRequest ();
 loginxhr.onreadystatechange = function(){
   if (this.readyState == 4) {
     document.body.style.background = 'red';
-    document.getElementById('auth').innerHTML += loginxhr.responseText;
+    document.getElementById('auth').innerHTML = JSON.parse(loginxhr.responseText).email + ' Выйти';
     xhr.send(param);//запрос музыки
   }
 };
