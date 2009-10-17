@@ -19,7 +19,7 @@
     </form>
 		</div>
 		<div class="start screen">
-      <form id="search" name="search" onsubmit="getMusic(document.getElementById('q').value); return false;">
+      <form id="search" name="search" onsubmit="getMusic(this.q.value);">
         <input type="text" name="q" id="q" />
         <button>Искать</button>
       </form>
