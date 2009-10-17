@@ -19,10 +19,10 @@
     </form>
 		</div>
 		<div class="start screen">
-			<input type="text" name="name" value="" id="name"/>
-			<button name="searchtype" value="art">артист</button>
-			<button name="searchtype" value="tag">тэг</button>
-			<button name="searchtype" value="track">трек</button>
+      <form id="search" name="search" onsubmit="getMusic(document.getElementById('q').value); return false;">
+        <input type="text" name="q" id="q" />
+        <button>Искать</button>
+      </form>
 		</div>
     <div id="search_result">not found</div>
 		<div class="artist screen">
