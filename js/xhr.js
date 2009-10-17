@@ -27,13 +27,13 @@ var param = 'c[q]=The Prodigy&c[section]=audio';
 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 
-window.onload = function(){
-  //логин
+
+window.addEventListener( 'load' , function(){
+	//логин
   document.getElementById('auth').onsubmit = function(){
     loginxhr.xhrparams += '&email=' + encodeURIComponent($('#email')[0].value) + '&pass=' + encodeURIComponent($('#pass')[0].value);
     loginxhr.send(loginxhr.xhrparams);
     return false;
   };
-
-};
+}, false);
 

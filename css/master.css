@@ -7,12 +7,25 @@ body{
 	font-family:Verdana,sans-serif;
 	}
 	#prayer{
-		overflow-y:scroll;
-		height:576px;
+		overflow-y:auto;
+		height:556px;
 		padding:10px;
 		}
 	.screen{
 		border-bottom:1px solid #666;
 		padding-bottom:5px;
 		margin-bottom:5px;
+		}
+	.window-bottom{
+		height:20px;
+		text-align:right;
+		overflow:hidden;
+		}
+		#resize-handle{
+			position:absolute;
+			bottom:9px;
+			right:5px;
+			border-bottom:1px dashed #333;
+			cursor: se-resize;
+			-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 		}
