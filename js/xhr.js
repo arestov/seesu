@@ -7,8 +7,7 @@ loginxhr.onreadystatechange = function(){
 	document.getElementById('auth').innerHTML = r.email + ' Выйти';
 	searchfield.value = 'The Prodigy';
 	slider.className = "screen-start";
-	var b = getMusic('The Prodigy');//запрос музыки
-	log(b);
+	getMusic('The Prodigy');//запрос музыки
 	
   }
 };
