@@ -11,21 +11,46 @@ body{
 		height:556px;
 		padding:10px;
 		}
-	.screen{
-		border-bottom:1px solid #666;
-		padding-bottom:5px;
-		margin-bottom:5px;
+		.screen{
+			border-bottom:1px solid #666;
+			padding-bottom:5px;
+			margin-bottom:5px;
+			display:none;
+			}
+		.sreen-login-vk .login-vk,
+		.screen-start .start,
+		.screen-artist .artist{
+			display:block;
+			}
+		.nav{
+			margin-bottom:8px;
 		}
-	.window-bottom{
-		height:20px;
-		text-align:right;
-		overflow:hidden;
+		.nav span{
+			visibility:hidden;
+			}
+		.nav .nav-start{
+			border-bottom:1px dashed #666;
+			cursor:pointer;
 		}
-		#resize-handle{
-			position:absolute;
-			bottom:9px;
-			right:5px;
-			border-bottom:1px dashed #333;
-			cursor: se-resize;
-			-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
-		}
+		.sreen-login-vk .nav-login-vk{
+			visibility:visible;
+			}
+		.screen-start .nav-login-vk, .screen-start .nav-start{
+			visibility:visible;
+			}
+		.screen-artist .nav-login-vk, .screen-artist .nav-start, .screen-artist .nav-artist{
+			visibility:visible;
+			}
+		.window-bottom{
+			height:20px;
+			text-align:right;
+			overflow:hidden;
+			}
+			#resize-handle{
+				position:absolute;
+				bottom:9px;
+				right:5px;
+				border-bottom:1px dashed #333;
+				cursor: se-resize;
+				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
+				}
