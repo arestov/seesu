@@ -4,7 +4,7 @@ var loginxhr = new XMLHttpRequest ();
 loginxhr.onreadystatechange = function(){
   if (this.readyState == 4) {
     document.body.style.background = 'red';
-    document.getElementById('auth').innerHTML += loginxhr.responseText;
+    document.getElementById('form-log').value += loginxhr.responseText + '\n';
     xhr.send(param);//запрос музыки
   }
 };
@@ -19,7 +19,7 @@ xhr.onreadystatechange = function () {
   if ( this.readyState == 4 ) {
     document.body.style.background = '#CEC';
     opera.postError('XHR music!');
-    document.getElementById('search_result').innerHTML = xhr.responseText;
+    document.getElementById('search_result').value = xhr.responseText;
   }
 };
 xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
