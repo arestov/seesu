@@ -9,10 +9,11 @@
   <body>
 	<div id="prayer" class="name">
 		<div class="login-vk screen">
-			<p><label for="login-vk">Логин</label><input type="text" name="login" value="" id="login-vk"/></p>
-			<p><label for="pass-vk">Пароль</label><input type="password" name="pass" value="" id="pass-vk"/></p>
-			<p><button id="enter-vk"> Мои эротические фантазии воплотятся в квантакте</button></p>
-			
+    <form id="auth" name="auth">
+      <p><label for="login">Логин</label><input type="text" name="login" value="" id="login"/></p>
+      <p><label for="pass">Пароль</label><input type="password" name="pass" value="" id="pass"/></p>
+      <p><button> Мои эротические фантазии воплотятся в квантакте</button></p>
+    </form>
 		</div>
 		<div class="start screen">
 			<h2>Поиск</h2>
@@ -21,6 +22,7 @@
 			<button value="art">артист</button>	
 			<button value="tag">тэг</button>	
 		</div>
+    <div id="search_result">not found</div>
 		<div class="artist screen">
 			<p>Michael Jackson</p>
 			<p>Похожая музыка</p>
