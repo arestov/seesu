@@ -5,7 +5,7 @@ loginxhr.onreadystatechange = function(){
   if (this.readyState == 4) {
     document.body.style.background = 'red';
     document.getElementById('auth').innerHTML = JSON.parse(loginxhr.responseText).email + ' Выйти';
-    xhr.send(param);//запрос музыки
+    getMusic('The Prodigy')//запрос музыки
   }
 };
 loginxhr.open('POST', 'http://vkontakte.ru/login.php');
@@ -14,18 +14,24 @@ loginxhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 loginxhr.setRequestHeader("host", "vkontakte.ru");
 
 
-var xhr = new XMLHttpRequest ();
-xhr.onreadystatechange = function () {
-  if ( this.readyState == 4 ) {
-    document.body.style.background = '#CEC';
-    opera.postError('XHR music!');
-    document.getElementById('search_result').innerHTML = JSON.parse(xhr.responseText).rows;
-  }
-};
-xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
-var param = 'c[q]=The Prodigy&c[section]=audio';
-xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+var getMusic = function(trackname){
+	var xhr = new XMLHttpRequest ();
+	xhr.onreadystatechange = function () {
+	  if ( this.readyState == 4 ) {
+	    document.body.style.background = '#CEC';
+	    opera.postError('XHR music!');
+	    var srd = document.createElement('div');
+	    srd.innerHTML = JSON.parse(xhr.responseText).rows;
+	    document.getElementById('search_result').appendChild(srd);
+	  }
+	};
+	xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
+	var param = 'c[section]=audio' + 'c[q]=' + trackname;
+	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+	xhr.send(param);
+}
+
 
 
 window.addEventListener( 'load' , function(){
@@ -35,5 +41,6 @@ window.addEventListener( 'load' , function(){
     loginxhr.send(loginxhr.xhrparams);
     return false;
   };
+  
 }, false);
 
