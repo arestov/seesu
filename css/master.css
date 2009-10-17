@@ -6,12 +6,31 @@ body{
 	height:596px;
 	font-family:Verdana,sans-serif;
 	}
-	#prayer{
-		overflow-y:auto;
-		height:556px;
-		padding:10px;
+	#slider{
+		
+		padding:10px 0;
+		
+		}
+		.nav{
+			height:20px;
+			margin-bottom:8px;
+			padding:0 10px;
+		}
+		.nav span{
+			visibility:hidden;
+			}
+		.nav .nav-start{
+			border-bottom:1px dashed #666;
+			cursor:pointer;
+		}
+		.screens{
+			overflow-y:auto;
+			height:536px;
+			padding:0 10px;
+			-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 		}
 		.screen{
+			overflow:hidden;
 			border-bottom:1px solid #666;
 			padding-bottom:5px;
 			margin-bottom:5px;
@@ -22,16 +41,8 @@ body{
 		.screen-artist .artist{
 			display:block;
 			}
-		.nav{
-			margin-bottom:8px;
-		}
-		.nav span{
-			visibility:hidden;
-			}
-		.nav .nav-start{
-			border-bottom:1px dashed #666;
-			cursor:pointer;
-		}
+
+
 		.sreen-login-vk .nav-login-vk{
 			visibility:visible;
 			}

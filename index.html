@@ -10,65 +10,70 @@
 	<script src="js/widget_ui.js"></script> 
   </head>
   <body>
-	<div id="prayer" class="sreen-login-vk">
+	<div id="slider" class="sreen-login-vk">
 		<div class="nav"><span class="nav-login-vk">Вход &rarr;</span> <span class="nav-start" id="start_search" >Поиск &rarr;</span> <span class="nav-artist" id="search_result_nav"></span></div>
-		<div class="login-vk screen">
-		  <h3>Вход в квантакте</h3>
-		  <form id="auth" name="auth">
-			  <p><label for="email">Логин</label><input type="email" name="email" id="email"/></p>
-			  <p><label for="pass">Пароль</label><input type="password" name="pass" id="pass"/></p>
-			  <p><button> Мои эротические фантазии воплотятся в квантакте</button></p>
-		  </form>
-		</div>
-		<div class="start screen">
-		  <h3>Поиск</h3>
-		  <form id="search" name="search" onsubmit="getMusic(this.q.value);">
-			<input type="text" name="q" id="q" />
-			<button>Искать</button>
-		  </form>
-		</div>
-		<div id="search_result" class="artist screen">
-			<h3 id="search_result_head">Результаты поиска</h3>
-			<p>Michael Jackson</p>
-			<p>Похожая музыка</p>
-			<h4>Популярные треки</h4>
-			<ul>
-				<li>
-					Billie Jean
-				</li>
-				<li>
-					Beat It
-				</li>
-				<li>
-					Thriller
-				</li>
-				<li>
-					Smooth Criminal
-				</li>
-				<li>
-					Black or White
-				</li>
-				<li>
-					Man in the Mirror
-				</li>
-				<li>
-					Bad
-				</li>
-				<li>
-					The Way You Make Me Feel
-				</li>
-				<li>
-					Dirty Diana
-				</li>
-				<li>
-					Rock With You
-				</li>
-			</ul>
-			<h4>Альбомы</h4>
-			<ul>
-				<li>1</li>
-				<li>2</li>
-			</ul>
+		<div class="screens" id="screens">
+			
+			<div class="login-vk screen">
+			  <h3>Вход в квантакте</h3>
+			  <form id="auth" name="auth">
+				  <p><label for="email">Логин</label><input type="email" name="email" id="email"/></p>
+				  <p><label for="pass">Пароль</label><input type="password" name="pass" id="pass"/></p>
+				  <p><button> Мои эротические фантазии воплотятся в квантакте</button></p>
+			  </form>
+			</div>
+			<div class="start screen">
+			  <h3>Поиск</h3>
+			  <form id="search" name="search" onsubmit="getMusic(this.q.value);">
+				<input type="text" name="q" id="q" />
+				<button>Искать</button>
+			  </form>
+			</div>
+			<div class="artist screen">
+				<h3 id="search_result_head">Результаты поиска</h3>
+				<div id="search_result">
+					<p>Michael Jackson</p>
+					<p>Похожая музыка</p>
+					<h4>Популярные треки</h4>
+					<ul>
+						<li>
+							Billie Jean
+						</li>
+						<li>
+							Beat It
+						</li>
+						<li>
+							Thriller
+						</li>
+						<li>
+							Smooth Criminal
+						</li>
+						<li>
+							Black or White
+						</li>
+						<li>
+							Man in the Mirror
+						</li>
+						<li>
+							Bad
+						</li>
+						<li>
+							The Way You Make Me Feel
+						</li>
+						<li>
+							Dirty Diana
+						</li>
+						<li>
+							Rock With You
+						</li>
+					</ul>
+					<h4>Альбомы</h4>
+					<ul>
+						<li>1</li>
+						<li>2</li>
+					</ul>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="window-bottom">

@@ -74,7 +74,7 @@ var getMusic = function(trackname){
 
 
 window.addEventListener( 'load' , function(){
-  slider = document.getElementById('prayer');
+  slider = document.getElementById('slider');
   searchfield = document.getElementById('q');
   srhead = document.getElementById('search_result_head');
   srnav = document.getElementById('search_result_nav');

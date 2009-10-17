@@ -3,7 +3,7 @@ resizeWidg = function(){
   var device = 'screen';
   
   var body = document.body,
-	  prayer = document.getElementById('prayer');
+	  screenHolder = document.getElementById('screens');
 	
   /** Helper for controlling window resize
    * @Author Benjamin "ICantDrink" Joffe
@@ -14,10 +14,11 @@ resizeWidg = function(){
     
     function widgetResize(width, height) {
 	    var zoom = (device == "mobile") ? window.innerWidth / document.documentElement.offsetWidth : 1;
+	    body.style.height = (height-4) + 'px';
+	    screenHolder.style.height = (height-64) + 'px';
 	    window.resizeTo(width * zoom, height * zoom);
 	    
-	    body.style.height = (height-4) + 'px';
-	    prayer.style.height = (height-44) + 'px';
+	    
 	    
 	    var compensation = device == "screen" ? 133 : 105; // magic numbers FTW!!
  	 }
