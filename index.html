@@ -14,9 +14,22 @@
 	var	s = '77fd498ed8592022e61863244b53077d';
 	var api='http://ws.audioscrobbler.com/2.0/?method=';
 	
-	var getLastfm(method,token) = function(method,token,paramobj){
+	var getLastfm = function(method,sk,paramobj,token){
+		var paramsList = [];
 		
+		if (sk) {
+			paramsList.push('sk' + sk)
+		} else if(token){
+			paramsList.push('token' + token)
+		} else return false
 		
+		method && paramsList.push('method' + encodeURIComponent(method));
+		paramsList.push('api_key' + apikey);
+		
+		for (var a in paramobj) {
+			paramsList && paramsList.push(encodeURIComponent(a + paramobj[a]))
+		}
+		return paramsList.sort()
 	}
 	
 	var getGetTokenLink = function(){
@@ -28,22 +41,15 @@
 	
 	
 	var token = '2627a61938eb91c54d1f4eff52f60379';
-	 var linkforuser = 'http://www.last.fm/api/auth/?api_key='+ apikey + '&token=' +  token;
-	 
+	var linkforuser = 'http://www.last.fm/api/auth/?api_key='+ apikey + '&token=' +  token;
+	
 	var getGetSessionLink = function(){
 		var getsesionkhash = hex_md5('api_key' + apikey +'methodauth.getSessiontoken' + token + s)
-	 var getsesionlink = api + 'auth.getSession&api_key='+apikey+'token=' +token+ '&api_sig='+ getsesionkhash;
-	 return getsesionlink
+		var getsesionlink = api + 'auth.getSession&api_key='+apikey+'token=' +token+ '&api_sig='+ getsesionkhash;
+		return getsesionlink
 	}
-
-	
-	 
-
-	 
-	 
-	 
 	 var sess='300fc3b91fc8e2438900ac1ee0a66aa5'
-	 	 log(getsesionlink)
+	log(getLastfm('auth.getSession','300fc3b91fc8e2438900ac1ee0a66aa5',{'artist' : 'jimmi', 'title' : 'back in ussr' }))
 	</script>
   </head>
   <body>
@@ -64,7 +70,7 @@
 			  
 			   
 
-	
+		<!-->	 
 	<embed type="application/x-shockwave-flash" src="http://vkontakte.ru/swf/AudioPlayer_mini.swf" 
 			    width="342" height="14" style="undefined" id="player" name="player" 
 			    bgcolor="#FFFFFF" 
@@ -73,7 +79,7 @@
 			    allowScriptAccess='sameDomain'
 			    swliveconnect="true"  
 			    flashvars="debug=false&amp;volume=47&amp;url=http://cs4507.vkontakte.ru/u18157945/audio/4878bc7d42a5.mp3&amp;duration=299"/>
-		<!-->	    
+	   
 			    
 				<object type="application/x-shockwave-flash" data="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" height="14" width="342">
 				  <param name="quality" value="high">
