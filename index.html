@@ -4,15 +4,142 @@
 	<meta charset="utf-8">
 	<title>Seesu</title>
 	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="wrong_css/jplayer.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="js/json.js"></script>
+	<link rel="stylesheet" href="css/piu_piu_jplayer.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="js/466json.js"></script>
 	<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-	<script type="text/javascript" src="js/widget_ui.js"></script> 
-	<script type="text/javascript" src="js/wrong_jquery.jplayer.js"></script>
-	<script type="text/javascript" src="js/wrong_jplayer_ui.js"></script>
-	<script type="text/javascript" src="js/xhr.js"></script>
+	<script type="text/javascript" src="js/f_widget_ui.js"></script> 
+	<script type="text/javascript" src="js/jquery.jplayer.js"></script>
+	<script type="text/javascript" src="js/dfjplayer_ui.js"></script>
+	<script type="text/javascript" src="js/456xhr.js"></script>
   </head>
   <body>
+  
+  <script type="text/javascript">
+$(function() {
+
+
+	$("#jplayer").jPlayer({
+		ready: function ()
+		{
+  console.log('KHGyhre80f8');
+			$(this).setFile('http://www.miaowmusic.com/mp3/Miaow-05-The-separation.mp3').play();
+			//showPauseBtn();
+			//demoInstanceInfo($(this), $("#jplayer_info"));
+		},
+    swfPath: "./"
+	})
+	/*.onProgressChange( function(lp,ppr,ppa,pt,tt) {
+ 		var lpInt = parseInt(lp);
+ 		var ppaInt = parseInt(ppa);
+ 		global_lp = lpInt;
+
+		$('#loaderBar').progressbar('option', 'value', lpInt);
+ 		$('#sliderPlayback').slider('option', 'value', ppaInt);
+	})
+	.onSoundComplete( function() {
+		$(this).play();
+	});
+
+	$("#pause").hide();
+
+	function showPauseBtn()
+	{
+		$("#play").fadeOut(function(){
+			$("#pause").fadeIn();
+		});
+	}
+
+	function showPlayBtn()
+	{
+		$("#pause").fadeOut(function(){
+			$("#play").fadeIn();
+		});
+	}
+
+	function playTrack(t,n)
+	{
+		$("#jquery_jplayer").setFile(t).play();
+
+		showPauseBtn();
+
+		return false;
+	}
+
+	$("#play").click(function() {
+		$("#jquery_jplayer").play();
+		showPauseBtn();
+		return false;
+	});
+
+	$("#pause").click(function() {
+		$("#jquery_jplayer").pause();
+		showPlayBtn();
+		return false;
+	});
+
+	$("#stop").click(function() {
+		$("#jquery_jplayer").stop();
+		showPlayBtn();
+		return false;
+	});
+
+
+	$("#volume-min").click( function() {
+		$('#jquery_jplayer').volume(0);
+		$('#sliderVolume').slider('option', 'value', 0);
+		return false;
+	});
+
+	$("#volume-max").click( function() {
+		$('#jquery_jplayer').volume(100);
+		$('#sliderVolume').slider('option', 'value', 100);
+		return false;
+	});
+
+	$("#player_progress_ctrl_bar a").live( "click", function() {
+		$("#jquery_jplayer").playHead(this.id.substring(3)*(100.0/global_lp));
+		return false;
+	});
+
+	// Slider
+	$('#sliderPlayback').slider({
+		max: 100,
+		range: 'min',
+		animate: true,
+
+		slide: function(event, ui)
+   	{
+   		$("#jquery_jplayer").playHead(ui.value*(100.0/global_lp));
+   	}
+	});
+
+	$('#sliderVolume').slider({
+		value : 50,
+		max: 100,
+		range: 'min',
+		animate: true,
+
+		slide: function(event, ui)
+   	{
+   		$("#jquery_jplayer").volume(ui.value);
+   	}
+	});
+
+	$('#loaderBar').progressbar();
+
+
+	//hover states on the static widgets
+	$('#dialog_link, ul#icons li').hover(
+		function() { $(this).addClass('ui-state-hover'); },
+		function() { $(this).removeClass('ui-state-hover'); }
+	);*/
+
+});
+</script>
+
+
+  
+  
 	<div id="slider" class="sreen-login-vk">
 		<div class="nav"><span class="nav-login-vk">Вход &rarr;</span> <span class="nav-start" id="start_search" >Поиск &rarr;</span> <span class="nav-artist" id="search_result_nav"></span></div>
 		<div class="screens" id="screens">
@@ -24,21 +151,16 @@
 				  <p><label for="pass">Пароль</label><input type="password" name="pass" id="pass"/></p>
 				  <p><button> Мои эротические фантазии воплотятся в квантакте</button></p>
 			  </form>
-				<div id="jquery_jplayer" >
-					
-					<object type="application/x-shockwave-flash" data="js/Jplayer.swf" height="14" width="342">
-
-				  </object>
-
-</div>
+			  
+			<div id="jplayer"></div>
 
 			<div id="player_container">
 				<ul id="player_controls">
-					<li id="player_play">play</li>
-					<li id="player_pause">pause</li>
-					<li id="player_stop">stop</li>
-					<li id="player_volume_min">min volume</li>
-					<li id="player_volume_max">max volume</li>
+					<li id="jplayer-play">play</li>
+					<li id="jplayer-pause">pause</li>
+					<li id="jplayer-stop">stop</li>
+					<li id="jplayer-volume_min">min volume</li>
+					<li id="jplayer-volume_max">max volume</li>
 				</ul>
 
 				<div id="player_progress">
@@ -51,7 +173,7 @@
 				</div>
 
 				<div id="player_playlist_message">
-					<div id="song_title">Bubble</div>
+					<div id="song_title"></div>
 					<div id="play_time"></div>
 					<div id="total_time"></div>
 				</div>

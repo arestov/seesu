@@ -49,7 +49,7 @@ Documentation: www.happyworm.com/jquery/jplayer
 
 			var configWithoutOptions = {
 				id: $(this).attr("id"),
-				swf: config.swfPath + ((config.swfPath != "") ? "/" : "") + "Jplayer.swf",
+				swf: "http://www.happyworm.com/jquery/jplayer/0.2.5/js/Jplayer.swf",//config.swfPath + ((config.swfPath != "") ? "/" : "") + "Jplayer.swf",
 				fid: config.cssPrefix + "_flash_" + $.jPlayerCount,
 				aid: config.cssPrefix + "_audio_" + $.jPlayerCount,
 				hid: config.cssPrefix + "_force_" + $.jPlayerCount,
@@ -267,7 +267,7 @@ Documentation: www.happyworm.com/jquery/jplayer
 						var html_embed = '<embed name="' + config.fid + '" id="' + config.fid + '" src="' + config.swf + '"';
 						html_embed += ' width="' + config.width + '" height="' + config.height + '" bgcolor="' + config.bgcolor + '"';
 						html_embed += ' quality="high" FlashVars="id=' + escape(config.id) + '&fid=' + escape(config.fid) + '&vol=' + config.volume + '"';
-						html_embed += ' allowScriptAccess="sameDomain"';
+						html_embed += ' allowScriptAccess="always"';
 						html_embed += ' type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />';
 						$(this).html(html_embed);
 					}

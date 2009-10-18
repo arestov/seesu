@@ -1,14 +1,26 @@
-$(document).ready(function(){
+function startup_player() {
 
-	$("#jquery_jplayer").jPlayer({
-		ready: function () {
-			$(this).setFile("http://cs4507.vkontakte.ru/u18157945/audio/4878bc7d42a5.mp3", "http://www.miaowmusic.com/ogg/Miaow-07-Bubble.ogg").play();
-			demoInstanceInfo($(this), $("#jplayer_info"));
-		},
-		cssPrefix: "different_prefix_example",
-		volume: 50,
-		oggSupport: false
-	})
+  function on_player_ready() {
+    console.log('bazinga!');
+  /*$(this).setFile(
+			  "http://cs4530.vkontakte.ru/u45969345/audio/e1de8ab6d542.mp3"
+			).play();
+			*/
+			//demoInstanceInfo($(this), $("#jplayer_info"));
+  }
+
+  $('#jplayer').jPlayer({ ready: on_player_ready });
+
+  $('#jplayer').jPlayerId("play", "jplayer-play"); // Associates play  
+  $("#jplayer").jPlayerId("pause", "jplayer-pause"); // Associates pause  
+  $("#jplayer").jPlayerId("stop", "jplayer-stop"); // Associates stop  
+  
+  /*$("#jplayer").onSoundComplete(function() { // Executed when the mp3 ends  
+    $(this).play(); // Auto-repeat  
+  });  */
+	
+	
+	/*
 	.jPlayerId("play", "player_play")
 	.jPlayerId("pause", "player_pause")
 	.jPlayerId("stop", "player_stop")
@@ -31,5 +43,5 @@ $(document).ready(function(){
 	})
 	.onSoundComplete( function() {
 		$(this).play();
-	});
-});
+	});*/
+}
