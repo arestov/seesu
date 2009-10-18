@@ -148,11 +148,3 @@
 	float:right;
 	text-align: right;
 }
-
-.miaow {
-	font-size:.8em;
-	color:#999;
-}
-
-.miaow a:link, a:visited, a:hover, a:focus, a:active {
-	color:#009be3;
