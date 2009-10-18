@@ -49,7 +49,7 @@ Documentation: www.happyworm.com/jquery/jplayer
 
 			var configWithoutOptions = {
 				id: $(this).attr("id"),
-				swf: "http://www.happyworm.com/jquery/jplayer/0.2.5/js/Jplayer.swf",//config.swfPath + ((config.swfPath != "") ? "/" : "") + "Jplayer.swf",
+				swf: config.swfPath + ((config.swfPath != "") ? "/" : "") + "Jplayer.swf",
 				fid: config.cssPrefix + "_flash_" + $.jPlayerCount,
 				aid: config.cssPrefix + "_audio_" + $.jPlayerCount,
 				hid: config.cssPrefix + "_force_" + $.jPlayerCount,
@@ -257,7 +257,8 @@ Documentation: www.happyworm.com/jquery/jplayer
 						obj_param[2] = '<param name="FlashVars" value="id=' + escape(config.id) + '&fid=' + escape(config.fid) + '&vol=' + config.volume + '" />';
 						obj_param[3] = '<param name="sameDomain" value="always" />';
 						obj_param[4] = '<param name="bgcolor" value="' + config.bgcolor + '" />';
-				
+						obj_param[5] = '<param name="swliveconnect" value="true" />';
+
 						var ie_dom = document.createElement(html_obj);
 						for(var i=0; i < obj_param.length; i++) {
 							ie_dom.appendChild(document.createElement(obj_param[i]));
@@ -268,7 +269,10 @@ Documentation: www.happyworm.com/jquery/jplayer
 						html_embed += ' width="' + config.width + '" height="' + config.height + '" bgcolor="' + config.bgcolor + '"';
 						html_embed += ' quality="high" FlashVars="id=' + escape(config.id) + '&fid=' + escape(config.fid) + '&vol=' + config.volume + '"';
 						html_embed += ' allowScriptAccess="always"';
+						html_embed += ' swliveconnect="true"';
 						html_embed += ' type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />';
+						
+						
 						$(this).html(html_embed);
 					}
 			
