@@ -21,7 +21,6 @@ var lastfm = function(method,paramobj,signature){
 				paramsstr += paramsList[i];
 			};
 			link += ('&api_sig=' + hex_md5(paramsstr += s));
-			log(paramsstr);
 		}
 		
 		var xhr = new XMLHttpRequest ();
@@ -31,11 +30,9 @@ var lastfm = function(method,paramobj,signature){
 				log(xhr.responseText)
 			  }
 			};
-			xhr.open( 'GET', api, false );
-			var param = link;
-			log(param);
+			xhr.open( 'GET', api + '?' + link, false );
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-			xhr.send(param);
+			xhr.send();
 		}
 		
 		return xhr.responseText
