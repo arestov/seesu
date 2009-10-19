@@ -32,9 +32,14 @@
       <protocol>https</protocol>
       <protocol>http</protocol>
       <host>last.fm</host>
+      
       <host>vkontakte.ru</host>
       <host>vk.com</host>
       <host>widgets.opera.com</host>
+    </access>
+    <access>
+	 <protocol>http</protocol>
+     <host>ws.audioscrobbler.com</host>
     </access>
 	<content java="no" plugins="yes" />
   </security>

@@ -4,10 +4,10 @@ var api='http://ws.audioscrobbler.com/2.0/';
 
 var lastfm = function(method,paramobj,signature){
 	var paramsList = [],
-		link = api,
+		link = '',
 		apisig = ((paramobj && (paramobj.sk || paramobj.token)) || signature) ? true : false; // yes, we need signature
 	if (method) {
-		(link += ('?method=' + encodeURIComponent(method))) && apisig && paramsList.push('method' + encodeURIComponent(method));
+		(link += ('method=' + encodeURIComponent(method))) && apisig && paramsList.push('method' + encodeURIComponent(method));
 		(link += ('&api_key=' + apikey)) && apisig && paramsList.push('api_key' + apikey);
 		if (paramobj) {
 			for (var a in paramobj) {
@@ -16,7 +16,7 @@ var lastfm = function(method,paramobj,signature){
 		}
 		if (apisig) {
 			paramsList.sort();
-			var paramsstr = ''
+			var paramsstr = '';
 			for (var i=0, l = paramsList.length; i < l; i++) {
 				paramsstr += paramsList[i];
 			};
@@ -24,10 +24,25 @@ var lastfm = function(method,paramobj,signature){
 			log(paramsstr);
 		}
 		
+		var xhr = new XMLHttpRequest ();
+		if (xhr) {
+			xhr.onreadystatechange = function () {
+			  if ( this.readyState == 4 ) {
+				log(xhr.responseText)
+			  }
+			};
+			xhr.open( 'GET', api, false );
+			var param = link;
+			log(param);
+			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+			xhr.send(param);
+		}
+		
+		return xhr.responseText
+		
 	} else return false
-	
-	
-	return link
-}
 
-log(lastfm('auth.getToken',false,true))
+}
+window.addEventListener( 'load' , function(){
+log(lastfm('auth.getToken',false,true));
+}, false);
