@@ -52,6 +52,25 @@ body{
 		.screen-artist .nav-login-vk, .screen-artist .nav-start, .screen-artist .nav-artist{
 			visibility:visible;
 			}
+		.lfm{
+			
+			}
+			.lfm
+			a{
+				display:none;
+				}	
+			.lfm.lastfm-auth-start
+			#login-lastfm-button {
+				display:inline;
+				}	
+			.lfm.lastfm-auth-finish
+			#login-lastfm-finish{
+				display:inline;
+				}
+			.lfm.lastfm-ready
+			#lastfm-scroble{
+				display:inline;
+				}
 		.window-bottom{
 			height:20px;
 			text-align:right;

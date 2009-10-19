@@ -35,11 +35,25 @@ var lastfm = function(method,paramobj,signature){
 			xhr.send();
 		}
 		
-		return xhr.responseText
+		return xhr.responseXML
 		
 	} else return false
 
 }
 window.addEventListener( 'load' , function(){
-log(lastfm('auth.getToken',false,true));
+//var lastfm = {};
+
+var newtoken = lastfm('auth.getToken',false,true).getElementsByTagName('token')[0].textContent;
+
+log(newtoken)
+var l = $('#lastfm');
+$('#login-lastfm-button').click(function(){
+	widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token='+lastfm.token);
+	l.addClass('lastfm-auth-finish');
+	return false
+})
+$('#login-lastfm-finish').click(function(){
+	var c = lastfm('auth.getSession',{'token':newtoken },true);
+})
+
 }, false);

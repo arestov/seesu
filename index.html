@@ -23,31 +23,14 @@
 				  <p><label for="pass">Пароль</label><input type="password" name="pass" id="pass"/></p>
 				  <p><button> Мои эротические фантазии воплотятся в квантакте</button></p>
 			  </form>
-
-
-
-			  
-			   
-
-		<!-->	 
-	<embed type="application/x-shockwave-flash" src="http://vkontakte.ru/swf/AudioPlayer_mini.swf" 
-			    width="342" height="14" style="undefined" id="player" name="player" 
-			    bgcolor="#FFFFFF" 
-			    quality="high" 
-			    wmode="transparent" 
-			    allowScriptAccess='sameDomain'
-			    swliveconnect="true"  
-			    flashvars="debug=false&amp;volume=47&amp;url=http://cs4507.vkontakte.ru/u18157945/audio/4878bc7d42a5.mp3&amp;duration=299"/>
-	   
-			    
-				<object type="application/x-shockwave-flash" data="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" height="14" width="342">
-				  <param name="quality" value="high">
-				  <param name="scale" value="noscale">
-				  <param name="wmode" value="transparent">
-				  <param name="swliveconnect" value="true">
-				  <param name="flashvars" value="debug=false&amp;volume=47&amp;dbid=66027115&amp;url=http://cs4507.vkontakte.ru/u18157945/audio/4878bc7d42a5.mp3&amp;duration=299">
-			</object>-->
 			</div>
+			<div class="lastfm-auth-start lfm" id="lastfm">
+				<h3>Вход в ластфм</h3>
+				<p><a id="login-lastfm-button" href="#">хотел бы войти</a></p>
+				<p><a id="login-lastfm-finish" href="#">Да, я разрешил приложению Seesu доступ к last.fm</a></p>
+				<p><a href="#" id="lastfm-scroble">Заскроблить какой-то нибудь безумный трек</a></p>
+			</div>
+			
 			<div class="start screen">
 			  <h3>Поиск</h3>
 			  <form id="search" name="search" onsubmit="getMusic(this.q.value);">
