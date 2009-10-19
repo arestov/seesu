@@ -7,7 +7,7 @@ var lastfm = function(method,paramobj,signature){
 		link = '',
 		apisig = ((paramobj && (paramobj.sk || paramobj.token)) || signature) ? true : false; // yes, we need signature
 	if (method) {
-		(link += ('method=' + encodeURIComponent(method))) && apisig && paramsList.push('method' + encodeURIComponent(method));
+		(link += ('?method=' + encodeURIComponent(method))) && apisig && paramsList.push('method' + encodeURIComponent(method));
 		(link += ('&api_key=' + apikey)) && apisig && paramsList.push('api_key' + apikey);
 		if (paramobj) {
 			for (var a in paramobj) {
@@ -30,7 +30,7 @@ var lastfm = function(method,paramobj,signature){
 				log(xhr.responseText)
 			  }
 			};
-			xhr.open( 'GET', api + '?' + link, false );
+			xhr.open( 'GET', api + link, false );
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 			xhr.send();
 		}
