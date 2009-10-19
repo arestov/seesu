@@ -48,7 +48,7 @@ var newtoken = lastfm('auth.getToken',false,true).getElementsByTagName('token')[
 log(newtoken)
 var l = $('#lastfm');
 $('#login-lastfm-button').click(function(){
-	widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token='+lastfm.token);
+	widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token='+newtoken);
 	l.addClass('lastfm-auth-finish');
 	return false
 })
