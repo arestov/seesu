@@ -4,14 +4,30 @@
 	<meta charset="utf-8">
 	<title>Seesu</title>
 	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="http://www.schillmania.com/projects/soundmanager2/demo/page-player/css/page-player.css" type="text/css" media="screen" />
+	
 	<script type="text/javascript" src="js/json.js"></script>
-	<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
+	<script type="text/javascript" src="js/jquery.js"></script>
+	<script type="text/javascript" src="js/soundmanager2.js"></script>
+	<script type="text/javascript" src="http://www.schillmania.com/projects/soundmanager2/demo/page-player/script/page-player.js"></script>
+
 	<script type="text/javascript" src="js/widget_ui.js"></script> 
 	<script type="text/javascript" src="js/xhr.js"></script>
 	<script type="text/javascript" src="js/md5-min.js"></script>
 	<script type="text/javascript" src="js/lastfm.js"></script>
   </head>
   <body>
+  
+  <script type="text/javascript">
+    soundManager.url = 'http://seesu.heroku.com/flashes/';
+    
+    function setTheme(sTheme) {
+      var o = document.getElementsByTagName('ul')[0];
+      o.className = 'playlist'+(sTheme?' '+sTheme:'');
+      return false;
+    }
+  </script>
+  
 	<div id="slider" class="sreen-login-vk">
 		<div class="nav"><span class="nav-login-vk">Вход &rarr;</span> <span class="nav-start" id="start_search" >Поиск &rarr;</span> <span class="nav-artist" id="search_result_nav"></span></div>
 		<div class="screens" id="screens">
@@ -85,8 +101,42 @@
 			</div>
 		</div>
 	</div>
-	<div class="window-bottom">
-		<span id="resize-handle">размер окна</span>	
-	</div>
+	
+	 <h1><a href="http://www.schillmania.com/projects/soundmanager2/" title="Play a page of mp3s with javascript via SoundManager 2">SoundManager 2</a> / page as a playlist, basic template (flash 8)</h1>
+
+ <ul class="playlist">
+  <li><a href="http://cs4429.vkontakte.ru/u27627468/audio/99c81a99feda.mp3">Nirvana - About a Girl</a></li>
+  <li><a href="http://cs4502.vkontakte.ru/u34343945/audio/af555b535044.mp3">Nirvana - Heart Shaped Box</a></li>
+  <li><a href="http://cs4505.vkontakte.ru/u52283045/audio/6caa4d4d8665.mp3">Nirvana - Rape me </a></li>
+
+ </ul>
+ 
+ <div id="control-template">
+  <!-- control markup inserted dynamically after each link -->
+  <div class="controls">
+   <div class="statusbar">
+
+    <div class="loading"></div>
+     <div class="position"></div>
+   </div>
+  </div>
+  <div class="timing">
+   <div id="sm2_timing" class="timing-data">
+    <span class="sm2_position">%s1</span> / <span class="sm2_total">%s2</span></div>
+
+  </div>
+  <div class="peak">
+   <div class="peak-box"><span class="l"></span><span class="r"></span>
+   </div>
+  </div>
+ </div>
+
+ <div id="spectrum-container" class="spectrum-container">
+  <div class="spectrum-box">
+
+   <div class="spectrum"></div>
+  </div>
+ </div> 
+
 </body>
 </html>
