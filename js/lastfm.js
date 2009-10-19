@@ -59,7 +59,7 @@ $('#login-lastfm-finish').click(function(){
 	
 })
 $('#lastfm-scroble').click(function(){
-	lastfm('album.getTags',{'artist':'Психея', 'album':'Психея', 'sk': sk}); 
+	lastfm('user.getRecommendedArtists',{'sk': sk}); 
 })
 
 }, false);
