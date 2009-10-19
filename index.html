@@ -5,137 +5,25 @@
 	<title>Seesu</title>
 	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/piu_piu_jplayer.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="js/466json.js"></script>
-	<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
-	<script type="text/javascript" src="js/f_widget_ui.js"></script> 
-	<script type="text/javascript" src="js/jquery.jplayer.js"></script>
-	<script type="text/javascript" src="js/dfjplayer_ui.js"></script>
-	<script type="text/javascript" src="js/456xhr.js"></script>
+	<link rel="stylesheet" href="http://www.schillmania.com/projects/soundmanager2/demo/page-player/css/page-player.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="js/_json.js"></script>
+	<script type="text/javascript" src="js/_jquery.js"></script>
+	<script type="text/javascript" src="js/soundmanager2.js"></script>
+	<script type="text/javascript" src="http://www.schillmania.com/projects/soundmanager2/demo/page-player/script/page-player.js"></script>
+	<script type="text/javascript" src="js/_widget_ui.js"></script> 
+	<script type="text/javascript" src="js/_xhr.js"></script>
   </head>
   <body>
   
   <script type="text/javascript">
-$(function() {
-
-
-	$("#jplayer").jPlayer({
-		ready: function ()
-		{
-      console.log('KHGyhre80f8');
-			$(this).setFile('http://www.miaowmusic.com/mp3/Miaow-05-The-separation.mp3').play();
-			//showPauseBtn();
-			//demoInstanceInfo($(this), $("#jplayer_info"));
-		},
-    swfPath: ""
-	})
-	/*.onProgressChange( function(lp,ppr,ppa,pt,tt) {
- 		var lpInt = parseInt(lp);
- 		var ppaInt = parseInt(ppa);
- 		global_lp = lpInt;
-
-		$('#loaderBar').progressbar('option', 'value', lpInt);
- 		$('#sliderPlayback').slider('option', 'value', ppaInt);
-	})
-	.onSoundComplete( function() {
-		$(this).play();
-	});
-
-	$("#pause").hide();
-
-	function showPauseBtn()
-	{
-		$("#play").fadeOut(function(){
-			$("#pause").fadeIn();
-		});
-	}
-
-	function showPlayBtn()
-	{
-		$("#pause").fadeOut(function(){
-			$("#play").fadeIn();
-		});
-	}
-
-	function playTrack(t,n)
-	{
-		$("#jquery_jplayer").setFile(t).play();
-
-		showPauseBtn();
-
-		return false;
-	}
-
-	$("#play").click(function() {
-		$("#jquery_jplayer").play();
-		showPauseBtn();
-		return false;
-	});
-
-	$("#pause").click(function() {
-		$("#jquery_jplayer").pause();
-		showPlayBtn();
-		return false;
-	});
-
-	$("#stop").click(function() {
-		$("#jquery_jplayer").stop();
-		showPlayBtn();
-		return false;
-	});
-
-
-	$("#volume-min").click( function() {
-		$('#jquery_jplayer').volume(0);
-		$('#sliderVolume').slider('option', 'value', 0);
-		return false;
-	});
-
-	$("#volume-max").click( function() {
-		$('#jquery_jplayer').volume(100);
-		$('#sliderVolume').slider('option', 'value', 100);
-		return false;
-	});
-
-	$("#player_progress_ctrl_bar a").live( "click", function() {
-		$("#jquery_jplayer").playHead(this.id.substring(3)*(100.0/global_lp));
-		return false;
-	});
-
-	// Slider
-	$('#sliderPlayback').slider({
-		max: 100,
-		range: 'min',
-		animate: true,
-
-		slide: function(event, ui)
-   	{
-   		$("#jquery_jplayer").playHead(ui.value*(100.0/global_lp));
-   	}
-	});
-
-	$('#sliderVolume').slider({
-		value : 50,
-		max: 100,
-		range: 'min',
-		animate: true,
-
-		slide: function(event, ui)
-   	{
-   		$("#jquery_jplayer").volume(ui.value);
-   	}
-	});
-
-	$('#loaderBar').progressbar();
-
-
-	//hover states on the static widgets
-	$('#dialog_link, ul#icons li').hover(
-		function() { $(this).addClass('ui-state-hover'); },
-		function() { $(this).removeClass('ui-state-hover'); }
-	);*/
-
-});
-</script>
+    soundManager.url = 'http://seesu.heroku.com/flashes/';
+    
+    function setTheme(sTheme) {
+      var o = document.getElementsByTagName('ul')[0];
+      o.className = 'playlist'+(sTheme?' '+sTheme:'');
+      return false;
+    }
+  </script>
 
 
   
@@ -151,55 +39,7 @@ $(function() {
 				  <p><label for="pass">Пароль</label><input type="password" name="pass" id="pass"/></p>
 				  <p><button> Мои эротические фантазии воплотятся в квантакте</button></p>
 			  </form>
-			  
-			<div id="jplayer"></div>
-
-			<div id="player_container">
-				<ul id="player_controls">
-					<li id="jplayer-play">play</li>
-					<li id="jplayer-pause">pause</li>
-					<li id="jplayer-stop">stop</li>
-					<li id="jplayer-volume_min">min volume</li>
-					<li id="jplayer-volume_max">max volume</li>
-				</ul>
-
-				<div id="player_progress">
-					<div id="player_progress_load_bar">
-						<div id="player_progress_play_bar"></div>
-					</div>
-				</div>
-				<div id="player_volume_bar">
-					<div id="player_volume_bar_value"></div>
-				</div>
-
-				<div id="player_playlist_message">
-					<div id="song_title"></div>
-					<div id="play_time"></div>
-					<div id="total_time"></div>
-				</div>
-			</div>
-			<div id="jplayer_info"></div>
-			  
-			   
-<!-->
-	
-	<embed type="application/x-shockwave-flash" src="http://vkontakte.ru/swf/AudioPlayer_mini.swf" 
-			    width="342" height="14" style="undefined" id="player" name="player" 
-			    bgcolor="#FFFFFF" 
-			    quality="high" 
-			    wmode="transparent" 
-			    allowScriptAccess='sameDomain'
-			    swliveconnect="true"  
-			    flashvars="debug=false&amp;volume=47&amp;url=http://cs4507.vkontakte.ru/u18157945/audio/4878bc7d42a5.mp3&amp;duration=299"/>
-			    
-			    
-				<object type="application/x-shockwave-flash" data="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" height="14" width="342">
-				  <param name="quality" value="high">
-				  <param name="scale" value="noscale">
-				  <param name="wmode" value="transparent">
-				  <param name="swliveconnect" value="true">
-				  <param name="flashvars" value="debug=false&amp;volume=47&amp;dbid=66027115&amp;url=http://cs4507.vkontakte.ru/u18157945/audio/4878bc7d42a5.mp3&amp;duration=299">
-			</object>-->
+			 
 			</div>
 			<div class="start screen">
 			  <h3>Поиск</h3>
@@ -255,8 +95,61 @@ $(function() {
 			</div>
 		</div>
 	</div>
-	<div class="window-bottom">
-		<span id="resize-handle">размер окна</span>	
-	</div>
+	
+	 <h1><a href="http://www.schillmania.com/projects/soundmanager2/" title="Play a page of mp3s with javascript via SoundManager 2">SoundManager 2</a> / page as a playlist, basic template (flash 8)</h1>
+
+ <ul class="playlist">
+
+  <li><a href="../jsAMP-preview/audio/rain.mp3">Rain</a></li>
+  <li><a href="../jsAMP-preview/audio/going_outside.mp3">Going Outside</a></li>
+
+  <li><a href="../jsAMP-preview/audio/office_lobby.mp3">Office Lobby</a></li>
+  <li><a href="../jsAMP-preview/audio/walking.mp3">Walking</a></li>
+  <li><a href="http://freshly-ground.com/data/audio/mpc/20060812%20-%20Groove.mp3" title="Dr. John Groove">Schill - Dr. John Groove</a></li>
+  <!-- files from the web (note that ID3 and waveformData information will *not* load from remote domains without permission, due to Flash security restrictions) -->
+  <li><a href="http://www.freshly-ground.com/misc/music/carl-3-barlp.mp3">Barrlping with Carl (featureblend.com)</a></li>
+  <li><a href="http://www.freshly-ground.com/data/audio/binaural/Mak.mp3">Angry cow sound?</a></li>
+
+  <li><a href="http://www.freshly-ground.com/data/audio/binaural/Things that open, close and roll.mp3">Things that open, close and roll</a></li>
+  <li><a href="http://www.freshly-ground.com/data/audio/binaural/A%20Trip%20to%20the%20Basement%20Garage.mp3">A Trip To The Basement Garage</a></li>
+
+ </ul>
+ 
+ <div id="control-template">
+  <!-- control markup inserted dynamically after each link -->
+  <div class="controls">
+   <div class="statusbar">
+
+    <div class="loading"></div>
+     <div class="position"></div>
+   </div>
+  </div>
+  <div class="timing">
+   <div id="sm2_timing" class="timing-data">
+    <span class="sm2_position">%s1</span> / <span class="sm2_total">%s2</span></div>
+
+  </div>
+  <div class="peak">
+   <div class="peak-box"><span class="l"></span><span class="r"></span>
+   </div>
+  </div>
+ </div>
+
+ <div id="spectrum-container" class="spectrum-container">
+  <div class="spectrum-box">
+
+   <div class="spectrum"></div>
+  </div>
+ </div> 
+
+ <p>For alternate themes, add the class to the playlist UL - eg. <a href="#" onclick="return setTheme('dark')">&lt;ul class="playlist dark"&gt;</a> or <a href="#" onclick="return setTheme('bubblegum')">&lt;ul class="playlist bubblegum"&gt;</a>; the base default is <a href="#" onclick="return setTheme()">&lt;ul class="playlist"&gt;</a>.</p>
+ 
+ <p>A reminder that if loading from the local filesystem, Flash will deny access to remote (network/internet) URLs by default unless whitelisted via the <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html">Flash Player Global Security Settings Page</a>. Some URLs in this example are remote to demonstrate this.</p>
+
+ <p>Note that by default, the Flash 8 version is used and therefore Flash 9-only features such as the VU meter, waveform etc. are not available. Refer to the main "page player" demo for configuration examples, or view the source of page-player.js for the configuration object (similar to that used in SoundManager 2 itself.)</p>
+
+ <p><a href="http://www.schillmania.com/projects/soundmanager2/" title="Javascript MP3 sound player API">SoundManager 2 project</a></p>
+
+
 </body>
 </html>
