@@ -3,11 +3,11 @@ var slider,searchfield,srhead,srnav;
 var loginxhr = new XMLHttpRequest ();
 loginxhr.onreadystatechange = function(){
   if (this.readyState == 4) {
-  	var r = JSON.parse(loginxhr.responseText)
-  	document.getElementById('auth').innerHTML = r.email + ' Выйти';
-  	searchfield.value = 'The Prodigy';
-  	slider.className = "screen-start";
-  	getMusic('The Prodigy');//запрос музыки
+	var r = JSON.parse(loginxhr.responseText)
+	document.getElementById('auth').innerHTML = r.email + ' Выйти';
+	searchfield.value = 'The Prodigy';
+	slider.className = "screen-start";
+	getMusic('The Prodigy');//запрос музыки
 	
   }
 };
@@ -73,8 +73,6 @@ var getMusic = function(trackname){
 
 
 window.addEventListener( 'load' , function(){
-  //startup_player();
-
   slider = document.getElementById('slider');
   searchfield = document.getElementById('q');
   srhead = document.getElementById('search_result_head');
