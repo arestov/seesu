@@ -3,7 +3,10 @@ var slider,searchfield,srhead,srnav;
 var loginxhr = new XMLHttpRequest ();
 loginxhr.onreadystatechange = function(){
   if (this.readyState == 4) {
-	var r = JSON.parse(loginxhr.responseText)
+	log(loginxhr.responseText);
+	var r = JSON.parse(loginxhr.responseText);
+	widget.setPreferenceForKey(r.id, 'vkid');
+	widget.setPreferenceForKey(r.email, 'vkemail');
 	document.getElementById('auth').innerHTML = r.email + ' Выйти';
 	searchfield.value = 'The Prodigy';
 	slider.className = "screen-start";
@@ -86,6 +89,10 @@ window.addEventListener( 'load' , function(){
 	loginxhr.send(loginxhr.xhrparams);	//логин
 	return false;
   };
-  
+  if (widget.preferenceForKey('vkid')) {
+	slider.className = "screen-start";
+  } else{
+	log('not loggin in')
+}
 }, false);
 
