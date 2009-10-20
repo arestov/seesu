@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<widget network="public">
+<widget network="public" transparent="false">
   <widgetname>Seesu</widgetname>
   <description>Get music you like from last.fm and play it with vk.com</description>
   <width>440</width>
