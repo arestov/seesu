@@ -56,7 +56,7 @@ $(function() {
  var holy_vk_string = 
    '<embed width="342" height="14" ' + 
    'flashvars="debug=false&amp;volume=:volume&amp;dbid=:id&amp;' +
-	 'url=:url" allowscriptaccess="always" swliveconnect="true" quality="high" ' +
+	 'url=:url" allowscriptaccess="never" wmode="transparent" swliveconnect="true" quality="high" ' +
 	 'bgcolor=":background_color" name="player" id="player" style="" ' +
 	 'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
 	 'type="application/x-shockwave-flash"/>',
