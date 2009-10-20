@@ -11,7 +11,9 @@ var lastfm = function(method,paramobj,signature){
 		(link += ('&api_key=' + apikey)) && apisig && paramsList.push('api_key' + apikey);
 		if (paramobj) {
 			for (var a in paramobj) {
-				(link += ('&'+a+'=' + paramobj[a])) && apisig && paramsList.push(a + paramobj[a])
+				(link += ('&'+a+'=' + paramobj[a])) && !(a == 'format') && !(a == 'callback') && apisig && paramsList.push(a + paramobj[a]);
+				
+				
 			}
 		}
 		if (apisig) {
@@ -63,7 +65,7 @@ $('#login-lastfm-finish').click(function(){
 	
 })
 $('#lastfm-scroble').click(function(){
-	lastfm('user.getRecommendedArtists',{'sk': sk}); 
+	lastfm('user.getRecommendedArtists',{sk: sk, format: 'json' }); 
 	return false
 })
 
