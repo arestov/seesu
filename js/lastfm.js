@@ -9,6 +9,7 @@ var lastfm = function(method,paramobj,signature){
 	if (method) {
 		(link += ('?method=' + method)) && apisig && paramsList.push('method' + method);
 		(link += ('&api_key=' + apikey)) && apisig && paramsList.push('api_key' + apikey);
+		link += ('&format=' + 'json');
 		if (paramobj) {
 			for (var a in paramobj) {
 				(link += ('&'+a+'=' + paramobj[a])) && !(a == 'format') && !(a == 'callback') && apisig && paramsList.push(a + paramobj[a]);
@@ -38,7 +39,7 @@ var lastfm = function(method,paramobj,signature){
 			xhr.send();
 		}
 		
-		return xhr.responseXML
+		return JSON.parse(xhr.responseText)
 		
 	} else return false
 
@@ -47,25 +48,25 @@ window.addEventListener( 'load' , function(){
 var l = $('#lastfm');
 var sk = widget.preferenceForKey('lfmsk') || false;
 sk && (l.addClass('lastfm-ready'));
-var newtoken = !sk ? lastfm('auth.getToken',false,true).getElementsByTagName('token')[0].textContent : false;
+var newtoken = !sk ? lastfm('auth.getToken',false,true).token : false;
 
 log(newtoken);
 
 $('#login-lastfm-button').click(function(){
-	newtoken = newtoken || lastfm('auth.getToken',false,true).getElementsByTagName('token')[0].textContent;
+	newtoken = newtoken || lastfm('auth.getToken',false,true).token;
 	widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token='+newtoken);
 	l.addClass('lastfm-auth-finish');
 	return false
 })
 $('#login-lastfm-finish').click(function(){
-	var key = lastfm('auth.getSession',{'token':newtoken }).getElementsByTagName('key')[0];
-	key && (sk = key.textContent) && (l.addClass('lastfm-ready')) && log(sk) ;
+	sk = lastfm('auth.getSession',{'token':newtoken }).session.key;
+	sk && (l.addClass('lastfm-ready')) && log(sk) ;
 	widget.setPreferenceForKey(sk, 'lfmsk');
 	return false
 	
 })
 $('#lastfm-scroble').click(function(){
-	lastfm('user.getRecommendedArtists',{sk: sk, format: 'json' }); 
+	lastfm('user.getRecommendedArtists',{sk: sk }); 
 	return false
 })
 
