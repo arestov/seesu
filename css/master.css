@@ -40,7 +40,7 @@ body{
 				margin-bottom:5px;
 				display:none;
 				}
-			#slider.sreen-login-vk .login-vk,
+			#slider.screen-login-vk .login-vk,
 			#slider.screen-start .start,
 			#slider.screen-artist .artist,
 			
@@ -49,7 +49,7 @@ body{
 				}
 	
 	
-			#slider.sreen-login-vk .nav-login-vk{
+			#slider.screen-login-vk .nav-login-vk{
 				visibility:visible;
 				}
 			#slider.screen-start .nav-login-vk, 
