@@ -120,5 +120,16 @@ window.addEventListener( 'load' , function(){
   } else{
 	log('not loggin in')
 }
+
+	$('#search-artist').click(function(){
+		
+	});
+	$('#search-tag').click(function(){
+		
+	});
+	$('#search-track').click(function(e){
+		getMusic(searchfield.value);
+	});
+
 }, false);
 
