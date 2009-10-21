@@ -1,9 +1,10 @@
-
+ul{list-style:none;}
 body{
 	background:#ddd;
 	border:2px solid #999;
 	margin:0;
 	height:596px;
+	font-size:12px;
 	font-family:Verdana,sans-serif;
 	}
 	#slider{
@@ -23,59 +24,62 @@ body{
 			border-bottom:1px dashed #666;
 			cursor:pointer;
 		}
+		#slider
 		.screens{
 			overflow-y:auto;
 			height:536px;
 			padding:0 10px;
 			-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
-		}
-		.screen{
-			overflow:hidden;
-			border-bottom:1px solid #666;
-			padding-bottom:5px;
-			margin-bottom:5px;
-			display:none;
 			}
-		.sreen-login-vk .login-vk,
-		.screen-start .start,
-		.screen-artist .artist,
-		
-		.screen-artist .start{
-			display:block;
-			}
-
-
-		.sreen-login-vk .nav-login-vk{
-			visibility:visible;
-			}
-		.screen-start .nav-login-vk, 
-		.screen-start .nav-start{
-			visibility:visible;
-			}
-		.screen-artist .nav-login-vk, 
-		.screen-artist .nav-start, 
-		.screen-artist .nav-artist{
-			visibility:visible;
-			}
-		.lfm{
-			
-			}
-			.lfm
-			a{
+			#slider
+			.screens
+			.screen{
+				overflow:hidden;
+				border-bottom:1px solid #666;
+				padding-bottom:5px;
+				margin-bottom:5px;
 				display:none;
-				}	
-			.lfm.lastfm-auth-start
-			#login-lastfm-button {
-				display:inline;
-				}	
-			.lfm.lastfm-auth-finish
-			#login-lastfm-finish{
-				display:inline;
 				}
-			.lfm.lastfm-ready
-			#lastfm-scroble{
-				display:inline;
+			#slider.sreen-login-vk .login-vk,
+			#slider.screen-start .start,
+			#slider.screen-artist .artist,
+			
+			#slider.screen-artist .start{
+				display:block;
 				}
+	
+	
+			#slider.sreen-login-vk .nav-login-vk{
+				visibility:visible;
+				}
+			#slider.screen-start .nav-login-vk, 
+			#slider.screen-start .nav-start{
+				visibility:visible;
+				}
+			#slider.screen-artist .nav-login-vk, 
+			#slider.screen-artist .nav-start, 
+			#slider.screen-artist .nav-artist{
+				visibility:visible;
+				}
+			.lfm{
+				
+				}
+				.lfm
+				a{
+					display:none;
+					}	
+				.lfm.lastfm-auth-start
+				#login-lastfm-button {
+					display:inline;
+					}	
+				.lfm.lastfm-auth-finish
+				#login-lastfm-finish{
+					display:inline;
+					}
+				.lfm.lastfm-ready
+				#lastfm-scroble{
+					display:inline;
+					}
 		.window-bottom{
 			height:20px;
 			text-align:right;

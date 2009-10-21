@@ -26,28 +26,25 @@
 				  <p><button> Мои эротические фантазии воплотятся в квантакте</button></p>
 			  </form>
 			</div>
-			<div class="lastfm-auth-start lfm" id="lastfm">
+			<div class="lastfm-auth-start lfm screen" id="lastfm">
 				<h3>Вход в ластфм</h3>
 				<p><a id="login-lastfm-button" href="#">хотел бы войти</a></p>
 				<p><a id="login-lastfm-finish" href="#">Да, я разрешил приложению Seesu доступ к last.fm</a></p>
 				<p><a href="#" id="lastfm-scroble">Получить в консоль список рекомендуемых артистов</a></p>
-			</div>
-				
-	<script type="text/javascript" charset="utf-8">
-	  function player_DoFSCommand(command, args) {}
-	
-	</script>
-	
-  			<a href="#" id="pause">остановить беспредел (музыку)</a>
+			</div>	
+  			
 			<div class="start screen">
 			  <h3>Поиск</h3>
 			  <form id="search" name="search" onsubmit="getMusic(this.q.value);">
 				<input type="text" name="q" id="q" />
-				<button>Искать</button>
+				<button type="submit" name="type" value="artist">Артист</button>
+				<button type="submit" name="type" value="tag">Тег</button>
+				<button type="submit" name="type" value="track">Трек</button>
 			  </form>
 			</div>
 			<div class="artist screen">
 				<h3 id="search_result_head">Результаты поиска</h3>
+				<a href="#" id="pause">остановить беспредел (музыку)</a>
 				<div id="search_result">
 				</div>
 			</div>
