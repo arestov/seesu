@@ -45,7 +45,8 @@ var getMusic = function(trackname){
 		var srd = document.createElement('div');
 		srd.innerHTML = JSON.parse(xhr.responseText).rows;
 		var rows = $(".audioRow ", srd);
-		
+		var searchres = document.getElementById('search_result');
+		searchres.innerHTML = '';
 		for (var i=0, l = rows.length; i < l; i++) {
 			var row = rows[i],
 				text = $('.audioText', row)[0],
@@ -55,11 +56,19 @@ var getMusic = function(trackname){
 				obj = parseStrToObj(playStr);
 			obj.artist = artist;
 			obj.track = track;
+			var сссс = $("<a></a>")
+				.attr({ 
+					href : obj.link, 
+					class : "song",
+					text: artist + ' - ' + track
+				});
+			$(searchres).append(сссс);
+			$(searchres).append('<br/><br/>');
 			musicList.push(obj);
 		};
-		var searchres = document.getElementById('search_result');
-		searchres.innerHTML = ''
-		searchres.appendChild(srd);
+		
+		
+		
 		slider.className = "screen-artist";
 	  }
 	};
