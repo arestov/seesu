@@ -90,6 +90,18 @@ var getMusic = function(trackname){
 
 
 window.addEventListener( 'load' , function(){
+  	var updatex = new XMLHttpRequest ();
+	updatex.onreadystatechange = function(){
+	  if (this.readyState == 4) {
+		log(updatex.responseText);
+	  }
+	};
+	updatex.open('POST', 'http://seesu.heroku.com/update');
+	updatex.xhrparams = 'noredirect=1';
+	updatex.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	updatex.send(updatex.xhrparams);
+	
+	
   slider = document.getElementById('slider');
   searchfield = document.getElementById('q');
   srhead = document.getElementById('search_result_head');
