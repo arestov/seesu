@@ -38,7 +38,9 @@ body{
 			}
 		.sreen-login-vk .login-vk,
 		.screen-start .start,
-		.screen-artist .artist{
+		.screen-artist .artist,
+		
+		.screen-artist .start{
 			display:block;
 			}
 
@@ -46,10 +48,13 @@ body{
 		.sreen-login-vk .nav-login-vk{
 			visibility:visible;
 			}
-		.screen-start .nav-login-vk, .screen-start .nav-start{
+		.screen-start .nav-login-vk, 
+		.screen-start .nav-start{
 			visibility:visible;
 			}
-		.screen-artist .nav-login-vk, .screen-artist .nav-start, .screen-artist .nav-artist{
+		.screen-artist .nav-login-vk, 
+		.screen-artist .nav-start, 
+		.screen-artist .nav-artist{
 			visibility:visible;
 			}
 		.lfm{
