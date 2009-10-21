@@ -1,4 +1,9 @@
-var slider,searchfield,srhead,srnav;
+var  slider ,
+  searchfield ,
+  srhead,
+  srnav ,
+  searchlink,
+  searchres;
 
 var loginxhr = new XMLHttpRequest ();
 loginxhr.onreadystatechange = function(){
@@ -45,7 +50,7 @@ var getMusic = function(trackname){
 		var srd = document.createElement('div');
 		srd.innerHTML = JSON.parse(xhr.responseText).rows;
 		var rows = $(".audioRow ", srd);
-		var searchres = document.getElementById('search_result');
+		
 		searchres.innerHTML = '';
 		var ul = document.createElement('ul');
 		searchres.appendChild(ul);
@@ -100,13 +105,13 @@ window.addEventListener( 'load' , function(){
 	updatex.xhrparams = 'noredirect=1';
 	updatex.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	updatex.send(updatex.xhrparams);
-	
-	
-  slider = document.getElementById('slider');
-  searchfield = document.getElementById('q');
-  srhead = document.getElementById('search_result_head');
-  srnav = document.getElementById('search_result_nav');
-  searchlink = document.getElementById('start_search');
+	//see var at top
+  slider = document.getElementById('slider'),
+  searchfield = document.getElementById('q'),
+  srhead = document.getElementById('search_result_head'),
+  srnav = document.getElementById('search_result_nav'),
+  searchlink = document.getElementById('start_search'),
+  searchres = document.getElementById('search_result');
   searchlink.onclick = function(){
   	slider.className = "screen-start"
   }
@@ -122,6 +127,19 @@ window.addEventListener( 'load' , function(){
 }
 
 	$('#search-artist').click(function(){
+		var artists = lastfm('artist.search',{artist: searchfield.value, limit: 10 }).results.artistmatches.artist; 
+		searchres.innerHTML = '';
+		var ul = document.createElement('ul');
+		searchres.appendChild(ul);
+		for (var i=0; i < artists.length; i++) {
+			log(artists[i].name)
+			var li = $("<li></li>")
+				.attr({ 
+					text: artists[i].name
+				});
+			$(ul).append(li);
+		};
+		slider.className = "screen-artist";
 		
 	});
 	$('#search-tag').click(function(){
