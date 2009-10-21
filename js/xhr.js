@@ -47,6 +47,10 @@ var getMusic = function(trackname){
 		var rows = $(".audioRow ", srd);
 		var searchres = document.getElementById('search_result');
 		searchres.innerHTML = '';
+		var ul = document.createElement('ul');
+		searchres.appendChild(ul);
+		
+		
 		for (var i=0, l = rows.length; i < l; i++) {
 			var row = rows[i],
 				text = $('.audioText', row)[0],
@@ -62,8 +66,9 @@ var getMusic = function(trackname){
 					class : "song",
 					text: artist + ' - ' + track
 				});
-			$(searchres).append(сссс);
-			$(searchres).append('<br/><br/>');
+			var li = document.createElement('li');
+			$(li).append(сссс);
+			$(ul).append(li);
 			musicList.push(obj);
 		};
 		
