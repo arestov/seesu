@@ -3,13 +3,15 @@ body{
 	background:#f5f7f5;
 	border:2px solid #eeeeee;
 	margin:0;
+	padding:0;
+	overflow:hidden;
 	height:596px;
 	font-size:12px;
 	font-family:Verdana,sans-serif;
 	}
 	#slider{
 		
-		padding:10px 0;
+		padding:10px 0 0;
 		
 		}
 		.nav{
