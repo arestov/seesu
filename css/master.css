@@ -20,6 +20,9 @@ a.song{
 a.song:hover{
 	background:#E6C9A3;
 }
+a.song.active-play{
+	background:#E6E4A3;
+}
 body{
 	background:#F3F8ED;
 	border:2px solid #CEE3B5;

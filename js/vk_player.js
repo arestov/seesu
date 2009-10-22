@@ -52,18 +52,23 @@ alert('тыдыщь!');
 	}
 	
 $(function() {
+ var playingNode;
  var playholder = $('#player-holder');
  $(document).click(function(e){
  	var node = e.target,
  	nodeClass = node.className;
  	if ((node.nodeName == 'A') && (nodeClass.indexOf('song') != -1)){
+ 		
  		var song_url = node.getAttribute('href');
+ 		$(playingNode).removeClass('active-play');
 		playholder.html(
 			holy_vk_string
 			  .replace(':url', song_url)
 			  .replace(':volume', start_volume)
 			  .replace(':background_color', background_color)
 		)
+		$(node).addClass('active-play');
+		playingNode = node;
 		return false
  	}
  });
