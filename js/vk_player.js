@@ -94,14 +94,21 @@ $(function() {
     return false;
   });
   
-  $('#pause').click(function() {
-  set_var("setState", "stop");
-  //  window.document.SetVariable("setState", "stop", false);
-   // $('.played-song embed').SetVariable("setState", "stop", false);//("audioPlayer_mc." + func, value);
-  
-    return false;
+  $('#stop').click(function() {
+	  set_var("setState", "stop");
+	  //  window.document.SetVariable("setState", "stop", false);
+	   // $('.played-song embed').SetVariable("setState", "stop", false);//("audioPlayer_mc." + func, value);
+	    return false;
   });
-  
+  /*
+	$('#pause').click(function() {
+		set_var("setState", "pause");
+		return false;
+	});
+	$('#play').click(function() {
+		set_var("setState", "play");
+		return false;
+	});*/
   // VK player events handler
 
  
