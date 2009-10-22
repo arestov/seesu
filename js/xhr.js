@@ -135,11 +135,14 @@ window.addEventListener( 'load' , function(){
 			$(searchres).append(ul);
 			for (var i=0; i < artists.length; i++) {
 				var artist = artists[i].name
-				
+				var image = artists[i].image[1]['#text'] || false;
 				var li = $("<li></li>");
 				var span = $("<span></span>").attr({ text: artist});
-				var img = $("<img/>").attr({ src: artists[i].image[1]['#text'] , alt: artist });
-				$(li).append(img);
+				if(image){
+					var img = $("<img/>").attr({ src: image , alt: artist });
+					$(li).append(img);
+				} 
+				
 				$(li).append(span);
 				$(ul).append(li);
 			};
