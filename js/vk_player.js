@@ -52,10 +52,25 @@ alert('тыдыщь!');
 	}
 	
 $(function() {
-
+ var playholder = $('#player-holder');
+ $(document).click(function(e){
+ 	log('piu');
+ 	var node = e.target,
+ 	nodeClass = node.className;
+ 	if ((node.nodeName == 'A') && (nodeClass.indexOf('song') != -1)){
+ 		var song_url = node.getAttribute('href');
+		playholder.html(
+			holy_vk_string
+			  .replace(':url', song_url)
+			  .replace(':volume', start_volume)
+			  .replace(':background_color', background_color)
+		)
+		return false
+ 	}
+ });
  var holy_vk_string = 
    '<embed width="342" height="14" ' + 
-   'flashvars="debug=false&amp;volume=:volume&amp;dbid=:id&amp;' +
+   'flashvars="debug=false&amp;volume=:volume&amp;' +
 	 'url=:url" allowscriptaccess="always" wmode="transparent" swliveconnect="true" quality="high" ' +
 	 'bgcolor=":background_color" name="player" id="player" style="" ' +
 	 'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
@@ -63,17 +78,15 @@ $(function() {
 	 
 	 background_color = '#FFFFFF',
 	 start_volume = 80;
- 
+ /*
   $('a.song').live('click', function() {
-    var song_url = $(this).attr('href'),
-        id = $('a.song').index($(this));
+    var song_url = $(this).attr('href');
     
         
-    $('#player-holder').html(
+    playholder.html(
     	holy_vk_string
         .replace(':url', song_url)
         .replace(':volume', start_volume)
-        .replace(':id', id)
         .replace(':background_color', background_color)
     )    
         /*
@@ -90,9 +103,10 @@ $(function() {
         .replace(':id', id)
         .replace(':background_color', background_color) +
       '</div>'
-    );*/
+    );
     return false;
   });
+  */
   
   $('#stop').click(function() {
 	  set_var("setState", "stop");
