@@ -29,17 +29,20 @@ var lastfm = function(method,paramobj,signature){
 		
 		var xhr = new XMLHttpRequest ();
 		if (xhr) {
+			var b;
 			xhr.onreadystatechange = function () {
 			  if ( this.readyState == 4 ) {
-				log(xhr.responseText)
+				b = JSON.parse(xhr.responseText);
+				b.log = xhr.responseText;
 			  }
 			};
 			xhr.open( 'GET', api + link, false );
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 			xhr.send();
+			return b 
 		}
 		
-		return JSON.parse(xhr.responseText)
+
 		
 	} else return false
 

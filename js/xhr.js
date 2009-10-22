@@ -167,7 +167,17 @@ window.addEventListener( 'load' , function(){
 			for (var i=0; i < artists.length; i++) {
 				var artist = artists[i].name
 				var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-				var li = $("<li></li>");
+				var li = $("<li></li>").data('artist',artist);
+				$(li).click(function(){
+					var tracks = lastfm('artist.getTopTracks',{artist: $(this).data('artist') }).toptracks.track || false;
+					if (tracks) {
+						var playlist = [];
+						for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
+							log(tracks[i].name);
+						};	
+					}
+				
+				});
 				var p = $("<p></p>").attr({ text: artist});
 				if(image){
 					var img = $("<img/>").attr({ src: image , alt: artist });
