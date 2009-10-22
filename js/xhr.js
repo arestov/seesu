@@ -88,7 +88,7 @@ var getMusic = function(trackname){
 
 var getObjectsByPlaylist = function(playList) {
 		var objects = new Array();
-
+		log(playList)
 		for (var i = 0; i < playList.length; i++) {
 			var searchingResults = getMusic(playList[i])
 			if (searchingResults) {
@@ -169,12 +169,15 @@ window.addEventListener( 'load' , function(){
 				var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 				var li = $("<li></li>").data('artist',artist);
 				$(li).click(function(){
-					var tracks = lastfm('artist.getTopTracks',{artist: $(this).data('artist') }).toptracks.track || false;
+					var artist = $(this).data('artist');
+					var tracks = lastfm('artist.getTopTracks',{artist: artist }).toptracks.track || false;
 					if (tracks) {
 						var playlist = [];
 						for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
-							log(tracks[i].name);
-						};	
+							playlist.push(artist + ' - ' + tracks[i].name);
+						};
+						var trackobj = getObjectsByPlaylist(playlist);
+						showPlaylist(trackobj);
 					}
 				
 				});
