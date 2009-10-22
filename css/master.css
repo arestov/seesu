@@ -100,3 +100,27 @@ body{
 		ul li{
 			margin: 10px 0;
 			}
+			
+		.search-results
+		ul.results-artists
+		li{
+			cursor:pointer;
+			overflow: hidden;
+			margin:15px 0;
+			padding:5px;
+			}
+		ul.results-artists
+		li:hover{
+			background:#f6f0e1;
+			}
+			.search-results
+			ul.results-artists
+			img{
+				float:left;
+				}
+			.search-results
+			ul.results-artists
+			p{
+				margin-bottom:0;
+				margin-left:76px;
+				}
