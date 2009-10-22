@@ -131,13 +131,16 @@ window.addEventListener( 'load' , function(){
 		var artists = lastfm('artist.search',{artist: searchfield.value, limit: 10 }).results.artistmatches.artist || false; 
 		if (artists){
 			searchres.innerHTML = '';
-			var ul = document.createElement('ul');
-			searchres.appendChild(ul);
+			var ul = $("<ul></ul>").attr({ class: 'results-artists'});
+			$(searchres).append(ul);
 			for (var i=0; i < artists.length; i++) {
-				var li = $("<li></li>")
-					.attr({ 
-						text: artists[i].name
-					});
+				var artist = artists[i].name
+				
+				var li = $("<li></li>");
+				var span = $("<span></span>").attr({ text: artist});
+				var img = $("<img/>").attr({ src: artists[i].image[1]['#text'] , alt: artist });
+				$(li).append(img);
+				$(li).append(span);
 				$(ul).append(li);
 			};
 			
