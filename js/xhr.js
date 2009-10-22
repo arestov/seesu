@@ -132,7 +132,6 @@ window.addEventListener( 'load' , function(){
 		var ul = document.createElement('ul');
 		searchres.appendChild(ul);
 		for (var i=0; i < artists.length; i++) {
-			log(artists[i].name)
 			var li = $("<li></li>")
 				.attr({ 
 					text: artists[i].name
