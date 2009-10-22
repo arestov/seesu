@@ -45,9 +45,9 @@ body{
 				}
 			#slider.screen-login-vk .login-vk,
 			#slider.screen-start .start,
-			#slider.screen-artist .artist,
+			#slider.screen-search .search-results,
 			
-			#slider.screen-artist .start{
+			#slider.screen-search .start{
 				display:block;
 				}
 	
@@ -59,11 +59,14 @@ body{
 			#slider.screen-start .nav-start{
 				visibility:visible;
 				}
-			#slider.screen-artist .nav-login-vk, 
-			#slider.screen-artist .nav-start, 
-			#slider.screen-artist .nav-artist{
+			#slider.screen-search .nav-login-vk, 
+			#slider.screen-search .nav-start, 
+			#slider.screen-search .nav-search-results{
 				visibility:visible;
 				}
+			#slider.screen-search .start .lfm-start{
+				display:none;
+			}
 			.lfm{
 				
 				}
@@ -71,16 +74,16 @@ body{
 				a{
 					display:none;
 					}	
-				.lfm.lastfm-auth-start
-				#login-lastfm-button {
+				.lfm.lfm-auth-start
+				#login-lfm-button {
 					display:inline;
 					}	
-				.lfm.lastfm-auth-finish
-				#login-lastfm-finish{
+				.lfm.lfm-auth-finish
+				#login-lfm-finish{
 					display:inline;
 					}
-				.lfm.lastfm-ready
-				#lastfm-scroble{
+				.lfm.lfm-ready
+				#lfm-scroble{
 					display:inline;
 					}
 		.window-bottom{

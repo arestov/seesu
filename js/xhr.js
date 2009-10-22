@@ -79,7 +79,7 @@ var getMusic = function(trackname){
 		
 		
 		
-		slider.className = "screen-artist";
+		slider.className = "screen-search";
 	  }
 	};
 	xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
@@ -152,7 +152,7 @@ window.addEventListener( 'load' , function(){
 				});
 			$(searchres).append(p);
 		}
-		slider.className = "screen-artist";
+		slider.className = "screen-search";
 		
 	});
 	$('#search-tag').click(function(){
