@@ -15,7 +15,7 @@
   <body>
 	<div id="slider" class="screen-login-vk">
 		
-		<div class="nav"><span class="nav-login-vk">Вход &rarr;</span> <span class="nav-start" id="start_search" >Поиск &rarr;</span> <span class="nav-artist" id="search_result_nav"></span></div>
+		<div class="nav"><span class="nav-login-vk">Вход &rarr;</span> <span class="nav-start" id="start_search" >Стартовая страница &rarr;</span> <span class="nav-search-results" >Результаты поиска</span><span id="search_result_nav"></span></div>
 		<div class="screens" id="screens">
 			
 			<div class="login-vk screen">
@@ -26,7 +26,7 @@
 				  <p><button> Мои эротические фантазии воплотятся в квантакте</button></p>
 			  </form>
 			</div>
-			<div class="lastfm-auth-start lfm screen" id="lastfm">
+			<div class="lfm-auth-start lfm screen" id="lastfm">
 				<h3>Вход в ластфм</h3>
 				<p><a id="login-lastfm-button" href="#">хотел бы войти</a></p>
 				<p><a id="login-lastfm-finish" href="#">Да, я разрешил приложению Seesu доступ к last.fm</a></p>
@@ -34,19 +34,25 @@
 			</div>	
   			
 			<div class="start screen">
-			  <h3>Поиск</h3>
-			  <form id="search" name="search">
-				<input type="text" name="q" id="q" />
-				<button type="submit" name="type" value="artist" id="search-artist">Артист</button>
-				<button type="submit" name="type" value="tag" id="search-tag">Тег</button>
-				<button type="submit" name="type" value="track" id="search-track">Трек *</button>
-				<button type="submit" name="type" onclick="getObjectsByPlaylist(['Ramones - Today your love tomorrow the world', 'Sex Pistols - Pretty vacant']); return false;">Плейлист в лог!</button>
-			  </form>
+				<div class="lfm-start">
+					<p><a href="">Рекоммендации</a></p>
+					<p><a href="">Любимые треки</a></p>
+				</div>
+				<div class="search-start">
+					<h3>Поиск</h3>
+					  <form id="search" name="search">
+						<input type="text" name="q" id="q" />
+						<button type="submit" name="type" value="artist" id="search-artist">Артист</button>
+						<button type="submit" name="type" value="tag" id="search-tag">Тег</button>
+						<button type="submit" name="type" value="track" id="search-track">Трек *</button>
+						<button type="submit" name="type" onclick="getObjectsByPlaylist(['Ramones - Today your love tomorrow the world', 'Sex Pistols - Pretty vacant']); return false;">Плейлист в лог!</button>
+					  </form>
+				</div>
 			</div>
-			<div class="artist screen">
-				<h3 id="search_result_head">Результаты поиска</h3>
+			<div class="artist search-results screen">
+				<h3>Результаты поиска</h3>
 				<a href="#" id="pause">остановить беспредел (музыку)</a>
-				<div id="search_result" class="search-results" >
+				<div id="search_result" class="search-results-holder" >
 				</div>
 			</div>
 		</div>

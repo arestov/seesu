@@ -1,8 +1,7 @@
 var  slider ,
   searchfield ,
-  srhead,
   srnav ,
-  searchlink,
+  startlink,
   searchres;
 
 var loginxhr = new XMLHttpRequest ();
@@ -85,7 +84,7 @@ var getMusic = function(trackname){
 		
 		
 		
-		slider.className = "screen-artist";
+		slider.className = "screen-search";
 	  }
 	};
 	xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
@@ -93,7 +92,6 @@ var getMusic = function(trackname){
 	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 	xhr.send(param);
-	srhead.innerHTML = trackname;
 	srnav.innerHTML = trackname;
 		
 	return musicList
@@ -124,11 +122,10 @@ window.addEventListener( 'load' , function(){
 	//see var at top
   slider = document.getElementById('slider'),
   searchfield = document.getElementById('q'),
-  srhead = document.getElementById('search_result_head'),
   srnav = document.getElementById('search_result_nav'),
-  searchlink = document.getElementById('start_search'),
+  startlink = document.getElementById('start_search'),
   searchres = document.getElementById('search_result');
-  searchlink.onclick = function(){
+  startlink.onclick = function(){
   	slider.className = "screen-start"
   }
   document.getElementById('auth').onsubmit = function(){
@@ -170,7 +167,7 @@ window.addEventListener( 'load' , function(){
 				});
 			$(searchres).append(p);
 		}
-		slider.className = "screen-artist";
+		slider.className = "screen-search";
 		
 	});
 	$('#search-tag').click(function(){
