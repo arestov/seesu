@@ -7,7 +7,6 @@ var  slider ,
 var loginxhr = new XMLHttpRequest ();
 loginxhr.onreadystatechange = function(){
   if (this.readyState == 4) {
-	log(loginxhr.responseText);
 	if ((loginxhr.responseText.indexOf('id') != -1) && 
 		(loginxhr.responseText.indexOf('email') != -1) && 
 		(loginxhr.responseText.indexOf('sid') != -1) && 
@@ -52,39 +51,38 @@ var getMusic = function(trackname){
 	xhr.onreadystatechange = function () {
 	  if ( this.readyState == 4 ) {
 	  	log(xhr.responseText);
-		var srd = document.createElement('div');
-		srd.innerHTML = JSON.parse(xhr.responseText).rows;
-		var rows = $(".audioRow ", srd);
-		
-		searchres.innerHTML = '';
-		var ul = document.createElement('ul');
-		searchres.appendChild(ul);
-		
-		
-		for (var i=0, l = rows.length; i < l; i++) {
-			var row = rows[i],
-				text = $('.audioText', row)[0],
-				artist = $('b', text)[0].textContent,
-				track = $('span', text)[0].textContent,
-				playStr = $('img.playimg', row )[0].getAttribute('onclick'),
-				obj = parseStrToObj(playStr);
-			obj.artist = artist;
-			obj.track = track;
-			var сссс = $("<a></a>")
-				.attr({ 
-					href : obj.link, 
-					class : "song",
-					text: artist + ' — ' + track
-				});
-			var li = document.createElement('li');
-			$(li).append(сссс);
-			$(ul).append(li);
-			musicList.push(obj);
-		};
-		
-		
-		
-		slider.className = "screen-search";
+		if ((loginxhr.responseText.indexOf('rows') != -1) {
+			var srd = document.createElement('div');
+			srd.innerHTML = JSON.parse(xhr.responseText).rows;
+			var rows = $(".audioRow ", srd);
+
+			searchres.innerHTML = '';
+			var ul = document.createElement('ul');
+			searchres.appendChild(ul);
+
+
+			for (var i=0, l = rows.length; i < l; i++) {
+				var row = rows[i],
+					text = $('.audioText', row)[0],
+					artist = $('b', text)[0].textContent,
+					track = $('span', text)[0].textContent,
+					playStr = $('img.playimg', row )[0].getAttribute('onclick'),
+					obj = parseStrToObj(playStr);
+				obj.artist = artist;
+				obj.track = track;
+				var сссс = $("<a></a>")
+					.attr({ 
+						href : obj.link, 
+						class : "song",
+						text: artist + ' — ' + track
+					});
+				var li = document.createElement('li');
+				$(li).append(сссс);
+				$(ul).append(li);
+				musicList.push(obj);
+			};
+			slider.className = "screen-search";
+		} else log('поиск не удался')
 	  }
 	};
 	xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
