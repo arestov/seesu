@@ -51,7 +51,7 @@ var getMusic = function(trackname){
 	xhr.onreadystatechange = function () {
 	  if ( this.readyState == 4 ) {
 	  	log(xhr.responseText);
-		if ((loginxhr.responseText.indexOf('rows') != -1) {
+		if (loginxhr.responseText.indexOf('rows') != -1) {
 			var srd = document.createElement('div');
 			srd.innerHTML = JSON.parse(xhr.responseText).rows;
 			var rows = $(".audioRow ", srd);
@@ -146,7 +146,10 @@ window.addEventListener( 'load' , function(){
 			for (var i=0; i < artists.length; i++) {
 				var artist = artists[i].name
 				var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-				var li = $("<li></li>");
+				var li = $("<li></li>").data('artist',artist);
+				$(li).click(function(){
+					log($(this).data('artist'));
+				});
 				var p = $("<p></p>").attr({ text: artist});
 				if(image){
 					var img = $("<img/>").attr({ src: image , alt: artist });
