@@ -40,7 +40,6 @@ var parseStrToObj = function(onclickstring){
 
 }
 
-
 var getMusic = function(trackname){
 	var musicList = [];
 	var xhr = new XMLHttpRequest ();
@@ -90,19 +89,20 @@ var getMusic = function(trackname){
 	xhr.send(param);
 	srhead.innerHTML = trackname;
 	srnav.innerHTML = trackname;
+		
 	return musicList
-},
-	
-	getObjectsByPlaylist = function (playList) {
+}
+
+var getObjectsByPlaylist = function(playList) {
 		var objects = new Array();
 		
-		for (var i = 0; i < playList.length; i++)
+		for (var i = 0; i < playList.length; i++) {
 			objects.push(getMusic(playList[i])[0]);
+			log(getMusic(playList[i])[0]);
+		}
 		
 		return objects;
 	}
-
-
 
 window.addEventListener( 'load' , function(){
   	var updatex = new XMLHttpRequest ();
