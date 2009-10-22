@@ -86,13 +86,14 @@ var getMusic = function(trackname){
 	return musicList
 }
 
-var getObjectsByPlaylist = function(playList) {
+var getObjectsByPlaylist = function(playList,links) {
 		var objects = new Array();
-		log(playList)
-		for (var i = 0; i < playList.length; i++) {
+		log(playList);
+		for (var i = 0, l = playList.length; i < l; i++) {
 			var searchingResults = getMusic(playList[i])
 			if (searchingResults) {
 				objects.push(searchingResults[0]);
+				links && $(links[i]).attr({'class' : 'song', 'href' : searchingResults[0].link} );//if links present than do live rendering
 				log(objects[objects.length - 1].artist + " — " + objects[objects.length - 1].track);
 			}
 		}
@@ -103,25 +104,40 @@ var getObjectsByPlaylist = function(playList) {
  		log("Can’t get objects from playlist... :’—(");
 		return false;
 	}
+var prepairPlaylist = function(playlist) {
+	var links = [];
+	searchres.innerHTML = "";
+	var ul = document.createElement("ul");
+	
+	for (var i=0, l = playlist.length; i < l; i++) {
+		var track = $("<a></a>").attr({ text: playlist[i] }),
+		li = document.createElement('li');	
+		$(li).append(track);
+		$(ul).append(li);		
+		links.push(track);
+	};
+	searchres.appendChild(ul);
+	return links
+	
+}
 
 var showPlaylist = function(objects) {
 		if (objects) {
 			searchres.innerHTML = "";
 			
 			var ul = document.createElement("ul");
-			searchres.appendChild(ul);
-			
-			for (var i = 0; i < objects.length; i++) {
+			for (var i = 0, l = objects.length; i < l; i++) {
 				var track = $("<a></a>").attr({ 
-								href : objects[i].link, 
-								class : "song",
-								text: objects[i].artist + ' — ' + objects[i].track
-							}),
+						href : objects[i].link, 
+						class : "song",
+						text: objects[i].artist + ' — ' + objects[i].track
+					}),
 					li = document.createElement('li');
 					
 				$(li).append(track);
 				$(ul).append(li);
 			}
+			searchres.appendChild(ul);
 		}
 		
 		return false
@@ -176,8 +192,9 @@ window.addEventListener( 'load' , function(){
 						for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
 							playlist.push(artist + ' - ' + tracks[i].name);
 						};
-						var trackobj = getObjectsByPlaylist(playlist);
-						showPlaylist(trackobj);
+						var links = prepairPlaylist(playlist);
+						var trackobj = getObjectsByPlaylist(playlist,links);
+						//showPlaylist(trackobj);
 					}
 				
 				});
