@@ -70,7 +70,7 @@ var getMusic = function(trackname){
 				.attr({ 
 					href : obj.link, 
 					class : "song",
-					text: artist + ' - ' + track
+					text: artist + ' — ' + track
 				});
 			var li = document.createElement('li');
 			$(li).append(сссс);
@@ -91,7 +91,16 @@ var getMusic = function(trackname){
 	srhead.innerHTML = trackname;
 	srnav.innerHTML = trackname;
 	return musicList
-}
+},
+	
+	getObjectsByPlaylist = function (playList) {
+		var objects = new Array();
+		
+		for (var i = 0; i < playList.length; i++)
+			objects.push(getMusic(playList[i])[0]);
+		
+		return objects;
+	}
 
 
 
