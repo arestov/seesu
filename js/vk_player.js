@@ -68,6 +68,15 @@ $(function() {
     var song_url = $(this).attr('href'),
         id = $('a.song').index($(this));
     
+        
+    $('#player-holder').html(
+    	holy_vk_string
+        .replace(':url', song_url)
+        .replace(':volume', start_volume)
+        .replace(':id', id)
+        .replace(':background_color', background_color)
+    )    
+        /*
     $('.played-song').each(function() {
       $(this).parent().html($(this).find('span').html());
         //.remove();
@@ -81,7 +90,7 @@ $(function() {
         .replace(':id', id)
         .replace(':background_color', background_color) +
       '</div>'
-    );
+    );*/
     return false;
   });
   
