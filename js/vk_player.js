@@ -54,7 +54,6 @@ alert('тыдыщь!');
 $(function() {
  var playholder = $('#player-holder');
  $(document).click(function(e){
- 	log('piu');
  	var node = e.target,
  	nodeClass = node.className;
  	if ((node.nodeName == 'A') && (nodeClass.indexOf('song') != -1)){

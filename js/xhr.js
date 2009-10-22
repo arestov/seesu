@@ -91,7 +91,7 @@ var getObjectsByPlaylist = function(playList,links) {
 		log(playList);
 		for (var i = 0, l = playList.length; i < l; i++) {
 			var searchingResults = getMusic(playList[i])
-			if (searchingResults) {
+			if (searchingResults[0] && searchingResults[0].link) {
 				objects.push(searchingResults[0]);
 				links && $(links[i]).attr({'class' : 'song', 'href' : searchingResults[0].link} );//if links present than do live rendering
 				log(objects[objects.length - 1].artist + " — " + objects[objects.length - 1].track);
