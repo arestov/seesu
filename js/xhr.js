@@ -50,16 +50,11 @@ var getMusic = function(trackname){
 	
 	xhr.onreadystatechange = function () {
 	  if ( this.readyState == 4 ) {
-	  	log(xhr.responseText);
-		if ((loginxhr.responseText.indexOf('rows') != -1) {
+	  	//log(xhr.responseText);
+		if (xhr.responseText.indexOf('rows') != -1) {
 			var srd = document.createElement('div');
 			srd.innerHTML = JSON.parse(xhr.responseText).rows;
 			var rows = $(".audioRow ", srd);
-
-			searchres.innerHTML = '';
-			var ul = document.createElement('ul');
-			searchres.appendChild(ul);
-
 
 			for (var i=0, l = rows.length; i < l; i++) {
 				var row = rows[i],
@@ -68,21 +63,17 @@ var getMusic = function(trackname){
 					track = $('span', text)[0].textContent,
 					playStr = $('img.playimg', row )[0].getAttribute('onclick'),
 					obj = parseStrToObj(playStr);
+
 				obj.artist = artist;
 				obj.track = track;
-				var сссс = $("<a></a>")
-					.attr({ 
-						href : obj.link, 
-						class : "song",
-						text: artist + ' — ' + track
-					});
-				var li = document.createElement('li');
-				$(li).append(сссс);
-				$(ul).append(li);
+				
 				musicList.push(obj);
 			};
 			slider.className = "screen-search";
-		} else log('поиск не удался')
+		} else {
+			log('Поиск не удался... :’—(');
+			return false
+		}
 	  }
 	};
 	xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
@@ -97,13 +88,43 @@ var getMusic = function(trackname){
 
 var getObjectsByPlaylist = function(playList) {
 		var objects = new Array();
-		
+
 		for (var i = 0; i < playList.length; i++) {
-			objects.push(getMusic(playList[i])[0]);
-			log(getMusic(playList[i])[0]);
+			var searchingResults = getMusic(playList[i])
+			if (searchingResults) {
+				objects.push(searchingResults[0]);
+				log(objects[objects.length - 1].artist + " — " + objects[objects.length - 1].track);
+			}
+		}
+	
+		if (objects.length)
+			return objects;
+	
+ 		log("Can’t get objects from playlist... :’—(");
+		return false;
+	}
+
+var showPlaylist = function(objects) {
+		if (objects) {
+			searchres.innerHTML = "";
+			
+			var ul = document.createElement("ul");
+			searchres.appendChild(ul);
+			
+			for (var i = 0; i < objects.length; i++) {
+				var track = $("<a></a>").attr({ 
+								href : objects[i].link, 
+								class : "song",
+								text: objects[i].artist + ' — ' + objects[i].track
+							}),
+					li = document.createElement('li');
+					
+				$(li).append(track);
+				$(ul).append(li);
+			}
 		}
 		
-		return objects;
+		return false
 	}
 
 window.addEventListener( 'load' , function(){
@@ -172,7 +193,7 @@ window.addEventListener( 'load' , function(){
 		
 	});
 	$('#search-track').click(function(e){
-		getMusic(searchfield.value);
+		showPlaylist(getMusic(searchfield.value));
 	});
 
 }, false);
