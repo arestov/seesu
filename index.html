@@ -15,7 +15,7 @@
   <body>
 	<div id="slider" class="screen-login-vk">
 		
-		<div class="nav"><span class="nav-login-vk">Вход &rarr;</span> <span class="nav-start" id="start_search" >Поиск &rarr;</span> <span class="nav-artist" id="search_result_nav"></span></div>
+		<div class="nav"><span class="nav-login-vk">Вход &rarr;</span> <span class="nav-start" id="start_search" >Стартовая страница &rarr;</span> <span class="nav-artist" ></span><span id="search_result_nav"></span></div>
 		<div class="screens" id="screens">
 			
 			<div class="login-vk screen">
@@ -34,6 +34,9 @@
 			</div>	
   			
 			<div class="start screen">
+			  <p><a href="">Рекоммендации</a></p>
+			  <p><a href="">Любимые треки</a></p>
+			  
 			  <h3>Поиск</h3>
 			  <form id="search" name="search">
 				<input type="text" name="q" id="q" />
@@ -42,10 +45,10 @@
 				<button type="submit" name="type" value="track" id="search-track">Трек *</button>
 			  </form>
 			</div>
-			<div class="artist screen">
-				<h3 id="search_result_head">Результаты поиска</h3>
+			<div class="artist search-results screen">
+				<h3>Результаты поиска</h3>
 				<a href="#" id="pause">остановить беспредел (музыку)</a>
-				<div id="search_result" class="search-results" >
+				<div id="search_result" class="search-results-holder" >
 				</div>
 			</div>
 		</div>
