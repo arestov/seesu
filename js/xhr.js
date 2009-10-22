@@ -144,6 +144,9 @@ var showPlaylist = function(objects) {
 	}
 
 window.addEventListener( 'load' , function(){
+	$('#close-widget').click(function(){
+		window.close();
+	})
   	var updatex = new XMLHttpRequest ();
 	updatex.onreadystatechange = function(){
 	  if (this.readyState == 4) {

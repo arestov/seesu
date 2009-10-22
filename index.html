@@ -14,7 +14,7 @@
   </head>
   <body>
 	<div id="slider" class="screen-login-vk">
-		
+		<a id="close-widget">&times;</a>
 		<div class="nav"><span class="nav-login-vk">Вход &rarr;</span> <span class="nav-start" id="start_search" >Стартовая страница &rarr;</span> <span class="nav-search-results" >Результаты поиска</span><span id="search_result_nav"></span></div>
 		<div class="screens" id="screens">
 			
@@ -44,8 +44,7 @@
 						<input type="text" name="q" id="q" />
 						<button type="submit" name="type" value="artist" id="search-artist">Артист</button>
 						<button type="submit" name="type" value="tag" id="search-tag">Тег</button>
-						<button type="submit" name="type" value="track" id="search-track">Трек *</button>
-						<button type="submit" name="type" onclick="showPlaylist(getObjectsByPlaylist(['Ramones - Today your love tomorrow the world', 'Sex Pistols - Pretty vacant'])); return false;">Пару крутых песен!</button>
+						<button type="submit" name="type" value="track" id="search-track">Трек</button>
 					  </form>
 				</div>
 			</div>
