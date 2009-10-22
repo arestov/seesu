@@ -84,7 +84,7 @@ var getMusic = function(trackname){
 	  }
 	};
 	xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
-	var param = 'c[section]=audio' + '&c[q]=' + trackname;
+	var param = 'c[section]=audio' + '&c[q]=' + encodeURIComponent(trackname);
 	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 	xhr.send(param);
