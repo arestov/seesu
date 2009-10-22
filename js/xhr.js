@@ -13,19 +13,16 @@ loginxhr.onreadystatechange = function(){
 		(loginxhr.responseText.indexOf('email') != -1) && 
 		(loginxhr.responseText.indexOf('sid') != -1) && 
 		(loginxhr.responseText.indexOf('pass') != -1)  ) {
-			var r = JSON.parse(loginxhr.responseText);
-			if (r.id) {
-				widget.setPreferenceForKey(r.id, 'vkid');
-				widget.setPreferenceForKey(r.email, 'vkemail');
-				document.getElementById('auth').innerHTML = r.email + ' Выйти';
-				searchfield.value = 'The Prodigy';
-				slider.className = "screen-start";
-				getMusic('The Prodigy');//запрос музыки	
-			}	
+		var r = JSON.parse(loginxhr.responseText);
+		if (r.id) {
+			widget.setPreferenceForKey(r.id, 'vkid');
+			widget.setPreferenceForKey(r.email, 'vkemail');
+			document.getElementById('auth').innerHTML = r.email + ' Выйти';
+			searchfield.value = 'The Prodigy';
+			slider.className = "screen-start";
+			getMusic('The Prodigy');//запрос музыки	
+		}	
 	} else log('не получается войти')
-	
-	
-	
   }
 };
 loginxhr.open('POST', 'http://vkontakte.ru/login.php');
