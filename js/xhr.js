@@ -47,6 +47,7 @@ var getMusic = function(trackname){
 	
 	xhr.onreadystatechange = function () {
 	  if ( this.readyState == 4 ) {
+	  	log(xhr.responseText);
 		var srd = document.createElement('div');
 		srd.innerHTML = JSON.parse(xhr.responseText).rows;
 		var rows = $(".audioRow ", srd);
@@ -127,17 +128,27 @@ window.addEventListener( 'load' , function(){
 }
 
 	$('#search-artist').click(function(){
-		var artists = lastfm('artist.search',{artist: searchfield.value, limit: 10 }).results.artistmatches.artist; 
-		searchres.innerHTML = '';
-		var ul = document.createElement('ul');
-		searchres.appendChild(ul);
-		for (var i=0; i < artists.length; i++) {
-			var li = $("<li></li>")
+		var artists = lastfm('artist.search',{artist: searchfield.value, limit: 10 }).results.artistmatches.artist || false; 
+		if (artists){
+			searchres.innerHTML = '';
+			var ul = document.createElement('ul');
+			searchres.appendChild(ul);
+			for (var i=0; i < artists.length; i++) {
+				var li = $("<li></li>")
+					.attr({ 
+						text: artists[i].name
+					});
+				$(ul).append(li);
+			};
+			
+		} else {
+			searchres.innerHTML = '';
+			var p = $("<p></p>")
 				.attr({ 
-					text: artists[i].name
+					text: 'Ничё нет'
 				});
-			$(ul).append(li);
-		};
+			$(searchres).append(p);
+		}
 		slider.className = "screen-artist";
 		
 	});
