@@ -139,7 +139,7 @@ var getObjectsByPlaylist = function(playList,links) {
  		log("Can’t get objects from playlist... :’—(");
 		return false;
 	}
-var prepairPlaylist = function(playlist) {
+var prepairPlaylist = function(playlist,container) {
 	var links = [];
 	searchres.innerHTML = "";
 	var ul = document.createElement("ul");
@@ -151,7 +151,7 @@ var prepairPlaylist = function(playlist) {
 		$(ul).append(li);		
 		links.push(track);
 	};
-	searchres.appendChild(ul);
+	(container && container.appendChild(ul)) || searchres.appendChild(ul);
 	return links
 	
 }
@@ -191,7 +191,16 @@ window.addEventListener( 'load' , function(){
   searchres = document.getElementById('search_result');
   startlink.onclick = function(){
   	slider.className = "screen-start"
-  }
+  };
+
+var artsHolder	= $('#artist-holder'),
+	artsImage	= $('img.artist-image',artsHolder),
+	artsBio		= $('p.artist-bio',artsHolder),
+	artsTracks	= $('.tracks-for-play',artsHolder),
+	artsName	= $('#artist-name');
+
+
+
   document.getElementById('auth').onsubmit = function(){
 	loginxhr.xhrparams += '&email=' + encodeURIComponent($('#email')[0].value) + '&pass=' + encodeURIComponent($('#pass')[0].value);
 	loginxhr.send(loginxhr.xhrparams);	//логин
@@ -206,24 +215,37 @@ window.addEventListener( 'load' , function(){
 	$('#search-artist').click(function(){
 		var artists = lastfm('artist.search',{artist: searchfield.value, limit: 10 }).results.artistmatches.artist || false; 
 		if (artists){
+			var bio = lastfm('artist.getInfo',{artist: artists[0].name }).artist.bio.summary;
+			var image = artists[0].image[1]['#text'];
+			image && artsImage.attr('src',image);
+			bio && artsBio.html(bio) && artsName.text(artists[0].name);
+			
+			
 			searchres.innerHTML = '';
 			var ul = $("<ul></ul>").attr({ class: 'results-artists'});
 			$(searchres).append(ul);
 			for (var i=0; i < artists.length; i++) {
-				var artist = artists[i].name
+				var artist = artists[i].name;
 				var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 				var li = $("<li></li>").data('artist',artist);
 				$(li).click(function(){
 					var artist = $(this).data('artist');
-					var tracks = lastfm('artist.getTopTracks',{artist: artist }).toptracks.track || false;
-					if (tracks) {
-						var playlist = [];
-						for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
-							playlist.push(artist + ' - ' + tracks[i].name);
-						};
-						var links = prepairPlaylist(playlist);
-						var trackobj = getObjectsByPlaylist(playlist,links);
-						//showPlaylist(trackobj);
+					var getTopTracks = function(artist) {
+						var tracks = lastfm('artist.getTopTracks',{'artist': artist }).toptracks.track || false;
+						if (tracks) {
+							var playlist = [];
+							for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
+								playlist.push(artist + ' - ' + tracks[i].name);
+							};
+							return playlist
+							
+						} else return false
+					}
+					var traaaks = getTopTracks(artist);
+					
+					if (traaaks) {
+						var links = prepairPlaylist(traaaks);
+						var trackobj = getObjectsByPlaylist(traaaks,links);
 					}
 				
 				});
