@@ -21,7 +21,10 @@ var player_state = STOPPED,
     start_volume = widget.preferenceForKey('vkplayer-volume') || 80,
      
     background_color = '#FFFFFF',
-    events = new Array;    
+    events = new Array,
+    
+    
+    playing_song = null;
 
 // VK player actions
 
@@ -60,6 +63,15 @@ function create_player() {
 	player_state = PLAYED;
 }
 
+// Player internal functions
+
+function set_current_song(node) {
+  song_url = node.attr('href');
+
+  if(playing_song) playing_song.removeClass('active-play');
+  playing_song = node.addClass('active-play');
+}
+
 // Player actions
 
 function play_pause() {
@@ -84,6 +96,14 @@ function pause() {
   log('Паузе')
   play_pause();
   player_state = PAUSED;
+}
+
+function switch_to(direction) {
+  eval(
+    "set_current_song(playing_song.parents('li')." +
+    direction +
+    "('li').find('a.song'));"
+  );
 }
 
 // Player state switcher
@@ -120,38 +140,30 @@ function set_state(new_player_state_str) {
   }
 }
 
+// Click by song
+
+function song_click(node) {
+
+  set_current_song(node);
+  create_player();
+
+  return false;
+}
+
 // Ready? Steady? Go!
 
 $(function() {
   player_holder = $('#player-holder');
 
-  var playingNode;
-
-  $(document).click(function(e) {
-  	var node = e.target,
-  	    nodeClass = node.className;
-  	
-  	if(node.nodeName == 'A') {
-  	if(nodeClass.indexOf('song') != -1) {
-   		
-   		song_url = node.getAttribute('href');
-   	
-   		$(playingNode).removeClass('active-play');
-  		
-  		create_player();
-  		
-  		$(node).addClass('active-play');
-  		playingNode = node;
-  		return false
-   	} else if(nodeClass.indexOf('vk-reg-ref') != -1) {
-  		
-  		widget.openURL(vkReferer);
-  		return false
-  	}
-  }
-  });
-
   $('#stop, #pause, #play').click(
     function() { set_state($(this).attr('id')); return false; }
   );
+
+  $('#play_prev, #play_next').click(
+    function() { if(playing_song) switch_to($(this).attr('id').replace(/play_/, '')); return false; }
+  );
+
+	events[FINISHED] = function() {
+	  switch_to('next');
+	};
 });
