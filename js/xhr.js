@@ -151,7 +151,7 @@ var prepairPlaylist = function(playlist,container) {
 		$(ul).append(li);		
 		links.push(track);
 	};
-	(container && container.appendChild(ul)) || searchres.appendChild(ul);
+	(container && container.html('').append(ul)) || searchres.appendChild(ul);
 	return links
 	
 }
@@ -244,7 +244,7 @@ var artsHolder	= $('#artist-holder'),
 					var traaaks = getTopTracks(artist);
 					
 					if (traaaks) {
-						var links = prepairPlaylist(traaaks);
+						var links = prepairPlaylist(traaaks,artsTracks);
 						var trackobj = getObjectsByPlaylist(traaaks,links);
 					}
 				

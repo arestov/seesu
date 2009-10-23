@@ -13,8 +13,8 @@ a{color:#6E9CC9;}
 a:hover{color:#376795;}
 a.song{
 	text-decoration:none;
-	background:#DEC987;
-	padding:3px 5px;
+	border-bottom:1px solid #DEC987;
+	padding:3px 1px 0px;
 	color:#000;
 	}
 a.song:hover{
