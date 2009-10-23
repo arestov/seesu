@@ -149,6 +149,7 @@ body{
 			ul.results-artists
 			img{
 				float:left;
+				max-width:64px;
 				}
 			.search-results-holder
 			ul.results-artists
