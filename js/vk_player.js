@@ -101,11 +101,28 @@ function pause() {
 }
 
 function switch_to(direction) {
-  eval(
-    "set_current_song(playing_song.parents('li')." +
-    direction +
-    "('li').find('a.song'));"
-  );
+  var to_song = null;
+  
+  while(!to_song && to_song != -1) {
+    log('Ищу...');
+    var to_li = null;
+    eval("to_li = playing_song.parents('li')." + direction + "('li');");
+    
+    if(to_li.length) {
+      log('Нашел...');
+      var song_link = $('a', to_li);
+      
+      if(song_link.is('.song')) {to_song = song_link;
+      
+        log('О норма!');
+      }
+    } else
+      to_song = -1;
+  }
+  
+  if(to_song && to_song != -1) {set_current_song(to_song);
+        log('Давай-давай!');
+      }
 }
 
 // Player state switcher
