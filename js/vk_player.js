@@ -53,6 +53,7 @@ alert('тыдыщь!');
 	
 $(function() {
  var playingNode;
+ var start_volume = widget.preferenceForKey('vkplayer-volume') || 80;
  var playholder = $('#player-holder');
  $(document).click(function(e){
  	var node = e.target,
@@ -80,8 +81,7 @@ $(function() {
 	 'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
 	 'type="application/x-shockwave-flash"/>',
 	 
-	 background_color = '#FFFFFF',
-	 start_volume = 80;
+	 background_color = '#FFFFFF';
  /*
   $('a.song').live('click', function() {
     var song_url = $(this).attr('href');
