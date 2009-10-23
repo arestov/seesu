@@ -70,6 +70,8 @@ function set_current_song(node) {
 
   if(playing_song) playing_song.removeClass('active-play');
   playing_song = node.addClass('active-play');
+  
+  create_player();
 }
 
 // Player actions
@@ -143,10 +145,7 @@ function set_state(new_player_state_str) {
 // Click by song
 
 function song_click(node) {
-
   set_current_song(node);
-  create_player();
-
   return false;
 }
 
