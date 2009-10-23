@@ -13,7 +13,7 @@ var updatex = new XMLHttpRequest ();
 updatex.onreadystatechange = function(){
   if (this.readyState == 4) {
 	var r = JSON.parse(updatex.responseText);
-	var cver = r.latest_version.number
+	var cver = r.latest_version.number;
 	if (cver > seesu.version) {
 		var message = 
 		 'Suddenly, Seesu ' + cver + ' has come. ' + 
@@ -75,6 +75,8 @@ var parseStrToObj = function(onclickstring){
 
 var getMusic = function(trackname){
 	var musicList = [];
+	musicList.links = [];
+	musicList.playlist = [];
 	var xhr = new XMLHttpRequest ();
 	
 	xhr.onreadystatechange = function () {
@@ -92,7 +94,8 @@ var getMusic = function(trackname){
 					track = $('span', text)[0].textContent,
 					playStr = $('img.playimg', row )[0].getAttribute('onclick'),
 					obj = parseStrToObj(playStr);
-
+				musicList.links.push(obj.link);
+				musicList.playlist.push(artist + ' - ' + track);
 				obj.artist = artist;
 				obj.track = track;
 				
@@ -140,44 +143,27 @@ var getObjectsByPlaylist = function(playList,links) {
  		log("Can’t get objects from playlist... :’—(");
 		return false;
 	}
-var prepairPlaylist = function(playlist,container) {
-	var links = [];
+var prerenderPlaylist = function(playlist,container,mp3links) { // if links present than do full rendering! yearh!
+	var linkNodes = [];
 	searchres.innerHTML = "";
 	var ul = document.createElement("ul");
 	
 	for (var i=0, l = playlist.length; i < l; i++) {
-		var track = $("<a></a>").attr({ text: playlist[i] }),
+		var attrs = {'text': playlist[i]};
+		if (mp3links) {
+			attrs.class = 'song';
+			attrs.href = mp3links[i];
+		}
+		var track = $("<a></a>").attr(attrs),
 		li = document.createElement('li');	
 		$(li).append(track);
 		$(ul).append(li);		
-		links.push(track);
+		linkNodes.push(track);
 	};
 	(container && container.html('').append(ul)) || searchres.appendChild(ul);
-	return links
+	return linkNodes
 	
 }
-
-var showPlaylist = function(objects) {
-		if (objects) {
-			searchres.innerHTML = "";
-			
-			var ul = document.createElement("ul");
-			for (var i = 0, l = objects.length; i < l; i++) {
-				var track = $("<a></a>").attr({ 
-						href : objects[i].link, 
-						class : "song",
-						text: objects[i].artist + ' — ' + objects[i].track
-					}),
-					li = document.createElement('li');
-					
-				$(li).append(track);
-				$(ul).append(li);
-			}
-			searchres.appendChild(ul);
-		}
-		
-		return false
-	}
 
 window.addEventListener( 'load' , function(){
 	$('#close-widget').click(function(){
@@ -245,7 +231,7 @@ var artsHolder	= $('#artist-holder'),
 					var traaaks = getTopTracks(artist);
 					
 					if (traaaks) {
-						var links = prepairPlaylist(traaaks,artsTracks);
+						var links = prerenderPlaylist(traaaks,artsTracks);
 						var trackobj = getObjectsByPlaylist(traaaks,links);
 					}
 				
@@ -275,7 +261,8 @@ var artsHolder	= $('#artist-holder'),
 		
 	});
 	$('#search-track').click(function(e){
-		showPlaylist(getMusic(searchfield.value));
+		var musicObj = getMusic(searchfield.value);
+		prerenderPlaylist(musicObj.playlist,false,musicObj.links);
 	});
 
 }, false);
