@@ -122,7 +122,13 @@ var getObjectsByPlaylist = function(playList,links) {
 			var searchingResults = getMusic(playList[i])
 			if (searchingResults[0] && searchingResults[0].link) {
 				objects.push(searchingResults[0]);
-				links && $(links[i]).attr({'class' : 'song', 'href' : searchingResults[0].link} );//if links present than do live rendering
+			
+				if (links) {	//if links present than do live rendering
+					var link = searchingResults[0].link;
+					links[i].attr({'class' : 'song', 'href' : link} );
+					var mp3 = $("<a></a>").attr({ 'class': 'download-mp3', 'text': 'mp3', 'href': link });
+					links[i].parent().append(mp3);
+				}
 				log(objects[objects.length - 1].artist + " — " + objects[objects.length - 1].track);
 			}
 		}

@@ -20,6 +20,15 @@ a.song{
 a.song:hover{
 	background:#E6C9A3;
 }
+a.download-mp3{
+	text-decoration:none;
+	padding:3px 5px;
+	margin-left:3px;
+	color:#3b4891;
+	}
+a.download-mp3:hover{
+	color:#8d5191;
+	}
 a.song.active-play{
 	background:#E6E4A3;
 }
