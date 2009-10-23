@@ -106,7 +106,7 @@ function switch_to(direction) {
   while(!to_song && to_song != -1) {
     log('Ищу...');
     var to_li = null;
-    eval("to_li = playing_song.parents('li')." + direction + "('li');");
+    to_li = playing_song.parents('li')[direction]('li');
     
     if(to_li.length) {
       log('Нашел...');
