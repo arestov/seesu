@@ -119,7 +119,8 @@ var getObjectsByPlaylist = function(playList,links) {
 		var objects = new Array();
 		log(playList);
 		for (var i = 0, l = playList.length; i < l; i++) {
-			var searchingResults = getMusic(playList[i])
+			links[i].addClass('search-mp3');
+			var searchingResults = getMusic(playList[i]);
 			if (searchingResults[0] && searchingResults[0].link) {
 				objects.push(searchingResults[0]);
 			
@@ -130,7 +131,7 @@ var getObjectsByPlaylist = function(playList,links) {
 					links[i].parent().append(mp3);
 				}
 				log(objects[objects.length - 1].artist + " — " + objects[objects.length - 1].track);
-			}
+			} else  links[i].attr('class' , 'search-mp3-failed');
 		}
 	
 		if (objects.length)

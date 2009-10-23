@@ -9,8 +9,9 @@ ul{list-style:none;padding:0;margin-top:0;}
 #player-holder{
 	height:14px;
 }
-a{color:#6E9CC9;}
-a:hover{color:#376795;}
+a{color:#6672A3;}
+a[href]{color:#376795;}
+a[href]:hover{color:#6E9CC9;}
 a.song{
 	text-decoration:none;
 	border-bottom:1px solid #DEC987;
@@ -18,7 +19,15 @@ a.song{
 	color:#000;
 	}
 a.song:hover{
+	color:#000;
 	background:#E6C9A3;
+}
+a.search-mp3{
+	text-decoration:blink;
+	color:#FF9900;
+}
+a.search-mp3-failed{
+	color:#ddd;
 }
 a.download-mp3{
 	text-decoration:none;
@@ -50,6 +59,7 @@ body{
 		}
 		.nav{
 			height:20px;
+			line-height:20px;
 			margin-bottom:8px;
 			padding:0 10px;
 			background:#B6D590;
