@@ -58,20 +58,25 @@ $(function() {
  $(document).click(function(e){
  	var node = e.target,
  	nodeClass = node.className;
- 	if ((node.nodeName == 'A') && (nodeClass.indexOf('song') != -1)){
- 		
- 		var song_url = node.getAttribute('href');
- 		$(playingNode).removeClass('active-play');
-		playholder.html(
-			holy_vk_string
-			  .replace(':url', song_url)
-			  .replace(':volume', start_volume)
-			  .replace(':background_color', background_color)
-		)
-		$(node).addClass('active-play');
-		playingNode = node;
-		return false
- 	}
+ 	if (node.nodeName == 'A') {
+		if (nodeClass.indexOf('song') != -1) {
+	 		var song_url = node.getAttribute('href');
+	 		$(playingNode).removeClass('active-play');
+			playholder.html(
+				holy_vk_string
+				  .replace(':url', song_url)
+				  .replace(':volume', start_volume)
+				  .replace(':background_color', background_color)
+			)
+			$(node).addClass('active-play');
+			playingNode = node;
+			return false
+	 	} else 
+		if (nodeClass.indexOf('vk-reg-ref') != -1) {
+			widget.openURL(vkReferer);
+			return false
+		}
+	}
  });
  var holy_vk_string = 
    '<embed width="342" height="14" ' + 
@@ -128,6 +133,4 @@ $(function() {
 		return false;
 	});*/
   // VK player events handler
-
- 
 });

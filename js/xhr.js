@@ -1,8 +1,37 @@
-var  slider ,
-  searchfield ,
-  srnav ,
-  startlink,
-  searchres;
+var slider ,
+	searchfield ,
+	srnav ,
+	startlink,
+	searchres,
+	seesu =  {
+		version: 0.1
+		
+	},
+	vkReferer = 'http://vkontakte.ru/';
+
+var updatex = new XMLHttpRequest ();
+updatex.onreadystatechange = function(){
+  if (this.readyState == 4) {
+	var r = JSON.parse(updatex.responseText);
+	var cver = r.latest_version.number
+	if (cver > seesu.version) {
+		var message = 
+		 'Suddenly, Seesu ' + cver + ' has come. ' + 
+		 'You have version ' + seesu.version + '. ';
+		widget.showNotification(message, function(){
+			widget.openURL(r.latest_version.link);
+		})
+	}
+	log(updatex.responseText);
+  }
+};
+updatex.open('POST', 'http://seesu.heroku.com/update');
+updatex.xhrparams = 'noredirect=1';
+updatex.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+updatex.send(updatex.xhrparams);
+
+
+
 
 var loginxhr = new XMLHttpRequest ();
 loginxhr.onreadystatechange = function(){
@@ -147,16 +176,7 @@ window.addEventListener( 'load' , function(){
 	$('#close-widget').click(function(){
 		window.close();
 	})
-  	var updatex = new XMLHttpRequest ();
-	updatex.onreadystatechange = function(){
-	  if (this.readyState == 4) {
-		log(updatex.responseText);
-	  }
-	};
-	updatex.open('POST', 'http://seesu.heroku.com/update');
-	updatex.xhrparams = 'noredirect=1';
-	updatex.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	updatex.send(updatex.xhrparams);
+  	
 	//see var at top
   slider = document.getElementById('slider'),
   searchfield = document.getElementById('q'),
