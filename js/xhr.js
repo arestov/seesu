@@ -119,7 +119,8 @@ var getMusic = function(trackname){
 }
 
 var getObjectsByPlaylist = function(playList,links) {
-		var objects = new Array();
+		var objects = [];
+		var songNodes = [];
 		log(playList);
 		for (var i = 0, l = playList.length; i < l; i++) {
 			links[i].addClass('search-mp3');
@@ -130,8 +131,12 @@ var getObjectsByPlaylist = function(playList,links) {
 				if (links) {	//if links present than do live rendering
 					var link = searchingResults[0].link;
 					links[i].attr({'class' : 'song', 'href' : link} );
+					songNodes.push(links[i]);
+					links[i].data('number_in_playlist', songNodes.length -1)
+					links[i].data('link_to_playlist', songNodes );
 					var mp3 = $("<a></a>").attr({ 'class': 'download-mp3', 'text': 'mp3', 'href': link });
 					links[i].parent().append(mp3);
+					
 				}
 				log(objects[objects.length - 1].artist + " — " + objects[objects.length - 1].track);
 			} else  links[i].attr('class' , 'search-mp3-failed');
@@ -145,6 +150,7 @@ var getObjectsByPlaylist = function(playList,links) {
 	}
 var prerenderPlaylist = function(playlist,container,mp3links) { // if links present than do full rendering! yearh!
 	var linkNodes = [];
+	var songNodes = [];
 	searchres.innerHTML = "";
 	var ul = document.createElement("ul");
 	
@@ -155,7 +161,12 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 			attrs.href = mp3links[i];
 		}
 		var track = $("<a></a>").attr(attrs),
-		li = document.createElement('li');	
+		li = document.createElement('li');
+		if (mp3links) {
+			songNodes.push(track);
+			track.data('number_in_playlist', songNodes.length -1);
+			track.data('link_to_playlist', songNodes );
+		};
 		$(li).append(track);
 		$(ul).append(li);		
 		linkNodes.push(track);

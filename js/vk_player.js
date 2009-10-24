@@ -7,8 +7,8 @@ const INIT     = -11,
       FINISHED =  11;
 
 var player_state = STOPPED,
-    song_url = '',
     player_holder = null,
+    current_playlist,
 
     holy_vk_string = 
       '<embed width="342" height="14" ' + 
@@ -24,7 +24,7 @@ var player_state = STOPPED,
     events = new Array,
     
     
-    playing_song = null;
+    current_song = null;
 
 // VK player actions
 
@@ -52,7 +52,7 @@ function set_var(variable, value) {
 	window.document.player.SetVariable("audioPlayer_mc." + variable, value);
 }  
 
-function create_player() {
+function create_player(song_url) {
 	player_holder.html(
 		holy_vk_string
 		  .replace(':url', song_url)
@@ -68,10 +68,9 @@ function create_player() {
 function set_current_song(node) {
   song_url = node.attr('href');
 
-  if(playing_song) playing_song.removeClass('active-play');
-  playing_song = node.addClass('active-play');
-  
-  create_player();
+  if(current_song) current_song.removeClass('active-play');
+  create_player(song_url);
+  current_song = node.addClass('active-play');
 }
 
 // Player actions
@@ -101,28 +100,28 @@ function pause() {
 }
 
 function switch_to(direction) {
-  var to_song = null;
-  
-  while(!to_song && to_song != -1) {
-    log('Ищу...');
-    var to_li = null;
-    to_li = playing_song.parents('li')[direction]('li');
-    
-    if(to_li.length) {
-      log('Нашел...');
-      var song_link = $('a', to_li);
-      
-      if(song_link.is('.song')) {to_song = song_link;
-      
-        log('О норма!');
-      }
-    } else
-      to_song = -1;
+  if(current_song) {
+  	var playlist 		= current_song.data('link_to_playlist'),
+  		current_number 	= current_song.data('number_in_playlist'),
+  		total			= playlist.length || 0;
+  	if (playlist.length > 1) {
+  		if (direction == 'next') {
+  			if (current_number == (total-1)) {
+  				set_current_song(playlist[0]);
+  			} else {
+  				set_current_song(playlist[current_number+1]);
+  			}
+  		} else
+  		if (direction == 'prev') {
+  			if ( current_number == 0) {
+  				set_current_song(playlist[total-1]);
+  			} else {
+  				set_current_song(playlist[current_number-1]);
+  			}
+  		}
+  	}
+  	
   }
-  
-  if(to_song && to_song != -1) {set_current_song(to_song);
-        log('Давай-давай!');
-      }
 }
 
 // Player state switcher
@@ -163,6 +162,7 @@ function set_state(new_player_state_str) {
 
 function song_click(node) {
   set_current_song(node);
+  current_playlist = node.data('link_to_playlist');
   return false;
 }
 
@@ -176,7 +176,7 @@ $(function() {
   );
 
   $('#play_prev, #play_next').click(
-    function() { if(playing_song) switch_to($(this).attr('id').replace(/play_/, '')); return false; }
+    function() { if(current_song) switch_to($(this).attr('id').replace(/play_/, '')); return false; }
   );
 
 	events[FINISHED] = function() {
