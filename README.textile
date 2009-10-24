@@ -1,4 +1,6 @@
-h1. Seesu
+h1. Seesu Opera Widget
+
+!/kossnocorp/seesu/raw/master/i/screenshot.png!:http://seesu.heroku.com/downloads/seesu.wgt
 
 Get music you like from last.fm and play it with vk.com
 
@@ -10,7 +12,7 @@ Copyright (c) 2009
 
 Gleb Arestov <gleb.arestov@gmail.com>
 Aleksandr Koss <kossnocorp@gmail.com>
-Nikita Vasilyev <me@elv1s.ru>
+"Nikita Vasilyev":http://github.com/NV/
 Aleksandr Belov <porqzz@gmail.com>
 
 Permission is hereby granted, free of charge, to any person
