@@ -311,6 +311,10 @@ body{
 .artist-bio{
 	margin-top:0;
 	}
+.vk-logged-in
+.vk-login-context{
+	display:none;
+}
 .vk-login-context{
 	clear:left;
 	}

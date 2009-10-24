@@ -17,8 +17,8 @@
 	<div id="slider" class="screen-start">
 		<a id="close-widget">&times;</a>
 		<div class="navs">
-			<span class="nav nav-start" id="start_search" ><em>Стартовая страница</em></span>
-			<span class="nav nav-search-results" id="search_result_nav"  >&rarr; <em>Результаты поиска</em></span>
+			<span class="nav nav-start" id="start_search" ><em>Start screen</em></span>
+			<span class="nav nav-search-results" id="search_result_nav"  >&rarr; <em>Search results</em></span>
 			<span class="nav nav-artist-page" >&rarr; <span id="nav_artist_page"></span></span>
 			<span class="nav nav-tracks-page">&rarr; <span id="nav_tracks_page"></span></span>
 			
@@ -41,7 +41,7 @@
 					<p><a href="#lov">Любимые треки</a></p>
 				</div>
 				<div class="search-start">
-					<h3>Музыкальный поиск</h3>
+					<h3>Music search</h3>
 					  <form id="search" name="search">
 						<input type="text" name="q" id="q" />
 						<button type="submit" name="type" value="artist" id="search-artist">Артист</button>
@@ -51,7 +51,7 @@
 				</div>
 			</div>
 			<div class="artist search-results screen">
-				<h3>Результаты поиска</h3>
+				<h3>Search results</h3>
 				<div id="search_result" class="search-results-holder" ></div>
 			</div>
 
@@ -75,13 +75,15 @@
 				</div>
 				<div class="tracks-for-play"></div>
 				<div class="vk-login-context">
-					<h3>Вход в квантакте</h3>
+					<p>To get access to mp3 library you need sign in vk.com. After authorization tracks become playable</p>
+					<h3>Type in values for vk.com authorization</h3>
 					<form  class="vk-auth" >
-						<p><label for="email-arts">Логин</label><input type="text" class="vk-email" name="email" id="email-arts"/></p>
-						<p><label for="pass-arts">Пароль</label><input type="password" class="vk-pass"  name="pass" id="pass-arts"/></p>
-						<p><button>войти</button></p>
+						<p><label for="email-arts">login</label><input type="text" class="vk-email" name="email" id="email-arts"/></p>
+						<p><label for="pass-arts">pass</label><input type="password" class="vk-pass"  name="pass" id="pass-arts"/></p>
+						<p><button>enter</button></p>
 					</form>
-					или <a href="" class="vk-reg-ref" >зарегистрироваться</a>
+					or <a href="" class="vk-reg-ref" >sign up</a>
+					<p>We do not store you password. Authorization in future will be happen by «<a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>»</p>
 				</div>
 			</div>
 			<div id="tracks-holder" class="tracks-page play-screen screen">
@@ -96,21 +98,24 @@
 					</p>
 					<p class="player-holder"></p>
 				</div>
-				<div class="tracks-for-play"></div>
+				<div class="tracks-for-play">
+					<p>No results. Directly vk.com search (button tracks you pressed) requires sign in.</p>
+				</div>
 				<div class="vk-login-context">
-					<h3>Вход в квантакте</h3>
+					<h3>Type in values for vk.com authorization</h3>
 					<form  class="vk-auth" >
-						<p><label for="email-traks">Логин</label><input type="text" class="vk-email" name="email" id="email-traks"/></p>
-						<p><label for="pass-traks">Пароль</label><input type="password" class="vk-pass"  name="pass" id="pass-traks"/></p>
-						<p><button>войти</button></p>
+						<p><label for="email-traks">login</label><input type="text" class="vk-email" name="email" id="email-traks"/></p>
+						<p><label for="pass-traks">pass</label><input type="password" class="vk-pass"  name="pass" id="pass-traks"/></p>
+						<p><button>enter</button></p>
 					</form>
-					или <a href="" class="vk-reg-ref" >зарегистрироваться</a>
+					or <a href="" class="vk-reg-ref" >sign up</a>
+					<p>We do not store you password. Authorization in future will be happen by «<a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>»</p>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="window-bottom">
-		<span id="resize-handle">размер окна</span>	
+		<span id="resize-handle">resize</span>	
 	</div>
 	
 </body>
