@@ -191,8 +191,14 @@ body{
 			#slider.screen-search .start{
 				display:block;
 				}
-	
-	
+				
+			#slider.screen-start .start
+			.lfm-start{
+				display:block;
+			}
+			#slider. .lfm-start{
+				display:none;
+			}
  
 			#slider.screen-start .nav-start{
 				visibility:visible;
@@ -207,9 +213,7 @@ body{
 			#slider.sreen-artist-page .nav-artist-page{
 				visibility:visible;
 			}
-			#slider.screen-search .start .lfm-start{
-				display:none;
-			}
+
 			#slider.sreen-artist-page .artist-page,
 			#slider.sreen-artist-page .start{
 				display:block;
