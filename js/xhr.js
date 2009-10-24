@@ -6,7 +6,7 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
 	},
 	vk_logged_in,
 	wait_for_vklogin = {},
-	referers = ['http://vk.com/reg198193','http://vk.com/reg1114384','http://vk.com/reg37829378','http://vk.com/reg668467'],
+	//referers = ['http://vk.com/reg198193','http://vk.com/reg1114384','http://vk.com/reg37829378','http://vk.com/reg668467'],
 	vkReferer = referers[Math.floor(Math.random()*4)];
 
 var updatex = new XMLHttpRequest ();
@@ -23,8 +23,9 @@ updatex.onreadystatechange = function(){
 		})
 	}
 	
-//	log(r.inviters[0]);
+	vkReferer = r.vk_referer;
 	
+	log(vkReferer);	
 	log(updatex.responseText);
   }
 };
