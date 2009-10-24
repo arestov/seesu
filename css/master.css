@@ -5,8 +5,8 @@
 	right:10px;
 	font-size:16px;
 	}
-#player-holder{height:14px;clear:left}
-.pl-holder{}
+#player-holder{height:14px;}
+.pl-holder{clear:left}
 
 .play-controls{
 	position:relative;
@@ -149,21 +149,22 @@ body{
 		padding:10px 0 0;
 		
 		}
-		.nav{
+		.navs{
 			height:20px;
 			line-height:20px;
 			margin-bottom:8px;
 			padding:0 10px;
 			background:#B6D590;
 		}
-		.nav span{
+		.navs .nav{
 			visibility:hidden;
 			}
-		.nav .nav-start{
+		.navs .nav-start{
 			
 			cursor:pointer;
 			}
-			.nav .nav-start em{
+			.navs .nav-start em,
+			.navs .nav-search-results em{
 				border-bottom:1px dashed #333;
 				font-style:normal;
 				}
@@ -201,8 +202,17 @@ body{
 			#slider.screen-search .nav-search-results{
 				visibility:visible;
 				}
+			#slider.sreen-artist-page .nav-start,
+			#slider.sreen-artist-page .nav-search-results,
+			#slider.sreen-artist-page .nav-artist-page{
+				visibility:visible;
+			}
 			#slider.screen-search .start .lfm-start{
 				display:none;
+			}
+			#slider.sreen-artist-page .artist-page,
+			#slider.sreen-artist-page .start{
+				display:block;
 			}
 			.lfm{
 				

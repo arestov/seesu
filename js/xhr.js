@@ -3,6 +3,7 @@ var slider ,
 	srnav ,
 	startlink,
 	searchres,
+	art_page_nav,
 	seesu =  {
 		version: 0.1
 		
@@ -101,7 +102,6 @@ var getMusic = function(trackname){
 				
 				musicList.push(obj);
 			};
-			slider.className = "screen-search";
 		} else {
 			log('Поиск не удался... :’—(');
 			return false
@@ -113,7 +113,6 @@ var getMusic = function(trackname){
 	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 	xhr.send(param);
-	srnav.innerHTML = trackname;
 		
 	return musicList
 }
@@ -171,7 +170,7 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 		$(ul).append(li);		
 		linkNodes.push(track);
 	};
-	(container && container.html('').append(ul)) || searchres.appendChild(ul);
+	(container && container.html('').append(ul)) || (searchres.appendChild(ul) && mp3links && (slider.className = 'screen-search'));
 	return linkNodes
 	
 }
@@ -186,9 +185,13 @@ window.addEventListener( 'load' , function(){
   searchfield = document.getElementById('q'),
   srnav = document.getElementById('search_result_nav'),
   startlink = document.getElementById('start_search'),
-  searchres = document.getElementById('search_result');
+  searchres = document.getElementById('search_result'),
+  art_page_nav = document.getElementById('nav_artist_page');
   startlink.onclick = function(){
-  	slider.className = "screen-start"
+  	slider.className = "screen-start";
+  };
+  srnav.onclick = function(){
+  	slider.className = "screen-search";
   };
 
 var artsHolder	= $('#artist-holder'),
@@ -223,6 +226,8 @@ var getTopTracks = function(artist) {
 	} else return false
 }
 var setArtistPage = function (artist,image) {
+	slider.className = 'sreen-artist-page';
+	nav_artist_page.innerHTML = artist;
 	var bio = lastfm('artist.getInfo',{'artist': artist }).artist.bio.summary;
 	artsName.text(artist);
 	image && artsImage.attr('src',image);
@@ -232,6 +237,9 @@ var setArtistPage = function (artist,image) {
 		var links = prerenderPlaylist(traaaks,artsTracks);
 		var trackobj = getObjectsByPlaylist(traaaks,links);
 	}
+	
+	
+	
 }
 	$('#search-artist').click(function(){
 		var artists = lastfm('artist.search',{artist: searchfield.value, limit: 10 }).results.artistmatches.artist || false; 
@@ -274,7 +282,6 @@ var setArtistPage = function (artist,image) {
 				});
 			$(searchres).append(p);
 		}
-		slider.className = "screen-search";
 		
 	});
 	$('#search-tag').click(function(){

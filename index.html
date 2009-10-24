@@ -16,7 +16,11 @@
   <body>
 	<div id="slider" class="screen-start">
 		<a id="close-widget">&times;</a>
-		<div class="nav"><span class="nav-start" id="start_search" ><em>Стартовая страница</em> &rarr;</span> <span class="nav-search-results" >Результаты поиска</span><span id="search_result_nav"></span></div>
+		<div class="navs">
+			<span class="nav nav-start" id="start_search" ><em>Стартовая страница</em></span>
+			<span class="nav nav-search-results" id="search_result_nav"  >&rarr; <em>Результаты поиска</em></span>
+			<span class="nav nav-artist-page" >&rarr; <span id="nav_artist_page"></em></span>
+		</div>
 		<div class="screens" id="screens">
 			
 			<div class="login-vk screen">
@@ -49,7 +53,7 @@
 				<div id="search_result" class="search-results-holder" ></div>
 			</div>
 
-			<div id="artist-holder">
+			<div id="artist-holder" class="artist-page screen">
 				<div class="info">
 					<h3 id="artist-name"></h3>
 					<div class="image">
