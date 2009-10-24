@@ -150,7 +150,7 @@ var getObjectsByPlaylist = function(playList,links) {
 var prerenderPlaylist = function(playlist,container,mp3links) { // if links present than do full rendering! yearh!
 	var linkNodes = [];
 	var songNodes = [];
-	searchres.innerHTML = "";
+
 	var ul = document.createElement("ul");
 	
 	for (var i=0, l = playlist.length; i < l; i++) {
@@ -170,7 +170,7 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 		$(ul).append(li);		
 		linkNodes.push(track);
 	};
-	(container && container.html('').append(ul)) || (searchres.appendChild(ul) && mp3links && (slider.className = 'screen-search'));
+	(container && container.html('').append(ul)) || ($(searchres).html().append(ul) && mp3links && (slider.className = 'screen-search'));
 	return linkNodes
 	
 }
@@ -242,46 +242,50 @@ var setArtistPage = function (artist,image) {
 	
 }
 	$('#search-artist').click(function(){
-		var artists = lastfm('artist.search',{artist: searchfield.value, limit: 10 }).results.artistmatches.artist || false; 
-		if (artists){
-
-			var image = artists[0].image[1]['#text'];
-			setArtistPage(artists[0].name,image);
-			
-			
-			searchres.innerHTML = '';
-			var ul = $("<ul></ul>").attr({ class: 'results-artists'});
-			$(searchres).append(ul);
-			for (var i=0; i < artists.length; i++) {
-				var artist = artists[i].name;
-				var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-				var li = $("<li></li>").data('artist',artist);
-				li.data('img', image)
-				$(li).click(function(){
-					var artist = $(this).data('artist');
-					var image = $(this).data('img');
-					setArtistPage(artist,image);
-
+		var query = searchfield.value;
+		if (query) {
+			var artists = lastfm('artist.search',{artist: query, limit: 10 }).results.artistmatches.artist || false; 
+			if (artists){
+	
+				var image = artists[0].image[1]['#text'];
+				setArtistPage(artists[0].name,image);
 				
-				});
-				var p = $("<p></p>").attr({ text: artist});
-				if(image){
-					var img = $("<img/>").attr({ src: image , alt: artist });
-					$(li).append(img);
-				} 
 				
-				$(li).append(p);
-				$(ul).append(li);
-			};
-			
-		} else {
-			searchres.innerHTML = '';
-			var p = $("<p></p>")
-				.attr({ 
-					text: 'Ничё нет'
-				});
-			$(searchres).append(p);
+				searchres.innerHTML = '';
+				var ul = $("<ul></ul>").attr({ class: 'results-artists'});
+				$(searchres).append(ul);
+				for (var i=0; i < artists.length; i++) {
+					var artist = artists[i].name;
+					var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+					var li = $("<li></li>").data('artist',artist);
+					li.data('img', image)
+					$(li).click(function(){
+						var artist = $(this).data('artist');
+						var image = $(this).data('img');
+						setArtistPage(artist,image);
+	
+					
+					});
+					var p = $("<p></p>").attr({ text: artist});
+					if(image){
+						var img = $("<img/>").attr({ src: image , alt: artist });
+						$(li).append(img);
+					} 
+					
+					$(li).append(p);
+					$(ul).append(li);
+				};
+				
+			} else {
+				searchres.innerHTML = '';
+				var p = $("<p></p>")
+					.attr({ 
+						text: 'Ничё нет'
+					});
+				$(searchres).append(p);
+			}
 		}
+		
 		
 	});
 	$('#search-tag').click(function(){
