@@ -196,7 +196,7 @@ body{
 			.lfm-start{
 				display:block;
 			}
-			#slider. .lfm-start{
+			#slider .lfm-start{
 				display:none;
 			}
  
@@ -214,8 +214,7 @@ body{
 				visibility:visible;
 			}
 
-			#slider.sreen-artist-page .artist-page,
-			#slider.sreen-artist-page .start{
+			#slider.sreen-artist-page .artist-page{
 				display:block;
 			}
 			.lfm{

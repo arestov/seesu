@@ -8,7 +8,7 @@ var slider ,
 		version: 0.1
 		
 	},
-	vkReferer = 'http://vkontakte.ru/';
+	vkReferer = 'http://vk.com/reg198193';
 
 var updatex = new XMLHttpRequest ();
 updatex.onreadystatechange = function(){
