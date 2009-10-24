@@ -169,7 +169,7 @@ function song_click(node) {
 // Ready? Steady? Go!
 
 $(function() {
-  player_holder = $('.player-holder:first');
+  player_holder = $('.player-holder');
 
   $('#stop, #pause, #play').click(
     function() { set_state($(this).attr('id')); return false; }
