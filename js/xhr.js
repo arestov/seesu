@@ -1,5 +1,6 @@
 var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
-	artsHolder,artsImage,artsBio,artsTracks,artsName,
+	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,
+	tracksHolder,tracksTracks,tracksName,trksplhld, //крекс пекс фекс
 	seesu =  {
 		version: 0.1
 		
@@ -187,6 +188,10 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 			songNodes.push(track);
 			track.data('number_in_playlist', songNodes.length -1);
 			track.data('link_to_playlist', songNodes );
+			if (songNodes.length == 1) {
+				set_current_song(track);
+				current_playlist = songNodes;
+			}
 		};
 		$(li).append(track);
 		$(ul).append(li);		
@@ -210,6 +215,7 @@ var getTopTracks = function(artist) {
 
 var setArtistPage = function (artist,image) {
 	slider.className = 'sreen-artist-page';
+	player_holder = artsplhld;
 	if (nav_artist_page.textContent == artist) return true;
 	nav_artist_page.innerHTML = artist;
 	var bio = lastfm('artist.getInfo',{'artist': artist }).artist.bio.summary;
@@ -283,6 +289,7 @@ window.addEventListener( 'load' , function(){
   startlink = document.getElementById('start_search'),
   searchres = document.getElementById('search_result'),
   art_page_nav = document.getElementById('nav_artist_page');
+  trk_page_nav = document.getElementById('nav_tracks_page')
   startlink.onclick = function(){
   	slider.className = "screen-start";
   };
@@ -294,10 +301,13 @@ window.addEventListener( 'load' , function(){
 	artsImage	= $('img.artist-image',artsHolder),
 	artsBio		= $('p.artist-bio',artsHolder),
 	artsTracks	= $('.tracks-for-play',artsHolder),
+	artsplhld	= $('.player-holder',artsHolder),
 	artsName	= $('#artist-name');
 	
-	
-
+	tracksHolder = $('#tracks-holder'),
+	tracksTracks = $('.tracks-for-play', tracksHolder),
+	tracksName	 = $('#tracks-name');
+	trksplhld 	 = $('.player-holder',tracksHolder),
 
 
 $('.vk-auth').submit(function(){
@@ -340,7 +350,11 @@ $('.vk-auth').submit(function(){
 		if (query) {
 			var musicObj = getMusic(query);
 			if (musicObj) {
-				prerenderPlaylist(musicObj.playlist,false,musicObj.links)
+				trk_page_nav.innerHTML = query;
+				tracksName.text(query)
+				slider.className = 'sreen-tracks-page';
+				player_holder  = trksplhld;
+				prerenderPlaylist(musicObj.playlist,tracksTracks,musicObj.links);
 			} else {
 				wait_for_vklogin = function(){
 					_this.click()

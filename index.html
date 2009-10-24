@@ -20,6 +20,8 @@
 			<span class="nav nav-start" id="start_search" ><em>Стартовая страница</em></span>
 			<span class="nav nav-search-results" id="search_result_nav"  >&rarr; <em>Результаты поиска</em></span>
 			<span class="nav nav-artist-page" >&rarr; <span id="nav_artist_page"></em></span>
+			<span class="nav nav-tracks-page">&rarr; <span id="nav_tracks_page"></span></span>
+			
 		</div>
 		<div class="screens" id="screens">
 			
@@ -39,11 +41,11 @@
 					<p><a href="#lov">Любимые треки</a></p>
 				</div>
 				<div class="search-start">
-					<h3>Поиск</h3>
+					<h3>Музыкальный поиск</h3>
 					  <form id="search" name="search">
 						<input type="text" name="q" id="q" />
 						<button type="submit" name="type" value="artist" id="search-artist">Артист</button>
-						<button type="submit" name="type" value="tag" id="search-tag">Тег</button>
+						<!--<button type="submit" name="type" value="tag" id="search-tag">Тег</button>-->
 						<button type="submit" name="type" value="track" id="search-track">Трек</button>
 					  </form>
 				</div>
@@ -53,7 +55,7 @@
 				<div id="search_result" class="search-results-holder" ></div>
 			</div>
 
-			<div id="artist-holder" class="artist-page screen">
+			<div id="artist-holder" class="artist-page screen play-screen">
 				<div class="info">
 					<h3 id="artist-name"></h3>
 					<div class="image">
@@ -69,12 +71,12 @@
 						<a id="pause" class="play-control" ></a>
 						<a id="play_next" class="play-control"></a>
 					</p>
-					<p id="player-holder"></p>
+					<p class="player-holder"></p>
 				</div>
 				<div class="tracks-for-play"></div>
 				<div class="vk-login-context">
 					<h3>Вход в квантакте</h3>
-					<form id="auth" name="auth" class="vk-auth" >
+					<form  class="vk-auth" >
 						<p><label for="email-arts">Логин</label><input type="text" class="vk-email" name="email" id="email-arts"/></p>
 						<p><label for="pass-arts">Пароль</label><input type="password" class="vk-pass"  name="pass" id="pass-arts"/></p>
 						<p><button>войти</button></p>
@@ -82,7 +84,8 @@
 					или <a href="" class="vk-reg-ref" >зарегистрироваться</a>
 				</div>
 			</div>
-			<div id="tracks-holder" class="tracks-page screen">
+			<div id="tracks-holder" class="tracks-page play-screen screen">
+				<div class="info"><h3 id="tracks-name"></h3></div>
 				<div class="pl-holder">
 					<p class="play-controls" >
 						<a id="play_prev" class="play-control" ></a>
@@ -96,9 +99,9 @@
 				<div class="tracks-for-play"></div>
 				<div class="vk-login-context">
 					<h3>Вход в квантакте</h3>
-					<form id="auth" name="auth" class="vk-auth" >
-						<p><label for="email-arts">Логин</label><input type="text" class="vk-email" name="email" id="email-arts"/></p>
-						<p><label for="pass-arts">Пароль</label><input type="password" class="vk-pass"  name="pass" id="pass-arts"/></p>
+					<form  class="vk-auth" >
+						<p><label for="email-traks">Логин</label><input type="text" class="vk-email" name="email" id="email-traks"/></p>
+						<p><label for="pass-traks">Пароль</label><input type="password" class="vk-pass"  name="pass" id="pass-traks"/></p>
 						<p><button>войти</button></p>
 					</form>
 					или <a href="" class="vk-reg-ref" >зарегистрироваться</a>

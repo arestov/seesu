@@ -5,7 +5,7 @@
 	right:10px;
 	font-size:16px;
 	}
-#player-holder{height:14px;}
+.player-holder{height:14px;}
 .pl-holder{clear:left}
 
 .play-controls{
@@ -157,7 +157,7 @@ body{
 			background:#B6D590;
 		}
 		.navs .nav{
-			visibility:hidden;
+			display:none;
 			}
 		.navs .nav-start{
 			
@@ -192,31 +192,41 @@ body{
 				display:block;
 				}
 				
+			#slider.sreen-tracks-page .tracks-page{
+				display:block;
+			}
+			#slider.sreen-artist-page .artist-page{
+				display:block;
+			}
+			#slider.sreen-artist-page .artist-page{
+				display:block;
+			}
 			#slider.screen-start .start
 			.lfm-start{
-				display:block;
 			}
 			#slider .lfm-start{
 				display:none;
 			}
  
 			#slider.screen-start .nav-start{
-				visibility:visible;
+				display:inline;
 				}
 			 
 			#slider.screen-search .nav-start, 
 			#slider.screen-search .nav-search-results{
-				visibility:visible;
+				display:inline;
 				}
 			#slider.sreen-artist-page .nav-start,
 			#slider.sreen-artist-page .nav-search-results,
 			#slider.sreen-artist-page .nav-artist-page{
-				visibility:visible;
+				display:inline;
 			}
-
-			#slider.sreen-artist-page .artist-page{
-				display:block;
+			
+			#slider.sreen-tracks-page .nav-start,
+			#slider.sreen-tracks-page .nav-tracks-page{
+				display:inline;
 			}
+			
 			.lfm{
 				
 				}
