@@ -1,15 +1,12 @@
-var slider ,
-	searchfield ,
-	srnav ,
-	startlink,
-	searchres,
-	art_page_nav,
+var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
+	artsHolder,artsImage,artsBio,artsTracks,artsName,
 	seesu =  {
 		version: 0.1
 		
 	},
-	referers = ['http://vk.com/reg198193','http://vk.com/reg1114384','http://vk.com/reg37829378','http://vk.com/reg668467']
-	,
+	vk_logged_in,
+	wait_for_search = {},
+	referers = ['http://vk.com/reg198193','http://vk.com/reg1114384','http://vk.com/reg37829378','http://vk.com/reg668467'],
 	vkReferer = referers[Math.floor(Math.random()*4)];
 
 var updatex = new XMLHttpRequest ();
@@ -47,10 +44,11 @@ loginxhr.onreadystatechange = function(){
 		if (r.id) {
 			widget.setPreferenceForKey(r.id, 'vkid');
 			widget.setPreferenceForKey(r.email, 'vkemail');
-			document.getElementById('auth').innerHTML = r.email + ' Выйти';
-			searchfield.value = 'The Prodigy';
-			slider.className = "screen-start";
-			getMusic('The Prodigy');//запрос музыки	
+			vk_logged_in = true;
+			$(document.body).addClass('vk-logged-in');
+			
+			wait_for_search && wait_for_search.playlist && getObjectsByPlaylist(wait_for_search.playlist, wait_for_search.links)
+			
 		}	
 	} else log('не получается войти')
   }
@@ -77,6 +75,8 @@ var parseStrToObj = function(onclickstring){
 }
 
 var getMusic = function(trackname){
+	if (!vk_logged_in) return false
+	
 	var musicList = [];
 	musicList.links = [];
 	musicList.playlist = [];
@@ -119,13 +119,14 @@ var getMusic = function(trackname){
 	return musicList
 }
 
-var getObjectsByPlaylist = function(playList,links) {
+var getObjectsByPlaylist = function(playlist,links) {
+	if (vk_logged_in) {
 		var objects = [];
 		var songNodes = [];
-		log(playList);
-		for (var i = 0, l = playList.length; i < l; i++) {
+		log(playlist);
+		for (var i = 0, l = playlist.length; i < l; i++) {
 			links[i].addClass('search-mp3');
-			var searchingResults = getMusic(playList[i]);
+			var searchingResults = getMusic(playlist[i]);
 			if (searchingResults[0] && searchingResults[0].link) {
 				objects.push(searchingResults[0]);
 			
@@ -148,7 +149,8 @@ var getObjectsByPlaylist = function(playList,links) {
 	
  		log("Can’t get objects from playlist... :’—(");
 		return false;
-	}
+	} else {log('wait for vklogin');wait_for_search = {'playlist' : playlist, 'links' : links} }	
+}
 var prerenderPlaylist = function(playlist,container,mp3links) { // if links present than do full rendering! yearh!
 	var linkNodes = [];
 	var songNodes = [];
@@ -176,6 +178,78 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 	return linkNodes
 	
 }
+var getTopTracks = function(artist) {
+	var tracks = lastfm('artist.getTopTracks',{'artist': artist }).toptracks.track || false;
+	if (tracks) {
+		var playlist = [];
+		for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
+			playlist.push(artist + ' - ' + tracks[i].name);
+		};
+		return playlist
+		
+	} else return false
+}
+
+var setArtistPage = function (artist,image) {
+	slider.className = 'sreen-artist-page';
+	nav_artist_page.innerHTML = artist;
+	var bio = lastfm('artist.getInfo',{'artist': artist }).artist.bio.summary;
+	artsName.text(artist);
+	image && artsImage.attr('src',image);
+	artsBio.html(bio || '');
+	var traaaks = getTopTracks(artist);
+	if (traaaks) {
+		var links = prerenderPlaylist(traaaks,artsTracks);
+		var trackobj = getObjectsByPlaylist(traaaks,links);
+	}
+	
+	
+	
+}
+var artistsearch = function(artist) {
+	
+	var artists = lastfm('artist.search',{artist: artist, limit: 10 }).results.artistmatches.artist || false; 
+	if (artists){
+
+		var image = artists[0].image[1]['#text'];
+		setArtistPage(artists[0].name,image);
+		
+		
+		searchres.innerHTML = '';
+		var ul = $("<ul></ul>").attr({ class: 'results-artists'});
+		$(searchres).append(ul);
+		for (var i=0; i < artists.length; i++) {
+			var artist = artists[i].name;
+			var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+			var li = $("<li></li>").data('artist',artist);
+			li.data('img', image)
+			$(li).click(function(){
+				var artist = $(this).data('artist');
+				var image = $(this).data('img');
+				setArtistPage(artist,image);
+
+			
+			});
+			var p = $("<p></p>").attr({ text: artist});
+			if(image){
+				var img = $("<img/>").attr({ src: image , alt: artist });
+				$(li).append(img);
+			} 
+			
+			$(li).append(p);
+			$(ul).append(li);
+		};
+		
+	} else {
+		searchres.innerHTML = '';
+		var p = $("<p></p>")
+			.attr({ 
+				text: 'Ничё нет'
+			});
+		$(searchres).append(p);
+	}
+}
+
 
 window.addEventListener( 'load' , function(){
 	$('#close-widget').click(function(){
@@ -196,96 +270,43 @@ window.addEventListener( 'load' , function(){
   	slider.className = "screen-search";
   };
 
-var artsHolder	= $('#artist-holder'),
+	artsHolder	= $('#artist-holder'),
 	artsImage	= $('img.artist-image',artsHolder),
 	artsBio		= $('p.artist-bio',artsHolder),
 	artsTracks	= $('.tracks-for-play',artsHolder),
 	artsName	= $('#artist-name');
+	
+	
 
 
 
-  document.getElementById('auth').onsubmit = function(){
+$('.vk-auth').submit(function(){
+	var _this = $(this);
+	var email = $('input.vk-email',_this).val();
+	var pass = $('input.vk-pass',_this).val();
+	loginxhr.send(loginxhr.xhrparams + '&email=' + encodeURIComponent(email) + '&pass=' + encodeURIComponent(pass));	
+	return false;
+})
+
+
+ /* document.getElementById('auth').onsubmit = function(){
 	loginxhr.xhrparams += '&email=' + encodeURIComponent($('#email')[0].value) + '&pass=' + encodeURIComponent($('#pass')[0].value);
 	loginxhr.send(loginxhr.xhrparams);	//логин
 	return false;
-  };
+  };*/
   if (widget.preferenceForKey('vkid')) {
   	$(document.body).addClass('vk-logged-in');
+  	vk_logged_in = true;
   } else{
 	log('not loggin in')
 }
 
 
-var getTopTracks = function(artist) {
-	var tracks = lastfm('artist.getTopTracks',{'artist': artist }).toptracks.track || false;
-	if (tracks) {
-		var playlist = [];
-		for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
-			playlist.push(artist + ' - ' + tracks[i].name);
-		};
-		return playlist
-		
-	} else return false
-}
-var setArtistPage = function (artist,image) {
-	slider.className = 'sreen-artist-page';
-	nav_artist_page.innerHTML = artist;
-	var bio = lastfm('artist.getInfo',{'artist': artist }).artist.bio.summary;
-	artsName.text(artist);
-	image && artsImage.attr('src',image);
-	artsBio.html(bio || '');
-	var traaaks = getTopTracks(artist);
-	if (traaaks) {
-		var links = prerenderPlaylist(traaaks,artsTracks);
-		var trackobj = getObjectsByPlaylist(traaaks,links);
-	}
-	
-	
-	
-}
+
 	$('#search-artist').click(function(){
 		var query = searchfield.value;
 		if (query) {
-			var artists = lastfm('artist.search',{artist: query, limit: 10 }).results.artistmatches.artist || false; 
-			if (artists){
-	
-				var image = artists[0].image[1]['#text'];
-				setArtistPage(artists[0].name,image);
-				
-				
-				searchres.innerHTML = '';
-				var ul = $("<ul></ul>").attr({ class: 'results-artists'});
-				$(searchres).append(ul);
-				for (var i=0; i < artists.length; i++) {
-					var artist = artists[i].name;
-					var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-					var li = $("<li></li>").data('artist',artist);
-					li.data('img', image)
-					$(li).click(function(){
-						var artist = $(this).data('artist');
-						var image = $(this).data('img');
-						setArtistPage(artist,image);
-	
-					
-					});
-					var p = $("<p></p>").attr({ text: artist});
-					if(image){
-						var img = $("<img/>").attr({ src: image , alt: artist });
-						$(li).append(img);
-					} 
-					
-					$(li).append(p);
-					$(ul).append(li);
-				};
-				
-			} else {
-				searchres.innerHTML = '';
-				var p = $("<p></p>")
-					.attr({ 
-						text: 'Ничё нет'
-					});
-				$(searchres).append(p);
-			}
+			artistsearch(query)
 		}
 		
 		
