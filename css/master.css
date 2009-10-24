@@ -299,6 +299,10 @@ body{
 .pl-holder{
 	float:left;
 }
+.flash-secur{
+	float:left;
+	width:342px;
+}
 .tracks-for-play{
 	float:right;
 	width:40%;
