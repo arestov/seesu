@@ -5,7 +5,7 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
 		
 	},
 	vk_logged_in,
-	wait_for_search = {},
+	wait_for_vklogin = {},
 	referers = ['http://vk.com/reg198193','http://vk.com/reg1114384','http://vk.com/reg37829378','http://vk.com/reg668467'],
 	vkReferer = referers[Math.floor(Math.random()*4)];
 
@@ -55,7 +55,7 @@ loginxhr.onreadystatechange = function(){
 			vk_logged_in = true;
 			$(document.body).addClass('vk-logged-in');
 			
-			wait_for_search && wait_for_search.playlist && getObjectsByPlaylist(wait_for_search.playlist, wait_for_search.links)
+			wait_for_vklogin && wait_for_vklogin();
 			
 		}	
 	} else log('не получается войти')
@@ -161,7 +161,13 @@ var getObjectsByPlaylist = function(playlist,links) {
 	
  		log("Can’t get objects from playlist... :’—(");
 		return false;
-	} else {log('wait for vklogin');wait_for_search = {'playlist' : playlist, 'links' : links} }	
+	} else {
+		log('wait for vklogin');
+		wait_for_vklogin = function(){
+			getObjectsByPlaylist(playlist,links);
+		} 
+		
+	}	
 }
 var prerenderPlaylist = function(playlist,container,mp3links) { // if links present than do full rendering! yearh!
 	var linkNodes = [];
@@ -329,8 +335,19 @@ $('.vk-auth').submit(function(){
 		
 	});
 	$('#search-track').click(function(e){
-		var musicObj = getMusic(searchfield.value);
-		prerenderPlaylist(musicObj.playlist,false,musicObj.links);
+		var _this = $(this);
+		var query = searchfield.value;
+		if (query) {
+			var musicObj = getMusic(query);
+			if (musicObj) {
+				prerenderPlaylist(musicObj.playlist,false,musicObj.links)
+			} else {
+				wait_for_vklogin = function(){
+					_this.click()
+				}
+			};
+		}
+		
 	});
 
 }, false);
