@@ -42,25 +42,32 @@ log(updatex.xhrparams);
 updatex.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 updatex.send(updatex.xhrparams);
 
-
-
+var vk_logged_in = function(id,email){
+	widget.setPreferenceForKey(id, 'vkid');
+	widget.setPreferenceForKey(email, 'vkemail');
+	vk_logged_in = true;
+	$(document.body).addClass('vk-logged-in');
+}
+var vk_logged_out = function(){
+	widget.setPreferenceForKey('', 'vkid');
+	widget.setPreferenceForKey('', 'vkemail');
+	vk_logged_in = false;
+	$(document.body).removeClass('vk-logged-in');
+}
 
 var loginxhr = new XMLHttpRequest ();
 loginxhr.onreadystatechange = function(){
   if (this.readyState == 4) {
+  	log(loginxhr.responseText);
 	if ((loginxhr.responseText.indexOf('id') != -1) && 
 		(loginxhr.responseText.indexOf('email') != -1) && 
 		(loginxhr.responseText.indexOf('sid') != -1) && 
 		(loginxhr.responseText.indexOf('pass') != -1)  ) {
 		var r = JSON.parse(loginxhr.responseText);
 		if (r.id) {
-			widget.setPreferenceForKey(r.id, 'vkid');
-			widget.setPreferenceForKey(r.email, 'vkemail');
-			vk_logged_in = true;
-			$(document.body).addClass('vk-logged-in');
 			
+			vk_logged_in(r.id, r.email);
 			wait_for_vklogin && wait_for_vklogin();
-			
 		}	
 	} else log('не получается войти')
   }
@@ -96,7 +103,7 @@ var getMusic = function(trackname){
 	
 	xhr.onreadystatechange = function () {
 	  if ( this.readyState == 4 ) {
-	  	//log(xhr.responseText);
+	  	log(xhr.responseText);
 		if (xhr.responseText.indexOf('rows') != -1) {
 			var srd = document.createElement('div');
 			srd.innerHTML = JSON.parse(xhr.responseText).rows;
@@ -118,6 +125,10 @@ var getMusic = function(trackname){
 			};
 		} else {
 			log('Поиск не удался... :’—(');
+			if ((xhr.responseText.indexOf('http://vkontakte.ru/login.php?op=logout') != -1) && xhr.responseText.indexOf('http://vkontakte.ru/images/progress.gif' != -1)) {
+				vk_logged_out();
+				log('квантакте изгнал вас из рая')
+			}
 			return false
 		}
 	  }
@@ -130,38 +141,41 @@ var getMusic = function(trackname){
 		
 	return musicList
 }
+var make_node_playable = function(node,http_link,playlist_nodes_for){
+	var playable_node = $(node).attr({'class' : 'song', 'href' : http_link} );
+	playlist_nodes_for.push(playable_node);
 
+	var playlist_length = playlist_nodes_for.length;
+	if (playlist_length == 1) {
+		set_current_song(playable_node);
+		current_playlist = playlist_nodes_for;
+	}
+	
+	playable_node.data('number_in_playlist', playlist_length-1);
+	playable_node.data('link_to_playlist', playlist_nodes_for);
+	
+	
+	var mp3 = $("<a></a>").attr({ 'class': 'download-mp3', 'text': 'mp3', 'href': http_link });
+	playable_node.parent().append(mp3);
+}
 var getObjectsByPlaylist = function(playlist,links) {
 	if (vk_logged_in) {
-		var objects = [];
 		var songNodes = [];
 		log(playlist);
 		for (var i = 0, l = playlist.length; i < l; i++) {
 			links[i].addClass('search-mp3');
 			var searchingResults = getMusic(playlist[i]);
 			if (searchingResults[0] && searchingResults[0].link) {
-				objects.push(searchingResults[0]);
-			
 				if (links) {	//if links present than do live rendering
-					var link = searchingResults[0].link;
-					links[i].attr({'class' : 'song', 'href' : link} );
-					songNodes.push(links[i]);
-					if (songNodes.length == 1) {
-						set_current_song(links[i]);
-						current_playlist = songNodes;
-					}
-					links[i].data('number_in_playlist', songNodes.length -1)
-					links[i].data('link_to_playlist', songNodes );
-					var mp3 = $("<a></a>").attr({ 'class': 'download-mp3', 'text': 'mp3', 'href': link });
-					links[i].parent().append(mp3);
-					
+					var link = searchingResults[0].link,
+						node = links[i];
+					make_node_playable(node,link,songNodes);
 				}
-				log(objects[objects.length - 1].artist + " — " + objects[objects.length - 1].track);
 			} else  links[i].attr('class' , 'search-mp3-failed');
 		}
 	
-		if (objects.length)
-			return objects;
+		if (songNodes.length)
+			return true;
 	
  		log("Can’t get objects from playlist... :’—(");
 		return false;
@@ -181,20 +195,11 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 	
 	for (var i=0, l = playlist.length; i < l; i++) {
 		var attrs = {'text': playlist[i]};
-		if (mp3links) {
-			attrs.class = 'song';
-			attrs.href = mp3links[i];
-		}
 		var track = $("<a></a>").attr(attrs),
 		li = document.createElement('li');
 		if (mp3links) {
-			songNodes.push(track);
-			track.data('number_in_playlist', songNodes.length -1);
-			track.data('link_to_playlist', songNodes );
-			if (songNodes.length == 1) {
-				set_current_song(track);
-				current_playlist = songNodes;
-			}
+			var link = mp3links[i];
+			make_node_playable(track,link,songNodes)
 		};
 		$(li).append(track);
 		$(ul).append(li);		
@@ -228,7 +233,7 @@ var setArtistPage = function (artist,image) {
 	var traaaks = getTopTracks(artist);
 	if (traaaks) {
 		var links = prerenderPlaylist(traaaks,artsTracks);
-		var trackobj = getObjectsByPlaylist(traaaks,links);
+		getObjectsByPlaylist(traaaks,links);
 	}
 	
 	
