@@ -134,6 +134,10 @@ var getObjectsByPlaylist = function(playlist,links) {
 					var link = searchingResults[0].link;
 					links[i].attr({'class' : 'song', 'href' : link} );
 					songNodes.push(links[i]);
+					if (songNodes.length == 1) {
+						set_current_song(links[i]);
+						current_playlist = songNodes;
+					}
 					links[i].data('number_in_playlist', songNodes.length -1)
 					links[i].data('link_to_playlist', songNodes );
 					var mp3 = $("<a></a>").attr({ 'class': 'download-mp3', 'text': 'mp3', 'href': link });
@@ -248,6 +252,7 @@ var artistsearch = function(artist) {
 				text: 'Ничё нет'
 			});
 		$(searchres).append(p);
+		slider.className = "screen-search";
 	}
 }
 
