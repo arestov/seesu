@@ -253,9 +253,8 @@ body{
 			}
 			#resize-handle{
 				position:absolute;
-				bottom:9px;
-				right:5px;
-				border-bottom:1px dashed #333;
+				bottom:0;
+				right:0;
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
