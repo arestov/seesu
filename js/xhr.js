@@ -192,6 +192,7 @@ var getTopTracks = function(artist) {
 
 var setArtistPage = function (artist,image) {
 	slider.className = 'sreen-artist-page';
+	if (nav_artist_page.textContent == artist) return true;
 	nav_artist_page.innerHTML = artist;
 	var bio = lastfm('artist.getInfo',{'artist': artist }).artist.bio.summary;
 	artsName.text(artist);
