@@ -22,11 +22,19 @@ updatex.onreadystatechange = function(){
 			widget.openURL(r.latest_version.link);
 		})
 	}
+	
+//	log(r.inviters[0]);
+	
 	log(updatex.responseText);
   }
 };
 updatex.open('POST', 'http://seesu.heroku.com/update');
-updatex.xhrparams = 'noredirect=1';
+updatex.xhrparams = 
+  'hash=' + hex_md5(widget.identifier) + '&' +
+  'version=' + seesu.version + '&' +
+  'demension_x=' + widget.preferenceForKey('width') + '&' + 
+  'demension_y=' + widget.preferenceForKey('height');
+  
 updatex.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 updatex.send(updatex.xhrparams);
 
