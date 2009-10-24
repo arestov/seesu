@@ -2,7 +2,7 @@ h1. Seesu
 
 Get music you like from last.fm and play it with vk.com
 
-h1. "You can download Seesu widget here":http://github.com/kossnocorp/seesu/downloads
+h1. "You can download Seesu widget here":http://seesu.heroku.com/downloads/seesu.wgt
 
 h1. License
 
