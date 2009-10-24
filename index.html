@@ -53,28 +53,7 @@
 				<h3>Результаты поиска</h3>
 				<div id="search_result" class="search-results-holder" ></div>
 			</div>
-			<style type="text/css" media="screen">
-				.info{float:left;}
-				.image{
-					float:left;
-					margin-right:13px;
-					}
-				.pl-holder{
-					float:left;
-				}
-				.tracks-for-play{
-					float:right;
-					width:40%;
-					line-height:1.4em;
-					}
-					.tracks-for-play
-					li{
-						margin: 10px 0;
-						}
-				.artist-bio{
-					margin-top:0;
-					}
-			</style>
+
 			<div id="artist-holder">
 				<div class="info">
 					<h3 id="artist-name"></h3>
@@ -86,12 +65,12 @@
 					</p>
 				</div>
 				<div class="pl-holder">
-					<p>
-						<a id="play_prev">назад</a>
-						<a id="play">играть</a>
-						<a id="pause" >пауза</a>
-						<a id="stop">стоп</a>
-						<a id="play_next">вперёд</a>
+					<p class="play-controls" >
+						<a id="play_prev" class="play-control" ></a>
+						<a id="stop" class="play-control"></a>
+						<a id="play" class="play-control"></a>
+						<a id="pause" class="play-control" ></a>
+						<a id="play_next" class="play-control"></a>
 					</p>
 					<p id="player-holder"></p>
 				</div>

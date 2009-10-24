@@ -1,4 +1,3 @@
-ul{list-style:none;padding:0;margin-top:0;}
 #close-widget{
 	position:absolute;
 	top:13px;
@@ -7,8 +6,91 @@ ul{list-style:none;padding:0;margin-top:0;}
 	font-size:16px;
 	}
 #player-holder{
-	height:14px;
 }
+.pl-holder{
+	
+}
+.play-controls{
+	position:relative;
+	height:77px;
+	width:252px;
+}
+.play-control{
+	display:inline-block;
+	position:absolute;
+	cursor:pointer;
+}
+#play_prev{
+	left:0px;
+	top:21px;
+	
+	width:45px;
+	height:45px;
+	background:url(../i/controls_link_play_prev.png) no-repeat;
+	}
+	#play_prev:hover{
+		background-image:url(../i/controls_hover_play_prev.png);
+		}
+	#play_prev:active{
+		background-image:url(../i/controls_active_play_prev.png);
+		}
+#play{
+	left:74px;
+	top:11px;
+	
+	width:64px;
+	height:56px;
+	background:url(../i/controls_link_play.png) no-repeat;
+	}
+	#play:hover{
+		background:url(../i/controls_hover_play.png) no-repeat;
+	}
+	#play:active{
+		background:url(../i/controls_active_play.png) no-repeat;
+	}
+#pause{
+	top:39px;
+	left:143px;
+	
+	width:30px;
+	height:29px;
+	background:url(../i/controls_link_pause.png) no-repeat;
+	}
+	#pause:hover{
+		background:url(../i/controls_hover_pause.png) no-repeat;
+	}
+	#pause:active{
+		background:url(../i/controls_active_pause.png) no-repeat;
+	}
+#stop{
+	left:51px;
+	top:17px;
+	
+	width:20px;
+	height:18px;
+	background:url(../i/controls_link_stop.png) no-repeat;
+	}
+	#stop:hover{
+		background:url(../i/controls_hover_stop.png) no-repeat;
+	}
+	#stop:active{
+		background:url(../i/controls_active_stop.png) no-repeat;
+	}
+#play_next{
+	left:173px;
+	top:17px;
+	
+	width:53px;
+	height:46px;
+	background:url(../i/controls_link_play_next.png) no-repeat;
+	}
+	#play_next:hover{
+		background:url(../i/controls_hover_play_next.png) no-repeat;
+	}
+	#play_next:active{
+		background:url(../i/controls_active_play_next.png) no-repeat;
+	}
+ul{list-style:none;padding:0;margin-top:0;}
 a{color:#6672A3;}
 a[href]{color:#376795;}
 a[href]:hover{color:#6E9CC9;}
@@ -176,3 +258,26 @@ body{
 				margin-bottom:0;
 				margin-left:76px;
 				}
+				
+				
+.info{float:left;}
+.info
+.image{
+	float:left;
+	margin-right:13px;
+	}
+.pl-holder{
+	float:left;
+}
+.tracks-for-play{
+	float:right;
+	width:40%;
+	line-height:1.4em;
+	}
+	.tracks-for-play
+	li{
+		margin: 10px 0;
+		}
+.artist-bio{
+	margin-top:0;
+	}
