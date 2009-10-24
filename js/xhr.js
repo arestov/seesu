@@ -19,9 +19,13 @@ updatex.onreadystatechange = function(){
 		var message = 
 		 'Suddenly, Seesu ' + cver + ' has come. ' + 
 		 'You have version ' + seesu.version + '. ';
-		widget.showNotification(message, function(){
-			widget.openURL(r.latest_version.link);
-		})
+		var link = r.latest_version.link;
+		if (link.indexOf('http') != -1) {
+			widget.showNotification(message, function(){
+				widget.openURL(link);
+			})
+		}
+
 	}
 	
 	vkReferer = r.vk_referer;
