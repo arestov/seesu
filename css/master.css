@@ -134,7 +134,7 @@ input:focus{
 	outline:1px solid #8FB2D6;
 }
 body{
-	background:#F3F8ED;
+	background:#F3F8ED url(../i/logo_seesu.png) 10px 99% no-repeat;
 	border:2px solid #CEE3B5;
 	margin:0;
 	padding:0;
