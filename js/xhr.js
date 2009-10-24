@@ -37,6 +37,8 @@ updatex.xhrparams =
   'demension_x=' + widget.preferenceForKey('width') + '&' + 
   'demension_y=' + widget.preferenceForKey('height');
   
+log(updatex.xhrparams);
+
 updatex.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 updatex.send(updatex.xhrparams);
 
