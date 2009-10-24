@@ -170,7 +170,7 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 		$(ul).append(li);		
 		linkNodes.push(track);
 	};
-	(container && container.html('').append(ul)) || ($(searchres).html().append(ul) && mp3links && (slider.className = 'screen-search'));
+	(container && container.html('').append(ul)) || ($(searchres).html('').append(ul) && mp3links && (slider.className = 'screen-search'));
 	return linkNodes
 	
 }
