@@ -46,17 +46,20 @@ log(updatex.xhrparams);
 updatex.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 updatex.send(updatex.xhrparams);
 
-var vk_logged_in = function(id,email){
+var vk_logg_in = function(id,email){
 	widget.setPreferenceForKey(id, 'vkid');
 	widget.setPreferenceForKey(email, 'vkemail');
 	vk_logged_in = true;
 	$(document.body).addClass('vk-logged-in');
+	log('вошли в контакте и скрыли форму логина')
 }
 var vk_logged_out = function(){
-	widget.setPreferenceForKey('', 'vkid');
-	widget.setPreferenceForKey('', 'vkemail');
+	widget.setPreferenceForKey(null, 'vkid');
+	widget.setPreferenceForKey(null, 'vkemail');
 	vk_logged_in = false;
 	$(document.body).removeClass('vk-logged-in');
+	log('отображаем форму логина где нужно')
+	
 }
 
 var loginxhr = new XMLHttpRequest ();
@@ -69,8 +72,8 @@ loginxhr.onreadystatechange = function(){
 		(loginxhr.responseText.indexOf('pass') != -1)  ) {
 		var r = JSON.parse(loginxhr.responseText);
 		if (r.id) {
-			
-			vk_logged_in(r.id, r.email);
+			log(vk_logged_in)
+			vk_logg_in(r.id, r.email);
 			wait_for_vklogin && wait_for_vklogin();
 		}	
 	} else log('не получается войти')
