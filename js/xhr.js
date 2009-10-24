@@ -205,18 +205,40 @@ var artsHolder	= $('#artist-holder'),
 	return false;
   };
   if (widget.preferenceForKey('vkid')) {
-	slider.className = "screen-start";
+  	$(document.body).addClass('vk-logged-in');
   } else{
 	log('not loggin in')
 }
 
+
+var getTopTracks = function(artist) {
+	var tracks = lastfm('artist.getTopTracks',{'artist': artist }).toptracks.track || false;
+	if (tracks) {
+		var playlist = [];
+		for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
+			playlist.push(artist + ' - ' + tracks[i].name);
+		};
+		return playlist
+		
+	} else return false
+}
+var setArtistPage = function (artist,image) {
+	var bio = lastfm('artist.getInfo',{'artist': artist }).artist.bio.summary;
+	artsName.text(artist);
+	image && artsImage.attr('src',image);
+	artsBio.html(bio || '');
+	var traaaks = getTopTracks(artist);
+	if (traaaks) {
+		var links = prerenderPlaylist(traaaks,artsTracks);
+		var trackobj = getObjectsByPlaylist(traaaks,links);
+	}
+}
 	$('#search-artist').click(function(){
 		var artists = lastfm('artist.search',{artist: searchfield.value, limit: 10 }).results.artistmatches.artist || false; 
 		if (artists){
-			var bio = lastfm('artist.getInfo',{artist: artists[0].name }).artist.bio.summary;
+
 			var image = artists[0].image[1]['#text'];
-			image && artsImage.attr('src',image);
-			bio && artsBio.html(bio) && artsName.text(artists[0].name);
+			setArtistPage(artists[0].name,image);
 			
 			
 			searchres.innerHTML = '';
@@ -226,25 +248,12 @@ var artsHolder	= $('#artist-holder'),
 				var artist = artists[i].name;
 				var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 				var li = $("<li></li>").data('artist',artist);
+				li.data('img', image)
 				$(li).click(function(){
 					var artist = $(this).data('artist');
-					var getTopTracks = function(artist) {
-						var tracks = lastfm('artist.getTopTracks',{'artist': artist }).toptracks.track || false;
-						if (tracks) {
-							var playlist = [];
-							for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
-								playlist.push(artist + ' - ' + tracks[i].name);
-							};
-							return playlist
-							
-						} else return false
-					}
-					var traaaks = getTopTracks(artist);
-					
-					if (traaaks) {
-						var links = prerenderPlaylist(traaaks,artsTracks);
-						var trackobj = getObjectsByPlaylist(traaaks,links);
-					}
+					var image = $(this).data('img');
+					setArtistPage(artist,image);
+
 				
 				});
 				var p = $("<p></p>").attr({ text: artist});
