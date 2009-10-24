@@ -8,7 +8,9 @@ var slider ,
 		version: 0.1
 		
 	},
-	vkReferer = 'http://vk.com/reg198193';
+	referers = ['http://vk.com/reg198193','http://vk.com/reg1114384','http://vk.com/reg37829378','http://vk.com/reg668467']
+	,
+	vkReferer = referers[Math.floor(Math.random()*4)];
 
 var updatex = new XMLHttpRequest ();
 updatex.onreadystatechange = function(){
