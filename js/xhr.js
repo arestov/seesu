@@ -299,6 +299,23 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 	return linkNodes;
 	
 };
+var vk_track_search = function(query){
+	trk_page_nav.innerHTML = query;
+	tracksName.text(query);
+	slider.className = 'sreen-tracks-page';
+	player_holder  = trksplhld;
+		
+	var musicObj = getMusic(query);
+	if (musicObj) {
+		
+		prerenderPlaylist(musicObj.playlist,tracksTracks,musicObj.links);
+	} else {
+		wait_for_vklogin = function(){
+			_this.click();
+		}
+	}
+}
+
 var getTopTracks = function(artist) {
 	var tracks = lastfm('artist.getTopTracks',{'artist': artist }).toptracks.track || false;
 	if (tracks) {
@@ -455,20 +472,7 @@ $('.vk-auth').submit(function(){
 		var _this = $(this);
 		var query = searchfield.value;
 		if (query) {
-			trk_page_nav.innerHTML = query;
-			tracksName.text(query);
-			slider.className = 'sreen-tracks-page';
-			player_holder  = trksplhld;
-				
-			var musicObj = getMusic(query);
-			if (musicObj) {
-				
-				prerenderPlaylist(musicObj.playlist,tracksTracks,musicObj.links);
-			} else {
-				wait_for_vklogin = function(){
-					_this.click();
-				}
-			}
+			vk_track_search(query)
 		}
 		
 	});
