@@ -14,7 +14,7 @@ var player_state = STOPPED,
       '<embed width="342" height="14" ' + 
       'flashvars="debug=false&amp;volume=:volume&amp;' +
       'url=:url" allowscriptaccess="always" wmode="transparent" swliveconnect="true" quality="high" ' +
-      'bgcolor=":background_color" name="player" id="player" style="" ' +
+      'bgcolor=":background_color"  class="player" style="" ' +
       'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
       'type="application/x-shockwave-flash"/>',
       
@@ -49,7 +49,7 @@ function player_DoFSCommand(c, args) {
 }
 
 function set_var(variable, value) {
-	window.document.player.SetVariable("audioPlayer_mc." + variable, value);
+	$(".player",player_holder)[0].SetVariable("audioPlayer_mc." + variable, value);
 }  
 
 function create_player(song_url) {
