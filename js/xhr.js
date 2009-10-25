@@ -274,11 +274,22 @@ var setArtistPage = function (artist,image) {
 	player_holder = artsplhld;
 	if (nav_artist_page.textContent == artist) {return true;}
 	nav_artist_page.innerHTML = artist;
-	var bio = lastfm('artist.getInfo',{'artist': artist }).artist.bio.summary;
-		bio = bio.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm");
+	var info = lastfm('artist.getInfo',{'artist': artist }).artist,
+		similars = info.similar.artist,
+		tags = info.tags.tag,
+		bio = info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm");
 	artsName.text(artist);
 	image && artsImage.attr('src',image);
 	artsBio.html(bio || '');
+	if (similars.length) {
+		var similars_p = $("<p></p>").attr({ 'class': 'artist-similar', 'text' : 'Similar artists: '});
+		for (var i=0, l = similars.length; i < l; i++) {
+			var similar = similars[i],
+				similar_arts_node = $("<a></a>").attr({ text: similar.name, href: similar.url });
+			similars_p.append(similar_arts_node);
+		};
+		artsBio.append(similars_p);
+	}
 	var traaaks = getTopTracks(artist);
 	if (traaaks) {
 		var links = prerenderPlaylist(traaaks,artsTracks);
@@ -321,10 +332,7 @@ var artistsearch = function(artist_query) {
 		
 	} else {
 		searchres.innerHTML = '';
-		var p = $("<p></p>")
-			.attr({ 
-				text: 'Ничё нет'
-			});
+		var p = $("<p></p>").attr({ text: 'Ничё нет'});
 		$(searchres).append(p);
 		slider.className = "screen-search";
 	}
@@ -352,7 +360,7 @@ window.addEventListener( 'load' , function(){
 
 	artsHolder	= $('#artist-holder');
 	artsImage	= $('img.artist-image',artsHolder);
-	artsBio		= $('p.artist-bio',artsHolder);
+	artsBio		= $('.artist-bio',artsHolder);
 	artsTracks	= $('.tracks-for-play',artsHolder);
 	artsplhld	= $('.player-holder',artsHolder);
 	artsName	= $('#artist-name');
