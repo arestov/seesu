@@ -166,6 +166,25 @@ var getMusic = function(trackname){
 		
 	return musicList;
 };
+var sort_by_play_order = function(g,f){
+	if (g && f) {
+		if (g.data('play_order') > f.data('play_order'))
+			{return 1;}
+		else if (g.data('play_order') < f.data('play_order'))
+			{return -1;}
+		else
+		{return 0;}
+	} else {return 0;}
+	
+};
+var resort_playlist = function(playlist_nodes_for){
+	playlist_nodes_for.sort(sort_by_play_order);
+	if (playlist_nodes_for.length > 1) {
+		for (var i=0, l = playlist_nodes_for.length; i < l ; i++) {
+			playlist_nodes_for[i].data('number_in_playlist',i);
+		};
+	}
+}
 var get_vk_track = function(trackname,tracknode,playlist_nodes_for) {
 	if (!vk_logged_in) {
 		return false;
@@ -209,6 +228,7 @@ var get_vk_track = function(trackname,tracknode,playlist_nodes_for) {
 						playStr = $('img.playimg', row )[0].getAttribute('onclick'),
 						link = parseStrToObj(playStr).link;
 					make_node_playable(tracknode,link,playlist_nodes_for);
+					resort_playlist(playlist_nodes_for);
 				} else {
 					tracknode.attr('class' , 'search-mp3-failed');
 				}
@@ -265,8 +285,8 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 	
 	for (var i=0, l = playlist.length; i < l; i++) {
 		var attrs = {'text': playlist[i]};
-		var track = $("<a></a>").attr(attrs),
-		li = document.createElement('li');
+		var track = $("<a></a>").attr(attrs).data('play_order',i),
+			li = document.createElement('li');
 		$(li).append(track);
 		if (mp3links) {
 			var link = mp3links[i];
