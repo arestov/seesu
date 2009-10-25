@@ -84,6 +84,23 @@ loginxhr.xhrparams = 'noredirect=1';
 loginxhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 loginxhr.setRequestHeader("host", "vkontakte.ru");
 
+var vk_login = function(login,pass) {
+	loginxhr.send(loginxhr.xhrparams + '&email=' + encodeURIComponent(login) + '&pass=' + encodeURIComponent(pass));
+}
+var vk_login_check = function(){
+	$.ajax({
+	  url: "http://vkontakte.ru/feed2.php",
+	  global: false,
+	  type: "GET",
+	  dataType: "json",
+	  error: function(){
+		log('vignali!');
+		vk_logged_out();
+	  },
+	  success: function(r){
+	  }
+	});
+};
 
 var parseStrToObj = function(onclickstring){
 	var b = onclickstring,
@@ -111,7 +128,6 @@ var getMusic = function(trackname){
 	
 	xhr.onreadystatechange = function () {
 	  if ( this.readyState == 4 ) {
-		log(xhr.responseText);
 		if (xhr.responseText.indexOf('rows') != -1) {
 			var srd = document.createElement('div');
 			srd.innerHTML = JSON.parse(xhr.responseText).rows;
@@ -133,6 +149,7 @@ var getMusic = function(trackname){
 			}
 		} else {
 			log('Поиск не удался... :’—(');
+			log(xhr.responseText);
 			if ((xhr.responseText.indexOf('http://vkontakte.ru/login.php?op=logout') != -1) && xhr.responseText.indexOf('http://vkontakte.ru/images/progress.gif' != -1)) {
 				vk_logged_out();
 				log('квантакте изгнал вас из рая');
@@ -176,6 +193,7 @@ var get_vk_track = function(trackname,tracknode,playlist_nodes_for) {
 			  },
 			  error: function(){
 				tracknode.attr('class' , 'search-mp3-failed');
+				vk_login_check();
 			  },
 			  success: function(r){
 				log('Квантакте говорит: ' + r.summary);
@@ -384,7 +402,7 @@ $('.vk-auth').submit(function(){
 	var _this = $(this);
 	var email = $('input.vk-email',_this).val();
 	var pass = $('input.vk-pass',_this).val();
-	loginxhr.send(loginxhr.xhrparams + '&email=' + encodeURIComponent(email) + '&pass=' + encodeURIComponent(pass));	
+	vk_login(email,pass);
 	return false;
 });
 
