@@ -208,6 +208,10 @@ var make_tracklist_playable = function(playlist,track_nodes){
 				playlist_nodes_for = songNodes;
 			get_vk_track(trackname,node,playlist_nodes_for);
 		};
+	} else {
+		wait_for_vklogin = function(){
+			make_tracklist_playable(playlist,track_nodes);
+		}
 	}
 }
 var make_node_playable = function(node,http_link,playlist_nodes_for){
@@ -223,39 +227,11 @@ var make_node_playable = function(node,http_link,playlist_nodes_for){
 	playable_node.data('number_in_playlist', playlist_length-1);
 	playable_node.data('link_to_playlist', playlist_nodes_for);
 	
-	
+
 	var mp3 = $("<a></a>").attr({ 'class': 'download-mp3', 'text': 'mp3', 'href': http_link });
 	playable_node.parent().append(mp3);
 }
-var getObjectsByPlaylist = function(playlist,links) {
-	if (vk_logged_in) {
-		var songNodes = [];
-		log(playlist);
-		for (var i = 0, l = playlist.length; i < l; i++) {
-			links[i].addClass('search-mp3');
-			var searchingResults = getMusic(playlist[i]);
-			if (searchingResults[0] && searchingResults[0].link) {
-				if (links) {	//if links present than do live rendering
-					var link = searchingResults[0].link,
-						node = links[i];
-					make_node_playable(node,link,songNodes);
-				}
-			} else  links[i].attr('class' , 'search-mp3-failed');
-		}
-	
-		if (songNodes.length)
-			return true;
-	
- 		log("Can’t get objects from playlist... :’—(");
-		return false;
-	} else {
-		log('wait for vklogin');
-		wait_for_vklogin = function(){
-			getObjectsByPlaylist(playlist,links);
-		} 
-		
-	}	
-}
+
 var prerenderPlaylist = function(playlist,container,mp3links) { // if links present than do full rendering! yearh!
 	var linkNodes = [];
 	var songNodes = [];
@@ -266,11 +242,11 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 		var attrs = {'text': playlist[i]};
 		var track = $("<a></a>").attr(attrs),
 		li = document.createElement('li');
+		$(li).append(track);
 		if (mp3links) {
 			var link = mp3links[i];
 			make_node_playable(track,link,songNodes)
 		};
-		$(li).append(track);
 		$(ul).append(li);		
 		linkNodes.push(track);
 	};
@@ -302,8 +278,7 @@ var setArtistPage = function (artist,image) {
 	var traaaks = getTopTracks(artist);
 	if (traaaks) {
 		var links = prerenderPlaylist(traaaks,artsTracks);
-		make_tracklist_playable(traaaks,links)
-		//getObjectsByPlaylist(traaaks,links);
+		make_tracklist_playable(traaaks,links);
 	}
 	
 	
