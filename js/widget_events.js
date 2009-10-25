@@ -16,8 +16,13 @@ $(function() {
 	  }
 	  else if (clicked_node.is('.artist')){
 		artist_name = clicked_node.data('artist');
-		artistsearch(artist_name);
+		setArtistPage(artist_name);
 		return false;
+	  }
+	  else if(clicked_node.is('.bbcode_artist')){
+	  	artist_name = clicked_node.attr('href').replace('http://www.last.fm/music/','');
+	  	setArtistPage(artist_name);
+	    return false;
 	  }
 	}
   });

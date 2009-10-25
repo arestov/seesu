@@ -317,6 +317,10 @@ body{
 		border-bottom:1px dashed #6672A3;
 		margin-right:8px;
 	}
+	.bbcode_artist{
+		text-decoration:none;
+		border-bottom:1px dashed #6672A3;
+	}
 	.artist-tags a{
 		margin-right:6px;
 		}

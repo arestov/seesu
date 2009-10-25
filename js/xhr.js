@@ -193,8 +193,11 @@ var get_vk_track = function(trackname,tracknode,playlist_nodes_for) {
 			  },
 			  error: function(r){
 				tracknode.attr('class' , 'search-mp3-failed');
-				log(r);
-				vk_login_check();
+				log('Вконтакте молвит: ' + r.responseText);
+				if (r.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
+					vk_login_check();
+				}
+				
 			  },
 			  success: function(r){
 				log('Квантакте говорит: ' + r.summary);
@@ -293,14 +296,15 @@ var setArtistPage = function (artist,image) {
 	player_holder = artsplhld;
 	if (nav_artist_page.textContent == artist) {return true;}
 	nav_artist_page.innerHTML = artist;
-	var info = lastfm('artist.getInfo',{'artist': artist }).artist,
+	var info	 = lastfm('artist.getInfo',{'artist': artist }).artist,
 		similars = info.similar.artist,
-		tags = info.tags.tag,
-		bio = info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm");
+		tags	 = info.tags.tag,
+		bio		 = info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm"),
+		image	 = image || info.image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 	artsName.text(artist);
-	image && artsImage.attr({'src': image, 'alt': artist});
+	artsImage.attr({'src': image ,'alt': artist});
 	artsBio.html(bio || '');
-	if (tags.length) {
+	if (tags && tags.length) {
 		var tags_p = $("<p></p>").attr({ 'class': 'artist-tags', 'text' : 'Tags: '});
 		for (var i=0, l = tags.length; i < l; i++) {
 			var tag = tags[i],
@@ -309,7 +313,7 @@ var setArtistPage = function (artist,image) {
 		};
 		artsBio.append(tags_p);
 	}
-	if (similars.length) {
+	if (similars && similars.length) {
 		var similars_p = $("<p></p>").attr({ 'class': 'artist-similar', 'text' : 'Similar artists: '});
 		for (var i=0, l = similars.length; i < l; i++) {
 			var similar = similars[i],
