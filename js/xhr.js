@@ -275,6 +275,7 @@ var setArtistPage = function (artist,image) {
 	if (nav_artist_page.textContent == artist) {return true;}
 	nav_artist_page.innerHTML = artist;
 	var bio = lastfm('artist.getInfo',{'artist': artist }).artist.bio.summary;
+		bio = bio.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm");
 	artsName.text(artist);
 	image && artsImage.attr('src',image);
 	artsBio.html(bio || '');
