@@ -191,8 +191,9 @@ var get_vk_track = function(trackname,tracknode,playlist_nodes_for) {
 			  beforeSend: function(){
 				tracknode.addClass('search-mp3');
 			  },
-			  error: function(){
+			  error: function(r){
 				tracknode.attr('class' , 'search-mp3-failed');
+				log(r);
 				vk_login_check();
 			  },
 			  success: function(r){
@@ -312,7 +313,7 @@ var setArtistPage = function (artist,image) {
 		var similars_p = $("<p></p>").attr({ 'class': 'artist-similar', 'text' : 'Similar artists: '});
 		for (var i=0, l = similars.length; i < l; i++) {
 			var similar = similars[i],
-				arts_similar_node = $("<a></a>").attr({ text: similar.name, href: similar.url });
+				arts_similar_node = $("<a></a>").attr({ text: similar.name, href: similar.url, 'class' : 'artist' }).data('artist', similar.name );
 			similars_p.append(arts_similar_node);
 		};
 		artsBio.append(similars_p);
