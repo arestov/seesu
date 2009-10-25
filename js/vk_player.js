@@ -14,7 +14,7 @@ var player_state = STOPPED,
       '<embed width="342" height="14" ' + 
       'flashvars="debug=false&amp;volume=:volume&amp;' +
       'url=:url" allowscriptaccess="always" wmode="transparent" swliveconnect="true" quality="high" ' +
-      'bgcolor=":background_color"  class="player" style="" ' +
+      'bgcolor=":background_color" name="player" class="player" style="" ' +
       'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
       'type="application/x-shockwave-flash"/>',
       
