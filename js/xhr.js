@@ -281,12 +281,21 @@ var setArtistPage = function (artist,image) {
 	artsName.text(artist);
 	image && artsImage.attr('src',image);
 	artsBio.html(bio || '');
+	if (tags.length) {
+		var tags_p = $("<p></p>").attr({ 'class': 'artist-tags', 'text' : 'Tags: '});
+		for (var i=0, l = tags.length; i < l; i++) {
+			var tag = tags[i],
+				arts_tag_node = $("<a></a>").attr({ text: tag.name, href: tag.url });
+			tags_p.append(arts_tag_node);
+		};
+		artsBio.append(tags_p);
+	}
 	if (similars.length) {
 		var similars_p = $("<p></p>").attr({ 'class': 'artist-similar', 'text' : 'Similar artists: '});
 		for (var i=0, l = similars.length; i < l; i++) {
 			var similar = similars[i],
-				similar_arts_node = $("<a></a>").attr({ text: similar.name, href: similar.url });
-			similars_p.append(similar_arts_node);
+				arts_similar_node = $("<a></a>").attr({ text: similar.name, href: similar.url });
+			similars_p.append(arts_similar_node);
 		};
 		artsBio.append(similars_p);
 	}

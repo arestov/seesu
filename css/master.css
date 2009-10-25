@@ -312,8 +312,8 @@ body{
 .artist-bio{
 	margin-top:0;
 	}
-	.artist-similar
-	a{
+	.artist-similar a,
+	.artist-tags a{
 		margin-right:6px;
 		}
 .vk-logged-in
