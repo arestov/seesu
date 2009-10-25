@@ -100,6 +100,7 @@ var parseStrToObj = function(onclickstring){
 
 }
 
+
 var getMusic = function(trackname){
 	if (!vk_logged_in) return false
 	
@@ -147,6 +148,67 @@ var getMusic = function(trackname){
 	xhr.send(param);
 		
 	return musicList
+}
+var get_vk_track = function(trackname,tracknode,playlist_nodes_for) {
+	if (!vk_logged_in) return false
+	var now = (new Date()).getTime(),
+		timeout;
+	
+	arguments.callee.call_at = arguments.callee.call_at || now;
+	if ( arguments.callee.call_at && (arguments.callee.call_at > now)) {
+		timeout = arguments.callee.call_at - now;
+	} else {
+		timeout = 0;
+		arguments.callee.call_at = now;
+	}
+	
+	setTimeout(function(){
+		$.ajax({
+		  url: "http://vkontakte.ru/gsearch.php",
+		  global: false,
+		  type: "POST",
+		  data: ({'c[section]' : 'audio', 'c[q]' : trackname}),
+		  dataType: "json",
+		  beforeSend: function(){
+		  	tracknode.addClass('search-mp3');
+		  },
+		  error: function(){
+		  	tracknode.attr('class' , 'search-mp3-failed');
+	 	  },
+		  success: function(r){
+		  	log('Квантакте говорит: ' + r.summary);
+			var srd = document.createElement('div');
+				srd.innerHTML = r.rows;
+			var rows = $(".audioRow ", srd);
+			if (rows.length) {
+				var row = rows[0],
+					playStr = $('img.playimg', row )[0].getAttribute('onclick'),
+					link = parseStrToObj(playStr).link;
+				make_node_playable(tracknode,link,playlist_nodes_for);
+			} else {
+				tracknode.attr('class' , 'search-mp3-failed');
+			}
+			
+		  }
+		});
+	},timeout)
+	
+	arguments.callee.call_at += 900;
+	
+	return
+}
+
+var make_tracklist_playable = function(playlist,track_nodes){
+	if (vk_logged_in) {
+		var songNodes = [],
+			timeout = 0;
+		for (var i=0, l =  playlist.length; i < l; i++) {
+			var node = track_nodes[i],
+				trackname = playlist[i],
+				playlist_nodes_for = songNodes;
+			get_vk_track(trackname,node,playlist_nodes_for);
+		};
+	}
 }
 var make_node_playable = function(node,http_link,playlist_nodes_for){
 	var playable_node = $(node).attr({'class' : 'song', 'href' : http_link} );
@@ -240,7 +302,8 @@ var setArtistPage = function (artist,image) {
 	var traaaks = getTopTracks(artist);
 	if (traaaks) {
 		var links = prerenderPlaylist(traaaks,artsTracks);
-		getObjectsByPlaylist(traaaks,links);
+		make_tracklist_playable(traaaks,links)
+		//getObjectsByPlaylist(traaaks,links);
 	}
 	
 	
