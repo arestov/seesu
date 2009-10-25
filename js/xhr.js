@@ -267,7 +267,7 @@ var getTopTracks = function(artist) {
 		return playlist;
 		
 	} else {return false;}
-}
+};
 
 var setArtistPage = function (artist,image) {
 	slider.className = 'sreen-artist-page';
@@ -287,21 +287,20 @@ var setArtistPage = function (artist,image) {
 	
 	
 };
-var artistsearch = function(artist) {
+var artistsearch = function(artist_query) {
 	
-	var artists = lastfm('artist.search',{artist: artist, limit: 10 }).results.artistmatches.artist || false; 
+	var artists = lastfm('artist.search',{artist: artist_query, limit: 10 }).results.artistmatches.artist || false; 
 	if (artists){
 
-		var image = artists[0].image[1]['#text'];
-		setArtistPage(artists[0].name,image);
-		
-		
 		searchres.innerHTML = '';
 		var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
 		$(searchres).append(ul);
 		for (var i=0; i < artists.length; i++) {
 			var artist = artists[i].name;
 			var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+			
+			if (i === 0) {setArtistPage(artist,image);}
+			
 			var li = $("<li></li>").data('artist',artist);
 			li.data('img', image);
 			$(li).click(function(){
