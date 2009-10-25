@@ -298,7 +298,7 @@ var setArtistPage = function (artist,image) {
 		tags = info.tags.tag,
 		bio = info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm");
 	artsName.text(artist);
-	image && artsImage.attr('src',image);
+	image && artsImage.attr({'src': image, 'alt': artist});
 	artsBio.html(bio || '');
 	if (tags.length) {
 		var tags_p = $("<p></p>").attr({ 'class': 'artist-tags', 'text' : 'Tags: '});
