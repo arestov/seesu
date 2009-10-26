@@ -185,7 +185,7 @@ var resort_playlist = function(playlist_nodes_for){
 		};
 	}
 }
-var get_vk_track = function(trackname,tracknode,playlist_nodes_for) {
+var get_vk_track = function(tracknode,playlist_nodes_for) {
 	if (!vk_logged_in) {
 		return false;
 	} else {
@@ -205,7 +205,7 @@ var get_vk_track = function(trackname,tracknode,playlist_nodes_for) {
 			  url: "http://vkontakte.ru/gsearch.php",
 			  global: false,
 			  type: "POST",
-			  data: ({'c[section]' : 'audio', 'c[q]' : trackname}),
+			  data: ({'c[section]' : 'audio', 'c[q]' : tracknode.data('artist_name') + ' - ' + tracknode.data('track_title')}),
 			  dataType: "json",
 			  beforeSend: function(){
 				tracknode.addClass('search-mp3');
@@ -244,18 +244,17 @@ var get_vk_track = function(trackname,tracknode,playlist_nodes_for) {
 	return false;
 };
 
-var make_tracklist_playable = function(playlist,track_nodes){
+var make_tracklist_playable = function(track_nodes){
 	if (vk_logged_in) {
 		var songNodes = [];
-		for (var i=0, l =  playlist.length; i < l; i++) {
+		for (var i=0, l =  track_nodes.length; i < l; i++) {
 			var node = track_nodes[i],
-				trackname = playlist[i],
 				playlist_nodes_for = songNodes;
-			get_vk_track(trackname,node,playlist_nodes_for);
+			get_vk_track(node,playlist_nodes_for);
 		}
 	} else {
 		wait_for_vklogin = function(){
-			make_tracklist_playable(playlist,track_nodes);
+			make_tracklist_playable(track_nodes);
 		};
 	}
 };
@@ -284,9 +283,23 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 	var ul = document.createElement("ul");
 	
 	for (var i=0, l = playlist.length; i < l; i++) {
-		var attrs = {'text': playlist[i]};
-		var track = $("<a></a>").attr(attrs).data('play_order',i),
+		var attr = {},
+			data = {},
+			cool_nodes = !(typeof(playlist[i]) == 'string');
+			
+		if (!cool_nodes) {
+			attr.text = playlist[i];
+		} else {
+			attr.text = playlist[i].track_title;
+		}
+		
+		var track = $("<a></a>").attr(attr).data('play_order', i),
 			li = document.createElement('li');
+			
+		if (cool_nodes) {
+			track.data('artist_name',playlist[i].artist_name ).data('track_title', playlist[i].track_title )
+		}
+		
 		$(li).append(track);
 		if (mp3links) {
 			var link = mp3links[i];
@@ -321,7 +334,7 @@ var getTopTracks = function(artist) {
 	if (tracks) {
 		var playlist = [];
 		for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
-			playlist.push(artist + ' - ' + tracks[i].name);
+			playlist.push({'artist_name' : artist ,'track_title': tracks[i].name});
 		}
 		return playlist;
 		
@@ -361,8 +374,8 @@ var setArtistPage = function (artist,image) {
 	}
 	var traaaks = getTopTracks(artist);
 	if (traaaks) {
-		var links = prerenderPlaylist(traaaks,artsTracks);
-		make_tracklist_playable(traaaks,links);
+		var music_nodes = prerenderPlaylist(traaaks,artsTracks);
+		make_tracklist_playable(music_nodes);
 	}
 	
 	
