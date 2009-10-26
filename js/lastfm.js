@@ -12,7 +12,7 @@ var lastfm = function(method,paramobj,signature){
 		link += ('&format=' + 'json');
 		if (paramobj) {
 			for (var a in paramobj) {
-				(link += ('&'+a+'=' + paramobj[a])) && !(a == 'format') && !(a == 'callback') && apisig && paramsList.push(a + paramobj[a]);
+				(link += ('&'+a+'=' + encodeURIComponent(paramobj[a]))) && !(a == 'format') && !(a == 'callback') && apisig && paramsList.push(a + encodeURIComponent(paramobj[a]));
 				
 				
 			}
