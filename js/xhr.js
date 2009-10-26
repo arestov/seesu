@@ -1,8 +1,8 @@
 var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
-	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,
+	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
 	tracksHolder,tracksTracks,tracksName,trksplhld, //крекс пекс фекс
 	seesu =  {
-		version: 0.10
+		version: 0.1
 		
 	},
 	vk_logged_in,
@@ -191,13 +191,15 @@ var get_vk_track = function(tracknode,playlist_nodes_for) {
 	} else {
 		var now = (new Date()).getTime(),
 			timeout;
+		var this_func = arguments.callee;
+		art_tracks_w_counter.text(this_func.tracks_waiting_for_search = (this_func.tracks_waiting_for_search + 1) || 1);
 		
-		arguments.callee.call_at = arguments.callee.call_at || now;
-		if ( arguments.callee.call_at && (arguments.callee.call_at > now)) {
-			timeout = arguments.callee.call_at - now;
+		this_func.call_at = this_func.call_at || now;
+		if ( this_func.call_at && (this_func.call_at > now)) {
+			timeout = this_func.call_at - now;
 		} else {
 			timeout = 0;
-			arguments.callee.call_at = now;
+			this_func.call_at = now;
 		}
 		
 		setTimeout(function(){
@@ -212,6 +214,8 @@ var get_vk_track = function(tracknode,playlist_nodes_for) {
 			  },
 			  error: function(r){
 				tracknode.attr('class' , 'search-mp3-failed');
+				art_tracks_w_counter.text((this_func.tracks_waiting_for_search -= 1) || '');
+				
 				log('Вконтакте молвит: ' + r.responseText);
 				if (r.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
 					vk_login_check();
@@ -229,15 +233,16 @@ var get_vk_track = function(tracknode,playlist_nodes_for) {
 						link = parseStrToObj(playStr).link;
 					make_node_playable(tracknode,link,playlist_nodes_for);
 					resort_playlist(playlist_nodes_for);
+				
 				} else {
 					tracknode.attr('class' , 'search-mp3-failed');
 				}
-				
+				art_tracks_w_counter.text((this_func.tracks_waiting_for_search -= 1) || '');
 			  }
 			});
 		},timeout);
 		
-		arguments.callee.call_at += 900;
+		this_func.call_at += 900;
 	}
 	
 	
@@ -445,6 +450,7 @@ window.addEventListener( 'load' , function(){
 	artsBio		= $('.artist-bio',artsHolder);
 	artsTracks	= $('.tracks-for-play',artsHolder);
 	artsplhld	= $('.player-holder',artsHolder);
+	art_tracks_w_counter = $('.tracks-waiting-for-search',artsHolder)
 	artsName	= $('#artist-name');
 	
 	tracksHolder = $('#tracks-holder');
