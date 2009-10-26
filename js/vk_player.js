@@ -36,7 +36,6 @@ function call_event(event, data) {
 }
 
 function player_DoFSCommand(c, args) {
-log(args);
   if(args.match('playing')) {call_event(PLAYED)};
   
   if(args.match('paused')) {call_event(PAUSED)};
@@ -191,7 +190,6 @@ $(function() {
 	  switch_to('next');
 	};
 	events[VOLUME] = function(volume_value) {
-	  log(volume_value);
 	  widget.setPreferenceForKey(volume_value, 'vkplayer-volume');
 	  player_volume = volume_value;
 	};
