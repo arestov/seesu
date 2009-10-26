@@ -6,6 +6,12 @@ $(function() {
 	  if(clicked_node.is('.song')) {
 		return song_click(clicked_node);
 	  }	
+	  else if(clicked_node.is('.waiting-full-render')) {
+		if (wainter_for_play) {wainter_for_play.removeClass('marked-for-play');}
+		clicked_node.data('want_to_play', want_to_play += 1).addClass('marked-for-play');
+		wainter_for_play = clicked_node;
+		return false;
+	  }
 	  else if(clicked_node.is('.vk-reg-ref')) {
 		widget.openURL(vkReferer);
 		return false;

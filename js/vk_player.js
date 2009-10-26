@@ -9,6 +9,8 @@ const INIT     = -11,
 var player_state = STOPPED,
     player_holder = null,
     current_playlist,
+	want_to_play = 0,
+	wainter_for_play,
 
     holy_vk_string = 
       '<embed width="342" height="14" ' + 

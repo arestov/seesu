@@ -114,6 +114,9 @@ a.search-mp3{
 a.search-mp3-failed{
 	color:#ddd;
 }
+a.waiting-full-render.marked-for-play{
+	border-bottom:1px solid #86c9dc;
+}
 a.download-mp3{
 	text-decoration:none;
 	padding:3px 5px;

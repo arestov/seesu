@@ -263,7 +263,7 @@ var make_node_playable = function(node,http_link,playlist_nodes_for){
 	playlist_nodes_for.push(playable_node);
 
 	var playlist_length = playlist_nodes_for.length;
-	if (playlist_length == 1) {
+	if ((playlist_length == 1) || (playable_node.data('want_to_play') == want_to_play) ) {
 		set_current_song(playable_node);
 		current_playlist = playlist_nodes_for;
 	}
@@ -283,7 +283,7 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 	var ul = document.createElement("ul");
 	
 	for (var i=0, l = playlist.length; i < l; i++) {
-		var attr = {},
+		var attr = {'class' : 'waiting-full-render'},
 			data = {},
 			cool_nodes = !(typeof(playlist[i]) == 'string');
 			
