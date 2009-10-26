@@ -390,31 +390,36 @@ var artistsearch = function(artist_query) {
 	
 	var artists = lastfm('artist.search',{artist: artist_query, limit: 10 }).results.artistmatches.artist || false; 
 	if (artists){
-
-		searchres.innerHTML = '';
-		var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
-		$(searchres).append(ul);
-		for (var i=0; i < artists.length; i++) {
-			var artist = artists[i].name;
-			var image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-			
-			if (i === 0) {setArtistPage(artist,image);}
-			
-			var li = $("<li></li>").data('artist',artist);
-			li.data('img', image);
-			$(li).click(function(){
-				var artist = $(this).data('artist');
-				var image = $(this).data('img');
-				setArtistPage(artist,image);
-			});
-			var p = $("<p></p>").attr({ text: artist});
-			if(image){
-				var img = $("<img/>").attr({ src: image , alt: artist });
-				$(li).append(img);
+		if (artists.length){
+			searchres.innerHTML = '';
+			var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
+			$(searchres).append(ul);
+			for (var i=0; i < artists.length; i++) {
+				var artist = artists[i].name,
+					image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+				
+				if (i === 0) {setArtistPage(artist,image);}
+				
+				var li = $("<li></li>").data('artist',artist);
+					li.data('img', image);
+				$(li).click(function(){
+					var artist = $(this).data('artist');
+					var image = $(this).data('img');
+					setArtistPage(artist,image);
+				});
+				var p = $("<p></p>").attr({ text: artist});
+				if(image){
+					var img = $("<img/>").attr({ src: image , alt: artist });
+					$(li).append(img);
+				} 
+				
+				$(li).append(p);
+				$(ul).append(li);
 			} 
-			
-			$(li).append(p);
-			$(ul).append(li);
+		} else if (artists.name) {
+			var artist = artists.name,
+				image = artists.image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+			setArtistPage(artist,image);
 		}
 		
 	} else {
