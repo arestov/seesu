@@ -2,7 +2,7 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
 	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,
 	tracksHolder,tracksTracks,tracksName,trksplhld, //крекс пекс фекс
 	seesu =  {
-		version: 0.1
+		version: 0.10
 		
 	},
 	vk_logged_in,

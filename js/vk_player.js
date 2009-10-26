@@ -20,7 +20,7 @@ var player_state = STOPPED,
       'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
       'type="application/x-shockwave-flash"/>',
       
-    start_volume = widget.preferenceForKey('vkplayer-volume') || 80,
+    player_volume = widget.preferenceForKey('vkplayer-volume') || 80,
      
     background_color = '#FFFFFF',
     events = new Array,
@@ -36,18 +36,20 @@ function call_event(event, data) {
 }
 
 function player_DoFSCommand(c, args) {
+log(args);
+  if(args.match('playing')) {call_event(PLAYED)};
+  
+  if(args.match('paused')) {call_event(PAUSED)};
+  
+  if(args.match('finished')) {call_event(FINISHED)};
+  
+  if(args.match('init')) {call_event(INIT)};
+  
+  if(args.match('created')) {call_event(CREATED)};
 
-  if(args.match('playing')) call_event(PLAYED);
-  
-  if(args.match('paused')) call_event(PAUSED);
-  
-  if(args.match('finished')) call_event(FINISHED);
-  
-  if(args.match('init')) call_event(INIT);
-  
-  if(args.match('created')) call_event(CREATED);
-
-  if(args.match('volume')) call_event(VOLUME/*, ??? */);
+  if(args.match('volume')) {
+	call_event(VOLUME, parse_volume_value(args) )
+  };
 }
 
 function set_var(variable, value) {
@@ -58,7 +60,7 @@ function create_player(song_url) {
 	player_holder.html(
 		holy_vk_string
 		  .replace(':url', song_url)
-		  .replace(':volume', start_volume)
+		  .replace(':volume', player_volume)
 		  .replace(':background_color', background_color)
 	);
 	
@@ -169,7 +171,11 @@ function song_click(node) {
 }
 
 // Ready? Steady? Go!
-
+function parse_volume_value(volume_value_raw) {
+	var volume_level_regexp = /\"((\d{1,3}\.?\d*)|(NaN))\"/,
+		pre_pesult = volume_level_regexp.exec(volume_value_raw);
+	return pre_pesult.slice(1, pre_pesult.length - 1)[0];
+}
 $(function() {
   player_holder = $('.player-holder');
 
@@ -183,5 +189,10 @@ $(function() {
 
 	events[FINISHED] = function() {
 	  switch_to('next');
+	};
+	events[VOLUME] = function(volume_value) {
+	  log(volume_value);
+	  widget.setPreferenceForKey(volume_value, 'vkplayer-volume');
+	  player_volume = volume_value;
 	};
 });
