@@ -141,7 +141,7 @@ var getMusic = function(trackname){
 					playStr = $('img.playimg', row )[0].getAttribute('onclick'),
 					obj = parseStrToObj(playStr);
 				musicList.links.push(obj.link);
-				musicList.playlist.push(artist + ' - ' + track);
+				musicList.playlist.push({'artist_name' : artist ,'track_title': track});
 				obj.artist = artist;
 				obj.track = track;
 				
@@ -288,28 +288,18 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 	var ul = document.createElement("ul");
 	
 	for (var i=0, l = playlist.length; i < l; i++) {
-		var attr = {'class' : 'waiting-full-render'},
-			data = {},
-			cool_nodes = !(typeof(playlist[i]) == 'string');
-			
-		if (!cool_nodes) {
-			attr.text = playlist[i];
-		} else {
-			attr.text = playlist[i].track_title;
-		}
-		
+		var attr = {'class' : 'waiting-full-render', 'text' :  playlist[i].artist_name + ' - ' + playlist[i].track_title};
 		var track = $("<a></a>").attr(attr).data('play_order', i),
 			li = document.createElement('li');
-			
-		if (cool_nodes) {
-			track.data('artist_name',playlist[i].artist_name ).data('track_title', playlist[i].track_title )
-		}
-		
+		track.data('artist_name',playlist[i].artist_name ).data('track_title', playlist[i].track_title )
 		$(li).append(track);
+		
+		
 		if (mp3links) {
 			var link = mp3links[i];
 			make_node_playable(track,link,songNodes);
 		}
+		
 		$(ul).append(li);		
 		linkNodes.push(track);
 	}
