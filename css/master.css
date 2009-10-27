@@ -302,10 +302,20 @@ body{
 .pl-holder{
 	float:left;
 }
+.flash-internet
+.flash-secur
+p{
+	display:none;
+	}
+.flash-internet
+.flash-secur
+p.internet-flash-settings{
+	display:block;
+}
 .flash-secur{
 	float:left;
 	width:342px;
-}
+	}
 .play-list-holder{
 	float:right;
 	width:40%;

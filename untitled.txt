@@ -1,0 +1,12 @@
+{"id":198193,"email":"gr1b0k@gmail.com","pass":"4c6d7decd4fcaf1f62cef04da49cd176","sid":"6879463cf20590c2ff3f42526eacf8aec10e91de4c05f4aedac3f018"}
+
+setCookie("user_id", response.id);
+setCookie("user_email", response.email);
+setCookie("user_pass", response.pass);
+
+
+
+		var mp3 = $("<a></a>").attr({ 'class': 'song-mp3', 'text': 'mp3', 'href': link });
+		links[i].parent().append(mp3);
+		log($(links[i]).nodeName);
+		$(links[i].parentNode).append(mp3);

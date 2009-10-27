@@ -452,6 +452,24 @@ window.addEventListener( 'load' , function(){
 	tracksTracks = $('.tracks-for-play', tracksHolder);
 	tracksName	 = $('#tracks-name');
 	trksplhld	 = $('.player-holder',tracksHolder);
+	
+var flash_settings = $('.internet-flash-settings input');
+	
+flash_settings.change(function(){
+	if($(this).attr('checked')) {
+		widget.setPreferenceForKey('true', 'flash_internet');
+		$(document.body).addClass('flash-internet');
+	} else {
+		widget.setPreferenceForKey(null, 'flash_internet');
+		$(document.body).removeClass('flash-internet');
+	}
+});
+
+if (widget.preferenceForKey('flash_internet')) {
+	$(document.body).addClass('flash-internet');
+	flash_settings.attr('checked', 'checked');
+}
+
 
 
 $('.vk-auth').submit(function(){
