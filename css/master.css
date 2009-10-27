@@ -302,6 +302,9 @@ body{
 .pl-holder{
 	float:left;
 }
+
+
+
 .flash-internet
 .flash-secur
 p{
@@ -312,7 +315,13 @@ p{
 p.internet-flash-settings{
 	display:block;
 }
+.vk-logged-in
 .flash-secur{
+	display:block;
+}
+
+.flash-secur{
+	display:none;
 	float:left;
 	width:342px;
 	}
