@@ -242,7 +242,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for) {
 			});
 		},timeout);
 		
-		this_func.call_at += ((this_func.tracks_waiting_for_search % 7) == 0) ? 5000 : 900;
+		this_func.call_at += ((this_func.tracks_waiting_for_search % 8) == 0) ? 5000 : 900;
 	}
 	
 	
