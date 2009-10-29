@@ -218,6 +218,8 @@ var get_vk_track = function(tracknode,playlist_nodes_for) {
 				
 				log('Вконтакте молвит: ' + r.responseText);
 				if (r.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
+					this_func.call_at += (1000*60*5);
+				} else {
 					vk_login_check();
 				}
 				
