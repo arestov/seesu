@@ -46,44 +46,6 @@ var lfm = function(method,params,callback) {
 		});
 	}
 };
-var lastfm = function(method,paramobj){
-	var pv_signature_list = [], // array of <param>+<value>
-		link = '',
-		apisig = ((paramobj && (paramobj.sk || paramobj.token)) || (method == 'auth.getToken')) ? true : false; // yes, we need signature
-	if (method) {
-		(link += ('?method=' + method)) && apisig && pv_signature_list.push('method' + method);
-		(link += ('&api_key=' + apikey)) && apisig && pv_signature_list.push('api_key' + apikey);
-		link += ('&format=' + 'json');
-		if (paramobj) {
-			for (var a in paramobj) {
-				(link += ('&'+a+'=' + encodeURIComponent(paramobj[a]))) && !(a == 'format') && !(a == 'callback') && apisig && pv_signature_list.push(a + encodeURIComponent(paramobj[a]));
-			}
-		}
-		if (apisig) {
-			pv_signature_list.sort();
-			var paramsstr = '';
-			for (var i=0, l = pv_signature_list.length; i < l; i++) {
-				paramsstr += pv_signature_list[i];
-			};
-			log(paramsstr + s);
-			link += ('&api_sig=' + hex_md5(paramsstr += s));
-		}
-		var xhr = new XMLHttpRequest ();
-		if (xhr) {
-			var b;
-			xhr.onreadystatechange = function () {
-			  if ( this.readyState == 4 ) {
-				b = JSON.parse(xhr.responseText);
-				b.log = xhr.responseText;
-			  }
-			};
-			xhr.open( 'GET', api + link, false );
-			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-			xhr.send();
-			return b 
-		}
-	} else return false
-}
 window.addEventListener( 'load' , function(){
 var lfm_auth = {};	
 	
