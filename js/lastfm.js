@@ -29,6 +29,8 @@ var lfm = function(method,params,callback) {
 			
 			params_full.api_sig = hex_md5(paramsstr += s);
 		}
+		
+		
 		$.ajax({
 		  url: api,
 		  global: false,
@@ -83,28 +85,52 @@ var lastfm = function(method,paramobj){
 	} else return false
 }
 window.addEventListener( 'load' , function(){
+var lfm_auth = {};	
+	
 var l = $('#lastfm');
-var sk = widget.preferenceForKey('lfmsk') || false;
-sk && (l.addClass('lastfm-ready'));
-var newtoken = !sk ? lastfm('auth.getToken').token : false;
+lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;
+if (lfm_auth.sk) {
+	l.addClass('lastfm-ready');
+} else {
+	get_lfm_token(lfm_auth)
+}
 
-log(newtoken);
+var get_lfm_token = function(lfm_auth,callback){
+	lfm('auth.getToken',false,function(r){
+		lfm_auth.newtoken = r.token;
+		log(lfm_auth.newtoken);
+		if (callback) {callback(lfm_auth.newtoken);}
+	})
+}
 
 $('#login-lastfm-button').click(function(){
-	newtoken = newtoken || lastfm('auth.getToken').token;
-	widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token='+newtoken);
-	l.addClass('lastfm-auth-finish');
+	var open_lfm_to_login = function(token){
+		widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
+		l.addClass('lastfm-auth-finish');
+	};
+	
+	if (lfm_auth.newtoken) {
+		open_lfm_to_login(lfm_auth.newtoken);
+	} else {
+		get_lfm_token(lfm_auth,open_lfm_to_login);
+	}
+	
 	return false
 })
 $('#login-lastfm-finish').click(function(){
-	sk = lastfm('auth.getSession',{'token':newtoken }).session.key;
-	sk && (l.addClass('lastfm-ready')) && log(sk) ;
-	widget.setPreferenceForKey(sk, 'lfmsk');
+	lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+		if (!r.error) {
+			lfm_auth.sk = r.session.key;
+			(l.addClass('lastfm-ready'));
+			log(lfm_auth.sk);
+			widget.setPreferenceForKey(lfm_auth.sk, 'lfmsk');	
+		}
+	});
 	return false
 	
 })
 $('#lastfm-scroble').click(function(){
-	lastfm('user.getRecommendedArtists',{sk: sk }); 
+	lfm('user.getRecommendedArtists',{sk: lfm_auth.sk })
 	return false
 })
 
