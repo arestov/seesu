@@ -327,15 +327,18 @@ var vk_track_search = function(query){
 }
 
 var getTopTracks = function(artist) {
-	var tracks = lastfm('artist.getTopTracks',{'artist': artist }).toptracks.track || false;
-	if (tracks) {
-		var playlist = [];
-		for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
-			playlist.push({'artist_name' : artist ,'track_title': tracks[i].name});
-		}
-		return playlist;
-		
-	} else {return false;}
+	lfm('artist.getTopTracks',{'artist': artist },function(r){
+		var tracks = r.toptracks.track || false;
+		if (tracks) {
+			var playlist = [];
+			for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
+				playlist.push({'artist_name' : artist ,'track_title': tracks[i].name});
+			}
+			return playlist;
+
+		}	
+	})
+	
 };
 
 var setArtistPage = function (artist,image) {
@@ -343,32 +346,35 @@ var setArtistPage = function (artist,image) {
 	player_holder = artsplhld;
 	if (nav_artist_page.textContent == artist) {return true;}
 	nav_artist_page.innerHTML = artist;
-	var info	 = lastfm('artist.getInfo',{'artist': artist }).artist,
-		similars = info.similar.artist,
-		tags	 = info.tags.tag,
-		bio		 = info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm"),
-		image	 = image || info.image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-	artsName.text(artist);
-	artsImage.attr({'src': image ,'alt': artist});
-	artsBio.html(bio || '');
-	if (tags && tags.length) {
-		var tags_p = $("<p></p>").attr({ 'class': 'artist-tags', 'text' : 'Tags: '});
-		for (var i=0, l = tags.length; i < l; i++) {
-			var tag = tags[i],
-				arts_tag_node = $("<a></a>").attr({ text: tag.name, href: tag.url });
-			tags_p.append(arts_tag_node);
-		};
-		artsBio.append(tags_p);
-	}
-	if (similars && similars.length) {
-		var similars_p = $("<p></p>").attr({ 'class': 'artist-similar', 'text' : 'Similar artists: '});
-		for (var i=0, l = similars.length; i < l; i++) {
-			var similar = similars[i],
-				arts_similar_node = $("<a></a>").attr({ text: similar.name, href: similar.url, 'class' : 'artist' }).data('artist', similar.name );
-			similars_p.append(arts_similar_node);
-		};
-		artsBio.append(similars_p);
-	}
+	lfm('artist.getInfo',{'artist': artist },function(r){
+		var info	 = r.artist,
+			similars = info.similar.artist,
+			tags	 = info.tags.tag,
+			bio		 = info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm"),
+			image	 = image || info.image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+		artsName.text(artist);
+		artsImage.attr({'src': image ,'alt': artist});
+		artsBio.html(bio || '');
+		if (tags && tags.length) {
+			var tags_p = $("<p></p>").attr({ 'class': 'artist-tags', 'text' : 'Tags: '});
+			for (var i=0, l = tags.length; i < l; i++) {
+				var tag = tags[i],
+					arts_tag_node = $("<a></a>").attr({ text: tag.name, href: tag.url });
+				tags_p.append(arts_tag_node);
+			};
+			artsBio.append(tags_p);
+		}
+		if (similars && similars.length) {
+			var similars_p = $("<p></p>").attr({ 'class': 'artist-similar', 'text' : 'Similar artists: '});
+			for (var i=0, l = similars.length; i < l; i++) {
+				var similar = similars[i],
+					arts_similar_node = $("<a></a>").attr({ text: similar.name, href: similar.url, 'class' : 'artist' }).data('artist', similar.name );
+				similars_p.append(arts_similar_node);
+			};
+			artsBio.append(similars_p);
+		}
+	})
+
 	var traaaks = getTopTracks(artist);
 	if (traaaks) {
 		var music_nodes = prerenderPlaylist(traaaks,artsTracks);
@@ -379,47 +385,49 @@ var setArtistPage = function (artist,image) {
 	
 };
 var artistsearch = function(artist_query) {
-	
-	var artists = lastfm('artist.search',{artist: artist_query, limit: 10 }).results.artistmatches.artist || false; 
-	if (artists){
-		if (artists.length){
-			searchres.innerHTML = '';
-			var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
-			$(searchres).append(ul);
-			for (var i=0; i < artists.length; i++) {
-				var artist = artists[i].name,
-					image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-				
-				if (i === 0) {setArtistPage(artist,image);}
-				
-				var li = $("<li></li>").data('artist',artist);
-					li.data('img', image);
-				$(li).click(function(){
-					var artist = $(this).data('artist');
-					var image = $(this).data('img');
-					setArtistPage(artist,image);
-				});
-				var p = $("<p></p>").attr({ text: artist});
-				if(image){
-					var img = $("<img/>").attr({ src: image , alt: artist });
-					$(li).append(img);
+	lfm('artist.search',{artist: artist_query, limit: 10 },function(r){
+		var artists = r.results.artistmatches.artist || false; 
+		if (artists){
+			if (artists.length){
+				searchres.innerHTML = '';
+				var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
+				$(searchres).append(ul);
+				for (var i=0; i < artists.length; i++) {
+					var artist = artists[i].name,
+						image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+
+					if (i === 0) {setArtistPage(artist,image);}
+
+					var li = $("<li></li>").data('artist',artist);
+						li.data('img', image);
+					$(li).click(function(){
+						var artist = $(this).data('artist');
+						var image = $(this).data('img');
+						setArtistPage(artist,image);
+					});
+					var p = $("<p></p>").attr({ text: artist});
+					if(image){
+						var img = $("<img/>").attr({ src: image , alt: artist });
+						$(li).append(img);
+					} 
+
+					$(li).append(p);
+					$(ul).append(li);
 				} 
-				
-				$(li).append(p);
-				$(ul).append(li);
-			} 
-		} else if (artists.name) {
-			var artist = artists.name,
-				image = artists.image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-			setArtistPage(artist,image);
+			} else if (artists.name) {
+				var artist = artists.name,
+					image = artists.image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+				setArtistPage(artist,image);
+			}
+
+		} else {
+			searchres.innerHTML = '';
+			var p = $("<p></p>").attr({ text: 'Ничё нет'});
+			$(searchres).append(p);
+			slider.className = "screen-search";
 		}
-		
-	} else {
-		searchres.innerHTML = '';
-		var p = $("<p></p>").attr({ text: 'Ничё нет'});
-		$(searchres).append(p);
-		slider.className = "screen-search";
-	}
+	})
+	
 };
 
 
