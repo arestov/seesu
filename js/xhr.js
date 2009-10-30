@@ -334,7 +334,9 @@ var getTopTracks = function(artist) {
 			for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
 				playlist.push({'artist_name' : artist ,'track_title': tracks[i].name});
 			}
-			return playlist;
+			var music_nodes = prerenderPlaylist(playlist,artsTracks);
+			make_tracklist_playable(music_nodes);
+			log('2')
 
 		}	
 	})
@@ -375,11 +377,8 @@ var setArtistPage = function (artist,image) {
 		}
 	})
 
-	var traaaks = getTopTracks(artist);
-	if (traaaks) {
-		var music_nodes = prerenderPlaylist(traaaks,artsTracks);
-		make_tracklist_playable(music_nodes);
-	}
+	getTopTracks(artist);
+	log('1');
 	
 	
 	
