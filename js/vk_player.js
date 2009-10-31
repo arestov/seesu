@@ -11,7 +11,7 @@ var player_state = STOPPED,
     current_playlist,
 	want_to_play = 0,
 	wainter_for_play,
-	current_arstist = '',
+	current_artist = '',
 
     holy_vk_string = 
       '<embed width="342" height="14" ' + 
