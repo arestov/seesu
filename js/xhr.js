@@ -318,10 +318,8 @@ var getTopTracks = function(artist) {
 	})
 	
 };
-
-var setArtistPage = function (artist,image) {
-	slider.className = 'sreen-artist-page';
-	player_holder = artsplhld;
+var update_artist_info = function(artist,image){
+	
 	if (nav_artist_page.textContent == artist) {return true;}
 	nav_artist_page.innerHTML = artist;
 	lfm('artist.getInfo',{'artist': artist },function(r){
@@ -346,15 +344,25 @@ var setArtistPage = function (artist,image) {
 			var similars_p = $("<p></p>").attr({ 'class': 'artist-similar', 'text' : 'Similar artists: '});
 			for (var i=0, l = similars.length; i < l; i++) {
 				var similar = similars[i],
-					arts_similar_node = $("<a></a>").attr({ text: similar.name, href: similar.url, 'class' : 'artist' }).data('artist', similar.name );
+					arts_similar_node = $("<a></a>")
+					  .attr({ 
+						text: similar.name, 
+						href: similar.url, 
+						'class' : 'artist' 
+					  })
+					  .data('artist', similar.name );
 				similars_p.append(arts_similar_node);
 			};
 			artsBio.append(similars_p);
 		}
 	})
-
-	getTopTracks(artist);
+}
+var setArtistPage = function (artist,image) {
+	slider.className = 'sreen-artist-page';
+	player_holder = artsplhld;
 	
+	getTopTracks(artist);
+	update_artist_info(artist,image);
 	
 	
 };
