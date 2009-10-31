@@ -354,8 +354,8 @@ var show_artist_info = function(r){
 	}
 }
 var update_artist_info = function(artist){
-	if (current_arstist == artist) {return true;}
-	nav_artist_page.innerHTML = current_arstist = artist;
+	if (current_artist == artist) {return true;}
+	nav_artist_page.innerHTML = current_artist = artist;
 	
 	lfm('artist.getInfo',{'artist': artist }, show_artist_info)
 }
