@@ -32,76 +32,75 @@ $(function() {
 	  }
 	}
   });
-});
-
-window.addEventListener( 'load' , function(){
+  
+  
 	$('#close-widget').click(function(){
-		window.close();
+			window.close();
+		});
+		//see var at top
+	  slider = document.getElementById('slider');
+	  searchfield = document.getElementById('q');
+	  srnav = document.getElementById('search_result_nav');
+	  startlink = document.getElementById('start_search');
+	  searchres = document.getElementById('search_result');
+	  art_page_nav = document.getElementById('nav_artist_page');
+	  trk_page_nav = document.getElementById('nav_tracks_page');
+	  startlink.onclick = function(){
+		slider.className = "screen-start";
+	  };
+	  srnav.onclick = function(){
+		slider.className = "screen-search";
+	  };
+	
+		artsHolder	= $('#artist-holder');
+		artsImage	= $('img.artist-image',artsHolder);
+		artsBio		= $('.artist-bio',artsHolder);
+		artsTracks	= $('.tracks-for-play',artsHolder);
+		artsplhld	= $('.player-holder',artsHolder);
+		art_tracks_w_counter = $('.tracks-waiting-for-search',artsHolder)
+		artsName	= $('#artist-name');
+		
+		tracksHolder = $('#tracks-holder');
+		tracksTracks = $('.tracks-for-play', tracksHolder);
+		tracksName	 = $('#tracks-name');
+		trksplhld	 = $('.player-holder',tracksHolder);
+		
+	var flash_settings = $('.internet-flash-settings input');
+		
+	flash_settings.change(function(){
+		if($(this).attr('checked')) {
+			widget.setPreferenceForKey('true', 'flash_internet');
+			$(document.body).addClass('flash-internet');
+		} else {
+			widget.setPreferenceForKey(null, 'flash_internet');
+			$(document.body).removeClass('flash-internet');
+		}
 	});
-	//see var at top
-  slider = document.getElementById('slider');
-  searchfield = document.getElementById('q');
-  srnav = document.getElementById('search_result_nav');
-  startlink = document.getElementById('start_search');
-  searchres = document.getElementById('search_result');
-  art_page_nav = document.getElementById('nav_artist_page');
-  trk_page_nav = document.getElementById('nav_tracks_page');
-  startlink.onclick = function(){
-	slider.className = "screen-start";
-  };
-  srnav.onclick = function(){
-	slider.className = "screen-search";
-  };
-
-	artsHolder	= $('#artist-holder');
-	artsImage	= $('img.artist-image',artsHolder);
-	artsBio		= $('.artist-bio',artsHolder);
-	artsTracks	= $('.tracks-for-play',artsHolder);
-	artsplhld	= $('.player-holder',artsHolder);
-	art_tracks_w_counter = $('.tracks-waiting-for-search',artsHolder)
-	artsName	= $('#artist-name');
 	
-	tracksHolder = $('#tracks-holder');
-	tracksTracks = $('.tracks-for-play', tracksHolder);
-	tracksName	 = $('#tracks-name');
-	trksplhld	 = $('.player-holder',tracksHolder);
-	
-var flash_settings = $('.internet-flash-settings input');
-	
-flash_settings.change(function(){
-	if($(this).attr('checked')) {
-		widget.setPreferenceForKey('true', 'flash_internet');
+	if (widget.preferenceForKey('flash_internet')) {
 		$(document.body).addClass('flash-internet');
-	} else {
-		widget.setPreferenceForKey(null, 'flash_internet');
-		$(document.body).removeClass('flash-internet');
+		flash_settings.attr('checked', 'checked');
 	}
-});
-
-if (widget.preferenceForKey('flash_internet')) {
-	$(document.body).addClass('flash-internet');
-	flash_settings.attr('checked', 'checked');
-}
-
-
-
-$('.vk-auth').submit(function(){
-	var _this = $(this);
-	var email = $('input.vk-email',_this).val();
-	var pass = $('input.vk-pass',_this).val();
-	vk_login(email,pass);
-	return false;
-});
-
-  if (widget.preferenceForKey('vkid')) {
-	$(document.body).addClass('vk-logged-in');
-	vk_logged_in = true;
-  } else{
-	log('not loggin in');
-  }
-
-
-
+	
+	
+	
+	$('.vk-auth').submit(function(){
+		var _this = $(this);
+		var email = $('input.vk-email',_this).val();
+		var pass = $('input.vk-pass',_this).val();
+		vk_login(email,pass);
+		return false;
+	});
+	
+	  if (widget.preferenceForKey('vkid')) {
+		$(document.body).addClass('vk-logged-in');
+		vk_logged_in = true;
+	  } else{
+		log('not loggin in');
+	  }
+	
+	
+	
 	$('#search-artist').click(function(){
 		var query = searchfield.value;
 		if (query) {
@@ -121,60 +120,57 @@ $('.vk-auth').submit(function(){
 		}
 		
 	});
-
-}, false);
-
-window.addEventListener( 'load' , function(){
-var lfm_auth = {};	
+	var lfm_auth = {};	
 	
-var l = $('#lastfm');
-lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;
-
-var get_lfm_token = function(lfm_auth,callback){
-	lfm('auth.getToken',false,function(r){
-		lfm_auth.newtoken = r.token;
-		log(lfm_auth.newtoken);
-		if (callback) {callback(lfm_auth.newtoken);}
-	})
-}
-
-if (lfm_auth.sk) {
-	l.addClass('lastfm-ready');
-} else {
-	get_lfm_token(lfm_auth)
-}
-
-
-
-$('#login-lastfm-button').click(function(){
-	var open_lfm_to_login = function(token){
-		widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
-		l.addClass('lastfm-auth-finish');
-	};
+	var l = $('#lastfm');
+	lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;
 	
-	if (lfm_auth.newtoken) {
-		open_lfm_to_login(lfm_auth.newtoken);
-	} else {
-		get_lfm_token(lfm_auth,open_lfm_to_login);
+	var get_lfm_token = function(lfm_auth,callback){
+		lfm('auth.getToken',false,function(r){
+			lfm_auth.newtoken = r.token;
+			log(lfm_auth.newtoken);
+			if (callback) {callback(lfm_auth.newtoken);}
+		})
 	}
 	
-	return false
-})
-$('#login-lastfm-finish').click(function(){
-	lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
-		if (!r.error) {
-			lfm_auth.sk = r.session.key;
-			(l.addClass('lastfm-ready'));
-			log(lfm_auth.sk);
-			widget.setPreferenceForKey(lfm_auth.sk, 'lfmsk');	
-		}
-	});
-	return false
+	if (lfm_auth.sk) {
+		l.addClass('lastfm-ready');
+	} else {
+		get_lfm_token(lfm_auth)
+	}
 	
-})
-$('#lastfm-scroble').click(function(){
-	lfm('user.getRecommendedArtists',{sk: lfm_auth.sk })
-	return false
-})
+	
+	
+	$('#login-lastfm-button').click(function(){
+		var open_lfm_to_login = function(token){
+			widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
+			l.addClass('lastfm-auth-finish');
+		};
+		
+		if (lfm_auth.newtoken) {
+			open_lfm_to_login(lfm_auth.newtoken);
+		} else {
+			get_lfm_token(lfm_auth,open_lfm_to_login);
+		}
+		
+		return false
+	})
+	$('#login-lastfm-finish').click(function(){
+		lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+			if (!r.error) {
+				lfm_auth.sk = r.session.key;
+				(l.addClass('lastfm-ready'));
+				log(lfm_auth.sk);
+				widget.setPreferenceForKey(lfm_auth.sk, 'lfmsk');	
+			}
+		});
+		return false
+		
+	})
+	$('#lastfm-scroble').click(function(){
+		lfm('user.getRecommendedArtists',{sk: lfm_auth.sk })
+		return false
+	})
 
-}, false);
+
+});
