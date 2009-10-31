@@ -70,10 +70,15 @@ function create_player(song_url) {
 
 function set_current_song(node) {
   song_url = node.attr('href');
-
+  var artist = node.data('artist_name');
+  if (artist) {update_artist_info(artist);}
+  
+  
   if(current_song) current_song.removeClass('active-play');
   create_player(song_url);
   current_song = node.addClass('active-play');
+  
+  
 }
 
 // Player actions

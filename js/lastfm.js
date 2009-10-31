@@ -30,17 +30,15 @@ var lfm = function(method,params,callback) {
 			params_full.api_sig = hex_md5(paramsstr += s);
 		}
 		
-		
 		$.ajax({
 		  url: api,
 		  global: false,
 		  type: "GET",
 		  dataType: "json",
 		  data: params_full,
-		  error: function(){
+		  error: function(r){
 		  },
 		  success: function(r){
-			//log(JSON.stringify(r));
 			if (callback) {callback(r);}
 		  }
 		});
