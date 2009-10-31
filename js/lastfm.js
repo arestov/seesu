@@ -40,7 +40,7 @@ var lfm = function(method,params,callback) {
 		  error: function(){
 		  },
 		  success: function(r){
-			log(JSON.stringify(r));
+			//log(JSON.stringify(r));
 			if (callback) {callback(r);}
 		  }
 		});

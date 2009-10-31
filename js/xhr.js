@@ -7,13 +7,11 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
 	},
 	vk_logged_in,
 	wait_for_vklogin = {},
-	//referers = ['http://vk.com/reg198193','http://vk.com/reg1114384','http://vk.com/reg37829378','http://vk.com/reg668467'],
-	vkReferer = '';//referers[Math.floor(Math.random()*4)];
+	vkReferer = '';
 
-var updatex = new XMLHttpRequest ();
-updatex.onreadystatechange = function(){
-  if (this.readyState == 4) {
-	var r = JSON.parse(updatex.responseText);
+
+
+var updating_notify = function(r){
 	var cver = r.latest_version.number;
 	if (cver > seesu.version) {
 		var message = 
@@ -25,28 +23,28 @@ updatex.onreadystatechange = function(){
 				widget.openURL(link);
 			});
 		}
+		
 
 	}
-	
+	log(cver);
 	vkReferer = r.vk_referer;
-	
-	log(vkReferer);	
-	log(updatex.responseText);
-  }
-};
-updatex.open('POST', 'http://seesu.heroku.com/update');
-updatex.xhrparams = 
-  'hash=' + hex_md5(widget.identifier) + '&' +
-  'version=' + seesu.version + '&' +
-  'demension_x=' + widget.preferenceForKey('width') + '&' + 
-  'demension_y=' + widget.preferenceForKey('height');
-  
-log(updatex.xhrparams);
-
-updatex.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-updatex.send(updatex.xhrparams);
-
-
+	log(vkReferer);
+}
+$.ajax({
+  url: 'http://seesu.heroku.com/update',
+  global: false,
+  type: "POST",
+  dataType: "json",
+  data: {
+  	'hash': hex_md5(widget.identifier),
+  	'version': seesu.version,
+  	'demension_x': widget.preferenceForKey('width'),
+  	'demension_y': widget.preferenceForKey('height')
+  },
+  error: function(){
+  },
+  success: updating_notify
+});
 
 
 
