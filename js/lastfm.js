@@ -51,11 +51,6 @@ var lfm_auth = {};
 	
 var l = $('#lastfm');
 lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;
-if (lfm_auth.sk) {
-	l.addClass('lastfm-ready');
-} else {
-	get_lfm_token(lfm_auth)
-}
 
 var get_lfm_token = function(lfm_auth,callback){
 	lfm('auth.getToken',false,function(r){
@@ -64,6 +59,14 @@ var get_lfm_token = function(lfm_auth,callback){
 		if (callback) {callback(lfm_auth.newtoken);}
 	})
 }
+
+if (lfm_auth.sk) {
+	l.addClass('lastfm-ready');
+} else {
+	get_lfm_token(lfm_auth)
+}
+
+
 
 $('#login-lastfm-button').click(function(){
 	var open_lfm_to_login = function(token){
