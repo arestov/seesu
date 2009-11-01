@@ -311,7 +311,22 @@ var vk_track_search = function(query){
 	}
 }
 
-var getTopTracks = function(artist,callback) {
+var get_artists_tracks = function(artists,callback){
+	var artists_track_list = [];
+	for (var i=0, l = artists.length; i < l; i++) {
+		getTopTracks(artists[i], function(track_list, params_obj){
+			var random_track_num = Math.floor(Math.random()*track_list.length);
+			params_obj.artists_track_list.push(track_list[random_track_num]);
+			//log(JSON.stringify(params_obj.artists_track_list))
+			if (params_obj.finish) {
+				log(JSON.stringify(params_obj.artists_track_list))
+			}
+			
+		}, {artists_track_list: artists_track_list, finish: (i+1 == l)} );
+	};
+}
+
+var getTopTracks = function(artist,callback,callback_params_obj) {
 	lfm('artist.getTopTracks',{'artist': artist },function(r){
 		var tracks = r.toptracks.track || false;
 		if (tracks) {
@@ -319,10 +334,9 @@ var getTopTracks = function(artist,callback) {
 			for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
 				track_list.push({'artist_name' : artist ,'track_title': tracks[i].name});
 			}
-			if (callback) {callback(track_list);}
+			if (callback) {callback(track_list,callback_params_obj);}
 		}	
-	})
-	
+	});
 };
 var show_artist_info = function(r){
 	var info	 = r.artist,
