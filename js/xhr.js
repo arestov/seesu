@@ -303,16 +303,15 @@ var vk_track_search = function(query){
 	}
 }
 
-var getTopTracks = function(artist) {
+var getTopTracks = function(artist,callback) {
 	lfm('artist.getTopTracks',{'artist': artist },function(r){
 		var tracks = r.toptracks.track || false;
 		if (tracks) {
-			var playlist = [];
+			var track_list = [];
 			for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
-				playlist.push({'artist_name' : artist ,'track_title': tracks[i].name});
+				track_list.push({'artist_name' : artist ,'track_title': tracks[i].name});
 			}
-			var music_nodes = prerenderPlaylist(playlist,artsTracks);
-			make_tracklist_playable(music_nodes);
+			if (callback) {callback(track_list);}
 
 		}	
 	})
@@ -363,7 +362,10 @@ var setArtistPage = function (artist) {
 	slider.className = 'sreen-artist-page';
 	player_holder = artsplhld;
 	
-	getTopTracks(artist);
+	getTopTracks(artist,function(track_list){
+		var music_nodes = prerenderPlaylist(track_list,artsTracks);
+		make_tracklist_playable(music_nodes);
+	});
 	update_artist_info(artist);
 	
 	
