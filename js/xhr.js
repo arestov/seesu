@@ -281,7 +281,15 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 		$(ul).append(li);		
 		linkNodes.push(track);
 	}
-	(container && container.html('').append(ul)) || ($(searchres).html('').append(ul) && mp3links && (slider.className = 'screen-search'));
+	if (container) {
+		container.html('').append(ul);
+	} else{
+		$(searchres).html('').append(ul);
+		
+		if (mp3links) {
+			(slider.className = 'screen-search')
+		}
+	}
 	return linkNodes;
 	
 };
@@ -312,7 +320,6 @@ var getTopTracks = function(artist,callback) {
 				track_list.push({'artist_name' : artist ,'track_title': tracks[i].name});
 			}
 			if (callback) {callback(track_list);}
-
 		}	
 	})
 	
