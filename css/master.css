@@ -349,11 +349,12 @@ p.internet-flash-settings{
 	margin-top:0;
 	}
 	.artist-similar a{
-		text-decoration:none;
-		border-bottom:1px dashed #6672A3;
 		margin-right:8px;
 	}
-	.bbcode_artist{
+	.bbcode_artist,
+	.music-tag,
+	.artist-similar a
+	{
 		text-decoration:none;
 		border-bottom:1px dashed #6672A3;
 	}

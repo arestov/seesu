@@ -313,6 +313,9 @@ var vk_track_search = function(query){
 
 var render_tacks_by_artists_of_tag = function(tag){
 	get_artists_by_tag(tag,proxy_render_artists_tracks);
+	$(nav_artist_page).text(tag);
+	slider.className = 'sreen-artist-page';
+	player_holder = artsplhld;
 }
 
 var get_artists_by_tag = function(tag,callback){
@@ -370,14 +373,19 @@ var show_artist_info = function(r){
 		tags	 = info.tags.tag,
 		bio		 = info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm"),
 		image	 = info.image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-	artsName.text(artist);
 	artsImage.attr({'src': image ,'alt': artist});
 	artsBio.html(bio || '');
 	if (tags && tags.length) {
 		var tags_p = $("<p></p>").attr({ 'class': 'artist-tags', 'text' : 'Tags: '});
 		for (var i=0, l = tags.length; i < l; i++) {
 			var tag = tags[i],
-				arts_tag_node = $("<a></a>").attr({ text: tag.name, href: tag.url });
+				arts_tag_node = $("<a></a>")
+				  .attr({ 
+					text: tag.name, 
+					href: tag.url,
+					'class': 'music-tag'
+				  })
+				  .data('music_tag', tag.name);
 			tags_p.append(arts_tag_node);
 		};
 		artsBio.append(tags_p);
@@ -400,7 +408,7 @@ var show_artist_info = function(r){
 }
 var update_artist_info = function(artist){
 	if (current_artist == artist) {return true;}
-	nav_artist_page.innerHTML = current_artist = artist;
+	artsName.text(current_artist = artist);
 	
 	lfm('artist.getInfo',{'artist': artist }, show_artist_info)
 }
