@@ -291,7 +291,9 @@ var render_playlist = function(playlist,container,mp3links) { // if links presen
 			(slider.className = 'screen-search')
 		}
 	}
-	make_tracklist_playable(linkNodes);
+	if (!mp3links){
+		make_tracklist_playable(linkNodes);	
+	}
 	return true
 };
 var vk_track_search = function(query){
