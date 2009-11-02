@@ -135,10 +135,8 @@ $(function() {
 		}
 		
 	});
-	var lfm_auth = {};	
 	
 	var l = $('#lastfm');
-	lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;
 	
 	var get_lfm_token = function(lfm_auth,callback){
 		lfm('auth.getToken',false,function(r){
@@ -181,10 +179,6 @@ $(function() {
 		});
 		return false
 		
-	})
-	$('#lastfm-scroble').click(function(){
-		lfm('user.getRecommendedArtists',{sk: lfm_auth.sk })
-		return false
 	})
 
 

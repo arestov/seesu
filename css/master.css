@@ -150,6 +150,11 @@ body{
 	font-size:12px;
 	font-family:Helvetica , Arial ,sans-serif;
 	}
+	.lfm-auth{
+		display:none;
+	}
+	
+	
 	#slider{
 		padding:10px 0 0;
 		}
@@ -209,7 +214,6 @@ body{
 			.lfm-start{
 			}
 			#slider .lfm-start{
-				display:none;
 			}
  
 			#slider.screen-start .nav-start{
@@ -230,26 +234,6 @@ body{
 			#slider.sreen-tracks-page .nav-tracks-page{
 				display:inline;
 			}
-			
-			.lfm{
-				
-				}
-				.lfm
-				a{
-					display:none;
-					}	
-				.lfm.lfm-auth-start
-				#login-lfm-button {
-					display:inline;
-					}	
-				.lfm.lfm-auth-finish
-				#login-lfm-finish{
-					display:inline;
-					}
-				.lfm.lfm-ready
-				#lfm-scroble{
-					display:inline;
-					}
 		.window-bottom{
 			height:20px;
 			text-align:right;

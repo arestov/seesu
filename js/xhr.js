@@ -7,8 +7,9 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
 	},
 	vk_logged_in,
 	wait_for_vklogin = {},
-	vkReferer = '';
-
+	vkReferer = '',
+	lfm_auth = {};
+lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;
 
 
 var updating_notify = function(r){
