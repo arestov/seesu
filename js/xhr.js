@@ -259,7 +259,7 @@ var make_node_playable = function(node,http_link,playlist_nodes_for){
 	playable_node.parent().append(mp3);
 };
 
-var prerenderPlaylist = function(playlist,container,mp3links) { // if links present than do full rendering! yearh!
+var render_playlist = function(playlist,container,mp3links) { // if links present than do full rendering! yearh!
 	var linkNodes = [];
 	var songNodes = [];
 
@@ -290,8 +290,8 @@ var prerenderPlaylist = function(playlist,container,mp3links) { // if links pres
 			(slider.className = 'screen-search')
 		}
 	}
-	return linkNodes;
-	
+	make_tracklist_playable(linkNodes);
+	return true
 };
 var vk_track_search = function(query){
 	art_page_nav.innerHTML = query;
@@ -303,7 +303,7 @@ var vk_track_search = function(query){
 	var musicObj = getMusic(query);
 	if (musicObj) {
 		
-		prerenderPlaylist(musicObj.playlist,artsTracks,musicObj.links);
+		render_playlist(musicObj.playlist,artsTracks,musicObj.links);
 	} else {
 		wait_for_vklogin = function(){
 			_this.click();
@@ -311,19 +311,44 @@ var vk_track_search = function(query){
 	}
 }
 
-var get_artists_tracks = function(artists,callback){
+var render_tacks_by_artists_of_tag = function(tag){
+	get_artists_by_tag(tag,proxy_render_artists_tracks);
+}
+
+var get_artists_by_tag = function(tag,callback){
+	lfm('tag.getTopArtists',{'tag':tag},function(r){
+		var artists = r.topartists.artist;
+		if (artists && artists.length) {
+			var artist_list = [];
+			for (var i=0, l = (artists.length < 15) ? artists.length : 15; i < l; i++) {
+				artist_list.push(artists[i].name)
+			};
+			if (callback) {callback(artist_list);}
+		}
+	})
+	return true
+}
+var proxy_render_artists_tracks = function(artist_list){
+	get_tracks_by_artists(artist_list,function(artists_track_list){
+		render_playlist(artists_track_list,artsTracks);
+	})
+}
+
+var get_tracks_by_artists = function(artists,callback){
 	var artists_track_list = [];
 	for (var i=0, l = artists.length; i < l; i++) {
 		getTopTracks(artists[i], function(track_list, params_obj){
 			var random_track_num = Math.floor(Math.random()*track_list.length);
 			params_obj.artists_track_list.push(track_list[random_track_num]);
-			//log(JSON.stringify(params_obj.artists_track_list))
+		
 			if (params_obj.finish) {
-				log(JSON.stringify(params_obj.artists_track_list))
+				log(JSON.stringify(params_obj.artists_track_list));
+				if (callback) {callback(params_obj.artists_track_list);}
 			}
 			
 		}, {artists_track_list: artists_track_list, finish: (i+1 == l)} );
 	};
+	
 }
 
 var getTopTracks = function(artist,callback,callback_params_obj) {
@@ -384,8 +409,7 @@ var setArtistPage = function (artist) {
 	player_holder = artsplhld;
 	
 	getTopTracks(artist,function(track_list){
-		var music_nodes = prerenderPlaylist(track_list,artsTracks);
-		make_tracklist_playable(music_nodes);
+		render_playlist(track_list,artsTracks);
 	});
 	update_artist_info(artist);
 	
