@@ -45,8 +45,9 @@ $(function() {
   
   
 	$('#close-widget').click(function(){
-			window.close();
-		});
+		window.close();
+	});
+	
 		//see var at top
 	  slider = document.getElementById('slider');
 	  searchfield = document.getElementById('q');
@@ -180,6 +181,10 @@ $(function() {
 		return false
 		
 	})
-
+	$('#lfm-recomm').click(function(){
+	//	if(!lfm_auth.sk){
+			$(document.body).addClass('lfm-auth-req-recomm');
+	//	}
+	})
 
 });

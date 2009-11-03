@@ -152,9 +152,25 @@ body{
 	}
 	.lfm-auth{
 		display:none;
+		padding-left:20px;
+		padding-bottom:10px;
 	}
-	
-	
+	.lfm-auth-req-recomm
+	.lfm-recomm
+	.lfm-auth{
+		display:block;
+	}
+	.lfm-auth-req-love
+	.lfm-love
+	.lfm-auth{
+		display:block;
+	}
+	.lfm-auth-done
+	#slider
+	.lfm-start
+	.lfm-auth{
+		display:none;
+	}
 	#slider{
 		padding:10px 0 0;
 		}
@@ -200,7 +216,12 @@ body{
 			#slider.screen-search .start{
 				display:block;
 				}
-				
+			.lfm-start{
+				display:none;
+			}
+			#slider.screen-start .start .lfm-start{
+				display:block;
+			}
 			#slider.sreen-tracks-page .tracks-page{
 				display:block;
 			}

@@ -28,22 +28,21 @@
 		<div class="screens" id="screens">
 			<div class="start screen">
 				<div class="lfm-start">
-					<p class="lfm-recomm">
-						<a href="#rec">Рекоммендации</a>
+					<div class="lfm-recomm">
+						<p><a href="#rec" id="lfm-recomm">Рекоммендации</a></p>
+						<div class="lfm-auth">
+							<p>To get your music recommendations you need to <a id="login-lastfm-button" href="#">grant Seesu your account access</a></p>
+							<p><label><input type='checkbox'  name='hi' value='hmmm' /> I've granted my account access to Seesu</label>, so <button disable="disable" type="button" value='Next' id="login-lastfm-finish-recomm">give me recommendations</button></p>
+						</div>
+					</div>
+					<div class="lfm-love">
+						<p><a href="#lov" id="lfm-loved">Любимые треки</a></p>
 						<div class="lfm-auth">
 							<p>To get your music recommendations you need to grant Seesu your account access</p>
 							<p><a id="login-lastfm-button" href="#">Give access on last.fm</a></p>
 							<p><a id="login-lastfm-finish" href="#">I've granted my account access to Seesu</a></p>
 						</div>
-					</p>
-					<p class="lfm-love">
-						<a href="#lov">Любимые треки</a>
-						<div class="lfm-auth">
-							<p>To get your music recommendations you need to grant Seesu your account access</p>
-							<p><a id="login-lastfm-button" href="#">Give access on last.fm</a></p>
-							<p><a id="login-lastfm-finish" href="#">I've granted my account access to Seesu</a></p>
-						</div>
-					</p>
+					</div>
 				</div>
 				<div class="search-start">
 					<h3>Music search</h3>
