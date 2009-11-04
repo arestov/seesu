@@ -2,7 +2,7 @@
 <widget network="public" transparent="false">
   <widgetname>Seesu</widgetname>
   <description>Get music you like from last.fm and play it with vk.com</description>
-  <width>440</width>
+  <width>640</width>
   <height>600</height>
   <icon>i/favicon_seesu.png</icon>
   <author>
