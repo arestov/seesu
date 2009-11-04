@@ -99,7 +99,7 @@ a[href]{color:#376795;}
 a[href]:hover{color:#6E9CC9;}
 a.song{
 	text-decoration:none;
-	border-bottom:1px solid #DEC987;
+	border-bottom:1px dashed #DEC987;
 	padding:3px 1px 0px;
 	color:#000;
 	}
@@ -118,7 +118,7 @@ a.waiting-full-render{
 	cursor:pointer;
 }
 a.waiting-full-render.marked-for-play{
-	border-bottom:1px solid #86c9dc;
+	border-bottom:1px dotted #86c9dc;
 }
 a.download-mp3{
 	text-decoration:none;
