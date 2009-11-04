@@ -314,7 +314,7 @@ var vk_track_search = function(query){
 	}
 }
 
-var render_tacks_by_artists_of_tag = function(tag){
+var render_tracks_by_artists_of_tag = function(tag){
 	get_artists_by_tag(tag,proxy_render_artists_tracks);
 	$(nav_artist_page).text(tag);
 	slider.className = 'sreen-artist-page';

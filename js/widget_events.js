@@ -27,7 +27,7 @@ $(function() {
 	  }
 	  else if(clicked_node.is('.music-tag')){
 		tag_name = decodeURIComponent(clicked_node.data('music_tag'));
-		render_tacks_by_artists_of_tag(tag_name);
+		render_tracks_by_artists_of_tag(tag_name);
 		return false;
 	  }
 	  else if(clicked_node.is('.bbcode_artist')){
@@ -37,7 +37,7 @@ $(function() {
 	  }
 	  else if(clicked_node.is('.bbcode_tag')){
 		tag_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/tag/',''));
-	    render_tacks_by_artists_of_tag(tag_name);
+	    render_tracks_by_artists_of_tag(tag_name);
 		return false;
 	  }
 	}
@@ -124,7 +124,7 @@ $(function() {
 		var _this = $(this);
 		var query = searchfield.value;
 		if (query) {
-			render_tacks_by_artists_of_tag(query)
+			render_tracks_by_artists_of_tag(query);
 		}
 		
 	});
