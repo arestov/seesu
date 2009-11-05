@@ -31,16 +31,26 @@
 					<div class="lfm-recomm">
 						<p><a href="#rec" id="lfm-recomm">Рекоммендации</a></p>
 						<div class="lfm-auth">
-							<p>To get your music recommendations you need to <a id="login-lastfm-button" href="#">grant Seesu your account access</a></p>
-							<p><label><input type='checkbox'  name='hi' value='hmmm' /> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-recomm">give me recommendations</button></p>
+							<p>To get your music recommendations you need to <a class="login-lastfm-button" href="#">grant Seesu your account access</a></p>
+							<form>
+								<label><input type='checkbox'  id="login-lastfm-finish-recomm-check"/> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-recomm">give me recommendations</button>
+							</form>
 						</div>
 					</div>
-					<div class="lfm-love">
+					<div class="lfm-loved">
 						<p><a href="#lov" id="lfm-loved">Любимые треки</a></p>
 						<div class="lfm-auth">
-							<p>To get your music recommendations you need to grant Seesu your account access</p>
-							<p><a id="login-lastfm-button" href="#">Give access on last.fm</a></p>
-							<p><a id="login-lastfm-finish" href="#">I've granted my account access to Seesu</a></p>
+							<p>To get your favorite tracks you need to <a class="login-lastfm-button" href="#">grant Seesu your account access</a></p>
+							<form>
+								<p>
+									<label><input type='checkbox'  id="login-lastfm-finish-loved-check"/> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-loved">give me loved tracks</button>
+								</p>
+							</form>
+							<form>
+								<p>or type in username</p>
+								<p><input type="text" name="" value="YodaPunk" id=""> <button>ok</button></p>
+								<p> (you can type your friend)</p>
+							</form>
 						</div>
 					</div>
 				</div>

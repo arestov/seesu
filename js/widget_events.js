@@ -155,7 +155,7 @@ $(function() {
 	
 	
 	
-	$('#login-lastfm-button').click(function(){
+	$('.login-lastfm-button').click(function(){
 		var open_lfm_to_login = function(token){
 			widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
 			l.addClass('lastfm-auth-finish');
@@ -169,6 +169,35 @@ $(function() {
 		
 		return false
 	})
+	
+	var lfm_fin_recomm_check = $('#login-lastfm-finish-recomm-check'),
+		lfm_fin_recomm		 = $('#login-lastfm-finish-recomm');
+	lfm_fin_recomm_check.change(function(){
+		if ($(this).attr('checked')) {
+			lfm_fin_recomm.attr('disabled', null);
+		} else {
+			lfm_fin_recomm.attr('disabled', 'disabled');
+		}
+	});
+	lfm_fin_recomm.click(function(){
+		if(lfm_fin_recomm_check.attr('checked')){
+			lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+				if (!r.error) {
+					log(JSON.stringify(r));
+					lfm_auth.sk = r.session.key;
+					(l.addClass('lastfm-ready'));
+					log(lfm_auth.sk);
+					lfm_auth.user_name = r.session.name;
+					widget.setPreferenceForKey(lfm_auth.user_name, 'lfm_user_name');
+					widget.setPreferenceForKey(lfm_auth.sk, 'lfmsk');
+					render_recommendations();
+					$(document.body).addClass('lfm-auth-done');
+					
+				}
+			});
+			return false
+		}
+	});
 	$('#login-lastfm-finish').click(function(){
 		lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
 			if (!r.error) {
@@ -179,12 +208,20 @@ $(function() {
 			}
 		});
 		return false
-		
 	})
 	$('#lfm-recomm').click(function(){
-	//	if(!lfm_auth.sk){
+		if(!lfm_auth.sk){
 			$(document.body).addClass('lfm-auth-req-recomm');
-	//	}
+		}else {
+			render_recommendations();
+		}
+	})
+	$('#lfm-loved').click(function(){
+		if(!lfm_auth.sk){
+			$(document.body).addClass('lfm-auth-req-loved');
+		}else {
+			render_recommendations();
+		}
 	})
 
 });
