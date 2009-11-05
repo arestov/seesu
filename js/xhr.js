@@ -428,7 +428,10 @@ var show_artist_info = function(r){
 		artsBio.append(tags_p);
 	}
 	if (similars && similars.length) {
-		var similars_p = $("<p></p>").attr({ 'class': 'artist-similar', 'text' : 'Similar artists: '});
+		var similars_p = $("<p></p>").attr({ 'class': 'artist-similar'}),
+			artist_list = [],
+			similars_a = $('<a></a>').attr({'text' : 'Similar artists: ', 'class': 'artist-list'}).data('artist_list',artist_list);;
+		similars_p.append(similars_a);	
 		for (var i=0, l = similars.length; i < l; i++) {
 			var similar = similars[i],
 				arts_similar_node = $("<a></a>")
@@ -438,25 +441,31 @@ var show_artist_info = function(r){
 					'class' : 'artist' 
 				  })
 				  .data('artist', similar.name );
+			artist_list.push(similar.name);
 			similars_p.append(arts_similar_node);
 		};
 		artsBio.append(similars_p);
 	}
 }
-var update_artist_info = function(artist){
-	if (current_artist == artist) {return true;}
-	artsName.text(current_artist = artist);
-	
+var update_artist_info = function(artist,nav){
+	if ((current_artist == artist) && (nav != true)) {
+		return true;
+	} else {
+		if (!nav) {slider.className = 'sreen-artist-page'};
+		artsName.text(current_artist = artist);
+	}
 	lfm('artist.getInfo',{'artist': artist }, show_artist_info)
 }
-var setArtistPage = function (artist) {
-	slider.className = 'sreen-artist-page';
+var setArtistPage = function (artist,with_search_results) {
+	if (with_search_results) {
+		slider.className = 'sreen-artist-page-with-results';
+		$(art_page_nav).text(artist);
+	}
 	player_holder = artsplhld;
-	
 	getTopTracks(artist,function(track_list){
 		render_playlist(track_list,artsTracks);
 	});
-	update_artist_info(artist);
+	update_artist_info(artist, with_search_results ? true : false);
 	
 	
 };
@@ -471,14 +480,14 @@ var show_artists_results = function(r){
 				var artist = artists[i].name,
 					image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 
-				if (i === 0) {setArtistPage(artist,image);}
+				if (i === 0) {setArtistPage(artist,true);}
 
 				var li = $("<li></li>").data('artist',artist);
 					li.data('img', image);
 				$(li).click(function(){
 					var artist = $(this).data('artist');
 					var image = $(this).data('img');
-					setArtistPage(artist,image);
+					setArtistPage(artist);
 				});
 				var p = $("<p></p>").attr({ text: artist});
 				if(image){
