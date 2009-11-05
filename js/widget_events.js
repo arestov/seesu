@@ -220,7 +220,7 @@ $(function() {
 		if(!lfm_auth.sk){
 			$(document.body).addClass('lfm-auth-req-loved');
 		}else {
-			render_recommendations();
+			render_loved();
 		}
 	})
 
