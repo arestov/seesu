@@ -95,8 +95,8 @@
 	}
 ul{list-style:none;padding:0;margin-top:0;}
 a{color:#6672A3;}
-a[href]{color:#376795;}
-a[href]:hover{color:#6E9CC9;}
+a[href],a.artist-list{color:#376795;}
+a[href]:hover,a.artist-list:hover{color:#6E9CC9;}
 a.song{
 	text-decoration:none;
 	border-bottom:1px dashed #DEC987;
@@ -367,17 +367,17 @@ p.internet-flash-settings{
 .artist-bio{
 	margin-top:0;
 	}
-	.artist-similar a{
+	.artist-similar a.artist{
 		margin-right:8px;
 	}
 	.bbcode_artist,
 	.music-tag,
-	.artist-similar a
-	{
+	.artist-similar a,
+	.artist-list{
 		text-decoration:none;
 		border-bottom:1px dashed #6672A3;
 	}
-	.artist-tags a{
+	.artist-tags a.music-tag{
 		margin-right:6px;
 		}
 .vk-logged-in
