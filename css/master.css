@@ -382,7 +382,9 @@ p.internet-flash-settings{
 	.bbcode_artist,
 	.music-tag,
 	.artist-similar a,
-	.artist-list{
+	.artist-list,
+	#lfm-recomm,
+	#lfm-loved{
 		text-decoration:none;
 		border-bottom:1px dashed #6672A3;
 	}
