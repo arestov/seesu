@@ -212,14 +212,14 @@ $(function() {
 		}
 	})
 	$('#lfm-recomm').click(function(){
-		if(lfm_auth.sk){
+		if(!lfm_auth.sk){
 			$(document.body).toggleClass('lfm-auth-req-recomm');
 		}else {
 			render_recommendations();
 		}
 	})
 	$('#lfm-loved').click(function(){
-		if(lfm_auth.sk){
+		if(!lfm_auth.sk){
 			$(document.body).toggleClass('lfm-auth-req-loved');
 		}else {
 			render_loved();
