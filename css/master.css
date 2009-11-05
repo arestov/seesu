@@ -95,7 +95,7 @@
 	}
 ul{list-style:none;padding:0;margin-top:0;}
 a{color:#6672A3;}
-a[href],a.artist-list{color:#376795;}
+a[href],a.artist-list{color:#376795;cursor:pointer;}
 a[href]:hover,a.artist-list:hover{color:#6E9CC9;}
 a.song{
 	text-decoration:none;
@@ -156,14 +156,23 @@ body{
 		padding-bottom:10px;
 		}
 		.lfm-auth
+		.lfm-finish{
+			opacity:0.3;
+		}
+		.lfm-waiting-for-finish
+		.lfm-auth
+		.lfm-finish{
+			opacity:1;
+		}
+		.lfm-auth
 		p{
 			margin:0.3em 0;
 			}
 		.lfm-auth
 		form{
 			margin-right:20px;
-			margin-bottom:1em;
-			padding-bottom:0.5em;
+			margin-bottom:2.5em;
+			padding-bottom:1em;
 			border-bottom:1px solid #eee;
 			}
 	.lfm-auth-req-recomm

@@ -11,7 +11,13 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
 	lfm_auth = {};
 lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;
 lfm_auth.user_name = widget.preferenceForKey('lfm_user_name') || false;
-
+lfm_auth.login = function(r){
+	lfm_auth.sk = r.session.key;
+	lfm_auth.user_name = r.session.name;
+	widget.setPreferenceForKey(lfm_auth.user_name, 'lfm_user_name');
+	widget.setPreferenceForKey(lfm_auth.sk, 'lfmsk');
+	$(document.body).addClass('lfm-auth-done');
+}
 
 var updating_notify = function(r){
 	var cver = r.latest_version.number;
@@ -315,7 +321,7 @@ var vk_track_search = function(query){
 	}
 }
 var render_loved = function(user_name){
-	lfm('user.getLovedTracks',{sk: lfm_auth.sk, user: (user_name || lfm_auth.user_name), limit: 15},function(r){
+	lfm('user.getLovedTracks',{user: (user_name || lfm_auth.user_name), limit: 15},function(r){
 		
 		var tracks = r.lovedtracks.track || false;
 		if (tracks) {
@@ -330,6 +336,29 @@ var render_loved = function(user_name){
 		
 	});
 	$(nav_artist_page).text('Loved Tracks');
+	slider.className = 'sreen-artist-page';
+	player_holder = artsplhld;
+}
+var render_recommendations_by_username = function(username){
+	$.ajax({
+		url: 'http://ws.audioscrobbler.com/1.0/user/' + username + '/systemrecs.rss',
+		  global: false,
+		  type: "GET",
+		  dataType: "xml",
+		  error: function(xml){
+		  },
+		  success: function(xml){
+			var artists = $(xml).find('channel item title');
+			if (artists && artists.length) {
+				var artist_list = [];
+				for (var i=0, l = (artists.length < 15) ? artists.length : 15; i < l; i++) {
+					var artist = $(artists[i]).text();
+					artist_list.push(artist);
+				};
+				proxy_render_artists_tracks(artist_list);
+			}
+		  }
+	})
 	slider.className = 'sreen-artist-page';
 	player_holder = artsplhld;
 }
