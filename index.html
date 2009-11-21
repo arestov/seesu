@@ -27,9 +27,19 @@
 		</div>
 		<div class="screens" id="screens">
 			<div class="start screen">
+				
+				<div class="search-start">
+					<h3>Music search</h3>
+					  <form id="search" name="search">
+						<input type="text" name="q" id="q" size="50" />
+						<button type="submit" name="type" value="artist" id="search-artist">Artist</button>
+						<button type="submit" name="type" value="tag" id="search-tag">Тег</button>
+						<button type="submit" name="type" value="track" id="search-track">Track</button>
+					  </form>
+				</div>
 				<div class="lfm-start">
 					<div class="lfm-recomm">
-						<p><a href="#rec" id="lfm-recomm">Рекоммендации</a></p>
+						<p><a href="#rec" id="lfm-recomm">Recommendations</a></p>
 						<div class="lfm-auth">
 							<p>To get your music recommendations you need to <a class="login-lastfm-button" href="#">grant Seesu your account access</a></p>
 							<form class="lfm-finish">
@@ -43,7 +53,7 @@
 						</div>
 					</div>
 					<div class="lfm-loved">
-						<p><a href="#lov" id="lfm-loved">Любимые треки</a></p>
+						<p><a href="#lov" id="lfm-loved">Loved Tracks</a></p>
 						<div class="lfm-auth">
 							<p>To get your favorite tracks you need to <a class="login-lastfm-button" href="#">grant Seesu your account access</a></p>
 							<form class="lfm-finish">
@@ -58,15 +68,6 @@
 							</form>
 						</div>
 					</div>
-				</div>
-				<div class="search-start">
-					<h3>Music search</h3>
-					  <form id="search" name="search">
-						<input type="text" name="q" id="q" size="50" />
-						<button type="submit" name="type" value="artist" id="search-artist">Artist</button>
-						<button type="submit" name="type" value="tag" id="search-tag">Тег</button>
-						<button type="submit" name="type" value="track" id="search-track">Track</button>
-					  </form>
 				</div>
 			</div>
 			<div class="artist search-results screen">

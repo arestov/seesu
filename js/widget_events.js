@@ -109,6 +109,7 @@ $(function() {
 	  if (widget.preferenceForKey('vkid')) {
 		$(document.body).addClass('vk-logged-in');
 		vk_logged_in = true;
+		vk_login_check();
 	  } else{
 		log('not loggin in');
 	  }

@@ -213,6 +213,9 @@ body{
 				border-bottom:1px dashed #333;
 				font-style:normal;
 				}
+		.lfm-start{
+			border-top:1px solid #CCC;
+		}
 		#slider
 		.screens{
 			overflow-y:auto;
