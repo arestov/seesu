@@ -19,18 +19,35 @@
 	<div id="slider" class="screen-start">
 		<a id="close-widget">&times;</a>
 		<div class="navs">
-			<span class="nav nav-start" id="start_search" ><em>Start screen</em></span>
-			<span class="nav nav-search-results" id="search_result_nav"  >&rarr; <em>Search results</em></span>
-			<span class="nav nav-artist-page" >&rarr; <span id="nav_artist_page"></span></span>
-			<span class="nav nav-tracks-page">&rarr; <span id="nav_tracks_page"></span></span>
+			<div class="nav nav-start" id="start_search" >
+				<em>Start page</em>
+				<span class="arr-d">&darr;</span>
+				<span class="arr-r">&rarr;</span>
+			</div>
+			<div class="nav nav-search-results" id="search_result_nav"  >
+				<em>Search results</em>
+				<span class="arr-d">&darr;</span>
+				<span class="arr-r">&rarr;</span>
+			</div>
+			<div class="nav nav-artist-page" >
+				<span id="nav_artist_page"></span>
+				<span class="arr-d">&darr;</span>
+				<span class="arr-r">&rarr;</span>
+			</div>
+			<div class="nav nav-tracks-page">
+				<span id="nav_tracks_page"></span>
+				<span class="arr-d">&darr;</span>
+				<span class="arr-r">&rarr;</span>
+			</div>
 			
 		</div>
 		<div class="screens" id="screens">
 			<div class="start screen">
 				
 				<div class="search-start">
-					<h3>Music search</h3>
+					
 					  <form id="search" name="search">
+						<p>Music search</p>
 						<input type="text" name="q" id="q" size="50" />
 						<button type="submit" name="type" value="artist" id="search-artist">Artist</button>
 						<button type="submit" name="type" value="tag" id="search-tag">Тег</button>

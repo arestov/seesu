@@ -201,17 +201,27 @@ body{
 			padding:0 10px;
 			background:#B6D590;
 		}
+			.navs
+			.arr-r{
+				
+			}
+			.navs
+			.arr-d{
+				display:none;
+			}
 		.navs .nav{
 			display:none;
+			float:left;
+			margin-right:3px;
 			}
 		.navs .nav-start{
 			
-			cursor:pointer;
 			}
 			.navs .nav-start em,
 			.navs .nav-search-results em{
 				border-bottom:1px dashed #333;
 				font-style:normal;
+				cursor:pointer;
 				}
 		.lfm-start{
 			border-top:1px solid #CCC;
@@ -261,23 +271,41 @@ body{
 			}
  
 			#slider.screen-start .nav-start{
-				display:inline;
+				display:block;
 				}
 			 
 			#slider.screen-search .nav-start, 
 			#slider.screen-search .nav-search-results{
-				display:inline;
+				display:block;
 				}
+
 			#slider.sreen-artist-page-with-results .nav-start,
 			#slider.sreen-artist-page-with-results .nav-search-results,
 			#slider.sreen-artist-page-with-results .nav-artist-page{
-				display:inline;
+				display:block;
 			}
 			#slider.sreen-artist-page .nav-start{
-				display:inline;
+				display:block;
 			}
 			#slider.sreen-tracks-page .nav-start,
 			#slider.sreen-tracks-page .nav-tracks-page{
+				display:block;
+			}
+			#slider.screen-start .nav-start em, 
+			#slider.screen-search .nav-search-results em,
+			#slider.sreen-artist-page-with-results .nav-artist-page em{
+				cursor:default;
+				border-bottom:0;
+			}
+			#slider.screen-start .nav-start .arr-r, 
+			#slider.screen-search .nav-search-results .arr-r,
+			#slider.sreen-artist-page-with-results .nav-artist-page .arr-r{
+				display:none;
+			}
+
+			#slider.screen-start .nav-start .arr-d,
+			#slider.screen-search .nav-search-results .arr-d,
+			#slider.sreen-artist-page-with-results .nav-artist-page .arr-d{
 				display:inline;
 			}
 		.window-bottom{
