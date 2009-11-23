@@ -379,7 +379,7 @@ var render_recommendations = function(){
 }
 var render_tracks_by_artists_of_tag = function(tag){
 	get_artists_by_tag(tag,proxy_render_artists_tracks);
-	$(nav_artist_page).text(tag);
+	$(nav_artist_page).text('Tag: ' + tag);
 	slider.className = 'sreen-artist-page';
 	player_holder = artsplhld;
 }
@@ -481,7 +481,6 @@ var update_artist_info = function(artist,nav){
 	if ((current_artist == artist) && (nav != true)) {
 		return true;
 	} else {
-		if (!nav) {slider.className = 'sreen-artist-page'};
 		artsName.text(current_artist = artist);
 	}
 	lfm('artist.getInfo',{'artist': artist }, show_artist_info)
@@ -489,8 +488,10 @@ var update_artist_info = function(artist,nav){
 var setArtistPage = function (artist,with_search_results) {
 	if (with_search_results) {
 		slider.className = 'sreen-artist-page-with-results';
-		$(art_page_nav).text(artist);
+	} else {
+		slider.className = 'sreen-artist-page'
 	}
+	$(art_page_nav).text(artist);
 	player_holder = artsplhld;
 	getTopTracks(artist,function(track_list){
 		render_playlist(track_list,artsTracks);
@@ -517,7 +518,7 @@ var show_artists_results = function(r){
 				$(li).click(function(){
 					var artist = $(this).data('artist');
 					var image = $(this).data('img');
-					setArtistPage(artist);
+					setArtistPage(artist,true);
 				});
 				var p = $("<p></p>").attr({ text: artist});
 				if(image){

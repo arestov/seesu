@@ -41,7 +41,8 @@ $(function() {
 		return false;
 	  }
 	  else if(clicked_node.is('.artist-list')){
-		proxy_render_artists_tracks(clicked_node.data('artist_list'))
+		proxy_render_artists_tracks(clicked_node.data('artist_list'));
+		$(art_page_nav).text('Similar to «' + current_artist + '»');
 	  }
 	}
   });

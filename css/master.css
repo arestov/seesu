@@ -284,7 +284,8 @@ body{
 			#slider.sreen-artist-page-with-results .nav-artist-page{
 				display:block;
 			}
-			#slider.sreen-artist-page .nav-start{
+			#slider.sreen-artist-page .nav-start,
+			#slider.sreen-artist-page .nav-artist-page{
 				display:block;
 			}
 			#slider.sreen-tracks-page .nav-start,
@@ -299,12 +300,14 @@ body{
 			}
 			#slider.screen-start .nav-start .arr-r, 
 			#slider.screen-search .nav-search-results .arr-r,
+			#slider.sreen-artist-page .nav-artist-page .arr-r,
 			#slider.sreen-artist-page-with-results .nav-artist-page .arr-r{
 				display:none;
 			}
 
 			#slider.screen-start .nav-start .arr-d,
 			#slider.screen-search .nav-search-results .arr-d,
+			#slider.sreen-artist-page .nav-artist-page .arr-d,
 			#slider.sreen-artist-page-with-results .nav-artist-page .arr-d{
 				display:inline;
 			}
