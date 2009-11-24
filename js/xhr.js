@@ -2,7 +2,7 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
 	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
 	tracksHolder,tracksTracks,tracksName,trksplhld, //крекс пекс фекс
 	seesu =  {
-		version: 0.20
+		version: 0.22
 		
 	},
 	vk_logged_in,
@@ -478,14 +478,14 @@ var show_artist_info = function(r){
 	}
 }
 var update_artist_info = function(artist,nav){
-	if ((current_artist == artist) && (nav != true)) {
+	if (current_artist == artist) {
 		return true;
 	} else {
 		artsName.text(current_artist = artist);
+		lfm('artist.getInfo',{'artist': artist }, show_artist_info);
 	}
-	lfm('artist.getInfo',{'artist': artist }, show_artist_info)
 }
-var setArtistPage = function (artist,with_search_results) {
+var set_artist_page = function (artist,with_search_results) {
 	if (with_search_results) {
 		slider.className = 'sreen-artist-page-with-results';
 	} else {
@@ -496,7 +496,7 @@ var setArtistPage = function (artist,with_search_results) {
 	getTopTracks(artist,function(track_list){
 		render_playlist(track_list,artsTracks);
 	});
-	update_artist_info(artist, with_search_results ? true : false);
+	update_artist_info(artist);
 	
 	
 };
@@ -511,14 +511,14 @@ var show_artists_results = function(r){
 				var artist = artists[i].name,
 					image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 
-				if (i === 0) {setArtistPage(artist,true);}
+				if (i === 0) {set_artist_page(artist,true);}
 
 				var li = $("<li></li>").data('artist',artist);
 					li.data('img', image);
 				$(li).click(function(){
 					var artist = $(this).data('artist');
 					var image = $(this).data('img');
-					setArtistPage(artist,true);
+					set_artist_page(artist,true);
 				});
 				var p = $("<p></p>").attr({ text: artist});
 				if(image){
@@ -531,7 +531,7 @@ var show_artists_results = function(r){
 			} 
 		} else if (artists.name) {
 			var artist = artists.name;
-			setArtistPage(artist);
+			set_artist_page(artist);
 		}
 
 	} else {
