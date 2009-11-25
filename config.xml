@@ -6,40 +6,40 @@
   <height>600</height>
   <icon>i/favicon_seesu.png</icon>
   <author>
-    <name>Gleb Arestov</name>
+	<name>Gleb Arestov</name>
 	<name></name>
-    <email>gleb.arestov@gmail.com</email>
-    <organization>Spreadus foundation</organization>
+	<email>gleb.arestov@gmail.com</email>
+	<organization>Spreadus foundation</organization>
   </author>
   <author>
-    <name>Nikita Vasilyev</name>
+	<name>Nikita Vasilyev</name>
 	<name></name>
-    <email>me@elv1s.ru</email>
-    <link>http://elv1s.ru/</link>
+	<email>me@elv1s.ru</email>
+	<link>http://elv1s.ru/</link>
   </author>
   <author>
-    <name>Alexandr Koss</name>
+	<name>Alexandr Koss</name>
 	<name></name>
-    <email>kossnocorp@gmail.com</email>
-    <organization>Spreadus foundation</organization>
+	<email>kossnocorp@gmail.com</email>
+	<organization>Spreadus foundation</organization>
   </author>
   <id>
-    <name>Seesu</name>
-    <revised>2009-10-16</revised>
+	<name>Seesu</name>
+	<revised>2009-10-16</revised>
   </id>
   <security>
-    <access>
-      <protocol>https</protocol>
-      <protocol>http</protocol>
-      <host>last.fm</host>
-      <host>vkontakte.ru</host>
-      <host>vk.com</host>
-      <host>widgets.opera.com</host>
-    </access>
-    <access>
+	<access>
+	  <protocol>https</protocol>
+	  <protocol>http</protocol>
+	  <host>last.fm</host>
+	  <host>vkontakte.ru</host>
+	  <host>vk.com</host>
+	  <host>widgets.opera.com</host>
+	</access>
+	<access>
 	 <protocol>http</protocol>
-     <host>ws.audioscrobbler.com</host>
-    </access>
+	 <host>ws.audioscrobbler.com</host>
+	</access>
 	<access>
 	  <protocol>http</protocol>
 	  <host>seesu.heroku.com</host>
