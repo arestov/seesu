@@ -24,7 +24,7 @@ resizeWidg = function(){
  	 }
     
     var ResizeConfig = {
-      MinWidth  : 440,
+      MinWidth  : 640,
       MinHeight : 600
     };
     
