@@ -9,8 +9,7 @@
 .pl-holder{clear:left}
 
 .play-controls{
-	position:relative;
-	height:77px;
+	height:15px;
 	width:252px;
 	opacity:0.1;
 }
@@ -20,79 +19,15 @@
 	}
 .play-control{
 	display:inline-block;
-	position:absolute;
 	cursor:pointer;
-}
-#play_prev{
-	left:0px;
-	top:21px;
-	
-	width:45px;
-	height:45px;
-	background:url(../i/controls_link_play_prev.png) no-repeat;
+	padding:1px 0 0 1px;
+	width:19px;
+	height:19px;
+	background-repeat:no-repeat;
 	}
-	.vk-logged-in #play_prev:hover{
-		background-image:url(../i/controls_hover_play_prev.png);
+	.play-control:hover{
+		background-image:url(../i/buttons_hover.png);
 		}
-	.vk-logged-in #play_prev:active{
-		background-image:url(../i/controls_active_play_prev.png);
-		}
-#play{
-	left:74px;
-	top:11px;
-	
-	width:64px;
-	height:56px;
-	background:url(../i/controls_link_play.png) no-repeat;
-	}
-	.vk-logged-in #play:hover{
-		background:url(../i/controls_hover_play.png) no-repeat;
-	}
-	.vk-logged-in #play:active{
-		background:url(../i/controls_active_play.png) no-repeat;
-	}
-#pause{
-	top:39px;
-	left:143px;
-	
-	width:30px;
-	height:29px;
-	background:url(../i/controls_link_pause.png) no-repeat;
-	}
-	.vk-logged-in #pause:hover{
-		background:url(../i/controls_hover_pause.png) no-repeat;
-	}
-	.vk-logged-in #pause:active{
-		background:url(../i/controls_active_pause.png) no-repeat;
-	}
-#stop{
-	left:51px;
-	top:17px;
-	
-	width:20px;
-	height:18px;
-	background:url(../i/controls_link_stop.png) no-repeat;
-	}
-	.vk-logged-in #stop:hover{
-		background:url(../i/controls_hover_stop.png) no-repeat;
-	}
-	.vk-logged-in #stop:active{
-		background:url(../i/controls_active_stop.png) no-repeat;
-	}
-#play_next{
-	left:173px;
-	top:17px;
-	
-	width:53px;
-	height:46px;
-	background:url(../i/controls_link_play_next.png) no-repeat;
-	}
-	.vk-logged-in #play_next:hover{
-		background:url(../i/controls_hover_play_next.png) no-repeat;
-	}
-	.vk-logged-in #play_next:active{
-		background:url(../i/controls_active_play_next.png) no-repeat;
-	}
 ul{list-style:none;padding:0;margin-top:0;}
 a{color:#6672A3;}
 a[href],a.artist-list{color:#376795;cursor:pointer;}
