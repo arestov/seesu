@@ -74,52 +74,54 @@ var parseStrToObj = function(onclickstring){
 
 
 var getMusic = function(trackname){
-	if (!vk_logged_in) {return false;}
-	
-	var musicList = [];
-	musicList.links = [];
-	musicList.playlist = [];
-	var xhr = new XMLHttpRequest ();
-	
-	xhr.onreadystatechange = function () {
-	  if ( this.readyState == 4 ) {
-		if (xhr.responseText.indexOf('rows') != -1) {
-			var srd = document.createElement('div');
-			srd.innerHTML = JSON.parse(xhr.responseText).rows;
-			var rows = $(".audioRow ", srd);
+	if (!vk_logged_in) {
+		return false;
+	} else {
+		var musicList = [];
+		musicList.links = [];
+		musicList.playlist = [];
+		var xhr = new XMLHttpRequest ();
 
-			for (var i=0, l = rows.length; i < l; i++) {
-				var row = rows[i],
-					text = $('.audioText', row)[0],
-					artist = $('b', text)[0].textContent,
-					track = $('span', text)[0].textContent,
-					playStr = $('img.playimg', row )[0].getAttribute('onclick'),
-					obj = parseStrToObj(playStr);
-				musicList.links.push(obj.link);
-				musicList.playlist.push({'artist_name' : artist ,'track_title': track});
-				obj.artist = artist;
-				obj.track = track;
-				
-				musicList.push(obj);
+		xhr.onreadystatechange = function () {
+		  if ( this.readyState == 4 ) {
+			if (xhr.responseText.indexOf('rows') != -1) {
+				var srd = document.createElement('div');
+				srd.innerHTML = JSON.parse(xhr.responseText).rows;
+				var rows = $(".audioRow ", srd);
+
+				for (var i=0, l = rows.length; i < l; i++) {
+					var row = rows[i],
+						text = $('.audioText', row)[0],
+						artist = $('b', text)[0].textContent,
+						track = $('span', text)[0].textContent,
+						playStr = $('img.playimg', row )[0].getAttribute('onclick'),
+						obj = parseStrToObj(playStr);
+					musicList.links.push(obj.link);
+					musicList.playlist.push({'artist_name' : artist ,'track_title': track});
+					obj.artist = artist;
+					obj.track = track;
+
+					musicList.push(obj);
+				}
+			} else {
+				log('Поиск не удался... :’—(');
+				log(xhr.responseText);
+				if ((xhr.responseText.indexOf('http://vkontakte.ru/login.php?op=logout') != -1) && xhr.responseText.indexOf('http://vkontakte.ru/images/progress.gif' != -1)) {
+					vk_logged_out();
+					log('квантакте изгнал вас из рая');
+				}
+				return false;
 			}
-		} else {
-			log('Поиск не удался... :’—(');
-			log(xhr.responseText);
-			if ((xhr.responseText.indexOf('http://vkontakte.ru/login.php?op=logout') != -1) && xhr.responseText.indexOf('http://vkontakte.ru/images/progress.gif' != -1)) {
-				vk_logged_out();
-				log('квантакте изгнал вас из рая');
-			}
-			return false;
-		}
-	  }
-	};
-	xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
-	var param = 'c[section]=audio' + '&c[q]=' + encodeURIComponent(trackname);
-	xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-	xhr.send(param);
-		
-	return musicList;
+		  }
+		};
+		xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
+		var param = 'c[section]=audio' + '&c[q]=' + encodeURIComponent(trackname);
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+		xhr.send(param);
+
+		return musicList;
+	}
 };
 var sort_by_play_order = function(g,f){
 	if (g && f) {
