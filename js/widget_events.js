@@ -51,34 +51,40 @@ $(function() {
 	$('#close-widget').click(function(){
 		window.close();
 	});
+
+	//see var at top
+	slider = document.getElementById('slider');
+	searchfield = document.getElementById('q');
+	srnav = document.getElementById('search_result_nav');
+	startlink = document.getElementById('start_search');
+	searchres = document.getElementById('search_result');
+	art_page_nav = document.getElementById('nav_artist_page');
+	trk_page_nav = document.getElementById('nav_tracks_page');
+	startlink.onclick = function(){
+	slider.className = "screen-start";
+	};
+	srnav.onclick = function(){
+	slider.className = "screen-search";
+	};
 	
-		//see var at top
-	  slider = document.getElementById('slider');
-	  searchfield = document.getElementById('q');
-	  srnav = document.getElementById('search_result_nav');
-	  startlink = document.getElementById('start_search');
-	  searchres = document.getElementById('search_result');
-	  art_page_nav = document.getElementById('nav_artist_page');
-	  trk_page_nav = document.getElementById('nav_tracks_page');
-	  startlink.onclick = function(){
-		slider.className = "screen-start";
-	  };
-	  srnav.onclick = function(){
-		slider.className = "screen-search";
-	  };
 	
-		artsHolder	= $('#artist-holder');
-		artsImage	= $('img.artist-image',artsHolder);
-		artsBio		= $('.artist-bio',artsHolder);
-		artsTracks	= $('.tracks-for-play',artsHolder);
-		artsplhld	= $('.player-holder',artsHolder);
-		art_tracks_w_counter = $('.tracks-waiting-for-search',artsHolder)
-		artsName	= $('#artist-name');
-		
-		tracksHolder = $('#tracks-holder');
-		tracksTracks = $('.tracks-for-play', tracksHolder);
-		tracksName	 = $('#tracks-name');
-		trksplhld	 = $('.player-holder',tracksHolder);
+	if (!(document.activeElement.nodeName == 'INPUT')) {
+		searchfield.focus();
+	}
+	
+	
+	artsHolder	= $('#artist-holder');
+	artsImage	= $('img.artist-image',artsHolder);
+	artsBio		= $('.artist-bio',artsHolder);
+	artsTracks	= $('.tracks-for-play',artsHolder);
+	artsplhld	= $('.player-holder',artsHolder);
+	art_tracks_w_counter = $('.tracks-waiting-for-search',artsHolder)
+	artsName	= $('#artist-name');
+	
+	tracksHolder = $('#tracks-holder');
+	tracksTracks = $('.tracks-for-play', tracksHolder);
+	tracksName	 = $('#tracks-name');
+	trksplhld	 = $('.player-holder',tracksHolder);
 		
 	var flash_settings = $('.internet-flash-settings input');
 		
