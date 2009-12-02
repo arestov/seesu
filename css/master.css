@@ -17,6 +17,77 @@
 	.play-controls{
 		opacity:1;
 	}
+dl,dt,dd{
+	margin:0;
+	padding:0;
+}
+#about{
+	position:absolute;
+	bottom:5px;
+	left:2px;
+	width:300px;
+	padding-top:136px;
+	height:64px;
+	overflow:hidden;
+	}
+	#about .avatar{
+		position:relative;
+		display:inline-block;
+		margin-left:-60px;
+		}
+	#about .avatar .face {
+		height:64px;
+		width:64px;
+		background:url(../i/avatar_gleb_arestov_down.jpg) no-repeat;
+		display:block;
+		cursor:pointer;
+		}
+		#about .avatar .buble{
+			position:absolute;
+			display:none;
+			top:-86px;
+			left:50px;
+			width:141px;
+			height:100px;
+			padding-left:50px;
+			padding-top:31px;
+			font: italic normal normal 14px/1.2em "Trebuchet MS", sans-serif;
+			background:url(../i/buble.png) no-repeat;
+			}
+	#about .logo{
+		background:url(../i/logo_seesu.png) no-repeat;
+		height:49px;
+		width:49px;
+		display:inline-block;
+		}
+	#about .twitter{
+		width:14px;
+		height:16px;
+		background:url(../i/twitter.gif) no-repeat;
+		display:inline-block;
+		}
+	#about.logoover{
+		border-right:1px solid transparent;
+		
+		}
+		#about.logoover .avatar,
+		#about.tweet-about-seesu .avatar{
+			margin-left:3px;
+			}
+		#about.logoover .logo,
+		#about.tweet-about-seesu .logo{
+			display:none;
+			}
+
+	#about.tweet-about-seesu{
+		
+		}
+		#about.tweet-about-seesu .avatar .face{
+			background-image:url(../i/avatar_gleb_arestov.jpg);
+			}
+		#about.tweet-about-seesu .avatar .buble{
+			display:block;
+		}
 .play-control{
 	display:inline-block;
 	cursor:pointer;
@@ -75,7 +146,7 @@ input:focus{
 	outline:1px solid #8FB2D6;
 }
 body{
-	background:#F3F8ED url(../i/logo_seesu.png) 10px 99% no-repeat;
+	background:#F3F8ED 10px 99% no-repeat;
 	border:2px solid #CEE3B5;
 	margin:0;
 	padding:0;

@@ -46,7 +46,14 @@ $(function() {
 	  }
 	}
   });
-  
+	
+	var about_jnode = $('#about');
+	$('.logo',about_jnode).hover(function(){
+		about_jnode.addClass('logoover');
+	});
+	$('.avatar',about_jnode).click(function(){
+		about_jnode.attr('class','tweet-about-seesu');
+	});
   
 	$('#close-widget').click(function(){
 		window.close();
