@@ -29,11 +29,11 @@ dl,dt,dd{
 	padding-top:136px;
 	height:64px;
 	overflow:hidden;
+	padding-left:3px;
 	}
 	#about .avatar{
 		position:relative;
-		display:inline-block;
-		margin-left:-60px;
+		display:none;
 		}
 	#about .avatar .face {
 		height:64px;
@@ -55,12 +55,15 @@ dl,dt,dd{
 			background:url(../i/buble.png) no-repeat;
 			}
 	#about .logo{
-		background:url(../i/logo_seesu.png) no-repeat;
+		background:url(../i/logo_seesu.png) no-repeat 0 15px;
 		height:49px;
+		padding-top:15px;
+		margin-right:15px;
 		width:49px;
 		display:inline-block;
 		}
 	#about .twitter{
+		cursor:pointer;
 		width:14px;
 		height:16px;
 		background:url(../i/twitter.gif) no-repeat;
@@ -72,7 +75,7 @@ dl,dt,dd{
 		}
 		#about.logoover .avatar,
 		#about.tweet-about-seesu .avatar{
-			margin-left:3px;
+			display:inline-block;
 			}
 		#about.logoover .logo,
 		#about.tweet-about-seesu .logo{

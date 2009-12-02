@@ -20,6 +20,12 @@ $(function() {
 		widget.openURL('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 		return false;
 	  }
+	  else if (clicked_node.is('.twitter')){
+	  	var tweet_text = "Seesu plays last.fm for free and lets me to download tracks #seesu http://bit.ly/info/4s6CKa";
+		if (current_artist) {tweet_text += " Now I'm listening «" + current_artist + "»" };
+		widget.openURL( 'http://twitter.com/home/?status=' + encodeURIComponent(tweet_text));
+		return false;
+	  }
 	  else if (clicked_node.is('.artist')){
 		artist_name = decodeURIComponent(clicked_node.data('artist'));
 		set_artist_page(artist_name);
@@ -52,7 +58,7 @@ $(function() {
 		about_jnode.addClass('logoover');
 	});
 	$('.avatar',about_jnode).click(function(){
-		about_jnode.attr('class','tweet-about-seesu');
+		about_jnode.toggleClass('tweet-about-seesu');
 	});
   
 	$('#close-widget').click(function(){
