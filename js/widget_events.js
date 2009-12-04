@@ -1,3 +1,6 @@
+var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
+	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
+	captcha_img,vk_login_error;
 $(function() {
   $(document).click(function(e) {
 	var clicked_node = $(e.target);
@@ -106,22 +109,26 @@ $(function() {
 		}
 	});
 	
-	if (widget.preferenceForKey('flash_internet')) {
+	if (widget.preferenceForKey('flash_internet') == 'true') {
 		$(document.body).addClass('flash-internet');
 		flash_settings.attr('checked', 'checked');
 	}
 	
 	
 	
-	$('.vk-auth').submit(function(){
-		var _this = $(this);
-		var email = $('input.vk-email',_this).val();
-		var pass = $('input.vk-pass',_this).val();
-		vk_login(email,pass);
+	var vk_auth = $('.vk-auth').submit(function(){
+		log('click');
+		var _this = $(this),
+			email = $('input.vk-email',_this).val(),
+			pass = $('input.vk-pass',_this).val();
+		vk_login(email,pass, vk_captcha ? $('#vk-captcha',_this).val() : false );
 		return false;
 	});
+	captcha_img = $('.vk-captcha-context img',vk_auth);
+	vk_login_error = $('.error',vk_auth);
 	
-	  if (widget.preferenceForKey('vkid')) {
+	
+	  if ((typeof(widget.preferenceForKey('vkid')) == 'string') && (widget.preferenceForKey('vkid') != 'false')) {
 		$(document.body).addClass('vk-logged-in');
 		vk_logged_in = true;
 		vk_login_check();

@@ -1,8 +1,5 @@
-var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
-	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
-	seesu =  {
-		version: 0.24
-		
+var	seesu =  {
+	  version: 0.24	
 	},
 	vk_logged_in,
 	wait_for_vklogin = {},
