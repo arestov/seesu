@@ -118,6 +118,7 @@ $(function() {
 	
 	var vk_auth = $('.vk-auth').submit(function(){
 		vk_login_error.text('');
+		$(document.body).removeClass('vk-needs-captcha');
 		var _this = $(this),
 			email = $('input.vk-email',_this).val(),
 			pass = $('input.vk-pass',_this).val();

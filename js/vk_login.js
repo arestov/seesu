@@ -25,6 +25,7 @@ var vk_login = function(login,pass,captcha_key) {
 			vk_login_error.text('Wrong login or password')
 		} else if (vk_captcha = r.captcha_sid){
 			captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
+			$(document.body).addClass('vk-needs-captcha');
 		} else 	if (vk_id = r.id) {
 			vk_logg_in(vk_id, r.email);
 			wait_for_vklogin && wait_for_vklogin();

@@ -437,6 +437,15 @@ p.internet-flash-settings{
 	clear:left;
 	}
 	.vk-login-context
+	.vk-captcha-context{
+		display:none;
+	}
+	.vk-needs-captcha
+	.vk-login-context
+	.vk-captcha-context{
+		display:block;
+	}
+	.vk-login-context
 	form
 	p{
 		overflow:hidden;
