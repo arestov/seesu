@@ -1,21 +1,16 @@
 var vk_captcha;
 
 var vk_login = function(login,pass,captcha_key) {
-	var data = {
-	  'noredirect': '1',
-	  'email': login,
-	  'pass': pass
-	};
-	if (vk_captcha && captcha_key ){
-	  data.captcha_sid = vk_captcha;
-	  data.captcha_key = captcha_key;
-	}
 	$.ajax({
 	  url: "http://vkontakte.ru/login.php",
 	  global: false,
 	  type: "POST",
 	  dataType: "json",
-	  data: data,
+	  data: {
+		'noredirect': '1',
+		'email': login,
+		'pass': pass
+	  },
 	  error: function(){
 		log('войти не удалось');
 	  },
@@ -31,10 +26,26 @@ var vk_login = function(login,pass,captcha_key) {
 			wait_for_vklogin && wait_for_vklogin();
 		}
 	  }
+	});	
+}
+var vk_send_captcha = function(captcha_key){
+	$.ajax({
+	  url: "http://vkontakte.ru/login.php",
+	  global: false,
+	  type: "POST",
+	  dataType: "json",
+	  data: {
+		'op':a_login_attempt,
+		'captcha_key':captcha_key,
+		'captcha_sid':vk_captcha
+   	},
+	  error: function(){
+		log('войти не удалось');
+	  },
+	  success: function(r){
+		log('piu')
+	  }
 	});
-	
-	
-	
 }
 var vk_login_check = function(){
 	$.ajax({
@@ -46,7 +57,10 @@ var vk_login_check = function(){
 		log('vignali!');
 		vk_logged_out();
 	  },
-	  success: function(r){
+	  complete: function(r){
+		if (r.indexOf('vklogin') != -1){
+			
+		}
 	  }
 	});
 };
