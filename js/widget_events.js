@@ -117,7 +117,7 @@ $(function() {
 	
 	
 	var vk_auth = $('.vk-auth').submit(function(){
-		log('click');
+		vk_login_error.text('');
 		var _this = $(this),
 			email = $('input.vk-email',_this).val(),
 			pass = $('input.vk-pass',_this).val();
