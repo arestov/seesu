@@ -93,11 +93,6 @@ $(function() {
 	artsplhld	= $('.player-holder',artsHolder);
 	art_tracks_w_counter = $('.tracks-waiting-for-search',artsHolder)
 	artsName	= $('#artist-name');
-	
-	tracksHolder = $('#tracks-holder');
-	tracksTracks = $('.tracks-for-play', tracksHolder);
-	tracksName	 = $('#tracks-name');
-	trksplhld	 = $('.player-holder',tracksHolder);
 		
 	var flash_settings = $('.internet-flash-settings input');
 		

@@ -264,9 +264,7 @@ body{
 			#slider.screen-start .start .lfm-start{
 				display:block;
 			}
-			#slider.sreen-tracks-page .tracks-page{
-				display:block;
-			}
+
 			#slider.sreen-artist-page .artist-page{
 				display:block;
 			}
@@ -297,10 +295,7 @@ body{
 			#slider.sreen-artist-page .nav-artist-page{
 				display:block;
 			}
-			#slider.sreen-tracks-page .nav-start,
-			#slider.sreen-tracks-page .nav-tracks-page{
-				display:block;
-			}
+
 			#slider.screen-start .nav-start em, 
 			#slider.screen-search .nav-search-results em,
 			#slider.sreen-artist-page-with-results .nav-artist-page em{

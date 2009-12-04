@@ -1,6 +1,5 @@
 var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
 	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
-	tracksHolder,tracksTracks,tracksName,trksplhld, //крекс пекс фекс
 	seesu =  {
 		version: 0.24
 		
@@ -307,8 +306,7 @@ var render_playlist = function(playlist,container,mp3links) { // if links presen
 };
 var vk_track_search = function(query){
 	art_page_nav.innerHTML = query;
-	tracksName.text(query);
-	
+
 	slider.className = 'sreen-artist-page';
 	player_holder  = artsplhld;
 		
