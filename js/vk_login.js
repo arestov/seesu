@@ -1,27 +1,28 @@
-var loginxhr = new XMLHttpRequest ();
-loginxhr.onreadystatechange = function(){
-  if (this.readyState == 4) {
-	log(loginxhr.responseText);
-	if ((loginxhr.responseText.indexOf('id') != -1) && 
-		(loginxhr.responseText.indexOf('email') != -1) && 
-		(loginxhr.responseText.indexOf('sid') != -1) && 
-		(loginxhr.responseText.indexOf('pass') != -1)  ) {
-		var r = JSON.parse(loginxhr.responseText);
-		if (r.id) {
-			log(vk_logged_in);
-			vk_logg_in(r.id, r.email);
-			wait_for_vklogin && wait_for_vklogin();
-		}	
-	} else {log('не получается войти');}
-  }
-};
-loginxhr.open('POST', 'http://vkontakte.ru/login.php');
-loginxhr.xhrparams = 'noredirect=1';
-loginxhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-loginxhr.setRequestHeader("host", "vkontakte.ru");
-
 var vk_login = function(login,pass) {
-	loginxhr.send(loginxhr.xhrparams + '&email=' + encodeURIComponent(login) + '&pass=' + encodeURIComponent(pass));
+	$.ajax({
+	  url: "http://vkontakte.ru/login.php",
+	  global: false,
+	  type: "POST",
+	  dataType: "json",
+	  data: {
+		'noredirect': '1',
+		'email': login,
+		'pass': pass
+	  },
+	  error: function(){
+		log('РІРѕР№С‚Рё РЅРµ СѓРґР°Р»РѕСЃСЊ');
+	  },
+	  success: function(r){
+		var vk_id;
+		if (vk_id = r.id) {
+			vk_logg_in(vk_id, r.email);
+			wait_for_vklogin && wait_for_vklogin();
+		}
+	  }
+	});
+	
+	
+	
 }
 var vk_login_check = function(){
 	$.ajax({
@@ -42,13 +43,13 @@ var vk_logg_in = function(id,email){
 	widget.setPreferenceForKey(email, 'vkemail');
 	vk_logged_in = true;
 	$(document.body).addClass('vk-logged-in');
-	log('вошли в контакте и скрыли форму логина');
+	log('РІРѕС€Р»Рё РІ РєРѕРЅС‚Р°РєС‚Рµ Рё СЃРєСЂС‹Р»Рё С„РѕСЂРјСѓ Р»РѕРіРёРЅР°');
 };
 var vk_logged_out = function(){
 	widget.setPreferenceForKey(null, 'vkid');
 	widget.setPreferenceForKey(null, 'vkemail');
 	vk_logged_in = false;
 	$(document.body).removeClass('vk-logged-in');
-	log('отображаем форму логина где нужно');
+	log('РѕС‚РѕР±СЂР°Р¶Р°РµРј С„РѕСЂРјСѓ Р»РѕРіРёРЅР° РіРґРµ РЅСѓР¶РЅРѕ');
 	
 };
