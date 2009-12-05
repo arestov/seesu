@@ -21,12 +21,17 @@ dl,dt,dd{
 	margin:0;
 	padding:0;
 }
+.vk-logged-in
+#about{
+	display:block;
+}
 #about{
 	position:absolute;
 	bottom:5px;
 	left:2px;
-	width:300px;
-	padding-top:136px;
+	display:none;
+	width:90px;
+	padding-top:0;
 	height:64px;
 	overflow:hidden;
 	padding-left:3px;
@@ -84,6 +89,8 @@ dl,dt,dd{
 
 	#about.tweet-about-seesu{
 		
+		width:260px;
+		padding-top:90px;
 		}
 		#about.tweet-about-seesu .avatar .face{
 			background-image:url(../i/avatar_gleb_arestov.jpg);
@@ -435,6 +442,7 @@ p.internet-flash-settings{
 }
 .vk-login-context{
 	clear:left;
+	
 	}
 	.vk-login-context
 	.vk-captcha-context{
@@ -444,6 +452,10 @@ p.internet-flash-settings{
 	.vk-login-context
 	.vk-captcha-context{
 		display:block;
+	}
+	.vk-login-context
+	form{
+		padding-left:10px;
 	}
 	.vk-login-context
 	form
@@ -461,7 +473,12 @@ p.internet-flash-settings{
 		.vk-login-context
 		form
 		p
+		span.input-place{
+			float:left;
+		}
+		.vk-login-context
+		form
+		p
 		input{
 			width:100px;
-			
 		}

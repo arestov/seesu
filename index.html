@@ -136,17 +136,29 @@
 					<p>To get access to mp3 library you need sign in vk.com. After authorization tracks become playable</p>
 					<h3>Type values for vk.com authorization</h3>
 					<form  class="vk-auth" >
-						<p><label for="email-arts">login</label><input type="text" class="vk-email" name="email" id="email-arts"/></p>
-						<p><label for="pass-arts">pass</label><input type="password" class="vk-pass"  name="pass" id="pass-arts"/></p>
+						<p>
+							<label for="email-arts">login</label>
+							<span class="input-place" >
+								<input type="text" class="vk-email" name="email" id="email-arts"/>
+							</span>
+						</p>
+						<p>
+							<label for="pass-arts">pass</label>
+							<span class="input-place" >
+								<input type="password" class="vk-pass"  name="pass" id="pass-arts"/>
+							</span>
+						</p>
 						<p class="error"></p>
 						<p class="vk-captcha-context">
-							<label for="vk-captcha">Input code</label>
-							<img src="" alt="captcha"/><br/>
-							<input type="text" name="captcha_key" value="" id="vk-captcha"/>
+							<label for="vk-captcha-key">Input code</label>
+							<span class="input-place" >
+								<img src="" alt="captcha"/><br/>
+								<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
+							</span>
 						</p>
 						<p><button>enter</button></p>
 					</form>
-					or <a href="" class="vk-reg-ref" >sign up</a>
+					or <a href="" class="vk-reg-ref" >register new account</a> for vk.com
 					<p>We do not store you password. Authorization in future will be happen by «<a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>»</p>
 				</div>
 			</div>

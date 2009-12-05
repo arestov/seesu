@@ -122,7 +122,14 @@ $(function() {
 		var _this = $(this),
 			email = $('input.vk-email',_this).val(),
 			pass = $('input.vk-pass',_this).val();
-		vk_login(email,pass, vk_captcha ? $('#vk-captcha',_this).val() : false );
+		if (true) {
+			vk_send_captcha($('#vk-captcha_key',_this).val(),email,pass)
+			log('aa')
+		} else {
+			log('bb')
+			vk_login(email,pass);
+		}
+		
 		return false;
 	});
 	captcha_img = $('.vk-captcha-context img',vk_auth);
