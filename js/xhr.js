@@ -1,5 +1,5 @@
 var	seesu =  {
-	  version: 0.24	
+	  version: 0.25	
 	},
 	vk_logged_in,
 	wait_for_vklogin = {},
