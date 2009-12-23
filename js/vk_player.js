@@ -76,7 +76,9 @@ function set_current_song(node) {
   
   
   if(current_song) current_song.removeClass('active-play');
-  create_player(song_url);
+  soundManager.stopAll();
+  soundManager.play(song_url,song_url);
+  //create_player(song_url);
   current_song = node.addClass('active-play');
   
   
