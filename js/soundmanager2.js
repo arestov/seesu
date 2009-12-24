@@ -673,13 +673,11 @@ function SoundManager(smURL,smID) {
       bgcolor: _s.bgColor,
       pluginspage: 'http://www.macromedia.com/go/getflashplayer',
       type: 'application/x-shockwave-flash',
-      wmode: _s.wmode,
+      wmode: 'transparent',
       allowfullscreen: (_s.allowFullScreen?'true':'false')
     };
 
-    if (!_s.wmode) {
-	  delete oEmbed.wmode; // don't write empty attribute
-    }
+    
 
     var oMovie = null;
     var tmp = null;
