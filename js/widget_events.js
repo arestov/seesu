@@ -266,5 +266,4 @@ $(function() {
 		render_recommendations_by_username(_this[0].recomm_for_username.value);
 		$(document.body).removeClass('lfm-auth-req-recomm');
 	})
-
 });
