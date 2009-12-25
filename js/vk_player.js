@@ -56,21 +56,21 @@ function player_DoFSCommand(c, args) {
 function set_var(variable, value) {
 	$(".player",player_holder)[0].SetVariable("audioPlayer_mc." + variable, value);
 }  
-
-function create_player(song_url) {
+function play_song_by_url(song_url){
 	if (iframe_player) {
 		$('#ejohn')[0].contentWindow.postMessage(song_url,'*');
 	} else {
-		player_holder.html(
-			holy_vk_string
-			  .replace(':url', song_url)
-			  .replace(':volume', player_volume)
-			  .replace(':background_color', background_color)
-		);
+		create_player(song_url)
 	}
-	
-	
 	player_state = PLAYED;
+}
+function create_player(song_url) {
+	player_holder.html(
+		holy_vk_string
+		  .replace(':url', song_url)
+		  .replace(':volume', player_volume)
+		  .replace(':background_color', background_color)
+	);
 }
 
 // Player internal functions
@@ -82,7 +82,7 @@ function set_current_song(node) {
   
   
   if(current_song) current_song.removeClass('active-play');
-  create_player(song_url);
+  play_song_by_url(song_url);
   current_song = node.addClass('active-play');
   
   
@@ -187,6 +187,12 @@ function parse_volume_value(volume_value_raw) {
 		pre_pesult = volume_level_regexp.exec(volume_value_raw);
 	return pre_pesult.slice(1, pre_pesult.length - 1)[0];
 }
+events[FINISHED] = function() {
+  switch_to('next');
+};
+events[VOLUME] = function(volume_value) {
+  widget.setPreferenceForKey(volume_value, 'vkplayer-volume');
+  player_volume = volume_value;
 $(function() {
   player_holder = $('.player-holder');
 
@@ -198,11 +204,6 @@ $(function() {
     function() { if(current_song) switch_to($(this).attr('id').replace(/play_/, '')); return false; }
   );
 
-	events[FINISHED] = function() {
-	  switch_to('next');
-	};
-	events[VOLUME] = function(volume_value) {
-	  widget.setPreferenceForKey(volume_value, 'vkplayer-volume');
-	  player_volume = volume_value;
+
 	};
 });
