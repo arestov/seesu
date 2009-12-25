@@ -12,6 +12,7 @@ var player_state = STOPPED,
 	want_to_play = 0,
 	wainter_for_play,
 	current_artist = '',
+	iframe_player = true,
 
     holy_vk_string = 
       '<embed width="342" height="14" ' + 
@@ -57,12 +58,17 @@ function set_var(variable, value) {
 }  
 
 function create_player(song_url) {
-	player_holder.html(
-		holy_vk_string
-		  .replace(':url', song_url)
-		  .replace(':volume', player_volume)
-		  .replace(':background_color', background_color)
-	);
+	if (iframe_player) {
+		$('#ejohn')[0].contentWindow.postMessage(song_url,'*');
+	} else {
+		player_holder.html(
+			holy_vk_string
+			  .replace(':url', song_url)
+			  .replace(':volume', player_volume)
+			  .replace(':background_color', background_color)
+		);
+	}
+	
 	
 	player_state = PLAYED;
 }
