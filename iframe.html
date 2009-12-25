@@ -12,10 +12,12 @@
 	
 	<script type="text/javascript" src="js/json.js"></script>
 	<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
+	<script type="text/javascript" src="js/vk_player.js"></script>
 	<script type="text/javascript" charset="utf-8">
 		function log(){
 			opera.postError.apply(opera, arguments)
 		}
+		var source_window;
 		var player_holder,
 			holy_vk_string = 
 	      	'<embed width="342" height="14" ' + 
@@ -26,13 +28,30 @@
 		      'type="application/x-shockwave-flash"/>';
 
 		window.addEventListener("message", function(e){
-			log(e.data);
-			var song_url = e.data;
-			player_holder.html(
-				holy_vk_string
-				  .replace(':url', song_url)
-				  .replace(':volume', 80)
-			)
+			if (e.origin.indexOf('widget://') == -1) {
+				return
+			} else {
+				var o = JSON.parse(e.data);
+				if (o.command == 'play') {
+					var song_url = o.file;
+					player_holder.html(
+						holy_vk_string
+						  .replace(':url', song_url)
+						  .replace(':volume', 80)
+					)
+					log(JSON.stringify(o));
+				} else if (o.command == 'stop'){
+					stop();
+				} else if (o.command == 'play_pause'){
+					play_pause();
+				}
+				else if (o.command == 'init') {
+					source_window = e.source;
+					log(source_window.test_message)
+				}
+			}
+			
+			
 		}, false);
 		
 		
