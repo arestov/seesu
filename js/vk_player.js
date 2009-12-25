@@ -181,6 +181,13 @@ function parse_volume_value(volume_value_raw) {
 		pre_pesult = volume_level_regexp.exec(volume_value_raw);
 	return pre_pesult.slice(1, pre_pesult.length - 1)[0];
 }
+events[FINISHED] = function() {
+  switch_to('next');
+};
+events[VOLUME] = function(volume_value) {
+  widget.setPreferenceForKey(volume_value, 'vkplayer-volume');
+  player_volume = volume_value;
+};
 $(function() {
   player_holder = $('.player-holder');
 
@@ -192,11 +199,5 @@ $(function() {
     function() { if(current_song) switch_to($(this).attr('id').replace(/play_/, '')); return false; }
   );
 
-	events[FINISHED] = function() {
-	  switch_to('next');
-	};
-	events[VOLUME] = function(volume_value) {
-	  widget.setPreferenceForKey(volume_value, 'vkplayer-volume');
-	  player_volume = volume_value;
-	};
+
 });
