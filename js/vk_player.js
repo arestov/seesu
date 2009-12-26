@@ -34,7 +34,7 @@ var player_state = STOPPED,
 // VK player actions
 
 function call_event(event, data) {
-  log('Event: ' + event);
+  //log('Event: ' + event);
   if(events[event]) events[event](data);
 }
 
@@ -59,9 +59,6 @@ function set_var(variable, value) {
 }  
 function play_song_by_url(song_url){
 	if (iframe_doc) {
-		var o = {
-			
-		}
 		iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'play','file':song_url}),'*');
 	} else {
 		create_player(song_url)
@@ -104,14 +101,14 @@ function play_pause() {
 }
 
 function play() {
-  log('Играй гормонь!')
+  //log('Играй гормонь!')
   play_pause();
   player_state = PLAYED;
 }
 
 
 function stop() {
-  log('Стой сука');
+  //log('Стой сука');
   if (iframe_doc) {
 	iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'stop'}),'*');
   } else{
@@ -122,7 +119,7 @@ function stop() {
 
 
 function pause() {
-  log('Паузе')
+  //log('Паузе')
   play_pause();
   player_state = PAUSED;
 }
@@ -161,10 +158,10 @@ function set_state(new_player_state_str) {
       (new_player_state_str == "stop" ? STOPPED : PAUSED)
     );
 
-  log('Old state: ' + player_state);
-  log('Set state! ' + new_player_state);
+  //log('Old state: ' + player_state);
+  //log('Set state! ' + new_player_state);
 
-  log(player_state - new_player_state);
+  //log(player_state - new_player_state);
 
   switch(player_state - new_player_state) {
   case(STOPPED - PLAYED):
@@ -181,8 +178,7 @@ function set_state(new_player_state_str) {
     pause();
     break;
   default:
-    log('Do nothing');
-    // Do nothing
+    //log('Do nothing');
   }
 }
 
