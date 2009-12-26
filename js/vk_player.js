@@ -23,14 +23,16 @@ var player_state = STOPPED,
       'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
       'type="application/x-shockwave-flash"/>',
       
-    player_volume = widget.preferenceForKey('vkplayer-volume') || 80,
-     
+    player_volume = (widget.preferenceForKey('vkplayer-volume') && widget.preferenceForKey('vkplayer-volume') != 'undefined') || 80,
+    
     background_color = '#FFFFFF',
     events = new Array,
     
     
     current_song = null;
 
+	widget.test_message = 'Hello, world!';
+log(player_volume);
 // VK player actions
 
 function call_event(event, data) {
@@ -55,7 +57,11 @@ function player_DoFSCommand(c, args) {
 }
 
 function set_var(variable, value) {
-	$(".player",player_holder)[0].SetVariable("audioPlayer_mc." + variable, value);
+	var player = $(".player",player_holder);
+	player[0].SetVariable("audioPlayer_mc." + variable, value);
+	log(player[0])
+	log(player[0].SetVariable)
+	//$(".player",player_holder)[0].SetVariable("audioPlayer_mc." + variable, value);
 }  
 function play_song_by_url(song_url){
 	if (iframe_doc) {
@@ -95,6 +101,7 @@ function play_pause() {
   if (iframe_doc) {
 	iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'play_pause'}),'*');
   } else{
+  	log('piu')
 	set_var('buttonPressed', 'true');
   }
   
@@ -106,7 +113,12 @@ function play() {
   player_state = PLAYED;
 }
 
-
+ej_postMessage = function(message_obj){
+	iframe_doc.contentWindow.postMessage(JSON.stringify(message_obj),'*');
+}
+ej_do = function(to_eval){
+	iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'eval','toeval': to_eval}),'*');
+}
 function stop() {
   //log('Стой сука');
   if (iframe_doc) {
@@ -165,7 +177,7 @@ function set_state(new_player_state_str) {
 
   switch(player_state - new_player_state) {
   case(STOPPED - PLAYED):
-    create_player();
+    play_song_by_url('');
     break;
   case(PAUSED - PLAYED):
     play();
@@ -203,8 +215,8 @@ function change_volume(volume_value){
   widget.setPreferenceForKey(volume_value, 'vkplayer-volume');
   player_volume = volume_value;	
 }
-window.switch_to_next = switch_to_next;
-window.change_volume = change_volume;
+widget.switch_to_next = switch_to_next;
+widget.change_volume = change_volume;
 
 events[FINISHED] = function() {
   if (source_window) {
@@ -227,7 +239,6 @@ $(function() {
   player_holder = $('.player-holder');
   iframe_doc = $('#ejohn')[0];
   if (iframe_doc) {
-	window.test_message = 'Hello, world!';
 	$(iframe_doc).load(function(){
 		iframe_doc.contentWindow.postMessage(JSON.stringify({'command': 'init'}),'*');
 	})

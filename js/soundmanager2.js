@@ -669,6 +669,7 @@ function SoundManager(smURL,smID) {
       width: '100%',
       height: '100%',
       quality: 'high',
+      swliveconnect : "true",
       allowScriptAccess: 'always',
       bgcolor: _s.bgColor,
       pluginspage: 'http://www.macromedia.com/go/getflashplayer',
@@ -1813,5 +1814,5 @@ function SoundManager(smURL,smID) {
 
 // set var SM2_DEFER = true; in your own script to prevent auto start-up
 if (typeof SM2_DEFER == 'undefined' || !SM2_DEFER) {
-  soundManager = new SoundManager('/swf/');
+  soundManager = new SoundManager();
 }

@@ -123,10 +123,8 @@ $(function() {
 			email = $('input.vk-email',_this).val(),
 			pass = $('input.vk-pass',_this).val();
 		if (true) {
-			vk_send_captcha($('#vk-captcha_key',_this).val(),email,pass)
-			log('aa')
+			vk_send_captcha($('#vk-captcha_key',_this).val(),email,pass);
 		} else {
-			log('bb')
 			vk_login(email,pass);
 		}
 		
@@ -175,7 +173,6 @@ $(function() {
 	var get_lfm_token = function(lfm_auth,callback){
 		lfm('auth.getToken',false,function(r){
 			lfm_auth.newtoken = r.token;
-			log(lfm_auth.newtoken);
 			if (callback) {callback(lfm_auth.newtoken);}
 		})
 	}
