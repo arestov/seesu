@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>iframe</title>
+	<style type="text/css" media="screen">
+		body{margin:0;padding:0;overflow:hidden;-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);}
+	</style>
+	
+	<script type="text/javascript" src="js/json.js"></script>
+	<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
+	<script type="text/javascript" src="js/console.js"></script>
+	<script type="text/javascript" src="js/soundmanager2.js"></script>
+	<script type="text/javascript">
+		soundManager.url = '/swf/';
+		soundManager.debugMode = true;
+		soundManager.consoleOnly = true;
+	</script>
+	
+	<script type="text/javascript" src="js/vk_player.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		function log(){
+			opera.postError.apply(opera, arguments)
+		}
+		var source_window;
+		var player_holder,
+			holy_vk_string = 
+	      	'<embed width="342" height="14" ' + 
+		      'flashvars="debug=false&amp;volume=:volume&amp;' +
+		      'url=:url" allowscriptaccess="always" wmode="transparent" swliveconnect="true" quality="high" ' +
+		      'name="player" class="player" style="" ' +
+		      'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
+		      'type="application/x-shockwave-flash"/>';
+
+		window.addEventListener("message", function(e){
+			if (e.origin.indexOf('widget://') == -1) {
+				return
+			} else {
+				var o = JSON.parse(e.data);
+				if (o.command == 'play') {
+					var song_url = o.file;
+					player_holder.html(
+						holy_vk_string
+						  .replace(':url', song_url)
+						  .replace(':volume', 80)
+					)
+					log(JSON.stringify(o));
+				} else if (o.command == 'stop'){
+					stop();
+				} else if (o.command == 'play_pause'){
+					play_pause();
+				}
+				else if (o.command == 'init') {
+					source_window = e.source;
+					log(source_window.test_message);
+				} else if (o.command == 'eval') {
+					eval(o.toeval);
+				}
+			}
+			
+			
+		}, false);
+		
+		
+		$(function(){
+			player_holder = $('.player-holder');
+		})
+
+	</script>
+</head>
+
+<body>
+<div class="player-holder"></div>
+</body>
+</html>

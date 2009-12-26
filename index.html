@@ -16,13 +16,6 @@
 	<script type="text/javascript" src="js/widget_events.js"></script>
 	
 	<script type="text/javascript" src="js/console.js"></script>
-	<script type="text/javascript" src="js/soundmanager2.js"></script>
-	
-	
-	<script type="text/javascript">
-	soundManager.url = '/swf/';
-	soundManager.debugMode = true;
-	</script>
 	
   </head>
   <body>
@@ -55,7 +48,7 @@
 			<div class="start screen">
 				
 				<div class="search-start">
-					
+					  
 					  <form id="search" name="search">
 						<p>Music search</p>
 						<input type="text" name="q" id="q" size="50" />
@@ -128,7 +121,10 @@
 							<img src="i/buttons_next.png" alt="next"/>
 						</a>
 					</p>
-					<p class="player-holder"></p>
+					<p class="player-holder">
+						<iframe src="iframe.html" id="ejohn" width='342' height='13' onload="log('iframe')" frameborder="0"></iframe>
+					</p>
+					
 					<div class="flash-secur">
 						<p>To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong><a href="" class="flash-s">change settings</a></strong>:</p>
 						<p><img src="i/img_allow_internet_flash.png"alt="flash security page"/></p>
