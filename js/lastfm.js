@@ -17,16 +17,11 @@ var lfm = function(method,params,callback) {
 					pv_signature_list.push(param + encodeURIComponent(params_full[param]));
 				}
 			}
-			
 			pv_signature_list.sort();
-			
 			var paramsstr = '';
 			for (var i=0, l = pv_signature_list.length; i < l; i++) {
 				paramsstr += pv_signature_list[i];
 			};
-			
-			log(paramsstr + s);
-			
 			params_full.api_sig = hex_md5(paramsstr += s);
 		}
 		

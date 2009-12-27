@@ -1,3 +1,8 @@
+//http://github.com/NV/console.js
+//Console.js — crossbrowser Firebug console API
+//Nikita Vasilyev
+
+
 if (typeof console === 'undefined') {
  
   /**
