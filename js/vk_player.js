@@ -11,7 +11,7 @@ var vk_p = {
 	'html': 
 		('<embed width="342" height="14" ' + 
 		'flashvars="debug=false&amp;volume=:volume&amp;duration=210&amp;' +
-		'url=:url" allowscriptaccess="always" wmode="transparent" quality="high" ' +
+		'url=:url" allowscriptaccess="always" wmode="transparent" quality="low" ' +
 		'name="vk_flash_player" class="vk_flash_player" ' +
 		'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
 		'type="application/x-shockwave-flash"/>'),
@@ -25,7 +25,7 @@ var vk_p = {
 		if(args.match('created')) {call_event(CREATED)};
 		if(args.match('stopped')) {call_event(STOPPED)};
 		if(args.match('volume')) {
-		  call_event(VOLUME, parse_volume_value(args) );
+		  call_event(VOLUME, vk_p.parse_volume_value(args) );
 		};
 	},
 	'create_player': function(song_url,duration){
@@ -186,7 +186,6 @@ function song_click(node) {
   current_playlist = node.data('link_to_playlist');
   return false;
 }
-var parse_volume_value = vk_p.parse_volume_value;
 
 function switch_to_next(){
   switch_to('next');
