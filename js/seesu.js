@@ -57,13 +57,14 @@ var parseStrToObj = function(onclickstring){
 	var b = onclickstring,
 		fname = '';
 	b = b.substring(b.indexOf('(') + 1, b.indexOf(')'));
-	var params = b.split(','),
-		server = params[1],
-		user = params[2];
+	var params 		= b.split(','),
+		server 		= params[1],
+		user 		= params[2],
+		duration 	= params[4];
 	while (user.length < 5) {user = '0' + user;}
 	fname = params[3];
 	fname = fname.substring(1, fname.length - 1);
-	var obj ={'sever': server, 'user' : user , 'filename' : fname, 'link' : ('http://cs' + server + '.vkontakte.ru/u' + user + '/audio/' + fname + '.mp3')};
+	var obj ={'sever': server, 'user' : user , 'filename' : fname, 'link' : ('http://cs' + server + '.vkontakte.ru/u' + user + '/audio/' + fname + '.mp3'), 'duration' : duration};
 	return obj;
 
 };
@@ -74,8 +75,9 @@ var getMusic = function(trackname){
 		return false;
 	} else {
 		var musicList = [];
-		musicList.links = [];
-		musicList.playlist = [];
+			musicList.links = [];
+			musicList.playlist = [];
+			musicList.duration_list = [];
 		var xhr = new XMLHttpRequest ();
 
 		xhr.onreadystatechange = function () {
@@ -92,6 +94,7 @@ var getMusic = function(trackname){
 						track = $('span', text)[0].textContent,
 						playStr = $('img.playimg', row )[0].getAttribute('onclick'),
 						obj = parseStrToObj(playStr);
+					duration_list.push(obj.duration);
 					musicList.links.push(obj.link);
 					musicList.playlist.push({'artist_name' : artist ,'track_title': track});
 					obj.artist = artist;
@@ -207,8 +210,8 @@ var get_vk_track = function(tracknode,playlist_nodes_for,reset_queue) {
 						if (rows.length) {
 							var row = rows[0],
 								playStr = $('img.playimg', row )[0].getAttribute('onclick'),
-								link = parseStrToObj(playStr).link;
-							make_node_playable(tracknode,link,playlist_nodes_for);
+								ms_obj = parseStrToObj(playStr);
+							make_node_playable(tracknode, ms_obj.link, playlist_nodes_for, ms_obj.duration);
 							resort_playlist(playlist_nodes_for);
 						
 						} else {
@@ -247,8 +250,8 @@ var make_tracklist_playable = function(track_nodes){
 		};
 	}
 };
-var make_node_playable = function(node,http_link,playlist_nodes_for){
-	var playable_node = $(node).attr({'class' : 'song', 'href' : http_link} );
+var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_duration){
+	var playable_node = $(node).attr({'class' : 'song', 'href' : http_link} ).data('duration', mp3_duration);
 	playlist_nodes_for.push(playable_node);
 
 	var playlist_length = playlist_nodes_for.length;
@@ -265,7 +268,7 @@ var make_node_playable = function(node,http_link,playlist_nodes_for){
 	playable_node.parent().append(mp3);
 };
 
-var render_playlist = function(playlist,container,mp3links) { // if links present than do full rendering! yearh!
+var render_playlist = function(playlist,container,mp3links,duration_list) { // if links present than do full rendering! yearh!
 	var linkNodes = [];
 	var songNodes = [];
 
@@ -278,14 +281,16 @@ var render_playlist = function(playlist,container,mp3links) { // if links presen
 		track.data('artist_name',playlist[i].artist_name ).data('track_title', playlist[i].track_title );
 		$(li).append(track);
 		
-		
+		if (duration_list) {
+			track.data('duration',duration_list[i]);
+		}
 		if (mp3links) {
-			var link = mp3links[i];
-			make_node_playable(track,link,songNodes);
+			make_node_playable(track,mp3links[i],songNodes);
+		} else {
+			linkNodes.push(track);
 		}
 		
 		$(ul).append(li);		
-		linkNodes.push(track);
 	}
 	if (container) {
 		container.html('').append(ul);
@@ -297,7 +302,7 @@ var render_playlist = function(playlist,container,mp3links) { // if links presen
 		}
 	}
 	if (!mp3links){
-		make_tracklist_playable(linkNodes);	
+		make_tracklist_playable(linkNodes);	//get mp3 for each prepaired node
 	}
 	return true
 };
@@ -310,7 +315,7 @@ var vk_track_search = function(query){
 	var musicObj = getMusic(query);
 	if (musicObj) {
 		
-		render_playlist(musicObj.playlist,artsTracks,musicObj.links);
+		render_playlist(musicObj.playlist,artsTracks,musicObj.links,musicObj.duration_list);
 	} else {
 		wait_for_vklogin = function(){
 			_this.click();

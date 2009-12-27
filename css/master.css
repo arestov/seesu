@@ -245,6 +245,7 @@ body{
 		#slider
 		.screens{
 			overflow-y:auto;
+			overflow-x:hidden;
 			height:536px;
 			padding:0 10px;
 			-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
