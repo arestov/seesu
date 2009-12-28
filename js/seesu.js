@@ -94,7 +94,7 @@ var getMusic = function(trackname){
 						track = $('span', text)[0].textContent,
 						playStr = $('img.playimg', row )[0].getAttribute('onclick'),
 						obj = parseStrToObj(playStr);
-					duration_list.push(obj.duration);
+					musicList.duration_list.push(obj.duration);
 					musicList.links.push(obj.link);
 					musicList.playlist.push({'artist_name' : artist ,'track_title': track});
 					obj.artist = artist;
@@ -102,14 +102,17 @@ var getMusic = function(trackname){
 
 					musicList.push(obj);
 				}
+				render_playlist(musicList.playlist,artsTracks,musicList.links,musicList.duration_list);
 			} else {
 				log('Поиск не удался... :’—(');
 				log(xhr.responseText);
 				if ((xhr.responseText.indexOf('http://vkontakte.ru/login.php?op=logout') != -1) && xhr.responseText.indexOf('http://vkontakte.ru/images/progress.gif' != -1)) {
 					vk_logged_out();
 					log('квантакте изгнал вас из рая');
+					wait_for_vklogin = function(){
+						render_playlist(musicList.playlist,artsTracks,musicList.links,musicList.duration_list);
+					}
 				}
-				return false;
 			}
 		  }
 		};
@@ -119,7 +122,6 @@ var getMusic = function(trackname){
 		xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 		xhr.send(param);
 
-		return musicList;
 	}
 };
 var sort_by_play_order = function(g,f){
@@ -255,9 +257,9 @@ var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_durat
 	playlist_nodes_for.push(playable_node);
 
 	var playlist_length = playlist_nodes_for.length;
-	if ((playlist_length == 1) || (playable_node.data('want_to_play') == want_to_play) ) {
-		set_current_song(playable_node);
-		current_playlist = playlist_nodes_for;
+	if ((playlist_length == 1) || (playable_node.data('want_to_play') == seesu.player.want_to_play) ) {
+		seesu.player.set_current_song(playable_node);
+		seesu.player.current_playlist = playlist_nodes_for;
 	}
 	
 	playable_node.data('number_in_playlist', playlist_length-1);
@@ -281,11 +283,9 @@ var render_playlist = function(playlist,container,mp3links,duration_list) { // i
 		track.data('artist_name',playlist[i].artist_name ).data('track_title', playlist[i].track_title );
 		$(li).append(track);
 		
-		if (duration_list) {
-			track.data('duration',duration_list[i]);
-		}
+
 		if (mp3links) {
-			make_node_playable(track,mp3links[i],songNodes);
+			make_node_playable(track,mp3links[i],songNodes,duration_list[i]);
 		} else {
 			linkNodes.push(track);
 		}
@@ -302,7 +302,7 @@ var render_playlist = function(playlist,container,mp3links,duration_list) { // i
 		}
 	}
 	if (!mp3links){
-		make_tracklist_playable(linkNodes);	//get mp3 for each prepaired node
+		make_tracklist_playable(linkNodes);	//get mp3 for each prepaired node (do many many delayed requests to vkontakte)
 	}
 	return true
 };
@@ -310,17 +310,10 @@ var vk_track_search = function(query){
 	art_page_nav.innerHTML = query;
 
 	slider.className = 'sreen-artist-page';
-	player_holder  = artsplhld;
+	seesu.player.player_holder  = artsplhld;
 		
-	var musicObj = getMusic(query);
-	if (musicObj) {
-		
-		render_playlist(musicObj.playlist,artsTracks,musicObj.links,musicObj.duration_list);
-	} else {
-		wait_for_vklogin = function(){
-			_this.click();
-		}
-	}
+	getMusic(query);
+	
 }
 var render_loved = function(user_name){
 	lfm('user.getLovedTracks',{user: (user_name || lfm_auth.user_name), limit: 15},function(r){
@@ -339,7 +332,7 @@ var render_loved = function(user_name){
 	});
 	$(nav_artist_page).text('Loved Tracks');
 	slider.className = 'sreen-artist-page';
-	player_holder = artsplhld;
+	seesu.player.player_holder = artsplhld;
 }
 var render_recommendations_by_username = function(username){
 	$.ajax({
@@ -362,7 +355,7 @@ var render_recommendations_by_username = function(username){
 		  }
 	})
 	slider.className = 'sreen-artist-page';
-	player_holder = artsplhld;
+	seesu.player.player_holder = artsplhld;
 }
 var render_recommendations = function(){
 	lfm('user.getRecommendedArtists',{sk: lfm_auth.sk},function(r){
@@ -377,13 +370,13 @@ var render_recommendations = function(){
 	})
 	$(nav_artist_page).text('Recommendations');
 	slider.className = 'sreen-artist-page';
-	player_holder = artsplhld;
+	seesu.player.player_holder = artsplhld;
 }
 var render_tracks_by_artists_of_tag = function(tag){
 	get_artists_by_tag(tag,proxy_render_artists_tracks);
 	$(nav_artist_page).text('Tag: ' + tag);
 	slider.className = 'sreen-artist-page';
-	player_holder = artsplhld;
+	seesu.player.player_holder = artsplhld;
 }
 
 var get_artists_by_tag = function(tag,callback){
@@ -480,10 +473,10 @@ var show_artist_info = function(r){
 	}
 }
 var update_artist_info = function(artist,nav){
-	if (current_artist == artist) {
+	if (seesu.player.current_artist == artist) {
 		return true;
 	} else {
-		artsName.text(current_artist = artist);
+		artsName.text(seesu.player.current_artist = artist);
 		lfm('artist.getInfo',{'artist': artist }, show_artist_info);
 	}
 }
@@ -494,7 +487,7 @@ var set_artist_page = function (artist,with_search_results) {
 		slider.className = 'sreen-artist-page'
 	}
 	$(art_page_nav).text(artist);
-	player_holder = artsplhld;
+	seesu.player.player_holder = artsplhld;
 	getTopTracks(artist,function(track_list){
 		render_playlist(track_list,artsTracks);
 	});

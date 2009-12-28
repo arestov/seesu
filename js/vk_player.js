@@ -16,23 +16,21 @@ var vk_p = {
 		'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
 		'type="application/x-shockwave-flash"/>'),
 	'flash_js': function(c, args){
-		log(c)
-		log(args)
-		if(args.match('playing')) {call_event(PLAYED)};
-		if(args.match('paused')) {call_event(PAUSED)};
-		if(args.match('finished')) {call_event(FINISHED)};
-		if(args.match('init')) {call_event(INIT)};
-		if(args.match('created')) {call_event(CREATED)};
-		if(args.match('stopped')) {call_event(STOPPED)};
+		if(args.match('playing')) {seesu.player.call_event(PLAYED)};
+		if(args.match('paused')) {seesu.player.call_event(PAUSED)};
+		if(args.match('finished')) {seesu.player.call_event(FINISHED)};
+		if(args.match('init')) {seesu.player.call_event(INIT)};
+		if(args.match('created')) {seesu.player.call_event(CREATED)};
+		if(args.match('stopped')) {seesu.player.call_event(STOPPED)};
 		if(args.match('volume')) {
-		  call_event(VOLUME, vk_p.parse_volume_value(args) );
+		  seesu.player.call_event(VOLUME, vk_p.parse_volume_value(args) );
 		};
 	},
 	'create_player': function(song_url,duration){
 		player_holder.html(
 			vk_p.html
 			  .replace(':url', song_url)
-			  .replace(':volume', player_volume)
+			  .replace(':volume', seesu.player.player_volume)
 			  .replace('duration=210', ('duration=' + duration))
 		);
 	},
@@ -45,42 +43,94 @@ var vk_p = {
 		$(".vk_flash_player",player_holder)[0].SetVariable("audioPlayer_mc." + variable, value);
 	}  
 };
-function call_event(event, data) {
-  if(events[event]) events[event](data);
+var vk_flash_player_DoFSCommand = vk_p.flash_js;
+seesu.player = {
+	'player_state' 		: STOPPED,
+	'player_holder' 	: null,
+	'current_playlist' 	: null,
+	'want_to_play' 		: 0,
+	'wainter_for_play' 	: null,
+	'current_artist' 	: '',
+	'iframe_player' 	: false,
+	'iframe_doc' 		: null,
+	'volume_preference' : widget.preferenceForKey('vkplayer-volume'),
+	'player_volume' 	: ( volume_preference && (volume_preference != 'undefined') && (volume_preference != 'NaN') && volume_preference) || 80,
+	'events' 			: [],
+	'current_song' 		: null,
+	'call_event'		: function	(event, data) {
+	  if(this.events[event]) this.events[event](data);
+	},
+	'set_state'			:function (new_player_state_str) {
+	  var new_player_state =
+		(new_player_state_str == "play" ? PLAYED :
+		  (new_player_state_str == "stop" ? STOPPED : PAUSED)
+		);
+	  switch(this.player_state - new_player_state) {
+	  case(STOPPED - PLAYED):
+		if (this.current_song) {play_song_by_url(this.current_song.attr('href'),this.current_song.data('duration') )};
+		break;
+	  case(PAUSED - PLAYED):
+		play();
+		break;    
+	  case(PAUSED - STOPPED):
+	  case(PLAYED - STOPPED):
+		stop();
+		break;
+	  case(PLAYED - PAUSED):
+		pause();
+		break;
+	  default:
+		//log('Do nothing');
+	  }
+	},
+	'switch_to' 	:function (direction) {
+	  if (this.current_song) {
+		var playlist 		= this.current_song.data('link_to_playlist'),
+			current_number 	= this.current_song.data('number_in_playlist'),
+			total			= playlist.length || 0;
+		if (playlist.length > 1) {
+			if (direction == 'next') {
+				if (current_number == (total-1)) {
+					this.set_current_song(playlist[0]);
+				} else {
+					this.set_current_song(playlist[current_number+1]);
+				}
+			} else
+			if (direction == 'prev') {
+				if ( current_number == 0) {
+					this.set_current_song(playlist[total-1]);
+				} else {
+					this.set_current_song(playlist[current_number-1]);
+				}
+			}
+		}
+	  }
+	},
+	'set_current_song':function (node) {
+	  play_song_by_url(node.attr('href'), node.data('duration'));
+	  if (this.current_song) this.current_song.removeClass('active-play');
+	  this.current_song = node.addClass('active-play');
+	  var artist = node.data('artist_name');
+	  if (artist) {update_artist_info(artist);}
+	}
 }
-
-var player_state = STOPPED,
-	player_holder = null,
-	current_playlist,
-	want_to_play = 0,
-	wainter_for_play,
-	current_artist = '',
-	iframe_player = false,
-	iframe_doc = null,
-	volume_preference = widget.preferenceForKey('vkplayer-volume'),
-	player_volume = ( (volume_preference != 'undefined') && (volume_preference != 'NaN') && volume_preference) || 80,
-	events = new Array,
-	current_song = null;
-	widget.test_message = 'Hello, world!';
-log(player_volume)
-// VK player actions
-events[PAUSED] = function(){
-  player_state = PAUSED;
-}
-events[PLAYED] = function(){
-  player_state = PLAYED;
-}
-events[STOPPED] = function(){
-  player_state = STOPPED;
-}
-events[FINISHED] = function() {
+seesu.player.events[PAUSED] = function(){
+  seesu.player.player_state = PAUSED;
+};
+seesu.player.events[PLAYED] = function(){
+  seesu.player.player_state = PLAYED;
+};
+seesu.player.events[STOPPED] = function(){
+  seesu.player.player_state = STOPPED;
+};
+seesu.player.events[FINISHED] = function() {
   if (typeof(source_window) != 'undefined') {
 	source_window.switch_to_next();
   } else {
 	switch_to_next();
   }
 };
-events[VOLUME] = function(volume_value) {
+seesu.player.events[VOLUME] = function(volume_value) {
   if (typeof(source_window) != 'undefined') {
 	source_window.change_volume();
   } else { 
@@ -88,36 +138,17 @@ events[VOLUME] = function(volume_value) {
   }
   
 };
-// Player state switcher
-function set_state(new_player_state_str) {
 
-  var new_player_state =
-	(new_player_state_str == "play" ? PLAYED :
-	  (new_player_state_str == "stop" ? STOPPED : PAUSED)
-	);
-  //log('Old state: ' + player_state);
-  //log('Set state! ' + new_player_state);
-  //log(player_state - new_player_state);
 
-  switch(player_state - new_player_state) {
-  case(STOPPED - PLAYED):
-	if (current_song) {play_song_by_url(current_song.attr('href'),current_song.data('duration') )};
-	break;
-  case(PAUSED - PLAYED):
-	play();
-	break;    
-  case(PAUSED - STOPPED):
-  case(PLAYED - STOPPED):
-	stop();
-	break;
-  case(PLAYED - PAUSED):
-	pause();
-	break;
-  default:
-	//log('Do nothing');
-  }
-}
-var vk_flash_player_DoFSCommand = vk_p.flash_js;
+var iframe_player 		= seesu.player.iframe_player,
+	iframe_doc 			= seesu.player.iframe_doc;
+	
+widget.test_message = 'Hello, world!';
+
+
+
+
+
 function play_song_by_url(song_url,duration){
 	if (iframe_doc) {
 		iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'play','file':song_url}),'*');
@@ -126,8 +157,6 @@ function play_song_by_url(song_url,duration){
 	}
 	
 }
-
-// Player actions
 function play_pause() {
   if (iframe_doc) {
 	iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'play_pause'}),'*');
@@ -151,50 +180,19 @@ function pause() {
 }
 
 
-function set_current_song(node) {
-  play_song_by_url(node.attr('href'), node.data('duration'));
-  if (current_song) current_song.removeClass('active-play');
-  current_song = node.addClass('active-play');
-  var artist = node.data('artist_name');
-  if (artist) {update_artist_info(artist);}
-}
-function switch_to(direction) {
-  if(current_song) {
-	var playlist 		= current_song.data('link_to_playlist'),
-		current_number 	= current_song.data('number_in_playlist'),
-		total			= playlist.length || 0;
-	if (playlist.length > 1) {
-		if (direction == 'next') {
-			if (current_number == (total-1)) {
-				set_current_song(playlist[0]);
-			} else {
-				set_current_song(playlist[current_number+1]);
-			}
-		} else
-		if (direction == 'prev') {
-			if ( current_number == 0) {
-				set_current_song(playlist[total-1]);
-			} else {
-				set_current_song(playlist[current_number-1]);
-			}
-		}
-	}
-  }
-}
-
 // Click by song
 function song_click(node) {
-  set_current_song(node);
-  current_playlist = node.data('link_to_playlist');
+  seesu.player.set_current_song(node);
+  seesu.player.current_playlist = node.data('link_to_playlist');
   return false;
 }
 
 function switch_to_next(){
-  switch_to('next');
+  seesu.player.switch_to('next');
 }
 function change_volume(volume_value){
   widget.setPreferenceForKey(volume_value, 'vkplayer-volume');
-  player_volume = volume_value;	
+  seesu.player.player_volume = volume_value;	
 }
 widget.switch_to_next = switch_to_next;
 widget.change_volume = change_volume;
@@ -216,9 +214,9 @@ $(function() {
 	})
   };
   $('#stop, #pause, #play').click( function() {
-	set_state($(this).attr('id')); return false; }
+	seesu.player.set_state($(this).attr('id')); return false; }
   );
   $('#play_prev, #play_next').click( function() { 
-	if(current_song) switch_to($(this).attr('id').replace(/play_/, '')); return false; }
+	if(current_song) seesu.player.switch_to($(this).attr('id').replace(/play_/, '')); return false; }
   );
 });

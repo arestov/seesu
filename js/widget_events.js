@@ -10,9 +10,9 @@ $(function() {
 		return song_click(clicked_node);
 	  }	
 	  else if(clicked_node.is('.waiting-full-render')) {
-		if (wainter_for_play) {wainter_for_play.removeClass('marked-for-play');}
-		clicked_node.data('want_to_play', want_to_play += 1).addClass('marked-for-play');
-		wainter_for_play = clicked_node;
+		if (seesu.player.wainter_for_play) {seesu.player.wainter_for_play.removeClass('marked-for-play');}
+		clicked_node.data('want_to_play', seesu.player.want_to_play += 1).addClass('marked-for-play');
+		seesu.player.wainter_for_play = clicked_node;
 		return false;
 	  }
 	  else if(clicked_node.is('.vk-reg-ref')) {
@@ -25,7 +25,7 @@ $(function() {
 	  }
 	  else if (clicked_node.is('.twitter')){
 	  	var tweet_text = "Seesu plays last.fm for free and lets me to download tracks #seesu http://bit.ly/info/4s6CKa";
-		if (current_artist) {tweet_text += " Now I'm listening «" + current_artist + "»" };
+		if (seesu.player.current_artist) {tweet_text += " Now I'm listening «" + seesu.player.current_artist + "»" };
 		widget.openURL( 'http://twitter.com/home/?status=' + encodeURIComponent(tweet_text));
 		return false;
 	  }
@@ -51,7 +51,7 @@ $(function() {
 	  }
 	  else if(clicked_node.is('.artist-list')){
 		proxy_render_artists_tracks(clicked_node.data('artist_list'));
-		$(art_page_nav).text('Similar to «' + current_artist + '»');
+		$(art_page_nav).text('Similar to «' + seesu.player.current_artist + '»');
 	  }
 	}
   });
