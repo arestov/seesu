@@ -7,10 +7,11 @@ const INIT     = -11,
 	  FINISHED =  11;
 
 //vkontakte.ru player
-var vk_flash_player_DoFSCommand;
+var vk_flash_player_DoFSCommand = function(){
+	vk_p.flash_js(arguments[1])
+};
 var vk_p = function(flash_node_holder){
 	this.player_holder = flash_node_holder;
-	vk_flash_player_DoFSCommand = this.flash_js;
 };
 vk_p.prototype = {
 	'html': 
@@ -20,14 +21,14 @@ vk_p.prototype = {
 		'name="vk_flash_player" class="vk_flash_player" ' +
 		'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
 		'type="application/x-shockwave-flash"/>'),
-	'flash_js': function(c, args){
+	'flash_js': function(args){
 		if(args.match('playing')) {seesu.player.call_event(PLAYED);}
 		if(args.match('paused')) {seesu.player.call_event(PAUSED);}
-		if(args.match('finished')) {seesu.player.call_event(FINISHED);log('piu');}
+		if(args.match('finished')) {seesu.player.call_event(FINISHED);}
 		if(args.match('init')) {seesu.player.call_event(INIT);}
 		if(args.match('created')) {seesu.player.call_event(CREATED);}
 		if(args.match('stopped')) {seesu.player.call_event(STOPPED);}
-		if(args.match('volume')) {seesu.player.call_event(VOLUME, this.parse_volume_value(args));log(args)}
+		if(args.match('volume')) {seesu.player.call_event(VOLUME, this.parse_volume_value(args));}
 	},
 	'create_player': function(song_url,duration){
 		var _this = this;
@@ -57,8 +58,10 @@ seesu.player = {
 	'current_artist' 	: '',
 	'iframe_player' 	: false,
 	'iframe_doc' 		: null,
-	'volume_preference' : widget.preferenceForKey('vkplayer-volume'),
-	'player_volume' 	: ( this.volume_preference && (this.volume_preference != 'undefined') && (this.volume_preference != 'NaN') && this.volume_preference) || 80,
+	'player_volume' 	: ( function(){
+		var volume_preference = widget.preferenceForKey('vkplayer-volume');
+		return volume_preference && (volume_preference != 'undefined') && (volume_preference != 'NaN') && volume_preference
+		})() || 80,
 	'events' 			: [],
 	'current_song' 		: null,
 	'call_event'		: function	(event, data) {

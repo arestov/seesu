@@ -406,7 +406,6 @@ var get_tracks_by_artists = function(artists,callback){
 			params_obj.artists_track_list.push(track_list[random_track_num]);
 		
 			if (params_obj.finish) {
-				log(JSON.stringify(params_obj.artists_track_list));
 				if (callback) {callback(params_obj.artists_track_list);}
 			}
 			
