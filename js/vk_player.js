@@ -7,7 +7,12 @@ const INIT     = -11,
 	  FINISHED =  11;
 
 //vkontakte.ru player
-var vk_p = {
+var vk_flash_player_DoFSCommand;
+var vk_p = function(flash_node_holder){
+	this.player_holder = flash_node_holder;
+	vk_flash_player_DoFSCommand = this.flash_js;
+};
+vk_p.prototype = {
 	'html': 
 		('<embed width="342" height="14" ' + 
 		'flashvars="debug=false&amp;volume=:volume&amp;duration=210&amp;' +
@@ -16,19 +21,18 @@ var vk_p = {
 		'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
 		'type="application/x-shockwave-flash"/>'),
 	'flash_js': function(c, args){
-		if(args.match('playing')) {seesu.player.call_event(PLAYED)};
-		if(args.match('paused')) {seesu.player.call_event(PAUSED)};
-		if(args.match('finished')) {seesu.player.call_event(FINISHED)};
-		if(args.match('init')) {seesu.player.call_event(INIT)};
-		if(args.match('created')) {seesu.player.call_event(CREATED)};
-		if(args.match('stopped')) {seesu.player.call_event(STOPPED)};
-		if(args.match('volume')) {
-		  seesu.player.call_event(VOLUME, vk_p.parse_volume_value(args) );
-		};
+		if(args.match('playing')) {seesu.player.call_event(PLAYED);}
+		if(args.match('paused')) {seesu.player.call_event(PAUSED);}
+		if(args.match('finished')) {seesu.player.call_event(FINISHED);log('piu');}
+		if(args.match('init')) {seesu.player.call_event(INIT);}
+		if(args.match('created')) {seesu.player.call_event(CREATED);}
+		if(args.match('stopped')) {seesu.player.call_event(STOPPED);}
+		if(args.match('volume')) {seesu.player.call_event(VOLUME, this.parse_volume_value(args));log(args)}
 	},
 	'create_player': function(song_url,duration){
-		player_holder.html(
-			vk_p.html
+		var _this = this;
+		this.player_holder.html(
+			_this.html
 			  .replace(':url', song_url)
 			  .replace(':volume', seesu.player.player_volume)
 			  .replace('duration=210', ('duration=' + duration))
@@ -43,7 +47,7 @@ var vk_p = {
 		$(".vk_flash_player",player_holder)[0].SetVariable("audioPlayer_mc." + variable, value);
 	}  
 };
-var vk_flash_player_DoFSCommand = vk_p.flash_js;
+
 seesu.player = {
 	'player_state' 		: STOPPED,
 	'player_holder' 	: null,
@@ -54,7 +58,7 @@ seesu.player = {
 	'iframe_player' 	: false,
 	'iframe_doc' 		: null,
 	'volume_preference' : widget.preferenceForKey('vkplayer-volume'),
-	'player_volume' 	: ( volume_preference && (volume_preference != 'undefined') && (volume_preference != 'NaN') && volume_preference) || 80,
+	'player_volume' 	: ( this.volume_preference && (this.volume_preference != 'undefined') && (this.volume_preference != 'NaN') && this.volume_preference) || 80,
 	'events' 			: [],
 	'current_song' 		: null,
 	'call_event'		: function	(event, data) {
@@ -207,6 +211,9 @@ var ej_do = function(to_eval){
 // Ready? Steady? Go!
 $(function() {
   player_holder = $('.player-holder');
+  if (player_holder && player_holder.length) {
+	vk_p = new vk_p(player_holder)
+  }
   iframe_doc = $('#ejohn')[0];
   if (iframe_doc) {
 	$(iframe_doc).load(function(){
@@ -217,6 +224,6 @@ $(function() {
 	seesu.player.set_state($(this).attr('id')); return false; }
   );
   $('#play_prev, #play_next').click( function() { 
-	if(current_song) seesu.player.switch_to($(this).attr('id').replace(/play_/, '')); return false; }
+	if(seesu.player.current_song) seesu.player.switch_to($(this).attr('id').replace(/play_/, '')); return false; }
   );
 });
