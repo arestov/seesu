@@ -57,10 +57,12 @@ var player_state = STOPPED,
 	current_artist = '',
 	iframe_player = false,
 	iframe_doc = null,
-	player_volume = (widget.preferenceForKey('vkplayer-volume') && widget.preferenceForKey('vkplayer-volume') != 'undefined') || 80,
+	volume_preference = widget.preferenceForKey('vkplayer-volume'),
+	player_volume = ( (volume_preference != 'undefined') && (volume_preference != 'NaN') && volume_preference) || 80,
 	events = new Array,
 	current_song = null;
 	widget.test_message = 'Hello, world!';
+log(player_volume)
 // VK player actions
 events[PAUSED] = function(){
   player_state = PAUSED;
