@@ -200,10 +200,7 @@ var ej_do = function(to_eval){
 }
 // Ready? Steady? Go!
 $(function() {
-  player_holder = $('.player-holder');
-  if (player_holder && player_holder.length) {
-	seesu.player.musicbox = new vk_p(player_holder);//connecting vkontakte flash to seesu player core
-  }
+
   iframe_doc = $('#ejohn')[0];
   if (iframe_doc) {
 	$(iframe_doc).load(function(){

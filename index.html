@@ -4,6 +4,8 @@
 	<meta charset="utf-8">
 	<title>Seesu</title>
 	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="js/console.js"></script>
+	
 	<script type="text/javascript" src="js/json.js"></script>
 	<script type="text/javascript" src="js/md5-min.js"></script>
 	<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
@@ -12,18 +14,70 @@
 	<script type="text/javascript" src="js/vk_login.js"></script>
 	<script type="text/javascript" src="js/seesu.js"></script>
 	<script type="text/javascript" src="js/lastfm.js"></script>
+	<script type="text/javascript" src="js/soundmanager2.js"></script>
 	<script type="text/javascript" src="js/vk_player.js"></script>
-	<script type="text/javascript" src="js/widget_events.js"></script>
-	
-	<script type="text/javascript" src="js/console.js"></script>
-	
-	<!--<script type="text/javascript" src="js/soundmanager2.js"></script>
 	<script type="text/javascript" charset="utf-8">
+		var sm2_module = function(){};
+		sm2_module.prototype = {
+			'current_song': null,
+			"play_song_by_url": function (song_url,duration){
+			  if (this.current_song) {
+				this.current_song.stop()
+			  }
+			  this.current_song = soundManager.createSound({
+				id		: song_url,
+				url		: song_url,
+				volume	: 100,
+				autoPlay: true,
+				onplay	: function(){seesu.player.call_event(PLAYED);},
+				onresume: function(){seesu.player.call_event(PLAYED);},
+				onpause : function(){seesu.player.call_event(PAUSED);},
+				onstop	: function(){seesu.player.call_event(STOPPED);},
+				onfinish: function(){seesu.player.call_event(FINISHED);}
+			  });
+			  if (this.current_song.playState == 0){
+				this.current_song.play();
+			  }
+			},
+			'play': function () {
+			  if (this.current_song) {
+				this.current_song.resume()
+			  }
+			},
+			'stop': function () {
+			  if (this.current_song) {
+				this.current_song.stop()
+			  }
+			},
+			'pause': function () {
+			  if (this.current_song) {
+				this.current_song.pause()
+			  }
+			}
+		}
 		var soundManager = soundManager || {};
 		soundManager.url = '/swf/';
 		soundManager.debugMode = true;
 		soundManager.consoleOnly = true;
-	</script>-->
+		soundManager.onload = function(){
+			if (!soundManager.sandbox.noRemote) {
+				log('i can acces internet')
+				seesu.player.musicbox = new sm2_module();
+			} else {
+				log('bad');
+				player_holder = $('.player-holder');
+				if (player_holder && player_holder.length) {
+					seesu.player.musicbox = new vk_p(player_holder);//connecting vkontakte flash to seesu player core
+				}
+			}
+		}
+	</script>
+	
+	<script type="text/javascript" src="js/widget_events.js"></script>
+	
+	
+	
+
   </head>
   <body>
 	<div id="slider" class="screen-start">
@@ -34,7 +88,7 @@
 				<span class="arr-d">&darr;</span>
 				<span class="arr-r">&rarr;</span>
 			</div>
-			<div class="nav nav-search-results" id="search_result_nav"  >
+			<div class="nav nav-search-results" id="search_result_nav"	>
 				<em>Search results</em>
 				<span class="arr-d">&darr;</span>
 				<span class="arr-r">&rarr;</span>
@@ -157,7 +211,7 @@
 						<p>
 							<label for="pass-arts">pass</label>
 							<span class="input-place" >
-								<input type="password" class="vk-pass"  name="pass" id="pass-arts"/>
+								<input type="password" class="vk-pass"	name="pass" id="pass-arts"/>
 							</span>
 						</p>
 						<p class="error"></p>
