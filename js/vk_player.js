@@ -12,6 +12,7 @@ var vk_flash_player_DoFSCommand = function(){
 };
 var vk_p = function(flash_node_holder){
 	this.player_holder = flash_node_holder;
+	log('using vkontakte player');
 };
 vk_p.prototype = {
 	'html': 
@@ -45,8 +46,20 @@ vk_p.prototype = {
 		return pre_pesult.slice(1, pre_pesult.length - 1)[0];
 	},
 	'set_var': function(variable, value) {
-		$(".vk_flash_player",player_holder)[0].SetVariable("audioPlayer_mc." + variable, value);
-	}  
+	  $(".vk_flash_player",player_holder)[0].SetVariable("audioPlayer_mc." + variable, value);
+	},
+	"play_song_by_url": function (song_url,duration){
+	  this.create_player(song_url,duration)
+	},
+	'play': function () {
+	  this.set_var('buttonPressed', 'true');
+	},
+	'stop': function () {
+		this.set_var('setState', 'stop');
+	},
+	'pause': function () {
+	  this.set_var('buttonPressed', 'true');
+	} 
 };
 
 seesu.player = {
@@ -64,6 +77,8 @@ seesu.player = {
 		})() || 80,
 	'events' 			: [],
 	'current_song' 		: null,
+	'musicbox'			: null, //music box is a link to module with plaing methods, 
+								//for e.g. soundmanager2 and vkontakte flash player
 	'call_event'		: function	(event, data) {
 	  if(this.events[event]) this.events[event](data);
 	},
@@ -74,17 +89,17 @@ seesu.player = {
 		);
 	  switch(this.player_state - new_player_state) {
 	  case(STOPPED - PLAYED):
-		if (this.current_song) {play_song_by_url(this.current_song.attr('href'),this.current_song.data('duration') )};
+		if (this.current_song) {this.musicbox.play_song_by_url(this.current_song.attr('href'),this.current_song.data('duration') )};
 		break;
 	  case(PAUSED - PLAYED):
-		play();
+		this.musicbox.play();
 		break;    
 	  case(PAUSED - STOPPED):
 	  case(PLAYED - STOPPED):
-		stop();
+		this.musicbox.stop();
 		break;
 	  case(PLAYED - PAUSED):
-		pause();
+		this.musicbox.pause();
 		break;
 	  default:
 		//log('Do nothing');
@@ -114,7 +129,7 @@ seesu.player = {
 	  }
 	},
 	'set_current_song':function (node) {
-	  play_song_by_url(node.attr('href'), node.data('duration'));
+	  this.musicbox.play_song_by_url(node.attr('href'), node.data('duration'));
 	  if (this.current_song) this.current_song.removeClass('active-play');
 	  this.current_song = node.addClass('active-play');
 	  var artist = node.data('artist_name');
@@ -156,35 +171,7 @@ widget.test_message = 'Hello, world!';
 
 
 
-function play_song_by_url(song_url,duration){
-	if (iframe_doc) {
-		iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'play','file':song_url}),'*');
-	} else {
-		vk_p.create_player(song_url,duration)
-	}
-	
-}
-function play_pause() {
-  if (iframe_doc) {
-	iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'play_pause'}),'*');
-  } else{
-	vk_p.set_var('buttonPressed', 'true');
-  }
-}
-function play() {
-  play_pause();
-}
 
-function stop() {
-  if (iframe_doc) {
-	iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'stop'}),'*');
-  } else{
-	vk_p.set_var('setState', 'stop');
-  }
-}
-function pause() {
-  play_pause();
-}
 
 
 // Click by song
@@ -215,7 +202,7 @@ var ej_do = function(to_eval){
 $(function() {
   player_holder = $('.player-holder');
   if (player_holder && player_holder.length) {
-	vk_p = new vk_p(player_holder)
+	seesu.player.musicbox = new vk_p(player_holder);//connecting vkontakte flash to seesu player core
   }
   iframe_doc = $('#ejohn')[0];
   if (iframe_doc) {
