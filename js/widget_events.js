@@ -1,61 +1,87 @@
-var slider , searchfield ,srnav ,startlink, searchres, art_page_nav,
+var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, play_controls,
 	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
 	captcha_img,vk_login_error;
 $(function() {
   $(document).click(function(e) {
+  	var node = e.target;
+  	var class_name = node.className;
 	var clicked_node = $(e.target);
 
 	if(clicked_node.is('a')) {
-	  if(clicked_node.is('.song')) {
+
+	  if (class_name.match(/song/)){
 		return song_click(clicked_node);
 	  }	
-	  else if(clicked_node.is('.waiting-full-render')) {
+	  else if (class_name.match(/waiting-full-render/)){
 		if (seesu.player.wainter_for_play) {seesu.player.wainter_for_play.removeClass('marked-for-play');}
 		clicked_node.data('want_to_play', seesu.player.want_to_play += 1).addClass('marked-for-play');
 		seesu.player.wainter_for_play = clicked_node;
 		return false;
 	  }
-	  else if(clicked_node.is('.vk-reg-ref')) {
+	  else if (class_name.match(/vk-reg-ref/)){
 		widget.openURL(vkReferer);
 		return false;
 	  }
-	  else if (clicked_node.is('.flash-s')){
+	  else if (class_name.match(/flash-s/)){
 		widget.openURL('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 		return false;
 	  }
-	  else if (clicked_node.is('.twitter')){
-	  	var tweet_text = "Seesu plays last.fm for free and lets me to download tracks #seesu http://bit.ly/info/4s6CKa";
+	  else if (class_name.match(/twitter/)){
+		var tweet_text = "Seesu plays last.fm for free and lets me to download tracks #seesu http://bit.ly/info/4s6CKa";
 		if (seesu.player.current_artist) {tweet_text += " Now I'm listening «" + seesu.player.current_artist + "»" };
 		widget.openURL( 'http://twitter.com/home/?status=' + encodeURIComponent(tweet_text));
 		return false;
 	  }
-	  else if (clicked_node.is('.artist')){
+	  else if (class_name.match(/artist/)){
 		artist_name = decodeURIComponent(clicked_node.data('artist'));
 		set_artist_page(artist_name);
 		return false;
 	  }
-	  else if(clicked_node.is('.music-tag')){
+	  else if (class_name.match(/music-tag/)){
 		tag_name = decodeURIComponent(clicked_node.data('music_tag'));
 		render_tracks_by_artists_of_tag(tag_name);
 		return false;
 	  }
-	  else if(clicked_node.is('.bbcode_artist')){
-	  	artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/',''));
-	  	set_artist_page(artist_name);
-	    return false;
-	  }
-	  else if(clicked_node.is('.bbcode_tag')){
-		tag_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/tag/',''));
-	    render_tracks_by_artists_of_tag(tag_name);
+	  else if (class_name.match(/bbcode_artist/)){
+		artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/',''));
+		set_artist_page(artist_name);
 		return false;
 	  }
-	  else if(clicked_node.is('.artist-list')){
+	  else if (class_name.match(/bbcode_tag/)){
+		tag_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/tag/',''));
+		render_tracks_by_artists_of_tag(tag_name);
+		return false;
+	  }
+	  else if (class_name.match(/artist-list/)){
 		proxy_render_artists_tracks(clicked_node.data('artist_list'));
 		$(art_page_nav).text('Similar to «' + seesu.player.current_artist + '»');
 	  }
+	} else if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
+		var class_name = node.parentNode.className;
+		if (class_name.match(/pause/)){
+			seesu.player.set_state('pause');
+			return false; 
+		} 
+		else if (class_name.match(/play$/)){
+			seesu.player.set_state('play');
+			return false; 
+		}
+		else if (class_name.match(/stop/)){
+			seesu.player.set_state('stop');
+			return false; 
+		}
+		else if (class_name.match(/play_prev/)){
+			if(seesu.player.current_song) {seesu.player.switch_to('prev');}
+			return false;
+		}
+		else if (class_name.match(/play_next/)){
+			if(seesu.player.current_song) {seesu.player.switch_to('next');}
+			return false;
+		}
+	  
 	}
   });
-	
+	play_controls = $('.play-controls');
 	var about_jnode = $('#about');
 	$('.logo',about_jnode).hover(function(){
 		about_jnode.addClass('logoover');
@@ -239,6 +265,7 @@ $(function() {
 			return false
 		}
 	})
+	
 	$('#lfm-recomm').click(function(){
 		if(!lfm_auth.sk){
 			$(document.body).toggleClass('lfm-auth-req-recomm');

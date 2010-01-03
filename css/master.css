@@ -1,15 +1,77 @@
+#sm2-container{
+	bottom:0;
+	right:20px;
+}
 #close-widget{
 	position:absolute;
 	top:13px;
 	cursor:pointer;
 	right:8px;
 	font-size:16px;
+	color:#254DE5;
 	}
+	
+	#close-widget:hover{
+		color:#E52573;
+	}
+	#close-widget:active{
+		color:#F4AF16;
+	}
+.background-changes{
+	display:none;
+}
+.tracks-for-play
+.player-holder{
+	
+}
+.tracks-for-play
+.player-holder.vk-p-initing{
+	position:fixed;
+	left:40px;
+	top:50%;
+	opacity:0.01;
+}
+
+
 .player-holder{height:14px;}
 .pl-holder{clear:left}
-
+.tracks-for-play .play-controls{
+	display:none;
+	position:absolute;
+	top:0;
+	left:0;
+	width:auto;
+}
+.tracks-for-play .play-controls a{
+	float:left;
+}
+.tracks-for-play .play-controls .play_next{
+	position:absolute;
+	bottom:-20px;
+	left:50%;
+	margin-left:-10px;
+}
+.tracks-for-play .play-controls .play_prev{
+	position:absolute;
+	left:50%;
+	margin-left:-10px;
+	top:-20px;
+}
+.tracks-for-play .active-play .play-controls{
+	display:block;
+}
+.tracks-for-play .play-controls div{
+	position:absolute;
+	right:6px;
+	top:0;
+	width: 60px;
+}
+.tracks-for-play .active-play{
+	position:relative;
+}
 .play-controls{
-	height:15px;
+	display:none;
+	height:19px;
 	width:252px;
 	opacity:0.1;
 }
@@ -145,7 +207,9 @@ a.download-mp3{
 a.download-mp3:hover{
 	color:#8d5191;
 	}
-a.song.active-play{
+.active-play
+a.song{
+	cursor:default;
 	background:#E6E4A3;
 }
 input{
@@ -366,7 +430,7 @@ body{
 				}
 				
 				
-.info{float:left;}
+.info{overflow:hidden;}
 .info
 .image{
 	float:left;
@@ -374,7 +438,6 @@ body{
 	margin-bottom:7px;
 	}
 .pl-holder{
-	float:left;
 }
 
 
@@ -396,14 +459,17 @@ p.internet-flash-settings{
 
 .flash-secur{
 	display:none;
-	float:left;
-	width:342px;
+	}
+	.flash-secur
+	img{
+		max-width:100%;
 	}
 .play-list-holder{
-	float:right;
-	width:40%;
+	padding-top:10px;
+	padding-left:65px;
 	line-height:1.4em;
 	position:relative;
+	overflow:hidden;
 }
 	.play-list-holder
 	.tracks-waiting-for-search{

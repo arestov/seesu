@@ -1,3 +1,5 @@
+testing = widget.originURL.match(/config.xml/) && true;
+
 var	seesu =  {
 	  version: 0.25	
 	},
@@ -34,7 +36,7 @@ var updating_notify = function(r){
 	vkReferer = r.vk_referer;
 	log(vkReferer);
 }
-$.ajax({
+if (!testing) $.ajax({
   url: 'http://seesu.heroku.com/update',
   global: false,
   type: "POST",
@@ -255,7 +257,10 @@ var make_tracklist_playable = function(track_nodes){
 var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_duration){
 	var playable_node = $(node).attr({'class' : 'song', 'href' : http_link} ).data('duration', mp3_duration);
 	playlist_nodes_for.push(playable_node);
-
+	var mp3 = $("<a></a>").attr({ 'class': 'download-mp3', 'text': 'mp3', 'href': http_link });
+	playable_node.parent().append(mp3);
+	
+	
 	var playlist_length = playlist_nodes_for.length;
 	if ((playlist_length == 1) || (playable_node.data('want_to_play') == seesu.player.want_to_play) ) {
 		seesu.player.set_current_song(playable_node);
@@ -266,8 +271,7 @@ var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_durat
 	playable_node.data('link_to_playlist', playlist_nodes_for);
 	
 
-	var mp3 = $("<a></a>").attr({ 'class': 'download-mp3', 'text': 'mp3', 'href': http_link });
-	playable_node.parent().append(mp3);
+
 };
 
 var render_playlist = function(playlist,container,mp3links,duration_list) { // if links present than do full rendering! yearh!
@@ -281,7 +285,7 @@ var render_playlist = function(playlist,container,mp3links,duration_list) { // i
 		var track = $("<a></a>").attr(attr).data('play_order', i),
 			li = document.createElement('li');
 		track.data('artist_name',playlist[i].artist_name ).data('track_title', playlist[i].track_title );
-		$(li).append(track);
+		$(li).append(track).append(play_controls.clone());
 		
 
 		if (mp3links) {
@@ -289,6 +293,7 @@ var render_playlist = function(playlist,container,mp3links,duration_list) { // i
 		} else {
 			linkNodes.push(track);
 		}
+		
 		
 		$(ul).append(li);		
 	}
@@ -416,6 +421,7 @@ var get_tracks_by_artists = function(artists,callback){
 
 var getTopTracks = function(artist,callback,callback_params_obj) {
 	lfm('artist.getTopTracks',{'artist': artist },function(r){
+		if (typeof r != 'object') {return}
 		var tracks = r.toptracks.track || false;
 		if (tracks) {
 			var track_list = [];
@@ -427,6 +433,7 @@ var getTopTracks = function(artist,callback,callback_params_obj) {
 	});
 };
 var show_artist_info = function(r){
+	artsBio.parent().addClass('background-changes');
 	var info	 = r.artist,
 		similars = info.similar.artist,
 		artist	 = info.name,
@@ -470,12 +477,14 @@ var show_artist_info = function(r){
 		};
 		artsBio.append(similars_p);
 	}
+	artsBio.parent().removeClass('background-changes');
 }
 var update_artist_info = function(artist,nav){
 	if (seesu.player.current_artist == artist) {
-		return true;
+		
 	} else {
 		artsName.text(seesu.player.current_artist = artist);
+		artsBio.html('');
 		lfm('artist.getInfo',{'artist': artist }, show_artist_info);
 	}
 }

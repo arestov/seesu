@@ -17,9 +17,11 @@
 	<script type="text/javascript" src="js/soundmanager2.js"></script>
 	<script type="text/javascript" src="js/vk_player.js"></script>
 	<script type="text/javascript" charset="utf-8">
-		var sm2_module = function(){};
+		var sm2_module = function(){
+			this.current_song = null;
+			log('using soundmanager module');
+		};
 		sm2_module.prototype = {
-			'current_song': null,
 			"play_song_by_url": function (song_url,duration){
 			  if (this.current_song) {
 				this.current_song.stop()
@@ -57,10 +59,10 @@
 		}
 		var soundManager = soundManager || {};
 		soundManager.url = '/swf/';
-		soundManager.debugMode = true;
+		soundManager.debugMode = false;
 		soundManager.consoleOnly = true;
 		soundManager.onload = function(){
-			if (!soundManager.sandbox.noRemote) {
+			if (soundManager.sandbox.noRemote) {
 				log('i can acces internet')
 				seesu.player.musicbox = new sm2_module();
 			} else {
@@ -165,26 +167,26 @@
 					<div class="artist-bio"></div>
 				</div>
 				<div class="pl-holder">
-					<p class="play-controls" >
-						<a id="play_prev" class="play-control" >
-							<img src="i/buttons_prev.png" alt="previous"/>
-						</a>
-						<a id="stop" class="play-control">
-							<img src="i/buttons_stop.png" alt="stop"/>
-						</a>
-						<a id="play" class="play-control">
-							<img src="i/buttons_play.png" alt="play"/>
-						</a>
-						<a id="pause" class="play-control" >
-							<img src="i/buttons_pause.png" alt="pause"/>
-						</a>
-						<a id="play_next" class="play-control">
-							<img src="i/buttons_next.png" alt="next"/>
-						</a>
-					</p>
-					<p class="player-holder">
-						
-					</p>
+					<div class="play-controls" >
+						<div>
+							<a class="play-control play_prev" >
+								<img src="i/buttons_prev.png" alt="previous" class="pl-control" />
+							</a>
+							<a class="play-control stop">
+								<img src="i/buttons_stop.png" alt="stop" class="pl-control" />
+							</a>
+							<a class="play-control play">
+								<img src="i/buttons_play.png" alt="play" class="pl-control" />
+							</a>
+							<a class="play-control pause" >
+								<img src="i/buttons_pause.png" alt="pause" class="pl-control" />
+							</a>
+							<a class="play-control play_next">
+								<img src="i/buttons_next.png" alt="next" class="pl-control" />
+							</a>
+						</div>
+					</div>
+					<div class="player-holder"></div>
 					<div class="flash-secur">
 						<p>To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong><a href="" class="flash-s">change settings</a></strong>:</p>
 						<p><img src="i/img_allow_internet_flash.png"alt="flash security page"/></p>
