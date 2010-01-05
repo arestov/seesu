@@ -1,5 +1,8 @@
+body{
+	position:static;
+}
 #sm2-container{
-	bottom:0;
+	bottom:20px;
 	right:20px;
 }
 #close-widget{
@@ -9,6 +12,10 @@
 	right:8px;
 	font-size:16px;
 	color:#254DE5;
+	font-family:"Trebuchet MS", sans-serif;
+	height:25px;
+	font-size:1.4em;
+	line-height:25px;
 	}
 	
 	#close-widget:hover{
@@ -275,8 +282,10 @@ body{
 		padding:10px 0 0;
 		}
 		.navs{
-			height:20px;
-			line-height:20px;
+			font-family:"Trebuchet MS", sans-serif;
+			height:25px;
+			font-size:1.4em;
+			line-height:25px;
 			margin-bottom:8px;
 			padding:0 10px;
 			background:#B6D590;
@@ -303,6 +312,7 @@ body{
 				font-style:normal;
 				cursor:pointer;
 				}
+
 		.lfm-start{
 			border-top:1px solid #CCC;
 		}
