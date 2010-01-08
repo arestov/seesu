@@ -8,13 +8,9 @@ const INIT     = -11,
 
 //vkontakte.ru player
 var vk_flash_player_DoFSCommand = function(){
-	log(arguments[0])
 	seesu.player.musicbox.flash_js(arguments[1])
 };
-player_DoFSCommand = function(){
-	opera.postError(arguments[0])
-	opera.postError(arguments[1])
-};
+
 var vk_p = function(flash_node_holder){
 	this.player_holder = flash_node_holder;
 	log('using vkontakte player');
@@ -29,7 +25,6 @@ vk_p.prototype = {
 		'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
 		'type="application/x-shockwave-flash"/>'),
 	'flash_js': function(args){
-		log(args)
 		if(args.match('playing')) {
 			this.player_holder.removeClass('vk-p-initing');
 			seesu.player.call_event(PLAYED);
@@ -43,7 +38,7 @@ vk_p.prototype = {
 	},
 	'create_player': function(song_url,duration){
 		var _this = this;
-		this.player_holder.html(
+		this.player_holder.append(
 			_this.html
 			  .replace(':url', song_url)
 			  .replace(':volume', seesu.player.player_volume)
@@ -91,7 +86,7 @@ seesu.player = {
 		})() || 80,
 	'events' 			: [],
 	'current_song' 		: null,
-	'musicbox'			: null, //music box is a link to module with plaing methods, 
+	'musicbox'			: null, //music box is a link to module with playing methods, 
 								//for e.g. soundmanager2 and vkontakte flash player
 	'call_event'		: function	(event, data) {
 	  if(this.events[event]) this.events[event](data);
