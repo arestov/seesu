@@ -38,10 +38,11 @@ body{
 	top:50%;
 	opacity:0.01;
 }
-
-
-.player-holder{height:14px;}
-.pl-holder{clear:left}
+.flash-security-status{
+	padding-left:30px;
+	color:red;
+}
+.pl-holder{clear:left;position:relative}
 .tracks-for-play .play-controls{
 	display:none;
 	position:absolute;
@@ -447,8 +448,7 @@ body{
 	margin-right:13px;
 	margin-bottom:7px;
 	}
-.pl-holder{
-}
+
 
 
 
@@ -464,11 +464,24 @@ p.internet-flash-settings{
 }
 .vk-logged-in
 .flash-secur{
-	display:block;
+	
 }
 
 .flash-secur{
+	width:400px;
+	
+	position:absolute ;
 	display:none;
+	left:100px;
+	z-index:10;
+}
+	.flash-secur
+	.flash-secur-text{
+		background:#555;
+		color:#fff;
+		position:absolute;
+		bottom:auto;
+		padding:15px;
 	}
 	.flash-secur
 	img{

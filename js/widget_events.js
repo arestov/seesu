@@ -22,7 +22,7 @@ $(function() {
 		widget.openURL(vkReferer);
 		return false;
 	  }
-	  else if (class_name.match(/flash-s/)){
+	  else if (class_name.match(/flash-s$/)){
 		widget.openURL('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 		return false;
 	  }
@@ -79,7 +79,12 @@ $(function() {
 			return false;
 		}
 	  
-	}
+	} else if ((node.nodeName == 'DIV') && class_name.match(/flash-security-status/)){
+		var p  = clicked_node.parent().parent().position();
+		$('.flash-secur').css({'top': p.top + 30, 'display': 'block'})
+		log(clicked_node.parent().parent().position().top)
+		log(clicked_node.parent().parent().offset().top)
+	  }
   });
 	play_controls = $('.play-controls');
 	var about_jnode = $('#about');

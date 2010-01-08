@@ -59,6 +59,7 @@ vk_p.prototype = {
 	"play_song_by_node": function (node){
 	  this.player_holder.html('').appendTo(node.parent());
 	  this.create_player(node.attr('href'), node.data('duration'));
+	  this.player_holder.append('<div class="flash-security-status">About «Adobe Flash Player Security»</div>')
 	},
 	'play': function () {
 	  this.set_var('buttonPressed', 'true');
