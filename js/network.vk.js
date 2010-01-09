@@ -265,7 +265,7 @@ vk_api.prototype = {
 			
 			if(apisig) {
 				for (var param in params_full) {
-					pv_signature_list.push(param + '=' + encodeURIComponent(params_full[param]));
+					pv_signature_list.push(param + '=' + params_full[param]);
 					
 				}
 				
@@ -293,6 +293,9 @@ vk_api.prototype = {
 			  },
 			  success: function(r){
 				if (callback) {callback(r);}
+			  },
+			  complete: function(xhr){
+			  	log(xhr.responseText)
 			  }
 			});
 		}
