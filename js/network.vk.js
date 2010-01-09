@@ -270,7 +270,9 @@ vk_api.prototype = {
 				}
 				
 				pv_signature_list.sort();
-				
+				log(this.viewer_id)
+				log(this.s)
+				log(params_full.api_id)
 				var paramsstr = '';
 				for (var i=0, l = pv_signature_list.length; i < l; i++) {
 					paramsstr += pv_signature_list[i];
@@ -280,7 +282,7 @@ vk_api.prototype = {
 				params_full.sig = hex_md5(this.viewer_id + paramsstr + this.s);
 				log(params_full.sig)
 			}
-			
+			return
 			$.ajax({
 			  url: _this.api_link,
 			  global: false,
