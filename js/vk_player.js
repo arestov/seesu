@@ -200,12 +200,6 @@ var iframe_player 		= seesu.player.iframe_player,
 widget.test_message = 'Hello, world!';
 
 
-
-
-
-
-
-
 // Click by song
 function song_click(node) {
   seesu.player.set_current_song(node);
@@ -230,6 +224,7 @@ var ej_postMessage = function(message_obj){
 var ej_do = function(to_eval){
 	iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'eval','toeval': to_eval}),'*');
 }
+
 // Ready? Steady? Go!
 $(function() {
 

@@ -164,8 +164,8 @@ $(function() {
 	captcha_img = $('.vk-captcha-context img',vk_auth);
 	vk_login_error = $('.error',vk_auth);
 	
-	
-	  if ((typeof(widget.preferenceForKey('vkid')) == 'string') && (widget.preferenceForKey('vkid') != 'false')) {
+	  seesu.vk_id = widget.preferenceForKey('vkid');
+	  if ((typeof(seesu.vk_id) == 'string') && (seesu.vk_id != 'false')) {
 		$(document.body).addClass('vk-logged-in');
 		vk_logged_in = true;
 		vk_login_check();
