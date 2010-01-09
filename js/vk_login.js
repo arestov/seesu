@@ -87,3 +87,51 @@ var vk_logged_out = function(){
 	log('отображаем форму логина где нужно');
 	
 };
+var viewer_id 		= '198193';
+var vk_ms_s 		= 'JLutLcTbZR';
+var vk_ms_api_id 	= '1732516';
+var vk_v 			= '2.0';
+var vk_api_link 	= ' http://api.vkontakte.ru/api.php'
+var vk_api = function(method,params,callback){
+	if (method) {
+		var pv_signature_list = [], // array of <param>+<value>
+			params_full = params || {},
+			apisig =  true; // yes, we need signature
+		
+		params_full.method 	= method;
+		params_full.api_id 	= vk_ms_api_id;
+		params_full.v		= vk_v;
+	//	params_full.format 	= params_full.format || 'json';
+		
+		if(apisig) {
+			for (var param in params_full) {
+				pv_signature_list.push(param + '=' + encodeURIComponent(params_full[param]));
+				
+			}
+			
+			pv_signature_list.sort();
+			
+			var paramsstr = '';
+			for (var i=0, l = pv_signature_list.length; i < l; i++) {
+				paramsstr += pv_signature_list[i];
+			};
+			
+			log(viewer_id + paramsstr + vk_ms_s)
+			params_full.sig = hex_md5(viewer_id + paramsstr + vk_ms_s);
+			log(params_full.sig)
+		}
+		
+		$.ajax({
+		  url: vk_api_link,
+		  global: false,
+		  type: "GET",
+		  dataType: params_full.format || "XML",
+		  data: params_full,
+		  error: function(r){
+		  },
+		  success: function(r){
+			if (callback) {callback(r);}
+		  }
+		});
+	}
+};
