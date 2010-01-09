@@ -81,7 +81,7 @@ $(function() {
 	  
 	} else if ((node.nodeName == 'DIV') && class_name.match(/flash-security-status/)){
 		var p  = clicked_node.parent().parent().position();
-		$('.flash-secur').css({'top': p.top + 30, 'display': 'block'})
+		$('.flash-secur').css({'top': p.top + 60, 'display': 'block'})
 		log(clicked_node.parent().parent().position().top)
 		log(clicked_node.parent().parent().offset().top)
 	  }
