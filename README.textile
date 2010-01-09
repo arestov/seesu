@@ -1,6 +1,6 @@
 h1. Seesu Opera Widget
 
-!/kossnocorp/seesu/raw/master/i/screenshot.png!:http://seesu.heroku.com/downloads/seesu.wgt
+!http://cloud.github.com/downloads/kossnocorp/seesu/screenshot.png!:http://seesu.heroku.com/downloads/seesu.wgt
 
 Get music you like from last.fm and play it with vk.com
 
