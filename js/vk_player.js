@@ -147,7 +147,7 @@ seesu.player = {
 	  } else {
 	  	
 		var artist = node.data('artist_name');
-		if (!testing && artist) {update_artist_info(artist);}
+		if (artist) {update_artist_info(artist);}
 		if (this.current_song) {
 			//seesu.player.musicbox.stop();
 			this.current_song.parent().removeClass('active-play');
@@ -171,13 +171,23 @@ seesu.player.events[PAUSED] = function(){
   seesu.player.player_state = PAUSED;
 };
 seesu.player.events[PLAYED] = function(){
+  lfm_scroble.nowplay(
+	seesu.player.current_song.data('artist_name'),
+	seesu.player.current_song.data('track_title')
+  )
   seesu.player.player_state = PLAYED;
+  
   
 };
 seesu.player.events[STOPPED] = function(){
   seesu.player.player_state = STOPPED;
 };
 seesu.player.events[FINISHED] = function() {
+  lfm_scroble.submit(
+	seesu.player.current_song.data('artist_name'),
+	seesu.player.current_song.data('track_title'),
+	seesu.player.current_song.data('duration')
+  )
   if (typeof(source_window) != 'undefined') {
 	source_window.switch_to_next();
   } else {

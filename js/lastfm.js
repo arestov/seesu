@@ -67,6 +67,7 @@ var lfm_scroble = {
 			if (response[0] == 'OK'){
 				_this.s = response[1];
 				if (callback) {callback();}
+				log('handshake:' + '\n' + r)
 			} else {
 				log(r)
 			}
@@ -91,7 +92,7 @@ var lfm_scroble = {
 		  error: function(r){
 		  },
 		  success: function(r){
-			log(r)
+			log('nowplay:' + '\n' + r)
 		  }
 		})	
 	} 
@@ -125,7 +126,7 @@ var lfm_scroble = {
 		  error: function(r){
 		  },
 		  success: function(r){
-			log(r)
+			log('submit:' + '\n' + r)
 		  }
 		})	
 	} 

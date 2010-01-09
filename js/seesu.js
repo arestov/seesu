@@ -1,4 +1,4 @@
-testing = widget.originURL.match(/config.xml/) && true;
+testing = true;
 
 var	seesu =  {
 	  version: 0.25	
@@ -480,6 +480,7 @@ var show_artist_info = function(r){
 	artsBio.parent().removeClass('background-changes');
 }
 var update_artist_info = function(artist,nav){
+	if (testing ) {return;}
 	if (seesu.player.current_artist == artist) {
 		
 	} else {

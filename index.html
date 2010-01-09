@@ -62,7 +62,7 @@
 		soundManager.debugMode = false;
 		soundManager.consoleOnly = true;
 		soundManager.onload = function(){
-			if (soundManager.sandbox.noRemote) {
+			if (!vk_p && soundManager.sandbox.noRemote) {
 				log('i can acces internet')
 				seesu.player.musicbox = new sm2_module();
 			} else {
