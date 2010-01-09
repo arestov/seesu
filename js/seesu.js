@@ -84,11 +84,11 @@ var getMusic = function(trackname){
 
 		xhr.onreadystatechange = function () {
 		  if ( this.readyState == 4 ) {
-			if (xhr.responseText.indexOf('rows') != -1) {
+			if (xhr.responseText.match(/rows/) && !xhr.responseText.match(/noResultsWhit/)) {
 				var srd = document.createElement('div');
 				srd.innerHTML = JSON.parse(xhr.responseText).rows;
 				var rows = $(".audioRow ", srd);
-
+				log(xhr.responseText)
 				for (var i=0, l = rows.length; i < l; i++) {
 					var row = rows[i],
 						text = $('.audioText', row)[0],
