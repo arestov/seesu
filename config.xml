@@ -43,7 +43,10 @@
 	</access>
 	<access>
 	 <protocol>http</protocol>
+	 <port>80</port>
 	 <host>ws.audioscrobbler.com</host>
+	 <host>post.audioscrobbler.com</host>
+	 <host>post2.audioscrobbler.com</host>
 	</access>
 	<access>
 	  <protocol>http</protocol>

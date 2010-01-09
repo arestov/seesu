@@ -44,3 +44,97 @@ var lfm = function(method,params,callback) {
 		});
 	}
 };
+
+var lfm_scroble = {
+  handshake: function(callback){
+  	var _this = this;
+	var timestamp = ((new Date()).getTime()/1000).toFixed(0);
+	return $.ajax({
+		  url: 'http://post.audioscrobbler.com/',
+		  global: false,
+		  type: "GET",
+		  dataType: "text",
+		  data: {
+		  	'hs': 'true',
+		  	'p': '1.2.1',
+		  	'c': 'tst',
+		  	'v': '1.0',
+		  	'u': 'YodaPunk',
+		  	't': timestamp,
+		  	'a': hex_md5(s + timestamp),
+		  	'api_key': apikey,
+		  	'sk': lfm_auth.sk
+		  },
+		  error: function(r){
+		  },
+		  success: function(r){
+			var response = r.split(/\n/);
+			if (response[0] == 'OK'){
+				_this.s = response[1];
+				if (callback) {callback();}
+			} else {
+				log(r)
+			}
+			
+		  }
+	})	
+  },
+  nowplay: function(artist,title){
+  	
+  	if (this.s) {
+  		var _this = this;
+  		return $.ajax({
+		  url: 'http://post.audioscrobbler.com:80/np_1.2',
+		  global: false,
+		  type: "POST",
+		  dataType: "text",
+		  data: {
+		  	's': _this.s,
+		  	'a': artist,
+		  	't': title
+		  },
+		  error: function(r){
+		  },
+		  success: function(r){
+			log(r)
+		  }
+		})	
+	} 
+  	
+  },
+  submit: function(artist,title,duration){
+  	
+  	
+  	if (this.s) {
+  		var _this = this;
+  		var timestamp = ((new Date()).getTime()/1000).toFixed(0);
+  		
+  		return $.ajax({
+		  url: 'http://post2.audioscrobbler.com:80/protocol_1.2',
+		  global: false,
+		  type: "POST",
+		  dataType: "text",
+		  data: {
+		  	's': _this.s,
+		  	'a[0]': artist,
+		  	't[0]': title,
+		  	'i[0]': timestamp,
+		  	'o[0]': 'P',
+		  	'r[0]': ' ',
+		  	'l[0]': duration,
+		  	'b[0]': ' ',
+		  	'n[0]': ' ',
+		  	'm[0]': ' '
+		  	
+		  },
+		  error: function(r){
+		  },
+		  success: function(r){
+			log(r)
+		  }
+		})	
+	} 
+  	
+  },
+};
+lfm_scroble.handshake();
