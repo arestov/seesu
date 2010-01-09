@@ -282,7 +282,7 @@ vk_api.prototype = {
 				params_full.sig = hex_md5(this.viewer_id + paramsstr + this.s);
 				log(params_full.sig)
 			}
-			return
+			
 			$.ajax({
 			  url: _this.api_link,
 			  global: false,

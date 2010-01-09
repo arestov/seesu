@@ -295,6 +295,9 @@ $(function() {
 		render_recommendations_by_username(_this[0].recomm_for_username.value);
 		$(document.body).removeClass('lfm-auth-req-recomm');
 	})
-	
-	zz = new vk_api(seesu.vk_id,'SRkM2ws8NQ','35569' );
+	var viewer_id 		= '198193';
+var vk_ms_s 		= 'JLutLcTbZR';
+var vk_ms_api_id 	= '1732516';
+var vk_v 			= '2.0';
+	zz = new vk_api(seesu.vk_id,'JLutLcTbZR','1732516' );
 });
