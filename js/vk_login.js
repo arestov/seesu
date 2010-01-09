@@ -87,7 +87,7 @@ var vk_logged_out = function(){
 	log('отображаем форму логина где нужно');
 	
 };
-var viewer_id 		= seesu.vk_id;
+//var viewer_id 		= seesu.vk_id;
 var vk_ms_s 		= 'SRkM2ws8NQ';
 var vk_ms_api_id 	= '35569';
 var vk_v 			= '2.0';
@@ -116,8 +116,8 @@ var vk_api = function(method,params,callback){
 				paramsstr += pv_signature_list[i];
 			};
 			
-			log(viewer_id + paramsstr + vk_ms_s)
-			params_full.sig = hex_md5(viewer_id + paramsstr + vk_ms_s);
+			log(seesu.vk_id + paramsstr + vk_ms_s)
+			params_full.sig = hex_md5(seesu.vk_id + paramsstr + vk_ms_s);
 			log(params_full.sig)
 		}
 		
