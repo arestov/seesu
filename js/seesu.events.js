@@ -295,4 +295,6 @@ $(function() {
 		render_recommendations_by_username(_this[0].recomm_for_username.value);
 		$(document.body).removeClass('lfm-auth-req-recomm');
 	})
+	
+	zz = new vk_api(seesu.vk_id,'SRkM2ws8NQ','35569' );
 });

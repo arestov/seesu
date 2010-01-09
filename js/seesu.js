@@ -29,8 +29,6 @@ var updating_notify = function(r){
 				widget.openURL(link);
 			});
 		}
-		
-
 	}
 	log(cver);
 	vkReferer = r.vk_referer;
@@ -72,60 +70,7 @@ var parseStrToObj = function(onclickstring){
 };
 
 
-var getMusic = function(trackname){
-	if (!vk_logged_in) {
-		return false;
-	} else {
-		var musicList = [];
-			musicList.links = [];
-			musicList.playlist = [];
-			musicList.duration_list = [];
-		var xhr = new XMLHttpRequest ();
 
-		xhr.onreadystatechange = function () {
-		  if ( this.readyState == 4 ) {
-			if (xhr.responseText.match(/rows/) && !xhr.responseText.match(/noResultsWhit/)) {
-				var srd = document.createElement('div');
-				srd.innerHTML = JSON.parse(xhr.responseText).rows;
-				var rows = $(".audioRow ", srd);
-				log(xhr.responseText)
-				for (var i=0, l = rows.length; i < l; i++) {
-					var row = rows[i],
-						text = $('.audioText', row)[0],
-						artist = $('b', text)[0].textContent,
-						track = $('span', text)[0].textContent,
-						playStr = $('img.playimg', row )[0].getAttribute('onclick'),
-						obj = parseStrToObj(playStr);
-					musicList.duration_list.push(obj.duration);
-					musicList.links.push(obj.link);
-					musicList.playlist.push({'artist_name' : artist ,'track_title': track});
-					obj.artist = artist;
-					obj.track = track;
-
-					musicList.push(obj);
-				}
-				render_playlist(musicList.playlist,artsTracks,musicList.links,musicList.duration_list);
-			} else {
-				log('Поиск не удался... :’—(');
-				log(xhr.responseText);
-				if ((xhr.responseText.indexOf('http://vkontakte.ru/login.php?op=logout') != -1) && xhr.responseText.indexOf('http://vkontakte.ru/images/progress.gif' != -1)) {
-					vk_logged_out();
-					log('квантакте изгнал вас из рая');
-					wait_for_vklogin = function(){
-						render_playlist(musicList.playlist,artsTracks,musicList.links,musicList.duration_list);
-					}
-				}
-			}
-		  }
-		};
-		xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
-		var param = 'c[section]=audio' + '&c[q]=' + encodeURIComponent(trackname);
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-		xhr.send(param);
-
-	}
-};
 var sort_by_play_order = function(g,f){
 	if (g && f) {
 		if (g.data('play_order') > f.data('play_order'))
@@ -145,100 +90,7 @@ var resort_playlist = function(playlist_nodes_for){
 		};
 	}
 }
-var get_vk_track = function(tracknode,playlist_nodes_for,reset_queue) {
-	if (!vk_logged_in) {
-		return false;
-	} else {
-		var now = (new Date()).getTime(),
-			timeout;
-		var this_func = arguments.callee;
-		
-		if (reset_queue) {
-			if (this_func.queue && this_func.queue.length) {
-				
-				//if we are loading new playlist than we don't need old queue
-				for (var i = this_func.queue.length -1; i >= 0; i--) { //removing queue in reverse order
-					if (!this_func.queue[i].done) {
-						clearTimeout(this_func.queue[i].queue_item);
-						this_func.call_at -= this_func.queue[i].timeout;
-						art_tracks_w_counter.text((this_func.tracks_waiting_for_search -= 1) || '');
-					}
-				}
-			}
-			this_func.queue = [];
-		}
-		this_func.queue = this_func.queue || [];
-		
-		
-		art_tracks_w_counter.text(this_func.tracks_waiting_for_search = (this_func.tracks_waiting_for_search + 1) || 1);
-		
-		this_func.call_at = this_func.call_at || now;
-		if ( this_func.call_at && (this_func.call_at > now)) {
-			timeout = this_func.call_at - now;
-		} else {
-			timeout = 0;
-			this_func.call_at = now;
-		}
-		
-		var queue_element = {'timeout': timeout };
-		var delayed_ajax = function(queue_element,timeout) {
-			 queue_element.queue_item = setTimeout(function(){
-				
-				if (vk_logged_in) {
-					$.ajax({
-					  url: "http://vkontakte.ru/gsearch.php",
-					  global: false,
-					  type: "POST",
-					  data: ({'c[section]' : 'audio', 'c[q]' : tracknode.data('artist_name') + ' - ' + tracknode.data('track_title')}),
-					  dataType: "json",
-					  beforeSend: function(){
-						tracknode.addClass('search-mp3');
-					  },
-					  error: function(r){
-						tracknode.attr('class' , 'search-mp3-failed');
-						art_tracks_w_counter.text((this_func.tracks_waiting_for_search -= 1) || '');
-						
-						log('Вконтакте молвит: ' + r.responseText);
-						if (r.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
-							this_func.call_at += (1000*60*5);
-						} else {
-							vk_login_check();
-						}
-						
-					  },
-					  success: function(r){
-						log('Квантакте говорит: ' + r.summary);
-						var srd = document.createElement('div');
-							srd.innerHTML = r.rows;
-						var rows = $(".audioRow ", srd);
-						if (rows.length) {
-							var row = rows[0],
-								playStr = $('img.playimg', row )[0].getAttribute('onclick'),
-								ms_obj = parseStrToObj(playStr);
-							make_node_playable(tracknode, ms_obj.link, playlist_nodes_for, ms_obj.duration);
-							resort_playlist(playlist_nodes_for);
-						
-						} else {
-							tracknode.attr('class' , 'search-mp3-failed');
-						}
-						art_tracks_w_counter.text((this_func.tracks_waiting_for_search -= 1) || '');
-					  }
-					});
-				} else {
-					art_tracks_w_counter.text((this_func.tracks_waiting_for_search -= 1) || '');
-				}
-				queue_element.done = true;
-			},timeout);
-			
-		}
-		delayed_ajax(queue_element,timeout);
-		this_func.queue.push(queue_element);
-		this_func.call_at += ((this_func.tracks_waiting_for_search % 8) == 0) ? 5000 : 900;
-	}
-	
-	
-	return false;
-};
+
 
 var make_tracklist_playable = function(track_nodes){
 	if (vk_logged_in) {
@@ -266,12 +118,8 @@ var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_durat
 		seesu.player.set_current_song(playable_node);
 		seesu.player.current_playlist = playlist_nodes_for;
 	}
-	
 	playable_node.data('number_in_playlist', playlist_length-1);
 	playable_node.data('link_to_playlist', playlist_nodes_for);
-	
-
-
 };
 
 var render_playlist = function(playlist,container,mp3links,duration_list) { // if links present than do full rendering! yearh!
@@ -293,8 +141,6 @@ var render_playlist = function(playlist,container,mp3links,duration_list) { // i
 		} else {
 			linkNodes.push(track);
 		}
-		
-		
 		$(ul).append(li);		
 	}
 	if (container) {
@@ -331,9 +177,6 @@ var render_loved = function(user_name){
 			}
 			render_playlist(track_list,artsTracks);
 		}
-		
-		
-		
 	});
 	$(nav_artist_page).text('Loved Tracks');
 	slider.className = 'sreen-artist-page';
