@@ -27,7 +27,7 @@ $(function() {
 		return false;
 	  }
 	  else if (class_name.match(/twitter/)){
-		var tweet_text = "Seesu plays last.fm for free and lets me to download tracks #seesu http://bit.ly/info/4s6CKa";
+		var tweet_text = "Seesu plays last.fm for free and lets me to download tracks #seesu http://bit.ly/4s6CKa";
 		if (seesu.player.current_artist) {tweet_text += " Now I'm listening «" + seesu.player.current_artist + "»" };
 		widget.openURL( 'http://twitter.com/home/?status=' + encodeURIComponent(tweet_text));
 		return false;

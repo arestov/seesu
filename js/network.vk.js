@@ -136,12 +136,12 @@ var get_vk_track = function(tracknode,playlist_nodes_for,reset_queue) {
 					  beforeSend: function(){
 						tracknode.addClass('search-mp3');
 					  },
-					  error: function(r){
+					  error: function(xhr){
 						tracknode.attr('class' , 'search-mp3-failed');
 						art_tracks_w_counter.text((this_func.tracks_waiting_for_search -= 1) || '');
 						
-						log('Вконтакте молвит: ' + r.responseText);
-						if (r.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
+						log('Вконтакте молвит: ' + xhr.responseText);
+						if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
 							this_func.call_at += (1000*60*5);
 						} else {
 							vk_login_check();
@@ -202,35 +202,35 @@ var getMusic = function(trackname){
 		wait_for_vklogin = function(){getMusic(trackname)}
 		return false;
 	} else {
-		var xhr = new XMLHttpRequest ();
-
-		xhr.onreadystatechange = function () {
-		  if ( this.readyState == 4 ) {
-			if (xhr.responseText.match(/rows/) && !xhr.responseText.match(/noResultsWhit/)) {
-				var srd = document.createElement('div');
-					srd.innerHTML = JSON.parse(xhr.responseText).rows;
-				var rows = $(".audioRow ", srd);
-
-				log(xhr.responseText)
-
-				render_playlist(get_vk_music_list(rows), artsTracks);
+		$.ajax({
+		  url: "http://vkontakte.ru/gsearch.php",
+		  global: false,
+		  type: "POST",
+		  data: ({'c[section]' : 'audio', 'c[q]' : trackname}),
+		  dataType: "json",
+		  error: function(xhr){
+			
+			log('Вконтакте молвит: ' + xhr.responseText);
+			if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
+				
 			} else {
-				log('Поиск не удался... :’—(');
-				log(xhr.responseText);
-				if ((xhr.responseText.indexOf('http://vkontakte.ru/login.php?op=logout') != -1) && xhr.responseText.indexOf('http://vkontakte.ru/images/progress.gif' != -1)) {
-					vk_logged_out();
-					wait_for_vklogin = function(){getMusic(trackname)}
-					log('квантакте изгнал вас из рая');
-				}
+				vk_login_check();
 			}
+			
+		  },
+		  success: function(r){
+			log('Квантакте говорит: ' + r.summary);
+			if (!r.rows.match(/noResultsWhite/)) {
+				var srd = document.createElement('div');
+					srd.innerHTML = r.rows;
+				var rows = $(".audioRow ", srd);
+				render_playlist(get_vk_music_list(rows), artsTracks);
+			} else{
+				log('Поиск не удался... :’—(');
+			}
+			
 		  }
-		};
-		xhr.open( 'POST', 'http://vkontakte.ru/gsearch.php', false );
-		var param = 'c[section]=audio' + '&c[q]=' + encodeURIComponent(trackname);
-		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-		xhr.send(param);
-
+		});
 	}
 };
 
@@ -258,7 +258,7 @@ vk_api.prototype = {
 			params_full.method 	= method;
 			params_full.api_id 	= this.api_id;
 			params_full.v		= this.v;
-		//	params_full.format 	= params_full.format || 'json';
+			params_full.format 	= params_full.format || 'json';
 			
 			if(apisig) {
 				for (var param in params_full) {
@@ -272,9 +272,8 @@ vk_api.prototype = {
 					paramsstr += pv_signature_list[i];
 				};
 				
-				log(this.viewer_id + paramsstr + this.s)
 				params_full.sig = hex_md5(this.viewer_id + paramsstr + this.s);
-				log(params_full.sig)
+
 			}
 			
 			$.ajax({
@@ -293,5 +292,11 @@ vk_api.prototype = {
 			  }
 			});
 		}
+	},
+	audio_search: function(query,params,callback){
+		var params_u = params || {};
+			params_u.q = query;
+			params_u.count = params_u.count || 30;
+		this.use('audio.search',params_u,callback)
 	}
 }
