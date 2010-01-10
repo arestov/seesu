@@ -95,10 +95,11 @@ var resort_playlist = function(playlist_nodes_for){
 var make_tracklist_playable = function(track_nodes){
 	if (vk_logged_in) {
 		var songNodes = [];
+		var thread = [];
 		for (var i=0, l =  track_nodes.length; i < l; i++) {
 			var node = track_nodes[i],
 				playlist_nodes_for = songNodes;
-			get_vk_track(node,playlist_nodes_for, (i==0));
+			delay_vk_track_search(node,playlist_nodes_for, (i==0),get_vk_track);
 		}
 	} else {
 		wait_for_vklogin = function(){
