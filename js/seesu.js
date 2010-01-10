@@ -122,22 +122,24 @@ var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_durat
 	playable_node.data('link_to_playlist', playlist_nodes_for);
 };
 
-var render_playlist = function(playlist,container,mp3links,duration_list) { // if links present than do full rendering! yearh!
+var render_playlist = function(vk_music_list,container) { // if links present than do full rendering! yearh!
 	var linkNodes = [];
 	var songNodes = [];
+
+	var mp3links = vk_music_list[0].link ? true : false;
 
 	var ul = document.createElement("ul");
 	
 	for (var i=0, l = playlist.length; i < l; i++) {
-		var attr = {'class' : 'waiting-full-render', 'text' :  playlist[i].artist_name + ' - ' + playlist[i].track_title};
+		var attr = {'class' : 'waiting-full-render', 'text' :  vk_music_list[i].artist + ' - ' + vk_music_list[i].track};
 		var track = $("<a></a>").attr(attr).data('play_order', i),
 			li = document.createElement('li');
-		track.data('artist_name',playlist[i].artist_name ).data('track_title', playlist[i].track_title );
+		track.data('artist_name',vk_music_list[i].artist ).data('track_title', vk_music_list[i].track );
 		$(li).append(track).append(play_controls.clone());
 		
 
 		if (mp3links) {
-			make_node_playable(track,mp3links[i],songNodes,duration_list[i]);
+			make_node_playable(track, vk_music_list[i].link ,songNodes, vk_music_list[i].duration);
 		} else {
 			linkNodes.push(track);
 		}
@@ -173,7 +175,7 @@ var render_loved = function(user_name){
 		if (tracks) {
 			var track_list = [];
 			for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
-				track_list.push({'artist_name' : tracks[i].artist.name ,'track_title': tracks[i].name});
+				track_list.push({'artist' : tracks[i].artist.name ,'track': tracks[i].name});
 			}
 			render_playlist(track_list,artsTracks);
 		}

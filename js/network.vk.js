@@ -154,10 +154,8 @@ var get_vk_track = function(tracknode,playlist_nodes_for,reset_queue) {
 							srd.innerHTML = r.rows;
 						var rows = $(".audioRow ", srd);
 						if (rows.length) {
-							var row = rows[0],
-								playStr = $('img.playimg', row )[0].getAttribute('onclick'),
-								ms_obj = parseStrToObj(playStr);
-							make_node_playable(tracknode, ms_obj.link, playlist_nodes_for, ms_obj.duration);
+							var ms = get_vk_music_list(rows);
+							make_node_playable(tracknode, ms[0].link, playlist_nodes_for, ms[0].duration)
 							resort_playlist(playlist_nodes_for);
 						
 						} else {
@@ -181,49 +179,46 @@ var get_vk_track = function(tracknode,playlist_nodes_for,reset_queue) {
 	
 	return false;
 };
+var get_vk_music_list = function (row_nodes) {// vk_music_list is empty array, declared before cicle
+	var vk_music_list = [];
+	for (var i=0, l = rows.length; i < l; i++) {
+		var row = rows[i],
+			text = $('.audioText', row)[0],
+			artist = $('b', text)[0].textContent,
+			track = $('span', text)[0].textContent,
+			playStr = $('img.playimg', row )[0].getAttribute('onclick'),
+			vk_music_obj = parseStrToObj(playStr);
+		vk_music_obj.artist = artist;
+		vk_music_obj.track = track;
+	
+		vk_music_list.push(vk_music_obj);
+	}
+	return vk_music_list;
+}
+
 
 var getMusic = function(trackname){
 	if (!vk_logged_in) {
 		return false;
 	} else {
-		var musicList = [];
-			musicList.links = [];
-			musicList.playlist = [];
-			musicList.duration_list = [];
 		var xhr = new XMLHttpRequest ();
 
 		xhr.onreadystatechange = function () {
 		  if ( this.readyState == 4 ) {
 			if (xhr.responseText.match(/rows/) && !xhr.responseText.match(/noResultsWhit/)) {
 				var srd = document.createElement('div');
-				srd.innerHTML = JSON.parse(xhr.responseText).rows;
+					srd.innerHTML = JSON.parse(xhr.responseText).rows;
 				var rows = $(".audioRow ", srd);
-				log(xhr.responseText)
-				for (var i=0, l = rows.length; i < l; i++) {
-					var row = rows[i],
-						text = $('.audioText', row)[0],
-						artist = $('b', text)[0].textContent,
-						track = $('span', text)[0].textContent,
-						playStr = $('img.playimg', row )[0].getAttribute('onclick'),
-						obj = parseStrToObj(playStr);
-					musicList.duration_list.push(obj.duration);
-					musicList.links.push(obj.link);
-					musicList.playlist.push({'artist_name' : artist ,'track_title': track});
-					obj.artist = artist;
-					obj.track = track;
 
-					musicList.push(obj);
-				}
-				render_playlist(musicList.playlist,artsTracks,musicList.links,musicList.duration_list);
+				log(xhr.responseText)
+
+				render_playlist(get_vk_music_list(rows), artsTracks);
 			} else {
 				log('Поиск не удался... :’—(');
 				log(xhr.responseText);
 				if ((xhr.responseText.indexOf('http://vkontakte.ru/login.php?op=logout') != -1) && xhr.responseText.indexOf('http://vkontakte.ru/images/progress.gif' != -1)) {
 					vk_logged_out();
 					log('квантакте изгнал вас из рая');
-					wait_for_vklogin = function(){
-						render_playlist(musicList.playlist,artsTracks,musicList.links,musicList.duration_list);
-					}
 				}
 			}
 		  }
