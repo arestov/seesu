@@ -150,14 +150,10 @@ var get_vk_track = function(tracknode,playlist_nodes_for,reset_queue) {
 					  },
 					  success: function(r){
 						log('Квантакте говорит: ' + r.summary);
-						var srd = document.createElement('div');
-							srd.innerHTML = r.rows;
-						var rows = $(".audioRow ", srd);
-						if (rows.length) {
-							var ms = get_vk_music_list(rows);
-							make_node_playable(tracknode, ms[0].link, playlist_nodes_for, ms[0].duration)
+						var music_list = get_vk_music_list(r);
+						if (music_list){
+							make_node_playable(tracknode, music_list[0].link, playlist_nodes_for, music_list[0].duration)
 							resort_playlist(playlist_nodes_for);
-						
 						} else {
 							tracknode.attr('class' , 'search-mp3-failed');
 						}
@@ -179,21 +175,24 @@ var get_vk_track = function(tracknode,playlist_nodes_for,reset_queue) {
 	
 	return false;
 };
-var get_vk_music_list = function (row_nodes) {// vk_music_list is empty array, declared before cicle
-	var vk_music_list = [];
-	for (var i=0, l = row_nodes.length; i < l; i++) {
-		var row = row_nodes[i],
-			text = $('.audioText', row)[0],
-			artist = $('b', text)[0].textContent,
-			track = $('span', text)[0].textContent,
-			playStr = $('img.playimg', row )[0].getAttribute('onclick'),
-			vk_music_obj = parseStrToObj(playStr);
-		vk_music_obj.artist = artist;
-		vk_music_obj.track = track;
-	
-		vk_music_list.push(vk_music_obj);
-	}
-	return vk_music_list;
+var get_vk_music_list = function (r) {// vk_music_list is empty array, declared before cicle
+	if (!r.rows.match(/noResultsWhite/)) {
+		var row_nodes  = $('<div></div>').html(r.rows).find('.audioRow');
+		var vk_music_list = [];
+		for (var i=0, l = row_nodes.length; i < l; i++) {
+			var row = row_nodes[i],
+				text = $('.audioText', row)[0],
+				artist = $('b', text)[0].textContent,
+				track = $('span', text)[0].textContent,
+				playStr = $('img.playimg', row )[0].getAttribute('onclick'),
+				vk_music_obj = parseStrToObj(playStr);
+			vk_music_obj.artist = artist;
+			vk_music_obj.track = track;
+		
+			vk_music_list.push(vk_music_obj);
+		}
+		return vk_music_list;
+	} else {return false}
 }
 
 
@@ -220,11 +219,9 @@ var getMusic = function(trackname){
 		  },
 		  success: function(r){
 			log('Квантакте говорит: ' + r.summary);
-			if (!r.rows.match(/noResultsWhite/)) {
-				var srd = document.createElement('div');
-					srd.innerHTML = r.rows;
-				var rows = $(".audioRow ", srd);
-				render_playlist(get_vk_music_list(rows), artsTracks);
+			var music_list = get_vk_music_list(r);
+			if (music_list) {
+				render_playlist(music_list, artsTracks);
 			} else{
 				log('Поиск не удался... :’—(');
 			}
