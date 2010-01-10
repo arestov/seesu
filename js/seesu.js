@@ -4,7 +4,7 @@ var	seesu =  {
 	  version: 0.25	
 	},
 	vk_logged_in,
-	wait_for_vklogin = {},
+	wait_for_vklogin = function(){},
 	vkReferer = '',
 	lfm_auth = {};
 lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;

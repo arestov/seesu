@@ -199,6 +199,7 @@ var get_vk_music_list = function (row_nodes) {// vk_music_list is empty array, d
 
 var getMusic = function(trackname){
 	if (!vk_logged_in) {
+		wait_for_vklogin = function(){getMusic(trackname)}
 		return false;
 	} else {
 		var xhr = new XMLHttpRequest ();
@@ -218,6 +219,7 @@ var getMusic = function(trackname){
 				log(xhr.responseText);
 				if ((xhr.responseText.indexOf('http://vkontakte.ru/login.php?op=logout') != -1) && xhr.responseText.indexOf('http://vkontakte.ru/images/progress.gif' != -1)) {
 					vk_logged_out();
+					wait_for_vklogin = function(){getMusic(trackname)}
 					log('квантакте изгнал вас из рая');
 				}
 			}
