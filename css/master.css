@@ -497,7 +497,7 @@ p.internet-flash-settings{
 	.play-list-holder
 	.tracks-waiting-for-search{
 		position:absolute;
-		left:-20px;
+		right:20px;
 		top:0px;
 		color:#ddd;
 	}

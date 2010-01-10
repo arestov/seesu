@@ -1,4 +1,48 @@
 
+var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue_element){	
+	if (vk_logged_in) {
+		tracknode.addClass('search-mp3');
+		zz.audio_search(
+			tracknode.data('artist_name') + ' - ' + tracknode.data('track_title'),
+			false,
+			function(r){
+				log('api search')
+				if (r.response && (r.response[0] > 0 )) {
+					var music_list = [];
+					for (var i=1, l = r.response.length; i < l; i++) {
+						music_list.push({
+							'artist'  	:r.response[i].artist,
+							'duration'	:r.response[i].duration,
+							'link'		:r.response[i].url,
+							'track'		:r.response[i].title
+							
+						})
+						
+					};
+					make_node_playable(tracknode, music_list[0].link, playlist_nodes_for, music_list[0].duration)
+					resort_playlist(playlist_nodes_for);
+				}
+				
+				
+				
+				if (music_list) {
+					
+				} else {
+					tracknode.attr('class' , 'search-mp3-failed');
+				}
+				art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+			},
+			function(xhr){
+				tracknode.attr('class' , 'search-mp3-failed');
+				art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+			}
+		);
+	
+	} else {
+		art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+	}
+	queue_element.done = true;
+}
 var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_element){	
 		
 	if (vk_logged_in) {
@@ -15,7 +59,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 			tracknode.attr('class' , 'search-mp3-failed');
 			art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
 			
-			log('Вконтакте молвит: ' + xhr.responseText);
+			log('Error, vk say: ' + xhr.responseText);
 			if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
 				delaying_func.call_at += (1000*60*5);
 			} else {
@@ -24,7 +68,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 			
 		  },
 		  success: function(r){
-			log('Квантакте говорит: ' + r.summary);
+			log('success hardcore search, vk say: ' + r.summary);
 			var music_list = get_vk_music_list(r);
 			if (music_list){
 				make_node_playable(tracknode, music_list[0].link, playlist_nodes_for, music_list[0].duration)
@@ -40,7 +84,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 	}
 	queue_element.done = true;
 }
-var delay_vk_track_search = function(tracknode,playlist_nodes_for,reset_queue,delaying_func) {
+var delay_vk_track_search = function(tracknode,playlist_nodes_for,reset_queue,delaying_func,delay) {
 	if (!vk_logged_in) {
 		return false;
 	} else {
@@ -84,7 +128,7 @@ var delay_vk_track_search = function(tracknode,playlist_nodes_for,reset_queue,de
 		}
 		delayed_ajax(queue_element,timeout);
 		delaying_func.queue.push(queue_element);
-		delaying_func.call_at += ((delaying_func.tracks_waiting_for_search % 8) == 0) ? 5000 : 1000;
+		delaying_func.call_at += delay || (((delaying_func.tracks_waiting_for_search % 8) == 0) ? 5000 : 1000);
 	}
 	
 	

@@ -11,7 +11,7 @@ var vk_api = function(viewer_id,s,api_id){
 }
 
 vk_api.prototype = {
-	'use': function(method,params,callback){
+	'use': function(method,params,callback,error){
 	
 		if (method) {
 			var _this = this;
@@ -46,7 +46,8 @@ vk_api.prototype = {
 			  type: "GET",
 			  dataType: params_full.format || "XML",
 			  data: params_full,
-			  error: function(r){
+			  error: function(xhr){
+			  	if (error) {error(xhr);}
 			  },
 			  success: function(r){
 				if (callback) {callback(r);}
@@ -57,10 +58,10 @@ vk_api.prototype = {
 			});
 		}
 	},
-	audio_search: function(query,params,callback){
+	audio_search: function(query,params,callback,error){
 		var params_u = params || {};
 			params_u.q = query;
 			params_u.count = params_u.count || 30;
-		this.use('audio.search',params_u,callback)
+		this.use('audio.search',params_u,callback,error)
 	}
 }
