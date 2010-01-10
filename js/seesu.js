@@ -130,7 +130,7 @@ var render_playlist = function(vk_music_list,container) { // if links present th
 
 	var ul = document.createElement("ul");
 	
-	for (var i=0, l = playlist.length; i < l; i++) {
+	for (var i=0, l = vk_music_list.length; i < l; i++) {
 		var attr = {'class' : 'waiting-full-render', 'text' :  vk_music_list[i].artist + ' - ' + vk_music_list[i].track};
 		var track = $("<a></a>").attr(attr).data('play_order', i),
 			li = document.createElement('li');
@@ -271,7 +271,7 @@ var getTopTracks = function(artist,callback,callback_params_obj) {
 		if (tracks) {
 			var track_list = [];
 			for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
-				track_list.push({'artist_name' : artist ,'track_title': tracks[i].name});
+				track_list.push({'artist' : artist ,'track': tracks[i].name});
 			}
 			if (callback) {callback(track_list,callback_params_obj);}
 		}	

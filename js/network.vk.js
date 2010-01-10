@@ -173,7 +173,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for,reset_queue) {
 		}
 		delayed_ajax(queue_element,timeout);
 		this_func.queue.push(queue_element);
-		this_func.call_at += ((this_func.tracks_waiting_for_search % 8) == 0) ? 5000 : 900;
+		this_func.call_at += ((this_func.tracks_waiting_for_search % 8) == 0) ? 5000 : 1000;
 	}
 	
 	
@@ -181,8 +181,8 @@ var get_vk_track = function(tracknode,playlist_nodes_for,reset_queue) {
 };
 var get_vk_music_list = function (row_nodes) {// vk_music_list is empty array, declared before cicle
 	var vk_music_list = [];
-	for (var i=0, l = rows.length; i < l; i++) {
-		var row = rows[i],
+	for (var i=0, l = row_nodes.length; i < l; i++) {
+		var row = row_nodes[i],
 			text = $('.audioText', row)[0],
 			artist = $('b', text)[0].textContent,
 			track = $('span', text)[0].textContent,
