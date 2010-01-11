@@ -57,7 +57,9 @@ vk_p.prototype = {
 	  this.create_player(song_url,duration)
 	},
 	"play_song_by_node": function (node){
-	  this.player_holder.html('').appendTo(node.parent());
+	  this.player_holder[0].innerHTML = ''; //we need for spead here! so.. say no to jquery
+	  node[0].parentNode.appendChild(this.player_holder[0]);
+	  
 	  this.create_player(node.attr('href'), node.data('duration'));
 	  this.player_holder.append('<div class="flash-security-status">About «Adobe Flash Player Security»</div>')
 	},
@@ -145,24 +147,28 @@ seesu.player = {
 	  	return true;
 	  	
 	  } else {
-	  	
+	  	time = (new Date()).getTime();
+	  	log('1: ' + (time - (new Date()).getTime()));
 		var artist = node.data('artist_name');
 		if (artist) {update_artist_info(artist);}
 		if (this.current_song) {
 			//seesu.player.musicbox.stop();
 			this.current_song.parent().removeClass('active-play');
 		}
+		log('2: ' + (time - (new Date()).getTime()));
 		node.parent().addClass('active-play');
 		this.current_song = node;
 		
-		
+		log('3: ' + (time - (new Date()).getTime()));
 		if (this.musicbox.play_song_by_node) {
 		  this.musicbox.play_song_by_node(node);
-		} else if (this.musicbox.play_song_by_url) {
+		} else 
+		if (this.musicbox.play_song_by_url) {
 		  this.musicbox.play_song_by_url(node.attr('href'), node.data('duration'));
-		} else {return false;}
+		} else 
+		{return false;}
 
-		
+		log('end: ' + (time - (new Date()).getTime()));
 		
 	  }
 	}

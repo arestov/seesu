@@ -22,7 +22,7 @@ var vk_login = function(login,pass) {
 			captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
 			$(document.body).addClass('vk-needs-captcha');
 		} else 	if (vk_id = r.id) {
-			vk_logg_in(vk_id, r.email);
+			vk_logg_in(vk_id, r.email, r.sid);
 			wait_for_vklogin && wait_for_vklogin();
 		}
 	  },
@@ -67,13 +67,14 @@ var vk_login_check = function(){
 	  dataType: "json",
 	  error: function(){
 		log('vignali!');
-		vk_logged_out();
+		//vk_logged_out();
 	  }
 	});
 };
-var vk_logg_in = function(id,email){
+var vk_logg_in = function(id,email,sid){
 	widget.setPreferenceForKey(id, 'vkid');
 	widget.setPreferenceForKey(email, 'vkemail');
+	widget.setPreferenceForKey(sid, 'vk_sid');
 	vk_logged_in = true;
 	$(document.body).addClass('vk-logged-in');
 	log('вошли в контакте и скрыли форму логина');

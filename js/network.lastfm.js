@@ -133,4 +133,4 @@ var lfm_scroble = {
   	
   },
 };
-lfm_scroble.handshake();
+if (!testing) {lfm_scroble.handshake();}
