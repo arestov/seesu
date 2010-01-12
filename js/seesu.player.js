@@ -102,7 +102,7 @@ seesu.player = {
 	  switch(this.player_state - new_player_state) {
 	  case(STOPPED - PLAYED):
 		if (this.current_song) {
-			this.musicbox.play_song_by_url( this.current_song.attr('href'), this.current_song.data('duration') )
+			this.musicbox.play_song_by_node( this.current_song )
 		};
 		break;
 	  case(PAUSED - PLAYED):

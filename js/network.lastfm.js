@@ -41,6 +41,7 @@ var lfm = function(method,params,callback) {
 };
 
 var lfm_scroble = {
+  s: widget.preferenceForKey('lfm_scroble_s'),
   handshake: function(callback){
   	var _this = this;
 	var timestamp = ((new Date()).getTime()/1000).toFixed(0);
@@ -52,7 +53,7 @@ var lfm_scroble = {
 		  data: {
 		  	'hs': 'true',
 		  	'p': '1.2.1',
-		  	'c': 'tst',
+		  	'c': 'see',
 		  	'v': '1.0',
 		  	'u': 'YodaPunk',
 		  	't': timestamp,
@@ -66,6 +67,7 @@ var lfm_scroble = {
 			var response = r.split(/\n/);
 			if (response[0] == 'OK'){
 				_this.s = response[1];
+				widget.setPreferenceForKey(_this.s, 'lfm_scroble_s');
 				if (callback) {callback();}
 				log('handshake:' + '\n' + r)
 			} else {
@@ -133,4 +135,4 @@ var lfm_scroble = {
   	
   },
 };
-if (!testing) {lfm_scroble.handshake();}
+if (!lfm_scroble.s) {lfm_scroble.handshake();}

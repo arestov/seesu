@@ -67,7 +67,7 @@ var vk_login_check = function(){
 	  dataType: "json",
 	  error: function(){
 		log('vignali!');
-		//vk_logged_out();
+		vk_logged_out();
 	  }
 	});
 };

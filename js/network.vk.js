@@ -134,6 +134,24 @@ var delay_vk_track_search = function(tracknode,playlist_nodes_for,reset_queue,de
 	
 	return false;
 };
+var kill_music_dubs = function(array) {
+	var cleared_array = [];
+	for (var i=0; i < array.length; i++) {
+		if (!has_music_copy(array, array[i], i+1)){
+			cleared_array.push(array[i]);
+		}
+	}
+	return cleared_array
+}
+var has_music_copy = function(array, entity, from_position){
+	if (!array.length) {return false}
+	
+	for (var i = from_position || 0, l = array.length; i < l; i++) {
+		if ((array[i].artist == entity.artist) && (array[i].track == entity.track) && (array[i].duration == entity.duration)) {
+			return true;
+		}
+	};
+}
 var get_vk_music_list = function (r) {// vk_music_list is empty array, declared before cicle
 	if (!r.rows.match(/noResultsWhite/)) {
 		var row_nodes  = $('<div></div>').html(r.rows).find('.audioRow');
@@ -147,8 +165,10 @@ var get_vk_music_list = function (r) {// vk_music_list is empty array, declared 
 				vk_music_obj = parseStrToObj(playStr);
 			vk_music_obj.artist = artist;
 			vk_music_obj.track = track;
-		
-			vk_music_list.push(vk_music_obj);
+			
+			if (!has_music_copy(vk_music_list,vk_music_obj)){
+				vk_music_list.push(vk_music_obj);
+			}
 		}
 		return vk_music_list;
 	} else {return false}
