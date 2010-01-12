@@ -10,16 +10,21 @@ var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue
 				if (r.response && (r.response[0] > 0 )) {
 					var music_list = [];
 					for (var i=1, l = r.response.length; i < l; i++) {
-						music_list.push({
+						var entity = {
 							'artist'  	:r.response[i].artist,
 							'duration'	:r.response[i].duration,
 							'link'		:r.response[i].url,
 							'track'		:r.response[i].title
 							
-						})
+						};
+						if (!has_music_copy(music_list,entity)){
+							music_list.push(entity)
+						}
+						
 						
 					};
-					make_node_playable(tracknode, music_list[0].link, playlist_nodes_for, music_list[0].duration)
+					var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
+					make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
 					resort_playlist(playlist_nodes_for);
 				}
 				
@@ -71,7 +76,8 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 			log('success hardcore search, vk say: ' + r.summary);
 			var music_list = get_vk_music_list(r);
 			if (music_list){
-				make_node_playable(tracknode, music_list[0].link, playlist_nodes_for, music_list[0].duration)
+				var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
+				make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration)
 				resort_playlist(playlist_nodes_for);
 			} else {
 				tracknode.attr('class' , 'search-mp3-failed');
@@ -134,6 +140,47 @@ var delay_vk_track_search = function(tracknode,playlist_nodes_for,reset_queue,de
 	
 	return false;
 };
+var de_html_entity = document.createElement('div');
+var de_html = function(html_text){
+	de_html_entity.innerHTML = html_text;
+	return de_html_entity.textContent;
+}
+var search_from_list_one_track = function(array,artist,track){
+	var best = array[0],
+	worst_pr = -6; //six steps search
+	
+	for (var i=0,l=array.length; i < l; i++) {
+		var _ar = de_html(array[i].artist),
+			_tr = de_html(array[i].track);
+		artist = de_html(artist)
+		track = de_html(track)
+		if ((_ar == artist) && (_tr == track)){
+			return array[i];
+		} else
+		if ((_ar.toLowerCase() == artist.toLowerCase()) && (_tr.toLowerCase() == track.toLowerCase())){
+			best = array[i];
+			worst_pr = -1;
+		} else
+		if ( (worst_pr < -2) && (_ar == artist.replace("The ")) && (_tr == track)){
+			best = array[i];
+			worst_pr = -2;
+		} else
+		if ( (worst_pr < -3) && (_ar.toLowerCase() == artist.replace("The ").toLowerCase()) && (_tr.toLowerCase() == track.toLowerCase())){
+			best = array[i];
+			worst_pr = -3;
+		} else 
+		if ( (worst_pr < -4) && _ar.match(artist) && _tr.match(track)) {
+			best = array[i];
+			worst_pr = -4;
+		} else
+		if ( (worst_pr < -5) && _ar.toLowerCase().match(artist.toLowerCase()) && _tr.toLowerCase().match(track.toLowerCase())) {
+			best = array[i];
+			worst_pr = -5;
+		} 
+		
+	};
+	return best;
+}
 var kill_music_dubs = function(array) {
 	var cleared_array = [];
 	for (var i=0; i < array.length; i++) {

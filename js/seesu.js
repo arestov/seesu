@@ -131,6 +131,8 @@ var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_durat
 	playable_node.data('link_to_playlist', playlist_nodes_for);
 };
 
+
+
 var render_playlist = function(vk_music_list,container) { // if links present than do full rendering! yearh!
 	var linkNodes = [];
 	var songNodes = [];
@@ -139,11 +141,13 @@ var render_playlist = function(vk_music_list,container) { // if links present th
 
 	var ul = document.createElement("ul");
 	
+	var de_html_entity = document.createElement('div');
+	
 	for (var i=0, l = vk_music_list.length; i < l; i++) {
 		var attr = {'class' : 'waiting-full-render', 'text' :  vk_music_list[i].artist + ' - ' + vk_music_list[i].track};
 		var track = $("<a></a>").attr(attr).data('play_order', i),
 			li = document.createElement('li');
-		track.data('artist_name',vk_music_list[i].artist ).data('track_title', vk_music_list[i].track );
+		track.data('artist_name', vk_music_list[i].artist).data('track_title', vk_music_list[i].track );
 		$(li).append(track).append(play_controls.clone());
 		
 
