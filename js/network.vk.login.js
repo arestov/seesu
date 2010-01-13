@@ -65,7 +65,8 @@ var vk_login_check = function(){
 	  global: false,
 	  type: "GET",
 	  dataType: "json",
-	  error: function(){
+	  error: function(xhr){
+	  	log(xhr.responseText);
 		log('vignali!');
 		vk_logged_out();
 	  }
@@ -77,7 +78,7 @@ var vk_logg_in = function(id,email,sid){
 	widget.setPreferenceForKey(sid, 'vk_sid');
 	vk_logged_in = true;
 	$(document.body).addClass('vk-logged-in');
-	log('вошли в контакте и скрыли форму логина');
+	log('hide vklogin form');
 };
 var vk_logged_out = function(){
 	widget.setPreferenceForKey(false, 'vkid');
@@ -85,6 +86,6 @@ var vk_logged_out = function(){
 	log(widget.preferenceForKey('vkid'))
 	vk_logged_in = false;
 	$(document.body).removeClass('vk-logged-in');
-	log('отображаем форму логина где нужно');
+	log('display vklogin form if need')
 	
 };

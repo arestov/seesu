@@ -1,6 +1,10 @@
 body{
 	position:static;
 }
+html{
+	position:relative;
+	overflow:hidden;
+}
 #sm2-container{
 	bottom:20px;
 	right:20px;

@@ -134,6 +134,7 @@ var lfm_scroble = {
 			'duration': duration, 
 			'timestamp': timestamp
 		});
+		node.data('start_time',null);
 		node.data('last_scroble',timestamp);
 	}
 	if (this.s && this.music.length) {

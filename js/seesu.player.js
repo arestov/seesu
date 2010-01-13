@@ -25,13 +25,13 @@ vk_p.prototype = {
 		'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
 		'type="application/x-shockwave-flash"/>'),
 	'flash_js': function(args){
-		if(args.match('playing')) {
-			this.player_holder.removeClass('vk-p-initing');
-			seesu.player.call_event(PLAYED);
-		}
+		if(args.match('playing')) {seesu.player.call_event(PLAYED);}
 		if(args.match('paused')) {seesu.player.call_event(PAUSED);}
 		if(args.match('finished')) {seesu.player.call_event(FINISHED);}
-		if(args.match('init')) {seesu.player.call_event(INIT);}
+		if(args.match('init')) {
+			this.player_holder.removeClass('vk-p-initing');
+			seesu.player.call_event(INIT);
+		}
 		if(args.match('created')) {seesu.player.call_event(CREATED);}
 		if(args.match('stopped')) {seesu.player.call_event(STOPPED);}
 		if(args.match('volume')) {seesu.player.call_event(VOLUME, this.parse_volume_value(args));}
@@ -148,18 +148,15 @@ seesu.player = {
 	  	
 	  } else {
 	  	time = (new Date()).getTime();
-	  	log('1: ' + (time - (new Date()).getTime()));
 		var artist = node.data('artist_name');
 		if (artist) {update_artist_info(artist);}
 		if (this.current_song) {
 			//seesu.player.musicbox.stop();
 			this.current_song.parent().removeClass('active-play');
 		}
-		log('2: ' + (time - (new Date()).getTime()));
 		node.parent().addClass('active-play');
 		this.current_song = node;
-		
-		log('3: ' + (time - (new Date()).getTime()));
+
 		if (this.musicbox.play_song_by_node) {
 		  this.musicbox.play_song_by_node(node);
 		} else 
@@ -168,7 +165,6 @@ seesu.player = {
 		} else 
 		{return false;}
 
-		log('end: ' + (time - (new Date()).getTime()));
 		
 	  }
 	}
@@ -177,7 +173,10 @@ seesu.player.events[PAUSED] = function(){
   seesu.player.player_state = PAUSED;
 };
 seesu.player.events[PLAYED] = function(){
-  seesu.player.current_song.data('start_time',((new Date()).getTime()/1000).toFixed(0));
+  var start_time = seesu.player.current_song.data('start_time');
+  if (!start_time) {
+  	seesu.player.current_song.data('start_time',((new Date()).getTime()/1000).toFixed(0));
+  }
   lfm_scroble.nowplay(seesu.player.current_song);
   
   seesu.player.player_state = PLAYED;
@@ -185,6 +184,7 @@ seesu.player.events[PLAYED] = function(){
   
 };
 seesu.player.events[STOPPED] = function(){
+  seesu.player.current_song.data('start_time',null);
   seesu.player.player_state = STOPPED;
 };
 seesu.player.events[FINISHED] = function() {
