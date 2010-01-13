@@ -41,6 +41,7 @@ var lfm = function(method,params,callback) {
 };
 
 var lfm_scroble = {
+  music: [],
   s: widget.preferenceForKey('lfm_scroble_s'),
   handshake: function(callback){
   	var _this = this;
@@ -94,43 +95,68 @@ var lfm_scroble = {
 		  error: function(r){
 		  },
 		  success: function(r){
-			log('nowplay:' + '\n' + r)
+			log('nowplay:' + '\n' + r);
+			if (r.match('BADSESSION')){
+				lfm_scroble.s = null;
+				widget.setPreferenceForKey('', 'lfm_scroble_s');
+				
+				lfm_scroble.handshake();
+			};
 		  }
 		})	
 	} 
   	
   },
   submit: function(artist,title,duration){
-  	
+  	this.music.push({
+  		'artist': artist, 
+  		'title': title,
+  		'duration': duration, 
+  		'timestamp': ((new Date()).getTime()/1000).toFixed(0)
+	});
   	
   	if (this.s) {
   		var _this = this;
-  		var timestamp = ((new Date()).getTime()/1000).toFixed(0);
+  		
+  		
+  		var post_m_obj = {'s':_this.s};
+  		for (var i=0,l=_this.music.length; i < l; i++) {
+  			post_m_obj['a[' + i + ']'] = _this.music[i].artist,
+		  	post_m_obj['t[' + i + ']'] = _this.music[i].title,
+		  	post_m_obj['i[' + i + ']'] = _this.music[i].timestamp,
+		  	post_m_obj['o[' + i + ']'] = 'P',
+		  	post_m_obj['r[' + i + ']'] = ' ',
+		  	post_m_obj['l[' + i + ']'] = _this.music[i].duration,
+		  	post_m_obj['b[' + i + ']'] = ' ',
+		  	post_m_obj['n[' + i + ']'] = ' ',
+		  	post_m_obj['m[' + i + ']'] = ' '
+  		};
+  		
   		
   		return $.ajax({
 		  url: 'http://post2.audioscrobbler.com:80/protocol_1.2',
 		  global: false,
 		  type: "POST",
 		  dataType: "text",
-		  data: {
-		  	's': _this.s,
-		  	'a[0]': artist,
-		  	't[0]': title,
-		  	'i[0]': timestamp,
-		  	'o[0]': 'P',
-		  	'r[0]': ' ',
-		  	'l[0]': duration,
-		  	'b[0]': ' ',
-		  	'n[0]': ' ',
-		  	'm[0]': ' '
-		  	
-		  },
+		  data: post_m_obj,
 		  error: function(r){
 		  },
 		  success: function(r){
-			log('submit:' + '\n' + r)
+			log('submit:' + '\n' + r);
+			if (!r.match('OK')) {
+				if (r.match('BADSESSION')){
+					lfm_scroble.s = null;
+					widget.setPreferenceForKey('', 'lfm_scroble_s');
+					
+					lfm_scroble.handshake();
+				}
+				widget.setPreferenceForKey(JSON.strinify(_this.music),'lfm_scroble_music');
+			}
+			
 		  }
 		})	
+	} else{
+		widget.setPreferenceForKey(JSON.strinify(this.music),'lfm_scroble_music');
 	} 
   	
   },
