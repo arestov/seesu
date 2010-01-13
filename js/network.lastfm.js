@@ -127,7 +127,7 @@ var lfm_scroble = {
 		last_scroble = node.data('last_scroble'),
 		timestamp = ((new Date()).getTime()/1000).toFixed(0);
 
-	if (((timestamp - starttime)/duration > 0.6) || (last_scroble && ((timestamp - last_scroble)/duration > 0.6)) ){
+	if (((timestamp - starttime)/duration > 0.2) || (last_scroble && ((timestamp - last_scroble)/duration > 0.6)) ){
 		this.music.push({
 			'artist': artist, 
 			'title': title,
