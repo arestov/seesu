@@ -41,7 +41,14 @@ var lfm = function(method,params,callback) {
 };
 
 var lfm_scroble = {
-  music: [],
+  music: (function(){
+  	var lfmscm = widget.preferenceForKey('lfm_scroble_music');
+  	if (lfmscm) {
+  		return JSON.parse(lfmscm);
+  	} else {
+  		return [];
+  	}
+  })(),
   s: widget.preferenceForKey('lfm_scroble_s'),
   handshake: function(callback){
   	var _this = this;
@@ -78,11 +85,16 @@ var lfm_scroble = {
 		  }
 	})	
   },
-  nowplay: function(artist,title){
-  	
-  	if (this.s) {
-  		var _this = this;
-  		return $.ajax({
+  nowplay: function(node){
+  	var start_time = node.data('start_time');
+
+	
+	var artist = node.data('artist_name'),
+		title = node.data('track_title');
+	
+	if (this.s) {
+		var _this = this;
+		return $.ajax({
 		  url: 'http://post.audioscrobbler.com:80/np_1.2',
 		  global: false,
 		  type: "POST",
@@ -105,22 +117,30 @@ var lfm_scroble = {
 		  }
 		})	
 	} 
-  	
+	
   },
-  submit: function(artist,title,duration){
-  	this.music.push({
-  		'artist': artist, 
-  		'title': title,
-  		'duration': duration, 
-  		'timestamp': ((new Date()).getTime()/1000).toFixed(0)
-	});
-  	
-  	if (this.s) {
-  		var _this = this;
-  		
-  		
-  		var post_m_obj = {'s':_this.s};
-  		for (var i=0,l=_this.music.length; i < l; i++) {
+  submit: function(node){
+	var artist = node.data('artist_name'),
+		title = node.data('track_title'),
+		duration = node.data('duration'),
+		starttime = node.data('start_time'),
+		last_scroble = node.data('last_scroble'),
+		timestamp = ((new Date()).getTime()/1000).toFixed(0);
+
+	if (((timestamp - starttime)/duration > 0.6) || (last_scroble && ((timestamp - last_scroble)/duration > 0.6)) ){
+		this.music.push({
+			'artist': artist, 
+			'title': title,
+			'duration': duration, 
+			'timestamp': timestamp
+		});
+		node.data('last_scroble',timestamp);
+	}
+	if (this.s && this.music.length) {
+		var _this = this;
+		
+		var post_m_obj = {'s':_this.s};
+		for (var i=0,l=_this.music.length; i < l; i++) {
   			post_m_obj['a[' + i + ']'] = _this.music[i].artist,
 		  	post_m_obj['t[' + i + ']'] = _this.music[i].title,
 		  	post_m_obj['i[' + i + ']'] = _this.music[i].timestamp,
@@ -131,7 +151,6 @@ var lfm_scroble = {
 		  	post_m_obj['n[' + i + ']'] = ' ',
 		  	post_m_obj['m[' + i + ']'] = ' '
   		};
-  		
   		
   		return $.ajax({
 		  url: 'http://post2.audioscrobbler.com:80/protocol_1.2',
@@ -151,11 +170,13 @@ var lfm_scroble = {
 					lfm_scroble.handshake();
 				}
 				widget.setPreferenceForKey(JSON.strinify(_this.music),'lfm_scroble_music');
+			} else {
+				widget.setPreferenceForKey('','lfm_scroble_music');
 			}
 			
 		  }
 		})	
-	} else{
+	} else if (this.music.length){
 		widget.setPreferenceForKey(JSON.strinify(this.music),'lfm_scroble_music');
 	} 
   	

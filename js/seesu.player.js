@@ -177,10 +177,9 @@ seesu.player.events[PAUSED] = function(){
   seesu.player.player_state = PAUSED;
 };
 seesu.player.events[PLAYED] = function(){
-  lfm_scroble.nowplay(
-	seesu.player.current_song.data('artist_name'),
-	seesu.player.current_song.data('track_title')
-  )
+  seesu.player.current_song.data('start_time',((new Date()).getTime()/1000).toFixed(0));
+  lfm_scroble.nowplay(seesu.player.current_song);
+  
   seesu.player.player_state = PLAYED;
   
   
@@ -189,11 +188,7 @@ seesu.player.events[STOPPED] = function(){
   seesu.player.player_state = STOPPED;
 };
 seesu.player.events[FINISHED] = function() {
-  lfm_scroble.submit(
-	seesu.player.current_song.data('artist_name'),
-	seesu.player.current_song.data('track_title'),
-	seesu.player.current_song.data('duration')
-  )
+  lfm_scroble.submit(seesu.player.current_song);
   if (typeof(source_window) != 'undefined') {
 	source_window.switch_to_next();
   } else {
