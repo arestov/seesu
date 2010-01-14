@@ -57,7 +57,8 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 		  type: "POST",
 		  data: ({'c[section]' : 'audio', 'c[q]' : tracknode.data('artist_name') + ' - ' + tracknode.data('track_title')}),
 		  dataType: "json",
-		  beforeSend: function(){
+		  beforeSend: function(xhr){
+		  	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 			tracknode.addClass('search-mp3');
 		  },
 		  error: function(xhr){
@@ -233,6 +234,9 @@ var getMusic = function(trackname){
 		  type: "POST",
 		  data: ({'c[section]' : 'audio', 'c[q]' : trackname}),
 		  dataType: "json",
+		  beforeSend: function(xhr){
+		  	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+		  },
 		  error: function(xhr){
 			
 			log('Вконтакте молвит: ' + xhr.responseText);
