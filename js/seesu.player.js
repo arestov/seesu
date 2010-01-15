@@ -18,7 +18,7 @@ var vk_p = function(flash_node_holder){
 vk_p.prototype = {
 	'module_title':'vk_p',
 	'html': 
-		('<embed width="342" height="14" ' + 
+		('<embed width="342" height="8" ' + 
 		'flashvars="debug=false&amp;volume=:volume&amp;duration=210&amp;' +
 		'url=:url" allowscriptaccess="always" wmode="transparent" quality="low" ' +
 		'name="vk_flash_player" class="vk_flash_player" ' +
@@ -61,7 +61,7 @@ vk_p.prototype = {
 	  node[0].parentNode.appendChild(this.player_holder[0]);
 	  
 	  this.create_player(node.attr('href'), node.data('duration'));
-	  this.player_holder.append('<div class="flash-security-status">About «Adobe Flash Player Security»</div>')
+	  this.player_holder.append('<div class="flash-security-status" title="About «Adobe Flash Player Security»"></div>')
 	},
 	'play': function () {
 	  this.set_var('buttonPressed', 'true');

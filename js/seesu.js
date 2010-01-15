@@ -1,4 +1,4 @@
-testing = true;
+testing = false;
 
 var	seesu =  {
 	  version: 0.25	

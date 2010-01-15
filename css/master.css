@@ -42,8 +42,16 @@ html{
 	top:50%;
 	opacity:0.01;
 }
+.player-holder{
+	padding-left:20px;
+}
 .flash-security-status{
-	padding-left:30px;
+	position:absolute;
+	top:20px;
+	left:0;
+	width:16px;
+	height:16px;
+	background:red;
 	color:red;
 }
 .pl-holder{clear:left;position:relative}
