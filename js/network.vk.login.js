@@ -76,6 +76,7 @@ var vk_logg_in = function(id,email,sid){
 	widget.setPreferenceForKey(id, 'vkid');
 	widget.setPreferenceForKey(email, 'vkemail');
 	widget.setPreferenceForKey(sid, 'vk_sid');
+	seesu.vk_id = id;
 	vk_logged_in = true;
 	$(document.body).addClass('vk-logged-in');
 	log('hide vklogin form');
