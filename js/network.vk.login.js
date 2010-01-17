@@ -82,8 +82,9 @@ var vk_logg_in = function(id,email,sid){
 	log('hide vklogin form');
 };
 var vk_logged_out = function(){
-	widget.setPreferenceForKey(false, 'vkid');
-	widget.setPreferenceForKey(false, 'vkemail');
+	widget.setPreferenceForKey('', 'vkid');
+	widget.setPreferenceForKey('', 'vkemail');
+	widget.setPreferenceForKey('', 'vk_sid');
 	log(widget.preferenceForKey('vkid'))
 	vk_logged_in = false;
 	$(document.body).removeClass('vk-logged-in');
