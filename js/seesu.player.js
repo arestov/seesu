@@ -25,6 +25,7 @@ vk_p.prototype = {
 		'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
 		'type="application/x-shockwave-flash"/>'),
 	'flash_js': function(args){
+		log(args)
 		if(args.match('playing')) {seesu.player.call_event(PLAYED);}
 		if(args.match('paused')) {seesu.player.call_event(PAUSED);}
 		if(args.match('finished')) {seesu.player.call_event(FINISHED);}
@@ -44,6 +45,10 @@ vk_p.prototype = {
 			  .replace(':volume', seesu.player.player_volume)
 			  .replace('duration=210', ('duration=' + duration))
 		).addClass('vk-p-initing');
+		setTimeout(function(){
+			_this.player_holder.removeClass('vk-p-initing');
+			
+		},1000)
 	},
 	'parse_volume_value': function(volume_value_raw){
 		var volume_level_regexp = /\"((\d{1,3}\.?\d*)|(NaN))\"/,
