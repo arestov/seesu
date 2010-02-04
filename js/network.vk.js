@@ -206,7 +206,7 @@ var get_vk_music_list = function (r) {// vk_music_list is empty array, declared 
 		var vk_music_list = [];
 		for (var i=0, l = row_nodes.length; i < l; i++) {
 			var row = row_nodes[i],
-				text = $('.audioText', row)[0],
+				text = $('.audioTitle', row)[0],
 				artist = $('b', text)[0].textContent,
 				track = $('span', text)[0].textContent,
 				playStr = $('img.playimg', row )[0].getAttribute('onclick'),
