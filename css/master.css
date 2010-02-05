@@ -220,12 +220,14 @@ a.waiting-full-render.marked-for-play{
 }
 a.download-mp3{
 	text-decoration:none;
-	padding:3px 5px;
+	padding:3px 5px 1px;
 	margin-left:3px;
 	color:#3b4891;
+	
 	}
 a.download-mp3:hover{
-	color:#8d5191;
+	color:#DAD681;
+	background:#477AAE;
 	}
 .active-play
 a.song{
