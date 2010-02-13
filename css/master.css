@@ -6,7 +6,7 @@ html{
 	overflow:hidden;
 }
 #sm2-container{
-	bottom:20px;
+	bottom:10px;
 	right:20px;
 }
 #close-widget{
@@ -463,9 +463,6 @@ body{
 	margin-bottom:7px;
 	}
 
-
-
-
 .flash-internet
 .flash-secur
 p{
@@ -482,25 +479,70 @@ p.internet-flash-settings{
 }
 
 .flash-secur{
-	width:400px;
-	
 	position:absolute ;
 	display:none;
-	left:100px;
+	left:50px;
 	z-index:10;
 }
 	.flash-secur
 	.flash-secur-text{
-		background:#555;
-		color:#fff;
+		width:400px;
+		color:#555;
 		position:absolute;
-		bottom:auto;
-		padding:15px;
+		bottom:6px;
 	}
 	.flash-secur
 	img{
 		max-width:100%;
 	}
+
+.triangle {
+	position: absolute;
+	width: 100%;
+	left: 13px;
+	top: -7px;
+}
+
+.corners {
+	display:block;
+	position: absolute;
+	width: 100%;
+	padding:10px;
+	padding-bottom:0px;
+}
+	.sh {
+		position: absolute;
+		background: url(../i/corners.png) no-repeat;
+		z-index: -1;
+	}
+	.tl {
+		top: -6px;
+		bottom: 12px;
+		left: -11px;
+		right: 14px;
+	}
+	.tr {
+		width: 25px;
+		top: -6px;
+		bottom: 12px;
+		right: -11px;
+		background-position: top right;
+	}
+	.bl {
+		left: -11px;
+		right: 14px;
+		bottom: -16px;
+		height: 28px;
+		background-position: bottom left;
+	}
+	.br {
+		width: 25px;
+		height: 28px;
+		right: -11px;
+		bottom: -16px;
+		background-position: bottom right;
+	}
+
 .play-list-holder{
 	padding-top:10px;
 	padding-left:65px;
