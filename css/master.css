@@ -342,7 +342,6 @@ body{
 			#slider
 			.screens
 			.screen{
-				overflow:hidden;
 				border-bottom:1px solid #CCC;
 				padding-bottom:5px;
 				margin-bottom:5px;
@@ -498,7 +497,9 @@ p.internet-flash-settings{
 
 .triangle {
 	position: absolute;
-	width: 100%;
+	width: 21px;
+	height:17px;
+	background:url(/i/triangle.png) no-repeat ;
 	left: 13px;
 	top: -7px;
 }
@@ -508,7 +509,6 @@ p.internet-flash-settings{
 	position: absolute;
 	width: 100%;
 	padding:10px;
-	padding-bottom:0px;
 }
 	.sh {
 		position: absolute;
@@ -517,21 +517,21 @@ p.internet-flash-settings{
 	}
 	.tl {
 		top: -6px;
-		bottom: 12px;
+		bottom: 28px;
 		left: -11px;
 		right: 14px;
 	}
 	.tr {
 		width: 25px;
 		top: -6px;
-		bottom: 12px;
+		bottom: 28px;
 		right: -11px;
 		background-position: top right;
 	}
 	.bl {
 		left: -11px;
 		right: 14px;
-		bottom: -16px;
+		bottom: 0;
 		height: 28px;
 		background-position: bottom left;
 	}
@@ -539,7 +539,7 @@ p.internet-flash-settings{
 		width: 25px;
 		height: 28px;
 		right: -11px;
-		bottom: -16px;
+		bottom: 0;
 		background-position: bottom right;
 	}
 

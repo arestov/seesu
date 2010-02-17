@@ -81,9 +81,15 @@ $(function() {
 	  
 	} else if ((node.nodeName == 'DIV') && class_name.match(/flash-security-status/)){
 		var p  = clicked_node.parent().parent().position();
-		$('.flash-secur').css({'top': p.top + 60, 'display': 'block'})
-		log(clicked_node.parent().parent().position().top)
-		log(clicked_node.parent().parent().offset().top)
+		if (clicked_node.data('showing')) {
+			$('.flash-secur').css({'display': ''});
+			clicked_node.removeData('showing');
+		} else{
+			$('.flash-secur').css({'top': p.top + 60, 'display': 'block'});
+			clicked_node.data('showing',true);
+		}
+		
+		
 	  }
   });
 	play_controls = $('.play-controls');
