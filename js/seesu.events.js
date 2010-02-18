@@ -32,7 +32,7 @@ $(function() {
 		widget.openURL( 'http://twitter.com/home/?status=' + encodeURIComponent(tweet_text));
 		return false;
 	  }
-	  else if (class_name.match(/artist/)){
+	  else if (class_name.match(/artist$/)){
 		artist_name = decodeURIComponent(clicked_node.data('artist'));
 		set_artist_page(artist_name);
 		return false;

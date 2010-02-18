@@ -178,6 +178,9 @@ seesu.player.events[PAUSED] = function(){
   seesu.player.player_state = PAUSED;
 };
 seesu.player.events[PLAYED] = function(){
+	log('piu')
+	
+	
   var start_time = seesu.player.current_song.data('start_time');
   if (!start_time) {
   	seesu.player.current_song.data('start_time',((new Date()).getTime()/1000).toFixed(0));

@@ -318,7 +318,7 @@ var show_artist_info = function(r){
 	if (similars && similars.length) {
 		var similars_p = $("<p></p>").attr({ 'class': 'artist-similar'}),
 			artist_list = [],
-			similars_a = $('<a></a>').attr({'text' : 'Similar artists', 'class': 'artist-list'}).data('artist_list',artist_list);;
+			similars_a = $('<a></a>').attr({'text' : 'Similar artists', 'class': 'artist-list'}).data('artist_list',artist_list);
 		similars_p.append(similars_a);	
 		similars_p.append(document.createTextNode(": "));
 		for (var i=0, l = similars.length; i < l; i++) {
