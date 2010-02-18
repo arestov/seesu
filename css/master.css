@@ -1,9 +1,11 @@
 body{
-	position:relative;
+	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
+	width:99%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
 html{
-	position:relative;
-	overflow:hidden;
+	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
+	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
+	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
 #sm2-container{
 	bottom:10px;
@@ -242,7 +244,6 @@ input:focus{
 	outline:1px solid #8FB2D6;
 }
 body{
-	background:#F3F8ED 10px 99% no-repeat;
 	border:2px solid #CEE3B5;
 	margin:0;
 	padding:0;
@@ -295,6 +296,7 @@ body{
 	}
 	#slider{
 		padding:10px 0 0;
+		background:#F3F8ED ;
 		}
 		.navs{
 			font-family:"Trebuchet MS", sans-serif;
@@ -363,6 +365,7 @@ body{
 			#slider.sreen-artist-page .artist-page{
 				display:block;
 			}
+			
 			#slider.sreen-artist-page-with-results .artist-page{
 				display:block;
 			}
@@ -410,10 +413,17 @@ body{
 			#slider.sreen-artist-page-with-results .nav-artist-page .arr-d{
 				display:inline;
 			}
+.artist-similar,.artist-tags{
+	line-height:1.5em;
+}
+
+
+
 		.window-bottom{
 			height:20px;
 			text-align:right;
 			overflow:hidden;
+			background:#F3F8ED ;
 			}
 			#resize-handle{
 				position:absolute;
