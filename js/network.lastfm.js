@@ -140,6 +140,7 @@ var lfm_scroble = {
 	}
 		log('generating request for submit')
 	if (this.s && this.music.length) {
+		log('starting to generat request for submit')
 		var _this = this;
 		
 		var post_m_obj = {'s':_this.s};
@@ -154,7 +155,7 @@ var lfm_scroble = {
 		  	post_m_obj['n[' + i + ']'] = ' ',
 		  	post_m_obj['m[' + i + ']'] = ' '
   		};
-  		
+  		log('request data generated. sending')
   		return $.ajax({
 		  url: 'http://post2.audioscrobbler.com:80/protocol_1.2',
 		  global: false,
@@ -178,7 +179,8 @@ var lfm_scroble = {
 			}
 			
 		  }
-		})	
+		})
+			log(' data sended')
 	} else if (this.music.length){
 		widget.setPreferenceForKey(JSON.strinify(this.music),'lfm_scroble_music');
 	} 
