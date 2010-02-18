@@ -28,7 +28,7 @@ vk_p.prototype = {
 		log(args)
 		if(args.match('playing')) {seesu.player.call_event(PLAYED);}
 		if(args.match('paused')) {seesu.player.call_event(PAUSED);}
-		if(args.match('finished')) {seesu.player.call_event(FINISHED);}
+		if(args.match('finished')) {log('finish');seesu.player.call_event(FINISHED);}
 		if(args.match('init')) {
 			this.player_holder.removeClass('vk-p-initing');
 			seesu.player.call_event(INIT);
@@ -62,7 +62,7 @@ vk_p.prototype = {
 	  this.create_player(song_url,duration)
 	},
 	"play_song_by_node": function (node){
-	  this.player_holder[0].innerHTML = ''; //we need for spead here! so.. say no to jquery
+	  this.player_holder[0].innerHTML = ''; //we need for speed here! so.. say no to jquery
 	  node[0].parentNode.appendChild(this.player_holder[0]);
 	  
 	  this.create_player(node.attr('href'), node.data('duration'));
@@ -196,7 +196,9 @@ seesu.player.events[STOPPED] = function(){
   seesu.player.player_state = STOPPED;
 };
 seesu.player.events[FINISHED] = function() {
+  log('before scrobling');
   lfm_scroble.submit(seesu.player.current_song);
+  log('after scrobling')
   if (typeof(source_window) != 'undefined') {
 	source_window.switch_to_next();
   } else {

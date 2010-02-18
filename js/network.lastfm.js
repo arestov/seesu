@@ -120,13 +120,14 @@ var lfm_scroble = {
 	
   },
   submit: function(node){
+	log('getting data for submit')
 	var artist = node.data('artist_name'),
 		title = node.data('track_title'),
 		duration = node.data('duration'),
 		starttime = node.data('start_time'),
 		last_scroble = node.data('last_scroble'),
 		timestamp = ((new Date()).getTime()/1000).toFixed(0);
-
+	log('getting date for submit')
 	if (((timestamp - starttime)/duration > 0.2) || (last_scroble && ((timestamp - last_scroble)/duration > 0.6)) ){
 		this.music.push({
 			'artist': artist, 
@@ -137,6 +138,7 @@ var lfm_scroble = {
 		node.data('start_time',null);
 		node.data('last_scroble',timestamp);
 	}
+		log('generating request for submit')
 	if (this.s && this.music.length) {
 		var _this = this;
 		
@@ -180,7 +182,7 @@ var lfm_scroble = {
 	} else if (this.music.length){
 		widget.setPreferenceForKey(JSON.strinify(this.music),'lfm_scroble_music');
 	} 
-  	
+  	log('submit done')
   },
 };
 if (!lfm_scroble.s) {lfm_scroble.handshake();}
