@@ -37,6 +37,7 @@
 	  <protocol>https</protocol>
 	  <protocol>http</protocol>
 	  <host>last.fm</host>
+	  <host>api.vkontakte.ru</host>
 	  <host>vkontakte.ru</host>
 	  <host>vk.com</host>
 	  <host>userapi.com</host>
