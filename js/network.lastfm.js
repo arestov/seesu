@@ -120,6 +120,7 @@ var lfm_scroble = {
 	
   },
   submit: function(node){
+  	var _this = this;
 	log('getting data for submit')
 	var artist = node.data('artist_name'),
 		title = node.data('track_title'),
@@ -138,6 +139,7 @@ var lfm_scroble = {
 		node.data('start_time',null);
 		node.data('last_scroble',timestamp);
 	}
+	log('scrobling music ' + JSON.strinify(_this.music));
 		log('generating request for submit')
 	if (this.s && this.music.length) {
 		log('starting to generat request for submit')
@@ -181,8 +183,8 @@ var lfm_scroble = {
 		  }
 		})
 			log(' data sended')
-	} else if (this.music.length){
-		widget.setPreferenceForKey(JSON.strinify(this.music),'lfm_scroble_music');
+	} else if (_this.music.length){
+		widget.setPreferenceForKey(JSON.strinify(_this.music),'lfm_scroble_music');
 	} 
   	log('submit done')
   },

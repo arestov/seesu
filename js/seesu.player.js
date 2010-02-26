@@ -182,11 +182,12 @@ seesu.player.events[PLAYED] = function(){
 	
 	
   var start_time = seesu.player.current_song.data('start_time');
+  log('start_time before ' + start_time)
   if (!start_time) {
   	seesu.player.current_song.data('start_time',((new Date()).getTime()/1000).toFixed(0));
   }
   lfm_scroble.nowplay(seesu.player.current_song);
-  
+   log('start_time after ' + seesu.player.current_song.data('start_time'))
   seesu.player.player_state = PLAYED;
   
   
@@ -196,7 +197,8 @@ seesu.player.events[STOPPED] = function(){
   seesu.player.player_state = STOPPED;
 };
 seesu.player.events[FINISHED] = function() {
-  log('before scrobling');
+  log('before scrobling '  + seesu.player.current_song.data('start_time'));
+  
   lfm_scroble.submit(seesu.player.current_song);
   log('after scrobling')
   if (typeof(source_window) != 'undefined') {
