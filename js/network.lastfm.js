@@ -138,10 +138,8 @@ var lfm_scroble = {
 		node.data('start_time',null);
 		node.data('last_scroble',timestamp);
 	}
-	log('scrobling music ' + JSON.stringify(_this.music));
-		log('generating request for submit')
+
 	if (this.s && this.music.length) {
-		log('starting to generat request for submit')
 		var _this = this;
 		
 		var post_m_obj = {'s':_this.s};
@@ -157,6 +155,7 @@ var lfm_scroble = {
 		  	post_m_obj['m[' + i + ']'] = ' '
   		};
   		log('request data generated. sending')
+		log(JSON.stringify(post_m_obj));
   		$.ajax({
 		  url: 'http://post2.audioscrobbler.com:80/protocol_1.2',
 		  global: false,
