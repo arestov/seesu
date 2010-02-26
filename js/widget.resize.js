@@ -93,6 +93,13 @@ resizeWidg = function(){
   })();
 }
 window.addEventListener( 'load' , resizeWidg, false);
-function log(){
-	opera.postError.apply(opera, arguments)
+var log;
+if (opera && opera.postError ){ 
+	log = function(){
+		opera.postError.apply(opera, arguments)
+	}
+} else {
+	log = function(){
+		return
+	}
 }
