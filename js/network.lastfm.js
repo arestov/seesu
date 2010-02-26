@@ -53,7 +53,7 @@ var lfm_scroble = {
   handshake: function(callback){
   	var _this = this;
 	var timestamp = ((new Date()).getTime()/1000).toFixed(0);
-	return $.ajax({
+	$.ajax({
 		  url: 'http://post.audioscrobbler.com/',
 		  global: false,
 		  type: "GET",
@@ -93,7 +93,7 @@ var lfm_scroble = {
 	
 	if (this.s) {
 		var _this = this;
-		return $.ajax({
+		$.ajax({
 		  url: 'http://post.audioscrobbler.com:80/np_1.2',
 		  global: false,
 		  type: "POST",
@@ -128,7 +128,7 @@ var lfm_scroble = {
 		last_scroble = node.data('last_scroble'),
 		timestamp = ((new Date()).getTime()/1000).toFixed(0);
 	log('getting date for submit')
-	if (((timestamp - starttime)/duration > 0.2) || (last_scroble && ((timestamp - last_scroble)/duration > 0.6)) ){
+	if (((timestamp - starttime)/duration /** > 0.2**/) || (last_scroble && ((timestamp - last_scroble)/duration > 0.6)) ){
 		this.music.push({
 			'artist': artist, 
 			'title': title,
@@ -138,7 +138,7 @@ var lfm_scroble = {
 		node.data('start_time',null);
 		node.data('last_scroble',timestamp);
 	}
-	log('scrobling music ' + JSON.strinify(_this.music));// can't be array!
+	log('scrobling music ' + JSON.stringify(_this.music));
 		log('generating request for submit')
 	if (this.s && this.music.length) {
 		log('starting to generat request for submit')
@@ -157,13 +157,15 @@ var lfm_scroble = {
 		  	post_m_obj['m[' + i + ']'] = ' '
   		};
   		log('request data generated. sending')
-  		return $.ajax({
+  		$.ajax({
 		  url: 'http://post2.audioscrobbler.com:80/protocol_1.2',
 		  global: false,
 		  type: "POST",
 		  dataType: "text",
 		  data: post_m_obj,
 		  error: function(r){
+			log('error while scroble')
+			
 		  },
 		  success: function(r){
 			log('submit:' + '\n' + r);
@@ -174,7 +176,7 @@ var lfm_scroble = {
 					
 					lfm_scroble.handshake();
 				}
-				widget.setPreferenceForKey(JSON.strinify(_this.music),'lfm_scroble_music');
+				widget.setPreferenceForKey(JSON.stringify(_this.music),'lfm_scroble_music');
 			} else {
 				widget.setPreferenceForKey('','lfm_scroble_music');
 			}
@@ -183,7 +185,7 @@ var lfm_scroble = {
 		})
 			log(' data sended')
 	} else if (_this.music.length){
-		widget.setPreferenceForKey(JSON.strinify(_this.music),'lfm_scroble_music');// can't be array!
+		widget.setPreferenceForKey(JSON.stringify(_this.music),'lfm_scroble_music');
 	} 
   	log('submit done')
   },
