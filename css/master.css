@@ -195,8 +195,8 @@ dl,dt,dd{
 		}
 ul{list-style:none;padding:0;margin-top:0;}
 a{color:#6672A3;}
-a[href],a.artist-list{color:#376795;cursor:pointer;}
-a[href]:hover,a.artist-list:hover{color:#6E9CC9;}
+a[href],a.artist-list{color:#2286c0;cursor:pointer;}
+a[href]:hover,a.artist-list:hover{color:#29a2e7;}
 a.song{
 	text-decoration:none;
 	border-bottom:1px dashed #DEC987;
@@ -244,10 +244,10 @@ input:focus{
 	outline:1px solid #8FB2D6;
 }
 body{
-	border:2px solid #CEE3B5;
+	border:1px solid #292929;
 	margin:0;
 	padding:0;
-	color:#333;
+	color:#eee;
 	overflow:hidden;
 	height:596px;
 	font-size:12px;
@@ -296,7 +296,7 @@ body{
 	}
 	#slider{
 		padding:10px 0 0;
-		background:#F3F8ED ;
+		background:#505050 ;
 		}
 		.navs{
 			font-family:"Trebuchet MS", sans-serif;
@@ -305,7 +305,7 @@ body{
 			line-height:25px;
 			margin-bottom:8px;
 			padding:0 10px;
-			background:#B6D590;
+			background:#6c1471;
 		}
 			.navs
 			.arr-r{

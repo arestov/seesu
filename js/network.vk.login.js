@@ -65,6 +65,16 @@ var vk_login_check = function(){
 	  global: false,
 	  type: "GET",
 	  dataType: "json",
+	  success: function(r){
+	  	if (r.user && r.user.id) {
+	  		zz.viewer_id = r.user.id;
+		} else{
+			log(xhr.responseText);
+			log('vignali! !?!?!?');
+			vk_logged_out();
+		}
+	  	
+    },
 	  error: function(xhr){
 	  	log(xhr.responseText);
 		log('vignali!');
