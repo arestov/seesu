@@ -120,29 +120,7 @@ dl,dt,dd{
 	overflow:hidden;
 	padding-left:3px;
 	}
-	#about .avatar{
-		position:relative;
-		display:none;
-		}
-	#about .avatar .face {
-		height:64px;
-		width:64px;
-		background:url(../i/avatar_gleb_arestov_down.jpg) no-repeat;
-		display:block;
-		cursor:pointer;
-		}
-		#about .avatar .buble{
-			position:absolute;
-			display:none;
-			top:-86px;
-			left:50px;
-			width:141px;
-			height:100px;
-			padding-left:50px;
-			padding-top:31px;
-			font: italic normal normal 14px/1.2em "Trebuchet MS", sans-serif;
-			background:url(../i/buble.png) no-repeat;
-			}
+
 	#about .logo{
 		background:url(../i/logo_seesu.png) no-repeat 0 15px;
 		height:49px;
@@ -158,30 +136,9 @@ dl,dt,dd{
 		background:url(../i/twitter.gif) no-repeat;
 		display:inline-block;
 		}
-	#about.logoover{
-		border-right:1px solid transparent;
-		
-		}
-		#about.logoover .avatar,
-		#about.tweet-about-seesu .avatar{
-			display:inline-block;
-			}
-		#about.logoover .logo,
-		#about.tweet-about-seesu .logo{
-			display:none;
-			}
+	
 
-	#about.tweet-about-seesu{
-		
-		width:260px;
-		padding-top:90px;
-		}
-		#about.tweet-about-seesu .avatar .face{
-			background-image:url(../i/avatar_gleb_arestov.jpg);
-			}
-		#about.tweet-about-seesu .avatar .buble{
-			display:block;
-		}
+	
 .play-control{
 	display:inline-block;
 	cursor:pointer;
@@ -241,7 +198,7 @@ input{
 	padding:2px;
 }
 input:focus{
-	outline:1px solid #8FB2D6;
+	outline:1px solid #a37b1b;
 }
 body{
 	border:1px solid #292929;
@@ -331,7 +288,7 @@ body{
 				}
 
 		.lfm-start{
-			border-top:1px solid #CCC;
+			border-top:1px solid #666;
 		}
 		#slider
 		.screens{
@@ -423,7 +380,7 @@ body{
 			height:20px;
 			text-align:right;
 			overflow:hidden;
-			background:#F3F8ED ;
+			background:#505050 ;
 			}
 			#resize-handle{
 				position:absolute;
@@ -636,3 +593,7 @@ p.internet-flash-settings{
 		input{
 			width:100px;
 		}
+#search #q{
+	background:#b2b2b2;
+	border: 1px solid #666;
+}
