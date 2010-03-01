@@ -48,11 +48,16 @@ html{
 	padding-left:20px;
 }
 .player-holder
-.flash-security-status{
+#flash-secur{
 	position:absolute;
 	top:20px;
-	left:0;
+	left:0;	
+}
+.player-holder
+.flash-security-status{
 	width:16px;
+	cursor:pointer;
+	display:block;
 	height:16px;
 	background:red;
 	color:red;

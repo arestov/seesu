@@ -57,6 +57,9 @@ $(function() {
 		proxy_render_artists_tracks(clicked_node.data('artist_list'));
 		$(art_page_nav).text('Similar to «' + seesu.player.current_artist + '»');
 	  }
+	  else if (class_name.match(/flash-security-status/)){
+		clicked_node.parent().toggleClass('flash-warning');
+	  }
 	} else if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
 		var class_name = node.parentNode.className;
 		if (class_name.match(/pause/)){
@@ -80,22 +83,7 @@ $(function() {
 			return false;
 		}
 	  
-	} else if ((node.nodeName == 'DIV') && class_name.match(/flash-security-status/)){
-		
-		clicked_node.toggleClass('flash-warning');
-		/**
-		if (clicked_node.data('showing')) {
-			clicked_node.removeClass('flash-warn').removeData('showing');
-		} else{
-			clicked_node
-			  .append(
-				clicked_node.removeClass('flash-warn')
-			  )
-			  .data('showing',true);
-		}
-		**/
-		
-	  }
+	} 
   });
 	flash_secur = $('#flash-secur');
 	$('#widget-url').val(location.href);
