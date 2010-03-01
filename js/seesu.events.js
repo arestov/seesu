@@ -86,7 +86,23 @@ $(function() {
 	} 
   });
 	flash_secur = $('#flash-secur');
-	$('#widget-url').val(location.href);
+	
+	var wgt_urli = $('#widget-url').val(location.href);
+	if (wgt_urli) {
+		var wgt_url_reset_timer;
+		var reset_wgt_urli = function(){
+			wgt_urli.val(location.href);
+		}
+		wgt_urli
+		  .change(function(){
+			clearTimeout(wgt_url_reset_timer);
+			wgt_url_reset_timer = setTimeout(reset_wgt_urli,6000);
+		  })
+		  .keyup(function(){
+			clearTimeout(wgt_url_reset_timer);
+			wgt_url_reset_timer = setTimeout(reset_wgt_urli,6000);
+	 	  });
+	}
 	play_controls = $('.play-controls');
 	var about_jnode = $('#about');
 	
