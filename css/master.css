@@ -271,6 +271,7 @@ body{
 	}
 	#slider{
 		padding:0 0 0;
+		position:relative;
 		background:#505050 ;
 		}
 		.navs{
