@@ -92,6 +92,7 @@ $(function() {
 		
 	  }
   });
+	$('#widget-url').val(location.href);
 	play_controls = $('.play-controls');
 	var about_jnode = $('#about');
 	

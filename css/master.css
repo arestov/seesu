@@ -193,12 +193,19 @@ a.song{
 	cursor:default;
 	background:#E6E4A3;
 }
-input{
-	border:1px solid #d9d9d9;
+input[type=text]{
+	background:#b2b2b2;
+	border: 1px solid #666;
 	padding:2px;
+	font-size: 1.15em;
 }
-input:focus{
+input[type=text]:focus{
 	outline:1px solid #a37b1b;
+}
+input[type=submit],
+input[type=button],
+button{
+	font-size: 1.15em;
 }
 body{
 	border:1px solid #292929;
@@ -457,6 +464,11 @@ p.internet-flash-settings{
 		bottom:6px;
 	}
 	.flash-secur
+	.flash-secur-text
+	#widget-url{
+		width:80%;
+	}
+	.flash-secur
 	img{
 		max-width:100%;
 	}
@@ -593,7 +605,3 @@ p.internet-flash-settings{
 		input{
 			width:100px;
 		}
-#search #q{
-	background:#b2b2b2;
-	border: 1px solid #666;
-}

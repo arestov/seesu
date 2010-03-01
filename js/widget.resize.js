@@ -96,6 +96,7 @@ window.addEventListener( 'load' , resizeWidg, false);
 var log;
 if (opera && opera.postError ){ 
 	log = function(){
+		return
 		opera.postError.apply(opera, arguments)
 	}
 } else {
