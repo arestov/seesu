@@ -23,6 +23,7 @@ $(function() {
 		return false;
 	  }
 	  else if (class_name.match(/flash-s$/)){
+	  	log('fss');
 		widget.openURL('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 		return false;
 	  }

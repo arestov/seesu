@@ -95,8 +95,14 @@ resizeWidg = function(){
 window.addEventListener( 'load' , resizeWidg, false);
 var log;
 if (opera && opera.postError ){ 
-	log = function(){
-		opera.postError.apply(opera, arguments)
+	log = function(text){
+		if (typeof text === 'string'){
+			opera.postError.apply(opera, arguments)
+		} else{
+			arguments[0] = JSON.stringify(arguments[0]);
+			opera.postError.apply(opera, arguments)
+		}
+		
 	}
 } else {
 	log = function(){
