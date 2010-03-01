@@ -32,7 +32,7 @@ $(function() {
 		widget.openURL( 'http://twitter.com/home/?status=' + encodeURIComponent(tweet_text));
 		return false;
 	  }
-	  else if (class_name.match(/artist$/)){
+	  else if (class_name.match(/\bartist$/)){
 		artist_name = decodeURIComponent(clicked_node.data('artist'));
 		set_artist_page(artist_name);
 		return false;
@@ -43,6 +43,7 @@ $(function() {
 		return false;
 	  }
 	  else if (class_name.match(/bbcode_artist/)){
+		
 		artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/',''));
 		set_artist_page(artist_name);
 		return false;
