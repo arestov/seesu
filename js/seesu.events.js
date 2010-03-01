@@ -106,6 +106,9 @@ $(function() {
 	play_controls = $('.play-controls');
 	var about_jnode = $('#about');
 	
+  $('#close-widget').click(function(){
+    window.close();
+  });
 
 	//see var at top
 	slider = document.getElementById('slider');
