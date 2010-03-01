@@ -169,20 +169,20 @@ a[href],a.artist-list{color:#ffffff;cursor:pointer;}
 a[href]:hover,a.artist-list:hover{color:#d5d5d5;}
 a.song{
 	text-decoration:none;
-	border-bottom:1px dashed #DEC987;
+	border-bottom:1px dashed #d5d5d5;
 	padding:3px 1px 0px;
-	color:#000;
+	color:#d5d5d5;
 	}
 a.song:hover{
-	color:#000;
-	background:#E6C9A3;
+	color:#ffffff;
+	background:#6c1471;
 }
 a.search-mp3{
 	text-decoration:blink;
-	color:#FF9900;
+	color:#6c1471;
 }
 a.search-mp3-failed{
-	color:#ddd;
+	color:#f13737;
 }
 a.waiting-full-render{
 	cursor:pointer;
@@ -194,17 +194,15 @@ a.download-mp3{
 	text-decoration:none;
 	padding:3px 5px 1px;
 	margin-left:3px;
-	color:#3b4891;
-	
+	color:#d5d5d5;
 	}
 a.download-mp3:hover{
-	color:#DAD681;
-	background:#477AAE;
+	background:#6c1471;
+	color:#ffffff;
 	}
 .active-play
 a.song{
 	cursor:default;
-	background:#E6E4A3;
 }
 input[type=text]{
 	background:#b2b2b2;
@@ -495,7 +493,7 @@ p.internet-flash-settings{
 	width: 21px;
 	height:17px;
 	background:url(/i/triangle.png) no-repeat ;
-	left: 13px;
+	left: 15px;
 	top: -7px;
 }
 
