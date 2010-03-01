@@ -1,4 +1,4 @@
-var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, play_controls,
+var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, play_controls, flash_secur,
 	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
 	captcha_img,vk_login_error;
 $(function() {
@@ -81,18 +81,23 @@ $(function() {
 		}
 	  
 	} else if ((node.nodeName == 'DIV') && class_name.match(/flash-security-status/)){
-		var p  = clicked_node.parent().parent().position();
-		if (clicked_node.data('showing')) {
-			$('.flash-secur').css({'display': ''});
-			clicked_node.removeData('showing');
-		} else{
-			$('.flash-secur').css({'top': p.top + 60, 'display': 'block'});
-			clicked_node.data('showing',true);
-		}
 		
+		clicked_node.toggleClass('flash-warning');
+		/**
+		if (clicked_node.data('showing')) {
+			clicked_node.removeClass('flash-warn').removeData('showing');
+		} else{
+			clicked_node
+			  .append(
+				clicked_node.removeClass('flash-warn')
+			  )
+			  .data('showing',true);
+		}
+		**/
 		
 	  }
   });
+	flash_secur = $('#flash-secur');
 	$('#widget-url').val(location.href);
 	play_controls = $('.play-controls');
 	var about_jnode = $('#about');

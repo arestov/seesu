@@ -66,7 +66,7 @@ vk_p.prototype = {
 	  node[0].parentNode.appendChild(this.player_holder[0]);
 	  
 	  this.create_player(node.attr('href'), node.data('duration'));
-	  this.player_holder.append('<div class="flash-security-status" title="About «Adobe Flash Player Security»"></div>')
+	  this.player_holder.append(flash_secur)
 	},
 	'play': function () {
 	  this.set_var('buttonPressed', 'true');

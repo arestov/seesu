@@ -47,6 +47,7 @@ html{
 .player-holder{
 	padding-left:20px;
 }
+.player-holder
 .flash-security-status{
 	position:absolute;
 	top:20px;
@@ -56,6 +57,15 @@ html{
 	background:red;
 	color:red;
 }
+
+#message-flash-secur{
+	display:none;
+}
+#flash-secur.flash-warning
+#message-flash-secur{
+	display:block;
+}
+
 .pl-holder{clear:left;position:relative}
 .tracks-for-play .play-controls{
 	display:none;
@@ -453,12 +463,13 @@ p.internet-flash-settings{
 .flash-secur{
 	position:absolute ;
 	display:none;
-	left:50px;
+	left:-17px;
+	top:31px;
 	z-index:10;
 }
 	.flash-secur
 	.flash-secur-text{
-		width:400px;
+		width:460px;
 		color:#555;
 		position:absolute;
 		bottom:6px;
