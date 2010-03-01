@@ -99,8 +99,7 @@ $(function() {
 			wgt_url_reset_timer = setTimeout(reset_wgt_urli,6000);
 		  })
 		  .keyup(function(){
-			clearTimeout(wgt_url_reset_timer);
-			wgt_url_reset_timer = setTimeout(reset_wgt_urli,6000);
+			reset_wgt_urli();
 	 	  });
 	}
 	play_controls = $('.play-controls');
