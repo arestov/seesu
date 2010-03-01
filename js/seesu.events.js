@@ -143,7 +143,7 @@ $(function() {
 			widget.setPreferenceForKey('true', 'flash_internet');
 			$(document.body).addClass('flash-internet');
 		} else {
-			widget.setPreferenceForKey(null, 'flash_internet');
+			widget.setPreferenceForKey('', 'flash_internet');
 			$(document.body).removeClass('flash-internet');
 		}
 	});
