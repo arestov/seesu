@@ -13,7 +13,7 @@ html{
 }
 #close-widget{
 	position:absolute;
-	top:13px;
+	top:5px;
 	cursor:pointer;
 	right:8px;
 	font-size:16px;
@@ -274,7 +274,7 @@ body{
 		display:none;
 	}
 	#slider{
-		padding:10px 0 0;
+		padding:0 0 0;
 		background:#505050 ;
 		}
 		.navs{
@@ -283,7 +283,7 @@ body{
 			font-size:1.4em;
 			line-height:25px;
 			margin-bottom:8px;
-			padding:0 10px;
+			padding:5px 10px 5px;
 			background:#6c1471;
 		}
 			.navs
@@ -304,11 +304,16 @@ body{
 			}
 			.navs .nav-start em,
 			.navs .nav-search-results em{
-				border-bottom:1px dashed #333;
+				color:#2286c0;
+				border-bottom:1px dashed #2286c0;
 				font-style:normal;
 				cursor:pointer;
 				}
-
+			.navs .nav-start em:hover,
+			.navs .nav-search-results em:hover{
+				color:#29a2e7;
+				border-bottom-color:#29a2e7;
+			}
 		.lfm-start{
 			border-top:1px solid #666;
 		}
