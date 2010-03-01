@@ -17,7 +17,7 @@ html{
 	cursor:pointer;
 	right:8px;
 	font-size:16px;
-	color:#254DE5;
+	color:#ffffff;
 	font-family:"Trebuchet MS", sans-serif;
 	height:25px;
 	font-size:1.4em;
@@ -152,8 +152,6 @@ dl,dt,dd{
 		display:inline-block;
 		}
 	
-
-	
 .play-control{
 	display:inline-block;
 	cursor:pointer;
@@ -166,9 +164,9 @@ dl,dt,dd{
 		background-image:url(../i/buttons_hover.png);
 		}
 ul{list-style:none;padding:0;margin-top:0;}
-a{color:#6672A3;}
-a[href],a.artist-list{color:#2286c0;cursor:pointer;}
-a[href]:hover,a.artist-list:hover{color:#29a2e7;}
+a{color:#d5d5d5;}
+a[href],a.artist-list{color:#ffffff;cursor:pointer;}
+a[href]:hover,a.artist-list:hover{color:#d5d5d5;}
 a.song{
 	text-decoration:none;
 	border-bottom:1px dashed #DEC987;
@@ -190,7 +188,7 @@ a.waiting-full-render{
 	cursor:pointer;
 }
 a.waiting-full-render.marked-for-play{
-	border-bottom:1px dotted #86c9dc;
+	border-bottom:1px dotted #d5d5d5;
 }
 a.download-mp3{
 	text-decoration:none;
@@ -304,15 +302,15 @@ body{
 			}
 			.navs .nav-start em,
 			.navs .nav-search-results em{
-				color:#2286c0;
-				border-bottom:1px dashed #2286c0;
+				color:#ffffff;
+				border-bottom:1px dashed #ffffff;
 				font-style:normal;
 				cursor:pointer;
 				}
 			.navs .nav-start em:hover,
 			.navs .nav-search-results em:hover{
-				color:#29a2e7;
-				border-bottom-color:#29a2e7;
+				color:#d5d5d5;
+				border-bottom-color:#d5d5d5;
 			}
 		.lfm-start{
 			border-top:1px solid #666;
@@ -401,8 +399,6 @@ body{
 	line-height:1.5em;
 }
 
-
-
 		.window-bottom{
 			height:20px;
 			text-align:right;
@@ -431,7 +427,7 @@ body{
 			}
 		ul.results-artists
 		li:hover{
-			background:#f6f0e1;
+			color:#f6f0e1;
 			}
 			.search-results-holder
 			ul.results-artists
@@ -575,7 +571,7 @@ p.internet-flash-settings{
 	#lfm-recomm,
 	#lfm-loved{
 		text-decoration:none;
-		border-bottom:1px dashed #6672A3;
+		border-bottom:1px dashed #d5d5d5;
 	}
 	.artist-tags a.music-tag{
 		margin-right:6px;
