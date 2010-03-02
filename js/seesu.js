@@ -327,7 +327,7 @@ var show_artist_info = function(r){
 				  .attr({ 
 					text: similar.name, 
 					href: similar.url, 
-					'class' : 'artist' 
+					'class' : 'artist js-serv' 
 				  })
 				  .data('artist', similar.name );
 			artist_list.push(similar.name);
