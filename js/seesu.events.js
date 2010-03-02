@@ -33,7 +33,7 @@ $(function() {
 		widget.openURL( 'http://twitter.com/home/?status=' + encodeURIComponent(tweet_text));
 		return false;
 	  }
-	  else if (class_name.match(/\bartist$/)){
+	  else if (class_name.match(/\bartist\b/)){
 		artist_name = decodeURIComponent(clicked_node.data('artist'));
 		set_artist_page(artist_name);
 		return false;
@@ -59,7 +59,7 @@ $(function() {
 		$(art_page_nav).text('Similar to «' + seesu.player.current_artist + '»');
 	  }
 	  else if (class_name.match(/flash-security-status/)){
-		clicked_node.parent().toggleClass('flash-warning');
+		flash_secur.toggleClass('flash-warning');
 	  }
 	} else if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
 		var class_name = node.parentNode.className;
@@ -84,7 +84,21 @@ $(function() {
 			return false;
 		}
 	  
-	} 
+	} else if ((node.nodeName == 'INPUT')) {
+		if (class_name.match(/flash-mess-switch/)) {
+			if(clicked_node.attr('checked')) {
+				widget.setPreferenceForKey('true', 'flash_internet');
+				$(document.body).addClass('flash-internet');
+			} else {
+				widget.setPreferenceForKey('', 'flash_internet');
+				$(document.body).removeClass('flash-internet');
+			}
+		} 
+		else if (class_name.match(/flash-mess-close/)){
+			flash_secur.removeClass('flash-warning');
+		}
+	}
+	
   });
 	flash_secur = $('#flash-secur');
 	
@@ -141,14 +155,8 @@ $(function() {
 		
 	var flash_settings = $('.internet-flash-settings input');
 		
-	flash_settings.change(function(){
-		if($(this).attr('checked')) {
-			widget.setPreferenceForKey('true', 'flash_internet');
-			$(document.body).addClass('flash-internet');
-		} else {
-			widget.setPreferenceForKey('', 'flash_internet');
-			$(document.body).removeClass('flash-internet');
-		}
+	flash_settings.click(function(){
+		
 	});
 	
 	if (widget.preferenceForKey('flash_internet') == 'true') {
