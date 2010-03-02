@@ -116,7 +116,7 @@ var make_tracklist_playable = function(track_nodes){
 	}
 };
 var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_duration){
-	var playable_node = $(node).attr({'class' : 'song', 'href' : http_link} ).data('duration', mp3_duration);
+	var playable_node = $(node).attr({'class' : 'song js-serv', 'href' : http_link} ).data('duration', mp3_duration);
 	playlist_nodes_for.push(playable_node);
 	var mp3 = $("<a></a>").attr({ 'class': 'download-mp3', 'text': 'mp3', 'href': http_link });
 	playable_node.parent().append(mp3);
@@ -308,7 +308,7 @@ var show_artist_info = function(r){
 				  .attr({ 
 					text: tag.name, 
 					href: tag.url,
-					'class': 'music-tag'
+					'class': 'music-tag js-serv'
 				  })
 				  .data('music_tag', tag.name);
 			tags_p.append(arts_tag_node);
@@ -318,12 +318,12 @@ var show_artist_info = function(r){
 	if (similars && similars.length) {
 		var similars_p = $("<p></p>").attr({ 'class': 'artist-similar'}),
 			artist_list = [],
-			similars_a = $('<a></a>').attr({'text' : 'Similar artists', 'class': 'artist-list'}).data('artist_list',artist_list);
+			similars_a = $('<a></a>').attr({'text' : 'Similar artists', 'class': 'artist-list js-serv'}).data('artist_list',artist_list);
 		similars_p.append(similars_a);	
 		similars_p.append(document.createTextNode(": "));
 		for (var i=0, l = similars.length; i < l; i++) {
 			var similar = similars[i],
-				arts_similar_node = $("<a></a>")
+				arts_similar_node = $("<a class='js-serv'></a>")
 				  .attr({ 
 					text: similar.name, 
 					href: similar.url, 
