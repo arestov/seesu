@@ -33,7 +33,7 @@ $(function() {
 		widget.openURL( 'http://twitter.com/home/?status=' + encodeURIComponent(tweet_text));
 		return false;
 	  }
-	  else if (class_name.match(/\bartist\b/)){
+	  else if (class_name.match(/\bartist\b[^\-]/)){
 		artist_name = decodeURIComponent(clicked_node.data('artist'));
 		set_artist_page(artist_name);
 		return false;
