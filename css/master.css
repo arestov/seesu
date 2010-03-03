@@ -656,27 +656,27 @@ p.internet-flash-settings{
 	}
   
   
-.shadowed {
+#slider > .shadowed {
   position:relative;
 	display:block;
 	width: 100%;
 	padding:0px;
   }
 		
-  .sh {
+#slider > .sh {
     position: absolute;
     background: url(../i/shadow.png) no-repeat;
     z-index: -1;
 		}
 		
-  .tl {
+#slider > .tl {
     top: -6px;
     bottom: 12px;
     left: -11px;
     right: 14px;
 		}
 		
-  .tr {
+#slider > .tr {
     width: 25px;
     top: -6px;
     bottom: 12px;
@@ -684,7 +684,7 @@ p.internet-flash-settings{
     background-position: top right;
 		}
 		
-  .bl {
+#slider > .bl {
     left: -11px;
     right: 14px;
     bottom: -16px;
@@ -692,7 +692,7 @@ p.internet-flash-settings{
     background-position: bottom left;
 		}
 		
-  .br {
+#slider > .br {
     width: 25px;
     height: 28px;
     right: 11px;
