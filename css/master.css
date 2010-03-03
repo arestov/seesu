@@ -173,8 +173,13 @@ a.bbcode_artist,
 a.bbcode_tag{
 	cursor:pointer;
 	text-decoration:none;
-	border-bottom:1px dashed #a1d404;
+	border-bottom:1px dashed #647142;
 }
+	a.js-serv:hover,
+	a.bbcode_artist:hover,
+	a.bbcode_tag:hover{
+		border-bottom-color:#a1d404;
+	}
 a.song{
 	padding:3px 1px 0px;
 	}
