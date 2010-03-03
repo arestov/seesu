@@ -2,11 +2,94 @@ body{
 	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
 	width:99%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
+body{
+	border:1px solid #292929;
+	margin:0;
+	padding:0;
+	color:#eee;
+	overflow:hidden;
+	height:596px;
+	font-size:12px;
+	font-family:Helvetica , Arial ,sans-serif;
+	}
 html{
 	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
 	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
 	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
+input[type=text]{
+	background:#b2b2b2;
+	border: 1px solid #666;
+	padding:2px;
+	font-size: 1.15em;
+}
+input[type=text]:focus{
+	outline:1px solid #a37b1b;
+}
+input[type=submit],
+input[type=button],
+button{
+	font-size: 1.15em;
+}
+
+dl,dt,dd{
+	margin:0;
+	padding:0;
+}
+ul{list-style:none;padding:0;margin-top:0;}
+a{color:#d5d5d5;}
+a[href],a.js-serv{color:#a1d404;}
+a[href]:hover,a.js-serv:hover{color:#bef279;}
+
+a.js-serv,
+a.bbcode_artist,
+a.bbcode_tag{
+	cursor:pointer;
+	text-decoration:none;
+	border-bottom:1px dashed #647142;
+}
+	a.js-serv:hover,
+	a.bbcode_artist:hover,
+	a.bbcode_tag:hover{
+		border-bottom-color:#a1d404;
+	}
+a.song{
+	padding:3px 1px 0px;
+	}
+a.song:hover{
+	color:#ffffff;
+	background:#666;
+	border-bottom:1px solid #666;
+}
+a.search-mp3{
+	text-decoration:blink;
+	color:#6c1471;
+}
+a.search-mp3-failed{
+	color:#666;
+}
+a.waiting-full-render{
+	cursor:pointer;
+}
+a.waiting-full-render.marked-for-play{
+	border-bottom-color:#ae5d27;
+}
+a.download-mp3{
+	text-decoration:none;
+	padding:3px 5px 1px;
+	margin-left:3px;
+	}
+a.download-mp3:hover{
+	background:#666;
+	color:#ffffff;
+	}
+.active-play
+a.song{
+	cursor:default;
+	background-color: #7ad426;
+	color: #505050;
+}
+
 #sm2-container{
 	bottom:10px;
 	right:20px;
@@ -33,43 +116,7 @@ html{
 .background-changes{
 	display:none;
 }
-.tracks-for-play
-.player-holder{
-	
-}
-.tracks-for-play
-.player-holder.vk-p-initing{
-	position:fixed;
-	left:40px;
-	top:50%;
-	opacity:0.01;
-}
-.player-holder{
-	padding-left:20px;
-}
-.player-holder
-#flash-secur{
-	position:absolute;
-	top:20px;
-	left:0;	
-}
-.player-holder
-.flash-security-status{
-	width:16px;
-	cursor:pointer;
-	display:block;
-	height:16px;
-	background:red;
-	color:red;
-}
 
-#message-flash-secur{
-	display:none;
-}
-#flash-secur.flash-warning
-#message-flash-secur{
-	display:block;
-}
 
 .pl-holder{clear:left;position:relative}
 .tracks-for-play .play-controls{
@@ -116,10 +163,7 @@ html{
 	.play-controls{
 		opacity:1;
 	}
-dl,dt,dd{
-	margin:0;
-	padding:0;
-}
+
 .vk-logged-in
 #about{
 	display:block;
@@ -163,82 +207,7 @@ dl,dt,dd{
 	.play-control:hover{
 		background-image:url(../i/buttons_hover.png);
 		}
-ul{list-style:none;padding:0;margin-top:0;}
-a{color:#d5d5d5;}
-a[href],a.js-serv{color:#a1d404;}
-a[href]:hover,a.js-serv:hover{color:#bef279;}
 
-a.js-serv,
-a.bbcode_artist,
-a.bbcode_tag{
-	cursor:pointer;
-	text-decoration:none;
-	border-bottom:1px dashed #647142;
-}
-	a.js-serv:hover,
-	a.bbcode_artist:hover,
-	a.bbcode_tag:hover{
-		border-bottom-color:#a1d404;
-	}
-a.song{
-	padding:3px 1px 0px;
-	}
-a.song:hover{
-	color:#ffffff;
-	background:#666;
-	border-bottom:1px solid #666;
-}
-a.search-mp3{
-	text-decoration:blink;
-	color:#6c1471;
-}
-a.search-mp3-failed{
-	color:#666;
-}
-a.waiting-full-render{
-	cursor:pointer;
-}
-a.waiting-full-render.marked-for-play{
-}
-a.download-mp3{
-	text-decoration:none;
-	padding:3px 5px 1px;
-	margin-left:3px;
-	}
-a.download-mp3:hover{
-	background:#666;
-	color:#ffffff;
-	}
-.active-play
-a.song{
-	cursor:default;
-	background-color: #7ad426;
-	color: #505050;
-}
-input[type=text]{
-	background:#b2b2b2;
-	border: 1px solid #666;
-	padding:2px;
-	font-size: 1.15em;
-}
-input[type=text]:focus{
-	outline:1px solid #a37b1b;
-}
-input[type=submit],
-input[type=button],
-button{
-	font-size: 1.15em;
-}
-body{
-	border:1px solid #292929;
-	margin:0;
-	padding:0;
-	color:#eee;
-	overflow:hidden;
-	height:596px;
-	font-size:12px;
-	font-family:Helvetica , Arial ,sans-serif;
-	}
 	.lfm-auth{
 		display:none;
 		padding-left:20px;
@@ -625,3 +594,49 @@ p.internet-flash-settings{
 		input{
 			width:100px;
 		}
+#track-buttons{
+	position:absolute;
+}
+.tracks-for-play
+.player-holder{
+	
+}
+.tracks-for-play
+.player-holder.vk-p-initing{
+	position:fixed;
+	left:40px;
+	top:50%;
+	opacity:0.01;
+}
+.player-holder{
+	padding-left:20px;
+}
+.player-holder
+#flash-secur{
+	position:absolute;
+	top:20px;
+	left:0;	
+}
+#track-buttons{
+	display:none;
+}
+.active-play
+#track-buttons{
+	display:block;
+}
+.flash-security-status{
+	width:16px;
+	cursor:pointer;
+	display:block;
+	height:16px;
+	background:red;
+	color:red;
+}
+
+#message-flash-secur{
+	display:none;
+}
+#flash-secur.flash-warning
+#message-flash-secur{
+	display:block;
+}

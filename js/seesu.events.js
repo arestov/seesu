@@ -103,6 +103,7 @@ $(function() {
 	
   });
 	flash_secur = $('#flash-secur');
+	track_buttons = $('#track-buttons');
 	
 	var wgt_urli = $('#widget-url').val(location.href);
 	if (wgt_urli) {
@@ -136,6 +137,7 @@ $(function() {
 	trk_page_nav = document.getElementById('nav_tracks_page');
 	startlink.onclick = function(){
 	slider.className = "screen-start";
+	searchfield.focus();
 	};
 	srnav.onclick = function(){
 	slider.className = "screen-search";

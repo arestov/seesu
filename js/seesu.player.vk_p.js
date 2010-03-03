@@ -56,8 +56,8 @@ vk_p.prototype = {
 	"play_song_by_node": function (node){
 	  this.player_holder[0].innerHTML = ''; //we need for speed here! so.. say no to jquery
 	  node[0].parentNode.appendChild(this.player_holder[0]);
-	  this.player_holder.append(flash_secur);
-	  this.create_player(node.attr('href'), node.data('duration'));
+	  node[0].parentNode.appendChild(track_buttons[0]);
+	  //this.create_player(node.attr('href'), node.data('duration'));
 	  
 	},
 	'play': function () {
