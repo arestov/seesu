@@ -654,3 +654,48 @@ p.internet-flash-settings{
 		bottom: 0;
 		background-position: bottom right;
 	}
+  
+  
+.shadowed {
+  position:relative;
+	display:block;
+	width: 100%;
+	padding:0px;
+  }
+		
+  .sh {
+    position: absolute;
+    background: url(../i/shadow.png) no-repeat;
+    z-index: -1;
+		}
+		
+  .tl {
+    top: -6px;
+    bottom: 12px;
+    left: -11px;
+    right: 14px;
+		}
+		
+  .tr {
+    width: 25px;
+    top: -6px;
+    bottom: 12px;
+    right: -11px;
+    background-position: top right;
+		}
+		
+  .bl {
+    left: -11px;
+    right: 14px;
+    bottom: -16px;
+    height: 28px;
+    background-position: bottom left;
+		}
+		
+  .br {
+    width: 25px;
+    height: 28px;
+    right: 11px;
+    bottom: -16px;
+    background-position: bottom right;
+		}
