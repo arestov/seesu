@@ -61,7 +61,7 @@ $(function() {
 		$(art_page_nav).text('Similar to «' + seesu.player.current_artist + '»');
 	  }
 	  else if (class_name.match(/flash-security-status/)){
-		flash_secur.addClass('flash-warning');
+		flash_secur.toggleClass('flash-warning');
 	  }
 	} else if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
 		var class_name = node.parentNode.className;

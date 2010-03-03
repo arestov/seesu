@@ -57,7 +57,7 @@ vk_p.prototype = {
 	  this.player_holder[0].innerHTML = ''; //we need for speed here! so.. say no to jquery
 	  node[0].parentNode.appendChild(this.player_holder[0]);
 	  node[0].parentNode.appendChild(track_buttons[0]);
-	  //this.create_player(node.attr('href'), node.data('duration'));
+	  this.create_player(node.attr('href'), node.data('duration'));
 	  
 	},
 	'play': function () {

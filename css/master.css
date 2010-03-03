@@ -431,92 +431,6 @@ a.song{
 	margin-bottom:7px;
 	}
 
-.flash-internet
-.flash-secur
-p{
-	display:none;
-	}
-.flash-internet
-.flash-secur
-p.internet-flash-settings{
-	display:block;
-}
-.vk-logged-in
-.flash-secur{
-	
-}
-
-.flash-secur{
-	position:absolute;
-	display:none;
-	left:-17px;
-	top:31px;
-	z-index:10;
-}
-	.flash-secur
-	.flash-secur-text{
-		width:460px;
-		color:#555;
-		position:absolute;
-		bottom:6px;
-	}
-	.flash-secur
-	.flash-secur-text
-	#widget-url{
-		width:80%;
-	}
-	.flash-secur
-	img{
-		max-width:100%;
-	}
-
-.triangle {
-	position: absolute;
-	width: 21px;
-	height:17px;
-	background:url(/i/triangle.png) no-repeat ;
-	left: 15px;
-	top: -7px;
-}
-
-.corners {
-	display:block;
-	position: absolute;
-	width: 100%;
-	padding:10px;
-}
-	.sh {
-		position: absolute;
-		background: url(../i/corners.png) no-repeat;
-		z-index: -1;
-	}
-	.tl {
-		top: -6px;
-		bottom: 28px;
-		left: -11px;
-		right: 14px;
-	}
-	.tr {
-		width: 25px;
-		top: -6px;
-		bottom: 28px;
-		right: -11px;
-		background-position: top right;
-	}
-	.bl {
-		left: -11px;
-		right: 14px;
-		bottom: 0;
-		height: 28px;
-		background-position: bottom left;
-	}
-	.br {
-		width: 25px;
-		height: 28px;
-		right: -11px;
-		bottom: 0;
-		background-position: bottom right;
-	}
 
 .play-list-holder{
 	padding-top:10px;
@@ -596,7 +510,15 @@ p.internet-flash-settings{
 		}
 #track-buttons{
 	position:absolute;
-}
+	top:13px;
+	left:0;
+	}
+	#track-buttons li{
+		float:left;
+		width:16px;
+		height:16px;
+		margin-right:3px;
+		}
 .tracks-for-play
 .player-holder{
 	
@@ -609,13 +531,11 @@ p.internet-flash-settings{
 	opacity:0.01;
 }
 .player-holder{
-	padding-left:20px;
+	padding-left:36px;
 }
 .player-holder
 #flash-secur{
-	position:absolute;
-	top:20px;
-	left:0;	
+	position:relative;
 }
 #track-buttons{
 	display:none;
@@ -640,3 +560,90 @@ p.internet-flash-settings{
 #message-flash-secur{
 	display:block;
 }
+
+.flash-internet
+.flash-secur
+p{
+	display:none;
+	}
+.flash-internet
+.flash-secur
+p.internet-flash-settings{
+	display:block;
+}
+.vk-logged-in
+.flash-secur{
+	
+}
+
+.flash-secur{
+	position:absolute;
+	display:none;
+	left:-17px;
+	top:41px;
+	z-index:10;
+}
+	.flash-secur
+	.flash-secur-text{
+		width:460px;
+		color:#555;
+		position:absolute;
+		bottom:6px;
+	}
+	.flash-secur
+	.flash-secur-text
+	#widget-url{
+		width:80%;
+	}
+	.flash-secur
+	img{
+		max-width:100%;
+	}
+
+.triangle {
+	position: absolute;
+	width: 21px;
+	height:17px;
+	background:url(/i/triangle.png) no-repeat ;
+	left: 15px;
+	top: -7px;
+}
+
+.corners {
+	display:block;
+	position: absolute;
+	width: 100%;
+	padding:10px;
+}
+	.sh {
+		position: absolute;
+		background: url(../i/corners.png) no-repeat;
+		z-index: -1;
+	}
+	.tl {
+		top: -6px;
+		bottom: 28px;
+		left: -11px;
+		right: 14px;
+	}
+	.tr {
+		width: 25px;
+		top: -6px;
+		bottom: 28px;
+		right: -11px;
+		background-position: top right;
+	}
+	.bl {
+		left: -11px;
+		right: 14px;
+		bottom: 0;
+		height: 28px;
+		background-position: bottom left;
+	}
+	.br {
+		width: 25px;
+		height: 28px;
+		right: -11px;
+		bottom: 0;
+		background-position: bottom right;
+	}
