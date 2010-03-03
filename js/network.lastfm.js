@@ -189,4 +189,3 @@ var lfm_scroble = {
   	log('submit done')
   }
 };
-if (!lfm_scroble.s) {lfm_scroble.handshake();}

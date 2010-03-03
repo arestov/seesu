@@ -2,6 +2,8 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, play_contro
 	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
 	captcha_img,vk_login_error;
 $(function() {
+  if (!lfm_scroble.s) {lfm_scroble.handshake();}
+  if (seesu) {check_seesu_updates();}
   $(document).click(function(e) {
   	var node = e.target;
   	var class_name = node.className;

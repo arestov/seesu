@@ -34,21 +34,23 @@ var updating_notify = function(r){
 	vkReferer = r.vk_referer;
 	log(vkReferer);
 }
-if (!testing) $.ajax({
-  url: 'http://seesu.heroku.com/update',
-  global: false,
-  type: "POST",
-  dataType: "json",
-  data: {
-  	'hash': hex_md5(widget.identifier),
-  	'version': seesu.version,
-  	'demension_x': widget.preferenceForKey('width'),
-  	'demension_y': widget.preferenceForKey('height')
-  },
-  error: function(){
-  },
-  success: updating_notify
-});
+var check_seesu_updates = function(){
+	$.ajax({
+	  url: 'http://seesu.heroku.com/update',
+	  global: false,
+	  type: "POST",
+	  dataType: "json",
+	  data: {
+	  	'hash': hex_md5(widget.identifier),
+	  	'version': seesu.version,
+	  	'demension_x': widget.preferenceForKey('width'),
+	  	'demension_y': widget.preferenceForKey('height')
+	  },
+	  error: function(){
+	  },
+	  success: updating_notify
+	});
+}
 
 
 
