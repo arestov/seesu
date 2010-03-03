@@ -512,12 +512,18 @@ a.song{
 	position:absolute;
 	top:13px;
 	left:0;
+	
 	}
-	#track-buttons li{
+	#track-buttons>li{
 		float:left;
 		width:16px;
+		line-height:16px;
 		height:16px;
 		margin-right:3px;
+		}
+		#track-buttons>li>a{
+			font-weight:700px;
+			text-align:center;
 		}
 .tracks-for-play
 .player-holder{
@@ -549,8 +555,9 @@ a.song{
 	cursor:pointer;
 	display:block;
 	height:16px;
-	background:red;
-	color:red;
+	line-height:inherit;
+	background:#ff0000;
+	color:#fff;
 }
 
 #message-flash-secur{
