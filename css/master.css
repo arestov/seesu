@@ -301,9 +301,6 @@ a.song{
 			overflow-x:hidden;
 			height:536px;
 			padding:8px 10px 0px;
-			border:1px solid #292929;
-			border-top:0;
-			border-bottom:0;
 			
 			-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 			}
@@ -401,8 +398,8 @@ a.song{
 			}
 			#resize-handle{
 				position:absolute;
-				bottom:0px;
-				right:0;
+				bottom:1px;
+				right:1px;
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
@@ -672,6 +669,10 @@ p.internet-flash-settings{
 #slider-materail{
 	padding-bottom:10px;
 	background:#505050;
+	
+	border:1px solid #292929;
+	border-top:0;
+	border-bottom:0;
 }
 .dmain{
 	height:10px;
