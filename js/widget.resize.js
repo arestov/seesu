@@ -15,7 +15,7 @@ resizeWidg = function(){
     function widgetResize(width, height) {
 	    var zoom = (device == "mobile") ? window.innerWidth / document.documentElement.offsetWidth : 1;
 	    body.style.height = (height-4) + 'px';
-	    screenHolder.style.height = (height-64) + 'px';
+	    screenHolder.style.height = (height-67) + 'px';
 	    window.resizeTo(width * zoom, height * zoom);
 	    
 	    

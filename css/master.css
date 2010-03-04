@@ -3,7 +3,7 @@ body{
 	width:99%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
 body{
-	border:1px solid #292929;
+	
 	margin:0;
 	padding:0;
 	color:#eee;
@@ -252,16 +252,17 @@ a.song{
 	#slider{
 		padding:0 0 0;
 		position:relative;
-		background:#505050 ;
 		}
 		.navs{
 			font-family:"Trebuchet MS", sans-serif;
-			height:25px;
+			height:20px;
 			font-size:1.4em;
-			line-height:25px;
-			margin-bottom:8px;
-			padding:5px 10px 5px;
+			line-height:20px;
+			padding:0px 10px 5px;
 			background:#6c1471;
+			border:1px solid #292929;
+			border-top:0;
+			border-bottom:0;
 		}
 			.navs
 			.arr-r{
@@ -299,7 +300,11 @@ a.song{
 			overflow-y:auto;
 			overflow-x:hidden;
 			height:536px;
-			padding:0 10px;
+			padding:8px 10px 0px;
+			border:1px solid #292929;
+			border-top:0;
+			border-bottom:0;
+			
 			-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 			}
 			#slider
@@ -387,13 +392,16 @@ a.song{
 
 		.window-bottom{
 			height:20px;
+			position:absolute;
+			bottom:0;
+			width: 20px;
+			right:0;
 			text-align:right;
 			overflow:hidden;
-			background:#505050 ;
 			}
 			#resize-handle{
 				position:absolute;
-				bottom:0;
+				bottom:0px;
 				right:0;
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
@@ -529,7 +537,7 @@ a.song{
 		margin-right:3px;
 		}
 		#track-buttons>li>a{
-			font-weight:700px;
+			font-weight:700;
 			text-align:center;
 		}
 .tracks-for-play
@@ -661,48 +669,46 @@ p.internet-flash-settings{
 		bottom: 0;
 		background-position: bottom right;
 	}
-  
-  
-#slider > .shadowed {
-  position:relative;
-	display:block;
-	width: 100%;
-	padding:0px;
-  }
-		
-#slider > .sh {
-    position: absolute;
-    background: url(../i/shadow.png) no-repeat;
-    z-index: -1;
+#slider-materail{
+	padding-bottom:10px;
+	background:#505050;
+}
+.dmain{
+	height:10px;
+	padding-right:10px;
+	}
+	.dleft{
+		float:left;
+		height:100%;
+		width:10px;
 		}
-		
-#slider > .tl {
-    top: -6px;
-    bottom: 12px;
-    left: -11px;
-    right: 14px;
+	.dcenter{
+		overflow:hidden;
+		height:10px;
+		background:#ddd;
 		}
-		
-#slider > .tr {
-    width: 25px;
-    top: -6px;
-    bottom: 12px;
-    right: -11px;
-    background-position: top right;
+.dmain,.dleft{
+	background:url(/i/seesu-star.png) no-repeat 0 0;
+	}
+.dtop{
+	background-position:100% 0;
+	}
+	.dtop .dleft{
+		background-position:0 0;
 		}
-		
-#slider > .bl {
-    left: -11px;
-    right: 14px;
-    bottom: -16px;
-    height: 28px;
-    background-position: bottom left;
+	.dtop .dcenter{
+		background-color:#6c1471;
+		height:9px;
+		border-top:1px solid #292929;
 		}
-		
-#slider > .br {
-    width: 25px;
-    height: 28px;
-    right: 11px;
-    bottom: -16px;
-    background-position: bottom right;
+.dbottom{
+	background-position:100% -10px;
+	}
+	.dbottom .dleft{
+		background-position:0 -10px;
+		}
+	.dbottom .dcenter{
+		height:9px;
+		border-bottom:1px solid #292929;
+		background-color:#505050;
 		}
