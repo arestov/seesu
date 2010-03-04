@@ -668,7 +668,6 @@ p.internet-flash-settings{
 		background-position: bottom right;
 	}
 #slider-materail{
-	padding-bottom:10px;
 	background:#505050;
 	
 	border:1px solid #292929;
@@ -714,3 +713,9 @@ p.internet-flash-settings{
 		border-bottom:1px solid #292929;
 		background-color:#505050;
 		}
+#promo{
+	font-size:0.8em;
+	height:10px;
+	padding-left:70px;
+	color:#999;
+}
