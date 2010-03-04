@@ -374,6 +374,13 @@ a.song{
 			#slider.sreen-artist-page-with-results .nav-artist-page .arr-d{
 				display:inline;
 			}
+.search-start{
+	margin-bottom:1em;
+	}
+	.search-start
+	form{
+		margin:0;
+		}
 .artist-similar,.artist-tags{
 	line-height:1.5em;
 }
