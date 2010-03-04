@@ -282,15 +282,15 @@ a.song{
 			}
 			.navs .nav-start em,
 			.navs .nav-search-results em{
-				color:#ffffff;
-				border-bottom:1px dashed #ffffff;
+				color:#d5d5d5;
+				border-bottom:1px dashed #925196;
 				font-style:normal;
 				cursor:pointer;
 				}
 			.navs .nav-start em:hover,
 			.navs .nav-search-results em:hover{
-				color:#d5d5d5;
-				border-bottom-color:#d5d5d5;
+				color:#fff;
+				border-bottom-color:#b990bc;
 			}
 		.lfm-start{
 			border-top:1px solid #666;
