@@ -87,6 +87,7 @@ a.download-mp3:hover{
 a.song{
 	cursor:default;
 	background-color: #7ad426;
+	border-bottom:1px solid #7ad426;
 	color: #505050;
 }
 
@@ -207,7 +208,9 @@ a.song{
 	.play-control:hover{
 		background-image:url(../i/buttons_hover.png);
 		}
-
+	.play-control:active{
+		background-image:url(../i/buttons_active.png);
+		}
 	.lfm-auth{
 		display:none;
 		padding-left:20px;
