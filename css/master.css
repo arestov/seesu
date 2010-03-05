@@ -1,6 +1,6 @@
 body{
 	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
-	width:99%;			/* complex bugfix for opera 10.10 weird widget scroll */
+	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
 body{
 	
@@ -395,9 +395,7 @@ a.song{
 	form{
 		margin:0;
 		}
-.artist-similar,.artist-tags{
-	line-height:1.5em;
-}
+
 
 		.window-bottom{
 			height:20px;
@@ -478,6 +476,7 @@ a.song{
 		}
 .artist-bio{
 	margin-top:0;
+	line-height:1.5ем;
 	}
 	.artist-similar a.artist{
 		margin-right:8px;
