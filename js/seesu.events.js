@@ -62,7 +62,7 @@ $(function() {
 	  }
 	  else if (class_name.match(/flash-security-status/)){
 		flash_secur.toggleClass('flash-warning');
-	  }
+	  } 
 	} else if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
 		var class_name = node.parentNode.className;
 		if (class_name.match(/pause/)){
@@ -98,6 +98,14 @@ $(function() {
 		} 
 		else if (class_name.match(/flash-mess-close/)){
 			flash_secur.removeClass('flash-warning');
+		}
+		if (class_name.match(/login-lastfm-button/)){
+
+			if (lfm_auth.newtoken) {
+				open_lfm_to_login(lfm_auth.newtoken);
+			} else {
+				get_lfm_token(lfm_auth,open_lfm_to_login);
+			}
 		}
 	}
 	
@@ -241,17 +249,6 @@ $(function() {
 		get_lfm_token(lfm_auth);
 	}
 
-	$('.login-lastfm-button').click(function(){
-
-		
-		if (lfm_auth.newtoken) {
-			open_lfm_to_login(lfm_auth.newtoken);
-		} else {
-			get_lfm_token(lfm_auth,open_lfm_to_login);
-		}
-		
-		return false
-	})
 	
 	var lfm_fin_recomm_check = $('#login-lastfm-finish-recomm-check'),
 		lfm_fin_recomm		 = $('#login-lastfm-finish-recomm');

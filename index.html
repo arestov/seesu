@@ -72,7 +72,7 @@
 						<div class="lfm-recomm">
 							<p><a href="#rec" id="lfm-recomm" class="js-serv">Recommendations</a></p>
 							<div class="lfm-auth">
-								<p>To get your music recommendations you need to <a class="login-lastfm-button" href="#">grant Seesu your account access</a></p>
+								<p>To get your music recommendations you need to <input class="login-lastfm-button" type="button" value="grant"/> Seesu your account access</p>
 								<form class="lfm-finish">
 									<label><input type='checkbox'  id="login-lastfm-finish-recomm-check"/> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-recomm">give me recommendations</button>
 								</form>
@@ -86,7 +86,7 @@
 						<div class="lfm-loved">
 							<p><a href="#lov" class="js-serv" id="lfm-loved">Loved Tracks</a></p>
 							<div class="lfm-auth">
-								<p>To get your favorite tracks you need to <a class="login-lastfm-button" href="#">grant Seesu your account access</a></p>
+								<p>To get your favorite tracks you need to <input class="login-lastfm-button" type="button" value="grant"/> Seesu your account access</p>
 								<form class="lfm-finish">
 									<p>
 										<label><input type='checkbox'  id="login-lastfm-finish-loved-check"/> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-loved">give me loved tracks</button>
@@ -158,6 +158,15 @@
 							</li>
 							<li class="scrobling-button">
 								<a class="enablescrobling" title="Scrobling">sc</a>
+								<div class="track-button-content">
+									<p>Scrobling to last.fm</p>
+									<p><label>enabled <input type="radio"  value="" id="some_name"></label></p>
+									<p><label>disabled <input type="radio"  value="" id="some_name"></label></p>
+									<p>To scroble to last.fm you mast <input class="login-lastfm-button" type="button" value="grant"/> access to Seesu</p>
+									
+								</div>
+								
+								
 							</li>
 						</ul>
 						<div class="player-holder"></div>
