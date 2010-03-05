@@ -187,14 +187,16 @@ $(function() {
 	captcha_img = $('.vk-captcha-context img',vk_auth);
 	vk_login_error = $('.error',vk_auth);
 	
-	  seesu.vk_id = widget.preferenceForKey('vkid');
-	  if ((typeof(seesu.vk_id) == 'string') && (seesu.vk_id != 'false')) {
+	seesu.vk_id = widget.preferenceForKey('vkid');
+	if (seesu.vk_id) {
+		log(seesu.vk_id);
+		log("check vk login");
 		$(document.body).addClass('vk-logged-in');
 		vk_logged_in = true;
 		vk_login_check();
-	  } else{
+	} else{
 		log('not loggin in');
-	  }
+	}
 	
 	
 	
