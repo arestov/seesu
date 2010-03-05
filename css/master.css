@@ -616,6 +616,13 @@ p.internet-flash-settings{
 		width:80%;
 	}
 	.flash-secur
+	.flash-secur-text
+	strong{
+		color:#333;
+		font-weight:700;
+		font-size:1.15em;
+	}
+	.flash-secur
 	img{
 		max-width:100%;
 	}
