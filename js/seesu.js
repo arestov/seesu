@@ -294,13 +294,13 @@ var getTopTracks = function(artist,callback,callback_params_obj) {
 };
 var show_artist_info = function(r){
 	artsBio.parent().addClass('background-changes');
-	var info	 = r.artist,
-		similars = info.similar.artist,
-		artist	 = info.name,
-		tags	 = info.tags.tag,
-		bio		 = info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm"),
-		image	 = info.image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-	artsImage.attr({'src': image ,'alt': artist});
+	var info	 = r.artist || false,
+		similars = info && info.similar && info.similar.artist,
+		artist	 = info && info.name,
+		tags	 = info && info.tags && info.tags.tag,
+		bio		 = info && info.bio && info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm"),
+		image	 = (info && info.image[1]['#text']) || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+	if (artist) {artsImage.attr({'src': image ,'alt': artist})};
 	artsBio.html(bio || '');
 	if (tags && tags.length) {
 		var tags_p = $("<p></p>").attr({ 'class': 'artist-tags', 'text' : 'Tags: '});

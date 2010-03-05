@@ -32,28 +32,4 @@
 	<name>Seesu</name>
 	<revised>2009-10-16</revised>
   </id>
-  <security>
-	<access>
-	  <protocol>https</protocol>
-	  <protocol>http</protocol>
-	  <host>last.fm</host>
-	  <host>api.vkontakte.ru</host>
-	  <host>vkontakte.ru</host>
-	  <host>vk.com</host>
-	  <host>userapi.com</host>
-	  <host>widgets.opera.com</host>
-	</access>
-	<access>
-	 <protocol>http</protocol>
-	 <port>80</port>
-	 <host>ws.audioscrobbler.com</host>
-	 <host>post.audioscrobbler.com</host>
-	 <host>post2.audioscrobbler.com</host>
-	</access>
-	<access>
-	  <protocol>http</protocol>
-	  <host>seesu.heroku.com</host>
-	</access>
-	<content java="no" plugins="yes" />
-  </security>
 </widget>

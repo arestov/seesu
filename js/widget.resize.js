@@ -100,6 +100,7 @@ if (opera && opera.postError ){
 			opera.postError.apply(opera, arguments)
 		} else{
 			arguments[0] = JSON.stringify(arguments[0]);
+			opera.postError('object');
 			opera.postError.apply(opera, arguments)
 		}
 		
