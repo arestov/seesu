@@ -38,8 +38,15 @@ dl,dt,dd{
 }
 ul{list-style:none;padding:0;margin-top:0;}
 a{color:#d5d5d5;}
-a[href],a.js-serv{color:#a1d404;}
-a[href]:hover,a.js-serv:hover{color:#bef279;}
+a[href],a.js-serv{
+	color:#a1d404;
+	text-decoration:none;
+	border-bottom:1px solid #647142;
+	}
+a[href]:hover,a.js-serv:hover{
+	color:#bef279;
+	border-bottom-color:#a1d404;
+}
 
 a.js-serv,
 a.bbcode_artist,
@@ -78,6 +85,7 @@ a.download-mp3{
 	text-decoration:none;
 	padding:3px 5px 1px;
 	margin-left:3px;
+	border-bottom:0;
 	}
 a.download-mp3:hover{
 	background:#666;
@@ -728,4 +736,7 @@ p.internet-flash-settings{
 	height:10px;
 	padding-left:70px;
 	color:#999;
+}
+.track-button-content{
+	display:none;
 }
