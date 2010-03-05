@@ -128,7 +128,12 @@ seesu.player.events[STOPPED] = function(){
 seesu.player.events[FINISHED] = function() {
   log('before scrobling '  + seesu.player.current_song.data('start_time'));
   
-  lfm_scroble.submit(seesu.player.current_song);
+  var submit = function(node){
+	setTimeout(function(){
+		lfm_scroble.submit(node)
+	},300)
+  }
+  submit(seesu.player.current_song)
   log('after scrobling')
   if (typeof(source_window) != 'undefined') {
 	source_window.switch_to_next();
