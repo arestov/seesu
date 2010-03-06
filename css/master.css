@@ -542,6 +542,7 @@ a.song{
 		width:16px;
 		line-height:16px;
 		height:16px;
+		position:relative;
 		margin-right:3px;
 		}
 		#track-buttons>li>a{
@@ -616,17 +617,18 @@ p.internet-flash-settings{
 	position:absolute;
 	display:none;
 	width:460px;
-	background:#ddd;
-	top:41px;
+	background:#fff;
+	top:25px;
+	left:-18px;
 	z-index:10;
+	color:#555;
 }
 
 #message-flash-secur{
-	background:transparent;
-	left:-17px;
 	
 	
-	color:#555;
+	
+	
 	}
 	
 	#message-flash-secur
