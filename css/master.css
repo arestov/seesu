@@ -550,8 +550,11 @@ a.song{
 		}
 .tracks-for-play
 .player-holder{
-	
+	width:342px;
 }
+#artist-holder h3{
+	margin-top:0
+	}
 .tracks-for-play
 .player-holder.vk-p-initing{
 	position:fixed;
@@ -560,6 +563,7 @@ a.song{
 	opacity:0.01;
 }
 .player-holder{
+	height:20px;
 	padding-left:36px;
 }
 .player-holder
