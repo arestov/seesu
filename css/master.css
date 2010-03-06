@@ -17,6 +17,7 @@ html{
 	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
 	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
+label{cursor:pointer}
 input[type=text]{
 	background:#b2b2b2;
 	border: 1px solid #666;
@@ -476,7 +477,7 @@ a.song{
 		}
 .artist-bio{
 	margin-top:0;
-	line-height:1.5ем;
+	line-height:1.5em;
 	}
 	.artist-similar a.artist{
 		margin-right:8px;
