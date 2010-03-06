@@ -408,8 +408,8 @@ a.song{
 			}
 			#resize-handle{
 				position:absolute;
-				bottom:1px;
-				right:1px;
+				bottom:3px;
+				right:3px;
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
