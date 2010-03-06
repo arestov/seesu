@@ -60,8 +60,8 @@ $(function() {
 		proxy_render_artists_tracks(clicked_node.data('artist_list'));
 		$(art_page_nav).text('Similar to «' + seesu.player.current_artist + '»');
 	  }
-	  else if (class_name.match(/flash-security-status/)){
-		flash_secur.toggleClass('flash-warning');
+	  else if (class_name.match(/trackbutton/)){
+		clicked_node.data('tb-wrapper').toggleClass('tb-window');
 	  } 
 	} else if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
 		var class_name = node.parentNode.className;
@@ -97,7 +97,7 @@ $(function() {
 			}
 		} 
 		else if (class_name.match(/flash-mess-close/)){
-			flash_secur.removeClass('flash-warning');
+			flash_secur.removeClass('tb-window');
 		}
 		if (class_name.match(/login-lastfm-button/)){
 
@@ -112,6 +112,14 @@ $(function() {
   });
 	flash_secur = $('#flash-secur');
 	track_buttons = $('#track-buttons');
+	if (track_buttons) {
+		var tb_wrapps = track_buttons.children('li');
+		var t_butts = tb_wrapps.children('a.trackbutton');
+		for (var i=0, l = t_butts.length; i < l ; i++) {
+			
+			$(t_butts[i]).data('tb-wrapper',$(tb_wrapps[i]));
+		};	
+	}
 	
 	var wgt_urli = $('#widget-url').val(location.href);
 	if (wgt_urli) {

@@ -546,7 +546,10 @@ a.song{
 		}
 		#track-buttons>li>a{
 			font-weight:700;
+			cursor:pointer;
+			display:block;
 			text-align:center;
+			line-height:inherit;
 		}
 .tracks-for-play
 .player-holder{
@@ -578,65 +581,65 @@ a.song{
 	display:block;
 }
 .flash-security-status{
-	width:16px;
-	cursor:pointer;
-	display:block;
-	height:16px;
-	line-height:inherit;
+
+
+	
+	
 	background:#ff0000;
 	color:#fff;
 }
 
-#message-flash-secur{
-	display:none;
-}
-#flash-secur.flash-warning
-#message-flash-secur{
-	display:block;
-}
+
+
 
 .flash-internet
-.flash-secur
+#message-flash-secur
 p{
 	display:none;
 	}
 .flash-internet
-.flash-secur
+#message-flash-secur
 p.internet-flash-settings{
 	display:block;
 }
 .vk-logged-in
-.flash-secur{
+#message-flash-secur{
 	
 }
 
-.flash-secur{
+.tb-window
+.track-button-content{
+	display:block;
+}
+
+.track-button-content{
 	position:absolute;
 	display:none;
-	left:-17px;
+	width:460px;
+	background:#ddd;
 	top:41px;
 	z-index:10;
 }
-	.flash-secur
-	.flash-secur-text{
-		width:460px;
-		color:#555;
-		position:absolute;
-		bottom:6px;
+
+#message-flash-secur{
+	background:transparent;
+	left:-17px;
+	
+	
+	color:#555;
 	}
-	.flash-secur
-	.flash-secur-text
+	
+	#message-flash-secur
 	#widget-url{
 		width:80%;
 	}
-	.flash-secur
-	.flash-secur-text
+	#message-flash-secur
 	strong{
 		color:#333;
 		font-weight:700;
 		font-size:1.15em;
 	}
-	.flash-secur
+	#message-flash-secur
 	img{
 		max-width:100%;
 	}
