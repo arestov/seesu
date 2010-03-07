@@ -225,12 +225,12 @@ a.song{
 		padding-left:20px;
 		padding-bottom:10px;
 		}
-		.lfm-auth
+		
 		.lfm-finish{
 			opacity:0.3;
 		}
 		.lfm-waiting-for-finish
-		.lfm-auth
+		
 		.lfm-finish{
 			opacity:1;
 		}
@@ -749,3 +749,13 @@ p.internet-flash-settings{
 .track-button-content{
 	display:none;
 }
+.lfm-auth-done #scrobling-switches{ 
+	opacity:1;
+	}
+.lfm-auth-done .lfm-granting{
+	display:none
+}
+#scrobling-switches{
+	opacity:0.3;
+	
+	}

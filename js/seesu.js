@@ -9,14 +9,18 @@ var	seesu =  {
 	lfm_auth = {};
 lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;
 lfm_auth.user_name = widget.preferenceForKey('lfm_user_name') || false;
+lfm_auth.ui_logged = function(){
+	$(document.body).addClass('lfm-auth-done');
+	$('.lfm-finish input[type=checkbox]').attr('checked', 'checked');
+	$('#scrobling-switches').find('input').attr('disabled', '');
+}
 lfm_auth.login = function(r){
 	lfm_auth.sk = r.session.key;
 	lfm_auth.user_name = r.session.name;
 	widget.setPreferenceForKey(lfm_auth.user_name, 'lfm_user_name');
 	widget.setPreferenceForKey(lfm_auth.sk, 'lfmsk');
-	$(document.body).addClass('lfm-auth-done');
+	lfm_auth.ui_logged();
 }
-
 var updating_notify = function(r){
 	var cver = r.latest_version.number;
 	if (cver > seesu.version) {

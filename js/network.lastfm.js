@@ -41,6 +41,7 @@ var lfm = function(method,params,callback) {
 };
 
 var lfm_scroble = {
+  scrobling:  widget.preferenceForKey('lfm_scrobling_enabled') ? true : false, 
   music: (function(){
   	var lfmscm = widget.preferenceForKey('lfm_scroble_music');
   	if (lfmscm) {
@@ -115,6 +116,10 @@ var lfm_scroble = {
 			};
 		  }
 		})	
+	} else {
+		lfm_scroble.handshake(function(){
+			lfm_scroble.nowplay(node);
+		});
 	} 
 	
   },
@@ -187,9 +192,16 @@ var lfm_scroble = {
 		  }
 		})
 			log(' data sended')
-	} else if (_this.music.length){
-		widget.setPreferenceForKey(JSON.stringify(_this.music),'lfm_scroble_music');
-	} 
+	} else {
+		if (_this.music.length){
+			widget.setPreferenceForKey(JSON.stringify(_this.music),'lfm_scroble_music');
+		} 
+		if (!this.s){
+			lfm_scroble.handshake(function(){
+				lfm_scroble.submit(node);
+			});
+		}
+	}
   	log('submit done');
   }
 };

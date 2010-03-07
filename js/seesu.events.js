@@ -2,7 +2,7 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, play_contro
 	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
 	captcha_img,vk_login_error;
 $(function() {
-  if (!lfm_auth.sk) {lfm_scroble.handshake();}
+  if (lfm_auth.sk && !lfm_scroble.s) {lfm_scroble.handshake();}
   if (seesu) {check_seesu_updates();}
   $(document).click(function(e) {
   	var node = e.target;
@@ -61,7 +61,7 @@ $(function() {
 		$(art_page_nav).text('Similar to «' + seesu.player.current_artist + '»');
 	  }
 	  else if (class_name.match(/trackbutton/)){
-		clicked_node.data('tb-wrapper').toggleClass('tb-window');
+		clicked_node[0].tb_wrapper.toggleClass('tb-window');
 	  } 
 	} else if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
 		var class_name = node.parentNode.className;
@@ -96,16 +96,37 @@ $(function() {
 				$(document.body).removeClass('flash-internet');
 			}
 		} 
-		else if (class_name.match(/flash-mess-close/)){
-			flash_secur.removeClass('tb-window');
+		else if (class_name.match(/tb-mess-wrap-close/)){
+			clicked_node[0].tb_wrapper.removeClass('tb-window');
 		}
-		if (class_name.match(/login-lastfm-button/)){
+		else if (class_name.match(/login-lastfm-button/)){
 
 			if (lfm_auth.newtoken) {
 				open_lfm_to_login(lfm_auth.newtoken);
 			} else {
 				get_lfm_token(lfm_auth,open_lfm_to_login);
 			}
+		}
+		else if (class_name.match(/scrobling-grant/)){
+			if (!lfm_auth.newtoken || lfm_auth.sk){ return false}
+			if(clicked_node.attr('checked')){
+				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+					if (!r.error) {
+						lfm_auth.login(r);
+						log('lfm scroble access granted')
+					} else{
+						log('error while granting lfm scroble access')
+					}
+				});
+			}
+		} else if (class_name.match(/enable-scrobling/)){
+			widget.setPreferenceForKey('true', 'lfm_scrobling_enabled');
+			lfm_scroble.scrobling = true;
+			
+		} else if (class_name.match(/disable-scrobling/)){
+			widget.setPreferenceForKey('', 'lfm_scrobling_enabled');
+			lfm_scroble.scrobling = false;
+			
 		}
 	}
 	
@@ -114,11 +135,15 @@ $(function() {
 	track_buttons = $('#track-buttons');
 	if (track_buttons) {
 		var tb_wrapps = track_buttons.children('li');
+
+		var tbw_close = tb_wrapps.find('input.tb-mess-wrap-close');
 		var t_butts = tb_wrapps.children('a.trackbutton');
-		for (var i=0, l = t_butts.length; i < l ; i++) {
-			
-			$(t_butts[i]).data('tb-wrapper',$(tb_wrapps[i]));
-		};	
+
+		for (var i=0, l = tb_wrapps.length; i < l ; i++) {
+			tbw_close[i].tb_wrapper = $(tb_wrapps[i]);
+			t_butts[i].tb_wrapper = $(tb_wrapps[i]);
+		};
+		
 	}
 	
 	var wgt_urli = $('#widget-url').val(location.href);
@@ -226,8 +251,17 @@ $(function() {
 		}
 		
 	});
+	if (lfm_scroble.scrobling) {
+		var lfm_ssw = $('#scrobling-switches');
+		if (lfm_ssw) {
+			lfm_ssw.find('.enable-scrobling').attr('checked', 'checked');
+			lfm_ssw.find('.disable-scrobling').attr('checked', '');
+		}
+	}
 	
-	
+	if (lfm_auth.sk) {
+		lfm_auth.ui_logged();	
+	}
 	var get_lfm_token = function(lfm_auth,callback){
 		lfm('auth.getToken',false,function(r){
 			lfm_auth.newtoken = r.token;
