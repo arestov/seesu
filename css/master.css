@@ -3,7 +3,6 @@ body{
 	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
 body{
-	
 	margin:0;
 	padding:0;
 	color:#eee;
@@ -126,7 +125,6 @@ a.song{
 .background-changes{
 	display:none;
 }
-
 
 .pl-holder{clear:left;position:relative}
 .tracks-for-play .play-controls{
@@ -396,8 +394,6 @@ a.song{
 	form{
 		margin:0;
 		}
-
-
 		.window-bottom{
 			height:20px;
 			position:absolute;
@@ -418,7 +414,6 @@ a.song{
 		ul li{
 			margin: 10px 0;
 			}
-			
 		.search-results-holder
 		ul.results-artists
 		li{
@@ -444,7 +439,6 @@ a.song{
 				margin-bottom:0;
 				margin-left:76px;
 				}
-				
 				
 .info{overflow:hidden;}
 .info
@@ -476,7 +470,7 @@ a.song{
 		margin: 10px 0;
 		}
 .artist-bio{
-	margin-top:0;
+	margin-top:-5px;
 	line-height:1.5em;
 	}
 	.artist-similar a.artist{
@@ -583,17 +577,9 @@ a.song{
 	display:block;
 }
 .flash-security-status{
-
-
-	
-	
 	background:#ff0000;
 	color:#fff;
 }
-
-
-
-
 .flash-internet
 #message-flash-secur
 p{
@@ -606,7 +592,6 @@ p.internet-flash-settings{
 }
 .vk-logged-in
 #message-flash-secur{
-	
 }
 
 .tb-window
@@ -626,10 +611,6 @@ p.internet-flash-settings{
 }
 
 #message-flash-secur{
-	
-	
-	
-	
 	}
 	
 	#message-flash-secur
@@ -656,47 +637,47 @@ p.internet-flash-settings{
 	top: -7px;
 }
 
-.corners {
+.balun {
 	display:block;
 	position: absolute;
 	width: 100%;
 	padding:10px;
 }
-	.sh {
+	.bal {
 		position: absolute;
 		background: url(../i/corners.png) no-repeat;
 		z-index: -1;
 	}
-	.tl {
-		top: -6px;
-		bottom: 28px;
-		left: -11px;
-		right: 14px;
-	}
-	.tr {
-		width: 25px;
-		top: -6px;
-		bottom: 28px;
-		right: -11px;
-		background-position: top right;
-	}
-	.bl {
-		left: -11px;
-		right: 14px;
-		bottom: 0;
-		height: 28px;
-		background-position: bottom left;
-	}
-	.br {
-		width: 25px;
-		height: 28px;
-		right: -11px;
-		bottom: 0;
-		background-position: bottom right;
-	}
+    .tl {
+      top: -6px;
+      bottom: 28px;
+      left: -11px;
+      right: 14px;
+    }
+    .tr {
+      width: 25px;
+      top: -6px;
+      bottom: 28px;
+      right: -11px;
+      background-position: top right;
+    }
+    .bl {
+      left: -11px;
+      right: 14px;
+      bottom: 0;
+      height: 28px;
+      background-position: bottom left;
+    }
+    .br {
+      width: 25px;
+      height: 28px;
+      right: -11px;
+      bottom: 0;
+      background-position: bottom right;
+    }
+    
 #slider-materail{
 	background:#505050;
-	
 	border:1px solid #292929;
 	border-top:0;
 	border-bottom:0;
