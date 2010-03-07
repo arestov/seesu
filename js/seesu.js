@@ -1,7 +1,7 @@
 testing = false;
 
 var	seesu =  {
-	  version: 0.25	
+	  version: 1.0	
 	},
 	vk_logged_in,
 	wait_for_vklogin = function(){},

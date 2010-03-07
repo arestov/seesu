@@ -29,10 +29,18 @@ $(function() {
 		widget.openURL('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 		return false;
 	  }
-	  else if (class_name.match(/twitter/)){
+	  else if (class_name.match(/promo-twitter/)){
 		var tweet_text = "Seesu plays last.fm for free and lets me to download tracks #seesu http://bit.ly/4s6CKa";
 		if (seesu.player.current_artist) {tweet_text += " Now I'm listening «" + seesu.player.current_artist + "»" };
 		widget.openURL( 'http://twitter.com/home/?status=' + encodeURIComponent(tweet_text));
+		return false;
+	  }
+	  else if (class_name.match(/c2w-twitter/)){
+		widget.openURL( 'http://bit.ly/aOtxrI');
+		return false;
+	  }
+	  else if (class_name.match(/c2w-widget-rating/)){
+		widget.openURL('http://b23.ru/ep3a');
 		return false;
 	  }
 	  else if (class_name.match(/\bartist\b[^\-]/)){

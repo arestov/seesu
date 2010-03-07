@@ -43,10 +43,14 @@ a[href],a.js-serv{
 	text-decoration:none;
 	border-bottom:1px solid #647142;
 	}
-a[href]:hover,a.js-serv:hover{
-	color:#bef279;
-	border-bottom-color:#a1d404;
-}
+	a[href]:hover,a.js-serv:hover{
+		color:#bef279;
+		border-bottom-color:#a1d404;
+		}
+	a[href]:active,a.js-serv:active{
+		color:#999;
+		}
+
 
 a.js-serv,
 a.bbcode_artist,
@@ -54,12 +58,17 @@ a.bbcode_tag{
 	cursor:pointer;
 	text-decoration:none;
 	border-bottom:1px dashed #647142;
-}
+	}
 	a.js-serv:hover,
 	a.bbcode_artist:hover,
 	a.bbcode_tag:hover{
 		border-bottom-color:#a1d404;
-	}
+		}
+	a.js-serv:active,
+	a.bbcode_artist:active,
+	a.bbcode_tag:active{
+		border-bottom-color:#999;
+		}
 a.song{
 	padding:3px 1px 0px;
 	}
@@ -757,3 +766,6 @@ p.internet-flash-settings{
 	opacity:0.3;
 	
 	}
+#search #q{
+	width:350px;
+}
