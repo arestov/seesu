@@ -546,7 +546,10 @@ a.song{
 			display:block;
 			text-align:center;
 			line-height:inherit;
-		}
+			}
+			#track-buttons>li>a:hover{
+				background:#666;
+				}
 .tracks-for-play
 .player-holder{
 	width:342px;
@@ -577,9 +580,16 @@ a.song{
 	display:block;
 }
 .flash-security-status{
-	background:#ff0000;
+	background:#d8404c;
 	color:#fff;
-}
+	text-decoration:blink
+	}
+	.flash-internet
+	.flash-security-status{
+		background-color:#0d8b2b;
+		text-decoration:none;
+		}
+
 .flash-internet
 #message-flash-secur
 p{
