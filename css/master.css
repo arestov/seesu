@@ -550,6 +550,9 @@ a.song{
 			#track-buttons>li>a:hover{
 				background:#666;
 				}
+			#track-buttons>li>a:active{
+				background:#333;
+			}
 .tracks-for-play
 .player-holder{
 	width:342px;
@@ -566,7 +569,7 @@ a.song{
 }
 .player-holder{
 	height:20px;
-	padding-left:36px;
+	padding-left:40px;
 }
 .player-holder
 #flash-secur{
@@ -578,16 +581,20 @@ a.song{
 .active-play
 #track-buttons{
 	display:block;
+	
+}
+.scrobling-button>a{
+background:#d8404c;
 }
 .flash-security-status{
-	background:#d8404c;
-	color:#fff;
-	text-decoration:blink
+	text-decoration:blink;
+	background-color:#0d8b2b;
 	}
 	.flash-internet
 	.flash-security-status{
-		background-color:#0d8b2b;
+		
 		text-decoration:none;
+		color:inherit;
 		}
 
 .flash-internet
