@@ -188,12 +188,12 @@ var vk_track_search = function(query){
 	
 }
 var render_loved = function(user_name){
-	lfm('user.getLovedTracks',{user: (user_name || lfm_auth.user_name), limit: 15},function(r){
+	lfm('user.getLovedTracks',{user: (user_name || lfm_auth.user_name), limit: 30},function(r){
 		
 		var tracks = r.lovedtracks.track || false;
 		if (tracks) {
 			var track_list = [];
-			for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
+			for (var i=0, l = (tracks.length < 30) ? tracks.length : 30; i < l; i++) {
 				track_list.push({'artist' : tracks[i].artist.name ,'track': tracks[i].name});
 			}
 			render_playlist(track_list,artsTracks);
@@ -215,7 +215,7 @@ var render_recommendations_by_username = function(username){
 			var artists = $(xml).find('channel item title');
 			if (artists && artists.length) {
 				var artist_list = [];
-				for (var i=0, l = (artists.length < 15) ? artists.length : 15; i < l; i++) {
+				for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
 					var artist = $(artists[i]).text();
 					artist_list.push(artist);
 				};
@@ -231,7 +231,7 @@ var render_recommendations = function(){
 		var artists = r.recommendations.artist;
 		if (artists && artists.length) {
 			var artist_list = [];
-			for (var i=0, l = (artists.length < 15) ? artists.length : 15; i < l; i++) {
+			for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
 				artist_list.push(artists[i].name)
 			};
 			proxy_render_artists_tracks(artist_list);
@@ -253,7 +253,7 @@ var get_artists_by_tag = function(tag,callback){
 		var artists = r.topartists.artist;
 		if (artists && artists.length) {
 			var artist_list = [];
-			for (var i=0, l = (artists.length < 15) ? artists.length : 15; i < l; i++) {
+			for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
 				artist_list.push(artists[i].name)
 			};
 			if (callback) {callback(artist_list);}
@@ -289,7 +289,7 @@ var getTopTracks = function(artist,callback,callback_params_obj) {
 		var tracks = r.toptracks.track || false;
 		if (tracks) {
 			var track_list = [];
-			for (var i=0, l = (tracks.length < 15) ? tracks.length : 15; i < l; i++) {
+			for (var i=0, l = (tracks.length < 30) ? tracks.length : 30; i < l; i++) {
 				track_list.push({'artist' : artist ,'track': tracks[i].name});
 			}
 			if (callback) {callback(track_list,callback_params_obj);}
