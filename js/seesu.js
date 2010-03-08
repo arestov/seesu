@@ -106,7 +106,7 @@ var make_tracklist_playable = function(track_nodes){
 				playlist_nodes_for = songNodes;
 				
 			// 2 threahs search: 1 hardcode and 3 api requests per second
-			delay_vk_track_search(node,playlist_nodes_for, (i==0),get_vk_api_track, 400);
+			delay_vk_track_search(node,playlist_nodes_for, (i==0),get_vk_api_track);
 			/*
 			if ( (i+1 == 1) || ((i % 4) == 0)) {
 				//delay_vk_track_search(node,playlist_nodes_for, ,get_vk_track);
