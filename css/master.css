@@ -185,33 +185,7 @@ a.song{
 #about{
 	display:block;
 }
-#about{
-	position:absolute;
-	bottom:5px;
-	left:2px;
-	display:none;
-	width:90px;
-	padding-top:0;
-	height:64px;
-	overflow:hidden;
-	padding-left:3px;
-	}
 
-	#about .logo{
-		background:url(../i/logo_seesu.png) no-repeat 0 15px;
-		height:49px;
-		padding-top:15px;
-		margin-right:15px;
-		width:49px;
-		display:inline-block;
-		}
-	#about .twitter{
-		cursor:pointer;
-		width:14px;
-		height:16px;
-		background:url(../i/twitter.gif) no-repeat;
-		display:inline-block;
-		}
 	
 .play-control{
 	display:inline-block;
@@ -273,12 +247,13 @@ a.song{
 		position:relative;
 		}
 		.navs{
+			
 			font-family:"Trebuchet MS", sans-serif;
 			height:20px;
 			font-size:1.4em;
 			line-height:20px;
-			padding:0px 10px 5px;
-			background:#6c1471;
+			padding:0px 10px 5px 45px;
+			background:#6c1471 url(/i/logo_su.png) no-repeat 8px 0;
 			border:1px solid #292929;
 			border-top:0;
 			border-bottom:0;

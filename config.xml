@@ -4,10 +4,7 @@
   <description>Get music you like from last.fm and play it with vk.com</description>
   <width>640</width>
   <height>600</height>
-  <icon>i/icons/16_widget_icon_seesu.png</icon>
-  <icon>i/icons/32_widget_icon_seesu.png</icon>
-  <icon>i/icons/64_widget_icon_seesu.png</icon>
-  <icon>i/icons/128_widget_icon_seesu.png</icon>
+  <icon>i/icon_su.png</icon>
 
   <author>
 	<name>Gleb Arestov</name>
