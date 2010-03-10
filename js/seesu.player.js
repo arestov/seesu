@@ -176,28 +176,12 @@ function change_volume(volume_value){
   widget.setPreferenceForKey(volume_value, 'vkplayer-volume');
   seesu.player.player_volume = volume_value;	
 }
-widget.switch_to_next = switch_to_next;
-widget.change_volume = change_volume;
-
-
-var ej_postMessage = function(message_obj){
-	iframe_doc.contentWindow.postMessage(JSON.stringify(message_obj),'*');
-}
-var ej_do = function(to_eval){
-	iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'eval','toeval': to_eval}),'*');
-}
-widget.test_message = 'Hello, world!';
-var i_f = seesu.iframe_player = document.createElement('iframe');
-	i_f.src = "if.html";
-	log(i_f);
-	
 
 	
 
 // Ready? Steady? Go!
 $(function() {
-	//$('#play-list-holder').append(i_f);
-	//	i_f.contentWindow.postMessage("hello",'*');
+
 	
 	
 	player_holder = $('.player-holder');
