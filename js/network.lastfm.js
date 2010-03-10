@@ -64,7 +64,7 @@ var lfm_scrobble = {
 		  	'p': '1.2.1',
 		  	'c': 'see',
 		  	'v': '1.0',
-		  	'u': 'YodaPunk',
+		  	'u': lfm_auth.user_name,
 		  	't': timestamp,
 		  	'a': hex_md5(s + timestamp),
 		  	'api_key': apikey,
