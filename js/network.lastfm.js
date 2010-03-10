@@ -40,6 +40,7 @@ var lfm = function(method,params,callback, type_of_xhr_is_post) {
 		  	log(xhr.responseText)
 		  }
 		});
+		log(params_full)
 	}
 };
 
