@@ -2,7 +2,7 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, play_contro
 	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
 	captcha_img,vk_login_error;
 $(function() {
-  if (lfm_auth.sk && !lfm_scroble.s) {lfm_scroble.handshake();}
+  if (lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
   if (seesu) {check_seesu_updates();}
   $(document).click(function(e) {
   	var node = e.target;
@@ -115,25 +115,25 @@ $(function() {
 				get_lfm_token(lfm_auth,open_lfm_to_login);
 			}
 		}
-		else if (class_name.match(/scrobling-grant/)){
+		else if (class_name.match(/scrobbling-grant/)){
 			if (!lfm_auth.newtoken || lfm_auth.sk){ return false}
 			if(clicked_node.attr('checked')){
 				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
 					if (!r.error) {
 						lfm_auth.login(r);
-						log('lfm scroble access granted')
+						log('lfm scrobble access granted')
 					} else{
-						log('error while granting lfm scroble access')
+						log('error while granting lfm scrobble access')
 					}
 				});
 			}
-		} else if (class_name.match(/enable-scrobling/)){
-			widget.setPreferenceForKey('true', 'lfm_scrobling_enabled');
-			lfm_scroble.scrobling = true;
+		} else if (class_name.match(/enable-scrobbling/)){
+			widget.setPreferenceForKey('true', 'lfm_scrobbling_enabled');
+			lfm_scrobble.scrobbling = true;
 			
-		} else if (class_name.match(/disable-scrobling/)){
-			widget.setPreferenceForKey('', 'lfm_scrobling_enabled');
-			lfm_scroble.scrobling = false;
+		} else if (class_name.match(/disable-scrobbling/)){
+			widget.setPreferenceForKey('', 'lfm_scrobbling_enabled');
+			lfm_scrobble.scrobbling = false;
 			
 		}
 	}
@@ -258,11 +258,11 @@ $(function() {
 		}
 		
 	});
-	if (lfm_scroble.scrobling) {
-		var lfm_ssw = $('#scrobling-switches');
+	if (lfm_scrobble.scrobbling) {
+		var lfm_ssw = $('#scrobbling-switches');
 		if (lfm_ssw) {
-			lfm_ssw.find('.enable-scrobling').attr('checked', 'checked');
-			lfm_ssw.find('.disable-scrobling').attr('checked', '');
+			lfm_ssw.find('.enable-scrobbling').attr('checked', 'checked');
+			lfm_ssw.find('.disable-scrobbling').attr('checked', '');
 		}
 	}
 	

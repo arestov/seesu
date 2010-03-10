@@ -12,7 +12,7 @@ lfm_auth.user_name = widget.preferenceForKey('lfm_user_name') || false;
 lfm_auth.ui_logged = function(){
 	$(document.body).addClass('lfm-auth-done');
 	$('.lfm-finish input[type=checkbox]').attr('checked', 'checked');
-	$('#scrobling-switches').find('input').attr('disabled', '');
+	$('#scrobbling-switches').find('input').attr('disabled', '');
 }
 lfm_auth.login = function(r){
 	lfm_auth.sk = r.session.key;

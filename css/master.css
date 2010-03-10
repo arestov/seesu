@@ -567,7 +567,7 @@ a.song{
 	display:block;
 	
 }
-.scrobling-button>a{
+.scrobbling-button>a{
 background:#d8404c;
 }
 .flash-security-status{
@@ -731,13 +731,13 @@ p.internet-flash-settings{
 .track-button-content{
 	display:none;
 }
-.lfm-auth-done #scrobling-switches{ 
+.lfm-auth-done #scrobbling-switches{ 
 	opacity:1;
 	}
 .lfm-auth-done .lfm-granting{
 	display:none
 }
-#scrobling-switches{
+#scrobbling-switches{
 	opacity:0.3;
 	
 	}

@@ -40,17 +40,17 @@ var lfm = function(method,params,callback) {
 	}
 };
 
-var lfm_scroble = {
-  scrobling:  widget.preferenceForKey('lfm_scrobling_enabled') ? true : false, 
+var lfm_scrobble = {
+  scrobbling:  widget.preferenceForKey('lfm_scrobbling_enabled') ? true : false, 
   music: (function(){
-  	var lfmscm = widget.preferenceForKey('lfm_scroble_music');
+  	var lfmscm = widget.preferenceForKey('lfm_scrobble_music');
   	if (lfmscm) {
   		return JSON.parse(lfmscm);
   	} else {
   		return [];
   	}
   })(),
-  s: widget.preferenceForKey('lfm_scroble_s'),
+  s: widget.preferenceForKey('lfm_scrobble_s'),
   handshake: function(callback){
   	var _this = this;
 	var timestamp = ((new Date()).getTime()/1000).toFixed(0);
@@ -76,7 +76,7 @@ var lfm_scroble = {
 			var response = r.split(/\n/);
 			if (response[0] == 'OK'){
 				_this.s = response[1];
-				widget.setPreferenceForKey(_this.s, 'lfm_scroble_s');
+				widget.setPreferenceForKey(_this.s, 'lfm_scrobble_s');
 				if (callback) {callback();}
 				log('handshake:' + '\n' + r)
 			} else {
@@ -109,16 +109,16 @@ var lfm_scroble = {
 		  success: function(r){
 			log('nowplay:' + '\n' + r);
 			if (r.match('BADSESSION')){
-				lfm_scroble.s = null;
-				widget.setPreferenceForKey('', 'lfm_scroble_s');
+				lfm_scrobble.s = null;
+				widget.setPreferenceForKey('', 'lfm_scrobble_s');
 				
-				lfm_scroble.handshake();
+				lfm_scrobble.handshake();
 			};
 		  }
 		})	
 	} else {
-		lfm_scroble.handshake(function(){
-			lfm_scroble.nowplay(node);
+		lfm_scrobble.handshake(function(){
+			lfm_scrobble.nowplay(node);
 		});
 	} 
 	
@@ -130,10 +130,10 @@ var lfm_scroble = {
 		title = node.data('track_title'),
 		duration = node.data('duration'),
 		starttime = node.data('start_time'),
-		last_scroble = node.data('last_scroble'),
+		last_scrobble = node.data('last_scrobble'),
 		timestamp = ((new Date()).getTime()/1000).toFixed(0);
 	log('getting date for submit')
-	if (((timestamp - starttime)/duration > 0.2) || (last_scroble && ((timestamp - last_scroble)/duration > 0.6)) ){
+	if (((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
 		this.music.push({
 			'artist': artist, 
 			'title': title,
@@ -141,7 +141,7 @@ var lfm_scroble = {
 			'timestamp': timestamp
 		});
 		node.data('start_time',null);
-		node.data('last_scroble',timestamp);
+		node.data('last_scrobble',timestamp);
 	} 
 
 	if (lfm_auth.sk && this.s && this.music.length) {
@@ -168,22 +168,22 @@ var lfm_scroble = {
 		  dataType: "text",
 		  data: post_m_obj,
 		  error: function(r){
-			log('error while scroble')
+			log('error while scrobble')
 			
 		  },
 		  success: function(r){
 			log('submit:' + '\n' + r);
 			if (!r.match('OK')) {
 				if (r.match('BADSESSION')){
-					lfm_scroble.s = null;
-					widget.setPreferenceForKey('', 'lfm_scroble_s');
+					lfm_scrobble.s = null;
+					widget.setPreferenceForKey('', 'lfm_scrobble_s');
 					
-					lfm_scroble.handshake();
+					lfm_scrobble.handshake();
 				}
-				widget.setPreferenceForKey(JSON.stringify(_this.music),'lfm_scroble_music');
+				widget.setPreferenceForKey(JSON.stringify(_this.music),'lfm_scrobble_music');
 			} else {
 				_this.music = [];
-				widget.setPreferenceForKey('','lfm_scroble_music');
+				widget.setPreferenceForKey('','lfm_scrobble_music');
 			}
 			
 		  },
@@ -194,11 +194,11 @@ var lfm_scroble = {
 			log(' data sended')
 	} else {
 		if (_this.music.length){
-			widget.setPreferenceForKey(JSON.stringify(_this.music),'lfm_scroble_music');
+			widget.setPreferenceForKey(JSON.stringify(_this.music),'lfm_scrobble_music');
 		} 
 		if (!this.s){
-			lfm_scroble.handshake(function(){
-				lfm_scroble.submit(node);
+			lfm_scrobble.handshake(function(){
+				lfm_scrobble.submit(node);
 			});
 		}
 	}

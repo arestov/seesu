@@ -115,8 +115,8 @@ seesu.player.events[PLAYED] = function(){
   if (!start_time) {
   	seesu.player.current_song.data('start_time',((new Date()).getTime()/1000).toFixed(0));
   }
-  if (lfm_scroble.scrobling) {
-	lfm_scroble.nowplay(seesu.player.current_song);
+  if (lfm_scrobble.scrobbling) {
+	lfm_scrobble.nowplay(seesu.player.current_song);
   }
   
   log('start_time after ' + seesu.player.current_song.data('start_time'))
@@ -130,15 +130,15 @@ seesu.player.events[STOPPED] = function(){
 };
 seesu.player.events[FINISHED] = function() {
   
-  if (lfm_scroble.scrobling ) {
-	log('before scrobling '  + seesu.player.current_song.data('start_time'));
+  if (lfm_scrobble.scrobbling ) {
+	log('before scrobbling '  + seesu.player.current_song.data('start_time'));
 	var submit = function(node){
 		setTimeout(function(){
-			lfm_scroble.submit(node);
+			lfm_scrobble.submit(node);
 		},300)
 	};
 	submit(seesu.player.current_song);
-	log('after scrobling');
+	log('after scrobbling');
   }
   
   if (typeof(source_window) != 'undefined') {
