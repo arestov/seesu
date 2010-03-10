@@ -8,12 +8,12 @@ h1. "You can download Seesu widget here":http://seesu.heroku.com/downloads/seesu
 
 h1. License
 
-Copyright (c) 2009 
+Copyright (c) 2009—2010 
 
 Gleb Arestov <gleb.arestov@gmail.com>
 Aleksandr Koss <kossnocorp@gmail.com>
 "Nikita Vasilyev":http://github.com/NV/
-Aleksandr Belov <porqzz@gmail.com>
+Alexander Belov <porqz@mesquite.ru>
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
