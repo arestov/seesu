@@ -63,9 +63,10 @@
 						  <form id="search" name="search">
 							<p>Music search</p>
 							<input type="text" name="q" id="q" size="50" />
+							
+							<button type="submit" name="type" value="track" id="search-track">Track</button>
 							<button type="submit" name="type" value="artist" id="search-artist">Artist</button>
 							<button type="submit" name="type" value="tag" id="search-tag">Tag</button>
-							<button type="submit" name="type" value="track" id="search-track">Track</button>
 						  </form>
 					</div>
 					<div class="lfm-start">
@@ -215,7 +216,7 @@
 						or <a href="" class="vk-reg-ref" >register new account</a> for vk.com
 						<p>We do not store you password. Authorization in future will be happen by «<a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>»</p>
 					</div>
-					<div class="play-list-holder">
+					<div class="play-list-holder" id="play-list-holder">
 						<div class="tracks-waiting-for-search">
 							
 						</div>

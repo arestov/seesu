@@ -169,6 +169,7 @@ a.song{
 }
 .tracks-for-play .active-play{
 	position:relative;
+	height: 36px;
 }
 .play-controls{
 	display:none;
@@ -451,7 +452,7 @@ a.song{
 	}
 	.tracks-for-play
 	li{
-		margin: 10px 0;
+		margin: 0 0 10px;
 		}
 .artist-bio{
 	margin-top:-5px;
@@ -510,11 +511,15 @@ a.song{
 		input{
 			width:100px;
 		}
+#artist-holder h3{
+	margin-top:0
+	}
+	
 #track-buttons{
 	position:absolute;
-	top:13px;
+	bottom:0;
 	left:0;
-	
+	height:16px;
 	}
 	#track-buttons>li{
 		float:left;
@@ -537,23 +542,25 @@ a.song{
 			#track-buttons>li>a:active{
 				background:#333;
 			}
-.tracks-for-play
+
+#play-list-holder
 .player-holder{
-	width:342px;
+	position:absolute;
+	left:60px;
 }
-#artist-holder h3{
-	margin-top:0
-	}
-.tracks-for-play
+
+#play-list-holder
 .player-holder.vk-p-initing{
 	position:fixed;
 	left:40px;
 	top:50%;
 	opacity:0.01;
 }
+
 .player-holder{
 	height:20px;
-	padding-left:40px;
+	margin-left:45px;
+	margin-top:18px
 }
 .player-holder
 #flash-secur{

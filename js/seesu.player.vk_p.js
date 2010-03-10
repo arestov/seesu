@@ -6,6 +6,8 @@ var vk_flash_player_DoFSCommand = function(){
 var vk_p = function(flash_node_holder){
 	this.player_holder = flash_node_holder;
 	log('using vkontakte player');
+	this.pl_h_style = $('<style></style>');
+	$(document.documentElement.firstChild).append(this.pl_h_style);
 };
 vk_p.prototype = {
 	'module_title':'vk_p',
@@ -54,8 +56,10 @@ vk_p.prototype = {
 	  this.create_player(song_url,duration)
 	},
 	"play_song_by_node": function (node){
-	  this.player_holder[0].innerHTML = ''; //we need for speed here! so.. say no to jquery
-	  node[0].parentNode.appendChild(this.player_holder[0]);
+	  var top = node.parent().position().top
+	  this.player_holder.html('')
+	  this.pl_h_style.html('.player-holder {top: ' + top + 'px}');
+	
 	  node[0].parentNode.appendChild(track_buttons[0]);
 	  this.create_player(node.attr('href'), node.data('duration'));
 	  

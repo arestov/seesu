@@ -159,7 +159,7 @@ seesu.player.events[VOLUME] = function(volume_value) {
 
 
 	
-widget.test_message = 'Hello, world!';
+
 
 
 // Click by song
@@ -186,11 +186,25 @@ var ej_postMessage = function(message_obj){
 var ej_do = function(to_eval){
 	iframe_doc.contentWindow.postMessage(JSON.stringify({'command':'eval','toeval': to_eval}),'*');
 }
+widget.test_message = 'Hello, world!';
+var i_f = seesu.iframe_player = document.createElement('iframe');
+	i_f.src = "if.html";
+	log(i_f);
+	
+
+	
 
 // Ready? Steady? Go!
 $(function() {
+	//$('#play-list-holder').append(i_f);
+	//	i_f.contentWindow.postMessage("hello",'*');
+	
+	
 	player_holder = $('.player-holder');
+	$('#play-list-holder').append(player_holder);
 	if (player_holder && player_holder.length) {
 		seesu.player.musicbox = new vk_p(player_holder);//connecting vkontakte flash to seesu player core
 	}
+
+		
 });
