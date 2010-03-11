@@ -1,13 +1,27 @@
 //vkontakte.ru player
-var vk_flash_player_DoFSCommand = function(){
-	seesu.player.musicbox.flash_js(arguments[1])
-};
-
-var vk_p = function(flash_node_holder){
-	this.player_holder = flash_node_holder;
+var vk_p = function(flash_node_holder,iframe){
+	
+	if (flash_node_holder) {this.player_holder = flash_node_holder};
+	if (iframe) {
+		this.player_container = iframe;
+		window.addEventListener("message", this.listen_commands_of_sandbox, false)
+	} else{
+		this.player_container = flash_node_holder;
+		var _this = this;
+		vk_flash_player_DoFSCommand = function(){
+			_this.flash_js(arguments[1])
+		};
+	}
+	if (typeof seesu === 'object') {
+		this.pl_h_style = $('<style></style>');
+		$(document.documentElement.firstChild).append(this.pl_h_style);
+	} else{
+		//look like we in iframe, so listen commands
+		window.addEventListener("message", this.listen_commands_of_source, false)
+	}
+	
+	this.init_timeout;
 	log('using vkontakte player');
-	this.pl_h_style = $('<style></style>');
-	$(document.documentElement.firstChild).append(this.pl_h_style);
 };
 vk_p.prototype = {
 	'module_title':'vk_p',
@@ -18,31 +32,57 @@ vk_p.prototype = {
 		'name="vk_flash_player" class="vk_flash_player" ' +
 		'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf?0.9.9" ' +
 		'type="application/x-shockwave-flash"/>'),
+	'html_events' : {
+		creating: function(_this){
+			_this.player_container.addClass('vk-p-initing');
+			_this.init_timeout = setTimeout(function(){
+				_this.player_container.removeClass('vk-p-initing');
+			},1000)
+		},
+		init: function(_this){
+			clearTimeout(_this.init_timeout)
+			_this.player_container.removeClass('vk-p-initing');
+		},
+		moving: function(_this,node){
+			var top = node.parent().position().top;
+			_this.pl_h_style.html('.player-holder {top: ' + top + 'px}');
+			node[0].parentNode.appendChild(track_buttons[0]);
+		}
+		
+	},
 	'flash_js': function(args){
 		log(args)
-		if(args.match('playing')) {seesu.player.call_event(PLAYED);}
-		if(args.match('paused')) {seesu.player.call_event(PAUSED);}
-		if(args.match('finished')) {log('finish');seesu.player.call_event(FINISHED);}
-		if(args.match('init')) {
-			this.player_holder.removeClass('vk-p-initing');
-			seesu.player.call_event(INIT);
-		}
-		if(args.match('created')) {seesu.player.call_event(CREATED);}
-		if(args.match('stopped')) {seesu.player.call_event(STOPPED);}
-		if(args.match('volume')) {seesu.player.call_event(VOLUME, this.parse_volume_value(args));}
+		if(args.match('playing')) 
+			{this.vk_player_events.playing(this);}
+		else 
+		if(args.match('paused'))
+		 	{this.vk_player_events.paused(this);}
+		else
+		if(args.match('finished')) 
+			{this.vk_player_events.finished(this);}
+		else
+		if(args.match('init')) 
+			{this.vk_player_events.init(this);}
+		else
+		if(args.match('created')) 
+			{this.vk_player_events.created(this);}
+		else
+		if(args.match('stopped')) 
+			{this.vk_player_events.stopped(this);}
+		else
+		if(args.match('volume')) 
+			{this.vk_player_events.volume(this, this.parse_volume_value(args));}
 	},
-	'create_player': function(song_url,duration){
+	'create_player':function(song_url,duration){
+		
 		var _this = this;
 		this.player_holder.append(
 			_this.html
 			  .replace(':url', song_url)
 			  .replace(':volume', seesu.player.player_volume)
 			  .replace('duration=210', ('duration=' + duration))
-		).addClass('vk-p-initing');
-		setTimeout(function(){
-			_this.player_holder.removeClass('vk-p-initing');
-			
-		},1000)
+		);
+		this.html_events.creating(_this);
 	},
 	'parse_volume_value': function(volume_value_raw){
 		var volume_level_regexp = /\"((\d{1,3}\.?\d*)|(NaN))\"/,
@@ -52,25 +92,131 @@ vk_p.prototype = {
 	'set_var': function(variable, value) {
 	  $(".vk_flash_player",this.player_holder)[0].SetVariable("audioPlayer_mc." + variable, value);
 	},
-	"play_song_by_url": function (song_url,duration){
-	  this.create_player(song_url,duration)
-	},
 	"play_song_by_node": function (node){
-	  var top = node.parent().position().top
-	  this.player_holder.html('')
-	  this.pl_h_style.html('.player-holder {top: ' + top + 'px}');
+	  this.play_song_by_url(node.attr('href'), node.data('duration'));
+	  this.html_events.moving(this,node);
+	},
+	'vk_player_events':
+	  (typeof seesu === 'object') ?
+		{
+			"playing": function(_this){
+				seesu.player.call_event(PLAYED);
+			},
+			"paused": function(_this){
+				seesu.player.call_event(PAUSED);
+			},
+			"finished": function(_this){
+				seesu.player.call_event(FINISHED);
+			},
+			"init": function(_this){
+				_this.html_events.init(_this);
+				seesu.player.call_event(INIT);
+			},
+			"created": function(_this){
+				seesu.player.call_event(CREATED);
+			},
+			"stopped": function(_this){
+				seesu.player.call_event(STOPPED);
+			},
+			"volume": function(_this,volume_value){
+				seesu.player.call_event(VOLUME, volume_value);
+			}
+		}
+	  :
+		{
+			//feedback of iframe flash
+			"playing": function(_this){
+				send_to_player_source('playing')
+			},
+			"paused": function(_this){
+				send_to_player_source('paused')
+			},
+			"finished": function(_this){
+				send_to_player_source('finished')
+			},
+			"init": function(_this){
+				send_to_player_source('init')
+			},
+			"created": function(_this){
+				send_to_player_source('created')
+			},
+			"stopped": function(_this){
+				send_to_player_source('stopped')
+			},
+			"volume": function(_this, volume_value){
+				send_to_player_source('volume,'+volume_value)
+			}
+		}
+	,
 	
-	  node[0].parentNode.appendChild(track_buttons[0]);
-	  this.create_player(node.attr('href'), node.data('duration'));
-	  
+	"play_song_by_url": 
+	  (typeof seesu === 'object') ?
+		function (song_url,duration){
+	  		this.player_holder.html('');
+	  		this.create_player(song_url,duration);
+		}
+	  :
+		function(song_url,duration){
+			this.send_to_player_sandbox('play_song_by_url,' + song_url + ',' + duration);
+		}
+	,
+	'play': 
+	  (typeof seesu === 'object') ?
+		function () {
+		  this.set_var('buttonPressed', 'true');
+		}
+	  :
+		function(){
+			this.send_to_player_sandbox('play')
+		}
+	,
+	'stop': 
+	  (typeof seesu === 'object') ?
+		function () {
+			this.set_var('setState', 'stop');
+		}
+	  :
+		function(){
+			this.send_to_player_sandbox('stop')
+		}
+	,
+	'pause': 
+	  (typeof seesu === 'object') ?
+		function () {
+		  this.set_var('buttonPressed', 'true');
+		}
+	  :
+		function(){
+			this.send_to_player_sandbox('pause')
+		}
+	,
+	"send_to_player_sandbox": function(message){
+		//using for sending messages to flash injected in iframe
+		this.iframe[0].contentWindow.postMessage('vk_p_iframe,' + message, '*')
 	},
-	'play': function () {
-	  this.set_var('buttonPressed', 'true');
+	"send_to_player_source": function(message){
+		//using for feedback messages from iframe flash
+		this.player_source_window.postMessage('vk_p_source,' + message, '*')
 	},
-	'stop': function () {
-		this.set_var('setState', 'stop');
+	"listen_commands_of_source": function(e){
+		if (e.origin.indexOf('widget://') == -1) {
+			return
+		} else {
+			if (e.data.match(/vk_p_iframe/)){
+				var commands  = e.data.replace('vk_p_iframe,').split(",");
+				this[commands.shift()].apply(this, commands)
+				
+			}
+		}
 	},
-	'pause': function () {
-	  this.set_var('buttonPressed', 'true');
-	} 
+	"listen_commands_of_sanbox": function(e){
+		if (e.origin.indexOf('widget://') == -1) {
+			return
+		} else {
+			if (e.data.match(/vk_p_source/)){
+				var commands  = e.data.replace('vk_p_source,').split(",");
+				this.vk_player_events[commands.shift()].apply(this, [this].concat(commands))
+			}
+		}
+	}
 };

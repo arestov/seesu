@@ -554,7 +554,7 @@ a.song{
 	position:fixed;
 	left:40px;
 	top:50%;
-	opacity:0.01;
+	opacity:0.1;
 }
 
 .player-holder{

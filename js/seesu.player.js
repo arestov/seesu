@@ -36,7 +36,8 @@ seesu.player = {
 	  switch(this.player_state - new_player_state) {
 	  case(STOPPED - PLAYED):
 		if (this.current_song) {
-			this.musicbox.play_song_by_node( this.current_song )
+			this.musicbox.play_song_by_node( this.current_song );
+			
 		};
 		break;
 	  case(PAUSED - PLAYED):
@@ -181,10 +182,19 @@ function change_volume(volume_value){
 
 // Ready? Steady? Go!
 $(function() {
-
+	i_f  = widget.i_f = seesu.iframe_player = $('#i_f')
+	//document.createElement('iframe');
+		//i_f.src = "if.html";
+		//i_f.id = 'i_f';
+	i_f.bind('load',function(){
+		log('iframe');
+		this.contentWindow.postMessage("hello",'*')
+	})
+	//$('#play-list-holder').append(i_f);
 	
 	
 	player_holder = $('.player-holder');
+	
 	$('#play-list-holder').append(player_holder);
 	if (player_holder && player_holder.length) {
 		seesu.player.musicbox = new vk_p(player_holder);//connecting vkontakte flash to seesu player core
