@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+	<title>iframe</title>
+	<style type="text/css" media="screen">
+		body{margin:0;padding:0;overflow:hidden;-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);}
+	</style>
+	<script type="text/javascript" charset="utf-8">
+		function log(){
+			opera.postError.apply(opera, arguments)
+		}
+	</script>
+	<script type="text/javascript" charset="utf-8">
+	if (typeof(widget) === 'object') {
+		var scripts = ['/js/jquery-1.4.2.min.js','/js/seesu.player.vk_p.js'];
+		for (var i=0; i < scripts.length; i++) {
+			var c = document.createElement('script');
+				c.setAttribute('type','text/javascript');
+				c.setAttribute('src','widget://' + widget.identifier +  scripts[i]);
+			document.documentElement.firstChild.appendChild(c);
+			
+		};
+	}
+
+	var source_window;
+	init_vk_p = function(e){
+		if (e.origin.indexOf('widget://') == -1) {
+			return
+		} else {
+			if (e.data == 'init_vk_p'){
+				vk_p_in_iframe.player_source_window = e.source;
+				window.removeEventListener("message", init_vk_p, false);
+			}
+		}
+	}
+	window.addEventListener("message", init_vk_p, false);
+	$(function(){
+		var vk_p_in_iframe = new vk_p($('#player-holder'))
+	})
+	
+	</script>
+
+</head>
+
+<body>
+<div id="player-holder"></div>
+</body>
+</html>
