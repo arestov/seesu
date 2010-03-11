@@ -182,15 +182,11 @@ function change_volume(volume_value){
 
 // Ready? Steady? Go!
 $(function() {
-	i_f  = widget.i_f = seesu.iframe_player = $('#i_f')
-	//document.createElement('iframe');
-		//i_f.src = "if.html";
-		//i_f.id = 'i_f';
+	i_f  = widget.i_f = seesu.iframe_player = $('<iframe id="#i_f" src="if.html"></iframe>');
 	i_f.bind('load',function(){
-		log('iframe');
-		this.contentWindow.postMessage("hello",'*')
-	})
-	//$('#play-list-holder').append(i_f);
+		this.contentWindow.postMessage("init_vk_p",'*')
+	});
+	$('#play-list-holder').append(i_f);
 	
 	
 	player_holder = $('.player-holder');

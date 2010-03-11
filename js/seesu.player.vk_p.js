@@ -202,6 +202,7 @@ vk_p.prototype = {
 		if (e.origin.indexOf('widget://') == -1) {
 			return
 		} else {
+			log('zannna')
 			if (e.data.match(/vk_p_iframe/)){
 				var commands  = e.data.replace('vk_p_iframe,').split(",");
 				this[commands.shift()].apply(this, commands)

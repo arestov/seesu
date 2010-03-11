@@ -22,7 +22,6 @@
 				c.setAttribute('type','text/javascript');
 				c.setAttribute('src','widget://' + widget.identifier +  scripts[i]);
 			document.documentElement.firstChild.appendChild(c);
-			
 		};
 	}
 
@@ -32,16 +31,16 @@
 			return
 		} else {
 			if (e.data == 'init_vk_p'){
+				vk_p_in_iframe = new vk_p($('#player-holder'));
 				vk_p_in_iframe.player_source_window = e.source;
 				window.removeEventListener("message", init_vk_p, false);
 			}
 		}
 	}
 	window.addEventListener("message", init_vk_p, false);
-	$(function(){
-		var vk_p_in_iframe = new vk_p($('#player-holder'))
-	})
-	
+	document.addEventListener("DOMContentLoaded", function(){
+		
+	},false)
 	</script>
 
 </head>
