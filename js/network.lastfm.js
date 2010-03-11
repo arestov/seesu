@@ -1,7 +1,7 @@
 var apikey = '2803b2bcbc53f132b4d4117ec1509d65';
 var	s = '77fd498ed8592022e61863244b53077d';
 var api='http://ws.audioscrobbler.com/2.0/';
-var lfm = function(method,params,callback) {
+var lfm = function(method,params,callback, type_of_xhr_is_post) {
 	if (method) {
 		var pv_signature_list = [], // array of <param>+<value>
 			params_full = params || {},
@@ -14,7 +14,7 @@ var lfm = function(method,params,callback) {
 		if(apisig) {
 			for (var param in params_full) {
 				if (!(param == 'format') && !(param == 'callback')){
-					pv_signature_list.push(param + encodeURIComponent(params_full[param]));
+					pv_signature_list.push(param + params_full[param]);
 				}
 			}
 			pv_signature_list.sort();
@@ -28,15 +28,19 @@ var lfm = function(method,params,callback) {
 		$.ajax({
 		  url: api,
 		  global: false,
-		  type: "GET",
+		  type: (type_of_xhr_is_post == true) ? "POST" : "GET",
 		  dataType: "json",
 		  data: params_full,
 		  error: function(r){
 		  },
 		  success: function(r){
 			if (callback) {callback(r);}
+		  },
+		  complete: function(xhr){
+		  	log(xhr.responseText)
 		  }
 		});
+		log(params_full)
 	}
 };
 
