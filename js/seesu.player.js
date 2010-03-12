@@ -186,7 +186,7 @@ if (i_f) {
 		this.contentWindow.postMessage("init_vk_p," + seesu.player.player_volume,'*');
 		i_f_hide_timeout = setTimeout(function(){
 			i_f.css('display','none');
-		},300)
+		},100)
 	});
 	check_iframe_vkp_init = function(e){
 		if (e.data.match(/vk_p_inited/)){

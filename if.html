@@ -32,7 +32,7 @@
 		} else {
 			if (e.data.match(/init_vk_p/)){
 				var volume = e.data.split(',')[1];
-				vk_p_in_iframe = new vk_p($('#player-holder'), volume);
+				vk_p_in_iframe = new vk_p(player_holder, volume);
 				vk_p_in_iframe.player_source_window = e.source;
 				e.source.postMessage("vk_p_inited",'*')
 				window.removeEventListener("message", init_vk_p, false);
@@ -41,7 +41,7 @@
 	}
 	window.addEventListener("message", init_vk_p, false);
 	document.addEventListener("DOMContentLoaded", function(){
-		
+		player_holder = $('#player-holder')
 	},false)
 	</script>
 
