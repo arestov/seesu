@@ -4,8 +4,10 @@ var vk_p = function(flash_node_holder,iframe){
 	if (flash_node_holder) {this.player_holder = flash_node_holder};
 	if (iframe) {
 		this.player_container = iframe;
-		window.addEventListener("message", this.listen_commands_of_sandbox, false)
+		window.addEventListener("message", this.listen_commands_of_sandbox, false);
+		this.flash_actions = this.flash_actions_for_sandbox;
 	} else{
+		this.flash_actions = this.flash_actions_normal
 		this.player_container = flash_node_holder;
 		var _this = this;
 		vk_flash_player_DoFSCommand = function(){
@@ -148,48 +150,61 @@ vk_p.prototype = {
 			}
 		}
 	,
-	
-	"play_song_by_url": 
-	  (typeof seesu === 'object') ?
-		function (song_url,duration){
-	  		this.player_holder.html('');
-	  		this.create_player(song_url,duration);
+	"flash_actions": null,
+	"flash_actions_normal":{
+		"play_song_by_url": function (song_url,duration){
+		  	this.player_holder.html('');
+		  	this.create_player(song_url,duration);
+		},
+		"play":function () {
+			this.set_var('buttonPressed', 'true');
 		}
-	  :
-		function(song_url,duration){
-			this.send_to_player_sandbox('play_song_by_url,' + song_url + ',' + duration);
-		}
-	,
-	'play': 
-	  (typeof seesu === 'object') ?
-		function () {
-		  this.set_var('buttonPressed', 'true');
-		}
-	  :
-		function(){
-			this.send_to_player_sandbox('play')
-		}
-	,
-	'stop': 
-	  (typeof seesu === 'object') ?
-		function () {
+
+		,
+		"stop":function () {
 			this.set_var('setState', 'stop');
 		}
-	  :
-		function(){
-			this.send_to_player_sandbox('stop')
+
+		,
+		"pause":function () {
+			this.set_var('buttonPressed', 'true');
 		}
-	,
-	'pause': 
-	  (typeof seesu === 'object') ?
-		function () {
-		  this.set_var('buttonPressed', 'true');
+
+		
+	},
+	"flash_actions_for_sandbox":{
+		"play_song_by_url": function(song_url,duration){
+			this.send_to_player_sandbox('play_song_by_url,' + song_url + ',' + duration);
 		}
-	  :
-		function(){
-			this.send_to_player_sandbox('pause')
+		,
+		"play":function(){
+			this.send_to_player_sandbox('play');
 		}
-	,
+		
+		,
+		"stop":function(){
+			this.send_to_player_sandbox('stop');
+		}
+		
+		,
+		"pause":function(){
+			this.send_to_player_sandbox('pause');
+		}
+		
+		
+	},
+	"play_song_by_url": function(){
+		this.flash_actions.play_song_by_url.apply(this, arguments);
+	},
+	'play': function(){
+		this.flash_actions.play.apply(this, arguments);
+	},
+	'stop': function(){
+		this.flash_actions.stop.apply(this, arguments);
+	},
+	'pause': function(){
+		this.flash_actions.pause.apply(this, arguments);
+	},
 	"send_to_player_sandbox": function(message){
 		//using for sending messages to flash injected in iframe
 		this.iframe[0].contentWindow.postMessage('vk_p_iframe,' + message, '*')
