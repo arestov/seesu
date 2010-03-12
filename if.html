@@ -30,8 +30,9 @@
 		if (e.origin.indexOf('widget://') == -1) {
 			return
 		} else {
-			if (e.data == 'init_vk_p'){
-				vk_p_in_iframe = new vk_p($('#player-holder'));
+			if (e.data.match(/init_vk_p/)){
+				var volume = e.data.split(',')[1];
+				vk_p_in_iframe = new vk_p($('#player-holder'), volume);
 				vk_p_in_iframe.player_source_window = e.source;
 				window.removeEventListener("message", init_vk_p, false);
 			}

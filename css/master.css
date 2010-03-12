@@ -556,7 +556,10 @@ a.song{
 	top:50%;
 	opacity:0.1;
 }
-
+#i_f{
+	width:362px;
+	border:1px solid #ddd;
+}
 .player-holder,#i_f{
 	height:20px;
 	margin-left:45px;

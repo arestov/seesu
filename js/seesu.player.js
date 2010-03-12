@@ -184,7 +184,7 @@ function change_volume(volume_value){
 $(function() {
 	i_f  = widget.i_f = seesu.iframe_player = $('<iframe id="i_f" src="if.html"></iframe>');
 	i_f.bind('load',function(){
-		this.contentWindow.postMessage("init_vk_p",'*')
+		this.contentWindow.postMessage("init_vk_p," + seesu.player.player_volume,'*')
 	});
 	$('#play-list-holder').append(i_f);
 	
@@ -193,7 +193,7 @@ $(function() {
 	
 	$('#play-list-holder').append(player_holder);
 	if (player_holder && player_holder.length) {
-		seesu.player.musicbox = new vk_p(player_holder,i_f);//connecting vkontakte flash to seesu player core
+		seesu.player.musicbox = new vk_p(player_holder, seesu.player.player_volume, i_f);//connecting vkontakte flash to seesu player core
 	}
 
 		

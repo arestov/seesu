@@ -1,6 +1,6 @@
 //vkontakte.ru player
-var vk_p = function(flash_node_holder,iframe){
-	
+var vk_p = function(flash_node_holder,volume,iframe){
+	this.volume = volume;
 	if (flash_node_holder) {this.player_holder = flash_node_holder};
 	if (iframe) {
 		this.player_container = iframe;
@@ -81,7 +81,7 @@ vk_p.prototype = {
 		this.player_holder.append(
 			_this.html
 			  .replace(':url', song_url)
-			  .replace(':volume', 10/*seesu.player.player_volume*/)
+			  .replace(':volume', _this.volume)
 			  .replace('duration=210', ('duration=' + duration))
 		);
 		this.html_events.creating(_this);
@@ -159,19 +159,14 @@ vk_p.prototype = {
 		"play":function () {
 			this.set_var('buttonPressed', 'true');
 		}
-
 		,
 		"stop":function () {
 			this.set_var('setState', 'stop');
 		}
-
 		,
 		"pause":function () {
-			log('p1')
 			this.set_var('buttonPressed', 'true');
 		}
-
-		
 	},
 	"flash_actions_for_sandbox":{
 		"play_song_by_url": function(song_url,duration){
@@ -181,19 +176,14 @@ vk_p.prototype = {
 		"play":function(){
 			this.send_to_player_sandbox('play');
 		}
-		
 		,
 		"stop":function(){
 			this.send_to_player_sandbox('stop');
 		}
-		
 		,
 		"pause":function(){
-			log('p0s')
 			this.send_to_player_sandbox('pause');
 		}
-		
-		
 	},
 	"play_song_by_url": function(){
 		this.flash_actions.play_song_by_url.apply(this, arguments);
@@ -205,16 +195,13 @@ vk_p.prototype = {
 		this.flash_actions.stop.apply(this, arguments);
 	},
 	'pause': function(){
-		log('p')
 		this.flash_actions.pause.apply(this, arguments);
 	},
 	"send_to_player_sandbox": function(message){
 		//using for sending messages to flash injected in iframe
-		log(message)
 		this.player_container[0].contentWindow.postMessage('vk_p_iframe,' + message, '*')
 	},
 	"send_to_player_source": function(message){
-		log('sending to source: ' +  message)
 		//using for feedback messages from iframe flash
 		this.player_source_window.postMessage('vk_p_source,' + message, '*')
 	},
@@ -223,7 +210,6 @@ vk_p.prototype = {
 		if (e.origin.indexOf('widget://') == -1) {
 			return
 		} else {
-			log('zannna')
 			if (e.data.match(/vk_p_iframe/)){
 				var commands  = e.data.replace('vk_p_iframe,','').split(",");
 				var func_name = commands.shift();
@@ -233,11 +219,9 @@ vk_p.prototype = {
 		}
 	},
 	"listen_commands_of_sandbox": function(e){
-		log('listen_commands_of_sandbox')
 		if (e.origin.indexOf('widget://') == -1) {
 			return
 		} else {
-			log('listen_commands_of_sandbox more more more more more more')
 			if (e.data.match(/vk_p_source/)){
 				var commands  = e.data.replace('vk_p_source,','').split(",");
 				seesu.player.musicbox.vk_player_events[commands.shift()].apply(seesu.player.musicbox, [seesu.player.musicbox].concat(commands))
