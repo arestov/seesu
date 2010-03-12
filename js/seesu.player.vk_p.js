@@ -1,15 +1,18 @@
 //vkontakte.ru player
 var vk_p = function(flash_node_holder,volume,iframe){
 	this.volume = volume;
+	var _this = this;
 	if (flash_node_holder) {this.player_holder = flash_node_holder};
 	if (iframe) {
 		this.player_container = iframe;
-		window.addEventListener("message", this.listen_commands_of_sandbox, false);
+		window.addEventListener("message", function(e){
+			_this.listen_commands_of_sandbox.apply(_this,arguments)
+		}, false);
 		this.flash_actions = this.flash_actions_for_sandbox;
 	} else{
 		this.flash_actions = this.flash_actions_normal
 		this.player_container = flash_node_holder;
-		var _this = this;
+		
 		vk_flash_player_DoFSCommand = function(){
 			_this.flash_js(arguments[1])
 		};
@@ -19,7 +22,9 @@ var vk_p = function(flash_node_holder,volume,iframe){
 		$(document.documentElement.firstChild).append(this.pl_h_style);
 	} else{
 		//look like we in iframe, so listen commands
-		window.addEventListener("message", this.listen_commands_of_source, false)
+		window.addEventListener("message", function(e){
+			_this.listen_commands_of_source.apply(_this,arguments)
+		}, false)
 	}
 	
 	this.init_timeout;
@@ -213,7 +218,7 @@ vk_p.prototype = {
 			if (e.data.match(/vk_p_iframe/)){
 				var commands  = e.data.replace('vk_p_iframe,','').split(",");
 				var func_name = commands.shift();
-				vk_p_in_iframe[func_name].apply(vk_p_in_iframe, commands)
+				this[func_name].apply(this, commands)
 				
 			}
 		}
@@ -224,7 +229,7 @@ vk_p.prototype = {
 		} else {
 			if (e.data.match(/vk_p_source/)){
 				var commands  = e.data.replace('vk_p_source,','').split(",");
-				seesu.player.musicbox.vk_player_events[commands.shift()].apply(seesu.player.musicbox, [seesu.player.musicbox].concat(commands))
+				this.vk_player_events[commands.shift()].apply(this, [seesu.player.musicbox].concat(commands))
 			}
 		}
 	}
