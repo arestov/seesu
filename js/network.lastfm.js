@@ -37,10 +37,10 @@ var lfm = function(method,params,callback, type_of_xhr_is_post) {
 			if (callback) {callback(r);}
 		  },
 		  complete: function(xhr){
-		  	log(xhr.responseText)
+		  	//log(xhr.responseText)
 		  }
 		});
-		log(params_full)
+		//log(params_full)
 	}
 };
 

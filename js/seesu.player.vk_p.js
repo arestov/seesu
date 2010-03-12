@@ -47,7 +47,7 @@ vk_p.prototype = {
 		},
 		moving: function(_this,node){
 			var top = node.parent().position().top;
-			_this.pl_h_style.html('.player-holder {top: ' + top + 'px}');
+			_this.pl_h_style.html('.player-holder,#i_f {top: ' + top + 'px}');
 			node[0].parentNode.appendChild(track_buttons[0]);
 		}
 		
@@ -81,7 +81,7 @@ vk_p.prototype = {
 		this.player_holder.append(
 			_this.html
 			  .replace(':url', song_url)
-			  .replace(':volume', seesu.player.player_volume)
+			  .replace(':volume', 100/*seesu.player.player_volume*/)
 			  .replace('duration=210', ('duration=' + duration))
 		);
 		this.html_events.creating(_this);
@@ -128,25 +128,25 @@ vk_p.prototype = {
 		{
 			//feedback of iframe flash
 			"playing": function(_this){
-				send_to_player_source('playing')
+				_this.send_to_player_source('playing')
 			},
 			"paused": function(_this){
-				send_to_player_source('paused')
+				_this.send_to_player_source('paused')
 			},
 			"finished": function(_this){
-				send_to_player_source('finished')
+				_this.send_to_player_source('finished')
 			},
 			"init": function(_this){
-				send_to_player_source('init')
+				_this.send_to_player_source('init')
 			},
 			"created": function(_this){
-				send_to_player_source('created')
+				_this.send_to_player_source('created')
 			},
 			"stopped": function(_this){
-				send_to_player_source('stopped')
+				_this.send_to_player_source('stopped')
 			},
 			"volume": function(_this, volume_value){
-				send_to_player_source('volume,'+volume_value)
+				_this.send_to_player_source('volume,'+volume_value)
 			}
 		}
 	,
@@ -167,6 +167,7 @@ vk_p.prototype = {
 
 		,
 		"pause":function () {
+			log('p1')
 			this.set_var('buttonPressed', 'true');
 		}
 
@@ -188,6 +189,7 @@ vk_p.prototype = {
 		
 		,
 		"pause":function(){
+			log('p0s')
 			this.send_to_player_sandbox('pause');
 		}
 		
@@ -203,24 +205,29 @@ vk_p.prototype = {
 		this.flash_actions.stop.apply(this, arguments);
 	},
 	'pause': function(){
+		log('p')
 		this.flash_actions.pause.apply(this, arguments);
 	},
 	"send_to_player_sandbox": function(message){
 		//using for sending messages to flash injected in iframe
-		this.iframe[0].contentWindow.postMessage('vk_p_iframe,' + message, '*')
+		this.player_container[0].contentWindow.postMessage('vk_p_iframe,' + message, '*')
 	},
 	"send_to_player_source": function(message){
 		//using for feedback messages from iframe flash
 		this.player_source_window.postMessage('vk_p_source,' + message, '*')
 	},
 	"listen_commands_of_source": function(e){
+		var _this = this;
 		if (e.origin.indexOf('widget://') == -1) {
 			return
 		} else {
 			log('zannna')
 			if (e.data.match(/vk_p_iframe/)){
-				var commands  = e.data.replace('vk_p_iframe,').split(",");
-				this[commands.shift()].apply(this, commands)
+				var commands  = e.data.replace('vk_p_iframe,','').split(",");
+				var func_name = commands.shift();
+				log(func_name)
+				log(commands)
+				vk_p_in_iframe[func_name].apply(vk_p_in_iframe, commands)
 				
 			}
 		}
@@ -230,7 +237,7 @@ vk_p.prototype = {
 			return
 		} else {
 			if (e.data.match(/vk_p_source/)){
-				var commands  = e.data.replace('vk_p_source,').split(",");
+				var commands  = e.data.replace('vk_p_source,','').split(",");
 				this.vk_player_events[commands.shift()].apply(this, [this].concat(commands))
 			}
 		}

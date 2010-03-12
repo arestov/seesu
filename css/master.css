@@ -544,20 +544,20 @@ a.song{
 			}
 
 #play-list-holder
-.player-holder{
+.player-holder, #play-list-holder #i_f{
 	position:absolute;
 	left:60px;
 }
 
 #play-list-holder
-.player-holder.vk-p-initing{
+.player-holder.vk-p-initing, #play-list-holder #i_f.vk-p-initing{
 	position:fixed;
 	left:40px;
 	top:50%;
 	opacity:0.1;
 }
 
-.player-holder{
+.player-holder,#i_f{
 	height:20px;
 	margin-left:45px;
 	margin-top:18px
