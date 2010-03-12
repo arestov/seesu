@@ -217,8 +217,7 @@ vk_p.prototype = {
 		} else {
 			if (e.data.match(/vk_p_iframe/)){
 				var commands  = e.data.replace('vk_p_iframe,','').split(",");
-				var func_name = commands.shift();
-				this[func_name].apply(this, commands);
+				this[commands.shift()].apply(this, commands);
 			}
 		}
 	},

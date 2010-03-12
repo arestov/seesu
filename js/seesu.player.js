@@ -181,9 +181,10 @@ function change_volume(volume_value){
 player_holder = seesu.ui.player_holder = $('<div class="player-holder"></div>');
 i_f  = seesu.ui.iframe_player = $('<iframe id="i_f" src="if.html"></iframe>');
 if (i_f) {
+	var i_f_hide_timeout;
 	i_f.bind('load',function(){
 		this.contentWindow.postMessage("init_vk_p," + seesu.player.player_volume,'*');
-		setTimeout(function(){
+		i_f_hide_timeout = setTimeout(function(){
 			i_f.css('display','none');
 		},300)
 	});
@@ -191,6 +192,7 @@ if (i_f) {
 		if (e.data.match(/vk_p_inited/)){
 			seesu.player.musicbox = new vk_p(false, seesu.player.player_volume, i_f);
 		}
+		clearTimeout(i_f_hide_timeout)
 		window.removeEventListener("message", check_iframe_vkp_init, false);
 	}
 }

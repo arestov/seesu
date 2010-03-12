@@ -558,6 +558,7 @@ a.song{
 }
 #i_f{
 	width:362px;
+	border:0;
 }
 .player-holder,#i_f{
 	height:20px;
