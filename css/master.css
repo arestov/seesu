@@ -255,9 +255,7 @@ a.song{
 			line-height:20px;
 			padding:0px 10px 5px 45px;
 			background:#6c1471 url(../i/logo_su.png) no-repeat 8px 0;
-			border:1px solid #292929;
-			border-top:0;
-			border-bottom:0;
+
 		}
 			.navs
 			.arr-r{
@@ -689,9 +687,7 @@ p.internet-flash-settings{
     
 #slider-materail{
 	background:#505050;
-	border:1px solid #292929;
-	border-top:0;
-	border-bottom:0;
+
 }
 .dmain{
 	height:10px;
@@ -708,7 +704,7 @@ p.internet-flash-settings{
 		background:#ddd;
 		}
 .dmain,.dleft{
-	background:url(../i/seesu-star.png) no-repeat 0 0;
+	background:url(../i/seesu-star2.png) no-repeat 0 0;
 	}
 .dtop{
 	background-position:100% 0;
@@ -718,8 +714,7 @@ p.internet-flash-settings{
 		}
 	.dtop .dcenter{
 		background-color:#6c1471;
-		height:9px;
-		border-top:1px solid #292929;
+		height:10px;
 		}
 .dbottom{
 	background-position:100% -10px;
@@ -728,8 +723,7 @@ p.internet-flash-settings{
 		background-position:0 -10px;
 		}
 	.dbottom .dcenter{
-		height:9px;
-		border-bottom:1px solid #292929;
+		height:10px;
 		background-color:#505050;
 		}
 #promo{
