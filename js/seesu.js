@@ -1,8 +1,9 @@
 testing = false;
 
 var	seesu =  {
-	  version: 1.0	
-	},
+	  version: 1.0,
+	  ui: {}
+	}, 
 	vk_logged_in,
 	wait_for_vklogin = function(){},
 	vkReferer = '',

@@ -178,23 +178,33 @@ function change_volume(volume_value){
   seesu.player.player_volume = volume_value;	
 }
 
-	
+player_holder = seesu.ui.player_holder = $('<div class="player-holder"></div>');
+i_f  = seesu.ui.iframe_player = $('<iframe id="i_f" src="if.html"></iframe>');
+if (i_f) {
+	i_f.bind('load',function(){
+		this.contentWindow.postMessage("init_vk_p," + seesu.player.player_volume,'*');
+		setTimeout(function(){
+			i_f.css('display','none');
+		},300)
+	});
+	check_iframe_vkp_init = function(e){
+		if (e.data.match(/vk_p_inited/)){
+			seesu.player.musicbox = new vk_p(false, seesu.player.player_volume, i_f);
+		}
+		window.removeEventListener("message", check_iframe_vkp_init, false);
+	}
+}
 
 // Ready? Steady? Go!
 $(function() {
-	i_f  = widget.i_f = seesu.iframe_player = $('<iframe id="i_f" src="if.html"></iframe>');
-	i_f.bind('load',function(){
-		this.contentWindow.postMessage("init_vk_p," + seesu.player.player_volume,'*')
-	});
-	$('#play-list-holder').append(i_f);
-	
-	
-	player_holder = $('.player-holder');
-	
 	$('#play-list-holder').append(player_holder);
 	if (player_holder && player_holder.length) {
-		seesu.player.musicbox = new vk_p(player_holder, seesu.player.player_volume, i_f);//connecting vkontakte flash to seesu player core
+		seesu.player.musicbox = new vk_p(player_holder, seesu.player.player_volume);//connecting vkontakte flash to seesu player core
 	}
+	$('#play-list-holder').append(i_f);
+	window.addEventListener("message", check_iframe_vkp_init, false);
+	
+
 
 		
 });

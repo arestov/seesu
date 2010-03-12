@@ -6,15 +6,15 @@ var vk_p = function(flash_node_holder,volume,iframe){
 	if (iframe) {
 		this.player_container = iframe;
 		window.addEventListener("message", function(e){
-			_this.listen_commands_of_sandbox.apply(_this,arguments)
+			_this.listen_commands_of_sandbox.apply(_this,arguments);
 		}, false);
 		this.flash_actions = this.flash_actions_for_sandbox;
 	} else{
-		this.flash_actions = this.flash_actions_normal
+		this.flash_actions = this.flash_actions_normal;
 		this.player_container = flash_node_holder;
 		
 		vk_flash_player_DoFSCommand = function(){
-			_this.flash_js(arguments[1])
+			_this.flash_js(arguments[1]);
 		};
 	}
 	if (typeof seesu === 'object') {
@@ -23,7 +23,7 @@ var vk_p = function(flash_node_holder,volume,iframe){
 	} else{
 		//look like we in iframe, so listen commands
 		window.addEventListener("message", function(e){
-			_this.listen_commands_of_source.apply(_this,arguments)
+			_this.listen_commands_of_source.apply(_this,arguments);
 		}, false)
 	}
 	
@@ -47,7 +47,7 @@ vk_p.prototype = {
 			},1000)
 		},
 		init: function(_this){
-			clearTimeout(_this.init_timeout)
+			clearTimeout(_this.init_timeout);
 			_this.player_container.removeClass('vk-p-initing');
 		},
 		moving: function(_this,node){
@@ -58,7 +58,7 @@ vk_p.prototype = {
 		
 	},
 	'flash_js': function(args){
-		log(args)
+		log(args);
 		if(args.match('playing')) 
 			{this.vk_player_events.playing(this);}
 		else 
@@ -133,25 +133,25 @@ vk_p.prototype = {
 		{
 			//feedback of iframe flash
 			"playing": function(_this){
-				_this.send_to_player_source('playing')
+				_this.send_to_player_source('playing');
 			},
 			"paused": function(_this){
-				_this.send_to_player_source('paused')
+				_this.send_to_player_source('paused');
 			},
 			"finished": function(_this){
-				_this.send_to_player_source('finished')
+				_this.send_to_player_source('finished');
 			},
 			"init": function(_this){
-				_this.send_to_player_source('init')
+				_this.send_to_player_source('init');
 			},
 			"created": function(_this){
-				_this.send_to_player_source('created')
+				_this.send_to_player_source('created');
 			},
 			"stopped": function(_this){
-				_this.send_to_player_source('stopped')
+				_this.send_to_player_source('stopped');
 			},
 			"volume": function(_this, volume_value){
-				_this.send_to_player_source('volume,'+volume_value)
+				_this.send_to_player_source('volume,'+volume_value);
 			}
 		}
 	,
@@ -204,11 +204,11 @@ vk_p.prototype = {
 	},
 	"send_to_player_sandbox": function(message){
 		//using for sending messages to flash injected in iframe
-		this.player_container[0].contentWindow.postMessage('vk_p_iframe,' + message, '*')
+		this.player_container[0].contentWindow.postMessage('vk_p_iframe,' + message, '*');
 	},
 	"send_to_player_source": function(message){
 		//using for feedback messages from iframe flash
-		this.player_source_window.postMessage('vk_p_source,' + message, '*')
+		this.player_source_window.postMessage('vk_p_source,' + message, '*');
 	},
 	"listen_commands_of_source": function(e){
 		var _this = this;
@@ -218,19 +218,15 @@ vk_p.prototype = {
 			if (e.data.match(/vk_p_iframe/)){
 				var commands  = e.data.replace('vk_p_iframe,','').split(",");
 				var func_name = commands.shift();
-				this[func_name].apply(this, commands)
-				
+				this[func_name].apply(this, commands);
 			}
 		}
 	},
 	"listen_commands_of_sandbox": function(e){
-		if (e.origin.indexOf('widget://') == -1) {
-			return
-		} else {
-			if (e.data.match(/vk_p_source/)){
-				var commands  = e.data.replace('vk_p_source,','').split(",");
-				this.vk_player_events[commands.shift()].apply(this, [seesu.player.musicbox].concat(commands))
-			}
+		if (e.data.match(/vk_p_source/)){
+			var commands  = e.data.replace('vk_p_source,','').split(",");
+			this.vk_player_events[commands.shift()].apply(this, [seesu.player.musicbox].concat(commands));
 		}
+		
 	}
 };
