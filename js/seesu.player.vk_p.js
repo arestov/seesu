@@ -81,7 +81,7 @@ vk_p.prototype = {
 		this.player_holder.append(
 			_this.html
 			  .replace(':url', song_url)
-			  .replace(':volume', 100/*seesu.player.player_volume*/)
+			  .replace(':volume', 10/*seesu.player.player_volume*/)
 			  .replace('duration=210', ('duration=' + duration))
 		);
 		this.html_events.creating(_this);
@@ -210,9 +210,11 @@ vk_p.prototype = {
 	},
 	"send_to_player_sandbox": function(message){
 		//using for sending messages to flash injected in iframe
+		log(message)
 		this.player_container[0].contentWindow.postMessage('vk_p_iframe,' + message, '*')
 	},
 	"send_to_player_source": function(message){
+		log('sending to source: ' +  message)
 		//using for feedback messages from iframe flash
 		this.player_source_window.postMessage('vk_p_source,' + message, '*')
 	},
@@ -225,20 +227,20 @@ vk_p.prototype = {
 			if (e.data.match(/vk_p_iframe/)){
 				var commands  = e.data.replace('vk_p_iframe,','').split(",");
 				var func_name = commands.shift();
-				log(func_name)
-				log(commands)
 				vk_p_in_iframe[func_name].apply(vk_p_in_iframe, commands)
 				
 			}
 		}
 	},
-	"listen_commands_of_sanbox": function(e){
+	"listen_commands_of_sandbox": function(e){
+		log('listen_commands_of_sandbox')
 		if (e.origin.indexOf('widget://') == -1) {
 			return
 		} else {
+			log('listen_commands_of_sandbox more more more more more more')
 			if (e.data.match(/vk_p_source/)){
 				var commands  = e.data.replace('vk_p_source,','').split(",");
-				this.vk_player_events[commands.shift()].apply(this, [this].concat(commands))
+				seesu.player.musicbox.vk_player_events[commands.shift()].apply(seesu.player.musicbox, [seesu.player.musicbox].concat(commands))
 			}
 		}
 	}
