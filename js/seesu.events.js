@@ -4,6 +4,16 @@ var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, play_contro
 $(function() {
   if (lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
   if (seesu) {check_seesu_updates();}
+  seesu.vk_id = widget.preferenceForKey('vkid');
+  if (seesu.vk_id) {
+	log(seesu.vk_id);
+	log("check vk login");
+	$(document.body).addClass('vk-logged-in');
+	vk_logged_in = true;
+	vk_login_check();
+  } else{
+	log('not loggin in');
+  }
   $(document).click(function(e) {
   	var node = e.target;
   	var class_name = node.className;
@@ -221,16 +231,7 @@ $(function() {
 	captcha_img = $('.vk-captcha-context img',vk_auth);
 	vk_login_error = $('.error',vk_auth);
 	
-	seesu.vk_id = widget.preferenceForKey('vkid');
-	if (seesu.vk_id) {
-		log(seesu.vk_id);
-		log("check vk login");
-		$(document.body).addClass('vk-logged-in');
-		vk_logged_in = true;
-		vk_login_check();
-	} else{
-		log('not loggin in');
-	}
+
 	
 	
 	

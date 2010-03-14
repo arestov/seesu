@@ -179,11 +179,16 @@ function change_volume(volume_value){
 }
 
 player_holder = seesu.ui.player_holder = $('<div class="player-holder"></div>');
-i_f  = seesu.ui.iframe_player = $('<iframe id="i_f" src="if.html"></iframe>');
+i_f  = seesu.ui.iframe_player = $('<iframe id="i_f" src="http://seesu.heroku.com/if.html"></iframe>');
 if (i_f) {
 	var i_f_hide_timeout;
+	
 	i_f.bind('load',function(){
-		this.contentWindow.postMessage("init_vk_p," + seesu.player.player_volume,'*');
+		var scripts_paths = '';
+		$('script.for-iframe', document.documentElement.firstChild).each(function(i){
+			scripts_paths += (((i == 0) ? '' : ',') + this.src) //comma separated
+		});
+		this.contentWindow.postMessage("init_vk_p," + seesu.player.player_volume + "," + scripts_paths,'*');
 		i_f_hide_timeout = setTimeout(function(){
 			i_f.css('display','none');
 		},100)
