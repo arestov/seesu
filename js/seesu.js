@@ -416,4 +416,58 @@ var artistsearch = function(artist_query) {
 	lfm('artist.search',{artist: artist_query, limit: 10 },show_artists_results)
 	
 };
-
+var fast_suggestion_ui = function(r){
+	
+	var sugg_arts = [];
+	var sugg_tracks = [];
+	var sugg_tags = [];
+	
+	for (var i=0, l = r.response.docs.length; i < l ; i++) {
+		var response_modul = r.response.docs[i];
+		if (response_modul.restype == 6){
+			sugg_arts.push(response_modul);
+		} else 
+		if (response_modul.restype == 9){
+			sugg_tracks.push(response_modul);
+		} else
+		if (response_modul.restype == 32){
+			sugg_tags.push(response_modul);
+		}
+	};
+	searchres.innerHTML = '';
+	if (sugg_arts && sugg_arts.length){
+		$(searchres).append('<h4>Artists</h4>');
+		var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
+		for (var i=0, l = sugg_arts.length; i < l; i++) {
+			var artist = sugg_arts[i].artist;
+			var image =  sugg_arts[i].artist.image ? 'http://userserve-ak.last.fm/serve/64s/' + sugg_arts[i].artist.image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+			var li = $("<li></li>");
+			var p = $("<p></p>").attr({ text: artist});
+			if(image){
+				var img = $("<img/>").attr({ src: image , alt: artist });
+				$(li).append(img);
+			} 
+			$(li).append(p);
+			$(ul).append(li);
+		};
+		$(searchres).append(ul);
+	}
+	if (sugg_tracks && sugg_tracks.length){
+		$(searchres).append('<h4>Artists</h4>');
+		var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
+		for (var i=0, l = sugg_tracks.length; i < l; i++) {
+			var artist = sugg_tracks[i].artist;
+			var image =  sugg_tracks[i].artist.image ? 'http://userserve-ak.last.fm/serve/64s/' + sugg_tracks[i].artist.image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+			var li = $("<li></li>");
+			var p = $("<p></p>").attr({ text: artist + ' &mdash; ' + sugg_tracks[i].track});
+			if(image){
+				var img = $("<img/>").attr({ src: image , alt: artist });
+				$(li).append(img);
+			} 
+			$(li).append(p);
+			$(li).append('<span class="sugg-track-dur">' + sugg_tracks[i].duration + '</span>')
+			$(ul).append(li);
+		};
+		$(searchres).append(ul);
+	}
+}
