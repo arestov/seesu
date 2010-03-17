@@ -393,35 +393,49 @@ a.song{
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
-		.search-results-holder
-		ul li{
-			margin: 10px 0;
+		.search-results-holder{
+			padding-left:60px;
+			position:relative;
 			}
-		.search-results-holder
-		ul.results-artists
-		li{
-			cursor:pointer;
-			overflow: hidden;
-			margin: 0;
-			padding:5px;
-			}
-		ul.results-artists
-		li:hover{
-			color:#f6f0e1;
-			background:#666;
+			.search-results-holder h4{
+				position:absolute;
+				left:0;
+				margin:0;
+				font-weight:400;
 			}
 			.search-results-holder
-			ul.results-artists
-			img{
-				float:left;
-				max-width:64px;
+			ul{
+				border-left:1px solid #5d5d5d;
 				}
-			.search-results-holder
-			ul.results-artists
-			p{
-				margin-bottom:0;
-				margin-left:76px;
-				}
+				.search-results-holder
+				ul li{
+					margin: 10px 0;
+					}
+				.search-results-holder
+				ul.results-artists
+				li{
+					cursor:pointer;
+					overflow: hidden;
+					margin: 0;
+					padding:5px;
+					}
+				ul.results-artists
+				li:hover{
+					color:#f6f0e1;
+					background:#666;
+					}
+					.search-results-holder
+					ul.results-artists
+					img{
+						float:left;
+						max-width:64px;
+						}
+					.search-results-holder
+					ul.results-artists
+					p{
+						margin-bottom:0;
+						margin-left:76px;
+						}
 				
 .info{overflow:hidden;}
 .info
