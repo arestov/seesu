@@ -427,7 +427,7 @@ a.song{
 				ul.results-artists
 				li:hover{
 					color:#f6f0e1;
-					background:#666;
+					background-color:#666;
 					}
 					.search-results-holder
 					ul.results-artists
@@ -447,7 +447,10 @@ a.song{
 			ul:last-child{
 				border-bottom:0;
 			}
-				
+			.search-results-holder
+			.recommend-tags li{
+				background: url(/i/tag-icon.png) no-repeat 56px 50%;
+			}
 .info{overflow:hidden;}
 .info
 .image{
