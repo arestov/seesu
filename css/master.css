@@ -448,6 +448,10 @@ a.song{
 				border-bottom:0;
 			}
 			.search-results-holder
+			ul:nth-of-type(even){
+				background-color:#4d4d4d;
+			}
+			.search-results-holder
 			.recommend-tags li{
 				background: url(/i/tag-icon.png) no-repeat 56px 50%;
 			}

@@ -375,7 +375,7 @@ var show_artists_results = function(r){
 		if (artists.length){
 			searchres.innerHTML = '';
 			var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
-			$(searchres).append(ul);
+			
 			for (var i=0; i < artists.length; i++) {
 				var artist = artists[i].name,
 					image = artists[i].image[1]['#text'].replace('/serve/64/','/serve/64s/') || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
@@ -398,6 +398,8 @@ var show_artists_results = function(r){
 				$(li).append(p);
 				$(ul).append(li);
 			} 
+			$(searchres).append('<h4>Artists</h4>')
+			$(searchres).append(ul);
 		} else if (artists.name) {
 			var artist = artists.name;
 			set_artist_page(artist);
