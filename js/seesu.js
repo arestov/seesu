@@ -378,7 +378,7 @@ var show_artists_results = function(r){
 			$(searchres).append(ul);
 			for (var i=0; i < artists.length; i++) {
 				var artist = artists[i].name,
-					image = artists[i].image[1]['#text'] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+					image = artists[i].image[1]['#text'].replace('/serve/64/','/serve/64s/') || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 
 				if (i === 0) {set_artist_page(artist,true);}
 

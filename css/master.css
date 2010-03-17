@@ -403,9 +403,14 @@ a.song{
 				margin:0;
 				font-weight:400;
 			}
+
 			.search-results-holder
 			ul{
+				overflow:hidden;
+				margin:0;
 				border-left:1px solid #5d5d5d;
+				border-bottom:1px solid #5d5d5d;
+				width:466px;
 				}
 				.search-results-holder
 				ul li{
@@ -429,6 +434,7 @@ a.song{
 					img{
 						float:left;
 						max-width:64px;
+						border:1px solid #eee;
 						}
 					.search-results-holder
 					ul.results-artists
@@ -436,6 +442,10 @@ a.song{
 						margin-bottom:0;
 						margin-left:76px;
 						}
+			.search-results-holder
+			ul:last-child{
+				border-bottom:0;
+			}
 				
 .info{overflow:hidden;}
 .info
