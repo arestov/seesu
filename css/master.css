@@ -424,6 +424,11 @@ a.song{
 					margin: 0;
 					padding:5px;
 					}
+					.search-results-holder
+					ul
+					.sugg-track-dur{
+						float:right;
+					}
 				ul.results-artists
 				li:hover{
 					color:#f6f0e1;

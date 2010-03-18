@@ -465,8 +465,10 @@ var fast_suggestion_ui = function(r){
 				var img = $("<img/>").attr({ src: image , alt: artist });
 				$(li).append(img);
 			} 
+			var track_dur = parseInt(sugg_tracks[i].duration);
+			track_dur = (Math.round(track_dur/60)) + ':' + (track_dur % 60)
+			$(li).append('<span class="sugg-track-dur">' + track_dur + '</span>');
 			$(li).append(p);
-			$(li).append('<span class="sugg-track-dur">' + sugg_tracks[i].duration + '</span>')
 			$(ul).append(li);
 		};
 		$(searchres).append(ul);
