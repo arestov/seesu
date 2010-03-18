@@ -435,14 +435,15 @@ var fast_suggestion_ui = function(r){
 		}
 	};
 	searchres.innerHTML = '';
+	$('#search-nav').text('Popular suggestions')
 	if (sugg_arts && sugg_arts.length){
 		$(searchres).append('<h4>Artists</h4>');
 		var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
 		for (var i=0, l = sugg_arts.length; i < l; i++) {
 			var artist = sugg_arts[i].artist;
-			var image =  sugg_arts[i].artist.image ? 'http://userserve-ak.last.fm/serve/64s/' + sugg_arts[i].artist.image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+			var image =  sugg_arts[i].image ? 'http://userserve-ak.last.fm/serve/34s/' + sugg_arts[i].image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 			var li = $("<li></li>");
-			var p = $("<p></p>").attr({ text: artist});
+			var p = $("<p></p>").html(artist);
 			if(image){
 				var img = $("<img/>").attr({ src: image , alt: artist });
 				$(li).append(img);
@@ -453,13 +454,13 @@ var fast_suggestion_ui = function(r){
 		$(searchres).append(ul);
 	}
 	if (sugg_tracks && sugg_tracks.length){
-		$(searchres).append('<h4>Artists</h4>');
+		$(searchres).append('<h4>Tracks</h4>');
 		var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
 		for (var i=0, l = sugg_tracks.length; i < l; i++) {
 			var artist = sugg_tracks[i].artist;
-			var image =  sugg_tracks[i].artist.image ? 'http://userserve-ak.last.fm/serve/64s/' + sugg_tracks[i].artist.image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+			var image =  sugg_tracks[i].image ? 'http://userserve-ak.last.fm/serve/34s/' + sugg_tracks[i].image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 			var li = $("<li></li>");
-			var p = $("<p></p>").attr({ text: artist + ' &mdash; ' + sugg_tracks[i].track});
+			var p = $("<p></p>").html(artist + ' &mdash; ' + sugg_tracks[i].track);
 			if(image){
 				var img = $("<img/>").attr({ src: image , alt: artist });
 				$(li).append(img);
@@ -470,4 +471,36 @@ var fast_suggestion_ui = function(r){
 		};
 		$(searchres).append(ul);
 	}
+	if (sugg_tags && sugg_tags.length){
+		$(searchres).append('<h4>Tags</h4>');
+		var ul = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
+		for (var i=0, l = sugg_tags.length; i < l; i++) {
+			var li = $("<li></li>");
+			var p = $("<p></p>").html(sugg_tags[i].tag);
+			$(li).append(p);
+			$(ul).append(li);
+		};
+		$(searchres).append(ul);
+	}
 }
+var input_change = function(e){
+	var input_value = e.target.value;
+	if (!input_value){return}
+	log(input_value)
+	$.ajax({
+	  url: 'http://www.last.fm/search/autocomplete',
+	  global: false,
+	  type: "GET",
+	  dataType: "json",
+	  data: {
+	  	"q": input_value,
+	  	"force" : 1
+	  },
+	  error: function(){
+	  },
+	  success: fast_suggestion_ui
+	});
+}
+$(function(){
+	$('#q').keyup(input_change)
+})

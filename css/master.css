@@ -400,7 +400,7 @@ a.song{
 			.search-results-holder h4{
 				position:absolute;
 				left:0;
-				margin:9px 0 0;
+				margin:5px 0 0;
 				font-weight:400;
 			}
 
@@ -433,15 +433,15 @@ a.song{
 					ul.results-artists
 					img{
 						float:left;
-						max-width:64px;
+						max-width:34px;
 						border:1px solid #eee;
 						}
 					.search-results-holder
 					ul.results-artists
 					p{
-						margin-top:5px;
+						margin-top:1px;
 						margin-bottom:0;
-						margin-left:76px;
+						margin-left:42px;
 						}
 			.search-results-holder
 			ul:last-child{
@@ -453,7 +453,7 @@ a.song{
 			}
 			.search-results-holder
 			.recommend-tags li{
-				background: url(/i/tag-icon.png) no-repeat 56px 50%;
+				background: url(/i/tag-icon.png) no-repeat 26px 50%;
 			}
 .info{overflow:hidden;}
 .info
