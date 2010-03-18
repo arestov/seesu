@@ -414,11 +414,12 @@ a.song{
 				}
 				.search-results-holder
 				ul li{
-					margin: 10px 0;
+				
 					}
 				.search-results-holder
 				ul.results-artists
-				li{
+				a{
+					display:block;
 					cursor:pointer;
 					overflow: hidden;
 					margin: 0;
@@ -428,9 +429,10 @@ a.song{
 					ul
 					.sugg-track-dur{
 						float:right;
+						margin:0;
 					}
 				ul.results-artists
-				li:hover{
+				a:hover{
 					color:#f6f0e1;
 					background-color:#666;
 					}
@@ -439,14 +441,16 @@ a.song{
 					img{
 						float:left;
 						max-width:34px;
+						margin-right:8px;
 						border:1px solid #eee;
 						}
 					.search-results-holder
 					ul.results-artists
-					p{
+					span{
+						overflow:hidden;
 						margin-top:1px;
 						margin-bottom:0;
-						margin-left:42px;
+						
 						}
 			.search-results-holder
 			ul:last-child{
@@ -457,7 +461,8 @@ a.song{
 				background-color:#4d4d4d;
 			}
 			.search-results-holder
-			.recommend-tags li{
+			ul.recommend-tags a{
+				padding-left:47px;
 				background: url(/i/tag-icon.png) no-repeat 26px 50%;
 			}
 .info{overflow:hidden;}
