@@ -150,6 +150,13 @@ seesu.ui.buttons = {
 			}
 
 		}),
+	"search_tracks": $('<button type="submit" name="type" value="track" id="search-track">Get tracks</button>').click(function(e){
+			var _this = $(this);
+			var query = searchfield.value;
+			if (query) {
+				track_search(query)
+			}
+		}),
 	"search_vkontakte": $('<button type="submit" name="type" value="vk_track" id="search-vk-track">Use dirty search</button>').click(function(e){
 			var _this = $(this);
 			var query = searchfield.value;
@@ -250,6 +257,11 @@ var fast_suggestion_ui = function(r){
 		
 	}
 	$(searchres).append(ul_tracks);
+	
+	var bli_track = $('<li></li');
+	seesu.ui.buttons.search_tracks.appendTo(bli_track);
+	bli_track.appendTo(ul_tracks);
+	
 	
 	
 	$(searchres).append('<h4>Tags</h4>');
