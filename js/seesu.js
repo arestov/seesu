@@ -518,5 +518,5 @@ var input_change = function(e){
 	$(e.target).data('lastvalue', input_value.replace(/ /g, ''))
 }
 $(function(){
-	$('#q').keyup($.debounce(input_change, 100))
+	$('#q').keyup($.debounce(input_change, 100)).mousemove($.debounce(input_change, 100)).change($.debounce(input_change, 100));
 })
