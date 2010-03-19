@@ -501,8 +501,7 @@ var fast_suggestion_ui = function(r){
 }
 var input_change = function(e){
 	var input_value = e.target.value;
-	if (!input_value){return}
-	log(input_value)
+	if (!input_value || ($(e.target).data('lastvalue') == input_value.replace(/ /g, ''))){return}
 	$.ajax({
 	  url: 'http://www.last.fm/search/autocomplete',
 	  global: false,
@@ -516,7 +515,8 @@ var input_change = function(e){
 	  },
 	  success: fast_suggestion_ui
 	});
+	$(e.target).data('lastvalue', input_value.replace(/ /g, ''))
 }
 $(function(){
-	$('#q').keyup(input_change)
+	$('#q').keyup($.debounce(input_change, 100))
 })

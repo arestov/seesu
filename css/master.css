@@ -434,7 +434,7 @@ a.song{
 				ul.results-artists
 				a:hover{
 					color:#f6f0e1;
-					background-color:#666;
+					background-color:#666  !important;
 					}
 					.search-results-holder
 					ul.results-artists
