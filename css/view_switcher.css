@@ -1,0 +1,139 @@
+#slider{
+	padding:0 0 0;
+	position:relative;
+	}
+	#slider
+	.screens{
+		overflow-y:auto;
+		overflow-x:hidden;
+		height:536px;
+		padding:8px 10px 0px;
+		position:relative;
+		z-index:2;
+		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
+		}
+
+	.navs{
+		
+		font-family:"Trebuchet MS", sans-serif;
+		height:20px;
+		font-size:1.4em;
+		line-height:20px;
+		padding:0px 10px 5px 45px;
+		background:#6c1471 url(../i/logo_su.png) no-repeat 8px 0;
+
+	}
+
+
+
+		.navs .nav-start em,
+		.navs .nav-search-results em{
+			color:#d5d5d5;
+			border-bottom:1px dashed #925196;
+			font-style:normal;
+			cursor:pointer;
+			}
+		.navs .nav-start em:hover,
+		.navs .nav-search-results em:hover{
+			color:#fff;
+			border-bottom-color:#b990bc;
+		}
+.navs .nav{
+	display:none;
+	float:left;
+	margin-right:3px;
+	}
+	.show-search 
+	.nav-start{
+		display:inline;
+		}
+	
+
+.arr-d{
+	display:none;
+}
+
+.lfm-start{
+	display:none;
+	}
+#search_result{
+	display:none;
+	}	
+
+.start-screen{
+	display:none;
+	}
+
+	
+	
+#artist-holder{
+	display:none;
+}
+
+
+
+
+.show-start{
+	
+	}
+	.show-start .lfm-start{
+		display:block;
+		}
+		
+		
+	.show-start .start-screen{
+		display:block;
+		}
+	.show-start .nav-start{
+		display:inline;
+		}
+		.show-start .nav-start .arr-d{
+			display:inline;
+			}
+			
+			
+.show-search{
+	
+	}
+	.show-search .start-screen{
+		display:block;
+		}
+		.show-search .nav-start{
+			display:inline;
+			}
+.show-search-results {
+
+	}
+	.show-search-results #search_result{
+		display:block;
+		}
+	.show-search-results .nav-search-results{
+		display:inline;
+		}
+		.show-search-results .nav-search-results .arr-d{
+			display:inline;
+			}
+.show-full-nav{
+	
+	}
+	.show-full-nav .nav-start{
+		display:inline;
+		}
+	
+	.show-full-nav .nav-search-results{
+		display:inline;
+		}
+		
+		
+.show-player-page{
+	
+	}
+	.show-player-page #artist-holder{
+		display:block;
+		}
+	.show-player-page .nav-artist-page{
+		display:inline;
+		}
+		.show-player-page .nav-artist-page .arr-d{
+			display:inline;
+			}

@@ -297,7 +297,8 @@ display:none;
 				.search-results-holder ul li.searched-bordered{
 					border-top: 1px dashed #5d5d5d;
 					}
-				.search-results-holder ul li:first-child{
+				.search-results-holder ul li:first-child,
+				.search-results-holder ul li:nth-child(2){
 					border-top:0 !important;
 					}
 				.search-results-holder
