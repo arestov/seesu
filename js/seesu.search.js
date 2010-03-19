@@ -1,17 +1,17 @@
 var show_artists_results = function(r){
+	seesu.ui.buttons.search_artists.remove()
+	
+	
 	var artists = r.results.artistmatches.artist || false; 
 	if (artists){
 		$('#search-nav').text('Suggestions & search')
 		var ul = seesu.ui.arts_results_ul;
-		seesu.ui.buttons.search_artists.remove()
+		
 		if (artists.length){
 			
 			for (var i=0; i < artists.length; i++) {
 				var artist = artists[i].name,
 					image = artists[i].image[1]['#text'].replace('/serve/64/','/serve/64s/') || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-
-				//if (i === 0) {set_artist_page(artist,true);}
-
 				var li = $("<li></li>");
 				
 				if( i == 0){
@@ -40,7 +40,7 @@ var show_artists_results = function(r){
 
 	} else {
 
-		var p = $("<p></p>").attr({ text: 'Nothing found'});
+		$("<p></p>").attr({ text: 'Nothing found'}).appendTo(seesu.ui.arts_results_ul);
 
 	}
 }
@@ -51,13 +51,19 @@ var artistsearch = function(artist_query) {
 var tag_search = function(tag_query){
 	lfm('tag.search',{tag: tag_query, limit: 15 },show_tags_results)
 }
+var track_search = function(track_query){
+	lfm('track.search',{track: track_query, limit: 15 },show_tracks_results)
+}
 var show_tags_results = function(r){
+	seesu.ui.buttons.search_tags.remove();
+	
+	
 	var tags = r.results.tagmatches.tag || false; 
 	if (tags && tags.length){
 
 		$('#search-nav').text('Suggestions & search')
 		var ul = seesu.ui.tags_results_ul;
-		seesu.ui.buttons.search_tags.remove()
+		
 		if (tags.length){
 			
 			for (var i=0; i < tags.length; i++) {
@@ -81,14 +87,49 @@ var show_tags_results = function(r){
 				$(ul).append(li);
 			} 
 		} else if (tags.name) {
-			var tag = tags.name;
-			set_artist_page(artist);
+	
 		}
 		
 		
 	}
 }
+var show_tracks_results = function(r){
+	seesu.ui.buttons.search_tracks.remove();
+	log(r)
+	return
+	var tracks = r.results.trackmatches.tag || false; 
+	if (tracks && tracks.length){
 
+		$('#search-nav').text('Suggestions & search')
+		var ul = seesu.ui.tracks_results_ul;
+		
+		if (tags.length){
+			
+			for (var i=0; i < tracks.length; i++) {
+				var track = tracks[i].name;
+
+				var li = $("<li></li>");
+				
+				if( i == 0){
+					li.addClass('searched-bordered')
+				}
+				
+				var a = $("<a></a>").data('track_title',track);
+					a.click(function(e){
+						var track = $(this).data('track_title');
+						render_tracks_by_artists_of_tag(tag)
+					});
+					
+				var span = $("<span></span>").attr({ text: tag});
+				$(a).append(span);
+				$(li).append(a);
+				$(ul).append(li);
+			} 
+		} else if (tags.name) {
+			
+		}
+	}
+}
 
 
 
@@ -100,6 +141,7 @@ seesu.ui.buttons = {
 				artistsearch(query);
 			}
 		}),
+		
 	"search_tags":  $('<button type="submit" name="type" value="tag" id="search-tag">Get tags</button>').click(function(){
 			var _this = $(this);
 			var query = searchfield.value;
@@ -108,14 +150,20 @@ seesu.ui.buttons = {
 			}
 
 		}),
-	"search_vkontakte": $('<button type="submit" name="type" value="track" id="search-track">Use dirty search</button>').click(function(e){
+	"search_vkontakte": $('<button type="submit" name="type" value="vk_track" id="search-vk-track">Use dirty search</button>').click(function(e){
 			var _this = $(this);
 			var query = searchfield.value;
 			if (query) {
 				vk_track_search(query)
 			}
 		}),
-	"search_tracks": {}
+	"search_tracks": $('<button type="submit" name="type" value="track" id="search-track">Get tracks</button>').click(function(e){
+			var _this = $(this);
+			var query = searchfield.value;
+			if (query) {
+				vk_track_search(query)
+			}
+		})
 }
 var fast_suggestion_ui = function(r){
 	
