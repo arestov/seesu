@@ -208,168 +208,45 @@ a.song{
 		padding-bottom:10px;
 		}
 		
-		.lfm-finish{
-			opacity:0.3;
-		}
-		.lfm-waiting-for-finish
-		
-		.lfm-finish{
-			opacity:1;
-		}
-		.lfm-auth
-		p{
-			margin:0.3em 0;
-			}
-		.lfm-auth
-		form{
-			margin-right:20px;
-			margin-bottom:2.5em;
-			padding-bottom:1em;
-			border-bottom:1px solid #eee;
-			}
-	.lfm-auth-req-recomm
-	.lfm-recomm
-	.lfm-auth{
-		display:block;
+.lfm-finish{
+	opacity:0.3;
+}
+.lfm-waiting-for-finish
+
+.lfm-finish{
+	opacity:1;
+}
+.lfm-auth
+p{
+	margin:0.3em 0;
 	}
-	.lfm-auth-req-loved
-	.lfm-loved
-	.lfm-auth{
-		display:block;
+.lfm-auth
+form{
+	margin-right:20px;
+	margin-bottom:2.5em;
+	padding-bottom:1em;
+	border-bottom:1px solid #eee;
 	}
-	.lfm-auth-done
-	#slider
-	.lfm-start
-	.lfm-auth{
-		display:none;
+	.lfm-start{
+		border-top:1px solid #666;
 	}
-	#slider{
-		padding:0 0 0;
-		position:relative;
-		}
-		.navs{
-			
-			font-family:"Trebuchet MS", sans-serif;
-			height:20px;
-			font-size:1.4em;
-			line-height:20px;
-			padding:0px 10px 5px 45px;
-			background:#6c1471 url(../i/logo_su.png) no-repeat 8px 0;
-
-		}
-			.navs
-			.arr-r{
-				
-			}
-			.navs
-			.arr-d{
-				display:none;
-			}
-		.navs .nav{
-			display:none;
-			float:left;
-			margin-right:3px;
-			}
-		.navs .nav-start{
-			
-			}
-			.navs .nav-start em,
-			.navs .nav-search-results em{
-				color:#d5d5d5;
-				border-bottom:1px dashed #925196;
-				font-style:normal;
-				cursor:pointer;
-				}
-			.navs .nav-start em:hover,
-			.navs .nav-search-results em:hover{
-				color:#fff;
-				border-bottom-color:#b990bc;
-			}
-		.lfm-start{
-			border-top:1px solid #666;
-		}
-		#slider
-		.screens{
-			overflow-y:auto;
-			overflow-x:hidden;
-			height:536px;
-			padding:8px 10px 0px;
-			position:relative;
-			z-index:2;
-			-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
-			}
-			#slider
-			.screens
-			.screen{
-				padding-bottom:5px;
-				margin-bottom:5px;
-				display:none;
-				}
-			
-			#slider.screen-start .start,
-			#slider.screen-search .search-results,
-			
-			#slider.screen-search .start{
-				display:block;
-				}
-			.lfm-start{
-				display:none;
-			}
-			#slider.screen-start .start .lfm-start{
-				display:block;
-			}
-
-			#slider.sreen-artist-page .artist-page{
-				display:block;
-			}
-			
-			#slider.sreen-artist-page-with-results .artist-page{
-				display:block;
-			}
-			#slider.screen-start .start
-			.lfm-start{
-			}
-			#slider .lfm-start{
-			}
- 
-			#slider.screen-start .nav-start{
-				display:block;
-				}
-			 
-			#slider.screen-search .nav-start, 
-			#slider.screen-search .nav-search-results{
-				display:block;
-				}
-
-			#slider.sreen-artist-page-with-results .nav-start,
-			#slider.sreen-artist-page-with-results .nav-search-results,
-			#slider.sreen-artist-page-with-results .nav-artist-page{
-				display:block;
-			}
-			#slider.sreen-artist-page .nav-start,
-			#slider.sreen-artist-page .nav-artist-page{
-				display:block;
-			}
-
-			#slider.screen-start .nav-start em, 
-			#slider.screen-search .nav-search-results em,
-			#slider.sreen-artist-page-with-results .nav-artist-page em{
-				cursor:default;
-				border-bottom:0;
-			}
-			#slider.screen-start .nav-start .arr-r, 
-			#slider.screen-search .nav-search-results .arr-r,
-			#slider.sreen-artist-page .nav-artist-page .arr-r,
-			#slider.sreen-artist-page-with-results .nav-artist-page .arr-r{
-				display:none;
-			}
-
-			#slider.screen-start .nav-start .arr-d,
-			#slider.screen-search .nav-search-results .arr-d,
-			#slider.sreen-artist-page .nav-artist-page .arr-d,
-			#slider.sreen-artist-page-with-results .nav-artist-page .arr-d{
-				display:inline;
-			}
+.lfm-auth-req-recomm
+.lfm-recomm
+.lfm-auth{
+display:block;
+}
+.lfm-auth-req-loved
+.lfm-loved
+.lfm-auth{
+display:block;
+}
+.lfm-auth-done
+#slider
+.lfm-start
+.lfm-auth{
+display:none;
+}
+	
 .search-start{
 	margin-bottom:1em;
 	}
@@ -396,6 +273,7 @@ a.song{
 		.search-results-holder{
 			padding-left:60px;
 			position:relative;
+			margin-top:20px;
 			}
 			.search-results-holder h4{
 				position:absolute;
@@ -410,11 +288,17 @@ a.song{
 				margin:0;
 				border-left:1px solid #5d5d5d;
 				border-bottom:1px solid #5d5d5d;
-				width:466px;
+				width:500px;
 				}
 				.search-results-holder
 				ul li{
 				
+					}
+				.search-results-holder ul li.searched-bordered{
+					border-top: 1px dashed #5d5d5d;
+					}
+				.search-results-holder ul li:first-child{
+					border-top:0 !important;
 					}
 				.search-results-holder
 				ul.results-artists
@@ -788,5 +672,13 @@ p.internet-flash-settings{
 	
 	}
 #search #q{
-	width:350px;
+	width:500px;
+	box-sizing:border-box;
 }
+#search #search-p{
+	margin:10px 0 30px;
+	}
+	#search #search-p span{
+		display:inline-block;
+		width:60px;
+	}

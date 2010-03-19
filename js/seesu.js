@@ -173,7 +173,7 @@ var render_playlist = function(vk_music_list,container) { // if links present th
 		$(searchres).html('').append(ul);
 		
 		if (mp3links) {
-			(slider.className = 'screen-search')
+			(slider.className = 'show-search ')
 		}
 	}
 	if (!mp3links){
@@ -184,7 +184,7 @@ var render_playlist = function(vk_music_list,container) { // if links present th
 var vk_track_search = function(query){
 	art_page_nav.innerHTML = query;
 
-	slider.className = 'sreen-artist-page';
+	slider.className = 'show-full-nav show-player-page';
 	seesu.player.player_holder  = artsplhld;
 		
 	getMusic(query);
@@ -203,7 +203,7 @@ var render_loved = function(user_name){
 		}
 	});
 	$(nav_artist_page).text('Loved Tracks');
-	slider.className = 'sreen-artist-page';
+	slider.className = 'show-player-page';
 	seesu.player.player_holder = artsplhld;
 }
 var render_recommendations_by_username = function(username){
@@ -226,7 +226,8 @@ var render_recommendations_by_username = function(username){
 			}
 		  }
 	})
-	slider.className = 'sreen-artist-page';
+	$(nav_artist_page).text('Recommendations for ' +  username);
+	slider.className = 'show-player-page';
 	seesu.player.player_holder = artsplhld;
 }
 var render_recommendations = function(){
@@ -240,14 +241,14 @@ var render_recommendations = function(){
 			proxy_render_artists_tracks(artist_list);
 		}
 	})
-	$(nav_artist_page).text('Recommendations');
-	slider.className = 'sreen-artist-page';
+	$(nav_artist_page).text('Recommendations for you');
+	slider.className = 'show-player-page';
 	seesu.player.player_holder = artsplhld;
 }
 var render_tracks_by_artists_of_tag = function(tag){
 	get_artists_by_tag(tag,proxy_render_artists_tracks);
 	$(nav_artist_page).text('Tag: ' + tag);
-	slider.className = 'sreen-artist-page';
+	slider.className = 'show-full-nav show-player-page';
 	seesu.player.player_holder = artsplhld;
 }
 
@@ -363,9 +364,9 @@ var update_artist_info = function(artist,nav){
 }
 var set_artist_page = function (artist,with_search_results) {
 	if (with_search_results) {
-		slider.className = 'sreen-artist-page-with-results';
+		slider.className = 'show-full-nav show-player-page';
 	} else {
-		slider.className = 'sreen-artist-page'
+		slider.className = 'show-player-page'
 	}
 	$(art_page_nav).text(artist);
 	seesu.player.player_holder = artsplhld;
@@ -379,16 +380,14 @@ var set_artist_page = function (artist,with_search_results) {
 var show_artists_results = function(r){
 	var artists = r.results.artistmatches.artist || false; 
 	if (artists){
+		$('#search-nav').text('Suggestions & search')
 		var ul = seesu.ui.arts_results_ul ||  (function(){
-			log('no ui')
 				if (seesu.ui.buttons && seesu.ui.buttons.arts_search){
 					seesu.ui.buttons.arts_search.before('<h4>Artists</h4>');
 					return $("<ul></ul>").attr({ 'class': 'results-artists'}).insertBefore(seesu.ui.buttons.arts_search)
 				}
 			})();
-		log(ul)
 		if (artists.length){
-			log('want rend')
 			
 			for (var i=0; i < artists.length; i++) {
 				var artist = artists[i].name,
@@ -397,10 +396,13 @@ var show_artists_results = function(r){
 				//if (i === 0) {set_artist_page(artist,true);}
 
 				var li = $("<li></li>");
-				log(artist)
+				if( i == 0){
+					li.addClass('searched-bordered')
+				}
 				var a = $("<a></a>").data('artist',artist);
 					a.data('img', image);
-				$(a).click(function(){
+				a.click(function(e){
+					log('click')
 					var artist = $(this).data('artist');
 					var image = $(this).data('img');
 					set_artist_page(artist,true);
@@ -423,7 +425,7 @@ var show_artists_results = function(r){
 		searchres.innerHTML = '';
 		var p = $("<p></p>").attr({ text: 'Nothing found'});
 		$(searchres).append(p);
-		slider.className = "screen-search";
+		slider.className = "show-search ";
 	}
 }
 var artistsearch = function(artist_query) {
@@ -448,16 +450,16 @@ var fast_suggestion_ui = function(r){
 			sugg_tags.push(response_modul);
 		}
 	};
-	slider.className = "screen-search";
+	slider.className = 'show-search  show-search-results';
 	searchres.innerHTML = '';
-	$('#search-nav').text('Popular suggestions')
+	$('#search-nav').text('Suggestions')
 	if (sugg_arts && sugg_arts.length){
 		$(searchres).append('<h4>Artists</h4>');
 		var ul = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
 		for (var i=0, l = sugg_arts.length; i < l; i++) {
 			var artist = sugg_arts[i].artist;
 			var image =  sugg_arts[i].image ? 'http://userserve-ak.last.fm/serve/34s/' + sugg_arts[i].image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-			var li = $("<li></li>");
+			var li = $("<li class='suggested'></li>");
 			
 			var a = $("<a></a>");
 			var span = $("<span></span>").html(artist);
@@ -489,16 +491,19 @@ var fast_suggestion_ui = function(r){
 		for (var i=0, l = sugg_tracks.length; i < l; i++) {
 			var artist = sugg_tracks[i].artist;
 			var image =  sugg_tracks[i].image ? 'http://userserve-ak.last.fm/serve/34s/' + sugg_tracks[i].image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-			var li = $("<li></li>");
+			var li = $("<li class='suggested'></li>");
 			var a = $("<a></a>");
 			var span = $("<span></span>").html(artist + ' &mdash; ' + sugg_tracks[i].track);
 			if(image){
 				var img = $("<img/>").attr({ src: image , alt: artist });
 				$(a).append(img);
 			} 
-			var track_dur = parseInt(sugg_tracks[i].duration);
-			track_dur = (Math.round(track_dur/60)) + ':' + (track_dur % 60)
-			$(a).append('<span class="sugg-track-dur">' + track_dur + '</span>');
+			if (sugg_tracks[i].duration){
+				var track_dur = parseInt(sugg_tracks[i].duration);
+				track_dur = (Math.round(track_dur/60)) + ':' + (track_dur % 60)
+				$(a).append('<span class="sugg-track-dur">' + track_dur + '</span>');
+			}
+
 			$(a).append(span);
 			
 			
@@ -511,7 +516,7 @@ var fast_suggestion_ui = function(r){
 		$(searchres).append('<h4>Tags</h4>');
 		var ul = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
 		for (var i=0, l = sugg_tags.length; i < l; i++) {
-			var li = $("<li></li>");
+			var li = $("<li class='suggested'></li>");
 			var a = $("<a></a>");
 			var span = $("<span></span>").html(sugg_tags[i].tag);
 			$(a).append(span);

@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<title>Seesu</title>
 	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="css/view_switcher.css" type="text/css" media="screen" />
 	
 	<script type="text/javascript" src="js/json.js"></script>
 	<script type="text/javascript" src="js/md5-min.js"></script>
@@ -25,7 +26,7 @@
   </head>
   
   <body>
-<div id="slider" class="screen-search">
+<div id="slider" class="show-search show-search-results">
 	<a id="close-widget">&times;</a>
 	<div class="dmain dtop">
 		<div class="dleft"></div>
@@ -35,36 +36,65 @@
 		<div class="nav nav-start" id="start_search" >
 			<em>Start page</em>
 			<span class="arr-d">&darr;</span>
-			<span class="arr-r">&rarr;</span>
+			
 		</div>
 		<div class="nav nav-search-results" id="search_result_nav">
+			<span class="arr-r">&rarr;</span>
 			<em id="search-nav">Search results</em>
 			<span class="arr-d">&darr;</span>
-			<span class="arr-r">&rarr;</span>
+			
 		</div>
 		<div class="nav nav-artist-page" >
+			<span class="arr-r">&rarr;</span>
 			<span id="nav_artist_page"></span>
 			<span class="arr-d">&darr;</span>
-			<span class="arr-r">&rarr;</span>
 		</div>
-		<div class="nav nav-tracks-page">
-			<span id="nav_tracks_page"></span>
-			<span class="arr-d">&darr;</span>
-			<span class="arr-r">&rarr;</span>
-		</div>
-
-	</div>	
- 
-    
+	</div>
 	<div id="slider-materail" class="shadowed">
 		
 			<div class="screens" id="screens">
-				<div class="start screen">
+				<div class="start-screen">
 					
 					<div class="search-start">
 						  <form id="search" name="search">
-							<p>Music search</p>
-							<input type="text" name="q" id="q" size="50" />
+							<p id="search-p"><label><span>Search</span><input type="text" name="q" id="q" size="50" /></label></p>
+							
+							
+							<div id="search_result" class="search-results-holder" >
+								<h4>Artists</h4>
+								<ul class="results-artists" >
+								  <li>
+								   <a> <img src="http://userserve-ak.last.fm/serve/34s/37228663.png" alt="Boy Kill Boy">
+								    <span>Boy Kill Boy</span></a>
+								  </li>
+								  <li><a>
+								    <img src="http://userserve-ak.last.fm/serve/34s/183371.jpg" alt="Kill Hannah">
+								    <span>Kill Hannah</span></a>
+								  </li>
+
+
+								</ul>
+								<h4>Tracks</h4>
+								<ul class="results-artists">
+									<li>
+									 	  <a><img src="http://userserve-ak.last.fm/serve/34s/322520.jpg" alt="Bikini Kill">
+									    <span>Bikini Kill</span></a>
+									  </li>
+									  <li>
+									    <a><img src="http://userserve-ak.last.fm/serve/34s/28022629.jpg" alt="Eyes Set to Kill">
+									    <span>Eyes Set to Kill</p></span>
+									  </li>
+								</ul>
+								<h4>Tags</h4>
+								<ul class="results-artists recommend-tags">
+									<li>
+										<a><span>instrumental hip-hop</span></a>
+									</li>
+									<li>
+										<a><span>hip-hop</span></a>
+									</li>
+								</ul>
+							</div>
 						  </form>
 						
 					</div>
@@ -101,43 +131,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="artist search-results screen">
-					<div id="search_result" class="search-results-holder" >
-						<h4>Artists</h4>
-						<ul class="results-artists" >
-						  <li>
-						   <a> <img src="http://userserve-ak.last.fm/serve/34s/37228663.png" alt="Boy Kill Boy">
-						    <span>Boy Kill Boy</span></a>
-						  </li>
-						  <li><a>
-						    <img src="http://userserve-ak.last.fm/serve/34s/183371.jpg" alt="Kill Hannah">
-						    <span>Kill Hannah</span></a>
-						  </li>
 
-						  
-						</ul>
-						<h4>Tracks</h4>
-						<ul class="results-artists">
-							<li>
-							 	  <a><img src="http://userserve-ak.last.fm/serve/34s/322520.jpg" alt="Bikini Kill">
-							    <span>Bikini Kill</span></a>
-							  </li>
-							  <li>
-							    <a><img src="http://userserve-ak.last.fm/serve/34s/28022629.jpg" alt="Eyes Set to Kill">
-							    <span>Eyes Set to Kill</p></span>
-							  </li>
-						</ul>
-						<h4>Tags</h4>
-						<ul class="results-artists recommend-tags">
-							<li>
-								<a><span>instrumental hip-hop</span></a>
-							</li>
-							<li>
-								<a><span>hip-hop</span></a>
-							</li>
-						</ul>
-					</div>
-				</div>
 	
 				<div id="artist-holder" class="artist-page screen play-screen">
 					<div class="info">

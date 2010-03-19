@@ -180,11 +180,11 @@ $(function() {
 	art_page_nav = document.getElementById('nav_artist_page');
 	trk_page_nav = document.getElementById('nav_tracks_page');
 	startlink.onclick = function(){
-	slider.className = "screen-start";
+		slider.className = "show-start";
 	searchfield.focus();
 	};
 	srnav.onclick = function(){
-	slider.className = "screen-search";
+		slider.className = "show-search show-search-results";
 	};
 	
 	
