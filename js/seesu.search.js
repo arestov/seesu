@@ -11,7 +11,7 @@ var show_artists_results = function(r){
 			
 			for (var i=0; i < artists.length; i++) {
 				var artist = artists[i].name,
-					image = artists[i].image[1]['#text'].replace('/serve/64/','/serve/64s/') || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+					image = artists[i].image && artists[i].image[1]['#text'].replace('/serve/64/','/serve/64s/') || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 				var li = $("<li></li>");
 				
 				if( i == 0){
@@ -96,31 +96,39 @@ var show_tags_results = function(r){
 var show_tracks_results = function(r){
 	seesu.ui.buttons.search_tracks.remove();
 	log(r)
-	return
-	var tracks = r.results.trackmatches.tag || false; 
+	var tracks = r.results.trackmatches.track || false; 
 	if (tracks && tracks.length){
 
 		$('#search-nav').text('Suggestions & search')
 		var ul = seesu.ui.tracks_results_ul;
 		
-		if (tags.length){
+		if (tracks.length){
 			
 			for (var i=0; i < tracks.length; i++) {
-				var track = tracks[i].name;
-
+				var track = tracks[i].name,
+					image = tracks[i].image && tracks[i].image[1]['#text'].replace('/serve/64/','/serve/64s/') || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png',
+					artist = tracks[i].artist;
+				
+				
 				var li = $("<li></li>");
 				
 				if( i == 0){
 					li.addClass('searched-bordered')
 				}
 				
-				var a = $("<a></a>").data('track_title',track);
-					a.click(function(e){
-						var track = $(this).data('track_title');
-						render_tracks_by_artists_of_tag(tag)
+				var a = $("<a></a>")
+					.data('track_title',track)
+					.data('artist',artist)
+					.click(function(e){
+						var query = $(this).data('artist') + ' - '+ $(this).data('track_title');
+						vk_track_search(track_search_query)
 					});
 					
-				var span = $("<span></span>").attr({ text: tag});
+				var span = $("<span></span>").attr({ text: artist + ' - ' + track});
+				if(image){
+					var img = $("<img/>").attr({ src: image , alt: artist });
+					$(a).append(img);
+				}
 				$(a).append(span);
 				$(li).append(a);
 				$(ul).append(li);
@@ -224,7 +232,7 @@ var fast_suggestion_ui = function(r){
 	
 	
 	$(searchres).append('<h4>Tracks</h4>');
-	var ul_tracks = $("<ul></ul>").attr({ 'class': 'results-artists'});
+	var ul_tracks = seesu.ui.tracks_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
 	if (sugg_tracks && sugg_tracks.length){
 		
 		

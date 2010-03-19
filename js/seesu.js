@@ -310,7 +310,7 @@ var show_artist_info = function(r){
 		artist	 = info && info.name,
 		tags	 = info && info.tags && info.tags.tag,
 		bio		 = info && info.bio && info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm"),
-		image	 = (info && info.image[1]['#text']) || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+		image	 = (info && info.image && info.image[1]['#text']) || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 	if (artist) {artsImage.attr({'src': image ,'alt': artist})};
 	artsBio.html(bio || '');
 	if (tags && tags.length) {
