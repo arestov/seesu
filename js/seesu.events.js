@@ -230,35 +230,7 @@ $(function() {
 	});
 	captcha_img = $('.vk-captcha-context img',vk_auth);
 	vk_login_error = $('.error',vk_auth);
-	
 
-	
-	
-	
-	$('#search-artist').click(function(){
-		var query = searchfield.value;
-		if (query) {
-			artistsearch(query);
-		}
-		
-		
-	});
-	$('#search-tag').click(function(){
-		var _this = $(this);
-		var query = searchfield.value;
-		if (query) {
-			render_tracks_by_artists_of_tag(query);
-		}
-		
-	});
-	$('#search-track').click(function(e){
-		var _this = $(this);
-		var query = searchfield.value;
-		if (query) {
-			vk_track_search(query)
-		}
-		
-	});
 	if (lfm_scrobble.scrobbling) {
 		var lfm_ssw = $('#scrobbling-switches');
 		if (lfm_ssw) {

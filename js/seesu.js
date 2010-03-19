@@ -2,7 +2,9 @@ testing = false;
 
 var	seesu =  {
 	  version: 1.0,
-	  ui: {}
+	  ui: {
+	  	"buttons" : {}
+	    }
 	}, 
 	vk_logged_in,
 	wait_for_vklogin = function(){},
@@ -290,11 +292,16 @@ var getTopTracks = function(artist,callback,callback_params_obj) {
 		var tracks = r.toptracks.track || false;
 		if (tracks) {
 			var track_list = [];
-			for (var i=0, l = (tracks.length < 30) ? tracks.length : 30; i < l; i++) {
-				track_list.push({'artist' : artist ,'track': tracks[i].name});
+			if (tracks.length){
+				for (var i=0, l = (tracks.length < 30) ? tracks.length : 30; i < l; i++) {
+					track_list.push({'artist' : artist ,'track': tracks[i].name});
+				}
+			} else{
+				track_list.push({'artist' : artist ,'track': tracks.name});
 			}
+			
 			if (callback) {callback(track_list,callback_params_obj);}
-		}	
+		}
 	});
 };
 var show_artist_info = function(r){
@@ -372,18 +379,25 @@ var set_artist_page = function (artist,with_search_results) {
 var show_artists_results = function(r){
 	var artists = r.results.artistmatches.artist || false; 
 	if (artists){
+		var ul = seesu.ui.arts_results_ul ||  (function(){
+			log('no ui')
+				if (seesu.ui.buttons && seesu.ui.buttons.arts_search){
+					seesu.ui.buttons.arts_search.before('<h4>Artists</h4>');
+					return $("<ul></ul>").attr({ 'class': 'results-artists'}).insertBefore(seesu.ui.buttons.arts_search)
+				}
+			})();
+		log(ul)
 		if (artists.length){
-			searchres.innerHTML = '';
-			var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
+			log('want rend')
 			
 			for (var i=0; i < artists.length; i++) {
 				var artist = artists[i].name,
 					image = artists[i].image[1]['#text'].replace('/serve/64/','/serve/64s/') || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 
-				if (i === 0) {set_artist_page(artist,true);}
+				//if (i === 0) {set_artist_page(artist,true);}
 
 				var li = $("<li></li>");
-				
+				log(artist)
 				var a = $("<a></a>").data('artist',artist);
 					a.data('img', image);
 				$(a).click(function(){
@@ -400,8 +414,6 @@ var show_artists_results = function(r){
 				$(li).append(a);
 				$(ul).append(li);
 			} 
-			$(searchres).append('<h4>Artists</h4>')
-			$(searchres).append(ul);
 		} else if (artists.name) {
 			var artist = artists.name;
 			set_artist_page(artist);
@@ -436,11 +448,12 @@ var fast_suggestion_ui = function(r){
 			sugg_tags.push(response_modul);
 		}
 	};
+	slider.className = "screen-search";
 	searchres.innerHTML = '';
 	$('#search-nav').text('Popular suggestions')
 	if (sugg_arts && sugg_arts.length){
 		$(searchres).append('<h4>Artists</h4>');
-		var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
+		var ul = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
 		for (var i=0, l = sugg_arts.length; i < l; i++) {
 			var artist = sugg_arts[i].artist;
 			var image =  sugg_arts[i].image ? 'http://userserve-ak.last.fm/serve/34s/' + sugg_arts[i].image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
@@ -460,6 +473,16 @@ var fast_suggestion_ui = function(r){
 		};
 		$(searchres).append(ul);
 	}
+	var bp_artist = $('<p></p');
+	seesu.ui.buttons.arts_search = $('<button type="submit" name="type" value="artist" id="search-artist">Artist</button>').click(function(){
+		var query = searchfield.value;
+		if (query) {
+			artistsearch(query);
+		}
+	}).appendTo(bp_artist);
+	bp_artist.appendTo(searchres);
+	
+	
 	if (sugg_tracks && sugg_tracks.length){
 		$(searchres).append('<h4>Tracks</h4>');
 		var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
@@ -498,7 +521,32 @@ var fast_suggestion_ui = function(r){
 		};
 		$(searchres).append(ul);
 	}
+	
+	
+	var bp_tag = $('<p></p');
+	$('<button type="submit" name="type" value="tag" id="search-tag">Get tag &laquo;' + r.responseHeader.params.q +   '&raquo;</button>').click(function(){
+		var _this = $(this);
+		var query = searchfield.value;
+		if (query) {
+			render_tracks_by_artists_of_tag(query);
+		}
+		
+	}).appendTo(bp_tag);
+	bp_tag.appendTo(searchres)
+	
+	
+	var bp_vk_track = $('<p></p');
+	$('<button type="submit" name="type" value="track" id="search-track">Dirty search</button>').click(function(e){
+		var _this = $(this);
+		var query = searchfield.value;
+		if (query) {
+			vk_track_search(query)
+		}
+	
+	}).appendTo(bp_vk_track);
+	bp_vk_track.appendTo(searchres)
 }
+	
 var input_change = function(e){
 	var input_value = e.target.value;
 	if (!input_value || ($(e.target).data('lastvalue') == input_value.replace(/ /g, ''))){return}
