@@ -156,14 +156,8 @@ seesu.ui.buttons = {
 			if (query) {
 				vk_track_search(query)
 			}
-		}),
-	"search_tracks": $('<button type="submit" name="type" value="track" id="search-track">Get tracks</button>').click(function(e){
-			var _this = $(this);
-			var query = searchfield.value;
-			if (query) {
-				vk_track_search(query)
-			}
 		})
+	
 }
 var fast_suggestion_ui = function(r){
 	
