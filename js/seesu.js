@@ -2,9 +2,7 @@ testing = false;
 
 var	seesu =  {
 	  version: 1.0,
-	  ui: {
-	  	"buttons" : {}
-	    }
+	  ui: {}
 	}, 
 	vk_logged_in,
 	wait_for_vklogin = function(){},
@@ -387,6 +385,7 @@ var show_artists_results = function(r){
 					return $("<ul></ul>").attr({ 'class': 'results-artists'}).insertBefore(seesu.ui.buttons.arts_search)
 				}
 			})();
+		seesu.ui.buttons.search_artists.remove()
 		if (artists.length){
 			
 			for (var i=0; i < artists.length; i++) {
@@ -432,6 +431,30 @@ var artistsearch = function(artist_query) {
 	lfm('artist.search',{artist: artist_query, limit: 10 },show_artists_results)
 	
 };
+seesu.ui.buttons = {
+	"search_artists" : $('<button type="submit" name="type" value="artist" id="search-artist">Get artist</button>').click(function(){
+			var query = searchfield.value;
+			if (query) {
+				artistsearch(query);
+			}
+		}),
+	"search_tags":  $('<button type="submit" name="type" value="tag" id="search-tag">Get tags</button>').click(function(){
+			var _this = $(this);
+			var query = searchfield.value;
+			if (query) {
+				render_tracks_by_artists_of_tag(query);
+			}
+
+		}),
+	"search_vkontakte": $('<button type="submit" name="type" value="track" id="search-track">Use dirty search</button>').click(function(e){
+			var _this = $(this);
+			var query = searchfield.value;
+			if (query) {
+				vk_track_search(query)
+			}
+		}),
+	"search_tracks": {}
+}
 var fast_suggestion_ui = function(r){
 	
 	var sugg_arts = [];
@@ -453,9 +476,13 @@ var fast_suggestion_ui = function(r){
 	slider.className = 'show-search  show-search-results';
 	searchres.innerHTML = '';
 	$('#search-nav').text('Suggestions')
+	
+	
+	$(searchres).append('<h4>Artists</h4>');
+	var ul_arts = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
 	if (sugg_arts && sugg_arts.length){
-		$(searchres).append('<h4>Artists</h4>');
-		var ul = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
+		
+		
 		for (var i=0, l = sugg_arts.length; i < l; i++) {
 			var artist = sugg_arts[i].artist;
 			var image =  sugg_arts[i].image ? 'http://userserve-ak.last.fm/serve/34s/' + sugg_arts[i].image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
@@ -471,23 +498,22 @@ var fast_suggestion_ui = function(r){
 			
 			
 			$(li).append(a);
-			$(ul).append(li);
+			$(ul_arts).append(li);
 		};
-		$(searchres).append(ul);
+		
 	}
-	var bp_artist = $('<p></p');
-	seesu.ui.buttons.arts_search = $('<button type="submit" name="type" value="artist" id="search-artist">Artist</button>').click(function(){
-		var query = searchfield.value;
-		if (query) {
-			artistsearch(query);
-		}
-	}).appendTo(bp_artist);
-	bp_artist.appendTo(searchres);
+	$(searchres).append(ul_arts);
+	var bli_artist = $('<li></li');
+	seesu.ui.buttons.search_artists.appendTo(bli_artist);
+	bli_artist.appendTo(ul_arts);
 	
 	
+	
+	$(searchres).append('<h4>Tracks</h4>');
+	var ul_tracks = $("<ul></ul>").attr({ 'class': 'results-artists'});
 	if (sugg_tracks && sugg_tracks.length){
-		$(searchres).append('<h4>Tracks</h4>');
-		var ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
+		
+		
 		for (var i=0, l = sugg_tracks.length; i < l; i++) {
 			var artist = sugg_tracks[i].artist;
 			var image =  sugg_tracks[i].image ? 'http://userserve-ak.last.fm/serve/34s/' + sugg_tracks[i].image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
@@ -503,18 +529,18 @@ var fast_suggestion_ui = function(r){
 				track_dur = (Math.round(track_dur/60)) + ':' + (track_dur % 60)
 				$(a).append('<span class="sugg-track-dur">' + track_dur + '</span>');
 			}
-
 			$(a).append(span);
-			
-			
 			$(li).append(a);
-			$(ul).append(li);
+			$(ul_tracks).append(li);
 		};
-		$(searchres).append(ul);
+		
 	}
+	$(searchres).append(ul_tracks);
+	
+	
+	$(searchres).append('<h4>Tags</h4>');
+	var ul_tags = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
 	if (sugg_tags && sugg_tags.length){
-		$(searchres).append('<h4>Tags</h4>');
-		var ul = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
 		for (var i=0, l = sugg_tags.length; i < l; i++) {
 			var li = $("<li class='suggested'></li>");
 			var a = $("<a></a>");
@@ -522,34 +548,20 @@ var fast_suggestion_ui = function(r){
 			$(a).append(span);
 			
 			$(li).append(a);
-			$(ul).append(li);
+			$(ul_tags).append(li);
 		};
-		$(searchres).append(ul);
-	}
-	
-	
-	var bp_tag = $('<p></p');
-	$('<button type="submit" name="type" value="tag" id="search-tag">Get tag &laquo;' + r.responseHeader.params.q +   '&raquo;</button>').click(function(){
-		var _this = $(this);
-		var query = searchfield.value;
-		if (query) {
-			render_tracks_by_artists_of_tag(query);
-		}
 		
-	}).appendTo(bp_tag);
-	bp_tag.appendTo(searchres)
+	}
+	$(searchres).append(ul_tags);
+	
+	var bli_tag = $('<li></li');
+	seesu.ui.buttons.search_tags.appendTo(bli_tag);
+	bli_tag.appendTo(ul_tags);
 	
 	
 	var bp_vk_track = $('<p></p');
-	$('<button type="submit" name="type" value="track" id="search-track">Dirty search</button>').click(function(e){
-		var _this = $(this);
-		var query = searchfield.value;
-		if (query) {
-			vk_track_search(query)
-		}
-	
-	}).appendTo(bp_vk_track);
-	bp_vk_track.appendTo(searchres)
+	seesu.ui.buttons.search_vkontakte.appendTo(bp_vk_track);
+	bp_vk_track.appendTo(searchres);
 }
 	
 var input_change = function(e){
