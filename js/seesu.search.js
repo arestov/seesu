@@ -437,10 +437,13 @@ var fast_suggestion_ui = function(r){
 var input_change = function(e){
 	var input_value = e.target.value;
 	if (!input_value || ($(e.target).data('lastvalue') == input_value.replace(/ /g, ''))){return}
-	$.ajax({
+	
+	if(seesu.xhrs.fast_search_suggest) {seesu.xhrs.fast_search_suggest.abort()}
+	seesu.xhrs.fast_search_suggest = $.ajax({
 	  url: 'http://www.last.fm/search/autocomplete',
 	  global: false,
 	  type: "GET",
+	  timeout: 10000,
 	  dataType: "json",
 	  data: {
 	  	"q": input_value,

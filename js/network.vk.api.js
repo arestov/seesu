@@ -46,6 +46,7 @@ vk_api.prototype = {
 			  type: "GET",
 			  dataType: params_full.format || "XML",
 			  data: params_full,
+			  timeout: 20000,
 			  error: function(xhr){
 			  	if (error) {error(xhr);}
 			  },

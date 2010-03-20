@@ -52,6 +52,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 		
 	if (vk_logged_in) {
 		$.ajax({
+		  timeout: 10000,
 		  url: "http://vkontakte.ru/gsearch.php",
 		  global: false,
 		  type: "POST",
@@ -229,6 +230,7 @@ var getMusic = function(trackname){
 		return false;
 	} else {
 		$.ajax({
+		  timeout: 10000,
 		  url: "http://vkontakte.ru/gsearch.php",
 		  global: false,
 		  type: "POST",
