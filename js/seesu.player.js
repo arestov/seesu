@@ -214,9 +214,15 @@ var try_to_use_iframe_sm2p = function(){
 		init_sm2_p = function(){
 			
 			
-			if (typeof soundManager != 'object'){
-				log('no sounds');
-			} else{
+			
+			window.soundManager = new SoundManager();
+			if (soundManager){
+				soundManager.url = 'http://seesu.heroku.com/swf/';
+				soundManager.flashVersion = 9;
+				soundManager.useFlashBlock = true;
+				soundManager.debugMode = false;
+				soundManager.wmode = 'transparent';
+				soundManager.useHighPerformance = true;
 				sm2_p_in_iframe = new sm2_p(false, _volume, soundManager);
 				sm2_p_in_iframe.player_source_window = iframe_source;
 				soundManager.onready(function() {
@@ -228,8 +234,11 @@ var try_to_use_iframe_sm2p = function(){
 					} else{
 						log('by some reason sm2 iframe don"t work')
 					}
-				})	
+				});
+			} else{
+				log('no sounds');
 			}
+
 			
 			
 		}
@@ -371,8 +380,8 @@ $(function() {
 		soundManager = new SoundManager();
 		if (soundManager){
 			soundManager.url = 'http://seesu.heroku.com/swf/';
-			soundManager.flashVersion = 9; // optional: shiny features (default = 8)
-			soundManager.useFlashBlock = true; // optionally, enable when you're ready to dive in
+			soundManager.flashVersion = 9;
+			soundManager.useFlashBlock = true;
 			soundManager.debugMode = false;
 			soundManager.wmode = 'transparent';
 			soundManager.useHighPerformance = true;
