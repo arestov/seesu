@@ -39,7 +39,7 @@ var show_artists_results = function(r){
 					})
 					.click(results_mouse_click_for_enter_press);
 					
-				var span = $("<span></span>").attr({ text: artist});
+				var span = $("<span></span>").text(artist);
 				if(image){
 					var img = $("<img/>").attr({ src: image , alt: artist });
 					$(a).append(img);
@@ -59,7 +59,7 @@ var show_artists_results = function(r){
 				})
 				.click(results_mouse_click_for_enter_press);
 				
-			var span = $("<span></span>").attr({ text: artist});
+			var span = $("<span></span>").text(artist);
 			if(image){
 				var img = $("<img/>").attr({ src: image , alt: artist });
 				$(a).append(img);
@@ -114,7 +114,7 @@ var show_tags_results = function(r){
 					})
 					.click(results_mouse_click_for_enter_press);
 					
-				var span = $("<span></span>").attr({ text: tag});
+				var span = $("<span></span>").text(tag);
 				$(a).append(span);
 				$(li).append(a);
 				$(ul).append(li);
@@ -130,7 +130,7 @@ var show_tags_results = function(r){
 				})
 				.click(results_mouse_click_for_enter_press);
 				
-			var span = $("<span></span>").attr({ text: tag});
+			var span = $("<span></span>").text(tag);
 			$(a).append(span);
 			$(li).append(a);
 			$(ul).append(li);
@@ -175,7 +175,7 @@ var show_tracks_results = function(r){
 					})
 					.click(results_mouse_click_for_enter_press);
 					
-				var span = $("<span></span>").attr({ text: artist + ' - ' + track});
+				var span = $("<span></span>").text(artist + ' - ' + track);
 				if(image){
 					var img = $("<img/>").attr({ src: image , alt: artist });
 					$(a).append(img);
@@ -205,7 +205,7 @@ var show_tracks_results = function(r){
 					})
 					.click(results_mouse_click_for_enter_press);
 					
-				var span = $("<span></span>").attr({ text: artist + ' - ' + track});
+				var span = $("<span></span>").text(artist + ' - ' + track);
 				if(image){
 					var img = $("<img/>").attr({ src: image , alt: artist });
 					$(a).append(img);
