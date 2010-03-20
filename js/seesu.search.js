@@ -243,8 +243,7 @@ seesu.ui.buttons = {
 					tag_search(query)
 				}
 	
-			})
-			.click(results_mouse_click_for_enter_press),
+			}),
 	"search_tracks": $
 		('<button type="submit" name="type" value="track" id="search-track">Get tracks</button>')
 			.click(function(e){
@@ -253,8 +252,7 @@ seesu.ui.buttons = {
 				if (query) {
 					track_search(query)
 				}
-			})
-			.click(results_mouse_click_for_enter_press),
+			}),
 	"search_vkontakte": 
 		$('<button type="submit" name="type" value="vk_track" id="search-vk-track">Use dirty search</button>')
 			.click(function(e){
@@ -264,7 +262,6 @@ seesu.ui.buttons = {
 					vk_track_search(query)
 				}
 			})
-			.click(results_mouse_click_for_enter_press)
 	
 }
 var fast_suggestion_ui = function(r){

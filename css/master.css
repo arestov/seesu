@@ -597,9 +597,15 @@ p.internet-flash-settings{
 	box-sizing:border-box;
 }
 #search #search-p{
-	margin:10px 0 30px;
+	margin:10px 0 5px;
 	}
 	#search #search-p span{
 		display:inline-block;
 		width:60px;
 	}
+#search-desciption{
+	margin-top:0;
+	padding-left:60px;
+	font-size:0.9em;
+	color:#999;
+}
