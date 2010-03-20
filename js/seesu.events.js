@@ -181,7 +181,7 @@ $(function() {
 	trk_page_nav = document.getElementById('nav_tracks_page');
 	startlink.onclick = function(){
 		slider.className = "show-start";
-	searchfield.focus();
+		searchfield.focus();
 	};
 	srnav.onclick = function(){
 		slider.className = "show-search show-search-results";
@@ -200,7 +200,8 @@ $(function() {
 	artsplhld	= $('.player-holder',artsHolder);
 	art_tracks_w_counter = $('.tracks-waiting-for-search',artsHolder)
 	artsName	= $('#artist-name');
-		
+	
+
 	var flash_settings = $('.internet-flash-settings input');
 		
 	flash_settings.click(function(){
