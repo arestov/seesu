@@ -149,7 +149,9 @@ var render_playlist = function(vk_music_list,container) { // if links present th
 	var ul = document.createElement("ul");
 	
 	var de_html_entity = document.createElement('div');
-	
+	if (container) {
+		container.html('').append(ul);
+	}
 	for (var i=0, l = vk_music_list.length; i < l; i++) {
 		var attr = {'class' : 'waiting-full-render', 'text' :  vk_music_list[i].artist + ' - ' + vk_music_list[i].track};
 		var track = $("<a></a>").attr(attr).data('play_order', i),
@@ -165,15 +167,7 @@ var render_playlist = function(vk_music_list,container) { // if links present th
 		}
 		$(ul).append(li);		
 	}
-	if (container) {
-		container.html('').append(ul);
-	} else{
-		$(searchres).html('').append(ul);
-		
-		if (mp3links) {
-			(slider.className = 'show-search ')
-		}
-	}
+
 	if (!mp3links){
 		make_tracklist_playable(linkNodes);	//get mp3 for each prepaired node (do many many delayed requests to vkontakte)
 	}
