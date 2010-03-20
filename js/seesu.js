@@ -132,8 +132,13 @@ var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_durat
 	
 	var playlist_length = playlist_nodes_for.length;
 	if ((playlist_length == 1) || (playable_node.data('want_to_play') == seesu.player.want_to_play) ) {
-		seesu.player.set_current_song(playable_node);
-		seesu.player.current_playlist = playlist_nodes_for;
+		(function(playable_node, playlist_nodes_for ){
+			setTimeout(function(){
+				seesu.player.set_current_song(playable_node);
+				seesu.player.current_playlist = playlist_nodes_for;
+			},100)
+		})(playable_node,playlist_nodes_for )
+		
 	}
 	playable_node.data('number_in_playlist', playlist_length-1);
 	playable_node.data('link_to_playlist', playlist_nodes_for);
