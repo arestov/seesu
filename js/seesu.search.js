@@ -286,7 +286,7 @@ var fast_suggestion_ui = function(r){
 			sugg_tags.push(response_modul);
 		}
 	};
-	slider.className = 'show-search  show-search-results';
+	
 	searchres.innerHTML = '';
 	$('#search-nav').text('Suggestions')
 	
@@ -453,6 +453,7 @@ var input_change = function(e){
 	  },
 	  success: fast_suggestion_ui
 	});
+	slider.className = 'show-search  show-search-results';
 	$(e.target).data('lastvalue', input_value.replace(/ /g, ''))
 }
 $(function(){
