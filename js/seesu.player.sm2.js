@@ -1,11 +1,3 @@
-if (typeof soundManager == 'object'){
-	
-	
-} else{
-	log('soundManager not exist')
-}
-
-
 var sm2_p = function(player_holder,volume,sm2, iframe){
 	var _this = this;
 	this.core = sm2;
