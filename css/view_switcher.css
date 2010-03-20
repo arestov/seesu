@@ -70,7 +70,9 @@
 	display:none;
 }
 
-
+#search-desciption{
+	display:none;
+}
 
 
 .show-start{
@@ -95,12 +97,16 @@
 .show-search{
 	
 	}
+	.show-search #search-desciption{
+		display:block;
+	}
 	.show-search .start-screen{
 		display:block;
 		}
 		.show-search .nav-start{
 			display:inline;
 			}
+			
 .show-search-results {
 
 	}

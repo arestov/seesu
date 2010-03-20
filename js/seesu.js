@@ -344,12 +344,15 @@ var show_artist_info = function(r){
 	}
 	artsBio.parent().removeClass('background-changes');
 }
-var update_artist_info = function(artist,nav){
+var update_artist_info = function(artist, not_show_link_to_artist_page){
 	if (testing ) {return;}
 	if (seesu.player.current_artist == artist) {
 		
 	} else {
 		artsName.text(seesu.player.current_artist = artist);
+		if (!not_show_link_to_artist_page){
+			artsName.append($('<a class="artist js-serv">top tracks</a>').data('artist', artist));
+		}
 		artsBio.html('');
 		lfm('artist.getInfo',{'artist': artist }, show_artist_info);
 	}
@@ -365,7 +368,7 @@ var set_artist_page = function (artist,with_search_results) {
 	getTopTracks(artist,function(track_list){
 		render_playlist(track_list,artsTracks);
 	});
-	update_artist_info(artist);
+	update_artist_info(artist, true);
 	
 	
 };
