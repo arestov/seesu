@@ -49,8 +49,24 @@ var show_artists_results = function(r){
 				$(ul).append(li);
 			} 
 		} else if (artists.name) {
-			var artist = artists.name;
-			set_artist_page(artist);
+			var artist = artists.name,
+				image = artists.image && artists.image[1]['#text'].replace('/serve/64/','/serve/64s/') || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+			var li = $("<li></li>");
+			var a = $("<a></a>").data('artist',artist)
+				.click(function(e){
+					var artist = $(this).data('artist');
+					set_artist_page(artist,true);
+				})
+				.click(results_mouse_click_for_enter_press);
+				
+			var span = $("<span></span>").attr({ text: artist});
+			if(image){
+				var img = $("<img/>").attr({ src: image , alt: artist });
+				$(a).append(img);
+			} 
+			$(a).append(span);
+			$(li).append(a);
+			$(ul).append(li);
 		}
 		seesu.ui.make_search_elements_index()
 	} else {
@@ -74,7 +90,7 @@ var show_tags_results = function(r){
 	
 	if (!r) {return}
 	var tags = r.results.tagmatches.tag || false; 
-	if (tags && tags.length){
+	if (tags){
 
 		$('#search-nav').text('Suggestions & search')
 		var ul = seesu.ui.tags_results_ul;
@@ -96,7 +112,7 @@ var show_tags_results = function(r){
 						var tag = $(this).data('tag');
 						render_tracks_by_artists_of_tag(tag)
 					})
-					.mouseover(results_mouse_over_for_enter_press);
+					.click(results_mouse_click_for_enter_press);
 					
 				var span = $("<span></span>").attr({ text: tag});
 				$(a).append(span);
@@ -104,18 +120,34 @@ var show_tags_results = function(r){
 				$(ul).append(li);
 			} 
 		} else if (tags.name) {
-	
+			var tag = tags.name
+			var li = $("<li></li>");
+			var a = $("<a></a>")
+				.data('tag',tag)
+				.click(function(e){
+					var tag = $(this).data('tag');
+					render_tracks_by_artists_of_tag(tag)
+				})
+				.click(results_mouse_click_for_enter_press);
+				
+			var span = $("<span></span>").attr({ text: tag});
+			$(a).append(span);
+			$(li).append(a);
+			$(ul).append(li);
 		}
 		seesu.ui.make_search_elements_index()
 		
+	} else {
+	
+		$("<li><a class='nothing-found'>Nothing found</a></li>").appendTo(seesu.ui.tags_results_ul);
+
 	}
 }
 var show_tracks_results = function(r){
 	seesu.ui.buttons.search_tracks.data('clone').remove();
 	if (!r) {return}
-	log(r)
 	var tracks = r.results.trackmatches.track || false; 
-	if (tracks && tracks.length){
+	if (tracks){
 
 		$('#search-nav').text('Suggestions & search')
 		var ul = seesu.ui.tracks_results_ul;
@@ -152,10 +184,39 @@ var show_tracks_results = function(r){
 				$(li).append(a);
 				$(ul).append(li);
 			} 
-		} else if (tags.name) {
-			
+		} else if (tracks.name) {
+			var track = tracks.name,
+				image = tracks.image && tracks.image[1]['#text'].replace('/serve/64/','/serve/64s/') || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png',
+				artist = tracks.artist;
+				
+				
+				var li = $("<li></li>");
+				
+				if( i == 0){
+					li.addClass('searched-bordered')
+				}
+				
+				var a = $("<a></a>")
+					.data('track_title',track)
+					.data('artist',artist)
+					.click(function(e){
+						var query = $(this).data('artist') + ' - '+ $(this).data('track_title');
+						vk_track_search(query)
+					})
+					.click(results_mouse_click_for_enter_press);
+					
+				var span = $("<span></span>").attr({ text: artist + ' - ' + track});
+				if(image){
+					var img = $("<img/>").attr({ src: image , alt: artist });
+					$(a).append(img);
+				}
+				$(a).append(span);
+				$(li).append(a);
+				$(ul).append(li);
 		}
 		seesu.ui.make_search_elements_index()
+	} else{
+		$("<li><a class='nothing-found'>Nothing found</a></li>").appendTo(seesu.ui.tracks_results_ul);
 	}
 }
 
@@ -207,6 +268,10 @@ seesu.ui.buttons = {
 	
 }
 var fast_suggestion_ui = function(r){
+	if (!r) {return false}
+	
+	var source_query = r.responseHeader.params.originalq;
+	
 	
 	var sugg_arts = [];
 	var sugg_tracks = [];
@@ -231,12 +296,15 @@ var fast_suggestion_ui = function(r){
 	
 	var fast_enter = null;
 	
+	var clone = null;
 	
 	$(searchres).append('<h4>Artists</h4>');
+	clone = seesu.ui.buttons.search_artists.clone(true);
+	seesu.ui.buttons.search_artists.data('clone', clone);
+	
+	
 	var ul_arts = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
 	if (sugg_arts && sugg_arts.length){
-		
-		
 		for (var i=0, l = sugg_arts.length; i < l; i++) {
 			var artist = sugg_arts[i].artist;
 			var image =  sugg_arts[i].image ? 'http://userserve-ak.last.fm/serve/34s/' + sugg_arts[i].image : 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
@@ -261,15 +329,19 @@ var fast_suggestion_ui = function(r){
 			
 			ul_arts.append(li);
 		};
-		
+		$('<li></li').append(clone.text('find more «' + source_query + '» artists')).appendTo(ul_arts);
+	} else{
+		$('<li></li').append(clone.addClass("search-button").text('Search «' +source_query + '» in artists')).appendTo(ul_arts);
 	}
 	$(searchres).append(ul_arts);
-	var clone = seesu.ui.buttons.search_artists.clone(true);
-	seesu.ui.buttons.search_artists.data('clone', clone);
-	$('<li></li').append(clone).appendTo(ul_arts);
+	
+	
 	
 	
 	$(searchres).append('<h4>Tracks</h4>');
+	 clone = seesu.ui.buttons.search_tracks.clone(true);
+	seesu.ui.buttons.search_tracks.data('clone', clone);
+	
 	var ul_tracks = seesu.ui.tracks_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
 	if (sugg_tracks && sugg_tracks.length){
 		
@@ -303,20 +375,25 @@ var fast_suggestion_ui = function(r){
 			li.append(a);
 			ul_tracks.append(li);
 		};
-		
+		$('<li></li').append(clone.text('find more «' + source_query + '» tracks')).appendTo(ul_tracks);
+	} else{
+		$('<li></li').append(clone.addClass("search-button").text('Search «' +source_query + '» in tracks')).appendTo(ul_tracks);
 	}
 	$(searchres).append(ul_tracks);
 	
 
 	
-	var clone = seesu.ui.buttons.search_tracks.clone(true);
-	seesu.ui.buttons.search_tracks.data('clone', clone);
-	$('<li></li').append(clone).appendTo(ul_tracks);
+	
+	
 
 	
 	
 	
 	$(searchres).append('<h4>Tags</h4>');
+	clone = seesu.ui.buttons.search_tags.clone(true);
+	seesu.ui.buttons.search_tags.data('clone', clone);
+	
+	
 	var ul_tags = seesu.ui.tags_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
 	if (sugg_tags && sugg_tags.length){
 		for (var i=0, l = sugg_tags.length; i < l; i++) {
@@ -340,13 +417,15 @@ var fast_suggestion_ui = function(r){
 			li.append(a);
 			ul_tags.append(li);
 		};
-		
+		$('<li></li').append(clone.text('find more «' + source_query + '» tags')).appendTo(ul_tags);
+	} else{
+		$('<li></li').append(clone.addClass("search-button").text('Search «' +source_query + '» in tags')).appendTo(ul_tags);
 	}
+		
 	$(searchres).append(ul_tags);
 	
-	var clone = seesu.ui.buttons.search_tags.clone(true);
-	seesu.ui.buttons.search_tags.data('clone', clone);
-	$('<li></li').append(clone).appendTo(ul_tags);
+
+	
 	
 	
 	
@@ -381,7 +460,7 @@ $(function(){
 	
 	seesu.ui.search_form = $('form#search');
 	if (seesu.ui.search_form) {
-		$(document).keyup(function(e){
+		$(document).keypress(function(e){
 			
 			if (!slider.className.match(/show-search-results/)) {return}
 			
