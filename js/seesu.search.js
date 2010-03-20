@@ -1,4 +1,4 @@
-var results_mouse_over_for_enter_press = function(e){
+var results_mouse_click_for_enter_press = function(e){
 	var node_name = e.target.nodeName;
 	if ((node_name != 'A') && (node_name != 'BUTTON')){return false;}
 	var active_node = seesu.ui.search_form.data('node_for_enter_press');
@@ -37,7 +37,7 @@ var show_artists_results = function(r){
 						var artist = $(this).data('artist');
 						set_artist_page(artist,true);
 					})
-					.mouseover(results_mouse_over_for_enter_press);
+					.click(results_mouse_click_for_enter_press);
 					
 				var span = $("<span></span>").attr({ text: artist});
 				if(image){
@@ -141,7 +141,7 @@ var show_tracks_results = function(r){
 						var query = $(this).data('artist') + ' - '+ $(this).data('track_title');
 						vk_track_search(query)
 					})
-					.mouseover(results_mouse_over_for_enter_press);
+					.click(results_mouse_click_for_enter_press);
 					
 				var span = $("<span></span>").attr({ text: artist + ' - ' + track});
 				if(image){
@@ -171,7 +171,7 @@ seesu.ui.buttons = {
 					artistsearch(query);
 				}
 			})
-			.mouseover(results_mouse_over_for_enter_press),
+			.click(results_mouse_click_for_enter_press),
 		
 	"search_tags":  
 		$('<button type="submit" name="type" value="tag" id="search-tag">Get tags</button>')
@@ -183,7 +183,7 @@ seesu.ui.buttons = {
 				}
 	
 			})
-			.mouseover(results_mouse_over_for_enter_press),
+			.click(results_mouse_click_for_enter_press),
 	"search_tracks": $
 		('<button type="submit" name="type" value="track" id="search-track">Get tracks</button>')
 			.click(function(e){
@@ -193,7 +193,7 @@ seesu.ui.buttons = {
 					track_search(query)
 				}
 			})
-			.mouseover(results_mouse_over_for_enter_press),
+			.click(results_mouse_click_for_enter_press),
 	"search_vkontakte": 
 		$('<button type="submit" name="type" value="vk_track" id="search-vk-track">Use dirty search</button>')
 			.click(function(e){
@@ -203,7 +203,7 @@ seesu.ui.buttons = {
 					vk_track_search(query)
 				}
 			})
-			.mouseover(results_mouse_over_for_enter_press)
+			.click(results_mouse_click_for_enter_press)
 	
 }
 var fast_suggestion_ui = function(r){
@@ -248,7 +248,7 @@ var fast_suggestion_ui = function(r){
 					var artist = $(this).data('artist');
 					set_artist_page(artist,true);
 				})
-				.mouseover(results_mouse_over_for_enter_press);
+				.click(results_mouse_click_for_enter_press);
 			var span = $("<span></span>").html(artist);
 			if(image){
 				var img = $("<img/>").attr({ src: image , alt: artist });
@@ -286,7 +286,7 @@ var fast_suggestion_ui = function(r){
 					var track_search_query = $(this).data('artist') + ' - ' +$(this).data('track_title');
 					vk_track_search(track_search_query)
 				})
-				.mouseover(results_mouse_over_for_enter_press);
+				.click(results_mouse_click_for_enter_press);
 			var span = $("<span></span>").html(artist + ' &mdash; ' + track);
 			if(image){
 				var img = $("<img/>").attr({ src: image , alt: artist });
@@ -332,7 +332,7 @@ var fast_suggestion_ui = function(r){
 					var tag = $(this).data('tag');
 					render_tracks_by_artists_of_tag(tag)
 				})
-				.mouseover(results_mouse_over_for_enter_press)
+				.click(results_mouse_click_for_enter_press)
 				.append(span);
 			
 			
@@ -381,7 +381,9 @@ $(function(){
 	
 	seesu.ui.search_form = $('form#search');
 	if (seesu.ui.search_form) {
-		$('#q').keyup(function(e){
+		$(document).keyup(function(e){
+			
+			if (!slider.className.match(/show-search-results/)) {return}
 			
 			var _key = e.keyCode;
 
