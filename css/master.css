@@ -88,7 +88,7 @@ a.waiting-full-render{
 	cursor:pointer;
 }
 a.waiting-full-render.marked-for-play{
-	border-bottom-color:#ae5d27;
+	border-bottom:1px dashed #888;
 }
 a.download-mp3{
 	text-decoration:none;
