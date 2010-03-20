@@ -43,8 +43,8 @@ vk_p.prototype = {
 		creating: function(_this){
 			_this.player_container.addClass('vk-p-initing');
 			_this.init_timeout = setTimeout(function(){
-				_this.player_container.removeClass('vk-p-initing');
-			},1000)
+				//_this.player_container.removeClass('vk-p-initing');
+			},3000)
 		},
 		init: function(_this){
 			clearTimeout(_this.init_timeout);
@@ -81,7 +81,6 @@ vk_p.prototype = {
 			{this.vk_player_events.volume(this, this.parse_volume_value(args));}
 	},
 	'create_player':function(song_url,duration){
-		
 		var _this = this;
 		this.player_holder.append(
 			_this.html
@@ -89,7 +88,6 @@ vk_p.prototype = {
 			  .replace(':volume', _this.volume)
 			  .replace('duration=210', ('duration=' + duration))
 		);
-		this.html_events.creating(_this);
 	},
 	'parse_volume_value': function(volume_value_raw){
 		var volume_level_regexp = /\"((\d{1,3}\.?\d*)|(NaN))\"/,
@@ -98,7 +96,7 @@ vk_p.prototype = {
 	},
 	'set_var': function(variable, value) {
 	  $(".vk_flash_player",this.player_holder)[0].SetVariable("audioPlayer_mc." + variable, value);
-	  log('set var to ' + $(".vk_flash_player",this.player_holder)[0])
+
 	},
 	"play_song_by_node": function (node){
 	  this.play_song_by_url(node.attr('href'), node.data('duration'));
@@ -161,6 +159,7 @@ vk_p.prototype = {
 		"play_song_by_url": function (song_url,duration){
 		  	this.player_holder.html('');
 		  	this.create_player(song_url,duration);
+			this.html_events.creating(this);
 		},
 		"play":function () {
 			this.set_var('buttonPressed', 'true');
@@ -177,6 +176,7 @@ vk_p.prototype = {
 	"flash_actions_for_sandbox":{
 		"play_song_by_url": function(song_url,duration){
 			this.send_to_player_sandbox('play_song_by_url,' + song_url + ',' + duration);
+			this.html_events.creating(this);
 		}
 		,
 		"play":function(){
@@ -204,17 +204,14 @@ vk_p.prototype = {
 		this.flash_actions.pause.apply(this, arguments);
 	},
 	"send_to_player_sandbox": function(message){
-		log('sending to sandbox')
 		//using for sending messages to flash injected in iframe
 		this.player_container[0].contentWindow.postMessage('vk_p_iframe,' + message, '*');
 	},
 	"send_to_player_source": function(message){
-		log('sending to source '+ message)
 		//using for feedback messages from iframe flash
 		this.player_source_window.postMessage('vk_p_source,' + message, '*');
 	},
 	"listen_commands_of_source": function(e){
-		log('listen source')
 		var _this = this;
 		if (e.origin.indexOf('widget://') == -1) {
 			return
@@ -226,7 +223,6 @@ vk_p.prototype = {
 		}
 	},
 	"listen_commands_of_sandbox": function(e){
-		log('listening sandbox')
 		if (e.data.match(/vk_p_source/)){
 			var commands  = e.data.replace('vk_p_source,','').split(",");
 			this.vk_player_events[commands.shift()].apply(this, [seesu.player.musicbox].concat(commands));
