@@ -196,6 +196,7 @@ if (i_f) {
 	check_iframe_vkp_init = function(e){
 		if (e.data.match(/vk_p_inited/)){
 			seesu.player.musicbox = new vk_p(false, seesu.player.player_volume, i_f);
+			$(document.body).addClass('flash-internet');
 			clearTimeout(i_f_hide_timeout)
 			i_f.css('display','');
 		}

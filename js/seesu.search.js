@@ -463,7 +463,7 @@ $(function(){
 		$(document).keypress(function(e){
 			
 			if (!slider.className.match(/show-search-results/)) {return}
-			
+			if (document.activeElement.nodeName == 'BUTTON'){return}
 			var _key = e.keyCode;
 
 			if (_key == '13'){
