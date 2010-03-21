@@ -4,13 +4,33 @@ var results_mouse_click_for_enter_press = function(e){
 	var active_node = seesu.ui.search_form.data('node_for_enter_press');
 	if (active_node) {active_node.removeClass('active');}
 	
-	seesu.ui.search_form.data('node_for_enter_press', $(e.target).addClass('active'));
+	set_node_for_enter_press($(e.target));
 }
-seesu.ui.make_search_elements_index = function(){
+var set_node_for_enter_press = function(node){
+	seesu.ui.search_form.data('node_for_enter_press', node.addClass('active'));
+	seesu.ui.search_form.data('current_node_index', node.data('search_element_index'));
+}
+seesu.ui.make_search_elements_index = function(remark_enter_press){
 	seesu.ui.search_elements = $(searchres).find('a:not(.nothing-found), button');
 	for (var i=0 , l = seesu.ui.search_elements.length; i < l; i++) {
 		$(seesu.ui.search_elements[i]).data('search_element_index', i).data('search_elements_length', l)
 	};
+	
+	
+	if (remark_enter_press) {
+		var active_node = seesu.ui.search_form.data('node_for_enter_press');
+		if (active_node) {
+			var active_index = seesu.ui.search_form.data('current_node_index');
+			var new_active_node = $(seesu.ui.search_elements[active_index]);
+			if (new_active_node) {
+				active_node.removeClass('active');
+				set_node_for_enter_press(new_active_node);
+			}
+			
+		}
+	}
+	
+	
 }
 var show_artists_results = function(r){
 	seesu.ui.buttons.search_artists.data('clone').remove()
@@ -68,7 +88,7 @@ var show_artists_results = function(r){
 			$(li).append(a);
 			$(ul).append(li);
 		}
-		seesu.ui.make_search_elements_index()
+		seesu.ui.make_search_elements_index(true)
 	} else {
 	
 		$("<li><a class='nothing-found'>Nothing found</a></li>").appendTo(seesu.ui.arts_results_ul);
@@ -135,7 +155,7 @@ var show_tags_results = function(r){
 			$(li).append(a);
 			$(ul).append(li);
 		}
-		seesu.ui.make_search_elements_index()
+		seesu.ui.make_search_elements_index(true)
 		
 	} else {
 	
@@ -214,7 +234,7 @@ var show_tracks_results = function(r){
 				$(li).append(a);
 				$(ul).append(li);
 		}
-		seesu.ui.make_search_elements_index()
+		seesu.ui.make_search_elements_index(true)
 	} else{
 		$("<li><a class='nothing-found'>Nothing found</a></li>").appendTo(seesu.ui.tracks_results_ul);
 	}
@@ -321,7 +341,7 @@ var fast_suggestion_ui = function(r){
 			} 
 			a.append(span);
 			
-			if (!fast_enter && (i == 0)) {fast_enter = a.addClass('active');}
+			if (!fast_enter && (i == 0)) {fast_enter = a;}
 			li.append(a);
 			
 			ul_arts.append(li);
@@ -368,7 +388,7 @@ var fast_suggestion_ui = function(r){
 				$(a).append('<span class="sugg-track-dur">' + track_dur + '</span>');
 			}
 			a.append(span);
-			if (!fast_enter && (i == 0)) {fast_enter = a.addClass('active');}
+			if (!fast_enter && (i == 0)) {fast_enter = a;}
 			li.append(a);
 			ul_tracks.append(li);
 		};
@@ -410,7 +430,7 @@ var fast_suggestion_ui = function(r){
 				.append(span);
 			
 			
-			if (!fast_enter && (i == 0)) {fast_enter = a.addClass('active');}
+			if (!fast_enter && (i == 0)) {fast_enter = a;}
 			li.append(a);
 			ul_tags.append(li);
 		};
@@ -426,9 +446,9 @@ var fast_suggestion_ui = function(r){
 	
 	
 	
-	seesu.ui.search_form.data('node_for_enter_press', fast_enter )
 	
 	seesu.ui.make_search_elements_index();
+	set_node_for_enter_press(fast_enter);
 	
 	$('<p></p').append(seesu.ui.buttons.search_vkontakte).appendTo(searchres);
 
@@ -482,11 +502,11 @@ $(function(){
 					
 					if (el_index < (els_length -1)){
 						var new_current = el_index+1;
-						seesu.ui.search_form.data('node_for_enter_press', $(seesu.ui.search_elements[new_current]).addClass('active'))
+						set_node_for_enter_press($(seesu.ui.search_elements[new_current]))
 						
 					} else {
 						var new_current = 0;
-						seesu.ui.search_form.data('node_for_enter_press', $(seesu.ui.search_elements[new_current]).addClass('active'))
+						set_node_for_enter_press($(seesu.ui.search_elements[new_current]))
 					}
 				}
 			} else 
@@ -500,11 +520,11 @@ $(function(){
 					
 					if (el_index > 0){
 						var new_current = el_index-1;
-						seesu.ui.search_form.data('node_for_enter_press', $(seesu.ui.search_elements[new_current]).addClass('active'))
+						set_node_for_enter_press($(seesu.ui.search_elements[new_current]))
 						
 					} else {
 						var new_current = els_length-1;
-						seesu.ui.search_form.data('node_for_enter_press', $(seesu.ui.search_elements[new_current]).addClass('active'))
+						set_node_for_enter_press($(seesu.ui.search_elements[new_current]))
 					}
 				}
 			}
