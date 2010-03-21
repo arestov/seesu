@@ -65,7 +65,6 @@ seesu.ui.make_search_elements_index = function(remark_enter_press){
 	
 }
 var show_artists_results = function(r){
-	seesu.ui.buttons.search_artists.data('clone').remove()
 	if (!r) {return}
 	
 	var artists = r.results.artistmatches.artist || false; 
@@ -138,7 +137,6 @@ var track_search = function(track_query){
 	lfm('track.search',{track: track_query, limit: 15 },show_tracks_results)
 }
 var show_tags_results = function(r){
-	seesu.ui.buttons.search_tags.data('clone').remove();
 	
 	if (!r) {return}
 	var tags = r.results.tagmatches.tag || false; 
@@ -196,7 +194,6 @@ var show_tags_results = function(r){
 	}
 }
 var show_tracks_results = function(r){
-	seesu.ui.buttons.search_tracks.data('clone').remove();
 	if (!r) {return}
 	var tracks = r.results.trackmatches.track || false; 
 	if (tracks){
@@ -273,12 +270,11 @@ var show_tracks_results = function(r){
 }
 
 
-
-
 seesu.ui.buttons = {
 	"search_artists" : 
-		$('<button type="submit" name="type" value="artist" id="search-artist">Get artists</button>')
-			.click(function(){
+		$('<button type="submit" name="type" value="artist" id="search-artist"><span>Search in artists</span></button>')
+			.click(function(e){
+				$(this).parent().remove()
 				var query = searchfield.value;
 				if (query) {
 					artistsearch(query);
@@ -287,28 +283,26 @@ seesu.ui.buttons = {
 			.click(results_mouse_click_for_enter_press),
 		
 	"search_tags":  
-		$('<button type="submit" name="type" value="tag" id="search-tag">Get tags</button>')
-			.click(function(){
-				var _this = $(this);
+		$('<button type="submit" name="type" value="tag" id="search-tag"><span>Search in tags</span></button>')
+			.click(function(e){
+				$(this).parent().remove()
 				var query = searchfield.value;
 				if (query) {
 					tag_search(query)
 				}
-	
 			}),
-	"search_tracks": $
-		('<button type="submit" name="type" value="track" id="search-track">Get tracks</button>')
+	"search_tracks": 
+		$('<button type="submit" name="type" value="track" id="search-track"><span>Search in tracks</span></button>')
 			.click(function(e){
-				var _this = $(this);
+				$(this).parent().remove()
 				var query = searchfield.value;
 				if (query) {
 					track_search(query)
 				}
 			}),
 	"search_vkontakte": 
-		$('<button type="submit" name="type" value="vk_track" id="search-vk-track">Use dirty search</button>')
+		$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>Use dirty search</span></button>')
 			.click(function(e){
-				var _this = $(this);
 				var query = searchfield.value;
 				if (query) {
 					vk_track_search(query)
@@ -349,7 +343,6 @@ var fast_suggestion_ui = function(r){
 	
 	$(searchres).append('<h4>Artists</h4>');
 	clone = seesu.ui.buttons.search_artists.clone(true);
-	seesu.ui.buttons.search_artists.data('clone', clone);
 	
 	
 	var ul_arts = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
@@ -378,9 +371,9 @@ var fast_suggestion_ui = function(r){
 			
 			ul_arts.append(li);
 		};
-		$('<li></li').append(clone.text('find more «' + source_query + '» artists')).appendTo(ul_arts);
+		$('<li></li').append(clone.find('span').text('find more «' + source_query + '» artists').end()).appendTo(ul_arts);
 	} else{
-		$('<li></li').append(clone.addClass("search-button").text('Search «' +source_query + '» in artists')).appendTo(ul_arts);
+		$('<li></li').append(clone.find('span').text('Search «' +source_query + '» in artists').end().addClass("search-button")).appendTo(ul_arts);
 	}
 	if (!fast_enter) {fast_enter = clone;}
 	$(searchres).append(ul_arts);
@@ -390,7 +383,6 @@ var fast_suggestion_ui = function(r){
 	
 	$(searchres).append('<h4>Tracks</h4>');
 	 clone = seesu.ui.buttons.search_tracks.clone(true);
-	seesu.ui.buttons.search_tracks.data('clone', clone);
 	
 	var ul_tracks = seesu.ui.tracks_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
 	if (sugg_tracks && sugg_tracks.length){
@@ -425,9 +417,9 @@ var fast_suggestion_ui = function(r){
 			li.append(a);
 			ul_tracks.append(li);
 		};
-		$('<li></li').append(clone.text('find more «' + source_query + '» tracks')).appendTo(ul_tracks);
+		$('<li></li').append(clone.find('span').text('find more «' + source_query + '» tracks').end()).appendTo(ul_tracks);
 	} else{
-		$('<li></li').append(clone.addClass("search-button").text('Search «' +source_query + '» in tracks')).appendTo(ul_tracks);
+		$('<li></li').append(clone.find('span').text('Search «' +source_query + '» in tracks').end().addClass("search-button")).appendTo(ul_tracks);
 	}
 	if (!fast_enter) {fast_enter = clone;}
 	$(searchres).append(ul_tracks);
@@ -442,8 +434,6 @@ var fast_suggestion_ui = function(r){
 	
 	$(searchres).append('<h4>Tags</h4>');
 	clone = seesu.ui.buttons.search_tags.clone(true);
-	seesu.ui.buttons.search_tags.data('clone', clone);
-	
 	
 	var ul_tags = seesu.ui.tags_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
 	if (sugg_tags && sugg_tags.length){
@@ -468,9 +458,9 @@ var fast_suggestion_ui = function(r){
 			li.append(a);
 			ul_tags.append(li);
 		};
-		$('<li></li').append(clone.text('find more «' + source_query + '» tags')).appendTo(ul_tags);
+		$('<li></li').append(clone.find('span').text('find more «' + source_query + '» tags').end()).appendTo(ul_tags);
 	} else{
-		$('<li></li').append(clone.addClass("search-button").text('Search «' +source_query + '» in tags')).appendTo(ul_tags);
+		$('<li></li').append(clone.find('span').text('Search «' +source_query + '» in tags').end().addClass("search-button")).appendTo(ul_tags);
 	}
 	if (!fast_enter) {fast_enter = clone;}
 	$(searchres).append(ul_tags);
@@ -478,13 +468,13 @@ var fast_suggestion_ui = function(r){
 
 	
 	
-	
+	$('<p></p').append(seesu.ui.buttons.search_vkontakte).appendTo(searchres);
 	
 	
 	seesu.ui.make_search_elements_index();
 	set_node_for_enter_press(fast_enter);
 	
-	$('<p></p').append(seesu.ui.buttons.search_vkontakte).appendTo(searchres);
+	
 
 }
 	

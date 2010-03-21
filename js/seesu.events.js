@@ -75,8 +75,10 @@ $(function() {
 		return false;
 	  }
 	  else if (class_name.match(/similar-artists/)){
+	  	if (!clicked_node.data('clicked')){
+	  		render_tracks_by_similar_artists(clicked_node.removeClass('js-serv').data('clicked', true).data('artist'));
+	  	}
 	  	
-	  	render_tracks_by_similar_artists(clicked_node.data('artist'));
 	  }
 	  else if (class_name.match(/trackbutton/)){
 		clicked_node[0].tb_wrapper.toggleClass('tb-window');

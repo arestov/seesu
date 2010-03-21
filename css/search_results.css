@@ -18,6 +18,10 @@
 		border-bottom:1px solid #5d5d5d;
 		width:500px;
 		}
+		.search-results-holder p{
+			width:500px;
+			margin-left:1px;
+		}
 		.search-results-holder
 		ul li{
 			position:relative;
@@ -25,12 +29,11 @@
 		.search-results-holder ul li.searched-bordered{
 			border-top: 1px dashed #5d5d5d;
 			}
-		.search-results-holder ul li:first-child,
-		.search-results-holder ul li:nth-child(2){
+		.search-results-holder ul li:first-child{
 			border-top:0 !important;
 			}
-		.search-results-holder ul.results-artists a,
-		.search-results-holder ul.results-artists button{
+		.search-results-holder   a,
+		.search-results-holder   button{
 			display:block;
 			cursor:pointer;
 			overflow: hidden;
@@ -43,24 +46,22 @@
 				float:right;
 				margin:0;
 			}
-		ul.results-artists button{
-			display:block;
+		.search-results-holder button{
 			border:0;
 			text-align:right;
 			width:100%;
 			background: transparent;
-			padding:0;
-			color:#fff;
+			color:#aaa;
 		}
-		ul.results-artists button.search-button{
+		.search-results-holder button.search-button{
 			text-align:left;
 		}
-		ul.results-artists a.active,
-		ul.results-artists button.active{
+		.search-results-holder a.active,
+		.search-results-holder button.active{
 			background-color:#555  !important;
 		}
-		ul.results-artists a:hover,
-		ul.results-artists button:hover
+		.search-results-holder a:hover,
+		.search-results-holder button:hover
 		{
 			color:#f6f0e1;
 			background-color:#666  !important;
@@ -107,3 +108,10 @@
 			background:inherit  !important;
 			color:inherit  !important;
 		}
+	.search-results-holder button span{
+		border-bottom:1px dashed #5c5c5c;
+	}
+#search_result p{
+	margin:0;
+	
+	}
