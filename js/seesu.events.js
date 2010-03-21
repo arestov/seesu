@@ -1,5 +1,5 @@
 var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, play_controls, flash_secur,
-	artsHolder,artsImage,artsBio,artsTracks,artsName,artsplhld,art_tracks_w_counter,
+	artsHolder,artsImage,artsBio,artsTracks,artsName,art_tracks_w_counter,
 	captcha_img,vk_login_error;
 $(function() {
   if (lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
@@ -74,9 +74,9 @@ $(function() {
 		render_tracks_by_artists_of_tag(tag_name);
 		return false;
 	  }
-	  else if (class_name.match(/artist-list/)){
-		proxy_render_artists_tracks(clicked_node.data('artist_list'));
-		$(art_page_nav).text('Similar to «' + seesu.player.current_artist + '»');
+	  else if (class_name.match(/similar-artists/)){
+	  	
+	  	render_tracks_by_similar_artists(clicked_node.data('artist'));
 	  }
 	  else if (class_name.match(/trackbutton/)){
 		clicked_node[0].tb_wrapper.toggleClass('tb-window');
@@ -197,7 +197,6 @@ $(function() {
 	artsImage	= $('img.artist-image',artsHolder);
 	artsBio		= $('.artist-bio',artsHolder);
 	artsTracks	= $('.tracks-for-play',artsHolder);
-	artsplhld	= $('.player-holder',artsHolder);
 	art_tracks_w_counter = $('.tracks-waiting-for-search',artsHolder)
 	artsName	= $('#artist-name');
 	
