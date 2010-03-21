@@ -20,7 +20,7 @@
 		}
 		.search-results-holder
 		ul li{
-		
+			position:relative;
 			}
 		.search-results-holder ul li.searched-bordered{
 			border-top: 1px dashed #5d5d5d;

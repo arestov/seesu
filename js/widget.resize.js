@@ -96,11 +96,11 @@ window.addEventListener( 'load' , resizeWidg, false);
 var log;
 if (opera && opera.postError ){ 
 	log = function(text){
-		if (typeof text === 'string'){
-			opera.postError.apply(opera, arguments)
-		} else{
+		if (typeof text === 'object'){
 			arguments[0] = JSON.stringify(arguments[0]);
 			opera.postError('object');
+			opera.postError.apply(opera, arguments)
+		} else {
 			opera.postError.apply(opera, arguments)
 		}
 		

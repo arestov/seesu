@@ -6,9 +6,41 @@ var results_mouse_click_for_enter_press = function(e){
 	
 	set_node_for_enter_press($(e.target));
 }
-var set_node_for_enter_press = function(node){
+$(function(){
+	seesu.ui.scrolling_viewport = $('#screens');
+})
+var set_node_for_enter_press = function(node, scroll_to_node){
+	if (!node){return false}
 	seesu.ui.search_form.data('node_for_enter_press', node.addClass('active'));
 	seesu.ui.search_form.data('current_node_index', node.data('search_element_index'));
+	
+	if (scroll_to_node){
+		log('fire ')
+		var scroll_up = seesu.ui.scrolling_viewport.scrollTop();
+		var scrolling_viewport_height = seesu.ui.scrolling_viewport.height()
+		
+		var container_postion = scroll_up + $(searchres).position().top;
+		
+		var node_position = node.parent().position().top + container_postion;
+		
+		
+		var view_pos_down = node.parent().height() + node_position;
+		var view_pos_up = node_position;
+
+		var scroll_down = scroll_up + scrolling_viewport_height;
+
+		if ( view_pos_down > scroll_down){
+			
+			var new_position =  view_pos_down - scrolling_viewport_height/2;
+			seesu.ui.scrolling_viewport.scrollTop(new_position);
+			log('scrolled down')
+		} else if (view_pos_down < scroll_up){
+			var new_position =  view_pos_down - scrolling_viewport_height/2;
+			seesu.ui.scrolling_viewport.scrollTop(new_position);
+			log('scrolled up')
+		}
+		
+	}
 }
 seesu.ui.make_search_elements_index = function(remark_enter_press){
 	seesu.ui.search_elements = $(searchres).find('a:not(.nothing-found), button');
@@ -341,7 +373,7 @@ var fast_suggestion_ui = function(r){
 			} 
 			a.append(span);
 			
-			if (!fast_enter && (i == 0)) {fast_enter = a;}
+			if ((i == 0) && ( !fast_enter || fast_enter.is('button') )) {fast_enter = a;}
 			li.append(a);
 			
 			ul_arts.append(li);
@@ -350,6 +382,7 @@ var fast_suggestion_ui = function(r){
 	} else{
 		$('<li></li').append(clone.addClass("search-button").text('Search «' +source_query + '» in artists')).appendTo(ul_arts);
 	}
+	if (!fast_enter) {fast_enter = clone;}
 	$(searchres).append(ul_arts);
 	
 	
@@ -388,7 +421,7 @@ var fast_suggestion_ui = function(r){
 				$(a).append('<span class="sugg-track-dur">' + track_dur + '</span>');
 			}
 			a.append(span);
-			if (!fast_enter && (i == 0)) {fast_enter = a;}
+			if ((i == 0) && ( !fast_enter || fast_enter.is('button') )) {fast_enter = a;}
 			li.append(a);
 			ul_tracks.append(li);
 		};
@@ -396,6 +429,7 @@ var fast_suggestion_ui = function(r){
 	} else{
 		$('<li></li').append(clone.addClass("search-button").text('Search «' +source_query + '» in tracks')).appendTo(ul_tracks);
 	}
+	if (!fast_enter) {fast_enter = clone;}
 	$(searchres).append(ul_tracks);
 	
 
@@ -430,7 +464,7 @@ var fast_suggestion_ui = function(r){
 				.append(span);
 			
 			
-			if (!fast_enter && (i == 0)) {fast_enter = a;}
+			if ((i == 0) && ( !fast_enter || fast_enter.is('button') )) {fast_enter = a;}
 			li.append(a);
 			ul_tags.append(li);
 		};
@@ -438,7 +472,7 @@ var fast_suggestion_ui = function(r){
 	} else{
 		$('<li></li').append(clone.addClass("search-button").text('Search «' +source_query + '» in tags')).appendTo(ul_tags);
 	}
-		
+	if (!fast_enter) {fast_enter = clone;}
 	$(searchres).append(ul_tags);
 	
 
@@ -502,11 +536,11 @@ $(function(){
 					
 					if (el_index < (els_length -1)){
 						var new_current = el_index+1;
-						set_node_for_enter_press($(seesu.ui.search_elements[new_current]))
+						set_node_for_enter_press($(seesu.ui.search_elements[new_current]), true)
 						
 					} else {
 						var new_current = 0;
-						set_node_for_enter_press($(seesu.ui.search_elements[new_current]))
+						set_node_for_enter_press($(seesu.ui.search_elements[new_current]), true)
 					}
 				}
 			} else 
@@ -520,11 +554,11 @@ $(function(){
 					
 					if (el_index > 0){
 						var new_current = el_index-1;
-						set_node_for_enter_press($(seesu.ui.search_elements[new_current]))
+						set_node_for_enter_press($(seesu.ui.search_elements[new_current]), true)
 						
 					} else {
 						var new_current = els_length-1;
-						set_node_for_enter_press($(seesu.ui.search_elements[new_current]))
+						set_node_for_enter_press($(seesu.ui.search_elements[new_current]), true)
 					}
 				}
 			}
