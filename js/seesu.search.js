@@ -11,11 +11,11 @@ $(function(){
 })
 var set_node_for_enter_press = function(node, scroll_to_node){
 	if (!node){return false}
+	
 	seesu.ui.search_form.data('node_for_enter_press', node.addClass('active'));
 	seesu.ui.search_form.data('current_node_index', node.data('search_element_index'));
 	
 	if (scroll_to_node){
-		log('fire ')
 		var scroll_up = seesu.ui.scrolling_viewport.scrollTop();
 		var scrolling_viewport_height = seesu.ui.scrolling_viewport.height()
 		
@@ -33,11 +33,9 @@ var set_node_for_enter_press = function(node, scroll_to_node){
 			
 			var new_position =  view_pos_down - scrolling_viewport_height/2;
 			seesu.ui.scrolling_viewport.scrollTop(new_position);
-			log('scrolled down')
 		} else if (view_pos_down < scroll_up){
 			var new_position =  view_pos_down - scrolling_viewport_height/2;
 			seesu.ui.scrolling_viewport.scrollTop(new_position);
-			log('scrolled up')
 		}
 		
 	}
@@ -279,8 +277,7 @@ seesu.ui.buttons = {
 				if (query) {
 					artistsearch(query);
 				}
-			})
-			.click(results_mouse_click_for_enter_press),
+			}),
 		
 	"search_tags":  
 		$('<button type="submit" name="type" value="tag" id="search-tag"><span>Search in tags</span></button>')
