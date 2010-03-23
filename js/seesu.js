@@ -372,7 +372,6 @@ var update_artist_info = function(artist, not_show_link_to_artist_page){
 		if (!not_show_link_to_artist_page){
 			artsName.append($('<a class="artist js-serv">top tracks</a>').data('artist', artist));
 		}
-		artsBio.html('');
 		lfm('artist.getInfo',{'artist': artist }, show_artist_info);
 	}
 }

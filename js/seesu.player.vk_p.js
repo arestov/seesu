@@ -1,6 +1,6 @@
 //vkontakte.ru player
-var vk_p = function(flash_node_holder,volume,iframe){
-	this.volume = volume;
+var vk_p = function(flash_node_holder,start_volume,iframe){
+	this.volume = start_volume;
 	var _this = this;
 	if (flash_node_holder) {this.player_holder = flash_node_holder};
 	if (iframe) {
@@ -125,6 +125,7 @@ vk_p.prototype = {
 				seesu.player.call_event(STOPPED);
 			},
 			"volume": function(_this,volume_value){
+				_this.volume = volume_value;
 				seesu.player.call_event(VOLUME, volume_value);
 			}
 		}
@@ -150,6 +151,7 @@ vk_p.prototype = {
 				_this.send_to_player_source('stopped');
 			},
 			"volume": function(_this, volume_value){
+				_this.volume = volume_value;
 				_this.send_to_player_source('volume,'+volume_value);
 			}
 		}
