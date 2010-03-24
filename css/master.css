@@ -146,17 +146,17 @@ a.song{
 .tracks-for-play .play-controls a{
 	float:left;
 }
-.tracks-for-play .play-controls .play_next{
+.play-control.play{
+	top:-17px;
+	left:0;
 	position:absolute;
-	bottom:-20px;
-	left:50%;
-	margin-left:-10px;
+	
 }
-.tracks-for-play .play-controls .play_prev{
+.play-control.stop{
+	left:0;
+	bottom:-17px;
 	position:absolute;
-	left:50%;
-	margin-left:-10px;
-	top:-20px;
+	
 }
 .tracks-for-play .active-play .play-controls{
 	display:block;
@@ -164,8 +164,8 @@ a.song{
 .tracks-for-play .play-controls div{
 	position:absolute;
 	right:6px;
-	top:0;
-	width: 60px;
+	top:-2px;
+	width: 25px;
 }
 .tracks-for-play .active-play{
 	position:relative;
