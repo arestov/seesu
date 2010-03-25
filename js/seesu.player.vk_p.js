@@ -43,17 +43,17 @@ vk_p.prototype = {
 		creating: function(_this){
 			_this.player_container.addClass('vk-p-initing');
 			_this.init_timeout = setTimeout(function(){
-				//_this.player_container.removeClass('vk-p-initing');
-			},3000)
+				_this.player_container.removeClass('vk-p-initing');
+			},1500)
 		},
 		init: function(_this){
 			clearTimeout(_this.init_timeout);
 			_this.player_container.removeClass('vk-p-initing');
 		},
 		moving: function(_this,node){
-			var top = node.parent().position().top;
+			var parent_node = node.parent()
+			var top = parent_node.position().top + parent_node.height();
 			_this.pl_h_style.html('.player-holder,#i_f {top: ' + top + 'px}');
-			node[0].parentNode.appendChild(track_buttons[0]);
 		}
 		
 	},

@@ -6,7 +6,8 @@
 	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/view_switcher.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/search_results.css" type="text/css" media="screen" />
-
+	<link rel="stylesheet" href="css/player.css" type="text/css" media="screen" />
+	
 	<script type="text/javascript" src="js/json2.min.js"></script>
 	<script type="text/javascript" src="js/md5-min.js"></script>
 	<script type="text/javascript" src="js/jquery-1.4.2.min.js" class="for-iframe"></script>
@@ -57,7 +58,102 @@
 			<div class="screens" id="screens">
 				<div class="start-screen">
 					
+					
+					
+					
 					<div class="search-start">
+						
+						<style type="text/css" media="screen">
+							.butmen{
+								margin:50px 50px;
+								position:relative;
+								}
+							.butmen-highlighting{
+								
+								}
+								.butmen-highlighting .butmen-hlts{
+									display:block;
+								}
+								
+							.butmen-butting{
+								
+								}
+								.butmen-butting .butmen-butts{
+									display:block;
+									}	
+									
+									
+							.butmen-butts{
+								position:absolute;
+								top:0;
+								display:none;
+								}
+								.butmen-butts li{
+									position:absolute;
+								}
+							.butmen-butt-left{
+								left:-30px;
+								}
+							.butmen-hlts{
+								position:absolute;
+								top:0;
+								left:0;
+								display:none;
+								}
+						</style>
+						
+						<dl class="butmen">
+							<dt class="main-button">
+								<a href="">aaa</a>
+							</dt>
+							<dd class="butmen-hlts">
+								<ul>
+									<li class="butmen-hlt-top">#</li>
+									<li class="butmen-hlt-right">#</li>
+									<li class="butmen-hlt-bottom">#</li>
+									<li class="butmen-hlt-left">#</li>
+								<ul>
+							</dd>
+							<dd class="butmen-butts">
+								<ul>
+									<li class="butmen-butt-left">left</li>
+								</ul>
+							</dd>
+						</dl>
+						<script type="text/javascript" charset="utf-8">
+							$('.butmen')
+							.mousedown(function(e){
+								var _this = $(this);
+								
+								_this.addClass('butmen-highlighting');
+								
+								$('dt.main-button', this).mouseleave(function(e){
+									_this.removeClass('butmen-highlighting').addClass('butmen-butting');
+									
+									
+									$(document).mouseup(function(e){
+										_this.removeClass('butmen-butting');
+										$(document).unbind('mouseup')
+									})
+									
+									$(this).unbind('mouseleave');
+									
+									
+								});
+								
+								
+								
+							})
+							.mouseup(function(e){
+								
+								var _this = $(this);
+								_this.removeClass('butmen-butting');
+								
+							})
+							.mousemove(function(e){
+								e.target.ownerDocument.defaultView.getSelection().removeAllRanges();
+							});
+						</script>
 						<form id="search" name="search">
 							<p id="search-p"><label><span>Search</span><input type="text" name="q" id="q" size="50"  autocomplete="off"/></label></p>
 							<p id="search-desciption">Use keyboard: tab, enter, arrows up and down</p>
@@ -107,7 +203,7 @@
 						</div>
 						<div class="artist-bio"></div>
 					</div>
-					<div class="pl-holder">
+					<div class="pl-holder track-zoom">
 						<div class="play-controls" >
 							<div>
 								<a class="play-control stop">

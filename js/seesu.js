@@ -165,7 +165,7 @@ var render_playlist = function(vk_music_list,container) { // if links present th
 			.attr(attr).data('play_order', i),
 			li = document.createElement('li');
 		track.data('artist_name', vk_music_list[i].artist).data('track_title', vk_music_list[i].track );
-		$(li).append(track).append(play_controls.clone());
+		$(li).append(track);
 		
 
 		if (mp3links) {
@@ -173,6 +173,7 @@ var render_playlist = function(vk_music_list,container) { // if links present th
 		} else {
 			linkNodes.push(track);
 		}
+		$(li).append(track_zoom.clone());
 		$(ul).append(li);		
 	}
 

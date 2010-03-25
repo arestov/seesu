@@ -1,4 +1,4 @@
-var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, play_controls, flash_secur,
+var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, flash_secur,
 	artsHolder,artsImage,artsBio,artsTracks,artsName,art_tracks_w_counter,
 	captcha_img,vk_login_error;
 $(function() {
@@ -81,7 +81,7 @@ $(function() {
 	  	
 	  }
 	  else if (class_name.match(/trackbutton/)){
-		clicked_node[0].tb_wrapper.toggleClass('tb-window');
+		clicked_node.parent().toggleClass('tb-window');
 	  } 
 	} else if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
 		var class_name = node.parentNode.className;
@@ -117,7 +117,7 @@ $(function() {
 			}
 		} 
 		else if (class_name.match(/tb-mess-wrap-close/)){
-			clicked_node[0].tb_wrapper.removeClass('tb-window');
+			clicked_node.parents('li').removeClass('tb-window');
 		}
 		else if (class_name.match(/login-lastfm-button/)){
 
@@ -167,7 +167,7 @@ $(function() {
 	}
 	
 	var wgt_urli = $('#widget-url').val(location.href);
-	play_controls = $('.play-controls');
+	track_zoom = $('.track-zoom');
 	
   $('#close-widget').click(function(){
     window.close();

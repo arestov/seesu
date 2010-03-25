@@ -167,6 +167,10 @@ seesu.player.events[VOLUME] = function(volume_value) {
 function song_click(node) {
   seesu.player.set_current_song(node);
   seesu.player.current_playlist = node.data('link_to_playlist');
+  $(document.body).toggleClass('track-zoomed')
+
+
+
   return false;
 }
 
