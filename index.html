@@ -21,11 +21,14 @@
 	<script type="text/javascript" src="js/network.vk.api.js"></script>
 	<script type="text/javascript" src="js/network.lastfm.js"></script>
 	
+	
 	<script type="text/javascript" src="js/seesu.js"></script>
 	<script type="text/javascript" src="js/seesu.search.js"></script>
 	<script type="text/javascript" src="js/seesu.player.vk_p.js" class="for-iframe"></script>
-	<script type="text/javascript" src="js/seesu.player.js"></script>	
-	<script type="text/javascript" src="js/seesu.events.js"></script>  
+	<script type="text/javascript" src="js/seesu.player.js"></script>
+	<script type="text/javascript" src="js/seesu.events.js"></script>
+	
+	<script type="text/javascript" src="js/buttmen.js"></script>
   </head>
   
   <body>
@@ -64,39 +67,39 @@
 					<div class="search-start">
 						
 						<style type="text/css" media="screen">
-							.butmen{
+							.buttmen{
 								margin:50px 50px;
 								position:relative;
 								width:20px;
 								height:20px;
 								
 								}
-								.butmen .main-button{
+								.buttmen .main-button{
 									display:block;
 									height:20px;
 									width:20px;
 									outline: 1px solid #444;
 									}
-							.butmen-highlighting{
+							.buttmen-highlighting{
 								
 								}
-								.butmen-highlighting .butmen-hlts{
+								.buttmen-highlighting .buttmen-hlts{
 									display:block;
 								}
 								
-							.butmen-butting{
+							.buttmen-butting{
 								
 								}
-								.butmen-butting .butmen-butts{
+								.buttmen-butting .buttmen-butts{
 									display:block;
 									}	
 									
 									
-							.butmen-butts{
+							.buttmen-butts{
 
 								display:none;
 								}
-								.butmen-butts li{
+								.buttmen-butts li{
 									position:absolute;
 									width:20px;
 									height:20px;
@@ -104,25 +107,25 @@
 									left:0;
 									background:#333;
 								}
-								.butmen-butts .butmen-butt-top{
+								.buttmen-butts .buttmen-butt-top{
 									top:-20px;
 									
 									}
-								.butmen-butts .butmen-butt-right{
+								.buttmen-butts .buttmen-butt-right{
 									right:-20px;
 									left:auto;
 									}
-								.butmen-butts .butmen-butt-bottom{
+								.buttmen-butts .buttmen-butt-bottom{
 									top:auto;
 									bottom:-20px;
 									}
-								.butmen-butts .butmen-butt-left{
+								.buttmen-butts .buttmen-butt-left{
 									left:-20px;
 									}
-							.butmen-hlts{
+							.buttmen-hlts{
 								display:none;
 								}
-								.butmen-hlts li{
+								.buttmen-hlts li{
 									position:absolute;
 									width:20px;
 									height:20px;
@@ -132,129 +135,44 @@
 									opacity:0.5;
 									text-align:center;
 								}
-								.butmen-hlts .butmen-hlt-top{
+								.buttmen-hlts .buttmen-hlt-top{
 									top:-20px;
 									
 									}
-								.butmen-hlts .butmen-hlt-right{
+								.buttmen-hlts .buttmen-hlt-right{
 									right:-20px;
 									left:auto;
 									}
-								.butmen-hlts .butmen-hlt-bottom{
+								.buttmen-hlts .buttmen-hlt-bottom{
 									top:auto;
 									bottom:-20px;
 									}
-								.butmen-hlts .butmen-hlt-left{
+								.buttmen-hlts .buttmen-hlt-left{
 									left:-20px;
 									}
 						</style>
 						
-						<dl class="butmen">
+						<dl class="buttmen">
 							<dt class="main-button">
 								<a href="">aaa</a>
 							</dt>
-							<dd class="butmen-hlts">
+							<dd class="buttmen-hlts">
 								<ul>
-									<li class="butmen-hlt-top"></li>
-									<li class="butmen-hlt-right"></li>
-									<li class="butmen-hlt-bottom"></li>
-									<li class="butmen-hlt-left"></li>
+									<li class="buttmen-hlt-top"></li>
+									<li class="buttmen-hlt-right"></li>
+									<li class="buttmen-hlt-bottom"></li>
+									<li class="buttmen-hlt-left"></li>
 								<ul>
 							</dd>
-							<dd class="butmen-butts">
+							<dd class="buttmen-butts">
 								<ul>
-									<li class="butmen-butt-top">top</li>
-									<li class="butmen-butt-right">right</li>
-									<li class="butmen-butt-bottom">bottom</li>
-									<li class="butmen-butt-left">left</li>
+									<li class="buttmen-butt-top">top</li>
+									<li class="buttmen-butt-right">right</li>
+									<li class="buttmen-butt-bottom">bottom</li>
+									<li class="buttmen-butt-left">left</li>
 								</ul>
 							</dd>
 						</dl>
-						<script type="text/javascript" charset="utf-8">
-							var but_hl_style = $('<style></style>').appendTo(document.documentElement.firstChild)
-							var sectors = 8;
-							var style = '		'
-							for (var i=1; i <= sectors; i++) {
-								log(i)
-								var style_ver = '\n .butmen-hlts ' + '.butmen-hlt-vertical-' + i + ' ';
-								var style_hor = '\n .butmen-hlts ' + '.butmen-hlt-horizontal-' + i + ' ';
-								log(style_ver)
-								style += style_hor + '.butmen-hlt-left {opacity:' +  (1 - 1/sectors*i) + ';}';
-								style += style_hor + '.butmen-hlt-right {opacity:' + (1/sectors*i) + ';}';
-								
-								style += style_ver + '.butmen-hlt-top {opacity:' +  (1 - 1/sectors*i) + ';}';
-								style += style_ver + '.butmen-hlt-bottom {opacity:' + (1/sectors*i) + ';}';
-							};
-							but_hl_style.html(style)
-							
-							$('.butmen')
-							.mousedown(function(e){
-								var _this = $(this);
-								var butt_hlts = _this.find('dd.butmen-hlts ul');
-								
-								
-								_this.addClass('butmen-highlighting');
-								
-								var butt_main = $('dt.main-button', this).mouseleave(function(e){
-									_this.removeClass('butmen-highlighting').addClass('butmen-butting');
-									$(this).unbind('mouseleave');
-								});
-								$(document).mouseup(function(e){
-									
-									butt_main.unbind('mouseleave');
-									setTimeout(function(){
-										_this.removeClass('butmen-butting');
-										_this.removeClass('butmen-highlighting')
-									},10);
-									$(document).unbind('mouseup')
-									$(document).unbind('mousemove')
-								})
-								
-								
-								var width = _this.width();
-								var height = _this.height();
-								var el_position = _this.offset();
-								var border_top 		= el_position.top;
-								var border_left 	= el_position.left;
-								var border_right 	= border_left + width;
-								var border_bottom 	= border_top + height;
-								
-								
-								var sector_vertical = height/sectors;
-								var sector_horizontal = width/sectors;
-								
-								$(document).mousemove(function(e){
-									var x = e.pageX;
-									var y = e.pageY;
-									if ( (x > border_left) && (x < border_right) && (y > border_top ) && (y < border_bottom)){
-										
-										var sector_y = (y - border_top)/sector_vertical;
-										
-										
-										var remainder_x = (x - border_left) % sector_horizontal;
-										var sector_x = ((x - border_left) - remainder_x)/sector_horizontal + (remainder_x ? 1 : 0);
-										
-										var remainder_y = (y - border_top) % sector_vertical;
-										var sector_y = ((y - border_top) - remainder_y)/sector_vertical + (remainder_y ? 1 : 0);
-										
-										butt_hlts.attr('class', 'butmen-hlt-vertical-' + sector_y + ' '+ 'butmen-hlt-horizontal-' + sector_x )
-										log(sector_x)
-										log(sector_y)
-									}
-									
-								})
-								
-							})
-							.mouseup(function(e){
-								
-								var _this = $(this);
-								_this.removeClass('butmen-butting');
-								
-							})
-							.mousemove(function(e){
-								e.target.ownerDocument.defaultView.getSelection().removeAllRanges();
-							});
-						</script>
 						<form id="search" name="search">
 							<p id="search-p"><label><span>Search</span><input type="text" name="q" id="q" size="50"  autocomplete="off"/></label></p>
 							<p id="search-desciption">Use keyboard: tab, enter, arrows up and down</p>
