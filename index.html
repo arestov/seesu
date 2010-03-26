@@ -100,8 +100,20 @@
 									height:20px;
 									top:0;
 									left:0;
-									background:#ddd;
+									background:#333;
 								}
+								.butmen-butts .butmen-butt-top{
+									top:-20px;
+									
+									}
+								.butmen-butts .butmen-butt-right{
+									right:-20px;
+									left:auto;
+									}
+								.butmen-butts .butmen-butt-bottom{
+									top:auto;
+									bottom:-20px;
+									}
 								.butmen-butts .butmen-butt-left{
 									left:-20px;
 									}
@@ -115,7 +127,7 @@
 									top:0;
 									left:0;
 									background:#ddd;
-									opacity:0;
+									opacity:0.5;
 								}
 								.butmen-hlts .butmen-hlt-top{
 									top:-20px;
@@ -134,7 +146,7 @@
 									}
 						</style>
 						
-						<dl class="butmen butmen-highlighting">
+						<dl class="butmen">
 							<dt class="main-button">
 								<a href="">aaa</a>
 							</dt>
@@ -148,6 +160,9 @@
 							</dd>
 							<dd class="butmen-butts">
 								<ul>
+									<li class="butmen-butt-top">top</li>
+									<li class="butmen-butt-right">right</li>
+									<li class="butmen-butt-bottom">bottom</li>
 									<li class="butmen-butt-left">left</li>
 								</ul>
 							</dd>
@@ -183,7 +198,10 @@
 								});
 								$(document).mouseup(function(e){
 									_this.removeClass('butmen-butting');
-									_this.removeClass('butmen-highlighting');
+									
+									setTimeout(function(){
+										_this.removeClass('butmen-highlighting')
+									},10);
 									$(document).unbind('mouseup')
 									$(document).unbind('mousemove')
 								})
