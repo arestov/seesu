@@ -195,13 +195,13 @@
 								
 								_this.addClass('butmen-highlighting');
 								
-								$('dt.main-button', this).mouseleave(function(e){
+								var butt_main = $('dt.main-button', this).mouseleave(function(e){
 									_this.removeClass('butmen-highlighting').addClass('butmen-butting');
 									$(this).unbind('mouseleave');
 								});
 								$(document).mouseup(function(e){
 									
-									_this.unbind('mouseleave');
+									butt_main.unbind('mouseleave');
 									setTimeout(function(){
 										_this.removeClass('butmen-butting');
 										_this.removeClass('butmen-highlighting')
