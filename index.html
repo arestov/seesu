@@ -115,6 +115,7 @@
 									top:0;
 									left:0;
 									background:#ddd;
+									opacity:0;
 								}
 								.butmen-hlts .butmen-hlt-top{
 									top:-20px;
@@ -152,9 +153,27 @@
 							</dd>
 						</dl>
 						<script type="text/javascript" charset="utf-8">
+							var but_hl_style = $('<style></style>').appendTo(document.documentElement.firstChild)
+							var sectors = 8;
+							var style = '		'
+							for (var i=1; i <= sectors; i++) {
+								log(i)
+								var style_ver = '\n .butmen-hlts ' + '.butmen-hlt-vertical-' + i + ' ';
+								var style_hor = '\n .butmen-hlts ' + '.butmen-hlt-horizontal-' + i + ' ';
+								log(style_ver)
+								style += style_hor + '.butmen-hlt-left {opacity:' +  (1 - 1/sectors*i) + ';}';
+								style += style_hor + '.butmen-hlt-right {opacity:' + (1/sectors*i) + ';}';
+								
+								style += style_ver + '.butmen-hlt-top {opacity:' +  (1 - 1/sectors*i) + ';}';
+								style += style_ver + '.butmen-hlt-bottom {opacity:' + (1/sectors*i) + ';}';
+							};
+							but_hl_style.html(style)
+							
 							$('.butmen')
 							.mousedown(function(e){
 								var _this = $(this);
+								var butt_hlts = _this.find('dd.butmen-hlts ul');
+								
 								
 								_this.addClass('butmen-highlighting');
 								
@@ -179,15 +198,24 @@
 								var border_bottom 	= border_top + height;
 								
 								
-								var sector_vertical = height/8;
-								var sector_horizontal = width/8;
+								var sector_vertical = height/sectors;
+								var sector_horizontal = width/sectors;
 								
 								$(document).mousemove(function(e){
 									var x = e.pageX;
 									var y = e.pageY;
 									if ( (x > border_left) && (x < border_right) && (y > border_top ) && (y < border_bottom)){
-										var sector_x = x/sector_horizontal;
-										var sector_y = y/sector_vertical;
+										
+										var sector_y = (y - border_top)/sector_vertical;
+										
+										
+										var remainder_x = (x - border_left) % sector_horizontal;
+										var sector_x = ((x - border_left) - remainder_x)/sector_horizontal + (remainder_x ? 1 : 0);
+										
+										var remainder_y = (y - border_top) % sector_vertical;
+										var sector_y = ((y - border_top) - remainder_y)/sector_vertical + (remainder_y ? 1 : 0);
+										
+										butt_hlts.attr('class', 'butmen-hlt-vertical-' + sector_y + ' '+ 'butmen-hlt-horizontal-' + sector_x )
 										log(sector_x)
 										log(sector_y)
 									}
