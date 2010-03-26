@@ -67,7 +67,14 @@
 							.butmen{
 								margin:50px 50px;
 								position:relative;
+								width:20px;
+								height:20px;
 								}
+								.butmen .main-button{
+									display:block;
+									height:20px;
+									width:20px;
+									}
 							.butmen-highlighting{
 								
 								}
@@ -84,41 +91,49 @@
 									
 									
 							.butmen-butts{
-								position:absolute;
-								top:0;
+
 								display:none;
 								}
 								.butmen-butts li{
 									position:absolute;
+									width:20px;
+									height:20px;
+									top:0;
+									left:0;
+									background:#ddd;
 								}
-							.butmen-butt-left{
-								left:-30px;
-								}
+								.butmen-butts .butmen-butt-left{
+									left:-20px;
+									}
 							.butmen-hlts{
-								position:absolute;
-								top:0;
-								left:0;
 								display:none;
 								}
 								.butmen-hlts li{
 									position:absolute;
+									width:20px;
+									height:20px;
+									top:0;
+									left:0;
+									background:#ddd;
 								}
-								.butmen-hlt-top{
+								.butmen-hlts .butmen-hlt-top{
 									top:-20px;
 									
 									}
-								.butmen-hlt-right{
+								.butmen-hlts .butmen-hlt-right{
 									right:-20px;
+									left:auto;
 									}
-								.butmen-hlt-bottom{
+								.butmen-hlts .butmen-hlt-bottom{
+									top:auto;
 									bottom:-20px;
 									}
-								.butmen-hlt-left{
+								.butmen-hlts .butmen-hlt-left{
 									left:-20px;
 									}
 						</style>
 						
-						<dl class="butmen">
+						<dl class="butmen butmen-highlighting">
 							<dt class="main-button">
 								<a href="">aaa</a>
 							</dt>
@@ -145,19 +160,39 @@
 								
 								$('dt.main-button', this).mouseleave(function(e){
 									_this.removeClass('butmen-highlighting').addClass('butmen-butting');
-									
-									
-									$(document).mouseup(function(e){
-										_this.removeClass('butmen-butting');
-										$(document).unbind('mouseup')
-									})
-									
 									$(this).unbind('mouseleave');
-									
-									
 								});
+								$(document).mouseup(function(e){
+									_this.removeClass('butmen-butting');
+									_this.removeClass('butmen-highlighting');
+									$(document).unbind('mouseup')
+									$(document).unbind('mousemove')
+								})
 								
 								
+								var width = _this.width();
+								var height = _this.height();
+								var el_position = _this.offset();
+								var border_top 		= el_position.top;
+								var border_left 	= el_position.left;
+								var border_right 	= border_left + width;
+								var border_bottom 	= border_top + height;
+								
+								
+								var sector_vertical = height/8;
+								var sector_horizontal = width/8;
+								
+								$(document).mousemove(function(e){
+									var x = e.pageX;
+									var y = e.pageY;
+									if ( (x > border_left) && (x < border_right) && (y > border_top ) && (y < border_bottom)){
+										var sector_x = x/sector_horizontal;
+										var sector_y = y/sector_vertical;
+										log(sector_x)
+										log(sector_y)
+									}
+									
+								})
 								
 							})
 							.mouseup(function(e){
