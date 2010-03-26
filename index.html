@@ -69,11 +69,13 @@
 								position:relative;
 								width:20px;
 								height:20px;
+								
 								}
 								.butmen .main-button{
 									display:block;
 									height:20px;
 									width:20px;
+									outline: 1px solid #444;
 									}
 							.butmen-highlighting{
 								
@@ -126,8 +128,9 @@
 									height:20px;
 									top:0;
 									left:0;
-									background:#ddd;
+									background:url(/i/white-dot.png) no-repeat 50% 50%;
 									opacity:0.5;
+									text-align:center;
 								}
 								.butmen-hlts .butmen-hlt-top{
 									top:-20px;
@@ -152,10 +155,10 @@
 							</dt>
 							<dd class="butmen-hlts">
 								<ul>
-									<li class="butmen-hlt-top">#</li>
-									<li class="butmen-hlt-right">#</li>
-									<li class="butmen-hlt-bottom">#</li>
-									<li class="butmen-hlt-left">#</li>
+									<li class="butmen-hlt-top"></li>
+									<li class="butmen-hlt-right"></li>
+									<li class="butmen-hlt-bottom"></li>
+									<li class="butmen-hlt-left"></li>
 								<ul>
 							</dd>
 							<dd class="butmen-butts">
@@ -197,9 +200,10 @@
 									$(this).unbind('mouseleave');
 								});
 								$(document).mouseup(function(e){
-									_this.removeClass('butmen-butting');
+									
 									
 									setTimeout(function(){
+										_this.removeClass('butmen-butting');
 										_this.removeClass('butmen-highlighting')
 									},10);
 									$(document).unbind('mouseup')
