@@ -1,0 +1,81 @@
+.buttmen{
+	margin:50px 50px;
+	position:relative;
+	width:20px;
+	height:20px;
+	
+	}
+	.buttmen .main-button{
+		display:block;
+		height:20px;
+		width:20px;
+		}
+.buttmen-highlighting{
+	
+	}
+	.buttmen-highlighting .buttmen-hlts{
+		display:block;
+	}
+	
+.buttmen-butting{
+	
+	}
+	.buttmen-butting .buttmen-butts{
+		display:block;
+		}	
+		
+		
+.buttmen-butts{
+
+	display:none;
+	}
+	.buttmen-butts li{
+		position:absolute;
+		width:20px;
+		height:20px;
+		top:0;
+		left:0;
+	}
+	.buttmen-butts .buttmen-butt-top{
+		top:-20px;
+		
+		}
+	.buttmen-butts .buttmen-butt-right{
+		right:-20px;
+		left:auto;
+		}
+	.buttmen-butts .buttmen-butt-bottom{
+		top:auto;
+		bottom:-20px;
+		}
+	.buttmen-butts .buttmen-butt-left{
+		left:-20px;
+		}
+.buttmen-hlts{
+	display:none;
+	}
+	.buttmen-hlts li{
+		position:absolute;
+		width:20px;
+		height:20px;
+		top:0;
+		left:0;
+		background:url(/i/white-dot.png) no-repeat 50% 50%;
+		opacity:0.5;
+		text-align:center;
+	}
+	.buttmen-hlts .buttmen-hlt-top{
+		top:-20px;
+		
+		}
+	.buttmen-hlts .buttmen-hlt-right{
+		right:-20px;
+		left:auto;
+		}
+	.buttmen-hlts .buttmen-hlt-bottom{
+		top:auto;
+		bottom:-20px;
+		}
+	.buttmen-hlts .buttmen-hlt-left{
+		left:-20px;
+		}
