@@ -1,7 +1,7 @@
 
 var button_menu = function(jq_node){
 	this.node = jq_node;
-	this.sectors = 8;
+	this.sectors = 20;
 	var button_menu_this = this;
 	
 	var but_hl_style = $('<style></style>').appendTo(document.documentElement.firstChild)
@@ -37,6 +37,7 @@ var button_menu = function(jq_node){
 			setTimeout(function(){
 				_this.removeClass('buttmen-butting');
 				_this.removeClass('buttmen-highlighting');
+				butt_hlts.attr('class', '' );
 			},10);
 			
 			$(document).unbind('mouseup');

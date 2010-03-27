@@ -1,13 +1,7 @@
 .play-controls{
 	display:none;
-	height:19px;
-	width:252px;
-	opacity:0.1;
 }
-	.vk-logged-in 
-	.play-controls{
-		opacity:1;
-	}
+
 
 
 	.play-control{
@@ -95,13 +89,10 @@
 .tracks-for-play .play-controls{
 	display:none;
 	position:absolute;
-	top: 12px;
-	left:0;
-	width:auto;
+	top: -2px;
+	left:-31px;
 }
-.tracks-for-play .play-controls a{
-	float:left;
-}
+
 
 #track-buttons{
 	display:none;

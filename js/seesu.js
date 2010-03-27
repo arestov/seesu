@@ -173,7 +173,7 @@ var render_playlist = function(vk_music_list,container) { // if links present th
 		} else {
 			linkNodes.push(track);
 		}
-		$(li).append(track_zoom.clone());
+		$(li).append(play_controls.clone(true)).append(track_zoom.clone());
 		$(ul).append(li);		
 	}
 
