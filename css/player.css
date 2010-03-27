@@ -32,7 +32,7 @@
 	position:absolute;
 	z-index:-1;
 	right: 0px;
-	bottom: -60px;
+	bottom: -40px;
 	padding-left:40px;
 	
 	display:none;
@@ -65,6 +65,9 @@
 .track-zoomed {
 	
 }
+	.track-zoomed .active-play{
+		margin: 0 0 37px;
+	}
 	.track-zoomed .active-play .track-zoomin{
 		display:none;
 	}
