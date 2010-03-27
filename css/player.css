@@ -28,9 +28,7 @@
 
 
 
-.play-control{
-	display:none;
-	}
+
 .play-control.pause{
 	display:inline-block
 	}

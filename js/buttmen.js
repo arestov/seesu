@@ -8,13 +8,15 @@ var button_menu = function(jq_node){
 	
 	var style = '';
 	for (var i=1; i <= this.sectors; i++) {
-		log(i)
+		
+		var x = i;
+		var y = (((Math.atan(x - (this.sectors/2)))/Math.PI) + 0.5).toFixed(1);
 		var style_ver = '\n .buttmen-hlts ' + '.buttmen-hlt-vertical-' + i + ' ';
 		var style_hor = '\n .buttmen-hlts ' + '.buttmen-hlt-horizontal-' + i + ' ';
-		style += style_hor + '.buttmen-hlt-left {opacity:' +  (1 - 1/this.sectors*i) + ';}';
-		style += style_hor + '.buttmen-hlt-right {opacity:' + (1/this.sectors*i) + ';}';
-		style += style_ver + '.buttmen-hlt-top {opacity:' +  (1 - 1/this.sectors*i) + ';}';
-		style += style_ver + '.buttmen-hlt-bottom {opacity:' + (1/this.sectors*i) + ';}';
+		style += style_hor + '.buttmen-hlt-left {opacity:' +  (1 - y) + ';}';
+		style += style_hor + '.buttmen-hlt-right {opacity:' + (y) + ';}';
+		style += style_ver + '.buttmen-hlt-top {opacity:' +  (1 - y) + ';}';
+		style += style_ver + '.buttmen-hlt-bottom {opacity:' + (y) + ';}';
 	};
 	but_hl_style.html(style)
 	
@@ -31,7 +33,6 @@ var button_menu = function(jq_node){
 			$(this).unbind('mouseleave');
 		});
 		$(document).mouseup(function(e){
-			log('up')
 			butt_main.unbind('mouseleave');
 			setTimeout(function(){
 				_this.removeClass('buttmen-butting');
@@ -69,8 +70,6 @@ var button_menu = function(jq_node){
 				var sector_y = ((y - border_top) - remainder_y)/sector_vertical + (remainder_y ? 1 : 0);
 				
 				butt_hlts.attr('class', 'buttmen-hlt-vertical-' + sector_y + ' '+ 'buttmen-hlt-horizontal-' + sector_x )
-				log(sector_x)
-				log(sector_y)
 			}
 			
 		})

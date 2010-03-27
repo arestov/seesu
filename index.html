@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="css/view_switcher.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/search_results.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/player.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="css/buttmen.css" type="text/css" media="screen" />
 	
 	<script type="text/javascript" src="js/json2.min.js"></script>
 	<script type="text/javascript" src="js/md5-min.js"></script>
@@ -66,95 +67,13 @@
 					
 					<div class="search-start">
 						
-						<style type="text/css" media="screen">
-							.buttmen{
-								margin:50px 50px;
-								position:relative;
-								width:20px;
-								height:20px;
-								
-								}
-								.buttmen .main-button{
-									display:block;
-									height:20px;
-									width:20px;
-									outline: 1px solid #444;
-									}
-							.buttmen-highlighting{
-								
-								}
-								.buttmen-highlighting .buttmen-hlts{
-									display:block;
-								}
-								
-							.buttmen-butting{
-								
-								}
-								.buttmen-butting .buttmen-butts{
-									display:block;
-									}	
-									
-									
-							.buttmen-butts{
-
-								display:none;
-								}
-								.buttmen-butts li{
-									position:absolute;
-									width:20px;
-									height:20px;
-									top:0;
-									left:0;
-									background:#333;
-								}
-								.buttmen-butts .buttmen-butt-top{
-									top:-20px;
-									
-									}
-								.buttmen-butts .buttmen-butt-right{
-									right:-20px;
-									left:auto;
-									}
-								.buttmen-butts .buttmen-butt-bottom{
-									top:auto;
-									bottom:-20px;
-									}
-								.buttmen-butts .buttmen-butt-left{
-									left:-20px;
-									}
-							.buttmen-hlts{
-								display:none;
-								}
-								.buttmen-hlts li{
-									position:absolute;
-									width:20px;
-									height:20px;
-									top:0;
-									left:0;
-									background:url(/i/white-dot.png) no-repeat 50% 50%;
-									opacity:0.5;
-									text-align:center;
-								}
-								.buttmen-hlts .buttmen-hlt-top{
-									top:-20px;
-									
-									}
-								.buttmen-hlts .buttmen-hlt-right{
-									right:-20px;
-									left:auto;
-									}
-								.buttmen-hlts .buttmen-hlt-bottom{
-									top:auto;
-									bottom:-20px;
-									}
-								.buttmen-hlts .buttmen-hlt-left{
-									left:-20px;
-									}
-						</style>
+						
 						
 						<dl class="buttmen">
 							<dt class="main-button">
-								<a href="">aaa</a>
+								<a class="play-control pause" >
+									<img src="i/buttons_pause.png" alt="pause" class="pl-control" />
+								</a>
 							</dt>
 							<dd class="buttmen-hlts">
 								<ul>
@@ -166,10 +85,22 @@
 							</dd>
 							<dd class="buttmen-butts">
 								<ul>
-									<li class="buttmen-butt-top">top</li>
-									<li class="buttmen-butt-right">right</li>
-									<li class="buttmen-butt-bottom">bottom</li>
-									<li class="buttmen-butt-left">left</li>
+									<li class="buttmen-butt-top">
+										
+									</li>
+									<li class="buttmen-butt-right">
+										<a class="play-control stop">
+											<img src="i/buttons_stop.png" alt="stop" class="pl-control" />
+										</a>	
+									</li>
+									<li class="buttmen-butt-bottom">
+										
+									</li>
+									<li class="buttmen-butt-left">
+										<a class="play-control play">
+											<img src="i/buttons_play.png" alt="play" class="pl-control" />
+										</a>
+									</li>
 								</ul>
 							</dd>
 						</dl>
