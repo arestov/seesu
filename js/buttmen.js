@@ -36,10 +36,12 @@ var button_menu = function(jq_node){
 			butt_main.unbind('mouseleave');
 			setTimeout(function(){
 				_this.removeClass('buttmen-butting');
-				_this.removeClass('buttmen-highlighting')
+				_this.removeClass('buttmen-highlighting');
 			},10);
-			$(document).unbind('mouseup')
-			$(document).unbind('mousemove')
+			
+			$(document).unbind('mouseup');
+			$(document).unbind('mousemove');
+			return test_pressed_node(e.target, true)
 		})
 		
 		

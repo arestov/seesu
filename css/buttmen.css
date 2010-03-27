@@ -5,6 +5,14 @@
 	height:20px;
 	
 	}
+	.buttmen .buttmen-mask{
+		position:absolute;
+		width:20px;
+		height:20px;
+		left:0;
+		top:0;
+		background: url(/i/white-black-dots.png) no-repeat ;
+	}
 	.buttmen .main-button{
 		display:block;
 		height:20px;
@@ -13,12 +21,18 @@
 .buttmen-highlighting{
 	
 	}
+	.buttmen-highlighting .buttmen-mask{
+		display:none;
+	}
 	.buttmen-highlighting .buttmen-hlts{
 		display:block;
 	}
 	
 .buttmen-butting{
 	
+	}
+	.buttmen-butting .buttmen-mask{
+		display:none;
 	}
 	.buttmen-butting .buttmen-butts{
 		display:block;
