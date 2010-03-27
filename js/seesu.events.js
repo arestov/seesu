@@ -18,19 +18,7 @@ $(function() {
 	return test_pressed_node(e.target)
   });
 	flash_secur = $('#flash-secur');
-	track_buttons = $('#track-buttons');
-	if (track_buttons) {
-		var tb_wrapps = track_buttons.children('li');
 
-		var tbw_close = tb_wrapps.find('input.tb-mess-wrap-close');
-		var t_butts = tb_wrapps.children('a.trackbutton');
-
-		for (var i=0, l = tb_wrapps.length; i < l ; i++) {
-			tbw_close[i].tb_wrapper = $(tb_wrapps[i]);
-			t_butts[i].tb_wrapper = $(tb_wrapps[i]);
-		};
-		
-	}
 	
 	var wgt_urli = $('#widget-url').val(location.href);
 	track_zoom = $('.track-zoom');

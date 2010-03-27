@@ -13,6 +13,12 @@ var test_pressed_node = function(original_node, mouseup){
 			seesu.player.wainter_for_play = clicked_node;
 			return false;
 		  }
+		  else if (class_name.match(/track-zoomin/)){
+			$(document.body).addClass('track-zoomed')
+		  }
+		  else if (class_name.match(/track-zoomout/)){
+			$(document.body).removeClass('track-zoomed')
+		  }
 		  else if (class_name.match(/vk-reg-ref/)){
 			widget.openURL(vkReferer);
 			return false;

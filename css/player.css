@@ -1,5 +1,6 @@
 .play-controls{
 	display:none;
+	z-index:7;
 }
 
 
@@ -31,22 +32,52 @@
 	position:absolute;
 	z-index:-1;
 	right: 0px;
-	bottom: -40px;
+	bottom: -60px;
+	padding-left:40px;
 	
+	display:none;
 	
-	
-	top: -14px;
-	left: -29px;
-	width:25px;
-	
+	top: -15px;
+	left: -65px;
+	width:100%;
+	background:#444;
+	border:1px solid #333;
+	opacity: 0.9;
 	
 	
 	
 }
-
+.track-zoomin,
+.track-zoomout{
+	display:none;
+	position:absolute;
+	top:-2px;
+}
+	.track-zoomin{
+		right:30px;
+	}
+	.track-zoomout{
+		left:-55px;
+	}
+.active-play .track-zoomin{
+	display:block;
+}
 .track-zoomed {
 	
 }
+	.track-zoomed .active-play .track-zoomin{
+		display:none;
+	}
+	.track-zoomed .track-zoomout{
+		display:block;
+	}
+	.track-zoomed .tracks-for-play>ul>li{
+		
+	}
+	.track-zoomed .tracks-for-play li.active-play{
+		display:block;
+	}
+
 	.track-zoomed .play-control{
 		display:inline-block;
 		}
@@ -54,8 +85,9 @@
 	.track-zoomed  #play-list-holder .player-holder,
 	.track-zoomed  #play-list-holder #i_f{
 		left:auto;
+		
 		}
-	.track-zoomed .active-play #track-buttons{
+	.track-zoomed .active-play .track-buttons{
 		display:block;
 
 		}
@@ -63,16 +95,7 @@
 
 			}
 	.track-zoomed .active-play .track-zoom{
-		background:#444;
-		border:1px solid #333;
-		opacity: 0.9;
-		
-		
-		top: -15px;
-		left: -30px;
-		width:100%;
-		
-
+		display:block;
 		
 	}
 .tracks-for-play .active-play .play-controls{
@@ -94,17 +117,17 @@
 }
 
 
-#track-buttons{
+.track-buttons{
 	display:none;
 }
 
-#track-buttons{
+.track-buttons{
 	position:absolute;
 	bottom:5px;
-	left:29px;
+	left:64px;
 	height:16px;
 	}
-	#track-buttons>li{
+	.track-buttons>li{
 		float:left;
 		width:16px;
 		line-height:16px;
@@ -112,17 +135,17 @@
 		position:relative;
 		margin-right:3px;
 		}
-		#track-buttons>li>a{
+		.track-buttons>li>a{
 			font-weight:700;
 			cursor:pointer;
 			display:block;
 			text-align:center;
 			line-height:inherit;
 			}
-			#track-buttons>li>a:hover{
+			.track-buttons>li>a:hover{
 				background:#666;
 				}
-			#track-buttons>li>a:active{
+			.track-buttons>li>a:active{
 				background:#333;
 			}
 

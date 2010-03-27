@@ -173,7 +173,11 @@ var render_playlist = function(vk_music_list,container) { // if links present th
 		} else {
 			linkNodes.push(track);
 		}
-		$(li).append(play_controls.clone(true)).append(track_zoom.clone());
+		$(li)
+			.append(play_controls.clone(true))
+			.append(track_zoom.clone())
+			.append('<a class="track-zoomin js-serv">&rarr;</a>')
+			.append('<a class="track-zoomout js-serv">&larr;</a>');
 		$(ul).append(li);		
 	}
 
