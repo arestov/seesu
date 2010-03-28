@@ -42,7 +42,7 @@ var delay_vk_track_search = function(tracknode,playlist_nodes_for,reset_queue,de
 		}
 		delayed_ajax(queue_element,timeout);
 		delaying_func.queue.push(queue_element);
-		delaying_func.call_at +=  (((delaying_func.tracks_waiting_for_search % 8) == 0) ? 5000 : 1100);
+		delaying_func.call_at +=  (((delaying_func.tracks_waiting_for_search % 5) == 0) ? 5000 : 2500);
 	}
 	
 	
