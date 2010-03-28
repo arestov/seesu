@@ -5,7 +5,7 @@ var test_pressed_node = function(original_node, mouseup){
 	if (!mouseup) {
 		if(clicked_node.is('a')) {
 		  if (class_name.match(/song/)){
-			return song_click(clicked_node);
+			return seesu.player.song_click(clicked_node);
 		  }	
 		  else if (class_name.match(/waiting-full-render/)){
 			if (seesu.player.wainter_for_play) {seesu.player.wainter_for_play.removeClass('marked-for-play');}

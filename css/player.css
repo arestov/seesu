@@ -302,4 +302,8 @@ p.internet-flash-settings{
 .player-holder,#i_f{
 	height:20px;
 }
-
+#i_f_sm2{
+	width:20px;
+	height:20px;
+	border:0;
+}

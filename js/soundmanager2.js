@@ -765,13 +765,13 @@ function SoundManager(smURL, smID) {
       movieHTML = '<object id="' + smID + '" data="' + smURL + '" type="' + oEmbed.type + '" width="' + oEmbed.width + '" height="' + oEmbed.height + '"><param name="movie" value="' + smURL + '" /><param name="AllowScriptAccess" value="' + _s.allowScriptAccess + '" /><param name="quality" value="' + oEmbed.quality + '" />' + (_s.wmode?'<param name="wmode" value="' + _s.wmode + '" /> ':'') + '<param name="bgcolor" value="' + _s.bgColor + '" /><param name="allowFullScreen" value="' + oEmbed.allowFullScreen + '" />' + (_s.debugFlash?'<param name="FlashVars" value="' + oEmbed.FlashVars + '" />':'') + '<!-- --></object>';
     } else {
       oMovie = document.createElement('embed');
+      oEmbed.wmode = 'transparent'
       for (tmp in oEmbed) {
         if (oEmbed.hasOwnProperty(tmp)) {
           oMovie.setAttribute(tmp, oEmbed[tmp]);
         }
       }
     }
-
     if (_s.debugMode) {
 
       oD = document.createElement('div');
@@ -840,8 +840,8 @@ function SoundManager(smURL, smID) {
               position: 'absolute',
               width: '6px',
               height: '6px',
-              top: '-9999px',
-              left: '-9999px'
+              top: '0',
+              left: '0'
             };
           }
         }
@@ -2002,6 +2002,10 @@ function SoundManager(smURL, smID) {
 
   if (document.addEventListener) {
     document.addEventListener('DOMContentLoaded', _s.domContentLoaded, false);
+  }
+  if (document.readyState == "complete") {
+  	setTimeout(function(){ _s.domContentLoaded();},100)
+       
   }
 
 } // SoundManager()

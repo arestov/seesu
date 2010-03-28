@@ -20,7 +20,7 @@ $(function() {
 	flash_secur = $('#flash-secur');
 
 	
-	var wgt_urli = $('#widget-url').val(location.href);
+	var wgt_urli = $('#widget-url').val(location.href.replace('index.html', ''));
 	track_zoom = $('.track-zoom');
 	
   $('#close-widget').click(function(){

@@ -206,6 +206,7 @@ vk_p.prototype = {
 		this.flash_actions.pause.apply(this, arguments);
 	},
 	"send_to_player_sandbox": function(message){
+		log('to sandbox')
 		//using for sending messages to flash injected in iframe
 		this.player_container[0].contentWindow.postMessage('vk_p_iframe,' + message, '*');
 	},
@@ -214,11 +215,13 @@ vk_p.prototype = {
 		this.player_source_window.postMessage('vk_p_source,' + message, '*');
 	},
 	"listen_commands_of_source": function(e){
+		
 		var _this = this;
 		if (e.origin.indexOf('widget://') == -1) {
 			return
 		} else {
 			if (e.data.match(/vk_p_iframe/)){
+				log('from source')
 				var commands  = e.data.replace('vk_p_iframe,','').split(",");
 				this[commands.shift()].apply(this, commands);
 			}
