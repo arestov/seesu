@@ -1,7 +1,7 @@
 testing = false;
 
 var	seesu =  {
-	  version: 1.0,
+	  version: 1.2,
 	  ui: {},
 	  xhrs: {}
 	}, 
