@@ -3,8 +3,6 @@
 	z-index:7;
 }
 
-
-
 	.play-control{
 		display:inline-block;
 		cursor:pointer;
@@ -19,7 +17,11 @@
 		.play-control:active{
 			background-image:url(../i/buttons_active.png);
 			}
-
+.player-paused .play-control.pause,
+.player-stoped .play-control.stop,
+.player-played .play-control.play{
+	background-image:url(../i/buttons_active.png);
+}
 
 
 
