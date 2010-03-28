@@ -69,7 +69,7 @@ sm2_p.prototype = {
 					id: url, // required
 					url: url, // required
 					// optional sound parameters here, see Sound Properties for full list
-					volume: 50,
+					volume: _this.volume,
 					autoPlay: true,
 					onplay: function(){_this.sm2_p_events.playing(_this)},
 					onresume: function(){_this.sm2_p_events.playing(_this)},
