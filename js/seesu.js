@@ -1,7 +1,7 @@
 testing = false;
 
 var	seesu =  {
-	  version: 1.2,
+	  version: 1.0,
 	  ui: {},
 	  xhrs: {}
 	}, 
@@ -34,6 +34,7 @@ var updating_notify = function(r){
 			widget.showNotification(message, function(){
 				widget.openURL(link);
 			});
+			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"></a>')
 		}
 	}
 	log(cver);
