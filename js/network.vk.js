@@ -92,56 +92,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 	}
 	queue_element.done = true;
 }
-var delay_vk_track_search = function(tracknode,playlist_nodes_for,reset_queue,delaying_func,delay) {
-	if (!vk_logged_in) {
-		return false;
-	} else {
-		var now = (new Date()).getTime(),
-			timeout;
-		var delaying_func;
-		
-		if (reset_queue) {
-			if (delaying_func.queue && delaying_func.queue.length) {
-				
-				//if we are loading new playlist than we don't need old queue
-				for (var i = delaying_func.queue.length -1; i >= 0; i--) { //removing queue in reverse order
-					if (!delaying_func.queue[i].done) {
-						clearTimeout(delaying_func.queue[i].queue_item);
-						delaying_func.call_at -= delaying_func.queue[i].timeout;
-						art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
-					}
-				}
-			}
-			delaying_func.queue = [];
-		}
-		delaying_func.queue = delaying_func.queue || [];
-		
-		
-		art_tracks_w_counter.text(delaying_func.tracks_waiting_for_search = (delaying_func.tracks_waiting_for_search + 1) || 1);
-		
-		delaying_func.call_at = delaying_func.call_at || now;
-		if ( delaying_func.call_at && (delaying_func.call_at > now)) {
-			timeout = delaying_func.call_at - now;
-		} else {
-			timeout = 0;
-			delaying_func.call_at = now;
-		}
-		
-		var queue_element = {'timeout': timeout };
-		var delayed_ajax = function(queue_element,timeout) {
-			 queue_element.queue_item = setTimeout(function(){
-			 	delaying_func(tracknode,playlist_nodes_for,delaying_func,queue_element);
-			 },timeout);
-			
-		}
-		delayed_ajax(queue_element,timeout);
-		delaying_func.queue.push(queue_element);
-		delaying_func.call_at +=  (((delaying_func.tracks_waiting_for_search % 8) == 0) ? 5000 : 700);
-	}
-	
-	
-	return false;
-};
+
 var de_html_entity = document.createElement('div');
 var de_html = function(html_text){
 	de_html_entity.innerHTML = html_text;

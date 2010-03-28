@@ -153,6 +153,7 @@ sm2_p.prototype = {
 				_this.send_to_player_source('paused');
 			},
 			"finished": function(_this){
+				log('finished')
 				_this.send_to_player_source('finished');
 			},
 			"init": function(_this){
