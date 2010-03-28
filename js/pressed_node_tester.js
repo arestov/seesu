@@ -24,7 +24,6 @@ var test_pressed_node = function(original_node, mouseup){
 			return false;
 		  }
 		  else if (class_name.match(/flash-s$/)){
-		  	log('fss');
 			widget.openURL('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 			return false;
 		  }
@@ -118,7 +117,6 @@ var test_pressed_node = function(original_node, mouseup){
 	} else{
 		if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
 			var class_name = node.parentNode.className;
-			log('some player control')
 			if (class_name.match(/pause/)){
 				seesu.player.set_state('pause');
 				return false; 

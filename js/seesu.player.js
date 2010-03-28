@@ -208,6 +208,7 @@ if (i_f) {
 		if (e.data.match(/vk_p_inited/)){
 			seesu.player.musicbox = new vk_p(false, seesu.player.player_volume, i_f);
 			$(document.body).addClass('flash-internet');
+			player_holder.empty();
 			clearTimeout(i_f_hide_timeout)
 			i_f.css('display','');
 		}
