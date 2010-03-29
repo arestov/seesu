@@ -1,7 +1,7 @@
 testing = false;
 
 var	seesu =  {
-	  version: 1.2,
+	  version: 1.3,
 	  ui: {},
 	  xhrs: {},
 	  search_one_track: get_audme_track,
