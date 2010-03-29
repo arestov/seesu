@@ -5,7 +5,8 @@ var	seesu =  {
 	  ui: {},
 	  xhrs: {},
 	  search_one_track: get_audme_track,
-	  search_many_tracks: get_all_audme_tracks
+	  search_many_tracks: get_all_audme_tracks,
+	  delayed_search: {}
 	}, 
 	vk_logged_in,
 	wait_for_vklogin = function(){},
@@ -97,7 +98,7 @@ var make_tracklist_playable = function(track_nodes){
 				playlist_nodes_for = songNodes;
 				
 			// 2 threahs search: 1 hardcode and 3 api requests per second
-			delay_vk_track_search(node,playlist_nodes_for, (i==0),get_audme_track);
+			delay_vk_track_search(node,playlist_nodes_for, (i==0),seesu.search_one_track);
 			/*
 			if ( (i+1 == 1) || ((i % 4) == 0)) {
 				//delay_vk_track_search(node,playlist_nodes_for, ,get_vk_track);

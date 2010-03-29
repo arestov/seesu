@@ -7,30 +7,30 @@ var delay_vk_track_search = function(tracknode,playlist_nodes_for,reset_queue,de
 		var delaying_func;
 		
 		if (reset_queue) {
-			if (delaying_func.queue && delaying_func.queue.length) {
+			if (seesu.delayed_search.queue && seesu.delayed_search.queue.length) {
 				
 				//if we are loading new playlist than we don't need old queue
-				for (var i = delaying_func.queue.length -1; i >= 0; i--) { //removing queue in reverse order
-					if (!delaying_func.queue[i].done) {
-						clearTimeout(delaying_func.queue[i].queue_item);
-						delaying_func.call_at -= delaying_func.queue[i].timeout;
-						art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+				for (var i = seesu.delayed_search.queue.length -1; i >= 0; i--) { //removing queue in reverse order
+					if (!seesu.delayed_search.queue[i].done) {
+						clearTimeout(seesu.delayed_search.queue[i].queue_item);
+						seesu.delayed_search.call_at -= seesu.delayed_search.queue[i].timeout;
+						art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 					}
 				}
 			}
-			delaying_func.queue = [];
+			seesu.delayed_search.queue = [];
 		}
-		delaying_func.queue = delaying_func.queue || [];
+		seesu.delayed_search.queue = seesu.delayed_search.queue || [];
 		
 		
-		art_tracks_w_counter.text(delaying_func.tracks_waiting_for_search = (delaying_func.tracks_waiting_for_search + 1) || 1);
+		art_tracks_w_counter.text(seesu.delayed_search.tracks_waiting_for_search = (seesu.delayed_search.tracks_waiting_for_search + 1) || 1);
 		
-		delaying_func.call_at = delaying_func.call_at || now;
-		if ( delaying_func.call_at && (delaying_func.call_at > now)) {
-			timeout = delaying_func.call_at - now;
+		seesu.delayed_search.call_at = seesu.delayed_search.call_at || now;
+		if ( seesu.delayed_search.call_at && (seesu.delayed_search.call_at > now)) {
+			timeout = seesu.delayed_search.call_at - now;
 		} else {
 			timeout = 0;
-			delaying_func.call_at = now;
+			seesu.delayed_search.call_at = now;
 		}
 		
 		var queue_element = {'timeout': timeout };
@@ -41,8 +41,8 @@ var delay_vk_track_search = function(tracknode,playlist_nodes_for,reset_queue,de
 			
 		}
 		delayed_ajax(queue_element,timeout);
-		delaying_func.queue.push(queue_element);
-		delaying_func.call_at +=  (((delaying_func.tracks_waiting_for_search % 5) == 0) ? 5000 : 2500);
+		seesu.delayed_search.queue.push(queue_element);
+		seesu.delayed_search.call_at +=  (((seesu.delayed_search.tracks_waiting_for_search % 5) == 0) ? 5000 : 2500);
 	}
 	
 	
@@ -67,7 +67,7 @@ var get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_
 		  timeout: 20000,
 		  error: function(xhr){
 		  	tracknode.attr('class' , 'search-mp3-failed');
-			art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		  },
 		  success: function(_r){
 			log('audme search')
@@ -92,6 +92,8 @@ var get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_
 					
 				};
 				var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
+				log(best_track.artist + ' ' + best_track.track)
+				log(music_list)
 				make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
 				resort_playlist(playlist_nodes_for);
 			}
@@ -103,7 +105,7 @@ var get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_
 			} else {
 				tracknode.attr('class' , 'search-mp3-failed');
 			}
-			art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		  },
 		  complete: function(xhr){
 		  	//log(xhr.responseText)

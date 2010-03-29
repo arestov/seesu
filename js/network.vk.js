@@ -100,7 +100,7 @@ var de_html = function(html_text){
 }
 var search_from_list_one_track = function(array,artist,track){
 	var best = array[0],
-	worst_pr = -6; //six steps search
+	worst_pr = -7; //six steps search
 	
 	for (var i=0,l=array.length; i < l; i++) {
 		var _ar = de_html(array[i].artist),
@@ -114,21 +114,25 @@ var search_from_list_one_track = function(array,artist,track){
 			best = array[i];
 			worst_pr = -1;
 		} else
-		if ( (worst_pr < -2) && (_ar == artist.replace("The ")) && (_tr == track)){
+		if ( (worst_pr < -2) && (_ar.replace(/The /g, '') == artist.replace(/The /g, '')) && (_tr == track)){
 			best = array[i];
 			worst_pr = -2;
 		} else
-		if ( (worst_pr < -3) && (_ar.toLowerCase() == artist.replace("The ").toLowerCase()) && (_tr.toLowerCase() == track.toLowerCase())){
+		if ( (worst_pr < -3) && (_ar.replace(/The /g, '') == artist.replace(/The /g, '')) && (_tr.replace(/.mp3/g, '') == track)){
 			best = array[i];
 			worst_pr = -3;
-		} else 
-		if ( (worst_pr < -4) && _ar.match(artist) && _tr.match(track)) {
+		} else
+		if ( (worst_pr < -4) && (_ar.toLowerCase() == artist.replace("The ").toLowerCase()) && (_tr.toLowerCase() == track.toLowerCase())){
 			best = array[i];
 			worst_pr = -4;
-		} else
-		if ( (worst_pr < -5) && _ar.toLowerCase().match(artist.toLowerCase()) && _tr.toLowerCase().match(track.toLowerCase())) {
+		} else 
+		if ( (worst_pr < -5) && _ar.match(artist) && _tr.match(track)) {
 			best = array[i];
 			worst_pr = -5;
+		} else
+		if ( (worst_pr < -6) && _ar.toLowerCase().match(artist.toLowerCase()) && _tr.toLowerCase().match(track.toLowerCase())) {
+			best = array[i];
+			worst_pr = -6;
 		} 
 		
 	};
