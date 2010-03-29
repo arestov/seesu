@@ -15,7 +15,7 @@ var	seesu =  {
 		"delay":{
 			"use": 5000,
 			"audme": 5000,
-			"vk" : 2500
+			"vk" : 8000
 		},
 		"big_delay_interval":{
 			"use": 5,
