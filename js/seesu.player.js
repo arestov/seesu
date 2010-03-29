@@ -252,6 +252,7 @@ var try_to_use_iframe_sm2p = function(){
 				seesu.player.musicbox = new sm2_p(false, seesu.player.player_volume, soundManager, i_f_sm2);
 				$(document.body).addClass('flash-internet');
 				player_holder.empty();
+				i_f.remove();
 				clearTimeout(i_f_sm2_hide_timeout);
 				window.removeEventListener("message", check_iframe_sm2p_init, false);
 			}

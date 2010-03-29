@@ -35,16 +35,16 @@ var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue
 				} else {
 					tracknode.attr('class' , 'search-mp3-failed');
 				}
-				art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+				art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 			},
 			function(xhr){
 				tracknode.attr('class' , 'search-mp3-failed');
-				art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+				art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 			}
 		);
 	
 	} else {
-		art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 	}
 	queue_element.done = true;
 }
@@ -64,7 +64,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 		  },
 		  error: function(xhr){
 			tracknode.attr('class' , 'search-mp3-failed');
-			art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 			
 			log('Error, vk say: ' + xhr.responseText);
 			if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
@@ -84,11 +84,11 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 			} else {
 				tracknode.attr('class' , 'search-mp3-failed');
 			}
-			art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		  }
 		});
 	} else {
-		art_tracks_w_counter.text((delaying_func.tracks_waiting_for_search -= 1) || '');
+		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 	}
 	queue_element.done = true;
 }
