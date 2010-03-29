@@ -58,26 +58,30 @@ sm2_p.prototype = {
 	"sm2_actions": null,
 	"sm2_actions_normal" :{
 		"play_song_by_url" : function(url){
+			log(url);
 			var _this = this;
-			this.core.stopAll();
-			var current_song = this.core.getSoundById(url);
-			if (current_song) {
-				this.core.play(url);
-			} else{
-				this.core
-				.createSound({
-					id: url, // required
-					url: url, // required
-					// optional sound parameters here, see Sound Properties for full list
-					volume: _this.volume,
-					autoPlay: true,
-					onplay: function(){_this.sm2_p_events.playing(_this)},
-					onresume: function(){_this.sm2_p_events.playing(_this)},
-					onpause: function(){_this.sm2_p_events.paused(_this)},
-					onstop: function(){_this.sm2_p_events.stopped(_this)},
-					onfinish : function(){_this.sm2_p_events.finished(_this)}
-				});
+			if (this.current_song){
+				var current_song = this.core.getSoundById(this.current_song);
+				if (current_song) {
+					current_song.destruct()
+				}
 			}
+			
+				
+			
+			this.core.createSound({
+				id: url, // required
+				url: url, // required
+				// optional sound parameters here, see Sound Properties for full list
+				volume: _this.volume,
+				autoPlay: true,
+				onplay: function(){_this.sm2_p_events.playing(_this)},
+				onresume: function(){_this.sm2_p_events.playing(_this)},
+				onpause: function(){_this.sm2_p_events.paused(_this)},
+				onstop: function(){_this.sm2_p_events.stopped(_this)},
+				onfinish : function(){_this.sm2_p_events.finished(_this)}
+			});
+			
 			
 			this.current_song = url;
 		},

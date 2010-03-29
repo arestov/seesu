@@ -152,6 +152,21 @@ var has_music_copy = function(array, entity, from_position){
 		}
 	};
 }
+var parseStrToObj = function(onclickstring){
+	var b = onclickstring,
+		fname = '';
+	b = b.substring(b.indexOf('(') + 1, b.indexOf(')'));
+	var params 		= b.split(','),
+		server 		= params[1],
+		user 		= params[2],
+		duration 	= params[4];
+	while (user.length < 5) {user = '0' + user;}
+	fname = params[3];
+	fname = fname.substring(1, fname.length - 1);
+	var obj ={'sever': server, 'user' : user , 'filename' : fname, 'link' : ('http://cs' + server + '.vkontakte.ru/u' + user + '/audio/' + fname + '.mp3'), 'duration' : duration};
+	return obj;
+
+};
 var get_vk_music_list = function (r) {// vk_music_list is empty array, declared before cicle
 	if (!r.rows.match(/noResultsWhite/)) {
 		var row_nodes  = $('<div></div>').html(r.rows).find('.audioRow');
@@ -175,9 +190,9 @@ var get_vk_music_list = function (r) {// vk_music_list is empty array, declared 
 }
 
 
-var getMusic = function(trackname){
+var getMusic = function(trackname,callback){
 	if (!vk_logged_in) {
-		wait_for_vklogin = function(){getMusic(trackname)}
+		wait_for_vklogin = function(){seesu.search_many_tracks(trackname, render_playlist)}
 		return false;
 	} else {
 		$.ajax({
@@ -191,7 +206,7 @@ var getMusic = function(trackname){
 		  	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 		  },
 		  error: function(xhr){
-			
+			callback()
 			log('Вконтакте молвит: ' + xhr.responseText);
 			if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
 				
@@ -204,9 +219,10 @@ var getMusic = function(trackname){
 			log('Квантакте говорит: ' + r.summary);
 			var music_list = get_vk_music_list(r);
 			if (music_list) {
-				render_playlist(music_list, artsTracks);
+				callback(music_list);
 			} else{
 				log('Поиск не удался... :’—(');
+				callback()
 			}
 			
 		  }

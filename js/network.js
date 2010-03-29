@@ -114,3 +114,57 @@ var get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_
 
 	queue_element.done = true;
 }
+var get_all_audme_tracks = function(trackname,callback){
+	$.ajax({
+	  url: 'http://audme.ru/search/',
+	  global: false,
+	  type: "GET",
+	  dataType: "HTML",
+	  data: {
+	  	"filter": "1",
+	  	"isall": "0",
+	  	"q": trackname,
+	  	"p":1
+	  },
+	  timeout: 20000,
+	  error: function(xhr){
+	  	callback()
+	  },
+	  success: function(_r){
+		log('audme search')
+		var r_div = document.createElement('div');
+		r_div.innerHTML = _r;
+		log(_r)
+		var r = $('.playBox',r_div);
+		if (r && r.length) {
+			var music_list = [];
+			for (var i=0, l = r.length; i < l; i++) {
+				var entity = {
+					'artist'  	:$(r[i]).find('.songTitle .artist').text(),
+					'duration'	:r[i].getAttribute('dur'),
+					'link'		:r[i].getAttribute('filepath'),
+					'track'		:$(r[i]).find('.songTitle .title').text()
+					
+				};
+				if (!has_music_copy(music_list,entity)){
+					music_list.push(entity)
+				}
+				
+				
+			};
+			if (callback) {callback(music_list);}
+		}
+		
+		
+		
+		if (music_list) {
+			
+		} else {
+			callback()
+		}
+	  },
+	  complete: function(xhr){
+	  	//log(xhr.responseText)
+	  }
+	});
+}
