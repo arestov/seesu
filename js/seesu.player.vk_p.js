@@ -37,7 +37,7 @@ vk_p.prototype = {
 		'flashvars="debug=false&amp;volume=:volume&amp;duration=210&amp;' +
 		'url=:url" allowscriptaccess="always" wmode="transparent" quality="low" ' +
 		'name="vk_flash_player" class="vk_flash_player" ' +
-		'src="http://seesu.heroku.com/AudioPlayer_mini.swf" ' +
+		'src="http://vkontakte.ru/swf/AudioPlayer_mini.swf" ' +
 		'type="application/x-shockwave-flash"/>'),
 	'html_events' : {
 		creating: function(_this){

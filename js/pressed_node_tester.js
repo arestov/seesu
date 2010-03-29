@@ -70,7 +70,10 @@ var test_pressed_node = function(original_node, mouseup){
 		  }
 		  else if (class_name.match(/trackbutton/)){
 			clicked_node.parent().toggleClass('tb-window');
-		  } 
+		  }
+		  else if (class_name.match(/search-music-files/)){
+			clicked_node.parent().toggleClass('want-to-select-mp3-search');
+		  }
 		}  else if ((node.nodeName == 'INPUT')) {
 			if (class_name.match(/flash-mess-switch/)) {
 				if(clicked_node.attr('checked')) {
@@ -83,6 +86,9 @@ var test_pressed_node = function(original_node, mouseup){
 			} 
 			else if (class_name.match(/tb-mess-wrap-close/)){
 				clicked_node.parents('li').removeClass('tb-window');
+			}
+			else if(class_name.match(/mp3-search-switch-close/)){
+				clicked_node.parents('#tracks-search').removeClass('want-to-select-mp3-search')
 			}
 			else if (class_name.match(/login-lastfm-button/)){
 	
@@ -112,6 +118,14 @@ var test_pressed_node = function(original_node, mouseup){
 				widget.setPreferenceForKey('', 'lfm_scrobbling_enabled');
 				lfm_scrobble.scrobbling = false;
 				
+			}else if (class_name.match(/mp3-audme/)){
+				$(document.body).removeClass('vk-needs-login');
+				vk_logged_out();
+				
+			}else if (class_name.match(/mp3-vk/)){
+				
+				$(document.body).addClass('vk-needs-login');
+				return false
 			}
 		}
 	} else{

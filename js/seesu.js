@@ -6,12 +6,56 @@ var	seesu =  {
 	  xhrs: {},
 	  search_one_track: get_audme_track,
 	  search_many_tracks: get_all_audme_tracks,
-	  delayed_search: {}
+	  delayed_search: {
+	  	"delay_mini": {
+			"use": 2500,
+			"audme": 2500 ,
+			"vk" : 1000
+		},
+		"delay":{
+			"use": 5000,
+			"audme": 5000,
+			"vk" : 2500
+		},
+		"big_delay_interval":{
+			"use": 5,
+			"audme": 5,
+			"vk": 7
+		},
+		"switch_to_audme": function(){
+			seesu.search_one_track = get_audme_track;
+			seesu.search_many_tracks = get_all_audme_tracks;
+			seesu.delayed_search.delay_mini.use = seesu.delayed_search.delay_mini.audme;
+			seesu.delayed_search.delay.use = seesu.delayed_search.delay.audme;
+			seesu.delayed_search.big_delay_interval.use =  seesu.delayed_search.big_delay_interval.audme;
+			$('#mp3-search-switch').find('.mp3searchway').attr('checked', '').filter('#mp3-audme').attr('checked', 'checked');
+			widget.setPreferenceForKey('audme', 'mp3-search-way');
+		},
+		"switch_to_vk": function(){
+			seesu.search_one_track = get_vk_api_track;
+			seesu.search_many_tracks = getMusic;
+			seesu.delayed_search.delay_mini.use = seesu.delayed_search.delay_mini.vk;
+			seesu.delayed_search.delay.use = seesu.delayed_search.delay.vk;
+			seesu.delayed_search.big_delay_interval.use =  seesu.delayed_search.big_delay_interval.vk;
+			$('#mp3-search-switch').find('.mp3searchway').attr('checked', '').filter('#mp3-vk').attr('checked', 'checked');
+			widget.setPreferenceForKey('vk', 'mp3-search-way');
+		}
+	  }
 	}, 
 	vk_logged_in,
 	wait_for_vklogin = function(){},
 	vkReferer = '',
 	lfm_auth = {};
+if (widget.preferenceForKey('mp3-search-way') == 'vk'){
+	$(function(){
+		seesu.delayed_search.switch_to_vk();
+	})
+} else {
+	$(function(){
+		seesu.delayed_search.switch_to_audme();
+	})
+}
+
 lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;
 lfm_auth.user_name = widget.preferenceForKey('lfm_user_name') || false;
 lfm_auth.ui_logged = function(){
@@ -91,27 +135,23 @@ var resort_playlist = function(playlist_nodes_for){
 
 
 var make_tracklist_playable = function(track_nodes){
-	if (vk_logged_in) {
-		var songNodes = [];
-		for (var i=0, l =  track_nodes.length; i < l; i++) {
-			var node = track_nodes[i],
-				playlist_nodes_for = songNodes;
-				
-			// 2 threahs search: 1 hardcode and 3 api requests per second
-			delay_vk_track_search(node,playlist_nodes_for, (i==0),seesu.search_one_track);
-			/*
-			if ( (i+1 == 1) || ((i % 4) == 0)) {
-				//delay_vk_track_search(node,playlist_nodes_for, ,get_vk_track);
-			} else {
-				
-			}*/
+	
+	var songNodes = [];
+	for (var i=0, l =  track_nodes.length; i < l; i++) {
+		var node = track_nodes[i],
+			playlist_nodes_for = songNodes;
 			
-		}
-	} else {
-		wait_for_vklogin = function(){
-			make_tracklist_playable(track_nodes);
-		};
+		// 2 threahs search: 1 hardcode and 3 api requests per second
+		delay_vk_track_search(node,playlist_nodes_for, (i==0),seesu.search_one_track);
+		/*
+		if ( (i+1 == 1) || ((i % 4) == 0)) {
+			//delay_vk_track_search(node,playlist_nodes_for, ,get_vk_track);
+		} else {
+			
+		}*/
+		
 	}
+	
 };
 var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_duration){
 	var playable_node = $(node).attr({'class' : 'song js-serv', 'href' : http_link} ).data('duration', mp3_duration);

@@ -1,0 +1,46 @@
+.vk-needs-login
+.vk-login-context{
+	display:block;
+}
+.vk-login-context{
+	clear:left;
+	display:none;
+	}
+	.vk-login-context
+	.vk-captcha-context{
+		display:none;
+	}
+	.vk-needs-captcha
+	.vk-login-context
+	.vk-captcha-context{
+		display:block;
+	}
+	.vk-login-context
+	form{
+		padding-left:10px;
+	}
+	.vk-login-context
+	form
+	p{
+		overflow:hidden;
+		}
+		.vk-login-context
+		form
+		p
+		label{
+			float:left;
+			width:50px;
+			padding:2px;
+		}
+		.vk-login-context
+		form
+		p
+		span.input-place{
+			float:left;
+		}
+		.vk-login-context
+		form
+		p
+		input{
+			width:100px;
+		}

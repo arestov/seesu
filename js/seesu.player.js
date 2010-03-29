@@ -213,7 +213,7 @@ var try_to_use_iframe_vkp = function(){
 				if ((!seesu.player.musicbox) || (seesu.player.musicbox && seesu.player.musicbox.module_title != 'sm2_p') ){
 					log('2?!')
 					seesu.player.musicbox = new vk_p(false, seesu.player.player_volume, i_f);
-					$(document.body).addClass('flash-internet');
+					$(document.body).removeClass('flash-internet');
 					player_holder.empty();
 					clearTimeout(i_f_hide_timeout)
 				}
@@ -276,7 +276,8 @@ $(function() {
 	soundManager.onready(function() {
 	  if (soundManager.supported()) {
 		log('sm2 in widget ok')
-		seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager)
+		seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager);
+		$(document.body).addClass('flash-internet');
 	  } else {
 	  	log('sm2 in widget notok')
 	  	try_to_use_iframe_vkp();

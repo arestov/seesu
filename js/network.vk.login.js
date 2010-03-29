@@ -88,7 +88,9 @@ var vk_logg_in = function(id,email,sid){
 	widget.setPreferenceForKey(sid, 'vk_sid');
 	zz.viewer_id = seesu.vk_id = id;
 	vk_logged_in = true;
-	$(document.body).addClass('vk-logged-in');
+	seesu.delayed_search.switch_to_vk();
+	$(document.body).removeClass('vk-needs-login');
+	
 	log('hide vklogin form');
 };
 var vk_logged_out = function(){
@@ -97,7 +99,7 @@ var vk_logged_out = function(){
 	widget.setPreferenceForKey('', 'vk_sid');
 	log(widget.preferenceForKey('vkid'))
 	vk_logged_in = false;
-	$(document.body).removeClass('vk-logged-in');
+	seesu.delayed_search.switch_to_audme();
 	log('display vklogin form if need')
 	
 };

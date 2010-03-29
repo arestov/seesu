@@ -44,7 +44,7 @@
 	width:100%;
 	background:#444;
 	border:1px solid #333;
-	opacity: 0.9;
+	opacity: 0.95;
 	
 	
 	
@@ -186,9 +186,7 @@ p{
 p.internet-flash-settings{
 	display:block;
 }
-.vk-logged-in
-#message-flash-secur{
-}
+
 
 .tb-window
 .track-button-content{
@@ -239,6 +237,14 @@ p.internet-flash-settings{
 	width: 100%;
 	padding:10px;
 }
+	.balun a{
+		color:blue;
+		border-bottom-color:blue;
+		}
+		.balun a:hover{
+			color:#333;
+			border-bottom-color:#333;
+		}
 	.bal {
 		position: absolute;
 		background: url(../i/corners.png) no-repeat;

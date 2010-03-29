@@ -220,16 +220,16 @@ display:none;
 
 
 .play-list-holder{
-	padding-top:10px;
+	padding-top:30px;
 	padding-left:65px;
 	line-height:1.4em;
 	position:relative;
 }
 	.play-list-holder
-	.tracks-waiting-for-search{
+	#tracks-search{
 		position:absolute;
 		right:20px;
-		top:0px;
+		top:-10px;
 		color:#ddd;
 	}
 .tracks-for-play{
@@ -250,52 +250,7 @@ display:none;
 	.artist-tags a.music-tag{
 		margin-right:6px;
 		}
-.vk-logged-in
-.vk-login-context{
-	display:none;
-}
-.vk-login-context{
-	clear:left;
-	
-	}
-	.vk-login-context
-	.vk-captcha-context{
-		display:none;
-	}
-	.vk-needs-captcha
-	.vk-login-context
-	.vk-captcha-context{
-		display:block;
-	}
-	.vk-login-context
-	form{
-		padding-left:10px;
-	}
-	.vk-login-context
-	form
-	p{
-		overflow:hidden;
-		}
-		.vk-login-context
-		form
-		p
-		label{
-			float:left;
-			width:50px;
-			padding:2px;
-		}
-		.vk-login-context
-		form
-		p
-		span.input-place{
-			float:left;
-		}
-		.vk-login-context
-		form
-		p
-		input{
-			width:100px;
-		}
+
 #artist-holder h3{
 	margin-top:0
 	}

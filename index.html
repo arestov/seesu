@@ -5,6 +5,8 @@
 	<title>Seesu</title>
 	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/view_switcher.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="css/vkontakte_switcher.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="css/mp3-search-switch.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/search_results.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/player.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/buttmen.css" type="text/css" media="screen" />
@@ -183,7 +185,7 @@
 										<p><img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page"/></p>
 										<p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
 
-										<p class="internet-flash-settings"><label><input type="checkbox" class="flash-mess-switch"/> I've given internet access to flash</label> <input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
+										<p class="internet-flash-settings"><label><input type="checkbox" class="flash-mess-switch"/> I've given internet access to flash (hide this message and stop button flashing)</label> <input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
 										<div class="bal tl"></div>
 										<div class="bal tr"></div>
 										<div class="bal bl"></div>
@@ -223,38 +225,59 @@
 						
 					</div>
 					
-					<div class="vk-login-context">
-						<p>To get access to mp3 library you need sign in vk.com. After authorization tracks become playable</p>
-						<h3>Type values for vk.com authorization</h3>
-						<form  class="vk-auth" >
-							<p>
-								<label for="email-arts">e-mail</label>
-								<span class="input-place" >
-									<input type="text" class="vk-email" name="email" id="email-arts"/>
-								</span>
-							</p>
-							<p>
-								<label for="pass-arts">pass</label>
-								<span class="input-place" >
-									<input type="text" class="vk-pass"	name="pass" id="pass-arts"/>
-								</span>
-							</p>
-							<p class="error"></p>
-							<p class="vk-captcha-context">
-								<label for="vk-captcha-key">Input code</label>
-								<span class="input-place" >
-									<img src="" alt="captcha"/><br/>
-									<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
-								</span>
-							</p>
-							<p><button>enter</button></p>
-						</form>
-						or <a href="" class="vk-reg-ref" >register new account</a> for vk.com
-						<p>We do not store you password. Authorization in future will be happen by «<a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>»</p>
-					</div>
+					
 					<div class="play-list-holder" id="play-list-holder">
-						<div class="tracks-waiting-for-search">
-							
+						<div id="tracks-search" class="search-music-files">
+							<span id="tracks-waiting-for-search"></span> 
+							<a class="js-serv search-music-files">mp3 search</a>
+							<div id="mp3-search-switch" class="balun">
+								<div class="triangle"></div>
+								<form>
+									<h5>For search mp3 files use</h5>
+									<div>
+										<label for="mp3-audme"><input type="radio" name='mp3searchway' id="mp3-audme" class="mp3-audme mp3searchway"/> audme.ru</label>
+									</div>
+									<p class="description">Do not requires registration. Buggy search. Nice mp3 names.</p>
+									<div>
+										<label for="mp3-vk"><input type="radio" name='mp3searchway' id="mp3-vk" class="mp3-vk mp3searchway"/> vkontakte.ru (same as vk.com)</label>
+									</div>
+									<p class="description">Requires registration and login. Fast, stable search. Ugly mp3 names.</p>
+								</form>
+								<div class="vk-login-context mp3-switch">
+									<h3>Type values for vk.com authorization</h3>
+									<form  class="vk-auth" >
+										<p>
+											<label for="email-arts">e-mail</label>
+											<span class="input-place" >
+												<input type="text" class="vk-email" name="email" id="email-arts"/>
+											</span>
+										</p>
+										<p>
+											<label for="pass-arts">pass</label>
+											<span class="input-place" >
+												<input type="text" class="vk-pass"	name="pass" id="pass-arts"/>
+											</span>
+										</p>
+										<p class="error"></p>
+										<p class="vk-captcha-context">
+											<label for="vk-captcha-key">Input code</label>
+											<span class="input-place" >
+												<img src="" alt="captcha"/><br/>
+												<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
+											</span>
+										</p>
+										<p><button>enter</button></p>
+									</form>
+									or <a href="" class="vk-reg-ref" >register new account</a> for vk.com
+									<p>Widget do not store you password. Authorization in future will be happen by «<a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>»</p>
+								</div>
+								<p><input type="button" value="Close message" class="mp3-search-switch-close"/></p>
+								
+								<div class="bal tl"></div>
+								<div class="bal tr"></div>
+								<div class="bal bl"></div>
+								<div class="bal br"></div>
+							</div>
 						</div>
 						<div class="tracks-for-play"></div>
 					</div>

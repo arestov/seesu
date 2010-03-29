@@ -8,7 +8,6 @@ $(function() {
   if (seesu.vk_id) {
 	log(seesu.vk_id);
 	log("check vk login");
-	$(document.body).addClass('vk-logged-in');
 	vk_logged_in = true;
 	vk_login_check();
   } else{
@@ -53,7 +52,7 @@ $(function() {
 	artsImage	= $('img.artist-image',artsHolder);
 	artsBio		= $('.artist-bio',artsHolder);
 	artsTracks	= $('.tracks-for-play',artsHolder);
-	art_tracks_w_counter = $('.tracks-waiting-for-search',artsHolder)
+	art_tracks_w_counter = $('#tracks-waiting-for-search')
 	artsName	= $('#artist-name');
 	
 
