@@ -1,0 +1,31 @@
+#mp3-search-switch{
+	z-index:10;
+	position:absolute;
+	right:0;
+	top:30px;
+	display:none;
+	color:#333;
+	width:450px;
+	}
+	#mp3-search-switch p{
+		margin: 5px 0 7px;
+	}
+	#mp3-search-switch
+	.mp3-switch{
+		
+		}
+	#mp3-search-switch
+	h5{
+		font-size:1.5em;
+		margin:10px 0;
+		}
+	#mp3-search-switch .triangle{
+		left:auto;
+		right:10px;
+	}
+	#mp3-search-switch .description{
+		padding-left:20px;
+	}
+.want-to-select-mp3-search #mp3-search-switch{
+	display:block;
+}
