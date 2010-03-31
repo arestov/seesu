@@ -401,14 +401,41 @@ var getTopTracks = function(artist,callback,callback_params_obj) {
 		}
 	});
 };
+var artist_albums_renderer = function(r, container){
+	var albums = r.topalbums.album;
+	var albums_ul = $('<ul></ul>');
+	if (albums){
+		var create_album = function(al_name, al_url, al_image){
+			var li = $('<li></li>').appendTo(albums_ul);
+			var a_href= $('<a></a>').attr('href', al_url ).appendTo(li);
+			$('<img/>').attr('src', al_image).appendTo(a_href);
+			$('<span class="album-name"></span>').text(al_name).appendTo(a_href);
+		}
+		if (albums.length) {
+			for (var i=0; i < albums.length; i++) {
+				create_album(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[1]['#text']) || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png')
+				
+			};
+		} else if (albums.name){
+			create_album(album.name, album.url, (album.image && album.image[1]['#text']) || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png')
+		}
+		
+	} else {
+		albums_ul.append('<li>No albums information</li>');
+	}
+	container.append(albums_ul)
+}
 var show_artist_info = function(r){
 	artsBio.parent().addClass('background-changes');
-	var info	 = r.artist || false,
-		similars = info && info.similar && info.similar.artist,
-		artist	 = info && info.name,
-		tags	 = info && info.tags && info.tags.tag,
-		bio		 = info && info.bio && info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm"),
-		image	 = (info && info.image && info.image[1]['#text']) || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+	var info	 = r.artist || false;
+	if (info) {
+		similars = info.similar && info.similar.artist,
+		artist	 = info.name,
+		tags	 = info.tags && info.tags.tag,
+		bio		 = info.bio && info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm"),
+		image	 = (info.image && info.image[1]['#text']) || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+	} 
+		
 	if (artist) {artsImage.attr({'src': image ,'alt': artist})};
 	artsBio.html(bio || '');
 	if (tags && tags.length) {
@@ -443,6 +470,20 @@ var show_artist_info = function(r){
 			similars_p.append(arts_similar_node);
 		};
 		artsBio.append(similars_p);
+	}
+	var artist_albums_container = $('<div class="artist-albums"></div>').text('Albums: ').appendTo(artsBio);
+	log('1')
+	if (artist_albums_container){
+		log('1')
+		$('<a class="js-serv get-artist-albums">get albums</a>')
+			.click(function(){
+				lfm('artist.getTopAlbums',{'artist': artist },function(r){
+					if (typeof r != 'object') {return}
+					artist_albums_renderer(r, artist_albums_container);
+				});
+				$(this).remove();
+			})
+			.appendTo(artist_albums_container);
 	}
 	artsBio.parent().removeClass('background-changes');
 }

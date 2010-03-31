@@ -95,7 +95,7 @@ a.bbcode_tag{
 		color:#F4AF16;
 	}
 .background-changes{
-	display:none;
+	height:200px;
 }
 
 .pl-holder{clear:left;position:relative}
@@ -213,7 +213,33 @@ display:none;
 	.artist-tags a.music-tag{
 		margin-right:6px;
 		}
-
+.artist-albums ul{
+	overflow:hidden;
+	margin:15px 0;
+	}
+	.artist-albums ul li{
+		float:left;
+		width:190px;
+		margin-bottom:30px;
+		}
+		.artist-albums ul li a{
+			display:block;
+			border-bottom:0;
+		}
+		.artist-albums ul li img{
+			float:left;
+			width:64px;
+			height:64px;
+			margin-right:4px;
+		}
+		.artist-albums ul li .album-name{
+			width:110px;
+			height:64px;
+			-o-text-overflow: ellipsis;
+			overflow:hidden;
+			display:block;
+			
+			}
 #artist-holder h3{
 	margin-top:0
 	}
@@ -222,7 +248,7 @@ display:none;
 		margin-left:10px;
 	}
 
-    
+	
 #slider-materail{
 	background:#505050;
 
