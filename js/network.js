@@ -33,15 +33,15 @@ var delay_vk_track_search = function(tracknode,playlist_nodes_for,reset_queue,de
 	var queue_element = {'timeout': timeout };
 	var delayed_ajax = function(queue_element,timeout) {
 		 queue_element.queue_item = setTimeout(function(){
-		 	seesu.search_one_track(tracknode,playlist_nodes_for,false,queue_element);
+		 	seesu.delayed_search.use.search_one_track(tracknode,playlist_nodes_for,false,queue_element);
 		 },timeout);
 		
 	}
 	delayed_ajax(queue_element,timeout);
 	seesu.delayed_search.queue.push(queue_element);
-	var interval_for_big_delay = seesu.delayed_search.big_delay_interval.use;
-	var big_delay = seesu.delayed_search.delay.use;
-	var small_delay = seesu.delayed_search.delay_mini.use;
+	var interval_for_big_delay = seesu.delayed_search.use.big_delay_interval;
+	var big_delay = seesu.delayed_search.use.delay_big;
+	var small_delay = seesu.delayed_search.use.delay_mini;
 	seesu.delayed_search.call_at +=  (((seesu.delayed_search.tracks_waiting_for_search % interval_for_big_delay) == 0) ? big_delay : small_delay);
 
 	
@@ -66,12 +66,14 @@ var get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_
 		  error: function(xhr){
 		  	tracknode.attr('class' , 'search-mp3-failed');
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
+			
+		  	log(xhr.responseText)
 		  },
 		  success: function(_r){
 			log('audme search')
 			var r_div = document.createElement('div');
 			r_div.innerHTML = _r;
-			log(_r)
+			
 			var r = $('.playBox',r_div);
 			if (r && r.length) {
 				var music_list = [];
@@ -94,6 +96,8 @@ var get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_
 				log(music_list)
 				make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
 				resort_playlist(playlist_nodes_for);
+			} else{
+				log(_r)
 			}
 			
 			
@@ -106,7 +110,6 @@ var get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		  },
 		  complete: function(xhr){
-		  	//log(xhr.responseText)
 		  }
 		});
 
@@ -168,3 +171,92 @@ var get_all_audme_tracks = function(trackname,callback){
 	  }
 	});
 }
+
+try_mp3_providers = function(){
+	var have_mp3_provider;
+	var prov_count_down = 2;
+	var mp3_prov_selected = widget.preferenceForKey('mp3-search-way');
+	
+	var swith_to_provider = function(){
+		if (mp3_prov_selected){
+			if (seesu.delayed_search.available && seesu.delayed_search.available.length){
+				var provider_selected;
+				for (var i=0; i < seesu.delayed_search.available.length; i++) {
+					var current_prov = seesu.delayed_search.available[i];
+					if (current_prov == mp3_prov_selected){
+						seesu.delayed_search['switch_to_' + current_prov]();
+						provider_selected = true;
+						log('selected prov ' + current_prov);
+					}
+				};
+				if (!provider_selected){
+					var current_prov = seesu.delayed_search.available[0];
+					if (current_prov){
+						seesu.delayed_search['switch_to_' + current_prov]();
+						provider_selected = true;
+						log('not selected prov ' + current_prov);
+					}
+				}
+			}
+		} else{
+			var someone_available = seesu.delayed_search.available[0];
+			if (someone_available){
+				seesu.delayed_search['switch_to_' + someone_available]();
+				log('some avai prov ' + someone_available)
+			} else{
+				log('must use vkontakte');
+			}
+		}
+	}
+	
+	$.ajax({
+	  url: 'http://audme.ru/',
+	  success: function(){
+	  	seesu.delayed_search.available.push('audme');
+	  	$('#mp3way-audme').removeClass('cant-be-used');
+	  	log('audme nice')
+	  },
+	  timeout: 7000,
+	  error: function(){
+		log('audme error')
+	  },
+	  complete: function(){
+		prov_count_down--;
+		if (prov_count_down == 0){
+			swith_to_provider();
+		}
+	  }
+	})
+  
+	$.ajax({
+	  url: "http://vkontakte.ru/feed2.php",
+	  global: false,
+	  type: "GET",
+	  dataType: "json",
+	  timeout: 7000,
+	  success: function(r){
+	  	if (r.user && r.user.id) {
+	  		
+	  		zz.viewer_id = r.user.id;
+			seesu.delayed_search.available.push('vk');
+			seesu.vk_logged_in = true;
+			log('vk mp3 prov ok')
+		} else{
+			vk_logged_out();
+			log('vk mp3 prov faild')
+		}
+	  	
+	  },
+	  error: function(xhr){
+		log('vk mp3 prov faild')
+		vk_logged_out();
+	  },
+	  complete: function(xhr){
+		prov_count_down--;
+		if (prov_count_down == 0){
+			swith_to_provider();
+		}
+	  }
+	  
+	});
+}	

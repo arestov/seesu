@@ -50,11 +50,10 @@ vk_api.prototype = {
 			  error: function(xhr){
 			  	if (error) {error(xhr);}
 			  },
-			  success: function(r){
-				if (callback) {callback(r);}
+			  success: function(r, textStatus, xhr){
+				if (callback) {callback(r, xhr.responseText);}
 			  },
 			  complete: function(xhr){
-			  	log(xhr.responseText)
 			  }
 			});
 		}

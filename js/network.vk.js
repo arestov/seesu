@@ -1,95 +1,89 @@
 
 var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue_element){	
-	if (vk_logged_in) {
-		tracknode.addClass('search-mp3');
-		zz.audio_search(
-			tracknode.data('artist_name') + ' - ' + tracknode.data('track_title'),
-			false,
-			function(r){
-				log('api search')
-				if (r.response && (r.response[0] > 0 )) {
-					var music_list = [];
-					for (var i=1, l = r.response.length; i < l; i++) {
-						var entity = {
-							'artist'  	:r.response[i].artist,
-							'duration'	:r.response[i].duration,
-							'link'		:r.response[i].url,
-							'track'		:r.response[i].title
-							
-						};
-						if (!has_music_copy(music_list,entity)){
-							music_list.push(entity)
-						}
-						
+
+	tracknode.addClass('search-mp3');
+	zz.audio_search(
+		tracknode.data('artist_name') + ' - ' + tracknode.data('track_title'),
+		false,
+		function(r, resp_text){
+			log('api search')
+			if (r.response && (r.response[0] > 0 )) {
+				var music_list = [];
+				for (var i=1, l = r.response.length; i < l; i++) {
+					var entity = {
+						'artist'  	:r.response[i].artist,
+						'duration'	:r.response[i].duration,
+						'link'		:r.response[i].url,
+						'track'		:r.response[i].title
 						
 					};
-					var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
-					make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
-					resort_playlist(playlist_nodes_for);
-				}
-				
-				
-				
-				if (music_list) {
+					if (!has_music_copy(music_list,entity)){
+						music_list.push(entity)
+					}
 					
-				} else {
-					tracknode.attr('class' , 'search-mp3-failed');
-				}
-				art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
-			},
-			function(xhr){
-				tracknode.attr('class' , 'search-mp3-failed');
-				art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
+					
+				};
+				var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
+				make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
+				resort_playlist(playlist_nodes_for);
+			} else{
+				log(resp_text)
 			}
-		);
-	
-	} else {
-		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
-	}
+			
+			
+			
+			if (music_list) {
+				
+			} else {
+				tracknode.attr('class' , 'search-mp3-failed');
+			}
+			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
+		},
+		function(xhr){
+			tracknode.attr('class' , 'search-mp3-failed');
+			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
+		}
+	);
+
+
 	queue_element.done = true;
 }
 var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_element){	
-		
-	if (vk_logged_in) {
-		$.ajax({
-		  timeout: 10000,
-		  url: "http://vkontakte.ru/gsearch.php",
-		  global: false,
-		  type: "POST",
-		  data: ({'c[section]' : 'audio', 'c[q]' : tracknode.data('artist_name') + ' - ' + tracknode.data('track_title')}),
-		  dataType: "json",
-		  beforeSend: function(xhr){
-		  	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-			tracknode.addClass('search-mp3');
-		  },
-		  error: function(xhr){
-			tracknode.attr('class' , 'search-mp3-failed');
-			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
-			
-			log('Error, vk say: ' + xhr.responseText);
-			if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
-				delaying_func.call_at += (1000*60*5);
-			} else {
-				vk_login_check();
-			}
-			
-		  },
-		  success: function(r){
-			log('success hardcore search, vk say: ' + r.summary);
-			var music_list = get_vk_music_list(r);
-			if (music_list){
-				var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
-				make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration)
-				resort_playlist(playlist_nodes_for);
-			} else {
-				tracknode.attr('class' , 'search-mp3-failed');
-			}
-			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
-		  }
-		});
-	} else {
+	$.ajax({
+	  timeout: 10000,
+	  url: "http://vkontakte.ru/gsearch.php",
+	  global: false,
+	  type: "POST",
+	  data: ({'c[section]' : 'audio', 'c[q]' : tracknode.data('artist_name') + ' - ' + tracknode.data('track_title')}),
+	  dataType: "json",
+	  beforeSend: function(xhr){
+	  	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+		tracknode.addClass('search-mp3');
+	  },
+	  error: function(xhr){
+		tracknode.attr('class' , 'search-mp3-failed');
 		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
-	}
+		
+		log('Error, vk say: ' + xhr.responseText);
+		if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
+			delaying_func.call_at += (1000*60*5);
+		}
+		
+	  },
+	  success: function(r){
+		log('success hardcore search, vk say: ' + r.summary);
+		var music_list = get_vk_music_list(r);
+		if (music_list){
+			var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
+			make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration)
+			resort_playlist(playlist_nodes_for);
+		} else {
+			tracknode.attr('class' , 'search-mp3-failed');
+		}
+		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
+	  }
+	});
+	
 	queue_element.done = true;
 }
 
@@ -195,41 +189,36 @@ var get_vk_music_list = function (r) {// vk_music_list is empty array, declared 
 
 
 var getMusic = function(trackname,callback){
-	if (!vk_logged_in) {
-		wait_for_vklogin = function(){seesu.search_many_tracks(trackname, render_playlist)}
-		return false;
-	} else {
-		$.ajax({
-		  timeout: 10000,
-		  url: "http://vkontakte.ru/gsearch.php",
-		  global: false,
-		  type: "POST",
-		  data: ({'c[section]' : 'audio', 'c[q]' : trackname}),
-		  dataType: "json",
-		  beforeSend: function(xhr){
-		  	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-		  },
-		  error: function(xhr){
+
+	$.ajax({
+	  timeout: 10000,
+	  url: "http://vkontakte.ru/gsearch.php",
+	  global: false,
+	  type: "POST",
+	  data: ({'c[section]' : 'audio', 'c[q]' : trackname}),
+	  dataType: "json",
+	  beforeSend: function(xhr){
+	  	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+	  },
+	  error: function(xhr){
+		callback()
+		log('Вконтакте молвит: ' + xhr.responseText);
+		if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
+			
+		} 
+		
+	  },
+	  success: function(r){
+		log('Квантакте говорит: ' + r.summary);
+		var music_list = get_vk_music_list(r);
+		if (music_list) {
+			callback(music_list);
+		} else{
+			log('Поиск не удался... :’—(');
 			callback()
-			log('Вконтакте молвит: ' + xhr.responseText);
-			if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
-				
-			} else {
-				vk_login_check();
-			}
-			
-		  },
-		  success: function(r){
-			log('Квантакте говорит: ' + r.summary);
-			var music_list = get_vk_music_list(r);
-			if (music_list) {
-				callback(music_list);
-			} else{
-				log('Поиск не удался... :’—(');
-				callback()
-			}
-			
-		  }
-		});
-	}
+		}
+		
+	  }
+	});
+	
 };

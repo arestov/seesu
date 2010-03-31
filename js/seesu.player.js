@@ -209,12 +209,11 @@ var try_to_use_iframe_vkp = function(){
 		});
 		check_iframe_vkp_init = function(e){
 			if (e.data.match(/vk_p_inited/)){
-				log('!?')
 				if ((!seesu.player.musicbox) || (seesu.player.musicbox && seesu.player.musicbox.module_title != 'sm2_p') ){
-					log('2?!')
+					player_holder.empty();
 					seesu.player.musicbox = new vk_p(false, seesu.player.player_volume, i_f);
 					$(document.body).removeClass('flash-internet');
-					player_holder.empty();
+					
 					clearTimeout(i_f_hide_timeout)
 				}
 				
@@ -249,9 +248,8 @@ var try_to_use_iframe_sm2p = function(){
 		check_iframe_sm2p_init = function(e){
 			if (e.data.match(/sm2_p_inited/)){
 
-				seesu.player.musicbox = new sm2_p(false, seesu.player.player_volume, soundManager, i_f_sm2);
+				seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
 				$(document.body).addClass('flash-internet');
-				player_holder.empty();
 				i_f.remove();
 				clearTimeout(i_f_sm2_hide_timeout);
 				window.removeEventListener("message", check_iframe_sm2p_init, false);

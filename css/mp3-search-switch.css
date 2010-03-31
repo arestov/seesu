@@ -14,6 +14,9 @@
 	.mp3-switch{
 		
 		}
+	#mp3-search-switch .mp3-search-way-select.cant-be-used{
+		display:none;
+	}
 	#mp3-search-switch
 	h5{
 		font-size:1.5em;

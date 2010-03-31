@@ -120,11 +120,16 @@ var test_pressed_node = function(original_node, mouseup){
 				
 			}else if (class_name.match(/mp3-audme/)){
 				$(document.body).removeClass('vk-needs-login');
-				vk_logged_out();
+				seesu.delayed_search.switch_to_audme();
+				return false;
 				
 			}else if (class_name.match(/mp3-vk/)){
+				if (seesu.vk_logged_in){
+					seesu.delayed_search.switch_to_vk()
+				}else{
+					$(document.body).addClass('vk-needs-login');
+				}
 				
-				$(document.body).addClass('vk-needs-login');
 				return false
 			}
 		}

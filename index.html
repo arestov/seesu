@@ -229,48 +229,52 @@
 					<div class="play-list-holder" id="play-list-holder">
 						<div id="tracks-search" class="search-music-files">
 							<span id="tracks-waiting-for-search"></span> 
-							<a class="js-serv search-music-files">mp3 search</a>
+							<a class="js-serv search-music-files">mp3 provider</a>
 							<div id="mp3-search-switch" class="balun">
 								<div class="triangle"></div>
-								<form>
 									<h5>For search mp3 files use</h5>
-									<div>
-										<label for="mp3-audme"><input type="radio" name='mp3searchway' id="mp3-audme" class="mp3-audme mp3searchway"/> audme.ru</label>
+									<div class="mp3-search-way-select cant-be-used" id="mp3way-audme">
+										<div>
+											<label for="mp3-audme"><input type="radio" name='mp3searchway' id="mp3-audme" class="mp3-audme mp3searchway"/> audme.ru</label>
+										</div>
+										<p class="description">Do not requires registration. Buggy search. Nice mp3 names.</p>
 									</div>
-									<p class="description">Do not requires registration. Buggy search. Nice mp3 names.</p>
-									<div>
-										<label for="mp3-vk"><input type="radio" name='mp3searchway' id="mp3-vk" class="mp3-vk mp3searchway"/> vkontakte.ru (same as vk.com)</label>
+									<div class="mp3-search-way-select">
+										<div>
+											<label for="mp3-vk"><input type="radio" name='mp3searchway' id="mp3-vk" class="mp3-vk mp3searchway"/> vkontakte.ru (same as vk.com)</label>
+										</div>
+										<p class="description">Requires registration and login. Fast, stable search. Ugly mp3 names.</p>
+										<div class="vk-login-context mp3-switch">
+											<h3>Type values for vk.com authorization</h3>
+											<form  class="vk-auth" >
+												<p>
+													<label for="email-arts">e-mail</label>
+													<span class="input-place" >
+														<input type="text" class="vk-email" name="email" id="email-arts"/>
+													</span>
+												</p>
+												<p>
+													<label for="pass-arts">pass</label>
+													<span class="input-place" >
+														<input type="text" class="vk-pass"	name="pass" id="pass-arts"/>
+													</span>
+												</p>
+												<p class="error"></p>
+												<p class="vk-captcha-context">
+													<label for="vk-captcha-key">Input code</label>
+													<span class="input-place" >
+														<img src="" alt="captcha"/><br/>
+														<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
+													</span>
+												</p>
+												<p><button>enter</button></p>
+											</form>
+											or <a href="" class="vk-reg-ref" >register new account</a> for vk.com
+											<p>Widget do not store you password. Authorization in future will be happen by «<a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>»</p>
+										</div>
 									</div>
-									<p class="description">Requires registration and login. Fast, stable search. Ugly mp3 names.</p>
-								</form>
-								<div class="vk-login-context mp3-switch">
-									<h3>Type values for vk.com authorization</h3>
-									<form  class="vk-auth" >
-										<p>
-											<label for="email-arts">e-mail</label>
-											<span class="input-place" >
-												<input type="text" class="vk-email" name="email" id="email-arts"/>
-											</span>
-										</p>
-										<p>
-											<label for="pass-arts">pass</label>
-											<span class="input-place" >
-												<input type="text" class="vk-pass"	name="pass" id="pass-arts"/>
-											</span>
-										</p>
-										<p class="error"></p>
-										<p class="vk-captcha-context">
-											<label for="vk-captcha-key">Input code</label>
-											<span class="input-place" >
-												<img src="" alt="captcha"/><br/>
-												<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
-											</span>
-										</p>
-										<p><button>enter</button></p>
-									</form>
-									or <a href="" class="vk-reg-ref" >register new account</a> for vk.com
-									<p>Widget do not store you password. Authorization in future will be happen by «<a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>»</p>
-								</div>
+									
+								
 								<p><input type="button" value="Close message" class="mp3-search-switch-close"/></p>
 								
 								<div class="bal tl"></div>

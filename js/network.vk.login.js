@@ -59,35 +59,12 @@ var vk_send_captcha = function(captcha_key,login,pass){
 	  }
 	});
 }
-var vk_login_check = function(){
-	$.ajax({
-	  url: "http://vkontakte.ru/feed2.php",
-	  global: false,
-	  type: "GET",
-	  dataType: "json",
-	  success: function(r){
-	  	if (r.user && r.user.id) {
-	  		zz.viewer_id = r.user.id;
-		} else{
-			log(xhr.responseText);
-			log('vignali! !?!?!?');
-			vk_logged_out();
-		}
-	  	
-    },
-	  error: function(xhr){
-	  	log(xhr.responseText);
-		log('vignali!');
-		vk_logged_out();
-	  }
-	});
-};
 var vk_logg_in = function(id,email,sid){
 	widget.setPreferenceForKey(id, 'vkid');
 	widget.setPreferenceForKey(email, 'vkemail');
 	widget.setPreferenceForKey(sid, 'vk_sid');
 	zz.viewer_id = seesu.vk_id = id;
-	vk_logged_in = true;
+	seesu.vk_logged_in = true;
 	seesu.delayed_search.switch_to_vk();
 	$(document.body).removeClass('vk-needs-login');
 	
@@ -98,8 +75,7 @@ var vk_logged_out = function(){
 	widget.setPreferenceForKey('', 'vkemail');
 	widget.setPreferenceForKey('', 'vk_sid');
 	log(widget.preferenceForKey('vkid'))
-	vk_logged_in = false;
-	seesu.delayed_search.switch_to_audme();
+	seesu.vk_logged_in = false;
 	log('display vklogin form if need')
 	
 };

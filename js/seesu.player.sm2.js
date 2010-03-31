@@ -14,6 +14,10 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 		musicbox.pause
 		musicbox.play_song_by_url
 	*/
+	if (player_holder){
+		this.live_controls_holder = player_holder;
+		player_holder.append('');
+	}
 	this.volume = volume;
 	
 	var _this = this;

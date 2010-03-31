@@ -5,14 +5,6 @@ $(function() {
   if (lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
   if (seesu) {check_seesu_updates();}
   seesu.vk_id = widget.preferenceForKey('vkid');
-  if (seesu.vk_id) {
-	log(seesu.vk_id);
-	log("check vk login");
-	vk_logged_in = true;
-	vk_login_check();
-  } else{
-	log('not loggin in');
-  }
   $(document).click(function(e) {
 	return test_pressed_node(e.target)
   });
@@ -28,24 +20,22 @@ $(function() {
 
 	//see var at top
 	slider = document.getElementById('slider');
-	searchfield = document.getElementById('q');
 	srnav = document.getElementById('search_result_nav');
 	startlink = document.getElementById('start_search');
-	searchres = document.getElementById('search_result');
-	art_page_nav = document.getElementById('nav_artist_page');
-	trk_page_nav = document.getElementById('nav_tracks_page');
 	startlink.onclick = function(){
 		slider.className = "show-start";
 		searchfield.focus();
 	};
+	searchres = document.getElementById('search_result');
+	art_page_nav = document.getElementById('nav_artist_page');
+	trk_page_nav = document.getElementById('nav_tracks_page');
+	
 	srnav.onclick = function(){
 		slider.className = "show-search show-search-results";
 	};
 	
 	
-	if (!(document.activeElement.nodeName == 'INPUT')) {
-		searchfield.focus();
-	}
+	
 	
 	
 	artsHolder	= $('#artist-holder');
