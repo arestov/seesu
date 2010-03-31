@@ -172,7 +172,7 @@ var make_tracklist_playable = function(track_nodes){
 		for (var i=0, l =  track_nodes.length; i < l; i++) {
 			var node = track_nodes[i],
 				playlist_nodes_for = songNodes;
-			delay_vk_track_search(node,playlist_nodes_for, (i==0),seesu.delayed_search.use.search_one_track);
+			delay_track_search(node,playlist_nodes_for, (i==0),seesu.delayed_search.use.search_one_track);
 			
 		}
 	}
