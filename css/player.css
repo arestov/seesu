@@ -18,7 +18,7 @@
 			background-image:url(../i/buttons_active.png);
 			}
 .player-paused .play-control.pause,
-.player-stoped .play-control.stop,
+.player-stopped .play-control.stop,
 .player-played .play-control.play{
 	background-image:url(../i/buttons_active.png);
 }
@@ -28,6 +28,63 @@
 
 .play-control.pause{
 	display:inline-block
+	}
+
+a.song{
+	padding:3px 1px 0px;
+	}
+a.song:hover{
+	color:#ffffff;
+	background:#666;
+	border-bottom:1px solid #666;
+}
+a.search-mp3{
+	text-decoration:blink;
+	color:#6c1471;
+}
+a.search-mp3-failed{
+	color:#666;
+}
+a.waiting-full-render{
+	cursor:pointer;
+}
+a.waiting-full-render.marked-for-play{
+	border-bottom:1px dashed #888;
+}
+a.download-mp3{
+	text-decoration:none;
+	padding:3px 5px 1px;
+	margin-left:3px;
+	border-bottom:0;
+	}
+a.download-mp3:hover{
+	background:#666;
+	color:#ffffff;
+	}
+.active-play
+a.song{
+	cursor:default;
+	
+}
+	.player-played
+	.active-play
+	a.song{
+		
+		background-color: #7ad426;
+		border-bottom:1px solid #7ad426;
+		color: #505050;
+	}
+	.player-paused
+	.active-play
+	a.song{
+		outline:1px dashed #647142;
+		border-bottom-color:transparent;
+	}
+	.player-stopped
+	.active-play
+	a.song{
+		outline:1px solid #647142;
+		border-bottom-color:transparent;
 	}
 
 .track-zoom{

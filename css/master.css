@@ -69,44 +69,7 @@ a.bbcode_tag{
 	a.bbcode_tag:active{
 		border-bottom-color:#999;
 		}
-a.song{
-	padding:3px 1px 0px;
-	}
-a.song:hover{
-	color:#ffffff;
-	background:#666;
-	border-bottom:1px solid #666;
-}
-a.search-mp3{
-	text-decoration:blink;
-	color:#6c1471;
-}
-a.search-mp3-failed{
-	color:#666;
-}
-a.waiting-full-render{
-	cursor:pointer;
-}
-a.waiting-full-render.marked-for-play{
-	border-bottom:1px dashed #888;
-}
-a.download-mp3{
-	text-decoration:none;
-	padding:3px 5px 1px;
-	margin-left:3px;
-	border-bottom:0;
-	}
-a.download-mp3:hover{
-	background:#666;
-	color:#ffffff;
-	}
-.active-play
-a.song{
-	cursor:default;
-	background-color: #7ad426;
-	border-bottom:1px solid #7ad426;
-	color: #505050;
-}
+
 
 #sm2-container{
 	bottom:10px;
