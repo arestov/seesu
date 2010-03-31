@@ -25,7 +25,7 @@ var	seesu =  {
 			"delay_big": 8000,
 			"big_delay_interval": 7,
 			"search_one_track": get_vk_api_track,
-			"search_many_tracks": getMusic
+			"search_many_tracks": get_all_vk_api_tracks
 		}
 		,
 		"waiting_for_mp3provider" : true,

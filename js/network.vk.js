@@ -7,7 +7,7 @@ var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue
 		false,
 		function(r, resp_text){
 			log('api search')
-			if (r.response && (r.response[0] > 0 )) {
+			if (r.response && (r.response.length > 1 )) {
 				var music_list = [];
 				for (var i=1, l = r.response.length; i < l; i++) {
 					var entity = {
@@ -187,7 +187,38 @@ var get_vk_music_list = function (r) {// vk_music_list is empty array, declared 
 	} else {return false}
 }
 
-
+var get_all_vk_api_tracks = function(trackname,callback){
+	zz.audio_search(
+		trackname,
+		false,
+		function(r, resp_text){
+			log('api search')
+			if (r.response && (r.response.length > 1 )) {
+				var music_list = [];
+				for (var i=1, l = r.response.length; i < l; i++) {
+					var entity = {
+						'artist'  	:r.response[i].artist,
+						'duration'	:r.response[i].duration,
+						'link'		:r.response[i].url,
+						'track'		:r.response[i].title
+						
+					};
+					if (!has_music_copy(music_list,entity)){
+						music_list.push(entity)
+					}
+					
+					
+				};
+				if (callback) {callback(music_list);}
+			} else{
+				if (callback) {callback()}
+			}
+		},
+		function(){
+			callback();
+		}
+	);
+}
 var getMusic = function(trackname,callback){
 
 	$.ajax({

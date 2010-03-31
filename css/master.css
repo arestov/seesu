@@ -346,3 +346,6 @@ display:none;
 	border:0;
 	
 }
+#screens{
+	clear:left;
+}
