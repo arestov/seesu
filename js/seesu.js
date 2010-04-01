@@ -1,7 +1,7 @@
 testing = false;
-
+lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 var	seesu =  {
-	  version: 1.4,
+	  version: 1.5,
 	  ui: {},
 	  xhrs: {},
 	  delayed_search: {
@@ -24,8 +24,8 @@ var	seesu =  {
 			"delay_mini": 1000,
 			"delay_big": 8000,
 			"big_delay_interval": 7,
-			"search_one_track": get_vk_api_track,
-			"search_many_tracks": get_all_vk_api_tracks
+			"search_one_track": get_vk_track,
+			"search_many_tracks": get_all_vk_tracks
 		}
 		,
 		"waiting_for_mp3provider" : true,
@@ -164,7 +164,8 @@ var make_tracklist_playable = function(track_nodes){
 				seesu.delayed_search.waiting_for_mp3provider = false;
 				seesu.delayed_search.start_for_mp3provider = null;
 				make_tracklist_playable(track_nodes);
-				
+				$(document.body).removeClass('vk-needs-login');
+				$('#tracks-search').removeClass('want-to-select-mp3-search');
 			}
 		})(track_nodes)
 	} else {
@@ -263,6 +264,8 @@ var vk_track_search = function(query){
 				seesu.delayed_search.waiting_for_mp3provider = false;
 				seesu.delayed_search.start_for_mp3provider = null;
 				seesu.delayed_search.use.search_many_tracks(query, render_playlist);
+				$(document.body).removeClass('vk-needs-login');
+				$('#tracks-search').removeClass('want-to-select-mp3-search');
 				
 			}
 		})(query, render_playlist)
@@ -405,25 +408,79 @@ var artist_albums_renderer = function(r, container){
 	var albums = r.topalbums.album;
 	var albums_ul = $('<ul></ul>');
 	if (albums){
-		var create_album = function(al_name, al_url, al_image){
+		
+		var create_album = function(al_name, al_url, al_image, al_artist){
 			var li = $('<li></li>').appendTo(albums_ul);
-			var a_href= $('<a></a>').attr('href', al_url ).appendTo(li);
+			var a_href= $('<a></a>')
+				.attr('href', al_url )
+				.data('artist', al_artist)
+				.data('album', al_name)
+				.click(function(){
+					seesu.toogle_art_alb_container(seesu.artist_albums_container.data('albums_link'));
+					
+					get_artist_album_info(al_artist, al_name, get_artist_album_playlist );
+					return false
+				})
+				.appendTo(li);
 			$('<img/>').attr('src', al_image).appendTo(a_href);
 			$('<span class="album-name"></span>').text(al_name).appendTo(a_href);
 		}
 		if (albums.length) {
 			for (var i=0; i < albums.length; i++) {
-				create_album(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[1]['#text']) || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png')
+				create_album(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[1]['#text']) || '', albums[i].artist.name)
 				
 			};
 		} else if (albums.name){
-			create_album(album.name, album.url, (album.image && album.image[1]['#text']) || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png')
+			create_album(albums.name, albums.url, (albums.image && albums.image[1]['#text']) || '', albums.artist.name )
 		}
 		
 	} else {
 		albums_ul.append('<li>No albums information</li>');
 	}
 	container.append(albums_ul)
+}
+var make_lastfm_playlist = function(r){
+	var playlist = r.playlist.trackList.track;
+	if  (playlist){
+		var music_list = [];
+		if (playlist.length){
+			
+			for (var i=0; i < playlist.length; i++) {
+				music_list.push({track: playlist[i].title, artist: playlist[i].creator });
+			};
+		} else if (playlist.title){
+			music_list.push({track: playlist.title, artist: playlist.creator });
+		}
+		if (music_list){
+			render_playlist(music_list);
+		} else {
+			render_playlist();
+		}
+	} else{
+		render_playlist();
+	}
+}
+var get_artist_album_playlist = function(r){
+	var album_id = r.album.id;
+	if (album_id) {
+		lfm('playlist.fetch',{'playlistURL': 'lastfm://playlist/album/' + album_id}, make_lastfm_playlist)
+	}
+}
+var get_artist_album_info = function(artist, album, callback){
+	$(art_page_nav).text('(' + artist + ') ' + album );
+	lfm('album.getInfo',{'artist': artist, album : album},function(r){
+		if (callback) {callback(r)}
+	})
+	
+}
+seesu.toogle_art_alb_container = function(link){
+	if (seesu.artist_albums_container.is('.collapse-albums')){
+		seesu.artist_albums_container.removeClass('collapse-albums');
+		link.text('hide them');
+	} else{
+		seesu.artist_albums_container.addClass('collapse-albums');
+		link.text('show them');
+	}
 }
 var show_artist_info = function(r){
 	artsBio.parent().addClass('background-changes');
@@ -433,7 +490,7 @@ var show_artist_info = function(r){
 		artist	 = info.name,
 		tags	 = info.tags && info.tags.tag,
 		bio		 = info.bio && info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm"),
-		image	 = (info.image && info.image[1]['#text']) || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+		image	 = (info.image && info.image[1]['#text']) || lfm_image_artist;
 	} 
 		
 	if (artist) {artsImage.attr({'src': image ,'alt': artist})};
@@ -471,19 +528,29 @@ var show_artist_info = function(r){
 		};
 		artsBio.append(similars_p);
 	}
-	var artist_albums_container = $('<div class="artist-albums"></div>').text('Albums: ').appendTo(artsBio);
-	log('1')
+	var artist_albums_container = seesu.artist_albums_container = $('<div class="artist-albums"></div>').text('Albums: ').appendTo(artsBio);
 	if (artist_albums_container){
-		log('1')
-		$('<a class="js-serv get-artist-albums">get albums</a>')
+		
+		var albums_link = $('<a class="js-serv get-artist-albums">get albums</a>')
 			.click(function(){
-				lfm('artist.getTopAlbums',{'artist': artist },function(r){
-					if (typeof r != 'object') {return}
-					artist_albums_renderer(r, artist_albums_container);
-				});
-				$(this).remove();
+				var _this = $(this);
+				if (!_this.data('albums-loaded')){
+					artist_albums_container.addClass('albums-loading')
+					
+					lfm('artist.getTopAlbums',{'artist': artist },function(r){
+						if (typeof r != 'object') {return}
+						artist_albums_renderer(r, artist_albums_container);
+						_this.data('albums-loaded', true);
+						artist_albums_container.removeClass('albums-loading');
+					});
+					_this.text('hide them');
+					
+				} else{
+					seesu.toogle_art_alb_container(_this)
+				}
 			})
 			.appendTo(artist_albums_container);
+		artist_albums_container.data('albums_link', albums_link);
 	}
 	artsBio.parent().removeClass('background-changes');
 }

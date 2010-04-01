@@ -71,7 +71,8 @@
 			ul.results-artists
 			img{
 				float:left;
-				max-width:34px;
+				width:34px;
+				height:34px;
 				margin-right:8px;
 				border:1px solid #eee;
 				}

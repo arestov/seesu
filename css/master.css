@@ -202,6 +202,9 @@ display:none;
 	li{
 		margin: 0 0 10px;
 		}
+.artist-image{
+	width:64px;
+}
 .artist-bio{
 	margin-top:-5px;
 	line-height:1.5em;
@@ -216,6 +219,7 @@ display:none;
 .artist-albums ul{
 	overflow:hidden;
 	margin:15px 0;
+	padding-left:10px;
 	}
 	.artist-albums ul li{
 		float:left;
@@ -225,12 +229,25 @@ display:none;
 		.artist-albums ul li a{
 			display:block;
 			border-bottom:0;
+			color:#aaaaaa;
+			}
+			.artist-albums ul li a:hover{
+				color:#fff;
+				}
+		.artist-albums.collapse-albums ul{
+			display:none;
+		}
+		.artist-albums.albums-loading a.get-artist-albums{
+			display:none;
 		}
 		.artist-albums ul li img{
 			float:left;
 			width:64px;
-			height:64px;
+			min-height:64px;
 			margin-right:4px;
+			padding:2px;
+			background:#ccc url(http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png) no-repeat 2px 2px;
+			
 		}
 		.artist-albums ul li .album-name{
 			width:110px;

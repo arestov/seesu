@@ -49,6 +49,7 @@ var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue
 	queue_element.done = true;
 }
 var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_element){	
+	tracknode.addClass('search-mp3');
 	$.ajax({
 	  timeout: 10000,
 	  url: "http://vkontakte.ru/gsearch.php",
@@ -219,7 +220,7 @@ var get_all_vk_api_tracks = function(trackname,callback){
 		}
 	);
 }
-var getMusic = function(trackname,callback){
+var get_all_vk_tracks = function(trackname,callback){
 
 	$.ajax({
 	  timeout: 10000,
