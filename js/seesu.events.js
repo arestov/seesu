@@ -93,7 +93,7 @@ $(function() {
 			if (callback) {callback(lfm_auth.newtoken);}
 		})
 	}
-	var open_lfm_to_login = function(token){
+	open_lfm_to_login = function(token){
 		widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
 		$(document.body).addClass('lfm-waiting-for-finish');
 	};

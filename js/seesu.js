@@ -1,7 +1,7 @@
 testing = false;
 lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 var	seesu =  {
-	  version: 1.5,
+	  version: 1.55,
 	  ui: {},
 	  xhrs: {},
 	  delayed_search: {
