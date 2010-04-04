@@ -1,7 +1,7 @@
 testing = false;
 lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 var	seesu =  {
-	  version: 1.55,
+	  version: 1.6,
 	  ui: {},
 	  xhrs: {},
 	  delayed_search: {
@@ -183,10 +183,17 @@ var make_tracklist_playable = function(track_nodes){
 var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_duration){
 	var playable_node = $(node).attr({'class' : 'song js-serv', 'href' : http_link} ).data('duration', mp3_duration);
 	playlist_nodes_for.push(playable_node);
+	
+	
+	
 	var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href': http_link });
 	playable_node.parent().append(mp3);
 	
-	
+	if (mp3_duration) {
+		var digits = mp3_duration % 60;
+		var track_dur = (Math.round(mp3_duration/60)) + ':' + (digits < 10 ? '0'+digits : digits )
+		playable_node.parent().append($('<div class="song-duration"></div>').text(track_dur + ' '));
+	}
 	var playlist_length = playlist_nodes_for.length;
 	if ((playlist_length == 1) || (playable_node.data('want_to_play') == seesu.player.want_to_play) ) {
 		(function(playable_node, playlist_nodes_for ){

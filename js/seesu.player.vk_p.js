@@ -18,7 +18,7 @@ var vk_p = function(flash_node_holder,start_volume,iframe){
 		};
 	}
 	if (typeof seesu === 'object') {
-		this.pl_h_style = $('<style></style>');
+		this.pl_h_style = seesu.pl_h_style = seesu.pl_h_style || $('<style></style>');
 		$(document.documentElement.firstChild).append(this.pl_h_style);
 	} else{
 		//look like we in iframe, so listen commands

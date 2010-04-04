@@ -91,7 +91,7 @@ a.song{
 	position:absolute;
 	z-index:-1;
 	right: 0px;
-	bottom: -40px;
+	bottom: -30px;
 	padding-left:40px;
 	
 	display:none;
@@ -144,8 +144,10 @@ a.song{
 		display:inline-block;
 		}
 
-	.track-zoomed  #play-list-holder .player-holder,
-	.track-zoomed  #play-list-holder #i_f{
+	.player-paused.track-zoomed  #play-list-holder .player-holder,
+	.player-played.track-zoomed  #play-list-holder .player-holder,
+	.player-paused.track-zoomed  #play-list-holder #i_f,
+	.player-played.track-zoomed  #play-list-holder .player-holder{
 		left:auto;
 		
 		}
@@ -359,6 +361,8 @@ p.internet-flash-settings{
 #play-list-holder .player-holder, #play-list-holder #i_f{
 	left:-700px;
 	z-index:10;
+	margin-left:34px;
+	margin-top: -13px;
 }
 
 
@@ -371,3 +375,55 @@ p.internet-flash-settings{
 	border:0;
 	position:absolute;
 }
+.track-progress{
+	width:300px;
+	height:6px;
+	float:left;
+	background:#456726;
+	position:relative;
+	border: 1px solid #3a3a3a;
+	}
+	.track-load-progress{
+		position:absolute;
+		cursor:pointer;
+		width:0;
+		left:0;
+		cursor:pointer;
+		top:0;
+		height:6px;
+		background:#537c2e;
+		}
+	.track-play-progress{
+		position:absolute;
+		cursor:pointer;
+		width:0;
+		left:0;
+		top:0;
+		height:6px;
+		background:#6a9e3a;
+		}
+.volume-state{
+	width:50px;
+	float:left;
+	margin-left:15px;
+	background:#456726;
+	height:6px;
+	position:relative;
+	cursor:pointer;
+	border: 1px solid #3a3a3a;
+	}
+	.volume-state-position{
+		height:6px;
+		width:0;
+		position:absolute;
+		top:0;
+		left:0;
+		background:#6a9e3a;
+	}
+.song-duration{
+	margin-top:7px;
+	display:none;
+	}
+.track-zoomed .active-play .song-duration{
+	display:block;
+	}
