@@ -95,7 +95,7 @@ seesu.player = {
 		}
 		node.parent().addClass('active-play');
 		this.current_song = node;
-
+		log(node.attr('href'))
 		if (this.musicbox.play_song_by_node) {
 		  this.musicbox.play_song_by_node(node);
 		} else 
@@ -233,6 +233,7 @@ var try_to_use_iframe_sm2p = function(){
 		var i_f_sm2_hide_timeout;
 		
 		i_f_sm2.bind('load',function(){
+			log('sm2 iframe loaded')
 			var scripts_paths = '';
 			$('script.for-sm2-iframe', document.documentElement.firstChild).each(function(i){
 				scripts_paths += (((i == 0) ? '' : ',') + this.src) //comma separated
@@ -241,13 +242,13 @@ var try_to_use_iframe_sm2p = function(){
 			i_f_sm2_hide_timeout = setTimeout(function(){
 				i_f_sm2.remove()
 				window.removeEventListener("message", check_iframe_sm2p_init, false);
-			},1400)
+			},5000)
 		});
 		check_iframe_sm2p_init = function(e){
 			if (e.data.match(/sm2_p_inited/)){
 				seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
 				$(document.body).addClass('flash-internet');
-				i_f.remove();
+				if (typeof i_f === 'object' ) {i_f.remove();}
 				clearTimeout(i_f_sm2_hide_timeout);
 				window.removeEventListener("message", check_iframe_sm2p_init, false);
 			}
@@ -273,7 +274,7 @@ $(function() {
 		$(document.body).addClass('flash-internet');
 	  } else {
 	  	log('sm2 in widget notok')
-	  	try_to_use_iframe_vkp();
+	 // 	try_to_use_iframe_vkp();
 	  	try_to_use_iframe_sm2p();
 
 	  }

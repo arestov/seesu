@@ -370,9 +370,11 @@ p.internet-flash-settings{
 	height:20px;
 }
 #i_f_sm2{
-	width:20px;
-	height:20px;
-	border:0;
+	width:200px;
+	top:0;
+	left:0;
+	height:200px;
+	border:1px solid #ddd;
 	position:absolute;
 }
 .track-progress{

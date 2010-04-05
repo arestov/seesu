@@ -10,19 +10,28 @@
 		body{margin:0;padding:0;overflow:hidden;-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);}
 	</style>
 	<script type="text/javascript" charset="utf-8">
-		function log(){
+	if  (navigator.userAgent.match(/Opera/)){
+		log = function(){
 			opera.postError.apply(opera, arguments)
 		}
+	} else {
+		log = alert
+	}
 	</script>
 	<script type="text/javascript">
+	/*
+	if (typeof console != 'object'){
 		console = {};
-		console.log = opera.postError;
+		console.log = function(text){
+			log(text)
+		}	
+	}*/
 	</script>
 	<script type="text/javascript" charset="utf-8">
 	get_script = function(script_path, callback){
 		var _script = document.createElement('script');
 			_script.setAttribute('type', 'text/javascript');
-			if (callback) {_script.onload = callback};
+			if (callback) {_script.onload = callback;};
 			_script.setAttribute('src', script_path);
 		document.documentElement.firstChild.appendChild(_script);
 	}
@@ -42,9 +51,12 @@
 		sm2_p_in_iframe.player_source_window = source;
 		
 		soundManager.onready(function() {
+			
 			if (soundManager.supported()) {
-				source.postMessage("sm2_p_inited",'*');
+				
+				//source.postMessage("sm2_p_inited",'*');
 				log('sm2 iframe work');
+				
 			} else{
 				log('by some reason sm2 iframe don"t work')
 			}
@@ -53,24 +65,31 @@
 		window.removeEventListener("message", init_sm2_p_listener, false);
 	}
 	init_sm2_p_listener = function(e){
-		if (e.origin.indexOf('widget://') == -1) {
-			return
-		} else {
-			if (e.data.match(/init_sm2_p/)){
-				var params_from_source = e.data.split(',');
-				var volume = params_from_source[1];
-				init_sm2_p_as_callback = (function(volume, source){
-					//making closure of init_sm2_p for cycle using 
-					return function(){init_sm2_p(volume, source);}
-				})(volume, e.source);
-				var scripts = params_from_source.slice(2);
-				for (var i=0, l = scripts.length ; i < l; i++) {
-					get_script(scripts[i], (function(current_script, scripts_number,callback){
-						return function(){scripts_loading_callback(current_script, scripts_number,callback)}
-					})(i+1, l, init_sm2_p_as_callback))
-				};
-			}
+		if (e.data.match(/init_sm2_p/)){
+			e.source.postMessage("sm2_p_inited",'*');
+			var params_from_source = e.data.split(',');
+			var volume = params_from_source[1];
+			init_sm2_p_as_callback = (function(volume, source){
+				//making closure of init_sm2_p for cycle using 
+				return function(){init_sm2_p(volume, source);}
+			})(volume, e.source);
+			var scripts = params_from_source.slice(2);
+			
+			for (var i=0, l = scripts.length ; i < l; i++) {
+				var _origin = e.origin;
+				
+				if (!_origin.match(/widget/) && !(location.protocol.match(/file/)) ){
+					var script = scripts[i];
+					var js_pos = script.indexOf('/js/');
+					scripts[i] = 'http://seesu.heroku.com' + scripts[i].slice(js_pos);
+				} else{
+				}
+				get_script(scripts[i], (function(current_script, scripts_number,callback){
+					return function(){scripts_loading_callback(current_script, scripts_number,callback)}
+				})(i+1, l, init_sm2_p_as_callback))
+			};
 		}
+		
 	}
 	window.addEventListener("message", init_sm2_p_listener, false);
 	</script>

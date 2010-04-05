@@ -1,9 +1,8 @@
 soundManager.url = 'http://seesu.heroku.com/swf/';
 soundManager.flashVersion = 9; // optional: shiny features (default = 8)
 soundManager.useFlashBlock = false; // optionally, enable when you're ready to dive in
-soundManager.debugMode = false;
+soundManager.debugMode = true;
 soundManager.wmode = 'transparent';
-
 
 var sm2_p = function(player_holder,volume,sm2, iframe){
 	var _this = this;
@@ -45,6 +44,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 	
 	
 	if (iframe) {
+		log('with iframe')
 		this.player_container = iframe;
 		window.addEventListener("message", function(e){
 			_this.listen_commands_of_sandbox.apply(_this,arguments);

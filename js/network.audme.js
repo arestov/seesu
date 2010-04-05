@@ -21,7 +21,6 @@ get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_elem
 		  	log(xhr.responseText)
 		  },
 		  success: function(_r){
-			log('audme search')
 			var r_div = document.createElement('div');
 			r_div.innerHTML = _r;
 			
