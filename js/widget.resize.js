@@ -2,8 +2,7 @@
 resizeWidg = function(){
   var device = 'screen';
   
-  var body = document.body,
-	  screenHolder = document.getElementById('screens');
+  var body = document.getElementsByTagName('body')[0];
 	
   /** Helper for controlling window resize
    * @Author Benjamin "ICantDrink" Joffe
@@ -15,9 +14,9 @@ resizeWidg = function(){
     function widgetResize(width, height) {
 	    var zoom = (device == "mobile") ? window.innerWidth / document.documentElement.offsetWidth : 1;
 	    body.style.height = (height-4) + 'px';
-	    screenHolder.style.height = (height-67) + 'px';
+
 	    window.resizeTo(width * zoom, height * zoom);
-	    
+
 	    
 	    
 	    var compensation = device == "screen" ? 133 : 105; // magic numbers FTW!!
@@ -39,16 +38,14 @@ resizeWidg = function(){
       
       widgetResize(width, height);
     }
-    
+    /*
     window.addEventListener("resize", function(event) {
       if(!timeout) {
         widgetResize(width, height);
       }
     }, false);
-    
-    window.onscroll = function() {
-      //window.scrollTo(0,0);
-    };
+    */
+
     
     resizeWindow();
     
@@ -92,4 +89,4 @@ resizeWidg = function(){
     };
   })();
 }
-window.addEventListener( 'load' , resizeWidg, false);
+document.addEventListener( 'DOMContentLoaded' , resizeWidg, false);

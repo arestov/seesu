@@ -10,6 +10,7 @@
 	<link rel="stylesheet" href="css/search_results.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/player.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/buttmen.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="css/abs_layout.css" type="text/css" media="screen" />
 	<script type="text/javascript" charset="utf-8" src="js/nice_alert.js"></script>
 	<!--<script type='text/javascript' 
         src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>-->
@@ -45,6 +46,8 @@
 			
 		}
 	</script>
+	<script type="text/javascript" src="js/wi1dget.resize.js"></script>
+	
 	
 	<script type="text/javascript" src="js/json2.min.js"></script>
 	<script type="text/javascript" src="js/md5.min.js"></script>
@@ -55,7 +58,7 @@
 	
 	<script type="text/javascript" src="js/soundmanager2.js" class="for-sm2-iframe"></script>
 
-	<script type="text/javascript" src="js/widget.resize.js"></script> 
+	 
 	
 	<script type="text/javascript" src="js/network.js"></script>
 	<script type="text/javascript" src="js/network.audme.js"></script>
@@ -75,6 +78,21 @@
 	
 	<script type="text/javascript" src="js/buttmen.js"></script>
 	<script type="text/javascript" src="js/pressed_node_tester.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		$(function(){
+			var old_win_height = $(window).height();
+			var new_win_size = $(document.body).height() - old_win_height;
+			
+			var hah = old_win_height + (new_win_size*2);
+			log($(window).height())
+			setTimeout(function(){
+				window.resizeTo(600,hah );
+				log(hah)
+				log($(window).height())
+			},1000)
+			
+		})
+	</script>
   </head>
   
   <body class="track-zoomed">
