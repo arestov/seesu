@@ -517,12 +517,12 @@ var show_artist_info = function(r){
 		for (var i=0, l = tags.length; i < l; i++) {
 			var tag = tags[i],
 				arts_tag_node = $("<a></a>")
-				  .attr({ 
-					text: tag.name, 
-					href: tag.url,
-					'class': 'music-tag js-serv'
-				  })
-				  .data('music_tag', tag.name);
+					.text(tag.name)
+					.attr({ 
+						href: tag.url,
+						'class': 'music-tag js-serv'
+					})
+					.data('music_tag', tag.name);
 			tags_p.append(arts_tag_node);
 		}
 		artsBio.append(tags_p);
@@ -535,8 +535,8 @@ var show_artist_info = function(r){
 		for (var i=0, l = similars.length; i < l; i++) {
 			var similar = similars[i],
 				arts_similar_node = $("<a class='js-serv'></a>")
+				  .text(similar.name)
 				  .attr({ 
-					text: similar.name, 
 					href: similar.url, 
 					'class' : 'artist js-serv' 
 				  })
