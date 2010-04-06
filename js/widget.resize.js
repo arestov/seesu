@@ -37,13 +37,13 @@ resizeWidg = function(){
       
       widgetResize(width, height);
     }
-    
+    /*
     window.addEventListener("resize", function(event) {
       if(!timeout) {
         widgetResize(width, height);
       }
     }, false);
-    
+    */
     window.onscroll = function() {
       //window.scrollTo(0,0);
     };

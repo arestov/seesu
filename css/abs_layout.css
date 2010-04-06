@@ -28,3 +28,6 @@
 	width:auto;
 	height:auto;
 }
+.window-bottom{
+	border:1px solid red;
+}
