@@ -257,7 +257,7 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 	}
 };
 var vk_track_search = function(query){
-	art_page_nav.innerHTML = query;
+	nav_artist_page.innerHTML = query;
 
 	slider.className = 'show-full-nav show-player-page';
 	if (seesu.delayed_search.waiting_for_mp3provider){
@@ -448,7 +448,7 @@ var get_artist_album_playlist = function(r){
 };
 
 var get_artist_album_info = function(artist, album, callback){
-	$(art_page_nav).text('(' + artist + ') ' + album );
+	$(nav_artist_page).text('(' + artist + ') ' + album );
 	lfm('album.getInfo',{'artist': artist, album : album},function(r){
 		if (callback) {callback(r);}
 	});
@@ -589,7 +589,7 @@ var set_artist_page = function (artist,with_search_results) {
 	} else {
 		slider.className = 'show-player-page';
 	}
-	$(art_page_nav).text(artist);
+	$(nav_artist_page).text(artist);
 	getTopTracks(artist,function(track_list){
 		render_playlist(track_list);
 	});
