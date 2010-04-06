@@ -161,11 +161,13 @@ $(function() {
 		var _this = $(this);
 		render_loved(_this[0].loved_by_user_name.value);
 		$(document.body).removeClass('lfm-auth-req-loved');
+		return false;
 	})
-	$('#lfm-recomm-for-username').submit(function(){
+	$('#lfm-recomm-for-username').submit(function(e){
 		var _this = $(this);
 		render_recommendations_by_username(_this[0].recomm_for_username.value);
 		$(document.body).removeClass('lfm-auth-req-recomm');
+		return false;
 	})
 	zz = new vk_api(seesu.vk_id,'SRkM2ws8NQ','35569' );
 	play_controls = $('.play-controls');

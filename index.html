@@ -24,7 +24,6 @@
 			}
 		} else {
 			log = function(text){
-				
 				alert(text)	
 			}
 		}
@@ -35,11 +34,18 @@
 				log(text)
 			}	
 		}
+		
 		log(location.href)
+		if ((typeof widget != 'object') || !widget.preferenceForKey){
+			widget = {};
+			widget.preferenceForKey = function(){return false}
+			widget.setPreferenceForKey = function(){return false}
+			
+		}
 	</script>
 	
 	<script type="text/javascript" src="js/json2.min.js"></script>
-	<script type="text/javascript" src="js/md5.min.js"></script>
+	<script type="text/javascript" src="js/md5.js"></script>
 	<script type="text/javascript" src="js/jquery-1.4.2.min.js" class="for-iframe"></script>
 	<script type="text/javascript" src="js/jquery.debounce-1.0.5.js"></script>
 	

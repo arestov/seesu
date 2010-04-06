@@ -112,6 +112,8 @@ try_mp3_providers = function(){
 	  dataType: "json",
 	  timeout: 7000,
 	  success: function(r){
+		
+		if (!r) {log(r);return false;}
 	  	if (r.user && r.user.id) {
 	  		
 	  		zz.viewer_id = r.user.id;
