@@ -82,11 +82,12 @@
 		$(function(){
 			var old_win_height = $(window).height();
 			var new_win_size = $(document.body).height() - old_win_height;
-			log(old_win_height + new_win_size )
+			
+			var hah = old_win_height + (new_win_size*2);
 			log($(window).height())
 			setTimeout(function(){
-				window.resizeTo(600, old_win_height + (new_win_size*2));
-				log(old_win_height + (new_win_size *2))
+				window.resizeTo(600,hah );
+				log(hah)
 				log($(window).height())
 			},1000)
 			
