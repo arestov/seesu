@@ -24,7 +24,7 @@ $(function() {
 		searchfield.focus();
 	};
 	searchres = document.getElementById('search_result');
-	art_page_nav = document.getElementById('nav_artist_page');
+	nav_artist_page = document.getElementById('nav_artist_page');
 	trk_page_nav = document.getElementById('nav_tracks_page');
 	
 	srnav.onclick = function(){
