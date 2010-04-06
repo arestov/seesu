@@ -36,6 +36,8 @@
 			console.log = function(text){
 				log(text)
 			}	
+		} else{
+			log = console.log
 		}
 		
 		log(location.href)
@@ -46,13 +48,13 @@
 			
 		}
 	</script>
-	<script type="text/javascript" src="js/widget.resize.js"></script>
+	<!--<script type="text/javascript" src="js/widget.resize.js"></script>-->
 	
 	
 	<script type="text/javascript" src="js/json2.min.js"></script>
 	<script type="text/javascript" src="js/md5.min.js"></script>
 	<script type="text/javascript" src="js/jquery-1.4.2.min.js" class="for-iframe"></script>
-	<script type="text/javascript" src="js/jquery.debounce-1.0.5.js"></script>
+
 	
 	<script type="text/javascript" src="js/jquery.debounce-1.0.5.js"></script>
 	
@@ -75,7 +77,7 @@
 	<script type="text/javascript" src="js/seesu.player.js"></script>
 	
 	<script type="text/javascript" src="js/seesu.events.js"></script>
-	
+
 	<script type="text/javascript" src="js/buttmen.js"></script>
 	<script type="text/javascript" src="js/pressed_node_tester.js"></script>
 	<script type="text/javascript" charset="utf-8">
@@ -85,7 +87,7 @@
 			
 			var hah = old_win_height + (new_win_size*2);
 			setTimeout(function(){
-				window.resizeTo(600,hah );
+				//window.resizeTo(600,hah );
 			},1000)
 			
 		})
@@ -131,7 +133,6 @@
 						
 						
 						<form id="search" name="search">
-
 							<p id="search-p"><label><span>Search</span><input type="text" name="q" id="q" size="50"  autocomplete="off"/></label></p>
 							<p id="search-desciption">Use keyboard: tab, enter, arrows up and down</p>
 						</form>
@@ -193,7 +194,7 @@
 								<li class="buttmen-hlt-right"></li>
 								<li class="buttmen-hlt-bottom"></li>
 								<li class="buttmen-hlt-left"></li>
-							<ul>
+							</ul>
 						</dd>
 						<dd class="buttmen-butts">
 							<ul>

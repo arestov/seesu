@@ -346,7 +346,7 @@ display:none;
 #update-star{
 	position:absolute;
 	left:15px;
-	background:url(/i/update_star.png);
+	background:url(../i/update_star.png);
 	width:16px;
 	height:16px;
 	border:0;

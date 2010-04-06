@@ -4,7 +4,7 @@ var button_menu = function(jq_node){
 	this.sectors = 20;
 	var button_menu_this = this;
 	
-	var but_hl_style = $('<style></style>').appendTo(document.documentElement.firstChild)
+	var but_hl_style = $('<style></style>').attr('title','button_menu').appendTo(document.documentElement.firstChild)
 	
 	var style = '';
 	for (var i=1; i <= this.sectors; i++) {
@@ -22,17 +22,19 @@ var button_menu = function(jq_node){
 	
 	
 	jq_node.mousedown(function(e){
+		e.preventDefault();
 		var _this = $(this);
 		var butt_hlts = _this.find('dd.buttmen-hlts ul');
 		
 		
 		_this.addClass('buttmen-highlighting');
-		
 		var butt_main = $('dt.main-button', this).mouseleave(function(e){
+			e.preventDefault();
 			_this.removeClass('buttmen-highlighting').addClass('buttmen-butting');
 			$(this).unbind('mouseleave');
 		});
 		$(document).mouseup(function(e){
+			e.preventDefault();
 			butt_main.unbind('mouseleave');
 			setTimeout(function(){
 				_this.removeClass('buttmen-butting');
@@ -59,6 +61,7 @@ var button_menu = function(jq_node){
 		var sector_horizontal = width/button_menu_this.sectors;
 		
 		$(document).mousemove(function(e){
+			e.preventDefault();
 			var x = e.pageX;
 			var y = e.pageY;
 			if ( (x > border_left) && (x < border_right) && (y > border_top ) && (y < border_bottom)){
@@ -79,12 +82,13 @@ var button_menu = function(jq_node){
 		
 	})
 	.mouseup(function(e){
-		
+		e.preventDefault();
 		var _this = $(this);
 		_this.removeClass('buttmen-butting');
 		
 	})
 	.mousemove(function(e){
+		e.preventDefault();
 		e.target.ownerDocument.defaultView.getSelection().removeAllRanges();
 	});
 	
