@@ -71,6 +71,8 @@
         var h = t.clientHeight - 18;
         t.style.height = h +'px';
         var i = 9;
+		t.style.display = 'none';
+		return
         var closing = setInterval(function(){
           i--;
           t.style.opacity = i/10;
