@@ -289,14 +289,12 @@ sm2_p.prototype = {
 	},
 	"listen_commands_of_source": function(e){
 		var _this = this;
-		if (e.origin.indexOf('widget://') == -1) {
-			return
-		} else {
-			if (e.data.match(/sm2_p_iframe/)){
-				var commands  = e.data.replace('sm2_p_iframe,','').split(",");
-				this[commands.shift()].apply(this, commands);
-			}
+		
+		if (e.data.match(/sm2_p_iframe/)){
+			var commands  = e.data.replace('sm2_p_iframe,','').split(",");
+			this[commands.shift()].apply(this, commands);
 		}
+		
 	},
 	"listen_commands_of_sandbox": function(e){
 		if (e.data.match(/sm2_p_source/)){
