@@ -95,7 +95,6 @@ seesu.player = {
 		}
 		node.parent().addClass('active-play');
 		this.current_song = node;
-		log(node.attr('href'))
 		if (this.musicbox.play_song_by_node) {
 		  this.musicbox.play_song_by_node(node);
 		} else 

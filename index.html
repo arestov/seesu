@@ -46,7 +46,7 @@
 			
 		}
 	</script>
-	<script type="text/javascript" src="js/wi1dget.resize.js"></script>
+	<script type="text/javascript" src="js/widget.resize.js"></script>
 	
 	
 	<script type="text/javascript" src="js/json2.min.js"></script>
@@ -84,11 +84,8 @@
 			var new_win_size = $(document.body).height() - old_win_height;
 			
 			var hah = old_win_height + (new_win_size*2);
-			log($(window).height())
 			setTimeout(function(){
 				window.resizeTo(600,hah );
-				log(hah)
-				log($(window).height())
 			},1000)
 			
 		})
