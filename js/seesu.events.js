@@ -1,6 +1,3 @@
-var slider , searchfield ,srnav ,startlink, searchres, art_page_nav, flash_secur,
-	artsHolder,artsImage,artsBio,artsTracks,artsName,art_tracks_w_counter,
-	captcha_img,vk_login_error;
 $(function() {
   if (lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
   if (seesu) {check_seesu_updates();}
