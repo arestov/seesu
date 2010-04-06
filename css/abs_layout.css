@@ -1,0 +1,30 @@
+#slider{
+	position:static ;
+}
+#slider-materail{
+	background-color: #505050;
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	bottom: 10px;
+	top: 35px;
+}
+.dbottom { 
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	}
+#promo{
+	position: absolute;
+	bottom: 0px;
+}
+#slider #screens{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 15px;
+	width:auto;
+	height:auto;
+}

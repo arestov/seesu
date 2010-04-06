@@ -2,8 +2,7 @@
 resizeWidg = function(){
   var device = 'screen';
   
-  var body = document.body,
-	  screenHolder = document.getElementById('screens');
+  var body = document.getElementsByTagName('body')[0];
 	
   /** Helper for controlling window resize
    * @Author Benjamin "ICantDrink" Joffe
@@ -15,7 +14,6 @@ resizeWidg = function(){
     function widgetResize(width, height) {
 	    var zoom = (device == "mobile") ? window.innerWidth / document.documentElement.offsetWidth : 1;
 	    body.style.height = (height-4) + 'px';
-	    screenHolder.style.height = (height-67) + 'px';
 	    window.resizeTo(width * zoom, height * zoom);
 	    
 	    
@@ -92,4 +90,4 @@ resizeWidg = function(){
     };
   })();
 }
-window.addEventListener( 'load' , resizeWidg, false);
+document.addEventListener( 'DOMContentLoaded' , resizeWidg, false);
