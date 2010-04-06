@@ -14,8 +14,9 @@ resizeWidg = function(){
     function widgetResize(width, height) {
 	    var zoom = (device == "mobile") ? window.innerWidth / document.documentElement.offsetWidth : 1;
 	    body.style.height = (height-4) + 'px';
+
 	    window.resizeTo(width * zoom, height * zoom);
-	    
+
 	    
 	    
 	    var compensation = device == "screen" ? 133 : 105; // magic numbers FTW!!
@@ -44,9 +45,7 @@ resizeWidg = function(){
       }
     }, false);
     */
-    window.onscroll = function() {
-      //window.scrollTo(0,0);
-    };
+
     
     resizeWindow();
     

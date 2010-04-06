@@ -46,7 +46,7 @@
 			
 		}
 	</script>
-	<script type="text/javascript" src="js/widget.resize.js"></script>
+	<script type="text/javascript" src="js/wi1dget.resize.js"></script>
 	
 	
 	<script type="text/javascript" src="js/json2.min.js"></script>
@@ -78,6 +78,20 @@
 	
 	<script type="text/javascript" src="js/buttmen.js"></script>
 	<script type="text/javascript" src="js/pressed_node_tester.js"></script>
+	<script type="text/javascript" charset="utf-8">
+		$(function(){
+			var old_win_height = $(window).height();
+			var new_win_size = $(document.body).height() - old_win_height;
+			log(old_win_height + new_win_size )
+			log($(window).height())
+			setTimeout(function(){
+				window.resizeTo(600, old_win_height + (new_win_size*2));
+				log(old_win_height + (new_win_size *2))
+				log($(window).height())
+			},1000)
+			
+		})
+	</script>
   </head>
   
   <body class="track-zoomed">
