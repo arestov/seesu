@@ -347,6 +347,7 @@ var try_to_use_iframe_sm2p = function(){
 			} else if (e.data.match(/sm2_inited/)){
 				log('iframe sm2 wrokss yearh!!!!')
 				seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
+				i_f_sm2.addClass('sm-inited');
 				$(document.body).addClass('flash-internet');
 				if (typeof i_f === 'object' ) {i_f.remove();}
 				
@@ -383,7 +384,7 @@ var try_to_use_iframe_sm2p = function(){
 $(function() {
 	$('#play-list-holder').append(player_holder);
 
-/*
+
 	soundManager.onready(function() {
 	  if (soundManager.supported()) {
 		log('sm2 in widget ok')
@@ -396,6 +397,6 @@ $(function() {
 
 	  }
 	});
-*/	
+
 	
 });
