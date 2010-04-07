@@ -244,7 +244,6 @@ var try_to_use_iframe_sm2p = function(){
 					if (soundManager.supported()) {
 
 						iframe_source.postMessage("sm2_inited",'*');
-						log('sm2 iframe work');
 
 					} else{
 						log('by some reason sm2 iframe don"t work')
