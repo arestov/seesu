@@ -31,44 +31,40 @@
 	<script type="text/javascript" charset="utf-8">
 	script_data = '';
 	
-	create_script = function(script_data){
+	create_script = function(scripts_data){
 		var _script = document.createElement('script');
 			_script.setAttribute('type', 'text/javascript');
-			_script.innerHTML = script_data;
-		document.documentElement.firstChild.appendChild(_scripts);
+			
+			var script_itlseft = document.createTextNode(scripts_data)
+			_script.appendChild(script_itlseft)
+			
+			
+		document.documentElement.firstChild.appendChild(_script);
 	}
-	
-
-	init_sm2_p = function(volume, source){
-		sm2_p_in_iframe = new sm2_p(false, volume, soundManager);
-		sm2_p_in_iframe.player_source_window = source;
-		
-		soundManager.onready(function() {
+	append_data_as_script_listener = function(e){
+		if (e.data.match(/^append_data_as_script\n/)){
+			create_script(e.data.replace(/^append_data_as_script\n/, ''))
 			
-			if (soundManager.supported()) {
-				
-				//source.postMessage("sm2_p_inited",'*');
-				log('sm2 iframe work');
-				
-			} else{
-				log('by some reason sm2 iframe don"t work')
-			}
-		})
-		
-		window.removeEventListener("message", init_sm2_p_listener, false);
+			window.removeEventListener("message", append_data_as_script_listener, false);
+			
+		}
 	}
-	init_sm2_p_listener = function(e){
-		if (e.data.match(/init_sm2_p/)){
-			e.source.postMessage("sm2_p_inited",'*');
-			var params_from_source = e.data.split(',');
-			var volume = params_from_source[1];
+	load_test_listener = function(e){
+		if (e.data.match(/test_iframe_loading_state/)){
+			iframe_source = e.source
+			iframe_source.postMessage("iframe_loaded",'*');
+			window.removeEventListener("message", load_test_listener, false);
 			
 			
+			window.addEventListener("message", append_data_as_script_listener, false);
 			
 		}
 		
 	}
-	window.addEventListener("message", init_sm2_p_listener, false);
+	
+	window.addEventListener("message", load_test_listener, false);
+	
+	
 	</script>
 
 </head>

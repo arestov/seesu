@@ -226,35 +226,152 @@ var try_to_use_iframe_vkp = function(){
 	
 }
 var try_to_use_iframe_sm2p = function(){
-	i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="iframe_sm2.html" ></iframe>');
+	i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="iframe_fetch_scripts.html" ></iframe>');
 	if (i_f_sm2) {
+		
+		
+		init_sm2_p = function(){
+			
+			
+			if (typeof soundManager != 'object'){
+				log('no sounds');
+			} else{
+				sm2_p_in_iframe = new sm2_p(false, _volume, soundManager);
+				sm2_p_in_iframe.player_source_window = iframe_source;
+
+				soundManager.onready(function() {
+
+					if (soundManager.supported()) {
+
+						iframe_source.postMessage("sm2_inited",'*');
+						log('sm2 iframe work');
+
+					} else{
+						log('by some reason sm2 iframe don"t work')
+					}
+				})	
+			}
+			
+			
+		}
+		var text_of_function = function(func){
+			return func.toString().replace(/^.*\n/, "").replace(/\n.*$/, "")
+		}
+		var last_iframe_func = text_of_function(init_sm2_p).replace('_volume', seesu.player.player_volume );
 		
 		var i_f_sm2_hide_timeout;
 		
-		i_f_sm2.bind('load',function(){
-			log('sm2 iframe loaded')
-			var scripts_paths = '';
-			$('script.for-sm2-iframe', document.documentElement.firstChild).each(function(i){
-				scripts_paths += (((i == 0) ? '' : ',') + this.src) //comma separated
-			});
-			this.contentWindow.postMessage("init_sm2_p," + seesu.player.player_volume + "," + scripts_paths,'*');
-			i_f_sm2_hide_timeout = setTimeout(function(){
-				i_f_sm2.remove()
-				window.removeEventListener("message", check_iframe_sm2p_init, false);
-			},5000)
+		var scripts_paths = [];
+
+		
+		scripts_data = [];
+		$('script.for-sm2-iframe', document.documentElement.firstChild).each(function(i){
+			scripts_paths.push(this.src);
 		});
-		check_iframe_sm2p_init = function(e){
-			if (e.data.match(/sm2_p_inited/)){
+		
+		
+		var all_scripts_data_loaded = false;
+		var wait_for_all_script_data = false;
+		var add_script_data_callback = function(){return;};
+		var send_scripts_to_iframe = function(iframe){
+			if (all_scripts_data_loaded){
+				log('sending')
+				iframe.contentWindow.postMessage("append_data_as_script\n" + scripts_data.complete_data, '*');
+				
+			} else{
+				log('callbacking')
+				wait_for_all_script_data = true;
+				add_script_data_callback = function(){
+					send_scripts_to_iframe(iframe);
+				}
+			}
+		}
+		var sort_by_number_order = function(g,f){
+			if (g && f) {
+				if (g.number > f.number)
+					{return 1;}
+				else if (g.number < f.number)
+					{return -1;}
+				else
+				{return 0;}
+			} else {return 0;}
+
+		};
+		
+		var add_script_data = function(i, l, data){
+			scripts_data.push({"number": i, "data": data});
+			
+			
+			if (scripts_data.length == (l)){
+				scripts_data.sort(sort_by_number_order);
+				scripts_data.complete_data = '/*<![CDATA[*/' + '\n';
+				for (var m=0; m < scripts_data.length; m++) {
+					scripts_data.complete_data += scripts_data[m].data + '\n\n'
+				};
+				
+				scripts_data.complete_data += last_iframe_func;
+				scripts_data.complete_data += '/* ]]>*/';
+
+				all_scripts_data_loaded = true;
+				if (wait_for_all_script_data) {
+					add_script_data_callback();
+				}
+			}
+		}
+		if (scripts_paths.length) {
+			for (var i=0; i < scripts_paths.length; i++) {
+				
+				(function(i, l){
+					$.ajax({
+						url: scripts_paths[i].replace(location.href, ''),
+						global: false,
+						dataType: 'text',
+						type: "GET",
+						success: function(r){
+							add_script_data(i, l, r)
+						}
+					});
+				})(i, scripts_paths.length)
+				
+				
+			}
+		}
+		var check_iframe = function(e){
+			if (e.data.match(/iframe_loaded/)){
+				clearTimeout(i_f_sm2_hide_timeout);
+				
+				log('got iframe loaded feedback');
+				send_scripts_to_iframe(i_f_sm2[0]);
+				
+				
+			} else if (e.data.match(/sm2_inited/)){
+				log('iframe sm2 wrokss yearh!!!!')
 				seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
 				$(document.body).addClass('flash-internet');
 				if (typeof i_f === 'object' ) {i_f.remove();}
-				clearTimeout(i_f_sm2_hide_timeout);
-				window.removeEventListener("message", check_iframe_sm2p_init, false);
+				
+				window.removeEventListener("message", check_iframe, false);
 			}
 		}
+		window.addEventListener("message", check_iframe, false);
+		$('#slider-materail').append(i_f_sm2);
+		
+		
+		i_f_sm2.bind('load',function(){
+			log('source knows that iframe loaded');
+			
+			this.contentWindow.postMessage("test_iframe_loading_state", '*');
+			
+			i_f_sm2_hide_timeout = setTimeout(function(){
+				i_f_sm2.remove()
+				window.removeEventListener("message", check_iframe, false);
+			},1000);
+			
+			
+		});
+		
 	}
-	window.addEventListener("message", check_iframe_sm2p_init, false);
-	$('#slider-materail').append(i_f_sm2);
+	
 }
 
 
@@ -262,9 +379,10 @@ var try_to_use_iframe_sm2p = function(){
 
 
 // Ready? Steady? Go!
+
 $(function() {
 	$('#play-list-holder').append(player_holder);
-
+/*
 
 	soundManager.onready(function() {
 	  if (soundManager.supported()) {
@@ -274,8 +392,10 @@ $(function() {
 	  } else {
 	  	log('sm2 in widget notok')
 	 // 	try_to_use_iframe_vkp();
-	  	try_to_use_iframe_sm2p();
+	  	
 
 	  }
 	});
+*/	
+	try_to_use_iframe_sm2p();
 });

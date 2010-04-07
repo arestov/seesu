@@ -370,10 +370,12 @@ p.internet-flash-settings{
 	height:20px;
 }
 #i_f_sm2{
-	width:200px;
+	width:500px;
 	top:0;
+	overflow:scroll;
 	left:0;
-	height:200px;
+	height:300px;
+	z-index:1000;
 	border:1px solid #ddd;
 	position:absolute;
 }
