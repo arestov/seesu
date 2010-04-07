@@ -40,7 +40,6 @@
 			log = console.log
 		}
 		
-		log(location.href)
 		if ((typeof widget != 'object') || !widget.preferenceForKey){
 			widget = {};
 			widget.preferenceForKey = function(){return false}
@@ -72,15 +71,18 @@
 	
 	<script type="text/javascript" src="js/seesu.js"></script>
 	<script type="text/javascript" src="js/seesu.search.js"></script>
+	<script type="text/javascript" src="js/seesu.events.js"></script>
+	
 	<script type="text/javascript" src="js/seesu.player.vk_p.js" class="for-iframe"></script>
 	<script type="text/javascript" src="js/seesu.player.sm2.js" class="for-sm2-iframe"></script>
 	<script type="text/javascript" src="js/seesu.player.js"></script>
 	
-	<script type="text/javascript" src="js/seesu.events.js"></script>
+	
 
 	<script type="text/javascript" src="js/buttmen.js"></script>
 	<script type="text/javascript" src="js/pressed_node_tester.js"></script>
 	<script type="text/javascript" charset="utf-8">
+	/*
 		$(function(){
 			var old_win_height = $(window).height();
 			var new_win_size = $(document.body).height() - old_win_height;
@@ -90,7 +92,7 @@
 				//window.resizeTo(600,hah );
 			},1000)
 			
-		})
+		})*/
 	</script>
   </head>
   

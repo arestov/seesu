@@ -2018,6 +2018,7 @@ function SoundManager(smURL, smID) {
 if (typeof SM2_DEFER === 'undefined' || !SM2_DEFER) {
   soundManager = new SoundManager();
 }
+
 // expose public interfaces
 window.SoundManager = SoundManager; // SoundManager() constructor
 window.soundManager = soundManager; // instance for Flash callbacks, etc.

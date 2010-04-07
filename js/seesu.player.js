@@ -382,8 +382,8 @@ var try_to_use_iframe_sm2p = function(){
 
 $(function() {
 	$('#play-list-holder').append(player_holder);
-/*
 
+/*
 	soundManager.onready(function() {
 	  if (soundManager.supported()) {
 		log('sm2 in widget ok')
@@ -392,10 +392,10 @@ $(function() {
 	  } else {
 	  	log('sm2 in widget notok')
 	 // 	try_to_use_iframe_vkp();
-	  	
+	  		try_to_use_iframe_sm2p();
 
 	  }
 	});
 */	
-	try_to_use_iframe_sm2p();
+	
 });
