@@ -226,7 +226,7 @@ var try_to_use_iframe_vkp = function(){
 	
 }
 var try_to_use_iframe_sm2p = function(){
-	i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="iframe_fetch_scripts.html" ></iframe>');
+	i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.heroku.com/iframe_fetch_scripts.html" ></iframe>');
 	if (i_f_sm2) {
 		
 		
