@@ -360,7 +360,7 @@ p.internet-flash-settings{
 }
 #play-list-holder .player-holder, #play-list-holder #i_f{
 	left:-700px;
-	z-index:10;
+	z-index:2;
 	margin-left:34px;
 	margin-top: -13px;
 }
