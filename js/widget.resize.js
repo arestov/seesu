@@ -79,17 +79,19 @@ resizeWidg = function(){
 	window.addEventListener("resize", $.debounce(save_size, 1000), false);
 	
 	var resize_button = $('#resize-handle');
-	if  (navigator.userAgent.match(/Opera/)){
+	
+	
+	if  ($.browser.opera || ($.browser.mozilla && navigator.platform.match(/Win/))){
 		resize_button.mousedown(function(e) {
 			drag(e, 1, 1);
 		})
 		
-		
+		log(1)
 	} else{
 		window.addEventListener("resize", $.debounce(resize_body, 10), false);
 		window.addEventListener("resize", $.debounce(window_minimum, 100), false);
 		resize_button.remove()
-
+log(2)
 	}
 	
 		
