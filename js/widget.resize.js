@@ -24,7 +24,7 @@ resizeWidg = function(){
       
       var width0 = width;
       var height0 = height;
-      document.addEventListener('mousemove', mousemove, false);
+      window.addEventListener('mousemove', mousemove, false);
       document.addEventListener('mouseup',   mouseup, false);
       
       function mousemove(e1) {
@@ -41,7 +41,7 @@ resizeWidg = function(){
       };
       
       function mouseup(e) {
-          document.removeEventListener('mousemove', mousemove, false);
+          window.removeEventListener('mousemove', mousemove, false);
           document.removeEventListener('mouseup'  , mouseup  , false);
           
           

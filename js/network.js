@@ -88,12 +88,21 @@ try_mp3_providers = function(){
 	}
 	
 	$.ajax({
-	  url: 'http://audme.ru/',
-	  success: function(){
-	  	seesu.delayed_search.available.push('audme');
-	  	$('#mp3way-audme').removeClass('cant-be-used');
-	  	log('audme nice')
-	  	swith_to_provider(true)
+	  url: "http://query.yahooapis.com/v1/public/yql?q=SELECT%20*%20FROM%20html%20WHERE%20url%3D'http%3A%2F%2Faudme.ru'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys",
+	  success: function(r){
+
+	  	if (!r.query.results){
+	  		log(typeof r.query.results)
+			seesu.delayed_search.available.push('audme');
+			$('#mp3way-audme').removeClass('cant-be-used');
+			log('audme nice')
+			swith_to_provider(true)	
+		} else{
+			log('audme error')
+		}
+		
+		
+		
 	  },
 	  timeout: 7000,
 	  error: function(){
