@@ -4,7 +4,7 @@
   <description>You can find &amp; get any music you need. Type in an artist or genre.</description>
   <width>640</width>
   <height>600</height>
-  <icon>i/icon_su.png</icon>
+  <icon>Icon.png</icon>
 
   <author>
 	<name>Gleb Arestov</name>
