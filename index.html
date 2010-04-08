@@ -25,6 +25,7 @@
 			}
 		} else {
 			log = function(text){
+				return
 				alert(text)	
 			}
 		}
@@ -45,12 +46,14 @@
 			
 		}
 	</script>
-	<!--<script type="text/javascript" src="js/widget.resize.js"></script>-->
+	
 	
 	
 	<script type="text/javascript" src="js/json2.min.js"></script>
 	<script type="text/javascript" src="js/md5.min.js"></script>
 	<script type="text/javascript" src="js/jquery-1.4.2.min.js" class="for-iframe"></script>
+	<script type="text/javascript" src="js/widget.resize.js"></script>
+
 
 	
 	<script type="text/javascript" src="js/jquery.debounce-1.0.5.js"></script>
@@ -79,19 +82,7 @@
 
 	<script type="text/javascript" src="js/buttmen.js"></script>
 	<script type="text/javascript" src="js/pressed_node_tester.js"></script>
-	<script type="text/javascript" charset="utf-8">
-	
-		$(function(){
-			var old_win_height = $(window).height();
-			var new_win_size = $(document.body).height() - old_win_height;
-			
-			var hah = old_win_height + (new_win_size*2);
-			setTimeout(function(){
-				window.resizeTo(600,hah );
-			},1000)
-			
-		})
-	</script>
+
   </head>
   
   <body class="track-zoomed">

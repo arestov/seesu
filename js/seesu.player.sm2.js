@@ -62,7 +62,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 	
 	
 	if (iframe) {
-		log('with iframe')
+		log('sm2 with iframe')
 		this.player_container = iframe;
 		window.addEventListener("message", function(e){
 			_this.listen_commands_of_sandbox.apply(_this,arguments);
