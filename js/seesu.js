@@ -180,7 +180,7 @@ var make_tracklist_playable = function(track_nodes){
 	
 };
 var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_duration){
-	var playable_node = $(node).attr({'class' : 'song js-serv'}).data('duration', mp3_duration);
+	var playable_node = $(node).attr({'class' : 'song js-serv', 'href': http_link }).data('duration', mp3_duration);
 	playlist_nodes_for.push(playable_node);
 	
 	
