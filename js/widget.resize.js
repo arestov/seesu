@@ -24,7 +24,7 @@ resizeWidg = function(){
       
       var width0 = width;
       var height0 = height;
-      window.addEventListener('mousemove', mousemove, false);
+      document.addEventListener('mousemove', mousemove, false);
       document.addEventListener('mouseup',   mouseup, false);
       
       function mousemove(e1) {
@@ -41,7 +41,7 @@ resizeWidg = function(){
       };
       
       function mouseup(e) {
-          window.removeEventListener('mousemove', mousemove, false);
+          document.removeEventListener('mousemove', mousemove, false);
           document.removeEventListener('mouseup'  , mouseup  , false);
           
           
@@ -86,12 +86,12 @@ resizeWidg = function(){
 			drag(e, 1, 1);
 		})
 		
-		log(1)
+
 	} else{
 		window.addEventListener("resize", $.debounce(resize_body, 10), false);
 		window.addEventListener("resize", $.debounce(window_minimum, 100), false);
 		resize_button.remove()
-log(2)
+
 	}
 	
 		
@@ -121,15 +121,6 @@ log(2)
       
       widgetResize(width, height);
     }
-    /*
-    window.addEventListener("resize", function(event) {
-      if(!timeout) {
-        widgetResize(width, height);
-      }
-    }, false);
-    */
-
-    
     resizeWindow();
     
 
