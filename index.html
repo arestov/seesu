@@ -11,41 +11,7 @@
 	<link rel="stylesheet" href="css/player.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/buttmen.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/abs_layout.css" type="text/css" media="screen" />
-	<script type="text/javascript" charset="utf-8" src="js/nice_alert.js" class="for-sm2-iframe"></script>
-	<script type="text/javascript">
-		if  (navigator.userAgent.match(/Opera/)){
-			log = function(){
-				if (typeof text === 'object'){
-					arguments[0] = JSON.stringify(arguments[0]);
-					opera.postError('object');
-					opera.postError.apply(opera, arguments)
-				} else {
-					opera.postError.apply(opera, arguments)
-				}
-			}
-		} else {
-			log = function(text){
-				return
-				alert(text)	
-			}
-		}
-		
-		if (typeof console != 'object'){
-			console = {};
-			console.log = function(text){
-				log(text)
-			}	
-		} else{
-			log = console.log
-		}
-		
-		if ((typeof widget != 'object') || !widget.preferenceForKey){
-			widget = {};
-			widget.preferenceForKey = function(){return false}
-			widget.setPreferenceForKey = function(){return false}
-			
-		}
-	</script>
+	<script type="text/javascript" src="js/_small_serv.js"></script>
 	
 	
 	

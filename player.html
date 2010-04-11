@@ -1,0 +1,2855 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Seesu</title>
+    <link rel="stylesheet" href="css/master.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/view_switcher.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/vkontakte_switcher.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/mp3-search-switch.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/search_results.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/player.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/buttmen.css" type="text/css" media="screen">
+    <link rel="stylesheet" href="css/abs_layout.css" type="text/css" media="screen">
+   
+    <style title="button_menu">
+ .buttmen-hlts .buttmen-hlt-horizontal-1 .buttmen-hlt-left {opacity:1;}
+ .buttmen-hlts .buttmen-hlt-horizontal-1 .buttmen-hlt-right {opacity:0.0;}
+ .buttmen-hlts .buttmen-hlt-vertical-1 .buttmen-hlt-top {opacity:1;}
+ .buttmen-hlts .buttmen-hlt-vertical-1 .buttmen-hlt-bottom {opacity:0.0;}
+ .buttmen-hlts .buttmen-hlt-horizontal-2 .buttmen-hlt-left {opacity:1;}
+ .buttmen-hlts .buttmen-hlt-horizontal-2 .buttmen-hlt-right {opacity:0.0;}
+ .buttmen-hlts .buttmen-hlt-vertical-2 .buttmen-hlt-top {opacity:1;}
+ .buttmen-hlts .buttmen-hlt-vertical-2 .buttmen-hlt-bottom {opacity:0.0;}
+ .buttmen-hlts .buttmen-hlt-horizontal-3 .buttmen-hlt-left {opacity:1;}
+ .buttmen-hlts .buttmen-hlt-horizontal-3 .buttmen-hlt-right {opacity:0.0;}
+ .buttmen-hlts .buttmen-hlt-vertical-3 .buttmen-hlt-top {opacity:1;}
+ .buttmen-hlts .buttmen-hlt-vertical-3 .buttmen-hlt-bottom {opacity:0.0;}
+ .buttmen-hlts .buttmen-hlt-horizontal-4 .buttmen-hlt-left {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-horizontal-4 .buttmen-hlt-right {opacity:0.1;}
+ .buttmen-hlts .buttmen-hlt-vertical-4 .buttmen-hlt-top {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-vertical-4 .buttmen-hlt-bottom {opacity:0.1;}
+ .buttmen-hlts .buttmen-hlt-horizontal-5 .buttmen-hlt-left {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-horizontal-5 .buttmen-hlt-right {opacity:0.1;}
+ .buttmen-hlts .buttmen-hlt-vertical-5 .buttmen-hlt-top {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-vertical-5 .buttmen-hlt-bottom {opacity:0.1;}
+ .buttmen-hlts .buttmen-hlt-horizontal-6 .buttmen-hlt-left {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-horizontal-6 .buttmen-hlt-right {opacity:0.1;}
+ .buttmen-hlts .buttmen-hlt-vertical-6 .buttmen-hlt-top {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-vertical-6 .buttmen-hlt-bottom {opacity:0.1;}
+ .buttmen-hlts .buttmen-hlt-horizontal-7 .buttmen-hlt-left {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-horizontal-7 .buttmen-hlt-right {opacity:0.1;}
+ .buttmen-hlts .buttmen-hlt-vertical-7 .buttmen-hlt-top {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-vertical-7 .buttmen-hlt-bottom {opacity:0.1;}
+ .buttmen-hlts .buttmen-hlt-horizontal-8 .buttmen-hlt-left {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-horizontal-8 .buttmen-hlt-right {opacity:0.1;}
+ .buttmen-hlts .buttmen-hlt-vertical-8 .buttmen-hlt-top {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-vertical-8 .buttmen-hlt-bottom {opacity:0.1;}
+ .buttmen-hlts .buttmen-hlt-horizontal-9 .buttmen-hlt-left {opacity:0.7;}
+ .buttmen-hlts .buttmen-hlt-horizontal-9 .buttmen-hlt-right {opacity:0.3;}
+ .buttmen-hlts .buttmen-hlt-vertical-9 .buttmen-hlt-top {opacity:0.7;}
+ .buttmen-hlts .buttmen-hlt-vertical-9 .buttmen-hlt-bottom {opacity:0.3;}
+ .buttmen-hlts .buttmen-hlt-horizontal-10 .buttmen-hlt-left {opacity:0.5;}
+ .buttmen-hlts .buttmen-hlt-horizontal-10 .buttmen-hlt-right {opacity:0.5;}
+ .buttmen-hlts .buttmen-hlt-vertical-10 .buttmen-hlt-top {opacity:0.5;}
+ .buttmen-hlts .buttmen-hlt-vertical-10 .buttmen-hlt-bottom {opacity:0.5;}
+ .buttmen-hlts .buttmen-hlt-horizontal-11 .buttmen-hlt-left {opacity:0.19999999999999996;}
+ .buttmen-hlts .buttmen-hlt-horizontal-11 .buttmen-hlt-right {opacity:0.8;}
+ .buttmen-hlts .buttmen-hlt-vertical-11 .buttmen-hlt-top {opacity:0.19999999999999996;}
+ .buttmen-hlts .buttmen-hlt-vertical-11 .buttmen-hlt-bottom {opacity:0.8;}
+ .buttmen-hlts .buttmen-hlt-horizontal-12 .buttmen-hlt-left {opacity:0.09999999999999998;}
+ .buttmen-hlts .buttmen-hlt-horizontal-12 .buttmen-hlt-right {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-vertical-12 .buttmen-hlt-top {opacity:0.09999999999999998;}
+ .buttmen-hlts .buttmen-hlt-vertical-12 .buttmen-hlt-bottom {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-horizontal-13 .buttmen-hlt-left {opacity:0.09999999999999998;}
+ .buttmen-hlts .buttmen-hlt-horizontal-13 .buttmen-hlt-right {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-vertical-13 .buttmen-hlt-top {opacity:0.09999999999999998;}
+ .buttmen-hlts .buttmen-hlt-vertical-13 .buttmen-hlt-bottom {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-horizontal-14 .buttmen-hlt-left {opacity:0.09999999999999998;}
+ .buttmen-hlts .buttmen-hlt-horizontal-14 .buttmen-hlt-right {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-vertical-14 .buttmen-hlt-top {opacity:0.09999999999999998;}
+ .buttmen-hlts .buttmen-hlt-vertical-14 .buttmen-hlt-bottom {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-horizontal-15 .buttmen-hlt-left {opacity:0.09999999999999998;}
+ .buttmen-hlts .buttmen-hlt-horizontal-15 .buttmen-hlt-right {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-vertical-15 .buttmen-hlt-top {opacity:0.09999999999999998;}
+ .buttmen-hlts .buttmen-hlt-vertical-15 .buttmen-hlt-bottom {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-horizontal-16 .buttmen-hlt-left {opacity:0.09999999999999998;}
+ .buttmen-hlts .buttmen-hlt-horizontal-16 .buttmen-hlt-right {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-vertical-16 .buttmen-hlt-top {opacity:0.09999999999999998;}
+ .buttmen-hlts .buttmen-hlt-vertical-16 .buttmen-hlt-bottom {opacity:0.9;}
+ .buttmen-hlts .buttmen-hlt-horizontal-17 .buttmen-hlt-left {opacity:0;}
+ .buttmen-hlts .buttmen-hlt-horizontal-17 .buttmen-hlt-right {opacity:1.0;}
+ .buttmen-hlts .buttmen-hlt-vertical-17 .buttmen-hlt-top {opacity:0;}
+ .buttmen-hlts .buttmen-hlt-vertical-17 .buttmen-hlt-bottom {opacity:1.0;}
+ .buttmen-hlts .buttmen-hlt-horizontal-18 .buttmen-hlt-left {opacity:0;}
+ .buttmen-hlts .buttmen-hlt-horizontal-18 .buttmen-hlt-right {opacity:1.0;}
+ .buttmen-hlts .buttmen-hlt-vertical-18 .buttmen-hlt-top {opacity:0;}
+ .buttmen-hlts .buttmen-hlt-vertical-18 .buttmen-hlt-bottom {opacity:1.0;}
+ .buttmen-hlts .buttmen-hlt-horizontal-19 .buttmen-hlt-left {opacity:0;}
+ .buttmen-hlts .buttmen-hlt-horizontal-19 .buttmen-hlt-right {opacity:1.0;}
+ .buttmen-hlts .buttmen-hlt-vertical-19 .buttmen-hlt-top {opacity:0;}
+ .buttmen-hlts .buttmen-hlt-vertical-19 .buttmen-hlt-bottom {opacity:1.0;}
+ .buttmen-hlts .buttmen-hlt-horizontal-20 .buttmen-hlt-left {opacity:0;}
+ .buttmen-hlts .buttmen-hlt-horizontal-20 .buttmen-hlt-right {opacity:1.0;}
+ .buttmen-hlts .buttmen-hlt-vertical-20 .buttmen-hlt-top {opacity:0;}
+ .buttmen-hlts .buttmen-hlt-vertical-20 .buttmen-hlt-bottom {opacity:1.0;}</style>
+    <style>.player-holder {top: 287px}</style>
+  </head>
+  <body class="track-zoomed flash-internet lfm-auth-done                            player-played" style="height: 600px">
+    <div id="slider" class="show-player-page">
+      <a id="close-widget">×</a>
+      <div class="dmain dtop">
+        <div class="dleft"></div>
+        <div class="dcenter"></div>
+      </div>
+      <div class="navs">
+        <div class="nav nav-start" id="start_search">
+          <em>Start page</em>
+          <span class="arr-d">↓</span>
+        </div>
+        <div class="nav nav-search-results" id="search_result_nav">
+          <span class="arr-r">→</span>
+          <em id="search-nav">Search results</em>
+          <span class="arr-d">↓</span>
+        </div>
+        <div class="nav nav-artist-page">
+          <span class="arr-r">→</span>
+          <span id="nav_artist_page">Recommendations for you</span>
+          <span class="arr-d">↓</span>
+        </div>
+      </div>
+      <div id="slider-materail" class="shadowed">
+        <div class="screens" id="screens">
+          <div class="start-screen">
+            <div class="search-start">
+              <form id="search" name="search">
+                <p id="search-p">
+                  <label>
+                    <span>Search</span>
+                    <input type="text" name="q" id="q" size="50" autocomplete="off">
+                  </label>
+                </p>
+                <p id="search-desciption">Use keyboard: tab, enter, arrows up and down</p>
+              </form>
+              <div id="search_result" class="search-results-holder"></div>
+            </div>
+            <div class="lfm-start">
+              <div class="lfm-recomm">
+                <p>
+                  <a href="#rec" id="lfm-recomm" class="js-serv">Recommendations</a>
+                </p>
+                <div class="lfm-auth">
+                  <p>
+                    To get your music recommendations you need to 
+                    <input class="login-lastfm-button" type="button" value="grant">
+                     Seesu your account access
+                  </p>
+                  <form class="lfm-finish">
+                    <label>
+                      <input type="checkbox" id="login-lastfm-finish-recomm-check">
+                       I've granted my account access to Seesu
+                    </label>
+                    , so 
+                    <button disabled="disabled" type="button" value="Next" id="login-lastfm-finish-recomm">give me recommendations</button>
+                  </form>
+                  <form id="lfm-recomm-for-username">
+                    <p>or type username</p>
+                    <p>
+                      <input type="text" name="recomm_for_username" value="YodaPunk" id="recomm_for_username">
+                      <button>ok</button>
+                    </p>
+                    <p> (you can type your friend)</p>
+                  </form>
+                </div>
+              </div>
+              <div class="lfm-loved">
+                <p>
+                  <a href="#lov" class="js-serv" id="lfm-loved">Loved Tracks</a>
+                </p>
+                <div class="lfm-auth">
+                  <p>
+                    To get your favorite tracks you need to 
+                    <input class="login-lastfm-button" type="button" value="grant">
+                     Seesu your account access
+                  </p>
+                  <form class="lfm-finish">
+                    <p>
+                      <label>
+                        <input type="checkbox" id="login-lastfm-finish-loved-check">
+                         I've granted my account access to Seesu
+                      </label>
+                      , so 
+                      <button disabled="disabled" type="button" value="Next" id="login-lastfm-finish-loved">give me loved tracks</button>
+                    </p>
+                  </form>
+                  <form id="lfm-loved-by-username">
+                    <p>or type username</p>
+                    <p>
+                      <input type="text" name="loved_by_user_name" value="YodaPunk" id="loved_by_user_name">
+                      <button>ok</button>
+                    </p>
+                    <p> (you can type your friend)</p>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="artist-holder" class="artist-page screen play-screen">
+            <div class="info">
+              <h3 id="artist-name">
+                Take
+                <a class="artist js-serv">top tracks</a>
+              </h3>
+              <div class="image">
+                <img alt="Take" class="artist-image" src="http://userserve-ak.last.fm/serve/64/33180939.jpg">
+              </div>
+              <div class="artist-bio">
+                There is more than one artist with this name:  (Fans of Korean boyband TAKE, please consider changing the name to 
+                <a href="http://www.last.fm/music/%ED%85%8C%EC%9D%B4%ED%81%AC">테이크</a>
+                . Being able to use the English for it would be nice, but this makes the most sense.)  1) Based in Los Angeles, TAKE aka Thomas Wilson is a composer who continues to push the boundaries of instrumental Hip Hop music into new directions. After multiple successful EP's under his belt, TAKE finally unleashed his debut full length player in 2007: "
+                <a title="Take - Earthtones and Concrete" href="http://www.last.fm/music/Take/Earthtones+and+Concrete" class="bbcode_album">Earthtones and Concrete</a>
+                ".
+                <p class="artist-tags">
+                  Tags: 
+                  <a href="http://www.last.fm/tag/hip-hop" class="music-tag js-serv">hip-hop</a>
+                  <a href="http://www.last.fm/tag/downtempo" class="music-tag js-serv">downtempo</a>
+                  <a href="http://www.last.fm/tag/korean" class="music-tag js-serv">korean</a>
+                  <a href="http://www.last.fm/tag/k-pop" class="music-tag js-serv">k-pop</a>
+                  <a href="http://www.last.fm/tag/electronic" class="music-tag js-serv">electronic</a>
+                </p>
+                <p class="artist-similar">
+                  <a class="similar-artists js-serv">Similar artists</a>
+                  : 
+                  <a class="artist js-serv" href="http://www.last.fm/music/Ras+G">Ras G</a>
+                  <a class="artist js-serv" href="http://www.last.fm/music/Mike+Slott">Mike Slott</a>
+                  <a class="artist js-serv" href="http://www.last.fm/music/Mono%252FPoly">Mono/Poly</a>
+                  <a class="artist js-serv" href="http://www.last.fm/music/Lukid">Lukid</a>
+                  <a class="artist js-serv" href="http://www.last.fm/music/Heralds+of+Change">Heralds of Change</a>
+                </p>
+                <div class="artist-albums">
+                  Albums: 
+                  <a class="js-serv get-artist-albums">get albums</a>
+                </div>
+              </div>
+            </div>
+            <dl class="buttmen play-controls">
+              <dt class="main-button">
+                <a class="play-control pause">
+                  <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                  <span class="buttmen-mask"></span>
+                </a>
+              </dt>
+              <dd class="buttmen-hlts">
+                <ul>
+                  <li class="buttmen-hlt-top"></li>
+                  <li class="buttmen-hlt-right"></li>
+                  <li class="buttmen-hlt-bottom"></li>
+                  <li class="buttmen-hlt-left"></li>
+                </ul>
+              </dd>
+              <dd class="buttmen-butts">
+                <ul>
+                  <li class="buttmen-butt-top">
+                    <a class="play-control play_prev">
+                      <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                    </a>
+                  </li>
+                  <li class="buttmen-butt-right">
+                    <a class="play-control stop">
+                      <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                    </a>
+                  </li>
+                  <li class="buttmen-butt-bottom">
+                    <a class="play-control play_next">
+                      <img src="i/buttons_next.png" alt="next" class="pl-control">
+                    </a>
+                  </li>
+                  <li class="buttmen-butt-left">
+                    <a class="play-control play">
+                      <img src="i/buttons_play.png" alt="play" class="pl-control">
+                    </a>
+                  </li>
+                </ul>
+              </dd>
+            </dl>
+            <div class="pl-holder track-zoom">
+              <ul class="track-buttons">
+                <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                  <a class="flash-security-status trackbutton">fl</a>
+                  <div class="track-button-content" id="message-flash-secur">
+                    <div class="triangle"></div>
+                    <div class="balun">
+                      <p>
+                        To stop annoing «Adobe Flash Player Security» window 
+                        <strong>copy</strong>
+                         this address:
+                      </p>
+                      <p>
+                        <input type="text" value="" id="widget-url" readonly="readonly">
+                      </p>
+                      <p>
+                        and 
+                        <strong>add</strong>
+                         it to white list on  
+                        <strong>
+                          <a href="" class="flash-s">flash internet security page</a>
+                        </strong>
+                      </p>
+                      <p>
+                        <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                      </p>
+                      <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                      <p class="internet-flash-settings">
+                        <label>
+                          <input type="checkbox" class="flash-mess-switch">
+                           I've given internet access to flash (hide this message and stop button flashing)
+                        </label>
+                        <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                      </p>
+                      <div class="bal tl"></div>
+                      <div class="bal tr"></div>
+                      <div class="bal bl"></div>
+                      <div class="bal br"></div>
+                    </div>
+                  </div>
+                </li>
+                <li class="scrobbling-button" title="Last.fm scrobbling">
+                  <a class="trackbutton">sc</a>
+                  <div class="track-button-content">
+                    <div class="triangle"></div>
+                    <div class="balun" id="enablescrobbling">
+                      <form class="scrobbling-switches" id="scrobbling-switches">
+                        <p>scrobbling to last.fm</p>
+                        <p>
+                          <label>
+                            <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                             enabled
+                          </label>
+                        </p>
+                        <p>
+                          <label>
+                            <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                             disabled
+                          </label>
+                        </p>
+                      </form>
+                      <div class="lfm-granting">
+                        <p>
+                          To scrobble to last.fm you must 
+                          <input class="login-lastfm-button" type="button" value="grant">
+                           access to Seesu 
+                        </p>
+                        <p class="lfm-finish">
+                          <label>
+                            <input type="checkbox" class="scrobbling-grant">
+                             I've granted my account access to Seesu
+                          </label>
+                        </p>
+                      </div>
+                      <p>
+                        <input type="button" value="Close message" class="tb-mess-wrap-close">
+                      </p>
+                      <div class="bal tl"></div>
+                      <div class="bal tr"></div>
+                      <div class="bal bl"></div>
+                      <div class="bal br"></div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="play-list-holder" id="play-list-holder">
+              <div id="tracks-search" class="search-music-files">
+                <span id="tracks-waiting-for-search"></span>
+                <a class="js-serv search-music-files">mp3 provider</a>
+                <div id="mp3-search-switch" class="balun">
+                  <div class="triangle"></div>
+                  <h5>For search mp3 files use</h5>
+                  <div class="mp3-search-way-select cant-be-used" id="mp3way-audme">
+                    <div>
+                      <label for="mp3-audme">
+                        <input type="radio" name="mp3searchway" id="mp3-audme" class="mp3-audme mp3searchway">
+                         audme.ru
+                      </label>
+                    </div>
+                    <p class="description">Do not requires registration. Buggy search. Nice mp3 names.</p>
+                  </div>
+                  <div class="mp3-search-way-select">
+                    <div>
+                      <label for="mp3-vk">
+                        <input type="radio" name="mp3searchway" id="mp3-vk" class="mp3-vk mp3searchway">
+                         vkontakte.ru (same as vk.com)
+                      </label>
+                    </div>
+                    <p class="description">Requires registration and login. Fast, stable search. Ugly mp3 names.</p>
+                    <div class="vk-login-context mp3-switch">
+                      <h3>Type values for vk.com authorization</h3>
+                      <form class="vk-auth">
+                        <p>
+                          <label for="email-arts">e-mail</label>
+                          <span class="input-place">
+                            <input type="text" class="vk-email" name="email" id="email-arts">
+                          </span>
+                        </p>
+                        <p>
+                          <label for="pass-arts">pass</label>
+                          <span class="input-place">
+                            <input type="text" class="vk-pass" name="pass" id="pass-arts">
+                          </span>
+                        </p>
+                        <p class="error"></p>
+                        <p class="vk-captcha-context">
+                          <label for="vk-captcha-key">Input code</label>
+                          <span class="input-place">
+                            <img src="" alt="captcha">
+                            <br>
+                            <input type="text" name="captcha_key" value="" id="vk-captcha-key">
+                          </span>
+                        </p>
+                        <p>
+                          <button>enter</button>
+                        </p>
+                      </form>
+                      
+											or 
+                      <a href="" class="vk-reg-ref">register new account</a>
+                       for vk.com
+											
+                      <p>
+                        Widget do not store you password. Authorization in future will be happen by «
+                        <a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>
+                        »
+                      </p>
+                    </div>
+                  </div>
+                  <p>
+                    <input type="button" value="Close message" class="mp3-search-switch-close">
+                  </p>
+                  <div class="bal tl"></div>
+                  <div class="bal tr"></div>
+                  <div class="bal bl"></div>
+                  <div class="bal br"></div>
+                </div>
+              </div>
+              <div class="tracks-for-play">
+                <ul>
+                  <li>
+                    <a class="search-mp3-failed">Hubert Daviz - Yes Sir - Original Mix</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                  </li>
+                  <li class="">
+                    <a class="song js-serv" href="http://cs4407.vkontakte.ru/u2982599/audio/b7000581fa17.mp3">Sunday Munich - Tiny</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4407.vkontakte.ru/u2982599/audio/b7000581fa17.mp3">mp3</a>
+                    <div class="song-duration">5:26 </div>
+                  </li>
+                  <li class="">
+                    <a class="song js-serv" href="http://cs4423.vkontakte.ru/u6902099/audio/ccdc949898a4.mp3">Tori Amos - Precious Things</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4423.vkontakte.ru/u6902099/audio/ccdc949898a4.mp3">mp3</a>
+                    <div class="song-duration">8:41 </div>
+                  </li>
+                  <li>
+                    <a class="search-mp3-failed">Beauty's Confusion - Hotels</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                  </li>
+                  <li>
+                    <a class="search-mp3-failed">00Genesis - Cheddar Puff Dreams</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                  </li>
+                  <li class="">
+                    <a class="song js-serv" href="http://cs4407.vkontakte.ru/u2982599/audio/8a8e557413fe.mp3">Deadbeats - Enter the Redman</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4407.vkontakte.ru/u2982599/audio/8a8e557413fe.mp3">mp3</a>
+                    <div class="song-duration">5:21 </div>
+                  </li>
+                  <li class="">
+                    <a class="song js-serv" href="http://cs4697.vkontakte.ru/u11536599/audio/5743b92dc223.mp3">Dibiase - Mega Gutta</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul class="">
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4697.vkontakte.ru/u11536599/audio/5743b92dc223.mp3">mp3</a>
+                    <div class="song-duration">3:04 </div>
+                  </li>
+                  <li>
+                    <a class="search-mp3-failed">Busy - 鯨</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                  </li>
+                  <li class="active-play">
+                    <a class="song js-serv" href="http://cs5012.vkontakte.ru/u14719079/audio/cec8fbc5081f.mp3">Take - In Back</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul class="">
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs5012.vkontakte.ru/u14719079/audio/cec8fbc5081f.mp3">mp3</a>
+                    <div class="song-duration">4:14 </div>
+                  </li>
+                  <li class="">
+                    <a class="song js-serv" href="http://cs4818.vkontakte.ru/u16480670/audio/7cd6daf954a2.mp3">Deadly Avenger - Sequola</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4818.vkontakte.ru/u16480670/audio/7cd6daf954a2.mp3">mp3</a>
+                    <div class="song-duration">3:51 </div>
+                  </li>
+                  <li>
+                    <a class="song js-serv" href="http://cs4757.vkontakte.ru/u48930445/audio/522e63980a29.mp3">And So I Watch You From Afar - These Riots Are Just The Beginning</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4757.vkontakte.ru/u48930445/audio/522e63980a29.mp3">mp3</a>
+                    <div class="song-duration">5:48 </div>
+                  </li>
+                  <li>
+                    <a class="search-mp3-failed">Rustie - Inside Pikachu's C**t</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                  </li>
+                  <li>
+                    <a class="search-mp3-failed">Tranqill - Payroll Paul Whites Clean Dub</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                  </li>
+                  <li>
+                    <a class="song js-serv" href="http://cs4292.vkontakte.ru/u935552/audio/d8428333a75d.mp3">Feist - My Moon My Man</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4292.vkontakte.ru/u935552/audio/d8428333a75d.mp3">mp3</a>
+                    <div class="song-duration">5:57 </div>
+                  </li>
+                  <li>
+                    <a class="song js-serv" href="http://cs4203.vkontakte.ru/u5505206/audio/8cfbbe4ff6a8.mp3">John Parish and Polly Jean Harvey - Pig Will Not</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4203.vkontakte.ru/u5505206/audio/8cfbbe4ff6a8.mp3">mp3</a>
+                    <div class="song-duration">4:49 </div>
+                  </li>
+                  <li>
+                    <a class="song js-serv" href="http://cs4639.vkontakte.ru/u7428714/audio/b032082fd559.mp3">Love and Rockets - Trip and Glide</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4639.vkontakte.ru/u7428714/audio/b032082fd559.mp3">mp3</a>
+                    <div class="song-duration">5:22 </div>
+                  </li>
+                  <li class="">
+                    <a class="song js-serv" href="http://cs4514.vkontakte.ru/u35930319/audio/0eca04e38f4d.mp3">Verticals - Third Ear</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4514.vkontakte.ru/u35930319/audio/0eca04e38f4d.mp3">mp3</a>
+                    <div class="song-duration">3:14 </div>
+                  </li>
+                  <li>
+                    <a class="song js-serv" href="http://cs4239.vkontakte.ru/u6011928/audio/ef47dbaf574b.mp3">le N?KO - apprendre</a>
+                    <dl class="buttmen play-controls">
+                      <dt class="main-button">
+                        <a class="play-control pause">
+                          <img src="i/buttons_pause.png" alt="pause" class="pl-control">
+                          <span class="buttmen-mask"></span>
+                        </a>
+                      </dt>
+                      <dd class="buttmen-hlts">
+                        <ul>
+                          <li class="buttmen-hlt-top"></li>
+                          <li class="buttmen-hlt-right"></li>
+                          <li class="buttmen-hlt-bottom"></li>
+                          <li class="buttmen-hlt-left"></li>
+                        </ul>
+                      </dd>
+                      <dd class="buttmen-butts">
+                        <ul>
+                          <li class="buttmen-butt-top">
+                            <a class="play-control play_prev">
+                              <img src="i/buttons_prev.png" alt="previous" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-right">
+                            <a class="play-control stop">
+                              <img src="i/buttons_stop.png" alt="stop" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-bottom">
+                            <a class="play-control play_next">
+                              <img src="i/buttons_next.png" alt="next" class="pl-control">
+                            </a>
+                          </li>
+                          <li class="buttmen-butt-left">
+                            <a class="play-control play">
+                              <img src="i/buttons_play.png" alt="play" class="pl-control">
+                            </a>
+                          </li>
+                        </ul>
+                      </dd>
+                    </dl>
+                    <div class="pl-holder track-zoom">
+                      <ul class="track-buttons">
+                        <li title="About «Adobe Flash Player Security»" id="flash-secur">
+                          <a class="flash-security-status trackbutton">fl</a>
+                          <div class="track-button-content" id="message-flash-secur">
+                            <div class="triangle"></div>
+                            <div class="balun">
+                              <p>
+                                To stop annoing «Adobe Flash Player Security» window 
+                                <strong>copy</strong>
+                                 this address:
+                              </p>
+                              <p>
+                                <input type="text" value="" id="widget-url" readonly="readonly">
+                              </p>
+                              <p>
+                                and 
+                                <strong>add</strong>
+                                 it to white list on  
+                                <strong>
+                                  <a href="" class="flash-s">flash internet security page</a>
+                                </strong>
+                              </p>
+                              <p>
+                                <img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page">
+                              </p>
+                              <p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+                              <p class="internet-flash-settings">
+                                <label>
+                                  <input type="checkbox" class="flash-mess-switch">
+                                   I've given internet access to flash (hide this message and stop button flashing)
+                                </label>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close" checked="true">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                        <li class="scrobbling-button" title="Last.fm scrobbling">
+                          <a class="trackbutton">sc</a>
+                          <div class="track-button-content">
+                            <div class="triangle"></div>
+                            <div class="balun" id="enablescrobbling">
+                              <form class="scrobbling-switches" id="scrobbling-switches">
+                                <p>scrobbling to last.fm</p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="enable-scrobbling">
+                                     enabled
+                                  </label>
+                                </p>
+                                <p>
+                                  <label>
+                                    <input type="radio" name="lfm_scrobble" class="disable-scrobbling" checked="checked">
+                                     disabled
+                                  </label>
+                                </p>
+                              </form>
+                              <div class="lfm-granting">
+                                <p>
+                                  To scrobble to last.fm you must 
+                                  <input class="login-lastfm-button" type="button" value="grant">
+                                   access to Seesu 
+                                </p>
+                                <p class="lfm-finish">
+                                  <label>
+                                    <input type="checkbox" class="scrobbling-grant">
+                                     I've granted my account access to Seesu
+                                  </label>
+                                </p>
+                              </div>
+                              <p>
+                                <input type="button" value="Close message" class="tb-mess-wrap-close">
+                              </p>
+                              <div class="bal tl"></div>
+                              <div class="bal tr"></div>
+                              <div class="bal bl"></div>
+                              <div class="bal br"></div>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                    <a class="track-zoomin js-serv">→</a>
+                    <a class="track-zoomout js-serv">←</a>
+                    <a class="download-mp3" href="http://cs4239.vkontakte.ru/u6011928/audio/ef47dbaf574b.mp3">mp3</a>
+                    <div class="song-duration">4:50 </div>
+                  </li>
+                </ul>
+              </div>
+              <div class="player-holder">
+                <div class="track-progress">
+                  <div class="track-load-progress" style="width: 300px"></div>
+                  <div class="track-play-progress" style="width: 117px"></div>
+                </div>
+                <div class="volume-state">
+                  <div class="volume-state-position" style="width: 47px"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="promo">
+          
+				Please, help me to win «The Opera Widgets Code-to-win Challenge» — 
+          <a class="c2w-twitter js-serv">tweet your vote</a>
+           or 
+          <a class="c2w-widget-rating js-serv">rate up the widget</a>
+          .
+			
+        </div>
+        <iframe id="i_f_sm2" src="http://seesu.heroku.com/iframe_fetch_scripts.html" class="sm-inited"></iframe>
+      </div>
+      <div class="dmain dbottom">
+        <div class="dleft"></div>
+        <div class="dcenter"></div>
+      </div>
+      <div class="window-bottom">
+        <img src="i/resize.png" id="resize-handle" alt="/">
+      </div>
+    </div>
+    <div id="sm2-container" class="movieContainer " style="position: absolute; width: 6px; height: 6px; top: 0px; left: 0px">
+      <embed name="sm2movie" id="sm2movie" src="http://seesu.heroku.com/swf/soundmanager2_flash9.swf" width="100%" height="100%" quality="high" allowscriptaccess="always" bgcolor="#ffffff" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" allowfullscreen="true" wmode="transparent">
+    </div>
+  </body>
+</html>
