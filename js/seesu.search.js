@@ -477,6 +477,9 @@ var fast_suggestion_ui = function(r){
 	
 var input_change = function(e){
 	var input_value = e.target.value;
+	if (!input_value) {
+		slider.className = "show-start";
+	}
 	if (!input_value || ($(e.target).data('lastvalue') == input_value.replace(/ /g, ''))){return}
 	
 	if(seesu.xhrs.fast_search_suggest) {seesu.xhrs.fast_search_suggest.abort()}

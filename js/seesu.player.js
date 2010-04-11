@@ -27,7 +27,11 @@ seesu.player = {
 	  })(),
 	'events' 			: [],
 	'current_song' 		: null,
-	'musicbox'			: null, //music box is a link to module with playing methods, 
+	'musicbox'			: {
+			play_song_by_node: function(node){
+				current_song = node;
+			}
+		}, //music box is a link to module with playing methods, 
 								//for e.g. soundmanager2 and vkontakte flash player
 	'call_event'		: function	(event, data) {
 	  if(this.events[event]) this.events[event](data);
@@ -188,43 +192,7 @@ function change_volume(volume_value){
 }
 
 player_holder = seesu.ui.player_holder = $('<div class="player-holder"></div>');
-var try_to_use_iframe_vkp = function(){
-	
-	i_f  = seesu.ui.iframe_player = $('<iframe id="i_f" src="if.html"></iframe>');
-	if (i_f) {
-		var i_f_hide_timeout;
-		
-		i_f.bind('load',function(){
-			var scripts_paths = '';
-			$('script.for-iframe', document.documentElement.firstChild).each(function(i){
-				scripts_paths += (((i == 0) ? '' : ',') + this.src) //comma separated
-			});
-			this.contentWindow.postMessage("init_vk_p," + seesu.player.player_volume + "," + scripts_paths,'*');
-			i_f_hide_timeout = setTimeout(function(){
-				i_f.remove();
-				window.removeEventListener("message", check_iframe_vkp_init, false);
-			},1000)
-		});
-		check_iframe_vkp_init = function(e){
-			if (e.data.match(/vk_p_inited/)){
-				if ((!seesu.player.musicbox) || (seesu.player.musicbox && seesu.player.musicbox.module_title != 'sm2_p') ){
-					player_holder.empty();
-					seesu.player.musicbox = new vk_p(false, seesu.player.player_volume, i_f);
-					$(document.body).removeClass('flash-internet');
-					
-					clearTimeout(i_f_hide_timeout)
-				}
-				
-				window.removeEventListener("message", check_iframe_vkp_init, false);
-			}
-			
-			
-		}
-		window.addEventListener("message", check_iframe_vkp_init, false);
-		$('#play-list-holder').append(i_f);
-	}
-	
-}
+
 var try_to_use_iframe_sm2p = function(){
 	i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.heroku.com/iframe_fetch_scripts.html" ></iframe>');
 	if (i_f_sm2) {
@@ -348,7 +316,6 @@ var try_to_use_iframe_sm2p = function(){
 				seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
 				i_f_sm2.addClass('sm-inited');
 				$(document.body).addClass('flash-internet');
-				if (typeof i_f === 'object' ) {i_f.remove();}
 				
 				window.removeEventListener("message", check_iframe, false);
 			}
@@ -391,7 +358,6 @@ $(function() {
 		$(document.body).addClass('flash-internet');
 	  } else {
 	  	log('sm2 in widget notok')
-	 // 	try_to_use_iframe_vkp();
 	  		try_to_use_iframe_sm2p();
 
 	  }

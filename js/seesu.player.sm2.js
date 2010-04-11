@@ -75,12 +75,19 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 	if (typeof seesu === 'object') {
 		this.pl_h_style = seesu.pl_h_style = seesu.pl_h_style || $('<style></style>');
 		$(document.documentElement.firstChild).append(this.pl_h_style);
+		
+		
+		if (seesu.player.current_song){
+			this.play_song_by_node(current_song);
+		}
+		
 	} else{
 		//look like we in iframe, so listen commands
 		window.addEventListener("message", function(e){
 			_this.listen_commands_of_source.apply(_this,arguments);
 		}, false)
 	}
+	
 	
 };
 sm2_p.prototype = {
