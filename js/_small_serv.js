@@ -31,7 +31,9 @@ if (typeof console != 'object'){
 		log(text)
 	}	
 } else {
-	log = console.log
+	log = function(text){
+		console.log(text)
+	}
 }
 
 

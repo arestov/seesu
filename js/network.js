@@ -120,26 +120,36 @@ try_mp3_providers = function(){
 	  url: "http://vkontakte.ru/feed2.php",
 	  global: false,
 	  type: "GET",
-	  dataType: "json",
+	  dataType: "text",
 	  timeout: 7000,
-	  success: function(r){
-		
-		if (!r) {log(r);return false;}
-	  	if (r.user && r.user.id) {
-	  		
-	  		zz.viewer_id = r.user.id;
-			seesu.delayed_search.available.push('vk');
-			seesu.vk_logged_in = true;
-			log('vk mp3 prov ok')
-			swith_to_provider(true)
+	  success: function(text){
+		if (text.match(/^\{/) && text.match(/\}$/)){
+			try {
+				var r = $.parseJSON(text);
+				if (r.user && r.user.id) {
+
+			  		zz.viewer_id = r.user.id;
+					seesu.delayed_search.available.push('vk');
+					seesu.vk_logged_in = true;
+					log('vk mp3 prov ok')
+					swith_to_provider(true)
+				} else{
+					vk_logged_out();
+					log('vk mp3 prov faild')
+				}
+			} catch(e) {
+				log(e)
+			}
 		} else{
 			vk_logged_out();
-			log('vk mp3 prov faild')
+			log('vk mp3 prov faild (can not parse)')
 		}
+		
+	  	
 	  	
 	  },
 	  error: function(xhr){
-		log('vk mp3 prov faild')
+		log('vk mp3 prov faild with jq error')
 		vk_logged_out();
 	  },
 	  complete: function(xhr){

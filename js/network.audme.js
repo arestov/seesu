@@ -42,8 +42,7 @@ get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_elem
 					
 				};
 				var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
-				log(best_track.artist + ' ' + best_track.track)
-				log(music_list)
+
 				make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
 				resort_playlist(playlist_nodes_for);
 			} else{

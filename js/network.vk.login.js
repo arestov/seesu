@@ -36,26 +36,30 @@ var vk_send_captcha = function(captcha_key,login,pass){
 	  url: "http://vkontakte.ru/login.php",
 	  global: false,
 	  type: "POST",
-	  dataType: "json",
+	  dataType: "text",
 	  data: {
 		'op': 'a_login_attempt',
 		'captcha_key': captcha_key,
 		'captcha_sid': vk_captcha
    	  },
-	  success: function(r){
-	  	if (vk_captcha = r.captcha_sid){
-	  		log(vk_captcha)
-			captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
-			$(document.body).addClass('vk-needs-captcha');
-		}
-	  },
-	  complete: function(xhr){
-	  	log(xhr.responseText)
-		if ((xhr.responseText.indexOf('vklogin') != -1)){
+	  success: function(text){
+		if (text.match(/vklogin/)){
 			vk_captcha = 0;
 			vk_login(login,pass);
-			
+		} else{
+			try {
+				var r = $.parseJSON(text)
+
+			  	if (vk_captcha = r.captcha_sid){
+			  		log(vk_captcha)
+					captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
+					$(document.body).addClass('vk-needs-captcha');
+				}
+			} catch (e){
+				log(e)
+			}
 		}
+
 	  }
 	});
 }
