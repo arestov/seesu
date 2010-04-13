@@ -29,7 +29,7 @@ var lfm = function(method,params,callback, type_of_xhr_is_post) {
 		  url: api,
 		  global: false,
 		  type: (type_of_xhr_is_post == true) ? "POST" : "GET",
-		  dataType: "json",
+		  dataType: "jsonp",
 		  data: params_full,
 		  error: function(r){
 		  },
