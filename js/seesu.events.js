@@ -1,6 +1,6 @@
 $(function() {
   if (lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
-  if (seesu) {check_seesu_updates();}
+  if (!location.protocol.match(/http/)) {check_seesu_updates();}
   seesu.vk_id = widget.preferenceForKey('vkid');
   $(document).click(function(e) {
 	return test_pressed_node(e.target)

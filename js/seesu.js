@@ -70,7 +70,10 @@ $(function(){
 	if (document.activeElement.nodeName != 'INPUT') {
 		searchfield.focus();
 	}
-	try_mp3_providers();
+	if (!location.protocol.match(/http/)){
+		try_mp3_providers();
+	}
+	
 });
 
 
