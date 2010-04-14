@@ -167,12 +167,36 @@ var resort_playlist = function(playlist_nodes_for){
 };
 
 var half_sync_making = function(track_nodes){
-	var songNodes = [];
+	var playlist_nodes_for = [];
 	for (var i=0, l =  track_nodes.length; i < l; i++) {
-		var node = track_nodes[i],
-			playlist_nodes_for = songNodes;
+		var node = track_nodes[i];
 		delay_track_search(node,playlist_nodes_for, (i===0),seesu.delayed_search.use.search_one_track);
 
+	}
+}
+
+
+
+var async_making = function(track_nodes){
+	var playlist_nodes_for = [];
+	var random_track_plable = function(track_list){
+		var random_track_num = Math.floor(Math.random()*track_list.length);
+		return track_list[random_track_num];
+		
+	}
+	var start_random_nice_track_search = function(node, reset){
+		log(node.data('artist_name'))
+		
+		getTopTracks(node.data('artist_name'), function(track_list){
+			var some_track = random_track_plable(track_list);
+			node.text(some_track.artist + ' - ' + some_track.track);
+			node.data('track_title', some_track.track );
+			delay_track_search(node,playlist_nodes_for, reset, seesu.delayed_search.use.search_one_track);
+		} );
+	}
+	
+	for (var i=0, l =  track_nodes.length; i < l; i++) {
+		start_random_nice_track_search(track_nodes[i], (i===0))
 	}
 }
 var make_tracklist_playable = function(track_nodes){
@@ -191,10 +215,7 @@ var make_tracklist_playable = function(track_nodes){
 			half_sync_making(track_nodes)
 		}
 	} else{
-		return
-		get_tracks_by_artists(artist_list,function(artists_track_list){
-			render_playlist(artists_track_list);
-		});
+		async_making(track_nodes)
 	}
 	
 	
@@ -309,7 +330,7 @@ var vk_track_search = function(query){
 	
 	
 };
-var getTopTracks = function(artist,callback,callback_params_obj) {
+var getTopTracks = function(artist,callback) {
 	lfm('artist.getTopTracks',{'artist': artist },function(r){
 		if (typeof r != 'object') {return;}
 		var tracks = r.toptracks.track || false;
@@ -323,26 +344,11 @@ var getTopTracks = function(artist,callback,callback_params_obj) {
 				track_list.push({'artist' : artist ,'track': tracks.name});
 			}
 			
-			if (callback) {callback(track_list,callback_params_obj);}
+			if (callback) {callback(track_list);}
 		}
 	});
 };
-var get_tracks_by_artists = function(artists,callback){
-	var artists_track_list = [];
-	var select_random_artist_track = function(track_list, params_obj){
-		var random_track_num = Math.floor(Math.random()*track_list.length);
-		params_obj.artists_track_list.push(track_list[random_track_num]);
-	
-		if (params_obj.finish) {
-			if (callback) {callback(params_obj.artists_track_list);}
-		}
-	};
-	
-	for (var i=0, l = artists.length; i < l; i++) {
-		getTopTracks(artists[i], select_random_artist_track , {artists_track_list: artists_track_list, finish: (i+1 == l)} );
-	}
-	
-};
+
 var proxy_render_artists_tracks = function(artist_list){
 	var track_list_without_tracks = [];
 	for (var i=0; i < artist_list.length; i++) {
