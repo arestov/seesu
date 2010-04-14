@@ -95,7 +95,7 @@
 	.search-results-holder
 	ul.recommend-tags a{
 		padding-left:47px;
-		background: url(/i/tag-icon.png) no-repeat 26px 50%;
+		background: url(../i/tag-icon.png) no-repeat 26px 50%;
 	}
 	.search-results-holder
 	ul.recommend-tags{
