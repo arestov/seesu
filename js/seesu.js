@@ -185,8 +185,6 @@ var async_making = function(track_nodes){
 		
 	}
 	var start_random_nice_track_search = function(node, reset){
-		log(node.data('artist_name'))
-		
 		getTopTracks(node.data('artist_name'), function(track_list){
 			var some_track = random_track_plable(track_list);
 			node.text(some_track.artist + ' - ' + some_track.track);
