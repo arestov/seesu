@@ -15,12 +15,14 @@ get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_elem
 		  },
 		  timeout: 20000,
 		  error: function(xhr){
-		  	tracknode.attr('class' , 'search-mp3-failed');
+			tracknode.removeClass('search-mp3');
+		  	tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 			
 		  	log(xhr.responseText)
 		  },
 		  success: function(_r){
+			tracknode.removeClass('search-mp3');
 			var r_div = document.createElement('div');
 			r_div.innerHTML = _r;
 			
@@ -54,7 +56,7 @@ get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_elem
 			if (music_list) {
 				
 			} else {
-				tracknode.attr('class' , 'search-mp3-failed');
+				tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
 			}
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		  },

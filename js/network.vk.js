@@ -11,6 +11,7 @@ var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue
 		tracknode.data('artist_name') + ' - ' + tracknode.data('track_title'),
 		false,
 		function(r, resp_text){
+			tracknode.removeClass('search-mp3');
 			log('api search')
 			if (r.response && (r.response.length > 1 )) {
 				var music_list = [];
@@ -40,12 +41,13 @@ var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue
 			if (music_list) {
 				
 			} else {
-				tracknode.attr('class' , 'search-mp3-failed');
+				tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
 			}
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		},
 		function(xhr){
-			tracknode.attr('class' , 'search-mp3-failed');
+			tracknode.removeClass('search-mp3');
+			tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		}
 	);
@@ -64,7 +66,8 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 	  dataType: "text",
 	  beforeSend: seesu.vk.set_xhr_headers,
 	  error: function(xhr){
-		tracknode.attr('class' , 'search-mp3-failed');
+		tracknode.removeClass('search-mp3');
+		tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
 		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		
 		log('Error, vk say: ' + xhr.responseText);
@@ -74,7 +77,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 		
 	  },
 	  success: function(text){
-		
+		tracknode.removeClass('search-mp3');
 		if (text.match(/^\{/) && text.match(/\}$/)){
 			try {
 				var r = $.parseJSON(text);
@@ -85,14 +88,14 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 					make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
 					resort_playlist(playlist_nodes_for);
 				} else {
-					tracknode.attr('class' , 'search-mp3-failed');
+					tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
 				}
 				art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 			} catch(e) {
 				log(e)
 			}
 		} else{
-			tracknode.attr('class' , 'search-mp3-failed');
+			tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 			if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
 				delaying_func.call_at += (1000*60*5);

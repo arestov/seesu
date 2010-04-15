@@ -238,13 +238,17 @@ var make_tracklist_playable = function(track_nodes){
 	
 };
 var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_duration){
-	var playable_node = $(node).attr({'class' : 'song js-serv', 'href': http_link }).data('duration', mp3_duration);
+	var playable_node = $(node)
+		.addClass('song js-serv')
+		.removeClass('waiting-full-render')
+		.data('mp3link', http_link)
+		.data('duration', mp3_duration);
 	playlist_nodes_for.push(playable_node);
 	
 	
 	
 	var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href': http_link });
-	playable_node.parent().append(mp3);
+	mp3.insertBefore(playable_node);
 	
 	if (mp3_duration) {
 		var digits = mp3_duration % 60;
@@ -287,8 +291,9 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 		
 		
 		for (var i=0, l = vk_music_list.length; i < l; i++) {
-			var attrs = {'class' : 'waiting-full-render' };
-			var track = $("<a></a>").attr(attrs).data('play_order', i),
+			var track = $("<a></a>")
+				.addClass('track-node waiting-full-render')
+				.data('play_order', i),
 				li = document.createElement('li');
 
 			track.data('artist_name', vk_music_list[i].artist);

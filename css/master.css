@@ -198,9 +198,9 @@ display:none;
 .tracks-for-play{
 	
 	}
-	.tracks-for-play
-	li{
-		margin: 0 0 10px;
+	.tracks-for-play>ul>li{
+		margin: 0 0 3px;
+		overflow:hidden;
 		}
 .artist-image{
 	width:64px;

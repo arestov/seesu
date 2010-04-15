@@ -32,15 +32,23 @@
 
 a.song{
 	padding:3px 1px 0px;
+	
+	
 	}
 a.song:hover{
 	color:#ffffff;
-	background:#666;
-	border-bottom:1px solid #666;
+	border-color:#5a5a5a;
 }
 a.search-mp3{
 	text-decoration:blink;
 	color:#6c1471;
+}
+a.track-node{
+	display:block;
+	padding:6px;
+	margin-right:37px;
+	background:#535353;
+	border:1px solid #505050;
 }
 a.search-mp3-failed{
 	color:#666;
@@ -56,6 +64,7 @@ a.download-mp3{
 	padding:3px 5px 1px;
 	margin-left:3px;
 	border-bottom:0;
+	float:right;
 	}
 a.download-mp3:hover{
 	background:#666;
@@ -70,21 +79,18 @@ a.song{
 	.active-play
 	a.song{
 		
-		background-color: #7ad426;
-		border-bottom:1px solid #7ad426;
-		color: #505050;
+		
+		color: #fff;
 	}
 	.player-paused
 	.active-play
 	a.song{
 		outline:1px dashed #647142;
-		border-bottom-color:transparent;
 	}
 	.player-stopped
 	.active-play
 	a.song{
 		outline:1px solid #647142;
-		border-bottom-color:transparent;
 	}
 
 .track-zoom{

@@ -93,7 +93,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 sm2_p.prototype = {
 	'module_title':'sm2_p',
 	"play_song_by_node" : function(node){
-		this.play_song_by_url(node.attr('href'), node.data('duration'));
+		this.play_song_by_url(node.data('mp3link'), node.data('duration'));
 		var parent_node = node.parent()
 		var top = parent_node.position().top + parent_node.height();
 		this.pl_h_style.html('.player-holder {top: ' + top + 'px}');

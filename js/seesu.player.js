@@ -103,7 +103,7 @@ seesu.player = {
 		  this.musicbox.play_song_by_node(node);
 		} else 
 		if (this.musicbox.play_song_by_url) {
-		  this.musicbox.play_song_by_url(node.attr('href'), node.data('duration'));
+		  this.musicbox.play_song_by_url(node.data('mp3link'), node.data('duration'));
 		} else 
 		{return false;}
 
