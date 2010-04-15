@@ -213,7 +213,16 @@ var make_tracklist_playable = function(track_nodes){
 			half_sync_making(track_nodes)
 		}
 	} else{
-		async_making(track_nodes)
+		if (seesu.delayed_search.waiting_for_mp3provider){
+			seesu.delayed_search.we_need_mp3provider((function(track_nodes){
+				return function(){
+					async_making(track_nodes)
+				}
+			})(track_nodes))
+		} else {
+			async_making(track_nodes)
+		}
+		
 	}
 	
 	
