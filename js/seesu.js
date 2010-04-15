@@ -300,11 +300,7 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 				track.text(vk_music_list[i].artist)
 			}
 			
-			if (we_have_mp3links) {
-				make_node_playable(track, vk_music_list[i].link ,songNodes, vk_music_list[i].duration);
-			} else {
-				linkNodes.push(track);
-			}
+			
 			
 			$(li)
 				.append(track)
@@ -312,7 +308,13 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 				.append(track_zoom.clone())
 				.append('<a class="track-zoomin js-serv">&rarr;</a>')
 				.append('<a class="track-zoomout js-serv">&larr;</a>')
-				.appendTo(ul);		
+				.appendTo(ul);
+			
+			if (we_have_mp3links) {
+				make_node_playable(track, vk_music_list[i].link ,songNodes, vk_music_list[i].duration);
+			} else {
+				linkNodes.push(track);
+			}	
 		}
 	
 		if (!we_have_mp3links){

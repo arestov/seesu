@@ -82,7 +82,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 				var music_list = get_vk_music_list(r);
 				if (music_list){
 					var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
-					make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration)
+					make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
 					resort_playlist(playlist_nodes_for);
 				} else {
 					tracknode.attr('class' , 'search-mp3-failed');
