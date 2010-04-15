@@ -67,6 +67,10 @@ var vk_logg_in = function(id,email,sid){
 	widget.setPreferenceForKey(id, 'vkid');
 	widget.setPreferenceForKey(email, 'vkemail');
 	widget.setPreferenceForKey(sid, 'vk_sid');
+	
+	seesu.vk.big_vk_cookie = 'remixchk=5; remixsid=' + sid;
+	widget.setPreferenceForKey(seesu.vk.big_vk_cookie, 'big_vk_cookie');
+	
 	zz.viewer_id = seesu.vk_id = id;
 	seesu.vk_logged_in = true;
 	seesu.delayed_search.switch_to_vk();
@@ -78,7 +82,7 @@ var vk_logged_out = function(){
 	widget.setPreferenceForKey('', 'vkid');
 	widget.setPreferenceForKey('', 'vkemail');
 	widget.setPreferenceForKey('', 'vk_sid');
-	log(widget.preferenceForKey('vkid'))
+	widget.setPreferenceForKey('', 'big_vk_cookie');
 	seesu.vk_logged_in = false;
 	log('display vklogin form if need')
 	

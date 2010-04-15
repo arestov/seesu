@@ -506,17 +506,15 @@ $(function(){
 	seesu.ui.search_form = $('form#search');
 	if (seesu.ui.search_form) {
 		$(document).keypress(function(e){
-			
 			if (!slider.className.match(/show-search-results/)) {return}
 			if (document.activeElement.nodeName == 'BUTTON'){return}
 			var _key = e.keyCode;
-
 			if (_key == '13'){
 				e.preventDefault();
 				var current_node = seesu.ui.search_form.data('node_for_enter_press');
 				if (current_node) {current_node.click()}
 			} else 
-			if(_key == '40'){
+			if((_key == '40') || (_key == '63233')){
 				e.preventDefault();
 				var current_node = seesu.ui.search_form.data('node_for_enter_press');
 				if (current_node){
@@ -534,7 +532,7 @@ $(function(){
 					}
 				}
 			} else 
-			if(_key == '38'){
+			if((_key == '38') || (_key == '63232')){
 				e.preventDefault();
 				var current_node = seesu.ui.search_form.data('node_for_enter_press');
 				if (current_node){

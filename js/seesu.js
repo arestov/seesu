@@ -2,6 +2,16 @@ testing = false;
 lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 seesu =  {
 	  version: 1.7,
+	  vk:{
+		"id": widget.preferenceForKey('vkid'),
+		"big_vk_cookie": widget.preferenceForKey('big_vk_cookie'),
+		"set_xhr_headers": function(xhr){
+			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+			if (seesu.vk.big_vk_cookie){
+				xhr.setRequestHeader("Cookie", seesu.vk.big_vk_cookie);
+			}
+		}
+	  },
 	  ui: {},
 	  xhrs: {},
 	  delayed_search: {

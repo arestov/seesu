@@ -57,10 +57,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 	  type: "POST",
 	  data: ({'c[section]' : 'audio', 'c[q]' : tracknode.data('artist_name') + ' - ' + tracknode.data('track_title')}),
 	  dataType: "json",
-	  beforeSend: function(xhr){
-	  	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-		tracknode.addClass('search-mp3');
-	  },
+	  beforeSend: seesu.vk.set_xhr_headers,
 	  error: function(xhr){
 		tracknode.attr('class' , 'search-mp3-failed');
 		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
@@ -229,9 +226,7 @@ var get_all_vk_tracks = function(trackname,callback){
 	  type: "POST",
 	  data: ({'c[section]' : 'audio', 'c[q]' : trackname}),
 	  dataType: "json",
-	  beforeSend: function(xhr){
-	  	xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-	  },
+	  beforeSend: seesu.vk.set_xhr_headers,
 	  error: function(xhr){
 		callback()
 		log('Вконтакте молвит: ' + xhr.responseText);
