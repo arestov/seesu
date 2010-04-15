@@ -49,6 +49,7 @@ a.track-node{
 	display:block;
 	padding:6px;
 	margin-right:37px;
+	border:1px solid transparent;
 }
 a.search-mp3-failed{
 	color:#666;
