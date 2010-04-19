@@ -1,6 +1,14 @@
+
+.player-holder .play-controls{
+	position:absolute;
+	right:0px;
+}
+
+
 .play-controls{
 	display:none;
 	z-index:7;
+	
 }
 
 	.play-control{
@@ -31,7 +39,7 @@
 	}
 
 a.song{
-	padding:3px 1px 0px;
+	padding:3px 1px 0;
 	
 	background:#535353;
 	border:1px solid #505050;
@@ -47,7 +55,8 @@ a.search-mp3{
 }
 a.track-node{
 	display:block;
-	padding:6px;
+	padding:6px 40px 6px 6px;
+	
 	margin-right:37px;
 	border:1px solid transparent;
 }
@@ -97,14 +106,13 @@ a.song{
 .track-zoom{
 	position:absolute;
 	z-index:-1;
-	right: 0px;
+	right: 0;
 	bottom: -30px;
-	padding-left:40px;
 	
 	display:none;
 	
 	top: -15px;
-	left: -65px;
+	left: 0;
 	width:100%;
 	background:#444;
 	border:1px solid #333;
@@ -155,7 +163,7 @@ a.song{
 	.player-played.track-zoomed  #play-list-holder .player-holder,
 	.player-paused.track-zoomed  #play-list-holder #i_f,
 	.player-played.track-zoomed  #play-list-holder .player-holder{
-		left:auto;
+		left:0;
 		
 		}
 	.track-zoomed .active-play .track-buttons{
@@ -348,11 +356,7 @@ p.internet-flash-settings{
 
 
 
-#play-list-holder
-.player-holder, #play-list-holder #i_f{
-	position:absolute;
-	left:60px;
-}
+
 
 #play-list-holder
 .player-holder.vk-p-initing, #play-list-holder #i_f.vk-p-initing{
@@ -365,10 +369,15 @@ p.internet-flash-settings{
 	width:362px;
 	border:0;
 }
+
+#play-list-holder .player-holder, #play-list-holder #i_f{
+
+}
 #play-list-holder .player-holder, #play-list-holder #i_f{
 	left:-700px;
 	z-index:2;
-	margin-left:34px;
+	right:40px;
+	position:absolute;
 	margin-top: -13px;
 }
 
