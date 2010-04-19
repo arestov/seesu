@@ -7,7 +7,7 @@ var check_vk_logout_response = function(text){
 var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue_element){	
 
 	tracknode.addClass('search-mp3');
-	zz.audio_search(
+	seesu.vk_api.audio_search(
 		tracknode.data('artist_name') + ' - ' + tracknode.data('track_title'),
 		false,
 		function(r, resp_text){
@@ -210,7 +210,7 @@ var get_vk_music_list = function (r) {// vk_music_list is empty array, declared 
 }
 
 var get_all_vk_api_tracks = function(trackname,callback){
-	zz.audio_search(
+	seesu.vk_api.audio_search(
 		trackname,
 		false,
 		function(r, resp_text){

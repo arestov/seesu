@@ -2,12 +2,15 @@
 
 
 //var viewer_id 		= seesu.vk_id;
-var vk_api = function(viewer_id,s,api_id){
+var vk_api = function(viewer_id,s,api_id,test_mode){
 	this.viewer_id 	= viewer_id;
 	this.s 			= s;
 	this.api_id 	= api_id;
 	this.api_link 	= 'http://api.vkontakte.ru/api.php';
 	this.v 			= '2.0';
+	if (test_mode){
+		this.test_mode = true;
+	}
 }
 
 vk_api.prototype = {
@@ -23,6 +26,10 @@ vk_api.prototype = {
 			params_full.api_id 	= this.api_id;
 			params_full.v		= this.v;
 			params_full.format 	= params_full.format || 'json';
+			
+			if (this.test_mode) {
+				params_full.test_mode = 1;
+			}
 			
 			if(apisig) {
 				for (var param in params_full) {
@@ -65,3 +72,6 @@ vk_api.prototype = {
 		this.use('audio.search',params_u,callback,error)
 	}
 }
+
+
+//seesu.vk_api = new vk_api(user_id,'secret',app_id , true);

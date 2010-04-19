@@ -169,6 +169,5 @@ $(function() {
 		$(document.body).removeClass('lfm-auth-req-recomm');
 		return false;
 	})
-	zz = new vk_api(seesu.vk_id,'SRkM2ws8NQ','35569' );
 	play_controls = $('.play-controls');
 });
