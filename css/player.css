@@ -439,3 +439,19 @@ p.internet-flash-settings{
 .track-zoomed .active-play .song-duration{
 	display:block;
 	}
+	
+.player-paused .track-zoom,
+.player-stopped .track-zoom,
+.player-played .track-zoom{
+	display:block;
+}
+.player-paused .play-controls,
+.player-stopped .play-controls,
+.player-played .play-controls{
+	display:block;
+}
+.player-paused .track-buttons,
+.player-stopped .track-buttons,
+.player-played .track-buttons{
+	display:block;
+}

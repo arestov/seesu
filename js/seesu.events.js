@@ -9,7 +9,6 @@ $(function() {
 
 	
 	var wgt_urli = $('#widget-url').val(location.href.replace('index.html', ''));
-	track_zoom = $('.track-zoom');
 	
   $('#close-widget').click(function(){
     window.close();
@@ -170,5 +169,4 @@ $(function() {
 		return false;
 	})
 	zz = new vk_api(seesu.vk_id,'SRkM2ws8NQ','35569' );
-	play_controls = $('.play-controls');
 });

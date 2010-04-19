@@ -348,8 +348,12 @@ var try_to_use_iframe_sm2p = function(){
 // Ready? Steady? Go!
 
 $(function() {
+	play_controls = $('.play-controls');
+	track_zoom = $('.track-zoom');
+	player_holder.append(play_controls)
+	player_holder.append(track_zoom)
 	$('#play-list-holder').append(player_holder);
-
+	
 
 	soundManager.onready(function() {
 	  if (soundManager.supported()) {

@@ -309,8 +309,6 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 			
 			$(li)
 				.append(track)
-				.append(play_controls.clone(true))
-				.append(track_zoom.clone())
 				.append('<a class="track-zoomin js-serv">&rarr;</a>')
 				.append('<a class="track-zoomout js-serv">&larr;</a>')
 				.appendTo(ul);
