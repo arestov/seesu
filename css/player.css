@@ -1,7 +1,8 @@
 
 .player-holder .play-controls{
 	position:absolute;
-	right:0px;
+	right:55px;
+	margin-top:5px;
 }
 
 
@@ -55,11 +56,20 @@ a.search-mp3{
 }
 a.track-node{
 	display:block;
-	padding:6px 40px 6px 6px;
+	padding:6px 6px;
 	
-	margin-right:37px;
+	margin-right:5px;
 	border:1px solid transparent;
-}
+	overflow:hidden;
+	}
+	.song-duration{
+		color:#666;
+		}
+	a.track-node .song-duration{
+		float:right;
+		padding-left:10px;
+		width:35px;
+	}
 a.search-mp3-failed{
 	color:#666;
 }
@@ -111,11 +121,9 @@ a.song{
 	
 	display:none;
 	
-	top: -15px;
+	top: 0;
 	left: 0;
 	width:100%;
-	background:#444;
-	border:1px solid #333;
 	opacity: 0.95;
 	
 	
@@ -139,9 +147,6 @@ a.song{
 .track-zoomed {
 	
 }
-	.track-zoomed .active-play{
-		margin: 0 0 37px;
-	}
 	.track-zoomed .active-play .track-zoomin{
 		display:none;
 	}
@@ -378,7 +383,6 @@ p.internet-flash-settings{
 	z-index:2;
 	right:40px;
 	position:absolute;
-	margin-top: -13px;
 }
 
 
@@ -441,13 +445,8 @@ p.internet-flash-settings{
 		left:0;
 		background:#6a9e3a;
 	}
-.song-duration{
-	margin-top:7px;
-	display:none;
-	}
-.track-zoomed .active-play .song-duration{
-	display:block;
-	}
+
+
 	
 .player-paused .track-zoom,
 .player-stopped .track-zoom,

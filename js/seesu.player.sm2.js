@@ -95,7 +95,7 @@ sm2_p.prototype = {
 	"play_song_by_node" : function(node){
 		this.play_song_by_url(node.data('mp3link'), node.data('duration'));
 		var parent_node = node.parent()
-		var top = parent_node.position().top + parent_node.height();
+		var top = parent_node.position().top;
 		this.pl_h_style.html('.player-holder {top: ' + top + 'px}');
 		if (this.track_progress_total){
 			this.track_progress_play[0].style.width = this.track_progress_load[0].style.width = '';

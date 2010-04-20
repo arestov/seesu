@@ -253,7 +253,7 @@ var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_durat
 	if (mp3_duration) {
 		var digits = mp3_duration % 60;
 		var track_dur = (Math.round(mp3_duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-		playable_node.parent().append($('<div class="song-duration"></div>').text(track_dur + ' '));
+		playable_node.prepend($('<span class="song-duration"></span>').text(track_dur + ' '));
 	}
 	var playlist_length = playlist_nodes_for.length;
 	if ((playlist_length == 1) || (playable_node.data('want_to_play') == seesu.player.want_to_play) ) {
