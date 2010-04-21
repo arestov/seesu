@@ -98,7 +98,7 @@ a.bbcode_tag{
 	height:200px;
 }
 
-.pl-holder{clear:left;position:relative}
+
 
 
 
@@ -187,15 +187,9 @@ display:none;
 	line-height:1.4em;
 	position:relative;
 }
-	.play-list-holder
-	#tracks-search{
-		position:absolute;
-		right:20px;
-		top:-10px;
-		color:#ddd;
-	}
-.tracks-for-play{
 	
+.tracks-for-play{
+	clear:both;
 	}
 	.tracks-for-play>ul>li{
 		margin: 0 0 3px;

@@ -40,7 +40,7 @@ $(function() {
 	artsTracks	= $('.tracks-for-play',artsHolder);
 	art_tracks_w_counter = $('#tracks-waiting-for-search')
 	artsName	= $('#artist-name');
-	
+	playlist_panel = $('#play-list-panel');
 
 	var flash_settings = $('.internet-flash-settings input');
 		

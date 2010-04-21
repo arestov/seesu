@@ -10,7 +10,9 @@
 	<link rel="stylesheet" href="css/search_results.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/player.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/buttmen.css" type="text/css" media="screen" />
+	<link rel="stylesheet" href="css/play-list-panel.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/abs_layout.css" type="text/css" media="screen" />
+	
 	<script type="text/javascript" src="js/_small_serv.js"></script>
 	
 	
@@ -177,118 +179,119 @@
 							</ul>
 						</dd>
 					</dl>
-					<div class="pl-holder track-zoom">
-						
-						<ul class="track-buttons">
-							<li title="About «Adobe Flash Player Security»" id="flash-secur">
-								<a class="flash-security-status trackbutton">fl</a>
-								<div class="track-button-content" id="message-flash-secur">
-									<div class="triangle"></div>
-									<div class="balun">							
-										<p>To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
-										<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
-										<p>and <strong>add</strong> it to white list on  <strong><a class="flash-s">flash internet security page</a></strong></p>
-										<p><img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page"/></p>
-										<p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
-
-										<p class="internet-flash-settings"><label><input type="checkbox" class="flash-mess-switch"/> I've given internet access to flash (hide this message and stop button flashing)</label> <input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
-										<div class="bal tl"></div>
-										<div class="bal tr"></div>
-										<div class="bal bl"></div>
-										<div class="bal br"></div>
-
-									</div>
-								</div>
-							</li>
-							<li class="scrobbling-button"  title="Last.fm scrobbling">
-								<a class="trackbutton">sc</a>
-								<div class="track-button-content">
-									
-									<div class="triangle"></div>
-									<div class="balun" id="enablescrobbling">								<form class="scrobbling-switches" id="scrobbling-switches">
-											<p>scrobbling to last.fm</p>
-										
-											<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="enable-scrobbling" /> enabled</label></p>	
-											<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
-										</form>
-										<div class="lfm-granting">
-											<p>To scrobble to last.fm you must <input class="login-lastfm-button" type="button" value="grant"/> access to Seesu </p>
-											<p class="lfm-finish"><label><input type='checkbox' class="scrobbling-grant"/> I've granted my account access to Seesu</label></p>
-										</div>
-										<p><input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
-										<div class="bal tl"></div>
-										<div class="bal tr"></div>
-										<div class="bal bl"></div>
-										<div class="bal br"></div>
-									</div>
-								</div>
-								
-								
-							</li>
-						</ul>
-						
-						
-						
-					</div>
+					
 					
 					
 					<div class="play-list-holder" id="play-list-holder">
-						<div id="tracks-search" class="search-music-files">
-							<span id="tracks-waiting-for-search"></span> 
-							<a class="js-serv search-music-files">mp3 provider</a>
-							<div id="mp3-search-switch" class="balun">
-								<div class="triangle"></div>
-									<h5>For search mp3 files use</h5>
-									<div class="mp3-search-way-select cant-be-used" id="mp3way-audme">
-										<div>
-											<label for="mp3-audme"><input type="radio" name='mp3searchway' id="mp3-audme" class="mp3-audme mp3searchway"/> audme.ru</label>
+						<div id="play-list-panel">
+							<div id="tracks-search" class="search-music-files">
+								<span id="tracks-waiting-for-search"></span> 
+								<a class="js-serv search-music-files">mp3 provider</a>
+								<div id="mp3-search-switch" class="balun">
+									<div class="triangle"></div>
+										<h5>For search mp3 files use</h5>
+										<div class="mp3-search-way-select cant-be-used" id="mp3way-audme">
+											<div>
+												<label for="mp3-audme"><input type="radio" name='mp3searchway' id="mp3-audme" class="mp3-audme mp3searchway"/> audme.ru</label>
+											</div>
+											<p class="description">Do not requires registration. Buggy search. Nice mp3 names.</p>
 										</div>
-										<p class="description">Do not requires registration. Buggy search. Nice mp3 names.</p>
+										<div class="mp3-search-way-select">
+											<div>
+												<label for="mp3-vk"><input type="radio" name='mp3searchway' id="mp3-vk" class="mp3-vk mp3searchway"/> vkontakte.ru (same as vk.com)</label>
+											</div>
+											<p class="description">Requires registration and login. Fast, stable search. Ugly mp3 names.</p>
+											<div class="vk-login-context mp3-switch">
+												<h3>Type values for vk.com authorization</h3>
+												<form  class="vk-auth" >
+													<p>
+														<label for="email-arts">e-mail</label>
+														<span class="input-place" >
+															<input type="text" class="vk-email" name="email" id="email-arts"/>
+														</span>
+													</p>
+													<p>
+														<label for="pass-arts">pass</label>
+														<span class="input-place" >
+															<input type="text" class="vk-pass"	name="pass" id="pass-arts"/>
+														</span>
+													</p>
+													<p class="error"></p>
+													<p class="vk-captcha-context">
+														<label for="vk-captcha-key">Input code</label>
+														<span class="input-place" >
+															<img src="" alt="captcha"/><br/>
+															<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
+														</span>
+													</p>
+													<p><button>enter</button></p>
+												</form>
+												or <a class="vk-reg-ref" >register new account</a> for vk.com
+												<p>Widget do not store you password. Authorization in future will be happen by «<a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>»</p>
+											</div>
+										</div>
+										
+									
+									<p><input type="button" value="Close message" class="mp3-search-switch-close"/></p>
+									
+									<div class="bal tl"></div>
+									<div class="bal tr"></div>
+									<div class="bal bl"></div>
+									<div class="bal br"></div>
+								</div>
+							</div>
+							
+							<ul class="track-buttons">
+								<li title="About «Adobe Flash Player Security»" id="flash-secur">
+									<a class="flash-security-status trackbutton">fl</a>
+									<div class="track-button-content" id="message-flash-secur">
+										<div class="triangle"></div>
+										<div class="balun">							
+											<p>To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
+											<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
+											<p>and <strong>add</strong> it to white list on  <strong><a class="flash-s">flash internet security page</a></strong></p>
+											<p><img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page"/></p>
+											<p>Usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+	
+											<p class="internet-flash-settings"><label><input type="checkbox" class="flash-mess-switch"/> I've given internet access to flash (hide this message and stop button flashing)</label> <input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
+											<div class="bal tl"></div>
+											<div class="bal tr"></div>
+											<div class="bal bl"></div>
+											<div class="bal br"></div>
+	
+										</div>
 									</div>
-									<div class="mp3-search-way-select">
-										<div>
-											<label for="mp3-vk"><input type="radio" name='mp3searchway' id="mp3-vk" class="mp3-vk mp3searchway"/> vkontakte.ru (same as vk.com)</label>
-										</div>
-										<p class="description">Requires registration and login. Fast, stable search. Ugly mp3 names.</p>
-										<div class="vk-login-context mp3-switch">
-											<h3>Type values for vk.com authorization</h3>
-											<form  class="vk-auth" >
-												<p>
-													<label for="email-arts">e-mail</label>
-													<span class="input-place" >
-														<input type="text" class="vk-email" name="email" id="email-arts"/>
-													</span>
-												</p>
-												<p>
-													<label for="pass-arts">pass</label>
-													<span class="input-place" >
-														<input type="text" class="vk-pass"	name="pass" id="pass-arts"/>
-													</span>
-												</p>
-												<p class="error"></p>
-												<p class="vk-captcha-context">
-													<label for="vk-captcha-key">Input code</label>
-													<span class="input-place" >
-														<img src="" alt="captcha"/><br/>
-														<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
-													</span>
-												</p>
-												<p><button>enter</button></p>
+								</li>
+								<li class="scrobbling-button"  title="Last.fm scrobbling">
+									<a class="trackbutton">sc</a>
+									<div class="track-button-content">
+										
+										<div class="triangle"></div>
+										<div class="balun" id="enablescrobbling">								<form class="scrobbling-switches" id="scrobbling-switches">
+												<p>scrobbling to last.fm</p>
+											
+												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="enable-scrobbling" /> enabled</label></p>	
+												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
 											</form>
-											or <a class="vk-reg-ref" >register new account</a> for vk.com
-											<p>Widget do not store you password. Authorization in future will be happen by «<a href="http://en.wikipedia.org/wiki/HTTP_cookie">cookies</a>»</p>
+											<div class="lfm-granting">
+												<p>To scrobble to last.fm you must <input class="login-lastfm-button" type="button" value="grant"/> access to Seesu </p>
+												<p class="lfm-finish"><label><input type='checkbox' class="scrobbling-grant"/> I've granted my account access to Seesu</label></p>
+											</div>
+											<p><input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
+											<div class="bal tl"></div>
+											<div class="bal tr"></div>
+											<div class="bal bl"></div>
+											<div class="bal br"></div>
 										</div>
 									</div>
 									
-								
-								<p><input type="button" value="Close message" class="mp3-search-switch-close"/></p>
-								
-								<div class="bal tl"></div>
-								<div class="bal tr"></div>
-								<div class="bal bl"></div>
-								<div class="bal br"></div>
-							</div>
+									
+								</li>
+							</ul>
+							
+							
 						</div>
+						
 						<div class="tracks-for-play"></div>
 					</div>
 				</div>
