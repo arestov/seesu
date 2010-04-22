@@ -249,7 +249,7 @@ sm2_p.prototype = {
 				seesu.player.call_event(VOLUME, volume_value);
 			},
 			"progress_playing": function(_this, progress_value, total){
-				if (this.ignore_position_change) {return false;}
+				if (_this.ignore_position_change) {return false;}
 				var progress = parseInt(progress_value);
 				var total = parseInt(total);
 				
@@ -258,7 +258,7 @@ sm2_p.prototype = {
 				_this.track_progress_play[0].style.width = current + 'px'
 			},
 			"progress_loading": function(_this, progress_value, total){
-				if (this.ignore_position_change) {return false;}
+				if (_this.ignore_position_change) {return false;}
 				var progress = parseInt(progress_value);
 				var total = parseInt(total);
 				
