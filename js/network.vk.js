@@ -55,6 +55,41 @@ var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue
 
 	queue_element.done = true;
 }
+
+var get_all_vk_api_tracks = function(trackname,callback){
+	seesu.vk_api.audio_search(
+		trackname,
+		false,
+		function(r, resp_text){
+			log('api search')
+			if (r.response && (r.response.length > 1 )) {
+				var music_list = [];
+				for (var i=1, l = r.response.length; i < l; i++) {
+					var entity = {
+						'artist'  	:r.response[i].artist,
+						'duration'	:r.response[i].duration,
+						'link'		:r.response[i].url,
+						'track'		:r.response[i].title
+						
+					};
+					if (!has_music_copy(music_list,entity)){
+						music_list.push(entity)
+					}
+					
+					
+				};
+				if (callback) {callback(music_list);}
+			} else{
+				if (callback) {callback()}
+			}
+		},
+		function(){
+			callback();
+		}
+	);
+}
+
+
 var hardcore_vk_search = function(query, callback, error, nocache){
 
 	var use_cache = !nocache;
@@ -68,7 +103,7 @@ var hardcore_vk_search = function(query, callback, error, nocache){
 				var date_of_c_response = parseInt(date_string);
 				if (date_of_c_response) {
 					var now_is = (new Date).getTime();
-					if ((now_is - date_of_c_response) < (5 * 60 * 60 * 100)){
+					if ((now_is - date_of_c_response) < (5 * 60 * 60 * 1000)){
 						var old_r = JSON.parse(cached_response);
 						if (callback) {callback(old_r);}
 						return
@@ -209,7 +244,7 @@ var kill_music_dubs = function(array) {
 	}
 	return cleared_array
 }
-var has_music_copy = function(array, entity, from_position){
+has_music_copy = function(array, entity, from_position){
 	if (!array.length) {return false}
 	
 	for (var i = from_position || 0, l = array.length; i < l; i++) {
@@ -255,36 +290,5 @@ var get_vk_music_list = function (r) {// vk_music_list is empty array, declared 
 	} else {return false}
 }
 
-var get_all_vk_api_tracks = function(trackname,callback){
-	seesu.vk_api.audio_search(
-		trackname,
-		false,
-		function(r, resp_text){
-			log('api search')
-			if (r.response && (r.response.length > 1 )) {
-				var music_list = [];
-				for (var i=1, l = r.response.length; i < l; i++) {
-					var entity = {
-						'artist'  	:r.response[i].artist,
-						'duration'	:r.response[i].duration,
-						'link'		:r.response[i].url,
-						'track'		:r.response[i].title
-						
-					};
-					if (!has_music_copy(music_list,entity)){
-						music_list.push(entity)
-					}
-					
-					
-				};
-				if (callback) {callback(music_list);}
-			} else{
-				if (callback) {callback()}
-			}
-		},
-		function(){
-			callback();
-		}
-	);
-}
+
 

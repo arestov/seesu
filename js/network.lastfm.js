@@ -39,7 +39,7 @@ var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 					var date_of_c_response = parseInt(date_string);
 					if (date_of_c_response) {
 						var now_is = (new Date).getTime();
-						if ((now_is - date_of_c_response) < (5 * 60 * 60 * 100)){
+						if ((now_is - date_of_c_response) < (5 * 60 * 60 * 1000)){
 							var old_r = JSON.parse(cached_response);
 							if (callback) {callback(old_r);}
 							return
