@@ -2,8 +2,11 @@ var apikey = '2803b2bcbc53f132b4d4117ec1509d65';
 var	s = '77fd498ed8592022e61863244b53077d';
 var api='http://ws.audioscrobbler.com/2.0/';
 var lastfm_cache_on = true;
-var lfm = function(method,params,callback, type_of_xhr_is_post) {
+var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 	if (method) {
+		var use_cache = (lastfm_cache_on && !type_of_xhr_is_post && !nocache)
+
+
 		var pv_signature_list = [], // array of <param>+<value>
 			params_full = params || {},
 			apisig = ((params && (params.sk || params.token )) || (method == 'auth.getToken')) ? true : false; // yes, we need signature
@@ -14,7 +17,7 @@ var lfm = function(method,params,callback, type_of_xhr_is_post) {
 		
 
 		var paramsstr = '';
-		if(apisig || lastfm_cache_on) {
+		if(apisig || use_cache) {
 			for (var param in params_full) {
 				if (!(param == 'format') && !(param == 'callback')){
 					pv_signature_list.push(param + params_full[param]);
@@ -28,7 +31,7 @@ var lfm = function(method,params,callback, type_of_xhr_is_post) {
 			params_full.api_sig = hex_md5(paramsstr + s);
 		}
 		
-		if (lastfm_cache_on){
+		if (use_cache){
 			var chached_response = widget.preferenceForKey(params_full.api_sig);
 			if (chached_response) {
 				var date_string = widget.preferenceForKey(params_full.api_sig + '_date');
@@ -60,7 +63,7 @@ var lfm = function(method,params,callback, type_of_xhr_is_post) {
 		  },
 		  success: function(r){
 			if (callback) {callback(r);}
-			if (lastfm_cache_on){
+			if (use_cache){
 				widget.setPreferenceForKey(JSON.stringify(r), params_full.api_sig);
 				widget.setPreferenceForKey((new Date).getTime(), params_full.api_sig + '_date');
 			}

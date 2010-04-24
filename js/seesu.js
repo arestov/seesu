@@ -426,7 +426,7 @@ var render_recommendations = function(){
 			}
 			proxy_render_artists_tracks(artist_list);
 		}
-	});
+	}, false);
 	$(nav_artist_page).text('Recommendations for you');
 	slider.className = 'show-player-page';
 };
@@ -442,7 +442,7 @@ var get_artists_by_tag = function(tag,callback){
 			}
 			if (callback) {callback(artist_list);}
 		}
-	});
+	}, false);
 	return true;
 };
 var render_tracks_by_artists_of_tag = function(tag){
