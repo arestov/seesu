@@ -2,7 +2,7 @@
 
 
 //var viewer_id 		= seesu.vk_id;
-var vk_api = function(viewer_id,s,api_id,test_mode){
+var vk_api = function(viewer_id, s, api_id, test_mode, cache){
 	this.viewer_id 	= viewer_id;
 	this.s 			= s;
 	this.api_id 	= api_id;
@@ -10,6 +10,9 @@ var vk_api = function(viewer_id,s,api_id,test_mode){
 	this.v 			= '2.0';
 	if (test_mode){
 		this.test_mode = true;
+	}
+	if (cache){
+		this.use_cache = true;
 	}
 }
 

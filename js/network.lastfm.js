@@ -32,15 +32,15 @@ var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 		}
 		
 		if (use_cache){
-			var chached_response = widget.preferenceForKey(params_full.api_sig);
-			if (chached_response) {
+			var cached_response = widget.preferenceForKey(params_full.api_sig);
+			if (cached_response) {
 				var date_string = widget.preferenceForKey(params_full.api_sig + '_date');
 				if (date_string){
 					var date_of_c_response = parseInt(date_string);
 					if (date_of_c_response) {
 						var now_is = (new Date).getTime();
 						if ((now_is - date_of_c_response) < (5 * 60 * 60 * 100)){
-							var old_r = JSON.parse(chached_response);
+							var old_r = JSON.parse(cached_response);
 							if (callback) {callback(old_r);}
 							return
 						}

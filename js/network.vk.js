@@ -55,60 +55,97 @@ var get_vk_api_track = function(tracknode,playlist_nodes_for,delaying_func,queue
 
 	queue_element.done = true;
 }
-var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_element){	
-	tracknode.addClass('search-mp3');
+var hardcore_vk_search = function(query, callback, error, nocache){
+
+	var use_cache = !nocache;
+	var hash = hex_md5(query);
+
+	if (use_cache){
+		var cached_response = widget.preferenceForKey('vk_h_' + hash);
+		if (cached_response) {
+			var date_string = widget.preferenceForKey('vk_h_' + hash + '_date');
+			if (date_string){
+				var date_of_c_response = parseInt(date_string);
+				if (date_of_c_response) {
+					var now_is = (new Date).getTime();
+					if ((now_is - date_of_c_response) < (5 * 60 * 60 * 100)){
+						var old_r = JSON.parse(cached_response);
+						if (callback) {callback(old_r);}
+						return
+					}
+				}
+			}
+			
+		}
+		
+		
+	}
+
 	$.ajax({
 	  timeout: 10000,
 	  url: "http://vkontakte.ru/gsearch.php",
 	  global: false,
 	  type: "POST",
-	  data: ({'c[section]' : 'audio', 'c[q]' : tracknode.data('artist_name') + ' - ' + tracknode.data('track_title')}),
+	  data: ({'c[section]' : 'audio', 'c[q]' : query}),
 	  dataType: "text",
 	  beforeSend: seesu.vk.set_xhr_headers,
-	  error: function(xhr){
+	  complete: function(xhr){
+		var text = xhr.responseText;
+		if (text.match(/^\{/) && text.match(/\}$/)){
+			try {
+				var r = JSON.parse(text);
+				log('Квантакте говорит: ' + r.summary);
+				var music_list = get_vk_music_list(r);
+				
+				if (music_list && callback) {
+					if (use_cache){
+						
+						widget.setPreferenceForKey(JSON.stringify(music_list), 'vk_h_' + hash);
+						widget.setPreferenceForKey((new Date).getTime(), 'vk_h_' + hash + '_date');
+
+					}
+					
+				
+					callback(music_list);
+				} else{
+					if  (error) {error(xhr);}
+				}
+			} catch(e) {
+				log(e)
+				if  (error) {error(xhr);}
+			}
+		} else{
+			check_vk_logout_response(text);
+			if  (error) {error(xhr);}
+			
+		}
+	  }
+	});
+
+
+}
+var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_element){	
+	tracknode.addClass('search-mp3');
+	hardcore_vk_search(tracknode.data('artist_name') + ' - ' + tracknode.data('track_title'), 
+	function(music_list){
+		//sucess
 		tracknode.removeClass('search-mp3');
-		tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
+		var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
+		make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
+		resort_playlist(playlist_nodes_for);
+		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
+	},
+	function(xhr){
+		//error
+		tracknode.removeClass('search-mp3').addClass('search-mp3-failed').removeClass('waiting-full-render');
 		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		
 		log('Error, vk say: ' + xhr.responseText);
 		if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
 			delaying_func.call_at += (1000*60*5);
 		}
-		
-	  },
-	  success: function(text){
-		tracknode.removeClass('search-mp3');
-		if (text.match(/^\{/) && text.match(/\}$/)){
-			try {
-				var r = $.parseJSON(text);
-				log('success hardcore search, vk say: ' + r.summary);
-				var music_list = get_vk_music_list(r);
-				if (music_list){
-					var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
-					make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
-					resort_playlist(playlist_nodes_for);
-				} else {
-					tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
-				}
-				art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
-			} catch(e) {
-				log(e)
-			}
-		} else{
-			tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
-			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
-			if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
-				delaying_func.call_at += (1000*60*5);
-			}
-			check_vk_logout_response(text);
-		}
-		
-		
-		
-		
-	  }
 	});
-	
+
 	queue_element.done = true;
 }
 
