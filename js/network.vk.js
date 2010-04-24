@@ -148,6 +148,12 @@ var get_vk_track = function(tracknode,playlist_nodes_for,delaying_func,queue_ele
 
 	queue_element.done = true;
 }
+var get_all_vk_tracks = function(trackname,callback){
+	hardcore_vk_search(trackname, callback, function(){
+		callback();
+	});	
+};
+
 
 var de_html_entity = document.createElement('div');
 var de_html = function(html_text){
@@ -281,45 +287,4 @@ var get_all_vk_api_tracks = function(trackname,callback){
 		}
 	);
 }
-var get_all_vk_tracks = function(trackname,callback){
 
-	$.ajax({
-	  timeout: 10000,
-	  url: "http://vkontakte.ru/gsearch.php",
-	  global: false,
-	  type: "POST",
-	  data: ({'c[section]' : 'audio', 'c[q]' : trackname}),
-	  dataType: "text",
-	  beforeSend: seesu.vk.set_xhr_headers,
-	  error: function(xhr){
-		callback()
-		log('Вконтакте молвит: ' + xhr.responseText);
-		if (xhr.responseText.indexOf('Действие выполнено слишком быстро.') != -1){
-			
-		} 
-		
-	  },
-	  success: function(text){
-		if (text.match(/^\{/) && text.match(/\}$/)){
-			try {
-				var r = $.parseJSON(text);
-				log('Квантакте говорит: ' + r.summary);
-				var music_list = get_vk_music_list(r);
-				
-				if (music_list) {
-					callback(music_list);
-				} else{
-					log('Поиск не удался... :’—(');
-					callback()
-				}
-			} catch(e) {
-				log(e)
-			}
-		} else{
-			callback();
-			check_vk_logout_response(text)
-		}
-	  }
-	});
-	
-};
