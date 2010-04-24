@@ -1,10 +1,9 @@
 .play-list-holder
 #tracks-search{
 	position:absolute;
-	right:90px;
+	right:120px;
 	top:0;
 	color:#ddd;
-	width:100px
 }
 #tracks-waiting-for-search{
 	position: absolute;
@@ -38,6 +37,31 @@
 			.track-buttons>li>a:active{
 				background:#333;
 			}
+
+.tb-window
+.track-button-content{
+	display:block;
+}
+.track-button-content{
+	display:none;
+}
+.track-button-content{
+	position:absolute;
+	display:none;
+	width:460px;
+	background:#fff;
+	top:25px;
+	left:auto;
+	right:12px;
+	z-index:10;
+	color:#555;
+}
+
+.track-button-content .triangle { 
+	left: auto;
+	right: -14px;
+	}
+
 .volume-state{
 	width:50px;
 	position:absolute;

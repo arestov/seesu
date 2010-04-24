@@ -68,11 +68,11 @@ vk_api.prototype = {
 			});
 		}
 	},
-	audio_search: function(query,params,callback,error){
+	audio_search: function(query, params, callback, error){
 		var params_u = params || {};
 			params_u.q = query;
 			params_u.count = params_u.count || 30;
-		this.use('audio.search',params_u,callback,error)
+		this.use('audio.search', params_u, callback, error)
 	}
 }
 

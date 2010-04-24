@@ -95,7 +95,6 @@ sm2_p.prototype = {
 		this.ignore_position_change = true;
 		if (this.track_progress_total){
 			this.track_progress_play[0].style.width = this.track_progress_load[0].style.width = '0';
-			log(this.track_progress_play.width())
 		}
 		
 		var parent_node = node.parent()

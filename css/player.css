@@ -217,21 +217,7 @@ p.internet-flash-settings{
 }
 
 
-.tb-window
-.track-button-content{
-	display:block;
-}
 
-.track-button-content{
-	position:absolute;
-	display:none;
-	width:460px;
-	background:#fff;
-	top:25px;
-	left:-18px;
-	z-index:10;
-	color:#555;
-}
 
 #message-flash-secur{
 	}
@@ -250,69 +236,6 @@ p.internet-flash-settings{
 	img{
 		max-width:100%;
 	}
-
-.triangle {
-	position: absolute;
-	width: 21px;
-	height:17px;
-	background:url(../i/triangle.png) no-repeat ;
-	left: 15px;
-	top: -7px;
-}
-
-.balun {
-	display:block;
-	position: absolute;
-	width: 100%;
-	padding:10px;
-}
-	.balun a{
-		color:blue;
-		border-bottom-color:blue;
-		}
-		.balun a:hover{
-			color:#333;
-			border-bottom-color:#333;
-		}
-	.bal {
-		position: absolute;
-		background: url(../i/corners.png) no-repeat;
-		z-index: -1;
-	}
-    .tl {
-      top: -6px;
-      bottom: 28px;
-      left: -11px;
-      right: 14px;
-    }
-    .tr {
-      width: 25px;
-      top: -6px;
-      bottom: 28px;
-      right: -11px;
-      background-position: top right;
-    }
-    .bl {
-      left: -11px;
-      right: 14px;
-      bottom: 0;
-      height: 28px;
-      background-position: bottom left;
-    }
-    .br {
-      width: 25px;
-      height: 28px;
-      right: -11px;
-      bottom: 0;
-      background-position: bottom right;
-    }
-
-
-
-
-
-
-
 
 
 
