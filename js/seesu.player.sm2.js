@@ -21,31 +21,30 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 	*/
 	if (player_holder){
 		this.live_controls_holder = player_holder;
-		var get_click_position = function(e){
-			var pos = e.offsetX;
+		var get_click_position = function(e, node){
+			var pos ;
+			if (!node){
+				pos = e.offsetX;
+			}
+			
 			if (!pos){
-				pos = e.pageX - $(e.target).offset().left;
+				pos = e.pageX - $(node).offset().left;
 			}
 			return pos
 		}
 		
 		
 		
-		this.track_progress_total = $('<div class="track-progress"></div>').appendTo(player_holder);
-		this.track_progress_load = $('<div class="track-load-progress"></div>').click(function(e){
-			
-			var pos = get_click_position(e);
-			var new_play_position_factor = pos/300;
+		this.track_progress_total = $('<div class="track-progress"></div>').click(function(e){
+			e.stopPropagation();
+			var pos = get_click_position(e, this);
+			var new_play_position_factor = pos/_this.track_progress_width;
 			_this.set_new_position(new_play_position_factor);
 			
-		}).appendTo(this.track_progress_total);
-		this.track_progress_play = $('<div class="track-play-progress"></div>').click(function(e){
-			var pos = get_click_position(e);
-			var new_play_position_factor = pos/300;
-			_this.set_new_position(new_play_position_factor);
-			
-		}).appendTo(this.track_progress_total);
-		
+		}).appendTo(player_holder);
+		this.track_progress_load = $('<div class="track-load-progress"></div>').appendTo(this.track_progress_total);
+		this.track_progress_play = $('<div class="track-play-progress"></div>').appendTo(this.track_progress_total);
+		this.track_node_text = $('<span class="track-node-text"><span>').appendTo(this.track_progress_total);
 		
 		
 		this.volume_state = $('<div class="volume-state"></div>').click(function(e){
@@ -54,7 +53,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 			_this.changhe_volume(new_volume_factor * 100);
 			
 			_this.volume_state_position.css('width', pos + 'px')
-		}).appendTo(player_holder);
+		}).appendTo(playlist_panel);
 		this.volume_state_position = $('<div class="volume-state-position"></div>').css('width',((volume * 50)/100) + 'px' ).appendTo(this.volume_state);
 		
 	}
@@ -93,13 +92,23 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 sm2_p.prototype = {
 	'module_title':'sm2_p',
 	"play_song_by_node" : function(node){
-		this.play_song_by_url(node.attr('href'), node.data('duration'));
+		this.ignore_position_change = true;
+		if (this.track_progress_total){
+			this.track_progress_play[0].style.width = this.track_progress_load[0].style.width = '0';
+			log(this.track_progress_play.width())
+		}
+		
 		var parent_node = node.parent()
-		var top = parent_node.position().top + parent_node.height();
+		var top = parent_node.position().top;
 		this.pl_h_style.html('.player-holder {top: ' + top + 'px}');
 		if (this.track_progress_total){
-			this.track_progress_play[0].style.width = this.track_progress_load[0].style.width = '';
+			this.track_progress_width = this.track_progress_total.outerWidth();
+			this.track_node_text.html(node.html());
 		}
+		
+		this.play_song_by_url(node.data('mp3link'), node.data('duration'));
+		this.ignore_position_change = false;
+		
 		
 		
 	},
@@ -124,7 +133,6 @@ sm2_p.prototype = {
 	"sm2_actions": null,
 	"sm2_actions_normal" :{
 		"set_new_position": function(position_factor){
-			
 			var current_song = this.core.getSoundById(this.current_song);
 			if (current_song) {
 				var total = (current_song.bytesTotal * current_song.duration)/current_song.bytesLoaded;
@@ -241,19 +249,20 @@ sm2_p.prototype = {
 				seesu.player.call_event(VOLUME, volume_value);
 			},
 			"progress_playing": function(_this, progress_value, total){
-				
+				if (_this.ignore_position_change) {return false;}
 				var progress = parseInt(progress_value);
 				var total = parseInt(total);
 				
-				var current = Math.round((progress/total) * 300);
+				var current = Math.round((progress/total) * _this.track_progress_width);
 				
 				_this.track_progress_play[0].style.width = current + 'px'
 			},
 			"progress_loading": function(_this, progress_value, total){
+				if (_this.ignore_position_change) {return false;}
 				var progress = parseInt(progress_value);
 				var total = parseInt(total);
 				
-				var current = Math.round((progress/total) * 300);
+				var current = Math.round((progress/total) * _this.track_progress_width);
 				
 				_this.track_progress_load[0].style.width = current + 'px'
 			}

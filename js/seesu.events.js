@@ -9,7 +9,6 @@ $(function() {
 
 	
 	var wgt_urli = $('#widget-url').val(location.href.replace('index.html', ''));
-	track_zoom = $('.track-zoom');
 	
   $('#close-widget').click(function(){
     window.close();
@@ -41,7 +40,7 @@ $(function() {
 	artsTracks	= $('.tracks-for-play',artsHolder);
 	art_tracks_w_counter = $('#tracks-waiting-for-search')
 	artsName	= $('#artist-name');
-	
+	playlist_panel = $('#play-list-panel');
 
 	var flash_settings = $('.internet-flash-settings input');
 		
@@ -170,4 +169,5 @@ $(function() {
 		return false;
 	})
 	play_controls = $('.play-controls');
+
 });

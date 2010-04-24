@@ -103,7 +103,7 @@ seesu.player = {
 		  this.musicbox.play_song_by_node(node);
 		} else 
 		if (this.musicbox.play_song_by_url) {
-		  this.musicbox.play_song_by_url(node.attr('href'), node.data('duration'));
+		  this.musicbox.play_song_by_url(node.data('mp3link'), node.data('duration'));
 		} else 
 		{return false;}
 
@@ -348,8 +348,10 @@ var try_to_use_iframe_sm2p = function(){
 // Ready? Steady? Go!
 
 $(function() {
+	play_controls = $('.play-controls');
+	player_holder.append(play_controls)
 	$('#play-list-holder').append(player_holder);
-
+	
 
 	soundManager.onready(function() {
 	  if (soundManager.supported()) {

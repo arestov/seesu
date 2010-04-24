@@ -1,0 +1,56 @@
+.play-list-holder
+#tracks-search{
+	position:absolute;
+	right:0;
+	top:0;
+	color:#ddd;
+	width:100px
+}
+.track-buttons{
+	position:absolute;
+	top:0;
+	right:160px;
+	height:16px;
+	}
+	.track-buttons>li{
+		float:left;
+		width:16px;
+		line-height:16px;
+		height:16px;
+		position:relative;
+		margin-right:3px;
+		}
+		.track-buttons>li>a{
+			font-weight:700;
+			cursor:pointer;
+			display:block;
+			text-align:center;
+			line-height:inherit;
+			}
+			.track-buttons>li>a:hover{
+				background:#666;
+				}
+			.track-buttons>li>a:active{
+				background:#333;
+			}
+.volume-state{
+	width:50px;
+	position:absolute;
+	right:100px;
+	top:0;
+	background:#456726;
+	height:6px;
+	cursor:pointer;
+	border: 1px solid #3a3a3a;
+	}
+	.volume-state-position{
+		height:6px;
+		width:0;
+		position:absolute;
+		top:0;
+		left:0;
+		background:#6a9e3a;
+	}
+.play-list-holder{
+	position:relative;
+	}

@@ -238,18 +238,22 @@ var make_tracklist_playable = function(track_nodes){
 	
 };
 var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_duration){
-	var playable_node = $(node).attr({'class' : 'song js-serv', 'href': http_link }).data('duration', mp3_duration);
+	var playable_node = $(node)
+		.addClass('song js-serv')
+		.removeClass('waiting-full-render')
+		.data('mp3link', http_link)
+		.data('duration', mp3_duration);
 	playlist_nodes_for.push(playable_node);
 	
 	
 	
 	var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href': http_link });
-	playable_node.parent().append(mp3);
+	mp3.insertBefore(playable_node);
 	
 	if (mp3_duration) {
 		var digits = mp3_duration % 60;
 		var track_dur = (Math.round(mp3_duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-		playable_node.parent().append($('<div class="song-duration"></div>').text(track_dur + ' '));
+		playable_node.prepend($('<span class="song-duration"></span>').text(track_dur + ' '));
 	}
 	var playlist_length = playlist_nodes_for.length;
 	if ((playlist_length == 1) || (playable_node.data('want_to_play') == seesu.player.want_to_play) ) {
@@ -287,8 +291,9 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 		
 		
 		for (var i=0, l = vk_music_list.length; i < l; i++) {
-			var attrs = {'class' : 'waiting-full-render' };
-			var track = $("<a></a>").attr(attrs).data('play_order', i),
+			var track = $("<a></a>")
+				.addClass('track-node waiting-full-render')
+				.data('play_order', i),
 				li = document.createElement('li');
 
 			track.data('artist_name', vk_music_list[i].artist);
@@ -304,8 +309,6 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 			
 			$(li)
 				.append(track)
-				.append(play_controls.clone(true))
-				.append(track_zoom.clone())
 				.append('<a class="track-zoomin js-serv">&rarr;</a>')
 				.append('<a class="track-zoomout js-serv">&larr;</a>')
 				.appendTo(ul);
@@ -423,7 +426,7 @@ var render_recommendations = function(){
 			}
 			proxy_render_artists_tracks(artist_list);
 		}
-	});
+	}, false);
 	$(nav_artist_page).text('Recommendations for you');
 	slider.className = 'show-player-page';
 };
@@ -439,7 +442,7 @@ var get_artists_by_tag = function(tag,callback){
 			}
 			if (callback) {callback(artist_list);}
 		}
-	});
+	}, false);
 	return true;
 };
 var render_tracks_by_artists_of_tag = function(tag){
