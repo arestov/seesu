@@ -93,7 +93,6 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
-	log('before cache and value: ' + use_cache)
 	if (use_cache){
 		var cached_response = widget.preferenceForKey('vk_h_' + hash);
 		if (cached_response) {
@@ -114,7 +113,6 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 		
 		
 	}
-	log('after cache')
 	var not_init_quene = false;
 
 	if (seesu.delayed_search.waiting_for_mp3provider){
@@ -143,7 +141,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 			if (text.match(/^\{/) && text.match(/\}$/)){
 				try {
 					var r = JSON.parse(text);
-					log('Квантакте говорит: ' + r.summary);
+					log('Квантакте говорит: \n' + r.summary);
 					var music_list = get_vk_music_list(r);
 				
 					if (music_list && callback) {
@@ -185,7 +183,7 @@ var get_vk_track = function(tracknode,playlist_nodes_for, was_unsuccessful){
 		tracknode.removeClass('search-mp3').addClass('search-mp3-failed').removeClass('waiting-full-render');
 		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		
-		log('Error, vk say: ' + xhr.responseText);
+		log('Error, vk say: \n' + xhr.responseText);
 	}, 
 	was_unsuccessful,
 	function(){

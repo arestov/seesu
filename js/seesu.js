@@ -342,8 +342,15 @@ var vk_track_search = function(query){
 	nav_artist_page.innerHTML = query;
 
 	slider.className = 'show-full-nav show-player-page';
+	var used_successful = seesu.delayed_search.use.search_many_tracks(query, render_playlist);
+	if (!used_successful && seesu.delayed_search.waiting_for_mp3provider){
+		if (mp3_prov_quene) {
+			mp3_prov_quene.add((function(node){
+				return function(){seesu.delayed_search.use.search_many_tracks(query, render_playlist, true);};
+			})(node), true)
+		}
+	}
 	
-	seesu.delayed_search.use.search_many_tracks(query, render_playlist);
 	
 	
 	
