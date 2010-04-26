@@ -168,7 +168,8 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 
 
 }
-var get_vk_track = function(tracknode,playlist_nodes_for, was_unsuccessful){	
+var get_vk_track = function(tracknode,playlist_nodes_for, was_unsuccessful){
+	art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
 	var used_successful = hardcore_vk_search(tracknode.data('artist_name') + ' - ' + tracknode.data('track_title'), 
 	function(music_list){
 		//success

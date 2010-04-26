@@ -181,9 +181,8 @@ var resort_playlist = function(playlist_nodes_for){
 var half_sync_making = function(track_nodes){
 	var playlist_nodes_for = [];
 	var mp3_prov_quene;
-	if (seesu.mp3_quene) {
-		seesu.mp3_quene.reset();
-	} 
+	
+
 	if (seesu.delayed_search.waiting_for_mp3provider){
 		mp3_prov_quene = new funcs_quene();
 		seesu.delayed_search.we_need_mp3provider(mp3_prov_quene)
@@ -210,9 +209,7 @@ var async_making = function(track_nodes){
 		return track_list[random_track_num];
 		
 	}
-	if (seesu.mp3_quene) {
-		seesu.mp3_quene.reset();
-	} 
+
 	if (seesu.delayed_search.waiting_for_mp3provider){
 		mp3_prov_quene = new funcs_quene();
 		seesu.delayed_search.we_need_mp3provider(mp3_prov_quene)
@@ -238,6 +235,11 @@ var async_making = function(track_nodes){
 	}
 }
 var make_tracklist_playable = function(track_nodes){
+	if (seesu.mp3_quene) {
+		seesu.mp3_quene.reset();
+	} 
+	
+
 	var we_have_tracks = track_nodes[0].data('track_title') ? true : false;
 	if (we_have_tracks) {
 		half_sync_making(track_nodes)
