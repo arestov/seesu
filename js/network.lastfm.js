@@ -32,9 +32,9 @@ var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 		}
 		
 		if (use_cache){
-			var cached_response = widget.preferenceForKey(params_full.api_sig);
+			var cached_response = widget.preferenceForKey('lastfm_' + params_full.api_sig);
 			if (cached_response) {
-				var date_string = widget.preferenceForKey(params_full.api_sig + '_date');
+				var date_string = widget.preferenceForKey('lastfm_' + params_full.api_sig + '_date');
 				if (date_string){
 					var date_of_c_response = parseInt(date_string);
 					if (date_of_c_response) {
@@ -63,10 +63,10 @@ var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 		  },
 		  success: function(r){
 			if (callback) {callback(r);}
-			if (use_cache){
-				widget.setPreferenceForKey(JSON.stringify(r), params_full.api_sig);
-				widget.setPreferenceForKey((new Date).getTime(), params_full.api_sig + '_date');
-			}
+			
+			widget.setPreferenceForKey(JSON.stringify(r), 'lastfm_' + params_full.api_sig);
+			widget.setPreferenceForKey((new Date).getTime(), 'lastfm_' + params_full.api_sig + '_date');
+			
 			
 		  },
 		  complete: function(xhr){
