@@ -7,6 +7,8 @@ var check_vk_logout_response = function(text){
 
 var get_all_vk_api_tracks = function(trackname, callback){
 	if (seesu.mp3_quene) {seesu.mp3_quene.reset();}
+	seesu.delayed_search.tracks_waiting_for_search = 0;
+	art_tracks_w_counter.text('');
 	var used_successful = seesu.vk_api.audio_search(trackname, callback, function(){callback();}, was_unsuccessful);
 	return used_successful;
 }
@@ -172,6 +174,8 @@ var get_vk_track = function(tracknode,playlist_nodes_for, was_unsuccessful){
 }
 var get_all_vk_tracks = function(trackname, callback, was_unsuccessful){
 	if (seesu.mp3_quene) {seesu.mp3_quene.reset();}
+	seesu.delayed_search.tracks_waiting_for_search = 0;
+	art_tracks_w_counter.text('');
 	var used_successful = hardcore_vk_search(trackname, callback, function(){callback();}, was_unsuccessful);
 	return used_successful;
 };
