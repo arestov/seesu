@@ -55,7 +55,7 @@ var get_vk_api_track = function(tracknode,playlist_nodes_for){
 
 }
 
-var get_all_vk_api_tracks = function(trackname,callback){
+var get_all_vk_api_tracks = function(trackname, callback){
 	seesu.vk_api.audio_search(
 		trackname,
 		false,
@@ -191,11 +191,10 @@ var get_vk_track = function(tracknode,playlist_nodes_for, was_unsuccessful){
 	});
 	return used_successful;
 }
-var get_all_vk_tracks = function(trackname,callback){
+var get_all_vk_tracks = function(trackname, callback, was_unsuccessful){
 	if (seesu.mp3_quene) {seesu.mp3_quene.reset();}
-	hardcore_vk_search(trackname, callback, function(){
-		callback();
-	});	
+	var used_successful = hardcore_vk_search(trackname, callback, function(){callback();}, was_unsuccessful);
+	return used_successful;
 };
 
 
