@@ -238,8 +238,7 @@ var make_tracklist_playable = function(track_nodes){
 	if (seesu.mp3_quene) {
 		seesu.mp3_quene.reset();
 	} 
-	
-
+	seesu.delayed_search.tracks_waiting_for_search = 0;
 	var we_have_tracks = track_nodes[0].data('track_title') ? true : false;
 	if (we_have_tracks) {
 		half_sync_making(track_nodes)
