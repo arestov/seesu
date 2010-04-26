@@ -37,67 +37,13 @@ var get_vk_api_track = function(tracknode, playlist_nodes_for, was_unsuccessful 
 	return used_successful;
 
 }
-
-
-audio_search: function(query, callback, error, nocache, after_ajax, params){
-	var params_u = params || {};
-		params_u.q = query;
-		params_u.count = params_u.count || 30;
-	var used_successful = this.use('audio.search', params_u, 
-	function(r){
-		if (r.response && (r.response.length > 1 )) {
-			var music_list = [];
-			for (var i=1, l = r.response.length; i < l; i++) {
-				var entity = {
-					'artist'  	:r.response[i].artist,
-					'duration'	:r.response[i].duration,
-					'link'		:r.response[i].url,
-					'track'		:r.response[i].title
-					
-				};
-				if (!has_music_copy(music_list,entity)){
-					music_list.push(entity)
-				}
-				
-				
-			};
-			if (music_list && music_list.length){
-				if (callback) {callback(music_list);}
-			} else{
-				if (error) {error()}
-			}
-			
-		} else{
-			if (error) {error()}
-		}
-	}, error, nocache)
-	if (after_ajax) {after_ajax();}
-	return used_successful;
-}
-
 var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
 	if (use_cache){
-		var cached_response = widget.preferenceForKey('vk_h_' + hash);
-		if (cached_response) {
-			var date_string = widget.preferenceForKey('vk_h_' + hash + '_date');
-			if (date_string){
-				var date_of_c_response = parseInt(date_string);
-				if (date_of_c_response) {
-					var now_is = (new Date).getTime();
-					if ((now_is - date_of_c_response) < (5 * 60 * 60 * 1000)){
-						var old_r = JSON.parse(cached_response);
-						if (callback) {callback(old_r);}
-						return true;
-					}
-				}
-			}
-			
-		}
-		
-		
+		var cache_used = cache_ajax.get('vk_h', hash, callback)
+		if (cache_used) {return true;}
 	}
 
 	if (seesu.delayed_search.waiting_for_mp3provider){
@@ -123,8 +69,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 					var music_list = get_vk_music_list(r);
 				
 					if (music_list && callback) {
-						widget.setPreferenceForKey(JSON.stringify(music_list), 'vk_h_' + hash);
-						widget.setPreferenceForKey((new Date).getTime(), 'vk_h_' + hash + '_date');
+						cache_ajax.set('vk_h', hash, music_list);
 						callback(music_list);
 					} else{
 						if  (error) {error(xhr);}
@@ -162,8 +107,6 @@ var get_vk_track = function(tracknode,playlist_nodes_for, was_unsuccessful){
 			//error
 			tracknode.removeClass('search-mp3').addClass('search-mp3-failed').removeClass('waiting-full-render');
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
-	
-			log('Error, vk say: \n' + xhr.responseText);
 		}, 
 		was_unsuccessful,
 		function(){

@@ -32,24 +32,8 @@ var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 		}
 		
 		if (use_cache){
-			var cached_response = widget.preferenceForKey('lastfm_' + params_full.api_sig);
-			if (cached_response) {
-				var date_string = widget.preferenceForKey('lastfm_' + params_full.api_sig + '_date');
-				if (date_string){
-					var date_of_c_response = parseInt(date_string);
-					if (date_of_c_response) {
-						var now_is = (new Date).getTime();
-						if ((now_is - date_of_c_response) < (5 * 60 * 60 * 1000)){
-							var old_r = JSON.parse(cached_response);
-							if (callback) {callback(old_r);}
-							return
-						}
-					}
-				}
-				
-			}
-			
-			
+			var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback)
+			if (cache_used) {return;}		
 		}
 
 
@@ -62,12 +46,8 @@ var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 		  error: function(r){
 		  },
 		  success: function(r){
-			if (callback) {callback(r);}
-			
-			widget.setPreferenceForKey(JSON.stringify(r), 'lastfm_' + params_full.api_sig);
-			widget.setPreferenceForKey((new Date).getTime(), 'lastfm_' + params_full.api_sig + '_date');
-			
-			
+			cache_ajax.set('lastfm', params_full.api_sig, r)
+			if (callback) {callback(r);}			
 		  },
 		  complete: function(xhr){
 		  	//log(xhr.responseText)
