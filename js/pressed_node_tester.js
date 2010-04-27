@@ -141,7 +141,13 @@ var test_pressed_node = function(original_node, mouseup){
 				return false; 
 			} 
 			else if (class_name.match(/play$/)){
-				seesu.player.set_state('play');
+				var current_state = seesu.player.get_state();
+				if (current_state == 'playing') {
+					seesu.player.set_state('pause');
+				} else {
+					seesu.player.set_state('play');
+				}
+				
 				return false; 
 			}
 			else if (class_name.match(/stop/)){

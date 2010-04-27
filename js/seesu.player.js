@@ -36,6 +36,19 @@ seesu.player = {
 	'call_event'		: function	(event, data) {
 	  if(this.events[event]) this.events[event](data);
 	},
+	get_state: function(){
+		if (this.player_state == PLAYED){
+			return 'playing';
+		} else 
+		if (this.player_state == STOPPED){
+			return 'stoped';
+		} else 
+		if (this.player_state == PAUSED){
+			return 'paused';
+		} else {
+			return false;
+		}
+	},
 	'set_state'			:function (new_player_state_str) {
 	  var new_player_state =
 		(new_player_state_str == "play" ? PLAYED :
