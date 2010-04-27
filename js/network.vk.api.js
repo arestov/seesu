@@ -52,7 +52,7 @@ vk_api.prototype = {
 			}
 			
 			if (use_cache){
-				var cache_used = cache_ajax.get('vk_api', params_full.api_sig, callback)
+				var cache_used = cache_ajax.get('vk_api', params_full.sig, callback)
 				if (cache_used) {return true;}
 			}
 
