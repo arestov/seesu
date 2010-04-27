@@ -34,6 +34,12 @@ seesu =  {
 			"big_delay_interval": 7,
 			"search_tracks": hardcore_vk_search
 		},
+		"vk_api":{
+			"delay_mini": 1000,
+			"delay_big": 8000,
+			"big_delay_interval": 7,
+			"search_tracks": seesu.vk_api.audio_search
+		}
 		"waiting_for_mp3provider" : true,
 		"we_need_mp3provider": function(quene){
 			$(document.body).addClass('vk-needs-login');
@@ -74,6 +80,22 @@ seesu =  {
 			});
 			seesu.delayed_search.waiting_for_mp3provider = false;
 			widget.setPreferenceForKey('vk', 'mp3-search-way');
+			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
+				seesu.delayed_search.start_for_mp3provider();
+			}
+		},
+		"switch_to_vk_api": function(){
+			seesu.delayed_search.use = seesu.delayed_search.vk_api;
+			seesu.mp3_quene = new funcs_quene(1000, 8000 , 7);
+			
+			$(function(){
+				setTimeout(function(){
+					$('#mp3-search-switch').find('.mp3searchway').attr('checked', '').filter('#mp3-vk-api').attr('checked', 'checked');					
+				},10);
+				
+			});
+			seesu.delayed_search.waiting_for_mp3provider = false;
+			widget.setPreferenceForKey('vk_api', 'mp3-search-way');
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}

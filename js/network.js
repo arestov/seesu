@@ -98,47 +98,46 @@ has_music_copy = function(array, entity, from_position){
 
 
 
-
-
-try_mp3_providers = function(){
-	var have_mp3_provider;
-	var prov_count_down = 2;
-	var mp3_prov_selected = widget.preferenceForKey('mp3-search-way');
-	var provider_selected;
-	var swith_to_provider = function(try_selected){
-		if (provider_selected) {return false}
-		if (mp3_prov_selected && seesu.delayed_search.available && seesu.delayed_search.available.length){
+prov_count_down = 3;
+swith_to_provider = function(try_selected){
+	if (provider_selected) {return false}
+	if (mp3_prov_selected && seesu.delayed_search.available && seesu.delayed_search.available.length){
+	
 		
-			
-			for (var i=0; i < seesu.delayed_search.available.length; i++) {
-				var current_prov = seesu.delayed_search.available[i];
-				if (current_prov == mp3_prov_selected){
-					seesu.delayed_search['switch_to_' + current_prov]();
-					provider_selected = true;
-					log('selected prov ' + current_prov);
-				}
-			};
-			if (!provider_selected && !try_selected){
-				var current_prov = seesu.delayed_search.available[0];
-				if (current_prov){
-					seesu.delayed_search['switch_to_' + current_prov]();
-					provider_selected = true;
-					log('not selected prov ' + current_prov);
-				} else{
-					log('must use vkontakte');
-				}
+		for (var i=0; i < seesu.delayed_search.available.length; i++) {
+			var current_prov = seesu.delayed_search.available[i];
+			if (current_prov == mp3_prov_selected){
+				seesu.delayed_search['switch_to_' + current_prov]();
+				provider_selected = true;
+				log('selected prov ' + current_prov);
 			}
-			
-		} else if (!try_selected){
-			var someone_available = seesu.delayed_search.available[0];
-			if (someone_available){
-				seesu.delayed_search['switch_to_' + someone_available]();
-				log('some avai prov ' + someone_available)
+		};
+		if (!provider_selected && !try_selected){
+			var current_prov = seesu.delayed_search.available[0];
+			if (current_prov){
+				seesu.delayed_search['switch_to_' + current_prov]();
+				provider_selected = true;
+				log('not selected prov ' + current_prov);
 			} else{
 				log('must use vkontakte');
 			}
 		}
+		
+	} else if (!try_selected){
+		var someone_available = seesu.delayed_search.available[0];
+		if (someone_available){
+			seesu.delayed_search['switch_to_' + someone_available]();
+			log('some avai prov ' + someone_available)
+		} else{
+			log('must use vkontakte');
+		}
 	}
+}
+try_mp3_providers = function(){
+	var have_mp3_provider;
+
+	var mp3_prov_selected = widget.preferenceForKey('mp3-search-way');
+	var provider_selected;
 	
 	$.ajax({
 	  url: "http://query.yahooapis.com/v1/public/yql?q=SELECT%20*%20FROM%20html%20WHERE%20url%3D'http%3A%2F%2Faudme.ru'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys",
@@ -182,7 +181,9 @@ try_mp3_providers = function(){
 					var r = $.parseJSON(text);
 					if (r.user && r.user.id) {
 						if (seesu.vk_api){
-							seesu.vk_api.viewer_id = r.user.id;
+							if (!seesu.vk_api.test_mode) {
+								seesu.vk_api.viewer_id = r.user.id;
+							}
 						}
 				  		
 						seesu.delayed_search.available.push('vk');
