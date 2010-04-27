@@ -123,7 +123,7 @@ var test_pressed_node = function(original_node, mouseup){
 				seesu.delayed_search.switch_to_audme();
 				return false;
 				
-			}else if (class_name.match(/mp3-vk/)){
+			}else if (class_name.match(/mp3-vk$/)){
 				if (seesu.vk_logged_in){
 					seesu.delayed_search.switch_to_vk()
 				}else{

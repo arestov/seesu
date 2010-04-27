@@ -17,7 +17,7 @@ var vk_api = function(viewer_id, s, api_id, test_mode, cache){
 }
 
 vk_api.prototype = {
-	'use': function(method, params, callback, error, nocache){
+	'use': function(method, params, callback, error, nocache, after_ajax){
 	
 		if (method) {
 			var use_cache = (this.use_cache && !nocache)
@@ -79,8 +79,9 @@ vk_api.prototype = {
 				  complete: function(xhr){
 				  }
 				});
-
+				if (after_ajax) {after_ajax();}
 			});
+			
 			return true;
 			
 		}
@@ -116,8 +117,7 @@ vk_api.prototype = {
 			} else{
 				if (error) {error()}
 			}
-		}, error, nocache)
-		if (after_ajax) {after_ajax();}
+		}, error, nocache, after_ajax);
 		return used_successful;
 	}
 }
