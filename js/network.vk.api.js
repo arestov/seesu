@@ -122,13 +122,16 @@ vk_api.prototype = {
 	}
 }
 
-
-//seesu.vk_api = new vk_api(user_id,'secret',app_id , true);
-if (seesu.vk_api) {
-	seesu.delayed_search.available.push('vk_api');
-	swith_to_provider(true);
-}
-prov_count_down--;
-if (prov_count_down == 0){
-	swith_to_provider();
-}
+$(function(){
+	//seesu.vk_api =  new vk_api(user_id,'secret',app_id , true);
+	//seesu.delayed_search.vk_api.search_tracks = seesu.vk_api.audio_search;
+	if (typeof seesu.vk_api === 'object') {
+		seesu.delayed_search.available.push('vk_api');
+		swith_to_provider(true);
+	}
+	
+	prov_count_down--;
+	if (prov_count_down == 0){
+		swith_to_provider();
+	}
+})

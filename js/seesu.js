@@ -37,9 +37,8 @@ seesu =  {
 		"vk_api":{
 			"delay_mini": 1000,
 			"delay_big": 8000,
-			"big_delay_interval": 7,
-			"search_tracks": seesu.vk_api.audio_search
-		}
+			"big_delay_interval": 7
+		},
 		"waiting_for_mp3provider" : true,
 		"we_need_mp3provider": function(quene){
 			$(document.body).addClass('vk-needs-login');
