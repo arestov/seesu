@@ -35,7 +35,6 @@ vk_api.prototype = {
 			if (this.test_mode) {
 				params_full.test_mode = 1;
 			}
-			
 			if(apisig || use_cache) {
 				for (var param in params_full) {
 					pv_signature_list.push(param + '=' + params_full[param]);
@@ -73,7 +72,7 @@ vk_api.prototype = {
 				  	if (error) {error(xhr);}
 				  },
 				  success: function(r){
-					cache_ajax.set('vk_api', params_full.api_sig, r)
+					cache_ajax.set('vk_api', params_full.api_sig, r);
 					if (callback) {callback(r);}
 				  },
 				  complete: function(xhr){
@@ -123,7 +122,7 @@ vk_api.prototype = {
 }
 
 $(function(){
-	seesu.vk_api =  new vk_api('198193', '4YEx7NPh3I', '1858111', true);
+	seesu.vk_api =  new vk_api('198193', '4YEx7NPh3I', '1858111', true, true);
 	seesu.delayed_search.vk_api.search_tracks = function(){
 		seesu.vk_api.audio_search.apply(seesu.vk_api, arguments)
 	};

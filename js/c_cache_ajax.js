@@ -25,5 +25,6 @@ cache_ajax = {
 		}
 		widget.setPreferenceForKey(_v, prefix + '_' + hash_key);
 		widget.setPreferenceForKey((new Date).getTime(), prefix + '_' + hash_key + '_date');
+		return _v;
 	}
 }
