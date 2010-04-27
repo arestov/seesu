@@ -72,7 +72,7 @@ vk_api.prototype = {
 				  	if (error) {error(xhr);}
 				  },
 				  success: function(r){
-					cache_ajax.set('vk_api', params_full.api_sig, r);
+					cache_ajax.set('vk_api', params_full.sig, r);
 					if (callback) {callback(r);}
 				  },
 				  complete: function(xhr){
