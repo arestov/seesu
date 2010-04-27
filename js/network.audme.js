@@ -1,124 +1,78 @@
-get_audme_track = function(tracknode,playlist_nodes_for,delaying_func,queue_element){	
+audme_search = function(query, callback, error, nocache, after_ajax){
 
-		tracknode.addClass('search-mp3');
-		
+	var use_cache = !nocache;
+	var hash = hex_md5(query);
+	if (use_cache){
+		var cache_used = cache_ajax.get('audme', hash, callback)
+		if (cache_used) {return true;}
+	}
+
+	if (seesu.delayed_search.waiting_for_mp3provider){
+		return false;
+	}
+
+
+	seesu.mp3_quene.add(function(){
 		$.ajax({
-		  url: 'http://audme.ru/search/',
+		  timeout: 10000,
+		  url: "http://audme.ru/search/",
 		  global: false,
 		  type: "GET",
-		  dataType: "HTML",
 		  data: {
 		  	"filter": "1",
 		  	"isall": "0",
-		  	"q": tracknode.data('artist_name') + ' - ' + tracknode.data('track_title'),
+		  	"q": query,
 		  	"p":1
 		  },
-		  timeout: 20000,
-		  error: function(xhr){
-			tracknode.removeClass('search-mp3');
-		  	tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
-			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
-			
-		  	log(xhr.responseText)
-		  },
-		  success: function(_r){
-			tracknode.removeClass('search-mp3');
-			var r_div = document.createElement('div');
-			r_div.innerHTML = _r;
-			
-			var r = $('.playBox',r_div);
-			if (r && r.length) {
-				var music_list = [];
-				for (var i=0, l = r.length; i < l; i++) {
-					var entity = {
-						'artist'  	:$(r[i]).find('.songTitle .artist').text(),
-						'duration'	:r[i].getAttribute('dur'),
-						'link'		:r[i].getAttribute('filepath'),
-						'track'		:$(r[i]).find('.songTitle .title').text()
-						
-					};
-					if (!has_music_copy(music_list,entity)){
-						music_list.push(entity)
-					}
-					
-					
-				};
-				var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
-
-				make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
-				resort_playlist(playlist_nodes_for);
-			} else{
-				log(_r)
-			}
-			
-			
-			
-			if (music_list) {
-				
-			} else {
-				tracknode.addClass('search-mp3-failed').removeClass('waiting-full-render');
-			}
-			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
-		  },
+		  dataType: "text",
+		  beforeSend: seesu.vk.set_xhr_headers,
 		  complete: function(xhr){
+			var text = xhr.responseText;
+			if (text.match(/^\{/) && text.match(/\}$/)){
+				try {
+					var _r = JSON.parse(text);
+					var r_div = document.createElement('div');
+					r_div.innerHTML = _r;
+
+
+					var music_list = [];
+
+					var r = $('.playBox',r_div);
+					if (r && r.length) {
+						
+						for (var i=0, l = r.length; i < l; i++) {
+							var entity = {
+								'artist'  	:$(r[i]).find('.songTitle .artist').text(),
+								'duration'	:r[i].getAttribute('dur'),
+								'link'		:r[i].getAttribute('filepath'),
+								'track'		:$(r[i]).find('.songTitle .title').text()
+						
+							};
+							if (!has_music_copy(music_list,entity)){
+								music_list.push(entity)
+							}
+					
+					
+						};
+					} 
+				
+					if (music_list && music_list.length && callback) {
+						cache_ajax.set('audme', hash, music_list);
+						callback(music_list);
+					} else{
+						if  (error) {error(xhr);}
+					}
+				} catch(e) {
+					log(e)
+					if  (error) {error(xhr);}
+				}
+			} else{
+				if  (error) {error(xhr);}
+			
+			}
 		  }
 		});
-
-	
-
-	queue_element.done = true;
-}
-get_all_audme_tracks = function(trackname,callback){
-	$.ajax({
-	  url: 'http://audme.ru/search/',
-	  global: false,
-	  type: "GET",
-	  dataType: "HTML",
-	  data: {
-	  	"filter": "1",
-	  	"isall": "0",
-	  	"q": trackname,
-	  	"p":1
-	  },
-	  timeout: 20000,
-	  error: function(xhr){
-	  	callback()
-	  },
-	  success: function(_r){
-		log('audme search')
-		var r_div = document.createElement('div');
-		r_div.innerHTML = _r;
-		log(_r)
-		var r = $('.playBox',r_div);
-		if (r && r.length) {
-			var music_list = [];
-			for (var i=0, l = r.length; i < l; i++) {
-				var entity = {
-					'artist'  	:$(r[i]).find('.songTitle .artist').text(),
-					'duration'	:r[i].getAttribute('dur'),
-					'link'		:r[i].getAttribute('filepath'),
-					'track'		:$(r[i]).find('.songTitle .title').text()
-					
-				};
-				if (!has_music_copy(music_list,entity)){
-					music_list.push(entity)
-				}
-				
-				
-			};
-			if (callback) {callback(music_list);}
-		}
-		
-		
-		
-		if (music_list) {
-			
-		} else {
-			callback()
-		}
-	  },
-	  complete: function(xhr){
-	  	//log(xhr.responseText)
-	  }
+		if (after_ajax) {after_ajax();}
 	});
+	return true;
 }

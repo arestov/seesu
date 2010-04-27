@@ -20,22 +20,19 @@ seesu =  {
 			"delay_mini": 2500,
 			"delay_big": 5000,
 			"big_delay_interval": 5,
-			"search_one_track": hardcore_vk_search,
-			"search_many_tracks": hardcore_vk_search
+			"search_tracks": hardcore_vk_search
 		},
 		"audme":{
 			"delay_mini": 2500,
 			"delay_big": 5000,
 			"big_delay_interval": 5,
-			"search_one_track": get_audme_track,
-			"search_many_tracks": get_all_audme_tracks
+			"search_tracks": audme_search
 		},
 		"vk":{
 			"delay_mini": 1000,
 			"delay_big": 8000,
 			"big_delay_interval": 7,
-			"search_one_track": hardcore_vk_search,
-			"search_many_tracks": hardcore_vk_search
+			"search_tracks": hardcore_vk_search
 		},
 		"waiting_for_mp3provider" : true,
 		"we_need_mp3provider": function(quene){
