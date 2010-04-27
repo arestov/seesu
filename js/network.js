@@ -1,4 +1,4 @@
-get_all_tracks = function(tracknode, playlist_nodes_for, was_unsuccessful){
+get_all_tracks = function(trackname, callback, was_unsuccessful){
 	if (seesu.mp3_quene) {seesu.mp3_quene.reset();}
 	seesu.delayed_search.tracks_waiting_for_search = 0;
 	art_tracks_w_counter.text('');
