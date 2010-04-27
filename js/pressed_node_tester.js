@@ -131,6 +131,12 @@ var test_pressed_node = function(original_node, mouseup){
 				}
 				
 				return false
+			}else if (class_name.match(/mp3-vk-api/)){
+				
+				seesu.delayed_search.switch_to_vk_api()
+				
+				
+				return false
 			}
 		}
 	} else{

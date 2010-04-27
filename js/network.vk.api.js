@@ -123,11 +123,14 @@ vk_api.prototype = {
 }
 
 $(function(){
-	//seesu.vk_api =  new vk_api(user_id,'secret',app_id , true);
-	//seesu.delayed_search.vk_api.search_tracks = seesu.vk_api.audio_search;
+	seesu.vk_api =  new vk_api('198193', '4YEx7NPh3I', '1858111', true);
+	seesu.delayed_search.vk_api.search_tracks = function(){
+		seesu.vk_api.audio_search.apply(seesu.vk_api, arguments)
+	};
 	if (typeof seesu.vk_api === 'object') {
 		seesu.delayed_search.available.push('vk_api');
 		swith_to_provider(true);
+		$('#mp3way-vk-api').removeClass('cant-be-used');
 	}
 	
 	prov_count_down--;
