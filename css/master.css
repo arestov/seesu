@@ -402,3 +402,11 @@ display:none;
       bottom: 0;
       background-position: bottom right;
     }
+#sm2-container{
+	width:8px;
+	height:8px;
+	position:fixed;
+	bottom:auto;
+	top:5px;
+	left:0;
+	}
