@@ -6,7 +6,9 @@ get_all_tracks = function(trackname, callback, was_unsuccessful){
 	return used_successful;
 }
 get_track = function(tracknode, playlist_nodes_for, was_unsuccessful){
-	art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
+	if (!was_unsuccessful){
+		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
+	}
 	var used_successful = seesu.delayed_search.use.search_tracks(
 		tracknode.data('artist_name') + ' - ' + tracknode.data('track_title'), 
 		function(music_list){
