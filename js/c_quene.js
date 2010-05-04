@@ -17,14 +17,15 @@ funcs_quene = function(small_delay, big_delay, big_delay_interval){
 
 funcs_quene.prototype = {
 	add: function(func, not_init, log_string){
-		var num = this.big_quene.length;
+		var quene_just_for_me = this.big_quene;
+		var num = quene_just_for_me.length;
 
 		var _this = this;
 
 
-		this.big_quene.push(function(){
+		quene_just_for_me.push(function(){
 			func();
-			if (log_string) {log('quened:' + log_string);}
+			if (log_string) {log('quened: ' + num + '/'+ quene_just_for_me.length + log_string);}
 			
 			var time;
 			if (!_this.nodelay){
@@ -33,8 +34,8 @@ funcs_quene.prototype = {
 				time = 0;
 			}
 			setTimeout(function(){
-				if (_this.big_quene[num + 1]) {
-					_this.big_quene[num + 1]();
+				if (quene_just_for_me[num + 1]) {
+					quene_just_for_me[num + 1]();
 				} else {
 					_this.reset();
 				}
