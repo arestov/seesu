@@ -54,7 +54,6 @@ vk_api.prototype = {
 			if (use_cache){
 				var cache_used = cache_ajax.get('vk_api', params_full.sig, callback)
 				if (cache_used) {
-					log('cache: ' + query)
 					return true;
 				}
 			}
@@ -75,7 +74,6 @@ vk_api.prototype = {
 				  	if (error) {error(xhr);}
 				  },
 				  success: function(r){
-				  	log('ajax: ' + query)
 					cache_ajax.set('vk_api', params_full.sig, r);
 					if (callback) {callback(r);}
 				  },
@@ -83,7 +81,7 @@ vk_api.prototype = {
 				  }
 				});
 				if (after_ajax) {after_ajax();}
-			}, false, query);
+			}, false);
 			
 			return true;
 			

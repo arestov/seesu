@@ -16,7 +16,7 @@ funcs_quene = function(small_delay, big_delay, big_delay_interval){
 };
 
 funcs_quene.prototype = {
-	add: function(func, not_init, log_string){
+	add: function(func, not_init){
 		var quene_just_for_me = this.big_quene;
 		var num = quene_just_for_me.length;
 
@@ -25,7 +25,6 @@ funcs_quene.prototype = {
 
 		quene_just_for_me.push(function(){
 			func();
-			if (log_string) {log('quened: ' + num + '/'+ quene_just_for_me.length + log_string);}
 			
 			var time;
 			if (!_this.nodelay){
