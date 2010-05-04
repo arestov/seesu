@@ -83,7 +83,7 @@ vk_api.prototype = {
 				  }
 				});
 				if (after_ajax) {after_ajax();}
-			});
+			}, false, query);
 			
 			return true;
 			
