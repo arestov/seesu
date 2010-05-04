@@ -34,10 +34,12 @@ funcs_quene.prototype = {
 				time = 0;
 			}
 			setTimeout(function(){
-				if (quene_just_for_me[num + 1]) {
-					quene_just_for_me[num + 1]();
-				} else {
-					_this.reset();
+				if (quene_just_for_me == _this.big_quene){
+					if (quene_just_for_me[num + 1]) {
+						quene_just_for_me[num + 1]();
+					} else {
+						_this.reset();
+					}
 				}
 			}, time);
 
