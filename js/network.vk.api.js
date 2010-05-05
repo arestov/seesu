@@ -124,7 +124,7 @@ vk_api.prototype = {
 }
 
 $(function(){
-	seesu.vk_api =  new vk_api('198193', '4YEx7NPh3I', '1858111', true, true);
+	seesu.vk_api =  new vk_api('82336533', 'sykmuB665c', '1871450', true, true);
 	seesu.delayed_search.vk_api.search_tracks = function(){
 		seesu.vk_api.audio_search.apply(seesu.vk_api, arguments)
 	};
