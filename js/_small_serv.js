@@ -43,7 +43,20 @@ if (typeof console != 'object'){
 
 if ((typeof widget != 'object') || !widget.preferenceForKey){
 	widget = {};
-	widget.preferenceForKey = function(){return false}
-	widget.setPreferenceForKey = function(){return false}
+	if ( (typeof System != "undefined") && System.Gadget && System.Gadget.Settings){
+		widget.preferenceForKey = function(key){
+			return System.Gadget.Settings.readString(key);
+		};
+		widget.setPreferenceForKey = function(string, key){
+			System.Gadget.Settings.writeString(key, string);
+		};
+		 
+	} else{
+		widget.preferenceForKey = function(){return false};
+		widget.setPreferenceForKey = function(){return false};
+	}
+	widget.openURL = function(url){
+		window.open(url);
+	}
 	
 }
