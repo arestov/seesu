@@ -51,6 +51,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 			var pos = get_click_position(e);
 			var new_volume_factor = pos/50;
 			_this.changhe_volume(new_volume_factor * 100);
+			seesu.player.call_event(VOLUME, new_volume_factor * 100);
 			
 			_this.volume_state_position.css('width', pos + 'px')
 		}).appendTo(playlist_panel);
@@ -218,7 +219,6 @@ sm2_p.prototype = {
 			this.send_to_player_sandbox('pause');
 		},
 		"changhe_volume": function(volume_value){
-			seesu.player.call_event(VOLUME, volume_value);
 			this.send_to_player_sandbox('changhe_volume,' + volume_value);
 		}
 	},
