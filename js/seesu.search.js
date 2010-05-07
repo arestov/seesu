@@ -479,26 +479,34 @@ var input_change = function(e){
 	var input_value = e.target.value;
 	if (!input_value) {
 		slider.className = "show-start";
+		return
 	}
-	if (!input_value || ($(e.target).data('lastvalue') == input_value.replace(/ /g, ''))){return}
 	
-	if(seesu.xhrs.fast_search_suggest) {seesu.xhrs.fast_search_suggest.abort()}
-	seesu.xhrs.fast_search_suggest = $.ajax({
-	  url: 'http://www.last.fm/search/autocomplete',
-	  global: false,
-	  type: "GET",
-	  timeout: 10000,
-	  dataType: "json",
-	  data: {
-	  	"q": input_value,
-	  	"force" : 1
-	  },
-	  error: function(){
-	  },
-	  success: fast_suggestion_ui
-	});
+	if (seesu.xhrs.fast_search_suggest) {seesu.xhrs.fast_search_suggest.abort()}
+	
+	var hash = hex_md5(input_value);
+	var cache_used = cache_ajax.get('lfm_fs', hash, fast_suggestion_ui)
+	
+	if (!cache_used) {
+		seesu.xhrs.fast_search_suggest = $.ajax({
+		  url: 'http://www.last.fm/search/autocomplete',
+		  global: false,
+		  type: "GET",
+		  timeout: 10000,
+		  dataType: "json",
+		  data: {
+		  	"q": input_value,
+		  	"force" : 1
+		  },
+		  error: function(){
+		  },
+		  success: function(r){
+		  	cache_ajax.set('lfm_fs', hash, r);
+		  	fast_suggestion_ui(r)
+		  }
+		});
+	}
 	slider.className = 'show-search  show-search-results';
-	$(e.target).data('lastvalue', input_value.replace(/ /g, ''))
 }
 $(function(){
 	$('#q').keyup($.debounce(input_change, 100)).mousemove($.debounce(input_change, 100)).change($.debounce(input_change, 100));
