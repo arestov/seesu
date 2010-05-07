@@ -481,7 +481,7 @@ var input_change = function(e){
 		slider.className = "show-start";
 		return
 	}
-	
+	if ($(e.target).data('lastvalue') == input_value){return}
 	if (seesu.xhrs.fast_search_suggest) {seesu.xhrs.fast_search_suggest.abort()}
 	
 	var hash = hex_md5(input_value);
@@ -507,6 +507,7 @@ var input_change = function(e){
 		});
 	}
 	slider.className = 'show-search  show-search-results';
+	$(e.target).data('lastvalue', input_value)
 }
 $(function(){
 	$('#q').keyup($.debounce(input_change, 100)).mousemove($.debounce(input_change, 100)).change($.debounce(input_change, 100));
