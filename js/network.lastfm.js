@@ -58,16 +58,16 @@ var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 };
 
 var lfm_scrobble = {
-  scrobbling:  widget.preferenceForKey('lfm_scrobbling_enabled') ? true : false, 
+  scrobbling:  w_storage('lfm_scrobbling_enabled') ? true : false, 
   music: (function(){
-  	var lfmscm = widget.preferenceForKey('lfm_scrobble_music');
+  	var lfmscm = w_storage('lfm_scrobble_music');
   	if (lfmscm) {
   		return JSON.parse(lfmscm);
   	} else {
   		return [];
   	}
   })(),
-  s: widget.preferenceForKey('lfm_scrobble_s'),
+  s: w_storage('lfm_scrobble_s'),
   handshake: function(callback){
   	var _this = this;
 	var timestamp = ((new Date()).getTime()/1000).toFixed(0);
@@ -93,7 +93,7 @@ var lfm_scrobble = {
 			var response = r.split(/\n/);
 			if (response[0] == 'OK'){
 				_this.s = response[1];
-				widget.setPreferenceForKey(_this.s, 'lfm_scrobble_s');
+				w_storage('lfm_scrobble_s', _this.s);
 				if (callback) {callback();}
 				log('handshake:' + '\n' + r)
 			} else {
@@ -127,7 +127,7 @@ var lfm_scrobble = {
 			log('nowplay:' + '\n' + r);
 			if (r.match('BADSESSION')){
 				lfm_scrobble.s = null;
-				widget.setPreferenceForKey('', 'lfm_scrobble_s');
+				w_storage('lfm_scrobble_s', '');
 				
 				lfm_scrobble.handshake();
 			};
@@ -193,14 +193,14 @@ var lfm_scrobble = {
 			if (!r.match('OK')) {
 				if (r.match('BADSESSION')){
 					lfm_scrobble.s = null;
-					widget.setPreferenceForKey('', 'lfm_scrobble_s');
+					w_storage('lfm_scrobble_s', '');
 					
 					lfm_scrobble.handshake();
 				}
-				widget.setPreferenceForKey(JSON.stringify(_this.music),'lfm_scrobble_music');
+				w_storage('lfm_scrobble_music', _this.music);
 			} else {
 				_this.music = [];
-				widget.setPreferenceForKey('','lfm_scrobble_music');
+				w_storage('lfm_scrobble_music', '');
 			}
 			
 		  },
@@ -211,7 +211,7 @@ var lfm_scrobble = {
 			log(' data sended')
 	} else {
 		if (_this.music.length){
-			widget.setPreferenceForKey(JSON.stringify(_this.music),'lfm_scrobble_music');
+			w_storage('lfm_scrobble_music', _this.music);
 		} 
 		if (!this.s){
 			lfm_scrobble.handshake(function(){

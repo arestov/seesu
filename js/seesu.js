@@ -3,8 +3,8 @@ lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_arti
 seesu =  {
 	  version: 1.72,
 	  vk:{
-		"id": widget.preferenceForKey('vkid'),
-		"big_vk_cookie": widget.preferenceForKey('big_vk_cookie'),
+		"id": w_storage('vkid'),
+		"big_vk_cookie": w_storage('big_vk_cookie'),
 		"set_xhr_headers": function(xhr){
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 			if (seesu.vk.big_vk_cookie){
@@ -62,7 +62,7 @@ seesu =  {
 				},10);
 			});
 			seesu.delayed_search.waiting_for_mp3provider = false;
-			widget.setPreferenceForKey('audme', 'mp3-search-way');
+			w_storage('mp3-search-way', 'audme');
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -78,7 +78,7 @@ seesu =  {
 				
 			});
 			seesu.delayed_search.waiting_for_mp3provider = false;
-			widget.setPreferenceForKey('vk', 'mp3-search-way');
+			w_storage('mp3-search-way', 'vk');
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -94,7 +94,7 @@ seesu =  {
 				
 			});
 			seesu.delayed_search.waiting_for_mp3provider = false;
-			widget.setPreferenceForKey('vk_api', 'mp3-search-way');
+			w_storage('mp3-search-way', 'vk_api');
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -119,8 +119,8 @@ $(function(){
 });
 
 
-lfm_auth.sk = widget.preferenceForKey('lfmsk') || false;
-lfm_auth.user_name = widget.preferenceForKey('lfm_user_name') || false;
+lfm_auth.sk = w_storage('lfmsk') || false;
+lfm_auth.user_name = w_storage('lfm_user_name') || false;
 lfm_auth.ui_logged = function(){
 	$(document.body).addClass('lfm-auth-done');
 	$('.lfm-finish input[type=checkbox]').attr('checked', 'checked');
@@ -129,8 +129,8 @@ lfm_auth.ui_logged = function(){
 lfm_auth.login = function(r){
 	lfm_auth.sk = r.session.key;
 	lfm_auth.user_name = r.session.name;
-	widget.setPreferenceForKey(lfm_auth.user_name, 'lfm_user_name');
-	widget.setPreferenceForKey(lfm_auth.sk, 'lfmsk');
+	w_storage('lfm_user_name', lfm_auth.user_name);
+	w_storage('lfmsk', lfm_auth.sk);
 	lfm_auth.ui_logged();
 };
 var updating_notify = function(r){
@@ -160,8 +160,8 @@ var check_seesu_updates = function(){
 	  data: {
 		'hash': hex_md5(widget.identifier),
 		'version': seesu.version,
-		'demension_x': widget.preferenceForKey('width'),
-		'demension_y': widget.preferenceForKey('height')
+		'demension_x': w_storage('width'),
+		'demension_y': w_storage('height')
 	  },
 	  error: function(){
 	  },

@@ -64,12 +64,12 @@ var vk_send_captcha = function(captcha_key,login,pass){
 	});
 }
 var vk_logg_in = function(id,email,sid){
-	widget.setPreferenceForKey(id, 'vkid');
-	widget.setPreferenceForKey(email, 'vkemail');
-	widget.setPreferenceForKey(sid, 'vk_sid');
+	w_storage('vkid', id);
+	w_storage('vkemail', email);
+	w_storage( 'vk_sid', sid);
 	
 	seesu.vk.big_vk_cookie = 'remixchk=5; remixsid=' + sid;
-	widget.setPreferenceForKey(seesu.vk.big_vk_cookie, 'big_vk_cookie');
+	w_storage('big_vk_cookie', seesu.vk.big_vk_cookie);
 	if (seesu.vk_api) {
 		seesu.vk_api.viewer_id = seesu.vk_id = id;
 	}
@@ -80,10 +80,10 @@ var vk_logg_in = function(id,email,sid){
 	log('hide vklogin form');
 };
 var vk_logged_out = function(){
-	widget.setPreferenceForKey('', 'vkid');
-	widget.setPreferenceForKey('', 'vkemail');
-	widget.setPreferenceForKey('', 'vk_sid');
-	widget.setPreferenceForKey('', 'big_vk_cookie');
+	w_storage('vkid', '');
+	w_storage('vkemail', '');
+	w_storage('vk_sid', '');
+	w_storage('big_vk_cookie', '');
 	seesu.vk_logged_in = false;
 	log('display vklogin form if need')
 	

@@ -1,7 +1,7 @@
 $(function() {
   if (lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
   if (!location.protocol.match(/http/)) {check_seesu_updates();}
-  seesu.vk_id = widget.preferenceForKey('vkid');
+  seesu.vk_id = w_storage('vkid');
   $(document).click(function(e) {
 	return test_pressed_node(e.target)
   });
@@ -48,7 +48,7 @@ $(function() {
 		
 	});
 	
-	if (widget.preferenceForKey('flash_internet') == 'true') {
+	if (w_storage('flash_internet') == 'true') {
 		$(document.body).addClass('flash-internet');
 		flash_settings.attr('checked', 'checked');
 	}

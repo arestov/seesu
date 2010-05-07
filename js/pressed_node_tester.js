@@ -81,10 +81,10 @@ var test_pressed_node = function(original_node, mouseup){
 		}  else if ((node.nodeName == 'INPUT')) {
 			if (class_name.match(/flash-mess-switch/)) {
 				if(clicked_node.attr('checked')) {
-					widget.setPreferenceForKey('true', 'flash_internet');
+					w_storage('flash_internet', 'true');
 					$(document.body).addClass('flash-internet');
 				} else {
-					widget.setPreferenceForKey('', 'flash_internet');
+					w_storage('flash_internet', '');
 					$(document.body).removeClass('flash-internet');
 				}
 			} 
@@ -115,11 +115,11 @@ var test_pressed_node = function(original_node, mouseup){
 					});
 				}
 			} else if (class_name.match(/enable-scrobbling/)){
-				widget.setPreferenceForKey('true', 'lfm_scrobbling_enabled');
+				w_storage('lfm_scrobbling_enabled', 'true');
 				lfm_scrobble.scrobbling = true;
 				
 			} else if (class_name.match(/disable-scrobbling/)){
-				widget.setPreferenceForKey('', 'lfm_scrobbling_enabled');
+				w_storage('lfm_scrobbling_enabled', '');
 				lfm_scrobble.scrobbling = false;
 				
 			}else if (class_name.match(/mp3-audme/)){

@@ -96,7 +96,7 @@ has_music_copy = function(array, entity, from_position){
 	};
 }
 
-var mp3_prov_selected = widget.preferenceForKey('mp3-search-way');
+var mp3_prov_selected = w_storage('mp3-search-way');
 var have_mp3_provider;
 prov_count_down = 3;
 var provider_selected;

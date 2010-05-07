@@ -12,8 +12,8 @@ resizeWidg = function(){
 
 	
 	var save_size = function(){
-		widget.setPreferenceForKey(window.innerWidth,'width');
-        widget.setPreferenceForKey(window.innerHeight,'height');
+		w_storage('width', window.innerWidth);
+        w_storage('height', window.innerHeight);
 
 	}
 	
@@ -110,8 +110,8 @@ resizeWidg = function(){
       MinHeight : 600
     };
     
-    var width = parseInt(widget.preferenceForKey('width'), 10) || ResizeConfig.MinWidth;
-    var height = parseInt(widget.preferenceForKey('height'), 10) || ResizeConfig.MinHeight;
+    var width = parseInt(w_storage('width'), 10) || ResizeConfig.MinWidth;
+    var height = parseInt(w_storage('height'), 10) || ResizeConfig.MinHeight;
     
     var timeout = 0;
     function resizeWindow() {

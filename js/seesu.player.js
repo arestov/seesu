@@ -18,7 +18,7 @@ seesu.player = {
 	'iframe_player' 	: false,
 	'iframe_doc' 		: null,
 	'player_volume' 	: ( function(){
-		var volume_preference = widget.preferenceForKey('vkplayer-volume');
+		var volume_preference = w_storage('vkplayer-volume');
 		if (volume_preference && (volume_preference != 'undefined') && volume_preference != 'NaN'){
 			return parseFloat(volume_preference) || 80
 		} else {
@@ -200,7 +200,7 @@ function switch_to_next(){
   seesu.player.switch_to('next');
 }
 function change_volume(volume_value){
-  widget.setPreferenceForKey(volume_value, 'vkplayer-volume');
+  w_storage('vkplayer-volume', volume_value);
   seesu.player.player_volume = volume_value;	
 }
 
