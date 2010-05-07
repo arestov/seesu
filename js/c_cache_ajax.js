@@ -1,8 +1,8 @@
 cache_ajax = {
 	get: function(prefix, hash_key, callback, hours){
-		var cached_response = w_storage('_cache_of_' + prefix + '_' + hash_key);
+		var cached_response = w_storage('c_' + prefix + '_' + hash_key);
 		if (cached_response) {
-			var date_string = w_storage(prefix + '_' + hash_key + '_date');
+			var date_string = w_storage('c_' + prefix + '_' + hash_key + '_date');
 			if (date_string){
 				var date_of_c_response = parseInt(date_string);
 				if (date_of_c_response) {
@@ -23,7 +23,7 @@ cache_ajax = {
 		if ((typeof _v === 'array') || (typeof _v === 'object')){
 			_v = JSON.stringify(value);
 		}
-		w_storage('_cache_of_' + prefix + '_' + hash_key, _v);
-		w_storage('_cache_of_' + prefix + '_' + hash_key + '_date', (new Date).getTime());
+		w_storage('c_' + prefix + '_' + hash_key, _v);
+		w_storage('c_' + prefix + '_' + hash_key + '_date', (new Date).getTime());
 	}
 }
