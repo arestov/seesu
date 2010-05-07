@@ -6,7 +6,11 @@ var test_pressed_node = function(original_node, mouseup){
 		if(clicked_node.is('a')) {
 		  if (class_name.match(/song/)){
 			return seesu.player.song_click(clicked_node);
-		  }	
+		  }
+		  if (class_name.match(/download-mp3/)){
+			widget.openURL(node.href);
+			return false;
+		  }
 		  else if (class_name.match(/waiting-full-render/)){
 			if (seesu.player.wainter_for_play) {seesu.player.wainter_for_play.removeClass('marked-for-play');}
 			clicked_node.data('want_to_play', seesu.player.want_to_play += 1).addClass('marked-for-play');
