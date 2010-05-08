@@ -40,9 +40,8 @@ if (typeof console != 'object'){
 
 
 
-
 if ((typeof widget != 'object') || !widget.preferenceForKey){
-	widget = {};
+	window.widget = {};
 	if ( (typeof System != "undefined") && System.Gadget && System.Gadget.Settings){
 		widget.preferenceForKey = function(key){
 			return System.Gadget.Settings.readString(key);
@@ -55,8 +54,25 @@ if ((typeof widget != 'object') || !widget.preferenceForKey){
 		widget.preferenceForKey = function(){return false};
 		widget.setPreferenceForKey = function(){return false};
 	}
+	widget.identifier = '0';
 	widget.openURL = function(url){
 		window.open(url);
 	}
 	
 }
+window.addEvent = window.addEventListener ? 
+	function(elem, evType, fn){
+		elem.addEventListener(evType, fn, false);
+		return fn;
+	}:
+	function(elem, evType, fn){
+		elem.attachEvent('on' + evType, fn);
+		return fn;
+	};
+window.removeEvent = window.addEventListener ?
+	function(elem, evType, fn){
+		elem.removeEventListener(evType, fn, false);
+	}:
+	function(elem, evType, fn){
+		elem.detachEvent('on' + evType, fn)
+	};

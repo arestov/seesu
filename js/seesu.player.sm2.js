@@ -44,7 +44,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 		}).appendTo(player_holder);
 		this.track_progress_load = $('<div class="track-load-progress"></div>').appendTo(this.track_progress_total);
 		this.track_progress_play = $('<div class="track-play-progress"></div>').appendTo(this.track_progress_total);
-		this.track_node_text = $('<span class="track-node-text"><span>').appendTo(this.track_progress_total);
+		this.track_node_text = $('<div class="track-node-text"><div>').appendTo(this.track_progress_total);
 		
 		
 		this.volume_state = $('<div class="volume-state"></div>').click(function(e){
@@ -64,16 +64,16 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 	if (iframe) {
 		log('sm2 with iframe')
 		this.player_container = iframe;
-		window.addEventListener("message", function(e){
+		addEvent(window, "message", function(e){
 			_this.listen_commands_of_sandbox.apply(_this,arguments);
-		}, false);
+		});
 		this.sm2_actions = this.sm2_actions_for_sandbox;
 	} else{
 		this.sm2_actions = this.sm2_actions_normal;
 
 	}
 	if (typeof seesu === 'object') {
-		this.pl_h_style = seesu.pl_h_style = seesu.pl_h_style || $('<style></style>');
+		this.pl_h_style = seesu.pl_h_style = seesu.pl_h_style || $('<style></style>').attr({title:'track position', type: 'text/css'});
 		$(document.documentElement.firstChild).append(this.pl_h_style);
 		
 		
@@ -83,9 +83,9 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 		
 	} else{
 		//look like we in iframe, so listen commands
-		window.addEventListener("message", function(e){
+		addEvent(window, "message", function(e){
 			_this.listen_commands_of_source.apply(_this,arguments);
-		}, false)
+		})
 	}
 	
 	
@@ -100,7 +100,14 @@ sm2_p.prototype = {
 		
 		var parent_node = node.parent()
 		var top = parent_node.position().top;
-		this.pl_h_style.html('.player-holder {top: ' + top + 'px}');
+		var tp_style = '.player-holder {top: ' + top + 'px}';
+		
+		if (!this.pl_h_style[0].styleSheet){
+			this.pl_h_style[0].appendChild(document.createTextNode(tp_style));
+		} else{
+			this.pl_h_style[0].styleSheet.cssText = tp_style;
+		}
+		
 		if (this.track_progress_total){
 			this.track_progress_width = this.track_progress_total.outerWidth();
 			this.track_node_text.html(node.html());

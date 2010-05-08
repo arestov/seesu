@@ -13,18 +13,17 @@ $(function() {
   $('#close-widget').click(function(){
     window.close();
   });
-
 	//see var at top
-	slider = document.getElementById('slider');
-	srnav = document.getElementById('search_result_nav');
-	startlink = document.getElementById('start_search');
+	window.slider = document.getElementById('slider');
+	window.srnav = document.getElementById('search_result_nav');
+	window.startlink = document.getElementById('start_search');
 	startlink.onclick = function(){
 		slider.className = "show-start";
 		searchfield.focus();
 	};
-	searchres = document.getElementById('search_result');
-	nav_artist_page = document.getElementById('nav_artist_page');
-	trk_page_nav = document.getElementById('nav_tracks_page');
+	window.searchres = document.getElementById('search_result');
+	window.nav_artist_page = document.getElementById('nav_artist_page');
+	window.trk_page_nav = document.getElementById('nav_tracks_page');
 	
 	srnav.onclick = function(){
 		slider.className = "show-search show-search-results";

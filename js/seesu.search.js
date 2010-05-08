@@ -514,7 +514,7 @@ $(function(){
 	
 	seesu.ui.search_form = $('form#search');
 	if (seesu.ui.search_form) {
-		$(document).keypress(function(e){
+		$(document).keydown(function(e){
 			if (!slider.className.match(/show-search-results/)) {return}
 			if (document.activeElement.nodeName == 'BUTTON'){return}
 			var _key = e.keyCode;

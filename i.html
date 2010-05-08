@@ -15,8 +15,27 @@
 			opera.postError.apply(opera, arguments)
 		}
 	} else {
-		log = alert
+		log = function(text){
+			alert(text);
+		}
 	}
+	window.addEvent = window.addEventListener ? 
+	function(elem, evType, fn){
+		elem.addEventListener(evType, fn, false);
+		return fn;
+	}:
+	function(elem, evType, fn){
+		elem.attachEvent('on' + evType, fn);
+		return fn;
+	};
+	
+	window.removeEvent = window.addEventListener ?
+	function(elem, evType, fn){
+		elem.removeEventListener(evType, fn, false);
+	}:
+	function(elem, evType, fn){
+		elem.detachEvent('on' + evType, fn)
+	};
 	</script>
 	<script type="text/javascript">
 	
@@ -25,45 +44,30 @@
 		console.log = function(text){
 			log(text)
 		}	
+	} else{
+		log = function(text){
+			console.log(text)
+		}
 	}
 	</script>
 	<script type="text/javascript" charset="utf-8">
-	script_data = '';
-	
-	create_script = function(scripts_data){
-		var _script = document.createElement('script');
-			_script.setAttribute('type', 'text/javascript');
-			
-			var script_itlseft = document.createTextNode(scripts_data)
-			_script.appendChild(script_itlseft)
-			
-			
-		document.documentElement.firstChild.appendChild(_script);
-	}
 	append_data_as_script_listener = function(e){
 		if (e.data.match(/^append_data_as_script\n/)){
-			create_script(e.data.replace(/^append_data_as_script\n/, ''))
-			
-			window.removeEventListener("message", append_data_as_script_listener, false);
-			
+			eval(e.data.replace(/^append_data_as_script\n/, ''));
+			removeEvent(window, "message", append_data_as_script_listener);
 		}
 	}
 	load_test_listener = function(e){
 		if (e.data.match(/test_iframe_loading_state/)){
-			iframe_source = e.source
+			removeEvent(window, "message", load_test_listener);
+			addEvent(window, "message", append_data_as_script_listener);
+			
+			iframe_source = e.source;
 			iframe_source.postMessage("iframe_loaded",'*');
-			window.removeEventListener("message", load_test_listener, false);
-			
-			
-			window.addEventListener("message", append_data_as_script_listener, false);
-			
 		}
-		
 	}
 	
-	window.addEventListener("message", load_test_listener, false);
-	
-	
+	addEvent(window, "message", load_test_listener);
 	</script>
 
 </head>
