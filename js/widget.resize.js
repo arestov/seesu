@@ -24,8 +24,8 @@ var resizeWidg = function(){
 	  
 	  var width0 = width;
 	  var height0 = height;
-	  document.addEventListener('mousemove', mousemove, false);
-	  document.addEventListener('mouseup',   mouseup, false);
+	  addEvent(document, 'mousemove', mousemove);
+	  addEvent(document, 'mouseup',   mouseup);
 	  
 	  function mousemove(e1) {
 		  if (x === 1) {
@@ -76,7 +76,7 @@ var resizeWidg = function(){
 	}
 	
 	
-	window.addEventListener("resize", $.debounce(save_size, 1000), false);
+	addEvent(window, "resize", $.debounce(save_size, 1000));
 	
 	var resize_button = $('#resize-handle');
 	
@@ -88,8 +88,8 @@ var resizeWidg = function(){
 		
 
 	} else{
-		window.addEventListener("resize", $.debounce(resize_body, 10), false);
-		window.addEventListener("resize", $.debounce(window_minimum, 100), false);
+		addEvent(window, "resize", $.debounce(resize_body, 10));
+		addEvent(window, "resize", $.debounce(window_minimum, 100));
 		resize_button.remove()
 
 	}
@@ -126,5 +126,5 @@ var resizeWidg = function(){
 	
 })()
 }
-$(resizeWidg)
+if(!$.browser.msie){$(resizeWidg)}
 })();

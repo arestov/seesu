@@ -35,7 +35,11 @@ if (typeof console != 'object'){
 		console.log(text)
 	}
 }
-
+if (typeof System != "undefined") {
+	log = function(text){
+		System.Debug.outputString(text);
+	}
+}
 
 
 
