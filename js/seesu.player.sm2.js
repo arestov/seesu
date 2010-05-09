@@ -20,7 +20,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 		musicbox.play_song_by_url
 	*/
 	if (player_holder){
-		this.live_controls_holder = player_holder;
+		this.player_holder = player_holder;
 		var get_click_position = function(e, node){
 			var pos ;
 			if (!node){
@@ -73,8 +73,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 
 	}
 	if (typeof seesu === 'object') {
-		this.pl_h_style = seesu.pl_h_style = seesu.pl_h_style || $('<style></style>').attr({title:'track position', type: 'text/css'});
-		$(document.documentElement.firstChild).append(this.pl_h_style);
+
 		
 		
 		if (seesu.player.current_song){
@@ -102,11 +101,9 @@ sm2_p.prototype = {
 		var top = parent_node.position().top;
 		var tp_style = '.player-holder {top: ' + top + 'px}';
 		
-		if (!this.pl_h_style[0].styleSheet){
-			this.pl_h_style[0].appendChild(document.createTextNode(tp_style));
-		} else{
-			this.pl_h_style[0].styleSheet.cssText = tp_style;
-		}
+		
+		this.player_holder[0].style.top = top + 'px';
+
 		
 		if (this.track_progress_total){
 			this.track_progress_width = this.track_progress_total.outerWidth();

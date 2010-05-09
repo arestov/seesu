@@ -410,3 +410,11 @@ display:none;
 	top:5px;
 	left:0;
 	}
+html{
+	position:static;
+}
+html, body{
+	width:640px !important;
+	height:600px;
+	
+}
