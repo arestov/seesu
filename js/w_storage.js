@@ -3,15 +3,6 @@
 	
 	var store_get = function(){return false};
 	var store_set = function(){return false};
-	if (typeof localStorage === 'object') {
-		store_get = function(key){
-			return localStorage.getItem(key);
-			
-		}
-		store_set = function(key, value){
-			return localStorage.setItem(key, value);
-		}
-	} else
 	if (typeof widget === 'object') {
 		store_get = function(key){
 			return widget.preferenceForKey(key);
@@ -19,7 +10,21 @@
 		store_set = function(key, value){
 			return widget.setPreferenceForKey(value, key);
 		}
-	} else 
+	} else
+	if (typeof localStorage === 'object') {
+		store_get = function(key){
+			return localStorage.getItem(key);
+			
+		}
+		store_set = function(key, value){
+			try {
+				return localStorage.setItem(key, value);
+			} catch(e){
+				return null;
+			}
+			
+		}
+	} else
 	if ( (typeof System != "undefined") && System.Gadget && System.Gadget.Settings){
 		store_get = function(key){
 			return System.Gadget.Settings.readString(key);
