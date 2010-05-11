@@ -98,10 +98,10 @@ has_music_copy = function(array, entity, from_position){
 
 var mp3_prov_selected = w_storage('mp3-search-way');
 var have_mp3_provider;
-prov_count_down = 3;
+window.prov_count_down = 2;
 var provider_selected;
 
-swith_to_provider = function(try_selected){
+window.swith_to_provider = function(try_selected){
 	if (provider_selected) {return false}
 	if (mp3_prov_selected && seesu.delayed_search.available && seesu.delayed_search.available.length){
 	
@@ -139,9 +139,7 @@ swith_to_provider = function(try_selected){
 try_mp3_providers = function(){
 	
 	
-
-	
-	
+	/*
 	$.ajax({
 	  url: "http://query.yahooapis.com/v1/public/yql?q=SELECT%20*%20FROM%20html%20WHERE%20url%3D'http%3A%2F%2Faudme.ru'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys",
 	  success: function(r){
@@ -170,6 +168,7 @@ try_mp3_providers = function(){
 		}
 	  }
 	})
+	*/
   	if (seesu.vk.id && seesu.vk.big_vk_cookie) {
 		$.ajax({
 		  url: "http://vkontakte.ru/feed2.php",

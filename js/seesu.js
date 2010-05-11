@@ -1,7 +1,7 @@
 testing = false;
 lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 window.seesu =  {
-	  version: 1.72,
+	  version: 1.8,
 	  vk:{
 		"id": w_storage('vkid'),
 		"big_vk_cookie": w_storage('big_vk_cookie'),
