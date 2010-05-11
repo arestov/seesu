@@ -8,7 +8,12 @@ window.seesu =  {
 		"set_xhr_headers": function(xhr){
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 			if (seesu.vk.big_vk_cookie){
-				xhr.setRequestHeader("Cookie", seesu.vk.big_vk_cookie);
+				try {
+					xhr.setRequestHeader("Cookie", seesu.vk.big_vk_cookie);
+				} catch(e){
+					return
+				}
+				
 			}
 		}
 	  },
