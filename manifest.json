@@ -1,0 +1,20 @@
+{
+  "name": "Seesu",
+  "version": "1.7.5",
+  "description": "You can find & get any music you need. Type in an artist or genre.",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_title": "Seesu Music Player",
+    "popup": "index.html"
+  },
+  "background_page": "index.html",
+  "permissions": [
+    "tabs",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "icons": {
+    "64": "icon.png"
+  },
+  "update_url": "http://clients2.google.com/service/update2/crx"
+}
