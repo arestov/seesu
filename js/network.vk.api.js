@@ -128,14 +128,24 @@ $(function(){
 	seesu.delayed_search.vk_api.search_tracks = function(){
 		seesu.vk_api.audio_search.apply(seesu.vk_api, arguments)
 	};
-	if (typeof seesu.vk_api === 'object') {
+	seesu.vk_api.audio_search('killers',function(){
 		seesu.delayed_search.available.push('vk_api');
 		swith_to_provider(true);
 		$('#mp3way-vk-api').removeClass('cant-be-used');
-	}
+		
+		prov_count_down--;
+		if (prov_count_down == 0){
+			swith_to_provider();
+		}
+	},function(){
+		log()
+		prov_count_down--;
+		if (prov_count_down == 0){
+			swith_to_provider();
+		}
+		
+	}, true);
+
 	
-	prov_count_down--;
-	if (prov_count_down == 0){
-		swith_to_provider();
-	}
+
 })
