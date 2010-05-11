@@ -261,7 +261,7 @@ display:none;
 	
 #slider-materail{
 	background:#505050;
-
+	z-index:2;
 }
 .dmain{
 	height:10px;
@@ -410,6 +410,11 @@ display:none;
 	top:5px;
 	left:0;
 	}
+	
+#sm2-container.swf_error{
+		display:none;
+	}
+
 html{
 	position:static;
 }
@@ -418,3 +423,4 @@ html, body{
 	height:600px;
 	
 }
+
