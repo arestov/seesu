@@ -29,9 +29,7 @@ $(function() {
 		slider.className = "show-search show-search-results";
 	};
 	
-	
-	
-	
+	seesu.start_screen = $('#start-screen');
 	
 	artsHolder	= $('#artist-holder');
 	artsImage	= $('img.artist-image',artsHolder);
