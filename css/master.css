@@ -419,8 +419,7 @@ html{
 	position:static;
 }
 html, body{
-	width:640px !important;
-	height:600px;
+	height:100%  !important;
 	
 }
 

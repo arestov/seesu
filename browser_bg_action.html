@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8">
+	<title>Seesu</title>
+	<script type="text/javascript">
+		if (typeof chrome === 'object' && chrome.browserAction && chrome.browserAction.onClicked){
+			chrome.browserAction.onClicked.addListener(function() {
+				chrome.tabs.create({url: chrome.extension.getURL('index.html')})
+			});
+		}
+	</script>
+  </head>
+  <body></body>
+</html>

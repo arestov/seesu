@@ -32,3 +32,11 @@ cache_ajax = {
 		w_storage('c_' + prefix + '_' + hash_key + '_date', (new Date).getTime());
 	}
 }
+if (typeof chrome ==='object'){
+	cache_ajax.get = function(){
+		return false
+	};
+	cache_ajax.set = function(){
+		return false
+	};
+}
