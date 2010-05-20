@@ -18,7 +18,7 @@ var soundManager = null;
 
 function SoundManager(smURL, smID) {
 
-  this.flashVersion = 9;             // version of flash to require, either 8 or 9. Some API features require Flash 9.
+  this.flashVersion = 8;             // version of flash to require, either 8 or 9. Some API features require Flash 9.
   this.debugMode = true;             // enable debugging output (div#soundmanager-debug, OR console if available+configured)
   this.debugFlash = false;           // enable debugging output inside SWF, troubleshoot Flash/browser issues
   this.useConsole = true;            // use firebug/safari console.log()-type debug console if available
@@ -29,9 +29,9 @@ function SoundManager(smURL, smID) {
   this.useFastPolling = false;       // uses 1 msec flash timer interval (vs. default of 20) for higher callback frequency, best combined with useHighPerformance
   this.useMovieStar = false;         // enable support for Flash 9.0r115+ (codename "MovieStar") MPEG4 audio+video formats (AAC, M4V, FLV, MOV etc.)
   this.bgColor = '#ffffff';          // movie (.swf) background color, '#000000' useful if showing on-screen/full-screen video etc.
-  this.useHighPerformance = true;   // position:fixed flash movie can help increase js/flash speed, minimize lag
+  this.useHighPerformance = false;   // position:fixed flash movie can help increase js/flash speed, minimize lag
   this.flashLoadTimeout = 1000;      // msec to wait for flash movie to load before failing (0 = infinity)
-  this.wmode = 'transparent';                 // mode to render the flash movie in - null, transparent, opaque (last two allow layering of HTML on top)
+  this.wmode = null;                 // mode to render the flash movie in - null, transparent, opaque (last two allow layering of HTML on top)
   this.allowFullScreen = true;       // enter full-screen (via double-click on movie) for flash 9+ video
   this.allowScriptAccess = 'always'; // for scripting the SWF (object/embed property), either 'always' or 'sameDomain'
   this.useFlashBlock = false;        // allow showing of SWF + recovery from flash blockers. Wait indefinitely and apply timeout CSS to SWF, if applicable.

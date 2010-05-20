@@ -4,6 +4,8 @@ if (typeof soundManager == 'object'){
 	soundManager.useFlashBlock = true; // optionally, enable when you're ready to dive in
 	soundManager.debugMode = false;
 	soundManager.wmode = 'transparent';
+	soundManager.useHighPerformance = true;
+	
 } else{
 	log('soundManager not exist')
 }
