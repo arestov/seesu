@@ -2008,7 +2008,7 @@ function SoundManager(smURL, smID) {
   }
 } // SoundManager()
 
-// var SM2_DEFER = true;
+var SM2_DEFER = true;
 // un-comment here or define in your own script to prevent immediate SoundManager() constructor call+start-up.
 
 // if deferring, construct later with window.soundManager = new SoundManager(); followed by soundManager.beginDelayedInit();

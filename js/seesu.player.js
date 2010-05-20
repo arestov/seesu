@@ -364,18 +364,36 @@ $(function() {
 	player_holder.append(play_controls)
 	$('#play-list-holder').append(player_holder);
 	
-
-	soundManager.onready(function() {
-	  if (soundManager.supported()) {
-		log('sm2 in widget ok')
-		seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager);
-		$(document.body).addClass('flash-internet');
-	  } else {
-	  	log('sm2 in widget notok')
-	  		try_to_use_iframe_sm2p();
-
-	  }
-	});
+	var a = document.createElement('audio');
+	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
+		seesu.player.musicbox = new hmtl5_p(player_holder, seesu.player.player_volume);
+	} else{
+		soundManager = new SoundManager();
+		if (soundManager){
+			soundManager.url = 'http://seesu.heroku.com/swf/';
+			soundManager.flashVersion = 9; // optional: shiny features (default = 8)
+			soundManager.useFlashBlock = true; // optionally, enable when you're ready to dive in
+			soundManager.debugMode = false;
+			soundManager.wmode = 'transparent';
+			soundManager.useHighPerformance = true;
+			soundManager.onready(function() {
+			  if (soundManager.supported()) {
+				log('sm2 in widget ok')
+				seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager);
+				$(document.body).addClass('flash-internet');
+			  } else {
+			  	log('sm2 in widget notok')
+			  		try_to_use_iframe_sm2p();
+		
+			  }
+			});
+		}
+	}
+	
+	
+	
+	
+		
 
 	
 });
