@@ -1,9 +1,6 @@
 if (typeof soundManager == 'object'){
-	soundManager.url = 'http://seesu.heroku.com/swf/';
-	soundManager.flashVersion = 9; // optional: shiny features (default = 8)
-	soundManager.useFlashBlock = true; // optionally, enable when you're ready to dive in
-	soundManager.debugMode = false;
-	soundManager.wmode = 'transparent';
+	
+	
 } else{
 	log('soundManager not exist')
 }
