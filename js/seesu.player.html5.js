@@ -1,12 +1,5 @@
-if (typeof soundManager == 'object'){
-	
-	
-} else{
-	log('soundManager not exist')
-}
-
-
-var sm2_p = function(player_holder,volume){
+var html5_p = function(player_holder,volume){
+	log('using html5 audio')
 	var _this = this;
 	/*
 		musicbox.play_song_by_node
@@ -62,7 +55,7 @@ var sm2_p = function(player_holder,volume){
 	
 	
 };
-sm2_p.prototype = {
+html5_p.prototype = {
 	'module_title':'html5_p',
 	"play_song_by_node" : function(node){
 		this.ignore_position_change = true;
@@ -113,7 +106,7 @@ sm2_p.prototype = {
 				var total = this.current_song.duration;
 				var playable = this.current_song.buffered.end(0);
 				var target = total * position_factor;
-				current_song.currentTime = Math.min(playable, target);
+				this.current_song.currentTime = Math.min(playable, target);
 			}
 			/*
 			var current_song = this.core.getSoundById(this.current_song);
@@ -125,18 +118,32 @@ sm2_p.prototype = {
 		"play_song_by_url" : function(url){
 			var _this = this;
 			if (this.current_song){
-				var current_song = this.core.getSoundById(this.current_song);
-				if (current_song) {
-					current_song.destruct()
-				}
+				this.stop();
 			}
+			this.current_song = new Audio(url);
+			this.current_song.load();
+			
+			addEvent(this.current_song, 'play', function(){_this.html5_p_events.playing(_this)});
+			addEvent(this.current_song, 'pause', function(){_this.html5_p_events.paused(_this)});
+			addEvent(this.current_song, 'stop', function(){_this.html5_p_events.stopped(_this)});
+			addEvent(this.current_song, 'ended', function(){_this.html5_p_events.finished(_this)});
+			addEvent(this.current_song, 'timeupdate', function(){
+				_this.html5_p_events.progress_playing(_this, _this.current_song.currentTime, _this.current_song.duration)
+			});
+			addEvent(this.current_song, 'progress', function(e){
+				_this.html5_p_events.progress_loading(_this, e.loaded, e.total) 
+				
+			});
+			log('tyriiii');
+			this.current_song.play();
+			/*
 			this.core.createSound({
 				id: url, // required
 				url: url, // required
 				// optional sound parameters here, see Sound Properties for full list
 				volume: _this.volume,
 				autoPlay: true,
-				onplay: function(){_this.sm2_p_events.playing(_this)},
+				onplay: ...,
 				onresume: function(){_this.sm2_p_events.playing(_this)},
 				onpause: function(){_this.sm2_p_events.paused(_this)},
 				onstop: function(){_this.sm2_p_events.stopped(_this)},
@@ -152,6 +159,7 @@ sm2_p.prototype = {
 			
 			
 			this.current_song = url;
+			*/
 		},
 		"play" : function(){
 			var current_song = this.core.getSoundById(this.current_song);
@@ -162,6 +170,7 @@ sm2_p.prototype = {
 		"stop" : function(){
 			if (this.current_song){
 				this.current_song.pause();
+				this.current_song.currentTime = 0;
 			}
 		},
 		"pause" : function(){
@@ -200,19 +209,14 @@ sm2_p.prototype = {
 		},
 		"progress_playing": function(_this, progress_value, total){
 			if (_this.ignore_position_change) {return false;}
-			var progress = parseInt(progress_value);
-			var total = parseInt(total);
 			
-			var current = Math.round((progress/total) * _this.track_progress_width);
+			var current = Math.round((progress_value/total) * _this.track_progress_width);
 			
 			_this.track_progress_play[0].style.width = current + 'px'
 		},
 		"progress_loading": function(_this, progress_value, total){
 			if (_this.ignore_position_change) {return false;}
-			var progress = parseInt(progress_value);
-			var total = parseInt(total);
-			
-			var current = Math.round((progress/total) * _this.track_progress_width);
+			var current = Math.round((progress_value/total) * _this.track_progress_width);
 			
 			_this.track_progress_load[0].style.width = current + 'px'
 		}

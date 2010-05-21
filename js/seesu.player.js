@@ -366,7 +366,7 @@ $(function() {
 	
 	var a = document.createElement('audio');
 	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
-		seesu.player.musicbox = new hmtl5_p(player_holder, seesu.player.player_volume);
+		seesu.player.musicbox = new html5_p(player_holder, seesu.player.player_volume);
 	} else{
 		soundManager = new SoundManager();
 		if (soundManager){
