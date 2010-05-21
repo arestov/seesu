@@ -40,6 +40,7 @@ var html5_p = function(player_holder,volume){
 			var pos = get_click_position(e);
 			var new_volume_factor = pos/50;
 			_this.changhe_volume(new_volume_factor);
+			_this.volume = new_volume_factor;
 			seesu.player.call_event(VOLUME, new_volume_factor * 100);
 			
 			_this.volume_state_position.css('width', pos + 'px')
@@ -47,7 +48,7 @@ var html5_p = function(player_holder,volume){
 		this.volume_state_position = $('<div class="volume-state-position"></div>').css('width',((volume * 50)/100) + 'px' ).appendTo(this.volume_state);
 		
 	}
-	this.volume = volume;
+	this.volume = volume/100;
 	if (seesu.player.current_song){
 		this.play_song_by_node(current_song);
 	}
@@ -122,7 +123,7 @@ html5_p.prototype = {
 			}
 			this.current_song = new Audio(url);
 			this.current_song.load();
-			
+			this.current_song.volume = this.volume;
 			addEvent(this.current_song, 'play', function(){_this.html5_p_events.playing(_this)});
 			addEvent(this.current_song, 'pause', function(){_this.html5_p_events.paused(_this)});
 			addEvent(this.current_song, 'stop', function(){_this.html5_p_events.stopped(_this)});
@@ -132,39 +133,20 @@ html5_p.prototype = {
 			});
 			addEvent(this.current_song, 'progress', function(e){
 				_this.html5_p_events.progress_loading(_this, e.loaded, e.total) 
-				
+				log('progress: ' + e.loaded + ' ' + e.total)
 			});
-			log('tyriiii');
+			addEvent(this.current_song, 'canplaythrough', function(e){
+				setTimeout(function(){
+					if (_this.current_song.buffered.length && (_this.current_song.buffered.length > 0)){
+						_this.html5_p_events.progress_loading(_this, _this.current_song.buffered.end(0), _this.current_song.duration)
+					}
+				},300)
+			});
 			this.current_song.play();
-			/*
-			this.core.createSound({
-				id: url, // required
-				url: url, // required
-				// optional sound parameters here, see Sound Properties for full list
-				volume: _this.volume,
-				autoPlay: true,
-				onplay: ...,
-				onresume: function(){_this.sm2_p_events.playing(_this)},
-				onpause: function(){_this.sm2_p_events.paused(_this)},
-				onstop: function(){_this.sm2_p_events.stopped(_this)},
-				onfinish : function(){_this.sm2_p_events.finished(_this)},
-				whileplaying: function(){
-					var total = (this.bytesTotal * this.duration)/this.bytesLoaded;
-					_this.sm2_p_events.progress_playing(_this, this.position, total)
-				},
-				whileloading: function(){
-					_this.sm2_p_events.progress_loading(_this, this.bytesLoaded, this.bytesTotal) 
-				}
-			});
-			
-			
-			this.current_song = url;
-			*/
 		},
 		"play" : function(){
-			var current_song = this.core.getSoundById(this.current_song);
-			if (current_song) {
-				current_song.resume()
+			if (this.current_song){
+				this.current_song.play();
 			}
 		},
 		"stop" : function(){
