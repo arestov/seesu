@@ -29,4 +29,7 @@
 	<name>Seesu</name>
 	<revised>20010-3-8</revised>
   </id>
+  <security>
+   	<access>*<access>
+  </security>
 </widget>
