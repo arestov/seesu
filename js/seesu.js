@@ -178,9 +178,38 @@ var check_seesu_updates = function(){
 	});
 };
 
+var external_playlist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
+	this.result = this.header + '\n';
+	for (var i=0; i < array.length; i++) {
+		this.result += this.preline + ':' + (array[i].duration || '-1') + ',' + array[i].artist_name + ' - ' + array[i].track_title + '\n' + array[i].mp3link + '\n';
+	};
+	this.data_uri = this.request_header + this.result
+	
+}
+external_playlist.prototype = {
+	header : '#EXTM3U',
+	preline: '#EXTINF',
+	request_header = 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
+}
 
-
-
+var make_external_playlist = function(playlist_nodes_for){
+	if (playlist_nodes_for && playlist_nodes_for.length){
+		var simple_playlist = [];
+		
+		for (var i=0; i < playlist_nodes_for.length; i++) {
+			simple_playlist.push({
+				track_title: playlist_nodes_for[i].data('track_title'),
+				artist_name: playlist_nodes_for[i].data('artist_name'),
+				duration: playlist_nodes_for[i].data('duration'),
+				mp3link: playlist_nodes_for[i].data('mp3link')
+			})
+			
+		};
+		
+		seesu.player.current_external_playlist = new external_playlist(simple_playlist);
+		
+	}
+}
 
 
 

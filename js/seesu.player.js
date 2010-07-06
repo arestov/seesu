@@ -15,6 +15,7 @@ seesu.player = {
 	'want_to_play' 		: 0,
 	'wainter_for_play' 	: null,
 	'current_artist' 	: '',
+	'current_external_playlist': null,
 	'iframe_player' 	: false,
 	'iframe_doc' 		: null,
 	'player_volume' 	: ( function(){
