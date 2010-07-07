@@ -183,13 +183,13 @@ var external_playlist = function(array){ //array = [{artist_name: '', track_titl
 	for (var i=0; i < array.length; i++) {
 		this.result += this.preline + ':' + (array[i].duration || '-1') + ',' + array[i].artist_name + ' - ' + array[i].track_title + '\n' + array[i].mp3link + '\n';
 	};
-	this.data_uri = this.request_header + this.result
+	this.data_uri = this.request_header + escape(this.result)
 	
 }
 external_playlist.prototype = {
 	header : '#EXTM3U',
 	preline: '#EXTINF',
-	request_header = 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
+	request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
 }
 
 var make_external_playlist = function(playlist_nodes_for){
@@ -207,7 +207,7 @@ var make_external_playlist = function(playlist_nodes_for){
 		};
 		
 		seesu.player.current_external_playlist = new external_playlist(simple_playlist);
-		
+		export_playlist.attr('href', seesu.player.current_external_playlist.data_uri)
 	}
 }
 

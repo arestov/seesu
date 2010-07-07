@@ -28,7 +28,7 @@ $(function() {
 	srnav.onclick = function(){
 		slider.className = "show-search show-search-results";
 	};
-	
+	window.export_playlist = $('#open-external-playlist');
 	seesu.start_screen = $('#start-screen');
 	
 	artsHolder	= $('#artist-holder');

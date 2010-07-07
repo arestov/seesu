@@ -57,12 +57,12 @@ var test_pressed_node = function(original_node, mouseup){
 		  }
 		  else if (class_name.match(/bbcode_artist/)){
 			
-			artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/',''));
+			artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/','').replace('+', ' '));
 			set_artist_page(artist_name);
 			return false;
 		  }
 		  else if (class_name.match(/bbcode_tag/)){
-			tag_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/tag/',''));
+			tag_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/tag/','').replace('+', ' '));
 			render_tracks_by_artists_of_tag(tag_name);
 			return false;
 		  }
@@ -75,6 +75,10 @@ var test_pressed_node = function(original_node, mouseup){
 		  else if (class_name.match(/search-music-files/)){
 			clicked_node.parent().toggleClass('want-to-select-mp3-search');
 		  }
+		  else if (class_name.match(/open-external-playlist/)){
+			return false;
+		  }
+		 
 		}  else if ((node.nodeName == 'INPUT')) {
 			if (class_name.match(/flash-mess-switch/)) {
 				if(clicked_node.attr('checked')) {

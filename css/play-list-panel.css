@@ -5,6 +5,11 @@
 	top:0;
 	color:#ddd;
 }
+#open-external-playlist{
+	position:absolute;
+	left:0;
+	top:0;
+}
 #tracks-waiting-for-search{
 	position: absolute;
 	left: -30px;
