@@ -647,8 +647,10 @@ var show_artist_info = function(r){
 	
 	
 	arst_meta_info.empty();
+	
 	if (tags && tags.length) {
-		var tags_p = $("<p></p>").append('<span class="desc-name">Tags:</span>').attr({ 'class': 'artist-tags'});
+		var tags_p = $("<p class='artist-tags'></p>").append('<span class="desc-name">Tags:</span>');
+		var tags_text = $('<span class="desc-text"></span>').appendTo(tags_p);
 		for (var i=0, l = tags.length; i < l; i++) {
 			var tag = tags[i],
 				arts_tag_node = $("<a></a>")
@@ -657,16 +659,17 @@ var show_artist_info = function(r){
 						href: tag.url,
 						'class': 'music-tag js-serv'
 					})
-					.data('music_tag', tag.name);
-			tags_p.append(arts_tag_node);
+					.data('music_tag', tag.name)
+					.appendTo(tags_text);
 		}
 		arst_meta_info.append(tags_p);
 	}
+	
 	if (similars && similars.length) {
 		var similars_p = $("<p></p>").attr({ 'class': 'artist-similar'}),
 			similars_a = $('<a></a>').append('Similar artists').attr({ 'class': 'similar-artists js-serv'}).data('artist', artist);	
 		$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p).append(document.createTextNode(':'));
-		
+		var similars_text = $('<span class="desc-text"></span>').appendTo(similars_p);
 		for (var i=0, l = similars.length; i < l; i++) {
 			var similar = similars[i],
 				arts_similar_node = $("<a class='js-serv'></a>")
@@ -675,12 +678,13 @@ var show_artist_info = function(r){
 					href: similar.url, 
 					'class' : 'artist js-serv' 
 				  })
-				  .data('artist', similar.name );
-			similars_p.append(arts_similar_node);
+				  .data('artist', similar.name )
+				  .appendTo(similars_text);
 		}
 		arst_meta_info.append(similars_p);
 	}
-	var artist_albums_container = seesu.artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">Albums:</span>').appendTo(arst_meta_info);
+	var artist_albums_container = seesu.artist_albums_container = $('<div class="artist-albums"></div>').append('<div class="desc-name">Albums:</div>').appendTo(arst_meta_info);
+	var artist_albums_text = $('<div class=""></div>').appendTo(artist_albums_container)
 	if (artist_albums_container){
 		
 		var albums_link = $('<a class="js-serv get-artist-albums">get albums</a>')
@@ -691,7 +695,7 @@ var show_artist_info = function(r){
 					
 					lfm('artist.getTopAlbums',{'artist': artist },function(r){
 						if (typeof r != 'object') {return;}
-						artist_albums_renderer(r, artist_albums_container);
+						artist_albums_renderer(r, artist_albums_text);
 						_this.data('albums-loaded', true);
 						artist_albums_container.removeClass('albums-loading');
 					});
@@ -701,7 +705,7 @@ var show_artist_info = function(r){
 					seesu.toogle_art_alb_container(_this);
 				}
 			})
-			.appendTo(artist_albums_container);
+			.appendTo(artist_albums_text);
 		artist_albums_container.data('albums_link', albums_link);
 	}
 	artsBio.parent().removeClass('background-changes');

@@ -218,7 +218,7 @@ display:none;
 .artist-albums, .artist-similar,.artist-tags{
 	overflow:hidden;
 	padding-bottom:2px;
-	margin:0.5em;
+	margin:0.5em 0;
 }		
 .desc-name{
 	float:left;
@@ -226,7 +226,9 @@ display:none;
 	margin-right: 13px;
 	text-align:right;
 }
-		
+.desc-text{
+	overflow:hidden;
+}	
 .artist-albums ul{
 	overflow:hidden;
 	margin:15px 0;
