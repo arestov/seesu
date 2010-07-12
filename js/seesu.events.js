@@ -28,7 +28,7 @@ $(function() {
 	srnav.onclick = function(){
 		slider.className = "show-search show-search-results";
 	};
-	
+	window.export_playlist = $('#open-external-playlist');
 	seesu.start_screen = $('#start-screen');
 	
 	artsHolder	= $('#artist-holder');
@@ -38,7 +38,11 @@ $(function() {
 	art_tracks_w_counter = $('#tracks-waiting-for-search')
 	artsName	= $('#artist-name');
 	playlist_panel = $('#play-list-panel');
-
+	
+	arst_meta_info = $('#artist-meta-info');
+	
+	
+	
 	var flash_settings = $('.internet-flash-settings input');
 		
 	flash_settings.click(function(){
