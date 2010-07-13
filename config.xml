@@ -5,12 +5,11 @@
   <width>640</width>
   <height>600</height>
   <icon>icon.png</icon>
-
   <author>
 	<name>Gleb Arestov</name>
 	<name></name>
 	<email>gleb.arestov@gmail.com</email>
-	<link>http://gleb-arestov.moikrug.ru/</link>
+	<link>http://arestov.me/</link>
 	<organization>Spreadus foundation</organization>
   </author>
   <author>

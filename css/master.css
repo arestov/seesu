@@ -196,19 +196,39 @@ display:none;
 		overflow:hidden;
 		}
 .artist-image{
-	width:64px;
-}
+	width:126px;
+	}
 .artist-bio{
-	margin-top:-5px;
 	line-height:1.5em;
+	overflow:hidden;
+	position:relative;
+	top:-3px;
 	}
 	.artist-similar a.artist{
 		margin-right:8px;
-	}
+		}
 	
 	.artist-tags a.music-tag{
 		margin-right:6px;
 		}
+#artist-meta-info{
+	overflow:hidden;
+	clear:left;
+}
+.artist-albums, .artist-similar,.artist-tags{
+	overflow:hidden;
+	padding-bottom:2px;
+	margin:0.5em 0;
+}		
+.desc-name{
+	float:left;
+	width:126px;
+	margin-right: 13px;
+	text-align:right;
+}
+.desc-text{
+	overflow:hidden;
+}	
 .artist-albums ul{
 	overflow:hidden;
 	margin:15px 0;
