@@ -225,6 +225,7 @@ display:none;
 	margin:0.5em 0;
 }		
 .desc-name{
+	min-height:1em;
 	float:left;
 	width:126px;
 	margin-right: 13px;
