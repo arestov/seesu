@@ -173,7 +173,7 @@ display:none;
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
-.info{overflow:hidden;}
+.info{overflow:hidden;padding-left:8px}
 .info
 .image{
 	float:left;
@@ -215,12 +215,17 @@ display:none;
 	overflow:hidden;
 	clear:left;
 }
-.artist-albums, .artist-similar,.artist-tags{
+#artist-name{
 	overflow:hidden;
+	padding-bottom:2px;
+}
+.artist-albums, .artist-similar,.artist-tags{
+	
 	padding-bottom:2px;
 	margin:0.5em 0;
 }		
 .desc-name{
+	min-height:1em;
 	float:left;
 	width:126px;
 	margin-right: 13px;

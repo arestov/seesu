@@ -42,13 +42,13 @@
 a.song{
 	padding:3px 1px 0;
 	
-	background:#535353;
-	border:1px solid #505050;
-	
+	border:1px solid transparent;
+	border-radius:4px;
 	}
 a.song:hover{
 	color:#ffffff;
-	border-color:#5a5a5a;
+	background:#595959;
+	border-color:transparent;
 }
 a.search-mp3{
 	text-decoration:blink;
@@ -269,7 +269,8 @@ p.internet-flash-settings{
 	padding:6px;
 	left:0;
 	right:0;
-	border: 1px solid #454545;
+	border: 1px solid transparent;
+
 	}
 	.track-load-progress{
 		position:absolute;

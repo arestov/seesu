@@ -713,12 +713,37 @@ var show_artist_info = function(r){
 var update_artist_info = function(artist, not_show_link_to_artist_page){
 	if (testing ) {return;}
 	if (seesu.player.current_artist == artist) {
-		
-	} else {
-		artsName.text(seesu.player.current_artist = artist);
-		if (!not_show_link_to_artist_page){
-			artsName.append($('<a class="artist js-serv">top tracks</a>').data('artist', artist));
+		if (not_show_link_to_artist_page){
+			if (seesu.player.top_tracks_link){
+				seesu.player.top_tracks_link.remove()
+			}
 		}
+	} else {
+		
+		artsName.empty();
+		
+		
+
+		
+		
+		var arts_name = $('<span class="desc-name"></span>')
+			.appendTo(artsName);
+			
+		if (!not_show_link_to_artist_page){
+			seesu.player.top_tracks_link = $('<a class="artist js-serv">top tracks</a>').data('artist', artist).appendTo(arts_name);
+		}	
+		
+		$('<a></a>')
+			.attr('href', 'http://www.last.fm/music/' + artist.replace(' ', '+'))
+			.text('profile')
+			.attr('title', 'last.fm profile')
+			.appendTo(arts_name)
+		
+		$('<span class="desc-text"></span>')
+			.text(seesu.player.current_artist = artist)
+			.appendTo(artsName);
+		
+		
 		lfm('artist.getInfo',{'artist': artist }, show_artist_info);
 	}
 };
