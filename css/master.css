@@ -173,7 +173,7 @@ display:none;
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
-.info{overflow:hidden;}
+.info{overflow:hidden;padding-left:8px}
 .info
 .image{
 	float:left;
