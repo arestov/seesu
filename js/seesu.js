@@ -716,6 +716,10 @@ var update_artist_info = function(artist, not_show_link_to_artist_page){
 		
 	} else {
 		artsName.text(seesu.player.current_artist = artist);
+		artsName.empty();
+		
+		$('<span class="desc-name"></span>').append($('<a></a>'))
+		
 		if (!not_show_link_to_artist_page){
 			artsName.append($('<a class="artist js-serv">top tracks</a>').data('artist', artist));
 		}
