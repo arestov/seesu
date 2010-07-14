@@ -737,6 +737,10 @@ var update_artist_info = function(artist, not_show_link_to_artist_page){
 			.attr('href', 'http://www.last.fm/music/' + artist.replace(' ', '+'))
 			.text('profile')
 			.attr('title', 'last.fm profile')
+			.click(function(){
+				widget.openURL('http://www.last.fm/music/' + artist.replace(' ', '+'));
+				return false
+			})
 			.appendTo(arts_name)
 		
 		$('<span class="desc-text"></span>')
