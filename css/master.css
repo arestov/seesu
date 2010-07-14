@@ -225,7 +225,7 @@ display:none;
 	margin:0.5em 0;
 }		
 .desc-name{
-	min-height:1em;
+	min-height:1.5em;
 	float:left;
 	width:126px;
 	margin-right: 13px;
@@ -233,6 +233,7 @@ display:none;
 }
 .desc-text{
 	overflow:hidden;
+	display: table-cell;
 }	
 .artist-albums ul{
 	overflow:hidden;
