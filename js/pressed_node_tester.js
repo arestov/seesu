@@ -84,6 +84,10 @@ var test_pressed_node = function(original_node, mouseup){
 			
 			return false
 		  }
+		  else if (class_name.match(/seesu-me-link/)){
+		  	widget.openURL('http://seesu.me/')
+		  	return false;
+		  }
 		 
 		}  else if ((node.nodeName == 'INPUT')) {
 			if (class_name.match(/flash-mess-switch/)) {
