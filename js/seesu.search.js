@@ -95,7 +95,16 @@ var create_track_suggest_item = function(artist, track, image, duration){
 	$("<span></span>").text(artist + ' - ' + track).appendTo(a);
 	return a
 }
-
+var create_tag_suggest_item = function(tag){
+	return $("<a></a>")
+		.data('tag',tag)
+		.click(function(e){
+			var tag = $(this).data('tag');
+			render_tracks_by_artists_of_tag(tag)
+		})
+		.click(results_mouse_click_for_enter_press)
+		.append("<span>" + tag + "</span>");
+}
 var show_artists_results = function(r){
 	if (!r) {return}
 	var ul = seesu.ui.arts_results_ul;
@@ -164,33 +173,15 @@ var show_tags_results = function(r){
 					li.addClass('searched-bordered')
 				}
 				
-				var a = $("<a></a>")
-					.data('tag',tag)
-					.click(function(e){
-						var tag = $(this).data('tag');
-						render_tracks_by_artists_of_tag(tag)
-					})
-					.click(results_mouse_click_for_enter_press);
-					
-				var span = $("<span></span>").text(tag);
-				$(a).append(span);
-				$(li).append(a);
+
+				$(li).append(create_tag_suggest_item(tag));
 				$(ul).append(li);
 			} 
 		} else if (tags.name) {
 			var tag = tags.name
 			var li = $("<li></li>");
-			var a = $("<a></a>")
-				.data('tag',tag)
-				.click(function(e){
-					var tag = $(this).data('tag');
-					render_tracks_by_artists_of_tag(tag)
-				})
-				.click(results_mouse_click_for_enter_press);
-				
-			var span = $("<span></span>").text(tag);
-			$(a).append(span);
-			$(li).append(a);
+			 
+			$(li).append(create_tag_suggest_item(tag));
 			$(ul).append(li);
 		}
 		seesu.ui.make_search_elements_index(true)
@@ -394,17 +385,7 @@ var fast_suggestion_ui = function(r){
 			var tag = sugg_tags[i].tag
 			var li = $("<li class='suggested'></li>");
 			
-			var span = $("<span></span>").html(tag);
-			
-			var a = $("<a></a>")
-				.data('tag',tag)
-				.click(function(e){
-					var tag = $(this).data('tag');
-					render_tracks_by_artists_of_tag(tag)
-				})
-				.click(results_mouse_click_for_enter_press)
-				.append(span);
-			
+			var a = create_tag_suggest_item(tag)
 			
 			if ((i == 0) && ( !fast_enter || fast_enter.is('button') )) {fast_enter = a;}
 			li.append(a);
