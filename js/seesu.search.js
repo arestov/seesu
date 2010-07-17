@@ -112,7 +112,7 @@ var show_artists_results = function(r){
 	
 	var artists = r.results.artistmatches.artist || false; 
 	if (artists){
-		$('#search-nav').text('Suggestions & search');
+		search_nav.text('Suggestions & search');
 		
 		
 		if (artists.length){
@@ -159,7 +159,7 @@ var show_tags_results = function(r){
 	var tags = r.results.tagmatches.tag || false; 
 	if (tags){
 
-		$('#search-nav').text('Suggestions & search')
+		search_nav.text('Suggestions & search')
 		var ul = seesu.ui.tags_results_ul;
 		
 		if (tags.length){
@@ -197,7 +197,7 @@ var show_tracks_results = function(r){
 	var tracks = r.results.trackmatches.track || false; 
 	if (tracks){
 
-		$('#search-nav').text('Suggestions & search')
+		search_nav.text('Suggestions & search')
 		var ul = seesu.ui.tracks_results_ul;
 		
 		if (tracks.length){
@@ -302,7 +302,7 @@ var fast_suggestion_ui = function(r){
 	};
 	
 	searchres.innerHTML = '';
-	$('#search-nav').text('Suggestions')
+	search_nav.text('Suggestions')
 	
 	
 	var fast_enter = null;
