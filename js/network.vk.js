@@ -39,19 +39,19 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 				
 					if (music_list && callback) {
 						cache_ajax.set('vk_h', hash, music_list);
-						if (qcheck == seesu.mp3_quene.big_quene){
+						if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0 || seesu.mp3_quene.big_quene.length == 0){
 							callback(music_list);
 						}
 						
 					} else{
-						if (qcheck == seesu.mp3_quene.big_quene){
+						if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
 							if  (error) {error(xhr);}
 						}
 						
 					}
 				} catch(e) {
 					log(e)
-					if (qcheck == seesu.mp3_quene.big_quene){
+					if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
 						if  (error) {error(xhr);}
 					}
 					
@@ -59,7 +59,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 			} else{
 				check_vk_logout_response(text);
 				
-				if (qcheck == seesu.mp3_quene.big_quene){
+				if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
 					if  (error) {error(xhr);}
 				}
 			
