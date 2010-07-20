@@ -61,7 +61,7 @@ vk_api.prototype = {
 			if (seesu.delayed_search.waiting_for_mp3provider){
 				return false;
 			}
-			
+			var qcheck = seesu.mp3_quene.big_quene;
 			seesu.mp3_quene.add(function(){
 				$.ajax({
 				  url: _this.api_link,
@@ -71,11 +71,18 @@ vk_api.prototype = {
 				  data: params_full,
 				  timeout: 20000,
 				  error: function(xhr){
-				  	if (error) {error(xhr);}
+					if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
+						if (error) {error(xhr);}
+					}
+				  	
+				  	
 				  },
 				  success: function(r){
-					cache_ajax.set('vk_api', params_full.sig, r);
-					if (callback) {callback(r);}
+				  	cache_ajax.set('vk_api', params_full.sig, r);
+				  	if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
+						if (callback) {callback(r);}
+					}
+					
 				  },
 				  complete: function(xhr){
 				  }

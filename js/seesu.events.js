@@ -40,8 +40,8 @@ $(function() {
 	playlist_panel = $('#play-list-panel');
 	
 	arst_meta_info = $('#artist-meta-info');
-	
-	
+	search_nav = $('#search-nav');
+	window.vk_save_pass = $('#vk-save-pass');
 	
 	var flash_settings = $('.internet-flash-settings input');
 		
