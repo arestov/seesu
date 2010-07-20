@@ -93,7 +93,7 @@ var lfm_scrobble = {
 			var response = r.split(/\n/);
 			if (response[0] == 'OK'){
 				_this.s = response[1];
-				w_storage('lfm_scrobble_s', _this.s);
+				w_storage('lfm_scrobble_s', _this.s, true);
 				if (callback) {callback();}
 				log('handshake:' + '\n' + r)
 			} else {
@@ -127,7 +127,7 @@ var lfm_scrobble = {
 			log('nowplay:' + '\n' + r);
 			if (r.match('BADSESSION')){
 				lfm_scrobble.s = null;
-				w_storage('lfm_scrobble_s', '');
+				w_storage('lfm_scrobble_s', '', true);
 				
 				lfm_scrobble.handshake();
 			};
@@ -193,7 +193,7 @@ var lfm_scrobble = {
 			if (!r.match('OK')) {
 				if (r.match('BADSESSION')){
 					lfm_scrobble.s = null;
-					w_storage('lfm_scrobble_s', '');
+					w_storage('lfm_scrobble_s', '', true);
 					
 					lfm_scrobble.handshake();
 				}

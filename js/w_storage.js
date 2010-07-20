@@ -16,7 +16,8 @@
 			return localStorage.getItem(key);
 			
 		}
-		store_set = function(key, value){
+		store_set = function(key, value, important){
+			if (!important){return null}
 			try {
 				return localStorage.setItem(key, value);
 			} catch(e){
@@ -64,12 +65,12 @@
 	
 	
 	
-	window.w_storage = function(key, value){
+	window.w_storage = function(key, value, important){
 		if (key){
 			if (typeof value === 'undefined'){
 				return get_key(key);
 			} else {
-				return set_key(key, stringify(value));
+				return set_key(key, stringify(value), important);
 			}
 		} else {
 			return false

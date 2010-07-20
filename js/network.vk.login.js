@@ -64,12 +64,12 @@ var vk_send_captcha = function(captcha_key, login, pass, callback){
 	});
 }
 var vk_logg_in = function(id, email, sid, login, pass, callback){
-	w_storage('vkid', id);
-	w_storage('vkemail', email);
-	w_storage( 'vk_sid', sid);
+	w_storage('vkid', id, true);
+	w_storage('vkemail', email, true);
+	w_storage( 'vk_sid', sid, true);
 	
 	seesu.vk.big_vk_cookie = 'remixchk=5; remixsid=' + sid;
-	w_storage('big_vk_cookie', seesu.vk.big_vk_cookie);
+	w_storage('big_vk_cookie', seesu.vk.big_vk_cookie, true);
 	if (seesu.vk_api) {
 		seesu.vk_api.viewer_id = seesu.vk_id = id;
 	}
@@ -78,20 +78,20 @@ var vk_logg_in = function(id, email, sid, login, pass, callback){
 	$(document.body).removeClass('vk-needs-login');
 	
 	if (vk_save_pass.attr('checked')){
-		w_storage( 'vk_auth_login', login);
-		w_storage( 'vk_auth_pass', pass);
+		w_storage( 'vk_auth_login', login, true);
+		w_storage( 'vk_auth_pass', pass, true);
 	} else{
-		w_storage( 'vk_auth_login', '');
-		w_storage( 'vk_auth_pass', '');
+		w_storage( 'vk_auth_login', '', true);
+		w_storage( 'vk_auth_pass', '', true);
 	}
 	log('hide vklogin form');
 	if (callback) {callback();}
 };
 var vk_logged_out = function(){
-	w_storage('vkid', '');
-	w_storage('vkemail', '');
-	w_storage('vk_sid', '');
-	w_storage('big_vk_cookie', '');
+	w_storage('vkid', '', true);
+	w_storage('vkemail', '', true);
+	w_storage('vk_sid', '', true);
+	w_storage('big_vk_cookie', '', true);
 	seesu.vk_logged_in = false;
 	log('display vklogin form if need')
 	
