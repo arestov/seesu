@@ -71,7 +71,7 @@ window.seesu =  {
 				},10);
 			});
 			seesu.delayed_search.waiting_for_mp3provider = false;
-			w_storage('mp3-search-way', 'audme');
+			w_storage('mp3-search-way', 'audme', true);
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -87,7 +87,7 @@ window.seesu =  {
 				
 			});
 			seesu.delayed_search.waiting_for_mp3provider = false;
-			w_storage('mp3-search-way', 'vk');
+			w_storage('mp3-search-way', 'vk', true);
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -103,7 +103,7 @@ window.seesu =  {
 				
 			});
 			seesu.delayed_search.waiting_for_mp3provider = false;
-			w_storage('mp3-search-way', 'vk_api');
+			w_storage('mp3-search-way', 'vk_api', true);
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -138,8 +138,8 @@ lfm_auth.ui_logged = function(){
 lfm_auth.login = function(r){
 	lfm_auth.sk = r.session.key;
 	lfm_auth.user_name = r.session.name;
-	w_storage('lfm_user_name', lfm_auth.user_name);
-	w_storage('lfmsk', lfm_auth.sk);
+	w_storage('lfm_user_name', lfm_auth.user_name, true);
+	w_storage('lfmsk', lfm_auth.sk, true);
 	lfm_auth.ui_logged();
 };
 var updating_notify = function(r){

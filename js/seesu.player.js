@@ -201,7 +201,7 @@ function switch_to_next(){
   seesu.player.switch_to('next');
 }
 function change_volume(volume_value){
-  w_storage('vkplayer-volume', volume_value);
+  w_storage('vkplayer-volume', volume_value, true);
   seesu.player.player_volume = volume_value;	
 }
 
