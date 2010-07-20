@@ -17,7 +17,7 @@
 			
 		}
 		store_set = function(key, value, important){
-			if (!important){return null}
+			if (!important){return null;}
 			try {
 				return localStorage.setItem(key, value);
 			} catch(e){
@@ -43,9 +43,9 @@
 			return store_get(key);
 		}
 	}
-	var set_key = function(key, value){
+	var set_key = function(key, value, important){
 		ram_storage[key] = value;
-		return store_set(key, value);
+		return store_set(key, value, important);
 	}
 	
 	

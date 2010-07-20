@@ -76,7 +76,6 @@ var vk_logg_in = function(id, email, sid, login, pass, callback){
 	seesu.vk_logged_in = true;
 	seesu.delayed_search.switch_to_vk();
 	$(document.body).removeClass('vk-needs-login');
-	
 	if (vk_save_pass.attr('checked')){
 		w_storage( 'vk_auth_login', login, true);
 		w_storage( 'vk_auth_pass', pass, true);
