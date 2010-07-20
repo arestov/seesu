@@ -87,11 +87,16 @@ var vk_logg_in = function(id, email, sid, login, pass, callback){
 	if (callback) {callback();}
 };
 var vk_logged_out = function(){
-	w_storage('vkid', '', true);
-	w_storage('vkemail', '', true);
-	w_storage('vk_sid', '', true);
-	w_storage('big_vk_cookie', '', true);
+	var login = w_storage( 'vk_auth_login');
+	var pass = w_storage( 'vk_auth_pass');
+	if (!login || !pass){
+		w_storage('vkid', '', true);
+		w_storage('vkemail', '', true);
+		w_storage('vk_sid', '', true);
+		w_storage('big_vk_cookie', '', true);
+	}
+
 	seesu.vk_logged_in = false;
-	log('display vklogin form if need')
+	log('vk data removed')
 	
 };
