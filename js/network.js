@@ -136,7 +136,12 @@ window.swith_to_provider = function(try_selected){
 		}
 	}
 }
-
+window.swith_to_provider_finish = function(){
+	prov_count_down--;
+	if (prov_count_down == 0){
+		swith_to_provider();
+	}
+}
 try_mp3_providers = function(){
 	
 	
@@ -195,7 +200,18 @@ try_mp3_providers = function(){
 						swith_to_provider(true)
 					} else{
 						vk_logged_out();
-						log('vk mp3 prov faild')
+						log('vk mp3 prov faild');
+						
+						
+						var login = w_storage( 'vk_auth_login');
+						var pass = w_storage( 'vk_auth_pass');
+						if (login && pass){
+							vk_send_captcha('', login, pass, function(){
+								seesu.delayed_search.available.push('vk');
+								swith_to_provider(true);
+							})
+						}
+						
 					}
 				} catch(e) {
 					log(e)
@@ -213,20 +229,14 @@ try_mp3_providers = function(){
 			vk_logged_out();
 		  },
 		  complete: function(xhr){
-			prov_count_down--;
-			if (prov_count_down == 0){
-				swith_to_provider();
-			}
+			swith_to_provider_finish();
 		  }
 
 		});
 	} else{
 		log('vk mp3 prov faild cos not auth')
 		vk_logged_out();
-		prov_count_down--;
-		if (prov_count_down == 0){
-			swith_to_provider();
-		}
+		swith_to_provider_finish();
 	}
 	
 }	

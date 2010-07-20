@@ -1,6 +1,6 @@
 var vk_captcha;
 
-var vk_login = function(login,pass) {
+var vk_login = function(login, pass, callback) {
 	$.ajax({
 	  url: "http://vkontakte.ru/login.php",
 	  global: false,
@@ -22,7 +22,7 @@ var vk_login = function(login,pass) {
 			captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
 			$(document.body).addClass('vk-needs-captcha');
 		} else 	if (vk_id = r.id) {
-			vk_logg_in(vk_id, r.email, r.sid);
+			vk_logg_in(vk_id, r.email, r.sid, login, pass, callback);
 			wait_for_vklogin && wait_for_vklogin();
 		}
 	  },
@@ -31,7 +31,7 @@ var vk_login = function(login,pass) {
 	  }
 	});	
 }
-var vk_send_captcha = function(captcha_key,login,pass){
+var vk_send_captcha = function(captcha_key, login, pass, callback){
 	$.ajax({
 	  url: "http://vkontakte.ru/login.php",
 	  global: false,
@@ -45,7 +45,7 @@ var vk_send_captcha = function(captcha_key,login,pass){
 	  success: function(text){
 		if (text.match(/vklogin/)){
 			vk_captcha = 0;
-			vk_login(login,pass);
+			vk_login(login, pass, callback);
 		} else{
 			try {
 				var r = $.parseJSON(text)
@@ -63,7 +63,7 @@ var vk_send_captcha = function(captcha_key,login,pass){
 	  }
 	});
 }
-var vk_logg_in = function(id,email,sid){
+var vk_logg_in = function(id, email, sid, login, pass, callback){
 	w_storage('vkid', id);
 	w_storage('vkemail', email);
 	w_storage( 'vk_sid', sid);
@@ -77,7 +77,15 @@ var vk_logg_in = function(id,email,sid){
 	seesu.delayed_search.switch_to_vk();
 	$(document.body).removeClass('vk-needs-login');
 	
+	if (vk_save_pass.attr('checked')){
+		w_storage( 'vk_auth_login', login);
+		w_storage( 'vk_auth_pass', pass);
+	} else{
+		w_storage( 'vk_auth_login', '');
+		w_storage( 'vk_auth_pass', '');
+	}
 	log('hide vklogin form');
+	if (callback) {callback();}
 };
 var vk_logged_out = function(){
 	w_storage('vkid', '');

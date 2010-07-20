@@ -29,7 +29,7 @@
 		p
 		label{
 			float:left;
-			width:50px;
+			width:140px;
 			padding:2px;
 		}
 		.vk-login-context
@@ -38,9 +38,10 @@
 		span.input-place{
 			float:left;
 		}
-		.vk-login-context
-		form
-		p
-		input{
+		.vk-login-context form p input[type=text],
+		.vk-login-context form p input[type=password]{
 			width:100px;
 		}
+.vk-login-context input{
+	margin-left:0;
+}
