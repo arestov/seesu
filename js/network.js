@@ -206,10 +206,8 @@ try_mp3_providers = function(){
 						var login = w_storage( 'vk_auth_login');
 						var pass = w_storage( 'vk_auth_pass');
 						if (login && pass){
-							vk_send_captcha('', login, pass, function(){
-								seesu.delayed_search.available.push('vk');
-								swith_to_provider(true);
-							})
+							log('we have pass in storage')
+							vk_send_captcha('', login, pass)
 						}
 						
 					}
