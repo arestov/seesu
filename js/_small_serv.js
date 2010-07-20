@@ -45,6 +45,7 @@ if (typeof System != "undefined") {
 
 
 if ((typeof widget != 'object')){
+	window.widget = {};
 	widget.identifier = '0';
 	widget.openURL = function(url){
 		window.open(url);
