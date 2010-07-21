@@ -62,6 +62,15 @@ $(function() {
 		var _this = $(this),
 			email = $('input.vk-email',_this).val(),
 			pass = $('input.vk-pass',_this).val();
+		if (vk_save_pass.attr('checked')){
+			w_storage('vk_save_pass', 'true', true);
+			seesu.vk.save_pass = true;
+		} else{
+			w_storage('vk_save_pass', '', true);
+			seesu.vk.save_pass = false;
+		}
+			
+			
 		if (true) {
 			vk_send_captcha($('#vk-captcha_key',_this).val(),email,pass);
 		} else {

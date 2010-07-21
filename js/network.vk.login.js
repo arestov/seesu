@@ -76,7 +76,9 @@ var vk_logg_in = function(id, email, sid, login, pass, callback){
 	seesu.vk_logged_in = true;
 	seesu.delayed_search.switch_to_vk();
 	$(document.body).removeClass('vk-needs-login');
-	if (vk_save_pass.attr('checked')){
+	
+	
+	if (seesu.vk.save_pass){
 		w_storage( 'vk_auth_login', login, true);
 		w_storage( 'vk_auth_pass', pass, true);
 	} else{
@@ -86,12 +88,20 @@ var vk_logg_in = function(id, email, sid, login, pass, callback){
 	log('hide vklogin form');
 	if (callback) {callback();}
 };
-var vk_logged_out = function(){
-	w_storage('vkid', '', true);
-	w_storage('vkemail', '', true);
-	w_storage('vk_sid', '', true);
-	w_storage('big_vk_cookie', '', true);
+var vk_logged_out = function(force){
+	var login = w_storage( 'vk_auth_login');
+	var pass = w_storage( 'vk_auth_pass');
+	if (force || !login || !pass){
+		w_storage('vkid', '', true);
+		w_storage('vkemail', '', true);
+		w_storage('vk_sid', '', true);
+		w_storage('big_vk_cookie', '', true);
+		log('vk data has been removed')
+	} else{
+		log('vk data has NOT been  removed')
+	}
+
 	seesu.vk_logged_in = false;
-	log('display vklogin form if need')
+	
 	
 };
