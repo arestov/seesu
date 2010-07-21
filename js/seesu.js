@@ -3,9 +3,9 @@ lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_arti
 window.seesu =  {
 	  version: 1.8,
 	  vk:{
-		"id": w_storage('vkid'),
-		"big_vk_cookie": w_storage('big_vk_cookie'),
-		"set_xhr_headers": function(xhr){
+		id: w_storage('vkid'),
+		big_vk_cookie: w_storage('big_vk_cookie'),
+		set_xhr_headers: function(xhr){
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 			if (seesu.vk.big_vk_cookie){
 				try {
@@ -15,7 +15,8 @@ window.seesu =  {
 				}
 				
 			}
-		}
+		},
+		vk_save_pass: w_storage('vk_save_pass')
 	  },
 	  now_playing:{
 		link: null,
