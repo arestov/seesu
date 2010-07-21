@@ -10,9 +10,9 @@ $(function() {
 	
 	var wgt_urli = $('#widget-url').val(location.href.replace('index.html', ''));
 	
-  $('#close-widget').click(function(){
-    window.close();
-  });
+
+  
+  
 	//see var at top
 	window.slider = document.getElementById('slider');
 	window.srnav = document.getElementById('search_result_nav');
@@ -42,6 +42,20 @@ $(function() {
 	arst_meta_info = $('#artist-meta-info');
 	search_nav = $('#search-nav');
 	window.vk_save_pass = $('#vk-save-pass');
+	
+	  
+  	if ($.browser.opera && ((typeof opera.version == 'function') && (parseFloat(opera.version()) <= 10.1)) ){
+  		
+		$('<a id="close-widget">&times;</a>')
+			.click(function(){
+				window.close();
+			})
+			.prependTo(slider)
+	}
+  
+	
+	
+	
 	
 	var flash_settings = $('.internet-flash-settings input');
 		
