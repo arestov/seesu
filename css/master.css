@@ -291,43 +291,8 @@ display:none;
 	background:#505050;
 	z-index:2;
 }
-.dmain{
-	height:10px;
-	padding-right:10px;
-	}
-	.dleft{
-		float:left;
-		height:100%;
-		width:10px;
-		}
-	.dcenter{
-		overflow:hidden;
-		height:10px;
-		background:#ddd;
-		}
-.dmain,.dleft{
-	background:url(../i/seesu-star.png) no-repeat 0 0;
-	}
-.dtop{
-	background-position:100% 0;
-	}
-	.dtop .dleft{
-		background-position:0 0;
-		}
-	.dtop .dcenter{
-		background-color:#6c1471;
-		height:10px;
-		}
-.dbottom{
-	background-position:100% -10px;
-	}
-	.dbottom .dleft{
-		background-position:0 -10px;
-		}
-	.dbottom .dcenter{
-		height:10px;
-		background-color:#505050;
-		}
+
+
 #promo{
 	font-size:0.8em;
 	height:10px;

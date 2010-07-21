@@ -19,12 +19,11 @@
 		height:20px;
 		font-size:1.4em;
 		line-height:20px;
-		padding:0px 10px 5px 45px;
-		background:#6c1471 url(../i/logo_su.png) no-repeat 8px 0;
+		padding:8px 10px 5px 45px;
+		background:#6c1471 url(../i/logo_su.png) no-repeat 8px 8px;
 		overflow: hidden;
 		-o-text-overflow: ellipsis;
 	}
-
 
 
 		.navs .nav-start em,
