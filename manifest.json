@@ -1,6 +1,6 @@
 {
   "name": "Seesu",
-  "version": "1.85",
+  "version": "1.86",
   "description": "You can find & get any music you need. Type in an artist or genre.",
   "browser_action": {
 	"default_icon": "icon.png",
