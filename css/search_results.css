@@ -59,6 +59,19 @@
 		.search-results-holder a.active,
 		.search-results-holder button.active{
 			background-color:#555  !important;
+			padding-right:23px;
+		}
+		.search-results-holder a.active:after,
+		.search-results-holder button.active:after{
+			content: '↩';
+			position:absolute;
+			top:12px;
+			right:5px;
+			line-height:20px;
+			height:20px;
+			margin-top:-10px;
+			vertical-align:middle;
+			color:#fff;
 		}
 		.search-results-holder a:hover,
 		.search-results-holder button:hover
@@ -114,5 +127,5 @@
 	}
 #search_result p{
 	margin:0;
-	
+	position:relative;
 	}
