@@ -216,7 +216,15 @@ try_mp3_providers = function(){
 				}
 			} else{
 				vk_logged_out();
-				log('vk mp3 prov faild (can not parse)')
+				log('vk mp3 prov faild (can not parse)');
+				
+				var login = w_storage( 'vk_auth_login');
+				var pass = w_storage( 'vk_auth_pass');
+				if (login && pass){
+					log('we have pass in storage')
+					vk_send_captcha('', login, pass)
+				}
+				
 			}
 
 
