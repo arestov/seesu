@@ -61,7 +61,6 @@ a.track-node{
 	display:block;
 	padding:6px 6px;
 	
-	margin-right:5px;
 	border:1px solid transparent;
 	overflow:hidden;
 	}
@@ -86,9 +85,9 @@ a.waiting-full-render.marked-for-play{
 a.download-mp3{
 	text-decoration:none;
 	padding:3px 5px 1px;
-	margin-left:3px;
 	border-bottom:0;
-	float:right;
+	position:absolute;
+	right:0;
 	}
 a.download-mp3:hover{
 	background:#666;
@@ -143,7 +142,7 @@ a.song{
 		display:block;
 	}
 	.track-zoomed .tracks-for-play>ul>li{
-		
+		padding-right:42px;
 	}
 	.track-zoomed .tracks-for-play li.active-play{
 		display:block;
