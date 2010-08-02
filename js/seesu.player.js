@@ -372,7 +372,7 @@ var try_to_use_iframe_sm2p = function(){
 $(function() {
 	play_controls = $('.play-controls');
 	player_holder.append(play_controls)
-	$('#play-list-holder').append(player_holder);
+	$('#tracks-magic').append(player_holder);
 	
 	var a = document.createElement('audio');
 	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){

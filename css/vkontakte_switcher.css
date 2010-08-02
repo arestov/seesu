@@ -1,13 +1,24 @@
-.vk-needs-login
-.vk-login-context{
+.vk-needs-login .vk-login-context{
 	display:block;
 }
 .vk-login-context{
 	clear:left;
 	display:none;
+	
+	padding:8px 0 8px 17px;
+	margin: 0 -10px 20px;
+	background:#faebd7;
+	color:#000;
 	}
-	.vk-login-context
-	.vk-captcha-context{
+	.vk-login-context a.js-serv{
+		color:#83ac1b;
+		border-bottom-color:#dddba9;
+		}
+		.vk-login-context a.js-serv:hover{
+			color:#a1d404;
+			border-bottom-color:#e3e5a0;
+		}
+	.vk-login-context .vk-captcha-context{
 		display:none;
 	}
 	.vk-needs-captcha
@@ -15,33 +26,30 @@
 	.vk-captcha-context{
 		display:block;
 	}
-	.vk-login-context
-	form{
+	.vk-login-context form{
 		padding-left:10px;
 	}
-	.vk-login-context
-	form
-	p{
+	.vk-login-context form p{
 		overflow:hidden;
 		}
-		.vk-login-context
-		form
-		p
-		label{
+		.vk-login-context form p label{
 			float:left;
-			width:140px;
+			width:160px;
 			padding:2px;
 		}
-		.vk-login-context
-		form
-		p
-		span.input-place{
+		.vk-login-context form p span.input-place{
 			float:left;
 		}
 		.vk-login-context form p input[type=text],
 		.vk-login-context form p input[type=password]{
-			width:100px;
+			width:140px;
 		}
 .vk-login-context input{
 	margin-left:0;
+}
+.want-to-sign-in-to-vk .vk-auth{
+	display:block;
+}
+.vk-auth{
+	display:none;
 }

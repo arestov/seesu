@@ -52,30 +52,13 @@ window.seesu =  {
 		"waiting_for_mp3provider" : true,
 		"we_need_mp3provider": function(quene){
 			$(document.body).addClass('vk-needs-login');
-			$('#tracks-search').addClass('want-to-select-mp3-search');
 
 			seesu.delayed_search.start_for_mp3provider = function(){
 				seesu.delayed_search.waiting_for_mp3provider = false;
 				seesu.delayed_search.start_for_mp3provider = null;
 				$(document.body).removeClass('vk-needs-login');
-				$('#tracks-search').removeClass('want-to-select-mp3-search');
 				if (quene && quene.init) {quene.init();}
 			};
-		},
-		"switch_to_audme": function(){
-			seesu.delayed_search.use = seesu.delayed_search.audme;
-			$(function(){
-				
-				setTimeout(function(){
-					$('#mp3-search-switch').find('.mp3searchway').attr('checked', '').filter('#mp3-audme').attr('checked', 'checked');
-					
-				},10);
-			});
-			seesu.delayed_search.waiting_for_mp3provider = false;
-			w_storage('mp3-search-way', 'audme', true);
-			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
-				seesu.delayed_search.start_for_mp3provider();
-			}
 		},
 		"switch_to_vk": function(){
 			seesu.delayed_search.use = seesu.delayed_search.vk;
@@ -323,7 +306,7 @@ var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_durat
 	if (mp3_duration) {
 		var digits = mp3_duration % 60;
 		var track_dur = (Math.round(mp3_duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-		playable_node.prepend($('<span class="song-duration"></span>').text(track_dur + ' '));
+		playable_node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
 	}
 	var playlist_length = playlist_nodes_for.length;
 	if ((playlist_length == 1) || (playable_node.data('want_to_play') == seesu.player.want_to_play) ) {
@@ -348,7 +331,7 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 	
 	
 	if (artsTracks) {
-		artsTracks.html('').append(ul);
+		artsTracks.empty().append(ul);
 	}
 	if (!vk_music_list){
 		$(ul).append('<li>Nothing found</li>');
@@ -391,8 +374,6 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 			
 			$(li)
 				.append(track)
-				.append('<a class="track-zoomin js-serv">&rarr;</a>')
-				.append('<a class="track-zoomout js-serv">&larr;</a>')
 				.appendTo(ul);
 			
 			if (we_have_mp3links) {
