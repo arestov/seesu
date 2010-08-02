@@ -5,7 +5,14 @@ var test_pressed_node = function(original_node, mouseup){
 	if (!mouseup) {
 		if(clicked_node.is('a')) {
 		  if (class_name.match(/song/)){
-			return seesu.player.song_click(clicked_node);
+		  	if (class_name.match(/duration/)){
+		  		seesu.player.song_click(clicked_node.parent());
+			} else{
+				seesu.player.song_click(clicked_node);
+			}
+		  	
+		  	
+			return ;
 		  }
 		  if (class_name.match(/download-mp3/)){
 			widget.openURL(node.href);
