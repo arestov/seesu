@@ -99,7 +99,7 @@ has_music_copy = function(array, entity, from_position){
 
 var mp3_prov_selected = w_storage('mp3-search-way');
 var have_mp3_provider;
-window.prov_count_down = 2;
+window.prov_count_down = 1;
 var provider_selected;
 
 window.swith_to_provider = function(try_selected){

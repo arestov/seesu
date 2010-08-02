@@ -194,72 +194,7 @@
 							
 							</a>
 							<div id="tracks-search" class="search-music-files">
-								
 								<span id="tracks-waiting-for-search"></span> 
-								<a class="js-serv search-music-files">mp3 provider</a>
-								<div id="mp3-search-switch" class="balun">
-									<div class="triangle"></div>
-										<h5>For search mp3 files use</h5>
-										<div class="mp3-search-way-select cant-be-used" id="mp3way-audme">
-											<div>
-												<label for="mp3-audme"><input type="radio" name='mp3searchway' id="mp3-audme" class="mp3-audme mp3searchway"/> audme.ru</label>
-											</div>
-											<p class="description">Do not requires registration. Buggy search. Nice mp3 names.</p>
-										</div>
-										<div class="mp3-search-way-select cant-be-used" id="mp3way-vk-api">
-											<div>
-												<label for="mp3-vk-api"><input type="radio" name='mp3searchway' id="mp3-vk-api" class="mp3-vk-api mp3searchway"/> vkontakte.ru</label>
-											</div>
-											<p class="description">Fast, stable search. Ugly mp3 names.</p>
-										</div>
-										<div class="mp3-search-way-select">
-											<div>
-												<label for="mp3-vk"><input type="radio" name='mp3searchway' id="mp3-vk" class="mp3-vk mp3searchway"/> vkontakte.ru (your account)</label>
-											</div>
-											<p class="description">Requires registration and login. Fast, stable search. Ugly mp3 names. <strong>Use if simple vkontakte.ru search unavailable</strong></p>
-											<div class="vk-login-context mp3-switch">
-												<h3>Type values for vk.com authorization</h3>
-												<form  class="vk-auth" >
-													<p>
-														<label for="email-arts">E-mail</label>
-														<span class="input-place" >
-															<input type="text" class="vk-email" name="email" id="email-arts"/>
-														</span>
-													</p>
-													<p>
-														<label for="pass-arts">Password</label>
-														<span class="input-place" >
-															<input type="text" class="vk-pass"	name="pass" id="pass-arts"/>
-														</span>
-													</p>
-													<p class="error"></p>
-													<p class="vk-captcha-context">
-														<label for="vk-captcha-key">Input code</label>
-														<span class="input-place" >
-															<img src="" alt="captcha"/><br/>
-															<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
-														</span>
-													</p>
-													<p>
-														<label for="vk-save-pass">save pass in&nbsp;Seesu</label>
-														<span class="input-place">
-															<input type="checkbox" name="vk-save-pass" value="" id="vk-save-pass"/>
-														</span>
-													</p>
-													<p><button>enter</button></p>
-												</form>
-												or <a class="vk-reg-ref" >register new account</a> for vk.com
-											</div>
-										</div>
-										
-									
-									<p><input type="button" value="Close message" class="mp3-search-switch-close"/></p>
-									
-									<div class="bal tl"></div>
-									<div class="bal tr"></div>
-									<div class="bal bl"></div>
-									<div class="bal br"></div>
-								</div>
 							</div>
 							
 							<ul class="track-buttons">
@@ -288,7 +223,8 @@
 									<div class="track-button-content">
 										
 										<div class="triangle"></div>
-										<div class="balun" id="enablescrobbling">								<form class="scrobbling-switches" id="scrobbling-switches">
+										<div class="balun" id="enablescrobbling">
+											<form class="scrobbling-switches" id="scrobbling-switches">
 												<p>scrobbling to last.fm</p>
 											
 												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="enable-scrobbling" /> enabled</label></p>	
@@ -312,8 +248,41 @@
 							
 							
 						</div>
-						
-						<div class="tracks-for-play"></div>
+						<div class="vk-login-context">
+							<p>To get mp3 files you need to <a class="js-serv sign-in-to-vk">sign in</a> to vk.com (vkontakte.ru). You may <a class="vk-reg-ref js-serv" >create new account</a> (it's free).</p>
+							<form  class="vk-auth" >
+								<p>
+									<label for="email-arts">E-mail</label>
+									<span class="input-place" >
+										<input type="text" class="vk-email" name="email" id="email-arts"/>
+									</span>
+								</p>
+								<p>
+									<label for="pass-arts">Password</label>
+									<span class="input-place" >
+										<input type="text" class="vk-pass"	name="pass" id="pass-arts"/>
+									</span>
+								</p>
+								<p class="error"></p>
+								<p class="vk-captcha-context">
+									<label for="vk-captcha-key">Captcha value</label>
+									<span class="input-place" >
+										<img src="" alt="captcha"/><br/>
+										<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
+									</span>
+								</p>
+								<p>
+									<label for="vk-save-pass">Save password in&nbsp;Seesu</label>
+									<span class="input-place">
+										<input type="checkbox" name="vk-save-pass" value="" id="vk-save-pass"/>
+									</span>
+								</p>
+								<p><button>enter</button></p>
+							</form>
+						</div>
+						<div id="tracks-magic">
+							<div class="tracks-for-play"></div>
+						</div>
 					</div>
 				</div>
 			</div>

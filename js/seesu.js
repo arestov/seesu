@@ -52,30 +52,13 @@ window.seesu =  {
 		"waiting_for_mp3provider" : true,
 		"we_need_mp3provider": function(quene){
 			$(document.body).addClass('vk-needs-login');
-			$('#tracks-search').addClass('want-to-select-mp3-search');
 
 			seesu.delayed_search.start_for_mp3provider = function(){
 				seesu.delayed_search.waiting_for_mp3provider = false;
 				seesu.delayed_search.start_for_mp3provider = null;
 				$(document.body).removeClass('vk-needs-login');
-				$('#tracks-search').removeClass('want-to-select-mp3-search');
 				if (quene && quene.init) {quene.init();}
 			};
-		},
-		"switch_to_audme": function(){
-			seesu.delayed_search.use = seesu.delayed_search.audme;
-			$(function(){
-				
-				setTimeout(function(){
-					$('#mp3-search-switch').find('.mp3searchway').attr('checked', '').filter('#mp3-audme').attr('checked', 'checked');
-					
-				},10);
-			});
-			seesu.delayed_search.waiting_for_mp3provider = false;
-			w_storage('mp3-search-way', 'audme', true);
-			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
-				seesu.delayed_search.start_for_mp3provider();
-			}
 		},
 		"switch_to_vk": function(){
 			seesu.delayed_search.use = seesu.delayed_search.vk;
@@ -348,7 +331,7 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 	
 	
 	if (artsTracks) {
-		artsTracks.html('').append(ul);
+		artsTracks.empty().append(ul);
 	}
 	if (!vk_music_list){
 		$(ul).append('<li>Nothing found</li>');

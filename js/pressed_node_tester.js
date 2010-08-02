@@ -27,6 +27,10 @@ var test_pressed_node = function(original_node, mouseup){
 			widget.openURL(vkReferer);
 			return false;
 		  }
+		  else if (class_name.match(/sign-in-to-vk/)){
+			clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
+			return false;
+		  }
 		  else if (class_name.match(/flash-s$/)){
 			widget.openURL('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 			return false;

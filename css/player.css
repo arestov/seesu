@@ -1,4 +1,7 @@
-
+#tracks-magic{
+	position:relative;
+	padding-top:1px;
+}
 .player-holder .play-controls{
 	position:absolute;
 	right:55px;
@@ -150,9 +153,7 @@ a.song{
 		display:inline-block;
 		}
 
-	.player-paused.track-zoomed  #play-list-holder .player-holder,
-	.player-played.track-zoomed  #play-list-holder .player-holder,
-	.player-played.track-zoomed  #play-list-holder .player-holder{
+	.player-paused.track-zoomed  #play-list-holder .player-holder,{
 		left:0;
 		
 		}
