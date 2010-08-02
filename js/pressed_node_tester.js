@@ -94,16 +94,7 @@ var test_pressed_node = function(original_node, mouseup){
 		  }
 		 
 		}  else if ((node.nodeName == 'INPUT')) {
-			if (class_name.match(/flash-mess-switch/)) {
-				if(clicked_node.attr('checked')) {
-					w_storage('flash_internet', 'true', true);
-					$(document.body).addClass('flash-internet');
-				} else {
-					w_storage('flash_internet', '', true);
-					$(document.body).removeClass('flash-internet');
-				}
-			} 
-			else if (class_name.match(/tb-mess-wrap-close/)){
+			if (class_name.match(/tb-mess-wrap-close/)){
 				clicked_node.parents('li').removeClass('tb-window');
 			}
 			else if(class_name.match(/mp3-search-switch-close/)){

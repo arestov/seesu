@@ -63,11 +63,7 @@ $(function() {
 		
 	});
 	
-	if (w_storage('flash_internet') == 'true') {
-		$(document.body).addClass('flash-internet');
-		flash_settings.attr('checked', 'checked');
-	}
-	
+
 	
 	
 	var vk_auth = $('.vk-auth').submit(function(){

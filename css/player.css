@@ -217,7 +217,10 @@ p.internet-flash-settings{
 	display:block;
 }
 
-
+.flash-internet
+#flash-secur{
+	display:none;
+}
 
 
 #message-flash-secur{
