@@ -198,6 +198,10 @@ display:none;
 		}
 .artist-image{
 	width:126px;
+	display:none;
+	}
+	.artist-image[src]{
+		display:block;
 	}
 .artist-bio{
 	line-height:1.5em;
