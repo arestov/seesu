@@ -621,7 +621,7 @@ var input_change = function(e){
 $(function(){
 	$('#q').keyup($.debounce(input_change, 100)).mousemove($.debounce(input_change, 100)).change($.debounce(input_change, 100));
 	
-	seesu.ui.search_form = $('form#search');
+	seesu.ui.search_form = $('form#search').submit(function(){return false;});
 	if (seesu.ui.search_form) {
 		$(document).keydown(function(e){
 			if (!slider.className.match(/show-search-results/)) {return}
