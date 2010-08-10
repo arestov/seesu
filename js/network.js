@@ -143,106 +143,77 @@ window.swith_to_provider_finish = function(){
 	}
 }
 try_mp3_providers = function(){
-	
-	
-	/*
-	$.ajax({
-	  url: "http://query.yahooapis.com/v1/public/yql?q=SELECT%20*%20FROM%20html%20WHERE%20url%3D'http%3A%2F%2Faudme.ru'&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys",
-	  success: function(r){
-
-	  	if (!r.query.results){
-	  		log(r.query.results)
-			seesu.delayed_search.available.push('audme');
-			$('#mp3way-audme').removeClass('cant-be-used');
-			log('audme nice')
-			swith_to_provider(true)	
-		} else{
-			log('audme error')
-		}
-		
-		
-		
-	  },
-	  timeout: 7000,
-	  error: function(){
-		log('audme error')
-	  },
-	  complete: function(){
-		prov_count_down--;
-		if (prov_count_down == 0){
-			swith_to_provider();
-		}
-	  }
-	})
-	*/
-  	if (seesu.vk.id && seesu.vk.big_vk_cookie) {
-		$.ajax({
-		  url: "http://vkontakte.ru/feed2.php",
-		  global: false,
-		  type: "GET",
-		  dataType: "text",
-		  timeout: 7000,
-		  beforeSend: seesu.vk.set_xhr_headers,
-		  success: function(text){
-			if (text.match(/^\{/) && text.match(/\}$/)){
-				try {
-					var r = $.parseJSON(text);
-					if (r.user && r.user.id) {
-						if (seesu.vk_api){
-							if (!seesu.vk_api.test_mode) {
-								seesu.vk_api.viewer_id = r.user.id;
+	if (seesu.cross_domain_allowed){
+		if (seesu.vk.id && seesu.vk.big_vk_cookie) {
+			$.ajax({
+			  url: "http://vkontakte.ru/feed2.php",
+			  global: false,
+			  type: "GET",
+			  dataType: "text",
+			  timeout: 7000,
+			  beforeSend: seesu.vk.set_xhr_headers,
+			  success: function(text){
+				if (text.match(/^\{/) && text.match(/\}$/)){
+					try {
+						var r = $.parseJSON(text);
+						if (r.user && r.user.id) {
+							if (seesu.vk_api){
+								if (!seesu.vk_api.test_mode) {
+									seesu.vk_api.viewer_id = r.user.id;
+								}
 							}
+					  		
+							seesu.delayed_search.available.push('vk');
+							seesu.vk_logged_in = true;
+							log('vk mp3 prov ok')
+							swith_to_provider(true)
+						} else{
+							vk_logged_out();
+							log('vk mp3 prov faild');
+							
+						
+							var login = w_storage( 'vk_auth_login');
+							var pass = w_storage( 'vk_auth_pass');
+							if (login && pass){
+								log('we have pass in storage')
+								vk_send_captcha('', login, pass)
+							}
+							
 						}
-				  		
-						seesu.delayed_search.available.push('vk');
-						seesu.vk_logged_in = true;
-						log('vk mp3 prov ok')
-						swith_to_provider(true)
-					} else{
-						vk_logged_out();
-						log('vk mp3 prov faild');
-						
-						
-						var login = w_storage( 'vk_auth_login');
-						var pass = w_storage( 'vk_auth_pass');
-						if (login && pass){
-							log('we have pass in storage')
-							vk_send_captcha('', login, pass)
-						}
-						
+					} catch(e) {
+						log(e)
 					}
-				} catch(e) {
-					log(e)
+				} else{
+					vk_logged_out();
+					log('vk mp3 prov faild (can not parse)');
+					
+					var login = w_storage( 'vk_auth_login');
+					var pass = w_storage( 'vk_auth_pass');
+					if (login && pass){
+						log('we have pass in storage')
+						vk_send_captcha('', login, pass)
+					}
+					
 				}
-			} else{
+	
+	
+	
+			  },
+			  error: function(xhr){
+				log('vk mp3 prov faild with jq error')
 				vk_logged_out();
-				log('vk mp3 prov faild (can not parse)');
-				
-				var login = w_storage( 'vk_auth_login');
-				var pass = w_storage( 'vk_auth_pass');
-				if (login && pass){
-					log('we have pass in storage')
-					vk_send_captcha('', login, pass)
-				}
-				
-			}
-
-
-
-		  },
-		  error: function(xhr){
-			log('vk mp3 prov faild with jq error')
+			  },
+			  complete: function(xhr){
+				swith_to_provider_finish();
+			  }
+	
+			});
+		} else{
+			log('vk mp3 prov faild cos not auth')
 			vk_logged_out();
-		  },
-		  complete: function(xhr){
 			swith_to_provider_finish();
-		  }
-
-		});
-	} else{
-		log('vk mp3 prov faild cos not auth')
-		vk_logged_out();
-		swith_to_provider_finish();
+		}
 	}
+  	
 	
 }	

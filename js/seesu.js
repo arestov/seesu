@@ -1,6 +1,7 @@
 testing = false;
 lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 window.seesu =  {
+	  cross_domain_allowed: !location.protocol.match(/http/),
 	  version: 1.8,
 	  vk:{
 		id: w_storage('vkid'),
@@ -105,9 +106,8 @@ $(function(){
 	if (document.activeElement.nodeName != 'INPUT') {
 		searchfield.focus();
 	}
-	if (!location.protocol.match(/http/)){
-		try_mp3_providers();
-	}
+	try_mp3_providers();
+	
 	
 });
 
@@ -392,7 +392,12 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 };
 var vk_track_search = function(query){
 	nav_artist_page.innerHTML = query;
-
+	
+	if (seesu.delayed_search.waiting_for_mp3provider){
+		mp3_prov_quene = new funcs_quene();
+		seesu.delayed_search.we_need_mp3provider(mp3_prov_quene)
+	}
+	
 	seesu.now_playing.nav = slider.className = 'show-full-nav show-player-page';
 	var used_successful = get_all_tracks(query, render_playlist);
 	if (!used_successful && seesu.delayed_search.waiting_for_mp3provider){
