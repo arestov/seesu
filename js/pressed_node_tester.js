@@ -5,7 +5,14 @@ var test_pressed_node = function(original_node, mouseup){
 	if (!mouseup) {
 		if(clicked_node.is('a')) {
 		  if (class_name.match(/song/)){
-			return seesu.player.song_click(clicked_node);
+		  	if (class_name.match(/duration/)){
+		  		seesu.player.song_click(clicked_node.parent());
+			} else{
+				seesu.player.song_click(clicked_node);
+			}
+		  	
+		  	
+			return ;
 		  }
 		  if (class_name.match(/download-mp3/)){
 			widget.openURL(node.href);
@@ -25,6 +32,10 @@ var test_pressed_node = function(original_node, mouseup){
 		  }
 		  else if (class_name.match(/vk-reg-ref/)){
 			widget.openURL(vkReferer);
+			return false;
+		  }
+		  else if (class_name.match(/sign-in-to-vk/)){
+			clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
 			return false;
 		  }
 		  else if (class_name.match(/flash-s$/)){
@@ -90,16 +101,7 @@ var test_pressed_node = function(original_node, mouseup){
 		  }
 		 
 		}  else if ((node.nodeName == 'INPUT')) {
-			if (class_name.match(/flash-mess-switch/)) {
-				if(clicked_node.attr('checked')) {
-					w_storage('flash_internet', 'true', true);
-					$(document.body).addClass('flash-internet');
-				} else {
-					w_storage('flash_internet', '', true);
-					$(document.body).removeClass('flash-internet');
-				}
-			} 
-			else if (class_name.match(/tb-mess-wrap-close/)){
+			if (class_name.match(/tb-mess-wrap-close/)){
 				clicked_node.parents('li').removeClass('tb-window');
 			}
 			else if(class_name.match(/mp3-search-switch-close/)){

@@ -61,12 +61,16 @@
 
 .start-screen{
 	display:none;
+	max-width: 750px;
+	margin:0 auto;
 	}
 
 	
 	
 #artist-holder{
 	display:none;
+	max-width: 750px;
+	margin:0 auto;
 }
 
 #search-desciption{

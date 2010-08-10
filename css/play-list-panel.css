@@ -9,6 +9,10 @@
 	position:absolute;
 	left:0;
 	top:0;
+	display:none;
+}
+#open-external-playlist[href]{
+	display:inline;
 }
 #tracks-waiting-for-search{
 	position: absolute;
