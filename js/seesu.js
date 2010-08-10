@@ -1,6 +1,7 @@
 testing = false;
 lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 window.seesu =  {
+	  cross_domain_allowed: !location.protocol.match(/http/),
 	  version: 1.8,
 	  vk:{
 		id: w_storage('vkid'),
@@ -105,7 +106,7 @@ $(function(){
 	if (document.activeElement.nodeName != 'INPUT') {
 		searchfield.focus();
 	}
-	if (!location.protocol.match(/http/)){
+	if (seesu.cross_domain_allowed){
 		try_mp3_providers();
 	}
 	

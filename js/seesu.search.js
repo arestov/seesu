@@ -569,8 +569,7 @@ var multiply_suggestion_ui = function(input_value){
 	
 
 }
-var suggest_search = location.protocol.match(/http/) ? 
-	multiply_suggestion_ui : 
+var suggest_search = seesu.cross_domain_allowed ? 
 	function(input_value){
 		
 		var hash = hex_md5(input_value);
@@ -595,7 +594,8 @@ var suggest_search = location.protocol.match(/http/) ?
 			  }
 			});
 		}
-	}
+	} :
+	multiply_suggestion_ui;
 var input_change = function(e){
 	var input_value = e.target.value;
 	if (!input_value) {
