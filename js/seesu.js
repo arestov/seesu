@@ -106,9 +106,8 @@ $(function(){
 	if (document.activeElement.nodeName != 'INPUT') {
 		searchfield.focus();
 	}
-	if (seesu.cross_domain_allowed){
-		try_mp3_providers();
-	}
+	try_mp3_providers();
+	
 	
 });
 
