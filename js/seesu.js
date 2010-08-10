@@ -402,9 +402,7 @@ var vk_track_search = function(query){
 	var used_successful = get_all_tracks(query, render_playlist);
 	if (!used_successful && seesu.delayed_search.waiting_for_mp3provider){
 		if (mp3_prov_quene) {
-			mp3_prov_quene.add((function(node){
-				return function(){get_all_tracks(query, render_playlist, true);};
-			})(node), true)
+			mp3_prov_quene.add(function(){get_all_tracks(query, render_playlist, true);}, true)
 		}
 	}
 	
