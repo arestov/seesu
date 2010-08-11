@@ -2,15 +2,12 @@
 
 
 //var viewer_id 		= seesu.vk_id;
-var vk_api = function(viewer_id, s, api_id, test_mode, cache){
-	this.viewer_id 	= viewer_id;
-	this.s 			= s;
+var vk_api = function(api_id, s, sid, viewer_id, cache){
+	this.sid 	= sid;
 	this.api_id 	= api_id;
-	this.api_link 	= 'http://api.vkontakte.ru/api.php';
-	this.v 			= '2.0';
-	if (test_mode){
-		this.test_mode = true;
-	}
+	this.api_link 	= 'http://api.vk.com/api.php';
+	this.v 			= '3.0';
+	this.viewer_id = viewer_id;
 	if (cache){
 		this.use_cache = true;
 	}
@@ -31,14 +28,12 @@ vk_api.prototype = {
 			params_full.api_id 	= this.api_id;
 			params_full.v		= this.v;
 			params_full.format 	= params_full.format || 'json';
+			params_full.sid 	= this.sid;
 			
-			if (this.test_mode) {
-				params_full.test_mode = 1;
-			}
 			if(apisig || use_cache) {
 				for (var param in params_full) {
-					pv_signature_list.push(param + '=' + params_full[param]);
-					
+					pv_signature_list.push(param + params_full[param]);
+
 				}
 				
 				pv_signature_list.sort();
@@ -67,7 +62,7 @@ vk_api.prototype = {
 				  url: _this.api_link,
 				  global: false,
 				  type: "GET",
-				  dataType: params_full.format || "XML",
+				  dataType: 'JSONP',
 				  data: params_full,
 				  timeout: 20000,
 				  error: function(xhr){

@@ -19,7 +19,7 @@ var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 		var paramsstr = '';
 		if(apisig || use_cache) {
 			for (var param in params_full) {
-				if (!(param == 'format') && !(param == 'callback')){
+				if ((param != 'format') && (param != 'callback')){
 					pv_signature_list.push(param + params_full[param]);
 				}
 			}
