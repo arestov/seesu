@@ -35,7 +35,31 @@ var test_pressed_node = function(original_node, mouseup){
 			return false;
 		  }
 		  else if (class_name.match(/sign-in-to-vk/)){
-			clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
+		  	if (false && seesu.cross_domain_allowed){
+				clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
+			} else{
+				if (!clicked_node.data('popup_listening')){
+					addEvent(window, "message", function(e){
+						if (e.origin == "http://seesu.me") {
+							if (e.data.match(/^set_vk_auth\n/)){
+								var transport = e.source;
+								window.vk_session = JSON.parse(e.data.replace(/^set_vk_auth\n/, ''));
+									
+							} else if (e.data == 'vkapi_auth_callback_ready'){
+								var transport = e.source;
+								transport.postMessage('get_vk_auth', 'http://seesu.me');
+							}
+						} else {
+							return false;
+						}
+					});
+					clicked_node.data('popup_listening', true)
+				}
+				
+				window.open('http://vk.com/login.php?app=1915003&layout=openapi&channel=http://seesu.me/vk_auth.html&settings=8');
+				
+			}
+			
 			return false;
 		  }
 		  else if (class_name.match(/flash-s$/)){

@@ -65,12 +65,6 @@ window.seesu =  {
 			seesu.delayed_search.use = seesu.delayed_search.vk;
 			seesu.mp3_quene = new funcs_quene(1000, 8000 , 7);
 			
-			$(function(){
-				setTimeout(function(){
-					$('#mp3-search-switch').find('.mp3searchway').attr('checked', '').filter('#mp3-vk').attr('checked', 'checked');					
-				},10);
-				
-			});
 			seesu.delayed_search.waiting_for_mp3provider = false;
 			w_storage('mp3-search-way', 'vk', true);
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
@@ -81,12 +75,6 @@ window.seesu =  {
 			seesu.delayed_search.use = seesu.delayed_search.vk_api;
 			seesu.mp3_quene = new funcs_quene(1000, 8000 , 7);
 			
-			$(function(){
-				setTimeout(function(){
-					$('#mp3-search-switch').find('.mp3searchway').attr('checked', '').filter('#mp3-vk-api').attr('checked', 'checked');					
-				},10);
-				
-			});
 			seesu.delayed_search.waiting_for_mp3provider = false;
 			w_storage('mp3-search-way', 'vk_api', true);
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
@@ -102,7 +90,7 @@ lfm_auth = {};
 	
 
 $(function(){
-	searchfield = document.getElementById('q');
+	window.searchfield = document.getElementById('q');
 	if (document.activeElement.nodeName != 'INPUT') {
 		searchfield.focus();
 	}
