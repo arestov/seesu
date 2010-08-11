@@ -1,4 +1,8 @@
-
+var listen_vk_api_callback_window = function(){
+	addEvent(window, "message", function(e){
+		
+	});
+}
 
 
 //var viewer_id 		= seesu.vk_id;
