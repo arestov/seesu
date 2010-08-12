@@ -70,9 +70,6 @@ var vk_logg_in = function(id, email, sid, login, pass, callback){
 	
 	seesu.vk.big_vk_cookie = 'remixchk=5; remixsid=' + sid;
 	w_storage('big_vk_cookie', seesu.vk.big_vk_cookie, true);
-	if (seesu.vk_api) {
-		seesu.vk_api.viewer_id = seesu.vk_id = id;
-	}
 	seesu.vk_logged_in = true;
 	seesu.delayed_search.switch_to_vk();
 	$(document.body).removeClass('vk-needs-login');
