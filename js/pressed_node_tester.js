@@ -43,7 +43,12 @@ var test_pressed_node = function(original_node, mouseup){
 						if (e.origin == "http://seesu.me") {
 							if (e.data.match(/^set_vk_auth\n/)){
 								var transport = e.source;
-								window.vk_session = JSON.parse(e.data.replace(/^set_vk_auth\n/, ''));
+								var vk_session = JSON.parse(e.data.replace(/^set_vk_auth\n/, ''));
+								
+								seesu.vk_api = new vk_api(1915003, vk_session.secret, vk_session.sid, vk_session.mid, true)
+								seesu.delayed_search.switch_to_vk_api();
+								$(document.body).removeClass('vk-needs-login');
+								
 									
 							} else if (e.data == 'vkapi_auth_callback_ready'){
 								var transport = e.source;

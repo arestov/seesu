@@ -26,32 +26,35 @@ window.seesu =  {
 	  ui: {},
 	  xhrs: {},
 	  delayed_search: {
-		'available': [],
-		"use":{
-			"delay_mini": 2500,
-			"delay_big": 5000,
-			"big_delay_interval": 5,
-			"search_tracks": hardcore_vk_search
+		available: [],
+		use:{
+			delay_mini: 2500,
+			delay_big: 5000,
+			big_delay_interval: 5,
+			search_tracks: hardcore_vk_search
 		},
-		"audme":{
-			"delay_mini": 2500,
-			"delay_big": 5000,
-			"big_delay_interval": 5,
-			"search_tracks": audme_search
+		audme:{
+			delay_mini: 2500,
+			delay_big: 5000,
+			big_delay_interval: 5,
+			search_tracks: audme_search
 		},
-		"vk":{
-			"delay_mini": 1000,
-			"delay_big": 8000,
-			"big_delay_interval": 7,
-			"search_tracks": hardcore_vk_search
+		vk:{
+			delay_mini: 1000,
+			delay_big: 8000,
+			big_delay_interval: 7,
+			search_tracks: hardcore_vk_search
 		},
-		"vk_api":{
-			"delay_mini": 1000,
-			"delay_big": 8000,
-			"big_delay_interval": 7
+		vk_api:{
+			delay_mini: 1000,
+			delay_big: 8000,
+			big_delay_interval: 7,
+			search_tracks : function(){
+				seesu.vk_api.audio_search.apply(seesu.vk.vk_api, agruments);
+			}
 		},
-		"waiting_for_mp3provider" : true,
-		"we_need_mp3provider": function(quene){
+		waiting_for_mp3provider : true,
+		we_need_mp3provider: function(quene){
 			$(document.body).addClass('vk-needs-login');
 
 			seesu.delayed_search.start_for_mp3provider = function(){
@@ -61,7 +64,7 @@ window.seesu =  {
 				if (quene && quene.init) {quene.init();}
 			};
 		},
-		"switch_to_vk": function(){
+		switch_to_vk: function(){
 			seesu.delayed_search.use = seesu.delayed_search.vk;
 			seesu.mp3_quene = new funcs_quene(1000, 8000 , 7);
 			
@@ -71,7 +74,7 @@ window.seesu =  {
 				seesu.delayed_search.start_for_mp3provider();
 			}
 		},
-		"switch_to_vk_api": function(){
+		switch_to_vk_api: function(){
 			seesu.delayed_search.use = seesu.delayed_search.vk_api;
 			seesu.mp3_quene = new funcs_quene(1000, 8000 , 7);
 			

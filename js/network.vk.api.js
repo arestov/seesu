@@ -31,13 +31,15 @@ vk_api.prototype = {
 			params_full.method 	= method;
 			params_full.api_id 	= this.api_id;
 			params_full.v		= this.v;
-			params_full.format 	= params_full.format || 'json';
+			params_full.format 	= params_full.format || 'JSON';
 			params_full.sid 	= this.sid;
+			//params_full.callback 	= 'console.log';
 			
 			if(apisig || use_cache) {
 				for (var param in params_full) {
-					pv_signature_list.push(param + params_full[param]);
-
+					if (param != 'sid'){
+						pv_signature_list.push(param  + '=' + params_full[param]);
+					}
 				}
 				
 				pv_signature_list.sort();
@@ -66,7 +68,7 @@ vk_api.prototype = {
 				  url: _this.api_link,
 				  global: false,
 				  type: "GET",
-				  dataType: 'JSONP',
+				  dataType: 'JSON',
 				  data: params_full,
 				  timeout: 20000,
 				  error: function(xhr){
