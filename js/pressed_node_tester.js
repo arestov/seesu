@@ -35,7 +35,7 @@ var test_pressed_node = function(original_node, mouseup){
 			return false;
 		  }
 		  else if (class_name.match(/sign-in-to-vk/)){
-		  	if (false && seesu.cross_domain_allowed){
+		  	if (seesu.cross_domain_allowed){
 				clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
 			} else{
 				if (!clicked_node.data('popup_listening')){

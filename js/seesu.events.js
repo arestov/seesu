@@ -5,6 +5,9 @@ $(function() {
   $(document).click(function(e) {
 	return test_pressed_node(e.target)
   });
+  if (seesu.cross_domain_allowed){
+  	$(document.body).addClass('js-cross-domain-allowed')
+  }
 	flash_secur = $('#flash-secur');
 
 	
