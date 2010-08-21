@@ -11,6 +11,7 @@ var vk_api = function(api_id, s, sid, viewer_id, cache){
 	this.api_id 	= api_id;
 	this.api_link 	= 'http://api.vk.com/api.php';
 	this.v 			= '3.0';
+	this.s = s;
 	this.viewer_id = viewer_id;
 	if (cache){
 		this.use_cache = true;
@@ -33,7 +34,13 @@ vk_api.prototype = {
 			params_full.v		= this.v;
 			params_full.format 	= params_full.format || 'JSON';
 			params_full.sid 	= this.sid;
-			//params_full.callback 	= 'console.log';
+			params_full.callback= create_jsonp_callback(function(r){
+				var r = (typeof r == 'object') ? r : JSON.parse(r);
+				cache_ajax.set('vk_api', params_full.sig, r);
+				if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
+					if (callback) {callback(r);}
+				}
+			});
 			
 			if(apisig || use_cache) {
 				for (var param in params_full) {
@@ -62,30 +69,22 @@ vk_api.prototype = {
 			if (seesu.delayed_search.waiting_for_mp3provider){
 				return false;
 			}
+			
+			
 			var qcheck = seesu.mp3_quene.big_quene;
 			seesu.mp3_quene.add(function(){
 				$.ajax({
 				  url: _this.api_link,
 				  global: false,
 				  type: "GET",
-				  dataType: 'JSON',
+				  dataType: 'JSONP',
 				  data: params_full,
 				  timeout: 20000,
+				  jsonpCallback: params_full.callback, 
 				  error: function(xhr){
 					if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
-						if (error) {error(xhr);}
-					}
-				  	
-				  	
-				  },
-				  success: function(r){
-				  	cache_ajax.set('vk_api', params_full.sig, r);
-				  	if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
-						if (callback) {callback(r);}
-					}
-					
-				  },
-				  complete: function(xhr){
+						if (error && xhr) {error(xhr);}
+					}	
 				  }
 				});
 				if (after_ajax) {after_ajax();}

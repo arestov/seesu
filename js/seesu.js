@@ -46,7 +46,7 @@ window.seesu =  {
 			search_tracks: hardcore_vk_search
 		},
 		vk_api:{
-			delay_mini: 1000,
+			delay_mini: 1200,
 			delay_big: 8000,
 			big_delay_interval: 7,
 			search_tracks : function(){

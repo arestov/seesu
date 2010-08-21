@@ -68,3 +68,15 @@ window.removeEvent = window.addEventListener ?
 	function(elem, evType, fn){
 		elem.detachEvent('on' + evType, fn)
 	};
+(function(){
+	var jsonp_counter = 1;
+	window.create_jsonp_callback = function(func){
+		var func_name = 'jsonp_callback_' + window.jsonp_counter;
+		window[func_name] = func;
+		
+		
+		++window.jsonp_counter;
+		
+		return func_name;
+	}	
+})()	
