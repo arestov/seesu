@@ -11,7 +11,28 @@ window.seesu =  {
 			} else {
 				env.app_type = 'apple_db_widget';
 			} 
+		} else
+		if (typeof chrome === 'object' && location.protocol == 'chrome-extension:'){
+			env.app_type = 'chrome_extension';
+		} else
+		if (location.protocol.match(/http/)){
+			env.app_type = 'web_app';
+		} else 
+		if ($.browser.mozilla){
+			env.app_type = 'firefox_widget';
+		} else{
+			env.app_type = false;
 		}
+		
+		
+		if (!env.app_type){
+			env.app_type = 'unknown_app_type' + (navigator.userAgent && ': ' + navigator.userAgent); 
+		} else{
+			env[env.app_type] = true
+		}
+		
+		
+		
 		return env;
 	  })(),
 	  vk:{
