@@ -3,6 +3,10 @@ lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_arti
 window.seesu =  {
 	  cross_domain_allowed: !location.protocol.match(/http/),
 	  version: 1.8,
+	  env: (function(){
+	  	var env = {};
+		return env;
+	  }(),
 	  vk:{
 		id: w_storage('vkid'),
 		big_vk_cookie: w_storage('big_vk_cookie'),
