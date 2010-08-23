@@ -44,13 +44,14 @@ if (typeof System != "undefined") {
 
 
 
-if ((typeof widget != 'object')){
-	window.widget = {};
-	widget.identifier = '0';
-	widget.openURL = function(url){
-		window.open(url);
+if (typeof widget != 'object'){
+	window.widget = {
+		fake_widget: true,
+		identifier : 0,
+		openURL: function(url){
+			window.open(url);
+		}
 	}
-	
 }
 window.addEvent = window.addEventListener ? 
 	function(elem, evType, fn){
@@ -69,13 +70,12 @@ window.removeEvent = window.addEventListener ?
 		elem.detachEvent('on' + evType, fn)
 	};
 (function(){
-	var jsonp_counter = 1;
+	var jsonp_counter = 0;
 	window.create_jsonp_callback = function(func){
-		var func_name = 'jsonp_callback_' + window.jsonp_counter;
+		var func_name = 'jsonp_callback_' + (++jsonp_counter);
 		window[func_name] = func;
 		
 		
-		++window.jsonp_counter;
 		
 		return func_name;
 	}	

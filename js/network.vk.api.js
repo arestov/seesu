@@ -29,6 +29,8 @@ vk_api.prototype = {
 				params_full = params || {},
 				apisig =  true; // yes, we need signature
 			
+				
+				
 			params_full.method 	= method;
 			params_full.api_id 	= this.api_id;
 			params_full.v		= this.v;
@@ -77,7 +79,7 @@ vk_api.prototype = {
 				  url: _this.api_link,
 				  global: false,
 				  type: "GET",
-				  dataType: 'JSONP',
+				  dataType: 'script',
 				  data: params_full,
 				  timeout: 20000,
 				  jsonpCallback: params_full.callback, 

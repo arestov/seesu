@@ -1,8 +1,19 @@
-testing = false;
-lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
+window.testing = false;
+window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 window.seesu =  {
 	  cross_domain_allowed: !location.protocol.match(/http/),
 	  version: 1.8,
+	  env: (function(){
+		var env = {};
+		if (typeof widget == 'object' && !widget.fake_widget){
+			if ($.browser.opera){
+				env.app_type = 'opera_widget';
+			} else {
+				env.app_type = 'apple_db_widget';
+			} 
+		}
+		return env;
+	  })(),
 	  vk:{
 		id: w_storage('vkid'),
 		big_vk_cookie: w_storage('big_vk_cookie'),
