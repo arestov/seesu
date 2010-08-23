@@ -1,10 +1,10 @@
-hard_testing = false;
+var hard_testing = false;
 
 if (typeof console != 'object'){
 	
 	
 	if  (navigator.userAgent.match(/Opera/)){
-		log = function(){
+		window.log = function(){
 				opera.postError.apply(opera, arguments)
 			
 		}
@@ -28,15 +28,15 @@ if (typeof console != 'object'){
 	
 	console = {};
 	console.log = function(text){
-		log(text)
+		window.log(text)
 	}	
 } else {
-	log = function(text){
+	window.log = function(text){
 		console.log(text)
 	}
 }
 if (typeof System != "undefined") {
-	log = function(text){
+	window.log = function(text){
 		System.Debug.outputString(text);
 	}
 }

@@ -1,4 +1,3 @@
-window.testing = false;
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 window.seesu =  {
 	  cross_domain_allowed: !location.protocol.match(/http/),
@@ -150,6 +149,7 @@ lfm_auth.login = function(r){
 	lfm_auth.ui_logged();
 };
 var updating_notify = function(r){
+	if (!r){return}
 	var cver = r.latest_version.number;
 	if (cver > seesu.version) {
 		var message = 
@@ -719,7 +719,6 @@ var show_artist_info = function(r){
 	artsBio.parent().removeClass('background-changes');
 };
 var update_artist_info = function(artist, not_show_link_to_artist_page){
-	if (testing ) {return;}
 	if (seesu.player.current_artist == artist) {
 		if (not_show_link_to_artist_page){
 			if (seesu.player.top_tracks_link){
