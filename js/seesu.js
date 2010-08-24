@@ -2,42 +2,7 @@ window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/defau
 window.seesu =  {
 	  cross_domain_allowed: !location.protocol.match(/http/),
 	  version: 1.8,
-	  env: (function(){
-		var env = {};
-		if (typeof widget == 'object' && !widget.fake_widget){
-			if ($.browser.opera){
-				env.app_type = 'opera_widget';
-			} else {
-				env.app_type = 'apple_db_widget';
-			} 
-		} else
-		if (typeof chrome === 'object' && location.protocol == 'chrome-extension:'){
-			env.app_type = 'chrome_extension';
-		} else
-		if (location.protocol.match(/http/)){
-			env.app_type = 'web_app';
-		} else 
-		if (typeof btapp == 'object'){
-			env.app_type = 'utorrent_app';
-		} else
-		if ($.browser.mozilla){
-			env.app_type = 'firefox_widget';
-		}  
-		 else{
-			env.app_type = false;
-		}
-		
-		
-		if (!env.app_type){
-			env.app_type = 'unknown_app_type' + (navigator.userAgent && ': ' + navigator.userAgent); 
-		} else{
-			env[env.app_type] = true
-		}
-		
-		
-		
-		return env;
-	  })(),
+	  env: false,
 	  vk:{
 		id: w_storage('vkid'),
 		big_vk_cookie: w_storage('big_vk_cookie'),
