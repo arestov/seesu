@@ -48,22 +48,6 @@ var resizeWidg = function(){
 	  }
 	};
 
-
-	
-	var window_minimum = function(){
-		var current_win_height = window.innerHeight;
-		var current_win_width = window.innerWidth;
-		
-		if (current_win_height < ResizeConfig.MinHeight ){
-			widgetResize(Math.max(current_win_width, ResizeConfig.MinWidth), ResizeConfig.MinHeight )
-		}
-		if (current_win_width < ResizeConfig.MinWidth ){
-			widgetResize(ResizeConfig.MinWidth, Math.max(current_win_height, ResizeConfig.MinHeight)  )
-		}
-		
-	}
-	
-	
 	
 	var resize_body = function(new_body_height){
 		if (typeof new_body_height === 'number'){
@@ -80,23 +64,7 @@ var resizeWidg = function(){
 	
 	var resize_button = $('#resize-handle');
 	
-	
-	if  ($.browser.opera || ($.browser.mozilla && navigator.platform.match(/Win/))){
-		resize_button.mousedown(function(e) {
-			drag(e, 1, 1);
-		})
-		
 
-	} else{
-		addEvent(window, "resize", $.debounce(resize_body, 10));
-		addEvent(window, "resize", $.debounce(window_minimum, 100));
-		resize_button.remove()
-
-	}
-	
-		
-		
-		
 	function widgetResize(width, height) {
 		resize_body(height)
 		window.resizeTo(width, height + size_shift);
@@ -121,7 +89,18 @@ var resizeWidg = function(){
 	  
 	  widgetResize(width, height);
 	}
-	resizeWindow();
+	
+	if  (app_env.as_application){
+		resize_button.mousedown(function(e) {
+			drag(e, 1, 1);
+		})
+		resizeWindow();	
+	} else{
+		resize_button.remove()
+
+	}
+	
+	
 
 	
 })()
