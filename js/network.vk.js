@@ -28,7 +28,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 		  type: "POST",
 		  data: ({'c[section]' : 'audio', 'c[q]' : query}),
 		  dataType: "text",
-		  beforeSend: seesu.vk.set_xhr_headers,
+		  beforeSend: seesu.env.apple_db_widget ? seesu.vk.set_xhr_headers : undefined,
 		  complete: function(xhr){
 			var text = xhr.responseText;
 			if (text.match(/^\{/) && text.match(/\}$/)){

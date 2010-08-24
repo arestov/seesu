@@ -24,7 +24,7 @@ var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 		var scroll_up = seesu.ui.scrolling_viewport.scrollTop();
 		var scrolling_viewport_height = seesu.ui.scrolling_viewport.height()
 		
-		var container_postion = scroll_up + $(searchres).position().top;
+		var container_postion = scroll_up + searchres.position().top;
 		
 		var node_position = node.parent().position().top + container_postion;
 		
@@ -46,7 +46,7 @@ var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 	}
 }
 seesu.ui.make_search_elements_index = function(remark_enter_press, after_user){
-	seesu.ui.search_elements = $(searchres).find('a:not(.nothing-found), button');
+	seesu.ui.search_elements = searchres.find('a:not(.nothing-found), button');
 	for (var i=0 , l = seesu.ui.search_elements.length; i < l; i++) {
 		$(seesu.ui.search_elements[i]).data('search_element_index', i).data('search_elements_length', l)
 	};
@@ -127,6 +127,10 @@ var show_artists_results = function(r, start, end){
 	
 	var ul = seesu.ui.arts_results_ul;
 	
+	var source_query = r.results['@attr']['for'];
+	if (search_input.val() != source_query ){
+		return
+	}
 	
 	var artists = r.results.artistmatches.artist || false; 
 	if (artists && (start ? (artists.length && (artists.length > start)) : true)){
@@ -202,6 +206,13 @@ var track_search = function(track_query, start){
 var show_tags_results = function(r, start, end){
 	
 	if (!r) {return}
+	
+	var source_query = r.results['@attr']['for'];
+	if (search_input.val() != source_query ){
+		return
+	}
+	
+	
 	var tags = r.results.tagmatches.tag || false; 
 	if (tags  && (start ? (tags.length && (tags.length > start)) : true)){
 
@@ -255,6 +266,14 @@ var show_tags_results = function(r, start, end){
 }
 var show_tracks_results = function(r, start, end){
 	if (!r) {return}
+	
+	
+	var source_query = r.results['@attr']['for'];
+	if (search_input.val() != source_query ){
+		return
+	}
+	
+	
 	var tracks = r.results.trackmatches.track || false; 
 	if (tracks && (start ? (tracks.length && (tracks.length > start)) : true)){
 
@@ -395,7 +414,7 @@ var fast_suggestion_ui = function(r){
 		}
 	};
 	
-	$(searchres).empty();
+	searchres.empty();
 	search_nav.text('Suggestions')
 	
 	
@@ -403,7 +422,7 @@ var fast_suggestion_ui = function(r){
 	
 	var clone = null;
 	
-	$(searchres).append('<h4>Artists</h4>');
+	searchres.append('<h4>Artists</h4>');
 	clone = seesu.ui.buttons.search_artists.clone(true);
 	
 	
@@ -426,12 +445,12 @@ var fast_suggestion_ui = function(r){
 		$('<li></li').append(clone.find('span').text('Search «' +source_query + '» in artists').end().addClass("search-button")).appendTo(ul_arts);
 	}
 	if (!fast_enter) {fast_enter = clone;}
-	$(searchres).append(ul_arts);
+	searchres.append(ul_arts);
 	
 	
 	
 	
-	$(searchres).append('<h4>Tracks</h4>');
+	searchres.append('<h4>Tracks</h4>');
 	 clone = seesu.ui.buttons.search_tracks.clone(true);
 	
 	var ul_tracks = seesu.ui.tracks_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
@@ -459,7 +478,7 @@ var fast_suggestion_ui = function(r){
 		$('<li></li').append(clone.find('span').text('Search «' +source_query + '» in tracks').end().addClass("search-button")).appendTo(ul_tracks);
 	}
 	if (!fast_enter) {fast_enter = clone;}
-	$(searchres).append(ul_tracks);
+	searchres.append(ul_tracks);
 	
 
 	
@@ -469,7 +488,7 @@ var fast_suggestion_ui = function(r){
 	
 	
 	
-	$(searchres).append('<h4>Tags</h4>');
+	searchres.append('<h4>Tags</h4>');
 	clone = seesu.ui.buttons.search_tags.clone(true);
 	
 	var ul_tags = seesu.ui.tags_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
@@ -490,7 +509,7 @@ var fast_suggestion_ui = function(r){
 		$('<li></li').append(clone.find('span').text('Search «' +source_query + '» in tags').end().addClass("search-button")).appendTo(ul_tags);
 	}
 	if (!fast_enter) {fast_enter = clone;}
-	$(searchres).append(ul_tags);
+	searchres.append(ul_tags);
 	
 
 	
@@ -510,33 +529,33 @@ var multiply_suggestion_ui = function(input_value){
 	seesu.xhrs.multiply_suggestions = [];
 	
 	
-	$(searchres).empty();
+	searchres.empty();
 	search_nav.text('Suggestions')
 	
 
 	
-	$(searchres).append('<h4>Artists</h4>');
+	searchres.append('<h4>Artists</h4>');
 	var arts_clone = seesu.ui.buttons.search_artists.clone(true).data('finishing_results', 5);
 	log('finishing_results test: ' + arts_clone.data('finishing_results'))
 	var ul_arts = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
 	seesu.ui.buttons_li.search_artists = $('<li></li').append(arts_clone.find('span').text('Search «' +source_query + '» in artists').end().addClass("search-button")).appendTo(ul_arts);
-	$(searchres).append(ul_arts);
+	searchres.append(ul_arts);
 	
 	
 
-	$(searchres).append('<h4>Tracks</h4>');
+	searchres.append('<h4>Tracks</h4>');
 	var track_clone = seesu.ui.buttons.search_tracks.clone(true).data('finishing_results', 5);
 	var ul_tracks = seesu.ui.tracks_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
 	seesu.ui.buttons_li.search_tracks = $('<li></li').append(track_clone.find('span').text('Search «' +source_query + '» in tracks').end().addClass("search-button")).appendTo(ul_tracks);
-	$(searchres).append(ul_tracks);
+	searchres.append(ul_tracks);
 	
 
 
-	$(searchres).append('<h4>Tags</h4>');
+	searchres.append('<h4>Tags</h4>');
 	var tags_clone = seesu.ui.buttons.search_tags.clone(true).data('finishing_results', 5);
 	var ul_tags = seesu.ui.tags_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
 	seesu.ui.buttons_li.search_tags = $('<li></li').append(tags_clone.find('span').text('Search «' +source_query + '» in tags').end().addClass("search-button")).appendTo(ul_tags);
-	$(searchres).append(ul_tags);
+	searchres.append(ul_tags);
 	
 
 	$('<p></p').append(seesu.ui.buttons.search_vkontakte).appendTo(searchres);
@@ -589,20 +608,21 @@ var suggest_search = seesu.cross_domain_allowed ?
 			  error: function(){
 			  },
 			  success: function(r){
-			  	cache_ajax.set('lfm_fs', hash, r);
-			  	fast_suggestion_ui(r)
+				cache_ajax.set('lfm_fs', hash, r);
+				fast_suggestion_ui(r)
 			  }
 			});
 		}
 	} :
 	multiply_suggestion_ui;
 var input_change = function(e){
-	var input_value = e.target.value;
+	var input = (e && e.target) || e; //e can be EVENT or INPUT  
+	var input_value = input.value;
 	if (!input_value) {
 		slider.className = "show-start";
-		return
+		return;
 	}
-	if ($(e.target).data('lastvalue') == input_value){return}
+	if ($(input).data('lastvalue') == input_value){return}
 	
 	if (seesu.xhrs.fast_search_suggest) {seesu.xhrs.fast_search_suggest.abort()}
 	if (seesu.xhrs.multiply_suggestions){
@@ -619,7 +639,12 @@ var input_change = function(e){
 	$(e.target).data('lastvalue', input_value)
 }
 $(function(){
-	$('#q').keyup($.debounce(input_change, 100)).mousemove($.debounce(input_change, 100)).change($.debounce(input_change, 100));
+	window.searchres = $('#search_result');
+	window.search_nav = $('#search-nav');
+	window.search_input = $('#q')
+		.keyup($.debounce(input_change, 100))
+		.mousemove($.debounce(input_change, 100))
+		.change($.debounce(input_change, 100));
 	
 	seesu.ui.search_form = $('form#search').submit(function(){return false;});
 	if (seesu.ui.search_form) {
@@ -669,5 +694,10 @@ $(function(){
 				}
 			}
 		})
+	}
+	
+	var ext_search_query = search_input.val();
+	if (ext_search_query) {
+		input_change(search_input[0])
 	}
 })

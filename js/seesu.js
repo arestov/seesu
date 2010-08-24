@@ -17,9 +17,13 @@ window.seesu =  {
 		if (location.protocol.match(/http/)){
 			env.app_type = 'web_app';
 		} else 
+		if (typeof btapp == 'object'){
+			env.app_type = 'utorrent_app';
+		} else
 		if ($.browser.mozilla){
 			env.app_type = 'firefox_widget';
-		} else{
+		}  
+		 else{
 			env.app_type = false;
 		}
 		
@@ -54,7 +58,9 @@ window.seesu =  {
 		link: null,
 		nav: null
 	  },
-	  ui: {},
+	  ui: {
+	  	allow_mp3_downloading: true
+	  },
 	  xhrs: {},
 	  delayed_search: {
 		available: [],
@@ -101,6 +107,7 @@ window.seesu =  {
 			
 			seesu.delayed_search.waiting_for_mp3provider = false;
 			w_storage('mp3-search-way', 'vk', true);
+			seesu.ui.allow_mp3_downloading = true;
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -111,6 +118,7 @@ window.seesu =  {
 			
 			seesu.delayed_search.waiting_for_mp3provider = false;
 			w_storage('mp3-search-way', 'vk_api', true);
+			seesu.ui.allow_mp3_downloading = false;
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -322,9 +330,11 @@ var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_durat
 	playlist_nodes_for.push(playable_node);
 	
 	
+	if (seesu.ui.allow_mp3_downloading){
+		var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  http_link });
+		mp3.insertBefore(playable_node);
+	}
 	
-	var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href': http_link });
-	mp3.insertBefore(playable_node);
 	
 	if (mp3_duration) {
 		var digits = mp3_duration % 60;
