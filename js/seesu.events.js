@@ -12,7 +12,8 @@ $(function() {
 
 	
 	var wgt_urli = $('#widget-url').val(location.href.replace('index.html', ''));
-	
+	window.seesu_me_link = $('#seesu-me-link');
+	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('utm_source=seesu%2Bapplication', 'utm_source=' + seesu.env.app_type))
 
   
   
@@ -24,7 +25,7 @@ $(function() {
 		slider.className = "show-start";
 		searchfield.focus();
 	};
-	window.searchres = document.getElementById('search_result');
+	
 	window.nav_artist_page = document.getElementById('nav_artist_page');
 	window.trk_page_nav = document.getElementById('nav_tracks_page');
 	
@@ -43,7 +44,6 @@ $(function() {
 	playlist_panel = $('#play-list-panel');
 	
 	arst_meta_info = $('#artist-meta-info');
-	search_nav = $('#search-nav');
 	window.vk_save_pass = $('#vk-save-pass');
 	
 	  

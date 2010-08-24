@@ -125,7 +125,7 @@ var test_pressed_node = function(original_node, mouseup){
 			return false
 		  }
 		  else if (class_name.match(/seesu-me-link/)){
-		  	widget.openURL('http://seesu.me/')
+		  	widget.openURL(node.href)
 		  	return false;
 		  }
 		 

@@ -1,4 +1,3 @@
-window.testing = false;
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 window.seesu =  {
 	  cross_domain_allowed: !location.protocol.match(/http/),
@@ -11,7 +10,32 @@ window.seesu =  {
 			} else {
 				env.app_type = 'apple_db_widget';
 			} 
+		} else
+		if (typeof chrome === 'object' && location.protocol == 'chrome-extension:'){
+			env.app_type = 'chrome_extension';
+		} else
+		if (location.protocol.match(/http/)){
+			env.app_type = 'web_app';
+		} else 
+		if (typeof btapp == 'object'){
+			env.app_type = 'utorrent_app';
+		} else
+		if ($.browser.mozilla){
+			env.app_type = 'firefox_widget';
+		}  
+		 else{
+			env.app_type = false;
 		}
+		
+		
+		if (!env.app_type){
+			env.app_type = 'unknown_app_type' + (navigator.userAgent && ': ' + navigator.userAgent); 
+		} else{
+			env[env.app_type] = true
+		}
+		
+		
+		
 		return env;
 	  })(),
 	  vk:{
@@ -34,7 +58,9 @@ window.seesu =  {
 		link: null,
 		nav: null
 	  },
-	  ui: {},
+	  ui: {
+	  	allow_mp3_downloading: true
+	  },
 	  xhrs: {},
 	  delayed_search: {
 		available: [],
@@ -81,6 +107,7 @@ window.seesu =  {
 			
 			seesu.delayed_search.waiting_for_mp3provider = false;
 			w_storage('mp3-search-way', 'vk', true);
+			seesu.ui.allow_mp3_downloading = true;
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -91,6 +118,7 @@ window.seesu =  {
 			
 			seesu.delayed_search.waiting_for_mp3provider = false;
 			w_storage('mp3-search-way', 'vk_api', true);
+			seesu.ui.allow_mp3_downloading = false;
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -129,6 +157,7 @@ lfm_auth.login = function(r){
 	lfm_auth.ui_logged();
 };
 var updating_notify = function(r){
+	if (!r){return}
 	var cver = r.latest_version.number;
 	if (cver > seesu.version) {
 		var message = 
@@ -301,9 +330,11 @@ var make_node_playable = function(node, http_link, playlist_nodes_for, mp3_durat
 	playlist_nodes_for.push(playable_node);
 	
 	
+	if (seesu.ui.allow_mp3_downloading){
+		var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  http_link });
+		mp3.insertBefore(playable_node);
+	}
 	
-	var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href': http_link });
-	mp3.insertBefore(playable_node);
 	
 	if (mp3_duration) {
 		var digits = mp3_duration % 60;
@@ -698,7 +729,6 @@ var show_artist_info = function(r){
 	artsBio.parent().removeClass('background-changes');
 };
 var update_artist_info = function(artist, not_show_link_to_artist_page){
-	if (testing ) {return;}
 	if (seesu.player.current_artist == artist) {
 		if (not_show_link_to_artist_page){
 			if (seesu.player.top_tracks_link){
