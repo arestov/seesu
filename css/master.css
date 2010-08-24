@@ -410,9 +410,19 @@ display:none;
 	top:5px;
 	left:0;
 	}
+	
 	#sm2-container.swf_error{
 		display:none;
-	}
+		}
+
+html.chrome-extension{
+	position:static;
+}
+html.chrome-extension, .chrome-extension body{
+	height:100%  !important;
+	
+}
+
 #now-play-b{
 	margin-top:2em;
 }
