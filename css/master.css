@@ -410,15 +410,14 @@ display:none;
 	top:5px;
 	left:0;
 	}
-	
-#sm2-container.swf_error{
+	#sm2-container.swf_error{
 		display:none;
-	}
+		}
 
-html{
+html.chrome-extension{
 	position:static;
 }
-html, body{
+html.chrome-extension, .chrome-extension body{
 	height:100%  !important;
 	
 }
