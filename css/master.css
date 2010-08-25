@@ -415,10 +415,10 @@ display:none;
 		display:none;
 		}
 
-html.chrome-extension{
+html:not(.as-application){
 	position:static;
 }
-html.chrome-extension, .chrome-extension body{
+html:not(.as-application), :not(.as-application)  body{
 	height:100%  !important;
 	
 }
