@@ -1,21 +1,13 @@
 body{
-	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
-	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
-}
-body{
 	margin:0;
 	padding:0;
 	color:#eee;
-	overflow:hidden;
+	background-color: #505050;
 	height:596px;
 	font-size:12px;
 	font-family:Helvetica , Arial ,sans-serif;
 	}
-html{
-	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
-	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
-	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
-}
+
 label{cursor:pointer}
 input[type=text]{
 	background:#b2b2b2;

@@ -1,7 +1,24 @@
+body.as-application{
+	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
+	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
+	
+	background-color:transparent;
+	overflow:hidden;
+}
+
+
+html.as-application{
+	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
+	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
+	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
+}
+
+
 #slider{
 	position:static ;
 }
-#slider-materail{
+
+.as-application #slider-materail{
 	background-color: #505050;
 	position: absolute;
 	left: 0px;
@@ -13,7 +30,7 @@
 	position: absolute;
 	bottom: 10px;
 }
-#slider #screens{
+.as-application #slider #screens{
 	position: absolute;
 	top: 0px;
 	left: 0px;
