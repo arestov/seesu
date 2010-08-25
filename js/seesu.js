@@ -1,7 +1,7 @@
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 window.seesu =  {
 	  cross_domain_allowed: !location.protocol.match(/http/),
-	  version: 1.8,
+	  version: 1.86,
 	  env: app_env,
 	  vk:{
 		id: w_storage('vkid'),
