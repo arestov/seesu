@@ -1,20 +1,14 @@
 body{
-	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
-	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
-}
-body{
 	margin:0;
 	padding:0;
 	color:#eee;
-	overflow:hidden;
+	
 	height:596px;
 	font-size:12px;
 	font-family:Helvetica , Arial ,sans-serif;
 	}
-html{
-	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
-	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
-	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
+:not(.as-application) body{
+	background-color: #505050;
 }
 label{cursor:pointer}
 input[type=text]{
@@ -155,6 +149,7 @@ display:none;
 	
 .search-start{
 	margin-bottom:1em;
+	max-width:562px;
 	}
 	.search-start
 	form{
@@ -178,13 +173,24 @@ display:none;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
 .info{overflow:hidden;padding-left:8px}
-.info
-.image{
-	float:left;
+.info .image{
 	margin-right:13px;
 	margin-bottom:7px;
 	}
-
+@media (min-width:600px) {
+	.info .image{
+		float:left;
+		}
+	.desc-name{
+		float:left;
+	}
+	.artist-albums ul li{
+		float:left;
+		}
+	.artist-albums ul li img{
+			float:left;
+		}
+}
 
 .play-list-holder{
 	padding-top:30px;
@@ -234,7 +240,6 @@ display:none;
 }		
 .desc-name{
 	min-height:1.5em;
-	float:left;
 	width:126px;
 	margin-right: 13px;
 	text-align:right;
@@ -250,7 +255,6 @@ display:none;
 	padding-left:10px;
 	}
 	.artist-albums ul li{
-		float:left;
 		width:190px;
 		margin-bottom:30px;
 		}
@@ -269,7 +273,6 @@ display:none;
 			display:none;
 		}
 		.artist-albums ul li img{
-			float:left;
 			width:64px;
 			min-height:64px;
 			margin-right:4px;
@@ -318,15 +321,24 @@ display:none;
 	
 	}
 #search #q{
-	width:500px;
+	width:100%;
 	box-sizing:border-box;
+}
+@media (min-width:700px){
+	
 }
 #search #search-p{
 	margin:10px 0 5px;
+	overflow:hidden;
 	}
-	#search #search-p span{
-		display:inline-block;
+	#search #search-p label span.lbl{
+		float:left;
 		width:60px;
+		font-style:normal;
+	}
+	#search #search-p label span.inpt{
+		overflow:hidden;
+		display:block;
 	}
 #search-desciption{
 	margin-top:0;
@@ -414,10 +426,10 @@ display:none;
 		display:none;
 		}
 
-html.chrome-extension{
+html:not(.as-application){
 	position:static;
 }
-html.chrome-extension, .chrome-extension body{
+html:not(.as-application), :not(.as-application)  body{
 	height:100%  !important;
 	
 }

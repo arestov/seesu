@@ -1,7 +1,41 @@
+body.as-application{
+	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
+	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
+	
+	background-color:transparent;
+	overflow:hidden;
+}
+
+
+html.as-application{
+	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
+	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
+	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
+}
+
+
 #slider{
 	position:static ;
+	padding:0 0 0;
 }
-#slider-materail{
+
+
+	
+	#slider .screens{
+		
+		
+		padding:13px 10px 0px;
+		position:relative;
+		z-index:2;
+		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
+		}
+	.as-application #slider .screens{
+		overflow-y:auto;
+		
+		overflow-x:hidden;
+		height:536px;
+		}
+.as-application #slider-materail{
 	background-color: #505050;
 	position: absolute;
 	left: 0px;
@@ -9,11 +43,15 @@
 	bottom: 0px;
 	top: 33px;
 }
-#promo{
+.as-application #promo{
 	position: absolute;
-	bottom: 10px;
 }
-#slider #screens{
+#promo{
+	
+	bottom: 10px;
+	z-index:3;
+}
+.as-application #slider #screens{
 	position: absolute;
 	top: 0px;
 	left: 0px;

@@ -153,7 +153,7 @@ a.song{
 		display:inline-block;
 		}
 
-	.player-paused.track-zoomed  #play-list-holder .player-holder,{
+	.player-paused.track-zoomed  #play-list-holder .player-holder{
 		left:0;
 		
 		}
