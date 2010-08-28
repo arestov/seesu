@@ -184,17 +184,15 @@ display:none;
 	}
 	.desc-name{
 		float:left;
+		min-height:1.5em;
+		width:126px;
+		text-align:right;
 	}
 	.desc-text{
 		overflow:hidden;
 		display: table-cell;
 	}
-	.artist-albums ul li{
-		float:left;
-		}
-	.artist-albums ul li img{
-			float:left;
-		}
+	
 }
 
 .play-list-holder{
@@ -244,10 +242,10 @@ display:none;
 	margin:0.5em 0;
 }		
 .desc-name{
-	min-height:1.5em;
-	width:126px;
 	margin-right: 13px;
-	text-align:right;
+}
+.artist-albums .desc-name{
+	float:left;
 }
 .desc-text{
 	padding-bottom:2px;
@@ -257,6 +255,13 @@ display:none;
 	margin:15px 0;
 	padding-left:10px;
 	}
+	.artist-albums ul li{
+		float:left;
+		}
+	.artist-albums ul li img{
+			float:left;
+		}
+		
 	.artist-albums ul li{
 		width:190px;
 		margin-bottom:30px;
