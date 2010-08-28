@@ -2,12 +2,14 @@ body{
 	margin:0;
 	padding:0;
 	color:#eee;
-	background-color: #505050;
+	
 	height:596px;
 	font-size:12px;
 	font-family:Helvetica , Arial ,sans-serif;
 	}
-
+:not(.as-application) body{
+	background-color: #505050;
+}
 label{cursor:pointer}
 input[type=text]{
 	background:#b2b2b2;

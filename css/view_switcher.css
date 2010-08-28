@@ -1,26 +1,13 @@
-#slider{
-	padding:0 0 0;
-	position:relative;
-	}
-	#slider
-	.screens{
-		overflow-y:auto;
-		overflow-x:hidden;
-		height:536px;
-		padding:13px 10px 0px;
-		position:relative;
-		z-index:2;
-		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
-		}
+
 
 	.navs{
 		
 		font-family:"Trebuchet MS", sans-serif;
-		height:20px;
+		min-height:20px;
 		font-size:1.4em;
-		line-height:20px;
-		padding:8px 10px 5px 45px;
-		background:#6c1471 url(../i/logo_su.png) no-repeat 8px 8px;
+		line-height:28px;
+		padding:4px 10px 1px 45px;
+		background:#6c1471 url(../i/logo_su.png) no-repeat 8px 9px;
 		overflow: hidden;
 		-o-text-overflow: ellipsis;
 	}
