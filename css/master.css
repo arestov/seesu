@@ -334,6 +334,7 @@ display:none;
 	#search #search-p label span.lbl{
 		float:left;
 		width:60px;
+		padding-top:4px;
 		font-style:normal;
 	}
 	#search #search-p label span.inpt{
