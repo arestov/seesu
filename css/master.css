@@ -9,6 +9,7 @@ body{
 	}
 :not(.as-application) body{
 	background-color: #505050;
+	padding-bottom:15px;
 }
 label{cursor:pointer}
 input[type=text]{
@@ -180,9 +181,13 @@ display:none;
 @media (min-width:600px) {
 	.info .image{
 		float:left;
-		}
+	}
 	.desc-name{
 		float:left;
+	}
+	.desc-text{
+		overflow:hidden;
+		display: table-cell;
 	}
 	.artist-albums ul li{
 		float:left;
@@ -245,8 +250,6 @@ display:none;
 	text-align:right;
 }
 .desc-text{
-	overflow:hidden;
-	display: table-cell;
 	padding-bottom:2px;
 }	
 .artist-albums ul{
