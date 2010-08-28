@@ -149,6 +149,7 @@ display:none;
 	
 .search-start{
 	margin-bottom:1em;
+	max-width:562px;
 	}
 	.search-start
 	form{
@@ -176,7 +177,7 @@ display:none;
 	margin-right:13px;
 	margin-bottom:7px;
 	}
-@media (max-width:600px) {
+@media (min-width:600px) {
 	.info .image{
 		float:left;
 		}
@@ -320,8 +321,12 @@ display:none;
 	
 	}
 #search #q{
-	width:500px;
+	width:100%;
+	margin-left:-60px;
 	box-sizing:border-box;
+}
+@media (min-width:700px){
+	
 }
 #search #search-p{
 	margin:10px 0 5px;
