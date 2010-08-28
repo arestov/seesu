@@ -322,7 +322,6 @@ display:none;
 	}
 #search #q{
 	width:100%;
-	margin-left:-60px;
 	box-sizing:border-box;
 }
 @media (min-width:700px){
@@ -330,10 +329,16 @@ display:none;
 }
 #search #search-p{
 	margin:10px 0 5px;
+	overflow:hidden;
 	}
-	#search #search-p span{
-		display:inline-block;
+	#search #search-p label span.lbl{
+		float:left;
 		width:60px;
+		font-style:normal;
+	}
+	#search #search-p label span.inpt{
+		overflow:hidden;
+		display:block;
 	}
 #search-desciption{
 	margin-top:0;
