@@ -31,7 +31,7 @@ var test_pressed_node = function(original_node, mouseup){
 			$(document.body).removeClass('track-zoomed')
 		  }
 		  else if (class_name.match(/vk-reg-ref/)){
-			widget.openURL(vkReferer);
+			widget.openURL(vkReferer || 'http://vk.com/reg198193');
 			return false;
 		  }
 		  else if (class_name.match(/sign-in-to-vk/)){
@@ -39,25 +39,7 @@ var test_pressed_node = function(original_node, mouseup){
 				clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
 			} else{
 				if (!clicked_node.data('popup_listening')){
-					addEvent(window, "message", function(e){
-						if (e.origin == "http://seesu.me") {
-							if (e.data.match(/^set_vk_auth\n/)){
-								var transport = e.source;
-								var vk_session = JSON.parse(e.data.replace(/^set_vk_auth\n/, ''));
-								
-								seesu.vk_api = new vk_api(1915003, vk_session.secret, vk_session.sid, vk_session.mid, true)
-								seesu.delayed_search.switch_to_vk_api();
-								$(document.body).removeClass('vk-needs-login');
-								
-									
-							} else if (e.data == 'vkapi_auth_callback_ready'){
-								var transport = e.source;
-								transport.postMessage('get_vk_auth', 'http://seesu.me');
-							}
-						} else {
-							return false;
-						}
-					});
+					addEvent(window, "message", listen_vk_api_callback_window);
 					clicked_node.data('popup_listening', true)
 				}
 				
