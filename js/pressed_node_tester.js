@@ -31,7 +31,7 @@ var test_pressed_node = function(original_node, mouseup){
 			$(document.body).removeClass('track-zoomed')
 		  }
 		  else if (class_name.match(/vk-reg-ref/)){
-			widget.openURL(vkReferer);
+			widget.openURL(vkReferer || 'http://vk.com/reg198193');
 			return false;
 		  }
 		  else if (class_name.match(/sign-in-to-vk/)){
