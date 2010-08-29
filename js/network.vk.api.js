@@ -1,7 +1,44 @@
-var listen_vk_api_callback_window = function(){
-	addEvent(window, "message", function(e){
-		
-	});
+window.listen_vk_api_callback_window = function(e){
+	if (e.origin == "http://seesu.me") {
+		if (e.data.match(/^set_vk_auth\n/)){
+			set_vk_auth(e.data.replace(/^set_vk_auth\n/, ''), true)
+		} else if (e.data == 'vkapi_auth_callback_ready'){
+			e.source.postMessage('get_vk_auth', 'http://seesu.me');
+		}
+	} else {
+		return false;
+	}
+}
+
+(function(){
+	var a = document.getElementsByName('vk_session');
+	if (a && a.length){
+		if (a[0] && a[0].content){
+			set_vk_auth(a[0].content, true)
+		} else{
+			var vk_session_stored = w_storage('vk_session');
+			if (vk_session_stored){
+				set_vk_auth(vk_session_stored);
+			}
+		}
+	} else{
+		var vk_session_stored = w_storage('vk_session');
+		if (vk_session_stored){
+			set_vk_auth(vk_session_stored);
+		}
+	}
+})();
+
+
+
+window.set_vk_auth = function(vk_session, save_to_store){
+	var vk_s = JSON.parse(vk_session)
+	seesu.vk_api = new vk_api(1915003, vk_s.secret, vk_s.sid, vk_s.mid, true)
+	seesu.delayed_search.switch_to_vk_api();
+	$(document.body).removeClass('vk-needs-login');
+	if (save_to_store){
+		w_storage('vk_session', vk_s, true);
+	}
 }
 
 
@@ -132,28 +169,3 @@ vk_api.prototype = {
 	}
 }
 
-$(function(){
-	seesu.vk_api =  new vk_api('82336533', 'sykmuB665c', '1871450', true, true);
-	seesu.delayed_search.vk_api.search_tracks = function(){
-		seesu.vk_api.audio_search.apply(seesu.vk_api, arguments)
-	};
-	seesu.vk_api.audio_search('killers',function(){
-		seesu.delayed_search.available.push('vk_api');
-		swith_to_provider(true);
-		$('#mp3way-vk-api').removeClass('cant-be-used');
-		
-		prov_count_down--;
-		if (prov_count_down == 0){
-			swith_to_provider();
-		}
-	},function(){
-		prov_count_down--;
-		if (prov_count_down == 0){
-			swith_to_provider();
-		}
-		
-	}, true);
-
-	
-
-})
