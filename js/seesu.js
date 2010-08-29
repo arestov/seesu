@@ -8,7 +8,7 @@ window.seesu =  {
 		big_vk_cookie: w_storage('big_vk_cookie'),
 		set_xhr_headers: function(xhr){
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-			if (seesu.vk.big_vk_cookie){
+			if (seesu.env.apple_db_widget && seesu.vk.big_vk_cookie){
 				try {
 					xhr.setRequestHeader("Cookie", seesu.vk.big_vk_cookie);
 				} catch(e){
