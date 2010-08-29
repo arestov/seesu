@@ -147,7 +147,6 @@ $(function(){
 			swith_to_provider();
 		}
 	},function(){
-		log()
 		prov_count_down--;
 		if (prov_count_down == 0){
 			swith_to_provider();

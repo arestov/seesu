@@ -157,12 +157,6 @@ try_mp3_providers = function(){
 					try {
 						var r = $.parseJSON(text);
 						if (r.user && r.user.id) {
-							if (seesu.vk_api){
-								if (!seesu.vk_api.test_mode) {
-									seesu.vk_api.viewer_id = r.user.id;
-								}
-							}
-					  		
 							seesu.delayed_search.available.push('vk');
 							seesu.vk_logged_in = true;
 							log('vk mp3 prov ok')
