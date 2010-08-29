@@ -9,6 +9,7 @@ body{
 	}
 :not(.as-application) body{
 	background-color: #505050;
+	padding-bottom:15px;
 }
 label{cursor:pointer}
 input[type=text]{
@@ -180,16 +181,18 @@ display:none;
 @media (min-width:600px) {
 	.info .image{
 		float:left;
-		}
+	}
 	.desc-name{
 		float:left;
+		min-height:1.5em;
+		width:126px;
+		text-align:right;
 	}
-	.artist-albums ul li{
-		float:left;
-		}
-	.artist-albums ul li img{
-			float:left;
-		}
+	.desc-text{
+		overflow:hidden;
+		display: table-cell;
+	}
+	
 }
 
 .play-list-holder{
@@ -239,14 +242,12 @@ display:none;
 	margin:0.5em 0;
 }		
 .desc-name{
-	min-height:1.5em;
-	width:126px;
 	margin-right: 13px;
-	text-align:right;
+}
+.artist-albums .desc-name{
+	float:left;
 }
 .desc-text{
-	overflow:hidden;
-	display: table-cell;
 	padding-bottom:2px;
 }	
 .artist-albums ul{
@@ -254,6 +255,13 @@ display:none;
 	margin:15px 0;
 	padding-left:10px;
 	}
+	.artist-albums ul li{
+		float:left;
+		}
+	.artist-albums ul li img{
+			float:left;
+		}
+		
 	.artist-albums ul li{
 		width:190px;
 		margin-bottom:30px;
@@ -334,6 +342,7 @@ display:none;
 	#search #search-p label span.lbl{
 		float:left;
 		width:60px;
+		padding-top:4px;
 		font-style:normal;
 	}
 	#search #search-p label span.inpt{

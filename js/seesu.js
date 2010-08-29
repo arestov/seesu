@@ -666,7 +666,7 @@ var show_artist_info = function(r){
 		}
 		arst_meta_info.append(similars_p);
 	}
-	var artist_albums_container = seesu.artist_albums_container = $('<div class="artist-albums"></div>').append('<div class="desc-name">Albums:</div>').appendTo(arst_meta_info);
+	var artist_albums_container = seesu.artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">Albums:</span>').appendTo(arst_meta_info);
 	var artist_albums_text = $('<div class=""></div>').appendTo(artist_albums_container)
 	if (artist_albums_container){
 		
