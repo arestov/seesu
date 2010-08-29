@@ -10,24 +10,24 @@ window.listen_vk_api_callback_window = function(e){
 	}
 }
 
-(function(){
-	var a = document.getElementsByName('vk_session');
-	if (a && a.length){
-		if (a[0] && a[0].content){
-			set_vk_auth(a[0].content, true)
-		} else{
-			var vk_session_stored = w_storage('vk_session');
-			if (vk_session_stored){
-				set_vk_auth(vk_session_stored);
-			}
-		}
+
+var vk_session_meta = document.getElementsByName('vk_session');
+if (vk_session_meta && vk_session_meta.length){
+	if (vk_session_meta[0] && vk_session_meta[0].content){
+		set_vk_auth(a[0].content, true)
 	} else{
 		var vk_session_stored = w_storage('vk_session');
 		if (vk_session_stored){
 			set_vk_auth(vk_session_stored);
 		}
 	}
-})();
+} else{
+	var vk_session_stored = w_storage('vk_session');
+	if (vk_session_stored){
+		set_vk_auth(vk_session_stored);
+	}
+}
+
 
 
 
