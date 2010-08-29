@@ -52,7 +52,7 @@ window.seesu =  {
 			delay_big: 8000,
 			big_delay_interval: 7,
 			search_tracks : function(){
-				seesu.vk_api.audio_search.apply(seesu.vk.vk_api, agruments);
+				seesu.vk_api.audio_search.apply(seesu.vk_api, arguments);
 			}
 		},
 		waiting_for_mp3provider : true,

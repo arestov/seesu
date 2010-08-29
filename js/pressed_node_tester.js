@@ -10,8 +10,6 @@ var test_pressed_node = function(original_node, mouseup){
 			} else{
 				seesu.player.song_click(clicked_node);
 			}
-		  	
-		  	
 			return ;
 		  }
 		  if (class_name.match(/download-mp3/)){
@@ -42,9 +40,7 @@ var test_pressed_node = function(original_node, mouseup){
 					addEvent(window, "message", listen_vk_api_callback_window);
 					clicked_node.data('popup_listening', true)
 				}
-				
 				window.open('http://vk.com/login.php?app=1915003&layout=openapi&channel=http://seesu.me/vk_auth.html&settings=8');
-				
 			}
 			
 			return false;
