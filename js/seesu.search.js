@@ -638,6 +638,14 @@ var input_change = function(e){
 	slider.className = 'show-search  show-search-results';
 	$(e.target).data('lastvalue', input_value)
 }
+var preload_query = document.getElementsByName('search_query');
+if (preload_query && preload_query.length){
+	if (preload_query[0] && preload_query[0].content){
+		lfm('artist.search',{artist: preload_query[0].content, limit: 15 },function(){ })
+		lfm('tag.search',{tag: preload_query[0].content, limit: 15 },function(){ })
+		lfm('track.search',{track: preload_query[0].content, limit: 15 },function(){ })
+	}
+}
 $(function(){
 	window.searchres = $('#search_result');
 	window.search_nav = $('#search-nav');

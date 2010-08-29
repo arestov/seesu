@@ -91,6 +91,32 @@ window.seesu =  {
 	  }
 	};
 	
+window.set_vk_auth = function(vk_session, save_to_store){
+	var vk_s = JSON.parse(vk_session)
+	seesu.vk_api = new vk_api(1915003, vk_s.secret, vk_s.sid, vk_s.mid, true)
+	seesu.delayed_search.switch_to_vk_api();
+	$(document.body).removeClass('vk-needs-login');
+	if (save_to_store){
+		w_storage('vk_session', vk_s, true);
+	}
+}
+
+var vk_session_meta = document.getElementsByName('vk_session');
+if (vk_session_meta && vk_session_meta.length){
+	if (vk_session_meta[0] && vk_session_meta[0].content){
+		set_vk_auth(a[0].content, true)
+	} else{
+		var vk_session_stored = w_storage('vk_session');
+		if (vk_session_stored){
+			set_vk_auth(vk_session_stored);
+		}
+	}
+} else{
+	var vk_session_stored = w_storage('vk_session');
+	if (vk_session_stored){
+		set_vk_auth(vk_session_stored);
+	}
+}
 wait_for_vklogin = function(){};
 vkReferer = '';
 lfm_auth = {};
