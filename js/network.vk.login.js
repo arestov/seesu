@@ -97,7 +97,8 @@ var vk_logged_out = function(force){
 	} else{
 		log('vk data has NOT been  removed')
 	}
-
+	seesu.delayed_search.waiting_for_mp3provider = true;
+	$(document.body).addClass('vk-needs-login');
 	seesu.vk_logged_in = false;
 	
 	
