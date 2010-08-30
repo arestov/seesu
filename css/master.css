@@ -97,7 +97,7 @@ a.bbcode_tag{
 .needs-cross-domain{
 	display:none;
 }
-.js-cross-domain-allowed .needs-cross-domain{
+.cross-domain-allowed .needs-cross-domain{
 	display:block;
 }
 
