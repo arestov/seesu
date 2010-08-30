@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 //var viewer_id 		= seesu.vk_id;
 var vk_api = function(api_id, s, sid, viewer_id, cache){
 	this.sid 	= sid;

@@ -62,7 +62,6 @@ window.seesu =  {
 			seesu.delayed_search.start_for_mp3provider = function(){
 				seesu.delayed_search.waiting_for_mp3provider = false;
 				seesu.delayed_search.start_for_mp3provider = null;
-				$(document.body).removeClass('vk-needs-login');
 				if (quene && quene.init) {quene.init();}
 			};
 		},
@@ -92,13 +91,24 @@ window.seesu =  {
 	};
 	
 window.set_vk_auth = function(vk_session, save_to_store){
-	var vk_s = JSON.parse(vk_session)
-	seesu.vk_api = new vk_api(1915003, vk_s.secret, vk_s.sid, vk_s.mid, true)
-	seesu.delayed_search.switch_to_vk_api();
-	$(document.body).removeClass('vk-needs-login');
-	if (save_to_store){
-		w_storage('vk_session', vk_s, true);
+	var vk_s = JSON.parse(vk_session);
+	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
+	if (vk_s.expire > rightnow){
+		seesu.vk_api = new vk_api(1915003, vk_s.secret, vk_s.sid, vk_s.mid, true)
+		seesu.delayed_search.switch_to_vk_api();
+		$(document.body).removeClass('vk-needs-login');
+		if (save_to_store){
+			w_storage('vk_session', vk_s, true);
+		}
+		setTimeout(function(){
+			seesu.delayed_search.waiting_for_mp3provider = true;
+			$(document.body).addClass('vk-needs-login');
+		}, (vk_s.expire - rightnow)*1000)
+		
+	} else{
+		w_storage('vk_session', '', true);
 	}
+
 }
 
 var vk_session_meta = document.getElementsByName('vk_session');
