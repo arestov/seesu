@@ -25,7 +25,7 @@ window.seesu =  {
 		nav: null
 	  },
 	  ui: {
-	  	allow_mp3_downloading: true,
+	  	allow_mp3_downloading: true
 	  	
 	  },
 	  xhrs: {},
