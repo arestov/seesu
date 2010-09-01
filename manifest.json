@@ -1,10 +1,10 @@
 {
   "name": "Seesu",
-  "version": "1.86",
+  "version": "1.90",
   "description": "You can find & get any music you need. Type in an artist or genre.",
   "browser_action": {
 	"default_icon": "icon.png",
-	"default_title": "Seesu Music Player"
+	"default_title": "Seesu"
   },
   "background_page": "browser_bg_action.html",
   "permissions": [
