@@ -87,6 +87,9 @@
 .show-search{
 	
 	}
+	.show-search #search-use-hint{
+		display:none;
+	}
 	.show-search #search-desciption{
 		display:block;
 	}

@@ -4,6 +4,10 @@
 	height:20px;
 	
 	}
+	.buttmen a{
+		border:0;
+		text-decoration:none;
+	}
 	.buttmen .buttmen-mask{
 		position:absolute;
 		width:20px;

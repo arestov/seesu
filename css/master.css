@@ -33,6 +33,7 @@ dl,dt,dd{
 }
 ul{list-style:none;padding:0;margin-top:0;}
 a{color:#d5d5d5;}
+
 a[href],a.js-serv{
 	color:#a1d404;
 	text-decoration:none;
@@ -45,24 +46,26 @@ a[href],a.js-serv{
 	a[href]:active,a.js-serv:active{
 		color:#999;
 		}
-
+a[href='javascript:void(0)']{
+	border-bottom-style:dashed;
+}
 
 a.js-serv,
 a.bbcode_artist,
 a.bbcode_tag{
 	cursor:pointer;
 	text-decoration:none;
-	border-bottom:1px dashed #647142;
+	border-bottom:1px dashed #647142  !important;
 	}
 	a.js-serv:hover,
 	a.bbcode_artist:hover,
 	a.bbcode_tag:hover{
-		border-bottom-color:#a1d404;
+		border-bottom-color:#a1d404  !important;
 		}
 	a.js-serv:active,
 	a.bbcode_artist:active,
 	a.bbcode_tag:active{
-		border-bottom-color:#999;
+		border-bottom-color:#999  !important;
 		}
 
 
@@ -349,12 +352,13 @@ display:none;
 		overflow:hidden;
 		display:block;
 	}
-#search-desciption{
-	margin-top:0;
+.search-desc{
 	padding-left:60px;
 	font-size:0.9em;
 	color:#999;
+	margin-top:0;
 }
+
 #update-star{
 	position:absolute;
 	left:15px;
