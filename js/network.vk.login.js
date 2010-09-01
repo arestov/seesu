@@ -6,6 +6,7 @@ var vk_login = function(login, pass, callback) {
 	  global: false,
 	  type: "POST",
 	  dataType: "json",
+	  beforeSend: seesu.vk.set_xhr_headers,
 	  data: {
 		'noredirect': '1',
 		'email': login,
@@ -37,6 +38,7 @@ var vk_send_captcha = function(captcha_key, login, pass, callback){
 	  global: false,
 	  type: "POST",
 	  dataType: "text",
+	  beforeSend: seesu.vk.set_xhr_headers,
 	  data: {
 		'op': 'a_login_attempt',
 		'captcha_key': captcha_key,
