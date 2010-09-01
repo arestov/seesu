@@ -208,7 +208,7 @@ display:none;
 	clear:both;
 	}
 	.tracks-for-play>ul>li{
-		margin: 0 0 3px;
+		margin: 0 42px 3px 0;
 		overflow:hidden;
 		}
 .artist-image{
