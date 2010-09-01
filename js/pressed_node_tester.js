@@ -106,7 +106,13 @@ var test_pressed_node = function(original_node, mouseup){
 		  	widget.openURL(node.href)
 		  	return false;
 		  }
-		 
+		  else if (class_name.match(/hint-query/)){
+		  	var query = clicked_node.text();
+		  	search_input.val(query);
+			input_change(search_input[0])
+		  	clicked_node.text(seesu.popular_artists[(Math.random()*10).toFixed(0)])
+		  	return false;
+		  }
 		}  else if ((node.nodeName == 'INPUT')) {
 			if (class_name.match(/tb-mess-wrap-close/)){
 				clicked_node.parents('li').removeClass('tb-window');

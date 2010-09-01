@@ -35,6 +35,8 @@
 		}
 		.track-buttons>li>a{
 			font-weight:700;
+			color:#d5d5d5;
+			border-bottom:0;
 			cursor:pointer;
 			display:block;
 			text-align:center;

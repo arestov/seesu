@@ -3,6 +3,7 @@ window.seesu =  {
 	  cross_domain_allowed: !location.protocol.match(/http/) && $(document.documentElement).addClass('cross-domain-allowed') && true,
 	  version: 1.86,
 	  env: app_env,
+	  popular_artists: ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ],
 	  vk:{
 		id: w_storage('vkid'),
 		big_vk_cookie: w_storage('big_vk_cookie'),
@@ -24,7 +25,8 @@ window.seesu =  {
 		nav: null
 	  },
 	  ui: {
-	  	allow_mp3_downloading: true
+	  	allow_mp3_downloading: true,
+	  	
 	  },
 	  xhrs: {},
 	  delayed_search: {

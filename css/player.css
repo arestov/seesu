@@ -51,7 +51,7 @@ a.song{
 a.song:hover{
 	color:#ffffff;
 	background:#595959;
-	border-color:transparent;
+	border-color:transparent  !important;
 }
 a.search-mp3{
 	text-decoration:blink;
@@ -61,7 +61,7 @@ a.track-node{
 	display:block;
 	padding:6px 6px;
 	
-	border:1px solid transparent;
+	border:1px solid transparent  !important;
 	overflow:hidden;
 	}
 	.song-duration{
@@ -85,7 +85,7 @@ a.waiting-full-render.marked-for-play{
 a.download-mp3{
 	text-decoration:none;
 	padding:3px 5px 1px;
-	border-bottom:0;
+	border-bottom:0  !important;
 	position:absolute;
 	right:0;
 	margin-top:3px;
