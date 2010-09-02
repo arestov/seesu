@@ -9,6 +9,10 @@ body{
 	}
 :not(.as-application) body{
 	background-color: #505050;
+	
+	
+}
+:not(.as-application) .slider-materail{
 	padding-bottom:15px;
 }
 label{cursor:pointer}
