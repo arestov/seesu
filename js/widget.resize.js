@@ -60,7 +60,7 @@ var resizeWidg = function(){
 	}
 	
 	
-	addEvent(window, "resize", $.debounce(save_size, 1000));
+	
 	
 	var resize_button = $('#resize-handle');
 	
@@ -91,13 +91,16 @@ var resizeWidg = function(){
 	}
 	
 	if  (app_env.as_application){
+		addEvent(window, "resize", $.debounce(save_size, 1000));
+		
 		resize_button.mousedown(function(e) {
 			drag(e, 1, 1);
 		})
 		resizeWindow();	
+		log('bubbbb')
 	} else{
 		resize_button.remove()
-
+		log('zmubbb')
 	}
 	
 	
@@ -105,5 +108,5 @@ var resizeWidg = function(){
 	
 })()
 }
-if(!$.browser.msie){$(resizeWidg)}
+if(app_env.as_application && !$.browser.msie){$(resizeWidg)}
 })();
