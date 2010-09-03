@@ -9,6 +9,10 @@ body{
 	}
 :not(.as-application) body{
 	background-color: #505050;
+	
+	
+}
+:not(.as-application) .slider-materail{
 	padding-bottom:15px;
 }
 label{cursor:pointer}
@@ -335,8 +339,12 @@ display:none;
 	width:100%;
 	box-sizing:border-box;
 }
-@media (min-width:700px){
-	
+@media (min-width:770px){
+	.vk-login-context{
+		-moz-border-radius:6px;
+		-webkit-border-radius:6px;
+		border-radius:6px;
+	}
 }
 #search #search-p{
 	margin:10px 0 5px;

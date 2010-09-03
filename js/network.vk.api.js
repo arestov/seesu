@@ -49,13 +49,21 @@ vk_api.prototype = {
 				for (var i=0, l = pv_signature_list.length; i < l; i++) {
 					paramsstr += pv_signature_list[i];
 				};
-				
+				if (use_cache){
+					var cache_hash = '';
+					for (var i=0, l = pv_signature_list.length; i < l; i++) {
+						if (!pv_signature_list[i].match(/^callback/))
+						cache_hash += pv_signature_list[i];
+					};
+					cache_hash = hex_md5(cache_hash);
+					
+				}
 				params_full.sig = hex_md5(this.viewer_id + paramsstr + this.s);
 
 			}
 			
 			if (use_cache){
-				var cache_used = cache_ajax.get('vk_api', params_full.sig, callback)
+				var cache_used = cache_ajax.get('vk_api', cache_hash, callback)
 				if (cache_used) {
 					return true;
 				}
