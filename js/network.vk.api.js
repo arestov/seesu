@@ -31,7 +31,7 @@ vk_api.prototype = {
 			params_full.sid 	= this.sid;
 			params_full.callback= create_jsonp_callback(function(r){
 				var r = (typeof r == 'object') ? r : JSON.parse(r);
-				cache_ajax.set('vk_api', params_full.sig, r);
+				cache_ajax.set('vk_api', cache_hash, r);
 				if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
 					if (callback) {callback(r);}
 				}
