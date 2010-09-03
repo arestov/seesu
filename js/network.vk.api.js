@@ -52,8 +52,10 @@ vk_api.prototype = {
 				if (use_cache){
 					var cache_hash = '';
 					for (var i=0, l = pv_signature_list.length; i < l; i++) {
-						if (!pv_signature_list[i].match(/^callback/))
-						cache_hash += pv_signature_list[i];
+						if (!pv_signature_list[i].match(/^callback/)){
+							cache_hash += pv_signature_list[i];
+						}
+						
 					};
 					cache_hash = hex_md5(cache_hash);
 					
