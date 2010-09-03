@@ -15,6 +15,8 @@ body{
 :not(.as-application) .slider-materail{
 	padding-bottom:15px;
 }
+
+a img{border:0;}
 label{cursor:pointer}
 input[type=text]{
 	background:#b2b2b2;
@@ -199,7 +201,6 @@ display:none;
 		overflow:hidden;
 		display: table-cell;
 	}
-	
 }
 
 .play-list-holder{
