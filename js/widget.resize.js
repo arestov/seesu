@@ -94,6 +94,8 @@ if(!$.browser.msie){
 			
 		})
 	} else {
-		$('#resize-handle').remove();
+		$(function(){
+			$('#resize-handle').remove();
+		});
 	}
 }
