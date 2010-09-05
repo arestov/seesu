@@ -2,8 +2,8 @@
 	overflow:hidden;
 	padding-top:6px;
 	padding-left:10px;
-	height:36px;
-	background:url(../i/nav/head-gradient.png) repeat-x;
+	min-height:36px;
+	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
 	border-bottom:1px solid #333;
 	font-family:"Trebuchet MS", sans-serif;
 	

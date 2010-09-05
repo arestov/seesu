@@ -19,7 +19,8 @@ $(function() {
 	window.startlink = document.getElementById('start_search');
 	startlink.onclick = function(){
 		slider.className = "show-start";
-		searchfield.focus();
+		search_input[0].focus();
+		search_input[0].select();
 	};
 	
 	window.nav_artist_page = document.getElementById('nav_artist_page');

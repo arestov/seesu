@@ -135,10 +135,7 @@ lfm_auth = {};
 	
 
 $(function(){
-	window.searchfield = document.getElementById('q');
-	if (document.activeElement.nodeName != 'INPUT') {
-		searchfield.focus();
-	}
+
 	try_mp3_providers();
 	
 	

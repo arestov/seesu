@@ -346,7 +346,7 @@ seesu.ui.buttons = {
 				
 
 				log('finishing_results: ' + finishing_results)
-				var query = searchfield.value;
+				var query = search_input.val();
 				if (query) {
 					artist_search(query, finishing_results);
 				}
@@ -360,7 +360,7 @@ seesu.ui.buttons = {
 				$(this).parent().remove();
 				
 				
-				var query = searchfield.value;
+				var query = search_input.val();
 				if (query) {
 					tag_search(query, finishing_results)
 				}
@@ -375,7 +375,7 @@ seesu.ui.buttons = {
 				
 				
 				
-				var query = searchfield.value;
+				var query = search_input.val();
 				if (query) {
 					track_search(query, finishing_results)
 				}
@@ -384,7 +384,7 @@ seesu.ui.buttons = {
 	search_vkontakte: 
 		$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>Use dirty search</span></button>')
 			.click(function(e){
-				var query = searchfield.value;
+				var query = search_input.val();
 				if (query) {
 					vk_track_search(query)
 				}
@@ -636,7 +636,7 @@ var input_change = function(e){
 	suggest_search(input_value);
 	
 	slider.className = 'show-search  show-search-results';
-	$(e.target).data('lastvalue', input_value)
+	$(input).data('lastvalue', input_value)
 }
 var preload_query = document.getElementsByName('search_query');
 if (preload_query && preload_query.length){
@@ -653,7 +653,9 @@ $(function(){
 		.keyup($.debounce(input_change, 100))
 		.mousemove($.debounce(input_change, 100))
 		.change($.debounce(input_change, 100));
-	
+	if (document.activeElement.nodeName != 'INPUT') {
+		search_input[0].focus();
+	}
 	seesu.ui.search_form = $('form#search').submit(function(){return false;});
 	if (seesu.ui.search_form) {
 		$(document).keydown(function(e){
