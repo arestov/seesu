@@ -14,6 +14,10 @@ var vk_login = function(login, pass, callback) {
 	  },
 	  error: function(){
 		log('войти не удалось');
+		log('plan A not worked, trying plan B')
+		try_hard_vk_working(function(r){
+			vk_logg_in(r.user.id, false, false, login, pass, callback) //function(id, email, sid, login, pass, callback){
+		})
 	  },
 	  success: function(r){
 		var vk_id,vk_error;
@@ -66,12 +70,21 @@ var vk_send_captcha = function(captcha_key, login, pass, callback){
 	});
 }
 var vk_logg_in = function(id, email, sid, login, pass, callback){
-	w_storage('vkid', id, true);
-	w_storage('vkemail', email, true);
-	w_storage( 'vk_sid', sid, true);
+	if (id){
+		w_storage('vkid', id, true);
+	}
+	if (email){
+		w_storage('vkemail', email, true);
+	}
 	
-	seesu.vk.big_vk_cookie = 'remixchk=5; remixsid=' + sid;
-	w_storage('big_vk_cookie', seesu.vk.big_vk_cookie, true);
+	if (sid){
+		w_storage( 'vk_sid', sid, true);
+		seesu.vk.big_vk_cookie = 'remixchk=5; remixsid=' + sid;
+		w_storage('big_vk_cookie', seesu.vk.big_vk_cookie, true);
+	}
+	
+	
+	
 	seesu.vk_logged_in = true;
 	seesu.delayed_search.switch_to_vk();
 	$(document.body).removeClass('vk-needs-login');
