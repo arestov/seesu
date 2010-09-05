@@ -16,19 +16,18 @@ $(function() {
   
 	//see var at top
 	window.slider = document.getElementById('slider');
-	window.srnav = document.getElementById('search_result_nav');
 	window.startlink = document.getElementById('start_search');
 	startlink.onclick = function(){
 		slider.className = "show-start";
-		searchfield.focus();
+		search_input[0].focus();
+		search_input[0].select();
 	};
 	
 	window.nav_artist_page = document.getElementById('nav_artist_page');
 	window.trk_page_nav = document.getElementById('nav_tracks_page');
-	
-	srnav.onclick = function(){
+	search_nav.click(function(){
 		slider.className = "show-search show-search-results";
-	};
+	})
 	window.export_playlist = $('#open-external-playlist');
 	seesu.start_screen = $('#start-screen');
 	

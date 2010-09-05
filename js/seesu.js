@@ -116,7 +116,7 @@ window.set_vk_auth = function(vk_session, save_to_store){
 var vk_session_meta = document.getElementsByName('vk_session');
 if (vk_session_meta && vk_session_meta.length){
 	if (vk_session_meta[0] && vk_session_meta[0].content){
-		set_vk_auth(a[0].content, true)
+		set_vk_auth(vk_session_meta[0].content, true)
 	} else{
 		var vk_session_stored = w_storage('vk_session');
 		if (vk_session_stored){
@@ -135,10 +135,7 @@ lfm_auth = {};
 	
 
 $(function(){
-	window.searchfield = document.getElementById('q');
-	if (document.activeElement.nodeName != 'INPUT') {
-		searchfield.focus();
-	}
+
 	try_mp3_providers();
 	
 	

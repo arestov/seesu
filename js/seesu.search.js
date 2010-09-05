@@ -134,7 +134,7 @@ var show_artists_results = function(r, start, end){
 	
 	var artists = r.results.artistmatches.artist || false; 
 	if (artists && (start ? (artists.length && (artists.length > start)) : true)){
-		search_nav.text('Suggestions & search');
+		search_nav.attr('title', 'Suggestions & search');
 		
 		
 		
@@ -216,7 +216,7 @@ var show_tags_results = function(r, start, end){
 	var tags = r.results.tagmatches.tag || false; 
 	if (tags  && (start ? (tags.length && (tags.length > start)) : true)){
 
-		search_nav.text('Suggestions & search')
+		search_nav.attr('title','Suggestions & search')
 		var ul = seesu.ui.tags_results_ul;
 
 		if (tags.length){
@@ -277,7 +277,7 @@ var show_tracks_results = function(r, start, end){
 	var tracks = r.results.trackmatches.track || false; 
 	if (tracks && (start ? (tracks.length && (tracks.length > start)) : true)){
 
-		search_nav.text('Suggestions & search')
+		search_nav.attr('title','Suggestions & search')
 		var ul = seesu.ui.tracks_results_ul;
 		
 		if (tracks.length){
@@ -346,7 +346,7 @@ seesu.ui.buttons = {
 				
 
 				log('finishing_results: ' + finishing_results)
-				var query = searchfield.value;
+				var query = search_input.val();
 				if (query) {
 					artist_search(query, finishing_results);
 				}
@@ -360,7 +360,7 @@ seesu.ui.buttons = {
 				$(this).parent().remove();
 				
 				
-				var query = searchfield.value;
+				var query = search_input.val();
 				if (query) {
 					tag_search(query, finishing_results)
 				}
@@ -375,7 +375,7 @@ seesu.ui.buttons = {
 				
 				
 				
-				var query = searchfield.value;
+				var query = search_input.val();
 				if (query) {
 					track_search(query, finishing_results)
 				}
@@ -384,7 +384,7 @@ seesu.ui.buttons = {
 	search_vkontakte: 
 		$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>Use dirty search</span></button>')
 			.click(function(e){
-				var query = searchfield.value;
+				var query = search_input.val();
 				if (query) {
 					vk_track_search(query)
 				}
@@ -415,7 +415,7 @@ var fast_suggestion_ui = function(r){
 	};
 	
 	searchres.empty();
-	search_nav.text('Suggestions')
+	search_nav.attr('title','Suggestions')
 	
 	
 	var fast_enter = null;
@@ -530,7 +530,7 @@ var multiply_suggestion_ui = function(input_value){
 	
 	
 	searchres.empty();
-	search_nav.text('Suggestions')
+	search_nav.attr('title','Suggestions')
 	
 
 	
@@ -636,7 +636,7 @@ var input_change = function(e){
 	suggest_search(input_value);
 	
 	slider.className = 'show-search  show-search-results';
-	$(e.target).data('lastvalue', input_value)
+	$(input).data('lastvalue', input_value)
 }
 var preload_query = document.getElementsByName('search_query');
 if (preload_query && preload_query.length){
@@ -648,12 +648,14 @@ if (preload_query && preload_query.length){
 }
 $(function(){
 	window.searchres = $('#search_result');
-	window.search_nav = $('#search-nav');
+	window.search_nav = $('#search_result_nav');
 	window.search_input = $('#q')
 		.keyup($.debounce(input_change, 100))
 		.mousemove($.debounce(input_change, 100))
 		.change($.debounce(input_change, 100));
-	
+	if (document.activeElement.nodeName != 'INPUT') {
+		search_input[0].focus();
+	}
 	seesu.ui.search_form = $('form#search').submit(function(){return false;});
 	if (seesu.ui.search_form) {
 		$(document).keydown(function(e){
