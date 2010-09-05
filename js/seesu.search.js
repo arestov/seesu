@@ -134,7 +134,7 @@ var show_artists_results = function(r, start, end){
 	
 	var artists = r.results.artistmatches.artist || false; 
 	if (artists && (start ? (artists.length && (artists.length > start)) : true)){
-		search_nav.text('Suggestions & search');
+		search_nav.attr('title', 'Suggestions & search');
 		
 		
 		
@@ -216,7 +216,7 @@ var show_tags_results = function(r, start, end){
 	var tags = r.results.tagmatches.tag || false; 
 	if (tags  && (start ? (tags.length && (tags.length > start)) : true)){
 
-		search_nav.text('Suggestions & search')
+		search_nav.attr('title','Suggestions & search')
 		var ul = seesu.ui.tags_results_ul;
 
 		if (tags.length){
@@ -277,7 +277,7 @@ var show_tracks_results = function(r, start, end){
 	var tracks = r.results.trackmatches.track || false; 
 	if (tracks && (start ? (tracks.length && (tracks.length > start)) : true)){
 
-		search_nav.text('Suggestions & search')
+		search_nav.attr('title','Suggestions & search')
 		var ul = seesu.ui.tracks_results_ul;
 		
 		if (tracks.length){
@@ -415,7 +415,7 @@ var fast_suggestion_ui = function(r){
 	};
 	
 	searchres.empty();
-	search_nav.text('Suggestions')
+	search_nav.attr('title','Suggestions')
 	
 	
 	var fast_enter = null;
@@ -530,7 +530,7 @@ var multiply_suggestion_ui = function(input_value){
 	
 	
 	searchres.empty();
-	search_nav.text('Suggestions')
+	search_nav.attr('title','Suggestions')
 	
 
 	
@@ -648,7 +648,7 @@ if (preload_query && preload_query.length){
 }
 $(function(){
 	window.searchres = $('#search_result');
-	window.search_nav = $('#search-nav');
+	window.search_nav = $('#search_result_nav');
 	window.search_input = $('#q')
 		.keyup($.debounce(input_change, 100))
 		.mousemove($.debounce(input_change, 100))

@@ -16,7 +16,7 @@
 	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport"  content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
-
+<!-->
 	<script>
 		var _gaq = _gaq || [];
 		_gaq.push(['_setAccount', 'UA-17915703-1']);
@@ -28,7 +28,7 @@
 			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 		})();
 	</script>
-	
+-->
 	<script type="text/javascript" src="js/w_storage.js"></script>
 	<script type="text/javascript" src="js/c_quene.js"></script>
 	<script type="text/javascript" src="js/c_cache_ajax.js"></script>
@@ -73,22 +73,16 @@
   <body>
 <div id="slider" class="show-start">
 	<div class="navs">
-		<div class="nav nav-start" id="start_search" >
-			<em>Start page</em>
-			<span class="arr-d">&darr;</span>
-			
-		</div>
-		<div class="nav nav-search-results" id="search_result_nav">
-			<span class="arr-r">&rarr;</span>
-			<em id="search-nav">Search results</em>
-			<span class="arr-d">&darr;</span>
-			
-		</div>
-		<div class="nav nav-artist-page" >
-			<span class="arr-r">&rarr;</span>
+		<span href="#1" class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
+		<span href="#2" class="nnav nav-search-results" id="search_result_nav">
+			<em id="search-nav"></em>
+			<b></b>
+		</span>
+		<span href="#3" class="nnav nav-artist-page">
 			<span id="nav_artist_page"></span>
-			<span class="arr-d">&darr;</span>
-		</div>
+			<b></b>
+		</span>
+
 	</div>
 	<div id="slider-materail" class="shadowed">
 		
