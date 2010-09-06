@@ -656,7 +656,8 @@ $(function(){
 	if (document.activeElement.nodeName != 'INPUT') {
 		search_input[0].focus();
 	}
-	seesu.ui.search_form = $('form#search').submit(function(){return false;});
+	seesu.ui.search_form = $('#search').submit(function(){return false;});
+	$('#app_type', seesu.ui.search_form).val(seesu.env.app_type);
 	if (seesu.ui.search_form) {
 		$(document).keydown(function(e){
 			if (!slider.className.match(/show-search-results/)) {return}

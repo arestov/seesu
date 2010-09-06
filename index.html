@@ -88,16 +88,15 @@
 		
 			<div class="screens" id="screens">
 				<div class="start-screen" id="start-screen">
-					
-					
-					
-					
 					<div class="search-start">
-						
-						
-						
-						
-						<form id="search" name="search">
+						<form id="search" name="search" action='/o' method="post">
+							<!-- google stat for custom search in browsers -->
+							<div>
+								<input type="hidden" name="utm_source" value="web_app" id="app_type">
+								<input type="hidden" name="utm_medium" value="form search">
+								<input type="hidden" name="utm_campaign" value="application">
+							</div>
+							<!-- / google stat -->
 							<p id="search-p">
 								<label>
 									<span class='lbl'>Search</span>

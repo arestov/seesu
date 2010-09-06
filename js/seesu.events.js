@@ -10,7 +10,7 @@ $(function() {
 	$('#hint-query').text(seesu.popular_artists[(Math.random()*10).toFixed(0)])
 	var wgt_urli = $('#widget-url').val(location.href.replace('index.html', ''));
 	window.seesu_me_link = $('#seesu-me-link');
-	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('utm_source=seesu%2Bapplication', 'utm_source=' + seesu.env.app_type))
+	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', seesu.env.app_type))
 
   
   
@@ -27,7 +27,7 @@ $(function() {
 	window.trk_page_nav = document.getElementById('nav_tracks_page');
 	search_nav.click(function(){
 		slider.className = "show-search show-search-results";
-	})
+	});
 	window.export_playlist = $('#open-external-playlist');
 	seesu.start_screen = $('#start-screen');
 	
