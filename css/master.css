@@ -109,7 +109,9 @@ a.bbcode_tag{
 .cross-domain-allowed .needs-cross-domain{
 	display:block;
 }
-
+.cross-domain-allowed .no-needs-cross-domain{
+	display:none;
+}
 
 
 	.lfm-auth{

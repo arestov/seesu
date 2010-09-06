@@ -40,7 +40,8 @@ var test_pressed_node = function(original_node, mouseup){
 					addEvent(window, "message", listen_vk_api_callback_window);
 					clicked_node.data('popup_listening', true)
 				}
-				window.open('http://vk.com/login.php?app=1915003&layout=openapi&channel=http://seesu.me/vk_auth.html&settings=8');
+				var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
+				window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
 			}
 			
 			return false;
