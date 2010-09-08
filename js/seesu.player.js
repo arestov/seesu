@@ -99,6 +99,17 @@ seesu.player = {
 		}
 	  }
 	},
+	change_songs_ui: function(node, remove_playing_status){
+		node.parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('active-play');
+		var c_playlist = node.data('link_to_playlist'),
+			c_num = node.data('number_in_playlist');
+		if (c_playlist[c_num-1]) {
+			c_playlist[c_num-1].parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('to-play-previous')
+		}
+		if (c_playlist[c_num+1]){
+			c_playlist[c_num+1].parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('to-play-next')
+		}
+	},
 	'set_current_song':function (node) {
 	  if (this.current_song && this.current_song.length && (this.current_song[0] == node[0])) {
 		return true;
@@ -107,11 +118,12 @@ seesu.player = {
 		time = (new Date()).getTime();
 		var artist = node.data('artist_name');
 		if (artist) {update_artist_info(artist, a_info);}
+		
 		if (this.current_song) {
-			//seesu.player.musicbox.stop();
-			this.current_song.parent().removeClass('active-play');
+			this.change_songs_ui(this.current_song, true)
 		}
-		node.parent().addClass('active-play');
+		this.change_songs_ui(node);
+		
 		this.current_song = node;
 		if (this.musicbox.play_song_by_node) {
 		  this.musicbox.play_song_by_node(node);
