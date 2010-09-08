@@ -148,15 +148,13 @@
 
 	
 				<div id="artist-holder" class="artist-page screen play-screen">
-					<div class="info">
-						<h3 id="artist-name"></h3>
+					<div class="artist-info">
+						<h3 class="artist-name"></h3>
 						<div class="image">
-							<img  alt="" class="artist-image"/>
+							<img  alt="" class="artist-image" src=""/>
 						</div>
 						<div class="artist-bio"></div>
-						<div id="artist-meta-info">
-							
-						</div>
+						<div class="artist-meta-info"></div>
 					</div>
 					<dl class="buttmen play-controls">
 						<dt class="main-button">
@@ -251,7 +249,7 @@
 												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="enable-scrobbling" /> enabled</label></p>	
 												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
 											</form>
-											<div class="lfm-granting">
+											<div class="lfm-granting needs-cross-domain">
 												<p>To scrobble to last.fm you must <input class="login-lastfm-button" type="button" value="grant"/> access to Seesu </p>
 												<p class="lfm-finish"><label><input type='checkbox' class="scrobbling-grant"/> I've granted my account access to Seesu</label></p>
 											</div>

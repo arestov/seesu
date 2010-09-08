@@ -106,7 +106,7 @@ seesu.player = {
 	  } else {
 		time = (new Date()).getTime();
 		var artist = node.data('artist_name');
-		if (artist) {update_artist_info(artist);}
+		if (artist) {update_artist_info(artist, a_info);}
 		if (this.current_song) {
 			//seesu.player.musicbox.stop();
 			this.current_song.parent().removeClass('active-play');

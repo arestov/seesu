@@ -31,15 +31,19 @@ $(function() {
 	window.export_playlist = $('#open-external-playlist');
 	seesu.start_screen = $('#start-screen');
 	
-	artsHolder	= $('#artist-holder');
-	artsImage	= $('img.artist-image',artsHolder);
-	artsBio		= $('.artist-bio',artsHolder);
-	artsTracks	= $('.tracks-for-play',artsHolder);
-	art_tracks_w_counter = $('#tracks-waiting-for-search')
-	artsName	= $('#artist-name');
-	playlist_panel = $('#play-list-panel');
+	window.artsHolder	= $('#artist-holder');
+	window.a_info		= $('.artist-info', artsHolder)
+	window.artsName		= $('.artist-name',  a_info);
+	window.artsImage	= $('img.artist-image',a_info);
+	window.artsBio		= $('.artist-bio',a_info);
+	window.arst_meta_info = $('.artist-meta-info', a_info);
 	
-	arst_meta_info = $('#artist-meta-info');
+	window.artsTracks	= $('.tracks-for-play',artsHolder);
+	window.art_tracks_w_counter = $('#tracks-waiting-for-search');
+	
+	window.playlist_panel = $('#play-list-panel');
+	
+	
 	window.vk_save_pass = $('#vk-save-pass');
 	
 	  
