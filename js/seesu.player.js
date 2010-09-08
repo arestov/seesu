@@ -190,7 +190,6 @@ seesu.player.events[VOLUME] = function(volume_value) {
 // Click by song
 seesu.player.song_click = function(node) {
   seesu.player.set_current_song(node);
-  seesu.player.current_playlist = node.data('link_to_playlist');
 
 
 
