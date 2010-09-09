@@ -103,12 +103,15 @@ seesu.player = {
 		node.parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('active-play');
 		var c_playlist = node.data('link_to_playlist'),
 			c_num = node.data('number_in_playlist');
-		if (c_playlist[c_num-1]) {
-			c_playlist[c_num-1].parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('to-play-previous')
+		if (c_playlist && c_num){
+			if (c_playlist[c_num-1]) {
+				c_playlist[c_num-1].parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('to-play-previous')
+			}
+			if (c_playlist[c_num+1]){
+				c_playlist[c_num+1].parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('to-play-next')
+			}
 		}
-		if (c_playlist[c_num+1]){
-			c_playlist[c_num+1].parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('to-play-next')
-		}
+		
 	},
 	'set_current_song':function (node) {
 	  if (this.current_song && this.current_song.length && (this.current_song[0] == node[0])) {
