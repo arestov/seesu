@@ -47,13 +47,12 @@
 a.song{
 	padding:3px 1px 0;
 	
-	border:1px solid transparent;
+	border:0  !important;
 	border-radius:4px;
 	}
 a.song:hover{
 	color:#ffffff;
 	background:#595959;
-	border-color:transparent  !important;
 }
 a.search-mp3{
 	text-decoration:blink;
@@ -63,7 +62,7 @@ a.track-node{
 	display:block;
 	padding:6px 6px;
 	
-	border:1px solid transparent  !important;
+	border:0 !important;
 	overflow:hidden;
 	}
 	.song-duration{

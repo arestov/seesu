@@ -127,7 +127,8 @@ seesu.player = {
 	},
 	fix_songs_ui: function(){
 		if (this.current_song){
-			this.change_songs_ui(this.current_song)
+			this.change_songs_ui(this.current_song, true);
+			this.change_songs_ui(this.current_song);
 		}
 	},
 	'set_current_song':function (node, zoom) {

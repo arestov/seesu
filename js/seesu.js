@@ -222,7 +222,8 @@ var make_external_playlist = function(playlist_nodes_for){
 		};
 		
 		seesu.player.current_external_playlist = new external_playlist(simple_playlist);
-		export_playlist.attr('href', seesu.player.current_external_playlist.data_uri)
+		export_playlist.attr('href', seesu.player.current_external_playlist.data_uri);
+		
 	}
 }
 
