@@ -109,7 +109,9 @@ a.bbcode_tag{
 .cross-domain-allowed .needs-cross-domain{
 	display:block;
 }
-
+.cross-domain-allowed .no-needs-cross-domain{
+	display:none;
+}
 
 
 	.lfm-auth{
@@ -182,13 +184,13 @@ display:none;
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
-.info{overflow:hidden;padding-left:8px}
-.info .image{
+.artist-info{overflow:hidden;padding-left:8px}
+.artist-info .image{
 	margin-right:13px;
 	margin-bottom:7px;
 	}
 @media (min-width:600px) {
-	.info .image{
+	.artist-info .image{
 		float:left;
 	}
 	.desc-name{
@@ -204,7 +206,7 @@ display:none;
 }
 
 .play-list-holder{
-	padding-top:30px;
+	padding-top:0;
 	line-height:1.4em;
 	position:relative;
 }
@@ -213,9 +215,14 @@ display:none;
 	clear:both;
 	}
 	.tracks-for-play>ul>li{
-		margin: 0 42px 3px 0;
+		margin: 0 0 3px 0;
+		padding-right:43px;
 		overflow:hidden;
+		position:relative;
 		}
+.artist-image.freeze-this-image{
+	visibility:hidden;
+}
 .artist-image{
 	width:126px;
 	display:none;
@@ -236,11 +243,11 @@ display:none;
 	.artist-tags a.music-tag{
 		margin-right:6px;
 		}
-#artist-meta-info{
+.artist-meta-info{
 	overflow:hidden;
 	clear:left;
 }
-#artist-name{
+.artist-name{
 	overflow:hidden;
 	padding-bottom:2px;
 }

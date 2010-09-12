@@ -10,7 +10,7 @@ $(function() {
 	$('#hint-query').text(seesu.popular_artists[(Math.random()*10).toFixed(0)])
 	var wgt_urli = $('#widget-url').val(location.href.replace('index.html', ''));
 	window.seesu_me_link = $('#seesu-me-link');
-	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('utm_source=seesu%2Bapplication', 'utm_source=' + seesu.env.app_type))
+	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', seesu.env.app_type))
 
   
   
@@ -23,23 +23,33 @@ $(function() {
 		search_input[0].select();
 	};
 	
-	window.nav_artist_page = document.getElementById('nav_artist_page');
+	window.nav_playlist_page = document.getElementById('nav_playlist_page');
+	$(nav_playlist_page).parent().click(function(){
+		$(slider).removeClass('show-zoom-to-track')
+	})
+	window.nav_track_zoom = $('#nav_track_zoom');
 	window.trk_page_nav = document.getElementById('nav_tracks_page');
 	search_nav.click(function(){
 		slider.className = "show-search show-search-results";
-	})
+		search_input[0].focus();
+		search_input[0].select();
+	});
 	window.export_playlist = $('#open-external-playlist');
 	seesu.start_screen = $('#start-screen');
 	
-	artsHolder	= $('#artist-holder');
-	artsImage	= $('img.artist-image',artsHolder);
-	artsBio		= $('.artist-bio',artsHolder);
-	artsTracks	= $('.tracks-for-play',artsHolder);
-	art_tracks_w_counter = $('#tracks-waiting-for-search')
-	artsName	= $('#artist-name');
-	playlist_panel = $('#play-list-panel');
+	window.artsHolder	= $('#artist-holder');
+	window.a_info		= $('.artist-info', artsHolder)
+	window.artsName		= $('.artist-name',  a_info);
+	window.artsImage	= $('img.artist-image',a_info);
+	window.artsBio		= $('.artist-bio',a_info);
+	window.arst_meta_info = $('.artist-meta-info', a_info);
 	
-	arst_meta_info = $('#artist-meta-info');
+	window.artsTracks	= $('.tracks-for-play',artsHolder);
+	window.art_tracks_w_counter = $('#tracks-waiting-for-search');
+	
+	window.playlist_panel = $('#track-panel');
+	
+	
 	window.vk_save_pass = $('#vk-save-pass');
 	
 	  

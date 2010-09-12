@@ -84,6 +84,17 @@ if (typeof widget != 'object'){
 	}
 }
 
+// Forcing Opera full page reflow/repaint to fix page draw bugs
+var forceOperaRepaint = function() {
+	return
+	if (window.opera) {
+		var bs = document.body.style;
+		bs.position = 'relative';
+		setTimeout(function() {
+			bs.position = 'static';
+		}, 1);
+	}
+}
 
 
 var hard_testing = false;

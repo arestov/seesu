@@ -2,7 +2,7 @@ var test_pressed_node = function(original_node, mouseup){
 	var node = original_node;
   	var class_name = node.className;
 	var clicked_node = $(original_node);
-	if (!mouseup) {
+	
 		if(clicked_node.is('a')) {
 		  if (class_name.match(/song/)){
 		  	if (class_name.match(/duration/)){
@@ -40,7 +40,8 @@ var test_pressed_node = function(original_node, mouseup){
 					addEvent(window, "message", listen_vk_api_callback_window);
 					clicked_node.data('popup_listening', true)
 				}
-				window.open('http://vk.com/login.php?app=1915003&layout=openapi&channel=http://seesu.me/vk_auth.html&settings=8');
+				var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
+				window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
 			}
 			
 			return false;
@@ -169,7 +170,7 @@ var test_pressed_node = function(original_node, mouseup){
 				return false
 			}
 		}
-	} else{
+	
 		if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
 			var class_name = node.parentNode.className;
 			if (class_name.match(/pause/)){
@@ -200,6 +201,6 @@ var test_pressed_node = function(original_node, mouseup){
 			}
 		  
 		}
-	}
+	
 	
 }

@@ -31,6 +31,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 			_this.set_new_position(new_play_position_factor);
 			
 		}).appendTo(player_holder);
+		
 		this.track_progress_load = $('<div class="track-load-progress"></div>').appendTo(this.track_progress_total);
 		this.track_progress_play = $('<div class="track-play-progress"></div>').appendTo(this.track_progress_total);
 		this.track_node_text = $('<div class="track-node-text"><div>').appendTo(this.track_progress_total);
@@ -43,7 +44,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 			seesu.player.call_event(VOLUME, new_volume_factor * 100);
 			
 			_this.volume_state_position.css('width', pos + 'px')
-		}).appendTo(playlist_panel);
+		}).prependTo(playlist_panel);
 		this.volume_state_position = $('<div class="volume-state-position"></div>').css('width',((volume * 50)/100) + 'px' ).appendTo(this.volume_state);
 		
 	}
@@ -87,15 +88,17 @@ sm2_p.prototype = {
 		}
 		
 		var parent_node = node.parent()
+		/**
 		var top = parent_node.position().top;
 		
 		
 		this.player_holder[0].style.top = top + 'px';
-
+**/
 		
 		if (this.track_progress_total){
-			this.track_progress_width = this.track_progress_total.outerWidth();
-			this.track_node_text.html(node.html());
+			this.track_progress_width = parent_node.outerWidth();
+			//this.track_node_text.html(node.html());
+			//log('width: '  + this.track_progress_width)
 		}
 		
 		this.play_song_by_url(node.data('mp3link'), node.data('duration'));
@@ -246,7 +249,10 @@ sm2_p.prototype = {
 				
 				var current = Math.round((progress/total) * _this.track_progress_width);
 				
-				_this.track_progress_play[0].style.width = current + 'px'
+				_this.track_progress_play[0].style.width = current + 'px';
+				
+
+				
 			},
 			"progress_loading": function(_this, progress_value, total){
 				if (_this.ignore_position_change) {return false;}
@@ -255,7 +261,11 @@ sm2_p.prototype = {
 				
 				var current = Math.round((progress/total) * _this.track_progress_width);
 				
-				_this.track_progress_load[0].style.width = current + 'px'
+				_this.track_progress_load[0].style.width = current + 'px';
+				
+
+				
+				
 			}
 		}
 	  :
