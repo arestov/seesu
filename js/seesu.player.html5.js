@@ -66,12 +66,12 @@ html5_p.prototype = {
 		}
 		
 		var parent_node = node.parent()
+		/**
 		var top = parent_node.position().top;
-		var tp_style = '.player-holder {top: ' + top + 'px}';
 		
 		
 		this.player_holder[0].style.top = top + 'px';
-
+**/
 		
 		if (this.track_progress_total){
 			this.track_progress_width = parent_node.outerWidth();
