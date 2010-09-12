@@ -73,13 +73,17 @@
   <body>
 <div id="slider" class="show-start">
 	<div class="navs">
-		<span href="#1" class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
-		<span href="#2" class="nnav nav-search-results" id="search_result_nav">
+		<span class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
+		<span class="nnav nav-search-results" id="search_result_nav">
 			<em id="search-nav"></em>
 			<b></b>
 		</span>
-		<span href="#3" class="nnav nav-artist-page">
-			<span id="nav_artist_page"></span>
+		<span  class="nnav nav-playlist-page">
+			<span id="nav_playlist_page"></span>
+			<b></b>
+		</span>
+		<span  class="nnav nav-track-zoom">
+			<span id="nav_track_zoom"></span>
 			<b></b>
 		</span>
 
@@ -149,6 +153,64 @@
 	
 				<div id="artist-holder" class="artist-page screen play-screen">
 					<div class="artist-info">
+						
+						<div id="track-panel">
+							
+							<a class="play-control play" href="javascript:void(0)">
+							  <img src="i/buttons_play.png" alt="play" class="pl-control">
+							</a>
+							
+							<ul class="track-buttons">
+								<li title="About «Adobe Flash Player Security»" id="flash-secur">
+									<a href="javascript:void(0)" class="flash-security-status trackbutton">fl</a>
+									<div class="track-button-content" id="message-flash-secur">
+										<div class="triangle"></div>
+										<div class="balun">							
+											<p>To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
+											<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
+											<p><strong>add</strong> it to white list on  <strong><a class="flash-s">flash internet security page</a></strong> and then restart Seesu</p>
+											<p>
+												<img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page"/>
+												
+											</p>
+											<p>About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+	
+											<p class="internet-flash-settings">
+												<input type="button" value="Close message" class="tb-mess-wrap-close"/>
+												
+											</p>
+	
+										</div>
+									</div>
+								</li>
+								<li class="scrobbling-button"  title="Last.fm scrobbling">
+									<a href="javascript:void(0)" class="trackbutton">sc</a>
+									<div class="track-button-content">
+										
+										<div class="triangle"></div>
+										<div class="balun" id="enablescrobbling">
+											<form class="scrobbling-switches" id="scrobbling-switches">
+												<p>scrobbling to last.fm</p>
+											
+												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="enable-scrobbling" /> enabled</label></p>	
+												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
+											</form>
+											<div class="lfm-granting needs-cross-domain">
+												<p>To scrobble to last.fm you must <input class="login-lastfm-button" type="button" value="grant"/> access to Seesu </p>
+												<p class="lfm-finish"><label><input type='checkbox' class="scrobbling-grant"/> I've granted my account access to Seesu</label></p>
+											</div>
+											<p><input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
+										</div>
+									</div>
+									
+									
+								</li>
+							</ul>
+							
+							
+						</div>
+						
+						
 						<h3 class="artist-name"></h3>
 						<div class="image">
 							<img  alt="" class="artist-image" src=""/>
@@ -201,68 +263,7 @@
 					
 					
 					<div class="play-list-holder" id="play-list-holder">
-						<div id="play-list-panel">
-							<a
-								
-								class="js-serv open-external-playlist" 
-								id="open-external-playlist" 
-								title="Right Mouse Click > Save as... > *.m3u file">
-								Export m3u playlist
-							
-							</a>
-							<div id="tracks-search" class="search-music-files">
-								<span id="tracks-waiting-for-search"></span> 
-							</div>
-							
-							<ul class="track-buttons">
-								<li title="About «Adobe Flash Player Security»" id="flash-secur">
-									<a href="javascript:void(0)" class="flash-security-status trackbutton">fl</a>
-									<div class="track-button-content" id="message-flash-secur">
-										<div class="triangle"></div>
-										<div class="balun">							
-											<p>To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
-											<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
-											<p><strong>add</strong> it to white list on  <strong><a class="flash-s">flash internet security page</a></strong> and then restart Seesu</p>
-											<p>
-												<img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page"/>
-												
-											</p>
-											<p>About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
-	
-											<p class="internet-flash-settings">
-												<input type="button" value="Close message" class="tb-mess-wrap-close"/>
-												
-											</p>
-	
-										</div>
-									</div>
-								</li>
-								<li class="scrobbling-button"  title="Last.fm scrobbling">
-									<a href="javascript:void(0)" class="trackbutton">sc</a>
-									<div class="track-button-content">
-										
-										<div class="triangle"></div>
-										<div class="balun" id="enablescrobbling">
-											<form class="scrobbling-switches" id="scrobbling-switches">
-												<p>scrobbling to last.fm</p>
-											
-												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="enable-scrobbling" /> enabled</label></p>	
-												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
-											</form>
-											<div class="lfm-granting needs-cross-domain">
-												<p>To scrobble to last.fm you must <input class="login-lastfm-button" type="button" value="grant"/> access to Seesu </p>
-												<p class="lfm-finish"><label><input type='checkbox' class="scrobbling-grant"/> I've granted my account access to Seesu</label></p>
-											</div>
-											<p><input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
-										</div>
-									</div>
-									
-									
-								</li>
-							</ul>
-							
-							
-						</div>
+						
 						<div class="vk-login-context">
 							<div class="needs-cross-domain">To get mp3 files you need to <a href="javascript:void(0)" class="js-serv sign-in-to-vk">sign in</a> to vk.com (vkontakte.ru). You may <a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv" >create new account</a> (it's free).</div>
 							<div class="no-needs-cross-domain">To get mp3 files you need to login <a href="javascript:void(0)" class="js-serv sign-in-to-vk">to vk.com</a> or <a href="javascript:void(0)" class="js-serv sign-in-to-vk-ru">to vkontakte.ru</a>. Try both if you get &laquo;Open API security breach&raquo;. You may <a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv" >create new account</a> (it's free).</div>
@@ -296,7 +297,20 @@
 								<p><button>enter</button></p>
 							</form>
 						</div>
-						<div id="tracks-magic">
+						<div class="play-list-panel">
+							<a
+								
+								class="js-serv open-external-playlist" 
+								id="open-external-playlist" 
+								title="Right Mouse Click > Save as... > *.m3u file">
+								Export m3u playlist
+							
+							</a>
+							<div id="tracks-search" class="search-music-files">
+								<span id="tracks-waiting-for-search"></span> 
+							</div>
+						</div>
+						<div id="tracks-magic" class="tracks-magic">
 							<div class="tracks-for-play"></div>
 						</div>
 					</div>

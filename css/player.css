@@ -1,11 +1,12 @@
-#tracks-magic{
+.tracks-magic{
 	position:relative;
 	padding-top:1px;
 }
-.player-holder .play-controls{
+.tracks-for-play .play-controls{
 	position:absolute;
-	right:55px;
+	right:115px;
 	margin-top:5px;
+	top:0;
 }
 
 
@@ -21,6 +22,7 @@
 		padding:1px 0 0 1px;
 		width:19px;
 		height:19px;
+		border:0  !important;
 		background-repeat:no-repeat;
 		}
 		.play-control:hover{
@@ -94,9 +96,8 @@ a.download-mp3:hover{
 	background:#666;
 	color:#ffffff;
 	}
-.active-play
-a.song{
-	cursor:default;
+.active-play a.song{
+	background:transparent;
 	
 }
 	.player-played
@@ -136,21 +137,12 @@ a.song{
 
 
 
-.tracks-for-play .play-controls{
-	display:none;
-	position:absolute;
-	top: -2px;
-	left:-31px;
-}
 
 
 
 
 
-.player-holder
-#flash-secur{
-	position:relative;
-}
+
 
 .scrobbling-button>a{
 background:#d8404c;
@@ -203,17 +195,9 @@ p.internet-flash-settings{
 
 
 
-#play-list-holder .player-holder{
-	left:0;
-	z-index:2;
-	right:42px;
-	position:absolute;
-}
 
 
-.player-holder{
-	height:20px;
-}
+
 #i_f_sm2{
 	width:20px;
 	top:0;
@@ -230,9 +214,10 @@ p.internet-flash-settings{
 	position:absolute;
 	overflow:hidden;
 	max-width:100%;
-	padding:6px;
+	padding:0;
 	left:0;
 	right:0;
+	height:15px;
 	border: 1px solid transparent;
 
 	}
@@ -247,6 +232,7 @@ p.internet-flash-settings{
 		}
 	.track-play-progress{
 		position:absolute;
+		cursor:pointer;
 		width:0;
 		left:0;
 		top:0;

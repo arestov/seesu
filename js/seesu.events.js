@@ -23,10 +23,16 @@ $(function() {
 		search_input[0].select();
 	};
 	
-	window.nav_artist_page = document.getElementById('nav_artist_page');
+	window.nav_playlist_page = document.getElementById('nav_playlist_page');
+	$(nav_playlist_page).parent().click(function(){
+		$(slider).removeClass('show-zoom-to-track')
+	})
+	window.nav_track_zoom = $('#nav_track_zoom');
 	window.trk_page_nav = document.getElementById('nav_tracks_page');
 	search_nav.click(function(){
 		slider.className = "show-search show-search-results";
+		search_input[0].focus();
+		search_input[0].select();
 	});
 	window.export_playlist = $('#open-external-playlist');
 	seesu.start_screen = $('#start-screen');
@@ -41,7 +47,7 @@ $(function() {
 	window.artsTracks	= $('.tracks-for-play',artsHolder);
 	window.art_tracks_w_counter = $('#tracks-waiting-for-search');
 	
-	window.playlist_panel = $('#play-list-panel');
+	window.playlist_panel = $('#track-panel');
 	
 	
 	window.vk_save_pass = $('#vk-save-pass');

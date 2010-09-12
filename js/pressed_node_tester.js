@@ -2,7 +2,7 @@ var test_pressed_node = function(original_node, mouseup){
 	var node = original_node;
   	var class_name = node.className;
 	var clicked_node = $(original_node);
-	if (!mouseup) {
+	
 		if(clicked_node.is('a')) {
 		  if (class_name.match(/song/)){
 		  	if (class_name.match(/duration/)){
@@ -170,7 +170,7 @@ var test_pressed_node = function(original_node, mouseup){
 				return false
 			}
 		}
-	} else{
+	
 		if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
 			var class_name = node.parentNode.className;
 			if (class_name.match(/pause/)){
@@ -201,6 +201,6 @@ var test_pressed_node = function(original_node, mouseup){
 			}
 		  
 		}
-	}
+	
 	
 }

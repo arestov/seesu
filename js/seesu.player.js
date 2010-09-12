@@ -103,18 +103,39 @@ seesu.player = {
 		node.parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('active-play');
 		var c_playlist = node.data('link_to_playlist'),
 			c_num = node.data('number_in_playlist');
-		if (c_playlist && c_num){
-			if (c_playlist[c_num-1]) {
-				c_playlist[c_num-1].parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('to-play-previous')
+			
+		if (!remove_playing_status){
+			if (c_playlist && typeof c_num == 'number'){
+				if (c_playlist[c_num-1]) {
+					this.current_prev_song = c_playlist[c_num-1].parent().addClass('to-play-previous')
+				}
+				if (c_playlist[c_num+1]){
+					this.current_next_song = c_playlist[c_num+1].parent().addClass('to-play-next')
+				}
 			}
-			if (c_playlist[c_num+1]){
-				c_playlist[c_num+1].parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('to-play-next')
+		} else{
+			if (this.current_prev_song && this.current_prev_song.length){
+				this.current_prev_song.removeClass('to-play-previous')
+			}
+			if (this.current_next_song && this.current_next_song.length){
+				this.current_next_song.removeClass('to-play-next')
 			}
 		}
+			
+		
 		
 	},
-	'set_current_song':function (node) {
+	fix_songs_ui: function(){
+		if (this.current_song){
+			this.change_songs_ui(this.current_song)
+		}
+	},
+	'set_current_song':function (node, zoom) {
+	  if (zoom){
+		$(slider).addClass('show-zoom-to-track');
+	  }
 	  if (this.current_song && this.current_song.length && (this.current_song[0] == node[0])) {
+	  	this.fix_songs_ui();
 		return true;
 		
 	  } else {
@@ -125,9 +146,13 @@ seesu.player = {
 		if (this.current_song) {
 			this.change_songs_ui(this.current_song, true)
 		}
-		this.change_songs_ui(node);
+		
 		
 		this.current_song = node;
+		
+		
+		this.change_songs_ui(node);
+		
 		if (this.musicbox.play_song_by_node) {
 		  this.musicbox.play_song_by_node(node);
 		} else 
@@ -135,7 +160,11 @@ seesu.player = {
 		  this.musicbox.play_song_by_url(node.data('mp3link'), node.data('duration'));
 		} else 
 		{return false;}
-
+		
+		
+		node.parent().append(this.play_controls.rebind())
+		
+		nav_track_zoom.text(( $(nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + node.data('track_title'));
 		
 	  }
 	}
@@ -204,10 +233,8 @@ seesu.player.events[VOLUME] = function(volume_value) {
 
 // Click by song
 seesu.player.song_click = function(node) {
+  $(slider).addClass('show-zoom-to-track');
   seesu.player.set_current_song(node);
-
-
-
   return false;
 }
 
@@ -219,7 +246,7 @@ function change_volume(volume_value){
   seesu.player.player_volume = volume_value;	
 }
 
-player_holder = seesu.ui.player_holder = $('<div class="player-holder"></div>');
+seesu.ui.player_holder = $('<div class="player-holder"></div>');
 
 var try_to_use_iframe_sm2p = function(){
 	i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.heroku.com/i.html" ></iframe>');
@@ -349,7 +376,7 @@ var try_to_use_iframe_sm2p = function(){
 				
 			} else if (e.data.match(/sm2_inited/)){
 				log('iframe sm2 wrokss yearh!!!!')
-				seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
+				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
 				i_f_sm2.addClass('sm-inited');
 				$(document.body).addClass('flash-internet');
 				
@@ -384,13 +411,11 @@ var try_to_use_iframe_sm2p = function(){
 // Ready? Steady? Go!
 
 $(function() {
-	play_controls = $('.play-controls');
-	player_holder.append(play_controls)
-	$('#tracks-magic').append(player_holder);
+	a_info.prepend(seesu.ui.player_holder);
 	
 	var a = document.createElement('audio');
 	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
-		seesu.player.musicbox = new html5_p(player_holder, seesu.player.player_volume);
+		seesu.player.musicbox = new html5_p(seesu.ui.player_holder, seesu.player.player_volume);
 	} else{
 		soundManager = new SoundManager();
 		if (soundManager){
@@ -403,7 +428,7 @@ $(function() {
 			soundManager.onready(function() {
 			  if (soundManager.supported()) {
 				log('sm2 in widget ok')
-				seesu.player.musicbox = new sm2_p(player_holder, seesu.player.player_volume, soundManager);
+				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager);
 				$(document.body).addClass('flash-internet');
 			  } else {
 			  	log('sm2 in widget notok')

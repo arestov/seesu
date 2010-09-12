@@ -206,7 +206,7 @@ display:none;
 }
 
 .play-list-holder{
-	padding-top:30px;
+	padding-top:0;
 	line-height:1.4em;
 	position:relative;
 }
@@ -215,8 +215,10 @@ display:none;
 	clear:both;
 	}
 	.tracks-for-play>ul>li{
-		margin: 0 42px 3px 0;
+		margin: 0 0 3px 0;
+		padding-right:43px;
 		overflow:hidden;
+		position:relative;
 		}
 .artist-image.freeze-this-image{
 	visibility:hidden;
