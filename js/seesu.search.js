@@ -384,10 +384,13 @@ seesu.ui.buttons = {
 	search_vkontakte: 
 		$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>Use dirty search</span></button>')
 			.click(function(e){
+				
 				var query = search_input.val();
+				log(query)
 				if (query) {
 					vk_track_search(query)
 				}
+				
 			})
 	
 }
@@ -514,7 +517,7 @@ var fast_suggestion_ui = function(r){
 
 	
 	
-	$('<p></p').append(seesu.ui.buttons.search_vkontakte).appendTo(searchres);
+	$('<p></p').append(seesu.ui.buttons.search_vkontakte.clone(true)).appendTo(searchres);
 	
 	
 	seesu.ui.make_search_elements_index();
@@ -558,7 +561,7 @@ var multiply_suggestion_ui = function(input_value){
 	searchres.append(ul_tags);
 	
 
-	$('<p></p').append(seesu.ui.buttons.search_vkontakte).appendTo(searchres);
+	$('<p></p').append(seesu.ui.buttons.search_vkontakte.clone(true)).appendTo(searchres);
 	
 	seesu.ui.buttons_li.inject_before_buttons = true;
 	seesu.ui.make_search_elements_index();

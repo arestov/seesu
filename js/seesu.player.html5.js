@@ -65,7 +65,7 @@ html5_p.prototype = {
 			this.track_progress_play[0].style.width = this.track_progress_load[0].style.width = '0';
 		}
 		
-		var parent_node = node.parent()
+		var parent_node = node.parent();
 		/**
 		var top = parent_node.position().top;
 		
@@ -76,7 +76,7 @@ html5_p.prototype = {
 		if (this.track_progress_total){
 			this.track_progress_width = parent_node.outerWidth();
 			//this.track_node_text.html(node.html());
-			//log('width: '  + this.track_progress_width)
+			//log('width: '  + this.track_progress_width);
 		}
 		
 		this.play_song_by_url(node.data('mp3link'), node.data('duration'));
@@ -131,16 +131,17 @@ html5_p.prototype = {
 			addEvent(this.current_song, 'stop', function(){_this.html5_p_events.stopped(_this)});
 			addEvent(this.current_song, 'ended', function(){_this.html5_p_events.finished(_this)});
 			addEvent(this.current_song, 'timeupdate', function(){
-				_this.html5_p_events.progress_playing(_this, _this.current_song.currentTime, _this.current_song.duration)
+				_this.html5_p_events.progress_playing(_this, _this.current_song.currentTime, _this.current_song.duration);
 			});
 			addEvent(this.current_song, 'progress', function(e){
-				_this.html5_p_events.progress_loading(_this, e.loaded, e.total) 
-				log('progress: ' + e.loaded + ' ' + e.total)
+				if (e.loaded && e.total){
+					_this.html5_p_events.progress_loading(_this, e.loaded, e.total);
+				}
 			});
 			addEvent(this.current_song, 'canplaythrough', function(e){
 				setTimeout(function(){
 					if (_this.current_song.buffered.length && (_this.current_song.buffered.length > 0)){
-						_this.html5_p_events.progress_loading(_this, _this.current_song.buffered.end(0), _this.current_song.duration)
+						_this.html5_p_events.progress_loading(_this, _this.current_song.buffered.end(0), _this.current_song.duration);
 					}
 				},300)
 			});
