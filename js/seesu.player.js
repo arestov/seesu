@@ -417,6 +417,7 @@ $(function() {
 	var a = document.createElement('audio');
 	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 		seesu.player.musicbox = new html5_p(seesu.ui.player_holder, seesu.player.player_volume);
+		$(document.body).addClass('flash-internet');
 	} else{
 		soundManager = new SoundManager();
 		if (soundManager){
