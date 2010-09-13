@@ -1,7 +1,7 @@
 {
   "name": "Seesu",
-  "version": "1.91",
-  "description": "You can find & get any music you need. Type in an artist or genre.",
+  "version": "1.92",
+  "description": "Seesu if for searching and listening music. Free last.fm player.",
   "browser_action": {
 	"default_icon": "icon.png",
 	"default_title": "Seesu"
