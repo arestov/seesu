@@ -149,6 +149,7 @@ seesu.player = {
 		}
 		
 		
+		
 		this.current_song = node;
 		
 		
@@ -166,6 +167,11 @@ seesu.player = {
 		node.parent().append(this.play_controls.rebind())
 		
 		nav_track_zoom.text(( $(nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + node.data('track_title'));
+		if (seesu.now_playing.link){
+			seesu.now_playing.link.siblings('span').remove();
+			seesu.now_playing.link.after($('<span></span>').text(": " + artist + " - " + node.data('track_title')));
+		}
+		
 		
 	  }
 	}
