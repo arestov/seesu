@@ -254,7 +254,9 @@ var get_track_as_possible = function(node, playlist_nodes_for){
 	if (!used_successful && seesu.delayed_search.waiting_for_mp3provider){
 		if (mp3_prov_quene) {
 			mp3_prov_quene.add(function(){
-				get_track(node, playlist_nodes_for, true);
+				if (!node.data('mp3link')){
+					get_track(node, playlist_nodes_for, true);
+				} 
 			}, true)
 		}
 	}
