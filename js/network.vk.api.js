@@ -1,6 +1,6 @@
 //var viewer_id 		= seesu.vk_id;
 var vk_api = function(apis){
-	this.api = apis;
+	this.apis = apis;
 	if (apis.length > 1){
 		this.allow_random_api;
 	}
@@ -24,9 +24,9 @@ vk_api.prototype = {
 		if (method) {
 			var api;
 			if (this.allow_random_api){
-				api = apis[Math.floor(Math.random()*this.apis.length)];
+				api = this.apis[Math.floor(Math.random()*this.apis.length)];
 			} else{
-				api = apis[0];
+				api = this.apis[0];
 			}
 			
 			
