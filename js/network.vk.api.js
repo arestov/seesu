@@ -1,21 +1,36 @@
 //var viewer_id 		= seesu.vk_id;
-var vk_api = function(api_id, s, sid, viewer_id, cache){
+var vk_api = function(apis){
+	this.api = apis;
+	if (apis.length > 1){
+		this.allow_random_api;
+	}
+	/**
+	api_id, s, sid, viewer_id, cache
+	
 	this.sid 	= sid;
 	this.api_id 	= api_id;
-	this.api_link 	= 'http://api.vk.com/api.php';
 	this.v 			= '3.0';
 	this.s = s;
 	this.viewer_id = viewer_id;
 	if (cache){
 		this.use_cache = true;
-	}
+	}**/
 }
 
 vk_api.prototype = {
-	'use': function(method, params, callback, error, nocache, after_ajax, query){
+	api_link: 'http://api.vk.com/api.php',
+	use: function(method, params, callback, error, nocache, after_ajax, query){
 	
 		if (method) {
-			var use_cache = (this.use_cache && !nocache);
+			var api;
+			if (this.allow_random_api){
+				api = apis[Math.floor(Math.random()*this.apis.length)];
+			} else{
+				api = apis[0];
+			}
+			
+			
+			var use_cache = (api.use_cache && !nocache);
 
 			var _this = this;
 			var pv_signature_list = [], // array of <param>+<value>
@@ -24,18 +39,31 @@ vk_api.prototype = {
 			
 				
 				
-			params_full.method 	= method;
-			params_full.api_id 	= this.api_id;
-			params_full.v		= this.v;
-			params_full.format 	= params_full.format || 'JSON';
-			params_full.sid 	= this.sid;
-			params_full.callback= create_jsonp_callback(function(r){
+			var response_callback = function(r){
 				var r = (typeof r == 'object') ? r : JSON.parse(r);
-				cache_ajax.set('vk_api', cache_hash, r);
+				cache_ajax.set('vk_api', query, r);
 				if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
 					if (callback) {callback(r);}
 				}
-			});
+			}
+				
+				
+			params_full.method 	= method;
+			params_full.api_id 	= api.api_id;
+			
+			params_full.format 	= 'JSON';
+			if (api.sid){
+				params_full.sid 	= api.sid;
+				params_full.callback = create_jsonp_callback(response_callback);
+			}
+			if(api.v){
+				params_full.v		= api.v;
+			}
+			if(api.test_mode){
+				params_full.test_mode = 1;
+			}
+			
+			
 			
 			if(apisig || use_cache) {
 				for (var param in params_full) {
@@ -49,23 +77,12 @@ vk_api.prototype = {
 				for (var i=0, l = pv_signature_list.length; i < l; i++) {
 					paramsstr += pv_signature_list[i];
 				};
-				if (use_cache){
-					var cache_hash = '';
-					for (var i=0, l = pv_signature_list.length; i < l; i++) {
-						if (!pv_signature_list[i].match(/^callback/)){
-							cache_hash += pv_signature_list[i];
-						}
-						
-					};
-					cache_hash = hex_md5(cache_hash);
-					
-				}
-				params_full.sig = hex_md5(this.viewer_id + paramsstr + this.s);
+				params_full.sig = hex_md5(api.viewer_id + paramsstr + api.s);
 
 			}
 			
 			if (use_cache){
-				var cache_used = cache_ajax.get('vk_api', cache_hash, callback)
+				var cache_used = cache_ajax.get('vk_api', query, callback)
 				if (cache_used) {
 					return true;
 				}
@@ -82,10 +99,11 @@ vk_api.prototype = {
 				  url: _this.api_link,
 				  global: false,
 				  type: "GET",
-				  dataType: 'script',
+				  dataType: params_full.sid ? 'script' : 'json',
 				  data: params_full,
 				  timeout: 20000,
-				  jsonpCallback: params_full.callback, 
+				  success: params_full.sid ? false : response_callback,
+				  jsonpCallback: params_full.callback ? params_full.callback : false, 
 				  error: function(xhr){
 					if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
 						if (error && xhr) {error(xhr);}

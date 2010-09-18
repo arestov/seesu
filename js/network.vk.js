@@ -11,7 +11,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
 	if (use_cache){
-		var cache_used = cache_ajax.get('vk_h', hash, callback)
+		var cache_used = cache_ajax.get('vk_hard', query, callback)
 		if (cache_used) {return true;}
 	}
 
@@ -38,7 +38,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 					var music_list = get_vk_music_list(r);
 				
 					if (music_list && callback) {
-						cache_ajax.set('vk_h', hash, music_list);
+						cache_ajax.set('vk_hard', query, music_list);
 						if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0 || seesu.mp3_quene.big_quene.length == 0){
 							callback(music_list);
 						}

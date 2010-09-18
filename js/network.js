@@ -5,6 +5,7 @@ get_all_tracks = function(trackname, callback, was_unsuccessful){
 	var used_successful = seesu.delayed_search.use.search_tracks(trackname, callback, function(){callback();}, was_unsuccessful);
 	return used_successful;
 }
+
 get_track = function(tracknode, playlist_nodes_for, was_unsuccessful){
 	if (!was_unsuccessful){
 		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
