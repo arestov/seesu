@@ -101,7 +101,8 @@ window.set_vk_auth = function(vk_session, save_to_store){
 			s: vk_s.secret,
 			viewer_id: vk_s.mid, 
 			sid: vk_s.sid, 
-			use_cache: true
+			use_cache: true,
+			v: "3.0"
 		}]);
 		seesu.delayed_search.switch_to_vk_api();
 		$(document.body).removeClass('vk-needs-login');
