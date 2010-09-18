@@ -12,7 +12,7 @@
 #open-external-playlist{
 	display:none;
 }
-#open-external-playlist[href]{
+#open-external-playlist.can-be-used{
 	display:inline;
 }
 #tracks-waiting-for-search{

@@ -46,7 +46,7 @@ var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 			  },
 			  success: function(r){
 				cache_ajax.set('lastfm', params_full.api_sig, r)
-				if (callback) {callback(r);}			
+				if (callback) {callback(r);}
 			  },
 			  complete: function(xhr){
 			  	//log(xhr.responseText)

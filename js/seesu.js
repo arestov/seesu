@@ -96,7 +96,13 @@ window.set_vk_auth = function(vk_session, save_to_store){
 	var vk_s = JSON.parse(vk_session);
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (vk_s.expire > rightnow){
-		seesu.vk_api = new vk_api(1915003, vk_s.secret, vk_s.sid, vk_s.mid, true)
+		seesu.vk_api = new vk_api([{
+			api_id: 1915003, 
+			s: vk_s.secret,
+			viewer_id: vk_s.mid, 
+			sid: vk_s.sid, 
+			use_cache: true
+		}]);
 		seesu.delayed_search.switch_to_vk_api();
 		$(document.body).removeClass('vk-needs-login');
 		if (save_to_store){
@@ -207,7 +213,10 @@ external_playlist.prototype = {
 	request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
 }
 
-var make_external_playlist = function(playlist_nodes_for){
+var make_external_playlist = function(){
+	if (!seesu.player.current_song ){return false}
+	var playlist_nodes_for = seesu.player.current_song.data('link_to_playlist');
+	
 	if (playlist_nodes_for && playlist_nodes_for.length){
 		var simple_playlist = [];
 		

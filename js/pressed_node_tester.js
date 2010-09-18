@@ -95,6 +95,8 @@ var test_pressed_node = function(original_node, mouseup){
 			clicked_node.parent().toggleClass('want-to-select-mp3-search');
 		  }
 		  else if (class_name.match(/open-external-playlist/)){
+		  	
+			make_external_playlist();
 			if (seesu.player.current_external_playlist.result) {
 				widget.openURL(
 					'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(seesu.player.current_external_playlist.result)
