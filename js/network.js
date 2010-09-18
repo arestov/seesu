@@ -17,7 +17,7 @@ get_track = function(tracknode, playlist_nodes_for, was_unsuccessful){
 			var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
 			make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
 			resort_playlist(playlist_nodes_for);
-			make_external_playlist(playlist_nodes_for);
+			export_playlist.addClass('can-be-used');
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		},
 		function(xhr){

@@ -207,7 +207,10 @@ external_playlist.prototype = {
 	request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
 }
 
-var make_external_playlist = function(playlist_nodes_for){
+var make_external_playlist = function(){
+	if (!seesu.player.current_song ){return false}
+	var playlist_nodes_for = seesu.player.current_song.data('link_to_playlist');
+	
 	if (playlist_nodes_for && playlist_nodes_for.length){
 		var simple_playlist = [];
 		
