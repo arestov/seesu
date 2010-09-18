@@ -43,6 +43,7 @@ var button_menu = function(jq_node){
 button_menu.prototype = {
 	rebind: function(){
 		return this.node
+			.data('buttmen', this)
 			.unbind()
 			.mousedown(this.events.mousedown)
 			.mouseup(this.events.mouseup)

@@ -96,7 +96,7 @@ sm2_p.prototype = {
 **/
 		
 		if (this.track_progress_total){
-			this.track_progress_width = parent_node.outerWidth();
+			this.track_progress_width = parent_node.outerWidth() - 12;
 			//this.track_node_text.html(node.html());
 			//log('width: '  + this.track_progress_width)
 		}
