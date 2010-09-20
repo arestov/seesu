@@ -4,22 +4,8 @@ var test_pressed_node = function(original_node, mouseup){
 	var clicked_node = $(original_node);
 	
 		if(clicked_node.is('a')) {
-		  if (class_name.match(/song/)){
-		  	if (class_name.match(/duration/)){
-		  		seesu.player.song_click(clicked_node.parent());
-			} else{
-				seesu.player.song_click(clicked_node);
-			}
-			return ;
-		  }
 		  if (class_name.match(/download-mp3/)){
 			widget.openURL(node.href);
-			return false;
-		  }
-		  else if (class_name.match(/waiting-full-render/)){
-			if (seesu.player.wainter_for_play) {seesu.player.wainter_for_play.removeClass('marked-for-play');}
-			clicked_node.data('want_to_play', seesu.player.want_to_play += 1).addClass('marked-for-play');
-			seesu.player.wainter_for_play = clicked_node;
 			return false;
 		  }
 		  else if (class_name.match(/track-zoomin/)){
@@ -150,11 +136,6 @@ var test_pressed_node = function(original_node, mouseup){
 			} else if (class_name.match(/disable-scrobbling/)){
 				w_storage('lfm_scrobbling_enabled', '', true);
 				lfm_scrobble.scrobbling = false;
-				
-			}else if (class_name.match(/mp3-audme/)){
-				$(document.body).removeClass('vk-needs-login');
-				seesu.delayed_search.switch_to_audme();
-				return false;
 				
 			}else if (class_name.match(/mp3-vk($| )/)){
 				if (seesu.vk_logged_in){

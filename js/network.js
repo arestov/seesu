@@ -1,33 +1,68 @@
-get_all_tracks = function(trackname, callback, was_unsuccessful){
-	if (seesu.mp3_quene) {seesu.mp3_quene.reset();}
+get_all_tracks = function(trackname, callback, was_unsuccessful, hypnotoad){
+	if (seesu.delayed_search.use.quene) {seesu.delayed_search.use.quene.reset();}
 	seesu.delayed_search.tracks_waiting_for_search = 0;
 	art_tracks_w_counter.text('');
-	var used_successful = seesu.delayed_search.use.search_tracks(trackname, callback, function(){callback();}, was_unsuccessful);
+	var s = hypnotoad ? seesu.hypnotoad.search_tracks : seesu.delayed_search.use.search_tracks;
+	var used_successful = s(trackname, callback, function(){callback();}, was_unsuccessful);
 	return used_successful;
 }
 
-get_track = function(tracknode, playlist_nodes_for, was_unsuccessful){
+get_track = function(tracknode, was_unsuccessful, hypnotoad){
+	if(tracknode.data('mp3link')){
+		return false;
+	}
 	if (!was_unsuccessful){
 		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
 	}
-	var used_successful = seesu.delayed_search.use.search_tracks(
+	var s = hypnotoad ? seesu.hypnotoad.search_tracks : seesu.delayed_search.use.search_tracks;
+	var used_successful = s(
 		tracknode.data('artist_name') + ' - ' + tracknode.data('track_title'), 
 		function(music_list){
 			//success
+			if(tracknode.data('mp3link')){
+				return false
+			}
 			tracknode.removeClass('search-mp3');
 			var best_track = search_from_list_one_track(music_list,tracknode.data('artist_name'),tracknode.data('track_title'));
-			make_node_playable(tracknode, best_track.link, playlist_nodes_for, best_track.duration);
-			resort_playlist(playlist_nodes_for);
+			make_node_playable(tracknode, best_track.link, best_track.duration);
+			resort_playlist(tracknode.data('link_to_playlist'));
 			export_playlist.addClass('can-be-used');
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		},
 		function(xhr){
 			//error
+			if(tracknode.data('mp3link')){
+				return false;
+			}
+			if (!tracknode.data('not_use')){
+				tracknode.data('not_use', true);
+				if (
+					(seesu.player.current_next_song && (tracknode[0] == seesu.player.current_next_song[0])) || (seesu.player.current_prev_song && (tracknode[0] == seesu.player.current_prev_song[0]))
+					
+				){
+					seesu.player.fix_songs_ui();
+				}
+				if (hypnotoad){
+					if (seesu.player.current_next_song && !seesu.player.current_next_song.data('mp3link')){
+						get_track(seesu.player.current_next_song, false, true);
+						
+					}
+				}
+				
+			} else{
+				return false;
+			}
+			
+			
+			
 			tracknode.removeClass('search-mp3').addClass('search-mp3-failed').removeClass('waiting-full-render');
 			art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		}, 
 		was_unsuccessful,
 		function(){
+			if(tracknode.data('mp3link')){
+				return false;
+			}
 			tracknode.addClass('search-mp3');
 		}
 	);
@@ -207,7 +242,7 @@ window.try_hard_vk_working = function(callback){
 
 try_mp3_providers = function(){
 	if (seesu.cross_domain_allowed){
-		if (seesu.vk.id) {
+		if (seesu.vk.id || seesu.env.chrome_extension || seesu.env.firefox_widget ) {
 			try_hard_vk_working();
 		} else{
 			log('vk mp3 prov faild cos not auth')
