@@ -3,6 +3,38 @@ window.seesu =  {
 	  cross_domain_allowed: !location.protocol.match(/http/) && $(document.documentElement).addClass('cross-domain-allowed') && true,
 	  version: 1.90,
 	  env: app_env,
+	  track_stat: (function(){
+		var _i = document.createElement('iframe');_i.id ='gstat';_i.src = 'http://seesu.me/g_stat.html';
+
+		
+		$(function(){
+			document.body.appendChild(_i);
+		})
+		var ga_ready = false;
+		var ga_ready_waiter = function(e){
+			if ( e.origin == "http://seesu.me") { //security, sir!
+				if (e.data == 'ga_stat_ready'){
+					ga_ready = true;
+					removeEvent(window, "message", ga_ready_waiter);
+				}
+			} else {
+				return false
+			}
+		}	
+		addEvent(window, "message", ga_ready_waiter);
+	  	
+		return function(){
+			if (ga_ready){
+				var string = 'track_stat';
+				for (var i=0; i < arguments.length; i++) {
+					string += '\n' + arguments[i];
+				};
+			
+				_i.contentWindow.postMessage(string, "http://seesu.me");
+			}
+			
+	  	}	
+	  })(),
 	  popular_artists: ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ],
 	  vk:{
 		id: w_storage('vkid'),
@@ -32,7 +64,6 @@ window.seesu =  {
 	  hypnotoad: {
 	  	vk_api: false,
 	  	search_tracks:function(){
-	  		log('i love hypnotoads!')
 	  		if(seesu.hypnotoad.vk_api){
 	  			return seesu.hypnotoad.vk_api.audio_search.apply(seesu.hypnotoad.vk_api, arguments);
 	  		}
@@ -375,7 +406,6 @@ var make_node_playable = function(node, http_link, mp3_duration){
 	}
 
 	if (playlist_length == 2) {
-		log('zz')
 		seesu.player.fix_songs_ui();
 	}
 
