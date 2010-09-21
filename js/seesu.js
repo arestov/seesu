@@ -231,7 +231,7 @@ var updating_notify = function(r){
 };
 var check_seesu_updates = function(){
 	$.ajax({
-	  url: 'http://seesu.me/update',
+	  url: seesu.cross_domain_allowed ? 'http://seesu.me/update' : '/update',
 	  global: false,
 	  type: "POST",
 	  dataType: "json",
