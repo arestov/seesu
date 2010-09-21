@@ -7,7 +7,7 @@ var check_vk_logout_response = function(text){
 
 
 var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
-
+	seesu.track_event('mp3 search', 'vk hardcore search');
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
 	if (use_cache){
@@ -19,8 +19,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 		return false;
 	}
 
-	var qcheck = seesu.mp3_quene.big_quene;
-	seesu.mp3_quene.add(function(){
+	seesu.delayed_search.vk.quene.add(function(){
 		$.ajax({
 		  timeout: 10000,
 		  url: "http://vkontakte.ru/gsearch.php",
@@ -39,19 +38,19 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 				
 					if (music_list && callback) {
 						cache_ajax.set('vk_hard', query, music_list);
-						if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0 || seesu.mp3_quene.big_quene.length == 0){
+						if (seesu.delayed_search.vk.quene == seesu.delayed_search.use.quene){
 							callback(music_list);
 						}
 						
 					} else{
-						if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
+						if (seesu.delayed_search.vk.quene == seesu.delayed_search.use.quene){
 							if  (error) {error(xhr);}
 						}
 						
 					}
 				} catch(e) {
 					log(e)
-					if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
+					if (seesu.delayed_search.vk.quene == seesu.delayed_search.use.quene){
 						if  (error) {error(xhr);}
 					}
 					
@@ -59,7 +58,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 			} else{
 				check_vk_logout_response(text);
 				
-				if (qcheck == seesu.mp3_quene.big_quene || seesu.mp3_quene.big_quene.length == 0){
+				if (seesu.delayed_search.vk.quene == seesu.delayed_search.use.quene){
 					if  (error) {error(xhr);}
 				}
 			

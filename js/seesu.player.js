@@ -101,24 +101,38 @@ seesu.player = {
 	},
 	change_songs_ui: function(node, remove_playing_status){
 		node.parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('active-play');
-		var c_playlist = node.data('link_to_playlist'),
-			c_num = node.data('number_in_playlist');
+		var c_playlist = node.data('full_playlist'),
+			c_num = node.data('play_order');
 			
 		if (!remove_playing_status){
 			if (c_playlist && typeof c_num == 'number'){
-				if (c_playlist[c_num-1]) {
-					this.current_prev_song = c_playlist[c_num-1].parent().addClass('to-play-previous')
+				if (c_num-1 >= 0) {
+					for (var i = c_num-1, _p; i >= 0, !_p; i--){
+						if (c_playlist[i] && !c_playlist[i].data('not_use')){
+							_p = true;
+							(this.current_prev_song = c_playlist[i]).parent().addClass('to-play-previous')
+						}
+					};
+					if (!_p){this.current_prev_song = false}
 				}
-				if (c_playlist[c_num+1]){
-					this.current_next_song = c_playlist[c_num+1].parent().addClass('to-play-next')
+				if (c_num+1 < c_playlist.length){
+					for (var i = c_num+1, _n; i < c_playlist.length, !_n; i++) {
+						if (c_playlist[i] && !c_playlist[i].data('not_use')){
+							_n = true;
+							(this.current_next_song = c_playlist[i]).parent().addClass('to-play-next')
+						}
+					};
+					if(!_n){this.current_next_song = false}
 				}
+				
+				
 			}
 		} else{
 			if (this.current_prev_song && this.current_prev_song.length){
-				this.current_prev_song.removeClass('to-play-previous')
+				this.current_prev_song.parent().removeClass('to-play-previous')
 			}
 			if (this.current_next_song && this.current_next_song.length){
-				this.current_next_song.removeClass('to-play-next')
+				this.current_next_song.parent().removeClass('to-play-next')
 			}
 		}
 			
@@ -131,16 +145,21 @@ seesu.player = {
 			this.change_songs_ui(this.current_song);
 		}
 	},
-	'set_current_song':function (node, zoom) {
+	set_current_song: function (node, zoom) {
 	  if (zoom){
 		$(slider).addClass('show-zoom-to-track');
 	  }
 	  if (this.current_song && this.current_song.length && (this.current_song[0] == node[0])) {
 	  	this.fix_songs_ui();
+	  	
 		return true;
 		
 	  } else {
-		time = (new Date()).getTime();
+	  	
+		if (zoom){
+			$(slider).addClass('show-zoom-to-track');
+		}
+		//time = (new Date()).getTime();
 		var artist = node.data('artist_name');
 		if (artist) {update_artist_info(artist, a_info);}
 		
@@ -151,7 +170,7 @@ seesu.player = {
 		
 		
 		this.current_song = node;
-		
+		seesu.track_event('Play', 'started', node.data('artist_name') + ' - ' + node.data('track_title') );
 		
 		this.change_songs_ui(node);
 		
@@ -216,6 +235,7 @@ seesu.player.events[FINISHED] = function() {
 	};
 	submit(seesu.player.current_song);
   }
+  seesu.track_event('Play', 'finished', seesu.player.current_song.data('artist_name') + ' - ' + seesu.player.current_song.data('track_title') );
   
   if (typeof(source_window) != 'undefined') {
 	source_window.switch_to_next();
@@ -240,8 +260,21 @@ seesu.player.events[VOLUME] = function(volume_value) {
 
 // Click by song
 seesu.player.song_click = function(node) {
-  $(slider).addClass('show-zoom-to-track');
-  seesu.player.set_current_song(node);
+  var zoomed = !!slider.className.match(/show-zoom-to-track/);
+  if (node[0] == this.current_song[0]){
+  	seesu.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
+  } else if (node[0] == this.current_next_song[0]){
+  	seesu.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
+  } else if (node[0] == this.current_prev_song[0]){
+  	seesu.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
+  } else{
+  	seesu.track_event('Song click', 'simple click');
+  }
+  
+	  	
+  
+	  	
+  seesu.player.set_current_song(node, !zoomed);
   return false;
 }
 

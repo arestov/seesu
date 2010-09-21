@@ -21,7 +21,15 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 			}
 			return pos
 		}
-		
+		this.before_finish = function(){
+			this.before_finish_fired = true;
+			log('before finish')
+			if (seesu.player.current_next_song && !seesu.player.current_next_song.data('mp3link')){
+				get_track(seesu.player.current_next_song, false, true);
+				
+			}
+			
+		}
 		
 		
 		this.track_progress_total = $('<div class="track-progress"></div>').click(function(e){
@@ -111,6 +119,7 @@ sm2_p.prototype = {
 		this.sm2_actions.set_new_position.apply(this, arguments);
 	},
 	"play_song_by_url": function(){
+		this.before_finish_fired = false;
 		this.sm2_actions.play_song_by_url.apply(this, arguments);
 	},
 	'play': function(){
@@ -262,7 +271,13 @@ sm2_p.prototype = {
 				var current = Math.round((progress/total) * _this.track_progress_width);
 				
 				_this.track_progress_load[0].style.width = current + 'px';
-				
+				if (!_this.before_finish_fired){
+					if (total - progress_value < 20){
+						if (_this.before_finish){
+							_this.before_finish();
+						}
+					}
+				}
 
 				
 				

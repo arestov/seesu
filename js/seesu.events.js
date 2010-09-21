@@ -1,6 +1,6 @@
 $(function() {
   if (lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
-  if (seesu.cross_domain_allowed) {check_seesu_updates();}
+  check_seesu_updates();
   seesu.vk_id = w_storage('vkid');
   $(document).click(function(e) {
 	return test_pressed_node(e.target)
@@ -18,21 +18,27 @@ $(function() {
 	window.slider = document.getElementById('slider');
 	window.startlink = document.getElementById('start_search');
 	startlink.onclick = function(){
+		var current_page = slider.className;
 		slider.className = "show-start";
 		search_input[0].focus();
 		search_input[0].select();
+		seesu.track_event('Navigation', 'start page', current_page);
 	};
 	
 	window.nav_playlist_page = document.getElementById('nav_playlist_page');
 	$(nav_playlist_page).parent().click(function(){
-		$(slider).removeClass('show-zoom-to-track')
+		var current_page = slider.className;
+		$(slider).removeClass('show-zoom-to-track');
+		seesu.track_event('Navigation', 'playlist', current_page);
 	})
 	window.nav_track_zoom = $('#nav_track_zoom');
 	window.trk_page_nav = document.getElementById('nav_tracks_page');
 	search_nav.click(function(){
+		var current_page = slider.className;
 		slider.className = "show-search show-search-results";
 		search_input[0].focus();
 		search_input[0].select();
+		seesu.track_event('Navigation', 'search results', current_page);
 	});
 	window.export_playlist = $('#open-external-playlist');
 	seesu.start_screen = $('#start-screen');

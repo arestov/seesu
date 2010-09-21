@@ -55,6 +55,7 @@ window.app_env = (function(){
 	}  
 	 else{
 		env.app_type = false;
+		env.unknown_app = true;
 	}
 	
 	
