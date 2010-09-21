@@ -68,7 +68,6 @@ get_track = function(tracknode, was_unsuccessful, hypnotoad){
 			tracknode.addClass('search-mp3');
 		}
 	);
-	seesu.track_event('mp3 search', hypnotoad ? 'hypnotoad' : 'usual');
 	return used_successful;
 }
 

@@ -71,6 +71,7 @@ window.seesu =  {
 	  	vk_api: false,
 	  	search_tracks:function(){
 	  		if(seesu.hypnotoad.vk_api){
+				seesu.track_event('mp3 search', 'hypnotoad');
 	  			return seesu.hypnotoad.vk_api.audio_search.apply(seesu.hypnotoad.vk_api, arguments);
 	  		}
 	  		
@@ -98,6 +99,7 @@ window.seesu =  {
 			delay_big: 8000,
 			big_delay_interval: 7,
 			search_tracks : function(){
+				seesu.track_event('mp3 search', 'vk api with auth');
 				return seesu.vk_api.audio_search.apply(seesu.vk_api, arguments);
 			}
 		},
