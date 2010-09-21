@@ -438,3 +438,12 @@ html:not(.as-application), :not(.as-application)  body{
 #now-play-b{
 	margin-top:2em;
 }
+#gstat{
+	border:0;
+	margin:0;
+	padding:0;
+	height:1px;
+	width:1px;
+	position:relative;
+	z-index:-10;
+}
