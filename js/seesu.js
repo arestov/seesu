@@ -226,7 +226,7 @@ var updating_notify = function(r){
 	if (r.vk_apis){
 		seesu.hypnotoad.api = new vk_api(r.vk_apis, new quene(1300,5000,7));
 	}
-	log('lv: ' cver + ' reg link: ' + (vkReferer = r.vk_referer));
+	log('lv: ' +  cver + ' reg link: ' + (vkReferer = r.vk_referer));
 
 };
 var check_seesu_updates = function(){
