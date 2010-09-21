@@ -58,6 +58,8 @@ vk_api.prototype = {
 			params_full.format 	= 'JSON';
 			if (api.sid){
 				params_full.sid 	= api.sid;
+			}
+			if (api.callback || api.sid){
 				params_full.callback = create_jsonp_callback(response_callback);
 			}
 			if(api.v){
