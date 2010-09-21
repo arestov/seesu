@@ -4,7 +4,6 @@ get_all_tracks = function(trackname, callback, was_unsuccessful, hypnotoad){
 	art_tracks_w_counter.text('');
 	var s = hypnotoad ? seesu.hypnotoad.search_tracks : seesu.delayed_search.use.search_tracks;
 	var used_successful = s(trackname, callback, function(){callback();}, was_unsuccessful);
-	seesu.track_event('mp3 search', hypnotoad ? 'hypnotoad' : 'usual');
 	return used_successful;
 }
 
