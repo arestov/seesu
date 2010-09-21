@@ -160,7 +160,8 @@ vk_api.prototype = {
 window.listen_vk_api_callback_window = function(e){
 	if (e.origin == "http://seesu.me") {
 		if (e.data.match(/^set_vk_auth\n/)){
-			set_vk_auth(e.data.replace(/^set_vk_auth\n/, ''), true)
+			set_vk_auth(e.data.replace(/^set_vk_auth\n/, ''), true);
+			seesu.track_event('Auth to vk', 'auth', 'from iframe post message');
 		} else if (e.data == 'vkapi_auth_callback_ready'){
 			e.source.postMessage('get_vk_auth', 'http://seesu.me');
 		}

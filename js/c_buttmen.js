@@ -56,25 +56,37 @@ button_menu.prototype = {
 			e.preventDefault();
 			var _this = $(this);
 			var butt_hlts = _this.find('dd.buttmen-hlts ul');
+			var playing_with_dots = false;
+			var stat = setTimeout(function(){
+				if (playing_with_dots){
+					seesu.track_event('Buttmen', 'dots was showed and played');
+				}
+				
+			},200)
+			
 			
 			
 			_this.addClass('buttmen-highlighting');
 			var butt_main = $('dt.main-button', this).mouseleave(function(e){
 				e.preventDefault();
 				_this.removeClass('buttmen-highlighting').addClass('buttmen-butting');
+				seesu.track_event('Buttmen', 'buttons are here');
 				$(this).unbind('mouseleave');
 			});
 			$(document).mouseup(function(e){
+				clearTimeout(stat);
 				e.preventDefault();
 				butt_main.unbind('mouseleave');
 				setTimeout(function(){
 					_this.removeClass('buttmen-butting');
 					_this.removeClass('buttmen-highlighting');
 					butt_hlts.attr('class', '' );
+					seesu.track_event('Buttmen', 'some button was pressed');
 				},10);
 				
 				$(document).unbind('mouseup');
 				$(document).unbind('mousemove');
+				
 				return test_pressed_node(e.target, true)
 			})
 			
@@ -108,8 +120,10 @@ button_menu.prototype = {
 					
 					butt_hlts.attr('class', 'buttmen-hlt-vertical-' + sector_y + ' '+ 'buttmen-hlt-horizontal-' + sector_x )
 				}
+				playing_with_dots = true;
 				
-			})
+			});
+			
 			
 		},
 		mouseup: function(e){

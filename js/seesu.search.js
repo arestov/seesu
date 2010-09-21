@@ -85,6 +85,7 @@ var create_artist_suggest_item = function(artist, image){
 		.click(function(e){
 			var artist = $(this).data('artist');
 			set_artist_page(artist,true);
+			seesu.track_event('Music search', search_input.val(), "artist: " + artist );
 		})
 		.click(results_mouse_click_for_enter_press);
 	
@@ -98,7 +99,8 @@ var create_track_suggest_item = function(artist, track, image, duration){
 		.data('artist',artist)
 		.click(function(e){
 			var query = $(this).data('artist') + ' - ' + $(this).data('track_title');
-			vk_track_search(query)
+			vk_track_search(query);
+			seesu.track_event('Music search', search_input.val(), "track: " + query );
 		})
 		.click(results_mouse_click_for_enter_press);
 	
@@ -118,6 +120,7 @@ var create_tag_suggest_item = function(tag){
 		.click(function(e){
 			var tag = $(this).data('tag');
 			render_tracks_by_artists_of_tag(tag)
+			seesu.track_event('Music search', search_input.val(), "tag: " + tag );
 		})
 		.click(results_mouse_click_for_enter_press)
 		.append("<span>" + tag + "</span>");

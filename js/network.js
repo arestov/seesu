@@ -4,6 +4,7 @@ get_all_tracks = function(trackname, callback, was_unsuccessful, hypnotoad){
 	art_tracks_w_counter.text('');
 	var s = hypnotoad ? seesu.hypnotoad.search_tracks : seesu.delayed_search.use.search_tracks;
 	var used_successful = s(trackname, callback, function(){callback();}, was_unsuccessful);
+	seesu.track_event('mp3 search', hypnotoad ? 'hypnotoad' : 'usual');
 	return used_successful;
 }
 
@@ -11,6 +12,7 @@ get_track = function(tracknode, was_unsuccessful, hypnotoad){
 	if(tracknode.data('mp3link')){
 		return false;
 	}
+	
 	if (!was_unsuccessful){
 		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
 	}
@@ -66,6 +68,7 @@ get_track = function(tracknode, was_unsuccessful, hypnotoad){
 			tracknode.addClass('search-mp3');
 		}
 	);
+	seesu.track_event('mp3 search', hypnotoad ? 'hypnotoad' : 'usual');
 	return used_successful;
 }
 

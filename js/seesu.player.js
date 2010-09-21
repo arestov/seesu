@@ -145,16 +145,21 @@ seesu.player = {
 			this.change_songs_ui(this.current_song);
 		}
 	},
-	'set_current_song':function (node, zoom) {
+	set_current_song: function (node, zoom) {
 	  if (zoom){
 		$(slider).addClass('show-zoom-to-track');
 	  }
 	  if (this.current_song && this.current_song.length && (this.current_song[0] == node[0])) {
 	  	this.fix_songs_ui();
+	  	
 		return true;
 		
 	  } else {
-		time = (new Date()).getTime();
+	  	
+		if (zoom){
+			$(slider).addClass('show-zoom-to-track');
+		}
+		//time = (new Date()).getTime();
 		var artist = node.data('artist_name');
 		if (artist) {update_artist_info(artist, a_info);}
 		
@@ -165,7 +170,7 @@ seesu.player = {
 		
 		
 		this.current_song = node;
-		
+		seesu.track_event('Play', 'started', node.data('artist_name') + ' - ' + node.data('track_title') );
 		
 		this.change_songs_ui(node);
 		
@@ -230,6 +235,7 @@ seesu.player.events[FINISHED] = function() {
 	};
 	submit(seesu.player.current_song);
   }
+  seesu.track_event('Play', 'finished', seesu.player.current_song.data('artist_name') + ' - ' + seesu.player.current_song.data('track_title') );
   
   if (typeof(source_window) != 'undefined') {
 	source_window.switch_to_next();
@@ -254,8 +260,21 @@ seesu.player.events[VOLUME] = function(volume_value) {
 
 // Click by song
 seesu.player.song_click = function(node) {
-  $(slider).addClass('show-zoom-to-track');
-  seesu.player.set_current_song(node);
+  var zoomed = !!slider.className.match(/show-zoom-to-track/);
+  if (node[0] == this.current_song[0]){
+  	seesu.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
+  } else if (node[0] == this.current_next_song[0]){
+  	seesu.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
+  } else if (node[0] == this.current_prev_song[0]){
+  	seesu.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
+  } else{
+  	seesu.track_event('Song click', 'simple click');
+  }
+  
+	  	
+  
+	  	
+  seesu.player.set_current_song(node, !zoomed);
   return false;
 }
 

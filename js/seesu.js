@@ -16,6 +16,7 @@ window.seesu =  {
 				if (e.data == 'ga_stat_ready'){
 					ga_ready = true;
 					removeEvent(window, "message", ga_ready_waiter);
+					seesu.track_stat('_trackPageview', !app_env.unknown_app ? app_env.app_type : 'unknown_app');
 				}
 			} else {
 				return false
@@ -35,6 +36,11 @@ window.seesu =  {
 			
 	  	}	
 	  })(),
+	  track_event:function(){
+	  	var args = Array.prototype.slice.call(arguments)
+	  	args.unshift('_trackEvent');
+	  	seesu.track_stat.apply(this, args);
+	  },
 	  popular_artists: ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ],
 	  vk:{
 		id: w_storage('vkid'),
@@ -159,17 +165,20 @@ window.set_vk_auth = function(vk_session, save_to_store){
 var vk_session_meta = document.getElementsByName('vk_session');
 if (vk_session_meta && vk_session_meta.length){
 	if (vk_session_meta[0] && vk_session_meta[0].content){
-		set_vk_auth(vk_session_meta[0].content, true)
+		set_vk_auth(vk_session_meta[0].content, true);
+		seesu.track_event('Auth to vk', 'auth', 'from meta tag (iframe redirect)');
 	} else{
 		var vk_session_stored = w_storage('vk_session');
 		if (vk_session_stored){
 			set_vk_auth(vk_session_stored);
+			seesu.track_event('Auth to vk', 'auth', 'from saved');
 		}
 	}
 } else{
 	var vk_session_stored = w_storage('vk_session');
 	if (vk_session_stored){
 		set_vk_auth(vk_session_stored);
+		seesu.track_event('Auth to vk', 'auth', 'from saved');
 	}
 }
 wait_for_vklogin = function(){};
@@ -214,13 +223,15 @@ var updating_notify = function(r){
 			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"></a>');
 		}
 	}
-	log(cver);
-	vkReferer = r.vk_referer;
-	log(vkReferer);
+	if (r.vk_apis){
+		seesu.hypnotoad.api = new vk_api(r.vk_apis, new quene(1300,5000,7));
+	}
+	log('lv: ' cver + ' reg link: ' + (vkReferer = r.vk_referer));
+
 };
 var check_seesu_updates = function(){
 	$.ajax({
-	  url: 'http://seesu.heroku.com/update',
+	  url: 'http://seesu.me/update',
 	  global: false,
 	  type: "POST",
 	  dataType: "json",
@@ -429,7 +440,9 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 			if (seesu.start_screen){
 				$('<p></p>').attr('id', 'now-play-b').append(
 					seesu.now_playing.link = $('<a></a>').text('Now Playing').attr('class', 'js-serv').click(function(){
+						var current_page = slider.className;
 						slider.className = seesu.now_playing.nav;
+						seesu.track_event('Navigation', 'now playing', current_page);
 					})
 				).appendTo(seesu.start_screen)
 
@@ -459,7 +472,7 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 					seesu.player.wainter_for_play = clicked_node;
 					
 					get_track(clicked_node, false, true)
-					
+					seesu.track_event('Song click', 'empty song');
 					return false;	
 				}),
 				li = document.createElement('li');
@@ -507,7 +520,9 @@ var vk_track_search = function(query){
 			mp3_prov_quene.add(function(){get_all_tracks(query, render_playlist, true);}, true)
 		}
 	}
-	
+	if (!used_successful){
+		get_all_tracks(query, render_playlist, false, true);
+	}
 	
 	
 	
@@ -696,6 +711,7 @@ var artist_albums_renderer = function(r, container){
 					seesu.toogle_art_alb_container(seesu.artist_albums_container.data('albums_link'));
 					
 					get_artist_album_info(al_artist, al_name, get_artist_album_playlist );
+					seesu.track_event('Artist navigation', 'album', al_artist + ": " + al_name);
 					return false;
 				})
 				.appendTo(li);
@@ -783,6 +799,7 @@ var show_artist_info = function(r, ainf){
 			.click(function(){
 				var _this = $(this);
 				if (!_this.data('albums-loaded')){
+					
 					artist_albums_container.addClass('albums-loading');
 					
 					lfm('artist.getTopAlbums',{'artist': artist },function(r){
@@ -792,7 +809,7 @@ var show_artist_info = function(r, ainf){
 						artist_albums_container.removeClass('albums-loading');
 					});
 					_this.text('hide them');
-					
+					seesu.track_event('Artist navigation', 'show artist info', artist);
 				} else{
 					seesu.toogle_art_alb_container(_this);
 				}
@@ -825,7 +842,13 @@ var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 			.appendTo(ainf.name);
 			
 		if (!not_show_link_to_artist_page){
-			seesu.player.top_tracks_link = $('<a class="artist js-serv">top tracks</a>').data('artist', artist).appendTo(arts_name);
+			seesu.player.top_tracks_link = $('<a class="js-serv">top tracks</a>')
+				.data('artist', artist)
+				.appendTo(arts_name)
+				.click(function(){
+					set_artist_page(artist);
+					seesu.track_event('Artist navigation', 'top tracks', artist);
+				});
 		}	
 		
 		$('<a></a>')
@@ -833,7 +856,9 @@ var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 			.text('profile')
 			.attr('title', 'last.fm profile')
 			.click(function(){
-				widget.openURL('http://www.last.fm/music/' + artist.replace(' ', '+'));
+				var link = 'http://www.last.fm/music/' + artist.replace(' ', '+')
+				widget.openURL(link);
+				seesu.track_event('Links', 'lastfm', link);
 				return false
 			})
 			.appendTo(arts_name)
