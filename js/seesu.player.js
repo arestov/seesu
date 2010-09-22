@@ -329,7 +329,7 @@ var try_to_use_iframe_sm2p = function(){
 		}
 		var last_iframe_func = text_of_function(init_sm2_p).replace('_volume', seesu.player.player_volume );
 		
-		var i_f_sm2_hide_timeout;
+
 		
 		var scripts_paths = [];
 
@@ -408,7 +408,6 @@ var try_to_use_iframe_sm2p = function(){
 		}
 		var check_iframe = function(e){
 			if (e.data.match(/iframe_loaded/)){
-				clearTimeout(i_f_sm2_hide_timeout);
 				
 				log('got iframe loaded feedback');
 				send_scripts_to_iframe(i_f_sm2[0]);
@@ -432,10 +431,7 @@ var try_to_use_iframe_sm2p = function(){
 			
 			this.contentWindow.postMessage("test_iframe_loading_state", '*');
 			
-			i_f_sm2_hide_timeout = setTimeout(function(){
-				i_f_sm2.remove()
-				removeEvent(window, "message", check_iframe, false);
-			},1000);
+
 			
 			
 		});
