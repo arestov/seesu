@@ -288,9 +288,19 @@ function change_volume(volume_value){
 
 seesu.ui.player_holder = $('<div class="player-holder"></div>');
 
-var try_to_use_iframe_sm2p = function(){
-	i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.heroku.com/i.html" ></iframe>');
-	if (i_f_sm2) {
+var try_to_use_iframe_sm2p = function(remove){
+	if (!seesu.cross_domain_allowed){
+		return false;
+	}
+	if (remove){
+		if (window.i_f_sm2 && i_f_sm2.length){
+			i_f_sm2.remove();
+		}
+		
+		return false;
+	}
+	window.i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.heroku.com/i.html" ></iframe>');
+	if (window.i_f_sm2) {
 		
 		
 		init_sm2_p = function(){
@@ -418,7 +428,7 @@ var try_to_use_iframe_sm2p = function(){
 				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
 				i_f_sm2.addClass('sm-inited');
 				$(document.body).addClass('flash-internet');
-				
+				$('#sm2-container').remove();
 				removeEvent(window, "message", check_iframe);
 			}
 		}
@@ -467,6 +477,7 @@ $(function() {
 				log('sm2 in widget ok')
 				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager);
 				$(document.body).addClass('flash-internet');
+				try_to_use_iframe_sm2p(true);
 			  } else {
 			  	log('sm2 in widget notok')
 			  		try_to_use_iframe_sm2p();
