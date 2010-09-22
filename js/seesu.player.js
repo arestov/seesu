@@ -261,11 +261,11 @@ seesu.player.events[VOLUME] = function(volume_value) {
 // Click by song
 seesu.player.song_click = function(node) {
   var zoomed = !!slider.className.match(/show-zoom-to-track/);
-  if (node[0] == this.current_song[0]){
+  if ((this.current_song && this.current_song.length ) && node[0] == this.current_song[0]){
   	seesu.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
-  } else if (node[0] == this.current_next_song[0]){
+  } else if ((this.current_prev_song && this.current_prev_song.length) && node[0] == this.current_next_song[0]){
   	seesu.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
-  } else if (node[0] == this.current_prev_song[0]){
+  } else if ((this.current_prev_song && this.current_prev_song.length) && node[0] == this.current_prev_song[0]){
   	seesu.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
   } else{
   	seesu.track_event('Song click', 'simple click');
