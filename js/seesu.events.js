@@ -94,14 +94,8 @@ $(function() {
 			w_storage('vk_save_pass', '', true);
 			seesu.vk.save_pass = false;
 		}
-			
-			
-		if (true) {
-			vk_send_captcha($('#vk-captcha_key',_this).val(),email,pass);
-		} else {
-			vk_login(email,pass);
-		}
-		
+		vk_send_captcha($('#vk-captcha_key',_this).val(),email,pass);
+
 		return false;
 	});
 	captcha_img = $('.vk-captcha-context img',vk_auth);

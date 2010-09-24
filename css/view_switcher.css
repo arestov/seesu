@@ -75,10 +75,10 @@
 		
 		
 /**  New nav **/	
-.show-zoom-to-track .artist-info{
+.show-zoom-to-track .track-context{
 	display:block;
 }
-.artist-info{
+.track-context{
 	display:none;
 }
 
@@ -121,7 +121,7 @@
 	.show-zoom-to-track .tracks-for-play>ul>li.active-play .song{
 		font-size:1.3em;
 		}
-.show-zoom-to-track .artist-info{
+.show-zoom-to-track .track-context{
 	padding-top:86px;
 	
 	padding-bottom:71px;

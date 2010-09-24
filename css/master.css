@@ -184,7 +184,10 @@ display:none;
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
-.artist-info{overflow:hidden;padding-left:8px}
+.track-context{
+	padding-left:8px
+}
+.artist-info{overflow:hidden;}
 .artist-info .image{
 	margin-right:13px;
 	margin-bottom:7px;
