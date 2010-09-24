@@ -22,7 +22,7 @@
 }
 .track-buttons{
 	position:absolute;
-	top:0;
+	top:23px;
 	right:54px;
 	height:16px;
 	}
@@ -82,7 +82,7 @@
 	border: 1px solid #3a3a3a;
 	
 	position:absolute;
-	top:0;
+	top:23px;
 	right:0;
 	}
 	.volume-state-position{
@@ -95,5 +95,6 @@
 	}
 #track-panel{
 	position:relative;
-	height:30px;
+	height:54px;
+	overflow: hidden;
 	}

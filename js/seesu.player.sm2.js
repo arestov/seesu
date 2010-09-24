@@ -38,7 +38,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 			var new_play_position_factor = pos/_this.track_progress_width;
 			_this.set_new_position(new_play_position_factor);
 			
-		}).appendTo(player_holder);
+		}).prependTo(player_holder);
 		
 		this.track_progress_load = $('<div class="track-load-progress"></div>').appendTo(this.track_progress_total);
 		this.track_progress_play = $('<div class="track-play-progress"></div>').appendTo(this.track_progress_total);
@@ -52,7 +52,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 			seesu.player.call_event(VOLUME, new_volume_factor * 100);
 			
 			_this.volume_state_position.css('width', pos + 'px')
-		}).prependTo(playlist_panel);
+		}).prependTo(player_holder);
 		this.volume_state_position = $('<div class="volume-state-position"></div>').css('width',((volume * 50)/100) + 'px' ).appendTo(this.volume_state);
 		
 	}

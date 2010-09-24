@@ -53,7 +53,7 @@ $(function() {
 	window.artsTracks	= $('.tracks-for-play',artsHolder);
 	window.art_tracks_w_counter = $('#tracks-waiting-for-search');
 	
-	window.playlist_panel = $('#track-panel');
+	window.track_panel = $('#track-panel');
 	
 	
 	window.vk_save_pass = $('#vk-save-pass');

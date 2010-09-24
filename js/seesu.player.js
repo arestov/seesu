@@ -457,7 +457,7 @@ var try_to_use_iframe_sm2p = function(remove){
 // Ready? Steady? Go!
 
 $(function() {
-	a_info.prepend(seesu.ui.player_holder);
+	track_panel.prepend(seesu.ui.player_holder);
 	
 	var a = document.createElement('audio');
 	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
