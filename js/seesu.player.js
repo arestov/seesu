@@ -299,7 +299,7 @@ var try_to_use_iframe_sm2p = function(remove){
 		
 		return false;
 	}
-	window.i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.heroku.com/i.html" ></iframe>');
+	window.i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.me/i.html" ></iframe>');
 	if (window.i_f_sm2) {
 		
 		
@@ -309,7 +309,7 @@ var try_to_use_iframe_sm2p = function(remove){
 			
 			window.soundManager = new SoundManager();
 			if (soundManager){
-				soundManager.url = 'http://seesu.heroku.com/swf/';
+				soundManager.url = 'http://seesu.me/swf/';
 				soundManager.flashVersion = 9;
 				soundManager.useFlashBlock = true;
 				soundManager.debugMode = false;
@@ -466,7 +466,7 @@ $(function() {
 	} else if (seesu.cross_domain_allowed){
 		soundManager = new SoundManager();
 		if (soundManager){
-			soundManager.url = 'http://seesu.heroku.com/swf/';
+			soundManager.url = 'http://seesu.me/swf/';
 			soundManager.flashVersion = 9;
 			soundManager.useFlashBlock = true;
 			soundManager.debugMode = false;

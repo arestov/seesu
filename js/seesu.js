@@ -838,7 +838,7 @@ var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 			meta_info: a_info.find('.artist-meta-info'),
 			c : a_info
 		}
-
+		ainf.name.empty();
 		
 		
 		var arts_name = $('<span class="desc-name"></span>')
@@ -889,7 +889,7 @@ var set_artist_page = function (artist,with_search_results) {
 	getTopTracks(artist,function(track_list){
 		render_playlist(track_list);
 	});
-	update_artist_info(artist, a_info ,true);
+	lfm('artist.getInfo',{'artist': artist });
 	
 	
 };
