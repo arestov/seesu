@@ -107,7 +107,7 @@ seesu.player = {
 		if (!remove_playing_status){
 			if (c_playlist && typeof c_num == 'number'){
 				if (c_num-1 >= 0) {
-					for (var i = c_num-1, _p = false; i >= 0, !_p == false; i--){
+					for (var i = c_num-1, _p = false; i >= 0, _p == false; i--){
 						if (c_playlist[i] && !c_playlist[i].data('not_use')){
 							_p = true;
 							(this.current_prev_song = c_playlist[i]).parent().addClass('to-play-previous')
@@ -116,7 +116,7 @@ seesu.player = {
 					if (!_p){this.current_prev_song = false}
 				}
 				if (c_num+1 < c_playlist.length){
-					for (var i = c_num+1, _n = false; i < c_playlist.length, !_n == false; i++) {
+					for (var i = c_num+1, _n = false; i < c_playlist.length, _n == false; i++) {
 						if (c_playlist[i] && !c_playlist[i].data('not_use')){
 							_n = true;
 							(this.current_next_song = c_playlist[i]).parent().addClass('to-play-next')
