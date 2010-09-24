@@ -198,15 +198,18 @@ p.internet-flash-settings{
 
 
 #i_f_sm2{
-	width:20px;
-	top:0;
-	left:0;
-	height:20px;
+	width:30px;
+	
+	left:19px;
+	z-index:10;
+	height:30px;
 	border:0;
+	bottom:50px;
 	position:absolute;
 }
 #i_f_sm2.sm-inited{
 	left:-250px;
+	z-index:-10;
 }
 .track-progress{
 	background:#505050;

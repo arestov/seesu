@@ -107,7 +107,7 @@ seesu.player = {
 		if (!remove_playing_status){
 			if (c_playlist && typeof c_num == 'number'){
 				if (c_num-1 >= 0) {
-					for (var i = c_num-1, _p; i >= 0, !_p; i--){
+					for (var i = c_num-1, _p = false; i >= 0, _p == false; i--){
 						if (c_playlist[i] && !c_playlist[i].data('not_use')){
 							_p = true;
 							(this.current_prev_song = c_playlist[i]).parent().addClass('to-play-previous')
@@ -116,7 +116,7 @@ seesu.player = {
 					if (!_p){this.current_prev_song = false}
 				}
 				if (c_num+1 < c_playlist.length){
-					for (var i = c_num+1, _n; i < c_playlist.length, !_n; i++) {
+					for (var i = c_num+1, _n = false; i < c_playlist.length, _n == false; i++) {
 						if (c_playlist[i] && !c_playlist[i].data('not_use')){
 							_n = true;
 							(this.current_next_song = c_playlist[i]).parent().addClass('to-play-next')
@@ -261,11 +261,11 @@ seesu.player.events[VOLUME] = function(volume_value) {
 // Click by song
 seesu.player.song_click = function(node) {
   var zoomed = !!slider.className.match(/show-zoom-to-track/);
-  if (node[0] == this.current_song[0]){
+  if ((this.current_song && this.current_song.length ) && node[0] == this.current_song[0]){
   	seesu.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
-  } else if (node[0] == this.current_next_song[0]){
+  } else if ((this.current_prev_song && this.current_prev_song.length) && node[0] == this.current_next_song[0]){
   	seesu.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
-  } else if (node[0] == this.current_prev_song[0]){
+  } else if ((this.current_prev_song && this.current_prev_song.length) && node[0] == this.current_prev_song[0]){
   	seesu.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
   } else{
   	seesu.track_event('Song click', 'simple click');
@@ -288,9 +288,19 @@ function change_volume(volume_value){
 
 seesu.ui.player_holder = $('<div class="player-holder"></div>');
 
-var try_to_use_iframe_sm2p = function(){
-	i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.heroku.com/i.html" ></iframe>');
-	if (i_f_sm2) {
+var try_to_use_iframe_sm2p = function(remove){
+	if (!seesu.cross_domain_allowed){
+		return false;
+	}
+	if (remove){
+		if (window.i_f_sm2 && i_f_sm2.length){
+			i_f_sm2.remove();
+		}
+		
+		return false;
+	}
+	window.i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.me/i.html" ></iframe>');
+	if (window.i_f_sm2) {
 		
 		
 		init_sm2_p = function(){
@@ -299,7 +309,7 @@ var try_to_use_iframe_sm2p = function(){
 			
 			window.soundManager = new SoundManager();
 			if (soundManager){
-				soundManager.url = 'http://seesu.heroku.com/swf/';
+				soundManager.url = 'http://seesu.me/swf/';
 				soundManager.flashVersion = 9;
 				soundManager.useFlashBlock = true;
 				soundManager.debugMode = false;
@@ -329,7 +339,7 @@ var try_to_use_iframe_sm2p = function(){
 		}
 		var last_iframe_func = text_of_function(init_sm2_p).replace('_volume', seesu.player.player_volume );
 		
-		var i_f_sm2_hide_timeout;
+
 		
 		var scripts_paths = [];
 
@@ -408,7 +418,6 @@ var try_to_use_iframe_sm2p = function(){
 		}
 		var check_iframe = function(e){
 			if (e.data.match(/iframe_loaded/)){
-				clearTimeout(i_f_sm2_hide_timeout);
 				
 				log('got iframe loaded feedback');
 				send_scripts_to_iframe(i_f_sm2[0]);
@@ -419,7 +428,7 @@ var try_to_use_iframe_sm2p = function(){
 				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
 				i_f_sm2.addClass('sm-inited');
 				$(document.body).addClass('flash-internet');
-				
+				$('#sm2-container').remove();
 				removeEvent(window, "message", check_iframe);
 			}
 		}
@@ -432,10 +441,7 @@ var try_to_use_iframe_sm2p = function(){
 			
 			this.contentWindow.postMessage("test_iframe_loading_state", '*');
 			
-			i_f_sm2_hide_timeout = setTimeout(function(){
-				i_f_sm2.remove()
-				removeEvent(window, "message", check_iframe, false);
-			},1000);
+
 			
 			
 		});
@@ -457,10 +463,10 @@ $(function() {
 	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 		seesu.player.musicbox = new html5_p(seesu.ui.player_holder, seesu.player.player_volume);
 		$(document.body).addClass('flash-internet');
-	} else{
+	} else if (!seesu.cross_domain_allowed){
 		soundManager = new SoundManager();
 		if (soundManager){
-			soundManager.url = 'http://seesu.heroku.com/swf/';
+			soundManager.url = 'http://seesu.me/swf/';
 			soundManager.flashVersion = 9;
 			soundManager.useFlashBlock = true;
 			soundManager.debugMode = false;
@@ -471,6 +477,7 @@ $(function() {
 				log('sm2 in widget ok')
 				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager);
 				$(document.body).addClass('flash-internet');
+				try_to_use_iframe_sm2p(true);
 			  } else {
 			  	log('sm2 in widget notok')
 			  		try_to_use_iframe_sm2p();
@@ -478,6 +485,8 @@ $(function() {
 			  }
 			});
 		}
+	} else {
+		try_to_use_iframe_sm2p();
 	}
 	
 	

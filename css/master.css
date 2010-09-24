@@ -184,7 +184,10 @@ display:none;
 				cursor: se-resize;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
-.artist-info{overflow:hidden;padding-left:8px}
+.track-context{
+	padding-left:8px
+}
+.artist-info{overflow:hidden;}
 .artist-info .image{
 	margin-right:13px;
 	margin-bottom:7px;
@@ -415,12 +418,20 @@ display:none;
 			border-bottom-color:#333;
 		}
 #sm2-container{
-	width:8px;
-	height:8px;
+	width:30px;
+	height:30px;
 	position:fixed;
 	bottom:auto;
-	top:5px;
-	left:0;
+	top:51px;
+	left:19px;
+	z-index:10;
+	}
+	.swf_unblocked{
+		z-index:-10;
+		width:8px;
+		height:8px;
+		top:0;
+		left:0;
 	}
 	#sm2-container.swf_error{
 		display:none;
