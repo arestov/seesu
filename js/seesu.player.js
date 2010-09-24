@@ -463,7 +463,7 @@ $(function() {
 	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 		seesu.player.musicbox = new html5_p(seesu.ui.player_holder, seesu.player.player_volume);
 		$(document.body).addClass('flash-internet');
-	} else if (seesu.cross_domain_allowed){
+	} else if (!seesu.cross_domain_allowed){
 		soundManager = new SoundManager();
 		if (soundManager){
 			soundManager.url = 'http://seesu.me/swf/';
