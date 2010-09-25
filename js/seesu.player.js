@@ -110,7 +110,7 @@ seesu.player = {
 					for (var i = c_num-1, _p = false;  ((i >= 0) && (_p == false)); i--){
 						if (c_playlist[i] && !c_playlist[i].data('not_use')){
 							_p = true;
-							(this.current_prev_song = c_playlist[i]).parent().addClass('to-play-previous')
+							(this.current_prev_song = c_playlist[i]).parent().addClass('to-play-previous');
 						}
 					};
 					if (!_p){this.current_prev_song = false}
@@ -119,7 +119,7 @@ seesu.player = {
 					for (var i = c_num+1, _n = false; ((i < c_playlist.length) && ( _n == false)); i++) {
 						if (c_playlist[i] && !c_playlist[i].data('not_use')){
 							_n = true;
-							(this.current_next_song = c_playlist[i]).parent().addClass('to-play-next')
+							(this.current_next_song = c_playlist[i]).parent().addClass('to-play-next');
 						}
 					};
 					if(!_n){this.current_next_song = false}
