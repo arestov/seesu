@@ -161,7 +161,9 @@ seesu.player = {
 		}
 		//time = (new Date()).getTime();
 		var artist = node.data('artist_name');
+		
 		if (artist) {update_artist_info(artist, a_info);}
+		this.current_artist = artist;
 		
 		if (this.current_song) {
 			this.change_songs_ui(this.current_song, true)
