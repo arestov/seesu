@@ -35,26 +35,26 @@ var test_pressed_node = function(original_node, mouseup){
 		  }
 		  else if (class_name.match(/\bartist\b[^\-]/)){
 			artist_name = decodeURIComponent(clicked_node.data('artist'));
-			set_artist_page(artist_name);
+			show_artist(artist_name);
 			seesu.track_event('Artist navigation', 'artist', artist_name);
 			return false;
 		  }
 		  else if (class_name.match(/music-tag/)){
 			tag_name = decodeURIComponent(clicked_node.data('music_tag'));
-			render_tracks_by_artists_of_tag(tag_name);
+			show_tag(tag_name);
 			seesu.track_event('Artist navigation', 'tag', tag_name);
 			return false;
 		  }
 		  else if (class_name.match(/bbcode_artist/)){
 			
 			artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/','').replace('+', ' '));
-			set_artist_page(artist_name);
+			show_artist(artist_name);
 			seesu.track_event('Artist navigation', 'bbcode_artist', artist_name);
 			return false;
 		  }
 		  else if (class_name.match(/bbcode_tag/)){
 			tag_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/tag/','').replace('+', ' '));
-			render_tracks_by_artists_of_tag(tag_name);
+			show_tag(tag_name);
 			seesu.track_event('Artist navigation', 'bbcode_tag', tag_name);
 			return false;
 		  }
