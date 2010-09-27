@@ -18,11 +18,8 @@ $(function() {
 	window.slider = document.getElementById('slider');
 	window.startlink = document.getElementById('start_search');
 	startlink.onclick = function(){
-		var current_page = slider.className;
-		slider.className = "show-start";
-		search_input[0].focus();
-		search_input[0].select();
-		seesu.track_event('Navigation', 'start page', current_page);
+		
+		seesu.ui.views.show_start_page(true, true);
 	};
 	
 	window.nav_playlist_page = document.getElementById('nav_playlist_page');
@@ -34,11 +31,7 @@ $(function() {
 	window.nav_track_zoom = $('#nav_track_zoom');
 	window.trk_page_nav = document.getElementById('nav_tracks_page');
 	search_nav.click(function(){
-		var current_page = slider.className;
-		slider.className = "show-search show-search-results";
-		search_input[0].focus();
-		search_input[0].select();
-		seesu.track_event('Navigation', 'search results', current_page);
+		seesu.ui.views.show_search_results_page(true, true);
 	});
 	window.export_playlist = $('#open-external-playlist');
 	seesu.start_screen = $('#start-screen');
