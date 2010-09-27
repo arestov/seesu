@@ -137,7 +137,7 @@ var show_artists_results = function(r, start, end){
 	
 	var artists = r.results.artistmatches.artist || false; 
 	if (artists && (start ? (artists.length && (artists.length > start)) : true)){
-		search_nav.attr('title', 'Suggestions & search');
+
 		
 		
 		
@@ -219,7 +219,7 @@ var show_tags_results = function(r, start, end){
 	var tags = r.results.tagmatches.tag || false; 
 	if (tags  && (start ? (tags.length && (tags.length > start)) : true)){
 
-		search_nav.attr('title','Suggestions & search')
+
 		var ul = seesu.ui.tags_results_ul;
 
 		if (tags.length){
@@ -280,7 +280,7 @@ var show_tracks_results = function(r, start, end){
 	var tracks = r.results.trackmatches.track || false; 
 	if (tracks && (start ? (tracks.length && (tracks.length > start)) : true)){
 
-		search_nav.attr('title','Suggestions & search')
+
 		var ul = seesu.ui.tracks_results_ul;
 		
 		if (tracks.length){
@@ -425,7 +425,6 @@ var fast_suggestion_ui = function(r){
 	
 	// = seesu.ui.views.current.search_results;
 	results_container.empty();
-	search_nav.attr('title','Suggestions');
 	
 	
 	var fast_enter = null;
@@ -542,7 +541,6 @@ var multiply_suggestion_ui = function(input_value){
 	var results_container = seesu.ui.views.get_search_rc();
 	
 	results_container.empty();
-	search_nav.attr('title','Suggestions')
 	
 
 	
@@ -636,7 +634,7 @@ var input_change = $.debounce(function(e){
 		$(input).data('lastvalue', input_value)
 	}
 	if (!input_value) {
-		slider.className = "show-start";
+		seesu.ui.views.show_start_page();
 		return;
 	}
 	
@@ -651,8 +649,9 @@ var input_change = $.debounce(function(e){
 	seesu.ui.search_form.data('current_node_index' , false);
 	
 	suggest_search(input_value);
+	seesu.ui.views.show_search_results_page();
 	
-	slider.className = 'show-search  show-search-results';
+	
 	
 },100);
 var preload_query = document.getElementsByName('search_query');
