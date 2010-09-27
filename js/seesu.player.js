@@ -9,16 +9,16 @@ var INIT     = -11,
 
 
 seesu.player = {
-	'player_state' 		: STOPPED,
-	'player_holder' 	: null,
-	'current_playlist' 	: null,
-	'want_to_play' 		: 0,
-	'wainter_for_play' 	: null,
-	'current_artist' 	: '',
-	'current_external_playlist': null,
-	'iframe_player' 	: false,
-	'iframe_doc' 		: null,
-	'player_volume' 	: ( function(){
+	player_state 		: STOPPED,
+	player_holder 		: null,
+	current_playlist 	: null,
+	want_to_play		: 0,
+	wainter_for_play 	: null,
+	current_artist		: '',
+	current_external_playlist: null,
+	iframe_player 	: false,
+	iframe_doc 		: null,
+	player_volume 	: ( function(){
 		var volume_preference = w_storage('vkplayer-volume');
 		if (volume_preference && (volume_preference != 'undefined') && volume_preference != 'NaN'){
 			return parseFloat(volume_preference) || 80
@@ -26,15 +26,15 @@ seesu.player = {
 			return 80
 		}
 	  })(),
-	'events' 			: [],
-	'current_song' 		: null,
-	'musicbox'			: {
+	events 			: [],
+	current_song 		: null,
+	musicbox			: {
 			play_song_by_node: function(node){
 				current_song = node;
 			}
 		}, //music box is a link to module with playing methods, 
 								//for e.g. soundmanager2 and vkontakte flash player
-	'call_event'		: function	(event, data) {
+	call_event		: function	(event, data) {
 	  if(this.events[event]) this.events[event](data);
 	},
 	get_state: function(){
@@ -50,7 +50,7 @@ seesu.player = {
 			return false;
 		}
 	},
-	'set_state'			:function (new_player_state_str) {
+	set_state			:function (new_player_state_str) {
 	  var new_player_state =
 		(new_player_state_str == "play" ? PLAYED :
 		  (new_player_state_str == "stop" ? STOPPED : PAUSED)
@@ -76,7 +76,7 @@ seesu.player = {
 		//log('Do nothing');
 	  }
 	},
-	'switch_to' 	:function (direction) {
+	switch_to 	:function (direction) {
 	  if (this.current_song) {
 		var playlist 		= this.current_song.data('link_to_playlist'),
 			current_number 	= this.current_song.data('number_in_playlist'),

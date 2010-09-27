@@ -63,8 +63,48 @@ window.seesu =  {
 		nav: null
 	  },
 	  ui: {
-		allow_mp3_downloading: true
-		
+		allow_mp3_downloading: true,
+		views: {
+			browsing:{},
+			playing:{},
+			get_search_rc: function(){
+				if (this.browsing.search_results){
+					return this.browsing.search_results;
+				} else {
+					return this.browsing.search_results = $('<div class="search-results-container current-src"></div').appendTo(searchres);
+				}
+			},
+			get_playlist_c:function(){
+				if (this.browsing.playlist){
+					return this.browsing.playlist;
+				} else {
+					return this.browsing.playlist = $('<ul class="tracks-c current-tracks-c"></ul>').appendTo(artsTracks);
+				}
+			},
+			snap_shot: function(song_nodes){
+				if (song_nodes == this.playing.song_nodes){
+					return true;
+				} else{
+					this.playing = this.browsing;
+					this.playing.navigation = {
+						switch_string: slider.className,
+						playlist_type: '' 
+					}
+					
+					this.browsing = {};
+				}
+				
+			},
+			snap_recovery: function(){
+				
+			},
+			hide_playing: function(){
+				
+			},
+			hide_browsing: function(){
+				
+			}
+		}
 	  },
 	  xhrs: {},
 	  hypnotoad: {
@@ -429,12 +469,8 @@ var make_node_playable = function(node, http_link, mp3_duration){
 var render_playlist = function(vk_music_list) { // if links present than do full rendering! yearh!
 	
 
-	var ul = document.createElement("ul");
-	
-	
-	if (artsTracks) {
-		artsTracks.empty().append(ul);
-	}
+	var ul = seesu.ui.views.get_playlist_c();;
+	ul.empty();
 	if (!vk_music_list){
 		$(ul).append('<li>Nothing found</li>');
 	} else {
