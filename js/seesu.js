@@ -473,6 +473,7 @@ var make_node_playable = function(node, music_object){
 	
 	var playable_node = $(node)
 		.addClass('song js-serv')
+		.removeClass('search-mp3-failed')
 		.removeClass('waiting-full-render')
 		.data('mp3link', music_object.link)
 		.data('not_use', false)
