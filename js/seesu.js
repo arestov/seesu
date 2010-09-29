@@ -488,7 +488,7 @@ var make_node_playable = function(node, music_object){
 	
 	
 	if (seesu.ui.allow_mp3_downloading){
-		var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  http_link });
+		var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  music_object.link });
 		mp3.insertBefore(playable_node);
 	}
 	
