@@ -917,6 +917,7 @@ window.update_track_info = function(a_info, node){
 				.click(function(){
 					widget.openURL(mo.page_link);
 					seesu.track_event('Links', 'soundcloud track');
+					return false;
 				});
 		}
 		
