@@ -407,6 +407,7 @@ var get_track_as_possible = function(node, order, mp3_prov_quene){
 		}
 	}
 	if (!used_successful && order == 0){
+		log('some one')
 		get_track(node, false, true);
 	}
 }
@@ -467,15 +468,16 @@ var make_tracklist_playable = function(track_nodes){
 	
 	
 };
-var make_node_playable = function(node, http_link, mp3_duration){
+var make_node_playable = function(node, music_object){
 	
 	
 	var playable_node = $(node)
 		.addClass('song js-serv')
 		.removeClass('waiting-full-render')
-		.data('mp3link', http_link)
+		.data('mp3link', music_object.link)
 		.data('not_use', false)
-		.data('duration', mp3_duration)
+		.data('duration', music_object.duration)
+		.data('music_object', music_object)
 		.unbind()
 		.click(function(){
 			seesu.player.song_click($(this));
@@ -575,7 +577,7 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 				.appendTo(ul);
 			
 			if (we_have_mp3links) {
-				make_node_playable(track, vk_music_list[i].link , vk_music_list[i].duration);
+				make_node_playable(track, vk_music_list[i]);
 			}
 			
 			linkNodes.push(track);

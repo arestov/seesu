@@ -135,7 +135,8 @@ vk_api.prototype = {
 						'artist'  	: r.response[i].artist ? r.response[i].artist : r.response[i].audio.artist,
 						'duration'	: r.response[i].duration ? r.response[i].duration : r.response[i].audio.duration,
 						'link'		: r.response[i].url ? r.response[i].url : r.response[i].audio.url,
-						'track'		: r.response[i].title ? r.response[i].title : r.response[i].audio.title
+						'track'		: r.response[i].title ? r.response[i].title : r.response[i].audio.title,
+						'from':'vk_api'
 					
 					};
 					if (!has_music_copy(music_list,entity)){
