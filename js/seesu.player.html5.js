@@ -164,8 +164,17 @@ html5_p.prototype = {
 		},
 		"stop" : function(){
 			if (this.current_song){
-				this.current_song.pause();
-				this.current_song.currentTime = 0;
+				try{
+					this.current_song.pause();
+					this.current_song.currentTime = 0;
+				} catch(e){
+					if (e){
+						log(e)
+					}
+					
+					$(this.current_song).remove();
+				}
+				
 			}
 		},
 		"pause" : function(){

@@ -493,9 +493,9 @@ var make_node_playable = function(node, music_object){
 	}
 	
 	
-	if (mp3_duration) {
-		var digits = mp3_duration % 60;
-		var track_dur = (Math.round(mp3_duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+	if (music_object.duration) {
+		var digits = music_object.duration % 60;
+		var track_dur = (Math.round(music_object.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
 		playable_node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
 	}
 	var playlist_length = playlist_nodes_for.length;
