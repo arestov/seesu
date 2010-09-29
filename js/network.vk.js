@@ -103,6 +103,7 @@ var get_vk_music_list = function (r) {// vk_music_list is empty array, declared 
 				vk_music_obj = parseStrToObj(playStr);
 			vk_music_obj.artist = artist;
 			vk_music_obj.track = track;
+			vk_music_obj.from = 'vk_hardcore'
 			
 			if (!has_music_copy(vk_music_list,vk_music_obj)){
 				vk_music_list.push(vk_music_obj);
