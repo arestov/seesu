@@ -152,29 +152,10 @@ window.seesu =  {
 		}
 	  },
 	  xhrs: {},
+	  soundcloud_quene: new funcs_quene(200, 1000 , 7),
 	  hypnotoad: {
 	  	vk_api: false,
-	  	search_soundcloud:function(query, callback, error, nocache, after_ajax){
-			return
-			seesu.track_event('mp3 search', 'soundcloud search');
-			$.ajax({
-				timeout: 10000,
-				url: "http://api.soundcloud.com/tracks.js",
-				global: false,
-				type: "GET",
-				data: {
-					consumer_key: 'HNVCUV6apk9ANn8tLERpag',
-					order: 'hotness',
-					filter:'streamable,downloadable',
-					q:'metaform'
-				},
-				dataType: "jsonp",
-				success:function(r){
-					console.log(r)
-				}
-				  
-			})
-		},
+	  	search_soundcloud: soundcloud_search,
 	  	search_tracks:function(){
 	  		if(seesu.hypnotoad.vk_api){
 				seesu.track_event('mp3 search', 'hypnotoad');
