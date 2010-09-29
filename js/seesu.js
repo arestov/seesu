@@ -906,6 +906,31 @@ var show_artist_info = function(r, ainf){
 	ainf.bio.parent().removeClass('background-changes');
 
 };
+window.update_track_info = function(a_info, node){
+	var ti = a_info.find('.track-info').empty();
+	var mo = node.data('music_object');
+	if (mo.from && mo.from == 'soundcloud'){
+		if (mo.page_link){
+			var link = $('<a></a>')
+				.attr('href', mo.page_link)
+				.text('page of this track')
+				.click(function(){
+					widget.openURL(mo.page_link);
+					seesu.track_event('Links', 'soundcloud track');
+				});
+		}
+		
+		ti.append(
+			$('<p></p>')
+				.text(
+					'This track was found in SoundCloud. ' + 
+					'It may not match track you are searching for at all. Try to use vk.com (vkontakte.ru) '
+				 )
+				 .append(link)
+			
+		)
+	}	
+}
 var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 	if (seesu.player.current_artist == artist) {
 		if (seesu.ui.playlist_type == 'artist'){

@@ -15,7 +15,6 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax)
 			dataType: "jsonp",
 			data: {
 				consumer_key: 'HNVCUV6apk9ANn8tLERpag',
-				order: 'hotness',
 				filter:'streamable,downloadable',
 				q: query
 			},
@@ -57,6 +56,7 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax)
 								'link'		: r[i].download_url || r[i].stream_url,
 								'from': 	'soundcloud',
 								'real_title': r[i].title,
+								'page_link':  r[i].permalink_url,
 								'description': r[i].description || false
 								
 							
