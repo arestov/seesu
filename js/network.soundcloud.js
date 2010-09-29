@@ -1,5 +1,5 @@
 window.soundcloud_search = function(query, callback, error, nocache, after_ajax){
-	//seesu.track_event('mp3 search', 'soundcloud search');
+	seesu.track_event('mp3 search', 'soundcloud search');
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
 	if (use_cache){
