@@ -9,6 +9,7 @@ var INIT     = -11,
 
 
 seesu.player = {
+	autostart: true,
 	player_state 		: STOPPED,
 	player_holder 		: null,
 	current_playlist 	: null,
@@ -184,6 +185,7 @@ seesu.player = {
 		  this.musicbox.play_song_by_url(node.data('mp3link'), node.data('duration'));
 		} else 
 		{return false;}
+		
 		
 		
 		node.parent().append(this.play_controls.rebind())
