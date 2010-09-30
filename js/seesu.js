@@ -954,7 +954,7 @@ window.update_track_info = function(a_info, node){
 			$('<p></p>')
 				.text(
 					'This track was found in SoundCloud. ' + 
-					'It may not match track you are searching for at all. Try to use vk.com (vkontakte.ru) '
+					'It may not match with track you are searching for at all. Try to use vk.com (vkontakte.ru) '
 				 )
 				 .append(link)
 			
