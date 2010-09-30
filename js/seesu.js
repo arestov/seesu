@@ -66,7 +66,7 @@ window.seesu =  {
 		allow_mp3_downloading: true,
 		views: {
 			browsing:{},
-			playing:{},
+			playing:false,
 			get_search_rc: function(){
 				if (this.browsing.search_results){
 					return this.browsing.search_results;
@@ -81,23 +81,52 @@ window.seesu =  {
 					return this.browsing.playlist = $('<ul class="tracks-c current-tracks-c"></ul>').appendTo(artsTracks);
 				}
 			},
-			snap_shot: function(song_nodes){
-				if (song_nodes == this.playing.song_nodes){
+			save_view: function(song_nodes){
+				if (this.playing && song_nodes == this.playing.song_nodes){
 					return true;
 				} else{
+					if (this.playing){
+						this.playing.search_results.remove();
+						this.playing.playlist.remove();
+					}
 					this.playing = this.browsing;
 					this.browsing = {};
 				}
 				
 			},
-			snap_recovery: function(){
+			restore_view: function(){
+				this.hide_browsing();
+				if (this.playing){
+					this.playing.search_results.show();
+					this.playing.playlist.show();
+					this.show_playlist_page(
+						this.playing.playlist_title, 
+						this.playing.playlist_type, 
+						this.playing.with_search_results_link)
+				}
 				
 			},
 			hide_playing: function(){
-				
+				if (this.playing){
+					this.playing.search_results.hide();
+					this.playing.playlist.hide();
+				}
+			},
+			show_browsing: function(){
+				if (this.browsing.search_results){
+					this.browsing.search_results.show();
+				}
+				if (this.browsing.playlist){
+					this.browsing.playlist.show();
+				}
 			},
 			hide_browsing: function(){
-				
+				if (this.browsing.search_results){
+					this.browsing.search_results.hide();
+				}
+				if (this.browsing.playlist){
+					this.browsing.playlist.hide();
+				}
 			},
 			show_now_playing: function(){
 				var current_page = slider.className;
@@ -117,21 +146,19 @@ window.seesu =  {
 				if (log_navigation){
 					seesu.track_event('Navigation', 'start page', _s);
 				}
+				this.hide_playing();
+				this.show_browsing();
 			},
 			show_search_results_page: function(focus_to_input, log_navigation){
 				var _s;
-				
 				if (log_navigation){
 					_s = slider.className;
 				}
-				
 				slider.className = "show-search show-search-results";
-				
 				if (focus_to_input){
 					search_input[0].focus();
 					search_input[0].select();
 				}
-				
 				if (log_navigation){
 					seesu.track_event('Navigation', 'search results', _s);
 				}
@@ -144,9 +171,11 @@ window.seesu =  {
 					this.browsing.playlist_type = seesu.ui.playlist_type = playlist_type;
 				}
 				if (with_search_results_link) {
-					this.browsing.nav = seesu.now_playing.nav = slider.className = 'show-full-nav show-player-page';
+					this.browsing.with_search_results_link = true;
+					seesu.now_playing.nav = slider.className = 'show-full-nav show-player-page';
 				} else {
-					this.browsing.nav = seesu.now_playing.nav = slider.className = 'show-player-page';
+					this.browsing.with_search_results_link = false;
+					seesu.now_playing.nav = slider.className = 'show-player-page';
 				}
 			}
 		}
