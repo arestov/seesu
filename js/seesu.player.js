@@ -163,6 +163,7 @@ seesu.player = {
 		var artist = node.data('artist_name');
 		
 		if (artist) {update_artist_info(artist, a_info);}
+		update_track_info(a_info, node);
 		this.current_artist = artist;
 		
 		if (this.current_song) {

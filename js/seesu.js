@@ -66,7 +66,7 @@ window.seesu =  {
 		allow_mp3_downloading: true,
 		views: {
 			browsing:{},
-			playing:{},
+			playing:false,
 			get_search_rc: function(){
 				if (this.browsing.search_results){
 					return this.browsing.search_results;
@@ -81,23 +81,52 @@ window.seesu =  {
 					return this.browsing.playlist = $('<ul class="tracks-c current-tracks-c"></ul>').appendTo(artsTracks);
 				}
 			},
-			snap_shot: function(song_nodes){
-				if (song_nodes == this.playing.song_nodes){
+			save_view: function(song_nodes){
+				if (this.playing && song_nodes == this.playing.song_nodes){
 					return true;
 				} else{
+					if (this.playing){
+						this.playing.search_results.remove();
+						this.playing.playlist.remove();
+					}
 					this.playing = this.browsing;
 					this.browsing = {};
 				}
 				
 			},
-			snap_recovery: function(){
+			restore_view: function(){
+				this.hide_browsing();
+				if (this.playing){
+					this.playing.search_results.show();
+					this.playing.playlist.show();
+					this.show_playlist_page(
+						this.playing.playlist_title, 
+						this.playing.playlist_type, 
+						this.playing.with_search_results_link)
+				}
 				
 			},
 			hide_playing: function(){
-				
+				if (this.playing){
+					this.playing.search_results.hide();
+					this.playing.playlist.hide();
+				}
+			},
+			show_browsing: function(){
+				if (this.browsing.search_results){
+					this.browsing.search_results.show();
+				}
+				if (this.browsing.playlist){
+					this.browsing.playlist.show();
+				}
 			},
 			hide_browsing: function(){
-				
+				if (this.browsing.search_results){
+					this.browsing.search_results.hide();
+				}
+				if (this.browsing.playlist){
+					this.browsing.playlist.hide();
+				}
 			},
 			show_now_playing: function(){
 				var current_page = slider.className;
@@ -117,21 +146,19 @@ window.seesu =  {
 				if (log_navigation){
 					seesu.track_event('Navigation', 'start page', _s);
 				}
+				this.hide_playing();
+				this.show_browsing();
 			},
 			show_search_results_page: function(focus_to_input, log_navigation){
 				var _s;
-				
 				if (log_navigation){
 					_s = slider.className;
 				}
-				
 				slider.className = "show-search show-search-results";
-				
 				if (focus_to_input){
 					search_input[0].focus();
 					search_input[0].select();
 				}
-				
 				if (log_navigation){
 					seesu.track_event('Navigation', 'search results', _s);
 				}
@@ -144,9 +171,11 @@ window.seesu =  {
 					this.browsing.playlist_type = seesu.ui.playlist_type = playlist_type;
 				}
 				if (with_search_results_link) {
-					this.browsing.nav = seesu.now_playing.nav = slider.className = 'show-full-nav show-player-page';
+					this.browsing.with_search_results_link = true;
+					seesu.now_playing.nav = slider.className = 'show-full-nav show-player-page';
 				} else {
-					this.browsing.nav = seesu.now_playing.nav = slider.className = 'show-player-page';
+					this.browsing.with_search_results_link = false;
+					seesu.now_playing.nav = slider.className = 'show-player-page';
 				}
 			}
 		}
@@ -473,6 +502,7 @@ var make_node_playable = function(node, music_object){
 	
 	var playable_node = $(node)
 		.addClass('song js-serv')
+		.removeClass('search-mp3-failed')
 		.removeClass('waiting-full-render')
 		.data('mp3link', music_object.link)
 		.data('not_use', false)
@@ -488,14 +518,14 @@ var make_node_playable = function(node, music_object){
 	
 	
 	if (seesu.ui.allow_mp3_downloading){
-		var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  http_link });
+		var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  music_object.link });
 		mp3.insertBefore(playable_node);
 	}
 	
 	
-	if (mp3_duration) {
-		var digits = mp3_duration % 60;
-		var track_dur = (Math.round(mp3_duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+	if (music_object.duration) {
+		var digits = music_object.duration % 60;
+		var track_dur = (Math.round(music_object.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
 		playable_node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
 	}
 	var playlist_length = playlist_nodes_for.length;
@@ -905,6 +935,32 @@ var show_artist_info = function(r, ainf){
 	ainf.bio.parent().removeClass('background-changes');
 
 };
+window.update_track_info = function(a_info, node){
+	var ti = a_info.find('.track-info').empty();
+	var mo = node.data('music_object');
+	if (mo.from && mo.from == 'soundcloud'){
+		if (mo.page_link){
+			var link = $('<a></a>')
+				.attr('href', mo.page_link)
+				.text('page of this track')
+				.click(function(){
+					widget.openURL(mo.page_link);
+					seesu.track_event('Links', 'soundcloud track');
+					return false;
+				});
+		}
+		
+		ti.append(
+			$('<p></p>')
+				.text(
+					'This track was found in SoundCloud. ' + 
+					'It may not match with track you are searching for at all. Try to use vk.com (vkontakte.ru) '
+				 )
+				 .append(link)
+			
+		)
+	}	
+}
 var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 	if (seesu.player.current_artist == artist) {
 		if (seesu.ui.playlist_type == 'artist'){
