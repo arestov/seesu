@@ -561,7 +561,6 @@ var make_node_playable = function(node, music_object){
 	if ((seesu.player.autostart && (playlist_length == 1)) || (playable_node.data('want_to_play') == seesu.player.want_to_play)) {
 		seesu.player.set_current_song(playable_node, true);
 		seesu.player.autostart = false;
-		seesu.ui.views.save_view(playable_node.data('full_playlist'));
 	}
 
 	if (playlist_length == 2) {
@@ -643,8 +642,11 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 		}
 	
 		if (!we_have_mp3links){
-			
-			make_tracklist_playable(linkNodes, seesu.player.autostart);
+			if (seesu.player.autostart){
+				seesu.ui.views.save_view(linkNodes)
+			} else{
+				make_tracklist_playable(linkNodes)
+			}
 			//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
 	
 		}
