@@ -82,15 +82,18 @@ window.seesu =  {
 					return this.browsing.playlist = $('<ul class="tracks-c current-tracks-c"></ul>').appendTo(artsTracks);
 				}
 			},
-			save_view: function(song_nodes){
+			save_view: function(song_nodes, not_make_playable){
 				if (this.playing && song_nodes == this.playing.song_nodes){
 					return true;
 				} else{					
 					this.browsing.song_nodes = song_nodes;
 					if (this.playing){
-						if (this.playing.search_results && (this.playing.search_results[0] != (this.current_rc && this.current_rc[0]))){
-							this.playing.search_results.remove();
+						if (this.playing.search_results){
+							if (!this.browsing.with_search_results_link || (this.playing.search_results[0] != (this.current_rc && this.current_rc[0]))){
+									this.playing.search_results.remove();
+							}
 						}
+						
 						if (this.playing.playlist){
 							this.playing.playlist.remove();
 						}
@@ -98,7 +101,10 @@ window.seesu =  {
 					}
 					this.playing = this.browsing;
 					this.browsing = {};
-					make_tracklist_playable(song_nodes, true);
+					if (!not_make_playable){
+						make_tracklist_playable(song_nodes, true);
+					}
+					
 				}
 				
 			},
@@ -525,7 +531,7 @@ var make_node_playable = function(node, music_object){
 	
 	
 	var playable_node = $(node)
-		.addClass('song js-serv')
+		.addClass('song')
 		.removeClass('search-mp3-failed')
 		.removeClass('waiting-full-render')
 		.data('mp3link', music_object.link)
@@ -558,9 +564,8 @@ var make_node_playable = function(node, music_object){
 	
 	playable_node.data('number_in_playlist', playlist_length-1);
 	
-	if ((seesu.player.autostart && (playlist_length == 1)) || (playable_node.data('want_to_play') == seesu.player.want_to_play)) {
+	if (playable_node.data('want_to_play') == seesu.player.want_to_play) {
 		seesu.player.set_current_song(playable_node, true);
-		seesu.player.autostart = false;
 	}
 
 	if (playlist_length == 2) {
@@ -652,12 +657,18 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 	
 		if (!we_have_mp3links){
 			if (seesu.player.autostart){
-				seesu.ui.views.save_view(linkNodes)
+				seesu.ui.views.save_view(linkNodes);
+				seesu.player.autostart = false;
 			} else{
-				make_tracklist_playable(linkNodes)
+				make_tracklist_playable(linkNodes);
 			}
 			//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
 	
+		} else{
+			if (seesu.player.autostart){
+				seesu.ui.views.save_view(linkNodes, true);
+				seesu.player.autostart = false;
+			}
 		}
 		return true;
 	}
