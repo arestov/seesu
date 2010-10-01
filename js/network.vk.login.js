@@ -13,8 +13,8 @@ var vk_login = function(login, pass, callback) {
 		'pass': pass
 	  },
 	  error: function(){
-		log('войти не удалось');
-		log('plan A not worked, trying plan B')
+		console.log('войти не удалось');
+		console.log('plan A not worked, trying plan B')
 		try_hard_vk_working(function(r){
 			vk_logg_in(r.user.id, false, false, login, pass, callback) //function(id, email, sid, login, pass, callback){
 		})
@@ -32,7 +32,7 @@ var vk_login = function(login, pass, callback) {
 		}
 	  },
 	  complete: function(xhr){
-	  	log(xhr.responseText)
+	  	console.log(xhr.responseText)
 	  }
 	});	
 }
@@ -57,12 +57,12 @@ var vk_send_captcha = function(captcha_key, login, pass, callback){
 				var r = $.parseJSON(text)
 
 			  	if (vk_captcha = r.captcha_sid){
-			  		log(vk_captcha)
+			  		console.log(vk_captcha)
 					captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
 					$(document.body).addClass('vk-needs-captcha');
 				}
 			} catch (e){
-				log(e)
+				console.log(e)
 			}
 		}
 
@@ -97,7 +97,7 @@ var vk_logg_in = function(id, email, sid, login, pass, callback){
 		w_storage( 'vk_auth_login', '', true);
 		w_storage( 'vk_auth_pass', '', true);
 	}
-	log('hide vklogin form');
+	console.log('hide vklogin form');
 	if (callback) {callback();}
 };
 var vk_logged_out = function(force){
@@ -108,9 +108,9 @@ var vk_logged_out = function(force){
 		w_storage('vkemail', '', true);
 		w_storage('vk_sid', '', true);
 		w_storage('big_vk_cookie', '', true);
-		log('vk data has been removed')
+		console.log('vk data has been removed')
 	} else{
-		log('vk data has NOT been  removed')
+		console.log('vk data has NOT been  removed')
 	}
 	seesu.delayed_search.waiting_for_mp3provider = true;
 	$(document.body).addClass('vk-needs-login');

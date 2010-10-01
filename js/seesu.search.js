@@ -54,14 +54,14 @@ seesu.ui.make_search_elements_index = function(remark_enter_press, after_user){
 	
 	if (remark_enter_press) {
 		var active_index = seesu.ui.search_form.data('current_node_index') || 0;
-		log("active_index: " + active_index)
+		console.log("active_index: " + active_index)
 		var new_active_node = seesu.ui.search_elements[active_index];
-		log('new_active_node: ' + new_active_node.nodeName)
+		console.log('new_active_node: ' + new_active_node.nodeName)
 		if (new_active_node) {
 			
 				var active_node = seesu.ui.search_form.data('node_for_enter_press');
 				if (active_node) {
-					log('old node: ' + (active_node[0] && active_node[0].nodeName))
+					console.log('old node: ' + (active_node[0] && active_node[0].nodeName))
 					active_node.removeClass('active');
 				}
 				
@@ -348,7 +348,7 @@ seesu.ui.buttons = {
 				
 				
 
-				log('finishing_results: ' + finishing_results)
+				console.log('finishing_results: ' + finishing_results)
 				var query = search_input.val();
 				if (query) {
 					artist_search(query, finishing_results);
@@ -389,7 +389,7 @@ seesu.ui.buttons = {
 			.click(function(e){
 				
 				var query = search_input.val();
-				log(query)
+				console.log(query)
 				if (query) {
 					show_track(query)
 				}
@@ -546,7 +546,7 @@ var multiply_suggestion_ui = function(input_value){
 	
 	results_container.append('<h4>Artists</h4>');
 	var arts_clone = seesu.ui.buttons.search_artists.clone(true).data('finishing_results', 5);
-	log('finishing_results test: ' + arts_clone.data('finishing_results'))
+	console.log('finishing_results test: ' + arts_clone.data('finishing_results'))
 	var ul_arts = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
 	seesu.ui.buttons_li.search_artists = $('<li></li').append(arts_clone.find('span').text('Search «' +source_query + '» in artists').end().addClass("search-button")).appendTo(ul_arts);
 	results_container.append(ul_arts);

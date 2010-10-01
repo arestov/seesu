@@ -113,9 +113,9 @@ var test_pressed_node = function(original_node, mouseup){
 					lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
 						if (!r.error) {
 							lfm_auth.login(r);
-							log('lfm scrobble access granted')
+							console.log('lfm scrobble access granted')
 						} else{
-							log('error while granting lfm scrobble access')
+							console.log('error while granting lfm scrobble access')
 						}
 					});
 				}

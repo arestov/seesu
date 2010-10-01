@@ -375,7 +375,7 @@ var updating_notify = function(r){
 	if (r.vk_apis){
 		seesu.hypnotoad.api = new vk_api(r.vk_apis, new quene(1300,5000,7));
 	}
-	log('lv: ' +  cver + ' reg link: ' + (vkReferer = r.vk_referer));
+	console.log('lv: ' +  cver + ' reg link: ' + (vkReferer = r.vk_referer));
 
 };
 var check_seesu_updates = function(){
@@ -604,13 +604,20 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 				.data('artist_name', vk_music_list[i].artist)
 				.addClass('track-node waiting-full-render')
 				.data('play_order', i)
+				.data('delayed_in', [])
 				.data('full_playlist', linkNodes)
 				.data('link_to_playlist', playlist_nodes_for)
 				.click(function(){
 					var clicked_node = $(this);
 					seesu.ui.views.save_view(clicked_node.data('full_playlist'));
 					if (seesu.player.wainter_for_play) {seesu.player.wainter_for_play.removeClass('marked-for-play');}
-					clicked_node.data('want_to_play', seesu.player.want_to_play += 1).addClass('marked-for-play');
+					var new_pr = ++seesu.player.want_to_play;
+					clicked_node.data('want_to_play', new_pr).addClass('marked-for-play');
+					var delayed_in = clicked_node.data('delayed_in');
+					for (var i=0; i < delayed_in.length; i++) {
+						delayed_in[i].pr = new_pr;
+					};
+					
 					seesu.player.wainter_for_play = clicked_node;
 					
 					get_track(clicked_node, false, true)

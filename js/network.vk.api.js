@@ -99,7 +99,7 @@ vk_api.prototype = {
 			}
 			
 			
-			_this.quene.add(function(){
+			return _this.quene.add(function(){
 				$.ajax({
 				  url: _this.api_link,
 				  global: false,
@@ -116,9 +116,7 @@ vk_api.prototype = {
 				  }
 				});
 				if (after_ajax) {after_ajax();}
-			}, false);
-			
-			return true;
+			}, true);
 			
 		}
 	},
