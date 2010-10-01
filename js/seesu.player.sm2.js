@@ -273,6 +273,8 @@ sm2_p.prototype = {
 				_this.track_progress_load[0].style.width = current + 'px';
 				if (!_this.before_finish_fired){
 					if (total - progress_value < 20){
+						log('total: ' + total);
+						log('progress_value: ' + progress_value);
 						if (_this.before_finish){
 							_this.before_finish();
 						}

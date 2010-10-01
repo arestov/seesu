@@ -43,13 +43,22 @@
 .show-start{
 	
 	}
+	.show-start #search{
+		display:block;
+	}
 	.show-start .lfm-start{
 		display:block;
 		}
 	.show-start .start-screen{
 		display:block;
 		}	
+#search{
+	display:none;
+}
 .show-search{
+	}
+	.show-search #search{
+		display:block;
 	}
 	.show-search #search-use-hint{
 		display:none;
@@ -62,6 +71,9 @@
 		}	
 .show-search-results {
 	}
+	.show-search-results .start-screen{
+		display:block;
+		} 
 	.show-search-results #search_result{
 		display:block;
 		}
