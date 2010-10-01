@@ -67,11 +67,12 @@ window.seesu =  {
 		views: {
 			browsing:{},
 			playing:false,
+			current_rc: false;
 			get_search_rc: function(){
 				if (this.browsing.search_results){
-					return this.browsing.search_results;
+					return this.current_rc = this.browsing.search_results;
 				} else {
-					return this.browsing.search_results = $('<div class="search-results-container current-src"></div').appendTo(searchres);
+					return this.current_rc = this.browsing.search_results = $('<div class="search-results-container current-src"></div').appendTo(searchres);
 				}
 			},
 			get_playlist_c:function(){
@@ -87,8 +88,13 @@ window.seesu =  {
 				} else{					
 					this.browsing.song_nodes = song_nodes;
 					if (this.playing){
-						this.playing.search_results.remove();
-						this.playing.playlist.remove();
+						if (this.playing.search_results && (this.playing.search_results[0] != (this.current_rc && this.current_rc[0]))){
+							this.playing.search_results.remove();
+						}
+						if (this.playing.playlist){
+							this.playing.playlist.remove();
+						}
+						
 					}
 					this.playing = this.browsing;
 					this.browsing = {};
@@ -110,7 +116,7 @@ window.seesu =  {
 			},
 			show_playing: function(){
 				if (this.playing.search_results){
-					this.playing.search_results.show();
+					this.current_rc = this.playing.search_results.show();
 				}
 				if (this.playing.playlist){
 					this.playing.playlist.show();
@@ -128,7 +134,7 @@ window.seesu =  {
 			},
 			show_browsing: function(){
 				if (this.browsing.search_results){
-					this.browsing.search_results.show();
+					this.current_rc = this.browsing.search_results.show();
 				}
 				if (this.browsing.playlist){
 					this.browsing.playlist.show();
@@ -163,16 +169,12 @@ window.seesu =  {
 				this.hide_playing();
 				this.show_browsing();
 			},
-			show_search_results_page: function(focus_to_input, log_navigation){
+			show_search_results_page: function(without_input, log_navigation){
 				var _s;
 				if (log_navigation){
 					_s = slider.className;
 				}
-				slider.className = "show-search show-search-results";
-				if (focus_to_input){
-					search_input[0].focus();
-					search_input[0].select();
-				}
+				slider.className = (without_input ? '' : 'show-search ') + "show-search-results";
 				if (log_navigation){
 					seesu.track_event('Navigation', 'search results', _s);
 				}
