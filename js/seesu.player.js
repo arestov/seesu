@@ -202,7 +202,7 @@ seesu.player = {
 }
 seesu.player.events[PAUSED] = function(){
   seesu.player.player_state = PAUSED;
-  document.body.className = document.body.className.replace(/player-[a-z]+ed/g, '');
+  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
   $(document.body).addClass('player-paused');
 };
 seesu.player.events[PLAYED] = function(){
@@ -217,19 +217,19 @@ seesu.player.events[PLAYED] = function(){
   }
   
   seesu.player.player_state = PLAYED;
-  document.body.className = document.body.className.replace(/player-[a-z]+ed/g, '');
+  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
   $(document.body).addClass('player-played');
   
 };
 seesu.player.events[STOPPED] = function(){
   seesu.player.current_song.data('start_time',null);
   seesu.player.player_state = STOPPED;
-  document.body.className = document.body.className.replace(/player-[a-z]+ed/g, '');
+  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
   $(document.body).addClass('player-stopped');
   
 };
 seesu.player.events[FINISHED] = function() {
-  document.body.className = document.body.className.replace(/player-[a-z]+ed/g, '');
+  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
   $(document.body).addClass('player-finished');
   
   if (lfm_scrobble.scrobbling ) {
