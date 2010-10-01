@@ -31,8 +31,9 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 		  complete: function(xhr){
 			var text = xhr.responseText;
 			if (text.match(/^\{/) && text.match(/\}$/)){
+				
 				try {
-					var r = JSON.parse(text);
+					var r = JSON.parse(text.replace(/images\\\/play\.gif/g,'').replace(/images.play\.gif/g, ''));
 					log('Квантакте говорит: \n' + r.summary);
 					var music_list = get_vk_music_list(r);
 				
@@ -48,6 +49,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 						}
 						
 					}
+					
 				} catch(e) {
 					log(e)
 					if (seesu.delayed_search.vk.quene == seesu.delayed_search.use.quene){

@@ -67,7 +67,7 @@ window.seesu =  {
 		views: {
 			browsing:{},
 			playing:false,
-			current_rc: false;
+			current_rc: false,
 			get_search_rc: function(){
 				if (this.browsing.search_results){
 					return this.current_rc = this.browsing.search_results;
@@ -104,6 +104,9 @@ window.seesu =  {
 			},
 			restore_view: function(){
 				this.hide_browsing();
+				if (this.playing.search_results){
+					this.current_rc = this.playing.search_results;
+				}
 				if (this.playing){
 					this.show_playlist_page(
 						this.playing.playlist_title, 
@@ -123,9 +126,13 @@ window.seesu =  {
 				}
 			},
 			hide_playing: function(){
-				if (this.playing.search_results){
+				
+				if (this.playing.search_results && (this.playing.search_results[0] != (this.current_rc && this.current_rc[0]))){
 					this.playing.search_results.hide();
+				
 				}
+				
+				
 				if (this.playing.playlist){
 					this.playing.playlist.hide();
 				}
@@ -166,6 +173,7 @@ window.seesu =  {
 				if (log_navigation){
 					seesu.track_event('Navigation', 'start page', _s);
 				}
+				this.current_rc = false;
 				this.hide_playing();
 				this.show_browsing();
 			},
