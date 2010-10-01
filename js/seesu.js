@@ -609,7 +609,7 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 				.data('link_to_playlist', playlist_nodes_for)
 				.click(function(){
 					var clicked_node = $(this);
-					seesu.ui.views.save_view(clicked_node.data('full_playlist'));
+					
 					if (seesu.player.wainter_for_play) {seesu.player.wainter_for_play.removeClass('marked-for-play');}
 					var new_pr = ++seesu.player.want_to_play;
 					clicked_node.data('want_to_play', new_pr).addClass('marked-for-play');
@@ -619,6 +619,8 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 					};
 					
 					seesu.player.wainter_for_play = clicked_node;
+					
+					seesu.ui.views.save_view(clicked_node.data('full_playlist'));
 					
 					get_track(clicked_node, false, true)
 					
@@ -1060,7 +1062,8 @@ var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 var show_artist = function (artist,with_search_results) {
 	
 	if (seesu.player.current_artist == artist && seesu.ui.playlist_type == 'artist') {
-		return false;
+		seesu.ui.views.restore_view();
+		return true;
 	}
 	seesu.ui.views.show_playlist_page(artist, 'artist', with_search_results);
 	getTopTracks(artist,function(track_list){
