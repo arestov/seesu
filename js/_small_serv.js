@@ -100,12 +100,16 @@ var forceOperaRepaint = function() {
 var hard_testing = false;
 
 if (typeof console != 'object'){
-	
+	window.console = {};
 	
 	if  (navigator.userAgent.match(/Opera/)){
-		window.log = function(){
+		console.log = function(){
 				opera.postError.apply(opera, arguments)
 			
+		}
+	} else if ((typeof System != "undefined") && System.Debug) {
+		console.log = function(text){
+			System.Debug.outputString(text);
 		}
 	} else {
 		if (hard_testing) {
@@ -118,24 +122,9 @@ if (typeof console != 'object'){
 		}
 		
 	
-		log = function(text){
+		console.log = function(text){
 			if (!hard_testing) {return false;}
 			alert(text)	
 		}
-	}
-	
-	
-	console = {};
-	console.log = function(text){
-		window.log(text)
 	}	
-} else {
-	window.log = function(text){
-		console.log(text)
-	}
-}
-if (typeof System != "undefined") {
-	window.log = function(text){
-		System.Debug.outputString(text);
-	}
 }

@@ -49,10 +49,10 @@ var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 				if (callback) {callback(r);}
 			  },
 			  complete: function(xhr){
-			  	//log(xhr.responseText)
+			  	//console.log(xhr.responseText)
 			  }
 			});
-			//log(params_full)
+			//console.log(params_full)
 		}
 
 	}
@@ -96,9 +96,9 @@ var lfm_scrobble = {
 				_this.s = response[1];
 				w_storage('lfm_scrobble_s', _this.s, true);
 				if (callback) {callback();}
-				log('handshake:' + '\n' + r)
+				console.log('handshake:' + '\n' + r)
 			} else {
-				log(r)
+				console.log(r)
 			}
 			
 		  }
@@ -125,7 +125,7 @@ var lfm_scrobble = {
 		  error: function(r){
 		  },
 		  success: function(r){
-			log('nowplay:' + '\n' + r);
+			console.log('nowplay:' + '\n' + r);
 			if (r.match('BADSESSION')){
 				lfm_scrobble.s = null;
 				w_storage('lfm_scrobble_s', '', true);
@@ -143,14 +143,14 @@ var lfm_scrobble = {
   },
   submit: function(node){
   	var _this = this;
-	log('getting data for submit')
+	console.log('getting data for submit')
 	var artist = node.data('artist_name'),
 		title = node.data('track_title'),
 		duration = node.data('duration'),
 		starttime = node.data('start_time'),
 		last_scrobble = node.data('last_scrobble'),
 		timestamp = ((new Date()).getTime()/1000).toFixed(0);
-	log('getting date for submit')
+	console.log('getting date for submit')
 	if (((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
 		this.music.push({
 			'artist': artist, 
@@ -177,8 +177,8 @@ var lfm_scrobble = {
 		  	post_m_obj['n[' + i + ']'] = ' ',
 		  	post_m_obj['m[' + i + ']'] = ' '
   		};
-  		log('request data generated. sending')
-		log(JSON.stringify(post_m_obj));
+  		console.log('request data generated. sending')
+		console.log(JSON.stringify(post_m_obj));
   		$.ajax({
 		  url: 'http://post2.audioscrobbler.com:80/protocol_1.2',
 		  global: false,
@@ -186,11 +186,11 @@ var lfm_scrobble = {
 		  dataType: "text",
 		  data: post_m_obj,
 		  error: function(r){
-			log('error while scrobble')
+			console.log('error while scrobble')
 			
 		  },
 		  success: function(r){
-			log('submit:' + '\n' + r);
+			console.log('submit:' + '\n' + r);
 			if (!r.match('OK')) {
 				if (r.match('BADSESSION')){
 					lfm_scrobble.s = null;
@@ -206,10 +206,10 @@ var lfm_scrobble = {
 			
 		  },
 		  complete: function(xhr){
-			log(xhr);
+			console.log(xhr);
 		  }
 		})
-			log(' data sended')
+			console.log(' data sended')
 	} else {
 		if (_this.music.length){
 			w_storage('lfm_scrobble_music', _this.music);
@@ -220,6 +220,6 @@ var lfm_scrobble = {
 			});
 		}
 	}
-  	log('submit done');
+  	console.log('submit done');
   }
 };

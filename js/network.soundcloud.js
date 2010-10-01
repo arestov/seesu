@@ -6,7 +6,7 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax)
 		var cache_used = cache_ajax.get('soundcloud', query, callback)
 		if (cache_used) {return true;}
 	}
-	seesu.soundcloud_quene.add(function(){
+	return seesu.soundcloud_quene.add(function(){
 		$.ajax({
 			timeout: 10000,
 			url: "http://api.soundcloud.com/tracks.js",
@@ -81,8 +81,7 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax)
 			  
 		})
 		if (after_ajax) {after_ajax();}
-	})
-	return true;
+	}, true);
 	
 	
 }
