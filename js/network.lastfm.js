@@ -2,7 +2,7 @@ var apikey = '2803b2bcbc53f132b4d4117ec1509d65';
 var	s = '77fd498ed8592022e61863244b53077d';
 var api='http://ws.audioscrobbler.com/2.0/';
 var lastfm_cache_on = true;
-var lfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
+var lastfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 	if (method) {
 		var use_cache = (lastfm_cache_on && !type_of_xhr_is_post && !nocache)
 
