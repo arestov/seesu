@@ -83,6 +83,9 @@ a.waiting-full-render{
 a.waiting-full-render.marked-for-play{
 	outline:1px dashed #888 ;
 }
+a.waiting-full-render:hover{
+	color:#fff;
+}
 a.download-mp3{
 	text-decoration:none;
 	padding:3px 5px 1px;

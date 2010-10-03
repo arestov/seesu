@@ -9,8 +9,8 @@ funcs_quene = function(small_delay, big_delay, big_delay_interval){
 	if (big_delay_interval) {
 		this.big_delay_interval = big_delay_interval;
 	}
-	if (!small_delay || !big_delay || !big_delay_interval){
-		this.nodelay = true;
+	if (!big_delay || !big_delay_interval){
+		this.nobigdelay = true;
 	}
 	this.last_num = 0;
 };
@@ -27,12 +27,8 @@ funcs_quene.prototype = {
 			func: function(){
 				func();
 				this.done = true;
-				var time;
-				if (!_this.nodelay){
-					time  = (((_this.last_num + 1) % _this.big_delay_interval) === 0) ? _this.big_delay : _this.small_delay;
-				} else {
-					time = 0;
-				}
+				var time = (!_this.nobigdelay && (((_this.last_num + 1) % _this.big_delay_interval) === 0)) ? _this.big_delay : _this.small_delay;
+			
 				setTimeout(function(){
 					_this.next(quene_just_for_me);
 				}, time);
@@ -57,10 +53,10 @@ funcs_quene.prototype = {
 		var _this = this;
 
 
-		if (!_this.nodelay){
+		
 			var last_usage = this.last_usage || 0;
 			var difference = (new Date()).getTime() - last_usage;
-			var time = (((_this.last_num) % _this.big_delay_interval) === 0) ? _this.big_delay : _this.small_delay;
+			var time =  (!_this.nobigdelay && (((_this.last_num) % _this.big_delay_interval) === 0)) ? _this.big_delay : _this.small_delay
 			if (difference < time) {
 				setTimeout(function(){
 					_this.next(_this.big_quene);
@@ -69,9 +65,7 @@ funcs_quene.prototype = {
 			} else{
 				_this.next(_this.big_quene);
 			}
-		} else{
-			_this.next(_this.big_quene);
-		}
+		
 		this.big_quene.inited = true;
 		return this;
 

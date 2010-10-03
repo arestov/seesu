@@ -1,6 +1,6 @@
 h1. Seesu (Music app)
 
-!http://cloud.github.com/downloads/kossnocorp/seesu/screenshot.png!:http://seesu.heroku.com/downloads/seesu.wgt
+!http://img-fotki.yandex.ru/get/4505/gleb-arestov.0/0_527fe_bf011de0_orig!:http://seesu.me/
 
 Get music you like from last.fm and play it with vk.com
 
@@ -39,7 +39,7 @@ h1. Todo (closest future)
 
 17. open search
 
-3. оптимизация под оперу мини
+3. //оптимизация под оперу мини
 4. оптимизация загрузки
 
 11. iframe вк апи авторизация
