@@ -59,7 +59,11 @@ window.app_env = (function(){
 	}
 	
 	
-	if (env.as_application){$(document.documentElement).addClass('as-application')}
+	if (env.as_application){
+		$(document.documentElement).addClass('as-application')
+	} else{
+		$(document.documentElement).addClass('not-as-application')
+	}
 	if (env.app_type){$(document.documentElement).addClass(env.app_type.replace('_','-'))}
 	
 	if (!env.app_type){

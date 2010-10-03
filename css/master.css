@@ -7,12 +7,12 @@ body{
 	font-size:12px;
 	font-family:Helvetica , Arial ,sans-serif;
 	}
-:not(.as-application) body{
+.not-as-application body{
 	background-color: #505050;
 	
 	
 }
-:not(.as-application) .slider-materail{
+.not-as-application .slider-materail{
 	padding-bottom:15px;
 }
 
@@ -437,10 +437,10 @@ display:none;
 		display:none;
 		}
 
-html:not(.as-application){
+html.not-as-application{
 	position:static;
 }
-html:not(.as-application), :not(.as-application)  body{
+html.not-as-application, .not-as-application  body{
 	height:100%  !important;
 	
 }
