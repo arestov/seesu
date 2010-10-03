@@ -7,7 +7,7 @@ window.lfm = function(){
 	})
 }
 window.seesu =  {
-	  lfm_quene: new funcs_quene(100, 100, 10),
+	  lfm_quene: new funcs_quene(100),
 	  cross_domain_allowed: !location.protocol.match(/http/) && $(document.documentElement).addClass('cross-domain-allowed') && true,
 	  version: 1.90,
 	  env: app_env,
