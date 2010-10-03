@@ -46,10 +46,10 @@ var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 	}
 }
 seesu.ui.make_search_elements_index = function(remark_enter_press, after_user){
-	var search_elements = searchres.find('a:not(.nothing-found), button');
+	var search_elements = seesu.ui.views.current_rc.find('a:not(.nothing-found), button');
 	seesu.ui.views.current_rc.data('search_elements', search_elements)
 	for (var i=0 , l = search_elements.length; i < l; i++) {
-		$(search_elements[i]).data('search_element_index', i).data('search_elements_length', l)
+		$(search_elements[i]).data('search_element_index', i);
 	};
 	
 	
@@ -689,17 +689,18 @@ $(function(){
 				e.preventDefault();
 				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
 				if (current_node){
+					var _elements = seesu.ui.views.current_rc.data('search_elements');
 					var el_index = current_node.data('search_element_index');
-					var els_length = current_node.data('search_elements_length');
+					var els_length = _elements.length;
 					current_node.removeClass('active')
 					
 					if (el_index < (els_length -1)){
 						var new_current = el_index+1;
-						set_node_for_enter_press($(seesu.ui.views.current_rc.data('search_elements')[new_current]), true)
+						set_node_for_enter_press($(_elements[new_current]), true)
 						
 					} else {
 						var new_current = 0;
-						set_node_for_enter_press($(seesu.ui.views.current_rc.data('search_elements')[new_current]), true)
+						set_node_for_enter_press($(_elements[new_current]), true)
 					}
 				}
 			} else 
@@ -707,17 +708,18 @@ $(function(){
 				e.preventDefault();
 				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
 				if (current_node){
+					var _elements = seesu.ui.views.current_rc.data('search_elements');
 					var el_index = current_node.data('search_element_index');
-					var els_length = current_node.data('search_elements_length');
+					var els_length = _elements.length;
 					current_node.removeClass('active')
 					
 					if (el_index > 0){
 						var new_current = el_index-1;
-						set_node_for_enter_press($(seesu.ui.views.current_rc.data('search_elements')[new_current]), true)
+						set_node_for_enter_press($(_elements[new_current]), true)
 						
 					} else {
 						var new_current = els_length-1;
-						set_node_for_enter_press($(seesu.ui.views.current_rc.data('search_elements')[new_current]), true)
+						set_node_for_enter_press($(_elements[new_current]), true)
 					}
 				}
 			}
