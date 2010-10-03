@@ -132,6 +132,7 @@
 	}
 	.show-zoom-to-track .tracks-for-play>ul>li.active-play .song{
 		font-size:1.3em;
+		cursor:default;
 		}
 .show-zoom-to-track .track-context{
 	padding-top:86px;

@@ -68,7 +68,6 @@ window.seesu =  {
 		nav: null
 	  },
 	  ui: {
-		allow_mp3_downloading: true,
 		views: {
 			browsing:{},
 			playing:false,
@@ -276,7 +275,6 @@ window.seesu =  {
 			
 			seesu.delayed_search.waiting_for_mp3provider = false;
 			w_storage('mp3-search-way', 'vk', true);
-			seesu.ui.allow_mp3_downloading = true;
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -286,7 +284,6 @@ window.seesu =  {
 			
 			seesu.delayed_search.waiting_for_mp3provider = false;
 			w_storage('mp3-search-way', 'vk_api', true);
-			seesu.ui.allow_mp3_downloading = false;
 			if (typeof seesu.delayed_search.start_for_mp3provider == 'function'){
 				seesu.delayed_search.start_for_mp3provider();
 			}
@@ -554,9 +551,11 @@ var make_node_playable = function(node, music_object){
 	playlist_nodes_for.push(playable_node);
 	
 	
-	if (seesu.ui.allow_mp3_downloading){
+	if (music_object.from != 'vk_api'){
 		var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  music_object.link });
 		mp3.insertBefore(playable_node);
+	} else{
+		playable_node.addClass('mp3-download-is-not-allowed');
 	}
 	
 	
