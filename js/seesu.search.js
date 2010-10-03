@@ -493,6 +493,12 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 	if (!fast_enter) {fast_enter = tags_clone;}
 	
 	seesu.ui.make_search_elements_index();
+	
+	var active_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+	if (active_node) {
+		active_node.removeClass('active');
+	}
+	
 	set_node_for_enter_press(fast_enter, false, true);
 }
 var suggestions_search = seesu.cross_domain_allowed ? function(q, arts_clone, track_clone ,tags_clone){
