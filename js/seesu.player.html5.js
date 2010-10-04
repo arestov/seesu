@@ -11,14 +11,7 @@ var html5_p = function(player_holder,volume){
 	if (player_holder){
 		this.player_holder = player_holder;
 		var get_click_position = function(e, node){
-			var pos ;
-			if (!node){
-				pos = e.offsetX;
-			}
-			
-			if (!pos){
-				pos = e.pageX - $(node).offset().left;
-			}
+			var pos = e.offsetX || (e.pageX - $(node).offset().left);
 			return pos
 		}
 		this.before_finish = function(){
@@ -46,7 +39,7 @@ var html5_p = function(player_holder,volume){
 		
 		
 		this.volume_state = $('<div class="volume-state"></div>').click(function(e){
-			var pos = get_click_position(e);
+			var pos = get_click_position(e, this);
 			var new_volume_factor = pos/50;
 			_this.changhe_volume(new_volume_factor);
 			_this.volume = new_volume_factor;
