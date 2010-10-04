@@ -504,8 +504,9 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 var suggestions_search = seesu.cross_domain_allowed ? function(q, arts_clone, track_clone ,tags_clone){
 		
 		var hash = hex_md5(q);
-		var cache_used = cache_ajax.get('lfm_fs', hash, fast_suggestion)
-		
+		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
+			fast_suggestion(r, q, arts_clone, track_clone ,tags_clone)
+		});
 		if (!cache_used) {
 			seesu.xhrs.fast_search_suggest = $.ajax({
 			  url: 'http://www.last.fm/search/autocomplete',
