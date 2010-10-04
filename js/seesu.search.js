@@ -383,18 +383,22 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 	var sugg_arts = [];
 	var sugg_tracks = [];
 	var sugg_tags = [];
+	var sugg_albums = [];
 	
 	for (var i=0, l = r.response.docs.length; i < l ; i++) {
 		var response_modul = r.response.docs[i];
 		if (response_modul.restype == 6){
 			sugg_arts.push(response_modul);
 		} else 
+		if (response_modul.restype == 8){
+			sugg_albums.push(response_modul);
+		} else 
 		if (response_modul.restype == 9){
 			sugg_tracks.push(response_modul);
 		} else
 		if (response_modul.restype == 32){
 			sugg_tags.push(response_modul);
-		}
+		} 
 	};
 	
 	
@@ -476,7 +480,7 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 	
 	set_node_for_enter_press(fast_enter, false, true);
 }
-var get_fast_suggests = $.debounce(function(q, callback){
+var get_fast_suggests = function(q, callback, hash){
 	return $.ajax({
 	  url: 'http://www.last.fm/search/autocomplete',
 	  global: false,
@@ -491,9 +495,12 @@ var get_fast_suggests = $.debounce(function(q, callback){
 	  },
 	  success: function(r){
 		cache_ajax.set('lfm_fs', hash, r);
-		if (callback){callback();}
+		if (callback){callback(r);}
 	  }	
-}),300)
+	})
+};
+
+
 var suggestions_search = seesu.cross_domain_allowed ? function(q, arts_clone, track_clone ,tags_clone){
 		
 		var hash = hex_md5(q);
@@ -501,9 +508,9 @@ var suggestions_search = seesu.cross_domain_allowed ? function(q, arts_clone, tr
 			fast_suggestion(r, q, arts_clone, track_clone ,tags_clone)
 		});
 		if (!cache_used) {
-			seesu.xhrs.fast_search_suggest = get_fast_suggests(q, function(){	
+			seesu.xhrs.fast_search_suggest = get_fast_suggests(q, function(r){	
 				fast_suggestion(r, q, arts_clone, track_clone ,tags_clone)
-			})
+			}, hash)
 			
 		}
 	} :
