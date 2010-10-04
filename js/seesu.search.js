@@ -5,24 +5,21 @@ var results_mouse_click_for_enter_press = function(e){
 	if (active_node) {active_node.removeClass('active');}
 	
 	set_node_for_enter_press($(e.target));
-}
+};
 $(function(){
 	seesu.ui.scrolling_viewport = $('#screens');
-})
+});
 var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
-	if (!node){return false}
-	
+	if (!node){return false;}
 	if (not_by_user){
 		seesu.ui.search_form.data('current_node_index', false);
 	} else{
 		seesu.ui.search_form.data('current_node_index', node.data('search_element_index'));
 	}
 	seesu.ui.views.current_rc.data('node_for_enter_press', node.addClass('active'));
-	
-	
 	if (scroll_to_node){
 		var scroll_up = seesu.ui.scrolling_viewport.scrollTop();
-		var scrolling_viewport_height = seesu.ui.scrolling_viewport.height()
+		var scrolling_viewport_height = seesu.ui.scrolling_viewport.height();
 		
 		var container_postion = scroll_up + searchres.position().top;
 		
@@ -42,7 +39,6 @@ var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 			var new_position =  view_pos_down - scrolling_viewport_height/2;
 			seesu.ui.scrolling_viewport.scrollTop(new_position);
 		}
-		
 	}
 }
 seesu.ui.make_search_elements_index = function(remark_enter_press, after_user){
@@ -51,8 +47,6 @@ seesu.ui.make_search_elements_index = function(remark_enter_press, after_user){
 	for (var i=0 , l = search_elements.length; i < l; i++) {
 		$(search_elements[i]).data('search_element_index', i);
 	};
-	
-	
 	if (remark_enter_press) {
 		var active_index = seesu.ui.search_form.data('current_node_index') || 0;
 		var new_active_node = search_elements[active_index];
@@ -62,20 +56,9 @@ seesu.ui.make_search_elements_index = function(remark_enter_press, after_user){
 				if (active_node) {
 					active_node.removeClass('active');
 				}
-				
 				set_node_for_enter_press($(new_active_node), false, after_user);
-				
-				
-			
-			
 		}
-	
-			
-			
-		
 	}
-	
-	
 }
 var create_artist_suggest_item = function(artist, image){
 	var a = $("<a></a>")
@@ -437,14 +420,6 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 	}
 	if (!fast_enter) {fast_enter = arts_clone;}
 	
-	
-
-	
-	
-	
-	
-
-	
 	var ul_tracks = seesu.ui.tracks_results_ul;
 	if (sugg_tracks && sugg_tracks.length){
 		
@@ -501,29 +476,35 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 	
 	set_node_for_enter_press(fast_enter, false, true);
 }
+var get_fast_suggests = $.debounce(function(q, callback){
+	return $.ajax({
+	  url: 'http://www.last.fm/search/autocomplete',
+	  global: false,
+	  type: "GET",
+	  timeout: 10000,
+	  dataType: "json",
+	  data: {
+	  	"q": q,
+	  	"force" : 1
+	  },
+	  error: function(){
+	  },
+	  success: function(r){
+		cache_ajax.set('lfm_fs', hash, r);
+		if (callback){callback();}
+	  }	
+}),300)
 var suggestions_search = seesu.cross_domain_allowed ? function(q, arts_clone, track_clone ,tags_clone){
 		
 		var hash = hex_md5(q);
-		var cache_used = cache_ajax.get('lfm_fs', hash, fast_suggestion)
-		
+		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
+			fast_suggestion(r, q, arts_clone, track_clone ,tags_clone)
+		});
 		if (!cache_used) {
-			seesu.xhrs.fast_search_suggest = $.ajax({
-			  url: 'http://www.last.fm/search/autocomplete',
-			  global: false,
-			  type: "GET",
-			  timeout: 10000,
-			  dataType: "json",
-			  data: {
-			  	"q": q,
-			  	"force" : 1
-			  },
-			  error: function(){
-			  },
-			  success: function(r){
-				cache_ajax.set('lfm_fs', hash, r);
+			seesu.xhrs.fast_search_suggest = get_fast_suggests(q, function(){	
 				fast_suggestion(r, q, arts_clone, track_clone ,tags_clone)
-			  }
-			});
+			})
+			
 		}
 	} :
 	function(q, arts_clone, track_clone ,tags_clone){
