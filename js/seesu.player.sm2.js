@@ -23,7 +23,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 		}
 		this.before_finish = function(){
 			this.before_finish_fired = true;
-			log('before finish')
+			console.log('before finish')
 			if (seesu.player.current_next_song && !seesu.player.current_next_song.data('mp3link')){
 				get_track(seesu.player.current_next_song, false, true);
 				
@@ -60,7 +60,7 @@ var sm2_p = function(player_holder,volume,sm2, iframe){
 	
 	
 	if (iframe) {
-		log('sm2 with iframe')
+		console.log('sm2 with iframe')
 		this.player_container = iframe;
 		addEvent(window, "message", function(e){
 			_this.listen_commands_of_sandbox.apply(_this,arguments);
@@ -106,7 +106,7 @@ sm2_p.prototype = {
 		if (this.track_progress_total){
 			this.track_progress_width = parent_node.outerWidth() - 12;
 			//this.track_node_text.html(node.html());
-			//log('width: '  + this.track_progress_width)
+			//console.log('width: '  + this.track_progress_width)
 		}
 		
 		this.play_song_by_url(node.data('mp3link'), node.data('duration'));
@@ -273,6 +273,8 @@ sm2_p.prototype = {
 				_this.track_progress_load[0].style.width = current + 'px';
 				if (!_this.before_finish_fired){
 					if (total - progress_value < 20){
+						console.log('total: ' + total);
+						console.log('progress_value: ' + progress_value);
 						if (_this.before_finish){
 							_this.before_finish();
 						}

@@ -12,7 +12,7 @@ window.removeEvent = window.addEventListener ?
 		elem.removeEventListener(evType, fn, false);
 	}:
 	function(elem, evType, fn){
-		elem.detachEvent('on' + evType, fn)
+		elem.detachEvent('on' + evType, fn);
 	};
 	
 (function(){
@@ -24,8 +24,8 @@ window.removeEvent = window.addEventListener ?
 		
 		
 		return func_name;
-	}	
-})()
+	};	
+})();
 
 window.app_env = (function(){
 	var env = {};
@@ -57,15 +57,25 @@ window.app_env = (function(){
 		env.app_type = false;
 		env.unknown_app = true;
 	}
+	try{
+		if (document.createEvent('TouchEvent')){
+			env.touch_support = true;
+		}
+	} catch(e){}
 	
 	
-	if (env.as_application){$(document.documentElement).addClass('as-application')}
-	if (env.app_type){$(document.documentElement).addClass(env.app_type.replace('_','-'))}
+	if (env.touch_support){$(document.documentElement).addClass('touch-screen');}
+	if (env.as_application){
+		$(document.documentElement).addClass('as-application');
+	} else{
+		$(document.documentElement).addClass('not-as-application');
+	}
+	if (env.app_type){$(document.documentElement).addClass(env.app_type.replace('_','-'));}
 	
 	if (!env.app_type){
 		env.app_type = 'unknown_app_type' + (navigator.userAgent && ': ' + navigator.userAgent); 
 	} else{
-		env[env.app_type] = true
+		env[env.app_type] = true;
 	}
 	
 	
@@ -82,7 +92,7 @@ if (typeof widget != 'object'){
 		openURL: function(url){
 			window.open(url);
 		}
-	}
+	};
 }
 
 // Forcing Opera full page reflow/repaint to fix page draw bugs
@@ -94,48 +104,37 @@ var forceOperaRepaint = function() {
 			bs.position = 'static';
 		}, 1);
 	}
-}
+};
 
 
 var hard_testing = false;
 
 if (typeof console != 'object'){
-	
+	window.console = {};
 	
 	if  (navigator.userAgent.match(/Opera/)){
-		window.log = function(){
-				opera.postError.apply(opera, arguments)
+		console.log = function(){
+				opera.postError.apply(opera, arguments);
 			
-		}
+		};
+	} else if ((typeof System != "undefined") && System.Debug) {
+		console.log = function(text){
+			System.Debug.outputString(text);
+		};
 	} else {
 		if (hard_testing) {
 			document.addEventListener('DOMContentLoaded', function(){
 				var h = document.getElementsByTagName('head')[0];
 				var _s = document.createElement('script');
 					_s.src = "http://userscripts.ru/js/nice-alert/nice_alert.js";
-				h.appendChild(_s)
+				h.appendChild(_s);
 			}, false);
 		}
 		
 	
-		log = function(text){
+		console.log = function(text){
 			if (!hard_testing) {return false;}
-			alert(text)	
-		}
-	}
-	
-	
-	console = {};
-	console.log = function(text){
-		window.log(text)
+			alert(text);
+		};
 	}	
-} else {
-	window.log = function(text){
-		console.log(text)
-	}
-}
-if (typeof System != "undefined") {
-	window.log = function(text){
-		System.Debug.outputString(text);
-	}
 }

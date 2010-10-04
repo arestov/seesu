@@ -1,13 +1,19 @@
 get_all_tracks = function(trackname, callback, was_unsuccessful, hypnotoad){
+	var allow_h = hypnotoad && seesu.delayed_search.waiting_for_mp3provider;
 	if (seesu.delayed_search.use.quene) {seesu.delayed_search.use.quene.reset();}
 	seesu.delayed_search.tracks_waiting_for_search = 0;
 	art_tracks_w_counter.text('');
-	var s = hypnotoad ? seesu.hypnotoad.search_soundcloud : seesu.delayed_search.use.search_tracks;
+	var s = allow_h ? seesu.hypnotoad.search_soundcloud : seesu.delayed_search.use.search_tracks;
 	var used_successful = s(trackname, callback, function(){callback();}, was_unsuccessful);
+	if (typeof used_successful == 'object'){
+		used_successful.pr = seesu.player.want_to_play + 1;
+		used_successful.q.init();
+	}
 	return used_successful;
 }
 
 get_track = function(tracknode, was_unsuccessful, hypnotoad){
+	var allow_h = hypnotoad && seesu.delayed_search.waiting_for_mp3provider;
 	if(tracknode.data('mp3link')){
 		return false;
 	}
@@ -15,7 +21,7 @@ get_track = function(tracknode, was_unsuccessful, hypnotoad){
 	if (!was_unsuccessful){
 		art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
 	}
-	var s = hypnotoad ? seesu.hypnotoad.search_soundcloud : seesu.delayed_search.use.search_tracks;
+	var s = allow_h ? seesu.hypnotoad.search_soundcloud : seesu.delayed_search.use.search_tracks;
 	var last_hypnotoad_try = false;
 	var callback_success = function(music_list){
 		//success
@@ -44,7 +50,7 @@ get_track = function(tracknode, was_unsuccessful, hypnotoad){
 				){
 					seesu.player.fix_songs_ui();
 				}
-				if (hypnotoad){
+				if (allow_h){
 					if (seesu.player.current_next_song && !seesu.player.current_next_song.data('mp3link')){
 						get_track(seesu.player.current_next_song, false, true);
 						
@@ -52,7 +58,7 @@ get_track = function(tracknode, was_unsuccessful, hypnotoad){
 				}
 			}
 			
-			if (hypnotoad && hypnotoad.vk_api && !last_hypnotoad_try ){
+			if (allow_h && seesu.hypnotoad.vk_api && !last_hypnotoad_try ){
 			
 				last_hypnotoad_try = true;
 				seesu.hypnotoad.search_tracks(
@@ -91,7 +97,16 @@ get_track = function(tracknode, was_unsuccessful, hypnotoad){
 			tracknode.addClass('search-mp3');
 		}
 	);
-	return used_successful;
+	if (typeof used_successful == 'object'){
+		var has_pr = tracknode.data('want_to_play');
+		if (has_pr) {
+			used_successful.pr = has_pr;
+		}
+		tracknode.data('delayed_in').push(used_successful);
+		used_successful.q.init();
+	}
+	
+	return !!used_successful;
 }
 
 var de_html_entity = document.createElement('div');
@@ -184,7 +199,7 @@ window.swith_to_provider = function(try_selected){
 			if (current_prov == mp3_prov_selected){
 				seesu.delayed_search['switch_to_' + current_prov]();
 				provider_selected = true;
-				log('selected prov ' + current_prov);
+				console.log('selected prov ' + current_prov);
 			}
 		};
 		if (!provider_selected && !try_selected){
@@ -192,9 +207,9 @@ window.swith_to_provider = function(try_selected){
 			if (current_prov){
 				seesu.delayed_search['switch_to_' + current_prov]();
 				provider_selected = true;
-				log('not selected prov ' + current_prov);
+				console.log('not selected prov ' + current_prov);
 			} else{
-				log('must use vkontakte');
+				console.log('must use vkontakte');
 			}
 		}
 		
@@ -202,9 +217,9 @@ window.swith_to_provider = function(try_selected){
 		var someone_available = seesu.delayed_search.available[0];
 		if (someone_available){
 			seesu.delayed_search['switch_to_' + someone_available]();
-			log('some avai prov ' + someone_available)
+			console.log('some avai prov ' + someone_available)
 		} else{
-			log('must use vkontakte');
+			console.log('must use vkontakte');
 		}
 	}
 }
@@ -233,40 +248,40 @@ window.try_hard_vk_working = function(callback){
 					} else{
 						seesu.delayed_search.available.push('vk');
 						seesu.vk_logged_in = true;
-						log('vk mp3 prov ok')
+						console.log('vk mp3 prov ok')
 						swith_to_provider(true)
 					}
 				} else{
 					vk_logged_out();
-					log('vk mp3 prov faild');
+					console.log('vk mp3 prov faild');
 					
 				
 					var login = w_storage( 'vk_auth_login');
 					var pass = w_storage( 'vk_auth_pass');
 					if (login && pass){
-						log('we have pass in storage')
+						console.log('we have pass in storage')
 						vk_send_captcha('', login, pass)
 					}
 					
 				}
 			} catch(e) {
-				log(e)
+				console.log(e)
 			}
 		} else{
 			vk_logged_out();
-			log('vk mp3 prov faild (can not parse)');
+			console.log('vk mp3 prov faild (can not parse)');
 			
 			var login = w_storage( 'vk_auth_login');
 			var pass = w_storage( 'vk_auth_pass');
 			if (login && pass){
-				log('we have pass in storage')
+				console.log('we have pass in storage')
 				vk_send_captcha('', login, pass)
 			}
 			
 		}
 	  },
 	  error: function(xhr){
-		log('vk mp3 prov faild with jq error')
+		console.log('vk mp3 prov faild with jq error')
 		vk_logged_out();
 	  },
 	  complete: function(xhr){
@@ -281,7 +296,7 @@ try_mp3_providers = function(){
 		if (seesu.vk.id || seesu.env.chrome_extension || seesu.env.firefox_widget ) {
 			try_hard_vk_working();
 		} else{
-			log('vk mp3 prov faild cos not auth')
+			console.log('vk mp3 prov faild cos not auth')
 			vk_logged_out();
 			swith_to_provider_finish();
 		}

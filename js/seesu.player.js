@@ -74,7 +74,7 @@ seesu.player = {
 		this.musicbox.pause();
 		break;
 	  default:
-		//log('Do nothing');
+		//console.log('Do nothing');
 	  }
 	},
 	switch_to 	:function (direction) {
@@ -202,7 +202,7 @@ seesu.player = {
 }
 seesu.player.events[PAUSED] = function(){
   seesu.player.player_state = PAUSED;
-  document.body.className = document.body.className.replace(/player-[a-z]+ed/g, '');
+  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
   $(document.body).addClass('player-paused');
 };
 seesu.player.events[PLAYED] = function(){
@@ -217,19 +217,19 @@ seesu.player.events[PLAYED] = function(){
   }
   
   seesu.player.player_state = PLAYED;
-  document.body.className = document.body.className.replace(/player-[a-z]+ed/g, '');
+  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
   $(document.body).addClass('player-played');
   
 };
 seesu.player.events[STOPPED] = function(){
   seesu.player.current_song.data('start_time',null);
   seesu.player.player_state = STOPPED;
-  document.body.className = document.body.className.replace(/player-[a-z]+ed/g, '');
+  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
   $(document.body).addClass('player-stopped');
   
 };
 seesu.player.events[FINISHED] = function() {
-  document.body.className = document.body.className.replace(/player-[a-z]+ed/g, '');
+  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
   $(document.body).addClass('player-finished');
   
   if (lfm_scrobble.scrobbling ) {
@@ -329,11 +329,11 @@ var try_to_use_iframe_sm2p = function(remove){
 						iframe_source.postMessage("sm2_inited",'*');
 
 					} else{
-						log('by some reason sm2 iframe don"t work')
+						console.log('by some reason sm2 iframe don"t work')
 					}
 				});
 			} else{
-				log('no sounds');
+				console.log('no sounds');
 			}
 
 			
@@ -360,11 +360,11 @@ var try_to_use_iframe_sm2p = function(remove){
 		var add_script_data_callback = function(){return;};
 		var send_scripts_to_iframe = function(iframe){
 			if (all_scripts_data_loaded){
-				log('sending')
+				console.log('sending')
 				iframe.contentWindow.postMessage("append_data_as_script\n" + scripts_data.complete_data, '*');
 				
 			} else{
-				log('callbacking')
+				console.log('callbacking')
 				wait_for_all_script_data = true;
 				add_script_data_callback = function(){
 					send_scripts_to_iframe(iframe);
@@ -424,12 +424,12 @@ var try_to_use_iframe_sm2p = function(remove){
 		var check_iframe = function(e){
 			if (e.data.match(/iframe_loaded/)){
 				
-				log('got iframe loaded feedback');
+				console.log('got iframe loaded feedback');
 				send_scripts_to_iframe(i_f_sm2[0]);
 				
 				
 			} else if (e.data.match(/sm2_inited/)){
-				log('iframe sm2 wrokss yearh!!!!')
+				console.log('iframe sm2 wrokss yearh!!!!')
 				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
 				i_f_sm2.addClass('sm-inited');
 				$(document.body).addClass('flash-internet');
@@ -442,7 +442,7 @@ var try_to_use_iframe_sm2p = function(remove){
 		
 		
 		i_f_sm2.bind('load',function(){
-			log('source knows that iframe loaded');
+			console.log('source knows that iframe loaded');
 			
 			this.contentWindow.postMessage("test_iframe_loading_state", '*');
 			
@@ -479,12 +479,12 @@ $(function() {
 			soundManager.useHighPerformance = true;
 			soundManager.onready(function() {
 			  if (soundManager.supported()) {
-				log('sm2 in widget ok')
+				console.log('sm2 in widget ok')
 				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager);
 				$(document.body).addClass('flash-internet');
 				try_to_use_iframe_sm2p(true);
 			  } else {
-			  	log('sm2 in widget notok')
+			  	console.log('sm2 in widget notok')
 			  		try_to_use_iframe_sm2p();
 		
 			  }

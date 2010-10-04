@@ -99,7 +99,7 @@ vk_api.prototype = {
 			}
 			
 			
-			_this.quene.add(function(){
+			return _this.quene.add(function(){
 				$.ajax({
 				  url: _this.api_link,
 				  global: false,
@@ -116,13 +116,12 @@ vk_api.prototype = {
 				  }
 				});
 				if (after_ajax) {after_ajax();}
-			}, false);
-			
-			return true;
+			}, true);
 			
 		}
 	},
 	audio_search: function(query, callback, error, nocache, after_ajax, params){
+		var _this = this;
 		var params_u = params || {};
 			params_u.q = query;
 			params_u.count = params_u.count || 30;
@@ -136,7 +135,7 @@ vk_api.prototype = {
 						'duration'	: r.response[i].duration ? r.response[i].duration : r.response[i].audio.duration,
 						'link'		: r.response[i].url ? r.response[i].url : r.response[i].audio.url,
 						'track'		: r.response[i].title ? r.response[i].title : r.response[i].audio.title,
-						'from':'vk_api'
+						'from'		: (_this.allow_random_api ? 'random ' : '') + 'vk_api'
 					
 					};
 					if (!has_music_copy(music_list,entity)){
