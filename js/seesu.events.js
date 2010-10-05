@@ -265,6 +265,61 @@ $(function() {
 	}
 });
 
+$(function(){
+	var buttmen_node =  $('.buttmen');
+	if (buttmen_node){
+		seesu.buttmen = new button_menu(buttmen_node)
+	}
+	
+	seesu.player.play_controls = seesu.buttmen;
+})
+
+
+// Ready? Steady? Go!
+
+$(function() {
+	track_panel.prepend(seesu.ui.player_holder);
+	
+	var a = document.createElement('audio');
+	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
+		seesu.player.musicbox = new html5_p(seesu.ui.player_holder, seesu.player.player_volume);
+		$(document.body).addClass('flash-internet');
+	} else if (!seesu.cross_domain_allowed){
+		soundManager = new SoundManager();
+		if (soundManager){
+			soundManager.url = 'http://seesu.me/swf/';
+			soundManager.flashVersion = 9;
+			soundManager.useFlashBlock = true;
+			soundManager.debugMode = false;
+			soundManager.wmode = 'transparent';
+			soundManager.useHighPerformance = true;
+			soundManager.onready(function() {
+			  if (soundManager.supported()) {
+				console.log('sm2 in widget ok')
+				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager);
+				$(document.body).addClass('flash-internet');
+				try_to_use_iframe_sm2p(true);
+			  } else {
+			  	console.log('sm2 in widget notok')
+			  		try_to_use_iframe_sm2p();
+		
+			  }
+			});
+		}
+	} else {
+		try_to_use_iframe_sm2p();
+	}
+	
+	
+	
+	
+		
+
+	
+});
+
+
+
 var preload_query = document.getElementsByName('search_query');
 if (preload_query && preload_query.length){
 	if (preload_query[0] && preload_query[0].content){
