@@ -341,15 +341,6 @@ if (vk_session_meta && vk_session_meta.length){
 wait_for_vklogin = function(){};
 vkReferer = '';
 lfm_auth = {};
-	
-
-$(function(){
-
-	try_mp3_providers();
-	
-	
-});
-
 
 lfm_auth.sk = w_storage('lfmsk') || false;
 lfm_auth.user_name = w_storage('lfm_user_name') || false;

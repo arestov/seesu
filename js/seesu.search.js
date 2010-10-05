@@ -6,9 +6,6 @@ var results_mouse_click_for_enter_press = function(e){
 	
 	set_node_for_enter_press($(e.target));
 };
-$(function(){
-	seesu.ui.scrolling_viewport = $('#screens');
-});
 var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 	if (!node){return false;}
 	if (not_by_user){
@@ -609,79 +606,3 @@ var input_change = $.debounce(function(e){
 	
 	
 },100);
-var preload_query = document.getElementsByName('search_query');
-if (preload_query && preload_query.length){
-	if (preload_query[0] && preload_query[0].content){
-		lfm('artist.search',{artist: preload_query[0].content, limit: 15 },function(){ })
-		lfm('tag.search',{tag: preload_query[0].content, limit: 15 },function(){ })
-		lfm('track.search',{track: preload_query[0].content, limit: 15 },function(){ })
-	}
-}
-$(function(){
-	window.searchres = $('#search_result');
-	window.search_nav = $('#search_result_nav');
-	window.search_input = $('#q')
-		.keyup(input_change)
-		.mousemove(input_change)
-		.change(input_change);
-	if (document.activeElement.nodeName != 'INPUT') {
-		search_input[0].focus();
-	}
-	seesu.ui.search_form = $('#search').submit(function(){return false;});
-	$('#app_type', seesu.ui.search_form).val(seesu.env.app_type);
-	if (seesu.ui.search_form) {
-		$(document).keydown(function(e){
-			if (!slider.className.match(/show-search-results/)) {return}
-			if (document.activeElement.nodeName == 'BUTTON'){return}
-			var _key = e.keyCode;
-			if (_key == '13'){
-				e.preventDefault();
-				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
-				if (current_node) {current_node.click()}
-			} else 
-			if((_key == '40') || (_key == '63233')){
-				e.preventDefault();
-				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
-				if (current_node){
-					var _elements = seesu.ui.views.current_rc.data('search_elements');
-					var el_index = current_node.data('search_element_index');
-					var els_length = _elements.length;
-					current_node.removeClass('active')
-					
-					if (el_index < (els_length -1)){
-						var new_current = el_index+1;
-						set_node_for_enter_press($(_elements[new_current]), true)
-						
-					} else {
-						var new_current = 0;
-						set_node_for_enter_press($(_elements[new_current]), true)
-					}
-				}
-			} else 
-			if((_key == '38') || (_key == '63232')){
-				e.preventDefault();
-				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
-				if (current_node){
-					var _elements = seesu.ui.views.current_rc.data('search_elements');
-					var el_index = current_node.data('search_element_index');
-					var els_length = _elements.length;
-					current_node.removeClass('active')
-					
-					if (el_index > 0){
-						var new_current = el_index-1;
-						set_node_for_enter_press($(_elements[new_current]), true)
-						
-					} else {
-						var new_current = els_length-1;
-						set_node_for_enter_press($(_elements[new_current]), true)
-					}
-				}
-			}
-		})
-	}
-	
-	var ext_search_query = search_input.val();
-	if (ext_search_query) {
-		input_change(search_input[0])
-	}
-})
