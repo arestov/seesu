@@ -51,7 +51,7 @@ a.song{
 	border-radius:4px;
 	}
 a.song:hover{
-	color:#ffffff;
+	color:#fff;
 	background:#595959;
 }
 a.search-mp3{
@@ -87,7 +87,7 @@ a.waiting-full-render.marked-for-play{
 	outline:1px dashed #888 ;
 }
 a.waiting-full-render:hover{
-	color:#fff;
+	color:#A1D404;
 }
 a.download-mp3{
 	text-decoration:none;
@@ -99,7 +99,7 @@ a.download-mp3{
 	}
 a.download-mp3:hover{
 	background:#666;
-	color:#ffffff;
+	color:#fff;
 	}
 .active-play a.song{
 	background:transparent;
