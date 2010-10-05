@@ -278,11 +278,14 @@ $(function(){
 // Ready? Steady? Go!
 
 $(function() {
+	seesu.ui.player_holder = $('<div class="player-holder"></div>')
+		.prepend(seesu.player.controls.track_progress_total)
+		.prepend(seesu.player.controls.volume_state);
 	track_panel.prepend(seesu.ui.player_holder);
 	
 	var a = document.createElement('audio');
 	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
-		seesu.player.musicbox = new html5_p(seesu.ui.player_holder, seesu.player.player_volume);
+		seesu.player.musicbox = new html5_p(seesu.player.controls, seesu.player.player_volume);
 		$(document.body).addClass('flash-internet');
 	} else if (!seesu.cross_domain_allowed){
 		soundManager = new SoundManager();
@@ -296,7 +299,7 @@ $(function() {
 			soundManager.onready(function() {
 			  if (soundManager.supported()) {
 				console.log('sm2 in widget ok')
-				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager);
+				seesu.player.musicbox = new sm2_p(seesu.player.controls, seesu.player.player_volume, soundManager);
 				$(document.body).addClass('flash-internet');
 				try_to_use_iframe_sm2p(true);
 			  } else {

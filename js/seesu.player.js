@@ -10,6 +10,14 @@ var INIT     = -11,
 
 seesu.player = {
 	autostart: true,
+	player_volume 	: ( function(){
+		var volume_preference = w_storage('vkplayer-volume');
+		if (volume_preference && (volume_preference != 'undefined') && volume_preference != 'NaN'){
+			return parseFloat(volume_preference) || 80
+		} else {
+			return 80
+		}
+	  })(),
 	player_state 		: STOPPED,
 	player_holder 		: null,
 	current_playlist 	: null,
@@ -19,24 +27,17 @@ seesu.player = {
 	current_external_playlist: null,
 	iframe_player 	: false,
 	iframe_doc 		: null,
-	player_volume 	: ( function(){
-		var volume_preference = w_storage('vkplayer-volume');
-		if (volume_preference && (volume_preference != 'undefined') && volume_preference != 'NaN'){
-			return parseFloat(volume_preference) || 80
-		} else {
-			return 80
-		}
-	  })(),
 	events 			: [],
 	current_song 		: null,
 	musicbox			: {
-			play_song_by_node: function(node){
-				current_song = node;
-			}
-		}, //music box is a link to module with playing methods, 
-								//for e.g. soundmanager2 and vkontakte flash player
+		play_song_by_node: function(node){
+			current_song = node;
+		}
+	}, //music box is a link to module with playing methods, 
+		//for e.g. soundmanager2 and vkontakte flash player
 	call_event		: function	(event, data) {
-	  if(this.events[event]) this.events[event](data);
+	  var args = Array.prototype.slice.call(arguments);
+	  if(this.events[args.shift()]) this.events[event].apply(this,args);
 	},
 	get_state: function(){
 		if (this.player_state == PLAYED){
@@ -146,6 +147,16 @@ seesu.player = {
 			this.change_songs_ui(this.current_song);
 		}
 	},
+	fix_progress_bar: function(node){
+		if (this.controls.track_progress_total){
+			this.controls.track_progress_play[0].style.width = this.controls.track_progress_load[0].style.width = '0';
+		}
+		
+		var parent_node = node.parent()
+		if (this.controls.track_progress_total){
+			this.controls.track_progress_width = parent_node.outerWidth() - 12;
+		}
+	},
 	set_current_song: function (node, zoom) {
 	  if (zoom){
 		$(slider).addClass('show-zoom-to-track');
@@ -177,6 +188,8 @@ seesu.player = {
 		seesu.track_event('Play', 'started', node.data('artist_name') + ' - ' + node.data('track_title') );
 		
 		this.change_songs_ui(node);
+		this.fix_progress_bar(node);
+		
 		
 		if (this.musicbox.play_song_by_node) {
 		  this.musicbox.play_song_by_node(node);
@@ -200,6 +213,38 @@ seesu.player = {
 	  }
 	}
 }
+seesu.player.controls = (function(volume){
+	var o = {};
+	var get_click_position = function(e, node){
+		var pos = e.offsetX || (e.pageX - $(node).offset().left);
+		return pos
+	}
+	o.track_progress_total = $('<div class="track-progress"></div>').click(function(e){
+		e.stopPropagation();
+		var pos = get_click_position(e, this);
+		var new_play_position_factor = pos/o.track_progress_width;
+		seesu.player.musicbox.set_new_position(new_play_position_factor);
+		
+	})//.prependTo(player_holder);
+	
+	o.track_progress_load = $('<div class="track-load-progress"></div>').appendTo(o.track_progress_total);
+	o.track_progress_play = $('<div class="track-play-progress"></div>').appendTo(o.track_progress_total);
+	o.track_node_text = $('<div class="track-node-text"><div>').appendTo(o.track_progress_total);
+	
+	
+	o.volume_state = $('<div class="volume-state"></div>').click(function(e){
+		var pos = get_click_position(e, this);
+		var new_volume_factor = pos/50;
+		seesu.player.musicbox.changhe_volume(new_volume_factor * 100);
+		seesu.player.call_event(VOLUME, new_volume_factor * 100);
+		
+		o.volume_state_position.css('width', pos + 'px')
+	})//.prependTo(player_holder);
+	o.volume_state_position = $('<div class="volume-state-position"></div>')
+		.css('width',((volume * 50)/100) + 'px')
+		.appendTo(o.volume_state);
+	return o;
+})(seesu.player.player_volume);
 seesu.player.events[PAUSED] = function(){
   seesu.player.player_state = PAUSED;
   document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
@@ -249,16 +294,44 @@ seesu.player.events[FINISHED] = function() {
   }
 };
 seesu.player.events[VOLUME] = function(volume_value) {
-  if (typeof(source_window) != 'undefined') {
-	source_window.change_volume();
-  } else { 
 	change_volume(volume_value);
-  }
-  
 };
+seesu.player.events.progress_playing = function(progress_value, total){
 
-
-
+	//if (_this.ignore_position_change) {return false;}
+	var progress = parseInt(progress_value);
+	var total = parseInt(total);
+	
+	var current = Math.round((progress/total) * seesu.player.controls.track_progress_width);
+	
+	seesu.player.controls.track_progress_play[0].style.width = current + 'px';
+}
+seesu.player.events.before_finish = function(){
+	this.before_finish_fired = true;
+	console.log('before finish')
+	if (seesu.player.current_next_song && !seesu.player.current_next_song.data('mp3link')){
+		get_track(seesu.player.current_next_song, false, true);
+		
+	}
+}
+seesu.player.events.progress_loading=function(progress_value, total){
+	//if (_this.ignore_position_change) {return false;}
+	var progress = parseInt(progress_value);
+	var total = parseInt(total);
+	
+	var current = Math.round((progress/total) * seesu.player.controls.track_progress_width);
+	
+	seesu.player.controls.track_progress_load[0].style.width = current + 'px';
+	
+	return
+	if (!_this.before_finish_fired){
+		if (total - progress_value < 20){
+			console.log('total: ' + total);
+			console.log('progress_value: ' + progress_value);
+			seesu.player.events.before_finish();
+		}
+	}
+}
 	
 
 
@@ -291,7 +364,7 @@ function change_volume(volume_value){
   seesu.player.player_volume = volume_value;	
 }
 
-seesu.ui.player_holder = $('<div class="player-holder"></div>');
+
 
 var try_to_use_iframe_sm2p = function(remove){
 	if (!seesu.cross_domain_allowed){
@@ -430,7 +503,7 @@ var try_to_use_iframe_sm2p = function(remove){
 				
 			} else if (e.data.match(/sm2_inited/)){
 				console.log('iframe sm2 wrokss yearh!!!!')
-				seesu.player.musicbox = new sm2_p(seesu.ui.player_holder, seesu.player.player_volume, soundManager, i_f_sm2);
+				seesu.player.musicbox = new sm2_p(seesu.player.controls, seesu.player.player_volume, soundManager, i_f_sm2);
 				i_f_sm2.addClass('sm-inited');
 				$(document.body).addClass('flash-internet');
 				$('#sm2-container').remove();

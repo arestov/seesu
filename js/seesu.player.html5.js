@@ -1,6 +1,9 @@
-var html5_p = function(player_holder,volume){
+var html5_p = function(c, volume){
 	console.log('using html5 audio')
 	var _this = this;
+	if (c){
+		this.c = c;
+	}
 	/*
 		musicbox.play_song_by_node
 		musicbox.play()
@@ -8,46 +11,14 @@ var html5_p = function(player_holder,volume){
 		musicbox.pause
 		musicbox.play_song_by_url
 	*/
-	if (player_holder){
-		this.player_holder = player_holder;
-		var get_click_position = function(e, node){
-			var pos = e.offsetX || (e.pageX - $(node).offset().left);
-			return pos
-		}
-		this.before_finish = function(){
-			this.before_finish_fired = true;
-			console.log('before finish')
-			if (seesu.player.current_next_song && !seesu.player.current_next_song.data('mp3link')){
-				get_track(seesu.player.current_next_song, false, true);
-				
-			}
+
+	this.before_finish = function(){
+		this.before_finish_fired = true;
+		console.log('before finish')
+		if (seesu.player.current_next_song && !seesu.player.current_next_song.data('mp3link')){
+			get_track(seesu.player.current_next_song, false, true);
 			
 		}
-		
-		
-		this.track_progress_total = $('<div class="track-progress"></div>').click(function(e){
-			e.stopPropagation();
-			var pos = get_click_position(e, this);
-			var new_play_position_factor = pos/_this.track_progress_width;
-			_this.set_new_position(new_play_position_factor);
-			
-		}).prependTo(player_holder);
-		this.track_progress_load = $('<div class="track-load-progress"></div>').appendTo(this.track_progress_total);
-		this.track_progress_play = $('<div class="track-play-progress"></div>').appendTo(this.track_progress_total);
-		
-		this.track_node_text = $('<div class="track-node-text"><div>').appendTo(this.track_progress_total);
-		
-		
-		this.volume_state = $('<div class="volume-state"></div>').click(function(e){
-			var pos = get_click_position(e, this);
-			var new_volume_factor = pos/50;
-			_this.changhe_volume(new_volume_factor);
-			_this.volume = new_volume_factor;
-			seesu.player.call_event(VOLUME, new_volume_factor * 100);
-			
-			_this.volume_state_position.css('width', pos + 'px')
-		}).prependTo(track_panel);
-		this.volume_state_position = $('<div class="volume-state-position"></div>').css('width',((volume * 50)/100) + 'px' ).appendTo(this.volume_state);
 		
 	}
 	this.volume = volume/100;
@@ -62,22 +33,12 @@ html5_p.prototype = {
 	'module_title':'html5_p',
 	"play_song_by_node" : function(node){
 		this.ignore_position_change = true;
-		if (this.track_progress_total){
-			this.track_progress_play[0].style.width = this.track_progress_load[0].style.width = '0';
+		if (this.c.track_progress_total){
+			this.c.track_progress_play[0].style.width = this.c.track_progress_load[0].style.width = '0';
 		}
-		
 		var parent_node = node.parent();
-		/**
-		var top = parent_node.position().top;
-		
-		
-		this.player_holder[0].style.top = top + 'px';
-**/
-		
-		if (this.track_progress_total){
-			this.track_progress_width = parent_node.outerWidth() - 12;
-			//this.track_node_text.html(node.html());
-			//console.log('width: '  + this.track_progress_width);
+		if (this.c.track_progress_total){
+			this.c.track_progress_width = parent_node.outerWidth() - 12;
 		}
 		
 		this.play_song_by_url(node.data('mp3link'), node.data('duration'));
@@ -112,12 +73,6 @@ html5_p.prototype = {
 				var target = total * position_factor;
 				this.current_song.currentTime = Math.min(playable, target);
 			}
-			/*
-			var current_song = this.core.getSoundById(this.current_song);
-			if (current_song) {
-				var total = (current_song.bytesTotal * current_song.duration)/current_song.bytesLoaded;
-				current_song.setPosition( position_factor * total )
-			}*/
 		},
 		"play_song_by_url" : function(url){
 			this.before_finish_fired = false;
@@ -207,9 +162,9 @@ html5_p.prototype = {
 		"progress_playing": function(_this, progress_value, total){
 			if (_this.ignore_position_change) {return false;}
 			
-			var current = Math.round((progress_value/total) * _this.track_progress_width);
+			var current = Math.round((progress_value/total) * _this.c.track_progress_width);
 			
-			_this.track_progress_play[0].style.width = current + 'px';
+			_this.c.track_progress_play[0].style.width = current + 'px';
 			if (!_this.before_finish_fired){
 				if (total - progress_value < 20){
 					if (_this.before_finish){
@@ -221,9 +176,9 @@ html5_p.prototype = {
 		},
 		"progress_loading": function(_this, progress_value, total){
 			if (_this.ignore_position_change) {return false;}
-			var current = Math.round((progress_value/total) * _this.track_progress_width);
+			var current = Math.round((progress_value/total) * _this.c.track_progress_width);
 			
-			_this.track_progress_load[0].style.width = current + 'px';
+			_this.c.track_progress_load[0].style.width = current + 'px';
 		}
 	}
 	
