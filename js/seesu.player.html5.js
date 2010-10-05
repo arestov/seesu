@@ -1,9 +1,7 @@
-var html5_p = function(c, volume){
+var html5_p = function(volume){
 	console.log('using html5 audio')
 	var _this = this;
-	if (c){
-		this.c = c;
-	}
+
 	/*
 		musicbox.play_song_by_node
 		musicbox.play()
@@ -32,20 +30,7 @@ var html5_p = function(c, volume){
 html5_p.prototype = {
 	'module_title':'html5_p',
 	"play_song_by_node" : function(node){
-		this.ignore_position_change = true;
-		if (this.c.track_progress_total){
-			this.c.track_progress_play[0].style.width = this.c.track_progress_load[0].style.width = '0';
-		}
-		var parent_node = node.parent();
-		if (this.c.track_progress_total){
-			this.c.track_progress_width = parent_node.outerWidth() - 12;
-		}
-		
 		this.play_song_by_url(node.data('mp3link'), node.data('duration'));
-		this.ignore_position_change = false;
-		
-		
-		
 	},
 	"set_new_position": function(){
 		this.html5_actions.set_new_position.apply(this, arguments);
@@ -160,25 +145,11 @@ html5_p.prototype = {
 			seesu.player.call_event(VOLUME, volume_value);
 		},
 		"progress_playing": function(_this, progress_value, total){
-			if (_this.ignore_position_change) {return false;}
-			
-			var current = Math.round((progress_value/total) * _this.c.track_progress_width);
-			
-			_this.c.track_progress_play[0].style.width = current + 'px';
-			if (!_this.before_finish_fired){
-				if (total - progress_value < 20){
-					if (_this.before_finish){
-						_this.before_finish();
-					}
-				}
-			}
+			seesu.player.call_event('progress_playing', progress_value, total);
 			
 		},
 		"progress_loading": function(_this, progress_value, total){
-			if (_this.ignore_position_change) {return false;}
-			var current = Math.round((progress_value/total) * _this.c.track_progress_width);
-			
-			_this.c.track_progress_load[0].style.width = current + 'px';
+			seesu.player.call_event('progress_loading', progress_value, total);
 		}
 	}
 	

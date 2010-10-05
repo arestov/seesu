@@ -285,7 +285,7 @@ $(function() {
 	
 	var a = document.createElement('audio');
 	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
-		seesu.player.musicbox = new html5_p(seesu.player.controls, seesu.player.player_volume);
+		seesu.player.musicbox = new html5_p(seesu.player.player_volume);
 		$(document.body).addClass('flash-internet');
 	} else if (!seesu.cross_domain_allowed){
 		soundManager = new SoundManager();
@@ -299,7 +299,7 @@ $(function() {
 			soundManager.onready(function() {
 			  if (soundManager.supported()) {
 				console.log('sm2 in widget ok')
-				seesu.player.musicbox = new sm2_p(seesu.player.controls, seesu.player.player_volume, soundManager);
+				seesu.player.musicbox = new sm2_p(seesu.player.player_volume, soundManager);
 				$(document.body).addClass('flash-internet');
 				try_to_use_iframe_sm2p(true);
 			  } else {

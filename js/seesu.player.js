@@ -393,7 +393,7 @@ var try_to_use_iframe_sm2p = function(remove){
 				soundManager.debugMode = false;
 				soundManager.wmode = 'transparent';
 				soundManager.useHighPerformance = true;
-				sm2_p_in_iframe = new sm2_p(false, _volume, soundManager);
+				sm2_p_in_iframe = new sm2_p(_volume, soundManager);
 				sm2_p_in_iframe.player_source_window = iframe_source;
 				soundManager.onready(function() {
 
@@ -503,7 +503,7 @@ var try_to_use_iframe_sm2p = function(remove){
 				
 			} else if (e.data.match(/sm2_inited/)){
 				console.log('iframe sm2 wrokss yearh!!!!')
-				seesu.player.musicbox = new sm2_p(seesu.player.controls, seesu.player.player_volume, soundManager, i_f_sm2);
+				seesu.player.musicbox = new sm2_p(seesu.player.player_volume, false, i_f_sm2);
 				i_f_sm2.addClass('sm-inited');
 				$(document.body).addClass('flash-internet');
 				$('#sm2-container').remove();
