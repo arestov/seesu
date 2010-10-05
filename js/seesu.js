@@ -1018,13 +1018,12 @@ var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 	} else {
 		
 		var ainf = {
-			name: a_info.find('.artist-name'), 
+			name: a_info.find('.artist-name').empty(), 
 			image: a_info.find('img.artist-image'),
 			bio: a_info.find('.artist-bio'),
 			meta_info: a_info.find('.artist-meta-info'),
 			c : a_info
 		};
-		ainf.name.empty();
 		
 		
 		var arts_name = $('<span class="desc-name"></span>')
@@ -1054,7 +1053,7 @@ var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 		
 		$('<span class="desc-text"></span>')
 			.text(artist)
-			.appendTo(arts_name);
+			.appendTo(ainf.name);
 			
 		ainf.image.attr('src', '').attr('alt', artist);
 		ainf.bio.text('...');

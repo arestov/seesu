@@ -8,7 +8,7 @@ if(!$.browser.msie){
 				resz_b.src="i/resize.png"; resz_b.id='resize-handle'; resz_b.alt='/';
 			wb.appendChild(resz_b);
 			
-			var body = document.getElementsByTagName('body')[0];
+			var body = document.body;
 			
 			
 			var old_win_height = window.innerHeight;
