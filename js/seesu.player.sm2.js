@@ -12,15 +12,15 @@ var sm2_p = function(volume, sm2, iframe){
 		musicbox.play_song_by_url
 	*/
 	this.volume = volume;
-	if (sm2 && !iframe){
-		this.sm2_actions = this.sm2_actions_normal;
-	} else{
+	if (iframe){
 		console.log('sm2 with iframe')
 		this.player_container = iframe;
 		addEvent(window, "message", function(e){
 			_this.listen_commands_of_sandbox.apply(_this,arguments);
 		});
 		this.sm2_actions = this.sm2_actions_for_sandbox;
+	} else if (sm2){
+		this.sm2_actions = this.sm2_actions_normal;
 	}
 	
 	if (typeof seesu === 'object') {
