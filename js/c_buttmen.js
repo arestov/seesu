@@ -138,12 +138,3 @@ button_menu.prototype = {
 		}
 	}
 }
-$(function(){
-	var buttmen_node =  $('.buttmen');
-	if (buttmen_node){
-		seesu.buttmen = new button_menu(buttmen_node)
-	}
-	
-	seesu.player.play_controls = seesu.buttmen;
-})
-

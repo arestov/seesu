@@ -1,14 +1,19 @@
 if(!$.browser.msie){
 	
 	if (app_env.as_application){
-		$(function(){
-			var resize_button = $('#resize-handle');
-			var body = document.getElementsByTagName('body')[0];
+		addEvent(document, "DOMContentLoaded", function(){
+			var wb = document.getElementById('wb');
+			
+			var resz_b = document.createElement('img');
+				resz_b.src="i/resize.png"; resz_b.id='resize-handle'; resz_b.alt='/';
+			wb.appendChild(resz_b);
+			
+			var body = document.body;
 			
 			
-			var old_win_height = $(window).height();
+			var old_win_height = window.innerHeight;
 			window.resizeTo(600,old_win_height );
-			var size_shift = old_win_height - $(window).height();
+			var size_shift = old_win_height - window.innerHeight;
 		
 			var save_size = function(){
 				w_storage('width', window.innerWidth);
@@ -87,15 +92,12 @@ if(!$.browser.msie){
 			
 			addEvent(window, "resize", $.debounce(save_size, 1000));
 			
-			resize_button.mousedown(function(e) {
+			addEvent(resz_b, "mousedown", function(e) {
 				drag(e, 1, 1);
-			})
+			});
+
 			resizeWindow();	
 			
 		})
-	} else {
-		$(function(){
-			$('#resize-handle').remove();
-		});
 	}
 }
