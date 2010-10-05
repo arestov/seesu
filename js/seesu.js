@@ -341,15 +341,6 @@ if (vk_session_meta && vk_session_meta.length){
 wait_for_vklogin = function(){};
 vkReferer = '';
 lfm_auth = {};
-	
-
-$(function(){
-
-	try_mp3_providers();
-	
-	
-});
-
 
 lfm_auth.sk = w_storage('lfmsk') || false;
 lfm_auth.user_name = w_storage('lfm_user_name') || false;
@@ -941,7 +932,7 @@ var show_artist_info = function(r, ainf){
 					.data('music_tag', tag.name)
 					.appendTo(tags_text); //!using in DOM
 		}
-		arst_meta_info.append(tags_p);
+		ainf.meta_info.append(tags_p);
 	}
 	
 	if (similars && similars.length) {
@@ -960,9 +951,9 @@ var show_artist_info = function(r, ainf){
 				  .data('artist', similar.name )
 				  .appendTo(similars_text);//!using in DOM
 		}
-		arst_meta_info.append(similars_p);
+		ainf.meta_info.append(similars_p);
 	}
-	var artist_albums_container = seesu.artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">Albums:</span>').appendTo(arst_meta_info);
+	var artist_albums_container = seesu.artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">Albums:</span>').appendTo(ainf.meta_info);
 	var artist_albums_text = $('<div class=""></div>').appendTo(artist_albums_container);
 	if (artist_albums_container){
 		
@@ -1063,7 +1054,7 @@ var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 		
 		$('<span class="desc-text"></span>')
 			.text(artist)
-			.appendTo(artsName);
+			.appendTo(arts_name);
 			
 		ainf.image.attr('src', '').attr('alt', artist);
 		ainf.bio.text('...');
