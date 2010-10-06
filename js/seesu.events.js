@@ -190,7 +190,6 @@ $(function() {
 		$(document.body).removeClass('lfm-auth-req-recomm');
 		return false;
 	})
-	play_controls = $('.play-controls');
 
 
 
@@ -263,7 +262,7 @@ $(function() {
 });
 
 $(function(){
-	var buttmen_node =  $('.buttmen');
+	var buttmen_node =  $('.play-controls.buttmen');
 	if (buttmen_node){
 		seesu.buttmen = new button_menu(buttmen_node)
 	}
