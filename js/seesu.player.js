@@ -411,7 +411,7 @@ var try_to_use_iframe_sm2p = function(remove){
 
 			
 			
-		}
+		};
 		var text_of_function = function(func){
 			return func.toString().replace(/^.*\n/, "").replace(/\n.*$/, "")
 		}
@@ -458,8 +458,6 @@ var try_to_use_iframe_sm2p = function(remove){
 		
 		var add_script_data = function(i, l, data){
 			scripts_data.push({"number": i, "data": data});
-			
-			
 			if (scripts_data.length == (l)){
 				scripts_data.sort(sort_by_number_order);
 				scripts_data.complete_data = '/*<![CDATA[*/' + '\n';
@@ -475,23 +473,21 @@ var try_to_use_iframe_sm2p = function(remove){
 					add_script_data_callback();
 				}
 			}
-		}
+		};
 		if (scripts_paths.length) {
+			var get_js = function(i,l){
+				$.ajax({
+					url: scripts_paths[i].replace(location.href, ''),
+					global: false,
+					dataType: 'text',
+					type: "GET",
+					success: function(r){
+						add_script_data(i, l, r)
+					}
+				});
+			}
 			for (var i=0; i < scripts_paths.length; i++) {
-				
-				(function(i, l){
-					$.ajax({
-						url: scripts_paths[i].replace(location.href, ''),
-						global: false,
-						dataType: 'text',
-						type: "GET",
-						success: function(r){
-							add_script_data(i, l, r)
-						}
-					});
-				})(i, scripts_paths.length)
-				
-				
+				get_js(i, scripts_paths.length);
 			}
 		}
 		var check_iframe = function(e){
@@ -509,24 +505,46 @@ var try_to_use_iframe_sm2p = function(remove){
 				$('#sm2-container').remove();
 				removeEvent(window, "message", check_iframe);
 			}
-		}
+		};
 		addEvent(window, "message", check_iframe);
-		$('#slider-materail').append(i_f_sm2);
-		
-		
+		$(function(){
+			$('#slider-materail').append(i_f_sm2);
+		});
 		i_f_sm2.bind('load',function(){
 			console.log('source knows that iframe loaded');
-			
 			this.contentWindow.postMessage("test_iframe_loading_state", '*');
-			
-
-			
 			
 		});
 		
 	}
 	
 }
-
-
-
+var a = document.createElement('audio');
+if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
+	seesu.player.musicbox = new html5_p(seesu.player.player_volume);
+	$(document.body).addClass('flash-internet');
+} else if (!seesu.cross_domain_allowed){ //sm2 can't be used directly in sandbox
+	soundManager = new SoundManager();
+	if (soundManager){
+		soundManager.url = 'http://seesu.me/swf/';
+		soundManager.flashVersion = 9;
+		soundManager.useFlashBlock = true;
+		soundManager.debugMode = false;
+		soundManager.wmode = 'transparent';
+		soundManager.useHighPerformance = true;
+		soundManager.onready(function() {
+		  if (soundManager.supported()) {
+			console.log('sm2 in widget ok')
+			seesu.player.musicbox = new sm2_p(seesu.player.player_volume, soundManager);
+			$(document.body).addClass('flash-internet');
+			try_to_use_iframe_sm2p(true);
+		  } else {
+		  	console.log('sm2 in widget notok')
+		  		try_to_use_iframe_sm2p();
+	
+		  }
+		});
+	}
+} else {
+	try_to_use_iframe_sm2p();
+}
