@@ -1,12 +1,20 @@
+if (su.env.touch_support){$(document.documentElement).addClass('touch-screen');}
+if (su.env.as_application){
+	$(document.documentElement).addClass('as-application');
+} else{
+	$(document.documentElement).addClass('not-as-application');
+}
+if (!su.env.unknown_app_type){$(document.documentElement).addClass(su.env.app_type.replace('_','-'));}
+if (su.cross_domain_allowed) {$(document.documentElement).addClass('cross-domain-allowed')}
+
 $(function() {
-  if (seesu.cross_domain_allowed && lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
-  check_seesu_updates();
-  seesu.vk_id = w_storage('vkid');
-  $(document).click(function(e) {
-	return test_pressed_node(e.target)
-  });
-  seesu.ui.scrolling_viewport = $('#screens');
-  try_mp3_providers();
+
+	
+
+	$(document).click(function(e) {
+		return test_pressed_node(e.target)
+	});
+	seesu.ui.scrolling_viewport = $('#screens');
 	flash_secur = $('#flash-secur');
 
 	$('#hint-query').text(seesu.popular_artists[(Math.random()*10).toFixed(0)])
@@ -41,10 +49,6 @@ $(function() {
 	
 	window.artsHolder	= $('#artist-holder');
 	window.a_info		= $('.artist-info', artsHolder)
-	window.artsName		= $('.artist-name',  a_info);
-	window.artsImage	= $('img.artist-image',a_info);
-	window.artsBio		= $('.artist-bio',a_info);
-	window.arst_meta_info = $('.artist-meta-info', a_info);
 	
 	window.artsTracks	= $('.tracks-for-play',artsHolder);
 	window.art_tracks_w_counter = $('#tracks-waiting-for-search');
@@ -108,20 +112,13 @@ $(function() {
 	if (lfm_auth.sk) {
 		lfm_auth.ui_logged();	
 	}
-	var get_lfm_token = function(lfm_auth,callback){
-		lfm('auth.getToken',false,function(r){
-			lfm_auth.newtoken = r.token;
-			if (callback) {callback(lfm_auth.newtoken);}
-		})
-	}
+	
 	open_lfm_to_login = function(token){
 		widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
 		$(document.body).addClass('lfm-waiting-for-finish');
 	};
 	
-	if (!lfm_auth.sk) {
-		get_lfm_token(lfm_auth);
-	}
+	
 
 	
 	var lfm_fin_recomm_check = $('#login-lastfm-finish-recomm-check'),
