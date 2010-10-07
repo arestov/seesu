@@ -94,9 +94,10 @@
 	display:none;
 }
 
-.show-zoom-to-track .play-controls{
-	display:none;
+li.active-play .play-controls{
+	display:block;
 }
+
 .show-zoom-to-track .play-list-holder{
 	position:static;
 	padding-top:0px;

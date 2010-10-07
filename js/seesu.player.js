@@ -199,10 +199,7 @@ seesu.player = {
 		  this.musicbox.play_song_by_url(node.data('mp3link'), node.data('duration'));
 		} else 
 		{return false;}
-		
-		
-		
-		node.parent().append(this.play_controls.rebind())
+
 		
 		nav_track_zoom.text(( $(nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + node.data('track_title'));
 		if (seesu.now_playing.link){
@@ -523,7 +520,10 @@ var try_to_use_iframe_sm2p = function(remove){
 var a = document.createElement('audio');
 if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 	seesu.player.musicbox = new html5_p(seesu.player.player_volume);
-	$(document.body).addClass('flash-internet');
+	$(function(){
+		$(document.body).addClass('flash-internet');
+	})
+	
 } else if (!seesu.cross_domain_allowed){ //sm2 can't be used directly in sandbox
 	soundManager = new SoundManager();
 	if (soundManager){
@@ -537,7 +537,9 @@ if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 		  if (soundManager.supported()) {
 			console.log('sm2 in widget ok')
 			seesu.player.musicbox = new sm2_p(seesu.player.player_volume, soundManager);
-			$(document.body).addClass('flash-internet');
+			$(function(){
+				$(document.body).addClass('flash-internet');
+			})
 			try_to_use_iframe_sm2p(true);
 		  } else {
 		  	console.log('sm2 in widget notok')

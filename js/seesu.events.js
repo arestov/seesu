@@ -267,7 +267,7 @@ $(function(){
 		seesu.buttmen = new button_menu(buttmen_node)
 	}
 	
-	seesu.player.play_controls = seesu.buttmen;
+	window.play_controls = seesu.buttmen;
 })
 
 
