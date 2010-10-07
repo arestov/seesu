@@ -6,9 +6,9 @@ window.lfm = function(){
 		lastfm.apply(_this, ag)
 	})
 }
-window.seesu =  {
+window.seesu = window.su =  {
 	  lfm_quene: new funcs_quene(100),
-	  cross_domain_allowed: !location.protocol.match(/http/) && $(document.documentElement).addClass('cross-domain-allowed') && true,
+	  cross_domain_allowed: !location.protocol.match(/http/),
 	  version: 1.96,
 	  env: app_env,
 	  track_stat: (function(){
@@ -1078,3 +1078,19 @@ var show_artist = function (artist,with_search_results) {
 
 	
 };
+
+$(function(){
+	if (seesu.cross_domain_allowed && lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
+	check_seesu_updates();
+	seesu.vk_id = w_storage('vkid');
+	try_mp3_providers();
+	var get_lfm_token = function(lfm_auth,callback){
+		lfm('auth.getToken',false,function(r){
+			lfm_auth.newtoken = r.token;
+			if (callback) {callback(lfm_auth.newtoken);}
+		})
+	}
+	if (!lfm_auth.sk) {
+		get_lfm_token(lfm_auth);
+	}
+})
