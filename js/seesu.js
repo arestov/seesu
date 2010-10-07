@@ -869,9 +869,10 @@ var artist_albums_renderer = function(r, container){
 				.attr('href', al_url )
 				.data('artist', al_artist)
 				.data('album', al_name)
-				.click(function(){
+				.click(function(e){
+					e.preventDefault(); 
 					seesu.toogle_art_alb_container(seesu.artist_albums_container.data('albums_link'));
-					seesu.ui.views.show_playlist_page('(' + artist + ') ' + album ,'album');
+					seesu.ui.views.show_playlist_page('(' + al_artist + ') ' + al_name ,'album');
 					get_artist_album_info(al_artist, al_name, get_artist_album_playlist );
 					seesu.track_event('Artist navigation', 'album', al_artist + ": " + al_name);
 					return false;
