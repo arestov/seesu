@@ -628,7 +628,7 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 				.data('link_to_playlist', playlist_nodes_for)
 				.click(empty_song_click),
 				li = document.createElement('li');
-
+			this.play_controls.node.clone(true).appendTo(li);
 			if (we_have_tracks){
 				track.text(vk_music_list[i].artist + ' - ' + vk_music_list[i].track);
 				track.data('track_title', vk_music_list[i].track );
