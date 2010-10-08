@@ -64,16 +64,12 @@ window.app_env = (function(){
 	} catch(e){}
 	
 	
-	if (env.touch_support){$(document.documentElement).addClass('touch-screen');}
-	if (env.as_application){
-		$(document.documentElement).addClass('as-application');
-	} else{
-		$(document.documentElement).addClass('not-as-application');
-	}
-	if (env.app_type){$(document.documentElement).addClass(env.app_type.replace('_','-'));}
+	
+	
 	
 	if (!env.app_type){
-		env.app_type = 'unknown_app_type' + (navigator.userAgent && ': ' + navigator.userAgent); 
+		env.app_type = 'unknown_app_type' + (navigator.userAgent && ': ' + navigator.userAgent);
+		env.unknown_app_type = true;
 	} else{
 		env[env.app_type] = true;
 	}

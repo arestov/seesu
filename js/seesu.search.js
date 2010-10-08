@@ -5,24 +5,18 @@ var results_mouse_click_for_enter_press = function(e){
 	if (active_node) {active_node.removeClass('active');}
 	
 	set_node_for_enter_press($(e.target));
-}
-$(function(){
-	seesu.ui.scrolling_viewport = $('#screens');
-})
+};
 var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
-	if (!node){return false}
-	
+	if (!node){return false;}
 	if (not_by_user){
 		seesu.ui.search_form.data('current_node_index', false);
 	} else{
 		seesu.ui.search_form.data('current_node_index', node.data('search_element_index'));
 	}
 	seesu.ui.views.current_rc.data('node_for_enter_press', node.addClass('active'));
-	
-	
 	if (scroll_to_node){
 		var scroll_up = seesu.ui.scrolling_viewport.scrollTop();
-		var scrolling_viewport_height = seesu.ui.scrolling_viewport.height()
+		var scrolling_viewport_height = seesu.ui.scrolling_viewport.height();
 		
 		var container_postion = scroll_up + searchres.position().top;
 		
@@ -42,7 +36,6 @@ var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 			var new_position =  view_pos_down - scrolling_viewport_height/2;
 			seesu.ui.scrolling_viewport.scrollTop(new_position);
 		}
-		
 	}
 }
 seesu.ui.make_search_elements_index = function(remark_enter_press, after_user){
@@ -51,8 +44,6 @@ seesu.ui.make_search_elements_index = function(remark_enter_press, after_user){
 	for (var i=0 , l = search_elements.length; i < l; i++) {
 		$(search_elements[i]).data('search_element_index', i);
 	};
-	
-	
 	if (remark_enter_press) {
 		var active_index = seesu.ui.search_form.data('current_node_index') || 0;
 		var new_active_node = search_elements[active_index];
@@ -62,20 +53,9 @@ seesu.ui.make_search_elements_index = function(remark_enter_press, after_user){
 				if (active_node) {
 					active_node.removeClass('active');
 				}
-				
 				set_node_for_enter_press($(new_active_node), false, after_user);
-				
-				
-			
-			
 		}
-	
-			
-			
-		
 	}
-	
-	
 }
 var create_artist_suggest_item = function(artist, image){
 	var a = $("<a></a>")
@@ -400,18 +380,22 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 	var sugg_arts = [];
 	var sugg_tracks = [];
 	var sugg_tags = [];
+	var sugg_albums = [];
 	
 	for (var i=0, l = r.response.docs.length; i < l ; i++) {
 		var response_modul = r.response.docs[i];
 		if (response_modul.restype == 6){
 			sugg_arts.push(response_modul);
 		} else 
+		if (response_modul.restype == 8){
+			sugg_albums.push(response_modul);
+		} else 
 		if (response_modul.restype == 9){
 			sugg_tracks.push(response_modul);
 		} else
 		if (response_modul.restype == 32){
 			sugg_tags.push(response_modul);
-		}
+		} 
 	};
 	
 	
@@ -436,14 +420,6 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 		$('<li></li').append(arts_clone.find('span').text('Search «' +source_query + '» in artists').end().addClass("search-button")).appendTo(ul_arts);
 	}
 	if (!fast_enter) {fast_enter = arts_clone;}
-	
-	
-
-	
-	
-	
-	
-
 	
 	var ul_tracks = seesu.ui.tracks_results_ul;
 	if (sugg_tracks && sugg_tracks.length){
@@ -501,29 +477,38 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 	
 	set_node_for_enter_press(fast_enter, false, true);
 }
+var get_fast_suggests = function(q, callback, hash){
+	return $.ajax({
+	  url: 'http://www.last.fm/search/autocomplete',
+	  global: false,
+	  type: "GET",
+	  timeout: 10000,
+	  dataType: "json",
+	  data: {
+	  	"q": q,
+	  	"force" : 1
+	  },
+	  error: function(){
+	  },
+	  success: function(r){
+		cache_ajax.set('lfm_fs', hash, r);
+		if (callback){callback(r);}
+	  }	
+	})
+};
+
+
 var suggestions_search = seesu.cross_domain_allowed ? function(q, arts_clone, track_clone ,tags_clone){
 		
 		var hash = hex_md5(q);
-		var cache_used = cache_ajax.get('lfm_fs', hash, fast_suggestion)
-		
+		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
+			fast_suggestion(r, q, arts_clone, track_clone ,tags_clone)
+		});
 		if (!cache_used) {
-			seesu.xhrs.fast_search_suggest = $.ajax({
-			  url: 'http://www.last.fm/search/autocomplete',
-			  global: false,
-			  type: "GET",
-			  timeout: 10000,
-			  dataType: "json",
-			  data: {
-			  	"q": q,
-			  	"force" : 1
-			  },
-			  error: function(){
-			  },
-			  success: function(r){
-				cache_ajax.set('lfm_fs', hash, r);
+			seesu.xhrs.fast_search_suggest = get_fast_suggests(q, function(r){	
 				fast_suggestion(r, q, arts_clone, track_clone ,tags_clone)
-			  }
-			});
+			}, hash)
+			
 		}
 	} :
 	function(q, arts_clone, track_clone ,tags_clone){
@@ -621,79 +606,3 @@ var input_change = $.debounce(function(e){
 	
 	
 },100);
-var preload_query = document.getElementsByName('search_query');
-if (preload_query && preload_query.length){
-	if (preload_query[0] && preload_query[0].content){
-		lfm('artist.search',{artist: preload_query[0].content, limit: 15 },function(){ })
-		lfm('tag.search',{tag: preload_query[0].content, limit: 15 },function(){ })
-		lfm('track.search',{track: preload_query[0].content, limit: 15 },function(){ })
-	}
-}
-$(function(){
-	window.searchres = $('#search_result');
-	window.search_nav = $('#search_result_nav');
-	window.search_input = $('#q')
-		.keyup(input_change)
-		.mousemove(input_change)
-		.change(input_change);
-	if (document.activeElement.nodeName != 'INPUT') {
-		search_input[0].focus();
-	}
-	seesu.ui.search_form = $('#search').submit(function(){return false;});
-	$('#app_type', seesu.ui.search_form).val(seesu.env.app_type);
-	if (seesu.ui.search_form) {
-		$(document).keydown(function(e){
-			if (!slider.className.match(/show-search-results/)) {return}
-			if (document.activeElement.nodeName == 'BUTTON'){return}
-			var _key = e.keyCode;
-			if (_key == '13'){
-				e.preventDefault();
-				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
-				if (current_node) {current_node.click()}
-			} else 
-			if((_key == '40') || (_key == '63233')){
-				e.preventDefault();
-				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
-				if (current_node){
-					var _elements = seesu.ui.views.current_rc.data('search_elements');
-					var el_index = current_node.data('search_element_index');
-					var els_length = _elements.length;
-					current_node.removeClass('active')
-					
-					if (el_index < (els_length -1)){
-						var new_current = el_index+1;
-						set_node_for_enter_press($(_elements[new_current]), true)
-						
-					} else {
-						var new_current = 0;
-						set_node_for_enter_press($(_elements[new_current]), true)
-					}
-				}
-			} else 
-			if((_key == '38') || (_key == '63232')){
-				e.preventDefault();
-				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
-				if (current_node){
-					var _elements = seesu.ui.views.current_rc.data('search_elements');
-					var el_index = current_node.data('search_element_index');
-					var els_length = _elements.length;
-					current_node.removeClass('active')
-					
-					if (el_index > 0){
-						var new_current = el_index-1;
-						set_node_for_enter_press($(_elements[new_current]), true)
-						
-					} else {
-						var new_current = els_length-1;
-						set_node_for_enter_press($(_elements[new_current]), true)
-					}
-				}
-			}
-		})
-	}
-	
-	var ext_search_query = search_input.val();
-	if (ext_search_query) {
-		input_change(search_input[0])
-	}
-})

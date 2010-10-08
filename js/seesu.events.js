@@ -1,10 +1,20 @@
+if (su.env.touch_support){$(document.documentElement).addClass('touch-screen');}
+if (su.env.as_application){
+	$(document.documentElement).addClass('as-application');
+} else{
+	$(document.documentElement).addClass('not-as-application');
+}
+if (!su.env.unknown_app_type){$(document.documentElement).addClass(su.env.app_type.replace('_','-'));}
+if (su.cross_domain_allowed) {$(document.documentElement).addClass('cross-domain-allowed')}
+
 $(function() {
-  if (seesu.cross_domain_allowed && lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
-  check_seesu_updates();
-  seesu.vk_id = w_storage('vkid');
-  $(document).click(function(e) {
-	return test_pressed_node(e.target)
-  });
+
+	
+
+	$(document).click(function(e) {
+		return test_pressed_node(e.target)
+	});
+	seesu.ui.scrolling_viewport = $('#screens');
 	flash_secur = $('#flash-secur');
 
 	$('#hint-query').text(seesu.popular_artists[(Math.random()*10).toFixed(0)])
@@ -30,7 +40,8 @@ $(function() {
 	})
 	window.nav_track_zoom = $('#nav_track_zoom');
 	window.trk_page_nav = document.getElementById('nav_tracks_page');
-	search_nav.click(function(){
+	
+	window.search_nav = $('#search_result_nav').click(function(){
 		seesu.ui.views.show_search_results_page(true, true);
 	});
 	window.export_playlist = $('#open-external-playlist');
@@ -38,10 +49,6 @@ $(function() {
 	
 	window.artsHolder	= $('#artist-holder');
 	window.a_info		= $('.artist-info', artsHolder)
-	window.artsName		= $('.artist-name',  a_info);
-	window.artsImage	= $('img.artist-image',a_info);
-	window.artsBio		= $('.artist-bio',a_info);
-	window.arst_meta_info = $('.artist-meta-info', a_info);
 	
 	window.artsTracks	= $('.tracks-for-play',artsHolder);
 	window.art_tracks_w_counter = $('#tracks-waiting-for-search');
@@ -105,20 +112,13 @@ $(function() {
 	if (lfm_auth.sk) {
 		lfm_auth.ui_logged();	
 	}
-	var get_lfm_token = function(lfm_auth,callback){
-		lfm('auth.getToken',false,function(r){
-			lfm_auth.newtoken = r.token;
-			if (callback) {callback(lfm_auth.newtoken);}
-		})
-	}
+	
 	open_lfm_to_login = function(token){
 		widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
 		$(document.body).addClass('lfm-waiting-for-finish');
 	};
 	
-	if (!lfm_auth.sk) {
-		get_lfm_token(lfm_auth);
-	}
+	
 
 	
 	var lfm_fin_recomm_check = $('#login-lastfm-finish-recomm-check'),
@@ -190,6 +190,103 @@ $(function() {
 		$(document.body).removeClass('lfm-auth-req-recomm');
 		return false;
 	})
-	play_controls = $('.play-controls');
 
+
+
+
+	window.searchres = $('#search_result');
+	window.search_input = $('#q')
+		.keyup(input_change)
+		.mousemove(input_change)
+		.change(input_change);
+	if (document.activeElement.nodeName != 'INPUT') {
+		search_input[0].focus();
+	}
+	seesu.ui.search_form = $('#search').submit(function(){return false;});
+	$('#app_type', seesu.ui.search_form).val(seesu.env.app_type);
+	if (seesu.ui.search_form) {
+		$(document).keydown(function(e){
+			if (!slider.className.match(/show-search-results/)) {return}
+			if (document.activeElement.nodeName == 'BUTTON'){return}
+			var _key = e.keyCode;
+			if (_key == '13'){
+				e.preventDefault();
+				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+				if (current_node) {current_node.click()}
+			} else 
+			if((_key == '40') || (_key == '63233')){
+				e.preventDefault();
+				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+				if (current_node){
+					var _elements = seesu.ui.views.current_rc.data('search_elements');
+					var el_index = current_node.data('search_element_index');
+					var els_length = _elements.length;
+					current_node.removeClass('active')
+					
+					if (el_index < (els_length -1)){
+						var new_current = el_index+1;
+						set_node_for_enter_press($(_elements[new_current]), true)
+						
+					} else {
+						var new_current = 0;
+						set_node_for_enter_press($(_elements[new_current]), true)
+					}
+				}
+			} else 
+			if((_key == '38') || (_key == '63232')){
+				e.preventDefault();
+				var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+				if (current_node){
+					var _elements = seesu.ui.views.current_rc.data('search_elements');
+					var el_index = current_node.data('search_element_index');
+					var els_length = _elements.length;
+					current_node.removeClass('active')
+					
+					if (el_index > 0){
+						var new_current = el_index-1;
+						set_node_for_enter_press($(_elements[new_current]), true)
+						
+					} else {
+						var new_current = els_length-1;
+						set_node_for_enter_press($(_elements[new_current]), true)
+					}
+				}
+			}
+		})
+	}
+	
+	var ext_search_query = search_input.val();
+	if (ext_search_query) {
+		input_change(search_input[0])
+	}
 });
+
+$(function(){
+	var buttmen_node =  $('.play-controls.buttmen');
+	if (buttmen_node){
+		seesu.buttmen = new button_menu(buttmen_node)
+	}
+	
+	window.play_controls = seesu.buttmen;
+})
+
+
+// Ready? Steady? Go!
+
+$(function() {
+	seesu.ui.player_holder = $('<div class="player-holder"></div>')
+		.prepend(seesu.player.controls.track_progress_total)
+		.prepend(seesu.player.controls.volume_state);
+	track_panel.prepend(seesu.ui.player_holder);
+});
+
+
+
+var preload_query = document.getElementsByName('search_query');
+if (preload_query && preload_query.length){
+	if (preload_query[0] && preload_query[0].content){
+		lfm('artist.search',{artist: preload_query[0].content, limit: 15 },function(){ })
+		lfm('tag.search',{tag: preload_query[0].content, limit: 15 },function(){ })
+		lfm('track.search',{track: preload_query[0].content, limit: 15 },function(){ })
+	}
+}

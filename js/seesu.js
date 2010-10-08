@@ -6,10 +6,10 @@ window.lfm = function(){
 		lastfm.apply(_this, ag)
 	})
 }
-window.seesu =  {
+window.seesu = window.su =  {
 	  lfm_quene: new funcs_quene(100),
-	  cross_domain_allowed: !location.protocol.match(/http/) && $(document.documentElement).addClass('cross-domain-allowed') && true,
-	  version: 1.94,
+	  cross_domain_allowed: !location.protocol.match(/http/),
+	  version: 1.96,
 	  env: app_env,
 	  track_stat: (function(){
 		var _i = document.createElement('iframe');_i.id ='gstat';_i.src = 'http://seesu.me/g_stat.html';
@@ -341,15 +341,6 @@ if (vk_session_meta && vk_session_meta.length){
 wait_for_vklogin = function(){};
 vkReferer = '';
 lfm_auth = {};
-	
-
-$(function(){
-
-	try_mp3_providers();
-	
-	
-});
-
 
 lfm_auth.sk = w_storage('lfmsk') || false;
 lfm_auth.user_name = w_storage('lfm_user_name') || false;
@@ -637,7 +628,7 @@ var render_playlist = function(vk_music_list) { // if links present than do full
 				.data('link_to_playlist', playlist_nodes_for)
 				.click(empty_song_click),
 				li = document.createElement('li');
-
+			this.play_controls.node.clone(true).appendTo(li);
 			if (we_have_tracks){
 				track.text(vk_music_list[i].artist + ' - ' + vk_music_list[i].track);
 				track.data('track_title', vk_music_list[i].track );
@@ -878,9 +869,10 @@ var artist_albums_renderer = function(r, container){
 				.attr('href', al_url )
 				.data('artist', al_artist)
 				.data('album', al_name)
-				.click(function(){
+				.click(function(e){
+					e.preventDefault(); 
 					seesu.toogle_art_alb_container(seesu.artist_albums_container.data('albums_link'));
-					seesu.ui.views.show_playlist_page('(' + artist + ') ' + album ,'album');
+					seesu.ui.views.show_playlist_page('(' + al_artist + ') ' + al_name ,'album');
 					get_artist_album_info(al_artist, al_name, get_artist_album_playlist );
 					seesu.track_event('Artist navigation', 'album', al_artist + ": " + al_name);
 					return false;
@@ -941,7 +933,7 @@ var show_artist_info = function(r, ainf){
 					.data('music_tag', tag.name)
 					.appendTo(tags_text); //!using in DOM
 		}
-		arst_meta_info.append(tags_p);
+		ainf.meta_info.append(tags_p);
 	}
 	
 	if (similars && similars.length) {
@@ -960,9 +952,9 @@ var show_artist_info = function(r, ainf){
 				  .data('artist', similar.name )
 				  .appendTo(similars_text);//!using in DOM
 		}
-		arst_meta_info.append(similars_p);
+		ainf.meta_info.append(similars_p);
 	}
-	var artist_albums_container = seesu.artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">Albums:</span>').appendTo(arst_meta_info);
+	var artist_albums_container = seesu.artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">Albums:</span>').appendTo(ainf.meta_info);
 	var artist_albums_text = $('<div class=""></div>').appendTo(artist_albums_container);
 	if (artist_albums_container){
 		
@@ -1027,13 +1019,12 @@ var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 	} else {
 		
 		var ainf = {
-			name: a_info.find('.artist-name'), 
+			name: a_info.find('.artist-name').empty(), 
 			image: a_info.find('img.artist-image'),
 			bio: a_info.find('.artist-bio'),
 			meta_info: a_info.find('.artist-meta-info'),
 			c : a_info
 		};
-		ainf.name.empty();
 		
 		
 		var arts_name = $('<span class="desc-name"></span>')
@@ -1063,7 +1054,7 @@ var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 		
 		$('<span class="desc-text"></span>')
 			.text(artist)
-			.appendTo(artsName);
+			.appendTo(ainf.name);
 			
 		ainf.image.attr('src', '').attr('alt', artist);
 		ainf.bio.text('...');
@@ -1088,3 +1079,19 @@ var show_artist = function (artist,with_search_results) {
 
 	
 };
+
+$(function(){
+	if (seesu.cross_domain_allowed && lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
+	check_seesu_updates();
+	seesu.vk_id = w_storage('vkid');
+	try_mp3_providers();
+	var get_lfm_token = function(lfm_auth,callback){
+		lfm('auth.getToken',false,function(r){
+			lfm_auth.newtoken = r.token;
+			if (callback) {callback(lfm_auth.newtoken);}
+		})
+	}
+	if (!lfm_auth.sk) {
+		get_lfm_token(lfm_auth);
+	}
+})

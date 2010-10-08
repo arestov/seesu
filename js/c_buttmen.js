@@ -54,12 +54,17 @@ button_menu.prototype = {
 	events:{
 		mousedown: function(e){
 			e.preventDefault();
+			var _tr = function(text){
+				setTimeout(function(text){
+					seesu.track_event('Buttmen', text);
+				},1000)
+			};
 			var _this = $(this);
 			var butt_hlts = _this.find('dd.buttmen-hlts ul');
 			var playing_with_dots = false;
 			var stat = setTimeout(function(){
 				if (playing_with_dots){
-					seesu.track_event('Buttmen', 'dots was showed and played');
+					_tr('dots was showed and played');
 				}
 				
 			},200)
@@ -70,7 +75,7 @@ button_menu.prototype = {
 			var butt_main = $('dt.main-button', this).mouseleave(function(e){
 				e.preventDefault();
 				_this.removeClass('buttmen-highlighting').addClass('buttmen-butting');
-				seesu.track_event('Buttmen', 'buttons are here');
+				_tr('buttons are here');
 				$(this).unbind('mouseleave');
 			});
 			$(document).mouseup(function(e){
@@ -81,7 +86,7 @@ button_menu.prototype = {
 					_this.removeClass('buttmen-butting');
 					_this.removeClass('buttmen-highlighting');
 					butt_hlts.attr('class', '' );
-					seesu.track_event('Buttmen', 'some button was pressed');
+					_tr('some button was pressed');
 				},10);
 				
 				$(document).unbind('mouseup');
@@ -138,12 +143,3 @@ button_menu.prototype = {
 		}
 	}
 }
-$(function(){
-	var buttmen_node =  $('.buttmen');
-	if (buttmen_node){
-		seesu.buttmen = new button_menu(buttmen_node)
-	}
-	
-	seesu.player.play_controls = seesu.buttmen;
-})
-

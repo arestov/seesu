@@ -30,7 +30,6 @@
 
 	
 	<script type="text/javascript" src="js/jquery.debounce-1.0.5.js"></script>
-	
 	<script type="text/javascript" src="js/soundmanager2.js" class="for-sm2-iframe"></script>
 
 	 
@@ -45,7 +44,6 @@
 	
 	<script type="text/javascript" src="js/seesu.js"></script>
 	<script type="text/javascript" src="js/seesu.search.js"></script>
-	<script type="text/javascript" src="js/seesu.events.js"></script>
 	
 	<script type="text/javascript" src="js/seesu.player.html5.js" class="for-sm2-iframe"></script>
 	<script type="text/javascript" src="js/seesu.player.sm2.js" class="for-sm2-iframe"></script>
@@ -55,6 +53,9 @@
 
 	<script type="text/javascript" src="js/c_buttmen.js"></script>
 	<script type="text/javascript" src="js/pressed_node_tester.js"></script>
+	
+	
+	<script type="text/javascript" src="js/seesu.events.js"></script>
 
   </head>
   
@@ -142,7 +143,7 @@
 						<div id="track-panel">
 							
 							<a class="play-control play" href="javascript:void(0)">
-							  <img src="i/buttons_play.png" alt="play" class="pl-control">
+							  <img src="i/buttons_play.png" alt="play" class="pl-control simple-clicks">
 							</a>
 							
 							<ul class="track-buttons">
@@ -155,7 +156,7 @@
 											<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
 											<p><strong>add</strong> it to white list on  <strong><a class="flash-s">flash internet security page</a></strong> and then restart Seesu</p>
 											<p>
-												<img src="http://github.com/downloads/kossnocorp/seesu/img_allow_internet_flash.png" alt="flash security page"/>
+												<img src="http://img-fotki.yandex.ru/get/4603/gleb-arestov.0/0_55167_ceb4a878_orig" alt="flash security page"/>
 												
 											</p>
 											<p>About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
@@ -305,9 +306,7 @@
 	
 
 	
-	<div class="window-bottom">
-		<img src="i/resize.png" id="resize-handle" alt="/"/>	
-	</div>
+	<div id="wb" class="window-bottom"></div>
 </div>
 	
 	

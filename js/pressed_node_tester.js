@@ -144,7 +144,7 @@ var test_pressed_node = function(original_node, mouseup){
 			}
 		}
 	
-		if ((node.nodeName == 'IMG') && class_name.match(/pl-control/)){
+		if ((node.nodeName == 'IMG') && (mouseup || class_name.match(/simple-clicks/) && class_name.match(/pl-control/) )){
 			var class_name = node.parentNode.className;
 			if (class_name.match(/pause/)){
 				seesu.player.set_state('pause');
