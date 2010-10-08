@@ -27,10 +27,10 @@
 		background-repeat:no-repeat;
 		}
 		.play-control:hover{
-			background-image:url(../i/buttons_hover.png);
+			background-image:url(../i/buttons_hover.png)  !important;
 			}
 		.play-control:active{
-			background-image:url(../i/buttons_active.png);
+			background-image:url(../i/buttons_active.png) !important;
 			}
 .player-paused .play-control.pause,
 .player-stopped .play-control.stop,

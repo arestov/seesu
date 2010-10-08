@@ -39,14 +39,6 @@ var sm2_p = function(volume, sm2, iframe){
 };
 sm2_p.prototype = {
 	'module_title':'sm2_p',
-	"play_song_by_node" : function(node){
-		
-		
-		this.play_song_by_url(node.data('mp3link'), node.data('duration'));
-		
-		
-		
-	},
 	"set_new_position": function(){
 		this.sm2_actions.set_new_position.apply(this, arguments);
 	},
