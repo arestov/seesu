@@ -104,11 +104,11 @@ var lfm_scrobble = {
 		  }
 	})	
   },
-  nowplay: function(node){
+  nowplay: function(mo){
 
 	
-	var artist = node.data('artist_name'),
-		title = node.data('track_title');
+	var artist = mo.artist,
+		title = mo.title;
 	
 	if (this.s) {
 		var _this = this;
@@ -136,19 +136,19 @@ var lfm_scrobble = {
 		})	
 	} else {
 		lfm_scrobble.handshake(function(){
-			lfm_scrobble.nowplay(node);
+			lfm_scrobble.nowplay(mo);
 		});
 	} 
 	
   },
-  submit: function(node){
+  submit: function(mo){
   	var _this = this;
 	console.log('getting data for submit')
-	var artist = node.data('artist_name'),
-		title = node.data('track_title'),
-		duration = node.data('duration'),
-		starttime = node.data('start_time'),
-		last_scrobble = node.data('last_scrobble'),
+	var artist = mo.artist,
+		title = mo.track,
+		duration = mo.duration,
+		starttime = mo.start_time,
+		last_scrobble = mo.last_scrobble,
 		timestamp = ((new Date()).getTime()/1000).toFixed(0);
 	console.log('getting date for submit')
 	if (((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
@@ -158,8 +158,8 @@ var lfm_scrobble = {
 			'duration': duration, 
 			'timestamp': timestamp
 		});
-		node.data('start_time',null);
-		node.data('last_scrobble',timestamp);
+		mo.start_time = false;
+		mo.last_scrobble = timestamp;
 	} 
 
 	if (lfm_auth.sk && this.s && this.music.length) {
@@ -216,7 +216,7 @@ var lfm_scrobble = {
 		} 
 		if (!this.s){
 			lfm_scrobble.handshake(function(){
-				lfm_scrobble.submit(node);
+				lfm_scrobble.submit(mo);
 			});
 		}
 	}
