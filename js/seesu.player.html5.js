@@ -10,15 +10,7 @@ var html5_p = function(volume){
 		musicbox.play_song_by_url
 	*/
 
-	this.before_finish = function(){
-		this.before_finish_fired = true;
-		console.log('before finish')
-		if (seesu.player.current_next_song && !seesu.player.current_next_song.data('mp3link')){
-			get_track(seesu.player.current_next_song, false, true);
-			
-		}
-		
-	}
+
 	this.volume = volume/100;
 	if (seesu.player.current_song){
 		this.play_song_by_node(current_song);
@@ -29,9 +21,6 @@ var html5_p = function(volume){
 };
 html5_p.prototype = {
 	'module_title':'html5_p',
-	"play_song_by_node" : function(node){
-		this.play_song_by_url(node.data('mp3link'), node.data('duration'));
-	},
 	"set_new_position": function(){
 		this.html5_actions.set_new_position.apply(this, arguments);
 	},
@@ -60,7 +49,6 @@ html5_p.prototype = {
 			}
 		},
 		"play_song_by_url" : function(url){
-			this.before_finish_fired = false;
 			var _this = this;
 			
 			if (this.current_song){
