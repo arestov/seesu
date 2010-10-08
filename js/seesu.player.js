@@ -345,9 +345,9 @@ seesu.player.song_click = function(mo) {
   var zoomed = !!slider.className.match(/show-zoom-to-track/);
   if (this.c_song && mo == this.c_song){
   	seesu.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
-  } else if (this.c_song && mo == this.c_song){
+  } else if (this.current_next_song && mo == this.current_next_song){
   	seesu.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
-  } else if (this.c_song && mo == this.c_song){
+  } else if (this.current_prev_song && mo == this.current_prev_song){
   	seesu.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
   } else{
   	seesu.track_event('Song click', 'simple click');
