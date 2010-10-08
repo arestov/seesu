@@ -510,6 +510,7 @@ var make_tracklist_playable = function(pl, full_allowing){
 	var ob = {num:0};
 	for (var i=0, l =  pl.length; i < l; i++) {
 		var mo = pl[i];
+
 		if (!!mo.track){
 			if (full_allowing){
 				if (!mo.fetch_started){
@@ -524,6 +525,7 @@ var make_tracklist_playable = function(pl, full_allowing){
 };
 var make_node_playable = function(mo, music_object){
 	var node = mo.node;
+
 	if (mo.mo_pla){
 		playable_node.find('a.song-duration').remove();
 	}
@@ -543,12 +545,11 @@ var make_node_playable = function(mo, music_object){
 	(mo.mo_pla = music_object).mo_titl = mo;
 	music_object.node = playable_node;
 		
+
 	var playlist_length = mo.plst_pla.push(music_object);;
-	
+
 	music_object.number_in_playlist =  playlist_length-1;
 	
-	
-
 	resort_plst(mo.plst_pla);
 	
 	

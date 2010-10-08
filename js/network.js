@@ -51,7 +51,9 @@ get_track = function(mo, was_unsuccessful, hypnotoad){
 					seesu.player.fix_songs_ui();
 				}
 				if (allow_h){
+
 					if (seesu.player.current_next_song && !seesu.player.current_next_song.mo_pla){
+
 						get_track(seesu.player.current_next_song, false, true);
 					}
 				}
