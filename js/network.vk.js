@@ -6,7 +6,7 @@ var check_vk_logout_response = function(text){
 }
 
 
-var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
+var hardcore_vk_search = function(query, callback, error, nocache, after_ajax, only_cache){
 	seesu.track_event('mp3 search', 'vk hardcore search');
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
@@ -15,7 +15,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax){
 		if (cache_used) {return true;}
 	}
 
-	if (seesu.delayed_search.waiting_for_mp3provider){
+	if (only_cache){
 		return false;
 	}
 

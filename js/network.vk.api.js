@@ -21,7 +21,7 @@ var vk_api = function(apis, quene){
 
 vk_api.prototype = {
 	api_link: 'http://api.vk.com/api.php',
-	use: function(method, params, callback, error, nocache, after_ajax, query){
+	use: function(method, params, callback, error, use_only_cache, after_ajax, query, only_cache){
 	
 		if (method) {
 			var api;
@@ -34,7 +34,7 @@ vk_api.prototype = {
 			}
 			
 			
-			var use_cache = (api.use_cache && !nocache);
+			
 
 			
 			var pv_signature_list = [], // array of <param>+<value>
@@ -71,7 +71,7 @@ vk_api.prototype = {
 			
 			
 			
-			if(apisig || use_cache) {
+			if(apisig) {
 				for (var param in params_full) {
 					if (param != 'sid'){
 						pv_signature_list.push(param  + '=' + params_full[param]);
@@ -87,14 +87,14 @@ vk_api.prototype = {
 
 			}
 			
-			if (use_cache){
+			if (api.use_cache && !nocache){
 				var cache_used = cache_ajax.get('vk_api', query, callback)
 				if (cache_used) {
 					return true;
 				}
 			}
 
-			if (!_this.allow_random_api && seesu.delayed_search.waiting_for_mp3provider){
+			if (only_cache){
 				return false;
 			}
 			
@@ -120,7 +120,7 @@ vk_api.prototype = {
 			
 		}
 	},
-	audio_search: function(query, callback, error, nocache, after_ajax, params){
+	audio_search: function(query, callback, error, nocache, after_ajax, only_cache){
 		var _this = this;
 		var params_u = params || {};
 			params_u.q = query;
@@ -153,7 +153,7 @@ vk_api.prototype = {
 			} else{
 				if (error) {error()}
 			}
-		}, error, nocache, after_ajax, query);
+		}, error, nocache, after_ajax, query, only_cache);
 		return used_successful;
 	}
 }
