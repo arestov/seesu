@@ -586,6 +586,7 @@ var make_node_playable = function(mo, music_object){
 	}
 	
 };
+
 var empty_song_click = function(){
 	var clicked_node = $(this);
 	
@@ -607,44 +608,13 @@ var empty_song_click = function(){
 	seesu.track_event('Song click', 'empty song');
 	return false;	
 };
-var create_playlist_element = function(mo_titl, pl, i, plst){
-	var track = $("<a></a>")
-		.data('mo_titl', mo_titl)
-		.data('artist_name', mo_titl.artist)
-		.addClass('track-node waiting-full-render')
-		.click(empty_song_click),
-		li = document.createElement('li');
-		
-	mo_titl.delayed_in = [];
-	mo_titl.play_order = i
-	mo_titl.node = track;
-	mo_titl.plst_pla = plst;
-	mo_titl.plst_titl = pl;
-	
-	if (!!mo_titl.track){
-		track.text(mo_titl.artist + ' - ' + mo_titl.track);
-	} else{
-		track.text(mo_titl.artist);
-	}
-	
-	
-	
-	
-	
-	if (mo_titl.link) {
-		make_node_playable(mo_titl, mo_titl);
-	} else{
-		we_dont_have_mp3links = true;
-	}
-	return $(li)
-		.data('mo_titl', mo_titl)
-		.append(play_controls.node.clone(true))
-		.append(track);
-}
+
+
+
 
 var render_playlist = function(pl) { // if links present than do full rendering! yearh!
-	var ul = seesu.ui.views.get_playlist_c();
-	ul.empty();
+	pl.ui = seesu.ui.views.get_playlist_c();
+	pl.ui.empty();
 	if (!pl){
 		$(ul).append('<li>Nothing found</li>');
 	} else {
@@ -658,9 +628,15 @@ var render_playlist = function(pl) { // if links present than do full rendering!
 			}
 			
 		}
-		var plst = [];
+
+		pl.plst_pla = [];
+		pl.ui = ul;
 		for (var i=0, l = pl.length; i < l; i++) {
-			ul.append(create_playlist_element(pl[i], pl, i, plst));
+			pl.ui.append(
+				seesu.gena.create_playlist_element(
+					seesu.gena.connect(pl[i], pl, i)
+				)
+			);
 		}
 	
 		if (seesu.player.autostart){

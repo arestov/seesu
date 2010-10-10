@@ -7,7 +7,57 @@ var INIT     = -11,
 	  PAUSED   =  7,
 	  FINISHED =  11;
 
-
+seesu.gena = { //this work with playlists
+	create_playlist_element : function(mo_titl){
+		var track = $("<a></a>")
+			.data('mo_titl', mo_titl)
+			.data('artist_name', mo_titl.artist)
+			.addClass('track-node waiting-full-render')
+			.click(empty_song_click),
+			li = document.createElement('li');
+			
+		
+		mo_titl.node = track;
+		
+		if (!!mo_titl.track){
+			track.text(mo_titl.artist + ' - ' + mo_titl.track);
+		} else{
+			track.text(mo_titl.artist);
+		}
+		if (mo_titl.link) {
+			make_node_playable(mo_titl, mo_titl);
+		} 
+		return $(li)
+			.data('mo_titl', mo_titl)
+			.append(play_controls.node.clone(true))
+			.append(track);
+	},
+	connect:function(mo_titl, pl, i){
+		mo_titl.delayed_in = [];
+		mo_titl.play_order = i;
+		mo_titl.plst_pla = pl.plst_pla || (pl.plst_pla = []);
+		mo_titl.plst_titl = pl;
+		return mo_titl
+	},
+	add: function(mo_titl, pl){
+		var n_mo = this.soft_clone(mo_titl);
+		pl.push(n_mo, pl, pl.length);
+		if (seesu.player.c_song.mo_titl.plst_titl == pl){
+			pl.ui.append(create_playlist_element(n_mo);)
+			
+		}
+		
+	},
+	soft_clone: (obj){
+		var _n = {};
+		for (var a in obj) {
+			if (typeof obj[a] != 'object'){
+				_n[a] = obj[a];
+			}
+		};
+		return _n;
+	}
+}
 
 seesu.player = {
 	autostart: true,
