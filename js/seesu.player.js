@@ -43,12 +43,12 @@ seesu.gena = { //this work with playlists
 		var n_mo = this.soft_clone(mo_titl);
 		pl.push(n_mo, pl, pl.length);
 		if (seesu.player.c_song.mo_titl.plst_titl == pl){
-			pl.ui.append(create_playlist_element(n_mo);)
+			pl.ui.append(create_playlist_element(n_mo))
 			
 		}
 		
 	},
-	soft_clone: (obj){
+	soft_clone: function(obj){
 		var _n = {};
 		for (var a in obj) {
 			if (typeof obj[a] != 'object'){
