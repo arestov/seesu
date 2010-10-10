@@ -630,7 +630,6 @@ var render_playlist = function(pl) { // if links present than do full rendering!
 		}
 
 		pl.plst_pla = [];
-		pl.ui = ul;
 		for (var i=0, l = pl.length; i < l; i++) {
 			pl.ui.append(
 				seesu.gena.create_playlist_element(
