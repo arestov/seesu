@@ -21,7 +21,7 @@ var vk_api = function(apis, quene){
 
 vk_api.prototype = {
 	api_link: 'http://api.vk.com/api.php',
-	use: function(method, params, callback, error, use_only_cache, after_ajax, query, only_cache){
+	use: function(method, params, callback, error, nocache, after_ajax, query, only_cache){
 	
 		if (method) {
 			var api;
