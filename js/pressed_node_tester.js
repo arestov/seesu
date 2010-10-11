@@ -183,7 +183,7 @@ var test_pressed_node = function(original_node, mouseup){
 				return false;
 			} else if (class_name.match(/add-to-playlist/)){
 				if(seesu.player.c_song) {
-					seesu.gena.add(seesu.player.c_song.mo_titl, seesu.player.c_song.mo_titl.plst_titl)
+					seesu.gena.add(seesu.player.c_song.mo_titl, seesu.gena.user_playlist)
 				}
 				seesu.track_event('Controls', 'add to playlist', mouseup ? 'mouseup' : '');
 				return false;

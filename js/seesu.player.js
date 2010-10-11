@@ -8,6 +8,27 @@ var INIT     = -11,
 	  FINISHED =  11;
 
 seesu.gena = { //this work with playlists
+	user_playlist: (function(){
+		var p = [];
+		p.push = function(mo){
+			Array.prototype.push.call(this, mo);
+			if (!this.link && p.length > 0 && seesu.start_screen){
+				$('<p></p>').attr('id', 'cus-playlist-b').append(
+					this.link = $('<a></a>').text('Custom playlist').attr('class', 'js-serv').click(function(){
+						if (seesu.player.c_song.mo_titl.plst_titl == p){
+							seesu.ui.views.restore_view();
+						} else{
+							seesu.ui.views.show_playlist_page('Custom playlist', 'cplaylist');
+							render_playlist(p)
+						}
+						return false;
+					}) 
+				).appendTo(seesu.start_screen);
+			}
+			
+		}
+		return p;
+		})(),
 	create_playlist_element : function(mo_titl){
 		var track = $("<a></a>")
 			.data('mo_titl', mo_titl)
@@ -37,6 +58,8 @@ seesu.gena = { //this work with playlists
 		mo_titl.play_order = i;
 		mo_titl.fetch_started = false;
 		mo_titl.not_use = false;
+		mo_titl.node = false;
+		mo_titl.ready_for_play = false;
 		mo_titl.plst_pla = pl.plst_pla || (pl.plst_pla = []);
 		mo_titl.plst_titl = pl;
 		return mo_titl
