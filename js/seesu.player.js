@@ -52,15 +52,24 @@ seesu.gena = { //this work with playlists
 			.data('mo_titl', mo_titl)
 			.append(play_controls.node.clone(true))
 			.append(track);
+	},clear: function(mo_titl, full){
+		delete mo_titl.fetch_started;
+		delete mo_titl.not_use = false;
+		delete mo_titl.node = false;
+		delete mo_titl.ready_for_play = false;
+		if (full){
+			delete mo_titl.delayed_in;
+			delete mo_titl.plst_pla;
+			delete mo_titl.plst_titl;
+		}
+		
+		return mo_titl;
 	},
 	connect:function(mo_titl, pl, i){
+		this.clear(mo_titl);
 		mo_titl.delayed_in = [];
 		mo_titl.play_order = i;
-		mo_titl.fetch_started = false;
-		mo_titl.not_use = false;
-		mo_titl.node = false;
-		mo_titl.ready_for_play = false;
-		mo_titl.plst_pla = pl.plst_pla || (pl.plst_pla = []);
+		mo_titl.plst_pla = pl.plst_pla;
 		mo_titl.plst_titl = pl;
 		return mo_titl
 	},
