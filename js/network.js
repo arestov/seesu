@@ -14,7 +14,7 @@ get_all_tracks = function(trackname, callback, nocache, hypnotoad, only_cache){
 
 get_track = function(mo, nocache, hypnotoad, only_cache){
 	var allow_h = hypnotoad && seesu.delayed_search.waiting_for_mp3provider;
-	if(mo.mo_pla){
+	if(mo.ready_for_play){
 		return false;
 	}
 	
@@ -25,7 +25,7 @@ get_track = function(mo, nocache, hypnotoad, only_cache){
 	var last_hypnotoad_try = false;
 	var callback_success = function(music_list){
 		//success
-		if (mo.mo_pla){
+		if (mo.ready_for_play){
 			return false
 		}
 		
@@ -41,7 +41,7 @@ get_track = function(mo, nocache, hypnotoad, only_cache){
 	
 	var callback_error = function(xhr){
 		//error
-		if(mo.mo_pla){
+		if(mo.ready_for_play){
 			return false;
 		}
 		if (!mo.not_use){
@@ -55,7 +55,7 @@ get_track = function(mo, nocache, hypnotoad, only_cache){
 				}
 				if (allow_h){
 
-					if (seesu.player.current_next_song && !seesu.player.current_next_song.mo_pla){
+					if (seesu.player.current_next_song && !seesu.player.current_next_song.ready_for_play){
 
 						get_track(seesu.player.current_next_song, false, true);
 					}
@@ -69,7 +69,7 @@ get_track = function(mo, nocache, hypnotoad, only_cache){
 					mo.artist + ' - ' + mo.track, callback_success, callback_error, 
 					nocache,
 					function(){
-						if(mo.mo_pla){
+						if(mo.ready_for_play){
 							return false;
 						}
 						mo.node.addClass('search-mp3');
@@ -98,7 +98,7 @@ get_track = function(mo, nocache, hypnotoad, only_cache){
 		mo.artist + ' - ' + mo.track, callback_success, callback_error, 
 		nocache,
 		function(){
-			if(mo.mo_pla){
+			if(mo.ready_for_play){
 				return false;
 			}
 			mo.node.addClass('search-mp3');

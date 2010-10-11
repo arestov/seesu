@@ -173,13 +173,19 @@ var test_pressed_node = function(original_node, mouseup){
 				return false; 
 			}
 			else if (class_name.match(/play_prev/)){
-				if(seesu.player.current_song) {seesu.player.switch_to('prev');}
+				if(seesu.player.c_song) {seesu.player.switch_to('prev');}
 				seesu.track_event('Controls', 'prev', mouseup ? 'mouseup' : '');
 				return false;
 			}
 			else if (class_name.match(/play_next/)){
-				if(seesu.player.current_song) {seesu.player.switch_to('next');}
+				if(seesu.player.c_song) {seesu.player.switch_to('next');}
 				seesu.track_event('Controls', 'next', mouseup ? 'mouseup' : '');
+				return false;
+			} else if (class_name.match(/add-to-playlist/)){
+				if(seesu.player.c_song) {
+					seesu.gena.add(seesu.player.c_song.mo_titl, seesu.gena.user_playlist)
+				}
+				seesu.track_event('Controls', 'add to playlist', mouseup ? 'mouseup' : '');
 				return false;
 			}
 		  
