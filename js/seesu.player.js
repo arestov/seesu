@@ -387,8 +387,8 @@ seesu.player.events.progress_playing = function(progress_value, total){
 }
 seesu.player.events.before_finish = function(){
 	console.log('before finish')
-	if (seesu.player.current_next_song && !seesu.player.current_next_song.link){
-		get_track(seesu.player.current_next_song, false, true);
+	if (seesu.player.current_next_song && !seesu.player.current_next_song.ready_for_play){
+		get_next_track_with_priority(seesu.player.current_next_song);
 		
 	}
 }

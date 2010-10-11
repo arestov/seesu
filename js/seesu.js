@@ -454,12 +454,16 @@ var resort_plst= function(plst_pla){
 		}
 	}
 }
-
-var get_track_as_possible = function(mo, order, mp3_prov_quene, only_cache){
+var get_next_track_with_priority = function(mo){
+	var _din = mo.delayed_in;
+	for (var i=0; i < _din.length; i++) {
+		_din[i].pr = seesu.player.want_to_play || 1;
+	}
+	get_track_as_possible(mo, true, false, false, true);
+}
+var get_track_as_possible = function(mo, can_use_hypnotoad, mp3_prov_quene, only_cache, get_next){
 	var _ocache = only_cache || seesu.delayed_search.waiting_for_mp3provider;
-
-	
-	var used_successful = get_track(mo,false, false, _ocache);
+	var used_successful = get_track(mo,false, false, _ocache, get_next);
 	if (!used_successful && seesu.delayed_search.waiting_for_mp3provider){
 		if (mp3_prov_quene) {
 			mp3_prov_quene.add(function(){
@@ -469,7 +473,7 @@ var get_track_as_possible = function(mo, order, mp3_prov_quene, only_cache){
 			}, true);
 		}
 	}
-	if (!only_cache && !used_successful && order === 0){
+	if (!only_cache && !used_successful && can_use_hypnotoad){
 		get_track(mo, false, true);
 	}
 };
@@ -485,7 +489,7 @@ var start_random_nice_track_search = function(mo, ob, mp3_prov_quene, not_search
 		var some_track = random_track_plable(track_list);
 		
 		mo.node.text(some_track.artist + ' - ' + (mo.track = some_track.track));
-		get_track_as_possible(mo, ob.num, mp3_prov_quene, not_search_mp3);
+		get_track_as_possible(mo, ob.num  === 0, mp3_prov_quene, not_search_mp3);
 		
 		
 		++ob.num;
@@ -516,11 +520,11 @@ var make_tracklist_playable = function(pl, full_allowing){
 			if (!!mo.track){
 				if (full_allowing){
 					if (!mo.fetch_started){
-						get_track_as_possible(mo, i, mp3_prov_quene);
+						get_track_as_possible(mo, i === 0, mp3_prov_quene);
 						mo.fetch_started = true;
 					}
 				} else{
-					get_track_as_possible(mo, i, mp3_prov_quene, true);
+					get_track_as_possible(mo, i === 0, mp3_prov_quene, true);
 				}
 			} else{
 				start_random_nice_track_search(mo, ob, mp3_prov_quene, !full_allowing);
