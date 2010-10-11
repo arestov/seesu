@@ -35,15 +35,17 @@ seesu.gena = { //this work with playlists
 	connect:function(mo_titl, pl, i){
 		mo_titl.delayed_in = [];
 		mo_titl.play_order = i;
+		mo_titl.fetch_started = false;
+		mo_titl.not_use = false;
 		mo_titl.plst_pla = pl.plst_pla || (pl.plst_pla = []);
 		mo_titl.plst_titl = pl;
 		return mo_titl
 	},
 	add: function(mo_titl, pl){
 		var n_mo = this.soft_clone(mo_titl);
-		pl.push(n_mo, pl, pl.length);
+		pl.push(this.connect(n_mo, pl, pl.length));
 		if (seesu.player.c_song.mo_titl.plst_titl == pl){
-			pl.ui.append(create_playlist_element(n_mo));
+			pl.ui.append(this.create_playlist_element(n_mo));
 			make_tracklist_playable(pl);
 		}
 		

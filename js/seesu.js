@@ -410,7 +410,7 @@ external_playlist.prototype = {
 };
 
 var make_external_playlist = function(){
-	if (!seesu.player.current_song ){return false;}
+	if (!seesu.player.c_song ){return false;}
 	var playlist_nodes_for = seesu.player.c_song.mo_titl.plst_pla;
 	
 	if (playlist_nodes_for && playlist_nodes_for.length){
