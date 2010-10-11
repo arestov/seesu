@@ -122,7 +122,7 @@ vk_api.prototype = {
 	},
 	audio_search: function(query, callback, error, nocache, after_ajax, only_cache){
 		var _this = this;
-		var params_u = params || {};
+		var params_u = {};
 			params_u.q = query;
 			params_u.count = params_u.count || 30;
 		var used_successful = this.use('audio.search', params_u, 
