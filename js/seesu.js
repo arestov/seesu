@@ -457,7 +457,7 @@ var resort_plst= function(plst_pla){
 
 var get_track_as_possible = function(mo, order, mp3_prov_quene, only_cache){
 	var _ocache = only_cache || seesu.delayed_search.waiting_for_mp3provider;
-	
+
 	
 	var used_successful = get_track(mo,false, false, _ocache);
 	if (!used_successful && seesu.delayed_search.waiting_for_mp3provider){
@@ -469,7 +469,7 @@ var get_track_as_possible = function(mo, order, mp3_prov_quene, only_cache){
 			}, true);
 		}
 	}
-	if (!used_successful && order === 0){
+	if (!only_cache && !used_successful && order === 0){
 		get_track(mo, false, true);
 	}
 };
