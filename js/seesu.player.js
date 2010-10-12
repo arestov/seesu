@@ -294,7 +294,9 @@ seesu.player = {
 		nav_track_zoom.text(( $(nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.mo_titl.track);
 		if (seesu.now_playing.link){
 			seesu.now_playing.link.siblings('span').remove();
-			seesu.now_playing.link.after($('<span></span>').text(": " + artist + " - " + mo.mo_titl.track));
+			seesu.now_playing.link.after($('<span></span>').text(": " + 
+				( document.title = artist + " - " + mo.mo_titl.track)
+			));
 		}
 		
 		
