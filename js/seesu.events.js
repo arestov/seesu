@@ -26,6 +26,7 @@ $(function() {
 	window.make_trs = $("#make-trs-plable").click(function(){
 		
 		make_tracklist_playable(make_trs.hide().data('pl'), true);
+		seesu.track_event('Controls', 'make playable all tracks in playlist'); 
 	});
 		  	
 	//see var at top
