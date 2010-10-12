@@ -54,9 +54,9 @@ seesu.gena = { //this work with playlists
 			.append(track);
 	},clear: function(mo_titl, full){
 		delete mo_titl.fetch_started;
-		delete mo_titl.not_use = false;
-		delete mo_titl.node = false;
-		delete mo_titl.ready_for_play = false;
+		delete mo_titl.not_use;
+		delete mo_titl.node;
+		delete mo_titl.ready_for_play;
 		if (full){
 			delete mo_titl.delayed_in;
 			delete mo_titl.plst_pla;
