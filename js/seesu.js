@@ -631,14 +631,15 @@ var empty_song_click = function(){
 
 
 var render_playlist = function(pl, not_clear) { // if links present than do full rendering! yearh!
-	pl.ui = seesu.ui.views.get_playlist_c();
+	var ui = seesu.ui.views.get_playlist_c();
 	if (!not_clear){
-		pl.ui.empty();
+		ui.empty();
 	}
 	make_trs.show().data('pl', seesu.ui.views.browsing.mpl = pl);
 	if (!pl){
 		$(ul).append('<li>Nothing found</li>');
 	} else {
+		pl.ui = ui;
 		if (!seesu.now_playing.link){
 			if (seesu.start_screen){
 				$('<p></p>').attr('id', 'now-play-b').append(
