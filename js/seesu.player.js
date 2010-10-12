@@ -384,8 +384,19 @@ seesu.player.events[FINISHED] = function() {
 seesu.player.events[VOLUME] = function(volume_value) {
 	change_volume(volume_value);
 };
+seesu.player.events.before_finish = function(total, progress_value){
+	if (!seesu.player.c_song.before_finish_fired){
+		if (total - progress_value < 20){
+			console.log('Before finish. Total: ' + total + ' Progress_value: ' + progress_value);
+			if (seesu.player.current_next_song && !seesu.player.current_next_song.ready_for_play){
+				get_next_track_with_priority(seesu.player.current_next_song);
+				
+			}
+			seesu.player.c_song.before_finish_fired = true;
+		}
+	}
+}
 seesu.player.events.progress_playing = function(progress_value, total){
-
 	//if (_this.ignore_position_change) {return false;}
 	var progress = parseInt(progress_value);
 	var total = parseInt(total);
@@ -393,14 +404,9 @@ seesu.player.events.progress_playing = function(progress_value, total){
 	var current = Math.round((progress/total) * seesu.player.controls.track_progress_width);
 	
 	seesu.player.controls.track_progress_play[0].style.width = current + 'px';
+	seesu.player.events.before_finish(progress_value, total);
 }
-seesu.player.events.before_finish = function(){
-	console.log('before finish')
-	if (seesu.player.current_next_song && !seesu.player.current_next_song.ready_for_play){
-		get_next_track_with_priority(seesu.player.current_next_song);
-		
-	}
-}
+
 seesu.player.events.progress_loading=function(progress_value, total){
 	//if (_this.ignore_position_change) {return false;}
 	var progress = parseInt(progress_value);
@@ -409,16 +415,7 @@ seesu.player.events.progress_loading=function(progress_value, total){
 	var current = Math.round((progress/total) * seesu.player.controls.track_progress_width);
 	
 	seesu.player.controls.track_progress_load[0].style.width = current + 'px';
-
-	if (!seesu.player.c_song.before_finish_fired){
-		if (total - progress_value < 20){
-			
-			console.log('total: ' + total);
-			console.log('progress_value: ' + progress_value);
-			seesu.player.events.before_finish();
-			seesu.player.c_song.before_finish_fired = true;
-		}
-	}
+	seesu.player.events.before_finish(progress, total);
 }
 	
 
