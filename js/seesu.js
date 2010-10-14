@@ -658,13 +658,12 @@ var render_playlist = function(pl, not_clear) { // if links present than do full
 					seesu.gena.connect(pl[i], pl, i)
 				)
 			);
+			
 		}
-	
+		make_tracklist_playable(pl);
 		if (seesu.player.autostart){
 			seesu.ui.views.save_view(pl);
 			seesu.player.autostart = false;
-		} else{
-			make_tracklist_playable(pl);
 		}
 		//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
 	
