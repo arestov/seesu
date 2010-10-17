@@ -9,7 +9,7 @@ window.lfm = function(){
 window.seesu = window.su =  {
 	  lfm_quene: new funcs_quene(100),
 	  cross_domain_allowed: !location.protocol.match(/http/),
-	  version: 1.96,
+	  version: 1.97,
 	  env: app_env,
 	  track_stat: (function(){
 		var _i = document.createElement('iframe');_i.id ='gstat';_i.src = 'http://seesu.me/g_stat.html';
