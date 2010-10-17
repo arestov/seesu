@@ -435,8 +435,9 @@ seesu.player.song_click = function(mo) {
   } else{
   	seesu.track_event('Song click', 'simple click');
   }
-  
-	  	
+  if (!zoomed){
+  	seesu.track_page('track zoom');
+  }
   
 	  	
   seesu.player.play_song(mo, !zoomed);

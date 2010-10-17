@@ -24,7 +24,9 @@ window.seesu = window.su =  {
 				if (e.data == 'ga_stat_ready'){
 					ga_ready = true;
 					removeEvent(window, "message", ga_ready_waiter);
-					seesu.track_stat('_trackPageview', !app_env.unknown_app ? app_env.app_type : 'unknown_app');
+					
+					seesu.track_stat('_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'));
+					seesu.track_stat('_setCustomVar', 2, 'version', seesu.version);
 				}
 			} else {
 				return false;
@@ -47,6 +49,16 @@ window.seesu = window.su =  {
 	  track_event:function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackEvent');
+		seesu.track_stat.apply(this, args);
+	  },
+	  track_page:function(){
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift('_trackPageview');
+		seesu.track_stat.apply(this, args);
+	  },
+	   track_var: function(){
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift('_setCustomVar');
 		seesu.track_stat.apply(this, args);
 	  },
 	  popular_artists: ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ],
@@ -181,7 +193,7 @@ window.seesu = window.su =  {
 					search_input[0].select();
 				}
 				if (log_navigation){
-					seesu.track_event('Navigation', 'start page', _s);
+					seesu.track_page('start page');
 				}
 				this.current_rc = false;
 				this.hide_playing();
@@ -194,7 +206,7 @@ window.seesu = window.su =  {
 				}
 				slider.className = (without_input ? '' : 'show-search ') + "show-search-results";
 				if (log_navigation){
-					seesu.track_event('Navigation', 'search results', _s);
+					seesu.track_page('search results');
 				}
 			},
 			show_playlist_page: function(playlist_title, playlist_type, with_search_results_link, show_playing){
