@@ -1,5 +1,5 @@
 window.soundcloud_search = function(query, callback, error, nocache, after_ajax, only_cache){
-	seesu.track_event('mp3 search', 'soundcloud search');
+	
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
 	if (use_cache){
@@ -10,6 +10,7 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 		return false;
 	}
 	return seesu.soundcloud_quene.add(function(){
+		seesu.track_event('mp3 search', 'soundcloud search');
 		$.ajax({
 			timeout: 10000,
 			url: "http://api.soundcloud.com/tracks.js",

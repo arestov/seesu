@@ -7,7 +7,7 @@ var check_vk_logout_response = function(text){
 
 
 var hardcore_vk_search = function(query, callback, error, nocache, after_ajax, only_cache){
-	seesu.track_event('mp3 search', 'vk hardcore search');
+	
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
 	if (use_cache){
@@ -20,6 +20,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax, o
 	}
 
 	return seesu.delayed_search.vk.quene.add(function(){
+		seesu.track_event('mp3 search', 'vk hardcore search');
 		$.ajax({
 		  timeout: 10000,
 		  url: "http://vkontakte.ru/gsearch.php",

@@ -270,7 +270,6 @@ window.seesu = window.su =  {
 			delay_big: 8000,
 			big_delay_interval: 7,
 			search_tracks : function(){
-				seesu.track_event('mp3 search', 'vk api with auth');
 				return seesu.vk_api.audio_search.apply(seesu.vk_api, arguments);
 			}
 		},
