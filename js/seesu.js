@@ -26,7 +26,7 @@ window.seesu = window.su =  {
 					removeEvent(window, "message", ga_ready_waiter);
 					
 					seesu.track_stat('_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1);
-					seesu.track_stat('_setCustomVar', 2, 'version', seesu.version), 1;
+					seesu.track_stat('_setCustomVar', 2, 'version', seesu.version, 1);
 					seesu.track_stat('_trackPageview', 'start page');
 					
 				}
