@@ -108,7 +108,6 @@ seesu.player = {
 	current_playlist 	: null,
 	want_to_play		: 0,
 	wainter_for_play 	: null,
-	current_artist		: '',
 	current_external_playlist: null,
 	iframe_player 	: false,
 	iframe_doc 		: null,
@@ -273,7 +272,6 @@ seesu.player = {
 		
 		if (artist) {update_artist_info(artist, a_info);}
 		update_track_info(a_info, node);
-		this.current_artist = artist;
 		
 		if (this.c_song) {
 			this.change_songs_ui(this.c_song, true) //remove ative state

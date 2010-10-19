@@ -916,9 +916,7 @@ var artist_albums_renderer = function(r, container){
 	}
 	container.append(albums_ul);
 };
-var show_artist_info = function(r, ainf){
-	
-	ainf.bio.parent().addClass('background-changes');
+var show_artist_info = function(r, ainf, oa){
 	var info	 = r.artist || false;
 	var similars, artist, tags, bio, image;
 	if (info) {
@@ -929,8 +927,11 @@ var show_artist_info = function(r, ainf){
 		image	 = (info.image && info.image[2]['#text']) || lfm_image_artist;
 	} 
 		
-	if (artist) {
+	if (artist && artist == oa) {
+		ainf.bio.parent().addClass('background-changes');
 		ainf.image.attr({'src': image ,'alt': artist});
+	} else{
+		return false
 	}
 	if (bio){
 		ainf.bio.html(bio);
@@ -1031,7 +1032,7 @@ window.update_track_info = function(a_info, node){
 	}	
 };
 var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
-	if (seesu.player.current_artist == artist) {
+	if (seesu.current_artist == artist) {
 		if (seesu.ui.playlist_type == 'artist'){
 			if (seesu.player.top_tracks_link){
 				seesu.player.top_tracks_link.remove();
@@ -1081,14 +1082,15 @@ var update_artist_info = function(artist, a_info, not_show_link_to_artist_page){
 		ainf.bio.text('...');
 		ainf.meta_info.empty();
 		
+		seesu.current_artist = artist;
 		lfm('artist.getInfo',{'artist': artist }, function(r){
-			show_artist_info(r, ainf);
+			show_artist_info(r, ainf, artist);
 		});
 	}
 };
 var show_artist = function (artist,with_search_results) {
 	
-	if (seesu.player.current_artist == artist && seesu.ui.playlist_type == 'artist') {
+	if (seesu.current_artist == artist && seesu.ui.playlist_type == 'artist') {
 		seesu.ui.views.restore_view();
 		return true;
 	}
