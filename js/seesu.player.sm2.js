@@ -24,8 +24,8 @@ var sm2_p = function(volume, sm2, iframe){
 	}
 	
 	if (typeof seesu === 'object') {
-		if (seesu.player.current_song){
-			this.play_song_by_node(current_song);
+		if (seesu.player.c_song){
+			this.play_song_by_url(seesu.player.c_song.link);
 		}
 		
 	} else{

@@ -12,8 +12,8 @@ var html5_p = function(volume){
 
 
 	this.volume = volume/100;
-	if (seesu.player.current_song){
-		this.play_song_by_node(current_song);
+	if (seesu.player.c_song){
+		this.play_song_by_url(seesu.player.c_song.link);
 	}
 
 	

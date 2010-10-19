@@ -115,9 +115,6 @@ seesu.player = {
 	events 			: [],
 	current_song 		: null,
 	musicbox			: {
-		play_song_by_node: function(node){
-			current_song = node;
-		}
 	}, //music box is a link to module with playing methods, 
 		//for e.g. soundmanager2 and vkontakte flash player
 	call_event		: function	(event, data) {
@@ -144,7 +141,7 @@ seesu.player = {
 		);
 	  switch(this.player_state - new_player_state) {
 	  case(STOPPED - PLAYED):
-		if (this.current_song) {
+		if (this.musicbox.play_song_by_url && this.c_song) {
 			this.musicbox.play_song_by_url(this.c_song.link);
 		};
 		break;
