@@ -100,6 +100,7 @@ vk_api.prototype = {
 			
 			
 			return _this.quene.add(function(){
+				seesu.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
 				$.ajax({
 				  url: _this.api_link,
 				  global: false,

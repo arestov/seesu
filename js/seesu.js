@@ -9,7 +9,7 @@ window.lfm = function(){
 window.seesu = window.su =  {
 	  lfm_quene: new funcs_quene(100),
 	  cross_domain_allowed: !location.protocol.match(/http/),
-	  version: 1.96,
+	  version: 1.98,
 	  env: app_env,
 	  track_stat: (function(){
 		var _i = document.createElement('iframe');_i.id ='gstat';_i.src = 'http://seesu.me/g_stat.html';
@@ -24,7 +24,16 @@ window.seesu = window.su =  {
 				if (e.data == 'ga_stat_ready'){
 					ga_ready = true;
 					removeEvent(window, "message", ga_ready_waiter);
-					seesu.track_stat('_trackPageview', !app_env.unknown_app ? app_env.app_type : 'unknown_app');
+					
+					
+					
+					seesu.track_stat('_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1);
+					seesu.track_stat('_setCustomVar', 2, 'version', seesu.version, 1);
+					seesu.track_stat('_trackEvent', 'environmental', 'version', seesu.version);
+					seesu.track_stat('_trackEvent', 'environmental', 'type', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'));
+					
+					seesu.track_stat('_trackPageview', 'start page');
+					
 				}
 			} else {
 				return false;
@@ -47,6 +56,16 @@ window.seesu = window.su =  {
 	  track_event:function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackEvent');
+		seesu.track_stat.apply(this, args);
+	  },
+	  track_page:function(){
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift('_trackPageview');
+		seesu.track_stat.apply(this, args);
+	  },
+	   track_var: function(){
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift('_setCustomVar');
 		seesu.track_stat.apply(this, args);
 	  },
 	  popular_artists: ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ],
@@ -181,7 +200,7 @@ window.seesu = window.su =  {
 					search_input[0].select();
 				}
 				if (log_navigation){
-					seesu.track_event('Navigation', 'start page', _s);
+					seesu.track_page('start page');
 				}
 				this.current_rc = false;
 				this.hide_playing();
@@ -194,7 +213,7 @@ window.seesu = window.su =  {
 				}
 				slider.className = (without_input ? '' : 'show-search ') + "show-search-results";
 				if (log_navigation){
-					seesu.track_event('Navigation', 'search results', _s);
+					seesu.track_page('search results');
 				}
 			},
 			show_playlist_page: function(playlist_title, playlist_type, with_search_results_link, show_playing){
@@ -258,7 +277,6 @@ window.seesu = window.su =  {
 			delay_big: 8000,
 			big_delay_interval: 7,
 			search_tracks : function(){
-				seesu.track_event('mp3 search', 'vk api with auth');
 				return seesu.vk_api.audio_search.apply(seesu.vk_api, arguments);
 			}
 		},
@@ -631,14 +649,15 @@ var empty_song_click = function(){
 
 
 var render_playlist = function(pl, not_clear) { // if links present than do full rendering! yearh!
-	pl.ui = seesu.ui.views.get_playlist_c();
+	var ui = seesu.ui.views.get_playlist_c();
 	if (!not_clear){
-		pl.ui.empty();
+		ui.empty();
 	}
 	make_trs.show().data('pl', seesu.ui.views.browsing.mpl = pl);
 	if (!pl){
 		$(ul).append('<li>Nothing found</li>');
 	} else {
+		pl.ui = ui;
 		if (!seesu.now_playing.link){
 			if (seesu.start_screen){
 				$('<p></p>').attr('id', 'now-play-b').append(
@@ -657,13 +676,12 @@ var render_playlist = function(pl, not_clear) { // if links present than do full
 					seesu.gena.connect(pl[i], pl, i)
 				)
 			);
+			
 		}
-	
+		make_tracklist_playable(pl);
 		if (seesu.player.autostart){
 			seesu.ui.views.save_view(pl);
 			seesu.player.autostart = false;
-		} else{
-			make_tracklist_playable(pl);
 		}
 		//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
 	

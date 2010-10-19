@@ -41,7 +41,7 @@ $(function() {
 	$(nav_playlist_page).parent().click(function(){
 		var current_page = slider.className;
 		$(slider).removeClass('show-zoom-to-track');
-		seesu.track_event('Navigation', 'playlist', current_page);
+		seesu.track_page('playlist');
 	})
 	window.nav_track_zoom = $('#nav_track_zoom');
 	window.trk_page_nav = document.getElementById('nav_tracks_page');
