@@ -38,25 +38,6 @@ var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 		}
 	}
 }
-seesu.ui.make_search_elements_index = function(remark_enter_press, after_user){
-	var search_elements = seesu.ui.views.current_rc.find('a:not(.nothing-found), button');
-	seesu.ui.views.current_rc.data('search_elements', search_elements)
-	for (var i=0 , l = search_elements.length; i < l; i++) {
-		$(search_elements[i]).data('search_element_index', i);
-	};
-	if (remark_enter_press) {
-		var active_index = seesu.ui.search_form.data('current_node_index') || 0;
-		var new_active_node = search_elements[active_index];
-		if (new_active_node) {
-			
-				var active_node = seesu.ui.views.current_rc.data('node_for_enter_press');
-				if (active_node) {
-					active_node.removeClass('active');
-				}
-				set_node_for_enter_press($(new_active_node), false, after_user);
-		}
-	}
-}
 var create_artist_suggest_item = function(artist, image){
 	var a = $("<a></a>")
 		.data('artist', artist)

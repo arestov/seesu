@@ -2,7 +2,7 @@ window.seesu_ui = function(d, els, buttons){
 	this.d = d;
 	if (els){this.els = els;}
 	if (buttons){this.buttons = buttons}
-	seesu.ui.buttons_li = {};
+	this.buttons_li = {};
 	dstates.connect_ui(this);
 }
 seesu_ui.prototype = {
@@ -335,6 +335,25 @@ seesu_ui.prototype = {
 		dstates.add_state('body', 'lfm-auth-done')
 		$('.lfm-finish input[type=checkbox]').attr('checked', 'checked');
 		$('#scrobbling-switches').find('input').attr('disabled', '');
+	},
+	make_search_elements_index: function(remark_enter_press, after_user){
+		var search_elements = seesu.ui.views.current_rc.find('a:not(.nothing-found), button');
+		seesu.ui.views.current_rc.data('search_elements', search_elements)
+		for (var i=0 , l = search_elements.length; i < l; i++) {
+			$(search_elements[i]).data('search_element_index', i);
+		};
+		if (remark_enter_press) {
+			var active_index = seesu.ui.search_form.data('current_node_index') || 0;
+			var new_active_node = search_elements[active_index];
+			if (new_active_node) {
+				
+					var active_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+					if (active_node) {
+						active_node.removeClass('active');
+					}
+					set_node_for_enter_press($(new_active_node), false, after_user);
+			}
+		}
 	},
 	views: {
 		browsing:{},

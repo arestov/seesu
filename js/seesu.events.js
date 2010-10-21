@@ -49,7 +49,7 @@ var buttons = {
 				}
 				
 			})
-
+};
 
 $(function() {
 	var artsHolder	= $('#artist-holder');
