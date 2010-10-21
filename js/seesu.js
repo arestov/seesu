@@ -8,7 +8,6 @@ window.lfm = function(){
 }
 window.seesu = window.su =  {
 	  lfm_quene: new funcs_quene(100),
-	  cross_domain_allowed: !location.protocol.match(/http/),
 	  version: 1.98,
 	  env: app_env,
 	  track_stat: (function(){
@@ -244,7 +243,7 @@ var updating_notify = function(r){
 };
 var check_seesu_updates = function(){
 	$.ajax({
-	  url: seesu.cross_domain_allowed ? 'http://seesu.me/update' : '/update',
+	  url: seesu.env.cross_domain_allowed ? 'http://seesu.me/update' : '/update',
 	  global: false,
 	  type: "POST",
 	  dataType: "json",
@@ -706,7 +705,7 @@ var get_artist_album_info = function(artist, album, callback){
 
 
 $(function(){
-	if (seesu.cross_domain_allowed && lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
+	if (seesu.env.cross_domain_allowed && lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
 	check_seesu_updates();
 	seesu.vk_id = w_storage('vkid');
 	try_mp3_providers();

@@ -292,7 +292,7 @@ window.try_hard_vk_working = function(callback){
 }
 
 try_mp3_providers = function(){
-	if (seesu.cross_domain_allowed){
+	if (seesu.env.cross_domain_allowed){
 		if (seesu.vk.id || seesu.env.chrome_extension || seesu.env.firefox_widget ) {
 			try_hard_vk_working();
 		} else{

@@ -498,7 +498,7 @@ var get_fast_suggests = function(q, callback, hash){
 };
 
 
-var suggestions_search = seesu.cross_domain_allowed ? function(q, arts_clone, track_clone ,tags_clone){
+var suggestions_search = seesu.env.cross_domain_allowed ? function(q, arts_clone, track_clone ,tags_clone){
 		
 		var hash = hex_md5(q);
 		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
@@ -600,7 +600,7 @@ var input_change = $.debounce(function(e){
 	
 	seesu.ui.search_form.data('current_node_index' , false);
 	
-	suggestions_prerender(input_value, seesu.cross_domain_allowed);
+	suggestions_prerender(input_value, seesu.env.cross_domain_allowed);
 	seesu.ui.views.show_search_results_page();
 	
 	

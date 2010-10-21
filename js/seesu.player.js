@@ -452,7 +452,7 @@ function change_volume(volume_value){
 
 
 var try_to_use_iframe_sm2p = function(remove){
-	if (!seesu.cross_domain_allowed){
+	if (!seesu.env.cross_domain_allowed){
 		return false;
 	}
 	if (remove){
@@ -611,7 +611,7 @@ if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 		$(document.body).addClass('flash-internet');
 	})
 	
-} else if (!seesu.cross_domain_allowed){ //sm2 can't be used directly in sandbox
+} else if (!seesu.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
 	soundManager = new SoundManager();
 	if (soundManager){
 		soundManager.url = 'http://seesu.me/swf/';

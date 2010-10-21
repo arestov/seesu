@@ -1,5 +1,6 @@
 window.seesu_ui = function(d){
-	this.document = d;
+	this.d = d;
+	dstates(this);
 }
 seesu_ui.prototype = {
 	show_artist: function (artist,with_search_results) {

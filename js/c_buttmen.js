@@ -29,7 +29,7 @@ var button_menu = function(jq_node){
 	}
 	
 	
-	document.documentElement.firstChild.appendChild(but_hl_style);
+	seesu.ui.d.documentElement.firstChild.appendChild(but_hl_style);
 
 	
 	

@@ -27,8 +27,78 @@ window.removeEvent = window.addEventListener ?
 	};	
 })();
 
+var addClass = function(old_c, add_c){
+	var re = new RegExp("(^|\\s)" + add_c + "(\\s|$)", "g");
+	if (old_c.match(re)) {return;}
+	return (old_c + " " + add_c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+}
+ 
+var removeClass = function(old_c, add_c){
+	var re = new RegExp("(^|\\s)" + add_c + "(\\s|$)", "g");
+	return old_c.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+}
+
+var document_states = function(d){
+	this.ui = {
+		d: d
+	};
+	this.html_el_state= d.documentElement.className;
+	this.body_state= (d.body && d.body.className) || '';
+
+};
+document_states.prototype = {
+	add_state: function(state_of, state){
+		if (state_of == 'html_el'){
+			this.html_el_state = addClass(this.html_el_state, state);
+			if (this.ui.d) {
+				this.ui.d.documentElement.className = this.html_el_state;
+			}
+			
+		} else if (state_of == 'body'){
+			this.body_state = addClass(this.body_state, state);
+			if (this.ui.d) {
+				this.ui.d.body.className = this.body_state;
+			}
+		}
+	},
+	remove_state: function(state_of, state){
+		if (state_of == 'html_el'){
+			this.html_el_state = removeClass(this.html_el_state, state);
+			if (this.ui.d) {
+				this.ui.d.documentElement.className  = this.html_el_state;
+			}
+			
+		} else if (state_of == 'body'){
+			this.body_state = removeClass(this.body_state, state);
+			if (this.ui.d) {
+				this.ui.d.body.className = this.body_state;
+			}
+		}
+	}, 
+	connect_to_ui: function(ui){
+		if (ui.d){
+			if (ui.d != this.ui.d){
+				
+				ui.d.documentElement.className = 
+					this.html_el_state = 
+						addClass(this.html_el_state, ui.d.documentElement.className);
+						
+				ui.d.body.className = 
+					this.body_state = 
+						addClass(this.body_state, ui.d.body.className );
+			}
+		}
+		this.ui = ui;
+	}
+};
+
+window.dstates = new document_states(document);
+
 window.app_env = (function(){
 	var env = {};
+	env.cross_domain_allowed = !location.protocol.match(/http/);
+	
+	
 	if (typeof widget == 'object' && !widget.fake_widget){
 		if ($.browser.opera){
 			env.app_type = 'opera_widget';
@@ -74,6 +144,17 @@ window.app_env = (function(){
 		env[env.app_type] = true;
 	}
 	
+	
+	
+	if (env.touch_support){dstates.add_state('html_el', 'touch-screen');}
+	if (env.as_application){
+		dstates.remove_state('html_el', 'not-as-application');
+		dstates.add_state('html_el', 'as-application');
+	} else{
+	
+	}
+	if (!env.unknown_app_type){dstates.add_state('html_el', env.app_type.replace('_','-'));}
+	if (env.cross_domain_allowed) {dstates.add_state('html_el', 'cross-domain-allowed')}
 	
 	
 	return env;

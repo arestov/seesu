@@ -1,12 +1,3 @@
-if (su.env.touch_support){$(document.documentElement).addClass('touch-screen');}
-if (su.env.as_application){
-	$(document.documentElement).addClass('as-application');
-} else{
-	$(document.documentElement).addClass('not-as-application');
-}
-if (!su.env.unknown_app_type){$(document.documentElement).addClass(su.env.app_type.replace('_','-'));}
-if (su.cross_domain_allowed) {$(document.documentElement).addClass('cross-domain-allowed')}
-
 $(function() {
 
 	
