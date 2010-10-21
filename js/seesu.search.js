@@ -62,7 +62,7 @@ var create_artist_suggest_item = function(artist, image){
 		.data('artist', artist)
 		.click(function(e){
 			var artist = $(this).data('artist');
-			show_artist(artist,true);
+			seesu.ui.show_artist(artist,true);
 			seesu.track_event('Music search', search_input.val(), "artist: " + artist );
 		})
 		.click(results_mouse_click_for_enter_press);

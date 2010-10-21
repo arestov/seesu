@@ -19,7 +19,7 @@ seesu.gena = { //this work with playlists
 							seesu.ui.views.restore_view();
 						} else{
 							seesu.ui.views.show_playlist_page('Custom playlist', 'cplaylist');
-							render_playlist(p)
+							create_playlist(p)
 						}
 						return false;
 					}) 
@@ -47,7 +47,9 @@ seesu.gena = { //this work with playlists
 		}
 		if (mo_titl.link) {
 			make_node_playable(mo_titl, mo_titl);
-		} 
+		} else if (mo_titl.mo_pla){
+			make_node_playable(mo_titl, mo_titl.mo_pla);
+		}
 		return $(li)
 			.data('mo_titl', mo_titl)
 			.append(play_controls.node.clone(true))
@@ -270,8 +272,8 @@ seesu.player = {
 		//time = (new Date()).getTime();
 		var artist = mo.mo_titl.artist;
 		
-		if (artist) {update_artist_info(artist, a_info);}
-		update_track_info(a_info, node);
+		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
+		seesu.ui.update_track_info(a_info, node);
 		
 		if (this.c_song) {
 			this.change_songs_ui(this.c_song, true) //remove ative state

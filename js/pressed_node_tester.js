@@ -35,7 +35,7 @@ var test_pressed_node = function(original_node, mouseup){
 		  }
 		  else if (class_name.match(/\bartist\b[^\-]/)){
 			artist_name = decodeURIComponent(clicked_node.data('artist'));
-			show_artist(artist_name);
+			seesu.ui.show_artist(artist_name);
 			seesu.track_event('Artist navigation', 'artist', artist_name);
 			return false;
 		  }
@@ -48,7 +48,7 @@ var test_pressed_node = function(original_node, mouseup){
 		  else if (class_name.match(/bbcode_artist/)){
 			
 			artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/','').replace('+', ' '));
-			show_artist(artist_name);
+			seesu.ui.show_artist(artist_name);
 			seesu.track_event('Artist navigation', 'bbcode_artist', artist_name);
 			return false;
 		  }
