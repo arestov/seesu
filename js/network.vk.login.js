@@ -22,9 +22,9 @@ var vk_login = function(login, pass, callback) {
 	  success: function(r){
 		var vk_id,vk_error;
 		if (vk_error = r.error){
-			vk_login_error.text('Wrong login or password')
+			seesu.ui.els.vk_login_error.text('Wrong login or password')
 		} else if (vk_captcha = r.captcha_sid){
-			captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
+			seesu.ui.els.captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
 			$(document.body).addClass('vk-needs-captcha');
 		} else 	if (vk_id = r.id) {
 			vk_logg_in(vk_id, r.email, r.sid, login, pass, callback);
@@ -58,7 +58,7 @@ var vk_send_captcha = function(captcha_key, login, pass, callback){
 
 			  	if (vk_captcha = r.captcha_sid){
 			  		console.log(vk_captcha)
-					captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
+					seesu.ui.els.captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
 					$(document.body).addClass('vk-needs-captcha');
 				}
 			} catch (e){

@@ -12,7 +12,7 @@ seesu.gena = { //this work with playlists
 		var p = [];
 		p.push = function(mo){
 			Array.prototype.push.call(this, mo);
-			if (!this.link && p.length > 0 && seesu.start_screen){
+			if (!this.link && p.length > 0 && seesu.ui.els.start_screen){
 				$('<p></p>').attr('id', 'cus-playlist-b').append(
 					this.link = $('<a></a>').text('Custom playlist').attr('class', 'js-serv').click(function(){
 						if (seesu.player.c_song.mo_titl.plst_titl == p){
@@ -23,7 +23,7 @@ seesu.gena = { //this work with playlists
 						}
 						return false;
 					}) 
-				).appendTo(seesu.start_screen);
+				).appendTo(seesu.ui.els.start_screen);
 			}
 			
 		}
@@ -232,7 +232,7 @@ seesu.player = {
 	set_current_song: function (mo, zoom) {
 	  var node = mo.node;
 	  if (zoom){
-		$(slider).addClass('show-zoom-to-track');
+		$(seesu.ui.els.slider).addClass('show-zoom-to-track');
 	  }
 	  if (this.c_song && (this.c_song == mo)) {
 	  	this.fix_songs_ui();
@@ -242,13 +242,13 @@ seesu.player = {
 	  } else {
 	  	
 		if (zoom){
-			$(slider).addClass('show-zoom-to-track');
+			$(seesu.ui.els.slider).addClass('show-zoom-to-track');
 		}
 		//time = (new Date()).getTime();
 		var artist = mo.mo_titl.artist;
 		
-		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
-		seesu.ui.update_track_info(a_info, node);
+		if (artist) {seesu.ui.update_artist_info(artist, seesu.ui.els.a_info);}
+		seesu.ui.update_track_info(seesu.ui.els.a_info, node);
 		
 		if (this.c_song) {
 			this.change_songs_ui(this.c_song, true) //remove ative state
@@ -263,7 +263,7 @@ seesu.player = {
 		this.change_songs_ui(mo);
 		this.fix_progress_bar(node);
 		
-		nav_track_zoom.text(( $(nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.mo_titl.track);
+		seesu.ui.els.nav_track_zoom.text(( $(seesu.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.mo_titl.track);
 		if (seesu.now_playing.link){
 			seesu.now_playing.link.siblings('span').remove();
 			seesu.now_playing.link.after($('<span></span>').text(": " + 
@@ -397,7 +397,7 @@ seesu.player.events.progress_loading=function(progress_value, total){
 
 // Click by song
 seesu.player.song_click = function(mo) {
-  var zoomed = !!slider.className.match(/show-zoom-to-track/);
+  var zoomed = !!seesu.ui.els.slider.className.match(/show-zoom-to-track/);
   if (this.c_song && mo == this.c_song){
   	seesu.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
   } else if (this.current_next_song && mo == this.current_next_song){

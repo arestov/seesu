@@ -86,8 +86,8 @@ var test_pressed_node = function(original_node, mouseup){
 		  }
 		  else if (class_name.match(/hint-query/)){
 		  	var query = clicked_node.text();
-		  	search_input.val(query);
-			input_change(search_input[0]);
+		  	seesu.ui.els.search_input.val(query);
+			input_change(seesu.ui.els.search_input[0]);
 		  	clicked_node.text(seesu.popular_artists[(Math.random()*10).toFixed(0)]);
 		  	seesu.track_event('Navigation', 'hint artist');
 		  	return false;

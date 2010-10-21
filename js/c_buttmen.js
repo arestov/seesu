@@ -4,7 +4,7 @@ var button_menu = function(jq_node){
 	this.sectors = 20;
 	this.node.data('buttmen', this);
 	
-	var but_hl_style = document.createElement('style');
+	var but_hl_style = seesu.ui.d.createElement('style');
 		but_hl_style.setAttribute('title', 'button_menu');
 		but_hl_style.setAttribute('type', 'text/css');
 	
@@ -23,7 +23,7 @@ var button_menu = function(jq_node){
 	};
 
 	if (!but_hl_style.styleSheet){
-		but_hl_style.appendChild(document.createTextNode(style));
+		but_hl_style.appendChild(seesu.ui.d.createTextNode(style));
 	} else{
 		but_hl_style.styleSheet.cssText = style;
 	}
@@ -78,7 +78,7 @@ button_menu.prototype = {
 				_tr('buttons are here');
 				$(this).unbind('mouseleave');
 			});
-			$(document).mouseup(function(e){
+			$(seesu.ui.d).mouseup(function(e){
 				clearTimeout(stat);
 				e.preventDefault();
 				butt_main.unbind('mouseleave');
@@ -89,8 +89,8 @@ button_menu.prototype = {
 					_tr('some button was pressed');
 				},10);
 				
-				$(document).unbind('mouseup');
-				$(document).unbind('mousemove');
+				$(seesu.ui.d).unbind('mouseup');
+				$(seesu.ui.d).unbind('mousemove');
 				
 				return test_pressed_node(e.target, true)
 			})
@@ -108,7 +108,7 @@ button_menu.prototype = {
 			var sector_vertical = height/_this.data('buttmen').sectors;
 			var sector_horizontal = width/_this.data('buttmen').sectors;
 			
-			$(document).mousemove(function(e){
+			$(seesu.ui.d).mousemove(function(e){
 				e.preventDefault();
 				var x = e.pageX;
 				var y = e.pageY;
@@ -139,7 +139,7 @@ button_menu.prototype = {
 		mousemove: function(e){
 			e.preventDefault();
 			if (window.getSelection) { window.getSelection().removeAllRanges(); } else 
-			if (document.selection && document.selection.clear) {document.selection.clear();}
+			if (seesu.ui.d.selection && seesu.ui.d.selection.clear) {seesu.ui.d.selection.clear();}
 		}
 	}
 }

@@ -15,10 +15,10 @@ var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 	}
 	seesu.ui.views.current_rc.data('node_for_enter_press', node.addClass('active'));
 	if (scroll_to_node){
-		var scroll_up = seesu.ui.scrolling_viewport.scrollTop();
-		var scrolling_viewport_height = seesu.ui.scrolling_viewport.height();
+		var scroll_up = seesu.ui.els.scrolling_viewport.scrollTop();
+		var scrolling_viewport_height = seesu.ui.els.scrolling_viewport.height();
 		
-		var container_postion = scroll_up + searchres.position().top;
+		var container_postion = scroll_up + seesu.ui.els.searchres.position().top;
 		
 		var node_position = node.parent().position().top + container_postion;
 		
@@ -31,10 +31,10 @@ var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 		if ( view_pos_down > scroll_down){
 			
 			var new_position =  view_pos_down - scrolling_viewport_height/2;
-			seesu.ui.scrolling_viewport.scrollTop(new_position);
+			seesu.ui.els.scrolling_viewport.scrollTop(new_position);
 		} else if (view_pos_down < scroll_up){
 			var new_position =  view_pos_down - scrolling_viewport_height/2;
-			seesu.ui.scrolling_viewport.scrollTop(new_position);
+			seesu.ui.els.scrolling_viewport.scrollTop(new_position);
 		}
 	}
 }
@@ -63,7 +63,7 @@ var create_artist_suggest_item = function(artist, image){
 		.click(function(e){
 			var artist = $(this).data('artist');
 			seesu.ui.show_artist(artist,true);
-			seesu.track_event('Music search', search_input.val(), "artist: " + artist );
+			seesu.track_event('Music search', seesu.ui.els.search_input.val(), "artist: " + artist );
 		})
 		.click(results_mouse_click_for_enter_press);
 	
@@ -78,7 +78,7 @@ var create_track_suggest_item = function(artist, track, image, duration){
 		.click(function(e){
 			var query = $(this).data('artist') + ' - ' + $(this).data('track_title');
 			show_track(query, true);
-			seesu.track_event('Music search', search_input.val(), "track: " + query );
+			seesu.track_event('Music search', seesu.ui.els.search_input.val(), "track: " + query );
 		})
 		.click(results_mouse_click_for_enter_press);
 	
@@ -98,7 +98,7 @@ var create_tag_suggest_item = function(tag){
 		.click(function(e){
 			var tag = $(this).data('tag');
 			show_tag(tag, true)
-			seesu.track_event('Music search', search_input.val(), "tag: " + tag );
+			seesu.track_event('Music search', seesu.ui.els.search_input.val(), "tag: " + tag );
 		})
 		.click(results_mouse_click_for_enter_press)
 		.append("<span>" + tag + "</span>");
@@ -109,7 +109,7 @@ var show_artists_results = function(r, start, end){
 	var ul = seesu.ui.arts_results_ul;
 	
 	var source_query = r.results['@attr']['for'];
-	if (search_input.val() != source_query ){
+	if (seesu.ui.els.search_input.val() != source_query ){
 		return
 	}
 	
@@ -189,7 +189,7 @@ var show_tags_results = function(r, start, end){
 	if (!r) {return}
 	
 	var source_query = r.results['@attr']['for'];
-	if (search_input.val() != source_query ){
+	if (seesu.ui.els.search_input.val() != source_query ){
 		return
 	}
 	
@@ -250,7 +250,7 @@ var show_tracks_results = function(r, start, end){
 	
 	
 	var source_query = r.results['@attr']['for'];
-	if (search_input.val() != source_query ){
+	if (seesu.ui.els.search_input.val() != source_query ){
 		return
 	}
 	
@@ -315,60 +315,6 @@ var show_tracks_results = function(r, start, end){
 	}
 }
 
-seesu.ui.buttons_li = {};
-seesu.ui.buttons = {
-	search_artists : 
-		$('<button type="submit" name="type" value="artist" id="search-artist"><span>Search in artists</span></button>')
-			.click(function(e){
-				var finishing_results = $(this).data('finishing_results');
-				$(this).parent().remove();
-				var query = search_input.val();
-				if (query) {
-					artist_search(query, finishing_results);
-				}
-				seesu.ui.make_search_elements_index()
-			}),
-		
-	search_tags:  
-		$('<button type="submit" name="type" value="tag" id="search-tag"><span>Search in tags</span></button>')
-			.click(function(e){
-				var finishing_results = $(this).data('finishing_results');
-				$(this).parent().remove();
-				
-				
-				var query = search_input.val();
-				if (query) {
-					tag_search(query, finishing_results)
-				}
-				seesu.ui.make_search_elements_index()
-			}),
-	search_tracks: 
-		$('<button type="submit" name="type" value="track" id="search-track"><span>Search in tracks</span></button>')
-			.click(function(e){
-				var finishing_results = $(this).data('finishing_results');
-				$(this).parent().remove();
-				
-				
-				
-				
-				var query = search_input.val();
-				if (query) {
-					track_search(query, finishing_results)
-				}
-				seesu.ui.make_search_elements_index()
-			}),
-	search_vkontakte: 
-		$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>Use dirty search</span></button>')
-			.click(function(e){
-				
-				var query = search_input.val();
-				if (query) {
-					show_track(query)
-				}
-				
-			})
-	
-}
 
 var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_clone){
 	if (!r) {return false;}

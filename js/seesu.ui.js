@@ -1,5 +1,8 @@
-window.seesu_ui = function(d){
+window.seesu_ui = function(d, els, buttons){
 	this.d = d;
+	if (els){this.els = els;}
+	if (buttons){this.buttons = buttons}
+	seesu.ui.buttons_li = {};
 	dstates.connect_ui(this);
 }
 seesu_ui.prototype = {
@@ -244,7 +247,7 @@ seesu_ui.prototype = {
 		if (!not_clear){
 			ui.empty();
 		}
-		make_trs.show().data('pl', _sui.views.browsing.mpl = pl);
+		seesu.ui.els.make_trs.show().data('pl', _sui.views.browsing.mpl = pl);
 		if (!pl){
 			$(ul).append('<li>Nothing found</li>');
 		} else {
@@ -341,14 +344,14 @@ seesu_ui.prototype = {
 			if (this.browsing.search_results){
 				return (this.current_rc = this.browsing.search_results);
 			} else {
-				return (this.current_rc = this.browsing.search_results = $('<div class="search-results-container current-src"></div').appendTo(searchres));
+				return (this.current_rc = this.browsing.search_results = $('<div class="search-results-container current-src"></div').appendTo(seesu.ui.els.searchres));
 			}
 		},
 		get_playlist_c:function(){
 			if (this.browsing.playlist){
 				return this.browsing.playlist;
 			} else {
-				return (this.browsing.playlist = $('<ul class="tracks-c current-tracks-c"></ul>').appendTo(artsTracks));
+				return (this.browsing.playlist = $('<ul class="tracks-c current-tracks-c"></ul>').appendTo(seesu.ui.els.artsTracks));
 			}
 		},
 		save_view: function(pl, not_make_playable){
@@ -431,19 +434,19 @@ seesu_ui.prototype = {
 			}
 		},
 		show_now_playing: function(){
-			var current_page = slider.className;
+			var current_page = seesu.ui.els.slider.className;
 			this.restore_view();
 			seesu.track_event('Navigation', 'now playing', current_page);
 		},
 		show_start_page: function(focus_to_input, log_navigation){
 			var _s;
 			if (log_navigation){
-				_s = slider.className;
+				_s = seesu.ui.els.slider.className;
 			}
-			slider.className = "show-start";
+			seesu.ui.els.slider.className = "show-start";
 			if (focus_to_input){
-				search_input[0].focus();
-				search_input[0].select();
+				seesu.ui.els.search_input[0].focus();
+				seesu.ui.els.search_input[0].select();
 			}
 			if (log_navigation){
 				seesu.track_page('start page');
@@ -455,9 +458,9 @@ seesu_ui.prototype = {
 		show_search_results_page: function(without_input, log_navigation){
 			var _s;
 			if (log_navigation){
-				_s = slider.className;
+				_s = seesu.ui.els.slider.className;
 			}
-			slider.className = (without_input ? '' : 'show-search ') + "show-search-results";
+			seesu.ui.els.slider.className = (without_input ? '' : 'show-search ') + "show-search-results";
 			if (log_navigation){
 				seesu.track_page('search results');
 			}
@@ -466,11 +469,11 @@ seesu_ui.prototype = {
 			var _sui = this;
 			if (show_playing){
 				this.show_playing();
-				make_trs.show().data('pl', this.playing.mpl);
+				seesu.ui.els.make_trs.show().data('pl', this.playing.mpl);
 			} else {
 				this.hide_playing();
 				this.show_browsing();
-				make_trs.show().data('pl', this.browsing.mpl);
+				seesu.ui.els.make_trs.show().data('pl', this.browsing.mpl);
 			}
 
 			if (playlist_title){
@@ -481,10 +484,10 @@ seesu_ui.prototype = {
 			}
 			if (with_search_results_link) {
 				this.browsing.with_search_results_link = true;
-				seesu.now_playing.nav = slider.className = 'show-full-nav show-player-page';
+				seesu.now_playing.nav = seesu.ui.els.slider.className = 'show-full-nav show-player-page';
 			} else {
 				this.browsing.with_search_results_link = false;
-				seesu.now_playing.nav = slider.className = 'show-player-page';
+				seesu.now_playing.nav = seesu.ui.els.slider.className = 'show-player-page';
 			}
 		}
 	}

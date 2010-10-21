@@ -287,7 +287,7 @@ var make_external_playlist = function(){
 		}
 		
 		seesu.player.current_external_playlist = new external_playlist(simple_playlist);
-		export_playlist.attr('href', seesu.player.current_external_playlist.data_uri);
+		seesu.ui.els.export_playlist.attr('href', seesu.player.current_external_playlist.data_uri);
 		
 	}
 };
@@ -365,7 +365,7 @@ var reset_q = function(){
 			seesu.delayed_search.use.quene.reset();
 		} 
 		seesu.delayed_search.tracks_waiting_for_search = 0;
-		art_tracks_w_counter.text('');
+		seesu.ui.els.art_tracks_w_counter.text('');
 	return mp3_prov_quene;
 }
 var make_tracklist_playable = function(pl, full_allowing, reset){

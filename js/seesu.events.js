@@ -1,58 +1,105 @@
-$(function() {
+var buttons = {
+	search_artists : 
+		$('<button type="submit" name="type" value="artist" id="search-artist"><span>Search in artists</span></button>')
+			.click(function(e){
+				var finishing_results = $(this).data('finishing_results');
+				$(this).parent().remove();
+				var query = seesu.ui.els.search_input.val();
+				if (query) {
+					artist_search(query, finishing_results);
+				}
+				seesu.ui.make_search_elements_index()
+			}),
+		
+	search_tags:  
+		$('<button type="submit" name="type" value="tag" id="search-tag"><span>Search in tags</span></button>')
+			.click(function(e){
+				var finishing_results = $(this).data('finishing_results');
+				$(this).parent().remove();
+				
+				
+				var query = seesu.ui.els.search_input.val();
+				if (query) {
+					tag_search(query, finishing_results)
+				}
+				seesu.ui.make_search_elements_index()
+			}),
+	search_tracks: 
+		$('<button type="submit" name="type" value="track" id="search-track"><span>Search in tracks</span></button>')
+			.click(function(e){
+				var finishing_results = $(this).data('finishing_results');
+				$(this).parent().remove();
+				
+				
+				
+				
+				var query = seesu.ui.els.search_input.val();
+				if (query) {
+					track_search(query, finishing_results)
+				}
+				seesu.ui.make_search_elements_index()
+			}),
+	search_vkontakte: 
+		$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>Use dirty search</span></button>')
+			.click(function(e){
+				
+				var query = seesu.ui.els.search_input.val();
+				if (query) {
+					show_track(query)
+				}
+				
+			})
 
+
+$(function() {
+	var artsHolder	= $('#artist-holder');
+	
+	seesu.ui = new seesu_ui(document,  {
+		scrolling_viewport: $('#screens'),
+		make_trs: $("#make-trs-plable").click(function(){
+			make_tracklist_playable(make_trs.hide().data('pl'), true);
+			seesu.track_event('Controls', 'make playable all tracks in playlist'); 
+		}),
+		slider: document.getElementById('slider'),
+		nav_playlist_page: document.getElementById('nav_playlist_page'),
+		nav_track_zoom: $('#nav_track_zoom'),
+		export_playlist: $('#open-external-playlist'),
+		start_screen: $('#start-screen'),
+		artsHolder: artsHolder,
+		a_info: $('.artist-info', artsHolder),
+		artsTracks: $('.tracks-for-play',artsHolder),
+		art_tracks_w_counter: $('#tracks-waiting-for-search'),
+		vk_login_error: $('.error',vk_auth),
+		captcha_img: $('.vk-captcha-context img',vk_auth),
+		searchres: $('#search_result'),
+		search_input: $('#q').keyup(input_change).mousemove(input_change).change(input_change)
+	}, buttons);
 	
 
 	$(document).click(function(e) {
-		return test_pressed_node(e.target)
+		return test_pressed_node(e.target);
 	});
-	seesu.ui.scrolling_viewport = $('#screens');
+	
 	flash_secur = $('#flash-secur');
-
-	$('#hint-query').text(seesu.popular_artists[(Math.random()*10).toFixed(0)])
-	var wgt_urli = $('#widget-url').val(location.href.replace('index.html', ''));
+	$('#hint-query').text(seesu.popular_artists[(Math.random()*10).toFixed(0)]);
+	$('#widget-url').val(location.href.replace('index.html', ''));
 	window.seesu_me_link = $('#seesu-me-link');
-	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', seesu.env.app_type))
+	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', seesu.env.app_type));
 	
-	
-	window.make_trs = $("#make-trs-plable").click(function(){
-		
-		make_tracklist_playable(make_trs.hide().data('pl'), true);
-		seesu.track_event('Controls', 'make playable all tracks in playlist'); 
-	});
-		  	
-	//see var at top
-	window.slider = document.getElementById('slider');
-	window.startlink = document.getElementById('start_search');
-	startlink.onclick = function(){
-		
+	$('#start_search').click(function(){
 		seesu.ui.views.show_start_page(true, true);
-	};
-	
-	window.nav_playlist_page = document.getElementById('nav_playlist_page');
-	$(nav_playlist_page).parent().click(function(){
-		var current_page = slider.className;
-		$(slider).removeClass('show-zoom-to-track');
+	});
+	$(seesu.ui.els.nav_playlist_page).parent().click(function(){
+		$(seesu.ui.els.slider).removeClass('show-zoom-to-track');
 		seesu.track_page('playlist');
-	})
-	window.nav_track_zoom = $('#nav_track_zoom');
-	window.trk_page_nav = document.getElementById('nav_tracks_page');
-	
-	window.search_nav = $('#search_result_nav').click(function(){
+	});
+	$('#search_result_nav').click(function(){
 		seesu.ui.views.show_search_results_page(true, true);
 	});
-	window.export_playlist = $('#open-external-playlist');
-	seesu.start_screen = $('#start-screen');
-	
-	window.artsHolder	= $('#artist-holder');
-	window.a_info		= $('.artist-info', artsHolder)
-	
-	window.artsTracks	= $('.tracks-for-play',artsHolder);
-	window.art_tracks_w_counter = $('#tracks-waiting-for-search');
-	
-	window.track_panel = $('#track-panel');
 	
 	
-	window.vk_save_pass = $('#vk-save-pass');
+	
+	var vk_save_pass = $('#vk-save-pass');
 	
 	  
   	if ($.browser.opera && ((typeof opera.version == 'function') && (parseFloat(opera.version()) <= 10.1)) ){
@@ -61,24 +108,20 @@ $(function() {
 			.click(function(){
 				window.close();
 			})
-			.prependTo(slider)
+			.prependTo(seesu.ui.els.slider)
 	}
   
 	
 	
 	
 	
-	var flash_settings = $('.internet-flash-settings input');
-		
-	flash_settings.click(function(){
-		
-	});
+
 	
 
 	
 	
 	var vk_auth = $('.vk-auth').submit(function(){
-		vk_login_error.text('');
+		seesu.ui.els.vk_login_error.text('');
 		$(document.body).removeClass('vk-needs-captcha');
 		var _this = $(this),
 			email = $('input.vk-email',_this).val(),
@@ -94,8 +137,7 @@ $(function() {
 
 		return false;
 	});
-	captcha_img = $('.vk-captcha-context img',vk_auth);
-	vk_login_error = $('.error',vk_auth);
+	
 
 	if (lfm_scrobble.scrobbling) {
 		var lfm_ssw = $('#scrobbling-switches');
@@ -190,19 +232,14 @@ $(function() {
 
 
 
-	window.searchres = $('#search_result');
-	window.search_input = $('#q')
-		.keyup(input_change)
-		.mousemove(input_change)
-		.change(input_change);
 	if (document.activeElement.nodeName != 'INPUT') {
-		search_input[0].focus();
+		seesu.ui.els.search_input[0].focus();
 	}
 	seesu.ui.search_form = $('#search').submit(function(){return false;});
 	$('#app_type', seesu.ui.search_form).val(seesu.env.app_type);
 	if (seesu.ui.search_form) {
 		$(document).keydown(function(e){
-			if (!slider.className.match(/show-search-results/)) {return}
+			if (!seesu.ui.els.slider.className.match(/show-search-results/)) {return}
 			if (document.activeElement.nodeName == 'BUTTON'){return}
 			var _key = e.keyCode;
 			if (_key == '13'){
@@ -251,9 +288,9 @@ $(function() {
 		})
 	}
 	
-	var ext_search_query = search_input.val();
+	var ext_search_query = seesu.ui.els.search_input.val();
 	if (ext_search_query) {
-		input_change(search_input[0])
+		input_change(seesu.ui.els.search_input[0])
 	}
 });
 
@@ -273,7 +310,7 @@ $(function() {
 	seesu.ui.player_holder = $('<div class="player-holder"></div>')
 		.prepend(seesu.player.controls.track_progress_total)
 		.prepend(seesu.player.controls.volume_state);
-	track_panel.prepend(seesu.ui.player_holder);
+	$('#track-panel').prepend(seesu.ui.player_holder);
 });
 
 
