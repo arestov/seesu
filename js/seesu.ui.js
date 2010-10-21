@@ -272,6 +272,11 @@ seesu_ui.prototype = {
 			return true;
 		}
 	},
+	lfm_logged : function(){
+		dstates.add_state('body', 'lfm-auth-done')
+		$('.lfm-finish input[type=checkbox]').attr('checked', 'checked');
+		$('#scrobbling-switches').find('input').attr('disabled', '');
+	},
 	views: {
 		browsing:{},
 		playing:false,

@@ -106,7 +106,7 @@ $(function() {
 	}
 	
 	if (lfm_auth.sk) {
-		lfm_auth.ui_logged();	
+		seesu.ui.lfm_logged();	
 	}
 	
 	open_lfm_to_login = function(token){

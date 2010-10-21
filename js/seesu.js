@@ -208,17 +208,13 @@ lfm_auth = {};
 
 lfm_auth.sk = w_storage('lfmsk') || false;
 lfm_auth.user_name = w_storage('lfm_user_name') || false;
-lfm_auth.ui_logged = function(){
-	$(document.body).addClass('lfm-auth-done');
-	$('.lfm-finish input[type=checkbox]').attr('checked', 'checked');
-	$('#scrobbling-switches').find('input').attr('disabled', '');
-};
+
 lfm_auth.login = function(r){
 	lfm_auth.sk = r.session.key;
 	lfm_auth.user_name = r.session.name;
 	w_storage('lfm_user_name', lfm_auth.user_name, true);
 	w_storage('lfmsk', lfm_auth.sk, true);
-	lfm_auth.ui_logged();
+	seesu.ui.lfm_logged();
 };
 var updating_notify = function(r){
 	if (!r){return;}
