@@ -1,4 +1,4 @@
-body.as-application{
+.opera_widget.as-application body{
 	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
 	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 	
@@ -6,22 +6,22 @@ body.as-application{
 	overflow:hidden;
 }
 
-
-html.as-application{
+ 
+html.as-application.opera_widget{
 	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
 	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
 	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
 
 
-#slider{
+ #slider{
 	position:static ;
 	padding:0 0 0;
 }
 
 
 	
-	#slider .screens{
+	 #slider .screens{
 		
 		
 		padding:13px 10px 0px;

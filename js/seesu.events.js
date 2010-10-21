@@ -1,3 +1,6 @@
+if (!window.window_resized){
+	//window_resizer(document);
+}
 var buttons = {
 	search_artists : 
 		$('<button type="submit" name="type" value="artist" id="search-artist"><span>Search in artists</span></button>')
@@ -50,10 +53,48 @@ var buttons = {
 				
 			})
 };
+seesu.player.controls = (function(volume){
+	var o = {};
+	var get_click_position = function(e, node){
+		var pos = e.offsetX || (e.pageX - $(node).offset().left);
+		return pos
+	}
+	o.track_progress_total = $('<div class="track-progress"></div>').click(function(e){
+		e.stopPropagation();
+		var pos = get_click_position(e, this);
+		var new_play_position_factor = pos/o.track_progress_width;
+		seesu.player.musicbox.set_new_position(new_play_position_factor);
+		
+	})//.prependTo(player_holder);
+	
+	o.track_progress_load = $('<div class="track-load-progress"></div>').appendTo(o.track_progress_total);
+	o.track_progress_play = $('<div class="track-play-progress"></div>').appendTo(o.track_progress_total);
+	o.track_node_text = $('<div class="track-node-text"><div>').appendTo(o.track_progress_total);
+	
+	
+	o.volume_state = $('<div class="volume-state"></div>').click(function(e){
+		var pos = get_click_position(e, this);
+		var new_volume_factor = pos/50;
+		seesu.player.musicbox.changhe_volume(new_volume_factor * 100);
+		seesu.player.call_event(VOLUME, new_volume_factor * 100);
+		
+		o.volume_state_position.css('width', pos + 'px')
+	})//.prependTo(player_holder);
+	o.volume_state_position = $('<div class="volume-state-position"></div>')
+		.css('width',((volume * 50)/100) + 'px')
+		.appendTo(o.volume_state);
+	return o;
+})(seesu.player.player_volume);
 
 $(function() {
 	var artsHolder	= $('#artist-holder');
+	var buttmen_node =  $('.play-controls.buttmen');
+	if (buttmen_node){
+		seesu.buttmen = new button_menu(buttmen_node);
+	}
 	
+	
+	console.log('aaad' + Math.random()) 
 	seesu.ui = new seesu_ui(document,  {
 		scrolling_viewport: $('#screens'),
 		make_trs: $("#make-trs-plable").click(function(){
@@ -72,7 +113,8 @@ $(function() {
 		vk_login_error: $('.error',vk_auth),
 		captcha_img: $('.vk-captcha-context img',vk_auth),
 		searchres: $('#search_result'),
-		search_input: $('#q').keyup(input_change).mousemove(input_change).change(input_change)
+		search_input: $('#q').keyup(input_change).mousemove(input_change).change(input_change),
+		play_controls: seesu.buttmen
 	}, buttons);
 	
 
@@ -294,14 +336,7 @@ $(function() {
 	}
 });
 
-$(function(){
-	var buttmen_node =  $('.play-controls.buttmen');
-	if (buttmen_node){
-		seesu.buttmen = new button_menu(buttmen_node)
-	}
-	
-	window.play_controls = seesu.buttmen;
-})
+
 
 
 // Ready? Steady? Go!

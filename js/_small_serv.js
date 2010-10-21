@@ -27,10 +27,19 @@ window.removeEvent = window.addEventListener ?
 	};	
 })();
 
-var addClass = function(old_c, add_c){
-	var re = new RegExp("(^|\\s)" + add_c + "(\\s|$)", "g");
-	if (old_c.match(re)) {return;}
-	return (old_c + " " + add_c).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+var addClass = function(old_c, cl){
+	
+	var add_c = cl.split(' ');
+	var new_c = old_c;
+	for (var i=0; i < add_c.length; i++) {
+		var re = new RegExp("(^|\\s)" + add_c[i] + "(\\s|$)", "g");
+		if (!old_c.match(re)){
+			var b = (" " + add_c[i]);
+			console.log()
+			new_c = (new_c + " " + add_c[i]).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
+		}
+	};
+	return new_c;
 }
  
 var removeClass = function(old_c, add_c){
@@ -42,7 +51,7 @@ var document_states = function(d){
 	this.ui = {
 		d: d
 	};
-	this.html_el_state= d.documentElement.className;
+	this.html_el_state= d.documentElement.className || '';
 	this.body_state= (d.body && d.body.className) || '';
 
 };
@@ -78,14 +87,31 @@ document_states.prototype = {
 	connect_ui: function(ui){
 		if (ui.d){
 			if (ui.d != this.ui.d){
+				if (!!ui.d.documentElement.className){
+					console.log('documentElement.className: ' + ui.d.documentElement.className)
+					var va = addClass(this.html_el_state, ui.d.documentElement.className || '');
 				
-				ui.d.documentElement.className = 
-					this.html_el_state = 
-						addClass(this.html_el_state, ui.d.documentElement.className);
+					console.log('summ of classes: ' + va)
+					
+					
+					ui.d.documentElement.className =  this.html_el_state = va;
+				} else{
+					ui.d.documentElement.className =  this.html_el_state;
+				}
+				
+				if (!!ui.d.body.className){
+					console.log(ui.d.body.className)
+					var da = addClass(this.body_state, ui.d.body.className || '');
+				
+					console.log(da)
+					ui.d.body.className = this.body_state = da;
+				} else{
+					ui.d.body.className = this.body_state;
+				}
+				
+				
+				
 						
-				ui.d.body.className = 
-					this.body_state = 
-						addClass(this.body_state, ui.d.body.className );
 			}
 		}
 		this.ui = ui;
@@ -109,7 +135,7 @@ window.app_env = (function(){
 	} else
 	if (typeof chrome === 'object' && location.protocol == 'chrome-extension:'){
 		env.app_type = 'chrome_extension';
-		env.as_application = false;
+		env.as_application = true;
 	} else
 	if (location.protocol.match(/http/)){
 		env.app_type = 'web_app';
@@ -148,10 +174,10 @@ window.app_env = (function(){
 	
 	if (env.touch_support){dstates.add_state('html_el', 'touch-screen');}
 	if (env.as_application){
-		dstates.remove_state('html_el', 'not-as-application');
+		
 		dstates.add_state('html_el', 'as-application');
 	} else{
-	
+		dstates.add_state('html_el', 'not-as-application');
 	}
 	if (!env.unknown_app_type){dstates.add_state('html_el', env.app_type.replace('_','-'));}
 	if (env.cross_domain_allowed) {dstates.add_state('html_el', 'cross-domain-allowed')}
