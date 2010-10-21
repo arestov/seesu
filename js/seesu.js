@@ -86,9 +86,7 @@ window.seesu = window.su =  {
 		link: null,
 		nav: null
 	  },
-	  ui: {
-		new seesu_ui(document)
-	  },
+	  ui: new seesu_ui(document),
 	  xhrs: {},
 	  soundcloud_quene: new funcs_quene(200, 1000 , 7),
 	  hypnotoad: {
@@ -503,7 +501,6 @@ var empty_song_click = function(){
 
 
 var create_playlist =  function(pl, not_clear){
-	var _sui = this;
 	if (!pl){
 		seesu.ui.render_playlist();
 	} else{
@@ -513,12 +510,11 @@ var create_playlist =  function(pl, not_clear){
 		}
 		
 		if (seesu.player.autostart){
-			_sui.views.save_view(pl);
+			seesu.ui.views.save_view(pl);
 			seesu.player.autostart = false;
 		}
 		make_tracklist_playable(pl);
-		_sui.render_playlist(pl, not_clear);
-		
+		seesu.ui.render_playlist(pl, not_clear);
 	}
 	
 }
