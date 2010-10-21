@@ -404,57 +404,19 @@ var make_tracklist_playable = function(pl, full_allowing, reset){
 	}
 };
 var make_node_playable = function(mo, music_object){
-
-
-	if (mo.mo_pla && mo.node){
-		node.find('a.song-duration').remove();
-	}
 	mo.not_use = false;
-	
-	var playable_node = mo.node && mo.node
-		.addClass('song')
-		.removeClass('search-mp3-failed')
-		.removeClass('waiting-full-render')
-		.data('mo_pla', music_object)
-		.unbind()
-		.click(function(){
-			seesu.ui.views.save_view(mo.plst_titl);
-			seesu.player.song_click(music_object);
-		}) || false;
-
 	(mo.mo_pla = music_object).mo_titl = mo;
-	if (playable_node){
-		music_object.node = playable_node;
-	}
-	
-		
-
 	var playlist_length = mo.plst_pla.push(music_object);
 	music_object.number_in_playlist =  playlist_length-1;
-	
 	resort_plst(mo.plst_pla);
-	
-	if (playable_node){
-		if (music_object.from != 'vk_api'){
-			var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  music_object.link });
-			mp3.insertBefore(playable_node);
-		} else{
-			playable_node.addClass('mp3-download-is-not-allowed');
-		}
-	}
-	
-	
-	if(playable_node){
-		if (music_object.duration) {
-			var digits = music_object.duration % 60;
-			var track_dur = (Math.round(music_object.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-			playable_node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
-		}
-	}
-	
-	
 	mo.ready_for_play = true;
-	
+
+	if (mo.node){
+		seesu.ui.make_pl_element_playable(mo);
+	}
+	if (playlist_length == 2) {
+		seesu.player.fix_songs_ui();
+	}
 	
 	if (mo.want_to_play == seesu.player.want_to_play) {
 		if (seesu.player.wainter_for_play == mo) {
@@ -462,10 +424,8 @@ var make_node_playable = function(mo, music_object){
 		}
 		
 	}
-
-	if (playlist_length == 2) {
-		seesu.player.fix_songs_ui();
-	}
+	
+	
 	
 };
 
@@ -508,8 +468,9 @@ var create_playlist =  function(pl, not_clear){
 			seesu.ui.views.save_view(pl);
 			seesu.player.autostart = false;
 		}
-		make_tracklist_playable(pl);
 		seesu.ui.render_playlist(pl, not_clear);
+		make_tracklist_playable(pl);
+		
 	}
 	
 }

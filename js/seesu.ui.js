@@ -1,6 +1,6 @@
 window.seesu_ui = function(d){
 	this.d = d;
-	dstates(this);
+	dstates.connect_ui(this);
 }
 seesu_ui.prototype = {
 	show_artist: function (artist,with_search_results) {
@@ -260,10 +260,13 @@ seesu_ui.prototype = {
 				
 			}
 			for (var i=0, l = pl.length; i < l; i++) {
-				pl.ui.append(
-					seesu.gena.create_playlist_element(pl[i])
-				);
 				
+				pl.ui.append(
+					_sui.create_playlist_element(pl[i])
+				);
+				if (pl[i].mo_pla){
+					_sui.make_pl_element_playable(pl[i]);
+				}
 			}
 			
 			//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
@@ -271,6 +274,59 @@ seesu_ui.prototype = {
 			
 			return true;
 		}
+	},
+	make_pl_element_playable: function(mo){
+		mo.mo_pla.node = mo.node;
+		mo.node
+			.find('a.song-duration').remove().end()
+			.addClass('song')
+			.removeClass('search-mp3-failed')
+			.removeClass('waiting-full-render')
+			.data('mo_pla', mo.mo_pla)
+			.unbind()
+			.click(function(){
+				seesu.ui.views.save_view(mo.plst_titl);
+				seesu.player.song_click(mo.mo_pla);
+			});
+		
+		if (mo.mo_pla.from != 'vk_api'){
+			var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  mo.mo_pla.link });
+			mp3.insertBefore(mo.node);
+		} else{
+			mo.node.addClass('mp3-download-is-not-allowed');
+		}
+		
+		if (mo.mo_pla.duration) {
+			var digits = mo.mo_pla.duration % 60;
+			var track_dur = (Math.round(mo.mo_pla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+			mo.node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
+		}
+	},
+	create_playlist_element: function(mo_titl){
+		var track = $("<a></a>")
+			.data('mo_titl', mo_titl)
+			.data('artist_name', mo_titl.artist)
+			.addClass('track-node waiting-full-render')
+			.click(empty_song_click),
+			li = document.createElement('li');
+			
+		
+		mo_titl.node = track;
+		
+		if (!!mo_titl.track){
+			track.text(mo_titl.artist + ' - ' + mo_titl.track);
+		} else{
+			track.text(mo_titl.artist);
+		}
+		if (mo_titl.link) {
+			make_node_playable(mo_titl, mo_titl);
+		} else if (mo_titl.mo_pla){
+			make_node_playable(mo_titl, mo_titl.mo_pla);
+		}
+		return $(li)
+			.data('mo_titl', mo_titl)
+			.append(play_controls.node.clone(true))
+			.append(track);
 	},
 	lfm_logged : function(){
 		dstates.add_state('body', 'lfm-auth-done')

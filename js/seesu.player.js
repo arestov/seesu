@@ -29,32 +29,7 @@ seesu.gena = { //this work with playlists
 		}
 		return p;
 		})(),
-	create_playlist_element : function(mo_titl){
-		var track = $("<a></a>")
-			.data('mo_titl', mo_titl)
-			.data('artist_name', mo_titl.artist)
-			.addClass('track-node waiting-full-render')
-			.click(empty_song_click),
-			li = document.createElement('li');
-			
-		
-		mo_titl.node = track;
-		
-		if (!!mo_titl.track){
-			track.text(mo_titl.artist + ' - ' + mo_titl.track);
-		} else{
-			track.text(mo_titl.artist);
-		}
-		if (mo_titl.link) {
-			make_node_playable(mo_titl, mo_titl);
-		} else if (mo_titl.mo_pla){
-			make_node_playable(mo_titl, mo_titl.mo_pla);
-		}
-		return $(li)
-			.data('mo_titl', mo_titl)
-			.append(play_controls.node.clone(true))
-			.append(track);
-	},clear: function(mo_titl, full){
+	clear: function(mo_titl, full){
 		delete mo_titl.fetch_started;
 		delete mo_titl.not_use;
 		delete mo_titl.node;
@@ -79,7 +54,7 @@ seesu.gena = { //this work with playlists
 		var n_mo = this.soft_clone(mo_titl);
 		pl.push(this.connect(n_mo, pl, pl.length));
 		if (seesu.player.c_song.mo_titl.plst_titl == pl){
-			pl.ui.append(this.create_playlist_element(n_mo));
+			pl.ui.append(seesu.ui.create_playlist_element(n_mo));
 			make_tracklist_playable(pl);
 		}
 		

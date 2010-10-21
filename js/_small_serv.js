@@ -75,7 +75,7 @@ document_states.prototype = {
 			}
 		}
 	}, 
-	connect_to_ui: function(ui){
+	connect_ui: function(ui){
 		if (ui.d){
 			if (ui.d != this.ui.d){
 				
