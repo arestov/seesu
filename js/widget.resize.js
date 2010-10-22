@@ -1,6 +1,6 @@
 window.window_resizer = function(d){
 	if(!$.browser.msie){
-		if (app_env.as_application){
+		if (app_env.opera_widget || app_env.firefox_widget){
 			addEvent(d, "DOMContentLoaded", function(){
 				var wb = d.getElementById('wb');
 				if (!wb) {return false;}

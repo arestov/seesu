@@ -53,6 +53,9 @@ html.as-application:not(.chrome-extension){
 		overflow-x:hidden;
 		height:536px;
 		}
+.chrome-extension.as-application #slider .screens{
+			height: 540px;
+		}
 .as-application:not(.chrome-extension) #slider #screens{
 	position: absolute;
 	top: 0px;

@@ -86,33 +86,13 @@ document_states.prototype = {
 	}, 
 	connect_ui: function(ui){
 		if (ui.d){
-			if (ui.d != this.ui.d){
-				if (!!ui.d.documentElement.className){
-					console.log('documentElement.className: ' + ui.d.documentElement.className)
-					var va = addClass(this.html_el_state, ui.d.documentElement.className || '');
-				
-					console.log('summ of classes: ' + va)
-					
-					
-					ui.d.documentElement.className =  this.html_el_state = va;
-				} else{
-					ui.d.documentElement.className =  this.html_el_state;
-				}
-				
-				if (!!ui.d.body.className){
-					console.log(ui.d.body.className)
-					var da = addClass(this.body_state, ui.d.body.className || '');
-				
-					console.log(da)
-					ui.d.body.className = this.body_state = da;
-				} else{
-					ui.d.body.className = this.body_state;
-				}
-				
-				
-				
-						
+			if (ui.d.documentElement){
+				ui.d.documentElement.className =  this.html_el_state;
 			}
+			if (ui.d.body){
+				ui.d.body.className = this.body_state;
+			}
+			
 		}
 		this.ui = ui;
 	}

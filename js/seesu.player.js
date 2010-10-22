@@ -18,8 +18,9 @@ seesu.gena = { //this work with playlists
 						if (seesu.player.c_song.mo_titl.plst_titl == p){
 							seesu.ui.views.restore_view();
 						} else{
-							seesu.ui.views.show_playlist_page('Custom playlist', 'cplaylist');
-							create_playlist(p)
+							var pl_r = prepare_playlist('Custom playlist', 'cplaylist');
+							seesu.ui.views.show_playlist_page(pl_r);
+							create_playlist(p, pl_r);
 						}
 						return false;
 					}) 
@@ -81,7 +82,6 @@ seesu.player = {
 		}
 	  })(),
 	player_state 		: STOPPED,
-	player_holder 		: null,
 	current_playlist 	: null,
 	want_to_play		: 0,
 	wainter_for_play 	: null,
@@ -116,23 +116,23 @@ seesu.player = {
 		  (new_player_state_str == "stop" ? STOPPED : PAUSED)
 		);
 	  switch(this.player_state - new_player_state) {
-	  case(STOPPED - PLAYED):
-		if (this.musicbox.play_song_by_url && this.c_song) {
-			this.musicbox.play_song_by_url(this.c_song.link);
-		};
-		break;
-	  case(PAUSED - PLAYED):
-		this.musicbox.play();
-		break;    
-	  case(PAUSED - STOPPED):
-	  case(PLAYED - STOPPED):
-		this.musicbox.stop();
-		break;
-	  case(PLAYED - PAUSED):
-		this.musicbox.pause();
-		break;
-	  default:
-		//console.log('Do nothing');
+		  case(STOPPED - PLAYED):
+			if (this.musicbox.play_song_by_url && this.c_song) {
+				this.musicbox.play_song_by_url(this.c_song.link);
+			};
+			break;
+		  case(PAUSED - PLAYED):
+			this.musicbox.play();
+			break;    
+		  case(PAUSED - STOPPED):
+		  case(PLAYED - STOPPED):
+			this.musicbox.stop();
+			break;
+		  case(PLAYED - PAUSED):
+			this.musicbox.pause();
+			break;
+		  default:
+			//console.log('Do nothing');
 	  }
 	},
 	switch_to 	:function (direction) {
@@ -218,7 +218,7 @@ seesu.player = {
 		}
 	},
 	play_song: function(mo, zoom){
-		
+		delete mo.mo_titl.want_to_play;
 		this.set_current_song(mo, zoom);
 		if (mo != this.c_song){
 			this.c_song = mo;
@@ -226,21 +226,22 @@ seesu.player = {
 				this.musicbox.play_song_by_url(mo.link);
 			}
 		}
+		seesu.track_event('Play', 'started', mo.mo_titl.artist + ' - ' +mo.mo_titl.track );
 		
 		
 	},
-	set_current_song: function (mo, zoom) {
+	set_current_song: function (mo, zoom, force) {
 	  var node = mo.node;
 	  if (zoom){
 		$(seesu.ui.els.slider).addClass('show-zoom-to-track');
 	  }
-	  if (this.c_song && (this.c_song == mo)) {
-	  	this.fix_songs_ui();
-	  	
+	  if (!force && this.c_song && (this.c_song == mo)) {
+		this.fix_songs_ui();
+		
 		return true;
 		
 	  } else {
-	  	
+		
 		if (zoom){
 			$(seesu.ui.els.slider).addClass('show-zoom-to-track');
 		}
@@ -258,16 +259,16 @@ seesu.player = {
 		
 		this.current_song = node;
 		
-		seesu.track_event('Play', 'started', mo.mo_titl.artist + ' - ' +mo.mo_titl.track );
+		
 		
 		this.change_songs_ui(mo);
 		this.fix_progress_bar(node);
 		
 		seesu.ui.els.nav_track_zoom.text(( $(seesu.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.mo_titl.track);
-		if (seesu.now_playing.link){
-			seesu.now_playing.link.siblings('span').remove();
-			seesu.now_playing.link.after($('<span></span>').text(": " + 
-				( document.title = artist + " - " + mo.mo_titl.track)
+		if (su.ui.now_playing.link){
+			su.ui.now_playing.link.siblings('span').remove();
+			su.ui.now_playing.link.after($('<span></span>').text(": " + 
+				( su.ui.d.title = artist + " - " + mo.mo_titl.track)
 			));
 		}
 		
@@ -276,14 +277,9 @@ seesu.player = {
 	}
 }
 
-seesu.player.events[PAUSED] = function(){
-  seesu.player.player_state = PAUSED;
-  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
-  $(document.body).addClass('player-paused');
-};
+
+
 seesu.player.events[PLAYED] = function(){
-	
-	
   var start_time = seesu.player.c_song.start_time;
   if (!start_time) {
 	seesu.player.c_song.start_time = ((new Date()).getTime()/1000).toFixed(0);
@@ -291,23 +287,18 @@ seesu.player.events[PLAYED] = function(){
   if (lfm_scrobble.scrobbling) {
 	lfm_scrobble.nowplay(seesu.player.c_song);
   }
-  
-  seesu.player.player_state = PLAYED;
-  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
-  $(document.body).addClass('player-played');
-  
+  su.ui.mark_c_node_as(seesu.player.player_state = PLAYED);
+};
+seesu.player.events[PAUSED] = function(){
+  su.ui.mark_c_node_as(seesu.player.player_state = PAUSED);
 };
 seesu.player.events[STOPPED] = function(){
   seesu.player.c_song.start_time = false;
-  seesu.player.player_state = STOPPED;
-  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
-  $(document.body).addClass('player-stopped');
-  
+  su.ui.mark_c_node_as(seesu.player.player_state = STOPPED);
 };
+
+
 seesu.player.events[FINISHED] = function() {
-  document.body.className = document.body.className.replace(/\s*player-[a-z]+ed/g, '');
-  $(document.body).addClass('player-finished');
-  
   if (lfm_scrobble.scrobbling ) {
 	var submit = function(mo){
 		setTimeout(function(){
@@ -318,11 +309,7 @@ seesu.player.events[FINISHED] = function() {
   }
   seesu.track_event('Play', 'finished', seesu.player.c_song.artist + ' - ' + seesu.player.c_song.track );
   
-  if (typeof(source_window) != 'undefined') {
-	source_window.switch_to_next();
-  } else {
-	switch_to_next();
-  }
+  seesu.player.switch_to('next');
 };
 seesu.player.events[VOLUME] = function(volume_value) {
 	change_volume(volume_value);
@@ -368,26 +355,24 @@ seesu.player.events.progress_loading=function(progress_value, total){
 seesu.player.song_click = function(mo) {
   var zoomed = !!seesu.ui.els.slider.className.match(/show-zoom-to-track/);
   if (this.c_song && mo == this.c_song){
-  	seesu.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
+	seesu.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
   } else if (this.current_next_song && mo == this.current_next_song){
-  	seesu.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
+	seesu.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
   } else if (this.current_prev_song && mo == this.current_prev_song){
-  	seesu.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
+	seesu.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
   } else{
-  	seesu.track_event('Song click', 'simple click');
+	seesu.track_event('Song click', 'simple click');
   }
   if (!zoomed){
-  	seesu.track_page('track zoom');
+	seesu.track_page('track zoom');
   }
   
-	  	
+		
   seesu.player.play_song(mo, !zoomed);
   return false;
 }
 
-function switch_to_next(){
-  seesu.player.switch_to('next');
-}
+
 function change_volume(volume_value){
   w_storage('vkplayer-volume', volume_value, true);
   seesu.player.player_volume = volume_value;	
@@ -573,8 +558,8 @@ if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 			})
 			try_to_use_iframe_sm2p(true);
 		  } else {
-		  	console.log('sm2 in widget notok')
-		  		try_to_use_iframe_sm2p();
+			console.log('sm2 in widget notok')
+				try_to_use_iframe_sm2p();
 	
 		  }
 		});
