@@ -126,7 +126,7 @@ window.seesu = window.su =  {
 		},
 		waiting_for_mp3provider : true,
 		we_need_mp3provider: function(quene){
-			$(document.body).addClass('vk-needs-login');
+			dstates.add_state('body','vk-needs-login');
 
 			seesu.delayed_search.start_for_mp3provider = function(){
 				seesu.delayed_search.waiting_for_mp3provider = false;
@@ -168,13 +168,13 @@ window.set_vk_auth = function(vk_session, save_to_store){
 			v: "3.0"
 		}], seesu.delayed_search.vk_api.quene);
 		seesu.delayed_search.switch_to_vk_api();
-		$(document.body).removeClass('vk-needs-login');
+		dstates.remove_state('body','vk-needs-login');
 		if (save_to_store){
 			w_storage('vk_session', vk_s, true);
 		}
 		setTimeout(function(){
 			seesu.delayed_search.waiting_for_mp3provider = true;
-			$(document.body).addClass('vk-needs-login');
+			dstates.add_state('body','vk-needs-login');
 		}, (vk_s.expire - rightnow)*1000);
 		
 	} else{
@@ -462,11 +462,6 @@ var create_playlist =  function(pl, not_clear){
 		pl.plst_pla = [];
 		for (var i=0, l = pl.length; i < l; i++) {
 			seesu.gena.connect(pl[i], pl, i);
-		}
-		
-		if (seesu.player.autostart){
-			seesu.ui.views.save_view(pl);
-			seesu.player.autostart = false;
 		}
 		seesu.ui.render_playlist(pl, not_clear);
 		make_tracklist_playable(pl);

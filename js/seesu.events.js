@@ -165,7 +165,7 @@ $(function() {
 	
 	var vk_auth = $('.vk-auth').submit(function(){
 		seesu.ui.els.vk_login_error.text('');
-		$(document.body).removeClass('vk-needs-captcha');
+		dstates.remove_state('body','vk-needs-captcha');
 		var _this = $(this),
 			email = $('input.vk-email',_this).val(),
 			pass = $('input.vk-pass',_this).val();
@@ -196,7 +196,7 @@ $(function() {
 	
 	open_lfm_to_login = function(token){
 		widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
-		$(document.body).addClass('lfm-waiting-for-finish');
+		dstates.add_state('body','lfm-waiting-for-finish');
 	};
 	
 	
@@ -345,7 +345,7 @@ $(function() {
 $(function() {
 	seesu.ui.player_holder = $('<div class="player-holder"></div>')
 		.prepend(seesu.player.controls.track_progress_total)
-		.prepend(seesu.player.controls.volume_state);
+		.prepend(seesu.player.controls.volume_state)
 		.prependTo($('#track-panel'));
 });
 

@@ -25,7 +25,7 @@ var vk_login = function(login, pass, callback) {
 			seesu.ui.els.vk_login_error.text('Wrong login or password')
 		} else if (vk_captcha = r.captcha_sid){
 			seesu.ui.els.captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
-			$(document.body).addClass('vk-needs-captcha');
+			dstates.add_state('body','vk-needs-captcha');
 		} else 	if (vk_id = r.id) {
 			vk_logg_in(vk_id, r.email, r.sid, login, pass, callback);
 			wait_for_vklogin && wait_for_vklogin();
@@ -59,7 +59,7 @@ var vk_send_captcha = function(captcha_key, login, pass, callback){
 			  	if (vk_captcha = r.captcha_sid){
 			  		console.log(vk_captcha)
 					seesu.ui.els.captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
-					$(document.body).addClass('vk-needs-captcha');
+					dstates.add_state('body','vk-needs-captcha');
 				}
 			} catch (e){
 				console.log(e)
@@ -87,7 +87,7 @@ var vk_logg_in = function(id, email, sid, login, pass, callback){
 	
 	seesu.vk_logged_in = true;
 	seesu.delayed_search.switch_to_vk();
-	$(document.body).removeClass('vk-needs-login');
+	dstates.remove_state('body','vk-needs-login');
 	
 	
 	if (seesu.vk.save_pass){
@@ -113,7 +113,7 @@ var vk_logged_out = function(force){
 		console.log('vk data has NOT been  removed')
 	}
 	seesu.delayed_search.waiting_for_mp3provider = true;
-	$(document.body).addClass('vk-needs-login');
+	dstates.add_state('body','vk-needs-login');
 	seesu.vk_logged_in = false;
 	
 	

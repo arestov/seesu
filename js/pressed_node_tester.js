@@ -131,7 +131,7 @@ var test_pressed_node = function(original_node, mouseup){
 				if (seesu.vk_logged_in){
 					seesu.delayed_search.switch_to_vk()
 				}else{
-					$(document.body).addClass('vk-needs-login');
+					dstates.add_state('body','vk-needs-login');
 				}
 				
 				return false

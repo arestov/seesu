@@ -530,7 +530,7 @@ var try_to_use_iframe_sm2p = function(remove){
 				console.log('iframe sm2 wrokss yearh!!!!')
 				seesu.player.musicbox = new sm2_p(seesu.player.player_volume, false, i_f_sm2);
 				i_f_sm2.addClass('sm-inited');
-				$(document.body).addClass('flash-internet');
+				dstates.add_state('body','flash-internet');
 				$('#sm2-container').remove();
 				removeEvent(window, "message", check_iframe);
 			}
@@ -552,7 +552,7 @@ var a = document.createElement('audio');
 if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 	seesu.player.musicbox = new html5_p(seesu.player.player_volume);
 	$(function(){
-		$(document.body).addClass('flash-internet');
+		dstates.add_state('body','flash-internet');
 	})
 	
 } else if (!seesu.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
@@ -569,7 +569,7 @@ if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 			console.log('sm2 in widget ok')
 			seesu.player.musicbox = new sm2_p(seesu.player.player_volume, soundManager);
 			$(function(){
-				$(document.body).addClass('flash-internet');
+				dstates.add_state('body','flash-internet');
 			})
 			try_to_use_iframe_sm2p(true);
 		  } else {

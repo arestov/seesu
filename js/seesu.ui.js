@@ -414,12 +414,12 @@ seesu_ui.prototype = {
 		} else {
 			pl.ui = ui;
 			if (!seesu.now_playing.link){
-				if (seesu.start_screen){
+				if (seesu.ui.els.start_screen){
 					$('<p></p>').attr('id', 'now-play-b').append(
 						seesu.now_playing.link = $('<a></a>').text('Now Playing').attr('class', 'js-serv').click(function(){
 							_sui.views.show_now_playing();
 						})
-					).appendTo(seesu.start_screen);
+					).appendTo(seesu.ui.els.start_screen);
 				}
 				
 			}
