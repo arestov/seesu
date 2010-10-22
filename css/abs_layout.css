@@ -1,4 +1,4 @@
-.opera_widget.as-application body{
+.as-application:not(.chrome-extension) body{
 	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
 	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 	
@@ -7,7 +7,7 @@
 }
 
  
-html.as-application.opera_widget{
+html.as-application:not(.chrome-extension){
 	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
 	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
 	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
@@ -18,7 +18,9 @@ html.as-application.opera_widget{
 	position:static ;
 	padding:0 0 0;
 }
-
+.chrome-extension #slider {
+	width:600px;
+}
 
 	
 	 #slider .screens{
@@ -29,13 +31,8 @@ html.as-application.opera_widget{
 		z-index:2;
 		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 		}
-	.as-application #slider .screens{
-		overflow-y:auto;
-		
-		overflow-x:hidden;
-		height:536px;
-		}
-.as-application #slider-materail{
+
+.as-application:not(.chrome-extension) #slider-materail{
 	background-color: #505050;
 	position: absolute;
 	left: 0px;
@@ -51,7 +48,12 @@ html.as-application.opera_widget{
 	bottom: 10px;
 	z-index:3;
 }
-.as-application #slider #screens{
+.as-application #slider .screens{
+		overflow-y:auto;
+		overflow-x:hidden;
+		height:536px;
+		}
+.as-application:not(.chrome-extension) #slider #screens{
 	position: absolute;
 	top: 0px;
 	left: 0px;
@@ -60,8 +62,9 @@ html.as-application.opera_widget{
 	width:auto;
 	height:auto;
 }
-.window-bottom{
-}
+
+
+
 
 
 .as-application .navs{

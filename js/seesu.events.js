@@ -92,7 +92,7 @@ $(function() {
 	if (buttmen_node){
 		seesu.buttmen = new button_menu(buttmen_node);
 	}
-	
+	var search_form = $('#search').submit(function(){return false;});
 	
 	console.log('aaad' + Math.random()) 
 	seesu.ui = new seesu_ui(document,  {
@@ -114,7 +114,8 @@ $(function() {
 		captcha_img: $('.vk-captcha-context img',vk_auth),
 		searchres: $('#search_result'),
 		search_input: $('#q').keyup(input_change).mousemove(input_change).change(input_change),
-		play_controls: seesu.buttmen
+		play_controls: seesu.buttmen,
+		search_form: search_form
 	}, buttons);
 	
 
@@ -277,9 +278,9 @@ $(function() {
 	if (document.activeElement.nodeName != 'INPUT') {
 		seesu.ui.els.search_input[0].focus();
 	}
-	seesu.ui.search_form = $('#search').submit(function(){return false;});
-	$('#app_type', seesu.ui.search_form).val(seesu.env.app_type);
-	if (seesu.ui.search_form) {
+	
+	$('#app_type', search_form).val(seesu.env.app_type);
+	if (search_form) {
 		$(document).keydown(function(e){
 			if (!seesu.ui.els.slider.className.match(/show-search-results/)) {return}
 			if (document.activeElement.nodeName == 'BUTTON'){return}
@@ -345,7 +346,7 @@ $(function() {
 	seesu.ui.player_holder = $('<div class="player-holder"></div>')
 		.prepend(seesu.player.controls.track_progress_total)
 		.prepend(seesu.player.controls.volume_state);
-	$('#track-panel').prepend(seesu.ui.player_holder);
+		.prependTo($('#track-panel'));
 });
 
 

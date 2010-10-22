@@ -9,9 +9,9 @@ var results_mouse_click_for_enter_press = function(e){
 var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 	if (!node){return false;}
 	if (not_by_user){
-		seesu.ui.search_form.data('current_node_index', false);
+		seesu.ui.els.search_form.data('current_node_index', false);
 	} else{
-		seesu.ui.search_form.data('current_node_index', node.data('search_element_index'));
+		seesu.ui.els.search_form.data('current_node_index', node.data('search_element_index'));
 	}
 	seesu.ui.views.current_rc.data('node_for_enter_press', node.addClass('active'));
 	if (scroll_to_node){
@@ -526,7 +526,7 @@ var input_change = $.debounce(function(e){
 		};
 	}
 	
-	seesu.ui.search_form.data('current_node_index' , false);
+	seesu.ui.els.search_form.data('current_node_index' , false);
 	
 	suggestions_prerender(input_value, seesu.env.cross_domain_allowed);
 	seesu.ui.views.show_search_results_page();

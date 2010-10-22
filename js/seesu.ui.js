@@ -504,7 +504,7 @@ seesu_ui.prototype = {
 			$(search_elements[i]).data('search_element_index', i);
 		};
 		if (remark_enter_press) {
-			var active_index = seesu.ui.search_form.data('current_node_index') || 0;
+			var active_index = seesu.ui.els.search_form.data('current_node_index') || 0;
 			var new_active_node = search_elements[active_index];
 			if (new_active_node) {
 				

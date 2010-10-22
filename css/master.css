@@ -333,7 +333,11 @@ display:none;
 	padding-left:18px;
 	color:#999;
 }
-
+	#promo a{
+		backgroun:#505050;
+		padding:1px;
+		border-radius:1px;
+	}
 .lfm-auth-done #scrobbling-switches{ 
 	opacity:1;
 	}
