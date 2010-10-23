@@ -258,7 +258,7 @@ seesu_ui.prototype = {
 				.attr('title', 'last.fm profile')
 				.click(function(){
 					var link = 'http://www.last.fm/music/' + artist.replace(' ', '+');
-					widget.openURL(link);
+					open_url(link);
 					seesu.track_event('Links', 'lastfm', link);
 					return false;
 				})
@@ -290,7 +290,7 @@ seesu_ui.prototype = {
 					.attr('href', mo.page_link)
 					.text('page of this track')
 					.click(function(){
-						widget.openURL(mo.page_link);
+						open_url(mo.page_link);
 						seesu.track_event('Links', 'soundcloud track');
 						return false;
 					});
@@ -513,9 +513,11 @@ seesu_ui.prototype = {
 		}
 	},
 	create_playlist_element: function(mo_titl){
+		var t_context = this.els.track_c.clone(true);
 		var track = $("<a></a>")
 			.data('mo_titl', mo_titl)
 			.data('artist_name', mo_titl.artist)
+			.data('t_context', t_context)
 			.addClass('track-node waiting-full-render')
 			.click(empty_song_click),
 			li = document.createElement('li');
@@ -533,10 +535,24 @@ seesu_ui.prototype = {
 		} else if (mo_titl.mo_pla){
 			make_node_playable(mo_titl, mo_titl.mo_pla);
 		}
+		
+		
+		var ph = seesu.player.controls.ph.clone(true);
+		var tpt = ph.children('.track-progress').data('mo_titl', mo_titl);
+		mo_titl.c = {
+			tr_progress_t: tpt,
+			tr_progress_l: tpt.children('.track-load-progress'),
+			tr_progress_p: tpt.children('.track-play-progress')
+		};
+		ph.prependTo($('.track-panel',t_context));
+			
+			
+			
 		return $(li)
 			.data('mo_titl', mo_titl)
 			.append(seesu.ui.els.play_controls.node.clone(true))
-			.append(track);
+			.append(track)
+			.append(t_context);
 	},
 	lfm_logged : function(){
 		dstates.add_state('body', 'lfm-auth-done')

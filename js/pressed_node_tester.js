@@ -5,11 +5,11 @@ var test_pressed_node = function(original_node, mouseup){
 	
 		if(clicked_node.is('a')) {
 		  if (class_name.match(/download-mp3/)){
-			widget.openURL(node.href);
+			open_url(node.href);
 			return false;
 		  }
 		  else if (class_name.match(/vk-reg-ref/)){
-			widget.openURL(vkReferer || 'http://vk.com/reg198193');
+			open_url(vkReferer || 'http://vk.com/reg198193');
 			seesu.track_event('Links', 'vk registration');
 			return false;
 		  }
@@ -29,7 +29,7 @@ var test_pressed_node = function(original_node, mouseup){
 			return false;
 		  }
 		  else if (class_name.match(/flash-s$/)){
-			widget.openURL('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
+			open_url('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 			seesu.track_event('Links', 'flash security');
 			return false;
 		  }
@@ -73,7 +73,7 @@ var test_pressed_node = function(original_node, mouseup){
 		  	
 			make_external_playlist();
 			if (seesu.player.current_external_playlist.result) {
-				widget.openURL(
+				open_url(
 					'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(seesu.player.current_external_playlist.result)
 				)
 		  	}
@@ -81,7 +81,7 @@ var test_pressed_node = function(original_node, mouseup){
 			return false
 		  }
 		  else if (class_name.match(/seesu-me-link/)){
-		  	widget.openURL(node.href)
+		  	open_url(node.href)
 		  	return false;
 		  }
 		  else if (class_name.match(/hint-query/)){

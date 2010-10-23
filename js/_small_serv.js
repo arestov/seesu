@@ -166,7 +166,13 @@ window.app_env = (function(){
 	return env;
 })();
 
-
+window.open_url = (window.widget && window.widget.openURL) ? 
+	function(){
+		return widget.openURL.apply(widget, arguments);
+	} :
+	function(){
+		return window.open.apply(window, arguments);
+	};
 
 if (typeof widget != 'object'){
 	window.widget = {

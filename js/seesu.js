@@ -223,7 +223,7 @@ var updating_notify = function(r){
 		var link = r.latest_version.link;
 		if (link.indexOf('http') != -1) {
 			widget.showNotification(message, function(){
-				widget.openURL(link);
+				open_url(link);
 			});
 			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"></a>');
 		}
@@ -653,7 +653,7 @@ var get_artist_album_info = function(artist, album, callback){
 };
 
 window.open_lfm_to_login = function(token){
-	widget.openURL('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
+	open_url('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
 	dstates.add_state('body','lfm-waiting-for-finish');
 };
 

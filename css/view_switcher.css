@@ -87,11 +87,12 @@
 		
 		
 /**  New nav **/	
-.show-zoom-to-track .track-context{
+.show-zoom-to-track li.active-play .track-context{
 	display:block;
 }
 .track-context{
 	display:none;
+	min-height: 412px;
 }
 
 li.active-play .play-controls{
@@ -119,26 +120,25 @@ li.active-play .play-controls{
 .show-zoom-to-track .tracks-for-play .play-controls{
 	display:none;
 }
+.show-zoom-to-track .tracks-for-play>ul{
+	overflow:hidden;
+	padding-top:50px;
+}
 .show-zoom-to-track .tracks-for-play>ul>li.to-play-previous{
-	position:absolute;
-	top:11px;
+	margin-top:-34px;
 	}
 .show-zoom-to-track .tracks-for-play>ul>li.to-play-next{
-	position:absolute;
-	bottom:9px;
+	
 	}
 .show-zoom-to-track .tracks-for-play>ul>li.active-play{
-	position:absolute;
-	top:53px;
+	
 	}
 	.show-zoom-to-track .tracks-for-play>ul>li.active-play .song{
 		font-size:1.3em;
 		cursor:default;
 		}
 .show-zoom-to-track .track-context{
-	padding-top:86px;
 	
-	padding-bottom:71px;
 	}
 
 .show-zoom-to-track#slider .screens{

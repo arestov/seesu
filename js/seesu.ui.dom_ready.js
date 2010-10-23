@@ -66,7 +66,7 @@ window.connect_dom_to_som = function(d, ui){
 		o.track_progress_total = $('<div class="track-progress"></div>',d).click(function(e){
 			e.stopPropagation();
 			var pos = get_click_position(e, this);
-			var new_play_position_factor = pos/o.track_progress_width;
+			var new_play_position_factor = pos/$(this).data('mo_titl').c.track_progress_width;
 			seesu.player.musicbox.set_new_position(new_play_position_factor);
 			
 		})
@@ -81,16 +81,30 @@ window.connect_dom_to_som = function(d, ui){
 			var new_volume_factor = pos/50;
 			seesu.player.musicbox.changhe_volume(new_volume_factor * 100);
 			seesu.player.call_event(VOLUME, new_volume_factor * 100);
-			
-			o.volume_state_position.css('width', pos + 'px')
+			(su.ui.els.volume_s.sheet.cssRules || su.ui.els.volume_s.sheet.rules)[0].style.width = pos + 'px';
 		})
 		o.volume_state_position = $('<div class="volume-state-position"></div>',d)
-			.css('width',((volume * 50)/100) + 'px')
 			.appendTo(o.volume_state);
+			
+		o.ph = $('<div class="player-holder"></div>',d)
+			.prepend(o.track_progress_total)
+			.prepend(o.volume_state);
+			
 		return o;
 	})(seesu.player.player_volume);
 	
 	addEvent(d, "DOMContentLoaded", function() {
+		var volume_s = d.createElement('style');
+			volume_s.setAttribute('title', 'volume');
+			volume_s.setAttribute('type', 'text/css');
+		var volume_style= '.volume-state-position {width:' + ((seesu.player.player_volume * 50)/100) + 'px' + '}'; 
+		if (volume_style.styleSheet){
+			volume_s.styleSheet.cssText = volume_style;
+		} else{
+			volume_s.appendChild(d.createTextNode(volume_style));
+		}
+		d.documentElement.firstChild.appendChild(volume_s);
+		
 		dstates.connect_ui(ui);
 		var artsHolder	= $('#artist-holder',d);
 		var buttmen_node =  $('.play-controls.buttmen',d);
@@ -117,10 +131,7 @@ window.connect_dom_to_som = function(d, ui){
 		});
 		
 		
-		$('<div class="player-holder"></div>',d)
-			.prepend(seesu.player.controls.track_progress_total)
-			.prepend(seesu.player.controls.volume_state)
-			.prependTo($('#track-panel',d));
+		
 			
 			
 		ui.els = {
@@ -143,7 +154,9 @@ window.connect_dom_to_som = function(d, ui){
 			searchres: $('#search_result',d),
 			search_input: $('#q',d).keyup(input_change).mousemove(input_change).change(input_change),
 			play_controls: seesu.buttmen,
-			search_form: search_form
+			search_form: search_form,
+			track_c : $('.track-context',d),
+			volume_s: volume_s
 		};
 		
 		if (window.su && su.player && su.player.c_song){

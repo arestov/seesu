@@ -1,31 +1,33 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <widget network="public" transparent="transparent">
+  <id>
+	<name>Seesu</name>
+	<revised>2010-10-23</revised>
+  </id>
   <widgetname>Seesu</widgetname>
   <description>You can find &amp; get any music you need. Type in an artist or genre.</description>
   <width>640</width>
   <height>600</height>
-  <icon>icon.png</icon>
+  <icon width="16" height="16">icons/icon16.png</icon>
+  <icon width="19" height="19">icons/icon19.png</icon>
+  <icon width="32" height="32">icons/icon32.png</icon>
+  <icon width="64" height="64">icons/icon64.png</icon>
+  <icon width="128" height="128">icons/icon128.png</icon>
   <author>
 	<name>Gleb Arestov</name>
-	<name></name>
 	<email>gleb.arestov@gmail.com</email>
 	<link>http://arestov.me/</link>
 	<organization>Spreadus foundation</organization>
   </author>
   <author>
 	<name>Nikita Vasilyev</name>
-	<name></name>
 	<email>me@elv1s.ru</email>
 	<link>http://elv1s.ru/</link>
   </author>
   <author>
 	<name>Alexandr Koss</name>
-	<name></name>
 	<email>kossnocorp@gmail.com</email>
 	<organization>Spreadus foundation</organization>
   </author>
-  <id>
-	<name>Seesu</name>
-	<revised>2010-09-21</revised>
-  </id>
+  
 </widget>

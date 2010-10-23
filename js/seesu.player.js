@@ -209,12 +209,10 @@ seesu.player = {
 			this.change_songs_ui(this.c_song);
 		}
 	},
-	fix_progress_bar: function(node){
-		if (this.controls.track_progress_total){
-			this.controls.track_progress_play[0].style.width = this.controls.track_progress_load[0].style.width = '0';
-		}
-		if (this.controls.track_progress_total){
-			this.controls.track_progress_width = node.parent().outerWidth() - 12;
+	fix_progress_bar: function(node, mo_titl){
+		if (mo_titl.c.tr_progress_t){
+			mo_titl.c.tr_progress_p[0].style.width = mo_titl.c.tr_progress_l[0].style.width = '0';
+			mo_titl.c.track_progress_width = node.parent().outerWidth() - 12;
 		}
 	},
 	play_song: function(mo, zoom){
@@ -247,9 +245,9 @@ seesu.player = {
 		}
 		//time = (new Date()).getTime();
 		var artist = mo.mo_titl.artist;
-		
-		if (artist) {seesu.ui.update_artist_info(artist, seesu.ui.els.a_info);}
-		seesu.ui.update_track_info(seesu.ui.els.a_info, node);
+		var a_info = node.data('t_context').children('.artist-info');
+		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
+		seesu.ui.update_track_info(a_info, node);
 		
 		if (this.c_song) {
 			this.change_songs_ui(this.c_song, true) //remove ative state
@@ -262,7 +260,7 @@ seesu.player = {
 		
 		
 		this.change_songs_ui(mo);
-		this.fix_progress_bar(node);
+		this.fix_progress_bar(node, mo.mo_titl);
 		
 		seesu.ui.els.nav_track_zoom.text(( $(seesu.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.mo_titl.track);
 		if (su.ui.now_playing.link){
@@ -328,23 +326,29 @@ seesu.player.events.before_finish = function(total, progress_value){
 }
 seesu.player.events.progress_playing = function(progress_value, total){
 	//if (_this.ignore_position_change) {return false;}
+	var _c = seesu.player.c_song.mo_titl.c;
+	if (!_c){return false}
+	
 	var progress = parseInt(progress_value);
 	var total = parseInt(total);
 	
-	var current = Math.round((progress/total) * seesu.player.controls.track_progress_width);
+	var current = Math.round((progress/total) * _c.track_progress_width);
 	
-	seesu.player.controls.track_progress_play[0].style.width = current + 'px';
+	_c.tr_progress_p[0].style.width = current + 'px';
 	seesu.player.events.before_finish(progress_value, total);
 }
 
 seesu.player.events.progress_loading=function(progress_value, total){
 	//if (_this.ignore_position_change) {return false;}
+	var _c = seesu.player.c_song.mo_titl.c;
+	if (!_c){return false}
+	
 	var progress = parseInt(progress_value);
 	var total = parseInt(total);
 	
-	var current = Math.round((progress/total) * seesu.player.controls.track_progress_width);
+	var current = Math.round((progress/total) * _c.track_progress_width);
 	
-	seesu.player.controls.track_progress_load[0].style.width = current + 'px';
+	_c.tr_progress_l[0].style.width = current + 'px';
 	seesu.player.events.before_finish(progress, total);
 }
 	
