@@ -9,18 +9,18 @@ var INIT     = -11,
 
 seesu.gena = { //this work with playlists
 	user_playlist: (function(){
-		var p = [];
-		p.push = function(mo){
+		var pl_r = prepare_playlist('Custom playlist', 'cplaylist');
+		pl_r.push = function(mo){
 			Array.prototype.push.call(this, mo);
-			if (!this.link && p.length > 0 && seesu.ui.els.start_screen){
+			if (!seesu.ui.link && pl_r.length > 0 && seesu.ui.els.start_screen){
 				$('<p></p>').attr('id', 'cus-playlist-b').append(
-					this.link = $('<a></a>').text('Custom playlist').attr('class', 'js-serv').click(function(){
-						if (seesu.player.c_song.mo_titl.plst_titl == p){
+					seesu.ui.link = $('<a></a>').text('Custom playlist').attr('class', 'js-serv').click(function(){
+						if (seesu.player.c_song.mo_titl.plst_titl == pl_r){
 							seesu.ui.views.restore_view();
 						} else{
-							var pl_r = prepare_playlist('Custom playlist', 'cplaylist');
 							seesu.ui.views.show_playlist_page(pl_r);
-							create_playlist(p, pl_r);
+							seesu.ui.render_playlist(pl_r);
+							make_tracklist_playable(pl_r);
 						}
 						return false;
 					}) 
@@ -28,7 +28,7 @@ seesu.gena = { //this work with playlists
 			}
 			
 		}
-		return p;
+		return pl_r;
 		})(),
 	clear: function(mo_titl, full){
 		delete mo_titl.fetch_started;

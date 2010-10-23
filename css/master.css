@@ -18,13 +18,13 @@ body{
 
 a img{border:0;}
 label{cursor:pointer}
-input[type=text]{
+input[type=text],input[type=search]{
 	background:#b2b2b2;
 	border: 1px solid #666;
 	padding:2px;
 	font-size: 1.15em;
 }
-input[type=text]:focus{
+input[type=text]:focus,input[type=search]:focus{
 	outline:1px solid #a37b1b;
 }
 input[type=submit],
@@ -372,6 +372,7 @@ display:none;
 	#search #search-p label span.inpt{
 		overflow:hidden;
 		display:block;
+		padding:0 2px;
 	}
 .search-desc{
 	padding-left:60px;

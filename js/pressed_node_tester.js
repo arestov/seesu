@@ -100,7 +100,7 @@ var test_pressed_node = function(original_node, mouseup){
 				clicked_node.parents('#tracks-search').removeClass('want-to-select-mp3-search')
 			}
 			else if (class_name.match(/login-lastfm-button/)){
-	
+				lfm_auth.waiting_for = clicked_node.attr('name');
 				if (lfm_auth.newtoken) {
 					open_lfm_to_login(lfm_auth.newtoken);
 				} else {

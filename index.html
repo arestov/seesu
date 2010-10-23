@@ -92,7 +92,7 @@
 							<p id="search-p">
 								<label>
 									<span class='lbl'>Search</span>
-									<span class="inpt"><input type="text" name="q" id="q" size="50"  autocomplete="off"/></span>
+									<span class="inpt"><input type="search" name="q" id="q" size="50"  autocomplete="off"/></span>
 									
 								</label>
 								
@@ -106,7 +106,7 @@
 						<div class="lfm-recomm">
 							<p><a  id="lfm-recomm" class="js-serv">Recommendations</a></p>
 							<div class="lfm-auth">
-								<p>To get your music recommendations you need to <input class="login-lastfm-button" type="button" value="grant"/> Seesu your last.fm account access</p>
+								<p>To get your music recommendations you need to <input class="login-lastfm-button" type="button" value="grant" name="recommendations"/> Seesu your last.fm account access</p>
 								<form class="lfm-finish">
 									<label><input type='checkbox'  id="login-lastfm-finish-recomm-check"/> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-recomm">give me recommendations</button>
 									<p>It's simple and safe. It does not require your last.fm password.</p>
@@ -121,7 +121,7 @@
 						<div class="lfm-loved">
 							<p><a class="js-serv" id="lfm-loved">Loved Tracks</a></p>
 							<div class="lfm-auth">
-								<p>To get your favorite tracks you need to <input class="login-lastfm-button" type="button" value="grant"/> Seesu your last.fm account access</p>
+								<p>To get your favorite tracks you need to <input class="login-lastfm-button" type="button" name="loved" value="grant"/> Seesu your last.fm account access</p>
 								<form class="lfm-finish">
 									<p>
 										<label><input type='checkbox'  id="login-lastfm-finish-loved-check"/> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-loved">give me loved tracks</button>
@@ -187,7 +187,7 @@
 												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
 											</form>
 											<div class="lfm-granting">
-												<p>To scrobble to last.fm you must <input class="login-lastfm-button" type="button" value="grant"/> access to Seesu </p>
+												<p>To scrobble to last.fm you must <input class="login-lastfm-button" type="button" value="grant" name="scrobbling"/> access to Seesu </p>
 												<p class="lfm-finish"><label><input type='checkbox' class="scrobbling-grant"/> I've granted my account access to Seesu</label></p>
 											</div>
 											<p><input type="button" value="Close message" class="tb-mess-wrap-close"/></p>

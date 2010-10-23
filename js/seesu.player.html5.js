@@ -105,7 +105,7 @@ html5_p.prototype = {
 		},
 		"changhe_volume": function(volume){
 			if (this.current_song){
-				this.current_song.volume = volume/100;
+				this.current_song.volume = this.volume = volume/100;
 			}
 		}
 	},

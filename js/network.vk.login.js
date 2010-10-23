@@ -28,7 +28,6 @@ var vk_login = function(login, pass, callback) {
 			dstates.add_state('body','vk-needs-captcha');
 		} else 	if (vk_id = r.id) {
 			vk_logg_in(vk_id, r.email, r.sid, login, pass, callback);
-			wait_for_vklogin && wait_for_vklogin();
 		}
 	  },
 	  complete: function(xhr){

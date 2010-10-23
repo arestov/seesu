@@ -556,8 +556,15 @@ seesu_ui.prototype = {
 	},
 	lfm_logged : function(){
 		dstates.add_state('body', 'lfm-auth-done')
-		$('.lfm-finish input[type=checkbox]').attr('checked', 'checked');
-		$('#scrobbling-switches').find('input').attr('disabled', '');
+		$('.lfm-finish input[type=checkbox]',this.d).attr('checked', 'checked');
+		$('#scrobbling-switches', this.d).find('input').attr('disabled', '');
+	},
+	lfm_enable_scrobbling:function(){
+		var lfm_ssw = $('#scrobbling-switches',this.d);
+		if (lfm_ssw) {
+			lfm_ssw.find('.enable-scrobbling').attr('checked', 'checked');
+			lfm_ssw.find('.disable-scrobbling').attr('checked', '');
+		}
 	},
 	make_search_elements_index: function(remark_enter_press, after_user){
 		var search_elements = seesu.ui.views.current_rc.find('a:not(.nothing-found), button');
@@ -592,7 +599,7 @@ seesu_ui.prototype = {
 			break;
 		  default:
 			//console.log('Do nothing');
-	}
+		}
 	 
   
 }

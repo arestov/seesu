@@ -199,12 +199,12 @@ if (vk_session_meta && vk_session_meta.length){
 		seesu.track_event('Auth to vk', 'auth', 'from saved');
 	}
 }
-wait_for_vklogin = function(){};
 vkReferer = '';
-lfm_auth = {};
 
-lfm_auth.sk = w_storage('lfmsk') || false;
-lfm_auth.user_name = w_storage('lfm_user_name') || false;
+window.lfm_auth = {
+	sk: w_storage('lfmsk') || false,
+	user_name: w_storage('lfm_user_name') || false
+};
 
 lfm_auth.login = function(r){
 	lfm_auth.sk = r.session.key;
@@ -452,6 +452,7 @@ var empty_song_click = function(){
 
 var prepare_playlist = function(playlist_title, playlist_type, with_search_results_link){
 	var pl = [];
+	pl.plst_pla = [];
 	if (playlist_title){
 		pl.playlist_title = playlist_title;
 	}
@@ -467,7 +468,7 @@ var create_playlist =  function(pl, pl_r, not_clear){
 	if (!pl){
 		seesu.ui.render_playlist();
 	} else{
-		pl_r.plst_pla = [];
+		
 		for (var i=0, l = pl.length; i < l; i++) {
 			pl_r.push(seesu.gena.connect(pl[i], pl_r, i));
 		}

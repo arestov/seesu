@@ -94,6 +94,34 @@ window.connect_dom_to_som = function(d, ui){
 	})(seesu.player.player_volume);
 	
 	addEvent(d, "DOMContentLoaded", function() {
+		if (lfm_auth.newtoken && lfm_auth.waiting_for){
+				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+				if (!r.error) {
+					lfm_auth.login(r);
+					switch(lfm_auth.waiting_for) {
+					  case('recommendations'):
+						render_recommendations();
+						break;
+					  case('loved'):
+						render_loved();
+						break;    
+					  case('scrobbling'):
+						w_storage('lfm_scrobbling_enabled', 'true', true);
+						lfm_scrobble.scrobbling = true;
+						ui.lfm_enable_scrobbling();
+						break;
+					  default:
+						//console.log('Do nothing');
+					}
+					
+					console.log('lfm scrobble access granted')
+				} else{
+					console.log('error while granting lfm scrobble access')
+				}
+				lfm_auth.waiting_for = false;
+			});
+		}
+		
 		var volume_s = d.createElement('style');
 			volume_s.setAttribute('title', 'volume');
 			volume_s.setAttribute('type', 'text/css');
@@ -218,11 +246,7 @@ window.connect_dom_to_som = function(d, ui){
 		
 	
 		if (lfm_scrobble.scrobbling) {
-			var lfm_ssw = $('#scrobbling-switches',d);
-			if (lfm_ssw) {
-				lfm_ssw.find('.enable-scrobbling').attr('checked', 'checked');
-				lfm_ssw.find('.disable-scrobbling').attr('checked', '');
-			}
+			ui.lfm_enable_scrobbling();
 		}
 		
 		if (lfm_auth.sk) {
@@ -233,28 +257,29 @@ window.connect_dom_to_som = function(d, ui){
 		
 		
 	
+		ui.lfm_auth = {
+			lfm_fin_recomm_check : $('#login-lastfm-finish-recomm-check',d),
+			lfm_fin_recomm		 : $('#login-lastfm-finish-recomm',d),
+			lfm_fin_loved_check  : $('#login-lastfm-finish-loved-check',d),
+			lfm_fin_loved		 : $('#login-lastfm-finish-loved',d)
+		}
 		
-		var lfm_fin_recomm_check = $('#login-lastfm-finish-recomm-check',d),
-			lfm_fin_recomm		 = $('#login-lastfm-finish-recomm',d);
-		var lfm_fin_loved_check  = $('#login-lastfm-finish-loved-check',d),
-			lfm_fin_loved		 = $('#login-lastfm-finish-loved',d);
 			
 			
-		lfm_fin_recomm_check.change(function(){
+		ui.lfm_auth.lfm_fin_recomm_check.change(function(){
 			if ($(this).attr('checked')) {
+				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+					if (!r.error) {
+						lfm_auth.login(r);
+						render_recommendations();
+					}
+				});
 				lfm_fin_recomm.attr('disabled', null);
 			} else {
 				lfm_fin_recomm.attr('disabled', 'disabled');
 			}
 		});
-		lfm_fin_loved_check.change(function(){
-			if ($(this).attr('checked')) {
-				lfm_fin_loved.attr('disabled', null);
-			} else {
-				lfm_fin_loved.attr('disabled', 'disabled');
-			}
-		});
-		lfm_fin_recomm.click(function(){
+		ui.lfm_auth.lfm_fin_recomm.click(function(){
 			if(lfm_fin_recomm_check.attr('checked')){
 				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
 					if (!r.error) {
@@ -265,7 +290,24 @@ window.connect_dom_to_som = function(d, ui){
 				return false
 			}
 		});
-		lfm_fin_loved.click(function(){
+		
+		
+		ui.lfm_auth.lfm_fin_loved_check.change(function(){
+			if ($(this).attr('checked')) {
+				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+					if (!r.error) {
+						lfm_auth.login(r);
+						render_recommendations();
+					}
+				});
+				lfm_fin_loved.attr('disabled', null);
+				
+			} else {
+				lfm_fin_loved.attr('disabled', 'disabled');
+			}
+		});
+		
+		ui.lfm_auth.lfm_fin_loved.click(function(){
 			if(lfm_fin_loved_check.attr('checked')){
 				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
 					if (!r.error) {
@@ -277,20 +319,23 @@ window.connect_dom_to_som = function(d, ui){
 			}
 		})
 		
-		$('#lfm-recomm',d).click(function(){
+		var lfm_recomm = $('#lfm-recomm',d).click(function(){
 			if(!lfm_auth.sk){
 				$(d.body).toggleClass('lfm-auth-req-recomm');
 			}else {
 				render_recommendations();
 			}
-		})
-		$('#lfm-loved',d).click(function(){
+		});
+		
+		var lfm_loved = $('#lfm-loved',d).click(function(){
 			if(!lfm_auth.sk){
 				$(d.body).toggleClass('lfm-auth-req-loved');
 			}else {
 				render_loved();
 			}
-		})
+		});
+
+		
 		$('#lfm-loved-by-username',d).submit(function(){
 			var _this = $(this);
 			render_loved(_this[0].loved_by_user_name.value);
