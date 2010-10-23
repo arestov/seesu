@@ -31,7 +31,9 @@ html.as-application:not(.chrome-extension){
 		z-index:2;
 		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 		}
-
+		.chrome-extension #slider .screens{
+			padding-bottom:20px;
+		}
 .as-application:not(.chrome-extension) #slider-materail{
 	background-color: #505050;
 	position: absolute;

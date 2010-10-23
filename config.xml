@@ -8,11 +8,11 @@
   <description>You can find &amp; get any music you need. Type in an artist or genre.</description>
   <width>640</width>
   <height>600</height>
-  <icon width="16" height="16">icons/icon16.png</icon>
-  <icon width="19" height="19">icons/icon19.png</icon>
-  <icon width="32" height="32">icons/icon32.png</icon>
-  <icon width="64" height="64">icons/icon64.png</icon>
   <icon width="128" height="128">icons/icon128.png</icon>
+  <icon width="64" height="64">icons/icon64.png</icon>
+  <icon width="32" height="32">icons/icon32.png</icon>
+  <icon width="19" height="19">icons/icon19.png</icon>
+  <icon width="16" height="16">icons/icon16.png</icon>
   <author>
 	<name>Gleb Arestov</name>
 	<email>gleb.arestov@gmail.com</email>

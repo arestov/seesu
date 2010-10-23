@@ -121,11 +121,11 @@ li.active-play .play-controls{
 	display:none;
 }
 .show-zoom-to-track .tracks-for-play>ul{
-	overflow:hidden;
-	padding-top:50px;
+
+	padding-top:37px;
 }
 .show-zoom-to-track .tracks-for-play>ul>li.to-play-previous{
-	margin-top:-34px;
+	margin-top:-33px;
 	}
 .show-zoom-to-track .tracks-for-play>ul>li.to-play-next{
 	
@@ -141,9 +141,7 @@ li.active-play .play-controls{
 	
 	}
 
-.show-zoom-to-track#slider .screens{
-	padding-top:0;
-}
+
 .show-zoom-to-track #artist-holder{
 	min-height: 100%;
 	position: relative;
