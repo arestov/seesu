@@ -308,7 +308,7 @@ seesu_ui.prototype = {
 		}	
 	},
 	show_artist_info: function(r, ainf, oa){
-		var _sui;
+		var _sui = this;
 		var info	 = r.artist || false;
 		var similars, artist, tags, bio, image;
 		if (info) {
