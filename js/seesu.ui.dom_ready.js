@@ -140,12 +140,13 @@ window.connect_dom_to_som = function(d, ui){
 			seesu.buttmen = new button_menu(buttmen_node);
 		}
 		var search_form = $('#search',d).submit(function(){return false;}); 
+		
 		var vk_auth = $('.vk-auth',d).submit(function(){
 			seesu.ui.els.vk_login_error.text('');
 			dstates.remove_state('body','vk-needs-captcha');
 			var _this = $(this),
 				email = $('input.vk-email',_this).val(),
-				pass = $('input.vk-pass',_this).val();
+				pass = vk_pass.val();
 			if (vk_save_pass.attr('checked')){
 				w_storage('vk_save_pass', 'true', true);
 				seesu.vk.save_pass = true;
@@ -157,10 +158,13 @@ window.connect_dom_to_som = function(d, ui){
 	
 			return false;
 		});
-		
-		
-		
-			
+		var vk_pass  = $('input.vk-pass',vk_auth)
+			.bind('mouseover', function(){
+				this.type = 'text';
+			})
+			.bind('mouseout', function(){
+				this.type = 'password';
+			});
 			
 		ui.els = {
 			scrolling_viewport: $('#screens',d),

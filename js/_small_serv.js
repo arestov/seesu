@@ -114,8 +114,14 @@ window.app_env = (function(){
 		env.as_application = true;
 	} else
 	if (typeof chrome === 'object' && location.protocol == 'chrome-extension:'){
-		env.app_type = 'chrome_extension';
-		env.as_application = true;
+		if (location.pathname == '/index.html'){
+			env.app_type = 'chrome_app';
+			env.as_application = false;
+		} else{
+			env.app_type = 'chrome_extension';
+			env.as_application = true;
+		}
+		
 	} else
 	if (location.protocol.match(/http/)){
 		env.app_type = 'web_app';
