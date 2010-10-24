@@ -14,7 +14,9 @@
 	"128": "icons/icon128.png"
   },
   "permissions": [
-	"http://*/*",
-	"https://*/*"
+	"http://vkontakte.ru/*",
+	"http://*.last.fm/*",
+	"http://*.audioscrobbler.com/*",
+	"http://api.soundcloud.com/*"
   ]
 }
