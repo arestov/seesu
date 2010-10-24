@@ -95,7 +95,9 @@
 		left:0;
 		background:#6a9e3a;
 	}
-#track-panel{
+.track-panel{
+	top:1px;
 	position:relative;
 	height:54px;
+	
 	}

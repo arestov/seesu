@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="not-as-application">
   <head>
 	<meta charset="utf-8">
 	<title>Seesu</title>
@@ -41,7 +41,8 @@
 	<script type="text/javascript" src="js/network.vk.api.js"></script>
 	<script type="text/javascript" src="js/network.lastfm.js"></script>
 	
-	
+	<script type="text/javascript" src="js/seesu.ui.dom_ready.js"></script>
+	<script type="text/javascript" src="js/seesu.ui.js"></script>
 	<script type="text/javascript" src="js/seesu.js"></script>
 	<script type="text/javascript" src="js/seesu.search.js"></script>
 	
@@ -54,8 +55,9 @@
 	<script type="text/javascript" src="js/c_buttmen.js"></script>
 	<script type="text/javascript" src="js/pressed_node_tester.js"></script>
 	
-	
-	<script type="text/javascript" src="js/seesu.events.js"></script>
+	<script type="text/javascript">
+		su.ui = new seesu_ui(document, true);
+	</script>
 
   </head>
   
@@ -90,7 +92,7 @@
 							<p id="search-p">
 								<label>
 									<span class='lbl'>Search</span>
-									<span class="inpt"><input type="text" name="q" id="q" size="50"  autocomplete="off"/></span>
+									<span class="inpt"><input type="search" name="q" id="q" size="50"  autocomplete="off"/></span>
 									
 								</label>
 								
@@ -104,7 +106,7 @@
 						<div class="lfm-recomm">
 							<p><a  id="lfm-recomm" class="js-serv">Recommendations</a></p>
 							<div class="lfm-auth">
-								<p>To get your music recommendations you need to <input class="login-lastfm-button" type="button" value="grant"/> Seesu your last.fm account access</p>
+								<p>To get your music recommendations you need to <input class="login-lastfm-button" type="button" value="grant" name="recommendations"/> Seesu your last.fm account access</p>
 								<form class="lfm-finish">
 									<label><input type='checkbox'  id="login-lastfm-finish-recomm-check"/> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-recomm">give me recommendations</button>
 									<p>It's simple and safe. It does not require your last.fm password.</p>
@@ -119,7 +121,7 @@
 						<div class="lfm-loved">
 							<p><a class="js-serv" id="lfm-loved">Loved Tracks</a></p>
 							<div class="lfm-auth">
-								<p>To get your favorite tracks you need to <input class="login-lastfm-button" type="button" value="grant"/> Seesu your last.fm account access</p>
+								<p>To get your favorite tracks you need to <input class="login-lastfm-button" type="button" name="loved" value="grant"/> Seesu your last.fm account access</p>
 								<form class="lfm-finish">
 									<p>
 										<label><input type='checkbox'  id="login-lastfm-finish-loved-check"/> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-loved">give me loved tracks</button>
@@ -138,9 +140,9 @@
 
 	
 				<div id="artist-holder" class="artist-page screen play-screen">
-					<div class="track-context">
+					<div class="track-context" >
 						
-						<div id="track-panel">
+						<div class="track-panel">
 							
 							<a class="play-control play" href="javascript:void(0)">
 							  <img src="i/buttons_play.png" alt="play" class="pl-control simple-clicks">
@@ -185,7 +187,7 @@
 												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
 											</form>
 											<div class="lfm-granting">
-												<p>To scrobble to last.fm you must <input class="login-lastfm-button" type="button" value="grant"/> access to Seesu </p>
+												<p>To scrobble to last.fm you must <input class="login-lastfm-button" type="button" value="grant" name="scrobbling"/> access to Seesu </p>
 												<p class="lfm-finish"><label><input type='checkbox' class="scrobbling-grant"/> I've granted my account access to Seesu</label></p>
 											</div>
 											<p><input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
@@ -269,7 +271,7 @@
 								<p>
 									<label for="pass-arts">Password</label>
 									<span class="input-place" >
-										<input type="text" class="vk-pass"	name="pass" id="pass-arts"/>
+										<input type="password" class="vk-pass"	name="pass" id="pass-arts"/>
 									</span>
 								</p>
 								<p class="error"></p>

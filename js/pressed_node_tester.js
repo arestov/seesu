@@ -5,16 +5,16 @@ var test_pressed_node = function(original_node, mouseup){
 	
 		if(clicked_node.is('a')) {
 		  if (class_name.match(/download-mp3/)){
-			widget.openURL(node.href);
+			open_url(node.href);
 			return false;
 		  }
 		  else if (class_name.match(/vk-reg-ref/)){
-			widget.openURL(vkReferer || 'http://vk.com/reg198193');
+			open_url(vkReferer || 'http://vk.com/reg198193');
 			seesu.track_event('Links', 'vk registration');
 			return false;
 		  }
 		  else if (class_name.match(/sign-in-to-vk/)){
-		  	if (seesu.cross_domain_allowed){
+		  	if (seesu.env.cross_domain_allowed){
 				clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
 			} else{
 				if (!clicked_node.data('popup_listening')){
@@ -29,13 +29,13 @@ var test_pressed_node = function(original_node, mouseup){
 			return false;
 		  }
 		  else if (class_name.match(/flash-s$/)){
-			widget.openURL('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
+			open_url('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 			seesu.track_event('Links', 'flash security');
 			return false;
 		  }
 		  else if (class_name.match(/\bartist\b[^\-]/)){
 			artist_name = decodeURIComponent(clicked_node.data('artist'));
-			show_artist(artist_name);
+			seesu.ui.show_artist(artist_name);
 			seesu.track_event('Artist navigation', 'artist', artist_name);
 			return false;
 		  }
@@ -48,7 +48,7 @@ var test_pressed_node = function(original_node, mouseup){
 		  else if (class_name.match(/bbcode_artist/)){
 			
 			artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/','').replace('+', ' '));
-			show_artist(artist_name);
+			seesu.ui.show_artist(artist_name);
 			seesu.track_event('Artist navigation', 'bbcode_artist', artist_name);
 			return false;
 		  }
@@ -73,7 +73,7 @@ var test_pressed_node = function(original_node, mouseup){
 		  	
 			make_external_playlist();
 			if (seesu.player.current_external_playlist.result) {
-				widget.openURL(
+				open_url(
 					'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(seesu.player.current_external_playlist.result)
 				)
 		  	}
@@ -81,13 +81,13 @@ var test_pressed_node = function(original_node, mouseup){
 			return false
 		  }
 		  else if (class_name.match(/seesu-me-link/)){
-		  	widget.openURL(node.href)
+		  	open_url(node.href)
 		  	return false;
 		  }
 		  else if (class_name.match(/hint-query/)){
 		  	var query = clicked_node.text();
-		  	search_input.val(query);
-			input_change(search_input[0]);
+		  	seesu.ui.els.search_input.val(query);
+			input_change(seesu.ui.els.search_input[0]);
 		  	clicked_node.text(seesu.popular_artists[(Math.random()*10).toFixed(0)]);
 		  	seesu.track_event('Navigation', 'hint artist');
 		  	return false;
@@ -100,7 +100,7 @@ var test_pressed_node = function(original_node, mouseup){
 				clicked_node.parents('#tracks-search').removeClass('want-to-select-mp3-search')
 			}
 			else if (class_name.match(/login-lastfm-button/)){
-	
+				lfm_auth.waiting_for = clicked_node.attr('name');
 				if (lfm_auth.newtoken) {
 					open_lfm_to_login(lfm_auth.newtoken);
 				} else {
@@ -131,7 +131,7 @@ var test_pressed_node = function(original_node, mouseup){
 				if (seesu.vk_logged_in){
 					seesu.delayed_search.switch_to_vk()
 				}else{
-					$(document.body).addClass('vk-needs-login');
+					dstates.add_state('body','vk-needs-login');
 				}
 				
 				return false

@@ -12,8 +12,8 @@ var html5_p = function(volume){
 
 
 	this.volume = volume/100;
-	if (seesu.player.current_song){
-		this.play_song_by_node(current_song);
+	if (seesu.player.c_song){
+		this.play_song_by_url(seesu.player.c_song.link);
 	}
 
 	
@@ -105,7 +105,7 @@ html5_p.prototype = {
 		},
 		"changhe_volume": function(volume){
 			if (this.current_song){
-				this.current_song.volume = volume/100;
+				this.current_song.volume = this.volume = volume/100;
 			}
 		}
 	},
