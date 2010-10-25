@@ -398,7 +398,7 @@ seesu_ui.prototype = {
 	
 	},
 	artist_albums_renderer: function(r, container){
-		var sui = this;
+		var _sui = this;
 		var albums = r.topalbums.album;
 		var albums_ul = $('<ul></ul>');
 		if (albums){
