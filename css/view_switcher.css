@@ -160,8 +160,7 @@ li.active-play .play-controls{
 	
 	
 	
-	
-	
+
 		
 .nnav{
 	display:none;
@@ -186,7 +185,13 @@ li.active-play .play-controls{
 	
 	
 	}
-	
+	.nnav:last-child {
+		float:none;
+		overflow:hidden;
+		white-space:nowrap;
+		text-overflow: ellipsis; 
+	}
+		
 
 .nnav:first-child{
 	-moz-border-radius:6px 0 0 6px;
