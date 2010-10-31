@@ -145,6 +145,9 @@ views.prototype = {
 			$(seesu.ui.els.nav_playlist_page).text(pl_r.playlist_title);
 		}
 		_sui.playlist_type = pl_r.playlist_type || '';
+		if (pl_r.length){
+			seesu.ui.render_playlist(pl_r);
+		}
 		if (pl_r.with_search_results_link) {
 			
 			su.ui.now_playing.nav = seesu.ui.els.slider.className = 'show-full-nav show-player-page';
@@ -368,7 +371,7 @@ seesu_ui.prototype = {
 			}
 			ainf.meta_info.append(similars_p);
 		}
-		var artist_albums_container = seesu.artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">Albums:</span>').appendTo(ainf.meta_info);
+		var artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">Albums:</span>').appendTo(ainf.meta_info);
 		var artist_albums_text = $('<div class=""></div>').appendTo(artist_albums_container);
 		if (artist_albums_container){
 			
@@ -411,7 +414,6 @@ seesu_ui.prototype = {
 					.data('album', al_name)
 					.click(function(e){
 						e.preventDefault(); 
-						_sui.toogle_art_alb_container(seesu.artist_albums_container.data('albums_link'));
 						
 						var pl_r = prepare_playlist('(' + al_artist + ') ' + al_name ,'album')
 						_sui.views.show_playlist_page(pl_r);
@@ -440,11 +442,12 @@ seesu_ui.prototype = {
 		container.append(albums_ul);
 	},
 	toogle_art_alb_container: function(link){
-		if (seesu.artist_albums_container.is('.collapse-albums')){
-			seesu.artist_albums_container.removeClass('collapse-albums');
+		var artist_albums_container = link.parent().parent();
+		if (artist_albums_container.is('.collapse-albums')){
+			artist_albums_container.removeClass('collapse-albums');
 			link.text('hide them');
 		} else{
-			seesu.artist_albums_container.addClass('collapse-albums');
+			artist_albums_container.addClass('collapse-albums');
 			link.text('show them');
 		}
 	},
@@ -465,7 +468,7 @@ seesu_ui.prototype = {
 						su.ui.now_playing.link = $('<a></a>').text('Now Playing').attr('class', 'js-serv').click(function(){
 							_sui.views.show_now_playing();
 						})
-					).appendTo(seesu.ui.els.start_screen);
+					).prependTo(seesu.ui.els.start_screen.children('.for-startpage'));
 				}
 				
 			}
@@ -514,6 +517,7 @@ seesu_ui.prototype = {
 	},
 	create_playlist_element: function(mo_titl){
 		var t_context = this.els.track_c.clone(true);
+		var tp = t_context.children('.track-panel');
 		var track = $("<a></a>")
 			.data('mo_titl', mo_titl)
 			.data('artist_name', mo_titl.artist)
@@ -522,6 +526,7 @@ seesu_ui.prototype = {
 			.click(empty_song_click),
 			li = document.createElement('li');
 			
+		tp.children('.play-control').children('img.pl-control').data('mo_titl', mo_titl);
 		
 		mo_titl.node = track;
 		
@@ -544,13 +549,13 @@ seesu_ui.prototype = {
 			tr_progress_l: tpt.children('.track-load-progress'),
 			tr_progress_p: tpt.children('.track-play-progress')
 		};
-		ph.prependTo($('.track-panel',t_context));
+		ph.prependTo(tp);
 			
 			
 			
 		return $(li)
 			.data('mo_titl', mo_titl)
-			.append(seesu.ui.els.play_controls.node.clone(true))
+			.append(seesu.ui.els.play_controls.node.clone(true).data('mo_titl', mo_titl))
 			.append(track)
 			.append(t_context);
 	},
@@ -564,6 +569,22 @@ seesu_ui.prototype = {
 		if (lfm_ssw) {
 			lfm_ssw.find('.enable-scrobbling').attr('checked', 'checked');
 			lfm_ssw.find('.disable-scrobbling').attr('checked', '');
+		}
+	},
+	search: function(query){
+		this.els.search_input.val(query);
+		input_change(this.els.search_input[0]);
+	},
+	create_playlists_link: function(){
+		var _ui = this;
+		if (!_ui.link && su.gena.playlists.length > 0 && _ui.els.start_screen){
+			$('<p></p>').attr('id', 'cus-playlist-b').append(
+				_ui.link = $('<a></a>').text('Playlists').attr('class', 'js-serv').click(function(){
+					_ui.search('');
+					_ui.search(':playlists');
+					return false;
+				}) 
+			).appendTo(_ui.els.start_screen.children('.for-startpage'));
 		}
 	},
 	make_search_elements_index: function(remark_enter_press, after_user){
@@ -584,7 +605,8 @@ seesu_ui.prototype = {
 					set_node_for_enter_press($(new_active_node), false, after_user);
 			}
 		}
-	},mark_c_node_as: function(marker){
+	},
+	mark_c_node_as: function(marker){
 		var s = seesu.ui.els.artsHolder;
 		s.attr('class', s.attr('class').replace(/\s*player-[a-z]+ed/g, ''));
 		switch(marker) {

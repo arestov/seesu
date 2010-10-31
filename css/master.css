@@ -398,7 +398,7 @@ display:none;
 	position: absolute;
 	width: 21px;
 	height:17px;
-	background:url(../i/triangle.png) no-repeat ;
+	background:url(../i/triangle.png) no-repeat 50% 0;
 	left: 15px;
 	top: -7px;
 }
@@ -450,9 +450,7 @@ html.not-as-application, .not-as-application  body{
 	
 }
 
-#now-play-b{
-	margin-top:2em;
-}
+
 #gstat{
 	border:0;
 	margin:0;

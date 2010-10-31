@@ -508,47 +508,108 @@ var suggestions_prerender = function(input_value, crossdomain){
 	var source_query = input_value;
 
 	var results_container = seesu.ui.views.get_search_rc().empty();
+	
+	var create_plr_entity = function(pl){
+		pl.with_search_results_link = true;
+		var li  = $('<li></li>');
+		var _b = $('<a></a>')
+			.text(pl.playlist_title)
+			.click(function(){
+				su.ui.views.show_playlist_page(pl);
+			}).appendTo(li)
+		return li;
+	}
+	
+	if (':playlists'.match(new RegExp('\^' + input_value , 'i'))){
+		results_container.append('<h4>Playlists</h4>');
+		var pl_r = $('<ul class="playlist-results"></ul>');
+		
+		var playlists = seesu.gena.playlists;
+		if (!playlists.length){
+			pl_r.append('<li><a class="nothing-found">none playlists found</a></li>').appendTo(results_container);
+		} else{
+			var pl_results = $();
+			for (var i=0; i < playlists.length; i++) {
+				pl_results = pl_results.add(create_plr_entity(playlists[i]));
+			};
+			pl_r.append(pl_results).appendTo(results_container);
+		}
+	} 
+	
+	if (!input_value.match(/^:/)){
+		//playlist search
+		var playlists = seesu.gena.playlists;
+		var matches = [];
+		for (var i=0; i < playlists.length; i++) {
+			if (playlists[i].playlist_title == input_value){
+				matches.unshift(i);
+				matches.full_match = true;
+			} else if (playlists[i].playlist_title.match(new  RegExp('\\b' + input_value))){
+				 matches.push(i);
+			}
+
+		};
+		if (matches.length){
+			results_container.append('<h4>Playlists</h4>');
+			var pl_r = $('<ul class="playlist-results"></ul>');
+			
+			
+			var pl_results = $();
+					
+			for (var i=0; i < matches.length; i++) {
+				pl_results = pl_results.add(create_plr_entity(playlists[matches[i]]));
+			};
+			if (pl_results.length > 0){
+				pl_r.append(pl_results).appendTo(results_container);
+			}
+		
+		}
+		
+		//===playlists search
 
 
-	results_container.append('<h4>Artists</h4>');
-	var arts_clone = seesu.ui.buttons.search_artists.clone(true)
-		.data('finishing_results', multy ? 5 : 0)
-		.addClass("search-button")
-		.find('span').text('Search «' +source_query + '» in artists').end();
-	var ul_arts = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
-	seesu.ui.buttons_li.search_artists = $('<li></li>',seesu.ui.d).append(arts_clone).appendTo(ul_arts);
-	results_container.append(ul_arts);
-	
-	
-
-	results_container.append('<h4>Tracks</h4>');
-	var track_clone = seesu.ui.buttons.search_tracks.clone(true)
-		.data('finishing_results', multy ? 5 : 0)
-		.addClass("search-button")
-		.find('span').text('Search «' +source_query + '» in tracks').end();
-	var ul_tracks = seesu.ui.tracks_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
-	seesu.ui.buttons_li.search_tracks = $('<li></li>',seesu.ui.d).append(track_clone).appendTo(ul_tracks);
-	results_container.append(ul_tracks);
-	
 
 
-	results_container.append('<h4>Tags</h4>');
-	var tags_clone = seesu.ui.buttons.search_tags.clone(true)
-		.data('finishing_results', multy ? 5 : 0)
-		.addClass("search-button")
-		.find('span').text('Search «' +source_query + '» in tags').end();
-	var ul_tags = seesu.ui.tags_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
-	seesu.ui.buttons_li.search_tags = $('<li></li>',seesu.ui.d).append(tags_clone).appendTo(ul_tags);
-	results_container.append(ul_tags);
+		results_container.append('<h4>Artists</h4>');
+		var arts_clone = seesu.ui.buttons.search_artists.clone(true)
+			.data('finishing_results', multy ? 5 : 0)
+			.addClass("search-button")
+			.find('span').text('Search «' +source_query + '» in artists').end();
+		var ul_arts = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
+		seesu.ui.buttons_li.search_artists = $('<li></li>',seesu.ui.d).append(arts_clone).appendTo(ul_arts);
+		results_container.append(ul_arts);
+		
+		
 	
-
-	$('<p></p>',seesu.ui.d).append(seesu.ui.buttons.search_vkontakte.clone(true)).appendTo(results_container);
+		results_container.append('<h4>Tracks</h4>');
+		var track_clone = seesu.ui.buttons.search_tracks.clone(true)
+			.data('finishing_results', multy ? 5 : 0)
+			.addClass("search-button")
+			.find('span').text('Search «' +source_query + '» in tracks').end();
+		var ul_tracks = seesu.ui.tracks_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
+		seesu.ui.buttons_li.search_tracks = $('<li></li>',seesu.ui.d).append(track_clone).appendTo(ul_tracks);
+		results_container.append(ul_tracks);
+		
 	
-	seesu.ui.buttons_li.inject_before_buttons = true;
-	seesu.ui.make_search_elements_index();
-	set_node_for_enter_press(arts_clone, false, true);
 	
-	suggestions_search(source_query, arts_clone, track_clone ,tags_clone);
+		results_container.append('<h4>Tags</h4>');
+		var tags_clone = seesu.ui.buttons.search_tags.clone(true)
+			.data('finishing_results', multy ? 5 : 0)
+			.addClass("search-button")
+			.find('span').text('Search «' +source_query + '» in tags').end();
+		var ul_tags = seesu.ui.tags_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
+		seesu.ui.buttons_li.search_tags = $('<li></li>',seesu.ui.d).append(tags_clone).appendTo(ul_tags);
+		results_container.append(ul_tags);
+		
+	
+		$('<p></p>',seesu.ui.d).append(seesu.ui.buttons.search_vkontakte.clone(true)).appendTo(results_container);
+		
+		seesu.ui.buttons_li.inject_before_buttons = true;
+		seesu.ui.make_search_elements_index();
+		set_node_for_enter_press(arts_clone, false, true);
+		
+		suggestions_search(source_query, arts_clone, track_clone ,tags_clone);
+	}
 }
 
 

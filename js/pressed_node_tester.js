@@ -1,7 +1,7 @@
-var test_pressed_node = function(original_node, mouseup){
-	var node = original_node;
+var test_pressed_node = function(e, mouseup){
+	var node = e.target;
   	var class_name = node.className;
-	var clicked_node = $(original_node);
+	var clicked_node = $(node);
 	
 		if(clicked_node.is('a')) {
 		  if (class_name.match(/download-mp3/)){
@@ -86,8 +86,7 @@ var test_pressed_node = function(original_node, mouseup){
 		  }
 		  else if (class_name.match(/hint-query/)){
 		  	var query = clicked_node.text();
-		  	seesu.ui.els.search_input.val(query);
-			input_change(seesu.ui.els.search_input[0]);
+		  	su.ui.search(query);
 		  	clicked_node.text(seesu.popular_artists[(Math.random()*10).toFixed(0)]);
 		  	seesu.track_event('Navigation', 'hint artist');
 		  	return false;
@@ -182,10 +181,31 @@ var test_pressed_node = function(original_node, mouseup){
 				seesu.track_event('Controls', 'next', mouseup ? 'mouseup' : '');
 				return false;
 			} else if (class_name.match(/add-to-playlist/)){
+				console.log()
+				
+				var target_offset = clicked_node.offset();
+				var container_offset = su.ui.els.artsHolder.offset();
+				var container_width = su.ui.els.artsHolder.width();
+				var left = target_offset.left - container_offset.left;
+				su.ui.els.pl_search
+					.data('current_song', clicked_node.data('mo_titl'))
+					.css({
+						top: (target_offset.top - container_offset.top) + 'px',
+						left: left + 'px',
+						display: 'block'
+					});
+				if (left > container_width/2){
+					su.ui.els.pl_search.addClass('close-to-right');
+				} else{
+					su.ui.els.pl_search.removeClass('close-to-right');
+				}
+				su.ui.els.pl_r.val('')[0].focus();
+				
+				/*
 				if(seesu.player.c_song) {
 					seesu.gena.add(seesu.player.c_song.mo_titl, seesu.gena.user_playlist)
-				}
-				seesu.track_event('Controls', 'add to playlist', mouseup ? 'mouseup' : '');
+				}*/
+				//seesu.track_event('Controls', 'add to playlist', mouseup ? 'mouseup' : '');
 				return false;
 			}
 		  

@@ -253,3 +253,59 @@ p.internet-flash-settings{
 	z-index:2;
 	display:block;
 }
+#playlist-search{
+		display:none;
+		position:absolute;
+		z-index:20;
+		margin:30px 0px 0px -17px;
+		}
+	#playlist-search-con{
+		width:200px;
+		background:#ddd;
+		color:#555;
+		border-radius:5px;
+		padding:15px;
+	}
+		#playlist-search-con .js-serv{
+			color:#666;
+			border-bottom-color:#aaa  !important;
+			}
+			#playlist-search-con .js-serv:hover{
+				color:#999;
+				border-bottom-color:#ccc  !important;
+				}
+	#playlist-search h4{
+		margin:0 0 10px;
+		padding:0;
+		font-size:12px;
+	}
+	#playlist-search .ext-playlists-getting{
+		margin:15px 0 50px 3px;
+		
+	}
+	#playlist-search .ext-playlists-getting.not-want-to{
+		margin-bottom:15px;
+	}
+	
+	#playlist-search .pl-r{
+		padding:0;
+		margin-top:15px;
+		list-style:none;
+		max-height:140px;
+		overflow-y:auto;
+		}
+		#playlist-search .pl-r li{
+			margin-bottom:5px;
+			padding:3px;
+			border-radius:4px;
+			}
+			#playlist-search .pl-r li span{
+				color:#999;
+			}
+			#playlist-search .pl-r li:hover{
+				background:#eee;
+				cursor:pointer;
+				}
+	.ext-playlists-getting.not-want-to div{
+		display:none;
+	}
