@@ -65,7 +65,7 @@ document_states.prototype = {
 			
 		} else if (state_of == 'body'){
 			this.body_state = addClass(this.body_state, state);
-			if (this.ui.d) {
+			if (this.ui.d && this.ui.d.body) {
 				this.ui.d.body.className = this.body_state;
 			}
 		}
@@ -79,7 +79,7 @@ document_states.prototype = {
 			
 		} else if (state_of == 'body'){
 			this.body_state = removeClass(this.body_state, state);
-			if (this.ui.d) {
+			if (this.ui.d && this.ui.d.body) {
 				this.ui.d.body.className = this.body_state;
 			}
 		}
