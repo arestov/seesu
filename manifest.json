@@ -1,6 +1,6 @@
 {
   "name": "Seesu",
-  "version": "1.992",
+  "version": "1.994",
   "description": "Seesu is for searching and listening music. Free last.fm player.",
   "app": {
     "launch": {
@@ -17,6 +17,7 @@
 	"http://vkontakte.ru/*",
 	"http://*.last.fm/*",
 	"http://*.audioscrobbler.com/*",
-	"http://api.soundcloud.com/*"
+	"http://api.soundcloud.com/*",
+	"http://seesu.me/*"
   ]
 }

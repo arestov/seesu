@@ -1,4 +1,3 @@
-
 var INIT     = -11,
 	  CREATED  = -7,
 	  VOLUME   = -5,
@@ -8,24 +7,46 @@ var INIT     = -11,
 	  FINISHED =  11;
 
 seesu.gena = { //this work with playlists
-	user_playlist: (function(){
+	reconnect_playlist: function(pl){
+		for (var i=0; i < pl.length; i++) {
+			this.connect(pl[i], pl, i);
+		};
+	},
+	save_playlists: function(){
+		var _this = this;
+		if (this.save_timeout){clearTimeout(this.save_timeout);}
+		
+		this.save_timeout = setTimeout(function(){
+			var plsts = [];
+			var playlists = _this.playlists;
+			for (var i=0; i < playlists.length; i++) {
+				var new_pl = _this.soft_clone(playlists[i]);
+				delete new_pl.plst_pla;
+				delete new_pl.push;
+				for (var k=0; k < new_pl.length; k++) {
+					
+					new_pl[k] = _this.clear(_this.soft_clone(new_pl[k]));
+				};
+				plsts[i] = new_pl;
+			};
+			w_storage('user_playlists', plsts, true);
+		},10)
+	},
+	create_userplaylist: function(title){
+		var _this = this;
+		var pl_r = prepare_playlist(title, 'cplaylist');
+		this.playlists.push(pl_r);
+		pl_r.push = function(){
+			Array.prototype.push.apply(this, arguments);
+			_this.save_playlists();
+		}
+		return pl_r;
+	},
+	user_playlis1t: (function(){
 		var pl_r = prepare_playlist('Custom playlist', 'cplaylist');
 		pl_r.push = function(mo){
 			Array.prototype.push.call(this, mo);
-			if (!seesu.ui.link && pl_r.length > 0 && seesu.ui.els.start_screen){
-				$('<p></p>').attr('id', 'cus-playlist-b').append(
-					seesu.ui.link = $('<a></a>').text('Custom playlist').attr('class', 'js-serv').click(function(){
-						if (seesu.player.c_song.mo_titl.plst_titl == pl_r){
-							seesu.ui.views.restore_view();
-						} else{
-							seesu.ui.views.show_playlist_page(pl_r);
-							seesu.ui.render_playlist(pl_r);
-							make_tracklist_playable(pl_r);
-						}
-						return false;
-					}) 
-				).appendTo(seesu.ui.els.start_screen);
-			}
+			
 			
 		}
 		return pl_r;
@@ -61,16 +82,55 @@ seesu.gena = { //this work with playlists
 		
 	},
 	soft_clone: function(obj){
+		var arrgh = obj instanceof Array;
 		var _n = {};
 		for (var a in obj) {
-			if (typeof obj[a] != 'object'){
-				_n[a] = obj[a];
+			if (arrgh || (typeof obj[a] != 'object')){
+				if (a != 'ui'){
+					_n[a] = obj[a];
+				}
+				
 			}
 		};
+		if (arrgh){
+			_n.length = obj.length;
+		}
 		return _n;
 	}
 }
-
+var extent_array_by_object = function(array, obj){
+	for (var a in obj) {
+		if (a != 'length'){
+			array[a] = obj[a];
+		}
+	};
+}
+su.gena.playlists = (function(){
+	var plsts_str = w_storage('user_playlists');
+	if (plsts_str){
+		var pls = JSON.parse(plsts_str);
+		for (var i=0; i < pls.length; i++) {
+			var recd_pl = prepare_playlist(pls[i].playlist_title, pls[i].playlist_type);
+			recd_pl.push = function(){
+				Array.prototype.push.apply(this, arguments);
+				console.log('bbbbb');
+				su.gena.save_playlists();
+			}
+			extent_array_by_object(recd_pl, pls[i]);
+			su.gena.reconnect_playlist(recd_pl);
+			pls[i] = recd_pl;
+		};
+	} else{
+		var pls = [];
+	}
+	
+	pls.push = function(){
+		Array.prototype.push.apply(this, arguments);
+		su.ui.create_playlists_link();
+	}
+	return pls;
+})();
+	
 seesu.player = {
 	autostart: true,
 	player_volume 	: ( function(){

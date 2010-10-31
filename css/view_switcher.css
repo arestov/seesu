@@ -14,9 +14,6 @@
 }
 
 
-.lfm-start{
-	display:none;
-	}
 #search_result{
 	display:none;
 	}	
@@ -39,14 +36,20 @@
 #search-desciption{
 	display:none;
 }
-
+.for-startpage{
+	display:none;
+	margin-top:2em;
+}
+.lfm-start{
+	display:none;
+	}
 .show-start{
 	
 	}
 	.show-start #search{
 		display:block;
 	}
-	.show-start .lfm-start{
+	.show-start .lfm-start,.show-start .for-startpage{
 		display:block;
 		}
 	.show-start .start-screen{

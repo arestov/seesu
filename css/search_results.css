@@ -103,6 +103,7 @@
 	ul:nth-of-type(even){
 		background-color:#4d4d4d;
 	}
+	.search-results-holder ul.playlist-results a{padding-left:47px;}
 	.search-results-holder
 	ul.recommend-tags a{
 		padding-left:47px;
