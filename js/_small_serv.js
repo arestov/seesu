@@ -35,7 +35,6 @@ var addClass = function(old_c, cl){
 		var re = new RegExp("(^|\\s)" + add_c[i] + "(\\s|$)", "g");
 		if (!old_c.match(re)){
 			var b = (" " + add_c[i]);
-			console.log()
 			new_c = (new_c + " " + add_c[i]).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
 		}
 	};
@@ -184,6 +183,7 @@ if (typeof widget != 'object'){
 	window.widget = {
 		fake_widget: true,
 		identifier : 0,
+		showNotification: function(){return false;},
 		openURL: function(url){
 			window.open(url);
 		}
@@ -205,7 +205,7 @@ var forceOperaRepaint = function() {
 var hard_testing = false;
 
 if (typeof console != 'object'){
-	window.console = {};
+	var console = {};
 	
 	if  (navigator.userAgent.match(/Opera/)){
 		console.log = function(){
