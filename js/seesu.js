@@ -2,9 +2,7 @@ window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/defau
 window.lfm = function(){
 	var _this = this;
 	var ag = arguments;
-	seesu.lfm_quene.add(function(){
-		lastfm.apply(_this, ag)
-	})
+	lastfm.apply(_this, ag);
 }
 window.seesu = window.su =  {
 	  fs: {},

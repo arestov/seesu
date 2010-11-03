@@ -145,7 +145,7 @@ views.prototype = {
 			$(seesu.ui.els.nav_playlist_page).text(pl_r.playlist_title);
 		}
 		_sui.playlist_type = pl_r.playlist_type || '';
-		if (pl_r.length){
+		if (pl_r.length && !show_playing){
 			seesu.ui.render_playlist(pl_r);
 		}
 		if (pl_r.with_search_results_link) {

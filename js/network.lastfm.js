@@ -32,27 +32,29 @@ var lastfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
 		}
 		
 		if (use_cache){
-			var cache_used = cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback)	
+			var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback)	
 		}
 
 		if (!cache_used){
-			return $.ajax({
-			  url: api,
-			  global: false,
-			  type: (type_of_xhr_is_post == true) ? "POST" : "GET",
-			  dataType: "jsonp",
-			  data: params_full,
-			  error: function(r){
-			  },
-			  success: function(r){
-				cache_ajax.set('lastfm', params_full.api_sig, r)
-				if (callback) {callback(r);}
-			  },
-			  complete: function(xhr){
-			  	//console.log(xhr.responseText)
-			  }
-			});
-			//console.log(params_full)
+			return seesu.lfm_quene.add(function(){
+				$.ajax({
+				  url: api,
+				  global: false,
+				  type: (type_of_xhr_is_post == true) ? "POST" : "GET",
+				  dataType: "jsonp",
+				  data: params_full,
+				  error: function(r){
+				  },
+				  success: function(r){
+					cache_ajax.set('lastfm', params_full.api_sig, r)
+					if (callback) {callback(r);}
+				  },
+				  complete: function(xhr){
+				  	//console.log(xhr.responseText)
+				  }
+				});
+				//console.log(params_full)
+			})
 		}
 
 	}
