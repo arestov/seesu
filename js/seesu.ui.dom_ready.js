@@ -107,7 +107,7 @@ window.connect_dom_to_som = function(d, ui){
 						break;    
 					  case('scrobbling'):
 						w_storage('lfm_scrobbling_enabled', 'true', true);
-						lfm_scrobble.scrobbling = true;
+						lfm_sc.scrobbling = true;
 						ui.lfm_enable_scrobbling();
 						break;
 					  default:
@@ -237,20 +237,8 @@ window.connect_dom_to_som = function(d, ui){
 				})
 				.prependTo(seesu.ui.els.slider)
 		}
-	  
-		
-		
-		
-		
-	
-		
-	
-		
-		
-		
-		
-	
-		if (lfm_scrobble.scrobbling) {
+
+		if (lfm_sc.scrobbling) {
 			ui.lfm_enable_scrobbling();
 		}
 		

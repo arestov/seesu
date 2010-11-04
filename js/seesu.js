@@ -2,9 +2,7 @@ window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/defau
 window.lfm = function(){
 	var _this = this;
 	var ag = arguments;
-	seesu.lfm_quene.add(function(){
-		lastfm.apply(_this, ag)
-	})
+	lastfm.apply(_this, ag);
 }
 window.seesu = window.su =  {
 	  fs: {},
@@ -652,7 +650,6 @@ window.open_lfm_to_login = function(token){
 
 
 $(function(){
-	if (seesu.env.cross_domain_allowed && lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
 	check_seesu_updates();
 	seesu.vk_id = w_storage('vkid');
 	try_mp3_providers();
