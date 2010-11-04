@@ -120,11 +120,11 @@ var test_pressed_node = function(e, mouseup){
 				}
 			} else if (class_name.match(/enable-scrobbling/)){
 				w_storage('lfm_scrobbling_enabled', 'true', true);
-				lfm_scrobble.scrobbling = true;
+				lfm_sc.scrobbling = true;
 				
 			} else if (class_name.match(/disable-scrobbling/)){
 				w_storage('lfm_scrobbling_enabled', '', true);
-				lfm_scrobble.scrobbling = false;
+				lfm_sc.scrobbling = false;
 				
 			}else if (class_name.match(/mp3-vk($| )/)){
 				if (seesu.vk_logged_in){

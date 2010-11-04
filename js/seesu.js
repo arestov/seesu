@@ -650,7 +650,6 @@ window.open_lfm_to_login = function(token){
 
 
 $(function(){
-	if (seesu.env.cross_domain_allowed && lfm_auth.sk && !lfm_scrobble.s) {lfm_scrobble.handshake();}
 	check_seesu_updates();
 	seesu.vk_id = w_storage('vkid');
 	try_mp3_providers();

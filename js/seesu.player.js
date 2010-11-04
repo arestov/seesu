@@ -342,9 +342,12 @@ seesu.player.events[PLAYED] = function(){
   if (!start_time) {
 	seesu.player.c_song.start_time = ((new Date()).getTime()/1000).toFixed(0);
   }
-  if (lfm_scrobble.scrobbling) {
-	lfm_scrobble.nowplay(seesu.player.c_song);
+  if (lfm_sc.scrobbling) {
+	lfm_sc.nowplay(seesu.player.c_song);
   }
+	
+	
+	
   su.ui.mark_c_node_as(seesu.player.player_state = PLAYED);
 };
 seesu.player.events[PAUSED] = function(){
@@ -357,10 +360,10 @@ seesu.player.events[STOPPED] = function(){
 
 
 seesu.player.events[FINISHED] = function() {
-  if (lfm_scrobble.scrobbling ) {
+  if (lfm_sc.scrobbling ) {
 	var submit = function(mo){
 		setTimeout(function(){
-			lfm_scrobble.submit(mo);
+			lfm_sc.submit(mo);
 		},300)
 	};
 	submit(seesu.player.c_song);
