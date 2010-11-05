@@ -62,8 +62,10 @@ lastfm_api.prototype = {
 			
 			params_full.method = method;
 			params_full.api_key = _this.apikey;
-			params_full.format = params_full.format || no_need_for_post_serv ? 'json' : 'xml';
-			
+			var f = params_full.format || no_need_for_post_serv ? 'json' : '';
+			if (f){
+				params_full.format = f;
+			}
 	
 			var paramsstr = '';
 			if(apisig || use_cache) {
