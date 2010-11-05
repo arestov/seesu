@@ -99,19 +99,19 @@ var test_pressed_node = function(e, mouseup){
 				clicked_node.parents('#tracks-search').removeClass('want-to-select-mp3-search')
 			}
 			else if (class_name.match(/login-lastfm-button/)){
-				lfm_auth.waiting_for = clicked_node.attr('name');
-				if (lfm_auth.newtoken) {
-					open_lfm_to_login(lfm_auth.newtoken);
+				su.lfm_api.waiting_for = clicked_node.attr('name');
+				if (su.lfm_api.newtoken) {
+					su.lfm_api.open_lfm_to_login(su.lfm_api.newtoken);
 				} else {
-					get_lfm_token(lfm_auth,open_lfm_to_login);
+					su.lfm_api.get_lfm_token(true);
 				}
 			}
 			else if (class_name.match(/scrobbling-grant/)){
-				if (!lfm_auth.newtoken || lfm_auth.sk){ return false}
+				if (!su.lfm_api.newtoken || su.lfm_api.sk){ return false}
 				if(clicked_node.attr('checked')){
-					lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+					lfm('auth.getSession',{'token':su.lfm_api.newtoken },function(r){
 						if (!r.error) {
-							lfm_auth.login(r);
+							su.lfm_api.login(r, seesu.ui.lfm_logged);
 							console.log('lfm scrobble access granted')
 						} else{
 							console.log('error while granting lfm scrobble access')
@@ -120,11 +120,11 @@ var test_pressed_node = function(e, mouseup){
 				}
 			} else if (class_name.match(/enable-scrobbling/)){
 				w_storage('lfm_scrobbling_enabled', 'true', true);
-				lfm_sc.scrobbling = true;
+				su.lfm_api.scrobbling = true;
 				
 			} else if (class_name.match(/disable-scrobbling/)){
 				w_storage('lfm_scrobbling_enabled', '', true);
-				lfm_sc.scrobbling = false;
+				su.lfm_api.scrobbling = false;
 				
 			}else if (class_name.match(/mp3-vk($| )/)){
 				if (seesu.vk_logged_in){

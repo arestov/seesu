@@ -1,79 +1,125 @@
-var apikey = '2803b2bcbc53f132b4d4117ec1509d65';
-var	s = '77fd498ed8592022e61863244b53077d';
-var api='http://ws.audioscrobbler.com/2.0/';
-var lastfm_cache_on = true;
-var lastfm = function(method, params, callback, nocache, type_of_xhr_is_post) {
-	if (method) {
-		var use_cache = (lastfm_cache_on && !type_of_xhr_is_post && !nocache)
-
-
-		var pv_signature_list = [], // array of <param>+<value>
-			params_full = params || {},
-			apisig = ((params && (params.sk || params.token )) || (method == 'auth.getToken')) ? true : false; // yes, we need signature
+var lastfm_api = function(apikey, s, cache, crossdomain){
+	this.apikey = apikey;
+	this.s = s;
+	this.cache = cache;
+	this.crossdomain = crossdomain;
+	if (!crossdomain){
+		var srvc = document.createElement('div');srvc.className="serv-container";$(function(){document.body.appendChild(srvc)});
 		
-		params_full.method = method;
-		params_full.api_key = apikey;
-		params_full.format = params_full.format || 'json';
+		var _i = document.createElement('iframe'); _i.width='30'; _i.height= '30';
+		var _f = document.createElement('form'); _f.method ='POST'; _f.action=this.api_path; srvc.appendChild(_f);
 		
-
-		var paramsstr = '';
-		if(apisig || use_cache) {
-			for (var param in params_full) {
-				if ((param != 'format') && (param != 'callback')){
-					pv_signature_list.push(param + params_full[param]);
-				}
+		this.post_serv = {
+			name: 'lfmpost',
+			i: _i,
+			c: 0,
+			f: _f,
+			post: function(data,callback){
+				$(this.f).empty();
+				for (var a in data) {
+					var input = document.createElement('input');input.type='hidden';
+					input.name = a;
+					input.value = data[a];
+					this.f.appendChild(input)
+				};
+				var new_i = this.i.cloneNode(true);
+				this.f.target = new_i.name = new_i.id = (this.name + (++this.c));
+				srvc.appendChild(new_i);
+				this.f.submit();
+				if (callback){callback({});}
 			}
-			pv_signature_list.sort();
-			
-			for (var i=0, l = pv_signature_list.length; i < l; i++) {
-				paramsstr += pv_signature_list[i];
-			};
-			params_full.api_sig = hex_md5(paramsstr + s);
-		}
-		
-		if (use_cache){
-			var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback)	
-		}
-
-		if (!cache_used){
-			return seesu.lfm_quene.add(function(){
-				$.ajax({
-				  url: api,
-				  global: false,
-				  type: (type_of_xhr_is_post == true) ? "POST" : "GET",
-				  dataType: "jsonp",
-				  data: params_full,
-				  error: function(r){
-				  },
-				  success: function(r){
-					cache_ajax.set('lastfm', params_full.api_sig, r)
-					if (callback) {callback(r);}
-				  },
-				  complete: function(xhr){
-				  	//console.log(xhr.responseText)
-				  }
-				});
-				//console.log(params_full)
-			})
-		}
-
+		};
 	}
-};
-
-var lfm_sc = {
-	scrobbling:  w_storage('lfm_scrobbling_enabled') ? true : false, 
-	music: (function(){
+	this.quene = new funcs_quene(100);
+	
+	
+	this.scrobbling =  w_storage('lfm_scrobbling_enabled') ? true : false;
+	this.sk =  w_storage('lfmsk') || false;
+	this.user_name = w_storage('lfm_user_name') || false;
+	this.music = (function(){
 		var lfmscm = w_storage('lfm_scrobble_music');
 		if (lfmscm) {
 			return JSON.parse(lfmscm);
 		} else {
 			return [];
 		}
-	})(),
+	})();
+	
+	
+	
+};
+lastfm_api.prototype = {
+	api_path: 'http://ws.audioscrobbler.com/2.0/',
+	use: function(method, params, callback, nocache, type_of_xhr_is_post) {
+		var _this = this;
+		if (method) {
+			var use_cache = (_this.cache && !type_of_xhr_is_post && !nocache)
+	
+	
+			var pv_signature_list = [], // array of <param>+<value>
+				params_full = params || {},
+				apisig = ((params && (params.sk || params.token )) || (method == 'auth.getToken')) ? true : false; // yes, we need signature
+			
+			params_full.method = method;
+			params_full.api_key = _this.apikey;
+			params_full.format = params_full.format || 'json';
+			
+	
+			var paramsstr = '';
+			if(apisig || use_cache) {
+				for (var param in params_full) {
+					if ((param != 'format') && (param != 'callback')){
+						pv_signature_list.push(param + params_full[param]);
+					}
+				}
+				pv_signature_list.sort();
+				
+				for (var i=0, l = pv_signature_list.length; i < l; i++) {
+					paramsstr += pv_signature_list[i];
+				};
+				params_full.api_sig = hex_md5(paramsstr + _this.s);
+			}
+			
+			if (use_cache){
+				var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback)	
+			}
+	
+			if (!cache_used){
+				return _this.quene.add(function(){
+					if (!type_of_xhr_is_post || _this.crossdomain){
+						$.ajax({
+						  url: _this.api_path,
+						  global: false,
+						  type: type_of_xhr_is_post ? "POST" : "GET",
+						  dataType: _this.crossdomain ? 'json' : 'jsonp',
+						  data: params_full,
+						  error: function(r){
+						  },
+						  success: function(r){
+							if (callback) {callback(r);}
+							if (!type_of_xhr_is_post){
+						  		cache_ajax.set('lastfm', params_full.api_sig, r)
+						  	}
+						  },
+						  complete: function(xhr){
+						  	//console.log(xhr.responseText)
+						  }
+						});
+						//console.log(params_full)
+					} else{
+						_this.post_serv.post(params_full, callback);
+					} 
+					
+				})
+			}
+	
+		}
+	},
 	nowplay: function(mo){
-		if (!lfm_auth.sk){return false}
-		lastfm('track.updateNowPlaying', {
-			sk: lfm_auth.sk,
+		var _this = this;
+		if (!_this.sk){return false}
+		_this.use('track.updateNowPlaying', {
+			sk: _this.sk,
 			artist: mo.artist,
 			track: mo.track,
 			duration: mo.duration
@@ -83,7 +129,7 @@ var lfm_sc = {
 	submit: function(mo){
 		var _this = this;
 		var artist = mo.artist,
-			title = mo.track,
+			track = mo.track,
 			duration = mo.duration,
 			starttime = mo.start_time,
 			last_scrobble = mo.last_scrobble,
@@ -100,10 +146,10 @@ var lfm_sc = {
 			mo.start_time = false;
 			mo.last_scrobble = timestamp;
 		} 
-		if (lfm_auth.sk && this.music.length) {
-			var _this = this;
+		if (_this.sk && this.music.length) {
 			
-			var post_m_obj = {sk: lfm_auth.sk};
+			
+			var post_m_obj = {sk: _this.sk};
 			for (var i=0,l=_this.music.length; i < l; i++) {
 				post_m_obj['artist[' + i + ']'] = _this.music[i].artist;
 				post_m_obj['track[' + i + ']'] = _this.music[i].track;
@@ -112,7 +158,7 @@ var lfm_sc = {
 			};
 			
 			
-			lastfm('track.scrobble', post_m_obj, function(r){
+			_this.use('track.scrobble', post_m_obj, function(r){
 				if (r){
 					_this.music = [];
 					w_storage('lfm_scrobble_music', '');
@@ -124,5 +170,53 @@ var lfm_sc = {
 				w_storage('lfm_scrobble_music', _this.music);
 			} 
 		}
+	},
+	login: function(r, callback){
+		this.sk = r.session.key;
+		this.user_name = r.session.name;
+		w_storage('lfm_user_name', this.user_name, true);
+		w_storage('lfmsk', this.sk, true);
+		if (callback){callback();}
+	},
+	get_lfm_token: function(open){
+		var _this = this;
+		this.use('auth.getToken', false, function(r){
+			su.lfm_api.newtoken = r.token;
+			if (open){_this.open_lfm_to_login(r.token);}
+		}, true);
+	},
+	open_lfm_to_login: function(token){
+		open_url('http://www.last.fm/api/auth/?api_key=' + this.apikey + '&token=' + token);
+		dstates.add_state('body','lfm-waiting-for-finish');
+	},
+	try_to_login: function(){
+		var _this = this
+		if (_this.newtoken && _this.waiting_for){
+				_this.use('auth.getSession',{'token':_this.newtoken },function(r){
+				if (!r.error) {
+					_this.login(r);
+					switch(_this.waiting_for) {
+					  case('recommendations'):
+						render_recommendations();
+						break;
+					  case('loved'):
+						render_loved();
+						break;    
+					  case('scrobbling'):
+						w_storage('lfm_scrobbling_enabled', 'true', true);
+						_this.scrobbling = true;
+						su.ui.lfm_enable_scrobbling();
+						break;
+					  default:
+						//console.log('Do nothing');
+					}
+					
+					console.log('lfm scrobble access granted')
+				} else{
+					console.log('error while granting lfm scrobble access')
+				}
+				_this.waiting_for = false;
+			});
+		}
 	}
-};
+}
