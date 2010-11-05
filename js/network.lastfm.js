@@ -54,7 +54,7 @@ lastfm_api.prototype = {
 		var _this = this;
 		if (method) {
 			var use_cache = (_this.cache && !type_of_xhr_is_post && !nocache)
-	
+			var no_need_for_post_serv = (!type_of_xhr_is_post || _this.crossdomain);
 	
 			var pv_signature_list = [], // array of <param>+<value>
 				params_full = params || {},
@@ -62,7 +62,7 @@ lastfm_api.prototype = {
 			
 			params_full.method = method;
 			params_full.api_key = _this.apikey;
-			params_full.format = params_full.format || 'json';
+			params_full.format = params_full.format || no_need_for_post_serv ? 'json' : 'xml';
 			
 	
 			var paramsstr = '';
@@ -86,7 +86,7 @@ lastfm_api.prototype = {
 	
 			if (!cache_used){
 				return _this.quene.add(function(){
-					if (!type_of_xhr_is_post || _this.crossdomain){
+					if (no_need_for_post_serv){
 						$.ajax({
 						  url: _this.api_path,
 						  global: false,
