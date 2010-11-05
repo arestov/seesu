@@ -473,7 +473,7 @@ var get_fast_suggests = function(q, callback, hash){
 };
 
 
-var suggestions_search = seesu.env.cross_domain_allowed ? function(q, arts_clone, track_clone ,tags_clone){
+var suggestions_search =  $.debounce((seesu.env.cross_domain_allowed ? function(q, arts_clone, track_clone ,tags_clone){
 		
 		var hash = hex_md5(q);
 		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
@@ -501,7 +501,7 @@ var suggestions_search = seesu.env.cross_domain_allowed ? function(q, arts_clone
 			show_tracks_results(r, false, 5);
 			track_clone.find('span').text('find more «' + q + '» tracks');
 		}));
-	};
+	}), 400);
 
 var suggestions_prerender = function(input_value, crossdomain){
 	var multy = !crossdomain;
@@ -610,10 +610,10 @@ var suggestions_prerender = function(input_value, crossdomain){
 		
 		suggestions_search(source_query, arts_clone, track_clone ,tags_clone);
 	}
-}
+};
 
 
-var input_change = $.debounce(function(e){
+var input_change = function(e){
 	var input = (e && e.target) || e; //e can be EVENT or INPUT  
 	var input_value = input.value;
 	if ($(input).data('lastvalue') == input_value){
@@ -641,4 +641,4 @@ var input_change = $.debounce(function(e){
 	
 	
 	
-},100);
+};

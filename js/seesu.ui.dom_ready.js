@@ -94,33 +94,7 @@ window.connect_dom_to_som = function(d, ui){
 	})(seesu.player.player_volume);
 	
 	addEvent(d, "DOMContentLoaded", function() {
-		if (lfm_auth.newtoken && lfm_auth.waiting_for){
-				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
-				if (!r.error) {
-					lfm_auth.login(r);
-					switch(lfm_auth.waiting_for) {
-					  case('recommendations'):
-						render_recommendations();
-						break;
-					  case('loved'):
-						render_loved();
-						break;    
-					  case('scrobbling'):
-						w_storage('lfm_scrobbling_enabled', 'true', true);
-						lfm_sc.scrobbling = true;
-						ui.lfm_enable_scrobbling();
-						break;
-					  default:
-						//console.log('Do nothing');
-					}
-					
-					console.log('lfm scrobble access granted')
-				} else{
-					console.log('error while granting lfm scrobble access')
-				}
-				lfm_auth.waiting_for = false;
-			});
-		}
+		su.lfm_api.try_to_login();		
 		
 		var volume_s = d.createElement('style');
 			volume_s.setAttribute('title', 'volume');
@@ -238,11 +212,11 @@ window.connect_dom_to_som = function(d, ui){
 				.prependTo(seesu.ui.els.slider)
 		}
 
-		if (lfm_sc.scrobbling) {
+		if (su.lfm_api.scrobbling) {
 			ui.lfm_enable_scrobbling();
 		}
 		
-		if (lfm_auth.sk) {
+		if (su.lfm_api.sk) {
 			seesu.ui.lfm_logged();	
 		}
 		
@@ -261,9 +235,9 @@ window.connect_dom_to_som = function(d, ui){
 			
 		ui.lfm_auth.lfm_fin_recomm_check.change(function(){
 			if ($(this).attr('checked')) {
-				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+				lfm('auth.getSession',{'token':su.lfm_api.newtoken },function(r){
 					if (!r.error) {
-						lfm_auth.login(r);
+						su.lfm_api.login(r);
 						render_recommendations();
 					}
 				});
@@ -274,9 +248,9 @@ window.connect_dom_to_som = function(d, ui){
 		});
 		ui.lfm_auth.lfm_fin_recomm.click(function(){
 			if(lfm_fin_recomm_check.attr('checked')){
-				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+				lfm('auth.getSession',{'token':su.lfm_api.newtoken },function(r){
 					if (!r.error) {
-						lfm_auth.login(r);
+						su.lfm_api.login(r);
 						render_recommendations();
 					}
 				});
@@ -287,9 +261,9 @@ window.connect_dom_to_som = function(d, ui){
 		
 		ui.lfm_auth.lfm_fin_loved_check.change(function(){
 			if ($(this).attr('checked')) {
-				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+				lfm('auth.getSession',{'token':su.lfm_api.newtoken },function(r){
 					if (!r.error) {
-						lfm_auth.login(r);
+						su.lfm_api.login(r);
 						render_recommendations();
 					}
 				});
@@ -302,9 +276,9 @@ window.connect_dom_to_som = function(d, ui){
 		
 		ui.lfm_auth.lfm_fin_loved.click(function(){
 			if(lfm_fin_loved_check.attr('checked')){
-				lfm('auth.getSession',{'token':lfm_auth.newtoken },function(r){
+				lfm('auth.getSession',{'token':su.lfm_api.newtoken },function(r){
 					if (!r.error) {
-						lfm_auth.login(r);
+						su.lfm_api.login(r);
 						render_loved();
 					}
 				});
@@ -313,7 +287,7 @@ window.connect_dom_to_som = function(d, ui){
 		})
 		
 		var lfm_recomm = $('#lfm-recomm',d).click(function(){
-			if(!lfm_auth.sk){
+			if(!su.lfm_api.sk){
 				$(d.body).toggleClass('lfm-auth-req-recomm');
 			}else {
 				render_recommendations();
@@ -321,7 +295,7 @@ window.connect_dom_to_som = function(d, ui){
 		});
 		
 		var lfm_loved = $('#lfm-loved',d).click(function(){
-			if(!lfm_auth.sk){
+			if(!su.lfm_api.sk){
 				$(d.body).toggleClass('lfm-auth-req-loved');
 			}else {
 				render_loved();

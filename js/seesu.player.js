@@ -342,8 +342,8 @@ seesu.player.events[PLAYED] = function(){
   if (!start_time) {
 	seesu.player.c_song.start_time = ((new Date()).getTime()/1000).toFixed(0);
   }
-  if (lfm_sc.scrobbling) {
-	lfm_sc.nowplay(seesu.player.c_song);
+  if (su.lfm_api.scrobbling) {
+	su.lfm_api.nowplay(seesu.player.c_song);
   }
 	
 	
@@ -360,10 +360,10 @@ seesu.player.events[STOPPED] = function(){
 
 
 seesu.player.events[FINISHED] = function() {
-  if (lfm_sc.scrobbling ) {
+  if (su.lfm_api.scrobbling ) {
 	var submit = function(mo){
 		setTimeout(function(){
-			lfm_sc.submit(mo);
+			su.lfm_api.submit(mo);
 		},300)
 	};
 	submit(seesu.player.c_song);

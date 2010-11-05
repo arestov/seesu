@@ -2,11 +2,11 @@ window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/defau
 window.lfm = function(){
 	var _this = this;
 	var ag = arguments;
-	lastfm.apply(_this, ag);
+	seesu.lfm_api.use.apply(seesu.lfm_api, ag);
 }
 window.seesu = window.su =  {
 	  fs: {},
-	  lfm_quene: new funcs_quene(100),
+	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
 	  version: 1.994,
 	  env: app_env,
 	  track_stat: (function(){
@@ -189,20 +189,8 @@ if (vk_session_meta && vk_session_meta.length){
 		seesu.track_event('Auth to vk', 'auth', 'from saved');
 	}
 }
-vkReferer = '';
+var vkReferer = '';
 
-window.lfm_auth = {
-	sk: w_storage('lfmsk') || false,
-	user_name: w_storage('lfm_user_name') || false
-};
-
-lfm_auth.login = function(r){
-	lfm_auth.sk = r.session.key;
-	lfm_auth.user_name = r.session.name;
-	w_storage('lfm_user_name', lfm_auth.user_name, true);
-	w_storage('lfmsk', lfm_auth.sk, true);
-	seesu.ui.lfm_logged();
-};
 var updating_notify = function(r){
 	if (!r){return;}
 	var cver = r.latest_version.number;
@@ -499,7 +487,7 @@ var proxy_render_artists_tracks = function(artist_list, pl_r){
 };
 var render_loved = function(user_name){
 	var pl_r = prepare_playlist('Loved Tracks', 'artists by loved');
-	lfm('user.getLovedTracks',{user: (user_name || lfm_auth.user_name), limit: 30},function(r){
+	lfm('user.getLovedTracks',{user: (user_name || su.lfm_api.user_name), limit: 30},function(r){
 		
 		var tracks = r.lovedtracks.track || false;
 		if (tracks) {
@@ -538,7 +526,7 @@ var render_recommendations_by_username = function(username){
 };
 var render_recommendations = function(){
 	var pl_r = prepare_playlist('Recommendations for you', 'artists by recommendations');
-	lfm('user.getRecommendedArtists',{sk: lfm_auth.sk},function(r){
+	lfm('user.getRecommendedArtists',{sk: su.lfm_api.sk},function(r){
 		var artists = r.recommendations.artist;
 		if (artists && artists.length) {
 			var artist_list = [];
@@ -643,23 +631,13 @@ var get_artist_album_info = function(artist, album, callback){
 	
 };
 
-window.open_lfm_to_login = function(token){
-	open_url('http://www.last.fm/api/auth/?api_key=' + apikey + '&token=' + token);
-	dstates.add_state('body','lfm-waiting-for-finish');
-};
-
 
 $(function(){
 	check_seesu_updates();
 	seesu.vk_id = w_storage('vkid');
 	try_mp3_providers();
-	var get_lfm_token = function(lfm_auth,callback){
-		lfm('auth.getToken',false,function(r){
-			lfm_auth.newtoken = r.token;
-			if (callback) {callback(lfm_auth.newtoken);}
-		})
-	}
-	if (!lfm_auth.sk) {
-		get_lfm_token(lfm_auth);
+
+	if (!su.lfm_api.sk) {
+		su.lfm_api.get_lfm_token();
 	}
 })
