@@ -45,6 +45,16 @@ var lastfm_api = function(apikey, s, cache, crossdomain){
 		}
 	})();
 	
+	this.ss =  w_storage('lfm_scrobble_s');
+	
+	if (!this.sk) {
+		$(function(){
+			su.lfm_api.get_lfm_token();
+		});
+	}
+	if (crossdomain){
+		this.old_sc_handshake();
+	}
 	
 	
 };
@@ -100,11 +110,11 @@ lastfm_api.prototype = {
 						  success: function(r){
 							if (callback) {callback(r);}
 							if (!type_of_xhr_is_post){
-						  		cache_ajax.set('lastfm', params_full.api_sig, r)
-						  	}
+								cache_ajax.set('lastfm', params_full.api_sig, r)
+							}
 						  },
 						  complete: function(xhr){
-						  	//console.log(xhr.responseText)
+							//console.log(xhr.responseText)
 						  }
 						});
 						//console.log(params_full)
@@ -120,13 +130,19 @@ lastfm_api.prototype = {
 	nowplay: function(mo){
 		var _this = this;
 		if (!_this.sk){return false}
-		_this.use('track.updateNowPlaying', {
-			sk: _this.sk,
-			artist: mo.artist,
-			track: mo.track,
-			duration: mo.duration
-			
-		}, function(r){}, true, true);
+		
+		if(!_this.crossdomain){
+			_this.use('track.updateNowPlaying', {
+				sk: _this.sk,
+				artist: mo.artist,
+				track: mo.track,
+				duration: mo.duration
+				
+			}, function(r){}, true, true);
+		} else{
+			_this.old_sc_nowplay(mo);
+		}
+		
 	},
 	submit: function(mo){
 		var _this = this;
@@ -148,25 +164,30 @@ lastfm_api.prototype = {
 			mo.start_time = false;
 			mo.last_scrobble = timestamp;
 		} 
+		
 		if (_this.sk && this.music.length) {
 			
-			
-			var post_m_obj = {sk: _this.sk};
-			for (var i=0,l=_this.music.length; i < l; i++) {
-				post_m_obj['artist[' + i + ']'] = _this.music[i].artist;
-				post_m_obj['track[' + i + ']'] = _this.music[i].track;
-				post_m_obj['timestamp[' + i + ']'] = _this.music[i].timestamp;
-				post_m_obj['duration[' + i + ']'] = _this.music[i].duration;
-			};
-			
-			
-			_this.use('track.scrobble', post_m_obj, function(r){
-				if (r){
-					_this.music = [];
-					w_storage('lfm_scrobble_music', '');
-				} 
+			if (!_this.crossdomain){
+				var post_m_obj = {sk: _this.sk};
+				for (var i=0,l=_this.music.length; i < l; i++) {
+					post_m_obj['artist[' + i + ']'] = _this.music[i].artist;
+					post_m_obj['track[' + i + ']'] = _this.music[i].track;
+					post_m_obj['timestamp[' + i + ']'] = _this.music[i].timestamp;
+					post_m_obj['duration[' + i + ']'] = _this.music[i].duration;
+				};
 				
-			}, true, true);
+				
+				_this.use('track.scrobble', post_m_obj, function(r){
+					if (r){
+						_this.music = [];
+						w_storage('lfm_scrobble_music', '');
+					} 
+					
+				}, true, true);
+			} else{
+				_this.old_sc_submit()
+			}
+			
 		} else {
 			if (_this.music.length){
 				w_storage('lfm_scrobble_music', _this.music);
@@ -220,5 +241,128 @@ lastfm_api.prototype = {
 				_this.waiting_for = false;
 			});
 		}
+	},
+	old_sc_handshake: function(callback){
+		var _this = this;
+		var timestamp = ((new Date()).getTime()/1000).toFixed(0);
+		$.ajax({
+			  url: 'http://post.audioscrobbler.com/',
+			  global: false,
+			  type: "GET",
+			  dataType: "text",
+			  data: {
+				'hs': 'true',
+				'p': '1.2.1',
+				'c': 'see',
+				'v': '1.0',
+				'u': _this.user_name,
+				't': timestamp,
+				'a': hex_md5(_this.s + timestamp),
+				'api_key': _this.apikey,
+				'sk': _this.sk
+			  },
+			  error: function(r){
+			  },
+			  success: function(r){
+				var response = r.split(/\n/);
+				if (response[0] == 'OK'){
+					_this.ss = response[1];
+					w_storage('lfm_scrobble_s', _this.s, true);
+					if (callback) {callback();}
+					console.log('handshake:' + '\n' + r)
+				} else {
+					console.log(r)
+				}
+				
+			  }
+		});
+	},
+	old_sc_nowplay: function(mo){	
+		var _this = this;	
+		if (_this.ss) {
+			
+			$.ajax({
+			  url: 'http://post.audioscrobbler.com:80/np_1.2',
+			  global: false,
+			  type: "POST",
+			  dataType: "text",
+			  data: {
+				's': _this.ss,
+				'a': mo.artist,
+				't': mo.track
+			  },
+			  error: function(r){
+			  },
+			  success: function(r){
+				if (r.match('BADSESSION')){
+					_this.ss = null;
+					w_storage('lfm_scrobble_s', '', true);
+					_this.old_sc_handshake();
+				};
+			  }
+			});	
+		} else {
+			_this.old_sc_handshake(function(){
+				_this.old_sc_nowplay(mo);
+			});
+		} 
+		
+	},
+	old_sc_submit: function(){
+		var _this = this;
+
+	
+		if (_this.ss) {
+			var _this = this;
+			
+			var post_m_obj = {'s':_this.ss};
+			for (var i=0,l=_this.music.length; i < l; i++) {
+				post_m_obj['a[' + i + ']'] = _this.music[i].artist,
+				post_m_obj['t[' + i + ']'] = _this.music[i].track,
+				post_m_obj['i[' + i + ']'] = _this.music[i].timestamp,
+				post_m_obj['o[' + i + ']'] = 'P',
+				post_m_obj['r[' + i + ']'] = ' ',
+				post_m_obj['l[' + i + ']'] = _this.music[i].duration,
+				post_m_obj['b[' + i + ']'] = ' ',
+				post_m_obj['n[' + i + ']'] = ' ',
+				post_m_obj['m[' + i + ']'] = ' '
+			};
+			$.ajax({
+			  url: 'http://post2.audioscrobbler.com:80/protocol_1.2',
+			  global: false,
+			  type: "POST",
+			  dataType: "text",
+			  data: post_m_obj,
+			  error: function(r){
+				console.log('error while scrobble')
+				
+			  },
+			  success: function(r){
+				if (!r.match('OK')) {
+					if (r.match('BADSESSION')){
+						_this.ss = null;
+						w_storage('lfm_scrobble_s', '', true);
+						
+						_this.old_sc_handshake();
+					}
+					w_storage('lfm_scrobble_music', _this.music);
+				} else {
+					_this.music = [];
+					w_storage('lfm_scrobble_music', '');
+				}
+				
+			  },
+			  complete: function(xhr){
+				console.log(xhr);
+			  }
+			})
+				console.log(' data sended')
+		} else {
+			_this.old_sc_handshake(function(){
+				_this.old_sc_submit(mo);
+			});
+		
+		}
+		console.log('submit done');
 	}
 }

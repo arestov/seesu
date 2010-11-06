@@ -564,8 +564,8 @@ seesu_ui.prototype = {
 		$('.lfm-finish input[type=checkbox]',this.d).attr('checked', 'checked');
 		$('#scrobbling-switches', this.d).find('input').attr('disabled', '');
 	},
-	lfm_enable_scrobbling:function(){
-		var lfm_ssw = $('#scrobbling-switches',this.d);
+	lfm_enable_scrobbling:function(context){
+		var lfm_ssw = $('.scrobbling-switches', context || this.d);
 		if (lfm_ssw) {
 			lfm_ssw.find('.enable-scrobbling').attr('checked', 'checked');
 			lfm_ssw.find('.disable-scrobbling').attr('checked', '');

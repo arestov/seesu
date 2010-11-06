@@ -634,10 +634,5 @@ var get_artist_album_info = function(artist, album, callback){
 
 $(function(){
 	check_seesu_updates();
-	seesu.vk_id = w_storage('vkid');
 	try_mp3_providers();
-
-	if (!su.lfm_api.sk) {
-		su.lfm_api.get_lfm_token();
-	}
 })
