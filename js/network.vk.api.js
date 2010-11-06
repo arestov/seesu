@@ -1,22 +1,9 @@
-//var viewer_id 		= seesu.vk_id;
 var vk_api = function(apis, quene){
 	this.apis = apis;
 	if (apis.length > 1){
 		this.allow_random_api = true;
 	}
 	this.quene = quene;
-	
-	/**
-	api_id, s, sid, viewer_id, cache
-	
-	this.sid 	= sid;
-	this.api_id 	= api_id;
-	this.v 			= '3.0';
-	this.s = s;
-	this.viewer_id = viewer_id;
-	if (cache){
-		this.use_cache = true;
-	}**/
 }
 
 vk_api.prototype = {

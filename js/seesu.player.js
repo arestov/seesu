@@ -308,7 +308,9 @@ seesu.player = {
 		var a_info = node.data('t_context').children('.artist-info');
 		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
 		seesu.ui.update_track_info(a_info, node);
-		
+		if (su.lfm_api.scrobbling) {
+			su.ui.lfm_enable_scrobbling(node.data('t_context').children('.track-panel').children('.track-buttons'));
+		}
 		if (this.c_song) {
 			this.change_songs_ui(this.c_song, true) //remove ative state
 		}
@@ -343,7 +345,12 @@ seesu.player.events[PLAYED] = function(){
 	seesu.player.c_song.start_time = ((new Date()).getTime()/1000).toFixed(0);
   }
   if (su.lfm_api.scrobbling) {
-	su.lfm_api.nowplay(seesu.player.c_song);
+	var submit = function(mo){
+		setTimeout(function(){
+			su.lfm_api.nowplay(mo);
+		},100)
+	};
+	submit(seesu.player.c_song);
   }
 	
 	
@@ -364,7 +371,7 @@ seesu.player.events[FINISHED] = function() {
 	var submit = function(mo){
 		setTimeout(function(){
 			su.lfm_api.submit(mo);
-		},300)
+		},50)
 	};
 	submit(seesu.player.c_song);
   }
