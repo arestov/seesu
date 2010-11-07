@@ -1,7 +1,7 @@
 .navs{
 	overflow:hidden;
 	padding-top:6px;
-	padding-left:10px;
+	padding-left:25px;
 	min-height:36px;
 	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
 	border-bottom:1px solid #333;
@@ -12,7 +12,9 @@
 	font-family: "Trebuchet MS", sans-serif;
 
 }
-
+.navs.not-inited * {
+	display:none;
+}
 
 #search_result{
 	display:none;
@@ -164,18 +166,24 @@ li.active-play .play-controls{
 	
 	
 
-		
+.navs .nav-title{
+	display:block;
+	padding-top:5px;
+	padding-left:10px;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow: ellipsis; 
+}
 .nnav{
-	display:none;
 	height:20px;
 	float:left;
 	cursor:pointer;
 	
-	padding-left:30px;
-	padding-right:9px;
+	padding-right:30px;
+	padding-left:9px;
 	padding-top:4px;
 	padding-bottom:4px;
-	
+	border-right:1px solid #731677;
 	border-top:1px solid #cb85cf;
 	border-bottom:1px solid #3d0740;
 	
@@ -185,42 +193,29 @@ li.active-play .play-controls{
 	line-height:20px;
 	
 	text-shadow:0 1px 0 #000;
-	
+	margin-right:10px;
 	
 	}
-	.nnav:last-child {
-		float:none;
-		overflow:hidden;
-		white-space:nowrap;
-		text-overflow: ellipsis; 
-	}
+
 		
 
-.nnav:first-child{
-	-moz-border-radius:6px 0 0 6px;
-	-webkit-border-radius:6px 0 0 6px;
-	border-radius:6px 0 0 6px;
-	padding-left:14px;
+.nnav{
+	-moz-border-radius:0 6px 6px 0;
+	-webkit-border-radius:0 6px 6px 0;
+	border-radius:0 6px 6px 0;
+	padding-right:14px;
 	}
 	.nnav b{
 		position:absolute;
 		width:15px;
-		right:-15px;
+		left:-15px;
 		z-index:2;
 		
-		background:url(../i/nav/button-arrow.png) no-repeat 0 -1px;
-		height:29px;
-		top:0;
-		}
-	.nnav:last-child b,
-	.show-search-results:not(.show-zoom-to-track) .nav-start b,
-	.show-player-page:not(.show-full-nav):not(.show-zoom-to-track) .nav-start b,
-	.show-player-page:not(.show-zoom-to-track) .nav-search-results b,
-	.show-zoom-to-track .nav-playlist-page b {
-		background-position:0 0;
+		background:url(../i/nav/button-arrow.png) no-repeat 0 0;
 		height:30px;
 		top:-1px;
 		}
+
 .nnav:after{
 	content: " ";
 	position:absolute;
@@ -228,12 +223,12 @@ li.active-play .play-controls{
 	height:28px;
 	bottom:-2px;
 	border-bottom:1px solid #904695;
-	
+	border-radius:0 0 6px 0;
 	display:block;
 }
 
 .nnav:first-child:after{
-	border-radius:0 0 0 6px;
+	
 }
 .nnav:hover{
 	color:#fff;
@@ -251,7 +246,7 @@ li.active-play .play-controls{
 		background-image:url(../i/nav/button-arrow-active.png) ;
 		}
 .nav-start{
-	background:url(../i/nav/seesu-nav-logo.png) no-repeat 14px 4px, url(../i/nav/button-gradient.png) repeat-x 100% 0;
+	background:url(../i/nav/seesu-nav-logo.png) no-repeat 10px 4px, url(../i/nav/button-gradient.png) repeat-x 100% 0;
 	width:20px;
 	}
 	.nav-start:hover{
@@ -261,7 +256,7 @@ li.active-play .play-controls{
 			background-image:url(../i/nav/seesu-nav-logo-active.png), url(../i/nav/button-gradient-active.png);
 			}
 .nav-search-results{
-	background:url(../i/nav/seesu-nav-search.png) no-repeat 30px 4px, url(../i/nav/button-gradient.png) repeat-x 100% 0;
+	background:url(../i/nav/seesu-nav-search.png) no-repeat 10px 4px, url(../i/nav/button-gradient.png) repeat-x 100% 0;
 	width:15px;
 	}
 	.nav-search-results:hover{
@@ -271,58 +266,3 @@ li.active-play .play-controls{
 			background-image:url(../i/nav/seesu-nav-search-active.png), url(../i/nav/button-gradient-active.png);
 			}
 
-.nav-start{display:block}		
-.show-start{
-	
-	}
-	.show-start .nav-start{
-		background:url(../i/nav/seesu-nav-logo.png) no-repeat 14px 4px;
-	}
-	.show-search-results .nav-search-results{
-		background:url(../i/nav/seesu-nav-search.png) no-repeat 30px 4px;
-	}
-	.show-player-page:not(.show-zoom-to-track) .nav-playlist-page,
-	.nav-track-zoom{
-		background:transparent  !important;
-	}
-	.show-start .nav-start, 
-	.show-search-results .nav-search-results,
-	.nav-track-zoom{
-		border-top-color:transparent;
-		border-bottom-color:transparent;
-		
-		cursor:default;
-		}
-	 .show-player-page:not(.show-zoom-to-track) .nav-playlist-page{
-
-		border-top-color:transparent;
-		border-bottom-color:transparent;
-		
-		cursor:default;
-	}
-		.show-start .nav-start:after,
-		.show-search-results .nav-search-results:after,
-		.nav-track-zoom:after{
-			display:none
-			}
-		.show-player-page:not(.show-zoom-to-track) .nav-playlist-page:after{
-			display:none
-		}
-		.show-start .nav-start b,
-		.show-search-results .nav-search-results b,
-		.nav-track-zoom b{
-			display:none
-			}
-		.show-player-page:not(.show-zoom-to-track) .nav-playlist-page b{
-			display:none;
-		}
-	.show-search-results .nav-search-results,
-	.show-player-page .nav-playlist-page{
-		display:block;
-	}
-	.show-full-nav .nav-search-results{
-		display:block;
-	}
-	.show-zoom-to-track .nav-track-zoom{
-		display:block;
-	}

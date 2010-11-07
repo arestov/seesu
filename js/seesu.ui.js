@@ -6,16 +6,22 @@ var views = function(){
 views.prototype = {
 	
 	get_search_rc: function(){
-		if (this.browsing.search_results){
+		if (this.browsing.search_results && (!this.playing || this.browsing.search_results != this.playing.search_results)){
 			return (this.current_rc = this.browsing.search_results);
 		} else {
+			if (this.browsing.search_results){
+				this.browsing.search_results.hide();
+			}
 			return (this.current_rc = this.browsing.search_results = $('<div class="search-results-container current-src"></div').appendTo(seesu.ui.els.searchres));
 		}
 	},
 	get_playlist_c:function(){
-		if (this.browsing.playlist){
+		if (this.browsing.playlist && (!this.playing && this.browsing.playlist != this.playing.playlist)){
 			return this.browsing.playlist;
 		} else {
+			if(this.browsing.playlist){
+				this.browsing.playlist.hide();
+			}
 			return (this.browsing.playlist = $('<ul class="tracks-c current-tracks-c"></ul>').appendTo(seesu.ui.els.artsTracks));
 		}
 	},
@@ -73,7 +79,7 @@ views.prototype = {
 			this.playing.search_results.hide();
 		
 		}
-		if (this.playing.playlist && (!this.browsing || this.browsing.playlist != this.browsing.playlist)){
+		if (this.playing.playlist && (!this.browsing || this.browsing.playlist != this.playing.playlist)){
 			this.playing.playlist.hide();
 		}
 	},
@@ -92,15 +98,20 @@ views.prototype = {
 		if (this.browsing.playlist && (!this.playing || this.playing.playlist != this.browsing.playlist)){
 			this.browsing.playlist.remove();
 		}
-		this.current_rc = false;
+		
 		this.browsing ={};
+		this.get_search_rc();
 	},
 	show_now_playing: function(){
 		var current_page = seesu.ui.els.slider.className;
 		this.restore_view();
 		seesu.track_event('Navigation', 'now playing', current_page);
 	},
-	show_start_page: function(focus_to_input, log_navigation){
+	show_start_page: function(focus_to_input, log_navigation, init){
+		this.nav.daddy.empty();
+		this.nav.daddy.append('<img class="nav-title" title="Seesu start page" src="i/nav/seesu-nav-logo.png"/>')
+		
+		
 		this.new_browse();
 		this.hide_playing();
 		
@@ -110,13 +121,27 @@ views.prototype = {
 			seesu.ui.els.search_input[0].focus();
 			seesu.ui.els.search_input[0].select();
 		}
+		if (init){
+			this.nav.daddy.removeClass('not-inited')
+		}
+		
+		
+		
 		if (log_navigation){
 			seesu.track_page('start page');
 		}
 		
-		
+		this.state = 'start';
 	},
 	show_search_results_page: function(without_input){
+		this.nav.daddy.empty();
+		this.nav.daddy.append(this.nav.start.unbind().click(function(){
+			seesu.ui.views.show_start_page(true, true);
+		}));
+		this.nav.daddy.append('<img class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png"/>')
+		
+		
+		
 		var _s = seesu.ui.els.slider.className;
 		var new_s = (without_input ? '' : 'show-search ') + "show-search-results";
 		if (new_s != _s){
@@ -124,36 +149,73 @@ views.prototype = {
 		
 			seesu.track_page('search results');
 		}
-		this.browsing.playlist = null;
-		
+		this.get_playlist_c();
+		this.state = 'search_results';
 	},
 	show_playlist_page: function(pl_r, show_playing){
 		var _sui = this;
 		var pl = pl_r || this.browsing.pl;
 		this.browsing.pl = pl;
 		
+		
 		if (show_playing){
 			this.show_playing();
+			if (this.playing && this.playing.playlist){
+				this.browsing.playlist = this.playing.playlist;
+			}
+			
 			seesu.ui.els.make_trs.show().data('pl', this.playing.mpl);
 		} else {
 			this.hide_playing();
 			seesu.ui.els.make_trs.show().data('pl', this.browsing.mpl);
 		}
-
-		if (pl.playlist_title){
-			$(seesu.ui.els.nav_playlist_page).text(pl.playlist_title);
+		
+		
+		this.nav.daddy.empty();
+		if (pl.with_search_results_link){
+			this.nav.daddy.append(this.nav.results.unbind().click(function(){
+				seesu.ui.views.show_search_results_page(true);
+			}));
+		} else{
+			this.nav.daddy.append(this.nav.start.unbind().click(function(){
+				seesu.ui.views.show_start_page(true, true);
+			}));
 		}
+		this.nav.daddy.append('<span class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png">' + pl.playlist_title + '</span>');
+		$(seesu.ui.els.nav_playlist_page).text(pl.playlist_title);
+		
+		
+		
 		_sui.playlist_type = pl.playlist_type || '';
 		if (pl.length && !show_playing && (!this.playing || this.playing.pl != pl)){
 			seesu.ui.render_playlist(pl);
 		}
+		
+		
 		if (pl.with_search_results_link) {
 			
 			su.ui.now_playing.nav = seesu.ui.els.slider.className = 'show-full-nav show-player-page';
 		} else {
 			su.ui.now_playing.nav = seesu.ui.els.slider.className = 'show-player-page';
 		}
+		this.state = 'playlist';
 		seesu.track_page('playlist', _sui.playlist_type);
+	},
+	show_track_page: function(title, zoom){
+		seesu.ui.els.nav_track_zoom.text(title);
+		if (zoom){
+			$(seesu.ui.els.slider).addClass('show-zoom-to-track');
+			this.state = 'track';
+		}
+		if (zoom || this.state == 'track'){
+			this.nav.daddy.empty();
+			this.nav.daddy.append(this.nav.playlist.unbind().click(function(){
+					seesu.ui.views.show_playlist_page();
+			}));
+			
+			this.nav.daddy.append('<span class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png">' + title + '</span>');
+		}
+		
 	},
 	show_pl_page: function(){
 		$(seesu.ui.els.slider).removeClass('show-zoom-to-track');

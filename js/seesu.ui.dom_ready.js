@@ -188,17 +188,11 @@ window.connect_dom_to_som = function(d, ui){
 		seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', seesu.env.app_type));
 		
 		
-		ui.els.nav = {
+		ui.views.nav = {
 			daddy: $(seesu.ui.els.slider).children('.navs'),
-			start: $('#start_search',d).click(function(){
-				seesu.ui.views.show_start_page(true, true);
-			}),
-			results: $('#search_result_nav',d).click(function(){
-				seesu.ui.views.show_search_results_page(true);
-			}),
-			playlist: $(seesu.ui.els.nav_playlist_page).parent().click(function(){
-				seesu.ui.views.show_playlist_page();
-			}),
+			start: $('#start_search',d),
+			results: $('#search_result_nav',d),
+			playlist: $(seesu.ui.els.nav_playlist_page).parent(),
 			track: ui.els.nav_track_zoom.parent()
 		}
 		
@@ -323,9 +317,7 @@ window.connect_dom_to_som = function(d, ui){
 	
 	
 	
-		if (d.activeElement.nodeName != 'INPUT') {
-			ui.els.search_input[0].focus();
-		}
+		
 		
 		$('#app_type', search_form).val(seesu.env.app_type);
 		if (search_form) {
@@ -416,7 +408,8 @@ window.connect_dom_to_som = function(d, ui){
 			$(this).parent().toggleClass('not-want-to')
 			return false;
 		});
-		seesu.track_stat('_trackPageview', 'start page');
+		ui.views.show_start_page(true, true, true);
+		
 		ui.create_playlists_link();
 	});
 	
