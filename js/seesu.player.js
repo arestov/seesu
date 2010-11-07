@@ -290,9 +290,8 @@ seesu.player = {
 	},
 	set_current_song: function (mo, zoom, force) {
 	  var node = mo.node;
-	  if (zoom){
-		$(seesu.ui.els.slider).addClass('show-zoom-to-track');
-	  }
+	  var artist = mo.mo_titl.artist;
+	  su.ui.views.show_track_page(($(su.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.mo_titl.track, zoom);
 	  if (!force && this.c_song && (this.c_song == mo)) {
 		this.fix_songs_ui();
 		
@@ -300,11 +299,8 @@ seesu.player = {
 		
 	  } else {
 		
-		if (zoom){
-			$(seesu.ui.els.slider).addClass('show-zoom-to-track');
-		}
 		//time = (new Date()).getTime();
-		var artist = mo.mo_titl.artist;
+		
 		var a_info = node.data('t_context').children('.artist-info');
 		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
 		seesu.ui.update_track_info(a_info, node);
@@ -324,7 +320,7 @@ seesu.player = {
 		this.change_songs_ui(mo);
 		this.fix_progress_bar(node, mo.mo_titl);
 		
-		seesu.ui.els.nav_track_zoom.text(( $(seesu.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.mo_titl.track);
+		
 		if (su.ui.now_playing.link){
 			su.ui.now_playing.link.siblings('span').remove();
 			su.ui.now_playing.link.after($('<span></span>').text(": " + 
