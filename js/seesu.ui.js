@@ -36,8 +36,10 @@ views.prototype = {
 				}
 				
 			}
-			this.playing = this.browsing;
-			this.browsing = {};
+			this.playing = {};
+			for (var a in this.browsing) {
+				this.playing[a] = this.browsing[a];
+			}
 			if (!not_make_playable){
 				make_tracklist_playable(pl, false, true);
 			}
@@ -46,7 +48,7 @@ views.prototype = {
 		
 	},
 	restore_view: function(){
-		this.hide_browsing();
+		this.new_browse();
 		if (this.playing.search_results){
 			this.current_rc = this.playing.search_results;
 		}
@@ -67,18 +69,13 @@ views.prototype = {
 		}
 	},
 	hide_playing: function(){
-		
 		if (this.playing.search_results && (this.playing.search_results[0] != (this.current_rc && this.current_rc[0]))){
 			this.playing.search_results.hide();
 		
 		}
-		
-		
-		if (this.playing.playlist){
+		if (this.playing.playlist && (!this.browsing || this.browsing.playlist != this.browsing.playlist)){
 			this.playing.playlist.hide();
 		}
-			
-		
 	},
 	show_browsing: function(){
 		if (this.browsing.search_results){
@@ -88,13 +85,15 @@ views.prototype = {
 			this.browsing.playlist.show();
 		}
 	},
-	hide_browsing: function(){
-		if (this.browsing.search_results){
-			this.browsing.search_results.hide();
+	new_browse: function(){
+		if (this.browsing.search_results && (!this.playing || this.playing.search_results != this.browsing.search_results) ){
+			this.browsing.search_results.remove();
 		}
-		if (this.browsing.playlist){
-			this.browsing.playlist.hide();
+		if (this.browsing.playlist && (!this.playing || this.playing.playlist != this.browsing.playlist)){
+			this.browsing.playlist.remove();
 		}
+		this.current_rc = false;
+		this.browsing ={};
 	},
 	show_now_playing: function(){
 		var current_page = seesu.ui.els.slider.className;
@@ -102,10 +101,10 @@ views.prototype = {
 		seesu.track_event('Navigation', 'now playing', current_page);
 	},
 	show_start_page: function(focus_to_input, log_navigation){
-		var _s;
-		if (log_navigation){
-			_s = seesu.ui.els.slider.className;
-		}
+		this.new_browse();
+		this.hide_playing();
+		
+		
 		seesu.ui.els.slider.className = "show-start";
 		if (focus_to_input){
 			seesu.ui.els.search_input[0].focus();
@@ -114,46 +113,51 @@ views.prototype = {
 		if (log_navigation){
 			seesu.track_page('start page');
 		}
-		this.current_rc = false;
-		this.hide_playing();
-		this.show_browsing();
+		
+		
 	},
-	show_search_results_page: function(without_input, log_navigation){
-		var _s;
-		if (log_navigation){
-			_s = seesu.ui.els.slider.className;
-		}
-		seesu.ui.els.slider.className = (without_input ? '' : 'show-search ') + "show-search-results";
-		if (log_navigation){
+	show_search_results_page: function(without_input){
+		var _s = seesu.ui.els.slider.className;
+		var new_s = (without_input ? '' : 'show-search ') + "show-search-results";
+		if (new_s != _s){
+			seesu.ui.els.slider.className = new_s;
+		
 			seesu.track_page('search results');
 		}
+		this.browsing.playlist = null;
+		
 	},
 	show_playlist_page: function(pl_r, show_playing){
 		var _sui = this;
-		this.browsing.pl = pl_r;
+		var pl = pl_r || this.browsing.pl;
+		this.browsing.pl = pl;
 		
 		if (show_playing){
 			this.show_playing();
 			seesu.ui.els.make_trs.show().data('pl', this.playing.mpl);
 		} else {
 			this.hide_playing();
-			this.show_browsing();
 			seesu.ui.els.make_trs.show().data('pl', this.browsing.mpl);
 		}
 
-		if (pl_r.playlist_title){
-			$(seesu.ui.els.nav_playlist_page).text(pl_r.playlist_title);
+		if (pl.playlist_title){
+			$(seesu.ui.els.nav_playlist_page).text(pl.playlist_title);
 		}
-		_sui.playlist_type = pl_r.playlist_type || '';
-		if (pl_r.length && !show_playing){
-			seesu.ui.render_playlist(pl_r);
+		_sui.playlist_type = pl.playlist_type || '';
+		if (pl.length && !show_playing && (!this.playing || this.playing.pl != pl)){
+			seesu.ui.render_playlist(pl);
 		}
-		if (pl_r.with_search_results_link) {
+		if (pl.with_search_results_link) {
 			
 			su.ui.now_playing.nav = seesu.ui.els.slider.className = 'show-full-nav show-player-page';
 		} else {
 			su.ui.now_playing.nav = seesu.ui.els.slider.className = 'show-player-page';
 		}
+		seesu.track_page('playlist', _sui.playlist_type);
+	},
+	show_pl_page: function(){
+		$(seesu.ui.els.slider).removeClass('show-zoom-to-track');
+		seesu.track_page('playlist');
 	}
 }
 
@@ -211,7 +215,7 @@ seesu_ui.prototype = {
 	},
 	show_artist: function (artist,with_search_results) {
 		var pl_r = prepare_playlist(artist, 'artist', with_search_results)
-		if (seesu.current_artist == artist && seesu.ui.playlist_type == 'artist') {
+		if (seesu.current_artist == artist && su.ui.views.playlist_type == 'artist') {
 			seesu.ui.views.restore_view();
 			return true;
 		}
@@ -226,9 +230,9 @@ seesu_ui.prototype = {
 	update_artist_info: function(artist, a_info, not_show_link_to_artist_page){
 		var _sui = this;
 		if (a_info.data('artist') == artist) {
-			if (seesu.ui.playlist_type == 'artist'){
-				if (seesu.player.top_tracks_link){
-					seesu.player.top_tracks_link.remove();
+			if (su.ui.views.playlist_type == 'artist'){
+				if (su.player.top_tracks_link){
+					su.player.top_tracks_link.remove();
 				}
 			}
 		} else {
@@ -245,13 +249,13 @@ seesu_ui.prototype = {
 			var arts_name = $('<span class="desc-name"></span>')
 				.appendTo(ainf.name);
 				
-			if (seesu.ui.playlist_type != 'artist'){
-				seesu.player.top_tracks_link = $('<a class="js-serv">top tracks</a>')
+			if (su.ui.views.playlist_type != 'artist'){
+				su.player.top_tracks_link = $('<a class="js-serv">top tracks</a>')
 					.data('artist', artist)
 					.appendTo(arts_name)
 					.click(function(){
-						seesu.ui.show_artist(artist);
-						seesu.track_event('Artist navigation', 'top tracks', artist);
+						su.ui.show_artist(artist);
+						su.track_event('Artist navigation', 'top tracks', artist);
 					});
 			}	
 			

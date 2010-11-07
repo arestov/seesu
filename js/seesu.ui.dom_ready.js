@@ -187,16 +187,20 @@ window.connect_dom_to_som = function(d, ui){
 		var seesu_me_link = $('#seesu-me-link',d);
 		seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', seesu.env.app_type));
 		
-		$('#start_search',d).click(function(){
-			seesu.ui.views.show_start_page(true, true);
-		});
-		$(seesu.ui.els.nav_playlist_page).parent().click(function(){
-			$(seesu.ui.els.slider).removeClass('show-zoom-to-track');
-			seesu.track_page('playlist');
-		});
-		$('#search_result_nav',d).click(function(){
-			seesu.ui.views.show_search_results_page(true, true);
-		});
+		
+		ui.els.nav = {
+			daddy: $(seesu.ui.els.slider).children('.navs'),
+			start: $('#start_search',d).click(function(){
+				seesu.ui.views.show_start_page(true, true);
+			}),
+			results: $('#search_result_nav',d).click(function(){
+				seesu.ui.views.show_search_results_page(true);
+			}),
+			playlist: $(seesu.ui.els.nav_playlist_page).parent().click(function(){
+				seesu.ui.views.show_playlist_page();
+			}),
+			track: ui.els.nav_track_zoom.parent()
+		}
 		
 		
 		

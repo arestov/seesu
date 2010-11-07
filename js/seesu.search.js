@@ -457,7 +457,7 @@ var get_fast_suggests = function(q, callback, hash){
 	  url: 'http://www.last.fm/search/autocomplete',
 	  global: false,
 	  type: "GET",
-	  timeout: 10000,
+	  timeout: 15000,
 	  dataType: "json",
 	  data: {
 	  	"q": q,
