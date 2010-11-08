@@ -158,20 +158,32 @@ window.connect_dom_to_som = function(d, ui){
 			vk_login_error: $('.error',vk_auth),
 			captcha_img: $('.vk-captcha-context img',vk_auth),
 			searchres: $('#search_result',d),
-			search_input: $('#q',d).bind('keyup mousemove change', input_change),
+			search_input: $('#q',d),
 			play_controls: seesu.buttmen,
 			search_form: search_form,
 			track_c : $('.track-context',d),
 			volume_s: volume_s
 		};
+		ui.views.nav = {
+			daddy: $(su.ui.els.slider).children('.navs'),
+			start: $('#start_search',d),
+			results: $('#search_result_nav',d),
+			playlist: $(su.ui.els.nav_playlist_page).parent(),
+			track: ui.els.nav_track_zoom.parent()
+		}
 		
+		su.ui.els.search_input.bind('keyup mousemove change', input_change);
+	
+		var state_recovered;	
 		if (window.su && su.player && su.player.c_song){
 			if (su.player.c_song.mo_titl && su.player.c_song.mo_titl.plst_titl){
+				ui.views.show_start_page(true, true, true);
 				su.ui.render_playlist(su.player.c_song.mo_titl.plst_titl);
 				su.ui.views.show_playlist_page(su.player.c_song.mo_titl.plst_titl);
 				su.player.set_current_song(su.player.c_song, true, true);
 				su.ui.views.save_view(su.player.c_song.mo_titl.plst_titl,true);
 				su.ui.mark_c_node_as(su.player.player_state);
+				state_recovered = true;
 			}
 		}
 	
@@ -188,13 +200,7 @@ window.connect_dom_to_som = function(d, ui){
 		seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', seesu.env.app_type));
 		
 		
-		ui.views.nav = {
-			daddy: $(seesu.ui.els.slider).children('.navs'),
-			start: $('#start_search',d),
-			results: $('#search_result_nav',d),
-			playlist: $(seesu.ui.els.nav_playlist_page).parent(),
-			track: ui.els.nav_track_zoom.parent()
-		}
+		
 		
 		
 		
@@ -408,7 +414,10 @@ window.connect_dom_to_som = function(d, ui){
 			$(this).parent().toggleClass('not-want-to')
 			return false;
 		});
-		ui.views.show_start_page(true, true, true);
+		if (!state_recovered){
+			ui.views.show_start_page(true, true, true);
+		}
+		
 		
 		ui.create_playlists_link();
 	});

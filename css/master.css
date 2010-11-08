@@ -463,3 +463,18 @@ html.not-as-application, .not-as-application  body{
 .serv-container{
 	display:none;
 }
+iframe.you-tube-video{
+	border:0;
+	width:600px;
+	height:360px;
+	margin:20px 0 40px;
+}
+.you-tube-video-link{
+	cursor:pointer;
+	margin-right:12px;
+	height:64px;
+	border:1px solid #647142;
+}
+.you-tube-video-link:hover, .you-tube-video-link.active{
+	border-color:#a1d404;
+}
