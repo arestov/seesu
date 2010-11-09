@@ -1,4 +1,25 @@
-get_all_tracks = function(trackname, callback, nocache, hypnotoad, only_cache){
+var get_youtube = function(q, callback){
+	var cache_used = cache_ajax.get('youtube', q, callback);
+	if (!cache_used){
+		$.ajax({
+			url: 'http://gdata.youtube.com/feeds/api/videos',
+			dataType: 'jsonp',
+			data: {
+				q: q,
+				v: 2,
+				alt: 'json-in-script'
+				
+			},
+			success: function(r){
+				if (callback) {callback(r);}
+					cache_ajax.set('youtube', q, r)
+				} 
+		})
+	}
+	
+};
+
+var get_all_tracks = function(trackname, callback, nocache, hypnotoad, only_cache){
 	var allow_h = hypnotoad && seesu.delayed_search.waiting_for_mp3provider;
 	if (seesu.delayed_search.use.quene) {seesu.delayed_search.use.quene.reset();}
 	seesu.delayed_search.tracks_waiting_for_search = 0;
@@ -12,7 +33,7 @@ get_all_tracks = function(trackname, callback, nocache, hypnotoad, only_cache){
 	return used_successful;
 }
 
-get_track = function(mo, nocache, hypnotoad, only_cache, get_next){
+var get_track = function(mo, nocache, hypnotoad, only_cache, get_next){
 	var allow_h = hypnotoad && seesu.delayed_search.waiting_for_mp3provider;
 	if(mo.ready_for_play){
 		return false;
@@ -114,7 +135,7 @@ var de_html = function(html_text){
 	de_html_entity.innerHTML = html_text;
 	return de_html_entity.textContent;
 }
-get_best_track = function(array,artist,track){
+var get_best_track = function(array,artist,track){
 	var best = array[0],
 	worst_pr = -7; //six steps search
 	
@@ -165,7 +186,7 @@ get_best_track = function(array,artist,track){
 	};
 	return best;
 }
-kill_music_dubs = function(array) {
+var kill_music_dubs = function(array) {
 	var cleared_array = [];
 	for (var i=0; i < array.length; i++) {
 		if (!has_music_copy(array, array[i], i+1)){
@@ -174,7 +195,7 @@ kill_music_dubs = function(array) {
 	}
 	return cleared_array
 }
-has_music_copy = function(array, entity, from_position){
+var has_music_copy = function(array, entity, from_position){
 	if (!array.length) {return false}
 	
 	for (var i = from_position || 0, l = array.length; i < l; i++) {

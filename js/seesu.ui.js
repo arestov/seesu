@@ -300,10 +300,10 @@ seesu_ui.prototype = {
 		} else {
 			a_info.data('artist', artist);
 			var ainf = {
-				name: a_info.find('.artist-name').empty(), 
-				image: a_info.find('img.artist-image'),
-				bio: a_info.find('.artist-bio'),
-				meta_info: a_info.find('.artist-meta-info'),
+				name: a_info.children('.artist-name').empty(), 
+				image: a_info.children('.image').children('img.artist-image'),
+				bio: a_info.children('.artist-bio'),
+				meta_info: a_info.children('.artist-meta-info'),
 				c : a_info
 			};
 			
@@ -349,6 +349,48 @@ seesu_ui.prototype = {
 				
 			});
 		}
+	},
+	show_video_info: function(vi_c, q){
+		var _this = this;
+		if (vi_c.data('has-info')){return true;}
+		get_youtube(q, function(r){			
+			var vs = r.feed.entry;
+			if (vs && vs.length){
+				vi_c.append('<span class="desc-name"><a target="_blank" href="http://www.youtube.com/results?search_query='+ q +'">Video</a>:</span>');
+				var v_content = $('<span class="desc-text"></span>');
+			}
+			var make_v_link = function(img_link, vid){
+				
+				v_content.append($('<img class="you-tube-video-link" alt=""/>').attr('src', img_link).click(function(){
+					var showed = this.showed;
+					
+					_this.remove_video();
+					
+					if (!showed){
+						su.ui.video = {
+							link: $(this).addClass('active'),
+							iframe: $('<iframe class="you-tube-video"></iframe>').attr('src', 'http://www.youtube.com/embed/' + vid).appendTo(v_content)
+						}
+						seesu.player.set_state('pause');
+						this.showed = true;
+					} else{
+						seesu.player.set_state('play');
+						this.showed = false;
+					}
+					
+				}));
+			}
+			for (var i=0, l = ((vs.length < 3) ? vs.length : 3); i < l; i++) {
+				var _v = vs[i],
+					tmn = _v['media$group']['media$thumbnail'][0].url,
+					v_id = _v['media$group']['yt$videoid']['$t'];
+				make_v_link(tmn, v_id);
+				
+			};
+			v_content.appendTo(vi_c);
+			vi_c.data('has-info', true);
+		});
+		
 	},
 	update_track_info: function(a_info, node){
 		var ti = a_info.find('.track-info').empty();
@@ -671,6 +713,21 @@ seesu_ui.prototype = {
 					set_node_for_enter_press($(new_active_node), false, after_user);
 			}
 		}
+	},
+	remove_video: function(){
+		if (this.video){
+			if (this.video.link){
+				this.video.link.removeClass('active');
+				this.video.link[0].showed = false;
+				this.video.link = false;
+				
+			}
+			if (this.video.iframe){
+				this.video.iframe.remove();
+				this.video.iframe = false;
+			}
+		}
+		
 	},
 	mark_c_node_as: function(marker){
 		var s = seesu.ui.els.artsHolder;

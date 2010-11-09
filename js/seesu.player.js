@@ -183,6 +183,7 @@ seesu.player = {
 			break;
 		  case(PAUSED - PLAYED):
 			this.musicbox.play();
+			su.ui.remove_video();
 			break;    
 		  case(PAUSED - STOPPED):
 		  case(PLAYED - STOPPED):
@@ -298,12 +299,15 @@ seesu.player = {
 		return true;
 		
 	  } else {
-		
+		su.ui.remove_video();
 		//time = (new Date()).getTime();
 		
 		var a_info = node.data('t_context').children('.artist-info');
 		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
-		seesu.ui.update_track_info(a_info, node);
+		su.ui.update_track_info(a_info, node);
+		su.ui.show_video_info(a_info.children('.track-video'), artist + " - " + mo.mo_titl.track);
+		
+		
 		if (su.lfm_api.scrobbling) {
 			su.ui.lfm_enable_scrobbling(node.data('t_context').children('.track-panel').children('.track-buttons'));
 		}
