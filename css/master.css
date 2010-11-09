@@ -465,7 +465,7 @@ html.not-as-application, .not-as-application  body{
 }
 iframe.you-tube-video{
 	border:0;
-	width:600px;
+	width:100%;
 	height:360px;
 	margin:20px 0 40px;
 }
