@@ -177,7 +177,7 @@ var get_url_parameters = function(){
 		full_url[_h[0]] = _h[1];
 	};
 	return full_url;
-}
+};
 (function(){
 	var _u = get_url_parameters();
 	if (_u.api_id && _u.viewer_id && _u.sid && _u.secret){
@@ -189,6 +189,12 @@ var get_url_parameters = function(){
 			use_cache: true,
 			v: "3.0"
 		}], seesu.delayed_search.vk_api.quene, true);
+		if (_u.api_settings & 8){
+			seesu.delayed_search.switch_to_vk_api();
+			dstates.remove_state('body','vk-needs-login');
+		}
+						
+						
 		var _s = document.createElement('script');
 		_s.src='http://vk.com/js/api/xd_connection.js';
 		_s.onload = function(){
@@ -196,14 +202,19 @@ var get_url_parameters = function(){
 				VK.init(function(){});
 				VK.addCallback('onSettingsChanged', function(sts){
 					if (sts & 8){
+						
+						seesu.delayed_search.switch_to_vk_api();
 						dstates.remove_state('body','vk-needs-login');
+						
+					} else{
+						seesu.delayed_search.we_need_mp3provider()
 					}
 				});
 			}
 			
 		}
 		document.documentElement.firstChild.appendChild(_s);
-		seesu.delayed_search.switch_to_vk_api();
+		
 		
 	} else{
 		var vk_session_meta = document.getElementsByName('vk_session');
@@ -226,7 +237,7 @@ var get_url_parameters = function(){
 			}
 		} 
 	}
-})()
+})();
 
 
 var vkReferer = '';

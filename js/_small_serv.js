@@ -124,7 +124,12 @@ window.app_env = (function(){
 	} else
 	if (location.protocol.match(/http/)){
 		env.app_type = 'web_app';
-		env.as_application = false;
+		if (window.parent != window){
+			env.as_application = true;
+		} else{
+			env.as_application = false;
+		}
+		
 	} else 
 	if (typeof btapp == 'object'){
 		env.app_type = 'utorrent_app';
