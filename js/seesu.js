@@ -169,26 +169,66 @@ window.set_vk_auth = function(vk_session, save_to_store){
 	}
 
 };
-
-var vk_session_meta = document.getElementsByName('vk_session');
-if (vk_session_meta && vk_session_meta.length){
-	if (vk_session_meta[0] && vk_session_meta[0].content){
-		set_vk_auth(vk_session_meta[0].content, true);
-		seesu.track_event('Auth to vk', 'auth', 'from meta tag (iframe redirect)');
-	} else{
-		var vk_session_stored = w_storage('vk_session');
-		if (vk_session_stored){
-			set_vk_auth(vk_session_stored);
-			seesu.track_event('Auth to vk', 'auth', 'from saved');
-		}
-	}
-} else{
-	var vk_session_stored = w_storage('vk_session');
-	if (vk_session_stored){
-		set_vk_auth(vk_session_stored);
-		seesu.track_event('Auth to vk', 'auth', 'from saved');
-	}
+var get_url_parameters = function(){
+	var url_vars = location.search.replace(/^\?/,'').split('&');
+	var full_url = {};
+	for (var i=0; i < url_vars.length; i++) {
+		var _h = url_vars[i].split('=');
+		full_url[_h[0]] = _h[1];
+	};
+	return full_url;
 }
+(function(){
+	var _u = get_url_parameters();
+	if (_u.api_id && _u.viewer_id && _u.sid && _u.secret){
+		seesu.vk_api = new vk_api([{
+			api_id: _u.api_id, 
+			s: _u.secret,
+			viewer_id: _u.viewer_id, 
+			sid: _u.sid, 
+			use_cache: true,
+			v: "3.0"
+		}], seesu.delayed_search.vk_api.quene, true);
+		var _s = document.createElement('script');
+		_s.src='http://vk.com/js/api/xd_connection.js';
+		_s.onload = function(){
+			if (window.VK){
+				VK.init(function(){});
+				VK.addCallback('onSettingsChanged', function(sts){
+					if (sts & 8){
+						dstates.remove_state('body','vk-needs-login');
+					}
+				});
+			}
+			
+		}
+		document.documentElement.firstChild.appendChild(_s);
+		seesu.delayed_search.switch_to_vk_api();
+		
+	} else{
+		var vk_session_meta = document.getElementsByName('vk_session');
+		if (vk_session_meta && vk_session_meta.length){
+			if (vk_session_meta[0] && vk_session_meta[0].content){
+				set_vk_auth(vk_session_meta[0].content, true);
+				seesu.track_event('Auth to vk', 'auth', 'from meta tag (iframe redirect)');
+			} else{
+				var vk_session_stored = w_storage('vk_session');
+				if (vk_session_stored){
+					set_vk_auth(vk_session_stored);
+					seesu.track_event('Auth to vk', 'auth', 'from saved');
+				}
+			}
+		} else{
+			var vk_session_stored = w_storage('vk_session');
+			if (vk_session_stored){
+				set_vk_auth(vk_session_stored);
+				seesu.track_event('Auth to vk', 'auth', 'from saved');
+			}
+		} 
+	}
+})()
+
+
 var vkReferer = '';
 
 var updating_notify = function(r){

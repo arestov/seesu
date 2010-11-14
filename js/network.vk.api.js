@@ -1,9 +1,12 @@
-var vk_api = function(apis, quene){
+var vk_api = function(apis, quene, iframe){
 	this.apis = apis;
 	if (apis.length > 1){
 		this.allow_random_api = true;
 	}
 	this.quene = quene;
+	if (iframe){
+		this.iframe = true;
+	}
 }
 
 vk_api.prototype = {

@@ -181,7 +181,7 @@ views.prototype = {
 				seesu.ui.views.show_start_page(true, true);
 			}));
 		}
-		this.nav.daddy.append('<span class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png">' + pl.playlist_title + '</span>');
+		this.nav.daddy.append('<span class="nav-title" src="i/nav/seesu-nav-search.png">' + pl.playlist_title + '</span>');
 		$(seesu.ui.els.nav_playlist_page).text(pl.playlist_title);
 		
 		
