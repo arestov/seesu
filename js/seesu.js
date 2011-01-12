@@ -141,9 +141,7 @@ window.seesu = window.su =  {
 		}
 	  }
 	};
-	
-window.set_vk_auth = function(vk_session, save_to_store){
-	var vk_s = JSON.parse(vk_session);
+var auth_to_vkapi = function(vk_s, save_to_store){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (vk_s.expire > rightnow){
 		seesu.vk_api = new vk_api([{
@@ -167,8 +165,15 @@ window.set_vk_auth = function(vk_session, save_to_store){
 	} else{
 		w_storage('vk_session', '', true);
 	}
+}
+	
+window.set_vk_auth = function(vk_session, save_to_store){
+	var vk_s = JSON.parse(vk_session);
+	auth_to_vkapi(vk_s, save_to_store);
 
 };
+
+
 var get_url_parameters = function(){
 	var url_vars = location.search.replace(/^\?/,'').split('&');
 	var full_url = {};

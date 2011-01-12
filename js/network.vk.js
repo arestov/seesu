@@ -1,5 +1,5 @@
 var check_vk_logout_response = function(text){
-	if (text.match("location.href='http://vkontakte.ru/login.php?op=logout'")){
+	if (text.match("location.href='http://vk.com/login.php?op=logout'")){
 		
 		vk_logged_out();
 	}
@@ -23,7 +23,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax, o
 		seesu.track_event('mp3 search', 'vk hardcore search');
 		$.ajax({
 		  timeout: 10000,
-		  url: "http://vkontakte.ru/gsearch.php",
+		  url: "http://vk.com/gsearch.php",
 		  global: false,
 		  type: "POST",
 		  data: ({'c[section]' : 'audio', 'c[q]' : query}),
@@ -88,7 +88,7 @@ var parseStrToObj = function(onclickstring){
 	while (user.length < 5) {user = '0' + user;}
 	fname = params[3];
 	fname = fname.substring(1, fname.length - 1);
-	var obj ={'sever': server, 'user' : user , 'filename' : fname, 'link' : ('http://cs' + server + '.vkontakte.ru/u' + user + '/audio/' + fname + '.mp3'), 'duration' : duration};
+	var obj ={'sever': server, 'user' : user , 'filename' : fname, 'link' : ('http://cs' + server + '.vk.com/u' + user + '/audio/' + fname + '.mp3'), 'duration' : duration};
 	return obj;
 
 };

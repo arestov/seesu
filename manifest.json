@@ -14,7 +14,7 @@
 	"128": "icons/icon128.png"
   },
   "permissions": [
-	"http://vkontakte.ru/*",
+	"http://*.vk.com/*",
 	"http://*.last.fm/*",
 	"http://*.audioscrobbler.com/*",
 	"http://api.soundcloud.com/*",

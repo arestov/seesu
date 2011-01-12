@@ -253,7 +253,7 @@ window.swith_to_provider_finish = function(){
 
 window.try_hard_vk_working = function(callback){
 	$.ajax({
-	  url: "http://vkontakte.ru/feed2.php",
+	  url: "http://vk.com/feed2.php",
 	  global: false,
 	  type: "GET",
 	  dataType: "text",

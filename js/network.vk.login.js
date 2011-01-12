@@ -2,7 +2,7 @@ var vk_captcha;
 
 var vk_login = function(login, pass, callback) {
 	$.ajax({
-	  url: "http://vkontakte.ru/login.php",
+	  url: "http://vk.com/login.php",
 	  global: false,
 	  type: "POST",
 	  dataType: "json",
@@ -24,7 +24,7 @@ var vk_login = function(login, pass, callback) {
 		if (vk_error = r.error){
 			seesu.ui.els.vk_login_error.text('Wrong login or password')
 		} else if (vk_captcha = r.captcha_sid){
-			seesu.ui.els.captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
+			seesu.ui.els.captcha_img.attr('src','http://vk.com/captcha.php?s=1&sid=' + vk_captcha);
 			dstates.add_state('body','vk-needs-captcha');
 		} else 	if (vk_id = r.id) {
 			vk_logg_in(vk_id, r.email, r.sid, login, pass, callback);
@@ -37,7 +37,7 @@ var vk_login = function(login, pass, callback) {
 }
 var vk_send_captcha = function(captcha_key, login, pass, callback){
 	$.ajax({
-	  url: "http://vkontakte.ru/login.php",
+	  url: "http://vk.com/login.php",
 	  global: false,
 	  type: "POST",
 	  dataType: "text",
@@ -57,7 +57,7 @@ var vk_send_captcha = function(captcha_key, login, pass, callback){
 
 			  	if (vk_captcha = r.captcha_sid){
 			  		console.log(vk_captcha)
-					seesu.ui.els.captcha_img.attr('src','http://vkontakte.ru/captcha.php?s=1&sid=' + vk_captcha);
+					seesu.ui.els.captcha_img.attr('src','http://vk.com/captcha.php?s=1&sid=' + vk_captcha);
 					dstates.add_state('body','vk-needs-captcha');
 				}
 			} catch (e){
