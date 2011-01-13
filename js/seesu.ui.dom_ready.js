@@ -128,11 +128,11 @@ window.connect_dom_to_som = function(d, ui){
 				w_storage('vk_save_pass', '', true);
 				seesu.vk.save_pass = false;
 			}
-			vk_send_captcha($('#vk-captcha_key',_this).val(),email,pass);
+			uilogin_to_hapi(email, pass, $('#vk-captcha_key',_this).val());
 	
 			return false;
 		});
-		var vk_pass  = $('input.vk-pass',vk_auth)
+		var vk_pass  = $('input.vk-pass', vk_auth)
 			.bind('mouseover', function(){
 				this.type = 'text';
 			})

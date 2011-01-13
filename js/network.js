@@ -251,7 +251,19 @@ window.swith_to_provider_finish = function(){
 	}
 }
 
+
+
+
 window.try_hard_vk_working = function(callback){
+	var try_to_auth = function(){
+		var login = w_storage( 'vk_auth_login');
+		var pass = w_storage( 'vk_auth_pass');
+		if (login && pass){
+			console.log('we have pass in storage')
+			vk_send_captcha('', login, pass)
+		}
+	};
+	
 	$.ajax({
 	  url: "http://vk.com/feed2.php",
 	  global: false,
@@ -275,14 +287,9 @@ window.try_hard_vk_working = function(callback){
 				} else{
 					vk_logged_out();
 					console.log('vk mp3 prov faild');
-					
+					try_to_auth();
 				
-					var login = w_storage( 'vk_auth_login');
-					var pass = w_storage( 'vk_auth_pass');
-					if (login && pass){
-						console.log('we have pass in storage')
-						vk_send_captcha('', login, pass)
-					}
+					
 					
 				}
 			} catch(e) {
@@ -291,13 +298,7 @@ window.try_hard_vk_working = function(callback){
 		} else{
 			vk_logged_out();
 			console.log('vk mp3 prov faild (can not parse)');
-			
-			var login = w_storage( 'vk_auth_login');
-			var pass = w_storage( 'vk_auth_pass');
-			if (login && pass){
-				console.log('we have pass in storage')
-				vk_send_captcha('', login, pass)
-			}
+			try_to_auth();
 			
 		}
 	  },
@@ -312,10 +313,11 @@ window.try_hard_vk_working = function(callback){
 	});
 }
 
+
 try_mp3_providers = function(){
 	if (seesu.env.cross_domain_allowed){
 		if (seesu.vk.id || seesu.env.chrome_extension || seesu.env.firefox_widget ) {
-			try_hard_vk_working();
+			try_hapi();
 		} else{
 			console.log('vk mp3 prov faild cos not auth')
 			vk_logged_out();

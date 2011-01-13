@@ -141,9 +141,16 @@ window.seesu = window.su =  {
 		}
 	  }
 	};
-var auth_to_vkapi = function(vk_s, save_to_store, app_id){
+var detach_vkapi = function(timeout){
+	return setTimeout(function(){
+		seesu.delayed_search.waiting_for_mp3provider = true;
+		dstates.add_state('body','vk-needs-login');
+	}, timeout);
+};
+var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback){
+	console.log('very want!')
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
-	if (vk_s.expire > rightnow){
+	if (!vk_s.expire || (vk_s.expire > rightnow)){
 		seesu.vk_api = new vk_api([{
 			api_id: app_id, 
 			s: vk_s.secret,
@@ -155,15 +162,28 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id){
 		seesu.delayed_search.switch_to_vk_api();
 		dstates.remove_state('body','vk-needs-login');
 		if (save_to_store){
-			w_storage('vk_session', vk_s, true);
+			w_storage('vk_session'+app_id, vk_s, true);
 		}
-		setTimeout(function(){
-			seesu.delayed_search.waiting_for_mp3provider = true;
-			dstates.add_state('body','vk-needs-login');
-		}, (vk_s.expire - rightnow)*1000);
+		console.log('baaaaabah!')
+		if (vk_s.expire){
+			var end = (vk_s.expire - rightnow)*1000;
+			if (callback){
+				var _t = detach_vkapi(end + 10000);
+				setTimeout(function(){
+					callback(function(){
+						clearTimeout(_t);
+					});
+				}, end);
+			} else{
+				detach_vkapi(end);
+			}
+		}
 		
+		
+		return true;
 	} else{
-		w_storage('vk_session', '', true);
+		w_storage('vk_session'+app_id, '', true);
+		return false;
 	}
 }
 	
@@ -184,6 +204,15 @@ var get_url_parameters = function(){
 	return full_url;
 };
 (function(){
+	var try_saved_auth = function(){
+		var vk_session_stored = w_storage('vk_session'+1915003);
+		if (vk_session_stored){
+			set_vk_auth(vk_session_stored);
+			seesu.track_event('Auth to vk', 'auth', 'from saved');
+		}
+	};
+	
+	
 	var _u = get_url_parameters();
 	if (_u.api_id && _u.viewer_id && _u.sid && _u.secret){
 		seesu.vk_api = new vk_api([{
@@ -217,7 +246,7 @@ var get_url_parameters = function(){
 				});
 			}
 			
-		}
+		};
 		document.documentElement.firstChild.appendChild(_s);
 		
 		
@@ -228,18 +257,10 @@ var get_url_parameters = function(){
 				set_vk_auth(vk_session_meta[0].content, true);
 				seesu.track_event('Auth to vk', 'auth', 'from meta tag (iframe redirect)');
 			} else{
-				var vk_session_stored = w_storage('vk_session');
-				if (vk_session_stored){
-					set_vk_auth(vk_session_stored);
-					seesu.track_event('Auth to vk', 'auth', 'from saved');
-				}
+				try_saved_auth();
 			}
 		} else{
-			var vk_session_stored = w_storage('vk_session');
-			if (vk_session_stored){
-				set_vk_auth(vk_session_stored);
-				seesu.track_event('Auth to vk', 'auth', 'from saved');
-			}
+			try_saved_auth();
 		} 
 	}
 })();
