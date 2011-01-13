@@ -141,11 +141,11 @@ window.seesu = window.su =  {
 		}
 	  }
 	};
-var auth_to_vkapi = function(vk_s, save_to_store){
+var auth_to_vkapi = function(vk_s, save_to_store, app_id){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (vk_s.expire > rightnow){
 		seesu.vk_api = new vk_api([{
-			api_id: 1915003, 
+			api_id: app_id, 
 			s: vk_s.secret,
 			viewer_id: vk_s.mid, 
 			sid: vk_s.sid, 
@@ -169,7 +169,7 @@ var auth_to_vkapi = function(vk_s, save_to_store){
 	
 window.set_vk_auth = function(vk_session, save_to_store){
 	var vk_s = JSON.parse(vk_session);
-	auth_to_vkapi(vk_s, save_to_store);
+	auth_to_vkapi(vk_s, save_to_store, 1915003);
 
 };
 

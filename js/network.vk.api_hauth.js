@@ -47,7 +47,7 @@ var login_spec_vkapi = function(email, pass){
 								auth = auth && auth[1];
 								if (auth){
 									var vk_s = JSON.parse(auth);
-									auth_to_vkapi(vk_s);
+									auth_to_vkapi(vk_s, false, 8);
 									console.log(vk_s)
 									
 								} else{
@@ -66,7 +66,7 @@ var login_spec_vkapi = function(email, pass){
 								secret:vk_sarr[2],
 								expire:vk_sarr[3],
 							};
-							auth_to_vkapi(vk_s);
+							auth_to_vkapi(vk_s, false, 8);
 							console.log('auth: ' + auth);
 						} else{
 							console.log('no auth')
