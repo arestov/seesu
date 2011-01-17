@@ -27,7 +27,7 @@ var get_form_params = function(text, uniq){
 };
 
 var hauth_from_string = function(str){
-	var vk_sarr = str.replace(/'|"/gi, '').split(/,/);
+	var vk_sarr = str.replace(/'|"|\s/gi, '').split(/,/);
 	return vk_s = {
 		mid:vk_sarr[0],
 		sid:vk_sarr[1],

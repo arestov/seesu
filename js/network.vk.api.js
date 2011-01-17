@@ -10,6 +10,7 @@ var vk_api = function(apis, quene, iframe){
 }
 
 vk_api.prototype = {
+	legal_apis:[1915003],
 	api_link: 'http://api.vk.com/api.php',
 	use: function(method, params, callback, error, nocache, after_ajax, query, only_cache){
 	
@@ -37,7 +38,7 @@ vk_api.prototype = {
 				var r = (typeof r == 'object') ? r : JSON.parse(r);
 				cache_ajax.set('vk_api', query, r);
 				if (_this.allow_random_api || (_this.quene == seesu.delayed_search.use.quene)){
-					if (callback) {callback(r);}
+					if (callback) {callback(r, {used_api: api.api_id});}
 				}
 			}
 				
@@ -117,7 +118,8 @@ vk_api.prototype = {
 			params_u.q = query;
 			params_u.count = params_u.count || 30;
 		var used_successful = this.use('audio.search', params_u, 
-		function(r){
+		function(r, cb_params){
+			var legal_api = !!~_this.legal_apis.indexOf(cb_params.used_api);
 			if (r.response && (r.response.length > 1 )) {
 				var music_list = [];
 				for (var i=1, l = r.response.length; i < l; i++) {
@@ -126,7 +128,7 @@ vk_api.prototype = {
 						'duration'	: r.response[i].duration ? r.response[i].duration : r.response[i].audio.duration,
 						'link'		: r.response[i].url ? r.response[i].url : r.response[i].audio.url,
 						'track'		: r.response[i].title ? r.response[i].title : r.response[i].audio.title,
-						'from'		: (_this.allow_random_api ? 'random ' : '') + 'vk_api'
+						'from'		:  (legal_api ? 'legal_' : (_this.allow_random_api ? 'random_' : '')) + 'vk_api'
 					
 					};
 					if (!has_music_copy(music_list,entity)){

@@ -620,7 +620,7 @@ seesu_ui.prototype = {
 				seesu.player.song_click(mo.mo_pla);
 			});
 		
-		if (mo.mo_pla.from != 'vk_api'){
+		if (mo.mo_pla.from != 'legal_vk_api'){
 			var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  mo.mo_pla.link });
 			mp3.insertBefore(mo.node);
 		} else{
