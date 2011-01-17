@@ -25,16 +25,21 @@ var get_form_params = function(text, uniq){
 	
 	
 };
+var hauth_vks = function(mid, sid, secret, expire){
+	return {
+		mid:mid,
+		sid: sid,
+		secret: secret,
+		expire: parseFloat(expire) || false
+	};
+};
 
 var hauth_from_string = function(str){
+
 	var vk_sarr = str.replace(/'|"|\s/gi, '').split(/,/);
-	return vk_s = {
-		mid:vk_sarr[0],
-		sid:vk_sarr[1],
-		secret:vk_sarr[2],
-		expire: parseFloat(vk_sarr[3]) || false ,
-	};
-}
+	
+	return hauth_vks.apply(this, vk_sarr);
+};
 
 
 window.try_hapi = function(callback){
@@ -45,7 +50,6 @@ window.try_hapi = function(callback){
 			login_spec_vkapi(login, pass, callback);
 		}
 	}
-	
 	$.ajax({
 	  url: "http://login.vk.com/",
 	  global: false,
@@ -68,6 +72,7 @@ window.try_hapi = function(callback){
 			  global: false,
 			  type: "post",
 			  data:_o,
+			  dataType: 'text',
 			  success:function(r){
 			  	console.log('digggi')
 			  	var auth = r.match(/\((.*)\)/);
