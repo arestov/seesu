@@ -69,8 +69,7 @@ window.seesu = window.su =  {
 					xhr.setRequestHeader("Cookie", seesu.vk.big_vk_cookie);
 				} catch(e){}
 			}
-		},
-		vk_save_pass: w_storage('vk_save_pass')
+		}
 	  },
 	  ui: new seesu_ui(document),
 	  xhrs: {},
@@ -148,7 +147,6 @@ var detach_vkapi = function(timeout){
 	}, timeout);
 };
 var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback){
-	console.log('very want!')
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (!vk_s.expire || (vk_s.expire > rightnow)){
 		seesu.vk_api = new vk_api([{
@@ -164,7 +162,6 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback){
 		if (save_to_store){
 			w_storage('vk_session'+app_id, vk_s, true);
 		}
-		console.log('baaaaabah!')
 		if (vk_s.expire){
 			var end = (vk_s.expire - rightnow)*1000;
 			if (callback){

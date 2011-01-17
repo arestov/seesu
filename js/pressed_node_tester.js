@@ -128,25 +128,13 @@ var test_pressed_node = function(e, mouseup){
 			} else if (class_name.match(/enable-scrobbling/)){
 				w_storage('lfm_scrobbling_enabled', 'true', true);
 				su.lfm_api.scrobbling = true;
+				return false
 				
 			} else if (class_name.match(/disable-scrobbling/)){
 				w_storage('lfm_scrobbling_enabled', '', true);
 				su.lfm_api.scrobbling = false;
-				
-			}else if (class_name.match(/mp3-vk($| )/)){
-				if (seesu.vk_logged_in){
-					seesu.delayed_search.switch_to_vk()
-				}else{
-					dstates.add_state('body','vk-needs-login');
-				}
-				
 				return false
-			}else if (class_name.match(/mp3-vk-api/)){
 				
-				seesu.delayed_search.switch_to_vk_api()
-				
-				
-				return false
 			}
 		}
 	

@@ -90,8 +90,27 @@ window.try_hapi = function(callback){
 	  }
 	});
 };
-var uilogin_to_hapi = function(login, pass, captcha){
-	login_spec_vkapi(login, pass, false, captcha);
+
+var save_vk_login_pass = function(login, pass){
+	if (!login && !pass){
+		w_storage('vk_auth_login','',true);
+		w_storage('vk_auth_pass','',true);
+	} else if (login && pass){
+		w_storage('vk_auth_login', login, true);
+		w_storage('vk_auth_pass', pass, true);
+	}
+	
+}
+
+var uilogin_to_hapi = function(login, pass, captcha, save){
+	var callback = function(){
+		if (save){
+			save_vk_login_pass(login, pass);
+		} else{
+			save_vk_login_pass();
+		}
+	};
+	login_spec_vkapi(login, pass, callback, captcha);
 }
 
 var login_spec_vkapi = function(email, pass, callback, captcha){

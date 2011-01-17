@@ -121,14 +121,14 @@ window.connect_dom_to_som = function(d, ui){
 			var _this = $(this),
 				email = $('input.vk-email',_this).val(),
 				pass = vk_pass.val();
-			if (vk_save_pass.attr('checked')){
-				w_storage('vk_save_pass', 'true', true);
+			
+			var save = vk_save_pass.attr('checked');
+			if (save){
 				seesu.vk.save_pass = true;
 			} else{
-				w_storage('vk_save_pass', '', true);
 				seesu.vk.save_pass = false;
 			}
-			uilogin_to_hapi(email, pass, $('#vk-captcha_key',_this).val());
+			uilogin_to_hapi(email, pass, $('#vk-captcha_key',_this).val(), save);
 	
 			return false;
 		});
