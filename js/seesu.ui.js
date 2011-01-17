@@ -181,7 +181,7 @@ views.prototype = {
 				seesu.ui.views.show_start_page(true, true);
 			}));
 		}
-		this.nav.daddy.append('<span class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png">' + pl.playlist_title + '</span>');
+		this.nav.daddy.append('<span class="nav-title" src="i/nav/seesu-nav-search.png">' + pl.playlist_title + '</span>');
 		$(seesu.ui.els.nav_playlist_page).text(pl.playlist_title);
 		
 		
@@ -357,11 +357,10 @@ seesu_ui.prototype = {
 			var vs = r.feed.entry;
 			if (vs && vs.length){
 				vi_c.append('<span class="desc-name"><a target="_blank" href="http://www.youtube.com/results?search_query='+ q +'">Video</a>:</span>');
-				var v_content = $('<span class="desc-text"></span>');
+				var v_content = $('<ul class="desc-text"></ul>');
 			}
-			var make_v_link = function(img_link, vid){
-				
-				v_content.append($('<img class="you-tube-video-link" alt=""/>').attr('src', img_link).click(function(){
+			var make_v_link = function(img_link, vid, _title){
+				var li = $('<li class="you-tube-video-link"></li>').click(function(){
 					var showed = this.showed;
 					
 					_this.remove_video();
@@ -377,14 +376,25 @@ seesu_ui.prototype = {
 						seesu.player.set_state('play');
 						this.showed = false;
 					}
+					return false;
+				});
+				
+				$("<a class='video-preview'></a>")
+					.attr('href', 'http://www.youtube.com/watch?v=' + v_id)
+					.append($('<img  alt=""/>').attr('src', img_link))
+					.appendTo(li);
+				
+				$('<span class="video-title"></span>')
+					.text(_title).appendTo(li);
 					
-				}));
+				li.appendTo(v_content)
 			}
 			for (var i=0, l = ((vs.length < 3) ? vs.length : 3); i < l; i++) {
 				var _v = vs[i],
 					tmn = _v['media$group']['media$thumbnail'][0].url,
-					v_id = _v['media$group']['yt$videoid']['$t'];
-				make_v_link(tmn, v_id);
+					v_id = _v['media$group']['yt$videoid']['$t'],
+					v_title = _v['media$group']['media$title']['$t'];
+				make_v_link(tmn, v_id, v_title);
 				
 			};
 			v_content.appendTo(vi_c);
@@ -610,7 +620,7 @@ seesu_ui.prototype = {
 				seesu.player.song_click(mo.mo_pla);
 			});
 		
-		if (mo.mo_pla.from != 'vk_api'){
+		if (mo.mo_pla.from != 'legal_vk_api'){
 			var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  mo.mo_pla.link });
 			mp3.insertBefore(mo.node);
 		} else{

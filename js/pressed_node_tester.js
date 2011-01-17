@@ -22,8 +22,15 @@ var test_pressed_node = function(e, mouseup){
 					clicked_node.data('popup_listening', true)
 				}
 				var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
-				window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
-				seesu.track_event('Auth to vk', 'start');
+				if (su.vk_api && su.vk_api.iframe){
+					if (window.VK){
+						VK.callMethod('showSettingsBox', 8);
+					}
+				} else{
+					window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
+					seesu.track_event('Auth to vk', 'start');
+				}
+				
 			}
 			
 			return false;

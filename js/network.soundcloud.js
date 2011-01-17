@@ -1,5 +1,5 @@
 window.soundcloud_search = function(query, callback, error, nocache, after_ajax, only_cache){
-	
+	var sc_key = 'HNVCUV6apk9ANn8tLERpag';
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
 	if (use_cache){
@@ -18,7 +18,7 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 			type: "GET",
 			dataType: "jsonp",
 			data: {
-				consumer_key: 'HNVCUV6apk9ANn8tLERpag',
+				consumer_key: sc_key,
 				filter:'streamable,downloadable',
 				q: query
 			},
@@ -57,7 +57,7 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 								'artist'  	: artist,
 								'track'		: track_title,
 								'duration'	: Math.round(r[i].duration/1000),
-								'link'		: r[i].download_url || r[i].stream_url,
+								'link'		: (r[i].download_url || r[i].stream_url) + '?consumer_key=' + sc_key,
 								'from': 	'soundcloud',
 								'real_title': r[i].title,
 								'page_link':  r[i].permalink_url,

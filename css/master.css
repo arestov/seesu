@@ -463,18 +463,41 @@ html.not-as-application, .not-as-application  body{
 .serv-container{
 	display:none;
 }
+
 iframe.you-tube-video{
 	border:0;
 	width:100%;
 	height:360px;
 	margin:20px 0 40px;
-}
-.you-tube-video-link{
-	cursor:pointer;
-	margin-right:12px;
-	height:64px;
-	border:1px solid #647142;
-}
-.you-tube-video-link:hover, .you-tube-video-link.active{
-	border-color:#a1d404;
-}
+	}
+.track-video{
+	margin-bottom:25px;
+	}
+	.track-video .desc-text{
+		display:block;
+		}
+		
+	.you-tube-video-link{
+		float:left;
+		cursor:pointer;
+		margin-right:12px;
+		}
+		.video-title{
+			display:none;
+			}
+		.video-preview{
+			height:48px;
+			overflow:hidden;
+			width:85px;
+			float:left;
+			border:1px solid #647142;
+			}
+			.video-preview img{
+				height:64px;
+				width:85px;
+				margin-top:-8px;
+				}
+	
+		.video-preview:hover, .you-tube-video-link.active .video-preview{
+			border-color:#a1d404;
+			}

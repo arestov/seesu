@@ -141,13 +141,18 @@ window.seesu = window.su =  {
 		}
 	  }
 	};
-	
-window.set_vk_auth = function(vk_session, save_to_store){
-	var vk_s = JSON.parse(vk_session);
+var detach_vkapi = function(timeout){
+	return setTimeout(function(){
+		seesu.delayed_search.waiting_for_mp3provider = true;
+		dstates.add_state('body','vk-needs-login');
+	}, timeout);
+};
+var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback){
+	console.log('very want!')
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
-	if (vk_s.expire > rightnow){
+	if (!vk_s.expire || (vk_s.expire > rightnow)){
 		seesu.vk_api = new vk_api([{
-			api_id: 1915003, 
+			api_id: app_id, 
 			s: vk_s.secret,
 			viewer_id: vk_s.mid, 
 			sid: vk_s.sid, 
@@ -157,38 +162,110 @@ window.set_vk_auth = function(vk_session, save_to_store){
 		seesu.delayed_search.switch_to_vk_api();
 		dstates.remove_state('body','vk-needs-login');
 		if (save_to_store){
-			w_storage('vk_session', vk_s, true);
+			w_storage('vk_session'+app_id, vk_s, true);
 		}
-		setTimeout(function(){
-			seesu.delayed_search.waiting_for_mp3provider = true;
-			dstates.add_state('body','vk-needs-login');
-		}, (vk_s.expire - rightnow)*1000);
+		console.log('baaaaabah!')
+		if (vk_s.expire){
+			var end = (vk_s.expire - rightnow)*1000;
+			if (callback){
+				var _t = detach_vkapi(end + 10000);
+				setTimeout(function(){
+					callback(function(){
+						clearTimeout(_t);
+					});
+				}, end);
+			} else{
+				detach_vkapi(end);
+			}
+		}
 		
+		
+		return true;
 	} else{
-		w_storage('vk_session', '', true);
+		w_storage('vk_session'+app_id, '', true);
+		return false;
 	}
+}
+	
+window.set_vk_auth = function(vk_session, save_to_store){
+	var vk_s = JSON.parse(vk_session);
+	auth_to_vkapi(vk_s, save_to_store, 1915003);
 
 };
 
-var vk_session_meta = document.getElementsByName('vk_session');
-if (vk_session_meta && vk_session_meta.length){
-	if (vk_session_meta[0] && vk_session_meta[0].content){
-		set_vk_auth(vk_session_meta[0].content, true);
-		seesu.track_event('Auth to vk', 'auth', 'from meta tag (iframe redirect)');
-	} else{
-		var vk_session_stored = w_storage('vk_session');
+
+var get_url_parameters = function(){
+	var url_vars = location.search.replace(/^\?/,'').split('&');
+	var full_url = {};
+	for (var i=0; i < url_vars.length; i++) {
+		var _h = url_vars[i].split('=');
+		full_url[_h[0]] = _h[1];
+	};
+	return full_url;
+};
+(function(){
+	var try_saved_auth = function(){
+		var vk_session_stored = w_storage('vk_session'+1915003);
 		if (vk_session_stored){
 			set_vk_auth(vk_session_stored);
 			seesu.track_event('Auth to vk', 'auth', 'from saved');
 		}
+	};
+	
+	
+	var _u = get_url_parameters();
+	if (_u.api_id && _u.viewer_id && _u.sid && _u.secret){
+		seesu.vk_api = new vk_api([{
+			api_id: _u.api_id, 
+			s: _u.secret,
+			viewer_id: _u.viewer_id, 
+			sid: _u.sid, 
+			use_cache: true,
+			v: "3.0"
+		}], seesu.delayed_search.vk_api.quene, true);
+		if (_u.api_settings & 8){
+			seesu.delayed_search.switch_to_vk_api();
+			dstates.remove_state('body','vk-needs-login');
+		}
+						
+						
+		var _s = document.createElement('script');
+		_s.src='http://vk.com/js/api/xd_connection.js';
+		_s.onload = function(){
+			if (window.VK){
+				VK.init(function(){});
+				VK.addCallback('onSettingsChanged', function(sts){
+					if (sts & 8){
+						
+						seesu.delayed_search.switch_to_vk_api();
+						dstates.remove_state('body','vk-needs-login');
+						
+					} else{
+						seesu.delayed_search.we_need_mp3provider()
+					}
+				});
+			}
+			
+		};
+		document.documentElement.firstChild.appendChild(_s);
+		
+		
+	} else{
+		var vk_session_meta = document.getElementsByName('vk_session');
+		if (vk_session_meta && vk_session_meta.length){
+			if (vk_session_meta[0] && vk_session_meta[0].content){
+				set_vk_auth(vk_session_meta[0].content, true);
+				seesu.track_event('Auth to vk', 'auth', 'from meta tag (iframe redirect)');
+			} else{
+				try_saved_auth();
+			}
+		} else{
+			try_saved_auth();
+		} 
 	}
-} else{
-	var vk_session_stored = w_storage('vk_session');
-	if (vk_session_stored){
-		set_vk_auth(vk_session_stored);
-		seesu.track_event('Auth to vk', 'auth', 'from saved');
-	}
-}
+})();
+
+
 var vkReferer = '';
 
 var updating_notify = function(r){
