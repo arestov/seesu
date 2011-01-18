@@ -360,7 +360,7 @@ window.connect_dom_to_som = function(d, ui){
 			
 			
 			var searching_for = this.value;
-			if (searching_for == pl_q.data('lastv')){return false;}
+			if (searching_for && searching_for == pl_q.data('lastv')){return false;}
 			
 			var current_song = pl_search.data('current_song');
 			if (searching_for){
