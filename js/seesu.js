@@ -89,23 +89,14 @@ window.seesu = window.su =  {
 		available: [],
 		use:{
 			quene:  new funcs_quene(1000, 8000 , 7),
-			delay_mini: 2500,
-			delay_big: 5000,
-			big_delay_interval: 5,
 			search_tracks: hardcore_vk_search
 		},
 		vk:{
 			quene:  new funcs_quene(1000, 8000 , 7),
-			delay_mini: 1000,
-			delay_big: 8000,
-			big_delay_interval: 7,
 			search_tracks: hardcore_vk_search
 		},
 		vk_api:{
 			quene:  new funcs_quene(1000, 8000 , 7),
-			delay_mini: 1200,
-			delay_big: 8000,
-			big_delay_interval: 7,
 			search_tracks : function(){
 				return seesu.vk_api.audio_search.apply(seesu.vk_api, arguments);
 			}

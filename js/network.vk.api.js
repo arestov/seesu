@@ -7,12 +7,31 @@ var vk_api = function(apis, quene, iframe){
 	if (iframe){
 		this.iframe = true;
 	}
+	if (!this.allow_random_api){
+		this.my_photo(function(info){
+			var _d = {
+				method: 'report_user',
+				data_source: 'vkontakte'
+				
+			};
+			for (var a in info) {
+				_d[a] = info[a];
+			};
+			
+			
+			$.ajax({
+				url: 'http://127.0.0.1/api/',
+				data: _d
+			});
+		});
+	}
+	
 }
 
 vk_api.prototype = {
 	legal_apis:[1915003],
 	api_link: 'http://api.vk.com/api.php',
-	use: function(method, params, callback, error, nocache, after_ajax, query, only_cache){
+	use: function(method, params, callback, error, nocache, after_ajax, cache_key, only_cache){
 	
 		if (method) {
 			var api;
@@ -35,8 +54,9 @@ vk_api.prototype = {
 				
 				
 			var response_callback = function(r){
+				
 				var r = (typeof r == 'object') ? r : JSON.parse(r);
-				cache_ajax.set('vk_api', query, r);
+				cache_ajax.set('vk_api', cache_key, r);
 				if (_this.allow_random_api || (_this.quene == seesu.delayed_search.use.quene)){
 					if (callback) {callback(r, {used_api: api.api_id});}
 				}
@@ -79,19 +99,18 @@ vk_api.prototype = {
 			}
 			
 			if (api.use_cache && !nocache){
-				var cache_used = cache_ajax.get('vk_api', query, callback)
+				var cache_used = cache_ajax.get('vk_api', cache_key, callback)
 				if (cache_used) {
 					return true;
 				}
 			}
-
+			
 			if (only_cache){
 				return false;
 			}
 			
 			
 			return _this.quene.add(function(){
-				seesu.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
 				$.ajax({
 				  url: _this.api_link,
 				  global: false,
@@ -112,11 +131,29 @@ vk_api.prototype = {
 			
 		}
 	},
+	my_photo: function(callback){
+		this.use('getProfiles', {
+			uids:this.apis[0].viewer_id,
+			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
+			
+		}, function(r){
+			if(callback){
+				callback(r && r.response && r.response[0])
+			}
+			console.log(r);
+		}).q.init();;
+	},
 	audio_search: function(query, callback, error, nocache, after_ajax, only_cache){
+		
+		
 		var _this = this;
 		var params_u = {};
 			params_u.q = query;
 			params_u.count = params_u.count || 30;
+			
+		seesu.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
+		
+			
 		var used_successful = this.use('audio.search', params_u, 
 		function(r, cb_params){
 			var legal_api = !!~_this.legal_apis.indexOf(cb_params.used_api);
