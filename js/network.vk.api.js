@@ -111,6 +111,13 @@ vk_api.prototype = {
 			
 			
 			return _this.quene.add(function(){
+				if (api.use_cache && !nocache){
+					var cache_used = cache_ajax.get('vk_api', cache_key, callback)
+					if (cache_used) {
+						return true;
+					}
+				}
+				
 				$.ajax({
 				  url: _this.api_link,
 				  global: false,

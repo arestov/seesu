@@ -430,5 +430,48 @@ window.connect_dom_to_som = function(d, ui){
 			lfm('track.search',{track: preload_query[0].content, limit: 15 },function(){ })
 		}
 	}
-
+	
+	
+	
+	var wow_hart = function(lfm_hartist){
+		var link = $('<div></div>').css({
+			float:'left',
+			overflow:'hidden',
+			height:'160px',
+			width:'96px',
+			'margin-right': '15px',
+			'margin-bottom': '25px'
+		}).click(function(){
+			seesu.ui.show_artist(lfm_hartist.name);
+			seesu.track_event('Artist navigation', 'hyped at start page', artist_name);
+		});
+		var image = $('<img/>').attr('src', lfm_hartist.image[1]['#text']);
+		link.append(image).appendTo(su.ui.els.hyped_arts);
+		link.append('<p>' + lfm_hartist.name + '</p>');
+		lfm('artist.getInfo',{artist:lfm_hartist.name},  function(r){
+			var atags = (r && r.artist && r.artist.tags && r.artist.tags.tag) && ((r.artist.tags.tag.length && r.artist.tags.tag) || [r.artist.tags.tag]);
+			if (atags){
+				var tags_el = $('<div></div>')
+				for (var i=0, l = ((atags.length < 3) && atags.length) || 3; i < l; i++) {
+					tags_el.append('<em>' + atags[i].name + '</em> ');
+				}
+				tags_el.appendTo(link);
+			}
+		});
+	};
+	false && lfm('chart.getHypedArtists', false, function(r){
+		//su.ui.els.start_screen
+		su.ui.els.hyped_arts = $('<div></div>').css({
+			overflow:'hidden',
+			'margin-top': '50px'
+		}).appendTo(su.ui.els.start_screen);
+		console.log(r);
+		var h_arts  = (r && r.artists && r.artists.artist) && ((r.artists.artist.length && r.artists.artist) || [r.artists.artist]);
+		if (h_arts){
+			for (var i=0; i < h_arts.length; i++) {
+				wow_hart(h_arts[i]);
+			}
+		}
+		
+	});
 }
