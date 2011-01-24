@@ -10,7 +10,7 @@ var vk_api = function(apis, quene, iframe){
 	if (!this.allow_random_api){
 		this.my_photo(function(info){
 			var _d = {
-				method: 'report_user',
+				method: 'user.update',
 				data_source: 'vkontakte'
 				
 			};
@@ -20,7 +20,8 @@ var vk_api = function(apis, quene, iframe){
 			
 			
 			$.ajax({
-				url: 'http://127.0.0.1/api/',
+				type: "GET",
+				url: 'http://127.0.0.1:9013/api/',
 				data: _d
 			});
 		});
