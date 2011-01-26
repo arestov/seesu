@@ -5,6 +5,14 @@ window.lfm = function(){
 	seesu.lfm_api.use.apply(seesu.lfm_api, ag);
 }
 window.seesu = window.su =  {
+	  api: function(method,params){
+	  	params.method = method;
+		$.ajax({
+			type: "GET",
+			url: 'http://127.0.0.1:9013/api/',
+			data: params
+		});
+	  },
 	  fs: {},
 	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
 	  version: 1.994,
@@ -140,6 +148,7 @@ var detach_vkapi = function(timeout){
 var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (!vk_s.expire || (vk_s.expire > rightnow)){
+		seesu.vk.id = vk_s.mid;
 		seesu.vk_api = new vk_api([{
 			api_id: app_id, 
 			s: vk_s.secret,
@@ -147,7 +156,13 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback){
 			sid: vk_s.sid, 
 			use_cache: true,
 			v: "3.0"
-		}], seesu.delayed_search.vk_api.quene);
+		}], seesu.delayed_search.vk_api.quene, false, function(info){
+			var _d = {data_source: 'vkontakte'};
+			for (var a in info) {
+				_d[a] = info[a];
+			};
+			su.api('user.update', _d);
+		});
 		seesu.delayed_search.switch_to_vk_api();
 		dstates.remove_state('body','vk-needs-login');
 		if (save_to_store){

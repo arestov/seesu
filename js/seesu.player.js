@@ -305,7 +305,12 @@ seesu.player = {
 		var a_info = node.data('t_context').children('.artist-info');
 		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
 		su.ui.update_track_info(a_info, node);
-		su.ui.show_video_info(a_info.children('.track-video'), artist + " - " + mo.mo_titl.track);
+		var tv = a_info.data('track-video');
+		if (!tv){
+			 tv = a_info.children('.track-video');
+			 a_info.data('track-video', tv)
+		}
+		su.ui.show_video_info(tv, artist + " - " + mo.mo_titl.track);
 		
 		
 		if (su.lfm_api.scrobbling) {
@@ -344,14 +349,25 @@ seesu.player.events[PLAYED] = function(){
   if (!start_time) {
 	seesu.player.c_song.start_time = ((new Date()).getTime()/1000).toFixed(0);
   }
-  if (su.lfm_api.scrobbling) {
+  
 	var submit = function(mo){
 		setTimeout(function(){
-			su.lfm_api.nowplay(mo);
-		},100)
+			if (su.lfm_api.scrobbling) {
+				su.lfm_api.nowplay(mo);
+			}
+			if (seesu.vk.id){
+				su.api('track.scrobble', {
+					vk_id: seesu.vk.id,
+					duration: mo.duration,
+					artist: mo.artist,
+					title: mo.track,
+					timestamp: ((new Date()).getTime()/1000).toFixed(0)
+				});
+			}
+		},100);
 	};
 	submit(seesu.player.c_song);
-  }
+  
 	
 	
 	

@@ -1,4 +1,4 @@
-var vk_api = function(apis, quene, iframe){
+var vk_api = function(apis, quene, iframe, callback){
 	this.apis = apis;
 	if (apis.length > 1){
 		this.allow_random_api = true;
@@ -8,22 +8,11 @@ var vk_api = function(apis, quene, iframe){
 		this.iframe = true;
 	}
 	if (!this.allow_random_api){
-		this.my_photo(function(info){
-			var _d = {
-				method: 'user.update',
-				data_source: 'vkontakte'
-				
-			};
-			for (var a in info) {
-				_d[a] = info[a];
-			};
-			
-			
-			$.ajax({
-				type: "GET",
-				url: 'http://127.0.0.1:9013/api/',
-				data: _d
-			});
+		this.get_user_info(function(info){
+			this.user_info = info;
+			if (callback){
+				callback(info);
+			}
 		});
 	}
 	
@@ -139,7 +128,7 @@ vk_api.prototype = {
 			
 		}
 	},
-	my_photo: function(callback){
+	get_user_info: function(callback){
 		this.use('getProfiles', {
 			uids:this.apis[0].viewer_id,
 			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
