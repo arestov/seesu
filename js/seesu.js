@@ -5,13 +5,16 @@ window.lfm = function(){
 	seesu.lfm_api.use.apply(seesu.lfm_api, ag);
 }
 window.seesu = window.su =  {
+	  server_interact: false,
 	  api: function(method,params){
-	  	params.method = method;
-		$.ajax({
-			type: "GET",
-			url: 'http://127.0.0.1:9013/api/',
-			data: params
-		});
+	  	if (this.server_interact){
+	  		params.method = method;
+			$.ajax({
+				type: "GET",
+				url: 'http://127.0.0.1:9013/api/',
+				data: params
+			});
+	  	}
 	  },
 	  fs: {},
 	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
@@ -161,6 +164,7 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback){
 			for (var a in info) {
 				_d[a] = info[a];
 			};
+			su.vk.user_info = _d;
 			su.api('user.update', _d);
 		});
 		seesu.delayed_search.switch_to_vk_api();
@@ -273,6 +277,14 @@ var vkReferer = '';
 
 var updating_notify = function(r){
 	if (!r){return;}
+	
+	if(r.server_interact){
+		su.server_interact = true;
+		if (su.vk.user_info){
+			su.api('user.update', su.vk.user_info);
+		}	
+	}
+	
 	var cver = r.latest_version.number;
 	if (cver > seesu.version) {
 		var message = 
