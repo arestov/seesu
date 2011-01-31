@@ -283,7 +283,7 @@ var updating_notify = function(r){
 			widget.showNotification(message, function(){
 				open_url(link);
 			});
-			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"></a>');
+			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
 		}
 	}
 	if (r.vk_apis){

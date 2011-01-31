@@ -382,13 +382,9 @@ display:none;
 }
 
 #update-star{
-	position:absolute;
-	left:15px;
-	background:url(../i/update_star.png);
-	width:16px;
-	height:16px;
-	border:0;
-	
+	position:relative;
+	bottom:-4px;
+	border-bottom:0  !important;
 }
 #screens{
 	clear:left;
