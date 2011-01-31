@@ -683,7 +683,9 @@ seesu_ui.prototype = {
 	lfm_logged : function(){
 		dstates.add_state('body', 'lfm-auth-done')
 		$('.lfm-finish input[type=checkbox]',this.d).attr('checked', 'checked');
-		$('#scrobbling-switches', this.d).find('input').attr('disabled', '');
+		var f = $('.scrobbling-switches', this.d);
+		var ii = f.find('input');
+		ii.removeAttr('disabled');
 	},
 	lfm_enable_scrobbling:function(context){
 		var lfm_ssw = $('.scrobbling-switches', context || this.d);
