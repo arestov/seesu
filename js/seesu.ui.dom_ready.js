@@ -92,10 +92,10 @@ window.connect_dom_to_som = function(d, ui){
 			
 		return o;
 	})(seesu.player.player_volume);
-	
+	console.log('bbggoooo')
 	addEvent(d, "DOMContentLoaded", function() {
 		su.lfm_api.try_to_login();		
-		
+		console.log('bbbboooooooooooooooxxxzzzzzzzz')
 		var volume_s = d.createElement('style');
 			volume_s.setAttribute('title', 'volume');
 			volume_s.setAttribute('type', 'text/css');
@@ -322,7 +322,7 @@ window.connect_dom_to_som = function(d, ui){
 	
 	
 	
-	
+		console.log('rrrrrrragggggggggggggggeeeeeeeeeeee')
 		
 		
 		$('#app_type', search_form).val(seesu.env.app_type);
@@ -336,10 +336,7 @@ window.connect_dom_to_som = function(d, ui){
 			})
 		}
 		
-		var ext_search_query = seesu.ui.els.search_input.val();
-		if (ext_search_query) {
-			su.ui.search(ext_search_query);
-		}
+		
 		
 		var playlists = seesu.gena.playlists;
 		//[{name: 'loved tracks'}, {name: 'killers'}, {name: 'top british 30'}, {name: 'vkontakte'}, {name: 'best beatles'}];
@@ -418,20 +415,19 @@ window.connect_dom_to_som = function(d, ui){
 		});
 		if (!state_recovered){
 			ui.views.show_start_page(true, true, true);
+			var ext_search_query = seesu.ui.els.search_input.val();
+			console.log(ext_search_query || su.start_query)
+			if (ext_search_query || su.start_query) {
+				
+				su.ui.search(ext_search_query || su.start_query);
+			}
 		}
 		
 		
 		ui.create_playlists_link();
 	});
 	
-	var preload_query = d.getElementsByName('search_query');
-	if (preload_query && preload_query.length){
-		if (preload_query[0] && preload_query[0].content){
-			lfm('artist.search',{artist: preload_query[0].content, limit: 15 },function(){ })
-			lfm('tag.search',{tag: preload_query[0].content, limit: 15 },function(){ })
-			lfm('track.search',{track: preload_query[0].content, limit: 15 },function(){ })
-		}
-	}
+
 	
 	
 	

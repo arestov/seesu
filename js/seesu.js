@@ -226,6 +226,10 @@ var get_url_parameters = function(){
 	
 	
 	var _u = get_url_parameters();
+	if (_u.q){
+		su.start_query = _u.q;
+	}
+	
 	if (_u.api_id && _u.viewer_id && _u.sid && _u.secret){
 		seesu.vk_api = new vk_api([{
 			api_id: _u.api_id, 
@@ -262,19 +266,8 @@ var get_url_parameters = function(){
 		document.documentElement.firstChild.appendChild(_s);
 		
 		
-	} else{
-		var vk_session_meta = document.getElementsByName('vk_session');
-		if (vk_session_meta && vk_session_meta.length){
-			if (vk_session_meta[0] && vk_session_meta[0].content){
-				set_vk_auth(vk_session_meta[0].content, true);
-				seesu.track_event('Auth to vk', 'auth', 'from meta tag (iframe redirect)');
-			} else{
-				try_saved_auth();
-			}
-		} else{
-			try_saved_auth();
-		} 
-	}
+	} 
+	
 })();
 
 

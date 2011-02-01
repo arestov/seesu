@@ -617,9 +617,11 @@ var input_change = function(e){
 	var input = (e && e.target) || e; //e can be EVENT or INPUT  
 	var input_value = input.value;
 	if ($(input).data('lastvalue') == input_value){
+		console.log('nothing:' + input_value);
 		return false
 	} else{
 		$(input).data('lastvalue', input_value)
+		console.log('saved to input cache:' + input_value);
 	}
 	if (!input_value) {
 		seesu.ui.views.show_start_page();
