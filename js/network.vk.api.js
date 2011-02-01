@@ -110,7 +110,6 @@ vk_api.prototype = {
 				
 				$.ajax({
 				  url: _this.api_link,
-				  global: false,
 				  type: "GET",
 				  dataType: params_full.callback ? 'script' : 'json',
 				  data: params_full,

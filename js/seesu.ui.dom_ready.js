@@ -113,7 +113,7 @@ window.connect_dom_to_som = function(d, ui){
 		if (buttmen_node){
 			seesu.buttmen = new button_menu(buttmen_node);
 		}
-		var search_form = $('#search',d).submit(function(){return false;}); 
+		var search_form = $('#search',d); 
 		
 		var vk_auth = $('.vk-auth',d).submit(function(){
 			seesu.ui.els.vk_login_error.text('');
@@ -326,6 +326,8 @@ window.connect_dom_to_som = function(d, ui){
 		
 		
 		$('#app_type', search_form).val(seesu.env.app_type);
+		
+		search_form.submit(function(){return false;})
 		if (search_form) {
 			$(d).keydown(function(e){
 				if (!seesu.ui.els.slider.className.match(/show-search-results/)) {return}
