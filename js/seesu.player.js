@@ -285,7 +285,6 @@ seesu.player = {
 				this.musicbox.play_song_by_url(mo.link);
 			}
 		}
-		seesu.track_event('Play', 'started', mo.mo_titl.artist + ' - ' +mo.mo_titl.track );
 		
 		
 	},
@@ -357,6 +356,7 @@ seesu.player.events[PLAYED] = function(){
 			}
 			if (seesu.vk.id){
 				su.api('track.scrobble', {
+					status: 'playing',
 					vk_id: seesu.vk.id,
 					duration: mo.duration,
 					artist: mo.artist,
@@ -383,17 +383,30 @@ seesu.player.events[STOPPED] = function(){
 
 
 seesu.player.events[FINISHED] = function() {
-  if (su.lfm_api.scrobbling ) {
+  
 	var submit = function(mo){
 		setTimeout(function(){
-			su.lfm_api.submit(mo);
+			if (su.lfm_api.scrobbling) {
+				su.lfm_api.submit(mo);
+			}
+			if (seesu.vk.id){
+				su.api('track.scrobble', {
+					status: 'finished',
+					vk_id: seesu.vk.id,
+					duration: mo.duration,
+					artist: mo.artist,
+					title: mo.track,
+					timestamp: ((new Date()).getTime()/1000).toFixed(0)
+				});
+			}
+			
+			
+			
 		},50)
 	};
 	submit(seesu.player.c_song);
-  }
-  seesu.track_event('Play', 'finished', seesu.player.c_song.artist + ' - ' + seesu.player.c_song.track );
-  
-  seesu.player.switch_to('next');
+
+	seesu.player.switch_to('next');
 };
 seesu.player.events[VOLUME] = function(volume_value) {
 	change_volume(volume_value);
