@@ -126,7 +126,7 @@ window.connect_dom_to_som = function(d, ui){
 			} else{
 				seesu.vk.save_pass = false;
 			}
-			uilogin_to_hapi(email, pass, $('#vk-captcha_key',_this).val(), save);
+			uilogin_to_hapi(email, pass, $('#vk-captcha-key',_this).val(), save);
 	
 			return false;
 		});

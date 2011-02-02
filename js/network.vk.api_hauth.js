@@ -89,7 +89,7 @@ window.try_hapi = function(callback){
 		});
 	};
 	
-	var _vk_sess = JSON.parse(w_storage('vk_session'+iapp_id));
+	var _vk_sess = JSON.parse(w_storage('vk_session'+iapp_id) || false);
 
 	var t_saved = function(){
 		var login = w_storage( 'vk_auth_login');
@@ -151,43 +151,48 @@ var login_spec_vkapi = function(email, pass, callback, captcha){
 				data:_o,
 				global: false,
 				success: function(r){
-					var _lo = get_form_params(r, 'http\\:\\/\\/vk\\.com\\/login\\.php');
-					if (_lo){
-						$.ajax({
-							dataType: 'text',
-							url: 'http://vk.com/login.php',
-							type: 'post',
-							global: false,
-							data: _lo,
-							success: function(r){
-								var auth = r.match(/\((.*)\)/);
-								auth = auth && auth[1];
-								if (auth){
-									var vk_s = JSON.parse(auth);
-									auth_to_vkapi(vk_s, true, iapp_id, try_hapi);
-									console.log(vk_s);
-									if (callback) {callback();}
-									
-								} else{
-									console.log('no auth')
+					if (!~r.indexOf('onError')){
+						var _lo = get_form_params(r, 'http\\:\\/\\/vk\\.com\\/login\\.php');
+						if (_lo){
+							$.ajax({
+								dataType: 'text',
+								url: 'http://vk.com/login.php',
+								type: 'post',
+								global: false,
+								data: _lo,
+								success: function(r){
+									var auth = r.match(/\((.*)\)/);
+									auth = auth && auth[1];
+									if (auth){
+										var vk_s = JSON.parse(auth);
+										auth_to_vkapi(vk_s, true, iapp_id, try_hapi);
+										console.log(vk_s);
+										if (callback) {callback();}
+										
+									} else{
+										console.log('no auth')
+									}
 								}
-							}
-						});
-					} else{
-						var auth = r.match(/\((.*)\)/);
-						auth = auth && auth[1];
-						if (auth){
-							var vk_s = hauth_from_string(auth);
-							
-							auth_to_vkapi(vk_s, true, iapp_id, try_hapi);
-							if (callback) {callback();}
-							console.log('auth: ' + auth);
+							});
 						} else{
-							console.log('no auth')
+							var auth = r.match(/\((.*)\)/);
+							auth = auth && auth[1];
+							if (auth){
+								var vk_s = hauth_from_string(auth);
+								
+								auth_to_vkapi(vk_s, true, iapp_id, try_hapi);
+								if (callback) {callback();}
+								console.log('auth: ' + auth);
+							} else{
+								console.log('no auth');
+							}
+							
+							
 						}
-						
-						
+					} else{
+						seesu.ui.els.vk_login_error.text('Wrong login or password');
 					}
+					
 					
 					
 				}
