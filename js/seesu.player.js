@@ -476,7 +476,7 @@ seesu.player.song_click = function(mo) {
 }
 
 
-function change_volume(volume_value){
+var change_volume = function (volume_value){
   w_storage('vkplayer-volume', volume_value, true);
   seesu.player.player_volume = volume_value;	
 }

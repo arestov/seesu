@@ -153,49 +153,68 @@ var detach_vkapi = function(timeout){
 		dstates.add_state('body','vk-needs-login');
 	}, timeout);
 };
-var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback){
+var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback, error_callback){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (!vk_s.expire || (vk_s.expire > rightnow)){
-		seesu.vk.id = vk_s.mid;
-		seesu.vk_api = new vk_api([{
+		console.log('want vk api')
+		var _vkapi = new vk_api([{
 			api_id: app_id, 
 			s: vk_s.secret,
 			viewer_id: vk_s.mid, 
 			sid: vk_s.sid, 
 			use_cache: true,
 			v: "3.0"
-		}], seesu.delayed_search.vk_api.quene, false, function(info){
-			var _d = {data_source: 'vkontakte'};
-			for (var a in info) {
-				_d[a] = info[a];
-			};
-			su.vk.user_info = _d;
-			su.api('user.update', _d);
-		});
-		seesu.delayed_search.switch_to_vk_api();
-		dstates.remove_state('body','vk-needs-login');
-		if (save_to_store){
-			w_storage('vk_session'+app_id, vk_s, true);
-		}
-		if (vk_s.expire){
-			var end = (vk_s.expire - rightnow)*1000;
-			if (callback){
-				var _t = detach_vkapi(end + 10000);
-				setTimeout(function(){
-					callback(function(){
-						clearTimeout(_t);
-					});
-				}, end);
+		}], seesu.delayed_search.vk_api.quene, false, function(info, r){
+			if (info){
+				seesu.vk.id = vk_s.mid;
+				seesu.vk_api = _vkapi
+				console.log('get vk api')
+				
+				
+				seesu.delayed_search.switch_to_vk_api();
+				dstates.remove_state('body','vk-needs-login');
+				
+				if (save_to_store){
+					w_storage('vk_session'+app_id, vk_s, true);
+				}
+				
+				if (vk_s.expire){
+					var end = (vk_s.expire - rightnow)*1000;
+					if (callback){
+						var _t = detach_vkapi(end + 10000);
+						setTimeout(function(){
+							callback(function(){
+								clearTimeout(_t);
+							});
+						}, end);
+					} else{
+						detach_vkapi(end);
+					}
+				}
+				
+				
+				var _d = {data_source: 'vkontakte'};
+				for (var a in info) {
+					_d[a] = info[a];
+				};
+				su.vk.user_info = _d;
+				su.api('user.update', _d);
+				
+				
 			} else{
-				detach_vkapi(end);
+				
+				w_storage('vk_session'+app_id, '', true);
+				error_callback('no info');
 			}
-		}
+			
+		});
 		
 		
-		return true;
+		
+		
 	} else{
 		w_storage('vk_session'+app_id, '', true);
-		return false;
+		error_callback('expired');
 	}
 }
 	

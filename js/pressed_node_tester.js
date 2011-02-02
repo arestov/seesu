@@ -17,10 +17,6 @@ var test_pressed_node = function(e, mouseup){
 		  	if (seesu.env.cross_domain_allowed){
 				clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
 			} else{
-				if (!clicked_node.data('popup_listening')){
-					addEvent(window, "message", listen_vk_api_callback_window);
-					clicked_node.data('popup_listening', true)
-				}
 				var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
 				if (su.vk_api && su.vk_api.iframe){
 					if (window.VK){

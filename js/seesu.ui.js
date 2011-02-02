@@ -229,7 +229,6 @@ window.seesu_ui = function(d, with_dom){
 	if (!with_dom){
 		dstates.connect_ui(this);
 	}
-	console.log('bg')
 	
 	this.views = new views();
 	this.buttons_li = {};

@@ -3,17 +3,27 @@ var vk_api = function(apis, quene, iframe, callback){
 	if (apis.length > 1){
 		this.allow_random_api = true;
 	}
-	this.quene = quene;
+	if (quene){
+		this.quene = quene;
+	}
+	
 	if (iframe){
 		this.iframe = true;
 	}
 	if (!this.allow_random_api){
-		this.get_user_info(function(info){
-			this.user_info = info;
+		this.get_user_info(function(info, r){
+			if(info){
+				this.user_info = info;
+			}
+			
 			if (callback){
-				callback(info);
+				callback(info, r);
 			}
 		});
+	} else{
+		if (callback){
+			callback();
+		}
 	}
 	
 }
@@ -22,7 +32,7 @@ vk_api.prototype = {
 	legal_apis:[1915003],
 	api_link: 'http://api.vk.com/api.php',
 	use: function(method, params, callback, error, nocache, after_ajax, cache_key, only_cache){
-	
+
 		if (method) {
 			var api;
 			var _this = this;
@@ -47,9 +57,8 @@ vk_api.prototype = {
 				
 				var r = (typeof r == 'object') ? r : JSON.parse(r);
 				cache_ajax.set('vk_api', cache_key, r);
-				if (_this.allow_random_api || (_this.quene == seesu.delayed_search.use.quene)){
-					if (callback) {callback(r, {used_api: api.api_id});}
-				}
+				if (callback) {callback(r, {used_api: api.api_id});}
+				
 			}
 				
 				
@@ -134,10 +143,10 @@ vk_api.prototype = {
 			
 		}, function(r){
 			if(callback){
-				callback(r && r.response && r.response[0])
+				callback(r && r.response && r.response[0], r)
 			}
 			console.log(r);
-		}).q.init();;
+		}).q.init();
 	},
 	audio_search: function(query, callback, error, nocache, after_ajax, only_cache){
 		

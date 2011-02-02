@@ -92,10 +92,8 @@ window.connect_dom_to_som = function(d, ui){
 			
 		return o;
 	})(seesu.player.player_volume);
-	console.log('bbggoooo')
 	addEvent(d, "DOMContentLoaded", function() {
 		su.lfm_api.try_to_login();		
-		console.log('bbbboooooooooooooooxxxzzzzzzzz')
 		var volume_s = d.createElement('style');
 			volume_s.setAttribute('title', 'volume');
 			volume_s.setAttribute('type', 'text/css');
@@ -322,7 +320,6 @@ window.connect_dom_to_som = function(d, ui){
 	
 	
 	
-		console.log('rrrrrrragggggggggggggggeeeeeeeeeeee')
 		
 		
 		$('#app_type', search_form).val(seesu.env.app_type);
