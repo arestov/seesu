@@ -18,46 +18,31 @@ funcs_quene = function(small_delay, big_delay, big_delay_interval){
 funcs_quene.prototype = {
 	get_interval: function(){
 		var last_num = this.using_stat.length - 1;
-		var bigdelay_turn = (!this.nobigdelay && last_num >1  && (((last_num + 1) % this.big_delay_interval) === 0));
+		var bigdelay_turn = (!this.nobigdelay && last_num > 1  && (last_num  % this.big_delay_interval === 0));
 		
 		if (bigdelay_turn){
-			var real_bdinterval = (new Date()).getTime() - this.using_stat[last_num - this.big_delay_interval];
+			var real_bdinterval = (new Date()).getTime() - this.using_stat[last_num - (this.big_delay_interval + 1)];
 			var _unit = (this.small_delay * this.big_delay_interval + this.big_delay);
-			console.log('diff:' + (real_bdinterval - _unit) )
 			if (real_bdinterval && real_bdinterval > _unit){
 				var time = Math.max(0, this.big_delay - (real_bdinterval - _unit));
-				console.log(real_bdinterval - _unit);
-				console.log('smaller delay: ' + time);
 			} else{
 				var time = this.big_delay;
-				console.log('big_delay delay: ' + time);
 			}
 		} else{
-			var time = this.small_delay;
-			
-			/*
 			var last_usage = this.using_stat[last_num] || 0;
-			var difference = (new Date()).getTime() - last_usage;
 			if (!last_usage){
 				var time = 0;
-			} else if (last_num % this.big_delay_interval === 0){
-				if (difference > this.big_delay){
-					if (difference - this.big_delay < this.small_delay){
-						var time = this.small_delay - (difference - this.big_delay);
-					} else{
-						var time=0;
-					}
-				} else {
-					
+			} else{
+				var time_difference = (new Date()).getTime() - last_usage;
+				var interval_diff = this.small_delay  - time_difference;
+				if (interval_diff > 0){
+					var time = interval_diff
+				} else{
+					var time = 0;
 				}
 				
-				
-			} else if (difference > this.small_delay){
-				var time = this.small_delay - difference;
-			} else  {
-				console.log('difference:' + difference);
-				var time = 0;
-			}*/
+			}
+			
 		}
 			
 		return  time;
@@ -72,6 +57,7 @@ funcs_quene.prototype = {
 			q: _this,
 			func: function(){
 				func();
+				_this.using_stat.push((new Date()).getTime());
 				this.done = true;
 				
 				var time = _this.get_interval();
@@ -79,11 +65,6 @@ funcs_quene.prototype = {
 				setTimeout(function(){
 					_this.next(quene_just_for_me);
 				}, time);
-				
-				_this.using_stat.push((new Date()).getTime());
-				
-	
-			
 			}
 		
 		};
