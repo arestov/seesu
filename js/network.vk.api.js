@@ -98,7 +98,9 @@ vk_api.prototype = {
 			}
 			
 			if (api.use_cache && !nocache){
-				var cache_used = cache_ajax.get('vk_api', cache_key, callback)
+				var cache_used = cache_ajax.get('vk_api', cache_key, function(r){
+					callback(r, {used_api: api.api_id})
+				});
 				if (cache_used) {
 					return true;
 				}
@@ -111,7 +113,9 @@ vk_api.prototype = {
 			
 			return _this.quene.add(function(){
 				if (api.use_cache && !nocache){
-					var cache_used = cache_ajax.get('vk_api', cache_key, callback)
+					var cache_used = cache_ajax.get('vk_api', cache_key, function(r){
+						callback(r, {used_api: api.api_id})
+					});
 					if (cache_used) {
 						return true;
 					}
