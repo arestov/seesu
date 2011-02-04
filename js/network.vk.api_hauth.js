@@ -96,6 +96,9 @@ window.try_hapi = function(callback){
 		var pass = w_storage( 'vk_auth_pass');
 		if (login && pass){
 			login_spec_vkapi(login, pass, callback);
+		} else{
+			seesu.delayed_search.waiting_for_mp3provider = true;
+			dstates.add_state('body','vk-needs-login');
 		}
 	};
 	if (_vk_sess){
