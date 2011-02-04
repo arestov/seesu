@@ -42,7 +42,7 @@ var hauth_from_string = function(str){
 };
 
 var iapp_id = 8;
-window.try_hapi = function(callback){
+window.try_hapi = function(callback, not_saved){
 	//auth_to_vkapi;
 	var try_cookies_hapi = function(){
 		$.ajax({
@@ -89,7 +89,7 @@ window.try_hapi = function(callback){
 		});
 	};
 	
-	var _vk_sess = JSON.parse(w_storage('vk_session'+iapp_id) || false);
+	var _vk_sess = !not_saved && JSON.parse(w_storage('vk_session'+iapp_id) || false);
 
 	var t_saved = function(){
 		var login = w_storage( 'vk_auth_login');

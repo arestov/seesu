@@ -153,7 +153,7 @@ var detach_vkapi = function(timeout){
 		dstates.add_state('body','vk-needs-login');
 	}, timeout);
 };
-var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback, error_callback){
+var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callback){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (!vk_s.expire || (vk_s.expire > rightnow)){
 		console.log('want vk api')
@@ -164,11 +164,12 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback, error_callba
 			sid: vk_s.sid, 
 			use_cache: true,
 			v: "3.0"
-		}], seesu.delayed_search.vk_api.quene, false, function(info, r){
+		}], seesu.delayed_search.vk_api.quene, false, 
+		function(info, r){
 			if (info){
 				seesu.vk.id = vk_s.mid;
 				seesu.vk_api = _vkapi
-				console.log('get vk api')
+				console.log('got vk api')
 				
 				
 				seesu.delayed_search.switch_to_vk_api();
@@ -180,10 +181,10 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback, error_callba
 				
 				if (vk_s.expire){
 					var end = (vk_s.expire - rightnow)*1000;
-					if (callback){
+					if (fallback){
 						var _t = detach_vkapi(end + 10000);
 						setTimeout(function(){
-							callback(function(){
+							fallback(function(){
 								clearTimeout(_t);
 							});
 						}, end);
@@ -207,6 +208,10 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback, error_callba
 				error_callback('no info');
 			}
 			
+		},function(){
+			detach_vkapi();
+	
+			fallback.apply(this, arguments)
 		});
 		
 		
@@ -220,7 +225,7 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback, error_callba
 	
 window.set_vk_auth = function(vk_session, save_to_store){
 	var vk_s = JSON.parse(vk_session);
-	auth_to_vkapi(vk_s, save_to_store, 1915003);
+	auth_to_vkapi(vk_s, save_to_store, 1915003, try_api);
 
 };
 

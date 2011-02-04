@@ -1,4 +1,4 @@
-var vk_api = function(apis, quene, iframe, callback){
+var vk_api = function(apis, quene, iframe, callback, fallback){
 	this.apis = apis;
 	if (apis.length > 1){
 		this.allow_random_api = true;
@@ -25,7 +25,10 @@ var vk_api = function(apis, quene, iframe, callback){
 			callback();
 		}
 	}
-	
+	if (fallback){
+		this.fallback = fallback;
+	}
+	this.fallback_counter = 0;
 }
 
 vk_api.prototype = {
@@ -56,8 +59,18 @@ vk_api.prototype = {
 			var response_callback = function(r){
 				
 				var r = (typeof r == 'object') ? r : JSON.parse(r);
-				cache_ajax.set('vk_api', cache_key, r);
-				if (callback) {callback(r, {used_api: api.api_id});}
+				if (!r.error){
+					cache_ajax.set('vk_api', cache_key, r);
+					if (callback) {callback(r, {used_api: api.api_id});}
+				} else{
+					if (r.error.error_code < 6){
+						if (_this.fallback){ _this.fallback(false, true);}
+						
+					} else{
+						if (callback) {callback(r, {used_api: api.api_id});}
+					}
+				}
+				
 				
 			}
 				
