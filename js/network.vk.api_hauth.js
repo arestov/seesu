@@ -57,33 +57,38 @@ window.try_hapi = function(callback, not_saved){
 		  },
 		  dataType: 'text',
 		  success: function(r){
-		  	var _o = get_form_params(r, 'http\\:\\/\\/i\\.vk\\.com\\/\\?act\\=auth');
+		  	if (!~r.indexOf('authFailed')){
+		  		var _o = get_form_params(r, 'http\\:\\/\\/i\\.vk\\.com\\/\\?act\\=auth');
 		 
-		  	console.log(_o)
-			if (_o){
-				$.ajax({
-				  url: "http://i.vk.com/?act=auth",
-				  global: false,
-				  type: "post",
-				  data:_o,
-				  dataType: 'text',
-				  success:function(r){
-				  	var auth = r.match(/\((.*)\)/);
-					auth = auth && auth[1];
-					console.log(auth)
-					if (auth){
-						var vk_s = hauth_from_string(auth);
-						console.log(vk_s);
-						auth_to_vkapi(vk_s, true, iapp_id, try_hapi);
-						if (callback) {callback();}
-					} else{
-						t_saved();
-					}
-				  }
-				});
+			  	console.log(_o)
+				if (_o){
+					$.ajax({
+					  url: "http://i.vk.com/?act=auth",
+					  global: false,
+					  type: "post",
+					  data:_o,
+					  dataType: 'text',
+					  success:function(r){
+					  	var auth = r.match(/\((.*)\)/);
+						auth = auth && auth[1];
+						console.log(auth)
+						if (auth){
+							var vk_s = hauth_from_string(auth);
+							console.log(vk_s);
+							auth_to_vkapi(vk_s, true, iapp_id, try_hapi);
+							if (callback) {callback();}
+						} else{
+							t_saved();
+						}
+					  }
+					});
+				} else{
+					t_saved();
+				}
 			} else{
 				t_saved();
 			}
+		  	
 			
 		  }
 		});
