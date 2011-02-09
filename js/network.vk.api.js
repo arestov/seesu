@@ -1,19 +1,41 @@
-var vk_api = function(apis, quene, iframe){
+var vk_api = function(apis, quene, iframe, callback, fallback){
 	this.apis = apis;
 	if (apis.length > 1){
 		this.allow_random_api = true;
 	}
-	this.quene = quene;
+	if (quene){
+		this.quene = quene;
+	}
+	
 	if (iframe){
 		this.iframe = true;
 	}
+	if (!this.allow_random_api){
+		this.get_user_info(function(info, r){
+			if(info){
+				this.user_info = info;
+			}
+			
+			if (callback){
+				callback(info, r);
+			}
+		});
+	} else{
+		if (callback){
+			callback();
+		}
+	}
+	if (fallback){
+		this.fallback = fallback;
+	}
+	this.fallback_counter = 0;
 }
 
 vk_api.prototype = {
 	legal_apis:[1915003],
 	api_link: 'http://api.vk.com/api.php',
-	use: function(method, params, callback, error, nocache, after_ajax, query, only_cache){
-	
+	use: function(method, params, callback, error, nocache, after_ajax, cache_key, only_cache){
+
 		if (method) {
 			var api;
 			var _this = this;
@@ -35,11 +57,21 @@ vk_api.prototype = {
 				
 				
 			var response_callback = function(r){
+				
 				var r = (typeof r == 'object') ? r : JSON.parse(r);
-				cache_ajax.set('vk_api', query, r);
-				if (_this.allow_random_api || (_this.quene == seesu.delayed_search.use.quene)){
+				if (!r.error){
+					cache_ajax.set('vk_api', cache_key, r);
 					if (callback) {callback(r, {used_api: api.api_id});}
+				} else{
+					if (r.error.error_code < 6){
+						if (_this.fallback){ _this.fallback(false, true);}
+						
+					} else{
+						if (callback) {callback(r, {used_api: api.api_id});}
+					}
 				}
+				
+				
 			}
 				
 				
@@ -79,22 +111,31 @@ vk_api.prototype = {
 			}
 			
 			if (api.use_cache && !nocache){
-				var cache_used = cache_ajax.get('vk_api', query, callback)
+				var cache_used = cache_ajax.get('vk_api', cache_key, function(r){
+					callback(r, {used_api: api.api_id})
+				});
 				if (cache_used) {
 					return true;
 				}
 			}
-
+			
 			if (only_cache){
 				return false;
 			}
 			
 			
 			return _this.quene.add(function(){
-				seesu.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
+				if (api.use_cache && !nocache){
+					var cache_used = cache_ajax.get('vk_api', cache_key, function(r){
+						callback(r, {used_api: api.api_id})
+					});
+					if (cache_used) {
+						return true;
+					}
+				}
+				
 				$.ajax({
 				  url: _this.api_link,
-				  global: false,
 				  type: "GET",
 				  dataType: params_full.callback ? 'script' : 'json',
 				  data: params_full,
@@ -112,11 +153,29 @@ vk_api.prototype = {
 			
 		}
 	},
+	get_user_info: function(callback){
+		this.use('getProfiles', {
+			uids:this.apis[0].viewer_id,
+			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
+			
+		}, function(r){
+			if(callback){
+				callback(r && r.response && r.response[0], r)
+			}
+			console.log(r);
+		}, false, true).q.init();
+	},
 	audio_search: function(query, callback, error, nocache, after_ajax, only_cache){
+		
+		
 		var _this = this;
 		var params_u = {};
 			params_u.q = query;
 			params_u.count = params_u.count || 30;
+			
+		seesu.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
+		
+			
 		var used_successful = this.use('audio.search', params_u, 
 		function(r, cb_params){
 			var legal_api = !!~_this.legal_apis.indexOf(cb_params.used_api);

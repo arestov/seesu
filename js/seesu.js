@@ -1,3 +1,8 @@
+$.ajaxSetup({
+  cache: true,
+  global:false
+});
+
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 window.lfm = function(){
 	var _this = this;
@@ -5,6 +10,17 @@ window.lfm = function(){
 	seesu.lfm_api.use.apply(seesu.lfm_api, ag);
 }
 window.seesu = window.su =  {
+	  server_interact: false,
+	  api: function(method,params){
+	  	if (this.server_interact){
+	  		params.method = method;
+			$.ajax({
+				type: "GET",
+				url: 'http://127.0.0.1:9013/api/',
+				data: params
+			});
+	  	}
+	  },
 	  fs: {},
 	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
 	  version: 1.994,
@@ -69,8 +85,7 @@ window.seesu = window.su =  {
 					xhr.setRequestHeader("Cookie", seesu.vk.big_vk_cookie);
 				} catch(e){}
 			}
-		},
-		vk_save_pass: w_storage('vk_save_pass')
+		}
 	  },
 	  ui: new seesu_ui(document),
 	  xhrs: {},
@@ -90,23 +105,14 @@ window.seesu = window.su =  {
 		available: [],
 		use:{
 			quene:  new funcs_quene(1000, 8000 , 7),
-			delay_mini: 2500,
-			delay_big: 5000,
-			big_delay_interval: 5,
 			search_tracks: hardcore_vk_search
 		},
 		vk:{
 			quene:  new funcs_quene(1000, 8000 , 7),
-			delay_mini: 1000,
-			delay_big: 8000,
-			big_delay_interval: 7,
 			search_tracks: hardcore_vk_search
 		},
 		vk_api:{
 			quene:  new funcs_quene(1000, 8000 , 7),
-			delay_mini: 1200,
-			delay_big: 8000,
-			big_delay_interval: 7,
 			search_tracks : function(){
 				return seesu.vk_api.audio_search.apply(seesu.vk_api, arguments);
 			}
@@ -147,49 +153,79 @@ var detach_vkapi = function(timeout){
 		dstates.add_state('body','vk-needs-login');
 	}, timeout);
 };
-var auth_to_vkapi = function(vk_s, save_to_store, app_id, callback){
-	console.log('very want!')
+var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callback){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (!vk_s.expire || (vk_s.expire > rightnow)){
-		seesu.vk_api = new vk_api([{
+		console.log('want vk api')
+		var _vkapi = new vk_api([{
 			api_id: app_id, 
 			s: vk_s.secret,
 			viewer_id: vk_s.mid, 
 			sid: vk_s.sid, 
 			use_cache: true,
 			v: "3.0"
-		}], seesu.delayed_search.vk_api.quene);
-		seesu.delayed_search.switch_to_vk_api();
-		dstates.remove_state('body','vk-needs-login');
-		if (save_to_store){
-			w_storage('vk_session'+app_id, vk_s, true);
-		}
-		console.log('baaaaabah!')
-		if (vk_s.expire){
-			var end = (vk_s.expire - rightnow)*1000;
-			if (callback){
-				var _t = detach_vkapi(end + 10000);
-				setTimeout(function(){
-					callback(function(){
-						clearTimeout(_t);
-					});
-				}, end);
+		}], seesu.delayed_search.vk_api.quene, false, 
+		function(info, r){
+			if (info){
+				seesu.vk.id = vk_s.mid;
+				seesu.vk_api = _vkapi;
+				console.log('got vk api');
+				
+				
+				seesu.delayed_search.switch_to_vk_api();
+				dstates.remove_state('body','vk-needs-login');
+				
+				if (save_to_store){
+					w_storage('vk_session'+app_id, vk_s, true);
+				}
+				
+				if (vk_s.expire){
+					var end = (vk_s.expire - rightnow)*1000;
+					if (fallback){
+						var _t = detach_vkapi(end + 10000);
+						setTimeout(function(){
+							fallback(function(){
+								clearTimeout(_t);
+							});
+						}, end);
+					} else{
+						detach_vkapi(end);
+					}
+				}
+				
+				
+				var _d = {data_source: 'vkontakte'};
+				for (var a in info) {
+					_d[a] = info[a];
+				};
+				su.vk.user_info = _d;
+				su.api('user.update', _d);
+				
+				
 			} else{
-				detach_vkapi(end);
+				
+				w_storage('vk_session'+app_id, '', true);
+				error_callback('no info');
 			}
-		}
+			
+		},function(){
+			detach_vkapi();
+	
+			fallback.apply(this, arguments)
+		});
 		
 		
-		return true;
+		
+		
 	} else{
 		w_storage('vk_session'+app_id, '', true);
-		return false;
+		error_callback('expired');
 	}
 }
 	
 window.set_vk_auth = function(vk_session, save_to_store){
 	var vk_s = JSON.parse(vk_session);
-	auth_to_vkapi(vk_s, save_to_store, 1915003);
+	auth_to_vkapi(vk_s, save_to_store, 1915003, try_api);
 
 };
 
@@ -214,6 +250,10 @@ var get_url_parameters = function(){
 	
 	
 	var _u = get_url_parameters();
+	if (_u.q){
+		su.start_query = _u.q;
+	}
+	
 	if (_u.api_id && _u.viewer_id && _u.sid && _u.secret){
 		seesu.vk_api = new vk_api([{
 			api_id: _u.api_id, 
@@ -250,19 +290,8 @@ var get_url_parameters = function(){
 		document.documentElement.firstChild.appendChild(_s);
 		
 		
-	} else{
-		var vk_session_meta = document.getElementsByName('vk_session');
-		if (vk_session_meta && vk_session_meta.length){
-			if (vk_session_meta[0] && vk_session_meta[0].content){
-				set_vk_auth(vk_session_meta[0].content, true);
-				seesu.track_event('Auth to vk', 'auth', 'from meta tag (iframe redirect)');
-			} else{
-				try_saved_auth();
-			}
-		} else{
-			try_saved_auth();
-		} 
-	}
+	} 
+	
 })();
 
 
@@ -270,6 +299,14 @@ var vkReferer = '';
 
 var updating_notify = function(r){
 	if (!r){return;}
+	
+	if(r.server_interact){
+		su.server_interact = true;
+		if (su.vk.user_info){
+			su.api('user.update', su.vk.user_info);
+		}	
+	}
+	
 	var cver = r.latest_version.number;
 	if (cver > seesu.version) {
 		var message = 
@@ -280,7 +317,7 @@ var updating_notify = function(r){
 			widget.showNotification(message, function(){
 				open_url(link);
 			});
-			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"></a>');
+			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
 		}
 	}
 	if (r.vk_apis){

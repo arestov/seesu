@@ -312,17 +312,29 @@ window.try_hard_vk_working = function(callback){
 
 	});
 }
-
+window.try_api = function(){
+	var remove_iframe = function(e){
+		setTimeout(function(){
+			$(e.target).remove();
+			console.log('removed!');
+		},5000)
+	}
+	
+	var tvk_ru =  $('<iframe id="test_vk_auth_ru" class="serv-container" src="http://vkontakte.ru/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
+		.bind('load',remove_iframe);
+	var tvk_com = $('<iframe id="test_vk_auth_com" class="serv-container" src="http://vk.com/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
+		.bind('load',remove_iframe);
+	$('#slider-materail').append(tvk_ru).append(tvk_com);
+};
 
 try_mp3_providers = function(){
 	if (seesu.env.cross_domain_allowed){
-		if (seesu.vk.id || seesu.env.chrome_extension || seesu.env.firefox_widget ) {
-			try_hapi();
-		} else{
-			console.log('vk mp3 prov faild cos not auth')
-			vk_logged_out();
-			swith_to_provider_finish();
-		}
+		try_hapi();
+	} else{
+		console.log('heyayy!')
+		addEvent(window, "message", listen_vk_api_callback_window);
+		try_hapi();
+
 	}
   	
 	

@@ -17,10 +17,6 @@ var test_pressed_node = function(e, mouseup){
 		  	if (seesu.env.cross_domain_allowed){
 				clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
 			} else{
-				if (!clicked_node.data('popup_listening')){
-					addEvent(window, "message", listen_vk_api_callback_window);
-					clicked_node.data('popup_listening', true)
-				}
 				var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
 				if (su.vk_api && su.vk_api.iframe){
 					if (window.VK){
@@ -133,20 +129,6 @@ var test_pressed_node = function(e, mouseup){
 				w_storage('lfm_scrobbling_enabled', '', true);
 				su.lfm_api.scrobbling = false;
 				
-			}else if (class_name.match(/mp3-vk($| )/)){
-				if (seesu.vk_logged_in){
-					seesu.delayed_search.switch_to_vk()
-				}else{
-					dstates.add_state('body','vk-needs-login');
-				}
-				
-				return false
-			}else if (class_name.match(/mp3-vk-api/)){
-				
-				seesu.delayed_search.switch_to_vk_api()
-				
-				
-				return false
 			}
 		}
 	

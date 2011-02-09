@@ -8,14 +8,22 @@ cache_ajax = {
 				if (date_of_c_response) {
 					var now_is = (new Date).getTime();
 					if ((now_is - date_of_c_response) < ( (hours || 5) * 60 * 60 * 1000)){
+						var status;
+						
+						var old_r = null;
+						
 						try {
 							var old_r = JSON.parse(cached_response);
-							if (callback) {callback(old_r);}
-							return true;
 						} catch(e){
-							return false;
+							console.log(e);
 						}
 						
+						if (old_r){
+							if (callback) {callback(old_r);}
+							return true;
+						} else{
+							return false;
+						}
 					}
 				}
 			}

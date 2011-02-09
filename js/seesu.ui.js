@@ -230,7 +230,6 @@ window.seesu_ui = function(d, with_dom){
 		dstates.connect_ui(this);
 	}
 	
-	
 	this.views = new views();
 	this.buttons_li = {};
 	
@@ -358,47 +357,50 @@ seesu_ui.prototype = {
 			if (vs && vs.length){
 				vi_c.append('<span class="desc-name"><a target="_blank" href="http://www.youtube.com/results?search_query='+ q +'">Video</a>:</span>');
 				var v_content = $('<ul class="desc-text"></ul>');
-			}
-			var make_v_link = function(img_link, vid, _title){
-				var li = $('<li class="you-tube-video-link"></li>').click(function(){
-					var showed = this.showed;
-					
-					_this.remove_video();
-					
-					if (!showed){
-						su.ui.video = {
-							link: $(this).addClass('active'),
-							iframe: $('<iframe class="you-tube-video"></iframe>').attr('src', 'http://www.youtube.com/embed/' + vid).appendTo(v_content)
+			
+				var make_v_link = function(img_link, vid, _title){
+					var li = $('<li class="you-tube-video-link"></li>').click(function(){
+						var showed = this.showed;
+						
+						_this.remove_video();
+						
+						if (!showed){
+							su.ui.video = {
+								link: $(this).addClass('active'),
+								iframe: $('<iframe class="you-tube-video"></iframe>').attr('src', 'http://www.youtube.com/embed/' + vid).appendTo(v_content)
+							}
+							seesu.player.set_state('pause');
+							this.showed = true;
+						} else{
+							seesu.player.set_state('play');
+							this.showed = false;
 						}
-						seesu.player.set_state('pause');
-						this.showed = true;
-					} else{
-						seesu.player.set_state('play');
-						this.showed = false;
-					}
-					return false;
-				});
-				
-				$("<a class='video-preview'></a>")
-					.attr('href', 'http://www.youtube.com/watch?v=' + v_id)
-					.append($('<img  alt=""/>').attr('src', img_link))
-					.appendTo(li);
-				
-				$('<span class="video-title"></span>')
-					.text(_title).appendTo(li);
+						return false;
+					});
 					
-				li.appendTo(v_content)
-			}
-			for (var i=0, l = ((vs.length < 3) ? vs.length : 3); i < l; i++) {
-				var _v = vs[i],
-					tmn = _v['media$group']['media$thumbnail'][0].url,
-					v_id = _v['media$group']['yt$videoid']['$t'],
-					v_title = _v['media$group']['media$title']['$t'];
-				make_v_link(tmn, v_id, v_title);
+					$("<a class='video-preview'></a>")
+						.attr('href', 'http://www.youtube.com/watch?v=' + v_id)
+						.append($('<img  alt=""/>').attr('src', img_link))
+						.appendTo(li);
+					
+					$('<span class="video-title"></span>')
+						.text(_title).appendTo(li);
+						
+					li.appendTo(v_content)
+				}
+				for (var i=0, l = ((vs.length < 3) ? vs.length : 3); i < l; i++) {
+					var _v = vs[i],
+						tmn = _v['media$group']['media$thumbnail'][0].url,
+						v_id = _v['media$group']['yt$videoid']['$t'],
+						v_title = _v['media$group']['media$title']['$t'];
+						
+					make_v_link(tmn, v_id, v_title);
+					
+				};
+				v_content.appendTo(vi_c);
+				vi_c.data('has-info', true);
 				
-			};
-			v_content.appendTo(vi_c);
-			vi_c.data('has-info', true);
+			}
 		});
 		
 	},
@@ -680,7 +682,9 @@ seesu_ui.prototype = {
 	lfm_logged : function(){
 		dstates.add_state('body', 'lfm-auth-done')
 		$('.lfm-finish input[type=checkbox]',this.d).attr('checked', 'checked');
-		$('#scrobbling-switches', this.d).find('input').attr('disabled', '');
+		var f = $('.scrobbling-switches', this.d);
+		var ii = f.find('input');
+		ii.removeAttr('disabled');
 	},
 	lfm_enable_scrobbling:function(context){
 		var lfm_ssw = $('.scrobbling-switches', context || this.d);

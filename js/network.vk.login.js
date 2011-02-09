@@ -92,10 +92,7 @@ var vk_logg_in = function(id, email, sid, login, pass, callback){
 	if (seesu.vk.save_pass){
 		w_storage( 'vk_auth_login', login, true);
 		w_storage( 'vk_auth_pass', pass, true);
-	} else{
-		w_storage( 'vk_auth_login', '', true);
-		w_storage( 'vk_auth_pass', '', true);
-	}
+	} 
 	console.log('hide vklogin form');
 	if (callback) {callback();}
 };
