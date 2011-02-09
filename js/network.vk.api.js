@@ -163,7 +163,7 @@ vk_api.prototype = {
 				callback(r && r.response && r.response[0], r)
 			}
 			console.log(r);
-		}).q.init();
+		}, false, true).q.init();
 	},
 	audio_search: function(query, callback, error, nocache, after_ajax, only_cache){
 		

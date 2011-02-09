@@ -168,8 +168,8 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 		function(info, r){
 			if (info){
 				seesu.vk.id = vk_s.mid;
-				seesu.vk_api = _vkapi
-				console.log('got vk api')
+				seesu.vk_api = _vkapi;
+				console.log('got vk api');
 				
 				
 				seesu.delayed_search.switch_to_vk_api();
