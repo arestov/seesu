@@ -131,17 +131,15 @@ lastfm_api.prototype = {
 		var _this = this;
 		if (!_this.sk){return false}
 		
-		if(!_this.crossdomain){
+		
 			_this.use('track.updateNowPlaying', {
 				sk: _this.sk,
 				artist: mo.artist,
 				track: mo.track,
 				duration: mo.duration
 				
-			}, function(r){}, true, true);
-		} else{
-			_this.old_sc_nowplay(mo);
-		}
+			}, function(r){}, true, !_this.crossdomain);
+		
 		
 	},
 	submit: function(mo){
@@ -167,7 +165,7 @@ lastfm_api.prototype = {
 		
 		if (_this.sk && this.music.length) {
 			
-			if (!_this.crossdomain){
+			
 				var post_m_obj = {sk: _this.sk};
 				for (var i=0,l=_this.music.length; i < l; i++) {
 					post_m_obj['artist[' + i + ']'] = _this.music[i].artist;
@@ -183,10 +181,8 @@ lastfm_api.prototype = {
 						w_storage('lfm_scrobble_music', '');
 					} 
 					
-				}, true, true);
-			} else{
-				_this.old_sc_submit()
-			}
+				}, true, !_this.crossdomain);
+			
 			
 		} else {
 			if (_this.music.length){
