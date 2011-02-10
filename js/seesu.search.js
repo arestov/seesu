@@ -468,8 +468,11 @@ var get_fast_suggests = function(q, callback, hash){
 	  success: function(r){
 		cache_ajax.set('lfm_fs', hash, r);
 		if (callback){callback(r);}
-	  }	
-	})
+	  }	,
+	  complete: function(xhr){
+	  	console.log(xhr)
+	  }
+}) 
 };
 
 
