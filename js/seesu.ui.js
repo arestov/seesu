@@ -355,8 +355,6 @@ seesu_ui.prototype = {
 			youtube_video.setAttribute('src', 'http://www.youtube.com/v/' + id);
 			youtube_video.setAttribute('allowfullscreen',"true");
 			youtube_video.setAttribute('class',"you-tube-video");
-			youtube_video.setAttribute('width',"100%");
-			youtube_video.setAttribute('height',"100%");
 			if (transparent){
 				youtube_video.setAttribute('wmode',"transparent");
 			}
