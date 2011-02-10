@@ -52,10 +52,11 @@ var lastfm_api = function(apikey, s, cache, crossdomain){
 			su.lfm_api.get_lfm_token();
 		});
 	}
+	/*
 	if (crossdomain){
 		this.old_sc_handshake();
 	}
-	
+	*/
 	
 };
 lastfm_api.prototype = {
@@ -138,7 +139,7 @@ lastfm_api.prototype = {
 				track: mo.track,
 				duration: mo.duration
 				
-			}, function(r){}, true, !_this.crossdomain);
+			}, function(r){}, true, true);
 		
 		
 	},
@@ -181,7 +182,7 @@ lastfm_api.prototype = {
 						w_storage('lfm_scrobble_music', '');
 					} 
 					
-				}, true, !_this.crossdomain);
+				}, true, true);
 			
 			
 		} else {
