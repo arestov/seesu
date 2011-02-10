@@ -472,7 +472,7 @@ var get_fast_suggests = function(q, callback, hash){
 	  complete: function(xhr){
 	  	console.log(xhr)
 	  }
-	})
+}) 
 };
 
 
