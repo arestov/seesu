@@ -460,7 +460,7 @@ html.not-as-application, .not-as-application  body{
 	display:none;
 }
 
-iframe.you-tube-video{
+iframe.you-tube-video,embed.you-tube-video{
 	border:0;
 	width:100%;
 	height:360px;
