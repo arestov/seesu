@@ -434,14 +434,17 @@ var random_track_plable = function(track_list){
 	
 };
 var start_random_nice_track_search = function(mo, ob, mp3_prov_quene, not_search_mp3){
+	mo.node.addClass('loading');
 	getTopTracks(mo.artist, function(track_list){
 		var some_track = random_track_plable(track_list);
-		
+		mo.node.removeClass('loading');
 		mo.node.text(some_track.artist + ' - ' + (mo.track = some_track.track));
 		get_track_as_possible(mo, ob.num  === 0, mp3_prov_quene, not_search_mp3);
 		
 		
 		++ob.num;
+	}, function(){
+		mo.node.removeClass('loading');
 	});
 };
 var reset_q = function(){
@@ -574,7 +577,7 @@ var create_playlist =  function(pl, pl_r, not_clear){
 
 
 
-var getTopTracks = function(artist,callback) {
+var getTopTracks = function(artist,callback, error_c) {
 	lfm('artist.getTopTracks',{'artist': artist },function(r){
 		if (typeof r != 'object') {return;}
 		var tracks = r.toptracks.track || false;
@@ -590,7 +593,7 @@ var getTopTracks = function(artist,callback) {
 			
 			if (callback) {callback(track_list);}
 		}
-	});
+	}, error_c);
 };
 
 var proxy_render_artists_tracks = function(artist_list, pl_r){

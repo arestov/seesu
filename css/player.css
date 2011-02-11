@@ -59,6 +59,9 @@ a.search-mp3{
 	background:url(../i/spinner.gif) no-repeat 100% 50%;
 	color:#6c1471;
 }
+a.loading{
+	background:url(../i/spinner.gif) no-repeat 100% 50%;
+}
 a.track-node{
 	display:block;
 	padding:6px 43px 6px 6px;
