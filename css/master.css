@@ -161,7 +161,6 @@ display:none;
 	
 .search-start{
 	margin-bottom:1em;
-	max-width:562px;
 	}
 	.search-start
 	form{
@@ -350,6 +349,7 @@ display:none;
 	}
 #search #q{
 	width:100%;
+	height:26px;
 	box-sizing:border-box;
 }
 @media (min-width:770px){
@@ -359,6 +359,16 @@ display:none;
 		border-radius:6px;
 	}
 }
+.tags-hyped{
+	overflow:hidden;
+	text-align: center;
+	line-height: 2;
+	margin-top: 50px;
+	}
+	.tags-hyped .hyped-tag{
+		margin-right:15px;
+		}
+
 #search #search-p{
 	margin:10px 0 5px;
 	overflow:hidden;
@@ -372,7 +382,7 @@ display:none;
 	#search #search-p label span.inpt{
 		overflow:hidden;
 		display:block;
-		padding:0 2px;
+		padding:2px;
 	}
 .search-desc{
 	padding-left:60px;
