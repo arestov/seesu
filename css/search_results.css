@@ -6,10 +6,15 @@
 	.search-results-holder h4{
 		position:absolute;
 		left:0;
-		margin:4px 0 0;
+		padding:4px 0 0;
 		font-weight:400;
+		margin:0;
+		width:60px;
+		height:20px;
 	}
-
+	.search-results-holder h4.loading{
+		background: url(../i/spinner_small.gif) no-repeat 100% 50%;
+	}
 	.search-results-holder ul{
 		overflow:hidden;
 		margin:0;

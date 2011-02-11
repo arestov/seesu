@@ -216,6 +216,10 @@ display:none;
 .tracks-for-play{
 	clear:both;
 	}
+	.tracks-for-play>ul.tracks-c.loading{
+		background:url(../i/spinner.gif) no-repeat 0 0;
+		height:30px;
+	}
 	.tracks-for-play>ul>li{
 		margin: 0 0 5px 0;
 		position:relative;
@@ -375,9 +379,14 @@ display:none;
 	}
 	#search #search-p label span.lbl{
 		float:left;
-		width:60px;
+		width:59px;
+		margin-right:1px;
 		padding-top:4px;
 		font-style:normal;
+		height: 26px;
+	}
+	#search #search-p label span.loading{
+		background: url(../i/spinner_small.gif) no-repeat 100% 50%;
 	}
 	#search #search-p label span.inpt{
 		overflow:hidden;

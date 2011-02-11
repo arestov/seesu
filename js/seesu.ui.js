@@ -168,6 +168,9 @@ views.prototype = {
 		} else {
 			this.hide_playing();
 			seesu.ui.els.make_trs.show().data('pl', this.browsing.mpl);
+			if (pl.loading){
+				pl.ui = this.get_playlist_c().addClass('loading');
+			}
 		}
 		
 		
@@ -584,7 +587,11 @@ seesu_ui.prototype = {
 	},
 	render_playlist: function(pl, not_clear) { // if links present than do full rendering! yearh!
 		var _sui = this;
-		var ui = _sui.views.get_playlist_c();
+		var ui = pl.ui || _sui.views.get_playlist_c();
+		if (pl.loading){
+			ui.removeClass('loading')
+			pl.loading = false;
+		}
 		if (!not_clear){
 			ui.empty();
 		}
