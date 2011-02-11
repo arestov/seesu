@@ -38,7 +38,7 @@
 #search-desciption{
 	display:none;
 }
-.for-startpage{
+.block-for-startpage, .for-startpage{
 	display:none;
 	margin-top:2em;
 }
@@ -51,7 +51,9 @@
 	.show-start #search{
 		display:block;
 	}
-	.show-start .lfm-start,.show-start .for-startpage{
+	.show-start .lfm-start,
+	.show-start .for-startpage,
+	.show-start .block-for-startpage {
 		display:block;
 		}
 	.show-start .start-screen{

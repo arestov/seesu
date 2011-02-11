@@ -469,4 +469,28 @@ window.connect_dom_to_som = function(d, ui){
 		}
 		
 	});
+	
+	var wow_tags= function(tag,c){
+		$('<a class="js-serv hyped-tag"></a> ')
+			.text(tag.name)
+			.click(function(){
+				show_tag(tag.name)
+				seesu.track_event('Navigation', 'hyped at start page', "tag: " + tag.name );
+				return false;
+			}).appendTo(c);
+		
+	};
+	
+	
+	lfm('chart.getTopTags', false, function(r){
+		var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(su.ui.els.start_screen);
+		var pop_tags  = (r && r.tags && r.tags.tag) && ((r.tags.tag.length && r.tags.tag) || [r.tags.tag]);
+		if (pop_tags){
+			for (var i=0; i < pop_tags.length; i++) {
+				wow_tags(pop_tags[i], _c);
+			}
+		}
+		console.log(r)
+		
+	});
 }
