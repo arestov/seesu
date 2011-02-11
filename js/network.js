@@ -135,6 +135,7 @@ var de_html = function(html_text){
 	de_html_entity.innerHTML = html_text;
 	return de_html_entity.textContent;
 }
+var reg_exp_string_fix;
 var get_best_track = function(array,artist,track){
 	var best = array[0],
 	worst_pr = -7; //six steps search
@@ -147,7 +148,7 @@ var get_best_track = function(array,artist,track){
 		var epic_fail;
 		
 		var for_first_test = artist + ' ' + track;
-		epic_fail = !for_first_test.match(new RegExp(artist, 'ig')) && !for_first_test.match(new RegExp(track, 'ig'));
+		epic_fail = !~for_first_test.indexOf(artist) && !~for_first_test.indexOf(track);
 		
 		if (!epic_fail){
 			if ((_ar == artist) && (_tr == track)){
@@ -169,11 +170,11 @@ var get_best_track = function(array,artist,track){
 				best = array[i];
 				worst_pr = -4;
 			} else 
-			if ( (worst_pr < -5) && _ar.match(artist) && _tr.match(track)) {
+			if ( (worst_pr < -5) && ~_ar.indexOf(artist) && ~_tr.indexOf(track)) {
 				best = array[i];
 				worst_pr = -5;
 			} else
-			if ( (worst_pr < -6) && _ar.toLowerCase().match(artist.toLowerCase()) && _tr.toLowerCase().match(track.toLowerCase())) {
+			if ( (worst_pr < -6) && ~_ar.toLowerCase().indexOf(artist.toLowerCase()) && ~_tr.toLowerCase().indexOf(track.toLowerCase())) {
 				best = array[i];
 				worst_pr = -6;
 			} else {
