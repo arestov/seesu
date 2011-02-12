@@ -176,8 +176,11 @@ window.connect_dom_to_som = function(d, ui){
 		var state_recovered;	
 		if (window.su && su.player && su.player.c_song){
 			if (su.player.c_song.mo_titl && su.player.c_song.mo_titl.plst_titl){
+				if (su.player.c_song.mo_titl.plst_titl.with_search_results_link){
+					delete su.player.c_song.mo_titl.plst_titl.with_search_results_link ;
+				}
+				
 				ui.views.show_start_page(true, true, true);
-				su.ui.render_playlist(su.player.c_song.mo_titl.plst_titl);
 				su.ui.views.show_playlist_page(su.player.c_song.mo_titl.plst_titl);
 				su.player.set_current_song(su.player.c_song, true, true);
 				su.ui.views.save_view(su.player.c_song.mo_titl.plst_titl,true);
