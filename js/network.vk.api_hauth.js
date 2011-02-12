@@ -43,7 +43,6 @@ var hauth_from_string = function(str){
 
 var iapp_id = 8;
 window.try_hapi = function(callback, not_saved){
-	return
 	//auth_to_vkapi;
 	var try_cookies_hapi = function(){
 		$.ajax({
