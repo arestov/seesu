@@ -127,7 +127,7 @@ var get_track = function(mo, nocache, hypnotoad, only_cache, get_next){
 		used_successful.q.init();
 	}
 	
-	return !!used_successful;
+	return used_successful;
 }
 
 var de_html_entity = document.createElement('div');

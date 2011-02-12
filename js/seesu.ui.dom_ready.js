@@ -45,7 +45,7 @@ window.connect_dom_to_som = function(d, ui){
 					seesu.ui.make_search_elements_index()
 				}),
 		search_vkontakte: 
-			$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>Use dirty search</span></button>',d)
+			$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>Use dirty mp3  search</span></button>',d)
 				.click(function(e){
 					
 					var query = seesu.ui.els.search_input.val();

@@ -22,10 +22,7 @@
 		border-bottom:1px solid #5d5d5d;
 		min-height:26px;
 		}
-		.search-results-holder p{
-			width:500px;
-			margin-left:1px;
-		}
+
 		.search-results-holder ul li{
 			position:relative;
 			}
