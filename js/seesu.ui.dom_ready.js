@@ -162,6 +162,7 @@ window.connect_dom_to_som = function(d, ui){
 			track_c : $('.track-context',d),
 			volume_s: volume_s
 		};
+		ui.els.search_label = ui.els.search_form.find('#search-p').find('.lbl');
 		ui.views.nav = {
 			daddy: $(su.ui.els.slider).children('.navs'),
 			start: $('#start_search',d),

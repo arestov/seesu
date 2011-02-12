@@ -61,9 +61,13 @@ var lastfm_api = function(apikey, s, cache, crossdomain){
 };
 lastfm_api.prototype = {
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
-	use: function(method, params, callback, nocache, type_of_xhr_is_post) {
+	use: function(method, params, callback, nocache_or_errorcallback, type_of_xhr_is_post, nc) {
 		var _this = this;
 		if (method) {
+			var error_callback = typeof nocache_or_errorcallback== 'function' ? nocache_or_errorcallback : false;
+			var nocache = (!error_callback && nocache_or_errorcallback) || nc;
+			
+			
 			var use_cache = (_this.cache && !type_of_xhr_is_post && !nocache)
 			var no_need_for_post_serv = (!type_of_xhr_is_post || _this.crossdomain);
 	
@@ -107,6 +111,9 @@ lastfm_api.prototype = {
 						  dataType: _this.crossdomain ? 'json' : 'jsonp',
 						  data: params_full,
 						  error: function(r){
+						  	if (error_callback){
+						  		error_callback(r)
+						  	}
 						  },
 						  success: function(r){
 							if (callback) {callback(r);}

@@ -56,8 +56,11 @@ a.song:hover{
 	background:#595959;
 }
 a.search-mp3{
-	text-decoration:blink;
+	background:url(../i/spinner.gif) no-repeat 100% 50%;
 	color:#6c1471;
+}
+a.loading{
+	background:url(../i/spinner.gif) no-repeat 100% 50%;
 }
 a.track-node{
 	display:block;
