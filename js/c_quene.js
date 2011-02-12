@@ -1,4 +1,4 @@
-funcs_quene = function(small_delay, big_delay, big_delay_interval){
+window.funcs_quene = function(small_delay, big_delay, big_delay_interval){
 	this.big_quene = [];
 	if (small_delay) {
 		this.small_delay = small_delay;
@@ -15,7 +15,7 @@ funcs_quene = function(small_delay, big_delay, big_delay_interval){
 	this.using_stat = [];
 };
 
-funcs_quene.prototype = {
+window.funcs_quene.prototype = {
 	get_interval: function(){
 		var last_num = this.using_stat.length - 1;
 		var bigdelay_turn = (!this.nobigdelay && last_num > 1  && (last_num  % this.big_delay_interval === 0));
@@ -65,7 +65,11 @@ funcs_quene.prototype = {
 				setTimeout(function(){
 					_this.next(quene_just_for_me);
 				}, time);
+			},
+			abort: function(){
+				this.aborted = true;
 			}
+			
 		
 		};
 		quene_just_for_me.push(_ob);
@@ -102,7 +106,7 @@ funcs_quene.prototype = {
 			
 			for (var i=0; i < q.length; i++) {
 				var _e = q[i];
-				if (!_e.done){
+				if (!_e.done && !_e.aborted){
 					if (_e.pr && (_e.pr > prior_num)){ //check priority
 						prior_num = _e.pr;
 						prior_el = _e;
