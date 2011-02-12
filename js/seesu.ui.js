@@ -152,7 +152,7 @@ views.prototype = {
 		this.get_playlist_c();
 		this.state = 'search_results';
 	},
-	show_playlist_page: function(pl_r, show_playing){
+	show_playlist_page: function(pl_r, show_playing, no_search_results){
 		var _sui = this;
 		var pl = pl_r || this.browsing.pl;
 		this.browsing.pl = pl;
@@ -590,7 +590,7 @@ seesu_ui.prototype = {
 	},
 	render_playlist: function(pl, not_clear) { // if links present than do full rendering! yearh!
 		var _sui = this;
-		var ui = pl.ui || _sui.views.get_playlist_c();
+		var ui = (pl.ui && pl.ui[0] && (pl.ui[0].ownerDocument == _sui.d) && pl.ui) || _sui.views.get_playlist_c();
 		if (pl.loading){
 			ui.removeClass('loading')
 			pl.loading = false;
