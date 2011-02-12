@@ -2,6 +2,7 @@ $.ajaxSetup({
   cache: true,
   global:false
 });
+$.support.cors = true;
 
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 window.lfm = function(){
