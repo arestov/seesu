@@ -121,7 +121,6 @@ window.seesu = window.su =  {
 		waiting_for_mp3provider : true,
 		we_need_mp3provider: function(quene){
 			dstates.add_state('body','vk-needs-login');
-
 			seesu.delayed_search.start_for_mp3provider = function(){
 				seesu.delayed_search.waiting_for_mp3provider = false;
 				seesu.delayed_search.start_for_mp3provider = null;
