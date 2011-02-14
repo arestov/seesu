@@ -487,6 +487,7 @@ iframe.you-tube-video,embed.you-tube-video{
 	}
 .track-video{
 	margin-bottom:25px;
+	overflow:hidden;
 	}
 	.track-video .desc-text{
 		display:block;

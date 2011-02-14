@@ -248,12 +248,6 @@ window.seesu_ui = function(d, with_dom){
 }
 seesu_ui.prototype = {
 	show_track: function(query, with_search_results){
-		var mp3_prov_quene;
-		if (seesu.delayed_search.waiting_for_mp3provider){
-			mp3_prov_quene = new funcs_quene();
-			seesu.delayed_search.we_need_mp3provider(mp3_prov_quene);
-
-		}
 		var pl_r = prepare_playlist(query, 'tracks', with_search_results)
 		seesu.ui.views.show_playlist_page(pl_r);
 		var used_successful = get_all_tracks(query, function(pl){
@@ -261,6 +255,8 @@ seesu_ui.prototype = {
 		}, false, false, true);
 		if (!used_successful){
 			if (seesu.delayed_search.waiting_for_mp3provider){
+				var mp3_prov_quene = new funcs_quene();
+				
 				if (mp3_prov_quene) {
 					mp3_prov_quene.add(function(){
 						get_all_tracks(query,  function(pl){
@@ -268,6 +264,7 @@ seesu_ui.prototype = {
 						}, true);
 					}, true);
 				}
+				seesu.delayed_search.we_need_mp3provider(mp3_prov_quene);
 			} else{
 				
 				get_all_tracks(query, function(pl){

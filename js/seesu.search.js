@@ -225,7 +225,7 @@ var track_search = su.fs.track_search = function(track_query, start){
 	})
 }
 
-var rend_vk_suggets = function(pl, button){
+var rend_vk_suggets = function(pl, ui){
 	var k = $();
 	for (var i=0, l = (pl.length < 3 && pl.length) || 3; i < l; i++) {
 		k = k.add(
@@ -241,29 +241,41 @@ var rend_vk_suggets = function(pl, button){
 		
 	};
 	
-	$(button).prepend(k);
+	ui.vk_tracks.button.prepend(k);
 }
-var vk_tracks_search = $.debounce(function(query, button){
+var vk_tracks_search = $.debounce(function(query, ui){
 
 	
 	seesu.xhrs.multiply_suggestions.push(get_all_tracks(query,function(pl){
-		seesu.ui.results_label_vk.removeClass('loading');
-		rend_vk_suggets(pl, button);
+		ui.vk_tracks.label.removeClass('loading');
+		rend_vk_suggets(pl, ui);
 	},true,false, false));
 	
 	
 	
 	
 },1400);
-var vk_suggests = $.debounce(function(query, button){
+var vk_suggests = $.debounce(function(query, ui){
 	
 	//function(trackname, callback, nocache, hypnotoad, only_cache){
 	var used_successful = get_all_tracks(query, function(pl){
-		rend_vk_suggets(pl, button);
+		rend_vk_suggets(pl, ui);
 	}, false, false, true);
-	if (!used_successful && !seesu.delayed_search.waiting_for_mp3provider){
-		vk_tracks_search(query, button);
-		seesu.ui.results_label_vk.addClass('loading');
+	if (!used_successful){
+		if (!seesu.delayed_search.waiting_for_mp3provider){
+			vk_tracks_search(query, ui);
+			ui.vk_tracks.label.addClass('loading');
+		} else{
+			var mp3_prov_quene = new funcs_quene();
+			if (mp3_prov_quene) {
+				seesu.xhrs.multiply_suggestions.push(mp3_prov_quene.add(function(){
+					vk_tracks_search(query, ui);
+					ui.vk_tracks.label.addClass('loading');
+				}, true));
+			}
+			seesu.delayed_search.we_need_mp3provider(mp3_prov_quene);
+		}
+		
 	}
 	
 	
@@ -400,7 +412,7 @@ var show_tracks_results = function(r, start, end){
 }
 
 
-var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_clone){
+var fast_suggestion = function(r, source_query, ui){
 	if (!r) {return false;}
 	
 	var fast_enter = null;
@@ -446,11 +458,11 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 			seesu.ui.buttons_li.search_artists.before(li);
 		};
 		var li = $('<li></li>',seesu.ui.d);
-		li.append(arts_clone.find('span').text('find more «' + source_query + '» artists').end()).appendTo(ul_arts);
+		li.append(ui.arts.button.find('span').text('find more «' + source_query + '» artists').end()).appendTo(ul_arts);
 	} else{
-		$('<li></li>',seesu.ui.d).append(arts_clone.find('span').text('Search «' +source_query + '» in artists').end().addClass("search-button")).appendTo(ul_arts);
+		$('<li></li>',seesu.ui.d).append(ui.arts.button.find('span').text('Search «' +source_query + '» in artists').end().addClass("search-button")).appendTo(ul_arts);
 	}
-	if (!fast_enter) {fast_enter = arts_clone;}
+	if (!fast_enter) {fast_enter = ui.arts.button;}
 	
 	var ul_tracks = seesu.ui.tracks_results_ul;
 	if (sugg_tracks && sugg_tracks.length){
@@ -472,11 +484,11 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 			li.append(a);
 			seesu.ui.buttons_li.search_tracks.before(li);
 		};
-		$('<li></li>',seesu.ui.d).append(track_clone.find('span').text('find more «' + source_query + '» tracks').end()).appendTo(ul_tracks);
+		$('<li></li>',seesu.ui.d).append(ui.track.button.find('span').text('find more «' + source_query + '» tracks').end()).appendTo(ul_tracks);
 	} else{
-		$('<li></li>',seesu.ui.d).append(track_clone.find('span').text('Search «' +source_query + '» in tracks').end().addClass("search-button")).appendTo(ul_tracks);
+		$('<li></li>',seesu.ui.d).append(ui.track.button.find('span').text('Search «' +source_query + '» in tracks').end().addClass("search-button")).appendTo(ul_tracks);
 	}
-	if (!fast_enter) {fast_enter = track_clone;}
+	if (!fast_enter) {fast_enter = ui.track.button;}
 	
 
 	
@@ -493,11 +505,11 @@ var fast_suggestion = function(r, source_query, arts_clone, track_clone ,tags_cl
 			li.append(a);
 			seesu.ui.buttons_li.search_tags.before(li);
 		};
-		$('<li></li>',seesu.ui.d).append(tags_clone.find('span').text('find more «' + source_query + '» tags').end()).appendTo(ul_tags);
+		$('<li></li>',seesu.ui.d).append(ui.tag.button.find('span').text('find more «' + source_query + '» tags').end()).appendTo(ul_tags);
 	} else{
-		$('<li></li>',seesu.ui.d).append(tags_clone.find('span').text('Search «' +source_query + '» in tags').end().addClass("search-button")).appendTo(ul_tags);
+		$('<li></li>',seesu.ui.d).append(ui.tag.button.find('span').text('Search «' +source_query + '» in tags').end().addClass("search-button")).appendTo(ul_tags);
 	}
-	if (!fast_enter) {fast_enter = tags_clone;}
+	if (!fast_enter) {fast_enter = ui.tag.button;}
 	
 	seesu.ui.make_search_elements_index();
 	
@@ -536,47 +548,68 @@ var get_fast_suggests = $.debounce(function(q, callback, hash){
 },400);
 
 
-var suggestions_search =  seesu.env.cross_domain_allowed ? function(q, arts_clone, track_clone ,tags_clone){
+var suggestions_search =  seesu.env.cross_domain_allowed ? function(q, ui){
 		su.ui.els.search_label.addClass('loading');
 		var hash = hex_md5(q);
 		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
 			su.ui.els.search_label.removeClass('loading');
-			fast_suggestion(r, q, arts_clone, track_clone ,tags_clone)
+			fast_suggestion(r, q, ui)
 		});
 		if (!cache_used) {
 			seesu.xhrs.multiply_suggestions.push(get_fast_suggests(q, function(r){	
-				fast_suggestion(r, q, arts_clone, track_clone ,tags_clone)
+				fast_suggestion(r, q, ui)
 			}, hash));
 			
 		}
 	} :
-	$.debounce(function(q, arts_clone, track_clone ,tags_clone){
-		seesu.ui.results_label_arts.addClass('loading');
-		seesu.ui.results_label_tracks.addClass('loading');
-		seesu.ui.results_label_tags.addClass('loading');
+	$.debounce(function(q, ui){
+	//	arts_clone, track_clone ,tags_clone
+		ui.arts.label.addClass('loading');
+		ui.track.label.addClass('loading');
+		ui.tag.label.addClass('loading');
 		
 		seesu.xhrs.multiply_suggestions.push(lfm('artist.search',{artist: q, limit: 15 },function(r){
 			show_artists_results(r, false, 5);
-			arts_clone.find('span').text('find more «' + q + '» artists');
-			seesu.ui.results_label_arts.removeClass('loading');
+			ui.arts.button.find('span').text('find more «' + q + '» artists');
+			ui.arts.label.removeClass('loading');
 		},function(){
-			seesu.ui.results_label_arts.removeClass('loading');
+			ui.arts.label.removeClass('loading');
 		}));
-		seesu.xhrs.multiply_suggestions.push(lfm('tag.search',{tag: q, limit: 15 },function(r){
-			show_tags_results(r, false, 5);
-			tags_clone.find('span').text('find more «' + q + '» tags');
-			seesu.ui.results_label_arts.removeClass('loading');
-		},function(){
-			seesu.ui.results_label_arts.removeClass('loading');
-		}));
+		
 		seesu.xhrs.multiply_suggestions.push(lfm('track.search',{track: q, limit: 15 },function(r){
 			show_tracks_results(r, false, 5);
-			track_clone.find('span').text('find more «' + q + '» tracks');
-			seesu.ui.results_label_arts.removeClass('loading');
+			ui.track.button.find('span').text('find more «' + q + '» tracks');
+			ui.track.label.removeClass('loading');
 		},function(){
-			seesu.ui.results_label_arts.removeClass('loading');
+			ui.track.label.removeClass('loading');
 		}));
+		
+		seesu.xhrs.multiply_suggestions.push(lfm('tag.search',{tag: q, limit: 15 },function(r){
+			show_tags_results(r, false, 5);
+			ui.tag.button.find('span').text('find more «' + q + '» tags');
+			ui.tag.label.removeClass('loading');
+		},function(){
+			ui.tag.label.removeClass('loading');
+		}));
+		
+		
 	}, 400);
+	
+	/*
+	arts: {
+				button: arts_clone,
+				label: seesu.ui.results_label_arts
+			},
+			track: {
+				button: track_clone,
+				label: seesu.ui.results_label_tracks
+			},
+			tag: {
+				button: tags_clone,
+				label: seesu.ui.results_label_tags
+			}
+			
+			*/
 
 var suggestions_prerender = function(input_value, crossdomain){
 	var multy = !crossdomain;
@@ -681,8 +714,26 @@ var suggestions_prerender = function(input_value, crossdomain){
 		seesu.ui.make_search_elements_index();
 		set_node_for_enter_press(arts_clone, false, true);
 		
-		suggestions_search(source_query, arts_clone, track_clone ,tags_clone);
-		vk_suggests(source_query, vk_clone);
+		suggestions_search(source_query, {
+			arts: {
+				button: arts_clone,
+				label: seesu.ui.results_label_arts
+			},
+			track: {
+				button: track_clone,
+				label: seesu.ui.results_label_tracks
+			},
+			tag: {
+				button: tags_clone,
+				label: seesu.ui.results_label_tags
+			}
+		});
+		vk_suggests(source_query, {
+			vk_tracks:{
+				button: vk_clone,
+				label: seesu.ui.results_label_vk
+			}
+		});
 	}
 };
 
@@ -705,7 +756,7 @@ var input_change = function(e){
 	
 	if (seesu.xhrs.multiply_suggestions && seesu.xhrs.multiply_suggestions.length){
 		for (var i=0; i < seesu.xhrs.multiply_suggestions.length; i++) {
-			if (seesu.xhrs.multiply_suggestions[i]) {seesu.xhrs.multiply_suggestions[i].abort();}
+			if (seesu.xhrs.multiply_suggestions[i] && seesu.xhrs.multiply_suggestions[i].abort) {seesu.xhrs.multiply_suggestions[i].abort();}
 		};
 		
 	}

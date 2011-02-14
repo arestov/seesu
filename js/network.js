@@ -334,7 +334,7 @@ try_mp3_providers = function(){
 	} else{
 		console.log('heyayy!')
 		addEvent(window, "message", listen_vk_api_callback_window);
-		try_hapi();
+		try_api();
 
 	}
   	
