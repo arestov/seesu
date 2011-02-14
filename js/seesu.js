@@ -17,7 +17,7 @@ window.seesu = window.su =  {
 	  		params.method = method;
 			$.ajax({
 				type: "GET",
-				url: 'http://seesu.me/api/',
+				url: 'http://127.0.0.1:9013/api/',
 				data: params
 			});
 	  	}

@@ -677,6 +677,15 @@ var try_to_use_iframe_sm2p = function(remove){
 	}
 	
 }
+var a = document.createElement('audio');
+if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
+	setTimeout(function(){
+		seesu.player.musicbox = new html5_p(seesu.player.player_volume);
+		$(function(){
+			dstates.add_state('body','flash-internet');
+		})
+	}, 10000);
+}
 if (!seesu.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
 	soundManager = new SoundManager();
 	if (soundManager){
