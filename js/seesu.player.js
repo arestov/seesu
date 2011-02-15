@@ -695,6 +695,7 @@ if (!seesu.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
 				dstates.add_state('body','flash-internet');
 			})
 			try_to_use_iframe_sm2p(true);
+			clearTimeout(html_player_timer);
 		  } else {
 			console.log('sm2 in widget notok')
 				try_to_use_iframe_sm2p();
