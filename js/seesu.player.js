@@ -632,16 +632,7 @@ var try_to_use_iframe_sm2p = function(remove){
 		
 		
 		
-		var html_player_timer;
-		var a = document.createElement('audio');
-		if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
-			html_player_timer = setTimeout(function(){
-				seesu.player.musicbox = new html5_p(seesu.player.player_volume);
-				$(function(){
-					dstates.add_state('body','flash-internet');
-				})
-			}, 10000);
-		}
+		
 		
 		var check_iframe = function(e){
 			if (e.data.match(/iframe_loaded/)){
@@ -677,9 +668,10 @@ var try_to_use_iframe_sm2p = function(remove){
 	}
 	
 }
+var html_player_timer;
 var a = document.createElement('audio');
 if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
-	setTimeout(function(){
+	html_player_timer = setTimeout(function(){
 		seesu.player.musicbox = new html5_p(seesu.player.player_volume);
 		$(function(){
 			dstates.add_state('body','flash-internet');
