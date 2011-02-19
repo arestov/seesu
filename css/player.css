@@ -26,7 +26,7 @@
 		border:0  !important;
 		background-repeat:no-repeat;
 		}
-		.play-control:hover{
+		.play-control:hover,.play-control.hover{
 			background-image:url(../i/buttons_hover.png)  !important;
 			}
 		.play-control:active{

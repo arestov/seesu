@@ -21,7 +21,7 @@ var get_youtube = function(q, callback){
 
 var get_all_tracks = function(trackname, callback, nocache, hypnotoad, only_cache){
 	var allow_h = hypnotoad && seesu.delayed_search.waiting_for_mp3provider;
-	if (seesu.delayed_search.use.quene) {seesu.delayed_search.use.quene.reset();}
+	if (seesu.delayed_search.use.queue) {seesu.delayed_search.use.queue.reset();}
 	seesu.delayed_search.tracks_waiting_for_search = 0;
 	seesu.ui.els.art_tracks_w_counter.text('');
 	var s = allow_h ? seesu.hypnotoad.search_soundcloud : seesu.delayed_search.use.search_tracks;

@@ -9,7 +9,7 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 	if (only_cache){
 		return false;
 	}
-	return seesu.soundcloud_quene.add(function(){
+	return seesu.soundcloud_queue.add(function(){
 		seesu.track_event('mp3 search', 'soundcloud search');
 		$.ajax({
 			timeout: 10000,

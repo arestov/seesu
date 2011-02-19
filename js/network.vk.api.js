@@ -1,10 +1,10 @@
-var vk_api = function(apis, quene, iframe, callback, fallback){
+var vk_api = function(apis, queue, iframe, callback, fallback){
 	this.apis = apis;
 	if (apis.length > 1){
 		this.allow_random_api = true;
 	}
-	if (quene){
-		this.quene = quene;
+	if (queue){
+		this.queue = queue;
 	}
 	
 	if (iframe){
@@ -110,7 +110,7 @@ vk_api.prototype = {
 
 			}
 			
-			if (api.use_cache && !nocache){
+			if (typeof cache_ajax == 'object' && api.use_cache && !nocache){
 				var cache_used = cache_ajax.get('vk_api', cache_key, function(r){
 					callback(r, {used_api: api.api_id})
 				});
@@ -123,9 +123,8 @@ vk_api.prototype = {
 				return false;
 			}
 			
-			
-			return _this.quene.add(function(){
-				if (api.use_cache && !nocache){
+			var request = function(){
+				if (typeof cache_ajax == 'object' && api.use_cache && !nocache){
 					var cache_used = cache_ajax.get('vk_api', cache_key, function(r){
 						callback(r, {used_api: api.api_id})
 					});
@@ -143,13 +142,19 @@ vk_api.prototype = {
 				  success: !params_full.callback ? response_callback : false,
 				  jsonpCallback: params_full.callback ? params_full.callback : false, 
 				  error: function(xhr){
-					if (_this.allow_random_api || (_this.quene == seesu.delayed_search.use.quene)){
-						if (error && xhr) {error(xhr);}
-					}	
+					if (error && xhr) {error(xhr);}
+					
 				  }
 				});
 				if (after_ajax) {after_ajax();}
-			}, true);
+			};
+			if (_this.queue){
+				return _this.queue.add(request, true);
+			} else{
+				request();
+				return true;
+			}
+			
 			
 		}
 	},
@@ -172,8 +177,11 @@ vk_api.prototype = {
 		var params_u = {};
 			params_u.q = query;
 			params_u.count = params_u.count || 30;
-			
-		seesu.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
+		
+		if (typeof seesu == 'object'){
+			seesu.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
+		}
+		
 		
 			
 		var used_successful = this.use('audio.search', params_u, 
@@ -211,15 +219,4 @@ vk_api.prototype = {
 }
 
 
-window.listen_vk_api_callback_window = function(e){
-	if (e.origin == "http://seesu.me") {
-		if (e.data.match(/^set_vk_auth\n/)){
-			set_vk_auth(e.data.replace(/^set_vk_auth\n/, ''), true);
-			seesu.track_event('Auth to vk', 'auth', 'from iframe post message');
-		} else if (e.data == 'vkapi_auth_callback_ready'){
-			e.source.postMessage('get_vk_auth', 'http://seesu.me');
-		}
-	} else {
-		return false;
-	}
-}
+

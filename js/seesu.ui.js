@@ -255,16 +255,16 @@ seesu_ui.prototype = {
 		}, false, false, true);
 		if (!used_successful){
 			if (seesu.delayed_search.waiting_for_mp3provider){
-				var mp3_prov_quene = new funcs_quene();
+				var mp3_prov_queue = new funcs_queue();
 				
-				if (mp3_prov_quene) {
-					mp3_prov_quene.add(function(){
+				if (mp3_prov_queue) {
+					mp3_prov_queue.add(function(){
 						get_all_tracks(query,  function(pl){
 							create_playlist(pl,pl_r);
 						}, true);
 					}, true);
 				}
-				seesu.delayed_search.we_need_mp3provider(mp3_prov_quene);
+				seesu.delayed_search.we_need_mp3provider(mp3_prov_queue);
 			} else{
 				
 				get_all_tracks(query, function(pl){

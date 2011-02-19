@@ -266,14 +266,14 @@ var vk_suggests = $.debounce(function(query, ui){
 			vk_tracks_search(query, ui);
 			ui.vk_tracks.label.addClass('loading');
 		} else{
-			var mp3_prov_quene = new funcs_quene();
-			if (mp3_prov_quene) {
-				seesu.xhrs.multiply_suggestions.push(mp3_prov_quene.add(function(){
+			var mp3_prov_queue = new funcs_queue();
+			if (mp3_prov_queue) {
+				seesu.xhrs.multiply_suggestions.push(mp3_prov_queue.add(function(){
 					vk_tracks_search(query, ui);
 					ui.vk_tracks.label.addClass('loading');
 				}, true));
 			}
-			seesu.delayed_search.we_need_mp3provider(mp3_prov_quene);
+			seesu.delayed_search.we_need_mp3provider(mp3_prov_queue);
 		}
 		
 	}

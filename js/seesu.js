@@ -90,7 +90,7 @@ window.seesu = window.su =  {
 	  },
 	  ui: new seesu_ui(document),
 	  xhrs: {},
-	  soundcloud_quene: new funcs_quene(200, 1000 , 7),
+	  soundcloud_queue: new funcs_queue(200, 1000 , 7),
 	  hypnotoad: {
 		vk_api: false,
 		search_soundcloud: soundcloud_search,
@@ -105,26 +105,26 @@ window.seesu = window.su =  {
 	  delayed_search: {
 		available: [],
 		use:{
-			quene:  new funcs_quene(1000, 8000 , 7),
+			queue:  new funcs_queue(1000, 8000 , 7),
 			search_tracks: hardcore_vk_search
 		},
 		vk:{
-			quene:  new funcs_quene(1000, 8000 , 7),
+			queue:  new funcs_queue(1000, 8000 , 7),
 			search_tracks: hardcore_vk_search
 		},
 		vk_api:{
-			quene:  new funcs_quene(1000, 8000 , 7),
+			queue:  new funcs_queue(1000, 8000 , 7),
 			search_tracks : function(){
 				return seesu.vk_api.audio_search.apply(seesu.vk_api, arguments);
 			}
 		},
 		waiting_for_mp3provider : true,
-		we_need_mp3provider: function(quene){
+		we_need_mp3provider: function(queue){
 			dstates.add_state('body','vk-needs-login');
 			seesu.delayed_search.start_for_mp3provider = function(){
 				seesu.delayed_search.waiting_for_mp3provider = false;
 				seesu.delayed_search.start_for_mp3provider = null;
-				if (quene && quene.init) {quene.init();}
+				if (queue && queue.init) {queue.init();}
 			};
 		},
 		switch_to_vk: function(){
@@ -164,7 +164,7 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 			sid: vk_s.sid, 
 			use_cache: true,
 			v: "3.0"
-		}], seesu.delayed_search.vk_api.quene, false, 
+		}], seesu.delayed_search.vk_api.queue, false, 
 		function(info, r){
 			if (info){
 				seesu.vk.id = vk_s.mid;
@@ -222,7 +222,18 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 		error_callback('expired');
 	}
 }
-	
+window.listen_vk_api_callback_window = function(e){
+	if (e.origin == "http://seesu.me") {
+		if (e.data.match(/^set_vk_auth\n/)){
+			set_vk_auth(e.data.replace(/^set_vk_auth\n/, ''), true);
+			seesu.track_event('Auth to vk', 'auth', 'from iframe post message');
+		} else if (e.data == 'vkapi_auth_callback_ready'){
+			e.source.postMessage('get_vk_auth', 'http://seesu.me');
+		}
+	} else {
+		return false;
+	}
+}
 window.set_vk_auth = function(vk_session, save_to_store){
 	var vk_s = JSON.parse(vk_session);
 	auth_to_vkapi(vk_s, save_to_store, 1915003, try_api);
@@ -262,7 +273,7 @@ var get_url_parameters = function(){
 			sid: _u.sid, 
 			use_cache: true,
 			v: "3.0"
-		}], seesu.delayed_search.vk_api.quene, true);
+		}], seesu.delayed_search.vk_api.queue, true);
 		if (_u.api_settings & 8){
 			seesu.delayed_search.switch_to_vk_api();
 			dstates.remove_state('body','vk-needs-login');
@@ -321,7 +332,7 @@ var updating_notify = function(r){
 		}
 	}
 	if (r.vk_apis){
-		seesu.hypnotoad.api = new vk_api(r.vk_apis, new quene(1300,5000,7));
+		seesu.hypnotoad.api = new vk_api(r.vk_apis, new queue(1300,5000,7));
 	}
 	console.log('lv: ' +  cver + ' reg link: ' + (vkReferer = r.vk_referer));
 
@@ -410,12 +421,12 @@ var get_next_track_with_priority = function(mo){
 	}
 	get_track_as_possible(mo, true, false, false, true);
 }
-var get_track_as_possible = function(mo, can_use_hypnotoad, mp3_prov_quene, only_cache, get_next){
+var get_track_as_possible = function(mo, can_use_hypnotoad, mp3_prov_queue, only_cache, get_next){
 	var _ocache = only_cache || seesu.delayed_search.waiting_for_mp3provider;
 	var used_successful = get_track(mo,false, false, _ocache, get_next);
 	if (!used_successful && seesu.delayed_search.waiting_for_mp3provider){
-		if (mp3_prov_quene) {
-			mp3_prov_quene.add(function(){
+		if (mp3_prov_queue) {
+			mp3_prov_queue.add(function(){
 				if (!mo.link){
 					get_track(mo, true);
 				} 
@@ -433,13 +444,13 @@ var random_track_plable = function(track_list){
 	return track_list[random_track_num];
 	
 };
-var start_random_nice_track_search = function(mo, ob, mp3_prov_quene, not_search_mp3){
+var start_random_nice_track_search = function(mo, ob, mp3_prov_queue, not_search_mp3){
 	mo.node.addClass('loading');
 	getTopTracks(mo.artist, function(track_list){
 		var some_track = random_track_plable(track_list);
 		mo.node.removeClass('loading');
 		mo.node.text(some_track.artist + ' - ' + (mo.track = some_track.track));
-		get_track_as_possible(mo, ob.num  === 0, mp3_prov_quene, not_search_mp3);
+		get_track_as_possible(mo, ob.num  === 0, mp3_prov_queue, not_search_mp3);
 		
 		
 		++ob.num;
@@ -448,22 +459,22 @@ var start_random_nice_track_search = function(mo, ob, mp3_prov_quene, not_search
 	});
 };
 var reset_q = function(){
-	var mp3_prov_quene;
+	var mp3_prov_queue;
 		if (seesu.delayed_search.waiting_for_mp3provider){
-			mp3_prov_quene = new funcs_quene();
-			seesu.delayed_search.we_need_mp3provider(mp3_prov_quene);
+			mp3_prov_queue = new funcs_queue();
+			seesu.delayed_search.we_need_mp3provider(mp3_prov_queue);
 		}
-		if (seesu.delayed_search.use.quene) {
-			seesu.delayed_search.use.quene.reset();
+		if (seesu.delayed_search.use.queue) {
+			seesu.delayed_search.use.queue.reset();
 		} 
 		seesu.delayed_search.tracks_waiting_for_search = 0;
 		seesu.ui.els.art_tracks_w_counter.text('');
-	return mp3_prov_quene;
+	return mp3_prov_queue;
 }
 var make_tracklist_playable = function(pl, full_allowing, reset){
-	var mp3_prov_quene;
+	var mp3_prov_queue;
 	if (full_allowing || reset){
-		mp3_prov_quene = reset_q();
+		mp3_prov_queue = reset_q();
 	}
 	if (reset){
 		return false;
@@ -478,14 +489,14 @@ var make_tracklist_playable = function(pl, full_allowing, reset){
 			if (!!mo.track){
 				if (full_allowing){
 					if (!mo.fetch_started){
-						get_track_as_possible(mo, i === 0, mp3_prov_quene);
+						get_track_as_possible(mo, i === 0, mp3_prov_queue);
 						mo.fetch_started = true;
 					}
 				} else{
-					get_track_as_possible(mo, i === 0, mp3_prov_quene, true);
+					get_track_as_possible(mo, i === 0, mp3_prov_queue, true);
 				}
 			} else{
-				start_random_nice_track_search(mo, ob, mp3_prov_quene, !full_allowing);
+				start_random_nice_track_search(mo, ob, mp3_prov_queue, !full_allowing);
 			}
 		} else{
 			if (!mo.ready_for_play){
