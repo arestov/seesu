@@ -38,16 +38,34 @@ var button_menu = function(jq_node){
 	.mousemove(this.events.mousemove);
 	
 	
+	this.node.find('.play-control')
+		.mouseover(function(){
+			console.log('ffff')
+		})
+		.mouseleave(function(){
+			$(this).removeClass('hover');
+		});
+	
 	
 }
 button_menu.prototype = {
 	rebind: function(){
-		return this.node
+		this.node
 			.data('buttmen', this)
 			.unbind()
 			.mousedown(this.events.mousedown)
 			.mouseup(this.events.mouseup)
 			.mousemove(this.events.mousemove);
+			
+		this.node.find('.play-control')
+			.mouseover(function(){
+				$(this).addClass('hover');
+			})
+			.mouseleave(function(){
+				$(this).removeClass('hover');
+			});
+			
+		return this.node;
 		
 		
 	},
