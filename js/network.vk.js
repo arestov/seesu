@@ -19,7 +19,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax, o
 		return false;
 	}
 
-	return seesu.delayed_search.vk.quene.add(function(){
+	return seesu.delayed_search.vk.queue.add(function(){
 		seesu.track_event('mp3 search', 'vk hardcore search');
 		$.ajax({
 		  timeout: 10000,
@@ -40,12 +40,12 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax, o
 				
 					if (music_list) {
 						cache_ajax.set('vk_hard', query, music_list);
-						if (callback && seesu.delayed_search.vk.quene == seesu.delayed_search.use.quene){
+						if (callback && seesu.delayed_search.vk.queue == seesu.delayed_search.use.queue){
 							callback(music_list);
 						}
 						
 					} else{
-						if (seesu.delayed_search.vk.quene == seesu.delayed_search.use.quene){
+						if (seesu.delayed_search.vk.queue == seesu.delayed_search.use.queue){
 							if  (error) {error(xhr);}
 						}
 						
@@ -53,7 +53,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax, o
 					
 				} catch(e) {
 					console.log(e)
-					if (seesu.delayed_search.vk.quene == seesu.delayed_search.use.quene){
+					if (seesu.delayed_search.vk.queue == seesu.delayed_search.use.queue){
 						if  (error) {error(xhr);}
 					}
 					
@@ -61,7 +61,7 @@ var hardcore_vk_search = function(query, callback, error, nocache, after_ajax, o
 			} else{
 				check_vk_logout_response(text);
 				
-				if (seesu.delayed_search.vk.quene == seesu.delayed_search.use.quene){
+				if (seesu.delayed_search.vk.queue == seesu.delayed_search.use.queue){
 					if  (error) {error(xhr);}
 				}
 			

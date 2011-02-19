@@ -30,7 +30,7 @@ var lastfm_api = function(apikey, s, cache, crossdomain){
 			}
 		};
 	}
-	this.quene = new funcs_quene(100);
+	this.queue = new funcs_queue(100);
 	
 	
 	this.scrobbling =  w_storage('lfm_scrobbling_enabled') ? true : false;
@@ -102,7 +102,7 @@ lastfm_api.prototype = {
 			}
 	
 			if (!cache_used){
-				return _this.quene.add(function(){
+				return _this.queue.add(function(){
 					if (no_need_for_post_serv){
 						$.ajax({
 						  url: _this.api_path,

@@ -1,5 +1,5 @@
-window.funcs_quene = function(small_delay, big_delay, big_delay_interval){
-	this.big_quene = [];
+var funcs_queue = function(small_delay, big_delay, big_delay_interval){
+	this.big_queue = [];
 	if (small_delay) {
 		this.small_delay = small_delay;
 	}
@@ -15,7 +15,7 @@ window.funcs_quene = function(small_delay, big_delay, big_delay_interval){
 	this.using_stat = [];
 };
 
-window.funcs_quene.prototype = {
+funcs_queue.prototype = {
 	get_interval: function(){
 		var last_num = this.using_stat.length - 1;
 		var bigdelay_turn = (!this.nobigdelay && last_num > 1  && (last_num  % this.big_delay_interval === 0));
@@ -48,8 +48,8 @@ window.funcs_quene.prototype = {
 		return  time;
 	},
 	add: function(func, not_init){
-		var quene_just_for_me = this.big_quene;
-		var counter = quene_just_for_me.length;
+		var queue_just_for_me = this.big_queue;
+		var counter = queue_just_for_me.length;
 
 		var _this = this;
 
@@ -63,7 +63,7 @@ window.funcs_quene.prototype = {
 				var time = _this.get_interval();
 			
 				setTimeout(function(){
-					_this.next(quene_just_for_me);
+					_this.next(queue_just_for_me);
 				}, time);
 			},
 			abort: function(){
@@ -72,7 +72,7 @@ window.funcs_quene.prototype = {
 			
 		
 		};
-		quene_just_for_me.push(_ob);
+		queue_just_for_me.push(_ob);
 	
 		if (counter == 0 && !not_init) {
 			this.init();
@@ -81,23 +81,23 @@ window.funcs_quene.prototype = {
 		return _ob;
 	},
 	init: function(){
-		if (this.big_quene.inited) {return this.big_quene;}
+		if (this.big_queue.inited) {return this.big_queue;}
 		var _this = this;
 
 
 		var time = this.get_interval();
 		setTimeout(function(){
-			_this.next(_this.big_quene);
+			_this.next(_this.big_queue);
 		}, time)
 			
 		
-		this.big_quene.inited = true;
+		this.big_queue.inited = true;
 		return this;
 
 		
 	},
 	next: function(q){
-		if (this.big_quene == q){
+		if (this.big_queue == q){
 			var prior_num = 0;
 			var prior_el = null;
 			
@@ -133,7 +133,7 @@ window.funcs_quene.prototype = {
 		}
 	},
 	reset: function(){
-		this.big_quene = [];
+		this.big_queue = [];
 		return this;
 	}
 };
