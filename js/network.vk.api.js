@@ -29,7 +29,7 @@ var vk_api = function(apis, queue, iframe, callback, fallback){
 		this.fallback = fallback;
 	}
 	this.fallback_counter = 0;
-}
+};
 
 vk_api.prototype = {
 	legal_apis:[1915003],
@@ -56,11 +56,14 @@ vk_api.prototype = {
 			
 				
 				
-			var response_callback = function(r){
+			var response_callback = function(resp){
 				
-				var r = (typeof r == 'object') ? r : JSON.parse(r);
+				var r = (typeof resp == 'object') ? resp : JSON.parse(resp);
 				if (!r.error){
-					cache_ajax.set('vk_api', cache_key, r);
+					if (typeof cache_ajax == 'object'){
+						cache_ajax.set('vk_api', cache_key, r);
+					}
+					
 					if (callback) {callback(r, {used_api: api.api_id});}
 				} else{
 					if (r.error.error_code < 6){
@@ -72,17 +75,17 @@ vk_api.prototype = {
 				}
 				
 				
-			}
+			};
 				
 				
-			params_full.method 	= method;
-			params_full.api_id 	= api.api_id;
+			params_full.method = method;
+			params_full.api_id = api.api_id;
 			
-			params_full.format 	= 'JSON';
+			params_full.format = 'JSON';
 			if (api.sid){
-				params_full.sid 	= api.sid;
+				params_full.sid = api.sid;
 			}
-			if (api.callback || api.sid){
+			if (typeof su == 'object' && !su.env.cross_domain_allowed){
 				params_full.callback = create_jsonp_callback(response_callback);
 			}
 			if(api.v){
