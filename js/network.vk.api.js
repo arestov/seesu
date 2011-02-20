@@ -1,4 +1,6 @@
-var vk_api = function(apis, queue, iframe, callback, fallback){
+/*global create_jsonp_callback: false, cache_ajax: false, su: false, hex_md5: false, $: false, has_music_copy: false*/
+
+window.vk_api = function(apis, queue, iframe, callback, fallback){
 	this.apis = apis;
 	if (apis.length > 1){
 		this.allow_random_api = true;
@@ -89,7 +91,7 @@ vk_api.prototype = {
 				params_full.callback = create_jsonp_callback(response_callback);
 			}
 			if(api.v){
-				params_full.v		= api.v;
+				params_full.v = api.v;
 			}
 			if(api.test_mode){
 				params_full.test_mode = 1;
@@ -108,14 +110,14 @@ vk_api.prototype = {
 				var paramsstr = '';
 				for (var i=0, l = pv_signature_list.length; i < l; i++) {
 					paramsstr += pv_signature_list[i];
-				};
+				}
 				params_full.sig = hex_md5(api.viewer_id + paramsstr + api.s);
 
 			}
 			
 			if (typeof cache_ajax == 'object' && api.use_cache && !nocache){
 				var cache_used = cache_ajax.get('vk_api', cache_key, function(r){
-					callback(r, {used_api: api.api_id})
+					callback(r, {used_api: api.api_id});
 				});
 				if (cache_used) {
 					return true;
@@ -129,7 +131,7 @@ vk_api.prototype = {
 			var request = function(){
 				if (typeof cache_ajax == 'object' && api.use_cache && !nocache){
 					var cache_used = cache_ajax.get('vk_api', cache_key, function(r){
-						callback(r, {used_api: api.api_id})
+						callback(r, {used_api: api.api_id});
 					});
 					if (cache_used) {
 						return true;
@@ -168,7 +170,7 @@ vk_api.prototype = {
 			
 		}, function(r){
 			if(callback){
-				callback(r && r.response && r.response[0], r)
+				callback(r && r.response && r.response[0], r);
 			}
 			console.log(r);
 		}, false, true).q.init();
@@ -181,8 +183,8 @@ vk_api.prototype = {
 			params_u.q = query;
 			params_u.count = params_u.count || 30;
 		
-		if (typeof seesu == 'object'){
-			seesu.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
+		if (typeof su == 'object' && su.track_event){
+			su.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
 		}
 		
 		
@@ -194,7 +196,7 @@ vk_api.prototype = {
 				var music_list = [];
 				for (var i=1, l = r.response.length; i < l; i++) {
 					var entity = {
-						'artist'  	: r.response[i].artist ? r.response[i].artist : r.response[i].audio.artist,
+						'artist'	: r.response[i].artist ? r.response[i].artist : r.response[i].audio.artist,
 						'duration'	: r.response[i].duration ? r.response[i].duration : r.response[i].audio.duration,
 						'link'		: r.response[i].url ? r.response[i].url : r.response[i].audio.url,
 						'track'		: r.response[i].title ? r.response[i].title : r.response[i].audio.title,
@@ -202,24 +204,24 @@ vk_api.prototype = {
 					
 					};
 					if (!has_music_copy(music_list,entity)){
-						music_list.push(entity)
+						music_list.push(entity);
 					}
 				
 				
-				};
+				}
 				if (music_list && music_list.length){
 					if (callback) {callback(music_list);}
 				} else{
-					if (error) {error()}
+					if (error) {error();}
 				}
 			
 			} else{
-				if (error) {error()}
+				if (error) {error();}
 			}
 		}, error, nocache, after_ajax, query, only_cache);
 		return used_successful;
 	}
-}
+};
 
 
 
