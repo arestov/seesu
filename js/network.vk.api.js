@@ -87,7 +87,7 @@ vk_api.prototype = {
 			if (api.sid){
 				params_full.sid = api.sid;
 			}
-			if (typeof su == 'object' && !su.env.cross_domain_allowed){
+			if (typeof su == 'object' && !su.env.cross_domain_allowed && typeof create_jsonp_callback == 'function'){
 				params_full.callback = create_jsonp_callback(response_callback);
 			}
 			if(api.v){
