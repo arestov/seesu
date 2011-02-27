@@ -18,7 +18,7 @@ var test_pressed_node = function(e, mouseup){
 				clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
 			} else{
 				var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
-				if (su.vk_api && su.vk_api.iframe){
+				if (su.vk_app_mode){
 					if (window.VK){
 						VK.callMethod('showSettingsBox', 8);
 					}
