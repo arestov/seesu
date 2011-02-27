@@ -4,6 +4,17 @@ $.ajaxSetup({
 });
 $.support.cors = true;
 
+var get_url_parameters = function(){
+	var url_vars = location.search.replace(/^\?/,'').split('&');
+	var full_url = {};
+	for (var i=0; i < url_vars.length; i++) {
+		var _h = url_vars[i].split('=');
+		full_url[_h[0]] = _h[1];
+	};
+	return full_url;
+};
+
+
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 window.lfm = function(){
 	var _this = this;
@@ -11,9 +22,10 @@ window.lfm = function(){
 	seesu.lfm_api.use.apply(seesu.lfm_api, ag);
 }
 window.seesu = window.su =  {
+	  _url: get_url_parameters(),
 	  distant_glow: {
 	  	interact: null,
-		url: 'http://127.0.0.1:9013/',
+		url: 'http://seesu.me/',
 		auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
 	  },
 	  api: function(method, params, callback, error){
@@ -173,7 +185,7 @@ var detach_vkapi = function(timeout){
 		dstates.add_state('body','vk-needs-login');
 	}, timeout);
 };
-var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callback){
+var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callback, callback){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (!vk_s.expire || (vk_s.expire > rightnow)){
 		console.log('want vk api')
@@ -188,6 +200,7 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 		var _vkapi = new vk_api([user_api_data], seesu.delayed_search.vk_api.queue, false, 
 		function(info, r){
 			if (info){
+				
 				seesu.vk.id = vk_s.mid;
 				seesu.vk_api = _vkapi;
 				console.log('got vk api');
@@ -256,11 +269,10 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 				}
 				
 				
-				return
 				
 				
 				
-				
+				if (callback){callback();}
 			} else{
 				
 				w_storage('vk_session'+app_id, '', true);
@@ -318,70 +330,10 @@ function stringifyParams(params, ignore_params, splitter){
 	return paramsstr;
 	
 };
+if (su._url.q){
+	su.start_query = su._url.q;
+}
 
-var get_url_parameters = function(){
-	var url_vars = location.search.replace(/^\?/,'').split('&');
-	var full_url = {};
-	for (var i=0; i < url_vars.length; i++) {
-		var _h = url_vars[i].split('=');
-		full_url[_h[0]] = _h[1];
-	};
-	return full_url;
-};
-(function(){
-	var try_saved_auth = function(){
-		var vk_session_stored = w_storage('vk_session'+1915003);
-		if (vk_session_stored){
-			set_vk_auth(vk_session_stored);
-			seesu.track_event('Auth to vk', 'auth', 'from saved');
-		}
-	};
-	
-	
-	var _u = get_url_parameters();
-	if (_u.q){
-		su.start_query = _u.q;
-	}
-	
-	if (_u.api_id && _u.viewer_id && _u.sid && _u.secret){
-		seesu.vk_api = new vk_api([{
-			api_id: _u.api_id, 
-			s: _u.secret,
-			viewer_id: _u.viewer_id, 
-			sid: _u.sid, 
-			use_cache: true,
-			v: "3.0"
-		}], seesu.delayed_search.vk_api.queue, true);
-		if (_u.api_settings & 8){
-			seesu.delayed_search.switch_to_vk_api();
-			dstates.remove_state('body','vk-needs-login');
-		}
-						
-						
-		var _s = document.createElement('script');
-		_s.src='http://vk.com/js/api/xd_connection.js';
-		_s.onload = function(){
-			if (window.VK){
-				VK.init(function(){});
-				VK.addCallback('onSettingsChanged', function(sts){
-					if (sts & 8){
-						
-						seesu.delayed_search.switch_to_vk_api();
-						dstates.remove_state('body','vk-needs-login');
-						
-					} else{
-						seesu.delayed_search.we_need_mp3provider()
-					}
-				});
-			}
-			
-		};
-		document.documentElement.firstChild.appendChild(_s);
-		
-		
-	} 
-	
-})();
 
 
 var vkReferer = '';
