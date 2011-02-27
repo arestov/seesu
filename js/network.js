@@ -130,21 +130,17 @@ var get_track = function(mo, nocache, hypnotoad, only_cache, get_next){
 	return used_successful;
 }
 
-var de_html_entity = document.createElement('div');
-var de_html = function(html_text){
-	de_html_entity.innerHTML = html_text;
-	return de_html_entity.textContent;
-}
+
 var reg_exp_string_fix;
 var get_best_track = function(array,artist,track){
 	var best = array[0],
 	worst_pr = -7; //six steps search
 	
 	for (var i=0,l=array.length; i < l; i++) {
-		var _ar = de_html(array[i].artist),
-			_tr = de_html(array[i].track);
-		artist = de_html(artist)
-		track = de_html(track)
+		var _ar = HTMLDecode(array[i].artist),
+			_tr = HTMLDecode(array[i].track);
+		artist = HTMLDecode(artist)
+		track = HTMLDecode(track)
 		var epic_fail;
 		
 		var for_first_test = artist + ' ' + track;
