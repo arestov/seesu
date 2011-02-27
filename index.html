@@ -26,7 +26,9 @@
 	<script type="text/javascript" src="js/jquery-1.5.min.js"></script>
 	<script type="text/javascript" src="js/_small_serv.js"></script>
 	<script type="text/javascript" src="js/widget.resize.js"></script>
- 
+	
+ 	<script type="text/javascript" src="js/htmlencoding.js"></script>
+	<script type="text/javascript" src="js/localizer.js"></script>
 
 	
 	<script type="text/javascript" src="js/jquery.debounce-1.0.5.js"></script>
@@ -55,6 +57,9 @@
 
 	<script type="text/javascript" src="js/c_buttmen.js"></script>
 	<script type="text/javascript" src="js/pressed_node_tester.js"></script>
+	<script type="text/javascript">
+		
+	</script>
 	
 	<script type="text/javascript">
 		su.ui = new seesu_ui(document, true);
@@ -94,47 +99,73 @@
 							<!-- / google stat -->
 							<p id="search-p">
 								<label>
-									<span class='lbl'>Search</span>
+									<span class='lbl lang localize-search'>Search</span>
 									<span class="inpt"><input type="search" name="q" id="q" size="50"  autocomplete="off"/></span>
 									
 								</label>
 								
 							</p>
-							<p id="search-use-hint" class="search-desc">try to search <a id='hint-query' href="javascript:void(0)" class="hint-query js-serv">The Beatles</a></p>
-							<p id="search-desciption" class="search-desc">Use keyboard: up and down arrows, enter</p>
+							<p id="search-use-hint" class="search-desc">
+								<span class="lang localize-trysearches">try to search</span> 
+								<a id='hint-query' href="javascript:void(0)" class="hint-query js-serv">The Beatles</a>
+								
+							</p>
+							<p id="search-desciption" class="search-desc lang localize-search-control-hint">Use keyboard: up and down arrows, enter</p>
 						</form>
 						<div id="search_result" class="search-results-holder" ></div>
 					</div>
 					<div class="lfm-start">
 						<div class="lfm-recomm">
-							<p><a  id="lfm-recomm" class="js-serv">Recommendations</a></p>
+							<p><a  id="lfm-recomm" class="js-serv lang localize-reccoms">Recommendations</a></p>
 							<div class="lfm-auth">
-								<p>To get your music recommendations you need to <input class="login-lastfm-button" type="button" value="grant" name="recommendations"/> Seesu your last.fm account access</p>
+								<p>
+									<span class="lang localize-lastfm-reccoms-access">To get your music recommendations you need to grant Seesu your last.fm account access</span> 
+									
+									<button class="login-lastfm-button lang localize-grant" type="button" name="recommendations">grant</button></p>
 								<form class="lfm-finish">
-									<label><input type='checkbox'  id="login-lastfm-finish-recomm-check"/> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-recomm">give me recommendations</button>
-									<p>It's simple and safe. It does not require your last.fm password.</p>
+									<label>
+										<input type='checkbox'  id="login-lastfm-finish-recomm-check"/> 
+										<span class="lang localize-user-granted-lfm">I've granted my account access to Seesu, so </span>
+										
+									</label>
+									<button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-recomm" class="lang localize-give-reccoms">give me recommendations</button>
+									<p >
+										<span class="lang localize-grant-lfm-desc">It's simple and safe. It does not require your last.fm password.</span>
+										
+									</p>
 								</form>
 								<form id="lfm-recomm-for-username" class="needs-cross-domain">
-									<p>or type username</p>
+									<p class="lang localize-or-type-username">or type username</p>
 									<p><input type="text" name="recomm_for_username" value="YodaPunk" id="recomm_for_username"> <button>ok</button></p>
-									<p> (you can type your friend)</p>
+									<p class="lang localize-type-friend-desc"> (you can type your friend)</p>
 								</form>
 							</div>
 						</div>
 						<div class="lfm-loved">
-							<p><a class="js-serv" id="lfm-loved">Loved Tracks</a></p>
+							<p><a class="js-serv lang localize-loved-tracks " id="lfm-loved">Loved Tracks</a></p>
 							<div class="lfm-auth">
-								<p>To get your favorite tracks you need to <input class="login-lastfm-button" type="button" name="loved" value="grant"/> Seesu your last.fm account access</p>
+								<p>
+									
+									<span class="lang localize-grant-love-lfm-access">To get your favorite tracks you need to grant Seesu your last.fm account access </span>
+									
+									<button class="login-lastfm-button lang localize-grant" type="button" name="loved">grant</button>
+								</p>
 								<form class="lfm-finish">
 									<p>
-										<label><input type='checkbox'  id="login-lastfm-finish-loved-check"/> I've granted my account access to Seesu</label>, so <button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-loved">give me loved tracks</button>
+										<label>
+											<input type='checkbox'  id="login-lastfm-finish-loved-check"/> 
+											<span class="lang localize-user-granted-lfm">I've granted my account access to Seesu, so </span>
+											
+										</label>
+											
+											<button disabled="disabled" type="button" class="lang localize-give-love" value='Next' id="login-lastfm-finish-loved">give me loved tracks</button>
 									</p>
-									<p>It's simple and safe. It does not require your last.fm password.</p>
+									<p  class="lang localize-grant-lfm-desc">It's simple and safe. It does not require your last.fm password.</p>
 								</form>
 								<form id="lfm-loved-by-username">
-									<p>or type username</p>
+									<p class="lang localize-or-type-username">or type username</p>
 									<p><input type="text" name="loved_by_user_name" value="YodaPunk" id="loved_by_user_name"> <button>ok</button></p>
-									<p> (you can type your friend)</p>
+									<p class="lang localize-type-friend-desc"> (you can type your friend)</p>
 								</form>
 							</div>
 						</div>
@@ -164,14 +195,24 @@
 									<div class="track-button-content" id="message-flash-secur">
 										<div class="triangle"></div>
 										<div class="balun">							
-											<p>To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
+											<p class="lang localize-stop-flash">To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
 											<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
-											<p><strong>add</strong> it to white list on  <strong><a class="flash-s">flash internet security page</a></strong> and then restart Seesu</p>
+											<p>
+												<span class="lang localize-add-to-wl"><strong>add</strong> it to white list on  </span>
+												
+												<strong>
+													<a class="flash-s lang localize-flashpage ">flash internet security page</a>
+													
+												</strong> 
+													
+													<span class="lang localize-and-restart">and then restart Seesu</span>
+													
+											</p>
 											<p>
 												<img src="http://img-fotki.yandex.ru/get/4603/gleb-arestov.0/0_55167_ceb4a878_orig" alt="flash security page"/>
 												
 											</p>
-											<p>About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+											<p class="lang localize-bad-flash-desc">About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
 	
 											<p class="internet-flash-settings">
 												<input type="button" value="Close message" class="tb-mess-wrap-close"/>
@@ -194,8 +235,19 @@
 												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
 											</form>
 											<div class="lfm-granting">
-												<p>To scrobble to last.fm you must <input class="login-lastfm-button" type="button" value="grant" name="scrobbling"/> access to Seesu </p>
-												<p class="lfm-finish"><label><input type='checkbox' class="scrobbling-grant"/> I've granted my account access to Seesu</label></p>
+												<p>
+													<span class="lang localize-lastfm-scrobble-access">To scrobble to last.fm you must grant access to Seesu</span>
+													<button class="lang localize-grant login-lastfm-button" type="button"  name="scrobbling" >grant</button>
+													
+												</p>
+												<p class="lfm-finish">
+													<label>
+														<input type='checkbox' class="scrobbling-grant"/> 
+														<span class="lang localize-user-granted-lfm">I've granted my account access to Seesu</span>
+													
+													</label>
+													
+												</p>
 											</div>
 											<p><input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
 										</div>
@@ -213,7 +265,7 @@
 							<div class="track-video"></div>
 							<h3 class="artist-name"></h3>
 							<div class="image">
-								<img  alt="" class="artist-image" src=""/>
+								<img  alt="" class="artist-image" src="#artist-image"/>
 							</div>
 							<div class="artist-bio"></div>
 							<div class="artist-meta-info"></div>
@@ -267,17 +319,34 @@
 					<div class="play-list-holder" id="play-list-holder">
 						
 						<div class="vk-login-context">
-							<div class="needs-cross-domain">To get mp3 files you need to <a href="javascript:void(0)" class="js-serv sign-in-to-vk">sign in</a> to vk.com (vkontakte.ru). You may <a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv" >create new account</a> (it's free).</div>
-							<div class="no-needs-cross-domain">To get mp3 files you need to login <a href="javascript:void(0)" class="js-serv sign-in-to-vk">to vk.com</a> or <a href="javascript:void(0)" class="js-serv sign-in-to-vk-ru">to vkontakte.ru</a>. Try both if you get &laquo;Open API security breach&raquo;. You may <a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv" >create new account</a> (it's free).</div>
+							<div class="needs-cross-domain">
+								<span class="lang localize-to-get-mp3-sign-to-vk">To get mp3 files you need to sign in to vk.com (vkontakte.ru) </span>
+								<a href="javascript:void(0)" class="js-serv sign-in-to-vk lang localize-sign ">sign in</a>. 
+								
+								<span class="lang localize-you-may">You may</span> 
+								<a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv lang localize-create-acc" >create new account</a> 
+								<span class='lang localize-its-free '>(it's free)</span>.
+								
+							</div>
+							<div class="no-needs-cross-domain">
+								<span class="lang localize-to-get-mp3-login-to-vk ">To get mp3 files you need to login to vk.com or to vkontakte.ru</span>
+								<a href="javascript:void(0)" class="js-serv sign-in-to-vk">to vk.com</a> <a href="javascript:void(0)" class="js-serv sign-in-to-vk-ru">to vkontakte.ru</a>. 
+								
+								<span class="lang localize-open-api-secure ">Try both if you get &laquo;Open API security breach&raquo;.</span>
+								 
+								<span class="lang localize-you-may">You may</span> 
+								<a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv lang localize-create-acc" >create new account</a> 
+								<span class='lang localize-its-free '>(it's free)</span>.
+							</div>
 							<form  class="vk-auth" method="post" >
 								<p>
-									<label for="email-arts">E-mail</label>
+									<label for="email-arts" class="lang localize-email">E-mail</label>
 									<span class="input-place" >
 										<input type="text" class="vk-email" name="email" id="email-arts"/>
 									</span>
 								</p>
 								<p>
-									<label for="pass-arts">Password</label>
+									<label for="pass-arts" class="lang localize-password">Password</label>
 									<span class="input-place" >
 										<input type="password" class="vk-pass"	name="pass" id="pass-arts"/>
 									</span>
@@ -286,12 +355,12 @@
 								<p class="vk-captcha-context">
 									<label for="vk-captcha-key">Captcha value</label>
 									<span class="input-place" >
-										<img src="" alt="captcha"/><br/>
+										<img src="#captcha" alt="captcha"/><br/>
 										<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
 									</span>
 								</p>
 								<p>
-									<label for="vk-save-pass">Save password in&nbsp;Seesu</label>
+									<label for="vk-save-pass" class="lang localize-savepass">Save password in&nbsp;Seesu</label>
 									<span class="input-place">
 										<input type="checkbox" name="vk-save-pass" value="" id="vk-save-pass"/>
 									</span>
@@ -301,10 +370,10 @@
 						</div>
 						<div class="play-list-panel">
 							<div id="tracks-search" class="search-music-files">
-								<a id ="make-trs-plable" class="js-serv make-trs-plable">Make playable all tracks in playlist</a>
+								<a id ="make-trs-plable" class="js-serv make-trs-plable lang localize-playlist-getmp3 ">Make playable all tracks in playlist</a>
 								<span id="tracks-waiting-for-search"></span> 
 							</div>
-							<a class="js-serv open-external-playlist" id="open-external-playlist" href"http://seesu.me/generated_files/seesu_playlist.m3u">Export m3u playlist</a>
+							<a class="js-serv open-external-playlist lang localize-playlist-export " id="open-external-playlist" href="http://seesu.me/generated_files/seesu_playlist.m3u">Export m3u playlist</a>
 							
 						</div>
 						<div id="tracks-magic" class="tracks-magic">
@@ -312,10 +381,10 @@
 						</div>
 					</div>
 					
-					<div action="playlist-search" id="playlist-search">
+					<div id="playlist-search">
 						<div id="playlist-search-con">
 							<span class="triangle"></span>
-							<h4>add song to:</h4>
+							<h4><span class="lang localize-addsong ">add song to</span>:</h4>
 							<div>
 								<input type="search" id="pl-q" autocomplete="off"/>
 							</div>

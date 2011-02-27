@@ -1,4 +1,4 @@
-var lastfm_api = function(apikey, s, cache, crossdomain){
+function lastfm_api(apikey, s, cache, crossdomain){
 	this.apikey = apikey;
 	this.s = s;
 	this.cache = cache;

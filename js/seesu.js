@@ -11,20 +11,39 @@ window.lfm = function(){
 	seesu.lfm_api.use.apply(seesu.lfm_api, ag);
 }
 window.seesu = window.su =  {
-	  server_interact: false,
-	  api: function(method,params){
-	  	if (this.server_interact){
+	  distant_glow: {
+	  	interact: null,
+		url: 'http://127.0.0.1:9013/',
+		auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
+	  },
+	  api: function(method, params, callback, error){
+	  	var _this = this;
+	  	if (_this.distant_glow.interact && !!~_this.distant_glow.interact.indexOf(method)){
+	  	
 	  		params.method = method;
+	  	
+	  		if (!!~['user.update', 'track.scrobble'].indexOf(method)){
+	  			if (!this.distant_glow.auth){
+	  				return false
+	  			} else{
+	  				params.sid = this.distant_glow.auth.sid;
+	  				params.sig = hex_md5(stringifyParams(params, ['sid']) + this.distant_glow.auth.secret) ;
+	  			}
+	  			
+	  		}
+	  		
 			$.ajax({
 				type: "GET",
-				url: 'http://127.0.0.1:9013/api/',
-				data: params
+				url: _this.distant_glow.url + 'api/',
+				data: params,
+				success: callback,
+				error: error
 			});
 	  	}
 	  },
-	  fs: {},
+	  fs: {},//fast search
 	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
-	  version: 1.994,
+	  version: 1.998,
 	  env: app_env,
 	  track_stat: (function(){
 		var _i = document.createElement('iframe');_i.id ='gstat';_i.src = 'http://seesu.me/g_stat.html';
@@ -147,6 +166,7 @@ window.seesu = window.su =  {
 		}
 	  }
 	};
+	
 var detach_vkapi = function(timeout){
 	return setTimeout(function(){
 		seesu.delayed_search.waiting_for_mp3provider = true;
@@ -157,14 +177,15 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (!vk_s.expire || (vk_s.expire > rightnow)){
 		console.log('want vk api')
-		var _vkapi = new vk_api([{
+		var user_api_data = {
 			api_id: app_id, 
 			s: vk_s.secret,
 			viewer_id: vk_s.mid, 
 			sid: vk_s.sid, 
 			use_cache: true,
 			v: "3.0"
-		}], seesu.delayed_search.vk_api.queue, false, 
+		};
+		var _vkapi = new vk_api([user_api_data], seesu.delayed_search.vk_api.queue, false, 
 		function(info, r){
 			if (info){
 				seesu.vk.id = vk_s.mid;
@@ -199,7 +220,45 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 					_d[a] = info[a];
 				};
 				su.vk.user_info = _d;
-				su.api('user.update', _d);
+				
+				
+				
+				if (!su.distant_glow.auth || su.distant_glow.auth.id != user_api_data.viewer_id){
+					su.api('user.getAuth', {
+						type:'vk',
+						vk_api: JSON.stringify({
+							session: user_api_data,
+							timeout: vk_s.expire
+						}),
+					}, function(su_sess){
+						if (su_sess.rkey && su_sess.sid){
+							
+							_vkapi.use('getVariable', {key: su_sess.rkey}, function(resp){
+								var secret = resp && resp.response;
+								if (secret){
+									su.distant_glow.auth = {
+										id: user_api_data.viewer_id,
+										secret: secret,
+										sid: su_sess.sid
+									};
+									w_storage('dg_auth', su.distant_glow.auth, true);
+									su.api('user.update', su.vk.user_info);
+								}
+								
+								
+							}, false,  {nocache: true});
+							
+						}
+						
+					});
+				} else{
+					su.api('user.update', su.vk.user_info);
+				}
+				
+				
+				return
+				
+				
 				
 				
 			} else{
@@ -239,7 +298,26 @@ window.set_vk_auth = function(vk_session, save_to_store){
 	auth_to_vkapi(vk_s, save_to_store, 1915003, try_api);
 
 };
-
+function stringifyParams(params, ignore_params, splitter){
+	var paramsstr = '',
+		pv_signature_list = [];
+	
+	
+	for (var p in params) {
+		if (!ignore_params || !~ignore_params.indexOf(p)){
+			pv_signature_list.push(p + (splitter || '') + params[p]);
+		}
+	}
+		
+	pv_signature_list.sort();
+		
+	for (var i=0, l = pv_signature_list.length; i < l; i++) {
+		paramsstr += pv_signature_list[i];
+	};
+		
+	return paramsstr;
+	
+};
 
 var get_url_parameters = function(){
 	var url_vars = location.search.replace(/^\?/,'').split('&');
@@ -311,8 +389,8 @@ var vkReferer = '';
 var updating_notify = function(r){
 	if (!r){return;}
 	
-	if(r.server_interact){
-		su.server_interact = true;
+	if(r.distant_glow_interact){
+		su.distant_glow.interact = r.distant_glow_interact;
 		if (su.vk.user_info){
 			su.api('user.update', su.vk.user_info);
 		}	
@@ -338,21 +416,24 @@ var updating_notify = function(r){
 
 };
 var check_seesu_updates = function(){
-	$.ajax({
-	  url: seesu.env.cross_domain_allowed ? 'http://seesu.me/update' : '/update',
-	  global: false,
-	  type: "POST",
-	  dataType: "json",
-	  data: {
-		'hash': hex_md5(widget.identifier),
-		'version': seesu.version,
-		'demension_x': w_storage('width'),
-		'demension_y': w_storage('height')
-	  },
-	  error: function(){
-	  },
-	  success: updating_notify
-	});
+	
+		$.ajax({
+		  url: su.distant_glow.url + 'update',
+		  global: false,
+		  type: "POST",
+		  dataType: "json",
+		  data: {
+			'hash': hex_md5(widget.identifier),
+			'version': seesu.version,
+			'demension_x': w_storage('width'),
+			'demension_y': w_storage('height')
+		  },
+		  error: function(){
+		  },
+		  success: updating_notify
+		});
+	
+	
 };
 
 var external_playlist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
@@ -620,7 +701,7 @@ var proxy_render_artists_tracks = function(artist_list, pl_r){
 	
 };
 var render_loved = function(user_name){
-	var pl_r = prepare_playlist('Loved Tracks', 'artists by loved');
+	var pl_r = prepare_playlist(localize('loved-tracks'), 'artists by loved');
 	lfm('user.getLovedTracks',{user: (user_name || su.lfm_api.user_name), limit: 30},function(r){
 		
 		var tracks = r.lovedtracks.track || false;

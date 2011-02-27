@@ -3,6 +3,12 @@ window.connect_dom_to_som = function(d, ui){
 		window_resizer(d);
 	}
 
+
+	
+	
+	
+	
+	
 	ui.buttons = {
 		search_artists : 
 			$('<button type="submit" name="type" value="artist" id="search-artist"><span>Search in artists</span></button>',d)
@@ -45,7 +51,7 @@ window.connect_dom_to_som = function(d, ui){
 					seesu.ui.make_search_elements_index()
 				}),
 		search_vkontakte: 
-			$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>Use dirty mp3  search</span></button>',d)
+			$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>',d)
 				.click(function(e){
 					
 					var query = seesu.ui.els.search_input.val();
@@ -93,6 +99,22 @@ window.connect_dom_to_som = function(d, ui){
 		return o;
 	})(seesu.player.player_volume);
 	addEvent(d, "DOMContentLoaded", function() {
+		var lang = navigator.language;
+		$('.lang', d).each(function(i,el){
+			var cn = el.className;
+			var classes = cn.split(/\s/);
+			$.each(classes, function(z, cl){
+				if (cl.match(/localize/)){
+					var term = localizer[cl.replace('localize-','')];
+					if (term && term[lang]){
+						$(el).text(term[lang]);
+					}
+				}
+			});
+			
+		});
+	
+	
 		su.lfm_api.try_to_login();		
 		var volume_s = d.createElement('style');
 			volume_s.setAttribute('title', 'volume');

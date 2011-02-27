@@ -1,4 +1,6 @@
-var vk_api = function(apis, queue, iframe, callback, fallback){
+/*global create_jsonp_callback: false, cache_ajax: false, su: false, hex_md5: false, $: false, has_music_copy: false*/
+
+function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
 	this.apis = apis;
 	if (apis.length > 1){
 		this.allow_random_api = true;
@@ -10,7 +12,7 @@ var vk_api = function(apis, queue, iframe, callback, fallback){
 	if (iframe){
 		this.iframe = true;
 	}
-	if (!this.allow_random_api){
+	if (!this.allow_random_api && !no_init_check){
 		this.get_user_info(function(info, r){
 			if(info){
 				this.user_info = info;
@@ -29,13 +31,13 @@ var vk_api = function(apis, queue, iframe, callback, fallback){
 		this.fallback = fallback;
 	}
 	this.fallback_counter = 0;
-}
+};
 
 vk_api.prototype = {
 	legal_apis:[1915003],
 	api_link: 'http://api.vk.com/api.php',
-	use: function(method, params, callback, error, nocache, after_ajax, cache_key, only_cache){
-
+	use: function(method, params, callback, error, api_pipi){ //nocache, after_ajax, cache_key, only_cache
+		var p = api_pipi || {};
 		if (method) {
 			var api;
 			var _this = this;
@@ -56,11 +58,14 @@ vk_api.prototype = {
 			
 				
 				
-			var response_callback = function(r){
+			var response_callback = function(resp){
 				
-				var r = (typeof r == 'object') ? r : JSON.parse(r);
+				var r = (typeof resp == 'object') ? resp : JSON.parse(resp);
 				if (!r.error){
-					cache_ajax.set('vk_api', cache_key, r);
+					if (typeof cache_ajax == 'object'){
+						cache_ajax.set('vk_api', p.cache_key, r);
+					}
+					
 					if (callback) {callback(r, {used_api: api.api_id});}
 				} else{
 					if (r.error.error_code < 6){
@@ -72,21 +77,21 @@ vk_api.prototype = {
 				}
 				
 				
-			}
+			};
 				
 				
-			params_full.method 	= method;
-			params_full.api_id 	= api.api_id;
+			params_full.method = method;
+			params_full.api_id = api.api_id;
 			
-			params_full.format 	= 'JSON';
+			params_full.format = 'JSON';
 			if (api.sid){
-				params_full.sid 	= api.sid;
+				params_full.sid = api.sid;
 			}
-			if (api.callback || api.sid){
+			if (typeof su == 'object' && !su.env.cross_domain_allowed && typeof create_jsonp_callback == 'function'){
 				params_full.callback = create_jsonp_callback(response_callback);
 			}
 			if(api.v){
-				params_full.v		= api.v;
+				params_full.v = api.v;
 			}
 			if(api.test_mode){
 				params_full.test_mode = 1;
@@ -95,38 +100,27 @@ vk_api.prototype = {
 			
 			
 			if(apisig) {
-				for (var param in params_full) {
-					if (param != 'sid'){
-						pv_signature_list.push(param  + '=' + params_full[param]);
-					}
-				}
+				params_full.sig = hex_md5(api.viewer_id + stringifyParams(params_full, ['sid'], '=') + api.s);				
 				
-				pv_signature_list.sort();
-				var paramsstr = '';
-				for (var i=0, l = pv_signature_list.length; i < l; i++) {
-					paramsstr += pv_signature_list[i];
-				};
-				params_full.sig = hex_md5(api.viewer_id + paramsstr + api.s);
-
 			}
 			
-			if (typeof cache_ajax == 'object' && api.use_cache && !nocache){
-				var cache_used = cache_ajax.get('vk_api', cache_key, function(r){
-					callback(r, {used_api: api.api_id})
+			if (typeof cache_ajax == 'object' && api.use_cache && !p.nocache){
+				var cache_used = cache_ajax.get('vk_api', p.cache_key, function(r){
+					callback(r, {used_api: api.api_id});
 				});
 				if (cache_used) {
 					return true;
 				}
 			}
 			
-			if (only_cache){
+			if (p.only_cache){
 				return false;
 			}
 			
 			var request = function(){
-				if (typeof cache_ajax == 'object' && api.use_cache && !nocache){
-					var cache_used = cache_ajax.get('vk_api', cache_key, function(r){
-						callback(r, {used_api: api.api_id})
+				if (typeof cache_ajax == 'object' && api.use_cache && !p.nocache){
+					var cache_used = cache_ajax.get('vk_api', p.cache_key, function(r){
+						callback(r, {used_api: api.api_id});
 					});
 					if (cache_used) {
 						return true;
@@ -146,10 +140,10 @@ vk_api.prototype = {
 					
 				  }
 				});
-				if (after_ajax) {after_ajax();}
+				if (p.after_ajax) {p.after_ajax();}
 			};
 			if (_this.queue){
-				return _this.queue.add(request, true);
+				return _this.queue.add(request, p.not_init_queue);
 			} else{
 				request();
 				return true;
@@ -165,10 +159,10 @@ vk_api.prototype = {
 			
 		}, function(r){
 			if(callback){
-				callback(r && r.response && r.response[0], r)
+				callback(r && r.response && r.response[0], r);
 			}
 			console.log(r);
-		}, false, true).q.init();
+		}, false, {nocache: true});
 	},
 	audio_search: function(query, callback, error, nocache, after_ajax, only_cache){
 		
@@ -178,8 +172,8 @@ vk_api.prototype = {
 			params_u.q = query;
 			params_u.count = params_u.count || 30;
 		
-		if (typeof seesu == 'object'){
-			seesu.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
+		if (typeof su == 'object' && su.track_event){
+			su.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
 		}
 		
 		
@@ -191,32 +185,38 @@ vk_api.prototype = {
 				var music_list = [];
 				for (var i=1, l = r.response.length; i < l; i++) {
 					var entity = {
-						'artist'  	: r.response[i].artist ? r.response[i].artist : r.response[i].audio.artist,
+						'artist'	: HTMLDecode(r.response[i].artist ? r.response[i].artist : r.response[i].audio.artist),
 						'duration'	: r.response[i].duration ? r.response[i].duration : r.response[i].audio.duration,
 						'link'		: r.response[i].url ? r.response[i].url : r.response[i].audio.url,
-						'track'		: r.response[i].title ? r.response[i].title : r.response[i].audio.title,
+						'track'		: HTMLDecode(r.response[i].title ? r.response[i].title : r.response[i].audio.title),
 						'from'		:  (legal_api ? 'legal_' : (_this.allow_random_api ? 'random_' : '')) + 'vk_api'
 					
 					};
 					if (!has_music_copy(music_list,entity)){
-						music_list.push(entity)
+						music_list.push(entity);
 					}
 				
 				
-				};
+				}
 				if (music_list && music_list.length){
 					if (callback) {callback(music_list);}
 				} else{
-					if (error) {error()}
+					if (error) {error();}
 				}
 			
 			} else{
-				if (error) {error()}
+				if (error) {error();}
 			}
-		}, error, nocache, after_ajax, query, only_cache);
+		}, error, {
+			nocache: nocache, 
+			after_ajax: after_ajax, 
+			cache_key: query, 
+			only_cache: only_cache,
+			not_init_queue: true
+		});
 		return used_successful;
 	}
-}
+};
 
 
 

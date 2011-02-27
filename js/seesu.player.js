@@ -374,7 +374,6 @@ seesu.player.events[PLAYED] = function(){
 			if (seesu.vk.id){
 				su.api('track.scrobble', {
 					status: 'playing',
-					vk_id: seesu.vk.id,
 					duration: mo.duration,
 					artist: mo.artist,
 					title: mo.track,
@@ -410,7 +409,6 @@ seesu.player.events[FINISHED] = function() {
 			if (seesu.vk.id){
 				su.api('track.scrobble', {
 					status: 'finished',
-					vk_id: seesu.vk.id,
 					duration: mo.duration,
 					artist: mo.artist,
 					title: mo.track,

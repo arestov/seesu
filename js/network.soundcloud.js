@@ -54,8 +54,8 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 							var track_title = _tr_str;
 							
 							var entity = {
-								'artist'  	: artist,
-								'track'		: track_title,
+								'artist'  	: HTMLDecode(artist),
+								'track'		: HTMLDecode(track_title),
 								'duration'	: Math.round(r[i].duration/1000),
 								'link'		: (r[i].download_url || r[i].stream_url) + '?consumer_key=' + sc_key,
 								'from': 	'soundcloud',

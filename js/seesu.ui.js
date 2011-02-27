@@ -109,7 +109,10 @@ views.prototype = {
 	},
 	show_start_page: function(focus_to_input, log_navigation, init){
 		this.nav.daddy.empty();
-		this.nav.daddy.append('<img class="nav-title" title="Seesu start page" src="i/nav/seesu-nav-logo.png"/>')
+		this.nav.daddy.append($('<img class="nav-title" title="Seesu start page" src="i/nav/seesu-nav-logo.png"/>').click(function(){
+			seesu.ui.els.search_input[0].focus();
+			seesu.ui.els.search_input[0].select();
+		}))
 		
 		
 		this.new_browse();
@@ -314,7 +317,7 @@ seesu_ui.prototype = {
 				.appendTo(ainf.name);
 				
 			if (su.ui.views.playlist_type != 'artist'){
-				su.player.top_tracks_link = $('<a class="js-serv">top tracks</a>')
+				su.player.top_tracks_link = $('<a class="js-serv">' + localize('top-tracks') + '</a>')
 					.data('artist', artist)
 					.appendTo(arts_name)
 					.click(function(){
@@ -325,7 +328,7 @@ seesu_ui.prototype = {
 			
 			$('<a></a>')
 				.attr('href', 'http://www.last.fm/music/' + artist.replace(' ', '+'))
-				.text('profile')
+				.text(localize('profile'))
 				.attr('title', 'last.fm profile')
 				.click(function(){
 					var link = 'http://www.last.fm/music/' + artist.replace(' ', '+');
@@ -369,7 +372,7 @@ seesu_ui.prototype = {
 		get_youtube(q, function(r){			
 			var vs = r.feed.entry;
 			if (vs && vs.length){
-				vi_c.append('<span class="desc-name"><a target="_blank" href="http://www.youtube.com/results?search_query='+ q +'">Video</a>:</span>');
+				vi_c.append('<span class="desc-name"><a target="_blank" href="http://www.youtube.com/results?search_query='+ q +'">' + localize('video','Video') + '</a>:</span>');
 				var v_content = $('<ul class="desc-text"></ul>');
 			
 				var make_v_link = function(img_link, vid, _title){
@@ -471,7 +474,7 @@ seesu_ui.prototype = {
 		
 		
 		if (tags && tags.length) {
-			var tags_p = $("<p class='artist-tags'></p>").append('<span class="desc-name">Tags:</span>');
+			var tags_p = $("<p class='artist-tags'></p>").append('<span class="desc-name">'+localize('Tags')+':</span>');
 			var tags_text = $('<span class="desc-text"></span>').appendTo(tags_p);
 			for (var i=0, l = tags.length; i < l; i++) {
 				var tag = tags[i],
@@ -489,7 +492,7 @@ seesu_ui.prototype = {
 		
 		if (similars && similars.length) {
 			var similars_p = $("<p></p>").attr({ 'class': 'artist-similar'}),
-				similars_a = $('<a></a>').append('Similar artists').attr({ 'class': 'similar-artists js-serv'}).data('artist', artist);	
+				similars_a = $('<a></a>').append(localize('similar-arts')).attr({ 'class': 'similar-artists js-serv'}).data('artist', artist);	
 			$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p).append(document.createTextNode(':'));
 			var similars_text = $('<span class="desc-text"></span>').appendTo(similars_p);
 			for (var i=0, l = similars.length; i < l; i++) {
@@ -505,11 +508,11 @@ seesu_ui.prototype = {
 			}
 			ainf.meta_info.append(similars_p);
 		}
-		var artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">Albums:</span>').appendTo(ainf.meta_info);
+		var artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">'+localize('albums')+':</span>').appendTo(ainf.meta_info);
 		var artist_albums_text = $('<div class=""></div>').appendTo(artist_albums_container);
 		if (artist_albums_container){
 			
-			var albums_link = $('<a class="js-serv get-artist-albums">get albums</a>')
+			var albums_link = $('<a class="js-serv get-artist-albums">' + localize('get-albums')+ '</a>')
 				.click(function(){
 					var _this = $(this);
 					if (!_this.data('albums-loaded')){
@@ -522,7 +525,7 @@ seesu_ui.prototype = {
 							_this.data('albums-loaded', true);
 							artist_albums_container.removeClass('albums-loading');
 						});
-						_this.text('hide them');
+						_this.text(localize('hide-them','hide them'));
 						seesu.track_event('Artist navigation', 'show artist info', artist);
 					} else{
 						_sui.toogle_art_alb_container(_this);
@@ -579,10 +582,10 @@ seesu_ui.prototype = {
 		var artist_albums_container = link.parent().parent();
 		if (artist_albums_container.is('.collapse-albums')){
 			artist_albums_container.removeClass('collapse-albums');
-			link.text('hide them');
+			link.text(localize('hide-them', 'hide them'));
 		} else{
 			artist_albums_container.addClass('collapse-albums');
-			link.text('show them');
+			link.text(localize('show-them', 'show them'));
 		}
 	},
 	render_playlist: function(pl, not_clear) { // if links present than do full rendering! yearh!
@@ -597,13 +600,13 @@ seesu_ui.prototype = {
 		}
 		seesu.ui.els.make_trs.show().data('pl', _sui.views.browsing.mpl = pl);
 		if (!pl){
-			$(ul).append('<li>Nothing found</li>');
+			$(ul).append('<li>' + localize('nothing-found','Nothing found') + '</li>');
 		} else {
 			pl.ui = ui;
 			if (!su.ui.now_playing.link){
 				if (seesu.ui.els.start_screen){
 					$('<p></p>').attr('id', 'now-play-b').append(
-						su.ui.now_playing.link = $('<a></a>').text('Now Playing').attr('class', 'js-serv').click(function(){
+						su.ui.now_playing.link = $('<a></a>').text(localize('now-playing','Now Playing')).attr('class', 'js-serv').click(function(){
 							_sui.views.show_now_playing();
 						})
 					).prependTo(seesu.ui.els.start_screen.children('.for-startpage'));
@@ -719,7 +722,7 @@ seesu_ui.prototype = {
 		var _ui = this;
 		if (!_ui.link && su.gena.playlists.length > 0 && _ui.els.start_screen){
 			$('<p></p>').attr('id', 'cus-playlist-b').append(
-				_ui.link = $('<a></a>').text('Playlists').attr('class', 'js-serv').click(function(){
+				_ui.link = $('<a></a>').text(localize('playlists')).attr('class', 'js-serv').click(function(){
 					_ui.search('');
 					_ui.search(':playlists');
 					return false;
