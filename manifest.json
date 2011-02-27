@@ -18,6 +18,7 @@
 	"http://*.last.fm/*",
 	"http://*.audioscrobbler.com/*",
 	"http://api.soundcloud.com/*",
-	"http://*.seesu.me/*"
+	"http://*.seesu.me/*",
+	"http://127.0.0.1/*"
   ]
 }

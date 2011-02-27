@@ -192,7 +192,7 @@ var show_artists_results = function(r, start, end){
 		if (seesu.ui.buttons_li.inject_before_buttons){
 			seesu.ui.buttons_li.search_artists.remove();
 		}
-		$("<li><a class='nothing-found'>Nothing found</a></li>").appendTo(ul);
+		$("<li><a class='nothing-found'>" + localize('nothing-found','Nothing found') + "</a></li>").appendTo(ul);
 
 	}
 }
@@ -226,22 +226,25 @@ var track_search = su.fs.track_search = function(track_query, start){
 }
 
 var rend_vk_suggets = function(pl, ui){
-	var k = $();
-	for (var i=0, l = (pl.length < 3 && pl.length) || 3; i < l; i++) {
-		k = k.add(
-			$('<span class="vk-track-suggest"></span>')
-				.text(pl[i].artist + ' - ' + pl[i].track)
-				.css({
-					display:'block',
-					'font-size': '10px',
-					border:0
-				})
+	if (pl && pl.length){
+			var k = $();
+		for (var i=0, l = (pl.length < 3 && pl.length) || 3; i < l; i++) {
+			k = k.add(
+				$('<span class="vk-track-suggest"></span>')
+					.text(pl[i].artist + ' - ' + pl[i].track)
+					.css({
+						display:'block',
+						'font-size': '10px',
+						border:0
+					})
+			
+			);
+			
+		};
 		
-		);
-		
-	};
-	
-	ui.vk_tracks.button.prepend(k);
+		ui.vk_tracks.button.prepend(k);
+	}
+
 }
 var vk_tracks_search = $.debounce(function(query, ui){
 
@@ -337,7 +340,7 @@ var show_tags_results = function(r, start, end){
 		if(seesu.ui.buttons_li.inject_before_buttons){
 			seesu.ui.buttons_li.search_tags.remove();
 		}
-		$("<li><a class='nothing-found'>Nothing found</a></li>").appendTo(seesu.ui.tags_results_ul);
+		$("<li><a class='nothing-found'>" + localize('nothing-found','Nothing found') + "</a></li>").appendTo(seesu.ui.tags_results_ul);
 
 	}
 }
@@ -407,7 +410,7 @@ var show_tracks_results = function(r, start, end){
 			seesu.ui.buttons_li.search_tracks.remove()
 		}
 		
-		$("<li><a class='nothing-found'>Nothing found</a></li>").appendTo(seesu.ui.tracks_results_ul);
+		$("<li><a class='nothing-found'>" + localize('nothing-found','Nothing found') + "</a></li>").appendTo(seesu.ui.tracks_results_ul);
 	}
 }
 
@@ -457,10 +460,10 @@ var fast_suggestion = function(r, source_query, ui){
 			
 			seesu.ui.buttons_li.search_artists.before(li);
 		};
-		var li = $('<li></li>',seesu.ui.d);
-		li.append(ui.arts.button.find('span').text('find more «' + source_query + '» artists').end()).appendTo(ul_arts);
+		var li = $('<li></li>',seesu.ui.d); 
+		li.append(ui.arts.button.find('span').text(localize('fine-more', 'find more') + ' «' + source_query + '» ' + localize('artists', 'artists')).end()).appendTo(ul_arts);
 	} else{
-		$('<li></li>',seesu.ui.d).append(ui.arts.button.find('span').text('Search «' +source_query + '» in artists').end().addClass("search-button")).appendTo(ul_arts);
+		$('<li></li>',seesu.ui.d).append(ui.arts.button.find('span').text(localize('to-search', 'Search ') + '«' +source_query + '» ' + localize('in-artists','in artists')).end().addClass("search-button")).appendTo(ul_arts);
 	}
 	if (!fast_enter) {fast_enter = ui.arts.button;}
 	
@@ -484,9 +487,9 @@ var fast_suggestion = function(r, source_query, ui){
 			li.append(a);
 			seesu.ui.buttons_li.search_tracks.before(li);
 		};
-		$('<li></li>',seesu.ui.d).append(ui.track.button.find('span').text('find more «' + source_query + '» tracks').end()).appendTo(ul_tracks);
+		$('<li></li>',seesu.ui.d).append(ui.track.button.find('span').text(localize('fine-more', 'find more') + ' «' + source_query + '» '+ localize('tracks', 'tracks')).end()).appendTo(ul_tracks);
 	} else{
-		$('<li></li>',seesu.ui.d).append(ui.track.button.find('span').text('Search «' +source_query + '» in tracks').end().addClass("search-button")).appendTo(ul_tracks);
+		$('<li></li>',seesu.ui.d).append(ui.track.button.find('span').text(localize('to-search', 'Search ') + '«' +source_query + '» ' +localize('in-tracks','in tracks')).end().addClass("search-button")).appendTo(ul_tracks);
 	}
 	if (!fast_enter) {fast_enter = ui.track.button;}
 	
@@ -505,9 +508,9 @@ var fast_suggestion = function(r, source_query, ui){
 			li.append(a);
 			seesu.ui.buttons_li.search_tags.before(li);
 		};
-		$('<li></li>',seesu.ui.d).append(ui.tag.button.find('span').text('find more «' + source_query + '» tags').end()).appendTo(ul_tags);
+		$('<li></li>',seesu.ui.d).append(ui.tag.button.find('span').text(localize('fine-more', 'find more') + ' «' + source_query + '» '+ localize('tags', 'tags')).end()).appendTo(ul_tags);
 	} else{
-		$('<li></li>',seesu.ui.d).append(ui.tag.button.find('span').text('Search «' +source_query + '» in tags').end().addClass("search-button")).appendTo(ul_tags);
+		$('<li></li>',seesu.ui.d).append(ui.tag.button.find('span').text(localize('to-search', 'Search ') + '«' +source_query + '» ' +localize('in-tags' , 'in tags')).end().addClass("search-button")).appendTo(ul_tags);
 	}
 	if (!fast_enter) {fast_enter = ui.tag.button;}
 	
@@ -538,7 +541,6 @@ var get_fast_suggests = $.debounce(function(q, callback, hash){
 		if (callback){callback(r);}
 	  }	,
 	  complete: function(xhr){
-	  	console.log(xhr);
 	  	su.ui.els.search_label.removeClass('loading');
 	  }
 	});
@@ -570,7 +572,7 @@ var suggestions_search =  seesu.env.cross_domain_allowed ? function(q, ui){
 		
 		seesu.xhrs.multiply_suggestions.push(lfm('artist.search',{artist: q, limit: 15 },function(r){
 			show_artists_results(r, false, 5);
-			ui.arts.button.find('span').text('find more «' + q + '» artists');
+			ui.arts.button.find('span').text(localize('fine-more', 'find more') + ' «' + q + '» '+ localize('artists', 'artists'));
 			ui.arts.label.removeClass('loading');
 		},function(){
 			ui.arts.label.removeClass('loading');
@@ -578,7 +580,7 @@ var suggestions_search =  seesu.env.cross_domain_allowed ? function(q, ui){
 		
 		seesu.xhrs.multiply_suggestions.push(lfm('track.search',{track: q, limit: 15 },function(r){
 			show_tracks_results(r, false, 5);
-			ui.track.button.find('span').text('find more «' + q + '» tracks');
+			ui.track.button.find('span').text(localize('fine-more', 'find more') + ' «' + q + '» ' + localize('tracks','tracks'));
 			ui.track.label.removeClass('loading');
 		},function(){
 			ui.track.label.removeClass('loading');
@@ -586,7 +588,7 @@ var suggestions_search =  seesu.env.cross_domain_allowed ? function(q, ui){
 		
 		seesu.xhrs.multiply_suggestions.push(lfm('tag.search',{tag: q, limit: 15 },function(r){
 			show_tags_results(r, false, 5);
-			ui.tag.button.find('span').text('find more «' + q + '» tags');
+			ui.tag.button.find('span').text(localize('fine-more', 'find more') + ' «' + q + '» ' + localize('tags','tags'));
 			ui.tag.label.removeClass('loading');
 		},function(){
 			ui.tag.label.removeClass('loading');
@@ -629,7 +631,7 @@ var suggestions_prerender = function(input_value, crossdomain){
 	}
 	
 	if (':playlists'.match(new RegExp('\^' + input_value , 'i'))){
-		results_container.append('<h4>Playlists</h4>');
+		results_container.append('<h4>'+ localize('playlists') +'</h4>');
 		var pl_r = $('<ul class="playlist-results"></ul>');
 		
 		var playlists = seesu.gena.playlists;
@@ -658,7 +660,7 @@ var suggestions_prerender = function(input_value, crossdomain){
 
 		};
 		if (matches.length){
-			results_container.append('<h4>Playlists</h4>');
+			results_container.append('<h4>'+localize('playlists')+'</h4>');
 			var pl_r = $('<ul class="playlist-results"></ul>');
 			
 			
@@ -677,31 +679,31 @@ var suggestions_prerender = function(input_value, crossdomain){
 
 
 
-		seesu.ui.results_label_arts = $('<h4>Artists</h4>').appendTo(results_container);
+		seesu.ui.results_label_arts = $('<h4>'+ localize('Artists','Artists') +'</h4>').appendTo(results_container);
 		var arts_clone = seesu.ui.buttons.search_artists.clone(true)
 			.data('finishing_results', multy ? 5 : 0)
 			.addClass("search-button")
-			.find('span').text('Search «' +source_query + '» in artists').end();
+			.find('span').text(localize('to-search', 'Search ') + '«' +source_query + '» ' + localize('in-artists','in artists')).end();
 		var ul_arts = seesu.ui.arts_results_ul = $("<ul id='artist-results-ul'></ul>").attr({ 'class': 'results-artists'});
 		seesu.ui.buttons_li.search_artists = $('<li></li>',seesu.ui.d).append(arts_clone).appendTo(ul_arts);
 		results_container.append(ul_arts);
 		
 		
-		seesu.ui.results_label_tracks = $('<h4>Tracks</h4>').appendTo(results_container);
+		seesu.ui.results_label_tracks = $('<h4>'+ localize('Tracks','Tracks') +'</h4>').appendTo(results_container);
 		var track_clone = seesu.ui.buttons.search_tracks.clone(true)
 			.data('finishing_results', multy ? 5 : 0)
 			.addClass("search-button")
-			.find('span').text('Search «' +source_query + '» in tracks').end();
+			.find('span').text(localize('to-search', 'Search ') + '«' +source_query + '» ' +localize('in-tracks','in tracks')).end();
 		var ul_tracks = seesu.ui.tracks_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists'});
 		seesu.ui.buttons_li.search_tracks = $('<li></li>',seesu.ui.d).append(track_clone).appendTo(ul_tracks);
 		results_container.append(ul_tracks);
 		
 	
-		seesu.ui.results_label_tags = $('<h4>Tags</h4>').appendTo(results_container);
+		seesu.ui.results_label_tags = $('<h4>'+localize('Tags')+'</h4>').appendTo(results_container);
 		var tags_clone = seesu.ui.buttons.search_tags.clone(true)
 			.data('finishing_results', multy ? 5 : 0)
 			.addClass("search-button")
-			.find('span').text('Search «' +source_query + '» in tags').end();
+			.find('span').text(localize('to-search', 'Search ') + '«' +source_query + '» ' +localize('in-tags', 'in tags')).end();
 		var ul_tags = seesu.ui.tags_results_ul = $("<ul></ul>").attr({ 'class': 'results-artists recommend-tags'});
 		seesu.ui.buttons_li.search_tags = $('<li></li>',seesu.ui.d).append(tags_clone).appendTo(ul_tags);
 		results_container.append(ul_tags);
@@ -742,11 +744,9 @@ var input_change = function(e){
 	var input = (e && e.target) || e; //e can be EVENT or INPUT  
 	var input_value = input.value;
 	if ($(input).data('lastvalue') == input_value){
-		console.log('nothing:' + input_value);
 		return false
 	} else{
-		$(input).data('lastvalue', input_value)
-		console.log('saved to input cache:' + input_value);
+		$(input).data('lastvalue', input_value);
 	}
 	if (!input_value) {
 		seesu.ui.views.show_start_page();

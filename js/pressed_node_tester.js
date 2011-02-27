@@ -94,7 +94,7 @@ var test_pressed_node = function(e, mouseup){
 		  	seesu.track_event('Navigation', 'hint artist');
 		  	return false;
 		  }
-		}  else if ((node.nodeName == 'INPUT')) {
+		}  else if ((node.nodeName == 'INPUT' || node.nodeName == 'BUTTON')) {
 			if (class_name.match(/tb-mess-wrap-close/)){
 				clicked_node.parents('li').removeClass('tb-window');
 			}
