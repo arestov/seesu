@@ -308,8 +308,9 @@ window.try_hard_vk_working = function(callback){
 	  }
 
 	});
-}
-window.try_api = function(){
+};
+
+window.try_api = function(callback, do_not_repeat){
 	var try_saved_auth = function(){
 		var vk_session_stored = w_storage('vk_session'+1915003);
 		if (vk_session_stored){
@@ -331,6 +332,7 @@ window.try_api = function(){
 			mid:  _u.viewer_id,
 			
 		}, false, _u.api_id, false, false, function(){
+			if (callback){callback();}
 			if (_u.api_settings & 8){
 				seesu.delayed_search.switch_to_vk_api();
 				dstates.remove_state('body','vk-needs-login');
@@ -373,18 +375,34 @@ window.try_api = function(){
 		
 		
 	} else{
-		var remove_iframe = function(e){
-			setTimeout(function(){
-				$(e.target).remove();
-				console.log('removed!');
-			},5000)
+		if (!do_not_repeat){
+			var sm = $('#slider-materail');
+			var remove_iframe_ru = function(e){
+				setTimeout(function(){
+					$(e.target).remove();
+					console.log('removed ru!');
+				},5000)
+				
+				
+				var remove_iframe_com = function(e){
+					setTimeout(function(){
+						$(e.target).remove();
+						console.log('removed ru!');
+					},5000)
+				
+				}
+				
+				var tvk_com = $('<iframe id="test_vk_auth_com" class="serv-container" src="http://vk.com/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
+				.bind('load',remove_iframe_com);
+				sm.append(tvk_com);
+			}
+			
+			var tvk_ru =  $('<iframe id="test_vk_auth_ru" class="serv-container" src="http://vkontakte.ru/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
+				.bind('load',remove_iframe_ru);
+			
+			sm.append(tvk_ru)
 		}
 		
-		var tvk_ru =  $('<iframe id="test_vk_auth_ru" class="serv-container" src="http://vkontakte.ru/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
-			.bind('load',remove_iframe);
-		var tvk_com = $('<iframe id="test_vk_auth_com" class="serv-container" src="http://vk.com/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
-			.bind('load',remove_iframe);
-		$('#slider-materail').append(tvk_ru).append(tvk_com);
 		
 		
 		
@@ -400,7 +418,18 @@ try_mp3_providers = function(){
 		try_hapi();
 	} else{
 		console.log('heyayy!')
-		addEvent(window, "message", listen_vk_api_callback_window);
+		addEvent(window, "message", function(e){
+			if (e.origin == "http://seesu.me") {
+				if (e.data.match(/^set_vk_auth\n/)){
+					set_vk_auth(e.data.replace(/^set_vk_auth\n/, ''), true);
+					seesu.track_event('Auth to vk', 'auth', 'from iframe post message');
+				} else if (e.data == 'vkapi_auth_callback_ready'){
+					e.source.postMessage('get_vk_auth', 'http://seesu.me');
+				}
+			} else {
+				return false;
+			}
+		});
 		try_api();
 
 	}

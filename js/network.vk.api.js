@@ -69,7 +69,7 @@ vk_api.prototype = {
 					if (callback) {callback(r, {used_api: api.api_id});}
 				} else{
 					if (r.error.error_code < 6){
-						if (_this.fallback){ _this.fallback(false, true);}
+						if (_this.fallback){ _this.fallback();}
 						
 					} else{
 						if (callback) {callback(r, {used_api: api.api_id});}
