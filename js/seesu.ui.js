@@ -423,14 +423,14 @@ seesu_ui.prototype = {
 	},
 	update_track_info: function(a_info, node){
 		var ti = a_info.find('.track-info').empty();
-		var mo = node.data('mo_pla');
-		if (mo.from && mo.from == 'soundcloud'){
-			if (mo.page_link){
+		var mo = node.data('mo');
+		if (mo.mopla.from && mo.mopla.from == 'soundcloud'){
+			if (mo.mopla.page_link){
 				var sc_link = $('<a></a>')
 					.attr('href', mo.page_link)
 					.text('page of this track')
 					.click(function(){
-						open_url(mo.page_link);
+						open_url(mo.mopla.page_link);
 						seesu.track_event('Links', 'soundcloud track');
 						return false;
 					});
@@ -630,17 +630,17 @@ seesu_ui.prototype = {
 		}
 	},
 	make_pl_element_playable: function(mo){
-		mo.mo_pla.node = mo.node;
+	
 		mo.node
 			.find('a.song-duration').remove().end()
 			.addClass('song')
 			.removeClass('search-mp3-failed')
 			.removeClass('waiting-full-render')
-			.data('mo_pla', mo.mo_pla)
+			.data('mo', mo)
 			.unbind()
 			.click(function(){
 				seesu.ui.views.save_view(mo.plst_titl);
-				seesu.player.song_click(mo.mo_pla);
+				seesu.player.song_click(mo);
 			});
 		
 		if (mo.mo_pla.from != 'legal_vk_api'){

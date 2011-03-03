@@ -9,6 +9,10 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 	if (only_cache){
 		return false;
 	}
+	
+	var search_source = {name: 'soundcloud', key: 0};
+	
+	
 	return seesu.soundcloud_queue.add(function(){
 		seesu.track_event('mp3 search', 'soundcloud search');
 		$.ajax({
@@ -23,7 +27,7 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 				q: query
 			},
 			error:function(xhr){
-				if  (error) {error(xhr);}
+				if  (error) {error(search_source);}
 				
 			},
 			
@@ -75,10 +79,10 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 				if (music_list){
 					cache_ajax.set('soundcloud', query, music_list);
 					if (callback ){
-						callback(music_list);
+						callback(music_list, search_source);
 					}
 				} else {
-					if  (error) {error(xhr);}
+					if  (error) {error(search_source);}
 				}
 				
 			}

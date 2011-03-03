@@ -1,3 +1,91 @@
+var searches_pr = {
+	vk: 0,
+	soundcloud: -5
+};
+
+cmo = {
+	addSteamPart: function(mo, search_source, t ){
+		var _ms = this.getMusicStore(mo, search_source);
+		_ms.t = t;
+	},
+	blockSteamPart: function(mo, search_source){
+		var _ms = this.getMusicStore(mo, search_source);
+		_ms.failed = true;
+		if (search_source.fixable){
+			_ms.fixable = true;
+		}
+		
+	},
+	getSomeTracks: function(steam){
+		var many_tracks = [];
+		for(var source in steam){
+			if (!steam[source].failed && steam[source].t){
+				many_tracks.push.apply(many_tracks, steam[source].t);
+			}
+		}
+		return (many_tracks.length && many_tracks) || false;
+	},
+	by_best_search_index: function(g,f){
+		if (g && f) {
+			var gg = searches_pr[g.name];
+			var ff = searches_pr[f.name];
+			if (typeof gg =='undefined'){
+				gg = -1000;
+			}
+			if (typeof ff =='undefined'){
+				ff = -1000;
+			}
+			
+			
+			if (gg < ff){
+				return 1;
+			}
+			else if (gg > ff){
+				return -1;
+			}
+			else{
+				return 0;
+			}
+		} else {
+			return 0;
+		}
+	},
+	getAllSongTracks: function(mo){
+
+		var tracks_pack = [];
+		for(var steam in mo.steams){
+			var m = this.getSomeTracks(mo.steams[steam]);
+			if (m){
+				tracks_pack.push({
+					name: steam,
+					t: m
+				})
+			}
+		}
+		tracks_pack.sort(this.by_best_search_index);
+		return (tracks_pack.length && tracks_pack) || false;
+	},
+	getMusicStore: function(mo, search_source){
+		
+		var ss = {
+			name: (search_source && search_source.name) || 'sample',
+			key: (search_source && search_source.key) || 0
+		};
+		
+		if (!mo.steams){
+			mo.steams = {};
+		}
+		if (!mo.steams[ss.name]){
+			mo.steams[ss.name] = {};
+		}
+		if (!mo.steams[ss.name][ss.key]){
+			mo.steams[ss.name][ss.key] = {};
+		}
+		return mo.steams[ss.name][ss.key];
+	}
+	
+}
+
 var get_youtube = function(q, callback){
 	var cache_used = cache_ajax.get('youtube', q, callback);
 	if (!cache_used){
@@ -32,27 +120,72 @@ var get_all_tracks = function(trackname, callback, nocache, hypnotoad, only_cach
 	}
 	return used_successful;
 }
-
-var get_track = function(mo, nocache, hypnotoad, only_cache, get_next){
-	var allow_h = hypnotoad && seesu.delayed_search.waiting_for_mp3provider;
-	if(mo.ready_for_play){
+function canUseSearch(mo, search_source){
+	if (!mo.steams){
+		return true;
+	}
+	if (!mo.steams[search_source.name]){
+		return true;
+	}
+	
+	var my_steam = mo.steams[search_source.key];
+	if (my_steam){
+		if (my_steam.failed){
+			if (my_steam.fixable){
+				return true;
+			} else{
+				return false;
+			}
+		} else if (my_steam.t){
+			return false; 
+		} else{
+			return true;
+		}
+		
+	}
+		
+	var fixable = true;
+	var getted = false;
+	for (var steam in mo.steams) {
+		if (mo.steams[steam].t){
+			getted = true;
+		}
+		if (mo.steams[steam].failed && !mo.steams[steam].fixable){
+			fixable = false;
+		}
+		
+	};
+	if (!getted && fixable){
+		return true;
+	} else{
 		return false;
 	}
+};
+var get_track = function(mo, nocache, hypnotoad, only_cache, get_next){
+	var allow_h = hypnotoad && seesu.delayed_search.waiting_for_mp3provider;
+	
 	
 	if (!nocache && !only_cache && !hypnotoad){
 		seesu.ui.els.art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
 	}
 	var s = allow_h ? seesu.hypnotoad.search_soundcloud : seesu.delayed_search.use.search_tracks;
 	var last_hypnotoad_try = false;
-	var callback_success = function(music_list){
+	var callback_success = function(music_list, search_source){
 		//success
-		if (mo.ready_for_play){
-			return false
-		}
 		
 		mo.node.removeClass('search-mp3');
-		var best_track = get_best_track(music_list,mo.artist,mo.track);
-		make_node_playable(mo, best_track);
+		
+		
+		var query = {
+			artist: HTMLDecode(mo.artist),
+			track: HTMLDecode(mo.track)
+		}
+		music_list.sort(function(g,f){
+			return by_best_matching_index(g,f, query)
+		});
+		
+		make_node_playable(mo, music_list, search_source);
+		
 		seesu.ui.els.export_playlist.addClass('can-be-used');
 		if (!nocache && !only_cache && !hypnotoad){
 			seesu.ui.els.art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
@@ -60,11 +193,9 @@ var get_track = function(mo, nocache, hypnotoad, only_cache, get_next){
 		
 	}
 	
-	var callback_error = function(xhr){
+	var callback_error = function(search_source){
 		//error
-		if(mo.ready_for_play){
-			return false;
-		}
+		
 		if (!mo.not_use){
 
 			
@@ -85,12 +216,12 @@ var get_track = function(mo, nocache, hypnotoad, only_cache, get_next){
 			} else{
 				if (get_next){
 					mo.not_use=true;
-					if ((seesu.player.current_next_song && (mo == seesu.player.current_next_song)) || 
-						(seesu.player.current_prev_song && (mo == seesu.player.current_prev_song))){
+					if (seesu.player.c_song && ((seesu.player.c_song.next_song && (mo == seesu.player.c_song.next_song)) || 
+						(seesu.player.c_song.prev_song && (mo == seesu.player.c_song.prev_song)))){
 						seesu.player.fix_songs_ui();
 					}
-					if (seesu.player.current_next_song && !seesu.player.current_next_song.ready_for_play){
-						get_next_track_with_priority(seesu.player.current_next_song);
+					if (seesu.player.c_song && seesu.player.c_song.next_song && !seesu.player.c_song.next_song.ready_for_play){
+						get_next_track_with_priority(seesu.player.c_song.next_song);
 					}
 				}
 				
@@ -111,9 +242,7 @@ var get_track = function(mo, nocache, hypnotoad, only_cache, get_next){
 		mo.artist + ' - ' + mo.track, callback_success, callback_error, 
 		nocache,
 		function(){
-			if(mo.ready_for_play){
-				return false;
-			}
+			
 			mo.node.addClass('search-mp3');
 		},
 		only_cache
@@ -130,59 +259,77 @@ var get_track = function(mo, nocache, hypnotoad, only_cache, get_next){
 	return used_successful;
 }
 
-
-var reg_exp_string_fix;
-var get_best_track = function(array,artist,track){
-	var best = array[0],
-	worst_pr = -7; //six steps search
+function getSongMatchingIndex(song, query){
+	var _ar = song.artist,
+		_tr = song.track;
+		
+	var artist = query.artist,
+		track = query.track;
+		
+	var mi = 0;
 	
-	for (var i=0,l=array.length; i < l; i++) {
-		var _ar = HTMLDecode(array[i].artist),
-			_tr = HTMLDecode(array[i].track);
-		artist = HTMLDecode(artist)
-		track = HTMLDecode(track)
-		var epic_fail;
+	
+	var epic_fail_test = artist + ' ' + track,
+		epic_fail = !~epic_fail_test.indexOf(artist.replace(/^The /, '')) && !~epic_fail_test.indexOf(track);
+	
+	if (epic_fail){
+		return mi = -1000;
+	} else{
+		if ((_ar == artist) && (_tr == track)){
+			return mi;
+		} 
+		--mi;
+		if ((_ar.toLowerCase() == artist.toLowerCase()) && (_tr.toLowerCase() == track.toLowerCase())){
+			return mi;
+		} 
+		--mi;
+		if ((_ar.replace(/^The /, '') == artist.replace(/^The /, '')) && (_tr == track)){
+			return mi;
+		} 
+		--mi;
+		if ((_ar.replace(/^The /, '') == artist.replace(/^The /, '')) && (_tr.replace(/.mp3$/, '') == track)){
+			return mi;
+		} 
+		--mi;
+		if ((_ar.toLowerCase() == artist.replace(/^The /).toLowerCase()) && (_tr.toLowerCase() == track.toLowerCase())){
+			return mi;
+		} 
+		--mi;
+		if (~_ar.indexOf(artist) && ~_tr.indexOf(track)) {
+			return mi;
+		} 
+		--mi;
+		if (~_ar.toLowerCase().indexOf(artist.toLowerCase()) && ~_tr.toLowerCase().indexOf(track.toLowerCase())) {
+			return mi;
+		} 
 		
-		var for_first_test = artist + ' ' + track;
-		epic_fail = !~for_first_test.indexOf(artist) && !~for_first_test.indexOf(track);
+		--mi 
+		return mi;
 		
-		if (!epic_fail){
-			if ((_ar == artist) && (_tr == track)){
-				return array[i];
-			} else
-			if ((_ar.toLowerCase() == artist.toLowerCase()) && (_tr.toLowerCase() == track.toLowerCase())){
-				best = array[i];
-				worst_pr = -1;
-			} else
-			if ( (worst_pr < -2) && (_ar.replace(/The /g, '') == artist.replace(/The /g, '')) && (_tr == track)){
-				best = array[i];
-				worst_pr = -2;
-			} else
-			if ( (worst_pr < -3) && (_ar.replace(/The /g, '') == artist.replace(/The /g, '')) && (_tr.replace(/.mp3/g, '') == track)){
-				best = array[i];
-				worst_pr = -3;
-			} else
-			if ( (worst_pr < -4) && (_ar.toLowerCase() == artist.replace("The ").toLowerCase()) && (_tr.toLowerCase() == track.toLowerCase())){
-				best = array[i];
-				worst_pr = -4;
-			} else 
-			if ( (worst_pr < -5) && ~_ar.indexOf(artist) && ~_tr.indexOf(track)) {
-				best = array[i];
-				worst_pr = -5;
-			} else
-			if ( (worst_pr < -6) && ~_ar.toLowerCase().indexOf(artist.toLowerCase()) && ~_tr.toLowerCase().indexOf(track.toLowerCase())) {
-				best = array[i];
-				worst_pr = -6;
-			} else {
-				best = array[i];
-				worst_pr = -7;
-			}
+	}
+	
+		
+	
+};
+var reg_exp_string_fix;
+
+
+function by_best_matching_index(g,f, query){
+	if (g && f) {
+		if (getSongMatchingIndex(g,query) < getSongMatchingIndex(f, query)){
+			return 1;
 		}
-		
-		
-	};
-	return best;
+		else if (getSongMatchingIndex(g, query) > getSongMatchingIndex(f, query)){
+			return -1;
+		}
+		else{
+			return 0;
+		}
+	} else {
+		return 0;
+	}
 }
+
 var kill_music_dubs = function(array) {
 	var cleared_array = [];
 	for (var i=0; i < array.length; i++) {
@@ -192,11 +339,12 @@ var kill_music_dubs = function(array) {
 	}
 	return cleared_array
 }
-var has_music_copy = function(array, entity, from_position){
+function has_music_copy(array, entity, from_position){
+	var ess = /(^\s*)|(\s*$)/g;
 	if (!array.length) {return false}
 	
 	for (var i = from_position || 0, l = array.length; i < l; i++) {
-		if ((array[i].artist == entity.artist) && (array[i].track == entity.track) && (array[i].duration == entity.duration)) {
+		if ((array[i].artist.replace(ess, '') == entity.artist.replace(ess, '')) && (array[i].track.replace(ess, '') == entity.track.replace(ess, '')) && (array[i].duration == entity.duration)) {
 			return true;
 		}
 	};
