@@ -110,19 +110,19 @@ a.download-mp3:hover{
 	
 }
 	.player-played
-	.active-play
+	.playing-song
 	a.song{
 		
 		
 		color: #fff;
 	}
 	.player-paused
-	.active-play
+	.playing-song
 	a.song{
 		outline:1px dashed #647142;
 	}
 	.player-stopped
-	.active-play
+	.playing-song
 	a.song{
 		outline:1px solid #647142;
 	}

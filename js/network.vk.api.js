@@ -33,26 +33,28 @@ function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
 	}
 	this.fallback_counter = 0;
 	
-	var search_source = {
+	this.search_source = {
 		name: 'vk',
 		key: this.allow_random_api ? 'rambler' : 'nice'
-	}
+	};
 	
 	var test_audio = function(mo){
-		return canUseSearch(mo, search_source);
-	}
+		return canUseSearch(mo, _this.search_source);
+	};
 	
 	var search_audio = function(){
 		return _this.audio_search.apply(_this, arguments);
-	}
+	};
 	this.asearch = {
 		test: test_audio,
 		search: search_audio,
-		name: search_source.name,
+		name: this.search_source.name,
+		description: 'vkontakte.ru',
 		slave: this.allow_random_api ? true: false,
 		preferred: null,
+		s: this.search_source,
 		q: queue
-	}
+	};
 	
 };
 
@@ -132,7 +134,7 @@ vk_api.prototype = {
 			
 			if (typeof cache_ajax == 'object' && api.use_cache && !p.nocache){
 				var cache_used = cache_ajax.get('vk_api', p.cache_key, function(r){
-					callback(r, {used_api: api.api_id});
+					callback(r, legal_api);
 				});
 				if (cache_used) {
 					return true;
@@ -146,7 +148,7 @@ vk_api.prototype = {
 			var request = function(){
 				if (typeof cache_ajax == 'object' && api.use_cache && !p.nocache){
 					var cache_used = cache_ajax.get('vk_api', p.cache_key, function(r){
-						callback(r, {used_api: api.api_id});
+						callback(r, legal_api);
 					});
 					if (cache_used) {
 						return true;
@@ -206,11 +208,6 @@ vk_api.prototype = {
 			
 		var used_successful = this.use('audio.search', params_u, 
 		function(r, legal_api){
-			var search_source = {name: 'vk', key: legal_api ? 'nice': 'rambler'};
-				
-				
-				
-			var legal_api = legal_api;
 			if (r.response && (r.response.length > 1 )) {
 				var music_list = [];
 				for (var i=1, l = r.response.length; i < l; i++) {
@@ -229,17 +226,16 @@ vk_api.prototype = {
 				
 				}
 				if (music_list && music_list.length){
-					if (callback) {callback(music_list, search_source);}
+					if (callback) {callback(music_list, _this.search_source);}
 				} else{
-					if (error) {error(search_source);}
+					if (error) {error(_this.search_source);}
 				}
 			
 			} else{
-				if (error) {error(search_source);}
+				if (error) {error(_this.search_source);}
 			}
 		}, function(xhr, legal_api){
-			var search_source = {name: 'vk', key: legal_api ? 'nice': 'rambler'};
-			if (error){error(search_source);}
+			if (error){error(_this.search_source);}
 		}, {
 			nocache: nocache, 
 			after_ajax: after_ajax, 

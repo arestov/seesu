@@ -113,7 +113,6 @@ su.gena.playlists = (function(){
 			var recd_pl = prepare_playlist(pls[i].playlist_title, pls[i].playlist_type);
 			recd_pl.push = function(){
 				Array.prototype.push.apply(this, arguments);
-				console.log('bbbbb');
 				su.gena.save_playlists();
 			}
 			extent_array_by_object(recd_pl, pls[i]);
@@ -323,13 +322,48 @@ seesu.player = {
 				this.musicbox.play_song_by_url(_mopla.link);
 				mo.mopla = _mopla;
 			}
+			if (last_mo){
+				last_mo.node.parent().removeClass('playing-song');
+			}
 			this.c_song = mo;
+			mo.node.parent().addClass('playing-song')
 		}
-		this.update_songs_ui(mo, zoom, false, last_mo);
+		if (su.ui.now_playing.link){
+			var artist = mo.artist;
+			su.ui.now_playing.link.siblings('span').remove();
+			su.ui.now_playing.link.after($('<span></span>').text(": " + 
+				( su.ui.d.title = artist + " - " + mo.track)
+			));
+		};
+		this.view_song(mo, zoom, false);
 		
 		
 	},
-	update_songs_ui: function (mo, zoom, force, last_mo) {
+	update_song_context: function(mo, not_deep){
+		var node = mo.node;
+		var artist = mo.artist;
+		
+		var a_info = node.data('t_context').children('.artist-info');
+		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
+		if (!not_deep){
+			su.ui.update_track_info(a_info, node);
+		}
+		
+		var tv = a_info.data('track-video');
+		if (!tv){
+			 tv = a_info.children('.track-video');
+			 a_info.data('track-video', tv)
+		}
+		su.ui.show_video_info(tv, artist + " - " + mo.track);
+		this.fix_progress_bar(node, mo);
+		
+		if (su.lfm_api.scrobbling) {
+			su.ui.lfm_enable_scrobbling(node.data('t_context').children('.track-panel').children('.track-buttons'));
+		}
+	},
+	view_song: function (mo, zoom, force, not_deep) {
+	  var last_mo = this.v_song;
+	  
 	  var node = mo.node;
 	  var artist = mo.artist;
 	  su.ui.views.show_track_page(($(su.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.track, zoom);
@@ -341,40 +375,13 @@ seesu.player = {
 	  } else {
 		su.ui.remove_video();
 		//time = (new Date()).getTime();
-		
-		var a_info = node.data('t_context').children('.artist-info');
-		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
-		su.ui.update_track_info(a_info, node);
-		var tv = a_info.data('track-video');
-		if (!tv){
-			 tv = a_info.children('.track-video');
-			 a_info.data('track-video', tv)
-		}
-		su.ui.show_video_info(tv, artist + " - " + mo.track);
-		
-		
-		if (su.lfm_api.scrobbling) {
-			su.ui.lfm_enable_scrobbling(node.data('t_context').children('.track-panel').children('.track-buttons'));
-		}
+		this.update_song_context(mo, not_deep);
 		if (last_mo) {
 			this.change_songs_ui(last_mo, true) //remove ative state
 		}
-		
-		
-		
-		
 		this.change_songs_ui(mo);
-		this.fix_progress_bar(node, mo);
-		
-		
-		if (su.ui.now_playing.link){
-			su.ui.now_playing.link.siblings('span').remove();
-			su.ui.now_playing.link.after($('<span></span>').text(": " + 
-				( su.ui.d.title = artist + " - " + mo.track)
-			));
-		}
-		
-		
+		this.v_song = mo;
+
 	  }
 	}
 }

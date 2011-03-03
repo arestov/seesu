@@ -633,15 +633,18 @@ seesu_ui.prototype = {
 	
 		mo.node
 			.find('a.song-duration').remove().end()
+			.find('a.download-mp3').remove().end()
 			.addClass('song')
 			.removeClass('search-mp3-failed')
 			.removeClass('waiting-full-render')
+			.removeClass('mp3-download-is-not-allowed')
 			.data('mo', mo)
 			.unbind()
 			.click(function(){
 				seesu.ui.views.save_view(mo.plst_titl);
 				seesu.player.song_click(mo);
 			});
+		
 		if (!not_rend){
 			var mopla = cmo.getAllSongTracks(mo);
 			if (mopla){
@@ -649,7 +652,7 @@ seesu_ui.prototype = {
 				
 				
 				if (mopla.from != 'legal_vk_api'){
-					var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  mopla.link });
+					var mp3 = $("<a class='download-mp3'></a>").text('mp3').attr({'href': mopla.link });
 					mp3.insertBefore(mo.node);
 				} else{
 					mo.node.addClass('mp3-download-is-not-allowed');
