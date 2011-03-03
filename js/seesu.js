@@ -226,7 +226,7 @@ su.mp3_search= (function(){
 		s.getCache = function(mo){
 				return false;
 		};
-		s.for = function(mo, options){
+		s.find_mp3 = function(mo, options){
 			var o = options || {};
 			var handlers = [];
 			
@@ -297,7 +297,7 @@ su.mp3_search= (function(){
 			
 			
 			if (exist_slave){
-				if (force || !exist_slave.preferred || !~su.this.indexOf(exist_slave.preferred)){
+				if (force || !exist_slave.preferred || !~this.indexOf(exist_slave.preferred)){
 					exist_slave.preferred.disabled = true;
 					this.push(asearch);
 					exist_slave.preferred = asearch;
@@ -611,7 +611,7 @@ var get_next_track_with_priority = function(mo){
 	for (var i=0; i < _din.length; i++) {
 		_din[i].pr = seesu.player.want_to_play || 1;
 	}
-	su.mp3_search.for(mo, {
+	su.mp3_search.find_mp3(mo, {
 		get_next: true
 	});
 }
@@ -629,7 +629,7 @@ var start_random_nice_track_search = function(mo, ob, mp3_prov_queue, not_search
 		var some_track = random_track_plable(track_list);
 		mo.node.removeClass('loading');
 		mo.node.text(some_track.artist + ' - ' + (mo.track = some_track.track));
-		su.mp3_search.for(mo, {
+		su.mp3_search.su.mp3_search.find_mp3(mo, {
 			only_cache: not_search_mp3
 		});
 		
@@ -669,7 +669,7 @@ var make_tracklist_playable = function(pl, full_allowing, reset){
 		if (!mo.track){
 			start_random_nice_track_search(mo, ob, mp3_prov_queue, !full_allowing);
 		}else{
-			su.mp3_search.for(mo, {
+			su.mp3_search.find_mp3(mo, {
 				only_cache: !full_allowing
 			});
 		}
@@ -739,7 +739,7 @@ var empty_song_click = function(){
 	seesu.player.wainter_for_play = mo;
 	seesu.ui.views.save_view(mo.plst_titl);
 	
-	su.mp3_search.for(mo);
+	su.mp3_search.find_mp3(mo);
 	seesu.track_event('Song click', 'empty song');
 	return false;	
 };
