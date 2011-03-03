@@ -1,4 +1,6 @@
-window.soundcloud_search = function(query, callback, error, nocache, after_ajax, only_cache){
+
+
+function soundcloud_search(query, callback, error, nocache, after_ajax, only_cache){
 	var sc_key = 'HNVCUV6apk9ANn8tLERpag';
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
@@ -90,6 +92,4 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 		})
 		if (after_ajax) {after_ajax();}
 	}, true);
-	
-	
 }

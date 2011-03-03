@@ -50,7 +50,8 @@ function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
 		search: search_audio,
 		name: search_source.name,
 		slave: this.allow_random_api ? true: false,
-		preferred: null
+		preferred: null,
+		q: queue
 	}
 	
 };

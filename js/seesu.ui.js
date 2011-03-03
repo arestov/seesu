@@ -427,7 +427,7 @@ seesu_ui.prototype = {
 		if (mo.mopla.from && mo.mopla.from == 'soundcloud'){
 			if (mo.mopla.page_link){
 				var sc_link = $('<a></a>')
-					.attr('href', mo.page_link)
+					.attr('href', mo.mopla.page_link)
 					.text('page of this track')
 					.click(function(){
 						open_url(mo.mopla.page_link);
@@ -629,7 +629,7 @@ seesu_ui.prototype = {
 			return true;
 		}
 	},
-	make_pl_element_playable: function(mo){
+	make_pl_element_playable: function(mo, not_rend){
 	
 		mo.node
 			.find('a.song-duration').remove().end()
@@ -642,19 +642,29 @@ seesu_ui.prototype = {
 				seesu.ui.views.save_view(mo.plst_titl);
 				seesu.player.song_click(mo);
 			});
-		
-		if (mo.mo_pla.from != 'legal_vk_api'){
-			var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  mo.mo_pla.link });
-			mp3.insertBefore(mo.node);
-		} else{
-			mo.node.addClass('mp3-download-is-not-allowed');
+		if (!not_rend){
+			var mopla = cmo.getAllSongTracks(mo);
+			if (mopla){
+				mopla = mopla[0].t[0];
+				
+				
+				if (mopla.from != 'legal_vk_api'){
+					var mp3 = $("<a></a>").text('mp3').attr({ 'class': 'download-mp3', 'href':  mopla.link });
+					mp3.insertBefore(mo.node);
+				} else{
+					mo.node.addClass('mp3-download-is-not-allowed');
+				}
+				
+				if (mopla.duration) {
+					var digits = mopla.duration % 60;
+					var track_dur = (Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+					mo.node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
+				}
+			}
 		}
 		
-		if (mo.mo_pla.duration) {
-			var digits = mo.mo_pla.duration % 60;
-			var track_dur = (Math.round(mo.mo_pla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-			mo.node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
-		}
+
+		
 	},
 	create_playlist_element: function(mo_titl){
 		var t_context = this.els.track_c.clone(true);
@@ -677,9 +687,9 @@ seesu_ui.prototype = {
 			track.text(mo_titl.artist);
 		}
 		if (mo_titl.link) {
-			make_node_playable(mo_titl, mo_titl);
+			make_node_playable(mo_titl, [mo_titl]);
 		} else if (mo_titl.mo_pla){
-			make_node_playable(mo_titl, mo_titl.mo_pla);
+			make_node_playable(mo_titl, [mo_titl.mo_pla]);
 		}
 		
 		
