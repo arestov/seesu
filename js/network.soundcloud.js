@@ -1,14 +1,21 @@
-window.soundcloud_search = function(query, callback, error, nocache, after_ajax, only_cache){
+
+
+function soundcloud_search(query, callback, error, nocache, after_ajax, only_cache){
+	var search_source = {name: 'soundcloud', key: 0};
 	var sc_key = 'HNVCUV6apk9ANn8tLERpag';
 	var use_cache = !nocache;
 	var hash = hex_md5(query);
 	if (use_cache){
-		var cache_used = cache_ajax.get('soundcloud', query, callback)
+		var cache_used = cache_ajax.get('soundcloud', query, function(r){callback(r,search_source);})
 		if (cache_used) {return true;}
 	}
 	if (only_cache){
 		return false;
 	}
+	
+	
+	
+	
 	return seesu.soundcloud_queue.add(function(){
 		seesu.track_event('mp3 search', 'soundcloud search');
 		$.ajax({
@@ -23,7 +30,7 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 				q: query
 			},
 			error:function(xhr){
-				if  (error) {error(xhr);}
+				if  (error) {error(search_source);}
 				
 			},
 			
@@ -75,10 +82,10 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 				if (music_list){
 					cache_ajax.set('soundcloud', query, music_list);
 					if (callback ){
-						callback(music_list);
+						callback(music_list, search_source);
 					}
 				} else {
-					if  (error) {error(xhr);}
+					if  (error) {error(search_source);}
 				}
 				
 			}
@@ -86,6 +93,4 @@ window.soundcloud_search = function(query, callback, error, nocache, after_ajax,
 		})
 		if (after_ajax) {after_ajax();}
 	}, true);
-	
-	
 }

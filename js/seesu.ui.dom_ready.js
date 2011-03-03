@@ -204,7 +204,7 @@ window.connect_dom_to_som = function(d, ui){
 				
 				ui.views.show_start_page(true, true, true);
 				su.ui.views.show_playlist_page(su.player.c_song.mo_titl.plst_titl);
-				su.player.set_current_song(su.player.c_song, true, true);
+				su.player.view_song(su.player.c_song, true, true);
 				su.ui.views.save_view(su.player.c_song.mo_titl.plst_titl,true);
 				su.ui.mark_c_node_as(su.player.player_state);
 				state_recovered = true;

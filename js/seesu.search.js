@@ -195,7 +195,7 @@ var show_artists_results = function(r, start, end){
 		$("<li><a class='nothing-found'>" + localize('nothing-found','Nothing found') + "</a></li>").appendTo(ul);
 
 	}
-}
+};
 var artist_search = su.fs.artist_search = function(artist_query, start) {
 	seesu.ui.results_label_arts.addClass('loading');
 	lfm('artist.search',{artist: artist_query, limit: 15 },function(r){
