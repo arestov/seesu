@@ -124,14 +124,14 @@ var get_mp3 = function(mo, options){
 	if (!o.nocache && !o.only_cache){
 		seesu.ui.els.art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
 	}
-	
+	var cant_waint_anymore;
 	var count_down = function(search_source, music_list, successed){
 		if (!o.nocache && !o.only_cache){
 			seesu.ui.els.art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		}
 		mo.node.removeClass('search-mp3');
 		if (mo.parallels !== 0 && --mo.parallels === 0){
-			
+			clearTimeout(cant_waint_anymore);
 			
 			mo.search_completed = true;
 			
@@ -161,7 +161,7 @@ var get_mp3 = function(mo, options){
 			} 
 		}
 	};
-	setTimeout(function(){
+	cant_waint_anymore = setTimeout(function(){
 		if (mo.parallels !== 0){
 			mo.parallels = 1;
 			count_down();
