@@ -20,14 +20,14 @@
 	.play-control{
 		display:inline-block;
 		cursor:pointer;
-		padding:1px 0 0 1px;
-		width:19px;
-		height:19px;
+		padding:0;
+		width:16px;
+		height:16px;
+		background: transparent no-repeat 0 0;
 		border:0  !important;
-		background-repeat:no-repeat;
 		}
 		.play-control:hover,.play-control.hover{
-			background-image:url(../i/buttons_hover.png)  !important;
+			background-image:url(../i/buttons_hover.png) ;
 			}
 		.play-control:active{
 			background-image:url(../i/buttons_active.png) !important;
@@ -35,7 +35,7 @@
 .player-paused .play-control.pause,
 .player-stopped .play-control.stop,
 .player-played .play-control.play{
-	background-image:url(../i/buttons_active.png);
+	background-image:url(../i/buttons_active.png) !important;
 }
 
 
