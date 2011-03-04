@@ -64,7 +64,6 @@ views.prototype = {
 				true
 			);
 		}
-		
 	},
 	show_playing: function(){
 		if (this.playing.search_results){
@@ -105,6 +104,7 @@ views.prototype = {
 	show_now_playing: function(){
 		var current_page = seesu.ui.els.slider.className;
 		this.restore_view();
+		su.player.view_song(su.player.c_song, true);
 		seesu.track_event('Navigation', 'now playing', current_page);
 	},
 	show_start_page: function(focus_to_input, log_navigation, init){
@@ -209,7 +209,10 @@ views.prototype = {
 		seesu.track_page('playlist', _sui.playlist_type);
 	},
 	show_track_page: function(title, zoom){
-		seesu.ui.els.nav_track_zoom.text(title);
+		if (title){
+			seesu.ui.els.nav_track_zoom.text(title);
+		}
+		
 		if (zoom){
 			$(seesu.ui.els.slider).addClass('show-zoom-to-track');
 			this.state = 'track';
@@ -608,16 +611,7 @@ seesu_ui.prototype = {
 			$(ul).append('<li>' + localize('nothing-found','Nothing found') + '</li>');
 		} else {
 			pl.ui = ui;
-			if (!su.ui.now_playing.link){
-				if (seesu.ui.els.start_screen){
-					$('<p></p>').attr('id', 'now-play-b').append(
-						su.ui.now_playing.link = $('<a></a>').text(localize('now-playing','Now Playing')).attr('class', 'js-serv').click(function(){
-							_sui.views.show_now_playing();
-						})
-					).prependTo(seesu.ui.els.start_screen.children('.for-startpage'));
-				}
-				
-			}
+			
 			for (var i=0, l = pl.length; i < l; i++) {
 				
 				pl.ui.append(
@@ -783,8 +777,10 @@ seesu_ui.prototype = {
 		
 	},
 	mark_c_node_as: function(marker){
-		var s = seesu.ui.els.artsHolder;
-		s.attr('class', s.attr('class').replace(/\s*player-[a-z]+ed/g, ''));
+		var s = seesu.ui.els.artsHolder.add(su.ui.now_playing.link);
+		s.each(function(i, el){
+			$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
+		});
 		switch(marker) {
 		  case(PLAYED):
 			s.addClass('player-played');

@@ -185,8 +185,10 @@ window.connect_dom_to_som = function(d, ui){
 			volume_s: volume_s
 		};
 		ui.els.search_label = ui.els.search_form.find('#search-p').find('.lbl');
+		var justhead = $(su.ui.els.slider).children('.navs');
 		ui.views.nav = {
-			daddy: $(su.ui.els.slider).children('.navs'),
+			justhead: justhead,
+			daddy: justhead.children('.daddy'),
 			start: $('#start_search',d),
 			results: $('#search_result_nav',d),
 			playlist: $(su.ui.els.nav_playlist_page).parent(),

@@ -354,11 +354,18 @@ seesu.player = {
 		
 		if (su.ui.now_playing.link){
 			var artist = mo.artist;
-			su.ui.now_playing.link.siblings('span').remove();
-			su.ui.now_playing.link.after($('<span></span>').text(": " + 
-				( su.ui.d.title = artist + " - " + mo.track)
-			));
-		};
+			su.ui.now_playing.link.attr('title', 
+				( su.ui.d.title = (localize('now-playing','Now Playing') + ': ' +artist + " - " + mo.track))
+			);
+		} else{
+			if (seesu.ui.views.nav){
+				
+				su.ui.now_playing.link = $('<a class="np"></a>').click(function(){
+					su.ui.views.show_now_playing(true);
+				}).appendTo(seesu.ui.views.nav.justhead);
+				
+			}
+		}
 		
 		
 		
