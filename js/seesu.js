@@ -121,7 +121,7 @@ window.seesu = window.su =  {
 	  },
 	  ui: new seesu_ui(document),
 	  xhrs: {},
-	  soundcloud_queue: new funcs_queue(200, 1000 , 7),
+	  soundcloud_queue: new funcs_queue(1000, 5000 , 7),
 	  hypnotoad: {
 		vk_api: false,
 		search_soundcloud: soundcloud_search,
@@ -223,19 +223,32 @@ function canUseSearch(mo, search_source){
 };
 su.mp3_search= (function(){
 	  	var s = [];
-		s.getCache = function(mo){
-				return false;
+		s.getCache = function(mo, name){
+			return cache_ajax.get(name + 'mp3', mo.artist + ' - ' + mo.track, function(r){
+				make_node_playable(mo, r.music_list);
+				seesu.ui.els.export_playlist.addClass('can-be-used');
+				cmo.addSteamPart(mo, r.search_source, r.music_list);
+			});
 		};
 		s.find_mp3 = function(mo, options){
 			var o = options || {};
 			var handlers = [];
 			
+			
+			var tried_cache = [];
+			
 			for (var i=0; i < this.length; i++) {
 				var cursor = this[i];
-				if (!cursor.disabled){
+				var _c; //cache
+				
+				if (!~tried_cache.indexOf(cursor.name)){
+					_c = this.getCache(mo, cursor.name);
+					tried_cache.push(cursor.name);
+				}
+				
+				if (!_c && !o.only_cache && !cursor.disabled){
 					if (!cursor.preferred || cursor.preferred.disabled){
-						var _c = this.getCache(mo);
-						if (!_c && !o.only_cache){
+						
 							var can_search = cursor.test(mo);
 							if (can_search){
 								cmo.getMusicStore(mo, cursor.s).processing = true;
@@ -248,7 +261,7 @@ su.mp3_search= (function(){
 								
 							}
 							
-						}
+						
 					}
 					
 				}
@@ -557,27 +570,23 @@ var make_external_playlist = function(){
 	
 	
 	var playlist = playlist_nodes_for = [];
+	var simple_playlist = [];
 	// this.c_song.plst_pla,
-	for (var i=0; i < this.c_song.plst_titl.length; i++) {
-		var ts = cmo.getAllSongTracks(this.c_song.plst_titl[i]);
+	for (var i=0; i < seesu.player.c_song.plst_titl.length; i++) {
+		var ts = cmo.getAllSongTracks(seesu.player.c_song.plst_titl[i]);
 		if (ts){
-			playlist.push(this.c_song.plst_titl[i]);
+			playlist.push(seesu.player.c_song.plst_titl[i]);
+			var mp = ts[0].t[0]
+			simple_playlist.push({
+				track_title: mp.track,
+				artist_name: mp.artist,
+				duration: mp.duration,
+				mp3link: mp.link
+			});
 		}
 	};
 	
-	if (playlist_nodes_for && playlist_nodes_for.length){
-		var simple_playlist = [];
-		
-		for (var i=0; i < playlist_nodes_for.length; i++) {
-			simple_playlist.push({
-				track_title: playlist_nodes_for[i].track,
-				artist_name: playlist_nodes_for[i].artist,
-				duration: playlist_nodes_for[i].duration,
-				mp3link: playlist_nodes_for[i].link
-			});
-			
-		}
-		
+	if (simple_playlist.length){
 		seesu.player.current_external_playlist = new external_playlist(simple_playlist);
 		seesu.ui.els.export_playlist.attr('href', seesu.player.current_external_playlist.data_uri);
 		
@@ -629,7 +638,7 @@ var start_random_nice_track_search = function(mo, ob, mp3_prov_queue, not_search
 		var some_track = random_track_plable(track_list);
 		mo.node.removeClass('loading');
 		mo.node.text(some_track.artist + ' - ' + (mo.track = some_track.track));
-		su.mp3_search.su.mp3_search.find_mp3(mo, {
+		su.mp3_search.find_mp3(mo, {
 			only_cache: not_search_mp3
 		});
 		
@@ -702,22 +711,24 @@ var make_tracklist_playable = function(pl, full_allowing, reset){
 
 
 
-var make_node_playable = function(mo, tracks, search_source, not_play){
+var make_node_playable = function(mo, tracks, not_play){
 
 	if (mo.node){
 		su.ui.make_pl_element_playable(mo);
 	}
 	
-	if (mo.want_to_play == seesu.player.want_to_play) {
-		if (su.player.wainter_for_play == mo) {
-			if (not_play){
-				su.player.view_song(mo, true, false, true);
-			} else{
-				su.player.play_song(mo, true);
-			}
-			
-		}
+	if (mo.want_to_play == seesu.player.want_to_play && su.player.wainter_for_play == mo) {
 		
+		if (not_play){
+			su.player.view_song(mo, true, false);
+		} else{
+			su.player.play_song(mo, true);
+		}
+			
+		
+		
+	} else{
+		su.player.update_song_context(mo);
 	}
 };
 

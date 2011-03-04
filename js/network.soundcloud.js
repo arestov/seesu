@@ -1,10 +1,7 @@
-
-
 function soundcloud_search(query, callback, error, nocache, after_ajax, only_cache){
 	var search_source = {name: 'soundcloud', key: 0};
 	var sc_key = 'HNVCUV6apk9ANn8tLERpag';
 	var use_cache = !nocache;
-	var hash = hex_md5(query);
 	if (use_cache){
 		var cache_used = cache_ajax.get('soundcloud', query, function(r){callback(r,search_source);})
 		if (cache_used) {return true;}

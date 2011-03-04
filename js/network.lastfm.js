@@ -232,7 +232,7 @@ lastfm_api.prototype = {
 					  case('scrobbling'):
 						w_storage('lfm_scrobbling_enabled', 'true', true);
 						_this.scrobbling = true;
-						su.ui.lfm_enable_scrobbling();
+						su.ui.lfm_change_scrobbling(true);
 						break;
 					  default:
 						//console.log('Do nothing');

@@ -231,52 +231,69 @@ seesu.player = {
 		}
 	  }
 	},
-	change_songs_ui: function(mo, remove_playing_status){
+	song_siblings: function(mo){
 		mo.next_preload_song = false;
-		
-		mo.node.parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('active-play');
 		var c_playlist = mo.plst_titl,
 			c_num = mo.play_order;
 			
-		if (!remove_playing_status){
-			if (c_playlist && typeof c_num == 'number'){
-				if (c_num-1 >= 0) {
-					for (var i = c_num-1, _p = false;  ((i >= 0) && (_p == false)); i--){
-						var cur = c_playlist[i];
-						if (cur && (cur.have_tracks || !cur.search_completed )){
-							_p = true;
-							(mo.prev_song = cur).node.parent().addClass('to-play-previous');
-						}
-					};
-					if (!_p){mo.prev_song = false}
-				}
-				var next_song = c_num+1;
-				if (next_song == c_playlist.length){
-					next_song = 0;
-				}
-				if (next_song < c_playlist.length){
-					for (var i = next_song, _n = false; ((i < c_playlist.length) && ( _n == false)); i++) {
-						var cur = c_playlist[i];
-						if (cur && (cur.have_tracks || !cur.search_completed)){
-							if (next_song !== 0){
-								_n = true;
-								(mo.next_song = cur).node.parent().addClass('to-play-next');
-								if (!mo.next_preload_song){
-									mo.next_preload_song = mo.next_song;
-									
-								}
-							} else{
-								if (!mo.next_preload_song){
-									mo.next_preload_song = cur;
-								}
+		if (c_playlist && typeof c_num == 'number'){
+			if (c_num-1 >= 0) {
+				for (var i = c_num-1, _p = false;  ((i >= 0) && (_p == false)); i--){
+					var cur = c_playlist[i];
+					if (cur && (cur.have_tracks || !cur.search_completed )){
+						_p = true;
+						mo.prev_song = cur;
+					}
+				};
+				if (!_p){mo.prev_song = false}
+			}
+			var next_song = c_num+1;
+			if (next_song == c_playlist.length){
+				next_song = 0;
+			}
+			if (next_song < c_playlist.length){
+				for (var i = next_song, _n = false; ((i < c_playlist.length) && ( _n == false)); i++) {
+					var cur = c_playlist[i];
+					if (cur && (cur.have_tracks || !cur.search_completed)){
+						if (next_song !== 0){
+							_n = true;
+							(mo.next_song = cur)
+							if (!mo.next_preload_song){
+								mo.next_preload_song = mo.next_song;
+								
 							}
-							
+						} else{
+							if (!mo.next_preload_song){
+								mo.next_preload_song = cur;
+							}
 						}
-					};
-					if(!_n){mo.next_song = false}
-				}
-				
-				
+						
+					}
+				};
+				if(!_n){mo.next_song = false}
+			}
+			
+			
+		}
+		
+			
+	},
+	change_songs_ui: function(mo, remove_playing_status){
+		
+		
+		mo.node.parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('active-play');
+		
+		
+		
+			
+		if (!remove_playing_status){
+			this.song_siblings(mo)
+			
+			if (mo.prev_song){
+				mo.prev_song.node.parent().addClass('to-play-previous');
+			}
+			if (mo.next_song){
+				mo.next_song.node.parent().addClass('to-play-next');
 			}
 		} else{
 			if (mo.prev_song){
@@ -291,9 +308,9 @@ seesu.player = {
 		
 	},
 	fix_songs_ui: function(){
-		if (this.c_song){
-			this.change_songs_ui(this.c_song, true);
-			this.change_songs_ui(this.c_song);
+		if (this.v_song){
+			this.change_songs_ui(this.v_song, true);
+			this.change_songs_ui(this.v_song);
 		}
 	},
 	fix_progress_bar: function(node, mo_titl){
@@ -304,6 +321,8 @@ seesu.player = {
 	},
 	play_song: function(mo, zoom, mopla){
 		delete mo.want_to_play;
+		
+		
 		var last_mo = this.c_song;
 		
 		var _mopla;
@@ -316,18 +335,23 @@ seesu.player = {
 			}
 		}
 		
+		
 		if (_mopla && (this.c_song != mo || (mopla && mo.mopla != mopla))){
+			this.c_song = mo;
+			if (last_mo){
+				last_mo.node.parent().removeClass('playing-song');
+			}
 			
+			mo.node.parent().addClass('playing-song')
+			this.song_siblings(mo);
 			if (this.musicbox.play_song_by_url){
 				this.musicbox.play_song_by_url(_mopla.link);
 				mo.mopla = _mopla;
 			}
-			if (last_mo){
-				last_mo.node.parent().removeClass('playing-song');
-			}
-			this.c_song = mo;
-			mo.node.parent().addClass('playing-song')
+			
 		}
+		this.view_song(mo, zoom, false);
+		
 		if (su.ui.now_playing.link){
 			var artist = mo.artist;
 			su.ui.now_playing.link.siblings('span').remove();
@@ -335,19 +359,18 @@ seesu.player = {
 				( su.ui.d.title = artist + " - " + mo.track)
 			));
 		};
-		this.view_song(mo, zoom, false);
+		
 		
 		
 	},
-	update_song_context: function(mo, not_deep){
+	update_song_context: function(mo){
 		var node = mo.node;
 		var artist = mo.artist;
 		
 		var a_info = node.data('t_context').children('.artist-info');
 		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
-		if (!not_deep){
-			su.ui.update_track_info(a_info, node);
-		}
+		su.ui.update_track_info(a_info, node);
+		
 		
 		var tv = a_info.data('track-video');
 		if (!tv){
@@ -358,10 +381,10 @@ seesu.player = {
 		this.fix_progress_bar(node, mo);
 		
 		if (su.lfm_api.scrobbling) {
-			su.ui.lfm_enable_scrobbling(node.data('t_context').children('.track-panel').children('.track-buttons'));
+			su.ui.lfm_change_scrobbling(true, node.data('t_context').children('.track-panel').children('.track-buttons'));
 		}
 	},
-	view_song: function (mo, zoom, force, not_deep) {
+	view_song: function (mo, zoom, force) {
 	  var last_mo = this.v_song;
 	  
 	  var node = mo.node;
@@ -375,7 +398,7 @@ seesu.player = {
 	  } else {
 		su.ui.remove_video();
 		//time = (new Date()).getTime();
-		this.update_song_context(mo, not_deep);
+		this.update_song_context(mo);
 		if (last_mo) {
 			this.change_songs_ui(last_mo, true) //remove ative state
 		}
@@ -397,7 +420,7 @@ seesu.player.events[PLAYED] = function(){
 	var submit = function(mo){
 		setTimeout(function(){
 			if (su.lfm_api.scrobbling) {
-				su.lfm_api.nowplay(mo);
+				su.lfm_api.nowplay(mo.mopla);
 			}
 			if (seesu.vk.id){
 				su.api('track.scrobble', {
@@ -432,7 +455,7 @@ seesu.player.events[FINISHED] = function() {
 	var submit = function(mo){
 		setTimeout(function(){
 			if (su.lfm_api.scrobbling) {
-				su.lfm_api.submit(mo);
+				su.lfm_api.submit(mo.mopla);
 			}
 			if (seesu.vk.id){
 				su.api('track.scrobble', {
@@ -515,7 +538,7 @@ seesu.player.song_click = function(mo) {
   if (!zoomed){
 	seesu.track_page('track zoom');
   }
-  
+  su.mp3_search.find_mp3(mo);
 		
   seesu.player.play_song(mo, !zoomed);
   return false;

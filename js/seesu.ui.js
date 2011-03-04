@@ -193,6 +193,7 @@ views.prototype = {
 		
 		
 		_sui.playlist_type = pl.playlist_type || '';
+		_sui.playlist_title = pl.playlist_title || '';
 		if (pl.length && !show_playing && (!this.playing || this.playing.pl != pl)){
 			seesu.ui.render_playlist(pl);
 		}
@@ -282,15 +283,16 @@ seesu_ui.prototype = {
 	},
 	show_artist: function (artist,with_search_results) {
 		var pl_r = prepare_playlist(artist, 'artist', with_search_results)
-		if (seesu.current_artist == artist && su.ui.views.playlist_type == 'artist') {
+		if (su.ui.views.playlist_title == pl_r.playlist_title && su.ui.views.playlist_type == pl_r.playlist_type) {
 			seesu.ui.views.restore_view();
-			return true;
+		} else{
+			seesu.ui.views.show_playlist_page(pl_r);
+			getTopTracks(artist,function(track_list){
+				create_playlist(track_list, pl_r);
+			});
+			lfm('artist.getInfo',{'artist': artist });
 		}
-		seesu.ui.views.show_playlist_page(pl_r);
-		getTopTracks(artist,function(track_list){
-			create_playlist(track_list, pl_r);
-		});
-		lfm('artist.getInfo',{'artist': artist });
+		
 	
 		
 	},
@@ -372,6 +374,8 @@ seesu_ui.prototype = {
 		get_youtube(q, function(r){			
 			var vs = r.feed.entry;
 			if (vs && vs.length){
+				vi_c.data('has-info', true);
+				vi_c.empty();
 				vi_c.append('<span class="desc-name"><a target="_blank" href="http://www.youtube.com/results?search_query='+ q +'">' + localize('video','Video') + '</a>:</span>');
 				var v_content = $('<ul class="desc-text"></ul>');
 			
@@ -414,8 +418,9 @@ seesu_ui.prototype = {
 					make_v_link(tmn, v_id, v_title);
 					
 				};
+				
 				v_content.appendTo(vi_c);
-				vi_c.data('has-info', true);
+				
 				
 			}
 		});
@@ -424,7 +429,7 @@ seesu_ui.prototype = {
 	update_track_info: function(a_info, node){
 		var ti = a_info.find('.track-info').empty();
 		var mo = node.data('mo');
-		if (mo.mopla.from && mo.mopla.from == 'soundcloud'){
+		if (mo.mopla && mo.mopla.from && mo.mopla.from == 'soundcloud'){
 			if (mo.mopla.page_link){
 				var sc_link = $('<a></a>')
 					.attr('href', mo.mopla.page_link)
@@ -633,7 +638,7 @@ seesu_ui.prototype = {
 	
 		mo.node
 			.find('a.song-duration').remove().end()
-			.find('a.download-mp3').remove().end()
+			.siblings('a.download-mp3').remove().end()
 			.addClass('song')
 			.removeClass('search-mp3-failed')
 			.removeClass('waiting-full-render')
@@ -720,11 +725,11 @@ seesu_ui.prototype = {
 		var ii = f.find('input');
 		ii.removeAttr('disabled');
 	},
-	lfm_enable_scrobbling:function(context){
+	lfm_change_scrobbling:function(enable, context){
 		var lfm_ssw = $('.scrobbling-switches', context || this.d);
 		if (lfm_ssw) {
-			lfm_ssw.find('.enable-scrobbling').attr('checked', 'checked');
-			lfm_ssw.find('.disable-scrobbling').attr('checked', '');
+			lfm_ssw.find('.enable-scrobbling').attr('checked', enable ? 'checked' : '');
+			lfm_ssw.find('.disable-scrobbling').attr('checked',enable ? '' : 'checked');
 		}
 	},
 	search: function(query){

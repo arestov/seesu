@@ -241,7 +241,7 @@ window.connect_dom_to_som = function(d, ui){
 		}
 
 		if (su.lfm_api.scrobbling) {
-			ui.lfm_enable_scrobbling();
+			ui.lfm_change_scrobbling(true);
 		}
 		
 		if (su.lfm_api.sk) {

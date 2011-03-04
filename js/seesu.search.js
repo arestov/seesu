@@ -625,7 +625,15 @@ var suggestions_prerender = function(input_value, crossdomain){
 		var _b = $('<a></a>')
 			.text(pl.playlist_title)
 			.click(function(){
-				su.ui.views.show_playlist_page(pl);
+				
+				
+				if (su.ui.views.playlist_title == pl.playlist_title && su.ui.views.playlist_type == pl.playlist_type) {
+					seesu.ui.views.restore_view();
+					
+				}else{
+					su.ui.views.show_playlist_page(pl);
+				}
+				
 			}).appendTo(li)
 		return li;
 	}

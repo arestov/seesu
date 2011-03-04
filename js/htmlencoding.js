@@ -99,13 +99,18 @@ var entityCharCodes = {
   '255': 'yuml'
 };
 
-specialCharEntities = {
+var specialCharEntities = {
   '&': '&amp;',
   '"': '&quot;',
   '<': '&lt;',
   '>': '&gt'
 };
-
+var specialChars = {
+	'amp': '&',
+	'quot': '"',
+	'lt': '<',
+	'gt': '>'
+}
 var entityRegExp = /&([#a-z0-9]+);/gi;
 var specialCharRegExp = /[&"<>]/g;
 
@@ -123,7 +128,13 @@ function entityToChar(s, name) {
       code = undefined;
     }
   }
-  return code ? String.fromCharCode(code) : s;
+  var specialChar;
+  if (!code){
+	if (specialChars[name]){
+		specialChar = specialChars[name];
+	}
+  }
+  return code ? String.fromCharCode(code) : (specialChar || s);
 }
 
 HTMLDecode = function decode(s) {
