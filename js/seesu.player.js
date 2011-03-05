@@ -75,7 +75,7 @@ seesu.gena = { //this work with playlists
 	add: function(mo_titl, pl){
 		var n_mo = this.soft_clone(mo_titl);
 		pl.push(this.connect(n_mo, pl, pl.length));
-		if (seesu.player.c_song.mo_titl.plst_titl == pl){
+		if (seesu.player.c_song.plst_titl == pl){
 			pl.ui.append(seesu.ui.create_playlist_element(n_mo));
 			make_tracklist_playable(pl);
 		}
