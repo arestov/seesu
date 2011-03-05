@@ -200,7 +200,7 @@ seesu.player = {
 		var playlist = [];
 		// this.c_song.plst_pla,
 		for (var i=0; i < this.c_song.plst_titl.length; i++) {
-			var ts = cmo.getAllSongTracks(this.c_song.plst_titl[i]);
+			var ts = cmo.getAllSongTracks(this.c_song.plst_titl[i].sem);
 			if (ts){
 				playlist.push(this.c_song.plst_titl[i]);
 			}
@@ -240,7 +240,7 @@ seesu.player = {
 			if (c_num-1 >= 0) {
 				for (var i = c_num-1, _p = false;  ((i >= 0) && (_p == false)); i--){
 					var cur = c_playlist[i];
-					if (cur && (cur.have_tracks || !cur.search_completed )){
+					if (cur && (cur.have_tracks || !(cur.sem && cur.sem.search_completed ))){
 						_p = true;
 						mo.prev_song = cur;
 					}
@@ -254,7 +254,7 @@ seesu.player = {
 			if (next_song < c_playlist.length){
 				for (var i = next_song, _n = false; ((i < c_playlist.length) && ( _n == false)); i++) {
 					var cur = c_playlist[i];
-					if (cur && (cur.have_tracks || !cur.search_completed)){
+					if (cur && (cur.have_tracks || !(cur.sem && cur.sem.search_completed))){
 						if (next_song !== 0){
 							_n = true;
 							(mo.next_song = cur)
@@ -329,7 +329,7 @@ seesu.player = {
 		if (mopla){
 			_mopla = mopla;
 		} else{
-			var songs = cmo.getAllSongTracks(mo);
+			var songs = cmo.getAllSongTracks(mo.sem);
 			if (songs){
 				_mopla = songs[0].t[0];
 			}

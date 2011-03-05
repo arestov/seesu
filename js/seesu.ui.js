@@ -645,7 +645,7 @@ seesu_ui.prototype = {
 			});
 		
 		if (!not_rend){
-			var mopla = cmo.getAllSongTracks(mo);
+			var mopla = cmo.getAllSongTracks(mo.sem);
 			if (mopla){
 				mopla = mopla[0].t[0];
 				
