@@ -391,9 +391,7 @@ su.mp3_search= (function(){
 			});
 		};
 		s.find_mp3 = function(mo, options){
-			if (mo.handled){
-				return true;
-			}
+			
 			
 			var o = options || {};
 			var search_handlers = [];
@@ -406,8 +404,11 @@ su.mp3_search= (function(){
 			var mqs = mo.artist + ' - '+ mo.track;
 			var sem = this.search_emitters[mqs] || (this.search_emitters[mqs] = new music_seach_emitter(music_query));
 			
-			sem.addSong(mo);
-			mo.handled = true;
+			if (!mo.handled){
+				sem.addSong(mo);
+				mo.handled = true;
+			}
+			
 			
 			var tried_cache = [];
 			
