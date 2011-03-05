@@ -617,9 +617,7 @@ seesu_ui.prototype = {
 				pl.ui.append(
 					_sui.create_playlist_element(pl[i])
 				);
-				if (pl[i].mo_pla){
-					_sui.make_pl_element_playable(pl[i]);
-				}
+				su.mp3_search.find_mp3(pl[i], {only_cache: true});
 			}
 			
 			//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
