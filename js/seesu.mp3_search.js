@@ -291,10 +291,10 @@ function handle_song(mo, complete, get_next){
 		make_node_playable(mo);
 		seesu.ui.els.export_playlist.addClass('can-be-used');
 	} else if (mo.sem.have_tracks){
-		mo.cantwait = setTimeout(function(){
+		/*mo.cantwait = setTimeout(function(){
 			make_node_playable(mo);
 			seesu.ui.els.export_playlist.addClass('can-be-used');
-		},20000);
+		},20000);*/
 		make_node_playable(mo, true);
 	}
 };
@@ -317,12 +317,13 @@ var get_mp3 = function(msq, options, p, callback, just_after_request){
 			callback(!music_list, search_source, complete, music_list)
 		}
 	};
+	/*
 	setTimeout(function(){
 		if (p.n !== 0){
 			p.n = 1;
 			count_down();
 		}
-	},50000);
+	},50000);*/
 	var callback_success = function(music_list, search_source){
 		//success
 		music_list.sort(function(g,f){
@@ -360,7 +361,7 @@ music_seach_emitter.prototype = {
 			if (this.some_results){
 				handle_song(mo);
 			}
-		}
+		} 
 		
 	},
 	handle_songs: function(){
@@ -407,6 +408,8 @@ su.mp3_search= (function(){
 			if (!mo.handled){
 				sem.addSong(mo);
 				mo.handled = true;
+			} else{
+				
 			}
 			
 			

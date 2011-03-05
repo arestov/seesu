@@ -495,7 +495,7 @@ var reset_q = function(){
 var make_tracklist_playable = function(pl, full_allowing, reset){
 	var mp3_prov_queue;
 	if (full_allowing || reset){
-		mp3_prov_queue = reset_q();
+		//mp3_prov_queue = reset_q();
 	}
 	if (reset){
 		return false;

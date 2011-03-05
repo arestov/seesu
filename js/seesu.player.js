@@ -240,7 +240,7 @@ seesu.player = {
 			if (c_num-1 >= 0) {
 				for (var i = c_num-1, _p = false;  ((i >= 0) && (_p == false)); i--){
 					var cur = c_playlist[i];
-					if (cur && (cur.have_tracks || !(cur.sem && cur.sem.search_completed ))){
+					if (cur && (cur.sem.have_tracks || !(cur.sem && cur.sem.search_completed ))){
 						_p = true;
 						mo.prev_song = cur;
 					}
@@ -254,7 +254,7 @@ seesu.player = {
 			if (next_song < c_playlist.length){
 				for (var i = next_song, _n = false; ((i < c_playlist.length) && ( _n == false)); i++) {
 					var cur = c_playlist[i];
-					if (cur && (cur.have_tracks || !(cur.sem && cur.sem.search_completed))){
+					if (cur && (cur.sem.have_tracks || !(cur.sem && cur.sem.search_completed))){
 						if (next_song !== 0){
 							_n = true;
 							(mo.next_song = cur)
