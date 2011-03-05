@@ -253,21 +253,21 @@ function handle_song(mo, complete, get_next){
 		make_node_playable(mo, true);
 	}
 };
-function music_seach_emmiter(q){
+function music_seach_emitter(q){
 	this.q = q;
 	this.defs = [];
 	this.songs = [];
 	
 	
 };
-music_seach_emmiter.prototype = {
+music_seach_emitter.prototype = {
 	addSong: function(){
 		
 	}
 }
 su.mp3_search= (function(){
 	  	var s = [];
-	  	s.search_emmiters = {};
+	  	s.search_emitters = {};
 	  	
 		s.getCache = function(mo, name){
 			return cache_ajax.get(name + 'mp3', mo.artist + ' - ' + mo.track, function(r){
@@ -289,7 +289,7 @@ su.mp3_search= (function(){
 				track: mo.track
 			};
 			var mqs = mo.artist + ' - '+ mo.track;
-			var sem = this.search_emmiters[mqs] || (this.search_emmiters[mqs] = new music_seach_emmiter(music_query));
+			var sem = this.search_emitters[mqs] || (this.search_emitters[mqs] = new music_seach_emitter(music_query));
 			
 			
 			
