@@ -375,21 +375,27 @@ seesu.player = {
 		var artist = mo.artist;
 		
 		var a_info = node.data('t_context').children('.artist-info');
-		if (artist) {seesu.ui.update_artist_info(artist, a_info);}
-		su.ui.update_track_info(a_info, node);
-		
-		
-		var tv = a_info.data('track-video');
-		if (!tv){
-			 tv = a_info.children('.track-video');
-			 a_info.data('track-video', tv)
+		if (a_info){
+				if (artist) {seesu.ui.update_artist_info(artist, a_info);}
+			su.ui.update_track_info(a_info, node);
+			
+			
+			var tv = a_info.data('track-video');
+			if (!tv){
+				 tv = a_info.children('.track-video');
+				 a_info.data('track-video', tv)
+			}
+			su.ui.show_video_info(tv, artist + " - " + mo.track);
+			this.fix_progress_bar(node, mo);
+			
+			if (su.lfm_api.scrobbling) {
+				su.ui.lfm_change_scrobbling(true, node.data('t_context').children('.track-panel').children('.track-buttons'));
+			}
+		} else{
+			console.log('no context for:')
+			console.log(mo)
 		}
-		su.ui.show_video_info(tv, artist + " - " + mo.track);
-		this.fix_progress_bar(node, mo);
 		
-		if (su.lfm_api.scrobbling) {
-			su.ui.lfm_change_scrobbling(true, node.data('t_context').children('.track-panel').children('.track-buttons'));
-		}
 	},
 	view_song: function (mo, zoom, force) {
 	  var last_mo = this.v_song;
