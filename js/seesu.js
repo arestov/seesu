@@ -396,25 +396,20 @@ external_playlist.prototype = {
 
 var make_external_playlist = function(){
 	if (!seesu.player.c_song ){return false;}
-	var playlist_nodes_for;
-	
-	
-	
-	var playlist = playlist_nodes_for = [];
 	var simple_playlist = [];
 	// this.c_song.plst_pla,
 	for (var i=0; i < seesu.player.c_song.plst_titl.length; i++) {
-		var ts = cmo.getAllSongTracks(seesu.player.c_song.plst_titl[i].sem);
-		if (ts){
-			playlist.push(seesu.player.c_song.plst_titl[i]);
-			var mp = ts[0].t[0]
+		var song = seesu.player.c_song.plst_titl[i].song();
+		if (song){
 			simple_playlist.push({
-				track_title: mp.track,
-				artist_name: mp.artist,
-				duration: mp.duration,
-				mp3link: mp.link
+				track_title: song.track,
+				artist_name: song.artist,
+				duration: song.duration,
+				mp3link: song.link
 			});
 		}
+			
+		
 	};
 	
 	if (simple_playlist.length){
@@ -509,9 +504,14 @@ var make_tracklist_playable = function(pl, full_allowing, reset){
 		if (!mo.track){
 			start_random_nice_track_search(mo, ob, mp3_prov_queue, !full_allowing);
 		}else{
-			su.mp3_search.find_mp3(mo, {
-				only_cache: !full_allowing
-			});
+			if (mo.raw){
+				su.ui.make_pl_element_playable(mo);
+			} else{
+				su.mp3_search.find_mp3(mo, {
+					only_cache: !full_allowing
+				});
+			}
+			
 		}
 		
 		/*
@@ -610,7 +610,6 @@ var create_playlist =  function(pl, pl_r, not_clear){
 			pl_r.push(seesu.gena.connect(pl[i], pl_r, i));
 		}
 		seesu.ui.render_playlist(pl_r, not_clear);
-		make_tracklist_playable(pl_r);
 		
 	}
 	

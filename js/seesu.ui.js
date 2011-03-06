@@ -254,33 +254,13 @@ window.seesu_ui = function(d, with_dom){
 	}
 }
 seesu_ui.prototype = {
-	show_track: function(query, with_search_results){
-		var pl_r = prepare_playlist(query, 'tracks', with_search_results)
+	show_track: function(q, with_search_results){
+		var pl_r = prepare_playlist( q.q ? q.q : (q.artist + " - " + q.track), 'tracks', with_search_results)
 		seesu.ui.views.show_playlist_page(pl_r);
-		var used_successful = get_all_tracks(query, function(pl){
+		var used_successful = su.mp3_search.find_files(q, 'vk', function(err, pl){
 			create_playlist(pl, pl_r);
 		}, false, false, true);
-		if (!used_successful){
-			if (seesu.delayed_search.waiting_for_mp3provider){
-				var mp3_prov_queue = new funcs_queue();
-				
-				if (mp3_prov_queue) {
-					mp3_prov_queue.add(function(){
-						get_all_tracks(query,  function(pl){
-							create_playlist(pl,pl_r);
-						}, true);
-					}, true);
-				}
-				seesu.delayed_search.we_need_mp3provider(mp3_prov_queue);
-			} else{
-				
-				get_all_tracks(query, function(pl){
-					create_playlist(pl,pl_r);
-				}, false, true);
-				
-			}
-			
-		}
+
 		
 		
 	},
@@ -311,7 +291,7 @@ seesu_ui.prototype = {
 			a_info.data('artist', artist);
 			var ainf = {
 				name: a_info.children('.artist-name').empty(), 
-				image: a_info.children('.image').children('img.artist-image'),
+				image: a_info.children('.image'),
 				bio: a_info.children('.artist-bio'),
 				meta_info: a_info.children('.artist-meta-info'),
 				c : a_info
@@ -347,7 +327,7 @@ seesu_ui.prototype = {
 				.text(artist)
 				.appendTo(ainf.name);
 				
-			ainf.image.attr('src', '').attr('alt', artist);
+			
 			ainf.bio.text('...');
 			ainf.meta_info.empty();
 			
@@ -469,7 +449,7 @@ seesu_ui.prototype = {
 			
 		if (artist && artist == oa) {
 			ainf.bio.parent().addClass('background-changes');
-			ainf.image.attr({'src': image ,'alt': artist});
+			ainf.image.append($('<img class="artist-image"/>').attr({'src': image ,'alt': artist}));
 		} else{
 			return false
 		}
@@ -619,7 +599,7 @@ seesu_ui.prototype = {
 				);
 				su.mp3_search.find_mp3(pl[i], {only_cache: true});
 			}
-			
+			make_tracklist_playable(pl);
 			//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
 		
 			
@@ -627,10 +607,9 @@ seesu_ui.prototype = {
 		}
 	},
 	make_pl_element_playable: function(mo, not_rend){
-	
+	var durat = mo.node.find('a.song-duration').remove();
+	var down = mo.node.siblings('a.download-mp3').remove();
 		mo.node
-			.find('a.song-duration').remove().end()
-			.siblings('a.download-mp3').remove().end()
 			.addClass('song')
 			.removeClass('search-mp3-failed')
 			.removeClass('waiting-full-render')
@@ -643,9 +622,9 @@ seesu_ui.prototype = {
 			});
 		
 		if (!not_rend){
-			var mopla = cmo.getAllSongTracks(mo.sem);
+			var mopla = mo.song();
 			if (mopla){
-				mopla = mopla[0].t[0];
+				
 				
 				
 				if (mopla.from != 'legal_vk_api'){
@@ -686,11 +665,7 @@ seesu_ui.prototype = {
 		} else{
 			track.text(mo_titl.artist);
 		}
-		if (mo_titl.link) {
-			make_node_playable(mo_titl, [mo_titl]);
-		} else if (mo_titl.mo_pla){
-			make_node_playable(mo_titl, [mo_titl.mo_pla]);
-		}
+
 		
 		
 		var ph = seesu.player.controls.ph.clone(true);
@@ -702,13 +677,14 @@ seesu_ui.prototype = {
 		};
 		ph.prependTo(tp);
 			
-			
-			
-		return $(li)
+		var plistel = $(li)
 			.data('mo_titl', mo_titl)
 			.append(seesu.ui.els.play_controls.node.clone(true).data('mo_titl', mo_titl))
 			.append(track)
 			.append(t_context);
+		
+			
+		return plistel;
 	},
 	lfm_logged : function(){
 		dstates.add_state('body', 'lfm-auth-done')

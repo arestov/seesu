@@ -190,6 +190,7 @@ display:none;
 .artist-info .image{
 	margin-right:13px;
 	margin-bottom:7px;
+	width: 126px;
 	}
 @media (min-width:600px) {
 	.artist-info .image{

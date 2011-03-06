@@ -25,7 +25,7 @@ seesu.gena = { //this work with playlists
 				delete new_pl.push;
 				for (var k=0; k < new_pl.length; k++) {
 					
-					new_pl[k] = _this.clear(_this.soft_clone(new_pl[k]));
+					new_pl[k] = _this.clear(_this.soft_clone(new_pl[k], ['track', 'artist']));
 				};
 				plsts[i] = new_pl;
 			};
@@ -42,20 +42,12 @@ seesu.gena = { //this work with playlists
 		}
 		return pl_r;
 	},
-	user_playlis1t: (function(){
-		var pl_r = prepare_playlist('Custom playlist', 'cplaylist');
-		pl_r.push = function(mo){
-			Array.prototype.push.call(this, mo);
-			
-			
-		}
-		return pl_r;
-		})(),
 	clear: function(mo_titl, full){
 		delete mo_titl.fetch_started;
 		delete mo_titl.not_use;
 		delete mo_titl.node;
 		delete mo_titl.ready_for_play;
+		delete mo_titl.handeled;
 		if (full){
 			delete mo_titl.delayed_in;
 			delete mo_titl.plst_pla;
@@ -73,7 +65,7 @@ seesu.gena = { //this work with playlists
 		return mo_titl
 	},
 	add: function(mo_titl, pl){
-		var n_mo = this.soft_clone(mo_titl);
+		var n_mo = this.soft_clone(mo_titl, ['track', 'artist']);
 		pl.push(this.connect(n_mo, pl, pl.length));
 		if (seesu.player.c_song.plst_titl == pl){
 			pl.ui.append(seesu.ui.create_playlist_element(n_mo));
@@ -81,16 +73,19 @@ seesu.gena = { //this work with playlists
 		}
 		
 	},
-	soft_clone: function(obj){
+	soft_clone: function(obj, white_list){
 		var arrgh = obj instanceof Array;
 		var _n = {};
 		for (var a in obj) {
-			if (arrgh || (typeof obj[a] != 'object')){
-				if (a != 'ui'){
-					_n[a] = obj[a];
+			if (!white_list || !!~white_list.indexOf(a)){
+				if (arrgh || (typeof obj[a] != 'object')){
+					if (a != 'ui'){
+						_n[a] = obj[a];
+					}
+					
 				}
-				
 			}
+			
 		};
 		if (arrgh){
 			_n.length = obj.length;
@@ -200,7 +195,7 @@ seesu.player = {
 		var playlist = [];
 		// this.c_song.plst_pla,
 		for (var i=0; i < this.c_song.plst_titl.length; i++) {
-			var ts = cmo.getAllSongTracks(this.c_song.plst_titl[i].sem);
+			var ts = this.c_song.plst_titl[i].song();
 			if (ts){
 				playlist.push(this.c_song.plst_titl[i]);
 			}
@@ -240,7 +235,7 @@ seesu.player = {
 			if (c_num-1 >= 0) {
 				for (var i = c_num-1, _p = false;  ((i >= 0) && (_p == false)); i--){
 					var cur = c_playlist[i];
-					if (cur && (cur.sem.have_tracks || !(cur.sem && cur.sem.search_completed ))){
+					if (cur && (cur.haveTracks() || !cur.searchCompleted())){
 						_p = true;
 						mo.prev_song = cur;
 					}
@@ -254,7 +249,7 @@ seesu.player = {
 			if (next_song < c_playlist.length){
 				for (var i = next_song, _n = false; ((i < c_playlist.length) && ( _n == false)); i++) {
 					var cur = c_playlist[i];
-					if (cur && (cur.sem.have_tracks || !(cur.sem && cur.sem.search_completed))){
+					if (cur && (cur.haveTracks() || !cur.searchCompleted())){
 						if (next_song !== 0){
 							_n = true;
 							(mo.next_song = cur)
@@ -329,10 +324,8 @@ seesu.player = {
 		if (mopla){
 			_mopla = mopla;
 		} else{
-			var songs = cmo.getAllSongTracks(mo.sem);
-			if (songs){
-				_mopla = songs[0].t[0];
-			}
+			_mopla = mo.song();
+			
 		}
 		
 		
