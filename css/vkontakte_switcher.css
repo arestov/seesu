@@ -3,10 +3,11 @@
 }
 .vk-login-context{
 	clear:left;
-	display:none;
-	
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
 	padding:8px 10px 8px 17px;
-	margin: 0 -10px 20px;
+	margin: 0 0 20px;
 	background:#faebd7;
 	color:#000;
 	}
@@ -34,7 +35,7 @@
 		}
 		.vk-login-context form p label{
 			float:left;
-			width:160px;
+			width:170px;
 			padding:2px;
 		}
 		.vk-login-context form p span.input-place{

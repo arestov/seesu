@@ -171,14 +171,14 @@ var test_pressed_node = function(e, mouseup){
 				seesu.track_event('Controls', 'next', mouseup ? 'mouseup' : '');
 				return false;
 			} else if (class_name.match(/add-to-playlist/)){
-				console.log()
+
 				
 				var target_offset = clicked_node.offset();
 				var container_offset = su.ui.els.artsHolder.offset();
 				var container_width = su.ui.els.artsHolder.width();
 				var left = target_offset.left - container_offset.left;
 				su.ui.els.pl_search
-					.data('current_song', clicked_node.data('mo_titl'))
+					.data('current_song', clicked_node.data('mo'))
 					.css({
 						top: (target_offset.top - container_offset.top) + 'px',
 						left: left + 'px',
@@ -190,12 +190,6 @@ var test_pressed_node = function(e, mouseup){
 					su.ui.els.pl_search.removeClass('close-to-right');
 				}
 				su.ui.els.pl_r.val('')[0].focus();
-				
-				/*
-				if(seesu.player.c_song) {
-					seesu.gena.add(seesu.player.c_song.mo_titl, seesu.gena.user_playlist)
-				}*/
-				//seesu.track_event('Controls', 'add to playlist', mouseup ? 'mouseup' : '');
 				return false;
 			}
 		  

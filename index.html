@@ -36,10 +36,8 @@
 
 	 
 	
-	<script type="text/javascript" src="js/network.vk.login.js"></script>
 	<script type="text/javascript" src="js/network.js"></script>
 	<script type="text/javascript" src="js/network.soundcloud.js"></script>
-	<script type="text/javascript" src="js/network.vk.js"></script>
 	<script type="text/javascript" src="js/network.vk.api.js"></script>
 	<script type="text/javascript" src="js/network.vk.api_hauth.js"></script>
 	<script type="text/javascript" src="js/network.lastfm.js"></script>
@@ -69,6 +67,66 @@
   </head>
   
   <body>
+  	<div id="ui-samples" style="display:none">
+  		<div class="vk-login-context">
+			<div class="needs-cross-domain">
+				<span class="lang localize-to-get-mp3-sign-to-vk">To get mp3 files you need to sign in to vk.com (vkontakte.ru) </span>
+				<a href="javascript:void(0)" class="js-serv sign-in-to-vk lang localize-sign ">sign in</a>. 
+				
+				<span class="lang localize-you-may">You may</span> 
+				<a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv lang localize-create-acc" >create new account</a> 
+				<span class='lang localize-its-free '>(it's free)</span>.
+				
+			</div>
+			<div class="no-needs-cross-domain">
+				<span class="lang localize-to-get-mp3-login-to-vk ">To get mp3 files you need to login to vk.com or to vkontakte.ru</span>
+				<a href="javascript:void(0)" class="js-serv sign-in-to-vk">to vk.com</a> <a href="javascript:void(0)" class="js-serv sign-in-to-vk-ru">to vkontakte.ru</a>. 
+				
+				<span class="lang localize-open-api-secure ">Try both if you get &laquo;Open API security breach&raquo;.</span>
+				 
+				<span class="lang localize-you-may">You may</span> 
+				<a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv lang localize-create-acc" >create new account</a> 
+				<span class='lang localize-its-free '>(it's free)</span>.
+			</div>
+			<form  class="vk-auth" method="post" >
+				<p>
+					<label>
+						<span class="lang localize-email">E-mail</span>
+						<span class="input-place" >
+							<input type="text" class="vk-email" name="email" />
+						</span>
+					</label>
+				</p>
+				<p>
+					<label>
+						<span class="lang localize-password">Password</span>
+						<span class="input-place" >
+							<input type="password" class="vk-pass"	name="pass" />
+						</span>
+					</label>
+				</p>
+				<p class="error"></p>
+				<p class="vk-captcha-context">
+					<label>
+						<span>Captcha value</span>
+						<span class="input-place" >
+							<!--   img src="#captcha" alt="captcha" br -->
+							<input type="text" name="captcha_key" value="" class="vk-captcha-key"/>
+						</span>
+					</label>
+				</p>
+				<p>
+					<label>
+						<input type="checkbox" name="vk-save-pass" value="" class="vk-save-pass"/> <span class="lang localize-savepass">Save password in&nbsp;Seesu</span>
+						<span class="input-place">
+							
+						</span>
+					</label>
+				</p>
+				<p><button>enter</button></p>
+			</form>
+		</div>
+  	</div>
 <div id="slider" class="show-start">
 	<div class="navs ">
 		<div class="daddy not-inited">
@@ -265,6 +323,7 @@
 						</div>
 						
 						<div class="artist-info">
+							<div class="track-files"></div>
 							<div class="track-info"></div>
 							<div class="track-video"></div>
 							<h3 class="artist-name"></h3>
@@ -322,56 +381,7 @@
 					
 					<div class="play-list-holder" id="play-list-holder">
 						
-						<div class="vk-login-context">
-							<div class="needs-cross-domain">
-								<span class="lang localize-to-get-mp3-sign-to-vk">To get mp3 files you need to sign in to vk.com (vkontakte.ru) </span>
-								<a href="javascript:void(0)" class="js-serv sign-in-to-vk lang localize-sign ">sign in</a>. 
-								
-								<span class="lang localize-you-may">You may</span> 
-								<a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv lang localize-create-acc" >create new account</a> 
-								<span class='lang localize-its-free '>(it's free)</span>.
-								
-							</div>
-							<div class="no-needs-cross-domain">
-								<span class="lang localize-to-get-mp3-login-to-vk ">To get mp3 files you need to login to vk.com or to vkontakte.ru</span>
-								<a href="javascript:void(0)" class="js-serv sign-in-to-vk">to vk.com</a> <a href="javascript:void(0)" class="js-serv sign-in-to-vk-ru">to vkontakte.ru</a>. 
-								
-								<span class="lang localize-open-api-secure ">Try both if you get &laquo;Open API security breach&raquo;.</span>
-								 
-								<span class="lang localize-you-may">You may</span> 
-								<a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv lang localize-create-acc" >create new account</a> 
-								<span class='lang localize-its-free '>(it's free)</span>.
-							</div>
-							<form  class="vk-auth" method="post" >
-								<p>
-									<label for="email-arts" class="lang localize-email">E-mail</label>
-									<span class="input-place" >
-										<input type="text" class="vk-email" name="email" id="email-arts"/>
-									</span>
-								</p>
-								<p>
-									<label for="pass-arts" class="lang localize-password">Password</label>
-									<span class="input-place" >
-										<input type="password" class="vk-pass"	name="pass" id="pass-arts"/>
-									</span>
-								</p>
-								<p class="error"></p>
-								<p class="vk-captcha-context">
-									<label for="vk-captcha-key">Captcha value</label>
-									<span class="input-place" >
-										<img src="#captcha" alt="captcha"/><br/>
-										<input type="text" name="captcha_key" value="" id="vk-captcha-key"/>
-									</span>
-								</p>
-								<p>
-									<label for="vk-save-pass" class="lang localize-savepass">Save password in&nbsp;Seesu</label>
-									<span class="input-place">
-										<input type="checkbox" name="vk-save-pass" value="" id="vk-save-pass"/>
-									</span>
-								</p>
-								<p><button>enter</button></p>
-							</form>
-						</div>
+						
 						<div class="play-list-panel">
 							<div id="tracks-search" class="search-music-files">
 								<a id ="make-trs-plable" class="js-serv make-trs-plable lang localize-playlist-getmp3 ">Make playable all tracks in playlist</a>

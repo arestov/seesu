@@ -101,10 +101,7 @@ window.try_hapi = function(callback, not_saved){
 		var pass = w_storage( 'vk_auth_pass');
 		if (login && pass){
 			login_spec_vkapi(login, pass, callback);
-		} else{
-			seesu.delayed_search.waiting_for_mp3provider = true;
-			dstates.add_state('body','vk-needs-login');
-		}
+		} 
 	};
 	if (_vk_sess){
 		auth_to_vkapi(_vk_sess, true, iapp_id, try_hapi, function(error_type){
@@ -198,7 +195,7 @@ var login_spec_vkapi = function(email, pass, callback, captcha){
 							
 						}
 					} else{
-						seesu.ui.els.vk_login_error.text('Wrong login or password');
+						seesu.ui.samples.vk_login.vk_login_error.text('Wrong login or password');
 					}
 					
 					

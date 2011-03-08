@@ -88,7 +88,7 @@ a.waiting-full-render{
 	cursor:pointer;
 }
 a.waiting-full-render.marked-for-play{
-	outline:1px dashed #888 ;
+	outline:1px dotted #888 ;
 }
 a.waiting-full-render:hover{
 	color:#6c1471;
@@ -116,11 +116,7 @@ a.download-mp3:hover{
 		
 		color: #fff;
 	}
-	.player-paused
-	.playing-song
-	a.song{
-		outline:1px dashed #647142;
-	}
+
 	.player-stopped
 	.playing-song
 	a.song{

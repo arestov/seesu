@@ -77,7 +77,7 @@ lastfm_api.prototype = {
 			
 			params_full.method = method;
 			params_full.api_key = _this.apikey;
-			var f = params_full.format || no_need_for_post_serv ? 'json' : '';
+			var f = params_full.format || (no_need_for_post_serv ? 'json' : '');
 			if (f){
 				params_full.format = f;
 			}

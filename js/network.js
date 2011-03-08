@@ -45,10 +45,9 @@ function try_api(callback, do_not_repeat){
 		}, false, _u.api_id, false, false, function(){
 			if (callback){callback();}
 			if (_u.api_settings & 8){
-				seesu.delayed_search.switch_to_vk_api();
-				dstates.remove_state('body','vk-needs-login');
+				
 			} else{
-				seesu.delayed_search.we_need_mp3provider()
+				
 			}
 		});
 		
@@ -67,11 +66,10 @@ function try_api(callback, do_not_repeat){
 					VK.addCallback('onSettingsChanged', function(sts){
 						if (sts & 8){
 							
-							seesu.delayed_search.switch_to_vk_api();
-							dstates.remove_state('body','vk-needs-login');
+							
 							
 						} else{
-							seesu.delayed_search.we_need_mp3provider()
+							
 						}
 					});
 				}
@@ -125,6 +123,7 @@ function try_api(callback, do_not_repeat){
 };
 
 function try_mp3_providers(){
+	return
 	if (seesu.env.cross_domain_allowed){
 		try_hapi();
 	} else{

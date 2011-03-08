@@ -25,7 +25,7 @@ views.prototype = {
 			return (this.browsing.playlist = $('<ul class="tracks-c current-tracks-c"></ul>').appendTo(seesu.ui.els.artsTracks));
 		}
 	},
-	save_view: function(pl, not_make_playable){
+	save_view: function(pl, not_reset_searches){
 		if (this.playing && pl == this.playing.pl){
 			return true;
 		} else{					
@@ -38,6 +38,7 @@ views.prototype = {
 				}
 				
 				if (this.playing.playlist){
+					this.playing.pl.kill();
 					this.playing.playlist.remove();
 				}
 				
@@ -46,8 +47,8 @@ views.prototype = {
 			for (var a in this.browsing) {
 				this.playing[a] = this.browsing[a];
 			}
-			if (!not_make_playable){
-				make_tracklist_playable(pl, false, true);
+			if (!not_reset_searches){
+				su.mp3_search.abortAllSearches();
 			}
 			
 		}
@@ -255,7 +256,16 @@ window.seesu_ui = function(d, with_dom){
 }
 seesu_ui.prototype = {
 	show_track: function(q, with_search_results){
-		var pl_r = prepare_playlist( q.q ? q.q : (q.artist + " - " + q.track), 'tracks', with_search_results)
+		var title;
+		if (q.q){
+			title= q.q
+		} else if (q.artist || q.track){
+			title = (q.artist || '') + " - " + (q.track || '');
+		} else{
+			title = 'unknow'
+		}
+		
+		var pl_r = prepare_playlist(title , 'tracks', with_search_results)
 		seesu.ui.views.show_playlist_page(pl_r);
 		var used_successful = su.mp3_search.find_files(q, 'vk', function(err, pl){
 			create_playlist(pl, pl_r);
@@ -279,10 +289,97 @@ seesu_ui.prototype = {
 	
 		
 	},
+	createFilesListElement: function(mopla, mo){
+		
+		var li = $('<li></li>');
+		
+		
+		var songitself = $('<a class="js-serv"></a>')
+			.text(mopla.artist + " - " + mopla.track)
+			.click(function(){
+				su.player.play_song(mo, true, mopla)
+			}).appendTo($('<span class="song-file"></span>').appendTo(li));
+			
+		var d = $('<span class="duration"></span>').appendTo(li);
+		if (mopla.duration){
+			var digits = mopla.duration % 60;
+			d.text((Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits ));
+		}	
+
+		
+		return li;
+	},
+	createFilesList: function(part, mo){
+		if (part.t && part.t.length){
+			var fl = $();
+			fl = fl.add($('<div class="files-source"></div>').text(part.name));
+			var ul = $('<ul></ul>');
+			fl = fl.add(ul);
+			for (var i=0; i < part.t.length; i++) {
+				var el = this.createFilesListElement(part.t[i], mo);
+				if (i > 2){
+					el.addClass('addition-file')
+				}
+				ul.append(el);
+			};
+			return fl;
+		}
+		
+	},
+	updateSongContext:function(mo){
+		var node = mo.node;
+		var artist = mo.artist;
+		
+		var a_info = mo.ui && mo.ui.a_info;
+		if (a_info){
+			if (artist) {this.update_artist_info(artist, a_info);}
+			this.update_track_info(mo);
+			this.show_video_info(mo.ui.tv, artist + " - " + mo.track);
+			this.updateSongfiles(mo);
+			su.player.fix_progress_bar(mo);
+			
+			if (su.lfm_api.scrobbling) {
+				this.lfm_change_scrobbling(true, mo.ui.context.children('.track-panel').children('.track-buttons'));
+			}
+		} else{
+			console.log('no context for:')
+			console.log(mo)
+		}
+		
+	},
+	updateSongfiles: function(mo){
+		var _sui = this;
+		var c = mo.ui.files;
+		c.empty();
+		/*
+		var no_vk = mo.failedFor('vk');
+		if (no_vk){
+			
+		}*/
+		c.append('<div class="desc-name">' + localize('Files', 'Files') + '</div>');
+		
+		
+		var desc = $('<div class="desc-text2"></div>').appendTo(c);
+		if (mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('vk')){
+			desc.append(_sui.samples.vk_login.clone())
+		}
+		var songs = mo.songs();
+		if (songs){
+			for (var i=0; i < songs.length; i++) {
+				var b = this.createFilesList(songs[i], mo);
+				if (b){b.appendTo(desc);}
+			};
+			
+		} 
+		if (mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('soundcloud')){
+			desc.append('<p>try to connect soundcloud search</p>')
+		}
+	
+	},
 	update_artist_info: function(artist, a_info, not_show_link_to_artist_page){
 		var _sui = this;
 		if (a_info.data('artist') == artist) {
-			if (su.ui.views.playlist_type == 'artist'){
+			if (_sui.views.playlist_type == 'artist'){
 				if (su.player.top_tracks_link){
 					su.player.top_tracks_link.remove();
 				}
@@ -301,12 +398,12 @@ seesu_ui.prototype = {
 			var arts_name = $('<span class="desc-name"></span>')
 				.appendTo(ainf.name);
 				
-			if (su.ui.views.playlist_type != 'artist'){
+			if (_sui.views.playlist_type != 'artist'){
 				su.player.top_tracks_link = $('<a class="js-serv">' + localize('top-tracks') + '</a>')
 					.data('artist', artist)
 					.appendTo(arts_name)
 					.click(function(){
-						su.ui.show_artist(artist);
+						_sui.show_artist(artist);
 						su.track_event('Artist navigation', 'top tracks', artist);
 					});
 			}	
@@ -353,6 +450,7 @@ seesu_ui.prototype = {
 	},
 	show_video_info: function(vi_c, q){
 		var _this = this;
+		var _sui = this;
 		if (vi_c.data('has-info')){return true;}
 		get_youtube(q, function(r){			
 			var vs = r.feed.entry;
@@ -369,7 +467,7 @@ seesu_ui.prototype = {
 						_this.remove_video();
 						
 						if (!showed){
-							su.ui.video = {
+							_sui.video = {
 								link: $(this).addClass('active'),
 								node: $(_this.create_youtube_video(vid, su.env.opera_widget)).appendTo(v_content)
 							}
@@ -409,9 +507,9 @@ seesu_ui.prototype = {
 		});
 		
 	},
-	update_track_info: function(a_info, node){
-		var ti = a_info.find('.track-info').empty();
-		var mo = node.data('mo');
+	update_track_info: function(mo){
+		var ti = mo.ui.info.empty();
+		var mo;
 		if (mo.mopla && mo.mopla.from && mo.mopla.from == 'soundcloud'){
 			if (mo.mopla.page_link){
 				var sc_link = $('<a></a>')
@@ -579,6 +677,7 @@ seesu_ui.prototype = {
 	render_playlist: function(pl, not_clear) { // if links present than do full rendering! yearh!
 		var _sui = this;
 		var ui = (pl.ui && pl.ui[0] && (pl.ui[0].ownerDocument == _sui.d) && pl.ui) || _sui.views.get_playlist_c();
+		pl.ui = ui;
 		if (pl.loading){
 			ui.removeClass('loading')
 			pl.loading = false;
@@ -586,27 +685,26 @@ seesu_ui.prototype = {
 		if (!not_clear){
 			ui.empty();
 		}
-		seesu.ui.els.make_trs.show().data('pl', _sui.views.browsing.mpl = pl);
-		if (!pl){
-			$(ul).append('<li>' + localize('nothing-found','Nothing found') + '</li>');
+		_sui.els.make_trs.show().data('pl', _sui.views.browsing.mpl = pl);
+		if (!pl.length){
+			$(ui).append('<li>' + localize('nothing-found','Nothing found') + '</li>');
 		} else {
-			pl.ui = ui;
-			
 			for (var i=0, l = pl.length; i < l; i++) {
 				
 				pl.ui.append(
 					_sui.create_playlist_element(pl[i])
 				);
-				su.mp3_search.find_mp3(pl[i], {only_cache: true});
 			}
 			make_tracklist_playable(pl);
+			//make_tracklist_playable(pl);
 			//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
 		
 			
 			return true;
 		}
 	},
-	make_pl_element_playable: function(mo, not_rend){
+	updateSong: function(mo, not_rend){
+	var _sui = this;
 	var durat = mo.node.find('a.song-duration').remove();
 	var down = mo.node.siblings('a.download-mp3').remove();
 		mo.node
@@ -617,8 +715,8 @@ seesu_ui.prototype = {
 			.data('mo', mo)
 			.unbind()
 			.click(function(){
-				seesu.ui.views.save_view(mo.plst_titl);
-				seesu.player.song_click(mo);
+				_sui.views.save_view(mo.plst_titl);
+				su.player.song_click(mo);
 			});
 		
 		if (!not_rend){
@@ -645,32 +743,43 @@ seesu_ui.prototype = {
 
 		
 	},
-	create_playlist_element: function(mo_titl){
+	create_playlist_element: function(mo){
+		var _sui = this;
 		var t_context = this.els.track_c.clone(true);
 		var tp = t_context.children('.track-panel');
 		var track = $("<a></a>")
-			.data('mo_titl', mo_titl)
-			.data('artist_name', mo_titl.artist)
+			.data('mo', mo)
 			.data('t_context', t_context)
 			.addClass('track-node waiting-full-render')
 			.click(empty_song_click),
 			li = document.createElement('li');
 			
-		tp.children('.play-control').children('img.pl-control').data('mo_titl', mo_titl);
+		tp.children('.play-control').children('img.pl-control').data('mo', mo);
 		
-		mo_titl.node = track;
 		
-		if (!!mo_titl.track){
-			track.text(mo_titl.artist + ' - ' + mo_titl.track);
+		var a_info = t_context.children('.artist-info');
+		mo.node = track;
+		mo.ui = {
+			a_info: a_info,
+			node: track,
+			context: t_context,
+			info: a_info.children('.track-info'),
+			tv: a_info.children('.track-video'),
+			files: a_info.children('.track-files')
+		};
+		
+		
+		if (!!mo.track){
+			track.text(mo.artist + ' - ' + mo.track);
 		} else{
-			track.text(mo_titl.artist);
+			track.text(mo.artist);
 		}
 
 		
 		
 		var ph = seesu.player.controls.ph.clone(true);
-		var tpt = ph.children('.track-progress').data('mo_titl', mo_titl);
-		mo_titl.c = {
+		var tpt = ph.children('.track-progress').data('mo', mo);
+		mo.c = {
 			tr_progress_t: tpt,
 			tr_progress_l: tpt.children('.track-load-progress'),
 			tr_progress_p: tpt.children('.track-play-progress')
@@ -678,8 +787,8 @@ seesu_ui.prototype = {
 		ph.prependTo(tp);
 			
 		var plistel = $(li)
-			.data('mo_titl', mo_titl)
-			.append(seesu.ui.els.play_controls.node.clone(true).data('mo_titl', mo_titl))
+			.data('mo', mo)
+			.append(_sui.els.play_controls.node.clone(true).data('mo', mo))
 			.append(track)
 			.append(t_context);
 		
