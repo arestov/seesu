@@ -672,13 +672,15 @@ su.mp3_search= (function(){
 			
 		};
 		var newSearchInit = function(){
-			
-			if (su.player.c_song){
+			if (su.player){
+				if (su.player.c_song){
 				s.find_mp3(su.player.c_song);
+				}
+				if (su.player.v_song && su.player.v_song != su.player.c_song ){
+					s.find_mp3(su.player.v_song);
+				}
 			}
-			if (su.player.v_song && su.player.v_song != su.player.c_song ){
-				s.find_mp3(su.player.v_song);
-			}
+			
 		};
 		s.getMasterSlaveSearch = function(filter){
 			var o = {
@@ -757,7 +759,7 @@ su.mp3_search= (function(){
 
 if (typeof soundcloud_search != 'undefined'){
 	(function(){
-		return 
+		 
 		var sc_search_source = {name: 'soundcloud', key: 0};
 		su.mp3_search.add({
 			test: function(mo){
