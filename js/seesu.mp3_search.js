@@ -658,7 +658,7 @@ su.mp3_search= (function(){
 						me.done = true;
 					}
 				});
-			}, false, options);
+			}, filter, options);
 			
 			if (successful_uses){
 				for (var i=0; i < successful_uses.length; i++) {
