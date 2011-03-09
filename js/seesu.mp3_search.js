@@ -672,6 +672,7 @@ su.mp3_search= (function(){
 			
 		};
 		var newSearchInit = function(){
+			
 			if (su.player.c_song){
 				s.find_mp3(su.player.c_song);
 			}
