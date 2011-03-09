@@ -672,6 +672,11 @@ su.mp3_search= (function(){
 			
 		};
 		var newSearchInit = function(){
+			for (var s in this.search_emitters){
+				if (this.search_emitters[s] instanceof music_seach_emitter){
+					delete this.search_emitters[s].search_completed;
+				}
+			}
 			if (su.player){
 				if (su.player.c_song){
 					s.find_mp3(su.player.c_song);
