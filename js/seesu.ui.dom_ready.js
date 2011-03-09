@@ -56,7 +56,7 @@ window.connect_dom_to_som = function(d, ui){
 					
 					var query = seesu.ui.els.search_input.val();
 					if (query) {
-						su.ui.show_track(query)
+						su.ui.show_track({q: query});
 					}
 					
 				})
@@ -72,7 +72,7 @@ window.connect_dom_to_som = function(d, ui){
 		o.track_progress_total = $('<div class="track-progress"></div>',d).click(function(e){
 			e.stopPropagation();
 			var pos = get_click_position(e, this);
-			var new_play_position_factor = pos/$(this).data('mo_titl').c.track_progress_width;
+			var new_play_position_factor = pos/$(this).data('mo').c.track_progress_width;
 			seesu.player.musicbox.set_new_position(new_play_position_factor);
 			
 		})
@@ -135,31 +135,8 @@ window.connect_dom_to_som = function(d, ui){
 		}
 		var search_form = $('#search',d); 
 		
-		var vk_auth = $('.vk-auth',d).submit(function(){
-			seesu.ui.els.vk_login_error.text('');
-			dstates.remove_state('body','vk-needs-captcha');
-			var _this = $(this),
-				email = $('input.vk-email',_this).val(),
-				pass = vk_pass.val();
-			
-			var save = vk_save_pass.attr('checked');
-			if (save){
-				seesu.vk.save_pass = true;
-			} else{
-				seesu.vk.save_pass = false;
-			}
-			uilogin_to_hapi(email, pass, $('#vk-captcha-key',_this).val(), save);
-	
-			return false;
-		});
-		var vk_pass  = $('input.vk-pass', vk_auth)
-			.bind('mouseover', function(){
-				this.type = 'text';
-			})
-			.bind('mouseout', function(){
-				this.type = 'password';
-			});
-			
+
+		var ui_samples = $('#ui-samples',d);
 		ui.els = {
 			scrolling_viewport: $('#screens',d),
 			make_trs: $("#make-trs-plable",d).click(function(){
@@ -175,25 +152,71 @@ window.connect_dom_to_som = function(d, ui){
 			a_info: $('.artist-info', artsHolder),
 			artsTracks: $('.tracks-for-play',artsHolder),
 			art_tracks_w_counter: $('#tracks-waiting-for-search',d),
-			vk_login_error: $('.error',vk_auth),
-			captcha_img: $('.vk-captcha-context img',vk_auth),
+			
+			
 			searchres: $('#search_result',d),
 			search_input: $('#q',d),
 			play_controls: seesu.buttmen,
 			search_form: search_form,
 			track_c : $('.track-context',d),
 			volume_s: volume_s
+			
 		};
+		ui.samples = {
+			vk_login: {
+				o: ui_samples.children('.vk-login-context'),
+				vk_login_error: $(),
+				captcha_img: $(),
+				clone: function(){
+					var _this = this;
+					var nvk = this.o.clone();
+					var vk_auth = $('.vk-auth',nvk);
+					
+					_this.vk_login_error =  _this.vk_login_error.add($('.error',vk_auth));
+					_this.captcha_img = _this.captcha_img.add($('.vk-captcha-context img',vk_auth));
+					
+					vk_auth.submit(function(){
+						_this.vk_login_error.text('');
+						dstates.remove_state('body','vk-needs-captcha');
+						var node = $(this),
+							email = $('input.vk-email',node).val(),
+							pass = vk_pass.val();
+						
+						var save = vk_save_pass.attr('checked');
+						if (save){
+							seesu.vk.save_pass = true;
+						} else{
+							seesu.vk.save_pass = false;
+						}
+						uilogin_to_hapi(email, pass, $('.vk-captcha-key',node).val(), save);
+				
+						return false;
+					});
+					var vk_pass  = $('input.vk-pass', vk_auth)
+						.bind('mouseover', function(){
+							this.type = 'text';
+						})
+						.bind('mouseout', function(){
+							this.type = 'password';
+						});
+					return nvk;
+				}
+			}
+		};
+			
+			
 		ui.els.search_label = ui.els.search_form.find('#search-p').find('.lbl');
+		var justhead = $(su.ui.els.slider).children('.navs');
 		ui.views.nav = {
-			daddy: $(su.ui.els.slider).children('.navs'),
+			justhead: justhead,
+			daddy: justhead.children('.daddy'),
 			start: $('#start_search',d),
 			results: $('#search_result_nav',d),
 			playlist: $(su.ui.els.nav_playlist_page).parent(),
 			track: ui.els.nav_track_zoom.parent()
 		}
 		
-		su.ui.els.search_input.bind('keyup mousemove change', input_change);
+		ui.els.search_input.bind('keyup mousemove change', input_change);
 	
 		var state_recovered;	
 		if (window.su && su.player && su.player.c_song){
@@ -204,7 +227,7 @@ window.connect_dom_to_som = function(d, ui){
 				
 				ui.views.show_start_page(true, true, true);
 				su.ui.views.show_playlist_page(su.player.c_song.mo_titl.plst_titl);
-				su.player.set_current_song(su.player.c_song, true, true);
+				su.player.view_song(su.player.c_song, true, true);
 				su.ui.views.save_view(su.player.c_song.mo_titl.plst_titl,true);
 				su.ui.mark_c_node_as(su.player.player_state);
 				state_recovered = true;
@@ -241,7 +264,7 @@ window.connect_dom_to_som = function(d, ui){
 		}
 
 		if (su.lfm_api.scrobbling) {
-			ui.lfm_enable_scrobbling();
+			ui.lfm_change_scrobbling(true);
 		}
 		
 		if (su.lfm_api.sk) {

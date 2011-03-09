@@ -10,13 +10,19 @@ cache_ajax = {
 					if ((now_is - date_of_c_response) < ( (hours || 5) * 60 * 60 * 1000)){
 						var status;
 						
-						var old_r = null;
+						var old_r = (cached_response == Object(cached_response) && cached_response) || null;
 						
-						try {
-							var old_r = JSON.parse(cached_response);
-						} catch(e){
-							console.log(e);
+						if (old_r){
+							try {
+								if (!old_r && typeof old_r == 'string'){
+									var old_r = JSON.parse(cached_response);
+								}
+								
+							} catch(e){
+								console.log(e);
+							}
 						}
+						
 						
 						if (old_r){
 							if (callback) {callback(old_r);}
@@ -33,9 +39,6 @@ cache_ajax = {
 	},
 	set: function(prefix, hash_key, value){
 		var _v = value;
-		if ((typeof _v === 'array') || (typeof _v === 'object')){
-			_v = JSON.stringify(value);
-		}
 		w_storage('c_' + prefix + '_' + hash_key, _v);
 		w_storage('c_' + prefix + '_' + hash_key + '_date', (new Date).getTime());
 	}

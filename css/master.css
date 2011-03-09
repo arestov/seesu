@@ -53,7 +53,7 @@ a[href],a.js-serv{
 		color:#999;
 		}
 a[href='javascript:void(0)']{
-	border-bottom-style:dashed;
+	border-bottom-style:dotted;
 }
 
 a.js-serv,
@@ -61,7 +61,7 @@ a.bbcode_artist,
 a.bbcode_tag{
 	cursor:pointer;
 	text-decoration:none;
-	border-bottom:1px dashed #647142  !important;
+	border-bottom:1px dotted #647142  !important;
 	}
 	a.js-serv:hover,
 	a.bbcode_artist:hover,
@@ -190,6 +190,7 @@ display:none;
 .artist-info .image{
 	margin-right:13px;
 	margin-bottom:7px;
+	width: 126px;
 	}
 @media (min-width:600px) {
 	.artist-info .image{
@@ -204,6 +205,9 @@ display:none;
 	.desc-text{
 		overflow:hidden;
 		display: table-cell;
+	}
+	.desc-text2{
+		overflow:hidden;
 	}
 }
 
@@ -357,13 +361,7 @@ display:none;
 	height:26px;
 	box-sizing:border-box;
 }
-@media (min-width:770px){
-	.vk-login-context{
-		-moz-border-radius:6px;
-		-webkit-border-radius:6px;
-		border-radius:6px;
-	}
-}
+
 .tags-hyped{
 	overflow:hidden;
 	text-align: center;
@@ -479,6 +477,33 @@ html.not-as-application, .not-as-application  body{
 .serv-container{
 	display:none;
 }
+.track-files{
+	margin-bottom:40px;
+	overflow:hidden;
+	}
+	.track-files .files-source{
+		float:right;
+		width:90px;
+	}
+	.track-files ul{
+		margin-bottom:10px;
+	}
+	.track-files li.addition-file{
+		display:none;
+	}
+	.track-files li{
+		overflow:hidden;
+		margin-bottom:11px;
+		}
+		.track-files li .song-file{
+			float:left;
+			width:378px;
+		}
+		.track-files li .duration{
+			float:left;
+			width:40px;
+			color:#666;
+			}
 
 iframe.you-tube-video,embed.you-tube-video{
 	border:0;

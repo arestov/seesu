@@ -1,4 +1,22 @@
 (function(){
+	var stringify = function(value){
+		return value;
+	}
+	if ((typeof JSON === 'object') && JSON.stringify){
+		stringify = function(value){
+			if ((typeof value === 'object') || (typeof value === 'array')){
+				return JSON.stringify(value);
+			} else{
+				return value;
+			}
+			
+		}
+	}
+	
+	
+	
+	
+	
 	var ram_storage = {};
 	
 	var store_get = function(){return false};
@@ -8,7 +26,7 @@
 			return widget.preferenceForKey(key);
 		}
 		store_set = function(key, value){
-			return widget.setPreferenceForKey(value, key);
+			return widget.setPreferenceForKey(stringify(value), key);
 		}
 	} else
 	if (typeof localStorage === 'object') {
@@ -19,7 +37,7 @@
 		store_set = function(key, value, important){
 			if (!important){return null;}
 			try {
-				return localStorage.setItem(key, value);
+				return localStorage.setItem(key, stringify(value));
 			} catch(e){
 				return null;
 			}
@@ -31,7 +49,7 @@
 			return System.Gadget.Settings.readString(key);
 		}
 		store_set = function(key, value){
-			return System.Gadget.Settings.writeString(key, value);
+			return System.Gadget.Settings.writeString(key, stringify(value));
 		}
 	}
 	var get_key = function(key){
@@ -49,19 +67,7 @@
 	}
 	
 	
-	var stringify = function(value){
-		return value;
-	}
-	if ((typeof JSON === 'object') && JSON.stringify){
-		stringify = function(value){
-			if ((typeof value === 'object') || (typeof value === 'array')){
-				return JSON.stringify(value);
-			} else{
-				return value;
-			}
-			
-		}
-	}
+	
 	
 	
 	
@@ -70,7 +76,7 @@
 			if (typeof value === 'undefined'){
 				return get_key(key);
 			} else {
-				return set_key(key, stringify(value), important);
+				return set_key(key, value, important);
 			}
 		} else {
 			return false

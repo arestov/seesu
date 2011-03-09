@@ -2,6 +2,7 @@
 	overflow:hidden;
 	padding-top:6px;
 	padding-left:25px;
+	padding-right:25px;
 	min-height:36px;
 	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
 	border-bottom:1px solid #333;
@@ -12,10 +13,23 @@
 	font-family: "Trebuchet MS", sans-serif;
 
 }
-.navs.not-inited * {
+.daddy.not-inited * {
 	display:none;
 }
-
+.daddy{
+	float:left;
+}
+.np{
+	cursor:pointer;
+	height:20px;
+	width:20px;
+	background:url(../i/equalaizer_stoped.gif) no-repeat;
+	float: right;
+	margin-top:4px;
+}
+.player-played.np{
+	background-image:url(../i/equalaizer.gif);
+}
 #search_result{
 	display:none;
 	}	
@@ -114,9 +128,6 @@ li.active-play .play-controls{
 	height:23px;
 	position:relative;
 }
-.show-zoom-to-track .vk-login-context{
-	margin-bottom:54px;
-}
 
 .show-zoom-to-track .tracks-magic{
 	position:static;
@@ -129,7 +140,7 @@ li.active-play .play-controls{
 }
 .show-zoom-to-track .tracks-for-play>ul{
 
-	padding-top:37px;
+	padding-top:33px;
 }
 .show-zoom-to-track .tracks-for-play>ul>li.to-play-previous{
 	margin-top:-33px;

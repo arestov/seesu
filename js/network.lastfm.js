@@ -77,7 +77,7 @@ lastfm_api.prototype = {
 			
 			params_full.method = method;
 			params_full.api_key = _this.apikey;
-			var f = params_full.format || no_need_for_post_serv ? 'json' : '';
+			var f = params_full.format || (no_need_for_post_serv ? 'json' : '');
 			if (f){
 				params_full.format = f;
 			}
@@ -232,7 +232,7 @@ lastfm_api.prototype = {
 					  case('scrobbling'):
 						w_storage('lfm_scrobbling_enabled', 'true', true);
 						_this.scrobbling = true;
-						su.ui.lfm_enable_scrobbling();
+						su.ui.lfm_change_scrobbling(true);
 						break;
 					  default:
 						//console.log('Do nothing');

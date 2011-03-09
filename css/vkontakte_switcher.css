@@ -3,12 +3,14 @@
 }
 .vk-login-context{
 	clear:left;
-	display:none;
-	
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
 	padding:8px 10px 8px 17px;
-	margin: 0 -10px 20px;
+	margin: 0 0 20px;
 	background:#faebd7;
 	color:#000;
+	margin-bottom:24px;
 	}
 	.vk-login-context a.js-serv{
 		color:#83ac1b;
@@ -27,22 +29,26 @@
 		display:block;
 	}
 	.vk-login-context form{
-		padding-left:10px;
 	}
 	.vk-login-context form p{
 		overflow:hidden;
 		}
 		.vk-login-context form p label{
+			
+			overflow:hidden;
+		}
+		.vk-login-context form p label span.label{
 			float:left;
-			width:160px;
-			padding:2px;
+			padding:2px 2px 2px 6px;
 		}
 		.vk-login-context form p span.input-place{
 			float:left;
+			text-align:right;
 		}
 		.vk-login-context form p input[type=text],
 		.vk-login-context form p input[type=password]{
 			width:140px;
+			margin:0;
 		}
 .vk-login-context input{
 	margin-left:0;
