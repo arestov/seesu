@@ -367,12 +367,12 @@ function handle_song(mo, complete, get_next){
 		} else{
 			mo.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
 			if (get_next){
-				if (seesu.player.c_song && ((seesu.player.c_song.next_song && (mo == seesu.player.c_song.next_song)) || 
-					(seesu.player.c_song.prev_song && (mo == seesu.player.c_song.prev_song)))){
-					seesu.player.fix_songs_ui();
+				if (su.player.c_song && ((su.player.c_song.next_song && (mo == su.player.c_song.next_song)) || 
+					(su.player.c_song.prev_song && (mo == su.player.c_song.prev_song)))){
+					su.player.fix_songs_ui();
 				}
-				if (seesu.player.c_song && seesu.player.c_song.next_song){
-					get_next_track_with_priority(seesu.player.c_song.next_song);
+				if (su.player.c_song && su.player.c_song.next_song){
+					get_next_track_with_priority(su.player.c_song.next_song);
 				}
 			}
 		}
@@ -389,7 +389,7 @@ function handle_song(mo, complete, get_next){
 	if (mo.isHaveTracks() || mo.isHaveBestTracks()){
 		
 		su.ui.updateSong(mo);
-		seesu.ui.els.export_playlist.addClass('can-be-used');
+		su.ui.els.export_playlist.addClass('can-be-used');
 	}
 };
 
@@ -400,13 +400,13 @@ var get_mp3 = function(msq, options, p, callback, just_after_request){
 	//o ={handler: function(){}, nocache: false, only_cache: false, get_next: false}
 	
 	if (!o.nocache && !o.only_cache){
-		seesu.ui.els.art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
+		su.ui.els.art_tracks_w_counter.text((su.delayed_search.tracks_waiting_for_search += 1) || '');
 	}
 	
 	var count_down = function(search_source, music_list, can_be_fixed){
 		var complete = p.n !== 0 && --p.n === 0;
 		if (!o.nocache && !o.only_cache){
-			seesu.ui.els.art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
+			su.ui.els.art_tracks_w_counter.text((su.delayed_search.tracks_waiting_for_search -= 1) || '');
 		}
 		if (callback){
 			callback(!music_list, search_source, complete, music_list, can_be_fixed)
@@ -664,7 +664,7 @@ su.mp3_search= (function(){
 				for (var i=0; i < successful_uses.length; i++) {
 					var used_successful = successful_uses[i];
 					if (typeof used_successful == 'object'){
-						used_successful.pr = seesu.player.want_to_play + 1;
+						used_successful.pr = su.player.want_to_play + 1;
 						used_successful.q.init();
 					}
 				};
@@ -674,7 +674,11 @@ su.mp3_search= (function(){
 		var newSearchInit = function(){
 			if (su.player){
 				if (su.player.c_song){
-				s.find_mp3(su.player.c_song);
+					s.find_mp3(su.player.c_song);
+					
+					if (su.player.c_song.next_preload_song){
+						s.find_mp3(su.player.c_song.next_preload_song);
+					}
 				}
 				if (su.player.v_song && su.player.v_song != su.player.c_song ){
 					s.find_mp3(su.player.v_song);
