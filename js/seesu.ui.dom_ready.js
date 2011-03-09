@@ -216,7 +216,7 @@ window.connect_dom_to_som = function(d, ui){
 			track: ui.els.nav_track_zoom.parent()
 		}
 		
-		su.ui.els.search_input.bind('keyup mousemove change', input_change);
+		ui.els.search_input.bind('keyup mousemove change', input_change);
 	
 		var state_recovered;	
 		if (window.su && su.player && su.player.c_song){

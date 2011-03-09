@@ -1,4 +1,4 @@
-window.arrows_keys_nav = function(e){
+function arrows_keys_nav(e){
 	var _key = e.keyCode;
 	if (_key == '13'){
 		e.preventDefault();
@@ -43,7 +43,7 @@ window.arrows_keys_nav = function(e){
 			}
 		}
 	}
-}
+};
 
 var results_mouse_click_for_enter_press = function(e){
 	var node_name = e.target.nodeName;
@@ -529,6 +529,7 @@ var get_fast_suggests = $.debounce(function(q, callback, hash){
 		if (callback){callback(r);}
 	  }	,
 	  complete: function(xhr){
+	  	if (su.ui.els.search_input.val() != q){return}
 	  	su.ui.els.search_label.removeClass('loading');
 	  }
 	});
@@ -542,11 +543,13 @@ var suggestions_search =  seesu.env.cross_domain_allowed ? function(q, ui){
 		su.ui.els.search_label.addClass('loading');
 		var hash = hex_md5(q);
 		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
+			if (su.ui.els.search_input.val() != q){return}
 			su.ui.els.search_label.removeClass('loading');
 			fast_suggestion(r, q, ui)
 		});
 		if (!cache_used) {
 			seesu.xhrs.multiply_suggestions.push(get_fast_suggests(q, function(r){	
+				if (su.ui.els.search_input.val() != q){return}
 				fast_suggestion(r, q, ui)
 			}, hash));
 			
@@ -559,26 +562,32 @@ var suggestions_search =  seesu.env.cross_domain_allowed ? function(q, ui){
 		ui.tag.label.addClass('loading');
 		
 		seesu.xhrs.multiply_suggestions.push(lfm('artist.search',{artist: q, limit: 15 },function(r){
+			if (su.ui.els.search_input.val() != q){return}
 			show_artists_results(r, false, 5);
 			ui.arts.button.find('span').text(localize('fine-more', 'find more') + ' «' + q + '» '+ localize('artists', 'artists'));
 			ui.arts.label.removeClass('loading');
 		},function(){
+			if (su.ui.els.search_input.val() != q){return}
 			ui.arts.label.removeClass('loading');
 		}));
 		
 		seesu.xhrs.multiply_suggestions.push(lfm('track.search',{track: q, limit: 15 },function(r){
+			if (su.ui.els.search_input.val() != q){return}
 			show_tracks_results(r, false, 5);
 			ui.track.button.find('span').text(localize('fine-more', 'find more') + ' «' + q + '» ' + localize('tracks','tracks'));
 			ui.track.label.removeClass('loading');
 		},function(){
+			if (su.ui.els.search_input.val() != q){return}
 			ui.track.label.removeClass('loading');
 		}));
 		
 		seesu.xhrs.multiply_suggestions.push(lfm('tag.search',{tag: q, limit: 15 },function(r){
+			if (su.ui.els.search_input.val() != q){return}
 			show_tags_results(r, false, 5);
 			ui.tag.button.find('span').text(localize('fine-more', 'find more') + ' «' + q + '» ' + localize('tags','tags'));
 			ui.tag.label.removeClass('loading');
 		},function(){
+			if (su.ui.els.search_input.val() != q){return}
 			ui.tag.label.removeClass('loading');
 		}));
 		
