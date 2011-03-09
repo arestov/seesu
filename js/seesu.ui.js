@@ -267,9 +267,27 @@ seesu_ui.prototype = {
 		
 		var pl_r = prepare_playlist(title , 'tracks', with_search_results)
 		seesu.ui.views.show_playlist_page(pl_r);
-		var used_successful = su.mp3_search.find_files(q, 'vk', function(err, pl){
-			create_playlist(pl, pl_r);
-		}, false, false, true);
+		su.mp3_search.find_files(q, false, function(err, pl, c, complete){
+			if (complete){
+				c.done = true;
+				var playlist = [];
+				if (pl && pl.length){
+					for (var i=0; i < pl.length; i++) {
+						if (pl[i].t){
+							playlist.push.apply(playlist, pl[i].t);
+						}
+					};
+				}
+				
+				var playlist_ui = create_playlist(playlist.length && playlist, pl_r);
+				if (!su.mp3_search.haveSearch('vk')){
+					playlist_ui.prepend($('<li></li>').append(su.ui.samples.vk_login.clone()))
+				}
+				
+			}
+			
+			
+		}, false);
 
 		
 		
@@ -687,7 +705,7 @@ seesu_ui.prototype = {
 		}
 		_sui.els.make_trs.show().data('pl', _sui.views.browsing.mpl = pl);
 		if (!pl.length){
-			$(ui).append('<li>' + localize('nothing-found','Nothing found') + '</li>');
+			pl.ui.append('<li>' + localize('nothing-found','Nothing found') + '</li>');
 		} else {
 			for (var i=0, l = pl.length; i < l; i++) {
 				
@@ -700,8 +718,9 @@ seesu_ui.prototype = {
 			//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
 		
 			
-			return true;
+			
 		}
+		return pl.ui
 	},
 	updateSong: function(mo, not_rend){
 	var _sui = this;

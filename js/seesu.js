@@ -433,17 +433,14 @@ var make_tracklist_playable = function(pl, full_allowing){
 	var ob = {num:0};
 	for (var i=0, l =  pl.length; i < l; i++) {
 		var mo = pl[i];
-		if (!mo.track){
+		if (mo.raw){
+				su.ui.updateSong(mo);
+		} else if (!mo.track){
 			start_random_nice_track_search(mo, ob, !full_allowing );
 		} else{
-			if (mo.raw){
-				su.ui.updateSong(mo);
-			} else{
-				su.mp3_search.find_mp3(mo, {
-					only_cache: !full_allowing && !mo.want_to_play
-				});
-			}
-			
+			su.mp3_search.find_mp3(mo, {
+				only_cache: !full_allowing && !mo.want_to_play
+			});
 		}
 	}
 };
@@ -513,13 +510,13 @@ var prepare_playlist = function(playlist_title, playlist_type, with_search_resul
 };
 var create_playlist =  function(pl, pl_r, not_clear){
 	if (!pl){
-		seesu.ui.render_playlist(pl_r);
+		return seesu.ui.render_playlist(pl_r);
 	} else{
 		
 		for (var i=0, l = pl.length; i < l; i++) {
 			pl_r.push(seesu.gena.connect(pl[i], pl_r, i));
 		}
-		seesu.ui.render_playlist(pl_r, not_clear);
+		return seesu.ui.render_playlist(pl_r, not_clear);
 		
 	}
 	

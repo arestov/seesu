@@ -14,7 +14,12 @@ var song_methods = {
 		}
 	},
 	songs: function(){
-		return cmo.getAllSongTracks(this.sem);
+		if (this.raw){
+			return [{t:[this]}];
+		} else{
+			return cmo.getAllSongTracks(this.sem);
+		}
+		
 	},
 	isHaveAnyResultsFrom: function(source_name){
 		return !!this.raw || !!this.sem && this.sem.isHaveAnyResultsFrom(source_name);
@@ -66,7 +71,7 @@ cmo = {
 		for (var steam in steams){
 			var d = this.getSteamData(sem, steam);
 			if (d){
-				allr.push(allr);
+				allr.push(d);
 			}
 		}
 		return !!allr.length && allr;
@@ -170,7 +175,9 @@ cmo = {
 		}
 	},
 	getAllSongTracks: function(sem){
-
+		if (!sem.steams){
+			return false;
+		}
 		var tracks_pack = [];
 		for(var steam in sem.steams){
 			var m = this.getSomeTracks(sem.steams[steam]);
@@ -198,7 +205,10 @@ cmo = {
 			sem.steams[ss.name] = {};
 		}
 		if (!sem.steams[ss.name][ss.key]){
-			sem.steams[ss.name][ss.key] = {};
+			sem.steams[ss.name][ss.key] = {
+				name: ss.name,
+				key: ss.key
+			};
 		}
 		return sem.steams[ss.name][ss.key];
 	}
@@ -467,18 +477,22 @@ music_seach_emitter.prototype = {
 			delete this.songs[i];
 		}
 	},
-	emmit_handler: function(c){
+	emmit_handler: function(c, complete){
 		
 		if (!c.done){
 			if (c.filter){
 				var r = cmo.getSteamData(this, c.filter);
 				if (r){
-					c.handler(r.failed, r.t, c);
+					c.handler(r.failed && {failed: true}, [r], c, complete);
+				} else if (!su.mp3_search.haveSearch(c.filter)){
+					c.handler({not_exist: true}, false, c, complete);
 				}
 			} else{
-				var r = cmo.getSteamsData(this, c.filter);
+				var r = cmo.getSteamsData(this);
 				if (r){
-					c.handler(false, r, c);
+					c.handler(false, r, c, complete);
+				} else{
+					c.handler(false, false, c, complete);
 				}
 			}
 		}
@@ -653,10 +667,7 @@ su.mp3_search= (function(){
 			var successful_uses = this.searchFor(q, function(sem){
 				sem.addHandler({
 					filter: filter,
-					handler: function(err, tracks, me){
-						if (callback) {callback(err, tracks);}
-						me.done = true;
-					}
+					handler: callback
 				});
 			}, filter, options);
 			
@@ -727,6 +738,10 @@ su.mp3_search= (function(){
 				}
 			};
 			return o;
+		};
+		s.haveSearch = function(search_name){
+			var o = this.getMasterSlaveSearch(search_name);	
+			return !!o.exist_slave || !!o.exitst_master_of_slave || !!o.exist_alone_master;
 		};
 		s.isNoMasterOfSlave= function(filter){
 			var o = this.getMasterSlaveSearch(filter);
