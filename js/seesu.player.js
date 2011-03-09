@@ -348,8 +348,7 @@ seesu.player = {
 				last_mo.node.parent().removeClass('playing-song');
 			}
 			
-			mo.node.parent().addClass('playing-song')
-			this.song_siblings(mo);
+			mo.node.parent().addClass('playing-song');
 			if (this.musicbox.play_song_by_url){
 				this.musicbox.play_song_by_url(_mopla.link);
 				mo.mopla = _mopla;
