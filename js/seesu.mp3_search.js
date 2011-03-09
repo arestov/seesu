@@ -19,6 +19,9 @@ var song_methods = {
 	isHaveAnyResultsFrom: function(source_name){
 		return !!this.raw || !!this.sem && this.sem.isHaveAnyResultsFrom(source_name);
 	},
+	isNeedsAuth: function(service_name){
+		return !this.raw && (!!this.sem && this.sem.isNoMasterOfSlave(service_name));
+	},
 	isHaveTracks: function(){
 		return !!this.raw || !!this.sem && this.sem.have_tracks ;
 	},
@@ -115,13 +118,13 @@ cmo = {
 		
 		
 	},
-	blockSteamPart: function(sem, search_source){
+	blockSteamPart: function(sem, search_source, can_be_fixed){
 		var _ms = this.getMusicStore(sem, search_source);
 		_ms.processing = false;
 		sem.some_results = true;
 		if (!_ms.t){
 			_ms.failed = true;
-			if (search_source.fixable){
+			if (can_be_fixed){
 				_ms.fixable = true;
 				
 			}
@@ -400,13 +403,13 @@ var get_mp3 = function(msq, options, p, callback, just_after_request){
 		seesu.ui.els.art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search += 1) || '');
 	}
 	
-	var count_down = function(search_source, music_list){
+	var count_down = function(search_source, music_list, can_be_fixed){
 		var complete = p.n !== 0 && --p.n === 0;
 		if (!o.nocache && !o.only_cache){
 			seesu.ui.els.art_tracks_w_counter.text((seesu.delayed_search.tracks_waiting_for_search -= 1) || '');
 		}
 		if (callback){
-			callback(!music_list, search_source, complete, music_list)
+			callback(!music_list, search_source, complete, music_list, can_be_fixed)
 		}
 	};
 
@@ -430,9 +433,9 @@ var get_mp3 = function(msq, options, p, callback, just_after_request){
 		
 	};
 	
-	var callback_error = function(search_source){
+	var callback_error = function(search_source, can_be_fixed){
 		//error
-		count_down(search_source);
+		count_down(search_source, false, can_be_fixed);
 	};
 	var used_successful = o.handler(search_query, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
 	
@@ -585,10 +588,10 @@ su.mp3_search= (function(){
 					var used_successful =  get_mp3(query, {
 						handler: search_handlers[i],
 						get_next: o.get_next
-					}, p, function(err, search_source, complete, music_list){
+					}, p, function(err, search_source, complete, music_list, can_be_fixed){
 						if (err){
 							if (search_source){
-								cmo.blockSteamPart(sem, search_source);
+								cmo.blockSteamPart(sem, search_source, can_be_fixed);
 							}
 						} else{
 							cmo.addSteamPart(sem, search_source, music_list);
@@ -676,49 +679,69 @@ su.mp3_search= (function(){
 				s.find_mp3(su.player.v_song);
 			}
 		};
-		s.add = function(asearch, force){
+		s.getMasterSlaveSearch = function(filter){
+			var o = {
+				exist_slave: false,
+				exist_alone_master: false,
+				exitst_master_of_slave: false
+			}
 			var exist_slave;
 			var exist_alone_master;
+			for (var i=0; i < this.length; i++) {
+				var cmp3s = this[i];
+				if (!cmp3s.disabled && cmp3s.name == filter){
+					if (cmp3s.slave){
+						if (!o.exist_slave){
+							o.exist_slave = cmp3s;
+							break
+						}
+					}
+				}
+			};
+			for (var i=0; i < this.length; i++) {
+				var cmp3s = this[i];
+				if (!cmp3s.disabled && cmp3s.name == filter){
+					if (!cmp3s.slave){
+						if (o.exist_slave){
+							if (o.exist_slave.preferred == cmp3s){
+								o.exitst_master_of_slave = cmp3s;
+							} else{
+								o.exist_alone_master = cmp3s;
+							}
+						} else{
+							o.exist_alone_master = cmp3s;
+						}
+					}
+				}
+			};
+			return o;
+		};
+		s.isNoMasterOfSlave= function(filter){
+			var o = this.getMasterSlaveSearch(filter);
+			return !!o.exist_slave && !o.exitst_master_of_slave;
+		};
+		s.add = function(asearch, force){
+			
 			
 			var push_later;
 			
 			
-			for (var i=0; i < this.length; i++) {
-				var cmp3s = this[i];
-				if (!cmp3s.disabled && cmp3s.name == asearch.name){
-					if (cmp3s.slave){
-						if (!exist_slave){
-							exist_slave = cmp3s;
-						}
-					}
-				}
-			};
-			for (var i=0; i < this.length; i++) {
-				var cmp3s = this[i];
-				if (!cmp3s.disabled && cmp3s.name == asearch.name){
-					if (!cmp3s.slave){
-						if (exist_slave){
-							if (exist_slave != cmp3s  && exist_slave.preferred != cmp3s){
-								exist_alone_master = cmp3s;
-							}
-						} else{
-							exist_alone_master = cmp3s;
-						}
-					}
-				}
-			};
+			var o = this.getMasterSlaveSearch(asearch.name);
 			
 
-			if (exist_slave){
-				if (force || !exist_slave.preferred || !~this.indexOf(exist_slave.preferred)){
-					exist_slave.preferred.disabled = true;
+			if (o.exist_slave){
+				if (force || !o.exitst_master_of_slave){
+					if (o.exist_slave.preferred){
+						o.exist_slave.preferred.disabled = true;
+					}
+					
 					this.push(asearch);
-					exist_slave.preferred = asearch;
+					o.exist_slave.preferred = asearch;
 					newSearchInit();
 				} 
-			} else if (exist_alone_master){
+			} else if (o.exist_alone_master){
 				if (force){
-					exist_alone_master.disabled = true;
+					o.exist_alone_master.disabled = true;
 					this.push(asearch);
 					newSearchInit();
 				}

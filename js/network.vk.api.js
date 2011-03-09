@@ -96,10 +96,16 @@ vk_api.prototype = {
 					
 					if (callback) {callback(r, legal_api);}
 				} else{
-					if (r.error.error_code < 6){
+					if (r.error.error_code < 5){
 						if (_this.fallback){ _this.fallback();}
 						
-					} else{
+					} 
+					if (r.error.error_code < 6){
+						if (error) {error(true, legal_api);}
+						
+					}
+					
+					else{
 						if (callback) {callback(r, legal_api);}
 					}
 				}
@@ -164,7 +170,7 @@ vk_api.prototype = {
 				  success: !params_full.callback ? response_callback : false,
 				  jsonpCallback: params_full.callback ? params_full.callback : false, 
 				  error: function(xhr){
-					if (error && xhr) {error(xhr, legal_api);}
+					if (error && xhr) {error(false, legal_api);}
 					
 				  }
 				});
