@@ -354,6 +354,7 @@ seesu.player = {
 				this.musicbox.play_song_by_url(_mopla.link);
 				mo.mopla = _mopla;
 			}
+			this.fix_progress_bar(mo);
 			
 		}
 		this.view_song(mo, zoom, false);

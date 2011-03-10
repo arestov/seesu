@@ -323,7 +323,10 @@ seesu_ui.prototype = {
 			var digits = mopla.duration % 60;
 			d.text((Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits ));
 		}	
-
+		if (mopla.page_link){
+			li.append('<a target="_blank" href="' + mopla.page_link + '">page</a>');
+			
+		}
 		
 		return li;
 	},
@@ -351,10 +354,9 @@ seesu_ui.prototype = {
 		var a_info = mo.ui && mo.ui.a_info;
 		if (a_info){
 			if (artist) {this.update_artist_info(artist, a_info);}
-			this.update_track_info(mo);
+			//this.update_track_info(mo);
 			this.show_video_info(mo.ui.tv, artist + " - " + mo.track);
 			this.updateSongfiles(mo);
-			su.player.fix_progress_bar(mo);
 			
 			if (su.lfm_api.scrobbling) {
 				this.lfm_change_scrobbling(true, mo.ui.context.children('.track-panel').children('.track-buttons'));
