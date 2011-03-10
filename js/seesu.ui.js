@@ -267,9 +267,27 @@ seesu_ui.prototype = {
 		
 		var pl_r = prepare_playlist(title , 'tracks', with_search_results)
 		seesu.ui.views.show_playlist_page(pl_r);
-		var used_successful = su.mp3_search.find_files(q, 'vk', function(err, pl){
-			create_playlist(pl, pl_r);
-		}, false, false, true);
+		su.mp3_search.find_files(q, false, function(err, pl, c, complete){
+			if (complete){
+				c.done = true;
+				var playlist = [];
+				if (pl && pl.length){
+					for (var i=0; i < pl.length; i++) {
+						if (pl[i].t){
+							playlist.push.apply(playlist, pl[i].t);
+						}
+					};
+				}
+				
+				var playlist_ui = create_playlist(playlist.length && playlist, pl_r);
+				if (!su.mp3_search.haveSearch('vk')){
+					playlist_ui.prepend($('<li></li>').append(su.ui.samples.vk_login.clone()))
+				}
+				
+			}
+			
+			
+		}, false);
 
 		
 		
@@ -305,7 +323,10 @@ seesu_ui.prototype = {
 			var digits = mopla.duration % 60;
 			d.text((Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits ));
 		}	
-
+		if (mopla.page_link){
+			li.append('<a target="_blank" href="' + mopla.page_link + '">page</a>');
+			
+		}
 		
 		return li;
 	},
@@ -333,10 +354,9 @@ seesu_ui.prototype = {
 		var a_info = mo.ui && mo.ui.a_info;
 		if (a_info){
 			if (artist) {this.update_artist_info(artist, a_info);}
-			this.update_track_info(mo);
+			//this.update_track_info(mo);
 			this.show_video_info(mo.ui.tv, artist + " - " + mo.track);
 			this.updateSongfiles(mo);
-			su.player.fix_progress_bar(mo);
 			
 			if (su.lfm_api.scrobbling) {
 				this.lfm_change_scrobbling(true, mo.ui.context.children('.track-panel').children('.track-buttons'));
@@ -687,7 +707,7 @@ seesu_ui.prototype = {
 		}
 		_sui.els.make_trs.show().data('pl', _sui.views.browsing.mpl = pl);
 		if (!pl.length){
-			$(ui).append('<li>' + localize('nothing-found','Nothing found') + '</li>');
+			pl.ui.append('<li>' + localize('nothing-found','Nothing found') + '</li>');
 		} else {
 			for (var i=0, l = pl.length; i < l; i++) {
 				
@@ -700,8 +720,9 @@ seesu_ui.prototype = {
 			//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
 		
 			
-			return true;
+			
 		}
+		return pl.ui
 	},
 	updateSong: function(mo, not_rend){
 	var _sui = this;
@@ -719,26 +740,23 @@ seesu_ui.prototype = {
 				su.player.song_click(mo);
 			});
 		
-		if (!not_rend){
-			var mopla = mo.song();
-			if (mopla){
-				
-				
-				
-				if (mopla.from != 'legal_vk_api'){
-					var mp3 = $("<a class='download-mp3'></a>").text('mp3').attr({'href': mopla.link });
-					mp3.insertBefore(mo.node);
-				} else{
-					mo.node.addClass('mp3-download-is-not-allowed');
-				}
-				
-				if (mopla.duration) {
-					var digits = mopla.duration % 60;
-					var track_dur = (Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-					mo.node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
-				}
+		
+		var mopla = mo.song();
+		if (mopla){
+			if (mopla.downloadable){
+				var mp3 = $("<a class='download-mp3'></a>").text('mp3').attr({'href': mopla.link });
+				mp3.insertBefore(mo.node);
+			} else{
+				mo.node.addClass('mp3-download-is-not-allowed');
+			}
+			
+			if (mopla.duration) {
+				var digits = mopla.duration % 60;
+				var track_dur = (Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+				mo.node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
 			}
 		}
+		
 		
 
 		

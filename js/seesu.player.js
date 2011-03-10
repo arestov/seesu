@@ -109,6 +109,7 @@ function rebuildPlaylist(saved_pl){
 	for (var i=0; i < saved_pl.length; i++) {
 		p.push(saved_pl[i]);
 	}
+	p.kill = function(){delete this.ui;return};
 	su.gena.create_userplaylist(false, p, true);
 	su.gena.reconnect_playlist(p);
 	return p;
@@ -353,6 +354,7 @@ seesu.player = {
 				this.musicbox.play_song_by_url(_mopla.link);
 				mo.mopla = _mopla;
 			}
+			this.fix_progress_bar(mo);
 			
 		}
 		this.view_song(mo, zoom, false);
@@ -389,7 +391,7 @@ seesu.player = {
 	  } else {
 		su.ui.remove_video();
 		//time = (new Date()).getTime();
-		//su.ui.updateSongContext(mo);
+		su.ui.updateSongContext(mo);
 		if (last_mo) {
 			this.change_songs_ui(last_mo, true) //remove ative state
 		}

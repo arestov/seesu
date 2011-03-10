@@ -38,35 +38,25 @@ function soundcloud_search(query, callback, error, nocache, after_ajax, only_cac
 					for (var i=0; i < r.length; i++) {
 						var search_string = r[i].title || r[i].description;
 						if (search_string){
-							var _ttl = search_string.split(/\s*\-\s*/);
-							var artist = _ttl[0];
+							var _ttl = search_string.split('-',2);
+							var artist = (_ttl.length == 2) && _ttl[0];
+							var track_title = (_ttl.length == 2) && (_ttl[1] && _ttl[1].replace(/^\s*|\s*$/,'') || '') || _ttl[0];
 							
-							var _tr_str = '';
-							if (_ttl[1]){
-								if (_ttl.length > 2){
-									_tr_str += (
-										search_string
-										.replace(artist,'')
-										.replace(/\s*\-\s*/,'')
-									);
-								
-								} else{
-									_tr_str += _ttl[1];
-								}
+							
+							if (!artist){
+								artist = r[i].user.permalink || '';
 							}
 							
-							var track_title = _tr_str;
-							
 							var entity = {
-								'artist'  	: HTMLDecode(artist),
-								'track'		: HTMLDecode(track_title),
-								'duration'	: Math.round(r[i].duration/1000),
-								'link'		: (r[i].download_url || r[i].stream_url) + '?consumer_key=' + sc_key,
-								'from': 	'soundcloud',
-								'real_title': r[i].title,
-								'page_link':  r[i].permalink_url,
-								'description': r[i].description || false
-								
+								artist  	: HTMLDecode(artist),
+								track		: HTMLDecode(track_title),
+								duration	: Math.round(r[i].duration/1000),
+								link		: (r[i].download_url || r[i].stream_url) + '?consumer_key=' + sc_key,
+								from		: 'soundcloud',
+								real_title	: r[i].title,
+								page_link	: r[i].permalink_url,
+								description : r[i].description || false,
+								downloadable: r[i].downloadable
 							
 							};
 							if (!has_music_copy(music_list,entity)){

@@ -219,6 +219,7 @@ p.internet-flash-settings{
 }
 .track-progress{
 	background:#505050;
+	
 	position:absolute;
 	overflow:hidden;
 	max-width:100%;
@@ -226,8 +227,20 @@ p.internet-flash-settings{
 	left:0;
 	right:0;
 	height:15px;
-	border: 1px solid transparent;
-
+	
+	
+	
+	background: #444444;
+	border-top: 1px solid #434343;
+	border-bottom: 1px solid #767676;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	border-radius: 7px;
+	border-left: 1px solid #4E4E4E;
+	border-right: 1px solid #4E4E4E;
+	
+	
+	
 	}
 	.track-load-progress{
 		position:absolute;
@@ -235,8 +248,15 @@ p.internet-flash-settings{
 		width:0;
 		left:0;
 		top:0;
-		height:100%;
-		background:#595959;
+		height:15px;
+		background:#484848;
+		
+		
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+	
+	
 		}
 	.track-play-progress{
 		position:absolute;
@@ -244,8 +264,13 @@ p.internet-flash-settings{
 		width:0;
 		left:0;
 		top:0;
-		height:100%;
-		background:#666;
+		height:15px;
+		background:#4f4f4f url(../i/playing-gradient.png) repeat-x 0 0;
+		
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		border-radius: 5px;
+	
 		}
 .track-node-text{
 	position:relative;

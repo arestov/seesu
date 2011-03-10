@@ -248,24 +248,15 @@ var rend_vk_suggets = function(pl, ui){
 	}
 
 }
-var vk_tracks_search = $.debounce(function(query, ui){
 
-	var used_successful = su.mp3_search.find_files({q: query}, 'vk', function(err, pl){
-		ui.vk_tracks.label.removeClass('loading');
-		rend_vk_suggets(pl, ui);
-	}, false, false, true);
-	
-
-	
-	
-	
-},1400);
 var vk_suggests = $.debounce(function(query, ui){
 	
 	//function(trackname, callback, nocache, hypnotoad, only_cache){
-	var used_successful = su.mp3_search.find_files({q: query}, 'vk', function(err, pl){
-		rend_vk_suggets(pl, ui);
-	}, false, false, true);
+	su.mp3_search.find_files({q: query}, 'vk', function(err, pl, c){
+		c.done = true;
+		ui.vk_tracks.label.removeClass('loading');
+		rend_vk_suggets(pl && pl[0], ui);
+	}, false);
 	
 	
 	
