@@ -42,16 +42,21 @@ function soundcloud_search(query, callback, error, nocache, after_ajax, only_cac
 							var artist = (_ttl.length == 2) && _ttl[0];
 							var track_title = (_ttl.length == 2) && (_ttl[1] && _ttl[1].replace(/^\s*|\s*$/,'') || '') || _ttl[0];
 							
+							
+							if (!artist){
+								artist = r[i].user.permalink || '';
+							}
+							
 							var entity = {
-								'artist'  	: HTMLDecode(artist),
-								'track'		: HTMLDecode(track_title),
-								'duration'	: Math.round(r[i].duration/1000),
-								'link'		: (r[i].download_url || r[i].stream_url) + '?consumer_key=' + sc_key,
-								'from': 	'soundcloud',
-								'real_title': r[i].title,
-								'page_link':  r[i].permalink_url,
-								'description': r[i].description || false
-								
+								artist  	: HTMLDecode(artist),
+								track		: HTMLDecode(track_title),
+								duration	: Math.round(r[i].duration/1000),
+								link		: (r[i].download_url || r[i].stream_url) + '?consumer_key=' + sc_key,
+								from		: 'soundcloud',
+								real_title	: r[i].title,
+								page_link	: r[i].permalink_url,
+								description : r[i].description || false,
+								downloadable: r[i].downloadable
 							
 							};
 							if (!has_music_copy(music_list,entity)){

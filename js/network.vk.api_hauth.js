@@ -172,6 +172,7 @@ var login_spec_vkapi = function(email, pass, callback, captcha){
 										var vk_s = JSON.parse(auth);
 										auth_to_vkapi(vk_s, true, iapp_id, try_hapi);
 										console.log(vk_s);
+										seesu.ui.samples.vk_login.remove();
 										if (callback) {callback();}
 										
 									} else{
@@ -184,7 +185,7 @@ var login_spec_vkapi = function(email, pass, callback, captcha){
 							auth = auth && auth[1];
 							if (auth){
 								var vk_s = hauth_from_string(auth);
-								
+								seesu.ui.samples.vk_login.remove();
 								auth_to_vkapi(vk_s, true, iapp_id, try_hapi);
 								if (callback) {callback();}
 								console.log('auth: ' + auth);

@@ -165,11 +165,17 @@ window.connect_dom_to_som = function(d, ui){
 		ui.samples = {
 			vk_login: {
 				o: ui_samples.children('.vk-login-context'),
+				oos: $(),
+				remove: function(){
+					this.oos = $().remove();
+					this.oos = $();
+				},
 				vk_login_error: $(),
 				captcha_img: $(),
 				clone: function(){
 					var _this = this;
 					var nvk = this.o.clone();
+					_this.oos =  _this.oos.add(nvk);
 					var vk_auth = $('.vk-auth',nvk);
 					
 					_this.vk_login_error =  _this.vk_login_error.add($('.error',vk_auth));

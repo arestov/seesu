@@ -738,26 +738,23 @@ seesu_ui.prototype = {
 				su.player.song_click(mo);
 			});
 		
-		if (!not_rend){
-			var mopla = mo.song();
-			if (mopla){
-				
-				
-				
-				if (mopla.from != 'legal_vk_api'){
-					var mp3 = $("<a class='download-mp3'></a>").text('mp3').attr({'href': mopla.link });
-					mp3.insertBefore(mo.node);
-				} else{
-					mo.node.addClass('mp3-download-is-not-allowed');
-				}
-				
-				if (mopla.duration) {
-					var digits = mopla.duration % 60;
-					var track_dur = (Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-					mo.node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
-				}
+		
+		var mopla = mo.song();
+		if (mopla){
+			if (mopla.downloadable){
+				var mp3 = $("<a class='download-mp3'></a>").text('mp3').attr({'href': mopla.link });
+				mp3.insertBefore(mo.node);
+			} else{
+				mo.node.addClass('mp3-download-is-not-allowed');
+			}
+			
+			if (mopla.duration) {
+				var digits = mopla.duration % 60;
+				var track_dur = (Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+				mo.node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
 			}
 		}
+		
 		
 
 		
