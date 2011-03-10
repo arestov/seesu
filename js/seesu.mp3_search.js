@@ -175,7 +175,8 @@ cmo = {
 		}
 	},
 	getAllSongTracks: function(sem){
-		if (!sem.steams){
+		
+		if (!sem || !sem.steams){
 			return false;
 		}
 		var tracks_pack = [];
