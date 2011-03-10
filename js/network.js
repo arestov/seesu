@@ -123,7 +123,6 @@ function try_api(callback, do_not_repeat){
 };
 
 function try_mp3_providers(){
-	return
 	if (seesu.env.cross_domain_allowed){
 		try_hapi();
 	} else{
