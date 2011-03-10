@@ -473,7 +473,7 @@ seesu_ui.prototype = {
 		var _sui = this;
 		if (vi_c.data('has-info')){return true;}
 		get_youtube(q, function(r){			
-			var vs = r.feed.entry;
+			var vs = r && r.feed && r.feed.entry;
 			if (vs && vs.length){
 				vi_c.data('has-info', true);
 				vi_c.empty();
