@@ -311,23 +311,32 @@ seesu_ui.prototype = {
 		
 		var li = $('<li></li>');
 		
+		var desc_part = $('<span class="desc-name"></span>').appendTo(li);
+		var main_part = $('<span class="desc-text"></span>').appendTo(li);
+		
 		
 		var songitself = $('<a class="js-serv"></a>')
 			.text(mopla.artist + " - " + mopla.track)
 			.click(function(){
 				su.player.play_song(mo, true, mopla)
-			}).appendTo($('<span class="song-file"></span>').appendTo(li));
+			}).appendTo(main_part);
 			
-		var d = $('<span class="duration"></span>').appendTo(li);
+		var d = $('<span class="duration"></span>').appendTo(desc_part);
 		if (mopla.duration){
 			var digits = mopla.duration % 60;
 			d.text((Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits ));
-		}	
-		if (mopla.page_link){
-			li.append('<a target="_blank" href="' + mopla.page_link + '">page</a>');
-			
 		}
 		
+		
+		var mp3l = $('<a class="desc external"></a>').appendTo($('<span class="mp3-file-link"></span>').appendTo(desc_part));
+		if (mopla.downloadable){
+			mp3l.attr('href', mopla.link).text('mp3')
+		}
+			
+		if (mopla.page_link){
+			$('<a class="external desc page-link" href="' + mopla.page_link + '">page</a>').appendTo(desc_part);
+			
+		}
 		return li;
 	},
 	createFilesList: function(part, mo){
@@ -376,22 +385,34 @@ seesu_ui.prototype = {
 		if (no_vk){
 			
 		}*/
-		c.append('<div class="desc-name">' + localize('Files', 'Files') + '</div>');
+		var small_head = $('<div class="files-header"></div>').appendTo(c);
 		
 		
-		var desc = $('<div class="desc-text2"></div>').appendTo(c);
+		small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
+		small_head.append(
+			$('<span class="desc-text"></span>').append(
+				$('<a class="js-serv">' + localize('show-them') +'</a>').click(function(){
+					c.toggleClass('show-files');
+				})	
+			)
+		);
+		
+
 		if (mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('vk')){
-			desc.append(_sui.samples.vk_login.clone())
+			c.append(_sui.samples.vk_login.clone())
 		}
 		var songs = mo.songs();
 		if (songs){
+			var sc = $('<div class="files-lists"></div>');
 			for (var i=0; i < songs.length; i++) {
 				var b = this.createFilesList(songs[i], mo);
-				if (b){b.appendTo(desc);}
+				if (b){b.appendTo(sc);}
 			};
-			
+			sc.appendTo(c)
 		} 
-		if (mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('soundcloud')){
+		
+		
+		if (false && mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('soundcloud')){
 			desc.append('<p>try to connect soundcloud search</p>')
 		}
 	

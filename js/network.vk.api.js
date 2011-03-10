@@ -226,7 +226,8 @@ vk_api.prototype = {
 						downloadable: !legal_api
 					
 					};
-					if (!has_music_copy(music_list,entity)){
+					
+					if (!entity.link.match(/audio\/.mp3$/) && !has_music_copy(music_list,entity)){
 						music_list.push(entity);
 					}
 				
