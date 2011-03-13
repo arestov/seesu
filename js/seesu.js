@@ -479,7 +479,7 @@ var empty_song_click = function(){
 	}
 	
 	seesu.player.wainter_for_play = mo;
-	seesu.ui.views.save_view(mo.plst_titl);
+	seesu.ui.views.freeze(mo.plst_titl);
 	
 	su.mp3_search.find_mp3(mo);
 	su.ui.updateSongContext(mo);

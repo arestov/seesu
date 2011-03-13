@@ -18,3 +18,14 @@ Alexander Belov <porqz@mesquite.ru>
 
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
+recheck:
+restore_view
+.current_rc.q
+testViewByPuppet
+testViewByQuery
+findViewOfSearchQuery
+findViewOfPlaylist
+su.mp3_search.abortAllSearches();
+su.ui.views.playlist_title == pl_r.playlist_title && su.ui.views.playlist_type == pl_r.playlist_type
+
+update_artist_info \n _sui.views.playlist_type == 'artist'

@@ -383,14 +383,14 @@ seesu.player = {
 		
 	} ,
 	view_song: function (mo, zoom, force) {
+	  var artist = mo.artist;
 	  var last_mo = this.v_song;
-	  //su.ui.views.show_track_page(($(su.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.track, zoom);
+	  
 	  if (!force && last_mo && (last_mo == mo)) {
 		this.fix_songs_ui();
 	  } else {
-		var node = mo.node;
-		var artist = mo.artist;
-		su.ui.views.show_track_page(($(su.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.track, zoom, mo);
+		
+		
 		
 		su.ui.remove_video();
 		//time = (new Date()).getTime();
@@ -401,6 +401,7 @@ seesu.player = {
 		this.change_songs_ui(mo);
 		this.v_song = mo;
 	  }
+	  su.ui.views.show_track_page(($(su.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.track, zoom, mo);
 	}
 }
 
