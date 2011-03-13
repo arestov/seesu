@@ -1,18 +1,36 @@
 var views = function(){
-	this.browsing={},
+	var _this;
+	this.browsing=false,
 	this.playing=false;
 	this.current_rc=false;
 }
 views.prototype = {
-	
+	testViewByPuppet: function(view, puppet){
+		if (view && view.pl && view.pl.compare(puppet)){
+			return view;
+		}
+	},
+	testViewByQuery: function(view, query){
+		if (view && view.search_results && view.search_results.q == query){
+			return view;
+		}	
+	},
+	findViewOfSearchQuery: function(query){
+		return this.testViewByQuery(this.browsing, query) || this.testViewByQuery(this.playing, query);
+	},
+	findViewOfPlaylist: function(puppet, only_playing){
+		return (!only_playing && this.testViewByPuppet(this.browsing, puppet)) || this.testViewByPuppet(this.playing, puppet);
+	},
 	get_search_rc: function(){
 		if (this.browsing.search_results && (!this.playing || this.browsing.search_results != this.playing.search_results)){
 			return (this.current_rc = this.browsing.search_results);
 		} else {
 			if (this.browsing.search_results){
-				this.browsing.search_results.hide();
+				this.browsing.search_results.ui.hide();
 			}
-			return (this.current_rc = this.browsing.search_results = $('<div class="search-results-container current-src"></div').appendTo(seesu.ui.els.searchres));
+			return (this.current_rc = this.browsing.search_results = {
+				ui: $('<div class="search-results-container current-src"></div').appendTo(seesu.ui.els.searchres)
+			});
 		}
 	},
 	get_playlist_c:function(){
@@ -32,8 +50,8 @@ views.prototype = {
 			
 			if (this.playing){
 				if (this.playing.search_results){
-					if (!this.browsing.pl.with_search_results_link || (this.playing.search_results[0] != (this.current_rc && this.current_rc[0]))){
-							this.playing.search_results.remove();
+					if (!this.browsing.pl.with_search_results_link || (this.playing.search_results != this.current_rc )){
+							this.playing.search_results.ui.remove();
 					}
 				}
 				
@@ -68,15 +86,15 @@ views.prototype = {
 	},
 	show_playing: function(){
 		if (this.playing.search_results){
-			this.current_rc = this.playing.search_results.show();
+			this.current_rc = this.playing.search_results.ui.show();
 		}
 		if (this.playing.playlist){
 			this.playing.playlist.show();
 		}
 	},
 	hide_playing: function(){
-		if (this.playing.search_results && (this.playing.search_results[0] != (this.current_rc && this.current_rc[0]))){
-			this.playing.search_results.hide();
+		if (this.playing.search_results && (this.playing.search_results != this.current_rc)){
+			this.playing.search_results.ui.hide();
 		
 		}
 		if (this.playing.playlist && (!this.browsing || this.browsing.playlist != this.playing.playlist)){
@@ -85,21 +103,29 @@ views.prototype = {
 	},
 	show_browsing: function(){
 		if (this.browsing.search_results){
-			this.current_rc = this.browsing.search_results.show();
+			this.current_rc = this.browsing.search_results.ui.show();
 		}
 		if (this.browsing.playlist){
 			this.browsing.playlist.show();
 		}
 	},
 	new_browse: function(){
+		var _this = this;
 		if (this.browsing.search_results && (!this.playing || this.playing.search_results != this.browsing.search_results) ){
-			this.browsing.search_results.remove();
+			this.browsing.search_results.ui.remove();
 		}
 		if (this.browsing.playlist && (!this.playing || this.playing.playlist != this.browsing.playlist)){
 			this.browsing.playlist.remove();
 		}
 		
-		this.browsing ={};
+		this.browsing ={
+			view: function(){
+				if (this == _this.playing){
+					_this.restore_view();
+					
+				} 
+			}
+		};
 		this.get_search_rc();
 	},
 	show_now_playing: function(){
@@ -127,6 +153,8 @@ views.prototype = {
 		}
 		if (init){
 			this.nav.daddy.removeClass('not-inited')
+		} else{
+			su.ui.navi.set('');
 		}
 		
 		
@@ -155,6 +183,7 @@ views.prototype = {
 		}
 		this.get_playlist_c();
 		this.state = 'search_results';
+		su.ui.navi.set('?q=' + this.current_rc.q);
 	},
 	show_playlist_page: function(pl_r, show_playing, no_search_results){
 		var _sui = this;
@@ -207,9 +236,15 @@ views.prototype = {
 			su.ui.now_playing.nav = seesu.ui.els.slider.className = 'show-player-page';
 		}
 		this.state = 'playlist';
+		
+		
+	
+		su.ui.navi.set(getUrlOfPlaylist(pl));
 		seesu.track_page('playlist', _sui.playlist_type);
+		
+		
 	},
-	show_track_page: function(title, zoom){
+	show_track_page: function(title, zoom, mo){
 		if (title){
 			seesu.ui.els.nav_track_zoom.text(title);
 		}
@@ -226,7 +261,10 @@ views.prototype = {
 			
 			this.nav.daddy.append('<span class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png">' + title + '</span>');
 		}
+		var pl = mo.plst_titl;
+		var url = getUrlOfPlaylist(pl, mo.getURLPart());
 		
+		su.ui.navi.set(url);
 	},
 	show_pl_page: function(){
 		$(seesu.ui.els.slider).removeClass('show-zoom-to-track');
@@ -255,6 +293,19 @@ window.seesu_ui = function(d, with_dom){
 	}
 }
 seesu_ui.prototype = {
+	navi: {
+		app_hash: '',
+		set: function(u){
+			var url = u.replace(/\s/g,'+')
+			console.log(url)
+			
+			if (this.app_hash != url){
+				location.assign('#' + url);
+				this.app_hash = url;
+			}
+			
+		}	
+	},
 	show_track: function(q, with_search_results){
 		var title;
 		if (q.q){
@@ -264,8 +315,10 @@ seesu_ui.prototype = {
 		} else{
 			title = 'unknow'
 		}
-		
-		var pl_r = prepare_playlist(title , 'tracks', with_search_results)
+		if (with_search_results){
+			var query = this.views.current_rc.q;
+		}
+		var pl_r = prepare_playlist(title , 'tracks', q , query)
 		seesu.ui.views.show_playlist_page(pl_r);
 		su.mp3_search.find_files(q, false, function(err, pl, c, complete){
 			if (complete){
@@ -293,7 +346,10 @@ seesu_ui.prototype = {
 		
 	},
 	show_artist: function (artist,with_search_results) {
-		var pl_r = prepare_playlist(artist, 'artist', with_search_results)
+		if (with_search_results){
+			var query = this.views.current_rc.q;
+		}
+		var pl_r = prepare_playlist(artist, 'artist', artist, query)
 		if (su.ui.views.playlist_title == pl_r.playlist_title && su.ui.views.playlist_type == pl_r.playlist_type) {
 			seesu.ui.views.restore_view();
 		} else{
@@ -389,13 +445,9 @@ seesu_ui.prototype = {
 		
 		
 		small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
-		small_head.append(
-			$('<span class="desc-text"></span>').append(
-				$('<a class="js-serv">' + localize('show-them') +'</a>').click(function(){
-					c.toggleClass('show-files');
-				})	
-			)
-		);
+		
+		var desc_text = $('<span class="desc-text"></span>').appendTo(small_head);
+		
 		
 
 		if (mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('vk')){
@@ -404,10 +456,34 @@ seesu_ui.prototype = {
 		var songs = mo.songs();
 		if (songs){
 			var sc = $('<div class="files-lists"></div>');
+			
+			var just_link;
+			var extend_link;
+			
+			
+			
+			$('<a class="js-serv">' + localize('show-them') +'</a>').click(function(){
+				c.toggleClass('show-files');
+				return false;
+			}).appendTo(desc_text)
+			
+						
 			for (var i=0; i < songs.length; i++) {
 				var b = this.createFilesList(songs[i], mo);
 				if (b){b.appendTo(sc);}
+				if (!extend_link && songs[i].t && songs[i].t.length > 3){
+					$('<a class="js-serv all-files-link">' + localize('all', 'all') +'</a>').click(function(){
+						c.toggleClass('show-all-files');
+						return false;
+					}).appendTo(desc_text)
+					extend_link = true;
+				}
+				
+				
 			};
+			
+			
+			
 			sc.appendTo(c)
 		} 
 		
@@ -648,7 +724,7 @@ seesu_ui.prototype = {
 						
 						lfm('artist.getTopAlbums',{'artist': artist },function(r){
 							if (typeof r != 'object') {return;}
-							_sui.artist_albums_renderer(r, artist_albums_text);
+							_sui.artist_albums_renderer(r, artist_albums_text, artist);
 							_this.data('albums-loaded', true);
 							artist_albums_container.removeClass('albums-loading');
 						});
@@ -664,7 +740,7 @@ seesu_ui.prototype = {
 		ainf.bio.parent().removeClass('background-changes');
 	
 	},
-	artist_albums_renderer: function(r, container){
+	artist_albums_renderer: function(r, container, original_artist){
 		var _sui = this;
 		var albums = r.topalbums.album;
 		var albums_ul = $('<ul></ul>');
@@ -679,7 +755,7 @@ seesu_ui.prototype = {
 					.click(function(e){
 						e.preventDefault(); 
 						
-						var pl_r = prepare_playlist('(' + al_artist + ') ' + al_name ,'album')
+						var pl_r = prepare_playlist('(' + al_artist + ') ' + al_name ,'album', {original_artist: original_artist, album: al_name});
 						_sui.views.show_playlist_page(pl_r);
 						get_artist_album_info(al_artist, al_name, function(alb_data){
 							get_artist_album_playlist(alb_data, pl_r);
@@ -717,7 +793,7 @@ seesu_ui.prototype = {
 	},
 	render_playlist: function(pl, not_clear) { // if links present than do full rendering! yearh!
 		var _sui = this;
-		var ui = (pl.ui && pl.ui[0] && (pl.ui[0].ownerDocument == _sui.d) && pl.ui) || _sui.views.get_playlist_c();
+		var ui = (pl.ui && pl.ui[0] && pl.ui[0].parentNode && (pl.ui[0].ownerDocument == _sui.d) && pl.ui.show()) || _sui.views.get_playlist_c();
 		pl.ui = ui;
 		if (pl.loading){
 			ui.removeClass('loading')
@@ -797,14 +873,15 @@ seesu_ui.prototype = {
 		
 		
 		var a_info = t_context.children('.artist-info');
+		var t_info = t_context.children('.track-info') 
 		mo.node = track;
 		mo.ui = {
 			a_info: a_info,
 			node: track,
 			context: t_context,
-			info: a_info.children('.track-info'),
-			tv: a_info.children('.track-video'),
-			files: a_info.children('.track-files')
+			t_info: t_info,
+			tv: t_info.children('.track-video'),
+			files: t_info.children('.track-files')
 		};
 		
 		
@@ -865,8 +942,9 @@ seesu_ui.prototype = {
 		}
 	},
 	make_search_elements_index: function(remark_enter_press, after_user){
-		var search_elements = seesu.ui.views.current_rc.find('a:not(.nothing-found), button');
-		seesu.ui.views.current_rc.data('search_elements', search_elements)
+		var srui = seesu.ui.views.current_rc.ui;
+		var search_elements = srui.find('a:not(.nothing-found), button');
+		srui.data('search_elements', search_elements)
 		for (var i=0 , l = search_elements.length; i < l; i++) {
 			$(search_elements[i]).data('search_element_index', i);
 		};
@@ -875,7 +953,7 @@ seesu_ui.prototype = {
 			var new_active_node = search_elements[active_index];
 			if (new_active_node) {
 				
-					var active_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+					var active_node = srui.data('node_for_enter_press');
 					if (active_node) {
 						active_node.removeClass('active');
 					}

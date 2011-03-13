@@ -4,14 +4,24 @@ $.ajaxSetup({
 });
 $.support.cors = true;
 
-var get_url_parameters = function(){
-	var url_vars = location.search.replace(/^\?/,'').split('&');
-	var full_url = {};
-	for (var i=0; i < url_vars.length; i++) {
-		var _h = url_vars[i].split('=');
-		full_url[_h[0]] = _h[1];
-	};
-	return full_url;
+var get_url_parameters = function(str){
+	var divider = str.indexOf('/');
+	if (~divider){
+		var search_part = str.slice(0, divider);
+		var path_part = str.slice(divider + 1);
+	} else{
+		var search_part = str;
+	}
+	if (search_part){
+		var url_vars = search_part.replace(/^\?/,'').split('&');
+		var full_url = {};
+		for (var i=0; i < url_vars.length; i++) {
+			var _h = url_vars[i].split('=');
+			full_url[_h[0]] = _h[1];
+		};
+	}
+
+	return {params:full_url || {}, path: path_part};
 };
 
 
@@ -20,9 +30,10 @@ window.lfm = function(){
 	var _this = this;
 	var ag = arguments;
 	seesu.lfm_api.use.apply(seesu.lfm_api, ag);
-}
+};
+
 window.seesu = window.su =  {
-	  _url: get_url_parameters(),
+	  _url: get_url_parameters(location.search).params,
 	  distant_glow: {
 	  	interact: null,
 		url: 'http://seesu.me/',
@@ -145,8 +156,8 @@ window.seesu = window.su =  {
 			queue:  new funcs_queue(1000, 8000 , 7)
 		}
 
-
-	  }
+		
+	  },
 	};
 
 var detach_vkapi = function(timeout){
@@ -236,22 +247,15 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 					});
 				} else{
 					su.api('user.update', su.vk.user_info);
-				}
-				
-				
-				
-				
-				
+				}				
 				if (callback){callback();}
 			} else{
-				
 				w_storage('vk_session'+app_id, '', true);
 				error_callback('no info');
 			}
 			
 		},function(){
 			detach_vkapi();
-	
 			fallback(false, true);
 		});
 		
@@ -484,8 +488,9 @@ var empty_song_click = function(){
 	return false;	
 };
 
-var prepare_playlist = function(playlist_title, playlist_type, with_search_results_link){
+var prepare_playlist = function(playlist_title, playlist_type, key, with_search_results_link){
 	var pl = [];
+	pl.key = key;
 	pl.loading = true;
 	if (playlist_title){
 		pl.playlist_title = playlist_title;
@@ -496,11 +501,24 @@ var prepare_playlist = function(playlist_title, playlist_type, with_search_resul
 	if (with_search_results_link){
 		pl.with_search_results_link = with_search_results_link;
 	}
+	pl.compare = function(puppet){
+		return this.playlist_type == puppet.playlist_type && (!this.key && !this.key || this.key == puppet.key);
+	};
 	pl.kill = function(){
 		for (var i = this.length - 1; i >= 0; i--){
 			this.pop().kill();
 		};
 	};
+	pl.showTrack = function(artist_track){
+		console.log('want to find and show');
+		
+		return false;
+		su.mp3_search.find_mp3(mo);
+		su.ui.updateSongContext(mo);
+		viewSong(mo);
+	}
+	
+	
 	var oldpush = pl.push;
 	pl.push = function(mo){
 		extendSong(mo)
@@ -628,7 +646,8 @@ var get_artists_by_tag = function(tag,callback,error_c){
 	return true;
 };
 var show_tag = function(tag, with_search_results){
-	var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', with_search_results);
+	
+	var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', tag, with_search_results);
 	get_artists_by_tag(tag, function(pl){
 		proxy_render_artists_tracks(pl, pl_r);
 	}, function(){
@@ -654,7 +673,7 @@ var get_similar_artists = function(original_artist, callback,error_c){
 };
 
 var render_tracks_by_similar_artists = function(original_artist){
-	var pl_r = prepare_playlist('Similar to «' + original_artist + '» artists', 'similar artists');
+	var pl_r = prepare_playlist('Similar to «' + original_artist + '» artists', 'similar artists', original_artist);
 	seesu.ui.views.show_playlist_page(pl_r);
 	get_similar_artists(original_artist, function(pl){
 		proxy_render_artists_tracks(pl, pl_r)

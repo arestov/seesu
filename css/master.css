@@ -354,8 +354,8 @@ display:none;
 }
 	#promo a{
 		background:#505050;
-		padding:1px;
-		border-radius:1px;
+		padding: 1px 6px;
+		border-radius: 5px;
 	}
 .lfm-auth-done #scrobbling-switches{ 
 	opacity:1;
@@ -492,6 +492,7 @@ html.not-as-application, .not-as-application  body{
 	margin-bottom:12px;
 	overflow:hidden;
 	}
+	
 	.track-files .files-header{
 		overflow:hidden;
 	}
@@ -510,9 +511,25 @@ html.not-as-application, .not-as-application  body{
 	.track-files .page-link{
 		float:right;
 	}
+	
 	.track-files.show-files .files-lists {
 		display:block;
 	}
+	.track-files .all-files-link{
+		display:none;
+	}
+	.track-files.show-files .all-files-link {
+		display:inline;
+	}
+	
+	.track-files .files-header a{
+		margin-right:12px;
+	}
+	.track-files.show-all-files li.addition-file{
+		display:block;
+	}
+	
+	
 	.track-files ul{
 		margin-bottom:10px;
 	}

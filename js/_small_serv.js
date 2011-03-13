@@ -26,7 +26,8 @@ window.removeEvent = window.addEventListener ?
 		return func_name;
 	};	
 })();
-
+	
+		
 var addClass = function(old_c, cl){
 	
 	var add_c = cl.split(' ');

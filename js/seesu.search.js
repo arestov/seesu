@@ -1,15 +1,16 @@
 function arrows_keys_nav(e){
+	var srui = seesu.ui.views.current_rc.ui;
 	var _key = e.keyCode;
 	if (_key == '13'){
 		e.preventDefault();
-		var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+		var current_node = srui.data('node_for_enter_press');
 		if (current_node) {current_node.click()}
 	} else 
 	if((_key == '40') || (_key == '63233')){
 		e.preventDefault();
-		var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+		var current_node = srui.data('node_for_enter_press');
 		if (current_node){
-			var _elements = seesu.ui.views.current_rc.data('search_elements');
+			var _elements = srui.data('search_elements');
 			var el_index = current_node.data('search_element_index');
 			var els_length = _elements.length;
 			current_node.removeClass('active')
@@ -26,9 +27,9 @@ function arrows_keys_nav(e){
 	} else 
 	if((_key == '38') || (_key == '63232')){
 		e.preventDefault();
-		var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+		var current_node = srui.data('node_for_enter_press');
 		if (current_node){
-			var _elements = seesu.ui.views.current_rc.data('search_elements');
+			var _elements = srui.data('search_elements');
 			var el_index = current_node.data('search_element_index');
 			var els_length = _elements.length;
 			current_node.removeClass('active')
@@ -46,21 +47,23 @@ function arrows_keys_nav(e){
 };
 
 var results_mouse_click_for_enter_press = function(e){
+	var srui = seesu.ui.views.current_rc.ui;
 	var node_name = e.target.nodeName;
 	if ((node_name != 'A') && (node_name != 'BUTTON')){return false;}
-	var active_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+	var active_node = srui.data('node_for_enter_press');
 	if (active_node) {active_node.removeClass('active');}
 	
 	set_node_for_enter_press($(e.target));
 };
 var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
+	var srui = seesu.ui.views.current_rc.ui;
 	if (!node){return false;}
 	if (not_by_user){
 		seesu.ui.els.search_form.data('current_node_index', false);
 	} else{
 		seesu.ui.els.search_form.data('current_node_index', node.data('search_element_index'));
 	}
-	seesu.ui.views.current_rc.data('node_for_enter_press', node.addClass('active'));
+	srui.data('node_for_enter_press', node.addClass('active'));
 	if (scroll_to_node){
 		var scroll_up = seesu.ui.els.scrolling_viewport.scrollTop();
 		var scrolling_viewport_height = seesu.ui.els.scrolling_viewport.height();
@@ -123,11 +126,12 @@ var create_track_suggest_item = function(artist, track, image, duration){
 	return a
 }
 var create_tag_suggest_item = function(tag){
+	var query = su.ui.views.current_rc.q
 	return $("<a></a>")
 		.data('tag',tag)
 		.click(function(e){
 			var tag = $(this).data('tag');
-			show_tag(tag, true)
+			show_tag(tag, query)
 			seesu.track_event('Music search', seesu.ui.els.search_input.val(), "tag: " + tag );
 		})
 		.click(results_mouse_click_for_enter_press)
@@ -494,8 +498,8 @@ var fast_suggestion = function(r, source_query, ui){
 	if (!fast_enter) {fast_enter = ui.tag.button;}
 	
 	seesu.ui.make_search_elements_index();
-	
-	var active_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+	var srui = seesu.ui.views.current_rc.ui;	
+	var active_node = srui.data('node_for_enter_press');
 	if (active_node) {
 		active_node.removeClass('active');
 	}
@@ -605,22 +609,24 @@ var suggestions_prerender = function(input_value, crossdomain){
 	var multy = !crossdomain;
 	var source_query = input_value;
 
-	var results_container = seesu.ui.views.get_search_rc().empty();
+	var search_view = seesu.ui.views.get_search_rc();
+	search_view.q= input_value;
+	var results_container = search_view.ui.empty();
 	
 	var create_plr_entity = function(pl){
-		pl.with_search_results_link = true;
+		pl.with_search_results_link = input_value;
 		var li  = $('<li></li>');
 		var _b = $('<a></a>')
 			.text(pl.playlist_title)
 			.click(function(){
 				
-				
-				if (su.ui.views.playlist_title == pl.playlist_title && su.ui.views.playlist_type == pl.playlist_type) {
-					seesu.ui.views.restore_view();
-					
-				}else{
+				var plist = su.ui.views.findViewOfPlaylist(pl, true);
+				if (plist){
+					plist.view();
+				} else{
 					su.ui.views.show_playlist_page(pl);
 				}
+				
 				
 			}).appendTo(li)
 		return li;

@@ -150,11 +150,10 @@ lastfm_api.prototype = {
 		
 		
 	},
-	submit: function(mo){
+	submit: function(mo, duration){
 		var _this = this;
 		var artist = mo.artist,
 			track = mo.track,
-			duration = mo.duration,
 			starttime = mo.start_time,
 			last_scrobble = mo.last_scrobble,
 			timestamp = ((new Date()).getTime()/1000).toFixed(0);
