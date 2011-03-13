@@ -108,7 +108,7 @@
 		
 		
 /**  New nav **/	
-.show-zoom-to-track li.active-play .track-context{
+.show-zoom-to-track li.viewing-song .track-context{
 	display:block;
 }
 .track-context{
@@ -116,7 +116,7 @@
 	min-height: 412px;
 }
 
-li.active-play .play-controls{
+li.playing-song .play-controls{
 	display:block;
 }
 
@@ -148,10 +148,10 @@ li.active-play .play-controls{
 .show-zoom-to-track .tracks-for-play>ul>li.to-play-next{
 	
 	}
-.show-zoom-to-track .tracks-for-play>ul>li.active-play{
+.show-zoom-to-track .tracks-for-play>ul>li.viewing-song{
 	
 	}
-	.show-zoom-to-track .tracks-for-play>ul>li.active-play .song{
+	.show-zoom-to-track .tracks-for-play>ul>li.viewing-song .song{
 		font-size:1.3em;
 		cursor:default;
 		}
@@ -169,7 +169,7 @@ li.active-play .play-controls{
 	}	
 	
 .show-zoom-to-track .tracks-for-play>ul>li.to-play-previous,
-.show-zoom-to-track .tracks-for-play>ul>li.active-play,
+.show-zoom-to-track .tracks-for-play>ul>li.viewing-song,
 .show-zoom-to-track .tracks-for-play>ul>li.to-play-next{
 		display: list-item;
 		left:0;

@@ -1,15 +1,20 @@
 function arrows_keys_nav(e){
+	var srca = seesu.ui.views.getCurrentSearchResultsContainer();
+	var srui = srca.ui;
+	if (!srui){
+		return false;
+	}
 	var _key = e.keyCode;
 	if (_key == '13'){
 		e.preventDefault();
-		var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+		var current_node = srui.data('node_for_enter_press');
 		if (current_node) {current_node.click()}
 	} else 
 	if((_key == '40') || (_key == '63233')){
 		e.preventDefault();
-		var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+		var current_node = srui.data('node_for_enter_press');
 		if (current_node){
-			var _elements = seesu.ui.views.current_rc.data('search_elements');
+			var _elements = srui.data('search_elements');
 			var el_index = current_node.data('search_element_index');
 			var els_length = _elements.length;
 			current_node.removeClass('active')
@@ -26,9 +31,9 @@ function arrows_keys_nav(e){
 	} else 
 	if((_key == '38') || (_key == '63232')){
 		e.preventDefault();
-		var current_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+		var current_node = srui.data('node_for_enter_press');
 		if (current_node){
-			var _elements = seesu.ui.views.current_rc.data('search_elements');
+			var _elements = srui.data('search_elements');
 			var el_index = current_node.data('search_element_index');
 			var els_length = _elements.length;
 			current_node.removeClass('active')
@@ -46,21 +51,31 @@ function arrows_keys_nav(e){
 };
 
 var results_mouse_click_for_enter_press = function(e){
+	var srca = seesu.ui.views.getCurrentSearchResultsContainer();
+	var srui = srca.ui;
+	if (!srui){
+		return false;
+	}
 	var node_name = e.target.nodeName;
 	if ((node_name != 'A') && (node_name != 'BUTTON')){return false;}
-	var active_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+	var active_node = srui.data('node_for_enter_press');
 	if (active_node) {active_node.removeClass('active');}
 	
 	set_node_for_enter_press($(e.target));
 };
 var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
+	var srca = seesu.ui.views.getCurrentSearchResultsContainer();
+	var srui = srca.ui;
+	if (!srui){
+		return false;
+	}
 	if (!node){return false;}
 	if (not_by_user){
 		seesu.ui.els.search_form.data('current_node_index', false);
 	} else{
 		seesu.ui.els.search_form.data('current_node_index', node.data('search_element_index'));
 	}
-	seesu.ui.views.current_rc.data('node_for_enter_press', node.addClass('active'));
+	srui.data('node_for_enter_press', node.addClass('active'));
 	if (scroll_to_node){
 		var scroll_up = seesu.ui.els.scrolling_viewport.scrollTop();
 		var scrolling_viewport_height = seesu.ui.els.scrolling_viewport.height();
@@ -85,12 +100,12 @@ var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 		}
 	}
 }
-var create_artist_suggest_item = function(artist, image){
+var create_artist_suggest_item = function(artist, image, source_query){
 	var a = $("<a></a>")
 		.data('artist', artist)
 		.click(function(e){
 			var artist = $(this).data('artist');
-			seesu.ui.show_artist(artist,true);
+			seesu.ui.show_artist(artist, source_query);
 			seesu.track_event('Music search', seesu.ui.els.search_input.val(), "artist: " + artist );
 		})
 		.click(results_mouse_click_for_enter_press);
@@ -122,12 +137,12 @@ var create_track_suggest_item = function(artist, track, image, duration){
 	$("<span></span>").text(artist + ' - ' + track).appendTo(a);
 	return a
 }
-var create_tag_suggest_item = function(tag){
+var create_tag_suggest_item = function(tag, source_query){
 	return $("<a></a>")
 		.data('tag',tag)
 		.click(function(e){
 			var tag = $(this).data('tag');
-			show_tag(tag, true)
+			show_tag(tag, source_query)
 			seesu.track_event('Music search', seesu.ui.els.search_input.val(), "tag: " + tag );
 		})
 		.click(results_mouse_click_for_enter_press)
@@ -164,7 +179,7 @@ var show_artists_results = function(r, start, end){
 					li.addClass('searched-bordered');
 				}
 				
-				li.append(create_artist_suggest_item(artist, image));
+				li.append(create_artist_suggest_item(artist, image, source_query));
 				if (end && seesu.ui.buttons_li.inject_before_buttons){
 					seesu.ui.buttons_li.search_artists.before(li);
 				} else{
@@ -176,7 +191,7 @@ var show_artists_results = function(r, start, end){
 			
 			var artist = artists.name,
 				image = artists.image && artists.image[1]['#text'].replace('/serve/64/','/serve/64s/');
-			li.append(create_artist_suggest_item(artist, image))
+			li.append(create_artist_suggest_item(artist, image, source_query))
 			if(!end){
 				li.addClass('searched-bordered');
 			}
@@ -287,7 +302,7 @@ var show_tags_results = function(r, start, end){
 				if( i == (start ? start : 0) && !end){
 					li.addClass('searched-bordered');
 				}
-				li.append(create_tag_suggest_item(tag));
+				li.append(create_tag_suggest_item(tag, source_query));
 				
 				if (end && seesu.ui.buttons_li.inject_before_buttons){
 					seesu.ui.buttons_li.search_tags.before(li);
@@ -303,7 +318,7 @@ var show_tags_results = function(r, start, end){
 				li.addClass('searched-bordered');
 			}
 			
-			li.append(create_tag_suggest_item(tag));
+			li.append(create_tag_suggest_item(tag, source_query));
 			
 			if (end && seesu.ui.buttons_li.inject_before_buttons){
 				seesu.ui.buttons_li.search_tags.before(li);
@@ -395,6 +410,12 @@ var show_tracks_results = function(r, start, end){
 
 
 var fast_suggestion = function(r, source_query, ui){
+	var srca = seesu.ui.views.getCurrentSearchResultsContainer();
+	var srui = srca.ui;
+	if (!srui || srca.freezed){
+		return false;
+	}
+	
 	if (!r) {return false;}
 	
 	var fast_enter = null;
@@ -432,7 +453,7 @@ var fast_suggestion = function(r, source_query, ui){
 			var image =  sugg_arts[i].image ? ('http://userserve-ak.last.fm/serve/34s/' + sugg_arts[i].image) : false;
 			var li = $("<li class='suggested'></li>");
 			
-			var a =  create_artist_suggest_item(artist, image)
+			var a =  create_artist_suggest_item(artist, image, source_query)
 			
 			if ((i == 0) && ( !fast_enter || fast_enter.is('button') )) {fast_enter = a;}
 			li.append(a);
@@ -481,7 +502,7 @@ var fast_suggestion = function(r, source_query, ui){
 			var tag = sugg_tags[i].tag
 			var li = $("<li class='suggested'></li>");
 			
-			var a = create_tag_suggest_item(tag)
+			var a = create_tag_suggest_item(tag, source_query)
 			
 			if ((i == 0) && ( !fast_enter || fast_enter.is('button') )) {fast_enter = a;}
 			li.append(a);
@@ -494,8 +515,8 @@ var fast_suggestion = function(r, source_query, ui){
 	if (!fast_enter) {fast_enter = ui.tag.button;}
 	
 	seesu.ui.make_search_elements_index();
-	
-	var active_node = seesu.ui.views.current_rc.data('node_for_enter_press');
+		
+	var active_node = srui.data('node_for_enter_press');
 	if (active_node) {
 		active_node.removeClass('active');
 	}
@@ -605,22 +626,24 @@ var suggestions_prerender = function(input_value, crossdomain){
 	var multy = !crossdomain;
 	var source_query = input_value;
 
-	var results_container = seesu.ui.views.get_search_rc().empty();
+	var search_view = seesu.ui.views.getSearchResultsContainer();
+	search_view.context.q= input_value;
+	var results_container = search_view.ui.empty();
 	
 	var create_plr_entity = function(pl){
-		pl.with_search_results_link = true;
+		pl.with_search_results_link = input_value;
 		var li  = $('<li></li>');
 		var _b = $('<a></a>')
 			.text(pl.playlist_title)
 			.click(function(){
 				
-				
-				if (su.ui.views.playlist_title == pl.playlist_title && su.ui.views.playlist_type == pl.playlist_type) {
-					seesu.ui.views.restore_view();
-					
-				}else{
+				var plist = su.ui.views.findViewOfPlaylist(pl, true);
+				if (plist){
+					plist.view();
+				} else{
 					su.ui.views.show_playlist_page(pl);
 				}
+				
 				
 			}).appendTo(li)
 		return li;

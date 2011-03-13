@@ -6,11 +6,17 @@
 	-moz-border-radius:6px;
 	-webkit-border-radius:6px;
 	border-radius:6px;
-	padding:8px 10px 8px 17px;
+	padding:12px;
 	margin: 0 0 20px;
-	background:#faebd7;
+	background:#faebd7 no-repeat 50% 50%;
 	color:#000;
 	margin-bottom:24px;
+	}
+	.vk-login-context.waiting-vk-login{
+		background-image:url(../i/spinner_small_yellow.gif)
+	}
+	.vk-login-context button{
+		margin:0;
 	}
 	.vk-login-context a.js-serv{
 		color:#83ac1b;

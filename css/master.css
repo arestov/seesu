@@ -73,7 +73,14 @@ a.bbcode_tag{
 	a.bbcode_tag:active{
 		border-bottom-color:#999  !important;
 		}
-
+a.desc{
+	color:#666;
+	border-bottom-color:#5e5e5e !important;
+}
+	a.desc:hover{
+		color:#5e5e5e;
+		border-bottom-color:#5a5a5a !important;
+		}
 
 #sm2-container{
 	bottom:10px;
@@ -209,6 +216,10 @@ display:none;
 	.desc-text2{
 		overflow:hidden;
 	}
+	.track-files .files-source{
+		float:right;
+		
+	}
 }
 
 .play-list-holder{
@@ -343,8 +354,8 @@ display:none;
 }
 	#promo a{
 		background:#505050;
-		padding:1px;
-		border-radius:1px;
+		padding: 1px 6px;
+		border-radius: 5px;
 	}
 .lfm-auth-done #scrobbling-switches{ 
 	opacity:1;
@@ -478,13 +489,47 @@ html.not-as-application, .not-as-application  body{
 	display:none;
 }
 .track-files{
-	margin-bottom:40px;
+	margin-bottom:12px;
 	overflow:hidden;
 	}
-	.track-files .files-source{
-		float:right;
-		width:90px;
+	
+	.track-files .files-header{
+		overflow:hidden;
 	}
+	.track-files .files-source{
+	
+		width:90px;
+		margin-bottom:12px;
+	}
+	.track-files .files-lists{
+		margin-top:12px;
+		display:none;
+	}
+	.track-files .files-lists ul{
+		margin-bottom:24px;
+	}
+	.track-files .page-link{
+		float:right;
+	}
+	
+	.track-files.show-files .files-lists {
+		display:block;
+	}
+	.track-files .all-files-link{
+		display:none;
+	}
+	.track-files.show-files .all-files-link {
+		display:inline;
+	}
+	
+	.track-files .files-header a{
+		margin-right:12px;
+	}
+	.track-files.show-all-files li.addition-file{
+		display:block;
+	}
+	
+	
 	.track-files ul{
 		margin-bottom:10px;
 	}
@@ -500,10 +545,15 @@ html.not-as-application, .not-as-application  body{
 			width:378px;
 		}
 		.track-files li .duration{
-			float:left;
+			margin-left:12px;
 			width:40px;
 			color:#666;
+			float:right;
 			}
+		.track-files li .mp3-file-link{
+			float:right;
+			width:40px;
+		}
 
 iframe.you-tube-video,embed.you-tube-video{
 	border:0;

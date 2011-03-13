@@ -32,9 +32,9 @@
 		.play-control:active{
 			background-image:url(../i/buttons_active.png) !important;
 			}
-.player-paused .play-control.pause,
-.player-stopped .play-control.stop,
-.player-played .play-control.play{
+.player-paused .playing-song .play-control.pause,
+.player-stopped .playing-song .play-control.stop,
+.player-played .playing-song .play-control.play{
 	background-image:url(../i/buttons_active.png) !important;
 }
 
@@ -105,7 +105,7 @@ a.download-mp3:hover{
 	background:#666;
 	color:#fff;
 	}
-.active-play a.song{
+.viewing-song a.song{
 	background:transparent;
 	
 }
@@ -227,7 +227,6 @@ p.internet-flash-settings{
 	left:0;
 	right:0;
 	height:15px;
-	
 	
 	
 	background: #444444;

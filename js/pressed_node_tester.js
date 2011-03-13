@@ -36,6 +36,11 @@ var test_pressed_node = function(e, mouseup){
 			seesu.track_event('Links', 'flash security');
 			return false;
 		  }
+		  else if (~class_name.indexOf('external')){
+		  	open_url(clicked_node.attr('href'));
+			seesu.track_event('Links', 'just link');
+			return false;
+		  }
 		  else if (class_name.match(/\bartist\b[^\-]/)){
 			artist_name = decodeURIComponent(clicked_node.data('artist'));
 			seesu.ui.show_artist(artist_name);
@@ -142,17 +147,23 @@ var test_pressed_node = function(e, mouseup){
 			} 
 			else if (class_name.match(/play$/)){
 				var current_state = seesu.player.get_state();
-				if (current_state == 'playing') {
-					seesu.player.set_state('pause');
-					
-					seesu.track_event('Controls', 'pause', mouseup ? 'mouseup' : '');
-					
-				} else {
-					seesu.player.set_state('play');
-					
-					seesu.track_event('Controls', 'play', mouseup ? 'mouseup' : '');
-					
+				var mo = clicked_node.data('mo');
+				if (mo && mo == su.player.c_song){
+					if (current_state == 'playing') {
+						su.player.set_state('pause');
+						
+						su.track_event('Controls', 'pause', mouseup ? 'mouseup' : '');
+						
+					} else {
+						su.player.set_state('play');
+						
+						su.track_event('Controls', 'play', mouseup ? 'mouseup' : '');
+						
+					}	
+				} else{
+					su.player.play_song(mo);
 				}
+				
 				
 				return false; 
 			}
