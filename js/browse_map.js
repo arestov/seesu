@@ -17,16 +17,16 @@ function browseMap(){
 }
 browseMap.prototype= {
 	findLevelOfPlaylist: function(level, puppet, only_freezed){
-		var free = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
-		var freezed = this.levels[level] && this.levels[level].freezed;
+		var f = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
+		var fz = this.levels[level] && this.levels[level].freezed;
 		
-		return (!only_freezed && free && free.testByPuppet(puppet)) || (freezed && freezed.testByPuppet(puppet));
+		return (!only_freezed && !!f && f.testByPlaylistPuppet(puppet)) || (!!fz && fz.testByPlaylistPuppet(puppet));
 	},
 	findLevelOfSearchQuery: function(level, query){
-		var free = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
-		var freezed = this.levels[level] && this.levels[level].freezed;
+		var f = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
+		var fz = this.levels[level] && this.levels[level].freezed;
 		
-		return (!only_freezed && free && free.testByQuery(query)) || (freezed && freezed.testByQuery(query));
+		return (!only_freezed && !!f && f.testByQuery(query)) || (!!fz && fz.testByQuery(query));
 	},
 	getLevel: function(num){
 		if (this.levels[num]){
