@@ -142,7 +142,7 @@ var create_tag_suggest_item = function(tag, source_query){
 		.data('tag',tag)
 		.click(function(e){
 			var tag = $(this).data('tag');
-			show_tag(tag, source_query)
+			show_tag(tag, source_query);
 			seesu.track_event('Music search', seesu.ui.els.search_input.val(), "tag: " + tag );
 		})
 		.click(results_mouse_click_for_enter_press)
@@ -639,9 +639,11 @@ var suggestions_prerender = function(input_value, crossdomain){
 				
 				var plist = su.ui.views.findViewOfPlaylist(pl, true);
 				if (plist){
-					plist.view();
+					if (plist.freezed){
+						su.ui.views.restoreFreezed();
+					}
 				} else{
-					su.ui.views.show_playlist_page(pl);
+					su.ui.views.show_playlist_page(pl, source_query ? 0 : false);
 				}
 				
 				

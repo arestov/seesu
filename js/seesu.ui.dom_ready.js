@@ -235,6 +235,7 @@ window.connect_dom_to_som = function(d, ui){
 				}
 				
 				ui.views.show_start_page(true, true, true);
+				su.player.c_song.mo_titl.plst_titl.with_search_results_link = false;
 				su.ui.views.show_playlist_page(su.player.c_song.mo_titl.plst_titl);
 				su.player.view_song(su.player.c_song, true, true);
 				su.ui.views.freeze(su.player.c_song.mo_titl.plst_titl,true);
