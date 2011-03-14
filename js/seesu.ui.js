@@ -22,21 +22,11 @@ views.prototype = {
 	getCurrentPlaylistContainer: function(){
 		return this.m.getLevel(1);
 	},
-	testViewByPuppet: function(view, puppet){
-		if (view && view.pl && view.pl.compare(puppet)){
-			return view;
-		}
-	},
-	testViewByQuery: function(view, query){
-		if (view && view.search_results && view.search_results.q == query){
-			return view;
-		}	
-	},
 	findViewOfSearchQuery: function(query){
-		return this.testViewByQuery(this.browsing, query) || this.testViewByQuery(this.playing, query);
+		return this.m.findLevelOfSearchQuery(1, query);
 	},
 	findViewOfPlaylist: function(puppet, only_playing){
-		return (!only_playing && this.testViewByPuppet(this.browsing, puppet)) || this.testViewByPuppet(this.playing, puppet);
+		return this.m.findLevelOfPlaylist(1, puppet, only_playing);
 	},
 	freeze: function(g, not_reset_searches){
 		this.m.freezeMapOfLevel(1);
@@ -269,7 +259,9 @@ seesu_ui.prototype = {
 		var pl = prepare_playlist(artist, 'artist', artist, with_search_results)
 		var plist = su.ui.views.findViewOfPlaylist(pl, true);
 		if (plist){
-			plist.view();
+			if (plist.freezed){
+				su.ui.views.restoreFreezed();
+			}
 		} else{
 			seesu.ui.views.show_playlist_page(pl, with_search_results ? 0 : false);
 			getTopTracks(artist,function(track_list){

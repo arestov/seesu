@@ -639,7 +639,9 @@ var suggestions_prerender = function(input_value, crossdomain){
 				
 				var plist = su.ui.views.findViewOfPlaylist(pl, true);
 				if (plist){
-					plist.view();
+					if (plist.freezed){
+						su.ui.views.restoreFreezed();
+					}
 				} else{
 					su.ui.views.show_playlist_page(pl, source_query ? 0 : false);
 				}

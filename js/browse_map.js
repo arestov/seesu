@@ -16,6 +16,18 @@ function browseMap(){
 	//today seesu has no deeper level
 }
 browseMap.prototype= {
+	findLevelOfPlaylist: function(level, puppet, only_freezed){
+		var free = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
+		var freezed = this.levels[level] && this.levels[level].freezed;
+		
+		return (!only_freezed && free && free.testByPuppet(puppet)) || (freezed && freezed.testByPuppet(puppet));
+	},
+	findLevelOfSearchQuery: function(level, query){
+		var free = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
+		var freezed = this.levels[level] && this.levels[level].freezed;
+		
+		return (!only_freezed && free && free.testByQuery(query)) || (freezed && freezed.testByQuery(query));
+	},
 	getLevel: function(num){
 		if (this.levels[num]){
 			return this.levels[num].free || this.levels[num].freezed;
@@ -33,6 +45,16 @@ browseMap.prototype= {
 			return this.levels[num].free;
 		} else{
 			return this.levels[num].free = {
+				testByPlaylistPuppet: function(puppet){
+					if (this.context && this.context.pl && this.context.pl.compare(puppet)){
+						return this;
+					}
+				},
+				testByQuery: function(query){
+					if (this.context && this.context.pl && this.context.q == query){
+						return this;
+					}	
+				},
 				context:{},
 				map: this,
 				freeze: function(){
@@ -58,6 +80,7 @@ browseMap.prototype= {
 							delete this.levels[i].freezed;
 						}
 						this.levels[i].freezed = this.levels[i].free;
+						this.levels[i].freezed.freezed = true;
 					}	
 				}
 				delete this.levels[i].free;
@@ -65,6 +88,21 @@ browseMap.prototype= {
 			
 			
 		};
+		
+		//clearing if have too much levels
+		if (l < this.levels.length -1) {
+			for (var i=0; i < this.levels.length; i++) {
+				if (this.levels[i].free){
+					this.levels[i].free.kill();
+					delete this.levels[i].free
+				}
+				if (this.levels[i].freezed){
+					this.levels[i].freezed.kill();
+					delete this.levels[i].freezed
+				}
+				
+			};
+		}
 		return this;
 	},
 	restoreFreezed: function(){
