@@ -653,7 +653,7 @@ var show_tag = function(tag, with_search_results){
 	}, function(){
 		proxy_render_artists_tracks();
 	});
-	seesu.ui.views.show_playlist_page(pl_r);
+	seesu.ui.views.show_playlist_page(pl_r, with_search_results ? 0 : false);
 
 };
 
