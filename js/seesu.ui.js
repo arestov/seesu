@@ -22,12 +22,14 @@ views.prototype = {
 	getCurrentPlaylistContainer: function(){
 		return this.m.getLevel(1);
 	},
-	findViewOfURL: function(url, only_freezed){
-		return this.m.findURL(1, url, only_freezed);
+	findViewOfURL: function(url, only_freezed, only_free){
+		return this.m.findURL(1, url, only_freezed, only_free);
 	},
-	
+	findSeachResultsOfURL: function(url, only_freezed, only_free){
+		return this.m.findURL(0, url, only_freezed, only_free);
+	},
 	findViewOfSearchQuery: function(query){
-		return this.m.findLevelOfSearchQuery(1, query);
+		return this.m.findLevelOfSearchQuery(0, query);
 	},
 	findViewOfPlaylist: function(puppet, only_playing){
 		return this.m.findLevelOfPlaylist(1, puppet, only_playing);
@@ -38,21 +40,21 @@ views.prototype = {
 			su.mp3_search.abortAllSearches();
 		}
 	},
-	restoreFreezed: function(){
+	restoreFreezed: function(no_navi){
 		this.m.restoreFreezed();
 		var l = this.m.getLevel(1); // playlist page is 1 level
 		if (l){
-			this.swithToPlaylistPage(l.context.pl);
+			this.swithToPlaylistPage(l.context.pl, no_navi);
 		}
 	},
 
 	show_now_playing: function(){
 		var current_page = seesu.ui.els.slider.className;
-		this.restoreFreezed();
+		this.restoreFreezed(true); // true is for supress navi.set
 		su.player.view_song(su.player.c_song, true);
 		seesu.track_event('Navigation', 'now playing', current_page);
 	},
-	show_start_page: function(focus_to_input, log_navigation, init){
+	show_start_page: function(focus_to_input, log_navigation, init, no_navi){
 		// start page is -1 level
 		this.m.sliceToLevel(-1);
 		
@@ -69,8 +71,8 @@ views.prototype = {
 		}
 		if (init){
 			this.nav.daddy.removeClass('not-inited')
-		} else{
-			su.ui.navi.set('');
+		} else if (!no_navi){
+			navi.set('');
 		}
 		if (log_navigation){
 			seesu.track_page('start page');
@@ -79,7 +81,7 @@ views.prototype = {
 		this.state = 'start';
 	
 	},
-	show_search_results_page: function(without_input){
+	show_search_results_page: function(without_input, no_navi){
 		// search results is 0 level
 		this.m.sliceToLevel(0);
 		
@@ -93,15 +95,17 @@ views.prototype = {
 		var new_s = (without_input ? '' : 'show-search ') + "show-search-results";
 		if (new_s != _s){
 			seesu.ui.els.slider.className = new_s;
-		
 			seesu.track_page('search results');
 		}
 		this.state = 'search_results';
-		su.ui.navi.set(this.getCurrentSearchResultsContainer().getFullURL());
+		if (!no_navi){
+			navi.set(this.getCurrentSearchResultsContainer().getFullURL());
+		}
+		
 		
 		
 	},
-	swithToPlaylistPage: function(pl){
+	swithToPlaylistPage: function(pl, no_navi){
 		// playlist page is 1 level
 		this.m.sliceToLevel(1);
 		
@@ -123,11 +127,13 @@ views.prototype = {
 			seesu.ui.els.slider.className = 'show-player-page';
 		}
 		this.state = 'playlist';
+		if (!no_navi){
+			navi.set(this.getCurrentPlaylistContainer().getFullURL(),{pl:pl});
+		}
 		
-		su.ui.navi.set(this.getCurrentPlaylistContainer().getFullURL());
 		seesu.track_page('playlist', pl.playlist_type);
 	},
-	show_playlist_page: function(p, slice_level){
+	show_playlist_page: function(p, slice_level, no_navi){
 		var skip_from;
 		if (typeof slice_level == 'number'){
 			
@@ -162,7 +168,7 @@ views.prototype = {
 			}
 			seesu.ui.render_playlist(pl);
 		}
-		this.swithToPlaylistPage(pl);
+		this.swithToPlaylistPage(pl, no_navi);
 		
 		
 		
@@ -189,7 +195,7 @@ views.prototype = {
 		}
 		
 		
-		su.ui.navi.set(this.getCurrentPlaylistContainer().getFullURL() + mo.getURLPart());
+		navi.set(this.getCurrentPlaylistContainer().getFullURL() + '/_' +mo.getURLPart(), {pl:pl});
 	}
 }
 
@@ -216,19 +222,6 @@ window.seesu_ui = function(d, with_dom){
 	}
 }
 seesu_ui.prototype = {
-	navi: {
-		app_hash: '',
-		set: function(u){
-			var url = u.replace(/\s/g,'+')
-			console.log(url)
-			return
-			if (this.app_hash != url){
-				location.assign('#' + url);
-				this.app_hash = url;
-			}
-			
-		}	
-	},
 	show_tag: function(tag, query){
 		
 		var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', tag, query);

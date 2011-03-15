@@ -18,10 +18,10 @@ function browseMap(){
 	//today seesu has no deeper level
 }
 browseMap.prototype= {
-	findURL: function(level, url, only_freezed){
+	findURL: function(level, url, only_freezed, only_free){
 		var f = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
 		var fz = this.levels[level] && this.levels[level].freezed;
-		return (!only_freezed && !!f && f.testByURL(url)) || (!!fz && fz.testByURL(url));
+		return (!only_freezed && !!f && f.testByURL(url)) || (!only_free && !!fz && fz.testByURL(url));
 	},
 	findLevelOfPlaylist: function(level, puppet, only_freezed){
 		var f = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
@@ -33,7 +33,7 @@ browseMap.prototype= {
 		var f = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
 		var fz = this.levels[level] && this.levels[level].freezed;
 		
-		return (!only_freezed && !!f && f.testByQuery(query)) || (!!fz && fz.testByQuery(query));
+		return (!!f && f.testByQuery(query)) || (!!fz && fz.testByQuery(query));
 	},
 	getLevel: function(num){
 		if (this.levels[num]){
@@ -102,6 +102,7 @@ browseMap.prototype= {
 					if(this.ui && this.ui.remove){
 						this.ui.remove();
 					}
+					delete this.map;
 				}
 				
 			};

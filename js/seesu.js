@@ -505,11 +505,14 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 		return this.playlist_type == puppet.playlist_type && (!this.key && !this.key || this.key == puppet.key);
 	};
 	pl.kill = function(){
+		delete this.ui;
+		/*
 		for (var i = this.length - 1; i >= 0; i--){
 			this.pop().kill();
 		};
+		*/
 	};
-	pl.showTrack = function(artist_track){
+	pl.showTrack = function(artist_track, no_navi){
 		console.log('want to find and show');
 		
 		return false;

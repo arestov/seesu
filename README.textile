@@ -17,3 +17,13 @@ Alexander Belov <porqz@mesquite.ru>
 (http://github.com/kossnocorp/seesu)
 
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
+
+
+
+два раза появляется ссылка на трек
+mp3 для вконтакте только для залогиненых и в неонлайн версии
+
+
+push pop история
+при открытом плейлисте не работает батменовская кнопка: крутое определение перемещается ли пользователь назад или вперёд
+дубликаты ?q=k ?q=ki ?q=kii
