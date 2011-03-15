@@ -533,7 +533,7 @@ window.connect_dom_to_som = function(d, ui){
 			$('<a class="js-serv hyped-tag"></a> ')
 				.text(tag.name)
 				.click(function(){
-					show_tag(tag.name)
+					su.ui.show_tag(tag.name)
 					seesu.track_event('Navigation', 'hyped at start page', "tag: " + tag.name );
 					return false;
 				}).appendTo(c);

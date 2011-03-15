@@ -438,7 +438,7 @@ var make_tracklist_playable = function(pl, full_allowing){
 	for (var i=0, l =  pl.length; i < l; i++) {
 		var mo = pl[i];
 		if (mo.raw){
-				su.ui.updateSong(mo);
+			su.ui.updateSong(mo);
 		} else if (!mo.track){
 			start_random_nice_track_search(mo, ob, !full_allowing );
 		} else{
@@ -644,17 +644,6 @@ var get_artists_by_tag = function(tag,callback,error_c){
 		}
 	}, error_c, false, true);
 	return true;
-};
-var show_tag = function(tag, with_search_results){
-	
-	var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', tag, with_search_results);
-	get_artists_by_tag(tag, function(pl){
-		proxy_render_artists_tracks(pl, pl_r);
-	}, function(){
-		proxy_render_artists_tracks();
-	});
-	seesu.ui.views.show_playlist_page(pl_r, with_search_results ? 0 : false);
-
 };
 
 
