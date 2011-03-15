@@ -10,12 +10,19 @@ var big_map = {
 
 function browseMap(){
 	this.levels = [];
+	//zoom levels
+	
 	// -1, not using, start page
 	//0 - search results
 	//1 - playlist page
 	//today seesu has no deeper level
 }
 browseMap.prototype= {
+	findURL: function(level, url, only_freezed){
+		var f = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
+		var fz = this.levels[level] && this.levels[level].freezed;
+		return (!only_freezed && !!f && f.testByURL(url)) || (!!fz && fz.testByURL(url));
+	},
 	findLevelOfPlaylist: function(level, puppet, only_freezed){
 		var f = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
 		var fz = this.levels[level] && this.levels[level].freezed;
@@ -35,7 +42,7 @@ browseMap.prototype= {
 			return false;// maybe better return this.getFreeLevel(num);
 		}
 	},
-	getFreeLevel: function(num){
+	getFreeLevel: function(num, skip_levels_above){
 		var _this = this;
 		if (!this.levels[num]){
 			this.levels[num] = {};
@@ -45,6 +52,17 @@ browseMap.prototype= {
 			return this.levels[num].free;
 		} else{
 			return this.levels[num].free = {
+				getURL: function(){
+					return this.url || '';
+				},
+				setURL: function(url){
+					this.url = url || '';
+				},
+				testByURL: function(url){
+					if (this.url == url){
+						return this;
+					}	
+				},
 				testByPlaylistPuppet: function(puppet){
 					if (this.context && this.context.pl && this.context.pl.compare(puppet)){
 						return this;
@@ -55,6 +73,26 @@ browseMap.prototype= {
 						return this;
 					}	
 				},
+				getFullURL: function(){
+					var u='';
+					for (var i=0; i < this.parent_levels.length; i++) {
+						u += this.parent_levels[i].getURL();
+					};
+					return u + this.getURL();
+				},
+				parent_levels: (function(){
+					var lvls = [];
+					
+					//from deep levels to top levels;
+					
+					for (var i = num-1; i > -1; i--){
+						if (!skip_levels_above || i < num - skip_levels_above){
+							lvls.push(_this.getLevel(i));
+						}
+					};
+					
+					return 	lvls;
+				})(),
 				context:{},
 				map: this,
 				freeze: function(){
@@ -70,6 +108,7 @@ browseMap.prototype= {
 		}
 	},
 	freezeMapOfLevel : function(num){
+		var fresh_freeze = false;
 		var l = (num < this.levels.length) ? num : (this.levels.length - 1);
 		for (var i = l; i >= 0; i--){
 			if (this.levels[i]){
@@ -81,6 +120,7 @@ browseMap.prototype= {
 						}
 						this.levels[i].freezed = this.levels[i].free;
 						this.levels[i].freezed.freezed = true;
+						fresh_freeze = true
 					}	
 				}
 				delete this.levels[i].free;
@@ -103,7 +143,7 @@ browseMap.prototype= {
 				
 			};
 		}
-		return this;
+		return fresh_freeze;
 	},
 	restoreFreezed: function(){
 		this.hideMap();

@@ -34,10 +34,6 @@ if ('onhashchange' in window){
 function getUrlOfPlaylist(pl, end){
 	var e = end || "";
 	var url ='';
-	if (pl.with_search_results_link){
-		url += '?q=' + pl.with_search_results_link;
-	}
-	
 	if (pl.playlist_type == 'artist'){
 		url += '/catalog/' + pl.key + (e && '/_' + e);
 	} else if (pl.playlist_type == 'album'){
@@ -234,9 +230,11 @@ function hashchangeHandler(e){
 		var newstate = getPlayViewStateFromString(jn.path);
 		
 		if (newstate){
-			var v = su.ui.views.findViewOfPlaylist(newstate.plp);
-			if (v){
-				v.view();
+			var plist = su.ui.views.findViewOfURL(getUrlOfPlaylist(pl));
+			if (plist){
+				if (plist.freezed){
+					su.ui.views.restoreFreezed();
+				}
 				if (newstate.current_artist || newstate.current_track){
 					v.pl.showTrack({
 						artist: newstate.current_artist,
