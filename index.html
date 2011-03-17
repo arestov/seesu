@@ -70,26 +70,178 @@
   
   <body>
   	<div id="ui-samples" style="display:none">
+  		<div class="artist-info">
+			<h3 class="artist-name"></h3>
+			<div class="image"></div>
+			<div class="artist-bio"></div>
+			<div class="artist-meta-info"></div>
+		</div>
+			
+			
+		<div class="track-context" >
+			<div class="track-panel">
+				
+				<a class="play-control play" href="javascript:void(0)">
+				  <img src="i/buttons_play.png" alt="play" class="pl-control simple-clicks">
+				</a>
+				<a class="play-control add-to-playlist" href="javascript:void(0)" title="add to playlist">
+				  <img src="i/buttons_add.png" alt="add to playlist" class="pl-control simple-clicks">
+				</a>
+				
+				<ul class="track-buttons">
+					<li title="About «Adobe Flash Player Security»" id="flash-secur">
+						<a href="javascript:void(0)" class="flash-security-status trackbutton">fl</a>
+						<div class="track-button-content" id="message-flash-secur">
+							<div class="triangle"></div>
+							<div class="balun">							
+								<p class="lang localize-stop-flash">To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
+								<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
+								<p>
+									<span class="lang localize-add-to-wl"><strong>add</strong> it to white list on  </span>
+									
+									<strong>
+										<a class="flash-s lang localize-flashpage ">flash internet security page</a>
+										
+									</strong> 
+										
+										<span class="lang localize-and-restart">and then restart Seesu</span>
+										
+								</p>
+								<p>
+									<img src="http://img-fotki.yandex.ru/get/4603/gleb-arestov.0/0_55167_ceb4a878_orig" alt="flash security page"/>
+									
+								</p>
+								<p class="lang localize-bad-flash-desc">About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+	
+								<p class="internet-flash-settings">
+									<input type="button" value="Close message" class="tb-mess-wrap-close"/>
+									
+								</p>
+	
+							</div>
+						</div>
+					</li>
+					<li class="scrobbling-button"  title="Last.fm scrobbling">
+						<a href="javascript:void(0)" class="trackbutton">sc</a>
+						<div class="track-button-content">
+							
+							<div class="triangle"></div>
+							<div class="balun" id="enablescrobbling">
+								<form class="scrobbling-switches" id="scrobbling-switches">
+									<p>scrobbling to last.fm</p>
+								
+									<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="enable-scrobbling" /> enabled</label></p>	
+									<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
+								</form>
+								<div class="lfm-granting">
+									<p>
+										<span class="lang localize-lastfm-scrobble-access">To scrobble to last.fm you must grant access to Seesu</span>
+										<button class="lang localize-grant login-lastfm-button" type="button"  name="scrobbling" >grant</button>
+										
+									</p>
+									<p class="lfm-finish">
+										<label>
+											<input type='checkbox' class="scrobbling-grant"/> 
+											<span class="lang localize-user-granted-lfm">I've granted my account access to Seesu</span>
+										
+										</label>
+										
+									</p>
+								</div>
+								<p><input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
+							</div>
+						</div>
+						
+						
+					</li>
+				</ul>
+				
+				
+			</div>
+			<div class="track-info">
+				<div class="track-files"></div>
+				<div class="track-video"></div>
+			</div>
+			
+			
+		</div>
+	
+	
+
+
+  		<dl class="buttmen play-controls">
+			<dt class="main-button">
+				<a class="play-control play" href="javascript:void(0)">
+					<img src="i/buttons_play.png" alt="play" class="pl-control" />
+				</a>
+				<span class="buttmen-mask"></span>
+			</dt>
+			<dd class="buttmen-hlts">
+				<ul>
+					<li class="buttmen-hlt-top"></li>
+					<li class="buttmen-hlt-right"></li>
+					<li class="buttmen-hlt-bottom"></li>
+					<li class="buttmen-hlt-left"></li>
+				</ul>
+			</dd>
+			<dd class="buttmen-butts">
+				<ul>
+					<li class="buttmen-butt-top">
+						<a class="play-control play_prev" >
+							<img src="i/buttons_prev.png" alt="previous" class="pl-control" />
+						</a>
+					</li>
+					<li class="buttmen-butt-right">
+						<a class="play-control stop">
+							<img src="i/buttons_stop.png" alt="stop" class="pl-control" />
+						</a>	
+					</li>
+					<li class="buttmen-butt-bottom">
+						<a class="play-control play_next">
+							<img src="i/buttons_next.png" alt="next" class="pl-control" />
+						</a>
+					</li>
+					<li class="buttmen-butt-left">
+						<a class="play-control pause" >
+							<img src="i/buttons_pause.png" alt="pause" class="pl-control" />
+							
+						</a>
+					</li>
+				</ul>
+			</dd>
+		</dl>
+					
+					
+					
+					
   		<div class="vk-login-context">
-			<div class="needs-cross-domain">
-				<span class="lang localize-to-get-mp3-sign-to-vk">To get mp3 files you need to sign in to vk.com (vkontakte.ru) </span>
-				<a href="javascript:void(0)" class="js-serv sign-in-to-vk lang localize-sign ">sign in</a>. 
-				
-				<span class="lang localize-you-may">You may</span> 
-				<a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv lang localize-create-acc" >create new account</a> 
-				<span class='lang localize-its-free '>(it's free)</span>.
-				
-			</div>
-			<div class="no-needs-cross-domain">
-				<span class="lang localize-to-get-mp3-login-to-vk ">To get mp3 files you need to login to vk.com or to vkontakte.ru</span>
+		
+			
+			
+		
+			<span class="login-request usual-login-request">
+				<span class="lang localize-to-find-and-play">To find and play</span> 
+				<span class="lang localize-music-files-from-vk">music files you need to login to vk.com (vkontakte.ru)</span>
+			</span>
+			<span class="login-request enhancement-login-request">
+				<span class="lang localize-to-find-better">To find better</span> 
+				<span class="lang localize-music-files-from-vk">music files you need to login to vk.com (vkontakte.ru)</span>
+			</span>
+			<span class="login-request stabilization-login-request">
+				<span class="lang localize-stabilization-of-vk">Files were found using test vkontakte.ru (vk.com) accaunt. Searching files for new compositions can break at any time. This will not happen if you use your own vkontakte.ru accaunt</span>
+			</span>
+			.
+			<span class="needs-cross-domain">
+				<a href="javascript:void(0)" class="js-serv sign-in-to-vk lang localize-sign ">sign in</a>
+			</span>
+			<span class="no-needs-cross-domain">
+				<span class="js-serv sign-in-to-vk lang localize-sign ">sign in</span>
 				<a href="javascript:void(0)" class="js-serv sign-in-to-vk">to vk.com</a> <a href="javascript:void(0)" class="js-serv sign-in-to-vk-ru">to vkontakte.ru</a>. 
-				
+				<br/>
 				<span class="lang localize-open-api-secure ">Try both if you get &laquo;Open API security breach&raquo;.</span>
-				 
-				<span class="lang localize-you-may">You may</span> 
-				<a href="http://vk.com/reg198193" target="_blank" class="vk-reg-ref js-serv lang localize-create-acc" >create new account</a> 
-				<span class='lang localize-its-free '>(it's free)</span>.
-			</div>
+			</span>
+			
+			
 			<form  class="vk-auth" method="post" >
 				<p>
 					<label>
@@ -129,7 +281,7 @@
 						
 					</label>
 				</p>
-				<div><button>enter</button></div>
+				<div><button class="lang localize-sign">sign in</button></div>
 			</form>
 		</div>
   	</div>
@@ -245,141 +397,7 @@
 				</div>
 
 	
-				<div id="artist-holder" class="artist-page screen play-screen">
-					<div class="track-context" >
-						
-						<div class="track-panel">
-							
-							<a class="play-control play" href="javascript:void(0)">
-							  <img src="i/buttons_play.png" alt="play" class="pl-control simple-clicks">
-							</a>
-							<a class="play-control add-to-playlist" href="javascript:void(0)" title="add to playlist">
-							  <img src="i/buttons_add.png" alt="add to playlist" class="pl-control simple-clicks">
-							</a>
-							
-							<ul class="track-buttons">
-								<li title="About «Adobe Flash Player Security»" id="flash-secur">
-									<a href="javascript:void(0)" class="flash-security-status trackbutton">fl</a>
-									<div class="track-button-content" id="message-flash-secur">
-										<div class="triangle"></div>
-										<div class="balun">							
-											<p class="lang localize-stop-flash">To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
-											<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
-											<p>
-												<span class="lang localize-add-to-wl"><strong>add</strong> it to white list on  </span>
-												
-												<strong>
-													<a class="flash-s lang localize-flashpage ">flash internet security page</a>
-													
-												</strong> 
-													
-													<span class="lang localize-and-restart">and then restart Seesu</span>
-													
-											</p>
-											<p>
-												<img src="http://img-fotki.yandex.ru/get/4603/gleb-arestov.0/0_55167_ceb4a878_orig" alt="flash security page"/>
-												
-											</p>
-											<p class="lang localize-bad-flash-desc">About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
-	
-											<p class="internet-flash-settings">
-												<input type="button" value="Close message" class="tb-mess-wrap-close"/>
-												
-											</p>
-	
-										</div>
-									</div>
-								</li>
-								<li class="scrobbling-button"  title="Last.fm scrobbling">
-									<a href="javascript:void(0)" class="trackbutton">sc</a>
-									<div class="track-button-content">
-										
-										<div class="triangle"></div>
-										<div class="balun" id="enablescrobbling">
-											<form class="scrobbling-switches" id="scrobbling-switches">
-												<p>scrobbling to last.fm</p>
-											
-												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="enable-scrobbling" /> enabled</label></p>	
-												<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
-											</form>
-											<div class="lfm-granting">
-												<p>
-													<span class="lang localize-lastfm-scrobble-access">To scrobble to last.fm you must grant access to Seesu</span>
-													<button class="lang localize-grant login-lastfm-button" type="button"  name="scrobbling" >grant</button>
-													
-												</p>
-												<p class="lfm-finish">
-													<label>
-														<input type='checkbox' class="scrobbling-grant"/> 
-														<span class="lang localize-user-granted-lfm">I've granted my account access to Seesu</span>
-													
-													</label>
-													
-												</p>
-											</div>
-											<p><input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
-										</div>
-									</div>
-									
-									
-								</li>
-							</ul>
-							
-							
-						</div>
-						<div class="track-info">
-							<div class="track-files"></div>
-							<div class="track-video"></div>
-						</div>
-						<div class="artist-info">
-							<h3 class="artist-name"></h3>
-							<div class="image"></div>
-							<div class="artist-bio"></div>
-							<div class="artist-meta-info"></div>
-						</div>
-						
-					</div>
-					<dl class="buttmen play-controls">
-						<dt class="main-button">
-							<a class="play-control play" href="javascript:void(0)">
-								<img src="i/buttons_play.png" alt="play" class="pl-control" />
-							</a>
-							<span class="buttmen-mask"></span>
-						</dt>
-						<dd class="buttmen-hlts">
-							<ul>
-								<li class="buttmen-hlt-top"></li>
-								<li class="buttmen-hlt-right"></li>
-								<li class="buttmen-hlt-bottom"></li>
-								<li class="buttmen-hlt-left"></li>
-							</ul>
-						</dd>
-						<dd class="buttmen-butts">
-							<ul>
-								<li class="buttmen-butt-top">
-									<a class="play-control play_prev" >
-										<img src="i/buttons_prev.png" alt="previous" class="pl-control" />
-									</a>
-								</li>
-								<li class="buttmen-butt-right">
-									<a class="play-control stop">
-										<img src="i/buttons_stop.png" alt="stop" class="pl-control" />
-									</a>	
-								</li>
-								<li class="buttmen-butt-bottom">
-									<a class="play-control play_next">
-										<img src="i/buttons_next.png" alt="next" class="pl-control" />
-									</a>
-								</li>
-								<li class="buttmen-butt-left">
-									<a class="play-control pause" >
-										<img src="i/buttons_pause.png" alt="pause" class="pl-control" />
-										
-									</a>
-								</li>
-							</ul>
-						</dd>
-					</dl>
+				<div id="playlist-level" class="artist-page screen play-screen">
 					
 					
 					
@@ -394,9 +412,7 @@
 							<a class="js-serv open-external-playlist lang localize-playlist-export " id="open-external-playlist" href="http://seesu.me/generated_files/seesu_playlist.m3u">Export m3u playlist</a>
 							
 						</div>
-						<div id="tracks-magic" class="tracks-magic">
-							<div class="tracks-for-play"></div>
-						</div>
+						<div id="tracks-magic" class="tracks-magic"></div>
 					</div>
 					
 					<div id="playlist-search">

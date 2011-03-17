@@ -116,6 +116,9 @@ a.desc{
 .cross-domain-allowed .needs-cross-domain{
 	display:block;
 }
+.cross-domain-allowed span.needs-cross-domain{
+	display:inline;
+}
 .cross-domain-allowed .no-needs-cross-domain{
 	display:none;
 }
@@ -231,11 +234,11 @@ display:none;
 .tracks-for-play{
 	clear:both;
 	}
-	.tracks-for-play>ul.tracks-c.loading{
+	ul.tracks-for-play.tracks-c.loading{
 		background:url(../i/spinner.gif) no-repeat 0 0;
 		height:30px;
 	}
-	.tracks-for-play>ul>li{
+	ul.tracks-for-play>li{
 		margin: 0 0 5px 0;
 		position:relative;
 		}
@@ -330,10 +333,10 @@ display:none;
 			display:block;
 			
 			}
-#artist-holder h3{
+#playlist-level h3{
 	margin-top:0
 	}
-	#artist-holder h3 a{
+	#playlist-level h3 a{
 		font-size:0.8em;
 		margin-left:6px;
 		display: inline-block;

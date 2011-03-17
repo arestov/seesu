@@ -15,7 +15,21 @@ views.prototype = {
 	getPlaylistContainer: function(skip_from){
 		var c = this.m.getFreeLevel(1, 1-(skip_from + 1));
 		if (!c.ui){
-			 c.ui = $('<ul class="tracks-c current-tracks-c"></ul>').appendTo(seesu.ui.els.artsTracks);
+			var conie = $('<div class="playlist-container"></div>').appendTo(seesu.ui.els.artsTracks);
+			c.ui = {
+				conie: conie,
+				remove: function(){
+					this.conie.remove()
+				},
+				hide: function(){
+					this.conie.hide()
+				},
+				show: function(){
+					this.conie.show()
+				},
+				info_container: $('<div class="playlist-info"></div>').appendTo(conie),
+				tracks_container: $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(conie)
+			};
 		} 
 		return c;
 	},
@@ -80,6 +94,10 @@ views.prototype = {
 		
 		this.state = 'start';
 	
+	},
+	newBrowse: function(){
+		//mainaly for hash url games
+		this.m.sliceToLevel(-1);
 	},
 	show_search_results_page: function(without_input, no_navi){
 		// search results is 0 level
@@ -154,12 +172,12 @@ views.prototype = {
 		if (pl && pl.loading){
 			var lev = this.getPlaylistContainer(skip_from);
 			lev.context.pl = pl; 
-			pl.ui = lev.ui.addClass('loading');
+			(pl.ui = lev.ui).tracks_container.addClass('loading');
 			lev.setURL(getUrlOfPlaylist(pl));
 		}
 		if (pl && pl.length){
 			
-			var ui = (pl.ui && pl.ui[0] && pl.ui[0].parentNode && (pl.ui[0].ownerDocument == _sui.d) && pl.ui.show());
+			var ui = (pl.ui.tracks_container && pl.ui.tracks_container[0] && pl.ui.tracks_container[0].parentNode && (pl.ui.tracks_container[0].ownerDocument == su.ui.d) && pl.ui.tracks_container.show());
 			if (!ui){
 				var lev = _sui.views.getPlaylistContainer(skip_from);
 				lev.context.pl = pl;
@@ -174,7 +192,7 @@ views.prototype = {
 		
 		
 	},
-	show_track_page: function(title, zoom, mo){
+	show_track_page: function(title, zoom, mo, no_navi){
 		var pl = mo.plst_titl;
 		
 		if (title){
@@ -194,8 +212,10 @@ views.prototype = {
 			this.nav.daddy.append('<span class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png">' + title + '</span>');
 		}
 		
+		if (!no_navi){
+			navi.set(this.getCurrentPlaylistContainer().getFullURL() + '/_' +mo.getURLPart(), {pl:pl, mo: mo});
+		}
 		
-		navi.set(this.getCurrentPlaylistContainer().getFullURL() + '/_' +mo.getURLPart(), {pl:pl});
 	}
 }
 
@@ -270,15 +290,15 @@ seesu_ui.prototype = {
 		
 		
 	},
-	show_artist: function (artist,with_search_results) {
+	show_artist: function (artist,with_search_results, no_navi) {
 		var pl = prepare_playlist(artist, 'artist', artist, with_search_results)
 		var plist = su.ui.views.findViewOfURL(getUrlOfPlaylist(pl));
 		if (plist){
 			if (plist.freezed){
-				su.ui.views.restoreFreezed();
+				su.ui.views.restoreFreezed(no_navi);
 			}
 		} else{
-			this.views.show_playlist_page(pl, with_search_results ? 0 : false);
+			this.views.show_playlist_page(pl, with_search_results ? 0 : false, no_navi);
 			getTopTracks(artist,function(track_list){
 				create_playlist(track_list, pl);
 			});
@@ -358,6 +378,10 @@ seesu_ui.prototype = {
 		
 	},
 	updateSongfiles: function(mo){
+		if (mo.ui.files_time_stamp >= mo.wheneWasChanged()){
+			return true;
+		}
+		
 		var _sui = this;
 		var c = mo.ui.files;
 		c.empty();
@@ -375,10 +399,22 @@ seesu_ui.prototype = {
 		
 		
 
-		if (mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('vk')){
-			c.append(_sui.samples.vk_login.clone())
-		}
+		
 		var songs = mo.songs();
+		
+		if (mo.isSearchCompleted()){
+			if (!songs.length){
+				c.prepend(_sui.samples.vk_login.clone())
+			} else if(!mo.isHaveAnyResultsFrom('vk')){
+				c.prepend(_sui.samples.vk_login.clone('enhancement'))
+			} else if (mo.isNeedsAuth('vk')){
+				c.prepend(_sui.samples.vk_login.clone('stabilization'))
+			}
+			
+			
+		}
+		
+		
 		if (songs){
 			var sc = $('<div class="files-lists"></div>');
 			
@@ -416,6 +452,7 @@ seesu_ui.prototype = {
 		if (false && mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('soundcloud')){
 			desc.append('<p>try to connect soundcloud search</p>')
 		}
+		mo.ui.files_time_stamp = mo.wheneWasChanged();
 	
 	},
 	update_artist_info: function(artist, a_info, show_link_to_artist_page){
@@ -712,7 +749,14 @@ seesu_ui.prototype = {
 	},
 	render_playlist: function(pl, not_clear) { // if links present than do full rendering! yearh!
 		var _sui = this;
-		var ui = pl.ui;
+		if (!pl.ui.has_info && pl.playlist_type == 'artist'){
+			//pl.ui.a_info = this.samples.a_info.clone().appendTo(pl.ui.info_container);
+			//pl.ui.has_info = true;
+			//this.update_artist_info(pl.key, pl.ui.a_info);
+		}
+		
+		
+		var ui = pl.ui.tracks_container;
 		if (pl.loading){
 			ui.removeClass('loading')
 			pl.loading = false;
@@ -778,7 +822,7 @@ seesu_ui.prototype = {
 	},
 	create_playlist_element: function(mo){
 		var _sui = this;
-		var t_context = this.els.track_c.clone(true);
+		var t_context = this.samples.track_c.clone(true);
 		var tp = t_context.children('.track-panel');
 		var track = $("<a></a>")
 			.data('mo', mo)
@@ -786,9 +830,10 @@ seesu_ui.prototype = {
 			.addClass('track-node waiting-full-render')
 			.click(empty_song_click),
 			li = document.createElement('li');
-			
-		tp.children('.play-control').children('img.pl-control').data('mo', mo);
 		
+		var buttmen = _sui.els.play_controls.node.clone(true).data('mo', mo);
+		tp.add(buttmen).find('.play-control img.pl-control').data('mo', mo);
+
 		
 		var a_info = t_context.children('.artist-info');
 		var t_info = t_context.children('.track-info') 
@@ -822,7 +867,7 @@ seesu_ui.prototype = {
 			
 		var plistel = $(li)
 			.data('mo', mo)
-			.append(_sui.els.play_controls.node.clone(true).data('mo', mo))
+			.append(buttmen)
 			.append(track)
 			.append(t_context);
 		
@@ -843,9 +888,13 @@ seesu_ui.prototype = {
 			lfm_ssw.find('.disable-scrobbling').attr('checked',enable ? '' : 'checked');
 		}
 	},
-	search: function(query){
+	search: function(query, no_navi, new_browse){
+		if (new_browse){
+			this.views.newBrowse();
+		}
 		this.els.search_input.val(query);
-		input_change(this.els.search_input[0]);
+		input_change(this.els.search_input[0], no_navi);
+		//this.views.show_search_results_page(false, no_navi);
 	},
 	create_playlists_link: function(){
 		var _ui = this;
@@ -899,7 +948,7 @@ seesu_ui.prototype = {
 		
 	},
 	mark_c_node_as: function(marker){
-		var s = this.els.artsHolder.add(su.ui.now_playing.link);
+		var s = this.els.pllistlevel.add(su.ui.now_playing.link);
 		s.each(function(i, el){
 			$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
 		});

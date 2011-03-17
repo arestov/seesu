@@ -99,8 +99,11 @@ browseMap.prototype= {
 					return this.map.freezeMapOfLevel(num);
 				},
 				kill: function(){
-					if(this.ui && this.ui.remove){
+					if (this.ui && this.ui.remove){
 						this.ui.remove();
+					}
+					if (this.context && this.context.pl &&  this.context.pl.kill){
+						this.context.pl.kill();
 					}
 					delete this.map;
 				}

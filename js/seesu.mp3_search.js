@@ -3,6 +3,14 @@ var searches_pr = {
 	soundcloud: -5
 };
 var song_methods = {
+	view: function(no_navi){
+		su.mp3_search.find_mp3(this);
+		su.ui.updateSongContext(this);
+		viewSong(this, no_navi);	
+	},
+	wheneWasChanged: function(){
+		return (this.raw && 1) || this.sem.changed;
+	},
 	song: function(){
 		if (this.raw){
 			return this;
@@ -36,7 +44,7 @@ var song_methods = {
 		return !!this.raw || !!this.sem && this.sem.isHaveAnyResultsFrom(source_name);
 	},
 	isNeedsAuth: function(service_name){
-		return !this.raw && (!!this.sem && this.sem.isNoMasterOfSlave(service_name));
+		return !this.raw && (su.mp3_search.isNoMasterOfSlave(service_name));
 	},
 	isHaveTracks: function(){
 		return !!this.raw || !!this.sem && this.sem.have_tracks ;
@@ -131,7 +139,7 @@ cmo = {
 		if (searches_pr[search_source.name] === best){
 			sem.have_best = true;
 		}
-		
+		sem.changed = +new Date();
 		
 	},
 	blockSteamPart: function(sem, search_source, can_be_fixed){
@@ -148,7 +156,7 @@ cmo = {
 		} else{
 			return false;
 		}
-		
+		sem.changed = +new Date();
 		
 	},
 	getSomeTracks: function(steam){
@@ -577,7 +585,10 @@ su.mp3_search= (function(){
 			
 			var sem = this.search_emitters[q] || (this.search_emitters[q] = new music_seach_emitter(q));
 			if (init){
-				init(sem);
+				var already_handled = init(sem);
+				if (already_handled){
+					return true;
+				}
 			}
 	
 			var tried_cache = [];
@@ -657,7 +668,18 @@ su.mp3_search= (function(){
 				if (!mo.handled){
 					sem.addSong(mo, !!options && options.get_next);
 					mo.handled = true;
+					
 				} 
+				var force_changed;
+				if (!mo.was_forced){
+					if (!options || !options.only_cache){
+						mo.was_forced = true;
+						force_changed = true;
+					}
+					
+				}
+				return !force_changed && mo.was_forced;
+				
 			}, false, options);
 			
 			if (successful_uses){
@@ -812,6 +834,9 @@ if (typeof soundcloud_search != 'undefined'){
 			preferred: null,
 			q: su.soundcloud_queue
 		})
+		
+		
+		/*testVKAccaunt();*/
 	})();
 	
 };

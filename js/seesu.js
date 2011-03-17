@@ -133,17 +133,6 @@ window.seesu = window.su =  {
 	  ui: new seesu_ui(document),
 	  xhrs: {},
 	  soundcloud_queue: new funcs_queue(1000, 5000 , 7),
-	  hypnotoad: {
-		vk_api: false,
-		search_soundcloud: soundcloud_search,
-		search_tracks:function(){
-			if(seesu.hypnotoad.vk_api){
-				seesu.track_event('mp3 search', 'hypnotoad');
-				return seesu.hypnotoad.vk_api.audio_search.apply(seesu.hypnotoad.vk_api, arguments);
-			}
-			
-		}
-	  },
 	  delayed_search: {
 	  	tracks_waiting_for_search:0,
 		use:{
@@ -160,11 +149,18 @@ window.seesu = window.su =  {
 	  },
 	};
 
-var detach_vkapi = function(timeout){
+var detach_vkapi = function(search_way, timeout){
 	return setTimeout(function(){
-		
+		search_way.disabled = true;
 	}, timeout);
 };
+var testVKAccaunt = function(array){
+	var tvkapi = new vk_api(array, new funcs_queue(1000, 8000 , 7));
+	su.mp3_search.add(tvkapi.asearch);
+};
+
+
+
 var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callback, callback){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (!vk_s.expire || (vk_s.expire > rightnow)){
@@ -197,14 +193,14 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 				if (vk_s.expire){
 					var end = (vk_s.expire - rightnow)*1000;
 					if (fallback){
-						var _t = detach_vkapi(end + 10000);
+						var _t = detach_vkapi(_vkapi.asearch, end + 10000);
 						setTimeout(function(){
 							fallback(function(){
 								clearTimeout(_t);
 							});
 						}, end);
 					} else{
-						detach_vkapi(end);
+						detach_vkapi(_vkapi.asearch, end);
 					}
 				}
 				
@@ -255,7 +251,7 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 			}
 			
 		},function(){
-			detach_vkapi();
+			detach_vkapi(_vkapi.asearch);
 			fallback(false, true);
 		});
 		
@@ -451,8 +447,8 @@ var make_tracklist_playable = function(pl, full_allowing){
 
 
 
-function viewSong(mo){
-	su.player.view_song(mo, true, false);
+function viewSong(mo, no_navi){
+	su.player.view_song(mo, true, false, no_navi);
 }
 
 
@@ -512,14 +508,40 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 		};
 		*/
 	};
+	pl.showExactlyTrack= function(mo, no_navi){
+		if (~pl.indexOf(mo)){
+			mo.view(no_navi);
+			return true;
+		}	
+	};
 	pl.showTrack = function(artist_track, no_navi){
+		var will_ignore_artist;
+		var artist_match_playlist = pl.playlist_type == 'artist' && pl.key == artist_track.artist;
+		if (!artist_track.artist || artist_match_playlist){
+			will_ignore_artist = true;
+		}
+		
+		
 		console.log('want to find and show');
 		
+		for (var i=0; i < pl.length; i++) {
+			if (artist_track.track == pl[i].track && (will_ignore_artist || artist_track.artist == pl[i].artist)){
+				su.mp3_search.find_mp3(pl[i]);
+				su.ui.updateSongContext(pl[i]);
+				viewSong(pl[i], no_navi);
+				
+				return true;
+			}
+			
+		};
+		if (artist_track.artist && artist_track.track){
+			pl.push(artist_track);
+			
+		}
+		
 		return false;
-		su.mp3_search.find_mp3(mo);
-		su.ui.updateSongContext(mo);
-		viewSong(mo);
-	}
+		
+	};
 	
 	
 	var oldpush = pl.push;

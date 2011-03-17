@@ -622,13 +622,12 @@ var suggestions_search =  seesu.env.cross_domain_allowed ? function(q, ui){
 			
 			*/
 
-var suggestions_prerender = function(input_value, crossdomain){
+var suggestions_prerender = function(search_view, input_value, crossdomain){
 	var multy = !crossdomain;
 	var source_query = input_value;
 
-	var search_view = seesu.ui.views.getSearchResultsContainer();
-	search_view.context.q= input_value;
-	search_view.setURL('?q=' + input_value);
+	
+	
 	var results_container = search_view.ui.empty();
 	
 	var create_plr_entity = function(pl){
@@ -762,13 +761,18 @@ var suggestions_prerender = function(input_value, crossdomain){
 };
 
 
-var input_change = function(e){
+var input_change = function(e, no_navi){
 	var input = (e && e.target) || e; //e can be EVENT or INPUT  
+	
+	var search_view = seesu.ui.views.getSearchResultsContainer();
+	
+	
 	var input_value = input.value;
-	if ($(input).data('lastvalue') == input_value){
+	if (search_view.context.q == input_value){
 		return false
 	} else{
-		$(input).data('lastvalue', input_value);
+		search_view.context.q= input_value;
+		search_view.setURL('?q=' + input_value);
 	}
 	if (!input_value) {
 		seesu.ui.views.show_start_page();
@@ -785,8 +789,9 @@ var input_change = function(e){
 	seesu.xhrs.multiply_suggestions =[]
 	seesu.ui.els.search_form.data('current_node_index' , false);
 	
-	suggestions_prerender(input_value, seesu.env.cross_domain_allowed);
-	seesu.ui.views.show_search_results_page();
+	suggestions_prerender(search_view, input_value, seesu.env.cross_domain_allowed);
+	
+	seesu.ui.views.show_search_results_page(false, no_navi);
 	
 	
 	

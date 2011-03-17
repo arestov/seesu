@@ -128,15 +128,18 @@ window.connect_dom_to_som = function(d, ui){
 		d.documentElement.firstChild.appendChild(volume_s);
 		
 		dstates.connect_ui(ui);
-		var artsHolder	= $('#artist-holder',d);
-		var buttmen_node =  $('.play-controls.buttmen',d);
-		if (buttmen_node){
-			seesu.buttmen = new button_menu(buttmen_node);
-		}
+		var pllistlevel = $('#playlist-level',d);
+		
 		var search_form = $('#search',d); 
 		
 
 		var ui_samples = $('#ui-samples',d);
+		var buttmen_node =  ui_samples.children('.play-controls.buttmen');
+		if (buttmen_node){
+			seesu.buttmen = new button_menu(buttmen_node);
+		}
+		
+		
 		ui.els = {
 			scrolling_viewport: $('#screens',d),
 			make_trs: $("#make-trs-plable",d).click(function(){
@@ -148,9 +151,8 @@ window.connect_dom_to_som = function(d, ui){
 			nav_track_zoom: $('#nav_track_zoom',d),
 			export_playlist: $('#open-external-playlist',d),
 			start_screen: $('#start-screen',d),
-			artsHolder: artsHolder,
-			a_info: $('.artist-info', artsHolder),
-			artsTracks: $('.tracks-for-play',artsHolder),
+			pllistlevel: pllistlevel,
+			artsTracks: pllistlevel.find('#tracks-magic'),
 			art_tracks_w_counter: $('#tracks-waiting-for-search',d),
 			
 			
@@ -158,12 +160,14 @@ window.connect_dom_to_som = function(d, ui){
 			search_input: $('#q',d),
 			play_controls: seesu.buttmen,
 			search_form: search_form,
-			track_c : $('.track-context',d),
 			volume_s: volume_s
 			
 		};
+		var ainfo_sample = ui_samples.children('.artist-info');
 		ui.samples = {
-			a_info: ui.els.a_info.clone(),
+			
+			a_info: ainfo_sample,
+			track_c : ui_samples.children('.track-context').append(ainfo_sample.clone()),
 			vk_login: {
 				o: ui_samples.children('.vk-login-context'),
 				oos: $(),
@@ -174,9 +178,17 @@ window.connect_dom_to_som = function(d, ui){
 				},
 				vk_login_error: $(),
 				captcha_img: $(),
-				clone: function(){
+				clone: function(type){
 					var _this = this;
 					var nvk = this.o.clone();
+					if (!type){
+						nvk.addClass('usual-login')
+					} else{
+						nvk.addClass(type + '-login')
+					}
+					
+					
+					
 					_this.oos =  _this.oos.add(nvk);
 					var vk_auth = $('.vk-auth',nvk);
 					
@@ -225,7 +237,7 @@ window.connect_dom_to_som = function(d, ui){
 			track: ui.els.nav_track_zoom.parent()
 		}
 		
-		ui.els.search_input.bind('keyup mousemove change', input_change);
+		ui.els.search_input.bind('keyup change', input_change);
 	
 		var state_recovered;	
 		if (window.su && su.player && su.player.c_song){
@@ -475,7 +487,7 @@ window.connect_dom_to_som = function(d, ui){
 			if (!hashchangeHandler({
 					oldURL:'',
 					newURL: location.hash.replace(/^\#/,'')
-				}) && ext_search_query){
+				}, true) && ext_search_query){
 				su.ui.search(ext_search_query);
 			}
 			console.log('bg');

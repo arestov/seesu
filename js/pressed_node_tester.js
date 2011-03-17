@@ -185,8 +185,8 @@ var test_pressed_node = function(e, mouseup){
 
 				
 				var target_offset = clicked_node.offset();
-				var container_offset = su.ui.els.artsHolder.offset();
-				var container_width = su.ui.els.artsHolder.width();
+				var container_offset = su.ui.els.pllistlevel.offset();
+				var container_width = su.ui.els.pllistlevel.width();
 				var left = target_offset.left - container_offset.left;
 				su.ui.els.pl_search
 					.data('current_song', clicked_node.data('mo'))
