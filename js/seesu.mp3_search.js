@@ -727,14 +727,19 @@ su.mp3_search= (function(){
 			}
 			if (su.player){
 				if (su.player.c_song){
-					s.find_mp3(su.player.c_song);
+					if (su.player.c_song.sem){
+						s.searchFor(su.player.c_song.sem.q);
+					}
 					
-					if (su.player.c_song.next_preload_song){
-						s.find_mp3(su.player.c_song.next_preload_song);
+					if (su.player.c_song.next_preload_song && su.player.c_song.next_preload_song.sem){
+						s.searchFor(su.player.c_song.next_preload_song.sem.q);
 					}
 				}
 				if (su.player.v_song && su.player.v_song != su.player.c_song ){
-					s.find_mp3(su.player.v_song);
+					if (su.player.v_song.sem){
+						s.searchFor(su.player.v_song.sem.q);
+					}
+					
 				}
 			}
 			

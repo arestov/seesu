@@ -432,7 +432,7 @@ function hashchangeHandler(e, force){
 					console.log('not too fresh new state');
 				} else{
 					if (newstate.plp.playlist_type == 'artist'){
-						show_artist(newstate.current_artist, false, true)
+						//show_artist(newstate.current_artist, false, true)
 					}
 					
 					console.log('realy fresh  neewwwww state');
