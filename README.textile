@@ -18,14 +18,22 @@ Alexander Belov <porqz@mesquite.ru>
 
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
-recheck:
-restore_view
-.current_rc.q
-testViewByPuppet
-testViewByQuery
-findViewOfSearchQuery
-findViewOfPlaylist
-su.mp3_search.abortAllSearches();
-su.ui.views.playlist_title == pl_r.playlist_title && su.ui.views.playlist_type == pl_r.playlist_type
 
-update_artist_info \n _sui.views.playlist_type == 'artist'
+
+два раза появляется ссылка на трек
+mp3 для вконтакте только для залогиненых и в неонлайн версии
+
+
+push pop история
+при открытом плейлисте не работает батменовская кнопка: крутое определение перемещается ли пользователь назад или вперёд
+дубликаты ?q=k ?q=ki ?q=kii
+
+искать треки в кеше только если нужно
+перерисовывать файлы только если нужно
+перерисовывать контекст трека только если нужно
+
+поправить поиск треков и прямой поиск во вконтакте
+
+история для плейлистов, треков
+ререндеринг плейлиста не показывает что треки доступные
+ререндеринг нужен для динамичных плейлистов 

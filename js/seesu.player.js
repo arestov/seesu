@@ -382,7 +382,7 @@ seesu.player = {
 		
 		
 	} ,
-	view_song: function (mo, zoom, force) {
+	view_song: function (mo, zoom, force, no_navi) {
 	  var artist = mo.artist;
 	  var last_mo = this.v_song;
 	  
@@ -401,7 +401,7 @@ seesu.player = {
 		this.change_songs_ui(mo);
 		this.v_song = mo;
 	  }
-	  su.ui.views.show_track_page(($(su.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.track, zoom, mo);
+	  su.ui.views.show_track_page(($(su.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.track, zoom, mo, no_navi);
 	}
 }
 

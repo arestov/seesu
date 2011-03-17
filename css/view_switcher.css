@@ -43,7 +43,7 @@
 
 	
 	
-#artist-holder{
+#playlist-level{
 	display:none;
 	max-width: 750px;
 	margin:0 auto;
@@ -102,7 +102,7 @@
 	}
 .show-player-page{
 	}
-	.show-player-page #artist-holder{
+	.show-player-page #playlist-level{
 		display:block;
 		}
 		
@@ -124,6 +124,9 @@ li.playing-song .play-controls{
 	position:static;
 	padding-top:0px;
 }
+.show-zoom-to-track .playlist-info{
+	display:none;
+}
 .player-holder{
 	height:23px;
 	position:relative;
@@ -135,23 +138,23 @@ li.playing-song .play-controls{
 .show-zoom-to-track .play-list-panel{
 	display:none;
 }
-.show-zoom-to-track .tracks-for-play .play-controls{
+.show-zoom-to-track ul.tracks-for-play .play-controls{
 	display:none;
 }
-.show-zoom-to-track .tracks-for-play>ul{
+.show-zoom-to-track ul.tracks-for-play{
 
 	padding-top:33px;
 }
-.show-zoom-to-track .tracks-for-play>ul>li.to-play-previous{
+.show-zoom-to-track ul.tracks-for-play>li.to-play-previous{
 	margin-top:-33px;
 	}
-.show-zoom-to-track .tracks-for-play>ul>li.to-play-next{
+.show-zoom-to-track ul.tracks-for-play>li.to-play-next{
 	
 	}
-.show-zoom-to-track .tracks-for-play>ul>li.viewing-song{
+.show-zoom-to-track ul.tracks-for-play>li.viewing-song{
 	
 	}
-	.show-zoom-to-track .tracks-for-play>ul>li.viewing-song .song{
+	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .song{
 		font-size:1.3em;
 		cursor:default;
 		}
@@ -160,17 +163,17 @@ li.playing-song .play-controls{
 	}
 
 
-.show-zoom-to-track #artist-holder{
+.show-zoom-to-track #playlist-level{
 	position: relative;
 } 
 
-.show-zoom-to-track .tracks-for-play>ul>li{
+.show-zoom-to-track ul.tracks-for-play>li{
 	display:none;
 	}	
 	
-.show-zoom-to-track .tracks-for-play>ul>li.to-play-previous,
-.show-zoom-to-track .tracks-for-play>ul>li.viewing-song,
-.show-zoom-to-track .tracks-for-play>ul>li.to-play-next{
+.show-zoom-to-track ul.tracks-for-play>li.to-play-previous,
+.show-zoom-to-track ul.tracks-for-play>li.viewing-song,
+.show-zoom-to-track ul.tracks-for-play>li.to-play-next{
 		display: list-item;
 		left:0;
 		right:0;

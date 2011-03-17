@@ -75,7 +75,7 @@ vk_api.prototype = {
 			} else{
 				api = this.apis[0];
 			}
-			var legal_api = !!~_this.legal_apis.indexOf(api.api_id);
+			var hapi = api.api_id == 8;
 			
 			
 
@@ -94,19 +94,19 @@ vk_api.prototype = {
 						cache_ajax.set('vk_api', p.cache_key, r);
 					}
 					
-					if (callback) {callback(r, legal_api);}
+					if (callback) {callback(r, hapi);}
 				} else{
 					if (r.error.error_code < 5){
 						if (_this.fallback){ _this.fallback();}
 						
 					} 
 					if (r.error.error_code < 6){
-						if (error) {error(true, legal_api);}
+						if (error) {error(true, hapi);}
 						
 					}
 					
 					else{
-						if (callback) {callback(r, legal_api);}
+						if (callback) {callback(r, hapi);}
 					}
 				}
 				
@@ -140,7 +140,7 @@ vk_api.prototype = {
 			
 			if (typeof cache_ajax == 'object' && api.use_cache && !p.nocache){
 				var cache_used = cache_ajax.get('vk_api', p.cache_key, function(r){
-					callback(r, legal_api);
+					callback(r, hapi);
 				});
 				if (cache_used) {
 					return true;
@@ -154,7 +154,7 @@ vk_api.prototype = {
 			var request = function(){
 				if (typeof cache_ajax == 'object' && api.use_cache && !p.nocache){
 					var cache_used = cache_ajax.get('vk_api', p.cache_key, function(r){
-						callback(r, legal_api);
+						callback(r, hapi);
 					});
 					if (cache_used) {
 						return true;
@@ -170,7 +170,7 @@ vk_api.prototype = {
 				  success: !params_full.callback ? response_callback : false,
 				  jsonpCallback: params_full.callback ? params_full.callback : false, 
 				  error: function(xhr){
-					if (error && xhr) {error(false, legal_api);}
+					if (error && xhr) {error(false, hapi);}
 					
 				  }
 				});
@@ -213,7 +213,7 @@ vk_api.prototype = {
 	
 			
 		var used_successful = this.use('audio.search', params_u, 
-		function(r, legal_api){
+		function(r, hapi){
 			if (r.response && (r.response.length > 1 )) {
 				var music_list = [];
 				for (var i=1, l = r.response.length; i < l; i++) {
@@ -222,8 +222,8 @@ vk_api.prototype = {
 						duration	: r.response[i].duration ? r.response[i].duration : r.response[i].audio.duration,
 						link		: r.response[i].url ? r.response[i].url : r.response[i].audio.url,
 						track		: HTMLDecode(r.response[i].title ? r.response[i].title : r.response[i].audio.title),
-						from		:  (legal_api ? 'legal_' : (_this.allow_random_api ? 'random_' : '')) + 'vk_api',
-						downloadable: !legal_api
+						from		:  (!hapi ? 'legal_' : (_this.allow_random_api ? 'random_' : '')) + 'vk_api',
+						downloadable: hapi
 					
 					};
 					
@@ -242,7 +242,7 @@ vk_api.prototype = {
 			} else{
 				if (error) {error(_this.search_source);}
 			}
-		}, function(xhr, legal_api){
+		}, function(xhr, hapi){
 			if (error){error(_this.search_source);}
 		}, {
 			nocache: nocache, 

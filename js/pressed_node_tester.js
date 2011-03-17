@@ -49,7 +49,7 @@ var test_pressed_node = function(e, mouseup){
 		  }
 		  else if (class_name.match(/music-tag/)){
 			tag_name = decodeURIComponent(clicked_node.data('music_tag'));
-			show_tag(tag_name);
+			su.ui.show_tag(tag_name);
 			seesu.track_event('Artist navigation', 'tag', tag_name);
 			return false;
 		  }
@@ -62,7 +62,7 @@ var test_pressed_node = function(e, mouseup){
 		  }
 		  else if (class_name.match(/bbcode_tag/)){
 			tag_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/tag/','').replace('+', ' '));
-			show_tag(tag_name);
+			su.ui.show_tag(tag_name);
 			seesu.track_event('Artist navigation', 'bbcode_tag', tag_name);
 			return false;
 		  }
@@ -185,8 +185,8 @@ var test_pressed_node = function(e, mouseup){
 
 				
 				var target_offset = clicked_node.offset();
-				var container_offset = su.ui.els.artsHolder.offset();
-				var container_width = su.ui.els.artsHolder.width();
+				var container_offset = su.ui.els.pllistlevel.offset();
+				var container_width = su.ui.els.pllistlevel.width();
 				var left = target_offset.left - container_offset.left;
 				su.ui.els.pl_search
 					.data('current_song', clicked_node.data('mo'))
