@@ -34,17 +34,21 @@ var sm2_p = function(volume, sm2, iframe){
 			_this.listen_commands_of_source.apply(_this,arguments);
 		})
 	}
-	
+	this.songs={};
 	
 };
 sm2_p.prototype = {
 	'module_title':'sm2_p',
+	
 	"set_new_position": function(){
 		this.sm2_actions.set_new_position.apply(this, arguments);
 	},
 	"play_song_by_url": function(){
 		this.before_finish_fired = false;
 		this.sm2_actions.play_song_by_url.apply(this, arguments);
+	},
+	"preloadSong": function(){
+		return this.sm2_actions.preloadSong.apply(this, arguments);
 	},
 	'play': function(){
 		this.sm2_actions.play.apply(this, arguments);
@@ -67,23 +71,34 @@ sm2_p.prototype = {
 				current_song.setPosition( position_factor * total )
 			}
 		},
+		preloadSong: function(url){
+			var s;
+			if (this.songs[url]){
+				s = this.core.getSoundById(url);
+			} else{
+				s = this.core.createSound({
+					id: url, // required
+					url: url, // required
+				});
+				this.songs[url] = true;
+			}
+			s.load();
+			return s;
+		},
 		"play_song_by_url" : function(url){
 			var _this = this;
 			if (this.current_song){
 				var current_song = this.core.getSoundById(this.current_song);
 				if (current_song) {
 					current_song.destruct()
+					delete this.songs[this.current_song];
 				}
 			}
 			
-				
+			this.preloadSong(url);
 			
-			this.core.createSound({
-				id: url, // required
-				url: url, // required
-				// optional sound parameters here, see Sound Properties for full list
+			this.core.play(url, {
 				volume: _this.volume,
-				autoPlay: true,
 				onplay: function(){_this.sm2_p_events.playing(_this)},
 				onresume: function(){_this.sm2_p_events.playing(_this)},
 				onpause: function(){_this.sm2_p_events.paused(_this)},
@@ -96,8 +111,9 @@ sm2_p.prototype = {
 				whileloading: function(){
 					_this.sm2_p_events.progress_loading(_this, this.bytesLoaded, this.bytesTotal) 
 				}
-			});
+			})
 			
+		
 			
 			this.current_song = url;
 		},
@@ -133,6 +149,9 @@ sm2_p.prototype = {
 		},
 		"play_song_by_url": function(song_url,duration){
 			this.send_to_player_sandbox('play_song_by_url,' + song_url + ',' + duration);
+		},
+		"preloadSong": function(song_url){
+			this.send_to_player_sandbox('preloadSong,' + song_url);
 		}
 		,
 		"play":function(){

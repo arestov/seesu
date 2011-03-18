@@ -6,7 +6,7 @@ var INIT     = -11,
 	  PAUSED   =  7,
 	  FINISHED =  11;
 
-seesu.gena = { //this work with playlists
+su.gena = { //this work with playlists
 	reconnect_playlist: function(pl){
 		for (var i=0; i < pl.length; i++) {
 			this.connect(pl[i], pl, i);
@@ -70,8 +70,8 @@ seesu.gena = { //this work with playlists
 	add: function(mo, pl){
 		var n_mo = this.soft_clone(mo, ['track', 'artist']);
 		pl.push(this.connect(n_mo, pl, pl.length));
-		if (seesu.player.c_song.plst_titl == pl){
-			pl.ui.append(seesu.ui.create_playlist_element(n_mo));
+		if (su.player.c_song.plst_titl == pl){
+			pl.ui.append(su.ui.create_playlist_element(n_mo));
 			make_tracklist_playable(pl);
 		}
 		
@@ -134,7 +134,7 @@ su.gena.playlists = (function(){
 })();
 
 
-seesu.player = {
+su.player = {
 	autostart: true,
 	player_volume 	: ( function(){
 		var volume_preference = w_storage('vkplayer-volume');
@@ -370,11 +370,11 @@ seesu.player = {
 				( su.ui.d.title = (localize('now-playing','Now Playing') + ': ' +artist + " - " + mo.track))
 			);
 		} else{
-			if (seesu.ui.views.nav){
+			if (su.ui.views.nav){
 				
 				su.ui.now_playing.link = $('<a class="np"></a>').click(function(){
 					su.ui.views.show_now_playing(true);
-				}).appendTo(seesu.ui.views.nav.justhead);
+				}).appendTo(su.ui.views.nav.justhead);
 				
 			}
 		}
@@ -407,10 +407,10 @@ seesu.player = {
 
 
 
-seesu.player.events[PLAYED] = function(){
-  var start_time = seesu.player.c_song.start_time;
+su.player.events[PLAYED] = function(){
+  var start_time = su.player.c_song.start_time;
   if (!start_time) {
-	seesu.player.c_song.start_time = ((new Date()).getTime()/1000).toFixed(0);
+	su.player.c_song.start_time = ((new Date()).getTime()/1000).toFixed(0);
   }
   
 	var submit = function(mo){
@@ -418,7 +418,7 @@ seesu.player.events[PLAYED] = function(){
 			if (su.lfm_api.scrobbling) {
 				su.lfm_api.nowplay(mo, mo.mopla.duration);
 			}
-			if (seesu.vk.id){
+			if (su.vk.id){
 				su.api('track.scrobble', {
 					status: 'playing',
 					duration: mo.mopla.duration,
@@ -429,31 +429,31 @@ seesu.player.events[PLAYED] = function(){
 			}
 		},100);
 	};
-	submit(seesu.player.c_song);
+	submit(su.player.c_song);
   
 	
 	
 	
-  su.ui.mark_c_node_as(seesu.player.player_state = PLAYED);
-  seesu.player.preload_song();
+  su.ui.mark_c_node_as(su.player.player_state = PLAYED);
+  su.player.preload_song();
 };
-seesu.player.events[PAUSED] = function(){
-  su.ui.mark_c_node_as(seesu.player.player_state = PAUSED);
+su.player.events[PAUSED] = function(){
+  su.ui.mark_c_node_as(su.player.player_state = PAUSED);
 };
-seesu.player.events[STOPPED] = function(){
-  seesu.player.c_song.start_time = false;
-  su.ui.mark_c_node_as(seesu.player.player_state = STOPPED);
+su.player.events[STOPPED] = function(){
+  su.player.c_song.start_time = false;
+  su.ui.mark_c_node_as(su.player.player_state = STOPPED);
 };
 
 
-seesu.player.events[FINISHED] = function() {
+su.player.events[FINISHED] = function() {
   
 	var submit = function(mo){
 		setTimeout(function(){
 			if (su.lfm_api.scrobbling) {
 				su.lfm_api.submit(mo, mo.mopla.duration);
 			}
-			if (seesu.vk.id){
+			if (su.vk.id){
 				su.api('track.scrobble', {
 					status: 'finished',
 					duration: mo.mopla.duration,
@@ -467,27 +467,27 @@ seesu.player.events[FINISHED] = function() {
 			
 		},50)
 	};
-	submit(seesu.player.c_song);
+	submit(su.player.c_song);
 
-	seesu.player.switch_to('next');
+	su.player.switch_to('next');
 };
-seesu.player.events[VOLUME] = function(volume_value) {
+su.player.events[VOLUME] = function(volume_value) {
 	change_volume(volume_value);
 };
-seesu.player.preload_song = function(){
-	if (!seesu.player.c_song.next_track_preload_fired){
-		if (seesu.player.c_song.next_preload_song){
-			get_next_track_with_priority(seesu.player.c_song.next_preload_song);
+su.player.preload_song = function(){
+	if (!su.player.c_song.next_track_preload_fired){
+		if (su.player.c_song.next_preload_song){
+			get_next_track_with_priority(su.player.c_song.next_preload_song);
 			
 		}
-		//seesu.player.c_song.next_track_preload_fired = true;
+		//su.player.c_song.next_track_preload_fired = true;
 		
 	}
 }
 
-seesu.player.events.progress_playing = function(progress_value, total){
+su.player.events.progress_playing = function(progress_value, total){
 	//if (_this.ignore_position_change) {return false;}
-	var _c = seesu.player.c_song && seesu.player.c_song.c;
+	var _c = su.player.c_song && su.player.c_song.c;
 	if (!_c){return false}
 	
 	var progress = parseInt(progress_value);
@@ -498,9 +498,9 @@ seesu.player.events.progress_playing = function(progress_value, total){
 	_c.tr_progress_p[0].style.width = current + 'px';
 }
 
-seesu.player.events.progress_loading = function(progress_value, total){
+su.player.events.progress_loading = function(progress_value, total){
 	//if (_this.ignore_position_change) {return false;}
-	var _c = seesu.player.c_song && seesu.player.c_song.c;
+	var _c = su.player.c_song && su.player.c_song.c;
 	if (!_c){return false}
 	
 	var progress = parseInt(progress_value);
@@ -509,47 +509,62 @@ seesu.player.events.progress_loading = function(progress_value, total){
 	var current = Math.round((progress/total) * _c.track_progress_width);
 	
 	_c.tr_progress_l[0].style.width = current + 'px';
+	
+	if ((progress/total) > 0.8){
+		if (su.player.c_song.next_song && (su.player.c_song.next_song.isHaveBestTracks() || su.player.c_song.next_song.isSearchCompleted()) && su.player.musicbox.preloadSong){
+			var s = su.player.c_song.next_song.song();
+			if (s && s.link){
+				su.player.musicbox.preloadSong(s.link)
+			}
+			
+		} 
+		console.log(progress/total)
+		if (progress == total){
+			su.player.c_song.load_finished = true;
+		}
+	} 
+	
 }
 	
 
 
 
 // Click by song
-seesu.player.song_click = function(mo) {
-  var zoomed = !!seesu.ui.els.slider.className.match(/show-zoom-to-track/);
+su.player.song_click = function(mo) {
+  var zoomed = !!su.ui.els.slider.className.match(/show-zoom-to-track/);
   if (this.c_song){
   	if (mo == this.c_song){
-		seesu.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
+		su.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
 	} else if (this.c_song.next_song && mo == this.c_song.next_song){
-		seesu.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
+		su.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
 	} else if (this.c_song.prev_song && mo == this.c_song.prev_song){
-		seesu.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
+		su.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
 	} else{
-		seesu.track_event('Song click', 'simple click');
+		su.track_event('Song click', 'simple click');
 	}
   } else{
-  	seesu.track_event('Song click', 'simple click');
+  	su.track_event('Song click', 'simple click');
   }
   
   if (!zoomed){
-	seesu.track_page('track zoom');
+	su.track_page('track zoom');
   }
   su.mp3_search.find_mp3(mo);
 		
-  seesu.player.play_song(mo, !zoomed);
+  su.player.play_song(mo, !zoomed);
   return false;
 }
 
 
 var change_volume = function (volume_value){
   w_storage('vkplayer-volume', volume_value, true);
-  seesu.player.player_volume = volume_value;	
+  su.player.player_volume = volume_value;	
 }
 
 
 
 var try_to_use_iframe_sm2p = function(remove){
-	if (!seesu.env.cross_domain_allowed){
+	if (!su.env.cross_domain_allowed){
 		return false;
 	}
 	if (remove){
@@ -559,7 +574,7 @@ var try_to_use_iframe_sm2p = function(remove){
 		
 		return false;
 	}
-	window.i_f_sm2 = seesu.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.me/i.html" ></iframe>');
+	window.i_f_sm2 = su.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.me/i.html" ></iframe>');
 	if (window.i_f_sm2) {
 		
 		
@@ -597,7 +612,7 @@ var try_to_use_iframe_sm2p = function(remove){
 		var text_of_function = function(func){
 			return func.toString().replace(/^.*\n/, "").replace(/\n.*$/, "")
 		}
-		var last_iframe_func = text_of_function(init_sm2_p).replace('_volume', seesu.player.player_volume );
+		var last_iframe_func = text_of_function(init_sm2_p).replace('_volume', su.player.player_volume );
 		
 
 		
@@ -693,7 +708,7 @@ var try_to_use_iframe_sm2p = function(remove){
 				
 			} else if (e.data.match(/sm2_inited/)){
 				console.log('iframe sm2 wrokss yearh!!!!')
-				seesu.player.musicbox = new sm2_p(seesu.player.player_volume, false, i_f_sm2);
+				su.player.musicbox = new sm2_p(su.player.player_volume, false, i_f_sm2);
 				clearTimeout(html_player_timer);
 				i_f_sm2.addClass('sm-inited');
 				dstates.add_state('body','flash-internet');
@@ -721,14 +736,13 @@ var try_to_use_iframe_sm2p = function(remove){
 var html_player_timer;
 var a = document.createElement('audio');
 if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
-	html_player_timer = setTimeout(function(){
-		seesu.player.musicbox = new html5_p(seesu.player.player_volume);
-		$(function(){
-			dstates.add_state('body','flash-internet');
-		})
-	}, 10000);
-}
-if (!seesu.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
+	
+	su.player.musicbox = new html5_p(su.player.player_volume);
+	$(function(){
+		dstates.add_state('body','flash-internet');
+	})
+	
+} else if (!su.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
 	soundManager = new SoundManager();
 	if (soundManager){
 		soundManager.url = 'http://seesu.me/swf/';
@@ -740,7 +754,7 @@ if (!seesu.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
 		soundManager.onready(function() {
 		  if (soundManager.supported()) {
 			console.log('sm2 in widget ok')
-			seesu.player.musicbox = new sm2_p(seesu.player.player_volume, soundManager);
+			su.player.musicbox = new sm2_p(su.player.player_volume, soundManager);
 			$(function(){
 				dstates.add_state('body','flash-internet');
 			})
