@@ -100,11 +100,9 @@ html5_p.prototype = {
 				}
 			});
 			addEvent(au, 'canplaythrough', function(e){
-				setTimeout(function(){
-					if (au.buffered.length){
-						_this.html5_p_events.progress_loading(_this, au.buffered.end(0), au.duration);
-					}
-				},30)
+				if (au.buffered.length){
+					_this.html5_p_events.progress_loading(_this, au.buffered.end(0), au.duration);
+				}
 			});
 			au.play();
 		},
