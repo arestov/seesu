@@ -116,7 +116,14 @@ navi= {
 			
 			this.app_hash = url; //supressing hash change handler, must be before location.assign
 			try{
-				location.assign('#' + url);
+				var hash = location.href.indexOf('#');
+				var curl;
+				if (~hash){
+					curl = location.href.slice(0,location.href.indexOf('#'));
+				} else{
+					curl = location.href;
+				}
+				location.assign(curl + '#' + url);
 			}catch(e){
 				
 			}
