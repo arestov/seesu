@@ -104,11 +104,7 @@ html5_p.prototype = {
 
 				}
 			});
-			addEvent(au, 'canplaythrough', function(e){
-				if (au.buffered.length){
-					_this.html5_p_events.progress_loading(_this, au.buffered.end(0), au.duration);
-				}
-			});
+			
 			au.play();
 		},
 		"play" : function(){
