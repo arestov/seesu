@@ -59,9 +59,14 @@ html5_p.prototype = {
 		"set_new_position": function(position_factor){
 			if (this.current_song){
 				var total = this.current_song.duration;
-				var playable = this.current_song.buffered.end(0);
-				var target = total * position_factor;
-				this.current_song.currentTime = Math.min(playable, target);
+				try{
+					var playable = this.current_song.buffered.end(0);
+					var target = total * position_factor;
+					this.current_song.currentTime = Math.min(playable, target);
+				}catch(e){
+					
+				}
+				
 			}
 		},
 		"play_song_by_url" : function(url){
