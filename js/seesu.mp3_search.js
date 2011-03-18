@@ -598,7 +598,6 @@ su.mp3_search= (function(){
 			var sem = this.search_emitters[q] || (this.search_emitters[q] = new music_seach_emitter(q));
 			if (init){
 				seeking_something_fresh = init(sem);
-				
 			}
 	
 			var tried_cache = [];
@@ -689,6 +688,7 @@ su.mp3_search= (function(){
 					
 				}
 				return !force_changed && mo.was_forced && mo.isSearchCompleted();
+
 				
 			}, false, options);
 			

@@ -115,7 +115,11 @@ navi= {
 			this.fake_current_location = url;
 			
 			this.app_hash = url; //supressing hash change handler, must be before location.assign
-			location.assign('#' + url);
+			try{
+				location.assign('#' + url);
+			}catch(e){
+				
+			}
 			
 			
 			
@@ -433,6 +437,7 @@ function hashchangeHandler(e, force){
 				} else{
 					if (newstate.plp.playlist_type == 'artist'){
 						//show_artist(newstate.current_artist, false, true)
+
 					}
 					
 					console.log('realy fresh  neewwwww state');
