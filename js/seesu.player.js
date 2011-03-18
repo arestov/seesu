@@ -511,7 +511,7 @@ su.player.events.progress_loading = function(progress_value, total){
 	_c.tr_progress_l[0].style.width = current + 'px';
 	
 	if ((progress/total) > 0.8){
-		if (su.player.c_song.next_song && su.player.c_song.next_song.isSearchCompleted() && su.player.musicbox.preloadSong){
+		if (su.player.c_song.next_song && (su.player.c_song.next_song.isHaveBestTracks() || su.player.c_song.next_song.isSearchCompleted()) && su.player.musicbox.preloadSong){
 			var s = su.player.c_song.next_song.song();
 			if (s && s.link){
 				su.player.musicbox.preloadSong(s.link)
