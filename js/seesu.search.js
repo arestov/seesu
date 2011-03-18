@@ -243,8 +243,9 @@ var track_search = su.fs.track_search = function(track_query, start){
 }
 
 var rend_vk_suggets = function(pl, ui){
+	console.log('almost rend')
 	if (pl && pl.length){
-			var k = $();
+		var k = $();
 		for (var i=0, l = (pl.length < 3 && pl.length) || 3; i < l; i++) {
 			k = k.add(
 				$('<span class="vk-track-suggest"></span>')
@@ -268,9 +269,10 @@ var vk_suggests = $.debounce(function(query, ui){
 	
 	//function(trackname, callback, nocache, hypnotoad, only_cache){
 	su.mp3_search.find_files({q: query}, 'vk', function(err, pl, c){
+		console.log(arguments);
 		c.done = true;
 		ui.vk_tracks.label.removeClass('loading');
-		rend_vk_suggets(pl && pl[0], ui);
+		rend_vk_suggets(pl && pl[0] && pl[0].t, ui);
 	}, false);
 	
 	

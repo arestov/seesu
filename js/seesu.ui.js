@@ -749,7 +749,7 @@ seesu_ui.prototype = {
 	},
 	render_playlist: function(pl, not_clear) { // if links present than do full rendering! yearh!
 		var _sui = this;
-		if (!pl.ui.has_info && pl.playlist_type == 'artist'){
+		if (pl.ui && !pl.ui.has_info && pl.playlist_type == 'artist'){
 			//pl.ui.a_info = this.samples.a_info.clone().appendTo(pl.ui.info_container);
 			//pl.ui.has_info = true;
 			//this.update_artist_info(pl.key, pl.ui.a_info);
