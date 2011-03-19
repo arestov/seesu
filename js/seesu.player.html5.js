@@ -78,7 +78,7 @@ html5_p.prototype = {
 			var au = this.current_song = this.songs[url] || (this.songs[url] = new Audio(url));
 			
 			au.load();
-			au.volume = this.volume;
+			au.volume = Math.min(1, this.volume);
 
 			addEvent(au, 'play', function(){_this.html5_p_events.playing(_this)});
 			addEvent(au, 'pause', function(){_this.html5_p_events.paused(_this)});

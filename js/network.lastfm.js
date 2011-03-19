@@ -135,7 +135,7 @@ lastfm_api.prototype = {
 	
 		}
 	},
-	nowplay: function(mo){
+	nowplay: function(mo, duration){
 		var _this = this;
 		if (!_this.sk){return false}
 		
@@ -144,7 +144,7 @@ lastfm_api.prototype = {
 				sk: _this.sk,
 				artist: mo.artist,
 				track: mo.track,
-				duration: mo.duration
+				duration: duration
 				
 			}, function(r){}, true, true);
 		

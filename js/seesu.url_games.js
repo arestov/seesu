@@ -99,7 +99,7 @@ navi= {
 	fake_current_location:'',
 	states:[],
 	app_hash: '',
-	set: function(u,data){
+	set: $.debounce(function(u,data){
 		var url = u.replace(/\s/g,'+');
 		
 		
@@ -116,7 +116,14 @@ navi= {
 			
 			this.app_hash = url; //supressing hash change handler, must be before location.assign
 			try{
-				location.assign('#' + url);
+				var hash = location.href.indexOf('#');
+				var curl;
+				if (~hash){
+					curl = location.href.slice(0,location.href.indexOf('#'));
+				} else{
+					curl = location.href;
+				}
+				location.assign(curl + '#' + url);
 			}catch(e){
 				
 			}
@@ -136,7 +143,7 @@ navi= {
 			this.app_hash = url;
 		}
 		
-	}	
+	},100)
 };
 	
 	
@@ -154,7 +161,7 @@ function getUrlOfPlaylist(pl, end){
 	} else if (pl.playlist_type == 'artists by tag'){
 		url += '/tag/' + pl.key + e;
 	} else if (pl.playlist_type == 'tracks'){
-		url += '/catalog/_/_' + pl.key;
+		url += '/catalog/_/_';
 	} else if (pl.playlist_type == 'artists by recommendations'){
 		url += '/recommendations' + e;
 	} else if (pl.playlist_type == 'artists by loved'){
@@ -181,6 +188,8 @@ function getPuppetPlaylistOfViewState(stt){
 		} else if (stt.subtype =='similar'){
 			puppet_playlist.key = stt.artist_name;
 			puppet_playlist.playlist_type = 'similar artists';
+		} else if (stt.subtype =='tracks'){
+			puppet_playlist.playlist_type = 'tracks';
 		}
 	} else if (stt.type == 'tag'){
 		puppet_playlist.key = stt.tag_name;
@@ -228,7 +237,7 @@ function getPlayViewStateFromString(n){
 		pvstate.type = path_levels[0];
 	}
 	if (pvstate.type == 'catalog'){
-		if (path_levels[1]){
+		if (path_levels[1] && path_levels[1] != '_'){
 			pvstate.artist_name = path_levels[1];
 		}
 		
@@ -252,6 +261,8 @@ function getPlayViewStateFromString(n){
 			} else{
 				if (path_levels[2] != '_'){
 					pvstate.album = path_levels[2];
+				} else if (path_levels[1] == '_'){
+					pvstate.subtype = "tracks";
 				}
 				
 				if (path_levels[4]){
@@ -263,7 +274,10 @@ function getPlayViewStateFromString(n){
 					
 				} else if (path_levels[3]){
 					//current_artist and current_track
-					pvstate.current_artist = pvstate.artist_name;
+					if (pvstate.artist_name){
+						pvstate.current_artist = pvstate.artist_name;
+					}
+					
 					pvstate.current_track = path_levels[3];
 				}
 			}
@@ -418,6 +432,8 @@ function hashchangeHandler(e, force){
 				
 			} 
 		} else{
+			return
+			console.log('ffff!!11')
 			if (newstate){
 				var have_anything_history = navi.findNextAndPrevStates(e);
 				if (have_anything_history.summ.length){

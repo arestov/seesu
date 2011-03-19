@@ -404,7 +404,7 @@ var random_track_plable = function(track_list){
 	return track_list[random_track_num];
 	
 };
-var start_random_nice_track_search = function(mo, ob, not_search_mp3){
+var start_random_nice_track_search = function(mo, not_search_mp3){
 	mo.node.addClass('loading');
 	getTopTracks(mo.artist, function(track_list){
 		var some_track = random_track_plable(track_list);
@@ -413,35 +413,28 @@ var start_random_nice_track_search = function(mo, ob, not_search_mp3){
 		su.mp3_search.find_mp3(mo, {
 			only_cache: not_search_mp3 && !mo.want_to_play && (!su.player.c_song || su.player.c_song.next_preload_song != mo)
 		});
-		
-		
-		++ob.num;
 	}, function(){
 		mo.node.removeClass('loading');
 	});
 };
-
+var makeSongPlayalbe= function(mo, full_allowing){
+	if (mo.raw){
+		su.ui.updateSong(mo);
+	} else if (!mo.track){
+		start_random_nice_track_search(mo, !full_allowing );
+	} else{
+		su.mp3_search.find_mp3(mo, {
+			only_cache: !full_allowing && !mo.want_to_play
+		});
+	}
+};
 var make_tracklist_playable = function(pl, full_allowing){
-	
 	if (full_allowing){
 		su.mp3_search.abortAllSearches();
 		//mp3_prov_queue = reset_q();
 	}
-	
-	
-
-	var ob = {num:0};
 	for (var i=0, l =  pl.length; i < l; i++) {
-		var mo = pl[i];
-		if (mo.raw){
-			su.ui.updateSong(mo);
-		} else if (!mo.track){
-			start_random_nice_track_search(mo, ob, !full_allowing );
-		} else{
-			su.mp3_search.find_mp3(mo, {
-				only_cache: !full_allowing && !mo.want_to_play
-			});
-		}
+		makeSongPlayalbe(pl[i], full_allowing);
 	}
 };
 
@@ -484,7 +477,7 @@ var empty_song_click = function(){
 	return false;	
 };
 
-var prepare_playlist = function(playlist_title, playlist_type, key, with_search_results_link){
+var prepare_playlist = function(playlist_title, playlist_type, key, with_search_results_link, first_song){
 	var pl = [];
 	pl.key = key;
 	pl.loading = true;
@@ -497,6 +490,48 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 	if (with_search_results_link){
 		pl.with_search_results_link = with_search_results_link;
 	}
+	
+	
+	var f;
+	var fdone;
+	if (first_song && first_song.track && (first_song.artist || (playlist_type == 'artist' && key))){
+		if (!first_song.artist){
+			first_song.artist = key;
+		}
+		f = first_song;
+	}
+	var oldpush = pl.push;
+	pl.push = function(mo){
+		extendSong(mo)
+		su.gena.connect(mo,pl);
+		if (f){
+			if (f==mo){
+				return oldpush.call(this, f);
+			} else if (!fdone){
+				if (mo.artist != f.artist || mo.track != f.track){
+					pl.pop();
+					oldpush.call(this, mo);
+					return oldpush.call(this, f);
+					
+				} else {
+					fdone = true;
+				}
+				
+			} else{
+				return oldpush.call(this, mo);
+			}
+		} else {
+			return oldpush.call(this, mo);
+		}
+		
+		
+	}
+	if (f){
+		pl.push(f)
+	}
+	
+	
+	
 	pl.compare = function(puppet){
 		return this.playlist_type == puppet.playlist_type && (!this.key && !this.key || this.key == puppet.key);
 	};
@@ -514,6 +549,35 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 			return true;
 		}	
 	};
+	pl.renderSong = function(mo){
+		if (pl.ui && pl.ui.tracks_container){
+			var pl_ui_element = su.ui.create_playlist_element(mo);
+			if (f){
+				if (!fdone){
+					if (mo == f){
+						pl.ui.tracks_container.append(pl_ui_element);
+					} else{
+						f.ui.mainc.before(pl_ui_element);
+					}
+				} else{
+					var f_position = pl.indexOf(f);
+					var t_position = pl.indexOf(mo);
+					if (t_position < f_position){
+						f.ui.mainc.before(pl_ui_element);
+						
+					} else{
+						pl.ui.tracks_container.append(pl_ui_element);
+					}
+				}
+				
+				
+			} else{
+				pl.ui.tracks_container.append(pl_ui_element);
+			}
+			
+		}
+	};
+	
 	pl.showTrack = function(artist_track, no_navi){
 		var will_ignore_artist;
 		var artist_match_playlist = pl.playlist_type == 'artist' && pl.key == artist_track.artist;
@@ -544,22 +608,18 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 	};
 	
 	
-	var oldpush = pl.push;
-	pl.push = function(mo){
-		extendSong(mo)
-		return oldpush.apply(this, arguments);
-	}
+	
 	return pl;
 };
 var create_playlist =  function(pl, pl_r, not_clear){
 	if (!pl){
-		return seesu.ui.render_playlist(pl_r);
+		return seesu.ui.render_playlist(pl_r, true);
 	} else{
 		
 		for (var i=0, l = pl.length; i < l; i++) {
-			pl_r.push(seesu.gena.connect(pl[i], pl_r, i));
+			pl_r.push(pl[i]);
 		}
-		return seesu.ui.render_playlist(pl_r, not_clear);
+		return seesu.ui.render_playlist(pl_r, true);
 		
 	}
 	

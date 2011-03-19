@@ -11,6 +11,13 @@ var song_methods = {
 	wheneWasChanged: function(){
 		return (this.raw && 1) || this.sem.changed;
 	},
+	render: function(){
+		if (this.plst_titl){
+			this.plst_titl.renderSong(this);
+		}
+		
+	
+	},
 	song: function(){
 		if (this.raw){
 			return this;

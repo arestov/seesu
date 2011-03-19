@@ -235,8 +235,8 @@ display:none;
 	clear:both;
 	}
 	ul.tracks-for-play.tracks-c.loading{
-		background:url(../i/spinner.gif) no-repeat 0 0;
-		height:30px;
+		background: url(../i/spinner.gif) no-repeat 4px 10px;
+		padding-top: 38px;
 	}
 	ul.tracks-for-play>li{
 		margin: 0 0 5px 0;
