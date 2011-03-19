@@ -19,13 +19,13 @@ views.prototype = {
 			c.ui = {
 				conie: conie,
 				remove: function(){
-					this.conie.remove()
+					return this.conie.remove()
 				},
 				hide: function(){
-					this.conie.hide()
+					return this.conie.hide()
 				},
 				show: function(){
-					this.conie.show()
+					return this.conie.show()
 				},
 				info_container: $('<div class="playlist-info"></div>').appendTo(conie),
 				tracks_container: $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(conie)
@@ -169,15 +169,19 @@ views.prototype = {
 			pl = lev.context.pl;
 		}
 
-		if (pl && pl.loading){
+		if (pl && !pl.ui){
 			var lev = this.getPlaylistContainer(skip_from);
 			lev.context.pl = pl; 
-			(pl.ui = lev.ui).tracks_container.addClass('loading');
+			pl.ui = lev.ui;
+			if (pl.loading){
+				pl.ui.tracks_container.addClass('loading');
+			}
+			
 			lev.setURL(getUrlOfPlaylist(pl));
 		}
 		if (pl && pl.length){
 			
-			var ui = (pl.ui.tracks_container && pl.ui.tracks_container[0] && pl.ui.tracks_container[0].parentNode && (pl.ui.tracks_container[0].ownerDocument == su.ui.d) && pl.ui.tracks_container.show());
+			var ui = (pl.ui && pl.ui.tracks_container && pl.ui.tracks_container[0] && pl.ui.tracks_container[0].parentNode && (pl.ui.tracks_container[0].ownerDocument == su.ui.d) && pl.ui.show());
 			if (!ui){
 				var lev = _sui.views.getPlaylistContainer(skip_from);
 				lev.context.pl = pl;
@@ -186,7 +190,10 @@ views.prototype = {
 			}
 			seesu.ui.render_playlist(pl);
 		}
+		
 		this.swithToPlaylistPage(pl, no_navi);
+		
+		
 		
 		
 		
@@ -213,7 +220,7 @@ views.prototype = {
 		}
 		
 		if (!no_navi){
-			navi.set(this.getCurrentPlaylistContainer().getFullURL() + '/_' +mo.getURLPart(), {pl:pl, mo: mo});
+			navi.set(this.getCurrentPlaylistContainer().getFullURL() + mo.getURLPart(), {pl:pl, mo: mo});
 		}
 		
 	}
@@ -290,15 +297,18 @@ seesu_ui.prototype = {
 		
 		
 	},
-	show_artist: function (artist,with_search_results, no_navi) {
-		var pl = prepare_playlist(artist, 'artist', artist, with_search_results)
+	show_artist: function (artist,with_search_results, no_navi, start_song) {
+		var pl = prepare_playlist(artist, 'artist', artist, with_search_results, start_song);
 		var plist = su.ui.views.findViewOfURL(getUrlOfPlaylist(pl));
 		if (plist){
 			if (plist.freezed){
 				su.ui.views.restoreFreezed(no_navi);
 			}
 		} else{
-			this.views.show_playlist_page(pl, with_search_results ? 0 : false, no_navi);
+			this.views.show_playlist_page(pl, with_search_results ? 0 : false, no_navi || !!start_song);
+			if (start_song){
+				start_song.view(no_navi);
+			}
 			getTopTracks(artist,function(track_list){
 				create_playlist(track_list, pl);
 			});
@@ -747,40 +757,29 @@ seesu_ui.prototype = {
 			link.text(localize('show-them', 'show them'));
 		}
 	},
-	render_playlist: function(pl, not_clear) { // if links present than do full rendering! yearh!
+	render_playlist: function(pl, load_finished) { // if links present than do full rendering! yearh!
 		var _sui = this;
-
 		if (pl.ui && !pl.ui.has_info && pl.playlist_type == 'artist'){
 			//pl.ui.a_info = this.samples.a_info.clone().appendTo(pl.ui.info_container);
 			//pl.ui.has_info = true;
 			//this.update_artist_info(pl.key, pl.ui.a_info);
 		}
-		
-		
 		var ui = pl.ui.tracks_container;
-		if (pl.loading){
+		if (load_finished){
 			ui.removeClass('loading')
 			pl.loading = false;
 		}
-		if (!not_clear){
-			ui.empty();
-		}
-		_sui.els.make_trs.show().data('pl', pl);
+		
 		if (!pl.length){
 			ui.append('<li>' + localize('nothing-found','Nothing found') + '</li>');
 		} else {
 			for (var i=0, l = pl.length; i < l; i++) {
-				
-				ui.append(
-					_sui.create_playlist_element(pl[i])
-				);
+				if (!pl[i].ui){
+					pl[i].render();
+				}
+				makeSongPlayalbe(pl[i]);
 			}
-			make_tracklist_playable(pl);
-			//make_tracklist_playable(pl);
-			//get mp3 for each prepaired node (do many many delayed requests to mp3 provider)
-		
-			
-			
+			su.player.fix_songs_ui();
 		}
 		return pl.ui
 	},
@@ -830,7 +829,7 @@ seesu_ui.prototype = {
 			.data('t_context', t_context)
 			.addClass('track-node waiting-full-render')
 			.click(empty_song_click),
-			li = document.createElement('li');
+			li = $('<li></li>');
 		
 		var buttmen = _sui.els.play_controls.node.clone(true).data('mo', mo);
 		tp.add(buttmen).find('.play-control img.pl-control').data('mo', mo);
@@ -840,6 +839,7 @@ seesu_ui.prototype = {
 		var t_info = t_context.children('.track-info') 
 		mo.node = track;
 		mo.ui = {
+			mainc: li,
 			a_info: a_info,
 			node: track,
 			context: t_context,

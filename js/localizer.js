@@ -1,6 +1,6 @@
 sviga = {};
 var localize= (function(){
-	var lang = navigator.language;
+	var lang = navigator.language.slice(0,2).toLowerCase();
 	return function(string, j){
 		if (localizer[string]){
 			return localizer[string][lang] || localizer[string].original;

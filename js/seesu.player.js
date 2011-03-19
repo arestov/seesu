@@ -9,7 +9,7 @@ var INIT     = -11,
 su.gena = { //this work with playlists
 	reconnect_playlist: function(pl){
 		for (var i=0; i < pl.length; i++) {
-			this.connect(pl[i], pl, i);
+			this.connect(pl[i], pl);
 		};
 	},
 	save_playlists: function(){
@@ -60,19 +60,18 @@ su.gena = { //this work with playlists
 		
 		return mo;
 	},
-	connect:function(mo, pl, i){
+	connect:function(mo, pl){
 		this.clear(mo);
 		mo.delayed_in = [];
-		mo.play_order = i;
 		mo.plst_titl = pl;
 		return mo
 	},
 	add: function(mo, pl){
 		var n_mo = this.soft_clone(mo, ['track', 'artist']);
-		pl.push(this.connect(n_mo, pl, pl.length));
+		pl.push(this.connect(n_mo, pl));
 		if (su.player.c_song.plst_titl == pl){
-			pl.ui.append(su.ui.create_playlist_element(n_mo));
-			make_tracklist_playable(pl);
+			mo.render();
+			makeSongPlayalbe(mo);
 		}
 		
 	},
@@ -109,6 +108,7 @@ function rebuildPlaylist(saved_pl){
 	for (var i=0; i < saved_pl.length; i++) {
 		p.push(saved_pl[i]);
 	}
+	delete p.loading;
 	p.kill = function(){delete this.ui;return};
 	su.gena.create_userplaylist(false, p, true);
 	su.gena.reconnect_playlist(p);
@@ -242,7 +242,7 @@ su.player = {
 		
 		
 		var c_playlist = mo.plst_titl,
-			c_num = mo.play_order;
+			c_num = mo.plst_titl.indexOf(mo);//mo.play_order
 
 		var can_use = [];
 		for (var i=0; i < c_playlist.length; i++) {
@@ -358,6 +358,7 @@ su.player = {
 			if (this.musicbox.play_song_by_url){
 				this.musicbox.play_song_by_url(_mopla.link);
 				mo.mopla = _mopla;
+				
 			}
 			this.fix_progress_bar(mo);
 			
@@ -378,6 +379,7 @@ su.player = {
 				
 			}
 		}
+		seesu.ui.views.freeze(mo.plst_titl);
 		
 		
 		

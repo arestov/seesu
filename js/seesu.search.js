@@ -119,10 +119,14 @@ var create_track_suggest_item = function(artist, track, image, duration){
 		.data('track_title',track)
 		.data('artist',artist)
 		.click(function(e){
-			su.ui.show_track({
+			seesu.ui.show_artist(artist, {
 				artist: artist,
 				track: track
-			}, true);
+			}, false, {
+				artist: artist,
+				track: track
+			});
+
 			seesu.track_event('Music search', seesu.ui.els.search_input.val(), "track: " + artist + ' - ' + track );
 		})
 		.click(results_mouse_click_for_enter_press);
@@ -269,7 +273,6 @@ var vk_suggests = $.debounce(function(query, ui){
 	
 	//function(trackname, callback, nocache, hypnotoad, only_cache){
 	su.mp3_search.find_files({q: query}, 'vk', function(err, pl, c){
-		console.log(arguments);
 		c.done = true;
 		ui.vk_tracks.label.removeClass('loading');
 		rend_vk_suggets(pl && pl[0] && pl[0].t, ui);
