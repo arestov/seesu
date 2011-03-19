@@ -183,9 +183,9 @@ views.prototype = {
 			
 			var ui = (pl.ui && pl.ui.tracks_container && pl.ui.tracks_container[0] && pl.ui.tracks_container[0].parentNode && (pl.ui.tracks_container[0].ownerDocument == su.ui.d) && pl.ui.show());
 			if (!ui){
-				var lev = _sui.views.getPlaylistContainer(skip_from);
+				var lev = this.getPlaylistContainer(skip_from);
 				lev.context.pl = pl;
-				ui = lev.ui;
+				pl.ui = lev.ui;
 				lev.setURL(getUrlOfPlaylist(pl));
 			}
 			seesu.ui.render_playlist(pl);
@@ -774,9 +774,8 @@ seesu_ui.prototype = {
 			ui.append('<li>' + localize('nothing-found','Nothing found') + '</li>');
 		} else {
 			for (var i=0, l = pl.length; i < l; i++) {
-				if (!pl[i].ui){
-					pl[i].render();
-				}
+				var mo = pl[i];
+				mo.render();
 				makeSongPlayalbe(pl[i]);
 			}
 			su.player.fix_songs_ui();
