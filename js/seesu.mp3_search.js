@@ -398,7 +398,7 @@ function handle_song(mo, complete, get_next){
 	su.ui.updateSongContext(mo);
 	
 	if (complete){
-		mo.node.removeClass('search-mp3');
+		mo.ui.node.removeClass('search-mp3');
 		if (mo.isHaveTracks()){
 			clearTimeout(mo.cantwait);
 			wantSong(mo);
@@ -410,7 +410,7 @@ function handle_song(mo, complete, get_next){
 				}
 			}
 		} else{
-			mo.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
+			mo.ui.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
 			if (get_next){
 				if (su.player.c_song) {
 					if (mo == su.player.c_song.next_song || mo == su.player.c_song.prev_song || mo == su.player.c_song.next_preload_song){
@@ -427,7 +427,7 @@ function handle_song(mo, complete, get_next){
 		wantSong(mo);
 	} else if (mo.isHaveTracks()){
 		mo.cantwait = setTimeout(function(){
-			mo.node.removeClass('search-mp3');
+			mo.ui.node.removeClass('search-mp3');
 			wantSong(mo);
 			
 		},20000);
@@ -562,7 +562,7 @@ music_seach_emitter.prototype = {
 		for (var i=0; i < this.songs.length; i++) {
 			var mo = this.songs[i];
 			if (mo && !mo.have_tracks){
-				mo.node.addClass('search-mp3');
+				mo.ui.node.addClass('search-mp3');
 			}
 		}
 		

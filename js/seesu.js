@@ -423,6 +423,9 @@ var makeSongPlayalbe= function(mo, full_allowing){
 	} else if (!mo.track){
 		start_random_nice_track_search(mo, !full_allowing );
 	} else{
+		if (mo.isSearchCompleted()){
+			handle_song(mo, true)
+		}
 		su.mp3_search.find_mp3(mo, {
 			only_cache: !full_allowing && !mo.want_to_play
 		});
@@ -551,6 +554,7 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 	};
 	pl.renderSong = function(mo){
 		if (pl.ui && pl.ui.tracks_container){
+			
 			if (!mo.ui || !mo.ui.mainc || mo.ui.mainc[0].ownerDocument != su.ui.d){				
 				var pl_ui_element = su.ui.create_playlist_element(mo);
 				if (f){
@@ -575,7 +579,10 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 				} else{
 					pl.ui.tracks_container.append(pl_ui_element);
 				}
+				
+				makeSongPlayalbe(mo);
 			}
+			
 		}
 	};
 	

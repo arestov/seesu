@@ -776,7 +776,6 @@ seesu_ui.prototype = {
 			for (var i=0, l = pl.length; i < l; i++) {
 				var mo = pl[i];
 				mo.render();
-				makeSongPlayalbe(pl[i]);
 			}
 			su.player.fix_songs_ui();
 		}

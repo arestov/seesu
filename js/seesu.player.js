@@ -334,6 +334,7 @@ su.player = {
 	mark_playing_song: function(mo){
 		if (!mo.ui.playing_mark){
 			mo.ui.node.parent().addClass('playing-song');
+			this.fix_progress_bar(mo);
 		}
 		
 	},
@@ -367,7 +368,7 @@ su.player = {
 				mo.mopla = _mopla;
 				
 			}
-			this.fix_progress_bar(mo);
+			
 			
 		}
 		
@@ -409,7 +410,7 @@ su.player = {
 		}
 		this.change_songs_ui(mo);
 		if (mo == this.c_song){
-			mark_playing_song(mo);
+			this.mark_playing_song(mo);
 		}
 		this.v_song = mo;
 	  }
