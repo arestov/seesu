@@ -245,8 +245,6 @@ window.connect_dom_to_som = function(d, ui){
 				if (su.player.c_song.plst_titl.with_search_results_link){
 					delete su.player.c_song.plst_titl.with_search_results_link ;
 				}
-				
-				ui.views.show_start_page(true, true, true, true);
 				su.ui.views.show_playlist_page(su.player.c_song.plst_titl, false, true);
 				su.player.view_song(su.player.c_song, true, true, true);
 				su.ui.views.freeze(su.player.c_song.plst_titl, true);

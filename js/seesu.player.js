@@ -331,6 +331,12 @@ su.player = {
 			mo.c.track_progress_width = mo.ui.node.parent().outerWidth() - 12;
 		}
 	},
+	mark_playing_song: function(mo){
+		if (!mo.ui.playing_mark){
+			mo.ui.node.parent().addClass('playing-song');
+		}
+		
+	},
 	play_song: function(mo, zoom, mopla){
 		if(!mo.isHaveTracks()){return false;}
 		delete mo.want_to_play;
@@ -351,10 +357,11 @@ su.player = {
 		if (_mopla && (this.c_song != mo || (mopla && mo.mopla != mopla))){
 			this.c_song = mo;
 			if (last_mo){
-				last_mo.node.parent().removeClass('playing-song');
+				last_mo.ui.playing_mark = false;
+				last_mo.ui.node.parent().removeClass('playing-song');
 			}
+			this.mark_playing_song(mo);
 			
-			mo.node.parent().addClass('playing-song');
 			if (this.musicbox.play_song_by_url){
 				this.musicbox.play_song_by_url(_mopla.link);
 				mo.mopla = _mopla;
@@ -401,6 +408,9 @@ su.player = {
 			this.change_songs_ui(last_mo, true) //remove ative state
 		}
 		this.change_songs_ui(mo);
+		if (mo == this.c_song){
+			mark_playing_song(mo);
+		}
 		this.v_song = mo;
 	  }
 	  su.ui.views.show_track_page(($(su.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.track, zoom, mo, no_navi);
