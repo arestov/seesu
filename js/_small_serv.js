@@ -117,7 +117,7 @@ window.app_env = (function(){
 		if (location.pathname == '/index.html'){
 			env.app_type = 'chrome_app';
 			env.as_application = false;
-			ens.needs_url_history = true;
+			env.needs_url_history = true;
 		} else{
 			env.app_type = 'chrome_extension';
 			env.as_application = true;
@@ -128,7 +128,7 @@ window.app_env = (function(){
 		env.app_type = 'web_app';
 		
 		env.as_application = false;
-		ens.needs_url_history = true;
+		env.needs_url_history = true;
 		
 	} else 
 	if (typeof btapp == 'object'){

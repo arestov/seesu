@@ -775,9 +775,7 @@ seesu_ui.prototype = {
 		} else {
 			for (var i=0, l = pl.length; i < l; i++) {
 				var mo = pl[i];
-				if (!mo.ui || !mo.ui.mainc || !mo.ui.mainc[0].ownerDocument != su.ui.d){
-					mo.render();
-				}
+				mo.render();
 				makeSongPlayalbe(pl[i]);
 			}
 			su.player.fix_songs_ui();

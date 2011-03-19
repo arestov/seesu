@@ -438,8 +438,10 @@ function hashchangeHandler(e, force){
 				
 			} 
 		} else{
-			return
 			console.log('ffff!!11')
+			throw "who was that?"
+			return
+			
 			if (newstate){
 				var have_anything_history = navi.findNextAndPrevStates(e);
 				if (have_anything_history.summ.length){

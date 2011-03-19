@@ -551,30 +551,31 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 	};
 	pl.renderSong = function(mo){
 		if (pl.ui && pl.ui.tracks_container){
-			var pl_ui_element = su.ui.create_playlist_element(mo);
-			if (f){
-				if (!fdone){
-					if (mo == f){
-						pl.ui.tracks_container.append(pl_ui_element);
-					} else{
-						f.ui.mainc.before(pl_ui_element);
+			if (!mo.ui || !mo.ui.mainc || mo.ui.mainc[0].ownerDocument != su.ui.d){				
+				var pl_ui_element = su.ui.create_playlist_element(mo);
+				if (f){
+					if (!fdone){
+						if (mo == f){
+							pl.ui.tracks_container.append(pl_ui_element);
+						} else{
+							f.ui.mainc.before(pl_ui_element);
+						}
+					} else if (f!=mo){
+						var f_position = pl.indexOf(f);
+						var t_position = pl.indexOf(mo);
+						if (t_position < f_position){
+							f.ui.mainc.before(pl_ui_element);
+							
+						} else{
+							pl.ui.tracks_container.append(pl_ui_element);
+						}
 					}
+					
+					
 				} else{
-					var f_position = pl.indexOf(f);
-					var t_position = pl.indexOf(mo);
-					if (t_position < f_position){
-						f.ui.mainc.before(pl_ui_element);
-						
-					} else{
-						pl.ui.tracks_container.append(pl_ui_element);
-					}
+					pl.ui.tracks_container.append(pl_ui_element);
 				}
-				
-				
-			} else{
-				pl.ui.tracks_container.append(pl_ui_element);
 			}
-			
 		}
 	};
 	
