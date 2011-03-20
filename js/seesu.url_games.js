@@ -121,6 +121,9 @@ navi= {
 			this.fake_current_location = url;
 			
 			this.app_hash = url; //supressing hash change handler, must be before location.assign
+			if (~url.indexOf('[object+Object]')){
+				throw 'bad url'
+			}
 			try{
 				var hash = location.href.indexOf('#');
 				var curl;
@@ -161,13 +164,13 @@ function getUrlOfPlaylist(pl, end){
 	if (pl.playlist_type == 'artist'){
 		url += '/catalog/' + pl.key + (e && '/_' + e);
 	} else if (pl.playlist_type == 'album'){
-		url += '/catalog/_/' + pl.key + e;
+		url += '/catalog/' + (pl.key.original_artist ? pl.key.original_artist + '/' : '_/') + pl.key.album + e;
 	} else if (pl.playlist_type == 'similar artists'){
 		url += '/catalog/' + pl.key + '/+similar' + e;
 	} else if (pl.playlist_type == 'artists by tag'){
 		url += '/tag/' + pl.key + e;
 	} else if (pl.playlist_type == 'tracks'){
-		url += '/catalog/_/_';
+		url += '/ds';
 	} else if (pl.playlist_type == 'artists by recommendations'){
 		url += '/recommendations' + e;
 	} else if (pl.playlist_type == 'artists by loved'){
@@ -184,11 +187,11 @@ function getPuppetPlaylistOfViewState(stt){
 	var puppet_playlist ={};
 	if (stt.type == 'catalog'){
 		if (!stt.subtype){
-			if (!stt.album){
+			if (!stt.album_name){
 				puppet_playlist.key = stt.artist_name;
 				puppet_playlist.playlist_type = 'artist';
 			} else{
-				puppet_playlist.key = stt.album;
+				puppet_playlist.key = stt.album_name;
 				puppet_playlist.playlist_type = 'album';
 			}
 		} else if (stt.subtype =='similar'){
@@ -223,7 +226,7 @@ function getPlayViewStateFromString(n){
 	#/radio/artist/The+Killers/similarartist/Bestie+Boys/Intergalactic
 	#?q=be/directsearch/vk/345345
 	'artists by loved'
-	
+	#/ds/vk/25325_2344446
 	http://www.lastfm.ru/music/65daysofstatic/+similar
 	
 	'artists by loved' //no key
@@ -238,7 +241,7 @@ function getPlayViewStateFromString(n){
 	if (!n){return false}
 	
 	var pvstate = {};
-	var path_levels = n.replace(/\+(?!^)/g, ' ').replace(/^\//,'').split('/');
+	var path_levels = n.replace(/^\//,'').split('/');
 	if (path_levels[0]){
 		pvstate.type = path_levels[0];
 	}
@@ -266,39 +269,47 @@ function getPlayViewStateFromString(n){
 				
 			} else{
 				if (path_levels[2] != '_'){
-					pvstate.album = path_levels[2];
+					pvstate.album_name = path_levels[2];
+					
+					if (path_levels[4]){
+						//current_artist and current_track
+						pvstate.current_artist = path_levels[3];
+						if (path_levels[4] != '_'){
+							pvstate.current_track = path_levels[4];
+						}
+						
+					} else if (path_levels[3]){
+						//current_artist and current_track
+						if (pvstate.artist_name){
+							pvstate.current_artist = pvstate.artist_name;
+						}
+						
+						pvstate.current_track = path_levels[3];
+					}
+				
+				
 				} else if (path_levels[1] == '_'){
-					pvstate.subtype = "tracks";
+					pvstate.type = '';
 				}
 				
-				if (path_levels[4]){
-					//current_artist and current_track
-					pvstate.current_artist = path_levels[3];
-					if (path_levels[4] != '_'){
-						pvstate.current_track = path_levels[4];
-					}
-					
-				} else if (path_levels[3]){
-					//current_artist and current_track
-					if (pvstate.artist_name){
-						pvstate.current_artist = pvstate.artist_name;
-					}
-					
-					pvstate.current_track = path_levels[3];
-				}
+				
 			}
 		}
 	} else if (pvstate.type == 'tag'){
 		if (path_levels[1]){
 			pvstate.tag_name = path_levels[1];
+			
+			//current_artist and current_track
+			if (path_levels[2]){
+				pvstate.current_artist = path_levels[2];
+			}
+			if (path_levels[3]){
+				pvstate.current_track = path_levels[3];
+			}
+		} else{
+			pvstate.type="";
 		}
-		//current_artist and current_track
-		if (path_levels[2]){
-			pvstate.current_artist = path_levels[2];
-		}
-		if (path_levels[3]){
-			pvstate.current_track = path_levels[3];
-		}
+		
 	} else if (pvstate.type == 'recommendations'){
 		
 		//current_artist and current_track
@@ -317,16 +328,21 @@ function getPlayViewStateFromString(n){
 			pvstate.current_track = path_levels[2];
 		}
 	} else if (pvstate.type == 'playlist'){
-		//current_artist and current_track
+		
 		if (path_levels[1]){
 			pvstate.current_playlist = path_levels[1];
+			
+			//current_artist and current_track
+			if (path_levels[2]){
+				pvstate.current_artist = path_levels[2];
+			}
+			if (path_levels[3]){
+				pvstate.current_track = path_levels[3];
+			}
+		} else{
+			pvstate.type="";
 		}
-		if (path_levels[2]){
-			pvstate.current_artist = path_levels[2];
-		}
-		if (path_levels[3]){
-			pvstate.current_track = path_levels[3];
-		}
+		
 	} else if (pvstate.type == 'directsearch'){
 		if (path_levels[1]){
 			pvstate.search = path_levels[1];
@@ -357,8 +373,8 @@ function hashchangeHandler(e, force){
 	} else{
 		navi.app_hash = e.newURL;
 		
-		var jo = get_url_parameters(e.oldURL.replace(/\+/g,' '));
-		var jn = get_url_parameters(e.newURL.replace(/\+/g,' '));
+		var jo = getFakeURLParameters(e.oldURL.replace(/([^\/])\+/g, '$1 '));
+		var jn = getFakeURLParameters(e.newURL.replace(/([^\/])\+/g, '$1 '));
 		
 		console.log('newURL: ' + e.newURL);
 		var oldstate = getPlayViewStateFromString(jo.path);
@@ -436,11 +452,8 @@ function hashchangeHandler(e, force){
 					
 				}
 				
-			} 
+			}
 		} else{
-			console.log('ffff!!11')
-			throw "who was that?"
-			return
 			
 			if (newstate){
 				var have_anything_history = navi.findNextAndPrevStates(e);
@@ -454,14 +467,67 @@ function hashchangeHandler(e, force){
 							track: newstate.current_track
 						}, true);
 						
-					} else{
+					} else {
 						console.log("will not search track")
 					}
 					console.log('not too fresh new state');
 				} else{
+					/*
+					'artists by loved' //no key
+					'artists by recommendations' //no key
+					'artists by tag' //key is tag
+					'similar artists' //key is artist
+					'cplaylist' //key is name
+					'tracks' //key is q{artist:'', track:''}
+					'artist' //key is artist
+					'album' //key is album
+					*/
+					
+					if (newstate.current_artist || newstate.current_track){
+						var tk =  {
+							artist: newstate.current_artist,
+							track: newstate.current_track
+						}
+					}
+					
+					
 					if (newstate.plp.playlist_type == 'artist'){
+						
+						su.ui.show_artist(newstate.current_artist, false, true, tk);
 						//show_artist(newstate.current_artist, false, true)
-
+					} else if (newstate.plp.playlist_type == 'similar artists'){
+						render_tracks_by_similar_artists(newstate.artist_name, true, tk)
+						
+					} else if (newstate.plp.playlist_type == 'artists by tag'){
+						su.ui.show_tag(newstate.tag_name, false, true, tk)
+					} else if (newstate.plp.playlist_type == 'cplaylist'){
+						if (newstate.current_artist){
+							su.ui.show_artist(newstate.current_artist, false, true, tk);
+						}
+							
+						/*
+						var uplst = su.gena.playlists.find(newstate.plp);
+						if (su.gena){
+							
+						} else{
+							
+							
+						}*/
+						
+						
+					} else if (newstate.plp.playlist_type == 'artists by recommendations'){
+						
+						if (newstate.current_artist){
+							su.ui.show_artist(newstate.current_artist, false, true, tk);
+						}
+						
+					} else if (newstate.plp.playlist_type == 'artists by loved'){
+						if (newstate.current_artist){
+							su.ui.show_artist(newstate.current_artist, false, true, tk);
+						}
+						
+					} else if (newstate.plp.playlist_type == 'album'){
+						findAlbum(newstate.album_name, newstate.artist_name, true, tk);
 					}
 					
 					console.log('realy fresh  neewwwww state');

@@ -100,9 +100,37 @@ document_states.prototype = {
 
 window.dstates = new document_states(document);
 
+
+function get_url_parameters(str){
+	var url_vars = str.replace(/^\?/,'').split('&');
+	var full_url = {};
+	for (var i=0; i < url_vars.length; i++) {
+		var _h = url_vars[i].split('=');
+		full_url[_h[0]] = _h[1];
+	};
+	return full_url;
+};
+function getFakeURLParameters(str){
+	var divider = str.indexOf('/');
+	if (~divider){
+		var search_part = str.slice(0, divider);
+		var path_part = str.slice(divider + 1);
+	} else{
+		var search_part = str;
+	}
+	if (search_part){
+		var full_url = get_url_parameters(search_part);
+	}
+
+	return {params:full_url || {}, path: path_part};
+	
+	
+};
 window.app_env = (function(){
 	var env = {};
-	env.cross_domain_allowed = !location.protocol.match(/http/);
+	env.url = get_url_parameters(location.search);
+	
+	env.cross_domain_allowed = !location.protocol.match(/(http\:)|(file\:)/);
 	
 	
 	if (typeof widget == 'object' && !widget.fake_widget){
@@ -125,8 +153,13 @@ window.app_env = (function(){
 		
 	} else
 	if (location.protocol.match(/http/)){
-		env.app_type = 'web_app';
 		
+		if (window.parent != window && env.url.api_id && env.url.secret && env.url.sid){
+			env.app_type = 'vkontakte';
+			env.check_resize = true;
+		} else{
+			env.app_type = 'web_app';
+		}
 		env.as_application = false;
 		env.needs_url_history = true;
 		
@@ -142,6 +175,7 @@ window.app_env = (function(){
 	 else{
 		env.app_type = false;
 		env.unknown_app = true;
+		env.needs_url_history = true;
 	}
 	try{
 		if (document.createEvent('TouchEvent')){
@@ -171,6 +205,45 @@ window.app_env = (function(){
 	}
 	if (!env.unknown_app_type){dstates.add_state('html_el', env.app_type.replace('_','-'));}
 	if (env.cross_domain_allowed) {dstates.add_state('html_el', 'cross-domain-allowed')}
+	
+	
+	if (env.web_app && window.parent != window && typeof env.url.language != 'undefined'){
+		if (env.url.language === 0){
+			env.lang = 'ru';
+		} else if (env.url.language === 3){
+			env.lang = 'en';
+		} else{
+			env.lang = navigator.language.slice(0,2).toLowerCase();
+		}
+	} else{
+		env.lang = navigator.language.slice(0,2).toLowerCase();
+	}
+	
+	if (env.check_resize){
+		var detectSize = function(D){
+			return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
+		}
+		var jz;
+		env.readySteadyResize = function(D){
+			if (jz){
+				clearInterval(jz);
+			}
+			
+			var oldsize = detectSize(D);
+			jz = setInterval(function(){
+				if (typeof documentScrollSizeChangeHandler == 'function'){
+					var newsize = detectSize(D);
+					
+					if (oldsize != newsize){
+						documentScrollSizeChangeHandler(oldsize = newsize);
+					}
+					
+				}
+			},100)
+		}
+		
+		
+	}
 	
 	
 	return env;

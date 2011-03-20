@@ -22,6 +22,34 @@ var get_youtube = function(q, callback){
 
 
 function try_api(callback, do_not_repeat){
+	if (su.env.vkontakte){
+		su.vk_app_mode = true;
+		console.log('ginsa?')
+		var _s = document.createElement('script');
+		_s.src='http://vk.com/js/api/xd_connection.js';
+		_s.onload = function(){
+			if (window.VK){
+				VK.init(function(){});
+				VK.addCallback('onSettingsChanged', function(sts){
+					if (sts & 8){
+						
+						
+						
+					} else{
+						
+					}
+				});
+				documentScrollSizeChangeHandler = function(height){
+					VK.callMethod("resizeWindow", 640, Math.max(580, height + 70));
+				}
+			}
+			
+		};
+		document.documentElement.firstChild.appendChild(_s);
+	}
+	
+	
+	
 	var try_saved_auth = function(){
 		var vk_session_stored = w_storage('vk_session'+1915003);
 		if (vk_session_stored){
@@ -50,39 +78,6 @@ function try_api(callback, do_not_repeat){
 				
 			}
 		});
-		
-		
-		
-
-		
-		if (window != window.parent){
-			su.vk_app_mode = true;
-			console.log('ginsa?')
-			var _s = document.createElement('script');
-			_s.src='http://vk.com/js/api/xd_connection.js';
-			_s.onload = function(){
-				if (window.VK){
-					VK.init(function(){});
-					VK.addCallback('onSettingsChanged', function(sts){
-						if (sts & 8){
-							
-							
-							
-						} else{
-							
-						}
-					});
-				}
-				
-			};
-			document.documentElement.firstChild.appendChild(_s);
-		}	else{
-			console.log('hinsa :(((')
-		}			
-						
-		
-		
-		
 	} else{
 		if (!do_not_repeat){
 			var sm = $('#slider-materail');

@@ -14,7 +14,7 @@ cache_ajax = {
 						
 						if (old_r){
 							try {
-								if (!old_r && typeof old_r == 'string'){
+								if (!old_r && typeof cached_response == 'string'){
 									var old_r = JSON.parse(cached_response);
 								}
 								

@@ -113,7 +113,13 @@ window.connect_dom_to_som = function(d, ui){
 			});
 			
 		});
-	
+		if (su.env.check_resize){
+			dstates.add_state('body', 'slice-for-height');
+		}
+		var slider = d.getElementById('slider');
+		if (su.env.readySteadyResize){
+			su.env.readySteadyResize(slider);
+		}
 	
 		su.lfm_api.try_to_login();		
 		var volume_s = d.createElement('style');
@@ -146,7 +152,7 @@ window.connect_dom_to_som = function(d, ui){
 				make_tracklist_playable(ui.els.make_trs.hide().data('pl'), true);
 				seesu.track_event('Controls', 'make playable all tracks in playlist'); 
 			}),
-			slider: d.getElementById('slider'),
+			slider: slider,
 			nav_playlist_page: d.getElementById('nav_playlist_page'),
 			nav_track_zoom: $('#nav_track_zoom',d),
 			export_playlist: $('#open-external-playlist',d),
@@ -245,8 +251,6 @@ window.connect_dom_to_som = function(d, ui){
 				if (su.player.c_song.plst_titl.with_search_results_link){
 					delete su.player.c_song.plst_titl.with_search_results_link ;
 				}
-				
-				ui.views.show_start_page(true, true, true, true);
 				su.ui.views.show_playlist_page(su.player.c_song.plst_titl, false, true);
 				su.player.view_song(su.player.c_song, true, true, true);
 				su.ui.views.freeze(su.player.c_song.plst_titl, true);

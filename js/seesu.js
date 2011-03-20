@@ -4,25 +4,6 @@ $.ajaxSetup({
 });
 $.support.cors = true;
 
-var get_url_parameters = function(str){
-	var divider = str.indexOf('/');
-	if (~divider){
-		var search_part = str.slice(0, divider);
-		var path_part = str.slice(divider + 1);
-	} else{
-		var search_part = str;
-	}
-	if (search_part){
-		var url_vars = search_part.replace(/^\?/,'').split('&');
-		var full_url = {};
-		for (var i=0; i < url_vars.length; i++) {
-			var _h = url_vars[i].split('=');
-			full_url[_h[0]] = _h[1];
-		};
-	}
-
-	return {params:full_url || {}, path: path_part};
-};
 
 
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
@@ -33,7 +14,7 @@ window.lfm = function(){
 };
 
 window.seesu = window.su =  {
-	  _url: get_url_parameters(location.search).params,
+	  _url: get_url_parameters(location.search),
 	  distant_glow: {
 	  	interact: null,
 		url: 'http://seesu.me/',
@@ -423,6 +404,9 @@ var makeSongPlayalbe= function(mo, full_allowing){
 	} else if (!mo.track){
 		start_random_nice_track_search(mo, !full_allowing );
 	} else{
+		if (mo.isSearchCompleted()){
+			handle_song(mo, true)
+		}
 		su.mp3_search.find_mp3(mo, {
 			only_cache: !full_allowing && !mo.want_to_play
 		});
@@ -493,7 +477,10 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 	
 	
 	var f;
-	var fdone;
+	if (~['artist', 'album', 'cplaylist'].indexOf(playlist_title )){
+		var can_find_context = true;
+	}
+	var fdone = !can_find_context;
 	if (first_song && first_song.track && (first_song.artist || (playlist_type == 'artist' && key))){
 		if (!first_song.artist){
 			first_song.artist = key;
@@ -536,12 +523,13 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 		return this.playlist_type == puppet.playlist_type && (!this.key && !this.key || this.key == puppet.key);
 	};
 	pl.kill = function(){
+		this.ui.remove();
 		delete this.ui;
-		/*
+		
 		for (var i = this.length - 1; i >= 0; i--){
-			this.pop().kill();
+			this[i].kill();
 		};
-		*/
+		
 	};
 	pl.showExactlyTrack= function(mo, no_navi){
 		if (~pl.indexOf(mo)){
@@ -551,6 +539,7 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 	};
 	pl.renderSong = function(mo){
 		if (pl.ui && pl.ui.tracks_container){
+			
 			if (!mo.ui || !mo.ui.mainc || mo.ui.mainc[0].ownerDocument != su.ui.d){				
 				var pl_ui_element = su.ui.create_playlist_element(mo);
 				if (f){
@@ -569,13 +558,18 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 						} else{
 							pl.ui.tracks_container.append(pl_ui_element);
 						}
+					} else{
+						pl.ui.tracks_container.append(pl_ui_element);
 					}
 					
 					
 				} else{
 					pl.ui.tracks_container.append(pl_ui_element);
 				}
+				
+				makeSongPlayalbe(mo);
 			}
+			
 		}
 	};
 	
@@ -600,7 +594,7 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 			
 		};
 		if (artist_track.artist && artist_track.track){
-			pl.push(artist_track);
+			su.gena.add(artist_track, this);
 			
 		}
 		
@@ -630,7 +624,13 @@ var create_playlist =  function(pl, pl_r, not_clear){
 
 var getTopTracks = function(artist,callback, error_c) {
 	lfm('artist.getTopTracks',{'artist': artist },function(r){
-		if (typeof r != 'object') {return;}
+		if (typeof r != 'object' || r.error) {
+			if (error_c){
+				error_c();
+			}
+			return;
+			
+		}
 		var tracks = r.toptracks.track || false;
 		if (tracks) {
 			var track_list = [];
@@ -655,7 +655,7 @@ var proxy_render_artists_tracks = function(artist_list, pl_r){
 		}
 		create_playlist(track_list_without_tracks, pl_r || []);
 	} else{
-		create_playlist();
+		create_playlist(false, pl_r);
 	}
 	
 };
@@ -731,7 +731,39 @@ var get_artists_by_tag = function(tag,callback,error_c){
 	}, error_c, false, true);
 	return true;
 };
-
+function findAlbum(album_name, artist_name, no_navi, start_song){
+	var pl_r = prepare_playlist((artist_name ? '(' + artist_name + ') ' : '') + album_name ,'album', {original_artist: artist_name, album: album_name}, false, start_song);
+	seesu.ui.views.show_playlist_page(pl_r ,false, no_navi || !!start_song );
+	lfm('Album.search', {album: album_name}, function(r) {
+		if (!r || r.error){
+			create_playlist(false, pl_r);
+			return
+		}
+		var res_matches = [];
+		var ralbums = [];
+		if (r.results.albummatches.album && r.results.albummatches.album.length){
+			for (var i=0; i < r.results.albummatches.album.length; i++) {
+				ralbums.push(r.results.albummatches.album[i])
+			};
+		} else if (r.results.albummatches.album){
+			ralbums.push(r.results.albummatches.album)
+		}
+		for (var i=0; i < ralbums.length; i++) {
+			var ral = ralbums[i];
+			if (album_name.toLowerCase() == ral.name.toLowerCase()  && (!artist_name || ral.artist == artist_name)){
+				res_matches.push(ral)
+			}
+			
+		};
+		if (res_matches.length){
+			get_artist_album_playlist(res_matches[0].id, pl_r)
+		} else{
+			create_playlist(false, pl_r);
+		}
+		
+		
+	});
+};
 
 var get_similar_artists = function(original_artist, callback,error_c){
 	lfm('artist.getSimilar',{'artist': original_artist},function(r){
@@ -747,9 +779,12 @@ var get_similar_artists = function(original_artist, callback,error_c){
 	return true;
 };
 
-var render_tracks_by_similar_artists = function(original_artist){
-	var pl_r = prepare_playlist('Similar to «' + original_artist + '» artists', 'similar artists', original_artist);
-	seesu.ui.views.show_playlist_page(pl_r);
+var render_tracks_by_similar_artists = function(original_artist, no_navi, start_song){
+	var pl_r = prepare_playlist('Similar to «' + original_artist + '» artists', 'similar artists', original_artist, false, start_song);
+	seesu.ui.views.show_playlist_page(pl_r, false, no_navi || !!start_song);
+	if (start_song){
+		start_song.view(no_navi);
+	}
 	get_similar_artists(original_artist, function(pl){
 		proxy_render_artists_tracks(pl, pl_r)
 	}, function(){
@@ -778,14 +813,13 @@ var make_lastfm_playlist = function(r, pl_r){
 		if (music_list){
 			create_playlist(music_list, pl_r);
 		} else {
-			create_playlist();
+			create_playlist(false, pl_r);
 		}
 	} else{
-		create_playlist();
+		create_playlist(false, pl_r);
 	}
 };
-var get_artist_album_playlist = function(r, pl_r){
-	var album_id = r.album.id;
+var get_artist_album_playlist = function(album_id, pl_r){
 	if (album_id) {
 		lfm('playlist.fetch',{'playlistURL': 'lastfm://playlist/album/' + album_id}, function(pl_data){
 			make_lastfm_playlist(pl_data, pl_r);
