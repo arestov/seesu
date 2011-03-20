@@ -38,6 +38,11 @@ var song_methods = {
 	},
 	getURLPart: function(){
 		var url ="";
+		if (this.plst_titl.playlist_type =='tracks'){
+			if (this.raw){
+				url += "/" + this.from + '/' + this._id;
+			}
+		}
 		if (this.artist && this.plst_titl.playlist_type != 'artist'){
 			url += '/' + this.artist + '/' + (this.track || '_');
 		} else{
@@ -45,6 +50,8 @@ var song_methods = {
 				url += '/' + this.track;
 			}
 		}
+		
+		
 		return url;
 	},
 	isHaveAnyResultsFrom: function(source_name){
@@ -63,18 +70,8 @@ var song_methods = {
 		return !!this.raw || !!this.sem && this.sem.have_best;
 	},
 	kill: function(){
-		if (su.player.v_song == this){
-			delete su.player.v_song;
-		}
-		if (su.player.c_song == this){
-			delete su.player.c_song;
-		}
-		if (this.sem){
-			this.sem.removeSong(this);
-		}
-		for(var a in this){
-			delete this[a];
-		}
+		this.ui.remove();
+		delete this.ui;
 	}
 };
 var extendSong = function(mo){
@@ -398,7 +395,10 @@ function handle_song(mo, complete, get_next){
 	su.ui.updateSongContext(mo);
 	
 	if (complete){
-		mo.ui.node.removeClass('search-mp3');
+		if (mo.ui){
+			mo.ui.node.removeClass('search-mp3');
+		}
+		
 		if (mo.isHaveTracks()){
 			clearTimeout(mo.cantwait);
 			wantSong(mo);
@@ -410,7 +410,10 @@ function handle_song(mo, complete, get_next){
 				}
 			}
 		} else{
-			mo.ui.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
+			if (mo.ui){
+				mo.ui.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
+				
+			}
 			if (get_next){
 				if (su.player.c_song) {
 					if (mo == su.player.c_song.next_song || mo == su.player.c_song.prev_song || mo == su.player.c_song.next_preload_song){
@@ -427,16 +430,21 @@ function handle_song(mo, complete, get_next){
 		wantSong(mo);
 	} else if (mo.isHaveTracks()){
 		mo.cantwait = setTimeout(function(){
-			mo.ui.node.removeClass('search-mp3');
+			if (mo.ui){
+				mo.ui.node.removeClass('search-mp3');
+			
+			}
 			wantSong(mo);
 			
 		},20000);
 	}
 	
 	if (mo.isHaveTracks() || mo.isHaveBestTracks()){
+		if (mo.ui){
+			su.ui.updateSong(mo);
+			su.ui.els.export_playlist.addClass('can-be-used');
+		}
 		
-		su.ui.updateSong(mo);
-		su.ui.els.export_playlist.addClass('can-be-used');
 	}
 };
 
@@ -561,7 +569,7 @@ music_seach_emitter.prototype = {
 	wait_ui: function(){
 		for (var i=0; i < this.songs.length; i++) {
 			var mo = this.songs[i];
-			if (mo && !mo.have_tracks){
+			if (mo && mo.ui && !mo.have_tracks){
 				mo.ui.node.addClass('search-mp3');
 			}
 		}
@@ -854,7 +862,15 @@ if (typeof soundcloud_search != 'undefined'){
 			slave: false,
 			s: sc_search_source,
 			preferred: null,
-			q: su.soundcloud_queue
+			q: su.soundcloud_queue,
+			getById: function(id, callback, needsAuth){
+				if (callback){
+					callback();
+				}
+				/*
+				http://api.soundcloud.com/tracks/10672593/download?consumer_key=HNVCUV6apk9ANn8tLERpag
+				return HNVCUV6apk9ANn8tLERpag*/
+			}
 		})
 		
 		

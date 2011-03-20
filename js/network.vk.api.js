@@ -217,13 +217,15 @@ vk_api.prototype = {
 			if (r.response && (r.response.length > 1 )) {
 				var music_list = [];
 				for (var i=1, l = r.response.length; i < l; i++) {
+					var vksong = r.response[i];
 					var entity = {
-						artist	: HTMLDecode(r.response[i].artist ? r.response[i].artist : r.response[i].audio.artist),
-						duration	: r.response[i].duration ? r.response[i].duration : r.response[i].audio.duration,
-						link		: r.response[i].url ? r.response[i].url : r.response[i].audio.url,
-						track		: HTMLDecode(r.response[i].title ? r.response[i].title : r.response[i].audio.title),
-						from		:  (!hapi ? 'legal_' : (_this.allow_random_api ? 'random_' : '')) + 'vk_api',
-						downloadable: hapi
+						artist	: HTMLDecode(vksong.artist ? vksong.artist : vksong.audio.artist),
+						duration	: vksong.duration ? vksong.duration : vksong.audio.duration,
+						link		: vksong.url ? vksong.url : vksong.audio.url,
+						track		: HTMLDecode(vksong.title ? vksong.title : vksong.audio.title),
+						from		: 'vk',
+						downloadable: hapi,
+						_id			: vksong.owner_id + '_' + vksong.aid
 					
 					};
 					

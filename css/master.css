@@ -7,6 +7,9 @@ body{
 	font-size:12px;
 	font-family:Helvetica , Arial ,sans-serif;
 	}
+body.slice-for-height{
+	overflow:hidden;
+}
 .not-as-application body{
 	background-color: #505050;
 	
@@ -359,7 +362,12 @@ display:none;
 		background:#505050;
 		padding: 1px 6px;
 		border-radius: 5px;
-	}
+		}
+		#promo a:hover{
+			color:#222;
+			background:#fff;
+			border:1px solid #eee  !important;
+		}
 .lfm-auth-done #scrobbling-switches{ 
 	opacity:1;
 	}
