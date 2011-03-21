@@ -213,10 +213,10 @@ window.app_env = (function(){
 	if (env.cross_domain_allowed) {dstates.add_state('html_el', 'cross-domain-allowed')}
 	
 	
-	if (env.web_app && window.parent != window && typeof env.url.language != 'undefined'){
-		if (env.url.language === 0){
+	if (env.vkontakte){
+		if (env.url.language === '0'){
 			env.lang = 'ru';
-		} else if (env.url.language === 3){
+		} else if (env.url.language === '3'){
 			env.lang = 'en';
 		} else{
 			env.lang = navigator.language.slice(0,2).toLowerCase();

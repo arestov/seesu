@@ -99,7 +99,7 @@ window.connect_dom_to_som = function(d, ui){
 		return o;
 	})(seesu.player.player_volume);
 	addEvent(d, "DOMContentLoaded", function() {
-		var lang = navigator.language;
+		var lang = app_env.lang;
 		$('.lang', d).each(function(i,el){
 			var cn = el.className;
 			var classes = cn.split(/\s/);
