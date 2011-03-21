@@ -270,28 +270,25 @@ function getPlayViewStateFromString(n){
 			} else{
 				if (path_levels[2] != '_'){
 					pvstate.album_name = path_levels[2];
-					
-					if (path_levels[4]){
-						//current_artist and current_track
-						pvstate.current_artist = path_levels[3];
-						if (path_levels[4] != '_'){
-							pvstate.current_track = path_levels[4];
-						}
-						
-					} else if (path_levels[3]){
-						//current_artist and current_track
-						if (pvstate.artist_name){
-							pvstate.current_artist = pvstate.artist_name;
-						}
-						
-						pvstate.current_track = path_levels[3];
-					}
-				
-				
+
 				} else if (path_levels[1] == '_'){
 					pvstate.type = '';
 				}
-				
+				if (path_levels[4]){
+					//current_artist and current_track
+					pvstate.current_artist = path_levels[3];
+					if (path_levels[4] != '_'){
+						pvstate.current_track = path_levels[4];
+					}
+					
+				} else if (path_levels[3]){
+					//current_artist and current_track
+					if (pvstate.artist_name){
+						pvstate.current_artist = pvstate.artist_name;
+					}
+					
+					pvstate.current_track = path_levels[3];
+				}
 				
 			}
 		}
@@ -493,7 +490,7 @@ function hashchangeHandler(e, force){
 					
 					if (newstate.plp.playlist_type == 'artist'){
 						
-						su.ui.show_artist(newstate.current_artist, false, true, tk);
+						su.ui.show_artist(newstate.artist_name, false, true, tk);
 						//show_artist(newstate.current_artist, false, true)
 					} else if (newstate.plp.playlist_type == 'similar artists'){
 						render_tracks_by_similar_artists(newstate.artist_name, true, tk)

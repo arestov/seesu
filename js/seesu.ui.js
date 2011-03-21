@@ -399,82 +399,80 @@ seesu_ui.prototype = {
 		if (!mo.ui){
 			return false;
 		}
-		if (mo.ui.files_time_stamp >= mo.wheneWasChanged()){
-			return true;
-		}
+		if (mo.wheneWasChanged() >= mo.ui.files_time_stamp){
 		
-		var _sui = this;
-		var c = mo.ui.files;
-		c.empty();
-		/*
-		var no_vk = mo.failedFor('vk');
-		if (no_vk){
-			
-		}*/
-		var small_head = $('<div class="files-header"></div>').appendTo(c);
-		
-		
-		small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
-		
-		var desc_text = $('<span class="desc-text"></span>').appendTo(small_head);
-		
-		
-
-		
-		var songs = mo.songs();
-		
-		if (mo.isSearchCompleted()){
-			if (!songs.length){
-				c.prepend(_sui.samples.vk_login.clone())
-			} else if(!mo.isHaveAnyResultsFrom('vk')){
-				c.prepend(_sui.samples.vk_login.clone('enhancement'))
-			} else if (mo.isNeedsAuth('vk')){
-				c.prepend(_sui.samples.vk_login.clone('stabilization'))
-			}
+			var _sui = this;
+			var c = mo.ui.files;
+			c.empty();
+			/*
+			var no_vk = mo.failedFor('vk');
+			if (no_vk){
+				
+			}*/
+			var small_head = $('<div class="files-header"></div>').appendTo(c);
 			
 			
-		}
-		
-		
-		if (songs){
-			var sc = $('<div class="files-lists"></div>');
+			small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
 			
-			var just_link;
-			var extend_link;
+			var desc_text = $('<span class="desc-text"></span>').appendTo(small_head);
 			
 			
+	
 			
-			$('<a class="js-serv">' + localize('show-them') +'</a>').click(function(){
-				c.toggleClass('show-files');
-				return false;
-			}).appendTo(desc_text)
+			var songs = mo.songs();
 			
-						
-			for (var i=0; i < songs.length; i++) {
-				var b = this.createFilesList(songs[i], mo);
-				if (b){b.appendTo(sc);}
-				if (!extend_link && songs[i].t && songs[i].t.length > 3){
-					$('<a class="js-serv all-files-link">' + localize('all', 'all') +'</a>').click(function(){
-						c.toggleClass('show-all-files');
-						return false;
-					}).appendTo(desc_text)
-					extend_link = true;
+			if (mo.isSearchCompleted()){
+				if (!songs.length){
+					c.prepend(_sui.samples.vk_login.clone())
+				} else if(!mo.isHaveAnyResultsFrom('vk')){
+					c.prepend(_sui.samples.vk_login.clone('enhancement'))
+				} else if (mo.isNeedsAuth('vk')){
+					c.prepend(_sui.samples.vk_login.clone('stabilization'))
 				}
 				
 				
-			};
+			}
 			
 			
+			if (songs){
+				var sc = $('<div class="files-lists"></div>');
+				
+				var just_link;
+				var extend_link;
+				
+				
+				
+				$('<a class="js-serv">' + localize('show-them') +'</a>').click(function(){
+					c.toggleClass('show-files');
+					return false;
+				}).appendTo(desc_text)
+				
+							
+				for (var i=0; i < songs.length; i++) {
+					var b = this.createFilesList(songs[i], mo);
+					if (b){b.appendTo(sc);}
+					if (!extend_link && songs[i].t && songs[i].t.length > 3){
+						$('<a class="js-serv all-files-link">' + localize('all', 'all') +'</a>').click(function(){
+							c.toggleClass('show-all-files');
+							return false;
+						}).appendTo(desc_text)
+						extend_link = true;
+					}
+					
+					
+				};
+				
+				
+				
+				sc.appendTo(c)
+			} 
 			
-			sc.appendTo(c)
-		} 
-		
-		
-		if (false && mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('soundcloud')){
-			desc.append('<p>try to connect soundcloud search</p>')
+			
+			if (false && mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('soundcloud')){
+				desc.append('<p>try to connect soundcloud search</p>')
+			}
+			mo.ui.files_time_stamp = mo.wheneWasChanged();
 		}
-		mo.ui.files_time_stamp = mo.wheneWasChanged();
-	
 	},
 	update_artist_info: function(artist, a_info, show_link_to_artist_page){
 		var _sui = this;
@@ -860,7 +858,8 @@ seesu_ui.prototype = {
 			files: t_info.children('.track-files'),
 			remove: function(){
 				this.mainc.remove();
-			}
+			},
+			files_time_stamp:0
 		};
 		
 		

@@ -259,30 +259,31 @@ su.player = {
 				can_use.push(i);
 			}
 		};	
-
 		if (c_playlist && typeof c_num == 'number'){
 			if (c_num-1 >= 0) {
-				for (var i = c_num-1, _p = false;  ((i >= 0) && (_p == false)); i--){
+				for (var i = c_num-1, _p = false;  i >= 0; i--){
 					
-					if (~can_use.indexOf(i)){
-						_p = true;
+					if (1*~can_use.indexOf(i)){
 						mo.prev_song = c_playlist[i];
+						break
 					}
 				};
 			}
+		
+			
 			
 			var next_song = c_num+1;
 			var preload_song;
-			for (var i = 0, _n = false; ((i < c_playlist.length) && ( _n == false)); i++) {
+			for (var i = 0, _n = false; i < c_playlist.length ; i++) {
 					
 				
-				if (~can_use.indexOf(i)){
+				if (1*~can_use.indexOf(i)){
 					if (!preload_song){
 						preload_song = c_playlist[i];
 					}
 					if (i >= next_song){
-						_n = true;
 						mo.next_song = preload_song =  c_playlist[i];
+						break
 					}
 					
 				}

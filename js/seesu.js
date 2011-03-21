@@ -477,7 +477,7 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 	
 	
 	var f;
-	if (~['artist', 'album', 'cplaylist'].indexOf(playlist_title )){
+	if (~['artist', 'album', 'cplaylist'].indexOf(playlist_type )){
 		var can_find_context = true;
 	}
 	var fdone = !can_find_context;
