@@ -268,7 +268,7 @@ function getSongMatchingIndex(song, query){
 	
 	
 	var epic_fail_test = artist + ' ' + track,
-		epic_fail = !~epic_fail_test.indexOf(artist.replace(/^The /, '')) && !~epic_fail_test.indexOf(track);
+		epic_fail = !bN(epic_fail_test.indexOf(artist.replace(/^The /, ''))) && !bN(epic_fail_test.indexOf(track));
 	
 	if (epic_fail){
 		return mi = -1000;
@@ -293,11 +293,11 @@ function getSongMatchingIndex(song, query){
 			return mi;
 		} 
 		--mi;
-		if (~_ar.indexOf(artist) && ~_tr.indexOf(track)) {
+		if (bN(_ar.indexOf(artist)) && bN(_tr.indexOf(track))) {
 			return mi;
 		} 
 		--mi;
-		if (~_ar.toLowerCase().indexOf(artist.toLowerCase()) && ~_tr.toLowerCase().indexOf(track.toLowerCase())) {
+		if (bN(_ar.toLowerCase().indexOf(artist.toLowerCase())) && bN(_tr.toLowerCase().indexOf(track.toLowerCase()))) {
 			return mi;
 		} 
 		
@@ -509,7 +509,7 @@ function music_seach_emitter(q, query){
 };
 music_seach_emitter.prototype = {
 	addSong: function(mo, get_next){
-		if (!~this.songs.indexOf(mo)){
+		if (!bN(this.songs.indexOf(mo))){
 			this.songs.push(mo);
 			mo.sem = this;
 			if (this.some_results){
@@ -520,7 +520,7 @@ music_seach_emitter.prototype = {
 	},
 	removeSong: function(mo){
 		var i = this.songs.indexOf(mo);
-		if (!!~i){
+		if (bN(i)){
 			delete this.songs[i];
 		}
 	},
@@ -623,7 +623,7 @@ su.mp3_search= (function(){
 				var cursor = this[i];
 				var _c; //cache
 				if (!filter || cursor.name == filter){
-					if (!seeking_something_fresh && !~tried_cache.indexOf(cursor.name)){
+					if (!seeking_something_fresh && !bN(tried_cache.indexOf(cursor.name))){
 						_c = this.getCache(sem, cursor.name);
 						tried_cache.push(cursor.name);
 					}

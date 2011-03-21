@@ -79,7 +79,7 @@ su.gena = { //this work with playlists
 		var arrgh = obj instanceof Array;
 		var _n = {};
 		for (var a in obj) {
-			if (!white_list || !!~white_list.indexOf(a)){
+			if (!white_list || bN(white_list.indexOf(a))){
 				if (arrgh || (typeof obj[a] != 'object')){
 					if (a != 'ui'){
 						_n[a] = obj[a];
@@ -248,7 +248,6 @@ su.player = {
 		mo.next_song = false
 		mo.prev_song = false
 		
-		
 		var c_playlist = mo.plst_titl,
 			c_num = mo.plst_titl.indexOf(mo);//mo.play_order
 
@@ -263,21 +262,16 @@ su.player = {
 			if (c_num-1 >= 0) {
 				for (var i = c_num-1, _p = false;  i >= 0; i--){
 					
-					if (1*~can_use.indexOf(i)){
+					if (bN(can_use.indexOf(i))){
 						mo.prev_song = c_playlist[i];
 						break
 					}
 				};
 			}
-		
-			
-			
 			var next_song = c_num+1;
 			var preload_song;
 			for (var i = 0, _n = false; i < c_playlist.length ; i++) {
-					
-				
-				if (1*~can_use.indexOf(i)){
+				if (bN(can_use.indexOf(i))){
 					if (!preload_song){
 						preload_song = c_playlist[i];
 					}
@@ -285,28 +279,17 @@ su.player = {
 						mo.next_song = preload_song =  c_playlist[i];
 						break
 					}
-					
 				}
-				
-				
 			};
 			if (preload_song){
 				mo.next_preload_song = preload_song;
 			}
-			
-			
-		}
-		
-			
+		}	
 	},
 	change_songs_ui: function(mo, remove_playing_status){
 		
 		if (mo.ui){
-			mo.ui.node.parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('viewing-song');
-		
-		
-			
-				
+			mo.ui.node.parent()[(remove_playing_status ? 'remove' : 'add')+ 'Class']('viewing-song');	
 			if (!remove_playing_status){
 				this.song_siblings(mo)
 				
@@ -325,10 +308,6 @@ su.player = {
 				}
 			}
 		}
-		
-			
-		
-		
 	},
 	fix_songs_ui: function(){
 		if (this.v_song){

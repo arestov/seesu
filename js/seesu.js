@@ -22,11 +22,11 @@ window.seesu = window.su =  {
 	  },
 	  api: function(method, params, callback, error){
 	  	var _this = this;
-	  	if (_this.distant_glow.interact && !!~_this.distant_glow.interact.indexOf(method)){
+	  	if (_this.distant_glow.interact && bN(_this.distant_glow.interact.indexOf(method))){
 	  	
 	  		params.method = method;
 	  	
-	  		if (!!~['user.update', 'track.scrobble'].indexOf(method)){
+	  		if (bN(['user.update', 'track.scrobble'].indexOf(method))){
 	  			if (!this.distant_glow.auth){
 	  				return false
 	  			} else{
@@ -256,7 +256,7 @@ function stringifyParams(params, ignore_params, splitter){
 	
 	
 	for (var p in params) {
-		if (!ignore_params || !~ignore_params.indexOf(p)){
+		if (!ignore_params || !bN(ignore_params.indexOf(p))){
 			pv_signature_list.push(p + (splitter || '') + params[p]);
 		}
 	}
@@ -477,7 +477,7 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 	
 	
 	var f;
-	if (~['artist', 'album', 'cplaylist'].indexOf(playlist_type )){
+	if (bN(['artist', 'album', 'cplaylist'].indexOf(playlist_type ))){
 		var can_find_context = true;
 	}
 	var fdone = !can_find_context;
@@ -532,7 +532,7 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 		
 	};
 	pl.showExactlyTrack= function(mo, no_navi){
-		if (~pl.indexOf(mo)){
+		if (bN(pl.indexOf(mo))){
 			mo.view(no_navi);
 			return true;
 		}	

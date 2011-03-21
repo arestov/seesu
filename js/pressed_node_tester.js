@@ -36,7 +36,7 @@ var test_pressed_node = function(e, mouseup){
 			seesu.track_event('Links', 'flash security');
 			return false;
 		  }
-		  else if (~class_name.indexOf('external')){
+		  else if (bN(class_name.indexOf('external'))){
 		  	open_url(clicked_node.attr('href'));
 			seesu.track_event('Links', 'just link');
 			return false;

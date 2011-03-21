@@ -57,11 +57,11 @@ navi= {
 		var sts = this.findNextAndPrevStates(url_obj)
 		
 		var c = this.history_positions-1;
-		if (~sts.prev.indexOf(this.states[c-1])){
+		if (bN(sts.prev.indexOf(this.states[c-1]))){
 			console.log("it's old state")
 			--this.history_positions;
 			return this.states[c-1];
-		} else if (~sts.next.indexOf(this.states[c+1])){
+		} else if (bN(sts.next.indexOf(this.states[c+1]))){
 			console.log("it's old new state")
 			++this.history_positions;
 			return this.states[c+1];
@@ -121,13 +121,13 @@ navi= {
 			this.fake_current_location = url;
 			
 			this.app_hash = url; //supressing hash change handler, must be before location.assign
-			if (~url.indexOf('[object+Object]')){
+			if (bN(url.indexOf('[object+Object]'))){
 				throw 'bad url'
 			}
 			try{
 				var hash = location.href.indexOf('#');
 				var curl;
-				if (~hash){
+				if (bN(hash)){
 					curl = location.href.slice(0,location.href.indexOf('#'));
 				} else{
 					curl = location.href;
