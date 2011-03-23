@@ -33,7 +33,16 @@ function bN(num){
 	http://friendfeed.com/yodapunk/935ad55d/o-rly-opera-cc-pepelsbey-foolip-erikdahlstrom
 	*/
 	return !!(1* (~num));
-}
+};
+function extCarefully(target, donor, white_list){
+	for (var prop in donor) {
+		if (!white_list || bN(white_list.indexOf(prop))){
+			target[prop] = donor[prop];
+		}
+	}
+};
+
+
 var addClass = function(old_c, cl){
 	
 	var add_c = cl.split(' ');

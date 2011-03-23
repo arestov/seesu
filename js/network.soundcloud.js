@@ -72,7 +72,7 @@ function soundcloud_search(query, callback, error, nocache, after_ajax, only_cac
 						}
 					};
 				}
-				if (music_list){
+				if (music_list && music_list.length){
 					cache_ajax.set('soundcloud', query, music_list);
 					if (callback ){
 						callback(music_list, search_source);

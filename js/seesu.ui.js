@@ -407,26 +407,12 @@ seesu_ui.prototype = {
 		if (!mo.ui){
 			return false;
 		}
-		if (mo.wheneWasChanged() >= mo.ui.files_time_stamp){
+		if (mo.wheneWasChanged() > mo.ui.files_time_stamp){
 		
 			var _sui = this;
 			var c = mo.ui.files;
 			c.empty();
-			/*
-			var no_vk = mo.failedFor('vk');
-			if (no_vk){
-				
-			}*/
-			var small_head = $('<div class="files-header"></div>').appendTo(c);
-			
-			
-			small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
-			
-			var desc_text = $('<span class="desc-text"></span>').appendTo(small_head);
-			
-			
-	
-			
+
 			var songs = mo.songs();
 			
 			if (mo.isSearchCompleted()){
@@ -443,6 +429,12 @@ seesu_ui.prototype = {
 			
 			
 			if (songs){
+				
+				var small_head = $('<div class="files-header"></div>').appendTo(c);
+				small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
+				var desc_text = $('<span class="desc-text"></span>').appendTo(small_head);
+				
+				
 				var sc = $('<div class="files-lists"></div>');
 				
 				var just_link;
@@ -479,7 +471,7 @@ seesu_ui.prototype = {
 			if (false && mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('soundcloud')){
 				desc.append('<p>try to connect soundcloud search</p>')
 			}
-			mo.ui.files_time_stamp = mo.wheneWasChanged();
+			mo.ui.files_time_stamp = +new Date();
 		}
 	},
 	update_artist_info: function(artist, a_info, show_link_to_artist_page){

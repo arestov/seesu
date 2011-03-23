@@ -9,7 +9,7 @@ var song_methods = {
 		viewSong(this, no_navi);	
 	},
 	wheneWasChanged: function(){
-		return (this.raw && 1) || (this.sem && this.sem.changed || -1);
+		return (this.raw && 1) || (this.sem && this.sem.changed || 1);
 	},
 	render: function(){
 		if (this.plst_titl){
@@ -59,7 +59,7 @@ var song_methods = {
 		return !!this.raw || !!this.sem && this.sem.isHaveAnyResultsFrom(source_name);
 	},
 	isNeedsAuth: function(service_name){
-		return !this.raw && (su.mp3_search.isNoMasterOfSlave(service_name));
+		return !this.raw && (su.mp3_search.isNoMasterOfSlave(service_name) || !su.mp3_search.haveSearch(service_name));
 	},
 	isHaveTracks: function(){
 		return !!this.raw || !!this.sem && this.sem.have_tracks ;
@@ -130,6 +130,7 @@ cmo = {
 		return nice_steam || ugly_steam || false;
 	},
 	addSteamPart: function(sem, search_source, t ){
+		sem.changed = +new Date();
 		var _ms = this.getMusicStore(sem, search_source);
 		_ms.t = t;
 		sem.have_tracks = true;
@@ -147,10 +148,11 @@ cmo = {
 		if (searches_pr[search_source.name] === best){
 			sem.have_best = true;
 		}
-		sem.changed = +new Date();
+		
 		
 	},
 	blockSteamPart: function(sem, search_source, can_be_fixed){
+		sem.changed = +new Date();
 		var _ms = this.getMusicStore(sem, search_source);
 		_ms.processing = false;
 		sem.some_results = true;
@@ -164,7 +166,7 @@ cmo = {
 		} else{
 			return false;
 		}
-		sem.changed = +new Date();
+		
 		
 	},
 	getSomeTracks: function(steam){
@@ -914,7 +916,6 @@ su.mp3_search= (function(){
 
 if (typeof soundcloud_search != 'undefined'){
 	(function(){
-		 
 		var sc_search_source = {name: 'soundcloud', key: 0};
 		su.mp3_search.add({
 			test: function(mo){

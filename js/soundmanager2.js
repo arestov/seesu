@@ -13,11 +13,27 @@
 /*jslint white: false, onevar: true, undef: true, nomen: false, eqeqeq: true, plusplus: false, bitwise: true, regexp: true, newcap: true, immed: true */
 
 (function(window) {
-
+function extCarefully(target, donor, white_list){
+	for (var prop in donor) {
+		if (!white_list || bN(white_list.indexOf(prop))){
+			target[prop] = donor[prop];
+		}
+	}
+};
+function bN(num){
+	/*
+	special for opera browser
+	http://opera.com
+	http://friendfeed.com/yodapunk/935ad55d/o-rly-opera-cc-pepelsbey-foolip-erikdahlstrom
+	*/
+	return !!(1* (~num));
+};		
 var soundManager = null;
 
-function SoundManager(smURL, smID) {
-
+function SoundManager(smURL, smID, init_options) {
+  window.soundManager = this; // for Flash callbacks, etc.
+  
+  
   this.flashVersion = 8;             // version of flash to require, either 8 or 9. Some API features require Flash 9.
   this.debugMode = true;             // enable debugging output (div#soundmanager-debug, OR console if available+configured)
   this.debugFlash = false;           // enable debugging output inside SWF, troubleshoot Flash/browser issues
@@ -35,6 +51,12 @@ function SoundManager(smURL, smID) {
   this.allowFullScreen = true;       // enter full-screen (via double-click on movie) for flash 9+ video
   this.allowScriptAccess = 'always'; // for scripting the SWF (object/embed property), either 'always' or 'sameDomain'
   this.useFlashBlock = false;        // allow showing of SWF + recovery from flash blockers. Wait indefinitely and apply timeout CSS to SWF, if applicable.
+  
+  if (init_options){
+  	extCarefully(this, init_options, ['flashVersion', 'debugMode', 'debugFlash', 'useConsole', 'consoleOnly', 'waitForWindowLoad', 'nullURL', 'allowPolling', 'useFastPolling', 'useMovieStar', 'bgColor', 'useHighPerformance', 'flashLoadTimeout', 'wmode', 'allowFullScreen', 'allowScriptAccess', 'useFlashBlock'])
+  }
+
+
 
   this.defaultOptions = {
     'autoLoad': false,             // enable automatic loading (otherwise .load() will be called on demand with .play(), the latter being nicer on bandwidth - if you want to .load yourself, you also can)
@@ -2019,6 +2041,5 @@ if (typeof SM2_DEFER === 'undefined' || !SM2_DEFER) {
 
 // expose public interfaces
 window.SoundManager = SoundManager; // SoundManager() constructor
-window.soundManager = soundManager; // instance for Flash callbacks, etc.
 
 }(window)); // invocation closure

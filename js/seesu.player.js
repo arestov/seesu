@@ -587,23 +587,20 @@ var try_to_use_iframe_sm2p = function(remove){
 		init_sm2_p = function(){
 			
 			
-			
-			window.soundManager = new SoundManager();
-			if (soundManager){
-				soundManager.url = 'http://seesu.me/swf/';
-				soundManager.flashVersion = 9;
-				soundManager.useFlashBlock = true;
-				soundManager.debugMode = false;
-				soundManager.wmode = 'transparent';
-				soundManager.useHighPerformance = true;
+						
+			window.soundManager = new SoundManager('http://seesu.me/swf/', false, {
+				flashVersion : 9,
+				useFlashBlock : true,
+				debugMode : false,
+				wmode : 'transparent',
+				useHighPerformance : true
+			});
+			if (soundManager){			
 				sm2_p_in_iframe = new sm2_p(_volume, soundManager);
 				sm2_p_in_iframe.player_source_window = iframe_source;
 				soundManager.onready(function() {
-
 					if (soundManager.supported()) {
-
 						iframe_source.postMessage("sm2_inited",'*');
-
 					} else{
 						console.log('by some reason sm2 iframe don"t work')
 					}
@@ -741,7 +738,7 @@ var try_to_use_iframe_sm2p = function(remove){
 }
 var html_player_timer;
 var a = document.createElement('audio');
-if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
+if(false && !!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 	
 	su.player.musicbox = new html5_p(su.player.player_volume);
 	$(function(){
@@ -749,28 +746,28 @@ if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 	})
 	
 } else if (!su.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
-	soundManager = new SoundManager();
-	if (soundManager){
-		soundManager.url = 'http://seesu.me/swf/';
-		soundManager.flashVersion = 9;
-		soundManager.useFlashBlock = true;
-		soundManager.debugMode = false;
-		soundManager.wmode = 'transparent';
-		soundManager.useHighPerformance = true;
+	soundManager = new SoundManager('http://seesu.me/swf/', false, {
+		flashVersion : 9,
+		useFlashBlock : true,
+		debugMode : false,
+		wmode : 'transparent',
+		useHighPerformance : true
+	});
+	if (soundManager){	
 		soundManager.onready(function() {
-		  if (soundManager.supported()) {
-			console.log('sm2 in widget ok')
-			su.player.musicbox = new sm2_p(su.player.player_volume, soundManager);
-			$(function(){
-				dstates.add_state('body','flash-internet');
-			})
-			try_to_use_iframe_sm2p(true);
-			clearTimeout(html_player_timer);
-		  } else {
-			console.log('sm2 in widget notok')
+			if (soundManager.supported()) {
+				console.log('sm2 in widget ok')
+				su.player.musicbox = new sm2_p(su.player.player_volume, soundManager);
+				$(function(){
+					dstates.add_state('body','flash-internet');
+				})
+				try_to_use_iframe_sm2p(true);
+				clearTimeout(html_player_timer);
+			} else {
+				console.log('sm2 in widget notok')
 				try_to_use_iframe_sm2p();
-	
-		  }
+		
+			}
 		});
 	}
 } else {
