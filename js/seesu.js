@@ -1,6 +1,7 @@
 $.ajaxSetup({
   cache: true,
-  global:false
+  global:false,
+  timeout:40000
 });
 $.support.cors = true;
 
@@ -22,11 +23,11 @@ window.seesu = window.su =  {
 	  },
 	  api: function(method, params, callback, error){
 	  	var _this = this;
-	  	if (_this.distant_glow.interact && !!~_this.distant_glow.interact.indexOf(method)){
+	  	if (_this.distant_glow.interact && bN(_this.distant_glow.interact.indexOf(method))){
 	  	
 	  		params.method = method;
 	  	
-	  		if (!!~['user.update', 'track.scrobble'].indexOf(method)){
+	  		if (bN(['user.update', 'track.scrobble'].indexOf(method))){
 	  			if (!this.distant_glow.auth){
 	  				return false
 	  			} else{
@@ -256,7 +257,7 @@ function stringifyParams(params, ignore_params, splitter){
 	
 	
 	for (var p in params) {
-		if (!ignore_params || !~ignore_params.indexOf(p)){
+		if (!ignore_params || !bN(ignore_params.indexOf(p))){
 			pv_signature_list.push(p + (splitter || '') + params[p]);
 		}
 	}
@@ -477,7 +478,7 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 	
 	
 	var f;
-	if (~['artist', 'album', 'cplaylist'].indexOf(playlist_title )){
+	if (bN(['artist', 'album', 'cplaylist'].indexOf(playlist_type ))){
 		var can_find_context = true;
 	}
 	var fdone = !can_find_context;
@@ -523,8 +524,11 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 		return this.playlist_type == puppet.playlist_type && (!this.key && !this.key || this.key == puppet.key);
 	};
 	pl.kill = function(){
-		this.ui.remove();
-		delete this.ui;
+		if (this.ui){
+			this.ui.remove();
+			delete this.ui;
+		}
+		
 		
 		for (var i = this.length - 1; i >= 0; i--){
 			this[i].kill();
@@ -532,7 +536,7 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 		
 	};
 	pl.showExactlyTrack= function(mo, no_navi){
-		if (~pl.indexOf(mo)){
+		if (bN(pl.indexOf(mo))){
 			mo.view(no_navi);
 			return true;
 		}	
@@ -710,7 +714,7 @@ var render_recommendations = function(){
 			proxy_render_artists_tracks(artist_list,pl_r);
 		}
 	}, function(){
-		proxy_render_artists_tracks();
+		proxy_render_artists_tracks(false, pl_r);
 	},false, true);
 
 	seesu.ui.views.show_playlist_page(pl_r);

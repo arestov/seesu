@@ -26,8 +26,14 @@ window.removeEvent = window.addEventListener ?
 		return func_name;
 	};	
 })();
-	
-		
+function bN(num){
+	/*
+	special for opera browser
+	http://opera.com
+	http://friendfeed.com/yodapunk/935ad55d/o-rly-opera-cc-pepelsbey-foolip-erikdahlstrom
+	*/
+	return !!(1* (~num));
+}
 var addClass = function(old_c, cl){
 	
 	var add_c = cl.split(' ');
@@ -112,7 +118,7 @@ function get_url_parameters(str){
 };
 function getFakeURLParameters(str){
 	var divider = str.indexOf('/');
-	if (~divider){
+	if (bN(divider)){
 		var search_part = str.slice(0, divider);
 		var path_part = str.slice(divider + 1);
 	} else{
@@ -207,10 +213,10 @@ window.app_env = (function(){
 	if (env.cross_domain_allowed) {dstates.add_state('html_el', 'cross-domain-allowed')}
 	
 	
-	if (env.web_app && window.parent != window && typeof env.url.language != 'undefined'){
-		if (env.url.language === 0){
+	if (env.vkontakte){
+		if (env.url.language === '0'){
 			env.lang = 'ru';
-		} else if (env.url.language === 3){
+		} else if (env.url.language === '3'){
 			env.lang = 'en';
 		} else{
 			env.lang = navigator.language.slice(0,2).toLowerCase();

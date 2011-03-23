@@ -57,7 +57,7 @@ window.try_hapi = function(callback, not_saved){
 		  },
 		  dataType: 'text',
 		  success: function(r){
-		  	if (!~r.indexOf('authFailed')){
+		  	if (!bN(r.indexOf('authFailed'))){
 		  		var _o = get_form_params(r, 'http\\:\\/\\/i\\.vk\\.com\\/\\?act\\=auth');
 		 
 			  	console.log(_o)
@@ -156,7 +156,7 @@ var login_spec_vkapi = function(email, pass, callback, captcha){
 				data:_o,
 				global: false,
 				success: function(r){
-					if (!~r.indexOf('onError')){
+					if (!bN(r.indexOf('onError'))){
 						var _lo = get_form_params(r, 'http\\:\\/\\/vk\\.com\\/login\\.php');
 						if (_lo){
 							$.ajax({

@@ -38,22 +38,24 @@ function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
 		key: this.allow_random_api ? 'rambler' : 'nice'
 	};
 	
-	var test_audio = function(mo){
-		return canUseSearch(mo, _this.search_source);
-	};
-	
-	var search_audio = function(){
-		return _this.audio_search.apply(_this, arguments);
-	};
+
+
 	this.asearch = {
-		test: test_audio,
-		search: search_audio,
+		test: function(mo){
+			return canUseSearch(mo, _this.search_source);
+		},
+		search: function(){
+			return _this.audio_search.apply(_this, arguments);
+		},
 		name: this.search_source.name,
 		description: 'vkontakte.ru',
 		slave: this.allow_random_api ? true: false,
 		preferred: null,
 		s: this.search_source,
-		q: queue
+		q: queue,
+		getById: function(){
+			return _this.getAudioById.apply(_this, arguments);
+		}
 	};
 	
 };
@@ -198,6 +200,54 @@ vk_api.prototype = {
 			console.log(r);
 		}, false, {nocache: true});
 	},
+	makeVKSong: function(cursor, hapi){
+		if (cursor && cursor.url){
+			return {
+						artist	: HTMLDecode(cursor.artist ? cursor.artist : cursor.audio.artist),
+						duration	: cursor.duration ? cursor.duration : vksong.audio.duration,
+						link		: cursor.url ? cursor.url : cursor.audio.url,
+						track		: HTMLDecode(cursor.title ? cursor.title : cursor.audio.title),
+						from		: 'vk',
+						downloadable: hapi,
+						_id			: cursor.owner_id + '_' + cursor.aid
+					
+					}
+		} else{
+			return false;
+		}
+		
+	},
+	getAudioById: function(id, callback, error, nocache, after_ajax, only_cache){
+		var _this = this;
+		if (typeof su == 'object' && su.track_event){
+			su.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
+		}
+		var used_successful = this.use('audio.getById', {audios: id}, 
+		function(r, hapi){
+			if (r && r.response && r.response[0]){
+				var entity = _this.makeVKSong(r.response[0], hapi);
+				if (entity){
+					if (callback) {callback(entity, _this.search_source);}
+				} else{
+					if (error) {error(_this.search_source);}
+				}
+			} else{
+				if (error) {error(_this.search_source);}
+			}
+			console.log(r);
+			return 
+			
+		}, function(xhr, hapi){
+			if (error){error(_this.search_source);}
+		}, {
+			nocache: nocache, 
+			after_ajax: after_ajax, 
+			cache_key: id, 
+			only_cache: only_cache,
+			not_init_queue: true
+		});
+		return used_successful;
+	},
 	audio_search: function(query, callback, error, nocache, after_ajax, only_cache){
 		
 		
@@ -217,19 +267,9 @@ vk_api.prototype = {
 			if (r.response && (r.response.length > 1 )) {
 				var music_list = [];
 				for (var i=1, l = r.response.length; i < l; i++) {
-					var vksong = r.response[i];
-					var entity = {
-						artist	: HTMLDecode(vksong.artist ? vksong.artist : vksong.audio.artist),
-						duration	: vksong.duration ? vksong.duration : vksong.audio.duration,
-						link		: vksong.url ? vksong.url : vksong.audio.url,
-						track		: HTMLDecode(vksong.title ? vksong.title : vksong.audio.title),
-						from		: 'vk',
-						downloadable: hapi,
-						_id			: vksong.owner_id + '_' + vksong.aid
+					var entity = _this.makeVKSong( r.response[i], hapi);
 					
-					};
-					
-					if (!entity.link.match(/audio\/.mp3$/) && !has_music_copy(music_list,entity)){
+					if (entity && !entity.link.match(/audio\/.mp3$/) && !has_music_copy(music_list,entity)){
 						music_list.push(entity);
 					}
 				
@@ -241,6 +281,7 @@ vk_api.prototype = {
 					if (error) {error(_this.search_source);}
 				}
 			
+
 			} else{
 				if (error) {error(_this.search_source);}
 			}
