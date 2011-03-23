@@ -1,6 +1,7 @@
 $.ajaxSetup({
   cache: true,
-  global:false
+  global:false,
+  timeout:40000
 });
 $.support.cors = true;
 
@@ -523,8 +524,11 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 		return this.playlist_type == puppet.playlist_type && (!this.key && !this.key || this.key == puppet.key);
 	};
 	pl.kill = function(){
-		this.ui.remove();
-		delete this.ui;
+		if (this.ui){
+			this.ui.remove();
+			delete this.ui;
+		}
+		
 		
 		for (var i = this.length - 1; i >= 0; i--){
 			this[i].kill();
@@ -710,7 +714,7 @@ var render_recommendations = function(){
 			proxy_render_artists_tracks(artist_list,pl_r);
 		}
 	}, function(){
-		proxy_render_artists_tracks();
+		proxy_render_artists_tracks(false, pl_r);
 	},false, true);
 
 	seesu.ui.views.show_playlist_page(pl_r);

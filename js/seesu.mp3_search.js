@@ -38,13 +38,13 @@ var song_methods = {
 	},
 	getURLPart: function(){
 		var url ="";
-		if (this.plst_titl.playlist_type =='tracks'){
+		if (!this.plst_titl || this.plst_titl.playlist_type =='tracks'){
 			if (this.raw){
 				url += "/" + this.from + '/' + this._id;
 			}
 		}
 		
-		if (this.plst_titl.playlist_type == 'artist'){
+		if (this.plst_titl && this.plst_titl.playlist_type == 'artist'){
 			if (this.track){
 				url += '/' + '_/'+ this.track;
 			}
@@ -71,8 +71,11 @@ var song_methods = {
 		return !!this.raw || !!this.sem && this.sem.have_best;
 	},
 	kill: function(){
-		this.ui.remove();
-		delete this.ui;
+		if (this.ui){
+			this.ui.remove();
+			delete this.ui;
+		}
+		
 	}
 };
 var extendSong = function(mo){
@@ -589,7 +592,56 @@ music_seach_emitter.prototype = {
 };
 su.mp3_search= (function(){
 		var s = [];
+		s.ids=[];
 		s.search_emitters = {};
+		s.updateStoringOfId = function(really_save, subraw, handler, stillNeed, i){
+				if (this.ids[i]){
+					if (!really_save){
+						delete this.ids[i]
+					}
+					
+				} else{
+					if (really_save){
+						if (stillNeed){
+							this.ids.push({
+								subraw: subraw,
+								handler: handler,
+								stillNeed: stillNeed});
+						}
+						
+					}
+				}
+		};
+		s.getById = function(subraw, callback, stillNeed, wait, i){
+			var _this= this;
+			if (callback && subraw && subraw.id && subraw.type){
+				var enjs = this.getMasterSlaveSearch(subraw.type);
+				var enj = (enjs && (enjs.exist_alone_master || enjs.exitst_master_of_slave || enjs.exist_slave));
+				if (enj){
+					var q = enj.getById(subraw.id, 
+						function(song){
+							song.raw = true;
+							_this.updateStoringOfId(callback(song), subraw, callback, stillNeed, i);
+						}, 
+						function(){
+							_this.updateStoringOfId(callback(), subraw, callback, stillNeed, i);
+						}, false, wait);
+					if (q && q.q && q.q.init){
+						q.q.init();
+					}	
+						
+				} else{
+					this.updateStoringOfId(callback(false, true), subraw, callback, stillNeed, i);
+				}
+			} else{
+				callback();
+			}
+			
+			
+				
+		};
+		
+		
 		s.abortAllSearches = function(){
 			for (var i=0; i < this.length; i++) {
 				if (this[i].q && this[i].q.abort){
@@ -746,10 +798,10 @@ su.mp3_search= (function(){
 			}
 			
 		};
-		var newSearchInit = function(){
-			for (var am in this.search_emitters){
-				if (this.search_emitters[am] instanceof music_seach_emitter){
-					delete this.search_emitters[am].search_completed;
+		var newSearchInit = function(filter){
+			for (var am in s.search_emitters){
+				if (s.search_emitters[am] instanceof music_seach_emitter){
+					delete s.search_emitters[am].search_completed;
 				}
 			}
 			if (su.player){
@@ -769,6 +821,16 @@ su.mp3_search= (function(){
 					
 				}
 			}
+			for (var i=0; i < s.ids.length; i++) {
+				var cursor = s.ids[i];
+				if (cursor && cursor.subraw.type == filter){
+					if (cursor.stillNeed()){
+						s.getById(cursor.subraw, cursor.handler, false, i);
+					} else{
+						s.updateStoringOfId(false, false, false, false, i);
+					}
+				}
+			};
 			
 		};
 		s.getMasterSlaveSearch = function(filter){
@@ -833,17 +895,17 @@ su.mp3_search= (function(){
 					
 					this.push(asearch);
 					o.exist_slave.preferred = asearch;
-					newSearchInit();
+					newSearchInit(asearch.name);
 				} 
 			} else if (o.exist_alone_master){
 				if (force){
 					o.exist_alone_master.disabled = true;
 					this.push(asearch);
-					newSearchInit();
+					newSearchInit(asearch.name);
 				}
 			} else{
 				this.push(asearch);
-				newSearchInit();
+				newSearchInit(asearch.name);
 			}
 		}
 
@@ -858,21 +920,14 @@ if (typeof soundcloud_search != 'undefined'){
 			test: function(mo){
 				return canUseSearch(mo, sc_search_source);
 			},
+			getById: soundcloudGetById,
 			search: soundcloud_search,
 			name: sc_search_source.name,
 			description:'soundcloud.com',
 			slave: false,
 			s: sc_search_source,
 			preferred: null,
-			q: su.soundcloud_queue,
-			getById: function(id, callback, needsAuth){
-				if (callback){
-					callback();
-				}
-				/*
-				http://api.soundcloud.com/tracks/10672593/download?consumer_key=HNVCUV6apk9ANn8tLERpag
-				return HNVCUV6apk9ANn8tLERpag*/
-			}
+			q: su.soundcloud_queue
 		})
 		
 		

@@ -30,6 +30,12 @@ views.prototype = {
 				show: function(){
 					return this.conie.show()
 				},
+				wait: function(){
+					this.tracks_container.addClass('loading');
+				},
+				ready: function(){
+					this.tracks_container.removeClass('loading');
+				},
 				info_container: $('<div class="playlist-info"></div>').appendTo(conie),
 				tracks_container: $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(conie)
 			};
@@ -177,7 +183,7 @@ views.prototype = {
 			lev.context.pl = pl; 
 			pl.ui = lev.ui;
 			if (pl.loading){
-				pl.ui.tracks_container.addClass('loading');
+				pl.ui.wait()
 			}
 			
 			lev.setURL(getUrlOfPlaylist(pl));
@@ -332,9 +338,11 @@ seesu_ui.prototype = {
 		
 		
 		var songitself = $('<a class="js-serv"></a>')
+			.attr('href', 'http://seesu.me/o#/ds' + song_methods.getURLPart.call(mopla))
 			.text(mopla.artist + " - " + mopla.track)
 			.click(function(){
 				su.player.play_song(mo, true, mopla)
+				return false;
 			}).appendTo(main_part);
 			
 		var d = $('<span class="duration"></span>').appendTo(desc_part);
@@ -778,7 +786,7 @@ seesu_ui.prototype = {
 		}
 		var ui = pl.ui.tracks_container;
 		if (load_finished){
-			ui.removeClass('loading')
+			pl.ui.ready();
 			pl.loading = false;
 		}
 		
