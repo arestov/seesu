@@ -4,9 +4,8 @@ var big_map = {
 	},
 	freezeCurrentMap: function(){
 		this.freezed_map = this.current_map.freezeMapOfLevel(10);
-	},
-	
-}
+	}	
+};
 
 function browseMap(){
 	this.levels = [];

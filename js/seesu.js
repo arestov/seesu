@@ -128,7 +128,7 @@ window.seesu = window.su =  {
 		}
 
 		
-	  },
+	  }
 	};
 
 var detach_vkapi = function(search_way, timeout){

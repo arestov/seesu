@@ -219,10 +219,10 @@ window.app_env = (function(){
 		} else if (env.url.language === '3'){
 			env.lang = 'en';
 		} else{
-			env.lang = navigator.language.slice(0,2).toLowerCase();
+			env.lang = (navigator.language || navigator.browserLanguage).slice(0,2).toLowerCase();
 		}
 	} else{
-		env.lang = navigator.language.slice(0,2).toLowerCase();
+		env.lang = (navigator.language || navigator.browserLanguage).slice(0,2).toLowerCase();
 	}
 	
 	if (env.check_resize){

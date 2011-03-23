@@ -78,7 +78,7 @@ sm2_p.prototype = {
 			} else{
 				s = this.core.createSound({
 					id: url, // required
-					url: url, // required
+					url: url // required
 				});
 				this.songs[url] = true;
 			}
