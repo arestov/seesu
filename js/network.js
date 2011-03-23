@@ -68,8 +68,7 @@ function try_api(callback, do_not_repeat){
 		auth_to_vkapi({
 			secret: _u.secret,
 			sid: _u.sid,
-			mid:  _u.viewer_id,
-			
+			mid:  _u.viewer_id
 		}, false, _u.api_id, false, false, function(){
 			if (callback){callback();}
 			if (_u.api_settings & 8){
@@ -118,7 +117,7 @@ function try_api(callback, do_not_repeat){
 };
 
 function try_mp3_providers(){
-	
+	return
 	if (seesu.env.cross_domain_allowed){
 		try_hapi();
 	} else{

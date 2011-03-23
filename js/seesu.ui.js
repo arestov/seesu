@@ -407,26 +407,12 @@ seesu_ui.prototype = {
 		if (!mo.ui){
 			return false;
 		}
-		if (mo.wheneWasChanged() >= mo.ui.files_time_stamp){
+		if (mo.wheneWasChanged() > mo.ui.files_time_stamp){
 		
 			var _sui = this;
 			var c = mo.ui.files;
 			c.empty();
-			/*
-			var no_vk = mo.failedFor('vk');
-			if (no_vk){
-				
-			}*/
-			var small_head = $('<div class="files-header"></div>').appendTo(c);
-			
-			
-			small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
-			
-			var desc_text = $('<span class="desc-text"></span>').appendTo(small_head);
-			
-			
-	
-			
+
 			var songs = mo.songs();
 			
 			if (mo.isSearchCompleted()){
@@ -443,6 +429,12 @@ seesu_ui.prototype = {
 			
 			
 			if (songs){
+				
+				var small_head = $('<div class="files-header"></div>').appendTo(c);
+				small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
+				var desc_text = $('<span class="desc-text"></span>').appendTo(small_head);
+				
+				
 				var sc = $('<div class="files-lists"></div>');
 				
 				var just_link;
@@ -479,7 +471,7 @@ seesu_ui.prototype = {
 			if (false && mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('soundcloud')){
 				desc.append('<p>try to connect soundcloud search</p>')
 			}
-			mo.ui.files_time_stamp = mo.wheneWasChanged();
+			mo.ui.files_time_stamp = +new Date();
 		}
 	},
 	update_artist_info: function(artist, a_info, show_link_to_artist_page){
@@ -778,28 +770,32 @@ seesu_ui.prototype = {
 		}
 	},
 	render_playlist: function(pl, load_finished) { // if links present than do full rendering! yearh!
-		var _sui = this;
-		if (pl.ui && !pl.ui.has_info && pl.playlist_type == 'artist'){
-			//pl.ui.a_info = this.samples.a_info.clone().appendTo(pl.ui.info_container);
-			//pl.ui.has_info = true;
-			//this.update_artist_info(pl.key, pl.ui.a_info);
-		}
-		var ui = pl.ui.tracks_container;
-		if (load_finished){
-			pl.ui.ready();
-			pl.loading = false;
-		}
 		
-		if (!pl.length){
-			ui.append('<li>' + localize('nothing-found','Nothing found') + '</li>');
-		} else {
-			for (var i=0, l = pl.length; i < l; i++) {
-				var mo = pl[i];
-				mo.render();
+		if (pl.ui){
+			var _sui = this;
+			if (pl.ui && !pl.ui.has_info && pl.playlist_type == 'artist'){
+				//pl.ui.a_info = this.samples.a_info.clone().appendTo(pl.ui.info_container);
+				//pl.ui.has_info = true;
+				//this.update_artist_info(pl.key, pl.ui.a_info);
 			}
-			su.player.fix_songs_ui();
+			var ui = pl.ui.tracks_container;
+			if (load_finished){
+				pl.ui.ready();
+				pl.loading = false;
+			}
+			
+			if (!pl.length){
+				ui.append('<li>' + localize('nothing-found','Nothing found') + '</li>');
+			} else {
+				for (var i=0, l = pl.length; i < l; i++) {
+					var mo = pl[i];
+					mo.render();
+				}
+				su.player.fix_songs_ui();
+			}
+			return pl.ui
 		}
-		return pl.ui
+
 	},
 	updateSong: function(mo, not_rend){
 		var _sui = this;

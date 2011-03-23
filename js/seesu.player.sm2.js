@@ -78,11 +78,13 @@ sm2_p.prototype = {
 			} else{
 				s = this.core.createSound({
 					id: url, // required
-					url: url, // required
+					url: url // required
 				});
 				this.songs[url] = true;
 			}
-			s.load();
+			if (this.songs[url] != this.songs[this.current_song]){
+				s.load();
+			}
 			return s;
 		},
 		"play_song_by_url" : function(url){

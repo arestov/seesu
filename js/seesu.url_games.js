@@ -1,16 +1,29 @@
 if (app_env.needs_url_history) {
 	if ('onhashchange' in window){
-		window.onhashchange = function(e){
-			if (typeof hashchangeHandler == 'function'){
-				var have_new_hash = e.newURL.indexOf('#')+1;
-				var have_old_hash = e.oldURL.indexOf('#')+1;
-				hashchangeHandler({
-					newURL: have_new_hash ? e.newURL.slice(have_new_hash) : '',
-					oldURL: have_old_hash ? e.oldURL.slice(have_old_hash) : ''
-				})
+		(function(){
+			var hash = location.hash;
+			window.onhashchange = function(e){
+				var newhash = location.hash;
+				if (newhash != hash){
+					if (typeof hashchangeHandler == 'function'){
+						var hnew = e.newURL || newhash;
+						var hold = e.oldURL || hash
+						var have_new_hash = hnew.indexOf('#')+1;
+						var have_old_hash = hold.indexOf('#')+1;
+						hashchangeHandler({
+							newURL: have_new_hash ? hnew.slice(have_new_hash) : '',
+							oldURL: have_old_hash ? hold.slice(have_old_hash) : ''
+						})
+					}
+					hash = newhash;
+				}
+				
+				
 			}
 			
-		}
+			
+		})()
+		
 	} else{
 		(function(){
 			var hash = location.hash;

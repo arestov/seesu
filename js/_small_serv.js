@@ -33,7 +33,16 @@ function bN(num){
 	http://friendfeed.com/yodapunk/935ad55d/o-rly-opera-cc-pepelsbey-foolip-erikdahlstrom
 	*/
 	return !!(1* (~num));
-}
+};
+function extCarefully(target, donor, white_list){
+	for (var prop in donor) {
+		if (!white_list || bN(white_list.indexOf(prop))){
+			target[prop] = donor[prop];
+		}
+	}
+};
+
+
 var addClass = function(old_c, cl){
 	
 	var add_c = cl.split(' ');
@@ -219,10 +228,10 @@ window.app_env = (function(){
 		} else if (env.url.language === '3'){
 			env.lang = 'en';
 		} else{
-			env.lang = navigator.language.slice(0,2).toLowerCase();
+			env.lang = (navigator.language || navigator.browserLanguage).slice(0,2).toLowerCase();
 		}
 	} else{
-		env.lang = navigator.language.slice(0,2).toLowerCase();
+		env.lang = (navigator.language || navigator.browserLanguage).slice(0,2).toLowerCase();
 	}
 	
 	if (env.check_resize){
