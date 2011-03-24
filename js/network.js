@@ -117,11 +117,21 @@ function try_api(callback, do_not_repeat){
 };
 
 function try_mp3_providers(){
-	return
 	if (seesu.env.cross_domain_allowed){
 		try_hapi();
 	} else{
 		console.log('heyayy!')
+		addEvent(window, "storage", function(e){
+			if (e && e.key && e.key == 'fresh_vk_session' && e.newValue){
+				set_vk_auth(e.newValue), true);
+				seesu.track_event('Auth to vk', 'auth', 'from iframe post message');
+				localStorage.removeItem('fresh_vk_session');
+			}
+		});
+		try_api();
+		
+		
+		return
 		addEvent(window, "message", function(e){
 			if (e.origin == "http://seesu.me") {
 				if (e.data.match(/^set_vk_auth\n/)){
