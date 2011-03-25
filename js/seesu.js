@@ -254,7 +254,7 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 
 window.set_vk_auth = function(vk_session, save_to_store){
 	var vk_s = JSON.parse(vk_session);
-	return auth_to_vkapi(vk_s, save_to_store, 1915003, try_api);
+	return auth_to_vkapi(vk_s, save_to_store, 1915003, try_clear_api);
 
 };
 function stringifyParams(params, ignore_params, splitter){
