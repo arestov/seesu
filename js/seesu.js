@@ -131,11 +131,14 @@ window.seesu = window.su =  {
 	  }
 	};
 
-var detach_vkapi = function(search_way, timeout){
+var detach_vkapi = function(search_way, timeout, dead){
 	return setTimeout(function(){
-		search_way.dead = true;
+		if (dead){
+			search_way.dead = true;
+		}
+		
 		search_way.disabled = true;
-	}, timeout);
+	}, timeout || 10);
 };
 var testVKAccaunt = function(array){
 	var tvkapi = new vk_api(array, new funcs_queue(1000, 8000 , 7));
@@ -176,14 +179,14 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 				if (vk_s.expire){
 					var end = (vk_s.expire - rightnow)*1000;
 					if (fallback){
-						var _t = detach_vkapi(_vkapi.asearch, end + 10000);
+						var _t = detach_vkapi(_vkapi.asearch, end + 10000, true);
 						setTimeout(function(){
 							fallback(function(){
 								clearTimeout(_t);
 							});
 						}, end);
 					} else{
-						detach_vkapi(_vkapi.asearch, end);
+						detach_vkapi(_vkapi.asearch, end, true);
 					}
 				}
 				
@@ -235,7 +238,10 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 			
 		},function(){
 			detach_vkapi(_vkapi.asearch);
-			fallback(false, true);
+			if (fallback){
+				fallback(false, true);
+			}
+			
 		});
 		return _vkapi;
 		
