@@ -19,7 +19,41 @@ var get_youtube = function(q, callback){
 	}
 	
 };
+var clear_vk_quene = new funcs_queue(15000);
 
+function try_clear_api(callback, do_not_repeat){
+	
+	clear_vk_quene.add(function(){
+		var sm = $('#slider-materail');
+		var remove_iframe_ru = function(e){
+			setTimeout(function(){
+				$(e.target).remove();
+				console.log('removed ru!');
+			},5000)
+			
+			
+			var remove_iframe_com = function(e){
+				setTimeout(function(){
+					$(e.target).remove();
+					console.log('removed ru!');
+				},5000)
+			
+			}
+			
+			var tvk_com = $('<iframe id="test_vk_auth_com" class="serv-container" src="http://vk.com/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
+			.bind('load',remove_iframe_com);
+			sm.append(tvk_com);
+		}
+		
+		var tvk_ru =  $('<iframe id="test_vk_auth_ru" class="serv-container" src="http://vkontakte.ru/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
+			.bind('load',remove_iframe_ru);
+		
+		sm.append(tvk_ru);
+	});
+	
+	
+	
+};
 
 function try_api(callback, do_not_repeat){
 	var try_saved_auth = function(){
@@ -76,33 +110,7 @@ function try_api(callback, do_not_repeat){
 		
 		
 	} else{
-		if (!do_not_repeat){
-			var sm = $('#slider-materail');
-			var remove_iframe_ru = function(e){
-				setTimeout(function(){
-					$(e.target).remove();
-					console.log('removed ru!');
-				},5000)
-				
-				
-				var remove_iframe_com = function(e){
-					setTimeout(function(){
-						$(e.target).remove();
-						console.log('removed ru!');
-					},5000)
-				
-				}
-				
-				var tvk_com = $('<iframe id="test_vk_auth_com" class="serv-container" src="http://vk.com/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
-				.bind('load',remove_iframe_com);
-				sm.append(tvk_com);
-			}
-			
-			var tvk_ru =  $('<iframe id="test_vk_auth_ru" class="serv-container" src="http://vkontakte.ru/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
-				.bind('load',remove_iframe_ru);
-			
-			sm.append(tvk_ru)
-		}
+		try_clear_api(callback, do_not_repeat);
 		
 		
 		
@@ -121,6 +129,7 @@ function try_mp3_providers(){
 		console.log('heyayy!')
 		addEvent(window, "storage", function(e){
 			if (e && e.key && e.key == 'fresh_vk_session' && e.newValue){
+				clear_vk_quene.reset();
 				set_vk_auth(e.newValue, true);
 				seesu.track_event('Auth to vk', 'auth', 'from iframe post message');
 				localStorage.removeItem('fresh_vk_session');
