@@ -22,34 +22,6 @@ var get_youtube = function(q, callback){
 
 
 function try_api(callback, do_not_repeat){
-	if (su.env.vkontakte){
-		su.vk_app_mode = true;
-		console.log('ginsa?')
-		var _s = document.createElement('script');
-		_s.src='http://vk.com/js/api/xd_connection.js';
-		_s.onload = function(){
-			if (window.VK){
-				VK.init(function(){});
-				VK.addCallback('onSettingsChanged', function(sts){
-					if (sts & 8){
-						
-						
-						
-					} else{
-						
-					}
-				});
-				documentScrollSizeChangeHandler = function(height){
-					VK.callMethod("resizeWindow", 640, Math.max(580, height + 70));
-				}
-			}
-			
-		};
-		document.documentElement.firstChild.appendChild(_s);
-	}
-	
-	
-	
 	var try_saved_auth = function(){
 		var vk_session_stored = w_storage('vk_session'+1915003);
 		if (vk_session_stored){
@@ -62,21 +34,47 @@ function try_api(callback, do_not_repeat){
 	var _u = su._url;
 	
 	
-	if (_u.api_id && _u.viewer_id && _u.sid && _u.secret){
-		
-		
-		auth_to_vkapi({
+	if (su.env.vkontakte && _u.api_id && _u.viewer_id && _u.sid && _u.secret){
+		su.vk_app_mode = true;
+		console.log('ginsa?')
+		var stable_vk_api = auth_to_vkapi({
 			secret: _u.secret,
 			sid: _u.sid,
 			mid:  _u.viewer_id
 		}, false, _u.api_id, false, false, function(){
 			if (callback){callback();}
-			if (_u.api_settings & 8){
-				
+			if ((_u.api_settings & 8)*1){
+				stable_vk_api.asearch.disabled = false;
 			} else{
-				
+				stable_vk_api.asearch.disabled = true;
 			}
 		});
+		
+		
+		var _s = document.createElement('script');
+		_s.src='http://vk.com/js/api/xd_connection.js';
+		_s.onload = function(){
+			if (window.VK){
+				VK.init(function(){});
+				VK.addCallback('onSettingsChanged', function(sts){
+					if ((sts & 8)*1){
+						if (!stable_vk_api.asearch.dead){
+							stable_vk_api.asearch.disabled = false;
+						}
+						
+					} else{
+						stable_vk_api.asearch.disabled = true;
+					}
+				});
+				documentScrollSizeChangeHandler = function(height){
+					VK.callMethod("resizeWindow", 640, Math.max(580, height + 70));
+				}
+			}
+			
+		};
+		document.documentElement.firstChild.appendChild(_s);
+		
+		
 	} else{
 		if (!do_not_repeat){
 			var sm = $('#slider-materail');
@@ -123,7 +121,7 @@ function try_mp3_providers(){
 		console.log('heyayy!')
 		addEvent(window, "storage", function(e){
 			if (e && e.key && e.key == 'fresh_vk_session' && e.newValue){
-				set_vk_auth(e.newValue), true);
+				set_vk_auth(e.newValue, true);
 				seesu.track_event('Auth to vk', 'auth', 'from iframe post message');
 				localStorage.removeItem('fresh_vk_session');
 			}

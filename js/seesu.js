@@ -133,6 +133,7 @@ window.seesu = window.su =  {
 
 var detach_vkapi = function(search_way, timeout){
 	return setTimeout(function(){
+		search_way.dead = true;
 		search_way.disabled = true;
 	}, timeout);
 };
@@ -236,6 +237,7 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 			detach_vkapi(_vkapi.asearch);
 			fallback(false, true);
 		});
+		return _vkapi;
 		
 		
 		
@@ -248,7 +250,7 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 
 window.set_vk_auth = function(vk_session, save_to_store){
 	var vk_s = JSON.parse(vk_session);
-	auth_to_vkapi(vk_s, save_to_store, 1915003, try_api);
+	return auth_to_vkapi(vk_s, save_to_store, 1915003, try_api);
 
 };
 function stringifyParams(params, ignore_params, splitter){
