@@ -213,7 +213,7 @@ localizer = {
 		ru: 'Сделать все песни доступными'
 	},
 	"playlist-export": {
-		"original": "Export m3u playlist",
+		"original": "Save playlist to *.m3u file",
 		ru: "Сохранить плейлист в m3u файл"
 	},
 	"addsong": {

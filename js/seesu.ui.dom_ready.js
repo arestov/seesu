@@ -149,13 +149,26 @@ window.connect_dom_to_som = function(d, ui){
 		ui.els = {
 			scrolling_viewport: $('#screens',d),
 			make_trs: $("#make-trs-plable",d).click(function(){
-				make_tracklist_playable(ui.els.make_trs.hide().data('pl'), true);
-				seesu.track_event('Controls', 'make playable all tracks in playlist'); 
+				var plc = su.ui.views.getCurrentPlaylistContainer();
+				var pl = plc && plc.context && plc.context.pl;
+				if (pl){
+					make_tracklist_playable(pl, true);
+					seesu.track_event('Controls', 'make playable all tracks in playlist'); 
+				}
+				
 			}),
 			slider: slider,
 			nav_playlist_page: d.getElementById('nav_playlist_page'),
 			nav_track_zoom: $('#nav_track_zoom',d),
-			export_playlist: $('#open-external-playlist',d),
+			export_playlist: $('#open-external-playlist',d).click(function(){
+				make_external_playlist();
+				if (seesu.player.current_external_playlist.result) {
+					open_url(
+						'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(seesu.player.current_external_playlist.result)
+					)
+				}
+				return false;
+			}),
 			start_screen: $('#start-screen',d),
 			pllistlevel: pllistlevel,
 			artsTracks: pllistlevel.find('#tracks-magic'),
