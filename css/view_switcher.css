@@ -47,6 +47,7 @@
 	display:none;
 	max-width: 750px;
 	margin:0 auto;
+	position: relative;
 }
 
 #search-desciption{
@@ -158,14 +159,7 @@ li.playing-song .play-controls{
 		font-size:1.3em;
 		cursor:default;
 		}
-.show-zoom-to-track .track-context{
-	
-	}
 
-
-.show-zoom-to-track #playlist-level{
-	position: relative;
-} 
 
 .show-zoom-to-track ul.tracks-for-play>li{
 	display:none;
