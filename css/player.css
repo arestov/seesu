@@ -297,6 +297,11 @@ p.internet-flash-settings{
 				color:#999;
 				border-bottom-color:#ccc  !important;
 				}
+	#playlist-search.close-to-right #playlist-search-con{
+		position:absolute;
+		right: -50px;
+	}			
+	
 	#playlist-search h4{
 		margin:0 0 10px;
 		padding:0;

@@ -8,13 +8,24 @@
 	padding-left:6px;
 	margin-bottom:10px;
 	overflow:hidden;
-	height:16px;
+	height:20px;
 }
 #open-external-playlist{
 	display:none;
+	position:relative;
 }
 #open-external-playlist.can-be-used{
 	display:inline;
+}
+#open-external-playlist .music-programs{
+	position:absolute;
+	width:61px;
+	height:18px;
+	right:-64px;
+	background:url(../i/icons_programs_inactive.png) no-repeat 0 0;
+}
+#open-external-playlist:hover .music-programs{
+	background-image:url(../i/icons_programs.png)
 }
 #tracks-waiting-for-search{
 	position: absolute;

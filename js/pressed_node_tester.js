@@ -1,6 +1,6 @@
 var test_pressed_node = function(e, mouseup){
 	var node = e.target;
-  	var class_name = node.className;
+	var class_name = node.className;
 	var clicked_node = $(node);
 	
 		if(clicked_node.is('a')) {
@@ -14,7 +14,7 @@ var test_pressed_node = function(e, mouseup){
 			return false;
 		  }
 		  else if (class_name.match(/sign-in-to-vk/)){
-		  	if (seesu.env.cross_domain_allowed){
+			if (seesu.env.cross_domain_allowed){
 				clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
 			} else{
 				var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
@@ -34,11 +34,6 @@ var test_pressed_node = function(e, mouseup){
 		  else if (class_name.match(/flash-s$/)){
 			open_url('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 			seesu.track_event('Links', 'flash security');
-			return false;
-		  }
-		  else if (bN(class_name.indexOf('external'))){
-		  	open_url(clicked_node.attr('href'));
-			seesu.track_event('Links', 'just link');
 			return false;
 		  }
 		  else if (class_name.match(/\bartist\b[^\-]/)){
@@ -67,7 +62,7 @@ var test_pressed_node = function(e, mouseup){
 			return false;
 		  }
 		  else if (class_name.match(/similar-artists/)){
-		  	var artist = clicked_node.data('artist');
+			var artist = clicked_node.data('artist');
 			render_tracks_by_similar_artists(artist);
 			seesu.track_event('Artist navigation', 'similar artists to', artist);
 		  }
@@ -77,27 +72,21 @@ var test_pressed_node = function(e, mouseup){
 		  else if (class_name.match(/search-music-files/)){
 			clicked_node.parent().toggleClass('want-to-select-mp3-search');
 		  }
-		  else if (class_name.match(/open-external-playlist/)){
-		  	
-			make_external_playlist();
-			if (seesu.player.current_external_playlist.result) {
-				open_url(
-					'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(seesu.player.current_external_playlist.result)
-				)
-		  	}
-			
-			return false
+		  else if (bN(class_name.indexOf('external'))){
+			open_url(clicked_node.attr('href'));
+			seesu.track_event('Links', 'just link');
+			return false;
 		  }
 		  else if (class_name.match(/seesu-me-link/)){
-		  	open_url(node.href)
-		  	return false;
+			open_url(node.href)
+			return false;
 		  }
 		  else if (class_name.match(/hint-query/)){
-		  	var query = clicked_node.text();
-		  	su.ui.search(query);
-		  	clicked_node.text(seesu.popular_artists[(Math.random()*10).toFixed(0)]);
-		  	seesu.track_event('Navigation', 'hint artist');
-		  	return false;
+			var query = clicked_node.text();
+			su.ui.search(query);
+			clicked_node.text(seesu.popular_artists[(Math.random()*10).toFixed(0)]);
+			seesu.track_event('Navigation', 'hint artist');
+			return false;
 		  }
 		}  else if ((node.nodeName == 'INPUT' || node.nodeName == 'BUTTON')) {
 			if (class_name.match(/tb-mess-wrap-close/)){
