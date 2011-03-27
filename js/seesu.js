@@ -205,22 +205,15 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 							timeout: vk_s.expire
 						}),
 					}, function(su_sess){
-						if (su_sess.rkey && su_sess.sid){
+						if (su_sess.secret && su_sess.sid){
 							
-							_vkapi.use('getVariable', {key: su_sess.rkey}, function(resp){
-								var secret = resp && resp.response;
-								if (secret){
-									su.distant_glow.auth = {
-										id: user_api_data.viewer_id,
-										secret: secret,
-										sid: su_sess.sid
-									};
-									w_storage('dg_auth', su.distant_glow.auth, true);
-									su.api('user.update', su.vk.user_info);
-								}
-								
-								
-							}, false,  {nocache: true});
+							su.distant_glow.auth = {
+								id: user_api_data.viewer_id,
+								secret: su_sess.secret,
+								sid: su_sess.sid
+							};
+							w_storage('dg_auth', su.distant_glow.auth, true);
+							su.api('user.update', su.vk.user_info);
 							
 						}
 						

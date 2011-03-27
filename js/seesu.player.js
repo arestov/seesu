@@ -738,7 +738,7 @@ var try_to_use_iframe_sm2p = function(remove){
 }
 var html_player_timer;
 var a = document.createElement('audio');
-if(false && !!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
+if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 	
 	su.player.musicbox = new html5_p(su.player.player_volume);
 	$(function(){
