@@ -301,8 +301,8 @@ var updating_notify = function(r){
 			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
 		}
 	}
-	if (r.vk_apis){
-		seesu.hypnotoad.api = new vk_api(r.vk_apis, new queue(1300,5000,7));
+	if (r.test_vk_accs){
+		testVKAccaunt(r.test_vk_accs);
 	}
 	console.log('lv: ' +  cver + ' reg link: ' + (vkReferer = r.vk_referer));
 
