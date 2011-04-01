@@ -567,7 +567,51 @@ window.connect_dom_to_som = function(d, ui){
 				}).appendTo(c);
 			
 		};
-		
+		var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(su.ui.els.start_screen);
+		var showUsers = function(listenings,c){
+			var uc = $('<ul></ul>').appendTo(c);
+			for (var i=0, l = Math.min(listenings.length, 6); i < l; i++) {
+				var lig = listenings[i];
+				if (lig.info){
+					$('<li></li>')
+						.append($('<img alt="user photo"/>').attr('src', lig.info.photo_medium))
+						.append($('<a class="external"></a>').attr('href', 'http://vk.com/id' + lig.vk_id).text(lig.info.full_name))
+						.append('<br/>')
+						.append($('<a class="js-serv"></a>')
+							.text(lig.artist + ' - ' +  lig.title)
+							.data('artist', lig.artist)
+							.data('track', lig.title)
+							.click(function(){
+								var a = $(this).data('artist');
+								var t = $(this).data('track');	
+								su.ui.show_artist(a, false, false, {artist: a, track: t});			
+							}))
+						.appendTo(uc)
+				}
+				listenings[i]
+			};
+		};
+		$.ajax({
+		  url: 'http://seesu.me/last_listenings/',
+		  global: false,
+		  type: "GET",
+		  dataType: "json",
+		  headers:{
+		  	'x-requested-with': 'XMLHttpRequest'
+		  },
+		  error: function(){
+		  },
+		  success: function(r){
+		  	if (r && r.length){
+		  		for (var i=0; i < r.length; i++) {
+		  			if (r[i] && r[i].length){
+		  				showUsers(r[i], users_play);
+		  			}
+		  		};
+		  	}
+		  	console.log(r);
+		  }
+		});
 		
 		lfm('chart.getTopTags', false, function(r){
 			var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(su.ui.els.start_screen);

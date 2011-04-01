@@ -383,7 +383,16 @@ display:none;
 	height:26px;
 	box-sizing:border-box;
 }
-
+.users-play-this{
+	overflow:hidden;
+	
+}
+.users-play-this li{
+	overflow:hidden;
+	float:left;
+	height:200px;
+	width:150px;
+}
 .tags-hyped{
 	overflow:hidden;
 	text-align: center;
