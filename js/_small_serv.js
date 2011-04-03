@@ -26,6 +26,10 @@ window.removeEvent = window.addEventListener ?
 		return func_name;
 	};	
 })();
+function getSomething(array){
+	return array[(Math.random()*(array.length-1)).toFixed(0)]
+};
+
 function bN(num){
 	/*
 	special for opera browser

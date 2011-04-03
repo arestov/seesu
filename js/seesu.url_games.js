@@ -541,6 +541,8 @@ function hashchangeHandler(e, force){
 						findAlbum(newstate.album_name, newstate.artist_name, true, tk);
 					} else if (newstate.type == 'ds' && newstate.search_type && newstate.search_id){
 						getMusicById({type:newstate.search_type, id:newstate.search_id}, true);			
+					} else{
+						console.log('can\'t do anythifg');
 					}
 					
 					console.log('realy fresh  neewwwww state');

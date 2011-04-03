@@ -47,7 +47,7 @@
 
 a.song{
 	padding:3px 1px 0;
-	color:#A1D404;
+	color:#ccc;
 	border:0  !important;
 	border-radius:4px;
 	}
@@ -61,6 +61,13 @@ a.search-mp3{
 }
 a.loading{
 	background:url(../i/spinner.gif) no-repeat 100% 50%;
+}
+a.search-mp3-failed{
+	color:#5E5E5E;
+}
+a.waiting-full-render{
+	cursor:pointer;
+	color:gray;
 }
 a.track-node{
 	display:block;
@@ -81,12 +88,7 @@ a.track-node{
 		padding-left:10px;
 		width:35px;
 	}
-a.search-mp3-failed{
-	color:#666;
-}
-a.waiting-full-render{
-	cursor:pointer;
-}
+
 a.waiting-full-render.marked-for-play{
 	outline:1px dotted #888 ;
 }

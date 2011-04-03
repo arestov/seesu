@@ -50,13 +50,13 @@ var test_pressed_node = function(e, mouseup){
 		  }
 		  else if (class_name.match(/bbcode_artist/)){
 			
-			artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/','').replace('+', ' '));
+			artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
 			seesu.ui.show_artist(artist_name);
 			seesu.track_event('Artist navigation', 'bbcode_artist', artist_name);
 			return false;
 		  }
 		  else if (class_name.match(/bbcode_tag/)){
-			tag_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/tag/','').replace('+', ' '));
+			tag_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/tag/','').replace(/\+/g, ' '));
 			su.ui.show_tag(tag_name);
 			seesu.track_event('Artist navigation', 'bbcode_tag', tag_name);
 			return false;

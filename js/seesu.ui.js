@@ -197,7 +197,7 @@ views.prototype = {
 				pl.ui = lev.ui;
 				lev.setURL(getUrlOfPlaylist(pl));
 			}
-			seesu.ui.render_playlist(pl);
+			seesu.ui.render_playlist(pl, pl.length > 1);
 		}
 		
 		this.swithToPlaylistPage(pl, no_navi);
@@ -416,7 +416,7 @@ seesu_ui.prototype = {
 			var songs = mo.songs();
 			
 			if (mo.isSearchCompleted()){
-				if (!songs.length){
+				if (!songs.length && mo.isNeedsAuth('vk')){
 					c.prepend(_sui.samples.vk_login.clone())
 				} else if(!mo.isHaveAnyResultsFrom('vk')){
 					c.prepend(_sui.samples.vk_login.clone('enhancement'))
