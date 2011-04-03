@@ -6,8 +6,8 @@ if (app_env.needs_url_history) {
 				var newhash = location.hash;
 				if (newhash != hash){
 					if (typeof hashchangeHandler == 'function'){
-						var hnew = e.newURL || newhash;
-						var hold = e.oldURL || hash
+						var hnew = decodeURI(e.newURL || newhash);
+						var hold = decodeURI(e.oldURL || hash);
 						var have_new_hash = hnew.indexOf('#')+1;
 						var have_old_hash = hold.indexOf('#')+1;
 						hashchangeHandler({
@@ -26,9 +26,9 @@ if (app_env.needs_url_history) {
 		
 	} else{
 		(function(){
-			var hash = location.hash;
+			var hash = decodeURI(location.hash);
 			setInterval(function(){
-				var newhash = location.hash;
+				var newhash = decodeURI(location.hash);
 				if (newhash != hash){
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
@@ -541,6 +541,8 @@ function hashchangeHandler(e, force){
 						findAlbum(newstate.album_name, newstate.artist_name, true, tk);
 					} else if (newstate.type == 'ds' && newstate.search_type && newstate.search_id){
 						getMusicById({type:newstate.search_type, id:newstate.search_id}, true);			
+					} else{
+						console.log('can\'t do anythifg');
 					}
 					
 					console.log('realy fresh  neewwwww state');

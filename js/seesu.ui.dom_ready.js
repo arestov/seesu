@@ -292,8 +292,8 @@ window.connect_dom_to_som = function(d, ui){
 		var vk_save_pass = $('#vk-save-pass',d);
 		
 		  
-	  	if ($.browser.opera && ((typeof opera.version == 'function') && (parseFloat(opera.version()) <= 10.1)) ){
-	  		
+		if ($.browser.opera && ((typeof opera.version == 'function') && (parseFloat(opera.version()) <= 10.1)) ){
+			
 			$('<a id="close-widget">&times;</a>',d)
 				.click(function(){
 					window.close();
@@ -559,28 +559,180 @@ window.connect_dom_to_som = function(d, ui){
 		
 		var wow_tags= function(tag,c){
 			$('<a class="js-serv hyped-tag"></a> ')
-				.text(tag.name)
+				.text(tag)
 				.click(function(){
-					su.ui.show_tag(tag.name)
-					seesu.track_event('Navigation', 'hyped at start page', "tag: " + tag.name );
+					su.ui.show_tag(tag)
+					seesu.track_event('Navigation', 'hyped at start page', "tag: " + tag );
 					return false;
 				}).appendTo(c);
+			c.append(' ')
 			
 		};
+		var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(su.ui.els.start_screen);
+		var showUsers = function(listenings,c){
+			if (listenings.length){
+				
+					
+					
+				var uc = $('<ul></ul>');
+				for (var i=0, l = Math.min(listenings.length, 6); i < l; i++) {
+					var lig = listenings[i];
+					if (lig.info){
+						$('<li></li>')
+							.append("<p class='vk-ava'><img alt='user photo' src='" + lig.info.photo + "'/></p>")
+							.append($('<a class="external"></a>').attr('href', 'http://vk.com/id' + lig.vk_id).text(lig.info.first_name))
+							.append(document.createTextNode(' слушает '))
+							.append('<br/>')
+							.append($('<a class="js-serv"></a>')
+								.text(lig.artist + ' - ' +  lig.title)
+								.data('artist', lig.artist)
+								.data('track', lig.title)
+								.click(function(){
+									var a = $(this).data('artist');
+									var t = $(this).data('track');	
+									su.ui.show_artist(a, false, false, {artist: a, track: t});			
+								}))
+							.appendTo(uc)
+					}
+					listenings[i]
+				};
+				uc.appendTo(c)
+			}
+
+		};
+		var getAndShowUsersListenings = function(){
+			users_play.addClass('loading');
+			$.ajax({
+			  url: 'http://seesu.me/last_listenings/',
+			  global: false,
+			  type: "GET",
+			  dataType: "json",
+			  headers:{
+				'x-requested-with': 'XMLHttpRequest'
+			  },
+			  error: function(){
+			  	
+			  },
+			  success: function(r){
+				if (r && r.length){
+					if ([].concat.apply([],r).length){
+						users_play.empty();
+						var _header = $('<h3></h3>').appendTo(users_play)
+						.append(localize('User-listening','Users are listening'));
+						
+						$('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
+							getAndShowUsersListenings();
+							return false
+						}).appendTo(_header);
+						
+						for (var i=0; i < r.length; i++) {
+							if (r[i] && r[i].length){
+								showUsers(r[i], users_play);
+							}
+						};
+					}
+					
+					
+				}
+			  }, complete: function(){
+				users_play.removeClass('loading');
+			  }
+		  
+			});
+		}
+		getAndShowUsersListenings();
 		
 		
-		lfm('chart.getTopTags', false, function(r){
+		var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(su.ui.els.start_screen);
+		var createTrackLink = function(artist, track, track_obj, playlist){
+			return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(){
+				su.ui.views.show_playlist_page(playlist)
+				playlist.showExactlyTrack(track_obj);
+				return false;
+			});
+		};
+		var showMetroRandom = function(){
+			var random_metro = getSomething(lastfm_metros);
+			_cmetro.addClass('loading');
+			lfm('geo.getMetroUniqueTrackChart', {country:random_metro.country, metro:random_metro.name, start: new Date - 60*60*24*7}, function(r){
+				_cmetro.removeClass('loading');
+				if (r && r.toptracks && r.toptracks.track){
+					_cmetro.empty()
+					
+					var plr = prepare_playlist('Chart of ' + random_metro.name, 'cplaylist', random_metro.name);
+					
+					var metro_tracks = r.toptracks.track;
+					var _header =  $('<h3></h3>').appendTo(_cmetro)
+						.append(localize('last-week-с') + ' ' + random_metro.name)
+						.append('<span class="desc"> (' + random_metro.country + ') </span>')
+						.append(localize('listen-this') + " ");
+					$('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
+						showMetroRandom();
+						return false
+					}).appendTo(_header);
+						
+		
+					var ulm = $('<ul class="metro-tracks"></ul>');
+					var counter = 0;
+					for (var i=0; i < metro_tracks.length; i++) {
+						if (counter <30){
+							var _trm = metro_tracks[i];
+							
+							if (_trm.image){
+								var con = $('<li></li>').appendTo(ulm);
+								$('<img alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
+								
+								var tobj = {artist: _trm.artist.name, track: _trm.name};
+								plr.push(tobj);
+								createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
+								
+								
+								++counter;
+							
+							}
+						} else{
+							break
+						}
+					};
+					_cmetro.append(ulm)
+				} else{
+					
+				}
+			})
+		};
+		showMetroRandom();
+		
+		
+		
+		if (window.lastfm_toptags && lastfm_toptags.length){
+			var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(su.ui.els.start_screen);
+			$('<h3></h3>').appendTo(_c)
+							.append(localize('Pop-tags','Popular tags'));
+			for (var i=0; i < lastfm_toptags.length; i++) {
+				wow_tags(lastfm_toptags[i], _c);
+			};
+		}
+		
+		false && lfm('chart.getTopTags', false, function(r){
 			var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(su.ui.els.start_screen);
 			var pop_tags  = (r && r.tags && r.tags.tag) && ((r.tags.tag.length && r.tags.tag) || [r.tags.tag]);
+			var wtags = [];
+			dizi = wtags;
 			if (pop_tags){
+				var nbsp_char= String.fromCharCode(160);
 				for (var i=0; i < pop_tags.length; i++) {
-					wow_tags(pop_tags[i], _c);
+					wtags.push(pop_tags[i].name.replace(' ', nbsp_char));
+					
 				}
+				wtags.sort();
+				for (var i=0; i < wtags.length; i++) {
+					wow_tags(wtags[i], _c);
+				};
 			}
 			console.log(r)
 			
 		});
-	
+		
 	
 	
 	

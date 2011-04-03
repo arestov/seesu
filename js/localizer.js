@@ -26,6 +26,26 @@ var localize= (function(){
 */
 
 localizer = {
+	"refresh": {
+		"original": "refresh",
+		"ru": "обновить"
+	},
+	"Pop-tags":{
+		"original": "Popular tags",
+		ru: "Популярные теги"
+	},
+	"User-listening":{
+		"original":"Users are listening",
+		ru:"Пользователи слушают"
+	},
+	"last-week-с":{
+		"original": "Last week",
+		ru: "Последнюю неделю город"
+	},
+	"listen-this":{
+		"original": "listen this",
+		ru: "слушал это"	
+	},
 	"search": {
 		"original": "Search",
 		ru: "Поиск"
