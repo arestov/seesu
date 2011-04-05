@@ -540,7 +540,7 @@ function hashchangeHandler(e, force){
 					} else if (newstate.plp.playlist_type == 'album'){
 						findAlbum(newstate.album_name, newstate.artist_name, true, tk);
 					} else if (newstate.type == 'ds' && newstate.search_type && newstate.search_id){
-						getMusicById({type:newstate.search_type, id:newstate.search_id}, true);			
+						getMusicById({type:newstate.search_type, id:newstate.search_id}, tk);			
 					} else{
 						console.log('can\'t do anythifg');
 					}
@@ -569,12 +569,13 @@ function hashchangeHandler(e, force){
 	
 };
 
-function getMusicById(sub_raw){
+function getMusicById(sub_raw, tk){
 	var pl_r = prepare_playlist('Track' , 'tracks', + new Date());
 	su.ui.views.show_playlist_page(pl_r, false, true);
 	
 	if (sub_raw.type && sub_raw.id){
 		su.mp3_search.getById(sub_raw, function(song, want_auth){
+			
 			if (pl_r.ui){
 				if (!song){
 					if (want_auth){
@@ -589,6 +590,15 @@ function getMusicById(sub_raw){
 
 					}
 				} else{
+					if (tk){
+						if (!song.artist && tk.artist){
+							song.artist == tk.artist;
+						};
+						
+						if (!song.track && tk.track){
+							song.track == tk.track;
+						}
+					}
 					pl_r.push(song);
 					su.ui.render_playlist(pl_r, true);
 					viewSong(song, true)

@@ -61,7 +61,7 @@ function lastfm_api(apikey, s, cache, crossdomain){
 };
 lastfm_api.prototype = {
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
-	use: function(method, params, callback, nocache_or_errorcallback, type_of_xhr_is_post, nc) {
+	use: function(method, params, callback, nocache_or_errorcallback, type_of_xhr_is_post, nc, after_ajax) {
 		var _this = this;
 		if (method) {
 			var error_callback = typeof nocache_or_errorcallback== 'function' ? nocache_or_errorcallback : false;
@@ -83,7 +83,7 @@ lastfm_api.prototype = {
 			}
 	
 			var paramsstr = '';
-			if(apisig || use_cache) {
+			if (apisig || use_cache) {
 				for (var param in params_full) {
 					if ((param != 'format') && (param != 'callback')){
 						pv_signature_list.push(param + params_full[param]);
@@ -103,29 +103,39 @@ lastfm_api.prototype = {
 	
 			if (!cache_used){
 				return _this.queue.add(function(){
+					
 					if (no_need_for_post_serv){
-						$.ajax({
-						  url: _this.api_path,
-						  global: false,
-						  type: type_of_xhr_is_post ? "POST" : "GET",
-						  dataType: _this.crossdomain ? 'json' : 'jsonp',
-						  data: params_full,
-						  error: function(r){
-						  	if (error_callback){
-						  		error_callback(r)
-						  	}
-						  },
-						  success: function(r){
-							if (callback) {callback(r);}
-							if (!type_of_xhr_is_post){
-								cache_ajax.set('lastfm', params_full.api_sig, r)
+						if (use_cache){
+							var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback)	
+						}
+						if (!cache_used){
+							$.ajax({
+							  url: _this.api_path,
+							  global: false,
+							  type: type_of_xhr_is_post ? "POST" : "GET",
+							  dataType: _this.crossdomain ? 'json' : 'jsonp',
+							  data: params_full,
+							  error: function(r){
+							  	if (error_callback){
+							  		error_callback(r)
+							  	}
+							  },
+							  success: function(r){
+								if (callback) {callback(r);}
+								if (!type_of_xhr_is_post){
+									cache_ajax.set('lastfm', params_full.api_sig, r)
+								}
+							  },
+							  complete: function(xhr){
+								//console.log(xhr.responseText)
+							  }
+							});
+							if (after_ajax){
+								after_ajax();
 							}
-						  },
-						  complete: function(xhr){
-							//console.log(xhr.responseText)
-						  }
-						});
-						//console.log(params_full)
+							//console.log(params_full)	
+						}
+
 					} else{
 						_this.post_serv.post(params_full, callback);
 					} 
@@ -134,6 +144,23 @@ lastfm_api.prototype = {
 			}
 	
 		}
+	},
+	searchMp3: function(msq, callback, error, nocache, after_ajax, only_cache){
+		var _this = this;
+		if (!(msq.artist && msq.track)){
+			if (error){
+				error(_this.search_source);
+			}
+		} else{
+			this.use('track.getInfo', {artist: msq.artist, track: msq.track}, function(r){
+				console.log(r);
+			}, function(){
+				if (error){
+					error(_this.search_source);
+				}
+			}, false, nocache, after_ajax);
+		}
+		
 	},
 	nowplay: function(mo, duration){
 		var _this = this;

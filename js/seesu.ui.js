@@ -867,11 +867,7 @@ seesu_ui.prototype = {
 		};
 		
 		
-		if (!!mo.track){
-			track.text(mo.artist + ' - ' + mo.track);
-		} else{
-			track.text(mo.artist);
-		}
+		track.text(mo.getFullName());
 
 		
 		

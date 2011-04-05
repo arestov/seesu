@@ -191,8 +191,7 @@ window.connect_dom_to_som = function(d, ui){
 				o: ui_samples.children('.vk-login-context'),
 				oos: $(),
 				remove: function(){
-					this.oos.removeClass("waiting-vk-login");
-					this.oos = $().remove();
+					this.oos.removeClass("waiting-vk-login").remove();
 					this.oos = $();
 				},
 				vk_login_error: $(),
