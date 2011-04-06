@@ -29,20 +29,24 @@ function try_clear_api(callback, do_not_repeat){
 			setTimeout(function(){
 				$(e.target).remove();
 				console.log('removed ru!');
+				
+				
+				
+				var remove_iframe_com = function(e){
+					setTimeout(function(){
+						$(e.target).remove();
+						console.log('removed ru!');
+					},5000)
+				
+				}
+				
+				var tvk_com = $('<iframe id="test_vk_auth_com" class="serv-container" src="http://vk.com/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
+				.bind('load',remove_iframe_com);
+				sm.append(tvk_com);
 			},5000)
 			
 			
-			var remove_iframe_com = function(e){
-				setTimeout(function(){
-					$(e.target).remove();
-					console.log('removed ru!');
-				},5000)
 			
-			}
-			
-			var tvk_com = $('<iframe id="test_vk_auth_com" class="serv-container" src="http://vk.com/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
-			.bind('load',remove_iframe_com);
-			sm.append(tvk_com);
 		}
 		
 		var tvk_ru =  $('<iframe id="test_vk_auth_ru" class="serv-container" src="http://vkontakte.ru/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
