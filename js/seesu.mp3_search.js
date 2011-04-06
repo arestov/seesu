@@ -1,10 +1,11 @@
 var searches_pr = {
 	vk: 0,
+	lastfm:-1,
 	soundcloud: -5
 };
 var song_methods = {
 	getFullName: function(){
-		var n = (this.artist ? this.artist + " - " : "") + (this.track || "");
+		var n = (this.artist || "") + ((this.artist && this.track) ?  ' - ' + this.track :  (this.track || ""))
 		return n || 'no title'
 	},
 	view: function(no_navi){
@@ -917,7 +918,9 @@ su.mp3_search= (function(){
 
 		return s;
 })();
-
+if (su.lfm_api && su.lfm_api.asearch){
+	su.mp3_search.add(su.lfm_api.asearch);
+}
 if (typeof soundcloud_search != 'undefined'){
 	(function(){
 		var sc_search_source = {name: 'soundcloud', key: 0};
