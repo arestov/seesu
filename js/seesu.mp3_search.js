@@ -135,9 +135,12 @@ cmo = {
 		return nice_steam || ugly_steam || false;
 	},
 	addSteamPart: function(sem, search_source, t ){
-		sem.changed = +new Date();
+		
 		var _ms = this.getMusicStore(sem, search_source);
+		sem.changed = _ms.changed = (+new Date() > sem.changed ? +new Date() : +new Date() + 10);
+		
 		_ms.t = t;
+		
 		sem.have_tracks = true;
 		_ms.processing = false;
 		sem.some_results = true;
@@ -157,8 +160,8 @@ cmo = {
 		
 	},
 	blockSteamPart: function(sem, search_source, can_be_fixed){
-		sem.changed = +new Date();
 		var _ms = this.getMusicStore(sem, search_source);
+		sem.changed = _ms.changed = (+new Date() > sem.changed ? +new Date() : +new Date() + 10);
 		_ms.processing = false;
 		sem.some_results = true;
 		if (!_ms.t){
