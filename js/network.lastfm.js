@@ -57,11 +57,30 @@ function lastfm_api(apikey, s, cache, crossdomain){
 		this.old_sc_handshake();
 	}
 	*/
-	
+	var _this = this;
+	this.asearch = {
+		test: function(mo){
+			return canUseSearch(mo, _this.search_source);
+		},
+		search: function(){
+			return _this.searchMp3.apply(_this, arguments);
+		},
+		name: this.search_source.name,
+		description: 'last.fm',
+		slave: false,
+		preferred: null,
+		s: this.search_source,
+		q: this.queue,
+		getById: function(id){
+			return false;
+			return _this.getAudioById.apply(_this, arguments);
+		}
+	};
 };
 lastfm_api.prototype = {
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
-	use: function(method, params, callback, nocache_or_errorcallback, type_of_xhr_is_post, nc) {
+	use: function(method, params, callback, nocache_or_errorcallback, type_of_xhr_is_post, nc, options) {
+		var o = options || {};
 		var _this = this;
 		if (method) {
 			var error_callback = typeof nocache_or_errorcallback== 'function' ? nocache_or_errorcallback : false;
@@ -83,7 +102,7 @@ lastfm_api.prototype = {
 			}
 	
 			var paramsstr = '';
-			if(apisig || use_cache) {
+			if (apisig || use_cache) {
 				for (var param in params_full) {
 					if ((param != 'format') && (param != 'callback')){
 						pv_signature_list.push(param + params_full[param]);
@@ -98,42 +117,114 @@ lastfm_api.prototype = {
 			}
 			
 			if (use_cache){
-				var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback)	
+				var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback);
+				if (cache_used) {
+					return true;
+				}
 			}
 	
 			if (!cache_used){
 				return _this.queue.add(function(){
+					
 					if (no_need_for_post_serv){
-						$.ajax({
-						  url: _this.api_path,
-						  global: false,
-						  type: type_of_xhr_is_post ? "POST" : "GET",
-						  dataType: _this.crossdomain ? 'json' : 'jsonp',
-						  data: params_full,
-						  error: function(r){
-						  	if (error_callback){
-						  		error_callback(r)
-						  	}
-						  },
-						  success: function(r){
-							if (callback) {callback(r);}
-							if (!type_of_xhr_is_post){
-								cache_ajax.set('lastfm', params_full.api_sig, r)
+						if (use_cache){
+							var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback)	
+						}
+						if (!cache_used){
+							$.ajax({
+							  url: _this.api_path,
+							  global: false,
+							  type: type_of_xhr_is_post ? "POST" : "GET",
+							  dataType: _this.crossdomain ? 'json' : 'jsonp',
+							  data: params_full,
+							  error: function(r){
+							  	if (error_callback){
+							  		error_callback(r)
+							  	}
+							  },
+							  success: function(r){
+								if (callback) {callback(r);}
+								if (!type_of_xhr_is_post){
+									cache_ajax.set('lastfm', params_full.api_sig, r)
+								}
+							  },
+							  complete: function(xhr){
+								//console.log(xhr.responseText)
+							  }
+							});
+							if (o.after_ajax){
+								o.after_ajax();
 							}
-						  },
-						  complete: function(xhr){
-							//console.log(xhr.responseText)
-						  }
-						});
-						//console.log(params_full)
+							//console.log(params_full)	
+						}
+
 					} else{
 						_this.post_serv.post(params_full, callback);
 					} 
 					
-				})
+				}, o.not_init_queue)
 			}
 	
 		}
+	},
+	search_source:{
+		name:"lastfm",
+		key:0	
+	},
+	createLastfmTrack: function(tr, link, duration, id, downloadable){
+		return {
+			from:'lastfm',
+			artist: tr.artist,
+			link: link,
+			track: tr.track,
+			duration: duration,
+			downloadable: downloadable,
+			_id: id
+		}	
+	},
+	searchMp3: function(msq, callback, error, nocache, after_ajax, only_cache){
+		var _this = this;
+		if (!(msq.artist && msq.track)){
+			if (error){error(_this.search_source);}
+		} else{
+			return this.use('track.getInfo', {artist: msq.artist, track: msq.track}, function(r){
+				if (r && r.track){
+
+					var free = r.track.freedownload;
+					if (free){
+						
+						callback([_this.createLastfmTrack(msq, free, r.track.duration/1000, r.track.id, true)], _this.search_source);
+					} else{
+						var steamable = r && r.track && r.track.streamable && r.track.streamable['#text'] == '1';
+						if (steamable){
+							duration = 30;
+							var link = 'http://ws.audioscrobbler.com/2.0/?method=track.previewmp3&trackid=' + r.track.id + "&api_key=" + _this.apikey;
+							callback([_this.createLastfmTrack(msq, link, 30, r.track.id)], _this.search_source);
+						} else{
+							if (error){error(_this.search_source);}
+						}
+					}
+				} else{
+					if (error){error(_this.search_source);}
+				}
+				
+				
+				
+				console.log(r);
+			}, function(){
+				if (error){error(_this.search_source);}
+			}, false, nocache, {after_ajax: after_ajax, not_init_queue: true});
+		}
+		
+	},
+	getAudioById: function(id, callback, error, nocache, after_ajax, only_cache){
+		var _this = this;
+		callback({
+			downloadable: false,
+			from:'lastfm',
+			link: 'http://ws.audioscrobbler.com/2.0/?method=track.previewmp3&trackid=' + id + "&api_key=" + _this.apikey,
+			_id: id
+		}, _this.search_source);
 	},
 	nowplay: function(mo, duration){
 		var _this = this;

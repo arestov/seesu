@@ -1,8 +1,13 @@
 var searches_pr = {
 	vk: 0,
+	lastfm:-1,
 	soundcloud: -5
 };
 var song_methods = {
+	getFullName: function(){
+		var n = (this.artist || "") + ((this.artist && this.track) ?  ' - ' + this.track :  (this.track || ""))
+		return n || 'no title'
+	},
 	view: function(no_navi){
 		su.mp3_search.find_mp3(this);
 		su.ui.updateSongContext(this);
@@ -498,7 +503,7 @@ var get_mp3 = function(msq, options, p, callback, just_after_request){
 		//error
 		count_down(search_source, false, can_be_fixed);
 	};
-	var used_successful = o.handler(search_query, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
+	var used_successful = o.handler(msq, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
 	
 	
 	return used_successful;
@@ -913,7 +918,9 @@ su.mp3_search= (function(){
 
 		return s;
 })();
-
+if (su.lfm_api && su.lfm_api.asearch){
+	su.mp3_search.add(su.lfm_api.asearch);
+}
 if (typeof soundcloud_search != 'undefined'){
 	(function(){
 		var sc_search_source = {name: 'soundcloud', key: 0};

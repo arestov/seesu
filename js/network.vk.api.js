@@ -248,8 +248,9 @@ vk_api.prototype = {
 		});
 		return used_successful;
 	},
-	audio_search: function(query, callback, error, nocache, after_ajax, only_cache){
+	audio_search: function(msq, callback, error, nocache, after_ajax, only_cache){
 		
+		var query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
 		
 		var _this = this;
 		var params_u = {};

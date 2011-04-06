@@ -348,7 +348,7 @@ seesu_ui.prototype = {
 		var d = $('<span class="duration"></span>').appendTo(desc_part);
 		if (mopla.duration){
 			var digits = mopla.duration % 60;
-			d.text((Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits ));
+			d.text((Math.floor(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits ));
 		}
 		
 		
@@ -415,12 +415,12 @@ seesu_ui.prototype = {
 
 			var songs = mo.songs();
 			
-			if (mo.isSearchCompleted()){
-				if (!songs.length && mo.isNeedsAuth('vk')){
+			if (mo.isSearchCompleted() && mo.isNeedsAuth('vk')){
+				if (!songs.length){
 					c.prepend(_sui.samples.vk_login.clone())
 				} else if(!mo.isHaveAnyResultsFrom('vk')){
 					c.prepend(_sui.samples.vk_login.clone('enhancement'))
-				} else if (mo.isNeedsAuth('vk')){
+				} else {
 					c.prepend(_sui.samples.vk_login.clone('stabilization'))
 				}
 				
@@ -825,7 +825,7 @@ seesu_ui.prototype = {
 			
 			if (mopla.duration) {
 				var digits = mopla.duration % 60;
-				var track_dur = (Math.round(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+				var track_dur = (Math.floor(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
 				mo.node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
 			}
 		}
@@ -867,11 +867,7 @@ seesu_ui.prototype = {
 		};
 		
 		
-		if (!!mo.track){
-			track.text(mo.artist + ' - ' + mo.track);
-		} else{
-			track.text(mo.artist);
-		}
+		track.text(mo.getFullName());
 
 		
 		

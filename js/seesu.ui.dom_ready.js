@@ -191,8 +191,7 @@ window.connect_dom_to_som = function(d, ui){
 				o: ui_samples.children('.vk-login-context'),
 				oos: $(),
 				remove: function(){
-					this.oos.removeClass("waiting-vk-login");
-					this.oos = $().remove();
+					this.oos.removeClass("waiting-vk-login").remove();
 					this.oos = $();
 				},
 				vk_login_error: $(),
@@ -646,8 +645,10 @@ window.connect_dom_to_som = function(d, ui){
 		var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(su.ui.els.start_screen);
 		var createTrackLink = function(artist, track, track_obj, playlist){
 			return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(){
-				su.ui.views.show_playlist_page(playlist)
-				playlist.showExactlyTrack(track_obj);
+				su.ui.views.show_playlist_page(playlist);
+				if (track_obj.ui && track_obj.ui.node){
+					track_obj.ui.node.click();
+				}
 				return false;
 			});
 		};
@@ -696,7 +697,7 @@ window.connect_dom_to_som = function(d, ui){
 					};
 					_cmetro.append(ulm)
 				} else{
-					
+					showMetroRandom();
 				}
 			})
 		};

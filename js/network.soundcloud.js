@@ -29,7 +29,9 @@ var make_sc_song = function(cursor, sc_key){
 	return entity
 };
 
-function soundcloud_search(query, callback, error, nocache, after_ajax, only_cache){
+function soundcloud_search(msq, callback, error, nocache, after_ajax, only_cache){
+	var query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+	
 	var search_source = {name: 'soundcloud', key: 0};
 	var sc_key = 'HNVCUV6apk9ANn8tLERpag';
 	var use_cache = !nocache;
