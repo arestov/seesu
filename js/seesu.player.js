@@ -348,6 +348,23 @@ su.player = {
 		
 		this.view_song(mo, zoom, false);
 		
+		
+		if (su.ui.now_playing.link){
+			var artist = mo.artist;
+			su.ui.now_playing.link.attr('title', 
+				( su.ui.d.title = (localize('now-playing','Now Playing') + ': ' +artist + " - " + mo.track))
+			);
+		} else{
+			if (su.ui.views.nav){
+				
+				su.ui.now_playing.link = $('<a class="np"></a>').click(function(){
+					su.ui.views.show_now_playing(true);
+				}).appendTo(su.ui.views.nav.justhead);
+				
+			}
+		}
+		
+		
 		if (_mopla && (this.c_song != mo || (mopla && mo.mopla != mopla))){
 			this.c_song = mo;
 			if (last_mo && last_mo.ui){
@@ -366,20 +383,7 @@ su.player = {
 		}
 		
 		
-		if (su.ui.now_playing.link){
-			var artist = mo.artist;
-			su.ui.now_playing.link.attr('title', 
-				( su.ui.d.title = (localize('now-playing','Now Playing') + ': ' +artist + " - " + mo.track))
-			);
-		} else{
-			if (su.ui.views.nav){
-				
-				su.ui.now_playing.link = $('<a class="np"></a>').click(function(){
-					su.ui.views.show_now_playing(true);
-				}).appendTo(su.ui.views.nav.justhead);
-				
-			}
-		}
+		
 		seesu.ui.views.freeze(mo.plst_titl);
 		
 		
