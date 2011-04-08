@@ -97,11 +97,8 @@ var test_pressed_node = function(e, mouseup){
 			}
 			else if (class_name.match(/login-lastfm-button/)){
 				su.lfm_api.waiting_for = clicked_node.attr('name');
-				if (su.lfm_api.newtoken) {
-					su.lfm_api.open_lfm_to_login(su.lfm_api.newtoken);
-				} else {
-					su.lfm_api.get_lfm_token(true);
-				}
+				su.ui.lfmRequestAuth();
+				
 			}
 			else if (class_name.match(/scrobbling-grant/)){
 				if (!su.lfm_api.newtoken || su.lfm_api.sk){ return false}

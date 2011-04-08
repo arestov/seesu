@@ -295,6 +295,15 @@ lastfm_api.prototype = {
 		w_storage('lfmsk', this.sk, true);
 		if (callback){callback();}
 	},
+	getInitAuthData: function(){
+		var o = {};
+		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.apikey + '&cb=http://seesu.me/lastfm/callbacker.html';
+		if (!su.env.deep_sanbdox){
+			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
+			o.link += '?key=' + o.bridgekey;
+		}
+		return o;
+	},
 	get_lfm_token: function(open){
 		var _this = this;
 		this.use('auth.getToken', false, function(r){
@@ -306,12 +315,12 @@ lastfm_api.prototype = {
 		open_url('http://www.last.fm/api/auth/?api_key=' + this.apikey + '&token=' + token);
 		dstates.add_state('body','lfm-waiting-for-finish');
 	},
-	try_to_login: function(){
+	try_to_login: function(callback){
 		var _this = this
 		if (_this.newtoken && _this.waiting_for){
 				_this.use('auth.getSession',{'token':_this.newtoken },function(r){
 				if (!r.error) {
-					_this.login(r);
+					_this.login(r,callback);
 					switch(_this.waiting_for) {
 					  case('recommendations'):
 						render_recommendations();

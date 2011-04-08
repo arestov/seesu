@@ -889,6 +889,46 @@ seesu_ui.prototype = {
 			
 		return plistel;
 	},
+	lfmRequestAuth: function(){
+		
+		this.lfmAuthInit();
+		return 
+		if (su.lfm_api.newtoken) {
+			su.lfm_api.open_lfm_to_login(su.lfm_api.newtoken);
+		} else {
+			su.lfm_api.get_lfm_token(true);
+		}
+	},
+	lfmAuthInit: function(){
+		if (this.lfm_auth_inited){
+			return false;
+		}
+		var i = document.createElement('iframe');
+		addEvent(i, 'load', function(){
+		
+		});
+		
+		var init_auth_data = su.lfm_api.getInitAuthData();
+		addEvent(window, 'message', function(e){
+			if (e.data == 'lastfm_bridge_ready:'){
+				e.source.postMessage("add_keys:" + init_auth_data.bridgekey, '*');
+			} else if(e.data.indexOf('lastfm_token:') === 0){
+				su.lfm_api.newtoken = e.data.replace('lastfm_token:','');
+				su.lfm_api.try_to_login(seesu.ui.lfm_logged);
+				console.log('got token!!!!')
+				console.log(e.data.replace('lastfm_token:',''));
+			}
+		});
+		i.className = 'serv-container';
+		i.src = 'http://seesu.me/lastfm/bridge.html';
+		document.body.appendChild(i);
+		open_url(init_auth_data.link);
+		
+		this.lfm_auth_inited = true;
+		
+		return
+		
+	},
 	lfm_logged : function(){
 		dstates.add_state('body', 'lfm-auth-done')
 		$('.lfm-finish input[type=checkbox]',this.d).attr('checked', 'checked');
