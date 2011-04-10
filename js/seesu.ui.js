@@ -642,6 +642,9 @@ seesu_ui.prototype = {
 			
 		if (artist && artist == oa) {
 			ainf.bio.parent().addClass('background-changes');
+			if (su.env.opera_widget){
+				image += '?somer=' + Math.random();
+			}
 			ainf.image.append($('<img class="artist-image"/>').attr({'src': image ,'alt': artist}));
 		} else{
 			return false
