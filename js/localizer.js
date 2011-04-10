@@ -26,6 +26,14 @@ var localize= (function(){
 */
 
 localizer = {
+	"enter-code":{
+		"original": "Enter here code",
+		ru: "Помести сюда полученный код"
+	},
+	"use-code":{
+		"original": "use code",
+		ru: "использовать код"
+	},
 	"refresh": {
 		"original": "refresh",
 		"ru": "обновить"
