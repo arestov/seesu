@@ -108,19 +108,6 @@ var test_pressed_node = function(e, mouseup){
 				}
 				console.log('sdffffffffffffffffffffffffff')
 				return false;
-			}
-			else if (class_name.match(/scrobbling-grant/)){
-				if (!su.lfm_api.newtoken || su.lfm_api.sk){ return false}
-				if(clicked_node.attr('checked')){
-					lfm('auth.getSession',{'token':su.lfm_api.newtoken },function(r){
-						if (!r.error) {
-							su.lfm_api.login(r, seesu.ui.lfm_logged);
-							console.log('lfm scrobble access granted')
-						} else{
-							console.log('error while granting lfm scrobble access')
-						}
-					});
-				}
 			} else if (class_name.match(/enable-scrobbling/)){
 				w_storage('lfm_scrobbling_enabled', 'true', true);
 				su.lfm_api.scrobbling = true;

@@ -298,7 +298,7 @@ lastfm_api.prototype = {
 	getInitAuthData: function(){
 		var o = {};
 		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.apikey + '&cb=http://seesu.me/lastfm/callbacker.html';
-		if (su.env.deep_sanbdox){
+		if (!su.env.deep_sanbdox){
 			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
 			o.link += '?key=' + o.bridgekey;
 		}

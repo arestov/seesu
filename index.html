@@ -133,20 +133,27 @@
 									<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="enable-scrobbling" /> enabled</label></p>	
 									<p><label><input type="radio"  disabled="disabled" name="lfm_scrobble" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
 								</form>
+								
 								<div class="lfm-granting">
 									<p>
-										<span class="lang localize-lastfm-scrobble-access">To scrobble to last.fm you must grant access to Seesu</span>
 										<button class="lang localize-grant login-lastfm-button" type="button"  name="scrobbling" >grant</button>
+										<span class="lang localize-lastfm-scrobble-access">To scrobble to last.fm you must grant access to Seesu</span>
+										
 										
 									</p>
-									<p class="lfm-finish">
-										<label>
-											<input type='checkbox' class="scrobbling-grant"/> 
-											<span class="lang localize-user-granted-lfm">I've granted my account access to Seesu</span>
+									<div class="lfm-finish">
+										<div>
+											Enter here code
+										</div>
+										<div>
+											
+											<input type="text" placeholder='Put your code here' class="lfm-code"/> <button class="use-lfm-code">Use code</button>
+											
+										</div>
 										
-										</label>
 										
-									</p>
+									</div>
+									
 								</div>
 								<p><input type="button" value="Close message" class="tb-mess-wrap-close"/></p>
 							</div>
@@ -338,18 +345,27 @@
 						<div class="lfm-recomm">
 							<p><a  id="lfm-recomm" class="js-serv lang localize-reccoms">Recommendations</a></p>
 							<div class="lfm-auth">
-								<p>
-									<span class="lang localize-lastfm-reccoms-access">To get your music recommendations you need to grant Seesu your last.fm account access</span> 
-									
-									<button class="login-lastfm-button lang localize-grant" type="button" name="recommendations">grant</button></p>
-								<form class="lfm-finish">
-									<label>
-										<input type='checkbox'  id="login-lastfm-finish-recomm-check"/> 
-										<span class="lang localize-user-granted-lfm">I've granted my account access to Seesu, so </span>
+								<div class="real-lfm-auth-part">
+									<p>
+										<button class="login-lastfm-button lang localize-grant" type="button" name="recommendations">grant</button>
+										<span class="lang localize-lastfm-reccoms-access">To get your music recommendations you need to grant Seesu your last.fm account access</span> 
 										
-									</label>
-									<button disabled="disabled" type="button" value='Next' id="login-lastfm-finish-recomm" class="lang localize-give-reccoms">give me recommendations</button>
-								</form>
+										
+									</p>
+									<div class="lfm-finish">
+										<div>
+											Enter here code
+										</div>
+										<div>
+											
+											<input type="text" placeholder='Put your code here' class="lfm-code"/> <button class="use-lfm-code">Use code</button>
+											
+										</div>
+										
+										
+									</div>
+								</div>
+								
 								<form id="lfm-recomm-for-username" class="needs-cross-domain">
 									<p class="lang localize-or-type-username">or type username</p>
 									<p><input type="text" name="recomm_for_username" value="YodaPunk" id="recomm_for_username"> <button>ok</button></p>
@@ -360,33 +376,23 @@
 						<div class="lfm-loved">
 							<p><a class="js-serv lang localize-loved-tracks " id="lfm-loved">Loved Tracks</a></p>
 							<div class="lfm-auth">
-								<p>
-									
-									<span class="lang localize-grant-love-lfm-access">To get your favorite tracks you need to grant Seesu your last.fm account access </span>
-									
-									<button class="login-lastfm-button lang localize-grant" type="button" name="loved">grant</button>
-								</p>
-								<form class="lfm-finish">
-									<div>
-										Enter here code
-									</div>
-									<div>
+								<div class="real-lfm-auth-part">
+									<p>				
+										<button class="login-lastfm-button lang localize-grant" type="button" name="loved">grant</button>	
+										<span class="lang localize-grant-love-lfm-access">To get your favorite tracks you need to grant Seesu your last.fm account access </span>
 										
-										<input type="text" placeholder='Put your code here' class="lfm-code"/> <button class="use-lfm-code">Use code</button>
-										
-									</div>
-									
-									<p>
-										
-										<label>
-											<input type='checkbox'  id="login-lastfm-finish-loved-check"/> 
-											<span class="lang localize-user-granted-lfm">I've granted my account access to Seesu, so </span>
-											
-										</label>
-											
-											<button disabled="disabled" type="button" class="lang localize-give-love" value='Next' id="login-lastfm-finish-loved">give me loved tracks</button>
 									</p>
-								</form>
+									<div class="lfm-finish">
+										<div>
+											Enter here code
+										</div>
+										<div>
+											<input type="text" placeholder='Put your code here' class="lfm-code"/> <button class="use-lfm-code">Use code</button>
+										</div>
+										
+										
+									</div>
+								</div>
 								<form id="lfm-loved-by-username">
 									<p class="lang localize-or-type-username">or type username</p>
 									<p><input type="text" name="loved_by_user_name" value="YodaPunk" id="loved_by_user_name"> <button>ok</button></p>
@@ -429,15 +435,7 @@
 							<div>
 								<input type="search" id="pl-q" autocomplete="off"/>
 							</div>
-							<!--
-							<div class="ext-playlists-getting not-want-to">
-								<a href="#" class="ext-playlists js-serv">last.fm playlists</a>
-								<div class="lfm-granting">
-									
-									<p>To use last.fm playlists you must <input class="login-lastfm-button" type="button" value="grant" name="scrobbling"/> access to Seesu </p>
-									<p class="lfm-finish"><label><input type='checkbox' class="scrobbling-grant"/> I've granted my account access to Seesu</label></p>
-								</div>
-							</div>-->
+							<!-- f -->
 							<ul class="pl-r"></ul>
 						</div>
 					</div>
