@@ -65,7 +65,13 @@ var removeClass = function(old_c, add_c){
 	var re = new RegExp("(^|\\s)" + add_c + "(\\s|$)", "g");
 	return old_c.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "");
 }
-
+var toggleClass = function(old_c, toggle_class){
+	if (bN(old_c.indexOf(toggle_class))){
+		return removeClass(old_c, toggle_class);
+	} else{
+		return addClass(old_c, toggle_class);
+	}
+};
 var document_states = function(d){
 	this.ui = {
 		d: d
@@ -84,6 +90,20 @@ document_states.prototype = {
 			
 		} else if (state_of == 'body'){
 			this.body_state = addClass(this.body_state, state);
+			if (this.ui.d && this.ui.d.body) {
+				this.ui.d.body.className = this.body_state;
+			}
+		}
+	},
+	toggleState: function(state_of, state){
+		if (state_of == 'html_el'){
+			this.html_el_state = toggleClass(this.html_el_state, state);
+			if (this.ui.d) {
+				this.ui.d.documentElement.className  = this.html_el_state;
+			}
+			
+		} else if (state_of == 'body'){
+			this.body_state = toggleClass(this.body_state, state);
 			if (this.ui.d && this.ui.d.body) {
 				this.ui.d.body.className = this.body_state;
 			}
@@ -155,6 +175,7 @@ window.app_env = (function(){
 	if (typeof widget == 'object' && !widget.fake_widget){
 		if ($.browser.opera){
 			env.app_type = 'opera_widget';
+			env.deep_sanbdox = true;
 		} else {
 			env.app_type = 'apple_db_widget';
 		}

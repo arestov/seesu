@@ -4,6 +4,7 @@ body{
 	color:#E6E6E6;
 	
 	height:596px;
+	line-height:1.5;
 	font-size:14px;
 	font-family:Helvetica , Arial ,sans-serif;
 	}
@@ -130,27 +131,36 @@ a.desc{
 	.lfm-auth{
 		display:none;
 		padding-left:20px;
-		padding-bottom:10px;
+		line-height:1.5;
 		}
 		
 .lfm-finish{
 	opacity:0.3;
+	display:none;
 }
-.lfm-waiting-for-finish
-
-.lfm-finish{
+.deep-sandbox .lfm-finish{
+	display:block;
+}
+.lfm-finish .lfm-code{
+	width: 314px;
+	margin-right: 24px;
+}
+.lfm-waiting-for-finish .lfm-finish{
 	opacity:1;
 }
-.lfm-auth
-p{
+.lfm-auth p{
 	margin:0.3em 0;
 	}
-.lfm-auth
-form{
-	margin-right:20px;
+.lfm-auth .real-lfm-auth-part{
+	margin-bottom: 20px;
+	margin-bottom:20px;
+}
+.login-lastfm-button{
+	float:right;
+}
+.lfm-auth form{
 	margin-bottom:2.5em;
 	padding-bottom:1em;
-	border-bottom:1px solid #eee;
 	}
 	.lfm-start{
 		border-top:1px solid #666;

@@ -889,8 +889,65 @@ seesu_ui.prototype = {
 			
 		return plistel;
 	},
+	lfmRequestAuth: function(){
+		
+		this.lfmAuthInit();
+		return 
+		if (su.lfm_api.newtoken) {
+			su.lfm_api.open_lfm_to_login(su.lfm_api.newtoken);
+		} else {
+			su.lfm_api.get_lfm_token(true);
+		}
+	},
+	lfmCreateAuthFrame: function(first_key){
+		if (this.lfm_auth_inited){
+			return false;
+		}
+		var i = su.lfm_api.auth_frame = document.createElement('iframe');	
+		addEvent(window, 'message', function(e){
+			if (e.data == 'lastfm_bridge_ready:'){
+				e.source.postMessage("add_keys:" + first_key, '*');
+			} else if(e.data.indexOf('lastfm_token:') === 0){
+				su.lfm_api.newtoken = e.data.replace('lastfm_token:','');
+				su.lfm_api.try_to_login(seesu.ui.lfm_logged);
+				console.log('got token!!!!')
+				console.log(e.data.replace('lastfm_token:',''));
+			}
+		});
+		i.className = 'serv-container';
+		i.src = 'http://seesu.me/lastfm/bridge.html';
+		document.body.appendChild(i);
+		this.lfm_auth_inited = true;
+	},
+	lfmSetAuthBridgeKey: function(key){
+		if (!this.lfm_auth_inited){
+			this.lfmCreateAuthFrame(key)
+		} else{
+			su.lfm_api.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
+		}
+	},
+	lfmAuthInit: function(){
+		
+		
+		//init_auth_data.bridgekey		
+		
+		var init_auth_data = su.lfm_api.getInitAuthData();
+		if (init_auth_data.bridgekey){
+			this.lfmSetAuthBridgeKey(init_auth_data.bridgekey)
+		} 
+		
+		
+		open_url(init_auth_data.link);
+		dstates.add_state('body','lfm-waiting-for-finish');
+		
+		
+		return
+		
+	},
 	lfm_logged : function(){
-		dstates.add_state('body', 'lfm-auth-done')
+		dstates.add_state('body', 'lfm-auth-done');
+		dstates.remove_state('body', 'lfm-auth-req-loved');
+		dstates.remove_state('body', 'lfm-auth-req-recomm');
 		$('.lfm-finish input[type=checkbox]',this.d).attr('checked', 'checked');
 		var f = $('.scrobbling-switches', this.d);
 		var ii = f.find('input');

@@ -295,6 +295,15 @@ lastfm_api.prototype = {
 		w_storage('lfmsk', this.sk, true);
 		if (callback){callback();}
 	},
+	getInitAuthData: function(){
+		var o = {};
+		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.apikey + '&cb=http://seesu.me/lastfm/callbacker.html';
+		if (!su.env.deep_sanbdox){
+			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
+			o.link += '?key=' + o.bridgekey;
+		}
+		return o;
+	},
 	get_lfm_token: function(open){
 		var _this = this;
 		this.use('auth.getToken', false, function(r){
@@ -306,33 +315,36 @@ lastfm_api.prototype = {
 		open_url('http://www.last.fm/api/auth/?api_key=' + this.apikey + '&token=' + token);
 		dstates.add_state('body','lfm-waiting-for-finish');
 	},
-	try_to_login: function(){
+	try_to_login: function(callback){
 		var _this = this
-		if (_this.newtoken && _this.waiting_for){
+		if (_this.newtoken ){
 				_this.use('auth.getSession',{'token':_this.newtoken },function(r){
 				if (!r.error) {
-					_this.login(r);
-					switch(_this.waiting_for) {
-					  case('recommendations'):
-						render_recommendations();
-						break;
-					  case('loved'):
-						render_loved();
-						break;    
-					  case('scrobbling'):
-						w_storage('lfm_scrobbling_enabled', 'true', true);
-						_this.scrobbling = true;
-						su.ui.lfm_change_scrobbling(true);
-						break;
-					  default:
-						//console.log('Do nothing');
+					_this.login(r,callback);
+					if (_this.waiting_for){
+						switch(_this.waiting_for) {
+						  case('recommendations'):
+							render_recommendations();
+							break;
+						  case('loved'):
+							render_loved();
+							break;    
+						  case('scrobbling'):
+							w_storage('lfm_scrobbling_enabled', 'true', true);
+							_this.scrobbling = true;
+							su.ui.lfm_change_scrobbling(true);
+							break;
+						  default:
+							//console.log('Do nothing');
+						}
+						_this.waiting_for = false;
 					}
 					
 					console.log('lfm scrobble access granted')
 				} else{
 					console.log('error while granting lfm scrobble access')
 				}
-				_this.waiting_for = false;
+				
 			});
 		}
 	},
