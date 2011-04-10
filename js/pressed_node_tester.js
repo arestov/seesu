@@ -100,6 +100,15 @@ var test_pressed_node = function(e, mouseup){
 				su.ui.lfmRequestAuth();
 				
 			}
+			else if (bN(class_name.indexOf('use-lfm-code'))){
+				var token = clicked_node.parent().find('.lfm-code').val();
+				if (token){
+					su.lfm_api.newtoken = token;
+					su.lfm_api.try_to_login(seesu.ui.lfm_logged);
+				}
+				console.log('sdffffffffffffffffffffffffff')
+				return false;
+			}
 			else if (class_name.match(/scrobbling-grant/)){
 				if (!su.lfm_api.newtoken || su.lfm_api.sk){ return false}
 				if(clicked_node.attr('checked')){

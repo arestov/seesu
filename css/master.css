@@ -136,9 +136,11 @@ a.desc{
 .lfm-finish{
 	opacity:0.3;
 }
-.lfm-waiting-for-finish
-
-.lfm-finish{
+.lfm-finish .lfm-code{
+	width: 314px;
+	margin-right: 24px;
+}
+.lfm-waiting-for-finish .lfm-finish{
 	opacity:1;
 }
 .lfm-auth
