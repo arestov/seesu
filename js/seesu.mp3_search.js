@@ -600,6 +600,10 @@ music_seach_emitter.prototype = {
 		return !!cmo.getSteamData(this, source_name);
 	}
 };
+var needSearch = function(sem, source_name){
+	var r = cmo.getSteamData(sem, source_name);
+	return !r || !r.t;
+};
 su.mp3_search= (function(){
 		var s = [];
 		s.ids=[];
@@ -671,7 +675,7 @@ su.mp3_search= (function(){
 		s.searchFor = function(query, init, filter, options){
 			var q = HTMLDecode(query.q || (query.artist + ' - ' + query.track));
 			var o = options || {};
-			var search_handlers = [];
+			
 			
 			var seeking_something_fresh;
 			var sem = this.search_emitters[q] || (this.search_emitters[q] = new music_seach_emitter(q, query));
@@ -681,20 +685,22 @@ su.mp3_search= (function(){
 	
 			var tried_cache = [];
 			
+			
+			var search_handlers = [];
+			var possible_handlers = [];
 			for (var i=0; i < this.length; i++) {
 				var cursor = this[i];
 				var _c; //cache
-				if (!filter || cursor.name == filter){
+				if ((!filter || cursor.name == filter) && needSearch(sem, cursor.name)){
 					if (!seeking_something_fresh && !bN(tried_cache.indexOf(cursor.name))){
 						_c = this.getCache(sem, cursor.name);
 						tried_cache.push(cursor.name);
 					}
 					
-					if (!_c && !o.only_cache && !cursor.disabled){
+					if (!_c && !cursor.disabled){
 						if (!cursor.preferred || cursor.preferred.disabled){
 							var can_search = cursor.test(sem);
 							if (can_search){
-								cmo.getMusicStore(sem, cursor.s).processing = true;
 								search_handlers.push(cursor.search);
 							}
 								
@@ -708,37 +714,41 @@ su.mp3_search= (function(){
 				n: search_handlers.length
 			};
 			var successful_uses = []
-			if (search_handlers.length){
-				for (var i=0; i < search_handlers.length; i++) {				
-					var used_successful =  get_mp3(query, {
-						handler: search_handlers[i],
-						get_next: o.get_next
-					}, p, function(err, search_source, complete, music_list, can_be_fixed){
-						if (err){
-							if (search_source){
-								cmo.blockSteamPart(sem, search_source, can_be_fixed);
+			if (!o.only_cache){
+				if (search_handlers.length){
+					for (var i=0; i < search_handlers.length; i++) {
+						cmo.getMusicStore(sem, search_handlers[i].s).processing = true;			
+						var used_successful =  get_mp3(query, {
+							handler: search_handlers[i],
+							get_next: o.get_next
+						}, p, function(err, search_source, complete, music_list, can_be_fixed){
+							if (err){
+								if (search_source){
+									cmo.blockSteamPart(sem, search_source, can_be_fixed);
+								}
+							} else{
+								cmo.addSteamPart(sem, search_source, music_list);
 							}
-						} else{
-							cmo.addSteamPart(sem, search_source, music_list);
-						}
-						if (complete){
-							sem.search_completed = true;
-						}
-						sem.emit(complete, o.get_next);
-					}, function(){
-						sem.wait_ui();
-					});
-					if (used_successful){successful_uses.push(used_successful)}
+							if (complete){
+								sem.search_completed = true;
+							}
+							sem.emit(complete, o.get_next);
+						}, function(){
+							sem.wait_ui();
+						});
+						if (used_successful){successful_uses.push(used_successful)}
+						
+						
+						
+					};
+				} else {
+					if (!seeking_something_fresh){
+						sem.emit(sem.search_completed = true, o.get_next);
+					}
 					
-					
-					
-				};
-			} else if (!o.only_cache) {
-				if (!seeking_something_fresh){
-					sem.emit(sem.search_completed = true, o.get_next);
 				}
-				
 			}
+	
 			
 			return !!successful_uses.length && successful_uses;
 		},
