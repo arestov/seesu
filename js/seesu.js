@@ -413,7 +413,7 @@ var makeSongPlayalbe= function(mo, full_allowing,  from_collection, last_in_coll
 			handle_song(mo, true)
 		}
 		su.mp3_search.find_mp3(mo, {
-			only_cache: !full_allowing && !mo.want_to_play
+			only_cache: !full_allowing && !mo.want_to_play,
 			collect_for: from_collection,
 			last_in_collection: last_in_collection
 		});

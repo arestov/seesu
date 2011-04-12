@@ -673,12 +673,15 @@ su.mp3_search= (function(){
 		};
 		
 		s.searchFor = function(query, init, filter, options){
-			if (options.collect_for){
-				query.collect_for = options.collect_for;
+			if (options){
+				if (options.collect_for){
+					query.collect_for = options.collect_for;
+				}
+				if (options.last_in_collection){
+					query.last_in_collection = options.last_in_collection;
+				}	
 			}
-			if (options.last_in_collection){
-				query.last_in_collection = options.last_in_collection;
-			}
+			
 			
 			var q = HTMLDecode(query.q || (query.artist + ' - ' + query.track));
 			var o = options || {};
@@ -724,7 +727,7 @@ su.mp3_search= (function(){
 			if (search_handlers.length){
 				for (var i=0; i < search_handlers.length; i++) {
 					
-					var handler == (!o.only_cache && search_handlers[i].search) || search_handlers[i].collectiveSearch;
+					var handler = (!o.only_cache && search_handlers[i].search) || search_handlers[i].collectiveSearch;
 					if (handler){
 						cmo.getMusicStore(sem, search_handlers[i].s).processing = true;			
 						var used_successful =  get_mp3(query, {
