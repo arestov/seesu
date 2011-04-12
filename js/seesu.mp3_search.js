@@ -16,9 +16,9 @@ var song_methods = {
 	wheneWasChanged: function(){
 		return (this.raw && 1) || (this.sem && this.sem.changed || 1);
 	},
-	render: function(){
+	render: function(from_collection, last_in_collection){
 		if (this.plst_titl){
-			this.plst_titl.renderSong(this);
+			this.plst_titl.renderSong(this, from_collection, last_in_collection);
 		}
 		
 	
@@ -673,6 +673,13 @@ su.mp3_search= (function(){
 		};
 		
 		s.searchFor = function(query, init, filter, options){
+			if (options.collect_for){
+				query.collect_for = options.collect_for;
+			}
+			if (options.last_in_collection){
+				query.last_in_collection = options.last_in_collection;
+			}
+			
 			var q = HTMLDecode(query.q || (query.artist + ' - ' + query.track));
 			var o = options || {};
 			
@@ -687,7 +694,6 @@ su.mp3_search= (function(){
 			
 			
 			var search_handlers = [];
-			var possible_handlers = [];
 			for (var i=0; i < this.length; i++) {
 				var cursor = this[i];
 				var _c; //cache
@@ -701,7 +707,7 @@ su.mp3_search= (function(){
 						if (!cursor.preferred || cursor.preferred.disabled){
 							var can_search = cursor.test(sem);
 							if (can_search){
-								search_handlers.push(cursor.search);
+								search_handlers.push(cursor);
 							}
 								
 						}
@@ -714,12 +720,15 @@ su.mp3_search= (function(){
 				n: search_handlers.length
 			};
 			var successful_uses = []
-			if (!o.only_cache){
-				if (search_handlers.length){
-					for (var i=0; i < search_handlers.length; i++) {
+			
+			if (search_handlers.length){
+				for (var i=0; i < search_handlers.length; i++) {
+					
+					var handler == (!o.only_cache && search_handlers[i].search) || search_handlers[i].collectiveSearch;
+					if (handler){
 						cmo.getMusicStore(sem, search_handlers[i].s).processing = true;			
 						var used_successful =  get_mp3(query, {
-							handler: search_handlers[i],
+							handler: handler,
 							get_next: o.get_next
 						}, p, function(err, search_source, complete, music_list, can_be_fixed){
 							if (err){
@@ -737,17 +746,16 @@ su.mp3_search= (function(){
 							sem.wait_ui();
 						});
 						if (used_successful){successful_uses.push(used_successful)}
-						
-						
-						
-					};
-				} else {
-					if (!seeking_something_fresh){
-						sem.emit(sem.search_completed = true, o.get_next);
 					}
 					
-				}
+					
+					
+					
+				};
+			} else if (!o.only_cache && !seeking_something_fresh){
+				sem.emit(sem.search_completed = true, o.get_next);
 			}
+
 	
 			
 			return !!successful_uses.length && successful_uses;
