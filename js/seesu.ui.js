@@ -790,9 +790,10 @@ seesu_ui.prototype = {
 			if (!pl.length){
 				ui.append('<li>' + localize('nothing-found','Nothing found') + '</li>');
 			} else {
+				var from_collection = +new Date;
 				for (var i=0, l = pl.length; i < l; i++) {
 					var mo = pl[i];
-					mo.render();
+					mo.render(from_collection, i == pl.length-1);
 				}
 				su.player.fix_songs_ui();
 			}

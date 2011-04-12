@@ -1,5 +1,22 @@
 /*global create_jsonp_callback: false, cache_ajax: false, su: false, hex_md5: false, $: false, has_music_copy: false*/
 
+/*
+su.vk_api.use('execute', {code:code},function(r){console.log(r)});
+
+
+var makeBigVKCodeMusicRequest = function(music_list){
+	var code = 'return [';
+	for (var i=0; i < alist.length; i++) {
+		code += '{"query": "' + acon(alist[i] + '", "result": ' + 'API.audio.search({"count":50,"q":"' + acon(alist[i] + '"})' + '}';
+		if (i != alist.length -1){
+			code += ',';
+		}
+	};
+	code+= '];'
+	return code;
+}*/
+
+
 function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
 	var _this = this;
 	this.apis = apis;
@@ -137,7 +154,9 @@ vk_api.prototype = {
 			
 			if(apisig) {
 				params_full.sig = hex_md5(api.viewer_id + stringifyParams(params_full, ['sid'], '=') + api.s);				
-				
+				if (!p.cache_key){
+					p.cache_key = params_full.sig;
+				}
 			}
 			
 			if (typeof cache_ajax == 'object' && api.use_cache && !p.nocache){

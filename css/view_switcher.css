@@ -26,6 +26,8 @@
 	background:url(../i/equalaizer_stoped.gif) no-repeat;
 	float: right;
 	margin-top:4px;
+	position:absolute;
+	right:25px;
 }
 .player-played.np{
 	background-image:url(../i/equalaizer.gif);
@@ -175,14 +177,16 @@ li.playing-song .play-controls{
 	
 	
 	
-
+.not-as-application .navs .nav-title{
+	float:left;
+}
 .navs .nav-title{
 	display:block;
 	padding-top:5px;
 	padding-left:10px;
 	overflow:hidden;
 	white-space:nowrap;
-	float:left;
+	
 	height:20px;
 	line-height:20px;
 	text-overflow: ellipsis; 

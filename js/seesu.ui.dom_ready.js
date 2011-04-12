@@ -264,11 +264,13 @@ window.connect_dom_to_som = function(d, ui){
 		var state_recovered;	
 		if (window.su && su.player && su.player.c_song){
 			if (su.player.c_song && su.player.c_song.plst_titl){
+				ui.views.show_start_page(true, true, true);
 				if (su.player.c_song.plst_titl.with_search_results_link){
 					delete su.player.c_song.plst_titl.with_search_results_link ;
 				}
 				su.ui.views.show_playlist_page(su.player.c_song.plst_titl, false, true);
 				su.player.view_song(su.player.c_song, true, true, true);
+				su.player.nowPlaying(su.player.c_song);
 				su.ui.views.freeze(su.player.c_song.plst_titl, true);
 				su.ui.mark_c_node_as(su.player.player_state);
 				state_recovered = true;

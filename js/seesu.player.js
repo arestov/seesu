@@ -331,6 +331,22 @@ su.player = {
 		}
 		
 	},
+	nowPlaying: function(mo){
+		if (!su.ui.now_playing.link || su.ui.now_playing.link[0].ownerDocument != su.ui.d){
+			if (su.ui.views.nav){
+				su.ui.now_playing.link = $('<a class="np"></a>').click(function(){
+					su.ui.views.show_now_playing(true);
+				}).appendTo(su.ui.views.nav.justhead);
+			}
+		}
+		if (su.ui.now_playing.link){
+			su.ui.now_playing.link.attr('title', 
+				( su.ui.d.title = (localize('now-playing','Now Playing') + ': ' +mo.artist + " - " + mo.track))
+			);	
+		}
+		
+		
+	},
 	play_song: function(mo, zoom, mopla){
 		if(!mo.isHaveTracks()){return false;}
 		delete mo.want_to_play;
@@ -347,22 +363,9 @@ su.player = {
 		}
 		
 		this.view_song(mo, zoom, false);
+		this.nowPlaying(mo);
 		
 		
-		if (su.ui.now_playing.link){
-			var artist = mo.artist;
-			su.ui.now_playing.link.attr('title', 
-				( su.ui.d.title = (localize('now-playing','Now Playing') + ': ' +artist + " - " + mo.track))
-			);
-		} else{
-			if (su.ui.views.nav){
-				
-				su.ui.now_playing.link = $('<a class="np"></a>').click(function(){
-					su.ui.views.show_now_playing(true);
-				}).appendTo(su.ui.views.nav.justhead);
-				
-			}
-		}
 		
 		
 		if (_mopla && (this.c_song != mo || (mopla && mo.mopla != mopla))){
