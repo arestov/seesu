@@ -18,6 +18,7 @@ var makeBigVKCodeMusicRequest = function(music_list){
 
 
 function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
+	this.audio_collection = {};
 	var _this = this;
 	this.apis = apis;
 	if (apis.length > 1){
@@ -63,6 +64,9 @@ function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
 		},
 		search: function(){
 			return _this.audio_search.apply(_this, arguments);
+		},
+		collectiveSearch: function(){
+			return _this.collectAudio.apply(_this, arguments);
 		},
 		name: this.search_source.name,
 		description: 'vkontakte.ru',
@@ -267,6 +271,28 @@ vk_api.prototype = {
 		});
 		return used_successful;
 	},
+	audioResponceHandler: function(r, hapi, callback, errorCallback){
+		var _this = this;
+		
+			var music_list = [];
+			for (var i=1, l = r.length; i < l; i++) {
+				var entity = _this.makeVKSong( r[i], hapi);
+				
+				if (entity && !entity.link.match(/audio\/.mp3$/) && !has_music_copy(music_list,entity)){
+					music_list.push(entity);
+				}
+			
+			
+			}
+			if (music_list && music_list.length){
+				if (callback) {callback(music_list, _this.search_source);}
+			} else{
+				if (errorCallback) {errorCallback(_this.search_source);}
+			}
+		
+
+		
+	},
 	audio_search: function(msq, callback, error, nocache, after_ajax, only_cache){
 		
 		var query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
@@ -285,26 +311,11 @@ vk_api.prototype = {
 		var used_successful = this.use('audio.search', params_u, 
 		function(r, hapi){
 			if (r.response && (r.response.length > 1 )) {
-				var music_list = [];
-				for (var i=1, l = r.response.length; i < l; i++) {
-					var entity = _this.makeVKSong( r.response[i], hapi);
-					
-					if (entity && !entity.link.match(/audio\/.mp3$/) && !has_music_copy(music_list,entity)){
-						music_list.push(entity);
-					}
-				
-				
-				}
-				if (music_list && music_list.length){
-					if (callback) {callback(music_list, _this.search_source);}
-				} else{
-					if (error) {error(_this.search_source);}
-				}
-			
-
+				_this.audioResponceHandler(r.response, hapi, callback, error);
 			} else{
 				if (error) {error(_this.search_source);}
 			}
+			
 		}, function(xhr, hapi){
 			if (error){error(_this.search_source);}
 		}, {
@@ -315,6 +326,98 @@ vk_api.prototype = {
 			not_init_queue: true
 		});
 		return used_successful;
+	},
+	addToAudioCollection: function(collection_key, cooperaty, last_in_collection){
+		
+		var _this = this;
+		var c = (this.audio_collection[collection_key] || (this.audio_collection[collection_key] = []));
+		var is_dublicate = false;
+		for (var i=0; i < c.length; i++) {
+			if (c[i].query == cooperaty.query){
+				is_dublicate = true;
+			}
+			break
+			
+		};
+		if (is_dublicate){
+			return false;
+		}
+		
+		clearTimeout(c.auto_send);
+		
+		
+		if (this.getActualAudioCollectionPart(collection_key).length > 4){
+			this.sendCollection(collection_key)
+		}
+		c.push(cooperaty);
+		
+		if (last_in_collection){
+			this.sendCollection(collection_key)
+		} else{
+			
+			c.auto_send = setTimeout(function(){
+				_this.sendCollection(collection_key);
+			},1000);
+		}
+		
+	},
+	getActualAudioCollectionPart: function(collection_key){
+		var c = this.audio_collection[collection_key];
+		var actual = [];
+		for (var i=0; i < c.length; i++) {
+			if (!c[i].disabled){
+				actual.push(c[i]);
+			}
+			
+		};
+		return actual;
+	},
+	sendCollection: function(collection_key){
+		var _this = this;
+		var ac = this.getActualAudioCollectionPart(collection_key);
+		if (ac.length){
+			var querylist = [];
+			for (var i=0; i < ac.length; i++) {
+				ac[i].disabled = true;
+				querylist.push(ac[i].query)
+			};
+			su.vk_api.use('execute', {code:this.makeBigVKCodeMusicRequest(querylist)},function(r, hapi){
+				if (r && r.response && r.response.length){
+					for (var i=0; i < r.response.length; i++) {
+						var cursor = r.response[i];
+						if (cursor.result && cursor.result.length > 1 ) {
+							_this.audioResponceHandler(cursor.result, hapi, ac[i].callback);
+						} 
+						
+					};
+				}
+				console.log(r)
+				
+			});
+			
+			
+		}
+	},
+	collectAudio: function(msq, callback, error, nocache, after_ajax, only_cache){
+		var query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+		//msq.collect_for
+		//msq.last_in_collection
+		this.addToAudioCollection(msq.collect_for, {
+			query: query,
+			callback: callback,
+			error: error
+		}, msq.last_in_collection);
+	},
+	makeBigVKCodeMusicRequest: function(query_list){
+		var code = 'return [';
+		for (var i=0; i < query_list.length; i++) {
+			code += '{"query": "' + query_list[i] + '", "result": ' + 'API.audio.search({"count":30,"q":"' + query_list[i] + '"})' + '}';
+			if (i != query_list.length -1){
+				code += ',';
+			}
+		};
+		code+= '];'
+		return code;
 	}
 };
 

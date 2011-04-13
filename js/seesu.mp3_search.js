@@ -729,7 +729,10 @@ su.mp3_search= (function(){
 					
 					var handler = (!o.only_cache && search_handlers[i].search) || search_handlers[i].collectiveSearch;
 					if (handler){
-						cmo.getMusicStore(sem, search_handlers[i].s).processing = true;			
+						if (!o.only_cache){
+							cmo.getMusicStore(sem, search_handlers[i].s).processing = true;
+						}
+						
 						var used_successful =  get_mp3(query, {
 							handler: handler,
 							get_next: o.get_next
