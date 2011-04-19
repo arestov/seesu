@@ -414,15 +414,15 @@ seesu_ui.prototype = {
 	},
 	createSongListeners: function(listenings, place, above_limit_value){
 		var _this = this;
-		var users_limit = 6;
+		var users_limit = 3;
 		for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
 			var lig = listenings[i];
 			if (lig.info){
 				var li = $('<li></li>');
-				
+				var imageplace = $("<div class='image-cropper'></div>").appendTo(li)
 				var image = this.preloadImage(lig.info.photo_medium, function(img){
 					_this.verticalAlign(img, 134, true);	
-				}, li); 
+				}, imageplace); 
 				
 
 
@@ -431,6 +431,7 @@ seesu_ui.prototype = {
 			}
 			listenings[i]
 		};
+		return Math.max(users_limit - listenings.length, 0);
 	},
 	updateSongListeners: function(mo){
 		var _this = this;
