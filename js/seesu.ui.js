@@ -450,9 +450,9 @@ seesu_ui.prototype = {
 							above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value);
 						}
 						
-					};
+					}; 
 					mo.ui.t_users.empty();
-					$('<div></div>').text('Пользователи, слушавшие этот трек, выглядят примерно так:').appendTo(mo.ui.t_users);
+					$('<div></div>').text(localize('listeners-looks')).appendTo(mo.ui.t_users);
 					uul.appendTo(mo.ui.t_users);
 				}
 				console.log(r)
