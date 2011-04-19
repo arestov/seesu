@@ -433,6 +433,7 @@ su.player.events[PLAYED] = function(){
 			}
 			if (su.vk.id){
 				su.api('track.scrobble', {
+					client: su.env.app_type,
 					status: 'playing',
 					duration: mo.mopla.duration,
 					artist: mo.artist,
@@ -468,6 +469,7 @@ su.player.events[FINISHED] = function() {
 			}
 			if (su.vk.id){
 				su.api('track.scrobble', {
+					client: su.env.app_type,
 					status: 'finished',
 					duration: mo.mopla.duration,
 					artist: mo.artist,
