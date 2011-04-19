@@ -635,6 +635,24 @@ html.not-as-application, .not-as-application  body{
 			float:right;
 			width:40px;
 		}
+.track-listeners{
+	margin:0.5em 0;
+}
+.song-listeners-list{
+	
+	overflow:hidden;
+	padding-top:10px;
+	position:relative;
+	}
+	.song-listeners-list li{
+		float:left;
+		height:134px;
+		overflow:hidden;
+		margin-right:14px;
+		}
+		.song-listeners-list li img{
+			width:100px;
+		}
 
 iframe.you-tube-video,embed.you-tube-video{
 	border:0;

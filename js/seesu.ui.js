@@ -380,7 +380,88 @@ seesu_ui.prototype = {
 		}
 		
 	},
-	updateSongContext:function(mo){
+	verticalAlign: function(img, target_height, fix){
+		var real_height = img.naturalHeight ||  img.height;
+		if (real_height){
+			var offset = (target_height - real_height)/2;
+			
+			if (offset && fix){
+				$(img).css('margin-top', offset + 'px')
+			}
+			return offset;
+		}
+		
+		
+	},
+	preloadImage: function(src, callback, place){
+		var image = document.createElement('img');
+		image.alt='user photo';
+		image.onload = function(){
+			if (callback){
+				callback(image)
+			}
+		};
+		if (place){
+			$(place).append(image);
+		}
+		image.src = src;
+		if (image.complete){
+			if (callback){
+				callback(image)
+			}
+		}
+		return image;
+	},
+	createSongListeners: function(listenings, place, above_limit_value){
+		var _this = this;
+		var users_limit = 6;
+		for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
+			var lig = listenings[i];
+			if (lig.info){
+				var li = $('<li></li>');
+				
+				var image = this.preloadImage(lig.info.photo_medium, function(img){
+					_this.verticalAlign(img, 134, true);	
+				}, li); 
+				
+
+
+				li
+					.appendTo(place);
+			}
+			listenings[i]
+		};
+	},
+	updateSongListeners: function(mo){
+		var _this = this;
+		var last_update = mo.ui.t_users.data('last_update');
+		if (mo.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 7)){
+			var d = {artist: mo.artist};
+			if (mo.track){
+				d.title = mo.track;
+			}
+			su.api('track.getListeners', d, function(r){
+				if (r && r.done && [].concat.apply([], r.done).length){
+					var above_limit_value = 0;
+					var uul = $("<ul class='song-listeners-list'></ul>");
+					for (var i=0; i < r.done.length; i++) {
+						if (r.done[i] && r.done[i].length){
+							above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value);
+						}
+						
+					};
+					mo.ui.t_users.empty();
+					$('<div></div>').text('Пользователи, слушавшие этот трек, выглядят примерно так:').appendTo(mo.ui.t_users);
+					uul.appendTo(mo.ui.t_users);
+				}
+				console.log(r)
+				
+			});
+			mo.ui.t_users.data('last_update', +new Date);
+		}
+		
+	},
+	updateSongContext:function(mo, real_need){
 		if (mo.ui){
 			var node = mo.node;
 			var artist = mo.artist;
@@ -390,7 +471,10 @@ seesu_ui.prototype = {
 				if (artist) {this.update_artist_info(artist, a_info, mo.plst_titl.playlist_type != 'artist');}
 				//this.update_track_info(mo);
 				this.show_video_info(mo.ui.tv, artist + " - " + mo.track);
-				this.updateSongfiles(mo);
+				this.updateSongFiles(mo);
+				if (real_need){
+					this.updateSongListeners(mo);
+				}
 				
 				if (su.lfm_api.scrobbling) {
 					this.lfm_change_scrobbling(true, mo.ui.context.children('.track-panel').children('.track-buttons'));
@@ -403,7 +487,7 @@ seesu_ui.prototype = {
 		
 		
 	},
-	updateSongfiles: function(mo){
+	updateSongFiles: function(mo){
 		if (!mo.ui){
 			return false;
 		}
@@ -854,12 +938,16 @@ seesu_ui.prototype = {
 
 		
 		var a_info = t_context.children('.artist-info');
-		var t_info = t_context.children('.track-info') 
+		var t_info = t_context.children('.track-info');
+		
+		var users = $('<div class="track-listeners"></div>').appendTo(t_context);
+		
 		mo.node = track;
 		mo.ui = {
 			mainc: li,
 			a_info: a_info,
 			node: track,
+			t_users: users,
 			context: t_context,
 			t_info: t_info,
 			tv: t_info.children('.track-video'),
@@ -889,7 +977,6 @@ seesu_ui.prototype = {
 			.append(buttmen)
 			.append(track)
 			.append(t_context);
-		
 			
 		return plistel;
 	},

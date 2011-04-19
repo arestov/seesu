@@ -10,7 +10,7 @@ var song_methods = {
 	},
 	view: function(no_navi){
 		su.mp3_search.find_mp3(this);
-		su.ui.updateSongContext(this);
+		su.ui.updateSongContext(this, true);
 		viewSong(this, no_navi);	
 	},
 	wheneWasChanged: function(){
@@ -406,7 +406,7 @@ function canUseSearch(sem, search_source){
 };
 function handle_song(mo, complete, get_next){
 	
-	su.ui.updateSongContext(mo);
+	su.ui.updateSongContext(mo, get_next);
 	
 	if (complete){
 		if (mo.ui){

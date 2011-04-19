@@ -462,7 +462,7 @@ var empty_song_click = function(){
 	seesu.ui.views.freeze(mo.plst_titl);
 	
 	su.mp3_search.find_mp3(mo);
-	su.ui.updateSongContext(mo);
+	su.ui.updateSongContext(mo, true);
 	viewSong(mo);
 	seesu.track_event('Song click', 'empty song');
 	return false;	
