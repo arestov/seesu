@@ -647,7 +647,7 @@ html.not-as-application, .not-as-application  body{
 	.song-listeners-list li{
 		float:left;
 		
-		margin-right:14px;
+		margin-right:13px;
 		background: #4A4A4A;
 		padding: 5px;
 		border-radius: 5px;

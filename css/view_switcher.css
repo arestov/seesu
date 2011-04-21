@@ -155,13 +155,20 @@ li.playing-song .play-controls{
 	
 	}
 .show-zoom-to-track ul.tracks-for-play>li.viewing-song{
-	
+	border: 1px solid #666;
+	background: #5E5E5E;
+	padding: 5px;
+	border-radius: 10px;
+	border-bottom-color:#4D4D4D;
 	}
 	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .song{
 		font-size:1.3em;
 		cursor:default;
+		text-shadow: 0 1px 0 #333;
 		}
-
+		.show-zoom-to-track ul.tracks-for-play>li.viewing-song .song .song-duration{
+			color:#aaa;
+		}
 
 .show-zoom-to-track ul.tracks-for-play>li{
 	display:none;
