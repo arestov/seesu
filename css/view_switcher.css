@@ -131,7 +131,9 @@ li.playing-song .play-controls{
 	display:none;
 }
 .player-holder{
-	height:23px;
+	height: 18px;
+	position: relative;
+	margin: 6px 0 12px;
 	position:relative;
 }
 
