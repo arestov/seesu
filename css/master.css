@@ -636,7 +636,7 @@ html.not-as-application, .not-as-application  body{
 			width:40px;
 		}
 .track-listeners{
-	margin:0.5em 0 28px;
+	margin:0.5em 0 0;
 }
 .song-listeners-list{
 	
