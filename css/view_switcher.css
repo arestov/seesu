@@ -131,7 +131,9 @@ li.playing-song .play-controls{
 	display:none;
 }
 .player-holder{
-	height:23px;
+	height: 18px;
+	position: relative;
+	margin: 6px 0 12px;
 	position:relative;
 }
 
@@ -155,14 +157,35 @@ li.playing-song .play-controls{
 	
 	}
 .show-zoom-to-track ul.tracks-for-play>li.viewing-song{
-	
+	border-bottom: 1px solid #4D4D4D;
+	border-top: 1px solid #737373;
+	background: #5E5E5E;
+	padding: 5px;
+	border-radius: 10px;
 	}
-	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .song{
+	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .track-node{
 		font-size:1.3em;
 		cursor:default;
 		}
-
-
+	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .song{
+		
+		
+		text-shadow: 0 1px 0 #333;
+		}
+		.show-zoom-to-track ul.tracks-for-play>li.viewing-song .song .song-duration{
+			color:#aaa;
+		}
+	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .search-mp3-failed{
+		color:#737373;
+	}
+	.show-zoom-to-track ul.tracks-for-play>li.viewing-song a.download-mp3{
+		right:8px;
+	}
+	.show-zoom-to-track ul.tracks-for-play>li.viewing-song a.loading,
+	.show-zoom-to-track ul.tracks-for-play>li.viewing-song a.search-mp3{
+		background-image:url(../i/spinner_bright.gif);
+	}
+	
 .show-zoom-to-track ul.tracks-for-play>li{
 	display:none;
 	}	

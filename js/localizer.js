@@ -26,6 +26,10 @@ var localize= (function(){
 */
 
 localizer = {
+	"listeners-looks":{
+		"original": "People who listened to this track, looks like this",
+		ru: "Люди, слушавшие этот трек, выглядят примерно так:"
+	},
 	"enter-code":{
 		"original": "Enter here code",
 		ru: "Помести сюда полученный код"

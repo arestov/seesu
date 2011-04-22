@@ -511,13 +511,14 @@ window.connect_dom_to_som = function(d, ui){
 			
 		};
 		var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(su.ui.els.start_screen);
-		var showUsers = function(listenings,c){
+		var users_limit = 6;
+		var showUsers = function(listenings,c, above_limit_value){
 			if (listenings.length){
 				
 					
 					
 				var uc = $('<ul></ul>');
-				for (var i=0, l = Math.min(listenings.length, 6); i < l; i++) {
+				for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
 					var lig = listenings[i];
 					if (lig.info){
 						$('<li></li>')
@@ -540,7 +541,7 @@ window.connect_dom_to_som = function(d, ui){
 				};
 				uc.appendTo(c)
 			}
-
+			return Math.max(users_limit - listenings.length, 0);
 		};
 		var getAndShowUsersListenings = function(){
 			users_play.addClass('loading');
@@ -566,10 +567,10 @@ window.connect_dom_to_som = function(d, ui){
 							getAndShowUsersListenings();
 							return false
 						}).appendTo(_header);
-						
+						var above_limit_value = 0;
 						for (var i=0; i < r.length; i++) {
 							if (r[i] && r[i].length){
-								showUsers(r[i], users_play);
+								above_limit_value = showUsers(r[i], users_play, above_limit_value);
 							}
 						};
 					}

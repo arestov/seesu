@@ -404,7 +404,7 @@ su.player = {
 		
 		su.ui.remove_video();
 		//time = (new Date()).getTime();
-		su.ui.updateSongContext(mo);
+		su.ui.updateSongContext(mo, true);
 		if (last_mo) {
 			this.change_songs_ui(last_mo, true) //remove ative state
 		}
@@ -433,6 +433,7 @@ su.player.events[PLAYED] = function(){
 			}
 			if (su.vk.id){
 				su.api('track.scrobble', {
+					client: su.env.app_type,
 					status: 'playing',
 					duration: mo.mopla.duration,
 					artist: mo.artist,
@@ -468,6 +469,7 @@ su.player.events[FINISHED] = function() {
 			}
 			if (su.vk.id){
 				su.api('track.scrobble', {
+					client: su.env.app_type,
 					status: 'finished',
 					duration: mo.mopla.duration,
 					artist: mo.artist,
@@ -505,10 +507,15 @@ su.player.events.progress_playing = function(progress_value, total){
 	
 	var progress = parseInt(progress_value);
 	var total = parseInt(total);
+	if (_c.track_progress_width){
+		var current_in_pixels = Math.round((progress/total) * _c.track_progress_width) + 'px';
+	} else{
+		var current_in_percents = ((progress/total) * 100) + '%';
+	}
 	
-	var current = Math.round((progress/total) * _c.track_progress_width);
+
 	
-	_c.tr_progress_p[0].style.width = current + 'px';
+	_c.tr_progress_p[0].style.width = current_in_pixels || current_in_percents;
 }
 
 su.player.events.progress_loading = function(progress_value, total){
@@ -519,9 +526,13 @@ su.player.events.progress_loading = function(progress_value, total){
 	var progress = parseInt(progress_value);
 	var total = parseInt(total);
 	
-	var current = Math.round((progress/total) * _c.track_progress_width);
+	if (_c.track_progress_width){
+		var current_in_pixels = Math.round((progress/total) * _c.track_progress_width) + 'px';
+	} else{
+		var current_in_percents = ((progress/total) * 100) + '%';
+	}
 	
-	_c.tr_progress_l[0].style.width = current + 'px';
+	_c.tr_progress_l[0].style.width = current_in_pixels || current_in_percents;
 	
 	if ((progress/total) > 0.8){
 		if (su.player.c_song.next_song && (su.player.c_song.next_song.isHaveBestTracks() || su.player.c_song.next_song.isSearchCompleted()) && su.player.musicbox.preloadSong){
