@@ -162,6 +162,7 @@ li.playing-song .play-controls{
 	background: #5E5E5E;
 	padding: 5px;
 	border-radius: 10px;
+	color:#fff;
 	}
 	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .track-node{
 		font-size:1.3em;
