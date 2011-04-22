@@ -357,7 +357,7 @@ vk_api.prototype = {
 			
 			c.auto_send = setTimeout(function(){
 				_this.sendCollection(collection_key);
-			},1000);
+			},3000);
 		}
 		
 	},
