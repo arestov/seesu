@@ -207,7 +207,7 @@ display:none;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
 .track-context{
-	padding-left:8px
+	padding:0 8px
 }
 .artist-info{overflow:hidden;}
 .artist-info .image{
@@ -647,11 +647,14 @@ html.not-as-application, .not-as-application  body{
 	.song-listeners-list li{
 		float:left;
 		
-		margin-right:13px;
+		margin-right:11px;
 		background: #4A4A4A;
 		padding: 5px;
 		border-radius: 5px;
 		margin-bottom:12px;
+		}
+		.song-listeners-list li:last-of-type{
+			margin-right:0;
 		}
 		.song-listeners-list li .image-cropper{
 			height:134px;
