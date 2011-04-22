@@ -53,7 +53,7 @@ a.song{
 	}
 a.song:hover{
 	color:#fff;
-	background:#595959;
+	background-color:#595959;
 }
 a.search-mp3{
 	background:url(../i/spinner.gif) no-repeat 100% 50%;
@@ -108,7 +108,7 @@ a.download-mp3:hover{
 	color:#fff;
 	}
 .viewing-song a.song{
-	background:transparent;
+	background-color:transparent;
 	
 }
 
