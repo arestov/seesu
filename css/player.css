@@ -77,7 +77,7 @@ a.track-node{
 	overflow:hidden;
 	}
 	a.track-node.mp3-download-is-not-allowed{
-		padding-right:0px;
+		padding-right:6px;
 	}
 	.song-duration{
 		color:#666;
