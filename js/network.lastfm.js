@@ -297,11 +297,14 @@ lastfm_api.prototype = {
 	},
 	getInitAuthData: function(){
 		var o = {};
-		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.apikey + '&cb=http://seesu.me/lastfm/callbacker.html';
+		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.apikey ;
+		var link_tag = 'http://seesu.me/lastfm/callbacker.html';
 		if (!su.env.deep_sanbdox){
 			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
-			o.link += '?key=' + o.bridgekey;
+			link_tag += '?key=' + o.bridgekey;
 		}
+		
+		o.link += '&cb=' + encodeURIComponent(link_tag);
 		return o;
 	},
 	get_lfm_token: function(open){
