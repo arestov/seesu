@@ -71,13 +71,10 @@ a.waiting-full-render{
 }
 a.track-node{
 	display:block;
-	padding:6px 43px 6px 6px;
+	padding:6px;
 	cursor:pointer;
 	border:0 !important;
 	overflow:hidden;
-	}
-	a.track-node.mp3-download-is-not-allowed{
-		padding-right:6px;
 	}
 	.song-duration{
 		color:#666;

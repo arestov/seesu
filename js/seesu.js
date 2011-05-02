@@ -646,10 +646,10 @@ var getTopTracks = function(artist,callback, error_c) {
 			var track_list = [];
 			if (tracks.length){
 				for (var i=0, l = (tracks.length < 30) ? tracks.length : 30; i < l; i++) {
-					track_list.push({'artist' : artist ,'track': tracks[i].name});
+					track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
 				}
 			} else{
-				track_list.push({'artist' : artist ,'track': tracks.name});
+				track_list.push({'artist' : artist ,'track': tracks.name, images: tracks.image});
 			}
 			
 			if (callback) {callback(track_list);}
