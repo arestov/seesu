@@ -505,11 +505,11 @@ seesu_ui.prototype = {
 			
 			if (mo.isSearchCompleted() && mo.isNeedsAuth('vk')){
 				if (!songs.length){
-					c.prepend(_sui.samples.vk_login.clone())
+					mo.ui.t_info.before(_sui.samples.vk_login.clone())
 				} else if(!mo.isHaveAnyResultsFrom('vk')){
-					c.prepend(_sui.samples.vk_login.clone('enhancement'))
+					mo.ui.t_info.before(_sui.samples.vk_login.clone('enhancement'))
 				} else {
-					c.prepend(_sui.samples.vk_login.clone('stabilization'))
+					mo.ui.t_info.before(_sui.samples.vk_login.clone('stabilization'))
 				}
 				
 				
