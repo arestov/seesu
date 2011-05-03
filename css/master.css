@@ -318,7 +318,12 @@ display:none;
 	margin:5px -13px 0;
 	padding: 0 0 14px;
 	min-height:140px;
-}		
+	}	
+	.track-info-dominator > .vk-login-context{
+		border-radius:0;
+		margin-bottom:14px;
+		margin-top:0;
+		}	
 	.track-info-dominator .dominator-head{
 			overflow:hidden;
 			padding:0 13px;
