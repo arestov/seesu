@@ -365,7 +365,7 @@ su.player = {
 			_mopla = mo.song();
 		}
 		if (force_zoom || (view && this.c_song != mo) || (last_mo == this.v_song && last_mo != mo)){
-			this.view_song(mo, true);
+			this.view_song(mo, force_zoom || view);
 		}
 		
 		this.nowPlaying(mo);
@@ -384,7 +384,6 @@ su.player = {
 			if (this.musicbox.play_song_by_url){
 				this.musicbox.play_song_by_url(_mopla.link);
 				mo.mopla = _mopla;
-				
 			}
 			su.ui.setSongDurationUI(mo, _mopla.duration);
 			
