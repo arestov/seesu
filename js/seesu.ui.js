@@ -469,10 +469,10 @@ seesu_ui.prototype = {
 			
 			var a_info = mo.ui && mo.ui.a_info;
 			if (a_info){
-				if (artist) {this.update_artist_info(artist, a_info, mo.plst_titl.playlist_type != 'artist');}
+				if (artist) {this.update_artist_info(artist, a_info, mo.plst_titl.playlist_type != 'artist', mo.ui.extend_info);}
 				//this.update_track_info(mo);
-				this.show_video_info(mo.ui.tv, artist + " - " + mo.track);
-				this.updateSongFiles(mo);
+				this.show_video_info(mo.ui.tv, artist + " - " + mo.track, mo.ui.extend_info);
+				this.updateSongFiles(mo, mo.ui.extend_info);
 				if (real_need){
 					this.updateSongListeners(mo);
 				}
@@ -484,11 +484,14 @@ seesu_ui.prototype = {
 				console.log('no context for:')
 				console.log(mo)
 			}
+			
+			
+			
 		}
 		
 		
 	},
-	updateSongFiles: function(mo){
+	updateSongFiles: function(mo, ext_info){
 		if (!mo.ui){
 			return false;
 		}
@@ -514,7 +517,7 @@ seesu_ui.prototype = {
 			
 			
 			if (songs){
-				
+				var songs_counter = 0;
 				var small_head = $('<div class="files-header"></div>').appendTo(c);
 				small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
 				var desc_text = $('<span class="desc-text"></span>').appendTo(small_head);
@@ -534,6 +537,7 @@ seesu_ui.prototype = {
 				
 							
 				for (var i=0; i < songs.length; i++) {
+					songs_counter += songs[i].t.length
 					var b = this.createFilesList(songs[i], mo);
 					if (b){b.appendTo(sc);}
 					if (!extend_link && songs[i].t && songs[i].t.length > 3){
@@ -546,7 +550,8 @@ seesu_ui.prototype = {
 					
 					
 				};
-				
+				ext_info.files = songs_counter;
+				ext_info.updateUI();
 				
 				
 				sc.appendTo(c)
@@ -559,7 +564,7 @@ seesu_ui.prototype = {
 			mo.ui.files_time_stamp = +new Date();
 		}
 	},
-	update_artist_info: function(artist, a_info, show_link_to_artist_page){
+	update_artist_info: function(artist, a_info, show_link_to_artist_page, ext_info){
 		var _sui = this;
 		if (a_info.data('artist') != artist){
 			a_info.data('artist', artist);
@@ -575,15 +580,7 @@ seesu_ui.prototype = {
 			var arts_name = $('<span class="desc-name"></span>')
 				.appendTo(ainf.name);
 				
-			if (show_link_to_artist_page){
-				$('<a class="js-serv">' + localize('top-tracks') + '</a>')
-					.data('artist', artist)
-					.appendTo(arts_name)
-					.click(function(){
-						_sui.show_artist(artist);
-						su.track_event('Artist navigation', 'top tracks', artist);
-					});
-			}
+			
 			
 			$('<a></a>')
 				.attr('href', 'http://www.last.fm/music/' + artist.replace(' ', '+'))
@@ -608,7 +605,7 @@ seesu_ui.prototype = {
 			seesu.current_artist = artist;
 			lfm('artist.getInfo',{'artist': artist }, function(r){
 				if (a_info.data('artist') == artist){
-					_sui.show_artist_info(r, ainf, artist);
+					_sui.show_artist_info(r, ainf, artist, ext_info);
 				}
 				
 			});
@@ -625,7 +622,7 @@ seesu_ui.prototype = {
 			}
 		return youtube_video;		
 	},
-	show_video_info: function(vi_c, q){
+	show_video_info: function(vi_c, q, ext_info){
 		var _this = this;
 		var _sui = this;
 		if (vi_c.data('has-info')){return true;}
@@ -646,7 +643,7 @@ seesu_ui.prototype = {
 						if (!showed){
 							_sui.video = {
 								link: $(this).addClass('active'),
-								node: $(_this.create_youtube_video(vid, su.env.opera_widget)).appendTo(v_content)
+								node: $(_this.create_youtube_video(vid, su.env.opera_widget)).appendTo(vi_c)
 							}
 							seesu.player.set_state('pause');
 							this.showed = true;
@@ -667,7 +664,7 @@ seesu_ui.prototype = {
 						
 					li.appendTo(v_content)
 				}
-				for (var i=0, l = ((vs.length < 3) ? vs.length : 3); i < l; i++) {
+				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
 					var _v = vs[i],
 						tmn = _v['media$group']['media$thumbnail'][0].url,
 						v_id = _v['media$group']['yt$videoid']['$t'],
@@ -676,6 +673,10 @@ seesu_ui.prototype = {
 					make_v_link(tmn, v_id, v_title);
 					
 				};
+				if (l){
+					ext_info.videos = l;
+					ext_info.updateUI();
+				}
 				
 				v_content.appendTo(vi_c);
 				
@@ -713,10 +714,10 @@ seesu_ui.prototype = {
 			);
 		}	
 	},
-	show_artist_info: function(r, ainf, oa){
+	show_artist_info: function(r, ainf, oa, ext_info){
 		var _sui = this;
 		var info	 = r.artist || false;
-		var similars, artist, tags, bio, image;
+		var similars, artist, tags, bio, image, has_some_info_extenders;
 		if (info) {
 			similars = info.similar && info.similar.artist;
 			artist	 = info.name;
@@ -736,6 +737,10 @@ seesu_ui.prototype = {
 		}
 		if (bio){
 			ainf.bio.html(bio);
+			ainf.bio.append('<span class="forced-end"></span>');
+			if (!has_some_info_extenders){
+				has_some_info_extenders = true;
+			}
 		}
 		
 		
@@ -743,7 +748,7 @@ seesu_ui.prototype = {
 		
 		
 		if (tags && tags.length) {
-			var tags_p = $("<p class='artist-tags'></p>").append('<span class="desc-name">'+localize('Tags')+':</span>');
+			var tags_p = $("<p class='artist-tags'></p>").append('<span class="desc-name"><em>'+localize('Tags')+':</em></span>');
 			var tags_text = $('<span class="desc-text"></span>').appendTo(tags_p);
 			for (var i=0, l = tags.length; i < l; i++) {
 				var tag = tags[i],
@@ -760,9 +765,12 @@ seesu_ui.prototype = {
 		}
 		
 		if (similars && similars.length) {
-			var similars_p = $("<p></p>").attr({ 'class': 'artist-similar'}),
-				similars_a = $('<a></a>').append(localize('similar-arts')).attr({ 'class': 'similar-artists js-serv'}).data('artist', artist);	
-			$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p).append(document.createTextNode(':'));
+			if (!has_some_info_extenders){
+				has_some_info_extenders = true;
+			}
+			var similars_p = $("<p class='extending-info artist-similar'></p>"),
+				similars_a = $('<em></em>').append($('<a></a>').append(localize('similar-arts') + ":").attr({ 'class': 'similar-artists js-serv'}).data('artist', artist));	
+			$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p);
 			var similars_text = $('<span class="desc-text"></span>').appendTo(similars_p);
 			for (var i=0, l = similars.length; i < l; i++) {
 				var similar = similars[i],
@@ -777,10 +785,12 @@ seesu_ui.prototype = {
 			}
 			ainf.meta_info.append(similars_p);
 		}
-		var artist_albums_container = $('<div class="artist-albums"></div>').append('<span class="desc-name">'+localize('albums')+':</span>').appendTo(ainf.meta_info);
+		var artist_albums_container = $('<div class="artist-albums extending-info"></div>').append('<span class="desc-name"><em>'+localize('albums')+':</em></span>').appendTo(ainf.meta_info);
 		var artist_albums_text = $('<div class=""></div>').appendTo(artist_albums_container);
 		if (artist_albums_container){
-			
+			if (!has_some_info_extenders){
+				has_some_info_extenders = true;
+			}
 			var albums_link = $('<a class="js-serv get-artist-albums">' + localize('get-albums')+ '</a>')
 				.click(function(){
 					var _this = $(this);
@@ -804,7 +814,11 @@ seesu_ui.prototype = {
 			artist_albums_container.data('albums_link', albums_link);
 		}
 		ainf.bio.parent().removeClass('background-changes');
-	
+		if (has_some_info_extenders){
+			ext_info.base_info = artist;
+			ext_info.updateUI();
+		}
+		
 	},
 	artist_albums_renderer: function(r, container, original_artist){
 		var _sui = this;
@@ -886,9 +900,20 @@ seesu_ui.prototype = {
 		}
 
 	},
+	setSongDurationUI: function(mo, duration){
+		var du = mo.node.find('a.song-duration');
+		
+		if (duration){
+			var digits = duration % 60;
+			var track_dur = (Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+			du.text(track_dur);
+		} else{
+			du.text('');
+		}
+		
+	},
 	updateSong: function(mo, not_rend){
 		var _sui = this;
-		var durat = mo.node.find('a.song-duration').remove();
 		var down = mo.node.siblings('a.download-mp3').remove();
 		mo.node
 			.addClass('song')
@@ -903,25 +928,36 @@ seesu_ui.prototype = {
 			});
 		
 		
+		
 		var mopla = mo.song();
 		if (mopla){
+			/*
 			if (mopla.downloadable){
 				var mp3 = $("<a class='download-mp3'></a>").text('mp3').attr({'href': mopla.link });
 				mp3.insertBefore(mo.node);
 			} else{
 				mo.node.addClass('mp3-download-is-not-allowed');
 			}
-			
-			if (mopla.duration) {
-				var digits = mopla.duration % 60;
-				var track_dur = (Math.floor(mopla.duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-				mo.node.prepend($('<a class="song-duration"></a>').text(track_dur + ' '));
+			*/
+			if (mopla.duration){
+				this.setSongDurationUI(mo, mopla.duration);
 			}
 		}
 		
 			
 
 		
+	},
+	infoGen: function(dp, c, base_string){
+		if (dp){
+			if (c.prev){
+				c.str += ', ';
+			}
+			c.str += base_string.replace('%s', dp);
+			if (!c.prev){
+				c.prev = true
+			}
+		}	
 	},
 	create_playlist_element: function(mo){
 		var _sui = this;
@@ -937,20 +973,71 @@ seesu_ui.prototype = {
 		var buttmen = _sui.els.play_controls.node.clone(true).data('mo', mo);
 		tp.add(buttmen).find('.play-control img.pl-control').data('mo', mo);
 
+		var tidominator = t_context.children('.track-info-dominator');
+		var dominator_head = tidominator.children('.dominator-head');
 		
-		var a_info = t_context.children('.artist-info');
-		var t_info = t_context.children('.track-info');
+		
+		var a_info = tidominator.children('.artist-info');
+		var t_info = tidominator.children('.track-info');
+		
+		if (mo.plst_titl.playlist_type != 'artist'){
+			$('<a class="js-serv">' + localize('top-tracks') + '</a>')
+				.data('artist', mo.artist)
+				.appendTo(dominator_head.children('.closer-to-track'))
+				.click(function(){
+					_sui.show_artist(mo.artist);
+					su.track_event('Artist navigation', 'top tracks', mo.artist);
+				});
+		}
+		
+		
 		
 		var users = $('<div class="track-listeners"></div>').appendTo(t_context);
 		
+		
+		var extend_switcher = dominator_head.children('.extend-switcher').click(function(){
+			tidominator.toggleClass('want-more-info');
+			return false;
+		});
+		
+		
 		mo.node = track;
 		mo.ui = {
+			tidominator: tidominator,
 			mainc: li,
 			a_info: a_info,
 			node: track,
 			t_users: users,
 			context: t_context,
 			t_info: t_info,
+			extend_info: {
+				files: false,
+				videos: false,
+				base_info: false,
+				extend_switcher: extend_switcher,
+				updateUI: function(){
+					var c = {
+						str: '',
+						prev: false
+					};
+					su.ui.infoGen(this.base_info, c, 'more «%s» info');
+					su.ui.infoGen(this.files, c, 'files: %s');
+					su.ui.infoGen(this.videos, c, 'video: %s');
+					if (c.str){
+						this.extend_switcher.find('.big-space').text(c.str);
+					}
+
+				}
+			},
+			deactivate: function(){
+				this.files.removeClass('show-files show-all-files')
+				this.mainc.removeClass('viewing-song')
+				this.tidominator.removeClass('want-more-info');
+			},
+			activate: function(){
+				this.mainc.addClass('viewing-song');
+			},
+			
 			tv: t_info.children('.track-video'),
 			files: t_info.children('.track-files'),
 			remove: function(){
@@ -978,7 +1065,9 @@ seesu_ui.prototype = {
 			.append(buttmen)
 			.append(track)
 			.append(t_context);
-			
+		
+		track.prepend($('<a class="song-duration"></a>'));
+		
 		return plistel;
 	},
 	lfmRequestAuth: function(){

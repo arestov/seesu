@@ -210,7 +210,6 @@ lastfm_api.prototype = {
 				
 				
 				
-				console.log(r);
 			}, function(){
 				if (error){error(_this.search_source);}
 			}, false, nocache, {after_ajax: after_ajax, not_init_queue: true});

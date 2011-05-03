@@ -186,10 +186,12 @@ window.connect_dom_to_som = function(d, ui){
 			
 		};
 		var ainfo_sample = ui_samples.children('.artist-info');
+		var track_c = ui_samples.children('.track-context');
+		track_c.children('.track-info-dominator').append(ainfo_sample.clone())
 		ui.samples = {
 			
 			a_info: ainfo_sample,
-			track_c : ui_samples.children('.track-context').append(ainfo_sample.clone()),
+			track_c : track_c,
 			vk_login: {
 				o: ui_samples.children('.vk-login-context'),
 				oos: $(),

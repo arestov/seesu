@@ -214,6 +214,7 @@ display:none;
 	margin-right:13px;
 	margin-bottom:7px;
 	width: 126px;
+	position:relative;
 	}
 @media (min-width:600px) {
 	.artist-info .image{
@@ -251,12 +252,15 @@ display:none;
 		background: url(../i/spinner.gif) no-repeat 4px 10px;
 		padding-top: 38px;
 	}
-	ul.tracks-for-play>li{
+	ul.tracks-for-play > li{
 		margin: 0 0 5px 0;
 		position:relative;
 		}
 .artist-image.freeze-this-image{
 	visibility:hidden;
+}
+.artist-info .image img.artist-image{
+	position:absolute;
 }
 .artist-image{
 	width:126px;
@@ -270,6 +274,8 @@ display:none;
 	overflow:hidden;
 	position:relative;
 	top:-3px;
+	height:4.7em;
+	
 	}
 	.artist-similar a.artist{
 		margin-right:8px;
@@ -281,15 +287,107 @@ display:none;
 .artist-meta-info{
 	overflow:hidden;
 	clear:left;
+	position:relative;
+	z-index:2;
+	}
+	.artist-meta-info .desc-name{
+		
+		}
+		.artist-meta-info .desc-name em {
+			font-style:normal;
+			background:#5a5a5a;
+			padding:3px 0 3px 5px;
+			border-radius: 4px 0 0 4px;
+		}
+		.artist-meta-info .desc-name em:hover{
+			opacity:0.4;
+		}
+.artist-bio .forced-end{
+	position:absolute;
+	bottom: 0;
+	right: 0;
+	
+	height:1.7em;
+	background:url(../i/img_forced_end.png) no-repeat 0 0;
+	width:76px;
 }
+.track-info-dominator{
+	border-top:1px solid #555555;
+	border-bottom:1px solid #6e6e6e;
+	background:#5a5a5a;
+	margin:5px -13px 0;
+	padding: 0 0 14px;
+	min-height:140px;
+}		
+	.track-info-dominator .dominator-head{
+			overflow:hidden;
+			padding:0 13px;
+		}
+		.track-info-dominator .dominator-head .closer-to-track{
+			padding-top:7px;
+		}
+	.track-info-dominator .extend-switcher{
+		border:0;
+		padding: 7px;
+		margin-left:-7px;
+		margin-bottom:5px;
+		display: inline-block;
+		border-radius: 0 0 6px 6px;
+		color:#808080;
+		text-shadow: 0 1px 0 #4A4A4A;
+		}
+		.track-info-dominator .extend-switcher .big-space{
+			
+		}
+
+		
+		.track-info-dominator .extend-switcher:hover{
+			background-color:#555;
+			}
+		.want-more-info .extend-switcher{
+			text-shadow:0;
+		}
+		.want-more-info .extend-switcher:hover{
+			background-color:#585858;
+		}
+
+	.track-info-dominator .extending-info{
+		display:none;
+		}	
+	.track-info-dominator .artist-info, .track-info-dominator .track-info{
+		padding:0 13px;
+		
+	}	
+	.track-info-dominator .track-info{
+		margin-bottom:14px;
+	}
+	
+	
+	
+	.want-more-info .extending-info{
+		display:block;
+		}	
+	.track-context .want-more-info .artist-bio{
+		height:auto;
+		}
+	.track-context .want-more-info  .artist-bio .forced-end{
+		display:none;
+		}
+
+	.track-context .want-more-info .image img.artist-image{
+		position:static;
+	}
+
+	
 .artist-name{
 	overflow:hidden;
 	padding-bottom:2px;
 }
 .artist-albums, .artist-similar,.artist-tags{
+	overflow: hidden;
+	padding: 2px 0;
+	margin: 6px 0;
 	
-	padding-bottom:2px;
-	margin:0.5em 0;
 }		
 .desc-name{
 	margin-right: 13px;
@@ -671,7 +769,6 @@ iframe.you-tube-video,embed.you-tube-video{
 	margin:20px 0 40px;
 	}
 .track-video{
-	margin-bottom:25px;
 	overflow:hidden;
 	}
 	.track-video .desc-text{

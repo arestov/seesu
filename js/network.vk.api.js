@@ -391,7 +391,6 @@ vk_api.prototype = {
 						
 					};
 				}
-				console.log(r)
 				
 			});
 			

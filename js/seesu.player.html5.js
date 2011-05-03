@@ -66,11 +66,11 @@ html5_p.prototype = {
 		preloadSong: function(url){
 			var au = this.getAud(url).a;
 			if (au.buffered.length && au.buffered.end(0) == au.duration){
-				console.log('will not preload ' + url)
+				
 				return true;
 				
 			} else{
-				console.log('preloading ' + url)
+				
 				au.load();
 			}
 			
