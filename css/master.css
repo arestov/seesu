@@ -757,7 +757,7 @@ html.not-as-application, .not-as-application  body{
 		margin-bottom:10px;
 		}
 		.track-listeners li:first-of-type{
-			margin-right:0;
+			margin-left:0;
 		}
 		.song-listeners-list li .image-cropper{
 			height:134px;
