@@ -16,6 +16,60 @@ var makeBigVKCodeMusicRequest = function(music_list){
 	return code;
 }*/
 
+var vk_auth_box = {
+	requestAuth: function(){
+		
+		this.authInit();
+		
+	},
+	createAuthFrame: function(first_key){
+		if (this._auth_inited){
+			return false;
+		}
+		this.auth_frame = document.createElement('iframe');	
+		addEvent(window, 'message', function(e){
+			if (e.data == 'vk_bridge_ready:'){
+				e.source.postMessage("add_keys:" + first_key, '*');
+			} else if(e.data.indexOf('vk_token:') === 0){
+				e.data.replace('vk_sess:','');
+				
+				console.log('got token!!!!')
+				console.log(e.data.replace('vk_sess:',''));
+			}
+		});
+		i.className = 'serv-container';
+		i.src = 'http://seesu.me/vk/bridge.html';
+		document.body.appendChild(i);
+		this._auth_inited = true;
+	},
+	setAuthBridgeKey: function(key){
+		if (!this._auth_inited){
+			this.CreateAuthFrame(key)
+		} else{
+			this.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
+		}
+	},
+	authInit: function(){
+		
+		
+		//init_auth_data.bridgekey		
+		
+		var init_auth_data = su._api.getInitAuthData();
+		if (init_auth_data.bridgekey){
+			this.SetAuthBridgeKey(init_auth_data.bridgekey)
+		} 
+		
+		
+		open_url(init_auth_data.link);
+		dstates.add_state('body','-waiting-for-finish');
+		
+		
+		return
+		
+	}
+}
+
+
 
 function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
 	this.audio_collection = {};
