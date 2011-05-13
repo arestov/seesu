@@ -742,7 +742,7 @@ html.not-as-application, .not-as-application  body{
 	margin:0.5em 0 0;
 }
 .song-listeners-list{
-	
+	height: 154px;
 	overflow:hidden;
 	padding-top:10px;
 	position:relative;
