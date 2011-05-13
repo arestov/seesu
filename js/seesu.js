@@ -163,7 +163,13 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 		var _vkapi = new vk_api([user_api_data], seesu.delayed_search.vk_api.queue, false, 
 		function(info, r){
 			if (info){
-				seesu.ui.samples.vk_login.remove(); 
+				if (seesu.ui && seesu.ui.samples && seesu.ui.samples.vk_login){
+					seesu.ui.samples.vk_login.remove(); 
+				}
+				
+						
+				
+				
 				seesu.vk.id = vk_s.mid;
 				seesu.vk_api = _vkapi;
 				
