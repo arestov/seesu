@@ -742,7 +742,7 @@ html.not-as-application, .not-as-application  body{
 	margin:0.5em 0 0;
 }
 .song-listeners-list{
-	
+	height: 154px;
 	overflow:hidden;
 	padding-top:10px;
 	position:relative;
@@ -750,14 +750,14 @@ html.not-as-application, .not-as-application  body{
 	.song-listeners-list li{
 		float:left;
 		
-		margin-right:11px;
+		margin-left:11px;
 		background: #4A4A4A;
 		padding: 5px;
 		border-radius: 5px;
-		margin-bottom:12px;
+		margin-bottom:10px;
 		}
-		.song-listeners-list li:last-of-type{
-			margin-right:0;
+		.track-listeners li:first-of-type{
+			margin-left:0;
 		}
 		.song-listeners-list li .image-cropper{
 			height:134px;
