@@ -17,9 +17,9 @@ var makeBigVKCodeMusicRequest = function(music_list){
 }*/
 
 var vk_auth_box = {
-	requestAuth: function(){
+	requestAuth: function(p){
 		
-		this.authInit();
+		this.authInit(p);
 		
 	},
 	createAuthFrame: function(first_key){
@@ -44,19 +44,19 @@ var vk_auth_box = {
 	},
 	setAuthBridgeKey: function(key){
 		if (!this._auth_inited){
-			this.CreateAuthFrame(key)
+			this.createAuthFrame(key)
 		} else{
 			this.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
 		}
 	},
-	authInit: function(){
+	authInit: function(p){
 		
 		
 		//init_auth_data.bridgekey		
 		
-		var init_auth_data = su._api.getInitAuthData();
+		var init_auth_data = su.vk_api.getInitAuthData(p);
 		if (init_auth_data.bridgekey){
-			this.SetAuthBridgeKey(init_auth_data.bridgekey)
+			this.setAuthBridgeKey(init_auth_data.bridgekey)
 		} 
 		
 		
@@ -138,6 +138,32 @@ function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
 vk_api.prototype = {
 	legal_apis:[1915003],
 	api_link: 'http://api.vk.com/api.php',
+	getInitAuthData: function(p){
+		var ru = p && p.ru;
+		
+		var o = {};
+		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.apikey ;
+		var link_tag = 'http://seesu.me/lastfm/callbacker.html';
+		if (!su.env.deep_sanbdox){
+			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
+			link_tag += '?key=' + o.bridgekey;
+		}
+		
+		o.link += '&cb=' + encodeURIComponent(link_tag);
+		
+		
+		/*
+		var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
+		if (su.vk_app_mode){
+			if (window.VK){
+				VK.callMethod('showSettingsBox', 8);
+			}
+		} else{
+			window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
+			seesu.track_event('Auth to vk', 'start');
+		}
+		*/
+	},
 	use: function(method, params, callback, error, api_pipi){ //nocache, after_ajax, cache_key, only_cache
 		var p = api_pipi || {};
 		if (method) {
