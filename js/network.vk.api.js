@@ -23,27 +23,27 @@ var vk_auth_box = {
 		
 	},
 	createAuthFrame: function(first_key){
-		if (this._auth_inited){
+		if (this.auth_inited){
 			return false;
 		}
-		this.auth_frame = document.createElement('iframe');	
+		var i = this.auth_frame = document.createElement('iframe');	
 		addEvent(window, 'message', function(e){
 			if (e.data == 'vk_bridge_ready:'){
 				e.source.postMessage("add_keys:" + first_key, '*');
-			} else if(e.data.indexOf('vk_token:') === 0){
+			} else if(e.data.indexOf('vk_sess:') === 0){
 				e.data.replace('vk_sess:','');
 				
-				console.log('got token!!!!')
+				console.log('got vk_sess!!!!')
 				console.log(e.data.replace('vk_sess:',''));
 			}
 		});
 		i.className = 'serv-container';
 		i.src = 'http://seesu.me/vk/bridge.html';
 		document.body.appendChild(i);
-		this._auth_inited = true;
+		this.auth_inited = true;
 	},
 	setAuthBridgeKey: function(key){
-		if (!this._auth_inited){
+		if (!this.auth_inited){
 			this.createAuthFrame(key)
 		} else{
 			this.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
@@ -142,16 +142,16 @@ vk_api.prototype = {
 		var ru = p && p.ru;
 		
 		var o = {};
-		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.apikey ;
-		var link_tag = 'http://seesu.me/lastfm/callbacker.html';
-		if (!su.env.deep_sanbdox){
-			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
-			link_tag += '?key=' + o.bridgekey;
-		}
+		o.link = 'http://' + (ru ? "vkontakte.ru" :  'vk.com') + '/login.php?app=1915003&layout=openapi&settings=' + (p && p.settings || 8);
+		var link_tag = 'http://seesu.me/vk/callbacker.html';
 		
-		o.link += '&cb=' + encodeURIComponent(link_tag);
+		o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
+		link_tag += '?key=' + o.bridgekey;
 		
 		
+		o.link += '&channel=' + encodeURIComponent(link_tag);
+		
+		return o;
 		/*
 		var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
 		if (su.vk_app_mode){
