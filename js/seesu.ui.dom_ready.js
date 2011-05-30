@@ -209,59 +209,39 @@ window.connect_dom_to_som = function(d, ui){
 					} else{
 						nvk.addClass(type + '-login')
 					}
-					
-					nkv.find('.sign-in-to-vk').click(function(){
+					var auth_c =  nvk.find('.auth-container');
+					nvk.find('.sign-in-to-vk').click(function(){
 						var class_name = this.className;
 						var clicked_node = $(this);
 						
+						/*
 						if (seesu.env.cross_domain_allowed){
 							nvk.toggleClass('want-to-sign-in-to-vk');
 						} else{
+							
+						} */
 							var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
 							if (su.vk_app_mode){
 								if (window.VK){
 									VK.callMethod('showSettingsBox', 8);
 								}
 							} else{
+								
+								vk_auth_box.requestAuth({
+									ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
+									c: auth_c
+								})
+								/*
 								window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
 								seesu.track_event('Auth to vk', 'start');
+								*/
 							}
 							
-						}
+						
 						return false;
 					});
 					
 					_this.oos =  _this.oos.add(nvk);
-					var vk_auth = $('.vk-auth',nvk);
-					
-					_this.vk_login_error =  _this.vk_login_error.add($('.error',vk_auth));
-					_this.captcha_img = _this.captcha_img.add($('.vk-captcha-context img',vk_auth));
-					
-					vk_auth.submit(function(){
-						_this.vk_login_error.text('');
-						_this.oos.addClass("waiting-vk-login");
-						dstates.remove_state('body','vk-needs-captcha');
-						var node = $(this),
-							email = $('input.vk-email',node).val(),
-							pass = vk_pass.val();
-						
-						var save = vk_save_pass.attr('checked');
-						if (save){
-							seesu.vk.save_pass = true;
-						} else{
-							seesu.vk.save_pass = false;
-						}
-						uilogin_to_hapi(email, pass, $('.vk-captcha-key',node).val(), save);
-				
-						return false;
-					});
-					var vk_pass  = $('input.vk-pass', vk_auth)
-						.bind('mouseover', function(){
-							this.type = 'text';
-						})
-						.bind('mouseout', function(){
-							this.type = 'password';
-						});
 					return nvk;
 				}
 			}

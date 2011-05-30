@@ -42,6 +42,32 @@ var vk_auth_box = {
 		document.body.appendChild(i);
 		this.auth_inited = true;
 	},
+	getInitAuthData: function(p){
+		var ru = p && p.ru;
+		
+		var o = {};
+		o.link = 'http://' + (ru ? "vkontakte.ru" :  'vk.com') + '/login.php?app=1915003&layout=openapi&settings=' + (p && p.settings || 8);
+		var link_tag = 'http://seesu.me/vk/callbacker.html';
+		
+		o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
+		link_tag += '?key=' + o.bridgekey;
+		
+		
+		o.link += '&channel=' + encodeURIComponent(link_tag);
+		
+		return o;
+		/*
+		var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
+		if (su.vk_app_mode){
+			if (window.VK){
+				VK.callMethod('showSettingsBox', 8);
+			}
+		} else{
+			window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
+			seesu.track_event('Auth to vk', 'start');
+		}
+		*/
+	},
 	setAuthBridgeKey: function(key){
 		if (!this.auth_inited){
 			this.createAuthFrame(key)
@@ -54,14 +80,19 @@ var vk_auth_box = {
 		
 		//init_auth_data.bridgekey		
 		
-		var init_auth_data = su.vk_api.getInitAuthData(p);
+		var init_auth_data = this.getInitAuthData(p);
 		if (init_auth_data.bridgekey){
 			this.setAuthBridgeKey(init_auth_data.bridgekey)
 		} 
+		if (p.c){
+			p.c.empty();
+			p.c.append('<iframe class="vk-auth-frame" src="' + init_auth_data.link + '"></iframe>')
+		} else{
+			open_url(init_auth_data.link);
+		}
 		
 		
-		open_url(init_auth_data.link);
-		dstates.add_state('body','-waiting-for-finish');
+		//dstates.add_state('body','vk-waiting-for-finish');
 		
 		
 		return
@@ -138,32 +169,6 @@ function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
 vk_api.prototype = {
 	legal_apis:[1915003],
 	api_link: 'http://api.vk.com/api.php',
-	getInitAuthData: function(p){
-		var ru = p && p.ru;
-		
-		var o = {};
-		o.link = 'http://' + (ru ? "vkontakte.ru" :  'vk.com') + '/login.php?app=1915003&layout=openapi&settings=' + (p && p.settings || 8);
-		var link_tag = 'http://seesu.me/vk/callbacker.html';
-		
-		o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
-		link_tag += '?key=' + o.bridgekey;
-		
-		
-		o.link += '&channel=' + encodeURIComponent(link_tag);
-		
-		return o;
-		/*
-		var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
-		if (su.vk_app_mode){
-			if (window.VK){
-				VK.callMethod('showSettingsBox', 8);
-			}
-		} else{
-			window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
-			seesu.track_event('Auth to vk', 'start');
-		}
-		*/
-	},
 	use: function(method, params, callback, error, api_pipi){ //nocache, after_ajax, cache_key, only_cache
 		var p = api_pipi || {};
 		if (method) {
