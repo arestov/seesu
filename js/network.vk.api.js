@@ -32,7 +32,7 @@ var vk_auth_box = {
 				e.source.postMessage("add_keys:" + first_key, '*');
 			} else if(e.data.indexOf('vk_sess:') === 0){
 				e.data.replace('vk_sess:','');
-				
+				set_vk_auth(e.data.replace('vk_sess:',''))
 				console.log('got vk_sess!!!!')
 				console.log(e.data.replace('vk_sess:',''));
 			}

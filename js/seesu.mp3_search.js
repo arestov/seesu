@@ -1,6 +1,6 @@
 var searches_pr = {
 	vk: 0,
-	lastfm:-1,
+	lastfm:-10,
 	soundcloud: -5
 };
 var song_methods = {
