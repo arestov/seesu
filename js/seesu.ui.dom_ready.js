@@ -199,6 +199,9 @@ window.connect_dom_to_som = function(d, ui){
 					this.oos.removeClass("waiting-vk-login").remove();
 					this.oos = $();
 				},
+				resetAuth: function(){
+					this.oos.find('.auth-container').empty();
+				},
 				vk_login_error: $(),
 				captcha_img: $(),
 				clone: function(type){

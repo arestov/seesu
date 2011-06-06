@@ -14,11 +14,12 @@
 	"128": "icons/icon128.png"
   },
   "permissions": [
-	"http://*.vk.com/*",
+	"https://*.vk.com/*",
 	"http://*.last.fm/*",
 	"http://*.audioscrobbler.com/*",
 	"http://api.soundcloud.com/*",
 	"http://*.seesu.me/*",
+	"http://*.vk.com/*",
 	"http://127.0.0.1/*"
   ]
 }

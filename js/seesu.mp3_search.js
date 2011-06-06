@@ -966,7 +966,6 @@ if (typeof soundcloud_search != 'undefined'){
 		})
 		
 		
-		/*testVKAccaunt();*/
 	})();
 	
 };
