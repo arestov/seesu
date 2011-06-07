@@ -220,6 +220,9 @@ display:none;
 	.artist-info .image{
 		float:left;
 	}
+	.artist-info .image img.artist-image{
+		position:absolute;
+	}
 	.desc-name{
 		float:left;
 		min-height:1.5em;
@@ -259,9 +262,7 @@ display:none;
 .artist-image.freeze-this-image{
 	visibility:hidden;
 }
-.artist-info .image img.artist-image{
-	position:absolute;
-}
+
 .artist-image{
 	width:126px;
 	display:none;

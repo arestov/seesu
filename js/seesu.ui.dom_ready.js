@@ -199,6 +199,9 @@ window.connect_dom_to_som = function(d, ui){
 					this.oos.removeClass("waiting-vk-login").remove();
 					this.oos = $();
 				},
+				resetAuth: function(){
+					this.oos.find('.auth-container').empty();
+				},
 				vk_login_error: $(),
 				captcha_img: $(),
 				clone: function(type){
@@ -209,40 +212,31 @@ window.connect_dom_to_som = function(d, ui){
 					} else{
 						nvk.addClass(type + '-login')
 					}
-					
-					
-					
-					_this.oos =  _this.oos.add(nvk);
-					var vk_auth = $('.vk-auth',nvk);
-					
-					_this.vk_login_error =  _this.vk_login_error.add($('.error',vk_auth));
-					_this.captcha_img = _this.captcha_img.add($('.vk-captcha-context img',vk_auth));
-					
-					vk_auth.submit(function(){
-						_this.vk_login_error.text('');
-						_this.oos.addClass("waiting-vk-login");
-						dstates.remove_state('body','vk-needs-captcha');
-						var node = $(this),
-							email = $('input.vk-email',node).val(),
-							pass = vk_pass.val();
+					var auth_c =  nvk.find('.auth-container');
+					nvk.find('.sign-in-to-vk').click(function(){
+						var class_name = this.className;
+						var clicked_node = $(this);
 						
-						var save = vk_save_pass.attr('checked');
-						if (save){
-							seesu.vk.save_pass = true;
+			
+						var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
+						if (su.vk_app_mode){
+							if (window.VK){
+								VK.callMethod('showSettingsBox', 8);
+							}
 						} else{
-							seesu.vk.save_pass = false;
+							
+							vk_auth_box.requestAuth({
+								ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
+								c: auth_c
+							})
+						
 						}
-						uilogin_to_hapi(email, pass, $('.vk-captcha-key',node).val(), save);
-				
+							
+						
 						return false;
 					});
-					var vk_pass  = $('input.vk-pass', vk_auth)
-						.bind('mouseover', function(){
-							this.type = 'text';
-						})
-						.bind('mouseout', function(){
-							this.type = 'password';
-						});
+					
+					_this.oos =  _this.oos.add(nvk);
 					return nvk;
 				}
 			}

@@ -17,51 +17,85 @@ var makeBigVKCodeMusicRequest = function(music_list){
 }*/
 
 var vk_auth_box = {
-	requestAuth: function(){
+	requestAuth: function(p){
 		
-		this.authInit();
+		this.authInit(p);
 		
 	},
 	createAuthFrame: function(first_key){
-		if (this._auth_inited){
+		if (this.auth_inited){
 			return false;
 		}
-		this.auth_frame = document.createElement('iframe');	
+		var i = this.auth_frame = document.createElement('iframe');	
 		addEvent(window, 'message', function(e){
 			if (e.data == 'vk_bridge_ready:'){
+				console.log('vk_bridge_ready')
 				e.source.postMessage("add_keys:" + first_key, '*');
 			} else if(e.data.indexOf('vk_token:') === 0){
-				e.data.replace('vk_sess:','');
-				
-				console.log('got token!!!!')
-				console.log(e.data.replace('vk_sess:',''));
+				var vk_t = JSON.parse(e.data.replace('vk_token:',''));
+				vk_t.expires_in = parseFloat(vk_t.expires_in);
+				auth_to_vkapi(vk_t, false, 2271620);
+				console.log('got vk_token!!!!')
+				console.log(e.data.replace('vk_token:',''));
+				seesu.track_event('Auth to vk', 'end');
 			}
 		});
 		i.className = 'serv-container';
 		i.src = 'http://seesu.me/vk/bridge.html';
 		document.body.appendChild(i);
-		this._auth_inited = true;
+		this.auth_inited = true;
+	},
+	getInitAuthData: function(p){
+		var ru = p && p.ru;
+		
+		var o = {};//http://api.vkontakte.ru/oauth/authorize?client_id=2271620&scope=friends,video,offline,audio,wall&redirect_uri=http://seesu.me/vk/tr?t=14234&display=page&response_type=token
+		o.link = 'http://api.' + (ru ? "vkontakte.ru" :  'vk.com') + '/oauth/authorize?client_id=2271620&scope=friends,video,offline,audio,wall&display=page&response_type=token';
+		var link_tag = 'http://seesu.me/vk/callbacker.html';
+		
+		o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
+		link_tag += '?key=' + o.bridgekey;
+		
+		
+		o.link += '&redirect_uri=' + encodeURIComponent(link_tag);
+		
+		return o;
+		/*
+		var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
+		if (su.vk_app_mode){
+			if (window.VK){
+				VK.callMethod('showSettingsBox', 8);
+			}
+		} else{
+			window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
+			
+		}
+		*/
 	},
 	setAuthBridgeKey: function(key){
-		if (!this._auth_inited){
-			this.CreateAuthFrame(key)
+		if (!this.auth_inited){
+			this.createAuthFrame(key)
 		} else{
 			this.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
 		}
 	},
-	authInit: function(){
+	authInit: function(p){
 		
 		
 		//init_auth_data.bridgekey		
 		
-		var init_auth_data = su._api.getInitAuthData();
+		var init_auth_data = this.getInitAuthData(p);
 		if (init_auth_data.bridgekey){
-			this.SetAuthBridgeKey(init_auth_data.bridgekey)
+			this.setAuthBridgeKey(init_auth_data.bridgekey)
 		} 
+		if (p.c){
+			p.c.empty();
+			p.c.append('<iframe class="vk-auth-frame" src="' + init_auth_data.link + '"></iframe>')
+		} else{
+			open_url(init_auth_data.link);
+		}
+		seesu.track_event('Auth to vk', 'start');
 		
-		
-		open_url(init_auth_data.link);
-		dstates.add_state('body','-waiting-for-finish');
+		//dstates.add_state('body','vk-waiting-for-finish');
 		
 		
 		return
@@ -71,21 +105,24 @@ var vk_auth_box = {
 
 
 
-function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
+function vk_api(vk_t, params, callback, fallback, iframe){
+	var p = params || {};
+	if (p.use_cache){
+		this.use_cache = true
+	}
+	this.core.setAccessToken(vk_t.access_token);
+	this.user_id = vk_t.user_id;
 	this.audio_collection = {};
 	var _this = this;
-	this.apis = apis;
-	if (apis.length > 1){
-		this.allow_random_api = true;
-	}
-	if (queue){
-		this.queue = queue;
+
+	if (p.queue){
+		this.queue = p.queue;
 	}
 	
 	if (iframe){
 		this.iframe = true;
 	}
-	if (!this.allow_random_api && !no_init_check){
+	if (!this.allow_random_api && !p.no_init_check){
 		this.get_user_info(function(info, r){
 			if(info){
 				this.user_info = info;
@@ -127,132 +164,111 @@ function vk_api(apis, queue, iframe, callback, fallback, no_init_check){
 		slave: this.allow_random_api ? true: false,
 		preferred: null,
 		s: this.search_source,
-		q: queue,
+		q: p.queue,
 		getById: function(){
 			return _this.getAudioById.apply(_this, arguments);
 		}
 	};
 	
 };
+var vkCoreApi = function(p){
+	if (p.jsonp){
+		this.jsonp = true;
+	}
+};
+vkCoreApi.prototype = {
+	link: 'https://api.vk.com/method/',
+	setAccessToken: function(at){
+		this.access_token = at;
+	},
+	removeAccessToken: function(){
+		delete this.access_token;	
+	},
+	hasAccessToken: function(){
+		!!this.access_token;
+	}, 
+	sendRequest: function(method, params, callback, error){ //nocache, after_ajax, cache_key, only_cache
+		
+	
+		
+		if (method) {
+			var _this = this;
+			var	params_full = params || {};
+			if (this.access_token){
+				params_full.access_token = this.access_token;
+			}
+			//https://api.vkontakte.ru/method/wall.post?message=test&access_token=a3644920a3674f11a33856ac55a345e6952a367a3666f0b6249c010e6ac9e68
+				
+			var response_callback = function(r){
+				if (!r.error){
+					if (callback) {callback(r);}
+				} else{
+					if (r.error.error_code < 5){
+						if (_this.fallback){ error({fallback: true, server: r.error});}
+						
+					} else if (r.error.error_code >= 5){
+						if (error) {error({server: r.error});}
+						
+					}
+				}
+			};
+			if (this.jsonp && typeof create_jsonp_callback == 'function'){
+				params_full.callback = create_jsonp_callback(response_callback);
+			}
+
+			$.ajax({
+			  url: this.link + method,
+			  type: "GET",
+			  dataType: params_full.callback ? 'script' : 'json',
+			  data: params_full,
+			  timeout: 20000,
+			  success: !params_full.callback ? response_callback : false,
+			  jsonpCallback: params_full.callback ? params_full.callback : false, 
+			  error: function(xhr, text){
+				if (error && xhr) {error({network: true, xhr: xhr, text: text})}
+				
+			  }
+			});
+		}
+	}
+};
 
 vk_api.prototype = {
-	legal_apis:[1915003],
-	api_link: 'http://api.vk.com/api.php',
+	core: new vkCoreApi({jsonp: !app_env.cross_domain_allowed}),
 	use: function(method, params, callback, error, api_pipi){ //nocache, after_ajax, cache_key, only_cache
 		var p = api_pipi || {};
 		if (method) {
-			var _this = this;
-			var api;
-			
-
-			
-			
-			if (_this.allow_random_api){
-				api = this.apis[Math.floor(Math.random()*this.apis.length)];
-			} else{
-				api = this.apis[0];
-			}
-			var hapi = api.api_id == 8;
-			
-			
-
-			
-			var pv_signature_list = [], // array of <param>+<value>
-				params_full = params || {},
-				apisig =  true; // yes, we need signature
-			
-				
-				
-			var response_callback = function(resp){
-				
-				var r = (typeof resp == 'object') ? resp : JSON.parse(resp);
-				if (!r.error){
-					if (typeof cache_ajax == 'object'){
-						cache_ajax.set('vk_api', p.cache_key, r);
-					}
-					
-					if (callback) {callback(r, hapi);}
-				} else{
-					if (r.error.error_code < 5){
-						if (_this.fallback){ _this.fallback();}
-						
-					} 
-					if (r.error.error_code < 6){
-						if (error) {error(true, hapi);}
-						
-					}
-					
-					else{
-						if (callback) {callback(r, hapi);}
-					}
-				}
-				
-				
-			};
-				
-				
-			params_full.method = method;
-			params_full.api_id = api.api_id;
-			
-			params_full.format = 'JSON';
-			if (api.sid){
-				params_full.sid = api.sid;
-			}
-			if (typeof su == 'object' && !su.env.cross_domain_allowed && typeof create_jsonp_callback == 'function'){
-				params_full.callback = create_jsonp_callback(response_callback);
-			}
-			if(api.v){
-				params_full.v = api.v;
-			}
-			if(api.test_mode){
-				params_full.test_mode = 1;
-			}
-			
-			
-			
-			if(apisig) {
-				params_full.sig = hex_md5(api.viewer_id + stringifyParams(params_full, ['sid'], '=') + api.s);				
-				if (!p.cache_key){
-					p.cache_key = params_full.sig;
-				}
-			}
-			
-			if (typeof cache_ajax == 'object' && api.use_cache && !p.nocache){
+			var _this = this;			
+			if (p.cache_key && typeof cache_ajax == 'object' && _this.use_cache && !p.nocache){
 				var cache_used = cache_ajax.get('vk_api', p.cache_key, function(r){
-					callback(r, hapi);
+					//загрузка кеша
+					callback(r);
 				});
 				if (cache_used) {
 					return true;
 				}
 			}
-			
 			if (p.only_cache){
 				return false;
 			}
-			
 			var request = function(){
-				if (typeof cache_ajax == 'object' && api.use_cache && !p.nocache){
+				if (typeof cache_ajax == 'object' && _this.use_cache && !p.nocache){
 					var cache_used = cache_ajax.get('vk_api', p.cache_key, function(r){
-						callback(r, hapi);
+						//загрузка кеша
+						callback(r);
 					});
 					if (cache_used) {
 						return true;
 					}
 				}
-				
-				$.ajax({
-				  url: _this.api_link,
-				  type: "GET",
-				  dataType: params_full.callback ? 'script' : 'json',
-				  data: params_full,
-				  timeout: 20000,
-				  success: !params_full.callback ? response_callback : false,
-				  jsonpCallback: params_full.callback ? params_full.callback : false, 
-				  error: function(xhr){
-					if (error && xhr) {error(false, hapi);}
+				_this.core.sendRequest(method, params, function(r){
+					if (p.cache_key && typeof cache_ajax == 'object'){
+						cache_ajax.set('vk_api', p.cache_key, r);
+						//сохранение кеша
+					}
+					callback(r);
 					
-				  }
-				});
+				}, error);
 				if (p.after_ajax) {p.after_ajax();}
 			};
 			if (_this.queue){
@@ -267,7 +283,7 @@ vk_api.prototype = {
 	},
 	get_user_info: function(callback){
 		this.use('getProfiles', {
-			uids:this.apis[0].viewer_id,
+			uids: this.user_id,
 			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
 			
 		}, function(r){
@@ -277,7 +293,7 @@ vk_api.prototype = {
 			console.log(r);
 		}, false, {nocache: true});
 	},
-	makeVKSong: function(cursor, hapi){
+	makeVKSong: function(cursor){
 		if (cursor && cursor.url){
 			return {
 						artist	: HTMLDecode(cursor.artist ? cursor.artist : cursor.audio.artist),
@@ -285,7 +301,7 @@ vk_api.prototype = {
 						link		: cursor.url ? cursor.url : cursor.audio.url,
 						track		: HTMLDecode(cursor.title ? cursor.title : cursor.audio.title),
 						from		: 'vk',
-						downloadable: hapi,
+						downloadable: false,
 						_id			: cursor.owner_id + '_' + cursor.aid
 					
 					}
@@ -300,9 +316,9 @@ vk_api.prototype = {
 			su.track_event('mp3 search', 'vk api', !_this.allow_random_api ? 'with auth' : 'random apis');
 		}
 		var used_successful = this.use('audio.getById', {audios: id}, 
-		function(r, hapi){
+		function(r){
 			if (r && r.response && r.response[0]){
-				var entity = _this.makeVKSong(r.response[0], hapi);
+				var entity = _this.makeVKSong(r.response[0]);
 				if (entity){
 					if (callback) {callback(entity, _this.search_source);}
 				} else{
@@ -314,7 +330,7 @@ vk_api.prototype = {
 			console.log(r);
 			return 
 			
-		}, function(xhr, hapi){
+		}, function(xhr){
 			if (error){error(_this.search_source);}
 		}, {
 			nocache: nocache, 
@@ -325,12 +341,12 @@ vk_api.prototype = {
 		});
 		return used_successful;
 	},
-	audioResponceHandler: function(r, hapi, callback, errorCallback){
+	audioResponceHandler: function(r, callback, errorCallback){
 		var _this = this;
 		
 			var music_list = [];
 			for (var i=1, l = r.length; i < l; i++) {
-				var entity = _this.makeVKSong( r[i], hapi);
+				var entity = _this.makeVKSong( r[i]);
 				
 				if (entity && !entity.link.match(/audio\/.mp3$/) && !has_music_copy(music_list,entity)){
 					music_list.push(entity);
@@ -363,14 +379,14 @@ vk_api.prototype = {
 	
 			
 		var used_successful = this.use('audio.search', params_u, 
-		function(r, hapi){
+		function(r){
 			if (r.response && (r.response.length > 1 )) {
-				_this.audioResponceHandler(r.response, hapi, callback, error);
+				_this.audioResponceHandler(r.response, callback, error);
 			} else{
 				if (error) {error(_this.search_source);}
 			}
 			
-		}, function(xhr, hapi){
+		}, function(xhr){
 			if (error){error(_this.search_source);}
 		}, {
 			nocache: nocache, 
@@ -435,12 +451,12 @@ vk_api.prototype = {
 				ac[i].disabled = true;
 				querylist.push(ac[i].query)
 			};
-			su.vk_api.use('execute', {code:this.makeBigVKCodeMusicRequest(querylist)},function(r, hapi){
+			su.vk_api.use('execute', {code:this.makeBigVKCodeMusicRequest(querylist)},function(r){
 				if (r && r.response && r.response.length){
 					for (var i=0; i < r.response.length; i++) {
 						var cursor = r.response[i];
 						if (cursor.result && cursor.result.length > 1 ) {
-							_this.audioResponceHandler(cursor.result, hapi, ac[i].callback);
+							_this.audioResponceHandler(cursor.result, ac[i].callback);
 						} 
 						
 					};

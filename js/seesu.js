@@ -141,50 +141,34 @@ var detach_vkapi = function(search_way, timeout, dead){
 		search_way.disabled = true;
 	}, timeout || 10);
 };
-var testVKAccaunt = function(array){
-	var tvkapi = new vk_api(array, new funcs_queue(1000, 8000 , 7));
-	su.mp3_search.add(tvkapi.asearch);
-};
 
 
 
-var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callback, callback){
+var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callback, callback){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
-	if (!vk_s.expire || (vk_s.expire > rightnow)){
-		console.log('want vk api')
-		var user_api_data = {
-			api_id: app_id, 
-			s: vk_s.secret,
-			viewer_id: vk_s.mid, 
-			sid: vk_s.sid, 
-			use_cache: true,
-			v: "3.0"
-		};
-		var _vkapi = new vk_api([user_api_data], seesu.delayed_search.vk_api.queue, false, 
+	if (!vk_t.expires_in || (vk_t.expires_in > rightnow)){
+	
+		var _vkapi = new vk_api(vk_t, {
+			queue: seesu.delayed_search.vk_api.queue,
+			use_cache: true
+		}, 
 		function(info, r){
 			if (info){
 				if (seesu.ui && seesu.ui.samples && seesu.ui.samples.vk_login){
 					seesu.ui.samples.vk_login.remove(); 
 				}
-				
-						
-				
-				
-				seesu.vk.id = vk_s.mid;
+				seesu.vk.id = vk_t.user_id;
 				seesu.vk_api = _vkapi;
-				
 				su.mp3_search.add(_vkapi.asearch, true);
 				
 				console.log('got vk api');
-				
-				
 				
 				if (save_to_store){
 					w_storage('vk_session'+app_id, vk_s, true);
 				}
 				
-				if (vk_s.expire){
-					var end = (vk_s.expire - rightnow)*1000;
+				if (vk_t.expires_in){
+					var end = (vk_t.expires_in - rightnow)*1000;
 					if (fallback){
 						var _t = detach_vkapi(_vkapi.asearch, end + 10000, true);
 						setTimeout(function(){
@@ -205,13 +189,13 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 				su.vk.user_info = _d;
 				
 				
-				
+				/*
 				if (!su.distant_glow.auth || su.distant_glow.auth.id != user_api_data.viewer_id){
 					su.api('user.getAuth', {
 						type:'vk',
 						vk_api: JSON.stringify({
 							session: user_api_data,
-							timeout: vk_s.expire
+							timeout: vk_t.expires_in
 						}),
 					}, function(su_sess){
 						if (su_sess.secret && su_sess.sid){
@@ -229,7 +213,7 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 					});
 				} else{
 					su.api('user.update', su.vk.user_info);
-				}				
+				}	*/			
 				if (callback){callback();}
 			} else{
 				w_storage('vk_session'+app_id, '', true);
@@ -254,11 +238,7 @@ var auth_to_vkapi = function(vk_s, save_to_store, app_id, fallback, error_callba
 	}
 }
 
-window.set_vk_auth = function(vk_session, save_to_store){
-	var vk_s = JSON.parse(vk_session);
-	return auth_to_vkapi(vk_s, save_to_store, 1915003, try_clear_api);
 
-};
 function stringifyParams(params, ignore_params, splitter){
 	var paramsstr = '',
 		pv_signature_list = [];
@@ -310,9 +290,7 @@ var updating_notify = function(r){
 			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
 		}
 	}
-	if (r.test_vk_accs){
-		testVKAccaunt(r.test_vk_accs);
-	}
+	
 	console.log('lv: ' +  cver + ' reg link: ' + (vkReferer = r.vk_referer));
 
 };

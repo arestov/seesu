@@ -13,24 +13,6 @@ var test_pressed_node = function(e, mouseup){
 			seesu.track_event('Links', 'vk registration');
 			return false;
 		  }
-		  else if (class_name.match(/sign-in-to-vk/)){
-			if (seesu.env.cross_domain_allowed){
-				clicked_node.parent().parent().toggleClass('want-to-sign-in-to-vk');
-			} else{
-				var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
-				if (su.vk_app_mode){
-					if (window.VK){
-						VK.callMethod('showSettingsBox', 8);
-					}
-				} else{
-					window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
-					seesu.track_event('Auth to vk', 'start');
-				}
-				
-			}
-			
-			return false;
-		  }
 		  else if (class_name.match(/flash-s$/)){
 			open_url('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 			seesu.track_event('Links', 'flash security');

@@ -127,37 +127,6 @@ function try_api(callback, do_not_repeat){
 };
 
 function try_mp3_providers(){
-	if (seesu.env.cross_domain_allowed){
-		try_hapi();
-	} else{
-		console.log('heyayy!')
-		addEvent(window, "storage", function(e){
-			if (e && e.key && e.key == 'fresh_vk_session' && e.newValue){
-				clear_vk_quene.reset();
-				set_vk_auth(e.newValue, true);
-				seesu.track_event('Auth to vk', 'auth', 'from iframe post message');
-				localStorage.removeItem('fresh_vk_session');
-			}
-		});
-		try_api();
-		
-		
-		return
-		addEvent(window, "message", function(e){
-			if (e.origin == "http://seesu.me") {
-				if (e.data.match(/^set_vk_auth\n/)){
-					set_vk_auth(e.data.replace(/^set_vk_auth\n/, ''), true);
-					seesu.track_event('Auth to vk', 'auth', 'from iframe post message');
-				} else if (e.data == 'vkapi_auth_callback_ready'){
-					e.source.postMessage('get_vk_auth', 'http://seesu.me');
-				}
-			} else {
-				return false;
-			}
-		});
-		try_api();
-
-	}
-  	
-	
+	return
+	try_api();
 }	

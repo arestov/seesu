@@ -579,7 +579,7 @@ su.player.song_click = function(mo) {
   }
   su.mp3_search.find_mp3(mo);
 		
-  su.player.play_song(mo, !zoomed, false, !zoomed);
+  su.player.play_song(mo, true, false, true);
   return false;
 }
 
