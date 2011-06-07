@@ -217,28 +217,20 @@ window.connect_dom_to_som = function(d, ui){
 						var class_name = this.className;
 						var clicked_node = $(this);
 						
-						/*
-						if (seesu.env.cross_domain_allowed){
-							nvk.toggleClass('want-to-sign-in-to-vk');
+			
+						var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
+						if (su.vk_app_mode){
+							if (window.VK){
+								VK.callMethod('showSettingsBox', 8);
+							}
 						} else{
 							
-						} */
-							var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
-							if (su.vk_app_mode){
-								if (window.VK){
-									VK.callMethod('showSettingsBox', 8);
-								}
-							} else{
-								
-								vk_auth_box.requestAuth({
-									ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
-									c: auth_c
-								})
-								/*
-								window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
-								seesu.track_event('Auth to vk', 'start');
-								*/
-							}
+							vk_auth_box.requestAuth({
+								ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
+								c: auth_c
+							})
+						
+						}
 							
 						
 						return false;

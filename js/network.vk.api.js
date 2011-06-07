@@ -37,6 +37,7 @@ var vk_auth_box = {
 				auth_to_vkapi(vk_t, false, 2271620);
 				console.log('got vk_token!!!!')
 				console.log(e.data.replace('vk_token:',''));
+				seesu.track_event('Auth to vk', 'end');
 			}
 		});
 		i.className = 'serv-container';
@@ -66,7 +67,7 @@ var vk_auth_box = {
 			}
 		} else{
 			window.open('http://' + vkdomain + '/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html');
-			seesu.track_event('Auth to vk', 'start');
+			
 		}
 		*/
 	},
@@ -92,7 +93,7 @@ var vk_auth_box = {
 		} else{
 			open_url(init_auth_data.link);
 		}
-		
+		seesu.track_event('Auth to vk', 'start');
 		
 		//dstates.add_state('body','vk-waiting-for-finish');
 		
