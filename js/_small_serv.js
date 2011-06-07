@@ -241,6 +241,7 @@ window.app_env = (function(){
 	if (env.as_application){
 		
 		dstates.add_state('html_el', 'as-application');
+		dstates.remove_state('html_el', 'not-as-application');
 	} else{
 		dstates.add_state('html_el', 'not-as-application');
 	}

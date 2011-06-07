@@ -227,7 +227,7 @@ window.connect_dom_to_som = function(d, ui){
 							
 							vk_auth_box.requestAuth({
 								ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
-								c: auth_c
+								c: nvk
 							})
 						
 						}
