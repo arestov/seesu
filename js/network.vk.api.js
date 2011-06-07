@@ -36,7 +36,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 				console.log('got vk api');
 				
 				if (save_to_store){
-					w_storage('vk_session'+app_id, vk_s, true);
+					w_storage('vk_token_info', vk_t, true);
 				}
 				
 				if (vk_t.expires_in){
@@ -112,7 +112,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 var vkTokenAuth = function(vk_t_raw){
 	var vk_t = JSON.parse(vk_t_raw);
 	vk_t.expires_in = parseFloat(vk_t.expires_in);
-	auth_to_vkapi(vk_t, false, 2271620);
+	auth_to_vkapi(vk_t, true, 2271620);
 };
 
 var vk_auth_box = {
@@ -219,7 +219,7 @@ function vk_api(vk_t, params, callback, fallback, iframe){
 	if (iframe){
 		this.iframe = true;
 	}
-	if (!this.allow_random_api && !p.no_init_check){
+	if (!p.no_init_check){
 		this.get_user_info(function(info, r){
 			if(info){
 				this.user_info = info;

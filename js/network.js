@@ -19,68 +19,17 @@ var get_youtube = function(q, callback){
 	}
 	
 };
-var clear_vk_quene = new funcs_queue(15000);
 
-function try_clear_api(callback, do_not_repeat){
-	
-	clear_vk_quene.add(function(){
-		var sm = $('#slider-materail');
-		var remove_iframe_ru = function(e){
-			setTimeout(function(){
-				$(e.target).remove();
-				console.log('removed ru!');
-				
-				
-				
-				var remove_iframe_com = function(e){
-					setTimeout(function(){
-						$(e.target).remove();
-						console.log('removed ru!');
-					},5000)
-				
-				}
-				
-				var tvk_com = $('<iframe id="test_vk_auth_com" class="serv-container" src="http://vk.com/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
-				.bind('load',remove_iframe_com);
-				sm.append(tvk_com);
-			},5000)
-			
-			
-			
-		}
-		
-		var tvk_ru =  $('<iframe id="test_vk_auth_ru" class="serv-container" src="http://vkontakte.ru/login.php?app=1915003&layout=openapi&settings=8' + '&channel=http://seesu.me/vk_auth.html"></iframe>')
-			.bind('load',remove_iframe_ru);
-		
-		sm.append(tvk_ru);
-	});
-	
-	
-	
-};
 
-function try_api(callback, do_not_repeat){
-	var try_saved_auth = function(){
-		var vk_session_stored = w_storage('vk_session'+1915003);
-		if (vk_session_stored){
-			set_vk_auth(vk_session_stored);
-			seesu.track_event('Auth to vk', 'auth', 'from saved');
-		}
-	};
-	
-	
+function tryVKApi(){
 	var _u = su._url;
-	
-	
-	if (su.env.vkontakte && _u.api_id && _u.viewer_id && _u.sid && _u.secret){
+	if (su.env.vkontakte){
 		su.vk_app_mode = true;
-		console.log('ginsa?')
+		
 		var stable_vk_api = auth_to_vkapi({
-			secret: _u.secret,
-			sid: _u.sid,
-			mid:  _u.viewer_id
+			user_id: _u.user_id,
+			access_token: _u.access_token
 		}, false, _u.api_id, false, false, function(){
-			if (callback){callback();}
 			if ((_u.api_settings & 8)*1){
 				stable_vk_api.asearch.disabled = false;
 			} else{
@@ -114,10 +63,9 @@ function try_api(callback, do_not_repeat){
 		
 		
 	} else{
-		try_clear_api(callback, do_not_repeat);
-		
-		
-		
+		var vk_t_raw  = w_storage('vk_token_info');
+		auth_to_vkapi(JSON.parse(vk_t_raw), false, 2271620);
+
 		
 	}
 	
@@ -127,6 +75,5 @@ function try_api(callback, do_not_repeat){
 };
 
 function try_mp3_providers(){
-	return
-	try_api();
+	tryVKApi();
 }	
