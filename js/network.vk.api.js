@@ -16,6 +16,105 @@ var makeBigVKCodeMusicRequest = function(music_list){
 	return code;
 }*/
 
+var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callback, callback){
+	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
+	if (!vk_t.expires_in || (vk_t.expires_in > rightnow)){
+	
+		var _vkapi = new vk_api(vk_t, {
+			queue: seesu.delayed_search.vk_api.queue,
+			use_cache: true
+		}, 
+		function(info, r){
+			if (info){
+				if (seesu.ui && seesu.ui.samples && seesu.ui.samples.vk_login){
+					seesu.ui.samples.vk_login.remove(); 
+				}
+				seesu.vk.id = vk_t.user_id;
+				seesu.vk_api = _vkapi;
+				su.mp3_search.add(_vkapi.asearch, true);
+				
+				console.log('got vk api');
+				
+				if (save_to_store){
+					w_storage('vk_token_info', vk_t, true);
+				}
+				
+				if (vk_t.expires_in){
+					var end = (vk_t.expires_in - rightnow)*1000;
+					if (fallback){
+						var _t = detach_vkapi(_vkapi.asearch, end + 10000, true);
+						setTimeout(function(){
+							fallback(function(){
+								clearTimeout(_t);
+							});
+						}, end);
+					} else{
+						detach_vkapi(_vkapi.asearch, end, true);
+					}
+				}
+				
+				
+				var _d = {data_source: 'vkontakte'};
+				for (var a in info) {
+					_d[a] = info[a];
+				};
+				su.vk.user_info = _d;
+				
+				
+				/*
+				if (!su.distant_glow.auth || su.distant_glow.auth.id != user_api_data.viewer_id){
+					su.api('user.getAuth', {
+						type:'vk',
+						vk_api: JSON.stringify({
+							session: user_api_data,
+							timeout: vk_t.expires_in
+						}),
+					}, function(su_sess){
+						if (su_sess.secret && su_sess.sid){
+							
+							su.distant_glow.auth = {
+								id: user_api_data.viewer_id,
+								secret: su_sess.secret,
+								sid: su_sess.sid
+							};
+							w_storage('dg_auth', su.distant_glow.auth, true);
+							su.api('user.update', su.vk.user_info);
+							
+						}
+						
+					});
+				} else{
+					su.api('user.update', su.vk.user_info);
+				}	*/			
+				if (callback){callback();}
+			} else{
+				w_storage('vk_session'+app_id, '', true);
+				error_callback('no info');
+			}
+			
+		},function(){
+			detach_vkapi(_vkapi.asearch);
+			if (fallback){
+				fallback(false, true);
+			}
+			
+		});
+		return _vkapi;
+		
+		
+		
+		
+	} else{
+		w_storage('vk_session'+app_id, '', true);
+		error_callback('expired');
+	}
+};
+var vkTokenAuth = function(vk_t_raw){
+	var vk_t = JSON.parse(vk_t_raw);
+	vk_t.expires_in = parseFloat(vk_t.expires_in);
+	auth_to_vkapi(vk_t, true, 2271620);
+};
+
 var vk_auth_box = {
 	requestAuth: function(p){
 		
@@ -32,9 +131,7 @@ var vk_auth_box = {
 				console.log('vk_bridge_ready')
 				e.source.postMessage("add_keys:" + first_key, '*');
 			} else if(e.data.indexOf('vk_token:') === 0){
-				var vk_t = JSON.parse(e.data.replace('vk_token:',''));
-				vk_t.expires_in = parseFloat(vk_t.expires_in);
-				auth_to_vkapi(vk_t, false, 2271620);
+				vkTokenAuth(e.data.replace('vk_token:',''));
 				console.log('got vk_token!!!!')
 				console.log(e.data.replace('vk_token:',''));
 				seesu.track_event('Auth to vk', 'end');
@@ -52,8 +149,11 @@ var vk_auth_box = {
 		o.link = 'http://api.' + (ru ? "vkontakte.ru" :  'vk.com') + '/oauth/authorize?client_id=2271620&scope=friends,video,offline,audio,wall&display=page&response_type=token';
 		var link_tag = 'http://seesu.me/vk/callbacker.html';
 		
-		o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
-		link_tag += '?key=' + o.bridgekey;
+		if (!su.env.deep_sanbdox){
+			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
+			link_tag += '?key=' + o.bridgekey;
+		}
+		
 		
 		
 		o.link += '&redirect_uri=' + encodeURIComponent(link_tag);
@@ -84,15 +184,12 @@ var vk_auth_box = {
 		//init_auth_data.bridgekey		
 		
 		var init_auth_data = this.getInitAuthData(p);
-		if (init_auth_data.bridgekey){
-			this.setAuthBridgeKey(init_auth_data.bridgekey)
-		} 
-		if (p.c){
-			p.c.empty();
-			p.c.append('<iframe class="vk-auth-frame" src="' + init_auth_data.link + '"></iframe>')
-		} else{
-			open_url(init_auth_data.link);
+		if (init_auth_data.bridgekey || !p.c){
+			this.setAuthBridgeKey(init_auth_data.bridgekey);
+		}  else{
+			p.c.addClass('vk-finishing');
 		}
+		open_url(init_auth_data.link);
 		seesu.track_event('Auth to vk', 'start');
 		
 		//dstates.add_state('body','vk-waiting-for-finish');
@@ -122,7 +219,7 @@ function vk_api(vk_t, params, callback, fallback, iframe){
 	if (iframe){
 		this.iframe = true;
 	}
-	if (!this.allow_random_api && !p.no_init_check){
+	if (!p.no_init_check){
 		this.get_user_info(function(info, r){
 			if(info){
 				this.user_info = info;

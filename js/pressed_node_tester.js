@@ -90,6 +90,13 @@ var test_pressed_node = function(e, mouseup){
 				}
 				console.log('sdffffffffffffffffffffffffff')
 				return false;
+			} else if (bN(class_name.indexOf('use-vk-code'))){
+				var vk_t_raw = clicked_node.parent().find('.vk-code').val();
+				if (vk_t_raw){
+					vkTokenAuth(vk_t_raw);
+				}
+				console.log('sdffffffffffffffffffffffffff')
+				return false;
 			} else if (class_name.match(/enable-scrobbling/)){
 				w_storage('lfm_scrobbling_enabled', 'true', true);
 				su.lfm_api.scrobbling = true;

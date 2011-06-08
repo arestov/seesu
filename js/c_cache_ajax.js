@@ -1,8 +1,11 @@
-cache_ajax = {
+var cache_ajax = {
+	storage: {},
 	get: function(prefix, hash_key, callback, hours){
-		var cached_response = w_storage('c_' + prefix + '_' + hash_key);
+		var _this= this;
+		
+		var cached_response = _this.storage['c_' + prefix + '_' + hash_key];
 		if (cached_response) {
-			var date_string = w_storage('c_' + prefix + '_' + hash_key + '_date');
+			var date_string = _this.storage['c_' + prefix + '_' + hash_key + '_date'];
 			if (date_string){
 				var date_of_c_response = parseInt(date_string);
 				if (date_of_c_response) {
@@ -38,8 +41,9 @@ cache_ajax = {
 		return false;
 	},
 	set: function(prefix, hash_key, value){
+		var _this = this;
 		var _v = value;
-		w_storage('c_' + prefix + '_' + hash_key, _v);
-		w_storage('c_' + prefix + '_' + hash_key + '_date', (new Date).getTime());
+		_this.storage['c_' + prefix + '_' + hash_key] = _v;
+		_this.storage['c_' + prefix + '_' + hash_key + '_date'] =  (new Date).getTime();
 	}
-}
+};

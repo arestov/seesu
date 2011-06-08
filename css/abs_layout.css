@@ -34,6 +34,8 @@ html.as-application:not(.chrome-extension){
 
 .as-application:not(.chrome-extension) #slider-materail{
 	background-color: #505050;
+	border:1px solid #666;
+	border-top:0;
 	position: absolute;
 	left: 0px;
 	right: 0px;

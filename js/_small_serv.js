@@ -195,7 +195,7 @@ window.app_env = (function(){
 	} else
 	if (location.protocol.match(/http/)){
 		
-		if (window.parent != window && env.url.api_id && env.url.secret && env.url.sid){
+		if (window.parent != window && env.url.access_token && env.url.user_id){
 			env.app_type = 'vkontakte';
 			env.check_resize = true;
 		} else{
@@ -241,6 +241,7 @@ window.app_env = (function(){
 	if (env.as_application){
 		
 		dstates.add_state('html_el', 'as-application');
+		dstates.remove_state('html_el', 'not-as-application');
 	} else{
 		dstates.add_state('html_el', 'not-as-application');
 	}

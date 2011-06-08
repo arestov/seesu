@@ -24,15 +24,12 @@
 	color:#000;
 	}
 	.vk-login-context .auth-container{
-		margin: 0 -12px;
+		display:none;
+		margin-top:20px;
 		}
-		.vk-login-context .auth-container iframe.vk-auth-frame{
-			margin-top:12px;
-			width: 100%;
-			border: 0;
-			height: 276px;
-			margin-bottom: -17px;
-			}
+		.vk-login-context.vk-finishing .auth-container{
+			display:block;
+		}
 	.vk-login-context.waiting-vk-login{
 		background-image:url(../i/spinner_small_yellow.gif)
 	}
