@@ -61,31 +61,35 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 				su.vk.user_info = _d;
 				
 				
-				/*
-				if (!su.distant_glow.auth || su.distant_glow.auth.id != user_api_data.viewer_id){
+				
+				if (!su.distant_glow.auth || su.distant_glow.auth.id != vk_t.user_id){
 					su.api('user.getAuth', {
 						type:'vk',
-						vk_api: JSON.stringify({
-							session: user_api_data,
-							timeout: vk_t.expires_in
-						}),
+						ver: 0.3,
+						vk_user: vk_t.user_id
 					}, function(su_sess){
-						if (su_sess.secret && su_sess.sid){
+						if (su_sess.secret_container && su_sess.sid){
 							
-							su.distant_glow.auth = {
-								id: user_api_data.viewer_id,
-								secret: su_sess.secret,
-								sid: su_sess.sid
-							};
-							w_storage('dg_auth', su.distant_glow.auth, true);
-							su.api('user.update', su.vk.user_info);
+							
+							_vkapi.use('storage.get',{key:su_sess.secret_container}, function(r){
+								if (r && r.response){
+									su.distant_glow.auth = {
+										id: vk_t.user_id,
+										secret: r.response,
+										sid: su_sess.sid
+									};
+									w_storage('dg_auth', su.distant_glow.auth, true);
+									su.api('user.update', su.vk.user_info);
+								}
+							});
+							
 							
 						}
 						
 					});
 				} else{
 					su.api('user.update', su.vk.user_info);
-				}	*/			
+				}			
 				if (callback){callback();}
 			} else{
 				w_storage('vk_session'+app_id, '', true);
@@ -268,7 +272,8 @@ function vk_api(vk_t, params, callback, fallback, iframe){
 	};
 	
 };
-var vkCoreApi = function(p){
+function vkCoreApi(params){
+	var p = params || {};
 	if (p.jsonp){
 		this.jsonp = true;
 	}
@@ -294,7 +299,6 @@ vkCoreApi.prototype = {
 			if (this.access_token){
 				params_full.access_token = this.access_token;
 			}
-			//https://api.vkontakte.ru/method/wall.post?message=test&access_token=a3644920a3674f11a33856ac55a345e6952a367a3666f0b6249c010e6ac9e68
 				
 			var response_callback = function(r){
 				if (!r.error){
