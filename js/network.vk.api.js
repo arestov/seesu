@@ -15,6 +15,15 @@ var makeBigVKCodeMusicRequest = function(music_list){
 	code+= '];'
 	return code;
 }*/
+var detach_vkapi = function(search_way, timeout, dead){
+	return setTimeout(function(){
+		if (dead){
+			search_way.dead = true;
+		}
+		
+		search_way.disabled = true;
+	}, timeout || 10);
+};
 
 var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callback, callback){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
@@ -99,7 +108,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 		},function(){
 			detach_vkapi(_vkapi.asearch);
 			if (fallback){
-				fallback(false, true);
+				fallback();
 			}
 			
 		});
@@ -120,9 +129,9 @@ var vkTokenAuth = function(vk_t_raw){
 };
 
 var vk_auth_box = {
-	requestAuth: function(p){
+	requestAuth: function(p ){
 		
-		this.authInit(p);
+		return this.authInit(p || {});
 		
 	},
 	createAuthFrame: function(first_key){
@@ -193,13 +202,16 @@ var vk_auth_box = {
 		}  else{
 			p.c.addClass('vk-finishing');
 		}
-		open_url(init_auth_data.link);
+		if (!p.not_open){
+			open_url(init_auth_data.link);
+		}
+		
 		seesu.track_event('Auth to vk', 'start');
 		
 		//dstates.add_state('body','vk-waiting-for-finish');
 		
 		
-		return
+		return init_auth_data
 		
 	}
 }
@@ -232,7 +244,7 @@ function vk_api(vk_t, params, callback, fallback, iframe){
 			if (callback){
 				callback(info, r);
 			}
-		});
+		}, fallback);
 	} else{
 		if (callback){
 			callback();
@@ -300,21 +312,9 @@ vkCoreApi.prototype = {
 				params_full.access_token = this.access_token;
 			}
 				
-			var response_callback = function(r){
-				if (!r.error){
-					if (callback) {callback(r);}
-				} else{
-					if (r.error.error_code < 5){
-						if (_this.fallback){ error({fallback: true, server: r.error});}
-						
-					} else if (r.error.error_code >= 5){
-						if (error) {error({server: r.error});}
-						
-					}
-				}
-			};
+			
 			if (this.jsonp && typeof create_jsonp_callback == 'function'){
-				params_full.callback = create_jsonp_callback(response_callback);
+				params_full.callback = create_jsonp_callback(callback);
 			}
 
 			$.ajax({
@@ -323,7 +323,7 @@ vkCoreApi.prototype = {
 			  dataType: params_full.callback ? 'script' : 'json',
 			  data: params_full,
 			  timeout: 20000,
-			  success: !params_full.callback ? response_callback : false,
+			  success: !params_full.callback ? callback : false,
 			  jsonpCallback: params_full.callback ? params_full.callback : false, 
 			  error: function(xhr, text){
 				if (error && xhr) {error({network: true, xhr: xhr, text: text})}
@@ -367,7 +367,17 @@ vk_api.prototype = {
 						cache_ajax.set('vk_api', p.cache_key, r);
 						//сохранение кеша
 					}
-					callback(r);
+					if (!r.error){
+						if (callback) {callback(r);}
+					} else{
+						if (r.error.error_code < 5){
+							if (_this.fallback){ error({fallback: true, server: r.error});}
+							
+						} else if (r.error.error_code >= 5){
+							if (error) {error({server: r.error});}
+							
+						}
+					}
 					
 				}, error);
 				if (p.after_ajax) {p.after_ajax();}
@@ -382,7 +392,7 @@ vk_api.prototype = {
 			
 		}
 	},
-	get_user_info: function(callback){
+	get_user_info: function(callback, error){
 		this.use('getProfiles', {
 			uids: this.user_id,
 			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
@@ -392,20 +402,20 @@ vk_api.prototype = {
 				callback(r && r.response && r.response[0], r);
 			}
 			console.log(r);
-		}, false, {nocache: true});
+		}, error, {nocache: true});
 	},
 	makeVKSong: function(cursor){
 		if (cursor && cursor.url){
 			return {
-						artist	: HTMLDecode(cursor.artist ? cursor.artist : cursor.audio.artist),
-						duration	: cursor.duration ? cursor.duration : vksong.audio.duration,
-						link		: cursor.url ? cursor.url : cursor.audio.url,
-						track		: HTMLDecode(cursor.title ? cursor.title : cursor.audio.title),
-						from		: 'vk',
-						downloadable: false,
-						_id			: cursor.owner_id + '_' + cursor.aid
-					
-					}
+				artist	: HTMLDecode(cursor.artist ? cursor.artist : cursor.audio.artist),
+				duration	: cursor.duration ? cursor.duration : vksong.audio.duration,
+				link		: cursor.url ? cursor.url : cursor.audio.url,
+				track		: HTMLDecode(cursor.title ? cursor.title : cursor.audio.title),
+				from		: 'vk',
+				downloadable: false,
+				_id			: cursor.owner_id + '_' + cursor.aid
+			
+			}
 		} else{
 			return false;
 		}

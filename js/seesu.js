@@ -132,15 +132,6 @@ window.seesu = window.su =  {
 	  }
 	};
 
-var detach_vkapi = function(search_way, timeout, dead){
-	return setTimeout(function(){
-		if (dead){
-			search_way.dead = true;
-		}
-		
-		search_way.disabled = true;
-	}, timeout || 10);
-};
 
 
 
