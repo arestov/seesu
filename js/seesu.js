@@ -19,7 +19,7 @@ window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
 	  distant_glow: {
 	  	interact: null,
-		url: 'http://127.0.0.1:9013/',
+		url: 'http://seesu.me/',
 		auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
 	  },
 	  api: function(method, params, callback, error){

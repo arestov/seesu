@@ -533,7 +533,6 @@ window.connect_dom_to_som = function(d, ui){
 								}))
 							.appendTo(uc)
 					}
-					listenings[i]
 				};
 				uc.appendTo(c)
 			}

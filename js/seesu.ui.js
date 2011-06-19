@@ -436,7 +436,7 @@ seesu_ui.prototype = {
 	updateSongListeners: function(mo){
 		var _this = this;
 		var last_update = mo.ui.t_users.data('last_update');
-		if (mo.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 7)){
+		if (mo.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 1)){
 			var d = {artist: mo.artist};
 			if (mo.track){
 				d.title = mo.track;
