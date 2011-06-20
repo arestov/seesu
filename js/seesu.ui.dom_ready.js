@@ -374,7 +374,7 @@ window.connect_dom_to_som = function(d, ui){
 			test_pressed_node(e)
 		});
 		
-		var new_playlist_desc = 'new playlist named '
+		var new_playlist_desc = 'new playlist named ';
 		var pl_r = $('.pl-r', pl_search);
 		
 		var pl_q = ui.els.pl_r = $('#pl-q',pl_search).bind('change keyup focus', function(e){
