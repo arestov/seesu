@@ -290,6 +290,7 @@ p.internet-flash-settings{
 		color:#555;
 		border-radius:5px;
 		padding:15px;
+		box-shadow: 0px 0px 12px 0px #333;
 	}
 		#playlist-search-con .js-serv{
 			color:#666;
@@ -299,6 +300,23 @@ p.internet-flash-settings{
 				color:#999;
 				border-bottom-color:#ccc  !important;
 				}
+				
+				
+	#people-connecting{
+		position: absolute;
+		z-index: 20;
+		margin: 30px 0px 0px -17px;
+		box-shadow: 0px 0px 15px 0px;
+		bottom: 200px; left: 33px; display: block; 
+		}
+	.people-connecting-content{
+		width: 200px;
+		background: #E8E8E8;
+		color: #555;
+		border-radius: 5px;
+		padding: 15px;
+		box-shadow: 0px 0px 12px 0px #333;
+		}			
 	#playlist-search.close-to-right #playlist-search-con{
 		position:absolute;
 		right: -50px;

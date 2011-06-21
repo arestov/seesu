@@ -612,6 +612,14 @@ display:none;
 	left: 15px;
 	top: -7px;
 }
+.triangle-bottom{
+	position: absolute;
+	width: 21px;
+	height:17px;
+	background:url(../i/triangle-bottom.png) no-repeat 50% 0;
+	bottom:-12px;
+	left: 15px;
+}
 
 .balun {
 	display:block;
