@@ -163,14 +163,14 @@ window.connect_dom_to_som = function(d, ui){
 			slider: slider,
 			nav_playlist_page: d.getElementById('nav_playlist_page'),
 			nav_track_zoom: $('#nav_track_zoom',d),
-			export_playlist: $('#open-external-playlist',d).click(function(){
+			export_playlist: $('#open-external-playlist',d).click(function(e){
 				make_external_playlist();
 				if (seesu.player.current_external_playlist.result) {
 					open_url(
 						'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(seesu.player.current_external_playlist.result)
 					)
 				}
-				return false;
+				e.preventDefault();
 			}),
 			start_screen: $('#start-screen',d),
 			pllistlevel: pllistlevel,
@@ -213,7 +213,7 @@ window.connect_dom_to_som = function(d, ui){
 						nvk.addClass(type + '-login')
 					}
 					var auth_c =  nvk.find('.auth-container');
-					nvk.find('.sign-in-to-vk').click(function(){
+					nvk.find('.sign-in-to-vk').click(function(e){
 						var class_name = this.className;
 						var clicked_node = $(this);
 						
@@ -233,7 +233,7 @@ window.connect_dom_to_som = function(d, ui){
 						}
 							
 						
-						return false;
+						e.preventDefault();
 					});
 					
 					_this.oos =  _this.oos.add(nvk);
@@ -274,7 +274,7 @@ window.connect_dom_to_som = function(d, ui){
 		}
 	
 		$(d).click(function(e) {
-			su.ui.els.pl_search.attr('style', '');
+			
 			return test_pressed_node(e);
 		});
 		
@@ -357,33 +357,74 @@ window.connect_dom_to_som = function(d, ui){
 				arrows_keys_nav(e);
 			})
 		}
+		var wtm_wrap = $('#people-connecting', d);
+		var wtm_content = wtm_wrap.find('.people-connecting-content');
+		ui.els.wtm = {
+			wp:wtm_wrap,
+			con: wtm_content,
+			visible: false,
+			id: false
+		};
+		
+		ui.els.wtm.id = ui.addPopup(wtm_wrap, function(){
+			return ui.els.wtm.visible;
+		}, function(){
+			wtm_wrap.hide();
+			wtm_content.empty();
+			ui.els.wtm.visible = false;
+		});
 		
 		
+		
+		
+		
+		var pl_search_wrap = $('#playlist-search', d);
+		
+		ui.els.pl_search = {
+			wp: pl_search_wrap,
+			visible: false,
+			hide: function(){
+				this.wp.attr('style', '');
+				this.visible = false	
+			}
+		}
 		
 		var playlists = seesu.gena.playlists;
+		
+
 		//[{name: 'loved tracks'}, {name: 'killers'}, {name: 'top british 30'}, {name: 'vkontakte'}, {name: 'best beatles'}];
 		var create_plr_entity = function(playlist, song){
 			var entity = $('<li></li>', d).text(playlist.playlist_title).click(function(){
-				pl_search.attr('style', '');
+				ui.els.pl_search.hide();
 				su.gena.add(song, playlist);
 			});
 			return entity;
 		};
-		var pl_search  = ui.els.pl_search = $('#playlist-search', d).click(function(e){
-			e.stopPropagation();
-			test_pressed_node(e)
+		
+		
+		
+		ui.addPopup(pl_search_wrap, function(){
+			return ui.els.pl_search.visible;
+			
+		}, function(){
+			ui.els.pl_search.hide();
 		});
+
+		
+		
+			
+		
 		
 		var new_playlist_desc = 'new playlist named ';
-		var pl_r = $('.pl-r', pl_search);
+		var pl_r = $('.pl-r', pl_search_wrap);
 		
-		var pl_q = ui.els.pl_r = $('#pl-q',pl_search).bind('change keyup focus', function(e){
+		var pl_q = ui.els.pl_r = $('#pl-q',pl_search_wrap).bind('change keyup focus', function(e){
 			
 			
 			var searching_for = this.value;
 			if (searching_for && searching_for == pl_q.data('lastv')){return false;}
 			
-			var current_song = pl_search.data('current_song');
+			var current_song = pl_search_wrap.data('current_song');
 			if (searching_for){
 				var matches = [];
 				for (var i=0; i < playlists.length; i++) {
@@ -402,7 +443,7 @@ window.connect_dom_to_som = function(d, ui){
 						.text('"'+searching_for+'"')
 						.prepend($('<span></span>').text(new_playlist_desc));
 					new_pl_button.click(function(e){
-							pl_search.attr('style', '');
+							ui.els.pl_search.hide();
 							su.gena.add(current_song, su.gena.create_userplaylist(searching_for));
 						});
 						
@@ -431,9 +472,9 @@ window.connect_dom_to_som = function(d, ui){
 		});
 		
 		
-		$('.ext-playlists', pl_search).click(function(){
+		$('.ext-playlists', pl_search_wrap).click(function(e){
 			$(this).parent().toggleClass('not-want-to')
-			return false;
+			e.preventDefault();
 		});
 		if (!state_recovered){
 			ui.views.show_start_page(true, true, true);
@@ -498,10 +539,10 @@ window.connect_dom_to_som = function(d, ui){
 		var wow_tags= function(tag,c){
 			$('<a class="js-serv hyped-tag"></a> ')
 				.text(tag)
-				.click(function(){
+				.click(function(e){
 					su.ui.show_tag(tag)
 					seesu.track_event('Navigation', 'hyped at start page', "tag: " + tag );
-					return false;
+					e.preventDefault();
 				}).appendTo(c);
 			c.append(' ')
 			
@@ -558,9 +599,9 @@ window.connect_dom_to_som = function(d, ui){
 						var _header = $('<h3></h3>').appendTo(users_play)
 						.append(localize('User-listening','Users are listening'));
 						
-						$('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
+						$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
 							getAndShowUsersListenings();
-							return false
+							e.preventDefault();
 						}).appendTo(_header);
 						var above_limit_value = 0;
 						for (var i=0; i < r.length; i++) {
@@ -583,12 +624,12 @@ window.connect_dom_to_som = function(d, ui){
 		
 		var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(su.ui.els.start_screen);
 		var createTrackLink = function(artist, track, track_obj, playlist){
-			return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(){
+			return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(e){
 				su.ui.views.show_playlist_page(playlist);
 				if (track_obj.ui && track_obj.ui.node){
 					track_obj.ui.node.click();
 				}
-				return false;
+				e.preventDefault();
 			});
 		};
 		var showMetroRandom = function(){
@@ -606,9 +647,9 @@ window.connect_dom_to_som = function(d, ui){
 						.append(localize('last-week-с') + ' ' + random_metro.name)
 						.append('<span class="desc"> (' + random_metro.country + ') </span>')
 						.append(localize('listen-this') + " ");
-					$('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
+					$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
 						showMetroRandom();
-						return false
+						e.preventDefault();
 					}).appendTo(_header);
 						
 		

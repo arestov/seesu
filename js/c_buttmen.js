@@ -110,7 +110,7 @@ button_menu.prototype = {
 				$(seesu.ui.d).unbind('mouseup');
 				$(seesu.ui.d).unbind('mousemove');
 				
-				return test_pressed_node(e, true)
+				return test_pressed_node(e, {mouseup: true})
 			})
 			
 			

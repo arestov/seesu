@@ -758,12 +758,21 @@ html.not-as-application, .not-as-application  body{
 	}
 	.song-listeners-list li{
 		float:left;
-		
+		position:relative;
 		margin-left:11px;
 		background: #4A4A4A;
 		padding: 5px;
 		border-radius: 5px;
 		margin-bottom:10px;
+		width:100px;
+		cursor:pointer;
+		
+		}
+		.song-listeners-list li:hover{
+			background-color:#555;
+		}
+		.song-listeners-list li:active{
+			background-color:#5a5a5a;
 		}
 		.track-listeners li:first-of-type{
 			margin-left:0;
@@ -771,9 +780,11 @@ html.not-as-application, .not-as-application  body{
 		.song-listeners-list li .image-cropper{
 			height:134px;
 			overflow:hidden;
+			
 		}
 		.song-listeners-list li img{
 			width:100px;
+			border-radius:2px;
 		}
 
 iframe.you-tube-video,embed.you-tube-video{

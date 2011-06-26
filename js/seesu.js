@@ -19,6 +19,9 @@ window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
 	  distant_glow: {
 	  	interact: null,
+	  	supportsLikes: function(){
+	  		return bN(this.interact.indexOf('user.likePerson')) && bN(this.interact.indexOf('user.getPersonsLikes'));
+  		},
 		url: 'http://seesu.me/',
 		auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
 	  },
