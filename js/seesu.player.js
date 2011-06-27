@@ -429,25 +429,33 @@ su.player.events[PLAYED] = function(){
   if (!start_time) {
 	su.player.c_song.start_time = ((new Date()).getTime()/1000).toFixed(0);
   }
+  var mo = su.player.c_song;
   
-	var submit = function(mo){
-		setTimeout(function(){
-			if (su.lfm_api.scrobbling) {
-				su.lfm_api.nowplay(mo, mo.mopla.duration);
-			}
-			if (su.vk.id){
-				su.api('track.scrobble', {
-					client: su.env.app_type,
-					status: 'playing',
-					duration: mo.mopla.duration,
-					artist: mo.artist,
-					title: mo.track,
-					timestamp: ((new Date()).getTime()/1000).toFixed(0)
-				});
-			}
-		},100);
-	};
-	submit(su.player.c_song);
+  setTimeout(function(){
+	if (mo == su.player.c_song){
+		var submit = function(mo){
+			setTimeout(function(){
+				if (su.lfm_api.scrobbling) {
+					su.lfm_api.nowplay(mo, mo.mopla.duration);
+				}
+				if (su.vk.id){
+					su.api('track.scrobble', {
+						client: su.env.app_type,
+						status: 'playing',
+						duration: mo.mopla.duration,
+						artist: mo.artist,
+						title: mo.track,
+						timestamp: ((new Date()).getTime()/1000).toFixed(0)
+					});
+				}
+			},100);
+		};
+		submit(mo);
+	}
+  	
+  },3000)
+  
+
   
 	
 	
