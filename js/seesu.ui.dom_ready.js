@@ -70,6 +70,7 @@ window.connect_dom_to_som = function(d, ui){
 			return pos
 		}
 		o.track_progress_total = $('<div class="track-progress"></div>',d).click(function(e){
+			su.ui.hidePopups();
 			e.stopPropagation();
 			var pos = get_click_position(e, this);
 			var new_play_position_factor = pos/$(this).data('mo').c.track_progress_width;

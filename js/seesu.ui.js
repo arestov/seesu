@@ -660,50 +660,59 @@ seesu_ui.prototype = {
 	},
 	update_artist_info: function(artist, a_info, show_link_to_artist_page, ext_info){
 		var _sui = this;
-		if (a_info.data('artist') != artist){
-			a_info.data('artist', artist);
+		if (a_info.data('artist') != artist || a_info.data('artist-lfm') != true){
 			var ainf = {
-				name: a_info.children('.artist-name').empty(), 
+				name: a_info.children('.artist-name'), 
 				image: a_info.children('.image'),
 				bio: a_info.children('.artist-bio'),
 				meta_info: a_info.children('.artist-meta-info'),
 				c : a_info
 			};
-			
-			
-			var arts_name = $('<span class="desc-name"></span>')
-				.appendTo(ainf.name);
+			if (a_info.data('artist') != artist){
+				a_info.data('artist', artist);
+				ainf.name.empty()
+				var arts_name = $('<span class="desc-name"></span>')
+					.appendTo(ainf.name);
+					
 				
-			
-			
-			$('<a></a>')
-				.attr('href', 'http://www.last.fm/music/' + artist.replace(' ', '+'))
-				.text(localize('profile'))
-				.attr('title', 'last.fm profile')
-				.click(function(e){
-					var link = 'http://www.last.fm/music/' + artist.replace(' ', '+');
-					open_url(link);
-					seesu.track_event('Links', 'lastfm', link);
-					e.preventDefault();
-				})
-				.appendTo(arts_name);
-			
-			$('<span class="desc-text"></span>')
-				.text(artist)
-				.appendTo(ainf.name);
 				
-			
-			ainf.bio.text('...');
-			ainf.meta_info.empty();
-			
-			seesu.current_artist = artist;
-			lfm('artist.getInfo',{'artist': artist }, function(r){
-				if (a_info.data('artist') == artist){
-					_sui.show_artist_info(r, ainf, artist, ext_info);
-				}
+				$('<a></a>')
+					.attr('href', 'http://www.last.fm/music/' + artist.replace(' ', '+'))
+					.text(localize('profile'))
+					.attr('title', 'last.fm profile')
+					.click(function(e){
+						var link = 'http://www.last.fm/music/' + artist.replace(' ', '+');
+						open_url(link);
+						seesu.track_event('Links', 'lastfm', link);
+						e.preventDefault();
+					})
+					.appendTo(arts_name);
 				
-			});
+				$('<span class="desc-text"></span>')
+					.text(artist)
+					.appendTo(ainf.name);
+					
+				
+				ainf.bio.text('...');
+				ainf.meta_info.empty();
+				
+				
+			}
+			
+			
+			if (a_info.data('artist-lfm') != true){
+				lfm('artist.getInfo',{'artist': artist }, function(r){
+					if (a_info.data('artist') == artist && a_info.data('artist-lfm') != true){
+						a_info.data('artist-lfm', true);
+						_sui.show_artist_info(r, ainf, artist, ext_info);
+						
+					}
+					
+				});
+			}
+
 		}
+		
 	},
 	create_youtube_video: function(id, transparent){
 		var youtube_video = document.createElement('embed');
