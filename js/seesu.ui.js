@@ -1136,6 +1136,7 @@ seesu_ui.prototype = {
 				this.files.removeClass('show-files show-all-files')
 				this.mainc.removeClass('viewing-song')
 				this.tidominator.removeClass('want-more-info');
+				su.ui.hidePopups();
 			},
 			activate: function(){
 				this.mainc.addClass('viewing-song');

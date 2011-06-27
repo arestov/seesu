@@ -72,7 +72,12 @@ function tryVKApi(){
 		
 	} else{
 		var vk_t_raw  = w_storage('vk_token_info');
-		auth_to_vkapi(JSON.parse(vk_t_raw), false, 2271620, tryVKOAuth);
+		if (vk_t_raw){
+			auth_to_vkapi(JSON.parse(vk_t_raw), false, 2271620, tryVKOAuth);
+		} else{
+			//tryVKOAuth();
+		}
+		
 
 		
 	}

@@ -28,7 +28,8 @@ var detach_vkapi = function(search_way, timeout, dead){
 var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callback, callback){
 	var rightnow = ((new Date()).getTime()/1000).toFixed(0);
 	if (!vk_t.expires_in || (vk_t.expires_in > rightnow)){
-	
+		vk_auth_box.startIndicating();
+		
 		var _vkapi = new vk_api(vk_t, {
 			queue: seesu.delayed_search.vk_api.queue,
 			use_cache: true
@@ -101,8 +102,10 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 				}			
 				if (callback){callback();}
 			} else{
+				vk_auth_box.stopIndicating();
 				w_storage('vk_session'+app_id, '', true);
 				error_callback('no info');
+				
 			}
 			
 		},function(){
@@ -129,6 +132,31 @@ var vkTokenAuth = function(vk_t_raw){
 };
 
 var vk_auth_box = {
+	setUI: function(vk_login_ui){
+		this.vk_login_ui = vk_login_ui;
+		
+		if (this.load_indicator){
+			this.vk_login_ui.showLoadIndicator();
+		}
+		
+		/*			if (this.vk_login_ui){
+					_this.vk_login_ui.hideLoadIndicator();
+				this.vk_login_ui.showLoadIndicator();
+				
+			}*/
+	},
+	startIndicating: function(){
+		this.load_indicator = true;
+		if (this.vk_login_ui){
+			this.vk_login_ui.showLoadIndicator();
+		}
+	},
+	stopIndicating: function(){
+		this.load_indicator = false;
+		if (this.vk_login_ui){
+			this.vk_login_ui.hideLoadIndicator();
+		}
+	},
 	requestAuth: function(p ){
 		
 		return this.authInit(p || {});
@@ -148,6 +176,8 @@ var vk_auth_box = {
 				console.log('got vk_token!!!!')
 				console.log(e.data.replace('vk_token:',''));
 				seesu.track_event('Auth to vk', 'end');
+			} else if (e.data == 'vk_error:'){
+				
 			}
 		});
 		i.className = 'serv-container';
@@ -192,7 +222,7 @@ var vk_auth_box = {
 		}
 	},
 	authInit: function(p){
-		
+		var _this = this;
 		
 		//init_auth_data.bridgekey		
 		
@@ -204,6 +234,15 @@ var vk_auth_box = {
 		}
 		if (!p.not_open){
 			open_url(init_auth_data.link);
+		} else{
+			this.startIndicating();
+			setTimeout(function(){
+				_this.stopIndicating();
+			},10000)
+			
+			
+
+			
 		}
 		
 		seesu.track_event('Auth to vk', 'start');

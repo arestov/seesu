@@ -83,7 +83,6 @@ a.track-node{
 	.track-node-text .song-duration{
 		float:right;
 		padding-left:10px;
-		width:35px;
 	}
 
 a.waiting-full-render.marked-for-play{

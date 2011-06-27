@@ -196,8 +196,16 @@ window.connect_dom_to_som = function(d, ui){
 			vk_login: {
 				o: ui_samples.children('.vk-login-context'),
 				oos: $(),
+				hideLoadIndicator: function(){
+					this.oos.removeClass("waiting-vk-login");
+					this.load_indicator = false;
+				},
+				showLoadIndicator:function() {
+					this.oos.addClass("waiting-vk-login");
+					this.load_indicator = true;
+				},
 				remove: function(){
-					this.oos.removeClass("waiting-vk-login").remove();
+					this.oos.remove();
 					this.oos = $();
 				},
 				resetAuth: function(){
@@ -208,6 +216,9 @@ window.connect_dom_to_som = function(d, ui){
 				clone: function(type){
 					var _this = this;
 					var nvk = this.o.clone();
+					if (this.load_indicator){
+						nvk.addClass("waiting-vk-login");
+					}
 					if (!type){
 						nvk.addClass('usual-login')
 					} else{
@@ -241,8 +252,9 @@ window.connect_dom_to_som = function(d, ui){
 					return nvk;
 				}
 			}
+			
 		};
-		
+		vk_auth_box.setUI(ui.samples.vk_login);
 		
 			
 		ui.els.search_label = ui.els.search_form.find('#search-p').find('.lbl');
