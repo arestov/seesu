@@ -89,6 +89,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 										sid: su_sess.sid
 									};
 									w_storage('dg_auth', su.distant_glow.auth, true);
+									su.distant_glow.setInfo('vk', su.vk.user_info);
 									su.api('user.update', su.vk.user_info);
 								}
 							});
@@ -98,6 +99,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 						
 					});
 				} else{
+					su.distant_glow.setInfo('vk', su.vk.user_info);
 					su.api('user.update', su.vk.user_info);
 				}			
 				if (callback){callback();}
@@ -277,7 +279,7 @@ function vk_api(vk_t, params, callback, fallback, iframe){
 	if (!p.no_init_check){
 		this.get_user_info(function(info, r){
 			if(info){
-				this.user_info = info;
+				_this.user_info = info;
 			}
 			
 			if (callback){

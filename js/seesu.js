@@ -17,7 +17,18 @@ window.lfm = function(){
 
 window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
+	 
 	  distant_glow: {
+	  	this.info: {},
+	  	getInfo: function(type){
+	  		return this.info[type];
+		},
+		setInfo: function(type, data){
+			this.info[type] = data;
+		},
+		getId: function(){
+			return this.auth && this.auth.id;
+		},
 	  	interact: null,
 	  	supportsLikes: function(){
 	  		return bN(this.interact.indexOf('user.likePerson')) && bN(this.interact.indexOf('user.getPersonsLikes'));
