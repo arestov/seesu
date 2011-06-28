@@ -529,7 +529,10 @@ seesu_ui.prototype = {
 	},
 	updateSongListeners: function(mo){
 		var _this = this;
-		var last_update = mo.ui.t_users.data('last_update');
+		var last_update = mo.ui.t_users.last_update;
+		var current_user = su.distant_glow.getId();
+		
+		
 		if (mo.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 1)){
 			var d = {artist: mo.artist};
 			if (mo.track){
@@ -545,14 +548,14 @@ seesu_ui.prototype = {
 						}
 						
 					}; 
-					mo.ui.t_users.empty();
-					$('<div></div>').text(localize('listeners-looks')).appendTo(mo.ui.t_users);
-					uul.appendTo(mo.ui.t_users);
+					mo.ui.t_users.c.empty();
+					$('<div></div>').text(localize('listeners-looks')).appendTo(mo.ui.t_users.c);
+					uul.appendTo(mo.ui.t_users.c);
 				}
 				console.log(r)
 				
 			});
-			mo.ui.t_users.data('last_update', +new Date);
+			mo.ui.t_users.last_update = (+new Date);
 		}
 		
 	},
@@ -1110,7 +1113,9 @@ seesu_ui.prototype = {
 			mainc: li,
 			a_info: a_info,
 			node: track,
-			t_users: users,
+			t_users: {
+				c: users
+			},
 			context: t_context,
 			t_info: t_info,
 			extend_info: {
