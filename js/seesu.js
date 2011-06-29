@@ -19,7 +19,7 @@ window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
 	 
 	  distant_glow: {
-	  	this.info: {},
+	  	info: {},
 	  	getInfo: function(type){
 	  		return this.info[type];
 		},
