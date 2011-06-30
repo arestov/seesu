@@ -20,7 +20,15 @@ var get_youtube = function(q, callback){
 	
 };
 
-
+function tryVKOAuth (){
+	var init_auth = vk_auth_box.requestAuth({not_open: true});
+	if (init_auth.bridgekey){
+		var i = document.createElement('iframe');	
+		i.className = 'serv-container';
+		i.src = init_auth.link;
+		document.body.appendChild(i);
+	}
+};
 function tryVKApi(){
 	var _u = su._url;
 	if (su.env.vkontakte){
@@ -64,7 +72,12 @@ function tryVKApi(){
 		
 	} else{
 		var vk_t_raw  = w_storage('vk_token_info');
-		auth_to_vkapi(JSON.parse(vk_t_raw), false, 2271620);
+		if (vk_t_raw){
+			auth_to_vkapi(JSON.parse(vk_t_raw), false, 2271620, tryVKOAuth);
+		} else{
+			//tryVKOAuth();
+		}
+		
 
 		
 	}

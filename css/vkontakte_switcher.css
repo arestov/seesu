@@ -20,7 +20,7 @@
 	border-radius:6px;
 	padding:12px;
 	margin: 10px 0 15px;
-	background:#faebd7 no-repeat 50% 50%;
+	background:#faebd7 no-repeat 100% 12px;
 	color:#000;
 	}
 	.vk-login-context .auth-container{
@@ -30,7 +30,11 @@
 		.vk-login-context.vk-finishing .auth-container{
 			display:block;
 		}
-	.vk-login-context.waiting-vk-login{
+	.vk-login-context .decor{
+		padding-right:16px;
+		background:no-repeat 100% 0;
+	}
+	.vk-login-context.waiting-vk-login .decor{
 		background-image:url(../i/spinner_small_yellow.gif)
 	}
 	.vk-login-context button{

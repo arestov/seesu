@@ -238,13 +238,15 @@ views.prototype = {
 
 window.seesu_ui = function(d, with_dom){
 	this.d = d;
+	this.els = {};
 	if (!with_dom){
 		dstates.connect_ui(this);
 	} else {
 		this.views = new views();
 	}
 	
-	
+	this.popups = [];
+	this.popups_counter = 0;
 	this.buttons_li = {};
 	
 	this.now_playing ={
@@ -258,6 +260,33 @@ window.seesu_ui = function(d, with_dom){
 	}
 }
 seesu_ui.prototype = {
+	addPopup: function(popup_node, testf, hidef){
+		var ob = {
+			test: testf,
+			hide: hidef,
+			id: ++this.popups_counter
+		}
+		popup_node.click(function(e){
+			e.stopPropagation();
+			test_pressed_node(e, {
+				stay_popup: ob.id
+			})
+		});
+		
+		
+		
+		this.popups.push(ob);
+		return ob.id;
+	},
+	hidePopups: function(e, exlude_id){
+		for (var i=0; i < this.popups.length; i++) {
+			var c = this.popups[i];
+			if (c.id != exlude_id && c.test(e)){
+				c.hide();
+			}
+			
+		};	
+	},
 	show_tag: function(tag, query, no_navi, start_song){
 		
 		var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', tag, query, start_song);
@@ -340,9 +369,9 @@ seesu_ui.prototype = {
 		var songitself = $('<a class="js-serv"></a>')
 			.attr('href', 'http://seesu.me/o#/ds' + song_methods.getURLPart.call(mopla))
 			.text(mopla.artist + " - " + mopla.track)
-			.click(function(){
+			.click(function(e){
 				su.player.play_song(mo, true, mopla)
-				return false;
+				e.preventDefault();
 			}).appendTo(main_part);
 			
 		var d = $('<span class="duration"></span>').appendTo(desc_part);
@@ -412,31 +441,99 @@ seesu_ui.prototype = {
 		}
 		return image;
 	},
+	createSongListener: function(lig){
+		var _this = this;
+		
+		
+		
+		/*
+		var target_offset = clicked_node.offset();
+				var container_offset = su.ui.els.pllistlevel.offset();
+				var container_width = su.ui.els.pllistlevel.width();
+				var left = target_offset.left - container_offset.left;
+				su.ui.els.pl_search
+					.data('current_song', clicked_node.data('mo'))
+					.css({
+						top: (target_offset.top - container_offset.top) + 'px',
+						left: left + 'px',
+						display: 'block'
+					});
+				if (left > container_width/2){
+					su.ui.els.pl_search.addClass('close-to-right');
+				} else{
+					su.ui.els.pl_search.removeClass('close-to-right');
+				}
+				su.ui.els.pl_r.val('')[0].focus();
+				return false;
+				
+				*/
+		var li = $('<li class="song-listener"></li>').click(function() {
+			su.ui.hidePopups(su.ui.els.wtm.id);
+			
+			var clicked_node = $(this);
+			
+			var target_offset = clicked_node.offset();
+			var container_offset = su.ui.els.pllistlevel.offset();
+			var container_width = su.ui.els.pllistlevel.width();
+			var left = target_offset.left - container_offset.left;
+			
+			su.ui.els.wtm.wp.css({
+				top: (target_offset.top - container_offset.top) + 'px',
+				left: left + 'px',
+				display: 'block'
+			});
+			
+			if (left > container_width/2){
+				su.ui.els.wtm.wp.addClass('close-to-right');
+			} else{
+				su.ui.els.wtm.wp.removeClass('close-to-right');
+			}
+			
+			
+			su.ui.els.wtm.con.text(Math.random());
+			su.ui.els.wtm.wp.show();
+			su.ui.els.wtm.visible = true;
+			/*
+			su.ui.els.pl_search
+				.data('current_song', clicked_node.data('mo'))
+				.css({
+					top: (target_offset.top - container_offset.top) + 'px',
+					left: left + 'px',
+					display: 'block'
+				});
+			
+			su.ui.els.pl_r.val('')[0].focus();
+			*/
+			return false;
+			//e.stop
+		});
+	
+		var imageplace = $("<div class='image-cropper'></div>").appendTo(li)
+		var image = this.preloadImage(lig.info.photo_medium, function(img){
+			_this.verticalAlign(img, 134, true);	
+		}, imageplace); 
+		
+		return li;
+				
+				
+	},
 	createSongListeners: function(listenings, place, above_limit_value){
 		var _this = this;
 		var users_limit = 3;
 		for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
-			var lig = listenings[i];
-			if (lig.info){
-				var li = $('<li></li>');
-				var imageplace = $("<div class='image-cropper'></div>").appendTo(li)
-				var image = this.preloadImage(lig.info.photo_medium, function(img){
-					_this.verticalAlign(img, 134, true);	
-				}, imageplace); 
-				
-
-
-				li
-					.appendTo(place);
+			if (listenings[i].info){
+				place.append(this.createSongListener(listenings[i]));
 			}
-			listenings[i]
 		};
 		return Math.max(users_limit - listenings.length, 0);
 	},
 	updateSongListeners: function(mo){
 		var _this = this;
-		var last_update = mo.ui.t_users.data('last_update');
-		if (mo.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 7)){
+		var last_update = mo.ui.t_users.last_update;
+		var current_user = su.distant_glow.getId();
+		
+		
+		if (mo.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 1)){
 			var d = {artist: mo.artist};
 			if (mo.track){
 				d.title = mo.track;
@@ -451,14 +548,14 @@ seesu_ui.prototype = {
 						}
 						
 					}; 
-					mo.ui.t_users.empty();
-					$('<div></div>').text(localize('listeners-looks')).appendTo(mo.ui.t_users);
-					uul.appendTo(mo.ui.t_users);
+					mo.ui.t_users.c.empty();
+					$('<div></div>').text(localize('listeners-looks')).appendTo(mo.ui.t_users.c);
+					uul.appendTo(mo.ui.t_users.c);
 				}
 				console.log(r)
 				
 			});
-			mo.ui.t_users.data('last_update', +new Date);
+			mo.ui.t_users.last_update = (+new Date);
 		}
 		
 	},
@@ -478,7 +575,7 @@ seesu_ui.prototype = {
 				}
 				
 				if (su.lfm_api.scrobbling) {
-					this.lfm_change_scrobbling(true, mo.ui.context.children('.track-panel').children('.track-buttons'));
+					this.lfm_change_scrobbling(true, mo.ui.context.children('.track-panel').find('.track-buttons'));
 				}
 			} else{
 				console.log('no context for:')
@@ -530,9 +627,9 @@ seesu_ui.prototype = {
 				
 				
 				
-				$('<a class="js-serv">' + localize('show-them') +'</a>').click(function(){
+				$('<a class="js-serv">' + localize('show-them') +'</a>').click(function(e){
 					c.toggleClass('show-files');
-					return false;
+					e.preventDefault();
 				}).appendTo(desc_text)
 				
 							
@@ -541,9 +638,9 @@ seesu_ui.prototype = {
 					var b = this.createFilesList(songs[i], mo);
 					if (b){b.appendTo(sc);}
 					if (!extend_link && songs[i].t && songs[i].t.length > 3){
-						$('<a class="js-serv all-files-link">' + localize('all', 'all') +'</a>').click(function(){
+						$('<a class="js-serv all-files-link">' + localize('all', 'all') +'</a>').click(function(e){
 							c.toggleClass('show-all-files');
-							return false;
+							e.preventDefault();
 						}).appendTo(desc_text)
 						extend_link = true;
 					}
@@ -566,50 +663,59 @@ seesu_ui.prototype = {
 	},
 	update_artist_info: function(artist, a_info, show_link_to_artist_page, ext_info){
 		var _sui = this;
-		if (a_info.data('artist') != artist){
-			a_info.data('artist', artist);
+		if (a_info.data('artist') != artist || a_info.data('artist-lfm') != true){
 			var ainf = {
-				name: a_info.children('.artist-name').empty(), 
+				name: a_info.children('.artist-name'), 
 				image: a_info.children('.image'),
 				bio: a_info.children('.artist-bio'),
 				meta_info: a_info.children('.artist-meta-info'),
 				c : a_info
 			};
-			
-			
-			var arts_name = $('<span class="desc-name"></span>')
-				.appendTo(ainf.name);
+			if (a_info.data('artist') != artist){
+				a_info.data('artist', artist);
+				ainf.name.empty()
+				var arts_name = $('<span class="desc-name"></span>')
+					.appendTo(ainf.name);
+					
 				
-			
-			
-			$('<a></a>')
-				.attr('href', 'http://www.last.fm/music/' + artist.replace(' ', '+'))
-				.text(localize('profile'))
-				.attr('title', 'last.fm profile')
-				.click(function(){
-					var link = 'http://www.last.fm/music/' + artist.replace(' ', '+');
-					open_url(link);
-					seesu.track_event('Links', 'lastfm', link);
-					return false;
-				})
-				.appendTo(arts_name);
-			
-			$('<span class="desc-text"></span>')
-				.text(artist)
-				.appendTo(ainf.name);
 				
-			
-			ainf.bio.text('...');
-			ainf.meta_info.empty();
-			
-			seesu.current_artist = artist;
-			lfm('artist.getInfo',{'artist': artist }, function(r){
-				if (a_info.data('artist') == artist){
-					_sui.show_artist_info(r, ainf, artist, ext_info);
-				}
+				$('<a></a>')
+					.attr('href', 'http://www.last.fm/music/' + artist.replace(' ', '+'))
+					.text(localize('profile'))
+					.attr('title', 'last.fm profile')
+					.click(function(e){
+						var link = 'http://www.last.fm/music/' + artist.replace(' ', '+');
+						open_url(link);
+						seesu.track_event('Links', 'lastfm', link);
+						e.preventDefault();
+					})
+					.appendTo(arts_name);
 				
-			});
+				$('<span class="desc-text"></span>')
+					.text(artist)
+					.appendTo(ainf.name);
+					
+				
+				ainf.bio.text('...');
+				ainf.meta_info.empty();
+				
+				
+			}
+			
+			
+			if (a_info.data('artist-lfm') != true){
+				lfm('artist.getInfo',{'artist': artist }, function(r){
+					if (a_info.data('artist') == artist && a_info.data('artist-lfm') != true){
+						a_info.data('artist-lfm', true);
+						_sui.show_artist_info(r, ainf, artist, ext_info);
+						
+					}
+					
+				});
+			}
+
 		}
+		
 	},
 	create_youtube_video: function(id, transparent){
 		var youtube_video = document.createElement('embed');
@@ -635,7 +741,7 @@ seesu_ui.prototype = {
 				var v_content = $('<ul class="desc-text"></ul>');
 			
 				var make_v_link = function(img_link, vid, _title){
-					var li = $('<li class="you-tube-video-link"></li>').click(function(){
+					var li = $('<li class="you-tube-video-link"></li>').click(function(e){
 						var showed = this.showed;
 						
 						_this.remove_video();
@@ -651,7 +757,7 @@ seesu_ui.prototype = {
 							seesu.player.set_state('play');
 							this.showed = false;
 						}
-						return false;
+						e.preventDefault();
 					});
 					
 					$("<a class='video-preview'></a>")
@@ -696,10 +802,10 @@ seesu_ui.prototype = {
 				var sc_link = $('<a></a>')
 					.attr('href', mo.mopla.page_link)
 					.text('page of this track')
-					.click(function(){
+					.click(function(e){
 						open_url(mo.mopla.page_link);
 						seesu.track_event('Links', 'soundcloud track');
-						return false;
+						e.preventDefault();
 					});
 			}
 			
@@ -841,7 +947,7 @@ seesu_ui.prototype = {
 							get_artist_album_playlist(alb_data.album.id, pl_r);
 						} );
 						seesu.track_event('Artist navigation', 'album', al_artist + ": " + al_name);
-						return false;
+						e.preventDefault();
 					})
 					.appendTo(li);
 				$('<img/>').attr('src', al_image).appendTo(a_href);
@@ -959,10 +1065,29 @@ seesu_ui.prototype = {
 			}
 		}	
 	},
+	createNiceButton: function(position){
+		var c = $('<span class="button-hole"><a class="nicebutton"></a></span>');
+		var b = c.children('a');
+		
+		if (position == 'left'){
+			c.addClass('bposition-l')
+		} else if (position == 'right'){
+			c.addClass('bposition-r')
+		}
+		
+		return {
+			c: c,
+			b: b
+		};
+	},
 	create_playlist_element: function(mo){
 		var _sui = this;
+
 		var t_context = this.samples.track_c.clone(true);
 		var tp = t_context.children('.track-panel');
+		
+		
+		
 		var track = $("<a></a>")
 			.data('mo', mo)
 			.data('t_context', t_context)
@@ -995,10 +1120,22 @@ seesu_ui.prototype = {
 		var users = $('<div class="track-listeners"></div>').appendTo(t_context);
 		
 		
-		var extend_switcher = dominator_head.children('.extend-switcher').click(function(){
+		var extend_switcher = dominator_head.children('.extend-switcher').click(function(e){
 			tidominator.toggleClass('want-more-info');
-			return false;
+			e.preventDefault();
 		});
+		
+		var files_cc = $('<div class="files-control"></div>').prependTo(tp.children('.tp-right-col'));
+		
+		
+		var files_list_nb = this.createNiceButton('left');
+		
+		files_list_nb.b.text( localize('Files', 'Files') + ' ▼');
+		files_list_nb.c.appendTo(files_cc);
+		
+		var file_download_nb =  this.createNiceButton('right');
+		file_download_nb.b.text(localize('Download', 'Download'));
+		file_download_nb.c.appendTo(files_cc);
 		
 		
 		mo.node = track;
@@ -1007,7 +1144,13 @@ seesu_ui.prototype = {
 			mainc: li,
 			a_info: a_info,
 			node: track,
-			t_users: users,
+			files_control: {
+				list_button: files_list_nb,
+				quick_download_button: file_download_nb
+			},
+			t_users: {
+				c: users
+			},
 			context: t_context,
 			t_info: t_info,
 			extend_info: {
@@ -1033,6 +1176,7 @@ seesu_ui.prototype = {
 				this.files.removeClass('show-files show-all-files')
 				this.mainc.removeClass('viewing-song')
 				this.tidominator.removeClass('want-more-info');
+				su.ui.hidePopups();
 			},
 			activate: function(){
 				this.mainc.addClass('viewing-song');
@@ -1048,7 +1192,7 @@ seesu_ui.prototype = {
 		
 		
 		track.text(mo.getFullName());
-
+		
 		
 		
 		var ph = seesu.player.controls.ph.clone(true);
@@ -1058,7 +1202,13 @@ seesu_ui.prototype = {
 			tr_progress_l: tpt.children('.track-load-progress'),
 			tr_progress_p: tpt.children('.track-play-progress')
 		};
-		ph.prependTo(tp);
+		
+		ph.prependTo(tp.children('.tp-left-col'));
+		
+		
+		
+
+		
 			
 		var plistel = $(li)
 			.data('mo', mo)
@@ -1153,10 +1303,10 @@ seesu_ui.prototype = {
 		var _ui = this;
 		if (!_ui.link && su.gena.playlists.length > 0 && _ui.els.start_screen){
 			$('<p></p>').attr('id', 'cus-playlist-b').append(
-				_ui.link = $('<a></a>').text(localize('playlists')).attr('class', 'js-serv').click(function(){
+				_ui.link = $('<a></a>').text(localize('playlists')).attr('class', 'js-serv').click(function(e){
 					_ui.search('');
 					_ui.search(':playlists');
-					return false;
+					e.preventDefault();
 				}) 
 			).appendTo(_ui.els.start_screen.children('.for-startpage'));
 		}

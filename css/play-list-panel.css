@@ -33,11 +33,36 @@
 	width:20px;
 	top:0;
 }
-.track-buttons{
-	position:absolute;
-	top:23px;
-	right:54px;
+.scrobbling-button .trackbutton{
+	background:#333 url(../i/last-fm-gray.png) no-repeat;
+	display:block;
 	height:16px;
+	width:16px;
+	border-radius:2px;
+	}
+	.scrobbling-button .trackbutton:hover{
+		background-image:url(../i/last-fm.png);
+	}
+	.scrobbling-button .trackbutton:active{
+		background-position: 1px 1px;
+		box-shadow:inset 0 0 6px 1px #111;
+		background-image:url(../i/last-fm-gray.png);
+	}
+.flash-security-status{
+	text-decoration:blink;
+	background-color:#0d8b2b;
+	}
+	.flash-internet
+	.flash-security-status{
+		
+		text-decoration:none;
+		color:inherit;
+		}
+
+.track-buttons{
+	position:relative;
+	height:16px;
+	float:right;
 	}
 	.track-buttons>li{
 		float:left;
@@ -56,12 +81,7 @@
 			text-align:center;
 			line-height:inherit;
 			}
-			.track-buttons>li>a:hover{
-				background:#666;
-				}
-			.track-buttons>li>a:active{
-				background:#333;
-			}
+
 
 .tb-window
 .track-button-content{
@@ -92,11 +112,12 @@
 	background:#456726;
 	height:6px;
 	cursor:pointer;
-	border: 1px solid #3a3a3a;
+	border-radius:2px;
+	border: 1px solid #4A4A4A;
 	
 	position:absolute;
-	top:23px;
-	right:0;
+	bottom:-19px;
+	right:3px;
 	}
 	.volume-state-position{
 		height:6px;
@@ -106,12 +127,32 @@
 		left:0;
 		background:#6a9e3a;
 	}
+.player-holder{
+	height: 18px;
+	margin: 0 0 12px;
+	position:relative;
+}
 .track-panel{
 	top:1px;
 	position:relative;
 	height:54px;
 	
 	}
+	.files-control{
+		overflow:hidden;
+		margin-top:-8px;
+		margin-bottom:11px;
+	}
+	.tp-left-col{
+		overflow:hidden;
+		position:relative;
+	}
+	.tp-right-col{
+		float:right;
+		
+		margin-left:24px;
+		position:relative;
+		}
 .playlist-info .artist-info{
 	margin-bottom:30px;
 }

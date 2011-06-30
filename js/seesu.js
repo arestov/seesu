@@ -17,8 +17,22 @@ window.lfm = function(){
 
 window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
+	 
 	  distant_glow: {
+	  	info: {},
+	  	getInfo: function(type){
+	  		return this.info[type];
+		},
+		setInfo: function(type, data){
+			this.info[type] = data;
+		},
+		getId: function(){
+			return this.auth && this.auth.id;
+		},
 	  	interact: null,
+	  	supportsLikes: function(){
+	  		return bN(this.interact.indexOf('user.likePerson')) && bN(this.interact.indexOf('user.getPersonsLikes'));
+  		},
 		url: 'http://seesu.me/',
 		auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
 	  },
@@ -132,15 +146,6 @@ window.seesu = window.su =  {
 	  }
 	};
 
-var detach_vkapi = function(search_way, timeout, dead){
-	return setTimeout(function(){
-		if (dead){
-			search_way.dead = true;
-		}
-		
-		search_way.disabled = true;
-	}, timeout || 10);
-};
 
 
 

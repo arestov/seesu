@@ -130,12 +130,7 @@ li.playing-song .play-controls{
 .show-zoom-to-track .playlist-info{
 	display:none;
 }
-.player-holder{
-	height: 18px;
-	position: relative;
-	margin: 6px 0 12px;
-	position:relative;
-}
+
 
 .show-zoom-to-track .tracks-magic{
 	position:static;
