@@ -575,7 +575,7 @@ seesu_ui.prototype = {
 				}
 				
 				if (su.lfm_api.scrobbling) {
-					this.lfm_change_scrobbling(true, mo.ui.context.children('.track-panel').children('.track-buttons'));
+					this.lfm_change_scrobbling(true, mo.ui.context.children('.track-panel').find('.track-buttons'));
 				}
 			} else{
 				console.log('no context for:')
@@ -1065,10 +1065,29 @@ seesu_ui.prototype = {
 			}
 		}	
 	},
+	createNiceButton: function(position){
+		var c = $('<span class="button-hole"><a class="nicebutton"></a></span>');
+		var b = c.children('a');
+		
+		if (position == 'left'){
+			c.addClass('bposition-l')
+		} else if (position == 'right'){
+			c.addClass('bposition-r')
+		}
+		
+		return {
+			c: c,
+			b: b
+		};
+	},
 	create_playlist_element: function(mo){
 		var _sui = this;
+
 		var t_context = this.samples.track_c.clone(true);
 		var tp = t_context.children('.track-panel');
+		
+		
+		
 		var track = $("<a></a>")
 			.data('mo', mo)
 			.data('t_context', t_context)
@@ -1106,6 +1125,18 @@ seesu_ui.prototype = {
 			e.preventDefault();
 		});
 		
+		var files_cc = $('<div class="files-control"></div>').prependTo(tp.children('.tp-right-col'));
+		
+		
+		var files_list_nb = this.createNiceButton('left');
+		
+		files_list_nb.b.text( localize('Files', 'Files') + ' ▼');
+		files_list_nb.c.appendTo(files_cc);
+		
+		var file_download_nb =  this.createNiceButton('right');
+		file_download_nb.b.text(localize('Download', 'Download'));
+		file_download_nb.c.appendTo(files_cc);
+		
 		
 		mo.node = track;
 		mo.ui = {
@@ -1113,6 +1144,10 @@ seesu_ui.prototype = {
 			mainc: li,
 			a_info: a_info,
 			node: track,
+			files_control: {
+				list_button: files_list_nb,
+				quick_download_button: file_download_nb
+			},
 			t_users: {
 				c: users
 			},
@@ -1157,7 +1192,7 @@ seesu_ui.prototype = {
 		
 		
 		track.text(mo.getFullName());
-
+		
 		
 		
 		var ph = seesu.player.controls.ph.clone(true);
@@ -1167,7 +1202,13 @@ seesu_ui.prototype = {
 			tr_progress_l: tpt.children('.track-load-progress'),
 			tr_progress_p: tpt.children('.track-play-progress')
 		};
-		ph.prependTo(tp);
+		
+		ph.prependTo(tp.children('.tp-left-col'));
+		
+		
+		
+
+		
 			
 		var plistel = $(li)
 			.data('mo', mo)

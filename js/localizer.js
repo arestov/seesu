@@ -21,22 +21,22 @@ var localize= (function(){
 /*
 "":{
 		"original": "",
-		ru: ""
+		"ru": ""
 	},
 */
 
 localizer = {
 	"listeners-looks":{
 		"original": "People who listened to this track, looks like this",
-		ru: "Люди, слушавшие этот трек, выглядят примерно так:"
+		"ru": "Люди, слушавшие этот трек, выглядят примерно так:"
 	},
 	"enter-code":{
 		"original": "Enter here code",
-		ru: "Помести сюда полученный код"
+		"ru": "Помести сюда полученный код"
 	},
 	"use-code":{
 		"original": "use code",
-		ru: "использовать код"
+		"ru": "использовать код"
 	},
 	"refresh": {
 		"original": "refresh",
@@ -44,209 +44,213 @@ localizer = {
 	},
 	"Pop-tags":{
 		"original": "Popular tags",
-		ru: "Популярные теги"
+		"ru": "Популярные теги"
 	},
 	"User-listening":{
 		"original":"Users are listening",
-		ru:"Пользователи слушают"
+		"ru":"Пользователи слушают"
 	},
 	"last-week-с":{
 		"original": "Last week",
-		ru: "Последнюю неделю город"
+		"ru": "Последнюю неделю город"
 	},
 	"listen-this":{
 		"original": "listen this",
-		ru: "слушал это"	
+		"ru": "слушал это"	
 	},
 	"search": {
 		"original": "Search",
-		ru: "Поиск"
+		"ru": "Поиск"
 	},
 	"trysearches": {
 		"original": "try to search",
-		ru: "Попробуйте найти"
+		"ru": "Попробуйте найти"
+	},
+	"Download": {
+		"original": "Download",
+		"ru": "Скачать"
 	},
 	"search-control-hint": {
 		"original": "Use keyboard: up and down arrows, enter",
-		ru: "Используйте клавиатуру: стрелки вверх, вниз и клавишу ввод"
+		"ru": "Используйте клавиатуру: стрелки вверх, вниз и клавишу ввод"
 		
 	},
 	"reccoms": {
 		"original": "Recommendations",
-		ru: "Рекомендации"
+		"ru": "Рекомендации"
 	},
 	"lastfm-reccoms-access": {
 		"original": "To get your music recommendations you need to grant Seesu your last.fm account access",
-		ru: "Что бы получить рекомендации вам нужно дать Сису доступ к вашему эккаунту на last.fm"
+		"ru": "Что бы получить рекомендации вам нужно дать Сису доступ к вашему эккаунту на last.fm"
 	},
 	"grant": {
 		"original": "grant",
-		ru: "дать доступ"
+		"ru": "дать доступ"
 	},
 	"user-granted-lfm": {
 		"original": "I've granted my account access to Seesu",
-		ru: "Я дал Сису доступ к своему эккаунту"
+		"ru": "Я дал Сису доступ к своему эккаунту"
 	},
 	"give-reccoms": {
 		"original": "give me recommendations",
-		ru: "получить рекомендации"
+		"ru": "получить рекомендации"
 	},
 	"grant-lfm-desc": {
 		"original": "It's simple and safe. It does not require your last.fm password.",
-		ru: "Это просто и безопасно, не требует ваш пароль от last.fm"
+		"ru": "Это просто и безопасно, не требует ваш пароль от last.fm"
 	},
 	"or-type-username": {
 		"original": "or type username",
-		ru: "или введите имя пользователя"
+		"ru": "или введите имя пользователя"
 	},
 	"type-friend-desc": {
 		"original": " (you can type your friend)",
-		ru: "(вы можете ввести вашего друга)"
+		"ru": "(вы можете ввести вашего друга)"
 	},
 	"grant-love-lfm-access": {
 		"original": "To get your favorite tracks you need to grant Seesu your last.fm account access ",
-		ru: "Что бы получить ваши любимые треки вам нужно дать Сису доступ к вашему эккаунту на last.fm"
+		"ru": "Что бы получить ваши любимые треки вам нужно дать Сису доступ к вашему эккаунту на last.fm"
 	},
 	"give-love": {
 		"original": "give me loved tracks",
-		ru: "получить любимые композиции"
+		"ru": "получить любимые композиции"
 	},
 	"loved-tracks": {
 		"original": "Loved Tracks",
-		ru: "Любимые композиции"
+		"ru": "Любимые композиции"
 	},
 	"playlists": {
 		"original": "Playlists",
-		ru: "Плейлисты"
+		"ru": "Плейлисты"
 	},
 	"profile":{
 		"original": "profile",
-		ru: 'страница'
+		"ru": 'страница'
 	},
 	"Tags": {
 		"original": "Tags",
-		ru: "Теги"	
+		"ru": "Теги"	
 	},
 	"get-albums":{
 		"original": "get albums",
-		ru: "получить альбомы"	
+		"ru": "получить альбомы"	
 	},
 	"similar-arts": {
 		"original":	"Similar artists",
-		ru: "Похожие артисты"
+		"ru": "Похожие артисты"
 	},
 	"albums": {
 		"original": "Albums",
-		ru: "Альбомы"	
+		"ru": "Альбомы"	
 	},
 	"top-tracks":{
 		"original": "top tracks",
-		ru: 'лучшие треки'	
+		"ru": 'лучшие треки'	
 	},
 	"stop-flash": {
 		"original": "To stop annoing «Adobe Flash Player Security» window copy this address:",
-		ru: "Что бы убрать сообщение об  «Adobe Flash Player Security» скопируйте следующий адрес"
+		"ru": "Что бы убрать сообщение об  «Adobe Flash Player Security» скопируйте следующий адрес"
 	},
 	"add-to-wl": {
 		"original": "add it to white list on",
-		ru: "добавьте его в белый список на"
+		"ru": "добавьте его в белый список на"
 	},
 	"flashpage": {
 		"original": "flash internet security page",
-		ru: "странице безопасности флеша"
+		"ru": "странице безопасности флеша"
 	},
 	"and-restart": {
 		"original": "and then restart Seesu",
-		ru: "и перезапустите Сису"
+		"ru": "и перезапустите Сису"
 	},
 	
 	"bad-flash-desc": {
 		"original": "About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.",
-		ru: "О безопасности флеша: по умолчанию флеш плеер работает среди ограничений накладывающееся на виджеты, при этом не имеет доступа в интернет. Чтобы дать доступ к mp3 файлам располагающихся на сайта вам нужно изменить настройки на соответствующей странице. Там же вы можете и ограничить доступ."
+		"ru": "О безопасности флеша: по умолчанию флеш плеер работает среди ограничений накладывающееся на виджеты, при этом не имеет доступа в интернет. Чтобы дать доступ к mp3 файлам располагающихся на сайта вам нужно изменить настройки на соответствующей странице. Там же вы можете и ограничить доступ."
 	},
 	"lastfm-scrobble-access": {
 		"original": "To scrobble to last.fm you must grant access to Seesu",
-		ru: "Для скроблинга вам нужно дать Сису доступ к своему last.fm эккаунту"
+		"ru": "Для скроблинга вам нужно дать Сису доступ к своему last.fm эккаунту"
 	},
 	"to-find-and-play":{
 		
 		"original": "To find and play",
-		ru: "Что бы найти и прослушать"
+		"ru": "Что бы найти и прослушать"
 	},
 	"to-find-better":{
 		"original": "To find better",
-		ru: "Что бы найти более подходящие"
+		"ru": "Что бы найти более подходящие"
 	},
 	"music-files-from-vk":{
 		"original": "music files you need to login to vk.com (vkontakte.ru)",
-		ru: "музыкальные файлы вам необходимо войти во vkontakte.ru (vk.com)"
+		"ru": "музыкальные файлы вам необходимо войти во vkontakte.ru (vk.com)"
 	},
 	
 	"stabilization-of-vk":{
 		"original": "Some files were found using test vkontakte.ru (vk.com) accaunt. Searching files for new compositions can break at any time. This will not happen if you use your own accaunt",
-		ru: "Некоторые файлы найдены с помощью тестового эккаунта vkontakte.ru (vk.com), поиск файлов для новых композиций может прекратится в любой момент. Этого не произойдёт, если вы будете использовать свой эккаунт от vkontakte"
+		"ru": "Некоторые файлы найдены с помощью тестового эккаунта vkontakte.ru (vk.com), поиск файлов для новых композиций может прекратится в любой момент. Этого не произойдёт, если вы будете использовать свой эккаунт от vkontakte"
 	},
 	
 	"":{
 		"original": "",
-		ru: ""
+		"ru": ""
 	},
 	"":{
 		"original": "",
-		ru: ""
+		"ru": ""
 	},
 	"":{
 		"original": "",
-		ru: ""
+		"ru": ""
 	},
 	"to-get-mp3-sign-to-vk": {
 		"original": "To get mp3 files you need to sign in to vk.com (vkontakte.ru)",
-		ru: "Что бы получить доступ к mp3 файлам вы должны войти во vkontakte.ru (vk.com)"
+		"ru": "Что бы получить доступ к mp3 файлам вы должны войти во vkontakte.ru (vk.com)"
 	},
 	"to-get-mp3-login-to-vk": {
 		"original": "To get mp3 files you need to login to vk.com or to vkontakte.ru",
-		ru: "Что бы получить доступ к mp3 файлам вы должны дать доступ к вашему эккаунту vkontakte.ru или vk.com"
+		"ru": "Что бы получить доступ к mp3 файлам вы должны дать доступ к вашему эккаунту vkontakte.ru или vk.com"
 	},
 	"sign": {
 		"original": "sign in",
-		ru: "войти"
+		"ru": "войти"
 	},
 	"you-may": {
 		"original": "You may",
-		ru: "Вы можете"
+		"ru": "Вы можете"
 	},
 	"create-acc": {
 		"original": "create new account",
-		ru: "создать эккаунт"
+		"ru": "создать эккаунт"
 	},
 	"its-free": {
 		"original": "(it's free)",
-		ru: "(это бесплатно)"
+		"ru": "(это бесплатно)"
 	},
    
 	"open-api-secure": {
 		"original": "Try both if you get «Open API security breach».",
-		ru: "Попробуйте и то и другое, если у вас появляется сообщение «Open API security breach»."
+		"ru": "Попробуйте и то и другое, если у вас появляется сообщение «Open API security breach»."
 	},
 	"email": {
 		"original": "E-mail",
-		ru: "Почта"
+		"ru": "Почта"
 	},
 	"password": {
 		"original": "Password",
-		ru: 'Пароль'
+		"ru": 'Пароль'
 	},
 	"savepass": {
 		"original": "Save password in Seesu",
-		ru: "Сохранить пароль в Сису"
+		"ru": "Сохранить пароль в Сису"
 	},
 	"playlist-getmp3": {
 		"original": "Make playable all tracks in playlist",
-		ru: 'Сделать все песни доступными'
+		"ru": 'Сделать все песни доступными'
 	},
 	"playlist-export": {
 		"original": "Save playlist to *.m3u file",
-		ru: "Сохранить плейлист в m3u файл"
+		"ru": "Сохранить плейлист в m3u файл"
 	},
 	"addsong": {
 		"original": "add song to",
@@ -254,74 +258,74 @@ localizer = {
 	},
 	 "to-search": {
 		"original": "Search ",
-		ru: "Искать "
+		"ru": "Искать "
 	},
 	"in-artists": {
 		"original": "in artists",
-		ru: "в артистах"
+		"ru": "в артистах"
 	},
 	"in-tracks": {
 		"original": "in tracks",
-		ru: "в треках"
+		"ru": "в треках"
 	},
 	"in-tags": {
 		"original": "in tags",
-		ru: "в тэгах"
+		"ru": "в тэгах"
 	},
 	"video": {
 		"original": "Video",
-		ru: "Видео"
+		"ru": "Видео"
 	},
 	"hide-them": {
 		"original": "hide them",
-		ru: "скрыть их"
+		"ru": "скрыть их"
 	},
 	"show-them": {
 		"original": "show them",
-		ru: "показать их"
+		"ru": "показать их"
 	},
 	"direct-vk-search": {
 		"original": "Search mp3  directly in vkontakte",
-		ru: 'Искать mp3 прямо во вконтакте'
+		"ru": 'Искать mp3 прямо во вконтакте'
 	},
 	"Artists": {
 		"original": "Artists",
-		ru: 'Артисты'
+		"ru": 'Артисты'
 	},
 	"Tracks": {
 		"original": "Tracks",
-		ru: 'Треки'
+		"ru": 'Треки'
 	},
 	"artists": {
 		"original": "artists",
-		ru: 'артистов'
+		"ru": 'артистов'
 	},
 	"tracks": {
 		"original": "tracks",
-		ru: 'треков'
+		"ru": 'треков'
 	},
 	"tags": {
 		'original': 'tags',
-		ru: 'тегов'	
+		"ru": 'тегов'	
 	},
 	"fine-more": {
 		"original": "find more",
-		ru: 'Найти больше'
+		"ru": 'Найти больше'
 	},
 	"now-playing": {
 		"original": "Now Playing",
-		ru: 'Сейчас играет'
+		"ru": 'Сейчас играет'
 	},
 	"nothing-found": {
 		"original": "Nothing found",
-		ru: 'Не найдено'
+		"ru": 'Не найдено'
 	},
 	"Files": {
 		"original":"Files",
-		ru: "Файлы"
+		"ru": "Файлы"
 	},
 	"all":{
 		"original":"all",
-		ru: "все"
+		"ru": "все"
 	}
 }

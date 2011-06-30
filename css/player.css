@@ -150,19 +150,6 @@ a.download-mp3:hover{
 
 
 
-.scrobbling-button>a{
-background:#d8404c;
-}
-.flash-security-status{
-	text-decoration:blink;
-	background-color:#0d8b2b;
-	}
-	.flash-internet
-	.flash-security-status{
-		
-		text-decoration:none;
-		color:inherit;
-		}
 
 .flash-internet
 #message-flash-secur
@@ -221,7 +208,7 @@ p.internet-flash-settings{
 .track-progress{
 	background:#505050;
 	
-	position:absolute;
+	position:relative;
 	overflow:hidden;
 	max-width:100%;
 	padding:0;
