@@ -122,6 +122,7 @@
 	.volume-state-position{
 		height:6px;
 		width:0;
+		border-radius:2px;
 		position:absolute;
 		top:0;
 		left:0;

@@ -303,7 +303,10 @@ p.internet-flash-settings{
 		border-radius: 5px;
 		padding: 15px;
 		box-shadow: 0px 0px 30px 0px #000;
-		}			
+		}	
+	.close-to-right .people-connecting-content{
+		right:-55px;
+	}	
 	#playlist-search.close-to-right #playlist-search-con{
 		position:absolute;
 		right: -50px;
