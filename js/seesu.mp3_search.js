@@ -945,9 +945,7 @@ su.mp3_search= (function(){
 
 		return s;
 })();
-if (su.lfm_api && su.lfm_api.asearch){
-	su.mp3_search.add(su.lfm_api.asearch);
-}
+
 if (typeof soundcloud_search != 'undefined'){
 	(function(){
 		var sc_search_source = {name: 'soundcloud', key: 0};

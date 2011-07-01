@@ -215,7 +215,8 @@ p.internet-flash-settings{
 	left:0;
 	right:0;
 	height:15px;
-	
+	line-height:13px;
+	text-align:right;
 	
 	background: #444444;
 	border-top: 1px solid #434343;
@@ -259,11 +260,17 @@ p.internet-flash-settings{
 		border-radius: 5px;
 	
 		}
-.track-node-text{
-	position:relative;
-	z-index:2;
-	display:block;
-}
+	.track-node-text{
+		display:none;
+		position: relative;
+		z-index: 2;
+		margin-right: 6px;
+		font-size: 12px;
+		color: #666;
+	}
+	.track-progress:hover .track-node-text{
+		display:inline;
+	}
 #playlist-search{
 		display:none;
 		position:absolute;
