@@ -101,8 +101,7 @@ a.desc{
 	border-radius:11px;
 	border-bottom:1px solid #676767;
 	
-	float:left;
-
+	display:inline-block;
 	
 	}
 	
