@@ -1,0 +1,196 @@
+.play-controls{
+	display:none;
+	
+}
+
+	.play-control{
+		display:inline-block;
+		cursor:pointer;
+		padding:0;
+		width:16px;
+		height:16px;
+		background: transparent no-repeat 0 0;
+		border:0  !important;
+		}
+		.play-control:hover,.play-control.hover{
+			background-image:url(../i/buttons_hover.png) ;
+			}
+		.play-control:active{
+			background-image:url(../i/buttons_active.png) !important;
+			}
+.player-paused .playing-song .play-control.pause,
+.player-stopped .playing-song .play-control.stop,
+.player-played .playing-song .play-control.play{
+	background-image:url(../i/buttons_active.png) !important;
+}
+
+
+
+
+.play-control.pause{
+	display:inline-block
+	}
+	
+	
+.pc{
+	display:inline-block;
+	background: transparent no-repeat;
+	cursor:pointer;
+	height:24px;
+	width:25px;
+	border:0  !important; 
+	padding:0;
+}
+
+.pc-indicator{
+	display:inline-block;
+	background: transparent no-repeat;
+	height:24px;
+	width:25px;
+}
+.big-indicator{
+	height:31px;
+	width:32px;
+}
+
+.pc.big-control{
+	height:31px;
+	width:32px;
+}
+
+.pc-play{
+	background-image:url(../i/buttons/pc-m-play-l.png);
+	}
+	.pc-play:hover{
+		background-image:url(../i/buttons/pc-m-play-h.png);
+		}
+	.pc-play:active{
+		background-image:url(../i/buttons/pc-m-play-a.png);
+		}
+.pc-add{
+	background-image:url(../i/buttons/pc-m-add-l.png);
+	}
+	.pc-add:hover{
+		background-image:url(../i/buttons/pc-m-add-h.png);
+		}
+	.pc-add:active{
+		background-image:url(../i/buttons/pc-m-add-a.png);
+		}	
+.pc-remove{
+	background-image:url(../i/buttons/pc-m-remove-l.png);
+	}
+	.pc-remove:hover{
+		background-image:url(../i/buttons/pc-m-remove-h.png);
+		}
+	.pc-remove:active{
+		background-image:url(../i/buttons/pc-m-remove-a.png);
+		}			
+		
+		
+.pc-love{
+	background-image:url(../i/buttons/pc-m-love-l.png);
+	}
+	.pc-love:hover{
+		background-image:url(../i/buttons/pc-m-love-h.png);
+		}
+	.pc-love:active{
+		background-image:url(../i/buttons/pc-m-love-a.png);
+		}	
+				
+.pc-stop{
+	background-image:url(../i/buttons/pc-m-stop-l.png);
+	}
+	.pc-stop:hover{
+		background-image:url(../i/buttons/pc-m-stop-h.png);
+		}
+	.pc-stop:active{
+		background-image:url(../i/buttons/pc-m-stop-a.png);
+		}		
+	
+.pc-tag{
+	background-image:url(../i/buttons/pc-m-tag-l.png);
+	}
+	.pc-tag:hover{
+		background-image:url(../i/buttons/pc-m-tag-h.png);
+		}
+	.pc-tag:active{
+		background-image:url(../i/buttons/pc-m-tag-a.png);
+		}
+.pc-next{
+	background-image:url(../i/buttons/pc-m-next-l.png);
+	}
+	.pc-next:hover{
+		background-image:url(../i/buttons/pc-m-next-h.png);
+		}
+	.pc-next:active{
+		background-image:url(../i/buttons/pc-m-next-a.png);
+		}
+.pc-prev{
+	background-image:url(../i/buttons/pc-m-prev-l.png);
+	}
+	.pc-prev:hover{
+		background-image:url(../i/buttons/pc-m-prev-h.png);
+		}
+	.pc-prev:active{
+		background-image:url(../i/buttons/pc-m-prev-a.png);
+		}
+.pc-play.big-control{
+	background-image:url(../i/buttons/pc-b-play-l.png);
+	}
+	.pc-play.big-control:hover{
+		background-image:url(../i/buttons/pc-b-play-h.png);
+		}
+	.pc-play.big-control:active{
+		background-image:url(../i/buttons/pc-b-play-a.png);
+		}	
+	
+		
+
+.nicebutton:active,.nicebutton:focus{
+	outline:0;
+}
+.nicebutton{
+	cursor:pointer;
+	
+	text-decoration:none;
+	color:#aaa;
+	
+	
+	border-top:1px solid #626262;
+	border-radius:11px;
+	border-bottom:1px solid #3D3D3D;
+	font-style:normal;
+	line-height:16px;
+	height:15px;
+	padding:3px 11px;
+	display:block;
+		
+}
+
+
+.nicebutton:active{
+	box-shadow:inset 0 0 10px 1px #111;
+	}
+	.nicebutton:active{
+		border-color:transparent;
+		border-width:0;
+		padding-top:4px;
+		padding-bottom:4px;
+	}
+	
+	
+.bposition-l, .bposition-l .nicebutton{
+	border-top-right-radius:0;
+	border-bottom-right-radius:0;
+}
+.bposition-l .nicebutton{
+	border-right:1px solid #474747;
+}
+
+.bposition-r, .bposition-r .nicebutton{
+	border-top-left-radius:0;
+	border-bottom-left-radius:0;
+}
+.bposition-r .nicebutton{
+	border-left:1px solid #555;
+}	

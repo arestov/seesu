@@ -117,60 +117,7 @@ a.desc{
 		}
 		
 		
-		.nicebutton{
-			
-			}
 	
-
-		
-		.nicebutton:active,.nicebutton:focus{
-			outline:0;
-		}
-		.nicebutton{
-			cursor:pointer;
-			
-			text-decoration:none;
-			color:#fff;
-			
-			
-			border-top:1px solid #626262;
-			border-radius:11px;
-			border-bottom:1px solid #3D3D3D;
-			font-style:normal;
-			line-height:16px;
-			height:15px;
-			padding:3px 11px;
-			display:block;
-				
-		}
-
-
-	.nicebutton:active{
-		box-shadow:inset 0 0 10px 1px #111;
-		}
-		.nicebutton:active{
-			border-color:transparent;
-			border-width:0;
-			padding-top:4px;
-			padding-bottom:4px;
-		}
-		
-		
-	.bposition-l, .bposition-l .nicebutton{
-		border-top-right-radius:0;
-		border-bottom-right-radius:0;
-	}
-	.bposition-l .nicebutton{
-		border-right:1px solid #474747;
-	}
-	
-	.bposition-r, .bposition-r .nicebutton{
-		border-top-left-radius:0;
-		border-bottom-left-radius:0;
-	}
-	.bposition-r .nicebutton{
-		border-left:1px solid #555;
-	}
 	
 	
 	
@@ -434,20 +381,24 @@ display:none;
 		text-shadow: 0 1px 0 #4A4A4A;
 		}
 		.track-info-dominator .extend-switcher .big-space{
-			
+			border-bottom: 1px dotted #696969;
+			padding-bottom: 1px;
 		}
 
 		
 		.track-info-dominator .extend-switcher:hover{
 			background-color:#555;
 			}
+			.track-info-dominator .extend-switcher:hover .big-space{
+				border-bottom-color:transparent; 
+				}
 		.want-more-info .extend-switcher{
 			text-shadow:0;
 		}
 		.want-more-info .extend-switcher:hover{
 			background-color:#585858;
 		}
-
+			
 	.track-info-dominator .extending-info{
 		display:none;
 		}	

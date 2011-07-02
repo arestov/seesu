@@ -10,40 +10,15 @@
 	
 	z-index:7;
 }
-
-
-.play-controls{
-	display:none;
-	
+.track-panel .pc-place{
+	float:left;
 }
-
-	.play-control{
-		display:inline-block;
-		cursor:pointer;
-		padding:0;
-		width:16px;
-		height:16px;
-		background: transparent no-repeat 0 0;
-		border:0  !important;
-		}
-		.play-control:hover,.play-control.hover{
-			background-image:url(../i/buttons_hover.png) ;
-			}
-		.play-control:active{
-			background-image:url(../i/buttons_active.png) !important;
-			}
-.player-paused .playing-song .play-control.pause,
-.player-stopped .playing-song .play-control.stop,
-.player-played .playing-song .play-control.play{
-	background-image:url(../i/buttons_active.png) !important;
+.player-played .playing-song .big-indicator.play-indicator{
+	background-image: url(../i/buttons/pc-indicator-b.png);
 }
-
-
-
-
-.play-control.pause{
-	display:inline-block
-	}
+.nice-buttons-place .play-indicator.pc-place{
+	margin-top:-4px;
+}
 
 a.song{
 	padding:3px 1px 0;

@@ -444,29 +444,6 @@ seesu_ui.prototype = {
 	createSongListener: function(lig){
 		var _this = this;
 		
-		
-		
-		/*
-		var target_offset = clicked_node.offset();
-				var container_offset = su.ui.els.pllistlevel.offset();
-				var container_width = su.ui.els.pllistlevel.width();
-				var left = target_offset.left - container_offset.left;
-				su.ui.els.pl_search
-					.data('current_song', clicked_node.data('mo'))
-					.css({
-						top: (target_offset.top - container_offset.top) + 'px',
-						left: left + 'px',
-						display: 'block'
-					});
-				if (left > container_width/2){
-					su.ui.els.pl_search.addClass('close-to-right');
-				} else{
-					su.ui.els.pl_search.removeClass('close-to-right');
-				}
-				su.ui.els.pl_r.val('')[0].focus();
-				return false;
-				
-				*/
 		var li = $('<li class="song-listener"></li>').click(function() {
 			su.ui.hidePopups(su.ui.els.wtm.id);
 			
@@ -493,17 +470,7 @@ seesu_ui.prototype = {
 			su.ui.els.wtm.con.text(Math.random());
 			su.ui.els.wtm.wp.show();
 			su.ui.els.wtm.visible = true;
-			/*
-			su.ui.els.pl_search
-				.data('current_song', clicked_node.data('mo'))
-				.css({
-					top: (target_offset.top - container_offset.top) + 'px',
-					left: left + 'px',
-					display: 'block'
-				});
-			
-			su.ui.els.pl_r.val('')[0].focus();
-			*/
+
 			return false;
 			//e.stop
 		});
@@ -1105,7 +1072,7 @@ seesu_ui.prototype = {
 		
 		
 		var buttmen = _sui.els.play_controls.node.clone(true).data('mo', mo);
-		tp.add(buttmen).find('.play-control img.pl-control').data('mo', mo);
+		tp.add(buttmen).find('.pc').data('mo', mo);
 
 		var tidominator = t_context.children('.track-info-dominator');
 		var dominator_head = tidominator.children('.dominator-head');
@@ -1137,7 +1104,7 @@ seesu_ui.prototype = {
 			e.preventDefault();
 		});
 		
-		var files_cc = $('<div class="files-control"></div>').prependTo(tp.children('.tp-right-col'));
+		var files_cc = $('<div class="files-control"></div>').prependTo(tp.children('.buttons-panel'));
 		
 		
 		var files_list_nb = this.createNiceButton('left');
@@ -1218,7 +1185,7 @@ seesu_ui.prototype = {
 			mopla_title: tpt.find('.track-node-text')
 		};
 		
-		ph.prependTo(tp.children('.tp-left-col'));
+		ph.prependTo(tp);
 		
 		
 		
