@@ -66,15 +66,19 @@ window.connect_dom_to_som = function(d, ui){
 	seesu.player.controls = (function(volume){
 		var o = {};
 		var get_click_position = function(e, node){
-			var pos = e.offsetX || (e.pageX - $(node).offset().left);
+			//e.offsetX || 
+			var pos = e.pageX - $(node).offset().left;
 			return pos
 		}
 		o.track_progress_total = $('<div class="track-progress"></div>',d).click(function(e){
-			su.ui.hidePopups();
-			e.stopPropagation();
-			var pos = get_click_position(e, this);
-			var new_play_position_factor = pos/$(this).data('mo').c.track_progress_width;
-			seesu.player.musicbox.set_new_position(new_play_position_factor);
+			
+				var pos = get_click_position(e, this);
+				var new_play_position_factor = pos/$(this).data('mo').c.track_progress_width;
+				seesu.player.musicbox.set_new_position(new_play_position_factor);
+			
+			//su.ui.hidePopups();
+			//e.stopPropagation();
+			
 			
 		})
 		
