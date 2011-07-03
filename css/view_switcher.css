@@ -40,12 +40,14 @@
 	display:none;
 	max-width: 750px;
 	margin:0 auto;
+	padding-top:12px;
 	padding-bottom:20px;
 	}
 
 	
 	
 #playlist-level{
+	padding-top:4px;
 	display:none;
 	max-width: 750px;
 	margin:0 auto;
