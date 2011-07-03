@@ -38,9 +38,9 @@ var button_menu = function(jq_node){
 	.mousemove(this.events.mousemove);
 	
 	
-	this.node.find('.play-control')
+	this.node.find('.pc')
 		.mouseover(function(){
-			console.log('ffff')
+			$(this).addClass('hover');
 		})
 		.mouseleave(function(){
 			$(this).removeClass('hover');
@@ -57,7 +57,7 @@ button_menu.prototype = {
 			.mouseup(this.events.mouseup)
 			.mousemove(this.events.mousemove);
 			
-		this.node.find('.play-control')
+		this.node.find('.pc')
 			.mouseover(function(){
 				$(this).addClass('hover');
 			})

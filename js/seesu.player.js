@@ -109,7 +109,6 @@ function rebuildPlaylist(saved_pl){
 		p.push(saved_pl[i]);
 	}
 	delete p.loading;
-	p.kill = function(){delete this.ui;return};
 	su.gena.create_userplaylist(false, p, true);
 	su.gena.reconnect_playlist(p);
 	return p;
@@ -298,17 +297,17 @@ su.player = {
 				this.song_siblings(mo)
 				
 				if (mo.prev_song){
-					mo.prev_song.node.parent().addClass('to-play-previous');
+					mo.prev_song.ui.node.parent().addClass('to-play-previous');
 				}
 				if (mo.next_song){
-					mo.next_song.node.parent().addClass('to-play-next');
+					mo.next_song.ui.node.parent().addClass('to-play-next');
 				}
 			} else{
 				if (mo.prev_song){
-					mo.prev_song.node.parent().removeClass('to-play-previous')
+					mo.prev_song.ui.node.parent().removeClass('to-play-previous')
 				}
 				if (mo.next_song){
-					mo.next_song.node.parent().removeClass('to-play-next')
+					mo.next_song.ui.node.parent().removeClass('to-play-next')
 				}
 			}
 		}
@@ -385,7 +384,7 @@ su.player = {
 				this.musicbox.play_song_by_url(_mopla.link);
 				mo.mopla = _mopla;
 			}
-			su.ui.setSongDurationUI(mo, _mopla.duration);
+			su.ui.displaySongMoplaInfo(mo, _mopla);
 			
 		}
 		

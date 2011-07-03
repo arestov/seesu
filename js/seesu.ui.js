@@ -444,29 +444,6 @@ seesu_ui.prototype = {
 	createSongListener: function(lig){
 		var _this = this;
 		
-		
-		
-		/*
-		var target_offset = clicked_node.offset();
-				var container_offset = su.ui.els.pllistlevel.offset();
-				var container_width = su.ui.els.pllistlevel.width();
-				var left = target_offset.left - container_offset.left;
-				su.ui.els.pl_search
-					.data('current_song', clicked_node.data('mo'))
-					.css({
-						top: (target_offset.top - container_offset.top) + 'px',
-						left: left + 'px',
-						display: 'block'
-					});
-				if (left > container_width/2){
-					su.ui.els.pl_search.addClass('close-to-right');
-				} else{
-					su.ui.els.pl_search.removeClass('close-to-right');
-				}
-				su.ui.els.pl_r.val('')[0].focus();
-				return false;
-				
-				*/
 		var li = $('<li class="song-listener"></li>').click(function() {
 			su.ui.hidePopups(su.ui.els.wtm.id);
 			
@@ -493,17 +470,7 @@ seesu_ui.prototype = {
 			su.ui.els.wtm.con.text(Math.random());
 			su.ui.els.wtm.wp.show();
 			su.ui.els.wtm.visible = true;
-			/*
-			su.ui.els.pl_search
-				.data('current_song', clicked_node.data('mo'))
-				.css({
-					top: (target_offset.top - container_offset.top) + 'px',
-					left: left + 'px',
-					display: 'block'
-				});
-			
-			su.ui.els.pl_r.val('')[0].focus();
-			*/
+
 			return false;
 			//e.stop
 		});
@@ -561,7 +528,6 @@ seesu_ui.prototype = {
 	},
 	updateSongContext:function(mo, real_need){
 		if (mo.ui){
-			var node = mo.node;
 			var artist = mo.artist;
 			
 			var a_info = mo.ui && mo.ui.a_info;
@@ -1006,8 +972,9 @@ seesu_ui.prototype = {
 		}
 
 	},
-	setSongDurationUI: function(mo, duration){
-		var du = mo.node.find('a.song-duration');
+	displaySongMoplaInfo: function(mo, mopla){
+		var duration = mopla.duration;
+		var du = mo.ui.durationc;
 		
 		if (duration){
 			var digits = duration % 60;
@@ -1017,11 +984,17 @@ seesu_ui.prototype = {
 			du.text('');
 		}
 		
+		var filename = mopla.artist + ' - ' +  mopla.track;
+		
+		mo.c.mopla_title.text(mopla.from + ": " + filename);
+		mo.c.mopla_title.attr('title', mopla.description || '');
+		
+		
 	},
 	updateSong: function(mo, not_rend){
 		var _sui = this;
-		var down = mo.node.siblings('a.download-mp3').remove();
-		mo.node
+		var down = mo.ui.node.siblings('a.download-mp3').remove();
+		mo.ui.node
 			.addClass('song')
 			.removeClass('search-mp3-failed')
 			.removeClass('waiting-full-render')
@@ -1037,16 +1010,8 @@ seesu_ui.prototype = {
 		
 		var mopla = mo.song();
 		if (mopla){
-			/*
-			if (mopla.downloadable){
-				var mp3 = $("<a class='download-mp3'></a>").text('mp3').attr({'href': mopla.link });
-				mp3.insertBefore(mo.node);
-			} else{
-				mo.node.addClass('mp3-download-is-not-allowed');
-			}
-			*/
 			if (mopla.duration){
-				this.setSongDurationUI(mo, mopla.duration);
+				this.displaySongMoplaInfo(mo, mopla);
 			}
 		}
 		
@@ -1094,12 +1059,26 @@ seesu_ui.prototype = {
 			.addClass('track-node waiting-full-render')
 			.click(empty_song_click),
 			li = $('<li></li>');
+			
+		var track_title_ui = $("<span></span>");
+		var track_duration_ui = $('<a class="song-duration"></a>');
+		
+		track_title_ui.text(mo.getFullName());
+		
+		
+		
+		track.append(track_title_ui);
+		track.prepend(track_duration_ui);
+		
 		
 		var buttmen = _sui.els.play_controls.node.clone(true).data('mo', mo);
-		tp.add(buttmen).find('.play-control img.pl-control').data('mo', mo);
+		tp.add(buttmen).find('.pc').data('mo', mo);
 
 		var tidominator = t_context.children('.track-info-dominator');
 		var dominator_head = tidominator.children('.dominator-head');
+		
+		
+	
 		
 		
 		var a_info = tidominator.children('.artist-info');
@@ -1125,7 +1104,7 @@ seesu_ui.prototype = {
 			e.preventDefault();
 		});
 		
-		var files_cc = $('<div class="files-control"></div>').prependTo(tp.children('.tp-right-col'));
+		var files_cc = $('<div class="files-control"></div>').prependTo(tp.children('.buttons-panel'));
 		
 		
 		var files_list_nb = this.createNiceButton('left');
@@ -1138,8 +1117,10 @@ seesu_ui.prototype = {
 		file_download_nb.c.appendTo(files_cc);
 		
 		
-		mo.node = track;
+
 		mo.ui = {
+			titlec: track_title_ui,
+			durationc: track_duration_ui,
 			tidominator: tidominator,
 			mainc: li,
 			a_info: a_info,
@@ -1191,7 +1172,7 @@ seesu_ui.prototype = {
 		};
 		
 		
-		track.text(mo.getFullName());
+		
 		
 		
 		
@@ -1200,10 +1181,11 @@ seesu_ui.prototype = {
 		mo.c = {
 			tr_progress_t: tpt,
 			tr_progress_l: tpt.children('.track-load-progress'),
-			tr_progress_p: tpt.children('.track-play-progress')
+			tr_progress_p: tpt.children('.track-play-progress'),
+			mopla_title: tpt.find('.track-node-text')
 		};
 		
-		ph.prependTo(tp.children('.tp-left-col'));
+		ph.prependTo(tp);
 		
 		
 		
@@ -1216,7 +1198,7 @@ seesu_ui.prototype = {
 			.append(track)
 			.append(t_context);
 		
-		track.prepend($('<a class="song-duration"></a>'));
+		
 		
 		return plistel;
 	},

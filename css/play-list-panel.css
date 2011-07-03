@@ -108,6 +108,9 @@
 	}
 
 .volume-state{
+	position:relative;
+	float:right;
+	
 	width:50px;
 	background:#456726;
 	height:6px;
@@ -115,13 +118,13 @@
 	border-radius:2px;
 	border: 1px solid #4A4A4A;
 	
-	position:absolute;
-	bottom:-19px;
-	right:3px;
+	
+	margin-left:24px;
 	}
 	.volume-state-position{
 		height:6px;
 		width:0;
+		border-radius:2px;
 		position:absolute;
 		top:0;
 		left:0;
@@ -129,19 +132,23 @@
 	}
 .player-holder{
 	height: 18px;
-	margin: 0 0 12px;
+	margin: 0 0 18px;
 	position:relative;
+}
+.nice-buttons-place{
+	margin-top:-4px;
+	float:left;
 }
 .track-panel{
 	top:1px;
 	position:relative;
-	height:54px;
+	height:70px;
 	
 	}
 	.files-control{
-		overflow:hidden;
-		margin-top:-8px;
-		margin-bottom:11px;
+		float:right;
+		margin-top:-5px;
+		margin-left:24px;
 	}
 	.tp-left-col{
 		overflow:hidden;

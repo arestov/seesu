@@ -10,40 +10,15 @@
 	
 	z-index:7;
 }
-
-
-.play-controls{
-	display:none;
-	
+.track-panel .pc-place{
+	float:left;
 }
-
-	.play-control{
-		display:inline-block;
-		cursor:pointer;
-		padding:0;
-		width:16px;
-		height:16px;
-		background: transparent no-repeat 0 0;
-		border:0  !important;
-		}
-		.play-control:hover,.play-control.hover{
-			background-image:url(../i/buttons_hover.png) ;
-			}
-		.play-control:active{
-			background-image:url(../i/buttons_active.png) !important;
-			}
-.player-paused .playing-song .play-control.pause,
-.player-stopped .playing-song .play-control.stop,
-.player-played .playing-song .play-control.play{
-	background-image:url(../i/buttons_active.png) !important;
+.player-played .playing-song .big-indicator.play-indicator{
+	background-image: url(../i/buttons/pc-indicator-b.png);
 }
-
-
-
-
-.play-control.pause{
-	display:inline-block
-	}
+.nice-buttons-place .play-indicator.pc-place{
+	margin-top:-4px;
+}
 
 a.song{
 	padding:3px 1px 0;
@@ -215,7 +190,8 @@ p.internet-flash-settings{
 	left:0;
 	right:0;
 	height:15px;
-	
+	line-height:13px;
+	text-align:right;
 	
 	background: #444444;
 	border-top: 1px solid #434343;
@@ -259,16 +235,22 @@ p.internet-flash-settings{
 		border-radius: 5px;
 	
 		}
-.track-node-text{
-	position:relative;
-	z-index:2;
-	display:block;
-}
+	.track-node-text{
+		display:none;
+		position: relative;
+		z-index: 2;
+		margin-right: 6px;
+		font-size: 12px;
+		color: #666;
+	}
+	.track-progress:hover .track-node-text{
+		display:inline;
+	}
 #playlist-search{
 		display:none;
 		position:absolute;
 		z-index:20;
-		margin:30px 0px 0px -17px;
+		margin:35px 0px 0px -14px;
 		}
 	#playlist-search-con{
 		width:200px;
@@ -303,7 +285,10 @@ p.internet-flash-settings{
 		border-radius: 5px;
 		padding: 15px;
 		box-shadow: 0px 0px 30px 0px #000;
-		}			
+		}	
+	.close-to-right .people-connecting-content{
+		right:-55px;
+	}	
 	#playlist-search.close-to-right #playlist-search-con{
 		position:absolute;
 		right: -50px;

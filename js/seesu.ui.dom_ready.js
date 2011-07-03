@@ -80,7 +80,7 @@ window.connect_dom_to_som = function(d, ui){
 		
 		o.track_progress_load = $('<div class="track-load-progress"></div>',d).appendTo(o.track_progress_total);
 		o.track_progress_play = $('<div class="track-play-progress"></div>',d).appendTo(o.track_progress_total);
-		o.track_node_text = $('<div class="track-node-text"><div>',d).appendTo(o.track_progress_total);
+		o.track_node_text = $('<span class="track-node-text"></span>',d).appendTo(o.track_progress_total);
 		
 		
 		o.volume_state = $('<div class="volume-state"></div>',d).click(function(e){

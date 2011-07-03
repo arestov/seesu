@@ -285,18 +285,18 @@ var random_track_plable = function(track_list){
 	
 };
 var start_random_nice_track_search = function(mo, not_search_mp3, from_collection, last_in_collection){
-	mo.node.addClass('loading');
+	mo.ui.node.addClass('loading');
 	getTopTracks(mo.artist, function(track_list){
 		var some_track = random_track_plable(track_list);
-		mo.node.removeClass('loading');
-		mo.node.text(some_track.artist + ' - ' + (mo.track = some_track.track));
+		mo.ui.node.removeClass('loading');
+		mo.ui.titlec.text(some_track.artist + ' - ' + (mo.track = some_track.track));
 		su.mp3_search.find_mp3(mo, {
 			only_cache: not_search_mp3 && !mo.want_to_play && (!su.player.c_song || su.player.c_song.next_preload_song != mo),
 			collect_for: from_collection,
 			last_in_collection: last_in_collection
 		});
 	}, function(){
-		mo.node.removeClass('loading');
+		mo.ui.node.removeClass('loading');
 	});
 };
 var makeSongPlayalbe= function(mo, full_allowing,  from_collection, last_in_collection){
