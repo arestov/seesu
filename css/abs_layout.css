@@ -26,7 +26,7 @@ html.as-application:not(.chrome-extension){
 	 #slider .screens{
 		
 		
-		padding:13px 10px 0px;
+		padding:0 10px 0px;
 		position:relative;
 		z-index:2;
 		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
