@@ -1,20 +1,4 @@
-window.addEvent = window.addEventListener ? 
-	function(elem, evType, fn){
-		elem.addEventListener(evType, fn, false);
-		return fn;
-	}:
-	function(elem, evType, fn){
-		elem.attachEvent('on' + evType, fn);
-		return fn;
-	};
-window.removeEvent = window.addEventListener ?
-	function(elem, evType, fn){
-		elem.removeEventListener(evType, fn, false);
-	}:
-	function(elem, evType, fn){
-		elem.detachEvent('on' + evType, fn);
-	};
-	
+
 (function(){
 	var jsonp_counter = 0;
 	window.create_jsonp_callback = function(func){
@@ -30,14 +14,6 @@ function getSomething(array){
 	return array[(Math.random()*(array.length-1)).toFixed(0)]
 };
 
-function bN(num){
-	/*
-	special for opera browser
-	http://opera.com
-	http://friendfeed.com/yodapunk/935ad55d/o-rly-opera-cc-pepelsbey-foolip-erikdahlstrom
-	*/
-	return !!(1* (~num));
-};
 function extCarefully(target, donor, white_list){
 	for (var prop in donor) {
 		if (!white_list || bN(white_list.indexOf(prop))){
