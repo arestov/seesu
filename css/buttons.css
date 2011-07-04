@@ -149,21 +149,25 @@
 .nicebutton:active,.nicebutton:focus{
 	outline:0;
 }
+.disabledbutton, .nicebutton{
+	text-decoration:none;
+	font-style:normal;
+	line-height:16px;
+	height:15px;
+	padding:3px 11px;
+	display:block;
+}
 .nicebutton{
 	cursor:pointer;
 	
-	text-decoration:none;
+	
 	color:#aaa;
 	
 	
 	border-top:1px solid #626262;
 	border-radius:11px;
 	border-bottom:1px solid #3D3D3D;
-	font-style:normal;
-	line-height:16px;
-	height:15px;
-	padding:3px 11px;
-	display:block;
+	
 		
 }
 

@@ -324,8 +324,8 @@ localizer = {
 		"original":"Files",
 		"ru": "Файлы"
 	},
-	"all":{
-		"original":"all",
-		"ru": "все"
+	"show-all-files":{
+		"original":"show all files",
+		"ru": "показать все файлы"
 	}
 }

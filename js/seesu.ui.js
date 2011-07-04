@@ -582,8 +582,7 @@ seesu_ui.prototype = {
 			if (songs){
 				var songs_counter = 0;
 				var small_head = $('<div class="files-header"></div>').appendTo(c);
-				small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
-				var desc_text = $('<span class="desc-text"></span>').appendTo(small_head);
+			
 				
 				
 				var sc = $('<div class="files-lists"></div>');
@@ -593,21 +592,22 @@ seesu_ui.prototype = {
 				
 				
 				
-				$('<a class="js-serv">' + localize('show-them') +'</a>').click(function(e){
-					c.toggleClass('show-files');
-					e.preventDefault();
-				}).appendTo(desc_text)
-				
+			
 							
 				for (var i=0; i < songs.length; i++) {
 					songs_counter += songs[i].t.length
 					var b = this.createFilesList(songs[i], mo);
 					if (b){b.appendTo(sc);}
 					if (!extend_link && songs[i].t && songs[i].t.length > 3){
-						$('<a class="js-serv all-files-link">' + localize('all', 'all') +'</a>').click(function(e){
-							c.toggleClass('show-all-files');
-							e.preventDefault();
-						}).appendTo(desc_text)
+						
+						small_head.addClass("show-f-head")
+						
+						small_head.append(
+							$('<a class="js-serv extend-switcher"><span class="big-space">' + localize('show-all-files') +'</span></a>').click(function(e){
+								c.toggleClass('show-all-files');
+								e.preventDefault();
+							})
+						);
 						extend_link = true;
 					}
 					
@@ -1074,15 +1074,18 @@ seesu_ui.prototype = {
 		var buttmen = _sui.els.play_controls.node.clone(true).data('mo', mo);
 		tp.add(buttmen).find('.pc').data('mo', mo);
 
+
+
+		var filesc = t_context.children('.track-files');
 		var tidominator = t_context.children('.track-info-dominator');
 		var dominator_head = tidominator.children('.dominator-head');
-		
-		
-	
-		
-		
 		var a_info = tidominator.children('.artist-info');
 		var t_info = tidominator.children('.track-info');
+		
+		
+		
+		
+		
 		
 		if (mo.plst_titl.playlist_type != 'artist'){
 			$('<a class="js-serv">' + localize('top-tracks') + '</a>')
@@ -1111,6 +1114,11 @@ seesu_ui.prototype = {
 		
 		files_list_nb.b.text( localize('Files', 'Files') + ' ▼');
 		files_list_nb.c.appendTo(files_cc);
+		files_list_nb.c.click(function(){
+			filesc.toggleClass('show-files');
+		});
+		
+		
 		
 		var file_download_nb =  this.createNiceButton('right');
 		file_download_nb.b.text(localize('Download', 'Download'));
@@ -1164,7 +1172,7 @@ seesu_ui.prototype = {
 			},
 			
 			tv: t_info.children('.track-video'),
-			files: t_info.children('.track-files'),
+			files: filesc,
 			remove: function(){
 				this.mainc.remove();
 			},

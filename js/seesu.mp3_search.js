@@ -41,6 +41,12 @@ var song_methods = {
 		}
 		
 	},
+	mp3Downloads: function(){
+		var songs = this.songs();
+		
+		
+		
+	},
 	getURLPart: function(){
 		var url ="";
 		if (!this.plst_titl || this.plst_titl.playlist_type =='tracks'){
