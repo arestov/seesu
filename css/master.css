@@ -254,6 +254,9 @@ display:none;
 	width: 126px;
 	position:relative;
 	}
+	.artist-info .image:hover{
+		z-index:3;
+	}
 @media (min-width:600px) {
 	.artist-info .image{
 		float:left;

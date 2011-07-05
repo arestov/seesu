@@ -568,11 +568,11 @@ seesu_ui.prototype = {
 			
 			if (mo.isSearchCompleted() && mo.isNeedsAuth('vk')){
 				if (!songs.length){
-					mo.ui.t_info.before(_sui.samples.vk_login.clone())
+					mo.ui.files.before(_sui.samples.vk_login.clone())
 				} else if(!mo.isHaveAnyResultsFrom('vk')){
-					mo.ui.t_info.before(_sui.samples.vk_login.clone('enhancement'))
+					mo.ui.files.before(_sui.samples.vk_login.clone('enhancement'))
 				} else {
-					mo.ui.t_info.before(_sui.samples.vk_login.clone('stabilization'))
+					mo.ui.files.before(_sui.samples.vk_login.clone('stabilization'))
 				}
 				
 				
@@ -617,8 +617,15 @@ seesu_ui.prototype = {
 				ext_info.updateUI();
 				
 				
-				sc.appendTo(c)
+				sc.appendTo(c);
+				mo.ui.files_control.list_button.enable();
 			} 
+			
+			var downloads = mo.mp3Downloads();
+			if (downloads){
+				mo.ui.files_control.quick_download_button.enable();
+			}
+			
 			
 			
 			if (false && mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('soundcloud')){
@@ -1039,11 +1046,30 @@ seesu_ui.prototype = {
 		} else if (position == 'right'){
 			c.addClass('bposition-r')
 		}
-		
-		return {
+
+		var bb = {
 			c: c,
-			b: b
-		};
+			b: b,
+			_enabled: true,
+			enable: function(){
+				if (!this._enabled){
+					this.b.addClass('nicebutton').removeClass('disabledbutton');
+					this.b.data('disabled', false);
+					this._enabled = true;
+				}
+				
+			},
+			disable: function(){
+				if (this._enabled){
+					this.b.removeClass('nicebutton').addClass('disabledbutton');	
+					this.b.data('disabled', true);
+					this._enabled = false;
+				}
+				
+			}
+		}
+		bb.disable();
+		return bb;
 	},
 	create_playlist_element: function(mo){
 		var _sui = this;
@@ -1114,8 +1140,11 @@ seesu_ui.prototype = {
 		
 		files_list_nb.b.text( localize('Files', 'Files') + ' ▼');
 		files_list_nb.c.appendTo(files_cc);
-		files_list_nb.c.click(function(){
-			filesc.toggleClass('show-files');
+		files_list_nb.b.click(function(){
+			if (!$(this).data('disabled')){
+				filesc.toggleClass('show-files');
+			}
+			
 		});
 		
 		
@@ -1123,7 +1152,15 @@ seesu_ui.prototype = {
 		var file_download_nb =  this.createNiceButton('right');
 		file_download_nb.b.text(localize('Download', 'Download'));
 		file_download_nb.c.appendTo(files_cc);
-		
+		file_download_nb.b.click(function(){
+			if (!$(this).data('disabled')){
+				var d = mo.mp3Downloads();
+				if (d){
+					open_url(d[0].link)
+				}
+				
+			}
+		});
 		
 
 		mo.ui = {
