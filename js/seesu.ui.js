@@ -505,13 +505,17 @@ seesu_ui.prototype = {
 			if (mo.track){
 				d.title = mo.track;
 			}
+			
+			var current_user = su.distant_glow.getId('vk');
+			
+			
 			su.api('track.getListeners', d, function(r){
 				if (r && r.done && [].concat.apply([], r.done).length){
 					var above_limit_value = 0;
 					var uul = $("<ul class='song-listeners-list'></ul>");
 					for (var i=0; i < r.done.length; i++) {
 						if (r.done[i] && r.done[i].length){
-							above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value);
+							above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value, current_user);
 						}
 						
 					}; 
