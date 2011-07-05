@@ -199,14 +199,8 @@ views.prototype = {
 			}
 			seesu.ui.render_playlist(pl, pl.length > 1);
 		}
-		
 		this.swithToPlaylistPage(pl, no_navi);
-		
-		
-		
-		
-		
-		
+
 	},
 	show_track_page: function(title, zoom, mo, no_navi){
 		var pl = mo.plst_titl;
@@ -441,31 +435,44 @@ seesu_ui.prototype = {
 		}
 		return image;
 	},
+	getRtPP: function(node){
+			
+		var clicked_node = $(node);
+		
+		var target_offset = clicked_node.offset();
+		var container_offset = su.ui.els.pllistlevel.offset();
+		return {
+			left: target_offset.left - container_offset.left,
+			top: target_offset.top - container_offset.top,
+			cwidth: su.ui.els.pllistlevel.width()
+		};
+	},
+	createUserAvatar: function(info, c){
+		var _this = this;
+		var imageplace = $("<div class='image-cropper'></div>").appendTo(c)
+		var image = this.preloadImage(info.photo_medium, function(img){
+			_this.verticalAlign(img, 134, true);	
+		}, imageplace); 
+	},
 	createSongListener: function(lig){
 		var _this = this;
 		
 		var li = $('<li class="song-listener"></li>').click(function() {
 			su.ui.hidePopups(su.ui.els.wtm.id);
 			
-			var clicked_node = $(this);
-			
-			var target_offset = clicked_node.offset();
-			var container_offset = su.ui.els.pllistlevel.offset();
-			var container_width = su.ui.els.pllistlevel.width();
-			var left = target_offset.left - container_offset.left;
+			var p = _this.getRtPP(this);
 			
 			su.ui.els.wtm.wp.css({
-				top: (target_offset.top - container_offset.top) + 'px',
-				left: left + 'px',
+				top: p.top + 'px',
+				left: p.left + 'px',
 				display: 'block'
 			});
 			
-			if (left > container_width/2){
+			if (p.left > p.cwidth/2){
 				su.ui.els.wtm.wp.addClass('close-to-right');
 			} else{
 				su.ui.els.wtm.wp.removeClass('close-to-right');
 			}
-			
 			
 			su.ui.els.wtm.con.text(Math.random());
 			su.ui.els.wtm.wp.show();
@@ -474,21 +481,18 @@ seesu_ui.prototype = {
 			return false;
 			//e.stop
 		});
-	
-		var imageplace = $("<div class='image-cropper'></div>").appendTo(li)
-		var image = this.preloadImage(lig.info.photo_medium, function(img){
-			_this.verticalAlign(img, 134, true);	
-		}, imageplace); 
+		this.createUserAvatar(lig.info, li);
+		
 		
 		return li;
 				
 				
 	},
-	createSongListeners: function(listenings, place, above_limit_value){
+	createSongListeners: function(listenings, place, above_limit_value, exlude_uer){
 		var _this = this;
 		var users_limit = 3;
 		for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
-			if (listenings[i].info){
+			if (!exlude_uer || (listenings[i].user != exlude_uer && listenings[i].info)){
 				place.append(this.createSongListener(listenings[i]));
 			}
 		};
@@ -510,18 +514,40 @@ seesu_ui.prototype = {
 			
 			
 			su.api('track.getListeners', d, function(r){
-				if (r && r.done && [].concat.apply([], r.done).length){
-					var above_limit_value = 0;
-					var uul = $("<ul class='song-listeners-list'></ul>");
-					for (var i=0; i < r.done.length; i++) {
-						if (r.done[i] && r.done[i].length){
-							above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value, current_user);
+				var raw_users = r && r.done && [].concat.apply([], r.done);
+				if (raw_users){
+					var users = $filter(raw_users, 'user', function(value){
+						if (value != current_user){
+							return true
+						}
+					});
+				
+				
+					if (users.length){
+						var above_limit_value = 0;
+						var uul = $("<ul class='song-listeners-list'></ul>");
+						for (var i=0; i < r.done.length; i++) {
+							if (r.done[i] && r.done[i].length){
+								above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value, current_user);
+							}
+							
+						}; 
+						
+						if (mo.ui.t_users.other_users){
+							mo.ui.t_users.other_users.remove();
 						}
 						
-					}; 
-					mo.ui.t_users.c.empty();
-					$('<div></div>').text(localize('listeners-looks')).appendTo(mo.ui.t_users.c);
-					uul.appendTo(mo.ui.t_users.c);
+						mo.ui.t_users.c.children('ul').remove();
+						//mo.ui.t_users.c.empty();
+						if (!mo.ui.t_users.header){
+							mo.ui.t_users.header = $('<div></div>').text(localize('listeners-looks')).appendTo(mo.ui.t_users.c);
+						}
+						
+						uul.appendTo(mo.ui.t_users.c);
+						mo.ui.t_users.other_users = uul;
+						
+					}
+				
 				}
 				console.log(r)
 				

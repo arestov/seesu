@@ -72,7 +72,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 				
 				
 				
-				if (!su.distant_glow.auth || su.distant_glow.auth.id != vk_t.user_id){
+				if (!su.distant_glow.loggedIn()){
 					su.api('user.getAuth', {
 						type:'vk',
 						ver: 0.3,
@@ -84,7 +84,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 							_vkapi.use('storage.get',{key:su_sess.secret_container}, function(r){
 								if (r && r.response){
 									su.distant_glow.auth = {
-										id: vk_t.user_id,
+										userid: su_sess.userid,
 										secret: r.response,
 										sid: su_sess.sid
 									};
