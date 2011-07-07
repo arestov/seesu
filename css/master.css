@@ -361,7 +361,7 @@ display:none;
 	padding: 0 0 14px;
 	min-height:140px;
 	}	
-	.track-info-dominator > .vk-login-context{
+	.track-info-dominator > .vk-login-context, .track-context > .vk-login-context{
 		border-radius:0;
 		margin-bottom:14px;
 		margin-top:0;
@@ -814,8 +814,7 @@ html.not-as-application, .not-as-application  body{
 	padding-top:10px;
 	position:relative;
 	}
-	.song-listeners-list li{
-		float:left;
+	.song-listener{
 		position:relative;
 		margin-left:11px;
 		background: #4A4A4A;
@@ -823,24 +822,36 @@ html.not-as-application, .not-as-application  body{
 		border-radius: 5px;
 		margin-bottom:10px;
 		width:100px;
+		float:left;
+	}
+	.current-user-listen{
+		margin-left:0;
+	}
+	.many-users .current-user-listen{
+		float:right;
+	}
+	
+	.song-listeners-list li.song-listener{
+		
+		
 		cursor:pointer;
 		
 		}
-		.song-listeners-list li:hover{
+		.song-listeners-list li.song-listener:hover{
 			background-color:#555;
 		}
-		.song-listeners-list li:active{
+		.song-listeners-list li.song-listener:active{
 			background-color:#5a5a5a;
 		}
-		.track-listeners li:first-of-type{
+		.track-listeners li.song-listener:first-of-type{
 			margin-left:0;
 		}
-		.song-listeners-list li .image-cropper{
+		.song-listener .image-cropper{
 			height:134px;
 			overflow:hidden;
 			
 		}
-		.song-listeners-list li img{
+		.song-listener img{
 			width:100px;
 			border-radius:2px;
 		}

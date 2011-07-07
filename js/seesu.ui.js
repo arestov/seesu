@@ -447,7 +447,7 @@ seesu_ui.prototype = {
 			cwidth: su.ui.els.pllistlevel.width()
 		};
 	},
-	createUserAvatar: function(info, c){
+	createUserAvatar: function(info, c, size){
 		var _this = this;
 		var imageplace = $("<div class='image-cropper'></div>").appendTo(c)
 		var image = this.preloadImage(info.photo_medium, function(img){
@@ -488,6 +488,18 @@ seesu_ui.prototype = {
 				
 				
 	},
+	createCurrentUserUI: function(mo, user_info){
+		if (!mo.ui.t_users.current_user){
+			var div = mo.ui.t_users.current_user = $('<div class="song-listener current-user-listen"></div>');
+			this.createUserAvatar(user_info, div);
+			
+			mo.ui.t_users.list.append(div);
+			return div;
+		}
+		
+		
+		
+	},
 	createSongListeners: function(listenings, place, above_limit_value, exlude_uer){
 		var _this = this;
 		var users_limit = 3;
@@ -497,6 +509,11 @@ seesu_ui.prototype = {
 			}
 		};
 		return Math.max(users_limit - listenings.length, 0);
+	},
+	createListenersHeader: function(mo){
+		if (!mo.ui.t_users.header){
+			mo.ui.t_users.header = $('<div></div>').text(localize('listeners-looks')).prependTo(mo.ui.t_users.c);
+		}
 	},
 	updateSongListeners: function(mo){
 		var _this = this;
@@ -511,6 +528,13 @@ seesu_ui.prototype = {
 			}
 			
 			var current_user = su.distant_glow.getId('vk');
+			if (current_user){
+				var user_info = su.distant_glow.getInfo('vk');
+				_this.createCurrentUserUI(mo, user_info);
+			
+				_this.createListenersHeader(mo);
+				
+			}
 			
 			
 			su.api('track.getListeners', d, function(r){
@@ -524,8 +548,9 @@ seesu_ui.prototype = {
 				
 				
 					if (users.length){
+						
 						var above_limit_value = 0;
-						var uul = $("<ul class='song-listeners-list'></ul>");
+						var uul = $("<ul></ul>");
 						for (var i=0; i < r.done.length; i++) {
 							if (r.done[i] && r.done[i].length){
 								above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value, current_user);
@@ -537,13 +562,11 @@ seesu_ui.prototype = {
 							mo.ui.t_users.other_users.remove();
 						}
 						
-						mo.ui.t_users.c.children('ul').remove();
-						//mo.ui.t_users.c.empty();
-						if (!mo.ui.t_users.header){
-							mo.ui.t_users.header = $('<div></div>').text(localize('listeners-looks')).appendTo(mo.ui.t_users.c);
-						}
+					
+						_this.createListenersHeader(mo);
 						
-						uul.appendTo(mo.ui.t_users.c);
+						mo.ui.t_users.c.addClass('many-users')
+						uul.appendTo(mo.ui.t_users.list);
 						mo.ui.t_users.other_users = uul;
 						
 					}
@@ -1156,7 +1179,7 @@ seesu_ui.prototype = {
 		
 		
 		var users = $('<div class="track-listeners"></div>').appendTo(t_context);
-		
+		var users_list = $("<div class='song-listeners-list'></div>").appendTo(users);
 		
 		var extend_switcher = dominator_head.children('.extend-switcher').click(function(e){
 			tidominator.toggleClass('want-more-info');
@@ -1205,7 +1228,8 @@ seesu_ui.prototype = {
 				quick_download_button: file_download_nb
 			},
 			t_users: {
-				c: users
+				c: users,
+				list: users_list
 			},
 			context: t_context,
 			t_info: t_info,
