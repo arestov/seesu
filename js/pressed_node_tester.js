@@ -118,22 +118,18 @@ var test_pressed_node = function(e, opts){
 			} 
 			else if (bN(class_list.indexOf('pc-add'))){
 
-				
-				var target_offset = clicked_node.offset();
-				var container_offset = su.ui.els.pllistlevel.offset();
-				var container_width = su.ui.els.pllistlevel.width();
-				var left = target_offset.left - container_offset.left;
+				var rpp = su.ui.getRtPP(node);
 				su.ui.els.pl_search.wp
 					.data('current_song', clicked_node.data('mo'))
 					.css({
-						top: (target_offset.top - container_offset.top) + 'px',
-						left: left + 'px',
+						top: rpp.top + 'px',
+						left: rpp.left + 'px',
 						display: 'block'
 					});
 					
 				su.ui.els.pl_search.visible = true;
 				
-				if (left > container_width/2){
+				if (rpp.left > rpp.cwidth/2){
 					su.ui.els.pl_search.wp.addClass('close-to-right');
 				} else{
 					su.ui.els.pl_search.wp.removeClass('close-to-right');

@@ -254,6 +254,9 @@ display:none;
 	width: 126px;
 	position:relative;
 	}
+	.artist-info .image:hover{
+		z-index:3;
+	}
 @media (min-width:600px) {
 	.artist-info .image{
 		float:left;
@@ -358,7 +361,7 @@ display:none;
 	padding: 0 0 14px;
 	min-height:140px;
 	}	
-	.track-info-dominator > .vk-login-context{
+	.track-info-dominator > .vk-login-context, .track-context > .vk-login-context{
 		border-radius:0;
 		margin-bottom:14px;
 		margin-top:0;
@@ -370,7 +373,7 @@ display:none;
 		.track-info-dominator .dominator-head .closer-to-track{
 			padding-top:7px;
 		}
-	.track-info-dominator .extend-switcher{
+	.track-context .extend-switcher{
 		border:0;
 		padding: 7px;
 		margin-left:-7px;
@@ -380,22 +383,22 @@ display:none;
 		color:#808080;
 		text-shadow: 0 1px 0 #4A4A4A;
 		}
-		.track-info-dominator .extend-switcher .big-space{
+		.track-context .extend-switcher .big-space{
 			border-bottom: 1px dotted #696969;
 			padding-bottom: 1px;
 		}
 
 		
-		.track-info-dominator .extend-switcher:hover{
+		.track-context .extend-switcher:hover{
 			background-color:#555;
 			}
-			.track-info-dominator .extend-switcher:hover .big-space{
+			.track-context .extend-switcher:hover .big-space{
 				border-bottom-color:transparent; 
 				}
-		.want-more-info .extend-switcher{
+		.track-context .want-more-info .extend-switcher{
 			text-shadow:0;
 		}
-		.want-more-info .extend-switcher:hover{
+		.track-context .want-more-info .extend-switcher:hover{
 			background-color:#585858;
 		}
 			
@@ -726,10 +729,22 @@ html.not-as-application, .not-as-application  body{
 .track-files{
 	margin-bottom:14px;
 	overflow:hidden;
+	display:none;
+	border-top: 1px solid #555555;
+	border-bottom: 1px solid #6e6e6e;
+	background: #5a5a5a;
+	margin: 5px -13px 24px;
+	padding: 0 13px 14px;
 	}
-	
+.track-files.show-files	{
+	display:block;
+}
 	.track-files .files-header{
-		overflow:hidden;
+		display:none;
+		margin-left:139px;
+	}
+	.track-files .files-header.show-f-head{
+		display:block;
 	}
 	.track-files .files-source{
 	
@@ -737,7 +752,7 @@ html.not-as-application, .not-as-application  body{
 		margin-bottom:14px;
 	}
 	.track-files .files-lists{
-		margin-top:14px;
+		
 		display:none;
 	}
 	.track-files .files-lists ul{
@@ -799,8 +814,7 @@ html.not-as-application, .not-as-application  body{
 	padding-top:10px;
 	position:relative;
 	}
-	.song-listeners-list li{
-		float:left;
+	.song-listener{
 		position:relative;
 		margin-left:11px;
 		background: #4A4A4A;
@@ -808,24 +822,36 @@ html.not-as-application, .not-as-application  body{
 		border-radius: 5px;
 		margin-bottom:10px;
 		width:100px;
+		float:left;
+	}
+	.current-user-listen{
+		margin-left:0;
+	}
+	.many-users .current-user-listen{
+		float:right;
+	}
+	
+	.song-listeners-list li.song-listener{
+		
+		
 		cursor:pointer;
 		
 		}
-		.song-listeners-list li:hover{
+		.song-listeners-list li.song-listener:hover{
 			background-color:#555;
 		}
-		.song-listeners-list li:active{
+		.song-listeners-list li.song-listener:active{
 			background-color:#5a5a5a;
 		}
-		.track-listeners li:first-of-type{
+		.track-listeners li.song-listener:first-of-type{
 			margin-left:0;
 		}
-		.song-listeners-list li .image-cropper{
+		.song-listener .image-cropper{
 			height:134px;
 			overflow:hidden;
 			
 		}
-		.song-listeners-list li img{
+		.song-listener img{
 			width:100px;
 			border-radius:2px;
 		}

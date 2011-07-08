@@ -27,7 +27,10 @@ window.seesu = window.su =  {
 			this.info[type] = data;
 		},
 		getId: function(){
-			return this.auth && this.auth.id;
+			return this.auth && this.auth.userid;
+		},
+		loggedIn: function(){
+			return !!(this.auth.secret && this.auth.sid && this.auth.userid)
 		},
 	  	interact: null,
 	  	supportsLikes: function(){

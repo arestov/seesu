@@ -199,14 +199,8 @@ views.prototype = {
 			}
 			seesu.ui.render_playlist(pl, pl.length > 1);
 		}
-		
 		this.swithToPlaylistPage(pl, no_navi);
-		
-		
-		
-		
-		
-		
+
 	},
 	show_track_page: function(title, zoom, mo, no_navi){
 		var pl = mo.plst_titl;
@@ -441,58 +435,98 @@ seesu_ui.prototype = {
 		}
 		return image;
 	},
+	getRtPP: function(node){
+			
+		var clicked_node = $(node);
+		
+		var target_offset = clicked_node.offset();
+		var container_offset = su.ui.els.pllistlevel.offset();
+		return {
+			left: target_offset.left - container_offset.left,
+			top: target_offset.top - container_offset.top,
+			cwidth: su.ui.els.pllistlevel.width()
+		};
+	},
+	createUserAvatar: function(info, c, size){
+		var _this = this;
+		var imageplace = $("<div class='image-cropper'></div>").appendTo(c)
+		var image = this.preloadImage(info.photo_medium, function(img){
+			_this.verticalAlign(img, 134, true);	
+		}, imageplace); 
+	},
 	createSongListener: function(lig){
 		var _this = this;
 		
 		var li = $('<li class="song-listener"></li>').click(function() {
 			su.ui.hidePopups(su.ui.els.wtm.id);
 			
-			var clicked_node = $(this);
-			
-			var target_offset = clicked_node.offset();
-			var container_offset = su.ui.els.pllistlevel.offset();
-			var container_width = su.ui.els.pllistlevel.width();
-			var left = target_offset.left - container_offset.left;
+			var p = _this.getRtPP(this);
 			
 			su.ui.els.wtm.wp.css({
-				top: (target_offset.top - container_offset.top) + 'px',
-				left: left + 'px',
+				top: p.top + 'px',
+				left: p.left + 'px',
 				display: 'block'
 			});
 			
-			if (left > container_width/2){
+			if (p.left > p.cwidth/2){
 				su.ui.els.wtm.wp.addClass('close-to-right');
 			} else{
 				su.ui.els.wtm.wp.removeClass('close-to-right');
 			}
 			
+			su.ui.els.wtm.con.empty();
+			if (lig.info && lig.info.photo_big){
+				var uavac = $('<div class="big-user-avatar"></div>');
+				var image = $('<img alt="user ava"/>').attr('src', lig.info.photo_big).appendTo(uavac);
+				uavac.appendTo(su.ui.els.wtm.con);
+			}
 			
-			su.ui.els.wtm.con.text(Math.random());
+			
+			
+			su.ui.els.wtm.con.append(Math.random())
+
+			
+			
+			
 			su.ui.els.wtm.wp.show();
 			su.ui.els.wtm.visible = true;
 
 			return false;
 			//e.stop
 		});
-	
-		var imageplace = $("<div class='image-cropper'></div>").appendTo(li)
-		var image = this.preloadImage(lig.info.photo_medium, function(img){
-			_this.verticalAlign(img, 134, true);	
-		}, imageplace); 
+		this.createUserAvatar(lig.info, li);
+		
 		
 		return li;
 				
 				
 	},
-	createSongListeners: function(listenings, place, above_limit_value){
+	createCurrentUserUI: function(mo, user_info){
+		if (!mo.ui.t_users.current_user){
+			var div = mo.ui.t_users.current_user = $('<div class="song-listener current-user-listen"></div>');
+			this.createUserAvatar(user_info, div);
+			
+			mo.ui.t_users.list.append(div);
+			return div;
+		}
+		
+		
+		
+	},
+	createSongListeners: function(listenings, place, above_limit_value, exlude_uer){
 		var _this = this;
 		var users_limit = 3;
 		for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
-			if (listenings[i].info){
+			if (!exlude_uer || (listenings[i].user != exlude_uer && listenings[i].info)){
 				place.append(this.createSongListener(listenings[i]));
 			}
 		};
 		return Math.max(users_limit - listenings.length, 0);
+	},
+	createListenersHeader: function(mo){
+		if (!mo.ui.t_users.header){
+			mo.ui.t_users.header = $('<div></div>').text(localize('listeners-looks')).prependTo(mo.ui.t_users.c);
+		}
 	},
 	updateSongListeners: function(mo){
 		var _this = this;
@@ -505,19 +539,55 @@ seesu_ui.prototype = {
 			if (mo.track){
 				d.title = mo.track;
 			}
+			
+			var current_user = su.distant_glow.getId('vk');
+			var user_info;
+			if (current_user){
+				user_info = su.distant_glow.getInfo('vk');
+				if (user_info){
+					_this.createCurrentUserUI(mo, user_info);
+				}
+				
+			
+				_this.createListenersHeader(mo);
+				
+			}
+			
+			
 			su.api('track.getListeners', d, function(r){
-				if (r && r.done && [].concat.apply([], r.done).length){
-					var above_limit_value = 0;
-					var uul = $("<ul class='song-listeners-list'></ul>");
-					for (var i=0; i < r.done.length; i++) {
-						if (r.done[i] && r.done[i].length){
-							above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value);
+				var raw_users = r && r.done && [].concat.apply([], r.done);
+				if (raw_users){
+					var users = $filter(raw_users, 'user', function(value){
+						if (value != current_user){
+							return true
+						}
+					});
+				
+				
+					if (users.length){
+						
+						var above_limit_value = 0;
+						var uul = $("<ul></ul>");
+						for (var i=0; i < r.done.length; i++) {
+							if (r.done[i] && r.done[i].length){
+								above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value, current_user);
+							}
+							
+						}; 
+						
+						if (mo.ui.t_users.other_users){
+							mo.ui.t_users.other_users.remove();
 						}
 						
-					}; 
-					mo.ui.t_users.c.empty();
-					$('<div></div>').text(localize('listeners-looks')).appendTo(mo.ui.t_users.c);
-					uul.appendTo(mo.ui.t_users.c);
+					
+						_this.createListenersHeader(mo);
+						
+						mo.ui.t_users.c.addClass('many-users')
+						uul.appendTo(mo.ui.t_users.list);
+						mo.ui.t_users.other_users = uul;
+						
+					}
+				
 				}
 				console.log(r)
 				
@@ -568,11 +638,11 @@ seesu_ui.prototype = {
 			
 			if (mo.isSearchCompleted() && mo.isNeedsAuth('vk')){
 				if (!songs.length){
-					mo.ui.t_info.before(_sui.samples.vk_login.clone())
+					mo.ui.files.before(_sui.samples.vk_login.clone())
 				} else if(!mo.isHaveAnyResultsFrom('vk')){
-					mo.ui.t_info.before(_sui.samples.vk_login.clone('enhancement'))
+					mo.ui.files.before(_sui.samples.vk_login.clone('enhancement'))
 				} else {
-					mo.ui.t_info.before(_sui.samples.vk_login.clone('stabilization'))
+					mo.ui.files.before(_sui.samples.vk_login.clone('stabilization'))
 				}
 				
 				
@@ -582,8 +652,7 @@ seesu_ui.prototype = {
 			if (songs){
 				var songs_counter = 0;
 				var small_head = $('<div class="files-header"></div>').appendTo(c);
-				small_head.append('<span class="desc-name">' + localize('Files', 'Files') + '</span>');
-				var desc_text = $('<span class="desc-text"></span>').appendTo(small_head);
+			
 				
 				
 				var sc = $('<div class="files-lists"></div>');
@@ -593,21 +662,22 @@ seesu_ui.prototype = {
 				
 				
 				
-				$('<a class="js-serv">' + localize('show-them') +'</a>').click(function(e){
-					c.toggleClass('show-files');
-					e.preventDefault();
-				}).appendTo(desc_text)
-				
+			
 							
 				for (var i=0; i < songs.length; i++) {
 					songs_counter += songs[i].t.length
 					var b = this.createFilesList(songs[i], mo);
 					if (b){b.appendTo(sc);}
 					if (!extend_link && songs[i].t && songs[i].t.length > 3){
-						$('<a class="js-serv all-files-link">' + localize('all', 'all') +'</a>').click(function(e){
-							c.toggleClass('show-all-files');
-							e.preventDefault();
-						}).appendTo(desc_text)
+						
+						small_head.addClass("show-f-head")
+						
+						small_head.append(
+							$('<a class="js-serv extend-switcher"><span class="big-space">' + localize('show-all-files') +'</span></a>').click(function(e){
+								c.toggleClass('show-all-files');
+								e.preventDefault();
+							})
+						);
 						extend_link = true;
 					}
 					
@@ -617,8 +687,15 @@ seesu_ui.prototype = {
 				ext_info.updateUI();
 				
 				
-				sc.appendTo(c)
+				sc.appendTo(c);
+				mo.ui.files_control.list_button.enable();
 			} 
+			
+			var downloads = mo.mp3Downloads();
+			if (downloads){
+				mo.ui.files_control.quick_download_button.enable();
+			}
+			
 			
 			
 			if (false && mo.isSearchCompleted() && !mo.isHaveAnyResultsFrom('soundcloud')){
@@ -1039,11 +1116,30 @@ seesu_ui.prototype = {
 		} else if (position == 'right'){
 			c.addClass('bposition-r')
 		}
-		
-		return {
+
+		var bb = {
 			c: c,
-			b: b
-		};
+			b: b,
+			_enabled: true,
+			enable: function(){
+				if (!this._enabled){
+					this.b.addClass('nicebutton').removeClass('disabledbutton');
+					this.b.data('disabled', false);
+					this._enabled = true;
+				}
+				
+			},
+			disable: function(){
+				if (this._enabled){
+					this.b.removeClass('nicebutton').addClass('disabledbutton');	
+					this.b.data('disabled', true);
+					this._enabled = false;
+				}
+				
+			}
+		}
+		bb.disable();
+		return bb;
 	},
 	create_playlist_element: function(mo){
 		var _sui = this;
@@ -1074,15 +1170,18 @@ seesu_ui.prototype = {
 		var buttmen = _sui.els.play_controls.node.clone(true).data('mo', mo);
 		tp.add(buttmen).find('.pc').data('mo', mo);
 
+
+
+		var filesc = t_context.children('.track-files');
 		var tidominator = t_context.children('.track-info-dominator');
 		var dominator_head = tidominator.children('.dominator-head');
-		
-		
-	
-		
-		
 		var a_info = tidominator.children('.artist-info');
 		var t_info = tidominator.children('.track-info');
+		
+		
+		
+		
+		
 		
 		if (mo.plst_titl.playlist_type != 'artist'){
 			$('<a class="js-serv">' + localize('top-tracks') + '</a>')
@@ -1097,7 +1196,7 @@ seesu_ui.prototype = {
 		
 		
 		var users = $('<div class="track-listeners"></div>').appendTo(t_context);
-		
+		var users_list = $("<div class='song-listeners-list'></div>").appendTo(users);
 		
 		var extend_switcher = dominator_head.children('.extend-switcher').click(function(e){
 			tidominator.toggleClass('want-more-info');
@@ -1111,11 +1210,27 @@ seesu_ui.prototype = {
 		
 		files_list_nb.b.text( localize('Files', 'Files') + ' ▼');
 		files_list_nb.c.appendTo(files_cc);
+		files_list_nb.b.click(function(){
+			if (!$(this).data('disabled')){
+				filesc.toggleClass('show-files');
+			}
+			
+		});
+		
+		
 		
 		var file_download_nb =  this.createNiceButton('right');
 		file_download_nb.b.text(localize('Download', 'Download'));
 		file_download_nb.c.appendTo(files_cc);
-		
+		file_download_nb.b.click(function(){
+			if (!$(this).data('disabled')){
+				var d = mo.mp3Downloads();
+				if (d){
+					open_url(d[0].link)
+				}
+				
+			}
+		});
 		
 
 		mo.ui = {
@@ -1130,7 +1245,8 @@ seesu_ui.prototype = {
 				quick_download_button: file_download_nb
 			},
 			t_users: {
-				c: users
+				c: users,
+				list: users_list
 			},
 			context: t_context,
 			t_info: t_info,
@@ -1164,7 +1280,7 @@ seesu_ui.prototype = {
 			},
 			
 			tv: t_info.children('.track-video'),
-			files: t_info.children('.track-files'),
+			files: filesc,
 			remove: function(){
 				this.mainc.remove();
 			},
