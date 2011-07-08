@@ -474,7 +474,20 @@ seesu_ui.prototype = {
 				su.ui.els.wtm.wp.removeClass('close-to-right');
 			}
 			
-			su.ui.els.wtm.con.text(Math.random());
+			su.ui.els.wtm.con.empty();
+			if (lig.info && lig.info.photo_big){
+				var uavac = $('<div class="big-user-avatar"></div>');
+				var image = $('<img alt="user ava"/>').attr('src', lig.info.photo_big).appendTo(uavac);
+				uavac.appendTo(su.ui.els.wtm.con);
+			}
+			
+			
+			
+			su.ui.els.wtm.con.append(Math.random())
+
+			
+			
+			
 			su.ui.els.wtm.wp.show();
 			su.ui.els.wtm.visible = true;
 
@@ -528,9 +541,13 @@ seesu_ui.prototype = {
 			}
 			
 			var current_user = su.distant_glow.getId('vk');
+			var user_info;
 			if (current_user){
-				var user_info = su.distant_glow.getInfo('vk');
-				_this.createCurrentUserUI(mo, user_info);
+				user_info = su.distant_glow.getInfo('vk');
+				if (user_info){
+					_this.createCurrentUserUI(mo, user_info);
+				}
+				
 			
 				_this.createListenersHeader(mo);
 				
