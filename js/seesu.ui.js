@@ -227,8 +227,59 @@ views.prototype = {
 		}
 		
 	}
-}
+};
 
+
+var contextRow = function(container){
+	this.c = container.hide();
+	this.arrow = container.children('.rc-arrow');
+	this.parts = {};
+	
+};
+contextRow.prototype = {
+	addPart: function(cpart, name){
+		if (name){
+			this.parts[name] = {
+				c: cpart
+			};
+		}
+		
+	},
+	isActive: function(name){
+		return !!this.parts[name].active;
+	},
+	show: function(name, arrow_left, callback){
+		if (!this.parts[name].active){
+			this.hide(true);
+		
+		
+			this.parts[name].c.show();
+			this.parts[name].active = true;
+			
+			
+			if (arrow_left){
+				//used for positioning 
+				this.arrow.css('left', arrow_left + 'px').show();
+				
+			} 
+			this.c.show();
+		}
+		
+	},
+	hide: function(not_itself){
+		if (!not_itself){
+			this.c.hide();
+		}
+		
+		for (var a in this.parts){
+			this.parts[a].c.hide();
+			this.parts[a].active = false;
+		}
+		
+		this.arrow.hide();
+		
+	}
+};
 
 window.seesu_ui = function(d, with_dom){
 	this.d = d;
@@ -276,7 +327,10 @@ seesu_ui.prototype = {
 		for (var i=0; i < this.popups.length; i++) {
 			var c = this.popups[i];
 			if (c.id != exlude_id && c.test(e)){
-				c.hide();
+				if (c.hide){
+					c.hide();
+				}
+				
 			}
 			
 		};	
@@ -409,7 +463,7 @@ seesu_ui.prototype = {
 			var offset = (target_height - real_height)/2;
 			
 			if (offset && fix){
-				$(img).css('margin-top', offset + 'px')
+				$(img).animate({'margin-top':  offset + 'px'},200);
 			}
 			return offset;
 		}
@@ -476,9 +530,9 @@ seesu_ui.prototype = {
 			
 			su.ui.els.wtm.con.empty();
 			if (lig.info && lig.info.photo_big){
-				var uavac = $('<div class="big-user-avatar"></div>');
-				var image = $('<img alt="user ava"/>').attr('src', lig.info.photo_big).appendTo(uavac);
-				uavac.appendTo(su.ui.els.wtm.con);
+				var image = _this.preloadImage(lig.info.photo_big, function(img){
+					_this.verticalAlign(img, 252, true);	
+				}, $('<div class="big-user-avatar"></div>').appendTo(su.ui.els.wtm.con));
 			}
 			
 			
@@ -1171,8 +1225,14 @@ seesu_ui.prototype = {
 		tp.add(buttmen).find('.pc').data('mo', mo);
 
 
-
-		var filesc = t_context.children('.track-files');
+		var song_row_context = t_context.children('.row-context');
+		var song_context  = new contextRow(song_row_context);
+		var filesc = song_row_context.children('.track-files');
+		song_context.addPart(filesc, 'files');
+		
+		
+		
+		
 		var tidominator = t_context.children('.track-info-dominator');
 		var dominator_head = tidominator.children('.dominator-head');
 		var a_info = tidominator.children('.artist-info');
@@ -1212,7 +1272,13 @@ seesu_ui.prototype = {
 		files_list_nb.c.appendTo(files_cc);
 		files_list_nb.b.click(function(){
 			if (!$(this).data('disabled')){
-				filesc.toggleClass('show-files');
+				
+				if (!song_context.isActive('files')){
+					var p = _sui.getRtPP(this);
+					song_context.show('files', p.left + $(this).width()/2);
+				} else{
+					song_context.hide();
+				}
 			}
 			
 		});
@@ -1270,16 +1336,36 @@ seesu_ui.prototype = {
 				}
 			},
 			deactivate: function(){
-				this.files.removeClass('show-files show-all-files')
-				this.mainc.removeClass('viewing-song')
-				this.tidominator.removeClass('want-more-info');
-				su.ui.hidePopups();
+				if (this.active){
+					this.files.removeClass('show-files show-all-files');
+				
+					this.tidominator.removeClass('want-more-info');
+					this.mainc.removeClass('viewing-song');
+					
+					su.ui.hidePopups();
+					
+					this.active = false;
+				}
+				
 			},
 			activate: function(){
-				this.mainc.addClass('viewing-song');
+				if (!this.active){
+					
+					
+					var _this = this;
+					this.mainc.addClass('viewing-song');
+					this.active = true;
+				}
+				
 			},
 			
 			tv: t_info.children('.track-video'),
+			rowconexts:{
+				forsong: {
+					c: song_row_context,
+					arrow: song_row_context.children('.rc-arrow')
+				}
+			},
 			files: filesc,
 			remove: function(){
 				this.mainc.remove();
