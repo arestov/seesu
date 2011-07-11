@@ -237,6 +237,9 @@ var contextRow = function(container){
 	
 };
 contextRow.prototype = {
+	getC: function(){
+		return this.c;
+	},
 	addPart: function(cpart, name){
 		if (name){
 			this.parts[name] = {
@@ -691,12 +694,14 @@ seesu_ui.prototype = {
 			var songs = mo.songs();
 			
 			if (mo.isSearchCompleted() && mo.isNeedsAuth('vk')){
+				
+				var vklc = mo.ui.rowcs.song_context.getC();
 				if (!songs.length){
-					mo.ui.files.before(_sui.samples.vk_login.clone())
+					vklc.after(_sui.samples.vk_login.clone());
 				} else if(!mo.isHaveAnyResultsFrom('vk')){
-					mo.ui.files.before(_sui.samples.vk_login.clone('enhancement'))
+					vklc.after(_sui.samples.vk_login.clone('enhancement'));
 				} else {
-					mo.ui.files.before(_sui.samples.vk_login.clone('stabilization'))
+					vklc.after(_sui.samples.vk_login.clone('stabilization'));
 				}
 				
 				
@@ -1360,11 +1365,8 @@ seesu_ui.prototype = {
 			},
 			
 			tv: t_info.children('.track-video'),
-			rowconexts:{
-				forsong: {
-					c: song_row_context,
-					arrow: song_row_context.children('.rc-arrow')
-				}
+			rowcs:{
+				song_context: song_context
 			},
 			files: filesc,
 			remove: function(){

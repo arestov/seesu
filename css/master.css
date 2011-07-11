@@ -336,8 +336,7 @@ display:none;
 	}	
 	.track-info-dominator > .vk-login-context, .track-context > .vk-login-context{
 		border-radius:0;
-		margin-bottom:14px;
-		margin-top:0;
+		margin:5px -13px 24px;
 		}	
 	.track-info-dominator .dominator-head{
 			overflow:hidden;
@@ -744,9 +743,17 @@ html.not-as-application, .not-as-application  body{
 		width:90px;
 		margin-bottom:14px;
 	}
-
+	.track-context .track-files .extend-switcher{
+		margin-bottom:-19px;
+	}
+	.track-files .files-lists{
+		margin-top:24px;
+	}
 	.track-files .files-lists ul{
 		margin-bottom:24px;
+	}
+	.track-files .files-lists ul:last-of-type{
+		margin-bottom:0;
 	}
 	.track-files .page-link{
 		float:right;
