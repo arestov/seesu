@@ -87,37 +87,10 @@ a.desc{
 		}
 		
 		
-		
-		
-.button-hole{
-	background:#555;
-	font: 12px/1.5 Arial, sans-serif;
-	background-image: -o-linear-gradient(#5a5a5a,#4a4a4a);
-	background-image: -moz-linear-gradient(100% 100% 180deg, #5a5a5a, #4a4a4a);
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5a5a5a), to(#4a4a4a)) !important;
-	background-image: linear-gradient(#5a5a5a,#4a4a4a);
+.row-context{
+	position:relative;
+}		
 
-	border-top:1px solid #474747;
-	border-radius:11px;
-	border-bottom:1px solid #676767;
-	
-	display:inline-block;
-	
-	}
-	
-	.button-hole:hover{
-		background-color:#4a4a4a;
-		
-		background-image: -o-linear-gradient(#5d5d5d,#444);
-		background-image: -moz-linear-gradient(100% 100% 180deg, #5d5d5d, #444);
-		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5d5d5d), to(#444)) !important;
-		background-image: linear-gradient(#5c5c5c,#444);
-		
-
-		}
-		
-		
-	
 	
 	
 	
@@ -648,6 +621,26 @@ display:none;
 #screens{
 	clear:left;
 }
+.arrow-part{
+	position: absolute;
+	width: 0;
+	height: 0;
+	font-size: 0;
+}
+	.rc-arrow {
+		display:none;
+		
+		margin-left: -13px;
+		top: -22px;
+		border: 11px solid;
+		border-color: transparent   transparent  #555 transparent ;
+		}
+		.rc-arrow-bg {
+			top: -10px;
+			left: -11px;
+			border: 11px solid;
+			border-color: transparent transparent #5A5A5A transparent  ;
+			}
 
 .triangle {
 	position: absolute;
@@ -751,10 +744,7 @@ html.not-as-application, .not-as-application  body{
 		width:90px;
 		margin-bottom:14px;
 	}
-	.track-files .files-lists{
-		
-		display:none;
-	}
+
 	.track-files .files-lists ul{
 		margin-bottom:24px;
 	}
@@ -762,15 +752,9 @@ html.not-as-application, .not-as-application  body{
 		float:right;
 	}
 	
-	.track-files.show-files .files-lists {
-		display:block;
-	}
-	.track-files .all-files-link{
-		display:none;
-	}
-	.track-files.show-files .all-files-link {
-		display:inline;
-	}
+
+
+
 	
 	.track-files .files-header a{
 		margin-right:14px;
