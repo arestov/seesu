@@ -409,7 +409,7 @@ seesu_ui.prototype = {
 			var offset = (target_height - real_height)/2;
 			
 			if (offset && fix){
-				$(img).css('margin-top', offset + 'px')
+				$(img).animate({'margin-top':  offset + 'px'},200);
 			}
 			return offset;
 		}
@@ -476,9 +476,9 @@ seesu_ui.prototype = {
 			
 			su.ui.els.wtm.con.empty();
 			if (lig.info && lig.info.photo_big){
-				var uavac = $('<div class="big-user-avatar"></div>');
-				var image = $('<img alt="user ava"/>').attr('src', lig.info.photo_big).appendTo(uavac);
-				uavac.appendTo(su.ui.els.wtm.con);
+				var image = _this.preloadImage(lig.info.photo_big, function(img){
+					_this.verticalAlign(img, 252, true);	
+				}, $('<div class="big-user-avatar"></div>').appendTo(su.ui.els.wtm.con));
 			}
 			
 			
@@ -1270,13 +1270,31 @@ seesu_ui.prototype = {
 				}
 			},
 			deactivate: function(){
-				this.files.removeClass('show-files show-all-files')
-				this.mainc.removeClass('viewing-song')
-				this.tidominator.removeClass('want-more-info');
-				su.ui.hidePopups();
+				if (this.active){
+					this.files.removeClass('show-files show-all-files');
+				
+					this.tidominator.removeClass('want-more-info');
+					this.mainc.removeClass('viewing-song');
+					
+					su.ui.hidePopups();
+					
+					this.active = false;
+				}
+				
 			},
 			activate: function(){
-				this.mainc.addClass('viewing-song');
+				if (!this.active){
+					var _this = this;
+					ttime(function(){
+						var tn = getECParticipials(_this.mainc[0], 'viewing-song');
+					
+						console.log(tn);
+					});
+					this.mainc.addClass('viewing-song', 300);
+					
+					this.active = true;
+				}
+				
 			},
 			
 			tv: t_info.children('.track-video'),

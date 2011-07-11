@@ -808,6 +808,15 @@ html.not-as-application, .not-as-application  body{
 	margin:0.5em 0 0;
 	min-height:10px;
 }
+.big-user-avatar {
+	height: 252px;
+	overflow-x: hidden;
+	overflow-y: hidden;
+	text-align: center;
+	width: 196px;
+	float:left;
+	margin-right:24px;
+}
 .song-listeners-list{
 	height: 154px;
 	overflow:hidden;
