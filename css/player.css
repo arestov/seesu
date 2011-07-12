@@ -126,19 +126,9 @@ a.download-mp3:hover{
 
 
 
-.flash-internet
-#message-flash-secur
-p{
-	display:none;
-	}
-.flash-internet
-#message-flash-secur
-p.internet-flash-settings{
-	display:block;
-}
 
-.flash-internet
-#flash-secur{
+
+.flash-internet .flash-secur{
 	display:none;
 }
 

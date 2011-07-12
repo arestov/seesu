@@ -7,9 +7,10 @@ var test_pressed_node = function(e, opts){
 	var class_name = node.className;
 	var class_list = class_name.split(/\s/);
 	var clicked_node = $(node);
-	e.preventDefault();
+	
 	
 		if(clicked_node.is('a')) {
+		  e.preventDefault();
 		  if (bN(class_list.indexOf('download-mp3'))){
 			open_url(node.href);
 			
@@ -53,9 +54,6 @@ var test_pressed_node = function(e, opts){
 			var artist = clicked_node.data('artist');
 			render_tracks_by_similar_artists(artist);
 			seesu.track_event('Artist navigation', 'similar artists to', artist);
-		  }
-		  else if (bN(class_list.indexOf('trackbutton'))){
-			clicked_node.parent().toggleClass('tb-window');
 		  }
 		  else if (bN(class_list.indexOf('external'))){
 			open_url(clicked_node.attr('href'));
@@ -139,10 +137,7 @@ var test_pressed_node = function(e, opts){
 			}  
 		}  
 		else if ((node.nodeName == 'INPUT' || node.nodeName == 'BUTTON')) {
-			if (bN(class_list.indexOf('tb-mess-wrap-close'))){
-				clicked_node.parents('li').removeClass('tb-window');
-			}
-			else if (bN(class_list.indexOf('login-lastfm-button')) ){
+			if (bN(class_list.indexOf('login-lastfm-button')) ){
 				su.lfm_api.waiting_for = clicked_node.attr('name');
 				su.ui.lfmRequestAuth();
 				

@@ -243,8 +243,22 @@ contextRow.prototype = {
 	addPart: function(cpart, name){
 		if (name){
 			this.parts[name] = {
-				c: cpart
+				c: cpart,
+				d:{}
 			};
+		}
+		
+	},
+	C: function(name){
+		return this.parts[name]	 && this.parts[name].c;
+	},
+	D: function(name, key, value){
+		if (name && this.parts[name]){
+			if (typeof value != 'undefined' && key){
+				return this.parts[name].d[key] = value;
+			} else if (key){
+				return this.parts[name].d[key];
+			}
 		}
 		
 	},
@@ -511,10 +525,38 @@ seesu_ui.prototype = {
 			_this.verticalAlign(img, 134, true);	
 		}, imageplace); 
 	},
-	createSongListener: function(lig){
+	createSongListener: function(lig, uc){
 		var _this = this;
 		
 		var li = $('<li class="song-listener"></li>').click(function() {
+			
+			if (!uc.isActive('user-info') || uc.D('user-info', 'current-user') != Math.random()){
+				
+				
+				
+				uc.D('user-info', 'current-user', Math.random());
+				var p = _this.getRtPP(this);
+				
+				var c = uc.C('user-info');
+
+				c.empty();
+				if (lig.info && lig.info.photo_big){
+					var image = _this.preloadImage(lig.info.photo_big, function(img){
+						_this.verticalAlign(img, 252, true);	
+					}, $('<div class="big-user-avatar"></div>').appendTo(c));
+				}
+				
+				
+				
+				su.ui.els.wtm.con.append(Math.random())
+				
+				
+				uc.show('user-info', p.left + $(this).outerWidth()/2);
+			} else{
+				uc.hide();
+			}
+			
+			/*
 			su.ui.hidePopups(su.ui.els.wtm.id);
 			
 			var p = _this.getRtPP(this);
@@ -549,6 +591,7 @@ seesu_ui.prototype = {
 			su.ui.els.wtm.visible = true;
 
 			return false;
+			*/
 			//e.stop
 		});
 		this.createUserAvatar(lig.info, li);
@@ -570,12 +613,12 @@ seesu_ui.prototype = {
 		
 		
 	},
-	createSongListeners: function(listenings, place, above_limit_value, exlude_uer){
+	createSongListeners: function(listenings, place, above_limit_value, exlude_user, users_context){
 		var _this = this;
 		var users_limit = 3;
 		for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
-			if (!exlude_uer || (listenings[i].user != exlude_uer && listenings[i].info)){
-				place.append(this.createSongListener(listenings[i]));
+			if (!exlude_user || (listenings[i].user != exlude_user && listenings[i].info)){
+				place.append(this.createSongListener(listenings[i], users_context));
 			}
 		};
 		return Math.max(users_limit - listenings.length, 0);
@@ -627,7 +670,7 @@ seesu_ui.prototype = {
 						var uul = $("<ul></ul>");
 						for (var i=0; i < r.done.length; i++) {
 							if (r.done[i] && r.done[i].length){
-								above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value, current_user);
+								above_limit_value = _this.createSongListeners(r.done[i], uul, above_limit_value, current_user, mo.ui.rowcs.users_context);
 							}
 							
 						}; 
@@ -1230,10 +1273,43 @@ seesu_ui.prototype = {
 		tp.add(buttmen).find('.pc').data('mo', mo);
 
 
-		var song_row_context = t_context.children('.row-context');
+		var song_row_context = t_context.children('.row-song-context');
 		var song_context  = new contextRow(song_row_context);
+		
+		
 		var filesc = song_row_context.children('.track-files');
 		song_context.addPart(filesc, 'files');
+		
+		
+		var lfm_context_part = song_row_context.children('.last-fm-scrobbling');
+		song_context.addPart(lfm_context_part, 'lastfm');
+		
+		
+		tp.find('.lfm-scrobbling-button').click(function(){
+			if (!song_context.isActive('lastfm')){
+				var p = _sui.getRtPP(this);
+				song_context.show('lastfm', p.left + $(this).outerWidth()/2);
+			} else{
+				song_context.hide();
+			}
+		});
+		
+		var flash_error_part = song_row_context.children('.flash-error');
+		song_context.addPart(flash_error_part, 'flash-error');
+		
+		
+		tp.find('.flash-secur-button').click(function(){
+			if (!song_context.isActive('flash-error')){
+				var p = _sui.getRtPP(this);
+				song_context.show('flash-error', p.left + $(this).outerWidth()/2);
+			} else{
+				song_context.hide();
+			}
+		});
+		
+		
+		
+		
 		
 		
 		
@@ -1260,8 +1336,15 @@ seesu_ui.prototype = {
 		
 		
 		
-		var users = $('<div class="track-listeners"></div>').appendTo(t_context);
-		var users_list = $("<div class='song-listeners-list'></div>").appendTo(users);
+		var users = t_context.children('.track-listeners');
+		var users_list = users.children('.song-listeners-list');
+		
+		
+		var users_row_context =  users.children('.row-context');
+		var users_context = new contextRow(users_row_context);
+		var uinfo_part = users_row_context.children('.big-listener-info');
+		users_context.addPart(uinfo_part, 'user-info');
+		
 		
 		var extend_switcher = dominator_head.children('.extend-switcher').click(function(e){
 			tidominator.toggleClass('want-more-info');
@@ -1280,13 +1363,16 @@ seesu_ui.prototype = {
 				
 				if (!song_context.isActive('files')){
 					var p = _sui.getRtPP(this);
-					song_context.show('files', p.left + $(this).width()/2);
+					song_context.show('files', p.left + $(this).outerWidth()/2);
 				} else{
 					song_context.hide();
 				}
 			}
 			
 		});
+		
+		
+		
 		
 		
 		
@@ -1342,8 +1428,9 @@ seesu_ui.prototype = {
 			},
 			deactivate: function(){
 				if (this.active){
-					this.files.removeClass('show-files show-all-files');
-				
+					for (var a in this.rowcs) {
+						this.rowcs[a].hide();
+					};
 					this.tidominator.removeClass('want-more-info');
 					this.mainc.removeClass('viewing-song');
 					
@@ -1366,7 +1453,8 @@ seesu_ui.prototype = {
 			
 			tv: t_info.children('.track-video'),
 			rowcs:{
-				song_context: song_context
+				song_context: song_context,
+				users_context: users_context
 			},
 			files: filesc,
 			remove: function(){
