@@ -274,14 +274,14 @@ contextRow.prototype = {
 			this.parts[name].active = true;
 			
 			
-			if (arrow_left){
-				//used for positioning 
-				this.arrow.css('left', arrow_left + 'px').show();
-				
-			} 
+			
 			this.c.show();
 		}
-		
+		if (arrow_left){
+			//used for positioning 
+			this.arrow.css('left', arrow_left + 'px').show();
+			
+		} 
 	},
 	hide: function(not_itself){
 		if (!not_itself){
@@ -530,12 +530,12 @@ seesu_ui.prototype = {
 		
 		var li = $('<li class="song-listener"></li>').click(function() {
 			
-			if (!uc.isActive('user-info') || uc.D('user-info', 'current-user') != Math.random()){
+			if (!uc.isActive('user-info') || uc.D('user-info', 'current-user') != lig.user){
 				
 				
 				
-				uc.D('user-info', 'current-user', Math.random());
-				var p = _this.getRtPP(this);
+				uc.D('user-info', 'current-user', lig.user);
+				var p = _this.getRtPP(li[0]);
 				
 				var c = uc.C('user-info');
 
@@ -548,10 +548,9 @@ seesu_ui.prototype = {
 				
 				
 				
-				su.ui.els.wtm.con.append(Math.random())
+				c.append(Math.random());
 				
-				
-				uc.show('user-info', p.left + $(this).outerWidth()/2);
+				uc.show('user-info', (p.left + $(li[0]).outerWidth()/2) -13 );
 			} else{
 				uc.hide();
 			}
@@ -1340,7 +1339,7 @@ seesu_ui.prototype = {
 		var users_list = users.children('.song-listeners-list');
 		
 		
-		var users_row_context =  users.children('.row-context');
+		var users_row_context =  t_context.children('.row-listeners-context');
 		var users_context = new contextRow(users_row_context);
 		var uinfo_part = users_row_context.children('.big-listener-info');
 		users_context.addPart(uinfo_part, 'user-info');

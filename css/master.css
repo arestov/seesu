@@ -90,7 +90,7 @@ a.desc{
 .row-context{
 	position:relative;
 }		
-.row-song-context{
+.row-song-context, .row-listeners-context{
 	margin-bottom:14px;
 	
 	display:none;
@@ -102,8 +102,7 @@ a.desc{
 }
 .big-listener-info{
 	overflow:hidden;
-	background:#4A4A4A;
-	border-radius:6px;
+	padding-top:12px;
 }
 	
 	
@@ -639,7 +638,7 @@ display:none;
 	height: 0;
 	font-size: 0;
 }
-	.rc-s-arrow {
+	.rc-s-arrow,.tl-arrow {
 		display:none;
 		
 		margin-left: -11px;
@@ -647,21 +646,16 @@ display:none;
 		border: 11px solid;
 		border-color: transparent   transparent  #555 transparent ;
 		}
-		.rc-s-arrow-bg {
+		.rc-s-arrow-bg,.tl-arrow-bg {
 			top: -10px;
 			left: -11px;
 			border: 11px solid;
 			border-color: transparent transparent #5A5A5A transparent  ;
 			}
-			
-	.tl-arrow {
-			display:none;
-			
-			margin-left: -11px;
-			top: -22px;
-			border: 11px solid;
-			border-color: transparent   transparent  #4A4A4A transparent ;
-			}
+	.tl-arrow{
+		margin-left:-5px;
+	}	
+
 .triangle {
 	position: absolute;
 	width: 21px;
