@@ -1018,7 +1018,7 @@ seesu_ui.prototype = {
 			if (!has_some_info_extenders){
 				has_some_info_extenders = true;
 			}
-			var similars_p = $("<p class='extending-info artist-similar'></p>"),
+			var similars_p = $("<p class='artist-similar'></p>"),
 				similars_a = $('<em></em>').append($('<a></a>').append(localize('similar-arts') + ":").attr({ 'class': 'similar-artists js-serv'}).data('artist', artist));	
 			$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p);
 			var similars_text = $('<span class="desc-text"></span>').appendTo(similars_p);

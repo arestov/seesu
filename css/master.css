@@ -296,14 +296,24 @@ display:none;
 	.artist-image[src]{
 		display:block;
 	}
+
+
 .artist-bio{
 	line-height:1.5em;
 	overflow:hidden;
 	position:relative;
 	top:-3px;
-	height:4.7em;
+	height:1.55em;
 	
 	}
+	
+	@media (min-height:700px) {
+		.artist-bio{
+			height:4.7em;
+		}
+	}
+	
+	
 	.artist-similar a.artist{
 		margin-right:8px;
 		}
