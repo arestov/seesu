@@ -90,8 +90,20 @@ a.desc{
 .row-context{
 	position:relative;
 }		
-
+.row-song-context, .row-listeners-context{
+	margin-bottom:14px;
 	
+	display:none;
+	border-top: 1px solid #555555;
+	border-bottom: 1px solid #6e6e6e;
+	background: #5a5a5a;
+	margin: 5px -13px 24px;
+	padding: 0 13px 14px;
+}
+.big-listener-info{
+	overflow:hidden;
+	padding-top:12px;
+}
 	
 	
 	
@@ -284,14 +296,24 @@ display:none;
 	.artist-image[src]{
 		display:block;
 	}
+
+
 .artist-bio{
 	line-height:1.5em;
 	overflow:hidden;
 	position:relative;
 	top:-3px;
-	height:4.7em;
+	height:1.55em;
 	
 	}
+	
+	@media (min-height:700px) {
+		.artist-bio{
+			height:4.7em;
+		}
+	}
+	
+	
 	.artist-similar a.artist{
 		margin-right:8px;
 		}
@@ -336,8 +358,7 @@ display:none;
 	}	
 	.track-info-dominator > .vk-login-context, .track-context > .vk-login-context{
 		border-radius:0;
-		margin-bottom:14px;
-		margin-top:0;
+		margin:5px -13px 24px;
 		}	
 	.track-info-dominator .dominator-head{
 			overflow:hidden;
@@ -627,20 +648,23 @@ display:none;
 	height: 0;
 	font-size: 0;
 }
-	.rc-arrow {
+	.rc-s-arrow,.tl-arrow {
 		display:none;
 		
-		margin-left: -13px;
+		margin-left: -11px;
 		top: -22px;
 		border: 11px solid;
 		border-color: transparent   transparent  #555 transparent ;
 		}
-		.rc-arrow-bg {
+		.rc-s-arrow-bg,.tl-arrow-bg {
 			top: -10px;
 			left: -11px;
 			border: 11px solid;
 			border-color: transparent transparent #5A5A5A transparent  ;
 			}
+	.tl-arrow{
+		margin-left:-5px;
+	}	
 
 .triangle {
 	position: absolute;
@@ -720,14 +744,7 @@ html.not-as-application, .not-as-application  body{
 	display:none;
 }
 .track-files{
-	margin-bottom:14px;
 	overflow:hidden;
-	display:none;
-	border-top: 1px solid #555555;
-	border-bottom: 1px solid #6e6e6e;
-	background: #5a5a5a;
-	margin: 5px -13px 24px;
-	padding: 0 13px 14px;
 	}
 .track-files.show-files	{
 	display:block;
@@ -744,9 +761,17 @@ html.not-as-application, .not-as-application  body{
 		width:90px;
 		margin-bottom:14px;
 	}
-
+	.track-context .track-files .extend-switcher{
+		margin-bottom:-19px;
+	}
+	.track-files .files-lists{
+		margin-top:24px;
+	}
 	.track-files .files-lists ul{
 		margin-bottom:24px;
+	}
+	.track-files .files-lists ul:last-of-type{
+		margin-bottom:0;
 	}
 	.track-files .page-link{
 		float:right;
