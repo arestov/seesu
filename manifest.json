@@ -1,6 +1,6 @@
 {
   "name": "Seesu App",
-  "version": "1.9995",
+  "version": "1.9997",
   "description": "Seesu is for searching and listening music. Free last.fm player.",
   "app": {
     "launch": {
