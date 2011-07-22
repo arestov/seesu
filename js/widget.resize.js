@@ -12,7 +12,7 @@ window.window_resizer = function(d){
 				
 				
 				var old_win_height = window.innerHeight;
-				window.resizeTo(650,old_win_height );
+				window.resizeTo(610,old_win_height );
 				var size_shift = old_win_height - window.innerHeight;
 			
 				var save_size = function(){
@@ -74,7 +74,7 @@ window.window_resizer = function(d){
 				
 				var ResizeConfig = {
 				  MinWidth  : 640,
-				  MinHeight : 650
+				  MinHeight : 610
 				};	
 				
 				var width = parseInt(w_storage('width'), 10) || ResizeConfig.MinWidth;
