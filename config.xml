@@ -7,7 +7,7 @@
   <widgetname>Seesu</widgetname>
   <description>You can find &amp; get any music you need. Type in an artist or genre.</description>
   <width>640</width>
-  <height>650</height>
+  <height>610</height>
   <icon width="128" height="128">icons/icon128.png</icon>
   <icon width="64" height="64">icons/icon64.png</icon>
   <icon width="32" height="32">icons/icon32.png</icon>
