@@ -334,9 +334,6 @@ seesu_ui.prototype = {
 				stay_popup: ob.id
 			})
 		});
-		
-		
-		
 		this.popups.push(ob);
 		return ob.id;
 	},
