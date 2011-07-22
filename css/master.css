@@ -827,16 +827,16 @@ html.not-as-application, .not-as-application  body{
 	margin-right:24px;
 }
 .song-listeners-list{
-	height: 154px;
+	height: 144px;
 	overflow:hidden;
-	padding-top:10px;
+	padding-top:5px;
 	position:relative;
 	}
 	.song-listener{
 		position:relative;
 		margin-left:11px;
 		background: #4A4A4A;
-		padding: 5px;
+		padding: 3px;
 		border-radius: 5px;
 		margin-bottom:10px;
 		width:100px;
