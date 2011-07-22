@@ -40,13 +40,23 @@
 	.vk-login-context button{
 		margin:0;
 	}
-	.vk-login-context a.js-serv{
+	.vk-login-context a{
 		color:#83ac1b;
 		border-bottom-color:#dddba9;
+	}
+	.vk-login-context a:hover{
+		color:#a1d404;
+		border-bottom-color:#e3e5a0;
+	}
+	.vk-login-reg-link{
+		float:right;
+		margin-left:12px;
+	}
+	.vk-login-context a.js-serv{
+		
 		}
 		.vk-login-context a.js-serv:hover{
-			color:#a1d404;
-			border-bottom-color:#e3e5a0;
+			
 		}
 	.vk-login-context .vk-captcha-context{
 		display:none;

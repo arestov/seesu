@@ -300,7 +300,10 @@ display:none;
 		display:block;
 	}
 
-
+.artist-info .artist-tags, .artist-info .artist-similar{
+	position:relative;
+	height:1.55em;
+}
 .artist-bio{
 	line-height:1.5em;
 	overflow:hidden;
@@ -342,7 +345,7 @@ display:none;
 		.artist-meta-info .desc-name em:hover{
 			opacity:0.4;
 		}
-.artist-bio .forced-end{
+.artist-info .forced-end{
 	position:absolute;
 	bottom: 0;
 	right: 0;
@@ -415,10 +418,12 @@ display:none;
 	.want-more-info .extending-info{
 		display:block;
 		}	
-	.track-context .want-more-info .artist-bio{
+	.track-context .want-more-info .artist-bio,
+	.track-context .want-more-info .artist-tags,
+	.track-context .want-more-info .artist-similar{
 		height:auto;
 		}
-	.track-context .want-more-info  .artist-bio .forced-end{
+	.track-context .want-more-info .forced-end{
 		display:none;
 		}
 

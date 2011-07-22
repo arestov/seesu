@@ -54,6 +54,10 @@ localizer = {
 		"original": "Last week",
 		"ru": "Последнюю неделю город"
 	},
+	"reg":{
+		"original": "Regisration",
+		"ru": "Регистрация"
+	},
 	"listen-this":{
 		"original": "listen this",
 		"ru": "слушал это"	

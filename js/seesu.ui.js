@@ -996,7 +996,7 @@ seesu_ui.prototype = {
 		
 		if (tags && tags.length) {
 			var tags_p = $("<p class='artist-tags'></p>").append('<span class="desc-name"><em>'+localize('Tags')+':</em></span>');
-			var tags_text = $('<span class="desc-text"></span>').appendTo(tags_p);
+			var tags_text = $('<span class="desc-text"></span>').appendTo(tags_p).append('<span class="forced-end"></span>');
 			for (var i=0, l = tags.length; i < l; i++) {
 				var tag = tags[i],
 					arts_tag_node = $("<a></a>")
@@ -1018,7 +1018,7 @@ seesu_ui.prototype = {
 			var similars_p = $("<p class='artist-similar'></p>"),
 				similars_a = $('<em></em>').append($('<a></a>').append(localize('similar-arts') + ":").attr({ 'class': 'similar-artists js-serv'}).data('artist', artist));	
 			$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p);
-			var similars_text = $('<span class="desc-text"></span>').appendTo(similars_p);
+			var similars_text = $('<span class="desc-text"></span>').appendTo(similars_p).append('<span class="forced-end"></span>');
 			for (var i=0, l = similars.length; i < l; i++) {
 				var similar = similars[i],
 					arts_similar_node = $("<a class='js-serv'></a>")
