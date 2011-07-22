@@ -4,6 +4,8 @@ $.ajaxSetup({
   timeout:40000
 });
 $.support.cors = true;
+var local_server = true && 'http://127.0.0.1:9013/';
+
 
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 window.lfm = function(){
@@ -36,7 +38,7 @@ window.seesu = window.su =  {
 	  	supportsLikes: function(){
 	  		return bN(this.interact.indexOf('user.likePerson')) && bN(this.interact.indexOf('user.getPersonsLikes'));
   		},
-		url: 'http://seesu.me/',
+		url: local_server || 'http://seesu.me/',
 		auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
 	  },
 	  api: function(method, params, callback, error){
