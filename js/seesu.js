@@ -4,7 +4,7 @@ $.ajaxSetup({
   timeout:40000
 });
 $.support.cors = true;
-var local_server = true && 'http://127.0.0.1:9013/';
+var local_server = false && 'http://127.0.0.1:9013/';
 
 
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
