@@ -47,7 +47,7 @@ window.seesu = window.su =  {
 	  	
 	  		params.method = method;
 	  	
-	  		if (bN(['user.update', 'track.scrobble'].indexOf(method))){
+	  		if (!bN(['track.getListeners','user.getAuth'].indexOf(method))){
 	  			if (!this.distant_glow.auth){
 	  				return false
 	  			} else{

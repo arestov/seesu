@@ -443,13 +443,13 @@ function bN(num){
 	return !!(1* (~num));
 };
 	
-var clone_obj = function(obj, black_list, white_list){
+var cloneObj= function(acceptor, donor, black_list, white_list){
 	//not deep! 
 	var _no = {};
-	for(var a in obj){
+	for(var a in donor){
 		if (!white_list || !!~white_list.indexOf(a)){
-			if ((typeof obj[a] != 'object') && (!black_list || !~black_list.indexOf(a))){
-				_no[a] = obj[a];
+			if (!black_list || !~black_list.indexOf(a)){
+				_no[a] = donor[a];
 			}
 		}
 		
