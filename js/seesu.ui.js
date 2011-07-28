@@ -522,6 +522,76 @@ seesu_ui.prototype = {
 			_this.verticalAlign(img, 134, true);	
 		}, imageplace); 
 	},
+	createLikeButton: function(lig){
+		var nb = this.createNiceButton();
+		nb.b.text( localize('want-meet', 'Want to meet') + '!');
+		nb.enable();
+		var pliking = false;
+		nb.b.click(function(){
+			if (!pliking){
+				var p =
+				su.api('relations.setLike', {to: lig.user}, function(r){
+					
+					if (r.done){
+						nb.c.after("You'd liked someone!")
+						nb.c.remove();
+					}
+					pliking = false;
+				})
+				pliking = true
+			}
+			
+			
+			
+		});
+		return nb;
+	},
+	createAcceptInviteButton: function(lig){
+		var nb = this.createNiceButton();
+		nb.b.text( localize('accept-inv', 'Accept invite'));
+		nb.enable();
+		var pliking = false;
+		nb.b.click(function(){
+			if (!pliking){
+				var p =
+				su.api('relations.acceptInvite', {from: lig.user}, function(r){
+					
+					if (r.done){
+						nb.c.after("You'd liked someone!")
+						nb.c.remove();
+					}
+					pliking = false;
+				})
+				pliking = true
+			}
+			
+			
+			
+		});
+		return nb;
+	},
+	showBigListener: function(c, lig){
+		
+		var _this = this;
+		
+		c.empty();
+		
+		if (lig.info && lig.info.photo_big){
+			var image = _this.preloadImage(lig.info.photo_big, function(img){
+				_this.verticalAlign(img, 252, true);	
+			}, $('<div class="big-user-avatar"></div>').appendTo(c));
+		}
+		
+		if (su.distant_glow.loggedIn()){
+			var lb = this.createLikeButton(lig);
+			lb.c.appendTo(c);
+		} else{
+			c.append(this.samples.vk_login.clone(localize('to-meet-man-vk')));
+			
+		}
+		
+		
+	},
 	createSongListener: function(lig, uc){
 		var _this = this;
 		
@@ -536,59 +606,16 @@ seesu_ui.prototype = {
 				
 				var c = uc.C('user-info');
 
-				c.empty();
-				if (lig.info && lig.info.photo_big){
-					var image = _this.preloadImage(lig.info.photo_big, function(img){
-						_this.verticalAlign(img, 252, true);	
-					}, $('<div class="big-user-avatar"></div>').appendTo(c));
-				}
-				
-				
-				
-				c.append(Math.random());
+				_this.showBigListener(c, lig);
+				su.distant_glow.setAuthCallback('biglistener', function(){
+					_this.showBigListener(c, lig);
+				});
 				
 				uc.show('user-info', (p.left + $(li[0]).outerWidth()/2) -13 );
 			} else{
 				uc.hide();
 			}
-			
-			/*
-			su.ui.hidePopups(su.ui.els.wtm.id);
-			
-			var p = _this.getRtPP(this);
-			
-			su.ui.els.wtm.wp.css({
-				top: p.top + 'px',
-				left: p.left + 'px',
-				display: 'block'
-			});
-			
-			if (p.left > p.cwidth/2){
-				su.ui.els.wtm.wp.addClass('close-to-right');
-			} else{
-				su.ui.els.wtm.wp.removeClass('close-to-right');
-			}
-			
-			su.ui.els.wtm.con.empty();
-			if (lig.info && lig.info.photo_big){
-				var image = _this.preloadImage(lig.info.photo_big, function(img){
-					_this.verticalAlign(img, 252, true);	
-				}, $('<div class="big-user-avatar"></div>').appendTo(su.ui.els.wtm.con));
-			}
-			
-			
-			
-			su.ui.els.wtm.con.append(Math.random())
 
-			
-			
-			
-			su.ui.els.wtm.wp.show();
-			su.ui.els.wtm.visible = true;
-
-			return false;
-			*/
-			//e.stop
 		});
 		this.createUserAvatar(lig.info, li);
 		
@@ -738,9 +765,9 @@ seesu_ui.prototype = {
 				if (!songs.length){
 					vklc.after(_sui.samples.vk_login.clone());
 				} else if(!mo.isHaveAnyResultsFrom('vk')){
-					vklc.after(_sui.samples.vk_login.clone('enhancement'));
+					vklc.after(_sui.samples.vk_login.clone( localize('to-find-better') + " " +  localize('music-files-from-vk')));
 				} else {
-					vklc.after(_sui.samples.vk_login.clone('stabilization'));
+					vklc.after(_sui.samples.vk_login.clone(localize('stabilization-of-vk')));
 				}
 				
 				

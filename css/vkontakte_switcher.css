@@ -1,18 +1,7 @@
 .vk-needs-login .vk-login-context{
 	display:block;
 }
-.vk-login-context .login-request{
-	display:none;
-}
-.vk-login-context.usual-login .usual-login-request{
-	display:inline;
-}
-.vk-login-context.enhancement-login .enhancement-login-request{
-	display:inline;
-}
-.vk-login-context.stabilization-login .stabilization-login-request{
-	display:inline;
-}
+
 .vk-login-context{
 	clear:left;
 	-moz-border-radius:6px;
@@ -22,6 +11,10 @@
 	margin: 10px 0 15px;
 	background:#faebd7 no-repeat 100% 12px;
 	color:#000;
+	overflow:hidden;
+	}
+	.big-listener-info .vk-login-context{
+		clear: none;
 	}
 	.vk-login-context .auth-container{
 		display:none;
@@ -51,7 +44,11 @@
 	.vk-login-reg-link{
 		float:right;
 		margin-left:12px;
-	}
+		text-align:right;
+		}
+		.vk-login-reg-link div{
+			margin-bottom:5px;
+			}
 	.vk-login-context a.js-serv{
 		
 		}

@@ -42,6 +42,10 @@ localizer = {
 		"original": "refresh",
 		"ru": "обновить"
 	},
+	"want-meet":{
+		"original": "Want to meet",
+		"ru": "Хочу познакомиться"	
+	},
 	"Pop-tags":{
 		"original": "Popular tags",
 		"ru": "Популярные теги"
@@ -55,8 +59,8 @@ localizer = {
 		"ru": "Последнюю неделю город"
 	},
 	"reg":{
-		"original": "Regisration",
-		"ru": "Регистрация"
+		"original": "regisration",
+		"ru": "регистрация"
 	},
 	"listen-this":{
 		"original": "listen this",
@@ -206,6 +210,10 @@ localizer = {
 	"":{
 		"original": "",
 		"ru": ""
+	},
+	"to-meet-man-vk":{
+		"original": "If you want to meet this man you need to sign in to vk.com (vkontakte.ru)",
+		"ru": "Если вы хотите познакомиться с этим человеком, то вы должны войти во vkontakte.ru (vk.com)"
 	},
 	"to-get-mp3-sign-to-vk": {
 		"original": "To get mp3 files you need to sign in to vk.com (vkontakte.ru)",

@@ -83,12 +83,11 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 							
 							_vkapi.use('storage.get',{key:su_sess.secret_container}, function(r){
 								if (r && r.response){
-									su.distant_glow.auth = {
+									su.distant_glow.setAuth({
 										userid: su_sess.userid,
 										secret: r.response,
 										sid: su_sess.sid
-									};
-									w_storage('dg_auth', su.distant_glow.auth, true);
+									});
 									su.distant_glow.setInfo('vk', su.vk.user_info);
 									su.api('user.update', su.vk.user_info);
 								}

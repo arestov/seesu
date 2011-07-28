@@ -217,16 +217,14 @@ window.connect_dom_to_som = function(d, ui){
 				},
 				vk_login_error: $(),
 				captcha_img: $(),
-				clone: function(type){
+				clone: function(request_description){
 					var _this = this;
 					var nvk = this.o.clone();
 					if (this.load_indicator){
 						nvk.addClass("waiting-vk-login");
 					}
-					if (!type){
-						nvk.addClass('usual-login')
-					} else{
-						nvk.addClass(type + '-login')
+					if (request_description){
+						nvk.find('.login-request-desc').text(request_description);
 					}
 					var auth_c =  nvk.find('.auth-container');
 					nvk.find('.sign-in-to-vk').click(function(e){
@@ -700,6 +698,77 @@ window.connect_dom_to_som = function(d, ui){
 		};
 		showMetroRandom();
 		
+		
+		var createPeopleListEl = function(img_src, button, name, link){
+			var li = $('<li class="people-list-item"></li>');
+			
+			var img_c = $('<div class="people-image"></div>').appendTo(li);
+			if (img_src){
+				$('<img/>').attr('src', img_src).appendTo(img_c);
+			}
+			
+			
+			var buttn_place = $('<div class="button-place-people-el"></div>').appendTo(li);
+			if (button){
+				(button.c || button).appendTo(li);
+			}
+			
+			
+			var link_place = $('<div class="p-link-place"></div>').appendTo(li);;
+			if (name && link){
+				$('<a></a>').attr('src', link).text(name).appendTo(link_place);
+			}
+			
+			
+			return li;
+			
+			
+		}
+		var rl_place = su.ui.els.start_screen.find('.relations-likes-wrap');
+		
+		var checkRelationsLikes = function(){
+			su.api('relations.getLikes', function(r){
+				rl_place.empty();
+				
+				if (r.done.length){
+					$('<h3></h3>').text('People you want to meet').appendTo(rl_place);
+					var ul = $("<ul></ul>").appendTo(rl_place);
+					
+					for (var i=0; i < r.done.length; i++) {
+						var cursor = r.done[i];
+						/*
+						var nb = this.createNiceButton();
+							nb.b.text( localize('accept-inv', 'Accept invite'));
+							nb.enable();*/
+						ul.append(createPeopleListEl(cursor.info.photo));
+						
+					};
+				}
+				
+				console.log(r);
+				
+			})
+		};
+		var checkRelationsInvites = function(){
+			su.api('relations.getInvites', function(r){
+				console.log(r);
+				
+			})
+		};
+		
+		if (su.distant_glow.cri){
+			clearInterval(su.distant_glow.cri);
+		}
+		var checkRelations = function(){
+			checkRelationsLikes();
+			checkRelationsInvites();
+		}
+		
+		su.distant_glow.cri = setInterval(checkRelations, 1000 * 60 * 8);
+		su.distant_glow.setAuthCallback('relations-check', checkRelations);
+		su.distant_glow.setInitCallback(function(){
+			checkRelations();
+		});
 		
 		
 		if (window.lastfm_toptags && lastfm_toptags.length){
