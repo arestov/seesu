@@ -211,15 +211,26 @@ window.connect_dom_to_som = function(d, ui){
 				remove: function(){
 					this.oos.remove();
 					this.oos = $();
+					su.vk.wait_for_finish = false;
 				},
 				resetAuth: function(){
 					this.oos.find('.auth-container').empty();
+				},
+				finishing: function(){
+					su.vk.wait_for_finish = true;	
+					
+					this.oos.addClass('vk-finishing');
 				},
 				vk_login_error: $(),
 				captcha_img: $(),
 				clone: function(request_description){
 					var _this = this;
 					var nvk = this.o.clone();
+					if (su.vk.wait_for_finish){
+						nvk.addClass('vk-finishing');
+					}
+					
+					
 					if (this.load_indicator){
 						nvk.addClass("waiting-vk-login");
 					}
@@ -241,7 +252,7 @@ window.connect_dom_to_som = function(d, ui){
 							
 							vk_auth_box.requestAuth({
 								ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
-								c: nvk
+								c: _this
 							})
 						
 						}

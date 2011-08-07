@@ -611,18 +611,18 @@ var try_to_use_iframe_sm2p = function(remove){
 	}
 	window.i_f_sm2 = su.ui.iframe_sm2_player = $('<iframe id="i_f_sm2" src="http://seesu.me/i.html" ></iframe>');
 	if (window.i_f_sm2) {
+		var sm2_init_p = {
+			oext: su.env.opera_extension
+		};
 		
-		
-		init_sm2_p = function(){
-			
-			
-						
+		var init_sm2_p = function(){
+					
 			window.soundManager = new SoundManager('http://seesu.me/swf/', false, {
 				flashVersion : 9,
 				useFlashBlock : true,
 				debugMode : false,
-				wmode : 'transparent',
-				useHighPerformance : true
+				wmode : sm2_init_p.oext ? 'opaque' : 'transparent',
+				useHighPerformance : !sm2_init_p.oext
 			});
 			if (soundManager){			
 				sm2_p_in_iframe = new sm2_p(_volume, soundManager);
@@ -643,7 +643,8 @@ var try_to_use_iframe_sm2p = function(remove){
 		};
 		var text_of_function = function(func){
 			return func.toString().replace(/^.*\n/, "").replace(/\n.*$/, "")
-		}
+		};
+		
 		var last_iframe_func = text_of_function(init_sm2_p).replace('_volume', su.player.player_volume );
 		
 
@@ -693,7 +694,7 @@ var try_to_use_iframe_sm2p = function(remove){
 				for (var m=0; m < scripts_data.length; m++) {
 					scripts_data.complete_data += scripts_data[m].data + '\n\n'
 				};
-				
+				scripts_data.complete_data += 'var sm2_init_p = ' + JSON.stringify(sm2_init_p) + ';';
 				scripts_data.complete_data += last_iframe_func;
 				scripts_data.complete_data += '/* ]]>*/';
 
@@ -754,14 +755,14 @@ var try_to_use_iframe_sm2p = function(remove){
 		
 		
 		$(function(){
-			$('#slider-materail').append(i_f_sm2);
+			$(document.body).append(i_f_sm2);
 		});
 		i_f_sm2.bind('load',function(){
 			console.log('source knows that iframe loaded');
 			this.contentWindow.postMessage("test_iframe_loading_state", '*');
 			
 		});
-		
+
 	}
 	
 }
@@ -774,13 +775,13 @@ if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 		dstates.add_state('body','flash-internet');
 	})
 	
-} else if (!su.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
+} else if (su.env.opera_extension || !su.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
 	soundManager = new SoundManager('http://seesu.me/swf/', false, {
 		flashVersion : 9,
 		useFlashBlock : true,
 		debugMode : false,
-		wmode : 'transparent',
-		useHighPerformance : true
+		wmode : su.env.opera_extension ? 'opaque' : 'transparent',
+		useHighPerformance : !su.env.opera_extension
 	});
 	if (soundManager){	
 		soundManager.onready(function() {
@@ -799,6 +800,7 @@ if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 			}
 		});
 	}
+	
 } else {
 	try_to_use_iframe_sm2p();
 }

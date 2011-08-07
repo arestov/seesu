@@ -13,7 +13,12 @@ html.as-application:not(.chrome-extension){
 	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
 
-
+html.opera-extension{
+	height:100%;
+}
+	html.opera-extension body{
+		height:100%;
+	}
  #slider{
 	position:static ;
 	padding:0 0 0;
