@@ -95,6 +95,33 @@ var distant_glow = {
 	setAuthCallback: function(key, f){
 		this.authCallbacks[key] = f;
 	},
+	getAuth: function(vk_user_id, callback){
+		su.api('user.getAuth', {
+			type:'vk',
+			ver: 0.3,
+			vk_user: vk_user_id
+		}, function(su_sess){
+			if (su_sess.secret_container && su_sess.sid){
+				
+				
+				su.vk_api.use('storage.get',{key:su_sess.secret_container}, function(r){
+					if (r && r.response){
+						su.distant_glow.setAuth({
+							userid: su_sess.userid,
+							secret: r.response,
+							sid: su_sess.sid
+						});
+						su.distant_glow.setInfo('vk', su.vk.user_info);
+						su.api('user.update', su.vk.user_info);
+						if (callback){callback();}
+					}
+				});
+				
+				
+			}
+			
+		});
+	},
 	auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
   };
 
@@ -107,7 +134,7 @@ window.seesu = window.su =  {
 	  distant_glow: distant_glow,
 	  api: function(method, p, c, error){
 	  	var params = (typeof p == 'object' && p) || {};
-	  	var callback = c || p;
+	  	var callback = c || (typeof p == 'function' && p);
 		var _this = this;
 		if (_this.distant_glow.interact && bN(_this.distant_glow.interact.indexOf(method))){
 		
@@ -127,7 +154,24 @@ window.seesu = window.su =  {
 				type: "GET",
 				url: _this.distant_glow.url + 'api/',
 				data: params,
-				success: callback,
+				success: function(r){
+					if (r){
+						if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){
+							
+							_this.distant_glow.auth = false;
+							w_storage('dg_auth', '', true);
+							if (seesu.vk.id ){
+								_this.distant_glow.getAuth(seesu.vk.id);
+							}
+							
+							
+							
+						} else{
+							if (callback){callback(r);}
+						}
+					}
+					
+				},
 				error: error
 			});
 		}

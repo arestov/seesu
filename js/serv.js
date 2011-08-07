@@ -365,43 +365,46 @@ var sortByRules = function(a, b, rules){
 
 var makeIndexByField = function(array, field){
 	var r = {};
-	for (var i=0; i < array.length; i++) {
-		var cur = array[i];
-		var fv = getTargetField(cur, field);
-		if (fv){
-			if (fv instanceof Array){
-				for (var k=0; k < fv.length; k++) {
-					var simple_name = (fv[k] + '').toLowerCase();
+	if (array && array.length){
+		for (var i=0; i < array.length; i++) {
+			var cur = array[i];
+			var fv = getTargetField(cur, field);
+			if (fv){
+				if (fv instanceof Array){
+					for (var k=0; k < fv.length; k++) {
+						var simple_name = (fv[k] + '').toLowerCase();
+						if (!r[simple_name]){
+							r[simple_name] = []
+							r[simple_name].real_name = fv[k];
+							
+						}
+						if (!bN(r[simple_name].indexOf(cur))){
+							r[simple_name].push(cur);
+						}
+					};
+				} else{
+					var simple_name = (fv + '').toLowerCase();
 					if (!r[simple_name]){
-						r[simple_name] = []
-						r[simple_name].real_name = fv[k];
-						
+						r[simple_name] = [];
+						r[simple_name].real_name = fv;
 					}
 					if (!bN(r[simple_name].indexOf(cur))){
-						r[simple_name].push(cur);
+						r[simple_name].push(cur)
 					}
-				};
-			} else{
-				var simple_name = (fv + '').toLowerCase();
-				if (!r[simple_name]){
-					r[simple_name] = [];
-					r[simple_name].real_name = fv;
 				}
-				if (!bN(r[simple_name].indexOf(cur))){
-					r[simple_name].push(cur)
+			} else {
+				if (!r['#other']){
+					r['#other'] = [];
+				}
+				if (!bN(r['#other'].indexOf(cur))){
+					r['#other'].push(cur)
 				}
 			}
-		} else {
-			if (!r['#other']){
-				r['#other'] = [];
-			}
-			if (!bN(r['#other'].indexOf(cur))){
-				r['#other'].push(cur)
-			}
-		}
-
 	
-	};
+		
+		};
+	}
+	
 	return r;
 };
 
