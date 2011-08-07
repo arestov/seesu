@@ -207,8 +207,8 @@ var vk_auth_box = {
 		var init_auth_data = this.getInitAuthData(p);
 		if (init_auth_data.bridgekey || !p.c){
 			this.setAuthBridgeKey(init_auth_data.bridgekey);
-		}  else{
-			p.c.addClass('vk-finishing');
+		}  else if (p.c){
+			p.c.finishing();
 		}
 		if (!p.not_open){
 			open_url(init_auth_data.link);

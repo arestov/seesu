@@ -331,12 +331,7 @@ var check_seesu_updates = function(){
 		  global: false,
 		  type: "POST",
 		  dataType: "json",
-		  data: {
-			'hash': hex_md5(widget.identifier),
-			'version': seesu.version,
-			'demension_x': w_storage('width'),
-			'demension_y': w_storage('height')
-		  },
+		  data: {},
 		  error: function(){
 		  },
 		  success: updating_notify

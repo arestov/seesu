@@ -150,7 +150,12 @@ window.app_env = (function(){
 	
 	if (typeof widget == 'object' && !widget.fake_widget){
 		if ($.browser.opera){
-			env.app_type = 'opera_widget';
+			if (opera.extension){
+				env.app_type = 'opera_extension';
+			} else{
+				env.app_type = 'opera_widget';
+				env.deep_sanbdox = true;
+			}
 			
 		} else {
 			env.app_type = 'apple_db_widget';
