@@ -787,7 +787,16 @@ window.connect_dom_to_som = function(d, ui){
 					var filtered = $filter(r.done, 'item.accepted', function(v){
 						return !!v;
 					});
-					$('<h3></h3>').text(localize('rels-you-people')).appendTo(rl_place);
+					$('<h3></h3>')
+						.text(localize('rels-you-people'))
+						.appendTo(rl_place)
+						.append($('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
+							$(this).remove();
+							setTimeout(function(){
+								checkRelationsLikes();
+							},1000)
+							
+						}));
 					if (filtered.length){
 						createPeopleList(filtered, {links: true, wide: true}).appendTo(rl_place);
 					}
@@ -809,7 +818,19 @@ window.connect_dom_to_som = function(d, ui){
 					var filtered = $filter(r.done, 'item.accepted', function(v){
 						return !!v;
 					});
-					$('<h3></h3>').text(localize('rels-people-you')).appendTo(ri_place);
+					$('<h3></h3>')
+						.text(localize('rels-people-you'))
+						.appendTo(ri_place)
+						.append($('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
+							$(this).remove();
+							setTimeout(function(){
+								checkRelationsInvites();
+							},1000)
+							
+						}));
+						
+						
+						
 					if (filtered.length){
 						createPeopleList(filtered, {links: true, wide: true}).appendTo(ri_place);
 					}
