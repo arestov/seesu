@@ -407,6 +407,8 @@ var makeIndexByField = function(array, field){
 
 var $filter = function(array, field, value_or_testfunc){
 	var r = [];
+	r.not = [];
+	
 	for (var i=0; i < array.length; i++) {
 		if (array[i]){
 			if (value_or_testfunc){
@@ -414,10 +416,14 @@ var $filter = function(array, field, value_or_testfunc){
 					var field_value = getTargetField(array[i], field);
 					if (value_or_testfunc(field_value)){
 						r.push(array[i]);
+					} else{
+						r.not.push(array[i]);
 					}
 				} else{
 					if (getTargetField(array[i], field) === value_or_testfunc){
 						r.push(array[i]); 
+					} else{
+						r.not.push(array[i]);
 					}
 				}
 				
@@ -425,6 +431,8 @@ var $filter = function(array, field, value_or_testfunc){
 				var field_value = getTargetField(array[i], field);
 				if (field_value){
 					r.push(field_value);
+				} else{
+					r.not.push(array[i]);
 				}
 			}
 			
@@ -443,13 +451,13 @@ function bN(num){
 	return !!(1* (~num));
 };
 	
-var clone_obj = function(obj, black_list, white_list){
+var cloneObj= function(acceptor, donor, black_list, white_list){
 	//not deep! 
 	var _no = {};
-	for(var a in obj){
+	for(var a in donor){
 		if (!white_list || !!~white_list.indexOf(a)){
-			if ((typeof obj[a] != 'object') && (!black_list || !~black_list.indexOf(a))){
-				_no[a] = obj[a];
+			if (!black_list || !~black_list.indexOf(a)){
+				_no[a] = donor[a];
 			}
 		}
 		

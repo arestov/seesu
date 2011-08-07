@@ -522,6 +522,137 @@ seesu_ui.prototype = {
 			_this.verticalAlign(img, 134, true);	
 		}, imageplace); 
 	},
+	createLikeButton: function(lig){
+		var nb = this.createNiceButton();
+		nb.b.text( localize('want-meet', 'Want to meet') + '!');
+		nb.enable();
+		var pliking = false;
+		nb.b.click(function(){
+			if (!pliking){
+				var p =
+				su.api('relations.setLike', {to: lig.user}, function(r){
+					
+					if (r.done){
+						
+						var gc = $("<div></div>");
+						nb.c.after(gc);
+
+						gc.append($('<span class="desc people-list-desc"></span>').text(localize('if-user-accept-i') + " " + localize('will-get-link')));
+						nb.c.remove();
+					}
+					pliking = false;
+				})
+				pliking = true
+			}
+			
+			
+			
+		});
+		return nb;
+	},
+	createAcceptInviteButton: function(lig){
+		var nb = this.createNiceButton();
+		nb.b.text( localize('accept-inv', 'Accept invite'));
+		nb.enable();
+		var pliking = false;
+		nb.b.click(function(){
+			if (!pliking){
+				var p =
+				su.api('relations.acceptInvite', {from: lig.user}, function(r){
+					
+					if (r.done){
+						
+						nb.c.after(
+							$('<span class="people-list-desc desc"></span>')
+								.text(su.ui.getRemainTimeText(r.done.est, true))
+						);
+						nb.c.remove();
+					}
+					pliking = false;
+				})
+				pliking = true
+			}
+			
+			
+			
+		});
+		return nb;
+	},
+	getRemainTimeText: function(time_string, full){
+		var d = new Date(time_string);
+		var remain_desc = '';
+		if (full){
+			remain_desc += localize('wget-link') + ' ';
+		}
+		
+		
+		remain_desc += d.getDate() + 
+		" " + localize('m'+(d.getMonth()+1)) + 
+		" " + localize('attime') + ' ' + d.getHours() + ":" + d.getMinutes();
+		
+		return remain_desc;
+	},
+	getAcceptedDesc: function(rel){
+		var link = rel.info.domain && ('http://vk.com/' + rel.info.domain);
+		if (link && rel.info.full_name){
+			return $('<a class="external"></a>').attr('href', link).text(rel.info.full_name);
+		}  else if (rel.item.est){
+			return $("<span class='desc'></span>").text(this.getRemainTimeText(rel.item.est, true));
+		}
+	},
+	showBigListener: function(c, lig){
+		
+		var _this = this;
+		
+		c.empty();
+		
+		if (lig.info && lig.info.photo_big){
+			var image = _this.preloadImage(lig.info.photo_big, function(img){
+				_this.verticalAlign(img, 252, true);	
+			}, $('<div class="big-user-avatar"></div>').appendTo(c));
+		}
+		
+		if (su.distant_glow.loggedIn()){
+			var liked = su.distant_glow.susd.isUserLiked(lig.user);
+			var user_invites_me = su.distant_glow.susd.didUserInviteMe(lig.user);
+			
+			if (liked){
+				
+				
+				if (liked.item.accepted){
+					c.append(this.getAcceptedDesc(liked));
+				} else{
+					
+					c.append(localize('you-want-user'));
+					
+					c.append('<br/>');
+					
+					c.append($('<span class="desc people-list-desc"></span>').text(localize('if-user-accept-i') + " " + localize('will-get-link')));
+				}
+				
+				
+			} else if (user_invites_me){
+				if ( user_invites_me.item.accepted){
+					c.append(this.getAcceptedDesc(user_invites_me));
+				} else{
+					c.append(localize('user-want-you'));
+					c.append('<br/>');
+					var lb = this.createAcceptInviteButton(lig);
+					lb.c.appendTo(c);
+				}
+				
+			} else {
+				var lb = this.createLikeButton(lig);
+				lb.c.appendTo(c);
+			}
+			
+		} else{
+			c.append(this.samples.vk_login.clone(localize('to-meet-man-vk')));
+			
+		}
+		
+		
+	},
 	createSongListener: function(lig, uc){
 		var _this = this;
 		
@@ -536,59 +667,16 @@ seesu_ui.prototype = {
 				
 				var c = uc.C('user-info');
 
-				c.empty();
-				if (lig.info && lig.info.photo_big){
-					var image = _this.preloadImage(lig.info.photo_big, function(img){
-						_this.verticalAlign(img, 252, true);	
-					}, $('<div class="big-user-avatar"></div>').appendTo(c));
-				}
-				
-				
-				
-				c.append(Math.random());
+				_this.showBigListener(c, lig);
+				su.distant_glow.setAuthCallback('biglistener', function(){
+					_this.showBigListener(c, lig);
+				});
 				
 				uc.show('user-info', (p.left + $(li[0]).outerWidth()/2) -13 );
 			} else{
 				uc.hide();
 			}
-			
-			/*
-			su.ui.hidePopups(su.ui.els.wtm.id);
-			
-			var p = _this.getRtPP(this);
-			
-			su.ui.els.wtm.wp.css({
-				top: p.top + 'px',
-				left: p.left + 'px',
-				display: 'block'
-			});
-			
-			if (p.left > p.cwidth/2){
-				su.ui.els.wtm.wp.addClass('close-to-right');
-			} else{
-				su.ui.els.wtm.wp.removeClass('close-to-right');
-			}
-			
-			su.ui.els.wtm.con.empty();
-			if (lig.info && lig.info.photo_big){
-				var image = _this.preloadImage(lig.info.photo_big, function(img){
-					_this.verticalAlign(img, 252, true);	
-				}, $('<div class="big-user-avatar"></div>').appendTo(su.ui.els.wtm.con));
-			}
-			
-			
-			
-			su.ui.els.wtm.con.append(Math.random())
 
-			
-			
-			
-			su.ui.els.wtm.wp.show();
-			su.ui.els.wtm.visible = true;
-
-			return false;
-			*/
-			//e.stop
 		});
 		this.createUserAvatar(lig.info, li);
 		
@@ -738,9 +826,9 @@ seesu_ui.prototype = {
 				if (!songs.length){
 					vklc.after(_sui.samples.vk_login.clone());
 				} else if(!mo.isHaveAnyResultsFrom('vk')){
-					vklc.after(_sui.samples.vk_login.clone('enhancement'));
+					vklc.after(_sui.samples.vk_login.clone( localize('to-find-better') + " " +  localize('music-files-from-vk')));
 				} else {
-					vklc.after(_sui.samples.vk_login.clone('stabilization'));
+					vklc.after(_sui.samples.vk_login.clone(localize('stabilization-of-vk')));
 				}
 				
 				

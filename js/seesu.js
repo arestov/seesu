@@ -16,47 +16,113 @@ window.lfm = function(){
 		q_el.q.init();
 	}
 };
+var distant_glow = {
+	susd: {
+		relations:{
+			likes: {},
+			invites: {}
+		},
+		addLike: function(user){
+			if (!this.relations.likes[user]){
+				this.relations.likes[user] = [{}];
+			}	
+		},
+		addInvite: function(user){
+			if (!this.relations.likes[user]){
+				this.relations.likes[user] = [{}];
+			}	
+		},
+		updateRelationsInvites: function(invites){
+			this.relations.invites = makeIndexByField(invites, 'user');
+		},
+		updateRelationsLikes: function(likes){
+			this.relations.likes = makeIndexByField(likes, 'user');
+		},
+		didUserInviteMe: function(user){
+			var rel = this.relations.invites[user];
+			return rel && rel[0];
+		},
+		isUserLiked: function(user){
+			var rel = this.relations.likes[user];
+			return rel && rel[0];
+		},
+		user_info: {}
+	},
+	getInfo: function(type){
+		return this.susd.user_info[type];
+	},
+	setInfo: function(type, data){
+		this.susd.user_info[type] = data;
+	},
+	init: function(interact_data){
+		
+		var g  = this.interact;
+		this.interact = interact_data;
+		
+		if (!g){
+			if (this.initCallback){
+				this.initCallback();
+			}
+			
+		}
+	},
+	setInitCallback: function(f){
+		this.initCallback = f;
+	},
+	
+	getId: function(){
+		return this.auth && this.auth.userid;
+	},
+	loggedIn: function(){
+		return !!(this.auth.secret && this.auth.sid && this.auth.userid)
+	},
+	interact: null,
+	url: local_server || 'http://seesu.me/',
+	authCallbacks:{},
+	setAuth: function(auth_data){
+		this.auth = auth_data;
+		
+		w_storage('dg_auth', auth_data, true);
+		
+		
+		for (var a in this.authCallbacks) {
+			if (this.authCallbacks[a]){
+				this.authCallbacks[a]();
+			}
+		};
+		
+	},
+	setAuthCallback: function(key, f){
+		this.authCallbacks[key] = f;
+	},
+	auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
+  };
 
+
+
+  
 window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
 	 
-	  distant_glow: {
-	  	info: {},
-	  	getInfo: function(type){
-	  		return this.info[type];
-		},
-		setInfo: function(type, data){
-			this.info[type] = data;
-		},
-		getId: function(){
-			return this.auth && this.auth.userid;
-		},
-		loggedIn: function(){
-			return !!(this.auth.secret && this.auth.sid && this.auth.userid)
-		},
-	  	interact: null,
-	  	supportsLikes: function(){
-	  		return bN(this.interact.indexOf('user.likePerson')) && bN(this.interact.indexOf('user.getPersonsLikes'));
-  		},
-		url: local_server || 'http://seesu.me/',
-		auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
-	  },
-	  api: function(method, params, callback, error){
-	  	var _this = this;
-	  	if (_this.distant_glow.interact && bN(_this.distant_glow.interact.indexOf(method))){
-	  	
-	  		params.method = method;
-	  	
-	  		if (bN(['user.update', 'track.scrobble'].indexOf(method))){
-	  			if (!this.distant_glow.auth){
-	  				return false
-	  			} else{
-	  				params.sid = this.distant_glow.auth.sid;
-	  				params.sig = hex_md5(stringifyParams(params, ['sid']) + this.distant_glow.auth.secret) ;
-	  			}
-	  			
-	  		}
-	  		
+	  distant_glow: distant_glow,
+	  api: function(method, p, c, error){
+	  	var params = (typeof p == 'object' && p) || {};
+	  	var callback = c || p;
+		var _this = this;
+		if (_this.distant_glow.interact && bN(_this.distant_glow.interact.indexOf(method))){
+		
+			params.method = method;
+		
+			if (!bN(['track.getListeners','user.getAuth'].indexOf(method))){
+				if (!this.distant_glow.auth){
+					return false
+				} else{
+					params.sid = this.distant_glow.auth.sid;
+					params.sig = hex_md5(stringifyParams(params, ['sid']) + this.distant_glow.auth.secret) ;
+				}
+				
+			}
+			
 			$.ajax({
 				type: "GET",
 				url: _this.distant_glow.url + 'api/',
@@ -64,7 +130,7 @@ window.seesu = window.su =  {
 				success: callback,
 				error: error
 			});
-	  	}
+		}
 	  },
 	  fs: {},//fast search
 	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
@@ -136,7 +202,7 @@ window.seesu = window.su =  {
 	  xhrs: {},
 	  soundcloud_queue: new funcs_queue(1000, 5000 , 7),
 	  delayed_search: {
-	  	tracks_waiting_for_search:0,
+		tracks_waiting_for_search:0,
 		use:{
 			queue:  new funcs_queue(1000, 8000 , 7)
 		},
@@ -188,7 +254,7 @@ var updating_notify = function(r){
 	if (!r){return;}
 	
 	if(r.distant_glow_interact){
-		su.distant_glow.interact = r.distant_glow_interact;
+		su.distant_glow.init(r.distant_glow_interact);
 		if (su.vk.user_info){
 			su.api('user.update', su.vk.user_info);
 		}	
