@@ -834,6 +834,8 @@ html.not-as-application, .not-as-application  body{
 	width: 196px;
 	float:left;
 	margin-right:24px;
+	background: #545454;
+	border-radius: 6px;
 }
 .song-listeners-list{
 	height: 144px;
