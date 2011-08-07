@@ -533,7 +533,11 @@ seesu_ui.prototype = {
 				su.api('relations.setLike', {to: lig.user}, function(r){
 					
 					if (r.done){
-						nb.c.after("You'd liked someone!")
+						
+						var gc = $("<div></div>");
+						nb.c.after(gc);
+
+						gc.append($('<span class="desc people-list-desc"></span>').text(localize('if-user-accept-i') + " " + localize('will-get-link')));
 						nb.c.remove();
 					}
 					pliking = false;
@@ -557,7 +561,11 @@ seesu_ui.prototype = {
 				su.api('relations.acceptInvite', {from: lig.user}, function(r){
 					
 					if (r.done){
-						nb.c.after("You'd liked someone!")
+						
+						nb.c.after(
+							$('<span class="people-list-desc desc"></span>')
+								.text(su.ui.getRemainTimeText(r.done.est, true))
+						);
 						nb.c.remove();
 					}
 					pliking = false;
@@ -569,6 +577,28 @@ seesu_ui.prototype = {
 			
 		});
 		return nb;
+	},
+	getRemainTimeText: function(time_string, full){
+		var d = new Date(time_string);
+		var remain_desc = '';
+		if (full){
+			remain_desc += localize('wget-link') + ' ';
+		}
+		
+		
+		remain_desc += d.getDate() + 
+		" " + localize('m'+(d.getMonth()+1)) + 
+		" " + localize('attime') + ' ' + d.getHours() + ":" + d.getMinutes();
+		
+		return remain_desc;
+	},
+	getAcceptedDesc: function(rel){
+		var link = rel.info.domain && ('http://vk.com/' + rel.info.domain);
+		if (link && rel.info.full_name){
+			return $('<a class="external"></a>').attr('href', link).text(rel.info.full_name);
+		}  else if (rel.item.est){
+			return $("<span class='desc'></span>").text(this.getRemainTimeText(rel.item.est, true));
+		}
 	},
 	showBigListener: function(c, lig){
 		
@@ -583,8 +613,39 @@ seesu_ui.prototype = {
 		}
 		
 		if (su.distant_glow.loggedIn()){
-			var lb = this.createLikeButton(lig);
-			lb.c.appendTo(c);
+			var liked = su.distant_glow.susd.isUserLiked(lig.user);
+			var user_invites_me = su.distant_glow.susd.didUserInviteMe(lig.user);
+			
+			if (liked){
+				
+				
+				if (liked.item.accepted){
+					c.append(this.getAcceptedDesc(liked));
+				} else{
+					
+					c.append(localize('you-want-user'));
+					
+					c.append('<br/>');
+					
+					c.append($('<span class="desc people-list-desc"></span>').text(localize('if-user-accept-i') + " " + localize('will-get-link')));
+				}
+				
+				
+			} else if (user_invites_me){
+				if ( user_invites_me.item.accepted){
+					c.append(this.getAcceptedDesc(user_invites_me));
+				} else{
+					c.append(localize('user-want-you'));
+					c.append('<br/>');
+					var lb = this.createAcceptInviteButton(lig);
+					lb.c.appendTo(c);
+				}
+				
+			} else {
+				var lb = this.createLikeButton(lig);
+				lb.c.appendTo(c);
+			}
+			
 		} else{
 			c.append(this.samples.vk_login.clone(localize('to-meet-man-vk')));
 			

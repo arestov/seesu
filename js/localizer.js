@@ -30,6 +30,98 @@ localizer = {
 		"original": "People who listened to this track, looks like this",
 		"ru": "Люди, слушавшие этот трек, выглядят примерно так:"
 	},
+	"rels-people-you":{
+		"original": "People which want to meet you",
+		"ru": "Люди, которые хотят познакомиться с тобой"
+	},
+	"rels-you-people":{
+		"original": "People you want to meet",
+		"ru": "Люди, с которыми ты хочешь познакомиться"
+	},
+	"user-want-you":{
+		"original": "This user wants to meet you",
+		"ru": "Этот пользователь хочеть познакомиться с тобой"
+	},
+	"you-want-user":{
+		"original": "You want to meet this user",
+		"ru": "Ты хочешь познакомиться с этим пользователем"
+	},
+	"if-you-accept-one-i":{
+		"original": "Если ты примешь приглашение от одного из пользователей, то",
+		"ru": "If you accept invite from one of the users, then"
+	},
+	"if-user-accept-i":{
+		"original": "If user accepts your invite, then",
+		"ru": "Если пользователь примет твоё приглашение, то "
+	},
+	"you-familiar":{
+		"original": "Are you familiar with this user",
+		"ru": "Ты знаком с этим пользователем"
+	},
+	"if-one-accept-i":{
+		"original": "If one of the users accepts your invite, then",
+		"ru": "Если один из пользователей примет твоё приглашение, то"
+	},
+	"will-get-link":{
+		"original": "you will get link to his profile after 5 days",
+		"ru": "через 5 дней ты получешь ссылку на его профиль"	
+	},
+	"wget-link":{
+		"original": "You will get profile link",
+		"ru": "Ссылка на профиль появится"
+	},
+	"attime":{
+		"original":"at",
+		"ru": "в"	
+	},
+	"m1":{
+		"original": "January",
+		"ru": "января"
+	},
+	"m2":{
+		"original": "February",
+		"ru": "февраля"
+	},
+	"m3":{
+		"original": "March",
+		"ru": "марта"
+	},
+	"m4":{
+		"original": "April",
+		"ru": "апреля"
+	},
+	"m5":{
+		"original": "May",
+		"ru": "мая"
+	},
+	"m6":{
+		"original": "June",
+		"ru": "июня"
+	},
+	"m7":{
+		"original": "July",
+		"ru": "июля"
+	},
+	"m8":{
+		"original": "August",
+		"ru": "августа"
+	},
+	"m9":{
+		"original": "September",
+		"ru": "сентября"
+	},
+	"m10":{
+		"original": "October",
+		"ru": "октября"
+	},
+	"m11":{
+		"original": "November",
+		"ru": "ноября"
+	},
+	"m12":{
+		"original": "December",
+		"ru": "декабря"
+	},
 	"enter-code":{
 		"original": "Enter here code",
 		"ru": "Помести сюда полученный код"
@@ -89,7 +181,7 @@ localizer = {
 	},
 	"lastfm-reccoms-access": {
 		"original": "To get your music recommendations you need to grant Seesu your last.fm account access",
-		"ru": "Что бы получить рекомендации вам нужно дать Сису доступ к вашему эккаунту на last.fm"
+		"ru": "Что бы получить рекомендации тебе нужно дать Сису доступ к своей учётной записи на last.fm"
 	},
 	"grant": {
 		"original": "grant",
@@ -97,7 +189,7 @@ localizer = {
 	},
 	"user-granted-lfm": {
 		"original": "I've granted my account access to Seesu",
-		"ru": "Я дал Сису доступ к своему эккаунту"
+		"ru": "Я дал Сису доступ к своей учётной записи"
 	},
 	"give-reccoms": {
 		"original": "give me recommendations",
@@ -105,7 +197,7 @@ localizer = {
 	},
 	"grant-lfm-desc": {
 		"original": "It's simple and safe. It does not require your last.fm password.",
-		"ru": "Это просто и безопасно, не требует ваш пароль от last.fm"
+		"ru": "Это просто и безопасно, не требует твой пароль от last.fm"
 	},
 	"or-type-username": {
 		"original": "or type username",
@@ -113,11 +205,11 @@ localizer = {
 	},
 	"type-friend-desc": {
 		"original": " (you can type your friend)",
-		"ru": "(вы можете ввести вашего друга)"
+		"ru": "(ты можешь ввести своего друга)"
 	},
 	"grant-love-lfm-access": {
 		"original": "To get your favorite tracks you need to grant Seesu your last.fm account access ",
-		"ru": "Что бы получить ваши любимые треки вам нужно дать Сису доступ к вашему эккаунту на last.fm"
+		"ru": "Что бы получить свои любимые треки тебе нужно дать Сису доступ к своей учётной записи на last.fm"
 	},
 	"give-love": {
 		"original": "give me loved tracks",
@@ -174,11 +266,11 @@ localizer = {
 	
 	"bad-flash-desc": {
 		"original": "About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.",
-		"ru": "О безопасности флеша: по умолчанию флеш плеер работает среди ограничений накладывающееся на виджеты, при этом не имеет доступа в интернет. Чтобы дать доступ к mp3 файлам располагающихся на сайта вам нужно изменить настройки на соответствующей странице. Там же вы можете и ограничить доступ."
+		"ru": "О безопасности флеша: по умолчанию флеш плеер работает среди ограничений накладывающееся на виджеты, при этом не имеет доступа в интернет. Чтобы дать доступ к mp3 файлам располагающихся на сайтах тебе нужно изменить настройки на соответствующей странице. Там же ты можешь ограничить доступ."
 	},
 	"lastfm-scrobble-access": {
 		"original": "To scrobble to last.fm you must grant access to Seesu",
-		"ru": "Для скроблинга вам нужно дать Сису доступ к своему last.fm эккаунту"
+		"ru": "Для скроблинга тебе нужно дать Сису доступ к своей учётной записи на last.fm"
 	},
 	"to-find-and-play":{
 		
@@ -191,12 +283,12 @@ localizer = {
 	},
 	"music-files-from-vk":{
 		"original": "music files you need to login to vk.com (vkontakte.ru)",
-		"ru": "музыкальные файлы вам необходимо войти во vkontakte.ru (vk.com)"
+		"ru": "музыкальные файлы тебе необходимо войти во vkontakte.ru (vk.com)"
 	},
 	
 	"stabilization-of-vk":{
 		"original": "Some files were found using test vkontakte.ru (vk.com) accaunt. Searching files for new compositions can break at any time. This will not happen if you use your own accaunt",
-		"ru": "Некоторые файлы найдены с помощью тестового эккаунта vkontakte.ru (vk.com), поиск файлов для новых композиций может прекратится в любой момент. Этого не произойдёт, если вы будете использовать свой эккаунт от vkontakte"
+		"ru": "Некоторые файлы найдены с помощью тестовой учётной записи vkontakte.ru (vk.com), поиск файлов для новых композиций может прекратится в любой момент. Этого не произойдёт, если ты будешь использовать свою учётную запись vkontakte"
 	},
 	
 	"":{
@@ -213,15 +305,15 @@ localizer = {
 	},
 	"to-meet-man-vk":{
 		"original": "If you want to meet this man you need to sign in to vk.com (vkontakte.ru)",
-		"ru": "Если вы хотите познакомиться с этим человеком, то вы должны войти во vkontakte.ru (vk.com)"
+		"ru": "Если ты хочешь познакомиться с этим человеком, то ты должен войти во vkontakte.ru (vk.com)"
 	},
 	"to-get-mp3-sign-to-vk": {
 		"original": "To get mp3 files you need to sign in to vk.com (vkontakte.ru)",
-		"ru": "Что бы получить доступ к mp3 файлам вы должны войти во vkontakte.ru (vk.com)"
+		"ru": "Что бы получить доступ к mp3 файлам ты должен войти во vkontakte.ru (vk.com)"
 	},
 	"to-get-mp3-login-to-vk": {
 		"original": "To get mp3 files you need to login to vk.com or to vkontakte.ru",
-		"ru": "Что бы получить доступ к mp3 файлам вы должны дать доступ к вашему эккаунту vkontakte.ru или vk.com"
+		"ru": "Что бы получить доступ к mp3 файлам ты должен дать доступ к своей учётной записи vkontakte.ru или vk.com"
 	},
 	"sign": {
 		"original": "sign in",
@@ -233,7 +325,7 @@ localizer = {
 	},
 	"create-acc": {
 		"original": "create new account",
-		"ru": "создать эккаунт"
+		"ru": "создать учётную запись"
 	},
 	"its-free": {
 		"original": "(it's free)",
@@ -242,7 +334,7 @@ localizer = {
    
 	"open-api-secure": {
 		"original": "Try both if you get «Open API security breach».",
-		"ru": "Попробуйте и то и другое, если у вас появляется сообщение «Open API security breach»."
+		"ru": "Попробуйте и то и другое, если у тебя появляется сообщение «Open API security breach»."
 	},
 	"email": {
 		"original": "E-mail",

@@ -699,59 +699,125 @@ window.connect_dom_to_som = function(d, ui){
 		showMetroRandom();
 		
 		
-		var createPeopleListEl = function(img_src, button, name, link){
-			var li = $('<li class="people-list-item"></li>');
+		var createPeopleListEl = function(img_src, opts){
+			var o = opts || {};
 			
-			var img_c = $('<div class="people-image"></div>').appendTo(li);
+			var ui = {
+				c: false,
+				bp: false,
+				imgc: false,
+				lp: false
+			}
+			var li = ui.c = $('<li class="people-list-item"></li>');
+			var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
 			if (img_src){
 				$('<img/>').attr('src', img_src).appendTo(img_c);
 			}
+			ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
+			ui.lp = $('<div class="p-link-place"></div>').appendTo(li);;
+			return ui;
+		};
+		
+		
+		 
+		
+		var buildPeopleLE = function(man, opts){
+			var o = opts || {};
+			var el_opts = {};	
+			
+			var ui = createPeopleListEl(man.info.photo);
 			
 			
-			var buttn_place = $('<div class="button-place-people-el"></div>').appendTo(li);
-			if (button){
-				(button.c || button).appendTo(li);
+			if (o.links){
+				ui.lp.append(su.ui.getAcceptedDesc(man));
+			
+			} else if (o.accept_button){
+				var nb = su.ui.createNiceButton();
+					nb.b.text( localize('accept-inv', 'Accept invite'));
+					nb.enable();
+					
+					var pliking;
+					
+					nb.b.click(function(){
+						if (!pliking){
+							var p =
+							su.api('relations.acceptInvite', {from: man.user}, function(r){
+								
+								if (r.done){
+									$('<span class="desc"></span>').text(su.ui.getRemainTimeText(r.done.est, true)).appendTo(ui.lp);
+									if (new Date(r.done.est) < new Date()){
+										checkRelationsInvites();
+									}
+									nb.c.remove();
+								}
+								pliking = false;
+							})
+							pliking = true
+						}
+					});
+				nb.c.appendTo(ui.bp);
 			}
 			
+			return ui.c;
+		};
+		var createPeopleList = function(people, opts){
+			var o = opts || {};
 			
-			var link_place = $('<div class="p-link-place"></div>').appendTo(li);;
-			if (name && link){
-				$('<a></a>').attr('src', link).text(name).appendTo(link_place);
+			var ul = $("<ul class='people-list'></ul>")
+			if (o.wide){
+				ul.addClass('people-l-wide')
 			}
 			
-			
-			return li;
-			
-			
-		}
+			for (var i=0; i < people.length; i++) {					
+				ul.append(buildPeopleLE(people[i], opts));
+				
+			};
+			return ul;
+		};
 		var rl_place = su.ui.els.start_screen.find('.relations-likes-wrap');
+		var ri_place = su.ui.els.start_screen.find('.relations-invites-wrap');
 		
 		var checkRelationsLikes = function(){
 			su.api('relations.getLikes', function(r){
 				rl_place.empty();
 				
-				if (r.done.length){
-					$('<h3></h3>').text('People you want to meet').appendTo(rl_place);
-					var ul = $("<ul></ul>").appendTo(rl_place);
-					
-					for (var i=0; i < r.done.length; i++) {
-						var cursor = r.done[i];
-						/*
-						var nb = this.createNiceButton();
-							nb.b.text( localize('accept-inv', 'Accept invite'));
-							nb.enable();*/
-						ul.append(createPeopleListEl(cursor.info.photo));
-						
-					};
-				}
+				su.distant_glow.susd.updateRelationsLikes(r.done);
 				
-				console.log(r);
+				if (r.done && r.done.length){
+					var filtered = $filter(r.done, 'item.accepted', function(v){
+						return !!v;
+					});
+					$('<h3></h3>').text(localize('rels-you-people')).appendTo(rl_place);
+					if (filtered.length){
+						createPeopleList(filtered, {links: true, wide: true}).appendTo(rl_place);
+					}
+					if (filtered.not.length){
+						createPeopleList(filtered.not).appendTo(rl_place);
+						$('<p class="desc people-list-desc"></p>').text(localize('if-one-accept-i') + ' ' + localize('will-get-link')).appendTo(rl_place);
+					}
+				}
 				
 			})
 		};
 		var checkRelationsInvites = function(){
 			su.api('relations.getInvites', function(r){
-				console.log(r);
+				ri_place.empty();
+				
+				su.distant_glow.susd.updateRelationsInvites(r.done);
+				
+				if (r.done && r.done.length){
+					var filtered = $filter(r.done, 'item.accepted', function(v){
+						return !!v;
+					});
+					$('<h3></h3>').text(localize('rels-people-you')).appendTo(ri_place);
+					if (filtered.length){
+						createPeopleList(filtered, {links: true, wide: true}).appendTo(ri_place);
+					}
+					if (filtered.not.length){
+						createPeopleList(filtered.not, {wide: true, accept_button: true}).appendTo(ri_place);
+						$('<p class="desc people-list-desc"></p>').text(localize('if-you-accept-one-i') + ' ' + localize('will-get-link')).appendTo(rl_place);
+					}
+				}
 				
 			})
 		};

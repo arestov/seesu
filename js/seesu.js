@@ -16,67 +16,95 @@ window.lfm = function(){
 		q_el.q.init();
 	}
 };
+var distant_glow = {
+	susd: {
+		relations:{
+			likes: {},
+			invites: {}
+		},
+		addLike: function(user){
+			if (!this.relations.likes[user]){
+				this.relations.likes[user] = [{}];
+			}	
+		},
+		addInvite: function(user){
+			if (!this.relations.likes[user]){
+				this.relations.likes[user] = [{}];
+			}	
+		},
+		updateRelationsInvites: function(invites){
+			this.relations.invites = makeIndexByField(invites, 'user');
+		},
+		updateRelationsLikes: function(likes){
+			this.relations.likes = makeIndexByField(likes, 'user');
+		},
+		didUserInviteMe: function(user){
+			var rel = this.relations.invites[user];
+			return rel && rel[0];
+		},
+		isUserLiked: function(user){
+			var rel = this.relations.likes[user];
+			return rel && rel[0];
+		},
+		user_info: {}
+	},
+	getInfo: function(type){
+		return this.susd.user_info[type];
+	},
+	setInfo: function(type, data){
+		this.susd.user_info[type] = data;
+	},
+	init: function(interact_data){
+		
+		var g  = this.interact;
+		this.interact = interact_data;
+		
+		if (!g){
+			if (this.initCallback){
+				this.initCallback();
+			}
+			
+		}
+	},
+	setInitCallback: function(f){
+		this.initCallback = f;
+	},
+	
+	getId: function(){
+		return this.auth && this.auth.userid;
+	},
+	loggedIn: function(){
+		return !!(this.auth.secret && this.auth.sid && this.auth.userid)
+	},
+	interact: null,
+	url: local_server || 'http://seesu.me/',
+	authCallbacks:{},
+	setAuth: function(auth_data){
+		this.auth = auth_data;
+		
+		w_storage('dg_auth', auth_data, true);
+		
+		
+		for (var a in this.authCallbacks) {
+			if (this.authCallbacks[a]){
+				this.authCallbacks[a]();
+			}
+		};
+		
+	},
+	setAuthCallback: function(key, f){
+		this.authCallbacks[key] = f;
+	},
+	auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
+  };
 
+
+
+  
 window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
 	 
-	  distant_glow: {
-		info: {},
-		relations: {
-			likes: [],
-			invites:[]
-		},
-		getInfo: function(type){
-			return this.info[type];
-		},
-		init: function(interact_data){
-			
-			var g  = this.interact;
-			this.interact = interact_data;
-			
-			if (!g){
-				if (this.initCallback){
-					this.initCallback();
-				}
-				
-			}
-		},
-		setInitCallback: function(f){
-			this.initCallback = f;
-		},
-		setInfo: function(type, data){
-			this.info[type] = data;
-		},
-		getId: function(){
-			return this.auth && this.auth.userid;
-		},
-		loggedIn: function(){
-			return !!(this.auth.secret && this.auth.sid && this.auth.userid)
-		},
-		interact: null,
-		supportsLikes: function(){
-			return bN(this.interact.indexOf('user.likePerson')) && bN(this.interact.indexOf('user.getPersonsLikes'));
-		},
-		url: local_server || 'http://seesu.me/',
-		authCallbacks:{},
-		setAuth: function(auth_data){
-			this.auth = auth_data;
-			
-			w_storage('dg_auth', auth_data, true);
-			
-			
-			for (var a in this.authCallbacks) {
-				if (this.authCallbacks[a]){
-					this.authCallbacks[a]();
-				}
-			};
-			
-		},
-		setAuthCallback: function(key, f){
-			this.authCallbacks[key] = f;
-		},
-		auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
-	  },
+	  distant_glow: distant_glow,
 	  api: function(method, p, c, error){
 	  	var params = (typeof p == 'object' && p) || {};
 	  	var callback = c || p;

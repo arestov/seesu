@@ -599,6 +599,7 @@ display:none;
 	font-size:12px;
 }
 
+
 .tags-hyped{
 	overflow:hidden;
 	text-align: justify;
@@ -919,3 +920,35 @@ iframe.you-tube-video,embed.you-tube-video{
 		.video-preview:hover, .you-tube-video-link.active .video-preview{
 			border-color:#9C9C9C;
 			}
+			
+.people-list{
+	overflow:hidden;
+	}
+	.people-list>li{
+		float:left;
+		padding-right:12px;
+		margin-bottom:12px;
+	}
+.people-l-wide .people-list-item{
+	width:238px;
+	
+}
+.people-list-item{
+	
+	}
+	.people-list-item .desc{
+		font-size:0.8em;
+		line-height:1.4;
+		display:block;
+	}
+	.people-image{
+		margin-right:12px;
+		float:left;
+	}
+	.button-place-people-el .button-hole{
+		margin-top:6px;
+	}
+.people-list-desc{
+	font-size:12px;
+	margin-top:-12px;
+}
