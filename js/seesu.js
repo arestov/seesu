@@ -94,6 +94,9 @@ var distant_glow = {
 	},
 	setAuthCallback: function(key, f){
 		this.authCallbacks[key] = f;
+		if (this.loggedIn()){
+			f();
+		}
 	},
 	getAuth: function(vk_user_id, callback){
 		su.api('user.getAuth', {
