@@ -29,7 +29,7 @@ window.seesu = window.su =  {
 	  s: new seesuServerAPI(JSON.parse(w_storage('dg_auth'))),
 	  fs: {},//fast search
 	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
-	  version: 1.998,
+	  version: 2.0,
 	  env: app_env,
 	  track_stat: (function(){
 		var _i = document.createElement('iframe');_i.id ='gstat';_i.src = 'http://seesu.me/g_stat.html';

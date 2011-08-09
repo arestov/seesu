@@ -78,7 +78,11 @@ asyncDataSteam.prototype = {
 			if (cb){
 				this._callbacks[key] = {cb: cb, lcb: lcb};
 				if (this._store){
-					cb(this._store);
+					var _this = this;
+					setTimeout(function(){
+						cb(_this._store);
+					},10);
+					
 				}
 			} else{
 				delete this._callbacks[key];
