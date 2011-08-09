@@ -286,7 +286,7 @@ window.connect_dom_to_som = function(d, ui){
 		var state_recovered;	
 		if (window.su && su.player && su.player.c_song){
 			if (su.player.c_song && su.player.c_song.plst_titl){
-				ui.views.show_start_page(true, true, true);
+				ui.views.show_start_page(false, true, true);
 				if (su.player.c_song.plst_titl.with_search_results_link){
 					delete su.player.c_song.plst_titl.with_search_results_link ;
 				}
