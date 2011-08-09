@@ -817,7 +817,7 @@ window.connect_dom_to_som = function(d, ui){
 					}
 				}
 				
-			})
+			});
 		};
 		var checkRelationsInvites = function(){
 			su.api('relations.getInvites', function(r){
@@ -858,8 +858,8 @@ window.connect_dom_to_som = function(d, ui){
 			clearInterval(su.distant_glow.cri);
 		}
 		var checkRelations = function(){
-			checkRelationsLikes();
-			checkRelationsInvites();
+			//checkRelationsLikes();
+			//checkRelationsInvites();
 		}
 		
 		su.distant_glow.cri = setInterval(checkRelations, 1000 * 60 * 8);

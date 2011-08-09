@@ -16,8 +16,79 @@ window.lfm = function(){
 		q_el.q.init();
 	}
 };
+
+var asyncDataSteam = function(getDataFunc, freshness, interval){
+	var _this = this;
+	
+	
+	this._request = function(){
+		this._processing = true;
+		
+		getDataFunc(function(r){
+			_this._timestamp = +new Date;
+			_this._store = r;
+			_this._fireCallbacks();
+			this._processing = false;
+		});
+	};
+	
+	
+	if (interval){
+		setInterval(function(){
+			_this._request();
+		}, interval);
+	}
+	this.freshness = freshness;
+};
+asyncDataSteam.prototype = {
+	_store: false,
+	_processing: false,
+	_timestamp: false,
+	_callbacks: {},
+	_onetime_callbacks:[],
+	getData: function(callback, force){
+		if (this._store && (this._timestamp + this.freshness > (+ new Date))){
+			callback(this._store);
+		} else{
+			this._onetime_callbacks.push(callback);
+			if (!this._processing){
+				this._request();
+			}
+		}
+	},
+	regCallback: function(key, f){
+		if (key){
+			if (f){
+				this._callbacks[key] = f;
+				if (this._store){
+					f(_store);
+				}
+			} else{
+				delete this._callbacks[key];
+			}
+		} else{
+			this._onetime_callbacks.push(f);
+		}
+
+	},
+	_fireCallbacks: function(){
+		for (var a in this._callbacks) {
+			this._callbacks[a](this._store);
+		};
+		for (var i = this._onetime_callbacks.length - 1; i >= 0; i--){
+			this._onetime_callbacks.pop(this._store);
+		};
+	}
+};
+
+
 var distant_glow = {
 	susd: {
+		rl: new asyncDataSteam(function(callback){
+				su.api('relations.getLikes', function(r){
+					if (callback){callback(r)};
+				});
+			}, 30000,  1000 * 60 * 5),
 		relations:{
 			likes: {},
 			invites: {}
