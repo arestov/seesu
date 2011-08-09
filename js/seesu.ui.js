@@ -948,13 +948,18 @@ seesu_ui.prototype = {
 	},
 	create_youtube_video: function(id, transparent){
 		var youtube_video = document.createElement('embed');
+		if (su.env.opera_widget){
+			youtube_video.setAttribute('wmode',"transparent");
+		} else if (su.env.opera_extension){
+			youtube_video.setAttribute('wmode',"opaque");
+		}
+		
+		
 			youtube_video.setAttribute('type',"application/x-shockwave-flash");
 			youtube_video.setAttribute('src', 'http://www.youtube.com/v/' + id);
 			youtube_video.setAttribute('allowfullscreen',"true");
 			youtube_video.setAttribute('class',"you-tube-video");
-			if (transparent){
-				youtube_video.setAttribute('wmode',"transparent");
-			}
+			
 		return youtube_video;		
 	},
 	show_video_info: function(vi_c, q, ext_info){
@@ -978,7 +983,7 @@ seesu_ui.prototype = {
 						if (!showed){
 							_sui.video = {
 								link: $(this).addClass('active'),
-								node: $(_this.create_youtube_video(vid, su.env.opera_widget)).appendTo(vi_c)
+								node: $(_this.create_youtube_video(vid)).appendTo(vi_c)
 							}
 							seesu.player.set_state('pause');
 							this.showed = true;
