@@ -4,7 +4,6 @@ $.ajaxSetup({
   timeout:40000
 });
 $.support.cors = true;
-var local_server = false && 'http://127.0.0.1:9013/';
 
 
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
@@ -17,239 +16,14 @@ window.lfm = function(){
 	}
 };
 
-var asyncDataSteam = function(getDataFunc, freshness, interval){
-	var _this = this;
-	
-	
-	this._request = function(){
-		this._processing = true;
-		
-		getDataFunc(function(r){
-			_this._timestamp = +new Date;
-			_this._store = r;
-			_this._fireCallbacks();
-			this._processing = false;
-		});
-	};
-	
-	
-	if (interval){
-		setInterval(function(){
-			_this._request();
-		}, interval);
-	}
-	this.freshness = freshness;
-};
-asyncDataSteam.prototype = {
-	_store: false,
-	_processing: false,
-	_timestamp: false,
-	_callbacks: {},
-	_onetime_callbacks:[],
-	getData: function(callback, force){
-		if (this._store && (this._timestamp + this.freshness > (+ new Date))){
-			callback(this._store);
-		} else{
-			this._onetime_callbacks.push(callback);
-			if (!this._processing){
-				this._request();
-			}
-		}
-	},
-	regCallback: function(key, f){
-		if (key){
-			if (f){
-				this._callbacks[key] = f;
-				if (this._store){
-					f(_store);
-				}
-			} else{
-				delete this._callbacks[key];
-			}
-		} else{
-			this._onetime_callbacks.push(f);
-		}
 
-	},
-	_fireCallbacks: function(){
-		for (var a in this._callbacks) {
-			this._callbacks[a](this._store);
-		};
-		for (var i = this._onetime_callbacks.length - 1; i >= 0; i--){
-			this._onetime_callbacks.pop(this._store);
-		};
-	}
-};
-
-
-var distant_glow = {
-	susd: {
-		rl: new asyncDataSteam(function(callback){
-				su.api('relations.getLikes', function(r){
-					if (callback){callback(r)};
-				});
-			}, 30000,  1000 * 60 * 5),
-		relations:{
-			likes: {},
-			invites: {}
-		},
-		addLike: function(user){
-			if (!this.relations.likes[user]){
-				this.relations.likes[user] = [{}];
-			}	
-		},
-		addInvite: function(user){
-			if (!this.relations.likes[user]){
-				this.relations.likes[user] = [{}];
-			}	
-		},
-		updateRelationsInvites: function(invites){
-			this.relations.invites = makeIndexByField(invites, 'user');
-		},
-		updateRelationsLikes: function(likes){
-			this.relations.likes = makeIndexByField(likes, 'user');
-		},
-		didUserInviteMe: function(user){
-			var rel = this.relations.invites[user];
-			return rel && rel[0];
-		},
-		isUserLiked: function(user){
-			var rel = this.relations.likes[user];
-			return rel && rel[0];
-		},
-		user_info: {}
-	},
-	getInfo: function(type){
-		return this.susd.user_info[type];
-	},
-	setInfo: function(type, data){
-		this.susd.user_info[type] = data;
-	},
-	init: function(interact_data){
-		
-		var g  = this.interact;
-		this.interact = interact_data;
-		
-		if (!g){
-			if (this.initCallback){
-				this.initCallback();
-			}
-			
-		}
-	},
-	setInitCallback: function(f){
-		this.initCallback = f;
-	},
-	
-	getId: function(){
-		return this.auth && this.auth.userid;
-	},
-	loggedIn: function(){
-		return !!(this.auth.secret && this.auth.sid && this.auth.userid)
-	},
-	interact: null,
-	url: local_server || 'http://seesu.me/',
-	authCallbacks:{},
-	setAuth: function(auth_data){
-		this.auth = auth_data;
-		
-		w_storage('dg_auth', auth_data, true);
-		
-		
-		for (var a in this.authCallbacks) {
-			if (this.authCallbacks[a]){
-				this.authCallbacks[a]();
-			}
-		};
-		
-	},
-	setAuthCallback: function(key, f){
-		this.authCallbacks[key] = f;
-		if (this.loggedIn()){
-			f();
-		}
-	},
-	getAuth: function(vk_user_id, callback){
-		su.api('user.getAuth', {
-			type:'vk',
-			ver: 0.3,
-			vk_user: vk_user_id
-		}, function(su_sess){
-			if (su_sess.secret_container && su_sess.sid){
-				
-				
-				su.vk_api.use('storage.get',{key:su_sess.secret_container}, function(r){
-					if (r && r.response){
-						su.distant_glow.setAuth({
-							userid: su_sess.userid,
-							secret: r.response,
-							sid: su_sess.sid
-						});
-						su.distant_glow.setInfo('vk', su.vk.user_info);
-						su.api('user.update', su.vk.user_info);
-						if (callback){callback();}
-					}
-				});
-				
-				
-			}
-			
-		});
-	},
-	auth: JSON.parse(w_storage('dg_auth') || false)//{id, sid, secret}
-  };
 
 
 
   
 window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
-	 
-	  distant_glow: distant_glow,
-	  api: function(method, p, c, error){
-	  	var params = (typeof p == 'object' && p) || {};
-	  	var callback = c || (typeof p == 'function' && p);
-		var _this = this;
-		if (_this.distant_glow.interact && bN(_this.distant_glow.interact.indexOf(method))){
-		
-			params.method = method;
-		
-			if (!bN(['track.getListeners','user.getAuth'].indexOf(method))){
-				if (!this.distant_glow.auth){
-					return false
-				} else{
-					params.sid = this.distant_glow.auth.sid;
-					params.sig = hex_md5(stringifyParams(params, ['sid']) + this.distant_glow.auth.secret) ;
-				}
-				
-			}
-			
-			$.ajax({
-				type: "GET",
-				url: _this.distant_glow.url + 'api/',
-				data: params,
-				success: function(r){
-					if (r){
-						if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){
-							
-							_this.distant_glow.auth = false;
-							w_storage('dg_auth', '', true);
-							if (seesu.vk.id ){
-								_this.distant_glow.getAuth(seesu.vk.id);
-							}
-							
-							
-							
-						} else{
-							if (callback){callback(r);}
-						}
-					}
-					
-				},
-				error: error
-			});
-		}
-	  },
+	  s: new seesuServerAPI(JSON.parse(w_storage('dg_auth'))),
 	  fs: {},//fast search
 	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
 	  version: 1.998,
@@ -370,13 +144,7 @@ var vkReferer = '';
 
 var updating_notify = function(r){
 	if (!r){return;}
-	
-	if(r.distant_glow_interact){
-		su.distant_glow.init(r.distant_glow_interact);
-		if (su.vk.user_info){
-			su.api('user.update', su.vk.user_info);
-		}	
-	}
+
 	
 	var cver = r.latest_version.number;
 	if (cver > seesu.version) {
@@ -398,7 +166,7 @@ var updating_notify = function(r){
 var check_seesu_updates = function(){
 	
 		$.ajax({
-		  url: su.distant_glow.url + 'update',
+		  url: su.s.url + 'update',
 		  global: false,
 		  type: "POST",
 		  dataType: "json",

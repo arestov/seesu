@@ -72,11 +72,11 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 				
 				
 				
-				if (!su.distant_glow.loggedIn()){
-					su.distant_glow.getAuth(vk_t.user_id);
+				if (!su.s.loggedIn()){
+					su.s.getAuth(vk_t.user_id);
 				} else{
-					su.distant_glow.setInfo('vk', su.vk.user_info);
-					su.api('user.update', su.vk.user_info);
+					su.s.setInfo('vk', su.vk.user_info);
+					su.s.api('user.update', su.vk.user_info);
 				}			
 				if (callback){callback();}
 			} else{

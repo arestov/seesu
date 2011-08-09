@@ -438,7 +438,7 @@ su.player.events[PLAYED] = function(){
 					su.lfm_api.nowplay(mo, mo.mopla.duration);
 				}
 				if (su.vk.id){
-					su.api('track.scrobble', {
+					su.s.api('track.scrobble', {
 						client: su.env.app_type,
 						status: 'playing',
 						duration: mo.mopla.duration,
@@ -479,7 +479,7 @@ su.player.events[FINISHED] = function() {
 				su.lfm_api.submit(mo, mo.mopla.duration);
 			}
 			if (su.vk.id){
-				su.api('track.scrobble', {
+				su.s.api('track.scrobble', {
 					client: su.env.app_type,
 					status: 'finished',
 					duration: mo.mopla.duration,
