@@ -342,9 +342,7 @@ display:none;
 			padding:3px 0 3px 5px;
 			border-radius: 4px 0 0 4px;
 		}
-		.artist-meta-info .desc-name em:hover{
-			opacity:0.4;
-		}
+
 .artist-info .forced-end{
 	position:absolute;
 	bottom: 0;
