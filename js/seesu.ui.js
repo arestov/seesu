@@ -530,7 +530,7 @@ seesu_ui.prototype = {
 		nb.b.click(function(){
 			if (!pliking){
 				var p =
-				su.api('relations.setLike', {to: lig.user}, function(r){
+				su.s.api('relations.setLike', {to: lig.user}, function(r){
 					
 					if (r.done){
 						
@@ -558,7 +558,7 @@ seesu_ui.prototype = {
 		nb.b.click(function(){
 			if (!pliking){
 				var p =
-				su.api('relations.acceptInvite', {from: lig.user}, function(r){
+				su.s.api('relations.acceptInvite', {from: lig.user}, function(r){
 					
 					if (r.done){
 						
@@ -612,9 +612,9 @@ seesu_ui.prototype = {
 			}, $('<div class="big-user-avatar"></div>').appendTo(c));
 		}
 		
-		if (su.distant_glow.loggedIn()){
-			var liked = su.distant_glow.susd.isUserLiked(lig.user);
-			var user_invites_me = su.distant_glow.susd.didUserInviteMe(lig.user);
+		if (su.s.loggedIn()){
+			var liked = su.s.susd.isUserLiked(lig.user);
+			var user_invites_me = su.s.susd.didUserInviteMe(lig.user);
 			
 			if (liked){
 				
@@ -668,7 +668,7 @@ seesu_ui.prototype = {
 				var c = uc.C('user-info');
 
 				_this.showBigListener(c, lig);
-				su.distant_glow.setAuthCallback('biglistener', function(){
+				su.s.auth.regCallback('biglistener', function(){
 					_this.showBigListener(c, lig);
 				});
 				
@@ -715,7 +715,7 @@ seesu_ui.prototype = {
 	updateSongListeners: function(mo){
 		var _this = this;
 		var last_update = mo.ui.t_users.last_update;
-		var current_user = su.distant_glow.getId();
+		var current_user = su.s.getId();
 		
 		
 		if (mo.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 1)){
@@ -724,10 +724,10 @@ seesu_ui.prototype = {
 				d.title = mo.track;
 			}
 			
-			var current_user = su.distant_glow.getId('vk');
+			var current_user = su.s.getId('vk');
 			var user_info;
 			if (current_user){
-				user_info = su.distant_glow.getInfo('vk');
+				user_info = su.s.getInfo('vk');
 				if (user_info){
 					_this.createCurrentUserUI(mo, user_info);
 				}
@@ -738,7 +738,7 @@ seesu_ui.prototype = {
 			}
 			
 			
-			su.api('track.getListeners', d, function(r){
+			su.s.api('track.getListeners', d, function(r){
 				var raw_users = r && r.done && [].concat.apply([], r.done);
 				if (raw_users){
 					var users = $filter(raw_users, 'user', function(value){

@@ -752,7 +752,7 @@ window.connect_dom_to_som = function(d, ui){
 					nb.b.click(function(){
 						if (!pliking){
 							var p =
-							su.api('relations.acceptInvite', {from: man.user}, function(r){
+							su.s.api('relations.acceptInvite', {from: man.user}, function(r){
 								
 								if (r.done){
 									$('<span class="desc"></span>').text(su.ui.getRemainTimeText(r.done.est, true)).appendTo(ui.lp);
@@ -788,84 +788,61 @@ window.connect_dom_to_som = function(d, ui){
 		var rl_place = su.ui.els.start_screen.find('.relations-likes-wrap');
 		var ri_place = su.ui.els.start_screen.find('.relations-invites-wrap');
 		
-		var checkRelationsLikes = function(){
-			su.api('relations.getLikes', function(r){
-				rl_place.empty();
-				
-				su.distant_glow.susd.updateRelationsLikes(r.done);
-				
-				if (r.done && r.done.length){
-					var filtered = $filter(r.done, 'item.accepted', function(v){
-						return !!v;
-					});
-					$('<h3></h3>')
-						.text(localize('rels-you-people'))
-						.appendTo(rl_place)
-						.append($('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
-							$(this).remove();
-							setTimeout(function(){
-								checkRelationsLikes();
-							},1000)
-							
-						}));
-					if (filtered.length){
-						createPeopleList(filtered, {links: true, wide: true}).appendTo(rl_place);
-					}
-					if (filtered.not.length){
-						createPeopleList(filtered.not).appendTo(rl_place);
-						$('<p class="desc people-list-desc"></p>').text(localize('if-one-accept-i') + ' ' + localize('will-get-link')).appendTo(rl_place);
-					}
+
+		su.s.susd.rl.regCallback('start-page', function(r){
+			rl_place.empty();
+			if (r.done && r.done.length){
+				var filtered = $filter(r.done, 'item.accepted', function(v){
+					return !!v;
+				});
+				$('<h3></h3>')
+					.text(localize('rels-you-people'))
+					.appendTo(rl_place)
+					.append($('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
+						$(this).remove();
+						setTimeout(function(){
+							su.s.susd.rl.getData();
+						},1000)
+						
+					}));
+				if (filtered.length){
+					createPeopleList(filtered, {links: true, wide: true}).appendTo(rl_place);
 				}
-				
-			});
-		};
-		var checkRelationsInvites = function(){
-			su.api('relations.getInvites', function(r){
-				ri_place.empty();
-				
-				su.distant_glow.susd.updateRelationsInvites(r.done);
-				
-				if (r.done && r.done.length){
-					var filtered = $filter(r.done, 'item.accepted', function(v){
-						return !!v;
-					});
-					$('<h3></h3>')
-						.text(localize('rels-people-you'))
-						.appendTo(ri_place)
-						.append($('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
-							$(this).remove();
-							setTimeout(function(){
-								checkRelationsInvites();
-							},1000)
-							
-						}));
-						
-						
-						
-					if (filtered.length){
-						createPeopleList(filtered, {links: true, wide: true}).appendTo(ri_place);
-					}
-					if (filtered.not.length){
-						createPeopleList(filtered.not, {wide: true, accept_button: true}).appendTo(ri_place);
-						$('<p class="desc people-list-desc"></p>').text(localize('if-you-accept-one-i') + ' ' + localize('will-get-link')).appendTo(rl_place);
-					}
+				if (filtered.not.length){
+					createPeopleList(filtered.not).appendTo(rl_place);
+					$('<p class="desc people-list-desc"></p>').text(localize('if-one-accept-i') + ' ' + localize('will-get-link')).appendTo(rl_place);
 				}
-				
-			})
-		};
-		
-		if (su.distant_glow.cri){
-			clearInterval(su.distant_glow.cri);
-		}
-		var checkRelations = function(){
-			//checkRelationsLikes();
-			//checkRelationsInvites();
-		}
-		
-		su.distant_glow.cri = setInterval(checkRelations, 1000 * 60 * 8);
-		su.distant_glow.setAuthCallback('relations-check', checkRelations);
-		su.distant_glow.setInitCallback(function(){
-			checkRelations();
+			}
+			
+		});
+		su.s.susd.ri.regCallback('start-page', function(r){
+			ri_place.empty();
+			if (r.done && r.done.length){
+				var filtered = $filter(r.done, 'item.accepted', function(v){
+					return !!v;
+				});
+				$('<h3></h3>')
+					.text(localize('rels-people-you'))
+					.appendTo(ri_place)
+					.append($('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
+						$(this).remove();
+						setTimeout(function(){
+							su.s.susd.ri.getData();
+						},1000)
+						
+					}));
+					
+					
+					
+				if (filtered.length){
+					createPeopleList(filtered, {links: true, wide: true}).appendTo(ri_place);
+				}
+				if (filtered.not.length){
+					createPeopleList(filtered.not, {wide: true, accept_button: true}).appendTo(ri_place);
+					$('<p class="desc people-list-desc"></p>').text(localize('if-you-accept-one-i') + ' ' + localize('will-get-link')).appendTo(rl_place);
+				}
+			}
+			
 		});
 		
 		
