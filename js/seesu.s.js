@@ -24,6 +24,8 @@ asyncDataSteam.prototype = {
 		
 			this._processing = true;
 			
+			this._fireCallbacks();
+			
 			this._getDataFunc(function(r){
 				_this.setNewData(r);
 				
@@ -35,7 +37,7 @@ asyncDataSteam.prototype = {
 	setNewData: function(data){
 		this._timestamp = +new Date;
 		this._store = data;
-		this._fireCallbacks();
+		this._fireCallbacks(true);
 	},
 	init: function(){
 		if (!this._inited){
@@ -56,13 +58,13 @@ asyncDataSteam.prototype = {
 		
 	},
 
-	getData: function(callback, force_newdata){
+	getData: function(callback, force_newdata, loading_marking){
 		
 		if (!force_newdata && callback && this._freshness && this._store && (this._timestamp + this._freshness > (+ new Date))){
 			callback(this._store);
 		} else{
 			if (callback){
-				this.regCallback(false, callback);
+				this.regCallback(false, callback, loading_marking);
 			}
 			
 			if (!this._processing){
@@ -70,31 +72,40 @@ asyncDataSteam.prototype = {
 			}
 		}
 	},
-	regCallback: function(key, f){
+	regCallback: function(key, cb, lcb){
 	
 		if (key){
-			if (f){
-				this._callbacks[key] = f;
+			if (cb){
+				this._callbacks[key] = {cb: cb, lcb: lcb};
 				if (this._store){
-					f(this._store);
+					cb(this._store);
 				}
 			} else{
 				delete this._callbacks[key];
 			}
 		} else{
-			if (f){
-				this._onetime_callbacks.push(f);
+			if (cb){
+				this._onetime_callbacks.push({cb: cb, lcb: lcb});
 			}
 			
 		}
 
 	},
-	_fireCallbacks: function(){
+	_fireLoading: function(){
+		for (var i=0; i < this.length; i++) {
+			this[i]
+		};
+	},
+	_fireCallbacks: function(real){//real callbacks or just loading marks
 		for (var a in this._callbacks) {
-			this._callbacks[a](this._store);
+			var f = this._callbacks[a];
+			f = real ? f.cb : f.lcb;
+			if (f){f(this._store)}
 		};
 		for (var i = this._onetime_callbacks.length - 1; i >= 0; i--){
-			this._onetime_callbacks.pop()(this._store);
+			var f = this._onetime_callbacks.pop();
+			f = real ? f.cb : f.lcb;
+			if (f){f(this._store)}
 		};
 	}
 };
@@ -122,13 +133,28 @@ var seesuServerAPI = function(auth){
 			if (callback){callback(r)};
 		});
 	}, update_interval,  update_interval);
-	
-	
-	
-	
+
 	this.auth.regCallback('relations.likes', function(d){
 		_this.susd.rl.init();
 		_this.susd.ri.init();
+	});
+	
+	
+	this.susd.ligs =  new asyncDataSteam(function(callback){		
+		$.ajax({
+		  url: 'http://seesu.me/last_listenings/',
+		  type: "GET",
+		  dataType: "json",
+		  error: function(){
+		  	callback();
+		  },
+		  success: function(r){
+			callback(r);
+		  }
+		});
+	}, update_interval,  update_interval);
+	$(function(){
+		_this.susd.ligs.init();
 	});
 	
 };
@@ -136,6 +162,7 @@ seesuServerAPI.prototype = {
 	susd: {
 		rl: false,
 		ri: false,
+		ligs: false,
 		relations:{
 			likes: {},
 			invites: {}
