@@ -585,7 +585,7 @@ window.connect_dom_to_som = function(d, ui){
 					var lig = listenings[i];
 					if (lig.info){
 						$('<li></li>')
-							.append("<p class='vk-ava'><img alt='user photo' src='" + lig.info.photo + "'/></p>")
+							.append("<p class='vk-ava'><img width='50' height='50' alt='user photo' src='" + lig.info.photo + "'/></p>")
 							.append($('<a class="external"></a>').attr('href', 'http://vk.com/id' + lig.vk_id).text(lig.info.first_name))
 							.append(document.createTextNode(' слушает '))
 							.append('<br/>')
@@ -605,48 +605,35 @@ window.connect_dom_to_som = function(d, ui){
 			}
 			return Math.max(users_limit - listenings.length, 0);
 		};
-		var getAndShowUsersListenings = function(){
-			users_play.addClass('loading');
-			$.ajax({
-			  url: 'http://seesu.me/last_listenings/',
-			  global: false,
-			  type: "GET",
-			  dataType: "json",
-			  headers:{
-				'x-requested-with': 'XMLHttpRequest'
-			  },
-			  error: function(){
-			  	
-			  },
-			  success: function(r){
-				if (r && r.length){
-					if ([].concat.apply([],r).length){
-						users_play.empty();
-						var _header = $('<h3></h3>').appendTo(users_play)
-						.append(localize('User-listening','Users are listening'));
-						
-						$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
-							getAndShowUsersListenings();
-							e.preventDefault();
-						}).appendTo(_header);
-						var above_limit_value = 0;
-						for (var i=0; i < r.length; i++) {
-							if (r[i] && r[i].length){
-								above_limit_value = showUsers(r[i], users_play, above_limit_value);
-							}
-						};
-					}
-					
-					
-				}
-			  }, complete: function(){
-				users_play.removeClass('loading');
-			  }
-		  
-			});
-		}
-		getAndShowUsersListenings();
 		
+		var showUsersListenings = function(r){
+			users_play.removeClass('loading');
+			if (r && r.length){
+				if ([].concat.apply([],r).length){
+					users_play.empty();
+					var _header = $('<h3></h3>').appendTo(users_play)
+					.append(localize('User-listening','Users are listening'));
+					
+					$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
+						su.s.susd.ligs.getData();
+					}).appendTo(_header);
+					var above_limit_value = 0;
+					for (var i=0; i < r.length; i++) {
+						if (r[i] && r[i].length){
+							above_limit_value = showUsers(r[i], users_play, above_limit_value);
+						}
+					};
+				}
+				
+				
+			}
+			
+			
+
+		}
+		su.s.susd.ligs.regCallback('start-page', showUsersListenings, function(){
+			users_play.addClass('loading');
+		});
 		
 		var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(su.ui.els.start_screen);
 		var createTrackLink = function(artist, track, track_obj, playlist){
@@ -687,7 +674,7 @@ window.connect_dom_to_som = function(d, ui){
 							
 							if (_trm.image){
 								var con = $('<li></li>').appendTo(ulm);
-								$('<img alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
+								$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
 								
 								var tobj = {artist: _trm.artist.name, track: _trm.name};
 								plr.push(tobj);
@@ -722,7 +709,7 @@ window.connect_dom_to_som = function(d, ui){
 			var li = ui.c = $('<li class="people-list-item"></li>');
 			var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
 			if (img_src){
-				$('<img/>').attr('src', img_src).appendTo(img_c);
+				$('<img width="50" height="50"/>').attr('src', img_src).appendTo(img_c);
 			}
 			ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
 			ui.lp = $('<div class="p-link-place"></div>').appendTo(li);;

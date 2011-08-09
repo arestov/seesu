@@ -1,7 +1,10 @@
 $.ajaxSetup({
   cache: true,
   global:false,
-  timeout:40000
+  timeout:40000,
+  headers:{
+	'x-requested-with': 'XMLHttpRequest'
+  }
 });
 $.support.cors = true;
 
