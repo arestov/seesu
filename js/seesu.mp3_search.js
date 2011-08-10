@@ -16,11 +16,65 @@ var song_methods = {
 	wheneWasChanged: function(){
 		return (this.raw && 1) || (this.sem && this.sem.changed || 1);
 	},
-	render: function(from_collection, last_in_collection){
-		if (this.plst_titl){
-			this.plst_titl.renderSong(this, from_collection, last_in_collection);
+	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
+		if (this.raw){
+			this.ui.update();
+		} else if (!this.track){
+			start_random_nice_track_search(this, !full_allowing, from_collection, last_in_collection);
+		} else{
+			if (this.isSearchCompleted()){
+				handle_song(this, true)
+			}
+			su.mp3_search.find_mp3(this, {
+				only_cache: !full_allowing && !this.want_to_play,
+				collect_for: from_collection,
+				last_in_collection: last_in_collection
+			});
+		}
+	},
+	render: function(from_collection, last_in_collection, complex){
+		
+		var pl = this.plst_titl;
+		this.playable_info = {
+			packsearch: from_collection,
+			last_in_collection: last_in_collection
+		};
+		if (pl && pl.ui && pl.ui.tracks_container){
+			
+			if (!this.ui || !this.ui.mainc || this.ui.mainc[0].ownerDocument != su.ui.d){			
+				this.ui = new songUI(this, complex);
+				var pl_ui_element = this.ui.mainc;
+				if (pl.first_song){
+					if (!fdone){
+						if (this == pl.first_song){
+							pl.ui.tracks_container.append(pl_ui_element);
+						} else{
+							f.ui.mainc.before(pl_ui_element);
+						}
+					} else if (pl.first_song != this){
+						var f_position = pl.indexOf(pl.first_song);
+						var t_position = pl.indexOf(this);
+						if (t_position < f_position){
+							pl.first_song.ui.mainc.before(pl_ui_element);
+							
+						} else{
+							pl.ui.tracks_container.append(pl_ui_element);
+						}
+					} else{
+						pl.ui.tracks_container.append(pl_ui_element);
+					}
+					
+					
+				} else{
+					pl.ui.tracks_container.append(pl_ui_element);
+				}
+				
+			}
+			
 		}
 		
+			
+	
 	
 	},
 	song: function(){

@@ -231,20 +231,24 @@ views.prototype = {
 
 
 var contextRow = function(container){
-	this.c = container.hide();
+	this.m = {
+		c: container.hide(),
+		active: false
+	};
 	this.arrow = container.children('.rc-arrow');
 	this.parts = {};
 	
 };
 contextRow.prototype = {
 	getC: function(){
-		return this.c;
+		return this.m.c;
 	},
 	addPart: function(cpart, name){
 		if (name){
 			this.parts[name] = {
-				c: cpart,
-				d:{}
+				c: cpart.hide(),
+				d:{},
+				active: false
 			};
 		}
 		
@@ -274,8 +278,11 @@ contextRow.prototype = {
 			this.parts[name].active = true;
 			
 			
+			if (!this.m.active){
+				this.m.c.show();
+				this.m.active = true;
+			}
 			
-			this.c.show();
 		}
 		if (arrow_left){
 			//used for positioning 
@@ -285,12 +292,19 @@ contextRow.prototype = {
 	},
 	hide: function(not_itself){
 		if (!not_itself){
-			this.c.hide();
+			if (this.m.active){
+				this.m.c.hide();
+				this.m.active = false;
+			}
+			
 		}
 		
 		for (var a in this.parts){
-			this.parts[a].c.hide();
-			this.parts[a].active = false;
+			if (this.parts[a].active){
+				this.parts[a].c.hide();
+				this.parts[a].active = false;
+			}
+			
 		}
 		
 		this.arrow.hide();
@@ -1230,10 +1244,58 @@ seesu_ui.prototype = {
 				ui.append('<li>' + localize('nothing-found','Nothing found') + '</li>');
 			} else {
 				var from_collection = +new Date;
-				for (var i=0, l = pl.length; i < l; i++) {
-					var mo = pl[i];
-					mo.render(from_collection, i == pl.length-1);
+				
+				
+				if (su.player.c_song && pl == su.player.c_song.plst_titl){
+					
+					var ordered = [];
+					var etc = [];
+					
+					ordered.push(su.player.c_song);
+					if (su.player.c_song.prev_song){
+						ordered.push(su.player.c_song.prev_song);
+					}
+					if (su.player.c_song.next_song){
+						ordered.push(su.player.c_song.next_song);
+					}
+					
+					for (var i=0; i < pl.length; i++) {
+						var mo = pl[i];
+						if (ordered.indexOf(mo) == -1){
+							etc.push(mo);
+						}
+						
+					};
+					
+					for (var i=0; i < pl.length; i++) {
+						pl[i].render(from_collection, i == pl.length-1, true);
+					}
+					for (var i=0; i < ordered.length; i++) {
+						if (ordered[i].ui){
+							ordered[i].ui.expand()
+						} else{}
+					};
+					
+					setTimeout(function(){
+						for (var i=0; i < etc.length; i++) {
+							if (etc[i].ui){
+								etc[i].ui.expand()
+							} else{}
+						};
+					},1000);
+					
+					
+				} else{
+					
+					for (var i=0; i < pl.length; i++) {
+						pl[i].render(from_collection, i == pl.length-1);
+					}
 				}
+				
+				
+				
+				
+				
 				su.player.fix_songs_ui();
 			}
 			return pl.ui
@@ -1284,10 +1346,6 @@ seesu_ui.prototype = {
 		}
 		bb.disable();
 		return bb;
-	},
-	create_playlist_element: function(mo){
-		mo.ui = new songUI(mo);
-		return mo.ui.mainc;
 	},
 	lfmRequestAuth: function(){
 		
