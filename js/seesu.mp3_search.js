@@ -467,7 +467,7 @@ function handle_song(mo, complete, get_next){
 	
 	if (mo.isHaveTracks() || mo.isHaveBestTracks()){
 		if (mo.ui){
-			su.ui.updateSong(mo);
+			mo.ui.update();
 			su.ui.els.export_playlist.addClass('can-be-used');
 		}
 		
