@@ -310,6 +310,7 @@ su.player = {
 					mo.next_song.ui.node.parent().removeClass('to-play-next')
 				}
 			}
+		} else{
 		}
 	},
 	fix_songs_ui: function(){
@@ -319,7 +320,7 @@ su.player = {
 		}
 	},
 	fix_progress_bar: function(mo){
-		if (mo.ui){
+		if (mo.ui && mo.ui.ct){
 			if (mo.ui.ct.tr_progress_t){
 				mo.ui.ct.tr_progress_p[0].style.width = mo.ui.ct.tr_progress_l[0].style.width = '0';
 				mo.ui.ct.track_progress_width = mo.ui.ct.tr_progress_t.width();

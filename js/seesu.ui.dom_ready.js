@@ -73,7 +73,7 @@ window.connect_dom_to_som = function(d, ui){
 		o.track_progress_total = $('<div class="track-progress"></div>',d).click(function(e){
 				
 				var ui = $(this).data('mo').ui;
-				if (ui){
+				if (ui && ui.ct){
 					var pos = get_click_position(e, this);
 					var new_play_position_factor = pos/ui.ct.track_progress_width;
 					seesu.player.musicbox.set_new_position(new_play_position_factor);
