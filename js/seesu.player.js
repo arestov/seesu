@@ -320,9 +320,9 @@ su.player = {
 	},
 	fix_progress_bar: function(mo){
 		if (mo.ui){
-			if (mo.c.tr_progress_t){
-				mo.c.tr_progress_p[0].style.width = mo.c.tr_progress_l[0].style.width = '0';
-				mo.c.track_progress_width = mo.c.tr_progress_t.width();
+			if (mo.ui.ct.tr_progress_t){
+				mo.ui.ct.tr_progress_p[0].style.width = mo.ui.ct.tr_progress_l[0].style.width = '0';
+				mo.ui.ct.track_progress_width = mo.ui.ct.tr_progress_t.width();
 			}
 		}
 		
