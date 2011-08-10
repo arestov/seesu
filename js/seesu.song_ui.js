@@ -1,5 +1,5 @@
 var createFilesButton = function(song_context){
-	var files_list_nb = this.createNiceButton('left');
+	var files_list_nb = su.ui.createNiceButton('left');
 
 	files_list_nb.b.text( localize('Files', 'Files') + ' ▼');
 	
@@ -18,9 +18,9 @@ var createFilesButton = function(song_context){
 	return files_list_nb;
 };
 var createDownloadButton = function(mo){
-	var file_download_nb =  this.createNiceButton('right');
+	var file_download_nb =  su.ui.createNiceButton('right');
 	file_download_nb.b.text(localize('Download', 'Download'));
-	file_download_nb.c.appendTo(files_cc);
+	
 	file_download_nb.b.click(function(){
 		if (!$(this).data('disabled')){
 			var d = mo.mp3Downloads();
@@ -35,10 +35,12 @@ var createDownloadButton = function(mo){
 
 
 var songUI = function(mo){
+	this.mo = mo;
+	
 	var _this = this;
 	
 
-	this.context = this.samples.track_c.clone(true);
+	this.context = su.ui.samples.track_c.clone(true);
 	var tp = this.context.children('.track-panel');
 	
 	
@@ -145,18 +147,18 @@ var songUI = function(mo){
 	
 	var dlb = createDownloadButton(mo);
 	
+	dlb.c.appendTo(files_cc);
 	
 	
-	
-	this.files_control: {
+	this.files_control= {
 		list_button: flb,
 		quick_download_button: dlb
 	};
-	this.t_users: {
+	this.t_users= {
 		c: users,
 		list: users_list
 	};
-	this.extend_info: {
+	this.extend_info= {
 		files: false,
 		videos: false,
 		base_info: false,
@@ -175,7 +177,7 @@ var songUI = function(mo){
 
 		}
 	};
-	this.rowcs:{
+	this.rowcs={
 		song_context: song_context,
 		users_context: users_context
 	};
@@ -204,7 +206,7 @@ var songUI = function(mo){
 		.data('mo', mo)
 		.append(buttmen)
 		.append(this.node)
-		.append(t_context);
+		.append(this.context);
 
 };
 songUI.prototype = {
@@ -234,5 +236,54 @@ songUI.prototype = {
 	},
 	remove: function(){
 		this.mainc.remove();
+	},
+	update: function(not_rend){
+		var _this = this;
+		
+		
+		var down = this.node.siblings('a.download-mp3').remove();
+		this.node
+			.addClass('song')
+			.removeClass('search-mp3-failed')
+			.removeClass('waiting-full-render')
+			.removeClass('mp3-download-is-not-allowed')
+			.data('mo', this.mo)
+			.unbind()
+			.click(function(){
+				su.ui.views.freeze(_this.mo.plst_titl);
+				su.player.song_click(_this.mo);
+			});
+		
+		
+		
+		var mopla = this.mo.song();
+		if (mopla){
+			if (mopla.duration){
+				this.displaySongMoplaInfo(mopla);
+			}
+		}
+		
+			
+
+		
+	},
+	displaySongMoplaInfo: function(mopla){
+		var duration = mopla.duration;
+		var du = this.durationc;
+		
+		if (duration){
+			var digits = duration % 60;
+			var track_dur = (Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+			du.text(track_dur);
+		} else{
+			du.text('');
+		}
+		
+		var filename = mopla.artist + ' - ' +  mopla.track;
+		
+		this.mopla_title.text(mopla.from + ": " + filename);
+		this.mopla_title.attr('title', mopla.description || '');
+		
+		
 	}
 };

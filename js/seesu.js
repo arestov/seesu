@@ -256,7 +256,7 @@ var start_random_nice_track_search = function(mo, not_search_mp3, from_collectio
 };
 var makeSongPlayalbe= function(mo, full_allowing,  from_collection, last_in_collection){
 	if (mo.raw){
-		su.ui.updateSong(mo);
+		mo.ui.update();
 	} else if (!mo.track){
 		start_random_nice_track_search(mo, !full_allowing, from_collection, last_in_collection);
 	} else{

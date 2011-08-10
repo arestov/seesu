@@ -1240,53 +1240,6 @@ seesu_ui.prototype = {
 		}
 
 	},
-	displaySongMoplaInfo: function(mo, mopla){
-		var duration = mopla.duration;
-		var du = mo.ui.durationc;
-		
-		if (duration){
-			var digits = duration % 60;
-			var track_dur = (Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-			du.text(track_dur);
-		} else{
-			du.text('');
-		}
-		
-		var filename = mopla.artist + ' - ' +  mopla.track;
-		
-		mo.ui.mopla_title.text(mopla.from + ": " + filename);
-		mo.ui.mopla_title.attr('title', mopla.description || '');
-		
-		
-	},
-	updateSong: function(mo, not_rend){
-		var _sui = this;
-		var down = mo.ui.node.siblings('a.download-mp3').remove();
-		mo.ui.node
-			.addClass('song')
-			.removeClass('search-mp3-failed')
-			.removeClass('waiting-full-render')
-			.removeClass('mp3-download-is-not-allowed')
-			.data('mo', mo)
-			.unbind()
-			.click(function(){
-				_sui.views.freeze(mo.plst_titl);
-				su.player.song_click(mo);
-			});
-		
-		
-		
-		var mopla = mo.song();
-		if (mopla){
-			if (mopla.duration){
-				this.displaySongMoplaInfo(mo, mopla);
-			}
-		}
-		
-			
-
-		
-	},
 	infoGen: function(dp, c, base_string){
 		if (dp){
 			if (c.prev){
@@ -1333,7 +1286,8 @@ seesu_ui.prototype = {
 		return bb;
 	},
 	create_playlist_element: function(mo){
-		
+		mo.ui = new songUI(mo);
+		return mo.ui.mainc;
 	},
 	lfmRequestAuth: function(){
 		
