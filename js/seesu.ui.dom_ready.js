@@ -1,4 +1,4 @@
-window.connect_dom_to_som = function(d, ui){
+window.connect_dom_to_som = function(d, sui){
 	if (!window.window_resized){
 		window_resizer(d);
 	}
@@ -9,17 +9,17 @@ window.connect_dom_to_som = function(d, ui){
 	
 	
 	
-	ui.buttons = {
+	sui.buttons = {
 		search_artists : 
 			$('<button type="submit" name="type" value="artist" id="search-artist"><span>Search in artists</span></button>',d)
 				.click(function(e){
 					var finishing_results = $(this).data('finishing_results');
 					$(this).parent().remove();
-					var query = seesu.ui.els.search_input.val();
+					var query = sui.els.search_input.val();
 					if (query) {
 						su.fs.artist_search(query, finishing_results);
 					}
-					seesu.ui.make_search_elements_index()
+					sui.make_search_elements_index()
 				}),
 			
 		search_tags:  
@@ -29,11 +29,11 @@ window.connect_dom_to_som = function(d, ui){
 					$(this).parent().remove();
 					
 					
-					var query = seesu.ui.els.search_input.val();
+					var query = sui.els.search_input.val();
 					if (query) {
 						su.fs.tag_search(query, finishing_results)
 					}
-					seesu.ui.make_search_elements_index()
+					sui.make_search_elements_index()
 				}),
 		search_tracks: 
 			$('<button type="submit" name="type" value="track" id="search-track"><span>Search in tracks</span></button>',d)
@@ -44,19 +44,19 @@ window.connect_dom_to_som = function(d, ui){
 					
 					
 					
-					var query = seesu.ui.els.search_input.val();
+					var query = sui.els.search_input.val();
 					if (query) {
 						su.fs.track_search(query, finishing_results)
 					}
-					seesu.ui.make_search_elements_index()
+					sui.make_search_elements_index()
 				}),
 		search_vkontakte: 
 			$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>',d)
 				.click(function(e){
 					
-					var query = seesu.ui.els.search_input.val();
+					var query = sui.els.search_input.val();
 					if (query) {
-						su.ui.show_track({q: query});
+						sui.show_track({q: query});
 					}
 					
 				})
@@ -96,7 +96,7 @@ window.connect_dom_to_som = function(d, ui){
 			var new_volume_factor = pos/50;
 			seesu.player.musicbox.changhe_volume(new_volume_factor * 100);
 			seesu.player.call_event(VOLUME, new_volume_factor * 100);
-			(su.ui.els.volume_s.sheet.cssRules || su.ui.els.volume_s.sheet.rules)[0].style.width = pos + 'px';
+			(sui.els.volume_s.sheet.cssRules || sui.els.volume_s.sheet.rules)[0].style.width = pos + 'px';
 		})
 		o.volume_state_position = $('<div class="volume-state-position"></div>',d)
 			.appendTo(o.volume_state);
@@ -107,7 +107,7 @@ window.connect_dom_to_som = function(d, ui){
 			
 		return o;
 	})(seesu.player.player_volume);
-	addEvent(d, "DOMContentLoaded", function() {
+	$(d).ready(function() {
 		var lang = app_env.lang;
 		$('.lang', d).each(function(i,el){
 			var cn = el.className;
@@ -145,7 +145,7 @@ window.connect_dom_to_som = function(d, ui){
 		}
 		d.documentElement.firstChild.appendChild(volume_s);
 		
-		dstates.connect_ui(ui);
+		dstates.connect_ui(sui);
 		var pllistlevel = $('#playlist-level',d);
 		
 		var search_form = $('#search',d); 
@@ -158,10 +158,10 @@ window.connect_dom_to_som = function(d, ui){
 		}
 		
 		
-		ui.els = {
+		sui.els = {
 			scrolling_viewport: $('#screens',d),
 			make_trs: $("#make-trs-plable",d).click(function(){
-				var plc = su.ui.views.getCurrentPlaylistContainer();
+				var plc = sui.views.getCurrentPlaylistContainer();
 				var pl = plc && plc.context && plc.context.pl;
 				if (pl){
 					make_tracklist_playable(pl, true);
@@ -197,7 +197,7 @@ window.connect_dom_to_som = function(d, ui){
 		var ainfo_sample = ui_samples.children('.artist-info');
 		var track_c = ui_samples.children('.track-context');
 		track_c.children('.track-info-dominator').append(ainfo_sample.clone())
-		ui.samples = {
+		sui.samples = {
 			
 			a_info: ainfo_sample,
 			track_c : track_c,
@@ -271,34 +271,34 @@ window.connect_dom_to_som = function(d, ui){
 			}
 			
 		};
-		vk_auth_box.setUI(ui.samples.vk_login);
+		vk_auth_box.setUI(sui.samples.vk_login);
 		
 			
-		ui.els.search_label = ui.els.search_form.find('#search-p').find('.lbl');
-		var justhead = $(su.ui.els.slider).children('.navs');
-		ui.views.nav = {
+		sui.els.search_label = sui.els.search_form.find('#search-p').find('.lbl');
+		var justhead = $(sui.els.slider).children('.navs');
+		sui.views.nav = {
 			justhead: justhead,
 			daddy: justhead.children('.daddy'),
 			start: $('#start_search',d),
 			results: $('#search_result_nav',d),
-			playlist: $(su.ui.els.nav_playlist_page).parent(),
-			track: ui.els.nav_track_zoom.parent()
+			playlist: $(sui.els.nav_playlist_page).parent(),
+			track: sui.els.nav_track_zoom.parent()
 		}
 		
-		ui.els.search_input.bind('keyup change', input_change);
+		sui.els.search_input.bind('keyup change', input_change);
 	
 		var state_recovered;	
 		if (window.su && su.player && su.player.c_song){
 			if (su.player.c_song && su.player.c_song.plst_titl){
-				ui.views.show_start_page(false, true, true);
+				sui.views.show_start_page(false, true, true);
 				if (su.player.c_song.plst_titl.with_search_results_link){
 					delete su.player.c_song.plst_titl.with_search_results_link ;
 				}
-				su.ui.views.show_playlist_page(su.player.c_song.plst_titl, false, true);
+				sui.views.show_playlist_page(su.player.c_song.plst_titl, false, true);
 				su.player.view_song(su.player.c_song, true, true, true);
 				su.player.nowPlaying(su.player.c_song);
-				su.ui.views.freeze(su.player.c_song.plst_titl, true);
-				su.ui.mark_c_node_as(su.player.player_state);
+				sui.views.freeze(su.player.c_song.plst_titl, true);
+				sui.mark_c_node_as(su.player.player_state);
 				state_recovered = true;
 			}
 		}
@@ -329,15 +329,15 @@ window.connect_dom_to_som = function(d, ui){
 				.click(function(){
 					window.close();
 				})
-				.prependTo(seesu.ui.els.slider)
+				.prependTo(sui.els.slider)
 		}
 
 		if (su.lfm_api.scrobbling) {
-			ui.lfm_change_scrobbling(true);
+			sui.lfm_change_scrobbling(true);
 		}
 		
 		if (su.lfm_api.sk) {
-			seesu.ui.lfm_logged();	
+			sui.lfm_logged();	
 		}
 		
 		
@@ -382,26 +382,26 @@ window.connect_dom_to_som = function(d, ui){
 		search_form.submit(function(){return false;})
 		if (search_form) {
 			$(d).keydown(function(e){
-				if (!seesu.ui.els.slider.className.match(/show-search-results/)) {return}
+				if (!sui.els.slider.className.match(/show-search-results/)) {return}
 				if (d.activeElement.nodeName == 'BUTTON'){return}
 				arrows_keys_nav(e);
 			})
 		}
 		var wtm_wrap = $('#people-connecting', d);
 		var wtm_content = wtm_wrap.find('.people-connecting-content');
-		ui.els.wtm = {
+		sui.els.wtm = {
 			wp:wtm_wrap,
 			con: wtm_content,
 			visible: false,
 			id: false
 		};
 		
-		ui.els.wtm.id = ui.addPopup(wtm_wrap, function(){
-			return ui.els.wtm.visible;
+		sui.els.wtm.id = sui.addPopup(wtm_wrap, function(){
+			return sui.els.wtm.visible;
 		}, function(){
 			wtm_wrap.hide();
 			wtm_content.empty();
-			ui.els.wtm.visible = false;
+			sui.els.wtm.visible = false;
 		});
 		
 		
@@ -410,7 +410,7 @@ window.connect_dom_to_som = function(d, ui){
 		
 		var pl_search_wrap = $('#playlist-search', d);
 		
-		ui.els.pl_search = {
+		sui.els.pl_search = {
 			wp: pl_search_wrap,
 			visible: false,
 			hide: function(){
@@ -425,7 +425,7 @@ window.connect_dom_to_som = function(d, ui){
 		//[{name: 'loved tracks'}, {name: 'killers'}, {name: 'top british 30'}, {name: 'vkontakte'}, {name: 'best beatles'}];
 		var create_plr_entity = function(playlist, song){
 			var entity = $('<li></li>', d).text(playlist.playlist_title).click(function(){
-				ui.els.pl_search.hide();
+				sui.els.pl_search.hide();
 				su.gena.add(song, playlist);
 			});
 			return entity;
@@ -433,11 +433,11 @@ window.connect_dom_to_som = function(d, ui){
 		
 		
 		
-		ui.addPopup(pl_search_wrap, function(){
-			return ui.els.pl_search.visible;
+		sui.addPopup(pl_search_wrap, function(){
+			return sui.els.pl_search.visible;
 			
 		}, function(){
-			ui.els.pl_search.hide();
+			sui.els.pl_search.hide();
 		});
 
 		
@@ -448,7 +448,7 @@ window.connect_dom_to_som = function(d, ui){
 		var new_playlist_desc = 'new playlist named ';
 		var pl_r = $('.pl-r', pl_search_wrap);
 		
-		var pl_q = ui.els.pl_r = $('#pl-q',pl_search_wrap).bind('change keyup focus', function(e){
+		var pl_q = sui.els.pl_r = $('#pl-q',pl_search_wrap).bind('change keyup focus', function(e){
 			
 			
 			var searching_for = this.value;
@@ -473,7 +473,7 @@ window.connect_dom_to_som = function(d, ui){
 						.text('"'+searching_for+'"')
 						.prepend($('<span></span>').text(new_playlist_desc));
 					new_pl_button.click(function(e){
-							ui.els.pl_search.hide();
+							sui.els.pl_search.hide();
 							su.gena.add(current_song, su.gena.create_userplaylist(searching_for));
 						});
 						
@@ -507,19 +507,19 @@ window.connect_dom_to_som = function(d, ui){
 			e.preventDefault();
 		});
 		if (!state_recovered){
-			ui.views.show_start_page(true, true, true);
-			var ext_search_query = seesu.ui.els.search_input.val();
+			sui.views.show_start_page(true, true, true);
+			var ext_search_query = sui.els.search_input.val();
 			if (!hashchangeHandler({
 					oldURL:'',
 					newURL: location.hash.replace(/^\#/,'')
 				}, true) && ext_search_query){
-				su.ui.search(ext_search_query);
+				sui.search(ext_search_query);
 			}
 			console.log('bg');
 		}
 		
 		
-		ui.create_playlists_link();
+		sui.create_playlists_link();
 		
 		
 		
@@ -533,11 +533,11 @@ window.connect_dom_to_som = function(d, ui){
 				'margin-right': '15px',
 				'margin-bottom': '25px'
 			}).click(function(){
-				seesu.ui.show_artist(lfm_hartist.name);
+				sui.show_artist(lfm_hartist.name);
 				seesu.track_event('Artist navigation', 'hyped at start page', artist_name);
 			});
 			var image = $('<img/>').attr('src', lfm_hartist.image[1]['#text']);
-			link.append(image).appendTo(su.ui.els.hyped_arts);
+			link.append(image).appendTo(sui.els.hyped_arts);
 			link.append('<p>' + lfm_hartist.name + '</p>');
 			lfm('artist.getInfo',{artist:lfm_hartist.name},  function(r){
 				var atags = (r && r.artist && r.artist.tags && r.artist.tags.tag) && ((r.artist.tags.tag.length && r.artist.tags.tag) || [r.artist.tags.tag]);
@@ -551,11 +551,11 @@ window.connect_dom_to_som = function(d, ui){
 			});
 		};
 		false && lfm('chart.getHypedArtists', false, function(r){
-			//su.ui.els.start_screen
-			su.ui.els.hyped_arts = $('<div></div>').css({
+			//sui.els.start_screen
+			sui.els.hyped_arts = $('<div></div>').css({
 				overflow:'hidden',
 				'margin-top': '50px'
-			}).appendTo(su.ui.els.start_screen);
+			}).appendTo(sui.els.start_screen);
 			console.log(r);
 			var h_arts  = (r && r.artists && r.artists.artist) && ((r.artists.artist.length && r.artists.artist) || [r.artists.artist]);
 			if (h_arts){
@@ -570,14 +570,14 @@ window.connect_dom_to_som = function(d, ui){
 			$('<a class="js-serv hyped-tag"></a> ')
 				.text(tag)
 				.click(function(e){
-					su.ui.show_tag(tag)
+					sui.show_tag(tag)
 					seesu.track_event('Navigation', 'hyped at start page', "tag: " + tag );
 					e.preventDefault();
 				}).appendTo(c);
 			c.append(' ')
 			
 		};
-		var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(su.ui.els.start_screen);
+		var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(sui.els.start_screen);
 		var users_limit = 6;
 		var showUsers = function(listenings,c, above_limit_value){
 			if (listenings.length){
@@ -600,7 +600,7 @@ window.connect_dom_to_som = function(d, ui){
 								.click(function(){
 									var a = $(this).data('artist');
 									var t = $(this).data('track');	
-									su.ui.show_artist(a, false, false, {artist: a, track: t});			
+									sui.show_artist(a, false, false, {artist: a, track: t});			
 								}))
 							.appendTo(uc)
 					}
@@ -639,10 +639,10 @@ window.connect_dom_to_som = function(d, ui){
 			users_play.addClass('loading');
 		});
 		
-		var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(su.ui.els.start_screen);
+		var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(sui.els.start_screen);
 		var createTrackLink = function(artist, track, track_obj, playlist){
 			return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(e){
-				su.ui.views.show_playlist_page(playlist);
+				sui.views.show_playlist_page(playlist);
 				if (track_obj.ui && track_obj.ui.node){
 					track_obj.ui.node.click();
 				}
@@ -727,14 +727,14 @@ window.connect_dom_to_som = function(d, ui){
 			var o = opts || {};
 			var el_opts = {};	
 			
-			var ui = createPeopleListEl(man.info.photo);
+			var pui = createPeopleListEl(man.info.photo);
 			
 			
 			if (o.links){
-				ui.lp.append(su.ui.getAcceptedDesc(man));
+				pui.lp.append(sui.getAcceptedDesc(man));
 			
 			} else if (o.accept_button){
-				var nb = su.ui.createNiceButton();
+				var nb = sui.createNiceButton();
 					nb.b.text( localize('accept-inv', 'Accept invite'));
 					nb.enable();
 					
@@ -746,7 +746,7 @@ window.connect_dom_to_som = function(d, ui){
 							su.s.api('relations.acceptInvite', {from: man.user}, function(r){
 								
 								if (r.done){
-									$('<span class="desc"></span>').text(su.ui.getRemainTimeText(r.done.est, true)).appendTo(ui.lp);
+									$('<span class="desc"></span>').text(sui.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
 									if (new Date(r.done.est) < new Date()){
 										checkRelationsInvites();
 									}
@@ -757,10 +757,10 @@ window.connect_dom_to_som = function(d, ui){
 							pliking = true
 						}
 					});
-				nb.c.appendTo(ui.bp);
+				nb.c.appendTo(pui.bp);
 			}
 			
-			return ui.c;
+			return pui.c;
 		};
 		var createPeopleList = function(people, opts){
 			var o = opts || {};
@@ -776,8 +776,8 @@ window.connect_dom_to_som = function(d, ui){
 			};
 			return ul;
 		};
-		var rl_place = su.ui.els.start_screen.find('.relations-likes-wrap');
-		var ri_place = su.ui.els.start_screen.find('.relations-invites-wrap');
+		var rl_place = sui.els.start_screen.find('.relations-likes-wrap');
+		var ri_place = sui.els.start_screen.find('.relations-invites-wrap');
 		
 
 		su.s.susd.rl.regCallback('start-page', function(r){
@@ -838,7 +838,7 @@ window.connect_dom_to_som = function(d, ui){
 		
 		
 		if (window.lastfm_toptags && lastfm_toptags.length){
-			var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(su.ui.els.start_screen);
+			var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(sui.els.start_screen);
 			$('<h3></h3>').appendTo(_c)
 							.append(localize('Pop-tags','Popular tags'));
 			for (var i=0; i < lastfm_toptags.length; i++) {
@@ -847,7 +847,7 @@ window.connect_dom_to_som = function(d, ui){
 		}
 		
 		false && lfm('chart.getTopTags', false, function(r){
-			var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(su.ui.els.start_screen);
+			var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(sui.els.start_screen);
 			var pop_tags  = (r && r.tags && r.tags.tag) && ((r.tags.tag.length && r.tags.tag) || [r.tags.tag]);
 			var wtags = [];
 			dizi = wtags;

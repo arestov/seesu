@@ -1,4 +1,5 @@
-var views = function(){
+var views = function(sui){
+	this.sui = sui;
 	this.m = new browseMap();
 }
 views.prototype = {
@@ -8,18 +9,20 @@ views.prototype = {
 	getSearchResultsContainer: function(){
 		var c = this.m.getFreeLevel(0);
 		if (!c.ui){
-			c.ui = $('<div class="search-results-container current-src"></div').appendTo(seesu.ui.els.searchres);
+			c.ui = $('<div class="search-results-container current-src"></div').appendTo(this.sui.els.searchres);
 		}
 		return c
 	},
 	getPlaylistContainer: function(skip_from){
+		var _this = this;
+		
 		var c = this.m.getFreeLevel(1, 1-(skip_from + 1));
 		if (!c.ui){
-			var conie = $('<div class="playlist-container"></div>').appendTo(seesu.ui.els.artsTracks);
+			var conie = $('<div class="playlist-container"></div>').appendTo(this.sui.els.artsTracks);
 			c.ui = {
 				conie: conie,
 				canUse: function(){
-					return this.conie && !!this.conie.parent() && this.conie[0].ownerDocument == su.ui.d;
+					return this.conie && !!this.conie.parent() && this.conie[0].ownerDocument == _this.sui.d;
 				},
 				remove: function(){
 					return this.conie.remove();
@@ -72,25 +75,26 @@ views.prototype = {
 	},
 
 	show_now_playing: function(){
-		var current_page = seesu.ui.els.slider.className;
+		var current_page = this.sui.els.slider.className;
 		this.restoreFreezed(true); // true is for supress navi.set
 		su.player.view_song(su.player.c_song, true);
 		seesu.track_event('Navigation', 'now playing', current_page);
 	},
 	show_start_page: function(focus_to_input, log_navigation, init, no_navi){
+		var _this = this;
 		// start page is -1 level
 		this.m.sliceToLevel(-1);
 		
 		
 		this.nav.daddy.empty();
 		this.nav.daddy.append($('<img class="nav-title" title="Seesu start page" src="i/nav/seesu-nav-logo.png"/>').click(function(){
-			seesu.ui.els.search_input[0].focus();
-			seesu.ui.els.search_input[0].select();
+			_this.sui.els.search_input[0].focus();
+			_this.sui.els.search_input[0].select();
 		}));
-		seesu.ui.els.slider.className = "show-start";
+		this.sui.els.slider.className = "show-start";
 		if (focus_to_input){
-			seesu.ui.els.search_input[0].focus();
-			seesu.ui.els.search_input[0].select();
+			_this.sui.els.search_input[0].focus();
+			_this.sui.els.search_input[0].select();
 		}
 		if (init){
 			this.nav.daddy.removeClass('not-inited')
@@ -109,19 +113,20 @@ views.prototype = {
 		this.m.sliceToLevel(-1);
 	},
 	show_search_results_page: function(without_input, no_navi){
+		var _this = this;
 		// search results is 0 level
 		this.m.sliceToLevel(0);
 		
 		
 		this.nav.daddy.empty();
 		this.nav.daddy.append(this.nav.start.unbind().click(function(){
-			seesu.ui.views.show_start_page(true, true);
+			_this.show_start_page(true, true);
 		}));
 		this.nav.daddy.append('<img class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png"/>');
-		var _s = seesu.ui.els.slider.className;
+		var _s = this.sui.els.slider.className;
 		var new_s = (without_input ? '' : 'show-search ') + "show-search-results";
 		if (new_s != _s){
-			seesu.ui.els.slider.className = new_s;
+			this.sui.els.slider.className = new_s;
 			seesu.track_page('search results');
 		}
 		this.state = 'search_results';
@@ -134,24 +139,26 @@ views.prototype = {
 	},
 	swithToPlaylistPage: function(pl, no_navi){
 		// playlist page is 1 level
+		var _this = this;
+		
 		this.m.sliceToLevel(1);
 		
 		this.nav.daddy.empty();
 		if (pl.with_search_results_link){
 			this.nav.daddy.append(this.nav.results.unbind().click(function(){
-				seesu.ui.views.show_search_results_page(true);
+				_this.sui.views.show_search_results_page(true);
 			}));
 		} else{
 			this.nav.daddy.append(this.nav.start.unbind().click(function(){
-				seesu.ui.views.show_start_page(true, true);
+				_this.sui.views.show_start_page(true, true);
 			}));
 		}
 		this.nav.daddy.append('<span class="nav-title" src="i/nav/seesu-nav-search.png">' + pl.playlist_title + '</span>');
-		$(seesu.ui.els.nav_playlist_page).text(pl.playlist_title);
+		$(this.sui.els.nav_playlist_page).text(pl.playlist_title);
 		if (pl.with_search_results_link) {
-			seesu.ui.els.slider.className = 'show-full-nav show-player-page';
+			this.sui.els.slider.className = 'show-full-nav show-player-page';
 		} else {
-			seesu.ui.els.slider.className = 'show-player-page';
+			this.sui.els.slider.className = 'show-player-page';
 		}
 		this.state = 'playlist';
 		if (!no_navi){
@@ -197,26 +204,28 @@ views.prototype = {
 				pl.ui = lev.ui;
 				lev.setURL(getUrlOfPlaylist(pl));
 			}
-			seesu.ui.render_playlist(pl, pl.length > 1);
+			this.sui.render_playlist(pl, pl.length > 1);
 		}
 		this.swithToPlaylistPage(pl, no_navi);
 
 	},
 	show_track_page: function(title, zoom, mo, no_navi){
+		var _this = this;
+		
 		var pl = mo.plst_titl;
 		
 		if (title){
-			seesu.ui.els.nav_track_zoom.text(title);
+			this.sui.els.nav_track_zoom.text(title);
 		}
 		
 		if (zoom){
-			$(seesu.ui.els.slider).addClass('show-zoom-to-track');
+			$(this.sui.els.slider).addClass('show-zoom-to-track');
 			this.state = 'track';
 		}
 		if (zoom || this.state == 'track'){
 			this.nav.daddy.empty();
 			this.nav.daddy.append(this.nav.playlist.unbind().click(function(){
-					seesu.ui.views.swithToPlaylistPage(pl);
+					_this.sui.views.swithToPlaylistPage(pl);
 			}));
 			
 			this.nav.daddy.append('<span class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png">' + title + '</span>');
@@ -318,7 +327,7 @@ window.seesu_ui = function(d, with_dom){
 	if (!with_dom){
 		dstates.connect_ui(this);
 	} else {
-		this.views = new views();
+		this.views = new views(this);
 	}
 	
 	this.popups = [];

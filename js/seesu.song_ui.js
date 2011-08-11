@@ -239,7 +239,10 @@ songUI.prototype = {
 			
 		
 		var pi = this.mo.playable_info; 
-		this.mo.makeSongPlayalbe(pi.full_allowing, pi.packsearch, pi.last_in_collection);	
+		setTimeout(function(){
+			_this.mo.makeSongPlayalbe(pi.full_allowing, pi.packsearch, pi.last_in_collection);	
+		},100)
+		
 	},
 	remove: function(){
 		this.mainc.remove();
