@@ -4,7 +4,7 @@ function lastfm_api(apikey, s, cache, crossdomain){
 	this.cache = cache;
 	this.crossdomain = crossdomain;
 	if (!crossdomain){
-		var srvc = document.createElement('div');srvc.className="serv-container";$(function(){document.body.appendChild(srvc)});
+		var srvc = document.createElement('div');srvc.className="serv-container";suReady(function(){document.body.appendChild(srvc)});
 		
 		var _i = document.createElement('iframe'); _i.width='30'; _i.height= '30';
 		var _f = document.createElement('form'); _f.method ='POST'; _f.action=this.api_path; srvc.appendChild(_f);
@@ -48,10 +48,8 @@ function lastfm_api(apikey, s, cache, crossdomain){
 	this.ss =  w_storage('lfm_scrobble_s');
 	
 	if (!this.sk) {
-		jsLoadComplete(function(){
-			$(function(){
-				su.lfm_api.get_lfm_token();
-			});
+		suReady(function(){
+			su.lfm_api.get_lfm_token();
 		});
 		
 	}

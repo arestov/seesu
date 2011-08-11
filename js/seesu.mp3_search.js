@@ -45,7 +45,7 @@ var song_methods = {
 				this.ui = new songUI(this, complex);
 				var pl_ui_element = this.ui.mainc;
 				if (pl.first_song){
-					if (!fdone){
+					if (!pl.firstsong_inseting_done){
 						if (this == pl.first_song){
 							pl.ui.tracks_container.append(pl_ui_element);
 						} else{
