@@ -157,7 +157,7 @@ var seesuServerAPI = function(auth){
 		  }
 		});
 	}, update_interval,  update_interval);
-	$(function(){
+	suReady(function(){
 		_this.susd.ligs.init();
 	});
 	

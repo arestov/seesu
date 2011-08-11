@@ -1,3 +1,22 @@
+(function() {
+	var ready = false;
+	jsLoadComplete(function(){
+		$(function(){
+			ready = true;
+		});
+	})
+	window.suReady = function(callback){
+		if (ready){
+			setTimeout(callback, 30);
+		} else{
+			jsLoadComplete(function(){
+				$(callback);
+			})
+		}
+		
+	};
+	
+})();
 
 (function(){
 	var jsonp_counter = 0;

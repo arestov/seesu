@@ -107,7 +107,7 @@ window.connect_dom_to_som = function(d, sui){
 			
 		return o;
 	})(seesu.player.player_volume);
-	$(d).ready(function() {
+	domReady(d, function() {
 		var lang = app_env.lang;
 		$('.lang', d).each(function(i,el){
 			var cn = el.className;

@@ -720,7 +720,7 @@ var sm2iframed = {
 				
 			});
 			
-			$(function(){
+			suReady(function(){
 				$(document.body).append(_this.c);
 			});
 			
@@ -766,7 +766,7 @@ var a = document.createElement('audio');
 if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 	
 	su.player.musicbox = new html5_p(su.player.player_volume);
-	$(function(){
+	suReady(function(){
 		dstates.add_state('body','flash-internet');
 	})
 	
@@ -783,7 +783,7 @@ if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 			if (soundManager.supported()) {
 				console.log('sm2 in widget ok')
 				su.player.musicbox = new sm2_p(su.player.player_volume, soundManager);
-				$(function(){
+				suReady(function(){
 					dstates.add_state('body','flash-internet');
 				})
 				sm2iframed.remove();

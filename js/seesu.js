@@ -35,7 +35,7 @@ window.seesu = window.su =  {
 		var _i = document.createElement('iframe');_i.id ='gstat';_i.src = 'http://seesu.me/g_stat.html';
 
 		
-		$(function(){
+		suReady(function(){
 			document.body.appendChild(_i);
 		});
 		var ga_ready = false;
@@ -323,7 +323,9 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 	if (bN(['artist', 'album', 'cplaylist'].indexOf(playlist_type ))){
 		var can_find_context = true;
 	}
-	var fdone = !can_find_context;
+
+	pl.firstsong_inseting_done = !can_find_context;
+	
 	if (first_song && first_song.track && (first_song.artist || (playlist_type == 'artist' && key))){
 		if (!first_song.artist){
 			first_song.artist = key;
@@ -337,14 +339,14 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 		if (pl.first_song){
 			if (pl.first_song==mo){
 				return oldpush.call(this, pl.first_song);
-			} else if (!fdone){
+			} else if (!pl.firstsong_inseting_done){
 				if (mo.artist != pl.first_song.artist || mo.track != pl.first_song.track){
 					pl.pop();
 					oldpush.call(this, mo);
 					return oldpush.call(this, pl.first_song);
 					
 				} else {
-					fdone = true;
+					pl.firstsong_inseting_done = true;
 				}
 				
 			} else{
@@ -648,7 +650,7 @@ var get_artist_album_info = function(artist, album, callback){
 };
 
 
-$(function(){
+suReady(function(){
 	check_seesu_updates();
 	try_mp3_providers();
-})
+});

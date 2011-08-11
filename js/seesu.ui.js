@@ -9,7 +9,7 @@ views.prototype = {
 	getSearchResultsContainer: function(){
 		var c = this.m.getFreeLevel(0);
 		if (!c.ui){
-			c.ui = $('<div class="search-results-container current-src"></div').appendTo(this.sui.els.searchres);
+			c.ui = $('<div class="search-results-container current-src"></div').appendTo(this.sUI().els.searchres);
 		}
 		return c
 	},
@@ -18,11 +18,11 @@ views.prototype = {
 		
 		var c = this.m.getFreeLevel(1, 1-(skip_from + 1));
 		if (!c.ui){
-			var conie = $('<div class="playlist-container"></div>').appendTo(this.sui.els.artsTracks);
+			var conie = $('<div class="playlist-container"></div>').appendTo(this.sUI().els.artsTracks);
 			c.ui = {
 				conie: conie,
 				canUse: function(){
-					return this.conie && !!this.conie.parent() && this.conie[0].ownerDocument == _this.sui.d;
+					return this.conie && !!this.conie.parent() && this.conie[0].ownerDocument == _this.sUI().d;
 				},
 				remove: function(){
 					return this.conie.remove();
@@ -47,6 +47,9 @@ views.prototype = {
 	},
 	getCurrentPlaylistContainer: function(){
 		return this.m.getLevel(1);
+	},
+	sUI: function(){
+		return su && su.ui || this.sui;	
 	},
 	findViewOfURL: function(url, only_freezed, only_free){
 		return this.m.findURL(1, url, only_freezed, only_free);
@@ -75,7 +78,7 @@ views.prototype = {
 	},
 
 	show_now_playing: function(){
-		var current_page = this.sui.els.slider.className;
+		var current_page = this.sUI().els.slider.className;
 		this.restoreFreezed(true); // true is for supress navi.set
 		su.player.view_song(su.player.c_song, true);
 		seesu.track_event('Navigation', 'now playing', current_page);
@@ -88,13 +91,13 @@ views.prototype = {
 		
 		this.nav.daddy.empty();
 		this.nav.daddy.append($('<img class="nav-title" title="Seesu start page" src="i/nav/seesu-nav-logo.png"/>').click(function(){
-			_this.sui.els.search_input[0].focus();
-			_this.sui.els.search_input[0].select();
+			_this.sUI().els.search_input[0].focus();
+			_this.sUI().els.search_input[0].select();
 		}));
-		this.sui.els.slider.className = "show-start";
+		this.sUI().els.slider.className = "show-start";
 		if (focus_to_input){
-			_this.sui.els.search_input[0].focus();
-			_this.sui.els.search_input[0].select();
+			_this.sUI().els.search_input[0].focus();
+			_this.sUI().els.search_input[0].select();
 		}
 		if (init){
 			this.nav.daddy.removeClass('not-inited')
@@ -123,10 +126,10 @@ views.prototype = {
 			_this.show_start_page(true, true);
 		}));
 		this.nav.daddy.append('<img class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png"/>');
-		var _s = this.sui.els.slider.className;
+		var _s = this.sUI().els.slider.className;
 		var new_s = (without_input ? '' : 'show-search ') + "show-search-results";
 		if (new_s != _s){
-			this.sui.els.slider.className = new_s;
+			this.sUI().els.slider.className = new_s;
 			seesu.track_page('search results');
 		}
 		this.state = 'search_results';
@@ -146,19 +149,19 @@ views.prototype = {
 		this.nav.daddy.empty();
 		if (pl.with_search_results_link){
 			this.nav.daddy.append(this.nav.results.unbind().click(function(){
-				_this.sui.views.show_search_results_page(true);
+				_this.sUI().views.show_search_results_page(true);
 			}));
 		} else{
 			this.nav.daddy.append(this.nav.start.unbind().click(function(){
-				_this.sui.views.show_start_page(true, true);
+				_this.sUI().views.show_start_page(true, true);
 			}));
 		}
 		this.nav.daddy.append('<span class="nav-title" src="i/nav/seesu-nav-search.png">' + pl.playlist_title + '</span>');
-		$(this.sui.els.nav_playlist_page).text(pl.playlist_title);
+		$(this.sUI().els.nav_playlist_page).text(pl.playlist_title);
 		if (pl.with_search_results_link) {
-			this.sui.els.slider.className = 'show-full-nav show-player-page';
+			this.sUI().els.slider.className = 'show-full-nav show-player-page';
 		} else {
-			this.sui.els.slider.className = 'show-player-page';
+			this.sUI().els.slider.className = 'show-player-page';
 		}
 		this.state = 'playlist';
 		if (!no_navi){
@@ -204,7 +207,7 @@ views.prototype = {
 				pl.ui = lev.ui;
 				lev.setURL(getUrlOfPlaylist(pl));
 			}
-			this.sui.render_playlist(pl, pl.length > 1);
+			this.sUI().render_playlist(pl, pl.length > 1);
 		}
 		this.swithToPlaylistPage(pl, no_navi);
 
@@ -215,17 +218,17 @@ views.prototype = {
 		var pl = mo.plst_titl;
 		
 		if (title){
-			this.sui.els.nav_track_zoom.text(title);
+			this.sUI().els.nav_track_zoom.text(title);
 		}
 		
 		if (zoom){
-			$(this.sui.els.slider).addClass('show-zoom-to-track');
+			$(this.sUI().els.slider).addClass('show-zoom-to-track');
 			this.state = 'track';
 		}
 		if (zoom || this.state == 'track'){
 			this.nav.daddy.empty();
 			this.nav.daddy.append(this.nav.playlist.unbind().click(function(){
-					_this.sui.views.swithToPlaylistPage(pl);
+				_this.sUI().views.swithToPlaylistPage(pl);
 			}));
 			
 			this.nav.daddy.append('<span class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png">' + title + '</span>');
@@ -343,7 +346,7 @@ window.seesu_ui = function(d, with_dom){
 	if (with_dom){
 		connect_dom_to_som(d, this);
 	}
-}
+};
 seesu_ui.prototype = {
 	addPopup: function(popup_node, testf, hidef){
 		var ob = {
