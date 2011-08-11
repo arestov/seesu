@@ -611,12 +611,12 @@ var sm2iframed = {
 		if (this.c) {
 			
 			var last_iframe_func = this.text_of_function(_this.i_func).replace('_volume', su.player.player_volume );
-			var scripts_paths = [];
+			var scripts_paths = [
+				'js/soundmanager2.js',
+				'js/seesu.player.sm2.js'
+			];
 
 			scripts_data = [];
-			$('script.for-sm2-iframe', document.documentElement.firstChild).each(function(i){
-				scripts_paths.push(this.src);
-			});
 			
 			var all_scripts_data_loaded = false;
 			var wait_for_all_script_data = false;
