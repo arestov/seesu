@@ -1418,7 +1418,7 @@ seesu_ui.prototype = {
 		dstates.add_state('body', 'lfm-auth-done');
 		dstates.remove_state('body', 'lfm-auth-req-loved');
 		dstates.remove_state('body', 'lfm-auth-req-recomm');
-		$('.lfm-finish input[type=checkbox]',this.d).attr('checked', 'checked');
+		$('.lfm-finish input[type=checkbox]',this.d).prop('checked', true);
 		var f = $('.scrobbling-switches', this.d);
 		var ii = f.find('input');
 		ii.removeAttr('disabled');
@@ -1426,8 +1426,8 @@ seesu_ui.prototype = {
 	lfm_change_scrobbling:function(enable, context){
 		var lfm_ssw = $('.scrobbling-switches', context || this.d);
 		if (lfm_ssw) {
-			lfm_ssw.find('.enable-scrobbling').attr('checked', enable ? 'checked' : '');
-			lfm_ssw.find('.disable-scrobbling').attr('checked',enable ? '' : 'checked');
+			lfm_ssw.find('.enable-scrobbling').prop('checked', enable ? true : false);
+			lfm_ssw.find('.disable-scrobbling').prop('checked',enable ? false : true);
 		}
 	},
 	search: function(query, no_navi, new_browse){
