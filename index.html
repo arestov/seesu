@@ -17,56 +17,17 @@
 	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport"  content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
-
-	<script type="text/javascript" src="js/w_storage.js"></script>
-	<script type="text/javascript" src="js/c_quene.js"></script>
-	<script type="text/javascript" src="js/c_cache_ajax.js"></script>
-	
-	<script type="text/javascript" src="js/json2.min.js"></script>
-	<script type="text/javascript" src="js/md5.min.js"></script>
-	<script type="text/javascript" src="js/jquery-1.6.2.mod.min.js"></script>
-	<script type="text/javascript" src="js/app_serv.js"></script>
-	<script type="text/javascript" src="js/serv.js"></script>
-	<script type="text/javascript" src="js/widget.resize.js"></script>
-	<script type="text/javascript" src="js/browse_map.js"></script>
-	
- 	<script type="text/javascript" src="js/htmlencoding.js"></script>
-	<script type="text/javascript" src="js/localizer.js"></script>
-
-	
-	<script type="text/javascript" src="js/jquery.debounce-1.0.5.js"></script>
-	<script type="text/javascript" src="js/soundmanager2.js" class="for-sm2-iframe"></script>
-
-	 
-	
-	<script type="text/javascript" src="js/network.js"></script>
-	<script type="text/javascript" src="js/network.soundcloud.js"></script>
-	<script type="text/javascript" src="js/network.vk.api.js"></script>
-	<script type="text/javascript" src="js/network.lastfm.js"></script>
-	
-	<script type="text/javascript" src="js/seesu.ui.dom_ready.js"></script>
-	<script type="text/javascript" src="js/seesu.ui.js"></script>
-	<script type="text/javascript" src="js/seesu.s.js"></script>
-	<script type="text/javascript" src="js/seesu.song_ui.js"></script>
-	<script type="text/javascript" src="js/seesu.js"></script>
-	<script type="text/javascript" src="js/seesu.url_games.js"></script>
-	<script type="text/javascript" src="js/seesu.mp3_search.js"></script>
-	<script type="text/javascript" src="js/seesu.search.js"></script>
-	
-	<script type="text/javascript" src="js/seesu.player.html5.js" class="for-sm2-iframe"></script>
-	<script type="text/javascript" src="js/seesu.player.sm2.js" class="for-sm2-iframe"></script>
-	<script type="text/javascript" src="js/seesu.player.js"></script>
-	
-	
-
-	<script type="text/javascript" src="js/c_buttmen.js"></script>
-	<script type="text/javascript" src="js/pressed_node_tester.js"></script>
+	<script type="text/javascript" src="js/yepnope.1.0.2-min.js"></script>
+	<script type="text/javascript" src="js/_seesu.jslist.js"></script>
 	<script type="text/javascript">
+		yepnope({
+			load: js_toload,
+			complete: function(){
+				su.ui = new seesu_ui(document, true);
+			}
+		});
+	
 		
-	</script>
-	
-	<script type="text/javascript">
-		su.ui = new seesu_ui(document, true);
 	</script>
 
   </head>
