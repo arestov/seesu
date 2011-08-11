@@ -14,6 +14,13 @@ function(elem, evType, fn){
 function(elem, evType, fn){
 	elem.detachEvent('on' + evType, fn)
 };
+var domReady = function(d, callback){
+	if (d.readyState == 'complete'){
+		setTimeout(callback, 30);
+	} else{
+		addEvent(d, 'DOMContentLoaded', callback);
+	}
+};
 
 var ttime = function(f){
 	var d = +new Date
