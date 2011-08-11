@@ -144,8 +144,8 @@ songUI.prototype = {
 				.data('artist', this.mo.artist)
 				.appendTo(dominator_head.children('.closer-to-track'))
 				.click(function(){
-					su.ui.show_artist(this.mo.artist);
-					su.track_event('Artist navigation', 'top tracks', this.mo.artist);
+					su.ui.show_artist(_this.mo.artist);
+					su.track_event('Artist navigation', 'top tracks', _this.mo.artist);
 				});
 		}
 		
