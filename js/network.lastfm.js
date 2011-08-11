@@ -48,9 +48,12 @@ function lastfm_api(apikey, s, cache, crossdomain){
 	this.ss =  w_storage('lfm_scrobble_s');
 	
 	if (!this.sk) {
-		$(function(){
-			su.lfm_api.get_lfm_token();
+		jsLoadComplete(function(){
+			$(function(){
+				su.lfm_api.get_lfm_token();
+			});
 		});
+		
 	}
 	/*
 	if (crossdomain){

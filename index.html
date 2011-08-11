@@ -20,11 +20,8 @@
 	<script type="text/javascript" src="js/yepnope.1.0.2-min.js"></script>
 	<script type="text/javascript" src="js/_seesu.jslist.js"></script>
 	<script type="text/javascript">
-		yepnope({
-			load: js_toload,
-			complete: function(){
-				su.ui = new seesu_ui(document, true);
-			}
+		jsLoadComplete(function(){
+			su.ui = new seesu_ui(document, true);
 		});
 	
 		
