@@ -1,7 +1,7 @@
 window.window_resizer = function(d){
 	if(!$.browser.msie){
 		if (app_env.opera_widget || app_env.firefox_widget){
-			addEvent(d, "DOMContentLoaded", function(){
+			domReady(d, function(){
 				var wb = d.getElementById('wb');
 				if (!wb) {return false;}
 				var resz_b = d.createElement('img');
