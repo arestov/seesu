@@ -32,6 +32,11 @@
 	"js/c_buttmen.js", 
 	"js/pressed_node_tester.js"
 	];
+	if (typeof bpath != 'undefined' && bpath){
+		for (var i=0; i < js_toload.length; i++) {
+			js_toload[i] = bpath + js_toload[i];
+		};
+	}
 	var js_loadcomplete = [];
 	window.jsLoadComplete = function(callback){
 		if (js_toload.completed){
