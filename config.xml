@@ -2,7 +2,7 @@
 <widget network="public" transparent="transparent">
   <id>
 	<name>Seesu</name>
-	<revised>2010-10-23</revised>
+	<revised>2011-08-12</revised>
   </id>
   <widgetname>Seesu</widgetname>
   <description>You can find &amp; get any music you need. Type in an artist or genre.</description>
