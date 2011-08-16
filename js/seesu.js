@@ -22,11 +22,12 @@ window.lfm = function(){
 
 
 
-
+var dga = w_storage('dg_auth');
+dga = dga && JSON.parse(dga);
   
 window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
-	  s: new seesuServerAPI(JSON.parse(w_storage('dg_auth'))),
+	  s: new seesuServerAPI(dga),
 	  fs: {},//fast search
 	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
 	  version: 2.0,
