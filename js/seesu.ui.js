@@ -524,10 +524,7 @@ seesu_ui.prototype = {
 		image.src = src;
 		if (image.complete){
 			if (callback){
-				setTimeout(function(){
-					callback(image);
-				},30);
-				
+				callback(image)
 			}
 		}
 		return image;

@@ -612,8 +612,8 @@ var sm2iframed = {
 			
 			var last_iframe_func = this.text_of_function(_this.i_func).replace('_volume', su.player.player_volume );
 			var scripts_paths = [
-				'js/soundmanager2.js',
-				'js/seesu.player.sm2.js'
+				bpath + 'js/soundmanager2.js',
+				bpath + 'js/seesu.player.sm2.js'
 			];
 
 			scripts_data = [];
@@ -764,37 +764,51 @@ var sm2iframed = {
 var html_player_timer;
 var a = document.createElement('audio');
 if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
+	yepnope({
+		load: bpath + "js/seesu.player.html5.js", 
+		complete: function(){
+			
+			su.player.musicbox = new html5_p(su.player.player_volume);
+			suReady(function(){
+				dstates.add_state('body','flash-internet');
+			});
+			
+		}
+	});
 	
-	su.player.musicbox = new html5_p(su.player.player_volume);
-	suReady(function(){
-		dstates.add_state('body','flash-internet');
-	})
 	
 } else if (!su.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
-	soundManager = new SoundManager('http://seesu.me/swf/', false, {
-		flashVersion : 9,
-		useFlashBlock : true,
-		debugMode : false,
-		wmode : su.env.opera_extension ? 'opaque' : 'transparent',
-		useHighPerformance : !su.env.opera_extension
-	});
-	if (soundManager){	
-		soundManager.onready(function() {
-			if (soundManager.supported()) {
-				console.log('sm2 in widget ok')
-				su.player.musicbox = new sm2_p(su.player.player_volume, soundManager);
-				suReady(function(){
-					dstates.add_state('body','flash-internet');
-				})
-				sm2iframed.remove();
-				clearTimeout(html_player_timer);
-			} else {
-				console.log('sm2 in widget notok')
-				sm2iframed.init();
-		
+	yepnope({
+		load:  bpath + 'js/soundmanager2.js',
+		complete: function(){
+			soundManager = new SoundManager('http://seesu.me/swf/', false, {
+				flashVersion : 9,
+				useFlashBlock : true,
+				debugMode : false,
+				wmode : su.env.opera_extension ? 'opaque' : 'transparent',
+				useHighPerformance : !su.env.opera_extension
+			});
+			if (soundManager){	
+				soundManager.onready(function() {
+					if (soundManager.supported()) {
+						console.log('sm2 in widget ok')
+						su.player.musicbox = new sm2_p(su.player.player_volume, soundManager);
+						suReady(function(){
+							dstates.add_state('body','flash-internet');
+						})
+						sm2iframed.remove();
+						clearTimeout(html_player_timer);
+					} else {
+						console.log('sm2 in widget notok')
+						sm2iframed.init();
+				
+					}
+				});
 			}
-		});
-	}
+		}
+	})
+
+	
 	
 } else {
 	sm2iframed.init();
