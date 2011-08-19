@@ -95,6 +95,7 @@ html5_p.prototype = {
 			var _this = this;
 			
 			if (this.current_song){
+				this.current_song.removeAllE();
 				this.stop();
 			}
 			var aud = this.current_song = this.getAud(url);
@@ -138,10 +139,12 @@ html5_p.prototype = {
 			}
 		},
 		"stop" : function(){
+			var _this = this;
+			
 			var au = this.current_song && this.current_song.a;
 			
 			if (au){
-				this.current_song.removeAllE();
+				
 				try{
 					au.pause();
 					au.currentTime = 0;
