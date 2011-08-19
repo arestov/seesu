@@ -2,8 +2,7 @@
 	var js_toload = [
 	"js/w_storage.js", 
 	"js/c_quene.js", 
-	"js/c_cache_ajax.js", 
-	"js/json2.min.js", 
+	"js/c_cache_ajax.js",  
 	"js/md5.min.js", 
 	"js/jquery-1.6.2.mod.min.js", 
 	"js/app_serv.js", 
@@ -46,16 +45,22 @@
 			js_loadcomplete.push(callback);
 		}
 	};
-	yepnope({
-		load: js_toload,
-		complete: function(){
-			js_toload.completed = true;
-			for (var i = js_loadcomplete.length - 1; i >= 0; i--){
-				var f = js_loadcomplete.pop();
-				f();
-			};
+	yepnope([
+		{
+			test: window.JSON,
+			nope: "js/json2.min.js"
+		},
+		{
+			load: js_toload,
+			complete: function(){
+				js_toload.completed = true;
+				for (var i = js_loadcomplete.length - 1; i >= 0; i--){
+					var f = js_loadcomplete.pop();
+					f();
+				};
+			}
 		}
-	});
+	]);
 })();
 
 
