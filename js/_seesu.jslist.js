@@ -24,7 +24,6 @@
 	"js/seesu.url_games.js", 
 	"js/seesu.mp3_search.js", 
 	"js/seesu.search.js", 
-	"js/seesu.player.sm2.js", 
 	"js/seesu.player.js", 
 	"js/c_buttmen.js", 
 	"js/pressed_node_tester.js"

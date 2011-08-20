@@ -763,7 +763,22 @@ var sm2iframed = {
 
 var html_player_timer;
 var a = document.createElement('audio');
-if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
+var aw = document.createElement('object');
+	aw.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95";
+if ('EnableContextMenu' in aw && aw.attachEvent){
+	
+	yepnope({
+		load: bpath + "js/seesu.player.wmp_p.js", 
+		complete: function(){
+			
+			su.player.musicbox = new wmp_p(su.player.player_volume);
+			suReady(function(){
+				dstates.add_state('body','flash-internet');
+			});
+			
+		}
+	});
+} else if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 	yepnope({
 		load: bpath + "js/seesu.player.html5.js", 
 		complete: function(){
