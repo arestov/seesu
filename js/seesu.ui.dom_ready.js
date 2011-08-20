@@ -138,7 +138,7 @@ window.connect_dom_to_som = function(d, sui){
 			volume_s.setAttribute('title', 'volume');
 			volume_s.setAttribute('type', 'text/css');
 		var volume_style= '.volume-state-position {width:' + ((seesu.player.player_volume * 50)/100) + 'px' + '}'; 
-		if (volume_style.styleSheet){
+		if (volume_s.styleSheet){
 			volume_s.styleSheet.cssText = volume_style;
 		} else{
 			volume_s.appendChild(d.createTextNode(volume_style));
