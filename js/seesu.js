@@ -334,8 +334,8 @@ var prepare_playlist = function(playlist_title, playlist_type, key, with_search_
 		pl.first_song = first_song;
 	}
 	var oldpush = pl.push;
-	pl.push = function(mo){
-		extendSong(mo)
+	pl.push = function(omo){
+		var mo = extendSong(omo)
 		su.gena.connect(mo,pl);
 		if (pl.first_song){
 			if (pl.first_song==mo){

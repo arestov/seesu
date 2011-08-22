@@ -455,7 +455,7 @@ seesu_ui.prototype = {
 		
 		
 		var songitself = $('<a class="js-serv"></a>')
-			.attr('href', 'http://seesu.me/o#/ds' + song_methods.getURLPart.call(mopla))
+			.attr('href', 'http://seesu.me/o#/ds' + song_methods.getURLPart(mopla))
 			.text(mopla.artist + " - " + mopla.track)
 			.click(function(e){
 				su.player.play_song(mo, true, mopla)
@@ -900,7 +900,10 @@ seesu_ui.prototype = {
 				
 				
 				sc.appendTo(c);
-				mo.ui.files_control.list_button.enable();
+				if (songs_counter > 1){
+					mo.ui.files_control.list_button.enable();
+				}
+				
 			} 
 			
 			var downloads = mo.mp3Downloads();
