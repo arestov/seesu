@@ -340,7 +340,95 @@ cmo = {
 		return sem.steams[ss.name][ss.key];
 	}
 	
-}
+};
+
+function musicSeachEmitter(q, query){
+	this.q = q;
+	this.query = query;
+	this.fdefs = [];
+	this.songs = [];
+	
+};
+musicSeachEmitter.prototype = {
+	addSong: function(mo, get_next){
+		if (!bN(this.songs.indexOf(mo))){
+			this.songs.push(mo);
+			mo.sem = this;
+			if (this.some_results){
+				handle_song(mo, this.search_completed, get_next);
+			}
+		} 
+		
+	},
+	removeSong: function(mo){
+		var i = this.songs.indexOf(mo);
+		if (bN(i)){
+			delete this.songs[i];
+		}
+	},
+	emmit_handler: function(c, complete){
+		console.log('ja')
+		if (!c.done){
+			if (c.filter){
+				var r = cmo.getSteamData(this, c.filter);
+				if (r){
+					c.handler(r.failed && {failed: true}, [r], c, complete);
+					console.log('filter, no repsonce, handling')
+				} else if (!su.mp3_search.haveSearch(c.filter)){
+					c.handler({not_exist: true}, false, c, complete);
+					console.log('no filter, no search, handling')
+				}
+			} else{
+				var r = cmo.getSteamsData(this);
+				if (r){
+					c.handler(false, r, c, complete);
+					console.log('no filter, handling')
+				} else{
+					c.handler(false, false, c, complete);
+					console.log('no filter, no repsonce, handling')
+				}
+			}
+		}
+	},
+	addHandler: function(oh){
+		this.fdefs.push(oh);
+		this.emmit_handler(oh);
+	},
+	emit: function(complete, get_next){
+		for (var i=0; i < this.songs.length; i++) {
+			if (this.songs[i]){
+				handle_song(this.songs[i], complete, get_next);
+			}
+			
+		}
+		
+		for (var i=0; i < this.fdefs.length; i++) {
+			this.emmit_handler(this.fdefs[i], complete, get_next)
+			
+			
+			
+		}
+		
+	},
+	wait_ui: function(){
+		for (var i=0; i < this.songs.length; i++) {
+			var mo = this.songs[i];
+			if (mo && mo.ui && !mo.have_tracks){
+				mo.ui.node.addClass('search-mp3');
+			}
+		}
+		
+		for (var i=0; i < this.fdefs.length; i++) {
+			if (!this.fdefs[i].done && this.fdefs[i].while_wait){
+				this.fdefs[i].while_wait(); 
+			}
+			
+		}
+	},
+	isHaveAnyResultsFrom: function(source_name){
+		return !!cmo.getSteamData(this, source_name);
+	}
+};
 
 
 
@@ -601,93 +689,6 @@ var get_mp3 = function(msq, options, p, callback, just_after_request){
 };
 
 
-function musicSeachEmitter(q, query){
-	this.q = q;
-	this.query = query;
-	this.fdefs = [];
-	this.songs = [];
-	
-};
-musicSeachEmitter.prototype = {
-	addSong: function(mo, get_next){
-		if (!bN(this.songs.indexOf(mo))){
-			this.songs.push(mo);
-			mo.sem = this;
-			if (this.some_results){
-				handle_song(mo, this.search_completed, get_next);
-			}
-		} 
-		
-	},
-	removeSong: function(mo){
-		var i = this.songs.indexOf(mo);
-		if (bN(i)){
-			delete this.songs[i];
-		}
-	},
-	emmit_handler: function(c, complete){
-		console.log('ja')
-		if (!c.done){
-			if (c.filter){
-				var r = cmo.getSteamData(this, c.filter);
-				if (r){
-					c.handler(r.failed && {failed: true}, [r], c, complete);
-					console.log('filter, no repsonce, handling')
-				} else if (!su.mp3_search.haveSearch(c.filter)){
-					c.handler({not_exist: true}, false, c, complete);
-					console.log('no filter, no search, handling')
-				}
-			} else{
-				var r = cmo.getSteamsData(this);
-				if (r){
-					c.handler(false, r, c, complete);
-					console.log('no filter, handling')
-				} else{
-					c.handler(false, false, c, complete);
-					console.log('no filter, no repsonce, handling')
-				}
-			}
-		}
-	},
-	addHandler: function(oh){
-		this.fdefs.push(oh);
-		this.emmit_handler(oh);
-	},
-	emit: function(complete, get_next){
-		for (var i=0; i < this.songs.length; i++) {
-			if (this.songs[i]){
-				handle_song(this.songs[i], complete, get_next);
-			}
-			
-		}
-		
-		for (var i=0; i < this.fdefs.length; i++) {
-			this.emmit_handler(this.fdefs[i], complete, get_next)
-			
-			
-			
-		}
-		
-	},
-	wait_ui: function(){
-		for (var i=0; i < this.songs.length; i++) {
-			var mo = this.songs[i];
-			if (mo && mo.ui && !mo.have_tracks){
-				mo.ui.node.addClass('search-mp3');
-			}
-		}
-		
-		for (var i=0; i < this.fdefs.length; i++) {
-			if (!this.fdefs[i].done && this.fdefs[i].while_wait){
-				this.fdefs[i].while_wait(); 
-			}
-			
-		}
-	},
-	isHaveAnyResultsFrom: function(source_name){
-		return !!cmo.getSteamData(this, source_name);
-	}
-};
 var needSearch = function(sem, source_name){
 	var r = cmo.getSteamData(sem, source_name);
 	return !r || !r.t;
