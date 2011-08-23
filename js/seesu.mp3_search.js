@@ -90,8 +90,10 @@ var song_methods = {
 	songs: function(){
 		if (this.raw()){
 			return [{t:[this.omo]}];
-		} else{
+		} else if (this.sem){
 			return this.sem.getAllSongTracks();
+		} else{
+			return false;
 		}
 		
 	},
