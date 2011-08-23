@@ -384,8 +384,9 @@ seesu_ui.prototype = {
 			proxy_render_artists_tracks();
 		});
 		this.views.show_playlist_page(pl_r, query ? 0 : false, no_navi || !!start_song );
+		
 		if (start_song){
-			start_song.view(no_navi);
+			pl_r.showTrack(start_song, no_navi);
 		}
 	},
 	show_track: function(q){
@@ -435,7 +436,7 @@ seesu_ui.prototype = {
 		} else{
 			this.views.show_playlist_page(pl, with_search_results ? 0 : false, no_navi || !!start_song);
 			if (start_song){
-				start_song.view(no_navi);
+				pl.showTrack(start_song, no_navi);
 			}
 			getTopTracks(artist,function(track_list){
 				create_playlist(track_list, pl);
@@ -1512,7 +1513,7 @@ seesu_ui.prototype = {
 		}
 	 
   
-}
+	}
 
 
 

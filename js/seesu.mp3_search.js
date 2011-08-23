@@ -182,10 +182,6 @@ var extendSong = function(omo){
 	
 };
 
-cmo = {
-	
-	
-};
 
 function musicSeachEmitter(q, query){
 	this.q = q;
