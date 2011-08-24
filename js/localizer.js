@@ -27,7 +27,7 @@ var localize= (function(){
 
 localizer = {
 	"listeners-looks":{
-		"original": "People who listened to this track, looks like this",
+		"original": "People who listened to this track, look like this",
 		"ru": "Люди, слушавшие этот трек, выглядят примерно так:"
 	},
 	"rels-people-you":{

@@ -384,8 +384,9 @@ seesu_ui.prototype = {
 			proxy_render_artists_tracks();
 		});
 		this.views.show_playlist_page(pl_r, query ? 0 : false, no_navi || !!start_song );
+		
 		if (start_song){
-			start_song.view(no_navi);
+			pl_r.showTrack(start_song, no_navi);
 		}
 	},
 	show_track: function(q){
@@ -435,7 +436,7 @@ seesu_ui.prototype = {
 		} else{
 			this.views.show_playlist_page(pl, with_search_results ? 0 : false, no_navi || !!start_song);
 			if (start_song){
-				start_song.view(no_navi);
+				pl.showTrack(start_song, no_navi);
 			}
 			getTopTracks(artist,function(track_list){
 				create_playlist(track_list, pl);
@@ -455,7 +456,7 @@ seesu_ui.prototype = {
 		
 		
 		var songitself = $('<a class="js-serv"></a>')
-			.attr('href', 'http://seesu.me/o#/ds' + song_methods.getURLPart.call(mopla))
+			.attr('href', 'http://seesu.me/o#/ds' + song_methods.getURLPart(mopla))
 			.text(mopla.artist + " - " + mopla.track)
 			.click(function(e){
 				su.player.play_song(mo, true, mopla)
@@ -900,7 +901,10 @@ seesu_ui.prototype = {
 				
 				
 				sc.appendTo(c);
-				mo.ui.files_control.list_button.enable();
+				if (songs_counter > 1){
+					mo.ui.files_control.list_button.enable();
+				}
+				
 			} 
 			
 			var downloads = mo.mp3Downloads();
@@ -1509,7 +1513,7 @@ seesu_ui.prototype = {
 		}
 	 
   
-}
+	}
 
 
 

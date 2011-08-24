@@ -138,7 +138,7 @@ window.connect_dom_to_som = function(d, sui){
 			volume_s.setAttribute('title', 'volume');
 			volume_s.setAttribute('type', 'text/css');
 		var volume_style= '.volume-state-position {width:' + ((seesu.player.player_volume * 50)/100) + 'px' + '}'; 
-		if (volume_s.styleSheet){
+		if (volume_style.styleSheet){
 			volume_s.styleSheet.cssText = volume_style;
 		} else{
 			volume_s.appendChild(d.createTextNode(volume_style));
@@ -426,7 +426,7 @@ window.connect_dom_to_som = function(d, sui){
 		var create_plr_entity = function(playlist, song){
 			var entity = $('<li></li>', d).text(playlist.playlist_title).click(function(){
 				sui.els.pl_search.hide();
-				su.gena.add(song, playlist);
+				playlist.add(song);
 			});
 			return entity;
 		};
@@ -474,7 +474,7 @@ window.connect_dom_to_som = function(d, sui){
 						.prepend($('<span></span>').text(new_playlist_desc));
 					new_pl_button.click(function(e){
 							sui.els.pl_search.hide();
-							su.gena.add(current_song, su.gena.create_userplaylist(searching_for));
+							su.gena.create_userplaylist(searching_for).add(current_song);
 						});
 						
 					pl_results = pl_results.add(new_pl_button);
@@ -643,9 +643,7 @@ window.connect_dom_to_som = function(d, sui){
 		var createTrackLink = function(artist, track, track_obj, playlist){
 			return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(e){
 				sui.views.show_playlist_page(playlist);
-				if (track_obj.ui && track_obj.ui.node){
-					track_obj.ui.node.click();
-				}
+				playlist.showTrack(track_obj);
 				e.preventDefault();
 			});
 		};

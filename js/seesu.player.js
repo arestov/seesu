@@ -7,11 +7,7 @@ var INIT     = -11,
 	  FINISHED =  11;
 
 su.gena = { //this work with playlists
-	reconnect_playlist: function(pl){
-		for (var i=0; i < pl.length; i++) {
-			this.connect(pl[i], pl);
-		};
-	},
+
 	save_playlists: function(){
 		var _this = this;
 		if (this.save_timeout){clearTimeout(this.save_timeout);}
@@ -20,14 +16,7 @@ su.gena = { //this work with playlists
 			var plsts = [];
 			var playlists = _this.playlists;
 			for (var i=0; i < playlists.length; i++) {
-				var new_pl = _this.soft_clone(playlists[i]);
-				delete new_pl.plst_pla;
-				delete new_pl.push;
-				for (var k=0; k < new_pl.length; k++) {
-					
-					new_pl[k] = _this.clear(_this.soft_clone(new_pl[k], ['track', 'artist']));
-				};
-				plsts[i] = new_pl;
+				plsts.push(playlists[i].simplify())
 			};
 			w_storage('user_playlists', plsts, true);
 		},10)
@@ -45,55 +34,8 @@ su.gena = { //this work with playlists
 			_this.save_playlists();
 		}
 		return pl_r;
-	},
-	clear: function(mo, full){
-		delete mo.fetch_started;
-		delete mo.not_use;
-		delete mo.node;
-		delete mo.ui;
-		delete mo.ready_for_play;
-		delete mo.handeled;
-		if (full){
-			delete mo.delayed_in;
-			delete mo.plst_pla;
-			delete mo.plst_titl;
-		}
-		
-		return mo;
-	},
-	connect:function(mo, pl){
-		this.clear(mo);
-		mo.delayed_in = [];
-		mo.plst_titl = pl;
-		return mo
-	},
-	add: function(mo, pl){
-		var n_mo = this.soft_clone(mo, ['track', 'artist']);
-		pl.push(this.connect(n_mo, pl));
-		if (su.player.c_song.plst_titl == pl){
-			mo.render();
-		}
-		
-	},
-	soft_clone: function(obj, white_list){
-		var arrgh = obj instanceof Array;
-		var _n = {};
-		for (var a in obj) {
-			if (!white_list || bN(white_list.indexOf(a))){
-				if (arrgh || (typeof obj[a] != 'object')){
-					if (a != 'ui'){
-						_n[a] = obj[a];
-					}
-					
-				}
-			}
-			
-		};
-		if (arrgh){
-			_n.length = obj.length;
-		}
-		return _n;
 	}
+	
 };
 
 var extent_array_by_object = function(array, obj){
@@ -110,7 +52,6 @@ function rebuildPlaylist(saved_pl){
 	}
 	delete p.loading;
 	su.gena.create_userplaylist(false, p, true);
-	su.gena.reconnect_playlist(p);
 	return p;
 };
 su.gena.playlists = (function(){
@@ -513,7 +454,6 @@ su.player.preload_song = function(){
 }
 
 su.player.events.progress_playing = function(progress_value, total){
-	if (!total){return}
 	//if (_this.ignore_position_change) {return false;}
 	var _c = su.player.c_song && su.player.c_song.ui && su.player.c_song.ui.ct;;
 	if (!_c){return false}
@@ -532,7 +472,6 @@ su.player.events.progress_playing = function(progress_value, total){
 }
 
 su.player.events.progress_loading = function(progress_value, total){
-	if (!total){return}
 	//if (_this.ignore_position_change) {return false;}
 	var _c = su.player.c_song && su.player.c_song.ui && su.player.c_song.ui.ct;;
 	if (!_c){return false}
@@ -765,22 +704,7 @@ var sm2iframed = {
 
 var html_player_timer;
 var a = document.createElement('audio');
-var aw = document.createElement('object');
-	aw.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95";
-if ('EnableContextMenu' in aw && aw.attachEvent){
-	
-	yepnope({
-		load: bpath + "js/seesu.player.wmp_p.js", 
-		complete: function(){
-			
-			su.player.musicbox = new wmp_p(su.player.player_volume);
-			suReady(function(){
-				dstates.add_state('body','flash-internet');
-			});
-			
-		}
-	});
-} else if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
+if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 	yepnope({
 		load: bpath + "js/seesu.player.html5.js", 
 		complete: function(){
