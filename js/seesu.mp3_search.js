@@ -155,7 +155,7 @@ var song_methods = {
 		return this.omo && this.omo.raw;
 	},
 	valueOf:function(){
-		return this.uid;
+		return this.artist + ' - ' + this.track;
 	}
 };
 

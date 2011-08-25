@@ -99,7 +99,85 @@ var set_node_for_enter_press = function(node, scroll_to_node, not_by_user){
 			seesu.ui.els.scrolling_viewport.scrollTop(new_position);
 		}
 	}
-}
+};
+(function(){
+	searchResults = function(query, prepared, valueOf){
+		this.query = query;
+		if (prepared){
+			this.append(prepared, valueOf);
+		};
+	};
+	searchResults.prototype = new Array();
+	var methods = {
+		doesContain: doesContain,
+		add: function(target, valueOf){
+			if (this.doesContain(target, valueOf) == -1){
+				return this.push(target);
+			} else{
+				return false;
+			}
+		},
+		append: function(array, valueOf){
+			for (var i=0; i < array.length; i++) {
+				this.add(array[i], valueOf);
+				
+			};
+		}
+	};
+	
+	cloneObj(searchResults.prototype, methods);
+
+	
+})();
+
+(function(){
+	artistSuggest = function(artist, image){
+		this.artist = artist;
+		this.image = image;
+	};
+	artistSuggest.prototype = {
+		valueOf: function(){
+			return this.artist;
+		}
+	};
+	
+})();
+
+
+(function(){
+	trackSuggest = function(artist, track, image, duration){
+		this.artist = artist;
+		this.track = track;
+		this.image = image;
+		if (duration){
+			this.duration = duration;
+		}
+	};
+	trackSuggest.prototype = {
+		valueOf: function(){
+			return this.artist + ' - ' + this.track;
+		}
+	};
+	
+})();
+(function(){
+	tagSuggest = function(tag, image){
+		this.tag = tag;
+		if (image){
+			this.image = image;
+		}
+		
+	};
+	tagSuggest.prototype = {
+		valueOf: function(){
+			return this.tag;
+		}
+	};
+	
+})();
+
+
+
 var create_artist_suggest_item = function(artist, image, source_query){
 	var a = $("<a></a>")
 		.data('artist', artist)
@@ -113,7 +191,7 @@ var create_artist_suggest_item = function(artist, image, source_query){
 	$("<img/>").attr({ src: (image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'), alt: artist }).appendTo(a);
 	$("<span></span>").text(artist).appendTo(a);
 	return a
-}
+};
 var create_track_suggest_item = function(artist, track, image, duration){
 	var a = $("<a></a>")
 		.data('track_title',track)
@@ -140,7 +218,7 @@ var create_track_suggest_item = function(artist, track, image, duration){
 	}
 	$("<span></span>").text(artist + ' - ' + track).appendTo(a);
 	return a
-}
+};
 var create_tag_suggest_item = function(tag, source_query){
 	return $("<a></a>")
 		.data('tag',tag)
@@ -151,7 +229,7 @@ var create_tag_suggest_item = function(tag, source_query){
 		})
 		.click(results_mouse_click_for_enter_press)
 		.append("<span>" + tag + "</span>");
-}
+};
 var show_artists_results = function(r, start, end){
 	if (!r) {return}
 	
@@ -411,7 +489,7 @@ var show_tracks_results = function(r, start, end){
 		
 		$("<li><a class='nothing-found'>" + localize('nothing-found','Nothing found') + "</a></li>").appendTo(seesu.ui.tracks_results_ul);
 	}
-}
+};
 
 
 var fast_suggestion = function(r, source_query, ui){
@@ -427,95 +505,101 @@ var fast_suggestion = function(r, source_query, ui){
 	var clone = null;
 	
 	
-	var sugg_arts = [];
-	var sugg_tracks = [];
-	var sugg_tags = [];
-	var sugg_albums = [];
+
 	
-	for (var i=0, l = r.response.docs.length; i < l ; i++) {
-		var response_modul = r.response.docs[i];
-		if (response_modul.restype == 6){
-			sugg_arts.push(response_modul);
-		} else 
-		if (response_modul.restype == 8){
-			sugg_albums.push(response_modul);
-		} else 
-		if (response_modul.restype == 9){
-			sugg_tracks.push(response_modul);
-		} else
-		if (response_modul.restype == 32){
-			sugg_tags.push(response_modul);
-		} 
-	};
 	
 	
 	
 	var ul_arts = seesu.ui.arts_results_ul;
 	
-	if (sugg_arts && sugg_arts.length){
-		for (var i=0, l = sugg_arts.length; i < l; i++) {
-			var artist = sugg_arts[i].artist;
-			var image =  sugg_arts[i].image ? ('http://userserve-ak.last.fm/serve/34s/' + sugg_arts[i].image) : false;
+	if (r.artists.length){
+		for (var i=0, l = r.artists.length; i < l; i++) {
+			var cur = r.artists[i];
+			
 			var li = $("<li class='suggested'></li>");
 			
-			var a =  create_artist_suggest_item(artist, image, source_query)
+			var a =  create_artist_suggest_item(cur.artist, cur.image, source_query)
 			
 			if ((i == 0) && ( !fast_enter || fast_enter.is('button') )) {fast_enter = a;}
 			li.append(a);
 			
 			seesu.ui.buttons_li.search_artists.before(li);
 		};
-		var li = $('<li></li>',seesu.ui.d); 
-		li.append(ui.arts.button.find('span').text(localize('fine-more', 'find more') + ' «' + source_query + '» ' + localize('artists', 'artists')).end()).appendTo(ul_arts);
+		var b_text = localize('fine-more', 'find more') + ' «' + source_query + '» ' + localize('artists', 'artists');
+		
+		$('<li></li>',seesu.ui.d)
+			.append(
+				ui.arts.button
+					.find('span')
+						.text(b_text)
+					.end()
+					.addClass("search-button"))
+			.appendTo(ul_arts);
+			
 	} else{
-		$('<li></li>',seesu.ui.d).append(ui.arts.button.find('span').text(localize('to-search', 'Search ') + '«' +source_query + '» ' + localize('in-artists','in artists')).end().addClass("search-button")).appendTo(ul_arts);
+		var b_text = localize('to-search', 'Search ') + '«' +source_query + '» ' + localize('in-artists','in artists');
+		
+		$('<li></li>',seesu.ui.d)
+			.append(
+				ui.arts.button
+					.find('span')
+						.text(b_text)
+					.end()
+					.addClass("search-button"))
+			.appendTo(ul_arts);
 	}
+	
+	
+	
 	if (!fast_enter) {fast_enter = ui.arts.button;}
 	
 	var ul_tracks = seesu.ui.tracks_results_ul;
-	if (sugg_tracks && sugg_tracks.length){
+	if (r.tracks.length){
 		
 		
-		for (var i=0, l = sugg_tracks.length; i < l; i++) {
-			var track = sugg_tracks[i].track,
-				artist = sugg_tracks[i].artist,
-				image =  sugg_tracks[i].image ? 'http://userserve-ak.last.fm/serve/34s/' + sugg_tracks[i].image : false,
-				duration = sugg_tracks[i].duration
-			
+		for (var i=0, l =  r.tracks.length; i < l; i++) {
+			var cur = r.tracks[i];
 			var li = $("<li class='suggested'></li>");
-			
-			var a = create_track_suggest_item(artist, track, image, duration)
-
-
-
+			var a = create_track_suggest_item(cur.artist, cur.track, cur.image, cur.duration)
 			if ((i == 0) && ( !fast_enter || fast_enter.is('button') )) {fast_enter = a;}
 			li.append(a);
 			seesu.ui.buttons_li.search_tracks.before(li);
 		};
-		$('<li></li>',seesu.ui.d).append(ui.track.button.find('span').text(localize('fine-more', 'find more') + ' «' + source_query + '» '+ localize('tracks', 'tracks')).end()).appendTo(ul_tracks);
+		var b_text = localize('fine-more', 'find more') + ' «' + source_query + '» '+ localize('tracks', 'tracks');
+		
+		$('<li></li>',seesu.ui.d).append(ui.track.button.find('span').text(b_text).end()).appendTo(ul_tracks);
+		
 	} else{
-		$('<li></li>',seesu.ui.d).append(ui.track.button.find('span').text(localize('to-search', 'Search ') + '«' +source_query + '» ' +localize('in-tracks','in tracks')).end().addClass("search-button")).appendTo(ul_tracks);
+		var b_text = localize('to-search', 'Search ') + '«' +source_query + '» ' +localize('in-tracks','in tracks');
+		
+		$('<li></li>',seesu.ui.d).append(ui.track.button.find('span').text(b_text).end().addClass("search-button")).appendTo(ul_tracks);
 	}
 	if (!fast_enter) {fast_enter = ui.track.button;}
 	
 
 	
 	var ul_tags = seesu.ui.tags_results_ul;
-	if (sugg_tags && sugg_tags.length){
-		for (var i=0, l = sugg_tags.length; i < l; i++) {
+	if (r.tags.length){
+		for (var i=0, l = r.tags.length; i < l; i++) {
+			var cur = r.tags[i];
 			
-			var tag = sugg_tags[i].tag
 			var li = $("<li class='suggested'></li>");
 			
-			var a = create_tag_suggest_item(tag, source_query)
+			var a = create_tag_suggest_item(cur.tag, source_query)
 			
 			if ((i == 0) && ( !fast_enter || fast_enter.is('button') )) {fast_enter = a;}
 			li.append(a);
 			seesu.ui.buttons_li.search_tags.before(li);
 		};
-		$('<li></li>',seesu.ui.d).append(ui.tag.button.find('span').text(localize('fine-more', 'find more') + ' «' + source_query + '» '+ localize('tags', 'tags')).end()).appendTo(ul_tags);
+		var b_text = localize('fine-more', 'find more') + ' «' + source_query + '» '+ localize('tags', 'tags');
+		
+		
+		$('<li></li>',seesu.ui.d).append(ui.tag.button.find('span').text(b_text).end()).appendTo(ul_tags);
 	} else{
-		$('<li></li>',seesu.ui.d).append(ui.tag.button.find('span').text(localize('to-search', 'Search ') + '«' +source_query + '» ' +localize('in-tags' , 'in tags')).end().addClass("search-button")).appendTo(ul_tags);
+		var b_text = localize('to-search', 'Search ') + '«' +source_query + '» ' +localize('in-tags' , 'in tags');
+		
+		
+		$('<li></li>',seesu.ui.d).append(ui.tag.button.find('span').text(b_text).end(b_text).addClass("search-button")).appendTo(ul_tags);
 	}
 	if (!fast_enter) {fast_enter = ui.tag.button;}
 	
@@ -542,6 +626,7 @@ var get_fast_suggests = $.debounce(function(q, callback, hash){
 	  error: function(){
 	  },
 	  success: function(r){
+	  	r = parseFastSuggests(r, q);
 		cache_ajax.set('lfm_fs', hash, r);
 		if (callback){callback(r);}
 	  }	,
@@ -554,6 +639,47 @@ var get_fast_suggests = $.debounce(function(q, callback, hash){
 	
 	
 },400);
+
+var renderSuggest
+
+var parseFastSuggests = function(r, q){
+	
+	
+	
+	var sugg_arts = $filter(r.response.docs, 'restype', 6);
+	$.each(sugg_arts, function(i, el){
+		sugg_arts[i] = new artistSuggest(
+			el.artist, 
+			el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false);
+	});
+	sugg_arts = new searchResults(q, sugg_arts);
+
+	var sugg_tracks = $filter(r.response.docs, 'restype', 9);
+	$.each(sugg_tracks, function(i, el){
+		sugg_tracks[i] = new trackSuggest(
+			el.artist, 
+			el.track,
+			el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false,
+			el.duration
+		);
+	});
+
+	var sugg_tags = $filter(r.response.docs, 'restype', 32);
+	$.each(sugg_tags, function(i, el){
+		sugg_tags[i] = new tagSuggest(el.tag);
+	});
+
+	
+	//var sugg_albums = $filter(r.response.docs, 'restype', 8);
+	
+	
+	
+	return {
+		artists: sugg_arts,
+		tracks: sugg_tracks,
+		tags: sugg_tags
+	};
+};
 
 
 var suggestions_search =  seesu.env.cross_domain_allowed ? function(q, ui){

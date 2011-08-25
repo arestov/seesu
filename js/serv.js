@@ -22,6 +22,26 @@ var domReady = function(d, callback){
 	}
 };
 
+doesContain = function(target, valueOf){
+	var cached_t_value = valueOf ? valueOf.call(target) : (+target);
+	
+	for (var i=0; i < this.length; i++) {
+		if (valueOf){
+			 if (valueOf.call(this[i]) == cached_t_value){
+			 	return i
+			 }
+		} else{
+			if (+this[i] == cached_t_value){
+				return i
+			}
+		}
+		
+		
+	};	
+	return -1;
+};
+
+
 var ttime = function(f){
 	var d = +new Date
 	
