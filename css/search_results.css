@@ -48,14 +48,12 @@
 			}
 		.search-results-holder button{
 			border:0;
-			text-align:right;
+			text-align:left;
 			width:100%;
 			background: transparent;
 			color:#aaa;
 		}
-		.search-results-holder button.search-button{
-			text-align:left;
-		}
+
 		.search-results-holder a.active,
 		.search-results-holder button.active{
 			background-color:#555  !important;

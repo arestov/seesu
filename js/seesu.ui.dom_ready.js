@@ -51,7 +51,7 @@ window.connect_dom_to_som = function(d, sui){
 					sui.make_search_elements_index()
 				}),
 		search_vkontakte: 
-			$('<button type="submit" name="type" value="vk_track" id="search-vk-track" class="search-button"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>',d)
+			$('<button type="submit" name="type" value="vk_track" id="search-vk-track"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>',d)
 				.click(function(e){
 					
 					var query = sui.els.search_input.val();
