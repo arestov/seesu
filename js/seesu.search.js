@@ -520,6 +520,9 @@ investigation.prototype = {
 			}
 		};	
 	},
+	doesNeed: function(q){
+		return q == this.q;
+	},
 	loading:function(){
 		su.ui.els.search_label.addClass('loading');
 	},
@@ -606,6 +609,7 @@ investigation.prototype = {
 		for (var i=0; i < this.sections.length; i++) {
 			this.sections[i].scratchResults(q);
 		};
+		this.q = q;
 		this.setItemForEnter();
 		delete this.selected_inum;
 	}
