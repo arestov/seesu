@@ -11,55 +11,13 @@ window.connect_dom_to_som = function(d, sui){
 	
 	sui.buttons = {
 		search_artists : 
-			$('<button type="submit" name="type" value="artist" id="search-artist"><span>Search in artists</span></button>',d)
-				.click(function(e){
-					var finishing_results = $(this).data('finishing_results');
-					$(this).parent().remove();
-					var query = sui.els.search_input.val();
-					if (query) {
-						su.fs.artist_search(query, finishing_results);
-					}
-					sui.make_search_elements_index()
-				}),
-			
+			$('<button type="submit" name="type" value="artist" id="search-artist"><span>Search in artists</span></button>',d),			
 		search_tags:  
-			$('<button type="submit" name="type" value="tag" id="search-tag"><span>Search in tags</span></button>',d)
-				.click(function(e){
-					var finishing_results = $(this).data('finishing_results');
-					$(this).parent().remove();
-					
-					
-					var query = sui.els.search_input.val();
-					if (query) {
-						su.fs.tag_search(query, finishing_results)
-					}
-					sui.make_search_elements_index()
-				}),
+			$('<button type="submit" name="type" value="tag" id="search-tag"><span>Search in tags</span></button>',d),
 		search_tracks: 
-			$('<button type="submit" name="type" value="track" id="search-track"><span>Search in tracks</span></button>',d)
-				.click(function(e){
-					var finishing_results = $(this).data('finishing_results');
-					$(this).parent().remove();
-					
-					
-					
-					
-					var query = sui.els.search_input.val();
-					if (query) {
-						su.fs.track_search(query, finishing_results)
-					}
-					sui.make_search_elements_index()
-				}),
+			$('<button type="submit" name="type" value="track" id="search-track"><span>Search in tracks</span></button>',d),
 		search_vkontakte: 
 			$('<button type="submit" name="type" value="vk_track" id="search-vk-track"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>',d)
-				.click(function(e){
-					
-					var query = sui.els.search_input.val();
-					if (query) {
-						sui.show_track({q: query});
-					}
-					
-				})
 	};
 	
 	
@@ -108,6 +66,7 @@ window.connect_dom_to_som = function(d, sui){
 		return o;
 	})(seesu.player.player_volume);
 	domReady(d, function() {
+		console.log('dom ready')
 		var lang = app_env.lang;
 		$('.lang', d).each(function(i,el){
 			var cn = el.className;

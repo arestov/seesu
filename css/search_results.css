@@ -11,11 +11,12 @@
 		margin:0;
 		width:60px;
 		height:20px;
+		z-index:2;
 	}
 	.search-results-holder h4.loading{
 		background: url(../i/spinner_small.gif) no-repeat 100% 50%;
 	}
-	.search-results-holder ul{
+	.search-results-holder ul.sugg-section{
 		overflow:hidden;
 		margin:0;
 		border-left:1px solid #5d5d5d;
@@ -52,6 +53,7 @@
 			width:100%;
 			background: transparent;
 			color:#aaa;
+			position:relative;
 		}
 
 		.search-results-holder a.active,
@@ -78,39 +80,37 @@
 			background-color:#666  !important;
 			}
 		
-			.search-results-holder
-			ul.results-artists
-			img{
+			.search-results-holder	ul.results-artists	img{
 				float:left;
 				width:34px;
 				height:34px;
 				margin-right:8px;
 				border:1px solid #eee;
 				}
-			.search-results-holder
-			ul.results-artists
-			span{
+			.search-results-holder	ul.results-artists	span{
 				overflow:hidden;
 				margin-top:1px;
 				margin-bottom:0;
 				
 				}
-	.search-results-holder
-	ul:last-child{
+	.search-results-holder	ul.sugg-section:last-child{
 		border-bottom:0;
 	}
-	.search-results-holder
-	ul:nth-of-type(even){
+	.search-results-holder ul{
+		display:none;
+	}
+	.search-results-holder ul.active-section{
+		display: block;
+	}
+	.search-results-holder ul.sugg-section.odd-section{
 		background-color:#4d4d4d;
 	}
 	.search-results-holder ul.playlist-results a{padding-left:47px;}
-	.search-results-holder
-	ul.recommend-tags a{
+	.search-results-holder	ul.recommend-tags a{
 		padding-left:47px;
 		background: url(../i/tag-icon.png) no-repeat 26px 50%;
 	}
-	.search-results-holder
-	ul.recommend-tags{
+	.search-results-holder	ul.recommend-tags{
 		border-bottom:0  !important;
 	}
 	.search-results-holder .nothing-found{
@@ -120,6 +120,7 @@
 		.search-results-holder .nothing-found:hover{
 			background:inherit  !important;
 			color:inherit  !important;
+			cursor:default  !important;
 		}
 	.search-results-holder button span{
 		border-bottom:1px dashed #5c5c5c;
@@ -128,3 +129,10 @@
 	margin:0;
 	position:relative;
 	}
+.vk-track-suggest{
+	display:block;
+	font-size: 10px;
+	border:0  !important;
+	color:#aaa;
+	padding-left:5px;
+}
