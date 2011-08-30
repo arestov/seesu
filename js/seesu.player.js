@@ -643,8 +643,14 @@ var sm2iframed = {
 					
 					
 				} else if (e.data.match(/sm2_inited/)){
-					console.log('iframe sm2 wrokss yearh!!!!')
-					su.player.musicbox = new sm2_p(su.player.player_volume, false, _this.c);
+					console.log('iframe sm2 wrokss yearh!!!!');
+					yepnope({
+						load:  [bpath + 'js/seesu.player.sm2.js'],
+						complete: function(){
+							su.player.musicbox = new sm2_p(su.player.player_volume, false, _this.c);
+						}
+					});
+					
 					clearTimeout(html_player_timer);
 					_this.c.addClass('sm-inited');
 					dstates.add_state('body','flash-internet');
@@ -717,10 +723,9 @@ if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 		}
 	});
 	
-	
 } else if (!su.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
 	yepnope({
-		load:  bpath + 'js/soundmanager2.js',
+		load:  [bpath + 'js/soundmanager2.js', bpath + 'js/seesu.player.sm2.js'],
 		complete: function(){
 			soundManager = new SoundManager('http://seesu.me/swf/', false, {
 				flashVersion : 9,
