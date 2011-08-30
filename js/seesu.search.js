@@ -606,11 +606,12 @@ investigation.prototype = {
 	},
 	scratchResults: function(q){
 		this.loaded();
+		this.setItemForEnter();
 		for (var i=0; i < this.sections.length; i++) {
 			this.sections[i].scratchResults(q);
 		};
 		this.q = q;
-		this.setItemForEnter();
+		
 		delete this.selected_inum;
 	}
 };
