@@ -475,7 +475,7 @@ var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_previe
 	}));
 };
 
-var suggestions_search = seesu.env.cross_domain_allowed ? function(q, ui, invstg){
+var suggestions_search = seesu.env.cross_domain_allowed ? function(q, invstg){
 		invstg.loading();
 		var hash = hex_md5(q);
 		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
@@ -491,7 +491,7 @@ var suggestions_search = seesu.env.cross_domain_allowed ? function(q, ui, invstg
 			
 		}
 	} :
-	$.debounce(function(q, ui, invstg){
+	$.debounce(function(q, invstg){
 		getLastfmSuggests('artist.search', {artist: q}, q, invstg.g('artists'), parseArtistsResults);
 		getLastfmSuggests('track.search', {track: q}, q, invstg.g('tracks'), parseTracksResults);
 		getLastfmSuggests('tag.search', {tag: q}, q, invstg.g('tags'), parseTagsResults);	
@@ -823,7 +823,7 @@ vkSuggest.prototype = {
 }
 
 
-var vk_suggests = $.debounce(function(query, ui){
+var vk_suggests = $.debounce(function(query, invstg){
 	
 	//function(trackname, callback, nocache, hypnotoad, only_cache){
 	su.mp3_search.find_files({q: query}, 'vk', function(err, pl, c){
@@ -834,8 +834,9 @@ var vk_suggests = $.debounce(function(query, ui){
 			for (var i=0; i < pl.length; i++) {
 				pl[i] = new vkSuggest(pl[i].artist, pl[i].track);
 			};
-			ui.vk_tracks.section.r.append(pl);
-			ui.vk_tracks.section.renderSuggests();
+			var vk_tracks = invstg.g('vk')
+				vk_tracks.r.append(pl);
+				vk_tracks.renderSuggests();
 		}
 	}, false);
 	
@@ -880,9 +881,7 @@ var suggestions_prerender = function(invstg, input_value){
 			}
 
 		};
-		
-		
-		
+
 		
 		if (pl_results.length){
 			var pl_sec =  invstg.g('playlists'); 
@@ -894,40 +893,15 @@ var suggestions_prerender = function(invstg, input_value){
 		
 		//===playlists search
 
-		var a_sec = invstg.g('artists'); 
-		var tr_sec = invstg.g('tracks'); 
-		var ta_sec = invstg.g('tags'); 
-		var vk_sec = invstg.g('vk'); 
-		
-		
-		
-		suggestions_search(source_query, {
-			arts: {
-				section: a_sec,
-				button: a_sec.button,
-				label: a_sec.header
-			},
-			track: {
-				section: tr_sec,
-				button: tr_sec.button,
-				label: tr_sec.header
-			},
-			tag: {
-				section: ta_sec,
-				button: ta_sec.button,
-				label: ta_sec.header
-			}
-		}, invstg);
-		vk_suggests(source_query, {
-			vk_tracks: {
-				section: vk_sec
-			}
-		}, invstg);
+		suggestions_search(source_query, invstg);
+		vk_suggests(source_query, invstg);
 	}
 };
 
 
 var input_change = function(e, no_navi){
+	su.ui.els.search_label.removeClass('loading');
+	
 	var input = (e && e.target) || e; //e can be EVENT or INPUT  
 	
 	var search_view = su.ui.views.getSearchResultsContainer();
