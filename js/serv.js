@@ -17,10 +17,42 @@ function(elem, evType, fn){
 var domReady = function(d, callback){
 	if (d.readyState == 'complete'){
 		setTimeout(callback, 30);
+		console.log('DOM looks as "complete"')
 	} else{
-		addEvent(d, 'DOMContentLoaded', callback);
+		var done;
+		var f = function(){
+			if (!done){
+				console.log('fired domready')
+				done = true;
+				callback();
+				
+			}
+		};
+		addEvent(d.defaultView, 'load', f)
+		console.log('added DOMContentLoaded event')
+		addEvent(d, 'DOMContentLoaded', f);
 	}
 };
+
+doesContain = function(target, valueOf){
+	var cached_t_value = valueOf ? valueOf.call(target) : (target.valueOf());
+	
+	for (var i=0; i < this.length; i++) {
+		if (valueOf){
+			 if (valueOf.call(this[i]) == cached_t_value){
+			 	return i
+			 }
+		} else{
+			if (this[i].valueOf() == cached_t_value){
+				return i
+			}
+		}
+		
+		
+	};	
+	return -1;
+};
+
 
 var ttime = function(f){
 	var d = +new Date
@@ -312,7 +344,15 @@ var getECParticipials = function(el, class_name){
 	return tnodes.length && collapseAll(tnodes);
 }
 
-
+var toRealArray = function(array, check_field){
+	if (array instanceof Array){
+		return array;
+	} else if (array && (!check_field || getTargetField(array, check_field))){
+		return [array];	
+	} else{
+		return [];
+	}
+};
 
 var getTargetField = function(obj, field){
 	var tree = field.split('.');
@@ -418,7 +458,7 @@ var makeIndexByField = function(array, field){
 var $filter = function(array, field, value_or_testfunc){
 	var r = [];
 	r.not = [];
-	
+	if (!array){return r}
 	for (var i=0; i < array.length; i++) {
 		if (array[i]){
 			if (value_or_testfunc){

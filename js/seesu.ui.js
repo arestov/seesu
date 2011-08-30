@@ -1454,30 +1454,6 @@ seesu_ui.prototype = {
 			).appendTo(_ui.els.start_screen.children('.for-startpage'));
 		}
 	},
-	make_search_elements_index: function(remark_enter_press, after_user){
-		var srca = this.views.getCurrentSearchResultsContainer();
-		var srui = srca.ui;
-		if (!srui){
-			return false;
-		}
-		var search_elements = srui.find('a:not(.nothing-found), button');
-		srui.data('search_elements', search_elements)
-		for (var i=0 , l = search_elements.length; i < l; i++) {
-			$(search_elements[i]).data('search_element_index', i);
-		};
-		if (remark_enter_press) {
-			var active_index = this.els.search_form.data('current_node_index') || 0;
-			var new_active_node = search_elements[active_index];
-			if (new_active_node) {
-				
-					var active_node = srui.data('node_for_enter_press');
-					if (active_node) {
-						active_node.removeClass('active');
-					}
-					set_node_for_enter_press($(new_active_node), false, after_user);
-			}
-		}
-	},
 	remove_video: function(){
 		if (this.video){
 			if (this.video.link){
