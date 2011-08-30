@@ -428,7 +428,6 @@ var parseFastSuggests = function(r){
 			el.artist, 
 			el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false);
 	});
-	sugg_arts = new searchResults(q, sugg_arts);
 
 	var sugg_tracks = $filter(r.response.docs, 'restype', 9);
 	$.each(sugg_tracks, function(i, el){
