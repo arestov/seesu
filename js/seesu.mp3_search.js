@@ -46,16 +46,16 @@ var song_methods = {
 				var pl_ui_element = this.ui.mainc;
 				if (pl.first_song){
 					if (!pl.firstsong_inseting_done){
-						if (this == pl.first_song){
+						if (this == pl.first_song.mo){
 							pl.ui.tracks_container.append(pl_ui_element);
 						} else{
-							f.ui.mainc.before(pl_ui_element);
+							pl.first_song.mo.ui.mainc.before(pl_ui_element);
 						}
-					} else if (pl.first_song != this){
-						var f_position = pl.indexOf(pl.first_song);
+					} else if (pl.first_song.mo != this){
+						var f_position = pl.indexOf(pl.first_song.mo);
 						var t_position = pl.indexOf(this);
 						if (t_position < f_position){
-							pl.first_song.ui.mainc.before(pl_ui_element);
+							pl.first_song.mo.ui.mainc.before(pl_ui_element);
 							
 						} else{
 							pl.ui.tracks_container.append(pl_ui_element);

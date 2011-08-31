@@ -342,10 +342,12 @@ var empty_song_click = function(){
 			if (!first_song.artist){
 				first_song.artist = key;
 			}
-			this.first_song = first_song;
+			this.first_song = {
+				omo: first_song
+			};
 		}
 		if (this.first_song){
-			this.push(this.first_song)
+			this.push(this.first_song.omo)
 		}
 	};
 	songsList.prototype = new Array();
@@ -369,13 +371,14 @@ var empty_song_click = function(){
 			}
 			
 			if (this.first_song){
-				if (this.first_song==mo){
-					return this.oldpush(this.first_song);
+				if (this.first_song.omo==omo){
+					this.first_song.mo = mo;
+					return this.oldpush(mo);
 				} else if (!this.firstsong_inseting_done){
-					if (mo.artist != this.first_song.artist || mo.track != this.first_song.track){
-						this.pop();
+					if (mo.artist != this.first_song.omo.artist || mo.track != this.first_song.omo.track){
+						var fs = this.pop();
 						this.oldpush(mo);
-						return this.oldpush(this.first_song);
+						return this.oldpush(fs);
 						
 					} else {
 						this.firstsong_inseting_done = true;
