@@ -9,8 +9,7 @@
 	"js/jquery-1.6.2.mod.min.js", 
 	"js/app_serv.js", 
 	"js/serv.js", 
-	"js/jquery.debounce-1.0.5.js", 
-	"js/widget.resize.js", 
+	"js/jquery.debounce-1.0.5.js",
 	"js/browse_map.js", 
 	"js/htmlencoding.js", 
 	"js/localizer.js", 
@@ -63,6 +62,14 @@
 					var f = js_loadcomplete.pop();
 					f();
 				};
+			},
+			callback: function(url){
+				if (url.indexOf('jquery.debounce-1.0.5.js') != -1){
+					if(!$.browser.msie && (app_env.opera_widget || app_env.firefox_widget)){
+						yepnope("js/widget.resize.js")
+					}
+				}
+			
 			}
 		}
 	]);

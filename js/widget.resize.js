@@ -1,4 +1,5 @@
-window.window_resizer = function(d){
+window.resizeWindow = function(w){
+	var d = w.document;
 	if(!$.browser.msie){
 		if (app_env.opera_widget || app_env.firefox_widget){
 			domReady(d, function(){
@@ -39,10 +40,8 @@ window.window_resizer = function(d){
 					  }
 				  };
 				  var mouseup = function (e) {
-					  d.removeEventListener('mousemove', mousemove, false);
-					  d.removeEventListener('mouseup'  , mouseup  , false);
-					  
-					  
+			 		removeEvent(d, 'mousemove', mousemove);
+			 		removeEvent(d, 'mouseup', mouseup);
 				  }
 				  
 				  addEvent(d, 'mousemove', mousemove);
@@ -71,26 +70,24 @@ window.window_resizer = function(d){
 					
 					
 				 }
+				var min_width = 640;
+				var min_height = 610;
+
 				
-				var ResizeConfig = {
-				  MinWidth  : 640,
-				  MinHeight : 610
-				};	
-				
-				var width = parseInt(w_storage('width'), 10) || ResizeConfig.MinWidth;
-				var height = parseInt(w_storage('height'), 10) || ResizeConfig.MinHeight;
+				var width = parseFloat(w_storage('width')) || min_width;
+				var height = parseFloat(w_storage('height')) || min_height;
 				
 				var timeout = 0;
 				function resizeWindow() {
 				  timeout = 0; // clearit.
-				  width = Math.max(width, ResizeConfig.MinWidth);
-				  height = Math.max(height, ResizeConfig.MinHeight);
+				  width = Math.max(width, min_width);
+				  height = Math.max(height, min_height);
 				  
 				  widgetResize(width, height);
 				}
 					
 				
-				addEvent(window, "resize", $.debounce(save_size, 1000));
+				addEvent(window, "resize", $.debounce(save_size, 500));
 				
 				addEvent(resz_b, "mousedown", function(e) {
 					drag(e, 1, 1);
@@ -103,5 +100,5 @@ window.window_resizer = function(d){
 	}
 	return true;
 }
-window.window_resized = window_resizer(document);
+window.window_resized = resizeWindow(document);
 
