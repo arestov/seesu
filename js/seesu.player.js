@@ -308,12 +308,9 @@ su.player = {
 		if (force_zoom || (view && this.c_song != mo) || (last_mo == this.v_song && last_mo != mo)){
 			this.view_song(mo, force_zoom || view);
 		}
-		
+	
 		this.nowPlaying(mo);
-		
-		
-		
-		
+
 		if (_mopla && (this.c_song != mo || (mopla && mo.mopla != mopla))){
 			this.c_song = mo;
 			if (last_mo && last_mo.ui){
@@ -395,12 +392,6 @@ su.player.events[PLAYED] = function(){
 	}
   	
   },3000)
-  
-
-  
-	
-	
-	
   su.ui.mark_c_node_as(su.player.player_state = PLAYED);
   su.player.preload_song();
 };
@@ -502,9 +493,6 @@ su.player.events.progress_loading = function(progress_value, total){
 	} 
 	
 }
-	
-
-
 
 // Click by song
 su.player.song_click = function(mo) {
@@ -623,17 +611,6 @@ var sm2iframed = {
 					get_js(i, scripts_paths.length);
 				}
 			}
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			var check_iframe = function(e){
 				if (e.data.match(/iframe_loaded/)){
