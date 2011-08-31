@@ -1,4 +1,6 @@
 (function() {
+	var completed; 
+	
 	var js_toload = [
 	"js/w_storage.js", 
 	"js/c_quene.js", 
@@ -28,14 +30,18 @@
 	"js/c_buttmen.js", 
 	"js/pressed_node_tester.js"
 	];
-	if (typeof bpath != 'undefined' && bpath){
-		for (var i=0; i < js_toload.length; i++) {
-			js_toload[i] = bpath + js_toload[i];
-		};
+	var bpathWrap = function(array){
+		if (typeof bpath != 'undefined' && bpath){
+			for (var i=0; i < array.length; i++) {
+				array[i] = bpath + array[i];
+			};
+		}
+		return array;
 	}
+	
 	var js_loadcomplete = [];
 	window.jsLoadComplete = function(callback){
-		if (js_toload.completed){
+		if (completed){
 			setTimeout(function(){
 				callback();
 			},30)
@@ -50,9 +56,9 @@
 			nope: "js/json2.min.js"
 		},
 		{
-			load: js_toload,
+			load: bpathWrap(js_toload),
 			complete: function(){
-				js_toload.completed = true;
+				completed = true;
 				for (var i = js_loadcomplete.length - 1; i >= 0; i--){
 					var f = js_loadcomplete.pop();
 					f();
