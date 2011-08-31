@@ -1,14 +1,8 @@
 window.connect_dom_to_som = function(d, sui){
-	if (!window.window_resized){
-		window_resizer(d);
+	if (window.resizeWindow && d && d.defaultView && !d.defaultView.window_resized){
+		resizeWindow(d.defaultView);
 	}
 
-
-	
-	
-	
-	
-	
 	sui.buttons = {
 		search_artists : 
 			$('<button type="submit" name="type" value="artist" id="search-artist"><span>Search in artists</span></button>',d),			
