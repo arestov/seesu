@@ -44,6 +44,9 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 				this.ui.a.removeClass('active');
 			}
 		},
+		getC: function(){
+			return this.ui && this.ui.c;
+		},
 		render: function(q, bordered){
 			if (!this.ui){
 				this.ui = {
@@ -519,6 +522,31 @@ investigation.prototype = {
 			}
 		};	
 	},
+	scrollTo: function(item){
+		if (!item){return false;}
+		var element = item.getC();
+		var scroll_up = seesu.ui.els.scrolling_viewport.scrollTop();
+		var scrolling_viewport_height = seesu.ui.els.scrolling_viewport.height();
+	
+		var container_postion = scroll_up + seesu.ui.els.searchres.position().top;
+	
+		var node_position = element.position().top + container_postion;
+	
+	
+		var view_pos_down = element.height() + node_position;
+		var view_pos_up = node_position;
+	
+		var scroll_down = scroll_up + scrolling_viewport_height;
+	
+		if ( view_pos_down > scroll_down){
+	
+			var new_position =  view_pos_down - scrolling_viewport_height/2;
+			seesu.ui.els.scrolling_viewport.scrollTop(new_position);
+		} else if (view_pos_down < scroll_up){
+			var new_position =  view_pos_down - scrolling_viewport_height/2;
+			seesu.ui.els.scrolling_viewport.scrollTop(new_position);
+		}
+	},
 	doesNeed: function(q){
 		return q == this.q;
 	},
@@ -582,14 +610,18 @@ investigation.prototype = {
 	},
 	selectEnterItemBelow: function(){
 		var ci = (this.enter_item && this.enter_item.serial_number) || 0,
-			ni = (ci ? ci : this.enter_items.length) - 1;
-		this.setItemForEnter(this.enter_items[ni]);
+			ni = (ci ? ci : this.enter_items.length) - 1,
+			t = this.enter_items[ni];
+		this.setItemForEnter(t);
+		this.scrollTo(t)
 		this.selected_inum = ni;
 	},
 	selectEnterItemAbove: function(){
 		var ci = (this.enter_item && this.enter_item.serial_number) || 0,
-			ni = (ci + 1 < this.enter_items.length) ? ci + 1 : 0;
-		this.setItemForEnter(this.enter_items[ni]);
+			ni = (ci + 1 < this.enter_items.length) ? ci + 1 : 0,
+			t = this.enter_items[ni];
+		this.setItemForEnter(t);
+		this.scrollTo(t)
 		this.selected_inum = ni;
 	},
 	getAllItems: function(){
@@ -712,6 +744,10 @@ searchSection.prototype = {
 					},
 					setInactive: function(){
 						this.node.removeClass('active')
+					},
+					c: this.buttonc,
+					getC: function(){
+						return this.c;	
 					},
 					click: function(){
 						_this.si.buttonClick(false, _this)
