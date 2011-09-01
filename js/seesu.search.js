@@ -525,25 +525,30 @@ investigation.prototype = {
 	scrollTo: function(item){
 		if (!item){return false;}
 		var element = item.getC();
-		var scroll_up = seesu.ui.els.scrolling_viewport.scrollTop();
+		var scroll_top = seesu.ui.els.scrolling_viewport.scrollTop();
 		var scrolling_viewport_height = seesu.ui.els.scrolling_viewport.height();
 	
-		var container_postion = scroll_up + seesu.ui.els.searchres.position().top;
+		var container_postion = scroll_top + seesu.ui.els.searchres.position().top;
 	
 		var node_position = element.position().top + container_postion;
 	
 	
-		var view_pos_down = element.height() + node_position;
+		var el_bottom = element.height() + node_position;
 		var view_pos_up = node_position;
 	
-		var scroll_down = scroll_up + scrolling_viewport_height;
+		var scroll_bottom = scroll_top + scrolling_viewport_height;
 	
-		if ( view_pos_down > scroll_down){
+		
+		
+		console.log(el_bottom + ' ' + scroll_bottom);
+		
+		console.log(el_bottom + ' ' + scroll_top);
+		if ( el_bottom > scroll_bottom){
 	
-			var new_position =  view_pos_down - scrolling_viewport_height/2;
+			var new_position =  el_bottom - scrolling_viewport_height/2;
 			seesu.ui.els.scrolling_viewport.scrollTop(new_position);
-		} else if (view_pos_down < scroll_up){
-			var new_position =  view_pos_down - scrolling_viewport_height/2;
+		} else if (el_bottom < scroll_top){
+			var new_position =  el_bottom - scrolling_viewport_height/2;
 			seesu.ui.els.scrolling_viewport.scrollTop(new_position);
 		}
 	},
