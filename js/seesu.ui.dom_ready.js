@@ -112,7 +112,7 @@ window.connect_dom_to_som = function(d, sui){
 		
 		
 		sui.els = {
-			scrolling_viewport: su.env.as_application ? $('#screens',d) : $(d),
+			scrolling_viewport: su.env.as_application ? $('#screens',d) : $(d.body),
 			make_trs: $("#make-trs-plable",d).click(function(){
 				var plc = sui.views.getCurrentPlaylistContainer();
 				var pl = plc && plc.context && plc.context.pl;
