@@ -19,6 +19,6 @@
 	"http://*.audioscrobbler.com/*",
 	"http://api.soundcloud.com/*",
 	"http://*.seesu.me/*",
-	"http://*.vk.com/*",
+	"http://*.vk.com/*"
   ]
 }
