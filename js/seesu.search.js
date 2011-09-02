@@ -525,39 +525,31 @@ investigation.prototype = {
 	scrollTo: function(item){
 		if (!item){return false;}
 		var element = item.getC();
-		var svp = seesu.ui.els.scrolling_viewport;
-		var scroll_top = svp.node.scrollTop();
-		var scrolling_viewport_height = svp.node.height();
+		var svp = seesu.ui.els.scrolling_viewport,
+			scroll_c = svp.offset ?   $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0])   :   svp.node,
+			scroll_top = scroll_c.scrollTop(), //top
+			scrolling_viewport_height = svp.node.height(), //height 
+			scroll_bottom = scroll_top + scrolling_viewport_height; //bottom
+		
 		var node_position;
-		
-		
 		if (svp.offset){
 			node_position = element.offset().top;
 		} else{
-			var container_postion = scroll_top + seesu.ui.els.searchres.position().top;
-			node_position = element.position().top + container_postion;
+			node_position = element.position().top + scroll_top + seesu.ui.els.searchres.position().top;
 		}
-	
-	
+
 		var el_bottom = element.height() + node_position;
-		var view_pos_up = node_position;
-	
-		var scroll_bottom = scroll_top + scrolling_viewport_height;
-	
-		
+
 		var new_position;
 		if ( el_bottom > scroll_bottom){
 			new_position =  el_bottom - scrolling_viewport_height/2;
 		} else if (el_bottom < scroll_top){
 			new_position =  el_bottom - scrolling_viewport_height/2;
 		}
-		var scroll_c;
-		if (svp.offset) {
-			scroll_c = (svp.node[0] && svp.node[0].ownerDocument) || svp.node[0];
-		} else{
-			scroll_c = svp.node;
-		} 
-		$(scroll_c).scrollTop(new_position);
+		if (new_position){
+			scroll_c.scrollTop(new_position);
+		}
+		
 	},
 	doesNeed: function(q){
 		return q == this.q;
