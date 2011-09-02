@@ -545,15 +545,19 @@ investigation.prototype = {
 		var scroll_bottom = scroll_top + scrolling_viewport_height;
 	
 		
-
+		var new_position;
 		if ( el_bottom > scroll_bottom){
-	
-			var new_position =  el_bottom - scrolling_viewport_height/2;
-			svp.node.scrollTop(new_position);
+			new_position =  el_bottom - scrolling_viewport_height/2;
 		} else if (el_bottom < scroll_top){
-			var new_position =  el_bottom - scrolling_viewport_height/2;
-			svp.node.scrollTop(new_position);
+			new_position =  el_bottom - scrolling_viewport_height/2;
 		}
+		var scroll_c;
+		if (svp.offset) {
+			scroll_c = (svp.node[0] && svp.node[0].ownerDocument) || svp.node[0];
+		} else{
+			scroll_c = svp.node;
+		} 
+		$(scroll_c).scrollTop(new_position);
 	},
 	doesNeed: function(q){
 		return q == this.q;
