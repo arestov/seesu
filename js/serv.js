@@ -369,7 +369,7 @@ var getTargetField = function(obj, field){
 	return target;
 };
 var getFieldValueByRule = function(obj, rule){
-	if (rule === Object(rule)){
+	if (typeof rule == 'object' && rule === Object(rule)){
 		if (typeof rule.field =='function'){
 			return rule.field(obj);
 		} else {
@@ -393,13 +393,15 @@ var sortByRules = function(a, b, rules){
 				var cr = rules[i];
 				var field_value_a = getFieldValueByRule(a, cr);
 				var field_value_b = getFieldValueByRule(b, cr);
+				field_value_a = field_value_a || !!field_value_a; //true > undefined == false, but true > false == true
+				field_value_b = field_value_b || !!field_value_b; //so convert every "", null and undefined to false
 				
-				if (field_value_a && field_value_b){
-					if (field_value_a > field_value_b){
-						shift = cr.reverse ? -1 : 1;
-					} else if (field_value_a < field_value_b){
-						shift = cr.reverse ? 1 : -1;
-					}
+				
+				
+				if (field_value_a > field_value_b){
+					shift = cr.reverse ? -1 : 1;
+				} else if (field_value_a < field_value_b){
+					shift = cr.reverse ? 1 : -1;
 				}
 			}
 			
