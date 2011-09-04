@@ -7,6 +7,73 @@ var big_map = {
 	}	
 };
 
+
+var mapLevel = function(map, parent_levels){
+	this.map = map;
+	this.parent_levels = parent_levels;
+	this.context = {};
+};
+mapLevel.prototype = {
+	setResident: function(resident){
+		this.resident = resident;
+	},
+	getResident: function(){
+		return this.resident;
+	},
+	getURL: function(){
+		return this.url || '';
+	},
+	setURL: function(url){
+		this.url = url || '';
+	},
+	testByURL: function(url){
+		if (this.url == url){
+			return this;
+		}	
+	},
+	testByPlaylistPuppet: function(puppet){
+		if (this.context && this.context.pl && this.context.pl.compare(puppet)){
+			return this;
+		}
+	},
+	testByQuery: function(query){
+		if (this.context && this.context.pl && this.context.q == query){
+			return this;
+		}	
+	},
+	getFullURL: function(){
+		var u='';
+		for (var i=0; i < this.parent_levels.length; i++) {
+			u += this.parent_levels[i].getURL();
+		};
+		return u + this.getURL();
+	},
+	
+	freeze: function(){
+		return this.map.freezeMapOfLevel(num);
+	},
+	show: function(){
+		if (this.ui && this.ui.show){
+			this.ui.show();
+		}
+	},
+	hide: function(){
+		if (this.ui && this.ui.hide){
+			this.ui.hide();
+		}
+	},
+	kill: function(){
+		if (this.ui && this.ui.remove){
+			this.ui.remove();
+		}
+		if (this.context && this.context.pl &&  this.context.pl.kill){
+			this.context.pl.kill();
+		}
+		delete this.map;
+	}
+	
+};
+
 function browseMap(){
 	this.levels = [];
 	//zoom levels
@@ -50,64 +117,21 @@ browseMap.prototype= {
 			//&& !this.levels[num].freezed
 			return this.levels[num].free;
 		} else{
-			return this.levels[num].free = {
-				getURL: function(){
-					return this.url || '';
-				},
-				setURL: function(url){
-					this.url = url || '';
-				},
-				testByURL: function(url){
-					if (this.url == url){
-						return this;
-					}	
-				},
-				testByPlaylistPuppet: function(puppet){
-					if (this.context && this.context.pl && this.context.pl.compare(puppet)){
-						return this;
-					}
-				},
-				testByQuery: function(query){
-					if (this.context && this.context.pl && this.context.q == query){
-						return this;
-					}	
-				},
-				getFullURL: function(){
-					var u='';
-					for (var i=0; i < this.parent_levels.length; i++) {
-						u += this.parent_levels[i].getURL();
-					};
-					return u + this.getURL();
-				},
-				parent_levels: (function(){
-					var lvls = [];
-					
-					//from deep levels to top levels;
-					
-					for (var i = num-1; i > -1; i--){
-						if (!skip_levels_above || i < num - skip_levels_above){
-							lvls.push(_this.getLevel(i));
-						}
-					};
-					
-					return 	lvls;
-				})(),
-				context:{},
-				map: this,
-				freeze: function(){
-					return this.map.freezeMapOfLevel(num);
-				},
-				kill: function(){
-					if (this.ui && this.ui.remove){
-						this.ui.remove();
-					}
-					if (this.context && this.context.pl &&  this.context.pl.kill){
-						this.context.pl.kill();
-					}
-					delete this.map;
-				}
+			var parent_levels = (function(){
+				var lvls = [];
 				
-			};
+				//from deep levels to top levels;
+				
+				for (var i = num-1; i > -1; i--){
+					if (!skip_levels_above || i < num - skip_levels_above){
+						lvls.push(_this.getLevel(i));
+					}
+				};
+				
+				return 	lvls;
+			})();
+			
+			return this.levels[num].free = new mapLevel(this, parent_levels);
 		}
 	},
 	freezeMapOfLevel : function(num){
@@ -152,18 +176,18 @@ browseMap.prototype= {
 		this.hideMap();
 		for (var i=0; i < this.levels.length; i++) {
 			if (this.levels[i]){
-				if(this.levels[i].freezed && this.levels[i].freezed.ui && this.levels[i].freezed.ui.show){
-					this.levels[i].freezed.ui.show();
+				if (this.levels[i].freezed){
+					this.levels[i].freezed.show();
 				}
 			}
 		};
 	},
 	hideLevel: function(i){
 		if (this.levels[i]){
-			if(this.levels[i].freezed && this.levels[i].freezed.ui && this.levels[i].freezed.ui.hide){
-				this.levels[i].freezed.ui.hide();
+			if (this.levels[i].freezed){ 
+				this.levels[i].freezed.hide();
 			}
-			if(this.levels[i].free){
+			if (this.levels[i].free){
 				this.levels[i].free.kill();
 				delete this.levels[i].free;
 			}
