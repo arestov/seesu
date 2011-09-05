@@ -57,33 +57,7 @@ views.prototype = {
 	getPlaylistContainer: function(skip_from){
 		var _this = this;
 		
-		var c = this.m.getFreeLevel(1, 1-(skip_from + 1));
-		if (!c.D('ui')){
-			var conie = $('<div class="playlist-container"></div>').appendTo(this.sUI().els.artsTracks);
-			c.D('ui',  {
-				conie: conie,
-				canUse: function(){
-					return this.conie && !!this.conie.parent() && this.conie[0].ownerDocument == _this.sUI().d;
-				},
-				remove: function(){
-					return this.conie.remove();
-				},
-				hide: function(){
-					return this.conie.hide()
-				},
-				show: function(){
-					return this.conie.show()
-				},
-				wait: function(){
-					this.tracks_container.addClass('loading');
-				},
-				ready: function(){
-					this.tracks_container.removeClass('loading');
-				},
-				info_container: $('<div class="playlist-info"></div>').appendTo(conie),
-				tracks_container: $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(conie)
-			});
-		} 
+		var c = this.m.getFreeLevel(1, 1-(skip_from + 1), playlistLevelResident);
 		return c;
 	},
 	getCurrentPlaylistContainer: function(){
@@ -231,8 +205,10 @@ views.prototype = {
 
 		if (pl && !pl.ui){
 			var lev = this.getPlaylistContainer(skip_from);
+			var pl_resident = lev.getResident();
 			lev.D('pl', pl); 
-			pl.ui = lev.D('ui');
+			pl_resident.D('pl', pl);
+			pl.ui = pl_resident
 			if (pl.loading){
 				pl.ui.wait()
 			}
@@ -244,8 +220,10 @@ views.prototype = {
 			var ui = pl.ui && pl.ui.canUse() && pl.ui.show();
 			if (!ui){
 				var lev = this.getPlaylistContainer(skip_from);
+				var pl_resident = lev.getResident();
 				lev.D('pl', pl);
-				pl.ui = lev.D('ui');
+				pl_resident.D('pl', pl);
+				pl.ui = pl_resident
 				lev.setURL(getUrlOfPlaylist(pl));
 			}
 			this.sUI().render_playlist(pl, pl.length > 1);
