@@ -36,8 +36,8 @@ views.prototype = {
 	},
 	getSearchResultsContainer: function(){
 		var c = this.m.getFreeLevel(0);
-		if (!c.ui){
-			c.ui = $('<div class="search-results-container current-src"></div').appendTo(this.sUI().els.searchres);
+		if (!c.D('ui')){
+			c.D('ui', $('<div class="search-results-container current-src"></div').appendTo(this.sUI().els.searchres));
 		}
 		return c
 	},
@@ -45,9 +45,9 @@ views.prototype = {
 		var _this = this;
 		
 		var c = this.m.getFreeLevel(1, 1-(skip_from + 1));
-		if (!c.ui){
+		if (!c.D('ui')){
 			var conie = $('<div class="playlist-container"></div>').appendTo(this.sUI().els.artsTracks);
-			c.ui = {
+			c.D('ui',  {
 				conie: conie,
 				canUse: function(){
 					return this.conie && !!this.conie.parent() && this.conie[0].ownerDocument == _this.sUI().d;
@@ -69,7 +69,7 @@ views.prototype = {
 				},
 				info_container: $('<div class="playlist-info"></div>').appendTo(conie),
 				tracks_container: $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(conie)
-			};
+			});
 		} 
 		return c;
 	},
@@ -101,7 +101,7 @@ views.prototype = {
 		this.m.restoreFreezed();
 		var l = this.m.getLevel(1); // playlist page is 1 level
 		if (l){
-			this.swithToPlaylistPage(l.context.pl, no_navi);
+			this.swithToPlaylistPage(l.D('pl'), no_navi);
 		}
 	},
 
@@ -213,13 +213,13 @@ views.prototype = {
 		var pl = p;
 		if (!pl){
 			var lev = this.getCurrentPlaylistContainer();
-			pl = lev.context.pl;
+			pl = lev.D('pl');
 		}
 
 		if (pl && !pl.ui){
 			var lev = this.getPlaylistContainer(skip_from);
-			lev.context.pl = pl; 
-			pl.ui = lev.ui;
+			lev.D('pl', pl); 
+			pl.ui = lev.D('ui');
 			if (pl.loading){
 				pl.ui.wait()
 			}
@@ -231,8 +231,8 @@ views.prototype = {
 			var ui = pl.ui && pl.ui.canUse() && pl.ui.show();
 			if (!ui){
 				var lev = this.getPlaylistContainer(skip_from);
-				lev.context.pl = pl;
-				pl.ui = lev.ui;
+				lev.D('pl', pl);
+				pl.ui = lev.D('ui');
 				lev.setURL(getUrlOfPlaylist(pl));
 			}
 			this.sUI().render_playlist(pl, pl.length > 1);

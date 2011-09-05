@@ -8,15 +8,26 @@ var big_map = {
 };
 
 
-var mapLevel = function(num, map, parent_levels){
+var mapLevel = function(num, map, parent_levels, resident){
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
 	this.context = {};
+	if (resident){
+		this.resident = new resident();
+	}
+	this.storage = {};
 };
 mapLevel.prototype = {
 	setResident: function(resident){
 		this.resident = resident;
+	},
+	D: function(key, value){
+		if (!value){
+			return this.storage[key];
+		} else {
+			this.storage[key] = value;
+		}
 	},
 	getResident: function(){
 		return this.resident;
@@ -33,12 +44,14 @@ mapLevel.prototype = {
 		}	
 	},
 	testByPlaylistPuppet: function(puppet){
-		if (this.context && this.context.pl && this.context.pl.compare(puppet)){
+		var pl = this.D('pl');
+		if (pl && pl.compare(puppet)){
 			return this;
 		}
 	},
 	testByQuery: function(query){
-		if (this.context && this.context.pl && this.context.q == query){
+		var pl = this.D('pl');
+		if (pl && this.D('q') == query){
 			return this;
 		}	
 	},
@@ -57,8 +70,9 @@ mapLevel.prototype = {
 		if (this.resident){
 			this.resident.show();
 		} else{
-			if (this.ui && this.ui.show){
-				this.ui.show();
+			var ui = this.D('ui');
+			if (ui && ui.show){
+				ui.show();
 			}
 		}
 		
@@ -67,8 +81,9 @@ mapLevel.prototype = {
 		if (this.resident){
 			this.resident.hide();
 		} else{
-			if (this.ui && this.ui.hide){
-				this.ui.hide();
+			var ui = this.D('ui');
+			if (ui && ui.hide){
+				ui.hide();
 			}
 		}
 		
@@ -77,11 +92,13 @@ mapLevel.prototype = {
 		if (this.resident){
 			this.resident.kill();
 		} else{
-			if (this.ui && this.ui.remove){
-				this.ui.remove();
+			var ui = this.D('ui');
+			if (ui && ui.remove){
+				ui.remove();
 			}
-			if (this.context && this.context.pl &&  this.context.pl.kill){
-				this.context.pl.kill();
+			var pl = this.D('pl');
+			if (pl && pl.kill){
+				pl.kill();
 			}
 		
 		}
@@ -124,7 +141,7 @@ browseMap.prototype= {
 			return false;// maybe better return this.getFreeLevel(num);
 		}
 	},
-	getFreeLevel: function(num, skip_levels_above){
+	getFreeLevel: function(num, skip_levels_above, resident){
 		var _this = this;
 		if (!this.levels[num]){
 			this.levels[num] = {};
@@ -147,7 +164,7 @@ browseMap.prototype= {
 				return 	lvls;
 			})();
 			
-			return this.levels[num].free = new mapLevel(num, this, parent_levels);
+			return this.levels[num].free = new mapLevel(num, this, parent_levels, resident);
 		}
 	},
 	freezeMapOfLevel : function(num){

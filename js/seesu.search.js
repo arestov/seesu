@@ -304,11 +304,11 @@ var tags_secti = {
 
 function arrows_keys_nav(e){
 	var srca = su.ui.views.getCurrentSearchResultsContainer();
-	var srui = srca.ui;
+	var srui = srca.D('ui');
 	if (!srui){
 		return false;
 	}
-	var invstg = srca.context.invstg;
+	var invstg = srca.D('invstg');
 	
 
 	var _key = e.keyCode;
@@ -328,7 +328,7 @@ function arrows_keys_nav(e){
 
 var results_mouse_click_for_enter_press = function(e){
 	var srca = su.ui.views.getCurrentSearchResultsContainer();
-	var srui = srca.ui;
+	var srui = srca.D('ui');
 	if (!srui){
 		return false;
 	}
@@ -948,10 +948,10 @@ var input_change = function(e, no_navi){
 	
 	var input_value = input.value;
 	//su.ui.search_input_value = input_value;
-	if (search_view.context.q == input_value){
+	if (search_view.D('q') == input_value){
 		return false
 	} else{
-		search_view.context.q= input_value;
+		search_view.D('q', input_value);
 		search_view.setURL('?q=' + input_value);
 	}
 	if (!input_value) {
@@ -969,8 +969,10 @@ var input_change = function(e, no_navi){
 	seesu.xhrs.multiply_suggestions =[]
 	su.ui.els.search_form.data('current_node_index' , false);
 	
-	if (!search_view.context.invstg){
-		var invstg = search_view.context.invstg  = new investigation(search_view.ui); 
+	if (!search_view.D('invstg')){
+		var invstg = new investigation(search_view.D('ui')); 
+		
+		search_view.D('invstg', invstg);
 		
 			invstg.addSection('playlists', playlist_secti);
 			invstg.addSection('artists', artists_secti);
@@ -993,7 +995,7 @@ var input_change = function(e, no_navi){
 	}
 	
 	
-	suggestions_prerender(search_view.context.invstg, input_value, seesu.env.cross_domain_allowed);
+	suggestions_prerender(search_view.D('invstg'), input_value, seesu.env.cross_domain_allowed);
 	
 	su.ui.views.show_search_results_page(false, no_navi);
 };
