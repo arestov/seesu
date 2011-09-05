@@ -1,3 +1,31 @@
+var playlistLevelResident = function(){
+	this.conie = $('<div class="playlist-container"></div>').appendTo(su.ui.els.artsTracks);
+	this.info_container = $('<div class="playlist-info"></div>').appendTo(this.conie),
+	this.tracks_container = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.conie)
+};
+playlistLevelResident.prototype = {
+	canUse: function(){
+		return this.conie && !!this.conie.parent() && this.conie[0].ownerDocument == su.ui.d;
+	},
+	remove: function(){
+		return this.conie.remove();
+	},
+	hide: function(){
+		return this.conie.hide()
+	},
+	show: function(){
+		return this.conie.show()
+	},
+	wait: function(){
+		this.tracks_container.addClass('loading');
+	},
+	ready: function(){
+		this.tracks_container.removeClass('loading');
+	}
+};
+
+
+
 var views = function(sui){
 	this.sui = sui;
 	this.m = new browseMap();

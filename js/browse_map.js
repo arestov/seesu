@@ -8,7 +8,8 @@ var big_map = {
 };
 
 
-var mapLevel = function(map, parent_levels){
+var mapLevel = function(num, map, parent_levels){
+	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
 	this.context = {};
@@ -50,24 +51,39 @@ mapLevel.prototype = {
 	},
 	
 	freeze: function(){
-		return this.map.freezeMapOfLevel(num);
+		return this.map.freezeMapOfLevel(this.num);
 	},
 	show: function(){
-		if (this.ui && this.ui.show){
-			this.ui.show();
+		if (this.resident){
+			this.resident.show();
+		} else{
+			if (this.ui && this.ui.show){
+				this.ui.show();
+			}
 		}
+		
 	},
 	hide: function(){
-		if (this.ui && this.ui.hide){
-			this.ui.hide();
+		if (this.resident){
+			this.resident.hide();
+		} else{
+			if (this.ui && this.ui.hide){
+				this.ui.hide();
+			}
 		}
+		
 	},
 	kill: function(){
-		if (this.ui && this.ui.remove){
-			this.ui.remove();
-		}
-		if (this.context && this.context.pl &&  this.context.pl.kill){
-			this.context.pl.kill();
+		if (this.resident){
+			this.resident.kill();
+		} else{
+			if (this.ui && this.ui.remove){
+				this.ui.remove();
+			}
+			if (this.context && this.context.pl &&  this.context.pl.kill){
+				this.context.pl.kill();
+			}
+		
 		}
 		delete this.map;
 	}
@@ -131,7 +147,7 @@ browseMap.prototype= {
 				return 	lvls;
 			})();
 			
-			return this.levels[num].free = new mapLevel(this, parent_levels);
+			return this.levels[num].free = new mapLevel(num, this, parent_levels);
 		}
 	},
 	freezeMapOfLevel : function(num){
