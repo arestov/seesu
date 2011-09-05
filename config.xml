@@ -10,7 +10,7 @@
   <height>610</height>
   <icon width="128" height="128">icons/icon128.png</icon>
   <icon width="64" height="64">icons/icon64.png</icon>
-  <icon width="64" height="64">icons/icon48.png</icon>
+  <icon width="48" height="48">icons/icon48.png</icon>
   <icon width="32" height="32">icons/icon32.png</icon>
   <icon width="19" height="19">icons/icon19.png</icon>
   <icon width="16" height="16">icons/icon16.png</icon>
