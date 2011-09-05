@@ -1,11 +1,17 @@
 var playlistLevelResident = function(){
 	this.conie = $('<div class="playlist-container"></div>').appendTo(su.ui.els.artsTracks);
 	this.info_container = $('<div class="playlist-info"></div>').appendTo(this.conie),
-	this.tracks_container = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.conie)
+	this.tracks_container = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.conie);
+	this.storage = {};
 };
 playlistLevelResident.prototype = {
 	canUse: function(){
 		return this.conie && !!this.conie.parent() && this.conie[0].ownerDocument == su.ui.d;
+	},
+	kill: function(){
+		var pl = this.D('pl');
+		if (pl){pl.kill()}
+		this.remove();	
 	},
 	remove: function(){
 		return this.conie.remove();
@@ -21,6 +27,13 @@ playlistLevelResident.prototype = {
 	},
 	ready: function(){
 		this.tracks_container.removeClass('loading');
+	},
+	D: function(key, value){
+		if (!value){
+			return this.storage[key];
+		} else {
+			this.storage[key] = value;
+		}
 	}
 };
 

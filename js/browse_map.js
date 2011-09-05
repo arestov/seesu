@@ -12,7 +12,6 @@ var mapLevel = function(num, map, parent_levels, resident){
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
-	this.context = {};
 	if (resident){
 		this.resident = new resident();
 	}
@@ -44,13 +43,13 @@ mapLevel.prototype = {
 		}	
 	},
 	testByPlaylistPuppet: function(puppet){
-		var pl = this.D('pl');
+		var pl = this.D('pl') || (this.getResident() && this.getResident().D && this.getResident().D('pl'));
 		if (pl && pl.compare(puppet)){
 			return this;
 		}
 	},
 	testByQuery: function(query){
-		var pl = this.D('pl');
+		var pl = this.D('pl') || (this.getResident() && this.getResident().D && this.getResident().D('pl'));
 		if (pl && this.D('q') == query){
 			return this;
 		}	
@@ -117,22 +116,23 @@ function browseMap(){
 	//today seesu has no deeper level
 }
 browseMap.prototype= {
+	getBothPartOfLevel: function(level_num){
+		return {
+			fr: this.levels[level_num] && this.levels[level_num].free != this.levels[level_num].freezed &&  this.levels[level_num].free,
+			fz: this.levels[level_num] && this.levels[level_num].freezed 
+		};
+	},
 	findURL: function(level, url, only_freezed, only_free){
-		var f = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
-		var fz = this.levels[level] && this.levels[level].freezed;
-		return (!only_freezed && !!f && f.testByURL(url)) || (!only_free && !!fz && fz.testByURL(url));
+		var both = this.getBothPartOfLevel(level);
+		return (!only_freezed && !!both.fr && both.fr.testByURL(url)) || (!only_free && !!both.fz && both.fz.testByURL(url));
 	},
 	findLevelOfPlaylist: function(level, puppet, only_freezed){
-		var f = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
-		var fz = this.levels[level] && this.levels[level].freezed;
-		
-		return (!only_freezed && !!f && f.testByPlaylistPuppet(puppet)) || (!!fz && fz.testByPlaylistPuppet(puppet));
+		var both = this.getBothPartOfLevel(level);
+		return (!only_freezed && !!both.fr && both.fr.testByPlaylistPuppet(puppet)) || (!!both.fz && both.fz.testByPlaylistPuppet(puppet));
 	},
 	findLevelOfSearchQuery: function(level, query){
-		var f = this.levels[level] && this.levels[level].free != this.levels[level].freezed &&  this.levels[level].free;
-		var fz = this.levels[level] && this.levels[level].freezed;
-		
-		return (!!f && f.testByQuery(query)) || (!!fz && fz.testByQuery(query));
+		var both = this.getBothPartOfLevel(level);
+		return (!!both.fr && both.fr.testByQuery(query)) || (!!both.fz && both.fz.testByQuery(query));
 	},
 	getLevel: function(num){
 		if (this.levels[num]){

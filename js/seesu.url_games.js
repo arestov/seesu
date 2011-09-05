@@ -395,7 +395,7 @@ function hashchangeHandler(e, force){
 				console.log(newstate);
 				var lev = su.ui.views.findViewOfURL(getUrlOfPlaylist(newstate.plp));
 				if (lev){
-					var pl = lev.context.pl;
+					var pl = lev.D('pl');
 					if (lev.freezed){
 						su.ui.views.restoreFreezed(true);
 					} else if (pl){
