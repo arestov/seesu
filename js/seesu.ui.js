@@ -6,7 +6,7 @@ var playlistLevelResident = function(){
 };
 playlistLevelResident.prototype = {
 	canUse: function(){
-		return this.conie && !!this.conie.parent() && this.conie[0].ownerDocument == su.ui.d;
+		return this.conie && !!this.conie.parent().length && this.conie[0].ownerDocument == su.ui.d;
 	},
 	kill: function(){
 		var pl = this.D('pl');
@@ -37,7 +37,31 @@ playlistLevelResident.prototype = {
 	}
 };
 
-
+var sRLevelResident = function(){
+	this.c = $('<div class="search-results-container current-src"></div').appendTo(su.ui.els.searchres);
+	this.storage = {};
+};
+sRLevelResident.prototype = {
+	canUse: function(){
+		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
+	},
+	kill: function(){
+		this.c.remove();
+	},
+	hide: function(){
+		this.c.hide();
+	},
+	show: function(){
+		this.c.show();
+	},
+	D: function(key, value){
+		if (!value){
+			return this.storage[key];
+		} else {
+			this.storage[key] = value;
+		}
+	}
+};
 
 var views = function(sui){
 	this.sui = sui;
@@ -48,11 +72,8 @@ views.prototype = {
 		return this.m.getLevel(0);
 	},
 	getSearchResultsContainer: function(){
-		var c = this.m.getFreeLevel(0);
-		if (!c.D('ui')){
-			c.D('ui', $('<div class="search-results-container current-src"></div').appendTo(this.sUI().els.searchres));
-		}
-		return c
+		var c = this.m.getFreeLevel(0, false, sRLevelResident);
+		return c;
 	},
 	getPlaylistContainer: function(skip_from){
 		var _this = this;

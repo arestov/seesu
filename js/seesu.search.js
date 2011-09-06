@@ -304,7 +304,7 @@ var tags_secti = {
 
 function arrows_keys_nav(e){
 	var srca = su.ui.views.getCurrentSearchResultsContainer();
-	var srui = srca.D('ui');
+	var srui = srca.getResident()
 	if (!srui){
 		return false;
 	}
@@ -328,7 +328,7 @@ function arrows_keys_nav(e){
 
 var results_mouse_click_for_enter_press = function(e){
 	var srca = su.ui.views.getCurrentSearchResultsContainer();
-	var srui = srca.D('ui');
+	var srui = srca.getResident()
 	if (!srui){
 		return false;
 	}
@@ -970,7 +970,7 @@ var input_change = function(e, no_navi){
 	su.ui.els.search_form.data('current_node_index' , false);
 	
 	if (!search_view.D('invstg')){
-		var invstg = new investigation(search_view.D('ui')); 
+		var invstg = new investigation(search_view.getResident().c); 
 		
 		search_view.D('invstg', invstg);
 		
