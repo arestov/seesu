@@ -221,19 +221,8 @@ var artists_secti = {
 		section.hideButton();
 		var q = section.r.query;
 		if (q) {
-				getLastfmSuggests('artist.search', {artist: q}, q, section, parseArtistsResults, true);
+			getLastfmSuggests('artist.search', {artist: q}, q, section, parseArtistsResults, true);
 
-
-			return
-			section.header.addClass('loading');
-			
-			lfm('artist.search',{artist: q, limit: 15 },function(r){
-				section.header.removeClass('loading');
-				show_artists_results(section, r, false);
-			}, function(){
-				section.header.removeClass('loading');
-			});
-			
 		}
 	}
 };
@@ -255,17 +244,6 @@ var tracks_secti = {
 		var q = section.r.query;
 		if (q) {
 			getLastfmSuggests('track.search', {track: q}, q, section, parseTracksResults, true);
-			
-			return
-			section.header.addClass('loading');
-			
-			lfm('track.search',{track: q, limit: 15 },function(r){
-				show_tracks_results(section, r);
-				section.header.removeClass('loading');
-			},function(){
-				section.header.removeClass('loading');
-			});
-			
 		}
 	}
 };
@@ -289,15 +267,6 @@ var tags_secti = {
 		if (q) {
 			getLastfmSuggests('tag.search', {tag: q}, q, section, parseTagsResults, true);	
 			return
-			section.header.addClass('loading');
-			lfm('tag.search',{tag: q, limit: 15 },function(r){
-				section.header.removeClass('loading');
-				show_tags_results(section, r);
-			},function(){
-				section.header.removeClass('loading');
-			});
-			
-			
 		}
 	}
 };
@@ -448,14 +417,15 @@ var parseFastSuggests = function(r){
 	});
 
 	
-	//var sugg_albums = $filter(r.response.docs, 'restype', 8);
+	var sugg_albums = $filter(r.response.docs, 'restype', 8);
 	
 	
 	
 	return {
 		artists: sugg_arts,
 		tracks: sugg_tracks,
-		tags: sugg_tags
+		tags: sugg_tags,
+		albs: sugg_albums
 	};
 };
 var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_preview){

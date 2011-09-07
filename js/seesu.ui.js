@@ -1216,6 +1216,20 @@ seesu_ui.prototype = {
 
 		container.append(albums_ul);
 	},
+	showAlbum: function(artist, name, id, original_artist){
+		var _sui = this;
+		
+		var pl_r = prepare_playlist('(' + artist + ') ' + name ,'album', {original_artist: original_artist || artist, album: name});
+		_sui.views.show_playlist_page(pl_r);
+		if (id){
+			get_artist_album_playlist(id, pl_r);
+		} else{
+			get_artist_album_info(artist, name, function(alb_data){
+				get_artist_album_playlist(alb_data.album.id, pl_r);
+			});
+		}
+		seesu.track_event('Artist navigation', 'album', artist + ": " + name);
+	},
 	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist){
 		var _sui = this;
 		var li = $('<li></li>');
@@ -1225,14 +1239,7 @@ seesu_ui.prototype = {
 				.data('album', al_name)
 				.click(function(e){
 					e.preventDefault(); 
-					
-					var pl_r = prepare_playlist('(' + al_artist + ') ' + al_name ,'album', {original_artist: original_artist, album: al_name});
-					_sui.views.show_playlist_page(pl_r);
-					get_artist_album_info(al_artist, al_name, function(alb_data){
-						get_artist_album_playlist(alb_data.album.id, pl_r);
-					} );
-					seesu.track_event('Artist navigation', 'album', al_artist + ": " + al_name);
-					e.preventDefault();
+					_sui.showAlbum(al_artist, al_name, false, original_artist);
 				})
 				.appendTo(li);
 			$('<img/>').attr('src', al_image).appendTo(a_href);
