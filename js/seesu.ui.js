@@ -1,5 +1,5 @@
-var dNav = function(){}
-var dNav.prototype = {
+var dNav = function(){};
+dNav.prototype = {
 	setActive: function(){
 		if (!this.active){
 			this.c.addClass('nnav');
@@ -17,13 +17,13 @@ var dNav.prototype = {
 	},
 	kill: function(){
 		this.c.remove();
-	}
+	},
 	hide: function(){
 		this.c.hide();	
 	},
 	text: function(text){
 		this.text_c.text(text);
-	}
+	},
 	render: function(place){
 		if (place){place.append(this.c)}
 	}
