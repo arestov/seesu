@@ -14,6 +14,9 @@ var mapLevel = function(num, map, parent_levels, resident){
 	this.parent_levels = parent_levels;
 	if (resident){
 		this.resident = new resident();
+		if (this.resident.nav){
+			this.nav = this.resident.nav();
+		}
 	}
 	this.storage = {};
 };
@@ -68,6 +71,9 @@ mapLevel.prototype = {
 	show: function(){
 		if (this.resident){
 			this.resident.show();
+			if (this.nav){
+				this.nav.show();
+			}
 		} else{
 			var ui = this.D('ui');
 			if (ui && ui.show){
@@ -79,6 +85,9 @@ mapLevel.prototype = {
 	hide: function(){
 		if (this.resident){
 			this.resident.hide();
+			if (this.nav){
+				this.nav.hide();
+			}
 		} else{
 			var ui = this.D('ui');
 			if (ui && ui.hide){
@@ -90,6 +99,9 @@ mapLevel.prototype = {
 	kill: function(){
 		if (this.resident){
 			this.resident.kill();
+			if (this.nav){
+				this.nav.kill();
+			}
 		} else{
 			var ui = this.D('ui');
 			if (ui && ui.remove){

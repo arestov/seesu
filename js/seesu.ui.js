@@ -1,3 +1,57 @@
+var dNav = function(){}
+var dNav.prototype = {
+	setActive: function(){
+		if (!this.active){
+			this.c.addClass('nnav');
+			this.c.show();
+			this.active = true;
+		}
+		
+	},
+	setInactive: function(){
+		if (this.active){
+			this.c.removeClass('nnav');
+			this.active = false;
+		}
+		
+	},
+	kill: function(){
+		this.c.remove();
+	}
+	hide: function(){
+		this.c.hide();	
+	},
+	text: function(text){
+		this.text_c.text(text);
+	}
+	render: function(place){
+		if (place){place.append(this.c)}
+	}
+};
+
+
+var plNav = function(){
+	this.c= $('<span class="nnav nav-playlist-page"><span></span><b></b></span>');
+	this.text_c = this.c.find('span');
+	this.active = true;
+	//$('<span class="nav-title"></span>');
+};
+plNav.prototype = new dNav();
+
+var sRNav = function(){
+	this.c= $('<span class="nnav nav-search-results" title="Suggestions &amp; search"><b></b></span>');
+	this.text_c = this.c.find('span');
+	this.active = true;
+}
+sRNav.prototype = new dNav();
+
+var trNav = function(){
+	this.c = $('<span class="nnav nav-track-zoom"><span></span><b></b></span>');
+	this.text_c = this.c.find('span');
+	this.active = true;
+}
+trNav.prototype =  new dNav();
+
 var playlistLevelResident = function(){
 	this.conie = $('<div class="playlist-container"></div>').appendTo(su.ui.els.artsTracks);
 	this.info_container = $('<div class="playlist-info"></div>').appendTo(this.conie),
@@ -34,6 +88,9 @@ playlistLevelResident.prototype = {
 		} else {
 			this.storage[key] = value;
 		}
+	},
+	nav: function(){
+		return new plNav();
 	}
 };
 
@@ -60,6 +117,9 @@ sRLevelResident.prototype = {
 		} else {
 			this.storage[key] = value;
 		}
+	},
+	nav: function(){
+		return new sRNav();
 	}
 };
 
@@ -68,6 +128,9 @@ var views = function(sui){
 	this.m = new browseMap();
 }
 views.prototype = {
+	setNav: function(obj){
+		this.nav= obj;
+	},
 	getCurrentSearchResultsContainer: function(){
 		return this.m.getLevel(0);
 	},

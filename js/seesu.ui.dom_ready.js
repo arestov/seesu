@@ -229,14 +229,14 @@ window.connect_dom_to_som = function(d, sui){
 			
 		sui.els.search_label = sui.els.search_form.find('#search-p').find('.lbl');
 		var justhead = $(sui.els.slider).children('.navs');
-		sui.views.nav = {
+		sui.views.setNav({
 			justhead: justhead,
 			daddy: justhead.children('.daddy'),
 			start: $('#start_search',d),
 			results: $('#search_result_nav',d),
 			playlist: $(sui.els.nav_playlist_page).parent(),
 			track: sui.els.nav_track_zoom.parent()
-		}
+		});
 		
 		sui.els.search_input.bind('keyup change', input_change);
 	
