@@ -198,6 +198,43 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 	});
 	
 })();
+(function(){
+	albumSuggest = function(artist, name, iamge, id){
+		this.artist = artist;
+		this.name = name;
+		
+		if (image){
+			this.image = image;
+		}
+		if (id){
+			this.aid = id;
+		}
+		
+	};
+	albumSuggest.prototype = new baseSuggest();
+	cloneObj(tagSuggest.prototype, {
+		valueOf: function(){
+			return '( ' + this.artist + ' ) ' + this.name;
+		},
+		click: function(){
+			su.ui.showAlbum(this.artist, this.name, this.id, this.q);
+			seesu.track_event('Music search', this.q, "album: " + this.valueOf());
+		},
+		createItem: function(q) {
+			var _this = this;
+			this.q = q;
+			var a = $("<a></a>")
+				.click(function(e){
+					_this.click();
+				})
+				.click(results_mouse_click_for_enter_press);
+			$("<img/>").attr({ src: (this.image || default_sugg_artimage), alt: this.valueOf() }).appendTo(a);
+			$("<span></span>").text(this.valueOf()).appendTo(a);
+			return a;
+		}
+	});
+})()
+	
 
 var playlist_secti = {
 	head: localize('playlists'),

@@ -1216,7 +1216,7 @@ seesu_ui.prototype = {
 
 		container.append(albums_ul);
 	},
-	showAlbum: function(artist, name, id, original_artist){
+	showAlbum: function(artist, name, id, original_artist, query){
 		var _sui = this;
 		
 		var pl_r = prepare_playlist('(' + artist + ') ' + name ,'album', {original_artist: original_artist || artist, album: name});
@@ -1228,7 +1228,7 @@ seesu_ui.prototype = {
 				get_artist_album_playlist(alb_data.album.id, pl_r);
 			});
 		}
-		seesu.track_event('Artist navigation', 'album', artist + ": " + name);
+		
 	},
 	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist){
 		var _sui = this;
@@ -1240,6 +1240,7 @@ seesu_ui.prototype = {
 				.click(function(e){
 					e.preventDefault(); 
 					_sui.showAlbum(al_artist, al_name, false, original_artist);
+					seesu.track_event('Artist navigation', 'album', artist + ": " + name);
 				})
 				.appendTo(li);
 			$('<img/>').attr('src', al_image).appendTo(a_href);
