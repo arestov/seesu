@@ -72,7 +72,7 @@ mapLevel.prototype = {
 		if (this.resident){
 			this.resident.show();
 			if (this.nav){
-				this.nav.show();
+				//this.nav.show();
 			}
 		} else{
 			var ui = this.D('ui');
@@ -86,7 +86,7 @@ mapLevel.prototype = {
 		if (this.resident){
 			this.resident.hide();
 			if (this.nav){
-				this.nav.hide();
+				//this.nav.hide();
 			}
 		} else{
 			var ui = this.D('ui');
@@ -100,7 +100,7 @@ mapLevel.prototype = {
 		if (this.resident){
 			this.resident.kill();
 			if (this.nav){
-				this.nav.kill();
+				//this.nav.kill();
 			}
 		} else{
 			var ui = this.D('ui');

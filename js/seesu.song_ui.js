@@ -68,6 +68,11 @@ songUI.prototype = {
 		
 	},
 	expand: function(){
+		if (this.expanded){
+			return true
+		} else{
+			this.expanded = true;
+		}
 		var _this = this;
 	
 	
