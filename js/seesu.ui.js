@@ -1155,7 +1155,7 @@ seesu_ui.prototype = {
 			}
 			ainf.meta_info.append(similars_p);
 		}
-		var artist_albums_container = $('<div class="artist-albums extending-info"></div>').append('<span class="desc-name"><em>'+localize('albums')+':</em></span>').appendTo(ainf.meta_info);
+		var artist_albums_container = $('<div class="artist-albums extending-info"></div>').append('<span class="desc-name"><em>'+localize('Albums')+':</em></span>').appendTo(ainf.meta_info);
 		var artist_albums_text = $('<div class=""></div>').appendTo(artist_albums_container);
 		if (artist_albums_container){
 			if (!has_some_info_extenders){
@@ -1218,9 +1218,9 @@ seesu_ui.prototype = {
 	},
 	showAlbum: function(artist, name, id, original_artist, query){
 		var _sui = this;
-		
-		var pl_r = prepare_playlist('(' + artist + ') ' + name ,'album', {original_artist: original_artist || artist, album: name});
-		_sui.views.show_playlist_page(pl_r);
+		//prepare_playlist(artist, 'artist', artist, with_search_results, start_song);
+		var pl_r = prepare_playlist('(' + artist + ') ' + name ,'album', {original_artist: original_artist || artist, album: name}, query);
+		_sui.views.show_playlist_page(pl_r, query ? 0 : false);
 		if (id){
 			get_artist_album_playlist(id, pl_r);
 		} else{

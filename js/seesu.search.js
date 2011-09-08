@@ -199,7 +199,7 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 	
 })();
 (function(){
-	albumSuggest = function(artist, name, iamge, id){
+	albumSuggest = function(artist, name, image, id){
 		this.artist = artist;
 		this.name = name;
 		
@@ -212,12 +212,12 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 		
 	};
 	albumSuggest.prototype = new baseSuggest();
-	cloneObj(tagSuggest.prototype, {
+	cloneObj(albumSuggest.prototype, {
 		valueOf: function(){
 			return '( ' + this.artist + ' ) ' + this.name;
 		},
 		click: function(){
-			su.ui.showAlbum(this.artist, this.name, this.id, this.q);
+			su.ui.showAlbum(this.artist, this.name, this.aid, false, this.q);
 			seesu.track_event('Music search', this.q, "album: " + this.valueOf());
 		},
 		createItem: function(q) {
@@ -243,13 +243,12 @@ var playlist_secti = {
 var artists_secti = {
 	head: localize('Artists','Artists'),
 	button: function(){
-		return su.ui.buttons.search_artists;
+		return $('<button type="submit" name="type" value="artist"><span>Search in artists</span></button>');
 	},
-	cid: 'artist-results-ul',
-	cclass: 'results-artists',
+	cclass: 'results-suggests',
 	getButtonText: function(have_results, q){
 		if (have_results){
-			return localize('fine-more', 'find more') + ' «' + q + '» ' + localize('artists', 'artists');
+			return localize('fine-more', 'find more') + ' «' + q + '» ' + localize('oartists', 'artists');
 		} else{
 			return localize('to-search', 'Search ') + '«' + q + '» ' + localize('in-artists','in artists');
 		}
@@ -266,12 +265,12 @@ var artists_secti = {
 var tracks_secti = {
 	head: localize('Tracks','Tracks'),
 	button: function(){
-		return su.ui.buttons.search_tracks;
+		return $('<button type="submit" name="type" value="track"><span>Search in tracks</span></button>');
 	},
-	cclass: 'results-artists',
+	cclass: 'results-suggests',
 	getButtonText: function(have_results, q){
 		if (have_results){
-			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('tracks', 'tracks');
+			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('otracks', 'tracks');
 		} else{
 			return localize('to-search', 'Search ') + '«' + q + '» ' +localize('in-tracks','in tracks');
 		}
@@ -288,12 +287,12 @@ var tracks_secti = {
 var tags_secti = {
 	head: localize('Tags'),
 	button: function(){
-		return su.ui.buttons.search_tags;
+		return $('<button type="submit" name="type" value="tag"><span>Search in tags</span></button>');
 	},
-	cclass: 'results-artists recommend-tags',
+	cclass: 'results-suggests recommend-tags',
 	getButtonText: function(have_results, q){
 		if (have_results){
-			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('tags', 'tags');
+			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('otags', 'tags');
 		} else{
 			return localize('to-search', 'Search ') + '«' +q + '» ' +localize('in-tags' , 'in tags');
 		}
@@ -303,7 +302,27 @@ var tags_secti = {
 		var q = section.r.query;
 		if (q) {
 			getLastfmSuggests('tag.search', {tag: q}, q, section, parseTagsResults, true);	
-			return
+		}
+	}
+};
+var albs_secti = {
+	head: localize('Albums', 'Albums'),
+	button: function(){
+		return $('<button type="submit" name="type" value="album"><span>Search in albums</span></button>');
+	},
+	cclass: 'results-suggests recommend-albums',
+	getButtonText: function(have_results, q){
+		if (have_results){
+			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('oalbums', 'albums');
+		} else{
+			return localize('to-search', 'Search ') + '«' +q + '» ' +localize('in-albums' , 'in albums');
+		}
+	},
+	buttonClick: function(e, section){
+		section.hideButton();
+		var q = section.r.query;
+		if (q) {
+			getLastfmSuggests('album.search', {'album': q}, q, section, parseAlbumsResults, true);
 		}
 	}
 };
@@ -363,7 +382,7 @@ var parseTracksResults = function(r){
 	var tracks = r.results.trackmatches.track || false; 
 	tracks = tracks && toRealArray(tracks, 'name');
 	for (var i=0; i < tracks.length; i++) {
-		tracks_results.push(new trackSuggest(   tracks[i].artist, tracks[i].name, tracks[i].image && tracks[i].image[1]['#text'].replace('/serve/64/','/serve/64s/'))   );
+		tracks_results.push(    new trackSuggest(tracks[i].artist, tracks[i].name, tracks[i].image && tracks[i].image[1]['#text'].replace('/serve/64/','/serve/64s/'))   );
 	};
 	return tracks_results;
 };
@@ -379,6 +398,18 @@ var parseTagsResults = function(r){
 	};
 	return tags_results;
 };
+var parseAlbumsResults = function(r){
+	var pdr= [];
+	var albums =  r.results.albummatches.album || false;
+	albums = albums && toRealArray(albums, 'name');
+	for (var i=0; i < albums.length; i++) {
+		pdr.push(     new albumSuggest(albums[i].artist, albums[i].name, albums[i].image && albums[i].image[1]['#text'].replace('/serve/64/','/serve/64s/'))   );
+	};
+	return pdr;
+}
+
+
+
 
 var fast_suggestion = function(r, q, invstg){
 	if (invstg.doesNeed(q)){
@@ -395,6 +426,10 @@ var fast_suggestion = function(r, q, invstg){
 		var tags = invstg.g('tags');
 			tags.r.append(r.tags);
 			tags.renderSuggests();
+			
+		var albums = invstg.g('albums');
+			albums.r.append(r.albums);
+			albums.renderSuggests();
 	}
 };
 
@@ -455,14 +490,21 @@ var parseFastSuggests = function(r){
 
 	
 	var sugg_albums = $filter(r.response.docs, 'restype', 8);
-	
+	$.each(sugg_albums, function(i, el){
+		sugg_albums[i] = new albumSuggest(
+			el.artist, 
+			el.album, 
+			el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false,
+			el.resid
+		);
+	});
 	
 	
 	return {
 		artists: sugg_arts,
 		tracks: sugg_tracks,
 		tags: sugg_tags,
-		albs: sugg_albums
+		albums: sugg_albums
 	};
 };
 var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_preview){
@@ -484,7 +526,7 @@ var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_previe
 	}));
 };
 
-var suggestions_search = seesu.env.cross_domain_allowed ? function(q, invstg){
+var suggestions_search = !seesu.env.cross_domain_allowed ? function(q, invstg){
 		invstg.loading();
 		var hash = hex_md5(q);
 		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
@@ -504,6 +546,7 @@ var suggestions_search = seesu.env.cross_domain_allowed ? function(q, invstg){
 		getLastfmSuggests('artist.search', {artist: q}, q, invstg.g('artists'), parseArtistsResults);
 		getLastfmSuggests('track.search', {track: q}, q, invstg.g('tracks'), parseTracksResults);
 		getLastfmSuggests('tag.search', {tag: q}, q, invstg.g('tags'), parseTagsResults);	
+		getLastfmSuggests('album.search', {album: q}, q, invstg.g('albums'), parseAlbumsResults);
 	}, 400);
 var investigation = function(c){
 	this.c = c;
@@ -981,8 +1024,9 @@ var input_change = function(e, no_navi){
 		
 			invstg.addSection('playlists', playlist_secti);
 			invstg.addSection('artists', artists_secti);
-			invstg.addSection('tracks', tracks_secti);
+			invstg.addSection('albums', albs_secti);
 			invstg.addSection('tags', tags_secti);
+			invstg.addSection('tracks', tracks_secti);
 			invstg.addSection('vk', {
 				head: 'Vkontakte',
 				buttonClick: function(e, section){
@@ -992,7 +1036,7 @@ var input_change = function(e, no_navi){
 					}
 				},
 				button: function(){
-					return su.ui.buttons.search_vkontakte
+					return $('<button type="submit" name="type" value="vk_track"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>')
 				},
 				nos: true
 			});

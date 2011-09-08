@@ -240,8 +240,8 @@ localizer = {
 		"ru": "Похожие артисты"
 	},
 	"albums": {
-		"original": "Albums",
-		"ru": "Альбомы"	
+		"original": "albums",
+		"ru": "альбомы"	
 	},
 	"top-tracks":{
 		"original": "top tracks",
@@ -376,6 +376,38 @@ localizer = {
 		"original": "in tags",
 		"ru": "в тэгах"
 	},
+	"in-albums": {
+		"original": "in albums",
+		"ru": "в альбомах"
+	},
+	"Artists": {
+		"original": "Artists",
+		"ru": 'Артисты'
+	},
+	"Tracks": {
+		"original": "Tracks",
+		"ru": 'Треки'
+	},
+	"Albums": {
+		"original": "Albums",
+		"ru": 'Альбомы'
+	},
+	"oartists": {
+		"original": "artists",
+		"ru": 'артистов'
+	},
+	"otracks": {
+		"original": "tracks",
+		"ru": 'треков'
+	},
+	"otags": {
+		'original': 'tags',
+		"ru": 'тегов'	
+	},
+	"oalbums":{
+		"original": "albums",
+		"ru": "альбомов"	
+	},
 	"video": {
 		"original": "Video",
 		"ru": "Видео"
@@ -391,26 +423,6 @@ localizer = {
 	"direct-vk-search": {
 		"original": "Search mp3  directly in vkontakte",
 		"ru": 'Искать mp3 прямо во вконтакте'
-	},
-	"Artists": {
-		"original": "Artists",
-		"ru": 'Артисты'
-	},
-	"Tracks": {
-		"original": "Tracks",
-		"ru": 'Треки'
-	},
-	"artists": {
-		"original": "artists",
-		"ru": 'артистов'
-	},
-	"tracks": {
-		"original": "tracks",
-		"ru": 'треков'
-	},
-	"tags": {
-		'original': 'tags',
-		"ru": 'тегов'	
 	},
 	"fine-more": {
 		"original": "find more",
