@@ -1258,7 +1258,7 @@ seesu_ui.prototype = {
 			}
 			ainf.meta_info.append(similars_p);
 		}
-		var artist_albums_container = $('<div class="artist-albums extending-info"></div>').append('<span class="desc-name"><em>'+localize('albums')+':</em></span>').appendTo(ainf.meta_info);
+		var artist_albums_container = $('<div class="artist-albums extending-info"></div>').append('<span class="desc-name"><em>'+localize('Albums')+':</em></span>').appendTo(ainf.meta_info);
 		var artist_albums_text = $('<div class=""></div>').appendTo(artist_albums_container);
 		if (artist_albums_container){
 			if (!has_some_info_extenders){
@@ -1319,6 +1319,20 @@ seesu_ui.prototype = {
 
 		container.append(albums_ul);
 	},
+	showAlbum: function(artist, name, id, original_artist, query){
+		var _sui = this;
+		//prepare_playlist(artist, 'artist', artist, with_search_results, start_song);
+		var pl_r = prepare_playlist('(' + artist + ') ' + name ,'album', {original_artist: original_artist || artist, album: name}, query);
+		_sui.views.show_playlist_page(pl_r, query ? 0 : false);
+		if (id){
+			get_artist_album_playlist(id, pl_r);
+		} else{
+			get_artist_album_info(artist, name, function(alb_data){
+				get_artist_album_playlist(alb_data.album.id, pl_r);
+			});
+		}
+		
+	},
 	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist){
 		var _sui = this;
 		var li = $('<li></li>');
@@ -1328,14 +1342,8 @@ seesu_ui.prototype = {
 				.data('album', al_name)
 				.click(function(e){
 					e.preventDefault(); 
-					
-					var pl_r = prepare_playlist('(' + al_artist + ') ' + al_name ,'album', {original_artist: original_artist, album: al_name});
-					_sui.views.show_playlist_page(pl_r);
-					get_artist_album_info(al_artist, al_name, function(alb_data){
-						get_artist_album_playlist(alb_data.album.id, pl_r);
-					} );
-					seesu.track_event('Artist navigation', 'album', al_artist + ": " + al_name);
-					e.preventDefault();
+					_sui.showAlbum(al_artist, al_name, false, original_artist);
+					seesu.track_event('Artist navigation', 'album', artist + ": " + name);
 				})
 				.appendTo(li);
 			$('<img/>').attr('src', al_image).appendTo(a_href);

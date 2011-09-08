@@ -80,14 +80,14 @@
 			background-color:#666  !important;
 			}
 		
-			.search-results-holder	ul.results-artists	img{
+			.search-results-holder	ul.results-suggests img{
 				float:left;
 				width:34px;
 				height:34px;
 				margin-right:8px;
 				border:1px solid #eee;
 				}
-			.search-results-holder	ul.results-artists	span{
+			.search-results-holder	ul.results-suggests	span{
 				overflow:hidden;
 				margin-top:1px;
 				margin-bottom:0;
@@ -110,9 +110,7 @@
 		padding-left:47px;
 		background: url(../i/tag-icon.png) no-repeat 26px 50%;
 	}
-	.search-results-holder	ul.recommend-tags{
-		border-bottom:0  !important;
-	}
+
 	.search-results-holder .nothing-found{
 		padding-left:47px  !important;
 		background:inherit  !important;

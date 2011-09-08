@@ -3,16 +3,7 @@ window.connect_dom_to_som = function(d, sui){
 		resizeWindow(d.defaultView);
 	}
 
-	sui.buttons = {
-		search_artists : 
-			$('<button type="submit" name="type" value="artist" id="search-artist"><span>Search in artists</span></button>',d),			
-		search_tags:  
-			$('<button type="submit" name="type" value="tag" id="search-tag"><span>Search in tags</span></button>',d),
-		search_tracks: 
-			$('<button type="submit" name="type" value="track" id="search-track"><span>Search in tracks</span></button>',d),
-		search_vkontakte: 
-			$('<button type="submit" name="type" value="vk_track" id="search-vk-track"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>',d)
-	};
+
 	
 	
 	seesu.player.controls = (function(volume){
