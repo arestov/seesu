@@ -526,7 +526,7 @@ var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_previe
 	}));
 };
 
-var suggestions_search = !seesu.env.cross_domain_allowed ? function(q, invstg){
+var suggestions_search = seesu.env.cross_domain_allowed ? function(q, invstg){
 		invstg.loading();
 		var hash = hex_md5(q);
 		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
