@@ -26,12 +26,34 @@ dNav.prototype = {
 	},
 	render: function(place){
 		if (place){place.append(this.c)}
+	},
+	click: function(){
+		if (this.click_cb){
+			this.click_cb(this.active);
+		}
+	},
+	setClickCb: function(f){
+		this.click_cb = f;
 	}
 };
-
+var mainNav = function(){
+	var _this = this;;
+	this.c= $('<span class="nnav nav-start" title="Seesu start page"><b></b></span>');
+	this.c.click(function(){
+		_this.click();
+		//su.ui.views.show_start_page(true, true);
+	})
+	this.text_c = this.c.find('span');
+	this.active = true;
+};
+mainNav.prototype = new dNav();
 
 var plNav = function(){
+	var _this = this;
 	this.c= $('<span class="nnav nav-playlist-page"><span></span><b></b></span>');
+	this.c.click(function(){
+		_this.click();
+	})
 	this.text_c = this.c.find('span');
 	this.active = true;
 	//$('<span class="nav-title"></span>');
@@ -39,9 +61,14 @@ var plNav = function(){
 plNav.prototype = new dNav();
 
 var sRNav = function(){
+	var _this = this;
 	this.c= $('<span class="nnav nav-search-results" title="Suggestions &amp; search"><b></b></span>');
 	this.text_c = this.c.find('span');
 	this.active = true;
+	this.c.click(function(){
+		_this.click();
+		//su.ui.views.show_start_page(true, true);
+	})
 }
 sRNav.prototype = new dNav();
 
@@ -57,6 +84,12 @@ var playlistLevelResident = function(){
 	this.info_container = $('<div class="playlist-info"></div>').appendTo(this.conie),
 	this.tracks_container = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.conie);
 	this.storage = {};
+	
+	this.conie.click(function(){
+		su.ui.views.show_search_results_page(true);
+		//su.ui.views.show_start_page(true, true);
+	})
+	
 };
 playlistLevelResident.prototype = {
 	canUse: function(){
@@ -73,7 +106,13 @@ playlistLevelResident.prototype = {
 	hide: function(){
 		return this.conie.hide()
 	},
-	show: function(){
+	show: function(recovering){
+		var pl = this.D('pl');
+		var wsrl = pl && pl.with_search_results_link;
+		wsrl = (wsrl && 'show-full-nav') || '';
+		
+		su.ui.els.slider.className = wsrl + ' show-player-page';
+		seesu.track_page('playlist', pl.playlist_type);
 		return this.conie.show()
 	},
 	wait: function(){
@@ -94,6 +133,27 @@ playlistLevelResident.prototype = {
 	}
 };
 
+var mainLevelResident = function(){	
+};
+mainLevelResident.prototype = {
+	hide: function(){
+		console.log('want to hide main')
+	},
+	kill: function(){
+		console.log('trying to kill main')
+	},
+	show: function(recovering){
+		su.ui.els.slider.className = "show-start";
+		su.ui.els.search_input[0].focus();
+		su.ui.els.search_input[0].select();
+		
+	},
+	nav: function(){
+		return new mainNav();
+	}
+};
+
+
 var sRLevelResident = function(){
 	this.c = $('<div class="search-results-container current-src"></div').appendTo(su.ui.els.searchres);
 	this.storage = {};
@@ -108,8 +168,15 @@ sRLevelResident.prototype = {
 	hide: function(){
 		this.c.hide();
 	},
-	show: function(){
+	show: function(recovering){
 		this.c.show();
+		
+		var _s = su.ui.els.slider.className;
+		var new_s = (recovering ? '' : 'show-search ') + "show-search-results";
+		if (new_s != _s){
+			su.ui.els.slider.className = new_s;
+			su.track_page('search results');
+		}
 	},
 	D: function(key, value){
 		if (!value){
@@ -125,23 +192,30 @@ sRLevelResident.prototype = {
 
 var views = function(sui){
 	this.sui = sui;
-	this.m = new browseMap();
+	var _this = this;
+	this.m = new browseMap(mainLevelResident, function(){
+		return _this.nav && _this.nav.daddy;
+	});
 }
 views.prototype = {
 	setNav: function(obj){
 		this.nav= obj;
+		if (obj.daddy){
+			obj.daddy.empty().removeClass('not-inited');
+		}
+		this.m.makeMainLevel();
 	},
 	getCurrentSearchResultsContainer: function(){
 		return this.m.getLevel(0);
 	},
 	getSearchResultsContainer: function(){
-		var c = this.m.getFreeLevel(0, false, sRLevelResident);
+		var c = this.m.getFreeLevel(0, true, sRLevelResident);
 		return c;
 	},
-	getPlaylistContainer: function(skip_from){
+	getPlaylistContainer: function(save_parents){
 		var _this = this;
 		
-		var c = this.m.getFreeLevel(1, 1-(skip_from + 1), playlistLevelResident);
+		var c = this.m.getFreeLevel(1, save_parents, playlistLevelResident);
 		return c;
 	},
 	getCurrentPlaylistContainer: function(){
@@ -188,18 +262,16 @@ views.prototype = {
 		this.m.sliceToLevel(-1);
 		
 		
+		
+		/*
 		this.nav.daddy.empty();
 		this.nav.daddy.append($('<img class="nav-title" title="Seesu start page" src="i/nav/seesu-nav-logo.png"/>').click(function(){
 			_this.sUI().els.search_input[0].focus();
 			_this.sUI().els.search_input[0].select();
 		}));
-		this.sUI().els.slider.className = "show-start";
-		if (focus_to_input){
-			_this.sUI().els.search_input[0].focus();
-			_this.sUI().els.search_input[0].select();
-		}
+		*/
 		if (init){
-			this.nav.daddy.removeClass('not-inited')
+			
 		} else if (!no_navi){
 			navi.set('');
 		}
@@ -219,18 +291,13 @@ views.prototype = {
 		// search results is 0 level
 		this.m.sliceToLevel(0);
 		
-		
+		/*
 		this.nav.daddy.empty();
 		this.nav.daddy.append(this.nav.start.unbind().click(function(){
 			_this.show_start_page(true, true);
 		}));
 		this.nav.daddy.append('<img class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png"/>');
-		var _s = this.sUI().els.slider.className;
-		var new_s = (without_input ? '' : 'show-search ') + "show-search-results";
-		if (new_s != _s){
-			this.sUI().els.slider.className = new_s;
-			seesu.track_page('search results');
-		}
+		*/
 		this.state = 'search_results';
 		if (!no_navi){
 			navi.set(this.getCurrentSearchResultsContainer().getFullURL());
@@ -245,6 +312,7 @@ views.prototype = {
 		
 		this.m.sliceToLevel(1);
 		
+		/*
 		this.nav.daddy.empty();
 		if (pl.with_search_results_link){
 			this.nav.daddy.append(this.nav.results.unbind().click(function(){
@@ -257,30 +325,21 @@ views.prototype = {
 		}
 		this.nav.daddy.append('<span class="nav-title" src="i/nav/seesu-nav-search.png">' + pl.playlist_title + '</span>');
 		$(this.sUI().els.nav_playlist_page).text(pl.playlist_title);
-		if (pl.with_search_results_link) {
-			this.sUI().els.slider.className = 'show-full-nav show-player-page';
-		} else {
-			this.sUI().els.slider.className = 'show-player-page';
-		}
+	
+		*/
 		this.state = 'playlist';
 		if (!no_navi){
 			navi.set(this.getCurrentPlaylistContainer().getFullURL(),{pl:pl});
 		}
 		
-		seesu.track_page('playlist', pl.playlist_type);
+		
 	},
-	show_playlist_page: function(p, slice_level, no_navi){
-		var skip_from;
-		if (typeof slice_level == 'number'){
-			
-			this.m.sliceToLevel(skip_from = slice_level);
-			// we want to clear map exept few first levels
-		} else{
-			// playlist page is 1 level
-			this.m.sliceToLevel(skip_from = -1);
-			//we want to clear map
-			
-		}
+	show_playlist_page: function(p, save_parents, no_navi){
+
+		var sl = save_parents ? 0 : -1;
+		this.m.sliceToLevel(sl);
+		// we want to clear map exept few first levels
+
 		var pl = p;
 		if (!pl){
 			var lev = this.getCurrentPlaylistContainer();
@@ -288,7 +347,7 @@ views.prototype = {
 		}
 
 		if (pl && !pl.ui){
-			var lev = this.getPlaylistContainer(skip_from);
+			var lev = this.getPlaylistContainer(save_parents);
 			var pl_resident = lev.getResident();
 			lev.D('pl', pl); 
 			pl_resident.D('pl', pl);
@@ -303,7 +362,7 @@ views.prototype = {
 			
 			var ui = pl.ui && pl.ui.canUse() && pl.ui.show();
 			if (!ui){
-				var lev = this.getPlaylistContainer(skip_from);
+				var lev = this.getPlaylistContainer(save_parents);
 				var pl_resident = lev.getResident();
 				lev.D('pl', pl);
 				pl_resident.D('pl', pl);
@@ -329,12 +388,15 @@ views.prototype = {
 			this.state = 'track';
 		}
 		if (zoom || this.state == 'track'){
-			this.nav.daddy.empty();
+			//this.nav.daddy.empty();
+			
+			/*
 			this.nav.daddy.append(this.nav.playlist.unbind().click(function(){
 				_this.sUI().views.swithToPlaylistPage(pl);
 			}));
 			
 			this.nav.daddy.append('<span class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png">' + title + '</span>');
+			*/
 		}
 		
 		if (!no_navi){
@@ -486,7 +548,7 @@ seesu_ui.prototype = {
 		}, function(){
 			proxy_render_artists_tracks();
 		});
-		this.views.show_playlist_page(pl_r, query ? 0 : false, no_navi || !!start_song );
+		this.views.show_playlist_page(pl_r, !!query, no_navi || !!start_song );
 		
 		if (start_song){
 			pl_r.showTrack(start_song, no_navi);
@@ -503,7 +565,7 @@ seesu_ui.prototype = {
 		}
 		
 		var pl_r = prepare_playlist(title , 'tracks', q , title)
-		this.views.show_playlist_page(pl_r, 0);
+		this.views.show_playlist_page(pl_r, !!q);
 		su.mp3_search.find_files(q, false, function(err, pl, c, complete){
 			if (complete){
 				c.done = true;
@@ -537,7 +599,7 @@ seesu_ui.prototype = {
 				su.ui.views.restoreFreezed(no_navi);
 			}
 		} else{
-			this.views.show_playlist_page(pl, with_search_results ? 0 : false, no_navi || !!start_song);
+			this.views.show_playlist_page(pl, !!with_search_results, no_navi || !!start_song);
 			if (start_song){
 				pl.showTrack(start_song, no_navi);
 			}
@@ -1323,7 +1385,7 @@ seesu_ui.prototype = {
 		var _sui = this;
 		//prepare_playlist(artist, 'artist', artist, with_search_results, start_song);
 		var pl_r = prepare_playlist('(' + artist + ') ' + name ,'album', {original_artist: original_artist || artist, album: name}, query);
-		_sui.views.show_playlist_page(pl_r, query ? 0 : false);
+		_sui.views.show_playlist_page(pl_r, !!query);
 		if (id){
 			get_artist_album_playlist(id, pl_r);
 		} else{

@@ -8,7 +8,7 @@ var big_map = {
 };
 
 
-var mapLevel = function(num, map, parent_levels, resident){
+var mapLevel = function(num, map, parent_levels, resident, getNavData){
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
@@ -16,6 +16,7 @@ var mapLevel = function(num, map, parent_levels, resident){
 		this.resident = new resident();
 		if (this.resident.nav){
 			this.nav = this.resident.nav();
+			this.nav.render(getNavData());
 		}
 	}
 	this.storage = {};
@@ -68,9 +69,9 @@ mapLevel.prototype = {
 	freeze: function(){
 		return this.map.freezeMapOfLevel(this.num);
 	},
-	show: function(){
+	show: function(was_freezed){
 		if (this.resident){
-			this.resident.show();
+			this.resident.show(was_freezed);
 			if (this.nav){
 				//this.nav.show();
 			}
@@ -86,7 +87,7 @@ mapLevel.prototype = {
 		if (this.resident){
 			this.resident.hide();
 			if (this.nav){
-				//this.nav.hide();
+				this.nav.hide();
 			}
 		} else{
 			var ui = this.D('ui');
@@ -100,7 +101,7 @@ mapLevel.prototype = {
 		if (this.resident){
 			this.resident.kill();
 			if (this.nav){
-				//this.nav.kill();
+				this.nav.kill();
 			}
 		} else{
 			var ui = this.D('ui');
@@ -118,8 +119,12 @@ mapLevel.prototype = {
 	
 };
 
-function browseMap(){
+function browseMap(mainLevelResident, getNavData){
+	
 	this.levels = [];
+	this.getNavData = getNavData;
+	this.mainLevelResident = mainLevelResident;
+	
 	//zoom levels
 	
 	// -1, not using, start page
@@ -128,6 +133,9 @@ function browseMap(){
 	//today seesu has no deeper level
 }
 browseMap.prototype= {
+	makeMainLevel: function(){
+		this.getFreeLevel(-1, false, this.mainLevelResident);
+	},
 	getBothPartOfLevel: function(level_num){
 		return {
 			fr: this.levels[level_num] && this.levels[level_num].free != this.levels[level_num].freezed &&  this.levels[level_num].free,
@@ -153,7 +161,7 @@ browseMap.prototype= {
 			return false;// maybe better return this.getFreeLevel(num);
 		}
 	},
-	getFreeLevel: function(num, skip_levels_above, resident){
+	getFreeLevel: function(num, save_parents, resident){
 		var _this = this;
 		if (!this.levels[num]){
 			this.levels[num] = {};
@@ -166,17 +174,15 @@ browseMap.prototype= {
 				var lvls = [];
 				
 				//from deep levels to top levels;
-				
-				for (var i = num-1; i > -1; i--){
-					if (!skip_levels_above || i < num - skip_levels_above){
+				if (save_parents){
+					for (var i = Math.min(_this.levels.length, num) - 1; i > -1; i--){
 						lvls.push(_this.getLevel(i));
-					}
-				};
-				
+					};
+				}
 				return 	lvls;
 			})();
 			
-			return this.levels[num].free = new mapLevel(num, this, parent_levels, resident);
+			return this.levels[num].free = new mapLevel(num, this, parent_levels, resident, this.getNavData);
 		}
 	},
 	freezeMapOfLevel : function(num){
@@ -222,7 +228,7 @@ browseMap.prototype= {
 		for (var i=0; i < this.levels.length; i++) {
 			if (this.levels[i]){
 				if (this.levels[i].freezed){
-					this.levels[i].freezed.show();
+					this.levels[i].freezed.show(this.levels[i].freezed.freezed);
 				}
 			}
 		};
@@ -243,13 +249,36 @@ browseMap.prototype= {
 			this.hideLevel(i);
 		};
 	},
+	updateNav: function(tl){
+		var lvls = [].concat(tl.parent_levels);
+		if (tl != this.getLevel(-1)){
+			lvls.push(this.getLevel(-1));
+		}
+		lvls.reverse();
+		tl.nav.setInactive();
+		
+		var prev = lvls.pop();
+		if (prev){
+			prev.nav.setActive();
+		}
+		if (lvls.length){
+			while (lvls.length){
+				lvls.pop().nav.hide();
+			}
+		}
+		
+	},
 	sliceToLevel: function(num){
 		if (num < this.levels.length){
 			for (var i = this.levels.length-1; i > num; i--){
 				this.hideLevel(i);
 			};
 		}
-		
+		num = this.getLevel(num);
+		if (num){
+			num.show(num.freezed);
+			this.updateNav(num);
+		}
 	}
 	
 }

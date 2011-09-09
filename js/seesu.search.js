@@ -110,7 +110,7 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 						su.ui.views.restoreFreezed();
 					}
 				} else{
-					su.ui.views.show_playlist_page(this.pl, q ? 0 : false);
+					su.ui.views.show_playlist_page(this.pl, true);
 				}
 		},
 		createItem: function(q){
