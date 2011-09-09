@@ -222,7 +222,7 @@ ul.tracks-for-play > li{
 	float:left;
 	cursor:pointer;
 
-	padding:4px 30px 4px 9px;
+	padding:4px 14px 4px 9px;
 
 	border-right:1px solid #731677;
 	border-top:1px solid #cb85cf;
@@ -235,16 +235,9 @@ ul.tracks-for-play > li{
 	
 	text-shadow:0 1px 0 #000;
 	margin-right:10px;
-	
-	}
-
-		
-
-.nnav{
 	-moz-border-radius:0 6px 6px 0;
 	-webkit-border-radius:0 6px 6px 0;
 	border-radius:0 6px 6px 0;
-	padding-right:14px;
 	}
 	.nnav b{
 		position:absolute;
@@ -291,10 +284,7 @@ ul.tracks-for-play > li{
 	float:left;
 	height:20px;
 	
-	padding-right:30px;
-	padding-left:9px;
-	padding-top:4px;
-	padding-bottom:4px;
+	padding:4px 14px 4px 9px;
 	
 	background:url(../i/nav/seesu-nav-logo.png) no-repeat 10px 4px;	
 }
@@ -309,15 +299,12 @@ ul.tracks-for-play > li{
 			background-image:url(../i/nav/seesu-nav-logo-active.png), url(../i/nav/button-gradient-active.png);
 			}
 .nav-search-results{
-	padding-right:30px;
-	padding-left:9px;
-	padding-top:4px;
-	padding-bottom:4px;
+	padding:4px 14px 4px 9px;
 	
-		width:15px;
-		float:left;
-		height:20px;
-		background:url(../i/nav/seesu-nav-search.png) no-repeat 10px 4px;
+	width:15px;
+	float:left;
+	height:20px;
+	background:url(../i/nav/seesu-nav-search.png) no-repeat 10px 4px;
 	}
 .nnav.nav-search-results{
 	background:url(../i/nav/seesu-nav-search.png) no-repeat 10px 4px, url(../i/nav/button-gradient.png) repeat-x 100% 0;
