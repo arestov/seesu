@@ -349,6 +349,8 @@ views.prototype = {
 		if (pl && !pl.ui){
 			var lev = this.getPlaylistContainer(save_parents);
 			var pl_resident = lev.getResident();
+				pl_resident.text(pl.playlist_title)
+			
 			lev.D('pl', pl); 
 			pl_resident.D('pl', pl);
 			pl.ui = pl_resident
