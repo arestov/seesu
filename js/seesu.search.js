@@ -1017,7 +1017,6 @@ var input_change = function(e, no_navi){
 		
 	}
 	seesu.xhrs.multiply_suggestions =[]
-	su.ui.els.search_form.data('current_node_index' , false);
 	
 	if (!search_view.context.invstg){
 		var invstg = search_view.context.invstg  = new investigation(search_view.ui); 
