@@ -18,6 +18,7 @@
 	"js/network.vk.api.js", 
 	"js/network.lastfm.js", 
 	"js/seesu.ui.dom_ready.js", 
+	"js/seesu.ui.views.js", 
 	"js/seesu.ui.js", 
 	"js/seesu.s.js", 
 	"js/seesu.song_ui.js", 

@@ -9,6 +9,7 @@ var big_map = {
 
 
 var mapLevel = function(num, map, parent_levels, resident, getNavData){
+	var _this = this;
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
@@ -17,6 +18,11 @@ var mapLevel = function(num, map, parent_levels, resident, getNavData){
 		if (this.resident.nav){
 			this.nav = this.resident.nav();
 			this.nav.render(getNavData());
+			this.nav.setClickCb(function(active){
+				if (active){
+					_this.map.goShallow(_this);
+				}	
+			})
 		}
 	}
 	this.storage = {};
@@ -70,51 +76,28 @@ mapLevel.prototype = {
 		return this.map.freezeMapOfLevel(this.num);
 	},
 	show: function(was_freezed){
-		if (this.resident){
-			this.resident.show(was_freezed);
-			if (this.nav){
-				//this.nav.show();
-			}
-		} else{
-			var ui = this.D('ui');
-			if (ui && ui.show){
-				ui.show();
-			}
+		this.resident.show(was_freezed);
+		if (this.nav){
+			//this.nav.show();
 		}
 		
 	},
 	hide: function(){
-		if (this.resident){
-			this.resident.hide();
-			if (this.nav){
-				this.nav.hide();
-			}
-		} else{
-			var ui = this.D('ui');
-			if (ui && ui.hide){
-				ui.hide();
-			}
+		this.resident.hide();
+		if (this.nav){
+			this.nav.hide();
 		}
 		
 	},
 	kill: function(){
-		if (this.resident){
-			this.resident.kill();
-			if (this.nav){
-				this.nav.kill();
-			}
-		} else{
-			var ui = this.D('ui');
-			if (ui && ui.remove){
-				ui.remove();
-			}
-			var pl = this.D('pl');
-			if (pl && pl.kill){
-				pl.kill();
-			}
-		
+		this.resident.kill();
+		if (this.nav){
+			this.nav.kill();
 		}
 		delete this.map;
+	},
+	isOpened: function(){
+		return !!this.map && !!this.freezed;
 	}
 	
 };
@@ -134,7 +117,7 @@ function browseMap(mainLevelResident, getNavData){
 }
 browseMap.prototype= {
 	makeMainLevel: function(){
-		this.getFreeLevel(-1, false, this.mainLevelResident);
+		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident));
 	},
 	getBothPartOfLevel: function(level_num){
 		return {
@@ -161,7 +144,30 @@ browseMap.prototype= {
 			return false;// maybe better return this.getFreeLevel(num);
 		}
 	},
-	getFreeLevel: function(num, save_parents, resident){
+	getActiveLevelNum: function(){
+		return 	this.current_level_num;
+	},
+	setLevelPartActive: function(lp){
+		lp.show();
+		this.updateNav(lp);
+		this.current_level_num = lp.num;
+	},
+	goShallow: function(to){ //up!
+		this.sliceToLevel(to.num);
+	},
+	goDeeper: function(orealy, resident){
+		var cl = this.getActiveLevelNum();
+		if (orealy){
+			this.sliceToLevel(cl);
+		}  else{
+			this.sliceToLevel(-1);
+		}
+		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
+		this.setLevelPartActive(cl);
+		return cl;
+		
+	},
+	getFreeLevel: function(num, save_parents, resident){//goDeeper
 		var _this = this;
 		if (!this.levels[num]){
 			this.levels[num] = {};
@@ -207,7 +213,7 @@ browseMap.prototype= {
 			
 		};
 		
-		//clearing if have too much levels
+		//clearing if have too much levels !?!?!??!?!?!
 		if (l < this.levels.length -1) {
 			for (var i=0; i < this.levels.length; i++) {
 				if (this.levels[i].free){
@@ -225,13 +231,16 @@ browseMap.prototype= {
 	},
 	restoreFreezed: function(){
 		this.hideMap();
+		var last_f;
 		for (var i=0; i < this.levels.length; i++) {
 			if (this.levels[i]){
 				if (this.levels[i].freezed){
 					this.levels[i].freezed.show(this.levels[i].freezed.freezed);
+					last_f = i;
 				}
 			}
 		};
+		this.current_level_num = last_f;
 	},
 	hideLevel: function(i){
 		if (this.levels[i]){
@@ -276,8 +285,7 @@ browseMap.prototype= {
 		}
 		num = this.getLevel(num);
 		if (num){
-			num.show(num.freezed);
-			this.updateNav(num);
+			this.setLevelPartActive(num);
 		}
 	}
 	

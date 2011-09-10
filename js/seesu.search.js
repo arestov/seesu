@@ -993,10 +993,21 @@ var input_change = function(e, no_navi){
 	
 	var input = (e && e.target) || e; //e can be EVENT or INPUT  
 	
-	var search_view = su.ui.views.getSearchResultsContainer();
+	
 	
 	
 	var input_value = input.value;
+	if (!input_value) {
+		su.ui.views.newBrowse();
+		return;
+	}
+	
+	if (!su.ui.search_el || !su.ui.search_el.isOpened()){
+		su.ui.search_el = su.ui.views.getSearchResultsContainer();
+	}
+	
+	var search_view = su.ui.search_el;
+
 	//su.ui.search_input_value = input_value;
 	if (search_view.D('q') == input_value){
 		return false
@@ -1004,10 +1015,7 @@ var input_change = function(e, no_navi){
 		search_view.D('q', input_value);
 		search_view.setURL('?q=' + input_value);
 	}
-	if (!input_value) {
-		su.ui.views.show_start_page();
-		return;
-	}
+	
 	
 	
 	if (seesu.xhrs.multiply_suggestions && seesu.xhrs.multiply_suggestions.length){
