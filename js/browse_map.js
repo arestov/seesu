@@ -75,8 +75,8 @@ mapLevel.prototype = {
 	freeze: function(){
 		return this.map.freezeMapOfLevel(this.num);
 	},
-	show: function(was_freezed){
-		this.resident.show(was_freezed);
+	show: function(opts){
+		this.resident.show(opts);
 		if (this.nav){
 			//this.nav.show();
 		}
@@ -97,7 +97,7 @@ mapLevel.prototype = {
 		delete this.map;
 	},
 	isOpened: function(){
-		return !!this.map && !!this.freezed;
+		return !!this.map && !this.freezed;
 	}
 	
 };
@@ -117,7 +117,7 @@ function browseMap(mainLevelResident, getNavData){
 }
 browseMap.prototype= {
 	makeMainLevel: function(){
-		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident));
+		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
 	},
 	getBothPartOfLevel: function(level_num){
 		return {
@@ -147,20 +147,23 @@ browseMap.prototype= {
 	getActiveLevelNum: function(){
 		return 	this.current_level_num;
 	},
-	setLevelPartActive: function(lp){
-		lp.show();
-		this.updateNav(lp);
+	setLevelPartActive: function(lp, opts){
+		lp.show(opts);
+		if (opts.userwant){
+			this.updateNav(lp);
+		}
+		
 		this.current_level_num = lp.num;
 	},
 	goShallow: function(to){ //up!
-		this.sliceToLevel(to.num);
+		this.sliceToLevel(to.num, true);
 	},
 	goDeeper: function(orealy, resident){
 		var cl = this.getActiveLevelNum();
 		if (orealy){
-			this.sliceToLevel(cl);
+			this.sliceToLevel(cl, false, true);
 		}  else{
-			this.sliceToLevel(-1);
+			this.sliceToLevel(-1, false, true);
 		}
 		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
 		this.setLevelPartActive(cl);
@@ -231,16 +234,14 @@ browseMap.prototype= {
 	},
 	restoreFreezed: function(){
 		this.hideMap();
-		var last_f;
 		for (var i=0; i < this.levels.length; i++) {
-			if (this.levels[i]){
-				if (this.levels[i].freezed){
-					this.levels[i].freezed.show(this.levels[i].freezed.freezed);
-					last_f = i;
+			var cur = this.levels[i]
+			if (cur){
+				if (cur.freezed){
+					this.setLevelPartActive(cur.freezed, {recovering: cur.freezed.freezed});
 				}
 			}
 		};
-		this.current_level_num = last_f;
 	},
 	hideLevel: function(i){
 		if (this.levels[i]){
@@ -277,7 +278,7 @@ browseMap.prototype= {
 		}
 		
 	},
-	sliceToLevel: function(num){
+	sliceToLevel: function(num, fullhouse, transit){
 		if (num < this.levels.length){
 			for (var i = this.levels.length-1; i > num; i--){
 				this.hideLevel(i);
@@ -285,7 +286,7 @@ browseMap.prototype= {
 		}
 		num = this.getLevel(num);
 		if (num){
-			this.setLevelPartActive(num);
+			this.setLevelPartActive(num, {userwant: fullhouse, transit: transit});
 		}
 	}
 	
