@@ -305,7 +305,7 @@ var empty_song_click = function(){
 	}
 	
 	seesu.player.wainter_for_play = mo;
-	seesu.ui.views.freeze(mo.plst_titl);
+	mo.plst_titl.lev.freeze()
 	
 	su.mp3_search.find_mp3(mo);
 	su.ui.updateSongContext(mo, true);

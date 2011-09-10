@@ -105,8 +105,8 @@ window.connect_dom_to_som = function(d, sui){
 		sui.els = {
 			scrolling_viewport: su.env.as_application ? {node:$('#screens',d)} : {node: $(d.body), offset: true},
 			make_trs: $("#make-trs-plable",d).click(function(){
-				var plc = sui.views.getCurrentPlaylistContainer();
-				var pl = plc && plc.D('pl');
+				
+				var pl = su.player && su.player.c_song && su.player.c_song.plst_titl;
 				if (pl){
 					make_tracklist_playable(pl, true);
 					seesu.track_event('Controls', 'make playable all tracks in playlist'); 

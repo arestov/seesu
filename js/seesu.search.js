@@ -328,8 +328,8 @@ var albs_secti = {
 };
 
 function arrows_keys_nav(e){
-	var srca = su.ui.views.getCurrentSearchResultsContainer();
-	var srui = srca.getResident()
+	var srca = su.ui.search_el;
+	var srui = srca && srca.getResident()
 	if (!srui){
 		return false;
 	}
@@ -352,8 +352,8 @@ function arrows_keys_nav(e){
 };
 
 var results_mouse_click_for_enter_press = function(e){
-	var srca = su.ui.views.getCurrentSearchResultsContainer();
-	var srui = srca.getResident()
+	var srca = su.ui.search_el;
+	var srui = srca && srca.getResident()
 	if (!srui){
 		return false;
 	}

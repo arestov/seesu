@@ -327,9 +327,8 @@ su.player = {
 			
 		}
 		
+		mo.plst_titl.lev.freeze();
 		
-		
-		seesu.ui.views.freeze(mo.plst_titl);
 		
 		
 		

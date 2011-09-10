@@ -265,7 +265,7 @@ songUI.prototype = {
 			.data('mo', this.mo)
 			.unbind()
 			.click(function(){
-				su.ui.views.freeze(_this.mo.plst_titl);
+				_this.mo.plst_titl.lev.freeze();
 				su.player.song_click(_this.mo);
 			});
 		

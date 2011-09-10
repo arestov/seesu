@@ -1,11 +1,3 @@
-var big_map = {
-	newMap: function(){
-		this.current_map = new browseMap();
-	},
-	freezeCurrentMap: function(){
-		this.freezed_map = this.current_map.freezeMapOfLevel(10);
-	}	
-};
 
 
 var mapLevel = function(num, map, parent_levels, resident, getNavData){
@@ -71,12 +63,10 @@ mapLevel.prototype = {
 		};
 		return u + this.getURL();
 	},
-	
-	freeze: function(){
-		return this.map.freezeMapOfLevel(this.num);
-	},
 	show: function(opts){
-		this.resident.show(opts);
+		var o = opts || {};
+		o.closed = this.closed;
+		this.resident.show(o);
 		if (this.nav){
 			//this.nav.show();
 		}
@@ -96,8 +86,14 @@ mapLevel.prototype = {
 		}
 		delete this.map;
 	},
+	sliceDeeper: function(){
+		this.map.sliceToLevel(this.num, true)
+	},
+	freeze: function(){
+		this.map.freezeMapOfLevel(this.num);
+	},
 	isOpened: function(){
-		return !!this.map && !this.freezed;
+		return !!this.map && !this.closed;
 	}
 	
 };
@@ -145,9 +141,10 @@ browseMap.prototype= {
 		}
 	},
 	getActiveLevelNum: function(){
-		return 	this.current_level_num;
+		return this.current_level_num;
 	},
 	setLevelPartActive: function(lp, opts){
+		opts = opts || {};
 		lp.show(opts);
 		if (opts.userwant){
 			this.updateNav(lp);
@@ -166,7 +163,7 @@ browseMap.prototype= {
 			this.sliceToLevel(-1, false, true);
 		}
 		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
-		this.setLevelPartActive(cl);
+		this.setLevelPartActive(cl, {userwant: true});
 		return cl;
 		
 	},
@@ -176,7 +173,6 @@ browseMap.prototype= {
 			this.levels[num] = {};
 		}
 		if (this.levels[num].free && this.levels[num].free != this.levels[num].freezed){
-			//&& !this.levels[num].freezed
 			return this.levels[num].free;
 		} else{
 			var parent_levels = (function(){
@@ -196,17 +192,17 @@ browseMap.prototype= {
 	},
 	freezeMapOfLevel : function(num){
 		var fresh_freeze = false;
-		var l = (num < this.levels.length) ? num : (this.levels.length - 1);
+		var l = Math.min(num, this.levels.length - 1);
 		for (var i = l; i >= 0; i--){
 			if (this.levels[i]){
 				if (this.levels[i].free){
 					if (this.levels[i].free != this.levels[i].freezed){
-						if (this.levels[i].freezed){
+						if (this.levels[i].freezed){ //removing old freezed
 							this.levels[i].freezed.kill();
 							delete this.levels[i].freezed;
 						}
 						this.levels[i].freezed = this.levels[i].free;
-						this.levels[i].freezed.freezed = true;
+						this.levels[i].freezed.closed = true;
 						fresh_freeze = true
 					}	
 				}
@@ -217,12 +213,8 @@ browseMap.prototype= {
 		};
 		
 		//clearing if have too much levels !?!?!??!?!?!
-		if (l < this.levels.length -1) {
-			for (var i=0; i < this.levels.length; i++) {
-				if (this.levels[i].free){
-					this.levels[i].free.kill();
-					delete this.levels[i].free
-				}
+		if (l + 1 < this.levels.length -1) {
+			for (var i= l + 1; i < this.levels.length; i++) {
 				if (this.levels[i].freezed){
 					this.levels[i].freezed.kill();
 					delete this.levels[i].freezed
@@ -238,7 +230,7 @@ browseMap.prototype= {
 			var cur = this.levels[i]
 			if (cur){
 				if (cur.freezed){
-					this.setLevelPartActive(cur.freezed, {recovering: cur.freezed.freezed});
+					this.setLevelPartActive(cur.freezed, {userwant: true});
 				}
 			}
 		};

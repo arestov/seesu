@@ -1082,11 +1082,6 @@ seesu_ui.prototype = {
 						pl[i].render(from_collection, i == pl.length-1);
 					}
 				}
-				
-				
-				
-				
-				
 				su.player.fix_songs_ui();
 			}
 			return pl.ui

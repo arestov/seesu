@@ -4,10 +4,10 @@ dNav.prototype = {
 	setActive: function(){
 		if (!this.active){
 			this.c.addClass('nnav');
-			this.c.show();
+			
 			this.active = true;
 		}
-		
+		this.c.show();
 	},
 	setInactive: function(){
 		if (this.active){
@@ -92,7 +92,7 @@ mainLevelResident.prototype = {
 	kill: function(){
 		console.log('trying to kill main')
 	},
-	show: function(recovering){
+	show: function(opts){
 		su.ui.els.slider.className = "show-start";
 		su.ui.els.search_input[0].focus();
 		su.ui.els.search_input[0].select();
@@ -118,11 +118,11 @@ sRLevelResident.prototype = {
 	hide: function(){
 		this.c.hide();
 	},
-	show: function(recovering){
+	show: function(opts){
 		this.c.show();
 		
 		var _s = su.ui.els.slider.className;
-		var new_s = (recovering ? '' : 'show-search ') + "show-search-results";
+		var new_s = (opts.closed ? '' : 'show-search ') + "show-search-results";
 		if (new_s != _s){
 			su.ui.els.slider.className = new_s;
 			su.track_page('search results');
@@ -169,13 +169,9 @@ playlistLevelResident.prototype = {
 	hide: function(){
 		return this.conie.hide()
 	},
-	show: function(recovering){
-		var pl = this.D('pl');
-		var wsrl = pl && pl.with_search_results_link;
-		wsrl = (wsrl && 'show-full-nav') || '';
-		
-		su.ui.els.slider.className = wsrl + ' show-player-page';
-		seesu.track_page('playlist', pl.playlist_type);
+	show: function(opts){
+		su.ui.els.slider.className = ' show-player-page';
+	
 		return this.conie.show()
 	},
 	wait: function(){
@@ -205,10 +201,10 @@ trackLevelResident.prototype = {
 		this.hide();
 	},
 	hide: function(){
-		su.ui.els.slider.removeClass("show-zoom-to-track");
+		$(su.ui.els.slider).removeClass("show-zoom-to-track");
 	},
-	show: function(){
-		su.ui.els.slider.addClass("show-zoom-to-track");
+	show: function(opts){
+		$(su.ui.els.slider).addClass("show-zoom-to-track");
 	},
 	nav: function(){
 		return new trNav();
@@ -256,12 +252,6 @@ views.prototype = {
 	},
 	findViewOfPlaylist: function(puppet, only_playing){
 		return this.m.findLevelOfPlaylist(1, puppet, only_playing);
-	},
-	freeze: function(g, not_reset_searches){
-		var newfreeze = this.m.freezeMapOfLevel(1);
-		if (newfreeze && !not_reset_searches){
-			su.mp3_search.abortAllSearches();
-		}
 	},
 	restoreFreezed: function(no_navi){
 		this.m.restoreFreezed();
@@ -349,26 +339,22 @@ views.prototype = {
 	
 		*/
 		this.state = 'playlist';
-		if (!no_navi){
-			navi.set(this.getCurrentPlaylistContainer().getFullURL(),{pl:pl});
-		}
+		
 		
 		
 	},
-	show_playlist_page: function(p, save_parents, no_navi){
-
-		var sl = save_parents ? 0 : -1;
-		//this.m.sliceToLevel(sl);
-		// we want to clear map exept few first levels
-
-		var pl = p;
-		if (!pl){
-			var lev = this.getCurrentPlaylistContainer();
-			pl = lev.D('pl');
-		}
-
+	show_playlist_page: function(pl, save_parents, no_navi){
 		if (pl && !pl.ui){
 			var lev = this.getPlaylistContainer(save_parents);
+			var pl_resident = lev.getResident();
+			
+			
+			var ui = pl.ui && pl.ui.canUse() && pl.ui.show();
+			if (!ui){
+				lev.D('pl', pl);
+				pl_resident.D('pl', pl);
+				pl.ui = pl_resident;
+			}
 			var pl_resident = lev.getResident();
 				lev.nav.text(pl.playlist_title)
 			
@@ -378,22 +364,19 @@ views.prototype = {
 			if (pl.loading){
 				pl.ui.wait()
 			}
+			pl.lev = lev;
+			if (pl.length){
+				this.sUI().render_playlist(pl, pl.length > 1);
+			}
+			
+			seesu.track_page('playlist', pl.playlist_type);
 			
 			lev.setURL(getUrlOfPlaylist(pl));
-		}
-		if (pl && pl.length){
-			
-			var ui = pl.ui && pl.ui.canUse() && pl.ui.show();
-			if (!ui){
-				var lev = this.getPlaylistContainer(save_parents);
-				var pl_resident = lev.getResident();
-				lev.D('pl', pl);
-				pl_resident.D('pl', pl);
-				pl.ui = pl_resident
-				lev.setURL(getUrlOfPlaylist(pl));
+			if (!no_navi){
+				navi.set(lev.getFullURL(),{pl:pl});
 			}
-			this.sUI().render_playlist(pl, pl.length > 1);
 		}
+		
 		//this.swithToPlaylistPage(pl, no_navi);
 
 	},
@@ -401,9 +384,13 @@ views.prototype = {
 		var _this = this;
 		
 		var pl = mo.plst_titl;
+		pl.lev.sliceDeeper();
+		var lev = this.m.goDeeper(true, trackLevelResident);
+			lev.nav.text(title);
+			
 		
 		if (title){
-			this.sUI().els.nav_track_zoom.text(title);
+			//this.sUI().els.nav_track_zoom.text(title);
 		}
 		
 		if (zoom){
@@ -423,7 +410,7 @@ views.prototype = {
 		}
 		
 		if (!no_navi){
-			navi.set(this.getCurrentPlaylistContainer().getFullURL() + mo.getURLPart(), {pl:pl, mo: mo});
+			navi.set(pl.lev.getFullURL() + mo.getURLPart(), {pl:pl, mo: mo});
 		}
 		
 	}
