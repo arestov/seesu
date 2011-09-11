@@ -6,19 +6,31 @@ var mapLevel = function(num, map, parent_levels, resident, getNavData){
 	this.map = map;
 	this.parent_levels = parent_levels;
 	this.getNavData = getNavData;
+	this.storage = {};
+	
 	if (resident){
 		this.setResidentC(resident);
 		this.buildResident();
 	}
-	this.storage = {};
+	
 };
 mapLevel.prototype = {
 	D: function(key, value){
-		if (!value){
+		if (!arguments.hasOwnProperty('1')){
 			return this.storage[key];
 		} else {
 			this.storage[key] = value;
+			if (this.getResident() && this.getResident().handleData){
+				this.getResident().handleData(key, value);
+			}
+			return value;
 		}
+	},
+	setTitle: function(text){
+		if (this.getNav()){
+			this.getNav().text(text);
+		}
+		this.title = text;
 	},
 	getNav: function(){
 		
@@ -40,13 +52,16 @@ mapLevel.prototype = {
 				_this.map.goShallow(_this);
 			}	
 		});
+		if (this.title){
+			this.nav.text(this.title);
+		}
 		return this.nav;
 	},
 	setResidentC: function(residentC){
 		this.residentC = residentC;
 	},	
 	buildResident: function(){
-		this.resident = new this.residentC();
+		this.resident = new this.residentC(this.storage);
 		if (this.resident.render && this.parent_levels[0]){
 			this.resident.render(this.parent_levels[0].getResident());
 			
@@ -255,14 +270,20 @@ browseMap.prototype= {
 	},
 	restoreFreezed: function(){
 		this.hideMap();
+		var r = [];
 		for (var i=0; i < this.levels.length; i++) {
 			var cur = this.levels[i]
 			if (cur){
 				if (cur.freezed){
 					this.setLevelPartActive(cur.freezed, {userwant: true});
+					r.push(cur.freezed)
 				}
 			}
 		};
+		var bb = $filter(this.levels, 'freezed');
+		//!!!! bb, r
+		console.log(bb);
+		console.log(r);
 	},
 	hideLevel: function(i){
 		if (this.levels[i]){

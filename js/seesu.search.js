@@ -1,6 +1,7 @@
+(function() {
 var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-(function(){
-	searchResults = function(query, prepared, valueOf){
+
+var searchResults = function(query, prepared, valueOf){
 		if (query){
 			this.query = query;
 		}
@@ -28,11 +29,11 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 			};
 		}
 	});
-
 	
-})();
-(function(){
-	baseSuggest = function(){};
+		
+
+
+var baseSuggest = function(){};
 	baseSuggest.prototype = {
 		setActive: function(){
 			if (this.ui){
@@ -62,10 +63,8 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 			
 		}
 	};
-	
-})();
-(function(){
-	artistSuggest = function(artist, image){
+
+var artistSuggest = function(artist, image){
 		this.artist = artist;
 		this.image = image;
 	};
@@ -91,11 +90,11 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 			return a;
 		}
 	});
-})();
 
 
-(function(){
-	playlistSuggest = function(pl){
+
+
+var playlistSuggest = function(pl){
 		this.pl = pl;
 	};
 	playlistSuggest.prototype = new baseSuggest();
@@ -121,10 +120,9 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 				.click(function(){_this.click();});
 		}
 	})
-})();
 
-(function(){
-	trackSuggest = function(artist, track, image, duration){
+
+var trackSuggest = function(artist, track, image, duration){
 		this.artist = artist;
 		this.track = track;
 		this.image = image;
@@ -168,10 +166,9 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 	});
 
 	
-})();
 
-(function(){
-	tagSuggest = function(tag, image){
+
+var tagSuggest = function(tag, image){
 		this.tag = tag;
 		if (image){
 			this.image = image;
@@ -197,9 +194,8 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 		}
 	});
 	
-})();
-(function(){
-	albumSuggest = function(artist, name, image, id){
+
+var albumSuggest = function(artist, name, image, id){
 		this.artist = artist;
 		this.name = name;
 		
@@ -233,8 +229,8 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 			return a;
 		}
 	});
-})()
-	
+
+
 
 var playlist_secti = {
 	head: localize('playlists'),
@@ -327,36 +323,30 @@ var albs_secti = {
 	}
 };
 
-function arrows_keys_nav(e){
-	var srca = su.ui.search_el;
-	var srui = srca && srca.getResident()
-	if (!srui){
-		return false;
-	}
-	var invstg = srca.D('invstg');
+arrows_keys_nav = function(e){
 	
-
-	var _key = e.keyCode;
-	if (_key == '13'){
-		e.preventDefault();
-		invstg.pressEnter();
-	} else 
-	if((_key == '40') || (_key == '63233')){
-		e.preventDefault();
-		invstg.selectEnterItemAbove();
-	} else 
-	if((_key == '38') || (_key == '63232')){
-		e.preventDefault();
-		invstg.selectEnterItemBelow();
+	var invstg = su.ui.search_el && (invstg = su.ui.search_el.getResident()) && invstg.D('invstg');
+	
+	if (invstg){
+		var _key = e.keyCode;
+		if (_key == '13'){
+			e.preventDefault();
+			invstg.pressEnter();
+		} else 
+		if((_key == '40') || (_key == '63233')){
+			e.preventDefault();
+			invstg.selectEnterItemAbove();
+		} else 
+		if((_key == '38') || (_key == '63232')){
+			e.preventDefault();
+			invstg.selectEnterItemBelow();
+		}
 	}
+	
 };
 
-var results_mouse_click_for_enter_press = function(e){
+results_mouse_click_for_enter_press = function(e){
 	var srca = su.ui.search_el;
-	var srui = srca && srca.getResident()
-	if (!srui){
-		return false;
-	}
 	var node_name = e.target.nodeName;
 	if ((node_name != 'A') && (node_name != 'BUTTON')){return false;}
 	
@@ -509,7 +499,7 @@ var parseFastSuggests = function(r){
 };
 var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_preview){
 	section.loading();
-	seesu.xhrs.multiply_suggestions.push(lfm(method, cloneObj({limit: 15 }, lfmquery),function(r){
+	section.addRequest(lfm(method, cloneObj({limit: 15 }, lfmquery),function(r){
 		if (!section.doesNeed(q)){return}
 		section.loaded();
 		r = r && parser(r);
@@ -535,7 +525,7 @@ var suggestions_search = seesu.env.cross_domain_allowed ? function(q, invstg){
 			fast_suggestion(r, q, invstg)
 		});
 		if (!cache_used) {
-			seesu.xhrs.multiply_suggestions.push(get_fast_suggests(q, function(r){	
+			invstg.addRequest(get_fast_suggests(q, function(r){	
 				if (su.ui.els.search_input.val() != q){return}
 				fast_suggestion(r, q, invstg)
 			}, hash, invstg));
@@ -548,13 +538,94 @@ var suggestions_search = seesu.env.cross_domain_allowed ? function(q, invstg){
 		getLastfmSuggests('tag.search', {tag: q}, q, invstg.g('tags'), parseTagsResults);	
 		getLastfmSuggests('album.search', {album: q}, q, invstg.g('albums'), parseAlbumsResults);
 	}, 400);
-var investigation = function(c){
+
+investigation = function(c){
 	this.c = c;
 	this.sections = [];
 	this.names = {};
 	this.enter_items = false;
+	this.requests = [];
+	
+	this.addSection('playlists', playlist_secti);
+	this.addSection('artists', artists_secti);
+	this.addSection('albums', albs_secti);
+	this.addSection('tags', tags_secti);
+	this.addSection('tracks', tracks_secti);
+	this.addSection('vk', {
+		head: 'Vkontakte',
+		buttonClick: function(e, section){
+			var query = section.r.query;
+			if (query) {
+				su.ui.show_track({q: query});
+			}
+		},
+		button: function(){
+			return $('<button type="submit" name="type" value="vk_track"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>')
+		},
+		nos: true
+	});
+	this.setInactiveAll();
 };
 investigation.prototype = {
+	addRequest: function(rq){
+		this.requests.push(rq);
+	},
+	stopRequests: function(){
+		while (this.requests.length) {
+			var rq = this.requests.pop();
+			if (rq && rq.abort) {rq.abort()}
+		}
+	},
+	kill: function(){
+		this.stopRequests();
+	},
+	doEverythingForQuery: function(){
+		if (':playlists'.match(new RegExp('\^' + this.q , 'i'))){
+			this.setInactiveAll('playlists')
+			var pl_sec = this.g('playlists')
+				pl_sec.setActive();
+				pl_sec.scratchResults(this.q);
+				
+			
+			var playlists = seesu.gena.playlists;
+			var pl_results = [];
+			for (var i=0; i < playlists.length; i++) {
+				pl_results.push(new playlistSuggest(playlists[i]));
+			};
+			pl_sec.r.append(pl_results)
+			pl_sec.renderSuggests(true);
+		} 
+		
+		if (!this.q.match(/^:/)){
+			this.setActiveAll('playlists')
+			//playlist search
+			var playlists = seesu.gena.playlists;
+			var pl_results = [];
+			for (var i=0; i < playlists.length; i++) {
+				var ple = new playlistSuggest(playlists[i]);
+				if (playlists[i].playlist_title == this.q){
+					pl_results.unshift(ple);
+				} else if (playlists[i].playlist_title.match(new  RegExp('\\b' + this.q))){
+					 pl_results.push(ple);
+				}
+	
+			};
+	
+			
+			if (pl_results.length){
+				var pl_sec =  this.g('playlists'); 
+				
+				pl_sec.setActive();
+				pl_sec.r.append(pl_results)
+				pl_sec.renderSuggests();
+			}
+			
+			//===playlists search
+	
+			suggestions_search(this.q, this);
+			vk_suggests(this.q, this);
+		}
+	},
 	g: function(name){
 		return this.names[name];
 	},
@@ -633,6 +704,8 @@ investigation.prototype = {
 			_this.refreshEnterItems();
 			
 			
+		}, function(rq){
+			_this.addRequest(rq);
 		});
 		this.sections.push(s);
 		this.names[name] = s;
@@ -690,18 +763,23 @@ investigation.prototype = {
 		return r;
 	},
 	scratchResults: function(q){
-		this.loaded();
-		this.setItemForEnter();
-		for (var i=0; i < this.sections.length; i++) {
-			this.sections[i].scratchResults(q);
-		};
-		this.q = q;
+		if (this.q != q){
+			this.stopRequests();
+			this.loaded();
+			this.setItemForEnter();
+			for (var i=0; i < this.sections.length; i++) {
+				this.sections[i].scratchResults(q);
+			};
+			this.q = q;
+			
+			delete this.selected_inum;
+			this.doEverythingForQuery()
+		}
 		
-		delete this.selected_inum;
 	}
 };
 
-var searchSection = function(sectionInfo, container, stateChange, newResultsWereRendered){
+var searchSection = function(sectionInfo, container, stateChange, newResultsWereRendered, addRequest){
 	var _this = this;
 	
 	this.si = sectionInfo;
@@ -714,10 +792,13 @@ var searchSection = function(sectionInfo, container, stateChange, newResultsWere
 	container.append(this.createUIc(true));
 	this.header = $('<h4></h4>').text(this.si.head).appendTo(container);
 	this.c.before(this.header);
-	
+	this.addRequest = addRequest;
 };
 
 searchSection.prototype = {
+	addRequest: function(){
+		
+	},
 	setActive: function(){
 		if (this.hidden){
 			this.c.addClass('active-section');
@@ -934,68 +1015,14 @@ var vk_suggests = $.debounce(function(query, invstg){
 	
 },300);
 
-var suggestions_prerender = function(invstg, input_value){
-	var source_query = input_value;
-
-	
-	invstg.scratchResults(input_value);
-	
-	if (':playlists'.match(new RegExp('\^' + input_value , 'i'))){
-		invstg.setInactiveAll('playlists')
-		var pl_sec = invstg.g('playlists')
-			pl_sec.setActive();
-			pl_sec.scratchResults(source_query);
-			
-		
-		var playlists = seesu.gena.playlists;
-		var pl_results = [];
-		for (var i=0; i < playlists.length; i++) {
-			pl_results.push(new playlistSuggest(playlists[i]));
-		};
-		pl_sec.r.append(pl_results)
-		pl_sec.renderSuggests(true);
-	} 
-	
-	if (!input_value.match(/^:/)){
-		invstg.setActiveAll('playlists')
-		//playlist search
-		var playlists = seesu.gena.playlists;
-		var pl_results = [];
-		for (var i=0; i < playlists.length; i++) {
-			var ple = new playlistSuggest(playlists[i]);
-			if (playlists[i].playlist_title == input_value){
-				pl_results.unshift(ple);
-			} else if (playlists[i].playlist_title.match(new  RegExp('\\b' + input_value))){
-				 pl_results.push(ple);
-			}
-
-		};
-
-		
-		if (pl_results.length){
-			var pl_sec =  invstg.g('playlists'); 
-			
-			pl_sec.setActive();
-			pl_sec.r.append(pl_results)
-			pl_sec.renderSuggests();
-		}
-		
-		//===playlists search
-
-		suggestions_search(source_query, invstg);
-		vk_suggests(source_query, invstg);
-	}
-};
 
 
-var input_change = function(e, no_navi){
+
+input_change = function(e, no_navi){
 	su.ui.els.search_label.removeClass('loading');
 	
 	var input = (e && e.target) || e; //e can be EVENT or INPUT  
-	
-	
-	
-	
+
 	var input_value = input.value;
 	if (!input_value) {
 		su.ui.views.newBrowse();
@@ -1015,45 +1042,7 @@ var input_change = function(e, no_navi){
 		search_view.D('q', input_value);
 		search_view.setURL('?q=' + input_value);
 	}
-	
-	
-	
-	if (seesu.xhrs.multiply_suggestions && seesu.xhrs.multiply_suggestions.length){
-		for (var i=0; i < seesu.xhrs.multiply_suggestions.length; i++) {
-			if (seesu.xhrs.multiply_suggestions[i] && seesu.xhrs.multiply_suggestions[i].abort) {seesu.xhrs.multiply_suggestions[i].abort();}
-		};
-		
-	}
-	seesu.xhrs.multiply_suggestions =[]
-	
-	if (!search_view.D('invstg')){
-		var invstg = new investigation(search_view.getResident().c); 
-		
-		search_view.D('invstg', invstg);
-		
-			invstg.addSection('playlists', playlist_secti);
-			invstg.addSection('artists', artists_secti);
-			invstg.addSection('albums', albs_secti);
-			invstg.addSection('tags', tags_secti);
-			invstg.addSection('tracks', tracks_secti);
-			invstg.addSection('vk', {
-				head: 'Vkontakte',
-				buttonClick: function(e, section){
-					var query = section.r.query;
-					if (query) {
-						su.ui.show_track({q: query});
-					}
-				},
-				button: function(){
-					return $('<button type="submit" name="type" value="vk_track"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>')
-				},
-				nos: true
-			});
-			invstg.setInactiveAll();
-	}
-	
-	
-	suggestions_prerender(search_view.D('invstg'), input_value, seesu.env.cross_domain_allowed);
-	
-	su.ui.views.show_search_results_page(false, no_navi);
 };
+
+
+})();

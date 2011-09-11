@@ -1210,7 +1210,6 @@ seesu_ui.prototype = {
 		}
 		this.els.search_input.val(query);
 		input_change(this.els.search_input[0], no_navi);
-		//this.views.show_search_results_page(false, no_navi);
 	},
 	create_playlists_link: function(){
 		var _ui = this;

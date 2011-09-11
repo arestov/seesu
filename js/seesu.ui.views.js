@@ -84,11 +84,48 @@ var trNav = function(){
 trNav.prototype =  new dNav();
 
 
+var baseLevelResident = function(){
+};
+baseLevelResident.prototype = {
+	D: function(key, value){
+		if (!arguments.hasOwnProperty('1')){
+			return this.storage && this.storage[key];
+		} else {
+			return this.storage && (this.storage[key] = value);
+		}
+	},
+	isHandeled: function(key, value, set){
+		if (!arguments.hasOwnProperty('2')){
+			return this.D('d-hadeled-' + key) == value;
+		} else {
+			return this.D('d-hadeled-' + key, value);
+		}
+	},
+	checkAndHandleData: function(){
+		if (this.levdata){
+			for (var a in this.levdata){
+				this.handleData(a, this.levdata[a]);
+			}
+		}
+	},
+	handleData: function(key, value){
+		if (this.dataHandlers && this.dataHandlers[key]){
+			if (!this.isHandeled(key, value)){
+				if (this.dataHandlers[key].call(this, value)){
+					this.isHandeled(key, value, true);
+				}
+			}
+			
+		}
+	}
+};
+
 
 
 var mainLevelResident = function(){	
 };
-mainLevelResident.prototype = {
+mainLevelResident.prototype = new baseLevelResident();
+cloneObj(mainLevelResident.prototype, {
 	hide: function(){
 		console.log('want to hide main')
 	},
@@ -97,21 +134,24 @@ mainLevelResident.prototype = {
 	},
 	show: function(opts){
 		su.ui.els.slider.className = "show-start";
-		su.ui.els.search_input[0].focus();
-		su.ui.els.search_input[0].select();
-		
+		if (opts.userwant){
+			su.ui.els.search_input[0].focus();
+			su.ui.els.search_input[0].select();
+		}
 	},
 	nav: function(){
 		return new mainNav();
 	}
-};
+});
 
 
-var sRLevelResident = function(){
+var sRLevelResident = function(levdata){
 	this.c = $('<div class="search-results-container current-src"></div').appendTo(su.ui.els.searchres);
 	this.storage = {};
+	this.levdata = levdata;
 };
-sRLevelResident.prototype = {
+sRLevelResident.prototype = new baseLevelResident();
+cloneObj(sRLevelResident.prototype, {
 	canUse: function(){
 		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
 	},
@@ -123,7 +163,9 @@ sRLevelResident.prototype = {
 	},
 	show: function(opts){
 		this.c.show();
-		
+		if (opts.userwant){
+			this.checkAndHandleData();	
+		}
 		var _s = su.ui.els.slider.className;
 		var new_s = (opts.closed ? '' : 'show-search ') + "show-search-results";
 		if (new_s != _s){
@@ -131,35 +173,35 @@ sRLevelResident.prototype = {
 			su.track_page('search results');
 		}
 	},
-	D: function(key, value){
-		if (!value){
-			return this.storage[key];
-		} else {
-			this.storage[key] = value;
-		}
-	},
 	nav: function(){
 		return new sRNav();
+	},
+	dataHandlers: {
+		q: function(query){
+			if (!this.D('invstg')){
+				this.D('invstg', new investigation(this.c));
+			}
+			this.D('invstg').scratchResults(query);
+			return true;
+		}
 	}
-};
+});
 
 
 
-var playlistLevelResident = function(){
-	this.conie = $('<div class="playlist-container"></div>').appendTo(su.ui.els.artsTracks);
-	this.info_container = $('<div class="playlist-info"></div>').appendTo(this.conie),
-	this.tracks_container = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.conie);
+var playlistLevelResident = function(levdata){
+	this.c = $('<div class="playlist-container"></div>').appendTo(su.ui.els.artsTracks);
+	this.info_container = $('<div class="playlist-info"></div>').appendTo(this.c),
+	this.tracks_container = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);
 	this.storage = {};
-	
-	this.conie.click(function(){
-		su.ui.views.show_search_results_page(true);
-		//su.ui.views.show_start_page(true, true);
-	})
+	this.levdata = levdata;
+
 	
 };
-playlistLevelResident.prototype = {
+playlistLevelResident.prototype  = new baseLevelResident();
+cloneObj(playlistLevelResident.prototype, {
 	canUse: function(){
-		return this.conie && !!this.conie.parent().length && this.conie[0].ownerDocument == su.ui.d;
+		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
 	},
 	kill: function(){
 		var pl = this.D('pl');
@@ -167,15 +209,18 @@ playlistLevelResident.prototype = {
 		this.remove();	
 	},
 	remove: function(){
-		return this.conie.remove();
+		return this.c.remove();
 	},
 	hide: function(){
-		return this.conie.hide()
+		return this.c.hide()
 	},
 	show: function(opts){
+		if (opts.userwant){
+			this.checkAndHandleData();	
+		}
+		
 		su.ui.els.slider.className = ' show-player-page';
-	
-		return this.conie.show()
+		return this.c.show()
 	},
 	wait: function(){
 		this.tracks_container.addClass('loading');
@@ -183,22 +228,29 @@ playlistLevelResident.prototype = {
 	ready: function(){
 		this.tracks_container.removeClass('loading');
 	},
-	D: function(key, value){
-		if (!value){
-			return this.storage[key];
-		} else {
-			this.storage[key] = value;
-		}
-	},
 	nav: function(){
 		return new plNav();
+	},
+	dataHandlers: {
+		pl: function(pl){
+			this.D('pl', pl);
+			pl.ui = this;
+			if (pl.loading){
+				pl.ui.wait()
+			}
+			if (pl.length){
+				this.sUI().render_playlist(pl, pl.length > 1);
+			}
+			return true;
+		}
 	}
-};
+});
 
 var trackLevelResident = function(){
 	
 };
-trackLevelResident.prototype = {
+trackLevelResident.prototype = new baseLevelResident();
+cloneObj(trackLevelResident.prototype, {
 	canUse: function(){return true},
 	kill: function(){
 		this.hide();
@@ -212,7 +264,7 @@ trackLevelResident.prototype = {
 	nav: function(){
 		return new trNav();
 	}
-};
+});
 
 
 views = function(sui){
@@ -260,10 +312,6 @@ views.prototype = {
 	},
 	restoreFreezed: function(no_navi){
 		this.m.restoreFreezed();
-		var l = this.m.getLevel(1); // playlist page is 1 level
-		if (l){
-			this.swithToPlaylistPage(l.D('pl'), no_navi);
-		}
 	},
 
 	show_now_playing: function(){
@@ -304,51 +352,24 @@ views.prototype = {
 	},
 	show_search_results_page: function(without_input, no_navi){
 		var _this = this;
-		// search results is 0 level
-		//this.m.sliceToLevel(0);
-		
-		/*
-		this.nav.daddy.empty();
-		this.nav.daddy.append(this.nav.start.unbind().click(function(){
-			_this.show_start_page(true, true);
-		}));
-		this.nav.daddy.append('<img class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png"/>');
-		*/
+
 		this.state = 'search_results';
 		if (!no_navi){
 			navi.set(this.getCurrentSearchResultsContainer().getFullURL());
 		}
-		
-		
-		
-	},
-	swithToPlaylistPage: function(pl, no_navi){
-		// playlist page is 1 level
-		var _this = this;
-		
-		//this.m.sliceToLevel(1);
-		
-		/*
-		this.nav.daddy.empty();
-		if (pl.with_search_results_link){
-			this.nav.daddy.append(this.nav.results.unbind().click(function(){
-				_this.sUI().views.show_search_results_page(true);
-			}));
-		} else{
-			this.nav.daddy.append(this.nav.start.unbind().click(function(){
-				_this.sUI().views.show_start_page(true, true);
-			}));
-		}
-		this.nav.daddy.append('<span class="nav-title" src="i/nav/seesu-nav-search.png">' + pl.playlist_title + '</span>');
-		$(this.sUI().els.nav_playlist_page).text(pl.playlist_title);
-	
-		*/
-		this.state = 'playlist';
-		
-		
+
 		
 	},
 	show_playlist_page: function(pl, save_parents, no_navi){
+		if (pl.lev){
+			var lev = pl.lev;
+		} else{
+			var lev = (pl.lev = this.getPlaylistContainer(save_parents));
+			lev.setTitle(pl.playlist_title);
+		}
+		pl.lev = lev;
+		lev.D('pl', pl);
+		return 
 		if (pl && !pl.ui){
 			if (pl.lev){
 				var lev = pl.lev;
@@ -357,16 +378,6 @@ views.prototype = {
 				lev.nav.text(pl.playlist_title);
 			}
 			
-			var pl_resident = lev.getResident();
-			pl_resident.D('pl', pl);
-			pl.ui = pl_resident;
-			if (pl.loading){
-				pl.ui.wait()
-			}
-			pl.lev = lev;
-			if (pl.length){
-				this.sUI().render_playlist(pl, pl.length > 1);
-			}
 			
 			seesu.track_page('playlist', pl.playlist_type);
 			
@@ -375,8 +386,6 @@ views.prototype = {
 				navi.set(lev.getFullURL(),{pl:pl});
 			}
 		}
-		
-		//this.swithToPlaylistPage(pl, no_navi);
 
 	},
 	show_track_page: function(title, zoom, mo, no_navi){
@@ -385,29 +394,8 @@ views.prototype = {
 		var pl = mo.plst_titl;
 		pl.lev.sliceDeeper();
 		var lev = this.m.goDeeper(true, trackLevelResident);
-			lev.nav.text(title);
+			lev.setTitle(title);
 			
-		
-		if (title){
-			//this.sUI().els.nav_track_zoom.text(title);
-		}
-		
-		if (zoom){
-			
-			this.state = 'track';
-		}
-		if (zoom || this.state == 'track'){
-			//this.nav.daddy.empty();
-			
-			/*
-			this.nav.daddy.append(this.nav.playlist.unbind().click(function(){
-				_this.sUI().views.swithToPlaylistPage(pl);
-			}));
-			
-			this.nav.daddy.append('<span class="nav-title" title="Suggestions &amp; search" src="i/nav/seesu-nav-search.png">' + title + '</span>');
-			*/
-		}
-		
 		if (!no_navi){
 			navi.set(pl.lev.getFullURL() + mo.getURLPart(), {pl:pl, mo: mo});
 		}
