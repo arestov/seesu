@@ -21,7 +21,7 @@ mapLevel.prototype = {
 		}
 	},
 	getNav: function(){
-		var _this = this;
+		
 		if (this.nav && (!this.nav.canUse || this.nav.canUse())){
 			return this.nav;
 		} else{
@@ -32,6 +32,7 @@ mapLevel.prototype = {
 		}
 	},
 	buildNav: function(){
+		var _this = this;
 		this.nav = this.getResident().nav();
 		this.nav.render(this.getNavData());
 		this.nav.setClickCb(function(active){
