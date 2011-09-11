@@ -51,11 +51,12 @@ mapLevel.prototype = {
 			
 		}
 		this.buildNav();
+		return this.resident;
 	},
 	getResident: function(){
 		if (this.resident && (!this.resident.canUse || this.resident.canUse())) {
 			return this.resident;
-		}else{
+		} else{
 			return this.buildResident();
 		}
 		return this.resident;
