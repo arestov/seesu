@@ -309,7 +309,7 @@ ul.tracks-for-play > li{
 	background:url(../i/nav/seesu-nav-search.png) no-repeat 10px 4px, url(../i/nav/button-gradient.png) repeat-x 100% 0;
 	
 	}
-	.nnav.nnav.nav-search-results:hover{
+	.nnav.nav-search-results:hover{
 		background-image:url(../i/nav/seesu-nav-search.png), url(../i/nav/button-gradient-hover.png);
 		}
 		.nnav.nav-search-results:active{

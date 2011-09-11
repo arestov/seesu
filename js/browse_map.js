@@ -6,6 +6,7 @@ var mapLevel = function(num, map, parent_levels, resident, getNavData){
 	this.map = map;
 	this.parent_levels = parent_levels;
 	if (resident){
+		this.setResidentC(resident);
 		this.resident = new resident();
 		if (this.resident.nav){
 			this.nav = this.resident.nav();
@@ -20,8 +21,15 @@ var mapLevel = function(num, map, parent_levels, resident, getNavData){
 	this.storage = {};
 };
 mapLevel.prototype = {
-	setResident: function(resident){
-		this.resident = resident;
+	setResidentC: function(residentC){
+		this.residentC = residentC;
+	},
+	buildResident: function(){
+		this.resident = new residentC();
+		if (this.resident.render && this.parent_levels[0]){
+			this.resident.render(this.parent_levels[0].getResident());
+			
+		}
 	},
 	D: function(key, value){
 		if (!value){
@@ -31,6 +39,11 @@ mapLevel.prototype = {
 		}
 	},
 	getResident: function(){
+		if (this.resident && (!this.resident.canUse || this.resident.canUse())) {
+			return this.resident;
+		}else{
+			return this.buildResident();
+		}
 		return this.resident;
 	},
 	getURL: function(){
@@ -45,13 +58,13 @@ mapLevel.prototype = {
 		}	
 	},
 	testByPlaylistPuppet: function(puppet){
-		var pl = this.D('pl') || (this.getResident() && this.getResident().D && this.getResident().D('pl'));
+		var pl = this.getResident() && this.getResident().D && this.getResident().D('pl');
 		if (pl && pl.compare(puppet)){
 			return this;
 		}
 	},
 	testByQuery: function(query){
-		var pl = this.D('pl') || (this.getResident() && this.getResident().D && this.getResident().D('pl'));
+		var pl = this.getResident() && this.getResident().D && this.getResident().D('pl');
 		if (pl && this.D('q') == query){
 			return this;
 		}	

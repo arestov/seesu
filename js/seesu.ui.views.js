@@ -345,22 +345,16 @@ views.prototype = {
 	},
 	show_playlist_page: function(pl, save_parents, no_navi){
 		if (pl && !pl.ui){
-			var lev = this.getPlaylistContainer(save_parents);
-			var pl_resident = lev.getResident();
-			
-			
-			var ui = pl.ui && pl.ui.canUse() && pl.ui.show();
-			if (!ui){
-				lev.D('pl', pl);
-				pl_resident.D('pl', pl);
-				pl.ui = pl_resident;
+			if (pl.lev){
+				var lev = pl.lev;
+			} else{
+				var lev = (pl.lev = this.getPlaylistContainer(save_parents));
+				lev.nav.text(pl.playlist_title);
 			}
-			var pl_resident = lev.getResident();
-				lev.nav.text(pl.playlist_title)
 			
-			lev.D('pl', pl); 
+			var pl_resident = lev.getResident();
 			pl_resident.D('pl', pl);
-			pl.ui = pl_resident
+			pl.ui = pl_resident;
 			if (pl.loading){
 				pl.ui.wait()
 			}
