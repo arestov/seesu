@@ -5,38 +5,52 @@ var mapLevel = function(num, map, parent_levels, resident, getNavData){
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
+	this.getNavData = getNavData;
 	if (resident){
 		this.setResidentC(resident);
-		this.resident = new resident();
-		if (this.resident.nav){
-			this.nav = this.resident.nav();
-			this.nav.render(getNavData());
-			this.nav.setClickCb(function(active){
-				if (active){
-					_this.map.goShallow(_this);
-				}	
-			})
-		}
+		this.buildResident();
 	}
 	this.storage = {};
 };
 mapLevel.prototype = {
-	setResidentC: function(residentC){
-		this.residentC = residentC;
-	},
-	buildResident: function(){
-		this.resident = new residentC();
-		if (this.resident.render && this.parent_levels[0]){
-			this.resident.render(this.parent_levels[0].getResident());
-			
-		}
-	},
 	D: function(key, value){
 		if (!value){
 			return this.storage[key];
 		} else {
 			this.storage[key] = value;
 		}
+	},
+	getNav: function(){
+		var _this = this;
+		if (this.nav && (!this.nav.canUse || this.nav.canUse())){
+			return this.nav;
+		} else{
+			var r = this.getResident();
+			if (r.nav){
+				return this.nav;
+			}
+		}
+	},
+	buildNav: function(){
+		this.nav = this.getResident().nav();
+		this.nav.render(this.getNavData());
+		this.nav.setClickCb(function(active){
+			if (active){
+				_this.map.goShallow(_this);
+			}	
+		});
+		return this.nav;
+	},
+	setResidentC: function(residentC){
+		this.residentC = residentC;
+	},	
+	buildResident: function(){
+		this.resident = new this.residentC();
+		if (this.resident.render && this.parent_levels[0]){
+			this.resident.render(this.parent_levels[0].getResident());
+			
+		}
+		this.buildNav();
 	},
 	getResident: function(){
 		if (this.resident && (!this.resident.canUse || this.resident.canUse())) {
@@ -79,23 +93,23 @@ mapLevel.prototype = {
 	show: function(opts){
 		var o = opts || {};
 		o.closed = this.closed;
-		this.resident.show(o);
-		if (this.nav){
+		this.getResident().show(o);
+		if (this.getNav()){
 			//this.nav.show();
 		}
 		
 	},
 	hide: function(){
-		this.resident.hide();
-		if (this.nav){
-			this.nav.hide();
+		this.getResident().hide();
+		if (this.getNav()){
+			this.getNav().hide();
 		}
 		
 	},
 	kill: function(){
-		this.resident.kill();
-		if (this.nav){
-			this.nav.kill();
+		this.getResident().kill();
+		if (this.getNav()){
+			this.getNav().kill();
 		}
 		delete this.map;
 	},
@@ -270,15 +284,15 @@ browseMap.prototype= {
 			lvls.push(this.getLevel(-1));
 		}
 		lvls.reverse();
-		tl.nav.setInactive();
+		tl.getNav().setInactive();
 		
 		var prev = lvls.pop();
 		if (prev){
-			prev.nav.setActive();
+			prev.getNav().setActive();
 		}
 		if (lvls.length){
 			while (lvls.length){
-				lvls.pop().nav.hide();
+				lvls.pop().getNav().hide();
 			}
 		}
 		

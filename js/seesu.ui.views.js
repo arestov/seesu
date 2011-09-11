@@ -1,6 +1,9 @@
 (function() {
 var dNav = function(){};
 dNav.prototype = {
+	canUse: function(){
+		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
+	},
 	setActive: function(){
 		if (!this.active){
 			this.c.addClass('nnav');
@@ -211,12 +214,14 @@ trackLevelResident.prototype = {
 	}
 };
 
+
 views = function(sui){
 	this.sui = sui;
 	var _this = this;
-	this.m = new browseMap(mainLevelResident, function(){
+	this.m = su.map || (su.map = new browseMap(mainLevelResident, function(){
 		return _this.nav && _this.nav.daddy;
-	});
+	}));
+
 }
 views.prototype = {
 	setNav: function(obj){
