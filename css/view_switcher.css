@@ -216,9 +216,14 @@ ul.tracks-for-play > li{
 	line-height:20px;
 	text-overflow: ellipsis; 
 }
+.nav-item{
+	float:left;
+}
+	.nav-item b{
+		display:none;
+	}
 .nnav{
 	height:20px;
-	float:left;
 	cursor:pointer;
 
 	padding:4px 14px 4px 9px;
@@ -239,6 +244,7 @@ ul.tracks-for-play > li{
 	border-radius:0 6px 6px 0;
 	}
 	.nnav b{
+		display:inline;
 		position:absolute;
 		width:15px;
 		left:-15px;
@@ -280,7 +286,6 @@ ul.tracks-for-play > li{
 		}
 .nav-start{
 	width:20px;
-	float:left;
 	height:20px;
 	
 	padding:4px 14px 4px 9px;
@@ -301,7 +306,6 @@ ul.tracks-for-play > li{
 	padding:4px 14px 4px 9px;
 	
 	width:15px;
-	float:left;
 	height:20px;
 	background:url(../i/nav/seesu-nav-search.png) no-repeat 10px 4px;
 	}

@@ -17,7 +17,7 @@ dNav.prototype = {
 			this.c.removeClass('nnav');
 			this.active = false;
 		}
-		
+		this.c.show();
 	},
 	kill: function(){
 		this.c.remove();
@@ -42,7 +42,7 @@ dNav.prototype = {
 };
 var mainNav = function(){
 	var _this = this;;
-	this.c= $('<span class="nnav nav-start" title="Seesu start page"><b></b></span>');
+	this.c= $('<span class="nnav nav-item nav-start" title="Seesu start page"><b></b></span>');
 	this.c.click(function(){
 		_this.click();
 		//su.ui.views.show_start_page(true, true);
@@ -54,7 +54,7 @@ mainNav.prototype = new dNav();
 
 var plNav = function(){
 	var _this = this;
-	this.c= $('<span class="nnav nav-playlist-page"><span></span><b></b></span>');
+	this.c= $('<span class="nnav nav-item nav-playlist-page"><span></span><b></b></span>');
 	this.c.click(function(){
 		_this.click();
 	})
@@ -66,7 +66,7 @@ plNav.prototype = new dNav();
 
 var sRNav = function(){
 	var _this = this;
-	this.c= $('<span class="nnav nav-search-results" title="Suggestions &amp; search"><b></b></span>');
+	this.c= $('<span class="nnav nav-item nav-search-results" title="Suggestions &amp; search"><b></b></span>');
 	this.text_c = this.c.find('span');
 	this.active = true;
 	this.c.click(function(){
@@ -77,7 +77,7 @@ var sRNav = function(){
 sRNav.prototype = new dNav();
 
 var trNav = function(){
-	this.c = $('<span class="nnav nav-track-zoom"><span></span><b></b></span>');
+	this.c = $('<span class="nnav nav-item nav-track-zoom"><span></span><b></b></span>');
 	this.text_c = this.c.find('span');
 	this.active = true;
 }
@@ -239,7 +239,7 @@ cloneObj(playlistLevelResident.prototype, {
 				pl.ui.wait()
 			}
 			if (pl.length){
-				this.sUI().render_playlist(pl, pl.length > 1);
+				su.ui.render_playlist(pl, pl.length > 1);
 			}
 			return true;
 		}
@@ -271,7 +271,7 @@ views = function(sui){
 	this.sui = sui;
 	var _this = this;
 	this.m = su.map || (su.map = new browseMap(mainLevelResident, function(){
-		return _this.nav && _this.nav.daddy;
+		return su.ui.views.nav && su.ui.views.nav.daddy;
 	}));
 
 }

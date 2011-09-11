@@ -37,10 +37,7 @@ mapLevel.prototype = {
 		if (this.nav && (!this.nav.canUse || this.nav.canUse())){
 			return this.nav;
 		} else{
-			var r = this.getResident();
-			if (r.nav){
-				return this.nav;
-			}
+			return this.buildNav();
 		}
 	},
 	buildNav: function(){
@@ -66,7 +63,6 @@ mapLevel.prototype = {
 			this.resident.render(this.parent_levels[0].getResident());
 			
 		}
-		this.buildNav();
 		return this.resident;
 	},
 	getResident: function(){
