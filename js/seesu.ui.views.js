@@ -45,7 +45,6 @@ var mainNav = function(){
 	this.c= $('<span class="nnav nav-item nav-start" title="Seesu start page"><b></b></span>');
 	this.c.click(function(){
 		_this.click();
-		//su.ui.views.show_start_page(true, true);
 	})
 	this.text_c = this.c.find('span');
 	this.active = true;
@@ -71,7 +70,6 @@ var sRNav = function(){
 	this.active = true;
 	this.c.click(function(){
 		_this.click();
-		//su.ui.views.show_start_page(true, true);
 	})
 }
 sRNav.prototype = new dNav();
