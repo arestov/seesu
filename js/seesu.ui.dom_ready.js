@@ -245,14 +245,15 @@ window.connect_dom_to_som = function(d, sui){
 				su.player.nowPlaying(su.player.c_song);
 				sui.views.freeze(su.player.c_song.plst_titl, true);
 				*/
-				sui.views.m.restoreFreezed()
+				sui.views.m.restoreFreezed();
+				su.player.view_song(su.player.c_song, true, true, true);
+				
 				sui.mark_c_node_as(su.player.player_state);
 				state_recovered = true;
 			}
 		}
 	
 		$(d).click(function(e) {
-			
 			return test_pressed_node(e);
 		});
 		

@@ -266,7 +266,11 @@ browseMap.prototype= {
 	},
 	restoreFreezed: function(){
 		this.hideMap();
-		var r = [];
+		var f_lvs = $filter(this.levels, 'freezed');
+		for (var i=0; i < f_lvs.length; i++) {
+			this.setLevelPartActive(f_lvs[i], {userwant: (i == f_lvs.length - 1)});
+		};
+		/*
 		for (var i=0; i < this.levels.length; i++) {
 			var cur = this.levels[i]
 			if (cur){
@@ -276,10 +280,11 @@ browseMap.prototype= {
 				}
 			}
 		};
-		var bb = $filter(this.levels, 'freezed');
-		//!!!! bb, r
+		
+		!!!! bb, r
 		console.log(bb);
 		console.log(r);
+		*/
 	},
 	hideLevel: function(i){
 		if (this.levels[i]){
