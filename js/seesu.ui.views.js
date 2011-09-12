@@ -1,3 +1,15 @@
+/*
+freeze
+!restoreFreezed
+show_now_playing
+!show_start_page
+!newBrowse
+!show_search_results_page
+-swithToPlaylistPage
+!!!show_playlist_page
+show_track_page
+*/
+
 (function() {
 var dNav = function(){};
 dNav.prototype = {
