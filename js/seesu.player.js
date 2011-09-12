@@ -334,7 +334,6 @@ su.player = {
 		
 	} ,
 	view_song: function (mo, zoom, force, no_navi) {
-	  var artist = mo.artist;
 	  var last_mo = this.v_song;
 	  
 	  if (!force && last_mo && (last_mo == mo)) {
@@ -355,7 +354,8 @@ su.player = {
 		}
 		this.v_song = mo;
 	  }
-	  su.ui.views.show_track_page(($(su.ui.els.nav_playlist_page).text() == artist ? '' : (artist + ' - ' )) + mo.track, zoom, mo, no_navi);
+	  var plofa = (plofa = mo.plst_titl ) && plofa.playlist_type == 'artist' && plofa.key == mo.artist;
+	  su.ui.views.show_track_page((plofa ? '' : (mo.artist + ' - ' )) + mo.track, zoom, mo, no_navi);
 	}
 }
 
