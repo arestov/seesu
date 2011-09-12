@@ -370,6 +370,168 @@ function getPlayViewStateFromString(n){
 	pvstate.plp = getPuppetPlaylistOfViewState(pvstate);
 	return pvstate;
 }
+var handleHistoryState =function(jo, jn, oldstate, newstate, state_from_history){
+	if (newstate || state_from_history.data.pl){
+		console.log(newstate);
+		var lev = su.ui.views.findViewOfURL(getUrlOfPlaylist(newstate.plp));
+		if (lev){
+			//у нас уже есть открытый плейлист
+			var pl = lev.D('pl');
+			
+			//показываем его
+			if (lev.freezed){
+				su.ui.views.restoreFreezed(true);
+			} else if (pl){
+				su.ui.views.show_playlist_page(pl, false, true);
+				
+			}
+			if (state_from_history.data.mo || newstate.current_artist || newstate.current_track){
+				
+				//показываем трек если нужно
+				var mo = state_from_history.data.mo;
+				if (!mo || !pl.showExactlyTrack(mo, true)){
+					var has_track = pl.showTrack({
+						artist: newstate.current_artist,
+						track: newstate.current_track
+					}, true);
+				}
+				
+			} else{
+				console.log("will not search track")
+			}
+			
+			return true;
+		} else if (state_from_history.data.pl){
+			//не открыт, но есть все данные этого плейлиста
+			su.ui.views.show_playlist_page(state_from_history.data.pl, false, true);
+			if (state_from_history.data.mo || newstate.current_artist || newstate.current_track){
+				var pl = state_from_history.data.pl;
+				var mo = state_from_history.data.mo;
+				
+				// если нужно - показываем трек
+				if (!mo || !pl.showExactlyTrack(mo, true)){
+					var has_track = pl.showTrack({
+						artist: newstate.current_artist,
+						track: newstate.current_track
+					}, true);
+				}
+				
+			} else{
+				console.log("will not search track")
+			}
+			
+			
+			return true;
+		} else{
+			console.log('no playlist anywhere')
+		}
+	} else if (jn.params.q){
+		console.log(jn.params);
+		if (jo.params.q == jn.params.q){
+			console.log('very want to recover')
+			var lev = su.ui.views.findSeachResultsOfURL('?q=' + jn.params.q, false, true);
+			if (!lev){
+				su.ui.search(jn.params.q, true, true);
+				return true;
+			} else{
+				su.ui.views.show_search_results_page(false, true);
+				console.log('have somethinf');
+			}
+		} else{
+			console.log('search !')
+			su.ui.search(jn.params.q, true, true);
+			return true;
+		}
+	} else{
+		if (e.oldURL != e.newURL){
+			su.ui.search('', true, true);
+			return true;
+		}
+	}
+};
+var handleExternalState = function(jo, jn, oldstate, newstate){
+	if (newstate){
+		var have_anything_history = navi.findNextAndPrevStates(e);
+		if (have_anything_history.summ.length){
+			
+			su.ui.views.show_playlist_page(have_anything_history.summ[0].data.pl, false, true);
+			if (newstate.current_artist || newstate.current_track){
+				var pl = have_anything_history.summ[0].data.pl;
+				var has_track = pl.showTrack({
+					artist: newstate.current_artist,
+					track: newstate.current_track
+				}, true);
+				
+			} else {
+				console.log("will not search track")
+			}
+			console.log('not too fresh new state');
+		} else{
+			/*
+			'artists by loved' //no key
+			'artists by recommendations' //no key
+			'artists by tag' //key is tag
+			'similar artists' //key is artist
+			'cplaylist' //key is name
+			'tracks' //key is q{artist:'', track:''}
+			'artist' //key is artist
+			'album' //key is album
+			*/
+			
+			if (newstate.current_artist || newstate.current_track){
+				var tk =  {
+					artist: newstate.current_artist,
+					track: newstate.current_track
+				}
+			}
+			
+			
+			if (newstate.plp.playlist_type == 'artist'){
+				
+				su.ui.show_artist(newstate.artist_name, false, true, tk);
+				//show_artist(newstate.current_artist, false, true)
+			} else if (newstate.plp.playlist_type == 'similar artists'){
+				render_tracks_by_similar_artists(newstate.artist_name, true, tk)
+				
+			} else if (newstate.plp.playlist_type == 'artists by tag'){
+				su.ui.show_tag(newstate.tag_name, false, true, tk)
+			} else if (newstate.plp.playlist_type == 'cplaylist'){
+				if (newstate.current_artist){
+					su.ui.show_artist(newstate.current_artist, false, true, tk);
+				}
+			} else if (newstate.plp.playlist_type == 'artists by recommendations'){
+				
+				if (newstate.current_artist){
+					su.ui.show_artist(newstate.current_artist, false, true, tk);
+				}
+				
+			} else if (newstate.plp.playlist_type == 'artists by loved'){
+				if (newstate.current_artist){
+					su.ui.show_artist(newstate.current_artist, false, true, tk);
+				}
+				
+			} else if (newstate.plp.playlist_type == 'album'){
+				findAlbum(newstate.album_name, newstate.artist_name, true, tk);
+			} else if (newstate.type == 'ds' && newstate.search_type && newstate.search_id){
+				getMusicById({type:newstate.search_type, id:newstate.search_id}, tk);			
+			} else{
+				console.log('can\'t do anything');
+			}
+			
+			console.log('realy fresh  neewwwww state');
+		}
+	} else if (jn.params.q){
+		su.ui.search(jn.params.q, true, true);
+	} else if (e.newURL == ''){
+		su.ui.search('', true, true);
+		
+		return true;
+		
+	}
+	
+	
+	navi.pushState(e.oldURL, e.newURL);
+};
 function hashchangeHandler(e, force){
 	navi.fake_current_location = e.newURL;
 	
@@ -391,173 +553,9 @@ function hashchangeHandler(e, force){
 		var state_from_history = navi.isNewStateAreOld(e);
 		
 		if (state_from_history){
-			if (newstate || state_from_history.data.pl){
-				console.log(newstate);
-				var lev = su.ui.views.findViewOfURL(getUrlOfPlaylist(newstate.plp));
-				if (lev){
-					var pl = lev.D('pl');
-					if (lev.freezed){
-						su.ui.views.restoreFreezed(true);
-					} else if (pl){
-						su.ui.views.show_playlist_page(pl, false, true);
-						
-					}
-					if (state_from_history.data.mo || newstate.current_artist || newstate.current_track){
-						
-						var mo = state_from_history.data.mo;
-						if (!mo || !pl.showExactlyTrack(mo, true)){
-							var has_track = pl.showTrack({
-								artist: newstate.current_artist,
-								track: newstate.current_track
-							}, true);
-						}
-						
-					} else{
-						console.log("will not search track")
-					}
-					
-					return true;
-				} else if (state_from_history.data.pl){
-					su.ui.views.show_playlist_page(state_from_history.data.pl, false, true);
-					if (state_from_history.data.mo || newstate.current_artist || newstate.current_track){
-						var pl = state_from_history.data.pl;
-						var mo = state_from_history.data.mo;
-						if (!mo || !pl.showExactlyTrack(mo, true)){
-							var has_track = pl.showTrack({
-								artist: newstate.current_artist,
-								track: newstate.current_track
-							}, true);
-						}
-						
-					} else{
-						console.log("will not search track")
-					}
-					
-					
-					return true;
-				} else{
-					console.log('no playlist anywhere')
-				}
-			} else if (jn.params.q){
-				console.log(jn.params);
-				if (jo.params.q == jn.params.q){
-					console.log('very want to recover')
-					var lev = su.ui.views.findSeachResultsOfURL('?q=' + jn.params.q, false, true);
-					if (!lev){
-						su.ui.search(jn.params.q, true, true);
-						return true;
-					} else{
-						su.ui.views.show_search_results_page(false, true);
-						console.log('have somethinf');
-					}
-				} else{
-					console.log('search !')
-					su.ui.search(jn.params.q, true, true);
-					return true;
-				}
-			} else{
-				if (e.oldURL != e.newURL){
-					su.ui.search('', true, true);
-					
-					return true;
-					
-				}
-				
-			}
+			handleHistoryState(jo, jn, oldstate, newstate, state_from_history);
 		} else{
-			
-			if (newstate){
-				var have_anything_history = navi.findNextAndPrevStates(e);
-				if (have_anything_history.summ.length){
-					
-					su.ui.views.show_playlist_page(have_anything_history.summ[0].data.pl, false, true);
-					if (newstate.current_artist || newstate.current_track){
-						var pl = have_anything_history.summ[0].data.pl;
-						var has_track = pl.showTrack({
-							artist: newstate.current_artist,
-							track: newstate.current_track
-						}, true);
-						
-					} else {
-						console.log("will not search track")
-					}
-					console.log('not too fresh new state');
-				} else{
-					/*
-					'artists by loved' //no key
-					'artists by recommendations' //no key
-					'artists by tag' //key is tag
-					'similar artists' //key is artist
-					'cplaylist' //key is name
-					'tracks' //key is q{artist:'', track:''}
-					'artist' //key is artist
-					'album' //key is album
-					*/
-					
-					if (newstate.current_artist || newstate.current_track){
-						var tk =  {
-							artist: newstate.current_artist,
-							track: newstate.current_track
-						}
-					}
-					
-					
-					if (newstate.plp.playlist_type == 'artist'){
-						
-						su.ui.show_artist(newstate.artist_name, false, true, tk);
-						//show_artist(newstate.current_artist, false, true)
-					} else if (newstate.plp.playlist_type == 'similar artists'){
-						render_tracks_by_similar_artists(newstate.artist_name, true, tk)
-						
-					} else if (newstate.plp.playlist_type == 'artists by tag'){
-						su.ui.show_tag(newstate.tag_name, false, true, tk)
-					} else if (newstate.plp.playlist_type == 'cplaylist'){
-						if (newstate.current_artist){
-							su.ui.show_artist(newstate.current_artist, false, true, tk);
-						}
-							
-						/*
-						var uplst = su.gena.playlists.find(newstate.plp);
-						if (su.gena){
-							
-						} else{
-							
-							
-						}*/
-						
-						
-					} else if (newstate.plp.playlist_type == 'artists by recommendations'){
-						
-						if (newstate.current_artist){
-							su.ui.show_artist(newstate.current_artist, false, true, tk);
-						}
-						
-					} else if (newstate.plp.playlist_type == 'artists by loved'){
-						if (newstate.current_artist){
-							su.ui.show_artist(newstate.current_artist, false, true, tk);
-						}
-						
-					} else if (newstate.plp.playlist_type == 'album'){
-						findAlbum(newstate.album_name, newstate.artist_name, true, tk);
-					} else if (newstate.type == 'ds' && newstate.search_type && newstate.search_id){
-						getMusicById({type:newstate.search_type, id:newstate.search_id}, tk);			
-					} else{
-						console.log('can\'t do anythifg');
-					}
-					
-					console.log('realy fresh  neewwwww state');
-				}
-			} else if (jn.params.q){
-				su.ui.search(jn.params.q, true, true);
-			} else if (e.newURL == ''){
-				su.ui.search('', true, true);
-				
-				return true;
-				
-			}
-			
-			
-			navi.pushState(e.oldURL, e.newURL);
+			handleExternalState(jo, jn, oldstate, newstate);
 		}
 		
 		

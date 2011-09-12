@@ -998,7 +998,7 @@ seesu_ui.prototype = {
 				.click(function(e){
 					e.preventDefault(); 
 					_sui.showAlbum(al_artist, al_name, false, original_artist);
-					seesu.track_event('Artist navigation', 'album', artist + ": " + name);
+					seesu.track_event('Artist navigation', 'album', al_artist + ": " + al_name);
 				})
 				.appendTo(li);
 			$('<img/>').attr('src', al_image).appendTo(a_href);
