@@ -162,7 +162,7 @@ function getFakeURLParameters(str){
 	}
 	sp = sp.concat(cp, path_part.replace(/^\//,'').split('/'));
 	
-	return {params:full_url || {}, path: path_part, supported_path: query + path_part};
+	return {params:full_url || {}, path: path_part, supported_path: sp};
 	
 	
 };
