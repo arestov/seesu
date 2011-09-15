@@ -228,8 +228,20 @@ function getPuppetPlaylistOfViewState(stt){
 	}
 	return puppet_playlist;
 };
+
+var getTrackAtristAndName(first, second){
+	var ob = {};
+	if (second){
+		ob.current_artist = first;
+		ob.current_track  = second;
+	} else if (first){
+		ob.current_track = first;
+	}	
+};
+
 function getPlayViewStateFromString(n){
 	/*
+	#/catalog/The+Killers/_/Try me
 	#?q=be/tag/beautiful
 	#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Phone+Call
 	#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
@@ -252,6 +264,8 @@ function getPlayViewStateFromString(n){
 	'album' //key is album
 	*/
 	if (!n){return false}
+	var splevels = [];
+	
 	
 	var pvstate = {};
 	var path_levels = n.replace(/^\//,'').split('/');
@@ -262,93 +276,50 @@ function getPlayViewStateFromString(n){
 		if (path_levels[1] && path_levels[1] != '_'){
 			pvstate.artist_name = path_levels[1];
 		}
-		
-		
-		
 		if (path_levels[2]){
 			if (path_levels[2].indexOf('+') == 0){
 				if (path_levels[2] == '+similar'){
+					//#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
 					pvstate.subtype = 'similar';
-					if (path_levels[3]){
-						//current_artist and current_track
-						pvstate.current_artist = path_levels[3];
-					}
-					if (path_levels[4]){
-						pvstate.current_track = path_levels[4];
-					}
-					
+
+					//current_artist and current_track
+					cloneObj(pvstate, getTrackAtristAndName(path_levels[3], path_levels[4]));
 				}
-				
-				
 			} else{
 				if (path_levels[2] != '_'){
+					//#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
 					pvstate.album_name = path_levels[2];
 
 				} else if (path_levels[1] == '_'){
+					//#/catalog/KiEw/_/Doc.Div.
 					pvstate.type = '';
 				}
-				if (path_levels[4]){
-					//current_artist and current_track
-					pvstate.current_artist = path_levels[3];
-					if (path_levels[4] != '_'){
-						pvstate.current_track = path_levels[4];
-					}
-					
-				} else if (path_levels[3]){
-					//current_artist and current_track
-					if (pvstate.artist_name){
-						pvstate.current_artist = pvstate.artist_name;
-					}
-					
-					pvstate.current_track = path_levels[3];
+			
+				cloneObj(pvstate, getTrackAtristAndName(path_levels[3], path_levels[4]));
+				if (!pvstate.current_artist && pvstate.current_track){
+					pvstate.current_artist = pvstate.artist_name;
 				}
-				
 			}
 		}
 	} else if (pvstate.type == 'tag'){
+		//#/tag/experimental/The+Mars+Volta/Tetragrammaton
 		if (path_levels[1]){
 			pvstate.tag_name = path_levels[1];
-			
-			//current_artist and current_track
-			if (path_levels[2]){
-				pvstate.current_artist = path_levels[2];
-			}
-			if (path_levels[3]){
-				pvstate.current_track = path_levels[3];
-			}
+			cloneObj(pvstate, getTrackAtristAndName(path_levels[2], path_levels[3]));
 		} else{
 			pvstate.type="";
 		}
 		
 	} else if (pvstate.type == 'recommendations'){
-		
-		//current_artist and current_track
-		if (path_levels[1]){
-			pvstate.current_artist = path_levels[1];
-		}
-		if (path_levels[2]){
-			pvstate.current_track = path_levels[2];
-		}
+		//#/recommendations/Austra/Beat+And+The+Pulse+-+Extended+Version
+		cloneObj(pvstate, getTrackAtristAndName(path_levels[1], path_levels[2]));
 	} else if (pvstate.type == 'loved'){
-		//current_artist and current_track
-		if (path_levels[1]){
-			pvstate.current_artist = path_levels[1];
-		}
-		if (path_levels[2]){
-			pvstate.current_track = path_levels[2];
-		}
+		cloneObj(pvstate, getTrackAtristAndName(path_levels[1], path_levels[2]));
 	} else if (pvstate.type == 'playlist'){
 		
 		if (path_levels[1]){
 			pvstate.current_playlist = path_levels[1];
-			
-			//current_artist and current_track
-			if (path_levels[2]){
-				pvstate.current_artist = path_levels[2];
-			}
-			if (path_levels[3]){
-				pvstate.current_track = path_levels[3];
-			}
+			cloneObj(pvstate, getTrackAtristAndName(path_levels[2], path_levels[3]));
 		} else{
 			pvstate.type="";
 		}
@@ -360,12 +331,7 @@ function getPlayViewStateFromString(n){
 		if (path_levels[2]){
 			pvstate.search_id = path_levels[2];
 		}
-		if (path_levels[3]){
-			pvstate.current_artist = path_levels[3];
-		}
-		if (path_levels[4]){
-			pvstate.current_track = path_levels[4];
-		}
+		cloneObj(pvstate, getTrackAtristAndName(path_levels[3], path_levels[4]));
 	}
 	pvstate.plp = getPuppetPlaylistOfViewState(pvstate);
 	return pvstate;
@@ -392,7 +358,7 @@ var handleHistoryState =function(jo, jn, oldstate, newstate, state_from_history)
 			}
 			
 			var mo = state_from_history.data.mo;
-			if ((mo! || !pl.showExactlyTrack(mo, true)) && tk){
+			if ((!mo || !pl.showExactlyTrack(mo, true)) && tk){
 				pl.showTrack(tk, true)	
 			} else{
 				console.log("will not search track")
@@ -407,7 +373,7 @@ var handleHistoryState =function(jo, jn, oldstate, newstate, state_from_history)
 				var mo = state_from_history.data.mo;
 				
 				// если нужно - показываем трек
-				if ((mo! || !pl.showExactlyTrack(mo, true)) && tk){
+				if ((!mo || !pl.showExactlyTrack(mo, true)) && tk){
 					pl.showTrack(tk, true)	
 				} else{
 					console.log("will not search track")
