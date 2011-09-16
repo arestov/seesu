@@ -181,7 +181,7 @@ function getUrlOfPlaylist(pl, end){
 	} else if (pl.playlist_type == 'similar artists'){
 		url += '/catalog/' + pl.key + '/+similar' + e;
 	} else if (pl.playlist_type == 'artists by tag'){
-		url += '/tag/' + pl.key + e;
+		url += '/tags/' + pl.key + e;
 	} else if (pl.playlist_type == 'tracks'){
 		url += '/ds';
 	} else if (pl.playlist_type == 'artists by recommendations'){
@@ -213,7 +213,7 @@ function getPuppetPlaylistOfViewState(stt){
 		} else if (stt.subtype =='tracks'){
 			puppet_playlist.playlist_type = 'tracks';
 		}
-	} else if (stt.type == 'tag'){
+	} else if (stt.type == 'tags'){
 		puppet_playlist.key = stt.tag_name;
 		puppet_playlist.playlist_type = 'artists by tag';
 	} else if (stt.type == 'recommendations'){
@@ -229,20 +229,45 @@ function getPuppetPlaylistOfViewState(stt){
 	return puppet_playlist;
 };
 
-var getTrackAtristAndName(first, second){
+var getTrackAtristAndName = function(first, second) {
 	var ob = {};
-	if (second){
+	if (second && second.indexOf('+') != 0){
 		ob.current_artist = first;
 		ob.current_track  = second;
 	} else if (first){
 		ob.current_track = first;
 	}	
 };
+var checkPlstateArtistAndTrack = function(pvstate, splevels, first, second){
+	cloneObj(pvstate, getTrackAtristAndName(first, second));
+	splevels.addTrackPart(pvstate.current_artist, pvstate.current_track);
+};
+
+
+var statesSkeleton = function(){};
+statesSkeleton.prototype = [];
+cloneObj(cloneObj.prototype, {
+	push: function(type){
+		var path_parts = Array.prototype.slice.call(arguments, 1);
+		this.oldpush({
+			type: type,
+			p: [''].concat(path_parts).join('/')
+		});
+	},
+	addTrackPart: function(first, second){
+		if (second){
+			this.push('track', first, second);
+		} else if (first){
+			this.push('track', first);
+		}
+	},
+	oldpush: statesSkeleton.prototype.push
+});
 
 function getPlayViewStateFromString(n){
 	/*
 	#/catalog/The+Killers/_/Try me
-	#?q=be/tag/beautiful
+	#?q=be/tags/beautiful
 	#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Phone+Call
 	#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
 	#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
@@ -264,7 +289,7 @@ function getPlayViewStateFromString(n){
 	'album' //key is album
 	*/
 	if (!n){return false}
-	var splevels = [];
+	var splevels = new statesSkeleton();
 	
 	
 	var pvstate = {};
@@ -277,14 +302,16 @@ function getPlayViewStateFromString(n){
 			pvstate.artist_name = path_levels[1];
 		}
 		if (path_levels[2]){
-			if (path_levels[2].indexOf('+') == 0){
-				if (path_levels[2] == '+similar'){
-					//#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
-					pvstate.subtype = 'similar';
-
-					//current_artist and current_track
-					cloneObj(pvstate, getTrackAtristAndName(path_levels[3], path_levels[4]));
-				}
+			if (path_levels[2].indexOf('+') == 0 && path_levels[2] == '+similar'){
+				splevels.push('pl', path_levels[0], path_levels[1], path_levels[2]);
+				
+				//#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
+				pvstate.subtype = 'similar';
+				
+				//current_artist and current_track
+				
+				checkPlstateArtistAndTrack(pvstate, splevels, path_levels[3], path_levels[4]);
+				
 			} else{
 				if (path_levels[2] != '_'){
 					//#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
@@ -295,31 +322,32 @@ function getPlayViewStateFromString(n){
 					pvstate.type = '';
 				}
 			
-				cloneObj(pvstate, getTrackAtristAndName(path_levels[3], path_levels[4]));
+				checkPlstateArtistAndTrack(pvstate, splevels, path_levels[3], path_levels[4]);
+				
 				if (!pvstate.current_artist && pvstate.current_track){
 					pvstate.current_artist = pvstate.artist_name;
 				}
 			}
 		}
-	} else if (pvstate.type == 'tag'){
+	} else if (pvstate.type == 'tags'){
 		//#/tag/experimental/The+Mars+Volta/Tetragrammaton
 		if (path_levels[1]){
 			pvstate.tag_name = path_levels[1];
-			cloneObj(pvstate, getTrackAtristAndName(path_levels[2], path_levels[3]));
+			checkPlstateArtistAndTrack(pvstate, splevels, path_levels[2], path_levels[3]);
 		} else{
 			pvstate.type="";
 		}
 		
 	} else if (pvstate.type == 'recommendations'){
 		//#/recommendations/Austra/Beat+And+The+Pulse+-+Extended+Version
-		cloneObj(pvstate, getTrackAtristAndName(path_levels[1], path_levels[2]));
+		checkPlstateArtistAndTrack(pvstate, splevels, path_levels[1], path_levels[2]);
 	} else if (pvstate.type == 'loved'){
-		cloneObj(pvstate, getTrackAtristAndName(path_levels[1], path_levels[2]));
+		checkPlstateArtistAndTrack(pvstate, splevels, path_levels[1], path_levels[2]);
 	} else if (pvstate.type == 'playlist'){
 		
 		if (path_levels[1]){
 			pvstate.current_playlist = path_levels[1];
-			cloneObj(pvstate, getTrackAtristAndName(path_levels[2], path_levels[3]));
+			checkPlstateArtistAndTrack(pvstate, splevels, path_levels[2], path_levels[3]);
 		} else{
 			pvstate.type="";
 		}
@@ -331,9 +359,11 @@ function getPlayViewStateFromString(n){
 		if (path_levels[2]){
 			pvstate.search_id = path_levels[2];
 		}
-		cloneObj(pvstate, getTrackAtristAndName(path_levels[3], path_levels[4]));
+		checkPlstateArtistAndTrack(pvstate, splevels, path_levels[3], path_levels[4]);
 	}
 	pvstate.plp = getPuppetPlaylistOfViewState(pvstate);
+	
+	console.log(splevels);
 	return pvstate;
 }
 var handleHistoryState =function(jo, jn, oldstate, newstate, state_from_history){
