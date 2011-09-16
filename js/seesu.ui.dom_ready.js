@@ -772,7 +772,7 @@ window.connect_dom_to_som = function(d, sui){
 				}
 				if (filtered.not.length){
 					createPeopleList(filtered.not, {wide: true, accept_button: true}).appendTo(ri_place);
-					$('<p class="desc people-list-desc"></p>').text(localize('if-you-accept-one-i') + ' ' + localize('will-get-link')).appendTo(rl_place);
+					$('<p class="desc people-list-desc"></p>').text(localize('if-you-accept-one-i') + ' ' + localize('will-get-link')).appendTo(ri_place);
 				}
 			}
 			
