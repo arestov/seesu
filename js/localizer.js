@@ -47,8 +47,8 @@ localizer = {
 		"ru": "Ты хочешь познакомиться с этим пользователем"
 	},
 	"if-you-accept-one-i":{
-		"original": "Если ты примешь приглашение от одного из пользователей, то",
-		"ru": "If you accept invite from one of the users, then"
+		"original": "If you accept invite from one of the users, then",
+		"ru": "Если ты примешь приглашение от одного из пользователей, то"
 	},
 	"if-user-accept-i":{
 		"original": "If user accepts your invite, then",
