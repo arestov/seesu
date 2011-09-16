@@ -236,17 +236,18 @@ var getTrackAtristAndName = function(first, second) {
 		ob.current_track  = second;
 	} else if (first){
 		ob.current_track = first;
-	}	
+	}
+	return ob;
 };
 var checkPlstateArtistAndTrack = function(pvstate, splevels, first, second){
 	cloneObj(pvstate, getTrackAtristAndName(first, second));
-	splevels.addTrackPart(pvstate.current_artist, pvstate.current_track);
+	splevels.addTrackPart(pvstate.current_track, pvstate.current_artist);
 };
 
 
 var statesSkeleton = function(){};
 statesSkeleton.prototype = [];
-cloneObj(cloneObj.prototype, {
+cloneObj(statesSkeleton.prototype, {
 	push: function(type){
 		var path_parts = Array.prototype.slice.call(arguments, 1);
 		this.oldpush({
@@ -254,11 +255,11 @@ cloneObj(cloneObj.prototype, {
 			p: [''].concat(path_parts).join('/')
 		});
 	},
-	addTrackPart: function(first, second){
-		if (second){
-			this.push('track', first, second);
-		} else if (first){
-			this.push('track', first);
+	addTrackPart: function(track, artist){
+		if (artist){
+			this.push('track', artist, track);
+		} else if (track){
+			this.push('track', track);
 		}
 	},
 	oldpush: statesSkeleton.prototype.push
@@ -315,11 +316,12 @@ function getPlayViewStateFromString(n){
 			} else{
 				if (path_levels[2] != '_'){
 					//#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
+					splevels.push('pl', path_levels[0], path_levels[1], path_levels[2]);
 					pvstate.album_name = path_levels[2];
 
-				} else if (path_levels[1] == '_'){
+				} else if (path_levels[2] == '_'){
+					splevels.push('pl', path_levels[0], path_levels[1]);
 					//#/catalog/KiEw/_/Doc.Div.
-					pvstate.type = '';
 				}
 			
 				checkPlstateArtistAndTrack(pvstate, splevels, path_levels[3], path_levels[4]);
@@ -332,6 +334,7 @@ function getPlayViewStateFromString(n){
 	} else if (pvstate.type == 'tags'){
 		//#/tag/experimental/The+Mars+Volta/Tetragrammaton
 		if (path_levels[1]){
+			splevels.push('pl', path_levels[0], path_levels[1]);
 			pvstate.tag_name = path_levels[1];
 			checkPlstateArtistAndTrack(pvstate, splevels, path_levels[2], path_levels[3]);
 		} else{
@@ -339,12 +342,14 @@ function getPlayViewStateFromString(n){
 		}
 		
 	} else if (pvstate.type == 'recommendations'){
+		splevels.push('pl', path_levels[0]);
 		//#/recommendations/Austra/Beat+And+The+Pulse+-+Extended+Version
 		checkPlstateArtistAndTrack(pvstate, splevels, path_levels[1], path_levels[2]);
 	} else if (pvstate.type == 'loved'){
+		splevels.push('pl', path_levels[0]);
 		checkPlstateArtistAndTrack(pvstate, splevels, path_levels[1], path_levels[2]);
 	} else if (pvstate.type == 'playlist'){
-		
+		splevels.push('pl', path_levels[0], path_levels[1]);
 		if (path_levels[1]){
 			pvstate.current_playlist = path_levels[1];
 			checkPlstateArtistAndTrack(pvstate, splevels, path_levels[2], path_levels[3]);
@@ -353,6 +358,7 @@ function getPlayViewStateFromString(n){
 		}
 		
 	} else if (pvstate.type == 'ds'){
+		splevels.push('pl', path_levels[0]);
 		if (path_levels[1]){
 			pvstate.search_type = path_levels[1];
 		}
@@ -366,7 +372,7 @@ function getPlayViewStateFromString(n){
 	console.log(splevels);
 	return pvstate;
 }
-var handleHistoryState =function(jo, jn, oldstate, newstate, state_from_history){
+var handleHistoryState =function(e, jo, jn, oldstate, newstate, state_from_history){
 	if (newstate.current_artist || newstate.current_track){
 		var tk =  {
 			artist: newstate.current_artist,
@@ -443,7 +449,7 @@ var handleHistoryState =function(jo, jn, oldstate, newstate, state_from_history)
 		}
 	}
 };
-var handleExternalState = function(jo, jn, oldstate, newstate){
+var handleExternalState = function(e, jo, jn, oldstate, newstate){
 	if (newstate){
 		if (newstate.current_artist || newstate.current_track){
 			var tk =  {
@@ -544,9 +550,9 @@ function hashchangeHandler(e, force){
 		var state_from_history = navi.isNewStateAreOld(e);
 		
 		if (state_from_history){
-			handleHistoryState(jo, jn, oldstate, newstate, state_from_history);
+			handleHistoryState(e, jo, jn, oldstate, newstate, state_from_history);
 		} else{
-			handleExternalState(jo, jn, oldstate, newstate);
+			handleExternalState(e, jo, jn, oldstate, newstate);
 		}
 		
 		
