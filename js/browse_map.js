@@ -46,7 +46,7 @@ mapLevel.prototype = {
 		this.nav.render(this.getNavData());
 		this.nav.setClickCb(function(active){
 			if (active){
-				_this.map.goShallow(_this);
+				_this.sliceTillMe();
 			}	
 		});
 		if (this.title){
@@ -78,6 +78,9 @@ mapLevel.prototype = {
 	},
 	setURL: function(url){
 		this.url = url || '';
+	},
+	matchURL: function(url){
+		return this.url && this.url == url;
 	},
 	testByURL: function(url){
 		if (this.url == url){
@@ -126,18 +129,29 @@ mapLevel.prototype = {
 		}
 		delete this.map;
 	},
-	sliceDeeper: function(){
-		this.map.sliceToLevel(this.num, true)
+	sliceTillMe: function(transit){
+		this.map.sliceToLevel(this.num, true, transit);
 	},
 	freeze: function(){
 		this.map.freezeMapOfLevel(this.num);
+	},
+	canUse: function(){
+		return !!this.map;	
 	},
 	isOpened: function(){
 		return !!this.map && !this.closed;
 	}
 	
 };
+/*
+getCurrentSearchResultsContainer
+show_search_results_page
 
+testByURL
+findURL
+findLevelOfPlaylist
+findLevelOfSearchQuery
+*/
 function browseMap(mainLevelResident, getNavData){
 	
 	this.levels = [];
@@ -146,7 +160,7 @@ function browseMap(mainLevelResident, getNavData){
 	
 	//zoom levels
 	
-	// -1, not using, start page
+	// -1, start page
 	//0 - search results
 	//1 - playlist page
 	//today seesu has no deeper level
@@ -160,6 +174,27 @@ browseMap.prototype= {
 			fr: this.levels[level_num] && this.levels[level_num].free != this.levels[level_num].freezed &&  this.levels[level_num].free,
 			fz: this.levels[level_num] && this.levels[level_num].freezed 
 		};
+	},
+	matchSketelon: function(skel){
+		var dizmiss = {
+			fr: false,
+			fz: false
+		};
+		for (var i=0; i < skel.length; i++) {
+			var bilev = this.getBothPartOfLevel(i);
+			
+			if (!dizmiss.fr && bilev.fr && bilev.fr.matchURL(skel[i].p)){
+				skel[i].s.fr = bilev.fr;
+			} else{
+				dizmiss.fr = true;
+			}
+			
+			if (!dizmiss.fz && bilev.fz && bilev.fz.matchURL(skel[i].p)){
+				skel[i].s.fz = bilev.fz;
+			} else{
+				dizmiss.fz = true;
+			}
+		};	
 	},
 	findURL: function(level, url, only_freezed, only_free){
 		var both = this.getBothPartOfLevel(level);

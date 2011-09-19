@@ -252,7 +252,8 @@ cloneObj(statesSkeleton.prototype, {
 		var path_parts = Array.prototype.slice.call(arguments, 1);
 		this.oldpush({
 			type: type,
-			p: [''].concat(path_parts).join('/')
+			p: [''].concat(path_parts).join('/'),
+			s: {}
 		});
 	},
 	addTrackPart: function(track, artist){

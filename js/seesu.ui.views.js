@@ -362,30 +362,21 @@ views.prototype = {
 		
 	},
 	show_playlist_page: function(pl, save_parents, no_navi){
-		if (pl.lev){
+		if (pl.lev && pl.lev.canUse()){
 			var lev = pl.lev;
 		} else{
 			var lev = (pl.lev = this.getPlaylistContainer(save_parents));
-			lev.setTitle(pl.playlist_title);
+			
+				lev.setTitle(pl.playlist_title);
 		}
 		pl.lev = lev;
 		lev.D('pl', pl);
 		return 
-		if (pl && !pl.ui){
-			if (pl.lev){
-				var lev = pl.lev;
-			} else{
-				var lev = (pl.lev = this.getPlaylistContainer(save_parents));
-				lev.nav.text(pl.playlist_title);
-			}
-			
-			
-			
-			
-			lev.setURL(getUrlOfPlaylist(pl));
-			if (!no_navi){
-				navi.set(lev.getFullURL(),{pl:pl});
-			}
+		
+		
+		lev.setURL(getUrlOfPlaylist(pl));
+		if (!no_navi){
+			navi.set(lev.getFullURL(),{pl:pl});
 		}
 
 	},
@@ -393,7 +384,7 @@ views.prototype = {
 		var _this = this;
 		
 		var pl = mo.plst_titl;
-		pl.lev.sliceDeeper();
+		pl.lev.sliceTillMe(true);
 		var lev = this.m.goDeeper(true, trackLevelResident);
 			lev.setTitle(title);
 			
