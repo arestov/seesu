@@ -152,17 +152,19 @@ function getFakeURLParameters(str){
 	} else{
 		var search_part = str;
 	}
-	if (search_part){
-		var full_url = get_url_parameters(search_part);
-	}
+	var params = (search_part && get_url_parameters(search_part)) || {};
+	
 	var sp = [];
 	var query = params.q ? '?q=' + params.q : '';
 	if (query) {
 		sp.push(query)
 	}
-	sp = sp.concat(cp, path_part.replace(/^\//,'').split('/'));
+	if (path_part){
+		sp = sp.concat(sp, path_part.replace(/^\//,'').split('/'));
+	}
 	
-	return {params:full_url || {}, path: path_part, supported_path: sp};
+	
+	return {params:params || {}, path: path_part || '', supported_path: sp};
 	
 	
 };
