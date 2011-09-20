@@ -1206,7 +1206,7 @@ seesu_ui.prototype = {
 	},
 	search: function(query, no_navi, new_browse){
 		if (new_browse){
-			this.views.newBrowse();
+			this.views.showStartPage();
 		}
 		this.els.search_input.val(query);
 		input_change(this.els.search_input[0], no_navi);

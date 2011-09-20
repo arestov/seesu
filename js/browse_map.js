@@ -49,8 +49,7 @@ mapLevel.prototype = {
 		this.nav.render(this.getNavData());
 		this.nav.setClickCb(function(active){
 			if (active){
-				_this.sliceTillMe();
-				_this.historyStep();
+				_this._sliceTM(true);
 			}	
 		});
 		if (this.title){
@@ -137,8 +136,11 @@ mapLevel.prototype = {
 		}
 		delete this.map;
 	},
+	_sliceTM: function(make_history_step, transit){ //private alike
+		this.map.sliceToLevel(this.num, true, transit, make_history_step);	
+	},
 	sliceTillMe: function(transit){
-		this.map.sliceToLevel(this.num, true, transit);
+		this._sliceTM(false, transit);
 	},
 	freeze: function(){
 		this.map.freezeMapOfLevel(this.num);
@@ -364,7 +366,7 @@ browseMap.prototype= {
 		}
 		
 	},
-	sliceToLevel: function(num, fullhouse, transit){
+	sliceToLevel: function(num, fullhouse, transit, make_history_step){
 		if (num < this.levels.length){
 			for (var i = this.levels.length-1; i > num; i--){
 				this.hideLevel(i);
@@ -373,7 +375,13 @@ browseMap.prototype= {
 		num = this.getLevel(num);
 		if (num){
 			this.setLevelPartActive(num, {userwant: fullhouse, transit: transit});
+			if (make_history_step){
+				num.historyStep();
+			}
 		}
+	},
+	startNewBrowse: function(make_history_step){
+		this.sliceToLevel(-1, true, false, make_history_step);
 	}
 	
 }

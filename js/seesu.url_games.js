@@ -547,14 +547,18 @@ function hashchangeHandler(e, force){
 		var oldstate = getPlayViewStateFromString(jo.path);
 		var newstate = getPlayViewStateFromString(jn.path);
 		
-		
-		var state_from_history = navi.isNewStateAreOld(e);
-		
-		if (state_from_history){
-			handleHistoryState(e, jo, jn, oldstate, newstate, state_from_history);
+		if (!jn.supported_path.length){
+			su.ui.views.showStartPage()
 		} else{
-			handleExternalState(e, jo, jn, oldstate, newstate);
+			var state_from_history = navi.isNewStateAreOld(e);
+		
+			if (state_from_history){
+				handleHistoryState(e, jo, jn, oldstate, newstate, state_from_history);
+			} else{
+				handleExternalState(e, jo, jn, oldstate, newstate);
+			}
 		}
+		
 		
 		
 		

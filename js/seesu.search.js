@@ -1025,7 +1025,7 @@ input_change = function(e, no_navi){
 
 	var input_value = input.value;
 	if (!input_value) {
-		su.ui.views.newBrowse();
+		su.ui.views.showStartPage();
 		return;
 	}
 	

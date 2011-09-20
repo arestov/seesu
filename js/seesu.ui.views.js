@@ -341,6 +341,10 @@ views.prototype = {
 		this.state = 'start';
 	
 	},
+	showStartPage: function(no_navi){
+		//mainaly for hash url games
+		this.m.startNewBrowse(!no_navi);
+	},
 	showResultsPage: function(query, no_navi){
 		if (!su.ui.search_el || !su.ui.search_el.isOpened()){
 			su.ui.search_el = this.m.goDeeper(false, sRLevelResident);
@@ -350,10 +354,6 @@ views.prototype = {
 			search_view.D('q', query);
 			search_view.setURL('?q=' + query, !no_navi, {q: query});
 		}
-	},
-	newBrowse: function(){
-		//mainaly for hash url games
-		this.m.sliceToLevel(-1);
 	},
 	show_search_results_page: function(without_input, no_navi){
 		
