@@ -594,7 +594,7 @@ var get_artists_by_tag = function(tag,callback,error_c){
 };
 function findAlbum(album_name, artist_name, no_navi, start_song){
 	var pl_r = prepare_playlist((artist_name ? '(' + artist_name + ') ' : '') + album_name ,'album', {original_artist: artist_name, album: album_name}, false, start_song);
-	seesu.ui.views.show_playlist_page(pl_r ,false, no_navi || !!start_song );
+	seesu.ui.views.show_playlist_page(pl_r, false, no_navi || !!start_song );
 	lfm('Album.search', {album: album_name}, function(r) {
 		if (!r || r.error){
 			create_playlist(false, pl_r);

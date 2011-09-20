@@ -435,7 +435,7 @@ var handleHistoryState =function(e, jo, jn, oldstate, newstate, state_from_histo
 				su.ui.search(jn.params.q, true, true);
 				return true;
 			} else{
-				su.ui.views.show_search_results_page(false, true);
+				//su.ui.views.show_search_results_page(false, true);
 				console.log('have somethinf');
 			}
 		} else{

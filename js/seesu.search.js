@@ -1029,19 +1029,7 @@ input_change = function(e, no_navi){
 		return;
 	}
 	
-	if (!su.ui.search_el || !su.ui.search_el.isOpened()){
-		su.ui.search_el = su.ui.views.getSearchResultsContainer();
-	}
-	
-	var search_view = su.ui.search_el;
-
-	//su.ui.search_input_value = input_value;
-	if (search_view.D('q') == input_value){
-		return false
-	} else{
-		search_view.D('q', input_value);
-		search_view.setURL('?q=' + input_value);
-	}
+	su.ui.views.showResultsPage(input_value, no_navi);
 };
 
 

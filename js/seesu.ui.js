@@ -184,15 +184,15 @@ seesu_ui.prototype = {
 		
 		
 	},
-	show_artist: function (artist,with_search_results, no_navi, start_song) {
-		var pl = prepare_playlist(artist, 'artist', artist, with_search_results, start_song);
+	show_artist: function (artist, query, no_navi, start_song) {
+		var pl = prepare_playlist(artist, 'artist', artist, query, start_song);
 		var plist = su.ui.views.findViewOfURL(getUrlOfPlaylist(pl));
 		if (plist){
 			if (plist.freezed){
 				su.ui.views.restoreFreezed(no_navi);
 			}
 		} else{
-			this.views.show_playlist_page(pl, !!with_search_results, no_navi || !!start_song);
+			this.views.show_playlist_page(pl, !!query, no_navi || !!start_song);
 			if (start_song){
 				pl.showTrack(start_song, no_navi);
 			}
@@ -1216,7 +1216,6 @@ seesu_ui.prototype = {
 		if (!_ui.link && su.gena.playlists.length > 0 && _ui.els.start_screen){
 			$('<p></p>').attr('id', 'cus-playlist-b').append(
 				_ui.link = $('<a></a>').text(localize('playlists')).attr('class', 'js-serv').click(function(e){
-					_ui.search('');
 					_ui.search(':playlists');
 					e.preventDefault();
 				}) 

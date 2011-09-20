@@ -282,7 +282,11 @@ cloneObj(trackLevelResident.prototype, {
 	}
 });
 
+//getCurrentSearchResultsContainer
+//	getSearchResultsContainer: function(){
 
+//this.getPlaylistContainer(save_parents)
+//getCurrentPlaylistContainer
 views = function(sui){
 	this.sui = sui;
 	var _this = this;
@@ -298,18 +302,6 @@ views.prototype = {
 			obj.daddy.empty().removeClass('not-inited');
 		}
 		this.m.makeMainLevel();
-	},
-	getCurrentSearchResultsContainer: function(){
-		return this.m.getLevel(0);
-	},
-	getSearchResultsContainer: function(){
-		return this.m.goDeeper(false, sRLevelResident);
-	},
-	getPlaylistContainer: function(save_parents){
-		return this.m.goDeeper(save_parents, playlistLevelResident);
-	},
-	getCurrentPlaylistContainer: function(){
-		return this.m.getLevel(1);
 	},
 	sUI: function(){
 		return su && su.ui || this.sui;	
@@ -336,28 +328,40 @@ views.prototype = {
 		su.player.view_song(su.player.c_song, true);
 		seesu.track_event('Navigation', 'now playing', current_page);
 	},
+	
 	show_start_page: function(focus_to_input, log_navigation, init, no_navi){
+		//DEP
 		var _this = this;
 		if (init){
 			
 		} else if (!no_navi){
-			navi.set('');
+		//	navi.set('');
 		}
 	
 		this.state = 'start';
 	
+	},
+	showResultsPage: function(query, no_navi){
+		if (!su.ui.search_el || !su.ui.search_el.isOpened()){
+			su.ui.search_el = this.m.goDeeper(false, sRLevelResident);
+		}
+		var search_view = su.ui.search_el;
+		if (search_view.D('q') != query){
+			search_view.D('q', query);
+			search_view.setURL('?q=' + query, !no_navi, {q: query});
+		}
 	},
 	newBrowse: function(){
 		//mainaly for hash url games
 		this.m.sliceToLevel(-1);
 	},
 	show_search_results_page: function(without_input, no_navi){
+		
+		//DEP!
 		var _this = this;
 
 		this.state = 'search_results';
-		if (!no_navi){
-			navi.set(this.getCurrentSearchResultsContainer().getFullURL());
-		}
+		
 
 		
 	},
@@ -365,19 +369,19 @@ views.prototype = {
 		if (pl.lev && pl.lev.canUse()){
 			var lev = pl.lev;
 		} else{
-			var lev = (pl.lev = this.getPlaylistContainer(save_parents));
+			var lev = (pl.lev = this.m.goDeeper(save_parents, playlistLevelResident));
 			
 				lev.setTitle(pl.playlist_title);
 		}
 		pl.lev = lev;
 		lev.D('pl', pl);
+		
+		lev.setURL(getUrlOfPlaylist(pl), !no_navi, {pl: pl});
+
 		return 
 		
 		
-		lev.setURL(getUrlOfPlaylist(pl));
-		if (!no_navi){
-			navi.set(lev.getFullURL(),{pl:pl});
-		}
+		
 
 	},
 	show_track_page: function(title, zoom, mo, no_navi){
@@ -387,11 +391,7 @@ views.prototype = {
 		pl.lev.sliceTillMe(true);
 		var lev = this.m.goDeeper(true, trackLevelResident);
 			lev.setTitle(title);
-			
-		if (!no_navi){
-			navi.set(pl.lev.getFullURL() + mo.getURLPart(), {pl:pl, mo: mo});
-		}
-		
+			lev.setURL(mo.getURLPart(), !no_navi, {mo: mo});
 	}
 };
 })();

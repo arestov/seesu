@@ -26,6 +26,9 @@ mapLevel.prototype = {
 			return value;
 		}
 	},
+	historyStep: function(){
+		navi.set(this.getFullURL(), this.history_data);
+	},
 	setTitle: function(text){
 		if (this.getNav()){
 			this.getNav().text(text);
@@ -47,6 +50,7 @@ mapLevel.prototype = {
 		this.nav.setClickCb(function(active){
 			if (active){
 				_this.sliceTillMe();
+				_this.historyStep();
 			}	
 		});
 		if (this.title){
@@ -76,8 +80,12 @@ mapLevel.prototype = {
 	getURL: function(){
 		return this.url || '';
 	},
-	setURL: function(url){
+	setURL: function(url, make_history_step, data){
 		this.url = url || '';
+		this.history_data = data;
+		if (make_history_step){
+			this.historyStep();
+		}
 	},
 	matchURL: function(url){
 		return this.url && this.url == url;
@@ -101,7 +109,7 @@ mapLevel.prototype = {
 	},
 	getFullURL: function(){
 		var u='';
-		for (var i=0; i < this.parent_levels.length; i++) {
+		for (var i = this.parent_levels.length - 1; i >= 0; i--){
 			u += this.parent_levels[i].getURL();
 		};
 		return u + this.getURL();
