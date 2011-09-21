@@ -153,15 +153,8 @@ mapLevel.prototype = {
 	}
 	
 };
-/*
-getCurrentSearchResultsContainer
-show_search_results_page
 
-testByURL
-findURL
-findLevelOfPlaylist
-findLevelOfSearchQuery
-*/
+
 function browseMap(mainLevelResident, getNavData){
 	
 	this.levels = [];
@@ -191,32 +184,23 @@ browseMap.prototype= {
 			fz: false
 		};
 		for (var i=0; i < skel.length; i++) {
-			var bilev = this.getBothPartOfLevel(i);
-			
-			if (!dizmiss.fr && bilev.fr && bilev.fr.matchURL(skel[i].p)){
-				skel[i].s.fr = bilev.fr;
-			} else{
-				dizmiss.fr = true;
+			if (skel[i].p){
+				var bilev = this.getBothPartOfLevel(i);
+				if (!dizmiss.fr && bilev.fr && bilev.fr.matchURL(skel[i].p)){
+					skel[i].s.fr = bilev.fr;
+				} else{
+					dizmiss.fr = true;
+				}
+				
+				if (!dizmiss.fz && bilev.fz && bilev.fz.matchURL(skel[i].p)){
+					skel[i].s.fz = bilev.fz;
+				} else{
+					dizmiss.fz = true;
+				}
 			}
-			
-			if (!dizmiss.fz && bilev.fz && bilev.fz.matchURL(skel[i].p)){
-				skel[i].s.fz = bilev.fz;
-			} else{
-				dizmiss.fz = true;
-			}
+				
 		};	
-	},
-	findURL: function(level, url, only_freezed, only_free){
-		var both = this.getBothPartOfLevel(level);
-		return (!only_freezed && !!both.fr && both.fr.testByURL(url)) || (!only_free && !!both.fz && both.fz.testByURL(url));
-	},
-	findLevelOfPlaylist: function(level, puppet, only_freezed){
-		var both = this.getBothPartOfLevel(level);
-		return (!only_freezed && !!both.fr && both.fr.testByPlaylistPuppet(puppet)) || (!!both.fz && both.fz.testByPlaylistPuppet(puppet));
-	},
-	findLevelOfSearchQuery: function(level, query){
-		var both = this.getBothPartOfLevel(level);
-		return (!!both.fr && both.fr.testByQuery(query)) || (!!both.fz && both.fz.testByQuery(query));
+		return skel;
 	},
 	getLevel: function(num){
 		if (this.levels[num]){

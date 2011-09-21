@@ -103,14 +103,8 @@ var playlistSuggest = function(pl){
 			return this.pl.playlist_title;
 		},
 		click: function(){
-			var plist = su.ui.views.findViewOfURL(getUrlOfPlaylist(this.pl));
-				if (plist){
-					if (plist.freezed){
-						su.ui.views.restoreFreezed();
-					}
-				} else{
-					su.ui.views.show_playlist_page(this.pl, true);
-				}
+			su.ui.views.show_playlist_page(this.pl, true);
+				
 		},
 		createItem: function(q){
 			var _this = this;

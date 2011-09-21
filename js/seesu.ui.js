@@ -185,23 +185,20 @@ seesu_ui.prototype = {
 		
 	},
 	show_artist: function (artist, query, no_navi, start_song) {
-		var pl = prepare_playlist(artist, 'artist', artist, query, start_song);
-		var plist = su.ui.views.findViewOfURL(getUrlOfPlaylist(pl));
-		if (plist){
-			if (plist.freezed){
-				su.ui.views.restoreFreezed(no_navi);
-			}
-		} else{
-			this.views.show_playlist_page(pl, !!query, no_navi || !!start_song);
-			if (start_song){
-				pl.showTrack(start_song, no_navi);
-			}
-			getTopTracks(artist,function(track_list){
-				create_playlist(track_list, pl);
-			});
-			lfm('artist.getInfo',{'artist': artist });
-		}
 		
+		
+		var pl = prepare_playlist(artist, 'artist', artist, query, start_song);
+
+		this.views.show_playlist_page(pl, !!query, no_navi || !!start_song);
+		if (start_song){
+			pl.showTrack(start_song, no_navi);
+		}
+		getTopTracks(artist,function(track_list){
+			create_playlist(track_list, pl);
+		});
+		lfm('artist.getInfo',{'artist': artist });
+	
+	
 	
 		
 	},

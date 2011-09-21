@@ -306,18 +306,6 @@ views.prototype = {
 	sUI: function(){
 		return su && su.ui || this.sui;	
 	},
-	findViewOfURL: function(url, only_freezed, only_free){
-		return this.m.findURL(1, url, only_freezed, only_free);
-	},
-	findSeachResultsOfURL: function(url, only_freezed, only_free){
-		return this.m.findURL(0, url, only_freezed, only_free);
-	},
-	findViewOfSearchQuery: function(query){
-		return this.m.findLevelOfSearchQuery(0, query);
-	},
-	findViewOfPlaylist: function(puppet, only_playing){
-		return this.m.findLevelOfPlaylist(1, puppet, only_playing);
-	},
 	restoreFreezed: function(no_navi){
 		this.m.restoreFreezed();
 	},
@@ -368,15 +356,15 @@ views.prototype = {
 	show_playlist_page: function(pl, save_parents, no_navi){
 		if (pl.lev && pl.lev.canUse()){
 			var lev = pl.lev;
+				lev.sliceTillMe();
 		} else{
 			var lev = (pl.lev = this.m.goDeeper(save_parents, playlistLevelResident));
-			
 				lev.setTitle(pl.playlist_title);
 		}
 		pl.lev = lev;
 		lev.D('pl', pl);
 		
-		lev.setURL(getUrlOfPlaylist(pl), !no_navi, {pl: pl});
+		lev.setURL(pl.getUrl(), !no_navi, {pl: pl});
 
 		return 
 		

@@ -353,6 +353,27 @@ var empty_song_click = function(){
 	songsList.prototype = new Array();
 	var songs_list_methods = {
 		oldpush: songsList.prototype.push,
+		getUrl: function(){
+			var url ='';
+			if (this.playlist_type == 'artist'){
+				url += '/catalog/' + this.key;
+			} else if (this.playlist_type == 'album'){
+				url += '/catalog/' + (this.key.original_artist ? this.key.original_artist + '/' : '_/') + this.key.album;
+			} else if (this.playlist_type == 'similar artists'){
+				url += '/catalog/' + this.key + '/+similar';
+			} else if (this.playlist_type == 'artists by tag'){
+				url += '/tags/' + this.key;
+			} else if (this.playlist_type == 'tracks'){
+				url += '/ds';
+			} else if (this.playlist_type == 'artists by recommendations'){
+				url += '/recommendations';
+			} else if (this.playlist_type == 'artists by loved'){
+				url += '/loved';
+			} else if (this.playlist_type == 'cplaylist'){
+				url += '/playlist/' + this.key;
+			}
+			return url;
+		},
 		add: function(omo, view){
 			var mo = cloneObj({}, omo, false, ['track', 'artist']);
 			this.push(mo, view);
@@ -463,10 +484,9 @@ var empty_song_click = function(){
 
 var prepare_playlist = function(playlist_title, playlist_type, key, with_search_results_link, first_song){
 	var pl = new songsList(playlist_title, playlist_type, key, with_search_results_link, first_song);
-	
-
 	return pl;
 };
+
 var create_playlist =  function(pl, pl_r, not_clear){
 	if (!pl){
 		return seesu.ui.render_playlist(pl_r, true);
