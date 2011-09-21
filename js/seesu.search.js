@@ -74,7 +74,8 @@ var artistSuggest = function(artist, image){
 			return this.artist;
 		},
 		click: function(){
-			su.ui.show_artist(this.artist, this.q);
+			su.ui.views.showArtcardPage(this.artist, true)
+			//su.ui.show_artist(this.artist, this.q);
 			su.track_event('Music search', this.q, "artist: " + this.artist );
 		},
 		createItem: function(q){

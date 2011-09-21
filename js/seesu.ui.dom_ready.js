@@ -126,7 +126,7 @@ window.connect_dom_to_som = function(d, sui){
 				e.preventDefault();
 			}),
 			start_screen: $('#start-screen',d),
-			artcards: ('#art-cards', d),
+			artcards: $('#art-cards', d),
 			pllistlevel: pllistlevel,
 			artsTracks: pllistlevel.find('#tracks-magic'),
 			art_tracks_w_counter: $('#tracks-waiting-for-search',d),

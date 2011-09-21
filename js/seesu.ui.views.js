@@ -215,7 +215,7 @@ cloneObj(sRLevelResident.prototype, {
 });
 
 var artcardLevelResident = function(levdata){
-	this.c = $('<div><div>').appendTo(su.ui.els.artcards);
+	this.c = $('<div></div>').appendTo(su.ui.els.artcards);
 	this.storage = {};
 	this.levdata = levdata;
 };
@@ -247,9 +247,18 @@ cloneObj(artcardLevelResident.prototype ,{
 		
 	},
 	nav: function(){
-		//return new plNav();
+		return new artcardNav();
 	},
-	dataHandlers: {}
+	dataHandlers: {
+		artist: function(name){
+			var header = $('<h3></h3>').appendTo(this.c);
+			header.text(name);
+			$('<a class="js-serv">Top tracks</a>').appendTo(this.c).click(function(){
+				su.ui.show_artist(name, true);
+			});
+			return true;
+		}
+	}
 });
 
 
@@ -399,8 +408,9 @@ views.prototype = {
 	showArtcardPage: function(artist, save_parents, no_navi){
 		var lev = this.m.goDeeper(save_parents, artcardLevelResident);
 			lev.setTitle(artist);
+			
 			lev.D('artist', artist);
-		
+			//lev.setURL(pl.getUrl(), !no_navi, {pl: pl});
 			
 	},
 	show_playlist_page: function(pl, save_parents, no_navi){
