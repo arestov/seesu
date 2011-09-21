@@ -44,7 +44,9 @@
 	padding-bottom:20px;
 	}
 
-	
+#art-cards{
+	display:none;
+}	
 	
 #playlist-level{
 	padding-top:4px;
@@ -109,7 +111,13 @@
 	.show-player-page #playlist-level{
 		display:block;
 		}
-		
+
+.show-art-card{
+	
+	}
+	.show-art-card #art-cards{
+		display:block;
+		}			
 		
 /**  New nav **/	
 .show-zoom-to-track li.viewing-song .track-context{

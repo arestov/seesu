@@ -63,6 +63,32 @@ var mainNav = function(){
 };
 mainNav.prototype = new dNav();
 
+
+
+var sRNav = function(){
+	var _this = this;
+	this.c= $('<span class="nnav nav-item nav-search-results" title="Suggestions &amp; search"><b></b></span>');
+	this.text_c = this.c.find('span');
+	this.active = true;
+	this.c.click(function(){
+		_this.click();
+	})
+}
+sRNav.prototype = new dNav();
+
+
+var artcardNav = function(){
+	var _this = this;
+	this.c = $('<span class="nnav nav-item "><span></span><b></b></span>');
+	this.c.click(function(){
+		_this.click();
+	});
+	this.text_c = this.c.find('span');
+	this.active = true;
+};
+artcardNav.prototype = new dNav();
+
+
 var plNav = function(){
 	var _this = this;
 	this.c= $('<span class="nnav nav-item nav-playlist-page"><span></span><b></b></span>');
@@ -75,16 +101,6 @@ var plNav = function(){
 };
 plNav.prototype = new dNav();
 
-var sRNav = function(){
-	var _this = this;
-	this.c= $('<span class="nnav nav-item nav-search-results" title="Suggestions &amp; search"><b></b></span>');
-	this.text_c = this.c.find('span');
-	this.active = true;
-	this.c.click(function(){
-		_this.click();
-	})
-}
-sRNav.prototype = new dNav();
 
 var trNav = function(){
 	this.c = $('<span class="nnav nav-item nav-track-zoom"><span></span><b></b></span>');
@@ -198,6 +214,43 @@ cloneObj(sRLevelResident.prototype, {
 	}
 });
 
+var artcardLevelResident = function(levdata){
+	this.c = $('<div><div>').appendTo(su.ui.els.artcards);
+	this.storage = {};
+	this.levdata = levdata;
+};
+artcardLevelResident.prototype  = new baseLevelResident();
+cloneObj(artcardLevelResident.prototype ,{
+	canUse: function(){
+		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
+	},
+	kill: function(){
+		this.remove();	
+	},
+	remove: function(){
+		return this.c.remove();
+	},
+	hide: function(){
+		return this.c.hide()
+	},
+	show: function(opts){
+		if (opts.userwant){
+			this.checkAndHandleData();
+		}
+		su.ui.els.slider.className = 'show-art-card';
+		return this.c.show()
+	},
+	wait: function(){
+		
+	},
+	ready: function(){
+		
+	},
+	nav: function(){
+		//return new plNav();
+	},
+	dataHandlers: {}
+});
 
 
 var playlistLevelResident = function(levdata){
@@ -343,15 +396,12 @@ views.prototype = {
 			search_view.setURL('?q=' + query, !no_navi, {q: query});
 		}
 	},
-	show_search_results_page: function(without_input, no_navi){
+	showArtcardPage: function(artist, save_parents, no_navi){
+		var lev = this.m.goDeeper(save_parents, artcardLevelResident);
+			lev.setTitle(artist);
+			lev.D('artist', artist);
 		
-		//DEP!
-		var _this = this;
-
-		this.state = 'search_results';
-		
-
-		
+			
 	},
 	show_playlist_page: function(pl, save_parents, no_navi){
 		if (pl.lev && pl.lev.canUse()){
@@ -365,12 +415,7 @@ views.prototype = {
 		lev.D('pl', pl);
 		
 		lev.setURL(pl.getUrl(), !no_navi, {pl: pl});
-
 		return 
-		
-		
-		
-
 	},
 	show_track_page: function(title, zoom, mo, no_navi){
 		var _this = this;
