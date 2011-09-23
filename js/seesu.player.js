@@ -344,7 +344,9 @@ su.player = {
 		
 		su.ui.remove_video();
 		//time = (new Date()).getTime();
-		su.ui.updateSongContext(mo, true);
+		if (mo.ui){
+			mo.ui.updateSongContext(true)
+		}
 		if (last_mo) {
 			this.change_songs_ui(last_mo, true) //remove ative state
 		}

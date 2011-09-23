@@ -331,4 +331,17 @@ ul.tracks-for-play > li{
 		.nnav.nav-search-results:active{
 			background-image:url(../i/nav/seesu-nav-search-active.png), url(../i/nav/button-gradient-active.png);
 			}
-
+.art-card{
+	overflow:hidden;
+	}
+	.art-card-image{
+		width:50%;
+		float:left;
+		}
+	.top-tracks{
+		width:50%;
+		float:right;
+		}
+	.art-card-tags{
+		clear:both;
+		}

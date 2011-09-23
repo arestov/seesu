@@ -10,7 +10,6 @@ var song_methods = {
 	},
 	view: function(no_navi){
 		su.mp3_search.find_mp3(this);
-		su.ui.updateSongContext(this, true);
 		viewSong(this, no_navi);	
 	},
 	wheneWasChanged: function(){
@@ -586,7 +585,7 @@ function canUseSearch(sem, search_source){
 };
 function handle_song(mo, complete, get_next){
 	
-	su.ui.updateSongContext(mo, get_next);
+	
 	
 	if (complete){
 		if (mo.ui){
@@ -595,13 +594,19 @@ function handle_song(mo, complete, get_next){
 		
 		if (mo.isHaveTracks()){
 			clearTimeout(mo.cantwait);
-			wantSong(mo);
+			
 			if (get_next){
+				if (mo.ui){
+					mo.ui.updateSongContext(get_next)
+				}
+
 				if (su.player.c_song && !su.player.c_song.load_finished) {
 					if (mo == su.player.c_song.next_song && su.player.musicbox.preloadSong){
 						su.player.musicbox.preloadSong(su.player.c_song.next_song.song().link);
 					} 
 				}
+			} else{
+				wantSong(mo);
 			}
 		} else{
 			if (mo.ui){

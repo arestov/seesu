@@ -308,7 +308,6 @@ var empty_song_click = function(){
 	mo.plst_titl.lev.freeze()
 	
 	su.mp3_search.find_mp3(mo);
-	su.ui.updateSongContext(mo, true);
 	viewSong(mo);
 	seesu.track_event('Song click', 'empty song');
 	return false;	
@@ -448,7 +447,6 @@ var empty_song_click = function(){
 			for (var i=0; i < this.length; i++) {
 				if (artist_track.track == this[i].track && (will_ignore_artist || artist_track.artist == this[i].artist)){
 					su.mp3_search.find_mp3(this[i]);
-					su.ui.updateSongContext(this[i]);
 					viewSong(this[i], no_navi);
 					
 					return true;

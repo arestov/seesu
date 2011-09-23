@@ -215,7 +215,15 @@ cloneObj(sRLevelResident.prototype, {
 });
 
 var artcardLevelResident = function(levdata){
-	this.c = $('<div></div>').appendTo(su.ui.els.artcards);
+	this.c = su.ui.samples.artcard.clone().appendTo(su.ui.els.artcards);
+	this.ui = {
+		imagec: this.c.find('.art-card-image'),
+		topc: this.c.find('.top-tracks'),
+		tagsc: this.c.find('.art-card-tags'),
+		albumsc: this.c.find('.art-card-albums'),
+		similarsc: this.c.find('.art-card-similar'),
+		bioc: this.c.find('.art-card-bio')
+	};
 	this.storage = {};
 	this.levdata = levdata;
 };

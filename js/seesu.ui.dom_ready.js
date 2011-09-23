@@ -143,7 +143,7 @@ window.connect_dom_to_som = function(d, sui){
 		var track_c = ui_samples.children('.track-context');
 		track_c.children('.track-info-dominator').append(ainfo_sample.clone())
 		sui.samples = {
-			
+			artcard: ui_samples.children('.art-card'),
 			a_info: ainfo_sample,
 			track_c : track_c,
 			vk_login: {
