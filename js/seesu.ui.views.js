@@ -17,12 +17,9 @@ dNav.prototype = {
 		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
 	},
 	setActive: function(stack){
+
 		
-		if (!this.active){
-			this.c.addClass('nnav');
-			
-			this.active = true;
-		}
+		this.c.addClass('nnav');
 		if (stack){
 			this.stack('top');
 		} else{
@@ -30,15 +27,14 @@ dNav.prototype = {
 		}
 		
 		this.show();
+		this.active = true;
 	},
 	setInactive: function(){
 		
-		if (this.active){
-			this.c.removeClass('nnav');
-			this.active = false;
-		}
+		this.c.removeClass('nnav');
 		this.resetStackMark()
 		this.show();
+		this.active = false;
 	},
 	kill: function(){
 		this.c.remove();
