@@ -47,8 +47,8 @@ mapLevel.prototype = {
 		var _this = this;
 		this.nav = this.getResident().nav();
 		this.nav.render(this.getNavData());
-		this.nav.setClickCb(function(active){
-			if (active){
+		this.nav.setClickCb(function(stacked){
+			if (stacked){
 				_this._sliceTM(true);
 			}	
 		});
@@ -341,11 +341,11 @@ browseMap.prototype= {
 		
 		var prev = lvls.pop();
 		if (prev){
-			prev.getNav().setActive();
+			prev.getNav().setActive(lvls.length);
 		}
 		if (lvls.length){
 			while (lvls.length){
-				lvls.pop().getNav().hide();
+				lvls.pop().getNav().stack( lvls.length == 0 ? 'bottom' : 'middle');
 			}
 		}
 		

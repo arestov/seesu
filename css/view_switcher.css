@@ -17,7 +17,7 @@
 	display:none;
 }
 .daddy{
-	float:left;
+	padding-right:17px;
 }
 .np{
 	cursor:pointer;
@@ -28,6 +28,7 @@
 	margin-top:4px;
 	position:absolute;
 	right:25px;
+	top:8px;
 }
 .player-played.np{
 	background-image:url(../i/equalaizer.gif);
@@ -228,14 +229,30 @@ ul.tracks-for-play > li{
 	line-height:20px;
 	text-overflow: ellipsis; 
 }
-.nav-item{
-	float:left;
+.nav-item.hidden{
+	display:none;
 }
+.nav-item{
+	display:block;
+	height:20px;
+	line-height:20px;
+	border-top:1px solid transparent;
+	padding:4px 0;
+}
+	.nav-item span{
+		display:block;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow:hidden;
+		}
 	.nav-item b{
 		display:none;
 	}
+
+			
+
 .nnav{
-	height:20px;
+	float:left;
 	cursor:pointer;
 
 	padding:4px 14px 4px 9px;
@@ -247,7 +264,7 @@ ul.tracks-for-play > li{
 	background:url(../i/nav/button-gradient.png) repeat-x 100% 0;
 	position:relative;
 	
-	line-height:20px;
+	
 	
 	text-shadow:0 1px 0 #000;
 	margin-right:10px;
@@ -278,9 +295,6 @@ ul.tracks-for-play > li{
 	display:block;
 }
 
-.nnav:first-child:after{
-	
-}
 .nnav:hover{
 	color:#fff;
 	background-image:url(../i/nav/button-gradient-hover.png);
@@ -296,12 +310,39 @@ ul.tracks-for-play > li{
 	.nnav:active b{
 		background-image:url(../i/nav/button-arrow-active.png) ;
 		}
+		
+.stack-bottom{
+	
+	}
+.stack-middle{
+	
+	}
+.stack-top{
+	
+	}
+
+.stack-bottom, .stack-middle{
+	max-width:15px;
+	display:block;
+	}
+	.stack-bottom:hover, .stack-bottom:active,
+	.stack-middle:hover, .stack-middle:active{
+		max-width:40px;
+		margin-right:30px;
+		}
+.stack-middle, .stack-top{
+	margin-left:-35px;
+	}
+	.stack-middle > b, .stack-top > b{
+		top: 0;
+		background-position:0 -1px;
+		}	
+	
+
+		
 .nav-start{
-	width:20px;
-	height:20px;
-	
 	padding:4px 14px 4px 9px;
-	
+	width:20px;
 	background:url(../i/nav/seesu-nav-logo.png) no-repeat 10px 4px;	
 }
 .nnav.nav-start{
@@ -316,9 +357,7 @@ ul.tracks-for-play > li{
 			}
 .nav-search-results{
 	padding:4px 14px 4px 9px;
-	
 	width:15px;
-	height:20px;
 	background:url(../i/nav/seesu-nav-search.png) no-repeat 10px 4px;
 	}
 .nnav.nav-search-results{

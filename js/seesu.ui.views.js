@@ -16,26 +16,52 @@ dNav.prototype = {
 	canUse: function(){
 		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
 	},
-	setActive: function(){
+	setActive: function(stack){
+		
 		if (!this.active){
 			this.c.addClass('nnav');
 			
 			this.active = true;
 		}
-		this.c.show();
+		if (stack){
+			this.stack('top');
+		} else{
+			this.resetStackMark();
+		}
+		
+		this.show();
 	},
 	setInactive: function(){
+		
 		if (this.active){
 			this.c.removeClass('nnav');
 			this.active = false;
 		}
-		this.c.show();
+		this.resetStackMark()
+		this.show();
 	},
 	kill: function(){
 		this.c.remove();
 	},
+	resetStackMark: function(){
+		this.stacked = false;
+		this.c.removeClass('stack-bottom stack-middle stack-top');
+	},
+	stack: function(place){
+		this.resetStackMark();
+		if (['top', 'bottom', 'middle'].indexOf(place) > -1){
+			this.c.addClass('stack-' + place + ' nnav');
+			this.stacked = true;
+		}
+		this.show();
+	},
+	show: function(){
+		this.c.removeClass('hidden');
+	},
 	hide: function(){
-		this.c.hide();	
+		this.c.addClass('hidden');
+		this.c.removeClass('nnav');
+		this.resetStackMark();
 	},
 	text: function(text){
 		this.text_c.text(text);
@@ -45,7 +71,7 @@ dNav.prototype = {
 	},
 	click: function(){
 		if (this.click_cb){
-			this.click_cb(this.active);
+			this.click_cb(this.stacked || this.active);
 		}
 	},
 	setClickCb: function(f){
