@@ -386,7 +386,7 @@ songUI.prototype = {
 		
 	},
 	update_artist_info: function(artist, a_info, show_link_to_artist_page, ext_info){
-		var _sui = this;
+		var _this = this;
 		if (a_info.data('artist') != artist || a_info.data('artist-lfm') != true){
 			var ainf = {
 				name: a_info.children('.artist-name'), 
@@ -431,7 +431,7 @@ songUI.prototype = {
 				lfm('artist.getInfo',{'artist': artist }, function(r){
 					if (a_info.data('artist') == artist && a_info.data('artist-lfm') != true){
 						a_info.data('artist-lfm', true);
-						_sui.show_artist_info(r, ainf, artist, ext_info);
+						_this.show_artist_info(r, ainf, artist, ext_info);
 						
 					}
 					
@@ -445,12 +445,15 @@ songUI.prototype = {
 		var _mui = this;
 		var info	 = r.artist || false;
 		var similars, artist, tags, bio, image, has_some_info_extenders;
+		
 		if (info) {
-			similars = info.similar && info.similar.artist;
-			artist	 = info.name;
-			tags	 = info.tags && info.tags.tag;
-			bio		 = info.bio && info.bio.summary.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm");
-			image	 = (info.image && info.image[2]['#text']) || lfm_image_artist;
+			var ai = parseArtistInfo(r);
+			
+			similars = ai.similars;
+			artist	 = ai.artist;
+			tags	 = ai.tags;
+			bio		 = ai.bio;
+			image	 = (ai.images && ai.images[2]) || lfm_image_artist;
 		} 
 			
 		if (artist && artist == oa) {
@@ -533,10 +536,12 @@ songUI.prototype = {
 							//_sui.renderArtistAlbums(ob.own);
 							var albums = toRealArray( r.topalbums.album);
 							if (albums.length){
-								var ob = sortLfmAlbums(r, artist);
+								var ob = sortLfmAlbums(albums, artist);
 								//ordered
 								for (var i=0; i < ob.ordered.length; i++) {
-									su.ui.renderArtistAlbums(ob.ordered[i], artist, artist_albums_text);
+									var aul =  $('<ul class="artist-album"></ul>');
+									su.ui.renderArtistAlbums(ob.ordered[i], artist, aul);
+									aul.appendTo(artist_albums_text)
 								};
 								
 								

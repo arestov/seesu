@@ -61,6 +61,9 @@ dNav.prototype = {
 	},
 	text: function(text){
 		this.text_c.text(text);
+		if (!this.has_title){
+			this.c.attr('title', text);
+		}
 	},
 	render: function(place){
 		if (place){place.append(this.c)}
@@ -80,8 +83,10 @@ var mainNav = function(){
 	this.c.click(function(){
 		_this.click();
 	})
+	
 	this.text_c = this.c.find('span');
 	this.active = true;
+	this.has_title = !!this.c.attr('title');
 };
 mainNav.prototype = new dNav();
 
@@ -91,10 +96,12 @@ var sRNav = function(){
 	var _this = this;
 	this.c= $('<span class="nnav nav-item nav-search-results" title="Suggestions &amp; search"><b></b></span>');
 	this.text_c = this.c.find('span');
+	
 	this.active = true;
 	this.c.click(function(){
 		_this.click();
-	})
+	});
+	this.has_title = !!this.c.attr('title');
 }
 sRNav.prototype = new dNav();
 
@@ -107,6 +114,7 @@ var artcardNav = function(){
 	});
 	this.text_c = this.c.find('span');
 	this.active = true;
+	this.has_title = !!this.c.attr('title');
 };
 artcardNav.prototype = new dNav();
 
@@ -119,6 +127,7 @@ var plNav = function(){
 	})
 	this.text_c = this.c.find('span');
 	this.active = true;
+	this.has_title = !!this.c.attr('title');
 	//$('<span class="nav-title"></span>');
 };
 plNav.prototype = new dNav();
@@ -128,6 +137,7 @@ var trNav = function(){
 	this.c = $('<span class="nnav nav-item nav-track-zoom"><span></span><b></b></span>');
 	this.text_c = this.c.find('span');
 	this.active = true;
+	this.has_title = !!this.c.attr('title');
 }
 trNav.prototype =  new dNav();
 
@@ -238,14 +248,6 @@ cloneObj(sRLevelResident.prototype, {
 
 var artcardLevelResident = function(levdata){
 	this.c = su.ui.samples.artcard.clone().appendTo(su.ui.els.artcards);
-	this.ui = {
-		imagec: this.c.find('.art-card-image'),
-		topc: this.c.find('.top-tracks'),
-		tagsc: this.c.find('.art-card-tags'),
-		albumsc: this.c.find('.art-card-albums'),
-		similarsc: this.c.find('.art-card-similar'),
-		bioc: this.c.find('.art-card-bio')
-	};
 	this.storage = {};
 	this.levdata = levdata;
 };
@@ -281,11 +283,10 @@ cloneObj(artcardLevelResident.prototype ,{
 	},
 	dataHandlers: {
 		artist: function(name){
-			var header = $('<h3></h3>').appendTo(this.c);
-			header.text(name);
-			$('<a class="js-serv">Top tracks</a>').appendTo(this.c).click(function(){
-				su.ui.show_artist(name, true);
-			});
+			if (!this.ui){
+				this.ui = new artcardUI(name, this.c);
+			}
+			
 			return true;
 		}
 	}

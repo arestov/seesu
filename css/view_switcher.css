@@ -49,7 +49,7 @@
 	display:none;
 	max-width: 750px;
 	margin: 0 auto;
-	padding-top: 12px;
+	padding-top: 24px;
 	padding-bottom: 20px;
 }	
 	
@@ -371,16 +371,95 @@ ul.tracks-for-play > li{
 			background-image:url(../i/nav/seesu-nav-search-active.png), url(../i/nav/button-gradient-active.png);
 			}
 .art-card{
-	overflow:hidden;
+	position:relative;
 	}
-	.art-card-image{
-		width:50%;
-		float:left;
+	.art-card ul{
+		
+	}
+	.art-card h6{
+	
 		}
-	.top-tracks{
+		.art-card h6 a{
+			margin-left:14px;
+			}
+	.art-card-image{
+		position:relative;
 		width:50%;
 		float:right;
+		margin-left:24px;
+		margin-bottom:24px;
+		}
+		.art-card-image:hover{
+			z-index:3;
+		}
+		.art-card-image img{
+			width:100%;
+		}
+	.top-tracks{
+		margin-bottom:24px;
+		min-height:140px;
+		}
+		.top-tracks-padding{
+			}
+		.top-tracks .row-header{
+			
 		}
 	.art-card-tags{
-		clear:both;
+		margin-bottom:24px;
 		}
+		.art-card-tags ul{
+			overflow:hidden;
+			}
+			.art-card-tags ul li{
+				float:left;
+				margin-right:1em;
+				}
+	.art-card-albums{
+		background: #3f3f3f;
+		padding: 10px 10px;
+		border-radius: 6px;
+		margin: 0 -10px 24px;
+		position: relative;
+		z-index: 2;
+		}
+	
+	
+		.art-card-albums ul{
+			overflow:hidden;
+			margin:0 0 14px;
+			padding-left:10px;
+			}
+			.art-card-albums ul li{
+				float:left;
+				}
+			.art-card-albums ul li img{
+				
+				}
+				
+			.art-card-albums ul li{
+				width:190px;
+				margin-bottom:30px;
+				}
+				.art-card-albums ul li a{
+					display:block;
+					border-bottom:0;
+					color:#aaaaaa;
+					}
+					.art-card-albums ul li a:hover{
+						color:#fff;
+						}
+				.art-card-albums ul li img{
+					width:64px;
+					min-height:64px;
+					margin-right:4px;
+					padding:2px;
+					background:#ccc url(http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png) no-repeat 2px 2px;
+				}
+				.art-card-albums ul li .album-name{
+					width:110px;
+					height:64px;
+					text-overflow: ellipsis;
+					overflow:hidden;
+					display:block;
+					
+					}

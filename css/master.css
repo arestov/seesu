@@ -37,7 +37,7 @@ button{
 	font-size: 1.15em;
 }
 
-dl,dt,dd{
+dl,dt,dd,h5{
 	margin:0;
 	padding:0;
 }
@@ -60,6 +60,10 @@ a[href='javascript:void(0)']{
 	border-bottom-style:dotted;
 }
 
+h5{
+	font-size:1em;
+	font-weight:400;
+}
 a.js-serv,
 a.bbcode_artist,
 a.bbcode_tag{
@@ -77,6 +81,9 @@ a.bbcode_tag{
 	a.bbcode_tag:active{
 		border-bottom-color:#999  !important;
 		}
+.hidden{
+	display:none;
+}
 a.desc{
 	color:#666;
 	border-bottom-color:#5e5e5e !important;
@@ -462,52 +469,7 @@ display:none;
 .desc-text{
 	padding-bottom:2px;
 }	
-.artist-albums ul{
-	overflow:hidden;
-	margin:15px 0;
-	padding-left:10px;
-	}
-	.artist-albums ul li{
-		float:left;
-		}
-	.artist-albums ul li img{
-			float:left;
-		}
-		
-	.artist-albums ul li{
-		width:190px;
-		margin-bottom:30px;
-		}
-		.artist-albums ul li a{
-			display:block;
-			border-bottom:0;
-			color:#aaaaaa;
-			}
-			.artist-albums ul li a:hover{
-				color:#fff;
-				}
-		.artist-albums.collapse-albums ul{
-			display:none;
-		}
-		.artist-albums.albums-loading a.get-artist-albums{
-			display:none;
-		}
-		.artist-albums ul li img{
-			width:64px;
-			min-height:64px;
-			margin-right:4px;
-			padding:2px;
-			background:#ccc url(http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png) no-repeat 2px 2px;
-			
-		}
-		.artist-albums ul li .album-name{
-			width:110px;
-			height:64px;
-			-o-text-overflow: ellipsis;
-			overflow:hidden;
-			display:block;
-			
-			}
+
 #playlist-level h3{
 	margin-top:0
 	}

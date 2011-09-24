@@ -513,12 +513,10 @@ var getTopTracks = function(artist,callback, error_c) {
 		var tracks = r.toptracks.track || false;
 		if (tracks) {
 			var track_list = [];
-			if (tracks.length){
-				for (var i=0, l = (tracks.length < 30) ? tracks.length : 30; i < l; i++) {
-					track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
-				}
-			} else{
-				track_list.push({'artist' : artist ,'track': tracks.name, images: tracks.image});
+			tracks = toRealArray(tracks);
+			
+			for (var i=0, l = Math.min(tracks.length, 30); i < l; i++) {
+				track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
 			}
 			
 			if (callback) {callback(track_list);}
@@ -643,7 +641,21 @@ function findAlbum(album_name, artist_name, no_navi, start_song){
 		
 	});
 };
+var parseArtistInfo = function(r){
+	var ai = {};
+	if (r && r.artist){
+		var info = r.artist;
 
+		
+		ai.artist = getTargetField(info, 'name');
+		ai.bio = (ai.bio = getTargetField(info, 'bio.summary')) && ai.bio.replace(new RegExp("ws.audioscrobbler.com",'g'),"www.last.fm");
+		ai.similars = (ai.similars = getTargetField(info, 'similar.artist')) && toRealArray(ai.similars);
+		ai.tags = (ai.tags = getTargetField(info, 'tags.tag')) && toRealArray(ai.tags);
+		ai.images = (ai.images = getTargetField(info, 'image')) && (ai.images = toRealArray(ai.images)) && $filter(ai.images, '#text');
+
+	}
+	return ai;
+}
 var get_similar_artists = function(original_artist, callback,error_c){
 	lfm('artist.getSimilar',{'artist': original_artist},function(r){
 		var artists = r.similarartists.artist;
@@ -732,9 +744,9 @@ var sortAlbs = function(a, b){
 	]);
 };
 
-var sortLfmAlbums = function(r, artist){
+var sortLfmAlbums = function(albums, artist){
 	var ob = {
-		own: $filter(makeArrayDeeper(toRealArray(r.topalbums.album)), 'd.artist.name', artist),
+		own: $filter(makeArrayDeeper(toRealArray(albums)), 'd.artist.name', artist),
 		ordered: []
 	};
 	ob.foreign = ob.own.not;

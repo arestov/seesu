@@ -1,3 +1,139 @@
+var artcardUI = function(artist, c){
+	this.artist= artist;
+	this.c = c;
+	
+	this.ui = {
+		imagec: this.c.find('.art-card-image'),
+		topc: this.c.find('.top-tracks .top-tracks-padding'),
+		tagsc: this.c.find('.art-card-tags'),
+		albumsc: this.c.find('.art-card-albums'),
+		similarsc: this.c.find('.art-card-similar'),
+		bioc: this.c.find('.art-card-bio')
+	};	
+
+
+	this.top_tracks_link = $(' <a class="js-serv">full list</a>').appendTo(this.ui.topc.children('.row-header')).click(function(){
+		su.ui.show_artist(artist, true);
+	});
+	this.loadInfo();
+}
+artcardUI.prototype = {
+	loadInfo: function(){
+		this.loadBaseInfo();
+		this.loadTopTracks();
+		this.loadAlbums();
+		
+	},
+	loadAlbums: function(){
+		
+		var _this = this;
+		
+		lfm('artist.getTopAlbums',{'artist': this.artist },function(r){
+			if (r){
+				var albums = toRealArray(r.topalbums.album);
+				_this.showAlbums(albums);
+			}
+		});
+	},
+	loadTopTracks: function(){
+		if (!this.has_top_tracks){
+			var _this = this;
+			var ul = this.ui.topc.children('ul');
+			
+			getTopTracks(this.artist, function(list){
+				if (!_this.has_top_tracks){
+					_this.has_top_tracks = true;
+					
+					$.each(list, function(i, el){
+						if (i < 5){
+							var title  = (el.artist ? el.artist + ' - ' : '') + el.track;
+							if (title){
+								$('<li></li>').text(title).appendTo(ul);
+							}
+						}
+						
+					});
+					ul.removeClass('hidden');
+					
+					console.log('TOP TRACKS');
+					console.log(list);
+				}
+			});
+		}
+	},
+	loadBaseInfo: function(){
+		if (!this.has_base_info){
+			var _this = this;
+			
+			lfm('artist.getInfo',{'artist': this.artist }, function(r){
+				if (!_this.has_base_info){
+					_this.has_base_info = true;
+					
+					var ai = parseArtistInfo(r);
+					if (ai.images){
+						_this.showArtistImage(ai.images);
+					}
+					if (ai.tags){
+						_this.showTags(ai.tags);
+					}
+					if (ai.bio){
+						_this.showBio(ai.bio);
+					}
+					if (ai.similars){
+						_this.showSimilars(ai.similars);
+					}
+				}
+			});
+		}
+	},
+	showArtistImage: function(images){
+		if (images[4]){
+			this.ui.imagec.empty();
+			this.ui.imagec.append(
+				$('<img/>').attr('src', images[4])
+			);
+		}
+		
+	},
+	showTags: function(tags){
+		var ul = this.ui.tagsc.children('ul');
+		$.each(tags, function(i, el){
+			if (el && el.name){
+				var li = $('<li></li>');
+				$('<a class="js-serv"></a>').text(el.name).attr('url', el.url).appendTo(li);
+				li.appendTo(ul).append(' ');
+			}
+			
+		});
+		ul.removeClass('hidden');
+	},
+	showBio: function(text){
+		if (text){
+			this.ui.bioc.html(text.replace(/\n/gi, '<br/><br/>'));
+		}
+		
+	},
+	showSimilars: function(artists){
+		
+	},
+	showAlbums: function(albums){
+		if (albums.length){
+			var ob = sortLfmAlbums(albums, this.artist);
+			//ordered
+			for (var i=0; i < ob.ordered.length; i++) {
+				var aul =  $('<ul></ul>');
+				su.ui.renderArtistAlbums(ob.ordered[i], this.artist, aul);
+				aul.appendTo(this.ui.albumsc);
+			};
+			
+			
+		} else{
+			
+		}
+	}
+};
+
+
 
 
 var contextRow = function(container){
@@ -187,7 +323,7 @@ seesu_ui.prototype = {
 	show_artist: function (artist, query, no_navi, start_song) {
 		
 		
-		var pl = prepare_playlist(artist, 'artist', artist, query, start_song);
+		var pl = prepare_playlist('Top of ' + artist, 'artist', artist, query, start_song);
 
 		this.views.show_playlist_page(pl, !!query, no_navi || !!start_song);
 		if (start_song){
@@ -512,17 +648,14 @@ seesu_ui.prototype = {
 	},
 	
 	
-	renderArtistAlbums: function(albums, original_artist, container){
+	renderArtistAlbums: function(albums, original_artist, albums_ul){
 		var _sui = this;
-		var albums_ul = $('<ul class="artist-album"></ul>');
 		if (albums.length) {
 			for (var i=0; i < albums.length; i++) {
-				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[1]['#text']) || '', albums[i].artist.name, original_artist))
-				;
+				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[1]['#text']) || '', albums[i].artist.name, original_artist));
 			}
 		} 
-
-		container.append(albums_ul);
+		return albums_ul;
 	},
 	showAlbum: function(artist, name, id, original_artist, query){
 		var _sui = this;
