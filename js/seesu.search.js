@@ -511,7 +511,7 @@ var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_previe
 	}));
 };
 
-var suggestions_search = seesu.env.cross_domain_allowed ? function(q, invstg){
+var network_search = seesu.env.cross_domain_allowed ? function(q, invstg){
 		invstg.loading();
 		var hash = hex_md5(q);
 		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
@@ -533,6 +533,9 @@ var suggestions_search = seesu.env.cross_domain_allowed ? function(q, invstg){
 		getLastfmSuggests('tag.search', {tag: q}, q, invstg.g('tags'), parseTagsResults);	
 		getLastfmSuggests('album.search', {album: q}, q, invstg.g('albums'), parseAlbumsResults);
 	}, 400);
+var offlineSearch = function(){
+	
+};
 
 investigation = function(c){
 	this.c = c;
@@ -614,8 +617,8 @@ investigation.prototype = {
 			}
 			
 			//===playlists search
-	
-			suggestions_search(this.q, this);
+			offlineSearch(this.q, this)
+			network_search(this.q, this);
 			vk_suggests(this.q, this);
 		}
 	},
