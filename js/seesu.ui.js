@@ -3,8 +3,8 @@ var artcardUI = function(artist, c){
 	this.c = c;
 	
 	this.ui = {
-		imagec: this.c.find('.art-card-image'),
-		topc: this.c.find('.top-tracks .top-tracks-padding'),
+		imagec: this.c.find('.art-card-image .art-card-image-padding'),
+		topc: this.c.find('.top-tracks'),
 		tagsc: this.c.find('.art-card-tags'),
 		albumsc: this.c.find('.art-card-albums'),
 		similarsc: this.c.find('.art-card-similar'),
@@ -46,9 +46,9 @@ artcardUI.prototype = {
 					
 					$.each(list, function(i, el){
 						if (i < 5){
-							var title  = (el.artist ? el.artist + ' - ' : '') + el.track;
-							if (title){
-								$('<li></li>').text(title).appendTo(ul);
+							if (el.track){
+								var a = $('<a class="js-serv"></a>').text(el.track);
+								$('<li></li>').append(a).appendTo(ul);
 							}
 						}
 						
@@ -96,25 +96,41 @@ artcardUI.prototype = {
 		
 	},
 	showTags: function(tags){
-		var ul = this.ui.tagsc.children('ul');
-		$.each(tags, function(i, el){
-			if (el && el.name){
-				var li = $('<li></li>');
-				$('<a class="js-serv"></a>').text(el.name).attr('url', el.url).appendTo(li);
-				li.appendTo(ul).append(' ');
-			}
-			
-		});
-		ul.removeClass('hidden');
+		if (tags.length){
+			var ul = this.ui.tagsc.children('ul');
+			$.each(tags, function(i, el){
+				if (el && el.name){
+					var li = $('<li></li>');
+					$('<a class="js-serv"></a>').text(el.name).attr('url', el.url).appendTo(li);
+					li.appendTo(ul);
+					ul.append(' ');
+				}
+				
+			});
+			ul.removeClass('hidden');
+		}
+		
 	},
 	showBio: function(text){
 		if (text){
-			this.ui.bioc.html(text.replace(/\n/gi, '<br/><br/>'));
+			this.ui.bioc.html(text.replace(/\n+/gi, '<br/><br/>'));
 		}
 		
 	},
 	showSimilars: function(artists){
+		if (artists.length){
+			var ul = this.ui.similarsc.children('ul');
+			$.each(artists, function(i, el){
+				var li = $('<li></li>');
+				$('<a class="js-serv"></a>').text(el.name).appendTo(li);
+				li.appendTo(ul);
+				ul.append(' ');
+				
+			});
+			ul.removeClass('hidden');
+		}
 		
+		console.log(artists)
 	},
 	showAlbums: function(albums){
 		if (albums.length){
