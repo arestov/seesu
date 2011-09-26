@@ -407,7 +407,7 @@ var handleExternalState = function(e, jo, jn, oldstate, newstate){
 				}
 				
 			} else if (newstate.plp.playlist_type == 'album'){
-				findAlbum(newstate.album_name, newstate.artist_name, true, tk);
+				//findAlbum(newstate.album_name, newstate.artist_name, true, tk); DEPRICATED
 			}
 		} else if (newstate.type == 'ds' && newstate.search_type && newstate.search_id){
 			getMusicById({type: newstate.search_type, id: newstate.search_id}, tk);			
