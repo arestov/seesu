@@ -49,7 +49,8 @@
 	display:none;
 	max-width: 750px;
 	margin: 0 auto;
-	padding-top: 24px;
+	padding: 24px 10px;
+	overflow:hidden;
 	padding-bottom: 20px;
 }	
 	
@@ -370,64 +371,76 @@ ul.tracks-for-play > li{
 		.nnav.nav-search-results:active{
 			background-image:url(../i/nav/seesu-nav-search-active.png), url(../i/nav/button-gradient-active.png);
 			}
+
 .art-card{
-	position:relative;
 	}
 	.art-card ul{
 		
 	}
-	.art-card h6{
+	.art-card .row-header{
+		margin-bottom:7px;
+	}
+	.art-card h5{
 	
 		}
-		.art-card h6 a{
+		.art-card h5 a{
 			margin-left:14px;
 			}
-	.art-card-image{
-		position:relative;
+	.art-card-meta{
+		float:left;
 		width:50%;
-		float:right;
-		margin-left:24px;
-		margin-bottom:24px;
-		}
-		.art-card-image:hover{
-			z-index:3;
-		}
-		.art-card-image img{
-			width:100%;
-		}
-	.top-tracks{
-		margin-bottom:24px;
+		
 		min-height:140px;
-		}
-		.top-tracks-padding{
-			}
-		.top-tracks .row-header{
-			
-		}
-	.art-card-tags{
 		margin-bottom:24px;
 		}
-		.art-card-tags ul{
+		.top-tracks,.art-card-tags{
+			padding-right:24px;
+			margin-bottom:24px;
+			}
+		
+					
+	
+			.art-card-meta ul{
+				overflow:hidden;
+				}
+				.art-card-meta ul li{
+					float:left;
+					white-space:nowrap;
+					margin-right:1em;
+					}
+	
+	.art-card-similar{
+		float:right;
+		width:50%;
+		margin-bottom:24px;
+		}
+		.art-card-similar ul{
 			overflow:hidden;
 			}
-			.art-card-tags ul li{
+			.art-card-similar ul li{
 				float:left;
 				margin-right:1em;
+				white-space:nowrap;
 				}
+
+	
+	
 	.art-card-albums{
 		background: #3f3f3f;
 		padding: 10px 10px;
 		border-radius: 6px;
 		margin: 0 -10px 24px;
-		position: relative;
-		z-index: 2;
+
+		clear:both;
+		height:174px;
+		overflow:hidden;
 		}
 	
 	
 		.art-card-albums ul{
 			overflow:hidden;
-			margin:0 0 14px;
-			padding-left:10px;
+			margin:14px 0 0;
+			padding-left:0;
 			}
 			.art-card-albums ul li{
 				float:left;
@@ -437,7 +450,7 @@ ul.tracks-for-play > li{
 				}
 				
 			.art-card-albums ul li{
-				width:190px;
+				width:145px;
 				margin-bottom:30px;
 				}
 				.art-card-albums ul li a{
@@ -463,3 +476,21 @@ ul.tracks-for-play > li{
 					display:block;
 					
 					}
+	.art-card-image{
+		width:50%;
+		float:left;
+		}
+		
+		.art-card-image-padding{
+			padding-right:24px;
+		}
+		.art-card-image img{
+			width:100%;
+			margin-bottom:24px;
+		}
+@media (max-width:550px) {
+	.art-card-similar, .art-card-meta{
+		float:none;
+		width:auto;
+	}
+}

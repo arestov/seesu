@@ -53,7 +53,9 @@ doesContain = function(target, valueOf){
 	return -1;
 };
 
-
+var getStringPattern = function(str){
+	return RegExp(str.replace(/([$\^*()+\[\]{}|.\/?\\])/g, '\\$1'), 'gi')	
+};
 var ttime = function(f){
 	var d = +new Date
 	

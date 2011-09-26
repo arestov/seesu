@@ -576,8 +576,8 @@ investigation.prototype = {
 	},
 	doEverythingForQuery: function(){
 		if (':playlists'.match(new RegExp('\^' + this.q , 'i'))){
-			this.setInactiveAll('playlists')
-			var pl_sec = this.g('playlists')
+			this.setInactiveAll('playlists');
+			var pl_sec = this.g('playlists');
 				pl_sec.setActive();
 				pl_sec.scratchResults(this.q);
 				
@@ -589,10 +589,8 @@ investigation.prototype = {
 			};
 			pl_sec.r.append(pl_results)
 			pl_sec.renderSuggests(true);
-		} 
-		
-		if (!this.q.match(/^:/)){
-			this.setActiveAll('playlists')
+		} else if (!this.q.match(/^:/)){
+			this.setActiveAll('playlists');
 			//playlist search
 			var playlists = seesu.gena.playlists;
 			var pl_results = [];
@@ -628,14 +626,14 @@ investigation.prototype = {
 		except = except && this.g(except);
 		for (var i=0; i < this.sections.length; i++) {
 			var cur = this.sections[i];
-			if (!except || cur != except){
-				if (!remove){
-					cur.setActive();
-				} else{
-					cur.setInactive();
-				}
-				
+			
+			if ((!except || cur != except) && !remove){
+				cur.setActive();
+			} else{
+				cur.setInactive();
 			}
+			
+			
 		};	
 	},
 	scrollTo: function(item){
