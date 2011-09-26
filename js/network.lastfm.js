@@ -476,7 +476,7 @@ lastfm_api.prototype = {
 	}
 };
 
-var lastfm_toptags = ["80s", "90s", "acoustic", "alternative", "alternative rock", "ambient", "black metal", "blues", "british", "chillout", "classical", "classic rock", "country", "dance", "death metal", "electronic", "electronica", "emo", "experimental", "favorites", "female vocalists", "folk", "hardcore", "hard rock", "heavy metal", "hip-hop", "hip hop", "indie", "indie rock", "industrial", "instrumental", "japanese", "jazz", "metal", "metalcore", "pop", "progressive metal", "progressive rock", "punk", "punk rock", "rap", "reggae", "rock", "seen live", "singer-songwriter", "soul", "soundtrack", "thrash metal", "trance", "trip-hop"];
+var lastfm_toptags = ["80s", "90s", "acoustic", "alternative", "alternative rock", "ambient", "black metal", "blues", "british", "chillout", "classical", "classic rock", "country", "dance", "death metal", "electronic", "electronica", "emo", "experimental", "favorites", "female vocalists", "folk", "hardcore", "hard rock", "heavy metal", "hip-hop", "hip hop", "indie", "indie rock", "industrial", "instrumental", "japanese", "jazz", "metal", "metalcore", "pop", "progressive metal", "progressive rock", "punk", "punk rock", "rap", "reggae", "rock", "seen live", "singer-songwriter", "soul", "soundtrack", "thrash metal", "trance", "trip-hop", 'instrumental hip-hop'];
 
 
 

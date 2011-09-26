@@ -17,19 +17,16 @@ function(elem, evType, fn){
 var domReady = function(d, callback){
 	if (d.readyState == 'complete'){
 		setTimeout(callback, 30);
-		console.log('DOM looks as "complete"')
 	} else{
 		var done;
 		var f = function(){
 			if (!done){
-				console.log('fired domready')
 				done = true;
 				callback();
 				
 			}
 		};
-		addEvent(d.defaultView, 'load', f)
-		console.log('added DOMContentLoaded event')
+		addEvent(d.defaultView, 'load', f);
 		addEvent(d, 'DOMContentLoaded', f);
 	}
 };
@@ -52,9 +49,60 @@ doesContain = function(target, valueOf){
 	};	
 	return -1;
 };
+var getFields = function(obj, fields){
+	var r = [];
+	for (var i=0; i < fields.length; i++) {
+		var cur = fields[i];
+		
+		var value = (typeof cur == 'function') ? cur(obj) : getTargetField(obj, cur);
+		if (value){
+			r.push(value);
+		}
+	};
+	return r;
+};
 
-var getStringPattern = function(str){
-	return RegExp(str.replace(/([$\^*()+\[\]{}|.\/?\\])/g, '\\$1'), 'gi')	
+var searchInArray = function (array, query, fields) {
+	query = getStringPattern(query);
+	if (query){
+		var r = [];
+		if (fields){
+			for (var i=0; i < array.length; i++) {
+				var cur = array[i];
+				var fields_values = getFields(cur, fields);
+				if (fields_values.join(' ').search(query) > -1){
+					r.push(cur);
+				}
+				
+			};
+		} else{
+			for (var i=0; i < array.length; i++) {
+				var cur = array[i]
+				if (typeof cur == 'string' && cur.search(query) > -1){
+					r.push(cur);
+				}
+			};
+		}
+		
+		
+	} else{
+		
+	}
+	
+	return r;
+};
+var getStringPattern = function (str) {
+	if (str.replace(/\s/g, '')){
+		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
+		str = str.replace(/([$\^*()+\[\]{}|.\/?\\])/g, '\\$1').split(/\s/g);  //escaping regexp symbols
+		for (var i=0; i < str.length; i++) {
+			str[i] = '(\\b' + str[i] + ')';
+		};
+		str = str.join('|');
+		
+		return RegExp(str, 'gi');
+	}
+	
 };
 var ttime = function(f){
 	var d = +new Date
