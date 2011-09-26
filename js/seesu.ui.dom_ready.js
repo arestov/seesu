@@ -473,7 +473,7 @@ window.connect_dom_to_som = function(d, sui){
 		
 		
 		
-		
+		/*
 		var wow_hart = function(lfm_hartist){
 			var link = $('<div></div>').css({
 				float:'left',
@@ -515,7 +515,7 @@ window.connect_dom_to_som = function(d, sui){
 			}
 			
 		});
-		
+		*/
 		var wow_tags= function(tag,c){
 			$('<a class="js-serv hyped-tag"></a> ')
 				.text(tag)
@@ -527,6 +527,8 @@ window.connect_dom_to_som = function(d, sui){
 			c.append(' ')
 			
 		};
+		
+		
 		var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(sui.els.start_screen);
 		var users_limit = 6;
 		var showUsers = function(listenings,c, above_limit_value){
@@ -550,7 +552,7 @@ window.connect_dom_to_som = function(d, sui){
 								.click(function(){
 									var a = $(this).data('artist');
 									var t = $(this).data('track');	
-									sui.show_artist(a, false, false, {artist: a, track: t});			
+									sui.showTopTacks(a, false, false, {artist: a, track: t});			
 								}))
 							.appendTo(uc)
 					}

@@ -405,7 +405,7 @@ views.prototype = {
 
 	show_now_playing: function(){
 		var current_page = this.sUI().els.slider.className;
-		this.restoreFreezed(true); // true is for supress navi.set
+		this.restoreFreezed();
 		su.player.view_song(su.player.c_song, true);
 		seesu.track_event('Navigation', 'now playing', current_page);
 	},

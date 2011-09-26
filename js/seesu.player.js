@@ -182,6 +182,16 @@ su.player = {
 		}
 	  }
 	},
+	isPlaying: function(playlist, force){
+		if (this.c_song){
+			if (force || (['artist' , 'album'].indexOf(playlist.playlist_type)) > -1){
+				if (this.c_song.plst_titl.compare(playlist)){
+					return this.c_song.plst_titl;
+				}
+			}
+		}
+		
+	},
 	song_siblings: function(mo){
 		//using for visual markering and determination of what to presearch
 		mo.next_preload_song = false;

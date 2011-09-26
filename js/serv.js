@@ -605,6 +605,31 @@ var getUnitBaseNum = function(_c){
 		return 2
 	}
 };
+var stringifyParams= function(params, ignore_params, splitter){
+	if (typeof params == 'string'){
+		return params;
+	}
+	var paramsstr = '',
+		pv_signature_list = [];
+	
+	
+	for (var p in params) {
+		if (!ignore_params || !~ignore_params.indexOf(p)){
+			pv_signature_list.push(p + (splitter || '') + params[p]);
+		}
+	}
+		
+	pv_signature_list.sort();
+		
+	for (var i=0, l = pv_signature_list.length; i < l; i++) {
+		paramsstr += pv_signature_list[i];
+	};
+		
+	return paramsstr;
+	
+};
+
+
 var separateNum = function(num){
 	var str = "" + num;
 	var three_sep = '';

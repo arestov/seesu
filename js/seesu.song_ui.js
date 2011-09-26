@@ -149,7 +149,7 @@ songUI.prototype = {
 				.data('artist', this.mo.artist)
 				.appendTo(dominator_head.children('.closer-to-track'))
 				.click(function(){
-					su.ui.show_artist(_this.mo.artist);
+					su.ui.showTopTacks(_this.mo.artist);
 					su.track_event('Artist navigation', 'top tracks', _this.mo.artist);
 				});
 		}
@@ -517,50 +517,7 @@ songUI.prototype = {
 			}
 			ainf.meta_info.append(similars_p);
 		}
-		var artist_albums_container = $('<div class="artist-albums extending-info"></div>').append('<span class="desc-name"><em>'+localize('Albums')+':</em></span>').appendTo(ainf.meta_info);
-		var artist_albums_text = $('<div class=""></div>').appendTo(artist_albums_container);
-		if (artist_albums_container){
-			if (!has_some_info_extenders){
-				has_some_info_extenders = true;
-			}
-			var albums_link = $('<a class="js-serv get-artist-albums">' + localize('get-albums')+ '</a>')
-				.click(function(){
-					var _this = $(this);
-					if (!_this.data('albums-loaded')){
-						
-						artist_albums_container.addClass('albums-loading');
-						
-						lfm('artist.getTopAlbums',{'artist': artist },function(r){
-							if (typeof r != 'object') {return;}
-							
-							//_sui.renderArtistAlbums(ob.own);
-							var albums = toRealArray( r.topalbums.album);
-							if (albums.length){
-								var ob = sortLfmAlbums(albums, artist);
-								//ordered
-								for (var i=0; i < ob.ordered.length; i++) {
-									var aul =  $('<ul class="artist-album"></ul>');
-									su.ui.renderArtistAlbums(ob.ordered[i], artist, aul);
-									aul.appendTo(artist_albums_text)
-								};
-								
-								
-							} else{
-								container.append('<p>No albums</p>')
-							}
-							
-							_this.data('albums-loaded', true);
-							artist_albums_container.removeClass('albums-loading');
-						});
-						_this.text(localize('hide-them','hide them'));
-						seesu.track_event('Artist navigation', 'show artist info', artist);
-					} else{
-						_mui.toogle_art_alb_container(_this);
-					}
-				})
-				.appendTo(artist_albums_text);
-			artist_albums_container.data('albums_link', albums_link);
-		}
+		
 		ainf.bio.parent().removeClass('background-changes');
 		if (has_some_info_extenders){
 			ext_info.base_info = artist;

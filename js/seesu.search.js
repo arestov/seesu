@@ -75,7 +75,6 @@ var artistSuggest = function(artist, image){
 		},
 		click: function(){
 			su.ui.views.showArtcardPage(this.artist, true)
-			//su.ui.show_artist(this.artist, this.q);
 			su.track_event('Music search', this.q, "artist: " + this.artist );
 		},
 		createItem: function(q){
@@ -109,7 +108,6 @@ var playlistSuggest = function(pl){
 		},
 		createItem: function(q){
 			var _this = this;
-			this.pl.with_search_results_link = q;
 			return $('<a></a>')
 				.text(this.valueOf())
 				.click(function(){_this.click();});
@@ -131,10 +129,7 @@ var trackSuggest = function(artist, track, image, duration){
 			return this.artist + ' - ' + this.track;
 		},
 		click: function(){
-			su.ui.show_artist(this.artist, {
-				artist: this.artist,
-				track: this.track
-			}, false, {
+			su.ui.showTopTacks(this.artist, true, false, {
 				artist: this.artist,
 				track: this.track
 			});
@@ -208,7 +203,7 @@ var albumSuggest = function(artist, name, image, id){
 			return '( ' + this.artist + ' ) ' + this.name;
 		},
 		click: function(){
-			su.ui.showAlbum(this.artist, this.name, this.aid, false, this.q);
+			su.ui.showAlbum(this.artist, this.name, this.aid, false, true);
 			seesu.track_event('Music search', this.q, "album: " + this.valueOf());
 		},
 		createItem: function(q) {
@@ -533,9 +528,22 @@ var network_search = seesu.env.cross_domain_allowed ? function(q, invstg){
 		getLastfmSuggests('tag.search', {tag: q}, q, invstg.g('tags'), parseTagsResults);	
 		getLastfmSuggests('album.search', {album: q}, q, invstg.g('albums'), parseAlbumsResults);
 	}, 400);
-var offlineSearch = function(){
 	
+var searchTags = function(q){
+	var tags_results = [];
+	
+	var tags = searchInArray(lastfm_toptags, q);
+	for (var i=0; i < tags.length; i++) {
+		tags_results.push(new tagSuggest(tags[i]));
+	};
+	return tags_results;
 };
+	
+var offlineSearch = $.debounce(function(q, invstg){
+	var tags = invstg.g('tags');
+		tags.r.append(searchTags(q));
+		tags.renderSuggests();
+},150);
 
 investigation = function(c){
 	this.c = c;

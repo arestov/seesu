@@ -314,7 +314,7 @@ var empty_song_click = function(){
 };
 
 (function(){
-	songsList = function(playlist_title, playlist_type, key, with_search_results_link, first_song){
+	songsList = function(playlist_title, playlist_type, key, first_song){
 		this.key = key;
 		this.loading = true;
 		if (playlist_title){
@@ -323,10 +323,6 @@ var empty_song_click = function(){
 		if (playlist_type){
 			this.playlist_type = playlist_type;
 		}
-		if (with_search_results_link){
-			this.with_search_results_link = with_search_results_link;
-		}
-		
 		
 		
 		if (bN(['artist', 'album', 'cplaylist'].indexOf(playlist_type ))){
@@ -414,7 +410,10 @@ var empty_song_click = function(){
 			
 		},
 		compare: function(puppet){
-			return this.playlist_type == puppet.playlist_type && (!this.key && !this.key || this.key == puppet.key);
+			var key_string_o = stringifyParams(this.key);
+			var key_string_p = stringifyParams(puppet.key);
+			
+			return this.playlist_type == puppet.playlist_type && (key_string_o == key_string_p);
 		},
 		kill: function(){
 			if (this.ui){
@@ -480,8 +479,8 @@ var empty_song_click = function(){
 })();
 
 
-var prepare_playlist = function(playlist_title, playlist_type, key, with_search_results_link, first_song){
-	var pl = new songsList(playlist_title, playlist_type, key, with_search_results_link, first_song);
+var prepare_playlist = function(playlist_title, playlist_type, key, first_song){
+	var pl = new songsList(playlist_title, playlist_type, key, first_song);
 	return pl;
 };
 
@@ -609,7 +608,7 @@ var get_artists_by_tag = function(tag,callback,error_c){
 	return true;
 };
 function findAlbum(album_name, artist_name, no_navi, start_song){
-	var pl_r = prepare_playlist((artist_name ? '(' + artist_name + ') ' : '') + album_name ,'album', {original_artist: artist_name, album: album_name}, false, start_song);
+	var pl_r = prepare_playlist((artist_name ? '(' + artist_name + ') ' : '') + album_name ,'album', {original_artist: artist_name, album: album_name}, start_song);
 	seesu.ui.views.show_playlist_page(pl_r, false, no_navi || !!start_song );
 	lfm('Album.search', {album: album_name}, function(r) {
 		if (!r || r.error){
@@ -671,7 +670,7 @@ var get_similar_artists = function(original_artist, callback,error_c){
 };
 
 var render_tracks_by_similar_artists = function(original_artist, no_navi, start_song){
-	var pl_r = prepare_playlist('Similar to «' + original_artist + '» artists', 'similar artists', original_artist, false, start_song);
+	var pl_r = prepare_playlist('Similar to «' + original_artist + '» artists', 'similar artists', original_artist, start_song);
 	seesu.ui.views.show_playlist_page(pl_r, false, no_navi || !!start_song);
 	if (start_song){
 		pl_r.showTrack(start_song, no_navi);
