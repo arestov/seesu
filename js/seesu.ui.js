@@ -106,7 +106,9 @@ artcardUI.prototype = {
 			$.each(tags, function(i, el){
 				if (el && el.name){
 					var li = $('<li></li>');
-					$('<a class="js-serv"></a>').text(el.name).attr('url', el.url).appendTo(li);
+					$('<a class="js-serv"></a>').click(function(){
+						su.ui.show_tag(el.name);
+					}).text(el.name).attr('url', el.url).appendTo(li);
 					li.appendTo(ul);
 					ul.append(' ');
 				}
@@ -296,7 +298,7 @@ seesu_ui.prototype = {
 			
 		};	
 	},
-	show_tag: function(tag, query, no_navi, start_song){
+	show_tag: function(tag, save_parents, no_navi, start_song){
 		
 		var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', tag, start_song);
 		get_artists_by_tag(tag, function(pl){
@@ -304,7 +306,7 @@ seesu_ui.prototype = {
 		}, function(){
 			proxy_render_artists_tracks();
 		});
-		this.views.show_playlist_page(pl_r, !!query, no_navi || !!start_song );
+		this.views.show_playlist_page(pl_r, !!save_parents, no_navi || !!start_song );
 		
 		if (start_song){
 			pl_r.showTrack(start_song, no_navi);

@@ -171,7 +171,7 @@ var tagSuggest = function(tag, image){
 			return this.tag;
 		},
 		click: function(){
-			su.ui.show_tag(this.tag, this.q);
+			su.ui.show_tag(this.tag, true);
 			seesu.track_event('Music search', this.q, "tag: " + this.tag );
 		},
 		createItem: function(q) {
