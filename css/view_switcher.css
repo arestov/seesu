@@ -435,7 +435,9 @@ ul.tracks-for-play > li{
 		height:174px;
 		overflow:hidden;
 		}
-	
+	.art-card-albums.show-all-albums{
+		height:auto;
+	}
 	
 		.art-card-albums ul{
 			overflow:hidden;

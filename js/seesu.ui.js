@@ -140,6 +140,7 @@ artcardUI.prototype = {
 		console.log(artists)
 	},
 	showAlbums: function(albums, save_parents){
+		var _this = this;
 		if (albums.length){
 			var ob = sortLfmAlbums(albums, this.artist);
 			//ordered
@@ -149,6 +150,9 @@ artcardUI.prototype = {
 				aul.appendTo(this.ui.albumsc);
 			};
 			
+			$('<a class="js-serv"></a>').text("Show all (" + albums.length + ")").click(function(){
+				_this.ui.albumsc.toggleClass('show-all-albums')
+			}).appendTo(_this.ui.albumsc.children(".row-header"));
 			
 		} else{
 			
