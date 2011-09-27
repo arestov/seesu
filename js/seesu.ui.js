@@ -355,7 +355,7 @@ seesu_ui.prototype = {
 			if (!simple){
 				su.ui.views.showArtcardPage(artist, save_parents, true);
 			}
-			this.views.show_playlist_page(pl, !!save_parents, no_navi);
+			this.views.show_playlist_page(pl, !simple || !!save_parents, no_navi);
 			return false;
 		} else{
 			su.ui.views.restoreFreezed();
