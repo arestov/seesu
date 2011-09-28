@@ -359,7 +359,7 @@ seesu_ui.prototype = {
 			return false;
 		} else{
 			su.ui.views.restoreFreezed();
-			return true;
+			return cpl;
 		}
 	},
 	showAlbum: function(artist, name, id, original_artist, save_parents, simple){
@@ -390,7 +390,7 @@ seesu_ui.prototype = {
 			});
 		}
 		if (start_song){
-			pl.showTrack(start_song, no_navi);
+			(recovered || pl).showTrack(start_song, no_navi);
 		}
 		
 		
