@@ -152,7 +152,7 @@ artcardUI.prototype = {
 				aul.appendTo(this.ui.albumsc);
 			};
 			
-			$('<a class="js-serv"></a>').text("Show all (" + albums.length + ")").click(function(){
+			$('<a class="js-serv"></a>').text(localize("Show-all")  + " (" + albums.length + ")").click(function(){
 				_this.ui.albumsc.toggleClass('show-all-albums')
 			}).appendTo(_this.ui.albumsc.children(".row-header"));
 			

@@ -247,6 +247,10 @@ localizer = {
 		"original": "artist card",
 		"ru": "карточка артиста"
 	},
+	"Best-tracks":{
+		"original": "Best tracks",
+		"ru": "Лучшие треки"
+	},
 	"top-tracks":{
 		"original": "top tracks",
 		"ru": 'лучшие треки'	
@@ -391,6 +395,10 @@ localizer = {
 	"Tracks": {
 		"original": "Tracks",
 		"ru": 'Треки'
+	},
+	"Show-all": {
+		"original": "Show all",
+		"ru": "Показать все"
 	},
 	"Albums": {
 		"original": "Albums",

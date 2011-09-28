@@ -268,6 +268,7 @@ cloneObj(artcardLevelResident.prototype ,{
 	show: function(opts){
 		if (opts.userwant){
 			this.checkAndHandleData();
+			su.track_page('art card');
 		}
 		su.ui.els.slider.className = 'show-art-card';
 		return this.c.show()
