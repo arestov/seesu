@@ -239,8 +239,9 @@ display:none;
 				-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 				}
 .track-context{
-	padding:0 8px;
+	padding:0 8px 10px;
 	margin-top:6px;
+	min-height: 420px;
 }
 .artist-info{overflow:hidden;}
 .artist-info .image{
@@ -378,7 +379,7 @@ display:none;
 	background:#5a5a5a;
 	margin:5px -13px 0;
 	padding: 0 0 14px;
-	min-height:140px;
+	min-height:237px;
 	}	
 	.track-info-dominator > .vk-login-context, .track-context > .vk-login-context{
 		border-radius:0;
@@ -428,7 +429,7 @@ display:none;
 		
 	}	
 	.track-info-dominator .track-info{
-		margin-bottom:14px;
+		margin-top:14px;
 	}
 	
 	
@@ -645,7 +646,7 @@ display:none;
 			border-color: transparent transparent #5A5A5A transparent  ;
 			}
 	.tl-arrow{
-		margin-left:-5px;
+		margin-left:0;
 	}	
 
 .triangle {
@@ -811,19 +812,19 @@ html.not-as-application, .not-as-application  body{
 	border-radius: 6px;
 }
 .song-listeners-list{
-	height: 144px;
-	overflow:hidden;
-	padding-top:5px;
-	position:relative;
+	height: 56px;
+	overflow: hidden;
+	padding-top: 10px;
+	position: relative;
 	}
 	.song-listener{
 		position:relative;
 		margin-left:11px;
 		background: #4A4A4A;
 		padding: 3px;
-		border-radius: 5px;
+		border-radius: 3px;
 		margin-bottom:10px;
-		width:100px;
+		width:50px;
 		float:left;
 	}
 	.current-user-listen{
@@ -849,13 +850,13 @@ html.not-as-application, .not-as-application  body{
 			margin-left:0;
 		}
 		.song-listener .image-cropper{
-			height:134px;
+			height:50px;
 			overflow:hidden;
 			
 		}
 		.song-listener img{
-			width:100px;
-			border-radius:2px;
+			width:50px;
+			border-radius:1px;
 		}
 
 iframe.you-tube-video,embed.you-tube-video{

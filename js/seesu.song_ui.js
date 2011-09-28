@@ -207,8 +207,8 @@ songUI.prototype = {
 					prev: false
 				};
 				su.ui.infoGen(this.base_info, c, 'more «%s» info');
-				su.ui.infoGen(this.files, c, 'files: %s');
-				su.ui.infoGen(this.videos, c, 'video: %s');
+				//su.ui.infoGen(this.files, c, 'files: %s');
+				//su.ui.infoGen(this.videos, c, 'video: %s');
 				if (c.str){
 					this.extend_switcher.find('.big-space').text(c.str);
 				}

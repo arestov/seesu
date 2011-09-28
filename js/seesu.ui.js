@@ -460,12 +460,13 @@ seesu_ui.prototype = {
 			}
 			return offset;
 		}
-		
-		
 	},
-	preloadImage: function(src, callback, place){
+	preloadImage: function(src, alt, callback, place){
 		var image = document.createElement('img');
-		image.alt='user photo';
+		if (alt){
+			image.alt= alt;
+		}
+		
 		image.onload = function(){
 			if (callback){
 				callback(image)
@@ -497,9 +498,11 @@ seesu_ui.prototype = {
 	createUserAvatar: function(info, c, size){
 		var _this = this;
 		var imageplace = $("<div class='image-cropper'></div>").appendTo(c)
-		var image = this.preloadImage(info.photo_medium, function(img){
-			_this.verticalAlign(img, 134, true);	
-		}, imageplace); 
+		$('<img alt="user photo" width="50" height="50"/>').attr('src', info.photo).appendTo(imageplace);
+		/*
+		var image = this.preloadImage(info.photo, 'user photo', function(img){
+			_this.verticalAlign(img, 50, true);	
+		}, imageplace); */
 	},
 	createLikeButton: function(lig){
 		var nb = this.createNiceButton();
@@ -586,7 +589,7 @@ seesu_ui.prototype = {
 		c.empty();
 		
 		if (lig.info && lig.info.photo_big){
-			var image = _this.preloadImage(lig.info.photo_big, function(img){
+			var image = _this.preloadImage(lig.info.photo_big, 'user photo', function(img){
 				_this.verticalAlign(img, 252, true);	
 			}, $('<div class="big-user-avatar"></div>').appendTo(c));
 		}
