@@ -243,6 +243,10 @@ localizer = {
 		"original": "albums",
 		"ru": "альбомы"	
 	},
+	"artcard": {
+		"original": "artist card",
+		"ru": "карточка ариста"
+	},
 	"top-tracks":{
 		"original": "top tracks",
 		"ru": 'лучшие треки'	

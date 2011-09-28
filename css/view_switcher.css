@@ -239,6 +239,7 @@ ul.tracks-for-play > li{
 	line-height:20px;
 	border-top:1px solid transparent;
 	padding:4px 0;
+	overflow: hidden;
 }
 	.nav-item span{
 		display:block;
@@ -264,7 +265,7 @@ ul.tracks-for-play > li{
 	
 	background:url(../i/nav/button-gradient.png) repeat-x 100% 0;
 	position:relative;
-	
+	overflow: visible;
 	
 	
 	text-shadow:0 1px 0 #000;

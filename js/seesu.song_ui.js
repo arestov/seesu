@@ -143,14 +143,16 @@ songUI.prototype = {
 		
 		
 		
-		
-		if (this.mo.plst_titl.playlist_type != 'artist'){
-			$('<a class="js-serv">' + localize('top-tracks') + '</a>')
+		var pl = this.mo.plst_titl,
+			pl_type = pl.playlist_type;
+			
+		if (pl_type != 'artist'){
+			$('<a class="js-serv">' + localize('artcard') + '</a>')
 				.data('artist', this.mo.artist)
 				.appendTo(dominator_head.children('.closer-to-track'))
 				.click(function(){
-					su.ui.showTopTacks(_this.mo.artist);
-					su.track_event('Artist navigation', 'top tracks', _this.mo.artist);
+					su.ui.views.showArtcardPage(_this.mo.artist);
+					su.track_event('Artist navigation', 'art card', _this.mo.artist);
 				});
 		}
 		
