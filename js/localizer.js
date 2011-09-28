@@ -245,7 +245,7 @@ localizer = {
 	},
 	"artcard": {
 		"original": "artist card",
-		"ru": "карточка ариста"
+		"ru": "карточка артиста"
 	},
 	"top-tracks":{
 		"original": "top tracks",
