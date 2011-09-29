@@ -578,6 +578,8 @@ songUI.prototype = {
 						
 					li.appendTo(v_content)
 				}
+				
+				//set up filter app$control.yt$state.reasonCode != limitedSyndication
 				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
 					var _v = vs[i],
 						tmn = _v['media$group']['media$thumbnail'][0].url,
