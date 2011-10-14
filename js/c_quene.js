@@ -61,10 +61,14 @@ funcs_queue.prototype = {
 				this.done = true;
 				
 				var time = _this.get_interval();
-			
-				setTimeout(function(){
+				if (time){
+					setTimeout(function(){
+						_this.next(queue_just_for_me);
+					}, time);
+				} else{
 					_this.next(queue_just_for_me);
-				}, time);
+				}
+				
 			},
 			abort: function(){
 				this.aborted = true;
@@ -80,18 +84,23 @@ funcs_queue.prototype = {
 		}
 		return _ob;
 	},
-	init: function(){
-		if (this.big_queue.inited) {return this.big_queue;}
+	init: function(force){
+		if (!force && this.big_queue.inited) {return this.big_queue;}
 		var _this = this;
-
-
+		this.big_queue.inited = true;
+		
 		var time = this.get_interval();
-		setTimeout(function(){
+		if (time){
+			setTimeout(function(){
+				_this.next(_this.big_queue);
+			}, time)
+		} else{
 			_this.next(_this.big_queue);
-		}, time)
+		}
+		
 			
 		
-		this.big_queue.inited = true;
+		
 		return this;
 
 		

@@ -52,7 +52,7 @@ var test_pressed_node = function(e, opts){
 		  }
 		  else if (bN(class_list.indexOf('similar-artists'))){
 			var artist = clicked_node.data('artist');
-			render_tracks_by_similar_artists(artist);
+			su.ui.showSimilarArtists(artist);
 			seesu.track_event('Artist navigation', 'similar artists to', artist);
 		  }
 		  else if (bN(class_list.indexOf('external'))){

@@ -244,7 +244,7 @@ window.connect_dom_to_som = function(d, sui){
 				sui.views.freeze(su.player.c_song.plst_titl, true);
 				*/
 				sui.views.m.restoreFreezed();
-				su.player.view_song(su.player.c_song, true, true, true);
+				su.ui.views.show_track_page(su.player.c_song, true);
 				
 				sui.mark_c_node_as(su.player.player_state);
 				state_recovered = true;
@@ -604,7 +604,7 @@ window.connect_dom_to_som = function(d, sui){
 				if (r && r.toptracks && r.toptracks.track){
 					_cmetro.empty()
 					
-					var plr = prepare_playlist('Chart of ' + random_metro.name, 'cplaylist', random_metro.name);
+					var plr = prepare_playlist('Chart of ' + random_metro.name, 'cplaylist', {metro: random_metro.name, country: random_metro.country});
 					
 					var metro_tracks = r.toptracks.track;
 					var _header =  $('<h3></h3>').appendTo(_cmetro)
@@ -797,7 +797,6 @@ window.connect_dom_to_som = function(d, sui){
 			var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(sui.els.start_screen);
 			var pop_tags  = (r && r.tags && r.tags.tag) && ((r.tags.tag.length && r.tags.tag) || [r.tags.tag]);
 			var wtags = [];
-			dizi = wtags;
 			if (pop_tags){
 				var nbsp_char= String.fromCharCode(160);
 				for (var i=0; i < pop_tags.length; i++) {

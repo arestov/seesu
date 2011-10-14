@@ -119,7 +119,7 @@ var song_methods = {
 		
 		if (this.plst_titl && this.plst_titl.playlist_type == 'artist'){
 			if (this.track){
-				url += '/' + '_/'+ this.track;
+				url += '/' + this.track;
 			}
 		} else if (this.artist){
 			url += '/' + this.artist + '/' + (this.track || '_');
@@ -590,16 +590,15 @@ function handle_song(mo, complete, get_next){
 	if (complete){
 		if (mo.ui){
 			mo.ui.node.removeClass('search-mp3');
+			if (get_next){
+				mo.ui.updateSongContext(get_next)
+			}
 		}
 		
 		if (mo.isHaveTracks()){
 			clearTimeout(mo.cantwait);
 			
 			if (get_next){
-				if (mo.ui){
-					mo.ui.updateSongContext(get_next)
-				}
-
 				if (su.player.c_song && !su.player.c_song.load_finished) {
 					if (mo == su.player.c_song.next_song && su.player.musicbox.preloadSong){
 						su.player.musicbox.preloadSong(su.player.c_song.next_song.song().link);
@@ -641,6 +640,7 @@ function handle_song(mo, complete, get_next){
 	if (mo.isHaveTracks() || mo.isHaveBestTracks()){
 		if (mo.ui){
 			mo.ui.update();
+			mo.ui.updateSongFiles();
 			su.ui.els.export_playlist.addClass('can-be-used');
 		}
 		

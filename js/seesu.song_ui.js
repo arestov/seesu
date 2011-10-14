@@ -311,7 +311,7 @@ songUI.prototype = {
 			if (a_info){
 				if (artist) {this.update_artist_info(artist, a_info, this.mo.plst_titl.playlist_type != 'artist', this.extend_info);}
 				this.show_video_info(this.tv, artist + " - " + this.mo.track, this.extend_info);
-				this.updateSongFiles(this.extend_info);
+				this.updateSongFiles();
 				if (real_need){
 					this.updateSongListeners();
 				}
@@ -602,13 +602,14 @@ songUI.prototype = {
 		
 	},
 	updateSongFiles: function(ext_info){
+		var ext_info = this.extend_info;
 		if (this.mo.wheneWasChanged() > this.mo.ui.files_time_stamp){
 		
 			var c = this.files;
 			c.empty();
 
 			var songs = this.mo.songs();
-			
+
 			if (this.mo.isSearchCompleted() && this.mo.isNeedsAuth('vk')){
 				
 				var vklc = this.rowcs.song_context.getC();
@@ -619,26 +620,16 @@ songUI.prototype = {
 				} else {
 					vklc.after(su.ui.samples.vk_login.clone(localize('stabilization-of-vk')));
 				}
-				
-				
 			} 
-			
-			
 			if (songs){
 				var songs_counter = 0;
 				var small_head = $('<div class="files-header"></div>').appendTo(c);
-			
-				
-				
+
 				var sc = $('<div class="files-lists"></div>');
 				
 				var just_link;
 				var extend_link;
-				
-				
-				
 			
-							
 				for (var i=0; i < songs.length; i++) {
 					songs_counter += songs[i].t.length
 					var b = su.ui.createFilesList(songs[i], this.mo);

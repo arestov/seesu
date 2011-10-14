@@ -45,8 +45,10 @@ if (app_env.needs_url_history) {
 	}
 }
 
-	
+(function() {
 navi= {
+	counter: 0,
+	states_store: {},
 	history_positions: 0,
 	popState: function(url_obj){
 		var states = this.findState(url_obj, true);
@@ -56,9 +58,16 @@ navi= {
 			//throw 'haarming history'
 		}
 	},
+	replaceLastState: function(newURL, d){
+		var lstate = this.states[this.states.length-1];
+		
+		lstate.newURL = newURL;
+		lstate.data = d;
+		
+	},
 	pushState: function(oldURL, newURL, d){
 		++this.history_positions;
-		this.states.push({oldURL:oldURL, newURL:newURL, data: d});
+		this.states.push({oldURL: oldURL, newURL: newURL, data: d});
 	},
 	sliceStates: function(){
 		if (this.states.length > this.history_positions){
@@ -115,7 +124,43 @@ navi= {
 	fake_current_location:'',
 	states:[],
 	app_hash: '',
-	set: $.debounce(function(u,data){
+	replace: function(oldu, u, data){
+		if (!app_env.needs_url_history){
+			return
+		}
+		var url = u.replace(/\s/g,'+');
+		
+		if (this.app_hash != url){
+			
+			this.sliceStates();
+			var c = this.fake_current_location;
+			var replacing = c == oldu;
+			if (replacing){
+				this.replaceLastState(url, data);
+			} else{
+				this.pushState(c, url, data);
+			}
+			this.fake_current_location = url;
+			
+			this.app_hash = url; //supressing hash change handler, must be before location.assign
+			
+			var cbase;
+			if (location.href.indexOf('#') > -1){
+				cbase = location.href.slice(0, location.href.indexOf('#'));
+			} else{
+				cbase = location.href;
+			}
+			
+			if (replacing){
+				location.replace(cbase + '#' + url);
+			} else{
+				location.assign(cbase + '#' + url);
+			}
+			
+			console.log(url);
+		}
+	},
+	set: function(u, data){
 		if (!app_env.needs_url_history){
 			return
 		}
@@ -127,15 +172,13 @@ navi= {
 			this.sliceStates();
 			var c = this.fake_current_location;
 			
-			this.pushState(c, url, d);
+			this.pushState(c, url, data);
 			
 			
 			this.fake_current_location = url;
 			
 			this.app_hash = url; //supressing hash change handler, must be before location.assign
-			if (bN(url.indexOf('[object+Object]'))){
-				throw 'bad url'
-			}
+
 			try{
 				var hash = location.href.indexOf('#');
 				var curl;
@@ -148,24 +191,15 @@ navi= {
 			}catch(e){
 				
 			}
-			
-			
-			
-			
 			console.log(url);
 		}
+	
 		
-		
-		
-		
-		return
-		if (this.app_hash != url){
-			
-			this.app_hash = url;
-		}
-		
-	},100)
-};
+	}
+};	
+})()
+	
+
 	
 	
 	
@@ -350,7 +384,6 @@ function getPlayViewStateFromString(n){
 	}
 	pvstate.plp = getPuppetPlaylistOfViewState(pvstate);
 	
-	console.log(splevels);
 	return pvstate;
 }
 var handleHistoryState =function(e, jo, jn, oldstate, newstate, state_from_history){
@@ -390,7 +423,7 @@ var handleExternalState = function(e, jo, jn, oldstate, newstate){
 			if (newstate.plp.playlist_type == 'artist'){
 				su.ui.show_artist(newstate.artist_name, false, true, tk);
 			} else if (newstate.plp.playlist_type == 'similar artists'){
-				render_tracks_by_similar_artists(newstate.artist_name, true, tk)
+				render_tracks_by_similar_artists(newstate.artist_name, true, tk) // showSimilarArtists
 			} else if (newstate.plp.playlist_type == 'artists by tag'){
 				su.ui.show_tag(newstate.tag_name, false, true, tk)
 			} else if (newstate.plp.playlist_type == 'cplaylist'){
@@ -422,7 +455,80 @@ var handleExternalState = function(e, jo, jn, oldstate, newstate){
 	
 	navi.pushState(e.oldURL, e.newURL);
 };
-function hashchangeHandler(e, force){
+var gunm = function(lev){
+	var levs = [].concat(lev, lev.parent_levels),
+		live_levs = [],
+		dead_levs = [];
+		
+	levs.reverse();
+		
+	var live_levs = []
+	
+	for (var i=0; i < levs.length; i++) {
+		var cur = levs[i]; 
+		if (cur && cur.canUse() && !dead_levs.length){
+			live_levs.push(cur);
+		} else{
+			dead_levs.push(cur);
+		}
+	};
+	return {
+		live: live_levs,
+		dead: dead_levs
+	};
+	// есть живые предки то восстанавливаем их
+
+
+};
+var hashChangeQueue = new funcs_queue(0);
+ 
+
+var hashChangeRecover = function(e, jo, jn, oldstate, newstate, state_from_history){
+	console.log(state_from_history)
+	if (state_from_history){
+		var dl = gunm(state_from_history.data);
+		console.log(dl);
+	//	dizi = dl;
+		if (dl.live.length){
+			var deepest = dl.live[dl.live.length -1];
+			if (!deepest.isOpened()){
+				su.ui.views.restoreFreezed();
+			}
+			deepest.sliceTillMe();
+		} else{
+			su.ui.views.showStartPage(true);
+		}
+		
+		if (dl.dead.length){
+			for (var i=0; i < dl.dead.length; i++) {
+				su.ui.views.m.resurrectLevel(dl.dead[i], i == dl.dead.length - 1);
+			};
+		}	
+	} else{
+		console.log(e);
+	}
+	
+	
+	if (state_from_history){
+		//handleHistoryState(e, jo, jn, oldstate, newstate, state_from_history);
+	} else{
+		//handleExternalState(e, jo, jn, oldstate, newstate);
+		if (!jn.supported_path.length){
+			su.ui.views.showStartPage()
+		} else{
+			
+		}
+	}
+}
+
+
+var hashChangeReciever = function(e){
+	hashChangeQueue.add(function(){
+		hashchangeHandler(e);
+	});
+};
+
+var hashchangeHandler=  function(e, force){
 	navi.fake_current_location = e.newURL;
 	
 	if (!force && (!e || e.newURL == navi.app_hash)){
@@ -439,30 +545,17 @@ function hashchangeHandler(e, force){
 		var oldstate = getPlayViewStateFromString(jo.path);
 		var newstate = getPlayViewStateFromString(jn.path);
 		
-		if (!jn.supported_path.length){
-			su.ui.views.showStartPage()
-		} else{
-			var state_from_history = navi.isNewStateAreOld(e);
 		
-			if (state_from_history){
-				handleHistoryState(e, jo, jn, oldstate, newstate, state_from_history);
-			} else{
-				handleExternalState(e, jo, jn, oldstate, newstate);
-			}
-		}
+		var state_from_history = navi.isNewStateAreOld(e);
 		
-		
-		
-		
-		
-		
+		hashChangeRecover(e, jo, jn, oldstate, newstate, state_from_history);
 		
 	}
 	
 };
 
 function getMusicById(sub_raw, tk){
-	var pl_r = prepare_playlist('Track' , 'tracks', + new Date());
+	var pl_r = prepare_playlist('Track' , 'tracks', {time: + new Date()});
 	su.ui.views.show_playlist_page(pl_r, false, true);
 	
 	if (sub_raw.type && sub_raw.id){
@@ -516,4 +609,41 @@ function getMusicById(sub_raw, tk){
 	} else{
 		
 	}
+};
+
+
+
+function findAlbum(album_name, artist_name, no_navi, start_song){
+	//DEPRICATED
+	var pl_r = prepare_playlist((artist_name ? '(' + artist_name + ') ' : '') + album_name ,'album', {original_artist: artist_name, album: album_name}, start_song);
+	seesu.ui.views.show_playlist_page(pl_r, false, no_navi || !!start_song );
+	lfm('Album.search', {album: album_name}, function(r) {
+		if (!r || r.error){
+			create_playlist(false, pl_r);
+			return
+		}
+		var res_matches = [];
+		var ralbums = [];
+		if (r.results.albummatches.album && r.results.albummatches.album.length){
+			for (var i=0; i < r.results.albummatches.album.length; i++) {
+				ralbums.push(r.results.albummatches.album[i])
+			};
+		} else if (r.results.albummatches.album){
+			ralbums.push(r.results.albummatches.album)
+		}
+		for (var i=0; i < ralbums.length; i++) {
+			var ral = ralbums[i];
+			if (album_name.toLowerCase() == ral.name.toLowerCase()  && (!artist_name || ral.artist == artist_name)){
+				res_matches.push(ral)
+			}
+			
+		};
+		if (res_matches.length){
+			get_artist_album_playlist(res_matches[0].id, pl_r)
+		} else{
+			create_playlist(false, pl_r);
+		}
+		
+		
+	});
 };

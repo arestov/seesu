@@ -234,7 +234,7 @@ window.app_env = (function(){
 	
 	
 	
-	env.needs_url_history = false; //TEMP
+	//env.needs_url_history = false; //TEMP
 	
 	if (!env.app_type){
 		env.app_type = 'unknown_app_type' + (navigator.userAgent && ': ' + navigator.userAgent);

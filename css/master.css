@@ -241,7 +241,7 @@ display:none;
 .track-context{
 	padding:0 8px 10px;
 	margin-top:6px;
-	min-height: 420px;
+	min-height: 383px;
 }
 .artist-info{overflow:hidden;}
 .artist-info .image{
@@ -338,6 +338,14 @@ display:none;
 		.artist-bio{
 			height:4.7em;
 		}
+		.track-info-dominator{
+			
+			min-height:237px;
+		}
+		.track-context{
+			
+			min-height: 420px;
+		}
 	}
 	
 	
@@ -379,7 +387,7 @@ display:none;
 	background:#5a5a5a;
 	margin:5px -13px 0;
 	padding: 0 0 14px;
-	min-height:237px;
+	min-height:200px;
 	}	
 	.track-info-dominator > .vk-login-context, .track-context > .vk-login-context{
 		border-radius:0;

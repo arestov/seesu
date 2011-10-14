@@ -1,12 +1,15 @@
 
 
-var mapLevel = function(num, map, parent_levels, resident, getNavData){
+var mapLevel = function(num, parent_levels, resident, map, getNavData, data){
 	var _this = this;
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
 	this.getNavData = getNavData;
 	this.storage = {};
+	if (typeof data == 'object'){
+		cloneObj(this.storage, data);
+	}
 	
 	if (resident){
 		this.setResidentC(resident);
@@ -26,14 +29,19 @@ mapLevel.prototype = {
 			return value;
 		}
 	},
-	historyStep: function(){
-		navi.set(this.getFullURL(), this.history_data);
+	historyStep: function(old, replace){
+		if (replace && old){
+			navi.replace(this.getFullURL(old), this.getFullURL(), this)
+		} else {
+			navi.set(this.getFullURL(), this);
+		}
+		
 	},
 	setTitle: function(text){
 		if (this.getNav()){
-			this.getNav().text(text);
+			this.getNav().text(text || "");
 		}
-		this.title = text;
+		this.title = text || "";
 	},
 	getNav: function(){
 		
@@ -59,12 +67,14 @@ mapLevel.prototype = {
 	},
 	setResidentC: function(residentC){
 		this.residentC = residentC;
-	},	
+	},
+	getResidentC: function(){
+		return 	this.residentC;
+	},
 	buildResident: function(){
-		this.resident = new this.residentC(this.storage);
+		this.resident = (new this.residentC(this.storage)).setLev(this);
 		if (this.resident.render && this.parent_levels[0]){
 			this.resident.render(this.parent_levels[0].getResident());
-			
 		}
 		return this.resident;
 	},
@@ -79,11 +89,11 @@ mapLevel.prototype = {
 	getURL: function(){
 		return this.url || '';
 	},
-	setURL: function(url, make_history_step, data){
+	setURL: function(url, make_history_step){
+		var old_url = this.url || false;
 		this.url = url || '';
-		this.history_data = data;
 		if (make_history_step){
-			this.historyStep();
+			this.historyStep(old_url, !!old_url);
 		}
 	},
 	matchURL: function(url){
@@ -106,12 +116,12 @@ mapLevel.prototype = {
 			return this;
 		}	
 	},
-	getFullURL: function(){
+	getFullURL: function(url){
 		var u='';
 		for (var i = this.parent_levels.length - 1; i >= 0; i--){
 			u += this.parent_levels[i].getURL();
 		};
-		return u + this.getURL();
+		return u + (url || this.getURL());
 	},
 	show: function(opts){
 		var o = opts || {};
@@ -201,6 +211,8 @@ browseMap.prototype= {
 				} else{
 					dizmiss.fz = true;
 				}
+			} else {
+				//dizmiss.fz = dizmiss.fr = true;
 			}
 				
 		};	
@@ -225,22 +237,55 @@ browseMap.prototype= {
 		
 		this.current_level_num = lp.num;
 	},
+	resurrectLevel: function(lev, set_active){
+		var nlev = this._goDeeper(true, lev.getResidentC(), lev.storage);
+			nlev.setURL(lev.getURL());
+			nlev.setTitle(lev.title);
+		
+		if (set_active){
+			this.setLevelPartActive(nlev, {userwant: true});
+		}
+		return nlev;
+	},
 	goShallow: function(to){ //up!
 		this.sliceDeepUntil(to.num, true);
 	},
-	goDeeper: function(orealy, resident){
+	_goDeeper: function(orealy, resident, storage){
 		var cl = this.getActiveLevelNum();
 		if (orealy){
 			this.sliceDeepUntil(cl, false, true);
 		}  else{
 			this.sliceDeepUntil(-1, false, true);
 		}
-		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
+		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident, storage);
 		this.setLevelPartActive(cl, {userwant: true});
 		return cl;
 		
 	},
-	getFreeLevel: function(num, save_parents, resident){//goDeeper
+	goDeeper: function(orealy, resident){
+		return this._goDeeper(orealy, resident);
+	},
+	createLevel: function(num, parent_levels, resident, storage){
+		return new mapLevel(num, parent_levels, resident, this, this.getNavData, storage);
+	},
+	getCurrentShallowLevelsAsParents: function(num){
+		var lvls = [];
+		//from deep levels to top levels;
+		if (this.levels.length){
+			var prev_lev_num = num - 1;
+			if (prev_lev_num > -1){
+				var prev_lev = this.getLevel(prev_lev_num);
+				if (prev_lev){
+					lvls.push(prev_lev);
+					if (prev_lev.parent_levels.length){
+						lvls = lvls.concat(prev_lev.parent_levels);
+					}
+				}
+			}
+		}
+		return 	lvls;
+	},
+	getFreeLevel: function(num, save_parents, resident, storage){//goDeeper
 		var _this = this;
 		if (!this.levels[num]){
 			this.levels[num] = {};
@@ -248,32 +293,8 @@ browseMap.prototype= {
 		if (this.levels[num].free && this.levels[num].free != this.levels[num].freezed){
 			return this.levels[num].free;
 		} else{
-			var parent_levels = (function(){
-				var lvls = [];
-				
-				//from deep levels to top levels;
-				if (save_parents){
-					if (_this.levels.length){
-						var prev_lev_num = num - 1;
-						if (prev_lev_num > -1){
-							var prev_lev = _this.getLevel(prev_lev_num);
-							if (prev_lev){
-								lvls.push(prev_lev);
-								if (prev_lev.parent_levels.length){
-									lvls = lvls.concat(prev_lev.parent_levels);
-								}
-							}
-							
-						}
-					}
-					
-					
-					
-				}
-				return 	lvls;
-			})();
-			
-			return this.levels[num].free = new mapLevel(num, this, parent_levels, resident, this.getNavData);
+			var parent_levels = save_parents ? this.getCurrentShallowLevelsAsParents(num) : [];
+			return this.levels[num].free = this.createLevel(num, parent_levels, resident, storage);
 		}
 	},
 	freezeMapOfLevel : function(num){

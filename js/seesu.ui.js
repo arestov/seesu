@@ -60,8 +60,7 @@ artcardUI.prototype = {
 					});
 					ul.removeClass('hidden');
 					
-					console.log('TOP TRACKS');
-					console.log(list);
+					
 				}
 			});
 		}
@@ -138,8 +137,6 @@ artcardUI.prototype = {
 			});
 			ul.removeClass('hidden');
 		}
-		
-		console.log(artists)
 	},
 	showAlbums: function(albums, save_parents){
 		var _this = this;
@@ -300,7 +297,7 @@ seesu_ui.prototype = {
 	},
 	show_tag: function(tag, save_parents, no_navi, start_song){
 		
-		var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', tag, start_song);
+		var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', {tag: tag}, start_song);
 		get_artists_by_tag(tag, function(pl){
 			proxy_render_artists_tracks(pl, pl_r);
 		}, function(){
@@ -322,7 +319,7 @@ seesu_ui.prototype = {
 			title = 'unknow';
 		}
 		
-		var pl_r = prepare_playlist(title , 'tracks', q , title)
+		var pl_r = prepare_playlist(title , 'tracks', {query: q} , title)
 		this.views.show_playlist_page(pl_r, !!q);
 		su.mp3_search.find_files(q, false, function(err, pl, c, complete){
 			if (complete){
@@ -364,7 +361,7 @@ seesu_ui.prototype = {
 	},
 	showAlbum: function(artist, name, id, original_artist, save_parents, simple){
 		var _sui = this;
-		var pl = prepare_playlist('(' + artist + ') ' + name ,'album', {original_artist: original_artist || artist, album: name});
+		var pl = prepare_playlist('(' + artist + ') ' + name, 'album', {artist: original_artist || artist, album: name});
 		
 		
 		var recovered = this.showArtistPlaylist(original_artist || artist, pl, save_parents, false, simple);
@@ -380,7 +377,7 @@ seesu_ui.prototype = {
 		}
 	},
 	showTopTacks: function (artist, save_parents, no_navi, start_song, simple) {
-		var pl = prepare_playlist('Top of ' + artist, 'artist', artist, start_song);
+		var pl = prepare_playlist('Top of ' + artist, 'artist', {artist: artist}, start_song);
 		
 		var recovered = this.showArtistPlaylist(artist, pl, save_parents, no_navi || !!start_song, simple);
 		
@@ -392,12 +389,25 @@ seesu_ui.prototype = {
 		if (start_song){
 			(recovered || pl).showTrack(start_song, no_navi);
 		}
+	},
+	showSimilarArtists: function(artist, save_parents, no_navi, start_song, simple){
+		var save_parents;
 		
+		var pl = prepare_playlist('Similar to «' + artist + '» artists', 'similar artists', {artist: artist}, start_song);
+		this.views.show_playlist_page(pl, false, no_navi || !!start_song);
 		
-	
-	
-	
+		var recovered = this.showArtistPlaylist(artist, pl, save_parents, no_navi || !!start_song, simple);
+		if (!recovered){
+			get_similar_artists(artist, function(list){
+				proxy_render_artists_tracks(list, pl)
+			}, function(){
+				proxy_render_artists_tracks();
+			});
+		}
 		
+		if (start_song){
+			(recovered || pl).showTrack(start_song, no_navi);
+		}
 	},
 	createFilesListElement: function(mopla, mo){
 		
@@ -456,7 +466,7 @@ seesu_ui.prototype = {
 			var offset = (target_height - real_height)/2;
 			
 			if (offset && fix){
-				$(img).animate({'margin-top':  offset + 'px'},200);
+				$(img).animate({'margin-top':  offset + 'px'}, 200);
 			}
 			return offset;
 		}
@@ -668,7 +678,7 @@ seesu_ui.prototype = {
 				
 	},
 	createCurrentUserUI: function(mo, user_info){
-		if (!mo.ui.t_users.current_user){
+		if (mo.ui && mo.ui.t_users && !mo.ui.t_users.current_user){
 			var div = mo.ui.t_users.current_user = $('<div class="song-listener current-user-listen"></div>');
 			this.createUserAvatar(user_info, div);
 			
@@ -690,9 +700,12 @@ seesu_ui.prototype = {
 		return Math.max(users_limit - listenings.length, 0);
 	},
 	createListenersHeader: function(mo){
-		if (!mo.ui.t_users.header){
-			mo.ui.t_users.header = $('<div></div>').text(localize('listeners-looks')).prependTo(mo.ui.t_users.c);
+		if (mo.ui && mo.ui.t_users){
+			if (!mo.ui.t_users.header){
+				mo.ui.t_users.header = $('<div></div>').text(localize('listeners-looks')).prependTo(mo.ui.t_users.c);
+			}
 		}
+		
 	},
 	create_youtube_video: function(id, transparent){
 		var youtube_video = document.createElement('embed');
@@ -740,7 +753,7 @@ seesu_ui.prototype = {
 		return li;
 	},
 
-	render_playlist: function(pl, load_finished) { // if links present than do full rendering! yearh!
+	render_playlist: function(pl, load_finished) {
 		
 		if (pl.ui){
 			var _sui = this;

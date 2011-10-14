@@ -195,7 +195,6 @@ var albumSuggest = function(artist, name, image, id){
 		if (id){
 			this.aid = id;
 		}
-		
 	};
 	albumSuggest.prototype = new baseSuggest();
 	cloneObj(albumSuggest.prototype, {
@@ -210,7 +209,7 @@ var albumSuggest = function(artist, name, image, id){
 			var _this = this;
 			this.q = q;
 			var a = $("<a></a>")
-				.click(function(e){
+				.click(function(){
 					_this.click();
 				})
 				.click(results_mouse_click_for_enter_press);
