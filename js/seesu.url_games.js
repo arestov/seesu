@@ -224,6 +224,9 @@ navi= {
 				this.fake_current_url = url;
 			}
 		},
+		getFakeURL: function(){
+			return 	this.fake_current_url;
+		},
 		getURLData: function(url){
 			var tag 	= (tag = url.match(tag_regexp)) && tag[0],
 				uniq_tag = (uniq_tag = (this.counter++).toString(36)) && zerofy(uniq_tag.substring(uniq_tag.length-3, uniq_tag.length), 3),
@@ -612,18 +615,21 @@ var hashChangeReciever = function(e){
 };
 
 var hashchangeHandler=  function(e, force){
-	navi.setFakeURL(e.newURL)
-	if (e.oldURL != e.newURL){
-		
-		var jn = getFakeURLParameters(e.newURL.replace(/([^\/])\+/g, '$1 '));
-		
-		console.log('newURL: ' + e.newURL);
-		var newstate = getPlayViewStateFromString(jn.path);
-		var state_from_history = navi.findHistory(e.newURL);
-		
-		hashChangeRecover(e, jn, newstate, state_from_history);
-		
+	if (e.newURL != navi.getFakeURL()){
+		navi.setFakeURL(e.newURL)
+		if (e.oldURL != e.newURL){
+			
+			var jn = getFakeURLParameters(e.newURL.replace(/([^\/])\+/g, '$1 '));
+			
+			console.log('newURL: ' + e.newURL);
+			var newstate = getPlayViewStateFromString(jn.path);
+			var state_from_history = navi.findHistory(e.newURL);
+			
+			hashChangeRecover(e, jn, newstate, state_from_history);
+			
+		}
 	}
+	
 	
 };
 
