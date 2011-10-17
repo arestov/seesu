@@ -99,8 +99,6 @@ a.desc{
 }		
 .row-song-context, .row-listeners-context{
 	margin-bottom:14px;
-	
-	display:none;
 	border-top: 1px solid #555555;
 	border-bottom: 1px solid #6e6e6e;
 	background: #5a5a5a;
@@ -378,7 +376,7 @@ display:none;
 	right: 0;
 	
 	height:1.7em;
-	background:url(../i/img_forced_end.png) no-repeat 0 0;
+	background:url(../i/img_forced_end.png) repeat-y 0 0;
 	width:76px;
 }
 .track-info-dominator{

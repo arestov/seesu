@@ -52,6 +52,7 @@ window.connect_dom_to_som = function(d, sui){
 	})(seesu.player.player_volume);
 	domReady(d, function() {
 		console.log('dom ready')
+		d.head = d.head || d.getElementsByTagName('head')[0];
 		var lang = app_env.lang;
 		$('.lang', d).each(function(i,el){
 			var cn = el.className;

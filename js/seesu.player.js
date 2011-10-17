@@ -297,9 +297,7 @@ su.player = {
 			}
 		}
 		if (su.ui.now_playing.link){
-			su.ui.now_playing.link.attr('title', 
-				( su.ui.d.title = (localize('now-playing','Now Playing') + ': ' +mo.artist + " - " + mo.track))
-			);	
+			su.ui.now_playing.link.attr('title', (localize('now-playing','Now Playing') + ': ' +mo.artist + " - " + mo.track));	
 		}
 		
 		

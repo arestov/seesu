@@ -383,7 +383,7 @@ ul.tracks-for-play > li{
 	.art-card h5{
 	
 		}
-		.art-card h5 a{
+		.art-card h5 a.extends-header{
 			margin-left:14px;
 			}
 	.art-card-meta{

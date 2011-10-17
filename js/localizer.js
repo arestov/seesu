@@ -46,6 +46,7 @@ localizer = {
 		"original": "You want to meet this user",
 		"ru": "Ты хочешь познакомиться с этим пользователем"
 	},
+
 	"if-you-accept-one-i":{
 		"original": "If you accept invite from one of the users, then",
 		"ru": "Если ты примешь приглашение от одного из пользователей, то"
@@ -69,6 +70,10 @@ localizer = {
 	"wget-link":{
 		"original": "You will get profile link",
 		"ru": "Ссылка на профиль появится"
+	},
+	"Search-resuls": {
+		"original": "%query% search resuls",
+		"ru": "Результаты поиска %query%"
 	},
 	"attime":{
 		"original":"at",
@@ -403,6 +408,10 @@ localizer = {
 	"Albums": {
 		"original": "Albums",
 		"ru": 'Альбомы'
+	},
+	"full-list":{
+		"original": "full list",
+		"ru": "полный список"	
 	},
 	"oartists": {
 		"original": "artists",

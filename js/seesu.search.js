@@ -81,10 +81,10 @@ var artistSuggest = function(artist, image){
 			var _this = this;
 			this.q = q;
 			var a = $("<a></a>")
-				.click(function(e){
-					_this.click();
-				})
-				.click(results_mouse_click_for_enter_press);
+				.click(function(e){_this.click();})
+				.click(function(){
+					setEnterItemAfterClick(_this);
+				});
 			$("<img/>").attr({ src: (this.image || default_sugg_artimage), alt: this.artist }).appendTo(a);
 			$("<span></span>").text(this.valueOf()).appendTo(a);
 			return a;
@@ -141,7 +141,9 @@ var trackSuggest = function(artist, track, image, duration){
 			var _this = this;
 			var a = $("<a></a>")
 				.click(function(e){_this.click();})
-				.click(results_mouse_click_for_enter_press);
+				.click(function(){
+					setEnterItemAfterClick(_this);
+				});
 			
 			$("<img/>").attr({ src: (this.image || default_sugg_artimage) , alt: this.artist }).appendTo(a);
 			if (this.duration){
@@ -179,7 +181,9 @@ var tagSuggest = function(tag, image){
 			var _this = this;
 			return $("<a></a>")
 				.click(function(e){_this.click();})
-				.click(results_mouse_click_for_enter_press)
+				.click(function(){
+					setEnterItemAfterClick(_this);
+				})
 				.append("<span>" + this.valueOf() + "</span>");
 		}
 	});
@@ -209,10 +213,10 @@ var albumSuggest = function(artist, name, image, id){
 			var _this = this;
 			this.q = q;
 			var a = $("<a></a>")
+				.click(function(e){_this.click();})
 				.click(function(){
-					_this.click();
-				})
-				.click(results_mouse_click_for_enter_press);
+					setEnterItemAfterClick(_this);
+				});
 			$("<img/>").attr({ src: (this.image || default_sugg_artimage), alt: this.valueOf() }).appendTo(a);
 			$("<span></span>").text(this.valueOf()).appendTo(a);
 			return a;
@@ -314,7 +318,7 @@ var albs_secti = {
 
 arrows_keys_nav = function(e){
 	
-	var invstg = su.ui.search_el && (invstg = su.ui.search_el.getResident()) && invstg.D('invstg');
+	var invstg = su.ui.search_el;
 	
 	if (invstg){
 		var _key = e.keyCode;
@@ -334,11 +338,13 @@ arrows_keys_nav = function(e){
 	
 };
 
-results_mouse_click_for_enter_press = function(e){
-	var srca = su.ui.search_el;
-	var node_name = e.target.nodeName;
-	if ((node_name != 'A') && (node_name != 'BUTTON')){return false;}
+var setEnterItemAfterClick = function(item){
+
+	var invstg = su.ui.search_el;
 	
+	if (invstg){
+		invstg.setItemForEnter(item);
+	}
 	
 	//set_node_for_enter_press($(e.target));
 };

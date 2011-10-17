@@ -22,8 +22,7 @@
 	"js/seesu.ui.js", 
 	"js/seesu.s.js", 
 	"js/seesu.song_ui.js", 
-	"js/seesu.js", 
-	"js/seesu.url_games.js", 
+	"js/seesu.js",
 	"js/seesu.mp3_search.js", 
 	"js/seesu.search.js", 
 	"js/seesu.player.js", 
@@ -68,6 +67,13 @@
 				if (url.indexOf('jquery.debounce-1.0.5.js') != -1){
 					if(!$.browser.msie && (app_env.opera_widget || app_env.firefox_widget)){
 						yepnope("js/widget.resize.js")
+					}
+				} else if (url.indexOf('seesu.js') != -1){
+					if (app_env.needs_url_history){
+						yepnope("js/seesu.url_games.js")
+					} else{
+						navi = {};
+						navi.set = navi.replace = function(){return false;};
 					}
 				}
 			

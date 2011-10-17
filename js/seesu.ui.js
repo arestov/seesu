@@ -12,7 +12,7 @@ var artcardUI = function(artist, c){
 	};	
 
 
-	this.top_tracks_link = $(' <a class="js-serv">full list</a>').appendTo(this.ui.topc.children('.row-header')).click(function(){
+	this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
 		su.ui.showTopTacks(artist, true, false, false, true);
 	});
 	this.loadInfo();
@@ -125,6 +125,7 @@ artcardUI.prototype = {
 	},
 	showSimilars: function(artists){
 		if (artists.length){
+			var _this = this;
 			var ul = this.ui.similarsc.children('ul');
 			$.each(artists, function(i, el){
 				var li = $('<li></li>');
@@ -135,6 +136,14 @@ artcardUI.prototype = {
 				ul.append(' ');
 				
 			});
+			
+			var header_link = $('<a class="js-serv"></a>')
+				.click(function(){
+					su.ui.showSimilarArtists(_this.artist, true, false, false, true);	
+				})
+				.text(localize('similar-arts'))
+			var header = this.ui.similarsc.children('h5').empty().append(header_link);
+			
 			ul.removeClass('hidden');
 		}
 	},
@@ -149,7 +158,7 @@ artcardUI.prototype = {
 				aul.appendTo(this.ui.albumsc);
 			};
 			
-			$('<a class="js-serv"></a>').text(localize("Show-all")  + " (" + albums.length + ")").click(function(){
+			$('<a class="js-serv extends-header"></a>').text(localize("Show-all")  + " (" + albums.length + ")").click(function(){
 				_this.ui.albumsc.toggleClass('show-all-albums')
 			}).appendTo(_this.ui.albumsc.children(".row-header"));
 			
@@ -164,7 +173,7 @@ artcardUI.prototype = {
 
 var contextRow = function(container){
 	this.m = {
-		c: container.hide(),
+		c: container.addClass('hidden'),
 		active: false
 	};
 	this.arrow = container.children('.rc-arrow');
@@ -178,7 +187,7 @@ contextRow.prototype = {
 	addPart: function(cpart, name){
 		if (name){
 			this.parts[name] = {
-				c: cpart.hide(),
+				c: cpart.addClass('hidden'),
 				d:{},
 				active: false
 			};
@@ -206,12 +215,12 @@ contextRow.prototype = {
 			this.hide(true);
 		
 		
-			this.parts[name].c.show();
+			this.parts[name].c.removeClass('hidden');
 			this.parts[name].active = true;
 			
 			
 			if (!this.m.active){
-				this.m.c.show();
+				this.m.c.removeClass('hidden');
 				this.m.active = true;
 			}
 			
@@ -225,7 +234,7 @@ contextRow.prototype = {
 	hide: function(not_itself){
 		if (!not_itself){
 			if (this.m.active){
-				this.m.c.hide();
+				this.m.c.addClass('hidden');
 				this.m.active = false;
 			}
 			
@@ -233,7 +242,7 @@ contextRow.prototype = {
 		
 		for (var a in this.parts){
 			if (this.parts[a].active){
-				this.parts[a].c.hide();
+				this.parts[a].c.addClass('hidden');
 				this.parts[a].active = false;
 			}
 			
@@ -394,7 +403,7 @@ seesu_ui.prototype = {
 		var save_parents;
 		
 		var pl = prepare_playlist('Similar to «' + artist + '» artists', 'similar artists', {artist: artist}, start_song);
-		this.views.show_playlist_page(pl, false, no_navi || !!start_song);
+		//this.views.show_playlist_page(pl, false, no_navi || !!start_song);
 		
 		var recovered = this.showArtistPlaylist(artist, pl, save_parents, no_navi || !!start_song, simple);
 		if (!recovered){
@@ -969,6 +978,17 @@ seesu_ui.prototype = {
 		}
 		
 	},
+	favicon_states: {
+		playing: 'icons/icon16p.png',
+		usual: 'icons/icon16.png'
+	},
+	changeFavicon: function(state){
+		if (state && this.favicon_states[state]){
+			changeFavicon(this.d, this.favicon_states[state], 'image/png');
+		} else{
+			changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
+		}
+	},
 	mark_c_node_as: function(marker){
 		var s = this.els.pllistlevel.add(su.ui.now_playing.link);
 		s.each(function(i, el){
@@ -987,7 +1007,11 @@ seesu_ui.prototype = {
 		  default:
 			//console.log('Do nothing');
 		}
-	 
+		if (marker == PLAYED){
+			this.changeFavicon('playing')
+		} else {
+			this.changeFavicon('usual');
+		}
   
 	}
 

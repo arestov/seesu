@@ -17,11 +17,7 @@ if (app_env.needs_url_history) {
 					}
 					hash = newhash;
 				}
-				
-				
 			}
-			
-			
 		})()
 		
 	} else{
@@ -197,7 +193,90 @@ navi= {
 		
 	}
 };	
-})()
+})();
+
+(function() {
+	var getURLBase = function(){
+		var cbase;
+		if (location.href.indexOf('#') > -1){
+			cbase = location.href.slice(0, location.href.indexOf('#'));
+		} else{
+			cbase = location.href;
+		}	
+		return cbase;
+	};
+	var zerofy = function(str, digits){
+		str = "" + str;
+		if (digits){
+			while (str.length < digits){
+				str = 0 + str;
+			}
+		}
+		return str;
+	};
+	var tag_regexp = /\ ?\$...$/;
+	navi = {
+		counter: Math.round((Math.random() * parseInt('zzz', 36))),
+		states_index: {},
+		fake_current_url:'',
+		setFakeURL: function(url){
+			if (this.fake_current_url != url){
+				this.fake_current_url = url;
+			}
+		},
+		getURLData: function(url){
+			var tag 	= (tag = url.match(tag_regexp)) && tag[0],
+				uniq_tag = (uniq_tag = (this.counter++).toString(36)) && zerofy(uniq_tag.substring(uniq_tag.length-3, uniq_tag.length), 3),
+				uniq_url= tag ? url : url + ' $' + uniq_tag;
+
+			return {
+				clear_url: url.replace(tag_regexp, ''),
+				tag: tag,
+				uniq_tag: uniq_tag,
+				uniq_url: uniq_url
+			};
+		},
+		_saveHistory: function(url, data, old_url){
+			if (url){
+				if (old_url){
+					var fud = this.getURLData(this.fake_current_url),
+						oud = this.getURLData(old_url),
+						replace = fud.clear_url == oud.clear_url;
+				}
+				
+				var ud = this.getURLData(url);
+				if (!this.states_index[ud.uniq_url]){
+					this.setFakeURL(ud.uniq_url);
+					this.states_index[ud.uniq_url] = {
+						date: new Date(),
+						url: ud.clear_url,
+						data: data
+					};
+					if (!replace){
+						location.assign(getURLBase() + '#' + ud.uniq_url);
+					} else{
+						location.replace(getURLBase() + '#' + ud.uniq_url);
+					}
+					
+				}
+			}	
+		},
+		set: function(url, data){
+			this._saveHistory(url, data);
+		}, 
+		replace: function(oldurl, url, data){
+			this._saveHistory(url, data, oldurl);
+		},
+		findHistory: function(url){
+			return this.states_index[url];
+		}
+		
+	};
+})();
+
+
+
+
 	
 
 	
@@ -466,8 +545,19 @@ var gunm = function(lev){
 	
 	for (var i=0; i < levs.length; i++) {
 		var cur = levs[i]; 
-		if (cur && cur.canUse() && !dead_levs.length){
-			live_levs.push(cur);
+		if (cur && !dead_levs.length){
+			if (cur.canUse()){
+				live_levs.push(cur);
+			} else{
+				var liveclone = cur.getResurrectedClone();
+				if (liveclone){
+					live_levs.push(liveclone);
+				} else{
+					dead_levs.push(cur);
+				}
+				
+			}
+			
 		} else{
 			dead_levs.push(cur);
 		}
@@ -483,7 +573,7 @@ var gunm = function(lev){
 var hashChangeQueue = new funcs_queue(0);
  
 
-var hashChangeRecover = function(e, jo, jn, oldstate, newstate, state_from_history){
+var hashChangeRecover = function(e, jn, newstate, state_from_history){
 	console.log(state_from_history)
 	if (state_from_history){
 		var dl = gunm(state_from_history.data);
@@ -506,15 +596,8 @@ var hashChangeRecover = function(e, jo, jn, oldstate, newstate, state_from_histo
 		}	
 	} else{
 		console.log(e);
-	}
-	
-	
-	if (state_from_history){
-		//handleHistoryState(e, jo, jn, oldstate, newstate, state_from_history);
-	} else{
-		//handleExternalState(e, jo, jn, oldstate, newstate);
 		if (!jn.supported_path.length){
-			su.ui.views.showStartPage()
+			su.ui.views.showStartPage(true)
 		} else{
 			
 		}
@@ -529,26 +612,16 @@ var hashChangeReciever = function(e){
 };
 
 var hashchangeHandler=  function(e, force){
-	navi.fake_current_location = e.newURL;
-	
-	if (!force && (!e || e.newURL == navi.app_hash)){
-		//console.log('manual change to:')
-		//console.log(e);
-		return false;
-	} else if (e.oldURL != e.newURL){
-		navi.app_hash = e.newURL;
+	navi.setFakeURL(e.newURL)
+	if (e.oldURL != e.newURL){
 		
-		var jo = getFakeURLParameters(e.oldURL.replace(/([^\/])\+/g, '$1 '));
 		var jn = getFakeURLParameters(e.newURL.replace(/([^\/])\+/g, '$1 '));
 		
 		console.log('newURL: ' + e.newURL);
-		var oldstate = getPlayViewStateFromString(jo.path);
 		var newstate = getPlayViewStateFromString(jn.path);
+		var state_from_history = navi.findHistory(e.newURL);
 		
-		
-		var state_from_history = navi.isNewStateAreOld(e);
-		
-		hashChangeRecover(e, jo, jn, oldstate, newstate, state_from_history);
+		hashChangeRecover(e, jn, newstate, state_from_history);
 		
 	}
 	

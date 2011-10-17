@@ -18,6 +18,22 @@
 	
 })();
 
+var changeFavicon = function(d, src, type) {
+	var link = d.createElement('link'),
+	     oldLink = d.getElementById('dynamic-favicon');
+	link.id = 'dynamic-favicon';
+	link.rel = 'shortcut icon';
+	if (type){
+		link.type = type;
+	}
+	
+	link.href = src;
+	if (oldLink) {
+		d.head.removeChild(oldLink);
+	}
+	d.head.appendChild(link);
+};
+
 (function(){
 	var jsonp_counter = 0;
 	window.create_jsonp_callback = function(func){

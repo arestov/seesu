@@ -60,10 +60,17 @@ dNav.prototype = {
 		this.resetStackMark();
 	},
 	text: function(text){
-		this.text_c.text(text);
-		if (!this.has_title){
-			this.c.attr('title', text);
+		if (this.text_c){
+			this.text_c.text(text);
 		}
+		if (!this.fixed_title){
+			this.title_text = this.getTitleString ? this.getTitleString(text) : text;
+			this.c.attr('title', this.title_text);
+		}
+		return this.title_text;
+	},
+	getTitle: function(){
+		return this.title_text;	
 	},
 	render: function(place){
 		if (place){place.append(this.c)}
@@ -83,28 +90,37 @@ var mainNav = function(){
 	this.c.click(function(){
 		_this.click();
 	})
-	
-	this.text_c = this.c.find('span');
 	this.active = true;
-	this.has_title = !!this.c.attr('title');
+	this.title_text = 'Seesu';
+	this.fixed_title = true;
 };
 mainNav.prototype = new dNav();
 
 
-
 var sRNav = function(){
 	var _this = this;
-	this.c= $('<span class="nnav nav-item nav-search-results" title="Suggestions &amp; search"><b></b></span>');
-	this.text_c = this.c.find('span');
-	
+	this.c= $('<span class="nnav nav-item nav-search-results" title="Search results"><b></b></span>');
+	this.c.attr('title', this.getTitleString());	
 	this.active = true;
 	this.c.click(function(){
 		_this.click();
 	});
-	this.has_title = !!this.c.attr('title');
 }
 sRNav.prototype = new dNav();
-
+cloneObj(sRNav.prototype, {
+	getTitleString: function(text){
+		var query_regexp = /\ ?\%query\%\ ?/;
+		var original = localize('Search-resuls')
+		
+		if (text){
+			return original.replace(query_regexp, ' «' + text + '» ').replace(/^\ |\ $/gi, '');
+		} else{
+			var usual_text = original.replace(query_regexp, '');
+			var cap = usual_text.charAt(0).toLocaleUpperCase();
+			return cap + usual_text.slice(1);
+		}
+	}
+})
 
 var artcardNav = function(){
 	var _this = this;
@@ -114,7 +130,6 @@ var artcardNav = function(){
 	});
 	this.text_c = this.c.find('span');
 	this.active = true;
-	this.has_title = !!this.c.attr('title');
 };
 artcardNav.prototype = new dNav();
 
@@ -127,7 +142,6 @@ var plNav = function(){
 	})
 	this.text_c = this.c.find('span');
 	this.active = true;
-	this.has_title = !!this.c.attr('title');
 	//$('<span class="nav-title"></span>');
 };
 plNav.prototype = new dNav();
@@ -137,7 +151,6 @@ var trNav = function(){
 	this.c = $('<span class="nnav nav-item nav-track-zoom"><span></span><b></b></span>');
 	this.text_c = this.c.find('span');
 	this.active = true;
-	this.has_title = !!this.c.attr('title');
 }
 trNav.prototype =  new dNav();
 
@@ -223,10 +236,10 @@ cloneObj(sRLevelResident.prototype, {
 		this.c.remove();
 	},
 	hide: function(){
-		this.c.hide();
+		this.c.addClass('hidden');
 	},
 	show: function(opts){
-		this.c.show();
+		this.c.removeClass('hidden');
 		if (opts.userwant){
 			this.checkAndHandleData();	
 		}
@@ -236,6 +249,7 @@ cloneObj(sRLevelResident.prototype, {
 			su.ui.els.slider.className = new_s;
 			su.track_page('search results');
 		}
+		su.ui.search_el = this.D('invstg');
 	},
 	nav: function(){
 		return new sRNav();
@@ -245,7 +259,9 @@ cloneObj(sRLevelResident.prototype, {
 			if (!this.D('invstg')){
 				this.D('invstg', new investigation(this.c));
 			}
+			this.D('invstg').lev = this.lev;
 			this.D('invstg').scratchResults(query);
+
 			return true;
 		}
 	}
@@ -268,7 +284,7 @@ cloneObj(artcardLevelResident.prototype ,{
 		return this.c.remove();
 	},
 	hide: function(){
-		return this.c.hide()
+		return this.c.addClass('hidden');
 	},
 	show: function(opts){
 		if (opts.userwant){
@@ -276,7 +292,7 @@ cloneObj(artcardLevelResident.prototype ,{
 			su.track_page('art card');
 		}
 		su.ui.els.slider.className = 'show-art-card';
-		return this.c.show()
+		return this.c.removeClass('hidden');
 	},
 	wait: function(){
 		
@@ -322,7 +338,7 @@ cloneObj(playlistLevelResident.prototype, {
 		return this.c.remove();
 	},
 	hide: function(){
-		return this.c.hide()
+		return this.c.addClass('hidden');
 	},
 	show: function(opts){
 		if (opts.userwant){
@@ -335,7 +351,7 @@ cloneObj(playlistLevelResident.prototype, {
 		}
 		
 		su.ui.els.slider.className = ' show-player-page';
-		return this.c.show()
+		return this.c.removeClass('hidden');
 	},
 	wait: function(){
 		this.tracks_container.addClass('loading');
@@ -462,25 +478,28 @@ views.prototype = {
 		this.m.startNewBrowse(!no_navi);
 	},
 	showResultsPage: function(query, no_navi){
-		if (!su.ui.search_el || !su.ui.search_el.isOpened()){
-			su.ui.search_el = this.m.goDeeper(false, sRLevelResident);
+		if (!su.ui.search_el || !su.ui.search_el.lev.isOpened()){
+			var lev = this.m.goDeeper(false, sRLevelResident);
+		} else {
+			var lev = su.ui.search_el.lev;
 		}
-		var search_view = su.ui.search_el;
-		if (search_view.D('q') != query){
-			search_view.D('q', query);
-			search_view.setURL('?q=' + query, !no_navi);
+		
+		if (lev.D('q') != query){
+			lev.setTitle(query);
+			lev.D('q', query);
+			lev.setURL('?q=' + query, !no_navi);
 		}
 	},
 	showArtcardPage: function(artist, save_parents, no_navi){
 		var lev = this.m.goDeeper(save_parents, artcardLevelResident);
 			lev.setTitle(artist);
-			
 			lev.D('artist', artist);
+			
 			lev.setURL('/catalog/' + artist, !no_navi);
 			
 	},
 	show_playlist_page: function(pl, save_parents, no_navi){
-		var lev = (pl.lev = this.m.goDeeper(save_parents, playlistLevelResident));
+		var lev = this.m.goDeeper(save_parents, playlistLevelResident);
 			lev.setTitle(pl.playlist_title);
 			lev.D('pl', pl);
 			lev.setURL(pl.getUrl(), !no_navi);
@@ -494,8 +513,8 @@ views.prototype = {
 		pl.lev.sliceTillMe(true);
 		var lev = this.m.goDeeper(true, trackLevelResident);
 			lev.setTitle(title);
-			lev.setURL(mo.getURLPart(), !no_navi);
 			lev.D('mo', mo);
+			lev.setURL(mo.getURLPart(), !no_navi);
 	}
 };
 })();

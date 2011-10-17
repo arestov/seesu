@@ -39,9 +39,12 @@ mapLevel.prototype = {
 	},
 	setTitle: function(text){
 		if (this.getNav()){
-			this.getNav().text(text || "");
+			this.full_title = this.getNav().text(text || "") || '';
 		}
 		this.title = text || "";
+	},
+	getFullTitle: function(){
+		return this.full_title  || this.getNav().getTitle();
 	},
 	getNav: function(){
 		
@@ -159,6 +162,18 @@ mapLevel.prototype = {
 		}
 		
 	},
+	getResurrectedClone: function(){
+		var current = this;
+		while (current.clone && !current.canUse()) {
+			current = current.clone;
+			this.clone = current
+		}
+		if (current.canUse()){
+			return current;
+		} else{
+			return null;
+		}
+	},
 	canUse: function(){
 		return !!this.map;	
 	},
@@ -238,7 +253,7 @@ browseMap.prototype= {
 		this.current_level_num = lp.num;
 	},
 	resurrectLevel: function(lev, set_active){
-		var nlev = this._goDeeper(true, lev.getResidentC(), lev.storage);
+		var nlev = lev.clone = this._goDeeper(true, lev.getResidentC(), lev.storage);
 			nlev.setURL(lev.getURL());
 			nlev.setTitle(lev.title);
 		
@@ -370,6 +385,15 @@ browseMap.prototype= {
 		};
 	},
 	updateNav: function(tl){
+		var big_title = [],
+			pushTitle = function(lev){
+				var title = lev.getFullTitle();
+				if (title){
+					big_title.push(title);
+				}
+			}
+		pushTitle(tl);
+			
 		var lvls = [].concat(tl.parent_levels);
 		if (tl != this.getLevel(-1)){
 			lvls.push(this.getLevel(-1));
@@ -377,15 +401,20 @@ browseMap.prototype= {
 		lvls.reverse();
 		tl.getNav().setInactive();
 		
+		
+		
 		var prev = lvls.pop();
 		if (prev){
 			prev.getNav().setActive(lvls.length);
+			pushTitle(prev);
 		}
 		if (lvls.length){
 			while (lvls.length){
 				lvls.pop().getNav().stack( lvls.length == 0 ? 'bottom' : 'middle');
 			}
 		}
+		su.ui.d.title = big_title.join(' ← ');
+		
 		
 	},
 	clearShallow: function(lev){
