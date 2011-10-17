@@ -227,7 +227,7 @@ contextRow.prototype = {
 		}
 		if (arrow_left){
 			//used for positioning 
-			this.arrow.css('left', arrow_left + 'px').show();
+			this.arrow.css('left', arrow_left + 'px').removeClass('hidden');
 			
 		} 
 	},
@@ -248,7 +248,7 @@ contextRow.prototype = {
 			
 		}
 		
-		this.arrow.hide();
+		this.arrow.addClass('hidden');
 		
 	}
 };

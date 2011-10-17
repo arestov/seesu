@@ -318,7 +318,7 @@ var albs_secti = {
 
 arrows_keys_nav = function(e){
 	
-	var invstg = su.ui.search_el;
+	var invstg = su.ui.search_el && su.ui.search_el.D('invstg');
 	
 	if (invstg){
 		var _key = e.keyCode;
@@ -340,7 +340,7 @@ arrows_keys_nav = function(e){
 
 var setEnterItemAfterClick = function(item){
 
-	var invstg = su.ui.search_el;
+	var invstg = su.ui.search_el && su.ui.search_el.D('invstg');
 	
 	if (invstg){
 		invstg.setItemForEnter(item);

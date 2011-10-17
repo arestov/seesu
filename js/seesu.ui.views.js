@@ -249,7 +249,7 @@ cloneObj(sRLevelResident.prototype, {
 			su.ui.els.slider.className = new_s;
 			su.track_page('search results');
 		}
-		su.ui.search_el = this.D('invstg');
+		su.ui.search_el = this;
 	},
 	nav: function(){
 		return new sRNav();
