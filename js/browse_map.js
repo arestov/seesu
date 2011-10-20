@@ -39,12 +39,9 @@ mapLevel.prototype = {
 	},
 	setTitle: function(text){
 		if (this.getNav()){
-			this.full_title = this.getNav().text(text || "") || '';
+			this.getNav().text(text || "");
 		}
 		this.title = text || "";
-	},
-	getFullTitle: function(){
-		return this.full_title  || this.getNav().getTitle();
 	},
 	getNav: function(){
 		
@@ -386,21 +383,33 @@ browseMap.prototype= {
 	},
 	updateNav: function(tl){
 		var big_title = [],
+			updateTitle = function(){
+				var bt = [];
+				for (var i=0; i < big_title.length; i++) {
+					var title = big_title[i].getNav().getTitle();
+					if (title){
+						bt.push(title)
+					}
+				};
+				su.ui.d.title = bt.join(' ← ');
+			},
 			pushTitle = function(lev){
-				var title = lev.getFullTitle();
-				if (title){
-					big_title.push(title);
-				}
-			}
-		pushTitle(tl);
+				big_title.push(lev);
+				lev.getNav().onTitleChange(function(){
+					updateTitle();
+				});
+			};
+		
 			
 		var lvls = [].concat(tl.parent_levels);
 		if (tl != this.getLevel(-1)){
 			lvls.push(this.getLevel(-1));
 		}
 		lvls.reverse();
-		tl.getNav().setInactive();
 		
+		
+		tl.getNav().setInactive();
+		pushTitle(tl);
 		
 		
 		var prev = lvls.pop();
@@ -413,7 +422,8 @@ browseMap.prototype= {
 				lvls.pop().getNav().stack( lvls.length == 0 ? 'bottom' : 'middle');
 			}
 		}
-		su.ui.d.title = big_title.join(' ← ');
+		updateTitle();
+		
 		
 		
 	},

@@ -36,10 +36,9 @@ dNav.prototype = {
 		this.show();
 		this.active = false;
 	},
-	kill: function(){
-		this.c.remove();
-	},
+	
 	resetStackMark: function(){
+		this.onTitleChange(null);
 		this.stacked = false;
 		this.c.removeClass('stack-bottom stack-middle stack-top');
 	},
@@ -59,7 +58,14 @@ dNav.prototype = {
 		this.c.removeClass('nnav');
 		this.resetStackMark();
 	},
+	kill: function(){
+		this.c.remove();
+		this.onTitleChange(null);
+	},
 	text: function(text){
+		var old_title = this.title_text;
+		
+		
 		if (this.text_c){
 			this.text_c.text(text);
 		}
@@ -67,10 +73,24 @@ dNav.prototype = {
 			this.title_text = this.getTitleString ? this.getTitleString(text) : text;
 			this.c.attr('title', this.title_text);
 		}
+		if (this.lev){
+			this.lev.setFullTitle(this.title_text);
+		}
+		if ((old_title != this.title_text) && this.titleChangeCallback){
+			this.titleChangeCallback();
+		}
 		return this.title_text;
 	},
 	getTitle: function(){
 		return this.title_text;	
+	},
+	onTitleChange: function(cb){
+		if (cb){
+			this.titleChangeCallback = cb;
+		} else{
+			delete this.titleChangeCallback;
+		}
+		
 	},
 	render: function(place){
 		if (place){place.append(this.c)}

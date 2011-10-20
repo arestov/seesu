@@ -18,7 +18,7 @@ Alexander Belov <porqz@mesquite.ru>
 
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
-
+поправить title (устанавливается после обработки навигации)
 
 два раза появляется ссылка на трек
 mp3 для вконтакте только для залогиненых и в неонлайн версии
