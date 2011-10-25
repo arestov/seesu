@@ -335,7 +335,7 @@ var empty_song_click = function(){
 			if (this.playlist_type == 'artist'){
 				url += '/_';
 			} else if (this.playlist_type == 'album'){
-				url += (this.info.artist ? this.info.artist + '/' : '/_/') + this.info.album;
+				url += '/' + this.info.album;
 			} else if (this.playlist_type == 'similar artists'){
 				url += '/+similar';
 			} else if (this.playlist_type == 'artists by tag'){
@@ -348,6 +348,8 @@ var empty_song_click = function(){
 				url += '/loved';
 			} else if (this.playlist_type == 'cplaylist'){
 				url += '/playlist/' + this.info.name;
+			} else if (this.playlist_type == 'chart'){
+				url += '/chart/' +  this.info.country + '/' + this.info.metro;
 			}
 			return url;
 		},

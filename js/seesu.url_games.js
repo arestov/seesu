@@ -79,14 +79,12 @@ if (app_env.needs_url_history) {
 			return 	this.fake_current_url;
 		},
 		getURLData: function(url){
-			var tag 	= (tag = url.match(tag_regexp)) && tag[0],
-				uniq_tag = this.getUniqId(),
-				uniq_url= tag ? url : url + ' $' + uniq_tag;
+			var tags		= (tag = url.match(tag_regexp)) && tag[0],
+				clear_url	= url.replace(tag_regexp, ''),
+				uniq_url	= url.replace(/\ /gi, '+') + (tag || (' $' + this.getUniqId()));
 
 			return {
-				clear_url: url.replace(tag_regexp, ''),
-				tag: tag,
-				uniq_tag: uniq_tag,
+				clear_url: clear_url,
 				uniq_url: uniq_url
 			};
 		},
@@ -242,7 +240,7 @@ var url_parser = {
 				break
 			case 'ds': this.getDirectSearchData(pth, con)
 				break
-			case 'charts':
+			case 'chart':
 				this.getChartData(pth, con)
 				break
 			default:
@@ -327,7 +325,20 @@ var url_parser = {
 		} 
 	},
 	getChartData: function(pth, con){
-		
+		var country = pth.shift();
+		var metro = pth.shift();
+
+		if (country && metro){
+			con.add('pl', {
+				country: country,
+				metro: metro,
+				type: 'chart'
+			});
+			var current_music = getTrackAtristAndName(pth);
+			if (current_music){
+				con.add('track', current_music);
+			}
+		}
 	},
 	getRecommendationsData: function(pth, con){
 		con.add('pl', {
@@ -366,16 +377,15 @@ var url_parser = {
 		}
 	},
 	getDirectSearchData: function(pth, con){
-		
-		
-		splevels.push('pl', pth[0]);
-		if (pth[1]){
-			pvstate.search_type = pth[1];
+		var source = pth.shift();
+		var id = pth.shift();
+		if (type && id){
+			con.add('pl', {
+				type: 'directsearch',
+				source: source,
+				rawid: id
+			});	
 		}
-		if (pth[2]){
-			pvstate.search_id = pth[2];
-		}
-		checkPlstateArtistAndTrack(pvstate, splevels, pth[3], pth[4]);
 	}
 }
 
@@ -463,41 +473,34 @@ var recoverPlaylistBranch = function(pldata, songdata, has_artcard){
 	switch (pldata.type) {
 		case 'similar':
 			su.ui.showSimilarArtists(pldata.artist, {no_navi: true, from_artcard: has_artcard, save_parents: true}, songdata);
-			//this.getCatalogData(pth, con)
 			break
 		case 'album':
 			su.ui.showAlbum({
 				album_name: pldata.album_name,
 				artist: pldata.artist
 			}, {no_navi: true, from_artcard: has_artcard, save_parents: true}, start_song);
-			//su.ui.showAlbum(pldata.artist, pldata.album_name, this.aid, false, true);
-			//this.getTagData(pth, con)
 			break
 		case 'top':
 			su.ui.showTopTacks(pldata.artist, {no_navi: true, from_artcard: has_artcard, save_parents: true}, start_song);
-			//this.getRecommendationsData(pth, con)		
 			break
 		case 'tag':
 			su.ui.show_tag(pldata.tag_name, {no_navi: true, save_parents: true}, start_song);
-			//this.getLovedData(pth, con)
 			break
 		case 'recommendations':
-			if (start_song.artist){
-				su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
-			}
-			//this.getLovedData(pth, con)
+			su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
 			break
 		case 'cplaylist':
-			if (start_song.artist){
+			su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+			break
+		case 'chart':
+			if (start_song){
 				su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+			} else{
+				su.ui.showMetroChart(pldata.country, pldata.metro, {no_navi: true, save_parents: true});
 			}
-			//this.getLovedData(pth, con)
 			break
 		case 'loved':
-			if (start_song.artist){
-				su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
-			}
-			//this.getLovedData(pth, con)
+			su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
 			break
 		default:
 			;
@@ -508,22 +511,19 @@ var recoverHistoryTreeBranch = function(branch, sub_branch, prev_branch){
 	var sub_branch_handled;
 	switch (branch.type) {
 		case 'search':
-			//this.getCatalogData(pth, con);
 			su.ui.views.showResultsPage(branch.data.query, true);
 			break
 		case 'artcard':
-			//this.getTagData(pth, con);
 			su.ui.views.showArtcardPage(branch.data.artist, true, true);
 			break
 		case 'pl':
-			//this.getRecommendationsData(pth, con)
 			var song;
 			
 			if (sub_branch && sub_branch.type == 'track'){
 				song = sub_branch.data;
 				sub_branch_handled = true;
 			}
-			recoverPlaylistBranch(branch.data, song, prev_branch.type == 'artcard')
+			recoverPlaylistBranch(branch.data, song, prev_branch && prev_branch.type == 'artcard')
 
 			
 			break
@@ -541,8 +541,10 @@ var hashChangeQueue = new funcs_queue(0);
  
 
 var hashChangeRecover = function(e){
+	var url = e.newURL.replace(/([^\/])\+/g, '$1 ');
+
 	
-	var state_from_history = navi.findHistory(e.newURL);
+	var state_from_history = navi.findHistory(url);
 	if (state_from_history){
 		var dl = gunm(state_from_history.data);
 
@@ -562,7 +564,7 @@ var hashChangeRecover = function(e){
 			};
 		}	
 	} else{
-		var jn = getFakeURLParameters(e.newURL.replace(/([^\/])\+/g, '$1 ').replace(/\ ?\$...$/, ''));
+		var jn = getFakeURLParameters(url.replace(/\ ?\$...$/, ''));
 		su.ui.views.showStartPage(true);
 		if (jn.tree.length){
 			var prev_branch;
@@ -650,37 +652,3 @@ function getMusicById(sub_raw, tk){
 
 
 
-function findAlbum(album_name, artist_name, no_navi, start_song){
-	//DEPRICATED
-	var pl_r = prepare_playlist((artist_name ? '(' + artist_name + ') ' : '') + album_name ,'album', {original_artist: artist_name, album: album_name}, start_song);
-	seesu.ui.views.show_playlist_page(pl_r, false, no_navi || !!start_song );
-	lfm('Album.search', {album: album_name}, function(r) {
-		if (!r || r.error){
-			create_playlist(false, pl_r);
-			return
-		}
-		var res_matches = [];
-		var ralbums = [];
-		if (r.results.albummatches.album && r.results.albummatches.album.length){
-			for (var i=0; i < r.results.albummatches.album.length; i++) {
-				ralbums.push(r.results.albummatches.album[i])
-			};
-		} else if (r.results.albummatches.album){
-			ralbums.push(r.results.albummatches.album)
-		}
-		for (var i=0; i < ralbums.length; i++) {
-			var ral = ralbums[i];
-			if (album_name.toLowerCase() == ral.name.toLowerCase()  && (!artist_name || ral.artist == artist_name)){
-				res_matches.push(ral)
-			}
-			
-		};
-		if (res_matches.length){
-			get_artist_album_playlist(res_matches[0].id, pl_r)
-		} else{
-			create_playlist(false, pl_r);
-		}
-		
-		
-	});
-};

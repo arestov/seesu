@@ -314,7 +314,7 @@ seesu_ui.prototype = {
 		get_artists_by_tag(tag, function(pl){
 			proxy_render_artists_tracks(pl, pl_r);
 		}, function(){
-			proxy_render_artists_tracks();
+			proxy_render_artists_tracks(false, pl_r);
 		});
 		this.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
 		
@@ -427,6 +427,24 @@ seesu_ui.prototype = {
 		if (start_song){
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
+	},
+	showMetroChart: function(country, metro, vopts){
+		vopts = vopts || {};
+		var plr = prepare_playlist('Chart of ' + metro, 'chart', {country: country, metro: metro});
+
+		lfm('geo.getMetroUniqueTrackChart', {country: country, metro: metro, start: new Date - 60*60*24*7}, function(r){
+				
+			if (r && r.toptracks && r.toptracks.track){
+				var metro_tracks = toRealArray(r.toptracks.track);
+				for (var i=0; i < Math.min(metro_tracks.length, 30); i++) {
+					
+					var _trm = metro_tracks[i];
+					plr.push({artist: _trm.artist.name, track: _trm.name});
+				};
+			}
+			su.ui.render_playlist(plr, true);
+		});
+		this.views.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
 	},
 	showSimilarArtists: function(artist, vopts, start_song){
 		vopts = vopts || {};

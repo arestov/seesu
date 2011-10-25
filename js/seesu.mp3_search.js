@@ -85,19 +85,17 @@ var song_methods = {
 	},
 	getURLPart: function(mopla){
 		var url ="";
-		if (!this.plst_titl || this.plst_titl.playlist_type =='tracks'){
-			if (this.raw()){
-				var s = mopla || this.omo;
-				url += "/" + s.from + '/' + s._id;
+		if (mopla || this.raw()){
+			var s = mopla || this.omo;
+			url += "/" + s.from + '/' + s._id;
+		} else{
+			if (this.plst_titl && this.plst_titl.playlist_type == 'artist'){
+				if (this.track){
+					url += '/' + this.track;
+				}
+			} else if (this.artist){
+				url += '/' + this.artist + '/' + (this.track || '_');
 			}
-		}
-		
-		if (this.plst_titl && this.plst_titl.playlist_type == 'artist'){
-			if (this.track){
-				url += '/' + this.track;
-			}
-		} else if (this.artist){
-			url += '/' + this.artist + '/' + (this.track || '_');
 		}
 		
 		

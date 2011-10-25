@@ -600,12 +600,12 @@ window.connect_dom_to_som = function(d, sui){
 		var showMetroRandom = function(){
 			var random_metro = getSomething(lastfm_metros);
 			_cmetro.addClass('loading');
-			lfm('geo.getMetroUniqueTrackChart', {country:random_metro.country, metro:random_metro.name, start: new Date - 60*60*24*7}, function(r){
+			lfm('geo.getMetroUniqueTrackChart', {country: random_metro.country, metro: random_metro.name, start: new Date - 60*60*24*7}, function(r){
 				_cmetro.removeClass('loading');
 				if (r && r.toptracks && r.toptracks.track){
 					_cmetro.empty()
 					
-					var plr = prepare_playlist('Chart of ' + random_metro.name, 'cplaylist', {metro: random_metro.name, country: random_metro.country});
+					var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name});
 					
 					var metro_tracks = r.toptracks.track;
 					var _header =  $('<h3></h3>').appendTo(_cmetro)
