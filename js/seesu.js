@@ -324,26 +324,8 @@ var empty_song_click = function(){
 			this.playlist_type = playlist_type;
 		}
 		
+		this.findSongOwnPosition(first_song);
 		
-		if (bN(['artist', 'album', 'cplaylist'].indexOf(playlist_type ))){
-			var can_find_context = true;
-		}
-		
-		this.can_insert_firstsong;
-		
-		this.firstsong_inseting_done = !can_find_context;
-		
-		if (first_song && first_song.track && (first_song.artist || (playlist_type == 'artist' && key))){
-			if (!first_song.artist){
-				first_song.artist = key;
-			}
-			this.first_song = {
-				omo: first_song
-			};
-		}
-		if (this.first_song){
-			this.push(this.first_song.omo)
-		}
 	};
 	songsList.prototype = new Array();
 	var songs_list_methods = {
@@ -372,6 +354,48 @@ var empty_song_click = function(){
 		add: function(omo, view){
 			var mo = cloneObj({}, omo, false, ['track', 'artist']);
 			this.push(mo, view);
+		},
+		findSongOwnPosition: function(first_song){
+			if (bN(['artist', 'album', 'cplaylist'].indexOf(this.playlist_type ))){
+				var can_find_context = true;
+			}
+			
+			this.firstsong_inseting_done = !can_find_context;
+			
+			if (first_song && first_song.track && first_song.artist){
+				this.first_song = {
+					omo: first_song
+				};
+			}
+			if (this.first_song){
+				this.push(this.first_song.omo)
+			}
+		},
+		appendSongUI: function(mo){
+			var pl_ui_element = mo.ui.mainc;
+			if (this.first_song){
+				if (!this.firstsong_inseting_done){
+					if (mo == this.first_song.mo){
+						this.ui.tracks_container.append(pl_ui_element);
+					} else{
+						this.first_song.mo.ui.mainc.before(pl_ui_element);
+					}
+				} else if (this.first_song.mo != mo){
+					var f_position = this.indexOf(this.first_song.mo);
+					var t_position = this.indexOf(mo);
+					if (t_position < f_position){
+						this.first_song.mo.ui.mainc.before(pl_ui_element);
+					} else{
+						this.ui.tracks_container.append(pl_ui_element);
+					}
+				} else{
+					this.ui.tracks_container.append(pl_ui_element);
+				}
+				
+				
+			} else{
+				this.ui.tracks_container.append(pl_ui_element);
+			}
 		},
 		push: function(omo, view){
 			var mo = extendSong(omo);
@@ -527,7 +551,7 @@ var getTopTracks = function(artist,callback, error_c) {
 };
 
 var proxy_render_artists_tracks = function(artist_list, pl_r){
-	if (artist_list || pl_r){
+	if (artist_list){
 		var track_list_without_tracks = [];
 		for (var i=0; i < artist_list.length; i++) {
 			track_list_without_tracks.push({"artist" :artist_list[i]});

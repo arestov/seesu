@@ -129,7 +129,7 @@ var trackSuggest = function(artist, track, image, duration){
 			return this.artist + ' - ' + this.track;
 		},
 		click: function(){
-			su.ui.showTopTacks(this.artist, true, false, {
+			su.ui.showTopTacks(this.artist, {save_parents: true}, {
 				artist: this.artist,
 				track: this.track
 			});
@@ -173,7 +173,7 @@ var tagSuggest = function(tag, image){
 			return this.tag;
 		},
 		click: function(){
-			su.ui.show_tag(this.tag, true);
+			su.ui.show_tag(this.tag, {save_parents: true});
 			seesu.track_event('Music search', this.q, "tag: " + this.tag );
 		},
 		createItem: function(q) {
@@ -206,7 +206,11 @@ var albumSuggest = function(artist, name, image, id){
 			return '( ' + this.artist + ' ) ' + this.name;
 		},
 		click: function(){
-			su.ui.showAlbum(this.artist, this.name, this.aid, false, true);
+			su.ui.showAlbum({
+				artist: this.artist,
+				album_name: this.name,
+				album_id: this.aid
+			}, {save_parents: true});
 			seesu.track_event('Music search', this.q, "album: " + this.valueOf());
 		},
 		createItem: function(q) {

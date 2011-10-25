@@ -315,13 +315,19 @@ su.player = {
 		} else{
 			_mopla = mo.song();
 		}
-		if (force_zoom || (view && this.c_song != mo) || (last_mo == this.v_song && last_mo != mo)){
-			su.ui.views.show_track_page(mo);
-		}
+		
+		
+//		if (force_zoom || (view && this.c_song != mo) || (last_mo == this.v_song && last_mo != mo)){
+	//		su.ui.views.show_track_page(mo);
+	//	}
 	
 		this.nowPlaying(mo);
 
 		if (_mopla && (this.c_song != mo || (mopla && mo.mopla != mopla))){
+			if (last_mo == this.v_song && this.c_song != mo){
+				viewSong(mo);
+			}
+			
 			this.c_song = mo;
 			if (last_mo && last_mo.ui){
 				last_mo.ui.playing_mark = false;
@@ -519,6 +525,7 @@ su.player.song_click = function(mo) {
   su.mp3_search.find_mp3(mo);
 		
   su.player.play_song(mo, true, false, true);
+  viewSong(mo);  
   return false;
 }
 

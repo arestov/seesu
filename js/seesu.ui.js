@@ -13,7 +13,7 @@ var artcardUI = function(artist, c){
 
 
 	this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
-		su.ui.showTopTacks(artist, true, false, false, true);
+		su.ui.showTopTacks(artist, {save_parents: true, from_artcard: true});
 	});
 	this.loadInfo();
 }
@@ -48,10 +48,10 @@ artcardUI.prototype = {
 						if (i < 5){
 							if (el.track){
 								var a = $('<a class="js-serv"></a>').click(function(){
-									su.ui.showTopTacks(_this.artist, true, false, {
+									su.ui.showTopTacks(_this.artist, {save_parents: true, from_artcard: true}, {
 										artist: _this.artist,
 										track: el.track
-									}, true);
+									});
 								}).text(el.track);
 								$('<li></li>').append(a).appendTo(ul);
 							}
@@ -139,7 +139,7 @@ artcardUI.prototype = {
 			
 			var header_link = $('<a class="js-serv"></a>')
 				.click(function(){
-					su.ui.showSimilarArtists(_this.artist, true, false, false, true);	
+					su.ui.showSimilarArtists(_this.artist, {save_parents: true, from_artcard: true});	
 				})
 				.text(localize('similar-arts'))
 			var header = this.ui.similarsc.children('h5').empty().append(header_link);
@@ -304,7 +304,11 @@ seesu_ui.prototype = {
 			
 		};	
 	},
-	show_tag: function(tag, save_parents, no_navi, start_song){
+	show_tag: function(tag, vopts, start_song){
+		//save_parents, no_navi
+		vopts = vopts || {};
+		var full_no_navi = vopts.no_navi;
+		vopts.no_navi = vopts.no_navi || !!start_song;
 		
 		var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', {tag: tag}, start_song);
 		get_artists_by_tag(tag, function(pl){
@@ -312,10 +316,10 @@ seesu_ui.prototype = {
 		}, function(){
 			proxy_render_artists_tracks();
 		});
-		this.views.show_playlist_page(pl_r, !!save_parents, no_navi || !!start_song );
+		this.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
 		
 		if (start_song){
-			pl_r.showTrack(start_song, no_navi);
+			pl_r.showTrack(start_song, full_no_navi);
 		}
 	},
 	show_track: function(q){
@@ -355,25 +359,40 @@ seesu_ui.prototype = {
 		
 		
 	},
-	showArtistPlaylist: function(artist, pl, save_parents, no_navi, simple){
+	//showArtistPlaylist: function(artist, pl, save_parents, no_navi, simple){
+	showArtistPlaylist: function(artist, pl, vopts){
+		vopts = vopts || {};
 		var cpl = su.player.isPlaying(pl);
 		if (!cpl){
-			if (!simple){
-				su.ui.views.showArtcardPage(artist, save_parents, true);
+			if (!vopts.from_artcard){
+				su.ui.views.showArtcardPage(artist, vopts.save_parents, true);
 			}
-			this.views.show_playlist_page(pl, !simple || !!save_parents, no_navi);
+			this.views.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
 			return false;
 		} else{
 			su.ui.views.restoreFreezed();
 			return cpl;
 		}
 	},
-	showAlbum: function(artist, name, id, original_artist, save_parents, simple){
-		var _sui = this;
-		var pl = prepare_playlist('(' + artist + ') ' + name, 'album', {artist: original_artist || artist, album: name});
+	/*
+	var vopts = {
+		save_parents: save_parents,
+		no_navi,
+		from_artcard
+	}*/
+	showAlbum: function(opts, vopts, start_song){
+	//showAlbum: function(opts, save_parents, start_song, simple){
+		var artist			= opts.artist, 
+			name			= opts.album_name,
+			id				= opts.album_id, 
+			original_artist	= opts.original_artist,
+			vopts = vopts || {};
+		var full_no_navi = vopts.no_navi;
+		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		
-		var recovered = this.showArtistPlaylist(original_artist || artist, pl, save_parents, false, simple);
+		var pl = prepare_playlist('(' + artist + ') ' + name, 'album', {artist: original_artist || artist, album: name}, start_song);
+	
+		var recovered = this.showArtistPlaylist(original_artist || artist, pl, vopts);
 		
 		if (!recovered){
 			if (id){
@@ -384,11 +403,21 @@ seesu_ui.prototype = {
 				});
 			}
 		}
+		if (start_song){
+			(recovered || pl).showTrack(start_song, vopts.no_navi);
+		}
 	},
-	showTopTacks: function (artist, save_parents, no_navi, start_song, simple) {
+	showTopTacks: function (artist, vopts, start_song) {
+	//showTopTacks: function (artist, save_parents, no_navi, start_song, simple) {
+		vopts = vopts || {};
+		var full_no_navi = vopts.no_navi;
+		vopts.no_navi = vopts.no_navi || !!start_song;
+		
+		
+		
 		var pl = prepare_playlist('Top of ' + artist, 'artist', {artist: artist}, start_song);
 		
-		var recovered = this.showArtistPlaylist(artist, pl, save_parents, no_navi || !!start_song, simple);
+		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		
 		if (!recovered){
 			getTopTracks(artist,function(track_list){
@@ -396,26 +425,28 @@ seesu_ui.prototype = {
 			});
 		}
 		if (start_song){
-			(recovered || pl).showTrack(start_song, no_navi);
+			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-	showSimilarArtists: function(artist, save_parents, no_navi, start_song, simple){
-		var save_parents;
+	showSimilarArtists: function(artist, vopts, start_song){
+		vopts = vopts || {};
+		var full_no_navi = vopts.no_navi;
+		vopts.no_navi = vopts.no_navi || !!start_song;
 		
 		var pl = prepare_playlist('Similar to «' + artist + '» artists', 'similar artists', {artist: artist}, start_song);
 		//this.views.show_playlist_page(pl, false, no_navi || !!start_song);
 		
-		var recovered = this.showArtistPlaylist(artist, pl, save_parents, no_navi || !!start_song, simple);
+		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		if (!recovered){
 			get_similar_artists(artist, function(list){
 				proxy_render_artists_tracks(list, pl)
 			}, function(){
-				proxy_render_artists_tracks();
+				proxy_render_artists_tracks(false, pl);
 			});
 		}
 		
 		if (start_song){
-			(recovered || pl).showTrack(start_song, no_navi);
+			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
 	createFilesListElement: function(mopla, mo){
@@ -743,7 +774,7 @@ seesu_ui.prototype = {
 		} 
 		return albums_ul;
 	},
-	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, save_parents, simple){
+	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, save_parents, from_artcard){
 		var _sui = this;
 		var li = $('<li></li>');
 			var a_href= $('<a></a>')
@@ -752,7 +783,14 @@ seesu_ui.prototype = {
 				.data('album', al_name)
 				.click(function(e){
 					e.preventDefault(); 
-					_sui.showAlbum(al_artist, al_name, false, original_artist, save_parents, simple);
+					_sui.showAlbum({
+						artist: al_artist, 
+						album_name: al_name,
+						original_artist: original_artist
+					}, {
+						save_parents: save_parents,
+						from_artcard: from_artcard
+					});
 					seesu.track_event('Artist navigation', 'album', al_artist + ": " + al_name);
 				})
 				.appendTo(li);

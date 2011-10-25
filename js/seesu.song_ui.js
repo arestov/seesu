@@ -613,12 +613,20 @@ songUI.prototype = {
 			if (this.mo.isSearchCompleted() && this.mo.isNeedsAuth('vk')){
 				
 				var vklc = this.rowcs.song_context.getC();
+				var oldvk_login_notify = this.vk_login_notify;
 				if (!songs.length){
-					vklc.after(su.ui.samples.vk_login.clone());
+					this.vk_login_notify = su.ui.samples.vk_login.clone();
 				} else if(!this.mo.isHaveAnyResultsFrom('vk')){
-					vklc.after(su.ui.samples.vk_login.clone( localize('to-find-better') + " " +  localize('music-files-from-vk')));
+					this.vk_login_notify = su.ui.samples.vk_login.clone( localize('to-find-better') + " " +  localize('music-files-from-vk'));
 				} else {
-					vklc.after(su.ui.samples.vk_login.clone(localize('stabilization-of-vk')));
+					this.vk_login_notify = su.ui.samples.vk_login.clone(localize('stabilization-of-vk'));
+					
+				}
+				if (oldvk_login_notify){
+					oldvk_login_notify.remove();
+				}
+				if (this.vk_login_notify){
+					vklc.after(this.vk_login_notify);
 				}
 			} 
 			if (songs){

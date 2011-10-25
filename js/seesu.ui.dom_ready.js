@@ -550,7 +550,7 @@ window.connect_dom_to_som = function(d, sui){
 								.click(function(){
 									var a = $(this).data('artist');
 									var t = $(this).data('track');	
-									sui.showTopTacks(a, false, false, {artist: a, track: t});			
+									sui.showTopTacks(a, {}, {artist: a, track: t});			
 								}))
 							.appendTo(uc)
 					}

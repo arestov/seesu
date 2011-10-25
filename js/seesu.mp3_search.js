@@ -42,32 +42,7 @@ var song_methods = {
 			
 			if (!this.ui || !this.ui.mainc || this.ui.mainc[0].ownerDocument != su.ui.d){			
 				this.ui = new songUI(this, complex);
-				var pl_ui_element = this.ui.mainc;
-				if (pl.first_song){
-					if (!pl.firstsong_inseting_done){
-						if (this == pl.first_song.mo){
-							pl.ui.tracks_container.append(pl_ui_element);
-						} else{
-							pl.first_song.mo.ui.mainc.before(pl_ui_element);
-						}
-					} else if (pl.first_song.mo != this){
-						var f_position = pl.indexOf(pl.first_song.mo);
-						var t_position = pl.indexOf(this);
-						if (t_position < f_position){
-							pl.first_song.mo.ui.mainc.before(pl_ui_element);
-							
-						} else{
-							pl.ui.tracks_container.append(pl_ui_element);
-						}
-					} else{
-						pl.ui.tracks_container.append(pl_ui_element);
-					}
-					
-					
-				} else{
-					pl.ui.tracks_container.append(pl_ui_element);
-				}
-				
+				pl.appendSongUI(this);
 			}
 			
 		}

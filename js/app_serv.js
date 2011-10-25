@@ -160,30 +160,7 @@ function get_url_parameters(str){
 	};
 	return full_url;
 };
-function getFakeURLParameters(str){
-	var divider = str.indexOf('/');
-	if (bN(divider)){
-		var search_part = str.slice(0, divider);
-		var path_part = str.slice(divider + 1);
-	} else{
-		var search_part = str;
-	}
-	var params = (search_part && get_url_parameters(search_part)) || {};
-	
-	var sp = [];
-	var query = params.q ? '?q=' + params.q : '';
-	if (query) {
-		sp.push(query)
-	}
-	if (path_part){
-		sp = sp.concat(sp, path_part.replace(/^\//,'').split('/'));
-	}
-	
-	
-	return {params:params || {}, path: path_part || '', supported_path: sp};
-	
-	
-};
+
 window.app_env = (function(){
 	var env = {};
 	env.url = get_url_parameters(location.search);
