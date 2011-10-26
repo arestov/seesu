@@ -428,6 +428,45 @@ seesu_ui.prototype = {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
+	showTrackById: function(sub_raw, vopts){
+		var pl_r = prepare_playlist('Track' , 'tracks', {time: + new Date()});
+		su.ui.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
+		
+		if (sub_raw.type && sub_raw.id){
+			su.mp3_search.getById(sub_raw, function(song, want_auth){
+				
+				if (pl_r.ui){
+					if (!song){
+						if (want_auth){
+							if (sub_raw.type == 'vk'){
+								pl_r.ui.ready();
+								pl_r.ui.tracks_container.prepend($('<li></li>').append(su.ui.samples.vk_login.clone()));
+							} else{
+								su.ui.render_playlist(pl_r, true);							
+							}
+						} else {
+							su.ui.render_playlist(pl_r, true);
+
+						}
+					} else{
+						pl_r.push(song, true);
+						su.ui.render_playlist(pl_r, true);
+						//viewSong(song, true)
+					}
+					if (want_auth){
+						return true;
+					}
+					console.log(song)
+				} 
+			}, function(){
+				return !!pl_r.ui;
+			}, function(){
+
+			})
+		} else{
+			
+		}
+	},
 	showMetroChart: function(country, metro, vopts){
 		vopts = vopts || {};
 		var plr = prepare_playlist('Chart of ' + metro, 'chart', {country: country, metro: metro});

@@ -407,11 +407,7 @@ var empty_song_click = function(){
 				mo.render();
 				mo.view();
 			}
-			
-			if (su.player && su.player.c_song && su.player.c_song.plst_titl == this){
-				
-			}
-			
+
 			if (this.first_song){
 				if (this.first_song.omo==omo){
 					this.first_song.mo = mo;

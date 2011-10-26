@@ -379,7 +379,7 @@ var url_parser = {
 	getDirectSearchData: function(pth, con){
 		var source = pth.shift();
 		var id = pth.shift();
-		if (type && id){
+		if (source && id){
 			con.add('pl', {
 				type: 'directsearch',
 				source: source,
@@ -502,6 +502,9 @@ var recoverPlaylistBranch = function(pldata, songdata, has_artcard){
 		case 'loved':
 			su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
 			break
+		case 'directsearch':
+			su.ui.showTrackById({type: pldata.source, id: pldata.rawid}, {no_navi: true, save_parents: true});
+			break
 		default:
 			;
 	}
@@ -599,55 +602,7 @@ var hashchangeHandler=  function(e, force){
 };
 
 function getMusicById(sub_raw, tk){
-	var pl_r = prepare_playlist('Track' , 'tracks', {time: + new Date()});
-	su.ui.views.show_playlist_page(pl_r, false, true);
 	
-	if (sub_raw.type && sub_raw.id){
-		su.mp3_search.getById(sub_raw, function(song, want_auth){
-			
-			if (pl_r.ui){
-				if (!song){
-					if (want_auth){
-						if (sub_raw.type == 'vk'){
-							pl_r.ui.ready();
-							pl_r.ui.tracks_container.prepend($('<li></li>').append(su.ui.samples.vk_login.clone()));
-						} else{
-							su.ui.render_playlist(pl_r, true);							
-						}
-					} else {
-						su.ui.render_playlist(pl_r, true);
-
-					}
-				} else{
-					if (tk){
-						if (!song.artist && tk.artist){
-							song.artist == tk.artist;
-						};
-						
-						if (!song.track && tk.track){
-							song.track == tk.track;
-						}
-					}
-					pl_r.push(song);
-					su.ui.render_playlist(pl_r, true);
-					viewSong(song, true)
-				}
-				if (want_auth){
-					return true;
-				}
-				console.log(song)
-			} 
-		}, function(){
-			return !!pl_r.ui;
-		}, function(){
-			if (pl_r.ui){
-				pl_r.ui.wait();
-			}
-			
-		})
-	} else{
-		
-	}
 };
 
 
