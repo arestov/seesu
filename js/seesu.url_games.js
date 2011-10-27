@@ -1,21 +1,26 @@
 if (app_env.needs_url_history) {
 	if ('onhashchange' in window){
 		(function(){
-			var hash = location.hash;
+			var hash = location.hash.replace(/^\#/, '');
 			window.onhashchange = function(e){
-				var newhash = location.hash;
+				var newhash = location.hash.replace(/^\#/, '');
 				if (newhash != hash){
-					var too_fast_hash_change = (e.newURL != newhash);
+					var hnew = decodeURI(e.newURL || newhash);
+					var hold = decodeURI(e.oldURL || hash);
+					var have_new_hash = hnew.indexOf('#')+1;
+					var have_old_hash = hold.indexOf('#')+1;
+
+					var o = {
+						newURL: have_new_hash ? hnew.slice(have_new_hash) : '',
+						oldURL: have_old_hash ? hold.slice(have_old_hash) : ''
+					};
+
+
+					var too_fast_hash_change = (o.newURL != newhash);
 					if (!too_fast_hash_change){
 						if (typeof hashchangeHandler == 'function'){
-							var hnew = decodeURI(e.newURL || newhash);
-							var hold = decodeURI(e.oldURL || hash);
-							var have_new_hash = hnew.indexOf('#')+1;
-							var have_old_hash = hold.indexOf('#')+1;
-							hashchangeHandler({
-								newURL: have_new_hash ? hnew.slice(have_new_hash) : '',
-								oldURL: have_old_hash ? hold.slice(have_old_hash) : ''
-							})
+							
+							hashchangeHandler(o)
 						}
 						hash = newhash;
 					}
@@ -32,8 +37,8 @@ if (app_env.needs_url_history) {
 				if (newhash != hash){
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
-							newURL: newhash.replace('#',''),
-							oldURL: hash.replace('#','')
+							newURL: newhash.replace(/^\#/, ''),
+							oldURL: hash.replace(/^\#/, '')
 						});
 					}
 					
