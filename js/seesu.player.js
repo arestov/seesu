@@ -523,9 +523,9 @@ su.player.song_click = function(mo) {
 	su.track_page('track zoom');
   }
   su.mp3_search.find_mp3(mo);
-		
+  viewSong(mo);	
   su.player.play_song(mo, true, false, true);
-  viewSong(mo);  
+  
   return false;
 }
 

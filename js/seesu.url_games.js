@@ -5,17 +5,21 @@ if (app_env.needs_url_history) {
 			window.onhashchange = function(e){
 				var newhash = location.hash;
 				if (newhash != hash){
-					if (typeof hashchangeHandler == 'function'){
-						var hnew = decodeURI(e.newURL || newhash);
-						var hold = decodeURI(e.oldURL || hash);
-						var have_new_hash = hnew.indexOf('#')+1;
-						var have_old_hash = hold.indexOf('#')+1;
-						hashchangeHandler({
-							newURL: have_new_hash ? hnew.slice(have_new_hash) : '',
-							oldURL: have_old_hash ? hold.slice(have_old_hash) : ''
-						})
+					var too_fast_hash_change = (e.newURL != newhash);
+					if (!too_fast_hash_change){
+						if (typeof hashchangeHandler == 'function'){
+							var hnew = decodeURI(e.newURL || newhash);
+							var hold = decodeURI(e.oldURL || hash);
+							var have_new_hash = hnew.indexOf('#')+1;
+							var have_old_hash = hold.indexOf('#')+1;
+							hashchangeHandler({
+								newURL: have_new_hash ? hnew.slice(have_new_hash) : '',
+								oldURL: have_old_hash ? hold.slice(have_old_hash) : ''
+							})
+						}
+						hash = newhash;
 					}
-					hash = newhash;
+					
 				}
 			}
 		})()
@@ -600,15 +604,25 @@ var hashchangeHandler=  function(e, force){
 		}
 	}
 };
-su.onUICreation(function(opts){
-	if (!opts.state_recovered && !opts.has_query){
-			hashchangeHandler({
-				newURL: location.hash.replace(/^\#/,'')
-			});
-		}
-		console.log('bg');
+(function(){
+	var url = window.location && location.hash.replace(/^\#/,'');
+	if (url){
+		su.onUICreation(function(opts){
+			if (!opts.state_recovered && !opts.has_query){
+				
+				hashchangeHandler({
+					newURL: url
+				});
+				
+				
+				
+				console.log('bg');
+			}
+		});
 	}
-});
+})();
+
+
 
 
 
