@@ -257,29 +257,31 @@ songUI.prototype = {
 	update: function(not_rend){
 		var _this = this;
 		
-		
-		var down = this.node.siblings('a.download-mp3').remove();
-		this.node
-			.addClass('song')
-			.removeClass('search-mp3-failed')
-			.removeClass('waiting-full-render')
-			.removeClass('mp3-download-is-not-allowed')
-			.data('mo', this.mo)
-			.unbind()
-			.click(function(){
-				_this.mo.plst_titl.lev.freeze();
-				su.player.song_click(_this.mo);
-			});
-		
-		
-		/*
-		var mopla = this.mo.song();
-		if (mopla){
-			if (mopla.duration){
-				this.displaySongMoplaInfo(mopla);
+		if (this.node){
+			var down = this.node.siblings('a.download-mp3').remove();
+			this.node
+				.addClass('song')
+				.removeClass('search-mp3-failed')
+				.removeClass('waiting-full-render')
+				.removeClass('mp3-download-is-not-allowed')
+				.data('mo', this.mo)
+				.unbind()
+				.click(function(){
+					_this.mo.plst_titl.lev.freeze();
+					su.player.song_click(_this.mo);
+				});
+			
+			
+			/*
+			var mopla = this.mo.song();
+			if (mopla){
+				if (mopla.duration){
+					this.displaySongMoplaInfo(mopla);
+				}
 			}
+			*/
 		}
-		*/
+		
 			
 
 		

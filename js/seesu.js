@@ -27,10 +27,26 @@ dga = dga && JSON.parse(dga);
   
 window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
+	  createUI: function(d, connect_dom){
+	  	var _this = this;
+		this.ui = new seesu_ui(d, connect_dom, function(opts){
+			var cbs = _this.ui_creation_callbacks;
+			if (cbs){
+				for (var i = 0; i < cbs.length; i++) {
+					cbs[i](opts);
+				};
+			}
+			
+		});
+	  },
+	  onUICreation: function(cb){
+	  	var ar = (this.ui_creation_callbacks = this.ui_creation_callbacks || []);
+	  		ar.push(cb);
+	  },
 	  s: new seesuServerAPI(dga),
 	  fs: {},//fast search
 	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
-	  version: 2.3,
+	  version: 2.7,
 	  env: app_env,
 	  track_stat: (function(){
 		var _i = document.createElement('iframe');_i.id ='gstat';_i.src = 'http://seesu.me/g_stat.html';

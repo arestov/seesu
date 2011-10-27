@@ -389,7 +389,7 @@ var url_parser = {
 	}
 }
 
-
+//su.UILoaded(function(){});
 var handleHistoryState =function(e, jo, jn, oldstate, newstate, state_from_history){
 	if (newstate.current_artist || newstate.current_track){
 		var tk =  {
@@ -600,10 +600,15 @@ var hashchangeHandler=  function(e, force){
 		}
 	}
 };
-
-function getMusicById(sub_raw, tk){
-	
-};
+su.onUICreation(function(opts){
+	if (!opts.state_recovered && !opts.has_query){
+			hashchangeHandler({
+				newURL: location.hash.replace(/^\#/,'')
+			});
+		}
+		console.log('bg');
+	}
+});
 
 
 

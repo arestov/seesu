@@ -253,7 +253,7 @@ contextRow.prototype = {
 	}
 };
 
-window.seesu_ui = function(d, with_dom){
+window.seesu_ui = function(d, with_dom, cb){
 	this.d = d;
 	this.els = {};
 	if (!with_dom){
@@ -273,7 +273,7 @@ window.seesu_ui = function(d, with_dom){
 	
 	
 	if (with_dom){
-		connect_dom_to_som(d, this);
+		connect_dom_to_som(d, this, cb);
 	}
 };
 seesu_ui.prototype = {
