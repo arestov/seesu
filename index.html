@@ -55,7 +55,7 @@
 				load: 'js/_seesu.jslist.js',
 				complete: function(){
 					jsLoadComplete(function(){
-						su.ui = new seesu_ui(document, true);
+						su.createUI(document, true);
 					});
 				}
 			});
