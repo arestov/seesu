@@ -637,9 +637,7 @@ display:none;
 	height: 0;
 	font-size: 0;
 }
-	.rc-s-arrow,.tl-arrow {
-		display:none;
-		
+	.rc-s-arrow,.tl-arrow {		
 		margin-left: -11px;
 		top: -22px;
 		border: 11px solid;
