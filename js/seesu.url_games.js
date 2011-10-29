@@ -19,7 +19,6 @@ if (app_env.needs_url_history) {
 					var too_fast_hash_change = (o.newURL != newhash);
 					if (!too_fast_hash_change){
 						if (typeof hashchangeHandler == 'function'){
-							
 							hashchangeHandler(o)
 						}
 						hash = newhash;
@@ -610,18 +609,13 @@ var hashchangeHandler=  function(e, force){
 	}
 };
 (function(){
-	var url = window.location && location.hash.replace(/^\#/,'');
+	var url = window.location && decodeURI(location.hash.replace(/^\#/,''));
 	if (url){
 		su.onUICreation(function(opts){
 			if (!opts.state_recovered && !opts.has_query){
-				
 				hashchangeHandler({
 					newURL: url
 				});
-				
-				
-				
-				console.log('bg');
 			}
 		});
 	}

@@ -15,7 +15,7 @@ function(elem, evType, fn){
 	elem.detachEvent('on' + evType, fn)
 };
 var domReady = function(d, callback){
-	if (d.readyState == 'complete'){
+	if (d.readyState == 'complete' || d.readyState == 'loaded'){
 		setTimeout(callback, 30);
 	} else{
 		var done;
