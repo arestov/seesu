@@ -233,7 +233,7 @@ songUI.prototype = {
 		this.ct = {
 			tr_progress_t: tpt,
 			tr_progress_l: tpt.children('.track-load-progress'),
-			tr_progress_p: tpt.children('.track-play-progress'),
+			tr_progress_p: tpt.children('.track-play-progress')
 		};
 		
 		ph.prependTo(tp);

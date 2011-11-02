@@ -735,8 +735,8 @@ var sortAlbs = function(a, b){
 		},
 		{
 			field: 'year.text',
-			reverse: true,
-		},
+			reverse: true
+		}
 	]);
 };
 

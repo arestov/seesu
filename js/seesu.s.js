@@ -291,5 +291,5 @@ seesuServerAPI.prototype = {
 			error: error
 		});
 		
-	},
+	}
 };

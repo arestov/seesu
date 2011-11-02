@@ -459,15 +459,19 @@ su.player.events.progress_playing = function(progress_value, total){
 	
 	var progress = parseInt(progress_value);
 	var total = parseInt(total);
-	if (_c.track_progress_width){
-		var current_in_pixels = Math.round((progress/total) * _c.track_progress_width) + 'px';
-	} else{
-		var current_in_percents = ((progress/total) * 100) + '%';
+	if (progress && total){
+		if (_c.track_progress_width){
+			var current_in_pixels = Math.round((progress/total) * _c.track_progress_width) + 'px';
+		} else{
+			var current_in_percents = ((progress/total) * 100) + '%';
+		}
+		_c.tr_progress_p[0].style.width = current_in_pixels || current_in_percents;
 	}
+	
 	
 
 	
-	_c.tr_progress_p[0].style.width = current_in_pixels || current_in_percents;
+	
 }
 
 su.player.events.progress_loading = function(progress_value, total){
@@ -478,27 +482,30 @@ su.player.events.progress_loading = function(progress_value, total){
 	var progress = parseInt(progress_value);
 	var total = parseInt(total);
 	
-	if (_c.track_progress_width){
-		var current_in_pixels = Math.round((progress/total) * _c.track_progress_width) + 'px';
-	} else{
-		var current_in_percents = ((progress/total) * 100) + '%';
-	}
-	
-	_c.tr_progress_l[0].style.width = current_in_pixels || current_in_percents;
-	
-	if ((progress/total) > 0.8){
-		if (su.player.c_song.next_song && (su.player.c_song.next_song.isHaveBestTracks() || su.player.c_song.next_song.isSearchCompleted()) && su.player.musicbox.preloadSong){
-			var s = su.player.c_song.next_song.song();
-			if (s && s.link){
-				su.player.musicbox.preloadSong(s.link)
-			}
-			
-		} 
-
-		if (progress == total){
-			su.player.c_song.load_finished = true;
+	if (progress && total){
+		if (_c.track_progress_width){
+			var current_in_pixels = Math.round((progress/total) * _c.track_progress_width) + 'px';
+		} else{
+			var current_in_percents = ((progress/total) * 100) + '%';
 		}
-	} 
+		
+		_c.tr_progress_l[0].style.width = current_in_pixels || current_in_percents;
+		
+		if ((progress/total) > 0.8){
+			if (su.player.c_song.next_song && (su.player.c_song.next_song.isHaveBestTracks() || su.player.c_song.next_song.isSearchCompleted()) && su.player.musicbox.preloadSong){
+				var s = su.player.c_song.next_song.song();
+				if (s && s.link){
+					su.player.musicbox.preloadSong(s.link)
+				}
+				
+			} 
+
+			if (progress == total){
+				su.player.c_song.load_finished = true;
+			}
+		}
+	}
+	 
 	
 }
 
