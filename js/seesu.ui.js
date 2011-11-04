@@ -277,6 +277,19 @@ window.seesu_ui = function(d, with_dom, cb){
 	}
 };
 seesu_ui.prototype = {
+	setTitle: function(title){
+		this.d.title = 	title || "";
+	},
+	isAlive: function(){
+		if (this.dead){
+			return false;
+		}
+		var is_dead = !(this.d && this.d.defaultView);
+		if (is_dead){
+			this.dead = true;
+		}
+		return !is_dead;
+	},
 	addPopup: function(popup_node, testf, hidef){
 		var ob = {
 			test: testf,

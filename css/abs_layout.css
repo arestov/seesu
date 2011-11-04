@@ -68,13 +68,15 @@ html.opera-extension{
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	bottom: 20px;
 	width:auto;
 	height:auto;
+	bottom: 20px;
 }
 
 
-
+.as-application.opera-extension #slider #screens{
+	bottom: 1px;
+}
 
 
 .as-application .navs{

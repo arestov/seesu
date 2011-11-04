@@ -391,7 +391,7 @@ browseMap.prototype= {
 						bt.push(title)
 					}
 				};
-				su.ui.d.title = bt.join(' ← ');
+				su.ui.setTitle(bt.join(' ← '));
 			},
 			pushTitle = function(lev){
 				big_title.push(lev);
