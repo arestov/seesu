@@ -21,22 +21,13 @@ var button_menu = function(jq_node){
 		style += style_ver + '.buttmen-hlt-top {opacity:' +  (1 - y) + ';}';
 		style += style_ver + '.buttmen-hlt-bottom {opacity:' + (y) + ';}';
 	};
+	su.ui.appendStyle(style);
 
-	if (!but_hl_style.styleSheet){
-		but_hl_style.appendChild(seesu.ui.d.createTextNode(style));
-	} else{
-		but_hl_style.styleSheet.cssText = style;
-	}
-	
-	
-	seesu.ui.d.documentElement.firstChild.appendChild(but_hl_style);
-
-	
-	
-	jq_node.mousedown(this.events.mousedown)
-	.mouseup(this.events.mouseup)
-	.mousemove(this.events.mousemove);
-	
+	jq_node
+		.mousedown(this.events.mousedown)
+		.mouseup(this.events.mouseup)
+		.mousemove(this.events.mousemove);
+		
 	
 	this.node.find('.pc')
 		.mouseover(function(){

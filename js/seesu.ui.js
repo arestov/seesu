@@ -290,6 +290,32 @@ seesu_ui.prototype = {
 		}
 		return !is_dead;
 	},
+	updateView: function(){
+		if (this.isAlive()){
+			var args = Array.prototype.slice.call(arguments),
+				method = args.shift();
+
+			if (this[method]){
+				this[method].apply(this, args);
+			}
+			
+		}
+		return this;
+	},
+	appendStyle: function(style_text){
+		var style_node = this.d.createElement('style');
+			style_node.setAttribute('title', 'button_menu');
+			style_node.setAttribute('type', 'text/css');
+
+		if (!style_node.styleSheet){
+			style_node.appendChild(this.d.createTextNode(style_text));
+		} else{
+			style_node.styleSheet.cssText = style_text;
+		}
+
+		this.d.documentElement.firstChild.appendChild(style_node);
+			
+	},
 	addPopup: function(popup_node, testf, hidef){
 		var ob = {
 			test: testf,
