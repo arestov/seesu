@@ -12,16 +12,16 @@ var test_pressed_node = function(e, opts){
 		if(clicked_node.is('a')) {
 		  e.preventDefault();
 		  if (bN(class_list.indexOf('download-mp3'))){
-			open_url(node.href);
+			app_env.openURL(node.href);
 			
 		  }
 		  else if (bN(class_list.indexOf('vk-reg-ref'))){
-			open_url(vkReferer || 'http://vk.com/reg198193');
+			app_env.openURL(vkReferer || 'http://vk.com/reg198193');
 			seesu.track_event('Links', 'vk registration');
 			
 		  }
 		  else if (bN(class_list.indexOf('flash-s'))){
-			open_url('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
+			app_env.openURL('http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html');
 			seesu.track_event('Links', 'flash security');
 			
 		  }
@@ -56,12 +56,12 @@ var test_pressed_node = function(e, opts){
 			seesu.track_event('Artist navigation', 'similar artists to', artist);
 		  }
 		  else if (bN(class_list.indexOf('external'))){
-			open_url(clicked_node.attr('href'));
+			app_env.openURL(clicked_node.attr('href'));
 			seesu.track_event('Links', 'just link');
 			
 		  }
 		  else if (bN(class_list.indexOf('seesu-me-link'))){
-			open_url(node.href)
+			app_env.openURL(node.href)
 			
 		  }
 		  else if (bN(class_list.indexOf('hint-query'))){

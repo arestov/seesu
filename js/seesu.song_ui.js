@@ -25,7 +25,7 @@ var createDownloadButton = function(mo){
 		if (!$(this).data('disabled')){
 			var d = mo.mp3Downloads();
 			if (d){
-				open_url(d[0].link)
+				app_env.openURL(d[0].link)
 			}
 			
 		}
@@ -413,7 +413,7 @@ songUI.prototype = {
 					.attr('title', 'last.fm profile')
 					.click(function(e){
 						var link = 'http://www.last.fm/music/' + artist.replace(' ', '+');
-						open_url(link);
+						app_env.openURL(link);
 						seesu.track_event('Links', 'lastfm', link);
 						e.preventDefault();
 					})

@@ -23,6 +23,20 @@ html.opera-extension{
 	position:static ;
 	padding:0 0 0;
 }
+.pokki-app{
+	width:800px !important;
+}
+.pokki-app, .pokki-app body{
+	height:auto !important;
+	}
+	.pokki-app #slider{
+		padding-bottom:5px;
+		}
+		.pokki-app #slider-materail{
+			height:700px;
+			overflow: auto;
+			}
+
 .chrome-extension #slider {
 	width:600px;
 }

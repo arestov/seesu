@@ -668,7 +668,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 			export_playlist: $('#open-external-playlist',d).click(function(e){
 				make_external_playlist();
 				if (seesu.player.current_external_playlist.result) {
-					open_url(
+					app_env.openURL(
 						'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(seesu.player.current_external_playlist.result)
 					)
 				}

@@ -315,7 +315,7 @@ lastfm_api.prototype = {
 		}, true);
 	},
 	open_lfm_to_login: function(token){
-		open_url('http://www.last.fm/api/auth/?api_key=' + this.apikey + '&token=' + token);
+		app_env.openURL('http://www.last.fm/api/auth/?api_key=' + this.apikey + '&token=' + token);
 		dstates.add_state('body','lfm-waiting-for-finish');
 	},
 	try_to_login: function(callback){

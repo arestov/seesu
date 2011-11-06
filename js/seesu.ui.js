@@ -1054,9 +1054,38 @@ seesu_ui.prototype = {
 		if (init_auth_data.bridgekey){
 			this.lfmSetAuthBridgeKey(init_auth_data.bridgekey)
 		} 
+		if (app_env.showWebPage){
+			
+			app_env.showWebPage(init_auth_data.link, function(url){
+				var path = url.split('/')[3];
+				if (!path || path == 'home'){
+					app_env.hideWebPages();
+					app_env.clearWebPageCookies();
+					return true
+				} else{
+					var sb = 'http://seesu.me/lastfm/callbacker.html';
+					if (url.indexOf(sb) == 0){
+						var params = get_url_parameters(url.replace(sb, ''));
+						if (params.token){
+							su.lfm_api.newtoken = params.token;
+							su.lfm_api.try_to_login(seesu.ui.lfm_logged);
+						}
+
+						app_env.hideWebPages();
+						app_env.clearWebPageCookies();
+						return true;
+					}
+				}
+				
+			}, function(e){
+				app_env.openURL(init_auth_data.link);
+				
+			}, 960, 750);
+		} else{
+			app_env.openURL(init_auth_data.link);
+		}
+	
 		
-		
-		open_url(init_auth_data.link);
 		dstates.add_state('body','lfm-waiting-for-finish');
 		
 		

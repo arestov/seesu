@@ -104,7 +104,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 	}
 };
 var vkTokenAuth = function(vk_t_raw){
-	var vk_t = JSON.parse(vk_t_raw);
+	var vk_t = (vk_t_raw ===  Object(vk_t_raw)) ? vk_t_raw : JSON.parse(vk_t_raw);
 	vk_t.expires_in = parseFloat(vk_t.expires_in);
 	auth_to_vkapi(vk_t, true, 2271620);
 };
@@ -211,7 +211,41 @@ var vk_auth_box = {
 			p.c.finishing();
 		}
 		if (!p.not_open){
-			open_url(init_auth_data.link);
+			if (app_env.showWebPage){
+				this.startIndicating();
+				app_env.showWebPage(init_auth_data.link, function(url){
+					var sb = 'http://seesu.me/vk/callbacker.html';
+					if (url.indexOf(sb) == 0){
+						_this.stopIndicating();
+						app_env.hideWebPages();
+						app_env.clearWebPageCookies();
+
+						var hash = url.replace(sb, '');
+
+						var hashurlparams = get_url_parameters(hash.replace(/^\#/,''));
+						var access_token = hashurlparams.access_token;
+						if (access_token){
+							var at = {};
+							at.access_token = access_token;
+							if (hashurlparams.expires_in){
+								at.expires_in = hashurlparams.expires_in;
+							}
+							at.user_id = hashurlparams.user_id;
+							vkTokenAuth(at);
+						}
+						
+						
+						return true;
+						
+					}
+				}, function(e){
+					_this.stopIndicating();
+					app_env.openURL(init_auth_data.link);
+				}, 700, 600);
+			} else{
+				app_env.openURL(init_auth_data.link);
+			}
+			
 		} else{
 			this.startIndicating();
 			setTimeout(function(){

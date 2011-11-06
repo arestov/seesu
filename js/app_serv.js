@@ -206,6 +206,12 @@ window.app_env = (function(){
 		env.needs_url_history = true;
 		
 	} else 
+	if (window.pokki && window.pokki.openPopup){
+		env.app_type = 'pokki_app';
+		env.cross_domain_allowed = true;
+		env.deep_sanbdox = true;
+		//env.as_application = true;
+	} else 
 	if (typeof btapp == 'object'){
 		env.app_type = 'utorrent_app';
 		env.as_application = false;
@@ -213,8 +219,7 @@ window.app_env = (function(){
 	if ($.browser.mozilla){
 		env.app_type = 'firefox_widget';
 		env.as_application = true;
-	}  
-	 else{
+	} else{
 		env.app_type = false;
 		env.unknown_app = true;
 		env.needs_url_history = true;
@@ -292,13 +297,7 @@ window.app_env = (function(){
 	return env;
 })();
 
-window.open_url = (window.widget && window.widget.openURL) ? 
-	function(){
-		return widget.openURL.apply(widget, arguments);
-	} :
-	function(){
-		return window.open.apply(window, arguments);
-	};
+
 
 if (typeof widget != 'object'){
 	window.widget = {
@@ -309,7 +308,52 @@ if (typeof widget != 'object'){
 			window.open(url);
 		}
 	};
-}
+};
+
+
+(function(){
+	var openURL;
+
+	if (window.widget && !widget.fake_widget && widget.openURL){
+		openURL = function(){
+			return widget.openURL.apply(widget, arguments)
+		}
+	} else if (window.pokki && pokki.openURLInDefaultBrowser) {
+		openURL = function(){
+			return pokki.openURLInDefaultBrowser.apply(pokki, arguments)
+		}
+	} else {
+		openURL = function(){
+			return window.open.apply(window, arguments);
+		};
+	}
+	app_env.openURL = openURL;
+
+	if (window.pokki && pokki.showWebSheet){
+		app_env.showWebPage = function(url, beforeLoadedCb, error, width, height){
+			var beforeLoaded = function(nurl){
+				var done = beforeLoadedCb.apply(this, arguments);
+				//beforeLoaded func must contain "return true" in it's body 
+				if (!done) {
+					return true;
+				} else{
+					return false;
+				}
+			};
+			return pokki.showWebSheet(url, width, height, beforeLoaded, error);
+		};
+		app_env.hideWebPages = function(){
+			return pokki.hideWebSheet();
+		};
+		app_env.clearWebPageCookies = function(){
+			return pokki.clearWebSheetCookies();
+		};
+	}
+	
+
+})();
+
+
 
 // Forcing Opera full page reflow/repaint to fix page draw bugs
 var forceOperaRepaint = function() {

@@ -11,6 +11,14 @@ body{
 body.slice-for-height{
 	overflow:hidden;
 }
+html.not-as-application{
+	position:static;
+}
+html.not-as-application, .not-as-application  body{
+	height:100%;
+	
+}
+
 .not-as-application body{
 	background-color: #505050;
 	
@@ -715,13 +723,6 @@ display:none;
 		display:none;
 		}
 
-html.not-as-application{
-	position:static;
-}
-html.not-as-application, .not-as-application  body{
-	height:100%  !important;
-	
-}
 
 
 #gstat{
@@ -730,7 +731,7 @@ html.not-as-application, .not-as-application  body{
 	padding:0;
 	height:1px;
 	width:1px;
-	position:relative;
+	position:absolute;
 	z-index:-10;
 }
 .serv-container{
@@ -937,4 +938,23 @@ iframe.you-tube-video,embed.you-tube-video{
 .people-list-desc{
 	font-size:12px;
 	margin-top:-12px;
+}
+/* Custom CSS scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    border-radius: 5px;
+	background: none;
+}
+::-webkit-scrollbar-track:vertical { 
+    background: none; 
+}
+::-webkit-scrollbar-thumb {
+    width: 8px; 
+    height: 20px;
+    background: #999;
+    border-radius: 5px;
+}
+::-webkit-scrollbar-button: { 
+    display: none; 
 }

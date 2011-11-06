@@ -609,15 +609,17 @@ function handle_song(mo, complete, get_next){
 			
 		},20000);
 	}
-	
-	if (mo.isHaveTracks() || mo.isHaveBestTracks()){
-		if (mo.ui){
+	if (mo.ui){
+		
+		mo.ui.updateSongFiles();
+
+		if (mo.isHaveTracks() || mo.isHaveBestTracks()){
 			mo.ui.update();
-			mo.ui.updateSongFiles();
 			su.ui.els.export_playlist.addClass('can-be-used');
 		}
 		
 	}
+	
 };
 
 var get_mp3 = function(msq, options, p, callback, just_after_request){

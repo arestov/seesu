@@ -22,8 +22,8 @@ window.lfm = function(){
 
 
 
-var dga = w_storage('dg_auth');
-dga = dga && JSON.parse(dga);
+var dga = (dga && w_storage('dg_auth')) && JSON.parse(dga);
+
   
 window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
@@ -173,9 +173,6 @@ var updating_notify = function(r){
 		 'You have version ' + seesu.version + '. ';
 		var link = r.latest_version.link;
 		if (link.indexOf('http') != -1) {
-			widget.showNotification(message, function(){
-				open_url(link);
-			});
 			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
 		}
 	}

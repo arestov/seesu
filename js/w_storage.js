@@ -21,7 +21,7 @@
 	
 	var store_get = function(){return false};
 	var store_set = function(){return false};
-	if ((typeof widget === 'object') && (typeof widget.setPreferenceForKey == 'function')) {
+	if ((typeof widget === 'object') && !widget.fake_widget && (typeof widget.setPreferenceForKey == 'function')) {
 		store_get = function(key){
 			return widget.preferenceForKey(key);
 		}
