@@ -781,17 +781,6 @@ window.connect_dom_to_som = function(d, sui, callback){
 		var state_recovered;	
 		if (window.su && su.player && su.player.c_song){
 			if (su.player.c_song && su.player.c_song.plst_titl){
-				
-				/*
-				sui.views.show_start_page(false, true, true);
-				if (su.player.c_song.plst_titl.with_search_results_link){
-					delete su.player.c_song.plst_titl.with_search_results_link ;
-				}
-				sui.views.show_playlist_page(su.player.c_song.plst_titl, false, true);
-				su.player.view_song(su.player.c_song, true, true, true);
-				
-				sui.views.freeze(su.player.c_song.plst_titl, true);
-				*/
 				sui.views.m.restoreFreezed();
 				su.ui.views.show_track_page(su.player.c_song, true);
 				

@@ -12,6 +12,162 @@ var song_methods = {
 		su.mp3_search.find_mp3(this);
 		viewSong(this, no_navi);	
 	},
+	findNeighbours: function(){
+		//using for visual markering and determination of what to presearch
+		this.next_preload_song = false;
+		this.next_song = false
+		this.prev_song = false
+		
+		var c_playlist = this.plst_titl,
+			c_num = this.plst_titl.indexOf(this);//this.play_order
+
+		var can_use = [];
+		for (var i=0; i < c_playlist.length; i++) {
+			var cur = c_playlist[i];
+			if (cur && (cur.isHaveTracks() || !cur.isSearchCompleted())){
+				can_use.push(i);
+			}
+		};	
+		if (c_playlist && typeof c_num == 'number'){
+			if (c_num-1 >= 0) {
+				for (var i = c_num-1, _p = false;  i >= 0; i--){
+					
+					if (bN(can_use.indexOf(i))){
+						this.prev_song = c_playlist[i];
+						break
+					}
+				};
+			}
+			var next_song = c_num+1;
+			var preload_song;
+			for (var i = 0, _n = false; i < c_playlist.length ; i++) {
+				if (bN(can_use.indexOf(i))){
+					if (!preload_song){
+						preload_song = c_playlist[i];
+					}
+					if (i >= next_song){
+						this.next_song = preload_song =  c_playlist[i];
+						break
+					}
+				}
+			};
+			if (preload_song){
+				this.next_preload_song = preload_song;
+			}
+		}	
+	},
+	checkAndFixNeighbours: function(){
+		this.findNeighbours();
+		this.addMarksToNeighbours();
+	},
+	deactivate: function(force){
+		if (force || this.active){
+			if (this.ui){
+				this.ui.deactivate();
+			}
+			this.removeMarksFromNeighbours();
+			this.active = false;
+		}
+		
+	},
+	activate: function(force){
+		
+		if (force || !this.active){
+
+			if (this.ui){
+				this.ui.activate();
+			}
+			this.checkAndFixNeighbours();
+			this.active = true;
+		}
+		
+	},
+	fixProgressBar: function(){
+		if (this.ui && this.ui.ct && this.ui.ct.tr_progress_t){
+			this.ui.ct.tr_progress_p[0].style.width = this.ui.ct.tr_progress_l[0].style.width = '0';
+			this.ui.ct.track_progress_width = this.ui.ct.tr_progress_t.width();
+		
+		}
+	},
+	markAsPlaying: function(){
+		if (!this.playing_mark){
+			if (this.ui){
+				this.ui.node.parent().addClass('playing-song');
+				this.fixProgressBar();
+			}
+			this.playing_mark = true;
+		}
+		
+	},
+	unmarkAsPlaying: function(){
+		if (this.playing_mark){
+			if (this.ui){
+				this.ui.node.parent().removeClass('playing-song');
+			}
+			delete this.playing_mark;
+		}
+		
+				
+	},
+	markAs: function(neighbour){
+		if (this.marked_as){
+			this.unmark();
+		}
+		var target_node = this.ui && this.ui.node.parent();
+		if (target_node){
+			switch (neighbour) {
+				case 'next':
+					target_node.addClass('to-play-next');
+					break
+				case 'prev':
+					target_node.addClass('to-play-previous');
+					break
+				default:
+			}
+
+		}
+		this.marked_as = neighbour;
+	},
+	unmark: function(){
+		if (this.marked_as){
+			var target_node = this.ui && this.ui.node.parent();
+			if (target_node){
+				target_node.removeClass('to-play-next to-play-previous');
+			}
+			
+			delete this.marked_as;
+		}
+		
+	},
+	addMarksToNeighbours: function(){
+		
+		if (!this.marked_prev_song || this.marked_prev_song != this.prev_song){
+			if (this.marked_prev_song){
+				this.marked_prev_song.unmark();
+			}
+			if (this.prev_song){
+				(this.marked_prev_song = this.prev_song).markAs('prev');
+			}
+		}
+		if (!this.marked_next_song || this.marked_next_song != this.next_song){
+			if (this.marked_next_song){
+				this.marked_next_song.unmark();
+			}
+			if (this.next_song){
+				(this.marked_next_song = this.next_song).markAs('next');
+			}
+		}
+			
+		
+	},
+	removeMarksFromNeighbours: function(){
+		if (this.marked_prev_song){
+			this.marked_prev_song.unmark();
+		}
+		if (this.marked_next_song){
+			this.marked_next_song.unmark();
+		}
+	},
 	wheneWasChanged: function(){
 		return (this.raw() && 1) || (this.sem && this.sem.changed || 1);
 	},
@@ -46,10 +202,6 @@ var song_methods = {
 			}
 			
 		}
-		
-			
-	
-	
 	},
 	song: function(){
 		if (this.raw()){
@@ -588,7 +740,7 @@ function handle_song(mo, complete, get_next){
 			if (get_next){
 				if (su.player.c_song) {
 					if (mo == su.player.c_song.next_song || mo == su.player.c_song.prev_song || mo == su.player.c_song.next_preload_song){
-						su.player.fix_songs_ui();
+						su.player.c_song.checkAndFixNeighbours();
 					}
 					if (su.player.c_song.next_preload_song){
 						get_next_track_with_priority(su.player.c_song.next_preload_song);

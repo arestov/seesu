@@ -957,7 +957,9 @@ seesu_ui.prototype = {
 						pl[i].render(from_collection, i == pl.length-1);
 					}
 				}
-				su.player.fix_songs_ui();
+				if (su.player.c_song){
+					su.player.c_song.checkAndFixNeighbours();
+				}
 			}
 			return pl.ui
 		}

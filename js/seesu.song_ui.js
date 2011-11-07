@@ -43,29 +43,17 @@ var songUI = function(mo, complex){
 
 };
 songUI.prototype = {
-	deactivate: function(){
-		if (this.active){
-			for (var a in this.rowcs) {
-				this.rowcs[a].hide();
-			};
-			this.tidominator.removeClass('want-more-info');
-			this.mainc.removeClass('viewing-song');
-			
-			su.ui.hidePopups();
-			
-			this.active = false;
-		}
+	deactivate: function(force){
+		for (var a in this.rowcs) {
+			this.rowcs[a].hide();
+		};
+		this.tidominator.removeClass('want-more-info');
+		this.mainc.removeClass('viewing-song');
 		
+		su.ui.hidePopups();
 	},
-	activate: function(){
-		if (!this.active){
-			
-			
-			var _this = this;
-			this.mainc.addClass('viewing-song');
-			this.active = true;
-		}
-		
+	activate: function(force){
+		this.mainc.addClass('viewing-song');
 	},
 	expand: function(){
 		if (this.expanded){
