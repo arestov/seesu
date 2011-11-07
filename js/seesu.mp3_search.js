@@ -163,9 +163,11 @@ var song_methods = {
 	removeMarksFromNeighbours: function(){
 		if (this.marked_prev_song){
 			this.marked_prev_song.unmark();
+			delete this.marked_prev_song;
 		}
 		if (this.marked_next_song){
 			this.marked_next_song.unmark();
+			delete this.marked_next_song;
 		}
 	},
 	wheneWasChanged: function(){
