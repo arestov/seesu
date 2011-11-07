@@ -230,7 +230,7 @@ su.player = {
 		this.nowPlaying(mo);
 
 		if (_mopla && (this.c_song != mo || (mopla && mo.mopla != mopla))){
-			if (last_mo == this.v_song && this.c_song != mo){
+			if (last_mo && last_mo.active && this.c_song != mo){
 				viewSong(mo);
 			}
 			
@@ -253,23 +253,6 @@ su.player = {
 		
 		
 		
-	},
-	view_song: function (mo) {
-		var last_mo = this.v_song;
-	  
-
-		su.ui.remove_video();
-		if (mo.ui){
-			mo.ui.updateSongContext(true)
-		}
-		if (last_mo) {
-			last_mo.deactivate();
-		}
-		mo.activate();
-		if (mo == this.c_song){
-			mo.markAsPlaying();
-		}
-		this.v_song = mo;
 	}
 };
 

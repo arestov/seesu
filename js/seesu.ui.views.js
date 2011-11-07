@@ -207,7 +207,9 @@ baseLevelResident.prototype = {
 	handleData: function(key, value){
 		if (this.dataHandlers && this.dataHandlers[key]){
 			if (!this.isHandeled(key, value)){
-				if (this.dataHandlers[key].call(this, value)){
+				var done = this.dataHandlers[key].call(this, value);
+				done = typeof done != 'undefined' ? !!done : true;
+				if (done){
 					this.isHandeled(key, value, true);
 				}
 			}
@@ -282,7 +284,7 @@ cloneObj(sRLevelResident.prototype, {
 			this.D('invstg').lev = this.lev;
 			this.D('invstg').scratchResults(query);
 
-			return true;
+	
 		}
 	}
 });
@@ -328,8 +330,6 @@ cloneObj(artcardLevelResident.prototype ,{
 			if (!this.ui){
 				this.ui = new artcardUI(name, this.c);
 			}
-			
-			return true;
 		}
 	}
 });
@@ -409,7 +409,6 @@ cloneObj(playlistLevelResident.prototype, {
 			if (pl.length){
 				su.ui.render_playlist(pl, pl.length > 1);
 			}
-			return true;
 		}
 	}
 });
@@ -423,6 +422,11 @@ cloneObj(trackLevelResident.prototype, {
 	canUse: function(){return true},
 	kill: function(){
 		this.hide();
+		var mo = this.D('mo');
+		if (mo){
+			su.ui.remove_video();
+			mo.deactivate();
+		}
 	},
 	hide: function(){
 		$(su.ui.els.slider).removeClass("show-zoom-to-track");
@@ -439,7 +443,12 @@ cloneObj(trackLevelResident.prototype, {
 	render: function(parent_resident){},
 	dataHandlers: {
 		mo: function(mo){
-			su.player.view_song(mo);
+			this.D('mo', mo);
+			if (mo.ui){
+				mo.ui.updateSongContext(true)
+			}
+			mo.activate();
+
 		}
 	}
 	
