@@ -397,6 +397,8 @@ var getECParticipials = function(el, class_name){
 var toRealArray = function(array, check_field){
 	if (array instanceof Array){
 		return array;
+	} else if (array == Object(array) && array.length){
+		return Array.prototype.slice.call(array);
 	} else if (array && (!check_field || getTargetField(array, check_field))){
 		return [array];	
 	} else{

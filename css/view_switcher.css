@@ -394,10 +394,12 @@ ul.tracks-for-play > li{
 		margin-bottom:24px;
 		}
 		.top-tracks,.art-card-tags{
-			padding-right:24px;
+			margin-right:24px;
 			margin-bottom:24px;
 			}
-		
+			.top-tracks.loading,.art-card-tags.loading{
+				background: url(../i/spinner_small.gif) no-repeat 100% 4px;
+				}
 					
 	
 			.art-card-meta ul{
@@ -414,6 +416,9 @@ ul.tracks-for-play > li{
 		width:50%;
 		margin-bottom:24px;
 		}
+		.art-card-similar.loading{
+			background: url(../i/spinner_small.gif) no-repeat 100% 4px;
+			}
 		.art-card-similar ul{
 			overflow:hidden;
 			}
@@ -435,6 +440,9 @@ ul.tracks-for-play > li{
 		height:174px;
 		overflow:hidden;
 		}
+		.art-card-albums.loading .row-header{
+			background: url(../i/spinner_dark_small.gif) no-repeat 100% 0%;
+			}
 	.art-card-albums.show-all-albums{
 		height:auto;
 	}
@@ -478,6 +486,15 @@ ul.tracks-for-play > li{
 					display:block;
 					
 					}
+	.art-card-bio{
+		float: right;
+		width: 50%;
+		}
+		.art-card-bio.loading{
+			min-height:20px;
+			background: url(../i/spinner_small.gif) no-repeat 100% 0%;
+			}
+
 	.art-card-image{
 		width:50%;
 		float:left;
