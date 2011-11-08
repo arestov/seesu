@@ -104,18 +104,6 @@ mapLevel.prototype = {
 			return this;
 		}	
 	},
-	testByPlaylistPuppet: function(puppet){
-		var pl = this.getResident() && this.getResident().D && this.getResident().D('pl');
-		if (pl && pl.compare(puppet)){
-			return this;
-		}
-	},
-	testByQuery: function(query){
-		var pl = this.getResident() && this.getResident().D && this.getResident().D('pl');
-		if (pl && this.D('q') == query){
-			return this;
-		}	
-	},
 	getFullURL: function(url){
 		var u='';
 		for (var i = this.parent_levels.length - 1; i >= 0; i--){
