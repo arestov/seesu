@@ -80,6 +80,20 @@ function lastfm_api(apikey, s, cache, crossdomain){
 };
 lastfm_api.prototype = {
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
+	get: function(method, data, nocache){
+		return this.send(method, data, nocache);
+	},
+	post: function(method, data, nocache){
+		return this.send(method, data, nocache, true);
+	},
+	send: function(method, data, nocache, post){
+		if (method){
+			
+		}
+	},
+	signParams: function(params_full){
+			
+	},
 	use: function(method, params, callback, nocache_or_errorcallback, type_of_xhr_is_post, nc, options) {
 		var o = options || {};
 		var _this = this;
@@ -89,7 +103,7 @@ lastfm_api.prototype = {
 			
 			
 			var use_cache = (_this.cache && !type_of_xhr_is_post && !nocache)
-			var no_need_for_post_serv = (!type_of_xhr_is_post || _this.crossdomain);
+			var use_post_serv = type_of_xhr_is_post && !_this.crossdomain;
 	
 			var pv_signature_list = [], // array of <param>+<value>
 				params_full = params || {},
@@ -97,7 +111,7 @@ lastfm_api.prototype = {
 			
 			params_full.method = method;
 			params_full.api_key = _this.apikey;
-			var f = params_full.format || (no_need_for_post_serv ? 'json' : '');
+			var f = params_full.format || (use_post_serv ?  '' : 'json');
 			if (f){
 				params_full.format = f;
 			}
@@ -127,7 +141,7 @@ lastfm_api.prototype = {
 			if (!cache_used){
 				return _this.queue.add(function(){
 					
-					if (no_need_for_post_serv){
+					if (!use_post_serv){
 						if (use_cache){
 							var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback)	
 						}
