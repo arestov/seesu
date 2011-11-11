@@ -939,13 +939,37 @@ iframe.you-tube-video,embed.you-tube-video{
 	font-size:12px;
 	margin-top:-12px;
 }
+
+.minimize-button{
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 22px;
+	height: 13px;
+	background-image: ;
+	background: url(../i/minimize-icon.png) no-repeat;
+	opacity: 0.8;
+	border-radius: 0 0 0 4px;
+	cursor: pointer;
+	
+	}
+	.minimize-button:hover{
+		box-shadow: 0 0 9px #999;
+		opacity: 1;
+		}
+		.minimize-button:active{
+			box-shadow: inset 0 0 7px #000;
+			}
 /* Custom CSS scrollbar */
+
 .pokki-app ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
     border-radius: 5px;
 	background: none;
 }
+
+
 .pokki-app ::-webkit-scrollbar-track:vertical { 
     background: none; 
 }
@@ -955,6 +979,7 @@ iframe.you-tube-video,embed.you-tube-video{
     background: #999;
     border-radius: 5px;
 }
+
 .pokki-app ::-webkit-scrollbar-button: { 
     display: none; 
 }

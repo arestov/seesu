@@ -218,7 +218,7 @@ seesuServerAPI.prototype = {
 	setAuth: function(auth_data, not_save){
 		var _this = this;
 		if (!not_save){
-			w_storage('dg_auth', auth_data, true);
+			suStore('dg_auth', auth_data, true);
 		}
 		this.auth.setNewData(auth_data);
 	},

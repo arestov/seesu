@@ -296,8 +296,24 @@ window.app_env = (function(){
 	
 	return env;
 })();
+(function(){
+	var sensitive_keys = ['vk_token_info', 'dg_auth'];
 
+	window.suStore = function(key, value, opts){
+		var sensitive = !!key && sensitive_keys.indexOf(key) > -1;
+	  	if (typeof value != 'undefined'){
+	  		if (value && sensitive && app_env.pokki_app){
+	  			value = pokki.scramble(value);
+	  		}
 
+	  		return w_storage(key, value, opts);
+	  		
+	  	} else{
+	  		
+	  	}
+	}
+
+})();
 
 if (typeof widget != 'object'){
 	window.widget = {

@@ -124,8 +124,6 @@ window.seesu = window.su =  {
 		vk_api:{
 			queue:  new funcs_queue(1000, 8000 , 7)
 		}
-
-		
 	  }
 	};
 

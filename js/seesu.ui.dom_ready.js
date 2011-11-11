@@ -775,6 +775,13 @@ window.connect_dom_to_som = function(d, sui, callback){
 			playlist: $(sui.els.nav_playlist_page).parent(),
 			track: sui.els.nav_track_zoom.parent()
 		});
+
+		if (app_env.pokki_app){
+			$('<span class="minimize-button"></span>').click(function(){
+				pokki.closePopup();
+			}).appendTo(justhead);
+		}
+
 		
 		sui.els.search_input.bind('keyup change', input_change);
 	

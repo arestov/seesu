@@ -46,7 +46,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 				console.log('got vk api');
 				
 				if (save_to_store){
-					w_storage('vk_token_info', vk_t, true);
+					suStore('vk_token_info', vk_t, true);
 				}
 				
 				if (vk_t.expires_in){
@@ -81,7 +81,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 				if (callback){callback();}
 			} else{
 				vk_auth_box.stopIndicating();
-				w_storage('vk_session'+app_id, '', true);
+				//w_storage('vk_session'+app_id, '', true);
 				error_callback('no info');
 				
 			}
@@ -99,7 +99,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 		
 		
 	} else{
-		w_storage('vk_session'+app_id, '', true);
+		//w_storage('vk_session'+app_id, '', true);
 		error_callback('expired');
 	}
 };
@@ -202,21 +202,21 @@ var vk_auth_box = {
 	authInit: function(p){
 		var _this = this;
 		
-		//init_auth_data.bridgekey		
+		//init_auth_data.bridgekey	
+		
+		var not_external = !!app_env.showWebPage;
 		
 		var init_auth_data = this.getInitAuthData(p);
 		if (init_auth_data.bridgekey || !p.c){
 			this.setAuthBridgeKey(init_auth_data.bridgekey);
-		}  else if (p.c){
+		}  else if (p.c && !not_external){
 			p.c.finishing();
 		}
 		if (!p.not_open){
 			if (app_env.showWebPage){
-				this.startIndicating();
 				app_env.showWebPage(init_auth_data.link, function(url){
 					var sb = 'http://seesu.me/vk/callbacker.html';
 					if (url.indexOf(sb) == 0){
-						_this.stopIndicating();
 						app_env.hideWebPages();
 						app_env.clearWebPageCookies();
 
@@ -239,7 +239,6 @@ var vk_auth_box = {
 						
 					}
 				}, function(e){
-					_this.stopIndicating();
 					app_env.openURL(init_auth_data.link);
 				}, 700, 600);
 			} else{
