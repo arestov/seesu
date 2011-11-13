@@ -974,9 +974,10 @@ seesu_ui.prototype = {
 						pl[i].render(from_collection, i == pl.length-1);
 					}
 				}
-				if (su.player.c_song){
-					su.player.c_song.checkAndFixNeighbours();
-				}
+				var actives_mo = $filter(pl, 'active', true);
+				for (var i = 0; i < actives_mo.length; i++) {
+					actives_mo[i].checkAndFixNeighbours();
+				};
 			}
 			return pl.ui
 		}
@@ -1176,6 +1177,16 @@ seesu_ui.prototype = {
 		s.each(function(i, el){
 			$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
 		});
+		if (marker == PLAYED){
+			if (app_env.pokki_app){
+				pokki.setIdleDetect('popup', false);
+			}
+		} else{
+			if (app_env.pokki_app){
+				pokki.setIdleDetect('popup', true);
+			}
+		}
+
 		switch(marker) {
 		  case(PLAYED):
 			s.addClass('player-played');

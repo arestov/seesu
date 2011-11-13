@@ -156,12 +156,12 @@ var test_pressed_node = function(e, opts){
 				}
 				
 			} else if (bN(class_list.indexOf('enable-scrobbling'))){
-				w_storage('lfm_scrobbling_enabled', 'true', true);
+				suStore('lfm_scrobbling_enabled', 'true', true);
 				su.lfm_api.scrobbling = true;
 				su.ui.lfm_change_scrobbling(true);
 				
 			} else if (bN(class_list.indexOf('disable-scrobbling'))){
-				w_storage('lfm_scrobbling_enabled', '', true);
+				suStore('lfm_scrobbling_enabled', '', true);
 				su.lfm_api.scrobbling = false;
 				su.ui.lfm_change_scrobbling();
 			}

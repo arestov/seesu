@@ -33,19 +33,19 @@ function lastfm_api(apikey, s, cache, crossdomain){
 	this.queue = new funcs_queue(100);
 	
 	
-	this.scrobbling =  w_storage('lfm_scrobbling_enabled') ? true : false;
-	this.sk =  w_storage('lfmsk') || false;
-	this.user_name = w_storage('lfm_user_name') || false;
+	this.scrobbling =  suStore('lfm_scrobbling_enabled') ? true : false;
+	this.sk =  suStore('lfmsk') || false;
+	this.user_name = suStore('lfm_user_name') || false;
 	this.music = (function(){
-		var lfmscm = w_storage('lfm_scrobble_music');
+		var lfmscm = suStore('lfm_scrobble_music');
 		if (lfmscm) {
-			return JSON.parse(lfmscm);
+			return lfmscm;
 		} else {
 			return [];
 		}
 	})();
 	
-	this.ss =  w_storage('lfm_scrobble_s');
+	this.ss =  suStore('lfm_scrobble_s');
 	
 	if (!this.sk) {
 		suReady(function(){
@@ -290,7 +290,7 @@ lastfm_api.prototype = {
 				_this.use('track.scrobble', post_m_obj, function(r){
 					if (r){
 						_this.music = [];
-						w_storage('lfm_scrobble_music', '');
+						suStore('lfm_scrobble_music', '');
 					} 
 					
 				}, true, true);
@@ -298,15 +298,15 @@ lastfm_api.prototype = {
 			
 		} else {
 			if (_this.music.length){
-				w_storage('lfm_scrobble_music', _this.music);
+				suStore('lfm_scrobble_music', _this.music);
 			} 
 		}
 	},
 	login: function(r, callback){
 		this.sk = r.session.key;
 		this.user_name = r.session.name;
-		w_storage('lfm_user_name', this.user_name, true);
-		w_storage('lfmsk', this.sk, true);
+		suStore('lfm_user_name', this.user_name, true);
+		suStore('lfmsk', this.sk, true);
 		if (callback){callback();}
 	},
 	getInitAuthData: function(){
@@ -347,7 +347,7 @@ lastfm_api.prototype = {
 							render_loved();
 							break;    
 						  case('scrobbling'):
-							w_storage('lfm_scrobbling_enabled', 'true', true);
+							suStore('lfm_scrobbling_enabled', 'true', true);
 							_this.scrobbling = true;
 							su.ui.lfm_change_scrobbling(true);
 							break;
@@ -390,7 +390,7 @@ lastfm_api.prototype = {
 				var response = r.split(/\n/);
 				if (response[0] == 'OK'){
 					_this.ss = response[1];
-					w_storage('lfm_scrobble_s', _this.s, true);
+					suStore('lfm_scrobble_s', _this.s, true);
 					if (callback) {callback();}
 					console.log('handshake:' + '\n' + r)
 				} else {
@@ -419,7 +419,7 @@ lastfm_api.prototype = {
 			  success: function(r){
 				if (r.match('BADSESSION')){
 					_this.ss = null;
-					w_storage('lfm_scrobble_s', '', true);
+					suStore('lfm_scrobble_s', '', true);
 					_this.old_sc_handshake();
 				};
 			  }
@@ -464,14 +464,14 @@ lastfm_api.prototype = {
 				if (!r.match('OK')) {
 					if (r.match('BADSESSION')){
 						_this.ss = null;
-						w_storage('lfm_scrobble_s', '', true);
+						suStore('lfm_scrobble_s', '', true);
 						
 						_this.old_sc_handshake();
 					}
-					w_storage('lfm_scrobble_music', _this.music);
+					suStore('lfm_scrobble_music', _this.music);
 				} else {
 					_this.music = [];
-					w_storage('lfm_scrobble_music', '');
+					suStore('lfm_scrobble_music', '');
 				}
 				
 			  },

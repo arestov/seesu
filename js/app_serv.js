@@ -207,6 +207,7 @@ window.app_env = (function(){
 		
 	} else 
 	if (window.pokki && window.pokki.openPopup){
+		env.safe_data = true;
 		env.app_type = 'pokki_app';
 		env.cross_domain_allowed = true;
 		env.deep_sanbdox = true;
@@ -297,8 +298,26 @@ window.app_env = (function(){
 	return env;
 })();
 (function(){
-	var sensitive_keys = ['vk_token_info', 'dg_auth'];
+	var sensitive_keys = ['vk_token_info', 'dg_auth', 'lfm_scrobble_s', 'lfmsk', 'big_vk_cookie'];
+	var parse = function(r_value){
+		if (r_value == Object(r_value)){
+			return r_value;
+		} else if (typeof r_value == 'string'){
+			var str_start = r_value.charAt(0),
+				str_end   = r_value.charAt(r_value.length - 1);
 
+			if ((str_start == '{' && str_end == '}') || (str_start == '[' && str_end == ']')){
+				try {
+					r_value = JSON.parse(r_value);
+				} catch (e) {
+					
+				}
+			}
+			return r_value;
+		} else{
+			return r_value;
+		}
+	};
 	window.suStore = function(key, value, opts){
 		var sensitive = !!key && sensitive_keys.indexOf(key) > -1;
 	  	if (typeof value != 'undefined'){
@@ -310,8 +329,27 @@ window.app_env = (function(){
 	  		
 	  	} else{
 	  		
+	  		value =  w_storage(key, value, opts);
+	  		if (sensitive && app_env.pokki_app){
+	  			value = pokki.descramble(value);
+	  		}
+	  		
+	  		return parse(value);
 	  	}
-	}
+	};
+	window.getPreloadedNK = function(key){
+		if (app_env.pokki_app){
+			var rv = pokki.getScrambled(key);
+			if (rv){
+				return rv;
+			}
+		}
+		var nk = suStore('preloaded_nk');
+		if (nk && nk[key]){
+			return nk[key];
+		}
+		
+	};
 
 })();
 

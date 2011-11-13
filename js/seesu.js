@@ -22,7 +22,7 @@ window.lfm = function(){
 
 
 
-var dga = (dga && w_storage('dg_auth')) && JSON.parse(dga);
+var dga = (dga && suStore('dg_auth'));
 
   
 window.seesu = window.su =  {
@@ -45,7 +45,7 @@ window.seesu = window.su =  {
 	  },
 	  s: new seesuServerAPI(dga),
 	  fs: {},//fast search
-	  lfm_api: new lastfm_api('2803b2bcbc53f132b4d4117ec1509d65', '77fd498ed8592022e61863244b53077d', true, app_env.cross_domain_allowed),
+	  lfm_api: new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret'), true, app_env.cross_domain_allowed),
 	  version: 2.7,
 	  env: app_env,
 	  track_stat: (function(){
@@ -99,8 +99,8 @@ window.seesu = window.su =  {
 	  },
 	  popular_artists: ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ],
 	  vk:{
-		id: w_storage('vkid'),
-		big_vk_cookie: w_storage('big_vk_cookie'),
+		id: suStore('vkid'),
+		big_vk_cookie: suStore('big_vk_cookie'),
 		set_xhr_headers: function(xhr){
 			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 			if (seesu.env.apple_db_widget && seesu.vk.big_vk_cookie){

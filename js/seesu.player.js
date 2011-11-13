@@ -18,7 +18,7 @@ su.gena = { //this work with playlists
 			for (var i=0; i < playlists.length; i++) {
 				plsts.push(playlists[i].simplify())
 			};
-			w_storage('user_playlists', plsts, true);
+			suStore('user_playlists', plsts, true);
 		},10)
 	},
 	create_userplaylist: function(title,p, manual_inject){
@@ -57,9 +57,9 @@ function rebuildPlaylist(saved_pl){
 su.gena.playlists = (function(){
 	var pls = [];
 	
-	var plsts_str = w_storage('user_playlists');
+	var plsts_str = suStore('user_playlists');
 	if (plsts_str){
-		var spls = JSON.parse(plsts_str);
+		var spls = plsts_str;
 		for (var i=0; i < spls.length; i++) {
 			pls[i] = rebuildPlaylist(spls[i]);
 		};
@@ -85,7 +85,7 @@ su.gena.playlists = (function(){
 su.player = {
 	autostart: true,
 	player_volume 	: ( function(){
-		var volume_preference = w_storage('vkplayer-volume');
+		var volume_preference = suStore('vkplayer-volume');
 		if (volume_preference && (volume_preference != 'undefined') && volume_preference != 'NaN'){
 			return parseFloat(volume_preference) || 80
 		} else {
@@ -426,7 +426,7 @@ su.player.song_click = function(mo) {
 
 
 var change_volume = function (volume_value){
-  w_storage('vkplayer-volume', volume_value, true);
+  suStore('vkplayer-volume', volume_value, true);
   su.player.player_volume = volume_value;	
 }
 

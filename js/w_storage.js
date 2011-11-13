@@ -51,9 +51,9 @@
 		}
 	}
 	var get_key = function(key){
-		var ram_value = ram_storage[key];
-		if (typeof ram_value != 'undefined'){
-			return ram_value;
+		var r_value = ram_storage[key];
+		if (typeof r_value != 'undefined'){
+			return r_value;
 			
 		} else{
 			return store_get(key);

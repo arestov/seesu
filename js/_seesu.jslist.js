@@ -1,10 +1,14 @@
 (function() {
-	var completed; 
+	var completed;
+	var base_path = '';
+	if (typeof bpath != 'undefined' && bpath){
+		base_path = bpath;
+	}
 	
 	var js_toload = [
 	"js/w_storage.js", 
 	"js/c_quene.js", 
-	"js/c_cache_ajax.js",  
+	"js/c_cache_ajax.js",
 	"js/md5.min.js", 
 	"js/jquery-1.6.2.mod.min.js", 
 	"js/app_serv.js", 
@@ -30,9 +34,9 @@
 	"js/pressed_node_tester.js"
 	];
 	var bpathWrap = function(array){
-		if (typeof bpath != 'undefined' && bpath){
+		if (base_path){
 			for (var i=0; i < array.length; i++) {
-				array[i] = bpath + array[i];
+				array[i] = base_path + array[i];
 			};
 		}
 		return array;
@@ -66,14 +70,18 @@
 			callback: function(url){
 				if (url.indexOf('jquery.debounce-1.0.5.js') != -1){
 					if(!$.browser.msie && (app_env.opera_widget || app_env.firefox_widget)){
-						yepnope("js/widget.resize.js")
+						yepnope(base_path + "js/widget.resize.js")
 					}
 				} else if (url.indexOf('seesu.js') != -1){
 					if (app_env.needs_url_history){
-						yepnope("js/seesu.url_games.js")
+						yepnope(base_path +  "js/seesu.url_games.js")
 					} else{
 						navi = {};
 						navi.set = navi.replace = function(){return false;};
+					}
+				} else if (url.indexOf('app_serv.js') != -1){
+					if (!app_env.safe_data){
+						yepnope(base_path + "js/seesu.network.data.js")
 					}
 				}
 			

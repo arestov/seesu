@@ -81,7 +81,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 				if (callback){callback();}
 			} else{
 				vk_auth_box.stopIndicating();
-				//w_storage('vk_session'+app_id, '', true);
+				//suStore('vk_session'+app_id, '', true);
 				error_callback('no info');
 				
 			}
@@ -99,7 +99,7 @@ var auth_to_vkapi = function(vk_t, save_to_store, app_id, fallback, error_callba
 		
 		
 	} else{
-		//w_storage('vk_session'+app_id, '', true);
+		//suStore('vk_session'+app_id, '', true);
 		error_callback('expired');
 	}
 };
