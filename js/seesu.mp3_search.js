@@ -270,7 +270,7 @@ var song_methods = {
 	isHaveBestTracks: function(){
 		return !!this.raw() || !!this.sem && this.sem.have_best;
 	},
-	kill: function(){
+	die: function(){
 		if (this.ui){
 			this.ui.remove();
 			delete this.ui;

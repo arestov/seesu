@@ -127,10 +127,10 @@ mapLevel.prototype = {
 		}
 		
 	},
-	kill: function(){
-		this.getResident().kill();
+	die: function(){
+		this.getResident().die();
 		if (this.getNav()){
-			this.getNav().kill();
+			this.getNav().die();
 		}
 		delete this.map;
 	},
@@ -305,7 +305,7 @@ browseMap.prototype= {
 				if (this.levels[i].free){
 					if (this.levels[i].free != this.levels[i].freezed){
 						if (this.levels[i].freezed){ //removing old freezed
-							this.levels[i].freezed.kill();
+							this.levels[i].freezed.die();
 							delete this.levels[i].freezed;
 						}
 						this.levels[i].freezed = this.levels[i].free;
@@ -323,7 +323,7 @@ browseMap.prototype= {
 		if (l + 1 < this.levels.length -1) {
 			for (var i= l + 1; i < this.levels.length; i++) {
 				if (this.levels[i].freezed){
-					this.levels[i].freezed.kill();
+					this.levels[i].freezed.die();
 					delete this.levels[i].freezed
 				}
 				
@@ -359,7 +359,7 @@ browseMap.prototype= {
 				lev.freezed.hide();
 			}
 			if (lev.free && lev.free != exept){
-				lev.free.kill();
+				lev.free.die();
 				delete lev.free;
 			}
 		}

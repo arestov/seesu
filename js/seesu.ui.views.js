@@ -14,7 +14,7 @@ show_track_page
 var dNav = function(){};
 dNav.prototype = {
 	canUse: function(){
-		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
+		return this.c && !this.dead && this.c[0].ownerDocument == su.ui.d;
 	},
 	setActive: function(stack){
 
@@ -58,7 +58,8 @@ dNav.prototype = {
 		this.c.removeClass('nnav');
 		this.resetStackMark();
 	},
-	kill: function(){
+	die: function(){
+		this.dead = true;
 		this.c.remove();
 		this.onTitleChange(null);
 	},
@@ -178,6 +179,9 @@ trNav.prototype =  new dNav();
 var baseLevelResident = function(){
 };
 baseLevelResident.prototype = {
+	canUse: function(){
+		return this.c && !this.dead && this.c[0].ownerDocument == su.ui.d;
+	},
 	setLev: function(lev){
 		this.lev = lev;
 		return this;	
@@ -220,15 +224,16 @@ baseLevelResident.prototype = {
 
 
 
-var mainLevelResident = function(){	
+var mainLevelResident = function(){
+	this.canUse = false;
 };
 mainLevelResident.prototype = new baseLevelResident();
 cloneObj(mainLevelResident.prototype, {
 	hide: function(){
 		console.log('want to hide main')
 	},
-	kill: function(){
-		console.log('trying to kill main')
+	die: function(){
+		console.log('trying to killkill main')
 	},
 	show: function(opts){
 		su.ui.els.slider.className = "show-start";
@@ -251,10 +256,9 @@ var sRLevelResident = function(levdata){
 };
 sRLevelResident.prototype = new baseLevelResident();
 cloneObj(sRLevelResident.prototype, {
-	canUse: function(){
-		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
-	},
-	kill: function(){
+	
+	die: function(){
+		this.dead = true;
 		this.c.remove();
 	},
 	hide: function(){
@@ -296,10 +300,8 @@ var artcardLevelResident = function(levdata){
 };
 artcardLevelResident.prototype  = new baseLevelResident();
 cloneObj(artcardLevelResident.prototype ,{
-	canUse: function(){
-		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
-	},
-	kill: function(){
+	die: function(){
+		this.dead = true;
 		this.remove();	
 	},
 	remove: function(){
@@ -346,12 +348,10 @@ var playlistLevelResident = function(levdata){
 };
 playlistLevelResident.prototype  = new baseLevelResident();
 cloneObj(playlistLevelResident.prototype, {
-	canUse: function(){
-		return this.c && !!this.c.parent().length && this.c[0].ownerDocument == su.ui.d;
-	},
-	kill: function(){
+	die: function(){
+		this.dead = true;
 		var pl = this.D('pl');
-		if (pl){pl.kill()}
+		if (pl){pl.die()}
 		this.remove();	
 	},
 	remove: function(){
@@ -420,7 +420,8 @@ var trackLevelResident = function(levdata){
 trackLevelResident.prototype = new baseLevelResident();
 cloneObj(trackLevelResident.prototype, {
 	canUse: function(){return true},
-	kill: function(){
+	die: function(){
+		this.dead = true;
 		this.hide();
 		var mo = this.D('mo');
 		if (mo){

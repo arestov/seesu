@@ -591,7 +591,7 @@ investigation.prototype = {
 			if (rq && rq.abort) {rq.abort()}
 		}
 	},
-	kill: function(){
+	die: function(){
 		this.stopRequests();
 	},
 	doEverythingForQuery: function(){

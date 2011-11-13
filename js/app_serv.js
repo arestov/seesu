@@ -368,10 +368,19 @@ if (typeof widget != 'object'){
 (function(){
 	var openURL;
 
-	if (window.widget && !widget.fake_widget && widget.openURL){
-		openURL = function(){
-			return widget.openURL.apply(widget, arguments)
+	if (window.widget && !widget.fake_widget){
+		if (widget.openURL){
+			openURL = function(){
+				return widget.openURL.apply(widget, arguments)
+			}
+		} else{
+			openURL = function(url){
+				var link_node = document.createElement('a');
+					link_node.href = url;
+					link_node.click();
+			}
 		}
+		
 	} else if (window.pokki && pokki.openURLInDefaultBrowser) {
 		openURL = function(){
 			return pokki.openURLInDefaultBrowser.apply(pokki, arguments)

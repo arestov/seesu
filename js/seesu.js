@@ -448,7 +448,7 @@ var empty_song_click = function(){
 			
 			return this.playlist_type == puppet.playlist_type && (key_string_o == key_string_p);
 		},
-		kill: function(){
+		die: function(){
 			if (this.ui){
 				this.ui.remove();
 				delete this.ui;
@@ -456,7 +456,7 @@ var empty_song_click = function(){
 			
 			
 			for (var i = this.length - 1; i >= 0; i--){
-				this[i].kill();
+				this[i].die();
 			};
 			
 		},
