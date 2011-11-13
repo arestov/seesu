@@ -81,7 +81,7 @@
 					}
 				} else if (url.indexOf('app_serv.js') != -1){
 					if (!app_env.safe_data){
-						yepnope(base_path + "js/seesu.network.data.js")
+						yepnope(base_path + "js/network.data.js")
 					}
 				}
 			
