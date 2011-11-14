@@ -300,12 +300,11 @@ window.app_env = (function(){
 (function(){
 	var sensitive_keys = ['vk_token_info', 'dg_auth', 'lfm_scrobble_s', 'lfmsk', 'big_vk_cookie'];
 	var parse = function(r_value){
-		if (r_value == Object(r_value)){
+		if (r_value === Object(r_value)){
 			return r_value;
 		} else if (typeof r_value == 'string'){
 			var str_start = r_value.charAt(0),
 				str_end   = r_value.charAt(r_value.length - 1);
-
 			if ((str_start == '{' && str_end == '}') || (str_start == '[' && str_end == ']')){
 				try {
 					r_value = JSON.parse(r_value);

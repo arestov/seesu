@@ -7,7 +7,7 @@
 			var cached_response = (cached_response = _this.storage['c_' + prefix + '_' + hash_key]) && cached_response.v;
 			if (cached_response) {
 
-				if (cached_response != Object(cached_response) && typeof cached_response == 'string'){
+				if (cached_response !== Object(cached_response) && typeof cached_response == 'string'){
 					try {
 						cached_response = JSON.parse(cached_response);
 					} catch(e){
