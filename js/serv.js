@@ -608,27 +608,18 @@ var getUnitBaseNum = function(_c){
 	}
 };
 var stringifyParams= function(params, ignore_params, splitter){
+	splitter = splitter || '';
 	if (typeof params == 'string'){
 		return params;
 	}
-	var paramsstr = '',
-		pv_signature_list = [];
-	
-	
+	var pv_signature_list = [];
 	for (var p in params) {
-		if (!ignore_params || !~ignore_params.indexOf(p)){
-			pv_signature_list.push(p + (splitter || '') + params[p]);
+		if (!ignore_params || ignore_params.indexOf(p) == -1){
+			pv_signature_list.push(p + splitter + params[p]);
 		}
 	}
-		
 	pv_signature_list.sort();
-		
-	for (var i=0, l = pv_signature_list.length; i < l; i++) {
-		paramsstr += pv_signature_list[i];
-	};
-		
-	return paramsstr;
-	
+	return pv_signature_list.join();
 };
 
 

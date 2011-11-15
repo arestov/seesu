@@ -80,105 +80,117 @@ function lastfm_api(apikey, s, cache, crossdomain){
 };
 lastfm_api.prototype = {
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
-	get: function(method, data, nocache){
-		return this.send(method, data, nocache);
+	get: function(method, data, options){
+		return this.send(method, data, options);
 	},
-	post: function(method, data, nocache){
-		return this.send(method, data, nocache, true);
+	post: function(method, data, options){
+		return this.send(method, data, options, true);
 	},
-	send: function(method, data, nocache, post){
+	send: function(method, params, options, post){
+		var _this				= this,
+			complex_response 	= {},
+			deferred 			= $.Deferred();
+
+		deferred.promise( complex_response );
+
 		if (method){
+			options = options || {};
+			params  = params  || {};
+
+			options.nocache = options.nocache || !_this.cache || post;
+
+
+			var use_post_serv = post && !_this.crossdomain;
 			
-		}
-	},
-	signParams: function(params_full){
+			var apisig = ((params && (params.sk || params.token )) || (method == 'auth.getToken')) ? true : false; // yes, we need signature
 			
-	},
-	use: function(method, params, callback, nocache_or_errorcallback, type_of_xhr_is_post, nc, options) {
-		var o = options || {};
-		var _this = this;
-		if (method) {
-			var error_callback = typeof nocache_or_errorcallback== 'function' ? nocache_or_errorcallback : false;
-			var nocache = (!error_callback && nocache_or_errorcallback) || nc;
-			
-			
-			var use_cache = (_this.cache && !type_of_xhr_is_post && !nocache)
-			var use_post_serv = type_of_xhr_is_post && !_this.crossdomain;
-	
-			var pv_signature_list = [], // array of <param>+<value>
-				params_full = params || {},
-				apisig = ((params && (params.sk || params.token )) || (method == 'auth.getToken')) ? true : false; // yes, we need signature
-			
-			params_full.method = method;
-			params_full.api_key = _this.apikey;
-			var f = params_full.format || (use_post_serv ?  '' : 'json');
-			if (f){
-				params_full.format = f;
-			}
-	
-			var paramsstr = '';
-			if (apisig || use_cache) {
-				for (var param in params_full) {
-					if ((param != 'format') && (param != 'callback')){
-						pv_signature_list.push(param + params_full[param]);
-					}
-				}
-				pv_signature_list.sort();
-				
-				for (var i=0, l = pv_signature_list.length; i < l; i++) {
-					paramsstr += pv_signature_list[i];
-				};
-				params_full.api_sig = hex_md5(paramsstr + _this.s);
+			params.method = method;
+			params.api_key = _this.apikey;
+			params.format = params.format || (use_post_serv ?  '' : 'json');
+
+			if (apisig || !options.nocache) {
+				params.api_sig = hex_md5(stringifyParams(params, ['format', 'callback']) + _this.s);
 			}
 			
-			if (use_cache){
-				var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback);
+			if (!options.nocache){
+				var cache_used = cache_ajax.get('lastfm', params.api_sig, function(r){
+					deferred.resolve(r);
+				});
 				if (cache_used) {
-					return true;
+					complex_response.cache_used = true;
+					return complex_response;
 				}
 			}
 	
 			if (!cache_used){
-				return _this.queue.add(function(){
+				complex_response.queued = _this.queue.add(function(){
 					
 					if (!use_post_serv){
-						if (use_cache){
-							var cache_used = cache_ajax.get('lastfm', params_full.api_sig, callback)	
+						if (!options.nocache){
+							var cache_used = cache_ajax.get('lastfm', params.api_sig, function(r){
+								deferred.resolve(r);
+							});
 						}
 						if (!cache_used){
 							$.ajax({
 							  url: _this.api_path,
 							  global: false,
-							  type: type_of_xhr_is_post ? "POST" : "GET",
+							  type: post ? "POST" : "GET",
 							  dataType: _this.crossdomain ? 'json' : 'jsonp',
-							  data: params_full,
+							  data: params,
 							  error: function(r){
-							  	if (error_callback){
-							  		error_callback(r)
-							  	}
+							  	deferred.reject.apply(deferred, arguments);
 							  },
 							  success: function(r){
-								if (callback) {callback(r);}
-								if (!type_of_xhr_is_post){
-									cache_ajax.set('lastfm', params_full.api_sig, r)
+							  	deferred.resolve.apply(deferred, arguments);
+								if (!post){
+									cache_ajax.set('lastfm', params.api_sig, r)
 								}
 							  },
 							  complete: function(xhr){
 								//console.log(xhr.responseText)
 							  }
 							});
-							if (o.after_ajax){
-								o.after_ajax();
+							if (options.after_ajax){
+								options.after_ajax();
 							}
-							//console.log(params_full)	
+							//console.log(params)	
 						}
 
 					} else{
-						_this.post_serv.post(params_full, callback);
+						_this.post_serv.post(params, callback);
 					} 
 					
-				}, o.not_init_queue)
+				}, options.not_init_queue)
 			}
+
+
+
+		} else{
+			deferred.reject();
+		}
+		return complex_response;
+	},
+	use: function(method, params, callback, nocache_or_errorcallback, post, nc, options) {
+		options = options || {};
+		var _this = this;
+		if (method) {
+
+			params = params || {};
+
+
+			var error_callback = typeof nocache_or_errorcallback== 'function' ? nocache_or_errorcallback : false;
+			$.extend(options, {
+				nocache: (!error_callback && nocache_or_errorcallback) || nc
+			});
+			
+			var r = this.send(method, params, options, post).then(callback, error_callback);
+			if (r.cache_used){
+				return true
+			} else{
+				return r.queued;
+			}
+			
 	
 		}
 	},
