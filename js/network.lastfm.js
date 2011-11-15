@@ -97,19 +97,19 @@ lastfm_api.prototype = {
 			options = options || {};
 			params  = params  || {};
 
-			options.nocache = options.nocache || !_this.cache || post;
+			options.nocache = options.nocache || !this.cache || post;
 
 
-			var use_post_serv = post && !_this.crossdomain;
+			var use_post_serv = post && !this.crossdomain;
 			
 			var apisig = ((params && (params.sk || params.token )) || (method == 'auth.getToken')) ? true : false; // yes, we need signature
 			
 			params.method = method;
-			params.api_key = _this.apikey;
+			params.api_key = this.apikey;
 			params.format = params.format || (use_post_serv ?  '' : 'json');
 
 			if (apisig || !options.nocache) {
-				params.api_sig = hex_md5(stringifyParams(params, ['format', 'callback']) + _this.s);
+				params.api_sig = hex_md5(stringifyParams(params, ['format', 'callback']) + this.s);
 			}
 			
 			if (!options.nocache){
@@ -123,7 +123,7 @@ lastfm_api.prototype = {
 			}
 	
 			if (!cache_used){
-				complex_response.queued = _this.queue.add(function(){
+				complex_response.queued = this.queue.add(function(){
 					
 					if (!use_post_serv){
 						if (!options.nocache){
