@@ -678,7 +678,7 @@ seesu_ui.prototype = {
 				su.s.api('relations.setLike', {to: lig.user}, function(r){
 					
 					if (r.done){
-						
+						su.track_event('people likes', 'liked');
 						var gc = $("<div></div>");
 						nb.c.after(gc);
 
@@ -706,7 +706,7 @@ seesu_ui.prototype = {
 				su.s.api('relations.acceptInvite', {from: lig.user}, function(r){
 					
 					if (r.done){
-						
+						su.track_event('people likes', 'accepted');
 						nb.c.after(
 							$('<span class="people-list-desc desc"></span>')
 								.text(su.ui.getRemainTimeText(r.done.est, true))
