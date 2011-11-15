@@ -88,8 +88,19 @@ lastfm_api.prototype = {
 	},
 	send: function(method, params, options, post){
 		var _this				= this,
-			complex_response 	= {},
-			deferred 			= $.Deferred();
+			deferred 			= $.Deferred(),
+			complex_response 	= {
+				abort: function(){
+					this.aborted = true;
+					deferred.reject('abort');
+					if (this.queued){
+						this.queued.abort();
+					}
+					if (this.xhr){
+						this.xhr.abort();
+					}
+				}
+			};
 
 		deferred.promise( complex_response );
 
@@ -124,6 +135,9 @@ lastfm_api.prototype = {
 	
 			if (!cache_used){
 				complex_response.queued = this.queue.add(function(){
+					if (complex_response.aborted){
+						return
+					}
 					
 					if (!use_post_serv){
 						if (!options.nocache){
@@ -132,7 +146,7 @@ lastfm_api.prototype = {
 							});
 						}
 						if (!cache_used){
-							$.ajax({
+							complex_response.xhr = $.ajax({
 							  url: _this.api_path,
 							  global: false,
 							  type: post ? "POST" : "GET",
