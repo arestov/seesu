@@ -28,6 +28,7 @@
 	"js/seesu.song_ui.js", 
 	"js/seesu.js",
 	"js/seesu.mp3_search.js", 
+	"js/search-investigation.js",
 	"js/seesu.search.js", 
 	"js/seesu.player.js", 
 	"js/c_buttmen.js", 

@@ -283,7 +283,7 @@ cloneObj(sRLevelResident.prototype, {
 	dataHandlers: {
 		q: function(query){
 			if (!this.D('invstg')){
-				this.D('invstg', new investigation(this.c));
+				this.D('invstg', createSuInvestigation(this.c));
 			}
 			this.D('invstg').lev = this.lev;
 			this.D('invstg').scratchResults(query);

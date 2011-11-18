@@ -1,84 +1,85 @@
 function lastfm_api(apikey, s, cache, crossdomain){
-	this.apikey = apikey;
-	this.s = s;
-	this.cache = cache;
-	this.crossdomain = crossdomain;
-	if (!crossdomain){
-		var srvc = document.createElement('div');srvc.className="serv-container";suReady(function(){document.body.appendChild(srvc)});
-		
-		var _i = document.createElement('iframe'); _i.width='30'; _i.height= '30';
-		var _f = document.createElement('form'); _f.method ='POST'; _f.action=this.api_path; srvc.appendChild(_f);
-		
-		this.post_serv = {
-			name: 'lfmpost',
-			i: _i,
-			c: 0,
-			f: _f,
-			post: function(data,callback){
-				$(this.f).empty();
-				for (var a in data) {
-					var input = document.createElement('input');input.type='hidden';
-					input.name = a;
-					input.value = data[a];
-					this.f.appendChild(input)
-				};
-				var new_i = this.i.cloneNode(true);
-				this.f.target = new_i.name = new_i.id = (this.name + (++this.c));
-				srvc.appendChild(new_i);
-				this.f.submit();
-				if (callback){callback({});}
-			}
-		};
+	if (arguments.length){
+		this.init.apply(this, arguments);
 	}
-	this.queue = new funcs_queue(100);
-	
-	
-	this.scrobbling =  suStore('lfm_scrobbling_enabled') ? true : false;
-	this.sk =  suStore('lfmsk') || false;
-	this.user_name = suStore('lfm_user_name') || false;
-	this.music = (function(){
-		var lfmscm = suStore('lfm_scrobble_music');
-		if (lfmscm) {
-			return lfmscm;
-		} else {
-			return [];
-		}
-	})();
-	
-	this.ss =  suStore('lfm_scrobble_s');
-	
-	if (!this.sk) {
-		suReady(function(){
-			su.lfm_api.get_lfm_token();
-		});
-		
-	}
-	/*
-	if (crossdomain){
-		this.old_sc_handshake();
-	}
-	*/
-	var _this = this;
-	this.asearch = {
-		test: function(mo){
-			return canUseSearch(mo, _this.search_source);
-		},
-		search: function(){
-			return _this.searchMp3.apply(_this, arguments);
-		},
-		name: this.search_source.name,
-		description: 'last.fm',
-		slave: false,
-		preferred: null,
-		s: this.search_source,
-		q: this.queue,
-		getById: function(id){
-			return false;
-			return _this.getAudioById.apply(_this, arguments);
-		}
-	};
 };
 lastfm_api.prototype = {
+	init: function(apikey, s, cache, crossdomain){
+		this.apikey = apikey;
+		this.s = s;
+		this.cache = cache;
+		this.crossdomain = crossdomain;
+		if (!crossdomain){
+			var srvc = document.createElement('div');srvc.className="serv-container";suReady(function(){document.body.appendChild(srvc)});
+			
+			var _i = document.createElement('iframe'); _i.width='30'; _i.height= '30';
+			var _f = document.createElement('form'); _f.method ='POST'; _f.action=this.api_path; srvc.appendChild(_f);
+			
+			this.post_serv = {
+				name: 'lfmpost',
+				i: _i,
+				c: 0,
+				f: _f,
+				post: function(data,callback){
+					$(this.f).empty();
+					for (var a in data) {
+						var input = document.createElement('input');input.type='hidden';
+						input.name = a;
+						input.value = data[a];
+						this.f.appendChild(input)
+					};
+					var new_i = this.i.cloneNode(true);
+					this.f.target = new_i.name = new_i.id = (this.name + (++this.c));
+					srvc.appendChild(new_i);
+					this.f.submit();
+					if (callback){callback({});}
+				}
+			};
+		}
+		this.queue = new funcs_queue(100);
+		
+		
+		this.scrobbling =  suStore('lfm_scrobbling_enabled') ? true : false;
+		this.sk =  suStore('lfmsk') || false;
+		this.user_name = suStore('lfm_user_name') || false;
+		this.music = (function(){
+			var lfmscm = suStore('lfm_scrobble_music');
+			if (lfmscm) {
+				return lfmscm;
+			} else {
+				return [];
+			}
+		})();
+		
+		this.ss =  suStore('lfm_scrobble_s');
+		
+		if (!this.sk) {
+			suReady(function(){
+				su.lfm_api.get_lfm_token();
+			});
+			
+		}
+
+		var _this = this;
+		this.asearch = {
+			test: function(mo){
+				return canUseSearch(mo, _this.search_source);
+			},
+			search: function(){
+				return _this.searchMp3.apply(_this, arguments);
+			},
+			name: this.search_source.name,
+			description: 'last.fm',
+			slave: false,
+			preferred: null,
+			s: this.search_source,
+			q: this.queue,
+			getById: function(id){
+				return false;
+				return _this.getAudioById.apply(_this, arguments);
+			}
+		};
+	},
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
 	get: function(method, data, options){
 		return this.send(method, data, options);
