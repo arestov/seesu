@@ -49,53 +49,46 @@ window.seesu = window.su =  {
 	  version: 2.7,
 	  env: app_env,
 	  track_stat: (function(){
-		var _i = document.createElement('iframe');_i.id ='gstat';_i.src = 'http://seesu.me/g_stat.html';
-
 		
-		suReady(function(){
-			document.body.appendChild(_i);
-		});
-		var ga_ready = false;
-		var ga_ready_waiter = function(e){
-			if ( e.origin == "http://seesu.me") { //security, sir!
-				if (e.data == 'ga_stat_ready'){
-					ga_ready = true;
-					removeEvent(window, "message", ga_ready_waiter);
-					seesu.track_stat('_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1);
-					seesu.track_stat('_setCustomVar', 2, 'version', seesu.version, 1);
-				}
-			} else {
-				return false;
-			}
-		};
-		addEvent(window, "message", ga_ready_waiter);
+		window._gaq = [];
+		
 
-		return function(){
-			if (ga_ready){
-				var string = 'track_stat';
-				for (var i=0; i < arguments.length; i++) {
-					string += '\n' + arguments[i];
+
+		_gaq.sV = function(v){
+			return suStore('ga_store', v, true);
+		};
+		_gaq.gV = function(){
+			return suStore('ga_store');
+		};
+
+		suReady(function(){
+			yepnope( {
+				load: 'http://seesu.me/st/ga.mod.min.js',
+				complete: function(){
+					_gaq.push(['_setAccount', 'UA-17915703-1']);
+					_gaq.push(['_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1]);
+					_gaq.push(['_setCustomVar', 2, 'version', seesu.version, 1]);
 				}
-			
-				_i.contentWindow.postMessage(string, "http://seesu.me");
-			}
-			
+			});
+		});
+		return function(data_array){
+			_gaq.push(data_array);
 		};
 	  })(),
 	  track_event:function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackEvent');
-		seesu.track_stat.apply(this, args);
+		seesu.track_stat.call(this, args);
 	  },
 	  track_page:function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
-		seesu.track_stat.apply(this, args);
+		seesu.track_stat.call(this, args);
 	  },
 	   track_var: function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_setCustomVar');
-		seesu.track_stat.apply(this, args);
+		seesu.track_stat.call(this, args);
 	  },
 	  popular_artists: ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ],
 	  vk:{
