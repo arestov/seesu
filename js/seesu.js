@@ -54,9 +54,9 @@ window.seesu = window.su =  {
 		
 
 
-		_gaq.sV = function(v){
-			return suStore('ga_store', v, true);
-		};
+		_gaq.sV = $.debounce(function(v){
+			suStore('ga_store', v, true);
+		},130);
 		_gaq.gV = function(){
 			return suStore('ga_store');
 		};
