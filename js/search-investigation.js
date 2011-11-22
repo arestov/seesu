@@ -18,6 +18,9 @@ investigation = function(c, init, searchf, stateChange, view_port){
 	this.setInactiveAll();
 };
 investigation.prototype = {
+	setSectionsSamplesCreators: function(seUnitsCreator){
+		this.seUnitsCreator = seUnitsCreator;
+	},
 	addRequest: function(rq){
 		this.requests.push(rq);
 	},
@@ -112,7 +115,10 @@ investigation.prototype = {
 	},
 	addSection: function(name, sectionInfo){
 		var _this = this;
-		var s = new searchSection(sectionInfo, this.c, function(state){
+		var s = new searchSection(sectionInfo, {
+			c: this.c,
+			ucreator: this.seUnitsCreator
+		}, function(state){
 			_this.remarkStyles();
 		}, function(){
 			_this.refreshEnterItems();
@@ -193,7 +199,7 @@ investigation.prototype = {
 	}
 };
 
-var searchSection = function(sectionInfo, container, stateChange, newResultsWereRendered, addRequest){
+var searchSection = function(sectionInfo, ui, stateChange, newResultsWereRendered, addRequest){
 	var _this = this;
 	
 	this.si = sectionInfo;
@@ -201,10 +207,12 @@ var searchSection = function(sectionInfo, container, stateChange, newResultsWere
 	if (this.si.button && this.si.buttonClick){
 		this.button_allowed = true;
 	}
+
+	this.ucreator = ui.ucreator;
 	if (stateChange){this.stateChange = stateChange;}
 	if (newResultsWereRendered){this.nRWR = newResultsWereRendered;}
-	container.append(this.createUIc(true));
-	this.header = $('<h4></h4>').text(this.si.head).appendTo(container);
+	ui.c.append(this.createUIc(true));
+	this.header = this.ucreator.createHead().text(this.si.head).appendTo(ui.c);
 	this.c.before(this.header);
 	this.addRequest = addRequest;
 };
@@ -261,7 +269,7 @@ searchSection.prototype = {
 		}
 	},
 	createUIc: function(with_button){
-		this.c = $('<ul></ul>');
+		this.c = this.ucreator.createRsCon();
 		if (!this.nos){
 			this.c.addClass('sugg-section')
 		}
@@ -274,35 +282,35 @@ searchSection.prototype = {
 		}
 		
 		
-		if (with_button){
+		if (this.button_allowed && with_button){
 			
-			if (this.button_allowed){
-				this.button = this.si.button().clone();
-				var _this = this;
-				this.button.click(function(e){
-					_this.si.buttonClick.call(this, e, _this);
-				})
-				
-				this.button_text = this.button.find('span');
-				
-				this.buttonc = $('<li></li>').append(this.button).appendTo(this.c);
-				this.button_obj = {
-					node: this.button,
-					setActive: function(){
-						this.node.addClass('active')
-					},
-					setInactive: function(){
-						this.node.removeClass('active')
-					},
-					c: this.buttonc,
-					getC: function(){
-						return this.c;	
-					},
-					click: function(){
-						_this.si.buttonClick(false, _this)
-					}
+		
+			this.button = this.si.button().clone();
+			var _this = this;
+			this.button.click(function(e){
+				_this.si.buttonClick.call(this, e, _this);
+			})
+			
+			this.button_text = this.button.find('span');
+			
+			this.buttonc = this.ucreator.createItemCon().append(this.button).appendTo(this.c);
+			this.button_obj = {
+				node: this.button,
+				setActive: function(){
+					this.node.addClass('active')
+				},
+				setInactive: function(){
+					this.node.removeClass('active')
+				},
+				c: this.buttonc,
+				getC: function(){
+					return this.c;	
+				},
+				click: function(){
+					_this.si.buttonClick(false, _this)
 				}
 			}
+			
 		}
 		return this.c;
 	},
@@ -368,7 +376,8 @@ searchSection.prototype = {
 			
 		} else{
 			if (no_more_results){
-				this.message = $("<li><a class='nothing-found'>" + localize('nothing-found', 'Nothing found') + "</a></li>");
+
+				this.message = this.ucreator.createItemCon().append("<a class='nothing-found'>" + localize('nothing-found', 'Nothing found') + "</a>");
 				if (this.button_allowed){
 					this.hideButton();
 					this.buttonc.before(this.message);

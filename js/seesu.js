@@ -13,11 +13,14 @@ window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/defau
 window.lfm = function(){
 	var _this = this;
 	var ag = arguments;
-	var q_el = seesu.lfm_api.use.apply(seesu.lfm_api, ag);
+	var q_el = su.lfm_api.use.apply(seesu.lfm_api, ag);
 	if (q_el.q && q_el.q.init){
 		q_el.q.init();
 	}
 };
+lfm.get = function(){
+	return su.lfm_api.get.apply(su.lfm_api, arguments);
+}
 
 
 

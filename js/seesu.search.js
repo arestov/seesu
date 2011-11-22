@@ -435,21 +435,27 @@ var parseFastSuggests = function(r){
 };
 var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_preview){
 	section.loading();
-	section.addRequest(lfm(method, cloneObj({limit: 15 }, lfmquery),function(r){
-		if (!section.doesNeed(q)){return}
-		section.loaded();
-		r = r && parser(r);
-		if (r.length){
-			section.r.append(r);
-			section.renderSuggests(true, !no_preview);
-		} else{
-			section.renderSuggests(true, !no_preview);
-		}
-		
-	},function(){
-		if (!section.doesNeed(q)){return}
-		section.loaded();
-	}));
+	section.addRequest(
+		lfm
+			.get(method, cloneObj({limit: 15 }, lfmquery))
+				.done(function(r){
+					if (!section.doesNeed(q)){return}
+					section.loaded();
+					r = r && parser(r);
+					if (r.length){
+						section.r.append(r);
+						section.renderSuggests(true, !no_preview);
+					} else{
+						section.renderSuggests(true, !no_preview);
+					}
+					
+				})
+				.fail(function(){
+					if (!section.doesNeed(q)){return}
+					section.loaded();
+				})
+			
+	);
 };
 
 var network_search = seesu.env.cross_domain_allowed ? function(q, invstg){
@@ -514,6 +520,15 @@ vkSuggest.prototype = {
 	}
 }
 
+var createSeHead = function(){
+	return $('<h4></h4>');
+};
+var createSeRsCon = function(){
+	return $('<ul></ul>')
+};
+var createSeItemCon = function(){
+	return $('<li></li>');
+};
 
 var vk_suggests = $.debounce(function(query, invstg){
 	
@@ -539,6 +554,11 @@ var vk_suggests = $.debounce(function(query, invstg){
 
 createSuInvestigation = function(c){
 	return new investigation(c, function(){
+		this.setSectionsSamplesCreators({
+			createHead: createSeHead,
+			createRsCon: createSeRsCon,
+			createItemCon: createSeItemCon
+		});
 		this.addSection('playlists', playlist_secti);
 		this.addSection('artists', artists_secti);
 		this.addSection('albums', albs_secti);
