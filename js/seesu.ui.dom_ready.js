@@ -206,51 +206,6 @@ window.connect_dom_to_som = function(d, sui, callback){
 		
 		sui.create_playlists_link();
 		
-		
-		
-		/*
-		var wow_hart = function(lfm_hartist){
-			var link = $('<div></div>').css({
-				float:'left',
-				overflow:'hidden',
-				height:'160px',
-				width:'96px',
-				'margin-right': '15px',
-				'margin-bottom': '25px'
-			}).click(function(){
-				sui.show_artist(lfm_hartist.name);
-				seesu.track_event('Artist navigation', 'hyped at start page', artist_name);
-			});
-			var image = $('<img/>').attr('src', lfm_hartist.image[1]['#text']);
-			link.append(image).appendTo(sui.els.hyped_arts);
-			link.append('<p>' + lfm_hartist.name + '</p>');
-			lfm('artist.getInfo',{artist:lfm_hartist.name},  function(r){
-				var atags = (r && r.artist && r.artist.tags && r.artist.tags.tag) && ((r.artist.tags.tag.length && r.artist.tags.tag) || [r.artist.tags.tag]);
-				if (atags){
-					var tags_el = $('<div></div>')
-					for (var i=0, l = ((atags.length < 3) && atags.length) || 3; i < l; i++) {
-						tags_el.append('<em>' + atags[i].name + '</em> ');
-					}
-					tags_el.appendTo(link);
-				}
-			});
-		};
-		false && lfm('chart.getHypedArtists', false, function(r){
-			//sui.els.start_screen
-			sui.els.hyped_arts = $('<div></div>').css({
-				overflow:'hidden',
-				'margin-top': '50px'
-			}).appendTo(sui.els.start_screen);
-			console.log(r);
-			var h_arts  = (r && r.artists && r.artists.artist) && ((r.artists.artist.length && r.artists.artist) || [r.artists.artist]);
-			if (h_arts){
-				for (var i=0; i < h_arts.length; i++) {
-					wow_hart(h_arts[i]);
-				}
-			}
-			
-		});
-		*/
 		var wow_tags= function(tag,c){
 			$('<a class="js-serv hyped-tag"></a> ')
 				.text(tag)
@@ -337,51 +292,56 @@ window.connect_dom_to_som = function(d, sui, callback){
 		var showMetroRandom = function(){
 			var random_metro = getSomething(lastfm_metros);
 			_cmetro.addClass('loading');
-			lfm('geo.getMetroUniqueTrackChart', {country: random_metro.country, metro: random_metro.name, start: new Date - 60*60*24*7}, function(r){
-				_cmetro.removeClass('loading');
-				if (r && r.toptracks && r.toptracks.track){
-					_cmetro.empty()
-					
-					var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name});
-					
-					var metro_tracks = r.toptracks.track;
-					var _header =  $('<h3></h3>').appendTo(_cmetro)
-						.append(localize('last-week-с') + ' ' + random_metro.name)
-						.append('<span class="desc"> (' + random_metro.country + ') </span>')
-						.append(localize('listen-this') + " ");
-					$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
-						showMetroRandom();
-						e.preventDefault();
-					}).appendTo(_header);
+			lfm.get('geo.getMetroUniqueTrackChart', {
+				country: random_metro.country, 
+				metro: random_metro.name, 
+				start: new Date - 60*60*24*7})
+				.done(function(r){
+					_cmetro.removeClass('loading');
+					if (r && r.toptracks && r.toptracks.track){
+						_cmetro.empty()
 						
-		
-					var ulm = $('<ul class="metro-tracks"></ul>');
-					var counter = 0;
-					for (var i=0; i < metro_tracks.length; i++) {
-						if (counter <30){
-							var _trm = metro_tracks[i];
+						var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name});
+						
+						var metro_tracks = r.toptracks.track;
+						var _header =  $('<h3></h3>').appendTo(_cmetro)
+							.append(localize('last-week-с') + ' ' + random_metro.name)
+							.append('<span class="desc"> (' + random_metro.country + ') </span>')
+							.append(localize('listen-this') + " ");
+						$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
+							showMetroRandom();
+							e.preventDefault();
+						}).appendTo(_header);
 							
-							if (_trm.image){
-								var con = $('<li></li>').appendTo(ulm);
-								$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
+			
+						var ulm = $('<ul class="metro-tracks"></ul>');
+						var counter = 0;
+						for (var i=0; i < metro_tracks.length; i++) {
+							if (counter <30){
+								var _trm = metro_tracks[i];
 								
-								var tobj = {artist: _trm.artist.name, track: _trm.name};
-								plr.push(tobj);
-								createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
+								if (_trm.image){
+									var con = $('<li></li>').appendTo(ulm);
+									$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
+									
+									var tobj = {artist: _trm.artist.name, track: _trm.name};
+									plr.push(tobj);
+									createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
+									
+									
+									++counter;
 								
-								
-								++counter;
-							
+								}
+							} else{
+								break
 							}
-						} else{
-							break
-						}
-					};
-					_cmetro.append(ulm)
-				} else{
-					showMetroRandom();
-				}
-			})
+						};
+						_cmetro.append(ulm)
+					} else{
+						showMetroRandom();
+					}
+				});
+				
 		};
 		showMetroRandom();
 		
@@ -530,25 +490,6 @@ window.connect_dom_to_som = function(d, sui, callback){
 				wow_tags(lastfm_toptags[i], _c);
 			};
 		}
-		
-		false && lfm('chart.getTopTags', false, function(r){
-			var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(sui.els.start_screen);
-			var pop_tags  = (r && r.tags && r.tags.tag) && ((r.tags.tag.length && r.tags.tag) || [r.tags.tag]);
-			var wtags = [];
-			if (pop_tags){
-				var nbsp_char= String.fromCharCode(160);
-				for (var i=0; i < pop_tags.length; i++) {
-					wtags.push(pop_tags[i].name.replace(' ', nbsp_char));
-					
-				}
-				wtags.sort();
-				for (var i=0; i < wtags.length; i++) {
-					wow_tags(wtags[i], _c);
-				};
-			}
-			console.log(r)
-			
-		});
 		
 	};
 

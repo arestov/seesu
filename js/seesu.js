@@ -533,26 +533,28 @@ var create_playlist =  function(pl, pl_r, not_clear){
 
 
 var getTopTracks = function(artist,callback, error_c) {
-	lfm('artist.getTopTracks',{'artist': artist }, function(r){
-		if (typeof r != 'object' || r.error) {
-			if (error_c){
-				error_c();
+	lfm.get('artist.getTopTracks',{'artist': artist })
+		.done(function(r){
+			if (typeof r != 'object' || r.error) {
+				if (error_c){
+					error_c();
+				}
+				return;
+				
 			}
-			return;
-			
-		}
-		var tracks = r.toptracks.track || false;
-		if (tracks) {
-			var track_list = [];
-			tracks = toRealArray(tracks);
-			
-			for (var i=0, l = Math.min(tracks.length, 30); i < l; i++) {
-				track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
+			var tracks = r.toptracks.track || false;
+			if (tracks) {
+				var track_list = [];
+				tracks = toRealArray(tracks);
+				
+				for (var i=0, l = Math.min(tracks.length, 30); i < l; i++) {
+					track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
+				}
+				
+				if (callback) {callback(track_list);}
 			}
-			
-			if (callback) {callback(track_list);}
-		}
-	}, error_c);
+		})
+		.fail(error_c);
 };
 
 var proxy_render_artists_tracks = function(artist_list, pl_r){
@@ -569,17 +571,17 @@ var proxy_render_artists_tracks = function(artist_list, pl_r){
 };
 var render_loved = function(user_name){
 	var pl_r = prepare_playlist(localize('loved-tracks'), 'artists by loved');
-	lfm('user.getLovedTracks',{user: (user_name || su.lfm_api.user_name), limit: 30},function(r){
-		
-		var tracks = r.lovedtracks.track || false;
-		if (tracks) {
-			var track_list = [];
-			for (var i=0, l = (tracks.length < 30) ? tracks.length : 30; i < l; i++) {
-				track_list.push({'artist' : tracks[i].artist.name ,'track': tracks[i].name});
+	lfm.get('user.getLovedTracks',{user: (user_name || su.lfm_api.user_name), limit: 30})
+		.done(function(r){
+			var tracks = r.lovedtracks.track || false;
+			if (tracks) {
+				var track_list = [];
+				for (var i=0, l = Math.min(tracks.length, 30); i < l; i++) {
+					track_list.push({'artist' : tracks[i].artist.name ,'track': tracks[i].name});
+				}
+				create_playlist(track_list,pl_r);
 			}
-			create_playlist(track_list,pl_r);
-		}
-	});
+		});
 	seesu.ui.views.show_playlist_page(pl_r);
 };
 var render_recommendations_by_username = function(username){
@@ -608,18 +610,20 @@ var render_recommendations_by_username = function(username){
 };
 var render_recommendations = function(){
 	var pl_r = prepare_playlist('Recommendations for you', 'artists by recommendations');
-	lfm('user.getRecommendedArtists',{sk: su.lfm_api.sk},function(r){
-		var artists = r.recommendations.artist;
-		if (artists && artists.length) {
-			var artist_list = [];
-			for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-				artist_list.push(artists[i].name);
+	lfm.get('user.getRecommendedArtists', {sk: su.lfm_api.sk}, {nocache: true})
+		.done(function(r){
+			var artists = r.recommendations.artist;
+			if (artists && artists.length) {
+				var artist_list = [];
+				for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
+					artist_list.push(artists[i].name);
+				}
+				proxy_render_artists_tracks(artist_list,pl_r);
 			}
-			proxy_render_artists_tracks(artist_list,pl_r);
-		}
-	}, function(){
-		proxy_render_artists_tracks(false, pl_r);
-	},false, true);
+		})
+		.fail(function(){
+			proxy_render_artists_tracks(false, pl_r);
+		});
 
 	seesu.ui.views.show_playlist_page(pl_r);
 
@@ -627,16 +631,18 @@ var render_recommendations = function(){
 
 
 var get_artists_by_tag = function(tag,callback,error_c){
-	lfm('tag.getTopArtists', {'tag':tag}, function(r){
-		var artists = r.topartists.artist;
-		if (artists && artists.length) {
-			var artist_list = [];
-			for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-				artist_list.push(artists[i].name);
+	lfm.get('tag.getTopArtists', {'tag':tag})
+		.done(function(r){
+			var artists = r.topartists.artist;
+			if (artists && artists.length) {
+				var artist_list = [];
+				for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
+					artist_list.push(artists[i].name);
+				}
+				if (callback) {callback(artist_list);}
 			}
-			if (callback) {callback(artist_list);}
-		}
-	}, error_c, false, true);
+		})
+		.fail(error_c);
 	return true;
 };
 
@@ -656,16 +662,18 @@ var parseArtistInfo = function(r){
 	return ai;
 }
 var get_similar_artists = function(original_artist, callback,error_c){
-	lfm('artist.getSimilar',{'artist': original_artist},function(r){
-		var artists = r.similarartists.artist;
-		if (artists && artists.length) {
-			var artist_list = [];
-			for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-				artist_list.push(artists[i].name);
+	lfm.get('artist.getSimilar',{'artist': original_artist})
+		.done(function(r){
+			var artists = r.similarartists.artist;
+			if (artists && artists.length) {
+				var artist_list = [];
+				for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
+					artist_list.push(artists[i].name);
+				}
+				if (callback) {callback(artist_list);}
 			}
-			if (callback) {callback(artist_list);}
-		}
-	}, error_c);
+		})
+		.fail(error_c);
 	return true;
 };
 
@@ -785,17 +793,18 @@ var make_lastfm_playlist = function(r, pl_r){
 };
 var get_artist_album_playlist = function(album_id, pl_r){
 	if (album_id) {
-		lfm('playlist.fetch',{'playlistURL': 'lastfm://playlist/album/' + album_id}, function(pl_data){
-			make_lastfm_playlist(pl_data, pl_r);
-		});
+		lfm.get('playlist.fetch',{'playlistURL': 'lastfm://playlist/album/' + album_id})
+			.done(function(pl_data){
+				make_lastfm_playlist(pl_data, pl_r);
+			});
 	}
 };
 
 var get_artist_album_info = function(artist, album, callback){
-	
-	lfm('album.getInfo',{'artist': artist, album : album},function(r){
-		if (callback) {callback(r);}
-	});
+	lfm.get('album.getInfo',{'artist': artist, album : album})
+		.done(function(r){
+			if (callback) {callback(r);}
+		});
 	
 };
 

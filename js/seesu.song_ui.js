@@ -420,14 +420,15 @@ songUI.prototype = {
 			
 			
 			if (a_info.data('artist-lfm') != true){
-				lfm('artist.getInfo',{'artist': artist }, function(r){
-					if (a_info.data('artist') == artist && a_info.data('artist-lfm') != true){
-						a_info.data('artist-lfm', true);
-						_this.show_artist_info(r, ainf, artist, ext_info);
+				lfm.get('artist.getInfo',{'artist': artist })
+					.done(function(r){
+						if (a_info.data('artist') == artist && a_info.data('artist-lfm') != true){
+							a_info.data('artist-lfm', true);
+							_this.show_artist_info(r, ainf, artist, ext_info);
+							
+						}
 						
-					}
-					
-				});
+					});
 			}
 
 		}
