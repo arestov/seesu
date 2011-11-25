@@ -269,8 +269,8 @@ su.player.events[PLAYED] = function(){
 	if (mo == su.player.c_song){
 		var submit = function(mo){
 			setTimeout(function(){
-				if (su.lfm_api.scrobbling) {
-					su.lfm_api.nowplay(mo, mo.mopla.duration);
+				if (lfm.scrobbling) {
+					lfm.nowplay(mo, mo.mopla.duration);
 				}
 				if (su.vk.id){
 					su.s.api('track.scrobble', {
@@ -304,8 +304,8 @@ su.player.events[FINISHED] = function() {
   
 	var submit = function(mo){
 		setTimeout(function(){
-			if (su.lfm_api.scrobbling) {
-				su.lfm_api.submit(mo, mo.mopla.duration);
+			if (lfm.scrobbling) {
+				lfm.submit(mo, mo.mopla.duration);
 			}
 			if (su.vk.id){
 				su.s.api('track.scrobble', {
@@ -445,7 +445,7 @@ var sm2iframed = {
 			
 			var last_iframe_func = this.text_of_function(_this.i_func).replace('_volume', su.player.player_volume );
 			var scripts_paths = [
-				bpath + 'js/soundmanager2.js',
+				bpath + 'js/common-libs/soundmanager2.js',
 				bpath + 'js/seesu.player.sm2.js'
 			];
 
@@ -621,7 +621,7 @@ if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
 	});
 } else if (!su.env.cross_domain_allowed){ //sm2 can't be used directly in sandbox
 	yepnope({
-		load:  [bpath + 'js/soundmanager2.js', bpath + 'js/seesu.player.sm2.js'],
+		load:  [bpath + 'js/common-libs/soundmanager2.js', bpath + 'js/seesu.player.sm2.js'],
 		complete: function(){
 			soundManager = new SoundManager('http://seesu.me/swf/', false, {
 				flashVersion : 9,

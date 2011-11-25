@@ -1037,23 +1037,18 @@ seesu_ui.prototype = {
 		
 		this.lfmAuthInit();
 		return 
-		if (su.lfm_api.newtoken) {
-			su.lfm_api.open_lfm_to_login(su.lfm_api.newtoken);
-		} else {
-			su.lfm_api.get_lfm_token(true);
-		}
 	},
 	lfmCreateAuthFrame: function(first_key){
 		if (this.lfm_auth_inited){
 			return false;
 		}
-		var i = su.lfm_api.auth_frame = document.createElement('iframe');	
+		var i = lfm.auth_frame = document.createElement('iframe');	
 		addEvent(window, 'message', function(e){
 			if (e.data == 'lastfm_bridge_ready:'){
 				e.source.postMessage("add_keys:" + first_key, '*');
 			} else if(e.data.indexOf('lastfm_token:') === 0){
-				su.lfm_api.newtoken = e.data.replace('lastfm_token:','');
-				su.lfm_api.try_to_login(seesu.ui.lfm_logged);
+				lfm.newtoken = e.data.replace('lastfm_token:','');
+				lfm.try_to_login(seesu.ui.lfm_logged);
 				console.log('got token!!!!')
 				console.log(e.data.replace('lastfm_token:',''));
 			}
@@ -1067,7 +1062,7 @@ seesu_ui.prototype = {
 		if (!this.lfm_auth_inited){
 			this.lfmCreateAuthFrame(key)
 		} else{
-			su.lfm_api.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
+			lfm.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
 		}
 	},
 	lfmAuthInit: function(){
@@ -1075,7 +1070,7 @@ seesu_ui.prototype = {
 		
 		//init_auth_data.bridgekey		
 		
-		var init_auth_data = su.lfm_api.getInitAuthData();
+		var init_auth_data = lfm.getInitAuthData();
 		if (init_auth_data.bridgekey){
 			this.lfmSetAuthBridgeKey(init_auth_data.bridgekey)
 		} 
@@ -1092,8 +1087,8 @@ seesu_ui.prototype = {
 					if (url.indexOf(sb) == 0){
 						var params = get_url_parameters(url.replace(sb, ''));
 						if (params.token){
-							su.lfm_api.newtoken = params.token;
-							su.lfm_api.try_to_login(seesu.ui.lfm_logged);
+							lfm.newtoken = params.token;
+							lfm.try_to_login(seesu.ui.lfm_logged);
 						}
 
 						app_env.hideWebPages();

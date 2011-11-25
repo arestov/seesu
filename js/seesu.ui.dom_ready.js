@@ -28,11 +28,11 @@ window.connect_dom_to_som = function(d, sui, callback){
 				.prependTo(sui.els.slider)
 		}
 
-		if (su.lfm_api.scrobbling) {
+		if (lfm.scrobbling) {
 			sui.lfm_change_scrobbling(true);
 		}
 		
-		if (su.lfm_api.sk) {
+		if (lfm.sk) {
 			sui.lfm_logged();	
 		}
 		
@@ -40,7 +40,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 		
 
 		var lfm_recomm = $('#lfm-recomm',d).click(function(){
-			if(!su.lfm_api.sk){
+			if(!lfm.sk){
 				dstates.toggleState('body', 'lfm-auth-req-recomm');
 			}else {
 				render_recommendations();
@@ -48,7 +48,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 		});
 		
 		var lfm_loved = $('#lfm-loved',d).click(function(){
-			if(!su.lfm_api.sk){
+			if(!lfm.sk){
 				dstates.toggleState('body', 'lfm-auth-req-loved');
 			}else {
 				render_loved();
@@ -567,7 +567,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 			su.env.readySteadyResize(slider);
 		}
 	
-		su.lfm_api.try_to_login();		
+		lfm.try_to_login();		
 		var volume_s = d.createElement('style');
 			volume_s.setAttribute('title', 'volume');
 			volume_s.setAttribute('type', 'text/css');

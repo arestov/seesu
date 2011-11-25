@@ -16,8 +16,28 @@ investigation = function(c, init, searchf, stateChange, view_port){
 	}
 
 	this.setInactiveAll();
+	this.callbacks = {};
 };
 investigation.prototype = {
+	addCallback: function(event_name, func){
+		this.callbacks[event_name] = this.callbacks[event_name] || [];
+		this.callbacks[event_name].push(func);
+	},
+	on: function(event_name, func){
+		this.addCallback(event_name, func);
+	},
+	changeResultsCounter: function(){
+		var cbs = this.callbacks['resultsChanged'];
+		if (cbs && cbs.length){
+			var rc = 0;
+			for (var i = 0; i < this.sections.length; i++) {
+				rc += this.sections[i].r.length;
+			};
+			for (var i = 0; i < cbs.length; i++) {
+				cbs[i].call(null, rc);
+			};
+		}
+	},
 	setSectionsSamplesCreators: function(seUnitsCreator){
 		this.seUnitsCreator = seUnitsCreator;
 	},
@@ -120,9 +140,11 @@ investigation.prototype = {
 			ucreator: this.seUnitsCreator
 		}, function(state){
 			_this.remarkStyles();
-		}, function(){
+		}, function(has_results){
 			_this.refreshEnterItems();
-			
+			if (has_results){
+				_this.changeResultsCounter();
+			}
 			
 		}, function(rq){
 			_this.addRequest(rq);
@@ -193,6 +215,7 @@ investigation.prototype = {
 			this.q = q;
 			
 			delete this.selected_inum;
+			this.changeResultsCounter();
 			this.doEverythingForQuery()
 		}
 		
@@ -212,12 +235,15 @@ var searchSection = function(sectionInfo, ui, stateChange, newResultsWereRendere
 	if (stateChange){this.stateChange = stateChange;}
 	if (newResultsWereRendered){this.nRWR = newResultsWereRendered;}
 	ui.c.append(this.createUIc(true));
-	this.header = this.ucreator.createHead().text(this.si.head).appendTo(ui.c);
+	this.header = this.ucreator.createHead(this.si.head).appendTo(ui.c);
 	this.c.before(this.header);
 	this.addRequest = addRequest;
 };
 
 searchSection.prototype = {
+	getItemConstructor: function(){
+		return this.si && this.si.resItem;
+	},
 	addRequest: function(){
 		
 	},
@@ -324,6 +350,9 @@ searchSection.prototype = {
 		return q == (this.r && this.r.query);
 	},
 	scratchResults: function(q){
+		if (!q && !this.si.no_results_text){
+			this.setInactive();
+		}
 		this.loaded();
 		this.removeOldResults();
 		if (this.message){
@@ -359,7 +388,7 @@ searchSection.prototype = {
 			var l = (slice && Math.min(end, this.r.length)) || this.r.length;
 			for (var i=0; i < l; i++) {
 				var bordered = this.r.last_rendered_length && (i == this.r.last_rendered_length);
-				var resel = this.r[i].render(_this.r.query, bordered);
+				var resel = this.r[i].render(_this.r.query, bordered, this.ucreator && this.ucreator.createItemCon);
 				if (resel){
 					if (this.button_allowed){
 						this.buttonc.before(resel);
@@ -372,18 +401,22 @@ searchSection.prototype = {
 			this.r.last_rendered_length = l;
 			
 			this.setButtonText(true, this.r.query);
-			if (this.nRWR){this.nRWR();}
+			if (this.nRWR){this.nRWR(true);}
 			
 		} else{
 			if (no_more_results){
-
-				this.message = this.ucreator.createItemCon().append("<a class='nothing-found'>" + localize('nothing-found', 'Nothing found') + "</a>");
-				if (this.button_allowed){
-					this.hideButton();
-					this.buttonc.before(this.message);
+				if (this.si.no_results_text){
+					this.message = this.ucreator.createItemCon().text(this.si.no_results_text);
+					if (this.button_allowed){
+						this.hideButton();
+						this.buttonc.before(this.message);
+					} else{
+						this.c.append(this.message);
+					}
 				} else{
-					this.c.append(this.message);
+					this.setInactive();
 				}
+				
 				
 			}
 			if (this.nRWR){this.nRWR();}
@@ -442,17 +475,23 @@ var baseSuggest = function(){};
 		getC: function(){
 			return this.ui && this.ui.c;
 		},
-		render: function(q, bordered){
+		render: function(q, bordered, createItemCon){
 			if (!this.ui){
-				this.ui = {
-					a: this.createItem(q),
-					c: $("<li class='suggest'></li>")
-				};	
+				var item_parent = (createItemCon && createItemCon()) || $("<li class='suggest'></li>");
+				var item_itself = this.createItem(q, item_parent);
+
 				if (bordered){
-					this.ui.c.addClass('searched-bordered')
+					item_parent.addClass('searched-bordered')
 				}
-				this.ui.c.append(this.ui.a);
-				return this.ui.c;
+				if (item_itself){
+					item_parent.append(item_itself);
+				}
+				this.ui = {
+					a: item_itself,
+					c: item_parent
+				};
+				
+				return item_parent;
 			}
 			
 		}

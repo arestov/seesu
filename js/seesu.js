@@ -10,20 +10,12 @@ $.support.cors = true;
 
 
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
-window.lfm = function(){
-	var _this = this;
-	var ag = arguments;
-	var q_el = su.lfm_api.use.apply(seesu.lfm_api, ag);
-	if (q_el.q && q_el.q.init){
-		q_el.q.init();
-	}
-};
-lfm.get = function(){
-	return su.lfm_api.get.apply(su.lfm_api, arguments);
-}
 
-
-
+var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret'), function(key){
+	return suStore(key)
+}, function(key, value){
+	return suStore(key, value, true);
+}, cache_ajax, app_env.cross_domain_allowed, new funcs_queue(100));
 
 var dga = (dga && suStore('dg_auth'));
 
@@ -48,7 +40,6 @@ window.seesu = window.su =  {
 	  },
 	  s: new seesuServerAPI(dga),
 	  fs: {},//fast search
-	  lfm_api: new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret'), true, app_env.cross_domain_allowed),
 	  version: 2.7,
 	  env: app_env,
 	  track_stat: (function(){
@@ -571,7 +562,7 @@ var proxy_render_artists_tracks = function(artist_list, pl_r){
 };
 var render_loved = function(user_name){
 	var pl_r = prepare_playlist(localize('loved-tracks'), 'artists by loved');
-	lfm.get('user.getLovedTracks',{user: (user_name || su.lfm_api.user_name), limit: 30})
+	lfm.get('user.getLovedTracks',{user: (user_name || lfm.user_name), limit: 30})
 		.done(function(r){
 			var tracks = r.lovedtracks.track || false;
 			if (tracks) {
@@ -610,7 +601,7 @@ var render_recommendations_by_username = function(username){
 };
 var render_recommendations = function(){
 	var pl_r = prepare_playlist('Recommendations for you', 'artists by recommendations');
-	lfm.get('user.getRecommendedArtists', {sk: su.lfm_api.sk}, {nocache: true})
+	lfm.get('user.getRecommendedArtists', {sk: lfm.sk}, {nocache: true})
 		.done(function(r){
 			var artists = r.recommendations.artist;
 			if (artists && artists.length) {

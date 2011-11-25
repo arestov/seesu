@@ -138,15 +138,15 @@ var test_pressed_node = function(e, opts){
 		}  
 		else if ((node.nodeName == 'INPUT' || node.nodeName == 'BUTTON')) {
 			if (bN(class_list.indexOf('login-lastfm-button')) ){
-				su.lfm_api.waiting_for = clicked_node.attr('name');
+				lfm.waiting_for = clicked_node.attr('name');
 				su.ui.lfmRequestAuth();
 				
 			}
 			else if (bN(class_list.indexOf('use-lfm-code'))){
 				var token = clicked_node.parent().find('.lfm-code').val();
 				if (token){
-					su.lfm_api.newtoken = token;
-					su.lfm_api.try_to_login(seesu.ui.lfm_logged);
+					lfm.newtoken = token;
+					lfm.try_to_login(seesu.ui.lfm_logged);
 				}
 				
 			} else if (bN(class_list.indexOf('use-vk-code'))){
@@ -157,12 +157,12 @@ var test_pressed_node = function(e, opts){
 				
 			} else if (bN(class_list.indexOf('enable-scrobbling'))){
 				suStore('lfm_scrobbling_enabled', 'true', true);
-				su.lfm_api.scrobbling = true;
+				lfm.scrobbling = true;
 				su.ui.lfm_change_scrobbling(true);
 				
 			} else if (bN(class_list.indexOf('disable-scrobbling'))){
 				suStore('lfm_scrobbling_enabled', '', true);
-				su.lfm_api.scrobbling = false;
+				lfm.scrobbling = false;
 				su.ui.lfm_change_scrobbling();
 			}
 		}

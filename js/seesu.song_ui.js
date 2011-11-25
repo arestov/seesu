@@ -306,7 +306,7 @@ songUI.prototype = {
 					this.updateSongListeners();
 				}
 				
-				if (su.lfm_api.scrobbling) {
+				if (lfm.scrobbling) {
 					su.ui.lfm_change_scrobbling(true, this.context.children('.track-panel').find('.track-buttons'));
 				}
 			} else{

@@ -6,21 +6,23 @@
 	}
 	
 	var js_toload = [
-	"js/w_storage.js", 
-	"js/c_quene.js", 
-	"js/c_cache_ajax.js",
-	"js/md5.min.js", 
-	"js/jquery-1.6.2.mod.min.js", 
+	"js/libs/w_storage.js", 
+	"js/libs/c_quene.js", 
+	"js/libs/c_cache_ajax.js",
+	"js/common-libs/md5.min.js", 
+	"js/common-libs/jquery-1.6.2.mod.min.js", 
 	"js/app_serv.js", 
-	"js/serv.js", 
-	"js/jquery.debounce-1.0.5.js",
-	"js/browse_map.js", 
-	"js/htmlencoding.js", 
-	"js/localizer.js", 
+	"js/libs/serv.js", 
+	"js/common-libs/jquery.debounce-1.0.5.js",
+	"js/libs/browse_map.js", 
+	"js/common-libs/htmlencoding.js", 
+	"js/libs/localizer.js", 
 	"js/network.js", 
-	"js/network.soundcloud.js", 
-	"js/network.vk.api.js", 
+	"js/libs/network.soundcloud.js", 
+	"js/libs/network.vk.api.js", 
+	"js/libs/lastfm.core.js", 
 	"js/network.lastfm.js", 
+	"js/lastfm.data.js",
 	"js/seesu.ui.dom_ready.js", 
 	"js/seesu.ui.views.js", 
 	"js/seesu.ui.js", 
@@ -28,10 +30,11 @@
 	"js/seesu.song_ui.js", 
 	"js/seesu.js",
 	"js/seesu.mp3_search.js", 
-	"js/search-investigation.js",
-	"js/seesu.search.js", 
+	"js/libs/search-investigation.js",
+	"js/libs/lastfm.search.js", 
+	"js/libs/seesu.search.js", 
 	"js/seesu.player.js", 
-	"js/c_buttmen.js", 
+	"js/libs/c_buttmen.js", 
 	"js/pressed_node_tester.js"
 	];
 	var bpathWrap = function(array){
@@ -57,7 +60,7 @@
 	yepnope([
 		{
 			test: window.JSON,
-			nope: "js/json2.min.js"
+			nope: "js/common-libs/json2.min.js"
 		},
 		{
 			load: bpathWrap(js_toload),
