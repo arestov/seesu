@@ -81,10 +81,11 @@ $.extend(lastfm_api.prototype, {
 	},
 	get_lfm_token: function(open){
 		var _this = this;
-		this.use('auth.getToken', false, function(r){
-			_this.newtoken = r.token;
-			if (open){_this.open_lfm_to_login(r.token);}
-		}, true);
+		this.get('auth.getToken', false, {nocache: true})
+			.done(function(r){
+				_this.newtoken = r.token;
+				if (open){_this.open_lfm_to_login(r.token);}
+			})
 	},
 	open_lfm_to_login: function(token){
 		app_env.openURL('http://www.last.fm/api/auth/?api_key=' + this.apikey + '&token=' + token);
@@ -93,34 +94,35 @@ $.extend(lastfm_api.prototype, {
 	try_to_login: function(callback){
 		var _this = this
 		if (_this.newtoken ){
-				_this.use('auth.getSession',{'token':_this.newtoken },function(r){
-				if (!r.error) {
-					_this.login(r,callback);
-					if (_this.waiting_for){
-						switch(_this.waiting_for) {
-						  case('recommendations'):
-							render_recommendations();
-							break;
-						  case('loved'):
-							render_loved();
-							break;    
-						  case('scrobbling'):
-							_this.stSet('lfm_scrobbling_enabled', 'true', true);
-							_this.scrobbling = true;
-							su.ui.lfm_change_scrobbling(true);
-							break;
-						  default:
-							//console.log('Do nothing');
+				_this.get('auth.getSession', {'token':_this.newtoken })
+					.done(function(r){
+						if (!r.error) {
+							_this.login(r,callback);
+							if (_this.waiting_for){
+								switch(_this.waiting_for) {
+								  case('recommendations'):
+									render_recommendations();
+									break;
+								  case('loved'):
+									render_loved();
+									break;    
+								  case('scrobbling'):
+									_this.stSet('lfm_scrobbling_enabled', 'true', true);
+									_this.scrobbling = true;
+									su.ui.lfm_change_scrobbling(true);
+									break;
+								  default:
+									//console.log('Do nothing');
+								}
+								_this.waiting_for = false;
+							}
+							
+							console.log('lfm scrobble access granted')
+						} else{
+							console.log('error while granting lfm scrobble access')
 						}
-						_this.waiting_for = false;
-					}
-					
-					console.log('lfm scrobble access granted')
-				} else{
-					console.log('error while granting lfm scrobble access')
-				}
-				
-			});
+						
+					});
 		}
 	}
 });
