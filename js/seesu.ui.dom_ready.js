@@ -525,10 +525,9 @@ window.connect_dom_to_som = function(d, sui, callback){
 		
 		o.volume_state = $('<div class="volume-state"></div>',d).click(function(e){
 			var pos = get_click_position(e, this);
-			var new_volume_factor = pos/50;
-			seesu.player.musicbox.changhe_volume(new_volume_factor * 100);
-			seesu.player.call_event(VOLUME, new_volume_factor * 100);
-			((sui.els.volume_s.sheets && sui.els.volume_s.sheets.cssRules) || sui.els.volume_s.sheet.rules)[0].style.width = pos + 'px';
+			seesu.player.musicbox.changhe_volume( pos/50 * 100);
+			seesu.player.call_event(VOLUME,  pos/50 * 100);
+			(sui.els.volume_s.sheet.cssRules || sui.els.volume_s.sheet.rules)[0].style.width = pos + 'px';
 		})
 		o.volume_state_position = $('<div class="volume-state-position"></div>',d)
 			.appendTo(o.volume_state);
