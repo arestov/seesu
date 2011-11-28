@@ -5,7 +5,10 @@ var mapLevel = function(num, parent_levels, resident, map, getNavData, data){
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
-	this.getNavData = getNavData;
+	if (getNavData){
+		this.getNavData = getNavData;
+	}
+	this.use_nav = !!getNavData;
 	this.storage = {};
 	if (typeof data == 'object'){
 		cloneObj(this.storage, data);
@@ -38,9 +41,12 @@ mapLevel.prototype = {
 		
 	},
 	setTitle: function(text){
-		if (this.getNav()){
-			this.getNav().text(text || "");
+		if (this.use_nav){
+			if (this.getNav()){
+				this.getNav().text(text || "");
+			}
 		}
+		
 		this.title = text || "";
 	},
 	getNav: function(){
@@ -111,27 +117,40 @@ mapLevel.prototype = {
 		};
 		return u + (url || this.getURL());
 	},
+	getParentLev: function(){
+		return this.parent_levels[0] || ((this.num > -1) && this.map.levels[-1].free);
+	},
 	show: function(opts){
 		var o = opts || {};
 		o.closed = this.closed;
-		this.getResident().show(o);
-		if (this.getNav()){
-			//this.nav.show();
+		var parent = this.getParentLev();
+		if (parent){
+			parent.getResident().blur();
 		}
+		this.getResident().show(o);
+
+
+		
 		
 	},
 	hide: function(){
 		this.getResident().hide();
-		if (this.getNav()){
-			this.getNav().hide();
+		if (this.use_nav){
+			if (this.getNav()){
+				this.getNav().hide();
+			}
 		}
+		
 		
 	},
 	die: function(){
 		this.getResident().die();
-		if (this.getNav()){
-			this.getNav().die();
+		if (this.use_nav){
+			if (this.getNav()){
+				this.getNav().die();
+			}
 		}
+		
 		delete this.map;
 	},
 	_sliceTM: function(make_history_step, transit){ //private alike
@@ -172,7 +191,10 @@ mapLevel.prototype = {
 function browseMap(mainLevelResident, getNavData){
 	
 	this.levels = [];
-	this.getNavData = getNavData;
+	if (getNavData){
+		this.getNavData = getNavData;
+	}
+	this.use_nav = !!getNavData;
 	this.mainLevelResident = mainLevelResident;
 	
 	//zoom levels
@@ -232,7 +254,9 @@ browseMap.prototype= {
 		opts = opts || {};
 		lp.show(opts);
 		if (opts.userwant){
-			this.updateNav(lp);
+			if (this.use_nav){
+				this.updateNav(lp);
+			}
 		}
 		
 		this.current_level_num = lp.num;

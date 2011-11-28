@@ -36,7 +36,6 @@ dNav.prototype = {
 		this.show();
 		this.active = false;
 	},
-	
 	resetStackMark: function(){
 		this.onTitleChange(null);
 		this.stacked = false;
@@ -186,6 +185,7 @@ baseLevelResident.prototype = {
 		this.lev = lev;
 		return this;	
 	},
+	blur: function(){return},
 	D: function(key, value){
 		if (!arguments.hasOwnProperty('1')){
 			return this.storage && this.storage[key];
@@ -235,8 +235,11 @@ cloneObj(mainLevelResident.prototype, {
 	die: function(){
 		console.log('trying to killkill main')
 	},
+	blur: function(){
+		$(su.ui.els.slider).removeClass("show-start");
+	},
 	show: function(opts){
-		su.ui.els.slider.className = "show-start";
+		$(su.ui.els.slider).addClass("show-start");
 		if (opts.userwant){
 			su.ui.els.search_input[0].focus();
 			su.ui.els.search_input[0].select();
@@ -259,10 +262,15 @@ cloneObj(sRLevelResident.prototype, {
 	
 	die: function(){
 		this.dead = true;
+		this.blur();
 		this.c.remove();
 	},
 	hide: function(){
+		this.blur();
 		this.c.addClass('hidden');
+	},
+	blur: function(){
+		$(su.ui.els.slider).removeClass('show-search show-search-results')
 	},
 	show: function(opts){
 		this.c.removeClass('hidden');
@@ -272,7 +280,7 @@ cloneObj(sRLevelResident.prototype, {
 		var _s = su.ui.els.slider.className;
 		var new_s = (opts.closed ? '' : 'show-search ') + "show-search-results";
 		if (new_s != _s){
-			su.ui.els.slider.className = new_s;
+			$(su.ui.els.slider).addClass(new_s);
 			su.track_page('search results');
 		}
 		su.ui.search_el = this;
@@ -302,20 +310,26 @@ artcardLevelResident.prototype  = new baseLevelResident();
 cloneObj(artcardLevelResident.prototype ,{
 	die: function(){
 		this.dead = true;
+		this.blur();
 		this.remove();	
+		
 	},
 	remove: function(){
 		return this.c.remove();
 	},
 	hide: function(){
+		this.blur();
 		return this.c.addClass('hidden');
+	},
+	blur: function(){
+		$(su.ui.els.slider).removeClass('show-art-card');
 	},
 	show: function(opts){
 		if (opts.userwant){
 			this.checkAndHandleData();
 			su.track_page('art card');
 		}
-		su.ui.els.slider.className = 'show-art-card';
+		$(su.ui.els.slider).addClass('show-art-card');
 		return this.c.removeClass('hidden');
 	},
 	wait: function(){
@@ -350,6 +364,7 @@ playlistLevelResident.prototype  = new baseLevelResident();
 cloneObj(playlistLevelResident.prototype, {
 	die: function(){
 		this.dead = true;
+		this.hide();
 		var pl = this.D('pl');
 		if (pl){pl.die()}
 		this.remove();	
@@ -358,6 +373,7 @@ cloneObj(playlistLevelResident.prototype, {
 		return this.c.remove();
 	},
 	hide: function(){
+		$(su.ui.els.slider).removeClass('show-player-page');
 		return this.c.addClass('hidden');
 	},
 	show: function(opts){
@@ -370,7 +386,7 @@ cloneObj(playlistLevelResident.prototype, {
 			
 		}
 		
-		su.ui.els.slider.className = ' show-player-page';
+		$(su.ui.els.slider).addClass('show-player-page');
 		return this.c.removeClass('hidden');
 	},
 	wait: function(){
