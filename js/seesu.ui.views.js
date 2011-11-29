@@ -128,14 +128,14 @@ var sRNav = function(){
 }
 sRNav.prototype = new dNav();
 cloneObj(sRNav.prototype, {
+	query_regexp: /\ ?\%query\%\ ?/,
 	getTitleString: function(text){
-		var query_regexp = /\ ?\%query\%\ ?/;
 		var original = localize('Search-resuls')
 		
 		if (text){
-			return original.replace(query_regexp, ' «' + text + '» ').replace(/^\ |\ $/gi, '');
+			return original.replace(this.query_regexp, ' «' + text + '» ').replace(/^\ |\ $/gi, '');
 		} else{
-			var usual_text = original.replace(query_regexp, '');
+			var usual_text = original.replace(this.query_regexp, '');
 			var cap = usual_text.charAt(0).toLocaleUpperCase();
 			return cap + usual_text.slice(1);
 		}
