@@ -149,7 +149,9 @@ lastfm_api.prototype= {
 						}
 
 					} else{
-						_this.post_serv.post(params, callback);
+						_this.post_serv.post(params, function(){
+							deferred.resolve();
+						});
 					} 
 					
 				};
