@@ -21,6 +21,7 @@
 	"js/libs/network.soundcloud.js", 
 	"js/libs/network.vk.api.js", 
 	"js/libs/lastfm.core.js", 
+	"js/libs/lastfm.serv.js",
 	"js/network.lastfm.js", 
 	"js/lastfm.data.js",
 	"js/seesu.ui.dom_ready.js", 

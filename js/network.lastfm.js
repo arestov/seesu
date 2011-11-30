@@ -42,10 +42,8 @@ $.extend(lastfm_api.prototype, {
 				
 				_this.post('track.scrobble', post_m_obj)
 					.done(function(r){
-						if (r){
-							_this.music = [];
-							_this.stSet('lfm_scrobble_music', '');
-						} 
+						_this.music = [];
+						_this.stSet('lfm_scrobble_music', '');
 						
 					});
 			} else{
