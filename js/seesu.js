@@ -40,7 +40,7 @@ window.seesu = window.su =  {
 	  },
 	  s: new seesuServerAPI(dga),
 	  fs: {},//fast search
-	  version: 2.7,
+	  version: 2.8,
 	  env: app_env,
 	  track_stat: (function(){
 		
