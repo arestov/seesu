@@ -1181,9 +1181,15 @@ seesu_ui.prototype = {
 			if (app_env.pokki_app){
 				pokki.setIdleDetect('popup', false);
 			}
+			if (window.btapp){
+				btapp.properties.set('background', true);
+			}
 		} else{
 			if (app_env.pokki_app){
 				pokki.setIdleDetect('popup', true);
+			}
+			if (window.btapp){
+				btapp.properties.set('background', false);
 			}
 		}
 

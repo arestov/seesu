@@ -250,7 +250,12 @@ display:none;
 	margin-top:6px;
 	min-height: 383px;
 }
-.artist-info{overflow:hidden;}
+.artist-info{
+	overflow:hidden;
+	zoom:1;
+	position:relative;
+
+}
 .artist-info .image{
 	margin-right:13px;
 	margin-bottom:7px;
@@ -260,19 +265,7 @@ display:none;
 	.artist-info .image:hover{
 		z-index:3;
 	}
-@media (max-width:550px) {
-	.daddy .stack-bottom, .daddy .stack-middle{
-		display:none;
-	}
-	.daddy .stack-top{
-		margin-left:0;
-		}
-		.daddy .stack-top > b{
-			top:-1px;
-			background-position:0 0;
-			}
-}
-@media (min-width:600px) {
+
 	.artist-info .image{
 		float:left;
 	}
@@ -295,6 +288,43 @@ display:none;
 	}
 	.track-files .files-source{
 		float:right;
+		
+	}
+@media (max-width:550px) {
+	.daddy .stack-bottom, .daddy .stack-middle{
+		display:none;
+	}
+	.daddy .stack-top{
+		margin-left:0;
+		}
+		.daddy .stack-top > b{
+			top:-1px;
+			background-position:0 0;
+			}
+}
+
+	
+
+@media (max-width:600px) {
+	.artist-info .image{
+		float:none;
+	}
+	.artist-info .image img.artist-image{
+		position:static;
+	}
+	.desc-name{
+		float:none;
+		width:auto;
+	}
+	.desc-text{
+		overflow:visible;
+		display: block;
+	}
+	.desc-text2{
+		overflow:visible;
+	}
+	.track-files .files-source{
+		float:none;
 		
 	}
 }

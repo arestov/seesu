@@ -216,6 +216,8 @@ window.app_env = (function(){
 	if (typeof btapp == 'object'){
 		env.app_type = 'utorrent_app';
 		env.as_application = false;
+		env.deep_sanbdox = true;
+		
 	} else
 	if ($.browser.mozilla){
 		env.app_type = 'firefox_widget';
@@ -238,10 +240,11 @@ window.app_env = (function(){
 	if (!env.app_type){
 		env.app_type = 'unknown_app_type' + (navigator.userAgent && ': ' + navigator.userAgent);
 		env.unknown_app_type = true;
+		env.deep_sanbdox = true;
 	} else{
 		env[env.app_type] = true;
 	}
-	
+	env.iframe_support = !env.utorrent_app && !env.unknown_app_type;
 	
 	
 	if (env.touch_support){dstates.add_state('html_el', 'touch-screen');}
@@ -385,8 +388,8 @@ if (typeof widget != 'object'){
 			return pokki.openURLInDefaultBrowser.apply(pokki, arguments)
 		}
 	} else {
-		openURL = function(){
-			return window.open.apply(window, arguments);
+		openURL = function(url){
+			return window.open(url);
 		};
 	}
 	app_env.openURL = openURL;
@@ -444,19 +447,21 @@ if (typeof console != 'object'){
 			System.Debug.outputString(text);
 		};
 	} else {
-		if (hard_testing) {
-			document.addEventListener('DOMContentLoaded', function(){
-				var h = document.getElementsByTagName('head')[0];
-				var _s = document.createElement('script');
-					_s.src = "http://userscripts.ru/js/nice-alert/nice_alert.js";
-				h.appendChild(_s);
-			}, false);
-		}
-		
-	
-		console.log = function(text){
-			if (!hard_testing) {return false;}
-			alert(text);
-		};
+		console.log = function(){};
 	}	
+};
+
+if (hard_testing) {
+	yepnope({
+		load: "http://userscripts.ru/js/nice-alert/nice_alert.js",
+		complete: function(){
+		}
+	});
+	
+	console.log = function(text){
+		if (!hard_testing) {return false;}
+		alert(text);
+	};
 }
+
+
