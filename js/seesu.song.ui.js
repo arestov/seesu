@@ -45,7 +45,7 @@ var songUI = function(mo, complex){
 songUI.prototype = {
 	updateView: function(state_name, state_value, method){
 		if (this[method]){
-			this[method].call(this, state_value);
+			this[method].call(this, state_value, this.states[state_name]);
 		}
 		if (state_value){
 			this.states[state_name] = state_value;
@@ -105,6 +105,39 @@ songUI.prototype = {
 	},
 	activate: function(opts){
 		this.mainc.addClass('viewing-song');
+	},
+	update: function(new_state, old_state){
+		if (!!new_state != !!old_state){
+			var _this = this;
+
+			if (this.node){
+				var down = this.node.siblings('a.download-mp3').remove();
+				this.node
+					.addClass('song')
+					.removeClass('search-mp3-failed')
+					.removeClass('waiting-full-render')
+					.removeClass('mp3-download-is-not-allowed')
+					.data('mo', this.mo)
+					.unbind()
+					.click(function(){
+						_this.mo.plst_titl.lev.freeze();
+						su.player.song_click(_this.mo);
+					});
+				
+				
+				/*
+				var mopla = this.mo.song();
+				if (mopla){
+					if (mopla.duration){
+						this.displaySongMoplaInfo(mopla);
+					}
+				}
+				*/
+			}
+		}
+		
+		
+		
 	},
 	expand: function(){
 		if (this.expanded){
@@ -293,47 +326,14 @@ songUI.prototype = {
 	remove: function(){
 		this.mainc.remove();
 	},
-	update: function(not_rend){
-		var _this = this;
-		
-		if (this.node){
-			var down = this.node.siblings('a.download-mp3').remove();
-			this.node
-				.addClass('song')
-				.removeClass('search-mp3-failed')
-				.removeClass('waiting-full-render')
-				.removeClass('mp3-download-is-not-allowed')
-				.data('mo', this.mo)
-				.unbind()
-				.click(function(){
-					_this.mo.plst_titl.lev.freeze();
-					su.player.song_click(_this.mo);
-				});
-			
-			
-			/*
-			var mopla = this.mo.song();
-			if (mopla){
-				if (mopla.duration){
-					this.displaySongMoplaInfo(mopla);
-				}
-			}
-			*/
-		}
-	},
 	updateFilesSearchState: function(opts){
 		if (opts.complete){
 			this.node.removeClass('search-mp3');
-			if (opts.have_tracks){
+			if (!opts.have_tracks){
 				this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
 			}
 		}
 		this.updateSongFiles();
-
-		if (opts.have_tracks){
-			this.update();
-			
-		}
 	},
 	displaySongMoplaInfo: function(mopla){
 		var duration = mopla.duration;

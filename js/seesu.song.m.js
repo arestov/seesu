@@ -128,7 +128,7 @@ var song_methods = {
 	},
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
 		if (this.raw()){
-			this.ui.update();
+			this.updateState('playable', true, 'update');
 		} else if (!this.track){
 			start_random_nice_track_search(this, !full_allowing, from_collection, last_in_collection);
 		} else{
@@ -163,7 +163,7 @@ var song_methods = {
 	updateFilesSearchState: function(complete, get_next){
 
 		var _this = this;
-		
+		var have_tracks = this.isHaveTracks();
 		if (complete){
 			
 			if (get_next){
@@ -172,7 +172,7 @@ var song_methods = {
 			
 			
 			
-			if (this.isHaveTracks()){
+			if (have_tracks){
 				clearTimeout(this.cantwait);
 				
 				if (get_next){
@@ -200,16 +200,18 @@ var song_methods = {
 		} else if (this.isHaveBestTracks()){
 			clearTimeout(this.cantwait);
 			wantSong(this);
-		} else if (this.isHaveTracks()){
+		} else if (have_tracks){
 			this.cantwait = setTimeout(function(){
 				wantSong(_this);
 			},20000);
 		}
-		if (this.isHaveTracks()){
+		if (have_tracks){
 			su.ui.els.export_playlist.addClass('can-be-used');
+
+			this.updateState('playable', true, 'update')
 		}
 
-		this.updateState('files_search', {complete: complete, have_tracks: this.isHaveTracks(), have_best_tracks: this.isHaveBestTracks()}, 'updateFilesSearchState');
+		this.updateState('files_search', {complete: complete, have_tracks: have_tracks, have_best_tracks: this.isHaveBestTracks()}, 'updateFilesSearchState');
 	},
 	render: function(from_collection, last_in_collection, complex){
 		
