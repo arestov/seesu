@@ -104,6 +104,7 @@ songUI.prototype = {
 		su.ui.hidePopups();
 	},
 	activate: function(opts){
+		this.updateSongContext(true);
 		this.mainc.addClass('viewing-song');
 	},
 	update: function(new_state, old_state){
@@ -328,6 +329,9 @@ songUI.prototype = {
 	},
 	updateFilesSearchState: function(opts){
 		if (opts.complete){
+			if (this.states.marked_as){
+				this.updateSongContext(true);
+			}
 			this.node.removeClass('search-mp3');
 			if (!opts.have_tracks){
 				this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');

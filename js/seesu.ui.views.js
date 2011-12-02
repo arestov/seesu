@@ -461,7 +461,6 @@ cloneObj(trackLevelResident.prototype, {
 	dataHandlers: {
 		mo: function(mo){
 			this.D('mo', mo);
-			mo.showTrackInfo(true);
 			mo.activate();
 
 		}

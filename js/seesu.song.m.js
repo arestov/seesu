@@ -157,21 +157,11 @@ var song_methods = {
 		}
 		return this;
 	},
-	showTrackInfo: function(real_need){
-		this.ui.updateSongContext(real_need);
-	},
 	updateFilesSearchState: function(complete, get_next){
 
 		var _this = this;
 		var have_tracks = this.isHaveTracks();
 		if (complete){
-			
-			if (get_next){
-				this.showTrackInfo(true);
-			}
-			
-			
-			
 			if (have_tracks){
 				clearTimeout(this.cantwait);
 				
