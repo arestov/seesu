@@ -550,6 +550,8 @@ songUI.prototype = {
 
 	show_video_info: function(vi_c, q){
 		if (vi_c.data('has-info')){return true;}
+
+		var _this = this;
 		get_youtube(q, function(r){			
 			var vs = r && r.feed && r.feed.entry;
 			if (vs && vs.length){
@@ -600,8 +602,8 @@ songUI.prototype = {
 					
 				};
 				if (l){
-					this.extend_info.videos = l;
-					this.extend_info.updateUI();
+					_this.extend_info.videos = l;
+					_this.extend_info.updateUI();
 				}
 				
 				v_content.appendTo(vi_c);
