@@ -56,81 +56,39 @@ var song_methods = {
 		this.addMarksToNeighbours();
 	},
 	deactivate: function(force){
-		if (force || this.active){
-			if (this.ui){
-				this.ui.deactivate();
-			}
+		if (force || this.states.active){
+			this.updateState('active', false, 'deactivate');
 			this.removeMarksFromNeighbours();
-			this.active = false;
 		}
 		
 	},
 	activate: function(force){
-		
-		if (force || !this.active){
-
-			if (this.ui){
-				this.ui.activate();
-			}
+		if (force || !this.states.active){
+			this.updateState('active', true, 'activate');
 			this.checkAndFixNeighbours();
-			this.active = true;
-		}
-		
-	},
-	fixProgressBar: function(){
-		if (this.ui && this.ui.ct && this.ui.ct.tr_progress_t){
-			this.ui.ct.tr_progress_p[0].style.width = this.ui.ct.tr_progress_l[0].style.width = '0';
-			this.ui.ct.track_progress_width = this.ui.ct.tr_progress_t.width();
-		
+			
 		}
 	},
 	markAsPlaying: function(){
-		if (!this.playing_mark){
-			if (this.ui){
-				this.ui.node.parent().addClass('playing-song');
-				this.fixProgressBar();
-			}
-			this.playing_mark = true;
+		if (!this.states.playing_mark){
+			this.updateState('playing_mark', true, 'markAsPlaying');
 		}
 		
 	},
 	unmarkAsPlaying: function(){
-		if (this.playing_mark){
-			if (this.ui){
-				this.ui.node.parent().removeClass('playing-song');
-			}
-			delete this.playing_mark;
-		}
-		
-				
+		if (this.states.playing_mark){
+			this.updateState('playing_mark', false, 'unmarkAsPlaying');
+		}	
 	},
 	markAs: function(neighbour){
 		if (this.states.marked_as){
 			this.unmark();
 		}
-		var target_node = this.ui && this.ui.node.parent();
-		if (target_node){
-			switch (neighbour) {
-				case 'next':
-					target_node.addClass('to-play-next');
-					break
-				case 'prev':
-					target_node.addClass('to-play-previous');
-					break
-				default:
-			}
-
-		}
-		this.states.marked_as = neighbour;
+		this.updateState('marked_as', neighbour, 'markAs');
 	},
 	unmark: function(){
 		if (this.states.marked_as){
-			var target_node = this.ui && this.ui.node.parent();
-			if (target_node){
-				target_node.removeClass('to-play-next to-play-previous');
-			}
-			
-			delete this.states.marked_as;
+			this.updateState('marked_as', false, 'unmark');
 		}
 		
 	},
@@ -184,14 +142,15 @@ var song_methods = {
 			});
 		}
 	},
-	updateView: function(){
-		if (this.ui && this.ui.updateView){
-			this.ui.updateView.apply(this.ui, arguments);
+	updateState: function(name, value, method){
+		if (value){
+			this.states[name] = value;
+		} else {
+			delete this.states[name];
 		}
 		
-		return this;
-		if (this.isAlive()){
-
+		if (this.ui && this.ui.updateView){
+			this.ui.updateView.call(this.ui, name, value, method);
 		}
 		return this;
 	},
@@ -247,8 +206,7 @@ var song_methods = {
 			su.ui.els.export_playlist.addClass('can-be-used');
 		}
 
-		this.states.files_search = {complete: complete, have_tracks: this.isHaveTracks(), have_best_tracks: this.isHaveBestTracks()};
-		this.updateView('updateFilesSearchState', 'files_search', this.states.files_search);
+		this.updateState('files_search', {complete: complete, have_tracks: this.isHaveTracks(), have_best_tracks: this.isHaveBestTracks()}, 'updateFilesSearchState');
 	},
 	render: function(from_collection, last_in_collection, complex){
 		

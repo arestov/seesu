@@ -43,14 +43,57 @@ var songUI = function(mo, complex){
 	this.states = {};
 };
 songUI.prototype = {
-	updateView: function(method, state_name, state_value){
+	updateView: function(state_name, state_value, method){
 		if (this[method]){
 			this[method].call(this, state_value);
 		}
-		this.states[state_name] = state_value;
+		if (state_value){
+			this.states[state_name] = state_value;
+		} else{
+			delete this.states[state_name];
+		}
 		
+		return this;
+		if (this.isAlive()){
+
+		}
 	},
-	deactivate: function(){
+	markAsPlaying: function(){
+		this.node.parent().addClass('playing-song');
+		this.fixProgressBar();
+	},
+	fixProgressBar: function(){
+		if (this && this.ct && this.ct.tr_progress_t){
+			this.ct.tr_progress_p[0].style.width = this.ct.tr_progress_l[0].style.width = '0';
+			this.ct.track_progress_width = this.ct.tr_progress_t.width();
+		
+		}
+	},
+	unmarkAsPlaying: function(){
+		this.node.parent().removeClass('playing-song');
+	},
+	unmark: function(){
+		var target_node = this.node && this.node.parent();
+		if (target_node){
+			target_node.removeClass('to-play-next to-play-previous');
+		}
+	},
+	markAs: function(statev){
+		var target_node = this.node && this.node.parent();
+		if (target_node){
+			switch (statev) {
+				case 'next':
+					target_node.addClass('to-play-next');
+					break
+				case 'prev':
+					target_node.addClass('to-play-previous');
+					break
+				default:
+			}
+
+		}
+	},
+	deactivate: function(opts){
 		for (var a in this.rowcs) {
 			this.rowcs[a].hide();
 		};
@@ -59,7 +102,7 @@ songUI.prototype = {
 		
 		su.ui.hidePopups();
 	},
-	activate: function(){
+	activate: function(opts){
 		this.mainc.addClass('viewing-song');
 	},
 	expand: function(){
@@ -310,7 +353,7 @@ songUI.prototype = {
 		
 		
 	},
-	updateSongContext:function(real_need){
+	updateSongContext: function(real_need){
 		
 			var artist = this.mo.artist;
 			
