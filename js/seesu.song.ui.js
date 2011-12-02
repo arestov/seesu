@@ -44,7 +44,7 @@ var songUI = function(mo, complex){
 };
 songUI.prototype = {
 	updateView: function(state_name, state_value, method){
-		if (this[method]){
+		if (method && this[method]){
 			this[method].call(this, state_value, this.states[state_name]);
 		}
 		if (state_value){
@@ -327,12 +327,19 @@ songUI.prototype = {
 	remove: function(){
 		this.mainc.remove();
 	},
+	filesSearch: function(searching){
+		if (searching){
+			this.node.addClass('search-mp3');
+		} else{
+			this.node.removeClass('search-mp3');
+		}
+	},
 	updateFilesSearchState: function(opts){
 		if (opts.complete){
 			if (this.states.marked_as){
 				this.updateSongContext(true);
 			}
-			this.node.removeClass('search-mp3');
+			
 			if (!opts.have_tracks){
 				this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
 			}

@@ -158,14 +158,14 @@ var song_methods = {
 		return this;
 	},
 	filesSearchStarted: function(){
-		
-		mo.ui.node.addClass('search-mp3');
+		this.updateState('searching-files', true, 'filesSearch');
 	},
 	updateFilesSearchState: function(complete, get_next){
 
 		var _this = this;
 		var have_tracks = this.isHaveTracks();
 		if (complete){
+			this.updateState('searching-files', false, 'filesSearch');
 			if (have_tracks){
 				clearTimeout(this.cantwait);
 				
