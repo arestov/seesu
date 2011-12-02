@@ -236,8 +236,8 @@ musicSeachEmitter.prototype = {
 	wait_ui: function(){
 		for (var i=0; i < this.songs.length; i++) {
 			var mo = this.songs[i];
-			if (mo && mo.ui && !mo.have_tracks){
-				mo.ui.node.addClass('search-mp3');
+			if (mo && !mo.have_tracks){
+				mo.filesSearchStarted();
 			}
 		}
 		

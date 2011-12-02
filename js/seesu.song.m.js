@@ -157,6 +157,10 @@ var song_methods = {
 		}
 		return this;
 	},
+	filesSearchStarted: function(){
+		
+		mo.ui.node.addClass('search-mp3');
+	},
 	updateFilesSearchState: function(complete, get_next){
 
 		var _this = this;
