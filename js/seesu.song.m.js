@@ -142,6 +142,9 @@ var song_methods = {
 			});
 		}
 	},
+	state: function(name){
+		return this.states[name];
+	},
 	updateState: function(name, value, method){
 		if (value){
 			this.states[name] = value;

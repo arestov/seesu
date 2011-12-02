@@ -230,7 +230,7 @@ su.player = {
 		this.nowPlaying(mo);
 
 		if (_mopla && (this.c_song != mo || (mopla && mo.mopla != mopla))){
-			if (last_mo && last_mo.active && this.c_song != mo){
+			if (last_mo && last_mo.state('active') && this.c_song != mo){
 				viewSong(mo);
 			}
 			

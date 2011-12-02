@@ -979,7 +979,7 @@ seesu_ui.prototype = {
 						pl[i].render(from_collection, i == pl.length-1);
 					}
 				}
-				var actives_mo = $filter(pl, 'active', true);
+				var actives_mo = $filter(pl, 'states.active', true);
 				for (var i = 0; i < actives_mo.length; i++) {
 					actives_mo[i].checkAndFixNeighbours();
 				};
