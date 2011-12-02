@@ -323,7 +323,6 @@ su.player.events[FINISHED] = function() {
 		},50)
 	};
 	submit(su.player.c_song);
-	su.player.c_song.fixProgressBar();
 	su.player.switch_to('next');
 };
 su.player.events[VOLUME] = function(volume_value) {

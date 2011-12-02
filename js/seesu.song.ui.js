@@ -63,13 +63,14 @@ songUI.prototype = {
 		this.fixProgressBar();
 	},
 	fixProgressBar: function(){
-		if (this && this.ct && this.ct.tr_progress_t){
+		if (this.ct && this.ct.tr_progress_t){
 			this.ct.tr_progress_p[0].style.width = this.ct.tr_progress_l[0].style.width = '0';
 			this.ct.track_progress_width = this.ct.tr_progress_t.width();
 		
 		}
 	},
 	unmarkAsPlaying: function(){
+		this.fixProgressBar();
 		this.node.parent().removeClass('playing-song');
 	},
 	unmark: function(){
