@@ -105,7 +105,7 @@ var song_methods = {
 				
 	},
 	markAs: function(neighbour){
-		if (this.marked_as){
+		if (this.states.marked_as){
 			this.unmark();
 		}
 		var target_node = this.ui && this.ui.node.parent();
@@ -121,16 +121,16 @@ var song_methods = {
 			}
 
 		}
-		this.marked_as = neighbour;
+		this.states.marked_as = neighbour;
 	},
 	unmark: function(){
-		if (this.marked_as){
+		if (this.states.marked_as){
 			var target_node = this.ui && this.ui.node.parent();
 			if (target_node){
 				target_node.removeClass('to-play-next to-play-previous');
 			}
 			
-			delete this.marked_as;
+			delete this.states.marked_as;
 		}
 		
 	},
@@ -185,30 +185,29 @@ var song_methods = {
 		}
 	},
 	updateView: function(){
-		var args = Array.prototype.slice.call(arguments),
-			method = args.shift();
-		if (this.ui && this.ui[method]){
-			this.ui[method].apply(this, args);
+		if (this.ui && this.ui.updateView){
+			this.ui.updateView.apply(this.ui, arguments);
 		}
+		
 		return this;
 		if (this.isAlive()){
-			
 
-			
-			
 		}
 		return this;
+	},
+	showTrackInfo: function(real_need){
+		this.ui.updateSongContext(real_need);
 	},
 	updateFilesSearchState: function(complete, get_next){
 
 		var _this = this;
 		
 		if (complete){
-			/*
+			
 			if (get_next){
-					this.ui.updateSongContext(get_next)
-				}
-				*/
+				this.showTrackInfo(true);
+			}
+			
 			
 			
 			if (this.isHaveTracks()){
@@ -249,25 +248,7 @@ var song_methods = {
 		}
 
 		this.states.files_search = {complete: complete, have_tracks: this.isHaveTracks(), have_best_tracks: this.isHaveBestTracks()};
-		this.updateView('updateFilesSearchState', this.states.files_search);
-	},
-	updateFilesSearchState: function(opts){
-		if (opts.complete){
-			this.node.removeClass('search-mp3');
-			if (opts.have_tracks){
-				this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
-			}
-		} else if (opts.have_best_tracks){
-			
-		} else if (opts.have_tracks){
-			
-		}
-		this.ui.updateSongFiles();
-
-		if (this.isHaveTracks()){
-			this.ui.update();
-			
-		}
+		this.updateView('updateFilesSearchState', 'files_search', this.states.files_search);
 	},
 	render: function(from_collection, last_in_collection, complex){
 		

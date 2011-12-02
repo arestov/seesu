@@ -555,7 +555,7 @@ var hashChangeRecover = function(e){
 	var url = e.newURL.replace(/([^\/])\+/g, '$1 ');
 
 	
-	var state_from_history = navi.findHistory(url);
+	var state_from_history = navi.findHistory(e.newURL);
 	if (state_from_history){
 		var dl = gunm(state_from_history.data);
 

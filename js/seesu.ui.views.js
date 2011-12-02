@@ -461,9 +461,7 @@ cloneObj(trackLevelResident.prototype, {
 	dataHandlers: {
 		mo: function(mo){
 			this.D('mo', mo);
-			if (mo.ui){
-				mo.ui.updateSongContext(true)
-			}
+			mo.showTrackInfo(true);
 			mo.activate();
 
 		}
