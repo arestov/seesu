@@ -97,9 +97,7 @@ su.player = {
 	want_to_play		: 0,
 	wainter_for_play 	: null,
 	current_external_playlist: null,
-	iframe_player 	: false,
-	iframe_doc 		: null,
-	events 			: [],
+	events 				: [],
 	current_song 		: null,
 	musicbox			: {
 	}, //music box is a link to module with playing methods, 
