@@ -133,6 +133,9 @@ su.player = {
 			};
 			break;
 		  case(PAUSED - PLAYED):
+				if (this.c_song){
+					this.c_song.updateState('play', 'playing', 'playingChanged')
+				}
 			this.musicbox.play();
 			su.ui.remove_video();
 			break;    

@@ -95,6 +95,8 @@ songUI.prototype = {
 		}
 	},
 	deactivate: function(opts){
+		this.hideYoutubeVideo();
+
 		for (var a in this.rowcs) {
 			this.rowcs[a].hide();
 		};
@@ -136,9 +138,11 @@ songUI.prototype = {
 				*/
 			}
 		}
-		
-		
-		
+	},
+	playingChanged: function(state){
+		if (state =='playing'){
+			this.hideYoutubeVideo();
+		}
 	},
 	expand: function(){
 		if (this.expanded){
@@ -602,7 +606,30 @@ songUI.prototype = {
 			link.text(localize('show-them', 'show them'));
 		}
 	},
-
+	showYoutubeVideo: function(id, c, link){
+		if (this.video){
+			this.hideYoutubeVideo();
+		}
+		this.video = {
+			link: link.addClass('active'),
+			node: $(su.ui.create_youtube_video(id)).appendTo(c)
+		};
+	},
+	hideYoutubeVideo: function(){
+		if (this.video){
+			if (this.video.link){
+				this.video.link.removeClass('active');
+				this.video.link[0].showed = false;
+				this.video.link = false;
+				
+			}
+			if (this.video.node){
+				this.video.node.remove();
+				this.video.node = false;
+			}
+			delete this.video;
+		}
+	},
 	show_video_info: function(vi_c, q){
 		if (vi_c.data('has-info')){return true;}
 
@@ -619,13 +646,8 @@ songUI.prototype = {
 					var li = $('<li class="you-tube-video-link"></li>').click(function(e){
 						var showed = this.showed;
 						
-						su.ui.remove_video();
-						
 						if (!showed){
-							su.ui.video = {
-								link: $(this).addClass('active'),
-								node: $(su.ui.create_youtube_video(vid)).appendTo(vi_c)
-							}
+							_this.showYoutubeVideo(vid, vi_c, $(this));
 							seesu.player.set_state('pause');
 							this.showed = true;
 						} else{

@@ -441,7 +441,6 @@ cloneObj(trackLevelResident.prototype, {
 		this.hide();
 		var mo = this.D('mo');
 		if (mo){
-			su.ui.remove_video();
 			mo.deactivate();
 		}
 	},

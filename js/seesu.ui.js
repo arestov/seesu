@@ -1146,21 +1146,6 @@ seesu_ui.prototype = {
 			).appendTo(_ui.els.start_screen.children('.for-startpage'));
 		}
 	},
-	remove_video: function(){
-		if (this.video){
-			if (this.video.link){
-				this.video.link.removeClass('active');
-				this.video.link[0].showed = false;
-				this.video.link = false;
-				
-			}
-			if (this.video.node){
-				this.video.node.remove();
-				this.video.node = false;
-			}
-		}
-		
-	},
 	favicon_states: {
 		playing: 'icons/icon16p.png',
 		usual: 'icons/icon16.png'
