@@ -835,18 +835,6 @@ seesu_ui.prototype = {
 				
 				
 	},
-	createCurrentUserUI: function(mo, user_info){
-		if (mo.ui && mo.ui.t_users && !mo.ui.t_users.current_user){
-			var div = mo.ui.t_users.current_user = $('<div class="song-listener current-user-listen"></div>');
-			this.createUserAvatar(user_info, div);
-			
-			mo.ui.t_users.list.append(div);
-			return div;
-		}
-		
-		
-		
-	},
 	createSongListeners: function(listenings, place, above_limit_value, exlude_user, users_context){
 		var _this = this;
 		var users_limit = 3;
@@ -856,14 +844,6 @@ seesu_ui.prototype = {
 			}
 		};
 		return Math.max(users_limit - listenings.length, 0);
-	},
-	createListenersHeader: function(mo){
-		if (mo.ui && mo.ui.t_users){
-			if (!mo.ui.t_users.header){
-				mo.ui.t_users.header = $('<div></div>').text(localize('listeners-looks')).prependTo(mo.ui.t_users.c);
-			}
-		}
-		
 	},
 	create_youtube_video: function(id, transparent){
 		var youtube_video = document.createElement('embed');

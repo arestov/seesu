@@ -135,7 +135,6 @@ su.player = {
 					this.c_song.updateState('play', 'playing', 'playingChanged')
 				}
 			this.musicbox.play();
-			su.ui.remove_video();
 			break;    
 		  case(PAUSED - STOPPED):
 		  case(PLAYED - STOPPED):
@@ -243,9 +242,8 @@ su.player = {
 			
 			if (this.musicbox.play_song_by_url){
 				this.musicbox.play_song_by_url(_mopla.link);
-				mo.mopla = _mopla;
+				mo.updateProp('mopla', _mopla, 'displaySongMoplaInfo')
 			}
-			mo.ui.displaySongMoplaInfo(_mopla);
 			
 		}
 		

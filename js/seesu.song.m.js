@@ -145,6 +145,18 @@ var song_methods = {
 	state: function(name){
 		return this.states[name];
 	},
+	updateProp: function(name, value, method){
+		if (name){
+			if (value){
+				this[name] = value;
+			} else{
+				delete this[name]
+			}
+		}
+		if (this.ui && this.ui.updateProp){
+			this.ui.updateProp.call(this.ui, name, value, method);
+		}	
+	},
 	updateState: function(name, value, method){
 		if (value){
 			this.states[name] = value;
@@ -152,8 +164,8 @@ var song_methods = {
 			delete this.states[name];
 		}
 		
-		if (this.ui && this.ui.updateView){
-			this.ui.updateView.call(this.ui, name, value, method);
+		if (this.ui && this.ui.updateState){
+			this.ui.updateState.call(this.ui, name, value, method);
 		}
 		return this;
 	},

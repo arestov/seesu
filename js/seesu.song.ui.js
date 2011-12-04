@@ -43,7 +43,12 @@ var songUI = function(mo, complex){
 	this.states = {};
 };
 songUI.prototype = {
-	updateView: function(state_name, state_value, method){
+	updateProp: function(name, value, method){
+		if (method && this[method]){
+			this[method].call(this, value);
+		}
+	},
+	updateState: function(state_name, state_value, method){
 		if (method && this[method]){
 			this[method].call(this, state_value, this.states[state_name]);
 		}
@@ -57,6 +62,9 @@ songUI.prototype = {
 		if (this.isAlive()){
 
 		}
+	},
+	updateTitle: function(title){
+		this.titlec.text(this.mo.getFullName());
 	},
 	markAsPlaying: function(){
 		this.node.parent().addClass('playing-song');
@@ -137,6 +145,13 @@ songUI.prototype = {
 				}
 				*/
 			}
+		}
+	},
+	loadingChanged: function(loading){
+		if (loading){
+			this.node.addClass('loading');
+		} else {
+			this.node.removeClass('loading');
 		}
 	},
 	playingChanged: function(state){
@@ -370,33 +385,41 @@ songUI.prototype = {
 		
 	},
 	updateSongContext: function(real_need){
+		var artist = this.mo.artist;
 		
-			var artist = this.mo.artist;
-			
-			this.updateSongFiles();
+		this.updateSongFiles();
 
-			var a_info = this && this.a_info;
-			if (a_info){
-				if (artist) {this.update_artist_info(artist, a_info, this.mo.plst_titl.playlist_type != 'artist');}
-				this.show_video_info(this.tv, artist + " - " + this.mo.track);
-				
-				if (real_need){
-					this.updateSongListeners();
-				}
-				
-				if (lfm.scrobbling) {
-					su.ui.lfm_change_scrobbling(true, this.context.children('.track-panel').find('.track-buttons'));
-				}
-			} else{
-				console.log('no context for:')
-				console.log(this.mo)
+		var a_info = this && this.a_info;
+		if (a_info){
+			if (artist) {this.update_artist_info(artist, a_info, this.mo.plst_titl.playlist_type != 'artist');}
+			this.show_video_info(this.tv, artist + " - " + this.mo.track);
+			
+			if (real_need){
+				this.updateSongListeners();
 			}
 			
-			
-			
-		
-		
-		
+			if (lfm.scrobbling) {
+				su.ui.lfm_change_scrobbling(true, this.context.children('.track-panel').find('.track-buttons'));
+			}
+		} else{
+			console.log('no context for:')
+			console.log(this.mo)
+		}
+	},
+	createListenersHeader: function(){
+		if (this && this.t_users){
+			if (!this.t_users.header){
+				this.t_users.header = $('<div></div>').text(localize('listeners-looks')).prependTo(this.t_users.c);
+			}
+		}
+	},
+	createCurrentUserUI: function(mo, user_info){
+		if (this.t_users && !this.t_users.current_user){
+			var div = this.t_users.current_user = $('<div class="song-listener current-user-listen"></div>');
+			su.ui.createUserAvatar(user_info, div);
+			this.t_users.list.append(div);
+			return div;
+		}
 	},
 	updateSongListeners: function(){
 		var _this = this;
@@ -414,9 +437,9 @@ songUI.prototype = {
 			if (current_user){
 				user_info = su.s.getInfo('vk');
 				if (user_info){
-					su.ui.createCurrentUserUI(this.mo, user_info);
+					_this.createCurrentUserUI(this.mo, user_info);
 				}
-				su.ui.createListenersHeader(this.mo);
+				_this.createListenersHeader();
 				
 			}
 			su.s.api('track.getListeners', d, function(r){
@@ -441,7 +464,7 @@ songUI.prototype = {
 							_this.t_users.other_users.remove();
 						}
 						
-						su.ui.createListenersHeader(_this.mo);
+						_this.createListenersHeader();
 						
 						_this.t_users.c.addClass('many-users')
 						uul.appendTo(_this.t_users.list);
@@ -692,7 +715,7 @@ songUI.prototype = {
 	},
 	updateSongFiles: function(ext_info){
 		var ext_info = this.extend_info;
-		if (this.mo.wheneWasChanged() > this.mo.ui.files_time_stamp){
+		if (this.mo.wheneWasChanged() > this.files_time_stamp){
 		
 			var c = this.files;
 			c.empty();
