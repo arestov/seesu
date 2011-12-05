@@ -343,6 +343,10 @@ songUI.prototype = {
 		},100)
 		
 	},
+	die: function(){
+		this.remove();
+		this.dead = true;
+	},
 	remove: function(){
 		this.mainc.remove();
 	},

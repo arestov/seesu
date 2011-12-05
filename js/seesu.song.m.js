@@ -302,7 +302,7 @@ var song_methods = {
 	},
 	die: function(){
 		if (this.ui){
-			this.ui.remove();
+			this.ui.die();
 			delete this.ui;
 		}
 		
