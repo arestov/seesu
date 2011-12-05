@@ -502,15 +502,15 @@ seesu_ui.prototype = {
 								pl_r.ui.ready();
 								pl_r.ui.tracks_container.prepend($('<li></li>').append(su.ui.samples.vk_login.clone()));
 							} else{
-								su.ui.render_playlist(pl_r, true);							
+								pl_r.render_playlist(true);							
 							}
 						} else {
-							su.ui.render_playlist(pl_r, true);
+							pl_r.render_playlist(true);
 
 						}
 					} else{
 						pl_r.push(song, true);
-						su.ui.render_playlist(pl_r, true);
+						pl_r.render_playlist(true);
 						//viewSong(song, true)
 					}
 					if (want_auth){
@@ -542,7 +542,7 @@ seesu_ui.prototype = {
 						plr.push({artist: _trm.artist.name, track: _trm.name});
 					};
 				}
-				su.ui.render_playlist(plr, true);
+				pl_r.render_playlist(true);
 			});
 		this.views.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
 	},
@@ -896,77 +896,6 @@ seesu_ui.prototype = {
 			$('<span class="album-name"></span>').text(al_name).appendTo(a_href);
 			
 		return li;
-	},
-
-	render_playlist: function(pl, load_finished) {
-		
-		if (pl.ui){
-			var _sui = this;
-			var ui = pl.ui.tracks_container;
-			if (load_finished){
-				pl.ui.ready();
-				pl.loading = false;
-			}
-			
-			if (!pl.length){
-				ui.append('<li>' + localize('nothing-found','Nothing found') + '</li>');
-			} else {
-				var from_collection = +new Date;
-				
-				
-				if (su.player.c_song && pl == su.player.c_song.plst_titl){
-					
-					var ordered = [];
-					var etc = [];
-					
-					ordered.push(su.player.c_song);
-					if (su.player.c_song.prev_song){
-						ordered.push(su.player.c_song.prev_song);
-					}
-					if (su.player.c_song.next_song){
-						ordered.push(su.player.c_song.next_song);
-					}
-					
-					for (var i=0; i < pl.length; i++) {
-						var mo = pl[i];
-						if (ordered.indexOf(mo) == -1){
-							etc.push(mo);
-						}
-						
-					};
-					
-					for (var i=0; i < pl.length; i++) {
-						pl[i].render(from_collection, i == pl.length-1, true);
-					}
-					for (var i=0; i < ordered.length; i++) {
-						if (ordered[i].ui){
-							ordered[i].ui.expand()
-						} else{}
-					};
-					
-					setTimeout(function(){
-						for (var i=0; i < etc.length; i++) {
-							if (etc[i].ui){
-								etc[i].ui.expand()
-							} else{}
-						};
-					},1000);
-					
-					
-				} else{
-					
-					for (var i=0; i < pl.length; i++) {
-						pl[i].render(from_collection, i == pl.length-1);
-					}
-				}
-				var actives_mo = $filter(pl, 'states.active', true);
-				for (var i = 0; i < actives_mo.length; i++) {
-					actives_mo[i].checkAndFixNeighbours();
-				};
-			}
-			return pl.ui
-		}
-
 	},
 	infoGen: function(dp, c, base_string){
 		if (dp){

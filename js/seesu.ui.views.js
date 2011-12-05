@@ -423,7 +423,7 @@ cloneObj(playlistLevelResident.prototype, {
 				pl.ui.wait()
 			}
 			if (pl.length){
-				su.ui.render_playlist(pl, pl.length > 1);
+				pl.render_playlist(pl.length > 1);
 			}
 		}
 	}

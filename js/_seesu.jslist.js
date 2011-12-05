@@ -30,6 +30,7 @@
 	"js/seesu.s.js", 
 	"js/seesu.song.ui.js", 
 	"js/seesu.js",
+	"js/seesu.songs-list.js",
 	"js/seesu.song.m.js", 
 	"js/seesu.mp3_search.js", 
 	"js/libs/search-investigation.js",
