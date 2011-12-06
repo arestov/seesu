@@ -922,6 +922,7 @@ iframe.you-tube-video,embed.you-tube-video{
 			display:none;
 			}
 		.video-preview{
+			border-radius:2px;
 			height:48px;
 			overflow:hidden;
 			width:85px;
