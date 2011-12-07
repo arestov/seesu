@@ -3,255 +3,282 @@ var searches_pr = {
 	lastfm:-10,
 	soundcloud: -5
 };
-
-
-function musicSeachEmitter(q, query){
-	this.q = q;
-	this.query = query;
-	this.fdefs = [];
-	this.songs = [];
+var songFileModel = function(file){
+	for (var a in file){
+		if (typeof file[a] != 'function' && typeof file[a] != 'object'){
+			this[a] = file[a];
+		}
+	}
+};
+songFileModel.prototype = {
 	
 };
-musicSeachEmitter.prototype = {
-	getSteamsData: function(){
+
+(function(){
+	var files_counter = 0;
+	var getSongFileModel = function(uid){
+		return this.models[uid] = this.models[uid] || new songFileModel(this);
+	};
+
+	musicSeachEmitter = function(q, query){
+		this.q = q;
+		this.query = query;
+		this.fdefs = [];
+		this.songs = [];
 		
-		var steams = this.steams;
-		if (!steams){
-			return false;
-		}
-		var allr = [];
-		
-		for (var steam in steams){
-			var d = this.getSteamData(steam);
-			if (d){
-				allr.push(d);
+	};
+	musicSeachEmitter.prototype = {
+		getSteamsData: function(){
+			
+			var steams = this.steams;
+			if (!steams){
+				return false;
 			}
-		}
-		return !!allr.length && allr;
-	},
-	getSteamData: function(steam_name){
-		if (!this.steams){
-			return false;
-		}
-		var steam = this.steams[steam_name];
-		if (!steam){
-			return false;
-		}
-		var nice_steam;
-		for(var source in steam){
-			if (!steam[source].failed && steam[source].t){
-				nice_steam = steam[source];
-				break;
+			var allr = [];
+			
+			for (var steam in steams){
+				var d = this.getSteamData(steam);
+				if (d){
+					allr.push(d);
+				}
 			}
-		}
-		var ugly_steam;
-		if (!nice_steam){
+			return !!allr.length && allr;
+		},
+		getSteamData: function(steam_name){
+			if (!this.steams){
+				return false;
+			}
+			var steam = this.steams[steam_name];
+			if (!steam){
+				return false;
+			}
+			var nice_steam;
 			for(var source in steam){
-				if (steam[source].failed){
-					ugly_steam = steam[source];
+				if (!steam[source].failed && steam[source].t){
+					nice_steam = steam[source];
 					break;
 				}
 			}
-		}
-		return nice_steam || ugly_steam || false;
-	},
-	addSteamPart: function(search_source, t ){
-		
-		var _ms = this.getMusicStore(search_source);
-		this.changed = _ms.changed = (+new Date() > this.changed ? +new Date() : +new Date() + 10);
-		
-		_ms.t = t;
-		
-		this.have_tracks = true;
-		_ms.processing = false;
-		this.some_results = true;
-		_ms.failed = false;
-		var searches_indexes=[];
-		for (var s in searches_pr) {
-			if (searches_pr[s] < 1){
-				searches_indexes.push(searches_pr[s]);
+			var ugly_steam;
+			if (!nice_steam){
+				for(var source in steam){
+					if (steam[source].failed){
+						ugly_steam = steam[source];
+						break;
+					}
+				}
 			}
+			return nice_steam || ugly_steam || false;
+		},
+		assignFilesMethods: function(fls){
+			for (var i = 0; i < fls.length; i++) {
+				fls[i].uid = files_counter++;
+				fls[i].models = {};
+				fls[i].getSongFileModel = getSongFileModel;
+
+			};
+		},
+		addSteamPart: function(search_source, t ){
 			
-		};
-		var best = Math.max.apply(Math, searches_indexes);
-		if (searches_pr[search_source.name] === best){
-			this.have_best = true;
-		}
-		
-		
-	},
-	blockSteamPart: function(search_source, can_be_fixed){
-		var _ms = this.getMusicStore(search_source);
-		this.changed = _ms.changed = (+new Date() > this.changed ? +new Date() : +new Date() + 10);
-		_ms.processing = false;
-		this.some_results = true;
-		if (!_ms.t){
-			_ms.failed = true;
-			if (can_be_fixed){
-				_ms.fixable = true;
+			var _ms = this.getMusicStore(search_source);
+			this.changed = _ms.changed = (+new Date() > this.changed ? +new Date() : +new Date() + 10);
+			
+			_ms.t = t;
+			this.assignFilesMethods(t);
+
+			
+			this.have_tracks = true;
+			_ms.processing = false;
+			this.some_results = true;
+			_ms.failed = false;
+			var searches_indexes=[];
+			for (var s in searches_pr) {
+				if (searches_pr[s] < 1){
+					searches_indexes.push(searches_pr[s]);
+				}
 				
-			}
-			return true;
-		} else{
-			return false;
-		}
-		
-		
-	},
-	getSomeTracks: function(steam){
-		var many_tracks = [];
-		for(var source in steam){
-			if (!steam[source].failed && steam[source].t){
-				many_tracks.push.apply(many_tracks, steam[source].t);
-			}
-		}
-		return !!many_tracks.length && many_tracks;
-	},
-	by_best_search_index: function(g,f){
-		if (g && f) {
-			var gg = searches_pr[g.name];
-			var ff = searches_pr[f.name];
-			if (typeof gg =='undefined'){
-				gg = -1000;
-			}
-			if (typeof ff =='undefined'){
-				ff = -1000;
+			};
+			var best = Math.max.apply(Math, searches_indexes);
+			if (searches_pr[search_source.name] === best){
+				this.have_best = true;
 			}
 			
 			
-			if (gg < ff){
-				return 1;
+		},
+		blockSteamPart: function(search_source, can_be_fixed){
+			var _ms = this.getMusicStore(search_source);
+			this.changed = _ms.changed = (+new Date() > this.changed ? +new Date() : +new Date() + 10);
+			_ms.processing = false;
+			this.some_results = true;
+			if (!_ms.t){
+				_ms.failed = true;
+				if (can_be_fixed){
+					_ms.fixable = true;
+					
+				}
+				return true;
+			} else{
+				return false;
 			}
-			else if (gg > ff){
-				return -1;
+			
+			
+		},
+		getSomeTracks: function(steam){
+			var many_tracks = [];
+			for(var source in steam){
+				if (!steam[source].failed && steam[source].t){
+					many_tracks.push.apply(many_tracks, steam[source].t);
+				}
 			}
-			else{
+			return !!many_tracks.length && many_tracks;
+		},
+		by_best_search_index: function(g,f){
+			if (g && f) {
+				var gg = searches_pr[g.name];
+				var ff = searches_pr[f.name];
+				if (typeof gg =='undefined'){
+					gg = -1000;
+				}
+				if (typeof ff =='undefined'){
+					ff = -1000;
+				}
+				
+				
+				if (gg < ff){
+					return 1;
+				}
+				else if (gg > ff){
+					return -1;
+				}
+				else{
+					return 0;
+				}
+			} else {
 				return 0;
 			}
-		} else {
-			return 0;
-		}
-	},
-	getAllSongTracks: function(){
-		
-		if (!this.steams){
-			return false;
-		}
-		var tracks_pack = [];
-		for(var steam in this.steams){
-			var m = this.getSomeTracks(this.steams[steam]);
-			if (m){
-				tracks_pack.push({
-					name: steam,
-					t: m
-				})
+		},
+		getAllSongTracks: function(){
+			
+			if (!this.steams){
+				return false;
 			}
-		}
-		tracks_pack.sort(this.by_best_search_index);
-		return !!tracks_pack.length && tracks_pack;
-	},
-	getMusicStore: function( search_source){
-		
-		var ss = {
-			name: (search_source && search_source.name) || 'sample',
-			key: (search_source && search_source.key) || 0
-		};
-		
-		if (!this.steams){
-			this.steams = {};
-		}
-		if (!this.steams[ss.name]){
-			this.steams[ss.name] = {};
-		}
-		if (!this.steams[ss.name][ss.key]){
-			this.steams[ss.name][ss.key] = {
-				name: ss.name,
-				key: ss.key
+			var tracks_pack = [];
+			for(var steam in this.steams){
+				var m = this.getSomeTracks(this.steams[steam]);
+				if (m){
+					tracks_pack.push({
+						name: steam,
+						t: m
+					})
+				}
+			}
+			tracks_pack.sort(this.by_best_search_index);
+			return !!tracks_pack.length && tracks_pack;
+		},
+		getMusicStore: function( search_source){
+			
+			var ss = {
+				name: (search_source && search_source.name) || 'sample',
+				key: (search_source && search_source.key) || 0
 			};
-		}
-		return this.steams[ss.name][ss.key];
-	},
-	
-	
-	addSong: function(mo, get_next){
-		if (!bN(this.songs.indexOf(mo))){
-			this.songs.push(mo);
-			mo.sem = this;
-			if (this.some_results){
-				mo.updateFilesSearchState(this.search_completed, get_next);
+			
+			if (!this.steams){
+				this.steams = {};
 			}
-		} 
+			if (!this.steams[ss.name]){
+				this.steams[ss.name] = {};
+			}
+			if (!this.steams[ss.name][ss.key]){
+				this.steams[ss.name][ss.key] = {
+					name: ss.name,
+					key: ss.key
+				};
+			}
+			return this.steams[ss.name][ss.key];
+		},
 		
-	},
-	removeSong: function(mo){
-		var i = this.songs.indexOf(mo);
-		if (bN(i)){
-			delete this.songs[i];
-		}
-	},
-	emmit_handler: function(c, complete){
-	
-		if (!c.done){
-			if (c.filter){
-				var r = this.getSteamData(c.filter);
-				if (r){
-					c.handler(r.failed && {failed: true}, [r], c, complete);
-					
-				} else if (!su.mp3_search.haveSearch(c.filter)){
-					c.handler({not_exist: true}, false, c, complete);
-					
+		
+		addSong: function(mo, get_next){
+			if (!bN(this.songs.indexOf(mo))){
+				this.songs.push(mo);
+				mo.sem = this;
+				if (this.some_results){
+					mo.updateFilesSearchState(this.search_completed, get_next);
 				}
-			} else{
-				var r = this.getSteamsData();
-				if (r){
-					c.handler(false, r, c, complete);
-					
+			} 
+			
+		},
+		removeSong: function(mo){
+			var i = this.songs.indexOf(mo);
+			if (bN(i)){
+				delete this.songs[i];
+			}
+		},
+		emmit_handler: function(c, complete){
+		
+			if (!c.done){
+				if (c.filter){
+					var r = this.getSteamData(c.filter);
+					if (r){
+						c.handler(r.failed && {failed: true}, [r], c, complete);
+						
+					} else if (!su.mp3_search.haveSearch(c.filter)){
+						c.handler({not_exist: true}, false, c, complete);
+						
+					}
 				} else{
-					c.handler(false, false, c, complete);
-					
+					var r = this.getSteamsData();
+					if (r){
+						c.handler(false, r, c, complete);
+						
+					} else{
+						c.handler(false, false, c, complete);
+						
+					}
 				}
 			}
-		}
-	},
-	addHandler: function(oh){
-		this.fdefs.push(oh);
-		this.emmit_handler(oh);
-	},
-	emit: function(complete, get_next){
-		for (var i=0; i < this.songs.length; i++) {
-			if (this.songs[i]){
-				this.songs[i].updateFilesSearchState(complete, get_next);
+		},
+		addHandler: function(oh){
+			this.fdefs.push(oh);
+			this.emmit_handler(oh);
+		},
+		emit: function(complete, get_next){
+			for (var i=0; i < this.songs.length; i++) {
+				if (this.songs[i]){
+					this.songs[i].updateFilesSearchState(complete, get_next);
+				}
+				
 			}
 			
-		}
-		
-		for (var i=0; i < this.fdefs.length; i++) {
-			this.emmit_handler(this.fdefs[i], complete, get_next)
-			
-			
-			
-		}
-		
-	},
-	wait_ui: function(){
-		for (var i=0; i < this.songs.length; i++) {
-			var mo = this.songs[i];
-			if (mo && !mo.have_tracks){
-				mo.filesSearchStarted();
-			}
-		}
-		
-		for (var i=0; i < this.fdefs.length; i++) {
-			if (!this.fdefs[i].done && this.fdefs[i].while_wait){
-				this.fdefs[i].while_wait(); 
+			for (var i=0; i < this.fdefs.length; i++) {
+				this.emmit_handler(this.fdefs[i], complete, get_next)
+				
+				
+				
 			}
 			
+		},
+		wait_ui: function(){
+			for (var i=0; i < this.songs.length; i++) {
+				var mo = this.songs[i];
+				if (mo && !mo.have_tracks){
+					mo.filesSearchStarted();
+				}
+			}
+			
+			for (var i=0; i < this.fdefs.length; i++) {
+				if (!this.fdefs[i].done && this.fdefs[i].while_wait){
+					this.fdefs[i].while_wait(); 
+				}
+				
+			}
+		},
+		isHaveAnyResultsFrom: function(source_name){
+			return !!this.getSteamData(source_name);
 		}
-	},
-	isHaveAnyResultsFrom: function(source_name){
-		return !!this.getSteamData(source_name);
-	}
-};
+	};
+})();
+
 
 
 

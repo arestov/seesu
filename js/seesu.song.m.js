@@ -300,6 +300,9 @@ var song_methods = {
 	isHaveBestTracks: function(){
 		return !!this.raw() || !!this.sem && this.sem.have_best;
 	},
+	getSongFileModel: function(file){
+			
+	},
 	die: function(){
 		if (this.ui){
 			this.ui.die();

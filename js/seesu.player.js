@@ -1,10 +1,10 @@
 var INIT     = -11,
-	  CREATED  = -7,
-	  VOLUME   = -5,
-	  STOPPED  =  1,
-	  PLAYED   =  5,
-	  PAUSED   =  7,
-	  FINISHED =  11;
+	CREATED  = -7,
+	VOLUME   = -5,
+	STOPPED  =  1,
+	PLAYED   =  5,
+	PAUSED   =  7,
+	FINISHED =  11;
 
 su.gena = { //this work with playlists
 
@@ -19,7 +19,8 @@ su.gena = { //this work with playlists
 				plsts.push(playlists[i].simplify())
 			};
 			suStore('user_playlists', plsts, true);
-		},10)
+		},10);
+		
 	},
 	create_userplaylist: function(title,p, manual_inject){
 		var _this = this;
@@ -131,9 +132,9 @@ su.player = {
 			};
 			break;
 		  case(PAUSED - PLAYED):
-				if (this.c_song){
-					this.c_song.updateState('play', 'playing', 'playingChanged')
-				}
+			if (this.c_song){
+				this.c_song.updateState('play', 'playing', 'playingChanged')
+			}
 			this.musicbox.play();
 			break;    
 		  case(PAUSED - STOPPED):
