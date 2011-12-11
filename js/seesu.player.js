@@ -311,7 +311,9 @@ su.player.preload_song = function(){
 
 su.player.events.progress_playing = function(progress_value, total){
 	//if (_this.ignore_position_change) {return false;}
-	var _c = su.player.c_song && su.player.c_song.ui && su.player.c_song.ui.ct;;
+	var ui = su.player.c_song && su.player.c_song.getView();
+
+	var _c = ui && ui.ct;
 	if (!_c){return false}
 	
 	var progress = parseInt(progress_value);
@@ -333,7 +335,9 @@ su.player.events.progress_playing = function(progress_value, total){
 
 su.player.events.progress_loading = function(progress_value, total){
 	//if (_this.ignore_position_change) {return false;}
-	var _c = su.player.c_song && su.player.c_song.ui && su.player.c_song.ui.ct;;
+	var ui = su.player.c_song && su.player.c_song.getView();
+
+	var _c = ui && ui.ct;
 	if (!_c){return false}
 	
 	var progress = parseInt(progress_value);

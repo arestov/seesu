@@ -504,7 +504,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 		}
 		o.track_progress_total = $('<div class="track-progress"></div>',d).click(function(e){
 				
-			var ui = $(this).data('mo').ui;
+			var ui = $(this).data('mo').getView();
 			if (ui && ui.ct){
 				var pos = get_click_position(e, this);
 				var new_play_position_factor = pos/ui.ct.track_progress_width;
