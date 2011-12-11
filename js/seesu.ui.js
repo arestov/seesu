@@ -579,7 +579,7 @@ seesu_ui.prototype = {
 			.attr('href', 'http://seesu.me/o#/ds' + song_methods.getURLPart(mopla))
 			.text(mopla.artist + " - " + mopla.track)
 			.click(function(e){
-				su.player.play_song(mo, true, mopla)
+				mo.play(mopla);
 				e.preventDefault();
 			}).appendTo(main_part);
 			

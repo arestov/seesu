@@ -133,7 +133,7 @@ su.player = {
 			break;
 		  case(PAUSED - PLAYED):
 			if (this.c_song){
-				this.c_song.updateState('play', 'playing', 'playingChanged')
+				this.c_song.updateState('play', 'playing');
 			}
 			this.musicbox.play();
 			break;    
@@ -178,7 +178,7 @@ su.player = {
 			}
 			
 			if (s){
-				this.play_song(s);
+				s.play();
 			}
 		}
 	  }
@@ -209,11 +209,7 @@ su.player = {
 		
 		
 	},
-	changeNowPlaying: function(){
-		
-	},
-	play_song: function(mo, view, mopla, force_zoom){
-
+	changeNowPlaying: function(mo){
 		var last_mo = this.c_song;
 		if (last_mo != mo){
 			
@@ -227,7 +223,6 @@ su.player = {
 			mo.plst_titl.lev.freeze();
 			this.c_song = mo;
 		}
-		
 	}
 };
 
@@ -393,7 +388,7 @@ su.player.song_click = function(mo) {
   }
   su.mp3_search.find_mp3(mo);
   viewSong(mo);	
-  su.player.play_song(mo, true, false, true);
+  mo.play();
   
   return false;
 }

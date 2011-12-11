@@ -47,7 +47,7 @@ songUI.prototype = new servView();
 
 cloneObj(songUI.prototype, {
 	state_change : {
-		activate: function(state){
+		active: function(state){
 			if (state){
 				this.activate();
 			} else {
@@ -80,7 +80,7 @@ cloneObj(songUI.prototype, {
 				this.node.removeClass('loading');
 			}
 		},
-		playing: function(state, oldstate){
+		play: function(state, oldstate){
 			if (state == 'playing'){
 				this.hideYoutubeVideo();
 			}

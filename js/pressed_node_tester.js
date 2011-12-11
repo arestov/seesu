@@ -79,21 +79,7 @@ var test_pressed_node = function(e, opts){
 				var current_state = seesu.player.get_state();
 				var mo = clicked_node.data('mo');
 				if (mo){
-					if (mo == su.player.c_song){
-						if (current_state == 'playing') {
-							su.player.set_state('pause');
-							
-							su.track_event('Controls', 'pause', mouseup ? 'mouseup' : '');
-							
-						} else {
-							su.player.set_state('play');
-							
-							su.track_event('Controls', 'play', mouseup ? 'mouseup' : '');
-							
-						}	
-					} else{
-						su.player.play_song(mo);
-					}
+					mo.switchPlay();
 				}
 				
 				

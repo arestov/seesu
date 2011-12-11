@@ -275,7 +275,7 @@ function viewSong(mo, no_navi){
 
 var wantSong = function(mo){
 	if (mo.want_to_play == seesu.player.want_to_play && su.player.wainter_for_play == mo) {
-		su.player.play_song(mo, true);
+		mo.play();
 	} 
 };
 

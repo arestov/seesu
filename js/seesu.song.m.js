@@ -75,33 +75,43 @@ var song_methods = {
 		this.updateState('play', false);
 	},
 	switchPlay: function(){
-		if (!this.state('play')){
-			
+		if (this.state('play')){
+			if (this.state('play') == 'playing'){
+				this.pause();
+			} else {
+				this.play();
+			}
 		} else {
 			this.play();
 		}
 	},
+	pause: function(){
+		this.updateState('play', 'paused');
+		
+	},
 	play: function(mopla){
-		if (mo.isHaveTracks()){
+		if (this.isHaveTracks()){
 			delete this.want_to_play;
-			mopla = mopla || mo.song();
+			mopla = mopla || this.song();
 
 			if (mopla && ((this.mopla != mopla) || !this.state('play'))){
 
 				if (this.mopla && this.mopla.stop){
 					this.mopla.stop();
 				}
-				if (this.mopla.play){
-					this.mopla.play();
+				su.player.changeNowPlaying(this);
+
+				if (mopla.play){
+					mopla.play();
 				} else{
-					if (this.musicbox.play_song_by_url){
-						this.musicbox.play_song_by_url(mopla.link);
+					if (su.player.musicbox.play_song_by_url){
+						su.player.musicbox.play_song_by_url(mopla.link);
 						
 					}
 				}
 				this.updateState('play', 'playing');
 				this.updateProp('mopla', mopla);
-				su.player.changeNowPlaying(this);
+				
 			}
 				
 			
