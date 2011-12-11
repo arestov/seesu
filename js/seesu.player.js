@@ -204,54 +204,29 @@ su.player = {
 			}
 		}
 		if (su.ui.now_playing.link){
-			su.ui.now_playing.link.attr('title', (localize('now-playing','Now Playing') + ': ' +mo.artist + " - " + mo.track));	
+			su.ui.now_playing.link.attr('title', (localize('now-playing','Now Playing') + ': ' + mo.artist + " - " + mo.track));	
 		}
 		
 		
 	},
+	changeNowPlaying: function(){
+		
+	},
 	play_song: function(mo, view, mopla, force_zoom){
-		if(!mo.isHaveTracks()){return false;}
-		delete mo.want_to_play;
-		
-		
-		var last_mo = this.c_song;
-		
-		var _mopla;
-		if (mopla){
-			_mopla = mopla;
-		} else{
-			_mopla = mo.song();
-		}
-		
-		
-//		if (force_zoom || (view && this.c_song != mo) || (last_mo == this.v_song && last_mo != mo)){
-	//		su.ui.views.show_track_page(mo);
-	//	}
-	
-		this.nowPlaying(mo);
 
-		if (_mopla && (this.c_song != mo || (mopla && mo.mopla != mopla))){
+		var last_mo = this.c_song;
+		if (last_mo != mo){
+			
 			if (last_mo && last_mo.state('active') && this.c_song != mo){
 				viewSong(mo);
 			}
-			
-			this.c_song = mo;
 			if (last_mo){
-				last_mo.unmarkAsPlaying();
+				last_mo.stop();
 			}
-			mo.markAsPlaying();
-			
-			if (this.musicbox.play_song_by_url){
-				this.musicbox.play_song_by_url(_mopla.link);
-				mo.updateProp('mopla', _mopla, 'displaySongMoplaInfo')
-			}
-			
+			this.nowPlaying(mo);
+			mo.plst_titl.lev.freeze();
+			this.c_song = mo;
 		}
-		
-		mo.plst_titl.lev.freeze();
-		
-		
-		
 		
 	}
 };

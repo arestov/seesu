@@ -243,7 +243,7 @@ var start_random_nice_track_search = function(mo, not_search_mp3, from_collectio
 	getTopTracks(mo.artist, function(track_list){
 		mo.updateState('loading', false, 'loadingChanged');
 		var some_track = random_track_plable(track_list);
-		mo.updateProp('track', some_track.track, 'updateTitle');
+		mo.updateProp('track', some_track.track);
 		su.mp3_search.find_mp3(mo, {
 			only_cache: not_search_mp3 && !mo.want_to_play && (!su.player.c_song || su.player.c_song.next_preload_song != mo),
 			collect_for: from_collection,

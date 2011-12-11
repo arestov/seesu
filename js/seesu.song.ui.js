@@ -35,36 +35,116 @@ var createDownloadButton = function(mo){
 
 
 var songUI = function(mo, complex){
+	this.init();
 	this.mo = mo;
-	this.mainc = $('<li></li>').data('mo', mo);
+	this.c = $('<li></li>').data('mo', mo);
 	if (!complex){
 		this.expand();
 	}
 	this.states = {};
 };
-songUI.prototype = {
-	updateProp: function(name, value, method){
-		if (method && this[method]){
-			this[method].call(this, value);
-		}
-	},
-	updateState: function(state_name, state_value, method){
-		if (method && this[method]){
-			this[method].call(this, state_value, this.states[state_name]);
-		}
-		if (state_value){
-			this.states[state_name] = state_value;
-		} else{
-			delete this.states[state_name];
-		}
-		
-		return this;
-		if (this.isAlive()){
+songUI.prototype = new servView();
 
+cloneObj(songUI.prototype, {
+	state_change : {
+		activate: function(state){
+			if (state){
+				this.activate();
+			} else {
+				this.deactivate();
+			}
+		},
+		files_search: function(opts){
+			if (opts.complete){
+				if (this.states.marked_as){
+					this.updateSongContext(true);
+				}
+				
+				if (!opts.have_tracks){
+					this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
+				}
+			}
+			this.updateSongFiles();
+		},
+		'searching-files': function(searching){
+			if (searching){
+				this.node.addClass('search-mp3');
+			} else{
+				this.node.removeClass('search-mp3');
+			}
+		},
+		loading : function(loading){
+			if (loading){
+				this.node.addClass('loading');
+			} else {
+				this.node.removeClass('loading');
+			}
+		},
+		playing: function(state, oldstate){
+			if (state == 'playing'){
+				this.hideYoutubeVideo();
+			}
+			if (!state){
+				this.unmarkAsPlaying();
+			} else if (!oldstate){
+				this.markAsPlaying();
+			}
+
+		},
+		playable: function(new_state, old_state){
+			if (new_state && !!new_state != !!old_state){
+				var _this = this;
+
+				if (this.node){
+					var down = this.node.siblings('a.download-mp3').remove();
+					this.node
+						.addClass('song')
+						.removeClass('search-mp3-failed')
+						.removeClass('waiting-full-render')
+						.removeClass('mp3-download-is-not-allowed')
+						.data('mo', this.mo)
+						.unbind()
+						.click(function(){
+							_this.mo.plst_titl.lev.freeze();
+							su.player.song_click(_this.mo);
+						});
+				}
+			}
+		},
+		marked_as: function(state, oldstate){
+			if (state){
+				if (oldstate){
+					this.unmark();
+				}
+				this.markAs(state);
+			} else {
+				this.unmark();
+			}
 		}
 	},
-	updateTitle: function(title){
-		this.titlec.text(this.mo.getFullName());
+	prop_change: {
+		track: function(title){
+			this.titlec.text(this.mo.getFullName());
+		},
+		mopla: function(mopla){
+			var duration = mopla.duration;
+			var du = this.durationc;
+			
+			if (duration){
+				var digits = duration % 60;
+				var track_dur = (Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+				du.text(track_dur);
+			} else{
+				du.text('');
+			}
+			
+			var filename = mopla.artist + ' - ' +  mopla.track;
+			
+			this.mopla_title.text(mopla.from + ": " + filename);
+			this.mopla_title.attr('title', mopla.description || '');
+			
+			
+		}
 	},
 	markAsPlaying: function(){
 		this.node.parent().addClass('playing-song');
@@ -109,56 +189,17 @@ songUI.prototype = {
 			this.rowcs[a].hide();
 		};
 		this.tidominator.removeClass('want-more-info');
-		this.mainc.removeClass('viewing-song');
+		this.c.removeClass('viewing-song');
 		
 		su.ui.hidePopups();
 	},
 	activate: function(opts){
 		this.updateSongContext(true);
-		this.mainc.addClass('viewing-song');
+		this.c.addClass('viewing-song');
 	},
-	update: function(new_state, old_state){
-		if (!!new_state != !!old_state){
-			var _this = this;
+	
 
-			if (this.node){
-				var down = this.node.siblings('a.download-mp3').remove();
-				this.node
-					.addClass('song')
-					.removeClass('search-mp3-failed')
-					.removeClass('waiting-full-render')
-					.removeClass('mp3-download-is-not-allowed')
-					.data('mo', this.mo)
-					.unbind()
-					.click(function(){
-						_this.mo.plst_titl.lev.freeze();
-						su.player.song_click(_this.mo);
-					});
-				
-				
-				/*
-				var mopla = this.mo.song();
-				if (mopla){
-					if (mopla.duration){
-						this.displaySongMoplaInfo(mopla);
-					}
-				}
-				*/
-			}
-		}
-	},
-	loadingChanged: function(loading){
-		if (loading){
-			this.node.addClass('loading');
-		} else {
-			this.node.removeClass('loading');
-		}
-	},
-	playingChanged: function(state){
-		if (state =='playing'){
-			this.hideYoutubeVideo();
-		}
-	},
+
 	expand: function(){
 		if (this.expanded){
 			return true
@@ -330,7 +371,7 @@ songUI.prototype = {
 		
 		ph.prependTo(tp);
 		
-		this.mainc
+		this.c
 			.append(buttmen)
 			.append(this.node)
 			.append(this.context);
@@ -348,45 +389,7 @@ songUI.prototype = {
 		this.dead = true;
 	},
 	remove: function(){
-		this.mainc.remove();
-	},
-	filesSearch: function(searching){
-		if (searching){
-			this.node.addClass('search-mp3');
-		} else{
-			this.node.removeClass('search-mp3');
-		}
-	},
-	updateFilesSearchState: function(opts){
-		if (opts.complete){
-			if (this.states.marked_as){
-				this.updateSongContext(true);
-			}
-			
-			if (!opts.have_tracks){
-				this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
-			}
-		}
-		this.updateSongFiles();
-	},
-	displaySongMoplaInfo: function(mopla){
-		var duration = mopla.duration;
-		var du = this.durationc;
-		
-		if (duration){
-			var digits = duration % 60;
-			var track_dur = (Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-			du.text(track_dur);
-		} else{
-			du.text('');
-		}
-		
-		var filename = mopla.artist + ' - ' +  mopla.track;
-		
-		this.mopla_title.text(mopla.from + ": " + filename);
-		this.mopla_title.attr('title', mopla.description || '');
-		
-		
+		this.c.remove();
 	},
 	updateSongContext: function(real_need){
 		var artist = this.mo.artist;
@@ -797,4 +800,4 @@ songUI.prototype = {
 			this.files_time_stamp = +new Date();
 		}
 	}
-};
+});

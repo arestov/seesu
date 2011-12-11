@@ -1,4 +1,7 @@
 var song_methods = {
+	state_change: {
+		
+	},
 	getFullName: function(){
 		var n = (this.artist || "") + ((this.artist && this.track) ?  ' - ' + this.track :  (this.track || ""))
 		return n || 'no title'
@@ -56,39 +59,61 @@ var song_methods = {
 		this.addMarksToNeighbours();
 	},
 	deactivate: function(force){
-		if (force || this.states.active){
-			this.updateState('active', false, 'deactivate');
-			this.removeMarksFromNeighbours();
-		}
-		
+		this.updateState('active', false);
+		this.removeMarksFromNeighbours();
 	},
 	activate: function(force){
-		if (force || !this.states.active){
-			this.updateState('active', true, 'activate');
-			this.checkAndFixNeighbours();
-			
-		}
-	},
-	markAsPlaying: function(){
-		if (!this.states.playing_mark){
-			this.updateState('playing_mark', true, 'markAsPlaying');
-		}
+		this.updateState('active', true);
+		this.checkAndFixNeighbours();
+
 		
 	},
-	unmarkAsPlaying: function(){
-		if (this.states.playing_mark){
-			this.updateState('playing_mark', false, 'unmarkAsPlaying');
-		}	
+	stop: function(){
+		if (this.mopla && this.mopla.stop){
+			this.mopla.stop();
+		}
+		this.updateState('play', false);
+	},
+	switchPlay: function(){
+		if (!this.state('play')){
+			
+		} else {
+			this.play();
+		}
+	},
+	play: function(mopla){
+		if (mo.isHaveTracks()){
+			delete this.want_to_play;
+			mopla = mopla || mo.song();
+
+			if (mopla && ((this.mopla != mopla) || !this.state('play'))){
+
+				if (this.mopla && this.mopla.stop){
+					this.mopla.stop();
+				}
+				if (this.mopla.play){
+					this.mopla.play();
+				} else{
+					if (this.musicbox.play_song_by_url){
+						this.musicbox.play_song_by_url(mopla.link);
+						
+					}
+				}
+				this.updateState('play', 'playing');
+				this.updateProp('mopla', mopla);
+				su.player.changeNowPlaying(this);
+			}
+				
+			
+		}
+
 	},
 	markAs: function(neighbour){
-		if (this.states.marked_as){
-			this.unmark();
-		}
-		this.updateState('marked_as', neighbour, 'markAs');
+		this.updateState('marked_as', neighbour);
 	},
 	unmark: function(){
 		if (this.states.marked_as){
-			this.updateState('marked_as', false, 'unmark');
+			this.updateState('marked_as', false);
 		}
 		
 	},
@@ -128,7 +153,7 @@ var song_methods = {
 	},
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
 		if (this.raw()){
-			this.updateState('playable', true, 'update');
+			this.updateState('playable', true);
 		} else if (!this.track){
 			start_random_nice_track_search(this, !full_allowing, from_collection, last_in_collection);
 		} else{
@@ -142,42 +167,15 @@ var song_methods = {
 			});
 		}
 	},
-	state: function(name){
-		return this.states[name];
-	},
-	updateProp: function(name, value, method){
-		if (name){
-			if (value){
-				this[name] = value;
-			} else{
-				delete this[name]
-			}
-		}
-		if (this.ui && this.ui.updateProp){
-			this.ui.updateProp.call(this.ui, name, value, method);
-		}	
-	},
-	updateState: function(name, value, method){
-		if (value){
-			this.states[name] = value;
-		} else {
-			delete this.states[name];
-		}
-		
-		if (this.ui && this.ui.updateState){
-			this.ui.updateState.call(this.ui, name, value, method);
-		}
-		return this;
-	},
 	filesSearchStarted: function(){
-		this.updateState('searching-files', true, 'filesSearch');
+		this.updateState('searching-files', true);
 	},
 	updateFilesSearchState: function(complete, get_next){
 
 		var _this = this;
 		var have_tracks = this.isHaveTracks();
 		if (complete){
-			this.updateState('searching-files', false, 'filesSearch');
+			this.updateState('searching-files', false);
 			if (have_tracks){
 				clearTimeout(this.cantwait);
 				
@@ -214,10 +212,10 @@ var song_methods = {
 		if (have_tracks){
 			su.ui.els.export_playlist.addClass('can-be-used');
 
-			this.updateState('playable', true, 'update')
+			this.updateState('playable', true);
 		}
 
-		this.updateState('files_search', {complete: complete, have_tracks: have_tracks, have_best_tracks: this.isHaveBestTracks()}, 'updateFilesSearchState');
+		this.updateState('files_search', {complete: complete, have_tracks: have_tracks, have_best_tracks: this.isHaveBestTracks()});
 	},
 	render: function(from_collection, last_in_collection, complex){
 		
@@ -227,9 +225,9 @@ var song_methods = {
 			last_in_collection: last_in_collection
 		};
 		if (pl && pl.ui && pl.ui.tracks_container){
-			
-			if (!this.ui || !this.ui.mainc || this.ui.mainc[0].ownerDocument != su.ui.d){			
-				this.ui = new songUI(this, complex);
+			var con = this.getC();
+			if (!con || con[0].ownerDocument != su.ui.d){
+				this.addView(new songUI(this, complex))
 				pl.appendSongUI(this);
 			}
 			
@@ -322,13 +320,16 @@ var song_methods = {
 	var counter = 0;
 	
 	song = function(omo){
+		this.init();
 		this.states = {};
 		this.uid = ++counter;
 		cloneObj(this, omo, false, ['artist', 'track']);
 		this.omo = omo;
 	};
-	
-	song.prototype = song_methods;
+	song.prototype = new servModel();
+
+	cloneObj(song.prototype, song_methods);
+	//song.prototype = song_methods;
 })();
 
 

@@ -13,6 +13,7 @@
 	"js/common-libs/jquery-1.6.2.mod.min.js", 
 	"js/app_serv.js", 
 	"js/libs/serv.js", 
+	"js/libs/serv-mvc.js",
 	"js/common-libs/jquery.debounce-1.0.5.js",
 	"js/libs/browse_map.js", 
 	"js/common-libs/htmlencoding.js", 

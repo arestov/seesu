@@ -91,19 +91,28 @@
 			}
 		},
 		appendSongUI: function(mo){
-			var pl_ui_element = mo.ui.mainc;
+			var pl_ui_element = mo.getC();
+			if (!pl_ui_element){
+				return
+			}
 			if (this.first_song){
 				if (!this.firstsong_inseting_done){
 					if (mo == this.first_song.mo){
 						this.ui.tracks_container.append(pl_ui_element);
 					} else{
-						this.first_song.mo.ui.mainc.before(pl_ui_element);
+						var moc = this.first_song.mo.getC();
+						if (moc){
+							moc.before(pl_ui_element);
+						}
 					}
 				} else if (this.first_song.mo != mo){
 					var f_position = this.indexOf(this.first_song.mo);
 					var t_position = this.indexOf(mo);
 					if (t_position < f_position){
-						this.first_song.mo.ui.mainc.before(pl_ui_element);
+						var moc = this.first_song.mo.getC();
+						if (moc){
+							moc.before(pl_ui_element);
+						}
 					} else{
 						this.ui.tracks_container.append(pl_ui_element);
 					}
