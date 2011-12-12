@@ -73,6 +73,15 @@ servModel.prototype = {
 		this.views.push( v );
 		return this;
 	},
+	setStates: function(states){
+		if (this.reset){
+			this.reset();
+			delete this.states;
+			for (var name in states){
+				this.updateState(name, states[name]);
+			}
+		}	
+	},
 	_updateProxy: function(is_prop, name, value){
 		this.removeDeadViews();
 		if (name){
