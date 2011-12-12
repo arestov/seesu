@@ -6,81 +6,6 @@ var INIT     = -11,
 	PAUSED   =  7,
 	FINISHED =  11;
 
-su.gena = { //this work with playlists
-
-	save_playlists: function(){
-		var _this = this;
-		if (this.save_timeout){clearTimeout(this.save_timeout);}
-		
-		this.save_timeout = setTimeout(function(){
-			var plsts = [];
-			var playlists = _this.playlists;
-			for (var i=0; i < playlists.length; i++) {
-				plsts.push(playlists[i].simplify())
-			};
-			suStore('user_playlists', plsts, true);
-		},10);
-		
-	},
-	create_userplaylist: function(title,p, manual_inject){
-		var _this = this;
-		var pl_r = p || prepare_playlist(title, 'cplaylist', {name: title});
-		if (!manual_inject){
-			this.playlists.push(pl_r);
-		}
-		
-		var oldpush = pl_r.push;
-		pl_r.push = function(){
-			oldpush.apply(this, arguments);
-			_this.save_playlists();
-		}
-		return pl_r;
-	}
-	
-};
-
-var extent_array_by_object = function(array, obj){
-	for (var a in obj) {
-		if (a != 'length'){
-			array[a] = obj[a];
-		}
-	};
-};
-function rebuildPlaylist(saved_pl){
-	var p = prepare_playlist(saved_pl.playlist_title, saved_pl.playlist_type, {name: saved_pl.playlist_title});
-	for (var i=0; i < saved_pl.length; i++) {
-		p.push(saved_pl[i]);
-	}
-	delete p.loading;
-	su.gena.create_userplaylist(false, p, true);
-	return p;
-};
-su.gena.playlists = (function(){
-	var pls = [];
-	
-	var plsts_str = suStore('user_playlists');
-	if (plsts_str){
-		var spls = plsts_str;
-		for (var i=0; i < spls.length; i++) {
-			pls[i] = rebuildPlaylist(spls[i]);
-		};
-	} 
-	
-	
-	pls.push = function(){
-		Array.prototype.push.apply(this, arguments);
-		su.ui.create_playlists_link();
-	}
-	pls.find = function(puppet){
-		for (var i=0; i < pls.length; i++) {
-			if (pls[i].compare(puppet)){
-				return pls[i]
-			}
-			
-		};	
-	};
-	return pls;
-})();
 
 
 su.player = {
@@ -106,19 +31,6 @@ su.player = {
 	call_event		: function	(event, data) {
 	  var args = Array.prototype.slice.call(arguments);
 	  if(this.events[args.shift()]) this.events[event].apply(this,args);
-	},
-	get_state: function(){
-		if (this.player_state == PLAYED){
-			return 'playing';
-		} else 
-		if (this.player_state == STOPPED){
-			return 'stoped';
-		} else 
-		if (this.player_state == PAUSED){
-			return 'paused';
-		} else {
-			return false;
-		}
 	},
 	set_state			:function (new_player_state_str) {
 	  var new_player_state =
@@ -206,8 +118,6 @@ su.player = {
 		if (su.ui.now_playing.link){
 			su.ui.now_playing.link.attr('title', (localize('now-playing','Now Playing') + ': ' + mo.artist + " - " + mo.track));	
 		}
-		
-		
 	},
 	changeNowPlaying: function(mo){
 		var last_mo = this.c_song;
@@ -257,7 +167,7 @@ su.player.events[PLAYED] = function(){
 		submit(mo);
 	}
   	
-  },3000)
+  },1000)
   su.ui.mark_c_node_as(su.player.player_state = PLAYED);
   su.player.preload_song();
 };
@@ -626,4 +536,81 @@ var html_player_timer;
 	} else {
 		sm2iframed.init();
 	}
+})();
+
+
+su.gena = { //this work with playlists
+
+	save_playlists: function(){
+		var _this = this;
+		if (this.save_timeout){clearTimeout(this.save_timeout);}
+		
+		this.save_timeout = setTimeout(function(){
+			var plsts = [];
+			var playlists = _this.playlists;
+			for (var i=0; i < playlists.length; i++) {
+				plsts.push(playlists[i].simplify())
+			};
+			suStore('user_playlists', plsts, true);
+		},10);
+		
+	},
+	create_userplaylist: function(title,p, manual_inject){
+		var _this = this;
+		var pl_r = p || prepare_playlist(title, 'cplaylist', {name: title});
+		if (!manual_inject){
+			this.playlists.push(pl_r);
+		}
+		
+		var oldpush = pl_r.push;
+		pl_r.push = function(){
+			oldpush.apply(this, arguments);
+			_this.save_playlists();
+		}
+		return pl_r;
+	}
+	
+};
+
+var extent_array_by_object = function(array, obj){
+	for (var a in obj) {
+		if (a != 'length'){
+			array[a] = obj[a];
+		}
+	};
+};
+function rebuildPlaylist(saved_pl){
+	var p = prepare_playlist(saved_pl.playlist_title, saved_pl.playlist_type, {name: saved_pl.playlist_title});
+	for (var i=0; i < saved_pl.length; i++) {
+		p.push(saved_pl[i]);
+	}
+	delete p.loading;
+	su.gena.create_userplaylist(false, p, true);
+	return p;
+};
+su.gena.playlists = (function(){
+	var pls = [];
+	
+	var plsts_str = suStore('user_playlists');
+	if (plsts_str){
+		var spls = plsts_str;
+		for (var i=0; i < spls.length; i++) {
+			pls[i] = rebuildPlaylist(spls[i]);
+		};
+	} 
+	
+	
+	pls.push = function(){
+		Array.prototype.push.apply(this, arguments);
+		su.ui.create_playlists_link();
+	}
+	pls.find = function(puppet){
+		for (var i=0; i < pls.length; i++) {
+			if (pls[i].compare(puppet)){
+				return pls[i]
+			}
+			
+		};	
+	};
+	return pls;
 })();

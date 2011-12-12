@@ -225,7 +225,11 @@ var song_methods = {
 			this.updateState('playable', true);
 		}
 
-		this.updateState('files_search', {complete: complete, have_tracks: have_tracks, have_best_tracks: this.isHaveBestTracks()});
+		this.updateState('files_search', {
+			complete: complete, 
+			have_tracks: have_tracks, 
+			have_best_tracks: this.isHaveBestTracks()
+		});
 	},
 	render: function(from_collection, last_in_collection, complex){
 		

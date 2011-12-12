@@ -76,14 +76,10 @@ var test_pressed_node = function(e, opts){
 				 
 			} 
 			else if (bN(class_list.indexOf('pc-play'))){
-				var current_state = seesu.player.get_state();
 				var mo = clicked_node.data('mo');
 				if (mo){
 					mo.switchPlay();
 				}
-				
-				
-				 
 			}
 			else if (bN(class_list.indexOf('pc-stop')) ){
 				seesu.player.set_state('stop');

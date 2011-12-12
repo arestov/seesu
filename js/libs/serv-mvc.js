@@ -5,9 +5,53 @@ servModel.prototype = {
 	init: function(){
 		this.states = {};
 		this.views = [];
+		this.subscribes = {};
+
+	},
+	on: function(name, cb){
+		if (!this.subscribes[name]){
+			this.subscribes[name].push(cb)
+		}
+	},
+	off: function(name, cb){
+		var cbs = this.subscribes[name];
+		if (cbs){
+			var clean = [];
+			for (var i = 0; i < cbs.length; i++) {
+				if (cbs[i] !== cb){
+					clean.push(cbs[i])
+				}
+			};
+			if (clean.length != cbs.length){
+				this.subscribes[name] = clean;
+			}
+		}
+	},
+	fire: function(){
+		var args = Array.prototype.slice.call(arguments);
+		var name = args.shift();
+		var cbs = this.subscribes[name];
+
+		if (cbs){
+			for (var i = 0; i < cbs.length; i++) {
+				cbs[i].apply(null, args);
+			};
+		}
+
 	},
 	state: function(name){
 		return this.states[name];
+	},
+	removeView: function(view){
+		var views = [];
+		for (var i = 0; i < this.views.length; i++) {
+			if (views[i] !== view){
+				views.push(views[i])
+			}
+		};
+		if (views.length != this.views.length){
+			this.views = views;
+		}
 	},
 	removeDeadViews: function(){
 		var alive = $filter(this.views, 'dead', true).not;
