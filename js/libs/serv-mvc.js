@@ -1,12 +1,7 @@
-var servModel = function(){
-	
-};
-servModel.prototype = {
+var eemiter = function(){};
+eemiter.prototype = {
 	init: function(){
-		this.states = {};
-		this.views = [];
 		this.subscribes = {};
-
 	},
 	on: function(name, cb){
 		if (!this.subscribes[name]){
@@ -38,6 +33,17 @@ servModel.prototype = {
 			};
 		}
 
+	}
+};
+
+var servModel = function(){};
+
+servModel.prototype = new eemiter();
+cloneObj(servModel.prototype, {
+	init: function(){
+		this.constructor.prototype.init.call(this);
+		this.states = {};
+		this.views = [];
 	},
 	state: function(name){
 		return this.states[name];
@@ -117,7 +123,7 @@ servModel.prototype = {
 	state_change: {
 		
 	}
-};
+});
 
 
 var servView = function(){};
