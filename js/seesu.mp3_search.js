@@ -334,12 +334,12 @@ var get_mp3 = function(msq, options, p, just_after_request){
 		emit: function(get_next){
 			for (var i=0; i < this.songs.length; i++) {
 				if (this.songs[i]){
-					this.songs[i].updateFilesSearchState(complete, get_next);
+					this.songs[i].updateFilesSearchState(this.search_completed, get_next);
 				}
 				
 			}
 			for (var i=0; i < this.fdefs.length; i++) {
-				this.emmit_handler(this.fdefs[i], complete, get_next)
+				this.emmit_handler(this.fdefs[i], this.search_completed, get_next)
 			}
 			
 		},
@@ -633,7 +633,24 @@ cloneObj(mp3Search.prototype, {
 		var p = {
 			n: search_handlers.length
 		};
-		var successful_uses = []
+		var successful_uses = [];
+
+
+		var request = function(sem, handler, o, p){
+			var used_successful =  get_mp3(query, {handler: handler, get_next: o.get_next}, p, function(){	sem.wait_ui();})
+				.done(function(search_source, music_list){
+					sem.addSteamPart(search_source, music_list);
+				})
+				.fail(function(search_source, can_be_fixed){
+					if (search_source){
+						sem.blockSteamPart(search_source, can_be_fixed);
+					}
+				})
+				.always(function(){
+					sem.change(o.get_next);
+				});
+				if (used_successful){successful_uses.push(used_successful)}
+		}
 		
 		if (search_handlers.length){
 			for (var i=0; i < search_handlers.length; i++) {
@@ -643,22 +660,12 @@ cloneObj(mp3Search.prototype, {
 					if (!o.only_cache){
 						sem.getMusicStore(search_handlers[i].s).processing = true;
 					}
-					
-					var used_successful =  get_mp3(query, {handler: handler, get_next: o.get_next}, p, function(){	sem.wait_ui();})
-						.done(function(search_source, music_list){
-							sem.addSteamPart(search_source, music_list);
-						})
-						.fail(function(search_source, can_be_fixed){
-							if (search_source){
-								sem.blockSteamPart(search_source, can_be_fixed);
-							}
-						})
-						.always(function(){
-							sem.change(o.get_next);
-						});
-					if (used_successful){successful_uses.push(used_successful)}
+					request(sem, handler, o, p);
 				}
 			};
+			$.when.apply($, successful_uses).always(function(){
+				sem.search_completed = true;
+			});
 		} else if (!o.only_cache && !seeking_something_fresh){
 			sem.search_completed = true
 			sem.change(o.get_next);
