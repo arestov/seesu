@@ -1,23 +1,4 @@
 
-var onNewsearch = function(){
-	if (su.player){
-		if (su.player.c_song){
-			if (su.player.c_song.sem){
-				s.searchFor(su.player.c_song.sem.query);
-			}
-			
-			if (su.player.c_song.next_preload_song && su.player.c_song.next_preload_song.sem){
-				s.searchFor(su.player.c_song.next_preload_song.sem.query);
-			}
-		}
-		if (su.player.v_song && su.player.v_song != su.player.c_song ){
-			if (su.player.v_song.sem){
-				s.searchFor(su.player.v_song.sem.query);
-			}
-			
-		}
-	}
-}
 /*
 function(err, search_source, complete, music_list, can_be_fixed){
 	if (err){
@@ -522,7 +503,8 @@ var needSearch = function(sem, source_name){
 	var r = sem.getSteamData(source_name);
 	return !r || !r.t;
 
-var mp3Search = function(){
+var mp3Search = function(onNewsearch){
+	this.onNewsearch = onNewsearch;
 	this.ids = [];
 	this.search_emitters = {};
 }
@@ -737,7 +719,9 @@ cloneObj(mp3Search.prototype, {
 				delete s.search_emitters[am].search_completed;
 			}
 		}
-		// su.player
+		if (this.onNewsearch){
+			this.onNewsearch();
+		}
 		for (var i=0; i < s.ids.length; i++) {
 			var cursor = s.ids[i];
 			if (cursor && cursor.subraw.type == filter){
@@ -823,7 +807,25 @@ cloneObj(mp3Search.prototype, {
 })
 
 };
-su.mp3_search = new mp3Search();
+su.mp3_search = new mp3Search(function(){
+	if (su.player){
+		if (su.player.c_song){
+			if (su.player.c_song.sem){
+				s.searchFor(su.player.c_song.sem.query);
+			}
+			
+			if (su.player.c_song.next_preload_song && su.player.c_song.next_preload_song.sem){
+				s.searchFor(su.player.c_song.next_preload_song.sem.query);
+			}
+		}
+		if (su.player.v_song && su.player.v_song != su.player.c_song ){
+			if (su.player.v_song.sem){
+				s.searchFor(su.player.v_song.sem.query);
+			}
+			
+		}
+	}
+});
 
 if (typeof soundcloud_search != 'undefined'){
 	(function(){
