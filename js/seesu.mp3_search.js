@@ -811,16 +811,16 @@ su.mp3_search = new mp3Search(function(){
 	if (su.player){
 		if (su.player.c_song){
 			if (su.player.c_song.sem){
-				s.searchFor(su.player.c_song.sem.query);
+				su.mp3_search.searchFor(su.player.c_song.sem.query);
 			}
 			
 			if (su.player.c_song.next_preload_song && su.player.c_song.next_preload_song.sem){
-				s.searchFor(su.player.c_song.next_preload_song.sem.query);
+				su.mp3_search.searchFor(su.player.c_song.next_preload_song.sem.query);
 			}
 		}
 		if (su.player.v_song && su.player.v_song != su.player.c_song ){
 			if (su.player.v_song.sem){
-				s.searchFor(su.player.v_song.sem.query);
+				su.mp3_search.searchFor(su.player.v_song.sem.query);
 			}
 			
 		}
