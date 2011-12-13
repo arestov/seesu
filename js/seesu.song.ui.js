@@ -47,6 +47,13 @@ songUI.prototype = new servView();
 
 cloneObj(songUI.prototype, {
 	state_change : {
+		want_to_play: function(state, oldstate){
+			if (state){
+				this.node.addClass('marked-for-play');
+			} else if (oldstate){
+				this.node.removeClass('marked-for-play');
+			}
+		},
 		active: function(state){
 			if (state){
 				this.activate();
@@ -678,10 +685,10 @@ cloneObj(songUI.prototype, {
 						
 						if (!showed){
 							_this.showYoutubeVideo(vid, vi_c, $(this));
-							seesu.player.set_state('pause');
+							this.mo.pause();
 							this.showed = true;
 						} else{
-							seesu.player.set_state('play');
+							this.mo.play();
 							this.showed = false;
 						}
 						e.preventDefault();

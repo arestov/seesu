@@ -1,3 +1,22 @@
+var queueFunc = function(queue, func){
+	this.func = func;
+	this.q = queue
+};
+queueFunc.prototype = {
+	constructor: queueFunc,
+	abort: function(){
+		this.aborted = true;
+	},
+	setPrio: function(num){
+		if (typeof num == 'number'){
+			this.pr = num;
+		} else if (num == 'as-top'){
+			this.pr = this.q.getTopPrio();
+		} else if (num == 'highest'){
+			this.pr = this.q.getTopPrio() + 1;
+		}
+	}
+}
 var funcs_queue = function(small_delay, big_delay, big_delay_interval){
 	this.big_queue = [];
 	if (small_delay) {
@@ -16,6 +35,21 @@ var funcs_queue = function(small_delay, big_delay, big_delay_interval){
 };
 
 funcs_queue.prototype = {
+	getTopPrio: function(){
+		var nums = [];
+		for (var i = 0; i < this.big_queue.length; i++) {
+			var cur = this.big_queue[i].pr;
+			if (typeof cur == 'number'){
+				nums.push(cur);
+			}
+			
+		};
+		if (nums.length){
+			return Math.max.apply(Math, nums);
+		} else {
+			return 0;
+		}
+	},
 	get_interval: function(){
 		var last_num = this.using_stat.length - 1;
 		var bigdelay_turn = (!this.nobigdelay && last_num > 1  && (last_num  % this.big_delay_interval === 0));
@@ -53,29 +87,21 @@ funcs_queue.prototype = {
 
 		var _this = this;
 
-		var _ob = {
-			q: _this,
-			func: function(){
-				func();
-				_this.using_stat.push((new Date()).getTime());
-				this.done = true;
-				
-				var time = _this.get_interval();
-				if (time){
-					setTimeout(function(){
-						_this.next(queue_just_for_me);
-					}, time);
-				} else{
+		var _ob = new queueFunc(_this, function(){
+			func();
+			_this.using_stat.push((new Date()).getTime());
+			this.done = true;
+			
+			var time = _this.get_interval();
+			if (time){
+				setTimeout(function(){
 					_this.next(queue_just_for_me);
-				}
-				
-			},
-			abort: function(){
-				this.aborted = true;
+				}, time);
+			} else{
+				_this.next(queue_just_for_me);
 			}
 			
-		
-		};
+		});
 		queue_just_for_me.push(_ob);
 	
 		if (counter == 0 && !not_init) {

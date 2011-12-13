@@ -1,5 +1,5 @@
 (function(){
-	songsList = function(playlist_title, playlist_type, info, first_song){
+	songsList = function(playlist_title, playlist_type, info, first_song, findMp3, player){
 		this.info = info || {};
 		this.loading = true;
 		if (playlist_title){
@@ -8,7 +8,8 @@
 		if (playlist_type){
 			this.playlist_type = playlist_type;
 		}
-		
+		this.player = player;
+		this.findMp3 = findMp3;
 		this.findSongOwnPosition(first_song);
 		
 	};
@@ -16,7 +17,7 @@
 	var songs_list_methods = {
 		oldpush: songsList.prototype.push,
 		push: function(omo, view){
-			var mo = extendSong(omo);
+			var mo = extendSong(omo, this.player, this.findMp3);
 			mo.delayed_in = [];
 			mo.plst_titl = this;
 			if (view){
@@ -140,17 +141,17 @@
 					var from_collection = +new Date;
 					
 					
-					if (su.player.c_song && su.player.c_song.plst_titl == this){
+					if (this.player.c_song && this.player.c_song.plst_titl == this){
 						
 						var ordered = [];
 						var etc = [];
 						
-						ordered.push(su.player.c_song);
-						if (su.player.c_song.prev_song){
-							ordered.push(su.player.c_song.prev_song);
+						ordered.push(this.player.c_song);
+						if (this.player.c_song.prev_song){
+							ordered.push(this.player.c_song.prev_song);
 						}
-						if (su.player.c_song.next_song){
-							ordered.push(su.player.c_song.next_song);
+						if (this.player.c_song.next_song){
+							ordered.push(this.player.c_song.next_song);
 						}
 						
 						for (var i=0; i < this.length; i++) {
@@ -230,7 +231,7 @@
 			
 			for (var i=0; i < this.length; i++) {
 				if (artist_track.track == this[i].track && (will_ignore_artist || artist_track.artist == this[i].artist)){
-					su.mp3_search.find_mp3(this[i]);
+					this[i].findFiles()
 					viewSong(this[i], no_navi);
 					
 					return true;

@@ -9,7 +9,6 @@ var INIT     = -11,
 
 
 su.player = {
-	autostart: true,
 	player_volume 	: ( function(){
 		var volume_preference = suStore('vkplayer-volume');
 		if (volume_preference && (volume_preference != 'undefined') && volume_preference != 'NaN'){
@@ -18,21 +17,18 @@ su.player = {
 			return 80
 		}
 	  })(),
-	player_state 		: STOPPED,
-	current_playlist 	: null,
-	want_to_play		: 0,
-	wainter_for_play 	: null,
+	player_state: STOPPED,
 	current_external_playlist: null,
 	events 				: [],
 	current_song 		: null,
 	musicbox			: {
 	}, //music box is a link to module with playing methods, 
 		//for e.g. soundmanager2 and vkontakte flash player
-	call_event		: function	(event, data) {
+	call_event: function	(event, data) {
 	  var args = Array.prototype.slice.call(arguments);
 	  if(this.events[args.shift()]) this.events[event].apply(this,args);
 	},
-	set_state			:function (new_player_state_str) {
+	set_state:function (new_player_state_str) {
 	  var new_player_state =
 		(new_player_state_str == "play" ? PLAYED :
 		  (new_player_state_str == "stop" ? STOPPED : PAUSED)
@@ -59,80 +55,6 @@ su.player = {
 		  default:
 			//console.log('Do nothing');
 	  }
-	},
-	switch_to 	:function (direction) {
-	  if (this.c_song) {
-		var playlist = [];
-		for (var i=0; i < this.c_song.plst_titl.length; i++) {
-			var ts = this.c_song.plst_titl[i].song();
-			if (ts){
-				playlist.push(this.c_song.plst_titl[i]);
-			}
-		};
-		var current_number = playlist.indexOf(this.c_song),
-			total			= playlist.length || 0;
-			
-		if (playlist.length > 1) {
-			var s = false;
-			if (direction == 'next') {
-				if (current_number == (total-1)) {
-					s = playlist[0];
-				} else {
-					s = playlist[current_number+1];
-				}
-			} else
-			if (direction == 'prev') {
-				if ( current_number == 0) {
-					s = playlist[total-1];
-				} else {
-					s = playlist[current_number-1];
-				}
-			}
-			
-			if (s){
-				s.play();
-			}
-		}
-	  }
-	},
-	isPlaying: function(playlist, force){
-		
-		if (this.c_song){
-			var pl = this.c_song.plst_titl;
-			if (force || (pl.belongsToArtist())){
-				if (pl.compare(playlist)){
-					return pl;
-				}
-			}
-		}
-		
-	},
-	nowPlaying: function(mo){
-		if (!su.ui.now_playing.link || su.ui.now_playing.link[0].ownerDocument != su.ui.d){
-			if (su.ui.views.nav){
-				su.ui.now_playing.link = $('<a class="np"></a>').click(function(){
-					su.ui.views.show_now_playing(true);
-				}).appendTo(su.ui.views.nav.justhead);
-			}
-		}
-		if (su.ui.now_playing.link){
-			su.ui.now_playing.link.attr('title', (localize('now-playing','Now Playing') + ': ' + mo.artist + " - " + mo.track));	
-		}
-	},
-	changeNowPlaying: function(mo){
-		var last_mo = this.c_song;
-		if (last_mo != mo){
-			
-			if (last_mo && last_mo.state('active') && this.c_song != mo){
-				viewSong(mo);
-			}
-			if (last_mo){
-				last_mo.stop();
-			}
-			this.nowPlaying(mo);
-			mo.plst_titl.lev.freeze();
-			this.c_song = mo;
-		}
 	}
 };
 
@@ -203,7 +125,7 @@ su.player.events[FINISHED] = function() {
 		},50)
 	};
 	submit(su.player.c_song);
-	su.player.switch_to('next');
+	su.player.playNext(false, true);
 };
 su.player.events[VOLUME] = function(volume_value) {
 	change_volume(volume_value);
@@ -236,11 +158,6 @@ su.player.events.progress_playing = function(progress_value, total){
 		}
 		_c.tr_progress_p[0].style.width = current_in_pixels || current_in_percents;
 	}
-	
-	
-
-	
-	
 }
 
 su.player.events.progress_loading = function(progress_value, total){
@@ -300,7 +217,7 @@ su.player.song_click = function(mo) {
   if (!zoomed){
 	su.track_page('track zoom');
   }
-  su.mp3_search.find_mp3(mo);
+  mo.findFiles();
   viewSong(mo);	
   mo.play();
   
@@ -432,7 +349,7 @@ var sm2iframed = {
 			});
 			
 			suReady(function(){
-				$(document.body).append(_this.c);
+				//$(document.body).append(_this.c);
 			});
 			
 	
@@ -474,6 +391,7 @@ var sm2iframed = {
 
 var html_player_timer;
 (function(){
+	return
 	var a = document.createElement('audio');
 	var aw = document.createElement('object');
 		aw.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95";

@@ -1,3 +1,7 @@
+(function(){
+var counter = 0;
+baseSong = function(){};
+cloneObj(baseSong.prototype, new servModel());
 var song_methods = {
 	state_change: {
 		
@@ -7,7 +11,7 @@ var song_methods = {
 		return n || 'no title'
 	},
 	view: function(no_navi){
-		su.mp3_search.find_mp3(this);
+		this.findFiles();
 		viewSong(this, no_navi);	
 	},
 	findNeighbours: function(){
@@ -91,24 +95,18 @@ var song_methods = {
 	},
 	play: function(mopla){
 		if (this.isHaveTracks()){
-			delete this.want_to_play;
+			this.updateState('want_to_play', false);
 			mopla = mopla || this.song();
+			mopla = mopla.getSongFileModel(this.uid, this.player);
 
 			if (mopla && ((this.mopla != mopla) || !this.state('play'))){
 
 				if (this.mopla && this.mopla.stop){
 					this.mopla.stop();
 				}
-				su.player.changeNowPlaying(this);
-
-				if (mopla.play){
-					mopla.play();
-				} else{
-					if (su.player.musicbox.play_song_by_url){
-						su.player.musicbox.play_song_by_url(mopla.link);
-						
-					}
-				}
+				this.player.changeNowPlaying(this);
+				mopla.play();
+				
 				this.updateState('play', 'playing');
 				this.updateProp('mopla', mopla);
 				
@@ -161,6 +159,13 @@ var song_methods = {
 	wheneWasChanged: function(){
 		return (this.raw() && 1) || (this.sem && this.sem.changed || 1);
 	},
+	findFiles: function(opts){
+		if (this.mp3_search){
+			opts = opts || {};
+			opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this)
+			this.mp3_search.find_mp3(this, opts);
+		}
+	},
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
 		if (this.raw()){
 			this.updateState('playable', true);
@@ -170,8 +175,8 @@ var song_methods = {
 			if (this.isSearchCompleted()){
 				this.updateFilesSearchState(true)
 			}
-			su.mp3_search.find_mp3(this, {
-				only_cache: !full_allowing && !this.want_to_play,
+			this.findFiles({
+				only_cache: !full_allowing,
 				collect_for: from_collection,
 				last_in_collection: last_in_collection
 			});
@@ -183,69 +188,40 @@ var song_methods = {
 	updateFilesSearchState: function(complete, get_next){
 
 		var _this = this;
-		var have_tracks = this.isHaveTracks();
+
+		var opts = {
+			complete: complete,
+			have_tracks: this.isHaveTracks(), 
+			have_best_tracks: this.isHaveBestTracks()
+		}
 		if (complete){
 			this.updateState('searching-files', false);
-			if (have_tracks){
-				clearTimeout(this.cantwait);
-				
+			if (opts.have_tracks){
 				if (get_next){
-					if (su.player.c_song && !su.player.c_song.load_finished) {
-						if (this == su.player.c_song.next_song && su.player.musicbox.preloadSong){
-							su.player.musicbox.preloadSong(su.player.c_song.next_song.song().link);
+					if (this.player.c_song && !this.player.c_song.load_finished) {
+						if (this == this.player.c_song.next_song && this.player.musicbox.preloadSong){
+							this.player.musicbox.preloadSong(this.player.c_song.next_song.song().link);
 						} 
 					}
-				} else{
-					wantSong(this);
-				}
+				} 
 			} else{
-				
 				if (get_next){
-					if (su.player.c_song) {
-						if (this == su.player.c_song.next_song || this == su.player.c_song.prev_song || this == su.player.c_song.next_preload_song){
-							su.player.c_song.checkAndFixNeighbours();
+					if (this.player.c_song) {
+						if (this == this.player.c_song.next_song || this == this.player.c_song.prev_song || this == this.player.c_song.next_preload_song){
+							this.player.c_song.checkAndFixNeighbours();
 						}
-						if (su.player.c_song.next_preload_song){
-							get_next_track_with_priority(su.player.c_song.next_preload_song);
+						if (this.player.c_song.next_preload_song){
+							get_next_track_with_priority(this.player.c_song.next_preload_song);
 						}
 					}
 				}
 			}
-		} else if (this.isHaveBestTracks()){
-			clearTimeout(this.cantwait);
-			wantSong(this);
-		} else if (have_tracks){
-			this.cantwait = setTimeout(function(){
-				wantSong(_this);
-			},20000);
-		}
-		if (have_tracks){
-			su.ui.els.export_playlist.addClass('can-be-used');
-
+		} 
+		if (opts.have_tracks){
 			this.updateState('playable', true);
 		}
-
-		this.updateState('files_search', {
-			complete: complete, 
-			have_tracks: have_tracks, 
-			have_best_tracks: this.isHaveBestTracks()
-		});
-	},
-	render: function(from_collection, last_in_collection, complex){
-		
-		var pl = this.plst_titl;
-		this.playable_info = {
-			packsearch: from_collection,
-			last_in_collection: last_in_collection
-		};
-		if (pl && pl.ui && pl.ui.tracks_container){
-			var con = this.getC();
-			if (!con || con[0].ownerDocument != su.ui.d){
-				this.addView(new songUI(this, complex))
-				pl.appendSongUI(this);
-			}
-			
-		}
+		this.fire('files_search', opts);
+		this.updateState('files_search', opts);
 	},
 	song: function(){
 		if (this.raw()){
@@ -301,7 +277,7 @@ var song_methods = {
 		return !!this.raw() || !!this.sem && this.sem.isHaveAnyResultsFrom(source_name);
 	},
 	isNeedsAuth: function(service_name){
-		return !this.raw() && (su.mp3_search.isNoMasterOfSlave(service_name) || !su.mp3_search.haveSearch(service_name));
+		return !this.raw() && this.mp3_search && (this.mp3_search.isNoMasterOfSlave(service_name) || !this.mp3_search.haveSearch(service_name));
 	},
 	isHaveTracks: function(){
 		return !!this.raw() || !!this.sem && this.sem.have_tracks ;
@@ -311,9 +287,6 @@ var song_methods = {
 	},
 	isHaveBestTracks: function(){
 		return !!this.raw() || !!this.sem && this.sem.have_best;
-	},
-	getSongFileModel: function(file){
-			
 	},
 	die: function(){
 		if (this.ui){
@@ -327,33 +300,24 @@ var song_methods = {
 	},
 	valueOf:function(){
 		return (this.artist ? this.artist + ' - ' : '') + this.track;
-	}
-};
-
-(function(){
-	var counter = 0;
-	
-	song = function(omo){
-		this.init();
+	},
+	init: function(omo, player, mp3_search){
+		servModel.prototype.init.call(this);
+		this.mp3_search = mp3_search;
+		this.player = player;
 		this.states = {};
 		this.uid = ++counter;
 		cloneObj(this, omo, false, ['artist', 'track']);
 		this.omo = omo;
-	};
-	song.prototype = new servModel();
+	},
+	render: function(){
+		
+	}
+};
 
-	cloneObj(song.prototype, song_methods);
-	//song.prototype = song_methods;
+cloneObj(baseSong.prototype, song_methods);
 })();
 
 
 
-
-var extendSong = function(omo){
-	if (!(omo instanceof song)){
-		return new song(omo);
-	} else{
-		return omo;
-	}
-};
 

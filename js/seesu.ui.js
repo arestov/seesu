@@ -422,7 +422,7 @@ seesu_ui.prototype = {
 	//showArtistPlaylist: function(artist, pl, save_parents, no_navi, simple){
 	showArtistPlaylist: function(artist, pl, vopts){
 		vopts = vopts || {};
-		var cpl = su.player.isPlaying(pl);
+		var cpl = su.p.isPlaying(pl);
 		if (!cpl){
 			if (!vopts.from_artcard){
 				su.ui.views.showArtcardPage(artist, vopts.save_parents, true);
@@ -576,7 +576,7 @@ seesu_ui.prototype = {
 		
 		
 		var songitself = $('<a class="js-serv"></a>')
-			.attr('href', 'http://seesu.me/o#/ds' + song_methods.getURLPart(mopla))
+			.attr('href', 'http://seesu.me/o#/ds' + mo.getURLPart(mopla))
 			.text(mopla.artist + " - " + mopla.track)
 			.click(function(e){
 				mo.play(mopla);

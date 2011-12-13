@@ -495,10 +495,14 @@ var recoverPlaylistBranch = function(pldata, songdata, has_artcard){
 			su.ui.show_tag(pldata.tag_name, {no_navi: true, save_parents: true}, start_song);
 			break
 		case 'recommendations':
-			su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+			if (start_song){
+				su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+			}
 			break
 		case 'cplaylist':
-			su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+			if (start_song){
+				su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+			}
 			break
 		case 'chart':
 			if (start_song){
@@ -508,7 +512,9 @@ var recoverPlaylistBranch = function(pldata, songdata, has_artcard){
 			}
 			break
 		case 'loved':
-			su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+			if (start_song){
+				su.ui.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+			}
 			break
 		case 'directsearch':
 			su.ui.showTrackById({type: pldata.source, id: pldata.rawid}, {no_navi: true, save_parents: true});

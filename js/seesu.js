@@ -222,16 +222,14 @@ var make_external_playlist = function(){
 
 
 var get_next_track_with_priority = function(mo){
-	var _din = mo.delayed_in;
-	for (var i=0; i < _din.length; i++) {
-		_din[i].pr = seesu.player.want_to_play || 1;
-	}
-	su.mp3_search.find_mp3(mo, {
+	mo.findFiles({
 		get_next: true
 	});
+	var _din = mo.delayed_in;
+	for (var i=0; i < _din.length; i++) {
+		_din[i].setPrio('highest');
+	}
 }
-
-
 
 var random_track_plable = function(track_list){
 	var random_track_num = Math.floor(Math.random()*track_list.length);
@@ -244,8 +242,8 @@ var start_random_nice_track_search = function(mo, not_search_mp3, from_collectio
 		mo.updateState('loading', false, 'loadingChanged');
 		var some_track = random_track_plable(track_list);
 		mo.updateProp('track', some_track.track);
-		su.mp3_search.find_mp3(mo, {
-			only_cache: not_search_mp3 && !mo.want_to_play && (!su.player.c_song || su.player.c_song.next_preload_song != mo),
+		mo.findFiles({
+			only_cache: not_search_mp3,
 			collect_for: from_collection,
 			last_in_collection: last_in_collection
 		});
@@ -266,39 +264,107 @@ var make_tracklist_playable = function(pl, full_allowing){
 	}
 };
 
+su.mp3_search = new mp3Search(function(){
+	if (su.player){
+		if (su.player.c_song){
+			if (su.player.c_song.sem){
+				su.mp3_search.searchFor(su.player.c_song.sem.query);
+			}
+			
+			if (su.player.c_song.next_preload_song && su.player.c_song.next_preload_song.sem){
+				su.mp3_search.searchFor(su.player.c_song.next_preload_song.sem.query);
+			}
+		}
+		if (su.player.v_song && su.player.v_song != su.player.c_song ){
+			if (su.player.v_song.sem){
+				su.mp3_search.searchFor(su.player.v_song.sem.query);
+			}
+			
+		}
+	}
+});
 
+if (typeof soundcloud_search != 'undefined'){
+	(function(){
+		var sc_search_source = {name: 'soundcloud', key: 0};
+		su.mp3_search.add({
+			test: function(mo){
+				return canUseSearch(mo, sc_search_source);
+			},
+			getById: soundcloudGetById,
+			search: soundcloud_search,
+			name: sc_search_source.name,
+			description:'soundcloud.com',
+			slave: false,
+			s: sc_search_source,
+			preferred: null,
+			q: su.soundcloud_queue
+		})
+		
+		
+	})();
+	
+};
 
 function viewSong(mo, no_navi){
 	su.ui.views.show_track_page(mo, no_navi);
 }
 
 
-var wantSong = function(mo){
-	if (mo.want_to_play == seesu.player.want_to_play && su.player.wainter_for_play == mo) {
-		mo.play();
-	} 
+
+(function(){
+
+	song = function(omo, player, mp3_search){
+		this.constructor.prototype.init.call(this, omo, player, mp3_search);
+	};
+	cloneObj(song.prototype, new baseSong())
+	cloneObj(song.prototype, {
+		updateFilesSearchState: function(complete, get_next){
+			baseSong.prototype.updateFilesSearchState.apply(this, arguments);
+			if (this.isHaveTracks()){
+				su.ui.els.export_playlist.addClass('can-be-used');
+			}
+		},
+		render: function(from_collection, last_in_collection, complex){
+		
+			var pl = this.plst_titl;
+			this.playable_info = {
+				packsearch: from_collection,
+				last_in_collection: last_in_collection
+			};
+			if (pl && pl.ui && pl.ui.tracks_container){
+				var con = this.getC();
+				if (!con || con[0].ownerDocument != su.ui.d){
+					this.addView(new songUI(this, complex))
+					pl.appendSongUI(this);
+				}
+				
+			}
+		}
+	});
+	//song.prototype = song_methods;
+})();
+
+var extendSong = function(omo, player, mp3_search){
+	if (!(omo instanceof song)){
+		return new song(omo, player, mp3_search);
+	} else{
+		return omo;
+	}
 };
+
 
 var empty_song_click = function(){
 	var clicked_node = $(this);
 	
-	if (seesu.player.wainter_for_play && seesu.player.wainter_for_play.node) {
-		seesu.player.wainter_for_play.node.removeClass('marked-for-play');
-	}
-	var new_pr = ++seesu.player.want_to_play;
-	
-	var mo = clicked_node.addClass('marked-for-play').data('mo');
-	
-	mo.want_to_play = new_pr;
-	var delayed_in = mo.delayed_in;
-	for (var i=0; i < delayed_in.length; i++) {
-		delayed_in[i].pr = new_pr;
-	}
-	
-	seesu.player.wainter_for_play = mo;
+	var mo = clicked_node.data('mo');
+
+	su.player.wantSong(mo);
+
+
 	mo.plst_titl.lev.freeze()
 	
-	su.mp3_search.find_mp3(mo);
+	mo.findFiles();
 	viewSong(mo);
 	seesu.track_event('Song click', 'empty song');
 	return false;	
@@ -308,7 +374,7 @@ var empty_song_click = function(){
 
 
 var prepare_playlist = function(playlist_title, playlist_type, info, first_song){
-	var pl = new songsList(playlist_title, playlist_type, info, first_song);
+	var pl = new songsList(playlist_title, playlist_type, info, first_song, su.mp3_search, su.p);
 	return pl;
 };
 

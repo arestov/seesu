@@ -71,7 +71,10 @@ var test_pressed_node = function(e, opts){
 			seesu.track_event('Navigation', 'hint artist');
 			
 		  } else if (bN(class_list.indexOf('pc-pause'))){
-				seesu.player.set_state('pause');
+			  	var mo = clicked_node.data('mo');
+				if (mo){
+					mo.pause();
+				}
 				seesu.track_event('Controls', 'pause', mouseup ? 'mouseup' : '');
 				 
 			} 
@@ -82,17 +85,26 @@ var test_pressed_node = function(e, opts){
 				}
 			}
 			else if (bN(class_list.indexOf('pc-stop')) ){
-				seesu.player.set_state('stop');
+				var mo = clicked_node.data('mo');
+				if (mo){
+					mo.stop();
+				}
 				seesu.track_event('Controls', 'stop', mouseup ? 'mouseup' : '');
 				 
 			}
 			else if ( bN(class_list.indexOf('pc-prev'))){
-				if(seesu.player.c_song) {seesu.player.switch_to('prev');}
+				var mo = clicked_node.data('mo');
+				if (mo){
+					mo.playPrev();
+				}
 				seesu.track_event('Controls', 'prev', mouseup ? 'mouseup' : '');
 				
 			}
 			else if (bN(class_list.indexOf('pc-next'))){
-				if(seesu.player.c_song) {seesu.player.switch_to('next');}
+				var mo = clicked_node.data('mo');
+				if (mo){
+					mo.playNext();
+				}
 				seesu.track_event('Controls', 'next', mouseup ? 'mouseup' : '');
 				
 			} 

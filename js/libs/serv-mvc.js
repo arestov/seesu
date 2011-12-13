@@ -1,5 +1,7 @@
 var eemiter = function(){};
-eemiter.prototype = {
+
+cloneObj(eemiter.prototype, {
+	constructor: eemiter.prototype.constructor,
 	init: function(){
 		this.subscribes = {};
 	},
@@ -34,14 +36,13 @@ eemiter.prototype = {
 		}
 
 	}
-};
+});
 
 var servModel = function(){};
-
-servModel.prototype = new eemiter();
+cloneObj(servModel.prototype, new eemiter());
 cloneObj(servModel.prototype, {
 	init: function(){
-		this.constructor.prototype.init.call(this);
+		eemiter.prototype.init.call(this);
 		this.states = {};
 		this.views = [];
 	},
@@ -127,7 +128,7 @@ cloneObj(servModel.prototype, {
 
 
 var servView = function(){};
-servView.prototype = {
+cloneObj(servView.prototype, {
 	init: function(){
 		this.states = {};
 	},
@@ -169,4 +170,5 @@ servView.prototype = {
 	state_change: {
 		
 	}
-};
+});
+
