@@ -35,8 +35,9 @@ if (!o.nocache && !o.only_cache){
 		*/
 
 (function(){
-	var getSongFileModel = function(uid, player){
-		return this.models[uid] = this.models[uid] || (new songFileModel(this)).setPlayer(player);
+	var getSongFileModel = function(mo, player){
+
+		return this.models[mo.uid] = this.models[mo.uid] || (new songFileModel(this, mo)).setPlayer(player);
 	};
 
 	musicSeachEmitter = function(q, query, mp3Search){

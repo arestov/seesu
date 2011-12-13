@@ -1,14 +1,15 @@
 var eemiter = function(){};
-
 cloneObj(eemiter.prototype, {
-	constructor: eemiter.prototype.constructor,
+	constructor: eemiter,
 	init: function(){
 		this.subscribes = {};
 	},
 	on: function(name, cb){
 		if (!this.subscribes[name]){
-			this.subscribes[name].push(cb)
+			this.subscribes[name] = [];
 		}
+		this.subscribes[name].push(cb)
+		return this;
 	},
 	off: function(name, cb){
 		var cbs = this.subscribes[name];
@@ -23,6 +24,7 @@ cloneObj(eemiter.prototype, {
 				this.subscribes[name] = clean;
 			}
 		}
+		return this;
 	},
 	fire: function(){
 		var args = Array.prototype.slice.call(arguments);
@@ -34,13 +36,14 @@ cloneObj(eemiter.prototype, {
 				cbs[i].apply(null, args);
 			};
 		}
-
+		return this;
 	}
 });
 
 var servModel = function(){};
-cloneObj(servModel.prototype, new eemiter());
+servModel.prototype = new eemiter();
 cloneObj(servModel.prototype, {
+	constructor: servModel,
 	init: function(){
 		eemiter.prototype.init.call(this);
 		this.states = {};

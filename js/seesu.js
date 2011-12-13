@@ -196,10 +196,10 @@ external_playlist.prototype = {
 };
 
 var make_external_playlist = function(){
-	if (!seesu.player.c_song ){return false;}
+	if (!seesu.p.c_song ){return false;}
 	var simple_playlist = [];
-	for (var i=0; i < seesu.player.c_song.plst_titl.length; i++) {
-		var song = seesu.player.c_song.plst_titl[i].song();
+	for (var i=0; i < seesu.p.c_song.plst_titl.length; i++) {
+		var song = seesu.p.c_song.plst_titl[i].song();
 		if (song){
 			simple_playlist.push({
 				track_title: song.track,
@@ -213,23 +213,12 @@ var make_external_playlist = function(){
 	};
 	
 	if (simple_playlist.length){
-		seesu.player.current_external_playlist = new external_playlist(simple_playlist);
-		seesu.ui.els.export_playlist.attr('href', seesu.player.current_external_playlist.data_uri);
+		seesu.p.current_external_playlist = new external_playlist(simple_playlist);
+		seesu.ui.els.export_playlist.attr('href', seesu.p.current_external_playlist.data_uri);
 		
 	}
 };
 
-
-
-var get_next_track_with_priority = function(mo){
-	mo.findFiles({
-		get_next: true
-	});
-	var _din = mo.delayed_in;
-	for (var i=0; i < _din.length; i++) {
-		_din[i].setPrio('highest');
-	}
-}
 
 var random_track_plable = function(track_list){
 	var random_track_num = Math.floor(Math.random()*track_list.length);
@@ -265,19 +254,21 @@ var make_tracklist_playable = function(pl, full_allowing){
 };
 
 su.mp3_search = new mp3Search(function(){
-	if (su.player){
-		if (su.player.c_song){
-			if (su.player.c_song.sem){
-				su.mp3_search.searchFor(su.player.c_song.sem.query);
+	var player = su.p;
+	if (player){
+		if (player.c_song){
+			if (player.c_song.sem){
+				su.mp3_search.searchFor(player.c_song.sem.query);
 			}
 			
-			if (su.player.c_song.next_preload_song && su.player.c_song.next_preload_song.sem){
-				su.mp3_search.searchFor(su.player.c_song.next_preload_song.sem.query);
+			if (player.c_song.next_preload_song && player.c_song.next_preload_song.sem){
+				su.mp3_search.searchFor(player.c_song.next_preload_song.sem.query);
 			}
 		}
-		if (su.player.v_song && su.player.v_song != su.player.c_song ){
-			if (su.player.v_song.sem){
-				su.mp3_search.searchFor(su.player.v_song.sem.query);
+		//fixme
+		if (player.v_song && player.v_song != player.c_song ){
+			if (player.v_song.sem){
+				su.mp3_search.searchFor(player.v_song.sem.query);
 			}
 			
 		}
@@ -359,7 +350,7 @@ var empty_song_click = function(){
 	
 	var mo = clicked_node.data('mo');
 
-	su.player.wantSong(mo);
+	su.p.wantSong(mo);
 
 
 	mo.plst_titl.lev.freeze()

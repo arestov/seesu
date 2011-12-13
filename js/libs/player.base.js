@@ -1,9 +1,14 @@
 
 var playerBase = function(){};
+playerBase.prototype = new servModel();
+
 cloneObj(playerBase.prototype, {
+	constructor: playerBase,
 	global_volume: true,
 	init: function(volume){
-		this.songFiles = {};
+		servModel.prototype.init.call(this);
+		this.song_files = {};
+		this.attached = {};
 		this.volume = volume || 100;
 	},
 	setCore: function(core){
@@ -20,66 +25,86 @@ cloneObj(playerBase.prototype, {
 		this.core = core;
 		core.subscribe(this.subscriber);
 	},
-	fireCoreEvent: function(id, event_name, opts){
-		console.log(arguments);
+	fireCoreEvent: function(event_name, id, opts){
+		var song_file = this.song_files[id],
+			attached =  this.attached[id];
+
+			if (song_file && song_file.events && song_file.events[event_name]){
+				song_file.events[event_name].call(song_file, opts);
+			}
+
+			if (song_file && attached && this.events && this.events[event_name]){
+				this.events[event_name].call(this, {
+					song_file: song_file,
+					song_id: id,
+					opts: opts
+				});
+			}
+
+			this.fire(event_name, {
+				song_file: song_file,
+				song_id: id,
+				opts: opts
+			});
 	},
-	attachSong: function(songFile){
-		this.songFiles[songFile.uid] = songFile
+	attachSong: function(song_file){
+		this.song_files[song_file.uid] = song_file;
+		this.attached[song_file.uid] = true;
 	},
-	dettachSong: function(songFile){
-		delete this.songFiles[songFile.uid];
+	dettachSong: function(song_file){
+		delete this.attached[song_file.uid];
 	},
 
 
-	create: function(songFile){
-		if (songFile && this.core){
-			this.core.create(songFile.uid, {
-				url: songFile.link
+	create: function(song_file){
+		if (song_file && this.core){
+			this.core.create(song_file.uid, {
+				url: song_file.link
 			});
 		}
 	},
-	play: function(songFile){
-		if (songFile && this.core){
-			this.core.play(songFile.uid);
+	play: function(song_file){
+		if (song_file && this.core){
+			this.core.play(song_file.uid);
 			if (this.global_volume){
-				this.setVolume(songFile, this.volume);
+				this.setVolume(song_file, this.volume);
 			}
 			
 		}
 	},
-	stop: function(songFile){
-		if (songFile && this.core){
-			this.core.stop(songFile.uid);
+	stop: function(song_file){
+		if (song_file && this.core){
+			this.core.stop(song_file.uid);
 		}
 	},
-	pause: function(songFile){
-		if (songFile && this.core){
-			this.core.pause(songFile.uid);
+	pause: function(song_file){
+		if (song_file && this.core){
+			this.core.pause(song_file.uid);
 		}
 	},
-	setVolume: function(songFile, vol){
-		if (songFile && this.core){
-			this.core.setVolume(songFile.uid, vol)
+	setVolume: function(song_file, vol){
+		if (song_file && this.core){
+			this.core.setVolume(song_file.uid, vol)
 		}
 	},
-	setPosition: function(songFile, pos){
-		if (songFile && this.core){
-			this.core.setPosition(songFile.uid, pos);
+	setPosition: function(song_file, pos){
+		if (song_file && this.core){
+			this.core.setPosition(song_file.uid, pos);
 		}
 	},
-	load: function(songFile){
-		if (songFile && this.core){
-			this.core.load(songFile.uid);
+	load: function(song_file){
+		if (song_file && this.core){
+			this.core.load(song_file.uid);
 		}
 	},
-	unload: function(songFile){
-		if (songFile && this.core){
-			this.core.unload(songFile.uid);
+	unload: function(song_file){
+		if (song_file && this.core){
+			this.core.unload(song_file.uid);
 		}
 	},
-	remove: function(songFile){
-		if (songFile && this.core){
-			this.core.remove(songFile.uid);
+	remove: function(song_file){
+		if (song_file && this.core){
+			this.core.remove(song_file.uid);
 		}
 	}
 });

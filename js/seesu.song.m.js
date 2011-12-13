@@ -1,8 +1,9 @@
 (function(){
 var counter = 0;
 baseSong = function(){};
-cloneObj(baseSong.prototype, new servModel());
+baseSong.prototype = new servModel();
 var song_methods = {
+	constructor: baseSong,
 	state_change: {
 		
 	},
@@ -97,7 +98,7 @@ var song_methods = {
 		if (this.isHaveTracks()){
 			this.updateState('want_to_play', false);
 			mopla = mopla || this.song();
-			mopla = mopla.getSongFileModel(this.uid, this.player);
+			mopla = mopla.getSongFileModel(this, this.player);
 
 			if (mopla && ((this.mopla != mopla) || !this.state('play'))){
 
@@ -159,6 +160,36 @@ var song_methods = {
 	wheneWasChanged: function(){
 		return (this.raw() && 1) || (this.sem && this.sem.changed || 1);
 	},
+	waitToLoadNext: function(ready){
+		this.ready_to_preload = ready;
+		if (ready){
+			if (!this.waiting_to_load_next && this.player.c_song == this && this.next_song){
+				var next_song = this.next_song;
+				this.waiting_to_load_next = setTimeout(function(){
+					next_song.preloadSongFile();
+				}, 4000);
+			}
+		} else if (this.waiting_to_load_next){
+			clearTimeout(this.waiting_to_load_next);
+			delete this.waiting_to_load_next;
+		}
+	},
+	preloadSong: function(){
+		if (this.isHaveBestTracks() && this.isSearchCompleted()){
+			var mopla = this.song();
+			mopla = mopla.getSongFileModel(this, this.player);
+			mopla.load();
+		}
+	},
+	prefindFiles: function(){
+		this.findFiles({
+			get_next: true
+		});
+		var _din = this.delayed_in;
+		for (var i=0; i < _din.length; i++) {
+			_din[i].setPrio('highest');
+		}
+	},
 	findFiles: function(opts){
 		if (this.mp3_search){
 			opts = opts || {};
@@ -197,11 +228,9 @@ var song_methods = {
 		if (complete){
 			this.updateState('searching-files', false);
 			if (opts.have_tracks){
-				if (get_next){
-					if (this.player.c_song && !this.player.c_song.load_finished) {
-						if (this == this.player.c_song.next_song && this.player.musicbox.preloadSong){
-							this.player.musicbox.preloadSong(this.player.c_song.next_song.song().link);
-						} 
+				if (get_next && this.player.c_song){
+					if (this.player.c_song.ready_to_preload && (this == this.player.c_song.next_song)) {
+						this.preloadSongFile();
 					}
 				} 
 			} else{
@@ -211,7 +240,7 @@ var song_methods = {
 							this.player.c_song.checkAndFixNeighbours();
 						}
 						if (this.player.c_song.next_preload_song){
-							get_next_track_with_priority(this.player.c_song.next_preload_song);
+							this.player.c_song.next_preload_song.prefindFiles();
 						}
 					}
 				}
