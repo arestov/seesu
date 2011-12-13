@@ -33,6 +33,7 @@
 	"js/seesu.js",
 	"js/seesu.songs-list.js",
 	"js/seesu.song.m.js", 
+	"js/songFile.js", 
 	"js/seesu.mp3_search.js", 
 	"js/libs/search-investigation.js",
 	"js/libs/lastfm.search.js", 
