@@ -41,9 +41,13 @@ cloneObj(songControlsView.prototype, {
 	changeBar: function(bar, factor){
 		if (factor){
 			if (this.width){
-				bar[0].style.width = factor * this.width + 'px'
+				bar.animate({
+					width: factor * this.width + 'px'
+				}, 200);
 			} else {
-				bar[0].style.width = factor * 100 + '%'
+				bar.animate({
+					width: factor * 100 + '%'
+				}, 200);
 			}
 		} else {
 			bar[0].style.width = 0;
