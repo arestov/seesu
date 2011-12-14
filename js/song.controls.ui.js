@@ -27,7 +27,7 @@ cloneObj(songControlsView.prototype, {
 			this.changeBar(this.cplayng, factor);
 		},
 		'loading-progress': function(factor){
-			this.changeBar(this.cplayng, factor);
+			this.changeBar(this.cloading, factor);
 		}
 	},
 	prop_change: {
