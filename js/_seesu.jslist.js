@@ -33,7 +33,7 @@
 	"js/seesu.song.ui.js", 
 	"js/seesu.song.m.js", 
 	"js/seesu.js",
-	"js/libs/songs-list.js",
+	"js/prototypes/songs-list.js",
 	"js/seesu.songs-list.js",
 	"js/song.controls.ui.js",
 	"js/libs/songFile.js", 
