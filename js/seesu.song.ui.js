@@ -34,6 +34,8 @@ var createDownloadButton = function(mo){
 };
 
 
+
+
 var songUI = function(mo, complex){
 	this.init();
 	this.mo = mo;
@@ -110,12 +112,6 @@ cloneObj(songUI.prototype, {
 						.removeClass('search-mp3-failed')
 						.removeClass('waiting-full-render')
 						.removeClass('mp3-download-is-not-allowed')
-						.data('mo', this.mo)
-						.unbind()
-						.click(function(){
-							_this.mo.plst_titl.lev.freeze();
-							su.player.song_click(_this.mo);
-						});
 				}
 			}
 		},
@@ -204,9 +200,26 @@ cloneObj(songUI.prototype, {
 		this.updateSongContext(true);
 		this.c.addClass('viewing-song');
 	},
-	
-
-
+	createBase: function(){
+		var _this = this;
+		this.node = $("<a></a>")
+			.addClass('track-node waiting-full-render')
+			.data('mo', this.mo)
+			.click(function(){
+				var mo = _this.mo;
+				if (mo.player){
+					mo.player.wantSong(mo);
+				}
+				if (mo.plst_titl.lev){
+					mo.plst_titl.lev.freeze()
+				}
+				
+				mo.view();
+				return false;
+			});
+		this.titlec = $("<span></span>").text(this.mo.getFullName()).appendTo(this.node);
+		this.durationc = $('<a class="song-duration"></a>').prependTo(this.node);
+	},
 	expand: function(){
 		if (this.expanded){
 			return true
@@ -220,16 +233,8 @@ cloneObj(songUI.prototype, {
 		var tp = this.context.children('.track-panel');
 		
 		
+		this.createBase();
 		
-		this.node = $("<a></a>")
-			.data('mo', this.mo)
-			.data('t_context', this.context)
-			.addClass('track-node waiting-full-render')
-			.click(empty_song_click)
-			
-			
-		this.titlec = $("<span></span>").text(this.mo.getFullName()).appendTo(this.node);
-		this.durationc = $('<a class="song-duration"></a>').prependTo(this.node);
 		
 		
 		

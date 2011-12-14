@@ -11,10 +11,6 @@ var song_methods = {
 		var n = (this.artist || "") + ((this.artist && this.track) ?  ' - ' + this.track :  (this.track || ""))
 		return n || 'no title'
 	},
-	view: function(no_navi){
-		this.findFiles();
-		viewSong(this, no_navi);	
-	},
 	findNeighbours: function(){
 		//using for visual markering and determination of what to presearch
 		this.next_preload_song = false;

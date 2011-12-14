@@ -10,6 +10,9 @@ var songControlsView = function(){
 	var _this = this;
 	this.c.click(function(e){
 		var pos = getClickPosition(e, this);
+		if (!_this.width){
+			_this.fixWidth();
+		}
 		_this.song_file.setPositionByFactor(_this.width && ((pos/_this.width)));
 		//su.ui.hidePopups();
 		//e.stopPropagation();	
@@ -49,8 +52,11 @@ cloneObj(songControlsView.prototype, {
 			bar[0].style.width = 0;
 		}
 	},
+	fixWidth: function(){
+		this.width = this.c.width();
+	},
 	reset: function(){
 		this.cplayng[0].style.width = this.cloading[0].style.width = '0';
-		this.width = this.c.width();
+		this.fixWidth();
 	}
 });

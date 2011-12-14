@@ -111,8 +111,8 @@
 			
 			for (var i=0; i < this.length; i++) {
 				if (artist_track.track == this[i].track && (will_ignore_artist || artist_track.artist == this[i].artist)){
-					this[i].findFiles()
-					viewSong(this[i], no_navi);
+					this[i].findFiles();
+					this[i].view(no_navi);
 					return true;
 				}
 			};

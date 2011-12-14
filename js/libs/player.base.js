@@ -13,7 +13,7 @@ cloneObj(playerBase.prototype, {
 	},
 	setCore: function(core){
 		if (!this.subscriber){
-			_this = this;
+			var _this = this;
 			this.subscriber = function(){
 				_this.fireCoreEvent.apply(_this, arguments);
 			};

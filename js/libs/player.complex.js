@@ -58,21 +58,27 @@ cloneObj(playerComplex.prototype, {
 				delayed_in[i].setPrio('highest');
 			}
 
-			var filesSearch = function(opts){
-				if (_this.wanted_song == mo){
-					if (opts.complete || opts.have_best_tracks){
-						clearTimeout(mo.cantwait_toplay);
-						mo.play()
-					} else if (!mo.cantwait_toplay){
-						mo.cantwait_toplay = setTimeout(function(){
-							mo.play();
-						}, 20000);
+			var opts = mo.state('files_search');
+			if (opts && ((opts.complete && opts.have_tracks) || opts.have_best_tracks)){
+				mo.play();
+			} else {
+				var filesSearch = function(opts){
+					if (_this.wanted_song == mo){
+						if (opts.complete || opts.have_best_tracks){
+							clearTimeout(mo.cantwait_toplay);
+							mo.play()
+						} else if (!mo.cantwait_toplay){
+							mo.cantwait_toplay = setTimeout(function(){
+								mo.play();
+							}, 20000);
+						}
+					} else {
+						mo.off('files_search', filesSearch);
 					}
-				} else {
-					mo.off('files_search', filesSearch);
-				}
-			};
-			mo.on('files_search', filesSearch);
+				};
+				mo.on('files_search', filesSearch);
+			}
+			
 		}
 	},
 	isPlaying: function(playlist, force){
@@ -96,7 +102,7 @@ cloneObj(playerComplex.prototype, {
 			this.removeCurrentWantedSong();
 
 			if (last_mo && last_mo.state('active') && this.c_song != mo){
-				viewSong(mo);
+				mo.view()
 			}
 			if (last_mo){
 				last_mo.stop();

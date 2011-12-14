@@ -61,34 +61,6 @@ su.player = {
 
 
 
-// Click by song
-su.player.song_click = function(mo) {
-  var zoomed = !!su.ui.els.slider.className.match(/show-zoom-to-track/);
-  if (this.c_song){
-  	if (mo == this.c_song){
-		su.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
-	} else if (this.c_song.next_song && mo == this.c_song.next_song){
-		su.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
-	} else if (this.c_song.prev_song && mo == this.c_song.prev_song){
-		su.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
-	} else{
-		su.track_event('Song click', 'simple click');
-	}
-  } else{
-  	su.track_event('Song click', 'simple click');
-  }
-  
-  if (!zoomed){
-	su.track_page('track zoom');
-  }
-  mo.findFiles();
-  viewSong(mo);	
-  mo.play();
-  
-  return false;
-}
-
-
 var change_volume = function (volume_value){
   suStore('vkplayer-volume', volume_value, true);
   su.player.player_volume = volume_value;	

@@ -510,7 +510,6 @@ seesu_ui.prototype = {
 					} else{
 						pl_r.push(song, true);
 						pl_r.loadComplete();
-						//viewSong(song, true)
 					}
 					if (want_auth){
 						return true;

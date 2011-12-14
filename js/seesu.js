@@ -297,16 +297,37 @@ if (typeof soundcloud_search != 'undefined'){
 	
 };
 
-function viewSong(mo, no_navi){
-	su.ui.views.show_track_page(mo, no_navi);
-}
-
 
 
 (function(){
 
 	song = function(omo, player, mp3_search){
 		this.constructor.prototype.init.call(this, omo, player, mp3_search);
+		var _this = this;
+
+		this.on('view', function(){
+			if (_this.state('playable')){
+				var zoomed = !!su.ui.els.slider.className.match(/show-zoom-to-track/);
+				if (this.c_song){
+			 		if (mo == this.c_song){
+						su.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
+					} else if (this.c_song.next_song && mo == this.c_song.next_song){
+						su.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
+					} else if (this.c_song.prev_song && mo == this.c_song.prev_song){
+						su.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
+					} else{
+						su.track_event('Song click', 'simple click');
+					}
+				} else{
+			  		su.track_event('Song click', 'simple click');
+				}
+				if (!zoomed){
+					su.track_page('track zoom');
+				}
+			} else {
+				su.track_event('Song click', 'empty song');
+			}
+		});
 	};
 	cloneObj(song.prototype, new baseSong())
 	cloneObj(song.prototype, {
@@ -315,6 +336,11 @@ function viewSong(mo, no_navi){
 			if (this.isHaveTracks()){
 				su.ui.els.export_playlist.addClass('can-be-used');
 			}
+		},	
+		view: function(no_navi){
+			this.fire('view');
+			this.findFiles();
+			su.ui.views.show_track_page(this, no_navi);
 		}
 	});
 	//song.prototype = song_methods;
@@ -328,22 +354,6 @@ var extendSong = function(omo, player, mp3_search){
 	}
 };
 
-
-var empty_song_click = function(){
-	var clicked_node = $(this);
-	
-	var mo = clicked_node.data('mo');
-
-	su.p.wantSong(mo);
-
-
-	mo.plst_titl.lev.freeze()
-	
-	mo.findFiles();
-	viewSong(mo);
-	seesu.track_event('Song click', 'empty song');
-	return false;	
-};
 
 
 
