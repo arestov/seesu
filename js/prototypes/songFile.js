@@ -14,7 +14,10 @@
 	cloneObj(songFileModel.prototype, {
 		events: {
 			finish: function(opts){
-				
+				var mo = ((this == this.mo.mopla) && this.mo);
+				if (mo){
+					mo.updateState('play', false)
+				}
 			},
 			play: function(opts){
 				var mo = ((this == this.mo.mopla) && this.mo);

@@ -84,14 +84,15 @@ su.p
 	.on('finish', function(e){
 		var mo = e.song_file.mo;
 		
+		var duration = Math.round(mo.mopla.duration/1000);
 		if (lfm.scrobbling) {
-			lfm.submit(mo, mo.mopla.duration);
+			lfm.submit(mo, duration);
 		}
 		if (su.vk.id){
 			su.s.api('track.scrobble', {
 				client: su.env.app_type,
 				status: 'finished',
-				duration: mo.mopla.duration,
+				duration: duration,
 				artist: mo.artist,
 				title: mo.track,
 				timestamp: ((new Date()).getTime()/1000).toFixed(0)
@@ -100,14 +101,15 @@ su.p
 	})
 	.on('play', function(e){
 		var mo = e.song_file.mo;
+		var duration = Math.round(mo.mopla.duration/1000);
 		if (lfm.scrobbling) {
-			lfm.nowplay(mo, mo.mopla.duration);
+			lfm.nowplay(mo, duration);
 		}
 		if (su.vk.id){
 			su.s.api('track.scrobble', {
 				client: su.env.app_type,
 				status: 'playing',
-				duration: mo.mopla.duration,
+				duration: duration,
 				artist: mo.artist,
 				title: mo.track,
 				timestamp: ((new Date()).getTime()/1000).toFixed(0)
