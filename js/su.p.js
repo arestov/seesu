@@ -17,18 +17,23 @@ cloneObj(seesuPlayer.prototype, {
 		play: function(e){
 			if (this.c_song == e.song_file.mo){
 				this.playing();
-				this.c_song.next_preload_song.prefindFiles();
+				if (this.c_song.next_preload_song){
+					this.c_song.next_preload_song.prefindFiles();
+				}
+				this.changeAppMode(true)
 				//su.player.preload_song();
 			}
 		},
 		pause: function(e){
 			if (this.c_song == e.song_file.mo){
 				this.notPlaying();
+				this.changeAppMode()
 			}
 		},
 		stop: function(e){
 			if (this.c_song == e.song_file.mo){
 				this.notPlaying();
+				this.changeAppMode()
 			}
 		},
 		playing: function(e){
@@ -36,10 +41,28 @@ cloneObj(seesuPlayer.prototype, {
 		}
 	},
 	notPlaying: function(){
-		su.ui.mark_c_node_as
+
+		su.ui.mark_c_node_as();
 	},
 	playing: function(){
-		su.ui.mark_c_node_as
+		su.ui.mark_c_node_as('play')
+	},
+	changeAppMode: function(playing){
+		if (playing){
+			if (app_env.pokki_app){
+				pokki.setIdleDetect('popup', false);
+			}
+			if (window.btapp){
+				btapp.properties.set('background', true);
+			}
+		} else{
+			if (app_env.pokki_app){
+				pokki.setIdleDetect('popup', true);
+			}
+			if (window.btapp){
+				btapp.properties.set('background', false);
+			}
+		}
 	},
 	nowPlaying: function(mo){
 		if (!su.ui.now_playing.link || su.ui.now_playing.link[0].ownerDocument != su.ui.d){

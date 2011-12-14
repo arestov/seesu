@@ -15,7 +15,7 @@ var make_sc_song = function(cursor, sc_key){
 		var entity = {
 			artist  	: HTMLDecode(artist),
 			track		: HTMLDecode(track_title),
-			duration	: Math.round(cursor.duration/1000),
+			duration	: cursor.duration,
 			link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + sc_key,
 			from		: 'soundcloud',
 			real_title	: cursor.title,

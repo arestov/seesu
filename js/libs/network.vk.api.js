@@ -458,7 +458,7 @@ vk_api.prototype = {
 		if (cursor && cursor.url){
 			return {
 				artist	: HTMLDecode(cursor.artist ? cursor.artist : cursor.audio.artist),
-				duration	: cursor.duration ? cursor.duration : vksong.audio.duration,
+				duration	: parseFloat(cursor.duration ? cursor.duration : cursor.audio.duration) * 1000,
 				link		: cursor.url ? cursor.url : cursor.audio.url,
 				track		: HTMLDecode(cursor.title ? cursor.title : cursor.audio.title),
 				from		: 'vk',

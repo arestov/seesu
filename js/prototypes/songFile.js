@@ -19,12 +19,12 @@
 			play: function(opts){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
+					mo.updateState('play', 'play')
 					if (!mo.start_time){
 						//fixme
 						mo.start_time = ((new Date()).getTime()/1000).toFixed(0);
 					}
 				}
-				
 			},
 			playing: function(opts){
 				var dec = opts.position/opts.duration;
@@ -40,16 +40,17 @@
 				if (mo){
 					mo.waitToLoadNext(dec > 0.8);
 				}
-
-				
-				
 			},
 			pause: function(opts){
-				
+				var mo = ((this == this.mo.mopla) && this.mo);
+				if (mo){
+					mo.updateState('play', 'pause')
+				}
 			},
 			stop: function(opts){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
+					mo.updateState('play', false)
 					delete mo.start_time;
 				}
 			}

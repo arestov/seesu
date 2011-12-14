@@ -1073,36 +1073,20 @@ seesu_ui.prototype = {
 		s.each(function(i, el){
 			$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
 		});
-		if (marker == PLAYED){
-			if (app_env.pokki_app){
-				pokki.setIdleDetect('popup', false);
-			}
-			if (window.btapp){
-				btapp.properties.set('background', true);
-			}
-		} else{
-			if (app_env.pokki_app){
-				pokki.setIdleDetect('popup', true);
-			}
-			if (window.btapp){
-				btapp.properties.set('background', false);
-			}
-		}
-
 		switch(marker) {
-		  case(PLAYED):
+		  case('play'):
 			s.addClass('player-played');
 			break;
-		  case(STOPPED):
+		  case('stop'):
 			s.addClass('player-stopped');
 			break;    
-		  case(PAUSED):
+		  case('pause'):
 			s.addClass('player-paused');
 			break;
 		  default:
 			//console.log('Do nothing');
 		}
-		if (marker == PLAYED){
+		if (marker == 'play'){
 			this.changeFavicon('playing')
 		} else {
 			this.changeFavicon('usual');

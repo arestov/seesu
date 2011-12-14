@@ -86,6 +86,9 @@ cloneObj(playerBase.prototype, {
 		if (song_file && this.core){
 			this.core.setVolume(song_file.uid, vol)
 		}
+		if (this.global_volume){
+			this.volume = vol;
+		}
 	},
 	setPosition: function(song_file, pos){
 		if (song_file && this.core){

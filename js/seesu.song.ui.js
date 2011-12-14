@@ -143,7 +143,7 @@ cloneObj(songUI.prototype, {
 				this.soco_view.change(true, 'desc', mopla.description || '');
 			}
 			this.soco_view.song_file = mopla;
-			var duration = mopla.duration;
+			var duration = mopla.duration/1000;
 			var du = this.durationc;
 			
 			if (duration){
@@ -365,9 +365,10 @@ cloneObj(songUI.prototype, {
 		var ph  = $('<div class="player-holder"></div>');
 		var volume_state = $('<div class="volume-state"></div>').click(function(e){
 			var pos = getClickPosition(e, this);
-			seesu.player.musicbox.changhe_volume( pos/50 * 100);
-			seesu.player.call_event(VOLUME,  pos/50 * 100);
-			(sui.els.volume_s.sheet.cssRules || sui.els.volume_s.sheet.rules)[0].style.width = pos + 'px';
+			_this.mo.setVolume((pos/50) * 100);
+			var volumeSheet = su.ui.els.volume_s && su.ui.els.volume_s.sheet;
+			(volumeSheet.cssRules || volumeSheet.sheet.rules)[0].style.width = pos + 'px';
+			
 		}).appendTo(ph);;
 		$('<div class="volume-state-position"></div>').appendTo(volume_state);
 

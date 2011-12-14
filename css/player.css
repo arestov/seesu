@@ -93,12 +93,6 @@ a.download-mp3:hover{
 		color: #fff;
 	}
 
-	.player-stopped
-	.playing-song
-	a.song{
-		outline:1px solid #647142;
-	}
-
 
 .track-zoomin,
 .track-zoomout{

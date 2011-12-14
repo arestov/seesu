@@ -69,15 +69,20 @@ var song_methods = {
 
 		
 	},
+	setVolume: function(vol){
+		if (this.mopla && this.mopla.setVolume){
+			this.mopla.setVolume(vol);
+		}	
+	},
 	stop: function(){
 		if (this.mopla && this.mopla.stop){
 			this.mopla.stop();
 		}
-		this.updateState('play', false);
+		//this.updateState('play', false);
 	},
 	switchPlay: function(){
 		if (this.state('play')){
-			if (this.state('play') == 'playing'){
+			if (this.state('play') == 'play'){
 				this.pause();
 			} else {
 				this.play();
@@ -87,11 +92,16 @@ var song_methods = {
 		}
 	},
 	pause: function(){
-		this.updateState('play', 'paused');
+		if (this.mopla && this.mopla.pause){
+			this.mopla.pause();
+		}
+		//this.updateState('play', 'paused');
 		
 	},
 	play: function(mopla){
-		if (this.isHaveTracks()){
+		if (!mopla && this.mopla && this.state('play') == 'pause'){
+			this.mopla.play();
+		} else if (this.isHaveTracks()){
 			this.updateState('want_to_play', false);
 			mopla = mopla || this.song();
 			mopla = mopla.getSongFileModel(this, this.player);
@@ -104,7 +114,7 @@ var song_methods = {
 				this.player.changeNowPlaying(this);
 				mopla.play();
 				
-				this.updateState('play', 'playing');
+				//this.updateState('play', 'play');
 				this.updateProp('mopla', mopla);
 				
 			}
