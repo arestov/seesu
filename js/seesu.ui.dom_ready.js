@@ -495,49 +495,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 
 	
 	
-	seesu.player.controls = (function(volume){
-		var o = {};
-		var get_click_position = function(e, node){
-			//e.offsetX || 
-			var pos = e.pageX - $(node).offset().left;
-			return pos
-		}
-		o.track_progress_total = $('<div class="track-progress"></div>',d).click(function(e){
-				
-			var ui = $(this).data('mo').getView();
-			if (ui && ui.ct){
-				var pos = get_click_position(e, this);
-				var new_play_position_factor = pos/ui.ct.track_progress_width;
-				seesu.player.musicbox.set_new_position(new_play_position_factor);
-			}
-		
-			
-			//su.ui.hidePopups();
-			//e.stopPropagation();
-			
-			
-		})
-		
-		o.track_progress_load = $('<div class="track-load-progress"></div>',d).appendTo(o.track_progress_total);
-		o.track_progress_play = $('<div class="track-play-progress"></div>',d).appendTo(o.track_progress_total);
-		o.track_node_text = $('<span class="track-node-text"></span>',d).appendTo(o.track_progress_total);
-		
-		
-		o.volume_state = $('<div class="volume-state"></div>',d).click(function(e){
-			var pos = get_click_position(e, this);
-			seesu.player.musicbox.changhe_volume( pos/50 * 100);
-			seesu.player.call_event(VOLUME,  pos/50 * 100);
-			(sui.els.volume_s.sheet.cssRules || sui.els.volume_s.sheet.rules)[0].style.width = pos + 'px';
-		})
-		o.volume_state_position = $('<div class="volume-state-position"></div>',d)
-			.appendTo(o.volume_state);
-			
-		o.ph = $('<div class="player-holder"></div>',d)
-			.prepend(o.track_progress_total)
-			.prepend(o.volume_state);
-			
-		return o;
-	})(seesu.player.player_volume);
+
 	domReady(d, function() {
 		console.log('dom ready')
 		d.head = d.head || d.getElementsByTagName('head')[0];

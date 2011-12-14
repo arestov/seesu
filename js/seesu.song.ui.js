@@ -46,6 +46,7 @@ var songUI = function(mo, complex){
 songUI.prototype = new servView();
 
 cloneObj(songUI.prototype, {
+	constructor: songUI,
 	state_change : {
 		want_to_play: function(state, oldstate){
 			if (state){
@@ -133,7 +134,19 @@ cloneObj(songUI.prototype, {
 		track: function(title){
 			this.titlec.text(this.mo.getFullName());
 		},
-		mopla: function(mopla){
+		mopla: function(mopla, old){
+			if (old){
+				old.removeView(this.soco_view);
+			}
+			if (mopla){
+				mopla.addView(this.soco_view);
+
+				this.soco_view.setStates(mopla.states);
+				var filename = mopla.artist + ' - ' +  mopla.track;
+				this.soco_view.change(true, 'title', mopla.from + ": " + filename)
+				this.soco_view.change(true, 'desc', mopla.description || '');
+			}
+			this.soco_view.song_file = mopla;
 			var duration = mopla.duration;
 			var du = this.durationc;
 			
@@ -145,27 +158,13 @@ cloneObj(songUI.prototype, {
 				du.text('');
 			}
 			
-			var filename = mopla.artist + ' - ' +  mopla.track;
-			
-			this.mopla_title.text(mopla.from + ": " + filename);
-			this.mopla_title.attr('title', mopla.description || '');
-			
 			
 		}
 	},
 	markAsPlaying: function(){
 		this.node.parent().addClass('playing-song');
-		this.fixProgressBar();
-	},
-	fixProgressBar: function(){
-		if (this.ct && this.ct.tr_progress_t){
-			this.ct.tr_progress_p[0].style.width = this.ct.tr_progress_l[0].style.width = '0';
-			this.ct.track_progress_width = this.ct.tr_progress_t.width();
-		
-		}
 	},
 	unmarkAsPlaying: function(){
-		this.fixProgressBar();
 		this.node.parent().removeClass('playing-song');
 	},
 	unmark: function(){
@@ -360,24 +359,26 @@ cloneObj(songUI.prototype, {
 			users_context: users_context
 		};
 		this.files_time_stamp = 0;
-	
-		
-		
-		
-		
-		
-		
-		var ph = seesu.player.controls.ph.clone(true);
-		var tpt = ph.children('.track-progress').data('mo', this.mo);
-		this.mopla_title =  tpt.find('.track-node-text');
-		this.ct = {
-			tr_progress_t: tpt,
-			tr_progress_l: tpt.children('.track-load-progress'),
-			tr_progress_p: tpt.children('.track-play-progress')
+
+
+		var getClickPosition = function(e, node){
+			//e.offsetX || 
+			var pos = e.pageX - $(node).offset().left;
+			return pos;
 		};
-		
+
+		var ph  = $('<div class="player-holder"></div>');
+		var volume_state = $('<div class="volume-state"></div>').click(function(e){
+			var pos = getClickPosition(e, this);
+			seesu.player.musicbox.changhe_volume( pos/50 * 100);
+			seesu.player.call_event(VOLUME,  pos/50 * 100);
+			(sui.els.volume_s.sheet.cssRules || sui.els.volume_s.sheet.rules)[0].style.width = pos + 'px';
+		}).appendTo(ph);;
+		$('<div class="volume-state-position"></div>').appendTo(volume_state);
+
+		this.soco_view = new songControlsView();
+		ph.append(this.soco_view.getC());
 		ph.prependTo(tp);
-		
 		this.c
 			.append(buttmen)
 			.append(this.node)

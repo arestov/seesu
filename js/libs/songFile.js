@@ -8,7 +8,7 @@
 				this[a] = file[a];
 			}
 		}
-		this.uid = counter++;
+		this.uid = 'song-file-' + counter++;
 	};
 	songFileModel.prototype = new servModel();
 	cloneObj(songFileModel.prototype, {
@@ -27,11 +27,12 @@
 				
 			},
 			playing: function(opts){
-				var dec = opts.total/opts.duration;
+				var dec = opts.position/opts.duration;
 				this.updateState('playing-progress', dec);
+				this.updateProp('duration', opts.duration);
 			},
 			loading: function(opts){
-				var dec = opts.total/opts.duration;
+				var dec = opts.loaded/opts.total;
 				this.updateState('loading-progress', dec);
 
 				
@@ -88,6 +89,9 @@
 			if (this.player){
 				this.player.setVolume(this, vol);
 			}
+		},
+		setPositionByFactor: function(fac){
+			this.setPosition(this.duration * fac);
 		},
 		setPosition: function(pos){
 			if (this.player){

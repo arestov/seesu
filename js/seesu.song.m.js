@@ -174,7 +174,7 @@ var song_methods = {
 			delete this.waiting_to_load_next;
 		}
 	},
-	preloadSong: function(){
+	preloadSongFile: function(){
 		if (this.isHaveBestTracks() && this.isSearchCompleted()){
 			var mopla = this.song();
 			mopla = mopla.getSongFileModel(this, this.player);
