@@ -669,7 +669,7 @@ cloneObj(mp3Search.prototype, {
 			if (!mo.handled){
 				sem.addSong(mo, !!options && options.get_next);
 				mo.handled = true;
-			} 
+			}
 			var force_changed;
 			if (!mo.was_forced){
 				if (!options || !options.only_cache){

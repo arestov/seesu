@@ -38,7 +38,7 @@ var songUI = function(mo, complex){
 	this.init();
 	this.mo = mo;
 	this.c = $('<li></li>').data('mo', mo);
-	if (!complex){
+	if (complex){
 		this.expand();
 	}
 	this.states = {};
@@ -200,6 +200,7 @@ cloneObj(songUI.prototype, {
 		su.ui.hidePopups();
 	},
 	activate: function(opts){
+		this.expand();
 		this.updateSongContext(true);
 		this.c.addClass('viewing-song');
 	},
@@ -266,22 +267,13 @@ cloneObj(songUI.prototype, {
 				song_context.hide();
 			}
 		});
-		
-		
-		
-		
-		
-		
-		
+
 		this.tidominator = this.context.children('.track-info-dominator');
 		var dominator_head = this.tidominator.children('.dominator-head');
 		this.a_info = this.tidominator.children('.artist-info');
 		this.t_info = this.tidominator.children('.track-info');
 		this.tv		= this.t_info.children('.track-video')
-		
-		
-		
-		
+
 		var pl = this.mo.plst_titl,
 			pl_type = pl.playlist_type;
 			
@@ -294,8 +286,6 @@ cloneObj(songUI.prototype, {
 					su.track_event('Artist navigation', 'art card', _this.mo.artist);
 				});
 		}
-		
-		
 		
 		var users = this.context.children('.track-listeners');
 		var users_list = users.children('.song-listeners-list');

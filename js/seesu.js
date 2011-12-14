@@ -315,22 +315,6 @@ function viewSong(mo, no_navi){
 			if (this.isHaveTracks()){
 				su.ui.els.export_playlist.addClass('can-be-used');
 			}
-		},
-		render: function(from_collection, last_in_collection, complex){
-		
-			var pl = this.plst_titl;
-			this.playable_info = {
-				packsearch: from_collection,
-				last_in_collection: last_in_collection
-			};
-			if (pl && pl.ui && pl.ui.tracks_container){
-				var con = this.getC();
-				if (!con || con[0].ownerDocument != su.ui.d){
-					this.addView(new songUI(this, complex))
-					pl.appendSongUI(this);
-				}
-				
-			}
 		}
 	});
 	//song.prototype = song_methods;
@@ -371,13 +355,13 @@ var prepare_playlist = function(playlist_title, playlist_type, info, first_song)
 
 var create_playlist =  function(pl, pl_r, not_clear){
 	if (!pl){
-		return pl_r.render_playlist(true);
+		return pl_r.loadComplete(true);
 	} else{
 		
 		for (var i=0, l = pl.length; i < l; i++) {
 			pl_r.push(pl[i]);
 		}
-		return pl_r.render_playlist( true);
+		return pl_r.loadComplete();
 		
 	}
 	
@@ -423,7 +407,7 @@ var proxy_render_artists_tracks = function(artist_list, pl_r){
 	
 };
 var render_loved = function(user_name){
-	var pl_r = prepare_playlist(localize('loved-tracks'), 'artists by loved');
+	var pl_r = prepare_playlist(localize('loved-tracks'), 'artists by loved').loading();
 	lfm.get('user.getLovedTracks',{user: (user_name || lfm.user_name), limit: 30})
 		.done(function(r){
 			var tracks = r.lovedtracks.track || false;
@@ -438,7 +422,7 @@ var render_loved = function(user_name){
 	seesu.ui.views.show_playlist_page(pl_r);
 };
 var render_recommendations_by_username = function(username){
-	var pl_r = prepare_playlist('Recommendations for ' +  username, 'artists by recommendations')
+	var pl_r = prepare_playlist('Recommendations for ' +  username, 'artists by recommendations').loading()
 	$.ajax({
 		url: 'http://ws.audioscrobbler.com/1.0/user/' + username + '/systemrecs.rss',
 		  global: false,
@@ -462,7 +446,7 @@ var render_recommendations_by_username = function(username){
 	seesu.ui.views.show_playlist_page(pl_r);
 };
 var render_recommendations = function(){
-	var pl_r = prepare_playlist('Recommendations for you', 'artists by recommendations');
+	var pl_r = prepare_playlist('Recommendations for you', 'artists by recommendations').loading();
 	lfm.get('user.getRecommendedArtists', {sk: lfm.sk}, {nocache: true})
 		.done(function(r){
 			var artists = r.recommendations.artist;

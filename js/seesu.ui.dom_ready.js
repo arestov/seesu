@@ -301,7 +301,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 					if (r && r.toptracks && r.toptracks.track){
 						_cmetro.empty()
 						
-						var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name});
+						var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name}).loading();
 						
 						var metro_tracks = r.toptracks.track;
 						var _header =  $('<h3></h3>').appendTo(_cmetro)
@@ -553,7 +553,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 			scrolling_viewport: su.env.as_application ? {node:$('#screens',d)} : {node: $(d.body), offset: true},
 			make_trs: $("#make-trs-plable",d).click(function(){
 				
-				var pl = su.player && su.player.c_song && su.player.c_song.plst_titl;
+				var pl = su.player && su.p.c_song && su.p.c_song.plst_titl;
 				if (pl){
 					make_tracklist_playable(pl, true);
 					seesu.track_event('Controls', 'make playable all tracks in playlist'); 
@@ -684,13 +684,13 @@ window.connect_dom_to_som = function(d, sui, callback){
 		sui.els.search_input.bind('keyup change', input_change);
 	
 		var state_recovered;	
-		if (window.su && su.player && su.player.c_song){
-			if (su.player.c_song && su.player.c_song.plst_titl){
+		if (window.su && su.player && su.p.c_song){
+			if (su.p.c_song && su.p.c_song.plst_titl){
 				sui.views.m.restoreFreezed();
-				su.ui.views.show_track_page(su.player.c_song, true);
+				su.ui.views.show_track_page(su.p.c_song, true);
 				
 				sui.mark_c_node_as(su.player.player_state);
-				su.player.nowPlaying(su.player.c_song);
+				su.player.nowPlaying(su.p.c_song);
 				state_recovered = true;
 			}
 		}

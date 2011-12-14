@@ -236,7 +236,7 @@ var song_methods = {
 			} else{
 				if (get_next){
 					if (this.player.c_song) {
-						if (this == this.player.c_song.next_song || this == this.player.c_song.prev_song || this == this.player.c_song.next_preload_song){
+						if (this.player.c_song.isNeighbour(this) || this == this.player.c_song.next_preload_song){
 							this.player.c_song.checkAndFixNeighbours();
 						}
 						if (this.player.c_song.next_preload_song){
@@ -330,6 +330,9 @@ var song_methods = {
 	valueOf:function(){
 		return (this.artist ? this.artist + ' - ' : '') + this.track;
 	},
+	isNeighbour: function(mo){
+		return (mo == this.prev_song) || (mo == this.next_song);
+	},
 	init: function(omo, player, mp3_search){
 		servModel.prototype.init.call(this);
 		this.mp3_search = mp3_search;
@@ -339,8 +342,15 @@ var song_methods = {
 		cloneObj(this, omo, false, ['artist', 'track']);
 		this.omo = omo;
 	},
-	render: function(){
-		
+	setPlayableInfo: function(info){
+		this.playable_info = info;
+		return this;
+	},
+	render: function(complex){
+		var v = this.getView();
+		if (!v){
+			this.addView(new songUI(this, complex));
+		}
 	}
 };
 

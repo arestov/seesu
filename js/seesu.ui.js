@@ -370,7 +370,7 @@ seesu_ui.prototype = {
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', {tag: tag}, start_song);
+		var pl_r = prepare_playlist('Tag: ' + tag, 'artists by tag', {tag: tag}, start_song).loading();
 		get_artists_by_tag(tag, function(pl){
 			proxy_render_artists_tracks(pl, pl_r);
 		}, function(){
@@ -392,7 +392,7 @@ seesu_ui.prototype = {
 			title = 'unknow';
 		}
 		
-		var pl_r = prepare_playlist(title , 'tracks', {query: q} , title)
+		var pl_r = prepare_playlist(title , 'tracks', {query: q} , title).loading();
 		this.views.show_playlist_page(pl_r, !!q);
 		su.mp3_search.find_files(q, false, function(err, pl, c, complete){
 			if (complete){
@@ -450,7 +450,7 @@ seesu_ui.prototype = {
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		var pl = prepare_playlist('(' + artist + ') ' + name, 'album', {artist: original_artist || artist, album: name}, start_song);
+		var pl = prepare_playlist('(' + artist + ') ' + name, 'album', {artist: original_artist || artist, album: name}, start_song).loading();
 	
 		var recovered = this.showArtistPlaylist(original_artist || artist, pl, vopts);
 		
@@ -475,7 +475,7 @@ seesu_ui.prototype = {
 		
 		
 		
-		var pl = prepare_playlist('Top of ' + artist, 'artist', {artist: artist}, start_song);
+		var pl = prepare_playlist('Top of ' + artist, 'artist', {artist: artist}, start_song).loading();
 		
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		
@@ -499,18 +499,17 @@ seesu_ui.prototype = {
 					if (!song){
 						if (want_auth){
 							if (sub_raw.type == 'vk'){
-								pl_r.ui.ready();
-								pl_r.ui.tracks_container.prepend($('<li></li>').append(su.ui.samples.vk_login.clone()));
+								pl_r.loadComplete('vk_auth');
 							} else{
-								pl_r.render_playlist(true);							
+								pl_r.loadComplete(true);							
 							}
 						} else {
-							pl_r.render_playlist(true);
+							pl_r.loadComplete(true);
 
 						}
 					} else{
 						pl_r.push(song, true);
-						pl_r.render_playlist(true);
+						pl_r.loadComplete();
 						//viewSong(song, true)
 					}
 					if (want_auth){
@@ -519,7 +518,7 @@ seesu_ui.prototype = {
 					console.log(song)
 				} 
 			}, function(){
-				return !!pl_r.ui;
+				return !!pl_r.getC();
 			}, function(){
 
 			})
@@ -529,7 +528,7 @@ seesu_ui.prototype = {
 	},
 	showMetroChart: function(country, metro, vopts){
 		vopts = vopts || {};
-		var plr = prepare_playlist('Chart of ' + metro, 'chart', {country: country, metro: metro});
+		var plr = prepare_playlist('Chart of ' + metro, 'chart', {country: country, metro: metro}).loading();
 
 		lfm.get('geo.getMetroUniqueTrackChart', {country: country, metro: metro, start: new Date - 60*60*24*7})
 			.done(function(r){
@@ -541,8 +540,12 @@ seesu_ui.prototype = {
 						var _trm = metro_tracks[i];
 						plr.push({artist: _trm.artist.name, track: _trm.name});
 					};
+					pl_r.loadComplete(metro_tracks.length);
+				} else {
+					pl_r.loadComplete(true);
 				}
-				pl_r.render_playlist(true);
+
+				
 			});
 		this.views.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
 	},
@@ -551,7 +554,7 @@ seesu_ui.prototype = {
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		var pl = prepare_playlist('Similar to «' + artist + '» artists', 'similar artists', {artist: artist}, start_song);
+		var pl = prepare_playlist('Similar to «' + artist + '» artists', 'similar artists', {artist: artist}, start_song).loading();
 		//this.views.show_playlist_page(pl, false, no_navi || !!start_song);
 		
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);

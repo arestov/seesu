@@ -128,6 +128,7 @@ cloneObj(servView.prototype, {
 	},
 	die: function(){
 		this.dead = true;
+		return this;
 	},
 	setModel: function(mdl, puppet_model){
 		this.mdl = mdl;
@@ -138,6 +139,9 @@ cloneObj(servView.prototype, {
 	},
 	getC: function(){
 		return this.c;	
+	},
+	setC: function(c){
+		this.c = c;
 	},
 	setStates: function(states){
 		if (this.reset){

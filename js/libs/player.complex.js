@@ -77,12 +77,17 @@ cloneObj(playerComplex.prototype, {
 	},
 	isPlaying: function(playlist, force){
 		if (this.c_song){
-			var pl = this.c_song.plst_titl;
-			if (force || (pl.belongsToArtist())){
-				if (pl.compare(playlist)){
+			var pl = this.c_song && this.c_song.plst_titl;
+			if (pl){
+				if (playlist === pl ){
 					return pl;
+				} else if (force || (pl.belongsToArtist())){
+					if (pl.compare(playlist)){
+						return pl;
+					}
 				}
 			}
+			
 		}
 	},
 	changeNowPlaying: function(mo){

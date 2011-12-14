@@ -409,22 +409,13 @@ cloneObj(playlistLevelResident.prototype, {
 					lev.setTitle(pl.playlist_title);
 			}
 			*/
-			
+
 			pl.lev = this.lev;
 
 			this.D('pl', pl);
+
+			pl.setC(this.tracks_container);
 			
-			if (pl.ui && pl.ui != this){
-				pl.ui.remove();
-			}
-			
-			pl.ui = this;
-			if (pl.loading){
-				pl.ui.wait()
-			}
-			if (pl.length){
-				pl.render_playlist(pl.length > 1);
-			}
 		}
 	}
 });
@@ -499,7 +490,7 @@ views.prototype = {
 		var current_page = this.sUI().els.slider.className;
 		this.restoreFreezed();
 		
-		su.ui.views.show_track_page(su.player.c_song);
+		su.ui.views.show_track_page(su.p.c_song);
 		seesu.track_event('Navigation', 'now playing', current_page);
 	},
 	
