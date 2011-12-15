@@ -1062,13 +1062,13 @@ seesu_ui.prototype = {
 		playing: 'icons/icon16p.png',
 		usual: 'icons/icon16.png'
 	},
-	changeFavicon: function(state){
+	changeFavicon: $.debounce(function(state){
 		if (state && this.favicon_states[state]){
 			changeFavicon(this.d, this.favicon_states[state], 'image/png');
 		} else{
 			changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
 		}
-	},
+	},300),
 	mark_c_node_as: function(marker){
 		var s = this.els.pllistlevel.add(su.ui.now_playing.link);
 		s.each(function(i, el){
@@ -1088,7 +1088,6 @@ seesu_ui.prototype = {
 			//console.log('Do nothing');
 		}
 		if (marker == 'play'){
-			//fix me debounce
 			this.changeFavicon('playing')
 		} else {
 			this.changeFavicon('usual');

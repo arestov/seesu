@@ -146,11 +146,12 @@ cloneObj(servView.prototype, {
 	setStates: function(states){
 		if (this.reset){
 			this.reset();
-			delete this.states;
-			for (var name in states){
-				this.change(false, name, states[name]);
-			}
-		}	
+		}
+		delete this.states;
+		for (var name in states){
+			this.change(false, name, states[name]);
+		}
+		return this;
 	},
 	change: function(is_prop, name, value){
 		if (name){

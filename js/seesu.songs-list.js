@@ -79,7 +79,7 @@
 				if (oldc){
 					this.removeView(this.getView().die());
 				}
-				this.addView((new songsListView(c)).setModel(this));
+				this.addView((new songsListView(c)).setModel(this).setStates(this.states));
 
 			}
 		}
