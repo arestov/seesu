@@ -587,7 +587,7 @@ seesu_ui.prototype = {
 			
 		var d = $('<span class="duration"></span>').appendTo(desc_part);
 		if (mopla.duration){
-			var duration = duration/1000;
+			var duration = Math.floor(mopla.duration/1000);
 			var digits = duration % 60;
 			d.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+digits : digits ));
 		}

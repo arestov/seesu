@@ -143,7 +143,7 @@ cloneObj(songUI.prototype, {
 				this.soco_view.change(true, 'desc', mopla.description || '');
 			}
 			this.soco_view.song_file = mopla;
-			var duration = mopla.duration/1000;
+			var duration = Math.floor(mopla.duration/1000);
 			var du = this.durationc;
 			
 			if (duration){
