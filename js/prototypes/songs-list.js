@@ -233,7 +233,7 @@
 					}
 					
 					for (var i=0; i < _this.length; i++) {
-						var mo = pl[i];
+						var mo = _this[i];
 						if (ordered.indexOf(mo) == -1){
 							etc.push(mo);
 						}

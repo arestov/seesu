@@ -1088,6 +1088,7 @@ seesu_ui.prototype = {
 			//console.log('Do nothing');
 		}
 		if (marker == 'play'){
+			//fix me debounce
 			this.changeFavicon('playing')
 		} else {
 			this.changeFavicon('usual');
