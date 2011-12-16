@@ -358,6 +358,7 @@ var prepare_playlist = function(playlist_title, playlist_type, info, first_song)
 };
 
 var create_playlist =  function(pl, pl_r, not_clear){
+	//fixme
 	if (!pl){
 		return pl_r.loadComplete(true);
 	} else{
@@ -399,6 +400,7 @@ var getTopTracks = function(artist,callback, error_c) {
 };
 
 var proxy_render_artists_tracks = function(artist_list, pl_r){
+	//fixme
 	if (artist_list){
 		var track_list_without_tracks = [];
 		for (var i=0; i < artist_list.length; i++) {
@@ -472,6 +474,8 @@ var render_recommendations = function(){
 
 
 var get_artists_by_tag = function(tag,callback,error_c){
+
+	//fixme
 	lfm.get('tag.getTopArtists', {'tag':tag})
 		.done(function(r){
 			var artists = r.topartists.artist;

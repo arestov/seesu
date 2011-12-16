@@ -119,6 +119,7 @@ var song_methods = {
 		} else if (this.isHaveTracks()){
 			this.updateState('want_to_play', false);
 			mopla = mopla || this.song();
+			//fixme - fixable mopla
 			mopla = mopla.getSongFileModel(this, this.player);
 
 			if (mopla && ((this.mopla != mopla) || !this.state('play'))){
