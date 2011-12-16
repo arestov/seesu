@@ -685,6 +685,7 @@ cloneObj(songUI.prototype, {
 							_this.mo.pause();
 							this.showed = true;
 						} else{
+							_this.hideYoutubeVideo();
 							_this.mo.play();
 							this.showed = false;
 						}

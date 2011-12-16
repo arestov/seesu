@@ -31,6 +31,11 @@ cloneObj(songControlsView.prototype, {
 		},
 		'loading-progress': function(factor){
 			this.changeBar(this.cloading, factor);
+		},
+		play: function(state){
+			if (!state){
+				this.resetPlayPosition();
+			}
 		}
 	},
 	prop_change: {
@@ -55,8 +60,12 @@ cloneObj(songControlsView.prototype, {
 	fixWidth: function(){
 		this.width = this.c.width();
 	},
+	resetPlayPosition: function(){
+		this.cplayng[0].style.width = 0
+	},
 	reset: function(){
-		this.cplayng[0].style.width = this.cloading[0].style.width = '0';
+		this.resetPlayPosition();
+		this.cloading[0].style.width = 0;
 		this.fixWidth();
 	}
 });
