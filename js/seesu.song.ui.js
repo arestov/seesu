@@ -91,7 +91,7 @@ cloneObj(songUI.prototype, {
 			}
 		},
 		play: function(state, oldstate){
-			if (state == 'playing'){
+			if (state == 'play'){
 				this.hideYoutubeVideo();
 			}
 			if (!state){
@@ -682,10 +682,10 @@ cloneObj(songUI.prototype, {
 						
 						if (!showed){
 							_this.showYoutubeVideo(vid, vi_c, $(this));
-							this.mo.pause();
+							_this.mo.pause();
 							this.showed = true;
 						} else{
-							this.mo.play();
+							_this.mo.play();
 							this.showed = false;
 						}
 						e.preventDefault();
