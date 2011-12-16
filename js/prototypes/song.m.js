@@ -7,8 +7,23 @@ var song_methods = {
 	state_change: {
 		
 	},
-	getFullName: function(){
-		var n = (this.artist || "") + ((this.artist && this.track) ?  ' - ' + this.track :  (this.track || ""))
+	getFullName: function(allow_short){
+		var n = '';
+		if (this.artist){
+			if (this.track){
+				if (allow_short){
+					if (this.plst_titl.info && this.plst_titl.info.artist == this.artist){
+						n = this.track;
+					}
+				} else {
+					n = this.artist + " - " + this.track;
+				}
+			} else {
+				n = this.artist;
+			}
+		} else if (this.track){
+			n = this.track;
+		}
 		return n || 'no title'
 	},
 	findNeighbours: function(){

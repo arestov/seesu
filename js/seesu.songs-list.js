@@ -72,6 +72,13 @@
 			}
 			return url;
 		},
+		extendSong: function(omo, player, mp3_search){
+			if (!(omo instanceof song)){
+				return new song(omo, player, mp3_search);
+			} else{
+				return omo;
+			}
+		},
 		setC: function(c){
 			var oldc = this.getC();
 
@@ -82,7 +89,8 @@
 				this.addView((new songsListView(c)).setModel(this).setStates(this.states));
 
 			}
-		}
+		},
+
 	});
 
 	

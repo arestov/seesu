@@ -346,13 +346,7 @@ if (typeof soundcloud_search != 'undefined'){
 	//song.prototype = song_methods;
 })();
 
-var extendSong = function(omo, player, mp3_search){
-	if (!(omo instanceof song)){
-		return new song(omo, player, mp3_search);
-	} else{
-		return omo;
-	}
-};
+
 
 
 

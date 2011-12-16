@@ -9,7 +9,7 @@
 			servModel.prototype.init.call(this)
 		},
 		push: function(omo, view){
-			var mo = extendSong(omo, this.player, this.findMp3);
+			var mo = this.extendSong(omo, this.player, this.findMp3);
 			mo.delayed_in = [];
 			mo.plst_titl = this;
 			if (view){
