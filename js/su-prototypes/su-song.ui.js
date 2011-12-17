@@ -219,6 +219,7 @@ cloneObj(songUI.prototype, {
 			});
 		this.titlec = $("<span></span>").text(this.mo.getFullName()).appendTo(this.node);
 		this.durationc = $('<a class="song-duration"></a>').prependTo(this.node);
+		this.c.append(this.node);
 	},
 	expand: function(){
 		if (this.expanded){
@@ -376,8 +377,7 @@ cloneObj(songUI.prototype, {
 		ph.append(this.soco_view.getC());
 		ph.prependTo(tp);
 		this.c
-			.append(buttmen)
-			.append(this.node)
+			.prepend(buttmen)
 			.append(this.context);
 			
 			

@@ -11,10 +11,8 @@ var song_methods = {
 		var n = '';
 		if (this.artist){
 			if (this.track){
-				if (allow_short){
-					if (this.plst_titl.info && this.plst_titl.info.artist == this.artist){
-						n = this.track;
-					}
+				if (allow_short && (this.plst_titl.info && this.plst_titl.info.artist == this.artist)){
+					n = this.track;
 				} else {
 					n = this.artist + " - " + this.track;
 				}
@@ -128,6 +126,7 @@ var song_methods = {
 					this.mopla.stop();
 				}
 				this.player.changeNowPlaying(this);
+				this.findNeighbours();
 				mopla.play();
 				
 				//this.updateState('play', 'play');
@@ -196,6 +195,28 @@ var song_methods = {
 			delete this.waiting_to_load_next;
 		}
 	},
+	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){
+		this.updateState('loading', true);
+		var _this = this;
+		lfm.get('artist.getTopTracks',{'artist': this.artist })
+			.done(function(r){
+				var tracks = toRealArray(getTargetField(r, 'toptracks.track'))
+				tracks = $filter(tracks, 'name');
+				var some_track = tracks[Math.floor(Math.random()*tracks.length)];
+				if (some_track){
+					_this.updateProp('track', some_track);
+					_this.findFiles({
+						only_cache: !full_allowing,
+						collect_for: from_collection,
+						last_in_collection: last_in_collection
+					});
+				}
+				
+			})
+			.always(function(){
+				_this.updateState('loading', false);
+			})
+	},
 	preloadSongFile: function(){
 		if (this.isHaveBestTracks() && this.isSearchCompleted()){
 			var mopla = this.song();
@@ -222,8 +243,8 @@ var song_methods = {
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
 		if (this.raw()){
 			this.updateState('playable', true);
-		} else if (!this.track){
-			start_random_nice_track_search(this, !full_allowing, from_collection, last_in_collection);
+		} else if (!this.track && this.getRandomTrackName){
+			this.getRandomTrackName(full_allowing, from_collection, last_in_collection);
 		} else{
 			if (this.isSearchCompleted()){
 				this.updateFilesSearchState(true)
