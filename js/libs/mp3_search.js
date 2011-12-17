@@ -648,7 +648,10 @@ cloneObj(mp3Search.prototype, {
 				}
 			};
 			$.when.apply($, successful_uses).always(function(){
-				sem.search_completed = true;
+				if (!o.only_cache){
+					sem.search_completed = true;
+				}
+				
 			});
 		} else if (!o.only_cache && !seeking_something_fresh){
 			sem.search_completed = true
