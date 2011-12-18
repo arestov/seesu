@@ -311,8 +311,7 @@ cloneObj(artcardLevelResident.prototype ,{
 	die: function(){
 		this.dead = true;
 		this.blur();
-		this.remove();	
-		
+		this.remove();
 	},
 	remove: function(){
 		return this.c.remove();
@@ -357,9 +356,8 @@ var playlistLevelResident = function(levdata){
 	this.tracks_container = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);
 	this.storage = {};
 	this.levdata = levdata;
-
-	
 };
+
 playlistLevelResident.prototype  = new baseLevelResident();
 cloneObj(playlistLevelResident.prototype, {
 	die: function(){

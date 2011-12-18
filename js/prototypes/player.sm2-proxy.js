@@ -32,7 +32,7 @@ sm2proxy.prototype = {
 		return this.frame;
 	},
 	origin: "http://arestov.github.com",
-	frame_url: "/SoundManager2/#debugMode=true",
+	frame_url: "/SoundManager2/",
 	handleFrameMessage: function(func, arg){
 		if (func){
 			if (func === 'sm2loaded'){

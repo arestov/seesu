@@ -34,7 +34,7 @@
 			playing: function(opts){
 				var dec = opts.position/opts.duration;
 				this.updateState('playing-progress', dec);
-				this.updateProp('duration', opts.duration);
+				this.updateProp('loaded_duration', opts.duration);
 			},
 			loading: function(opts){
 				var dec = opts.loaded/opts.total;
@@ -99,7 +99,7 @@
 			}
 		},
 		setPositionByFactor: function(fac){
-			this.setPosition(this.duration * fac);
+			this.setPosition((this.loaded_duration || this.duration) * fac);
 		},
 		setPosition: function(pos){
 			if (this.player){
