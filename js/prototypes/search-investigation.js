@@ -1,11 +1,22 @@
+var investigationUI = function(){
+	this.c = $('<div class="search-results-container current-src"></div');
+
+};
+investigationUI.prototype = new servView();
+
+cloneObj(investigationUI.prototype, {
+	constructor: investigationUI
+});
+
 investigation = function(c, init, searchf, stateChange, view_port){
+	this.constructor.prototype.init.call(this);
+
 	this.c = c;
 	this.view_port = view_port;
 
 	this.sections = [];
 	this.names = {};
 	this.enter_items = false;
-	this.requests = [];
 	
 	if (init){
 		init.call(this);
@@ -16,39 +27,23 @@ investigation = function(c, init, searchf, stateChange, view_port){
 	}
 
 	this.setInactiveAll();
-	this.callbacks = {};
 };
-investigation.prototype = {
+investigation.prototype = new servModel();
+
+cloneObj(investigation.prototype, {
+	constructor: investigation,
 	addCallback: function(event_name, func){
-		this.callbacks[event_name] = this.callbacks[event_name] || [];
-		this.callbacks[event_name].push(func);
-	},
-	on: function(event_name, func){
-		this.addCallback(event_name, func);
+		this.on(event_name, func);
 	},
 	changeResultsCounter: function(){
-		var cbs = this.callbacks['resultsChanged'];
-		if (cbs && cbs.length){
-			var rc = 0;
-			for (var i = 0; i < this.sections.length; i++) {
-				rc += this.sections[i].r.length;
-			};
-			for (var i = 0; i < cbs.length; i++) {
-				cbs[i].call(null, rc);
-			};
-		}
+		var rc = 0;
+		for (var i = 0; i < this.sections.length; i++) {
+			rc += this.sections[i].r.length;
+		};
+		this.fire('resultsChanged', rc);
 	},
 	setSectionsSamplesCreators: function(seUnitsCreator){
 		this.seUnitsCreator = seUnitsCreator;
-	},
-	addRequest: function(rq){
-		this.requests.push(rq);
-	},
-	stopRequests: function(){
-		while (this.requests.length) {
-			var rq = this.requests.pop();
-			if (rq && rq.abort) {rq.abort()}
-		}
 	},
 	die: function(){
 		this.stopRequests();
@@ -220,7 +215,7 @@ investigation.prototype = {
 		}
 		
 	}
-};
+});
 
 var searchSection = function(sectionInfo, ui, stateChange, newResultsWereRendered, addRequest){
 	var _this = this;

@@ -3,6 +3,7 @@ cloneObj(eemiter.prototype, {
 	constructor: eemiter,
 	init: function(){
 		this.subscribes = {};
+		this.requests = [];
 	},
 	on: function(name, cb){
 		if (!this.subscribes[name]){
@@ -37,6 +38,15 @@ cloneObj(eemiter.prototype, {
 			};
 		}
 		return this;
+	},
+	addRequest: function(rq){
+		this.requests.push(rq);
+	},
+	stopRequests: function(){
+		while (this.requests.length) {
+			var rq = this.requests.pop();
+			if (rq && rq.abort) {rq.abort()}
+		}
 	}
 });
 
