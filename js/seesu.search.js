@@ -408,7 +408,7 @@ var vk_suggests = $.debounce(function(query, invstg){
 },300);
 
 createSuInvestigation = function(c){
-	return new investigation(c, function(){
+	var investg =  new investigation(c, function(){
 		this.setSectionsSamplesCreators({
 			createHead: createSeHead,
 			createRsCon: createSeRsCon,
@@ -476,14 +476,17 @@ createSuInvestigation = function(c){
 			network_search(this.q, this);
 			vk_suggests(this.q, this);
 		}
-	}, function(state){
+	}, seesu.ui.els.scrolling_viewport);
+	investg.on('stateChange', function(state){
 		if (state == 'complete'){
 			su.ui.els.search_label.removeClass('loading');
 		} else if (state == 'loading'){
 			su.ui.els.search_label.addClass('loading');
 		}
 
-	}, seesu.ui.els.scrolling_viewport);
+	});
+
+	return investg;
 };
 
 

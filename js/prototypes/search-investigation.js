@@ -8,7 +8,7 @@ cloneObj(investigationUI.prototype, {
 	constructor: investigationUI
 });
 
-investigation = function(c, init, searchf, stateChange, view_port){
+investigation = function(c, init, searchf, view_port){
 	this.constructor.prototype.init.call(this);
 
 	this.c = c;
@@ -22,9 +22,6 @@ investigation = function(c, init, searchf, stateChange, view_port){
 		init.call(this);
 	}
 	this.searchf = searchf;
-	if (stateChange){
-		this.stateChange = stateChange;
-	}
 
 	this.setInactiveAll();
 };
@@ -103,15 +100,10 @@ cloneObj(investigation.prototype, {
 		return q == this.q;
 	},
 	loading:function(){
-		if (this.stateChange){
-			this.stateChange('loading');
-		}
-		
+		this.fire('stateChange', 'loading');
 	},
 	loaded: function(){
-		if (this.stateChange){
-			this.stateChange('complete');
-		}
+		this.fire('stateChange', 'complete');
 	},
 	remarkStyles: function(){
 		var c = 0;
