@@ -80,17 +80,28 @@ cloneObj(servModel.prototype, {
 		}
 		return this;
 	},
-	getC: function(){
-		var v = this.getView();
+	getC: function(name){
+		var v = this.getView(name);
 		if (v){
 			return v.getC();
 		}	
 	},
-	getView: function(many){
-		return many ? this.views : this.views[0];	
+	getView: function(name, many){
+		if (many){
+			if (name){
+				return this.views[name]
+			} else {
+				return this.views;
+			}
+		} else {
+			name = name || 'main';
+			return this.views[name] && this.views[name][0];
+		}
 	},
-	addView: function(v) {
+	addView: function(v, name) {
 		this.views.push( v );
+		name = name || 'main';
+		(this.views[name] = this.views[name] || []).push(v);
 		return this;
 	},
 	_updateProxy: function(is_prop, name, value){
@@ -146,6 +157,11 @@ cloneObj(servView.prototype, {
 			this.puppet_model = puppet_model;
 		}
 		return this;
+	},
+	appended: function(){
+		if (this.appendChildren){
+			this.appendChildren();
+		}
 	},
 	getC: function(){
 		return this.c;	

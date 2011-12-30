@@ -407,8 +407,8 @@ var vk_suggests = $.debounce(function(query, invstg){
 	
 },300);
 
-createSuInvestigation = function(c){
-	var investg =  new investigation(c, function(){
+createSuInvestigation = function(){
+	var investg =  new investigation(function(){
 		this.setSectionsSamplesCreators({
 			createHead: createSeHead,
 			createRsCon: createSeRsCon,
@@ -476,7 +476,7 @@ createSuInvestigation = function(c){
 			network_search(this.q, this);
 			vk_suggests(this.q, this);
 		}
-	}, seesu.ui.els.scrolling_viewport);
+	});
 	investg.on('stateChange', function(state){
 		if (state == 'complete'){
 			su.ui.els.search_label.removeClass('loading');

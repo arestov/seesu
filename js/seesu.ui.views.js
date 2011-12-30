@@ -179,7 +179,8 @@ var baseLevelResident = function(){
 };
 baseLevelResident.prototype = {
 	canUse: function(){
-		return this.c && !this.dead && this.c[0].ownerDocument == su.ui.d;
+		return true
+		//return this.c && !this.dead && this.c[0].ownerDocument == su.ui.d;
 	},
 	setLev: function(lev){
 		this.lev = lev;
@@ -253,7 +254,7 @@ cloneObj(mainLevelResident.prototype, {
 
 
 var sRLevelResident = function(levdata){
-	this.c = $('<div class="search-results-container current-src"></div').appendTo(su.ui.els.searchres);
+	this.c = $('');
 	this.storage = {};
 	this.levdata = levdata;
 };
@@ -291,11 +292,24 @@ cloneObj(sRLevelResident.prototype, {
 	dataHandlers: {
 		q: function(query){
 			if (!this.D('invstg')){
-				this.D('invstg', createSuInvestigation(this.c));
+				this.D('invstg', createSuInvestigation());
 			}
-			this.D('invstg').lev = this.lev;
-			this.D('invstg').scratchResults(query);
+			var invstg = this.D('invstg');
 
+			invstg.lev = this.lev;
+			invstg.scratchResults(query);
+
+			if (su.ui.els.searchres){
+				var child_c = invstg.getC();
+				if (!child_c){
+					var ig_ui = new investigationUI(invstg, seesu.ui.els.scrolling_viewport);
+					invstg.addView(ig_ui);
+					su.ui.els.searchres.append(child_c = ig_ui.getC());
+					ig_ui.appended();
+				}
+
+				this.c = child_c;
+			}
 	
 		}
 	}

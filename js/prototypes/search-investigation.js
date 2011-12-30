@@ -1,18 +1,62 @@
-var investigationUI = function(){
-	this.c = $('<div class="search-results-container current-src"></div');
+var investigationUI = function(invstg, view_port){
+	servView.prototype.init.call(this);
 
+	this.invstg = invstg;
+	this.c = $('<div class="search-results-container current-src"></div');
+	this.view_port = view_port;
 };
 investigationUI.prototype = new servView();
 
 cloneObj(investigationUI.prototype, {
-	constructor: investigationUI
+	constructor: investigationUI,
+	appendChildren: function(){
+
+		for (var i = 0; i < this.invstg.sections.length; i++) {
+			var cur = this.invstg.sections[i];
+			this.c.append(cur.gc);
+		};
+		console.log('bu!')
+	},
+	prop_change: {
+		enter_item: function(item){
+			this.scrollTo(item);
+		}
+	},
+	scrollTo: function(item){
+		if (!item){return false;}
+		if (!this.view_port || !this.view_port.node){return false}
+
+		var element = item.getC();
+		var svp = this.view_port,
+			scroll_c = svp.offset ?   $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0])   :   svp.node,
+			scroll_top = scroll_c.scrollTop(), //top
+			scrolling_viewport_height = svp.node.height(), //height 
+			scroll_bottom = scroll_top + scrolling_viewport_height; //bottom
+		
+		var node_position;
+		if (svp.offset){
+			node_position = element.offset().top;
+		} else{
+			node_position = element.position().top + scroll_top + this.c.parent().position().top;
+		}
+
+		var el_bottom = element.height() + node_position;
+
+		var new_position;
+		if ( el_bottom > scroll_bottom){
+			new_position =  el_bottom - scrolling_viewport_height/2;
+		} else if (el_bottom < scroll_top){
+			new_position =  el_bottom - scrolling_viewport_height/2;
+		}
+		if (new_position){
+			scroll_c.scrollTop(new_position);
+		}
+		
+	}
 });
 
-investigation = function(c, init, searchf, view_port){
-	this.constructor.prototype.init.call(this);
-
-	this.c = c;
-	this.view_port = view_port;
+investigation = function(init, searchf){
+	servModel.prototype.init.call(this);
 
 	this.sections = [];
 	this.names = {};
@@ -65,37 +109,6 @@ cloneObj(investigation.prototype, {
 			
 		};	
 	},
-	scrollTo: function(item){
-		if (!item){return false;}
-		if (!this.view_port || !this.view_port.node){return false}
-
-		var element = item.getC();
-		var svp = this.view_port,
-			scroll_c = svp.offset ?   $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0])   :   svp.node,
-			scroll_top = scroll_c.scrollTop(), //top
-			scrolling_viewport_height = svp.node.height(), //height 
-			scroll_bottom = scroll_top + scrolling_viewport_height; //bottom
-		
-		var node_position;
-		if (svp.offset){
-			node_position = element.offset().top;
-		} else{
-			node_position = element.position().top + scroll_top + this.c.parent().position().top;
-		}
-
-		var el_bottom = element.height() + node_position;
-
-		var new_position;
-		if ( el_bottom > scroll_bottom){
-			new_position =  el_bottom - scrolling_viewport_height/2;
-		} else if (el_bottom < scroll_top){
-			new_position =  el_bottom - scrolling_viewport_height/2;
-		}
-		if (new_position){
-			scroll_c.scrollTop(new_position);
-		}
-		
-	},
 	doesNeed: function(q){
 		return q == this.q;
 	},
@@ -123,7 +136,6 @@ cloneObj(investigation.prototype, {
 	addSection: function(name, sectionInfo){
 		var _this = this;
 		var s = new searchSection(sectionInfo, {
-			c: this.c,
 			ucreator: this.seUnitsCreator
 		}, function(state){
 			_this.remarkStyles();
@@ -137,6 +149,8 @@ cloneObj(investigation.prototype, {
 			_this.addRequest(rq);
 		});
 		this.sections.push(s);
+
+
 		this.names[name] = s;
 		return s;
 	},
@@ -159,9 +173,8 @@ cloneObj(investigation.prototype, {
 			delete this.enter_item
 		}
 		if (item){
-			this.enter_item = item;
+			this.updateProp('enter_item', item);
 			this.enter_item.setActive();
-			
 		}
 	},
 	selectEnterItemBelow: function(){
@@ -169,7 +182,6 @@ cloneObj(investigation.prototype, {
 			ni = (ci ? ci : this.enter_items.length) - 1,
 			t = this.enter_items[ni];
 		this.setItemForEnter(t);
-		this.scrollTo(t)
 		this.selected_inum = ni;
 	},
 	selectEnterItemAbove: function(){
@@ -177,7 +189,6 @@ cloneObj(investigation.prototype, {
 			ni = (ci + 1 < this.enter_items.length) ? ci + 1 : 0,
 			t = this.enter_items[ni];
 		this.setItemForEnter(t);
-		this.scrollTo(t)
 		this.selected_inum = ni;
 	},
 	getAllItems: function(){
@@ -209,211 +220,6 @@ cloneObj(investigation.prototype, {
 	}
 });
 
-var searchSection = function(sectionInfo, ui, stateChange, newResultsWereRendered, addRequest){
-	var _this = this;
-	
-	this.si = sectionInfo;
-	this.nos = this.si.nos;
-	if (this.si.button && this.si.buttonClick){
-		this.button_allowed = true;
-	}
-
-	this.ucreator = ui.ucreator;
-	if (stateChange){this.stateChange = stateChange;}
-	if (newResultsWereRendered){this.nRWR = newResultsWereRendered;}
-	ui.c.append(this.createUIc(true));
-	this.header = this.ucreator.createHead(this.si.head).appendTo(ui.c);
-	this.c.before(this.header);
-	this.addRequest = addRequest;
-};
-
-searchSection.prototype = {
-	getItemConstructor: function(){
-		return this.si && this.si.resItem;
-	},
-	addRequest: function(){
-		
-	},
-	setActive: function(){
-		if (this.hidden){
-			this.c.addClass('active-section');
-			this.header.show();
-			delete this.hidden;
-			if (this.stateChange){this.stateChange(true);}
-		}
-	},
-	loading: function(){
-		this.header.addClass('loading');	
-	},
-	loaded: function(){
-		this.header.removeClass('loading');	
-	},
-	markOdd: function(remove){
-		this.c[ remove ? 'removeClass' : 'addClass']('odd-section');
-	},
-	setInactive: function(){
-		if (!this.hidden){
-			this.c.removeClass('active-section');
-			this.header.hide();
-			this.hidden = true;
-			if (this.stateChange){this.stateChange(false);}
-		}	
-	},
-	getItems: function(){
-		var r = $filter(this.r, 'click', function(value){return !!value});
-		r = $filter(r, 'ui', function(value){return !!value});
-		if (this.button_allowed && !this.button_hidden){
-			r.push(this.button_obj);
-		}
-		return r;
-	},
-	hideButton: function(){
-		if (this.button_allowed && !this.button_hidden){
-			this.buttonc.hide();
-			this.button_hidden = true;
-			if (this.nRWR){this.nRWR();}
-		}
-	},
-	showButton: function(){
-		if (this.button_allowed && this.button_hidden){
-			this.buttonc.show();
-			this.button_hidden = false;
-			if (this.nRWR){this.nRWR();}
-		}
-	},
-	createUIc: function(with_button){
-		this.c = this.ucreator.createRsCon();
-		if (!this.nos){
-			this.c.addClass('sugg-section')
-		}
-		
-		if (this.si.cclass){
-			this.c.addClass(this.si.cclass);
-		}
-		if (this.si.cid){
-			this.c.attr('id', this.si.cid)
-		}
-		
-		
-		if (this.button_allowed && with_button){
-			
-		
-			this.button = this.si.button().clone();
-			var _this = this;
-			this.button.click(function(e){
-				_this.si.buttonClick.call(this, e, _this);
-			})
-			
-			this.button_text = this.button.find('span');
-			
-			this.buttonc = this.ucreator.createItemCon().append(this.button).appendTo(this.c);
-			this.button_obj = {
-				node: this.button,
-				setActive: function(){
-					this.node.addClass('active')
-				},
-				setInactive: function(){
-					this.node.removeClass('active')
-				},
-				c: this.buttonc,
-				getC: function(){
-					return this.c;	
-				},
-				click: function(){
-					_this.si.buttonClick(false, _this)
-				}
-			}
-			
-		}
-		return this.c;
-	},
-	setButtonText: function(have_results, q){
-		if (this.button_allowed && this.si.getButtonText){
-			this.button_text.text(this.si.getButtonText(have_results, q));
-		}
-		
-	},
-	doesNeed: function(q){
-		return q == (this.r && this.r.query);
-	},
-	scratchResults: function(q){
-		if (!q && !this.si.no_results_text){
-			this.setInactive();
-		}
-		this.loaded();
-		this.removeOldResults();
-		if (this.message){
-			this.message.remove();
-			delete this.message
-		}
-		
-		this.r = new searchResults(q);
-		this.setButtonText(false, q);
-		this.showButton();
-		if (this.nRWR){this.nRWR();}
-	},
-	removeOldResults: function(){
-		if (this.r){
-			$.each(this.r, function(i, el){
-				if (el.ui){
-					el.ui.c.remove();
-					delete el.ui;
-				}
-			});
-		}
-		
-	},
-	renderSuggests: function(no_more_results, preview){
-	
-		var _this = this;
-		
-		var slice = preview && !this.r.last_rendered_length,
-			start = 0,
-			end   = start + 5;
-			
-		if (this.r.length){
-			var l = (slice && Math.min(end, this.r.length)) || this.r.length;
-			for (var i=0; i < l; i++) {
-				var bordered = this.r.last_rendered_length && (i == this.r.last_rendered_length);
-				var resel = this.r[i].render(_this.r.query, bordered, this.ucreator && this.ucreator.createItemCon);
-				if (resel){
-					if (this.button_allowed){
-						this.buttonc.before(resel);
-					} else{
-						this.c.append(resel);
-					}
-				}
-				
-			};
-			this.r.last_rendered_length = l;
-			
-			this.setButtonText(true, this.r.query);
-			if (this.nRWR){this.nRWR(true);}
-			
-		} else{
-			if (no_more_results){
-				if (this.si.no_results_text){
-					this.message = this.ucreator.createItemCon().text(this.si.no_results_text);
-					if (this.button_allowed){
-						this.hideButton();
-						this.buttonc.before(this.message);
-					} else{
-						this.c.append(this.message);
-					}
-				} else{
-					this.setInactive();
-				}
-				
-				
-			}
-			if (this.nRWR){this.nRWR();}
-		}
-		
-	
-			
-		return this.r.length && this.r[0].ui.a;
-	}
-};
 
 var searchResults = function(query, prepared, valueOf){
 		if (query){

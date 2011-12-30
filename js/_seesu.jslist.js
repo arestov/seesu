@@ -39,6 +39,7 @@
 	"js/su-prototypes/su-song.controls.ui.js",
 	"js/prototypes/songFile.js", 
 	"js/prototypes/search-investigation.js",
+	"js/prototypes/searchSection.js",
 	"js/libs/lastfm.search.js", 
 	"js/seesu.search.js", 
 	"js/prototypes/player.base.js",
