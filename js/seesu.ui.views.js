@@ -300,15 +300,13 @@ cloneObj(sRLevelResident.prototype, {
 			invstg.scratchResults(query);
 
 			if (su.ui.els.searchres){
-				var child_c = invstg.getC();
-				if (!child_c){
-					var ig_ui = new investigationUI(invstg, seesu.ui.els.scrolling_viewport);
-					invstg.addView(ig_ui);
-					su.ui.els.searchres.append(child_c = ig_ui.getC());
-					ig_ui.appended();
+				var child_ui = invstg.getFreeView();
+				if (child_ui){
+					
+					su.ui.els.searchres.append(child_ui.getC());
+					child_ui.appended();
 				}
-
-				this.c = child_c;
+				this.c = invstg.getC();
 			}
 	
 		}

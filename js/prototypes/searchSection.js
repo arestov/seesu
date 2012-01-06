@@ -1,148 +1,182 @@
-var searchSectionUI = function(seasc){
-	servView.prototype.init.call(this);
-	this.seasc = seasc;
 
 
-	this.createUIc(true);
-	this.header = this.ucreator.createHead(this.si.head);
-	this.gc = this.header.add(this.c);
+var searchSectionUI = function(seasc){};
 
 
-};
+createPrototype(searchSectionUI, new servView(), {
+	init: function(seasc){
+		this.callParentMethod('init');
+		this.seasc = seasc;
+		this.createCon();
+		this.createHead();
+		this.button = seasc.button;
 
-searchSectionUI.prototype = new servView();
+		this.gc = this.header ? this.header.add(this.c) : this.c;
 
-cloneObj(searchSectionUI.prototype, {
-	constructor: searchSectionUI,
+		this.setModel(seasc);
+	},
+	getC: function(){
+		return this.gc;	
+	},
+	createHead: function(){
+		if (this.head_text){
+			this.header = $('<h4></h4>').hide().text(this.head_text);
+
+		}
+	},
+	createCon: function(){
+		this.c = $('<ul></ul>');
+		if (this.c_class){
+			this.c.addClass(this.c_class);
+		}
+	},
 	state_change: {
 		active: function(state){
 			if (state){
 				this.c.addClass('active-section');
-				this.header.show();
+				if (this.header){
+					this.header.show();
+				}
+				
 			} else {
 				this.c.removeClass('active-section');
-				this.header.hide();
+				if (this.header){
+					this.header.hide();
+				}
+				
 			}
-		}
-	},
-	createUIc: function(with_button){
-		this.c = this.ucreator.createRsCon();
-		if (!this.nos){
-			this.c.addClass('sugg-section')
-		}
-		
-		if (this.si.cclass){
-			this.c.addClass(this.si.cclass);
-		}
-		if (this.si.cid){
-			this.c.attr('id', this.si.cid)
-		}
-		
-		
-		if (this.button_allowed && with_button){
-			
-		
-			this.button = this.si.button().clone();
-			var _this = this;
-			this.button.click(function(e){
-				_this.si.buttonClick.call(this, e, _this);
-			})
-			
-			this.button_text = this.button.find('span');
-			
-			this.buttonc = this.ucreator.createItemCon().append(this.button).appendTo(this.c);
-			this.button_obj = {
-				node: this.button,
-				setActive: function(){
-					this.node.addClass('active')
-				},
-				setInactive: function(){
-					this.node.removeClass('active')
-				},
-				c: this.buttonc,
-				getC: function(){
-					return this.c;	
-				},
-				click: function(){
-					_this.si.buttonClick(false, _this)
+		},
+		changed: function(time){
+			this.appendChildren();
+		},
+		loading: function(state){
+			if (this.header){
+				if (state){
+					this.header.addClass('loading');
+				} else {
+					this.header.removeClass('loading');
 				}
 			}
 			
+		},
+		no_results_text: function(text){
+			if (text) {
+				if (this.message){
+					this.message.remove();
+				}
+				this.message = $('<li></li>').text(text);
+				if (this.button_c){
+					this.button_c.before(this.message);
+				} else{
+					this.c.append(this.message);
+				}
+			} else {
+				if (this.message){
+					this.message.remove();
+					delete this.message
+				}
+			}
+		},
+		'odd-section': function(state){
+			if (state){
+				this.c.addClass('odd-section')
+			} else {
+				this.c.removeClass('odd-section')
+			}
 		}
-		return this.c;
+	},
+	appendChildren: function(){
+		var _this = this;
+
+		if (this.button){
+			var bui = this.button.getFreeView();
+			if (bui){
+				this.button_c = bui.getC().appendTo(this.c);
+			}
+			
+		}
+
+		var rendering_list = this.seasc.rendering_list;
+		var last_rendered = this.seasc.edges_list;
+		if (rendering_list){
+			for (var i = 0; i < rendering_list.length; i++) {
+
+				var cur_ui = rendering_list[i].getFreeView();
+				if (cur_ui){
+					var ccon = cur_ui.getC();
+					if (this.button_c){
+						this.button_c.before(ccon);
+					} else{
+						this.c.append(ccon);
+					}
+				}
+
+			};
+			for (var i = 0; i < last_rendered.length; i++) {
+				
+				var cur = rendering_list[last_rendered[i]];
+				if (cur){
+					cur.updateState('bordered', true)
+				}
+				
+			};
+		}
+		
+		
 	}
 });
 
 
-var searchSection = function(sectionInfo, ui, stateChange, newResultsWereRendered, addRequest){
-	servModel.prototype.init.call(this);
+var searchSection = function(sectionInfo){};
 
-	var _this = this;
-	
-	this.si = sectionInfo;
-	this.nos = this.si.nos;
-	if (this.si.button && this.si.buttonClick){
-		this.button_allowed = true;
-	}
-
-	this.ucreator = ui.ucreator;
-	if (stateChange){this.stateChange = stateChange;}
-	if (newResultsWereRendered){this.nRWR = newResultsWereRendered;}
-	
-	this.addRequest = addRequest;
-
-	this.addView(new searchSectionUI(this));
-};
-
-searchSection.prototype = new servModel();
-
-cloneObj(searchSection.prototype, {
-	constructor: searchSection,
-	getItemConstructor: function(){
-		return this.si && this.si.resItem;
+createPrototype(searchSection, new servModel(), {
+	init: function(){
+		this.callParentMethod('init');
+		this.edges_list = [];
+		this.rendering_list = [];
+	},
+	ui_constr: function(){
+		return new searchSectionUI(this);
 	},
 	setActive: function(){
 		this.updateState('active', true);
-		if (this.stateChange){this.stateChange(true);}
+		this.fire('state-change', true);
 	},
 	setInactive: function(){
+		
 		this.updateState('active', false);
-		if (this.stateChange){this.stateChange(false);}
+		this.fire('state-change', false);
 	},
 	loading: function(){
-		this.header.addClass('loading');	
+		this.updateState('loading', true);
 	},
 	loaded: function(){
-		this.header.removeClass('loading');	
+		this.updateState('loading', false);
 	},
 	markOdd: function(remove){
-		this.c[ remove ? 'removeClass' : 'addClass']('odd-section');
+		this.updateState('odd-section', !remove)
 	},
-	getItems: function(){
-		var r = $filter(this.r, 'click', function(value){return !!value});
-		r = $filter(r, 'ui', function(value){return !!value});
-		if (this.button_allowed && !this.button_hidden){
-			r.push(this.button_obj);
+	getItems: function(no_button){
+		var r = [].concat(this.rendering_list);
+		if (!no_button && this.button && !this.button.state('disabled')){
+			r.push(this.button)
 		}
 		return r;
 	},
 	hideButton: function(){
-		if (this.button_allowed && !this.button_hidden){
-			this.buttonc.hide();
-			this.button_hidden = true;
-			if (this.nRWR){this.nRWR();}
+		if (this.button){
+			this.button.hide();
+
 		}
 	},
 	showButton: function(){
-		if (this.button_allowed && this.button_hidden){
-			this.buttonc.show();
-			this.button_hidden = false;
-			if (this.nRWR){this.nRWR();}
+		if (this.button){
+			this.button.show();
 		}
 	},
 	setButtonText: function(have_results, q){
-		if (this.button_allowed && this.si.getButtonText){
-			this.button_text.text(this.si.getButtonText(have_results, q));
+		if (this.button && this.getButtonText){
+			this.button.setText(this.getButtonText(have_results, q));
 		}
 		
 	},
@@ -150,80 +184,59 @@ cloneObj(searchSection.prototype, {
 		return q == (this.r && this.r.query);
 	},
 	scratchResults: function(q){
-		if (!q && !this.si.no_results_text){
+		if (!q && !this.no_results_text){
 			this.setInactive();
 		}
 		this.loaded();
 		this.removeOldResults();
-		if (this.message){
-			this.message.remove();
-			delete this.message
-		}
+		this.updateState('no_results_text', false);
+		
 		
 		this.r = new searchResults(q);
+		this.rendering_list = [];
+		this.edges_list = []
 		this.setButtonText(false, q);
 		this.showButton();
-		if (this.nRWR){this.nRWR();}
+		this.fire('items-change');
 	},
 	removeOldResults: function(){
-		if (this.r){
-			$.each(this.r, function(i, el){
-				if (el.ui){
-					el.ui.c.remove();
-					delete el.ui;
-				}
-			});
-		}
+
+		for (var i = 0; i < this.rendering_list.length; i++) {
+			this.rendering_list[i].die();
+		};
 		
 	},
 	renderSuggests: function(no_more_results, preview){
-	
-		var _this = this;
+
 		
-		var slice = preview && !this.r.last_rendered_length,
-			start = 0,
-			end   = start + 5;
-			
+		var slice = preview && !this.edges_list.length,
+			last_rendered = this.edges_list && this.edges_list[this.edges_list.length-1], 
+			start = (last_rendered) || 0,
+			end   = (slice && Math.min(this.r.length, start + 5)) || this.r.length;
+		
 		if (this.r.length){
-			var l = (slice && Math.min(end, this.r.length)) || this.r.length;
-			for (var i=0; i < l; i++) {
-				var bordered = this.r.last_rendered_length && (i == this.r.last_rendered_length);
-				var resel = this.r[i].render(_this.r.query, bordered, this.ucreator && this.ucreator.createItemCon);
-				if (resel){
-					if (this.button_allowed){
-						this.buttonc.before(resel);
-					} else{
-						this.c.append(resel);
-					}
-				}
-				
+			for (var i=start; i < end; i++) {
+				this.rendering_list.push(this.r[i]);
 			};
-			this.r.last_rendered_length = l;
-			
-			this.setButtonText(true, this.r.query);
-			if (this.nRWR){this.nRWR(true);}
-			
+			this.edges_list.push(end);
 		} else{
 			if (no_more_results){
-				if (this.si.no_results_text){
-					this.message = this.ucreator.createItemCon().text(this.si.no_results_text);
-					if (this.button_allowed){
-						this.hideButton();
-						this.buttonc.before(this.message);
-					} else{
-						this.c.append(this.message);
-					}
+				if (this.no_results_text){
+					this.updateState('no_results_text', this.no_results_text);
+					this.hideButton();
 				} else{
 					this.setInactive();
 				}
 				
 				
 			}
-			if (this.nRWR){this.nRWR();}
 		}
-		
-	
-			
-		return this.r.length && this.r[0].ui.a;
+
+		this.updateState('no_more_results', no_more_results);
+		this.updateState('preview', preview);
+		this.updateState('changed', new Date());
+
+		this.setButtonText(!!this.r.length, this.r.query);
+		this.fire('items-change', this.r.length);
 	}
 });

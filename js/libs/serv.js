@@ -635,6 +635,31 @@ var separateNum = function(num){
 	return  three_sep
 };
 
+var createPrototype = function(constr, assi_prototype, clone_prototype){
+	var parent_prototype = assi_prototype.constructor.prototype;
+	constr.prototype = assi_prototype;
+	cloneObj(constr.prototype, {
+		constructor: constr,
+		callParentMethod: function(){
+			var tmp = this.callParentMethod;
+			this.callParentMethod = parent_prototype.callParentMethod
+			//console.log(constr)
+			//console.log(assi_prototype)
+			var args = Array.prototype.slice.call(arguments);
+			var method = args.shift();
+
+			var r = parent_prototype[method].apply(this, args);
+
+			this.callParentMethod = tmp;
+			
+			return r;
+		}
+	});
+	cloneObj(constr.prototype, clone_prototype);
+
+	return constr;
+};
+
 if (!Array.indexOf) {
   Array.prototype.indexOf = function (obj, start) {
     for (var i = (start || 0); i < this.length; i++) {

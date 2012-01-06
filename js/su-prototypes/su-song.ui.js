@@ -383,6 +383,7 @@ cloneObj(songUI.prototype, {
 			
 		
 		var pi = this.mo.playable_info; 
+		//fixme for userplaylists
 		setTimeout(function(){
 			_this.mo.makeSongPlayalbe(pi.full_allowing, pi.packsearch, pi.last_in_collection);	
 		},100)

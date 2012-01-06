@@ -3,7 +3,6 @@ cloneObj(eemiter.prototype, {
 	constructor: eemiter,
 	init: function(){
 		this.subscribes = {};
-		this.requests = [];
 	},
 	on: function(name, cb){
 		if (!this.subscribes[name]){
@@ -34,19 +33,10 @@ cloneObj(eemiter.prototype, {
 
 		if (cbs){
 			for (var i = 0; i < cbs.length; i++) {
-				cbs[i].apply(null, args);
+				cbs[i].apply(this, args);
 			};
 		}
 		return this;
-	},
-	addRequest: function(rq){
-		this.requests.push(rq);
-	},
-	stopRequests: function(){
-		while (this.requests.length) {
-			var rq = this.requests.pop();
-			if (rq && rq.abort) {rq.abort()}
-		}
 	}
 });
 
@@ -58,6 +48,7 @@ cloneObj(servModel.prototype, {
 		eemiter.prototype.init.call(this);
 		this.states = {};
 		this.views = [];
+		this.requests = [];
 	},
 	state: function(name){
 		return this.states[name];
@@ -80,13 +71,38 @@ cloneObj(servModel.prototype, {
 		}
 		return this;
 	},
+	die: function(){
+		for (var i = 0; i < this.views.length; i++) {
+			this.views[i].die();
+		};	
+	},
 	getC: function(name){
 		var v = this.getView(name);
 		if (v){
 			return v.getC();
 		}	
 	},
+	getFreeView: function(name){
+		name = name || 'main';
+		var v = this.getView(name);
+		if (!v){
+			if (typeof this.ui_constr == 'function'){
+				var constr = name == 'main' && this.ui_constr;
+			} else if (this.ui_constr){
+				var constr = this.ui_constr[name]
+			}
+			if (constr){
+				v = constr.call(this);
+				if (v){
+					this.addView(v)
+					return v;
+				}
+				
+			}
+		}
+	},
 	getView: function(name, many){
+		this.removeDeadViews();
 		if (many){
 			if (name){
 				return this.views[name]
@@ -103,6 +119,16 @@ cloneObj(servModel.prototype, {
 		name = name || 'main';
 		(this.views[name] = this.views[name] || []).push(v);
 		return this;
+	},
+	addRequest: function(rq){
+		this.requests.push(rq);
+		this.fire('request', rq);
+	},
+	stopRequests: function(){
+		while (this.requests.length) {
+			var rq = this.requests.pop();
+			if (rq && rq.abort) {rq.abort()}
+		}
 	},
 	_updateProxy: function(is_prop, name, value){
 		this.removeDeadViews();
@@ -122,6 +148,7 @@ cloneObj(servModel.prototype, {
 				for (var i = 0; i < this.views.length; i++) {
 					this.views[i].change(is_prop, name, obj_to_change[name])
 				};
+				this.fire(name + '-state-change', name, obj_to_change[name])
 			}
 			
 		}
@@ -147,8 +174,14 @@ cloneObj(servView.prototype, {
 	init: function(){
 		this.states = {};
 	},
+	state: function(name){
+		return this.states[name];
+	},
 	die: function(){
 		this.dead = true;
+		if (this.c){
+			this.c.remove()
+		}
 		return this;
 	},
 	setModel: function(mdl, puppet_model){
@@ -156,12 +189,14 @@ cloneObj(servView.prototype, {
 		if (puppet_model){
 			this.puppet_model = puppet_model;
 		}
+		this.setStates(mdl.states)
 		return this;
 	},
 	appended: function(){
 		if (this.appendChildren){
 			this.appendChildren();
 		}
+		return this;
 	},
 	getC: function(){
 		return this.c;	
@@ -173,7 +208,7 @@ cloneObj(servView.prototype, {
 		if (this.reset){
 			this.reset();
 		}
-		delete this.states;
+		this.states = {};
 		for (var name in states){
 			this.change(false, name, states[name]);
 		}
@@ -181,7 +216,7 @@ cloneObj(servView.prototype, {
 	},
 	change: function(is_prop, name, value){
 		if (name){
-			var obj_to_change = !is_prop ? this.states : (this.puppet_model && this.mdl),
+			var obj_to_change = !is_prop ? this.states : this.puppet_model,
 				method = is_prop ? this.prop_change[name] : this.state_change[name];
 			
 			if (method){

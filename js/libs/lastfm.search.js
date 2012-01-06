@@ -50,7 +50,7 @@ var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_previe
 				.done(function(r){
 					if (!section.doesNeed(q)){return}
 					section.loaded();
-					r = r && parser(r, section.getItemConstructor());
+					r = r && parser(r, section.resItem);
 					if (r.length){
 						section.r.append(r);
 						section.renderSuggests(true, !no_preview);
@@ -120,7 +120,7 @@ var fast_suggestion = function(r, q, invstg){
 			tags = invstg.g('tags'),
 			albums = invstg.g('albums');
 
-		r = parseFastSuggests(r, artists.getItemConstructor(), tracks.getItemConstructor(), tags.getItemConstructor(), albums.getItemConstructor());
+		r = parseFastSuggests(r, artists.resItem, tracks.resItem, tags.resItem, albums.resItem);
 
 			artists.r.append(r.artists);
 			artists.renderSuggests();

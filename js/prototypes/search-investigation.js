@@ -1,26 +1,31 @@
-var investigationUI = function(invstg, view_port){
+var investigationUI = function(invstg){
 	servView.prototype.init.call(this);
 
 	this.invstg = invstg;
 	this.c = $('<div class="search-results-container current-src"></div');
-	this.view_port = view_port;
+
+	this.setStates(invstg.states);
 };
 investigationUI.prototype = new servView();
 
 cloneObj(investigationUI.prototype, {
 	constructor: investigationUI,
 	appendChildren: function(){
-
 		for (var i = 0; i < this.invstg.sections.length; i++) {
-			var cur = this.invstg.sections[i];
-			this.c.append(cur.gc);
+			var cur_ui = this.invstg.sections[i].getFreeView();
+			if (cur_ui){
+				this.c.append(cur_ui.getC());
+				cur_ui.appended()
+			}
 		};
-		console.log('bu!')
 	},
 	prop_change: {
 		enter_item: function(item){
 			this.scrollTo(item);
 		}
+	},
+	setViewport: function(vp){
+		this.view_port = vp;	
 	},
 	scrollTo: function(item){
 		if (!item){return false;}
@@ -73,6 +78,11 @@ investigation.prototype = new servModel();
 
 cloneObj(investigation.prototype, {
 	constructor: investigation,
+	ui_constr: {
+		main: function(){
+			return new investigationUI(this)
+		}	
+	},
 	addCallback: function(event_name, func){
 		this.on(event_name, func);
 	},
@@ -83,9 +93,7 @@ cloneObj(investigation.prototype, {
 		};
 		this.fire('resultsChanged', rc);
 	},
-	setSectionsSamplesCreators: function(seUnitsCreator){
-		this.seUnitsCreator = seUnitsCreator;
-	},
+
 	die: function(){
 		this.stopRequests();
 	},
@@ -123,7 +131,7 @@ cloneObj(investigation.prototype, {
 		for (var i=0; i < this.sections.length; i++) {
 			var cur = this.sections[i];
 			if (!cur.nos){
-				cur.markOdd(cur.hidden || !(++c % 2 == 0));
+				cur.markOdd( !cur.state('active') || !(++c % 2 == 0) );
 			}
 		};	
 	},
@@ -133,26 +141,42 @@ cloneObj(investigation.prototype, {
 	setInactiveAll: function(except){
 		this._changeActiveStatus(true, except);
 	},
-	addSection: function(name, sectionInfo){
+	addSection: function(name, s){
 		var _this = this;
-		var s = new searchSection(sectionInfo, {
-			ucreator: this.seUnitsCreator
-		}, function(state){
-			_this.remarkStyles();
-		}, function(has_results){
-			_this.refreshEnterItems();
-			if (has_results){
-				_this.changeResultsCounter();
-			}
-			
-		}, function(rq){
-			_this.addRequest(rq);
-		});
+		s
+			.on('items-change', function(results){
+				_this.refreshEnterItems();
+				if (results){
+					_this.changeResultsCounter();
+				}
+				_this.bindItemsView();
+			})
+			.on('state-change', function(state){
+				_this.remarkStyles();
+			})
+			.on('request', function(rq){
+				_this.addRequest(rq);
+			});
+
 		this.sections.push(s);
 
 
 		this.names[name] = s;
 		return s;
+	},
+	bindItemsView: function(){
+		var r = this.getAllItems(true);
+		r = $filter(r, 'binvstg', true).not;
+		var _this = this;
+
+		var seiaclck = function(){
+			_this.setItemForEnter(this);
+		};
+
+		for (var i = 0; i < r.length; i++) {
+			r[i].on('view',seiaclck).binvstg = true
+
+		};
 	},
 	refreshEnterItems: function(){
 		var r = this.getAllItems();
@@ -164,18 +188,21 @@ cloneObj(investigation.prototype, {
 	},
 	pressEnter: function(){
 		if (this.enter_item){
-			this.enter_item.click();
+			this.enter_item.view();
 		}
 	},
 	setItemForEnter: function(item){
-		if (this.enter_item){
-			this.enter_item.setInactive();
-			delete this.enter_item
+		if (this.enter_item != item){
+			if (this.enter_item){
+				this.enter_item.setInactive();
+				delete this.enter_item
+			}
+			if (item){
+				this.updateProp('enter_item', item);
+				this.enter_item.setActive();
+			}
 		}
-		if (item){
-			this.updateProp('enter_item', item);
-			this.enter_item.setActive();
-		}
+		
 	},
 	selectEnterItemBelow: function(){
 		var ci = (this.enter_item && this.enter_item.serial_number) || 0,
@@ -191,11 +218,11 @@ cloneObj(investigation.prototype, {
 		this.setItemForEnter(t);
 		this.selected_inum = ni;
 	},
-	getAllItems: function(){
+	getAllItems: function(no_button){
 		var r = [];
 		for (var i=0; i < this.sections.length; i++) {
 			var cur = this.sections[i];
-			var items = cur.getItems();
+			var items = cur.getItems(no_button);
 			if (items.length){
 				r = r.concat(items);
 			}
@@ -237,6 +264,7 @@ var searchResults = function(query, prepared, valueOf){
 		doesContain: doesContain,
 		add: function(target, valueOf){
 			if (this.doesContain(target, valueOf) == -1){
+				target.q = this.query;
 				return this.push(target);
 			} else{
 				return false;
@@ -249,10 +277,126 @@ var searchResults = function(query, prepared, valueOf){
 			};
 		}
 	});
-	
+
+
+var baseSuggestUI = function(){};
+createPrototype(baseSuggestUI, new servView(), {
+	init: function(sugg){
+		this.callParentMethod('init');
+		if (sugg){
+			this.sugg = sugg;
+		}
 		
+		this.createBase();
+		if (this.createItem){
+			this
+				.createItem()
+				.bindClick();
+		};
+		this.setModel(sugg)
+	},
+	state_change: {
+		active: function(state){
+			if (this.a){
+				if (state){
+					this.a.addClass('active');
+				} else {
+					this.a.removeClass('active');
+				}
+			}
+			
+		},
+		bordered: function(state){
+			if (state){
+				this.c.addClass('searched-bordered');
+			} else {
+				this.c.removeClass('searched-bordered');
+			}
+		},
+		disabled: function(state){
+			if (!state){
+				this.c.removeClass('hidden')
+			} else {
+				this.c.addClass('hidden')
+			}
+		}
+	},
+	createBase: function(){
+		this.c = $("<li class='suggest'></li>");
+		return this;
+	},
+	bindClick: function(){
+		if (this.a){
+			var _this = this;
+			this.a.click(function(){
+				_this.sugg.view();
+			});
+		}
+		
+		return this;
+	}
+});
 
 
+var baseSuggest = function(){};
+createPrototype(baseSuggest, new servModel(), {
+	setActive: function(){
+		this.updateState('active', true);
+	},
+	setInactive: function(){
+		this.updateState('active', false);
+	},
+	view: function(){
+		if (this.onView){
+			this.onView();
+		}
+		this.fire('view');
+	}
+});
+
+
+
+
+
+
+
+
+
+var baseSectionButtonUI = function(sugg){
+	this.callParentMethod('init', sugg);
+};
+createPrototype(baseSectionButtonUI, new baseSuggestUI(), {
+	state_change:  cloneObj({
+		button_text: function(text){
+			this.a.find('span').text(text);	
+		}
+	}, baseSuggestUI.prototype.state_change),
+	createItem: function(){
+		this.a = $('<button type="button"><span></span></button>').appendTo(this.c);
+		return this;
+	}
+});
+
+var baseSectionButton = function(){
+	this.callParentMethod('init');
+}
+createPrototype(baseSectionButton, new baseSuggest(), {
+	ui_constr: function(){
+		return new baseSectionButtonUI(this);
+	},
+	setText: function(text){
+		this.updateState('button_text', text);
+	},
+	show: function(){
+		this.updateState('disabled', false);
+	},
+	hide: function(){
+		this.updateState('disabled', true);
+		this.setInactive();
+	}
+});
+
+/*
 var baseSuggest = function(){};
 	baseSuggest.prototype = {
 		setActive: function(){
@@ -288,4 +432,4 @@ var baseSuggest = function(){};
 			}
 			
 		}
-	};
+	};*/
