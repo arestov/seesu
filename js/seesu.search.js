@@ -250,26 +250,6 @@ createPrototype(albumSuggestUI, new baseSuggestUI(), {
 	}
 });
 
-/*
-
-this.addSection('vk', {
-	head: 'Vkontakte',
-	buttonClick: function(e, section){
-		var query = section.r.query;
-		if (query) {
-			su.ui.show_track({q: query});
-		}
-	},
-	button: function(){
-		return $('<button type="submit" name="type" value="vk_track"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>')
-	},
-	nos: true
-});
-
-
-
-*/
-
 var vkSuggest = function(artist, track, pl){
 	this.callParentMethod('init');
 	this.artist = artist;
@@ -471,6 +451,55 @@ createPrototype(albumsSection, new seesuSection(), {
 });
 
 
+var vkSectionUI = function(seasc) {
+	this.callParentMethod('init', seasc);
+};
+createPrototype(vkSectionUI, new searchSectionUI(), {
+	head_text: 'Vkontakte'
+});
+
+var vkSection = function() {
+	this.callParentMethod('init');
+};
+createPrototype(vkSection, new seesuSection(), {
+	getButtonText: function() {
+		return this.btext;
+	},
+	btext: localize('direct-vk-search','Search mp3  directly in vkontakte'),
+	loadMore: function() {
+		var query = this.r.query;
+		if (query) {
+			su.ui.show_track({q: query});
+		}
+	},
+	ui_constr: function() {
+		return new vkSectionUI(this)
+	},
+	resItem: vkSuggest
+});
+
+
+/*
+
+this.addSection('vk', {
+	head: 'Vkontakte',
+	buttonClick: function(e, section){
+		var query = section.r.query;
+		if (query) {
+			su.ui.show_track({q: query});
+		}
+	},
+	button: function(){
+		return $('<button type="submit" name="type" value="vk_track"><span>' + localize('direct-vk-search','Search mp3  directly in vkontakte') +'</span></button>')
+	},
+	nos: true
+});
+
+
+
+*/
+
+
 
 arrows_keys_nav = function(e){
 	
@@ -527,25 +556,21 @@ var network_search = seesu.env.cross_domain_allowed ?
 
 
 var vk_suggests = $.debounce(function(query, invstg){
-	return
-	//function(trackname, callback, nocache, hypnotoad, only_cache){
 	su.mp3_search.find_files({q: query}, 'vk', function(err, pl, c){
 		c.done = true;
 		pl = pl && pl[0] && pl[0].t;
 		if (pl && pl.length){
+			var vk_tracks = invstg.g('vk')
+
 			pl = pl.slice(0, 3);
 			for (var i=0; i < pl.length; i++) {
-				pl[i] = new vkSuggest(pl[i].artist, pl[i].track);
+				pl[i] = new vk_tracks.resItem(pl[i].artist, pl[i].track);
 			};
-			var vk_tracks = invstg.g('vk')
-				vk_tracks.r.append(pl);
-				vk_tracks.renderSuggests();
+			
+			vk_tracks.r.append(pl);
+			vk_tracks.renderSuggests();
 		}
 	}, false);
-	
-	
-	
-	
 },300);
 
 createSuInvestigation = function(){
@@ -556,7 +581,7 @@ createSuInvestigation = function(){
 		this.addSection('albums', new albumsSection());
 		this.addSection('tags', new tagsSection());
 		this.addSection('tracks', new tracksSection());
-		//fixme vkontakte
+		this.addSection('vk', new vkSection());
 	}, function(q){
 		if (':playlists'.match(new RegExp('\^' + this.q , 'i'))){
 			this.setInactiveAll('playlists');
