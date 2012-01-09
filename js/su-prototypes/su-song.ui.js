@@ -50,18 +50,23 @@ songUI.prototype = new servView();
 cloneObj(songUI.prototype, {
 	constructor: songUI,
 	state_change : {
+		"mp-show": function(opts) {
+			if (opts){
+				$(su.ui.els.slider).addClass("show-zoom-to-track");
+				this.activate();
+			} else {
+				$(su.ui.els.slider).removeClass("show-zoom-to-track");
+				this.deactivate();
+			}
+		},
+		"mp-blured": function(state) {
+			
+		},
 		want_to_play: function(state, oldstate){
 			if (state){
 				this.node.addClass('marked-for-play');
 			} else if (oldstate){
 				this.node.removeClass('marked-for-play');
-			}
-		},
-		active: function(state){
-			if (state){
-				this.activate();
-			} else {
-				this.deactivate();
 			}
 		},
 		files_search: function(opts){

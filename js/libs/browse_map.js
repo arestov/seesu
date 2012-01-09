@@ -1,5 +1,3 @@
-
-
 var mapLevel = function(num, parent_levels, resident, map, getNavData, data){
 	var _this = this;
 	this.num = num;
@@ -8,26 +6,26 @@ var mapLevel = function(num, parent_levels, resident, map, getNavData, data){
 	if (getNavData){
 		this.getNavData = getNavData;
 	}
-	this.use_nav = !!getNavData;
+	this.use_nav = false// !!getNavData;
 	this.storage = {};
 	if (typeof data == 'object'){
 		cloneObj(this.storage, data);
 	}
-	
 	if (resident){
-		this.setResidentC(resident);
-		this.buildResident();
+		this.setResident(resident);
+		resident.assignMapLev(this);
+		//this.buildResident();
 	}
-	
 };
 mapLevel.prototype = {
+	constructor: mapLevel,
 	D: function(key, value){
 		if (!arguments.hasOwnProperty('1')){
 			return this.storage[key];
 		} else {
 			this.storage[key] = value;
-			if (this.getResident() && this.getResident().handleData){
-				this.getResident().handleData(key, value);
+			if (this.resident && this.resident.handleData){
+				this.resident.handleData(key, value);
 			}
 			return value;
 		}
@@ -42,9 +40,10 @@ mapLevel.prototype = {
 	},
 	setTitle: function(text){
 		if (this.use_nav){
+			/*
 			if (this.getNav()){
 				this.getNav().text(text || "");
-			}
+			}*/
 		}
 		
 		this.title = text || "";
@@ -71,25 +70,10 @@ mapLevel.prototype = {
 		}
 		return this.nav;
 	},
-	setResidentC: function(residentC){
-		this.residentC = residentC;
-	},
-	getResidentC: function(){
-		return 	this.residentC;
-	},
-	buildResident: function(){
-		this.resident = (new this.residentC(this.storage)).setLev(this);
-		if (this.resident.render && this.parent_levels[0]){
-			this.resident.render(this.parent_levels[0].getResident());
-		}
-		return this.resident;
+	setResident: function(resident){
+		this.resident = resident;
 	},
 	getResident: function(){
-		if (this.resident && (!this.resident.canUse || this.resident.canUse())) {
-			return this.resident;
-		} else{
-			return this.buildResident();
-		}
 		return this.resident;
 	},
 	getURL: function(){
@@ -125,30 +109,33 @@ mapLevel.prototype = {
 		o.closed = this.closed;
 		var parent = this.getParentLev();
 		if (parent){
-			parent.getResident().blur();
+			parent.resident.blur();
 		}
-		this.getResident().show(o);
+		this.resident.show(o);
 
 
 		
 		
 	},
 	hide: function(){
-		this.getResident().hide();
+		this.resident.hide();
 		if (this.use_nav){
+			/*
 			if (this.getNav()){
 				this.getNav().hide();
-			}
+			}*/
 		}
 		
 		
 	},
 	die: function(){
-		this.getResident().die();
+		this.resident.mlmDie();
 		if (this.use_nav){
+			/*
 			if (this.getNav()){
 				this.getNav().die();
 			}
+			*/
 		}
 		
 		delete this.map;
@@ -194,7 +181,7 @@ function browseMap(mainLevelResident, getNavData){
 	if (getNavData){
 		this.getNavData = getNavData;
 	}
-	this.use_nav = !!getNavData;
+	this.use_nav = false //!!getNavData;
 	this.mainLevelResident = mainLevelResident;
 	
 	//zoom levels
@@ -262,7 +249,7 @@ browseMap.prototype= {
 		this.current_level_num = lp.num;
 	},
 	resurrectLevel: function(lev, set_active){
-		var nlev = lev.clone = this._goDeeper(true, lev.getResidentC(), lev.storage);
+		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), lev.storage);
 			nlev.setURL(lev.getURL());
 			nlev.setTitle(lev.title);
 		
@@ -468,4 +455,47 @@ browseMap.prototype= {
 		this.sliceDeepUntil(-1, true, false, make_history_step);
 	}
 	
-}
+};
+var mapLevelModel = function() {};
+createPrototype(mapLevelModel, new servModel(), {
+	assignMapLev: function(lev){
+		this.lev = lev;
+		if (this.onMapLevAssign){
+			this.onMapLevAssign();
+		}
+		return this;	
+	},
+	assignChild: function(type, map_lvm) {
+		if (this.children_assigners && this.children_assigners[type]){
+			this.children_assigners[type](map_lvm)
+		}
+		return this;
+	},
+	mlmDie: function(){
+		this.die();	
+	},
+	hide: function() {
+		this.updateState('mp-show', false);
+		return this;
+	},
+	show: function(opts) {
+		this.focus();
+		this.updateState('mp-show', opts || true);
+		return this;
+	},
+	blur: function() {
+		this.stackNav(false);
+		this.updateState('mp-blured', true);
+		return this;
+	},
+	focus: function() {
+		this.stackNav(false);
+		this.updateState('mp-blured', false);
+		return this;
+	},
+	stackNav: function(stack_v){
+		this.updateState('mp-stack', stack_v);
+		return this;
+	},
+	
+});

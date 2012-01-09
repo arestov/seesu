@@ -1,10 +1,26 @@
 (function(){
 var counter = 0;
 baseSong = function(){};
-baseSong.prototype = new servModel();
-var song_methods = {
-	constructor: baseSong,
+createPrototype(baseSong, new mapLevelModel(), {
 	state_change: {
+		"mp-show": function(opts) {
+			if (opts){
+				this.checkAndFixNeighbours();
+			} else {
+				this.removeMarksFromNeighbours();
+			}
+		}
+	},
+	init: function(omo, player, mp3_search){
+		this.callParentMethod('init');
+		this.mp3_search = mp3_search;
+		this.player = player;
+		this.states = {};
+		this.uid = ++counter;
+		cloneObj(this, omo, false, ['artist', 'track']);
+		this.omo = omo;
+	},
+	die: function() {
 		
 	},
 	getFullName: function(allow_short){
@@ -71,16 +87,6 @@ var song_methods = {
 	checkAndFixNeighbours: function(){
 		this.findNeighbours();
 		this.addMarksToNeighbours();
-	},
-	deactivate: function(force){
-		this.updateState('active', false);
-		this.removeMarksFromNeighbours();
-	},
-	activate: function(force){
-		this.updateState('active', true);
-		this.checkAndFixNeighbours();
-
-		
 	},
 	setVolume: function(vol){
 		if (this.mopla && this.mopla.setVolume){
@@ -376,15 +382,6 @@ var song_methods = {
 	isNeighbour: function(mo){
 		return (mo == this.prev_song) || (mo == this.next_song);
 	},
-	init: function(omo, player, mp3_search){
-		servModel.prototype.init.call(this);
-		this.mp3_search = mp3_search;
-		this.player = player;
-		this.states = {};
-		this.uid = ++counter;
-		cloneObj(this, omo, false, ['artist', 'track']);
-		this.omo = omo;
-	},
 	setPlayableInfo: function(info){
 		this.playable_info = info;
 		return this;
@@ -395,9 +392,7 @@ var song_methods = {
 			this.addView(new songUI(this, complex));
 		}
 	}
-};
-
-cloneObj(baseSong.prototype, song_methods);
+});
 })();
 
 

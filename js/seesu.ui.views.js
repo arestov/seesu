@@ -17,15 +17,12 @@ dNav.prototype = {
 		return this.c && !this.dead && this.c[0].ownerDocument == su.ui.d;
 	},
 	setActive: function(stack){
-
-		
 		this.c.addClass('nnav');
 		if (stack){
 			this.stack('top');
 		} else{
 			this.resetStackMark();
 		}
-		
 		this.show();
 		this.active = true;
 	},
@@ -223,6 +220,101 @@ baseLevelResident.prototype = {
 	}
 };
 
+
+var baseNavUI = function() {};
+
+createPrototype(baseNavUI, new servView(), {
+	state_change: {
+		'mp-blured': function(state) {
+			if (state){
+				this.c.removeClass('nnav');
+			} else {
+				this.c.addClass('nnav');
+			}
+		},
+		'mp-stack': function(state) {
+			if (state){
+				state = ['top', 'bottom', 'middle'].indexOf(state) > -1 && state;
+				if (state){
+					this.c.addClass('stack-' + state + ' stacked');
+				}
+
+			} else {
+				this.resetStackMark();
+			}
+		}
+	},
+	init: function(ml) {
+		callParentMethod('init');
+		this.createBase();
+		this.setModel(ml);
+	},
+	resetStackMark: function() {
+		this.c.removeClass('stack-bottom stack-middle stack-top');
+	},
+	bindClick: function() {
+		var _this;
+		this.c.click(function(){
+			_this.mdl.fire('nav-click');
+		});
+	}
+});
+
+
+
+
+var mainLevelUI = function(mal){
+	this.setModel(mal);
+	this.callParentMethod('init');
+};
+createPrototype(mainLevelUI, new servView(), {
+
+	state_change: {
+		'mp-show': function(opts) {
+			if (opts){
+				if (opts.userwant){
+					su.ui.els.search_input[0].focus();
+					su.ui.els.search_input[0].select();
+					seesu.track_page('start page');
+				}
+			} else {
+				
+			}
+		},
+		'mp-blured': function(state) {
+			if (state){
+				$(su.ui.els.slider).removeClass("show-start");
+			} else {
+				$(su.ui.els.slider).addClass("show-start");
+			}
+		}
+	}
+});
+var mainLevelNavUI = function(mal) {
+	this.init(mal);
+};
+createPrototype(mainLevelNavUI, new baseNavUI(), {
+	createBase: function(){
+		this.c = $('<span class="nnav nav-item nav-start" title="Seesu start page"><b></b></span>');
+	}
+});
+
+
+var mainLevel = new mapLevelModel();
+cloneObj(mainLevel, {
+	onMapLevAssign: function(){
+		this.getFreeView()	
+	},
+	ui_constr: {
+		main: function() {
+			return new mainLevelUI(this);
+		},
+		nav: function() {
+			return new mainLevelNavUI(this)
+		}
+	}
+});
+mainLevel.init();
 
 
 var mainLevelResident = function(){
@@ -476,11 +568,11 @@ cloneObj(trackLevelResident.prototype, {
 views = function(sui){
 	this.sui = sui;
 	var _this = this;
-	this.m = su.map || (su.map = new browseMap(mainLevelResident, function(){
+	this.m = su.map || (su.map = new browseMap(mainLevel, function(){
 		return su.ui.views.nav && su.ui.views.nav.daddy;
 	}));
 
-}
+};
 views.prototype = {
 	setNav: function(obj){
 		this.nav= obj;
@@ -522,11 +614,16 @@ views.prototype = {
 	},
 	showResultsPage: function(query, no_navi){
 		if (!su.ui.search_el || !su.ui.search_el.lev.isOpened()){
-			var lev = this.m.goDeeper(false, sRLevelResident);
+			var lev = this.m.goDeeper(false, createSuInvestigation());
 		} else {
 			var lev = su.ui.search_el.lev;
 		}
 		
+		var invstg = lev.resident;
+		invstg.scratchResults(query)
+
+
+		return 
 		if (lev.D('q') != query){
 			lev.setTitle(query);
 			lev.D('q', query);
@@ -534,7 +631,8 @@ views.prototype = {
 		}
 	},
 	showArtcardPage: function(artist, save_parents, no_navi){
-		var lev = this.m.goDeeper(save_parents, artcardLevelResident);
+		var lev = this.m.goDeeper(save_parents, new artCard(artist));
+		return
 			lev.setTitle(artist);
 			lev.D('artist', artist);
 			
@@ -542,22 +640,25 @@ views.prototype = {
 			
 	},
 	show_playlist_page: function(pl, save_parents, no_navi){
-		var lev = this.m.goDeeper(save_parents, playlistLevelResident);
-			lev.setTitle(pl.playlist_title);
-			lev.D('pl', pl);
-			lev.setURL(pl.getUrl(), !no_navi);
-		return 
+		var lev = this.m.goDeeper(save_parents, pl);
+		return;
+			//lev.setTitle(pl.playlist_title);
+			//lev.D('pl', );
+			//lev.setURL(pl.getUrl(), !no_navi);
+		//return 
 	},
 	show_track_page: function(mo, no_navi){
 		var _this = this,
 			title = (mo.plst_titl.belongsToArtist(mo.artist) ? '' : (mo.artist + ' - '))  + mo.track;
 		
 		var pl = mo.plst_titl;
-		pl.lev.sliceTillMe(true);
-		var lev = this.m.goDeeper(true, trackLevelResident);
-			lev.setTitle(title);
-			lev.D('mo', mo);
-			lev.setURL(mo.getURLPart(), !no_navi);
+			pl.lev.sliceTillMe(true);
+		var lev = this.m.goDeeper(true, mo);
+
+		return
+			//lev.setTitle(title);
+			//lev.D('mo', mo);
+			//lev.setURL(mo.getURLPart(), !no_navi);
 	}
 };
 })();

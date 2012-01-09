@@ -1,15 +1,12 @@
 var investigationUI = function(invstg){
-	servView.prototype.init.call(this);
-
+	this.callParentMethod('init')
 	this.invstg = invstg;
 	this.c = $('<div class="search-results-container current-src"></div');
 
 	this.setStates(invstg.states);
 };
-investigationUI.prototype = new servView();
 
-cloneObj(investigationUI.prototype, {
-	constructor: investigationUI,
+createPrototype(investigationUI, new servView(), {
 	appendChildren: function(){
 		for (var i = 0; i < this.invstg.sections.length; i++) {
 			var cur_ui = this.invstg.sections[i].getFreeView();
@@ -18,6 +15,35 @@ cloneObj(investigationUI.prototype, {
 				cur_ui.appended()
 			}
 		};
+	},
+	state_change: {
+		"mp-show": function(opts) {
+			var sli = $(su.ui.els.slider);
+			if (opts){
+				this.c.removeClass('hidden');
+				sli.addClass('show-search-results')
+				if (!opts.closed){
+					sli.addClass('show-search')
+				}
+			} else {
+				this.blur();
+				this.c.addClass('hidden');
+			}
+		},
+		"mp-blured": function(state) {
+			if (state){
+				this.blur();
+			} else {
+				
+			}
+		}
+	},
+	die: function() {
+		this.blur();
+		this.callParentMethod('die');	
+	},
+	blur: function() {
+		$(su.ui.els.slider).removeClass('show-search show-search-results')
 	},
 	prop_change: {
 		enter_item: function(item){
@@ -61,7 +87,7 @@ cloneObj(investigationUI.prototype, {
 });
 
 investigation = function(init, searchf){
-	servModel.prototype.init.call(this);
+	this.callParentMethod('init')
 
 	this.sections = [];
 	this.names = {};
@@ -74,14 +100,34 @@ investigation = function(init, searchf){
 
 	this.setInactiveAll();
 };
-investigation.prototype = new servModel();
 
-cloneObj(investigation.prototype, {
-	constructor: investigation,
+
+createPrototype(investigation, new mapLevelModel(), {
 	ui_constr: {
 		main: function(){
 			return new investigationUI(this)
 		}	
+	},
+	onMapLevAssign: function() {
+		if (su.ui.els.searchres){
+			var child_ui = this.getFreeView();
+			if (child_ui){
+				su.ui.els.searchres.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}
+	},
+	state_change: {
+		"mp-show": function(opts) {
+			if (opts){
+				if (opts.userwant){
+					su.track_page('search results');
+				}
+				su.ui.search_el = this;
+			}
+			
+			
+		}
 	},
 	addCallback: function(event_name, func){
 		this.on(event_name, func);

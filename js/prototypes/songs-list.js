@@ -1,12 +1,12 @@
 (function(){
 	songsListModel = function(){};
 	songsListModel.prototype = new Array();
-	cloneObj(songsListModel.prototype, servModel.prototype);
+	cloneObj(songsListModel.prototype, mapLevelModel.prototype);
 	cloneObj(songsListModel.prototype, {
 		oldpush: songsListModel.prototype.push,
 		constructor: songsListModel,
 		init: function(){
-			servModel.prototype.init.call(this)
+			mapLevelModel.prototype.init.call(this)
 		},
 		push: function(omo, view){
 			var mo = this.extendSong(omo, this.player, this.findMp3);
@@ -59,16 +59,9 @@
 			}
 		},
 		die: function(){
-			if (this.ui){
-				this.ui.remove();
-				delete this.ui;
-			}
-			
-			
 			for (var i = this.length - 1; i >= 0; i--){
 				this[i].die();
 			};
-			
 		},
 		compare: function(puppet){
 			var key_string_o = stringifyParams(this.info);
@@ -160,12 +153,15 @@
 	});
 
 
-	songsListViewBase = function(c){};
+	songsListViewBase = function(){};
 	songsListViewBase.prototype = new servView(); 
 	cloneObj(songsListViewBase.prototype, {
 		constructor: songsListViewBase,
-		init: function(){
+		init: function(pl){
 			servView.prototype.init.call(this);
+			this.createBase();
+			this.setModel(pl);
+			
 		},
 		state_change: {
 			loading: function(loading){
@@ -178,6 +174,9 @@
 			changed: function(){
 				this.render_playlist();
 			}
+		},
+		createBase: function() {
+			this.c = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>');	
 		},
 		appendSongUI: function(mo){
 			var pl_ui_element = mo.getC();

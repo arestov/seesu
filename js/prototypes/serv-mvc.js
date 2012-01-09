@@ -71,10 +71,13 @@ cloneObj(servModel.prototype, {
 		}
 		return this;
 	},
-	die: function(){
+	killViews: function() {
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].die();
-		};	
+		};
+	},
+	die: function(){
+		this.killViews();
 	},
 	getC: function(name){
 		var v = this.getView(name);

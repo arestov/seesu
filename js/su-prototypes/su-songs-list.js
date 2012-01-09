@@ -1,15 +1,30 @@
 (function(){
-	var songsListView = function(c){
-		this.setC(c);
-		this.init();
+	var songsListView = function(pl){
+		this.init(pl);
 	};
-	songsListView.prototype = new songsListViewBase();
-	cloneObj(songsListView.prototype, {
-		constructor: songsListView
+	createPrototype(songsListView, new songsListViewBase(), {
+		appendChildren: function() {
+			
+		}
 	});
 
-	songsListView.prototype.state_change = cloneObj({}, songsListView.prototype.state_change);
-	cloneObj(songsListView.prototype.state_change, {
+
+
+	songsListView.prototype.state_change = cloneObj({
+		"mp-show": function(opts) {
+			if (opts){
+				$(su.ui.els.slider).addClass('show-player-page');
+			} else {
+				$(su.ui.els.slider).removeClass('show-player-page');
+			}
+		},
+		"mp-blured": function(state) {
+			if (state){
+				
+			} else {
+				
+			}
+		},
 		error: function(error){
 			if (this.error_b && this.error_b.v !== error){
 				this.error_b.n.remove();
@@ -28,8 +43,8 @@
 				}
 			}
 		}
-	});
-	
+	}, songsListView.prototype.state_change);
+
 
 	songsList = function(playlist_title, playlist_type, info, first_song, findMp3, player){
 		this.init();
@@ -46,9 +61,27 @@
 		this.changed();
 		
 	};
-	songsList.prototype = new songsListModel();
-	cloneObj(songsList.prototype, {
-		constructor: songsList,
+	createPrototype(songsList, new songsListModel(), {
+		ui_constr: {
+			main: function(){
+				return new songsListView(this)
+			}	
+		},
+		onMapLevAssign: function() {
+			if (su.ui && su.ui.els.artsTracks){
+
+
+				var child_ui = this.getFreeView();
+				if (child_ui){
+					var c = $('<div class="playlist-container"></div>').appendTo(su.ui.els.artsTracks);
+					//this.info_container = $('<div class="playlist-info"></div>').appendTo(this.c);
+					c.append(child_ui.getC())
+
+					
+					child_ui.appended();
+				}
+			}
+		},
 		getUrl: function(){
 			var url ='';
 			if (this.playlist_type == 'artist'){
@@ -80,6 +113,7 @@
 			}
 		},
 		setC: function(c){
+			return
 			var oldc = this.getC();
 
 			if (c != oldc){

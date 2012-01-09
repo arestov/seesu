@@ -1,127 +1,98 @@
-var artcardUI = function(artist, c){
-	this.artist= artist;
-	this.c = c;
-	
-	this.ui = {
-		imagec: this.c.find('.art-card-image .art-card-image-padding'),
-		topc: this.c.find('.top-tracks'),
-		tagsc: this.c.find('.art-card-tags'),
-		albumsc: this.c.find('.art-card-albums'),
-		similarsc: this.c.find('.art-card-similar'),
-		bioc: this.c.find('.art-card-bio')
-	};	
-
-
-	this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
-		su.ui.showTopTacks(artist, {save_parents: true, from_artcard: true});
-	});
-	this.loadInfo();
-}
-artcardUI.prototype = {
-	loadInfo: function(){
-		this.loadBaseInfo();
-		this.loadTopTracks();
-		this.loadAlbums();
-		
+var artCardUI = function(artcard) {
+	this.callParentMethod('init')
+	this.createBase();
+	this.setModel(artcard);
+};
+createPrototype(artCardUI, new servView(), {
+	die: function() {
+		this.blur();
+		this.callParentMethod('die');	
 	},
-	loadAlbums: function(){
-		
-		var _this = this;
-		_this.ui.albumsc.addClass('loading');
-		lfm.get('artist.getTopAlbums',{'artist': this.artist })
-			.done(function(r){
-				_this.ui.albumsc.removeClass('loading');
-
-				if (r){
-					var albums = toRealArray(r.topalbums.album);
-					_this.showAlbums(albums, true);
-				}
-			})
-			.fail(function(){
-				_this.ui.albumsc.removeClass('loading');
-			});
+	blur: function() {
+		$(su.ui.els.slider).removeClass('show-art-card');
 	},
-	loadTopTracks: function(){
-		if (!this.has_top_tracks){
+	state_change: {
+		"mp-show": function(opts) {
+			if (opts){
+				$(su.ui.els.slider).addClass('show-art-card');
+				su.track_page('art card');
+				this.c.removeClass('hidden');
+			} else {
+				this.c.addClass('hidden');
+			}
+		},
+		"mp-blured": function(state) {
+			if (state){
+				this.blur();
+			} else {
+				
+			}
+		},
+		"loading-albums": function(state) {
+			if (state){
+				this.ui.albumsc.addClass('loading');
+			} else {
+				this.ui.albumsc.removeClass('loading');
+			}
+		},
+		"loading-toptracks": function(state) {
+			if (state){
+				this.ui.topc.addClass('loading');
+			} else {
+				this.ui.topc.removeClass('loading');
+			}
+		},
+		"loading-baseinfo": function(state) {
+			var mark_loading_nodes = this.ui.tagsc.add(this.ui.bioc).add(this.ui.similarsc);
+
+			if (state){
+				mark_loading_nodes.addClass('loading');
+			} else {
+				mark_loading_nodes.removeClass('loading');
+			}
+		},
+		"sorted-albums": function(ob) {
+			var all_albums = Array.prototype.concat.apply([], ob.ordered);
+
+			var _this = this;
+			for (var i=0; i < ob.ordered.length; i++) {
+				var aul =  $('<ul></ul>');
+				su.ui.renderArtistAlbums(ob.ordered[i], _this.artist, aul, true, true);
+				aul.appendTo(this.ui.albumsc);
+			};
+			
+			$('<a class="js-serv extends-header"></a>').text(localize("Show-all")  + " (" + all_albums.length + ")").click(function(){
+				_this.ui.albumsc.toggleClass('show-all-albums')
+			}).appendTo(_this.ui.albumsc.children(".row-header"));
+		},
+		toptracks: function(list) {
 			var _this = this;
 			var ul = this.ui.topc.children('ul');
-			_this.ui.topc.addClass('loading');
-
-
-			getTopTracks(this.artist, function(list){
-				_this.ui.topc.removeClass('loading');
-				if (!_this.has_top_tracks){
-					_this.has_top_tracks = true;
-					
-					$.each(list, function(i, el){
-						if (i < 5){
-							if (el.track){
-								var a = $('<a class="js-serv"></a>').click(function(){
-									su.ui.showTopTacks(_this.artist, {save_parents: true, from_artcard: true}, {
-										artist: _this.artist,
-										track: el.track
-									});
-								}).text(el.track);
-								$('<li></li>').append(a).appendTo(ul);
-							}
-						}
-						
-					});
-					ul.removeClass('hidden');
-					
-					
-				}
-			}, function(){
-				_this.ui.topc.removeClass('loading');
-			});
-		}
-	},
-	loadBaseInfo: function(){
-		if (!this.has_base_info){
-			var _this = this;
-
-			var mark_loading_nodes = _this.ui.tagsc.add(_this.ui.bioc).add(_this.ui.similarsc);
-
-			mark_loading_nodes.addClass('loading');
-
-			
-			lfm.get('artist.getInfo',{'artist': this.artist })
-				.done(function(r){
-					mark_loading_nodes.removeClass('loading');
-					if (!_this.has_base_info){
-						_this.has_base_info = true;
-						
-						var ai = parseArtistInfo(r);
-						if (ai.images){
-							_this.showArtistImage(ai.images);
-						}
-						if (ai.tags){
-							_this.showTags(ai.tags);
-						}
-						if (ai.bio){
-							_this.showBio(ai.bio);
-						}
-						if (ai.similars){
-							_this.showSimilars(ai.similars);
-						}
+			$.each(list, function(i, el){
+				if (i < 5){
+					if (el.track){
+						var a = $('<a class="js-serv"></a>').click(function(){
+							su.ui.showTopTacks(_this.artist, {save_parents: true, from_artcard: true}, {
+								artist: _this.artist,
+								track: el.track
+							});
+						}).text(el.track);
+						$('<li></li>').append(a).appendTo(ul);
 					}
-				})
-				.fail(function(){
-					mark_loading_nodes.removeClass('loading');
-				})
-		}
-	},
-	showArtistImage: function(images){
-		if (images[4]){
-			this.ui.imagec.empty();
-			this.ui.imagec.append(
-				$('<img/>').attr('src', images[4])
-			);
-		}
-		
-	},
-	showTags: function(tags){
-		if (tags.length){
+				}
+				
+			});
+			ul.removeClass('hidden');
+		},
+		images: function(images) {
+			if (images[4]){
+				this.ui.imagec.empty();
+				this.ui.imagec.append(
+					$('<img/>').attr('src', images[4])
+				);
+			}
+		},
+		tags: function(tags) {
 			var ul = this.ui.tagsc.children('ul');
 			$.each(tags, function(i, el){
 				if (el && el.name){
@@ -135,17 +106,13 @@ artcardUI.prototype = {
 				
 			});
 			ul.removeClass('hidden');
-		}
-		
-	},
-	showBio: function(text){
-		if (text){
-			this.ui.bioc.html(text.replace(/\n+/gi, '<br/><br/>'));
-		}
-		
-	},
-	showSimilars: function(artists){
-		if (artists.length){
+		},
+		bio: function(text) {
+			if (text){
+				this.ui.bioc.html(text.replace(/\n+/gi, '<br/><br/>'));
+			}
+		},
+		similars: function(artists) {
 			var _this = this;
 			var ul = this.ui.similarsc.children('ul');
 			$.each(artists, function(i, el){
@@ -167,29 +134,112 @@ artcardUI.prototype = {
 			
 			ul.removeClass('hidden');
 		}
+
 	},
-	showAlbums: function(albums, save_parents){
-		var _this = this;
-		if (albums.length){
-			var ob = sortLfmAlbums(albums, this.artist);
-			//ordered
-			for (var i=0; i < ob.ordered.length; i++) {
-				var aul =  $('<ul></ul>');
-				su.ui.renderArtistAlbums(ob.ordered[i], this.artist, aul, save_parents, true);
-				aul.appendTo(this.ui.albumsc);
-			};
-			
-			$('<a class="js-serv extends-header"></a>').text(localize("Show-all")  + " (" + albums.length + ")").click(function(){
-				_this.ui.albumsc.toggleClass('show-all-albums')
-			}).appendTo(_this.ui.albumsc.children(".row-header"));
-			
-		} else{
-			
-		}
+	createBase: function() {
+		this.c = su.ui.samples.artcard.clone();
+		this.ui = {
+			imagec: this.c.find('.art-card-image .art-card-image-padding'),
+			topc: this.c.find('.top-tracks'),
+			tagsc: this.c.find('.art-card-tags'),
+			albumsc: this.c.find('.art-card-albums'),
+			similarsc: this.c.find('.art-card-similar'),
+			bioc: this.c.find('.art-card-bio')
+		};
 	}
+});
+
+
+var artCard = function(artist) {
+	this.callParentMethod('init')
+	this.artist= artist;
+	this.loadInfo();
 };
+createPrototype(artCard, new mapLevelModel(), {
+	ui_constr: {
+		main: function(){
+			return new artCardUI(this)
+		}	
+	},
+	onMapLevAssign: function() {
+		if (su.ui.els.artcards){
+			var child_ui = this.getFreeView();
+			if (child_ui){
+				su.ui.els.artcards.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}
+	},
+	loadInfo: function(){
+		this.loadBaseInfo();
+		this.loadTopTracks();
+		this.loadAlbums();
+	},
+	loadAlbums: function(){
+		
+		var _this = this;
+		this.updateState('loading-albums', true);
+		lfm.get('artist.getTopAlbums',{'artist': this.artist })
+			.done(function(r){
+				_this.updateState('loading-albums', false)
+				if (r){
+					var albums = toRealArray(r.topalbums.album);
+					
+					if (albums.length){
+						albums = sortLfmAlbums(albums, _this.artist);
+						if (albums.ordered){
+							_this.updateState('sorted-albums', albums);
+						}
+					}
+				}
+			})
+			.fail(function(){
+				_this.updateState('loading-albums', false)
+			});
+	},
+	loadTopTracks: function(){
+		
+		var _this = this;
+		this.updateState('loading-toptracks', true);
+		getTopTracks(this.artist, function(list){
+			_this.updateState('loading-toptracks', false);
+			if (list.length){
+				_this.updateState('toptracks', list);
+			}
+		}, function(){
+			_this.updateState('loading-toptracks', false);
+		});
+		
+	},
+	loadBaseInfo: function(){
+		var _this = this;
 
+		this.updateState('loading-baseinfo', true);
 
+		lfm.get('artist.getInfo',{'artist': this.artist })
+			.done(function(r){
+				_this.updateState('loading-baseinfo', false);
+				r = parseArtistInfo(r);
+				if (r.images){
+					_this.updateState('images', r.images);
+				}
+				if (r.tags){
+					_this.updateState('tags', r.tags);
+				}
+				if (r.bio){
+					_this.updateState('bio', r.bio);
+				}
+				if (r.similars){
+					_this.updateState('similars', r.similars);
+				}
+				
+			})
+			.fail(function(){
+				_this.updateState('loading-baseinfo', false);
+			})
+	
+	}
+});
 
 
 var contextRow = function(container){

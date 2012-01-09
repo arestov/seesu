@@ -28,14 +28,21 @@
 			}
 		});
 	};
-	cloneObj(song.prototype, new baseSong())
-	cloneObj(song.prototype, {
+	createPrototype(song, new baseSong(), {
+		ui_constr: {
+			main: function(){
+				return new songUI(this)
+			}	
+		},
 		updateFilesSearchState: function(complete, get_next){
 			baseSong.prototype.updateFilesSearchState.apply(this, arguments);
 			if (this.isHaveTracks()){
 				su.ui.els.export_playlist.addClass('can-be-used');
 			}
 		},	
+		mlmDie: function() {
+			this.hide();	
+		},
 		view: function(no_navi){
 			this.fire('view');
 			this.findFiles();
