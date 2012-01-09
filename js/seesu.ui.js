@@ -2,6 +2,7 @@ var artCardUI = function(artcard) {
 	this.callParentMethod('init')
 	this.createBase();
 	this.setModel(artcard);
+	this.artcard = artcard;
 };
 createPrototype(artCardUI, new servView(), {
 	die: function() {
@@ -57,7 +58,7 @@ createPrototype(artCardUI, new servView(), {
 			var _this = this;
 			for (var i=0; i < ob.ordered.length; i++) {
 				var aul =  $('<ul></ul>');
-				su.ui.renderArtistAlbums(ob.ordered[i], _this.artist, aul, true, true);
+				su.ui.renderArtistAlbums(ob.ordered[i], _this.artcard.artist, aul, true, true);
 				aul.appendTo(this.ui.albumsc);
 			};
 			
@@ -72,8 +73,8 @@ createPrototype(artCardUI, new servView(), {
 				if (i < 5){
 					if (el.track){
 						var a = $('<a class="js-serv"></a>').click(function(){
-							su.ui.showTopTacks(_this.artist, {save_parents: true, from_artcard: true}, {
-								artist: _this.artist,
+							su.ui.showTopTacks(_this.artcard.artist, {save_parents: true, from_artcard: true}, {
+								artist: _this.artcard.artist,
 								track: el.track
 							});
 						}).text(el.track);
@@ -127,7 +128,7 @@ createPrototype(artCardUI, new servView(), {
 			
 			var header_link = $('<a class="js-serv"></a>')
 				.click(function(){
-					su.ui.showSimilarArtists(_this.artist, {save_parents: true, from_artcard: true});	
+					su.ui.showSimilarArtists(_this.artcard.artist, {save_parents: true, from_artcard: true});	
 				})
 				.text(localize('similar-arts'))
 			var header = this.ui.similarsc.children('h5').empty().append(header_link);
@@ -137,6 +138,7 @@ createPrototype(artCardUI, new servView(), {
 
 	},
 	createBase: function() {
+		var _this = this;
 		this.c = su.ui.samples.artcard.clone();
 		this.ui = {
 			imagec: this.c.find('.art-card-image .art-card-image-padding'),
@@ -146,6 +148,9 @@ createPrototype(artCardUI, new servView(), {
 			similarsc: this.c.find('.art-card-similar'),
 			bioc: this.c.find('.art-card-bio')
 		};
+		this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
+			su.ui.showTopTacks(_this.artcard.artist, {save_parents: true, from_artcard: true});
+		});
 	}
 });
 

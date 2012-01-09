@@ -13,9 +13,11 @@
 	songsListView.prototype.state_change = cloneObj({
 		"mp-show": function(opts) {
 			if (opts){
+				this.c.removeClass('hidden');
 				$(su.ui.els.slider).addClass('show-player-page');
 			} else {
 				$(su.ui.els.slider).removeClass('show-player-page');
+				this.c.addClass('hidden');
 			}
 		},
 		"mp-blured": function(state) {
