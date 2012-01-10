@@ -32,7 +32,19 @@
 		ui_constr: {
 			main: function(){
 				return new songUI(this)
-			}	
+			},
+			nav: function() {
+				return new trackNavUI(this);
+			}
+		},
+		onMapLevAssign: function() {
+			if (su.ui.views.nav.daddy){
+				var child_ui = this.getFreeView('nav');
+				if (child_ui){
+					su.ui.views.nav.daddy.append(child_ui.getC());
+					child_ui.appended();
+				}
+			}
 		},
 		updateFilesSearchState: function(complete, get_next){
 			baseSong.prototype.updateFilesSearchState.apply(this, arguments);

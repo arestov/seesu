@@ -339,6 +339,44 @@ cloneObj(mainLevel, {
 });
 mainLevel.init();
 
+investgNavUI = function(mlm) {
+	this.callParentMethod('init', mlm);
+};
+createPrototype(investgNavUI, new baseNavUI(), {
+	createBase: function() {
+		this.c = $('<span class="nnav nav-item nav-search-results" title="Search results"><b></b></span>');
+	}
+});
+
+artCardNavUI = function(mlm) {
+	this.callParentMethod('init', mlm);
+};
+createPrototype(artCardNavUI, new baseNavUI(), {
+	createBase: function() {
+		this.c = $('<span class="nnav nav-item "><span></span><b></b></span>');
+	}
+});
+
+
+playlistNavUI = function(mlm) {
+	this.callParentMethod('init', mlm);
+};
+createPrototype(playlistNavUI, new baseNavUI(), {
+	createBase: function() {
+		this.c = $('<span class="nnav nav-item nav-playlist-page"><span></span><b></b></span>');
+	}
+});
+
+
+trackNavUI = function(mlm) {
+	this.callParentMethod('init', mlm);
+};
+createPrototype(trackNavUI, new baseNavUI(), {
+	createBase: function() {
+		this.c = $('<span class="nnav nav-item nav-track-zoom"><span></span><b></b></span>');
+	}
+});
+
 
 var mainLevelResident = function(){
 	this.canUse = false;

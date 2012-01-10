@@ -164,6 +164,9 @@ createPrototype(artCard, new mapLevelModel(), {
 	ui_constr: {
 		main: function(){
 			return new artCardUI(this)
+		},
+		nav: function() {
+			return new artCardNavUI(this)
 		}	
 	},
 	onMapLevAssign: function() {
@@ -171,6 +174,13 @@ createPrototype(artCard, new mapLevelModel(), {
 			var child_ui = this.getFreeView();
 			if (child_ui){
 				su.ui.els.artcards.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}
+		if (su.ui.views.nav.daddy){
+			var child_ui = this.getFreeView('nav');
+			if (child_ui){
+				su.ui.views.nav.daddy.append(child_ui.getC());
 				child_ui.appended();
 			}
 		}

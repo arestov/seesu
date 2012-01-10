@@ -66,8 +66,11 @@
 	createPrototype(songsList, new songsListModel(), {
 		ui_constr: {
 			main: function(){
-				return new songsListView(this)
-			}	
+				return new songsListView(this);
+			},
+			nav: function() {
+				return new playlistNavUI(this);
+			}
 		},
 		onMapLevAssign: function() {
 			if (su.ui && su.ui.els.artsTracks){
@@ -80,6 +83,14 @@
 					c.append(child_ui.getC())
 
 					
+					child_ui.appended();
+				}
+			}
+			
+			if (su.ui.views.nav.daddy){
+				var child_ui = this.getFreeView('nav');
+				if (child_ui){
+					su.ui.views.nav.daddy.append(child_ui.getC());
 					child_ui.appended();
 				}
 			}

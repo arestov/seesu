@@ -1,3 +1,5 @@
+
+
 var investigationUI = function(invstg){
 	this.callParentMethod('init')
 	this.invstg = invstg;
@@ -86,6 +88,8 @@ createPrototype(investigationUI, new servView(), {
 	}
 });
 
+
+
 investigation = function(init, searchf){
 	this.callParentMethod('init')
 
@@ -105,14 +109,24 @@ investigation = function(init, searchf){
 createPrototype(investigation, new mapLevelModel(), {
 	ui_constr: {
 		main: function(){
-			return new investigationUI(this)
-		}	
+			return new investigationUI(this);
+		},
+		nav: function() {
+			return new investgNavUI(this);
+		}
 	},
 	onMapLevAssign: function() {
 		if (su.ui.els.searchres){
 			var child_ui = this.getFreeView();
 			if (child_ui){
 				su.ui.els.searchres.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}
+		if (su.ui.views.nav.daddy){
+			var child_ui = this.getFreeView('nav');
+			if (child_ui){
+				su.ui.views.nav.daddy.append(child_ui.getC());
 				child_ui.appended();
 			}
 		}
