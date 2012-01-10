@@ -349,7 +349,7 @@ vkCoreApi.prototype = {
 		delete this.access_token;	
 	},
 	hasAccessToken: function(){
-		!!this.access_token;
+		return !!this.access_token;
 	}, 
 	sendRequest: function(method, params, callback, error){ //nocache, after_ajax, cache_key, only_cache
 		
