@@ -241,7 +241,7 @@ browseMap.prototype= {
 		opts = opts || {};
 		lp.show(opts);
 		if (opts.userwant){
-			if (this.use_nav){
+			if (true || this.use_nav){
 				this.updateNav(lp);
 			}
 		}
@@ -407,21 +407,24 @@ browseMap.prototype= {
 		lvls.reverse();
 		
 		
-		tl.getNav().setInactive();
-		pushTitle(tl);
+		//tl.getNav().setInactive();
+		//pushTitle(tl);
 		
 		
 		var prev = lvls.pop();
 		if (prev){
-			prev.getNav().setActive(lvls.length);
-			pushTitle(prev);
+			if (lvls.length){
+				prev.resident.stackNav('top');
+			}
+			
+			//pushTitle(prev);
 		}
 		if (lvls.length){
 			while (lvls.length){
-				lvls.pop().getNav().stack( lvls.length == 0 ? 'bottom' : 'middle');
+				lvls.pop().resident.stackNav( lvls.length == 0 ? 'bottom' : 'middle');
 			}
 		}
-		updateTitle();
+		//updateTitle();
 		
 		
 		

@@ -227,9 +227,9 @@ createPrototype(baseNavUI, new servView(), {
 	state_change: {
 		'mp-blured': function(state) {
 			if (state){
-				this.c.removeClass('nnav');
-			} else {
 				this.c.addClass('nnav');
+			} else {
+				this.c.removeClass('nnav');
 			}
 		},
 		'mp-stack': function(state) {
@@ -244,10 +244,10 @@ createPrototype(baseNavUI, new servView(), {
 			}
 		}
 	},
-	init: function(ml) {
-		callParentMethod('init');
+	init: function(mlm) {
+		this.callParentMethod('init');
 		this.createBase();
-		this.setModel(ml);
+		this.setModel(mlm);
 	},
 	resetStackMark: function() {
 		this.c.removeClass('stack-bottom stack-middle stack-top');
@@ -260,7 +260,14 @@ createPrototype(baseNavUI, new servView(), {
 	}
 });
 
-
+var mainLevelNavUI = function(mlm) {
+	this.callParentMethod('init', mlm);
+};
+createPrototype(mainLevelNavUI, new baseNavUI(), {
+	createBase: function() {
+		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b></span>');
+	}
+});
 
 
 var mainLevelUI = function(mal){
@@ -291,7 +298,7 @@ createPrototype(mainLevelUI, new servView(), {
 	}
 });
 var mainLevelNavUI = function(mal) {
-	this.init(mal);
+	this.callParentMethod('init', mal);
 };
 createPrototype(mainLevelNavUI, new baseNavUI(), {
 	createBase: function(){
@@ -303,7 +310,23 @@ createPrototype(mainLevelNavUI, new baseNavUI(), {
 var mainLevel = new mapLevelModel();
 cloneObj(mainLevel, {
 	onMapLevAssign: function(){
-		this.getFreeView()	
+		this.getFreeView();
+
+		if (su.ui.views.nav.daddy){
+			var child_ui = this.getFreeView('nav');
+			if (child_ui){
+				su.ui.views.nav.daddy.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}
+		/*
+		if (su.ui.els.searchres){
+			var child_ui = this.getFreeView();
+			if (child_ui){
+				su.ui.els.searchres.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}*/
 	},
 	ui_constr: {
 		main: function() {
@@ -573,6 +596,7 @@ views = function(sui){
 	}));
 
 };
+//su.ui.views.nav.daddy
 views.prototype = {
 	setNav: function(obj){
 		this.nav= obj;
