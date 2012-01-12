@@ -3,7 +3,7 @@
 var investigationUI = function(invstg){
 	this.callParentMethod('init')
 	this.invstg = invstg;
-	this.c = $('<div class="search-results-container current-src"></div');
+	this.createBase();
 
 	this.setStates(invstg.states);
 };
@@ -39,6 +39,9 @@ createPrototype(investigationUI, new servView(), {
 				
 			}
 		}
+	},
+	createBase: function() {
+		this.c = $('<div class="search-results-container current-src"></div');
 	},
 	die: function() {
 		this.blur();
