@@ -101,7 +101,7 @@ cloneObj(playerComplex.prototype, {
 		if (last_mo != mo){
 			this.removeCurrentWantedSong();
 
-			if (last_mo && last_mo.state('active') && this.c_song != mo){
+			if (last_mo && last_mo.state('mp-show') && this.c_song != mo){
 				mo.view()
 			}
 			if (last_mo){
