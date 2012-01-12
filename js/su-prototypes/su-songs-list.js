@@ -56,10 +56,13 @@
 		}
 		if (playlist_type){
 			this.playlist_type = playlist_type;
+			this.updateState('nav-text', this.playlist_title);
+			this.updateState('nav-title', this.playlist_title);
 		}
 		this.player = player;
 		this.findMp3 = findMp3;
 		this.findSongOwnPosition(first_song);
+
 		this.changed();
 		
 	};
@@ -86,7 +89,7 @@
 					child_ui.appended();
 				}
 			}
-			
+
 			if (su.ui.views.nav.daddy){
 				var child_ui = this.getFreeView('nav');
 				if (child_ui){

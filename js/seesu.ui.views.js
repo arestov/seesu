@@ -225,6 +225,13 @@ var baseNavUI = function() {};
 
 createPrototype(baseNavUI, new servView(), {
 	state_change: {
+		"mp-show": function(opts) {
+			if (opts){
+				this.c.removeClass('hidden')
+			} else {
+				this.c.addClass('hidden')
+			}
+		},
 		'mp-blured': function(state) {
 			if (state){
 				this.c.addClass('nnav');
@@ -242,20 +249,34 @@ createPrototype(baseNavUI, new servView(), {
 			} else {
 				this.resetStackMark();
 			}
+		},
+		"nav-text": function(text) {
+			if (this.text_place){
+				this.text_place.text(text || '');
+			}
+		},
+		"nav-title": function(text) {
+			this.c.attr('title', text || '');
+			
 		}
 	},
 	init: function(mlm) {
 		this.callParentMethod('init');
 		this.createBase();
+		this.bindClick();
+		var text_place = this.c.find('span');
+		if (text_place){
+			this.text_place = text_place;
+		}
 		this.setModel(mlm);
 	},
 	resetStackMark: function() {
 		this.c.removeClass('stack-bottom stack-middle stack-top');
 	},
 	bindClick: function() {
-		var _this;
+		var _this = this;
 		this.c.click(function(){
-			_this.mdl.fire('nav-click');
+			_this.mdl.zoomOut();
 		});
 	}
 });
@@ -307,8 +328,14 @@ createPrototype(mainLevelNavUI, new baseNavUI(), {
 });
 
 
-var mainLevel = new mapLevelModel();
-cloneObj(mainLevel, {
+var mainLevel = function() {
+	this.callParentMethod('init');
+	this.updateState('nav-title', 'Seesu start page');
+
+};
+
+
+createPrototype(mainLevel, new mapLevelModel(), {
 	onMapLevAssign: function(){
 		this.getFreeView();
 
@@ -337,7 +364,7 @@ cloneObj(mainLevel, {
 		}
 	}
 });
-mainLevel.init();
+var main_level = new mainLevel();
 
 investgNavUI = function(mlm) {
 	this.callParentMethod('init', mlm);
@@ -629,7 +656,7 @@ cloneObj(trackLevelResident.prototype, {
 views = function(sui){
 	this.sui = sui;
 	var _this = this;
-	this.m = su.map || (su.map = new browseMap(mainLevel, function(){
+	this.m = su.map || (su.map = new browseMap(main_level, function(){
 		return su.ui.views.nav && su.ui.views.nav.daddy;
 	}));
 

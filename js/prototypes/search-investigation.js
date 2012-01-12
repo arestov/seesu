@@ -155,6 +155,7 @@ createPrototype(investigation, new mapLevelModel(), {
 	},
 
 	die: function(){
+		this.callParentMethod('die');
 		this.stopRequests();
 	},
 	doEverythingForQuery: function(){
@@ -292,6 +293,7 @@ createPrototype(investigation, new mapLevelModel(), {
 	scratchResults: function(q){
 		if (this.q != q){
 			this.stopRequests();
+			this.updateState('nav-title', this.getTitleString(q));
 			this.loaded();
 			this.setItemForEnter();
 			for (var i=0; i < this.sections.length; i++) {
@@ -301,9 +303,22 @@ createPrototype(investigation, new mapLevelModel(), {
 			
 			delete this.selected_inum;
 			this.changeResultsCounter();
-			this.doEverythingForQuery()
+			this.doEverythingForQuery();
+			
 		}
 		
+	},
+	query_regexp: /\ ?\%query\%\ ?/,
+	getTitleString: function(text){
+		var original = localize('Search-resuls')
+		
+		if (text){
+			return original.replace(this.query_regexp, ' «' + text + '» ').replace(/^\ |\ $/gi, '');
+		} else{
+			var usual_text = original.replace(this.query_regexp, '');
+			var cap = usual_text.charAt(0).toLocaleUpperCase();
+			return cap + usual_text.slice(1);
+		}
 	}
 });
 

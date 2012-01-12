@@ -97,7 +97,7 @@ cloneObj(servModel.prototype, {
 			if (constr){
 				v = constr.call(this);
 				if (v){
-					this.addView(v)
+					this.addView(v, name)
 					return v;
 				}
 				

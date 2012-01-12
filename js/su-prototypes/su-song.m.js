@@ -3,7 +3,9 @@
 	song = function(omo, player, mp3_search){
 		this.constructor.prototype.init.call(this, omo, player, mp3_search);
 		var _this = this;
+		this.updateNavTexts();
 
+		
 		this.on('view', function(){
 			if (_this.state('playable')){
 				var zoomed = !!su.ui.els.slider.className.match(/show-zoom-to-track/);
@@ -59,7 +61,7 @@
 			this.fire('view');
 			this.findFiles();
 			su.ui.views.show_track_page(this, no_navi);
-		}
+		},
 	});
 	//song.prototype = song_methods;
 })();

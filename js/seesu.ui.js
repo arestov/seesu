@@ -158,6 +158,9 @@ createPrototype(artCardUI, new servView(), {
 var artCard = function(artist) {
 	this.callParentMethod('init')
 	this.artist= artist;
+	this.updateState('nav-text', artist);
+	this.updateState('nav-title', artist);
+
 	this.loadInfo();
 };
 createPrototype(artCard, new mapLevelModel(), {

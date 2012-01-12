@@ -500,5 +500,10 @@ createPrototype(mapLevelModel, new servModel(), {
 		this.updateState('mp-stack', stack_v);
 		return this;
 	},
+	zoomOut: function() {
+		if (this.lev && (this.state('mp-stack') || (this.state('mp-show') && this.state('mp-blured')) )){
+			this.lev._sliceTM(true)
+		}
+	}
 	
 });

@@ -27,7 +27,7 @@ createPrototype(baseSong, new mapLevelModel(), {
 		var n = '';
 		if (this.artist){
 			if (this.track){
-				if (allow_short && (this.plst_titl.info && this.plst_titl.info.artist == this.artist)){
+				if (allow_short && this.plst_titl && (this.plst_titl.info && this.plst_titl.info.artist == this.artist)){
 					n = this.track;
 				} else {
 					n = this.artist + " - " + this.track;
@@ -39,6 +39,11 @@ createPrototype(baseSong, new mapLevelModel(), {
 			n = this.track;
 		}
 		return n || 'no title'
+	},
+	updateNavTexts: function() {
+		var title = this.getFullName(true); 
+		this.updateState('nav-text', title);
+		this.updateState('nav-title', title);
 	},
 	findNeighbours: function(){
 		//using for visual markering and determination of what to presearch
@@ -211,6 +216,7 @@ createPrototype(baseSong, new mapLevelModel(), {
 				var some_track = tracks[Math.floor(Math.random()*tracks.length)];
 				if (some_track){
 					_this.updateProp('track', some_track);
+					_this.updateNavTexts();
 					_this.findFiles({
 						only_cache: !full_allowing,
 						collect_for: from_collection,

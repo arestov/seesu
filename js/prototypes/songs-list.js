@@ -59,9 +59,12 @@
 			}
 		},
 		die: function(){
+			this.hide();
+			mapLevelModel.prototype.die.call(this);
 			for (var i = this.length - 1; i >= 0; i--){
 				this[i].die();
 			};
+
 		},
 		compare: function(puppet){
 			var key_string_o = stringifyParams(this.info);
