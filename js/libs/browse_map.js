@@ -38,38 +38,6 @@ mapLevel.prototype = {
 		}
 		
 	},
-	setTitle: function(text){
-		if (this.use_nav){
-			/*
-			if (this.getNav()){
-				this.getNav().text(text || "");
-			}*/
-		}
-		
-		this.title = text || "";
-	},
-	getNav: function(){
-		
-		if (this.nav && (!this.nav.canUse || this.nav.canUse())){
-			return this.nav;
-		} else{
-			return this.buildNav();
-		}
-	},
-	buildNav: function(){
-		var _this = this;
-		this.nav = this.getResident().nav();
-		this.nav.render(this.getNavData());
-		this.nav.setClickCb(function(stacked){
-			if (stacked){
-				_this._sliceTM(true);
-			}	
-		});
-		if (this.title){
-			this.nav.text(this.title);
-		}
-		return this.nav;
-	},
 	setResident: function(resident){
 		this.resident = resident;
 	},
@@ -119,25 +87,9 @@ mapLevel.prototype = {
 	},
 	hide: function(){
 		this.resident.hide();
-		if (this.use_nav){
-			/*
-			if (this.getNav()){
-				this.getNav().hide();
-			}*/
-		}
-		
-		
 	},
 	die: function(){
 		this.resident.mlmDie();
-		if (this.use_nav){
-			/*
-			if (this.getNav()){
-				this.getNav().die();
-			}
-			*/
-		}
-		
 		delete this.map;
 	},
 	_sliceTM: function(make_history_step, transit){ //private alike
@@ -250,8 +202,8 @@ browseMap.prototype= {
 	},
 	resurrectLevel: function(lev, set_active){
 		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), lev.storage);
-			nlev.setURL(lev.getURL());
-			nlev.setTitle(lev.title);
+		//	nlev.setURL(lev.getURL());
+		//	nlev.setTitle(lev.title);
 		
 		if (set_active){
 			this.setLevelPartActive(nlev, {userwant: true});
