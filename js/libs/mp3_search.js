@@ -33,6 +33,110 @@ if (!o.nocache && !o.only_cache){
 
 		,
 		*/
+var muansPack = function(){
+	this.store = {}
+};
+createPrototype(muansPack, new eemiter(), {
+	addMuans: function(mu_ans, name){
+		this.store[name] = mu_ans;
+	},
+	isAvailable: function() {
+		for (var a in this.store){
+			if (!this.store[a].isAvailable()){
+				return false;
+			}
+		}
+		return true;
+	},
+	canSearchBy: function(msearch) {
+		var can;
+		if (this.isAvailable()){
+			for (var a in this.store){
+				if (this.store[a].canSearchBy(msearch)){
+					return true;
+				}
+			}
+		}	
+	}
+});
+
+
+var muAns = function(msearch) {
+	this.callParentMethod('init');
+	this.msearch = msearch;
+};
+createPrototype(muAns, new eemiter(), {
+	setSearch: function() {
+		this.msearch = msearch;
+	},
+	busy: function(state) {
+		this.progress = !!state;
+	},
+	isBusy: function() {
+		return this.progress	
+	},
+	reject: function(non_fixable, only_others) {
+		this.error = true;
+		if (non_fixable){
+			this.non_fixable = true
+		} else {
+			if (only_others){
+				this.only_others = true;
+			}
+		}
+		this.fin = true;
+		this.busy(false);
+		this.fire('fail', non_fixable, only_others);
+	},
+	resolve: function(files) {
+		delete this.error;
+		files = toRealArray(files);
+		if (files.length){
+			this.t = files;
+		}
+		this.fin = true;
+		this.busy(false);
+		this.fire('done', this.t);
+	},
+	done: function(cb){
+		this.on('done', cb);
+	},
+	fail: function() {
+		this.on('fail', cb);
+	},
+	isComplete: function() {
+		return this.fin;
+	},
+	isAvailable: function() {
+		return 	!this.error || !this.non_fixable
+	},
+	canSearchBy: function(msearch) {
+		if (!this.isBusy()){
+			if (this.isComplete()) {
+				if (this.error){
+					if (this.non_fixable){
+						return false;
+					} else {
+						if (this.only_others){
+							if (this.msearch == msearch){
+								return false
+							} else {
+								return true
+							}
+						} else {
+							return true;
+						}
+					}
+				} else {
+					return false;
+				}
+			} else {
+				return true;
+			}
+		}
+	}
+});
+
 
 (function(){
 	var getSongFileModel = function(mo, player){
@@ -41,13 +145,68 @@ if (!o.nocache && !o.only_cache){
 	};
 
 	musicSeachEmitter = function(q, query, mp3Search){
+		this.callParentMethod('init');
 		this.mp3Search = mp3Search;
 		this.q = q;
 		this.query = query;
 		this.fdefs = [];
 		this.songs = [];
+		this.onRegistration('changed', function(cb) {
+			if (this.some_results){
+				cb(this.search_completed);
+			}
+		});
 	};
-	musicSeachEmitter.prototype = {
+	 
+	createPrototype(musicSeachEmitter, new eemiter(), {
+		canSearchBy: function (search_source){
+			if (!this.steams){
+				return true;
+			}
+			if (!this.steams[search_source.name]){
+				return true;
+			}
+			
+			var my_steam = this.steams[search_source.name][search_source.key];
+			if (my_steam){
+				if (my_steam.failed){
+					if (!my_steam.non_fixable){
+						return true;
+					} else{
+						return false;
+					}
+				} else if (my_steam.t || my_steam.fin){
+					return false;
+				} else if (my_steam.processing){
+					return false; 
+				} else{
+					return true;
+				}
+				
+			}
+				
+			var fixable = true;
+			var getted = false;
+			for (var steam in this.steams) {
+				var cur = this.steams[steam]
+				if (cur != my_steam){
+					if (cur.t){
+						getted = true;
+					}
+					if (cur.failed){
+						if (cur.non_fixable && !cur.replaceable){
+							fixable = false;
+						}
+						
+					}
+				}
+			};
+			if (!getted && fixable){
+				return true;
+			} else{
+				return false;
+			}
+		},
 		getSteamsData: function(){
 			
 			var steams = this.steams;
@@ -136,8 +295,8 @@ if (!o.nocache && !o.only_cache){
 			this.some_results = true;
 			if (!_ms.t){
 				_ms.failed = true;
-				if (can_be_fixed){
-					_ms.fixable = true;
+				if (!can_be_fixed){
+					_ms.non_fixable = true;
 					
 				}
 				return true;
@@ -271,6 +430,8 @@ if (!o.nocache && !o.only_cache){
 			},100)	
 		},
 		emit: function(get_next){
+			this.fire('changed', this.search_completed, get_next);
+
 			for (var i=0; i < this.songs.length; i++) {
 				if (this.songs[i]){
 					this.songs[i].updateFilesSearchState(this.search_completed, get_next);
@@ -282,7 +443,9 @@ if (!o.nocache && !o.only_cache){
 			}
 			
 		},
-		wait_ui: function(){
+		notify: function(){
+			this.fire('progress');
+
 			for (var i=0; i < this.songs.length; i++) {
 				var mo = this.songs[i];
 				if (mo && !mo.have_tracks){
@@ -297,7 +460,7 @@ if (!o.nocache && !o.only_cache){
 				
 			}
 		}
-	};
+	});
 })();
 
 
@@ -409,49 +572,7 @@ function has_music_copy(array, entity, from_position){
 };
 
 
-function canUseSearch(sem, search_source){
-	if (!sem.steams){
-		return true;
-	}
-	if (!sem.steams[search_source.name]){
-		return true;
-	}
-	
-	var my_steam = sem.steams[search_source.name][search_source.key];
-	if (my_steam){
-		if (my_steam.failed){
-			if (my_steam.fixable){
-				return true;
-			} else{
-				return false;
-			}
-		} else if (my_steam.t){
-			return false; 
-		} else if (my_steam.processing){
-			return false; 
-		} else{
-			return true;
-		}
-		
-	}
-		
-	var fixable = true;
-	var getted = false;
-	for (var steam in sem.steams) {
-		if (sem.steams[steam].t){
-			getted = true;
-		}
-		if (sem.steams[steam].failed && !sem.steams[steam].fixable){
-			fixable = false;
-		}
-		
-	};
-	if (!getted && fixable){
-		return true;
-	} else{
-		return false;
-	}
-};
+
 
 
 
@@ -462,13 +583,19 @@ var needSearch = function(sem, source_name){
 	return !r || !r.t;
 };
 
+var mp3SearchBase = function() {};
+createPrototype(mp3SearchBase, [], new eemiter());
+
+
+
 mp3Search = function(onNewsearch){
+	
+	this.callParentMethod('init')
 	this.onNewsearch = onNewsearch;
 	this.ids = [];
 	this.search_emitters = {};
 };
-mp3Search.prototype = [];
-cloneObj(mp3Search.prototype, {
+createPrototype(mp3Search, new mp3SearchBase(), {
 	updateStoringOfId: function(really_save, subraw, handler, stillNeed, i){
 			if (this.ids[i]){
 				if (!really_save){
@@ -606,7 +733,10 @@ cloneObj(mp3Search.prototype, {
 				
 				if (!_c && !cursor.disabled){
 					if (!cursor.preferred || cursor.preferred.disabled){
-						var can_search = cursor.test(sem);
+
+
+
+						var can_search = sem.canSearchBy(cursor)//cursor.test(sem);
 						if (can_search){
 							search_handlers.push(cursor);
 						}
@@ -621,7 +751,7 @@ cloneObj(mp3Search.prototype, {
 
 
 		var request = function(sem, handler, o, p){
-			var used_successful =  _this.request(query, {handler: handler, get_next: o.get_next}, p, function(){	sem.wait_ui();})
+			var used_successful =  _this.request(query, {handler: handler, get_next: o.get_next}, p, function(){	sem.notify();})
 				.done(function(search_source, music_list){
 					sem.addSteamPart(search_source, music_list);
 				})
@@ -633,7 +763,10 @@ cloneObj(mp3Search.prototype, {
 				.always(function(){
 					sem.change(o.get_next);
 				});
-				if (used_successful){successful_uses.push(used_successful)}
+				if (used_successful){
+					successful_uses.push(used_successful);
+					_this.addRequest(used_successful);
+				}
 		}
 		
 		if (search_handlers.length){
@@ -659,64 +792,30 @@ cloneObj(mp3Search.prototype, {
 		}
 		return !!successful_uses.length && successful_uses;
 	},
-	find_mp3: function(mo, options){
-		if (!mo.artist || !mo.track || mo.raw() ){
-			return false;
-		}
-		var music_query = {
-			artist:mo.artist,
-			track: mo.track
-		};
-		var mqs = mo.artist + ' - '+ mo.track;
-		var successful_uses = this.searchFor(music_query, function(sem){
-			if (!mo.handled){
-				sem.addSong(mo, !!options && options.get_next);
-				mo.handled = true;
-			}
-			var force_changed;
-			if (!mo.was_forced){
-				if (!options || !options.only_cache){
-					mo.was_forced = true;
-					force_changed = true;
-				}
-				
-			}
-			return !force_changed && mo.was_forced && mo.isSearchCompleted();
-		}, false, options);
+	findFiles: function(msq, options) {
 		
-		if (successful_uses){
-			for (var i=0; i < successful_uses.length; i++) {
-				var queued = successful_uses[i]  && successful_uses[i].queued;
-				if (queued){
-					if (mo.state('want_to_play')) {
-						queued.setPrio('highest');
-					}
-					mo.delayed_in.push(queued);
-					queued.q.init();
-				}
 
-			};
-		}
+		return df;
 	},
+	
 	find_files: function(q, filter, callback, options){
-			
+		var semi;
 		var successful_uses = this.searchFor(q, function(sem){
+			semi = sem;
 			sem.addHandler({
 				filter: filter,
 				handler: callback
 			});
 		}, filter, options);
 		
-		if (successful_uses){
-			for (var i=0; i < successful_uses.length; i++) {
-				var queued = successful_uses[i]  && successful_uses[i].queued;
-				if (queued){
-					queued.setPrio('highest')
-					queued.q.init();
-				}
-			};
-		}
-		
+
+		semi.setPrio('highest');
+
+		var queued = this.sem.getQueued();
+		for (var i = 0; i < queued.length; i++) {
+			this.delayed_in.push(queued[i]);
+			queued[i].q.init();
+		};		
 	},
 	newSearchInit: function(filter){
 		for (var am in this.search_emitters){
@@ -784,6 +883,13 @@ cloneObj(mp3Search.prototype, {
 		var o = this.getMasterSlaveSearch(filter);
 		return !!o.exist_slave && !o.exitst_master_of_slave;
 	},
+
+	addSearch: function(space, msearch){
+		this.spaces = this.spaces || {};
+		var spaces = this.spaces;
+
+		spaces[space] = msearch;
+	},
 	add: function(asearch, force){
 		var push_later;
 		var o = this.getMasterSlaveSearch(asearch.name);
@@ -807,6 +913,9 @@ cloneObj(mp3Search.prototype, {
 			this.push(asearch);
 			this.newSearchInit(asearch.name);
 		}
+	},
+	removeSearch: function(msearch) {
+		
 	}
 
 })

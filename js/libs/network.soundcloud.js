@@ -60,7 +60,7 @@ function soundcloud_search(msq, callback, error, nocache, after_ajax, only_cache
 			dataType: "jsonp",
 			data: data,
 			error:function(xhr){
-				if  (error) {error(search_source);}
+				if  (error) {error(search_source, true);}
 			},
 			success:function(r,xhr){
 				if (r && r.length){
@@ -118,7 +118,7 @@ function soundcloudGetById(id, callback, error, nocache, after_ajax, only_cache)
 			dataType: "jsonp",
 			data: data,
 			error:function(xhr){
-				if  (error) {error(search_source);}
+				if  (error) {error(search_source, true);}
 			},
 			success:function(r,xhr){
 				if (r && r[0] && r[0].download_url){

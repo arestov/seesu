@@ -3,28 +3,47 @@ cloneObj(eemiter.prototype, {
 	constructor: eemiter,
 	init: function(){
 		this.subscribes = {};
+		this.reg_fires = {};
+		this.requests = [];
 	},
 	on: function(name, cb){
+		var _this = this;
 		if (!this.subscribes[name]){
 			this.subscribes[name] = [];
 		}
-		this.subscribes[name].push(cb)
+		this.subscribes[name].push(cb);
+		if (this.reg_fires[name]){
+			this.reg_fires[name].call(this,  function() {
+				cb.apply(_this, arguments)	
+			});
+		}
 		return this;
 	},
 	off: function(name, cb){
 		var cbs = this.subscribes[name];
 		if (cbs){
-			var clean = [];
-			for (var i = 0; i < cbs.length; i++) {
-				if (cbs[i] !== cb){
-					clean.push(cbs[i])
+			if (cb){
+				var clean = [];
+				for (var i = 0; i < cbs.length; i++) {
+					if (cbs[i] !== cb){
+						clean.push(cbs[i])
+					}
+				};
+				if (clean.length != cbs.length){
+					this.subscribes[name] = clean;
 				}
-			};
-			if (clean.length != cbs.length){
-				this.subscribes[name] = clean;
+			} else {
+				delete this.subscribes[name];
 			}
+			
 		}
 		return this;
+	},
+	onRegistration: function(name, cb) {
+		if (name){
+			//this.reg_fires[name] = this.reg_fires[name] || {};
+			this.reg_fires[name] = cb
+		}
 	},
 	fire: function(){
 		var args = Array.prototype.slice.call(arguments);
@@ -37,6 +56,25 @@ cloneObj(eemiter.prototype, {
 			};
 		}
 		return this;
+	},
+	addRequest: function(rq){
+		this.requests.push(rq);
+		this.fire('request', rq);
+	},
+	stopRequests: function(){
+		while (this.requests.length) {
+			var rq = this.requests.pop();
+			if (rq && rq.abort) {rq.abort()}
+		}
+	},
+	getQueued: function() {
+		return $filter(this.requests, 'queued');	
+	},
+	setPrio: function(type) {
+		var queued = this.getQueued();
+		for (var i = 0; i < queued.length; i++) {
+			queued[i].setPrio(type);
+		};
 	}
 });
 
@@ -48,7 +86,6 @@ cloneObj(servModel.prototype, {
 		eemiter.prototype.init.call(this);
 		this.states = {};
 		this.views = [];
-		this.requests = [];
 	},
 	state: function(name){
 		return this.states[name];
@@ -122,16 +159,6 @@ cloneObj(servModel.prototype, {
 		name = name || 'main';
 		(this.views[name] = this.views[name] || []).push(v);
 		return this;
-	},
-	addRequest: function(rq){
-		this.requests.push(rq);
-		this.fire('request', rq);
-	},
-	stopRequests: function(){
-		while (this.requests.length) {
-			var rq = this.requests.pop();
-			if (rq && rq.abort) {rq.abort()}
-		}
 	},
 	_updateProxy: function(is_prop, name, value){
 		this.removeDeadViews();

@@ -492,7 +492,7 @@ vk_api.prototype = {
 			return 
 			
 		}, function(xhr){
-			if (error){error(_this.search_source);}
+			if (error){error(_this.search_source, true);}
 		}, {
 			nocache: nocache, 
 			after_ajax: after_ajax, 
@@ -548,7 +548,7 @@ vk_api.prototype = {
 			}
 			
 		}, function(xhr){
-			if (error){error(_this.search_source);}
+			if (error){error(_this.search_source, true);}
 		}, {
 			nocache: nocache, 
 			after_ajax: after_ajax, 

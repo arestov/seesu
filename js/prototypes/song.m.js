@@ -248,8 +248,67 @@ createPrototype(baseSong, new mapLevelModel(), {
 	findFiles: function(opts){
 		if (this.mp3_search){
 			opts = opts || {};
-			opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this)
-			this.mp3_search.find_mp3(this, opts);
+			opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this);
+
+
+
+		
+			if (!this.artist || !this.track || this.raw() ){
+				return false;
+			}
+			var _this = this;
+			var music_query = {
+				artist:this.artist,
+				track: this.track
+			};
+			var mqs = this.artist + ' - '+ this.track;
+
+			
+
+			var oldFilesSearchCb = this.filesSearchCb;
+
+			this.filesSearchCb = function(complete) {
+				_this.updateFilesSearchState(complete, opts.get_next);
+			};
+
+
+			var successful_uses = this.mp3_search.searchFor(music_query, function(sem){
+
+				if (!_this.sem){
+					_this.sem = sem;
+				}
+
+				if (oldFilesSearchCb){
+					sem.off('changed', oldFilesSearchCb);
+					//sem.addSong(mo, !!opts && opts.get_next);
+				}
+
+				sem.on('changed', _this.filesSearchCb);
+
+				var force_changed;
+				if (!_this.was_forced){
+					if (!opts || !opts.only_cache){
+						_this.was_forced = true;
+						force_changed = true;
+					}
+					
+				}
+				return !force_changed && _this.was_forced && _this.isSearchCompleted();
+			}, false, opts);
+
+
+			if (this.state('want_to_play')) {
+				this.sem.setPrio('highest');
+			}
+			
+			var queued = this.sem.getQueued();
+			for (var i = 0; i < queued.length; i++) {
+				this.delayed_in.push(queued[i]);
+				queued[i].q.init();
+			};
+
+
+			//this.mp3_search.find_mp3(this, opts);
 		}
 	},
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
