@@ -765,7 +765,7 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 				});
 				if (used_successful){
 					successful_uses.push(used_successful);
-					_this.addRequest(used_successful);
+					sem.addRequest(used_successful);
 				}
 		}
 		
@@ -811,9 +811,8 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 
 		semi.setPrio('highest');
 
-		var queued = this.sem.getQueued();
+		var queued = semi.getQueued();
 		for (var i = 0; i < queued.length; i++) {
-			this.delayed_in.push(queued[i]);
 			queued[i].q.init();
 		};		
 	},
