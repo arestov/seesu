@@ -272,7 +272,7 @@ createPrototype(baseSong, new mapLevelModel(), {
 			};
 
 
-			var successful_uses = this.mp3_search.searchFor(music_query, function(sem){
+			this.mp3_search.searchFor(music_query, function(sem){
 
 				if (!_this.sem){
 					_this.sem = sem;

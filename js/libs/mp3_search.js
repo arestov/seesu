@@ -790,7 +790,7 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 			sem.search_completed = true
 			sem.change(o.get_next);
 		}
-		return !!successful_uses.length && successful_uses;
+		return sem;
 	},
 	findFiles: function(msq, options) {
 		
