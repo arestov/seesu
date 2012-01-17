@@ -377,7 +377,7 @@ createPrototype(muAns, new eemiter(), {
 			if (space_added){
 				this.fire('space-added');
 			}
-			return this.steams[ss.name][ss.key];
+			return this.steams[name][key];
 		},
 		isHaveAnyResultsFrom: function(source_name){
 			return !!this.getSteamData(source_name);
