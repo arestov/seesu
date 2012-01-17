@@ -356,22 +356,26 @@ createPrototype(muAns, new eemiter(), {
 			return !!tracks_pack.length && tracks_pack;
 		},
 		getMusicStore: function( search_source){
-			var ss = {
-				name: (search_source && search_source.name) || 'sample',
-				key: (search_source && search_source.key) || 0
-			};
+			var space_added,
+				name 	= (search_source && search_source.name) || 'sample',
+				key		= (search_source && search_source.key) || 0;
 			
 			if (!this.steams){
 				this.steams = {};
 			}
-			if (!this.steams[ss.name]){
-				this.steams[ss.name] = {};
+
+			if (!this.steams[name]){
+				this.steams[name] = {};
+				space_added = true;
 			}
-			if (!this.steams[ss.name][ss.key]){
-				this.steams[ss.name][ss.key] = {
-					name: ss.name,
-					key: ss.key
+			if (!this.steams[name][key]){
+				this.steams[name][key] = {
+					name: name,
+					key: key
 				};
+			}
+			if (space_added){
+				this.fire('space-added');
 			}
 			return this.steams[ss.name][ss.key];
 		},
