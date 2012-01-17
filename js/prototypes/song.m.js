@@ -276,11 +276,13 @@ createPrototype(baseSong, new mapLevelModel(), {
 
 				if (!_this.sem){
 					_this.sem = sem;
+					sem.on('progress', function() {
+						_this.filesSearchStarted();
+					})
 				}
 
 				if (oldFilesSearchCb){
 					sem.off('changed', oldFilesSearchCb);
-					//sem.addSong(mo, !!opts && opts.get_next);
 				}
 
 				sem.on('changed', _this.filesSearchCb);

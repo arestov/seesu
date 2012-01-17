@@ -150,7 +150,6 @@ createPrototype(muAns, new eemiter(), {
 		this.q = q;
 		this.query = query;
 		this.fdefs = [];
-		this.songs = [];
 		this.onRegistration('changed', function(cb) {
 			if (this.some_results){
 				cb(this.search_completed);
@@ -379,24 +378,6 @@ createPrototype(muAns, new eemiter(), {
 		isHaveAnyResultsFrom: function(source_name){
 			return !!this.getSteamData(source_name);
 		},
-
-
-		addSong: function(mo, get_next){
-			if (!bN(this.songs.indexOf(mo))){
-				this.songs.push(mo);
-				mo.sem = this;
-				if (this.some_results){
-					mo.updateFilesSearchState(this.search_completed, get_next);
-				}
-			} 
-			
-		},
-		removeSong: function(mo){
-			var i = this.songs.indexOf(mo);
-			if (bN(i)){
-				delete this.songs[i];
-			}
-		},
 		emmit_handler: function(c, complete){
 		
 			if (!c.done){
@@ -432,26 +413,16 @@ createPrototype(muAns, new eemiter(), {
 		emit: function(get_next){
 			this.fire('changed', this.search_completed, get_next);
 
-			for (var i=0; i < this.songs.length; i++) {
-				if (this.songs[i]){
-					this.songs[i].updateFilesSearchState(this.search_completed, get_next);
-				}
-				
-			}
 			for (var i=0; i < this.fdefs.length; i++) {
 				this.emmit_handler(this.fdefs[i], this.search_completed, get_next)
 			}
 			
 		},
 		notify: function(){
+
 			this.fire('progress');
 
-			for (var i=0; i < this.songs.length; i++) {
-				var mo = this.songs[i];
-				if (mo && !mo.have_tracks){
-					mo.filesSearchStarted();
-				}
-			}
+
 			
 			for (var i=0; i < this.fdefs.length; i++) {
 				if (!this.fdefs[i].done && this.fdefs[i].while_wait){
