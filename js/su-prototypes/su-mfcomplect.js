@@ -6,11 +6,29 @@ createPrototype(mfComplect, new servModel(), {
 });
 
 
+
+var mfСorUI = function(mf_cor) {
+	this.callParentMethod('init');
+	this.createBase();
+	this.setModel(mf_cor);
+};
+createPrototype(mfСorUI, new servView(), {
+	createBase: function() {
+		this.c = $('<div></div>')
+	}
+});
+
+
 var mfСor = function() {
-	
+	this.callParentMethod('init');
 };
 createPrototype(mfСor, new servModel(), {
-	
+	ui_constr: function() {
+		return new mfСorUI(this);
+	},
+	setSem: function(sem) {
+		this.sem  = sem;
+	}
 });
 
 /*
