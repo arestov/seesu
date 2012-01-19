@@ -6,10 +6,10 @@ createPrototype(mfComplect, new servModel(), {
 });
 
 
-var mfComplectsPack = function() {
+var mfСor = function() {
 	
 };
-createPrototype(mfComplectsPack, new servModel(), {
+createPrototype(mfСor, new servModel(), {
 	
 });
 
