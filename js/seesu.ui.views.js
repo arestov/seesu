@@ -323,7 +323,7 @@ var mainLevelNavUI = function(mal) {
 };
 createPrototype(mainLevelNavUI, new baseNavUI(), {
 	createBase: function(){
-		this.c = $('<span class="nnav nav-item nav-start" title="Seesu start page"><b></b></span>');
+		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b></span>');
 	}
 });
 
@@ -371,7 +371,7 @@ investgNavUI = function(mlm) {
 };
 createPrototype(investgNavUI, new baseNavUI(), {
 	createBase: function() {
-		this.c = $('<span class="nnav nav-item nav-search-results" title="Search results"><b></b></span>');
+		this.c = $('<span class="nav-item nav-search-results" title="Search results"><b></b></span>');
 	}
 });
 
@@ -380,7 +380,7 @@ artCardNavUI = function(mlm) {
 };
 createPrototype(artCardNavUI, new baseNavUI(), {
 	createBase: function() {
-		this.c = $('<span class="nnav nav-item "><span></span><b></b></span>');
+		this.c = $('<span class="nav-item "><span></span><b></b></span>');
 	}
 });
 
@@ -390,7 +390,7 @@ playlistNavUI = function(mlm) {
 };
 createPrototype(playlistNavUI, new baseNavUI(), {
 	createBase: function() {
-		this.c = $('<span class="nnav nav-item nav-playlist-page"><span></span><b></b></span>');
+		this.c = $('<span class="nav-item nav-playlist-page"><span></span><b></b></span>');
 	}
 });
 
@@ -400,7 +400,7 @@ trackNavUI = function(mlm) {
 };
 createPrototype(trackNavUI, new baseNavUI(), {
 	createBase: function() {
-		this.c = $('<span class="nnav nav-item nav-track-zoom"><span></span><b></b></span>');
+		this.c = $('<span class="nav-item nav-track-zoom"><span></span><b></b></span>');
 	}
 });
 

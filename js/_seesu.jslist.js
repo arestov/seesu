@@ -33,7 +33,7 @@
 	"js/su-prototypes/su-song.ui.js", 
 	"js/prototypes/song.m.js", 
 	"js/su-prototypes/su-song.m.js", 
-	"js/su-prototypes/su-mfcomplect.js"
+	"js/su-prototypes/su-mfcomplect.js",
 	"js/seesu.js",
 	"js/prototypes/songs-list.js",
 	"js/su-prototypes/su-songs-list.js",

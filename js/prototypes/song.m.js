@@ -129,7 +129,6 @@ createPrototype(baseSong, new mapLevelModel(), {
 			this.updateState('want_to_play', false);
 			mopla = mopla || this.song();
 			//fixme - fixable mopla
-			mopla = mopla.getSongFileModel(this, this.player);
 
 			if (mopla && ((this.mopla != mopla) || !this.state('play'))){
 
@@ -232,7 +231,6 @@ createPrototype(baseSong, new mapLevelModel(), {
 	preloadSongFile: function(){
 		if (this.isHaveBestTracks() && this.isSearchCompleted()){
 			var mopla = this.song();
-			mopla = mopla.getSongFileModel(this, this.player);
 			mopla.load();
 		}
 	},
@@ -276,6 +274,9 @@ createPrototype(baseSong, new mapLevelModel(), {
 
 				if (!_this.sem){
 					_this.sem = sem;
+					if (_this.mf_cor){
+						_this.mf_cor.setSem(_this.sem);
+					}
 					sem.on('progress', function() {
 						_this.filesSearchStarted();
 					})
@@ -368,26 +369,6 @@ createPrototype(baseSong, new mapLevelModel(), {
 		this.fire('files_search', opts);
 		this.updateState('files_search', opts);
 	},
-	song: function(){
-		if (this.raw()){
-			return this.omo;
-		} else if (this.sem) {
-			var s = this.sem.getAllSongTracks();
-			return !!s && s[0].t[0];
-		} else{
-			return false;
-		}
-	},
-	songs: function(){
-		if (this.raw()){
-			return [{t:[this.omo]}];
-		} else if (this.sem){
-			return this.sem.getAllSongTracks();
-		} else{
-			return false;
-		}
-		
-	},
 	mp3Downloads: function(){
 		var songs = this.songs();
 		var d = [];
@@ -396,8 +377,12 @@ createPrototype(baseSong, new mapLevelModel(), {
 			d = d.concat.apply(d, s);
 		};
 		return d.length && d;
-		
-		
+	},
+	die: function(){
+		if (this.ui){
+			this.ui.die();
+			delete this.ui;
+		}
 		
 	},
 	getURLPart: function(mopla){
@@ -414,34 +399,7 @@ createPrototype(baseSong, new mapLevelModel(), {
 				url += '/' + this.artist + '/' + (this.track || '_');
 			}
 		}
-		
-		
 		return url;
-	},
-	isHaveAnyResultsFrom: function(source_name){
-		return !!this.raw() || !!this.sem && this.sem.isHaveAnyResultsFrom(source_name);
-	},
-	isNeedsAuth: function(service_name){
-		return !this.raw() && this.mp3_search && (this.mp3_search.isNoMasterOfSlave(service_name) || !this.mp3_search.haveSearch(service_name));
-	},
-	isHaveTracks: function(){
-		return !!this.raw() || !!this.sem && this.sem.have_tracks ;
-	},
-	isSearchCompleted: function(){
-		return !!this.raw() || !!this.sem && this.sem.search_completed;
-	},
-	isHaveBestTracks: function(){
-		return !!this.raw() || !!this.sem && this.sem.have_best;
-	},
-	die: function(){
-		if (this.ui){
-			this.ui.die();
-			delete this.ui;
-		}
-		
-	},
-	raw: function(){
-		return this.omo && this.omo.raw;
 	},
 	valueOf:function(){
 		return (this.artist ? this.artist + ' - ' : '') + this.track;
@@ -458,6 +416,31 @@ createPrototype(baseSong, new mapLevelModel(), {
 		if (!v){
 			this.addView(new songUI(this, complex));
 		}
+	},
+	isNeedsAuth: function(service_name){
+		return !this.raw() && this.mp3_search && (this.mp3_search.isNoMasterOfSlave(service_name) || !this.mp3_search.haveSearch(service_name));
+	},
+	raw: function(){
+		return this.mf_cor && this.mf_cor.raw();
+	},
+	isHaveAnyResultsFrom: function(source_name){
+		return this.mf_cor && this.mf_cor.isHaveAnyResultsFrom(source_name);
+	},
+	isHaveTracks: function(){
+		return this.mf_cor && this.mf_cor.isHaveTracks();
+	},
+	isSearchCompleted: function(){
+		return this.mf_cor && this.mf_cor.isSearchCompleted();
+	},
+	isHaveBestTracks: function(){
+		return this.mf_cor && this.mf_cor.isHaveBestTracks();
+	},
+	
+	song: function(){
+		return this.mf_cor && this.mf_cor.song();
+	},
+	songs: function(){
+		return this.mf_cor && this.mf_cor.songs();
 	}
 });
 })();

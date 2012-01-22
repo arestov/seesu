@@ -1,5 +1,22 @@
 (function(){
 	var counter = 0;
+
+	var songFileModelUI = function(sf) {
+		this.sf = sf;
+		this.callParentMethod('init');
+		this.createBase();
+
+	};
+	createPrototype(songFileModelUI, new servView(), {
+		createBase: function() {
+			this.c = $('<li></li>');
+			this.title_c = $('<span></span>');
+			$('<span class="main-mf-text"></span>').text(this.sf.getTitle()).appendTo(this.title_c);
+			$('<span class="mf-source"></span>').text(this.sf.from).appendTo(this.title_c);
+			this.title_c.appendTo(this.c)
+		}
+	});
+
 	songFileModel = function(file, mo){
 		servModel.prototype.init.call(this);
 		this.mo = mo;
@@ -12,6 +29,20 @@
 	};
 	songFileModel.prototype = new servModel();
 	cloneObj(songFileModel.prototype, {
+		ui_constr: function() {
+			return new songFileModelUI(this);
+		},
+		getTitle: function() {
+			var title = [];
+
+			if (this.artist){
+				title.push(this.artist)
+			}
+			if (this.track){
+				title.push(this.track)
+			}
+			return title.join(' - ')
+		},
 		events: {
 			finish: function(opts){
 				var mo = ((this == this.mo.mopla) && this.mo);
@@ -111,6 +142,18 @@
 				this._createSound();
 				this.player.load(this);
 			}
+		},
+		activate: function() {
+			
+		},
+		deactivate: function() {
+			
+		},
+		markAsPlaying: function() {
+			
+		},
+		unmarkAsPlaying: function() {
+			
 		}
 	});
 })()

@@ -40,6 +40,7 @@ var songUI = function(mo, complex){
 	this.init();
 	this.mo = mo;
 	this.c = $('<li></li>').data('mo', mo);
+	this.createBase();
 	if (complex){
 		this.expand();
 	}
@@ -49,6 +50,9 @@ songUI.prototype = new servView();
 
 cloneObj(songUI.prototype, {
 	constructor: songUI,
+	appendChildren: function() {
+		//this.expand();
+	},
 	state_change : {
 		"mp-show": function(opts) {
 			if (opts){
@@ -239,8 +243,10 @@ cloneObj(songUI.prototype, {
 		var tp = this.context.children('.track-panel');
 		
 		
-		this.createBase();
-		
+		this.appendModelTo(this.mo.mf_cor, function(ui_c){
+			_this.context.prepend(ui_c);
+		});
+
 		
 		
 		
@@ -391,7 +397,11 @@ cloneObj(songUI.prototype, {
 		//fixme for userplaylists
 		setTimeout(function(){
 			_this.mo.makeSongPlayalbe(pi.full_allowing, pi.packsearch, pi.last_in_collection);	
-		},100)
+		},100);
+
+
+
+
 		
 	},
 	die: function(){

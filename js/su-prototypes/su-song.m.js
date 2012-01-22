@@ -29,6 +29,7 @@
 				su.track_event('Song click', 'empty song');
 			}
 		});
+		this.mf_cor = new mfСor(this, this.omo);
 	};
 	createPrototype(song, new baseSong(), {
 		ui_constr: {

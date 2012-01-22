@@ -163,8 +163,9 @@ cloneObj(servModel.prototype, {
 	_updateProxy: function(is_prop, name, value){
 		this.removeDeadViews();
 		if (name){
-			var obj_to_change = is_prop ? this : this.states,
-				method = is_prop ? this.prop_change[name] : this.state_change[name];
+			var obj_to_change 	= is_prop ? this : this.states,
+				method 			= is_prop ? this.prop_change[name] : this.state_change[name],
+				old_value 		= obj_to_change[name];
 				
 			if (obj_to_change[name] != value){
 				if (method){
@@ -175,10 +176,13 @@ cloneObj(servModel.prototype, {
 				} else {
 					delete obj_to_change[name];
 				}
-				for (var i = 0; i < this.views.length; i++) {
-					this.views[i].change(is_prop, name, obj_to_change[name])
-				};
-				this.fire(name + '-state-change', name, obj_to_change[name])
+				if (old_value != obj_to_change[name]){
+					for (var i = 0; i < this.views.length; i++) {
+						this.views[i].change(is_prop, name, obj_to_change[name])
+					};
+					this.fire(name + '-state-change', name, obj_to_change[name])
+				}
+				
 			}
 			
 		}
@@ -222,10 +226,26 @@ cloneObj(servView.prototype, {
 		this.setStates(mdl.states)
 		return this;
 	},
+	appendModelTo: function(m, c) {
+		var ui = m.getFreeView();
+		if (ui){
+			if (typeof c == 'function'){
+				c(ui.getC());
+			} else {
+				c.append(ui.getC());
+			}
+			ui.appended();
+		}
+	},
+	wasAppended: function() {
+		return !!this.append_done;
+	},
 	appended: function(){
+		this.append_done = true;
 		if (this.appendChildren){
 			this.appendChildren();
 		}
+
 		return this;
 	},
 	getC: function(){
