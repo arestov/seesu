@@ -115,6 +115,7 @@ var mfСor = function(mo, omo) {
 	this.omo = omo;
 	this.mo = mo;
 	this.complects = {};
+	this.subscribed_to = [];
 
 };
 createPrototype(mfСor, new servModel(), {
@@ -168,11 +169,86 @@ createPrototype(mfСor, new servModel(), {
 
 	},
 	setCurrentMopla: function(mf) {
+		var _this = this;
+
+		if (!this.mfPlayStateChange){
+			this.mfPlayStateChange = function(state) {
+				if (_this.state('current_mopla') == this){
+					_this.updateState('play', state);
+				}
+			};
+		}
+
 		if (mf){
+			if (this.subscribed_to.indexOf(mf) == -1){
+				mf.on('play-state-change', this.mfPlayStateChange);
+				this.subscribed_to.push(mf);
+			}
 			this.updateState('default_mopla', mf);
 			this.updateState('current_mopla', mf);
 		} else {
 			this.updateState('current_mopla', false)
+		}
+	},
+	preloadSongFile: function(){
+
+		if (this.isHaveBestTracks() || this.isSearchCompleted()){
+
+			var mopla = this.state('default_mopla');
+			if (mopla){
+				mopla.load();
+			}
+			
+		}
+	},
+	setVolume: function(vol){
+		var cmf = this.state('current_mopla')
+		if (cmf){
+			cmf.setVolume(vol);
+		}
+	},
+	stop: function(){
+		var cmf = this.state('current_mopla')
+		if (cmf){
+			cmf.stop();
+		}
+	},
+	switchPlay: function(){
+		if (this.state('play')){
+			if (this.state('play') == 'play'){
+				this.pause();
+			} else {
+				this.play();
+			}
+		} else {
+			this.play();
+		}
+		
+	},
+	pause: function(){
+		var cmf = this.state('current_mopla')
+		if (cmf){
+			cmf.pause();
+		}
+		
+	},
+	play: function(mopla){
+		var cmf = this.state('current_mopla');
+		var dmf = this.state('default_mopla');
+		if ((cmf && (!mopla || mopla == cmf)) && this.state('play') == 'pause'){
+			cmf.play();
+		} else if (this.isHaveTracks()){
+			mopla = mopla || dmf;
+			if (mopla != cmf || !this.state('play')){
+				if (cmf){
+					cmf.stop();
+				}
+				
+				this.setCurrentMopla(mopla);
+				this.fire('before-mf-play', mopla);
+				mopla.play();
+
+			}
 		}
 	},
 	raw: function(){
@@ -191,7 +267,7 @@ createPrototype(mfСor, new servModel(), {
 		return !!this.raw() || !!this.sem && this.sem.have_best;
 	},
 	getMf: function() {
-		return this.state('mopla');	
+		return this.state('default_mopla');	
 	},
 	song: function(){
 		if (this.raw()){

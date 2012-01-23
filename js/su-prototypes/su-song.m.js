@@ -30,6 +30,11 @@
 			}
 		});
 		this.mf_cor = new mfСor(this, this.omo);
+		this.mf_cor.on('before-mf-play', function(mopla) {
+			_this.player.changeNowPlaying(_this);
+			_this.findNeighbours();
+			_this.updateProp('mopla', mopla);
+		});
 	};
 	createPrototype(song, new baseSong(), {
 		ui_constr: {

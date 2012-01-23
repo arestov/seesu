@@ -93,59 +93,23 @@ createPrototype(baseSong, new mapLevelModel(), {
 		this.findNeighbours();
 		this.addMarksToNeighbours();
 	},
+	preloadSongFile: function(){
+		this.mf_cor.preloadSongFile();
+	},
 	setVolume: function(vol){
-		if (this.mopla && this.mopla.setVolume){
-			this.mopla.setVolume(vol);
-		}	
+		this.mf_cor.setVolume(vol);
 	},
 	stop: function(){
-		if (this.mopla && this.mopla.stop){
-			this.mopla.stop();
-		}
-		//this.updateState('play', false);
+		this.mf_cor.stop();
 	},
 	switchPlay: function(){
-		if (this.state('play')){
-			if (this.state('play') == 'play'){
-				this.pause();
-			} else {
-				this.play();
-			}
-		} else {
-			this.play();
-		}
+		this.mf_cor.switchPlay();
 	},
 	pause: function(){
-		if (this.mopla && this.mopla.pause){
-			this.mopla.pause();
-		}
-		//this.updateState('play', 'paused');
-		
+		this.mf_cor.pause();
 	},
 	play: function(mopla){
-		if (!mopla && this.mopla && this.state('play') == 'pause'){
-			this.mopla.play();
-		} else if (this.isHaveTracks()){
-			this.updateState('want_to_play', false);
-			mopla = mopla || this.song();
-			//fixme - fixable mopla
-
-			if (mopla && ((this.mopla != mopla) || !this.state('play'))){
-
-				if (this.mopla && this.mopla.stop){
-					this.mopla.stop();
-				}
-				this.player.changeNowPlaying(this);
-				this.findNeighbours();
-				mopla.play();
-				
-				//this.updateState('play', 'play');
-				this.updateProp('mopla', mopla);
-				
-			}
-				
-			
-		}
+		this.mf_cor.play(mopla)
 
 	},
 	markAs: function(neighbour){
@@ -227,12 +191,6 @@ createPrototype(baseSong, new mapLevelModel(), {
 			.always(function(){
 				_this.updateState('loading', false);
 			})
-	},
-	preloadSongFile: function(){
-		if (this.isHaveBestTracks() && this.isSearchCompleted()){
-			var mopla = this.song();
-			mopla.load();
-		}
 	},
 	prefindFiles: function(){
 		this.findFiles({

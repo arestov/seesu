@@ -165,22 +165,24 @@ cloneObj(servModel.prototype, {
 		if (name){
 			var obj_to_change 	= is_prop ? this : this.states,
 				method 			= is_prop ? this.prop_change[name] : this.state_change[name],
-				old_value 		= obj_to_change[name];
+				old_value 		= obj_to_change && obj_to_change[name];
 				
 			if (obj_to_change[name] != value){
-				if (method){
-					method.call(this, value, obj_to_change && obj_to_change[name]);
-				}
+				
 				if (value){
 					obj_to_change[name] = value;
 				} else {
 					delete obj_to_change[name];
 				}
 				if (old_value != obj_to_change[name]){
+					if (method){
+						method.call(this, value, old_value);
+					}
+					
 					for (var i = 0; i < this.views.length; i++) {
 						this.views[i].change(is_prop, name, obj_to_change[name])
 					};
-					this.fire(name + '-state-change', name, obj_to_change[name])
+					this.fire(name + '-state-change', obj_to_change[name], old_value)
 				}
 				
 			}
