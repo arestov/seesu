@@ -44,11 +44,16 @@
 			//this.c = $('<div class="track-progress"></div>')
 			var _this = this;
 			this.progress_c.click(function(e){
-				var pos = getClickPosition(e, this);
-				if (!_this.width){
-					_this.fixWidth();
+				if (_this.state('play')){
+					var pos = getClickPosition(e, this);
+					if (!_this.width){
+						_this.fixWidth();
+					}
+					_this.sf.setPositionByFactor(_this.width && ((pos/_this.width)));
+				} else {
+					_this.sf.fire('want-to-be-selected')
 				}
-				_this.sf.setPositionByFactor(_this.width && ((pos/_this.width)));
+				
 				//su.ui.hidePopups();
 				//e.stopPropagation();	
 			});
@@ -59,7 +64,21 @@
 			
 
 			//this.title_c = $('<span></span>');
-			$('<span class="mf-duration"></span>').appendTo(this.track_text);
+			this.duration_c = $('<span class="mf-duration"></span>').appendTo(this.track_text);
+			if (this.sf.duration){
+
+				var duration = Math.floor(this.sf.duration/1000);
+		
+				
+				if (duration){
+					var digits = duration % 60;
+					this.duration_c.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits ))
+				}
+
+
+				
+			}
+
 			$('<span class="main-mf-text"></span>').text(this.sf.getTitle()).appendTo(this.track_text);
 			$('<span class="mf-source"></span>').text(this.sf.from).appendTo(this.track_text);
 			//this.title_c.appendTo(this.c);
@@ -78,7 +97,7 @@
 			}
 		},
 		fixWidth: function(){
-			this.width = this.c.width();
+			this.width = this.progress_c.width();
 		},
 		resetPlayPosition: function(){
 			this.cplayng[0].style.width = 0
@@ -99,6 +118,7 @@
 			}
 		}
 		this.uid = 'song-file-' + counter++;
+		this.parent = file;
 	};
 	songFileModel.prototype = new servModel();
 	cloneObj(songFileModel.prototype, {

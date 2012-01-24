@@ -149,6 +149,9 @@ a.desc{
 			color:#999;
 			border-bottom: 1px solid #555555;
 			}
+			.moplas-block ul li  .mf-duration{
+				float:right
+			}
 			.moplas-block ul li .mf-source{
 				margin-left:10px;
 				color:#777;

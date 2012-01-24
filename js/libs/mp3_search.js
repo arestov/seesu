@@ -263,27 +263,36 @@ createPrototype(muAns, new eemiter(), {
 		addSteamPart: function(search_source, t ){
 			
 			var _ms = this.getMusicStore(search_source);
-			this.changed = _ms.changed = (+new Date() > this.changed ? +new Date() : +new Date() + 10);
-			
-			_ms.t = t;
-			this.assignFilesMethods(t);
+			if (!_ms.t){
 
-			
-			this.have_tracks = true;
-			_ms.processing = false;
-			this.some_results = true;
-			_ms.failed = false;
-			var searches_indexes=[];
-			for (var s in this.searches_pr) {
-				if (this.searches_pr[s] < 1){
-					searches_indexes.push(this.searches_pr[s]);
-				}
+
+				this.changed = _ms.changed = (+new Date() > this.changed ? +new Date() : +new Date() + 10);
+				_ms.t = t;
+				this.assignFilesMethods(t);
+
 				
-			};
-			var best = Math.max.apply(Math, searches_indexes);
-			if (this.searches_pr[search_source.name] === best){
-				this.have_best = true;
+				this.have_tracks = true;
+				_ms.processing = false;
+				this.some_results = true;
+				_ms.failed = false;
+				var searches_indexes=[];
+				for (var s in this.searches_pr) {
+					if (this.searches_pr[s] < 1){
+						searches_indexes.push(this.searches_pr[s]);
+					}
+					
+				};
+				var best = Math.max.apply(Math, searches_indexes);
+				if (this.searches_pr[search_source.name] === best){
+					this.have_best = true;
+				}
+					
+				
+			} else {
+				//fixme
+				console.log('lorem! ipsum!')
 			}
+			
 			
 			return this;
 		},

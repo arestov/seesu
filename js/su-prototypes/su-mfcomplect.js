@@ -21,13 +21,23 @@ createPrototype(mfComplectUI, new servView(), {
 	}
 });
 
-var mfComplect = function(mo, sem_part) {
+var mfComplect = function(mf_cor, sem_part, mo) {
 	this.callParentMethod('init');
 	this.sem_part = sem_part;
 	this.mo = mo;
+	this.mf_cor = mf_cor;
 	this.moplas_list = [];
+
+	var _this = this;
+	var playMf = function() {
+		_this.mf_cor.play(this);
+	}
 	for (var i = 0; i < this.sem_part.t.length; i++) {
-		this.moplas_list.push(this.sem_part.t[i].getSongFileModel(mo, mo.player));
+		this.moplas_list.push(
+			this.sem_part.t[i]
+				.getSongFileModel(mo, mo.player)
+					.on('want-to-be-selected', playMf)
+		);
 	};
 };
 
@@ -157,7 +167,7 @@ createPrototype(mfСor, new servModel(), {
 		for (var i = 0; i < this.pa_o.length; i++) {
 			var cp_name = this.pa_o[i];
 			if (!this.complects[cp_name]){
-				this.complects[cp_name] = new mfComplect(this.mo, songs_packs[i]);
+				this.complects[cp_name] = new mfComplect(this, songs_packs[i], this.mo);
 				many_files = many_files || this.complects[cp_name].hasManyFiles();
 			}
 		};
@@ -182,6 +192,7 @@ createPrototype(mfСor, new servModel(), {
 		if (mf){
 			if (this.subscribed_to.indexOf(mf) == -1){
 				mf.on('play-state-change', this.mfPlayStateChange);
+				
 				this.subscribed_to.push(mf);
 			}
 			this.updateState('default_mopla', mf);
