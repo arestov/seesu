@@ -158,7 +158,7 @@ createPrototype(mfСor, new servModel(), {
 			_this.semChanged(val);
 		});
 	},
-	semChanged: function(val) {
+	semChanged: function(complete) {
 		var songs_packs = this.songs_packs = this.sem.getAllSongTracks();
 
 		this.pa_o = $filter(songs_packs, 'name');
@@ -171,7 +171,7 @@ createPrototype(mfСor, new servModel(), {
 				many_files = many_files || this.complects[cp_name].hasManyFiles();
 			}
 		};
-		this.updateState('changed', val || new Date());
+		this.updateState('changed', new Date());
 		this.updateState('many_files', many_files);
 		if (!this.state('current_mopla')){
 			this.updateState('default_mopla', this.song());
