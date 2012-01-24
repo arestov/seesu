@@ -164,7 +164,7 @@ a.download-mp3:hover{
 	left:-250px;
 	z-index:-10;
 }
-.track-progress{
+.track-progress, .selected-mf .mf-progress{
 	background:#505050;
 	
 	position:relative;
@@ -175,7 +175,6 @@ a.download-mp3:hover{
 	right:0;
 	height:15px;
 	line-height:13px;
-	text-align:right;
 	
 	background: #444444;
 	border-top: 1px solid #434343;
@@ -189,7 +188,11 @@ a.download-mp3:hover{
 	
 	
 	}
-	.track-load-progress{
+	.track-progress{
+		
+		text-align:right;
+	}
+	.track-load-progress,  .selected-mf .mf-load-progress{
 		position:absolute;
 		cursor:pointer;
 		width:0;
@@ -205,7 +208,7 @@ a.download-mp3:hover{
 	
 	
 		}
-	.track-play-progress{
+	.track-play-progress, .selected-mf .mf-play-progress{
 		position:absolute;
 		cursor:pointer;
 		width:0;
@@ -219,10 +222,13 @@ a.download-mp3:hover{
 		border-radius: 5px;
 	
 		}
-	.track-node-text{
-		display:none;
+	.track-node-text, .mf-text{
 		position: relative;
 		z-index: 2;
+	}
+	.track-node-text{
+		display:none;
+		
 		margin-right: 6px;
 		font-size: 12px;
 		color: #666;
