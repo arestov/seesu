@@ -164,6 +164,16 @@ a.download-mp3:hover{
 	left:-250px;
 	z-index:-10;
 }
+.selected-mf .mf-progress {
+	margin-left:-5px;
+	}
+	.selected-mf .mf-text{
+		margin-left:5px;
+		color:#757575;
+		}
+		.mf-text{
+			
+			}
 .track-progress, .selected-mf .mf-progress{
 	background:#505050;
 	

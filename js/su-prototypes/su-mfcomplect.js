@@ -59,7 +59,7 @@ createPrototype(mfСorUI, new servView(), {
 				var ms_c = $('<div class="show-all-songs"></div>');
 				this.more_songs_b = $('<a class="js-serv"></a>').text(localize('Files')).appendTo(ms_c);
 				this.more_songs_b.click(function() {
-					_this.c.toggleClass('want-more-song');
+					_this.c.toggleClass('want-more-songs');
 				});
 				this.c.prepend(ms_c);
 			}
@@ -243,7 +243,7 @@ createPrototype(mfСor, new servModel(), {
 				if (cmf){
 					cmf.stop();
 				}
-				
+
 				this.setCurrentMopla(mopla);
 				this.fire('before-mf-play', mopla);
 				mopla.play();

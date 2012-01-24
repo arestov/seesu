@@ -140,12 +140,12 @@ a.desc{
 
 		}
 	.moplas-block ul {
-		margin-bottom:42px;
+		
 		}
 		.moplas-block ul li{
 			cursor: pointer;
 			border-top: 1px solid #5d5d5d;
-			padding:3px 10px;
+			padding:6px 10px;
 			color:#999;
 			border-bottom: 1px solid #555555;
 			}
@@ -153,14 +153,37 @@ a.desc{
 				margin-left:10px;
 				color:#777;
 				}
-				.moplas-block.want-more-song ul li.mf-source{
+				.moplas-block.want-more-songs ul .mf-source{
 					display: none;
 					}
 			.moplas-block ul li a{
 				color:inherit;
 			}
 
-	
+	.moplas-block .moplas-list h4{
+		display: none;
+		}
+	.moplas-block .moplas-list li{
+		display: none;
+		}
+
+
+		.want-more-songs.moplas-block  .moplas-list h4{
+			display: block;
+			}
+		.want-more-songs.moplas-block .moplas-list ul{
+			margin-bottom:42px;
+			}
+		.want-more-songs.moplas-block .moplas-list li{
+			display: block;
+			}
+
+
+
+	.moplas-block .moplas-list .selected-mf{
+		display: block;
+		overflow: hidden;
+	}
 	
 #sm2-container{
 	bottom:10px;
