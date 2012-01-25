@@ -333,6 +333,10 @@ browseMap.prototype= {
 		};
 	},
 	updateNav: function(tl){
+		var current_nav = [];
+
+
+
 		var big_title = [],
 			updateTitle = function(){
 				var bt = [];
@@ -358,7 +362,7 @@ browseMap.prototype= {
 		}
 		lvls.reverse();
 		
-		
+		current_nav.push(tl)
 		//tl.getNav().setInactive();
 		//pushTitle(tl);
 		
@@ -368,7 +372,7 @@ browseMap.prototype= {
 			if (lvls.length){
 				prev.resident.stackNav('top');
 			}
-			
+			current_nav.push(prev)
 			//pushTitle(prev);
 		}
 		if (lvls.length){
@@ -377,9 +381,28 @@ browseMap.prototype= {
 			}
 		}
 		//updateTitle();
-		
-		
-		
+		this.setCurrentNav(current_nav);
+	},
+	setCurrentNav: function(current_nav) {
+		var _this;
+		if (!this.onNavTitleChange){
+			this.onNavTitleChange = function() {
+				var s_num = _this.cur_nav.indexOf(this);
+				if (s_num != -1){
+					_thi.getNewTitle(s_num);
+				}
+			};
+		}
+
+		if (this.cur_nav){
+			for (var i = 0; i < this.cur_nav.length; i++) {
+				this.cur_nav[i]
+			};
+		}
+	},
+	getNewTitle: function(s_num) {
+
+		//var old_title = join(' ← ')
 	},
 	clearShallow: function(lev){
 		var exept_levels = [].concat(lev, lev.parent_levels);

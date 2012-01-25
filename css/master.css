@@ -180,8 +180,12 @@ a.desc{
 		.want-more-songs.moplas-block .moplas-list li{
 			display: block;
 			}
+		.want-more-songs.moplas-block .moplas-list li.overstocked{
+			display: none;
+			}
 
-		.want-overstocked-songs .overstocked{
+
+		.moplas-block .moplas-list.want-overstocked-songs .overstocked{
 			display: block;
 		}
 
@@ -189,9 +193,8 @@ a.desc{
 		display: block;
 		overflow: hidden;
 	}
-.overstocked{
-	display: none;
-	}
+
+
 #sm2-container{
 	bottom:10px;
 	right:20px;
