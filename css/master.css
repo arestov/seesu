@@ -181,13 +181,17 @@ a.desc{
 			display: block;
 			}
 
-
+		.want-overstocked-songs .overstocked{
+			display: block;
+		}
 
 	.moplas-block .moplas-list .selected-mf{
 		display: block;
 		overflow: hidden;
 	}
-	
+.overstocked{
+	display: none;
+	}
 #sm2-container{
 	bottom:10px;
 	right:20px;

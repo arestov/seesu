@@ -33,11 +33,15 @@ var mfComplect = function(mf_cor, sem_part, mo) {
 		_this.mf_cor.play(this);
 	}
 	for (var i = 0; i < this.sem_part.t.length; i++) {
-		this.moplas_list.push(
-			this.sem_part.t[i]
+		var sf = this.sem_part.t[i]
 				.getSongFileModel(mo, mo.player)
-					.on('want-to-be-selected', playMf)
-		);
+					.on('want-to-be-selected', playMf);
+
+		if (i + 1 > this.overstock_limit){
+			sf.updateState('overstock', true);
+		}
+		
+		this.moplas_list.push(sf);
 	};
 };
 
@@ -45,6 +49,7 @@ createPrototype(mfComplect, new servModel(), {
 	ui_constr: function() {
 		return new mfComplectUI(this);
 	},
+	overstock_limit: 5,
 	hasManyFiles: function() {
 		return this.sem_part && this.sem_part.t && this.sem_part.t.length > 1;
 	}

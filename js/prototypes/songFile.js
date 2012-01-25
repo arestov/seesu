@@ -5,7 +5,7 @@
 		this.sf = sf;
 		this.callParentMethod('init');
 		this.createBase();
-
+		this.setModel(sf);
 	};
 	createPrototype(songFileModelUI, new servView(), {
 		state_change: {
@@ -25,6 +25,13 @@
 					this.c.addClass('selected-mf');
 				} else {
 					this.c.removeClass('selected-mf');
+				}
+			},
+			overstock: function(state) {
+				if (state){
+					this.c.addClass('overstocked')
+				} else {
+					this.c.removeClass('overstocked')
 				}
 			}
 		},
@@ -61,22 +68,19 @@
 			this.cplayng = $('<div class="mf-play-progress"></div>').appendTo(this.progress_c);
 			this.track_text = $('<div class="mf-text"></div>').appendTo(this.progress_c);
 
+			if (this.sf.description){
+				this.track_text.attr('title', this.sf.description)
+			}
 			
 
 			//this.title_c = $('<span></span>');
 			this.duration_c = $('<span class="mf-duration"></span>').appendTo(this.track_text);
 			if (this.sf.duration){
-
 				var duration = Math.floor(this.sf.duration/1000);
-		
-				
 				if (duration){
 					var digits = duration % 60;
 					this.duration_c.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits ))
 				}
-
-
-				
 			}
 
 			$('<span class="main-mf-text"></span>').text(this.sf.getTitle()).appendTo(this.track_text);
