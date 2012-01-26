@@ -17,8 +17,7 @@ var mapLevel = function(num, parent_levels, resident, map, getNavData, data){
 		//this.buildResident();
 	}
 };
-mapLevel.prototype = {
-	constructor: mapLevel,
+createPrototype(mapLevel, {
 	D: function(key, value){
 		if (!arguments.hasOwnProperty('1')){
 			return this.storage[key];
@@ -124,11 +123,11 @@ mapLevel.prototype = {
 		return !!this.map && !this.closed;
 	}
 	
-};
+});
 
 
 function browseMap(mainLevelResident, getNavData){
-	
+	this.callParentMethod('init');
 	this.levels = [];
 	if (getNavData){
 		this.getNavData = getNavData;
@@ -143,7 +142,7 @@ function browseMap(mainLevelResident, getNavData){
 	//1 - playlist page
 	//today seesu has no deeper level
 }
-browseMap.prototype= {
+createPrototype(browseMap, new eemiter(), {
 	makeMainLevel: function(){
 		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
 	},
@@ -334,27 +333,6 @@ browseMap.prototype= {
 	},
 	updateNav: function(tl){
 		var new_nav = [];
-
-
-
-		var big_title = [],
-			updateTitle = function(){
-				var bt = [];
-				for (var i=0; i < big_title.length; i++) {
-					var title = big_title[i].getNav().getTitle();
-					if (title){
-						bt.push(title)
-					}
-				};
-				su.ui.setTitle(bt.join(' ← '));
-			},
-			pushTitle = function(lev){
-				big_title.push(lev);
-				lev.getNav().onTitleChange(function(){
-					updateTitle();
-				});
-			};
-		
 			
 		var lvls = [].concat(tl.parent_levels);
 		if (tl != this.getLevel(-1)){
@@ -363,46 +341,42 @@ browseMap.prototype= {
 		lvls.reverse();
 		
 		new_nav.push(tl.resident)
-		//tl.getNav().setInactive();
-		//pushTitle(tl);
-		
-		
+
 		var prev = lvls.pop();
 		if (prev){
 			if (lvls.length){
 				prev.resident.stackNav('top');
 			}
-			new_nav.push(prev.resident)
-			//pushTitle(prev);
+			new_nav.push(prev.resident);
 		}
 		if (lvls.length){
 			while (lvls.length){
 				lvls.pop().resident.stackNav( lvls.length == 0 ? 'bottom' : 'middle');
 			}
 		}
-		//updateTitle();
 		this.setCurrentNav(new_nav);
 	},
 	setCurrentNav: function(new_nav) {
-		var _this;
+		var _this = this;
 		if (!this.onNavTitleChange){
 			this.onNavTitleChange = function() {
 				var s_num = _this.cur_nav.indexOf(this);
 				if (s_num != -1){
-					_thi.refreshTitle(s_num);
+					_this.refreshTitle(s_num);
 				}
 			};
 		}
 		if (this.cur_nav){
 			for (var i = 0; i < this.cur_nav.length; i++) {
-				this.cur_nav[i].off('title-changed', this.onNavTitleChange);
+				this.cur_nav[i].offTitleChange( this.onNavTitleChange);
 			};
 			//unbind	
 		}
 
 		this.cur_nav = new_nav;
 		for (var i = 0; i < this.cur_nav.length; i++) {
-			this.cur_nav[i].on('title-changed', this.onNavTitleChange)
+
+			this.cur_nav[i].onTitleChange(this.onNavTitleChange);
 		};
 
 
@@ -414,8 +388,8 @@ browseMap.prototype= {
 		if (this.cur_title != new_title){
 			var old_title = this.cur_title;
 			this.cur_title = new_title;
-			console.log(new_title)
-			//this.fire('title-changed', new_title, old_title);
+			//console.log(new_title)
+			this.fire('title-change', new_title, old_title);
 		}
 	},
 	joinNavTitle: function(nav) {
@@ -461,7 +435,7 @@ browseMap.prototype= {
 		this.sliceDeepUntil(-1, true, false, make_history_step);
 	}
 	
-};
+});
 var mapLevelModel = function() {};
 createPrototype(mapLevelModel, new servModel(), {
 	assignMapLev: function(lev){
@@ -510,6 +484,12 @@ createPrototype(mapLevelModel, new servModel(), {
 	},
 	getTitle: function() {
 		return this.state('nav-title');
-	}
+	},
+	onTitleChange: function(cb) {
+		return this.on('nav-title-state-change', cb);
+	},
+	offTitleChange: function(cb) {
+		return 	this.off('nav-title-state-change', cb);
+	},
 	
 });

@@ -362,6 +362,10 @@ createPrototype(mainLevel, new mapLevelModel(), {
 		nav: function() {
 			return new mainLevelNavUI(this)
 		}
+	},
+	short_title: 'Seesu',
+	getTitle: function() {
+		return this.short_title;
 	}
 });
 var main_level = new mainLevel();
@@ -659,6 +663,9 @@ views = function(sui){
 	this.m = su.map || (su.map = new browseMap(main_level, function(){
 		return su.ui.views.nav && su.ui.views.nav.daddy;
 	}));
+	this.m.on('title-change', function(title) {
+		su.ui.setTitle(title);
+	});
 
 };
 //su.ui.views.nav.daddy
