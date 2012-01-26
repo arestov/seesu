@@ -333,7 +333,7 @@ browseMap.prototype= {
 		};
 	},
 	updateNav: function(tl){
-		var current_nav = [];
+		var new_nav = [];
 
 
 
@@ -362,7 +362,7 @@ browseMap.prototype= {
 		}
 		lvls.reverse();
 		
-		current_nav.push(tl)
+		new_nav.push(tl.resident)
 		//tl.getNav().setInactive();
 		//pushTitle(tl);
 		
@@ -372,7 +372,7 @@ browseMap.prototype= {
 			if (lvls.length){
 				prev.resident.stackNav('top');
 			}
-			current_nav.push(prev)
+			new_nav.push(prev.resident)
 			//pushTitle(prev);
 		}
 		if (lvls.length){
@@ -381,27 +381,55 @@ browseMap.prototype= {
 			}
 		}
 		//updateTitle();
-		this.setCurrentNav(current_nav);
+		this.setCurrentNav(new_nav);
 	},
-	setCurrentNav: function(current_nav) {
+	setCurrentNav: function(new_nav) {
 		var _this;
 		if (!this.onNavTitleChange){
 			this.onNavTitleChange = function() {
 				var s_num = _this.cur_nav.indexOf(this);
 				if (s_num != -1){
-					_thi.getNewTitle(s_num);
+					_thi.refreshTitle(s_num);
 				}
 			};
 		}
-
 		if (this.cur_nav){
 			for (var i = 0; i < this.cur_nav.length; i++) {
-				this.cur_nav[i]
+				this.cur_nav[i].off('title-changed', this.onNavTitleChange);
 			};
+			//unbind	
+		}
+
+		this.cur_nav = new_nav;
+		for (var i = 0; i < this.cur_nav.length; i++) {
+			this.cur_nav[i].on('title-changed', this.onNavTitleChange)
+		};
+
+
+		this.setTitle(this.joinNavTitle(this.cur_nav));
+
+
+	},
+	setTitle: function(new_title) {
+		if (this.cur_title != new_title){
+			var old_title = this.cur_title;
+			this.cur_title = new_title;
+			console.log(new_title)
+			//this.fire('title-changed', new_title, old_title);
 		}
 	},
-	getNewTitle: function(s_num) {
-
+	joinNavTitle: function(nav) {
+		var nav_t = [];
+		for (var i = 0; i < nav.length; i++) {
+			if (nav[i].getTitle){
+				nav_t.push(nav[i].getTitle());
+			}
+			
+		};
+		return nav_t.join(' ← ');
+	},
+	refreshTitle: function(s_num) {
+		this.setTitle(this.joinNavTitle(this.cur_nav));
 		//var old_title = join(' ← ')
 	},
 	clearShallow: function(lev){
@@ -479,6 +507,9 @@ createPrototype(mapLevelModel, new servModel(), {
 		if (this.lev && (this.state('mp-stack') || (this.state('mp-show') && this.state('mp-blured')) )){
 			this.lev._sliceTM(true)
 		}
+	},
+	getTitle: function() {
+		return this.state('nav-title');
 	}
 	
 });
