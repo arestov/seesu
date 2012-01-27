@@ -188,6 +188,9 @@ createPrototype(artCard, new mapLevelModel(), {
 			}
 		}
 	},
+	getURL: function() {
+		return '/catalog/' + this.artist;	
+	},
 	loadInfo: function(){
 		this.loadBaseInfo();
 		this.loadTopTracks();
@@ -646,7 +649,7 @@ seesu_ui.prototype = {
 		
 		
 		var songitself = $('<a class="js-serv"></a>')
-			.attr('href', 'http://seesu.me/o#/ds' + mo.getURLPart(mopla))
+			.attr('href', 'http://seesu.me/o#/ds' + mo.getURL(mopla))
 			.text(mopla.artist + " - " + mopla.track)
 			.click(function(e){
 				mo.play(mopla);

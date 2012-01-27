@@ -293,6 +293,9 @@ createPrototype(investigation, new mapLevelModel(), {
 		};
 		return r;
 	},
+	getURL: function() {
+		return '?q=' + (this.q || '');	
+	},
 	scratchResults: function(q){
 		if (this.q != q){
 			this.stopRequests();
@@ -307,7 +310,7 @@ createPrototype(investigation, new mapLevelModel(), {
 			delete this.selected_inum;
 			this.changeResultsCounter();
 			this.doEverythingForQuery();
-			
+			this.fire('url-change')//fixme; place before changing ui!?
 		}
 		
 	},

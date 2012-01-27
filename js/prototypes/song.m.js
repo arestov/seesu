@@ -343,7 +343,7 @@ createPrototype(baseSong, new mapLevelModel(), {
 		}
 		
 	},
-	getURLPart: function(mopla){
+	getURL: function(mopla){
 		var url ="";
 		if (mopla || this.raw()){
 			var s = mopla || this.omo;

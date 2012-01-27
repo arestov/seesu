@@ -98,7 +98,7 @@
 				}
 			}
 		},
-		getUrl: function(){
+		getURL: function(){
 			var url ='';
 			if (this.playlist_type == 'artist'){
 				url += '/_';
