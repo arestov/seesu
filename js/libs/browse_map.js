@@ -332,31 +332,33 @@ createPrototype(browseMap, new eemiter(), {
 		}
 	},
 	updateNav: function(tl){
-		var new_nav = [];
-			
-		var lvls = [].concat(tl.parent_levels);
+		var lvls = [tl].concat(tl.parent_levels);
 		if (tl != this.getLevel(-1)){
 			lvls.push(this.getLevel(-1));
 		}
-		lvls.reverse();
-		
-		new_nav.push(tl.resident);
 
-		var prev = lvls.pop();
+		var prev = lvls[1];
 		if (prev){
-			if (lvls.length){
+			if (lvls[2]){
+				// this is top of stack, but only we have "stack";
 				prev.resident.stackNav('top');
 			}
-			new_nav.push(prev.resident);
 		}
-		if (lvls.length){
-			while (lvls.length){
-				lvls.pop().resident.stackNav( lvls.length === 0 ? 'bottom' : 'middle');
-			}
+
+		for (var i = 2; i < lvls.length; i++) {
+			lvls[i].resident.stackNav( i + 1 === lvls.length ? 'bottom' : 'middle');
 		}
-		this.setCurrentNav(new_nav);
+		this.setNavTree(lvls);
 	},
-	setCurrentNav: function(new_nav) {
+	setNavTree: function(tree) {
+		var old_tree = this.nav_tree;
+		this.nav_tree = tree;
+		this.setCurrentNav(tree, old_tree);
+	},
+	getTitleNav: function(n) {
+		return n && n && (n = $filter(n, 'resident')) && n.slice(0, 2); 
+	},
+	setCurrentNav: function(new_nav, old_nav) {
 		var _this = this;
 		if (!this.onNavTitleChange){
 			this.onNavTitleChange = function() {
@@ -366,23 +368,21 @@ createPrototype(browseMap, new eemiter(), {
 				}
 			};
 		}
-		if (this.cur_nav){
-			for (var i = 0; i < this.cur_nav.length; i++) {
-				this.cur_nav[i].offTitleChange( this.onNavTitleChange);
+		old_nav = this.getTitleNav(old_nav);
+
+		if (old_nav){
+			for (var i = 0; i < old_nav.length; i++) {
+				old_nav[i].offTitleChange( this.onNavTitleChange); //unbind
 			}
-			//unbind	
+			
 		}
 
-		this.cur_nav = new_nav;
-		for (var i = 0; i < this.cur_nav.length; i++) {
+		new_nav = this.getTitleNav(new_nav);
 
-			this.cur_nav[i].onTitleChange(this.onNavTitleChange);
+		for (var i = 0; i < new_nav.length; i++) {
+			new_nav[i].onTitleChange(this.onNavTitleChange);
 		}
-
-
-		this.setTitle(this.joinNavTitle(this.cur_nav));
-
-
+		this.setTitle(this.joinNavTitle(new_nav));
 	},
 	setTitle: function(new_title) {
 		if (this.cur_title != new_title){
@@ -404,7 +404,7 @@ createPrototype(browseMap, new eemiter(), {
 		return nav_t.join(' ← ');
 	},
 	refreshTitle: function(s_num) {
-		this.setTitle(this.joinNavTitle(this.cur_nav));
+		this.setTitle(this.joinNavTitle(this.getTitleNav(this.nav_tree)));
 		return this;
 	},
 	clearShallow: function(lev){
