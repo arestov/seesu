@@ -191,7 +191,7 @@ createPrototype(browseMap, new eemiter(), {
 	setLevelPartActive: function(lp, opts){
 		opts = opts || {};
 		lp.show(opts);
-		if (opts.userwant){
+		if (opts.userwant && !opts.transit){
 			if (true || this.use_nav){
 				this.updateNav(lp);
 			}
