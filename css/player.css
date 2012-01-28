@@ -168,15 +168,20 @@ a.download-mp3:hover{
 .selected-mf .mf-progress {
 	
 	}
-	.selected-mf .mf-text{
-		margin-left:5px;
-		color:#757575;
-		margin-right:5px;
+	
+	.mf-text{
+		margin:0 5px;
 		}
-		.mf-text{
-			
-			}
-.track-progress, .selected-mf .mf-progress{
+	.selected-mf .mf-text{
+		color:#757575;
+		margin:0 4px;
+		}
+.track-progress, .moplas-block ul li .mf-progress{
+	height:15px;
+	line-height:13px;
+
+}
+.track-progress, .moplas-block ul li.selected-mf .mf-progress{
 	background:#505050;
 	
 	position:relative;
@@ -185,8 +190,7 @@ a.download-mp3:hover{
 	padding:0;
 	left:0;
 	right:0;
-	height:15px;
-	line-height:13px;
+	
 	
 	background: #444444;
 	border-top: 1px solid #434343;

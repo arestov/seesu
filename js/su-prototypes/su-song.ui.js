@@ -138,32 +138,6 @@ cloneObj(songUI.prototype, {
 	prop_change: {
 		track: function(title){
 			this.titlec.text(this.mo.getFullName());
-		},
-		mopla: function(mopla, old){
-			if (old){
-				old.removeView(this.soco_view);
-			}
-			if (mopla){
-				mopla.addView(this.soco_view);
-
-				this.soco_view.setStates(mopla.states);
-				var filename = mopla.artist + ' - ' +  mopla.track;
-				this.soco_view.change(true, 'title', mopla.from + ": " + filename)
-				this.soco_view.change(true, 'desc', mopla.description || '');
-			}
-			this.soco_view.song_file = mopla;
-			var duration = Math.floor(mopla.duration/1000);
-			var du = this.durationc;
-			
-			if (duration){
-				var digits = duration % 60;
-				var track_dur = (Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-				du.text(track_dur);
-			} else{
-				du.text('');
-			}
-			
-			
 		}
 	},
 	markAsPlaying: function(){
@@ -384,8 +358,7 @@ cloneObj(songUI.prototype, {
 		}).appendTo(ph);;
 		$('<div class="volume-state-position"></div>').appendTo(volume_state);
 
-		this.soco_view = new songControlsView();
-		ph.append(this.soco_view.getC());
+
 		ph.prependTo(tp);
 		this.c
 			.prepend(buttmen)

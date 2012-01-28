@@ -150,7 +150,7 @@ a.desc{
 	}
 	.moplas-block h4{
 		font-weight: 400;
-		margin:7px 0 7px 10px;
+		margin:7px 0 7px 47px;
 
 		}
 	.moplas-block ul {
@@ -159,7 +159,7 @@ a.desc{
 		.moplas-block ul li{
 			cursor: pointer;
 			border-top: 1px solid #5d5d5d;
-			padding:6px 10px;
+			padding:6px 5px;
 			color:#999;
 			border-bottom: 1px solid #555555;
 			}
@@ -168,7 +168,7 @@ a.desc{
 				margin-right: 5px;
 				margin-top: -8px;
 				margin-bottom: -12px;
-				margin-left: -6px;
+				margin-left: -1px;
 				height: 31px;
 				width: 32px;
 			}
@@ -180,6 +180,8 @@ a.desc{
 				}
 			.moplas-block ul li .mf-progress{
 				overflow: hidden;
+				height: 15px;
+				padding:1px 0;
 				}
 
 			.moplas-block ul li .mf-duration{
@@ -227,7 +229,7 @@ a.desc{
 		overflow: hidden;
 		}
 		.moplas-list .selected-mf .mf-progress{
-			left:-5px;
+		
 			}
 
 
