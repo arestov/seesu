@@ -4,14 +4,14 @@
 		$(function(){
 			ready = true;
 		});
-	})
+	});
 	window.suReady = function(callback){
 		if (ready){
 			setTimeout(callback, 30);
 		} else{
 			jsLoadComplete(function(){
 				$(callback);
-			})
+			});
 		}
 		
 	};
@@ -20,7 +20,7 @@
 
 var changeFavicon = function(d, src, type) {
 	var link = d.createElement('link'),
-	     oldLink = d.getElementById('dynamic-favicon');
+		oldLink = d.getElementById('dynamic-favicon');
 	link.id = 'dynamic-favicon';
 	link.rel = 'shortcut icon';
 	if (type){
@@ -46,8 +46,8 @@ var changeFavicon = function(d, src, type) {
 	};	
 })();
 function getSomething(array){
-	return array[(Math.random()*(array.length-1)).toFixed(0)]
-};
+	return array[(Math.random()*(array.length-1)).toFixed(0)];
+}
 
 function extCarefully(target, donor, white_list){
 	for (var prop in donor) {
@@ -55,7 +55,7 @@ function extCarefully(target, donor, white_list){
 			target[prop] = donor[prop];
 		}
 	}
-};
+}
 
 
 var addClass = function(old_c, cl){
@@ -68,14 +68,14 @@ var addClass = function(old_c, cl){
 			var b = (" " + add_c[i]);
 			new_c = (new_c + " " + add_c[i]).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
 		}
-	};
+	}
 	return new_c;
-}
+};
  
 var removeClass = function(old_c, add_c){
 	var re = new RegExp("(^|\\s)" + add_c + "(\\s|$)", "g");
 	return old_c.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "");
-}
+};
 var toggleClass = function(old_c, toggle_class){
 	if (bN(old_c.indexOf(toggle_class))){
 		return removeClass(old_c, toggle_class);
@@ -148,7 +148,7 @@ document_states.prototype = {
 	}
 };
 
-window.dstates = new document_states(document);
+window.dstates = new document_states(window.document);
 
 
 function get_url_parameters(str){
@@ -157,15 +157,15 @@ function get_url_parameters(str){
 	for (var i=0; i < url_vars.length; i++) {
 		var _h = url_vars[i].split('=');
 		full_url[_h[0]] = _h[1];
-	};
+	}
 	return full_url;
-};
+}
 
 window.app_env = (function(){
 	var env = {};
-	env.url = get_url_parameters(location.search);
+	env.url = get_url_parameters(window.location.search);
 	
-	env.cross_domain_allowed = !location.protocol.match(/(http\:)|(file\:)/);
+	env.cross_domain_allowed = !window.location.protocol.match(/(http\:)|(file\:)/);
 	
 	
 	if (typeof widget == 'object' && !widget.fake_widget){
@@ -183,8 +183,8 @@ window.app_env = (function(){
 		env.deep_sanbdox = true;
 		env.as_application = true;
 	} else
-	if (typeof chrome === 'object' && location.protocol == 'chrome-extension:'){
-		if (location.pathname == '/index.html'){
+	if (typeof chrome === 'object' && window.location.protocol == 'chrome-extension:'){
+		if (window.location.pathname == '/index.html'){
 			env.app_type = 'chrome_app';
 			env.as_application = false;
 			env.needs_url_history = true;
@@ -194,7 +194,7 @@ window.app_env = (function(){
 		}
 		
 	} else
-	if (location.protocol.match(/http/)){
+	if (window.location.protocol.match(/http/)){
 		
 		if (window.parent != window && env.url.access_token && env.url.user_id){
 			env.app_type = 'vkontakte';
@@ -228,7 +228,7 @@ window.app_env = (function(){
 		env.needs_url_history = true;
 	}
 	try{
-		if (document.createEvent('TouchEvent')){
+		if (window.document.createEvent('TouchEvent')){
 			env.touch_support = true;
 		}
 	} catch(e){}
@@ -256,7 +256,7 @@ window.app_env = (function(){
 		dstates.add_state('html_el', 'not-as-application');
 	}
 	if (!env.unknown_app_type){dstates.add_state('html_el', env.app_type.replace('_','-'));}
-	if (env.cross_domain_allowed) {dstates.add_state('html_el', 'cross-domain-allowed')}
+	if (env.cross_domain_allowed) {dstates.add_state('html_el', 'cross-domain-allowed');}
 	
 	
 	if (env.vkontakte){
@@ -274,7 +274,7 @@ window.app_env = (function(){
 	if (env.check_resize){
 		var detectSize = function(D){
 			return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
-		}
+		};
 		var jz;
 		env.readySteadyResize = function(D){
 			if (jz){
@@ -291,8 +291,8 @@ window.app_env = (function(){
 					}
 					
 				}
-			},100)
-		}
+			},100);
+		};
 		
 		
 	}
@@ -322,22 +322,22 @@ window.app_env = (function(){
 	};
 	window.suStore = function(key, value, opts){
 		var sensitive = !!key && sensitive_keys.indexOf(key) > -1;
-	  	if (typeof value != 'undefined'){
-	  		if (value && sensitive && app_env.pokki_app){
-	  			value = pokki.scramble(value);
-	  		}
+		if (typeof value != 'undefined'){
+			if (value && sensitive && app_env.pokki_app){
+				value = pokki.scramble(value);
+			}
 
-	  		return w_storage(key, value, opts);
-	  		
-	  	} else{
-	  		
-	  		value =  w_storage(key, value, opts);
-	  		if (sensitive && app_env.pokki_app){
-	  			value = pokki.descramble(value);
-	  		}
-	  		
-	  		return parse(value);
-	  	}
+			return w_storage(key, value, opts);
+			
+		} else{
+			
+			value =  w_storage(key, value, opts);
+			if (sensitive && app_env.pokki_app){
+				value = pokki.descramble(value);
+			}
+			
+			return parse(value);
+		}
 	};
 	window.getPreloadedNK = function(key){
 		if (app_env.pokki_app){
@@ -364,7 +364,7 @@ if (typeof widget != 'object'){
 			window.open(url);
 		}
 	};
-};
+}
 
 
 (function(){
@@ -373,20 +373,20 @@ if (typeof widget != 'object'){
 	if (window.widget && !widget.fake_widget){
 		if (widget.openURL){
 			openURL = function(){
-				return widget.openURL.apply(widget, arguments)
-			}
+				return widget.openURL.apply(widget, arguments);
+			};
 		} else{
 			openURL = function(url){
-				var link_node = document.createElement('a');
+				var link_node = window.document.createElement('a');
 					link_node.href = url;
 					link_node.click();
-			}
+			};
 		}
 		
 	} else if (window.pokki && pokki.openURLInDefaultBrowser) {
 		openURL = function(){
-			return pokki.openURLInDefaultBrowser.apply(pokki, arguments)
-		}
+			return pokki.openURLInDefaultBrowser.apply(pokki, arguments);
+		};
 	} else {
 		openURL = function(url){
 			return window.open(url);
@@ -423,7 +423,7 @@ if (typeof widget != 'object'){
 // Forcing Opera full page reflow/repaint to fix page draw bugs
 var forceOperaRepaint = function() {
 	if (window.opera) {
-		var bs = document.body.style;
+		var bs = window.document.body.style;
 		bs.position = 'relative';
 		setTimeout(function() {
 			bs.position = 'static';
@@ -449,7 +449,7 @@ if (typeof console != 'object'){
 	} else {
 		console.log = function(){};
 	}	
-};
+}
 
 if (hard_testing) {
 	yepnope({

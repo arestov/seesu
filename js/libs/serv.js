@@ -12,7 +12,7 @@ function(elem, evType, fn){
 	elem.removeEventListener(evType, fn, false);
 }:
 function(elem, evType, fn){
-	elem.detachEvent('on' + evType, fn)
+	elem.detachEvent('on' + evType, fn);
 };
 var domReady = function(d, callback){
 	if (d.readyState == 'complete' || d.readyState == 'loaded'){
@@ -36,17 +36,17 @@ doesContain = function(target, valueOf){
 	
 	for (var i=0; i < this.length; i++) {
 		if (valueOf){
-			 if (valueOf.call(this[i]) == cached_t_value){
-			 	return i
-			 }
+			if (valueOf.call(this[i]) == cached_t_value){
+				return i;
+			}
 		} else{
 			if (this[i].valueOf() == cached_t_value){
-				return i
+				return i;
 			}
 		}
 		
 		
-	};	
+	}
 	return -1;
 };
 var getFields = function(obj, fields){
@@ -58,220 +58,61 @@ var getFields = function(obj, fields){
 		if (value){
 			r.push(value);
 		}
-	};
+	}
 	return r;
 };
 
 var searchInArray = function (array, query, fields) {
 	query = getStringPattern(query);
+	var r,i,cur;
+
 	if (query){
-		var r = [];
+		r = [];
+		
 		if (fields){
-			for (var i=0; i < array.length; i++) {
-				var cur = array[i];
+			for (i=0; i < array.length; i++) {
+				cur = array[i];
 				var fields_values = getFields(cur, fields);
 				if (fields_values.join(' ').search(query) > -1){
 					r.push(cur);
 				}
 				
-			};
+			}
 		} else{
-			for (var i=0; i < array.length; i++) {
-				var cur = array[i]
+			for (i=0; i < array.length; i++) {
+				cur = array[i];
 				if (typeof cur == 'string' && cur.search(query) > -1){
 					r.push(cur);
 				}
-			};
+			}
 		}
-		
-		
-	} else{
-		
 	}
-	
 	return r;
 };
+
 var getStringPattern = function (str) {
 	if (str.replace(/\s/g, '')){
 		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
 		str = str.replace(/([$\^*()+\[\]{}|.\/?\\])/g, '\\$1').split(/\s/g);  //escaping regexp symbols
 		for (var i=0; i < str.length; i++) {
 			str[i] = '(\\b' + str[i] + ')';
-		};
+		}
 		str = str.join('|');
 		
 		return RegExp(str, 'gi');
 	}
-	
 };
+
 var ttime = function(f){
-	var d = +new Date
+	var d = +new Date();
 	
 	if (f){
 		f();
-		console.log((+new Date - d)/1000)
+		console.log(((new Date()) - d)/1000);
 	} else{
-		console.log(d/1000)
+		console.log(d/1000);
 	}
 };
-
-var getAllParents = function(el, include_itself, excl){
-	var ps = [];
-	if (include_itself){
-		ps.push({
-			node: el,
-			exception: include_itself.exception
-		});
-	}
-	while (el && ((el = el.parentNode) && ((!excl && el != el.ownerDocument)|| (el != excl )))) {
-		ps.push({
-			node: el
-		});
-	};
-	return ps;
-};
-
-
-
-(function(){
-	
-	var checkParent = function(parents, filter){
-		if (parents.length){
-			var p =parents.shift();
-			var el = p.node;
-			if (p.exception){
-				if (p.exception.classes){
-					for (var i=0; i < p.exception.classes.length; i++) {
-						filter = filter.replace('.' + p.exception.classes[i], '');
-					};
-				}
-				
-			}
-			
-			
-			
-			if (!filter || $(el).is(filter)){
-				return true;
-			} else{
-				console.log(filter)
-			}
-		}
-		
-		
-	}
-	
-	var checkParents = function(parents, filter){
-		while ( parents.length ) {
-			if (checkParent(parents, filter)){
-				return true
-			}
-		}
-		
-		console.log('vava')
-	}
-	
-	
-	var checkRelative = function(rule, filter, parents){
-		if (!rule){
-			return !!checkParents(parents, filter);
-		} else if (rule == '>'){
-			return !!checkParent(parents, filter);
-		}
-
-		
-	};
-	
-	checkRelativesBySteps = function(el, steps, parents){
-		var rule,
-			p = parents || getAllParents(el, false, el.ownerDocument);
-		
-		
-		
-		for (var i = steps.length - 1; i >= 0; i--){
-			
-			if (typeof rule != 'undefined'){
-				if (!checkRelative(rule, steps[i].t, p)){
-					console.log('failed')
-					console.log(rule);
-					console.log(steps[i].t);
-					console.log(p);
-					
-					
-					
-					return false;
-				} else{
-					
-				}
-				
-			}
-			rule = steps[i].r;			
-		};
-		return true;
-		
-	};
-		
-})();
-
-
-
-
-
-(function(){
-	var chunker = /((?:\((?:\([^()]+\)|[^()]+)+\)|\[(?:\[[^\[\]]*\]|['"][^'"]*['"]|[^\[\]'"]+)+\]|\\.|[^ >+~,(\[\\]+)+|[>+~])(\s*,\s*)?((?:.|\r|\n)*)/g;
-	var relative = {
-		'+': true,
-		'>': true,
-		'~': true
-	 };
-	
-	parseCSSSelector = function(selector){
-		var m, cur,
-			parts = [],
-			steps = [],
-			soFar = selector;
-		
-			
-		do {
-			chunker.exec( "" );
-			m = chunker.exec( soFar );
-	
-			if ( m ) {
-				soFar = m[3];
-			
-				parts.push( m[1] );
-			
-				if ( m[2] ) {
-					extra = m[3];
-					break;
-				}
-			}
-		} while ( m );
-		
-		
-		
-		
-		while ( parts.length ) {
-			cur = parts.shift();
-			pop = cur;
-	
-			if ( !relative[cur]) {
-				cur = "";
-			} else {
-				pop = parts.shift();
-			}
-	
-			if ( pop == null ) {
-				pop = context;
-			}
-			steps.push({t: pop, r: cur})
-			//Expr.relative[ cur ]( checkSet, pop, contextXML );
-		}
-		
-		
-		return steps;
-	};
-
-})();
 
 var collapseAll = function(){
 	var r= [];
@@ -283,116 +124,17 @@ var collapseAll = function(){
 					r.push(c[ii]);
 				}
 				
-			};
-		} else{
+			}
+		} else {
 			if (r.indexOf(c) == -1){
 				r.push(c);
 			}
 		}
-	};
+	}
 	return r;
 };
 
-var findCSSRules = function(selector_part){
-	selector_part=selector_part.toLowerCase();
-	
-	
-	var target_rules = [];
-	if (document.styleSheets) {
-	  for (var i=0; i < document.styleSheets.length; i++) {
-		var styleSheet = document.styleSheets[i]; 
-		var c_rules = styleSheet.cssRules || styleSheet.rules;
-		var ct_rules = $filter(c_rules, 'selectorText', function(v){
-			if (v){
-				if (bN(v.toLowerCase().indexOf(selector_part))){
-					return true
-				}
-			}
-		});
-		if (ct_rules.length){
-			target_rules = target_rules.concat.apply(target_rules, ct_rules);
-		}
-		
-	  }
-	  return target_rules.length && target_rules;
-	}  
-	return false;
 
-	
-};
-
-/*
-var killCSSRule = function (selector_part) { 
-	return getCSSRule(selector_part,'delete');
-}
-
-var addCSSRule = function (selector_part) {
-	if (document.styleSheets) { 
-	  if (!getCSSRule(selector_part)) {
-		 if (document.styleSheets[0].addRule) {
-			document.styleSheets[0].addRule(selector_part, null,0);
-		 } else { 
-			document.styleSheets[0].insertRule(selector_part+' { }', 0); 
-		 }
-	  }
-	}
-	return getCSSRule(selector_part); 
-}
-*/
-
-//var AnimateToCSSClass= 
-
-var checkNodeParticipation = function(node, god_father, oldold_parents, steps){
-	var r=[];
-	for (var i=0; i < node.length; i++) {
-		var n = node[i];
-		
-		var node_parents = getAllParents(n, false, god_father).concat(oldold_parents);
-		if (checkRelativesBySteps(n, steps, node_parents)){
-			r.push(n);
-		}
-		
-	};	
-	return r.length && r;
-};
-
-
-var getECParticipials = function(el, class_name){
-	var classes = class_name instanceof Array ? class_name : [class_name];
-	
-	var tnodes = [],
-		parents = getAllParents(el, {exception: {classes : classes}});
-	
-	for (var ii=0; ii < classes.length; ii++) {
-		var c_class_name = classes[ii];
-		var rules = findCSSRules("." + c_class_name);
-	
-		for (var i=0; i < rules.length; i++) {
-			
-			var steps = parseCSSSelector(rules[i].selectorText);
-			if (steps.length > 1){
-				var last_step = steps[steps.length-1].t;
-				
-				if (last_step.indexOf("." +c_class_name) == -1){
-					var node = $(el).find(last_step);
-					var ns = checkNodeParticipation(node, el, parents, steps);
-					if (ns){
-						tnodes = tnodes.concat(ns);
-					}
-				}
-				
-	
-				
-			}
-			
-			
-		};
-	};	
-		
-	
-	
-	return tnodes.length && collapseAll(tnodes);
-}
 
 var toRealArray = function(array, check_field){
 	if (array instanceof Array){
@@ -414,10 +156,9 @@ var getTargetField = function(obj, field){
 		if (target[tree[i]] !== nothing){
 			target = target[tree[i]];
 		} else{
-			return
+			return;
 		}
-		
-	};
+	}
 	return target;
 };
 var getFieldValueByRule = function(obj, rule){
@@ -457,7 +198,7 @@ var sortByRules = function(a, b, rules){
 				}
 			}
 			
-		};
+		}
 		
 		return shift;
 		
@@ -468,29 +209,30 @@ var makeIndexByField = function(array, field){
 	var r = {};
 	if (array && array.length){
 		for (var i=0; i < array.length; i++) {
-			var cur = array[i];
-			var fv = getTargetField(cur, field);
+			var simple_name,
+				cur = array[i],
+				fv = getTargetField(cur, field);
 			if (fv){
 				if (fv instanceof Array){
 					for (var k=0; k < fv.length; k++) {
-						var simple_name = (fv[k] + '').toLowerCase();
+						simple_name = (fv[k] + '').toLowerCase();
 						if (!r[simple_name]){
-							r[simple_name] = []
+							r[simple_name] = [];
 							r[simple_name].real_name = fv[k];
 							
 						}
 						if (!bN(r[simple_name].indexOf(cur))){
 							r[simple_name].push(cur);
 						}
-					};
+					}
 				} else{
-					var simple_name = (fv + '').toLowerCase();
+					simple_name = (fv + '').toLowerCase();
 					if (!r[simple_name]){
 						r[simple_name] = [];
 						r[simple_name].real_name = fv;
 					}
 					if (!bN(r[simple_name].indexOf(cur))){
-						r[simple_name].push(cur)
+						r[simple_name].push(cur);
 					}
 				}
 			} else {
@@ -498,12 +240,12 @@ var makeIndexByField = function(array, field){
 					r['#other'] = [];
 				}
 				if (!bN(r['#other'].indexOf(cur))){
-					r['#other'].push(cur)
+					r['#other'].push(cur);
 				}
 			}
 	
 		
-		};
+		}
 	}
 	
 	return r;
@@ -512,13 +254,12 @@ var makeIndexByField = function(array, field){
 var $filter = function(array, field, value_or_testfunc){
 	var r = [];
 	r.not = [];
-	if (!array){return r}
+	if (!array){return r;}
 	for (var i=0; i < array.length; i++) {
 		if (array[i]){
 			if (value_or_testfunc){
 				if (typeof value_or_testfunc == 'function'){
-					var field_value = getTargetField(array[i], field);
-					if (value_or_testfunc(field_value)){
+					if (value_or_testfunc(getTargetField(array[i], field))){
 						r.push(array[i]);
 					} else{
 						r.not.push(array[i]);
@@ -541,7 +282,7 @@ var $filter = function(array, field, value_or_testfunc){
 			}
 			
 		}
-	};
+	}
 	return r;
 };
 
@@ -553,7 +294,7 @@ function bN(num){
 	http://friendfeed.com/yodapunk/935ad55d/o-rly-opera-cc-pepelsbey-foolip-erikdahlstrom
 	*/
 	return !!(1* (~num));
-};
+}
 	
 var cloneObj= function(acceptor, donor, black_list, white_list){
 	//not deep! 
@@ -570,41 +311,40 @@ var cloneObj= function(acceptor, donor, black_list, white_list){
 };
 
 var isEqualObjs = function(obj1, obj2){
-	
-	for (var a in obj1){
+	var a;
+	for (a in obj1){
 		if (obj1[a] !== obj2[a]){
-			return false
+			return false;
 		}
 	}
 	
-	for (var a in obj2){
+	for (a in obj2){
 		if (obj2[a] !== obj1[a]){
-			return false
+			return false;
 		}
 	}
-	return true
+	return true;
 };
 var getUnitBaseNum = function(_c){
 	if (_c > 0){
 		if (_c > 10 && _c < 20){
-			return 2
-		} else{
+			return 2;
+		} else {
 			var _cc = '0' + _c;
 			_cc = parseFloat(_cc.slice(_cc.length-1));
 			
 			if (_cc === 0){
-				return 2
+				return 2;
 			} else if (_cc == 1){
-				return 0
+				return 0;
 			}else if (_cc < 5){
-				return 1
+				return 1;
 			} else {
-				return 2
+				return 2;
 			}
-		}
-		
-	} else if (_c == 0){
-		return 2
+		}		
+	} else if (_c === 0){
+		return 2;
 	}
 };
 var stringifyParams= function(params, ignore_params, splitter){
@@ -631,8 +371,8 @@ var separateNum = function(num){
 		if ((str.length - (i)) % 3 === 0){
 			three_sep = ' ' + three_sep;
 		}
-	};
-	return  three_sep
+	}
+	return  three_sep;
 };
 
 var createPrototype = function(constr, assi_prototype, clone_prototype){
@@ -642,7 +382,7 @@ var createPrototype = function(constr, assi_prototype, clone_prototype){
 		constructor: constr,
 		callParentMethod: function(){
 			var tmp = this.callParentMethod;
-			this.callParentMethod = parent_prototype.callParentMethod
+			this.callParentMethod = parent_prototype.callParentMethod;
 			//console.log(constr)
 			//console.log(assi_prototype)
 			var args = Array.prototype.slice.call(arguments);
@@ -656,7 +396,6 @@ var createPrototype = function(constr, assi_prototype, clone_prototype){
 		}
 	});
 	cloneObj(constr.prototype, clone_prototype);
-
 	return constr;
 };
 
@@ -669,6 +408,4 @@ if (!Array.prototype.indexOf) {
     }
     return -1;
   };
-};
-
-
+}

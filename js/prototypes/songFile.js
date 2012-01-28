@@ -29,9 +29,9 @@
 			},
 			overstock: function(state) {
 				if (state){
-					this.c.addClass('overstocked')
+					this.c.addClass('overstocked');
 				} else {
-					this.c.removeClass('overstocked')
+					this.c.removeClass('overstocked');
 				}
 			}
 		},
@@ -58,7 +58,7 @@
 					}
 					_this.sf.setPositionByFactor(_this.width && ((pos/_this.width)));
 				} else {
-					_this.sf.fire('want-to-be-selected')
+					_this.sf.fire('want-to-be-selected');
 				}
 				
 				//su.ui.hidePopups();
@@ -69,7 +69,7 @@
 			this.track_text = $('<div class="mf-text"></div>').appendTo(this.progress_c);
 
 			if (this.sf.description){
-				this.track_text.attr('title', this.sf.description)
+				this.track_text.attr('title', this.sf.description);
 			}
 			
 
@@ -79,7 +79,7 @@
 				var duration = Math.floor(this.sf.duration/1000);
 				if (duration){
 					var digits = duration % 60;
-					this.duration_c.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits ))
+					this.duration_c.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits ));
 				}
 			}
 
@@ -92,9 +92,9 @@
 		changeBar: function(bar, factor){
 			if (factor){
 				if (this.width){
-					bar[0].style.width = factor * this.width + 'px'
+					bar[0].style.width = factor * this.width + 'px';
 				} else {
-					bar[0].style.width = factor * 100 + '%'
+					bar[0].style.width = factor * 100 + '%';
 				}
 			} else {
 				bar[0].style.width = 0;
@@ -104,7 +104,7 @@
 			this.width = this.progress_c.width();
 		},
 		resetPlayPosition: function(){
-			this.cplayng[0].style.width = 0
+			this.cplayng[0].style.width = 0;
 		},
 		reset: function(){
 			this.resetPlayPosition();
@@ -133,31 +133,31 @@
 			var title = [];
 
 			if (this.artist){
-				title.push(this.artist)
+				title.push(this.artist);
 			}
 			if (this.track){
-				title.push(this.track)
+				title.push(this.track);
 			}
-			return title.join(' - ')
+			return title.join(' - ');
 		},
 		events: {
 			finish: function(opts){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', false)
+					mo.updateState('play', false);
 				}
-				this.updateState('play', false)
+				this.updateState('play', false);
 			},
 			play: function(opts){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', 'play')
+					mo.updateState('play', 'play');
 					if (!mo.start_time){
 						//fixme
 						mo.start_time = ((new Date()).getTime()/1000).toFixed(0);
 					}
 				}
-				this.updateState('play', 'play')
+				this.updateState('play', 'play');
 			},
 			playing: function(opts){
 				var dec = opts.position/opts.duration;
@@ -177,17 +177,17 @@
 			pause: function(opts){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', 'pause')
+					mo.updateState('play', 'pause');
 				}
-				this.updateState('play', 'pause')
+				this.updateState('play', 'pause');
 			},
 			stop: function(opts){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', false)
+					mo.updateState('play', false);
 					delete mo.start_time;
 				}
-				this.updateState('play', false)
+				this.updateState('play', false);
 			}
 		},
 		setPlayer: function(player){
@@ -253,6 +253,6 @@
 			
 		}
 	});
-})()
+})();
 
 
