@@ -121,14 +121,28 @@ a.desc{
 }
 .moplas-block .show-all-songs{
 	float:right;
-	margin-right:10px;
-	margin-top:7px;
 	}
 	.moplas-block .show-all-songs a{
-		color:#808080;
+		cursor: pointer;
+		color:gray;
+		display: inline-block;
+		padding:6px 10px;
 		text-shadow: 0 1px 0 #4A4A4A;
 		}
-
+		.moplas-block .show-all-songs a:hover{
+			background:#555;
+			color:#ccc;
+			}
+		.moplas-block .show-all-songs a:active{
+			color:#aaa;
+			box-shadow: inset 0 0 11px 0 #444;
+			}
+		.moplas-block .show-all-songs a span{
+			border-bottom: 1px dotted;
+			}
+	.moplas-block.want-more-songs .show-all-songs a{
+		border-bottom-left-radius: 6px;
+		}
 .moplas-block{
 	font-size: 14px;
 	padding:0;
@@ -149,9 +163,28 @@ a.desc{
 			color:#999;
 			border-bottom: 1px solid #555555;
 			}
-			.moplas-block ul li  .mf-duration{
-				float:right
+			.moplas-block ul li .play-button-place{
+				float: left;
+				margin-right: 5px;
+				margin-top: -8px;
+				margin-bottom: -12px;
+				margin-left: -6px;
+				height: 31px;
+				width: 32px;
 			}
+			.moplas-block ul li .play-button-place .pc-place{
+				display: none;
+				}
+			.moplas-block ul li.selected-mf .play-button-place .pc-place{
+				display:block;
+				}
+			.moplas-block ul li .mf-progress{
+				overflow: hidden;
+				}
+
+			.moplas-block ul li .mf-duration{
+				float:right
+				}
 			.moplas-block ul li .mf-source{
 				margin-left:10px;
 				color:#777;
@@ -192,7 +225,10 @@ a.desc{
 	.moplas-block .moplas-list .selected-mf{
 		display: block;
 		overflow: hidden;
-	}
+		}
+		.moplas-list .selected-mf .mf-progress{
+			left:-5px;
+			}
 
 
 #sm2-container{

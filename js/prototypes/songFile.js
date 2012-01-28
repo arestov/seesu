@@ -15,9 +15,15 @@
 			'loading-progress': function(factor){
 				this.changeBar(this.cloading, factor);
 			},
-			play: function(state){
+			play: function(state, oldstate){
 				if (!state){
 					this.resetPlayPosition();
+				}
+
+				if (state == 'play'){
+					this.c.addClass('playing-file')
+				} else {
+					this.c.removeClass('playing-file')
 				}
 			},
 			selected: function(state) {
@@ -37,6 +43,9 @@
 		},
 		createBase: function() {
 			this.c = $('<li></li>');
+
+			this.createPlayButton();
+
 
 			var getClickPosition = function(e, node){
 				//e.offsetX || 
@@ -88,6 +97,27 @@
 			//this.title_c.appendTo(this.c);
 
 			this.c.append(this.progress_c);
+		},
+		createPlayButton: function() {
+			var _this = this;
+
+			var pb_place = $('<span class="play-button-place"></span>');
+			var pc_place = $('<span class="pc-indicator big-indicator play-indicator pc-place"></span>').appendTo(pb_place);
+			var button = $('<span class="pc pc-play big-control"></span>').appendTo(pc_place);
+			button.click(function() {
+				if (_this.state('play')){
+
+					if (_this.state('play') == 'play'){
+						_this.sf.pause();
+					} else {
+						_this.sf.play();
+					}
+				} else {
+					_this.sf.fire('want-to-be-selected');
+				}
+			});
+
+			this.c.append(pb_place);
 		},
 		changeBar: function(bar, factor){
 			if (factor){

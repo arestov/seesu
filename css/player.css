@@ -13,7 +13,8 @@
 .track-panel .pc-place{
 	float:left;
 }
-.player-played .playing-song .big-indicator.play-indicator{
+.player-played .playing-song .buttons-panel .big-indicator.play-indicator,
+.playing-file .big-indicator.play-indicator{
 	background-image: url(../i/buttons/pc-indicator-b.png);
 }
 .nice-buttons-place .play-indicator.pc-place{
@@ -165,11 +166,12 @@ a.download-mp3:hover{
 	z-index:-10;
 }
 .selected-mf .mf-progress {
-	margin-left:-5px;
+	
 	}
 	.selected-mf .mf-text{
 		margin-left:5px;
 		color:#757575;
+		margin-right:5px;
 		}
 		.mf-text{
 			

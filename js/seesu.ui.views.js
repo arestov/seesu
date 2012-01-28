@@ -4,8 +4,6 @@ freeze
 show_now_playing
 !show_start_page
 !newBrowse
-!show_search_results_page
--swithToPlaylistPage
 !!!show_playlist_page
 show_track_page
 */

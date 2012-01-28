@@ -72,10 +72,13 @@ createPrototype(mfСorUI, new servView(), {
 			var _this = this;
 			if (!this.more_songs_b){
 				var ms_c = $('<div class="show-all-songs"></div>');
-				this.more_songs_b = $('<a class="js-serv"></a>').text(localize('Files')).appendTo(ms_c);
+
+
+				this.more_songs_b = $('<a class=""></a>').appendTo(ms_c);
 				this.more_songs_b.click(function() {
 					_this.c.toggleClass('want-more-songs');
 				});
+				$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
 				this.c.prepend(ms_c);
 			}
 		}
