@@ -217,12 +217,18 @@ a.desc{
 		.want-more-songs.moplas-block .moplas-list li.overstocked{
 			display: none;
 			}
-
-
+		
 		.moplas-block .moplas-list.want-overstocked-songs .overstocked{
 			display: block;
 		}
 
+		.selected-mf .mf-text{
+			font-size: 12px;
+			}
+			.want-more-songs .selected-mf .mf-text{
+				font-size: inherit;
+				}
+				
 	.moplas-block .moplas-list .selected-mf{
 		display: block;
 		overflow: hidden;
@@ -356,7 +362,12 @@ display:none;
 	padding:0 8px 10px;
 	margin-top:6px;
 	min-height: 383px;
-}
+	}
+	@media (min-height:700px) {
+		.track-context{
+			min-height: 420px;
+			}
+		}
 .artist-info{
 	overflow:hidden;
 	zoom:1;
@@ -482,14 +493,8 @@ display:none;
 		.artist-bio{
 			height:4.7em;
 		}
-		.track-info-dominator{
-			
-			min-height:237px;
-		}
-		.track-context{
-			
-			min-height: 420px;
-		}
+		
+		
 	}
 	
 	
@@ -533,6 +538,13 @@ display:none;
 	padding: 0 0 14px;
 	min-height:200px;
 	}	
+	@media (min-height:700px) {
+		.track-info-dominator{
+			
+			min-height:237px;
+		}
+	}
+
 	.track-info-dominator > .vk-login-context, .track-context > .vk-login-context{
 		border-radius:0;
 		margin:5px -13px 24px;
