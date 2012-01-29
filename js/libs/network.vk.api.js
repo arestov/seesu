@@ -313,9 +313,6 @@ function vk_api(vk_t, params, callback, fallback, iframe){
 
 
 	this.asearch = {
-		test: function(mo){
-			return canUseSearch(mo, _this.search_source);
-		},
 		search: function(){
 			return _this.audio_search.apply(_this, arguments);
 		},

@@ -279,9 +279,6 @@ if (typeof soundcloud_search != 'undefined'){
 	(function(){
 		var sc_search_source = {name: 'soundcloud', key: 0};
 		su.mp3_search.add({
-			test: function(mo){
-				return canUseSearch(mo, sc_search_source);
-			},
 			getById: soundcloudGetById,
 			search: soundcloud_search,
 			name: sc_search_source.name,

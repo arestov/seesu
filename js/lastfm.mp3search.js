@@ -61,9 +61,6 @@ $.extend(lastfm_api.prototype, {
 });
 lastfm_api.prototype.initers.push(function(){
 	this.asearch = {
-		test: function(mo){
-			return canUseSearch(mo, _this.search_source);
-		},
 		search: function(){
 			return _this.searchMp3.apply(_this, arguments);
 		},
