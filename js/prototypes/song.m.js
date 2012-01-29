@@ -327,15 +327,6 @@ createPrototype(baseSong, new mapLevelModel(), {
 		this.fire('files_search', opts);
 		this.updateState('files_search', opts);
 	},
-	mp3Downloads: function(){
-		var songs = this.songs();
-		var d = [];
-		for (var i=0; i < songs.length; i++) {
-			var s = $filter(songs[i].t, 'downloadable', true);
-			d = d.concat.apply(d, s);
-		};
-		return d.length && d;
-	},
 	die: function(){
 		if (this.ui){
 			this.ui.die();

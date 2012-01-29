@@ -547,7 +547,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 		if (buttmen_node){
 			seesu.buttmen = new button_menu(buttmen_node);
 		}
-		
+		//
 		
 		sui.els = {
 			scrolling_viewport: su.env.as_application ? {node:$('#screens',d)} : {node: $(d.body), offset: true},
@@ -561,6 +561,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 				
 			}),
 			slider: slider,
+			navs: $(slider).children('.navs'),
 			nav_playlist_page: d.getElementById('nav_playlist_page'),
 			nav_track_zoom: $('#nav_track_zoom',d),
 			export_playlist: $('#open-external-playlist',d).click(function(e){
@@ -664,7 +665,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 		
 			
 		sui.els.search_label = sui.els.search_form.find('#search-p').find('.lbl');
-		var justhead = $(sui.els.slider).children('.navs');
+		var justhead = sui.els.navs;
 		sui.views.setNav({
 			justhead: justhead,
 			daddy: justhead.children('.daddy'),

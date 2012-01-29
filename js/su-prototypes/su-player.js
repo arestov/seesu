@@ -121,18 +121,38 @@ su.p
 suReady(function(){
 	var pcore = new sm2proxy();
 	var pcon = $(pcore.getC());
-	$(document.body).append(pcon);
+	var complete;
 
+
+	pcon
+		.addClass('sm2proxy')
+		.attr('scrolling', 'no');
+	
+	pcon.bind('load', function() {
+		setTimeout(function() {
+			if (!complete){
+				pcon.addClass('long-appearance')
+			}
+		}, 10000);
+	});
+	
 	
 	pcore
 		.done(function(){
+			complete = true;
 			su.p.setCore(pcore);
-			pcon.css('border', '1px solid #666')
+			pcon.addClass('hidden');
+
 		})
 		.fail(function(){
+			complete = true;
 			pcon.css('border', '1px solid red')
 		})
-
+	$(function(){
+		$(document.body).append(pcon)
+		//$(su.ui.nav).after(pcon);
+	});
+	
 	//$(document.body).append(_this.c);
 });
 

@@ -1,37 +1,3 @@
-var createFilesButton = function(song_context){
-	var files_list_nb = su.ui.createNiceButton('left');
-
-	files_list_nb.b.text( localize('Files', 'Files') + ' ▼');
-	
-	files_list_nb.b.click(function(){
-		if (!$(this).data('disabled')){
-			
-			if (!song_context.isActive('files')){
-				var p = su.ui.getRtPP(this);
-				song_context.show('files', p.left + $(this).outerWidth()/2);
-			} else{
-				song_context.hide();
-			}
-		}
-		
-	});
-	return files_list_nb;
-};
-var createDownloadButton = function(mo){
-	var file_download_nb =  su.ui.createNiceButton('right');
-	file_download_nb.b.text(localize('Download', 'Download'));
-	
-	file_download_nb.b.click(function(){
-		if (!$(this).data('disabled')){
-			var d = mo.mp3Downloads();
-			if (d){
-				app_env.openURL(d[0].link)
-			}
-			
-		}
-	});
-	return file_download_nb;
-};
 
 
 
@@ -293,25 +259,7 @@ cloneObj(songUI.prototype, {
 			e.preventDefault();
 		});
 		
-		//var files_cc = $('<div class="files-control"></div>').prependTo(tp.children('.buttons-panel'));
 		
-		
-		
-		
-		
-	//	var flb = createFilesButton(song_context);
-	//	flb.c.appendTo(files_cc);
-		
-		
-		//var dlb = createDownloadButton(this.mo);
-		
-		//dlb.c.appendTo(files_cc);
-		
-		
-	/*	this.files_control= {
-			list_button: flb,
-			quick_download_button: dlb
-		};*/
 		this.t_users= {
 			c: users,
 			list: users_list
