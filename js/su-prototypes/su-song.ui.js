@@ -83,7 +83,6 @@ cloneObj(songUI.prototype, {
 					this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
 				}
 			}
-			this.updateSongFiles();
 		},
 		'searching-files': function(searching){
 			if (searching){
@@ -177,6 +176,7 @@ cloneObj(songUI.prototype, {
 		this.c.removeClass('viewing-song');
 		
 		su.ui.hidePopups();
+		this.mo.mf_cor.collapseExpanders();
 	},
 	activate: function(opts){
 		this.expand();
@@ -293,25 +293,25 @@ cloneObj(songUI.prototype, {
 			e.preventDefault();
 		});
 		
-		var files_cc = $('<div class="files-control"></div>').prependTo(tp.children('.buttons-panel'));
+		//var files_cc = $('<div class="files-control"></div>').prependTo(tp.children('.buttons-panel'));
 		
 		
 		
 		
 		
-		var flb = createFilesButton(song_context);
-		flb.c.appendTo(files_cc);
+	//	var flb = createFilesButton(song_context);
+	//	flb.c.appendTo(files_cc);
 		
 		
-		var dlb = createDownloadButton(this.mo);
+		//var dlb = createDownloadButton(this.mo);
 		
-		dlb.c.appendTo(files_cc);
+		//dlb.c.appendTo(files_cc);
 		
 		
-		this.files_control= {
+	/*	this.files_control= {
 			list_button: flb,
 			quick_download_button: dlb
-		};
+		};*/
 		this.t_users= {
 			c: users,
 			list: users_list
@@ -348,24 +348,26 @@ cloneObj(songUI.prototype, {
 			return pos;
 		};
 
-		var ph  = $('<div class="player-holder"></div>');
+
+		var tbus = tp.find('.track-buttons');
+
 		var volume_state = $('<div class="volume-state"></div>').click(function(e){
 			var pos = getClickPosition(e, this);
 			_this.mo.setVolume((pos/50) * 100);
 			var volumeSheet = su.ui.els.volume_s && su.ui.els.volume_s.sheet;
 			(volumeSheet.cssRules || volumeSheet.sheet.rules)[0].style.width = pos + 'px';
 			
-		}).appendTo(ph);;
+		});
 		$('<div class="volume-state-position"></div>').appendTo(volume_state);
 
 
-		ph.prependTo(tp);
+		tbus.before(volume_state)
+
 		this.c
 			.prepend(buttmen)
 			.append(this.context);
 			
-			
-		
+	
 		var pi = this.mo.playable_info || {}; 
 		//fixme for userplaylists
 		setTimeout(function(){
@@ -387,7 +389,7 @@ cloneObj(songUI.prototype, {
 	updateSongContext: function(real_need){
 		var artist = this.mo.artist;
 		
-		this.updateSongFiles();
+
 
 		var a_info = this && this.a_info;
 		if (a_info){
@@ -713,85 +715,5 @@ cloneObj(songUI.prototype, {
 			}
 		});
 		
-	},
-	updateSongFiles: function(ext_info){
-		var ext_info = this.extend_info;
-		if (this.mo.wheneWasChanged() > this.files_time_stamp){
-		
-			var c = this.files;
-			c.empty();
-
-			var songs = this.mo.songs();
-
-			if (this.mo.isSearchCompleted() && this.mo.isNeedsAuth('vk')){
-				
-				var vklc = this.rowcs.song_context.getC();
-				var oldvk_login_notify = this.vk_login_notify;
-				if (!songs.length){
-					this.vk_login_notify = su.ui.samples.vk_login.clone();
-				} else if(!this.mo.isHaveAnyResultsFrom('vk')){
-					this.vk_login_notify = su.ui.samples.vk_login.clone( localize('to-find-better') + " " +  localize('music-files-from-vk'));
-				} else {
-					this.vk_login_notify = su.ui.samples.vk_login.clone(localize('stabilization-of-vk'));
-					
-				}
-				if (oldvk_login_notify){
-					oldvk_login_notify.remove();
-				}
-				if (this.vk_login_notify){
-					vklc.after(this.vk_login_notify);
-				}
-			} 
-			if (songs){
-				var songs_counter = 0;
-				var small_head = $('<div class="files-header"></div>').appendTo(c);
-
-				var sc = $('<div class="files-lists"></div>');
-				
-				var just_link;
-				var extend_link;
-			
-				for (var i=0; i < songs.length; i++) {
-					songs_counter += songs[i].t.length
-					var b = su.ui.createFilesList(songs[i], this.mo);
-					if (b){b.appendTo(sc);}
-					if (!extend_link && songs[i].t && songs[i].t.length > 3){
-						
-						small_head.addClass("show-f-head")
-						
-						small_head.append(
-							$('<a class="js-serv extend-switcher"><span class="big-space">' + localize('show-all-files') +'</span></a>').click(function(e){
-								c.toggleClass('show-all-files');
-								e.preventDefault();
-							})
-						);
-						extend_link = true;
-					}
-					
-					
-				};
-				ext_info.files = songs_counter;
-				ext_info.updateUI();
-				
-				
-				sc.appendTo(c);
-				if (songs_counter > 1){
-					this.files_control.list_button.enable();
-				}
-				
-			} 
-			
-			var downloads = this.mo.mp3Downloads();
-			if (downloads){
-				this.files_control.quick_download_button.enable();
-			}
-			
-			
-			
-			if (false && this.mo.isSearchCompleted() && !this.mo.isHaveAnyResultsFrom('soundcloud')){
-				desc.append('<p>try to connect soundcloud search</p>')
-			}
-			this.files_time_stamp = +new Date();
-		}
 	}
 });

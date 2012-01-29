@@ -118,9 +118,9 @@
 	cursor:pointer;
 	border-radius:2px;
 	border: 1px solid #4A4A4A;
+	margin-top:2px;
 	
-	
-	margin-left:24px;
+	margin-left:14px;
 	}
 	.volume-state-position{
 		height:6px;
@@ -138,12 +138,13 @@
 }
 .nice-buttons-place{
 	margin-top:-4px;
+	margin-left: -6px;
 	float:left;
 }
 .track-panel{
 	top:1px;
 	position:relative;
-	height:70px;
+	height:28px;
 	
 	}
 	.files-control{

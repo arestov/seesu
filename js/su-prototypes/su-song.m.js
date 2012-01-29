@@ -29,7 +29,7 @@
 				su.track_event('Song click', 'empty song');
 			}
 		});
-		this.mf_cor = new mfСor(this, this.omo);
+		this.mf_cor = new mfCor(this, this.omo);
 		this.mf_cor.on('before-mf-play', function(mopla) {
 			_this.player.changeNowPlaying(_this);
 			_this.findNeighbours();
