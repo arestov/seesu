@@ -166,7 +166,7 @@ createPrototype(muAns, new eemiter(), {
 				return true;
 			}
 			
-			var my_steam = this.steams[search_source.name][search_source.key];
+			var my_steam = this.steams[search_source.name][search_source.key || 0];
 			if (my_steam){
 				if (my_steam.failed){
 					if (!my_steam.non_fixable){
@@ -664,9 +664,9 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 			
 		};
 		
-		var callback_error = function(search_source, can_be_fixed){
+		var callback_error = function(search_source, non_fixable){
 			//error
-			deferred.reject(search_source, can_be_fixed);
+			deferred.reject(search_source, non_fixable);
 			//count_down(search_source, false, can_be_fixed);
 		};
 		var used_successful = o.handler(msq, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
@@ -737,11 +737,16 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 		var request = function(sem, handler, o, p){
 			var used_successful =  _this.request(query, {handler: handler, get_next: o.get_next}, p, function(){	sem.notify();})
 				.done(function(search_source, music_list){
-					sem.addSteamPart(search_source, music_list);
+					if (music_list && music_list.length){
+						sem.addSteamPart(search_source, music_list);
+					} else {
+						sem.blockSteamPart(search_source, true);
+					}
+					
 				})
-				.fail(function(search_source, can_be_fixed){
+				.fail(function(search_source, non_fixable){
 					if (search_source){
-						sem.blockSteamPart(search_source, can_be_fixed);
+						sem.blockSteamPart(search_source, !non_fixable);
 					}
 				})
 				.always(function(){

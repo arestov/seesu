@@ -490,7 +490,7 @@ vk_api.prototype = {
 			return 
 			
 		}, function(xhr){
-			if (error){error(_this.search_source, true);}
+			if (error){error(_this.search_source);}
 		}, {
 			nocache: nocache, 
 			after_ajax: after_ajax, 
@@ -542,11 +542,11 @@ vk_api.prototype = {
 			if (r.response && (r.response.length > 1 )) {
 				_this.audioResponceHandler(r.response, callback, error);
 			} else{
-				if (error) {error(_this.search_source);}
+				if (error) {error(_this.search_source, true);}
 			}
 			
 		}, function(xhr){
-			if (error){error(_this.search_source, true);}
+			if (error){error(_this.search_source);}
 		}, {
 			nocache: nocache, 
 			after_ajax: after_ajax, 

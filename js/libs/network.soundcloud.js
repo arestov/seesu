@@ -61,7 +61,7 @@ function soundcloud_search(msq, callback, error, nocache, after_ajax, only_cache
 			dataType: "jsonp",
 			data: data,
 			error:function(xhr){
-				if  (error) {error(search_source, true);}
+				if  (error) {error(search_source);}
 			},
 			success:function(r,xhr){
 				if (r && r.length){
@@ -81,7 +81,7 @@ function soundcloud_search(msq, callback, error, nocache, after_ajax, only_cache
 						callback(music_list, search_source);
 					}
 				} else {
-					if  (error) {error(search_source);}
+					if  (error) {error(search_source, true);}
 				}
 				
 			}
@@ -130,7 +130,7 @@ function soundcloudGetById(id, callback, error, nocache, after_ajax, only_cache)
 							callback(entity, search_source);
 						}
 					} else{
-						if  (error) {error(search_source);}
+						if  (error) {error(search_source, true);}
 					}
 				}
 			}
