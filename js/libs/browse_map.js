@@ -1,3 +1,4 @@
+//make_history_step
 var mapLevel = function(num, parent_levels, resident, map, getNavData, data){
 	var _this = this;
 	this.num = num;
@@ -29,29 +30,11 @@ createPrototype(mapLevel, {
 			return value;
 		}
 	},
-	historyStep: function(old, replace){
-		if (replace && old){
-			navi.replace(this.getFullURL(old), this.getFullURL(), this);
-		} else {
-			navi.set(this.getFullURL(), this);
-		}
-		
-	},
 	setResident: function(resident){
 		this.resident = resident;
 	},
 	getResident: function(){
 		return this.resident;
-	},
-	getURL: function(){
-		return this.url || '';
-	},
-	setURL: function(url, make_history_step){
-		var old_url = this.url || false;
-		this.url = url || '';
-		if (make_history_step){
-			this.historyStep(old_url, !!old_url);
-		}
 	},
 	matchURL: function(url){
 		return this.url && this.url == url;
@@ -201,8 +184,6 @@ createPrototype(browseMap, new eemiter(), {
 	},
 	resurrectLevel: function(lev, set_active){
 		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), lev.storage);
-		//	nlev.setURL(lev.getURL());
-		//	nlev.setTitle(lev.title);
 		
 		if (set_active){
 			this.setLevelPartActive(nlev, {userwant: true});
@@ -484,9 +465,6 @@ createPrototype(browseMap, new eemiter(), {
 		num = this.getLevel(num);
 		if (num){
 			this.setLevelPartActive(num, {userwant: fullhouse, transit: transit});
-			if (make_history_step){
-				num.historyStep();
-			}
 		}
 	},
 	startNewBrowse: function(make_history_step){
