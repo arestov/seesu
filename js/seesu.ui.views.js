@@ -206,9 +206,13 @@ views = function(sui){
 	this.m = su.map || (su.map = new browseMap(main_level, function(){
 		return su.ui.views.nav && su.ui.views.nav.daddy;
 	}));
-	this.m.on('title-change', function(title) {
-		su.ui.setTitle(title);
-	});
+	this.m
+		.on('title-change', function(title) {
+			su.ui.setTitle(title);
+		})
+		.on('url-change', function(nu, ou, data, replace) {
+			console.log(arguments);
+		});
 
 };
 //su.ui.views.nav.daddy

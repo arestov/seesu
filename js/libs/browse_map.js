@@ -365,6 +365,9 @@ createPrototype(browseMap, new eemiter(), {
 		this.setCurrentNav(tree, old_tree);
 		this.setCurrentURL(tree, old_tree);
 	},
+	getCurMapL: function() {
+		return this.nav_tree[0]
+	},
 	getTreeResidents: function(n) {
 		return n && $filter(n, 'resident');
 	},
@@ -455,8 +458,7 @@ createPrototype(browseMap, new eemiter(), {
 	setURL: function(url, replace) {
 		var _this = this;
 		this.sProp('cur_url', url, function(nv, ov) {
-			console.log([nv, replace]);
-			_this.fire('url-change', nv, ov, replace);
+			_this.fire('url-change', nv, ov || "", _this.getCurMapL(), replace);
 		});
 		return this;
 	},
