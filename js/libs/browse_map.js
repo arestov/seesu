@@ -1,17 +1,9 @@
 //make_history_step
-var mapLevel = function(num, parent_levels, resident, map, getNavData, data){
+var mapLevel = function(num, parent_levels, resident, map){
 	var _this = this;
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
-	if (getNavData){
-		this.getNavData = getNavData;
-	}
-	this.use_nav = false;// !!getNavData;
-	this.storage = {};
-	if (typeof data == 'object'){
-		cloneObj(this.storage, data);
-	}
 	if (resident){
 		this.setResident(resident);
 		resident.assignMapLev(this);
@@ -19,17 +11,6 @@ var mapLevel = function(num, parent_levels, resident, map, getNavData, data){
 	}
 };
 createPrototype(mapLevel, {
-	D: function(key, value){
-		if (!arguments.hasOwnProperty('1')){
-			return this.storage[key];
-		} else {
-			this.storage[key] = value;
-			if (this.resident && this.resident.handleData){
-				this.resident.handleData(key, value);
-			}
-			return value;
-		}
-	},
 	setResident: function(resident){
 		this.resident = resident;
 	},
@@ -38,18 +19,6 @@ createPrototype(mapLevel, {
 	},
 	matchURL: function(url){
 		return this.url && this.url == url;
-	},
-	testByURL: function(url){
-		if (this.url == url){
-			return this;
-		}	
-	},
-	getFullURL: function(url){
-		var u='';
-		for (var i = this.parent_levels.length - 1; i >= 0; i--){
-			u += this.parent_levels[i].getURL();
-		}
-		return u + (url || this.getURL());
 	},
 	getParentLev: function(){
 		return this.parent_levels[0] || ((this.num > -1) && this.map.levels[-1].free);
@@ -109,13 +78,9 @@ createPrototype(mapLevel, {
 });
 
 
-function browseMap(mainLevelResident, getNavData){
+function browseMap(mainLevelResident){
 	this.callParentMethod('init');
 	this.levels = [];
-	if (getNavData){
-		this.getNavData = getNavData;
-	}
-	this.use_nav = false; //!!getNavData;
 	this.mainLevelResident = mainLevelResident;
 	
 	//zoom levels
@@ -128,38 +93,6 @@ function browseMap(mainLevelResident, getNavData){
 createPrototype(browseMap, new eemiter(), {
 	makeMainLevel: function(){
 		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
-	},
-	getBothPartOfLevel: function(level_num){
-		return {
-			fr: this.levels[level_num] && this.levels[level_num].free != this.levels[level_num].freezed &&  this.levels[level_num].free,
-			fz: this.levels[level_num] && this.levels[level_num].freezed 
-		};
-	},
-	matchSketelon: function(skel){
-		var dizmiss = {
-			fr: false,
-			fz: false
-		};
-		for (var i=0; i < skel.length; i++) {
-			if (skel[i].p){
-				var bilev = this.getBothPartOfLevel(i);
-				if (!dizmiss.fr && bilev.fr && bilev.fr.matchURL(skel[i].p)){
-					skel[i].s.fr = bilev.fr;
-				} else{
-					dizmiss.fr = true;
-				}
-				
-				if (!dizmiss.fz && bilev.fz && bilev.fz.matchURL(skel[i].p)){
-					skel[i].s.fz = bilev.fz;
-				} else{
-					dizmiss.fz = true;
-				}
-			} else {
-				//dizmiss.fz = dizmiss.fr = true;
-			}
-				
-		}
-		return skel;
 	},
 	getLevel: function(num){
 		if (this.levels[num]){
@@ -175,15 +108,15 @@ createPrototype(browseMap, new eemiter(), {
 		opts = opts || {};
 		lp.show(opts);
 		if (opts.userwant && !opts.transit){
-			if (true || this.use_nav){
-				this.updateNav(lp);
-			}
+			
+			this.updateNav(lp);
+			
 		}
 		
 		this.current_level_num = lp.num;
 	},
 	resurrectLevel: function(lev, set_active){
-		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), lev.storage);
+		var nlev = lev.clone = this._goDeeper(true, lev.getResident());
 		
 		if (set_active){
 			this.setLevelPartActive(nlev, {userwant: true});
@@ -193,14 +126,14 @@ createPrototype(browseMap, new eemiter(), {
 	goShallow: function(to){ //up!
 		this.sliceDeepUntil(to.num, true);
 	},
-	_goDeeper: function(orealy, resident, storage){
+	_goDeeper: function(orealy, resident){
 		var cl = this.getActiveLevelNum();
 		if (orealy){
 			this.sliceDeepUntil(cl, false, true);
 		}  else{
 			this.sliceDeepUntil(-1, false, true);
 		}
-		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident, storage);
+		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
 		this.setLevelPartActive(cl, {userwant: true});
 		return cl;
 		
@@ -208,8 +141,8 @@ createPrototype(browseMap, new eemiter(), {
 	goDeeper: function(orealy, resident){
 		return this._goDeeper(orealy, resident);
 	},
-	createLevel: function(num, parent_levels, resident, storage){
-		return new mapLevel(num, parent_levels, resident, this, this.getNavData, storage);
+	createLevel: function(num, parent_levels, resident){
+		return new mapLevel(num, parent_levels, resident, this);
 	},
 	getCurrentShallowLevelsAsParents: function(num){
 		var lvls = [];
@@ -228,7 +161,7 @@ createPrototype(browseMap, new eemiter(), {
 		}
 		return lvls;
 	},
-	getFreeLevel: function(num, save_parents, resident, storage){//goDeeper
+	getFreeLevel: function(num, save_parents, resident){//goDeeper
 		var _this = this;
 		if (!this.levels[num]){
 			this.levels[num] = {};
@@ -237,7 +170,7 @@ createPrototype(browseMap, new eemiter(), {
 			return this.levels[num].free;
 		} else{
 			var parent_levels = save_parents ? this.getCurrentShallowLevelsAsParents(num) : [];
-			return this.levels[num].free = this.createLevel(num, parent_levels, resident, storage);
+			return this.levels[num].free = this.createLevel(num, parent_levels, resident);
 		}
 	},
 	freezeMapOfLevel : function(num){
