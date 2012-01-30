@@ -178,7 +178,7 @@ var sm2iframed = {
 			addEvent(window, "message", check_iframe);
 			
 			
-			_this.c.bind('load',function(){
+			_this.c.on('load',function(){
 				console.log('source knows that iframe loaded');
 				this.contentWindow.postMessage("test_iframe_loading_state", '*');
 				

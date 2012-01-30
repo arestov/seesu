@@ -10,7 +10,7 @@
 	"js/libs/c_quene.js", 
 	"js/libs/c_cache_ajax.js",
 	"js/common-libs/md5.min.js", 
-	"js/common-libs/jquery-1.6.2.mod.min.js", 
+	"js/common-libs/jquery-1.7.2pre.mod.min.js", 
 	"js/app_serv.js", 
 	"js/libs/serv.js", 
 	"js/prototypes/serv-mvc.js",

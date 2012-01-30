@@ -128,7 +128,7 @@ suReady(function(){
 		.addClass('sm2proxy')
 		.attr('scrolling', 'no');
 	
-	pcon.bind('load', function() {
+	pcon.on('load', function() {
 		setTimeout(function() {
 			if (!complete){
 				pcon.addClass('long-appearance')

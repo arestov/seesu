@@ -460,7 +460,8 @@ vk_api.prototype = {
 				track		: HTMLDecode(cursor.title ? cursor.title : cursor.audio.title),
 				from		: 'vk',
 				downloadable: false,
-				_id			: cursor.owner_id + '_' + cursor.aid
+				_id			: cursor.owner_id + '_' + cursor.aid,
+				type: 'mp3'
 			
 			}
 		} else{

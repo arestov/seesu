@@ -144,7 +144,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 		var new_playlist_desc = 'new playlist named ';
 		var pl_r = $('.pl-r', pl_search_wrap);
 		
-		var pl_q = sui.els.pl_r = $('#pl-q',pl_search_wrap).bind('change keyup focus', function(e){
+		var pl_q = sui.els.pl_r = $('#pl-q',pl_search_wrap).on('change keyup focus', function(e){
 			
 			
 			var searching_for = this.value;
@@ -682,7 +682,7 @@ window.connect_dom_to_som = function(d, sui, callback){
 		}
 
 		
-		sui.els.search_input.bind('keyup change', input_change);
+		sui.els.search_input.on('keyup change', input_change);
 	
 		var state_recovered;	
 		if (window.su && su.player && su.p.c_song){

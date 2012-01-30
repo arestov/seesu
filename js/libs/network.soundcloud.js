@@ -22,7 +22,8 @@ var make_sc_song = function(cursor, sc_key){
 			page_link	: cursor.permalink_url,
 			description : cursor.description || false,
 			downloadable: cursor.downloadable,
-			_id			: cursor.id
+			_id			: cursor.id,
+			type: 'mp3'
 		};
 		
 	}
