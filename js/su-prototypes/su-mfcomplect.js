@@ -189,11 +189,12 @@ createPrototype(mfCor, new servModel(), {
 				many_files = many_files || this.complects[cp_name].hasManyFiles();
 			}
 		}
-		this.updateState('changed', new Date());
 		this.updateState('many_files', many_files);
 		if (!this.state('current_mopla')){
 			this.updateState('default_mopla', this.song());
 		}
+		this.updateState('changed', new Date());
+		
 
 	},
 	setCurrentMopla: function(mf) {
@@ -272,7 +273,7 @@ createPrototype(mfCor, new servModel(), {
 				if (cmf){
 					cmf.stop();
 				}
-
+				mopla = mopla || this.song();
 				this.setCurrentMopla(mopla);
 				this.fire('before-mf-play', mopla);
 				mopla.play();
