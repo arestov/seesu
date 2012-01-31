@@ -570,7 +570,7 @@ var hashChangeRecover = function(e){
 			if (!deepest.isOpened()){
 				su.ui.views.restoreFreezed(true);
 			}
-			deepest.sliceTillMe();
+			deepest.sliceTillMe(!!dl.dead.length, true);
 		} else{
 			su.ui.views.showStartPage(true);
 		}

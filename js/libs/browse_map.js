@@ -39,12 +39,12 @@ createPrototype(mapLevel, {
 		this.resident.mlmDie();
 		delete this.map;
 	},
-	_sliceTM: function(transit){ //private alike
+	_sliceTM: function(transit, url_restoring){ //private alike
 		this.map.clearShallow(this);
-		this.map.sliceDeepUntil(this.num, true, transit);	
+		this.map.sliceDeepUntil(this.num, true, transit, url_restoring);	
 	},
-	sliceTillMe: function(transit){
-		this._sliceTM(transit);
+	sliceTillMe: function(transit, url_restoring){
+		this._sliceTM(transit, url_restoring);
 	},
 	freeze: function(){
 		if (this.isOpened()){
