@@ -2,7 +2,6 @@
 freeze
 !restoreFreezed
 show_now_playing
-!show_start_page
 !newBrowse
 !!!show_playlist_page
 show_track_page
@@ -211,6 +210,12 @@ views = function(sui){
 			su.ui.setTitle(title);
 		})
 		.on('url-change', function(nu, ou, data, replace) {
+			if (replace){
+				navi.replace(ou, nu, data);
+			} else {
+				navi.set(nu, data);
+			}
+
 			console.log(arguments);
 		});
 
@@ -227,8 +232,8 @@ views.prototype = {
 	sUI: function(){
 		return su && su.ui || this.sui;	
 	},
-	restoreFreezed: function(no_navi){
-		this.m.restoreFreezed();
+	restoreFreezed: function(url_restoring){
+		this.m.restoreFreezed(url_restoring);
 	},
 
 	show_now_playing: function(){
@@ -238,22 +243,9 @@ views.prototype = {
 		su.ui.views.show_track_page(su.p.c_song);
 		seesu.track_event('Navigation', 'now playing', current_page);
 	},
-	
-	show_start_page: function(focus_to_input, log_navigation, init, no_navi){
-		//DEP
-		var _this = this;
-		if (init){
-			
-		} else if (!no_navi){
-		//	navi.set('');
-		}
-	
-		this.state = 'start';
-	
-	},
-	showStartPage: function(no_navi){
+	showStartPage: function(url_restoring){
 		//mainaly for hash url games
-		this.m.startNewBrowse(!no_navi);
+		this.m.startNewBrowse(url_restoring);
 	},
 	showResultsPage: function(query, no_navi){
 		var lev;

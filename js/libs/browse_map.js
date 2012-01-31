@@ -31,10 +31,6 @@ createPrototype(mapLevel, {
 			parent.resident.blur();
 		}
 		this.resident.show(o);
-
-
-		
-		
 	},
 	hide: function(){
 		this.resident.hide();
@@ -43,12 +39,12 @@ createPrototype(mapLevel, {
 		this.resident.mlmDie();
 		delete this.map;
 	},
-	_sliceTM: function(make_history_step, transit){ //private alike
+	_sliceTM: function(transit){ //private alike
 		this.map.clearShallow(this);
-		this.map.sliceDeepUntil(this.num, true, transit, make_history_step);	
+		this.map.sliceDeepUntil(this.num, true, transit);	
 	},
 	sliceTillMe: function(transit){
-		this._sliceTM(false, transit);
+		this._sliceTM(transit);
 	},
 	freeze: function(){
 		if (this.isOpened()){
@@ -108,25 +104,23 @@ createPrototype(browseMap, new eemiter(), {
 		opts = opts || {};
 		lp.show(opts);
 		if (opts.userwant && !opts.transit){
-			
-			this.updateNav(lp);
-			
+			this.updateNav(lp, opts.url_restoring);
 		}
 		
 		this.current_level_num = lp.num;
 	},
-	resurrectLevel: function(lev, set_active){
-		var nlev = lev.clone = this._goDeeper(true, lev.getResident());
+	resurrectLevel: function(lev, manual_activate, set_active){
+		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), manual_activate);
 		
 		if (set_active){
-			this.setLevelPartActive(nlev, {userwant: true});
+			this.setLevelPartActive(nlev, {userwant: true, url_restoring: true});
 		}
 		return nlev;
 	},
 	goShallow: function(to){ //up!
 		this.sliceDeepUntil(to.num, true);
 	},
-	_goDeeper: function(orealy, resident){
+	_goDeeper: function(orealy, resident, manual_activate){
 		var cl = this.getActiveLevelNum();
 		if (orealy){
 			this.sliceDeepUntil(cl, false, true);
@@ -134,7 +128,9 @@ createPrototype(browseMap, new eemiter(), {
 			this.sliceDeepUntil(-1, false, true);
 		}
 		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
-		this.setLevelPartActive(cl, {userwant: true});
+		if (!manual_activate){
+			this.setLevelPartActive(cl, {userwant: true});
+		}
 		return cl;
 		
 	},
@@ -207,11 +203,11 @@ createPrototype(browseMap, new eemiter(), {
 		}
 		return fresh_freeze;
 	},
-	restoreFreezed: function(){
+	restoreFreezed: function(url_restoring){
 		this.hideMap();
 		var f_lvs = $filter(this.levels, 'freezed');
 		for (var i=0; i < f_lvs.length; i++) {
-			this.setLevelPartActive(f_lvs[i], {userwant: (i == f_lvs.length - 1)});
+			this.setLevelPartActive(f_lvs[i], {userwant: (i == f_lvs.length - 1), url_restoring: url_restoring});
 		}
 		/*
 		for (var i=0; i < this.levels.length; i++) {
@@ -254,7 +250,7 @@ createPrototype(browseMap, new eemiter(), {
 			}
 		}
 	},
-	updateNav: function(tl){
+	updateNav: function(tl, url_restoring){
 		var lvls = [tl].concat(tl.parent_levels);
 		if (tl != this.getLevel(-1)){
 			lvls.push(this.getLevel(-1));
@@ -271,13 +267,13 @@ createPrototype(browseMap, new eemiter(), {
 		for (var i = 2; i < lvls.length; i++) {
 			lvls[i].resident.stackNav( i + 1 === lvls.length ? 'bottom' : 'middle');
 		}
-		this.setNavTree(lvls);
+		this.setNavTree(lvls, url_restoring);
 	},
-	setNavTree: function(tree) {
+	setNavTree: function(tree, url_restoring) {
 		var old_tree = this.nav_tree;
 		this.nav_tree = tree;
-		this.setCurrentNav(tree, old_tree);
-		this.setCurrentURL(tree, old_tree);
+		this.setCurrentNav(tree, old_tree, url_restoring);
+		this.setCurrentURL(tree, old_tree, url_restoring);
 	},
 	getCurMapL: function() {
 		return this.nav_tree[0]
@@ -335,7 +331,7 @@ createPrototype(browseMap, new eemiter(), {
 		this.setTitle(this.joinNavTitle(this.getTitleNav(this.nav_tree)));
 		return this;
 	},
-	setCurrentURL: function(new_tree, old_tree) {
+	setCurrentURL: function(new_tree, old_tree, url_restoring) {
 		var _this = this; 
 		if (!this.onNavUrlChange){
 			this.onNavUrlChange = function() {
@@ -357,7 +353,7 @@ createPrototype(browseMap, new eemiter(), {
 		for (var i = 0; i < new_tree.length; i++) {
 			new_tree[i].on('url-change', this.onNavUrlChange);
 		}
-		this.setURL(this.joinNavURL(new_tree));
+		this.setURL(this.joinNavURL(new_tree), false, url_restoring);
 	},
 	joinNavURL: function(nav) {
 		var url = [];
@@ -369,10 +365,13 @@ createPrototype(browseMap, new eemiter(), {
 		};
 		return url.reverse().join('');
 	},
-	setURL: function(url, replace) {
+	setURL: function(url, replace, url_restoring) {
 		var _this = this;
 		this.sProp('cur_url', url, function(nv, ov) {
-			_this.fire('url-change', nv, ov || "", _this.getCurMapL(), replace);
+			if (!url_restoring){
+				_this.fire('url-change', nv, ov || "", _this.getCurMapL(), replace);
+			}
+			
 		});
 		return this;
 	},
@@ -389,7 +388,7 @@ createPrototype(browseMap, new eemiter(), {
 			this.hideLevel(cur, exept_levels[i]);
 		}
 	},
-	sliceDeepUntil: function(num, fullhouse, transit, make_history_step){
+	sliceDeepUntil: function(num, fullhouse, transit, url_restoring){
 		if (num < this.levels.length){
 			for (var i = this.levels.length-1; i > num; i--){
 				this.hideLevel(this.levels[i]);
@@ -397,11 +396,11 @@ createPrototype(browseMap, new eemiter(), {
 		}
 		num = this.getLevel(num);
 		if (num){
-			this.setLevelPartActive(num, {userwant: fullhouse, transit: transit});
+			this.setLevelPartActive(num, {userwant: fullhouse, transit: transit, url_restoring: url_restoring});
 		}
 	},
-	startNewBrowse: function(make_history_step){
-		this.sliceDeepUntil(-1, true, false, make_history_step);
+	startNewBrowse: function(url_restoring){
+		this.sliceDeepUntil(-1, true, false, url_restoring);
 	}
 	
 });
@@ -448,7 +447,7 @@ createPrototype(mapLevelModel, new servModel(), {
 	},
 	zoomOut: function() {
 		if (this.lev && (this.state('mp-stack') || (this.state('mp-show') && this.state('mp-blured')) )){
-			this.lev._sliceTM(true);
+			this.lev._sliceTM();
 		}
 	},
 	getTitle: function() {
