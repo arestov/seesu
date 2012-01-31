@@ -20,7 +20,7 @@ createPrototype(baseSong, new mapLevelModel(), {
 		cloneObj(this, omo, false, ['artist', 'track']);
 		this.omo = omo;
 	},
-	die: function() {
+	mlmDie: function() {
 		
 	},
 	getFullName: function(allow_short){
@@ -326,13 +326,6 @@ createPrototype(baseSong, new mapLevelModel(), {
 		}
 		this.fire('files_search', opts);
 		this.updateState('files_search', opts);
-	},
-	die: function(){
-		if (this.ui){
-			this.ui.die();
-			delete this.ui;
-		}
-		
 	},
 	getURL: function(mopla){
 		var url ="";
