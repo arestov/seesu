@@ -1,3 +1,14 @@
+if (!Array.prototype.indexOf) {
+  Array.prototype.indexOf = function (obj, start) {
+    for (var i = (start || 0); i < this.length; i++) {
+      if (this[i] == obj) {
+        return i;
+      }
+    }
+    return -1;
+  };
+}
+
 var addEvent = window.addEventListener ? 
 function(elem, evType, fn){
 	elem.addEventListener(evType, fn, false);
@@ -398,14 +409,3 @@ var createPrototype = function(constr, assi_prototype, clone_prototype){
 	cloneObj(constr.prototype, clone_prototype);
 	return constr;
 };
-
-if (!Array.prototype.indexOf) {
-  Array.prototype.indexOf = function (obj, start) {
-    for (var i = (start || 0); i < this.length; i++) {
-      if (this[i] == obj) {
-        return i;
-      }
-    }
-    return -1;
-  };
-}

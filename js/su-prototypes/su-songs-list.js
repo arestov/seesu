@@ -76,14 +76,15 @@
 			}
 		},
 		onMapLevAssign: function() {
+			var child_ui;
 			if (su.ui && su.ui.els.artsTracks){
 
 
-				var child_ui = this.getFreeView();
+				child_ui = this.getFreeView();
 				if (child_ui){
 					var c = $('<div class="playlist-container"></div>').appendTo(su.ui.els.artsTracks);
 					//this.info_container = $('<div class="playlist-info"></div>').appendTo(this.c);
-					c.append(child_ui.getC())
+					c.append(child_ui.getC());
 
 					
 					child_ui.appended();
@@ -91,7 +92,7 @@
 			}
 
 			if (su.ui.views.nav.daddy){
-				var child_ui = this.getFreeView('nav');
+				child_ui = this.getFreeView('nav');
 				if (child_ui){
 					su.ui.views.nav.daddy.append(child_ui.getC());
 					child_ui.appended();
@@ -127,20 +128,7 @@
 			} else{
 				return omo;
 			}
-		},
-		setC: function(c){
-			return
-			var oldc = this.getC();
-
-			if (c != oldc){
-				if (oldc){
-					this.removeView(this.getView().die());
-				}
-				this.addView((new songsListView(c)).setModel(this).setStates(this.states));
-
-			}
-		},
-
+		}
 	});
 
 	

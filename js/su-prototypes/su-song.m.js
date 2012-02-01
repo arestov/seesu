@@ -10,7 +10,7 @@
 			if (_this.state('playable')){
 				var zoomed = !!su.ui.els.slider.className.match(/show-zoom-to-track/);
 				if (this.c_song){
-			 		if (mo == this.c_song){
+					if (mo == this.c_song){
 						su.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
 					} else if (this.c_song.next_song && mo == this.c_song.next_song){
 						su.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
@@ -20,7 +20,7 @@
 						su.track_event('Song click', 'simple click');
 					}
 				} else{
-			  		su.track_event('Song click', 'simple click');
+					su.track_event('Song click', 'simple click');
 				}
 				if (!zoomed){
 					su.track_page('track zoom');
@@ -39,7 +39,7 @@
 	createPrototype(song, new baseSong(), {
 		ui_constr: {
 			main: function(){
-				return new songUI(this)
+				return new songUI(this);
 			},
 			nav: function() {
 				return new trackNavUI(this);
@@ -67,7 +67,7 @@
 			this.fire('view');
 			this.findFiles();
 			su.ui.views.show_track_page(this, no_navi);
-		},
+		}
 	});
 	//song.prototype = song_methods;
 })();
