@@ -142,6 +142,7 @@ suReady(function(){
 			complete = true;
 			su.p.setCore(pcore);
 			pcon.addClass('hidden');
+			dstates.add_state('body','flash-internet');
 
 		})
 		.fail(function(){
