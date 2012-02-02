@@ -133,7 +133,7 @@ suReady(function(){
 			if (!complete){
 				pcon.addClass('long-appearance')
 			}
-		}, 10000);
+		}, 20000);
 	});
 	
 	
@@ -147,7 +147,7 @@ suReady(function(){
 		})
 		.fail(function(){
 			complete = true;
-			pcon.css('border', '1px solid red')
+			pcon.addClass('hidden');
 		})
 	$(function(){
 		$(document.body).append(pcon)

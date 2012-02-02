@@ -1,0 +1,1 @@
+player.sm2-internal.js
