@@ -45,6 +45,10 @@
 	"js/seesu.search.js", 
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
+
+	"js/common-libs/soundmanager2.mod.min.js", 
+	"js/prototypes/player.sm2-internal.js",
+	
 	"js/prototypes/player.sm2-proxy.js",
 	"js/su-prototypes/su-player.js",
 	"js/seesu.player.js", 

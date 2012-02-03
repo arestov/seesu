@@ -53,6 +53,7 @@
 			cloneObj(  sm2opts, opts  );
 		}
 		var _this = this;
+
 		var soundManager = new SoundManager(path || 'swf', false, sm2opts);
 		soundManager.onready(function() {
 			if (soundManager.supported()) {
@@ -64,6 +65,8 @@
 		
 			}
 		});
+		this.sm2_newb = soundManager;
+
 		this.c = soundManager.getC();
 	};
 
@@ -75,6 +78,9 @@
 		done: function() {
 			this.def.done(cb);
 			return this;
+		},
+		appended: function() {
+			this.sm2_newb.appended();
 		},
 		getC: function() {
 			return this.c;
