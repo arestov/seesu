@@ -1,8 +1,8 @@
 
-var sm2proxy = function(fireEvent, c) {
+var sm2proxy = function(origin, path, opts) {
 	var _this = this;
 
-	this.fireEvent = fireEvent;
+	
 
 	addEvent(window, "message", function(e){
 		if (e.origin.indexOf(_this.origin) === 0){
@@ -12,9 +12,6 @@ var sm2proxy = function(fireEvent, c) {
 
 	this.frame = document.createElement('iframe');
 	this.frame.src = this.origin + this.frame_url;
-	if (c && c.append){
-		c.append(this.frame);
-	}
 	this.def = $.Deferred();
 	
 };
@@ -45,15 +42,13 @@ sm2proxy.prototype = {
 				if (this.subr){
 					this.subr.apply(this, arguments);
 				}
-				if (this.fireEvent) {
-					this.fireEvent.apply(this, arguments);
-				}
 			}
 			//console.log(arguments)
 		}
 	},
 	subscribe: function(cb){
 		this.subr = cb;
+		return this;
 	},
 	desubscribe: function(cb){
 		if (this.subr === cb){
