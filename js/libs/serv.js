@@ -358,7 +358,9 @@ var getUnitBaseNum = function(_c){
 		return 2;
 	}
 };
-var stringifyParams= function(params, ignore_params, splitter){
+
+
+var stringifyParams= function(params, ignore_params, splitter, joiner){
 	splitter = splitter || '';
 	if (typeof params == 'string'){
 		return params;
@@ -370,7 +372,7 @@ var stringifyParams= function(params, ignore_params, splitter){
 		}
 	}
 	pv_signature_list.sort();
-	return pv_signature_list.join();
+	return pv_signature_list.join(joiner || '');
 };
 
 

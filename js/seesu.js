@@ -119,26 +119,7 @@ window.seesu = window.su =  {
 
 
 
-function stringifyParams(params, ignore_params, splitter){
-	var paramsstr = '',
-		pv_signature_list = [];
-	
-	
-	for (var p in params) {
-		if (!ignore_params || !bN(ignore_params.indexOf(p))){
-			pv_signature_list.push(p + (splitter || '') + params[p]);
-		}
-	}
-		
-	pv_signature_list.sort();
-		
-	for (var i=0, l = pv_signature_list.length; i < l; i++) {
-		paramsstr += pv_signature_list[i];
-	};
-		
-	return paramsstr;
-	
-};
+
 if (su._url.q){
 	su.start_query = su._url.q;
 }

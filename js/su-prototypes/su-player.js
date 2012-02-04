@@ -119,7 +119,17 @@ su.p
 
 
 suReady(function(){
-	var pcore = new sm2proxy();
+	var sm2opts = {};
+	if (su.env.opera_extension){
+		sm2opts.wmode = 'opaque'
+	} else {
+		sm2opts.useHighPerformance = true;
+		if (su.env.opera_widget){
+			sm2opts.wmode = 'transparent';
+		}
+	}
+
+	var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
 	var pcon = $(pcore.getC());
 	var complete;
 

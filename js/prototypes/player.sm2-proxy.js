@@ -1,7 +1,7 @@
 
 var sm2proxy = function(origin, path, opts) {
 	var _this = this;
-
+	this.origin = origin;
 	
 
 	addEvent(window, "message", function(e){
@@ -10,8 +10,15 @@ var sm2proxy = function(origin, path, opts) {
 		}
 	});
 
+	if (opts && opts === Object(opts)){
+		var params_string = stringifyParams(opts, false, '=', '&');
+		if (params_string){
+			path = path + '#' + params_string
+		}
+	}
+
 	this.frame = document.createElement('iframe');
-	this.frame.src = this.origin + this.frame_url;
+	this.frame.src = this.origin + path;
 	this.def = $.Deferred();
 	
 };
@@ -28,8 +35,6 @@ sm2proxy.prototype = {
 	getC: function(){
 		return this.frame;
 	},
-	origin: "http://arestov.github.com",
-	frame_url: "/SoundManager2/",
 	handleFrameMessage: function(func, arg){
 		if (func){
 			if (func === 'sm2loaded'){
