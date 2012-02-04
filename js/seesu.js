@@ -97,6 +97,7 @@ window.seesu = window.su =  {
 			}
 		}
 	  },
+	  map: su_map,
 	  ui: new seesu_ui(document),
 	  xhrs: {},
 	  soundcloud_queue: new funcs_queue(1000, 5000 , 7),

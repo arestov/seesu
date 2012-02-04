@@ -351,7 +351,7 @@ window.seesu_ui = function(d, with_dom, cb){
 	if (!with_dom){
 		dstates.connect_ui(this);
 	} else {
-		this.views = new views(this);
+		this.views = new views(this, su.map);
 	}
 	
 	this.popups = [];

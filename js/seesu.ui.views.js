@@ -147,7 +147,7 @@ createPrototype(mainLevel, new mapLevelModel(), {
 		return this.short_title;
 	}
 });
-var main_level = new mainLevel();
+main_level = new mainLevel();
 
 investgNavUI = function(mlm) {
 	this.callParentMethod('init', mlm);
@@ -190,7 +190,7 @@ createPrototype(trackNavUI, new baseNavUI(), {
 
 
 
-
+su_map = new browseMap(main_level);
 
 
 
@@ -199,12 +199,11 @@ createPrototype(trackNavUI, new baseNavUI(), {
 
 //this.getPlaylistContainer(save_parents)
 //getCurrentPlaylistContainer
-views = function(sui){
+views = function(sui, su_map){
 	this.sui = sui;
 	var _this = this;
-	this.m = su.map || (su.map = new browseMap(main_level, function(){
-		return su.ui.views.nav && su.ui.views.nav.daddy;
-	}));
+	this.m = su_map;
+
 	this.m
 		.on('title-change', function(title) {
 			su.ui.setTitle(title);
