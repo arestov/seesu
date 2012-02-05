@@ -107,33 +107,39 @@ createPrototype(mainLevelUI, new servView(), {
 });
 
 
-var mainLevel = function() {
+mainLevel = function() {
 	this.callParentMethod('init');
 	this.updateState('nav-title', 'Seesu start page');
+	var _this = this;
+	var onMapAssing = function() {
+		_this.getFreeView();
+		if (su.ui.nav.daddy){
+			var child_ui = _this.getFreeView('nav');
+			if (child_ui){
+				su.ui.nav.daddy.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}
+	};
+
+
+	_this
+		.on('mpl-attach', function() {
+			suReady(function() {
+				su.on('dom', onMapAssing);
+			});
+			
+		})
+		.on('mpl-dettach', function() {
+			suReady(function() {
+				su.off('dom', onMapAssing);
+			});
+		});
 
 };
 
 
 createPrototype(mainLevel, new mapLevelModel(), {
-	onMapLevAssign: function(){
-		this.getFreeView();
-
-		if (su.ui.views.nav.daddy){
-			var child_ui = this.getFreeView('nav');
-			if (child_ui){
-				su.ui.views.nav.daddy.append(child_ui.getC());
-				child_ui.appended();
-			}
-		}
-		/*
-		if (su.ui.els.searchres){
-			var child_ui = this.getFreeView();
-			if (child_ui){
-				su.ui.els.searchres.append(child_ui.getC());
-				child_ui.appended();
-			}
-		}*/
-	},
 	ui_constr: {
 		main: function() {
 			return new mainLevelUI(this);
@@ -147,7 +153,7 @@ createPrototype(mainLevel, new mapLevelModel(), {
 		return this.short_title;
 	}
 });
-main_level = new mainLevel();
+
 
 investgNavUI = function(mlm) {
 	this.callParentMethod('init', mlm);
@@ -190,10 +196,6 @@ createPrototype(trackNavUI, new baseNavUI(), {
 
 
 
-su_map = new browseMap(main_level);
-
-
-
 //getCurrentSearchResultsContainer
 //	getSearchResultsContainer: function(){
 
@@ -219,15 +221,8 @@ views = function(sui, su_map){
 		});
 
 };
-//su.ui.views.nav.daddy
+//su.ui.nav.daddy
 views.prototype = {
-	setNav: function(obj){
-		this.nav= obj;
-		if (obj.daddy){
-			obj.daddy.empty().removeClass('not-inited');
-		}
-		this.m.makeMainLevel();
-	},
 	sUI: function(){
 		return su && su.ui || this.sui;	
 	},
@@ -235,12 +230,15 @@ views.prototype = {
 		this.m.restoreFreezed(url_restoring);
 	},
 
-	show_now_playing: function(){
+	show_now_playing: function(no_stat){
 		var current_page = this.sUI().els.slider.className;
 		this.restoreFreezed();
 		
 		su.ui.views.show_track_page(su.p.c_song);
-		seesu.track_event('Navigation', 'now playing', current_page);
+		if (!no_stat){
+			seesu.track_event('Navigation', 'now playing', current_page);
+		}
+		
 	},
 	showStartPage: function(url_restoring){
 		//mainaly for hash url games

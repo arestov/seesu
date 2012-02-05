@@ -106,6 +106,40 @@ investigation = function(init, searchf){
 	this.searchf = searchf;
 
 	this.setInactiveAll();
+
+	var _this = this;
+
+	var onMapAssing = function() {
+		if (su.ui.els.searchres){
+			var child_ui = _this.getFreeView();
+			if (child_ui){
+				su.ui.els.searchres.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}
+		if (su.ui.nav.daddy){
+			var child_ui = _this.getFreeView('nav');
+			if (child_ui){
+				su.ui.nav.daddy.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}
+	};
+
+	_this
+		.on('mpl-attach', function() {
+			suReady(function() {
+				su.on('dom', onMapAssing);
+			});
+			
+		})
+		.on('mpl-dettach', function() {
+			suReady(function() {
+				su.off('dom', onMapAssing);
+			});
+		});
+
+	
 };
 
 
@@ -116,22 +150,6 @@ createPrototype(investigation, new mapLevelModel(), {
 		},
 		nav: function() {
 			return new investgNavUI(this);
-		}
-	},
-	onMapLevAssign: function() {
-		if (su.ui.els.searchres){
-			var child_ui = this.getFreeView();
-			if (child_ui){
-				su.ui.els.searchres.append(child_ui.getC());
-				child_ui.appended();
-			}
-		}
-		if (su.ui.views.nav.daddy){
-			var child_ui = this.getFreeView('nav');
-			if (child_ui){
-				su.ui.views.nav.daddy.append(child_ui.getC());
-				child_ui.appended();
-			}
 		}
 	},
 	state_change: {

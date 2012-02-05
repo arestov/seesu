@@ -65,6 +65,47 @@
 
 		this.changed();
 		
+		var _this = this;
+
+		var onMapAssing = function() {
+			var child_ui;
+			if (su.ui && su.ui.els.artsTracks){
+
+
+				child_ui = _this.getFreeView();
+				if (child_ui){
+					var c = $('<div class="playlist-container"></div>').appendTo(su.ui.els.artsTracks);
+					c.append(child_ui.getC());
+
+					
+					child_ui.appended();
+				}
+			}
+
+			if (su.ui.nav.daddy){
+				child_ui = _this.getFreeView('nav');
+				if (child_ui){
+					su.ui.nav.daddy.append(child_ui.getC());
+					child_ui.appended();
+				}
+			}
+		};
+
+
+		
+		_this
+			.on('mpl-attach', function() {
+				suReady(function() {
+					su.on('dom', onMapAssing);
+				});
+				
+			})
+			.on('mpl-dettach', function() {
+				suReady(function() {
+					su.off('dom', onMapAssing);
+				});
+			});
+			
 	};
 	createPrototype(songsList, new songsListModel(), {
 		ui_constr: {
@@ -73,30 +114,6 @@
 			},
 			nav: function() {
 				return new playlistNavUI(this);
-			}
-		},
-		onMapLevAssign: function() {
-			var child_ui;
-			if (su.ui && su.ui.els.artsTracks){
-
-
-				child_ui = this.getFreeView();
-				if (child_ui){
-					var c = $('<div class="playlist-container"></div>').appendTo(su.ui.els.artsTracks);
-					//this.info_container = $('<div class="playlist-info"></div>').appendTo(this.c);
-					c.append(child_ui.getC());
-
-					
-					child_ui.appended();
-				}
-			}
-
-			if (su.ui.views.nav.daddy){
-				child_ui = this.getFreeView('nav');
-				if (child_ui){
-					su.ui.views.nav.daddy.append(child_ui.getC());
-					child_ui.appended();
-				}
 			}
 		},
 		getURL: function(){

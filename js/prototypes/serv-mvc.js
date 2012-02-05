@@ -5,6 +5,7 @@ cloneObj(eemiter.prototype, {
 		this.subscribes = {};
 		this.reg_fires = {};
 		this.requests = [];
+		return this;
 	},
 	on: function(name, cb){
 		var _this = this;
@@ -44,6 +45,7 @@ cloneObj(eemiter.prototype, {
 			//this.reg_fires[name] = this.reg_fires[name] || {};
 			this.reg_fires[name] = cb
 		}
+		return this;
 	},
 	fire: function(){
 		var args = Array.prototype.slice.call(arguments);
@@ -87,6 +89,7 @@ cloneObj(servModel.prototype, {
 		this.states = {};
 		this.views = [];
 		this.children = [];
+		return this;
 	},
 	state: function(name){
 		return this.states[name];

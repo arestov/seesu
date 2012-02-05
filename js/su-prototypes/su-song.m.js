@@ -36,6 +36,32 @@
 			_this.findNeighbours();
 			_this.updateProp('mopla', mopla);
 		});
+
+		var _this = this;
+
+		var onMapAssing = function() {
+			if (su.ui.nav.daddy){
+				var child_ui = _this.getFreeView('nav');
+				if (child_ui){
+					su.ui.nav.daddy.append(child_ui.getC());
+					child_ui.appended();
+				}
+			}
+		};
+
+
+		_this
+			.on('mpl-attach', function() {
+				suReady(function() {
+					su.on('dom', onMapAssing);
+				});
+				
+			})
+			.on('mpl-dettach', function() {
+				suReady(function() {
+					su.off('dom', onMapAssing);
+				});
+			});
 	};
 	createPrototype(song, new baseSong(), {
 		ui_constr: {
@@ -44,15 +70,6 @@
 			},
 			nav: function() {
 				return new trackNavUI(this);
-			}
-		},
-		onMapLevAssign: function() {
-			if (su.ui.views.nav.daddy){
-				var child_ui = this.getFreeView('nav');
-				if (child_ui){
-					su.ui.views.nav.daddy.append(child_ui.getC());
-					child_ui.appended();
-				}
 			}
 		},
 		updateFilesSearchState: function(complete, get_next){

@@ -7,6 +7,7 @@ var mapLevel = function(num, parent_levels, resident, map){
 	if (resident){
 		this.setResident(resident);
 		resident.assignMapLev(this);
+		resident.fire('mpl-attach');
 		//this.buildResident();
 	}
 };
@@ -37,6 +38,7 @@ createPrototype(mapLevel, {
 	},
 	die: function(){
 		this.resident.mlmDie();
+		this.resident.fire('mpl-detach');
 		delete this.map;
 	},
 	_sliceTM: function(transit, url_restoring){ //private alike
@@ -89,6 +91,7 @@ function browseMap(mainLevelResident){
 createPrototype(browseMap, new eemiter(), {
 	makeMainLevel: function(){
 		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
+		return this;
 	},
 	getLevel: function(num){
 		if (this.levels[num]){
@@ -412,12 +415,6 @@ createPrototype(mapLevelModel, new servModel(), {
 			this.onMapLevAssign();
 		}
 		return this;	
-	},
-	assignChild: function(type, map_lvm) {
-		if (this.children_assigners && this.children_assigners[type]){
-			this.children_assigners[type](map_lvm);
-		}
-		return this;
 	},
 	mlmDie: function(){
 		this.die();	

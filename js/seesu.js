@@ -19,9 +19,19 @@ var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret')
 
 var dga = (dga && suStore('dg_auth'));
 
-  
+var main_level = new mainLevel();
 window.seesu = window.su =  {
 	  _url: get_url_parameters(location.search),
+	  emitter: (new eemiter()).init(),
+	  on: function() {
+		this.emitter.on.apply(this.emitter, arguments);
+	  },
+	  off: function() {
+		this.emitter.off.apply(this.emitter, arguments);
+	  },
+	  fire: function() {
+		this.emitter.fire.apply(this.emitter, arguments);
+	  },
 	  createUI: function(d, connect_dom){
 	  	var _this = this;
 		this.ui = new seesu_ui(d, connect_dom, function(opts){
@@ -97,7 +107,7 @@ window.seesu = window.su =  {
 			}
 		}
 	  },
-	  map: su_map,
+	  map: (new browseMap(main_level)).makeMainLevel(),
 	  ui: new seesu_ui(document),
 	  xhrs: {},
 	  soundcloud_queue: new funcs_queue(1000, 5000 , 7),
@@ -115,7 +125,11 @@ window.seesu = window.su =  {
 	  }
 	};
 
-
+su.emitter.onRegistration('dom', function(cb) {
+	if (su.ui && su.ui.views){
+		cb();
+	}	
+});
 
 
 

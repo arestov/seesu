@@ -162,6 +162,40 @@ var artCard = function(artist) {
 	this.updateState('nav-title', artist);
 
 	this.loadInfo();
+
+	var _this = this;
+
+	var onMapAssing = function() {
+		if (su.ui.els.artcards){
+			var child_ui = _this.getFreeView();
+			if (child_ui){
+				su.ui.els.artcards.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}
+		if (su.ui.nav.daddy){
+			var child_ui = _this.getFreeView('nav');
+			if (child_ui){
+				su.ui.nav.daddy.append(child_ui.getC());
+				child_ui.appended();
+			}
+		}
+	};
+
+
+	_this
+		.on('mpl-attach', function() {
+			suReady(function() {
+				su.on('dom', onMapAssing);
+			});
+			
+		})
+		.on('mpl-dettach', function() {
+			suReady(function() {
+				su.off('dom', onMapAssing);
+			});
+		});
+
 };
 createPrototype(artCard, new mapLevelModel(), {
 	ui_constr: {
@@ -171,22 +205,6 @@ createPrototype(artCard, new mapLevelModel(), {
 		nav: function() {
 			return new artCardNavUI(this)
 		}	
-	},
-	onMapLevAssign: function() {
-		if (su.ui.els.artcards){
-			var child_ui = this.getFreeView();
-			if (child_ui){
-				su.ui.els.artcards.append(child_ui.getC());
-				child_ui.appended();
-			}
-		}
-		if (su.ui.views.nav.daddy){
-			var child_ui = this.getFreeView('nav');
-			if (child_ui){
-				su.ui.views.nav.daddy.append(child_ui.getC());
-				child_ui.appended();
-			}
-		}
 	},
 	getURL: function() {
 		return '/catalog/' + this.artist;	

@@ -666,7 +666,15 @@ window.connect_dom_to_som = function(d, sui, callback){
 			
 		sui.els.search_label = sui.els.search_form.find('#search-p').find('.lbl');
 		var justhead = sui.els.navs;
-		sui.views.setNav({
+		sui.nav = {
+			justhead: justhead,
+			daddy: justhead.children('.daddy')
+		};
+
+		/*
+
+
+				sui.views.setNav({
 			justhead: justhead,
 			daddy: justhead.children('.daddy'),
 			start: $('#start_search',d),
@@ -674,6 +682,11 @@ window.connect_dom_to_som = function(d, sui, callback){
 			playlist: $(sui.els.nav_playlist_page).parent(),
 			track: sui.els.nav_track_zoom.parent()
 		});
+
+		
+		sui.views.setNav();*/
+		justhead.children('.daddy').empty().removeClass('not-inited');
+		su.fire('dom', sui);
 
 		if (app_env.pokki_app){
 			$('<span class="minimize-button"></span>').click(function(){
@@ -687,11 +700,12 @@ window.connect_dom_to_som = function(d, sui, callback){
 		var state_recovered;	
 		if (window.su && su.player && su.p.c_song){
 			if (su.p.c_song && su.p.c_song.plst_titl){
-				sui.views.m.restoreFreezed();
-				su.ui.views.show_track_page(su.p.c_song, true);
+				su.ui.views.show_now_playing(true)
+				//sui.views.m.restoreFreezed();
+				//su.ui.views.show_track_page(su.p.c_song, true);
 				
-				sui.mark_c_node_as(su.player.player_state);
-				su.player.nowPlaying(su.p.c_song);
+				//sui.mark_c_node_as(su.player.player_state);
+				//su.player.nowPlaying(su.p.c_song);
 				state_recovered = true;
 			}
 		}

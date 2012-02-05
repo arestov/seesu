@@ -66,10 +66,10 @@ cloneObj(seesuPlayer.prototype, {
 	},
 	nowPlaying: function(mo){
 		if (!su.ui.now_playing.link || su.ui.now_playing.link[0].ownerDocument != su.ui.d){
-			if (su.ui.views.nav){
+			if (su.ui.nav){
 				su.ui.now_playing.link = $('<a class="np"></a>').click(function(){
 					su.ui.views.show_now_playing(true);
-				}).appendTo(su.ui.views.nav.justhead);
+				}).appendTo(su.ui.nav.justhead);
 			}
 		}
 		if (su.ui.now_playing.link){
