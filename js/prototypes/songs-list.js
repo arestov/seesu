@@ -267,7 +267,7 @@
 						this.appendSongUI(_this[i]);
 					}
 				}
-				var actives_mo = $filter(_this, 'states.active', true);
+				var actives_mo = $filter(_this, 'states.mp-show', function(v) {return !!v});
 				for (var i = 0; i < actives_mo.length; i++) {
 					actives_mo[i].checkAndFixNeighbours();
 				};

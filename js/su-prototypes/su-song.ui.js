@@ -10,7 +10,7 @@ var songUI = function(mo, complex){
 	if (complex){
 		this.expand();
 	}
-	this.states = {};
+	this.setModel(mo);
 };
 songUI.prototype = new servView();
 

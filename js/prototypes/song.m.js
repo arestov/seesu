@@ -275,8 +275,11 @@ createPrototype(baseSong, new mapLevelModel(), {
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
 		if (this.raw()){
 			this.updateState('playable', true);
-		} else if (!this.track && this.getRandomTrackName){
-			this.getRandomTrackName(full_allowing, from_collection, last_in_collection);
+		} else if (!this.track){
+			if (this.getRandomTrackName){
+				this.getRandomTrackName(full_allowing, from_collection, last_in_collection);
+			}
+			
 		} else{
 			if (this.isSearchCompleted()){
 				this.updateFilesSearchState(true)

@@ -40,7 +40,7 @@ var mfComplect = function(mf_cor, sem_part, mo) {
 		if (i + 1 > this.overstock_limit){
 			sf.updateState('overstock', true);
 		}
-		
+		this.addChild(sf);
 		this.moplas_list.push(sf);
 	}
 };
@@ -60,8 +60,9 @@ createPrototype(mfComplect, new servModel(), {
 var mfCorUI = function(mf_cor) {
 	this.callParentMethod('init');
 	this.createBase();
-	this.setModel(mf_cor);
 	this.mf_cor = mf_cor;
+	this.setModel(mf_cor);
+	
 };
 createPrototype(mfCorUI, new servView(), {
 	state_change: {
@@ -186,6 +187,7 @@ createPrototype(mfCor, new servModel(), {
 			var cp_name = this.pa_o[i];
 			if (!this.complects[cp_name]){
 				this.complects[cp_name] = new mfComplect(this, songs_packs[i], this.mo);
+				this.addChild(this.complects[cp_name]);
 				many_files = many_files || this.complects[cp_name].hasManyFiles();
 			}
 		}

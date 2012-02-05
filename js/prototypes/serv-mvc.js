@@ -86,6 +86,7 @@ cloneObj(servModel.prototype, {
 		eemiter.prototype.init.call(this);
 		this.states = {};
 		this.views = [];
+		this.children = [];
 	},
 	state: function(name){
 		return this.states[name];
@@ -115,6 +116,12 @@ cloneObj(servModel.prototype, {
 	},
 	die: function(){
 		this.killViews();
+		for (var i = 0; i < this.children.length; i++) {
+			this.children[i].die();
+		};
+	},
+	addChild: function() {
+		this.children.push.apply(this.children, arguments);
 	},
 	getC: function(name){
 		var v = this.getView(name);
