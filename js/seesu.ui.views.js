@@ -78,8 +78,9 @@ createPrototype(mainLevelNavUI, new baseNavUI(), {
 });
 
 
-var mainLevelUI = function(mal){
-	this.setModel(mal);
+var mainLevelUI = function(m_l){
+	this.m_l = m_l;
+	this.setModel(m_l);
 	this.callParentMethod('init');
 };
 createPrototype(mainLevelUI, new servView(), {
@@ -101,6 +102,29 @@ createPrototype(mainLevelUI, new servView(), {
 				$(su.ui.els.slider).removeClass("show-start");
 			} else {
 				$(su.ui.els.slider).addClass("show-start");
+			}
+		},
+		'now-playing': function(text) {
+				
+				if (!this.now_playing_link && su.ui.nav){
+					this.now_playing_link = $('<a class="np"></a>').click(function(){
+						su.ui.views.show_now_playing(true);
+					}).appendTo(su.ui.nav.justhead);
+				}
+				if (this.now_playing_link){
+					this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));	
+				}	
+		},
+		playing: function(state) {
+			var s = su.ui.els.pllistlevel.add(this.now_playing_link);
+			if (state){
+				s.addClass('player-played');
+				su.ui.changeFavicon('playing')
+			} else {
+				s.each(function(i, el){
+					$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
+				});
+				su.ui.changeFavicon('usual');
 			}
 		}
 	}
@@ -147,6 +171,15 @@ createPrototype(mainLevel, new mapLevelModel(), {
 		nav: function() {
 			return new mainLevelNavUI(this);
 		}
+	},
+	nowPlaying: function(text) {
+		this.updateState('now-playing', text);
+	},
+	playing: function() {
+		this.updateState('playing', true);
+	},
+	notPlaying: function() {
+		this.updateState('playing', false);
 	},
 	short_title: 'Seesu',
 	getTitle: function() {

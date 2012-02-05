@@ -41,11 +41,11 @@ cloneObj(seesuPlayer.prototype, {
 		}
 	},
 	notPlaying: function(){
-
-		su.ui.mark_c_node_as();
+		su.main_level.notPlaying();
+		
 	},
 	playing: function(){
-		su.ui.mark_c_node_as('play')
+		su.main_level.playing();
 	},
 	changeAppMode: function(playing){
 		if (playing){
@@ -65,16 +65,7 @@ cloneObj(seesuPlayer.prototype, {
 		}
 	},
 	nowPlaying: function(mo){
-		if (!su.ui.now_playing.link || su.ui.now_playing.link[0].ownerDocument != su.ui.d){
-			if (su.ui.nav){
-				su.ui.now_playing.link = $('<a class="np"></a>').click(function(){
-					su.ui.views.show_now_playing(true);
-				}).appendTo(su.ui.nav.justhead);
-			}
-		}
-		if (su.ui.now_playing.link){
-			su.ui.now_playing.link.attr('title', (localize('now-playing','Now Playing') + ': ' + mo.artist + " - " + mo.track));	
-		}
+		su.main_level.nowPlaying(mo.getTitle());
 	}
 });
 

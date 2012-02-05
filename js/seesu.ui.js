@@ -376,11 +376,7 @@ window.seesu_ui = function(d, with_dom, cb){
 	this.popups_counter = 0;
 	this.buttons_li = {};
 	
-	this.now_playing ={
-		link: null,
-		nav: null
-	};
-	
+
 	
 	if (with_dom){
 		connect_dom_to_som(d, this, cb);
@@ -1157,32 +1153,7 @@ seesu_ui.prototype = {
 		} else{
 			changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
 		}
-	},300),
-	mark_c_node_as: function(marker){
-		var s = this.els.pllistlevel.add(su.ui.now_playing.link);
-		s.each(function(i, el){
-			$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
-		});
-		switch(marker) {
-		  case('play'):
-			s.addClass('player-played');
-			break;
-		  case('stop'):
-			s.addClass('player-stopped');
-			break;    
-		  case('pause'):
-			s.addClass('player-paused');
-			break;
-		  default:
-			//console.log('Do nothing');
-		}
-		if (marker == 'play'){
-			this.changeFavicon('playing')
-		} else {
-			this.changeFavicon('usual');
-		}
-  
-	}
+	},300)
 
 
 

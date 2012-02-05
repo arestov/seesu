@@ -107,6 +107,7 @@ window.seesu = window.su =  {
 			}
 		}
 	  },
+	  main_level: main_level,
 	  map: (new browseMap(main_level)).makeMainLevel(),
 	  ui: new seesu_ui(document),
 	  xhrs: {},

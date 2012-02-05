@@ -672,19 +672,14 @@ window.connect_dom_to_som = function(d, sui, callback){
 		};
 
 		/*
-
-
-				sui.views.setNav({
+		sui.views.setNav({
 			justhead: justhead,
 			daddy: justhead.children('.daddy'),
 			start: $('#start_search',d),
 			results: $('#search_result_nav',d),
 			playlist: $(sui.els.nav_playlist_page).parent(),
 			track: sui.els.nav_track_zoom.parent()
-		});
-
-		
-		sui.views.setNav();*/
+		});*/
 		justhead.children('.daddy').empty().removeClass('not-inited');
 		su.fire('dom', sui);
 
@@ -698,14 +693,13 @@ window.connect_dom_to_som = function(d, sui, callback){
 		sui.els.search_input.on('keyup change', input_change);
 	
 		var state_recovered;	
-		if (window.su && su.player && su.p.c_song){
+		if (window.su && su.p && su.p.c_song){
 			if (su.p.c_song && su.p.c_song.plst_titl){
 				su.ui.views.show_now_playing(true)
 				//sui.views.m.restoreFreezed();
 				//su.ui.views.show_track_page(su.p.c_song, true);
 				
-				//sui.mark_c_node_as(su.player.player_state);
-				//su.player.nowPlaying(su.p.c_song);
+
 				state_recovered = true;
 			}
 		}
