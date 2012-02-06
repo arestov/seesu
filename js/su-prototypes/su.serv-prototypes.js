@@ -29,7 +29,7 @@ createPrototype(suServView, new servView(), {
 			_this.die();
 		};
 		su.on('dom-die', onDOMDie);
-		this.onDie('die', function() {
+		this.onDie(function() {
 			su.off(onDOMDie);	
 		});
 	}
