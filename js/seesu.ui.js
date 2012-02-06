@@ -395,7 +395,32 @@ window.seesu_ui = function(d, with_dom, cb){
 
 	
 	if (with_dom){
-		connect_dom_to_som(d, this, cb);
+		var opts = connect_dom_to_som(d, this);
+
+		setTimeout(function() {
+			var state_recovered;
+			su.fire('dom', _this);
+
+			var state_recovered;	
+			if (window.su && su.p && su.p.c_song){
+				if (su.p.c_song && su.p.c_song.plst_titl){
+					su.ui.views.show_now_playing(true)
+					//sui.views.m.restoreFreezed();
+					//su.ui.views.show_track_page(su.p.c_song, true);
+					
+
+					state_recovered = true;
+				}
+			}
+			if (state_recovered){
+				opts.state_recovered = true;
+			}
+			if (cb){
+				cb(opts);
+			}
+			viewBlocks(_this, d);
+		}, 300);
+		
 	}
 };
 seesu_ui.prototype = {

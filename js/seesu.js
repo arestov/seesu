@@ -139,7 +139,11 @@ su.emitter.onRegistration('dom', function(cb) {
 
 
 
+var suBase = function() {
+	
+};
 
+//var 
 
 if (su._url.q){
 	su.start_query = su._url.q;

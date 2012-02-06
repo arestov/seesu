@@ -26,6 +26,7 @@
 	"js/network.lastfm.js", 
 	"js/lastfm.data.js",
 	"js/su-prototypes/su.serv-prototypes.js",
+	"js/seesu.star-page-blocks.js",
 	"js/seesu.ui.dom_ready.js", 
 	"js/seesu.ui.views.js", 
 	"js/seesu.ui.js", 
