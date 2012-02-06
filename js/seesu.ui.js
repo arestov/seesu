@@ -365,6 +365,33 @@ contextRow.prototype = {
 
 window.seesu_ui = function(d, with_dom, cb){
 	this.d = d;
+	var _this = this,
+		si;
+	if (with_dom && d.defaultView){
+		var die = function() {
+			if (!_this.dead){
+				clearInterval(si);
+				delete _this.d;
+				_this.dead = true;
+				console.log('DOM dead!');
+				su.removeDOM(d);
+			}
+			
+		};
+			//d.defaultView.onbeforeunload = die;
+			//d.defaultView.onuload = die;
+			//addEvent(, 'onbeforeunload', die);
+			//addEvent(d.defaultView, 'onuload', die);
+			si = setInterval(function() {
+				if (!d.defaultView){
+					die()
+				}
+			},1000);
+		
+	}
+
+
+
 	this.els = {};
 	if (!with_dom){
 		dstates.connect_ui(this);
@@ -395,18 +422,6 @@ seesu_ui.prototype = {
 			this.dead = true;
 		}
 		return !is_dead;
-	},
-	updateView: function(){
-		if (this.isAlive()){
-			var args = Array.prototype.slice.call(arguments),
-				method = args.shift();
-
-			if (this[method]){
-				this[method].apply(this, args);
-			}
-			
-		}
-		return this;
 	},
 	appendStyle: function(style_text){
 		var style_node = this.d.createElement('style');

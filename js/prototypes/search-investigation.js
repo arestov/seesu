@@ -6,6 +6,11 @@ var investigationUI = function(invstg){
 	this.createBase();
 
 	this.setStates(invstg.states);
+
+	su.on('dom-die', function() {
+		
+	});
+	
 };
 
 createPrototype(investigationUI, new servView(), {
@@ -138,7 +143,6 @@ investigation = function(init, searchf){
 				su.off('dom', onMapAssing);
 			});
 		});
-
 	
 };
 
