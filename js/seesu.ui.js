@@ -1,8 +1,10 @@
 var artCardUI = function(artcard) {
+	this.artcard = artcard;
+	
 	this.callParentMethod('init')
 	this.createBase();
 	this.setModel(artcard);
-	this.artcard = artcard;
+	
 };
 createPrototype(artCardUI, new suServView(), {
 	die: function() {
