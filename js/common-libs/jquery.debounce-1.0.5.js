@@ -23,15 +23,15 @@ $.extend({
 
 		return function() {
 
-			var args = arguments;
-            ctx = ctx || this;
+			var args = arguments,
+				_this = this;
 
-			invokeAsap && !timer && fn.apply(ctx, args);
+			invokeAsap && !timer && fn.apply(ctx || this, args);
 
 			clearTimeout(timer);
 
 			timer = setTimeout(function() {
-				!invokeAsap && fn.apply(ctx, args);
+				!invokeAsap && fn.apply(ctx || _this, args);
 				timer = null;
 			}, timeout);
 

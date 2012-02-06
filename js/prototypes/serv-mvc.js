@@ -182,7 +182,7 @@ cloneObj(servModel.prototype, {
 				if (value){
 					obj_to_change[name] = value;
 				} else {
-					delete obj_to_change[name];
+					obj_to_change[name] = false;
 				}
 				if (old_value != obj_to_change[name]){
 					if (method){

@@ -1,4 +1,4 @@
-window.connect_dom_to_som = function(d, sui, callback){
+window.connect_dom_to_som = function(d, sui, cb){
 	if (window.resizeWindow && d && d.defaultView && !d.defaultView.window_resized){
 		resizeWindow(d.defaultView);
 	}
@@ -211,8 +211,9 @@ window.connect_dom_to_som = function(d, sui, callback){
 		if (ext_search_query) {
 			sui.search(ext_search_query);
 		}
-
-		return {has_query: !!ext_search_query};
+		if (cb){
+			cb({has_query: !!ext_search_query})
+		}
 		//viewBlocks(sui, );
 		
 		
