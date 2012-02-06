@@ -219,15 +219,22 @@ var servView = function(){};
 cloneObj(servView.prototype, {
 	init: function(){
 		this.states = {};
+		this.die_subscribes = [];
 	},
 	state: function(name){
 		return this.states[name];
+	},
+	onDie: function(cb) {
+		this.die_subscribes.push(cb);	
 	},
 	die: function(){
 		this.dead = true;
 		if (this.c){
 			this.c.remove()
 		}
+		for (var i = 0; i < this.die_subscribes.length; i++) {
+			this.die_subscribes[i]();
+		};
 		return this;
 	},
 	setModel: function(mdl, puppet_model){
@@ -252,12 +259,15 @@ cloneObj(servView.prototype, {
 	wasAppended: function() {
 		return !!this.append_done;
 	},
-	appended: function(){
+	appended: function(parentView){
 		this.append_done = true;
+		if (parentView){
+			this.parentView = parentView;
+		}
 		if (this.appendChildren){
 			this.appendChildren();
 		}
-
+		
 		return this;
 	},
 	getC: function(){

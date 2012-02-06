@@ -1,7 +1,7 @@
 (function(){
 var counter = 0;
 baseSong = function(){};
-createPrototype(baseSong, new mapLevelModel(), {
+createPrototype(baseSong, new suMapModel(), {
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){

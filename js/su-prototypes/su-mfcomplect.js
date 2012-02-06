@@ -5,7 +5,7 @@ var mfComplectUI = function(mf) {
 	this.setModel(mf);
 	
 };
-createPrototype(mfComplectUI, new servView(), {
+createPrototype(mfComplectUI, new suServView(), {
 	createBase: function() {
 		this.c = $('<div class="moplas-list"></div>');
 
@@ -64,7 +64,7 @@ var mfCorUI = function(mf_cor) {
 	this.setModel(mf_cor);
 	
 };
-createPrototype(mfCorUI, new servView(), {
+createPrototype(mfCorUI, new suServView(), {
 	state_change: {
 		changed: function(val) {
 			this.appendChildren();

@@ -4,7 +4,7 @@ var artCardUI = function(artcard) {
 	this.setModel(artcard);
 	this.artcard = artcard;
 };
-createPrototype(artCardUI, new servView(), {
+createPrototype(artCardUI, new suServView(), {
 	die: function() {
 		this.blur();
 		this.callParentMethod('die');	
@@ -165,7 +165,7 @@ var artCard = function(artist) {
 
 	var _this = this;
 
-	var onMapAssing = function() {
+	this.regDOMDocChanges(function() {
 		if (su.ui.els.artcards){
 			var child_ui = _this.getFreeView();
 			if (child_ui){
@@ -180,24 +180,11 @@ var artCard = function(artist) {
 				child_ui.appended();
 			}
 		}
-	};
+	});
 
-
-	_this
-		.on('mpl-attach', function() {
-			suReady(function() {
-				su.on('dom', onMapAssing);
-			});
-			
-		})
-		.on('mpl-dettach', function() {
-			suReady(function() {
-				su.off('dom', onMapAssing);
-			});
-		});
 
 };
-createPrototype(artCard, new mapLevelModel(), {
+createPrototype(artCard, new suMapModel(), {
 	ui_constr: {
 		main: function(){
 			return new artCardUI(this)

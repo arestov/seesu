@@ -1,19 +1,17 @@
 
 
 var investigationUI = function(invstg){
-	this.callParentMethod('init')
 	this.invstg = invstg;
+	
+	this.callParentMethod('init')
+	
 	this.createBase();
 
 	this.setStates(invstg.states);
-
-	su.on('dom-die', function() {
-		
-	});
 	
 };
 
-createPrototype(investigationUI, new servView(), {
+createPrototype(investigationUI, new suServView(), {
 	appendChildren: function(){
 		for (var i = 0; i < this.invstg.sections.length; i++) {
 			var cur_ui = this.invstg.sections[i].getFreeView();
@@ -113,8 +111,7 @@ investigation = function(init, searchf){
 	this.setInactiveAll();
 
 	var _this = this;
-
-	var onMapAssing = function() {
+	this.regDOMDocChanges(function() {
 		if (su.ui.els.searchres){
 			var child_ui = _this.getFreeView();
 			if (child_ui){
@@ -129,25 +126,12 @@ investigation = function(init, searchf){
 				child_ui.appended();
 			}
 		}
-	};
-
-	_this
-		.on('mpl-attach', function() {
-			suReady(function() {
-				su.on('dom', onMapAssing);
-			});
-			
-		})
-		.on('mpl-dettach', function() {
-			suReady(function() {
-				su.off('dom', onMapAssing);
-			});
-		});
+	});
 	
 };
 
 
-createPrototype(investigation, new mapLevelModel(), {
+createPrototype(investigation, new suMapModel(), {
 	ui_constr: {
 		main: function(){
 			return new investigationUI(this);
@@ -383,7 +367,7 @@ var searchResults = function(query, prepared, valueOf){
 
 
 var baseSuggestUI = function(){};
-createPrototype(baseSuggestUI, new servView(), {
+createPrototype(baseSuggestUI, new suServView(), {
 	init: function(sugg){
 		this.callParentMethod('init');
 		if (sugg){

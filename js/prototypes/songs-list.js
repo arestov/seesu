@@ -1,12 +1,12 @@
 (function(){
 	songsListModel = function(){};
 	songsListModel.prototype = new Array();
-	cloneObj(songsListModel.prototype, mapLevelModel.prototype);
+	cloneObj(songsListModel.prototype, suMapModel.prototype);
 	cloneObj(songsListModel.prototype, {
 		oldpush: songsListModel.prototype.push,
 		constructor: songsListModel,
 		init: function(){
-			mapLevelModel.prototype.init.call(this)
+			suMapModel.prototype.init.call(this)
 		},
 		push: function(omo, view){
 			var mo = this.extendSong(omo, this.player, this.findMp3);
@@ -60,7 +60,7 @@
 		},
 		die: function(){
 			this.hide();
-			mapLevelModel.prototype.die.call(this);
+			suMapModel.prototype.die.call(this);
 			for (var i = this.length - 1; i >= 0; i--){
 				this[i].die();
 			};
@@ -157,7 +157,7 @@
 
 
 	songsListViewBase = function(){};
-	songsListViewBase.prototype = new servView(); 
+	songsListViewBase.prototype = new suServView(); 
 	cloneObj(songsListViewBase.prototype, {
 		constructor: songsListViewBase,
 		init: function(pl){

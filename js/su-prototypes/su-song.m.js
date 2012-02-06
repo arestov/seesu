@@ -38,8 +38,7 @@
 		});
 
 		var _this = this;
-
-		var onMapAssing = function() {
+		this.regDOMDocChanges(function() {
 			if (su.ui.nav.daddy){
 				var child_ui = _this.getFreeView('nav');
 				if (child_ui){
@@ -47,21 +46,7 @@
 					child_ui.appended();
 				}
 			}
-		};
-
-
-		_this
-			.on('mpl-attach', function() {
-				suReady(function() {
-					su.on('dom', onMapAssing);
-				});
-				
-			})
-			.on('mpl-dettach', function() {
-				suReady(function() {
-					su.off('dom', onMapAssing);
-				});
-			});
+		});
 	};
 	createPrototype(song, new baseSong(), {
 		ui_constr: {

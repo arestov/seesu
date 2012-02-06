@@ -10,7 +10,7 @@ show_track_page
 (function() {
 var baseNavUI = function() {};
 
-createPrototype(baseNavUI, new servView(), {
+createPrototype(baseNavUI, new suServView(), {
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
@@ -83,7 +83,7 @@ var mainLevelUI = function(m_l){
 	this.setModel(m_l);
 	this.callParentMethod('init');
 };
-createPrototype(mainLevelUI, new servView(), {
+createPrototype(mainLevelUI, new suServView(), {
 
 	state_change: {
 		'mp-show': function(opts) {
@@ -135,7 +135,8 @@ mainLevel = function() {
 	this.callParentMethod('init');
 	this.updateState('nav-title', 'Seesu start page');
 	var _this = this;
-	var onMapAssing = function() {
+
+	this.regDOMDocChanges(function() {
 		_this.getFreeView();
 		if (su.ui.nav.daddy){
 			var child_ui = _this.getFreeView('nav');
@@ -144,26 +145,12 @@ mainLevel = function() {
 				child_ui.appended();
 			}
 		}
-	};
-
-
-	_this
-		.on('mpl-attach', function() {
-			suReady(function() {
-				su.on('dom', onMapAssing);
-			});
-			
-		})
-		.on('mpl-dettach', function() {
-			suReady(function() {
-				su.off('dom', onMapAssing);
-			});
-		});
+	});
 
 };
 
 
-createPrototype(mainLevel, new mapLevelModel(), {
+createPrototype(mainLevel, new suMapModel(), {
 	ui_constr: {
 		main: function() {
 			return new mainLevelUI(this);

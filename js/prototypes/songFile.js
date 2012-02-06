@@ -7,7 +7,7 @@
 		this.createBase();
 		this.setModel(sf);
 	};
-	createPrototype(songFileModelUI, new servView(), {
+	createPrototype(songFileModelUI, new suServView(), {
 		state_change: {
 			'playing-progress': function(factor){
 				this.changeBar(this.cplayng, factor);

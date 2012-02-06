@@ -67,7 +67,7 @@
 		
 		var _this = this;
 
-		var onMapAssing = function() {
+		this.regDOMDocChanges(function() {
 			var child_ui;
 			if (su.ui && su.ui.els.artsTracks){
 
@@ -89,22 +89,8 @@
 					child_ui.appended();
 				}
 			}
-		};
+		});
 
-
-		
-		_this
-			.on('mpl-attach', function() {
-				suReady(function() {
-					su.on('dom', onMapAssing);
-				});
-				
-			})
-			.on('mpl-dettach', function() {
-				suReady(function() {
-					su.off('dom', onMapAssing);
-				});
-			});
 			
 	};
 	createPrototype(songsList, new songsListModel(), {

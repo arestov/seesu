@@ -3,7 +3,7 @@
 var searchSectionUI = function(seasc){};
 
 
-createPrototype(searchSectionUI, new servView(), {
+createPrototype(searchSectionUI, new suServView(), {
 	init: function(seasc){
 		this.callParentMethod('init');
 		this.seasc = seasc;
