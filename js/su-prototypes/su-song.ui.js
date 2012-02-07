@@ -133,13 +133,15 @@ cloneObj(songUI.prototype, {
 		}
 	},
 	deactivate: function(opts){
+		this.c.removeClass('viewing-song');
+		
 		this.hideYoutubeVideo();
 
 		for (var a in this.rowcs) {
 			this.rowcs[a].hide();
 		};
 		this.tidominator.removeClass('want-more-info');
-		this.c.removeClass('viewing-song');
+		
 		
 		su.ui.hidePopups();
 		this.mo.mf_cor.collapseExpanders();

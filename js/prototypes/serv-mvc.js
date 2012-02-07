@@ -216,25 +216,27 @@ cloneObj(servModel.prototype, {
 
 
 var servView = function(){};
+servView.prototype = new eemiter();
 cloneObj(servView.prototype, {
+	constructor: servView,
 	init: function(){
+		eemiter.prototype.init.call(this);
 		this.states = {};
-		this.die_subscribes = [];
+		this.states_watchers = {};
+		this.view_parts = {};
 	},
 	state: function(name){
 		return this.states[name];
 	},
 	onDie: function(cb) {
-		this.die_subscribes.push(cb);	
+		this.on('die', cb)
 	},
 	die: function(){
 		this.dead = true;
 		if (this.c){
 			this.c.remove()
 		}
-		for (var i = 0; i < this.die_subscribes.length; i++) {
-			this.die_subscribes[i]();
-		};
+		this.fire('die');
 		return this;
 	},
 	setModel: function(mdl, puppet_model){
@@ -286,24 +288,58 @@ cloneObj(servView.prototype, {
 		}
 		return this;
 	},
+	callStateWatchers: function(state_name, nv, ov) {
+		if (this.states_watchers[state_name]){
+			for (var i = 0; i < this.states_watchers[state_name].length; i++) {
+				this.states_watchers[state_name][i].call(this, nv, ov);
+			}
+		}
+		return this;
+	},
+	watchState: function(state_name, cb) {
+		(this.states_watchers[state_name] = this.states_watchers[state_name] || [])  .push(cb);
+		if (this.states[state_name]){
+			cb.call(this, this.states[state_name]);
+		}
+		return this;
+	},
+	requireAllParts: function() {
+		for (var a in parts_builder){
+			this.requirePart(parts_builder[a]);
+		}
+		return this;
+	},
+	requirePart: function(name) {
+		if (this.view_parts[name]){
+			return this.view_parts[name];
+		} else {
+			return this.parts_builder[name]();
+		}
+	},
 	change: function(is_prop, name, value){
 		if (name){
 			var obj_to_change = !is_prop ? this.states : this.puppet_model,
-				method = is_prop ? this.prop_change[name] : this.state_change[name];
+				method = is_prop ? this.prop_change[name] : this.state_change[name],
+				old_value = obj_to_change && obj_to_change[name];
 			
 			if (method){
-				method.call(this, value, obj_to_change && obj_to_change[name]);
+				method.call(this, value, old_value);
 			}
-
+			if (!is_prop){
+				this.callStateWatchers(name, value, old_value)
+			}
 			if (obj_to_change){
 				if (value){
 					obj_to_change[name] = value;
 				} else {
-					delete obj_to_change[name];
+					obj_to_change[name] = false;
 				}
 			};
 		}
 		return this;
+	},
+	parts_builder: {
+		
 	},
 	prop_change: {
 		
