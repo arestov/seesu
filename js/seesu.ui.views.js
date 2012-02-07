@@ -80,8 +80,9 @@ createPrototype(mainLevelNavUI, new baseNavUI(), {
 
 var mainLevelUI = function(m_l){
 	this.m_l = m_l;
-	this.setModel(m_l);
+	
 	this.callParentMethod('init');
+	this.setModel(m_l);
 };
 createPrototype(mainLevelUI, new suServView(), {
 

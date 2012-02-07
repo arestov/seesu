@@ -313,7 +313,7 @@ cloneObj(servView.prototype, {
 		if (this.view_parts[name]){
 			return this.view_parts[name];
 		} else {
-			return this.parts_builder[name]();
+			return (this.view_parts[name] = this.parts_builder[name]());
 		}
 	},
 	change: function(is_prop, name, value){

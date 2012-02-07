@@ -227,6 +227,7 @@ cloneObj(songUI.prototype, {
 			}
 		});
 
+		//this.requirePart('tidominator');
 		this.tidominator = this.context.children('.track-info-dominator');
 		var dominator_head = this.tidominator.children('.dominator-head');
 		this.a_info = this.tidominator.children('.artist-info');
