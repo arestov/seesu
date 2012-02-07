@@ -6,11 +6,12 @@ var songUI = function(mo, complex){
 	this.init();
 	this.mo = mo;
 	this.c = $('<li></li>').data('mo', mo);
+	this.rowcs = {};
 	this.createBase();
 	if (complex){
 		this.expand();
 	}
-
+	
 	this.setModel(mo);
 };
 songUI.prototype = new suServView();
@@ -79,15 +80,12 @@ cloneObj(songUI.prototype, {
 		playable: function(new_state, old_state){
 			if (new_state && !!new_state != !!old_state){
 				var _this = this;
-
-				if (this.node){
-					var down = this.node.siblings('a.download-mp3').remove();
-					this.node
-						.addClass('song')
-						.removeClass('search-mp3-failed')
-						.removeClass('waiting-full-render')
-						.removeClass('mp3-download-is-not-allowed')
-				}
+				this.node
+					.addClass('song')
+					.removeClass('search-mp3-failed')
+					.removeClass('waiting-full-render')
+					.removeClass('mp3-download-is-not-allowed')
+			
 			}
 		},
 		marked_as: function(state, oldstate){
@@ -99,18 +97,16 @@ cloneObj(songUI.prototype, {
 			} else {
 				this.unmark();
 			}
-		}
-	},
-	prop_change: {
-		track: function(title){
-			this.titlec.text(this.mo.getFullName());
+		},
+		'song-title': function(title) {
+			this.titlec.text(title);
 		}
 	},
 	markAsPlaying: function(){
-		this.node.parent().addClass('playing-song');
+		this.c.addClass('playing-song');
 	},
 	unmarkAsPlaying: function(){
-		this.node.parent().removeClass('playing-song');
+		this.c.removeClass('playing-song');
 	},
 	unmark: function(){
 		var target_node = this.node && this.node.parent();
@@ -165,6 +161,55 @@ cloneObj(songUI.prototype, {
 				}
 			});
 			return tidominator;
+		},
+		tp: function() {
+			var context = this.requirePart('context');
+			var tp = context.children('.track-panel');
+
+			tp.find('.pc').data('mo', this.mo);
+			if (lfm.scrobbling) {
+				su.ui.lfm_change_scrobbling(true, tp.find('.track-buttons'));
+			}
+			return tp;
+		},
+		song_row_context: function() {
+			var tp = this.requirePart('tp');
+
+			var context = this.requirePart('context');
+				
+			var song_row_context = context.children('.row-song-context');
+			var song_context  = new contextRow(song_row_context);
+			
+			this.files = song_row_context.children('.track-files');
+			
+			song_context.addPart(this.files, 'files');
+			
+			song_context.addPart(song_row_context.children('.last-fm-scrobbling'), 'lastfm');
+			
+			
+			tp.find('.lfm-scrobbling-button').click(function(){
+				if (!song_context.isActive('lastfm')){
+					var p = su.ui.getRtPP(this);
+					song_context.show('lastfm', p.left + $(this).outerWidth()/2);
+				} else{
+					song_context.hide();
+				}
+			});
+			
+			song_context.addPart(song_row_context.children('.flash-error'), 'flash-error');
+			
+			
+			tp.find('.flash-secur-button').click(function(){
+				if (!song_context.isActive('flash-error')){
+					var p = su.ui.getRtPP(this);
+					song_context.show('flash-error', p.left + $(this).outerWidth()/2);
+				} else{
+					song_context.hide();
+				}
+			});
+			
+			this.rowcs.song_context = song_context;
+			return song_row_context;
 		}
 	},
 	createBase: function(){
@@ -184,7 +229,7 @@ cloneObj(songUI.prototype, {
 				mo.view();
 				return false;
 			});
-		this.titlec = $("<span></span>").text(this.mo.getFullName()).appendTo(this.node);
+		this.titlec = $("<span></span>").appendTo(this.node);
 		this.durationc = $('<a class="song-duration"></a>').prependTo(this.node);
 		this.c.append(this.node);
 	},
@@ -199,55 +244,22 @@ cloneObj(songUI.prototype, {
 
 		var context = this.requirePart('context');
 
-		var tp = context.children('.track-panel');
+		this.requirePart('song_row_context');
 		
-		if (lfm.scrobbling) {
-			su.ui.lfm_change_scrobbling(true, tp.find('.track-buttons'));
-		}
-
-
+		var tp = this.requirePart('tp');
 
 		this.appendModelTo(this.mo.mf_cor, function(ui_c){
 			context.prepend(ui_c);
 		});
 
-		
+		this.requirePart('song_row_context');
 		
 		
 		var buttmen = su.ui.els.play_controls.node.clone(true).data('mo', this.mo);
-		tp.add(buttmen).find('.pc').data('mo', this.mo);
+		buttmen.find('.pc').data('mo', this.mo);
 		
-		
-		var song_row_context = context.children('.row-song-context');
-		var song_context  = new contextRow(song_row_context);
-		
-		this.files = song_row_context.children('.track-files');
-		
-		song_context.addPart(this.files, 'files');
-		
-		song_context.addPart(song_row_context.children('.last-fm-scrobbling'), 'lastfm');
-		
-		
-		tp.find('.lfm-scrobbling-button').click(function(){
-			if (!song_context.isActive('lastfm')){
-				var p = su.ui.getRtPP(this);
-				song_context.show('lastfm', p.left + $(this).outerWidth()/2);
-			} else{
-				song_context.hide();
-			}
-		});
-		
-		song_context.addPart(song_row_context.children('.flash-error'), 'flash-error');
-		
-		
-		tp.find('.flash-secur-button').click(function(){
-			if (!song_context.isActive('flash-error')){
-				var p = su.ui.getRtPP(this);
-				song_context.show('flash-error', p.left + $(this).outerWidth()/2);
-			} else{
-				song_context.hide();
-			}
-		});
+
+
 
 		//
 		var tidominator = this.requirePart('tidominator');
@@ -309,10 +321,9 @@ cloneObj(songUI.prototype, {
 	
 			}
 		};
-		this.rowcs={
-			song_context: song_context,
-			users_context: users_context
-		};
+		
+		this.rowcs.users_context = users_context;
+
 		this.files_time_stamp = 0;
 
 

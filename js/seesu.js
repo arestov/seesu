@@ -231,23 +231,7 @@ var random_track_plable = function(track_list){
 	return track_list[random_track_num];
 	
 };
-var start_random_nice_track_search = function(mo, not_search_mp3, from_collection, last_in_collection){
-	mo.updateState('loading', true, 'loadingChanged');
-	getTopTracks(mo.artist, function(track_list){
-		mo.updateState('loading', false, 'loadingChanged');
-		var some_track = random_track_plable(track_list);
-		mo.updateProp('track', some_track.track);
-		mo.findFiles({
-			only_cache: not_search_mp3,
-			collect_for: from_collection,
-			last_in_collection: last_in_collection
-		});
-	}, function(){
-		mo.updateState('loading', false, 'loadingChanged');
 
-		
-	});
-};
 
 var make_tracklist_playable = function(pl, full_allowing){
 	if (full_allowing){

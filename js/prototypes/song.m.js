@@ -15,10 +15,11 @@ createPrototype(baseSong, new suMapModel(), {
 		this.callParentMethod('init');
 		this.mp3_search = mp3_search;
 		this.player = player;
-		this.states = {};
+		
 		this.uid = ++counter;
 		cloneObj(this, omo, false, ['artist', 'track']);
 		this.omo = omo;
+		this.updateState('song-title', this.getFullName());
 	},
 	mlmDie: function() {
 		
@@ -178,7 +179,9 @@ createPrototype(baseSong, new suMapModel(), {
 				tracks = $filter(tracks, 'name');
 				var some_track = tracks[Math.floor(Math.random()*tracks.length)];
 				if (some_track){
-					_this.updateProp('track', some_track);
+					_this.track = some_track;
+					_this.updateState('song-title', _this.getFullName());
+					//_this.updateProp('track', some_track);
 					_this.updateNavTexts();
 					_this.findFiles({
 						only_cache: !full_allowing,

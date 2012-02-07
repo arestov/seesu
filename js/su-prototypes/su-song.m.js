@@ -34,7 +34,7 @@
 		this.mf_cor.on('before-mf-play', function(mopla) {
 			_this.player.changeNowPlaying(_this);
 			_this.findNeighbours();
-			_this.updateProp('mopla', mopla);
+			_this.mopla = mopla;
 		});
 
 		var _this = this;
