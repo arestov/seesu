@@ -158,7 +158,7 @@ cloneObj(songUI.prototype, {
 			return su.ui.samples.track_c.clone(true);
 		},
 		tidominator: function() {
-			var  tidominator = this.requirePart('context').children('.track-info-dominator');
+			var tidominator = this.requirePart('context').children('.track-info-dominator');
 			this.watchState('mp-show', function(nv, ov) {
 				if (!nv){
 					this.getPart('tidominator').removeClass('want-more-info');
