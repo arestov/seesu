@@ -223,6 +223,8 @@ cloneObj(servView.prototype, {
 		eemiter.prototype.init.call(this);
 		this.states = {};
 		this.states_watchers = {};
+		this.complex_states = {};
+		this.complex_states_watchers = [];
 		this.view_parts = {};
 	},
 	state: function(name){
@@ -284,8 +286,18 @@ cloneObj(servView.prototype, {
 		}
 		this.states = {};
 		for (var name in states){
-			this.change(false, name, states[name]);
+			this.changeState(false, name, states[name]);
 		}
+
+		for (var i = 0; i < this.complex_states_watchers.length; i++) {
+			var watcher = this.complex_states_watchers[i];
+			if (this.checkComplexWatcher(watcher)){
+				this.callComplexWatcher(watcher);
+			}
+			
+		};
+		
+
 		return this;
 	},
 	callStateWatchers: function(state_name, nv, ov) {
@@ -295,6 +307,60 @@ cloneObj(servView.prototype, {
 			}
 		}
 		return this;
+	},
+	callComplexStateWatchers: function(state_name) {
+		if (this.complex_states[state_name]){
+			for (var i = 0; i < this.complex_states[state_name].length; i++) {
+				this.callComplexWatcher(this.complex_states[state_name][i]);
+			}
+		}
+		return this;
+	},
+	checkComplexWatcher: function(watcher) {
+		var match;
+		for (var a in this.states) {
+			if (watcher.states_list.indexOf(a)){
+				match = true;
+				break
+			}
+		};
+		return match;
+	},
+	callComplexWatcher: function(watcher) {
+		var args = [];
+		for (var i = 0; i < watcher.states_list.length; i++) {
+			args.push(this.states[watcher.states_list[i]]);
+		};
+		watcher.func.apply(this, args);
+	},
+	watchStates: function(states_list, cb) {
+
+		var watcher = {
+			states_list: states_list,
+			func: cb
+		};
+
+		for (var i = 0; i < states_list.length; i++) {
+			var cur = states_list[i];
+			if (!this.complex_states[cur]){
+				this.complex_states[cur] = [];
+			}
+			this.complex_states[cur].push(watcher);
+			
+		};
+		this.complex_states_watchers.push(watcher);
+		if (this.checkComplexWatcher(watcher)){
+			this.callComplexWatcher(watcher);
+		}
+		
+
+		//for
+
+		//var args = Array.prototype.slice.call(arguments);
+
+
+
+		//complex_states_watchers
 	},
 	watchState: function(state_name, cb) {
 		(this.states_watchers[state_name] = this.states_watchers[state_name] || [])  .push(cb);
@@ -309,25 +375,22 @@ cloneObj(servView.prototype, {
 		}
 		return this;
 	},
+	getPart: function(name) {
+		return this.view_parts[name];
+	},
 	requirePart: function(name) {
 		if (this.view_parts[name]){
 			return this.view_parts[name];
 		} else {
-			return (this.view_parts[name] = this.parts_builder[name]());
+			return (this.view_parts[name] = this.parts_builder[name].call(this));
 		}
 	},
-	change: function(is_prop, name, value){
+	changeState: function(is_prop, name, value, allow_complex_watchers) {
 		if (name){
 			var obj_to_change = !is_prop ? this.states : this.puppet_model,
 				method = is_prop ? this.prop_change[name] : this.state_change[name],
 				old_value = obj_to_change && obj_to_change[name];
-			
-			if (method){
-				method.call(this, value, old_value);
-			}
-			if (!is_prop){
-				this.callStateWatchers(name, value, old_value)
-			}
+				
 			if (obj_to_change){
 				if (value){
 					obj_to_change[name] = value;
@@ -335,8 +398,24 @@ cloneObj(servView.prototype, {
 					obj_to_change[name] = false;
 				}
 			};
+
+
+			if (method){
+				method.call(this, value, old_value);
+			}
+			
+			if (!is_prop){
+				this.callStateWatchers(name, value, old_value);
+				if (allow_complex_watchers){
+					this.callComplexStateWatchers(name);
+				}
+			}
+			
 		}
 		return this;
+	},
+	change: function(is_prop, name, value){
+		this.changeState(is_prop, name, value, true);
 	},
 	parts_builder: {
 		

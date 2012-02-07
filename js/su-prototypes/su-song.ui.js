@@ -10,6 +10,7 @@ var songUI = function(mo, complex){
 	if (complex){
 		this.expand();
 	}
+
 	this.setModel(mo);
 };
 songUI.prototype = new suServView();
@@ -140,7 +141,7 @@ cloneObj(songUI.prototype, {
 		for (var a in this.rowcs) {
 			this.rowcs[a].hide();
 		};
-		this.tidominator.removeClass('want-more-info');
+		//this.tidominator.removeClass('want-more-info');
 		
 		
 		su.ui.hidePopups();
@@ -149,7 +150,22 @@ cloneObj(songUI.prototype, {
 	activate: function(opts){
 		this.expand();
 		this.updateSongContext(true);
+		this.updateSongListeners();
 		this.c.addClass('viewing-song');
+	},
+	parts_builder: {
+		context: function() {
+			return su.ui.samples.track_c.clone(true);
+		},
+		tidominator: function() {
+			var  tidominator = this.requirePart('context').children('.track-info-dominator');
+			this.watchState('mp-show', function(nv, ov) {
+				if (!nv){
+					this.getPart('tidominator').removeClass('want-more-info');
+				}
+			});
+			return tidominator;
+		}
 	},
 	createBase: function(){
 		var _this = this;
@@ -178,15 +194,21 @@ cloneObj(songUI.prototype, {
 		} else{
 			this.expanded = true;
 		}
+
 		var _this = this;
-	
-	
-		this.context = su.ui.samples.track_c.clone(true);
-		var tp = this.context.children('.track-panel');
+
+		var context = this.requirePart('context');
+
+		var tp = context.children('.track-panel');
 		
-		
+		if (lfm.scrobbling) {
+			su.ui.lfm_change_scrobbling(true, tp.find('.track-buttons'));
+		}
+
+
+
 		this.appendModelTo(this.mo.mf_cor, function(ui_c){
-			_this.context.prepend(ui_c);
+			context.prepend(ui_c);
 		});
 
 		
@@ -196,7 +218,7 @@ cloneObj(songUI.prototype, {
 		tp.add(buttmen).find('.pc').data('mo', this.mo);
 		
 		
-		var song_row_context = this.context.children('.row-song-context');
+		var song_row_context = context.children('.row-song-context');
 		var song_context  = new contextRow(song_row_context);
 		
 		this.files = song_row_context.children('.track-files');
@@ -227,11 +249,12 @@ cloneObj(songUI.prototype, {
 			}
 		});
 
-		//this.requirePart('tidominator');
-		this.tidominator = this.context.children('.track-info-dominator');
-		var dominator_head = this.tidominator.children('.dominator-head');
-		this.a_info = this.tidominator.children('.artist-info');
-		this.t_info = this.tidominator.children('.track-info');
+		//
+		var tidominator = this.requirePart('tidominator');
+		//this.tidominator = this.context.children('.track-info-dominator');
+		var dominator_head = tidominator.children('.dominator-head');
+		this.a_info = tidominator.children('.artist-info');
+		this.t_info = tidominator.children('.track-info');
 		this.tv		= this.t_info.children('.track-video')
 
 		var pl = this.mo.plst_titl,
@@ -247,18 +270,18 @@ cloneObj(songUI.prototype, {
 				});
 		}
 		
-		var users = this.context.children('.track-listeners');
+		var users = context.children('.track-listeners');
 		var users_list = users.children('.song-listeners-list');
 		
 		
-		var users_row_context =  this.context.children('.row-listeners-context');
+		var users_row_context =  context.children('.row-listeners-context');
 		var users_context = new contextRow(users_row_context);
 		var uinfo_part = users_row_context.children('.big-listener-info');
 		users_context.addPart(uinfo_part, 'user-info');
 		
 		
 		var extend_switcher = dominator_head.children('.extend-switcher').click(function(e){
-			_this.tidominator.toggleClass('want-more-info');
+			tidominator.toggleClass('want-more-info');
 			e.preventDefault();
 		});
 		
@@ -316,7 +339,7 @@ cloneObj(songUI.prototype, {
 
 		this.c
 			.prepend(buttmen)
-			.append(this.context);
+			.append(context);
 			
 	
 		var pi = this.mo.playable_info || {}; 
@@ -337,27 +360,13 @@ cloneObj(songUI.prototype, {
 	remove: function(){
 		this.c.remove();
 	},
-	updateSongContext: function(real_need){
+	updateSongContext: function(){
 		var artist = this.mo.artist;
-		
-
-
 		var a_info = this && this.a_info;
 		if (a_info){
 			if (artist) {this.update_artist_info(artist, a_info, this.mo.plst_titl.playlist_type != 'artist');}
 			this.show_video_info(this.tv, artist + " - " + this.mo.track);
-			
-			if (real_need){
-				this.updateSongListeners();
-			}
-			
-			if (lfm.scrobbling) {
-				su.ui.lfm_change_scrobbling(true, this.context.children('.track-panel').find('.track-buttons'));
-			}
-		} else{
-			console.log('no context for:')
-			console.log(this.mo)
-		}
+		} 
 	},
 	createListenersHeader: function(){
 		if (this && this.t_users){
