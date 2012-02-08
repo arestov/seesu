@@ -224,6 +224,11 @@ cloneObj(songUI.prototype, {
 				mo.view();
 				return false;
 			});
+		
+		var buttmen = su.ui.els.play_controls.node.clone(true).data('mo', this.md);
+			buttmen.find('.pc').data('mo', this.md);
+		this.c.prepend(buttmen);
+
 		this.titlec = $("<span></span>").appendTo(this.node);
 		this.durationc = $('<a class="song-duration"></a>').prependTo(this.node);
 		this.c.append(this.node);
@@ -250,10 +255,7 @@ cloneObj(songUI.prototype, {
 		this.requirePart('song_row_context');
 		
 		
-		var buttmen = su.ui.els.play_controls.node.clone(true).data('mo', this.md);
-		buttmen.find('.pc').data('mo', this.md);
 		
-
 
 
 		//
@@ -343,9 +345,7 @@ cloneObj(songUI.prototype, {
 
 		tbus.before(volume_state)
 
-		this.c
-			.prepend(buttmen)
-			.append(context);
+		this.c.append(context);
 			
 	
 
