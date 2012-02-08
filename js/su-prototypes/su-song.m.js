@@ -6,6 +6,7 @@
 		this.updateNavTexts();
 
 		
+
 		this.on('view', function(){
 			if (_this.state('playable')){
 				var zoomed = !!su.ui.els.slider.className.match(/show-zoom-to-track/);
@@ -45,6 +46,11 @@
 					su.ui.nav.daddy.append(child_ui.getC());
 					child_ui.appended();
 				}
+			}
+		});
+		this.watchStates(['files_search', 'marked_as'], function(files_search, marked_as) {
+			if (marked_as && files_search && files_search.complete){
+				this.updateState('can-expand', true);
 			}
 		});
 	};

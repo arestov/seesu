@@ -90,6 +90,9 @@ cloneObj(statesEmmiter.prototype, {
 		this.complex_states = {};
 		this.complex_states_watchers = [];
 	},
+	state: function(name){
+		return this.states[name];
+	},
 	replaceState: function(is_prop, name, value) {
 		if (name){
 			var obj_to_change	= is_prop ? this : this.states,
@@ -180,9 +183,6 @@ cloneObj(servModel.prototype, {
 		this.views = [];
 		this.children = [];
 		return this;
-	},
-	state: function(name){
-		return this.states[name];
 	},
 	removeView: function(view){
 		var views = [];
@@ -299,9 +299,6 @@ cloneObj(servView.prototype, {
 	init: function(){
 		statesEmmiter.prototype.init.call(this);
 		this.view_parts = {};
-	},
-	state: function(name){
-		return this.states[name];
 	},
 	onDie: function(cb) {
 		this.on('die', cb);

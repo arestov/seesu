@@ -195,14 +195,17 @@ createPrototype(baseSong, new suMapModel(), {
 				_this.updateState('loading', false);
 			})
 	},
+	setPrio: function(value) {
+		var _din = this.delayed_in;
+		for (var i=0; i < _din.length; i++) {
+			_din[i].setPrio(value);
+		}
+	},
 	prefindFiles: function(){
 		this.findFiles({
 			get_next: true
 		});
-		var _din = this.delayed_in;
-		for (var i=0; i < _din.length; i++) {
-			_din[i].setPrio('highest');
-		}
+		this.setPrio('highest');
 	},
 	findFiles: function(opts){
 		if (this.mp3_search){

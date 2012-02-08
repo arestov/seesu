@@ -133,12 +133,25 @@
 			this.updateState('error', error);
 			this.updateState('loading', false);
 			this.markTracksForFilesPrefinding();
+
+			var _this = this;
+			setTimeout(function() {
+				_this.makePlayable();
+			},300);
 			if (!error){
 				this.changed();
 			}
 			
 			return this;
 
+		},
+		makePlayable: function(full_allowing) {
+			for (var i = 0; i < this.length; i++) {
+				var mo = this[i];
+				var pi = mo.playable_info || {};
+				mo.makeSongPlayalbe(pi.full_allowing || full_allowing, pi.packsearch, pi.last_in_collection);
+				mo.setPrio('as-top');
+			};
 		},
 		markTracksForFilesPrefinding: function(){
 			var from_collection = +new Date;
@@ -147,7 +160,8 @@
 					.setPlayableInfo({
 						packsearch: from_collection,
 						last_in_collection: i == this.length-1
-					})
+					});
+				
 			};
 			return this;
 		}

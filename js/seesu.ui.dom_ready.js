@@ -64,7 +64,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 				
 				var pl = su.player && su.p.c_song && su.p.c_song.plst_titl;
 				if (pl){
-					make_tracklist_playable(pl, true);
+					pl.makePlayable(true);
 					seesu.track_event('Controls', 'make playable all tracks in playlist'); 
 				}
 				

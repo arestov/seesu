@@ -4,14 +4,11 @@
 
 var songUI = function(mo, complex){
 	this.init();
-	this.mo = mo;
+	this.md = mo;
 	this.c = $('<li></li>').data('mo', mo);
 	this.rowcs = {};
 	this.createBase();
-	if (complex){
-		this.expand();
-	}
-	
+
 	this.setModel(mo);
 };
 songUI.prototype = new suServView();
@@ -41,12 +38,11 @@ cloneObj(songUI.prototype, {
 				this.node.removeClass('marked-for-play');
 			}
 		},
+		"can-expand": function() {
+			this.expand();
+		},
 		files_search: function(opts){
 			if (opts.complete){
-				if (this.states.marked_as){
-					this.updateSongContext(true);
-				}
-				
 				if (!opts.have_tracks){
 					this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
 				}
@@ -141,11 +137,10 @@ cloneObj(songUI.prototype, {
 		
 		
 		su.ui.hidePopups();
-		this.mo.mf_cor.collapseExpanders();
+		this.md.mf_cor.collapseExpanders();
 	},
 	activate: function(opts){
 		this.expand();
-		this.updateSongContext(true);
 		this.updateSongListeners();
 		this.c.addClass('viewing-song');
 	},
@@ -166,7 +161,7 @@ cloneObj(songUI.prototype, {
 			var context = this.requirePart('context');
 			var tp = context.children('.track-panel');
 
-			tp.find('.pc').data('mo', this.mo);
+			tp.find('.pc').data('mo', this.md);
 			if (lfm.scrobbling) {
 				su.ui.lfm_change_scrobbling(true, tp.find('.track-buttons'));
 			}
@@ -216,9 +211,9 @@ cloneObj(songUI.prototype, {
 		var _this = this;
 		this.node = $("<a></a>")
 			.addClass('track-node waiting-full-render')
-			.data('mo', this.mo)
+			.data('mo', this.md)
 			.click(function(){
-				var mo = _this.mo;
+				var mo = _this.md;
 				if (mo.player){
 					mo.player.wantSong(mo);
 				}
@@ -248,15 +243,15 @@ cloneObj(songUI.prototype, {
 		
 		var tp = this.requirePart('tp');
 
-		this.appendModelTo(this.mo.mf_cor, function(ui_c){
+		this.appendModelTo(this.md.mf_cor, function(ui_c){
 			context.prepend(ui_c);
 		});
 
 		this.requirePart('song_row_context');
 		
 		
-		var buttmen = su.ui.els.play_controls.node.clone(true).data('mo', this.mo);
-		buttmen.find('.pc').data('mo', this.mo);
+		var buttmen = su.ui.els.play_controls.node.clone(true).data('mo', this.md);
+		buttmen.find('.pc').data('mo', this.md);
 		
 
 
@@ -269,16 +264,16 @@ cloneObj(songUI.prototype, {
 		this.t_info = tidominator.children('.track-info');
 		this.tv		= this.t_info.children('.track-video')
 
-		var pl = this.mo.plst_titl,
+		var pl = this.md.plst_titl,
 			pl_type = pl.playlist_type;
 			
 		if (pl_type != 'artist'){
 			$('<a class="js-serv">' + localize('artcard') + '</a>')
-				.data('artist', this.mo.artist)
+				.data('artist', this.md.artist)
 				.appendTo(dominator_head.children('.closer-to-track'))
 				.click(function(){
-					su.ui.views.showArtcardPage(_this.mo.artist);
-					su.track_event('Artist navigation', 'art card', _this.mo.artist);
+					su.ui.views.showArtcardPage(_this.md.artist);
+					su.track_event('Artist navigation', 'art card', _this.md.artist);
 				});
 		}
 		
@@ -338,7 +333,7 @@ cloneObj(songUI.prototype, {
 
 		var volume_state = $('<div class="volume-state"></div>').click(function(e){
 			var pos = getClickPosition(e, this);
-			_this.mo.setVolume((pos/50) * 100);
+			_this.md.setVolume((pos/50) * 100);
 			var volumeSheet = su.ui.els.volume_s && su.ui.els.volume_s.sheet;
 			(volumeSheet.cssRules || volumeSheet.sheet.rules)[0].style.width = pos + 'px';
 			
@@ -353,14 +348,8 @@ cloneObj(songUI.prototype, {
 			.append(context);
 			
 	
-		var pi = this.mo.playable_info || {}; 
-		//fixme for userplaylists
-		setTimeout(function(){
-			_this.mo.makeSongPlayalbe(pi.full_allowing, pi.packsearch, pi.last_in_collection);	
-		},100);
 
-
-
+		this.updateSongContext(true);
 
 		
 	},
@@ -372,11 +361,11 @@ cloneObj(songUI.prototype, {
 		this.c.remove();
 	},
 	updateSongContext: function(){
-		var artist = this.mo.artist;
+		var artist = this.md.artist;
 		var a_info = this && this.a_info;
 		if (a_info){
-			if (artist) {this.update_artist_info(artist, a_info, this.mo.plst_titl.playlist_type != 'artist');}
-			this.show_video_info(this.tv, artist + " - " + this.mo.track);
+			if (artist) {this.update_artist_info(artist, a_info, this.md.plst_titl.playlist_type != 'artist');}
+			this.show_video_info(this.tv, artist + " - " + this.md.track);
 		} 
 	},
 	createListenersHeader: function(){
@@ -400,17 +389,17 @@ cloneObj(songUI.prototype, {
 		var current_user = su.s.getId();
 		
 		
-		if (this.mo.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 1)){
-			var d = {artist: this.mo.artist};
-			if (this.mo.track){
-				d.title = this.mo.track;
+		if (this.md.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 1)){
+			var d = {artist: this.md.artist};
+			if (this.md.track){
+				d.title = this.md.track;
 			}
 			var current_user = su.s.getId('vk');
 			var user_info;
 			if (current_user){
 				user_info = su.s.getInfo('vk');
 				if (user_info){
-					_this.createCurrentUserUI(this.mo, user_info);
+					_this.createCurrentUserUI(this.md, user_info);
 				}
 				_this.createListenersHeader();
 				
@@ -644,11 +633,11 @@ cloneObj(songUI.prototype, {
 						
 						if (!showed){
 							_this.showYoutubeVideo(vid, vi_c, $(this));
-							_this.mo.pause();
+							_this.md.pause();
 							this.showed = true;
 						} else{
 							_this.hideYoutubeVideo();
-							_this.mo.play();
+							_this.md.play();
 							this.showed = false;
 						}
 						e.preventDefault();

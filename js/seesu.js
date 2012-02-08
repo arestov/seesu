@@ -7,7 +7,7 @@ $.ajaxSetup({
   }
 });
 $.support.cors = true;
-
+//su.mp3_search.abortAllSearches(); fixme
 
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 
@@ -232,16 +232,6 @@ var random_track_plable = function(track_list){
 	
 };
 
-
-var make_tracklist_playable = function(pl, full_allowing){
-	if (full_allowing){
-		su.mp3_search.abortAllSearches();
-		//mp3_prov_queue = reset_q();
-	}
-	for (var i=0, l =  pl.length; i < l; i++) {
-		pl[i].makeSongPlayalbe(full_allowing);
-	}
-};
 
 su.mp3_search = new mp3Search(function(){
 	var player = su.p;
