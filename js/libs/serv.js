@@ -25,6 +25,9 @@ function(elem, evType, fn){
 function(elem, evType, fn){
 	elem.detachEvent('on' + evType, fn);
 };
+var getDefaultView = function(d) {
+	return d.defaultView || d.parentWindow
+};
 var domReady = function(d, callback){
 	if (d.readyState == 'complete' || d.readyState == 'loaded'){
 		setTimeout(callback, 30);
@@ -37,7 +40,7 @@ var domReady = function(d, callback){
 				
 			}
 		};
-		addEvent(d.defaultView, 'load', f);
+		addEvent(getDefaultView(d), 'load', f);
 		addEvent(d, 'DOMContentLoaded', f);
 	}
 };

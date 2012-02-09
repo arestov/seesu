@@ -358,7 +358,7 @@ window.seesu_ui = function(d, with_dom, cb){
 	this.d = d;
 	var _this = this,
 		si;
-	if (with_dom && d.defaultView){
+	if (with_dom && getDefaultView(d)){
 		var die = function() {
 			if (!_this.dead){
 				clearInterval(si);
@@ -374,7 +374,7 @@ window.seesu_ui = function(d, with_dom, cb){
 		//addEvent(, 'onbeforeunload', die);
 		//addEvent(d.defaultView, 'onuload', die);
 		si = setInterval(function() {
-			if (!d.defaultView){
+			if (!getDefaultView(d)){
 				die()
 			}
 		},1000);
@@ -432,7 +432,7 @@ seesu_ui.prototype = {
 		if (this.dead){
 			return false;
 		}
-		var is_dead = !(this.d && this.d.defaultView);
+		var is_dead = !(this.d && getDefaultView(this.d);
 		if (is_dead){
 			this.dead = true;
 		}

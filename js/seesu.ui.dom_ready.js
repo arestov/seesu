@@ -1,6 +1,10 @@
 window.connect_dom_to_som = function(d, sui, cb){
-	if (window.resizeWindow && d && d.defaultView && !d.defaultView.window_resized){
-		resizeWindow(d.defaultView);
+	if (window.resizeWindow && d){
+		var dw = getDefaultView(d);
+		if (dw && dw.window_resized){
+			resizeWindow(dw);
+		}
+		
 	}
 
 	

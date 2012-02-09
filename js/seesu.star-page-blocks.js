@@ -1,5 +1,5 @@
 var viewBlocks = function(sui, d){
-	if (!d.defaultView){
+	if (!getDefaultView(d)){
 		return false;
 	}
 	$('#hint-query',d).text(seesu.popular_artists[(Math.random()*10).toFixed(0)]);

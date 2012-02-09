@@ -46,7 +46,7 @@ createPrototype(suServView, new servView(), {
 		} else {
 			var c = this.getCNode();
 			if (c){
-				if (c.ownerDocument.defaultView){
+				if (getDefaultView(c.ownerDocument)){
 					return true;
 				} else {
 					this.die();
