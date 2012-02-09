@@ -15,7 +15,7 @@ cloneObj(eemiter.prototype, {
 		this.subscribes[name].push(cb);
 		if (this.reg_fires[name]){
 			this.reg_fires[name].call(this,  function() {
-				cb.apply(_this, arguments)	
+				cb.apply(_this, arguments);
 			});
 		}
 		return this;
@@ -27,9 +27,9 @@ cloneObj(eemiter.prototype, {
 				var clean = [];
 				for (var i = 0; i < cbs.length; i++) {
 					if (cbs[i] !== cb){
-						clean.push(cbs[i])
+						clean.push(cbs[i]);
 					}
-				};
+				}
 				if (clean.length != cbs.length){
 					this.subscribes[name] = clean;
 				}
@@ -42,8 +42,7 @@ cloneObj(eemiter.prototype, {
 	},
 	onRegistration: function(name, cb) {
 		if (name){
-			//this.reg_fires[name] = this.reg_fires[name] || {};
-			this.reg_fires[name] = cb
+			this.reg_fires[name] = cb;
 		}
 		return this;
 	},
@@ -55,7 +54,7 @@ cloneObj(eemiter.prototype, {
 		if (cbs){
 			for (var i = 0; i < cbs.length; i++) {
 				cbs[i].apply(this, args);
-			};
+			}
 		}
 		return this;
 	},
@@ -66,7 +65,7 @@ cloneObj(eemiter.prototype, {
 	stopRequests: function(){
 		while (this.requests.length) {
 			var rq = this.requests.pop();
-			if (rq && rq.abort) {rq.abort()}
+			if (rq && rq.abort) {rq.abort();}
 		}
 	},
 	getQueued: function() {
@@ -76,7 +75,7 @@ cloneObj(eemiter.prototype, {
 		var queued = this.getQueued();
 		for (var i = 0; i < queued.length; i++) {
 			queued[i].setPrio(type);
-		};
+		}
 	}
 });
 
@@ -91,11 +90,14 @@ cloneObj(statesEmmiter.prototype, {
 		this.complex_states = {};
 		this.complex_states_watchers = [];
 	},
+	state: function(name){
+		return this.states[name];
+	},
 	replaceState: function(is_prop, name, value) {
 		if (name){
-			var obj_to_change 	= is_prop ? this : this.states,
-				old_value 		= obj_to_change && obj_to_change[name],
-				method 			= is_prop ? this.prop_change[name] : this.state_change[name];
+			var obj_to_change	= is_prop ? this : this.states,
+				old_value		= obj_to_change && obj_to_change[name],
+				method			= is_prop ? this.prop_change[name] : this.state_change[name];
 			
 			if (old_value != value){
 				obj_to_change[name] = value;
@@ -106,41 +108,32 @@ cloneObj(statesEmmiter.prototype, {
 			}
 		}
 	},
-	callStateWatchers: function(state_name, nv, ov) {
-		if (this.states_watchers[state_name]){
-			for (var i = 0; i < this.states_watchers[state_name].length; i++) {
-				this.states_watchers[state_name][i].call(this, nv, ov);
-			}
-		}
-		return this;
-	},
-	callComplexStateWatchers: function(state_name) {
+	iterateCSWatchers: function(state_name) {
 		if (this.complex_states[state_name]){
 			for (var i = 0; i < this.complex_states[state_name].length; i++) {
-				this.callComplexWatcher(this.complex_states[state_name][i]);
+				this.callCSWatcher(this.complex_states[state_name][i]);
 			}
 		}
 		return this;
 	},
-	checkComplexWatcher: function(watcher) {
+	callCSWatcher: function(watcher) {
+		var args = [];
+		for (var i = 0; i < watcher.states_list.length; i++) {
+			args.push(this.states[watcher.states_list[i]]);
+		}
+		watcher.func.apply(this, args);
+	},
+	checkCSWatcher: function(watcher) {
 		var match;
 		for (var a in this.states) {
 			if (watcher.states_list.indexOf(a)){
 				match = true;
-				break
+				break;
 			}
-		};
+		}
 		return match;
 	},
-	callComplexWatcher: function(watcher) {
-		var args = [];
-		for (var i = 0; i < watcher.states_list.length; i++) {
-			args.push(this.states[watcher.states_list[i]]);
-		};
-		watcher.func.apply(this, args);
-	},
 	watchStates: function(states_list, cb) {
-
 		var watcher = {
 			states_list: states_list,
 			func: cb
@@ -153,10 +146,18 @@ cloneObj(statesEmmiter.prototype, {
 			}
 			this.complex_states[cur].push(watcher);
 			
-		};
+		}
 		this.complex_states_watchers.push(watcher);
-		if (this.checkComplexWatcher(watcher)){
-			this.callComplexWatcher(watcher);
+		if (this.checkCSWatcher(watcher)){
+			this.callCSWatcher(watcher);
+		}
+		return this;
+	},
+	callStateWatchers: function(state_name, nv, ov) {
+		if (this.states_watchers[state_name]){
+			for (var i = 0; i < this.states_watchers[state_name].length; i++) {
+				this.states_watchers[state_name][i].call(this, nv, ov);
+			}
 		}
 		return this;
 	},
@@ -183,16 +184,13 @@ cloneObj(servModel.prototype, {
 		this.children = [];
 		return this;
 	},
-	state: function(name){
-		return this.states[name];
-	},
 	removeView: function(view){
 		var views = [];
 		for (var i = 0; i < this.views.length; i++) {
 			if (views[i] !== view){
-				views.push(views[i])
+				views.push(views[i]);
 			}
-		};
+		}
 		if (views.length != this.views.length){
 			this.views = views;
 		}
@@ -207,13 +205,13 @@ cloneObj(servModel.prototype, {
 	killViews: function() {
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].die();
-		};
+		}
 	},
 	die: function(){
 		this.killViews();
 		for (var i = 0; i < this.children.length; i++) {
 			this.children[i].die();
-		};
+		}
 	},
 	addChild: function() {
 		this.children.push.apply(this.children, arguments);
@@ -228,15 +226,16 @@ cloneObj(servModel.prototype, {
 		name = name || 'main';
 		var v = this.getView(name);
 		if (!v){
+			var constr;
 			if (typeof this.ui_constr == 'function'){
-				var constr = name == 'main' && this.ui_constr;
+				constr = name == 'main' && this.ui_constr;
 			} else if (this.ui_constr){
-				var constr = this.ui_constr[name]
+				constr = this.ui_constr[name];
 			}
 			if (constr){
 				v = constr.call(this);
 				if (v){
-					this.addView(v, name)
+					this.addView(v, name);
 					return v;
 				}
 				
@@ -269,8 +268,12 @@ cloneObj(servModel.prototype, {
 			this.removeDeadViews();
 			for (var i = 0; i < this.views.length; i++) {
 				this.views[i].change(is_prop, name, value);
-			};
+			}
 			this.fire(name + '-state-change', value, old_value[0]);
+			if (!is_prop){
+				this.callStateWatchers(name, value, old_value[0]);
+				this.iterateCSWatchers(name);
+			}
 		}
 		return this;
 	},
@@ -295,22 +298,15 @@ cloneObj(servView.prototype, {
 	constructor: servView,
 	init: function(){
 		statesEmmiter.prototype.init.call(this);
-		this.states = {};
-		this.states_watchers = {};
-		this.complex_states = {};
-		this.complex_states_watchers = [];
 		this.view_parts = {};
 	},
-	state: function(name){
-		return this.states[name];
-	},
 	onDie: function(cb) {
-		this.on('die', cb)
+		this.on('die', cb);
 	},
 	die: function(){
 		this.dead = true;
 		if (this.c){
-			this.c.remove()
+			this.c.remove();
 		}
 		this.fire('die');
 		return this;
@@ -320,7 +316,7 @@ cloneObj(servView.prototype, {
 		if (puppet_model){
 			this.puppet_model = puppet_model;
 		}
-		this.setStates(mdl.states)
+		this.setStates(mdl.states);
 		return this;
 	},
 	appendModelTo: function(m, c) {
@@ -362,16 +358,13 @@ cloneObj(servView.prototype, {
 		for (var name in states){
 			this.changeState(false, name, states[name]);
 		}
-
 		for (var i = 0; i < this.complex_states_watchers.length; i++) {
 			var watcher = this.complex_states_watchers[i];
-			if (this.checkComplexWatcher(watcher)){
-				this.callComplexWatcher(watcher);
+			if (this.checkCSWatcher(watcher)){
+				this.callCSWatcher(watcher);
 			}
 			
-		};
-		
-
+		}
 		return this;
 	},
 	
@@ -398,7 +391,7 @@ cloneObj(servView.prototype, {
 			if (!is_prop){
 				this.callStateWatchers(name, value, old_value[0]);
 				if (allow_complex_watchers){
-					this.callComplexStateWatchers(name);
+					this.iterateCSWatchers(name);
 				}
 			}
 		}

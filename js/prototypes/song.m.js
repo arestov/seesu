@@ -113,31 +113,35 @@ createPrototype(baseSong, new suMapModel(), {
 		this.mf_cor.play(mopla)
 
 	},
-	markAs: function(neighbour){
-		this.updateState('marked_as', neighbour);
-	},
-	unmark: function(){
-		if (this.states.marked_as){
-			this.updateState('marked_as', false);
+	markAs: function(neighbour, mo){
+		if (!this.neighbour_for){
+			this.neighbour_for = mo;
+			this.updateState('marked_as', neighbour);
 		}
-		
+	},
+	unmark: function(mo){
+		if (this.neighbour_for == mo){
+			delete this.neighbour_for;
+			this.updateState('marked_as', false);
+
+		}
 	},
 	addMarksToNeighbours: function(){
 		
 		if (!this.marked_prev_song || this.marked_prev_song != this.prev_song){
 			if (this.marked_prev_song){
-				this.marked_prev_song.unmark();
+				this.marked_prev_song.unmark(this);
 			}
 			if (this.prev_song){
-				(this.marked_prev_song = this.prev_song).markAs('prev');
+				(this.marked_prev_song = this.prev_song).markAs('prev', this);
 			}
 		}
 		if (!this.marked_next_song || this.marked_next_song != this.next_song){
 			if (this.marked_next_song){
-				this.marked_next_song.unmark();
+				this.marked_next_song.unmark(this);
 			}
 			if (this.next_song){
-				(this.marked_next_song = this.next_song).markAs('next');
+				(this.marked_next_song = this.next_song).markAs('next', this);
 			}
 		}
 			
@@ -145,11 +149,11 @@ createPrototype(baseSong, new suMapModel(), {
 	},
 	removeMarksFromNeighbours: function(){
 		if (this.marked_prev_song){
-			this.marked_prev_song.unmark();
+			this.marked_prev_song.unmark(this);
 			delete this.marked_prev_song;
 		}
 		if (this.marked_next_song){
-			this.marked_next_song.unmark();
+			this.marked_next_song.unmark(this);
 			delete this.marked_next_song;
 		}
 	},
@@ -195,14 +199,17 @@ createPrototype(baseSong, new suMapModel(), {
 				_this.updateState('loading', false);
 			})
 	},
+	setPrio: function(value) {
+		var _din = this.delayed_in;
+		for (var i=0; i < _din.length; i++) {
+			_din[i].setPrio(value);
+		}
+	},
 	prefindFiles: function(){
 		this.findFiles({
 			get_next: true
 		});
-		var _din = this.delayed_in;
-		for (var i=0; i < _din.length; i++) {
-			_din[i].setPrio('highest');
-		}
+		this.setPrio('highest');
 	},
 	findFiles: function(opts){
 		if (this.mp3_search){
