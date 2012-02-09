@@ -7,6 +7,40 @@ show_now_playing
 show_track_page
 */
 
+
+/*
+setTitle: function(title){
+		this.d.title = 	title || "";
+	},
+	Uncaught TypeError: Cannot set property 'title' of undefined
+seesu_ui.setTitlejs/seesu.ui.js:432
+viewsjs/seesu.ui.views.js:235
+cloneObj.firejs/prototypes/serv-mvc.js:56
+(anonymous function)js/libs/browse_map.js:320
+createPrototype.sPropjs/libs/browse_map.js:252
+createPrototype.setTitlejs/libs/browse_map.js:319
+createPrototype.setCurrentNavjs/libs/browse_map.js:315
+createPrototype.setNavTreejs/libs/browse_map.js:278
+createPrototype.updateNavjs/libs/browse_map.js:273
+createPrototype.setLevelPartActivejs/libs/browse_map.js:110
+createPrototype._goDeeperjs/libs/browse_map.js:135
+createPrototype.goDeeperjs/libs/browse_map.js:141
+views.show_track_pagejs/seesu.ui.views.js:295
+createPrototype.viewjs/su-prototypes/su-song.m.js:78
+cloneObj.changeNowPlayingjs/prototypes/player.complex.js:105
+_thisjs/su-prototypes/su-song.m.js:36
+cloneObj.firejs/prototypes/serv-mvc.js:56
+createPrototype.playjs/su-prototypes/su-mfcomplect.js:280
+createPrototype.playjs/prototypes/song.m.js:113
+(anonymous function)js/prototypes/player.complex.js:72
+
+
+
+
+js/seesu.star-page-blocks.js:5Uncaught TypeError: Cannot call method 'replace' of undefined
+seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', seesu.env.app_type));
+
+*/
 (function() {
 var baseNavUI = function() {};
 
@@ -82,6 +116,9 @@ var mainLevelUI = function(m_l){
 	this.m_l = m_l;
 	
 	this.callParentMethod('init');
+
+	this.c = $(su.ui.d.body);
+
 	this.setModel(m_l);
 };
 createPrototype(mainLevelUI, new suServView(), {
