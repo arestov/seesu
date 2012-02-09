@@ -7,40 +7,6 @@ show_now_playing
 show_track_page
 */
 
-
-/*
-setTitle: function(title){
-		this.d.title = 	title || "";
-	},
-	Uncaught TypeError: Cannot set property 'title' of undefined
-seesu_ui.setTitlejs/seesu.ui.js:432
-viewsjs/seesu.ui.views.js:235
-cloneObj.firejs/prototypes/serv-mvc.js:56
-(anonymous function)js/libs/browse_map.js:320
-createPrototype.sPropjs/libs/browse_map.js:252
-createPrototype.setTitlejs/libs/browse_map.js:319
-createPrototype.setCurrentNavjs/libs/browse_map.js:315
-createPrototype.setNavTreejs/libs/browse_map.js:278
-createPrototype.updateNavjs/libs/browse_map.js:273
-createPrototype.setLevelPartActivejs/libs/browse_map.js:110
-createPrototype._goDeeperjs/libs/browse_map.js:135
-createPrototype.goDeeperjs/libs/browse_map.js:141
-views.show_track_pagejs/seesu.ui.views.js:295
-createPrototype.viewjs/su-prototypes/su-song.m.js:78
-cloneObj.changeNowPlayingjs/prototypes/player.complex.js:105
-_thisjs/su-prototypes/su-song.m.js:36
-cloneObj.firejs/prototypes/serv-mvc.js:56
-createPrototype.playjs/su-prototypes/su-mfcomplect.js:280
-createPrototype.playjs/prototypes/song.m.js:113
-(anonymous function)js/prototypes/player.complex.js:72
-
-
-
-
-js/seesu.star-page-blocks.js:5Uncaught TypeError: Cannot call method 'replace' of undefined
-seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', seesu.env.app_type));
-
-*/
 (function() {
 var baseNavUI = function() {};
 
@@ -117,6 +83,11 @@ var mainLevelUI = function(m_l){
 	
 	this.callParentMethod('init');
 
+	this.sui = su.ui;
+	this.d = su.ui.d;
+
+	this.els = su.ui.els;
+	this.nav = su.ui.nav;
 	this.c = $(su.ui.d.body);
 
 	this.setModel(m_l);
@@ -127,9 +98,9 @@ createPrototype(mainLevelUI, new suServView(), {
 		'mp-show': function(opts) {
 			if (opts){
 				if (opts.userwant){
-					su.ui.els.search_input[0].focus();
-					su.ui.els.search_input[0].select();
-					seesu.track_page('start page');
+					this.els.search_input[0].focus();
+					this.els.search_input[0].select();
+					su.track_page('start page');
 				}
 			} else {
 				
@@ -137,34 +108,48 @@ createPrototype(mainLevelUI, new suServView(), {
 		},
 		'mp-blured': function(state) {
 			if (state){
-				$(su.ui.els.slider).removeClass("show-start");
+				$(this.els.slider).removeClass("show-start");
 			} else {
-				$(su.ui.els.slider).addClass("show-start");
+				$(this.els.slider).addClass("show-start");
 			}
 		},
 		'now-playing': function(text) {
 				
-				if (!this.now_playing_link && su.ui.nav){
+				if (!this.now_playing_link && this.nav){
 					this.now_playing_link = $('<a class="np"></a>').click(function(){
 						su.ui.views.show_now_playing(true);
-					}).appendTo(su.ui.nav.justhead);
+					}).appendTo(this.nav.justhead);
 				}
 				if (this.now_playing_link){
 					this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));	
 				}	
 		},
 		playing: function(state) {
-			var s = su.ui.els.pllistlevel.add(this.now_playing_link);
+			var s = this.els.pllistlevel.add(this.now_playing_link);
 			if (state){
 				s.addClass('player-played');
-				su.ui.changeFavicon('playing')
+				this.changeFavicon('playing');
 			} else {
 				s.each(function(i, el){
 					$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
 				});
-				su.ui.changeFavicon('usual');
+				this.changeFavicon('usual');
 			}
+		},
+		"doc-title": function(title) {
+			this.d.title = 	title || "";
 		}
+	},
+	changeFavicon: $.debounce(function(state){
+		if (state && this.favicon_states[state]){
+			changeFavicon(this.d, this.favicon_states[state], 'image/png');
+		} else{
+			changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
+		}
+	},300),
+	favicon_states: {
+		playing: 'icons/icon16p.png',
+		usual: 'icons/icon16.png'
 	}
 });
 
@@ -209,6 +194,10 @@ createPrototype(mainLevel, new suMapModel(), {
 	short_title: 'Seesu',
 	getTitle: function() {
 		return this.short_title;
+	},
+
+	setDocTitle: function(title) {
+		this.updateState('doc-title', title);
 	}
 });
 
@@ -266,7 +255,9 @@ views = function(sui, su_map){
 
 	this.m
 		.on('title-change', function(title) {
-			su.ui.setTitle(title);
+			su.main_level.setDocTitle(title);
+
+
 		})
 		.on('url-change', function(nu, ou, data, replace) {
 			if (replace){

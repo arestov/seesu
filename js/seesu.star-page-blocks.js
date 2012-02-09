@@ -1,4 +1,7 @@
 var viewBlocks = function(sui, d){
+	if (!d.defaultView){
+		return false;
+	}
 	$('#hint-query',d).text(seesu.popular_artists[(Math.random()*10).toFixed(0)]);
 	$('#widget-url',d).val(location.href.replace('index.html', ''));
 	var seesu_me_link = $('#seesu-me-link',d);

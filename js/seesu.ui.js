@@ -405,7 +405,7 @@ window.seesu_ui = function(d, with_dom, cb){
 				var state_recovered;	
 				if (window.su && su.p && su.p.c_song){
 					if (su.p.c_song && su.p.c_song.plst_titl){
-						su.ui.views.show_now_playing(true)
+						su.ui.views.show_now_playing(true);
 						//sui.views.m.restoreFreezed();
 						//su.ui.views.show_track_page(su.p.c_song, true);
 						
@@ -428,9 +428,6 @@ window.seesu_ui = function(d, with_dom, cb){
 	}
 };
 seesu_ui.prototype = {
-	setTitle: function(title){
-		this.d.title = 	title || "";
-	},
 	isAlive: function(){
 		if (this.dead){
 			return false;
@@ -1175,18 +1172,7 @@ seesu_ui.prototype = {
 				}) 
 			).appendTo(_ui.els.start_screen.children('.for-startpage'));
 		}
-	},
-	favicon_states: {
-		playing: 'icons/icon16p.png',
-		usual: 'icons/icon16.png'
-	},
-	changeFavicon: $.debounce(function(state){
-		if (state && this.favicon_states[state]){
-			changeFavicon(this.d, this.favicon_states[state], 'image/png');
-		} else{
-			changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
-		}
-	},300)
+	}
 
 
 
