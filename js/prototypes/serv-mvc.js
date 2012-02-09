@@ -171,8 +171,6 @@ cloneObj(statesEmmiter.prototype, {
 });
 
 
-
-
 var servModel = function(){};
 servModel.prototype = new statesEmmiter();
 cloneObj(servModel.prototype, {
@@ -181,6 +179,7 @@ cloneObj(servModel.prototype, {
 		statesEmmiter.prototype.init.call(this);
 		this.states = {};
 		this.views = [];
+		this.views_index = {};
 		this.children = [];
 		return this;
 	},
@@ -195,11 +194,26 @@ cloneObj(servModel.prototype, {
 			this.views = views;
 		}
 	},
-	removeDeadViews: function(){
-		var alive = $filter(this.views, 'dead', true).not;
+	removeDeadViews: function(hard_deads_check){
+		if (hard_deads_check){
+			for (var i = 0; i < this.views.length; i++) {
+				if (this.views[i].isAlive){
+					this.views[i].isAlive();
+				}
+			}
+		}
+
+		var dead = $filter(this.views, 'dead', true);
+		var alive = dead.not;
+
 		if (alive.length != this.views.length){
 			this.views = alive;
 		}
+
+		for (var a in this.views_index){
+			this.views_index[a] = arrayExclude(this.views_index[a], dead);
+		}
+
 		return this;
 	},
 	killViews: function() {
@@ -224,7 +238,7 @@ cloneObj(servModel.prototype, {
 	},
 	getFreeView: function(name){
 		name = name || 'main';
-		var v = this.getView(name);
+		var v = this.getView(name, true);
 		if (!v){
 			var constr;
 			if (typeof this.ui_constr == 'function'){
@@ -245,7 +259,7 @@ cloneObj(servModel.prototype, {
 	getViews: function(name, hard_deads_check) {
 		this.removeDeadViews(hard_deads_check);
 		if (name){
-			return this.views[name];
+			return this.views_index[name];
 		} else {
 			return this.views;
 		}
@@ -253,12 +267,12 @@ cloneObj(servModel.prototype, {
 	getView: function(name, hard_deads_check){
 		this.removeDeadViews(hard_deads_check);
 		name = name || 'main';
-		return this.views[name] && this.views[name][0];
+		return this.views_index[name] && this.views_index[name][0];
 	},
 	addView: function(v, name) {
 		this.views.push( v );
 		name = name || 'main';
-		(this.views[name] = this.views[name] || []).push(v);
+		(this.views_index[name] = this.views_index[name] || []).push(v);
 		return this;
 	},
 	_updateProxy: function(is_prop, name, value){

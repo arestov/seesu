@@ -60,6 +60,17 @@ doesContain = function(target, valueOf){
 	}
 	return -1;
 };
+var arrayExclude = function(arr, obj){
+	var r = []; obj = toRealArray(obj);
+	for (var i = 0; i < arr.length; i++) {
+		if (obj.indexOf(arr[i]) == -1){
+			r.push(arr[i]);
+		}	
+	}
+	return r;
+};
+
+
 var getFields = function(obj, fields){
 	var r = [];
 	for (var i=0; i < fields.length; i++) {
