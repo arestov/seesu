@@ -51,6 +51,8 @@
 		this.watchStates(['files_search', 'marked_as'], function(files_search, marked_as) {
 			if (marked_as && files_search && files_search.complete){
 				this.updateState('can-expand', true);
+			} else {
+				this.updateState('can-expand', false);
 			}
 		});
 	};
