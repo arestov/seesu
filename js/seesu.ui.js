@@ -351,8 +351,10 @@ contextRow.prototype = {
 		
 	}
 };
+var der = [];
 
 window.seesu_ui = function(d, with_dom, cb){
+
 	this.d = d;
 	var _this = this,
 		si;
@@ -367,18 +369,18 @@ window.seesu_ui = function(d, with_dom, cb){
 			}
 			
 		};
-			//d.defaultView.onbeforeunload = die;
-			//d.defaultView.onuload = die;
-			//addEvent(, 'onbeforeunload', die);
-			//addEvent(d.defaultView, 'onuload', die);
-			si = setInterval(function() {
-				if (!d.defaultView){
-					die()
-				}
-			},1000);
+		//d.defaultView.onbeforeunload = die;
+		//d.defaultView.onuload = die;
+		//addEvent(, 'onbeforeunload', die);
+		//addEvent(d.defaultView, 'onuload', die);
+		si = setInterval(function() {
+			if (!d.defaultView){
+				die()
+			}
+		},1000);
 		
 	}
-
+	der.push(this)
 
 
 	this.els = {};

@@ -243,18 +243,18 @@ cloneObj(servModel.prototype, {
 			}
 		}
 	},
-	getView: function(name, many){
-		this.removeDeadViews();
-		if (many){
-			if (name){
-				return this.views[name]
-			} else {
-				return this.views;
-			}
+	getViews: function(name, hard_deads_check) {
+		this.removeDeadViews(hard_deads_check);
+		if (name){
+			return this.views[name];
 		} else {
-			name = name || 'main';
-			return this.views[name] && this.views[name][0];
+			return this.views;
 		}
+	},
+	getView: function(name, hard_deads_check){
+		this.removeDeadViews(hard_deads_check);
+		name = name || 'main';
+		return this.views[name] && this.views[name][0];
 	},
 	addView: function(v, name) {
 		this.views.push( v );

@@ -32,10 +32,8 @@ window.seesu = window.su =  {
 	  fire: function() {
 		this.emitter.fire.apply(this.emitter, arguments);
 	  },
-	  removeDOM: function() {
-		if (!this.ui.d){
-			this.fire('dom-die');
-		}
+	  removeDOM: function(d) {
+		this.fire('dom-die', this.ui.d == d, d);
 	  },
 	  createUI: function(d, connect_dom){
 	  	var _this = this;

@@ -25,8 +25,12 @@ createPrototype(suServView, new servView(), {
 		this.callParentMethod('init');
 
 		var _this = this;
-		var onDOMDie = function() {
-			_this.die();
+		var onDOMDie = function(currend_doc, dead_doc) {
+			var c = (c = _this.getC()) && (c[0] || c);
+			if (c && c.ownerDocument == dead_doc){
+				_this.die();
+			}
+			
 		};
 		su.on('dom-die', onDOMDie);
 		this.onDie(function() {
