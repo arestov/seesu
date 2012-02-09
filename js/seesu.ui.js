@@ -432,7 +432,7 @@ seesu_ui.prototype = {
 		if (this.dead){
 			return false;
 		}
-		var is_dead = !(this.d && getDefaultView(this.d);
+		var is_dead = !(this.d && getDefaultView(this.d));
 		if (is_dead){
 			this.dead = true;
 		}
