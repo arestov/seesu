@@ -74,8 +74,7 @@
 
 				child_ui = _this.getFreeView();
 				if (child_ui){
-					var c = $('<div class="playlist-container"></div>').appendTo(su.ui.els.artsTracks);
-					c.append(child_ui.getC());
+					su.ui.els.artsTracks.append(child_ui.getC());
 
 					
 					child_ui.appended();

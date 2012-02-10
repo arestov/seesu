@@ -183,9 +183,9 @@
 		state_change: {
 			loading: function(loading){
 				if (loading){
-					this.c.addClass('loading');
+					this.lc.addClass('loading');
 				} else {
-					this.c.removeClass('loading');
+					this.lc.removeClass('loading');
 				}
 			},
 			changed: function(){
@@ -193,7 +193,8 @@
 			}
 		},
 		createBase: function() {
-			this.c = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>');	
+			this.c = $('<div class="playlist-container"></div>');
+			this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);	
 		},
 		appendSongUI: function(mo){
 			var pl_ui_element = mo.getC();
@@ -205,7 +206,7 @@
 			if (_this.first_song){
 				if (!_this.firstsong_inseting_done){
 					if (mo == _this.first_song.mo){
-						this.c.append(pl_ui_element);
+						this.lc.append(pl_ui_element);
 					} else{
 						var moc = _this.first_song.mo.getC();
 						if (moc){
@@ -221,15 +222,15 @@
 							moc.before(pl_ui_element);
 						}
 					} else{
-						this.c.append(pl_ui_element);
+						this.lc.append(pl_ui_element);
 					}
 				} else{
-					this.c.append(pl_ui_element);
+					this.lc.append(pl_ui_element);
 				}
 				
 				
 			} else{
-				this.c.append(pl_ui_element);
+				this.lc.append(pl_ui_element);
 			}
 		},
 		render_playlist: function(load_finished) {
