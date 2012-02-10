@@ -275,13 +275,13 @@ views.prototype = {
 	sUI: function(){
 		return su && su.ui || this.sui;	
 	},
-	restoreFreezed: function(url_restoring){
-		this.m.restoreFreezed(url_restoring);
+	restoreFreezed: function(transit, url_restoring){
+		this.m.restoreFreezed(transit, url_restoring);
 	},
 
 	show_now_playing: function(no_stat){
 		var current_page = this.sUI().els.slider.className;
-		this.restoreFreezed();
+		this.restoreFreezed(true);
 		
 		su.ui.views.show_track_page(su.p.c_song);
 		if (!no_stat){

@@ -406,10 +406,6 @@ window.seesu_ui = function(d, with_dom, cb){
 				if (window.su && su.p && su.p.c_song){
 					if (su.p.c_song && su.p.c_song.plst_titl){
 						su.ui.views.show_now_playing(true);
-						//sui.views.m.restoreFreezed();
-						//su.ui.views.show_track_page(su.p.c_song, true);
-						
-
 						state_recovered = true;
 					}
 				}

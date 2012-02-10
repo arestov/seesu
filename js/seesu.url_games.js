@@ -568,7 +568,7 @@ var hashChangeRecover = function(e){
 		if (dl.live.length){
 			var deepest = dl.live[dl.live.length -1];
 			if (!deepest.isOpened()){
-				su.ui.views.restoreFreezed(true);
+				su.ui.views.restoreFreezed(!!dl.dead.length, true);
 			}
 			deepest.sliceTillMe(!!dl.dead.length, true);
 		} else{

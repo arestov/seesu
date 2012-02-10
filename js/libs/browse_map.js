@@ -206,11 +206,15 @@ createPrototype(browseMap, new eemiter(), {
 		}
 		return fresh_freeze;
 	},
-	restoreFreezed: function(url_restoring){
+	restoreFreezed: function(transit, url_restoring){
 		this.hideMap();
 		var f_lvs = $filter(this.levels, 'freezed');
 		for (var i=0; i < f_lvs.length; i++) {
-			this.setLevelPartActive(f_lvs[i], {userwant: (i == f_lvs.length - 1), url_restoring: url_restoring});
+			this.setLevelPartActive(f_lvs[i], {
+				userwant: (i == f_lvs.length - 1), 
+				transit: transit, 
+				url_restoring: url_restoring
+			});
 		}
 		/*
 		for (var i=0; i < this.levels.length; i++) {
