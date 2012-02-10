@@ -6,7 +6,7 @@ var sm2proxy = function(origin, path, opts) {
 
 	addEvent(window, "message", function(e){
 		if (e.origin.indexOf(_this.origin) === 0){
-			_this.handleFrameMessage.apply(_this, e.data);
+			_this.handleFrameMessage.apply(_this, (e.data === Object(e.data) ? e.data : JSON.parse(e.data)));
 		}
 	});
 
@@ -63,7 +63,7 @@ sm2proxy.prototype = {
 	sendMsg: function(msg){
 		var args = Array.prototype.slice.call(arguments);
 		if (args.length){
-			this.frame.contentWindow.postMessage(args, '*');
+			this.frame.contentWindow.postMessage(JSON.stringify(args), '*');
 		}
 	},
 	create: function(id, opts){

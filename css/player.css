@@ -208,8 +208,12 @@ a.download-mp3:hover{
 		
 		text-align:right;
 	}
+	.mf-load-progress, .mf-play-progress{
+		display: none;
+	}
 	.track-load-progress,  .selected-mf .mf-load-progress{
 		position:absolute;
+		display: block;
 		cursor:pointer;
 		width:0;
 		left:0;
@@ -226,6 +230,7 @@ a.download-mp3:hover{
 		}
 	.track-play-progress, .selected-mf .mf-play-progress{
 		position:absolute;
+		display: block;
 		cursor:pointer;
 		width:0;
 		left:0;
