@@ -28,12 +28,7 @@
 .open-external-playlist:hover .music-programs{
 	background-image:url(../i/icons_programs.png)
 }
-#tracks-waiting-for-search{
-	position: absolute;
-	left: -30px;
-	width:20px;
-	top:0;
-}
+
 .scrobbling-button .trackbutton{
 	background:#333 url(../i/last-fm-gray.png) no-repeat;
 	display:block;

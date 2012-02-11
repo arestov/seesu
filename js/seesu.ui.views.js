@@ -308,6 +308,13 @@ views.prototype = {
 	showArtcardPage: function(artist, save_parents, no_navi){
 		var lev = this.m.goDeeper(save_parents, new artCard(artist));
 	},
+	showStaticPlaylist: function(pl, save_parents, no_navi) {
+		if (pl.lev && pl.lev.canUse() && !pl.lev.isOpened()){
+			this.restoreFreezed();
+		} else {
+			this.show_playlist_page(pl, save_parents, no_navi);
+		}
+	},
 	show_playlist_page: function(pl, save_parents, no_navi){
 		var lev = this.m.goDeeper(save_parents, pl);
 	},

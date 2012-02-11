@@ -34,6 +34,25 @@ var changeFavicon = function(d, src, type) {
 	d.head.appendChild(link);
 };
 
+var abortage = {
+	addDependent: function(dependent) {
+		this.dep_objs = this.dep_objs || [];
+		this.dep_objs.push(dependent);
+	},
+	canAbort: function(dependent) {
+		if (!this.dep_objs){
+			return true;
+		} else {
+			if (!this.dep_objs.length){
+				return true;
+			} else {
+				this.dep_objs = arrayExclude(this.dep_objs, dependent);
+				return !this.dep_objs.length;
+			}
+		}
+	}
+};
+
 (function(){
 	var jsonp_counter = 0;
 	window.create_jsonp_callback = function(func){

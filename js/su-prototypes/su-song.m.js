@@ -68,7 +68,7 @@
 		updateFilesSearchState: function(complete, get_next){
 			baseSong.prototype.updateFilesSearchState.apply(this, arguments);
 			if (this.isHaveTracks()){
-				su.ui.els.export_playlist.addClass('can-be-used');
+				this.plst_titl.markAsPlayable();
 			}
 		},	
 		mlmDie: function() {

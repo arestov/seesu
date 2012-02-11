@@ -41,7 +41,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 		var volume_s = d.createElement('style');
 			volume_s.setAttribute('title', 'volume');
 			volume_s.setAttribute('type', 'text/css');
-		var volume_style= '.volume-state-position {width:' + ((seesu.player.player_volume * 50)/100) + 'px' + '}'; 
+		var volume_style= '.volume-state-position {width:' + ((su.p.volume * 50)/100) + 'px' + '}'; 
 		if (volume_s.styleSheet){
 			volume_s.styleSheet.cssText = volume_style;
 		} else{
@@ -64,35 +64,12 @@ window.connect_dom_to_som = function(d, sui, cb){
 		
 		sui.els = {
 			scrolling_viewport: su.env.as_application ? {node:$('#screens',d)} : {node: $(d.body), offset: true},
-			make_trs: $("#make-trs-plable",d).click(function(){
-				
-				var pl = su.player && su.p.c_song && su.p.c_song.plst_titl;
-				if (pl){
-					pl.makePlayable(true);
-					seesu.track_event('Controls', 'make playable all tracks in playlist'); 
-				}
-				
-			}),
 			slider: slider,
 			navs: $(slider).children('.navs'),
-			nav_playlist_page: d.getElementById('nav_playlist_page'),
-			nav_track_zoom: $('#nav_track_zoom',d),
-			export_playlist: $('#open-external-playlist',d).click(function(e){
-				make_external_playlist();
-				if (seesu.player.current_external_playlist.result) {
-					app_env.openURL(
-						'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(seesu.player.current_external_playlist.result)
-					)
-				}
-				e.preventDefault();
-			}),
 			start_screen: $('#start-screen',d),
 			artcards: $('#art-cards', d),
 			pllistlevel: pllistlevel,
 			artsTracks: pllistlevel.find('#tracks-magic'),
-			art_tracks_w_counter: $('#tracks-waiting-for-search',d),
-			
-			
 			searchres: $('#search_result',d),
 			search_input: $('#q',d),
 			play_controls: seesu.buttmen,
@@ -104,6 +81,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 		sui.samples = {
 			artcard: ui_samples.children('.art-card'),
 			track_c : track_c,
+			playlist_panel: ui_samples.children('.play-list-panel'),
 			vk_login: {
 				o: ui_samples.children('.vk-login-context'),
 				oos: $(),

@@ -120,6 +120,9 @@
 			return this;
 			
 		},
+		markAsPlayable: function() {
+			this.updateState('can-play', true);	
+		},
 		loading: function(){
 			this.updateState('loading', true);
 			return this;
@@ -190,10 +193,39 @@
 			},
 			changed: function(){
 				this.render_playlist();
+			},
+			"can-play": function(state) {
+				if (state){
+					//make-trs-plable
+					this.export_playlist.addClass('can-be-used');
+				} else {
+					this.export_playlist.removeClass('can-be-used');
+				}
 			}
 		},
-		createBase: function() {
+		createC: function() {
 			this.c = $('<div class="playlist-container"></div>');
+
+			var pl_panel = su.ui.samples.playlist_panel.clone();
+
+
+			var _this = this;
+
+			pl_panel.find(".make-trs-plable").click(function(){
+				_this.mdl.makePlayable(true);
+				su.track_event('Controls', 'make playable all tracks in playlist'); 
+			})
+			
+			this.export_playlist = pl_panel.find('.open-external-playlist').click(function(e){
+				_this.mdl.makeExternalPlaylist()
+				e.preventDefault();
+			});
+			this.c.append(pl_panel);
+			
+			return this;
+		},
+		createBase: function() {
+			this.createC();
 			this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);	
 		},
 		appendSongUI: function(mo){

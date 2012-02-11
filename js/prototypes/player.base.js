@@ -9,8 +9,8 @@ cloneObj(playerBase.prototype, {
 		servModel.prototype.init.call(this);
 		this.song_files = {};
 		this.attached = {};
-		this.volume = volume || 100;
 	},
+	volume: 100,
 	setCore: function(core){
 		if (!this.subscriber){
 			var _this = this;
@@ -87,6 +87,9 @@ cloneObj(playerBase.prototype, {
 			this.core.setVolume(song_file.uid, vol)
 		}
 		if (this.global_volume){
+			if (this.saveVolume){
+				this.saveVolume(vol)
+			}
 			this.volume = vol;
 		}
 	},

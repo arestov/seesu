@@ -199,31 +199,6 @@ external_playlist.prototype = {
 	request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
 };
 
-var make_external_playlist = function(){
-	if (!seesu.p.c_song ){return false;}
-	var simple_playlist = [];
-	for (var i=0; i < seesu.p.c_song.plst_titl.length; i++) {
-		var song = seesu.p.c_song.plst_titl[i].song();
-		if (song){
-			simple_playlist.push({
-				track_title: song.track,
-				artist_name: song.artist,
-				duration: song.duration,
-				mp3link: song.link
-			});
-		}
-			
-		
-	};
-	
-	if (simple_playlist.length){
-		seesu.p.current_external_playlist = new external_playlist(simple_playlist);
-		seesu.ui.els.export_playlist.attr('href', seesu.p.current_external_playlist.data_uri);
-		
-	}
-};
-
-
 var random_track_plable = function(track_list){
 	var random_track_num = Math.floor(Math.random()*track_list.length);
 	return track_list[random_track_num];

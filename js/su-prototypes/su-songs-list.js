@@ -130,6 +130,38 @@
 			} else{
 				return omo;
 			}
+		},
+		makeExternalPlaylist: function() {
+			if (!this.length){return false;}
+			var simple_playlist = [];
+			for (var i=0; i < this.length; i++) {
+				var song = this[i].song();
+				if (song){
+					simple_playlist.push({
+						track_title: song.track,
+						artist_name: song.artist,
+						duration: song.duration,
+						mp3link: song.link
+					});
+				}
+					
+				
+			};
+			
+			if (simple_playlist.length){
+				this.current_external_playlist = new external_playlist(simple_playlist);
+				//su.ui.els.export_playlist.attr('href', su.p.current_external_playlist.data_uri);
+				if (this.current_external_playlist.result) {
+					app_env.openURL(
+						'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(this.current_external_playlist.result)
+					)
+				}
+					
+			}
+
+
+
+			
 		}
 	});
 

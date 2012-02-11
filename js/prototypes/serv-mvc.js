@@ -60,12 +60,15 @@ cloneObj(eemiter.prototype, {
 	},
 	addRequest: function(rq){
 		this.requests.push(rq);
+		if (rq.addDependent){
+			rq.addDependent(this);
+		}
 		this.fire('request', rq);
 	},
 	stopRequests: function(){
 		while (this.requests.length) {
 			var rq = this.requests.pop();
-			if (rq && rq.abort) {rq.abort();}
+			if (rq && rq.abort) {rq.abort(this);}
 		}
 	},
 	getQueued: function() {
@@ -220,6 +223,7 @@ cloneObj(servModel.prototype, {
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].die();
 		}
+		this.removeDeadViews();
 	},
 	die: function(){
 		this.killViews();

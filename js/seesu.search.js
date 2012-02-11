@@ -90,7 +90,7 @@ createPrototype(playlistSuggest, new baseSuggest(), {
 		return this.pl.playlist_title;
 	},
 	onView: function(){
-		su.ui.views.show_playlist_page(this.pl, true);
+		su.ui.views.showStaticPlaylist(this.pl, true);
 	},
 	ui_constr: function(){
 		return new playlistSuggestUI(this);

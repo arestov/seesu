@@ -7,6 +7,15 @@ cloneObj(seesuPlayer.prototype, {
 	constructor: seesuPlayer,
 	init: function(){
 		playerComplex.prototype.init.call(this);
+
+		var volume =  suStore('vkplayer-volume');
+			volume = volume && parseFloat(volume);
+		if (volume){
+			this.volume = volume;
+		}
+	},
+	saveVolume: function(vol) {
+		suStore('vkplayer-volume', vol, true);
 	},
 	events: {
 		finish: function(e){
@@ -20,8 +29,7 @@ cloneObj(seesuPlayer.prototype, {
 				if (this.c_song.next_preload_song){
 					this.c_song.next_preload_song.prefindFiles();
 				}
-				this.changeAppMode(true)
-				//su.player.preload_song();
+				this.changeAppMode(true);
 			}
 		},
 		pause: function(e){

@@ -1,38 +1,3 @@
-
-/*
-function(err, search_source, complete, music_list, can_be_fixed){
-	if (err){
-		
-	} else{
-		
-	}
-	if (complete){
-		sem.search_completed = true;
-	}
-	sem.emit(complete, o.get_next);
-}
-
-var count_down = function(search_source, music_list, can_be_fixed){
-	var complete = p.n !== 0 && --p.n === 0;
-	if (!o.nocache && !o.only_cache){
-		su.ui.els.art_tracks_w_counter.text((su.delayed_search.tracks_waiting_for_search -= 1) || '');
-	}
-	if (callback){
-		callback(!music_list, search_source, complete, music_list, can_be_fixed)
-	}
-};
-if (!o.nocache && !o.only_cache){
-	su.ui.els.art_tracks_w_counter.text((su.delayed_search.tracks_waiting_for_search += 1) || '');
-}
-
-	*/
-
-
-
-/*
-
-		,
-		*/
 var muansPack = function(){
 	this.store = {}
 };

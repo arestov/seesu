@@ -577,7 +577,7 @@ var hashChangeRecover = function(e){
 		
 		if (dl.dead.length){
 			for (var i=0; i < dl.dead.length; i++) {
-				su.ui.views.m.resurrectLevel(dl.dead[i], true, i == dl.dead.length - 1);
+				su.ui.views.m.resurrectLevel(dl.dead[i], i != dl.dead.length - 1, true );
 			};
 		}	
 	} else{

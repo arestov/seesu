@@ -112,18 +112,14 @@ createPrototype(browseMap, new eemiter(), {
 		
 		this.current_level_num = lp.num;
 	},
-	resurrectLevel: function(lev, manual_activate, set_active){
-		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), manual_activate);
-		
-		if (set_active){
-			this.setLevelPartActive(nlev, {userwant: true, url_restoring: true});
-		}
+	resurrectLevel: function(lev, transit, url_restoring){
+		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), transit, url_restoring);
 		return nlev;
 	},
 	goShallow: function(to){ //up!
 		this.sliceDeepUntil(to.num, true);
 	},
-	_goDeeper: function(orealy, resident, manual_activate){
+	_goDeeper: function(orealy, resident, transit, url_restoring){
 		var cl = this.getActiveLevelNum();
 		if (orealy){
 			this.sliceDeepUntil(cl, false, true);
@@ -131,9 +127,8 @@ createPrototype(browseMap, new eemiter(), {
 			this.sliceDeepUntil(-1, false, true);
 		}
 		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
-		if (!manual_activate){
-			this.setLevelPartActive(cl, {userwant: true});
-		}
+		this.setLevelPartActive(cl, {userwant: true, transit: transit, url_restoring: url_restoring});
+		
 		return cl;
 		
 	},
