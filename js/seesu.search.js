@@ -534,10 +534,10 @@ var network_search = seesu.env.cross_domain_allowed ?
 			fast_suggestion(r, q, invstg);
 		});
 		if (!cache_used) {
-			invstg.addRequest(get_fast_suggests(q, function(r){	
+			get_fast_suggests(q, function(r){	
 				if (su.ui.els.search_input.val() != q){return;}
 				fast_suggestion(r, q, invstg);
-			}, hash, invstg));
+			}, hash, invstg);
 			
 		}
 	} 
