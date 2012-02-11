@@ -27,18 +27,6 @@ createPrototype(suServView, new servView(), {
 		var _this = this;
 		var onDOMDie = function(currend_doc, dead_doc) {
 			_this.isAlive();
-
-
-			return 
-			var c = _this.getCNode();
-			if (c && c.ownerDocument == dead_doc){
-				_this.markAsDead();
-			} else {
-				console.log('no my doc!')
-				console.log(c.ownerDocument)
-				console.log(dead_doc)
-			}
-			
 		};
 		su.on('dom-die', onDOMDie);
 		this.onDie(function() {

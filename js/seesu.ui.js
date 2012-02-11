@@ -17,7 +17,6 @@ createPrototype(artCardUI, new suServView(), {
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
-				$(su.ui.els.slider).addClass('show-art-card');
 				su.track_page('art card');
 				this.c.removeClass('hidden');
 			} else {
@@ -28,7 +27,7 @@ createPrototype(artCardUI, new suServView(), {
 			if (state){
 				this.blur();
 			} else {
-				
+				$(su.ui.els.slider).addClass('show-art-card');
 			}
 		},
 		"loading-albums": function(state) {
@@ -403,15 +402,15 @@ window.seesu_ui = function(d, with_dom, cb){
 		connect_dom_to_som(d, this, function(opts) {
 			setTimeout(function() {
 				var state_recovered;
-				su.fire('dom', _this);
-
-				var state_recovered;	
 				if (window.su && su.p && su.p.c_song){
 					if (su.p.c_song && su.p.c_song.plst_titl){
 						su.ui.views.show_now_playing(true);
 						state_recovered = true;
 					}
 				}
+				su.fire('dom', _this);
+
+				
 				if (state_recovered){
 					opts.state_recovered = true;
 				}

@@ -23,15 +23,14 @@ createPrototype(investigationUI, new suServView(), {
 	},
 	state_change: {
 		"mp-show": function(opts) {
-			var sli = $(su.ui.els.slider);
 			if (opts){
 				if (!opts.transit){
 					this.expand();
 				}
 				this.c.removeClass('hidden');
-				sli.addClass('show-search-results')
+				
 				if (!opts.closed){
-					sli.addClass('show-search')
+					$(su.ui.els.slider).addClass('show-search')
 				}
 			} else {
 				this.blur();
@@ -42,7 +41,7 @@ createPrototype(investigationUI, new suServView(), {
 			if (state){
 				this.blur();
 			} else {
-				
+				$(su.ui.els.slider).addClass('show-search-results');
 			}
 		}
 	},
