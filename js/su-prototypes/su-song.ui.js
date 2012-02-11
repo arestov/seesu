@@ -38,8 +38,11 @@ cloneObj(songUI.prototype, {
 				this.node.removeClass('marked-for-play');
 			}
 		},
-		"can-expand": function() {
-			this.expand();
+		"can-expand": function(state) {
+			if (state){
+				this.expand();
+			}
+			
 		},
 		files_search: function(opts){
 			if (opts.complete){

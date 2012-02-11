@@ -75,9 +75,12 @@
 			this.hide();	
 		},
 		view: function(no_navi){
-			this.fire('view');
-			this.findFiles();
-			su.ui.views.show_track_page(this, no_navi);
+			if (!this.state('mp-show')){
+				this.fire('view');
+				this.findFiles();
+				su.ui.views.show_track_page(this, no_navi);
+			}
+			
 		}
 	});
 	//song.prototype = song_methods;

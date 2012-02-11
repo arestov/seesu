@@ -88,7 +88,7 @@ var mainLevelUI = function(m_l){
 
 	this.els = su.ui.els;
 	this.nav = su.ui.nav;
-	this.c = $(su.ui.d.body);
+	this.c = $(this.d.body);
 
 	this.setModel(m_l);
 };
@@ -295,10 +295,10 @@ views.prototype = {
 	},
 	showResultsPage: function(query, no_navi){
 		var lev;
-		if (!su.ui.search_el || !su.ui.search_el.lev.isOpened()){
+		if (!su.search_el || !su.search_el.lev.isOpened()){
 			lev = this.m.goDeeper(false, createSuInvestigation());
 		} else {
-			lev = su.ui.search_el.lev;
+			lev = su.search_el.lev;
 		}
 		
 		var invstg = lev.resident;

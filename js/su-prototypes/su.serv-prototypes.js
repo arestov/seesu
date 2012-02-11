@@ -9,7 +9,7 @@ createPrototype(suMapModel, new mapLevelModel(), {
 				});
 				
 			})
-			.on('mpl-dettach', function() {
+			.on('mpl-detach', function() {
 				suReady(function() {
 					su.off('dom', cb);
 				});
@@ -26,9 +26,17 @@ createPrototype(suServView, new servView(), {
 
 		var _this = this;
 		var onDOMDie = function(currend_doc, dead_doc) {
+			_this.isAlive();
+
+
+			return 
 			var c = _this.getCNode();
 			if (c && c.ownerDocument == dead_doc){
-				_this.die();
+				_this.markAsDead();
+			} else {
+				console.log('no my doc!')
+				console.log(c.ownerDocument)
+				console.log(dead_doc)
 			}
 			
 		};
@@ -38,23 +46,24 @@ createPrototype(suServView, new servView(), {
 		});
 	},
 	getCNode: function(c) {
-		return (c = this.getC()) && (c[0] || c);
+		return (c = this.getC()) && (typeof length != 'undefined' ? c[0] : c);
 	},
 	isAlive: function() {
 		if (this.dead){
 			return false;
 		} else {
-			var c = this.getCNode();
-			if (c){
-				if (getDefaultView(c.ownerDocument)){
+			if (this.getC()){
+				var c = this.getCNode();
+				if (c && getDefaultView(c.ownerDocument)){
 					return true;
 				} else {
-					this.die();
+					this.markAsDead();
 					return false;
 				}
 			} else {
 				return true;
 			}
+			
 			
 		}
 	}

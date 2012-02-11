@@ -366,6 +366,7 @@ window.seesu_ui = function(d, with_dom, cb){
 				_this.dead = true;
 				console.log('DOM dead!');
 				su.removeDOM(d);
+				delete _this.checkLiveState;
 			}
 			
 		};
@@ -373,11 +374,13 @@ window.seesu_ui = function(d, with_dom, cb){
 		//d.defaultView.onuload = die;
 		//addEvent(, 'onbeforeunload', die);
 		//addEvent(d.defaultView, 'onuload', die);
-		si = setInterval(function() {
+		this.checkLiveState = function() {
 			if (!getDefaultView(d)){
 				die()
 			}
-		},1000);
+		};
+
+		si = setInterval(this.checkLiveState, 1000);
 		
 	}
 	der.push(this)

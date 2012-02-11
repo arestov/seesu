@@ -12,7 +12,7 @@ var investigationUI = function(invstg){
 };
 
 createPrototype(investigationUI, new suServView(), {
-	appendChildren: function(){
+	expand: function(){
 		for (var i = 0; i < this.invstg.sections.length; i++) {
 			var cur_ui = this.invstg.sections[i].getFreeView();
 			if (cur_ui){
@@ -25,6 +25,9 @@ createPrototype(investigationUI, new suServView(), {
 		"mp-show": function(opts) {
 			var sli = $(su.ui.els.slider);
 			if (opts){
+				if (!opts.transit){
+					this.expand();
+				}
 				this.c.removeClass('hidden');
 				sli.addClass('show-search-results')
 				if (!opts.closed){
@@ -146,7 +149,7 @@ createPrototype(investigation, new suMapModel(), {
 				if (opts.userwant){
 					su.track_page('search results');
 				}
-				su.ui.search_el = this;
+				su.search_el = this;
 			}
 			
 			

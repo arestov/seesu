@@ -37,6 +37,9 @@ window.seesu = window.su =  {
 	  },
 	  createUI: function(d, connect_dom){
 	  	var _this = this;
+	  	if (this.ui && this.ui.checkLiveState){
+	  		this.ui.checkLiveState();
+	  	}
 		this.ui = new seesu_ui(d, connect_dom, function(opts){
 			var cbs = _this.ui_creation_callbacks;
 			if (cbs){

@@ -321,12 +321,20 @@ cloneObj(servView.prototype, {
 	onDie: function(cb) {
 		this.on('die', cb);
 	},
-	die: function(){
+	markAsDead: function() {
 		this.dead = true;
-		if (this.c){
-			this.c.remove();
-		}
 		this.fire('die');
+	},
+	die: function(){
+		if (!this.dead){
+			var c = this.getC();
+			if (c){
+				c.remove();
+			}
+
+		}
+		this.markAsDead();
+		
 		return this;
 	},
 	setModel: function(mdl, puppet_model){

@@ -502,7 +502,7 @@ this.addSection('vk', {
 
 arrows_keys_nav = function(e){
 	
-	var invstg = su.ui.search_el;
+	var invstg = su.search_el;
 	
 	if (invstg){
 		var _key = e.keyCode;
