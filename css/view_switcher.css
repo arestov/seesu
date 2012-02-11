@@ -47,11 +47,7 @@
 
 #art-cards{
 	display:none;
-	max-width: 750px;
-	margin: 0 auto;
-	padding: 24px 10px;
-	overflow:hidden;
-	padding-bottom: 20px;
+	
 }	
 	
 #playlist-level{
@@ -373,6 +369,11 @@ ul.tracks-for-play > li{
 			}
 
 .art-card{
+	max-width: 750px;
+	margin: 0 auto;
+	padding: 24px 10px;
+	overflow:hidden;
+	padding-bottom: 20px;
 	}
 	.art-card ul{
 		
