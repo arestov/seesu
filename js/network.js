@@ -86,7 +86,114 @@ function tryVKApi(){
 	
 	
 };
+var seesu_vkappid = 2271620;
+
+var connectApiToSeesu = function(vk_token, access, not_save) {
+	var vkapi = new vkApi(vk_token, {queue: su.delayed_search.vk_api.queue});
+
+	su.vk_api = vkapi;
+	if (access){
+		su.mp3_search.add(vkapi.asearch, true);
+	}
+	
+	if (vk_token.expires_in){
+		setTimeout(function() {
+			vkapi.asearch.dead = vkapi.asearch.disabled = true;
+			if (su.vk_api == vkapi){
+				delete su.vkapi;
+			}
+		}, vk_token.expires_in)
+	}
+	if (!not_save){
+		suStore('vk_token_info', cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
+	}
+
+	vkapi.get('getProfiles', {
+		uids: vk_token.user_id,
+		fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
+		
+	},{nocache: true})
+		.done(function(info) {
+			info = info.response && info.response[0];
+			if (info){
+				seesu.vk.id = vk_token.user_id;
+
+				var _d = cloneObj({data_source: 'vkontakte'}, info);
+				su.vk.user_info = _d;
+				
+				
+				
+				if (!su.s.loggedIn()){
+					su.s.getAuth(vk_token.user_id);
+				} else{
+					su.s.setInfo('vk', su.vk.user_info);
+					su.s.api('user.update', su.vk.user_info);
+				}
+			} else {
+				
+			}
+		})
+		.fail(function(r) {
+			
+		})
+};
 
 function try_mp3_providers(){
+
+	
+	su.vk_auth = new vkAuth(seesu_vkappid, {
+		bridge: 'http://seesu.me/vk/bridge.html',
+		callbacker: 'http://seesu.me/vk/callbacker.html'
+	}, ["friends", "video", "offline", "audio", "wall"]);
+
+
+	var save_token = suStore('vk_token_info');
+	if (save_token){
+		//console.log('token!')
+		connectApiToSeesu( new vkTokenAuth(seesu_vkappid, save_token), true);
+		//console.log(save_token)
+	}
+
+	su.vk_auth
+		.on('vk-token-receive', function(token){
+
+			var vk_token = new vkTokenAuth(seesu_vkappid, token);			
+			connectApiToSeesu(vk_token);
+		})
+		.on('want-open-url', function(wurl){
+			if (app_env.showWebPage){
+				app_env.showWebPage(wurl, function(url){
+					var sb = 'http://seesu.me/vk/callbacker.html';
+					if (url.indexOf(sb) == 0){
+						app_env.hideWebPages();
+						app_env.clearWebPageCookies();
+
+						var hash = url.replace(sb, '');
+
+						var hashurlparams = get_url_parameters(hash.replace(/^\#/,''));
+						var access_token = hashurlparams.access_token;
+						if (access_token){
+							var at = {};
+							at.access_token = access_token;
+							if (hashurlparams.expires_in){
+								at.expires_in = hashurlparams.expires_in;
+							}
+							at.user_id = hashurlparams.user_id;
+							var vk_token = new vkTokenAuth(seesu_vkappid, at);
+							connectApiToSeesu(vk_token);
+
+						}
+						return true;
+						
+					}
+				}, function(e){
+					app_env.openURL(wurl);
+				}, 700, 600);
+			} else{
+				app_env.openURL(wurl);
+			}
+		});
+
+	return 
 	tryVKApi();
 }	

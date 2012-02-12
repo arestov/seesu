@@ -119,7 +119,7 @@ var seesuServerAPI = function(auth){
 	
 	
 	if (auth){
-		this.setAuth(auth);
+		this.setAuth(auth, true);
 	};
 	
 	var update_interval = 1000 * 60 * 4;
@@ -276,8 +276,8 @@ seesuServerAPI.prototype = {
 					if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){
 						
 						_this.setAuth('');
-						if (seesu.vk.id ){
-							_this.getAuth(seesu.vk.id);
+						if (su.vk.id ){
+							_this.getAuth(su.vk.id);
 						}
 						
 						

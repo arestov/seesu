@@ -135,7 +135,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 							}
 						} else{
 							
-							vk_auth_box.requestAuth({
+							su.vk_auth.requestAuth({
 								ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
 								c: _this
 							})
@@ -152,7 +152,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 			}
 			
 		};
-		vk_auth_box.setUI(sui.samples.vk_login);
+		//vk_auth_box.setUI(sui.samples.vk_login);
 		
 			
 		sui.els.search_label = sui.els.search_form.find('#search-p').find('.lbl');

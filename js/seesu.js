@@ -17,7 +17,7 @@ var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret')
 	return suStore(key, value, true);
 }, cache_ajax, app_env.cross_domain_allowed, new funcs_queue(100));
 
-var dga = (dga && suStore('dg_auth'));
+var dga = suStore('dg_auth');
 
 var main_level = new mainLevel();
 window.seesu = window.su =  {
