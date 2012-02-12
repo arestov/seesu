@@ -121,8 +121,8 @@ suReady(function(){
 	var sm2opts = {};
 	if (su.env.opera_extension){
 		sm2opts.wmode = 'opaque'
+		sm2opts.useHighPerformance = false;
 	} else {
-		sm2opts.useHighPerformance = true;
 		if (su.env.opera_widget){
 			sm2opts.wmode = 'transparent';
 		}
