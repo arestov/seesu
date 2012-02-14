@@ -1,3 +1,36 @@
+var notifyCounter = function(name, banned_messages) {
+	this.callParentMethod('init');
+	this.messages = {};
+	this.banned_messages = banned_messages || [];
+	this.name = name;
+};
+
+createPrototype(notifyCounter, servModel(), {
+	addMessage: function(m) {
+		if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
+			this.messages[m] = true;
+			this.recount();
+		}
+	},
+	banMessage: function(m) {
+		this.removeMessage(m);
+		this.banned_messages.push(m);
+	},
+	removeMessage: function(m) {
+		if (this.messages[m]){
+			delete this.messages[m];
+			this.recount();
+		}
+	},
+	recount: function() {
+		var counter = 0;
+		for (var a in this.messages){
+			++counter
+		}
+		this.updateState('counter', counter);
+	}
+});
+
 var mfComplectUI = function(mf) {
 	this.mf = mf;
 	this.callParentMethod('init');
