@@ -5,7 +5,7 @@ var notifyCounter = function(name, banned_messages) {
 	this.name = name;
 };
 
-createPrototype(notifyCounter, servModel(), {
+createPrototype(notifyCounter, new servModel(), {
 	addMessage: function(m) {
 		if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
 			this.messages[m] = true;
