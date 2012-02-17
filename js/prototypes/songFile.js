@@ -122,7 +122,7 @@
 		changeBar: function(bar, factor){
 			if (factor){
 				if (this.width){
-					bar[0].style.width = factor * this.width + 'px';
+					bar[0].style.width = Math.floor(factor * this.width) + 'px';
 				} else {
 					bar[0].style.width = factor * 100 + '%';
 				}
@@ -133,13 +133,28 @@
 		fixWidth: function(){
 			this.width = this.progress_c.width();
 		},
+		fixBars: function() {
+			this.fixWidth();
+			this.changeBar(this.cplayng, this.state('playing-progress'));
+			this.changeBar(this.cloading, this.state('loading-progress'));
+		},
 		resetPlayPosition: function(){
-			this.cplayng[0].style.width = 0;
+			this.changeBar(this.cplayng,0);
 		},
 		reset: function(){
-			this.resetPlayPosition();
-			this.cloading[0].style.width = 0;
 			this.fixWidth();
+			this.resetPlayPosition();
+			this.changeBar(this.cloading, 0);
+			
+		},
+		onAppend: function(parent_view) {
+			var _this = this;
+			parent_view.parent_view.on('want-more-songs-state-change', function() {
+				if (_this.state('selected')){
+					_this.fixBars();
+				}
+				
+			})
 		}
 	});
 

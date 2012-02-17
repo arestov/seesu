@@ -359,10 +359,13 @@ cloneObj(servView.prototype, {
 	wasAppended: function() {
 		return !!this.append_done;
 	},
-	appended: function(parentView){
+	appended: function(parent_view){
 		this.append_done = true;
-		if (parentView){
-			this.parentView = parentView;
+		if (parent_view){
+			this.parent_view = parent_view;
+		}
+		if (this.onAppend){
+			this.onAppend(parent_view);
 		}
 		if (this.appendChildren){
 			this.appendChildren();
@@ -414,6 +417,7 @@ cloneObj(servView.prototype, {
 		value = value || false;
 		var old_value = this.replaceState(is_prop, name, value);
 		if (old_value){
+			this.fire(name + '-state-change', value, old_value[0]);
 			if (!is_prop){
 				this.callStateWatchers(name, value, old_value[0]);
 				if (allow_complex_watchers){

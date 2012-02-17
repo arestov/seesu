@@ -188,12 +188,17 @@ a.desc{
 				}
 			.moplas-block ul li .mf-progress{
 				overflow: hidden;
-				height: 15px;
+				min-height: 15px;
+				max-height:15px;
 				padding:1px 0;
 				}
-
+				.moplas-block.want-more-songs ul li .mf-progress{
+					max-height:none;
+					}
 			.moplas-block ul li .mf-duration{
-				float:right
+				float:right;
+				margin-left: 5px;
+				margin-bottom: 2px;
 				}
 			.moplas-block ul li .mf-source{
 				margin-left:10px;
@@ -202,6 +207,7 @@ a.desc{
 				.moplas-block.want-more-songs ul .mf-source{
 					display: none;
 					}
+		
 			.moplas-block ul li a{
 				color:inherit;
 			}

@@ -86,7 +86,11 @@ createPrototype(mfComplectUI, new suServView(), {
 		var moplas_list = this.mf.moplas_list;
 
 		for (var i = 0; i < moplas_list.length; i++) {
-			this.appendModelTo(moplas_list[i], this.lc);
+			var ui  = moplas_list[i].getFreeView();
+			if (ui){
+				this.lc.append(ui.getC())
+				ui.appended(this)
+			}
 		}
 	}
 });
@@ -170,7 +174,12 @@ createPrototype(mfCorUI, new suServView(), {
 			var pa = this.mf_cor.pa_o;
 
 
-			var append = function(ui_c){
+			var append = function(cur_view){
+				var ui_c = cur_view && cur_view.getC();
+				if (!ui_c){
+					return;
+				}
+
 				var prev_name = pa[i-1];
 				var prev = prev_name && _this.mf_cor.complects[prev_name];
 				var prev_c = prev && prev.getC();
@@ -184,23 +193,20 @@ createPrototype(mfCorUI, new suServView(), {
 						_this.c.append(ui_c);
 					}
 				}
+				cur_view.appended(_this);
 			};
 
 			for (var i = 0; i < pa.length; i++) {
-				this.appendModelTo(this.mf_cor.complects[pa[i]], append);
+				append(this.mf_cor.complects[pa[i]].getFreeView());
 			}
 		}
 		
 	},
 	getNextSemC: function(packs, start) {
-		
 		for (var i = start; i < packs.length; i++) {
 			var cur_name = packs[i];
 			var cur_mf = cur_name && this.mf_cor.complects[cur_name];
-			var mf_c = cur_mf && cur_mf.getC();
-			if (mf_c){
-				return mf_c;
-			}
+			return cur_mf && cur_mf.getC();
 		}
 	}
 });

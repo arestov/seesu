@@ -17,7 +17,7 @@ createPrototype(investigationUI, new suServView(), {
 			var cur_ui = this.invstg.sections[i].getFreeView();
 			if (cur_ui){
 				this.c.append(cur_ui.getC());
-				cur_ui.appended()
+				cur_ui.appended(this)
 			}
 		};
 	},
