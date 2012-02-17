@@ -425,3 +425,31 @@ var createPrototype = function(constr, assi_prototype, clone_prototype){
 	cloneObj(constr.prototype, clone_prototype);
 	return constr;
 };
+
+var depdc = function(init) {
+	if (init){
+		this.init();
+	}
+};
+depdc.prototype = {
+	constructor: depdc,
+	init: function() {
+		this.dep_list = [];
+	},
+	addDepend: function(de) {
+		if (this.dep_list.indexOf(de) == -1){
+			this.dep_list.push(de);
+		}
+	},
+	removeDepend: function(de) {
+		this.dep_list = arrayExclude(this.dep_list, de);
+	},
+	softAbort: function(de) {
+		if (de){
+			this.removeDepend(de);
+		}
+		if (!this.dep_list.length){
+			this.abort();
+		}
+	}
+};

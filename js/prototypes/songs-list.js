@@ -10,7 +10,6 @@
 		},
 		push: function(omo, view){
 			var mo = this.extendSong(omo, this.player, this.findMp3);
-			mo.delayed_in = [];
 			mo.plst_titl = this;
 			if (view){
 				mo.render(true);

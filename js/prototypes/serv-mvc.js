@@ -58,17 +58,31 @@ cloneObj(eemiter.prototype, {
 		}
 		return this;
 	},
-	addRequest: function(rq){
-		this.requests.push(rq);
-		if (rq.addDependent){
-			rq.addDependent(this);
+	getRequests: function() {
+		return this.requests;
+	},
+	addRequest: function(rq, depend){
+		if (this.requests.indexOf(rq) == -1){
+			if (depend){
+				if (rq){
+					rq.addDepend(this);
+				}
+			}
+			this.requests.push(rq);
+			this.fire('request', rq);
 		}
-		this.fire('request', rq);
+		
 	},
 	stopRequests: function(){
 		while (this.requests.length) {
 			var rq = this.requests.pop();
-			if (rq && rq.abort) {rq.abort(this);}
+			if (rq) {
+				if (rq.softAbort){
+					rq.softAbort(this);
+				} else if (rq.abort){
+					rq.abort(this);
+				}
+			}
 		}
 	},
 	getQueued: function() {
@@ -226,6 +240,7 @@ cloneObj(servModel.prototype, {
 		this.removeDeadViews();
 	},
 	die: function(){
+		this.stopRequests();
 		this.killViews();
 		for (var i = 0; i < this.children.length; i++) {
 			this.children[i].die();

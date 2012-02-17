@@ -66,18 +66,18 @@ lastfm_api.prototype= {
 	send: function(method, params, options, post){
 		var _this				= this,
 			deferred			= $.Deferred(),
-			complex_response	= {
-				abort: function(){
-					this.aborted = true;
-					deferred.reject('abort');
-					if (this.queued){
-						this.queued.abort();
-					}
-					if (this.xhr){
-						this.xhr.abort();
-					}
-				}
-			};
+			complex_response	= new depdc(true);
+		
+		complex_response.abort = function(){
+			this.aborted = true;
+			deferred.reject('abort');
+			if (this.queued){
+				this.queued.abort();
+			}
+			if (this.xhr){
+				this.xhr.abort();
+			}
+		};
 
 		deferred.promise( complex_response );
 

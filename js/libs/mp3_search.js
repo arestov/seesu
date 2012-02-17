@@ -607,7 +607,14 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 		var o = options || {};
 		var search_query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
 		var deferred = $.Deferred(),
-			complex_response = deferred.promise();
+			complex_response = new depdc(true);
+		complex_response.abort = function() {
+			this.aborted = true;
+			if (this.queued){
+				this.queued.abort();
+			}
+		};
+		deferred.promise( complex_response );
 
 		var callback_success = function(music_list, search_source){
 			music_list.sort(function(g,f){
@@ -765,6 +772,7 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 
 		semi.setPrio('highest');
 
+		//var reqs = semi.getRequests
 		var queued = semi.getQueued();
 		for (var i = 0; i < queued.length; i++) {
 			queued[i].q.init();

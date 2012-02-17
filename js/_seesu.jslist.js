@@ -7,11 +7,11 @@
 	
 	var js_toload = [
 	"js/libs/w_storage.js", 
-	"js/libs/c_quene.js", 
 	"js/libs/c_cache_ajax.js",
 	"js/common-libs/md5.min.js", 
 	"js/common-libs/jquery-1.7.2pre.mod.min.js", 
 	"js/libs/serv.js", 
+	"js/libs/c_quene.js", 
 	"js/app_serv.js",
 	"js/prototypes/serv-mvc.js",
 	"js/common-libs/jquery.debounce-1.0.5.js",
