@@ -588,13 +588,6 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 			callback();
 		}	
 	},
-	abortAllSearches: function(){
-		for (var i=0; i < this.length; i++) {
-			if (this[i].q && this[i].q.abort){
-				this[i].q.abort;
-			}
-		};
-	},
 	getCache: function(sem, name){
 		return cache_ajax.get(name + 'mp3', sem.q, function(r){
 			

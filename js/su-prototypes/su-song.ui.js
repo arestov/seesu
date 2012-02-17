@@ -108,25 +108,22 @@ cloneObj(songUI.prototype, {
 		this.c.removeClass('playing-song');
 	},
 	unmark: function(){
-		var target_node = this.node && this.node.parent();
-		if (target_node){
-			target_node.removeClass('to-play-next to-play-previous');
-		}
+		this.c.removeClass('to-play-next to-play-previous');
+		
 	},
 	markAs: function(statev){
-		var target_node = this.node && this.node.parent();
-		if (target_node){
-			switch (statev) {
-				case 'next':
-					target_node.addClass('to-play-next');
-					break
-				case 'prev':
-					target_node.addClass('to-play-previous');
-					break
-				default:
-			}
-
+	
+		switch (statev) {
+			case 'next':
+				this.c.addClass('to-play-next');
+				break
+			case 'prev':
+				this.c.addClass('to-play-previous');
+				break
+			default:
 		}
+
+		
 	},
 	deactivate: function(opts){
 		this.c.removeClass('viewing-song');

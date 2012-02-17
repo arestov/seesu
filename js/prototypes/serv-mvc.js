@@ -71,6 +71,7 @@ cloneObj(eemiter.prototype, {
 			this.requests.push(rq);
 			this.fire('request', rq);
 		}
+		return this;
 		
 	},
 	stopRequests: function(){
@@ -84,6 +85,7 @@ cloneObj(eemiter.prototype, {
 				}
 			}
 		}
+		return this;
 	},
 	getQueued: function() {
 		return $filter(this.requests, 'queued');	
@@ -93,6 +95,7 @@ cloneObj(eemiter.prototype, {
 		for (var i = 0; i < queued.length; i++) {
 			queued[i].setPrio(type);
 		}
+		return this;
 	}
 });
 

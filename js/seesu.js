@@ -7,7 +7,6 @@ $.ajaxSetup({
   }
 });
 $.support.cors = true;
-//su.mp3_search.abortAllSearches(); fixme
 
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 

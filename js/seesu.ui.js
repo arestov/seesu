@@ -198,15 +198,17 @@ createPrototype(artCard, new suMapModel(), {
 		return '/catalog/' + this.artist;	
 	},
 	loadInfo: function(){
+		this.loadAlbums();
 		this.loadBaseInfo();
 		this.loadTopTracks();
-		this.loadAlbums();
+		this.setPrio('highest');
+		
 	},
 	loadAlbums: function(){
 		
 		var _this = this;
 		this.updateState('loading-albums', true);
-		lfm.get('artist.getTopAlbums',{'artist': this.artist })
+		this.addRequest(lfm.get('artist.getTopAlbums',{'artist': this.artist })
 			.done(function(r){
 				_this.updateState('loading-albums', false)
 				if (r){
@@ -222,28 +224,40 @@ createPrototype(artCard, new suMapModel(), {
 			})
 			.fail(function(){
 				_this.updateState('loading-albums', false)
-			});
+			})
+		);
 	},
 	loadTopTracks: function(){
 		
 		var _this = this;
 		this.updateState('loading-toptracks', true);
-		getTopTracks(this.artist, function(list){
-			_this.updateState('loading-toptracks', false);
-			if (list.length){
-				_this.updateState('toptracks', list);
-			}
-		}, function(){
-			_this.updateState('loading-toptracks', false);
-		});
+		this.addRequest(
+			lfm.get('artist.getTopTracks',{'artist': this.artist })
+				.done(function(r){
+					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+
+					if (tracks.length){
+						var track_list = [];
+					
+						for (var i=0, l = Math.min(tracks.length, 30); i < l; i++) {
+							track_list.push({'artist' : this.artist ,'track': tracks[i].name, images: tracks[i].image});
+						}
+
+						_this.updateState('toptracks', track_list);
+					}
+					
+				})
+				.always(function(){
+					_this.updateState('loading-toptracks', false);
+				})
+		);
 		
 	},
 	loadBaseInfo: function(){
 		var _this = this;
 
 		this.updateState('loading-baseinfo', true);
-
-		lfm.get('artist.getInfo',{'artist': this.artist })
+		this.addRequest(lfm.get('artist.getInfo',{'artist': this.artist })
 			.done(function(r){
 				_this.updateState('loading-baseinfo', false);
 				r = parseArtistInfo(r);
@@ -264,6 +278,7 @@ createPrototype(artCard, new suMapModel(), {
 			.fail(function(){
 				_this.updateState('loading-baseinfo', false);
 			})
+		);
 	
 	}
 });

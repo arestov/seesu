@@ -297,7 +297,7 @@ var viewBlocks = function(sui, d){
 				if (r && r.toptracks && r.toptracks.track){
 					_cmetro.empty()
 					
-					var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name}).loading();
+					var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name});
 					
 					var metro_tracks = r.toptracks.track;
 					var _header =  $('<h3></h3>').appendTo(_cmetro)
