@@ -52,7 +52,6 @@
 	
 	"js/prototypes/player.sm2-proxy.js",
 	"js/su-prototypes/su-player.js",
-	"js/seesu.player.js", 
 	"js/libs/c_buttmen.js", 
 	"js/pressed_node_tester.js"
 	];
