@@ -66,31 +66,7 @@ sm2proxy.prototype = {
 			this.frame.contentWindow.postMessage(JSON.stringify(args), '*');
 		}
 	},
-	create: function(id, opts){
-		this.sendMsg('create', id, opts);
-	},
-	play: function(id){
-		this.sendMsg('play', id);
-	},
-	stop: function(id){
-		this.sendMsg('stop', id);
-	},
-	pause: function(id){
-		this.sendMsg('pause', id);
-	},
-	setVolume: function(id, vol){
-		this.sendMsg('setVolume', id, vol);
-	},
-	setPosition: function(id, pos){
-		this.sendMsg('setPosition', id, pos);
-	},
-	remove: function(id){
-		this.sendMsg('remove', id);
-	},
-	load: function(id){
-		this.sendMsg('load', id);
-	},
-	unload: function(id){
-		this.sendMsg('load', id);
+	callSongMethod: function(method, id) {
+		this.sendMsg.apply(this, arguments)
 	}
 };

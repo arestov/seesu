@@ -54,7 +54,11 @@
 			};
 
 			this.progress_c = $('<div class="mf-progress"></div>');
-
+			this.c.click(function() {
+				if (!_this.state('play')){
+					_this.sf.fire('want-to-be-selected');
+				} 
+			});
 
 
 			//this.c = $('<div class="track-progress"></div>')
@@ -69,7 +73,7 @@
 				} else {
 					_this.sf.fire('want-to-be-selected');
 				}
-				
+				return false;
 				//su.ui.hidePopups();
 				//e.stopPropagation();	
 			});
