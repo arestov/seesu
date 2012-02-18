@@ -70,9 +70,14 @@
 		
 			}
 		});
+		soundManager.ontimeout(function() {
+			_this.sm2Loaded();
+			console.log('internal sm2 notok')
+		})
 		this.sm2_newb = soundManager;
 
 		this.c = soundManager.getC();
+		this.def = $.Deferred();
 	};
 
 	sm2internal.prototype = {
@@ -85,16 +90,17 @@
 				delete this.subr;
 			}
 		},
-		fail: function() {
+		fail: function(cb) {
 			this.def.fail(cb);
 			return this;
 		},
-		done: function() {
+		done: function(cb) {
 			this.def.done(cb);
 			return this;
 		},
 		appended: function() {
 			this.sm2_newb.appended();
+			return this;
 		},
 		getC: function() {
 			return this.c;

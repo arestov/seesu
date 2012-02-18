@@ -115,19 +115,18 @@ su.p
 			});
 		}
 	});
+var sm2opts = {};
+if (su.env.opera_extension){
+	sm2opts.wmode = 'opaque'
+	sm2opts.useHighPerformance = false;
+} else {
+	if (su.env.opera_widget){
+		sm2opts.wmode = 'transparent';
+	}
+}
 
 
 suReady(function(){
-	var sm2opts = {};
-	if (su.env.opera_extension){
-		sm2opts.wmode = 'opaque'
-		sm2opts.useHighPerformance = false;
-	} else {
-		if (su.env.opera_widget){
-			sm2opts.wmode = 'transparent';
-		}
-	}
-
 	var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
 	var pcon = $(pcore.getC());
 	var complete;
@@ -166,6 +165,46 @@ suReady(function(){
 	//$(document.body).append(_this.c);
 });
 
+suReady(function(){
+
+	var pcore = new sm2internal("http://arestov.github.com/SoundManager2/swf/", sm2opts);
+	var pcon = $(pcore.getC());
+	var complete;
+
+
+	pcon
+		.addClass('sm2proxy')
+		.attr('scrolling', 'no');
+	
+	pcon.on('load', function() {
+		setTimeout(function() {
+			if (!complete){
+				pcon.addClass('long-appearance')
+			}
+		}, 20000);
+	});
+	
+	
+	pcore
+		.done(function(){
+			complete = true;
+			//su.p.setCore(pcore);
+			//pcon.addClass('hidden');
+			//dstates.add_state('body','flash-internet');
+
+		})
+		.fail(function(){
+			complete = true;
+			//pcon.addClass('hidden');
+		})
+	$(function(){
+		$(document.body).append(pcon);
+		pcore.appended();
+		//$(su.ui.nav).after(pcon);
+	});
+	
+	//$(document.body).append(_this.c);
+});
 
 
 	
