@@ -6,10 +6,10 @@ su.player = {
 var html_player_timer;
 (function(){
 	return
-	var a = document.createElement('audio');
+	var h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
 	var aw = document.createElement('object');
 		aw.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95";
-	if(!!(a.canPlayType && a.canPlayType('audio/mpeg;').replace(/no/, ''))){
+	if(h5a){
 		yepnope({
 			load: bpath + "js/seesu.player.html5.js", 
 			complete: function(){
