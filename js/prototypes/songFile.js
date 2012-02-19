@@ -214,23 +214,32 @@
 				this.updateProp('loaded_duration', opts.duration);
 			},
 			loading: function(opts){
-				var dec = opts.loaded/opts.total;
-				this.updateState('loading-progress', dec);
+				var factor;
+				if (opts.loaded && opts.total){
+					factor = opts.loaded/opts.total
+				} else if (opts.duration && opts.fetched){
+					factor = opts.fetched/opts.duration
+				}
+				if (factor){
+					this.updateState('loading-progress', factor);
+				}
+				
 
 				
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.waitToLoadNext(dec > 0.8);
+					mo.waitToLoadNext(factor > 0.8);
 				}
 			},
 			pause: function(opts){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', 'pause');
+					mo.updateState('play', false);
 				}
-				this.updateState('play', 'pause');
+				this.updateState('play', false);
 			},
 			stop: function(opts){
+				throw "Do not rely on stop event"
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
 					mo.updateState('play', false);
@@ -260,7 +269,8 @@
 		},
 		stop: function(){
 			if (this.player){
-				this.player.stop(this);
+				this.pause();
+				this.setPosition(0);
 				this.player.remove(this);
 				delete this.sound;
 			}

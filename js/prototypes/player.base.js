@@ -70,11 +70,6 @@ cloneObj(playerBase.prototype, {
 			
 		}
 	},
-	stop: function(song_file){
-		if (song_file && this.core){
-			this.core.callSongMethod("stop", song_file.uid);
-		}
-	},
 	pause: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("pause", song_file.uid);

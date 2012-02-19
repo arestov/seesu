@@ -1,42 +1,102 @@
 (function() {
-	var createSoundSample = function(cb) {
-		return {
-			onplay: function(){
-				cb('play', this.sID)
-			},
-			onresume: function(){
-				cb('play', this.sID)
-			},
-			onpause: function(){
-				cb('pause', this.sID)
-			},
-			onstop: function(){
-				cb('stop', this.sID)
-			},
-			onfinish: function(){
-				cb('finish', this.sID)
-			},
-			whileplaying: function(){
-				cb('playing', this.sID, {
-					duration:  (this.bytesTotal * this.duration)/this.bytesLoaded,
-					position: this.position
-				});
-			},
-			whileloading: function(){
-				cb('loading', this.sID, {
-					total: this.bytesTotal,
-					loaded: this.bytesLoaded
-				});
-			},
-			ondataerror: function(){
-				cb('error', this.sID);
-			}
+	var createAE = function(id, url, cb) {
+		var a = new Audio(url);
+		addEvent(a, 'play', function(){
+			cb('play', id);
+		});
+		addEvent(a, 'pause', function(){
+			cb('pause', id);
+		});
+		addEvent(a, 'ended', function(){
+			cb('finish', id);
+		});
+		addEvent(a, 'timeupdate', function(){
+			cb('playing', id, {
+				duration:  a.duration,
+				position: a.currentTime
+			});
+		});
+		var at_finish;
+		var fireProgress = function() {
+			cb('loading', id, {
+				duration: a.duration,
+				fetched: a.buffered.end(0)
+			});
 		};
+		addEvent(a, 'progress', function(e){
+			clearTimeout(at_finish);
+			if (a.buffered.length){
+				fireProgress();
+				if (a.buffered.end(0)/a.duration != 1){
+					at_finish = setTimeout(function() {
+						fireProgress();
+					}, 5000);
+				}
+			}
+		});
+		addEvent(a, 'error', function(){
+			cb('error', id);
+		});
+		return a;
 	};
+	var html5Sound = function(opts, cb) {
+		this.url = opts.url;
+		this.id = opts.id;
+		this.cb = cb;
+		this.requireAE();
+		
+	};
+	html5Sound.prototype = {
+		requireAE: function() {
+			if (!this.a){
+				this.a = createAE(this.id, this.url, this.cb);
+			}
+		},
+		unload: function() {
+			if (this.a){
+				try {
+					this.a.pause();
+				} catch (e){}
+				this.a.url = null;
+				delete this.a;
+			}
+		},
+		play: function() {
+			this.requireAE();
+			this.a.play();
+		},
+		load: function() {
+			this.requireAE();
+			this.a.load();
+		},
+		stop: function() {
+			try{
+				this.a.pause();
+				this.a.currentTime = 0;
+			} catch(e){}
+		},
+		pause: function() {
+			this.a.pause();
+		},
+		setVolume: function(vol) {
+			this.a.volume = vol/100;
+		},
+		setPosition: function(pos) {
+			try{
+				this.a.currentTime = Math.min(this.a.buffered.end(0), pos);
+			} catch(e){}
+		}
+	};
+
 
 	html5AudioCore = function(path, opts) {
 		var _this = this;
 		this.sounds_store = {};
+		this.feedBack = function() {
+			if (_this.subr){
+				_this.subr.apply(_this, arguments);
+			}
+		};
 	};
 
 	html5AudioCore.prototype = {
@@ -49,25 +109,34 @@
 				delete this.subr;
 			}
 		},
+
+		createSound: function(opts) {
+			if (!this.sounds_store[opts.id]){
+				this.sounds_store[opts.id] = new html5Sound(opts, this.feedBack);
+			}
+		},
+		removeSound: function(id) {
+			if (this.sounds_store[id]){
+				this.sounds_store[id].unload();
+				delete this.sounds_store[id];
+			}
+		},
 		getSound: function(id) {
 			return this.sounds_store[id];
 		},
 		plc: {
 			create: function(s, opts){
 				if (!s || s.url != opts.url){
-					if (s){
-						s.destroySound()
-					}
-					var sound_options = cloneObj({}, this.soundSample);
-					sound_options.id = opts.id;
-					sound_options.url = opts.url;
-
-					if (opts.volume){
-						sound_options.volume = parseFloat(opts.volume);
-					}
-					this.sm2.createSound(this.sound_options);
+					this.removeSound(opts.id);
+					this.createSound(opts);
 				}
 			},
+			remove: function(s){
+				if (s){
+					this.removeSound(s.id);
+				}
+			},
+
 			play: function(s){
 				s.play();
 			},
@@ -91,11 +160,6 @@
 					s.setPosition(parseFloat(pos));
 				}
 			},
-			remove: function(s){
-				if (s){
-					s.destruct();
-				}
-			},
 			load: function(s){
 				if (s){
 					s.load();
@@ -109,15 +173,15 @@
 		},
 
 		callCore: function(method, id, opts) {
-			if (this.sm2 && method && this.plc[method] && id){
+			if (method && this.plc[method] && id){
 				if (opts && opts === Object(opts)){
 					cloneObj(opts, {id: id});
 				}
-				this.plc[method].call(this, this.sm2.getSoundById(id), opts);
+				this.plc[method].call(this, this.getSound(id), opts);
 			}	
 		},
 		callSongMethod: function() {
-			this.callCore.apply(this, arguments)
+			this.callCore.apply(this, arguments);
 		}
 	};
 })();

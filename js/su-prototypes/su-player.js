@@ -125,8 +125,15 @@ if (su.env.opera_extension){
 	}
 }
 
+//su.p.setCore(pcore);
+
+var h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
+if (h5a){
+	su.p.setCore(new html5AudioCore());
+}
 
 suReady(function(){
+	return
 	var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
 	var pcon = $(pcore.getC());
 	var complete;
@@ -166,7 +173,7 @@ suReady(function(){
 });
 
 suReady(function(){
-
+	return
 	var pcore = new sm2internal("http://arestov.github.com/SoundManager2/swf/", sm2opts);
 	var pcon = $(pcore.getC());
 	var complete;
