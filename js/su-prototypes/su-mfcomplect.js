@@ -323,11 +323,7 @@ createPrototype(mfCor, new servModel(), {
 	},
 	switchPlay: function(){
 		if (this.state('play')){
-			if (this.state('play') == 'play'){
-				this.pause();
-			} else {
-				this.play();
-			}
+			this.pause();
 		} else {
 			this.play();
 		}
@@ -343,12 +339,10 @@ createPrototype(mfCor, new servModel(), {
 	play: function(mopla){
 		var cmf = this.state('current_mopla');
 		var dmf = this.state('default_mopla');
-		if ((cmf && (!mopla || mopla == cmf)) && this.state('play') == 'pause'){
-			cmf.play();
-		} else if (this.isHaveTracks()){
+		if (this.isHaveTracks()){
 			mopla = mopla || dmf;
 			if (mopla != cmf || !this.state('play')){
-				if (cmf){
+				if (cmf && mopla != cmf){
 					cmf.stop();
 				}
 				mopla = mopla || this.song();

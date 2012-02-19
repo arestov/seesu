@@ -16,9 +16,6 @@
 				this.changeBar(this.cloading, factor);
 			},
 			play: function(state, oldstate){
-				if (!state){
-					this.resetPlayPosition();
-				}
 
 				if (state == 'play'){
 					this.c.addClass('playing-file')
