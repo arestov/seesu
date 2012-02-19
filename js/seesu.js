@@ -132,16 +132,11 @@ window.seesu = window.su =  {
 	};
 
 su.emitter.onRegistration('dom', function(cb) {
-	if (su.ui && su.ui.views){
+	if (su.ui && su.ui.can_fire_on_domreg){
 		cb();
 	}	
 });
 
-
-
-var suBase = function() {
-	
-};
 
 //var 
 

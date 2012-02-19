@@ -424,7 +424,7 @@ window.seesu_ui = function(d, with_dom, cb){
 					}
 				}
 				su.fire('dom', _this);
-
+				_this.can_fire_on_domreg = true;
 				
 				if (state_recovered){
 					opts.state_recovered = true;

@@ -67,10 +67,7 @@
 	var js_loadcomplete = [];
 	window.jsLoadComplete = function(callback){
 		if (completed){
-			setTimeout(function(){
-				callback();
-			},30)
-			
+			callback();
 		} else{
 			js_loadcomplete.push(callback);
 		}
@@ -84,10 +81,9 @@
 			load: bpathWrap(js_toload),
 			complete: function(){
 				completed = true;
-				for (var i = js_loadcomplete.length - 1; i >= 0; i--){
-					var f = js_loadcomplete.pop();
-					f();
-				};
+				while (js_loadcomplete.length){
+					js_loadcomplete.shift()();
+				}
 			},
 			callback: function(url){
 				if (url.indexOf('jquery.debounce-1.0.5.js') != -1){

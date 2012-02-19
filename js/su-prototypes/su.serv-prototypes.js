@@ -4,13 +4,13 @@ createPrototype(suMapModel, new mapLevelModel(), {
 	regDOMDocChanges: function(cb) {
 		this
 			.on('mpl-attach', function() {
-				suReady(function() {
+				jsLoadComplete(function() {
 					su.on('dom', cb);
 				});
 				
 			})
 			.on('mpl-detach', function() {
-				suReady(function() {
+				jsLoadComplete(function() {
 					su.off('dom', cb);
 				});
 			});
