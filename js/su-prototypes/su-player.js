@@ -130,47 +130,48 @@ if (su.env.opera_extension){
 var h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
 if (h5a){
 	su.p.setCore(new html5AudioCore());
+} else {
+	suReady(function(){
+		var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
+		var pcon = $(pcore.getC());
+		var complete;
+
+
+		pcon
+			.addClass('sm2proxy')
+			.attr('scrolling', 'no');
+		
+		pcon.on('load', function() {
+			setTimeout(function() {
+				if (!complete){
+					pcon.addClass('long-appearance')
+				}
+			}, 20000);
+		});
+		
+		
+		pcore
+			.done(function(){
+				complete = true;
+				su.p.setCore(pcore);
+				pcon.addClass('hidden');
+				dstates.add_state('body','flash-internet');
+
+			})
+			.fail(function(){
+				complete = true;
+				pcon.addClass('hidden');
+			})
+		$(function(){
+			$(document.body).append(pcon)
+			//$(su.ui.nav).after(pcon);
+		});
+		
+		//$(document.body).append(_this.c);
+	});
 }
 
-suReady(function(){
-	return
-	var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
-	var pcon = $(pcore.getC());
-	var complete;
 
-
-	pcon
-		.addClass('sm2proxy')
-		.attr('scrolling', 'no');
-	
-	pcon.on('load', function() {
-		setTimeout(function() {
-			if (!complete){
-				pcon.addClass('long-appearance')
-			}
-		}, 20000);
-	});
-	
-	
-	pcore
-		.done(function(){
-			complete = true;
-			su.p.setCore(pcore);
-			pcon.addClass('hidden');
-			dstates.add_state('body','flash-internet');
-
-		})
-		.fail(function(){
-			complete = true;
-			pcon.addClass('hidden');
-		})
-	$(function(){
-		$(document.body).append(pcon)
-		//$(su.ui.nav).after(pcon);
-	});
-	
-	//$(document.body).append(_this.c);
-});
 
 suReady(function(){
 	return
