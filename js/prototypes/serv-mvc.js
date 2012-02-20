@@ -58,18 +58,34 @@ cloneObj(eemiter.prototype, {
 		}
 		return this;
 	},
-	addRequest: function(rq){
-		this.requests.push(rq);
-		if (rq.addDependent){
-			rq.addDependent(this);
+	getRequests: function() {
+		return this.requests;
+	},
+	addRequest: function(rq, depend){
+		if (this.requests.indexOf(rq) == -1){
+			if (depend){
+				if (rq){
+					rq.addDepend(this);
+				}
+			}
+			this.requests.push(rq);
+			this.fire('request', rq);
 		}
-		this.fire('request', rq);
+		return this;
+		
 	},
 	stopRequests: function(){
 		while (this.requests.length) {
 			var rq = this.requests.pop();
-			if (rq && rq.abort) {rq.abort(this);}
+			if (rq) {
+				if (rq.softAbort){
+					rq.softAbort(this);
+				} else if (rq.abort){
+					rq.abort(this);
+				}
+			}
 		}
+		return this;
 	},
 	getQueued: function() {
 		return $filter(this.requests, 'queued');	
@@ -79,6 +95,7 @@ cloneObj(eemiter.prototype, {
 		for (var i = 0; i < queued.length; i++) {
 			queued[i].setPrio(type);
 		}
+		return this;
 	}
 });
 
@@ -226,6 +243,7 @@ cloneObj(servModel.prototype, {
 		this.removeDeadViews();
 	},
 	die: function(){
+		this.stopRequests();
 		this.killViews();
 		for (var i = 0; i < this.children.length; i++) {
 			this.children[i].die();
@@ -359,10 +377,13 @@ cloneObj(servView.prototype, {
 	wasAppended: function() {
 		return !!this.append_done;
 	},
-	appended: function(parentView){
+	appended: function(parent_view){
 		this.append_done = true;
-		if (parentView){
-			this.parentView = parentView;
+		if (parent_view){
+			this.parent_view = parent_view;
+		}
+		if (this.onAppend){
+			this.onAppend(parent_view);
 		}
 		if (this.appendChildren){
 			this.appendChildren();
@@ -414,6 +435,7 @@ cloneObj(servView.prototype, {
 		value = value || false;
 		var old_value = this.replaceState(is_prop, name, value);
 		if (old_value){
+			this.fire(name + '-state-change', value, old_value[0]);
 			if (!is_prop){
 				this.callStateWatchers(name, value, old_value[0]);
 				if (allow_complex_watchers){

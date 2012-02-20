@@ -7,11 +7,11 @@
 	
 	var js_toload = [
 	"js/libs/w_storage.js", 
-	"js/libs/c_quene.js", 
 	"js/libs/c_cache_ajax.js",
 	"js/common-libs/md5.min.js", 
 	"js/common-libs/jquery-1.7.2pre.mod.min.js", 
 	"js/libs/serv.js", 
+	"js/libs/c_quene.js", 
 	"js/app_serv.js",
 	"js/prototypes/serv-mvc.js",
 	"js/common-libs/jquery.debounce-1.0.5.js",
@@ -47,13 +47,12 @@
 	"js/seesu.search.js", 
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
-
+	"js/prototypes/player.html5.js",
 	"js/common-libs/soundmanager2.mod.min.js", 
 	"js/prototypes/player.sm2-internal.js",
 	
 	"js/prototypes/player.sm2-proxy.js",
 	"js/su-prototypes/su-player.js",
-	"js/seesu.player.js", 
 	"js/libs/c_buttmen.js", 
 	"js/pressed_node_tester.js"
 	];
@@ -69,10 +68,7 @@
 	var js_loadcomplete = [];
 	window.jsLoadComplete = function(callback){
 		if (completed){
-			setTimeout(function(){
-				callback();
-			},30)
-			
+			callback();
 		} else{
 			js_loadcomplete.push(callback);
 		}
@@ -86,10 +82,9 @@
 			load: bpathWrap(js_toload),
 			complete: function(){
 				completed = true;
-				for (var i = js_loadcomplete.length - 1; i >= 0; i--){
-					var f = js_loadcomplete.pop();
-					f();
-				};
+				while (js_loadcomplete.length){
+					js_loadcomplete.shift()();
+				}
 			},
 			callback: function(url){
 				if (url.indexOf('jquery.debounce-1.0.5.js') != -1){

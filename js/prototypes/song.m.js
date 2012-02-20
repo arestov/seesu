@@ -177,33 +177,29 @@ createPrototype(baseSong, new suMapModel(), {
 	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){
 		this.updateState('loading', true);
 		var _this = this;
-		lfm.get('artist.getTopTracks',{'artist': this.artist })
-			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'toptracks.track'))
-				tracks = $filter(tracks, 'name');
-				var some_track = tracks[Math.floor(Math.random()*tracks.length)];
-				if (some_track){
-					_this.track = some_track;
-					_this.updateState('song-title', _this.getFullName());
-					//_this.updateProp('track', some_track);
-					_this.updateNavTexts();
-					_this.findFiles({
-						only_cache: !full_allowing,
-						collect_for: from_collection,
-						last_in_collection: last_in_collection
-					});
-				}
-				
-			})
-			.always(function(){
-				_this.updateState('loading', false);
-			})
-	},
-	setPrio: function(value) {
-		var _din = this.delayed_in;
-		for (var i=0; i < _din.length; i++) {
-			_din[i].setPrio(value);
-		}
+		this.addRequest(
+			lfm.get('artist.getTopTracks',{'artist': this.artist })
+				.done(function(r){
+					var tracks = toRealArray(getTargetField(r, 'toptracks.track'))
+					tracks = $filter(tracks, 'name');
+					var some_track = tracks[Math.floor(Math.random()*tracks.length)];
+					if (some_track){
+						_this.track = some_track;
+						_this.updateState('song-title', _this.getFullName());
+						//_this.updateProp('track', some_track);
+						_this.updateNavTexts();
+						_this.findFiles({
+							only_cache: !full_allowing,
+							collect_for: from_collection,
+							last_in_collection: last_in_collection
+						});
+					}
+					
+				})
+				.always(function(){
+					_this.updateState('loading', false);
+				}));
+		
 	},
 	prefindFiles: function(){
 		this.findFiles({
@@ -271,13 +267,16 @@ createPrototype(baseSong, new suMapModel(), {
 			if (this.state('want_to_play')) {
 				this.sem.setPrio('highest');
 			}
+			var reqs = this.sem.getRequests();
+			for (var i = 0; i < reqs.length; i++) {
+				this.addRequest(reqs[i], true);
+				
+			};
 			
 			var queued = this.sem.getQueued();
 			for (var i = 0; i < queued.length; i++) {
-				this.delayed_in.push(queued[i]);
 				queued[i].q.init();
 			};
-
 
 			//this.mp3_search.find_mp3(this, opts);
 		}

@@ -7,7 +7,6 @@ $.ajaxSetup({
   }
 });
 $.support.cors = true;
-//su.mp3_search.abortAllSearches(); fixme
 
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 
@@ -133,16 +132,11 @@ window.seesu = window.su =  {
 	};
 
 su.emitter.onRegistration('dom', function(cb) {
-	if (su.ui && su.ui.views){
+	if (su.ui && su.ui.can_fire_on_domreg){
 		cb();
 	}	
 });
 
-
-
-var suBase = function() {
-	
-};
 
 //var 
 
@@ -454,4 +448,76 @@ var get_artist_album_info = function(artist, album, callback){
 suReady(function(){
 	check_seesu_updates();
 	try_mp3_providers();
+});
+
+jsLoadComplete(function() {
+	su.gena = { //this work with playlists
+
+		save_playlists: function(){
+			var _this = this;
+			if (this.save_timeout){clearTimeout(this.save_timeout);}
+			
+			this.save_timeout = setTimeout(function(){
+				var plsts = [];
+				var playlists = _this.playlists;
+				for (var i=0; i < playlists.length; i++) {
+					plsts.push(playlists[i].simplify())
+				};
+				suStore('user_playlists', plsts, true);
+			},10);
+			
+		},
+		create_userplaylist: function(title,p, manual_inject){
+			var _this = this;
+			var pl_r = p || prepare_playlist(title, 'cplaylist', {name: title});
+			if (!manual_inject){
+				this.playlists.push(pl_r);
+			}
+			
+			var oldpush = pl_r.push;
+			pl_r.push = function(){
+				oldpush.apply(this, arguments);
+				_this.save_playlists();
+			}
+			return pl_r;
+		}
+		
+	};
+
+	function rebuildPlaylist(saved_pl){
+		var p = prepare_playlist(saved_pl.playlist_title, saved_pl.playlist_type, {name: saved_pl.playlist_title});
+		for (var i=0; i < saved_pl.length; i++) {
+			p.push(saved_pl[i]);
+		}
+		delete p.loading;
+		su.gena.create_userplaylist(false, p, true);
+		return p;
+	};
+	su.gena.playlists = (function(){
+		var pls = [];
+		
+		var plsts_str = suStore('user_playlists');
+		if (plsts_str){
+			var spls = plsts_str;
+			for (var i=0; i < spls.length; i++) {
+				pls[i] = rebuildPlaylist(spls[i]);
+			};
+		} 
+		
+		
+		pls.push = function(){
+			Array.prototype.push.apply(this, arguments);
+			su.ui.create_playlists_link();
+		}
+		pls.find = function(puppet){
+			for (var i=0; i < pls.length; i++) {
+				if (pls[i].compare(puppet)){
+					return pls[i]
+				}
+				
+			};	
+		};
+		return pls;
+	})();
+
 });

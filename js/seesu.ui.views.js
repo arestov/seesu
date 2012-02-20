@@ -2,7 +2,7 @@
 freeze
 !restoreFreezed
 show_now_playing
-!newBrowse
+
 !!!show_playlist_page
 show_track_page
 */

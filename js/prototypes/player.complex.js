@@ -53,10 +53,7 @@ cloneObj(playerComplex.prototype, {
 		if (this.wanted_song !== mo){
 			this.removeCurrentWantedSong();
 			(this.wanted_song = mo).updateState('want_to_play', true);
-			var delayed_in = mo.delayed_in;
-			for (var i=0; i < delayed_in.length; i++) {
-				delayed_in[i].setPrio('highest');
-			}
+			mo.setPrio('highest');
 
 			var opts = mo.state('files_search');
 			if (opts && ((opts.complete && opts.have_tracks) || opts.have_best_tracks)){

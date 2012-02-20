@@ -54,63 +54,56 @@ cloneObj(playerBase.prototype, {
 	dettachSong: function(song_file){
 		delete this.attached[song_file.uid];
 	},
-
-
 	create: function(song_file){
 		if (song_file && this.core){
-			this.core.create(song_file.uid, {
+			this.core.callSongMethod("create", song_file.uid, {
 				url: song_file.link
 			});
 		}
 	},
 	play: function(song_file){
 		if (song_file && this.core){
-			this.core.play(song_file.uid);
+			this.core.callSongMethod("play", song_file.uid);
 			if (this.global_volume){
 				this.setVolume(song_file, this.volume);
 			}
 			
 		}
 	},
-	stop: function(song_file){
-		if (song_file && this.core){
-			this.core.stop(song_file.uid);
-		}
-	},
 	pause: function(song_file){
 		if (song_file && this.core){
-			this.core.pause(song_file.uid);
+			this.core.callSongMethod("pause", song_file.uid);
 		}
 	},
 	setVolume: function(song_file, vol){
 		if (song_file && this.core){
-			this.core.setVolume(song_file.uid, vol)
+			this.core.callSongMethod("setVolume", song_file.uid, vol);
 		}
 		if (this.global_volume){
 			if (this.saveVolume){
-				this.saveVolume(vol)
+				this.saveVolume(vol);
 			}
 			this.volume = vol;
 		}
 	},
 	setPosition: function(song_file, pos){
 		if (song_file && this.core){
-			this.core.setPosition(song_file.uid, pos);
+			this.core.callSongMethod("setPosition", song_file.uid, pos);
 		}
 	},
 	load: function(song_file){
 		if (song_file && this.core){
-			this.core.load(song_file.uid);
+			this.core.callSongMethod("load", song_file.uid);
 		}
 	},
 	unload: function(song_file){
 		if (song_file && this.core){
-			this.core.unload(song_file.uid);
+			this.core.callSongMethod("unload", song_file.uid);
 		}
 	},
 	remove: function(song_file){
 		if (song_file && this.core){
-			this.core.remove(song_file.uid);
+			this.core.callSongMethod("remove", song_file.uid);
 		}
 	}
 });

@@ -11,7 +11,7 @@ queueFunc.prototype = {
 		if (typeof num == 'number'){
 			this.pr = num;
 		} else if (num == 'as-top'){
-			this.pr = this.q.getTopPrio();
+			this.pr = this.q.getTopPrio() || 1;
 		} else if (num == 'highest'){
 			this.pr = this.q.getTopPrio() + 1;
 		}

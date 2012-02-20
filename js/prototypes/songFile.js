@@ -16,9 +16,6 @@
 				this.changeBar(this.cloading, factor);
 			},
 			play: function(state, oldstate){
-				if (!state){
-					this.resetPlayPosition();
-				}
 
 				if (state == 'play'){
 					this.c.addClass('playing-file')
@@ -54,7 +51,11 @@
 			};
 
 			this.progress_c = $('<div class="mf-progress"></div>');
-
+			this.c.click(function() {
+				if (!_this.state('play')){
+					_this.sf.fire('want-to-be-selected');
+				} 
+			});
 
 
 			//this.c = $('<div class="track-progress"></div>')
@@ -69,7 +70,7 @@
 				} else {
 					_this.sf.fire('want-to-be-selected');
 				}
-				
+				return false;
 				//su.ui.hidePopups();
 				//e.stopPropagation();	
 			});
@@ -122,7 +123,7 @@
 		changeBar: function(bar, factor){
 			if (factor){
 				if (this.width){
-					bar[0].style.width = factor * this.width + 'px';
+					bar[0].style.width = Math.floor(factor * this.width) + 'px';
 				} else {
 					bar[0].style.width = factor * 100 + '%';
 				}
@@ -133,13 +134,28 @@
 		fixWidth: function(){
 			this.width = this.progress_c.width();
 		},
+		fixBars: function() {
+			this.fixWidth();
+			this.changeBar(this.cplayng, this.state('playing-progress'));
+			this.changeBar(this.cloading, this.state('loading-progress'));
+		},
 		resetPlayPosition: function(){
-			this.cplayng[0].style.width = 0;
+			this.changeBar(this.cplayng,0);
 		},
 		reset: function(){
-			this.resetPlayPosition();
-			this.cloading[0].style.width = 0;
 			this.fixWidth();
+			this.resetPlayPosition();
+			this.changeBar(this.cloading, 0);
+			
+		},
+		onAppend: function(parent_view) {
+			var _this = this;
+			parent_view.parent_view.on('want-more-songs-state-change', function() {
+				if (_this.state('selected')){
+					_this.fixBars();
+				}
+				
+			})
 		}
 	});
 
@@ -195,23 +211,32 @@
 				this.updateProp('loaded_duration', opts.duration);
 			},
 			loading: function(opts){
-				var dec = opts.loaded/opts.total;
-				this.updateState('loading-progress', dec);
+				var factor;
+				if (opts.loaded && opts.total){
+					factor = opts.loaded/opts.total
+				} else if (opts.duration && opts.fetched){
+					factor = opts.fetched/opts.duration
+				}
+				if (factor){
+					this.updateState('loading-progress', factor);
+				}
+				
 
 				
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.waitToLoadNext(dec > 0.8);
+					mo.waitToLoadNext(factor > 0.8);
 				}
 			},
 			pause: function(opts){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
-					mo.updateState('play', 'pause');
+					mo.updateState('play', false);
 				}
-				this.updateState('play', 'pause');
+				this.updateState('play', false);
 			},
 			stop: function(opts){
+				throw "Do not rely on stop event"
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
 					mo.updateState('play', false);
@@ -241,7 +266,8 @@
 		},
 		stop: function(){
 			if (this.player){
-				this.player.stop(this);
+				this.pause();
+				this.setPosition(0);
 				this.player.remove(this);
 				delete this.sound;
 			}

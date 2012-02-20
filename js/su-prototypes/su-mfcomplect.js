@@ -1,3 +1,73 @@
+var gMessagesStore = function(set, get, vname) {
+	this.sset = set;
+	this.sget = get;
+	this.vname = vname;
+	this.store = this.sget() || {};
+};
+createPrototype(gMessagesStore, {
+	set: function(space, message) {
+		this.store[space] = this.store[space] || [];
+		if ( this.store[space].indexOf(message) == -1 ){
+			this.store[space].push(message);
+			this.sset(this.store);
+			return true;
+		}
+	},
+	get: function(space) {
+		return this.store[space];
+	}
+});
+
+var commonMessagesStore = function(glob_store, store_name) {
+	this.callParentMethod('init');
+	this.glob_store = glob_store;
+	this.store_name = store_name;
+};
+createPrototype(commonMessagesStore, new eemiter, {
+	markAsReaded: function(message) {
+		var changed = this.glob_store.set(this.store_name, message);
+		if (changed){
+			this.fire('read', message);
+		}
+	},
+	getReadedMessages: function() {
+		return 	this.glob_store.get(this.store_name)
+	}
+});
+
+var notifyCounter = function(name, banned_messages) {
+	this.callParentMethod('init');
+	this.messages = {};
+	this.banned_messages = banned_messages || [];
+	this.name = name;
+};
+
+createPrototype(notifyCounter, new servModel(), {
+	addMessage: function(m) {
+		if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
+			this.messages[m] = true;
+			this.recount();
+		}
+	},
+	banMessage: function(m) {
+		this.removeMessage(m);
+		this.banned_messages.push(m);
+	},
+	removeMessage: function(m) {
+		if (this.messages[m]){
+			delete this.messages[m];
+			this.recount();
+		}
+	},
+	recount: function() {
+		var counter = 0;
+		for (var a in this.messages){
+			++counter
+		}
+		this.updateState('counter', counter);
+	}
+});
+
 var mfComplectUI = function(mf) {
 	this.mf = mf;
 	this.callParentMethod('init');
@@ -16,7 +86,11 @@ createPrototype(mfComplectUI, new suServView(), {
 		var moplas_list = this.mf.moplas_list;
 
 		for (var i = 0; i < moplas_list.length; i++) {
-			this.appendModelTo(moplas_list[i], this.lc);
+			var ui  = moplas_list[i].getFreeView();
+			if (ui){
+				this.lc.append(ui.getC())
+				ui.appended(this)
+			}
 		}
 	}
 });
@@ -100,7 +174,12 @@ createPrototype(mfCorUI, new suServView(), {
 			var pa = this.mf_cor.pa_o;
 
 
-			var append = function(ui_c){
+			var append = function(cur_view){
+				var ui_c = cur_view && cur_view.getC();
+				if (!ui_c){
+					return;
+				}
+
 				var prev_name = pa[i-1];
 				var prev = prev_name && _this.mf_cor.complects[prev_name];
 				var prev_c = prev && prev.getC();
@@ -114,23 +193,20 @@ createPrototype(mfCorUI, new suServView(), {
 						_this.c.append(ui_c);
 					}
 				}
+				cur_view.appended(_this);
 			};
 
 			for (var i = 0; i < pa.length; i++) {
-				this.appendModelTo(this.mf_cor.complects[pa[i]], append);
+				append(this.mf_cor.complects[pa[i]].getFreeView());
 			}
 		}
 		
 	},
 	getNextSemC: function(packs, start) {
-		
 		for (var i = start; i < packs.length; i++) {
 			var cur_name = packs[i];
 			var cur_mf = cur_name && this.mf_cor.complects[cur_name];
-			var mf_c = cur_mf && cur_mf.getC();
-			if (mf_c){
-				return mf_c;
-			}
+			return cur_mf && cur_mf.getC();
 		}
 	}
 });
@@ -247,11 +323,7 @@ createPrototype(mfCor, new servModel(), {
 	},
 	switchPlay: function(){
 		if (this.state('play')){
-			if (this.state('play') == 'play'){
-				this.pause();
-			} else {
-				this.play();
-			}
+			this.pause();
 		} else {
 			this.play();
 		}
@@ -267,12 +339,10 @@ createPrototype(mfCor, new servModel(), {
 	play: function(mopla){
 		var cmf = this.state('current_mopla');
 		var dmf = this.state('default_mopla');
-		if ((cmf && (!mopla || mopla == cmf)) && this.state('play') == 'pause'){
-			cmf.play();
-		} else if (this.isHaveTracks()){
+		if (this.isHaveTracks()){
 			mopla = mopla || dmf;
 			if (mopla != cmf || !this.state('play')){
-				if (cmf){
+				if (cmf && mopla != cmf){
 					cmf.stop();
 				}
 				mopla = mopla || this.song();

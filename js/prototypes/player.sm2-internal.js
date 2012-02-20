@@ -29,18 +29,23 @@
 				});
 			},
 			ondataerror: function(){
-				sendMsg('error', this.sID);
+				cb('error', this.sID);
 			}
 		};
 	};
 
 	sm2internal = function(path, opts) {
+		var _this = this;
+
 		var sendMsg = function() {
-			
+			if (_this.subr){
+				_this.subr.apply(this, arguments);
+			}
 		};
 
 
 		this.soundSample = createSoundSample(sendMsg);
+
 
 		var sm2opts = {
 			flashVersion : 9,
@@ -52,7 +57,7 @@
 		if (opts && opts === Object(opts)){
 			cloneObj(  sm2opts, opts  );
 		}
-		var _this = this;
+		
 
 		var soundManager = new SoundManager(path || 'swf', false, sm2opts);
 		soundManager.onready(function() {
@@ -65,22 +70,37 @@
 		
 			}
 		});
+		soundManager.ontimeout(function() {
+			_this.sm2Loaded();
+			console.log('internal sm2 notok')
+		})
 		this.sm2_newb = soundManager;
 
 		this.c = soundManager.getC();
+		this.def = $.Deferred();
 	};
 
 	sm2internal.prototype = {
-		fail: function() {
+		subscribe: function(cb){
+			this.subr = cb;
+			return this;
+		},
+		desubscribe: function(cb){
+			if (this.subr === cb){
+				delete this.subr;
+			}
+		},
+		fail: function(cb) {
 			this.def.fail(cb);
 			return this;
 		},
-		done: function() {
+		done: function(cb) {
 			this.def.done(cb);
 			return this;
 		},
 		appended: function() {
 			this.sm2_newb.appended();
+			return this;
 		},
 		getC: function() {
 			return this.c;
@@ -153,45 +173,18 @@
 				}
 			}
 		},
+
 		callCore: function(method, id, opts) {
 			if (this.sm2 && method && this.plc[method] && id){
 				if (opts && opts === Object(opts)){
 					cloneObj(opts, {id: id});
 				}
-				this.plc[method](this.sm2.getSoundById(id), opts);
+				this.plc[method].call(this, this.sm2.getSoundById(id), opts);
 			}	
 		},
-
-		create: function(id, opts){
-			this.callCore('create', id, opts);
-		},
-		play: function(id){
-			this.callCore('play', id);
-		},
-		stop: function(id){
-			this.callCore('stop', id);
-		},
-		pause: function(id){
-			this.callCore('pause', id);
-		},
-		setVolume: function(id, vol){
-			this.callCore('setVolume', id, vol);
-		},
-		setPosition: function(id, pos){
-			this.callCore('setPosition', id, pos);
-		},
-		remove: function(id){
-			this.callCore('remove', id);
-		},
-		load: function(id){
-			this.callCore('load', id);
-		},
-		unload: function(id){
-			this.callCore('load', id);
+		callSongMethod: function() {
+			this.callCore.apply(this, arguments)
 		}
 	};
-
-
-
 })();
 

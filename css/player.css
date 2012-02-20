@@ -177,7 +177,7 @@ a.download-mp3:hover{
 		margin:0 4px;
 		}
 .track-progress, .moplas-block ul li .mf-progress{
-	height:15px;
+
 	line-height:13px;
 
 }
@@ -218,7 +218,7 @@ a.download-mp3:hover{
 		width:0;
 		left:0;
 		top:0;
-		height:15px;
+		height:100%;
 		background:#484848;
 		
 		
@@ -235,7 +235,7 @@ a.download-mp3:hover{
 		width:0;
 		left:0;
 		top:0;
-		height:15px;
+		height:100%;
 		background:#4f4f4f url(../i/playing-gradient.png) repeat-x 0 0;
 		
 		-moz-border-radius: 5px;
