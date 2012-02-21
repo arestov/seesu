@@ -1,6 +1,7 @@
 (function() {
 	var createSoundSample = function(cb) {
 		return {
+			multiShot: false,
 			onplay: function(){
 				cb('play', this.sID)
 			},
