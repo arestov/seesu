@@ -114,7 +114,7 @@ vkCoreApi.prototype = {
 			}
 		}
 
-		return deferred;
+		return complex_response;
 	}
 };
 
