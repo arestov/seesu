@@ -150,7 +150,7 @@ var mfCorUI = function(mf_cor) {
 	this.callParentMethod('init');
 	this.createBase();
 	this.mf_cor = mf_cor;
-	this.setModel(mf_cor);
+	
 
 	var nof_ui = this.mf_cor.notifier.getFreeView();
 	if (nof_ui){
@@ -158,6 +158,7 @@ var mfCorUI = function(mf_cor) {
 		nof_ui.appended(this);
 	}
 	
+	this.setModel(mf_cor);
 };
 createPrototype(mfCorUI, new suServView(), {
 	state_change: {
