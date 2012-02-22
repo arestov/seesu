@@ -1,39 +1,3 @@
-var gMessagesStore = function(set, get, vname) {
-	this.sset = set;
-	this.sget = get;
-	this.vname = vname;
-	this.store = this.sget() || {};
-};
-createPrototype(gMessagesStore, {
-	set: function(space, message) {
-		this.store[space] = this.store[space] || [];
-		if ( this.store[space].indexOf(message) == -1 ){
-			this.store[space].push(message);
-			this.sset(this.store);
-			return true;
-		}
-	},
-	get: function(space) {
-		return this.store[space];
-	}
-});
-
-var commonMessagesStore = function(glob_store, store_name) {
-	this.callParentMethod('init');
-	this.glob_store = glob_store;
-	this.store_name = store_name;
-};
-createPrototype(commonMessagesStore, new eemiter, {
-	markAsReaded: function(message) {
-		var changed = this.glob_store.set(this.store_name, message);
-		if (changed){
-			this.fire('read', message);
-		}
-	},
-	getReadedMessages: function() {
-		return 	this.glob_store.get(this.store_name)
-	}
-});
 
 
 var notifyCounterUI = function() {
@@ -243,6 +207,10 @@ var mfCor = function(mo, omo) {
 	this.notifier = new notifyCounter();
 	this.addChild(this.notifier);
 	this.bindMessagesRecieving();
+
+	if (!this.mo.mp3_search.haveSearch('vk')){
+
+	}
 };
 createPrototype(mfCor, new servModel(), {
 	ui_constr: function() {
