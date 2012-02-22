@@ -35,6 +35,18 @@ createPrototype(commonMessagesStore, new eemiter, {
 	}
 });
 
+
+var notifyCounterUI = function() {
+	this.callParentMethod('init');
+	this.createBase();
+};
+
+createPrototype(notifyCounterUI, new suServView(), {
+	createBase: function() {
+		this.c = $('<span class="notifier hidden"></span>');
+	}
+});
+
 var notifyCounter = function(name, banned_messages) {
 	this.callParentMethod('init');
 	this.messages = {};
@@ -43,6 +55,9 @@ var notifyCounter = function(name, banned_messages) {
 };
 
 createPrototype(notifyCounter, new servModel(), {
+	ui_constr: function() {
+		return new notifyCounterUI(this);
+	},
 	addMessage: function(m) {
 		if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
 			this.messages[m] = true;
@@ -136,6 +151,12 @@ var mfCorUI = function(mf_cor) {
 	this.createBase();
 	this.mf_cor = mf_cor;
 	this.setModel(mf_cor);
+
+	var nof_ui = this.mf_cor.notifier.getFreeView();
+	if (nof_ui){
+		this.c.append(nof_ui.getC());
+		nof_ui.appended(this);
+	}
 	
 };
 createPrototype(mfCorUI, new suServView(), {
@@ -218,7 +239,9 @@ var mfCor = function(mo, omo) {
 	this.mo = mo;
 	this.complects = {};
 	this.subscribed_to = [];
-
+	this.notifier = new notifyCounter();
+	this.addChild(this.notifier);
+	this.bindMessagesRecieving();
 };
 createPrototype(mfCor, new servModel(), {
 	ui_constr: function() {
@@ -242,6 +265,9 @@ createPrototype(mfCor, new servModel(), {
 			}
 		}
 
+	},
+	bindMessagesRecieving: function() {
+			
 	},
 	collapseExpanders: function() {
 		this.updateState('want-more-songs', false);
