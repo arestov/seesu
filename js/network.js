@@ -20,6 +20,57 @@ var get_youtube = function(q, callback){
 	
 };
 
+ui_samples.children('.vk-login-context'),
+this.oos.removeClass("waiting-vk-login");
+
+
+
+
+function() {
+	var _this = this;
+	var nvk = this.o.clone();
+	if (su.vk.wait_for_finish){
+		nvk.addClass('vk-finishing');
+	}	
+	if (this.load_indicator){
+		nvk.addClass("waiting-vk-login");
+	}
+	if (request_description){
+		nvk.find('.login-request-desc').text(request_description);
+	}
+	var auth_c =  nvk.find('.auth-container');
+	nvk.find('.sign-in-to-vk').click(function(e){
+		var class_name = this.className;
+		var clicked_node = $(this);
+		
+
+		var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
+		if (su.vk_app_mode){
+			if (window.VK){
+				VK.callMethod('showSettingsBox', 8);
+			}
+		} else{
+			
+			su.vk_auth.requestAuth({
+				ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
+				c: _this
+			})
+		
+		}
+			
+		
+		e.preventDefault();
+	});
+
+	_this.oos =  _this.oos.add(nvk);
+	return nvk;
+};
+
+
+var vkLogin = function() {
+	this.call
+}; 
+
 function tryVKOAuth (){
 	var init_auth = vk_auth_box.requestAuth({not_open: true});
 	if (init_auth.bridgekey){
