@@ -537,10 +537,9 @@ createPrototype(mp3SearchBase, [], new eemiter());
 
 
 
-mp3Search = function(onNewsearch){
+mp3Search = function(){
 	
-	this.callParentMethod('init')
-	this.onNewsearch = onNewsearch;
+	this.callParentMethod('init');
 	this.ids = [];
 	this.search_emitters = {};
 };
@@ -771,15 +770,14 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 			queued[i].q.init();
 		};		
 	},
-	newSearchInit: function(filter){
+	newSearchInit: function(filter, search){
 		for (var am in this.search_emitters){
 			if (this.search_emitters[am] instanceof musicSeachEmitter){
 				delete this.search_emitters[am].search_completed;
 			}
 		}
-		if (this.onNewsearch){
-			this.onNewsearch();
-		}
+		
+
 		for (var i=0; i < this.ids.length; i++) {
 			var cursor = this.ids[i];
 			if (cursor && cursor.subraw.type == filter){
@@ -790,6 +788,7 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 				}
 			}
 		};
+		this.fire('new-search', search, filter);
 		
 	},
 	getMasterSlaveSearch: function(filter){
@@ -855,17 +854,17 @@ createPrototype(mp3Search, new mp3SearchBase(), {
 				
 				this.push(asearch);
 				o.exist_slave.preferred = asearch;
-				this.newSearchInit(asearch.name);
+				this.newSearchInit(asearch.name, asearch);
 			} 
 		} else if (o.exist_alone_master){
 			if (force){
 				o.exist_alone_master.disabled = true;
 				this.push(asearch);
-				this.newSearchInit(asearch.name);
+				this.newSearchInit(asearch.name, asearch);
 			}
 		} else{
 			this.push(asearch);
-			this.newSearchInit(asearch.name);
+			this.newSearchInit(asearch.name, asearch);
 		}
 	},
 	removeSearch: function(msearch) {

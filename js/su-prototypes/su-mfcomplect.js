@@ -8,6 +8,16 @@ var notifyCounterUI = function() {
 createPrototype(notifyCounterUI, new suServView(), {
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
+	},
+	state_change: {
+		counter: function(state) {
+			if (state){
+				this.c.text(state);
+				this.c.removeClass('hidden');
+			} else {
+				this.c.addClass('hidden');
+			}
+		}
 	}
 });
 
@@ -144,7 +154,7 @@ createPrototype(mfCorUI, new suServView(), {
 
 				this.more_songs_b = $('<a class=""></a>').appendTo(ms_c);
 				this.more_songs_b.click(function() {
-					_this.mf_cor.updateState('want-more-songs', !_this.state('want-more-songs'));
+					_this.mf_cor.switchMoreSongsView();
 				});
 				$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
 				this.c.prepend(ms_c);
@@ -208,9 +218,7 @@ var mfCor = function(mo, omo) {
 	this.addChild(this.notifier);
 	this.bindMessagesRecieving();
 
-	if (!this.mo.mp3_search.haveSearch('vk')){
-
-	}
+	this.checkVKAuthNeed();
 };
 createPrototype(mfCor, new servModel(), {
 	ui_constr: function() {
@@ -235,8 +243,52 @@ createPrototype(mfCor, new servModel(), {
 		}
 
 	},
-	bindMessagesRecieving: function() {
+	switchMoreSongsView: function() {
+		if (!this.state('want-more-songs')){
+			this.updateState('want-more-songs', true);
+			this.markMessagesReaded();
+		} else {
+			this.updateState('want-more-songs', false);
+		}
+		
+	},
+	markMessagesReaded: function() {
+		this.notifier.banMessage('vk-audio-auth');
+	},
+	vkAudioAuth: function(remove) {
+		if (remove){
+			this.notifier.removeMessage('vk-audio-auth');
+			this.updateState('vk-audio-auth', false);
+		} else {
 			
+			this.notifier.addMessage('vk-audio-auth');
+			this.updateState('vk-audio-auth', true);
+		}
+	},
+	checkVKAuthNeed: function() {
+		if (this.mo.mp3_search){
+				
+			if (this.mo.mp3_search.haveSearch('vk')){
+				this.vkAudioAuth(true);
+			} else {
+				if (this.isHaveAnyResultsFrom('vk')){
+					this.vkAudioAuth(true);
+				} else {
+					this.vkAudioAuth();
+				}
+			}
+		}
+		return this;
+	},
+	bindMessagesRecieving: function() {
+		if (this.mo.mp3_search){
+			var _this = this;
+			this.mo.mp3_search.on('new-search', function(search, name) {
+				if (name == 'vk'){
+					_this.vkAudioAuth(true);
+				}
+			});
+		}
 	},
 	collapseExpanders: function() {
 		this.updateState('want-more-songs', false);
@@ -249,6 +301,8 @@ createPrototype(mfCor, new servModel(), {
 		});
 	},
 	semChanged: function(complete) {
+		this.checkVKAuthNeed();
+
 		var songs_packs = this.songs_packs = this.sem.getAllSongTracks();
 
 		this.pa_o = $filter(songs_packs, 'name');

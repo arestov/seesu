@@ -203,27 +203,28 @@ var random_track_plable = function(track_list){
 };
 
 
-su.mp3_search = new mp3Search(function(){
-	var player = su.p;
-	if (player){
-		if (player.c_song){
-			if (player.c_song.sem){
-				su.mp3_search.searchFor(player.c_song.sem.query);
+su.mp3_search = (new mp3Search())
+	.on('new-search', function(search, name){
+		var player = su.p;
+		if (player){
+			if (player.c_song){
+				if (player.c_song.sem){
+					su.mp3_search.searchFor(player.c_song.sem.query);
+				}
+				
+				if (player.c_song.next_preload_song && player.c_song.next_preload_song.sem){
+					su.mp3_search.searchFor(player.c_song.next_preload_song.sem.query);
+				}
 			}
-			
-			if (player.c_song.next_preload_song && player.c_song.next_preload_song.sem){
-				su.mp3_search.searchFor(player.c_song.next_preload_song.sem.query);
+			//fixme
+			if (player.v_song && player.v_song != player.c_song ){
+				if (player.v_song.sem){
+					su.mp3_search.searchFor(player.v_song.sem.query);
+				}
+				
 			}
 		}
-		//fixme
-		if (player.v_song && player.v_song != player.c_song ){
-			if (player.v_song.sem){
-				su.mp3_search.searchFor(player.v_song.sem.query);
-			}
-			
-		}
-	}
-});
+	});
 
 if (typeof soundcloud_search != 'undefined'){
 	(function(){

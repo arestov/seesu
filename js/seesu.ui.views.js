@@ -266,7 +266,7 @@ views = function(sui, su_map){
 				navi.set(nu, data);
 			}
 
-			console.log(arguments);
+			//console.log(arguments);
 		});
 
 };
