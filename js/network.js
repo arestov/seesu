@@ -20,13 +20,14 @@ var get_youtube = function(q, callback){
 	
 };
 
-ui_samples.children('.vk-login-context'),
-this.oos.removeClass("waiting-vk-login");
 
 
 
 
-function() {
+var dui = function() {
+	//ui_samples.children('.vk-login-context'),
+//this.oos.removeClass("waiting-vk-login");
+
 	var _this = this;
 	var nvk = this.o.clone();
 	if (su.vk.wait_for_finish){
