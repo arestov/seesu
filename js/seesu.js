@@ -112,6 +112,14 @@ window.seesu = window.su =  {
 			}
 		}
 	  },
+	  notf: new gMessagesStore(
+	  	function(value) {
+	  		return suStore('notification', value, true);
+		}, 
+		function() {
+			return suStore('notification');
+		}
+	  ),
 	  main_level: main_level,
 	  map: (new browseMap(main_level)).makeMainLevel(),
 	  ui: new seesu_ui(document),

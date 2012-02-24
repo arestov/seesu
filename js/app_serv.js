@@ -53,11 +53,11 @@ var abortage = {
 	}
 };
 
-var gMessagesStore = function(set, get, vname) {
+var gMessagesStore = function(set, get) {
 	this.sset = set;
 	this.sget = get;
-	this.vname = vname;
 	this.store = this.sget() || {};
+	this.cm_store = {};
 };
 createPrototype(gMessagesStore, {
 	set: function(space, message) {
@@ -70,6 +70,9 @@ createPrototype(gMessagesStore, {
 	},
 	get: function(space) {
 		return this.store[space];
+	},
+	getStore: function(name) {
+		return this.cm_store || this.cm_store = new commonMessagesStore(this, name);
 	}
 });
 
