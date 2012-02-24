@@ -129,7 +129,20 @@ a.desc{
 }
 .moplas-block .show-all-songs{
 	float:right;
+	position: relative;
 	}
+	.moplas-block .show-all-songs .notifier{
+		position: absolute;
+		top: -11px;
+		left: 0;
+		background: red;
+		height: 20px;
+		line-height:20px;
+		width: 20px;
+		text-align: center;
+		border-radius: 10px;
+		opacity: 0.8;
+		}
 	.moplas-block .show-all-songs a{
 		cursor: pointer;
 		color:gray;
@@ -155,20 +168,8 @@ a.desc{
 	font-size: 14px;
 	padding:0;
 	min-height:31px;
-	position: relative;
+	
 	}
-	.moplas-block .notifier{
-		position: absolute;
-		top: -11px;
-		right: 10px;
-		background: red;
-		height: 20px;
-		line-height:20px;
-		width: 20px;
-		text-align: center;
-		border-radius: 10px;
-		opacity: 0.8;
-		}
 	.moplas-block h4{
 		font-weight: 400;
 		margin:7px 0 7px 53px;

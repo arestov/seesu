@@ -123,15 +123,10 @@ createPrototype(mfComplect, new servModel(), {
 
 var mfCorUI = function(mf_cor) {
 	this.callParentMethod('init');
-	this.createBase();
 	this.mf_cor = mf_cor;
-	
 
-	var nof_ui = this.mf_cor.notifier.getFreeView();
-	if (nof_ui){
-		this.c.append(nof_ui.getC());
-		nof_ui.appended(this);
-	}
+	this.createBase();
+	
 	
 	this.setModel(mf_cor);
 };
@@ -147,23 +142,32 @@ createPrototype(mfCorUI, new suServView(), {
 				this.c.removeClass('want-more-songs');
 			}
 		},
-		many_files: function(state) {
-			var _this = this;
-			if (!this.more_songs_b){
-				var ms_c = $('<div class="show-all-songs"></div>');
-
-
-				this.more_songs_b = $('<a class=""></a>').appendTo(ms_c);
-				this.more_songs_b.click(function() {
-					_this.mf_cor.switchMoreSongsView();
-				});
-				$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
-				this.c.prepend(ms_c);
+		"must-be-expandable": function(state) {
+			if (state){
+				this.sall_songs.removeClass('hidden')
 			}
 		}
 	},
 	createBase: function() {
 		this.c = $('<div class="song-row-content moplas-block"></div>');
+
+		if (!this.more_songs_b){
+			var _this = this;
+			this.sall_songs =  $('<div class="show-all-songs hidden"></div>');
+
+			this.more_songs_b = $('<a class=""></a>').appendTo(this.sall_songs);
+			this.more_songs_b.click(function() {
+				_this.mf_cor.switchMoreSongsView();
+			});
+			$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
+			this.c.prepend(this.sall_songs);
+
+			var nof_ui = this.mf_cor.notifier.getFreeView();
+			if (nof_ui){
+				this.sall_songs.append(nof_ui.getC());
+				nof_ui.appended(this);
+			}
+		}
 	},
 	appendChildren: function() {
 		var _this = this;
@@ -220,6 +224,13 @@ var mfCor = function(mo, omo) {
 	this.bindMessagesRecieving();
 
 	this.checkVKAuthNeed();
+
+	var _this = this;
+	this.watchStates(['has_files', 'vk-audio-auth'], function(has_files, vkaa) {
+		if (has_files || vkaa){
+			_this.updateState('must-be-expandable', true);
+		}
+	});
 };
 createPrototype(mfCor, new servModel(), {
 	ui_constr: function() {
@@ -317,7 +328,7 @@ createPrototype(mfCor, new servModel(), {
 				many_files = many_files || this.complects[cp_name].hasManyFiles();
 			}
 		}
-		this.updateState('many_files', many_files);
+		this.updateState('has_files', many_files);
 		if (!this.state('current_mopla')){
 			this.updateState('default_mopla', this.song());
 		}
