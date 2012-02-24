@@ -1,8 +1,9 @@
 
 
-var notifyCounterUI = function() {
+var notifyCounterUI = function(md) {
 	this.callParentMethod('init');
 	this.createBase();
+	this.setModel(md);
 };
 
 createPrototype(notifyCounterUI, new suServView(), {
