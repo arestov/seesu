@@ -204,7 +204,7 @@ createPrototype(vkApi, new vkCoreApi(), {
 		return async_ans.queued || async_ans.cache_used;
 
 
-
+		/*
 		var used_successful = this.use('audio.search', params_u, 
 		function(r){
 			if (r.response && (r.response.length > 1 )) {
@@ -223,7 +223,7 @@ createPrototype(vkApi, new vkCoreApi(), {
 			not_init_queue: true
 		});
 		return used_successful;
-
+*/
 
 	},
 	findAudio: function(msq, opts) {

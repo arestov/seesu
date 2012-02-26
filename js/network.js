@@ -39,7 +39,7 @@ var dui = function() {
 	if (request_description){
 		nvk.find('.login-request-desc').text(request_description);
 	}
-	var auth_c =  nvk.find('.auth-container');
+//	var auth_c =  nvk.find('.auth-container');
 	nvk.find('.sign-in-to-vk').click(function(e){
 		var class_name = this.className;
 		var clicked_node = $(this);
@@ -58,19 +58,86 @@ var dui = function() {
 			})
 		
 		}
-			
-		
 		e.preventDefault();
 	});
 
 	_this.oos =  _this.oos.add(nvk);
 	return nvk;
 };
+/*
+if (su.vk_app_mode){
+	if (window.VK){
+		VK.callMethod('showSettingsBox', 8);
+	}
+} else{
+	
+	su.vk_auth.requestAuth({
+		ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
+		c: _this
+	})
+
+}
+*/
+
+var vkLoginUI = function(md) {
+	this.callParentMethod('init');
+	this.md = md;
+	this.createBase();
+	this.setModel(md);
+};
+createPrototype(vkLoginUI, new servView(), {
+	state_change: {
+		wait: function(state) {
+			if (state){
+				this.c.addClass("waiting-vk-login");
+			} else {
+				this.c.removeClass("waiting-vk-login");
+			}
+		},
+		"request-description": function(state) {
+			this.c.find('.login-request-desc').text(state || "");
+		}
+	},
+	createBase: function() {
+		this.c = su.ui.samples.vklc.clone();
+		var _this = this;
+		this.c.find('.sign-in-to-vk').click(function(e){
+			var class_name = this.className;
+			
+			var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
+			_this.requestAuth({
+				ru: class_name.match(/sign-in-to-vk-ru/) ? true: false
+			})
+			
+			e.preventDefault();
+		});
+
+	}
+});
 
 
 var vkLogin = function() {
-	this.call
+	this.callParentMethod('init');
 }; 
+createPrototype(vkLogin, new servModel(), {
+	ui_constr: function() {
+		return new vkLoginUI(this);
+	},
+	waitData: function() {
+		this.updateState('wait', true)
+	},
+	notWaitData: function() {
+		this.updateState('wait', false)
+	},
+	setRequestDesc: function(text) {
+		this.updateState('request-description', text);
+	},
+	requestAuth: function(opts) {
+		this.fire('auth-request', opts)
+	}
+});
+
+
 
 function tryVKOAuth (){
 	var init_auth = vk_auth_box.requestAuth({not_open: true});
@@ -208,7 +275,6 @@ function try_mp3_providers(){
 
 	su.vk_auth
 		.on('vk-token-receive', function(token){
-
 			var vk_token = new vkTokenAuth(seesu_vkappid, token);			
 			connectApiToSeesu(vk_token);
 		})

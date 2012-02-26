@@ -126,13 +126,6 @@ window.seesu = window.su =  {
 	  xhrs: {},
 	  soundcloud_queue: new funcs_queue(1000, 5000 , 7),
 	  delayed_search: {
-		tracks_waiting_for_search:0,
-		use:{
-			queue:  new funcs_queue(1000, 8000 , 7)
-		},
-		vk:{
-			queue:  new funcs_queue(1000, 8000 , 7)
-		},
 		vk_api:{
 			queue:  new funcs_queue(1000, 8000 , 7)
 		}
@@ -278,7 +271,7 @@ var create_playlist =  function(pl, pl_r, not_clear){
 
 
 var getTopTracks = function(artist,callback, error_c) {
-	lfm.get('artist.getTopTracks',{'artist': artist })
+	lfm.get('artist.getTopTracks',{'artist': artist, limit: 30 })
 		.done(function(r){
 			if (typeof r != 'object' || r.error) {
 				if (error_c){
@@ -379,7 +372,7 @@ var render_recommendations = function(){
 var get_artists_by_tag = function(tag,callback,error_c){
 
 	//fixme
-	lfm.get('tag.getTopArtists', {'tag':tag})
+	lfm.get('tag.getTopArtists', {'tag':tag, limit: 30})
 		.done(function(r){
 			var artists = r.topartists.artist;
 			if (artists && artists.length) {

@@ -26,6 +26,9 @@ createPrototype( vkAuth , new servModel(), {
 	stopIndicating: function() {
 		
 	},
+	waitData: function() {
+		this.fire('data-wait');
+	},
 	createAuthFrame: function(first_key){
 		var _this = this;
 		if (this.auth_inited){
@@ -75,6 +78,7 @@ createPrototype( vkAuth , new servModel(), {
 
 		if (!p.not_open){
 			this.fire('want-open-url', init_auth_data.link, init_auth_data);
+			this.waitData();
 		} else{
 			this.startIndicating();
 			setTimeout(function(){

@@ -77,13 +77,17 @@ window.connect_dom_to_som = function(d, sui, cb){
 			volume_s: volume_s
 			
 		};
+
+		var vklc = ui_samples.children('.vk-login-context');
+
 		var track_c = ui_samples.children('.track-context');
 		sui.samples = {
 			artcard: ui_samples.children('.art-card'),
 			track_c : track_c,
 			playlist_panel: ui_samples.children('.play-list-panel'),
+			vklc: vklc,
 			vk_login: {
-				o: ui_samples.children('.vk-login-context'),
+				o: vklc,
 				oos: $(),
 				hideLoadIndicator: function(){
 					this.oos.removeClass("waiting-vk-login");

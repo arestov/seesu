@@ -230,18 +230,21 @@ seesuServerAPI.prototype = {
 			vk_user: vk_user_id
 		}, function(su_sess){
 			if (su_sess.secret_container && su_sess.sid){
-				su.vk_api.use('storage.get', {key:su_sess.secret_container}, function(r){
-					if (r && r.response){
-						su.s.setAuth({
-							userid: su_sess.userid,
-							secret: r.response,
-							sid: su_sess.sid
-						});
-						su.s.setInfo('vk', su.vk.user_info);
-						su.s.api('user.update', su.vk.user_info);
-						if (callback){callback();}
-					}
-				});
+				su.vk_api.get('storage.get', {key:su_sess.secret_container})
+					.done(function(r){
+						if (r && r.response){
+							su.s.setAuth({
+								userid: su_sess.userid,
+								secret: r.response,
+								sid: su_sess.sid
+							});
+							su.s.setInfo('vk', su.vk.user_info);
+
+							su.s.api('user.update', su.vk.user_info);
+							su.fire('dg-auth');
+							if (callback){callback();}
+						}
+					});
 			}
 			
 		});

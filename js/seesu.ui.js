@@ -232,7 +232,7 @@ createPrototype(artCard, new suMapModel(), {
 		var _this = this;
 		this.updateState('loading-toptracks', true);
 		this.addRequest(
-			lfm.get('artist.getTopTracks',{'artist': this.artist })
+			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30 })
 				.done(function(r){
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 
