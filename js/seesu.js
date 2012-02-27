@@ -58,17 +58,25 @@ window.seesu = window.su =  {
 	  version: 2.8,
 	  env: app_env,
 	  track_stat: (function(){
-		
+
+
 		window._gaq = [];
-		
-
-
 		_gaq.sV = $.debounce(function(v){
 			suStore('ga_store', v, true);
 		},130);
 		_gaq.gV = function(){
 			return suStore('ga_store');
 		};
+		/*
+		_gaq.push(['myTracker._setAccount', 'UA-XXXXX-X']);
+
+		_gaq.push(function() {
+		  var pageTracker = _gat._getTrackerByName('myTracker');
+		  var link = document.getElementById('my-link-id');
+		  link.href = pageTracker._getLinkerUrl('http://example.com/');
+		});
+		http://code.google.com/apis/analytics/docs/tracking/asyncUsageGuide.html
+		*/
 
 		suReady(function(){
 			yepnope( {
@@ -94,7 +102,7 @@ window.seesu = window.su =  {
 		args.unshift('_trackPageview');
 		seesu.track_stat.call(this, args);
 	  },
-	   track_var: function(){
+	  track_var: function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_setCustomVar');
 		seesu.track_stat.call(this, args);
