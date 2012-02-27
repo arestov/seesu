@@ -12,6 +12,15 @@ window.connect_dom_to_som = function(d, sui, cb){
 	domReady(d, function() {
 		console.log('dom ready')
 		d.head = d.head || d.getElementsByTagName('head')[0];
+
+		if (su.env.check_resize){
+			dstates.add_state('body', 'slice-for-height');
+		}
+		if (su.env.deep_sanbdox){
+			dstates.add_state('body', 'deep-sandbox');
+		}
+		dstates.connect_ui(sui);
+
 		var lang = app_env.lang;
 		$('.lang', d).each(function(i,el){
 			var cn = el.className;
@@ -26,18 +35,12 @@ window.connect_dom_to_som = function(d, sui, cb){
 			});
 			
 		});
-		if (su.env.check_resize){
-			dstates.add_state('body', 'slice-for-height');
-		}
-		if (su.env.deep_sanbdox){
-			dstates.add_state('body', 'deep-sandbox');
-		}
+
 		var slider = d.getElementById('slider');
 		if (su.env.readySteadyResize){
 			su.env.readySteadyResize(slider);
 		}
-	
-		lfm.try_to_login();		
+		
 		var volume_s = d.createElement('style');
 			volume_s.setAttribute('title', 'volume');
 			volume_s.setAttribute('type', 'text/css');
@@ -49,7 +52,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 		}
 		d.documentElement.firstChild.appendChild(volume_s);
 		
-		dstates.connect_ui(sui);
+		
 		var pllistlevel = $('#playlist-level',d);
 		
 		var search_form = $('#search',d); 
@@ -166,16 +169,6 @@ window.connect_dom_to_som = function(d, sui, cb){
 			daddy: justhead.children('.daddy')
 		};
 
-		/*
-		sui.views.setNav({
-			justhead: justhead,
-			daddy: justhead.children('.daddy'),
-			start: $('#start_search',d),
-			results: $('#search_result_nav',d),
-			playlist: $(sui.els.nav_playlist_page).parent(),
-			track: sui.els.nav_track_zoom.parent()
-		});*/
-
 		justhead.children('.daddy').empty().removeClass('not-inited');
 		
 
@@ -185,11 +178,8 @@ window.connect_dom_to_som = function(d, sui, cb){
 			}).appendTo(justhead);
 		}
 
-		
 		sui.els.search_input.on('keyup change', input_change);
 
-		
-	
 		$(d).click(function(e) {
 			return test_pressed_node(e);
 		});
@@ -200,18 +190,5 @@ window.connect_dom_to_som = function(d, sui, cb){
 		if (cb){
 			cb({has_query: !!ext_search_query})
 		}
-		//viewBlocks(sui, );
-		
-		
-		
-	
-	
-	
 	});
-	
-
-	
-	
-	
-	
 }

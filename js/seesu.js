@@ -134,7 +134,9 @@ if (su._url.q){
 	su.start_query = su._url.q;
 }
 
-
+suReady(function() {
+	lfm.try_to_login();
+});
 
 var vkReferer = '';
 
@@ -216,24 +218,29 @@ su.mp3_search = (new mp3Search())
 		}
 	});
 
-if (typeof soundcloud_search != 'undefined'){
-	(function(){
-		var sc_search_source = {name: 'soundcloud', key: 0};
-		su.mp3_search.add({
-			getById: soundcloudGetById,
-			search: soundcloud_search,
-			name: sc_search_source.name,
-			description:'soundcloud.com',
-			slave: false,
-			s: sc_search_source,
-			preferred: null,
-			q: su.soundcloud_queue
-		})
-		
-		
-	})();
+
+
+(function(){
+	var sc_api = new scApi(getPreloadedNK('sc_key'), su.soundcloud_queue);
+
+	var sc_search_source = {name: 'soundcloud', key: 0};
+	su.mp3_search.add({
+		getById: function() {
+			return sc_api.getSongById.apply(sc_api, arguments);
+		},
+		search: function() {
+			return sc_api.find.apply(sc_api, arguments);
+		},
+		name: sc_search_source.name,
+		description:'soundcloud.com',
+		slave: false,
+		s: sc_search_source,
+		preferred: null,
+		q: su.soundcloud_queue
+	})
 	
-};
+	
+})();
 
 
 

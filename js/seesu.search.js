@@ -5,16 +5,23 @@ var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/def
 
 input_change = function(e, no_navi){
 	su.ui.els.search_label.removeClass('loading');
-	
-	var input = (e && e.target) || e; //e can be EVENT or INPUT  
+	var 
+		input = (e && e.target) || e, //e can be EVENT or INPUT  
+		input_value = input.value,
+		old_value = $(input).data('old_v');
 
-	var input_value = input.value;
-	if (!input_value) {
-		su.ui.views.showStartPage();
-		return;
+	if (old_value != input_value){
+		$(input).data('old_v', input_value);
+		if (!input_value) {
+			su.ui.views.showStartPage();
+		} else {
+			su.ui.views.showResultsPage(input_value, no_navi);
+		}
 	}
+
 	
-	su.ui.views.showResultsPage(input_value, no_navi);
+	
+	
 };
 
 var searchTags = function(q){
