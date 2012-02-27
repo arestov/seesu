@@ -100,18 +100,7 @@ window.seesu = window.su =  {
 		seesu.track_stat.call(this, args);
 	  },
 	  popular_artists: ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ],
-	  vk:{
-		id: suStore('vkid'),
-		big_vk_cookie: suStore('big_vk_cookie'),
-		set_xhr_headers: function(xhr){
-			xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-			if (seesu.env.apple_db_widget && seesu.vk.big_vk_cookie){
-				try {
-					xhr.setRequestHeader("Cookie", seesu.vk.big_vk_cookie);
-				} catch(e){}
-			}
-		}
-	  },
+	  vk:{},
 	  notf: new gMessagesStore(
 	  	function(value) {
 	  		return suStore('notification', value, true);
