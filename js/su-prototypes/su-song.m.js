@@ -55,6 +55,26 @@
 				this.updateState('can-expand', false);
 			}
 		});
+		this.watchState('mp-show', function(opts) {
+			var
+				_this = this,
+				oldCb = this.makePlayableOnNewSearch;
+
+			if (opts){
+				if (!oldCb){
+					this.makePlayableOnNewSearch = function() {
+						_this.makeSongPlayalbe(true);
+					};
+					this.mp3_search.on('new-search', this.makePlayableOnNewSearch)
+					
+				}
+			} else {
+				if (oldCb){
+					this.mp3_search.off('new-search', oldCb)
+					delete this.makePlayableOnNewSearch;
+				}
+			}
+		});
 	};
 	createPrototype(song, new baseSong(), {
 		ui_constr: {

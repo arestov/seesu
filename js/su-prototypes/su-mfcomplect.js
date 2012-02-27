@@ -292,7 +292,8 @@ createPrototype(mfCor, new servModel(), {
 
 				this.vk_audio_auth = new vkLogin();
 				this.vk_audio_auth.on('auth-request', function() {
-					console.log()
+					su.vk_auth.requestAuth();
+					//console.log()
 				});
 				this.addChild(this.vk_audio_auth);
 				this.updateState('changed', new Date());

@@ -89,7 +89,6 @@
 				}
 			}
 		});
-
 			
 	};
 	createPrototype(songsList, new songsListModel(), {

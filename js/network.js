@@ -102,13 +102,7 @@ createPrototype(vkLoginUI, new servView(), {
 		this.c = su.ui.samples.vklc.clone();
 		var _this = this;
 		this.c.find('.sign-in-to-vk').click(function(e){
-			var class_name = this.className;
-			
-			var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
-			_this.requestAuth({
-				ru: class_name.match(/sign-in-to-vk-ru/) ? true: false
-			})
-			
+			_this.md.requestAuth();
 			e.preventDefault();
 		});
 
@@ -276,7 +270,7 @@ function try_mp3_providers(){
 	su.vk_auth
 		.on('vk-token-receive', function(token){
 			var vk_token = new vkTokenAuth(seesu_vkappid, token);			
-			connectApiToSeesu(vk_token);
+			connectApiToSeesu(vk_token, true);
 		})
 		.on('want-open-url', function(wurl){
 			if (app_env.showWebPage){
@@ -298,7 +292,7 @@ function try_mp3_providers(){
 							}
 							at.user_id = hashurlparams.user_id;
 							var vk_token = new vkTokenAuth(seesu_vkappid, at);
-							connectApiToSeesu(vk_token);
+							connectApiToSeesu(vk_token, true);
 
 						}
 						return true;
