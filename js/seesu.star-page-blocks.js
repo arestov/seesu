@@ -280,7 +280,7 @@ var viewBlocks = function(sui, d){
 	var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(sui.els.start_screen);
 	var createTrackLink = function(artist, track, track_obj, playlist){
 		return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(e){
-			sui.views.show_playlist_page(playlist);
+			su.views.show_playlist_page(playlist);
 			playlist.showTrack(track_obj);
 			e.preventDefault();
 		});

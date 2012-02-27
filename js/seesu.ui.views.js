@@ -100,7 +100,6 @@ createPrototype(mainLevelUI, new suServView(), {
 				if (opts.userwant){
 					this.els.search_input[0].focus();
 					this.els.search_input[0].select();
-					su.track_page('start page');
 				}
 			} else {
 				
@@ -117,7 +116,7 @@ createPrototype(mainLevelUI, new suServView(), {
 				
 				if (!this.now_playing_link && this.nav){
 					this.now_playing_link = $('<a class="np"></a>').click(function(){
-						su.ui.views.show_now_playing(true);
+						su.views.show_now_playing(true);
 					}).appendTo(this.nav.justhead);
 				}
 				if (this.now_playing_link){
@@ -182,6 +181,7 @@ createPrototype(mainLevel, new suMapModel(), {
 			return new mainLevelNavUI(this);
 		}
 	},
+	page_name: 'start page',
 	nowPlaying: function(text) {
 		this.updateState('now-playing', text);
 	},
@@ -248,8 +248,7 @@ createPrototype(trackNavUI, new baseNavUI(), {
 
 //this.getPlaylistContainer(save_parents)
 //getCurrentPlaylistContainer
-views = function(sui, su_map){
-	this.sui = sui;
+views = function(su_map){
 	var _this = this;
 	this.m = su_map;
 
@@ -267,26 +266,30 @@ views = function(sui, su_map){
 			}
 
 			//console.log(arguments);
-		});
+		})
+		.on('every-url-change', function(nd, od, replace) {
+
+			su.track_page(nd.map_level.resident.page_name);
+			
+		})
 
 };
 //su.ui.nav.daddy
 views.prototype = {
-	sUI: function(){
-		return su && su.ui || this.sui;	
-	},
 	restoreFreezed: function(transit, url_restoring){
 		this.m.restoreFreezed(transit, url_restoring);
 	},
 
 	show_now_playing: function(no_stat){
-		var current_page = this.sUI().els.slider.className;
-		this.restoreFreezed(true);
-		
-		su.ui.views.show_track_page(su.p.c_song);
 		if (!no_stat){
-			seesu.track_event('Navigation', 'now playing', current_page);
+			seesu.track_event('Navigation', 'now playing');
 		}
+		//var cl = su.map.getCurMapL();
+		//cl = cl && cl.resident;
+
+		this.restoreFreezed(true);
+		su.views.show_track_page(su.p.c_song);
+		
 		
 	},
 	showStartPage: function(url_restoring){

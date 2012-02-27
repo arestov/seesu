@@ -120,6 +120,8 @@ window.seesu = window.su =  {
 		}
 	  }
 	};
+su.views = new views(su.map);
+
 
 su.emitter.onRegistration('dom', function(cb) {
 	if (su.ui && su.ui.can_fire_on_domreg){
@@ -317,7 +319,7 @@ var render_loved = function(user_name){
 				create_playlist(track_list,pl_r);
 			}
 		});
-	seesu.ui.views.show_playlist_page(pl_r);
+	su.views.show_playlist_page(pl_r);
 };
 var render_recommendations_by_username = function(username){
 	var pl_r = prepare_playlist('Recommendations for ' +  username, 'artists by recommendations').loading()
@@ -341,7 +343,7 @@ var render_recommendations_by_username = function(username){
 		  }
 	});
 
-	seesu.ui.views.show_playlist_page(pl_r);
+	su.views.show_playlist_page(pl_r);
 };
 var render_recommendations = function(){
 	var pl_r = prepare_playlist('Recommendations for you', 'artists by recommendations').loading();
@@ -360,7 +362,7 @@ var render_recommendations = function(){
 			proxy_render_artists_tracks(false, pl_r);
 		});
 
-	seesu.ui.views.show_playlist_page(pl_r);
+	su.views.show_playlist_page(pl_r);
 
 };
 

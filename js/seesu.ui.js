@@ -17,7 +17,6 @@ createPrototype(artCardUI, new suServView(), {
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
-				su.track_page('art card');
 				this.c.removeClass('hidden');
 			} else {
 				this.c.addClass('hidden');
@@ -120,7 +119,7 @@ createPrototype(artCardUI, new suServView(), {
 			$.each(artists, function(i, el){
 				var li = $('<li></li>');
 				$('<a class="js-serv"></a>').click(function(){
-					su.ui.views.showArtcardPage(el.name);
+					su.views.showArtcardPage(el.name);
 				}).text(el.name).appendTo(li);
 				li.appendTo(ul);
 				ul.append(' ');
@@ -194,6 +193,7 @@ createPrototype(artCard, new suMapModel(), {
 			return new artCardNavUI(this)
 		}	
 	},
+	page_name: "art card",
 	getURL: function() {
 		return '/catalog/' + this.artist;	
 	},
@@ -403,8 +403,6 @@ window.seesu_ui = function(d, with_dom, cb){
 	this.els = {};
 	if (!with_dom){
 		dstates.connect_ui(this);
-	} else {
-		this.views = new views(this, su.map);
 	}
 	
 	this.popups = [];
@@ -419,7 +417,7 @@ window.seesu_ui = function(d, with_dom, cb){
 				var state_recovered;
 				if (window.su && su.p && su.p.c_song){
 					if (su.p.c_song && su.p.c_song.plst_titl){
-						su.ui.views.show_now_playing(true);
+						su.views.show_now_playing(true);
 						state_recovered = true;
 					}
 				}
@@ -553,12 +551,12 @@ seesu_ui.prototype = {
 		var cpl = su.p.isPlaying(pl);
 		if (!cpl){
 			if (!vopts.from_artcard){
-				su.ui.views.showArtcardPage(artist, vopts.save_parents, true);
+				su.views.showArtcardPage(artist, vopts.save_parents, true);
 			}
 			this.views.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
 			return false;
 		} else{
-			su.ui.views.restoreFreezed();
+			su.views.restoreFreezed();
 			return cpl;
 		}
 	},
@@ -618,7 +616,7 @@ seesu_ui.prototype = {
 	},
 	showTrackById: function(sub_raw, vopts){
 		var pl_r = prepare_playlist('Track' , 'tracks', {time: + new Date()});
-		su.ui.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
+		su.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
 		
 		if (sub_raw.type && sub_raw.id){
 			su.mp3_search.getById(sub_raw, function(song, want_auth){

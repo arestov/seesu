@@ -126,6 +126,12 @@ createPrototype(baseSong, new suMapModel(), {
 
 		}
 	},
+	wasMarkedAsPrev: function() {
+		return this.state('marked_as') && this.state('marked_as') == 'prev';
+	},
+	wasMarkedAsNext: function() {
+		return this.state('marked_as') && this.state('marked_as') == 'next';
+	},
 	addMarksToNeighbours: function(){
 		
 		if (!this.marked_prev_song || this.marked_prev_song != this.prev_song){

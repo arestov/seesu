@@ -13,9 +13,9 @@ input_change = function(e, no_navi){
 	if (old_value != input_value){
 		$(input).data('old_v', input_value);
 		if (!input_value) {
-			su.ui.views.showStartPage();
+			su.views.showStartPage();
 		} else {
-			su.ui.views.showResultsPage(input_value, no_navi);
+			su.views.showResultsPage(input_value, no_navi);
 		}
 	}
 
@@ -58,7 +58,7 @@ createPrototype(artistSuggest, new baseSuggest(), {
 		return this.artist;
 	},
 	onView: function(){
-		su.ui.views.showArtcardPage(this.artist, true);
+		su.views.showArtcardPage(this.artist, true);
 		su.track_event('Music search', this.q, "artist: " + this.artist );
 	},
 	ui_constr: function(){
@@ -97,7 +97,7 @@ createPrototype(playlistSuggest, new baseSuggest(), {
 		return this.pl.playlist_title;
 	},
 	onView: function(){
-		su.ui.views.showStaticPlaylist(this.pl, true);
+		su.views.showStaticPlaylist(this.pl, true);
 	},
 	ui_constr: function(){
 		return new playlistSuggestUI(this);

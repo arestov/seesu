@@ -8,27 +8,15 @@
 		
 
 		this.on('view', function(){
-			if (_this.state('playable')){
-				var zoomed = !!su.ui.els.slider.className.match(/show-zoom-to-track/);
-				if (this.c_song){
-					if (mo == this.c_song){
-						su.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
-					} else if (this.c_song.next_song && mo == this.c_song.next_song){
-						su.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
-					} else if (this.c_song.prev_song && mo == this.c_song.prev_song){
-						su.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
-					} else{
-						su.track_event('Song click', 'simple click');
-					}
-				} else{
-					su.track_event('Song click', 'simple click');
-				}
-				if (!zoomed){
-					su.track_page('track zoom');
-				}
-			} else {
-				su.track_event('Song click', 'empty song');
+			if (_this.wasMarkedAsPrev()){
+				su.track_event('Song click', 'previous song');
+			} else if (_this.wasMarkedAsNext()){
+				su.track_event('Song click', 'next song');
+			} else if (_this.state('play')){
+				su.track_event('Song click', 'zoom to itself');
 			}
+			
+		
 		});
 		this.mf_cor = new mfCor(this, this.omo);
 		this.addChild(this.mf_cor);
@@ -85,6 +73,7 @@
 				return new trackNavUI(this);
 			}
 		},
+		page_name: 'song page',
 		updateFilesSearchState: function(complete, get_next){
 			baseSong.prototype.updateFilesSearchState.apply(this, arguments);
 			if (this.isHaveTracks()){
@@ -98,7 +87,7 @@
 			if (!this.state('mp-show')){
 				this.fire('view');
 				this.findFiles();
-				su.ui.views.show_track_page(this, no_navi);
+				su.views.show_track_page(this, no_navi);
 			}
 			
 		}

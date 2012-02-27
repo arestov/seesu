@@ -274,7 +274,7 @@ cloneObj(songUI.prototype, {
 				.data('artist', this.md.artist)
 				.appendTo(dominator_head.children('.closer-to-track'))
 				.click(function(){
-					su.ui.views.showArtcardPage(_this.md.artist);
+					su.views.showArtcardPage(_this.md.artist);
 					su.track_event('Artist navigation', 'art card', _this.md.artist);
 				});
 		}

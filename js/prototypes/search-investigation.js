@@ -2,11 +2,8 @@
 
 var investigationUI = function(invstg){
 	this.invstg = invstg;
-	
 	this.callParentMethod('init')
-	
 	this.createBase();
-
 	this.setStates(invstg.states);
 	
 };
@@ -145,15 +142,13 @@ createPrototype(investigation, new suMapModel(), {
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
-				if (opts.userwant){
-					su.track_page('search results');
-				}
 				su.search_el = this;
 			}
 			
 			
 		}
 	},
+	page_name: "search results",
 	addCallback: function(event_name, func){
 		this.on(event_name, func);
 	},

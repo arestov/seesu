@@ -273,9 +273,15 @@ createPrototype(browseMap, new eemiter(), {
 	},
 	setNavTree: function(tree, url_restoring) {
 		var old_tree = this.nav_tree;
+		if (old_tree){
+			this.old_nav_tree = old_tree;
+		}
 		this.nav_tree = tree;
 		this.setCurrentNav(tree, old_tree, url_restoring);
 		this.setCurrentURL(tree, old_tree, url_restoring);
+	},
+	getPrevMampL: function() {
+		return this.old_nav_tree && this.old_nav_tree[0];
 	},
 	getCurMapL: function() {
 		return this.nav_tree[0]
@@ -373,7 +379,19 @@ createPrototype(browseMap, new eemiter(), {
 			if (!url_restoring){
 				_this.fire('url-change', nv, ov || "", _this.getCurMapL(), replace);
 			}
-			
+			_this.fire(
+				'every-url-change', 
+				{
+					url: nv,
+					map_level: _this.getCurMapL() 
+				},
+				{
+					url: ov || "",
+					map_level: _this.getPrevMampL()
+				}, 
+				replace
+			);
+
 		});
 		return this;
 	},

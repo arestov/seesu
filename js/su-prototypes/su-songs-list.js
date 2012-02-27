@@ -100,6 +100,7 @@
 				return new playlistNavUI(this);
 			}
 		},
+		page_name: 'playlist',
 		getURL: function(){
 			var url ='';
 			if (this.playlist_type == 'artist'){
