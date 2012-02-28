@@ -1,8 +1,6 @@
 
 var playerBase = function(){};
-
-// fixme - use simple eemitter
-servModel.extendTo(playerBase, {
+eemiter.extendTo(playerBase, {
 	constructor: playerBase,
 	global_volume: true,
 	init: function(volume){

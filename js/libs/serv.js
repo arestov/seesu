@@ -438,7 +438,27 @@ var createPrototype = function(constr, assi_prototype, clone_prototype){
 var Class;
 (function(){
 	"use strict";
-	var fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+	var 
+		fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/,
+		allowParentCall = function(name, fn, _super){
+			return function() {
+				var tmp = this._super;
+
+				// Add a new ._super() method that is the same method
+				// but on the super-class
+				this._super = _super[name];
+
+				// The method only need to be bound temporarily, so we
+				// remove it when we're done executing
+				var ret = fn.apply(this, arguments); 
+				if (typeof tmp != 'undefined'){
+					this._super = tmp
+				} else {
+					delete this._super
+				}
+				return ret;
+			};
+		};
 
 
 	// The base Class implementation (does nothing)
@@ -457,25 +477,7 @@ var Class;
 		// Check if we're overwriting an existing function
 		prototype[name] = typeof prop[name] == "function" && 
 			typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-			(function(name, fn){
-				return function() {
-					var tmp = this._super;
-
-					// Add a new ._super() method that is the same method
-					// but on the super-class
-					this._super = _super[name];
-
-					// The method only need to be bound temporarily, so we
-					// remove it when we're done executing
-					var ret = fn.apply(this, arguments); 
-					if (typeof tmp != 'undefined'){
-						this._super = tmp
-					} else {
-						delete this._super
-					}
-					return ret;
-				};
-			})(name, prop[name]) :
+			allowParentCall(name, prop[name], _super) :
 			prop[name];
 	}
 	 

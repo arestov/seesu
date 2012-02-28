@@ -1,5 +1,3 @@
-
-
 var investigationUI = function(invstg){
 	this.invstg = invstg;
 	this.init();
@@ -47,7 +45,7 @@ suServView.extendTo(investigationUI, {
 	},
 	die: function() {
 		this.blur();
-		this.callParentMethod('die');	
+		this._super();
 	},
 	blur: function() {
 		$(su.ui.els.slider).removeClass('show-search show-search-results')
@@ -158,11 +156,6 @@ suMapModel.extendTo(investigation, {
 			rc += this.sections[i].r.length;
 		};
 		this.fire('resultsChanged', rc);
-	},
-
-	die: function(){
-		this.callParentMethod('die');
-		this.stopRequests();
 	},
 	doEverythingForQuery: function(){
 		this.searchf.call(this);
