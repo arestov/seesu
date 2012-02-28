@@ -18,7 +18,7 @@ playerComplex.extendTo(seesuPlayer, {
 	events: {
 		finish: function(e){
 			if (this.c_song == e.song_file.mo){
-				this.playNext(false, true);
+				this.playNext(this.c_song, true);
 			}
 		},
 		play: function(e){

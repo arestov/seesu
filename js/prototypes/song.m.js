@@ -47,49 +47,15 @@ model.extendTo(baseSong, {
 		this.updateState('nav-text', title);
 		this.updateState('nav-title', title);
 	},
-	findNeighbours: function(){
-		//using for visual markering and determination of what to presearch
-		this.next_preload_song = false;
-		this.next_song = false
-		this.prev_song = false
-		
-		var c_playlist = this.plst_titl,
-			c_num = this.plst_titl.indexOf(this);//this.play_order
+	playNext: function(auto) {
+		this.plst_titl.switchTo(this, true, auto)
+	},
+	playPrev: function() {
+		this.plst_titl.switchTo(this)
+	},
 
-		var can_use = [];
-		for (var i=0; i < c_playlist.length; i++) {
-			var cur = c_playlist[i];
-			if (cur && (cur.isHaveTracks() || !cur.isSearchCompleted())){
-				can_use.push(i);
-			}
-		};	
-		if (c_playlist && typeof c_num == 'number'){
-			if (c_num-1 >= 0) {
-				for (var i = c_num-1, _p = false;  i >= 0; i--){
-					
-					if (bN(can_use.indexOf(i))){
-						this.prev_song = c_playlist[i];
-						break
-					}
-				};
-			}
-			var next_song = c_num+1;
-			var preload_song;
-			for (var i = 0, _n = false; i < c_playlist.length ; i++) {
-				if (bN(can_use.indexOf(i))){
-					if (!preload_song){
-						preload_song = c_playlist[i];
-					}
-					if (i >= next_song){
-						this.next_song = preload_song =  c_playlist[i];
-						break
-					}
-				}
-			};
-			if (preload_song){
-				this.next_preload_song = preload_song;
-			}
-		}	
+	findNeighbours: function(){
+		this.plst_titl.findNeighbours(this);
 	},
 	checkAndFixNeighbours: function(){
 		this.findNeighbours();
@@ -345,6 +311,12 @@ model.extendTo(baseSong, {
 		}
 		this.fire('files_search', opts);
 		this.updateState('files_search', opts);
+	},
+	view: function(no_navi, user_want){
+		if (!this.state('mp-show')){
+			this.fire('view', no_navi, user_want);
+			this.findFiles();
+		}
 	},
 	getURL: function(mopla){
 		var url ="";

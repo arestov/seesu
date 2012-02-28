@@ -6,6 +6,7 @@
 		oldpush: songsListModel.prototype.push,
 		constructor: songsListModel,
 		init: function(){
+			this.palist = []; 
 			suMapModel.prototype.init.call(this)
 		},
 		push: function(omo, view){
@@ -19,11 +20,17 @@
 			if (this.first_song){
 				if (this.first_song.omo==omo){
 					this.first_song.mo = mo;
+					this.palist.push(mo);
 					return this.oldpush(mo);
 				} else if (!this.firstsong_inseting_done){
 					if (mo.artist != this.first_song.omo.artist || mo.track != this.first_song.omo.track){
 						var fs = this.pop();
+						this.palist.pop();
+
+						this.palist.push(mo);
 						this.oldpush(mo);
+
+						this.palist.push(fs);
 						return this.oldpush(fs);
 						
 					} else {
@@ -31,9 +38,11 @@
 					}
 					
 				} else{
+					this.palist.push(mo);
 					return this.oldpush(mo);
 				}
 			} else {
+				this.palist.push(mo);
 				return this.oldpush(mo);
 			}
 		},
@@ -41,6 +50,7 @@
 			var mo = cloneObj({}, omo, false, ['track', 'artist']);
 			this.push(mo, view);
 		},
+
 		findSongOwnPosition: function(first_song){
 			if (bN(['artist', 'album', 'cplaylist'].indexOf(this.playlist_type ))){
 				var can_find_context = true;
@@ -166,6 +176,82 @@
 				
 			};
 			return this;
+		},
+		switchTo: function(mo, direction, auto) {
+	
+			var playlist = [];
+			for (var i=0; i < this.length; i++) {
+				var ts = this[i].song();
+				if (ts){
+					playlist.push(this[i]);
+				}
+			};
+			var current_number  = playlist.indexOf(mo),
+				total			= playlist.length || 0;
+				
+			if (playlist.length > 1) {
+				var s = false;
+				if (direction) {
+					if (current_number == (total-1)) {
+						s = playlist[0];
+					} else {
+						s = playlist[current_number+1];
+					}
+				} else {
+					if ( current_number == 0 ) {
+						s = playlist[total-1];
+					} else {
+						s = playlist[current_number-1];
+					}
+				}
+				if (s){
+					s.play();
+				}
+			}
+		
+		},
+		findNeighbours: function(mo) {
+			//using for visual markering and determination of what to presearch
+			mo.next_preload_song = false;
+			mo.next_song = false
+			mo.prev_song = false
+			
+			var c_num = this.indexOf(mo);//this.play_order
+
+			var can_use = [];
+			for (var i=0; i < this.length; i++) {
+				var cur = this[i];
+				if (cur && (cur.isHaveTracks() || !cur.isSearchCompleted())){
+					can_use.push(i);
+				}
+			};	
+			if (this && typeof c_num == 'number'){
+				if (c_num-1 >= 0) {
+					for (var i = c_num-1, _p = false;  i >= 0; i--){
+						
+						if (bN(can_use.indexOf(i))){
+							mo.prev_song = this[i];
+							break
+						}
+					};
+				}
+				var next_song = c_num+1;
+				var preload_song;
+				for (var i = 0, _n = false; i < this.length ; i++) {
+					if (bN(can_use.indexOf(i))){
+						if (!preload_song){
+							preload_song = this[i];
+						}
+						if (i >= next_song){
+							mo.next_song = preload_song =  this[i];
+							break
+						}
+					}
+				};
+				if (preload_song){
+					mo.next_preload_song = preload_song;
+				}
+			}	
 		}
 
 

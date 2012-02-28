@@ -5,14 +5,19 @@
 		var _this = this;
 		this.updateNavTexts();
 
-		this.on('view', function(){
-			if (_this.wasMarkedAsPrev()){
-				su.track_event('Song click', 'previous song');
-			} else if (_this.wasMarkedAsNext()){
-				su.track_event('Song click', 'next song');
-			} else if (_this.state('play')){
-				su.track_event('Song click', 'zoom to itself');
+		this.on('view', function(no_navi, user_want){
+			su.views.show_track_page(this, no_navi);
+			if (user_want){
+				//fixme - never true!
+				if (_this.wasMarkedAsPrev()){
+					su.track_event('Song click', 'previous song');
+				} else if (_this.wasMarkedAsNext()){
+					su.track_event('Song click', 'next song');
+				} else if (_this.state('play')){
+					su.track_event('Song click', 'zoom to itself');
+				}
 			}
+			
 		});
 		
 		this.mf_cor = new mfCor(this, this.omo);
@@ -80,14 +85,6 @@
 		},	
 		mlmDie: function() {
 			this.hide();	
-		},
-		view: function(no_navi){
-			if (!this.state('mp-show')){
-				this.fire('view');
-				this.findFiles();
-				su.views.show_track_page(this, no_navi);
-			}
-			
 		}
 	});
 	//song.prototype = song_methods;

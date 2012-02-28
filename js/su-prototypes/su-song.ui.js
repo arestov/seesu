@@ -221,7 +221,7 @@ cloneObj(songUI.prototype, {
 					mo.plst_titl.lev.freeze()
 				}
 				
-				mo.view();
+				mo.view(false, true);
 				return false;
 			});
 		

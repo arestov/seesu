@@ -2,44 +2,10 @@ var playerComplex = function(){};
 playerBase.extendTo(playerComplex, {
 	constructor: playerComplex,
 	playNext: function(mo, auto){
-		this.switchTo(mo, true, auto);
+		mo.playNext(auto);
 	},
 	playPrev: function(mo){
-		this.switchTo(mo)
-	},
-	switchTo: function(mo, direction, auto) {
-		var c_song = mo || this.c_song;
-		if (c_song) {
-			var playlist = [];
-			for (var i=0; i < c_song.plst_titl.length; i++) {
-				var ts = c_song.plst_titl[i].song();
-				if (ts){
-					playlist.push(c_song.plst_titl[i]);
-				}
-			};
-			var current_number  = playlist.indexOf(c_song),
-				total			= playlist.length || 0;
-				
-			if (playlist.length > 1) {
-				var s = false;
-				if (direction) {
-					if (current_number == (total-1)) {
-						s = playlist[0];
-					} else {
-						s = playlist[current_number+1];
-					}
-				} else {
-					if ( current_number == 0) {
-						s = playlist[total-1];
-					} else {
-						s = playlist[current_number-1];
-					}
-				}
-				if (s){
-					s.play();
-				}
-			}
-		}
+		mo.playPrev();
 	},
 	removeCurrentWantedSong: function(){
 		if (this.wanted_song){
