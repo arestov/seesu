@@ -502,7 +502,7 @@ seesu_ui.prototype = {
 		}, function(){
 			proxy_render_artists_tracks(false, pl_r);
 		});
-		this.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
+		su.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
 		
 		if (start_song){
 			pl_r.showTrack(start_song, full_no_navi);
@@ -519,7 +519,7 @@ seesu_ui.prototype = {
 		}
 		
 		var pl_r = prepare_playlist(title , 'tracks', {query: q} , title).loading();
-		this.views.show_playlist_page(pl_r, !!q);
+		su.views.show_playlist_page(pl_r, !!q);
 		su.mp3_search.find_files(q, false, function(err, pl, c, complete){
 			if (complete){
 				c.done = true;
@@ -553,7 +553,7 @@ seesu_ui.prototype = {
 			if (!vopts.from_artcard){
 				su.views.showArtcardPage(artist, vopts.save_parents, true);
 			}
-			this.views.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
+			su.views.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
 			return false;
 		} else{
 			su.views.restoreFreezed();
@@ -672,7 +672,7 @@ seesu_ui.prototype = {
 
 				
 			});
-		this.views.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
+		su.views.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
 	},
 	showSimilarArtists: function(artist, vopts, start_song){
 		vopts = vopts || {};
@@ -680,7 +680,7 @@ seesu_ui.prototype = {
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
 		var pl = prepare_playlist('Similar to «' + artist + '» artists', 'similar artists', {artist: artist}, start_song).loading();
-		//this.views.show_playlist_page(pl, false, no_navi || !!start_song);
+		//su.views.show_playlist_page(pl, false, no_navi || !!start_song);
 		
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		if (!recovered){
@@ -1168,7 +1168,7 @@ seesu_ui.prototype = {
 	},
 	search: function(query, no_navi, new_browse){
 		if (new_browse){
-			this.views.showStartPage();
+			su.views.showStartPage();
 		}
 		this.els.search_input.val(query);
 		input_change(this.els.search_input[0], no_navi);
