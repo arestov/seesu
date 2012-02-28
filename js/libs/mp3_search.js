@@ -424,17 +424,15 @@ function has_music_copy(array, entity, from_position){
 		return !r || !r.t;
 	};
 
-	var mp3SearchBase = function() {};
-	createPrototype(mp3SearchBase, [], new eemiter());
-
-
 	mp3Search = function(){
-		
-		this.callParentMethod('init');
+		this.init();
 		this.ids = [];
+		this.se_list = [];
 		this.search_emitters = {};
+
 	};
-	createPrototype(mp3Search, new mp3SearchBase(), {
+
+	eemiter.extendTo(mp3Search,  {
 		updateStoringOfId: function(really_save, subraw, handler, stillNeed, i){
 				if (this.ids[i]){
 					if (!really_save){
@@ -561,8 +559,9 @@ function has_music_copy(array, entity, from_position){
 			
 			
 			var search_handlers = [];
-			for (var i=0; i < this.length; i++) {
-				var cursor = this[i];
+
+			for (var i=0; i < this.se_list.length; i++) {
+				var cursor = this.se_list[i];
 				var _c; //cache
 				if ((!filter || cursor.name == filter) && needSearch(sem, cursor.name)){
 					if (!seeking_something_fresh && !bN(tried_cache.indexOf(cursor.name))){
@@ -690,8 +689,8 @@ function has_music_copy(array, entity, from_position){
 			}
 			var exist_slave;
 			var exist_alone_master;
-			for (var i=0; i < this.length; i++) {
-				var cmp3s = this[i];
+			for (var i=0; i < this.se_list.length; i++) {
+				var cmp3s = this.se_list[i];
 				if (!cmp3s.disabled && cmp3s.name == filter){
 					if (cmp3s.slave){
 						if (!o.exist_slave){
@@ -701,8 +700,8 @@ function has_music_copy(array, entity, from_position){
 					}
 				}
 			};
-			for (var i=0; i < this.length; i++) {
-				var cmp3s = this[i];
+			for (var i=0; i < this.se_list.length; i++) {
+				var cmp3s = this.se_list[i];
 				if (!cmp3s.disabled && cmp3s.name == filter){
 					if (!cmp3s.slave){
 						if (o.exist_slave){
@@ -742,19 +741,18 @@ function has_music_copy(array, entity, from_position){
 					if (o.exist_slave.preferred){
 						o.exist_slave.preferred.disabled = true;
 					}
-					
-					this.push(asearch);
+					this.se_list.push(asearch);
 					o.exist_slave.preferred = asearch;
 					this.newSearchInit(asearch.name, asearch);
 				} 
 			} else if (o.exist_alone_master){
 				if (force){
 					o.exist_alone_master.disabled = true;
-					this.push(asearch);
+					this.se_list.push(asearch);
 					this.newSearchInit(asearch.name, asearch);
 				}
 			} else{
-				this.push(asearch);
+				this.se_list.push(asearch);
 				this.newSearchInit(asearch.name, asearch);
 			}
 		},
