@@ -350,12 +350,12 @@ statesEmmiter.extendTo(servView, {
 		
 		return this;
 	},
-	setModel: function(mdl, puppet_model){
-		this.mdl = mdl;
+	setModel: function(md, puppet_model){
+		this.md = md;
 		if (puppet_model){
 			this.puppet_model = puppet_model;
 		}
-		this.setStates(mdl.states);
+		this.setStates(md.states);
 		return this;
 	},
 	appendModelTo: function(m, c) {

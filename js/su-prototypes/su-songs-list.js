@@ -132,10 +132,10 @@
 			}
 		},
 		makeExternalPlaylist: function() {
-			if (!this.length){return false;}
+			if (!this.palist.length){return false;}
 			var simple_playlist = [];
-			for (var i=0; i < this.length; i++) {
-				var song = this[i].song();
+			for (var i=0; i < this.palist.length; i++) {
+				var song = this.palist[i].song();
 				if (song){
 					simple_playlist.push({
 						track_title: song.track,

@@ -1,13 +1,9 @@
 (function(){
 	songsListModel = function(){};
-	songsListModel.prototype = new Array();
-	cloneObj(songsListModel.prototype, suMapModel.prototype);
-	cloneObj(songsListModel.prototype, {
-		oldpush: songsListModel.prototype.push,
-		constructor: songsListModel,
+	suMapModel.extendTo(songsListModel, {
 		init: function(){
 			this.palist = []; 
-			suMapModel.prototype.init.call(this)
+			this._super();
 		},
 		push: function(omo, view){
 			var mo = this.extendSong(omo, this.player, this.findMp3);
@@ -21,36 +17,26 @@
 				if (this.first_song.omo==omo){
 					this.first_song.mo = mo;
 					this.palist.push(mo);
-					return this.oldpush(mo);
 				} else if (!this.firstsong_inseting_done){
 					if (mo.artist != this.first_song.omo.artist || mo.track != this.first_song.omo.track){
-						var fs = this.pop();
-						this.palist.pop();
-
+						var fs = this.palist.pop();
 						this.palist.push(mo);
-						this.oldpush(mo);
-
 						this.palist.push(fs);
-						return this.oldpush(fs);
-						
 					} else {
 						this.firstsong_inseting_done = true;
 					}
 					
 				} else{
 					this.palist.push(mo);
-					return this.oldpush(mo);
 				}
 			} else {
 				this.palist.push(mo);
-				return this.oldpush(mo);
 			}
 		},
 		add: function(omo, view){
 			var mo = cloneObj({}, omo, false, ['track', 'artist']);
 			this.push(mo, view);
 		},
-
 		findSongOwnPosition: function(first_song){
 			if (bN(['artist', 'album', 'cplaylist'].indexOf(this.playlist_type ))){
 				var can_find_context = true;
@@ -69,9 +55,9 @@
 		},
 		die: function(){
 			this.hide();
-			suMapModel.prototype.die.call(this);
-			for (var i = this.length - 1; i >= 0; i--){
-				this[i].die();
+			this._super();
+			for (var i = this.palist.length - 1; i >= 0; i--){
+				this.palist[i].die();
 			};
 
 		},
@@ -114,10 +100,9 @@
 			
 			console.log('want to find and show');
 			
-			for (var i=0; i < this.length; i++) {
-				if (artist_track.track == this[i].track && (will_ignore_artist || artist_track.artist == this[i].artist)){
-					this[i].findFiles();
-					this[i].view(no_navi);
+			for (var i=0; i < this.palist.length; i++) {
+				if (artist_track.track == this.palist[i].track && (will_ignore_artist || artist_track.artist == this.palist[i].artist)){
+					this.palist[i].view(no_navi);
 					return true;
 				}
 			};
@@ -141,7 +126,7 @@
 			return this;
 		},
 		loadComplete: function(error){
-			error = ((typeof error == 'string') ? error : (!this.length && error));
+			error = ((typeof error == 'string') ? error : (!this.palist.length && error));
 			this.updateState('error', error);
 			this.updateState('loading', false);
 			this.markTracksForFilesPrefinding();
@@ -256,14 +241,13 @@
 
 
 	});
-
+	
 
 	songsListViewBase = function(){};
-	songsListViewBase.prototype = new suServView(); 
-	cloneObj(songsListViewBase.prototype, {
+	suServView.extendTo(songsListViewBase, {
 		constructor: songsListViewBase,
 		init: function(pl){
-			servView.prototype.init.call(this);
+			this._super();
 			this.createBase();
 			this.setModel(pl);
 			
@@ -297,12 +281,12 @@
 			var _this = this;
 
 			pl_panel.find(".make-trs-plable").click(function(){
-				_this.mdl.makePlayable(true);
+				_this.md.makePlayable(true);
 				su.track_event('Controls', 'make playable all tracks in playlist'); 
 			})
 			
 			this.export_playlist = pl_panel.find('.open-external-playlist').click(function(e){
-				_this.mdl.makeExternalPlaylist()
+				_this.md.makeExternalPlaylist()
 				e.preventDefault();
 			});
 			this.c.append(pl_panel);
@@ -318,7 +302,8 @@
 			if (!pl_ui_element){
 				return
 			}
-			var _this = this.mdl;
+			var _this = this.md;
+
 
 			if (_this.first_song){
 				if (!_this.firstsong_inseting_done){
@@ -331,8 +316,8 @@
 						}
 					}
 				} else if (_this.first_song.mo != mo){
-					var f_position = _this.indexOf(_this.first_song.mo);
-					var t_position = _this.indexOf(mo);
+					var f_position = _this.palist.indexOf(_this.first_song.mo);
+					var t_position = _this.palist.indexOf(mo);
 					if (t_position < f_position){
 						var moc = _this.first_song.mo.getC();
 						if (moc){
@@ -351,41 +336,36 @@
 			}
 		},
 		render_playlist: function(load_finished) {
-			var _this = this.mdl;	
-			if (_this.length){
+			var _this = this.md;
+			if (_this.palist.length){
 				if (_this.player && _this.player.isPlaying(_this)){
 					var ordered = [];
 					var etc = [];
 
 					var current_song = _this.player && _this.player.c_song;
 					if (current_song) {
-						for (var i = 0; i < _this.length; i++) {
-							if (current_song.isNeighbour(_this[i])){
-								ordered.push(_this[i]);
+						for (var i = 0; i < _this.palist.length; i++) {
+							if (current_song.isNeighbour(_this.palist[i])){
+								ordered.push(_this.palist[i]);
 							}
 						};
 					}
-					
-					for (var i=0; i < _this.length; i++) {
-						var mo = _this[i];
+					for (var i=0; i < _this.palist.length; i++) {
+						var mo = _this.palist[i];
 						if (ordered.indexOf(mo) == -1){
 							etc.push(mo);
 						}
 						
 					};
-					
-					for (var i=0; i < _this.length; i++) {
-						_this[i].render();
-						this.appendSongUI(_this[i]);
-
-						
+					for (var i=0; i < _this.palist.length; i++) {
+						_this.palist[i].render();
+						this.appendSongUI(_this.palist[i]);
 					}
 					for (var i=0; i < ordered.length; i++) {
 						if (ordered[i].ui){
 							ordered[i].ui.expand()
 						} else{}
 					};
-					
 					setTimeout(function(){
 						for (var i=0; i < etc.length; i++) {
 							if (etc[i].ui){
@@ -394,12 +374,12 @@
 						};
 					},1000);
 				} else{
-					for (var i=0; i < _this.length; i++) {
-						_this[i].render(true);
-						this.appendSongUI(_this[i]);
+					for (var i=0; i < _this.palist.length; i++) {
+						_this.palist[i].render(true);
+						this.appendSongUI(_this.palist[i]);
 					}
 				}
-				var actives_mo = $filter(_this, 'states.mp-show', function(v) {return !!v});
+				var actives_mo = $filter(_this.palist, 'states.mp-show', function(v) {return !!v});
 				for (var i = 0; i < actives_mo.length; i++) {
 					actives_mo[i].checkAndFixNeighbours();
 				};

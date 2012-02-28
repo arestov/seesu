@@ -63,7 +63,7 @@ createPrototype(baseNavUI, new suServView(), {
 	bindClick: function() {
 		var _this = this;
 		this.c.click(function(){
-			_this.mdl.zoomOut();
+			_this.md.zoomOut();
 		});
 	}
 });
