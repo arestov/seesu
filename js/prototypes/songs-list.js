@@ -82,7 +82,7 @@
 			return this.playlist_type == puppet.playlist_type && (key_string_o == key_string_p);
 		},
 		simplify: function(){
-			var npl = this.slice();
+			var npl = this.palist.slice();
 			for (var i=0; i < npl.length; i++) {
 				npl[i] = cloneObj({}, npl[i], false, ['track', 'artist']);
 			};
@@ -99,7 +99,7 @@
 			return !!(this.info && this.info.artist) && (!v || this.info.artist == v);
 		},
 		showExactlyTrack: function(mo, no_navi){
-			if (bN(this.indexOf(mo))){
+			if (bN(this.palist.indexOf(mo))){
 				mo.view(no_navi);
 				return true;
 			}	
@@ -158,8 +158,8 @@
 
 		},
 		makePlayable: function(full_allowing) {
-			for (var i = 0; i < this.length; i++) {
-				var mo = this[i];
+			for (var i = 0; i < this.palist.length; i++) {
+				var mo = this.palist[i];
 				var pi = mo.playable_info || {};
 				mo.makeSongPlayalbe(pi.full_allowing || full_allowing, pi.packsearch, pi.last_in_collection);
 				mo.setPrio('as-top');
@@ -167,11 +167,11 @@
 		},
 		markTracksForFilesPrefinding: function(){
 			var from_collection = +new Date;
-			for (var i=0; i < this.length; i++) {
-				this[i]
+			for (var i=0; i < this.palist.length; i++) {
+				this.palist[i]
 					.setPlayableInfo({
 						packsearch: from_collection,
-						last_in_collection: i == this.length-1
+						last_in_collection: i == this.palist.length-1
 					});
 				
 			};
@@ -180,10 +180,10 @@
 		switchTo: function(mo, direction, auto) {
 	
 			var playlist = [];
-			for (var i=0; i < this.length; i++) {
-				var ts = this[i].song();
+			for (var i=0; i < this.palist.length; i++) {
+				var ts = this.palist[i].song();
 				if (ts){
-					playlist.push(this[i]);
+					playlist.push(this.palist[i]);
 				}
 			};
 			var current_number  = playlist.indexOf(mo),
@@ -216,34 +216,34 @@
 			mo.next_song = false
 			mo.prev_song = false
 			
-			var c_num = this.indexOf(mo);//this.play_order
+			var c_num = this.palist.indexOf(mo);//this.play_order
 
 			var can_use = [];
-			for (var i=0; i < this.length; i++) {
-				var cur = this[i];
+			for (var i=0; i < this.palist.length; i++) {
+				var cur = this.palist[i];
 				if (cur && (cur.isHaveTracks() || !cur.isSearchCompleted())){
 					can_use.push(i);
 				}
 			};	
-			if (this && typeof c_num == 'number'){
+			if (typeof c_num == 'number'){
 				if (c_num-1 >= 0) {
 					for (var i = c_num-1, _p = false;  i >= 0; i--){
 						
 						if (bN(can_use.indexOf(i))){
-							mo.prev_song = this[i];
+							mo.prev_song = this.palist[i];
 							break
 						}
 					};
 				}
 				var next_song = c_num+1;
 				var preload_song;
-				for (var i = 0, _n = false; i < this.length ; i++) {
+				for (var i = 0, _n = false; i < this.palist.length ; i++) {
 					if (bN(can_use.indexOf(i))){
 						if (!preload_song){
-							preload_song = this[i];
+							preload_song = this.palist[i];
 						}
 						if (i >= next_song){
-							mo.next_song = preload_song =  this[i];
+							mo.next_song = preload_song =  this.palist[i];
 							break
 						}
 					}
