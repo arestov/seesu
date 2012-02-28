@@ -11,7 +11,8 @@ var mapLevel = function(num, parent_levels, resident, map){
 		//this.buildResident();
 	}
 };
-createPrototype(mapLevel, {
+
+Class.extendTo(mapLevel, {
 	setResident: function(resident){
 		this.resident = resident;
 	},
@@ -77,7 +78,7 @@ createPrototype(mapLevel, {
 
 
 function browseMap(mainLevelResident){
-	this.callParentMethod('init');
+	this.init();
 	this.levels = [];
 	this.mainLevelResident = mainLevelResident;
 	
@@ -87,8 +88,9 @@ function browseMap(mainLevelResident){
 	//0 - search results
 	//1 - playlist page
 	//today seesu has no deeper level
-}
-createPrototype(browseMap, new eemiter(), {
+};
+
+eemiter.extendTo(browseMap, {
 	makeMainLevel: function(){
 		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
 		return this;
@@ -425,7 +427,8 @@ createPrototype(browseMap, new eemiter(), {
 	
 });
 var mapLevelModel = function() {};
-createPrototype(mapLevelModel, new servModel(), {
+
+servModel.extendTo(mapLevelModel, {
 	assignMapLev: function(lev){
 		this.lev = lev;
 		if (this.onMapLevAssign){

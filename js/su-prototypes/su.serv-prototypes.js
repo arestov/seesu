@@ -1,6 +1,6 @@
 var suMapModel = function() {};
 
-createPrototype(suMapModel, new mapLevelModel(), {
+mapLevelModel.extendTo(suMapModel, {
 	regDOMDocChanges: function(cb) {
 		this
 			.on('mpl-attach', function() {
@@ -20,9 +20,10 @@ createPrototype(suMapModel, new mapLevelModel(), {
 
 
 var suServView = function() {};
-createPrototype(suServView, new servView(), {
+
+servView.extendTo(suServView, {
 	init: function() {
-		this.callParentMethod('init');
+		this._super();
 
 		var _this = this;
 		var onDOMDie = function(currend_doc, dead_doc) {

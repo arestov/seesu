@@ -1,13 +1,11 @@
 var seesuPlayer = function(){
 	this.init();
 };
-seesuPlayer.prototype = new playerComplex();
 
-cloneObj(seesuPlayer.prototype, {
-	constructor: seesuPlayer,
+
+playerComplex.extendTo(seesuPlayer, {
 	init: function(){
-		playerComplex.prototype.init.call(this);
-
+		this._super();
 		var volume =  suStore('vkplayer-volume');
 			volume = volume && parseFloat(volume);
 		if (volume){

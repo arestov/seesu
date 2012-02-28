@@ -1,11 +1,11 @@
 if (!Array.prototype.indexOf) {
   Array.prototype.indexOf = function (obj, start) {
-    for (var i = (start || 0); i < this.length; i++) {
-      if (this[i] == obj) {
-        return i;
-      }
-    }
-    return -1;
+	for (var i = (start || 0); i < this.length; i++) {
+	  if (this[i] == obj) {
+		return i;
+	  }
+	}
+	return -1;
   };
 }
 
@@ -425,6 +425,74 @@ var createPrototype = function(constr, assi_prototype, clone_prototype){
 	cloneObj(constr.prototype, clone_prototype);
 	return constr;
 };
+
+
+
+/* Simple JavaScript Inheritance
+  * By John Resig http://ejohn.org/
+  * http://ejohn.org/blog/simple-javascript-inheritance/
+  * MIT Licensed.
+  * Gleb Arestov mod
+  */
+// Inspired by base2 and Prototype
+var Class;
+(function(){
+	"use strict";
+	var fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+
+
+	// The base Class implementation (does nothing)
+	Class = function(){};
+
+	// Create a new Class that inherits from this class
+	var extend = Class.extendTo = function(namedClass, prop) {
+	var _super = this.prototype;
+
+	// Instantiate a base class (but only create the instance,
+	// don't run the init constructor)
+	var prototype = new this();
+
+	// Copy the properties over onto the new prototype
+	for (var name in prop) {
+		// Check if we're overwriting an existing function
+		prototype[name] = typeof prop[name] == "function" && 
+			typeof _super[name] == "function" && fnTest.test(prop[name]) ?
+			(function(name, fn){
+				return function() {
+					var tmp = this._super;
+
+					// Add a new ._super() method that is the same method
+					// but on the super-class
+					this._super = _super[name];
+
+					// The method only need to be bound temporarily, so we
+					// remove it when we're done executing
+					var ret = fn.apply(this, arguments); 
+					if (typeof tmp != 'undefined'){
+						this._super = tmp
+					} else {
+						delete this._super
+					}
+					return ret;
+				};
+			})(name, prop[name]) :
+			prop[name];
+	}
+	 
+	// Populate our constructed prototype object
+	namedClass.prototype = prototype;
+
+	// Enforce the constructor to be what we expect
+	namedClass.prototype.constructor = namedClass;
+
+	// And make this class extendable
+	namedClass.extendTo = extend;
+
+	return namedClass;
+   };
+})();
+
+
 
 var depdc = function(init) {
 	if (init){

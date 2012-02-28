@@ -1,8 +1,7 @@
 var vkAuth = function(app_id, urls, permissions, open_api, deep_sanbdox) {
 	this.init(app_id, urls, permissions, open_api, deep_sanbdox);
 };
-	
-createPrototype( vkAuth , new servModel(), {
+eemiter.extendTo(vkAuth, {
 	init: function(app_id, urls, permissions, open_api, deep_sanbdox) {
 		this.app_id = app_id;
 		this.urls = urls;
@@ -14,8 +13,8 @@ createPrototype( vkAuth , new servModel(), {
 		if (deep_sanbdox){
 			this.deep_sanbdox = deep_sanbdox;
 		}
-		
-		this.callParentMethod('init');
+		this._super();
+		return this;
 	},
 	requestAuth: function(p){
 		return this.authInit(p || {});

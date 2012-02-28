@@ -1,6 +1,5 @@
 var eemiter = function(){};
-cloneObj(eemiter.prototype, {
-	constructor: eemiter,
+Class.extendTo(eemiter, {
 	init: function(){
 		this.subscribes = {};
 		this.reg_fires = {};
@@ -100,15 +99,14 @@ cloneObj(eemiter.prototype, {
 });
 
 var statesEmmiter = function() {};
-statesEmmiter.prototype = new eemiter();
-cloneObj(statesEmmiter.prototype, {
-	constructor: statesEmmiter,
+eemiter.extendTo(statesEmmiter, {
 	init: function(){
-		eemiter.prototype.init.call(this);
+		this._super();
 		this.states = {};
 		this.states_watchers = {};
 		this.complex_states = {};
 		this.complex_states_watchers = [];
+		return this;
 	},
 	state: function(name){
 		return this.states[name];
@@ -192,11 +190,9 @@ cloneObj(statesEmmiter.prototype, {
 
 
 var servModel = function(){};
-servModel.prototype = new statesEmmiter();
-cloneObj(servModel.prototype, {
-	constructor: servModel,
+statesEmmiter.extendTo(servModel, {
 	init: function(){
-		statesEmmiter.prototype.init.call(this);
+		this._super();
 		this.states = {};
 		this.views = [];
 		this.views_index = {};
@@ -329,12 +325,11 @@ cloneObj(servModel.prototype, {
 
 
 var servView = function(){};
-servView.prototype = new statesEmmiter();
-cloneObj(servView.prototype, {
-	constructor: servView,
+statesEmmiter.extendTo(servView, {
 	init: function(){
-		statesEmmiter.prototype.init.call(this);
+		this._super();
 		this.view_parts = {};
+		return this;
 	},
 	onDie: function(cb) {
 		this.on('die', cb);

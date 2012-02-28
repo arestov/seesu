@@ -85,7 +85,8 @@ var vkLoginUI = function(md) {
 	this.createBase();
 	this.setModel(md);
 };
-createPrototype(vkLoginUI, new servView(), {
+
+servView.extendTo(vkLoginUI, {
 	state_change: {
 		wait: function(state) {
 			if (state){
@@ -113,7 +114,8 @@ createPrototype(vkLoginUI, new servView(), {
 var vkLogin = function() {
 	this.callParentMethod('init');
 }; 
-createPrototype(vkLogin, new servModel(), {
+
+servModel.extendTo(vkLogin, {
 	ui_constr: function() {
 		return new vkLoginUI(this);
 	},

@@ -5,7 +5,7 @@
 	};
 
 	musicSeachEmitter = function(q, query, mp3Search){
-		this.callParentMethod('init');
+		this.init();
 		this.mp3Search = mp3Search;
 		this.q = q;
 		this.query = query;
@@ -16,8 +16,9 @@
 			}
 		});
 	};
-	 
-	createPrototype(musicSeachEmitter, new eemiter(), {
+	
+
+	eemiter.extendTo(musicSeachEmitter, {
 		canSearchBy: function (search_source){
 			if (!this.steams){
 				return true;

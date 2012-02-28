@@ -1,6 +1,5 @@
 var playerComplex = function(){};
-playerComplex.prototype = new playerBase();
-cloneObj(playerComplex.prototype, {
+playerBase.extendTo(playerComplex, {
 	constructor: playerComplex,
 	playNext: function(mo, auto){
 		this.switchTo(mo, true, auto);

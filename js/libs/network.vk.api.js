@@ -1,6 +1,5 @@
 var vkCoreApi = function(){};
-vkCoreApi.prototype = {
-	constructor: vkCoreApi,
+Class.extendTo(vkCoreApi, {
 	init: function(params) {
 		params = params || {};
 		if (params.jsonp){
@@ -116,7 +115,7 @@ vkCoreApi.prototype = {
 
 		return complex_response;
 	}
-};
+});
 
 var vkApi = function(vk_t, params) {
 	var p = params || {};
@@ -146,7 +145,8 @@ var vkApi = function(vk_t, params) {
 
 
 };
-createPrototype(vkApi, new vkCoreApi(), {
+
+vkCoreApi.extendTo(vkApi, {
 	makeVKSong: function(cursor){
 		if (cursor && cursor.url){
 			return {

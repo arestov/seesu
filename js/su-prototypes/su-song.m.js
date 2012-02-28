@@ -1,11 +1,9 @@
 (function(){
-
+	var baseSong = createSongBase(suMapModel);
 	song = function(omo, player, mp3_search){
-		this.constructor.prototype.init.call(this, omo, player, mp3_search);
+		this.init.call(this, omo, player, mp3_search);
 		var _this = this;
 		this.updateNavTexts();
-
-		
 
 		this.on('view', function(){
 			if (_this.wasMarkedAsPrev()){
@@ -15,9 +13,8 @@
 			} else if (_this.state('play')){
 				su.track_event('Song click', 'zoom to itself');
 			}
-			
-		
 		});
+		
 		this.mf_cor = new mfCor(this, this.omo);
 		this.addChild(this.mf_cor);
 		this.mf_cor.on('before-mf-play', function(mopla) {
@@ -64,7 +61,8 @@
 			}
 		});
 	};
-	createPrototype(song, new baseSong(), {
+
+	baseSong.extendTo(song, {
 		ui_constr: {
 			main: function(){
 				return new songUI(this);
@@ -75,7 +73,7 @@
 		},
 		page_name: 'song page',
 		updateFilesSearchState: function(complete, get_next){
-			baseSong.prototype.updateFilesSearchState.apply(this, arguments);
+			this._super.apply(this, arguments);
 			if (this.isHaveTracks()){
 				this.plst_titl.markAsPlayable();
 			}

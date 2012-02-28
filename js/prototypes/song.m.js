@@ -1,7 +1,8 @@
-(function(){
+createSongBase = function(model) {
+
 var counter = 0;
-baseSong = function(){};
-createPrototype(baseSong, new suMapModel(), {
+var baseSong = function(){};
+model.extendTo(baseSong, {
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
@@ -12,7 +13,7 @@ createPrototype(baseSong, new suMapModel(), {
 		}
 	},
 	init: function(omo, player, mp3_search){
-		this.callParentMethod('init');
+		this._super();
 		this.mp3_search = mp3_search;
 		this.player = player;
 		
@@ -403,8 +404,9 @@ createPrototype(baseSong, new suMapModel(), {
 		return this.mf_cor && this.mf_cor.songs();
 	}
 });
-})();
 
+return baseSong;
 
+};
 
 

@@ -59,7 +59,8 @@ var gMessagesStore = function(set, get) {
 	this.store = this.sget() || {};
 	this.cm_store = {};
 };
-createPrototype(gMessagesStore, {
+
+Class.extendTo(gMessagesStore, {
 	set: function(space, message) {
 		this.store[space] = this.store[space] || [];
 		if ( this.store[space].indexOf(message) == -1 ){
@@ -81,7 +82,9 @@ var commonMessagesStore = function(glob_store, store_name) {
 	this.glob_store = glob_store;
 	this.store_name = store_name;
 };
-createPrototype(commonMessagesStore, new eemiter, {
+
+
+eemiter.extendTo(commonMessagesStore, {
 	markAsReaded: function(message) {
 		var changed = this.glob_store.set(this.store_name, message);
 		if (changed){
