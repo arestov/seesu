@@ -1,15 +1,15 @@
 if (!Array.prototype.indexOf) {
-  Array.prototype.indexOf = function (obj, start) {
-	for (var i = (start || 0); i < this.length; i++) {
-	  if (this[i] == obj) {
-		return i;
-	  }
-	}
-	return -1;
-  };
+	Array.prototype.indexOf = function (obj, start) {
+		for (var i = (start || 0); i < this.length; i++) {
+			if (this[i] == obj) {
+				return i;
+			}
+		}
+		return -1;
+	};
 }
 
-var addEvent = window.addEventListener ? 
+var addEvent = window.addEventListener ?
 function(elem, evType, fn){
 	elem.addEventListener(evType, fn, false);
 	return fn;
@@ -26,7 +26,7 @@ function(elem, evType, fn){
 	elem.detachEvent('on' + evType, fn);
 };
 var getDefaultView = function(d) {
-	return d.defaultView || d.parentWindow
+	return d.defaultView || d.parentWindow;
 };
 var domReady = function(d, callback){
 	if (d.readyState == 'complete' || d.readyState == 'loaded'){
@@ -68,7 +68,7 @@ var arrayExclude = function(arr, obj){
 	for (var i = 0; i < arr.length; i++) {
 		if (obj.indexOf(arr[i]) == -1){
 			r.push(arr[i]);
-		}	
+		}
 	}
 	return r;
 };
@@ -167,7 +167,7 @@ var toRealArray = function(array, check_field){
 	} else if (array === Object(array) && array.length){
 		return Array.prototype.slice.call(array);
 	} else if (array && (!check_field || getTargetField(array, check_field))){
-		return [array];	
+		return [array];
 	} else{
 		return [];
 	}
@@ -291,7 +291,7 @@ var $filter = function(array, field, value_or_testfunc){
 					}
 				} else{
 					if (getTargetField(array[i], field) === value_or_testfunc){
-						r.push(array[i]); 
+						r.push(array[i]);
 					} else{
 						r.not.push(array[i]);
 					}
@@ -322,7 +322,7 @@ function bN(num){
 }
 	
 var cloneObj= function(acceptor, donor, black_list, white_list){
-	//not deep! 
+	//not deep!
 	var _no = acceptor || {};
 	for(var a in donor){
 		if (!white_list || !!~white_list.indexOf(a)){
@@ -367,7 +367,7 @@ var getUnitBaseNum = function(_c){
 			} else {
 				return 2;
 			}
-		}		
+		}
 	} else if (_c === 0){
 		return 2;
 	}
@@ -438,7 +438,7 @@ var createPrototype = function(constr, assi_prototype, clone_prototype){
 var Class;
 (function(){
 	"use strict";
-	var 
+	var
 		fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/,
 		allowParentCall = function(name, fn, _super){
 			return function() {
@@ -450,11 +450,11 @@ var Class;
 
 				// The method only need to be bound temporarily, so we
 				// remove it when we're done executing
-				var ret = fn.apply(this, arguments); 
+				var ret = fn.apply(this, arguments);
 				if (typeof tmp != 'undefined'){
-					this._super = tmp
+					this._super = tmp;
 				} else {
-					delete this._super
+					delete this._super;
 				}
 				return ret;
 			};
@@ -475,7 +475,7 @@ var Class;
 	// Copy the properties over onto the new prototype
 	for (var name in prop) {
 		// Check if we're overwriting an existing function
-		prototype[name] = typeof prop[name] == "function" && 
+		prototype[name] = typeof prop[name] == "function" &&
 			typeof _super[name] == "function" && fnTest.test(prop[name]) ?
 			allowParentCall(name, prop[name], _super) :
 			prop[name];

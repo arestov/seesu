@@ -333,7 +333,7 @@ var searchResults = function(query, prepared, valueOf){
 			this.append(prepared, valueOf);
 		};
 	};
-	searchResults.prototype = new Array();
+	searchResults.prototype = [];
 	cloneObj(searchResults.prototype, {
 		setQuery: function(q){
 			this.query=q;
