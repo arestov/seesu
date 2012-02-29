@@ -2,7 +2,7 @@
 	var songsListView = function(pl){
 		this.init(pl);
 	};
-	createPrototype(songsListView, new songsListViewBase(), {
+	songsListViewBase.extendTo(songsListView, {
 		appendChildren: function() {
 			
 		}
@@ -91,7 +91,8 @@
 		});
 			
 	};
-	createPrototype(songsList, new songsListModel(), {
+	
+	songsListModel.extendTo(songsList, {
 		ui_constr: {
 			main: function(){
 				return new songsListView(this);
