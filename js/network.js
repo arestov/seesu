@@ -80,7 +80,7 @@ if (su.vk_app_mode){
 */
 
 var vkLoginUI = function(md) {
-	this.callParentMethod('init');
+	this.init();
 	this.md = md;
 	this.createBase();
 	this.setModel(md);
@@ -112,7 +112,7 @@ servView.extendTo(vkLoginUI, {
 
 
 var vkLogin = function() {
-	this.callParentMethod('init');
+	this.init();
 }; 
 
 servModel.extendTo(vkLogin, {

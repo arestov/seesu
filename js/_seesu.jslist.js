@@ -1,3 +1,6 @@
+var jsLoadComplete,
+	navi;
+
 (function() {
 	"use strict";
 	var completed;
@@ -67,7 +70,7 @@
 	};
 	
 	var js_loadcomplete = [];
-	window.jsLoadComplete = function(callback){
+	jsLoadComplete = function(callback){
 		if (completed){
 			callback();
 		} else{
