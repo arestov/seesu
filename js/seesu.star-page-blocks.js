@@ -411,8 +411,11 @@ var viewBlocks = function(sui, d){
 			ul.addClass('people-l-wide')
 		}
 		
-		for (var i=0; i < people.length; i++) {					
-			ul.append(buildPeopleLE(people[i], opts));
+		for (var i=0; i < people.length; i++) {
+			if (people[i].info){
+				ul.append(buildPeopleLE(people[i], opts));
+			}			
+			
 			
 		};
 		return ul;

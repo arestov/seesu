@@ -16,50 +16,15 @@ var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret')
 	return suStore(key, value, true);
 }, cache_ajax, app_env.cross_domain_allowed, new funcs_queue(100));
 
-var dga = suStore('dg_auth');
 
 var main_level = new mainLevel();
-window.seesu = window.su =  {
-	  _url: get_url_parameters(location.search),
-	  emitter: (new eemiter()).init(),
-	  on: function() {
-		this.emitter.on.apply(this.emitter, arguments);
-	  },
-	  off: function() {
-		this.emitter.off.apply(this.emitter, arguments);
-	  },
-	  fire: function() {
-		this.emitter.fire.apply(this.emitter, arguments);
-	  },
-	  removeDOM: function(d) {
-		this.fire('dom-die', this.ui.d == d, d);
-	  },
-	  createUI: function(d, connect_dom){
-	  	var _this = this;
-	  	if (this.ui && this.ui.checkLiveState){
-	  		this.ui.checkLiveState();
-	  	}
-		this.ui = new seesu_ui(d, connect_dom, function(opts){
-			var cbs = _this.ui_creation_callbacks;
-			if (cbs){
-				for (var i = 0; i < cbs.length; i++) {
-					cbs[i](opts);
-				};
-			}
-			
-		});
-	  },
-	  onUICreation: function(cb){
-	  	var ar = (this.ui_creation_callbacks = this.ui_creation_callbacks || []);
-	  		ar.push(cb);
-	  },
-	  s: new seesuServerAPI(dga),
-	  fs: {},//fast search
-	  version: 2.8,
-	  env: app_env,
-	  track_stat: (function(){
 
+var seesuApp = function() {
+	this.init();
 
+	this._url = get_url_parameters(location.search);
+
+	this.track_stat = (function(){
 		window._gaq = [];
 		_gaq.sV = $.debounce(function(v){
 			suStore('ga_store', v, true);
@@ -91,59 +56,128 @@ window.seesu = window.su =  {
 		return function(data_array){
 			_gaq.push(data_array);
 		};
-	  })(),
-	  track_event:function(){
-		var args = Array.prototype.slice.call(arguments);
-		args.unshift('_trackEvent');
-		seesu.track_stat.call(this, args);
-	  },
-	  track_page:function(){
-		var args = Array.prototype.slice.call(arguments);
-		args.unshift('_trackPageview');
-		seesu.track_stat.call(this, args);
-	  },
-	  track_var: function(){
-		var args = Array.prototype.slice.call(arguments);
-		args.unshift('_setCustomVar');
-		seesu.track_stat.call(this, args);
-	  },
-	  popular_artists: ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ],
-	  vk:{},
-	  notf: new gMessagesStore(
+	})();
+
+	  
+	this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
+	this.vk = {};
+
+	this.notf = new gMessagesStore(
 	  	function(value) {
 	  		return suStore('notification', value, true);
 		}, 
 		function() {
 			return suStore('notification');
 		}
-	  ),
-	  main_level: main_level,
-	  map: (new browseMap(main_level)).makeMainLevel(),
-	  ui: new seesu_ui(document),
-	  xhrs: {},
-	  soundcloud_queue: new funcs_queue(1000, 5000 , 7),
-	  delayed_search: {
+	);
+	this.main_level = main_level;
+	this.map = (new browseMap(main_level)).makeMainLevel();
+	this.ui = new seesu_ui(document);
+	this.soundcloud_queue = new funcs_queue(1000, 5000 , 7),
+	this.delayed_search = {
 		vk_api:{
 			queue:  new funcs_queue(1000, 8000 , 7)
 		}
-	  }
 	};
-su.views = new views(su.map);
 
 
-su.emitter.onRegistration('dom', function(cb) {
-	if (su.ui && su.ui.can_fire_on_domreg){
-		cb();
-	}	
+	this.s  = new seesuServerAPI(suStore('dg_auth'));
+	this.on('vk-api', function(vkapi, user_id) {
+		var _this = this;
+		vkapi.get('getProfiles', {
+			uids: user_id,
+			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
+			
+		},{nocache: true})
+			.done(function(info) {
+				info = info.response && info.response[0];
+				if (info){
+					_this.s.vk_id = user_id;
+
+					var _d = cloneObj({data_source: 'vkontakte'}, info);
+
+					_this.s.setInfo('vk', _d);
+
+					if (!_this.s.loggedIn()){
+						_this.s.getAuth(user_id);
+					} else{
+						_this.s.api('user.update', _d);
+					}
+				} else {
+					
+				}
+			})
+			.fail(function(r) {
+				
+			})
+	});
+
+
+	this.views = new views(this.map);
+
+
+	this.onRegistration('dom', function(cb) {
+		if (this.ui && this.ui.can_fire_on_domreg){
+			cb();
+		}	
+	});
+
+};
+eemiter.extendTo(seesuApp, {
+	removeDOM: function(d) {
+		this.fire('dom-die', this.ui.d == d, d);
+	},
+	createUI: function(d, connect_dom){
+	  	var _this = this;
+	  	if (this.ui && this.ui.checkLiveState){
+	  		this.ui.checkLiveState();
+	  	}
+		this.ui = new seesu_ui(d, connect_dom, function(opts){
+			var cbs = _this.ui_creation_callbacks;
+			if (cbs){
+				for (var i = 0; i < cbs.length; i++) {
+					cbs[i](opts);
+				};
+			}
+			
+		});
+	},
+	onUICreation: function(cb){
+	  	var ar = (this.ui_creation_callbacks = this.ui_creation_callbacks || []);
+	  		ar.push(cb);
+	},
+	fs: {},//fast search
+	version: 2.8,
+	env: app_env,
+	track_event:function(){
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift('_trackEvent');
+		this.track_stat.call(this, args);
+	},
+	track_page:function(){
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift('_trackPageview');
+		this.track_stat.call(this, args);
+	},
+	track_var: function(){
+		var args = Array.prototype.slice.call(arguments);
+		args.unshift('_setCustomVar');
+		this.track_stat.call(this, args);
+	},
+	setVkApi: function(vkapi, user_id) {
+		this.vk_api = vkapi;
+		this.fire('vk-api', vkapi, user_id);
+	}	  
 });
 
+window.seesu = window.su = new seesuApp(); 
 
-//var 
 
+/*
 if (su._url.q){
 	su.start_query = su._url.q;
 }
-
+*/
 suReady(function() {
 	lfm.try_to_login();
 });

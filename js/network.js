@@ -206,7 +206,7 @@ var seesu_vkappid = 2271620;
 var connectApiToSeesu = function(vk_token, access, not_save) {
 	var vkapi = new vkApi(vk_token, {queue: su.delayed_search.vk_api.queue});
 
-	su.vk_api = vkapi;
+	su.setVkApi(vkapi, vk_token.user_id)
 	if (access){
 		su.mp3_search.add(vkapi.asearch, true);
 	}
@@ -222,35 +222,6 @@ var connectApiToSeesu = function(vk_token, access, not_save) {
 	if (!not_save){
 		suStore('vk_token_info', cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
 	}
-
-	vkapi.get('getProfiles', {
-		uids: vk_token.user_id,
-		fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
-		
-	},{nocache: true})
-		.done(function(info) {
-			info = info.response && info.response[0];
-			if (info){
-				seesu.vk.id = vk_token.user_id;
-
-				var _d = cloneObj({data_source: 'vkontakte'}, info);
-				su.vk.user_info = _d;
-				
-				
-				
-				if (!su.s.loggedIn()){
-					su.s.getAuth(vk_token.user_id);
-				} else{
-					su.s.setInfo('vk', su.vk.user_info);
-					su.s.api('user.update', su.vk.user_info);
-				}
-			} else {
-				
-			}
-		})
-		.fail(function(r) {
-			
-		})
 };
 
 function try_mp3_providers(){

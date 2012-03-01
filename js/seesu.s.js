@@ -238,9 +238,9 @@ seesuServerAPI.prototype = {
 								secret: r.response,
 								sid: su_sess.sid
 							});
-							su.s.setInfo('vk', su.vk.user_info);
+							//su.s.setInfo('vk', su.vk.user_info);
 
-							su.s.api('user.update', su.vk.user_info);
+							//su.s.api('user.update', su.vk.user_info);
 							su.fire('dg-auth');
 							if (callback){callback();}
 						}
@@ -279,9 +279,8 @@ seesuServerAPI.prototype = {
 					if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){
 						
 						_this.setAuth('');
-						if (su.vk.id ){
-							_this.getAuth(su.vk.id);
-						}
+						_this.getAuth(_this.vk_id);
+						
 						
 						
 						

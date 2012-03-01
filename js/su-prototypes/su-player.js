@@ -85,7 +85,7 @@ su.p
 		if (lfm.scrobbling) {
 			lfm.submit(mo, duration);
 		}
-		if (su.vk.id){
+		if (su.s.loggedIn()){
 			su.s.api('track.scrobble', {
 				client: su.env.app_type,
 				status: 'finished',
@@ -102,7 +102,7 @@ su.p
 		if (lfm.scrobbling) {
 			lfm.nowplay(mo, duration);
 		}
-		if (su.vk.id){
+		if (su.s.loggedIn()){
 			su.s.api('track.scrobble', {
 				client: su.env.app_type,
 				status: 'playing',
