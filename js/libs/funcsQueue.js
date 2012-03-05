@@ -16,8 +16,10 @@ queueFunc.prototype = {
 			this.pr = this.q.getTopPrio() + 1;
 		}
 	}
-}
-var funcs_queue = function(small_delay, big_delay, big_delay_interval){
+};
+
+
+var funcsQueue = function(small_delay, big_delay, big_delay_interval){
 	this.big_queue = [];
 	if (small_delay) {
 		this.small_delay = small_delay;
@@ -34,7 +36,9 @@ var funcs_queue = function(small_delay, big_delay, big_delay_interval){
 	this.using_stat = [];
 };
 
-funcs_queue.prototype = {
+
+funcsQueue.prototype = {
+	constructor: funcsQueue,
 	getTopPrio: function(){
 		var nums = [];
 		for (var i = 0; i < this.big_queue.length; i++) {
@@ -170,7 +174,3 @@ funcs_queue.prototype = {
 		return this;
 	}
 };
-
-
-
-
