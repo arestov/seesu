@@ -3,9 +3,9 @@ var funcsStack;
 (function() {
 "use strict";
 
-var fstackAtom = function(stack, cb, done, data) {
+var fstackAtom = function(stack, func, done, data) {
 	this.stack = stack;
-	this.cb = cb;
+	this.func = func;
 	this.done = done;
 	this.data = data;
 };
@@ -27,7 +27,7 @@ funcsStack = function(selectNext) {
 			if (this.stack === _this.arr){
 				if (_this.arr[0] === this){
 					_this.arr.shift();
-					this.arr[0].cb.apply(this.arr[0].cb, arguments);
+					this.arr[0].func.apply(this.arr[0], arguments);
 				} else {
 					throw new Error("wrong stack, func must be in [0]");
 				}
@@ -43,7 +43,7 @@ funcsStack.prototype = {
 	},
 	start: function() {
 		if (this.arr.length){
-			this.arr[0].cb();
+			this.arr[0].func();
 		}
 		return this;
 	},
