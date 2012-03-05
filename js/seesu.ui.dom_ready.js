@@ -176,9 +176,16 @@ window.connect_dom_to_som = function(d, sui, cb){
 			$('<span class="minimize-button"></span>').click(function(){
 				pokki.closePopup();
 			}).appendTo(justhead);
-		}
+		};
 
-		sui.els.search_input.on('keyup change', input_change);
+		sui.els.search_input.on('keyup change', function(e) {
+			var input_value = this.value;
+			if (input_value != su.search_query){
+				su.search_query = input_value;
+				inputChange(input_value, sui.els.search_label)
+			}
+			
+		});
 
 		$(d).click(function(e) {
 			return test_pressed_node(e);
@@ -191,4 +198,10 @@ window.connect_dom_to_som = function(d, sui, cb){
 			cb({has_query: !!ext_search_query})
 		}
 	});
-}
+};
+var setSearchInputValue;
+(function() {
+	setSearchInputValue = function(value) {
+		su.ui.els.search_input.val(value)
+	};
+})();

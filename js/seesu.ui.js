@@ -1170,8 +1170,11 @@ seesu_ui.prototype = {
 		if (new_browse){
 			su.views.showStartPage();
 		}
-		this.els.search_input.val(query);
-		input_change(this.els.search_input[0], no_navi);
+		if (su.search_query != query){
+			su.search_query = query;
+			setSearchInputValue(query);
+		}
+		inputChange(query, this.els.search_label, no_navi);
 	},
 	create_playlists_link: function(){
 		var _ui = this;
