@@ -56,7 +56,7 @@ funcsStack.prototype = {
 		if (this.want_start && this.arr[0] === atom){
 			setTimeout(function() {
 				_this.goAhead(atom, _this.wait_next);
-			});
+			},0);
 			
 		}
 
