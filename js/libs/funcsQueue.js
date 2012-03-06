@@ -21,6 +21,9 @@ queueFunc.prototype = {
 
 var funcsQueue = function(small_delay, big_delay, big_delay_interval){
 	this.big_queue = [];
+
+	var _this = this;
+	
 	this.fstack = new funcsStack();
 	
 
