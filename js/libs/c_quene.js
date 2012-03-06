@@ -170,7 +170,3 @@ funcs_queue.prototype = {
 		return this;
 	}
 };
-
-
-
-

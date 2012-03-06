@@ -554,7 +554,7 @@ var recoverHistoryTreeBranch = function(branch, sub_branch, prev_branch){
 };
 
 
-var hashChangeQueue = new funcs_queue(0);
+var hashChangeQueue = new funcsQueue(0);
  
 
 var hashChangeRecover = function(e){

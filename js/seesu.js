@@ -14,7 +14,7 @@ var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret')
 	return suStore(key)
 }, function(key, value){
 	return suStore(key, value, true);
-}, cache_ajax, app_env.cross_domain_allowed, new funcs_queue(100));
+}, cache_ajax, app_env.cross_domain_allowed, new funcsQueue(100));
 
 
 var main_level = new mainLevel();
@@ -73,10 +73,10 @@ var seesuApp = function() {
 	this.main_level = main_level;
 	this.map = (new browseMap(main_level)).makeMainLevel();
 	this.ui = new seesu_ui(document);
-	this.soundcloud_queue = new funcs_queue(1000, 5000 , 7),
+	this.soundcloud_queue = new funcsQueue(1000, 5000 , 7),
 	this.delayed_search = {
 		vk_api:{
-			queue:  new funcs_queue(1000, 8000 , 7)
+			queue:  new funcsQueue(1000, 8000 , 7)
 		}
 	};
 

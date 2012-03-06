@@ -7,7 +7,9 @@ var fstackAtom = function(stack, func, done, data) {
 	this.stack = stack;
 	this.func = func;
 	this.done = done;
-	this.data = data;
+	if (data){
+		this.data = data;
+	}
 };
 
 
@@ -23,13 +25,16 @@ funcsStack = function(selectNext, initAtom) {
 			if (this.stack === _this.arr){
 				selectNext.call(_this, this, arguments);
 			}
-			
 		}:
 		function() {
 			if (this.stack === _this.arr){
 				if (_this.arr[0] === this){
 					_this.arr.shift();
-					_this.arr[0].func.apply(_this.arr[0], arguments);
+					if (_this.arr[0]){
+						_this.goAhead(_this.arr[0], arguments);
+					} else {
+						_this.waitNext(arguments);
+					}
 				} else {
 					throw new Error("wrong stack, func must be in [0]");
 				}
@@ -42,38 +47,46 @@ funcsStack = function(selectNext, initAtom) {
 funcsStack.prototype = {
 	constructor: funcsStack,
 	next: function(func, data) {
+		var _this = this;
 		var atom = new fstackAtom(this.arr, func, this.done, data);
 		if (this.initAtom){
 			this.initAtom(atom);
 		}
 		this.arr.push(atom);
-		if (!this.started && this.want_start){
-			this.started = true;
-			atom.func.apply(this.arr[0], this.start_args);
-			delete this.start_args;
+		if (this.want_start && this.arr[0] === atom){
+			setTimeout(function() {
+				_this.goAhead(atom, _this.wait_next);
+			});
+			
 		}
 
 		return this;
 	},
+	waitNext: function(args) {
+		this.wait_next = args;
+	},
+	goAhead: function(atom, args) {
+		delete this.wait_next;
+		atom.func.apply(atom, args);
+	},
 	start: function() {
 		if (!this.want_start){
 			
-			if (this.arr.length){
-				this.arr[0].func.apply(this.arr[0], arguments);
-				this.started = true;
+			if (this.arr[0]){
+				this.goAhead(this.arr[0], arguments);
 			} else {
-				this.start_args = arguments;
+				this.waitNext(arguments);
 			}
 			this.want_start = true;
 		}
-		
 		return this;
 	},
 	reset: function() {
 		this.arr = [];
 		return this;
+	},
+	getArr: function() {
+		return this.arr;
 	}
 };
-
-
 })();
