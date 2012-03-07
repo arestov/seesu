@@ -73,7 +73,7 @@ Class.extendTo(gMessagesStore, {
 		return this.store[space];
 	},
 	getStore: function(name) {
-		return this.cm_store || this.cm_store = new commonMessagesStore(this, name);
+		return this.cm_store || (this.cm_store = new commonMessagesStore(this, name));
 	}
 });
 
@@ -92,7 +92,7 @@ eemiter.extendTo(commonMessagesStore, {
 		}
 	},
 	getReadedMessages: function() {
-		return 	this.glob_store.get(this.store_name)
+		return this.glob_store.get(this.store_name);
 	}
 });
 
