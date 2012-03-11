@@ -244,6 +244,7 @@ statesEmmiter.extendTo(servModel, {
 		for (var i = 0; i < this.children.length; i++) {
 			this.children[i].die();
 		}
+		this.fire('die');
 	},
 	addChild: function() {
 		this.children.push.apply(this.children, arguments);
