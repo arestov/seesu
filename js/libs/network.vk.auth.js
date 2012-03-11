@@ -7,11 +7,11 @@ eemiter.extendTo(vkAuth, {
 		this.urls = urls;
 		this.permissions = toRealArray(permissions);
 		if (open_api){
-			this.open_api = open_api;
+			this.open_api = true;
 		}
 		
 		if (deep_sanbdox){
-			this.deep_sanbdox = deep_sanbdox;
+			this.deep_sanbdox = true;
 		}
 		this._super();
 		return this;
