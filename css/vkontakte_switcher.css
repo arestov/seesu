@@ -30,6 +30,9 @@
 		.vk-login-context.vk-finishing .auth-container{
 			display:block;
 		}
+		.wait-vk-login .auth-container{
+			display:block;
+			}
 	.vk-login-context .decor{
 		padding-right:16px;
 		background:no-repeat 100% 0;

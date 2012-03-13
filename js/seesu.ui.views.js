@@ -112,6 +112,13 @@ createPrototype(mainLevelUI, new suServView(), {
 				$(this.els.slider).addClass("show-start");
 			}
 		},
+		"wait-vk-login": function(state) {
+			if (state){
+				this.c.addClass("wait-vk-login");
+			} else {
+				this.c.removeClass("wait-vk-login");
+			}
+		},
 		'now-playing': function(text) {
 				
 				if (!this.now_playing_link && this.nav){
