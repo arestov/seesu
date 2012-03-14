@@ -94,7 +94,12 @@ var jsLoadComplete,
 				js_loadcomplete.push(callback);
 			}
 		} else if (callback && callback.fn && callback.test){
-			js_loadtest.push(callback);
+			if (callback.test()){
+				callback.fn();
+			} else {
+				js_loadtest.push(callback);
+			}
+			
 		}
 	};
 	jsLoadComplete.change = function() {
