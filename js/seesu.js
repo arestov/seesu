@@ -26,7 +26,7 @@ var seesuApp = function() {
 
 	this.track_stat = (function(){
 		window._gaq = [];
-		_gaq.sV = $.debounce(function(v){
+		_gaq.sV = debounce(function(v){
 			suStore('ga_store', v, true);
 		},130);
 		_gaq.gV = function(){

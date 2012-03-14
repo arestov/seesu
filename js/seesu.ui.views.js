@@ -146,7 +146,7 @@ createPrototype(mainLevelUI, new suServView(), {
 			this.d.title = 	title || "";
 		}
 	},
-	changeFavicon: $.debounce(function(state){
+	changeFavicon: debounce(function(state){
 		if (state && this.favicon_states[state]){
 			changeFavicon(this.d, this.favicon_states[state], 'image/png');
 		} else{

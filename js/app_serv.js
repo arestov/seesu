@@ -53,49 +53,6 @@ var abortage = {
 	}
 };
 
-var gMessagesStore = function(set, get) {
-	this.sset = set;
-	this.sget = get;
-	this.store = this.sget() || {};
-	this.cm_store = {};
-};
-
-Class.extendTo(gMessagesStore, {
-	set: function(space, message) {
-		this.store[space] = this.store[space] || [];
-		if ( this.store[space].indexOf(message) == -1 ){
-			this.store[space].push(message);
-			this.sset(this.store);
-			return true;
-		}
-	},
-	get: function(space) {
-		return this.store[space];
-	},
-	getStore: function(name) {
-		return this.cm_store || (this.cm_store = new commonMessagesStore(this, name));
-	}
-});
-
-var commonMessagesStore = function(glob_store, store_name) {
-	this.callParentMethod('init');
-	this.glob_store = glob_store;
-	this.store_name = store_name;
-};
-
-
-eemiter.extendTo(commonMessagesStore, {
-	markAsReaded: function(message) {
-		var changed = this.glob_store.set(this.store_name, message);
-		if (changed){
-			this.fire('read', message);
-		}
-	},
-	getReadedMessages: function() {
-		return this.glob_store.get(this.store_name);
-	}
-});
-
 
 
 (function(){
@@ -111,14 +68,6 @@ eemiter.extendTo(commonMessagesStore, {
 })();
 function getSomething(array){
 	return array[(Math.random()*(array.length-1)).toFixed(0)];
-}
-
-function extCarefully(target, donor, white_list){
-	for (var prop in donor) {
-		if (!white_list || bN(white_list.indexOf(prop))){
-			target[prop] = donor[prop];
-		}
-	}
 }
 
 
@@ -141,10 +90,10 @@ var removeClass = function(old_c, add_c){
 	return old_c.replace(re, "$1").replace(/\s+/g, " ").replace(/(^ | $)/g, "");
 };
 var toggleClass = function(old_c, toggle_class){
-	if (bN(old_c.indexOf(toggle_class))){
-		return removeClass(old_c, toggle_class);
-	} else{
+	if (old_c.indexOf(toggle_class) == -1){
 		return addClass(old_c, toggle_class);
+	} else{
+		return removeClass(old_c, toggle_class);
 	}
 };
 var document_states = function(d){

@@ -409,7 +409,7 @@ var handleHistoryState =function(e, jo, jn, oldstate, newstate, state_from_histo
 };
 var getFakeURLParameters = function(str){
 	var divider = str.indexOf('/');
-	if (bN(divider)){
+	if (divider != -1){
 		var search_part = str.slice(0, divider);
 		var path_part = str.slice(divider + 1);
 	} else{

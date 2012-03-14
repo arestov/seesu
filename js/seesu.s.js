@@ -260,7 +260,7 @@ seesuServerAPI.prototype = {
 		var auth = this.auth._store;
 		
 		
-		if (!bN(['track.getListeners', 'user.getAuth'].indexOf(method))){
+		if (['track.getListeners', 'user.getAuth'].indexOf(method) == -1){
 			if (!auth){
 				return false
 			} else {

@@ -25,7 +25,7 @@ var searchTags = function(q){
 	return tags_results;
 };
 	
-var offlineSearch = $.debounce(function(q, invstg){
+var offlineSearch = debounce(function(q, invstg){
 	var tags = invstg.g('tags');
 		var r = searchTags(q);
 		if (r.length){
@@ -540,7 +540,7 @@ var network_search = seesu.env.cross_domain_allowed ?
 		}
 	} 
 	:
-	$.debounce(function(q, invstg){
+	debounce(function(q, invstg){
 		getLastfmSuggests('artist.search', {artist: q}, q, invstg.g('artists'), parseArtistsResults);
 		getLastfmSuggests('track.search', {track: q}, q, invstg.g('tracks'), parseTracksResults);
 		getLastfmSuggests('tag.search', {tag: q}, q, invstg.g('tags'), parseTagsResults);	
@@ -552,7 +552,7 @@ var network_search = seesu.env.cross_domain_allowed ?
 
 
 
-var vk_suggests = $.debounce(function(query, invstg){
+var vk_suggests = debounce(function(query, invstg){
 	su.mp3_search.find_files({q: query}, 'vk', function(err, pl, c){
 		c.done = true;
 		pl = pl && pl[0] && pl[0].t;

@@ -20,7 +20,7 @@ var jsLoadComplete,
 	"js/libs/c_quene.js",
 	"js/prototypes/serv-mvc.js",
 	"js/app_serv.js",
-	"js/common-libs/jquery.debounce-1.0.5.js",
+	//"js/common-libs/jquery.debounce-1.0.5.js", //remove!
 	"js/libs/browse_map.js",
 	"js/common-libs/htmlencoding.js",
 	"js/libs/localizer.js",
@@ -54,9 +54,8 @@ var jsLoadComplete,
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
 	"js/prototypes/player.html5.js",
-	"js/common-libs/soundmanager2.mod.min.js",
+	//"js/common-libs/soundmanager2.mod.min.js",
 	"js/prototypes/player.sm2-internal.js",
-	
 	"js/prototypes/player.sm2-proxy.js",
 	"js/su-prototypes/su-player.js",
 	"js/libs/c_buttmen.js",
@@ -71,14 +70,45 @@ var jsLoadComplete,
 		return array;
 	};
 	
-	var js_loadcomplete = [];
+	var
+		js_loadcomplete = [],
+		js_loadtest = [];
+
+	var testCbs = function() {
+		for (var i = 0; i < js_loadtest.length; i++) {
+			var cur = js_loadtest[i];
+			if (cur && cur.test()){
+				js_loadtest[i] = null;
+				cur.fn();
+			}
+		};
+	};;
+
+
+
 	jsLoadComplete = function(callback){
-		if (completed){
-			callback();
-		} else{
-			js_loadcomplete.push(callback);
+		if (typeof callback == 'function'){
+			if (completed){
+				callback();
+			} else{
+				js_loadcomplete.push(callback);
+			}
+		} else if (callback && callback.fn && callback.test){
+			js_loadtest.push(callback);
 		}
 	};
+	jsLoadComplete.change = function() {
+		testCbs();
+	};
+	jsLoadComplete({
+		test: function(){
+			return window.app_env && (app_env.opera_widget || app_env.firefox_widget) && window.debounce && window.domReady && window.suStore;
+		},
+		fn: function() {
+			yepnope(base_path + "js/widget.resize.js");
+			console.log('bu')
+		}
+	})
 	yepnope([
 		{
 			test: window.JSON,
@@ -93,11 +123,14 @@ var jsLoadComplete,
 				}
 			},
 			callback: function(url){
-				if (url.indexOf('jquery.debounce-1.0.5.js') != -1){
+				console.log(url);
+				testCbs();
+				/*if (url.indexOf('jquery.debounce-1.0.5.js') != -1){
 					if(!$.browser.msie && (app_env.opera_widget || app_env.firefox_widget)){
 						yepnope(base_path + "js/widget.resize.js");
 					}
-				} else if (url.indexOf('seesu.js') != -1){
+				} else*/
+				if (url.indexOf('seesu.js') != -1){
 					if (app_env.needs_url_history){
 						yepnope(base_path +  "js/seesu.url_games.js");
 					} else{
@@ -114,7 +147,3 @@ var jsLoadComplete,
 		}
 	]);
 })();
-
-
-
-

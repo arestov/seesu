@@ -357,8 +357,8 @@ function has_music_copy(array, entity, from_position){
 		var mi = 0;
 		
 		
-		var epic_fail_test = artist + ' ' + track,
-			epic_fail = !bN(epic_fail_test.indexOf(artist.replace(/^The /, ''))) && !bN(epic_fail_test.indexOf(track));
+		var epic_fail_test = _ar + ' ' + _tr,
+			epic_fail = epic_fail_test.indexOf(artist.replace(/^The /, '')) == -1 && epic_fail_test.indexOf(track) == -1;
 		
 		if (epic_fail){
 			return mi = -1000;
@@ -383,11 +383,11 @@ function has_music_copy(array, entity, from_position){
 				return mi;
 			} 
 			--mi;
-			if (bN(_ar.indexOf(artist)) && bN(_tr.indexOf(track))) {
+			if (_ar.indexOf(artist) != -1 && _tr.indexOf(track) != -1) {
 				return mi;
 			} 
 			--mi;
-			if (bN(_ar.toLowerCase().indexOf(artist.toLowerCase())) && bN(_tr.toLowerCase().indexOf(track.toLowerCase()))) {
+			if (_ar.toLowerCase().indexOf(artist.toLowerCase()) != -1 && _tr.toLowerCase().indexOf(track.toLowerCase()) != -1) {
 				return mi;
 			} 
 			
@@ -564,7 +564,7 @@ function has_music_copy(array, entity, from_position){
 				var cursor = this.se_list[i];
 				var _c; //cache
 				if ((!filter || cursor.name == filter) && needSearch(sem, cursor.name)){
-					if (!seeking_something_fresh && !bN(tried_cache.indexOf(cursor.name))){
+					if (!seeking_something_fresh && tried_cache.indexOf(cursor.name) == -1){
 						_c = this.getCache(sem, cursor.name);
 						tried_cache.push(cursor.name);
 					}
