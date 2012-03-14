@@ -279,8 +279,8 @@ eemiter.extendTo(browseMap, {
 			this.old_nav_tree = old_tree;
 		}
 		this.nav_tree = tree;
-		this.setCurrentNav(tree, old_tree, url_restoring);
 		this.setCurrentURL(tree, old_tree, url_restoring);
+		this.setCurrentNav(tree, old_tree, url_restoring);
 	},
 	getPrevMampL: function() {
 		return this.old_nav_tree && this.old_nav_tree[0];
