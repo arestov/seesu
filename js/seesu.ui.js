@@ -365,11 +365,13 @@ contextRow.prototype = {
 		
 	}
 };
-var der = [];
+
 
 window.seesu_ui = function(d, with_dom, cb){
 
 	this.d = d;
+	this.cbs = [];
+
 	var _this = this,
 		si;
 	if (with_dom && getDefaultView(d)){
@@ -380,7 +382,7 @@ window.seesu_ui = function(d, with_dom, cb){
 				_this.dead = true;
 				console.log('DOM dead!');
 				su.removeDOM(d);
-				delete _this.checkLiveState;
+				//delete _this.checkLiveState;
 			}
 			
 		};
@@ -390,14 +392,14 @@ window.seesu_ui = function(d, with_dom, cb){
 		//addEvent(d.defaultView, 'onuload', die);
 		this.checkLiveState = function() {
 			if (!getDefaultView(d)){
-				die()
+				die();
+				return true;
 			}
 		};
 
 		si = setInterval(this.checkLiveState, 1000);
 		
 	}
-	der.push(this)
 
 
 	this.els = {};
@@ -413,7 +415,11 @@ window.seesu_ui = function(d, with_dom, cb){
 	
 	if (with_dom){
 		connect_dom_to_som(d, this, function(opts) {
-			setTimeout(function() {
+			if (_this.isAlive()){
+				if (opts.ext_search_query) {
+					_this.search(opts.ext_search_query);
+				}
+
 				var state_recovered;
 				if (window.su && su.p && su.p.c_song){
 					if (su.p.c_song && su.p.c_song.plst_titl){
@@ -431,7 +437,7 @@ window.seesu_ui = function(d, with_dom, cb){
 					cb(opts);
 				}
 				viewBlocks(_this, d);
-			}, 300);
+			}
 		});
 
 		
@@ -443,13 +449,13 @@ seesu_ui.prototype = {
 		if (this.dead){
 			return false;
 		}
-		var is_dead = !(this.d && getDefaultView(this.d));
-		if (is_dead){
-			this.dead = true;
-		}
-		return !is_dead;
+		return !this.checkLiveState();
+	},
+	onReady: function(cb){
+		this.cbs.push(cb);
 	},
 	appendStyle: function(style_text){
+		//fixme - check volume ondomready
 		var style_node = this.d.createElement('style');
 			style_node.setAttribute('title', 'button_menu');
 			style_node.setAttribute('type', 'text/css');

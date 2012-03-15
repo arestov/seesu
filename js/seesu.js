@@ -127,6 +127,20 @@ eemiter.extendTo(seesuApp, {
 	removeDOM: function(d) {
 		this.fire('dom-die', this.ui.d == d, d);
 	},
+	setUI: function(ui){
+		var _this = this;
+	  	if (this.ui && this.ui.checkLiveState){
+	  		this.ui.checkLiveState();
+	  	}
+	  	this.ui = ui.onReady(function(opts){
+	  		var cbs = _this.ui_creation_callbacks;
+			if (cbs){
+				for (var i = 0; i < cbs.length; i++) {
+					cbs[i](opts);
+				}
+			}
+	  	});
+	},
 	createUI: function(d, connect_dom){
 	  	var _this = this;
 	  	if (this.ui && this.ui.checkLiveState){
@@ -137,7 +151,7 @@ eemiter.extendTo(seesuApp, {
 			if (cbs){
 				for (var i = 0; i < cbs.length; i++) {
 					cbs[i](opts);
-				};
+				}
 			}
 			
 		});
@@ -561,5 +575,5 @@ jsLoadComplete(function() {
 		};
 		return pls;
 	})();
-
+	jsLoadComplete.change();
 });

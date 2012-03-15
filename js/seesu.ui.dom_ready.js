@@ -10,6 +10,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 	
 
 	domReady(d, function() {
+		var su_dom = {};
 		console.log('dom ready');
 		d.head = d.head || d.getElementsByTagName('head')[0];
 
@@ -65,7 +66,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 		}
 		//
 		
-		sui.els = {
+		su_dom.els = sui.els = {
 			scrolling_viewport: su.env.as_application ? {node:$('#screens',d)} : {node: $(d.body), offset: true},
 			slider: slider,
 			navs: $(slider).children('.navs'),
@@ -84,7 +85,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 		var vklc = ui_samples.children('.vk-login-context');
 
 		var track_c = ui_samples.children('.track-context');
-		sui.samples = {
+		su_dom.samples = sui.samples = {
 			artcard: ui_samples.children('.art-card'),
 			track_c : track_c,
 			playlist_panel: ui_samples.children('.play-list-panel'),
@@ -161,10 +162,10 @@ window.connect_dom_to_som = function(d, sui, cb){
 		};
 		//vk_auth_box.setUI(sui.samples.vk_login);
 		
-			
-		sui.els.search_label = sui.els.search_form.find('#search-p').find('.lbl');
-		var justhead = sui.els.navs;
-		sui.nav = {
+		su_dom.els.search_label = sui.els.search_label = sui.els.search_form.find('#search-p').find('.lbl');
+		
+		var justhead = su_dom.els.navs;
+		su_dom.nav = sui.nav = {
 			justhead: justhead,
 			daddy: justhead.children('.daddy')
 		};
@@ -178,24 +179,28 @@ window.connect_dom_to_som = function(d, sui, cb){
 			}).appendTo(justhead);
 		}
 
-		sui.els.search_input.on('keyup change', function(e) {
+		su_dom.els.search_input.on('keyup change', function(e) {
 			var input_value = this.value;
 			if (input_value != su.search_query){
 				su.search_query = input_value;
-				inputChange(input_value, sui.els.search_label);
+				inputChange(input_value, su_dom.els.search_label);
 			}
 			
 		});
-
-		$(d).click(function(e) {
-			return test_pressed_node(e);
+		jsLoadComplete(function(){
+			$(d).click(function(e) {
+				return test_pressed_node(e);
+			});
 		});
-		var ext_search_query = sui.els.search_input.val();
-		if (ext_search_query) {
-			sui.search(ext_search_query);
-		}
+		
+		var ext_search_query = su_dom.els.search_input.val();
+
 		if (cb){
-			cb({has_query: !!ext_search_query});
+			cb({
+				ext_search_query: ext_search_query,
+				has_query: !!ext_search_query,
+				su_dom: su_dom
+			});
 		}
 	});
 };
