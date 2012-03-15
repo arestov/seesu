@@ -10,20 +10,21 @@ var jsLoadComplete,
 	}
 	
 	var js_toload = [
+	"js/libs/serv.js",
 	"js/libs/w_storage.js",
 	"js/libs/c_cache_ajax.js",
 	"js/common-libs/md5.min.js",
 	"js/common-libs/jquery-1.7.2pre.mod.min.js",
-	"js/libs/serv.js",
 	"js/libs/funcsStack.js",
 	"js/libs/funcsQueue.js",
-	"js/libs/c_quene.js",
+	//"js/libs/c_quene.js",
 	"js/prototypes/serv-mvc.js",
 	"js/app_serv.js",
 	//"js/common-libs/jquery.debounce-1.0.5.js", //remove!
+	"js/libs/localizer.js",
 	"js/libs/browse_map.js",
 	"js/common-libs/htmlencoding.js",
-	"js/libs/localizer.js",
+	
 	"js/network.js",
 	"js/libs/network.soundcloud.js",
 	"js/libs/network.vk.auth.js",
@@ -113,7 +114,46 @@ var jsLoadComplete,
 			yepnope(base_path + "js/widget.resize.js");
 			console.log('bu')
 		}
-	})
+	});
+
+	jsLoadComplete({
+		test: function(){
+			return window.su;
+		},
+		fn: function() {
+			if (app_env.needs_url_history){
+				yepnope(base_path +  "js/seesu.url_games.js");
+			} else {
+				navi = {};
+				navi.set = navi.replace = function(){return false;};
+			}
+		}
+	});
+	jsLoadComplete({
+		test: function(){
+			return window.browseMap;
+		},
+		fn: function() {
+			if (!app_env.safe_data){
+				console.log('!!!!!!!')
+				yepnope(base_path + "js/network.data.js");
+			}
+		}
+	});
+	var time = new Date();
+	jsLoadComplete({
+		test: function(){
+			return window.domReady;
+		},
+		fn: function() {
+			domReady(window.document, function() {
+				console.log('dom r!!!eady')
+				console.log(new Date() - time);
+			})
+		}
+	});
+	
+
 	yepnope([
 		{
 			test: window.JSON,
@@ -129,25 +169,8 @@ var jsLoadComplete,
 			},
 			callback: function(url){
 				console.log(url);
-				testCbs();
-				/*if (url.indexOf('jquery.debounce-1.0.5.js') != -1){
-					if(!$.browser.msie && (app_env.opera_widget || app_env.firefox_widget)){
-						yepnope(base_path + "js/widget.resize.js");
-					}
-				} else*/
-				if (url.indexOf('seesu.js') != -1){
-					if (app_env.needs_url_history){
-						yepnope(base_path +  "js/seesu.url_games.js");
-					} else{
-						navi = {};
-						navi.set = navi.replace = function(){return false;};
-					}
-				} else if (url.indexOf('app_serv.js') != -1){
-					if (!app_env.safe_data){
-						yepnope(base_path + "js/network.data.js");
-					}
-				}
-			
+				console.log(new Date() - time);
+				testCbs();			
 			}
 		}
 	]);

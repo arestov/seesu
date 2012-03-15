@@ -54,8 +54,13 @@
 			yepnope({
 				load: bpath + 'js/_seesu.jslist.js',
 				complete: function(){
-					jsLoadComplete(function(){
-						su.createUI(document, true);
+					jsLoadComplete({
+						test: function() {
+							return window.app_env
+						},
+						fn: function() {
+							handleDocument(window.document);
+						}
 					});
 				}
 			});

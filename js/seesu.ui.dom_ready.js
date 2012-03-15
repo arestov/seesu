@@ -10,7 +10,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 	
 
 	domReady(d, function() {
-		console.log('dom ready')
+		console.log('dom ready');
 		d.head = d.head || d.getElementsByTagName('head')[0];
 
 		if (su.env.check_resize){
@@ -61,7 +61,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 		var ui_samples = $('#ui-samples',d);
 		var buttmen_node =  ui_samples.children('.play-controls.buttmen');
 		if (buttmen_node){
-			seesu.buttmen = new button_menu(buttmen_node);
+			su.buttmen = new button_menu(buttmen_node);
 		}
 		//
 		
@@ -75,7 +75,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 			artsTracks: pllistlevel.find('#tracks-magic'),
 			searchres: $('#search_result',d),
 			search_input: $('#q',d),
-			play_controls: seesu.buttmen,
+			play_controls: su.buttmen,
 			search_form: search_form,
 			volume_s: volume_s
 			
@@ -145,7 +145,7 @@ window.connect_dom_to_som = function(d, sui, cb){
 							su.vk_auth.requestAuth({
 								ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
 								c: _this
-							})
+							});
 						
 						}
 							
@@ -176,13 +176,13 @@ window.connect_dom_to_som = function(d, sui, cb){
 			$('<span class="minimize-button"></span>').click(function(){
 				pokki.closePopup();
 			}).appendTo(justhead);
-		};
+		}
 
 		sui.els.search_input.on('keyup change', function(e) {
 			var input_value = this.value;
 			if (input_value != su.search_query){
 				su.search_query = input_value;
-				inputChange(input_value, sui.els.search_label)
+				inputChange(input_value, sui.els.search_label);
 			}
 			
 		});
@@ -195,13 +195,13 @@ window.connect_dom_to_som = function(d, sui, cb){
 			sui.search(ext_search_query);
 		}
 		if (cb){
-			cb({has_query: !!ext_search_query})
+			cb({has_query: !!ext_search_query});
 		}
 	});
 };
 var setSearchInputValue;
 (function() {
 	setSearchInputValue = function(value) {
-		su.ui.els.search_input.val(value)
+		su.ui.els.search_input.val(value);
 	};
 })();

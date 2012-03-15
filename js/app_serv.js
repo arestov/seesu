@@ -1,7 +1,7 @@
-(function() {
+(function(w) {
 	var ready = false;
 	jsLoadComplete(function(){
-		$(function(){
+		domReady(w.document, function(){
 			ready = true;
 		});
 	});
@@ -10,13 +10,13 @@
 			setTimeout(callback, 30);
 		} else{
 			jsLoadComplete(function(){
-				$(callback);
+				domReady(w.document, callback);
 			});
 		}
 		
 	};
 	
-})();
+})(window);
 
 var changeFavicon = function(d, src, type) {
 	var link = d.createElement('link'),
@@ -172,9 +172,35 @@ function get_url_parameters(str){
 		full_url[_h[0]] = _h[1];
 	}
 	return full_url;
-}
+};
+
+var detectBrowser;
+(function(w) {
+	var
+		rwebkit = /(webkit)[ \/]([\w.]+)/,
+		ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
+		rmsie = /(msie) ([\w.]+)/,
+		rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/,
+		ua = w && w.navigator && w.navigator.userAgent;
+
+	detectBrowser = function() {
+		ua = ua.toLowerCase();
+
+		var match = rwebkit.exec( ua ) ||
+			ropera.exec( ua ) ||
+			rmsie.exec( ua ) ||
+			ua.indexOf("compatible") < 0 && rmozilla.exec( ua ) ||
+			[];
+
+		return { browser: match[1] || "", version: match[2] || "0" };
+	};
+	
+})(window);
 
 window.app_env = (function(){
+
+	var bro = detectBrowser();
+
 	var env = {};
 	env.url = get_url_parameters(window.location.search);
 	
@@ -182,7 +208,7 @@ window.app_env = (function(){
 	
 	
 	if (typeof widget == 'object' && !widget.fake_widget){
-		if ($.browser.opera){
+		if (bro.browser == 'opera'){
 			if (opera.extension){
 				env.app_type = 'opera_extension';
 			} else{
@@ -232,7 +258,7 @@ window.app_env = (function(){
 		env.deep_sanbdox = true;
 		
 	} else
-	if ($.browser.mozilla){
+	if (bro.browser == 'mozilla'){
 		env.app_type = 'firefox_widget';
 		env.as_application = true;
 	} else{
@@ -477,4 +503,9 @@ if (hard_testing) {
 	};
 }
 
-
+var handleDocument = function(d) {
+	jsLoadComplete(function() {
+		su.createUI(d, true);
+	});
+	
+};

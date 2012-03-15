@@ -49,7 +49,7 @@ getDefaultView = function(d) {
 };
 domReady = function(d, callback){
 	if (d.readyState == 'complete' || d.readyState == 'loaded'){
-		setTimeout(callback, 30);
+		callback();
 	} else{
 		var done;
 		var f = function(){
