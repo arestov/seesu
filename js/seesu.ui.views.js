@@ -147,11 +147,14 @@ createPrototype(mainLevelUI, new suServView(), {
 		}
 	},
 	changeFavicon: debounce(function(state){
-		if (state && this.favicon_states[state]){
-			changeFavicon(this.d, this.favicon_states[state], 'image/png');
-		} else{
-			changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
+		if (this.isAlive()){
+			if (state && this.favicon_states[state]){
+				changeFavicon(this.d, this.favicon_states[state], 'image/png');
+			} else{
+				changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
+			}
 		}
+		
 	},300),
 	favicon_states: {
 		playing: 'icons/icon16p.png',
