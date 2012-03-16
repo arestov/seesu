@@ -68,7 +68,7 @@ window.connect_dom_to_som = function(d, cb){
 					volume_s.appendChild(d.createTextNode(volume_style));
 				}
 				d.documentElement.firstChild.appendChild(volume_s);
-				su_dom.volume_s = volume_s;
+				su_dom.els.volume_s = volume_s;
 
 			}
 		});

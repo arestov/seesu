@@ -147,19 +147,6 @@ var jsLoadComplete,
 			}
 		}
 	});
-	var time = new Date();
-	jsLoadComplete({
-		test: function(){
-			return window.domReady;
-		},
-		fn: function() {
-			domReady(window.document, function() {
-				console.log('dom r!!!eady')
-				console.log(new Date() - time);
-			})
-		}
-	});
-	
 
 	yepnope([
 		{
@@ -175,8 +162,6 @@ var jsLoadComplete,
 				}
 			},
 			callback: function(url){
-				console.log(url);
-				console.log(new Date() - time);
 				testCbs();			
 			}
 		}

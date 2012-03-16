@@ -19,11 +19,11 @@ cloneObj(songUI.prototype, {
 		//this.expand();
 	},
 	state_change : {
-		"mp-show": function(opts) {
+		"mp-show": function(opts, old_opts) {
 			if (opts){
 				$(su.ui.els.slider).addClass("show-zoom-to-track");
 				this.activate();
-			} else {
+			} else if (old_opts) {
 				$(su.ui.els.slider).removeClass("show-zoom-to-track");
 				this.deactivate();
 			}

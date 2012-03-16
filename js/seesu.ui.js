@@ -366,38 +366,28 @@ contextRow.prototype = {
 	}
 };
 
-
+var countergg = 0;
 window.seesu_ui = function(d, with_dom){
-
+	this.nums = ++countergg;
 	this.d = d;
 	this.cbs = [];
+	console.log(this.nums);
 
-	var _this = this,
-		si;
+	var _this = this;
 	if (with_dom && getDefaultView(d)){
-		var die = function() {
-			if (!_this.dead){
-				clearInterval(si);
-				delete _this.d;
-				_this.dead = true;
-				console.log('DOM dead!');
-				su.removeDOM(d);
-				//delete _this.checkLiveState;
-			}
-			
-		};
-		//d.defaultView.onbeforeunload = die;
-		//d.defaultView.onuload = die;
-		//addEvent(, 'onbeforeunload', die);
-		//addEvent(d.defaultView, 'onuload', die);
-		this.checkLiveState = function() {
+		this.can_die = true;
+		this.checkLiveState = function(log_alive) {
 			if (!getDefaultView(d)){
-				die();
+				_this.die();
 				return true;
+			} else {
+				if (log_alive){
+					console.log('!!! alive')
+				}
 			}
 		};
 
-		si = setInterval(this.checkLiveState, 1000);
+		this.lst_interval = setInterval(this.checkLiveState, 1000);
 		
 	}
 
@@ -412,6 +402,18 @@ window.seesu_ui = function(d, with_dom){
 	this.buttons_li = {};
 };
 seesu_ui.prototype = {
+	die: function(){
+		if (this.can_die && !this.dead){
+			this.dead = true;
+			clearInterval(this.lst_interval);
+			var d = this.d;
+			delete this.d;
+			su.removeDOM(d, this);
+			
+			console.log('DOM dead! ' + this.nums);
+			
+		}
+	},
 	isAlive: function(){
 		if (this.dead){
 			return false;
@@ -439,6 +441,7 @@ seesu_ui.prototype = {
 						}
 					}
 					su.fire('dom', _this);
+					console.log('fired dom!')
 					_this.can_fire_on_domreg = true;
 					
 					if (state_recovered){

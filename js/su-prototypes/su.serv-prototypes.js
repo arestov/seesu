@@ -26,28 +26,28 @@ servView.extendTo(suServView, {
 		this._super();
 
 		var _this = this;
-		var onDOMDie = function(currend_doc, dead_doc) {
-			_this.isAlive();
+		var onDOMDie = function(dead_doc, is_current_ui, ui) {
+			_this.isAlive(dead_doc);
 		};
 		su.on('dom-die', onDOMDie);
 		this.onDie(function() {
-			su.off(onDOMDie);	
+			su.off('dom-die', onDOMDie);	
 		});
 	},
 	getCNode: function(c) {
 		return (c = this.getC()) && (typeof length != 'undefined' ? c[0] : c);
 	},
-	isAlive: function() {
+	isAlive: function(d) {
 		if (this.dead){
 			return false;
 		} else {
 			if (this.getC()){
 				var c = this.getCNode();
-				if (c && getDefaultView(c.ownerDocument)){
-					return true;
-				} else {
+				if (!c || (d && d === c.ownerDocument) || !getDefaultView(c.ownerDocument)){
 					this.markAsDead();
 					return false;
+				} else {
+					return true;
 				}
 			} else {
 				return true;

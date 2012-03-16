@@ -520,7 +520,6 @@ var handleDocument = function(d) {
 			}
 		};
 	});*/
-	var time = new Date();
 	var
 		done,
 		dom_opts,
@@ -528,7 +527,7 @@ var handleDocument = function(d) {
 
 	var tryComplete = function() {
 
-		console.log(time)
+
 		if (!done && ui && dom_opts){
 			done = true;
 			ui.setDOM(dom_opts);
@@ -543,8 +542,6 @@ var handleDocument = function(d) {
 		fn: function() {
 			connect_dom_to_som(d, function(opts) {
 				dom_opts = opts;
-				console.log('try dom')
-				console.log(new Date() - time)
 				tryComplete();
 			});
 		}
@@ -558,8 +555,6 @@ var handleDocument = function(d) {
 			var g = new seesu_ui(d, true);
 			su.setUI(g);
 			ui = g;
-			console.log('trye js')
-			console.log(new Date() - time);
 			tryComplete();
 		}
 	});

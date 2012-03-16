@@ -172,7 +172,7 @@ mainLevel = function() {
 			if (child_ui){
 				su.ui.nav.daddy.append(child_ui.getC());
 				child_ui.appended();
-			}
+			} 
 		}
 	});
 

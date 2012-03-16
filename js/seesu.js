@@ -124,13 +124,13 @@ var seesuApp = function() {
 
 };
 eemiter.extendTo(seesuApp, {
-	removeDOM: function(d) {
-		this.fire('dom-die', this.ui.d == d, d);
+	removeDOM: function(d, ui) {
+		this.fire('dom-die', d, this.ui == ui, this.ui);
 	},
 	setUI: function(ui){
 		var _this = this;
-	  	if (this.ui && this.ui.checkLiveState){
-	  		this.ui.checkLiveState();
+	  	if (this.ui){
+	  		this.ui.die();
 	  	}
 	  	this.ui = ui.onReady(function(opts){
 	  		var cbs = _this.ui_creation_callbacks;
