@@ -97,6 +97,6 @@ window.resizeWindow = function(w){
 	});
 	
 	return true;
-}
+};
 window.window_resized = resizeWindow(document);
 

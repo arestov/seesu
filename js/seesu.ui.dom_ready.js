@@ -1,26 +1,16 @@
-window.connect_dom_to_som = function(d, sui, cb){
-	if (window.resizeWindow && d){
-		var dw = getDefaultView(d);
-		if (dw && dw.window_resized){
-			resizeWindow(dw);
-		}
-		
-	}
-
-	
-
+window.connect_dom_to_som = function(d, cb){
 	domReady(d, function() {
 		var su_dom = {};
 		console.log('dom ready');
 		d.head = d.head || d.getElementsByTagName('head')[0];
 
-		if (su.env.check_resize){
+		if (app_env.check_resize){
 			dstates.add_state('body', 'slice-for-height');
 		}
-		if (su.env.deep_sanbdox){
+		if (app_env.deep_sanbdox){
 			dstates.add_state('body', 'deep-sandbox');
 		}
-		dstates.connect_ui(sui);
+		dstates.connect_ui(d);
 
 		var lang = app_env.lang;
 		$('.lang', d).each(function(i,el){
@@ -38,36 +28,49 @@ window.connect_dom_to_som = function(d, sui, cb){
 		});
 
 		var slider = d.getElementById('slider');
-		if (su.env.readySteadyResize){
-			su.env.readySteadyResize(slider);
+		if (app_env.readySteadyResize){
+			app_env.readySteadyResize(slider);
 		}
 		
-		var volume_s = d.createElement('style');
-			volume_s.setAttribute('title', 'volume');
-			volume_s.setAttribute('type', 'text/css');
-		var volume_style= '.volume-state-position {width:' + ((su.p.volume * 50)/100) + 'px' + '}'; 
-		if (volume_s.styleSheet){
-			volume_s.styleSheet.cssText = volume_style;
-		} else{
-			volume_s.appendChild(d.createTextNode(volume_style));
-		}
-		d.documentElement.firstChild.appendChild(volume_s);
 		
+		var ui_samples = $('#ui-samples',d);
+		jsLoadComplete({
+			test: function() {
+				return window.su && window.su.p;
+			},
+			fn: function() {
+				var volume_s = d.createElement('style');
+					volume_s.setAttribute('title', 'volume');
+					volume_s.setAttribute('type', 'text/css');
+				var volume_style= '.volume-state-position {width:' + ((su.p.volume * 50)/100) + 'px' + '}'; 
+				if (volume_s.styleSheet){
+					volume_s.styleSheet.cssText = volume_style;
+				} else{
+					volume_s.appendChild(d.createTextNode(volume_style));
+				}
+				d.documentElement.firstChild.appendChild(volume_s);
+				su_dom.volume_s = volume_s;
+
+			}
+		});
+		jsLoadComplete({
+			test: function() {
+				return window.button_menu;
+			},
+			fn: function() {
+				var buttmen =  ui_samples.children('.play-controls.buttmen');
+				buttmen = new button_menu(buttmen);
+				su_dom.els.play_controls = buttmen;
+
+			}
+		});
 		
 		var pllistlevel = $('#playlist-level',d);
 		
 		var search_form = $('#search',d); 
 		
-
-		var ui_samples = $('#ui-samples',d);
-		var buttmen_node =  ui_samples.children('.play-controls.buttmen');
-		if (buttmen_node){
-			su.buttmen = new button_menu(buttmen_node);
-		}
-		//
-		
-		su_dom.els = sui.els = {
-			scrolling_viewport: su.env.as_application ? {node:$('#screens',d)} : {node: $(d.body), offset: true},
+		su_dom.els = {
+			scrolling_viewport: app_env.as_application ? {node:$('#screens',d)} : {node: $(d.body), offset: true},
 			slider: slider,
 			navs: $(slider).children('.navs'),
 			start_screen: $('#start-screen',d),
@@ -76,16 +79,14 @@ window.connect_dom_to_som = function(d, sui, cb){
 			artsTracks: pllistlevel.find('#tracks-magic'),
 			searchres: $('#search_result',d),
 			search_input: $('#q',d),
-			play_controls: su.buttmen,
-			search_form: search_form,
-			volume_s: volume_s
+			search_form: search_form
 			
 		};
 
 		var vklc = ui_samples.children('.vk-login-context');
 
 		var track_c = ui_samples.children('.track-context');
-		su_dom.samples = sui.samples = {
+		su_dom.samples = {
 			artcard: ui_samples.children('.art-card'),
 			track_c : track_c,
 			playlist_panel: ui_samples.children('.play-list-panel'),
@@ -162,10 +163,10 @@ window.connect_dom_to_som = function(d, sui, cb){
 		};
 		//vk_auth_box.setUI(sui.samples.vk_login);
 		
-		su_dom.els.search_label = sui.els.search_label = sui.els.search_form.find('#search-p').find('.lbl');
+		su_dom.els.search_label = su_dom.els.search_form.find('#search-p').find('.lbl');
 		
 		var justhead = su_dom.els.navs;
-		su_dom.nav = sui.nav = {
+		su_dom.nav = {
 			justhead: justhead,
 			daddy: justhead.children('.daddy')
 		};
@@ -204,9 +205,3 @@ window.connect_dom_to_som = function(d, sui, cb){
 		}
 	});
 };
-var setSearchInputValue;
-(function() {
-	setSearchInputValue = function(value) {
-		su.ui.els.search_input.val(value);
-	};
-})();

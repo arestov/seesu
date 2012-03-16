@@ -12,16 +12,22 @@ var jsLoadComplete,
 	var js_toload = [
 	"js/libs/serv.js",
 	"js/libs/w_storage.js",
+	"js/app_serv.js",
+
+	"js/seesu.ui.dom_ready.js",
+	"js/common-libs/jquery-1.7.2pre.mod.min.js",
+	"js/libs/localizer.js",
+	
 	"js/libs/c_cache_ajax.js",
 	"js/common-libs/md5.min.js",
-	"js/common-libs/jquery-1.7.2pre.mod.min.js",
+
 	"js/libs/funcsStack.js",
 	"js/libs/funcsQueue.js",
 	//"js/libs/c_quene.js",
 	"js/prototypes/serv-mvc.js",
-	"js/app_serv.js",
+	
 	//"js/common-libs/jquery.debounce-1.0.5.js", //remove!
-	"js/libs/localizer.js",
+	
 	"js/libs/browse_map.js",
 	"js/common-libs/htmlencoding.js",
 	
@@ -35,7 +41,7 @@ var jsLoadComplete,
 	"js/lastfm.data.js",
 	"js/su-prototypes/su.serv-prototypes.js",
 	"js/seesu.star-page-blocks.js",
-	"js/seesu.ui.dom_ready.js",
+
 	"js/seesu.ui.views.js",
 	"js/seesu.ui.js",
 	"js/seesu.s.js",
@@ -52,13 +58,16 @@ var jsLoadComplete,
 	"js/prototypes/searchSection.js",
 	"js/libs/lastfm.search.js",
 	"js/seesu.search.js",
+
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
 	"js/prototypes/player.html5.js",
 	//"js/common-libs/soundmanager2.mod.min.js",
 	"js/prototypes/player.sm2-internal.js",
 	"js/prototypes/player.sm2-proxy.js",
+
 	"js/su-prototypes/su-player.js",
+
 	"js/libs/c_buttmen.js",
 	"js/pressed_node_tester.js"
 	];
@@ -112,7 +121,6 @@ var jsLoadComplete,
 		},
 		fn: function() {
 			yepnope(base_path + "js/widget.resize.js");
-			console.log('bu')
 		}
 	});
 
@@ -135,7 +143,6 @@ var jsLoadComplete,
 		},
 		fn: function() {
 			if (!app_env.safe_data){
-				console.log('!!!!!!!')
 				yepnope(base_path + "js/network.data.js");
 			}
 		}

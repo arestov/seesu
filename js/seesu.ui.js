@@ -367,7 +367,7 @@ contextRow.prototype = {
 };
 
 
-window.seesu_ui = function(d, with_dom, cb){
+window.seesu_ui = function(d, with_dom){
 
 	this.d = d;
 	this.cbs = [];
@@ -404,45 +404,12 @@ window.seesu_ui = function(d, with_dom, cb){
 
 	this.els = {};
 	if (!with_dom){
-		dstates.connect_ui(this);
+		dstates.connect_ui(d);
 	}
 	
 	this.popups = [];
 	this.popups_counter = 0;
 	this.buttons_li = {};
-	
-
-	
-	if (with_dom){
-		connect_dom_to_som(d, this, function(opts) {
-			if (_this.isAlive()){
-				if (opts.ext_search_query) {
-					_this.search(opts.ext_search_query);
-				}
-
-				var state_recovered;
-				if (window.su && su.p && su.p.c_song){
-					if (su.p.c_song && su.p.c_song.plst_titl){
-						su.views.show_now_playing(true);
-						state_recovered = true;
-					}
-				}
-				su.fire('dom', _this);
-				_this.can_fire_on_domreg = true;
-				
-				if (state_recovered){
-					opts.state_recovered = true;
-				}
-				if (cb){
-					cb(opts);
-				}
-				viewBlocks(_this, d);
-			}
-		});
-
-		
-		
-	}
 };
 seesu_ui.prototype = {
 	isAlive: function(){
@@ -451,8 +418,48 @@ seesu_ui.prototype = {
 		}
 		return !this.checkLiveState();
 	},
+	setDOM: function(opts) {
+		var _this = this;
+		if (this.isAlive()){
+
+			cloneObj(this, opts.su_dom);
+		
+			if (_this.isAlive()){
+
+				jsLoadComplete(function() {
+					if (opts.ext_search_query) {
+						_this.search(opts.ext_search_query);
+					}
+
+					var state_recovered;
+					if (window.su && su.p && su.p.c_song){
+						if (su.p.c_song && su.p.c_song.plst_titl){
+							su.views.show_now_playing(true);
+							state_recovered = true;
+						}
+					}
+					su.fire('dom', _this);
+					_this.can_fire_on_domreg = true;
+					
+					if (state_recovered){
+						opts.state_recovered = true;
+					}
+					for (var i = 0; i < _this.cbs.length; i++) {
+						_this.cbs[i](opts);
+					};
+				});
+				viewBlocks(_this, _this.d);
+			}
+			
+		
+
+			
+		}
+		return this;
+	},
 	onReady: function(cb){
 		this.cbs.push(cb);
+		return this;
 	},
 	appendStyle: function(style_text){
 		//fixme - check volume ondomready
@@ -1172,13 +1179,16 @@ seesu_ui.prototype = {
 			lfm_ssw.find('.disable-scrobbling').prop('checked',enable ? false : true);
 		}
 	},
+	setSearchInputValue: function(value) {
+		this.els.search_input.val(value);
+	},
 	search: function(query, no_navi, new_browse){
 		if (new_browse){
 			su.views.showStartPage();
 		}
 		if (su.search_query != query){
 			su.search_query = query;
-			setSearchInputValue(query);
+			this.setSearchInputValue(query);
 		}
 		inputChange(query, this.els.search_label, no_navi);
 	},

@@ -208,18 +208,7 @@ var viewBlocks = function(sui, d){
 	
 	
 	
-	var wow_tags= function(tag,c){
-		$('<a class="js-serv hyped-tag"></a> ')
-			.text(tag)
-			.click(function(e){
-				sui.show_tag(tag);
-				su.track_event('Navigation', 'hyped at start page', "tag: " + tag );
-				e.preventDefault();
-			}).appendTo(c);
-		c.append(' ');
-		
-	};
-	
+
 	
 	var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(sui.els.start_screen);
 	var users_limit = 6;
@@ -483,6 +472,18 @@ var viewBlocks = function(sui, d){
 		}
 		
 	});
+	
+	var wow_tags= function(tag,c){
+		$('<a class="js-serv hyped-tag"></a> ')
+			.text(tag)
+			.click(function(e){
+				sui.show_tag(tag);
+				su.track_event('Navigation', 'hyped at start page', "tag: " + tag );
+				e.preventDefault();
+			}).appendTo(c);
+		c.append(' ');
+		
+	};
 	
 	
 	if (window.lastfm_toptags && lastfm_toptags.length){

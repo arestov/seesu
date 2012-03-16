@@ -108,56 +108,57 @@ document_states.prototype = {
 	add_state: function(state_of, state){
 		if (state_of == 'html_el'){
 			this.html_el_state = addClass(this.html_el_state, state);
-			if (this.ui.d) {
-				this.ui.d.documentElement.className = this.html_el_state;
+			if (this.dub) {
+				this.dub.documentElement.className = this.html_el_state;
 			}
 			
 		} else if (state_of == 'body'){
 			this.body_state = addClass(this.body_state, state);
-			if (this.ui.d && this.ui.d.body) {
-				this.ui.d.body.className = this.body_state;
+			if (this.dub && this.dub.body) {
+				this.dub.body.className = this.body_state;
 			}
 		}
 	},
 	toggleState: function(state_of, state){
 		if (state_of == 'html_el'){
 			this.html_el_state = toggleClass(this.html_el_state, state);
-			if (this.ui.d) {
-				this.ui.d.documentElement.className  = this.html_el_state;
+			if (this.dub) {
+				this.dub.documentElement.className  = this.html_el_state;
 			}
 			
 		} else if (state_of == 'body'){
 			this.body_state = toggleClass(this.body_state, state);
-			if (this.ui.d && this.ui.d.body) {
-				this.ui.d.body.className = this.body_state;
+			if (this.dub && this.dub.body) {
+				this.dub.body.className = this.body_state;
 			}
 		}
 	},
 	remove_state: function(state_of, state){
 		if (state_of == 'html_el'){
 			this.html_el_state = removeClass(this.html_el_state, state);
-			if (this.ui.d) {
-				this.ui.d.documentElement.className  = this.html_el_state;
+			if (this.dub) {
+				this.dub.documentElement.className  = this.html_el_state;
 			}
 			
 		} else if (state_of == 'body'){
 			this.body_state = removeClass(this.body_state, state);
-			if (this.ui.d && this.ui.d.body) {
-				this.ui.d.body.className = this.body_state;
+			if (this.dub && this.dub.body) {
+				this.dub.body.className = this.body_state;
 			}
 		}
 	}, 
-	connect_ui: function(ui){
-		if (ui.d){
-			if (ui.d.documentElement){
-				ui.d.documentElement.className =  this.html_el_state;
+	connect_ui: function(dub){
+		
+			if (dub.documentElement){
+				dub.documentElement.className =  this.html_el_state;
 			}
-			if (ui.d.body){
-				ui.d.body.className = this.body_state;
+			if (dub.body){
+				dub.body.className = this.body_state;
 			}
 			
-		}
-		this.ui = ui;
+		
+		this.dub = dub;
+	//	this.ui = ui;
 	}
 };
 
@@ -504,8 +505,69 @@ if (hard_testing) {
 }
 
 var handleDocument = function(d) {
+	/*
+	jsLoadComplete({
+		test: function() {
+
+		},
+		fn: function() {
+			if (window.resizeWindow && d){
+				var dw = getDefaultView(d);
+				if (dw && dw.window_resized){
+					resizeWindow(dw);
+				}
+				
+			}
+		};
+	});*/
+	var time = new Date();
+	var
+		done,
+		dom_opts,
+		ui;
+
+	var tryComplete = function() {
+
+		console.log(time)
+		if (!done && ui && dom_opts){
+			done = true;
+			ui.setDOM(dom_opts);
+		}
+	};
+
+
+	jsLoadComplete({
+		test: function() {
+			return window.connect_dom_to_som && window.jQuery && window.localizer;
+		},
+		fn: function() {
+			connect_dom_to_som(document, function(opts) {
+				dom_opts = opts;
+				console.log('try dom')
+				console.log(new Date() - time)
+				tryComplete();
+			});
+		}
+	});
+
+	jsLoadComplete({
+		test: function() {
+			return window.su && window.seesu_ui;
+		},
+		fn: function() {
+			var g = new seesu_ui(document, true);
+			su.setUI(g);
+			ui = g;
+			console.log('trye js')
+			console.log(new Date() - time);
+			tryComplete();
+		}
+	});
+
 	jsLoadComplete(function() {
-		su.createUI(d, true);
+		
+		
+		//su.createUI(d, true);
 	});
 	
 };
