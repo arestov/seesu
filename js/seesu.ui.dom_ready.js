@@ -34,6 +34,25 @@ window.connect_dom_to_som = function(d, cb){
 		
 		
 		var ui_samples = $('#ui-samples',d);
+
+		var pllistlevel = $('#playlist-level',d);
+		
+		var search_form = $('#search',d); 
+		
+		su_dom.els = {
+			scrolling_viewport: app_env.as_application ? {node:$('#screens',d)} : {node: $(d.body), offset: true},
+			slider: slider,
+			navs: $(slider).children('.navs'),
+			start_screen: $('#start-screen',d),
+			artcards: $('#art-cards', d),
+			pllistlevel: pllistlevel,
+			artsTracks: pllistlevel.find('#tracks-magic'),
+			searchres: $('#search_result',d),
+			search_input: $('#q',d),
+			search_form: search_form
+			
+		};
+		
 		jsLoadComplete({
 			test: function() {
 				return window.su && window.su.p;
@@ -65,23 +84,7 @@ window.connect_dom_to_som = function(d, cb){
 			}
 		});
 		
-		var pllistlevel = $('#playlist-level',d);
 		
-		var search_form = $('#search',d); 
-		
-		su_dom.els = {
-			scrolling_viewport: app_env.as_application ? {node:$('#screens',d)} : {node: $(d.body), offset: true},
-			slider: slider,
-			navs: $(slider).children('.navs'),
-			start_screen: $('#start-screen',d),
-			artcards: $('#art-cards', d),
-			pllistlevel: pllistlevel,
-			artsTracks: pllistlevel.find('#tracks-magic'),
-			searchres: $('#search_result',d),
-			search_input: $('#q',d),
-			search_form: search_form
-			
-		};
 
 		var vklc = ui_samples.children('.vk-login-context');
 

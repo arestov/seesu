@@ -541,7 +541,7 @@ var handleDocument = function(d) {
 			return window.connect_dom_to_som && window.jQuery && window.localizer;
 		},
 		fn: function() {
-			connect_dom_to_som(document, function(opts) {
+			connect_dom_to_som(d, function(opts) {
 				dom_opts = opts;
 				console.log('try dom')
 				console.log(new Date() - time)
@@ -555,7 +555,7 @@ var handleDocument = function(d) {
 			return window.su && window.seesu_ui;
 		},
 		fn: function() {
-			var g = new seesu_ui(document, true);
+			var g = new seesu_ui(d, true);
 			su.setUI(g);
 			ui = g;
 			console.log('trye js')
