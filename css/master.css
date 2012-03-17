@@ -243,13 +243,9 @@ a.desc{
 		.want-more-songs.moplas-block .moplas-list li{
 			display: block;
 			}
-		.want-more-songs.moplas-block .moplas-list li.overstocked{
-			display: none;
-			}
-		
-		.moplas-block .moplas-list.want-overstocked-songs .overstocked{
-			display: block;
-		}
+
+
+	
 
 		.selected-mf .mf-text{
 			font-size: 12px;
@@ -257,6 +253,13 @@ a.desc{
 			.want-more-songs .selected-mf .mf-text{
 				font-size: inherit;
 				}
+	.moplas-block .moplas-list li.overstocked{
+		display: none;
+		}
+	
+		.want-more-songs.moplas-block .moplas-list.want-overstocked-songs .overstocked{
+			display: block;
+		}
 				
 	.moplas-block .moplas-list .selected-mf{
 		display: block;

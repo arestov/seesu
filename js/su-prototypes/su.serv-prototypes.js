@@ -58,6 +58,26 @@ servView.extendTo(suServView, {
 	}
 });
 
+var commonMessagesStore = function(glob_store, store_name) {
+	this.init();
+	this.glob_store = glob_store;
+	this.store_name = store_name;
+};
+
+
+eemiter.extendTo(commonMessagesStore, {
+	markAsReaded: function(message) {
+		var changed = this.glob_store.set(this.store_name, message);
+		if (changed){
+			this.fire('read', message);
+		}
+	},
+	getReadedMessages: function() {
+		return this.glob_store.get(this.store_name);
+	}
+});
+
+
 var gMessagesStore = function(set, get) {
 	this.sset = set;
 	this.sget = get;
@@ -75,31 +95,13 @@ Class.extendTo(gMessagesStore, {
 		}
 	},
 	get: function(space) {
-		return this.store[space];
+		return this.store[space] || [];
 	},
 	getStore: function(name) {
-		return this.cm_store || (this.cm_store = new commonMessagesStore(this, name));
+		return this.cm_store[name] || (this.cm_store[name] = new commonMessagesStore(this, name));
 	}
 });
 
-var commonMessagesStore = function(glob_store, store_name) {
-	this.callParentMethod('init');
-	this.glob_store = glob_store;
-	this.store_name = store_name;
-};
-
-
-eemiter.extendTo(commonMessagesStore, {
-	markAsReaded: function(message) {
-		var changed = this.glob_store.set(this.store_name, message);
-		if (changed){
-			this.fire('read', message);
-		}
-	},
-	getReadedMessages: function() {
-		return this.glob_store.get(this.store_name);
-	}
-});
 
 
 
