@@ -68,8 +68,8 @@ var mfComplectUI = function(mf) {
 createPrototype(mfComplectUI, new suServView(), {
 	createBase: function() {
 		this.c = $('<div class="moplas-list"></div>');
-
-		this.header = $('<h4></h4>').text(this.mf.sem_part.name).appendTo(this.c);
+		this.header_text = this.mf.sem_part.name;
+		this.header = $('<h4></h4>').text(header_text).appendTo(this.c);
 		this.lc = $('<ul></ul>').appendTo(this.c);
 	},
 	appendChildren: function() {
@@ -80,6 +80,13 @@ createPrototype(mfComplectUI, new suServView(), {
 			if (ui){
 				this.lc.append(ui.getC())
 				ui.appended(this)
+			}
+		}
+	},
+	state_change: {
+		overstock: function(state) {
+			if (state){
+				
 			}
 		}
 	}
@@ -96,6 +103,10 @@ var mfComplect = function(mf_cor, sem_part, mo) {
 	var playMf = function() {
 		_this.mf_cor.play(this);
 	};
+	if (this.sem_part.t.length > this.overstock_limit){
+		this.updateState('overstock', true);
+	}
+	
 	for (var i = 0; i < this.sem_part.t.length; i++) {
 		var sf = this.sem_part.t[i]
 				.getSongFileModel(mo, mo.player)

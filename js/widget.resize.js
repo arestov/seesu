@@ -11,13 +11,13 @@ window.resizeWindow = function(w){
 		var body = d.body;
 		
 		
-		var old_win_height = window.innerHeight;
-		window.resizeTo(610,old_win_height );
-		var size_shift = old_win_height - window.innerHeight;
+		var old_win_height = w.innerHeight;
+		w.resizeTo(610,old_win_height );
+		var size_shift = old_win_height - w.innerHeight;
 	
 		var save_size = function(){
-			suStore('width', window.innerWidth, true);
-			suStore('height', window.innerHeight, true);
+			suStore('width', w.innerWidth, true);
+			suStore('height', w.innerHeight, true);
 	
 		}
 		var drag = function(e0, x, y) {
@@ -54,7 +54,7 @@ window.resizeWindow = function(w){
 			if (typeof new_body_height === 'number'){
 				 body.style.height = height + 'px';
 			} else{
-				var _win_height = window.innerHeight;
+				var _win_height = w.innerHeight;
 	
 				body.style.height = _win_height + 'px';
 			}
@@ -64,7 +64,7 @@ window.resizeWindow = function(w){
 	
 		function widgetResize(width, height) {
 			resize_body(height);
-			window.resizeTo(width, height + size_shift);
+			w.resizeTo(width, height + size_shift);
 	
 			
 			
@@ -86,7 +86,7 @@ window.resizeWindow = function(w){
 		}
 			
 		
-		addEvent(window, "resize", debounce(save_size, 500));
+		addEvent(w, "resize", debounce(save_size, 500));
 		
 		addEvent(resz_b, "mousedown", function(e) {
 			drag(e, 1, 1);
@@ -98,5 +98,5 @@ window.resizeWindow = function(w){
 	
 	return true;
 };
-window.window_resized = resizeWindow(document);
+window.window_resized = resizeWindow(window);
 
