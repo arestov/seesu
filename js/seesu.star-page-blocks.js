@@ -290,44 +290,54 @@ var viewBlocks = function(sui, d){
 			.done(function(r){
 				_cmetro.removeClass('loading');
 				if (r && r.toptracks && r.toptracks.track){
-					_cmetro.empty();
 					
-					var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name});
 					
-					var metro_tracks = r.toptracks.track;
-					var _header =  $('<h3></h3>').appendTo(_cmetro)
-						.append(localize('last-week-с') + ' ' + random_metro.name)
-						.append('<span class="desc"> (' + random_metro.country + ') </span>')
-						.append(localize('listen-this') + " ");
-					$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
-						showMetroRandom();
-						e.preventDefault();
-					}).appendTo(_header);
-						
-		
-					var ulm = $('<ul class="metro-tracks"></ul>');
-					var counter = 0;
-					for (var i=0; i < metro_tracks.length; i++) {
-						if (counter <30){
-							var _trm = metro_tracks[i];
+					jsLoadComplete({
+						test: function() {
+							return window.su && window.songsList
+						},
+						fn: function() {
+							_cmetro.empty();
+					
+							var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name});
 							
-							if (_trm.image){
-								var con = $('<li></li>').appendTo(ulm);
-								$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
+							var metro_tracks = r.toptracks.track;
+							var _header =  $('<h3></h3>').appendTo(_cmetro)
+								.append(localize('last-week-с') + ' ' + random_metro.name)
+								.append('<span class="desc"> (' + random_metro.country + ') </span>')
+								.append(localize('listen-this') + " ");
+							$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
+								showMetroRandom();
+								e.preventDefault();
+							}).appendTo(_header);
 								
-								var tobj = {artist: _trm.artist.name, track: _trm.name};
-								plr.push(tobj);
-								createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
-								
-								
-								++counter;
-							
+				
+							var ulm = $('<ul class="metro-tracks"></ul>');
+							var counter = 0;
+							for (var i=0; i < metro_tracks.length; i++) {
+								if (counter <30){
+									var _trm = metro_tracks[i];
+									
+									if (_trm.image){
+										var con = $('<li></li>').appendTo(ulm);
+										$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
+										
+										var tobj = {artist: _trm.artist.name, track: _trm.name};
+										plr.push(tobj);
+										createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
+										
+										
+										++counter;
+									
+									}
+								} else{
+									break;
+								}
 							}
-						} else{
-							break;
+							_cmetro.append(ulm);
 						}
-					}
-					_cmetro.append(ulm);
+					});
+					
 				} else{
 					showMetroRandom();
 				}
