@@ -188,6 +188,7 @@ createPrototype(mfCorUI, new suServView(), {
 			if (nof_ui){
 				this.sall_songs.append(nof_ui.getC());
 				nof_ui.appended(this);
+				this.addChild(nof_ui);
 			}
 
 			this.messages_c = $('<div class="messages-c"></div>').appendTo(this.c);
@@ -199,6 +200,7 @@ createPrototype(mfCorUI, new suServView(), {
 			var vk_auth_mess = this.md.vk_audio_auth.getFreeView(),
 				vk_auth_mess_c = vk_auth_mess && vk_auth_mess.getC();
 			if (vk_auth_mess_c){
+				this.addChild(vk_auth_mess);
 				this.messages_c.append(vk_auth_mess_c);
 				vk_auth_mess.appended(this);
 			}
@@ -229,6 +231,7 @@ createPrototype(mfCorUI, new suServView(), {
 						_this.c.append(ui_c);
 					}
 				}
+				_this.addChild(cur_view);
 				cur_view.appended(_this);
 			};
 

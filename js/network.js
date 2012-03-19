@@ -239,7 +239,7 @@ function try_mp3_providers(){
 		su.vk_auth = new vkAuth(seesu_vkappid, {
 			bridge: 'http://seesu.me/vk/bridge.html',
 			callbacker: 'http://seesu.me/vk/callbacker.html'
-		}, ["friends", "video", "offline", "audio", "wall"], false, su.env.deep_sanbdox);
+		}, ["friends", "video", "offline", "audio", "wall"], false, true ||su.env.deep_sanbdox);
 
 
 		var save_token = suStore('vk_token_info');

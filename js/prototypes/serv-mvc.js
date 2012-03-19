@@ -329,6 +329,7 @@ var servView = function(){};
 statesEmmiter.extendTo(servView, {
 	init: function(){
 		this._super();
+		this.children = [];
 		this.view_parts = {};
 		return this;
 	},
@@ -338,6 +339,12 @@ statesEmmiter.extendTo(servView, {
 	markAsDead: function() {
 		this.dead = true;
 		this.fire('die');
+		for (var i = 0; i < this.children.length; i++) {
+			this.children[i].markAsDead();
+		};
+	},
+	addChild: function() {
+		this.children.push.apply(this.children, arguments);
 	},
 	die: function(){
 		if (!this.dead){
