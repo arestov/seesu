@@ -756,8 +756,8 @@ function has_music_copy(array, entity, from_position){
 				this.newSearchInit(asearch.name, asearch);
 			}
 		},
-		removeSearch: function(msearch) {
-			
+		remove: function(msearch) {
+			this.se_list = arrayExclude(this.se_list, msearch); 
 		}
 
 	});

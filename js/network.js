@@ -148,7 +148,20 @@ function tryVKApi(){
 	var _u = su._url;
 	if (su.env.vkontakte){
 		su.vk_app_mode = true;
-		
+
+		var
+			vkt = new vkTokenAuth(_u.api_id, {
+				user_id: _u.user_id,
+				access_token: _u.access_token
+			}),
+			has_music_access = (_u.api_settings & 8) * 1,
+			music_connected = has_music_access;
+
+
+		var vkapi = connectApiToSeesu(vkt, has_music_access, true);
+		/*
+
+
 		var stable_vk_api = auth_to_vkapi({
 			user_id: _u.user_id,
 			access_token: _u.access_token
@@ -159,8 +172,8 @@ function tryVKApi(){
 				stable_vk_api.asearch.disabled = true;
 			}
 		});
-		
-		
+		*/
+
 		var _s = document.createElement('script');
 		_s.src='http://vk.com/js/api/xd_connection.js';
 		_s.onload = function(){
@@ -168,15 +181,17 @@ function tryVKApi(){
 				VK.init(function(){});
 				VK.addCallback('onSettingsChanged', function(sts){
 					if ((sts & 8)*1){
-						if (!stable_vk_api.asearch.dead){
-							stable_vk_api.asearch.disabled = false;
+						if (!music_connected){
+							music_connected = true;
+							su.mp3_search.add(vkapi.asearch, true);
 						}
-						
 					} else{
-						stable_vk_api.asearch.disabled = true;
+						if (music_connected){
+							su.mp3_search.remove(vkapi.asearch, true);
+						}
 					}
 				});
-				documentScrollSizeChangeHandler = function(height){
+				window.documentScrollSizeChangeHandler = function(height){
 					VK.callMethod("resizeWindow", 640, Math.max(580, height + 70));
 				}
 			}
@@ -184,16 +199,6 @@ function tryVKApi(){
 		};
 		document.documentElement.firstChild.appendChild(_s);
 		
-		
-	} else{
-		var vk_t_raw  = suStore('vk_token_info');
-		if (vk_t_raw){
-			auth_to_vkapi(vk_t_raw, false, 2271620, tryVKOAuth);
-		} else{
-			//tryVKOAuth();
-		}
-		
-
 		
 	}
 	
@@ -222,6 +227,7 @@ var connectApiToSeesu = function(vk_token, access, not_save) {
 	if (!not_save){
 		suStore('vk_token_info', cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
 	}
+	return vkapi;
 };
 
 function try_mp3_providers(){
@@ -230,7 +236,7 @@ function try_mp3_providers(){
 	su.vk_auth = new vkAuth(seesu_vkappid, {
 		bridge: 'http://seesu.me/vk/bridge.html',
 		callbacker: 'http://seesu.me/vk/callbacker.html'
-	}, ["friends", "video", "offline", "audio", "wall"], false, true)//su.env.deep_sanbdox);
+	}, ["friends", "video", "offline", "audio", "wall"], false, su.env.deep_sanbdox);
 
 
 	var save_token = suStore('vk_token_info');
