@@ -118,8 +118,8 @@ Class.extendTo(vkCoreApi, {
 });
 
 var vkApi = function(vk_t, params) {
+	this.init(params);
 	var p = params || {};
-
 	this.setAccessToken(vk_t.access_token);
 
 	if (p.queue){

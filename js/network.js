@@ -145,6 +145,40 @@ function tryVKOAuth (){
 	}
 };
 function tryVKApi(){
+	
+	
+	
+	
+	
+};
+var seesu_vkappid = 2271620;
+
+var connectApiToSeesu = function(vk_token, access, not_save) {
+	var vkapi = new vkApi(vk_token, {
+		queue: su.delayed_search.vk_api.queue,
+		jsonp: !su.env.cross_domain_allowed
+	});
+
+	su.setVkApi(vkapi, vk_token.user_id)
+	if (access){
+		su.mp3_search.add(vkapi.asearch, true);
+	}
+	
+	if (vk_token.expires_in){
+		setTimeout(function() {
+			vkapi.asearch.dead = vkapi.asearch.disabled = true;
+			if (su.vk_api == vkapi){
+				delete su.vkapi;
+			}
+		}, vk_token.expires_in)
+	}
+	if (!not_save){
+		suStore('vk_token_info', cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
+	}
+	return vkapi;
+};
+
+function try_mp3_providers(){
 	var _u = su._url;
 	if (su.env.vkontakte){
 		su.vk_app_mode = true;
@@ -200,92 +234,60 @@ function tryVKApi(){
 		document.documentElement.firstChild.appendChild(_s);
 		
 		
-	}
+	} else {
 	
-	
-	
-	
-};
-var seesu_vkappid = 2271620;
-
-var connectApiToSeesu = function(vk_token, access, not_save) {
-	var vkapi = new vkApi(vk_token, {queue: su.delayed_search.vk_api.queue});
-
-	su.setVkApi(vkapi, vk_token.user_id)
-	if (access){
-		su.mp3_search.add(vkapi.asearch, true);
-	}
-	
-	if (vk_token.expires_in){
-		setTimeout(function() {
-			vkapi.asearch.dead = vkapi.asearch.disabled = true;
-			if (su.vk_api == vkapi){
-				delete su.vkapi;
-			}
-		}, vk_token.expires_in)
-	}
-	if (!not_save){
-		suStore('vk_token_info', cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
-	}
-	return vkapi;
-};
-
-function try_mp3_providers(){
-
-	
-	su.vk_auth = new vkAuth(seesu_vkappid, {
-		bridge: 'http://seesu.me/vk/bridge.html',
-		callbacker: 'http://seesu.me/vk/callbacker.html'
-	}, ["friends", "video", "offline", "audio", "wall"], false, su.env.deep_sanbdox);
+		su.vk_auth = new vkAuth(seesu_vkappid, {
+			bridge: 'http://seesu.me/vk/bridge.html',
+			callbacker: 'http://seesu.me/vk/callbacker.html'
+		}, ["friends", "video", "offline", "audio", "wall"], false, su.env.deep_sanbdox);
 
 
-	var save_token = suStore('vk_token_info');
-	if (save_token){
-		//console.log('token!')
-		connectApiToSeesu( new vkTokenAuth(seesu_vkappid, save_token), true);
-		//console.log(save_token)
-	}
+		var save_token = suStore('vk_token_info');
+		if (save_token){
+			//console.log('token!')
+			connectApiToSeesu( new vkTokenAuth(seesu_vkappid, save_token), true);
+			//console.log(save_token)
+		}
 
-	su.vk_auth
-		.on('vk-token-receive', function(token){
-			var vk_token = new vkTokenAuth(seesu_vkappid, token);			
-			connectApiToSeesu(vk_token, true);
-		})
-		.on('want-open-url', function(wurl){
-			if (app_env.showWebPage){
-				app_env.showWebPage(wurl, function(url){
-					var sb = 'http://seesu.me/vk/callbacker.html';
-					if (url.indexOf(sb) == 0){
-						app_env.hideWebPages();
-						app_env.clearWebPageCookies();
+		su.vk_auth
+			.on('vk-token-receive', function(token){
+				var vk_token = new vkTokenAuth(seesu_vkappid, token);			
+				connectApiToSeesu(vk_token, true);
+			})
+			.on('want-open-url', function(wurl){
+				if (app_env.showWebPage){
+					app_env.showWebPage(wurl, function(url){
+						var sb = 'http://seesu.me/vk/callbacker.html';
+						if (url.indexOf(sb) == 0){
+							app_env.hideWebPages();
+							app_env.clearWebPageCookies();
 
-						var hash = url.replace(sb, '');
+							var hash = url.replace(sb, '');
 
-						var hashurlparams = get_url_parameters(hash.replace(/^\#/,''));
-						var access_token = hashurlparams.access_token;
-						if (access_token){
-							var at = {};
-							at.access_token = access_token;
-							if (hashurlparams.expires_in){
-								at.expires_in = hashurlparams.expires_in;
+							var hashurlparams = get_url_parameters(hash.replace(/^\#/,''));
+							var access_token = hashurlparams.access_token;
+							if (access_token){
+								var at = {};
+								at.access_token = access_token;
+								if (hashurlparams.expires_in){
+									at.expires_in = hashurlparams.expires_in;
+								}
+								at.user_id = hashurlparams.user_id;
+								var vk_token = new vkTokenAuth(seesu_vkappid, at);
+								connectApiToSeesu(vk_token, true);
+
 							}
-							at.user_id = hashurlparams.user_id;
-							var vk_token = new vkTokenAuth(seesu_vkappid, at);
-							connectApiToSeesu(vk_token, true);
-
+							return true;
+							
 						}
-						return true;
-						
-					}
-				}, function(e){
+					}, function(e){
+						app_env.openURL(wurl);
+					}, 700, 600);
+				} else{
 					app_env.openURL(wurl);
-				}, 700, 600);
-			} else{
-				app_env.openURL(wurl);
-			}
-			su.main_level.updateState('wait-vk-login', true);
-		});
+				}
+				su.main_level.updateState('wait-vk-login', true);
+			});
 
-	return 
-	tryVKApi();
+	}
 }	
