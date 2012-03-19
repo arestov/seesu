@@ -1156,16 +1156,16 @@ seesu_ui.prototype = {
 		}
 	
 		
-		dstates.add_state('body','lfm-waiting-for-finish');
+		su.main_level.updateState('lfm-waiting-for-finish', true);
 		
 		
 		return
 		
 	},
 	lfm_logged : function(){
-		dstates.add_state('body', 'lfm-auth-done');
-		dstates.remove_state('body', 'lfm-auth-req-loved');
-		dstates.remove_state('body', 'lfm-auth-req-recomm');
+		su.main_level.updateState('lfm-auth-done', true);
+		su.main_level.updateState('lfm-auth-req-loved', false);
+		su.main_level.updateState('lfm-auth-req-recomm', false);
 		$('.lfm-finish input[type=checkbox]',this.d).prop('checked', true);
 		var f = $('.scrobbling-switches', this.d);
 		var ii = f.find('input');

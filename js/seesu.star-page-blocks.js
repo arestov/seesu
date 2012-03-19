@@ -36,7 +36,7 @@ var viewBlocks = function(sui, d){
 
 	var lfm_recomm = $('#lfm-recomm',d).click(function(){
 		if(!lfm.sk){
-			dstates.toggleState('body', 'lfm-auth-req-recomm');
+			su.main_level.toggleState('lfm-auth-req-recomm');
 		}else {
 			render_recommendations();
 		}
@@ -44,7 +44,7 @@ var viewBlocks = function(sui, d){
 	
 	var lfm_loved = $('#lfm-loved',d).click(function(){
 		if(!lfm.sk){
-			dstates.toggleState('body', 'lfm-auth-req-loved');
+			su.main_level.toggleState('lfm-auth-req-loved');
 		}else {
 			render_loved();
 		}

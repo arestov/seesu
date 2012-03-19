@@ -113,22 +113,42 @@ createPrototype(mainLevelUI, new suServView(), {
 			}
 		},
 		"wait-vk-login": function(state) {
-			if (state){
-				this.c.addClass("wait-vk-login");
-			} else {
-				this.c.removeClass("wait-vk-login");
-			}
+			this.toggleBodyClass(state, 'wait-vk-login');
+		},
+		"vk-waiting-for-finish": function(state){
+			this.toggleBodyClass(state, 'vk-waiting-for-finish');
+		},
+		"lfm-waiting-for-finish": function(state){
+			this.toggleBodyClass(state, 'lfm-waiting-for-finish');
+		},
+		"lfm-auth-req-recomm": function(state){
+			this.toggleBodyClass(state, 'lfm-auth-req-recomm');
+		},
+		"lfm-auth-req-loved": function(state){
+			this.toggleBodyClass(state, 'lfm-auth-req-loved');
+		},
+		"slice-for-height": function(state){
+			this.toggleBodyClass(state, 'slice-for-height');
+		},
+		"deep-sandbox": function(state){
+			this.toggleBodyClass(state, 'deep-sandbox');
+		},
+		"lfm-auth-done":function(state){
+			this.toggleBodyClass(state, 'lfm-auth-done');
+		},
+		"flash-internet":function(state){
+			this.toggleBodyClass(state, 'flash-internet');
 		},
 		'now-playing': function(text) {
-				
-				if (!this.now_playing_link && this.nav){
-					this.now_playing_link = $('<a class="np"></a>').click(function(){
-						su.views.show_now_playing(true);
-					}).appendTo(this.nav.justhead);
-				}
-				if (this.now_playing_link){
-					this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));	
-				}	
+			
+			if (!this.now_playing_link && this.nav){
+				this.now_playing_link = $('<a class="np"></a>').click(function(){
+					su.views.show_now_playing(true);
+				}).appendTo(this.nav.justhead);
+			}
+			if (this.now_playing_link){
+				this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));	
+			}	
 		},
 		playing: function(state) {
 			var s = this.els.pllistlevel.add(this.now_playing_link);
@@ -144,6 +164,13 @@ createPrototype(mainLevelUI, new suServView(), {
 		},
 		"doc-title": function(title) {
 			this.d.title = 	title || "";
+		}
+	},
+	toggleBodyClass: function(add, class_name){
+		if (add){
+			this.c.addClass(class_name);
+		} else {
+			this.c.removeClass(class_name);
 		}
 	},
 	changeFavicon: debounce(function(state){
@@ -166,6 +193,15 @@ createPrototype(mainLevelUI, new suServView(), {
 mainLevel = function() {
 	this.callParentMethod('init');
 	this.updateState('nav-title', 'Seesu start page');
+
+	if (app_env.check_resize){
+		this.updateState('slice-for-height', true);
+	}
+	if (app_env.deep_sanbdox){
+		this.updateState('deep-sandbox', true);
+	}
+
+
 	var _this = this;
 
 	this.regDOMDocChanges(function() {

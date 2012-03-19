@@ -313,6 +313,9 @@ statesEmmiter.extendTo(servModel, {
 	updateProp: function(name, value){
 		return this._updateProxy(true, name, value);
 	},
+	toggleState: function(name){
+		this.updateState(name, !this.state(name));
+	},
 	updateState: function(name, value){
 		return this._updateProxy(false, name, value);
 	},
