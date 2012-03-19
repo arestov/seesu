@@ -376,14 +376,10 @@ window.seesu_ui = function(d, with_dom){
 	var _this = this;
 	if (with_dom && getDefaultView(d)){
 		this.can_die = true;
-		this.checkLiveState = function(log_alive) {
+		this.checkLiveState = function() {
 			if (!getDefaultView(d)){
 				_this.die();
 				return true;
-			} else {
-				if (log_alive){
-					console.log('!!! alive')
-				}
 			}
 		};
 

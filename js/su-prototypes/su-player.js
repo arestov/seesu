@@ -144,7 +144,7 @@ if (h5a){
 				if (!complete){
 					pcon.addClass('long-appearance')
 				}
-			}, 20000);
+			}, 7000);
 		});
 		
 		
