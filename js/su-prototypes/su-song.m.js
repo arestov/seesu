@@ -1,4 +1,6 @@
+var song;
 (function(){
+	"use strict";
 	var baseSong = createSongBase(suMapModel);
 	song = function(omo, player, mp3_search){
 		this.init.call(this, omo, player, mp3_search);
@@ -27,8 +29,6 @@
 			_this.findNeighbours();
 			_this.mopla = mopla;
 		});
-
-		var _this = this;
 		this.regDOMDocChanges(function() {
 			if (su.ui.nav.daddy){
 				var child_ui = _this.getFreeView('nav');
@@ -55,12 +55,12 @@
 					this.makePlayableOnNewSearch = function() {
 						_this.makeSongPlayalbe(true);
 					};
-					this.mp3_search.on('new-search', this.makePlayableOnNewSearch)
+					this.mp3_search.on('new-search', this.makePlayableOnNewSearch);
 					
 				}
 			} else {
 				if (oldCb){
-					this.mp3_search.off('new-search', oldCb)
+					this.mp3_search.off('new-search', oldCb);
 					delete this.makePlayableOnNewSearch;
 				}
 			}
@@ -82,9 +82,9 @@
 			if (this.isHaveTracks()){
 				this.plst_titl.markAsPlayable();
 			}
-		},	
+		},
 		mlmDie: function() {
-			this.hide();	
+			this.hide();
 		}
 	});
 	//song.prototype = song_methods;
