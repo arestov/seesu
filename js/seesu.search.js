@@ -578,7 +578,7 @@ createSuInvestigation = function(){
 		this.addSection('albums', new albumsSection());
 		this.addSection('tags', new tagsSection());
 		this.addSection('tracks', new tracksSection());
-		this.addSection('vk', new vkSection());
+		//this.addSection('vk', new vkSection());
 	}, function(q){
 		var playlists = seesu.gena.playlists,
 			pl_results = [],
@@ -622,7 +622,7 @@ createSuInvestigation = function(){
 			//===playlists search
 			offlineSearch(this.q, this);
 			network_search(this.q, this);
-			vk_suggests(this.q, this);
+			//vk_suggests(this.q, this);
 		}
 	});
 	investg.on('stateChange', function(state){
