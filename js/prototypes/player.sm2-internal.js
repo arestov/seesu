@@ -1,3 +1,4 @@
+var soundManager;
 (function() {
 	var createSoundSample = function(cb) {
 		return {
@@ -60,7 +61,7 @@
 		}
 		
 
-		var soundManager = new SoundManager(path || 'swf', false, sm2opts);
+		soundManager = new SoundManager(path || 'swf', false, sm2opts);
 		soundManager.onready(function() {
 			if (soundManager.supported()) {
 				console.log(' internal sm2 ok')
@@ -132,7 +133,7 @@
 					if (opts.volume){
 						sound_options.volume = parseFloat(opts.volume);
 					}
-					this.sm2.createSound(this.sound_options);
+					this.sm2.createSound(sound_options);
 				}
 			},
 			play: function(s){

@@ -1,6 +1,5 @@
 var eemiter = function(){};
-cloneObj(eemiter.prototype, {
-	constructor: eemiter,
+Class.extendTo(eemiter, {
 	init: function(){
 		this.subscribes = {};
 		this.reg_fires = {};
@@ -100,15 +99,14 @@ cloneObj(eemiter.prototype, {
 });
 
 var statesEmmiter = function() {};
-statesEmmiter.prototype = new eemiter();
-cloneObj(statesEmmiter.prototype, {
-	constructor: statesEmmiter,
+eemiter.extendTo(statesEmmiter, {
 	init: function(){
-		eemiter.prototype.init.call(this);
+		this._super();
 		this.states = {};
 		this.states_watchers = {};
 		this.complex_states = {};
 		this.complex_states_watchers = [];
+		return this;
 	},
 	state: function(name){
 		return this.states[name];
@@ -192,11 +190,9 @@ cloneObj(statesEmmiter.prototype, {
 
 
 var servModel = function(){};
-servModel.prototype = new statesEmmiter();
-cloneObj(servModel.prototype, {
-	constructor: servModel,
+statesEmmiter.extendTo(servModel, {
 	init: function(){
-		statesEmmiter.prototype.init.call(this);
+		this._super();
 		this.states = {};
 		this.views = [];
 		this.views_index = {};
@@ -248,6 +244,7 @@ cloneObj(servModel.prototype, {
 		for (var i = 0; i < this.children.length; i++) {
 			this.children[i].die();
 		}
+		this.fire('die');
 	},
 	addChild: function() {
 		this.children.push.apply(this.children, arguments);
@@ -316,6 +313,9 @@ cloneObj(servModel.prototype, {
 	updateProp: function(name, value){
 		return this._updateProxy(true, name, value);
 	},
+	toggleState: function(name){
+		this.updateState(name, !this.state(name));
+	},
 	updateState: function(name, value){
 		return this._updateProxy(false, name, value);
 	},
@@ -329,12 +329,12 @@ cloneObj(servModel.prototype, {
 
 
 var servView = function(){};
-servView.prototype = new statesEmmiter();
-cloneObj(servView.prototype, {
-	constructor: servView,
+statesEmmiter.extendTo(servView, {
 	init: function(){
-		statesEmmiter.prototype.init.call(this);
+		this._super();
+		this.children = [];
 		this.view_parts = {};
+		return this;
 	},
 	onDie: function(cb) {
 		this.on('die', cb);
@@ -342,6 +342,12 @@ cloneObj(servView.prototype, {
 	markAsDead: function() {
 		this.dead = true;
 		this.fire('die');
+		for (var i = 0; i < this.children.length; i++) {
+			this.children[i].markAsDead();
+		};
+	},
+	addChild: function() {
+		this.children.push.apply(this.children, arguments);
 	},
 	die: function(){
 		if (!this.dead){
@@ -355,12 +361,12 @@ cloneObj(servView.prototype, {
 		
 		return this;
 	},
-	setModel: function(mdl, puppet_model){
-		this.mdl = mdl;
+	setModel: function(md, puppet_model){
+		this.md = md;
 		if (puppet_model){
 			this.puppet_model = puppet_model;
 		}
-		this.setStates(mdl.states);
+		this.setStates(md.states);
 		return this;
 	},
 	appendModelTo: function(m, c) {

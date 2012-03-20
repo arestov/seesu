@@ -4,8 +4,6 @@
 
 .vk-login-context{
 	clear:left;
-	-moz-border-radius:6px;
-	-webkit-border-radius:6px;
 	border-radius:6px;
 	padding:12px;
 	margin: 10px 0 15px;
@@ -13,6 +11,15 @@
 	color:#000;
 	overflow:hidden;
 	}
+	.moplas-block .vk-login-context{
+		border-radius:0px;
+		display: none;
+		clear:both;
+
+		}
+	.moplas-block.want-more-songs .vk-login-context{
+		display: block;
+		}
 	.big-listener-info .vk-login-context{
 		clear: none;
 	}
@@ -23,6 +30,9 @@
 		.vk-login-context.vk-finishing .auth-container{
 			display:block;
 		}
+		.wait-vk-login .auth-container{
+			display:block;
+			}
 	.vk-login-context .decor{
 		padding-right:16px;
 		background:no-repeat 100% 0;

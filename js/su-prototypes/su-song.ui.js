@@ -19,11 +19,11 @@ cloneObj(songUI.prototype, {
 		//this.expand();
 	},
 	state_change : {
-		"mp-show": function(opts) {
+		"mp-show": function(opts, old_opts) {
 			if (opts){
 				$(su.ui.els.slider).addClass("show-zoom-to-track");
 				this.activate();
-			} else {
+			} else if (old_opts) {
 				$(su.ui.els.slider).removeClass("show-zoom-to-track");
 				this.deactivate();
 			}
@@ -221,7 +221,7 @@ cloneObj(songUI.prototype, {
 					mo.plst_titl.lev.freeze()
 				}
 				
-				mo.view();
+				mo.view(false, true);
 				return false;
 			});
 		
@@ -248,9 +248,17 @@ cloneObj(songUI.prototype, {
 		
 		var tp = this.requirePart('tp');
 
-		this.appendModelTo(this.md.mf_cor, function(ui_c){
-			context.prepend(ui_c);
-		});
+
+
+		var mf_cor_view = this.md.mf_cor.getFreeView();
+		if (mf_cor_view){
+			var mf_cor_view_c = mf_cor_view.getC();
+			this.addChild(mf_cor_view);
+			context.prepend(mf_cor_view_c);
+			mf_cor_view.appended(this);
+
+		
+		}
 
 		this.requirePart('song_row_context');
 		
@@ -274,7 +282,7 @@ cloneObj(songUI.prototype, {
 				.data('artist', this.md.artist)
 				.appendTo(dominator_head.children('.closer-to-track'))
 				.click(function(){
-					su.ui.views.showArtcardPage(_this.md.artist);
+					su.views.showArtcardPage(_this.md.artist);
 					su.track_event('Artist navigation', 'art card', _this.md.artist);
 				});
 		}

@@ -2,26 +2,25 @@ var viewBlocks = function(sui, d){
 	if (!getDefaultView(d)){
 		return false;
 	}
-	$('#hint-query',d).text(seesu.popular_artists[(Math.random()*10).toFixed(0)]);
+	$('#hint-query',d).text(su.popular_artists[(Math.random()*10).toFixed(0)]);
 	$('#widget-url',d).val(location.href.replace('index.html', ''));
 	var seesu_me_link = $('#seesu-me-link',d);
-	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', seesu.env.app_type));
+	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', su.env.app_type));
 	
 	
 	
 	
 	
 	
-	var vk_save_pass = $('#vk-save-pass',d);
-	
-	  
-	if ($.browser.opera && ((typeof opera.version == 'function') && (parseFloat(opera.version()) <= 10.1)) ){
+	//var vk_save_pass = $('#vk-save-pass',d);
+
+	if ($.browser.opera && ((typeof window.opera.version == 'function') && (parseFloat(window.opera.version()) <= 10.1))){
 		
 		$('<a id="close-widget">&times;</a>',d)
 			.click(function(){
 				window.close();
 			})
-			.prependTo(sui.els.slider)
+			.prependTo(sui.els.slider);
 	}
 
 	if (lfm.scrobbling) {
@@ -37,7 +36,7 @@ var viewBlocks = function(sui, d){
 
 	var lfm_recomm = $('#lfm-recomm',d).click(function(){
 		if(!lfm.sk){
-			dstates.toggleState('body', 'lfm-auth-req-recomm');
+			su.main_level.toggleState('lfm-auth-req-recomm');
 		}else {
 			render_recommendations();
 		}
@@ -45,7 +44,7 @@ var viewBlocks = function(sui, d){
 	
 	var lfm_loved = $('#lfm-loved',d).click(function(){
 		if(!lfm.sk){
-			dstates.toggleState('body', 'lfm-auth-req-loved');
+			su.main_level.toggleState('lfm-auth-req-loved');
 		}else {
 			render_loved();
 		}
@@ -57,27 +56,27 @@ var viewBlocks = function(sui, d){
 		render_loved(_this[0].loved_by_user_name.value);
 		
 		return false;
-	})
+	});
 	$('#lfm-recomm-for-username',d).submit(function(e){
 		var _this = $(this);
 		render_recommendations_by_username(_this[0].recomm_for_username.value);
 		
 		return false;
-	})
+	});
 
 
 
 	
 	
-	$('#app_type', sui.els.search_form).val(seesu.env.app_type);
+	$('#app_type', sui.els.search_form).val(su.env.app_type);
 	
-	sui.els.search_form.submit(function(){return false;})
+	sui.els.search_form.submit(function(){return false;});
 	if (sui.els.search_form) {
 		$(d).keydown(function(e){
-			if (!sui.els.slider.className.match(/show-search-results/)) {return}
-			if (d.activeElement.nodeName == 'BUTTON'){return}
+			if (!sui.els.slider.className.match(/show-search-results/)) {return;}
+			if (d.activeElement.nodeName == 'BUTTON'){return;}
 			arrows_keys_nav(e);
-		})
+		});
 	}
 	var wtm_wrap = $('#people-connecting', d);
 	var wtm_content = wtm_wrap.find('.people-connecting-content');
@@ -107,12 +106,11 @@ var viewBlocks = function(sui, d){
 		visible: false,
 		hide: function(){
 			this.wp.attr('style', '');
-			this.visible = false	
+			this.visible = false;
 		}
-	}
-	
-	var playlists = seesu.gena.playlists;
-	
+	};
+
+
 
 	//[{name: 'loved tracks'}, {name: 'killers'}, {name: 'top british 30'}, {name: 'vkontakte'}, {name: 'best beatles'}];
 	var create_plr_entity = function(playlist, song){
@@ -122,6 +120,82 @@ var viewBlocks = function(sui, d){
 		});
 		return entity;
 	};
+	var new_playlist_desc = 'new playlist named ';
+	var pl_r = $('.pl-r', pl_search_wrap);
+	var pl_q = sui.els.pl_r = $('#pl-q',pl_search_wrap)
+	
+	jsLoadComplete({
+		test: function(){
+			return window.su && window.su.gena
+		}, 
+		fn: function(){
+			var playlists = su.gena.playlists;
+
+			pl_q.on('change keyup focus', function(e){
+				var searching_for = this.value;
+				if (searching_for && searching_for == pl_q.data('lastv')){return false;}
+				
+				var current_song = pl_search_wrap.data('current_song');
+				if (searching_for){
+					var matches = [];
+					for (var i=0; i < playlists.length; i++) {
+						if (playlists[i].playlist_title == searching_for){
+							matches.unshift(i);
+							matches.full_match = true;
+						} else if (playlists[i].playlist_title.match(new  RegExp('\\b' + searching_for))){
+							matches.push(i);
+						}
+
+					}
+					var pl_results = $();
+					
+					if (!matches.full_match && searching_for){
+						var new_pl_button = $('<li></li>')
+							.text('"'+searching_for+'"')
+							.prepend($('<span></span>').text(new_playlist_desc));
+						new_pl_button.click(function(e){
+								sui.els.pl_search.hide();
+								su.gena.create_userplaylist(searching_for).add(current_song);
+							});
+							
+						pl_results = pl_results.add(new_pl_button);
+					}
+					for (var i=0; i < matches.length; i++) {
+						pl_results = pl_results.add(create_plr_entity(playlists[matches[i]], current_song));
+					}
+					pl_r.empty();
+					if (pl_results.length > 0){
+						pl_r.append(pl_results);
+					}
+				} else{
+					console.log(current_song);
+					var pl_results = $();
+					for (var i=0; i < playlists.length; i++) {
+						pl_results = pl_results.add(create_plr_entity(playlists[i], current_song));
+					}
+					pl_r.empty();
+					if (pl_results.length > 0){
+						pl_r.append(pl_results);
+					}
+				}
+				pl_q.data('lastv', searching_for);
+			});
+			
+		
+		$('.ext-playlists', pl_search_wrap).click(function(e){
+			$(this).parent().toggleClass('not-want-to');
+			e.preventDefault();
+		});
+		
+		
+		sui.create_playlists_link();
+		}
+	});
+
+	
+	
+
+	
 	
 	
 	
@@ -131,89 +205,10 @@ var viewBlocks = function(sui, d){
 	}, function(){
 		sui.els.pl_search.hide();
 	});
+	
+	
+	
 
-	
-	
-		
-	
-	
-	var new_playlist_desc = 'new playlist named ';
-	var pl_r = $('.pl-r', pl_search_wrap);
-	
-	var pl_q = sui.els.pl_r = $('#pl-q',pl_search_wrap).on('change keyup focus', function(e){
-		
-		
-		var searching_for = this.value;
-		if (searching_for && searching_for == pl_q.data('lastv')){return false;}
-		
-		var current_song = pl_search_wrap.data('current_song');
-		if (searching_for){
-			var matches = [];
-			for (var i=0; i < playlists.length; i++) {
-				if (playlists[i].playlist_title == searching_for){
-					matches.unshift(i);
-					matches.full_match = true;
-				} else if (playlists[i].playlist_title.match(new  RegExp('\\b' + searching_for))){
-					 matches.push(i);
-				}
-
-			};
-			var pl_results = $();
-			
-			if (!matches.full_match && searching_for){
-				var new_pl_button = $('<li></li>')
-					.text('"'+searching_for+'"')
-					.prepend($('<span></span>').text(new_playlist_desc));
-				new_pl_button.click(function(e){
-						sui.els.pl_search.hide();
-						su.gena.create_userplaylist(searching_for).add(current_song);
-					});
-					
-				pl_results = pl_results.add(new_pl_button);
-			}
-			for (var i=0; i < matches.length; i++) {
-				pl_results = pl_results.add(create_plr_entity(playlists[matches[i]], current_song));
-			};
-			pl_r.empty();
-			if (pl_results.length > 0){
-				pl_r.append(pl_results);
-			}
-		} else{
-			console.log(current_song)
-			var pl_results = $();
-			for (var i=0; i < playlists.length; i++) {
-				pl_results = pl_results.add(create_plr_entity(playlists[i], current_song));
-			};
-			pl_r.empty();
-			if (pl_results.length > 0){
-				pl_r.append(pl_results);
-			}
-		}
-		pl_q.data('lastv', searching_for);
-		
-	});
-	
-	
-	$('.ext-playlists', pl_search_wrap).click(function(e){
-		$(this).parent().toggleClass('not-want-to')
-		e.preventDefault();
-	});
-	
-	
-	sui.create_playlists_link();
-	
-	var wow_tags= function(tag,c){
-		$('<a class="js-serv hyped-tag"></a> ')
-			.text(tag)
-			.click(function(e){
-				sui.show_tag(tag)
-				seesu.track_event('Navigation', 'hyped at start page', "tag: " + tag );
-				e.preventDefault();
-			}).appendTo(c);
-		c.append(' ')
-		
-	};
-	
 	
 	var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(sui.els.start_screen);
 	var users_limit = 6;
@@ -240,10 +235,10 @@ var viewBlocks = function(sui, d){
 								var t = $(this).data('track');	
 								sui.showTopTacks(a, {}, {artist: a, track: t});			
 							}))
-						.appendTo(uc)
+						.appendTo(uc);
 				}
-			};
-			uc.appendTo(c)
+			}
+			uc.appendTo(c);
 		}
 		return Math.max(users_limit - listenings.length, 0);
 	};
@@ -264,7 +259,7 @@ var viewBlocks = function(sui, d){
 					if (r[i] && r[i].length){
 						above_limit_value = showUsers(r[i], users_play, above_limit_value);
 					}
-				};
+				}
 			}
 			
 			
@@ -272,7 +267,7 @@ var viewBlocks = function(sui, d){
 		
 		
 
-	}
+	};
 	su.s.susd.ligs.regCallback('start-page', showUsersListenings, function(){
 		users_play.addClass('loading');
 	});
@@ -280,7 +275,7 @@ var viewBlocks = function(sui, d){
 	var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(sui.els.start_screen);
 	var createTrackLink = function(artist, track, track_obj, playlist){
 		return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(e){
-			sui.views.show_playlist_page(playlist);
+			su.views.show_playlist_page(playlist);
 			playlist.showTrack(track_obj);
 			e.preventDefault();
 		});
@@ -291,48 +286,58 @@ var viewBlocks = function(sui, d){
 		lfm.get('geo.getMetroUniqueTrackChart', {
 			country: random_metro.country, 
 			metro: random_metro.name, 
-			start: new Date - 60*60*24*7})
+			start: (new Date()) - 60*60*24*7})
 			.done(function(r){
 				_cmetro.removeClass('loading');
 				if (r && r.toptracks && r.toptracks.track){
-					_cmetro.empty()
 					
-					var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name});
 					
-					var metro_tracks = r.toptracks.track;
-					var _header =  $('<h3></h3>').appendTo(_cmetro)
-						.append(localize('last-week-с') + ' ' + random_metro.name)
-						.append('<span class="desc"> (' + random_metro.country + ') </span>')
-						.append(localize('listen-this') + " ");
-					$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
-						showMetroRandom();
-						e.preventDefault();
-					}).appendTo(_header);
-						
-		
-					var ulm = $('<ul class="metro-tracks"></ul>');
-					var counter = 0;
-					for (var i=0; i < metro_tracks.length; i++) {
-						if (counter <30){
-							var _trm = metro_tracks[i];
+					jsLoadComplete({
+						test: function() {
+							return window.su && window.songsList
+						},
+						fn: function() {
+							_cmetro.empty();
+					
+							var plr = prepare_playlist('Chart of ' + random_metro.name, 'chart', {country: random_metro.country, metro: random_metro.name});
 							
-							if (_trm.image){
-								var con = $('<li></li>').appendTo(ulm);
-								$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
+							var metro_tracks = r.toptracks.track;
+							var _header =  $('<h3></h3>').appendTo(_cmetro)
+								.append(localize('last-week-с') + ' ' + random_metro.name)
+								.append('<span class="desc"> (' + random_metro.country + ') </span>')
+								.append(localize('listen-this') + " ");
+							$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
+								showMetroRandom();
+								e.preventDefault();
+							}).appendTo(_header);
 								
-								var tobj = {artist: _trm.artist.name, track: _trm.name};
-								plr.push(tobj);
-								createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
-								
-								
-								++counter;
-							
+				
+							var ulm = $('<ul class="metro-tracks"></ul>');
+							var counter = 0;
+							for (var i=0; i < metro_tracks.length; i++) {
+								if (counter <30){
+									var _trm = metro_tracks[i];
+									
+									if (_trm.image){
+										var con = $('<li></li>').appendTo(ulm);
+										$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
+										
+										var tobj = {artist: _trm.artist.name, track: _trm.name};
+										plr.push(tobj);
+										createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
+										
+										
+										++counter;
+									
+									}
+								} else{
+									break;
+								}
 							}
-						} else{
-							break
+							_cmetro.append(ulm);
 						}
-					};
-					_cmetro.append(ulm)
+					});
+					
 				} else{
 					showMetroRandom();
 				}
@@ -350,19 +355,19 @@ var viewBlocks = function(sui, d){
 			bp: false,
 			imgc: false,
 			lp: false
-		}
+		};
 		var li = ui.c = $('<li class="people-list-item"></li>');
 		var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
 		if (img_src){
 			$('<img width="50" height="50"/>').attr('src', img_src).appendTo(img_c);
 		}
 		ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
-		ui.lp = $('<div class="p-link-place"></div>').appendTo(li);;
+		ui.lp = $('<div class="p-link-place"></div>').appendTo(li);
 		return ui;
 	};
 	
 	
-	 
+
 	
 	var buildPeopleLE = function(man, opts){
 		var o = opts || {};
@@ -394,8 +399,8 @@ var viewBlocks = function(sui, d){
 								nb.c.remove();
 							}
 							pliking = false;
-						})
-						pliking = true
+						});
+						pliking = true;
 					}
 				});
 			nb.c.appendTo(pui.bp);
@@ -406,15 +411,16 @@ var viewBlocks = function(sui, d){
 	var createPeopleList = function(people, opts){
 		var o = opts || {};
 		
-		var ul = $("<ul class='people-list'></ul>")
+		var ul = $("<ul class='people-list'></ul>");
 		if (o.wide){
-			ul.addClass('people-l-wide')
+			ul.addClass('people-l-wide');
 		}
 		
-		for (var i=0; i < people.length; i++) {					
-			ul.append(buildPeopleLE(people[i], opts));
-			
-		};
+		for (var i=0; i < people.length; i++) {
+			if (people[i].info){
+				ul.append(buildPeopleLE(people[i], opts));
+			}
+		}
 		return ul;
 	};
 	var rl_place = sui.els.start_screen.find('.relations-likes-wrap');
@@ -434,7 +440,7 @@ var viewBlocks = function(sui, d){
 					$(this).remove();
 					setTimeout(function(){
 						su.s.susd.rl.getData();
-					},1000)
+					},1000);
 					
 				}));
 			if (filtered.length){
@@ -460,7 +466,7 @@ var viewBlocks = function(sui, d){
 					$(this).remove();
 					setTimeout(function(){
 						su.s.susd.ri.getData();
-					},1000)
+					},1000);
 					
 				}));
 				
@@ -477,6 +483,18 @@ var viewBlocks = function(sui, d){
 		
 	});
 	
+	var wow_tags= function(tag,c){
+		$('<a class="js-serv hyped-tag"></a> ')
+			.text(tag)
+			.click(function(e){
+				sui.show_tag(tag);
+				su.track_event('Navigation', 'hyped at start page', "tag: " + tag );
+				e.preventDefault();
+			}).appendTo(c);
+		c.append(' ');
+		
+	};
+	
 	
 	if (window.lastfm_toptags && lastfm_toptags.length){
 		var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(sui.els.start_screen);
@@ -484,7 +502,7 @@ var viewBlocks = function(sui, d){
 						.append(localize('Pop-tags','Popular tags'));
 		for (var i=0; i < lastfm_toptags.length; i++) {
 			wow_tags(lastfm_toptags[i], _c);
-		};
+		}
 	}
 	
 };

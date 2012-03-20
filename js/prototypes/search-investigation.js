@@ -1,23 +1,20 @@
-
-
 var investigationUI = function(invstg){
 	this.invstg = invstg;
-	
-	this.callParentMethod('init')
-	
+	this.init();
 	this.createBase();
-
 	this.setStates(invstg.states);
 	
 };
 
-createPrototype(investigationUI, new suServView(), {
+suServView.extendTo(investigationUI, {
 	expand: function(){
 		for (var i = 0; i < this.invstg.sections.length; i++) {
 			var cur_ui = this.invstg.sections[i].getFreeView();
 			if (cur_ui){
+				this.addChild(cur_ui);
 				this.c.append(cur_ui.getC());
-				cur_ui.appended(this)
+				cur_ui.appended(this);
+
 			}
 		};
 	},
@@ -50,7 +47,7 @@ createPrototype(investigationUI, new suServView(), {
 	},
 	die: function() {
 		this.blur();
-		this.callParentMethod('die');	
+		this._super();
 	},
 	blur: function() {
 		$(su.ui.els.slider).removeClass('show-search show-search-results')
@@ -99,7 +96,7 @@ createPrototype(investigationUI, new suServView(), {
 
 
 investigation = function(init, searchf){
-	this.callParentMethod('init')
+	this.init();
 
 	this.sections = [];
 	this.names = {};
@@ -133,7 +130,7 @@ investigation = function(init, searchf){
 };
 
 
-createPrototype(investigation, new suMapModel(), {
+suMapModel.extendTo(investigation, {
 	ui_constr: {
 		main: function(){
 			return new investigationUI(this);
@@ -145,15 +142,13 @@ createPrototype(investigation, new suMapModel(), {
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
-				if (opts.userwant){
-					su.track_page('search results');
-				}
 				su.search_el = this;
 			}
 			
 			
 		}
 	},
+	page_name: "search results",
 	addCallback: function(event_name, func){
 		this.on(event_name, func);
 	},
@@ -163,11 +158,6 @@ createPrototype(investigation, new suMapModel(), {
 			rc += this.sections[i].r.length;
 		};
 		this.fire('resultsChanged', rc);
-	},
-
-	die: function(){
-		this.callParentMethod('die');
-		this.stopRequests();
 	},
 	doEverythingForQuery: function(){
 		this.searchf.call(this);
@@ -345,7 +335,7 @@ var searchResults = function(query, prepared, valueOf){
 			this.append(prepared, valueOf);
 		};
 	};
-	searchResults.prototype = new Array();
+	searchResults.prototype = [];
 	cloneObj(searchResults.prototype, {
 		setQuery: function(q){
 			this.query=q;
@@ -369,9 +359,10 @@ var searchResults = function(query, prepared, valueOf){
 
 
 var baseSuggestUI = function(){};
-createPrototype(baseSuggestUI, new suServView(), {
+
+suServView.extendTo(baseSuggestUI, {
 	init: function(sugg){
-		this.callParentMethod('init');
+		this._super();
 		if (sugg){
 			this.sugg = sugg;
 		}
@@ -428,7 +419,7 @@ createPrototype(baseSuggestUI, new suServView(), {
 
 
 var baseSuggest = function(){};
-createPrototype(baseSuggest, new servModel(), {
+servModel.extendTo(baseSuggest, {
 	setActive: function(){
 		this.updateState('active', true);
 	},
@@ -452,9 +443,10 @@ createPrototype(baseSuggest, new servModel(), {
 
 
 var baseSectionButtonUI = function(sugg){
-	this.callParentMethod('init', sugg);
+	this.init(sugg);
 };
-createPrototype(baseSectionButtonUI, new baseSuggestUI(), {
+
+baseSuggestUI.extendTo(baseSectionButtonUI, {
 	state_change:  cloneObj({
 		button_text: function(text){
 			this.a.find('span').text(text);	
@@ -467,9 +459,9 @@ createPrototype(baseSectionButtonUI, new baseSuggestUI(), {
 });
 
 var baseSectionButton = function(){
-	this.callParentMethod('init');
-}
-createPrototype(baseSectionButton, new baseSuggest(), {
+	this.init();
+};
+baseSuggest.extendTo(baseSectionButton, {
 	ui_constr: function(){
 		return new baseSectionButtonUI(this);
 	},
@@ -484,41 +476,3 @@ createPrototype(baseSectionButton, new baseSuggest(), {
 		this.setInactive();
 	}
 });
-
-/*
-var baseSuggest = function(){};
-	baseSuggest.prototype = {
-		setActive: function(){
-			if (this.ui){
-				this.ui.a.addClass('active');
-			}
-		},
-		setInactive: function(){
-			if (this.ui){
-				this.ui.a.removeClass('active');
-			}
-		},
-		getC: function(){
-			return this.ui && this.ui.c;
-		},
-		render: function(q, bordered, createItemCon){
-			if (!this.ui){
-				var item_parent = (createItemCon && createItemCon()) || $("<li class='suggest'></li>");
-				var item_itself = this.createItem(q, item_parent);
-
-				if (bordered){
-					item_parent.addClass('searched-bordered')
-				}
-				if (item_itself){
-					item_parent.append(item_itself);
-				}
-				this.ui = {
-					a: item_itself,
-					c: item_parent
-				};
-				
-				return item_parent;
-			}
-			
-		}
-	};*/

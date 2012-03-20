@@ -1,13 +1,11 @@
 var seesuPlayer = function(){
 	this.init();
 };
-seesuPlayer.prototype = new playerComplex();
 
-cloneObj(seesuPlayer.prototype, {
-	constructor: seesuPlayer,
+
+playerComplex.extendTo(seesuPlayer, {
 	init: function(){
-		playerComplex.prototype.init.call(this);
-
+		this._super();
 		var volume =  suStore('vkplayer-volume');
 			volume = volume && parseFloat(volume);
 		if (volume){
@@ -20,7 +18,7 @@ cloneObj(seesuPlayer.prototype, {
 	events: {
 		finish: function(e){
 			if (this.c_song == e.song_file.mo){
-				this.playNext(false, true);
+				this.playNext(this.c_song, true);
 			}
 		},
 		play: function(e){
@@ -87,7 +85,7 @@ su.p
 		if (lfm.scrobbling) {
 			lfm.submit(mo, duration);
 		}
-		if (su.vk.id){
+		if (su.s.loggedIn()){
 			su.s.api('track.scrobble', {
 				client: su.env.app_type,
 				status: 'finished',
@@ -104,7 +102,7 @@ su.p
 		if (lfm.scrobbling) {
 			lfm.nowplay(mo, duration);
 		}
-		if (su.vk.id){
+		if (su.s.loggedIn()){
 			su.s.api('track.scrobble', {
 				client: su.env.app_type,
 				status: 'playing',
@@ -129,90 +127,116 @@ if (su.env.opera_extension){
 
 var h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
 if (h5a){
-	su.p.setCore(new html5AudioCore());
-} else {
-	suReady(function(){
-		var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
-		var pcon = $(pcore.getC());
-		var complete;
-
-
-		pcon
-			.addClass('sm2proxy')
-			.attr('scrolling', 'no');
-		
-		pcon.on('load', function() {
-			setTimeout(function() {
-				if (!complete){
-					pcon.addClass('long-appearance')
-				}
-			}, 20000);
-		});
-		
-		
-		pcore
-			.done(function(){
-				complete = true;
-				su.p.setCore(pcore);
-				pcon.addClass('hidden');
-				dstates.add_state('body','flash-internet');
-
-			})
-			.fail(function(){
-				complete = true;
-				pcon.addClass('hidden');
-			})
-		$(function(){
-			$(document.body).append(pcon)
-			//$(su.ui.nav).after(pcon);
-		});
-		
-		//$(document.body).append(_this.c);
-	});
-}
-
-
-
-suReady(function(){
-	return
-	var pcore = new sm2internal("http://arestov.github.com/SoundManager2/swf/", sm2opts);
-	var pcon = $(pcore.getC());
-	var complete;
-
-
-	pcon
-		.addClass('sm2proxy')
-		.attr('scrolling', 'no');
-	
-	pcon.on('load', function() {
-		setTimeout(function() {
-			if (!complete){
-				pcon.addClass('long-appearance')
+	jsLoadComplete(function() {
+		yepnope({
+			load:  [bpath + 'player.html5.js'],
+			complete: function() {
+				su.p.setCore(new html5AudioCore());
 			}
-		}, 20000);
+		});
 	});
-	
-	
-	pcore
-		.done(function(){
-			complete = true;
-			//su.p.setCore(pcore);
-			//pcon.addClass('hidden');
-			//dstates.add_state('body','flash-internet');
-
-		})
-		.fail(function(){
-			complete = true;
-			//pcon.addClass('hidden');
-		})
-	$(function(){
-		$(document.body).append(pcon);
-		pcore.appended();
-		//$(su.ui.nav).after(pcon);
-	});
-	
-	//$(document.body).append(_this.c);
-});
+} else {
+	if (false && !su.env.cross_domain_allowed){
+		suReady(function(){
+			yepnope({
+				load:  [bpath + 'js/common-libs/soundmanager2.mod.min.js', bpath + 'js/prototypes/player.sm2-internal.js'],
+				complete: function(){
+					var pcore = new sm2internal(bpath + "swf/", sm2opts);
+					var pcon = $(pcore.getC());
+					var complete;
 
 
+					pcon
+						.addClass('sm2proxy')
+						.attr('scrolling', 'no');
+					
+					pcon.on('load', function() {
+						setTimeout(function() {
+							if (!complete){
+								pcon.addClass('long-appearance')
+							}
+						}, 7000);
+					});
+					
+					
+					pcore
+						.done(function(){
+							complete = true;
+							su.p.setCore(pcore);
+							setTimeout(function(){
+								pcon.addClass('sm2-complete');
+							}, 1000);
+							//
+							su.main_level.updateState('flash-internet', true);
+
+						})
+						.fail(function(){
+							complete = true;
+							//pcon.addClass('hidden');
+						})
+					$(function(){
+						$(document.body).append(pcon);
+						pcore.appended();
+						//$(su.ui.nav).after(pcon);
+					});
+					
+					//$(document.body).append(_this.c);
+				}
+			});
+		});
+
+	} else {
+		if (su.env.iframe_support){
+
+			
+			suReady(function(){
+				yepnope({
+					load:  [bpath + 'js/prototypes/player.sm2-proxy.js'],
+					complete: function(){
+						var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
+						var pcon = $(pcore.getC());
+						var complete;
+
+
+						pcon
+							.addClass('sm2proxy')
+							.attr('scrolling', 'no');
+						
+						pcon.on('load', function() {
+							setTimeout(function() {
+								if (!complete){
+									pcon.addClass('long-appearance')
+								}
+							}, 7000);
+						});
+						
+						
+						pcore
+							.done(function(){
+								complete = true;
+								su.p.setCore(pcore);
+								setTimeout(function(){
+									pcon.addClass('sm2-complete');
+								}, 1000);
+								su.main_level.updateState('flash-internet', true);
+
+							})
+							.fail(function(){
+								complete = true;
+								pcon.addClass('hidden');
+							})
+						$(function(){
+							$(document.body).append(pcon)
+							//$(su.ui.nav).after(pcon);
+						});
+						
+						//$(document.body).append(_this.c);
+					}
+				});
+
+				
+			});
+		}
+	}
 	
+}

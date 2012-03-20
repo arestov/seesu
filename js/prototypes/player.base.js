@@ -1,12 +1,10 @@
 
 var playerBase = function(){};
-playerBase.prototype = new servModel();
-
-cloneObj(playerBase.prototype, {
+eemiter.extendTo(playerBase, {
 	constructor: playerBase,
 	global_volume: true,
 	init: function(volume){
-		servModel.prototype.init.call(this);
+		this._super();
 		this.song_files = {};
 		this.attached = {};
 	},

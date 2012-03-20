@@ -27,7 +27,7 @@ var test_pressed_node = function(e, opts){
 		  }
 		  else if (bN(class_list.indexOf('artist'))){
 			artist_name = decodeURIComponent(clicked_node.data('artist'));
-			seesu.ui.views.showArtcardPage(artist_name);
+			su.views.showArtcardPage(artist_name);
 			seesu.track_event('Artist navigation', 'artist', artist_name);
 			
 		  }
@@ -40,7 +40,7 @@ var test_pressed_node = function(e, opts){
 		  else if (bN(class_list.indexOf('bbcode_artist'))){
 			
 			artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
-			seesu.ui.views.showArtcardPage(artist_name);
+			su.views.showArtcardPage(artist_name);
 			seesu.track_event('Artist navigation', 'bbcode_artist', artist_name);
 			
 		  }
@@ -146,7 +146,8 @@ var test_pressed_node = function(e, opts){
 			} else if (bN(class_list.indexOf('use-vk-code'))){
 				var vk_t_raw = clicked_node.parent().find('.vk-code').val();
 				if (vk_t_raw){
-					vkTokenAuth(vk_t_raw);
+					var vk_token = new vkTokenAuth(seesu_vkappid, vk_t_raw);			
+						connectApiToSeesu(vk_token, true);
 				}
 				
 			} else if (bN(class_list.indexOf('enable-scrobbling'))){

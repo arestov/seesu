@@ -63,7 +63,7 @@ createPrototype(baseNavUI, new suServView(), {
 	bindClick: function() {
 		var _this = this;
 		this.c.click(function(){
-			_this.mdl.zoomOut();
+			_this.md.zoomOut();
 		});
 	}
 });
@@ -100,7 +100,6 @@ createPrototype(mainLevelUI, new suServView(), {
 				if (opts.userwant){
 					this.els.search_input[0].focus();
 					this.els.search_input[0].select();
-					su.track_page('start page');
 				}
 			} else {
 				
@@ -113,16 +112,43 @@ createPrototype(mainLevelUI, new suServView(), {
 				$(this.els.slider).addClass("show-start");
 			}
 		},
+		"wait-vk-login": function(state) {
+			this.toggleBodyClass(state, 'wait-vk-login');
+		},
+		"vk-waiting-for-finish": function(state){
+			this.toggleBodyClass(state, 'vk-waiting-for-finish');
+		},
+		"lfm-waiting-for-finish": function(state){
+			this.toggleBodyClass(state, 'lfm-waiting-for-finish');
+		},
+		"lfm-auth-req-recomm": function(state){
+			this.toggleBodyClass(state, 'lfm-auth-req-recomm');
+		},
+		"lfm-auth-req-loved": function(state){
+			this.toggleBodyClass(state, 'lfm-auth-req-loved');
+		},
+		"slice-for-height": function(state){
+			this.toggleBodyClass(state, 'slice-for-height');
+		},
+		"deep-sandbox": function(state){
+			this.toggleBodyClass(state, 'deep-sandbox');
+		},
+		"lfm-auth-done":function(state){
+			this.toggleBodyClass(state, 'lfm-auth-done');
+		},
+		"flash-internet":function(state){
+			this.toggleBodyClass(state, 'flash-internet');
+		},
 		'now-playing': function(text) {
-				
-				if (!this.now_playing_link && this.nav){
-					this.now_playing_link = $('<a class="np"></a>').click(function(){
-						su.ui.views.show_now_playing(true);
-					}).appendTo(this.nav.justhead);
-				}
-				if (this.now_playing_link){
-					this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));	
-				}	
+			
+			if (!this.now_playing_link && this.nav){
+				this.now_playing_link = $('<a class="np"></a>').click(function(){
+					su.views.show_now_playing(true);
+				}).appendTo(this.nav.justhead);
+			}
+			if (this.now_playing_link){
+				this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));	
+			}	
 		},
 		playing: function(state) {
 			var s = this.els.pllistlevel.add(this.now_playing_link);
@@ -140,12 +166,22 @@ createPrototype(mainLevelUI, new suServView(), {
 			this.d.title = 	title || "";
 		}
 	},
-	changeFavicon: $.debounce(function(state){
-		if (state && this.favicon_states[state]){
-			changeFavicon(this.d, this.favicon_states[state], 'image/png');
-		} else{
-			changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
+	toggleBodyClass: function(add, class_name){
+		if (add){
+			this.c.addClass(class_name);
+		} else {
+			this.c.removeClass(class_name);
 		}
+	},
+	changeFavicon: debounce(function(state){
+		if (this.isAlive()){
+			if (state && this.favicon_states[state]){
+				changeFavicon(this.d, this.favicon_states[state], 'image/png');
+			} else{
+				changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
+			}
+		}
+		
 	},300),
 	favicon_states: {
 		playing: 'icons/icon16p.png',
@@ -157,6 +193,15 @@ createPrototype(mainLevelUI, new suServView(), {
 mainLevel = function() {
 	this.callParentMethod('init');
 	this.updateState('nav-title', 'Seesu start page');
+
+	if (app_env.check_resize){
+		this.updateState('slice-for-height', true);
+	}
+	if (app_env.deep_sanbdox){
+		this.updateState('deep-sandbox', true);
+	}
+
+
 	var _this = this;
 
 	this.regDOMDocChanges(function() {
@@ -166,7 +211,7 @@ mainLevel = function() {
 			if (child_ui){
 				su.ui.nav.daddy.append(child_ui.getC());
 				child_ui.appended();
-			}
+			} 
 		}
 	});
 
@@ -182,6 +227,7 @@ createPrototype(mainLevel, new suMapModel(), {
 			return new mainLevelNavUI(this);
 		}
 	},
+	page_name: 'start page',
 	nowPlaying: function(text) {
 		this.updateState('now-playing', text);
 	},
@@ -248,8 +294,7 @@ createPrototype(trackNavUI, new baseNavUI(), {
 
 //this.getPlaylistContainer(save_parents)
 //getCurrentPlaylistContainer
-views = function(sui, su_map){
-	this.sui = sui;
+views = function(su_map){
 	var _this = this;
 	this.m = su_map;
 
@@ -266,27 +311,31 @@ views = function(sui, su_map){
 				navi.set(nu, data);
 			}
 
-			console.log(arguments);
-		});
+			//console.log(arguments);
+		})
+		.on('every-url-change', function(nd, od, replace) {
+
+			su.track_page(nd.map_level.resident.page_name);
+			
+		})
 
 };
 //su.ui.nav.daddy
 views.prototype = {
-	sUI: function(){
-		return su && su.ui || this.sui;	
-	},
 	restoreFreezed: function(transit, url_restoring){
 		this.m.restoreFreezed(transit, url_restoring);
 	},
 
 	show_now_playing: function(no_stat){
-		var current_page = this.sUI().els.slider.className;
-		this.restoreFreezed(true);
-		
-		su.ui.views.show_track_page(su.p.c_song);
 		if (!no_stat){
-			seesu.track_event('Navigation', 'now playing', current_page);
+			seesu.track_event('Navigation', 'now playing');
 		}
+		//var cl = su.map.getCurMapL();
+		//cl = cl && cl.resident;
+
+		this.restoreFreezed(true);
+		su.views.show_track_page(su.p.c_song);
+		
 		
 	},
 	showStartPage: function(url_restoring){

@@ -1,37 +1,24 @@
-var gMessagesStore = function(set, get, vname) {
-	this.sset = set;
-	this.sget = get;
-	this.vname = vname;
-	this.store = this.sget() || {};
-};
-createPrototype(gMessagesStore, {
-	set: function(space, message) {
-		this.store[space] = this.store[space] || [];
-		if ( this.store[space].indexOf(message) == -1 ){
-			this.store[space].push(message);
-			this.sset(this.store);
-			return true;
-		}
-	},
-	get: function(space) {
-		return this.store[space];
-	}
-});
 
-var commonMessagesStore = function(glob_store, store_name) {
+
+var notifyCounterUI = function(md) {
 	this.callParentMethod('init');
-	this.glob_store = glob_store;
-	this.store_name = store_name;
+	this.createBase();
+	this.setModel(md);
 };
-createPrototype(commonMessagesStore, new eemiter, {
-	markAsReaded: function(message) {
-		var changed = this.glob_store.set(this.store_name, message);
-		if (changed){
-			this.fire('read', message);
-		}
+
+createPrototype(notifyCounterUI, new suServView(), {
+	createBase: function() {
+		this.c = $('<span class="notifier hidden"></span>');
 	},
-	getReadedMessages: function() {
-		return 	this.glob_store.get(this.store_name)
+	state_change: {
+		counter: function(state) {
+			if (state){
+				this.c.text(state);
+				this.c.removeClass('hidden');
+			} else {
+				this.c.addClass('hidden');
+			}
+		}
 	}
 });
 
@@ -43,6 +30,9 @@ var notifyCounter = function(name, banned_messages) {
 };
 
 createPrototype(notifyCounter, new servModel(), {
+	ui_constr: function() {
+		return new notifyCounterUI(this);
+	},
 	addMessage: function(m) {
 		if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
 			this.messages[m] = true;
@@ -69,7 +59,7 @@ createPrototype(notifyCounter, new servModel(), {
 });
 
 var mfComplectUI = function(mf) {
-	this.mf = mf;
+	this.md = this.mf = mf;
 	this.callParentMethod('init');
 	this.createBase();
 	this.setModel(mf);
@@ -78,8 +68,8 @@ var mfComplectUI = function(mf) {
 createPrototype(mfComplectUI, new suServView(), {
 	createBase: function() {
 		this.c = $('<div class="moplas-list"></div>');
-
-		this.header = $('<h4></h4>').text(this.mf.sem_part.name).appendTo(this.c);
+		this.header_text = this.mf.sem_part.name;
+		this.header_c = $('<h4></h4>').text(this.header_text).appendTo(this.c);
 		this.lc = $('<ul></ul>').appendTo(this.c);
 	},
 	appendChildren: function() {
@@ -90,6 +80,24 @@ createPrototype(mfComplectUI, new suServView(), {
 			if (ui){
 				this.lc.append(ui.getC())
 				ui.appended(this)
+			}
+		}
+	},
+	state_change: {
+		overstock: function(state) {
+			if (state){
+				var _this = this;
+				var header = $('<a class="js-serv"></a>').click(function() {
+					_this.md.toggleOverstocked();
+				}).text(this.header_text);
+				this.header_c.empty().append(header);
+			}
+		},
+		"show-overstocked": function(state, oldstate){
+			if (state){
+				this.c.addClass('want-overstocked-songs');
+			} else if (oldstate){
+				this.c.removeClass('want-overstocked-songs');
 			}
 		}
 	}
@@ -106,6 +114,10 @@ var mfComplect = function(mf_cor, sem_part, mo) {
 	var playMf = function() {
 		_this.mf_cor.play(this);
 	};
+	if (this.sem_part.t.length > this.overstock_limit){
+		this.updateState('overstock', true);
+	}
+	
 	for (var i = 0; i < this.sem_part.t.length; i++) {
 		var sf = this.sem_part.t[i]
 				.getSongFileModel(mo, mo.player)
@@ -123,6 +135,9 @@ createPrototype(mfComplect, new servModel(), {
 	ui_constr: function() {
 		return new mfComplectUI(this);
 	},
+	toggleOverstocked: function() {
+		this.updateState('show-overstocked', !this.state('show-overstocked'));
+	},
 	overstock_limit: 5,
 	hasManyFiles: function() {
 		return this.sem_part && this.sem_part.t && this.sem_part.t.length > 1;
@@ -131,12 +146,11 @@ createPrototype(mfComplect, new servModel(), {
 
 
 
-var mfCorUI = function(mf_cor) {
+var mfCorUI = function(md) {
 	this.callParentMethod('init');
+	this.md = md;
 	this.createBase();
-	this.mf_cor = mf_cor;
-	this.setModel(mf_cor);
-	
+	this.setModel(md);
 };
 createPrototype(mfCorUI, new suServView(), {
 	state_change: {
@@ -150,29 +164,53 @@ createPrototype(mfCorUI, new suServView(), {
 				this.c.removeClass('want-more-songs');
 			}
 		},
-		many_files: function(state) {
-			var _this = this;
-			if (!this.more_songs_b){
-				var ms_c = $('<div class="show-all-songs"></div>');
-
-
-				this.more_songs_b = $('<a class=""></a>').appendTo(ms_c);
-				this.more_songs_b.click(function() {
-					_this.mf_cor.updateState('want-more-songs', !_this.state('want-more-songs'));
-				});
-				$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
-				this.c.prepend(ms_c);
+		"must-be-expandable": function(state) {
+			if (state){
+				this.sall_songs.removeClass('hidden')
 			}
 		}
 	},
 	createBase: function() {
 		this.c = $('<div class="song-row-content moplas-block"></div>');
+
+		if (!this.more_songs_b){
+			var _this = this;
+			this.sall_songs =  $('<div class="show-all-songs hidden"></div>');
+
+			this.more_songs_b = $('<a class=""></a>').appendTo(this.sall_songs);
+			this.more_songs_b.click(function() {
+				_this.md.switchMoreSongsView();
+			});
+			$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
+			this.c.prepend(this.sall_songs);
+
+			var nof_ui = this.md.notifier.getFreeView();
+			if (nof_ui){
+				this.sall_songs.append(nof_ui.getC());
+				nof_ui.appended(this);
+				this.addChild(nof_ui);
+			}
+
+			this.messages_c = $('<div class="messages-c"></div>').appendTo(this.c);
+		}
 	},
 	appendChildren: function() {
 		var _this = this;
-		if (this.mf_cor.pa_o){
-			var pa = this.mf_cor.pa_o;
+		if (this.md.vk_audio_auth){
+			var vk_auth_mess = this.md.vk_audio_auth.getFreeView(),
+				vk_auth_mess_c = vk_auth_mess && vk_auth_mess.getC();
+			if (vk_auth_mess_c){
+				this.addChild(vk_auth_mess);
+				this.messages_c.append(vk_auth_mess_c);
+				vk_auth_mess.appended(this);
+			}
 
+		}
+		
+
+
+		if (this.md.pa_o){
+			var pa = this.md.pa_o;
 
 			var append = function(cur_view){
 				var ui_c = cur_view && cur_view.getC();
@@ -181,7 +219,7 @@ createPrototype(mfCorUI, new suServView(), {
 				}
 
 				var prev_name = pa[i-1];
-				var prev = prev_name && _this.mf_cor.complects[prev_name];
+				var prev = prev_name && _this.md.complects[prev_name];
 				var prev_c = prev && prev.getC();
 				if (prev_c){
 					prev_c.after(ui_c);
@@ -193,11 +231,12 @@ createPrototype(mfCorUI, new suServView(), {
 						_this.c.append(ui_c);
 					}
 				}
+				_this.addChild(cur_view);
 				cur_view.appended(_this);
 			};
 
 			for (var i = 0; i < pa.length; i++) {
-				append(this.mf_cor.complects[pa[i]].getFreeView());
+				append(this.md.complects[pa[i]].getFreeView());
 			}
 		}
 		
@@ -205,7 +244,7 @@ createPrototype(mfCorUI, new suServView(), {
 	getNextSemC: function(packs, start) {
 		for (var i = start; i < packs.length; i++) {
 			var cur_name = packs[i];
-			var cur_mf = cur_name && this.mf_cor.complects[cur_name];
+			var cur_mf = cur_name && this.md.complects[cur_name];
 			return cur_mf && cur_mf.getC();
 		}
 	}
@@ -219,6 +258,27 @@ var mfCor = function(mo, omo) {
 	this.complects = {};
 	this.subscribed_to = [];
 
+	this.notifier = new notifyCounter();
+	this.sf_notf = su.notf.getStore('song-files');
+	var rd_msgs = this.sf_notf.getReadedMessages();
+	for (var i = 0; i < rd_msgs.length; i++) {
+		this.notifier.banMessage(rd_msgs[i]);
+	};
+	this.bindMessagesRecieving();
+	
+
+
+	this.addChild(this.notifier);
+	
+
+	this.checkVKAuthNeed();
+
+	var _this = this;
+	this.watchStates(['has_files', 'vk-audio-auth'], function(has_files, vkaa) {
+		if (has_files || vkaa){
+			_this.updateState('must-be-expandable', true);
+		}
+	});
 };
 createPrototype(mfCor, new servModel(), {
 	ui_constr: function() {
@@ -243,6 +303,99 @@ createPrototype(mfCor, new servModel(), {
 		}
 
 	},
+	switchMoreSongsView: function() {
+		if (!this.state('want-more-songs')){
+			this.updateState('want-more-songs', true);
+			this.markMessagesReaded();
+		} else {
+			this.updateState('want-more-songs', false);
+		}
+		
+	},
+	markMessagesReaded: function() {
+		this.sf_notf.markAsReaded('vk-audio-auth');
+		//this.notifier.banMessage('vk-audio-auth');
+	},
+	vkAudioAuth: function(remove) {
+		if (remove){
+			this.notifier.removeMessage('vk-audio-auth');
+			if (this.vk_audio_auth){
+				this.updateState('vk-audio-auth', false);
+				this.vk_audio_auth.die();
+				delete this.vk_audio_auth;
+			}
+		} else {
+			
+			this.notifier.addMessage('vk-audio-auth');
+			if (!this.vk_audio_auth){
+
+				this.vk_audio_auth = new vkLogin();
+				this.vk_audio_auth.on('auth-request', function() {
+					if (su.vk_app_mode){
+						if (window.VK){
+							VK.callMethod('showSettingsBox', 8);
+						}
+					} else {
+						su.vk_auth.requestAuth();
+					}
+					//console.log()
+				});
+				this.addChild(this.vk_audio_auth);
+				this.updateState('changed', new Date());
+				this.updateState('vk-audio-auth', true);
+			}
+
+			
+			
+			
+			this.vk_audio_auth.setRequestDesc(
+					(
+						this.isHaveTracks() ? 
+							localize('to-find-better') : 
+							localize("to-find-and-play")
+					)  + " " +  localize('music-files-from-vk'));
+			/*
+				if (!songs.length){
+					this.vk_login_notify = su.ui.samples.vk_login.clone();
+				} else if(!this.mo.isHaveAnyResultsFrom('vk')){
+					this.vk_login_notify = su.ui.samples.vk_login.clone( localize('to-find-better') + " " +  localize('music-files-from-vk'));
+				} else {
+					this.vk_login_notify = su.ui.samples.vk_login.clone(localize('stabilization-of-vk'));
+					
+				}*/
+		}
+	},
+	checkVKAuthNeed: function() {
+		if (this.mo.mp3_search){
+				
+			if (this.mo.mp3_search.haveSearch('vk')){
+				this.vkAudioAuth(true);
+			} else {
+				if (this.isHaveAnyResultsFrom('vk')){
+					this.vkAudioAuth(true);
+				} else {
+					this.vkAudioAuth();
+				}
+			}
+		}
+		return this;
+	},
+	bindMessagesRecieving: function() {
+
+		var _this = this;
+		if (this.mo.mp3_search){
+			
+			this.mo.mp3_search.on('new-search', function(search, name) {
+				if (name == 'vk'){
+					_this.vkAudioAuth(true);
+				}
+			});
+		}
+		this.sf_notf.on('read', function(message_id) {
+			_this.notifier.banMessage(message_id);
+		});
+		
+	},
 	collapseExpanders: function() {
 		this.updateState('want-more-songs', false);
 	},
@@ -254,6 +407,8 @@ createPrototype(mfCor, new servModel(), {
 		});
 	},
 	semChanged: function(complete) {
+		this.checkVKAuthNeed();
+
 		var songs_packs = this.songs_packs = this.sem.getAllSongTracks();
 
 		this.pa_o = $filter(songs_packs, 'name');
@@ -267,7 +422,7 @@ createPrototype(mfCor, new servModel(), {
 				many_files = many_files || this.complects[cp_name].hasManyFiles();
 			}
 		}
-		this.updateState('many_files', many_files);
+		this.updateState('has_files', many_files);
 		if (!this.state('current_mopla')){
 			this.updateState('default_mopla', this.song());
 		}

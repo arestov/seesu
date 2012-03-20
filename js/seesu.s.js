@@ -119,7 +119,7 @@ var seesuServerAPI = function(auth){
 	
 	
 	if (auth){
-		this.setAuth(auth);
+		this.setAuth(auth, true);
 	};
 	
 	var update_interval = 1000 * 60 * 4;
@@ -230,18 +230,21 @@ seesuServerAPI.prototype = {
 			vk_user: vk_user_id
 		}, function(su_sess){
 			if (su_sess.secret_container && su_sess.sid){
-				su.vk_api.use('storage.get', {key:su_sess.secret_container}, function(r){
-					if (r && r.response){
-						su.s.setAuth({
-							userid: su_sess.userid,
-							secret: r.response,
-							sid: su_sess.sid
-						});
-						su.s.setInfo('vk', su.vk.user_info);
-						su.s.api('user.update', su.vk.user_info);
-						if (callback){callback();}
-					}
-				});
+				su.vk_api.get('storage.get', {key:su_sess.secret_container})
+					.done(function(r){
+						if (r && r.response){
+							su.s.setAuth({
+								userid: su_sess.userid,
+								secret: r.response,
+								sid: su_sess.sid
+							});
+							//su.s.setInfo('vk', su.vk.user_info);
+
+							//su.s.api('user.update', su.vk.user_info);
+							su.fire('dg-auth');
+							if (callback){callback();}
+						}
+					});
 			}
 			
 		});
@@ -257,7 +260,7 @@ seesuServerAPI.prototype = {
 		var auth = this.auth._store;
 		
 		
-		if (!bN(['track.getListeners', 'user.getAuth'].indexOf(method))){
+		if (['track.getListeners', 'user.getAuth'].indexOf(method) == -1){
 			if (!auth){
 				return false
 			} else {
@@ -276,9 +279,8 @@ seesuServerAPI.prototype = {
 					if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){
 						
 						_this.setAuth('');
-						if (seesu.vk.id ){
-							_this.getAuth(seesu.vk.id);
-						}
+						_this.getAuth(_this.vk_id);
+						
 						
 						
 						

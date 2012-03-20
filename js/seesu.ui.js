@@ -17,7 +17,6 @@ createPrototype(artCardUI, new suServView(), {
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
-				su.track_page('art card');
 				this.c.removeClass('hidden');
 			} else {
 				this.c.addClass('hidden');
@@ -120,7 +119,7 @@ createPrototype(artCardUI, new suServView(), {
 			$.each(artists, function(i, el){
 				var li = $('<li></li>');
 				$('<a class="js-serv"></a>').click(function(){
-					su.ui.views.showArtcardPage(el.name);
+					su.views.showArtcardPage(el.name);
 				}).text(el.name).appendTo(li);
 				li.appendTo(ul);
 				ul.append(' ');
@@ -194,6 +193,7 @@ createPrototype(artCard, new suMapModel(), {
 			return new artCardNavUI(this)
 		}	
 	},
+	page_name: "art card",
 	getURL: function() {
 		return '/catalog/' + this.artist;	
 	},
@@ -232,7 +232,7 @@ createPrototype(artCard, new suMapModel(), {
 		var _this = this;
 		this.updateState('loading-toptracks', true);
 		this.addRequest(
-			lfm.get('artist.getTopTracks',{'artist': this.artist })
+			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30 })
 				.done(function(r){
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 
@@ -365,93 +365,103 @@ contextRow.prototype = {
 		
 	}
 };
-var der = [];
 
-window.seesu_ui = function(d, with_dom, cb){
-
+var countergg = 0;
+window.seesu_ui = function(d, with_dom){
+	this.nums = ++countergg;
 	this.d = d;
-	var _this = this,
-		si;
+	this.cbs = [];
+	console.log(this.nums);
+
+	var _this = this;
 	if (with_dom && getDefaultView(d)){
-		var die = function() {
-			if (!_this.dead){
-				clearInterval(si);
-				delete _this.d;
-				_this.dead = true;
-				console.log('DOM dead!');
-				su.removeDOM(d);
-				delete _this.checkLiveState;
-			}
-			
-		};
-		//d.defaultView.onbeforeunload = die;
-		//d.defaultView.onuload = die;
-		//addEvent(, 'onbeforeunload', die);
-		//addEvent(d.defaultView, 'onuload', die);
+		this.can_die = true;
 		this.checkLiveState = function() {
 			if (!getDefaultView(d)){
-				die()
+				_this.die();
+				return true;
 			}
 		};
 
-		si = setInterval(this.checkLiveState, 1000);
+		this.lst_interval = setInterval(this.checkLiveState, 1000);
 		
 	}
-	der.push(this)
 
 
 	this.els = {};
 	if (!with_dom){
-		dstates.connect_ui(this);
-	} else {
-		this.views = new views(this, su.map);
+		dstates.connect_ui(d);
 	}
 	
 	this.popups = [];
 	this.popups_counter = 0;
 	this.buttons_li = {};
-	
-
-	
-	if (with_dom){
-		connect_dom_to_som(d, this, function(opts) {
-			setTimeout(function() {
-				var state_recovered;
-				if (window.su && su.p && su.p.c_song){
-					if (su.p.c_song && su.p.c_song.plst_titl){
-						su.ui.views.show_now_playing(true);
-						state_recovered = true;
-					}
-				}
-				su.fire('dom', _this);
-				_this.can_fire_on_domreg = true;
-				
-				if (state_recovered){
-					opts.state_recovered = true;
-				}
-				if (cb){
-					cb(opts);
-				}
-				viewBlocks(_this, d);
-			}, 300);
-		});
-
-		
-		
-	}
 };
 seesu_ui.prototype = {
+	die: function(){
+		if (this.can_die && !this.dead){
+			this.dead = true;
+			clearInterval(this.lst_interval);
+			var d = this.d;
+			delete this.d;
+			su.removeDOM(d, this);
+			
+			console.log('DOM dead! ' + this.nums);
+			
+		}
+	},
 	isAlive: function(){
 		if (this.dead){
 			return false;
 		}
-		var is_dead = !(this.d && getDefaultView(this.d));
-		if (is_dead){
-			this.dead = true;
+		return !this.checkLiveState();
+	},
+	setDOM: function(opts) {
+		var _this = this;
+		if (this.isAlive()){
+
+			cloneObj(this, opts.su_dom);
+		
+			if (_this.isAlive()){
+
+				jsLoadComplete(function() {
+					if (opts.ext_search_query) {
+						_this.search(opts.ext_search_query);
+					}
+
+					var state_recovered;
+					if (window.su && su.p && su.p.c_song){
+						if (su.p.c_song && su.p.c_song.plst_titl){
+							su.views.show_now_playing(true);
+							state_recovered = true;
+						}
+					}
+					su.fire('dom', _this);
+					console.log('fired dom!')
+					_this.can_fire_on_domreg = true;
+					
+					if (state_recovered){
+						opts.state_recovered = true;
+					}
+					for (var i = 0; i < _this.cbs.length; i++) {
+						_this.cbs[i](opts);
+					};
+				});
+				viewBlocks(_this, _this.d);
+			}
+			
+		
+
+			
 		}
-		return !is_dead;
+		return this;
+	},
+	onReady: function(cb){
+		this.cbs.push(cb);
+		return this;
 	},
 	appendStyle: function(style_text){
+		//fixme - check volume ondomready
 		var style_node = this.d.createElement('style');
 			style_node.setAttribute('title', 'button_menu');
 			style_node.setAttribute('type', 'text/css');
@@ -504,7 +514,7 @@ seesu_ui.prototype = {
 		}, function(){
 			proxy_render_artists_tracks(false, pl_r);
 		});
-		this.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
+		su.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
 		
 		if (start_song){
 			pl_r.showTrack(start_song, full_no_navi);
@@ -521,7 +531,7 @@ seesu_ui.prototype = {
 		}
 		
 		var pl_r = prepare_playlist(title , 'tracks', {query: q} , title).loading();
-		this.views.show_playlist_page(pl_r, !!q);
+		su.views.show_playlist_page(pl_r, !!q);
 		su.mp3_search.find_files(q, false, function(err, pl, c, complete){
 			if (complete){
 				c.done = true;
@@ -553,12 +563,12 @@ seesu_ui.prototype = {
 		var cpl = su.p.isPlaying(pl);
 		if (!cpl){
 			if (!vopts.from_artcard){
-				su.ui.views.showArtcardPage(artist, vopts.save_parents, true);
+				su.views.showArtcardPage(artist, vopts.save_parents, true);
 			}
-			this.views.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
+			su.views.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
 			return false;
 		} else{
-			su.ui.views.restoreFreezed();
+			su.views.restoreFreezed();
 			return cpl;
 		}
 	},
@@ -618,7 +628,7 @@ seesu_ui.prototype = {
 	},
 	showTrackById: function(sub_raw, vopts){
 		var pl_r = prepare_playlist('Track' , 'tracks', {time: + new Date()});
-		su.ui.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
+		su.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
 		
 		if (sub_raw.type && sub_raw.id){
 			su.mp3_search.getById(sub_raw, function(song, want_auth){
@@ -674,7 +684,7 @@ seesu_ui.prototype = {
 
 				
 			});
-		this.views.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
+		su.views.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
 	},
 	showSimilarArtists: function(artist, vopts, start_song){
 		vopts = vopts || {};
@@ -682,7 +692,7 @@ seesu_ui.prototype = {
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
 		var pl = prepare_playlist('Similar to «' + artist + '» artists', 'similar artists', {artist: artist}, start_song).loading();
-		//this.views.show_playlist_page(pl, false, no_navi || !!start_song);
+		//su.views.show_playlist_page(pl, false, no_navi || !!start_song);
 		
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		if (!recovered){
@@ -1146,16 +1156,16 @@ seesu_ui.prototype = {
 		}
 	
 		
-		dstates.add_state('body','lfm-waiting-for-finish');
+		su.main_level.updateState('lfm-waiting-for-finish', true);
 		
 		
 		return
 		
 	},
 	lfm_logged : function(){
-		dstates.add_state('body', 'lfm-auth-done');
-		dstates.remove_state('body', 'lfm-auth-req-loved');
-		dstates.remove_state('body', 'lfm-auth-req-recomm');
+		su.main_level.updateState('lfm-auth-done', true);
+		su.main_level.updateState('lfm-auth-req-loved', false);
+		su.main_level.updateState('lfm-auth-req-recomm', false);
 		$('.lfm-finish input[type=checkbox]',this.d).prop('checked', true);
 		var f = $('.scrobbling-switches', this.d);
 		var ii = f.find('input');
@@ -1168,12 +1178,18 @@ seesu_ui.prototype = {
 			lfm_ssw.find('.disable-scrobbling').prop('checked',enable ? false : true);
 		}
 	},
+	setSearchInputValue: function(value) {
+		this.els.search_input.val(value);
+	},
 	search: function(query, no_navi, new_browse){
 		if (new_browse){
-			this.views.showStartPage();
+			su.views.showStartPage();
 		}
-		this.els.search_input.val(query);
-		input_change(this.els.search_input[0], no_navi);
+		if (su.search_query != query){
+			su.search_query = query;
+			this.setSearchInputValue(query);
+		}
+		inputChange(query, this.els.search_label, no_navi);
 	},
 	create_playlists_link: function(){
 		var _ui = this;

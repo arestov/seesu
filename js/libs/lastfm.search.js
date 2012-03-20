@@ -136,7 +136,7 @@ var fast_suggestion = function(r, q, invstg){
 	}
 };
 
-var get_fast_suggests = $.debounce(function(q, callback, hash, invstg){
+var get_fast_suggests = debounce(function(q, callback, hash, invstg){
 	var xhr = $.ajax({
 	  url: 'http://www.last.fm/search/autocomplete',
 	  global: false,

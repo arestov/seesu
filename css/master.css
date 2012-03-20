@@ -109,6 +109,9 @@ a.desc{
 	z-index:-10;
 	border: 0;	
 }		
+.sm2proxy.sm2-complete{
+	left:-1000px;
+}
 .sm2proxy.long-appearance{
 	z-index:10;
 }
@@ -129,7 +132,20 @@ a.desc{
 }
 .moplas-block .show-all-songs{
 	float:right;
+	position: relative;
 	}
+	.moplas-block .show-all-songs .notifier{
+		position: absolute;
+		top: -11px;
+		left: 0;
+		background: red;
+		height: 20px;
+		line-height:20px;
+		width: 20px;
+		text-align: center;
+		border-radius: 10px;
+		opacity: 0.8;
+		}
 	.moplas-block .show-all-songs a{
 		cursor: pointer;
 		color:gray;
@@ -155,6 +171,7 @@ a.desc{
 	font-size: 14px;
 	padding:0;
 	min-height:31px;
+	
 	}
 	.moplas-block h4{
 		font-weight: 400;
@@ -229,13 +246,9 @@ a.desc{
 		.want-more-songs.moplas-block .moplas-list li{
 			display: block;
 			}
-		.want-more-songs.moplas-block .moplas-list li.overstocked{
-			display: none;
-			}
-		
-		.moplas-block .moplas-list.want-overstocked-songs .overstocked{
-			display: block;
-		}
+
+
+	
 
 		.selected-mf .mf-text{
 			font-size: 12px;
@@ -243,6 +256,13 @@ a.desc{
 			.want-more-songs .selected-mf .mf-text{
 				font-size: inherit;
 				}
+	.moplas-block .moplas-list li.overstocked{
+		display: none;
+		}
+	
+		.want-more-songs.moplas-block .moplas-list.want-overstocked-songs .overstocked{
+			display: block;
+		}
 				
 	.moplas-block .moplas-list .selected-mf{
 		display: block;
@@ -253,10 +273,7 @@ a.desc{
 			}
 
 
-#sm2-container{
-	bottom:10px;
-	right:20px;
-}
+
 #close-widget{
 	position:absolute;
 	top:5px;
@@ -867,26 +884,10 @@ display:none;
 			color:#333;
 			border-bottom-color:#333;
 		}
-#sm2-container{
-	width:30px;
-	height:30px;
-	position:fixed;
-	bottom:auto;
-	top:51px;
-	left:19px;
-	z-index:10;
+
+#sm2-container.swf_error{
+	display:none;
 	}
-	.swf_unblocked{
-		z-index:-10;
-		width:8px;
-		height:8px;
-		top:0;
-		left:0;
-	}
-	
-	#sm2-container.swf_error{
-		display:none;
-		}
 
 
 

@@ -1,35 +1,25 @@
 (function(){
-
+	var baseSong = createSongBase(suMapModel);
 	song = function(omo, player, mp3_search){
-		this.constructor.prototype.init.call(this, omo, player, mp3_search);
+		this.init.call(this, omo, player, mp3_search);
 		var _this = this;
 		this.updateNavTexts();
 
-		
-
-		this.on('view', function(){
-			if (_this.state('playable')){
-				var zoomed = !!su.ui.els.slider.className.match(/show-zoom-to-track/);
-				if (this.c_song){
-					if (mo == this.c_song){
-						su.track_event('Song click', 'zoom to track', zoomed ? "zoomed" : "playlist");
-					} else if (this.c_song.next_song && mo == this.c_song.next_song){
-						su.track_event('Song click', 'next song', zoomed ? 'zommed' : 'playlist');
-					} else if (this.c_song.prev_song && mo == this.c_song.prev_song){
-						su.track_event('Song click', 'previous song', zoomed ? 'zommed' : 'playlist');
-					} else{
-						su.track_event('Song click', 'simple click');
-					}
-				} else{
-					su.track_event('Song click', 'simple click');
+		this.on('view', function(no_navi, user_want){
+			su.views.show_track_page(this, no_navi);
+			if (user_want){
+				//fixme - never true!
+				if (_this.wasMarkedAsPrev()){
+					su.track_event('Song click', 'previous song');
+				} else if (_this.wasMarkedAsNext()){
+					su.track_event('Song click', 'next song');
+				} else if (_this.state('play')){
+					su.track_event('Song click', 'zoom to itself');
 				}
-				if (!zoomed){
-					su.track_page('track zoom');
-				}
-			} else {
-				su.track_event('Song click', 'empty song');
 			}
+			
 		});
+		
 		this.mf_cor = new mfCor(this, this.omo);
 		this.addChild(this.mf_cor);
 		this.mf_cor.on('before-mf-play', function(mopla) {
@@ -55,8 +45,29 @@
 				this.updateState('can-expand', false);
 			}
 		});
+		this.watchState('mp-show', function(opts) {
+			var
+				_this = this,
+				oldCb = this.makePlayableOnNewSearch;
+
+			if (opts){
+				if (!oldCb){
+					this.makePlayableOnNewSearch = function() {
+						_this.makeSongPlayalbe(true);
+					};
+					this.mp3_search.on('new-search', this.makePlayableOnNewSearch)
+					
+				}
+			} else {
+				if (oldCb){
+					this.mp3_search.off('new-search', oldCb)
+					delete this.makePlayableOnNewSearch;
+				}
+			}
+		});
 	};
-	createPrototype(song, new baseSong(), {
+
+	baseSong.extendTo(song, {
 		ui_constr: {
 			main: function(){
 				return new songUI(this);
@@ -65,22 +76,15 @@
 				return new trackNavUI(this);
 			}
 		},
+		page_name: 'song page',
 		updateFilesSearchState: function(complete, get_next){
-			baseSong.prototype.updateFilesSearchState.apply(this, arguments);
+			this._super.apply(this, arguments);
 			if (this.isHaveTracks()){
 				this.plst_titl.markAsPlayable();
 			}
 		},	
 		mlmDie: function() {
 			this.hide();	
-		},
-		view: function(no_navi){
-			if (!this.state('mp-show')){
-				this.fire('view');
-				this.findFiles();
-				su.ui.views.show_track_page(this, no_navi);
-			}
-			
 		}
 	});
 	//song.prototype = song_methods;

@@ -1,15 +1,34 @@
-if (!Array.prototype.indexOf) {
-  Array.prototype.indexOf = function (obj, start) {
-    for (var i = (start || 0); i < this.length; i++) {
-      if (this[i] == obj) {
-        return i;
-      }
-    }
-    return -1;
-  };
+var
+	addEvent, removeEvent, getDefaultView, domReady,
+	doesContain, arrayExclude, getFields, searchInArray, getStringPattern,
+	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
+	cloneObj,  getUnitBaseNum, stringifyParams, separateNum, createPrototype, Class, depdc,
+	debounce, throttle;
+
+function bN(num){
+	/*
+	special for opera browser
+	http://opera.com
+	http://friendfeed.com/yodapunk/935ad55d/o-rly-opera-cc-pepelsbey-foolip-erikdahlstrom
+	*/
+	return !!(1* (~num));
 }
 
-var addEvent = window.addEventListener ? 
+(function() {
+"use strict";
+
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function (obj, start) {
+		for (var i = (start || 0); i < this.length; i++) {
+			if (this[i] == obj) {
+				return i;
+			}
+		}
+		return -1;
+	};
+}
+
+addEvent = window.addEventListener ?
 function(elem, evType, fn){
 	elem.addEventListener(evType, fn, false);
 	return fn;
@@ -18,19 +37,19 @@ function(elem, evType, fn){
 	elem.attachEvent('on' + evType, fn);
 	return fn;
 };
-var removeEvent = window.addEventListener ?
+removeEvent = window.addEventListener ?
 function(elem, evType, fn){
 	elem.removeEventListener(evType, fn, false);
 }:
 function(elem, evType, fn){
 	elem.detachEvent('on' + evType, fn);
 };
-var getDefaultView = function(d) {
-	return d.defaultView || d.parentWindow
+getDefaultView = function(d) {
+	return d.defaultView || d.parentWindow;
 };
-var domReady = function(d, callback){
+domReady = function(d, callback){
 	if (d.readyState == 'complete' || d.readyState == 'loaded'){
-		setTimeout(callback, 30);
+		callback();
 	} else{
 		var done;
 		var f = function(){
@@ -63,18 +82,18 @@ doesContain = function(target, valueOf){
 	}
 	return -1;
 };
-var arrayExclude = function(arr, obj){
+arrayExclude = function(arr, obj){
 	var r = []; obj = toRealArray(obj);
 	for (var i = 0; i < arr.length; i++) {
 		if (obj.indexOf(arr[i]) == -1){
 			r.push(arr[i]);
-		}	
+		}
 	}
 	return r;
 };
 
 
-var getFields = function(obj, fields){
+getFields = function(obj, fields){
 	var r = [];
 	for (var i=0; i < fields.length; i++) {
 		var cur = fields[i];
@@ -87,7 +106,7 @@ var getFields = function(obj, fields){
 	return r;
 };
 
-var searchInArray = function (array, query, fields) {
+searchInArray = function (array, query, fields) {
 	query = getStringPattern(query);
 	var r,i,cur;
 
@@ -115,7 +134,7 @@ var searchInArray = function (array, query, fields) {
 	return r;
 };
 
-var getStringPattern = function (str) {
+getStringPattern = function (str) {
 	if (str.replace(/\s/g, '')){
 		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
 		str = str.replace(/([$\^*()+\[\]{}|.\/?\\])/g, '\\$1').split(/\s/g);  //escaping regexp symbols
@@ -124,11 +143,11 @@ var getStringPattern = function (str) {
 		}
 		str = str.join('|');
 		
-		return RegExp(str, 'gi');
+		return new RegExp(str, 'gi');
 	}
 };
 
-var ttime = function(f){
+ttime = function(f){
 	var d = +new Date();
 	
 	if (f){
@@ -139,7 +158,7 @@ var ttime = function(f){
 	}
 };
 
-var collapseAll = function(){
+collapseAll = function(){
 	var r= [];
 	for (var i=0; i < arguments.length; i++) {
 		var c = arguments[i];
@@ -159,21 +178,19 @@ var collapseAll = function(){
 	return r;
 };
 
-
-
-var toRealArray = function(array, check_field){
+toRealArray = function(array, check_field){
 	if (array instanceof Array){
 		return array;
-	} else if (array === Object(array) && array.length){
+	} else if (array && (typeof array == 'object') && array.length){
 		return Array.prototype.slice.call(array);
 	} else if (array && (!check_field || getTargetField(array, check_field))){
-		return [array];	
+		return [array];
 	} else{
 		return [];
 	}
 };
 
-var getTargetField = function(obj, field){
+getTargetField = function(obj, field){
 	var tree = field.split('.');
 	var nothing;
 	var target = obj;
@@ -186,15 +203,16 @@ var getTargetField = function(obj, field){
 	}
 	return target;
 };
+
 var getFieldValueByRule = function(obj, rule){
-	if (typeof rule == 'object' && rule === Object(rule)){
+	if (rule instanceof Function){
+		return rule(obj);
+	} else if (rule instanceof Object){
 		if (typeof rule.field =='function'){
 			return rule.field(obj);
 		} else {
 			return getTargetField(obj, rule.field);
 		}
-	} else if (typeof rule =='function'){
-		return rule(obj);
 	} else{
 		return getTargetField(obj, rule);
 	}
@@ -202,8 +220,9 @@ var getFieldValueByRule = function(obj, rule){
 	
 };
 
-var sortByRules = function(a, b, rules){
-	if (a === Object(a) && b === Object(b)){
+
+sortByRules = function(a, b, rules){
+	if (a instanceof Object && b instanceof Object){
 		var shift = 0;
 		
 		for (var i=0; i < rules.length; i++) {
@@ -230,7 +249,7 @@ var sortByRules = function(a, b, rules){
 	}
 };
 
-var makeIndexByField = function(array, field){
+makeIndexByField = function(array, field){
 	var r = {};
 	if (array && array.length){
 		for (var i=0; i < array.length; i++) {
@@ -276,7 +295,7 @@ var makeIndexByField = function(array, field){
 	return r;
 };
 
-var $filter = function(array, field, value_or_testfunc){
+$filter = function(array, field, value_or_testfunc){
 	var r = [];
 	r.not = [];
 	if (!array){return r;}
@@ -291,7 +310,7 @@ var $filter = function(array, field, value_or_testfunc){
 					}
 				} else{
 					if (getTargetField(array[i], field) === value_or_testfunc){
-						r.push(array[i]); 
+						r.push(array[i]);
 					} else{
 						r.not.push(array[i]);
 					}
@@ -312,17 +331,10 @@ var $filter = function(array, field, value_or_testfunc){
 };
 
 
-function bN(num){
-	/*
-	special for opera browser
-	http://opera.com
-	http://friendfeed.com/yodapunk/935ad55d/o-rly-opera-cc-pepelsbey-foolip-erikdahlstrom
-	*/
-	return !!(1* (~num));
-}
+
 	
-var cloneObj= function(acceptor, donor, black_list, white_list){
-	//not deep! 
+cloneObj= function(acceptor, donor, black_list, white_list){
+	//not deep!
 	var _no = acceptor || {};
 	for(var a in donor){
 		if (!white_list || !!~white_list.indexOf(a)){
@@ -335,22 +347,8 @@ var cloneObj= function(acceptor, donor, black_list, white_list){
 	return _no;
 };
 
-var isEqualObjs = function(obj1, obj2){
-	var a;
-	for (a in obj1){
-		if (obj1[a] !== obj2[a]){
-			return false;
-		}
-	}
-	
-	for (a in obj2){
-		if (obj2[a] !== obj1[a]){
-			return false;
-		}
-	}
-	return true;
-};
-var getUnitBaseNum = function(_c){
+
+getUnitBaseNum = function(_c){
 	if (_c > 0){
 		if (_c > 10 && _c < 20){
 			return 2;
@@ -367,14 +365,14 @@ var getUnitBaseNum = function(_c){
 			} else {
 				return 2;
 			}
-		}		
+		}
 	} else if (_c === 0){
 		return 2;
 	}
 };
 
 
-var stringifyParams= function(params, ignore_params, splitter, joiner){
+stringifyParams= function(params, ignore_params, splitter, joiner){
 	splitter = splitter || '';
 	if (typeof params == 'string'){
 		return params;
@@ -390,7 +388,7 @@ var stringifyParams= function(params, ignore_params, splitter, joiner){
 };
 
 
-var separateNum = function(num){
+separateNum = function(num){
 	var str = "" + num;
 	var three_sep = '';
 	for (var i = str.length - 1; i >= 0; i--){
@@ -402,7 +400,7 @@ var separateNum = function(num){
 	return  three_sep;
 };
 
-var createPrototype = function(constr, assi_prototype, clone_prototype){
+createPrototype = function(constr, assi_prototype, clone_prototype){
 	var parent_prototype = assi_prototype.constructor.prototype;
 	constr.prototype = assi_prototype;
 	cloneObj(constr.prototype, {
@@ -426,7 +424,139 @@ var createPrototype = function(constr, assi_prototype, clone_prototype){
 	return constr;
 };
 
-var depdc = function(init) {
+
+
+/* Simple JavaScript Inheritance
+  * By John Resig http://ejohn.org/
+  * http://ejohn.org/blog/simple-javascript-inheritance/
+  * MIT Licensed.
+  * Gleb Arestov mod
+  */
+// Inspired by base2 and Prototype
+(function(){
+	var
+		fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/,
+		allowParentCall = function(name, fn, _super){
+			return function() {
+				var tmp = this._super;
+
+				// Add a new ._super() method that is the same method
+				// but on the super-class
+				this._super = _super[name];
+
+				// The method only need to be bound temporarily, so we
+				// remove it when we're done executing
+				var ret = fn.apply(this, arguments);
+				if (typeof tmp != 'undefined'){
+					this._super = tmp;
+				} else {
+					delete this._super;
+				}
+				return ret;
+			};
+		};
+
+
+	// The base Class implementation (does nothing)
+	Class = function(){};
+
+	// Create a new Class that inherits from this class
+	var extend = Class.extendTo = function(namedClass, prop) {
+		var _super = this.prototype;
+
+		// Instantiate a base class (but only create the instance,
+		// don't run the init constructor)
+		var prototype = new this();
+
+		// Copy the properties over onto the new prototype
+		for (var name in prop) {
+			// Check if we're overwriting an existing function
+			prototype[name] = typeof prop[name] == "function" &&
+				typeof _super[name] == "function" && fnTest.test(prop[name]) ?
+				allowParentCall(name, prop[name], _super) :
+				prop[name];
+		}
+
+		// Populate our constructed prototype object
+		namedClass.prototype = prototype;
+
+		// Enforce the constructor to be what we expect
+		namedClass.prototype.constructor = namedClass;
+
+		// And make this class extendable
+		namedClass.extendTo = extend;
+
+		return namedClass;
+   };
+})();
+
+
+
+
+/**
+ * Debounce and throttle function's decorator plugin 1.0.5
+ *
+ * Copyright (c) 2009 Filatov Dmitry (alpha@zforms.ru)
+ * Dual licensed under the MIT and GPL licenses:
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.gnu.org/licenses/gpl.html
+ *
+ */
+debounce = function(fn, timeout, invokeAsap, ctx) {
+
+	if(arguments.length == 3 && typeof invokeAsap != 'boolean') {
+		ctx = invokeAsap;
+		invokeAsap = false;
+	}
+
+	var timer;
+
+	return function() {
+
+		var args = arguments,
+			_this = this;
+
+		invokeAsap && !timer && fn.apply(ctx || this, args);
+
+		clearTimeout(timer);
+
+		timer = setTimeout(function() {
+			!invokeAsap && fn.apply(ctx || _this, args);
+			timer = null;
+		}, timeout);
+
+	};
+
+};
+throttle = function(fn, timeout, ctx) {
+
+	var timer, args, needInvoke;
+
+	return function() {
+
+		args = arguments;
+		needInvoke = true;
+		ctx = ctx || this;
+
+		if(!timer) {
+			(function() {
+				if(needInvoke) {
+					fn.apply(ctx, args);
+					needInvoke = false;
+					timer = setTimeout(arguments.callee, timeout);
+				}
+				else {
+					timer = null;
+				}
+			})();
+		}
+
+	};
+
+};
+
+
+depdc = function(init) {
 	if (init){
 		this.init();
 	}
@@ -453,3 +583,4 @@ depdc.prototype = {
 		}
 	}
 };
+})();

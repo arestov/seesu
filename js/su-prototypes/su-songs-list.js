@@ -2,7 +2,7 @@
 	var songsListView = function(pl){
 		this.init(pl);
 	};
-	createPrototype(songsListView, new songsListViewBase(), {
+	songsListViewBase.extendTo(songsListView, {
 		appendChildren: function() {
 			
 		}
@@ -89,10 +89,10 @@
 				}
 			}
 		});
-
 			
 	};
-	createPrototype(songsList, new songsListModel(), {
+	
+	songsListModel.extendTo(songsList, {
 		ui_constr: {
 			main: function(){
 				return new songsListView(this);
@@ -101,6 +101,7 @@
 				return new playlistNavUI(this);
 			}
 		},
+		page_name: 'playlist',
 		getURL: function(){
 			var url ='';
 			if (this.playlist_type == 'artist'){
@@ -132,10 +133,10 @@
 			}
 		},
 		makeExternalPlaylist: function() {
-			if (!this.length){return false;}
+			if (!this.palist.length){return false;}
 			var simple_playlist = [];
-			for (var i=0; i < this.length; i++) {
-				var song = this[i].song();
+			for (var i=0; i < this.palist.length; i++) {
+				var song = this.palist[i].song();
 				if (song){
 					simple_playlist.push({
 						track_title: song.track,

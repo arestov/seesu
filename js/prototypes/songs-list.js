@@ -1,12 +1,9 @@
 (function(){
 	songsListModel = function(){};
-	songsListModel.prototype = new Array();
-	cloneObj(songsListModel.prototype, suMapModel.prototype);
-	cloneObj(songsListModel.prototype, {
-		oldpush: songsListModel.prototype.push,
-		constructor: songsListModel,
+	suMapModel.extendTo(songsListModel, {
 		init: function(){
-			suMapModel.prototype.init.call(this)
+			this.palist = []; 
+			this._super();
 		},
 		push: function(omo, view){
 			var mo = this.extendSong(omo, this.player, this.findMp3);
@@ -19,22 +16,21 @@
 			if (this.first_song){
 				if (this.first_song.omo==omo){
 					this.first_song.mo = mo;
-					return this.oldpush(mo);
+					this.palist.push(mo);
 				} else if (!this.firstsong_inseting_done){
 					if (mo.artist != this.first_song.omo.artist || mo.track != this.first_song.omo.track){
-						var fs = this.pop();
-						this.oldpush(mo);
-						return this.oldpush(fs);
-						
+						var fs = this.palist.pop();
+						this.palist.push(mo);
+						this.palist.push(fs);
 					} else {
 						this.firstsong_inseting_done = true;
 					}
 					
 				} else{
-					return this.oldpush(mo);
+					this.palist.push(mo);
 				}
 			} else {
-				return this.oldpush(mo);
+				this.palist.push(mo);
 			}
 		},
 		add: function(omo, view){
@@ -59,9 +55,9 @@
 		},
 		die: function(){
 			this.hide();
-			suMapModel.prototype.die.call(this);
-			for (var i = this.length - 1; i >= 0; i--){
-				this[i].die();
+			this._super();
+			for (var i = this.palist.length - 1; i >= 0; i--){
+				this.palist[i].die();
 			};
 
 		},
@@ -72,7 +68,7 @@
 			return this.playlist_type == puppet.playlist_type && (key_string_o == key_string_p);
 		},
 		simplify: function(){
-			var npl = this.slice();
+			var npl = this.palist.slice();
 			for (var i=0; i < npl.length; i++) {
 				npl[i] = cloneObj({}, npl[i], false, ['track', 'artist']);
 			};
@@ -89,7 +85,7 @@
 			return !!(this.info && this.info.artist) && (!v || this.info.artist == v);
 		},
 		showExactlyTrack: function(mo, no_navi){
-			if (bN(this.indexOf(mo))){
+			if (bN(this.palist.indexOf(mo))){
 				mo.view(no_navi);
 				return true;
 			}	
@@ -104,10 +100,9 @@
 			
 			console.log('want to find and show');
 			
-			for (var i=0; i < this.length; i++) {
-				if (artist_track.track == this[i].track && (will_ignore_artist || artist_track.artist == this[i].artist)){
-					this[i].findFiles();
-					this[i].view(no_navi);
+			for (var i=0; i < this.palist.length; i++) {
+				if (artist_track.track == this.palist[i].track && (will_ignore_artist || artist_track.artist == this.palist[i].artist)){
+					this.palist[i].view(no_navi);
 					return true;
 				}
 			};
@@ -131,7 +126,7 @@
 			return this;
 		},
 		loadComplete: function(error){
-			error = ((typeof error == 'string') ? error : (!this.length && error));
+			error = ((typeof error == 'string') ? error : (!this.palist.length && error));
 			this.updateState('error', error);
 			this.updateState('loading', false);
 			this.markTracksForFilesPrefinding();
@@ -148,8 +143,8 @@
 
 		},
 		makePlayable: function(full_allowing) {
-			for (var i = 0; i < this.length; i++) {
-				var mo = this[i];
+			for (var i = 0; i < this.palist.length; i++) {
+				var mo = this.palist[i];
 				var pi = mo.playable_info || {};
 				mo.makeSongPlayalbe(pi.full_allowing || full_allowing, pi.packsearch, pi.last_in_collection);
 				mo.setPrio('as-top');
@@ -157,27 +152,102 @@
 		},
 		markTracksForFilesPrefinding: function(){
 			var from_collection = +new Date;
-			for (var i=0; i < this.length; i++) {
-				this[i]
+			for (var i=0; i < this.palist.length; i++) {
+				this.palist[i]
 					.setPlayableInfo({
 						packsearch: from_collection,
-						last_in_collection: i == this.length-1
+						last_in_collection: i == this.palist.length-1
 					});
 				
 			};
 			return this;
+		},
+		switchTo: function(mo, direction, auto) {
+	
+			var playlist = [];
+			for (var i=0; i < this.palist.length; i++) {
+				var ts = this.palist[i].song();
+				if (ts){
+					playlist.push(this.palist[i]);
+				}
+			};
+			var current_number  = playlist.indexOf(mo),
+				total			= playlist.length || 0;
+				
+			if (playlist.length > 1) {
+				var s = false;
+				if (direction) {
+					if (current_number == (total-1)) {
+						s = playlist[0];
+					} else {
+						s = playlist[current_number+1];
+					}
+				} else {
+					if ( current_number == 0 ) {
+						s = playlist[total-1];
+					} else {
+						s = playlist[current_number-1];
+					}
+				}
+				if (s){
+					s.play();
+				}
+			}
+		
+		},
+		findNeighbours: function(mo) {
+			//using for visual markering and determination of what to presearch
+			mo.next_preload_song = false;
+			mo.next_song = false
+			mo.prev_song = false
+			
+			var c_num = this.palist.indexOf(mo);//this.play_order
+
+			var can_use = [];
+			for (var i=0; i < this.palist.length; i++) {
+				var cur = this.palist[i];
+				if (cur && (cur.isHaveTracks() || !cur.isSearchCompleted())){
+					can_use.push(i);
+				}
+			};	
+			if (typeof c_num == 'number'){
+				if (c_num-1 >= 0) {
+					for (var i = c_num-1, _p = false;  i >= 0; i--){
+						
+						if (bN(can_use.indexOf(i))){
+							mo.prev_song = this.palist[i];
+							break
+						}
+					};
+				}
+				var next_song = c_num+1;
+				var preload_song;
+				for (var i = 0, _n = false; i < this.palist.length ; i++) {
+					if (bN(can_use.indexOf(i))){
+						if (!preload_song){
+							preload_song = this.palist[i];
+						}
+						if (i >= next_song){
+							mo.next_song = preload_song =  this.palist[i];
+							break
+						}
+					}
+				};
+				if (preload_song){
+					mo.next_preload_song = preload_song;
+				}
+			}	
 		}
 
 
 	});
-
+	
 
 	songsListViewBase = function(){};
-	songsListViewBase.prototype = new suServView(); 
-	cloneObj(songsListViewBase.prototype, {
+	suServView.extendTo(songsListViewBase, {
 		constructor: songsListViewBase,
 		init: function(pl){
-			servView.prototype.init.call(this);
+			this._super();
 			this.createBase();
 			this.setModel(pl);
 			
@@ -211,12 +281,12 @@
 			var _this = this;
 
 			pl_panel.find(".make-trs-plable").click(function(){
-				_this.mdl.makePlayable(true);
+				_this.md.makePlayable(true);
 				su.track_event('Controls', 'make playable all tracks in playlist'); 
 			})
 			
 			this.export_playlist = pl_panel.find('.open-external-playlist').click(function(e){
-				_this.mdl.makeExternalPlaylist()
+				_this.md.makeExternalPlaylist()
 				e.preventDefault();
 			});
 			this.c.append(pl_panel);
@@ -232,7 +302,8 @@
 			if (!pl_ui_element){
 				return
 			}
-			var _this = this.mdl;
+			var _this = this.md;
+
 
 			if (_this.first_song){
 				if (!_this.firstsong_inseting_done){
@@ -245,8 +316,8 @@
 						}
 					}
 				} else if (_this.first_song.mo != mo){
-					var f_position = _this.indexOf(_this.first_song.mo);
-					var t_position = _this.indexOf(mo);
+					var f_position = _this.palist.indexOf(_this.first_song.mo);
+					var t_position = _this.palist.indexOf(mo);
 					if (t_position < f_position){
 						var moc = _this.first_song.mo.getC();
 						if (moc){
@@ -265,41 +336,36 @@
 			}
 		},
 		render_playlist: function(load_finished) {
-			var _this = this.mdl;	
-			if (_this.length){
+			var _this = this.md;
+			if (_this.palist.length){
 				if (_this.player && _this.player.isPlaying(_this)){
 					var ordered = [];
 					var etc = [];
 
 					var current_song = _this.player && _this.player.c_song;
 					if (current_song) {
-						for (var i = 0; i < _this.length; i++) {
-							if (current_song.isNeighbour(_this[i])){
-								ordered.push(_this[i]);
+						for (var i = 0; i < _this.palist.length; i++) {
+							if (current_song.isNeighbour(_this.palist[i])){
+								ordered.push(_this.palist[i]);
 							}
 						};
 					}
-					
-					for (var i=0; i < _this.length; i++) {
-						var mo = _this[i];
+					for (var i=0; i < _this.palist.length; i++) {
+						var mo = _this.palist[i];
 						if (ordered.indexOf(mo) == -1){
 							etc.push(mo);
 						}
 						
 					};
-					
-					for (var i=0; i < _this.length; i++) {
-						_this[i].render();
-						this.appendSongUI(_this[i]);
-
-						
+					for (var i=0; i < _this.palist.length; i++) {
+						_this.palist[i].render();
+						this.appendSongUI(_this.palist[i]);
 					}
 					for (var i=0; i < ordered.length; i++) {
 						if (ordered[i].ui){
 							ordered[i].ui.expand()
 						} else{}
 					};
-					
 					setTimeout(function(){
 						for (var i=0; i < etc.length; i++) {
 							if (etc[i].ui){
@@ -308,12 +374,12 @@
 						};
 					},1000);
 				} else{
-					for (var i=0; i < _this.length; i++) {
-						_this[i].render(true);
-						this.appendSongUI(_this[i]);
+					for (var i=0; i < _this.palist.length; i++) {
+						_this.palist[i].render(true);
+						this.appendSongUI(_this.palist[i]);
 					}
 				}
-				var actives_mo = $filter(_this, 'states.mp-show', function(v) {return !!v});
+				var actives_mo = $filter(_this.palist, 'states.mp-show', function(v) {return !!v});
 				for (var i = 0; i < actives_mo.length; i++) {
 					actives_mo[i].checkAndFixNeighbours();
 				};

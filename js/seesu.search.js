@@ -1,21 +1,19 @@
+var inputChange;
+
 (function() {
-var default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+var 
+	default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 
+inputChange = function(input_value, label, no_navi){
+	label.removeClass('loading');
 
-
-input_change = function(e, no_navi){
-	su.ui.els.search_label.removeClass('loading');
-	
-	var input = (e && e.target) || e; //e can be EVENT or INPUT  
-
-	var input_value = input.value;
 	if (!input_value) {
-		su.ui.views.showStartPage();
-		return;
+		su.views.showStartPage();
+	} else {
+		su.views.showResultsPage(input_value, no_navi);
 	}
-	
-	su.ui.views.showResultsPage(input_value, no_navi);
 };
+
 
 var searchTags = function(q){
 	var tags_results = [];
@@ -27,7 +25,7 @@ var searchTags = function(q){
 	return tags_results;
 };
 	
-var offlineSearch = $.debounce(function(q, invstg){
+var offlineSearch = debounce(function(q, invstg){
 	var tags = invstg.g('tags');
 		var r = searchTags(q);
 		if (r.length){
@@ -51,7 +49,7 @@ createPrototype(artistSuggest, new baseSuggest(), {
 		return this.artist;
 	},
 	onView: function(){
-		su.ui.views.showArtcardPage(this.artist, true);
+		su.views.showArtcardPage(this.artist, true);
 		su.track_event('Music search', this.q, "artist: " + this.artist );
 	},
 	ui_constr: function(){
@@ -90,7 +88,7 @@ createPrototype(playlistSuggest, new baseSuggest(), {
 		return this.pl.playlist_title;
 	},
 	onView: function(){
-		su.ui.views.showStaticPlaylist(this.pl, true);
+		su.views.showStaticPlaylist(this.pl, true);
 	},
 	ui_constr: function(){
 		return new playlistSuggestUI(this);
@@ -542,7 +540,7 @@ var network_search = seesu.env.cross_domain_allowed ?
 		}
 	} 
 	:
-	$.debounce(function(q, invstg){
+	debounce(function(q, invstg){
 		getLastfmSuggests('artist.search', {artist: q}, q, invstg.g('artists'), parseArtistsResults);
 		getLastfmSuggests('track.search', {track: q}, q, invstg.g('tracks'), parseTracksResults);
 		getLastfmSuggests('tag.search', {tag: q}, q, invstg.g('tags'), parseTagsResults);	
@@ -554,7 +552,7 @@ var network_search = seesu.env.cross_domain_allowed ?
 
 
 
-var vk_suggests = $.debounce(function(query, invstg){
+var vk_suggests = debounce(function(query, invstg){
 	su.mp3_search.find_files({q: query}, 'vk', function(err, pl, c){
 		c.done = true;
 		pl = pl && pl[0] && pl[0].t;

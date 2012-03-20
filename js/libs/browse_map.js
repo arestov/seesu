@@ -11,7 +11,8 @@ var mapLevel = function(num, parent_levels, resident, map){
 		//this.buildResident();
 	}
 };
-createPrototype(mapLevel, {
+
+Class.extendTo(mapLevel, {
 	setResident: function(resident){
 		this.resident = resident;
 	},
@@ -77,7 +78,7 @@ createPrototype(mapLevel, {
 
 
 function browseMap(mainLevelResident){
-	this.callParentMethod('init');
+	this.init();
 	this.levels = [];
 	this.mainLevelResident = mainLevelResident;
 	
@@ -87,8 +88,9 @@ function browseMap(mainLevelResident){
 	//0 - search results
 	//1 - playlist page
 	//today seesu has no deeper level
-}
-createPrototype(browseMap, new eemiter(), {
+};
+
+eemiter.extendTo(browseMap, {
 	makeMainLevel: function(){
 		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
 		return this;
@@ -273,9 +275,15 @@ createPrototype(browseMap, new eemiter(), {
 	},
 	setNavTree: function(tree, url_restoring) {
 		var old_tree = this.nav_tree;
+		if (old_tree){
+			this.old_nav_tree = old_tree;
+		}
 		this.nav_tree = tree;
-		this.setCurrentNav(tree, old_tree, url_restoring);
 		this.setCurrentURL(tree, old_tree, url_restoring);
+		this.setCurrentNav(tree, old_tree, url_restoring);
+	},
+	getPrevMampL: function() {
+		return this.old_nav_tree && this.old_nav_tree[0];
 	},
 	getCurMapL: function() {
 		return this.nav_tree[0]
@@ -373,7 +381,19 @@ createPrototype(browseMap, new eemiter(), {
 			if (!url_restoring){
 				_this.fire('url-change', nv, ov || "", _this.getCurMapL(), replace);
 			}
-			
+			_this.fire(
+				'every-url-change', 
+				{
+					url: nv,
+					map_level: _this.getCurMapL() 
+				},
+				{
+					url: ov || "",
+					map_level: _this.getPrevMampL()
+				}, 
+				replace
+			);
+
 		});
 		return this;
 	},
@@ -407,7 +427,8 @@ createPrototype(browseMap, new eemiter(), {
 	
 });
 var mapLevelModel = function() {};
-createPrototype(mapLevelModel, new servModel(), {
+
+servModel.extendTo(mapLevelModel, {
 	assignMapLev: function(lev){
 		this.lev = lev;
 		if (this.onMapLevAssign){

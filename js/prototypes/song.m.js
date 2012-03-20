@@ -1,7 +1,8 @@
-(function(){
+createSongBase = function(model) {
+
 var counter = 0;
-baseSong = function(){};
-createPrototype(baseSong, new suMapModel(), {
+var baseSong = function(){};
+model.extendTo(baseSong, {
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
@@ -12,7 +13,7 @@ createPrototype(baseSong, new suMapModel(), {
 		}
 	},
 	init: function(omo, player, mp3_search){
-		this.callParentMethod('init');
+		this._super();
 		this.mp3_search = mp3_search;
 		this.player = player;
 		
@@ -46,49 +47,15 @@ createPrototype(baseSong, new suMapModel(), {
 		this.updateState('nav-text', title);
 		this.updateState('nav-title', title);
 	},
-	findNeighbours: function(){
-		//using for visual markering and determination of what to presearch
-		this.next_preload_song = false;
-		this.next_song = false
-		this.prev_song = false
-		
-		var c_playlist = this.plst_titl,
-			c_num = this.plst_titl.indexOf(this);//this.play_order
+	playNext: function(auto) {
+		this.plst_titl.switchTo(this, true, auto)
+	},
+	playPrev: function() {
+		this.plst_titl.switchTo(this)
+	},
 
-		var can_use = [];
-		for (var i=0; i < c_playlist.length; i++) {
-			var cur = c_playlist[i];
-			if (cur && (cur.isHaveTracks() || !cur.isSearchCompleted())){
-				can_use.push(i);
-			}
-		};	
-		if (c_playlist && typeof c_num == 'number'){
-			if (c_num-1 >= 0) {
-				for (var i = c_num-1, _p = false;  i >= 0; i--){
-					
-					if (bN(can_use.indexOf(i))){
-						this.prev_song = c_playlist[i];
-						break
-					}
-				};
-			}
-			var next_song = c_num+1;
-			var preload_song;
-			for (var i = 0, _n = false; i < c_playlist.length ; i++) {
-				if (bN(can_use.indexOf(i))){
-					if (!preload_song){
-						preload_song = c_playlist[i];
-					}
-					if (i >= next_song){
-						this.next_song = preload_song =  c_playlist[i];
-						break
-					}
-				}
-			};
-			if (preload_song){
-				this.next_preload_song = preload_song;
-			}
-		}	
+	findNeighbours: function(){
+		this.plst_titl.findNeighbours(this);
 	},
 	checkAndFixNeighbours: function(){
 		this.findNeighbours();
@@ -125,6 +92,12 @@ createPrototype(baseSong, new suMapModel(), {
 			this.updateState('marked_as', false);
 
 		}
+	},
+	wasMarkedAsPrev: function() {
+		return this.state('marked_as') && this.state('marked_as') == 'prev';
+	},
+	wasMarkedAsNext: function() {
+		return this.state('marked_as') && this.state('marked_as') == 'next';
 	},
 	addMarksToNeighbours: function(){
 		
@@ -178,7 +151,7 @@ createPrototype(baseSong, new suMapModel(), {
 		this.updateState('loading', true);
 		var _this = this;
 		this.addRequest(
-			lfm.get('artist.getTopTracks',{'artist': this.artist })
+			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30 })
 				.done(function(r){
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'))
 					tracks = $filter(tracks, 'name');
@@ -270,7 +243,6 @@ createPrototype(baseSong, new suMapModel(), {
 			var reqs = this.sem.getRequests();
 			for (var i = 0; i < reqs.length; i++) {
 				this.addRequest(reqs[i], true);
-				
 			};
 			
 			var queued = this.sem.getQueued();
@@ -339,6 +311,12 @@ createPrototype(baseSong, new suMapModel(), {
 		this.fire('files_search', opts);
 		this.updateState('files_search', opts);
 	},
+	view: function(no_navi, user_want){
+		if (!this.state('mp-show')){
+			this.fire('view', no_navi, user_want);
+			this.findFiles();
+		}
+	},
 	getURL: function(mopla){
 		var url ="";
 		if (mopla || this.raw()){
@@ -397,8 +375,9 @@ createPrototype(baseSong, new suMapModel(), {
 		return this.mf_cor && this.mf_cor.songs();
 	}
 });
-})();
 
+return baseSong;
 
+};
 
 
