@@ -113,7 +113,7 @@ su.p
 			});
 		}
 	});
-var sm2opts = {debugMode: true};
+var sm2opts = {};
 if (su.env.opera_extension){
 	sm2opts.wmode = 'opaque'
 	sm2opts.useHighPerformance = false;
@@ -136,12 +136,12 @@ if (h5a){
 		});
 	});
 } else {
-	if (!su.env.cross_domain_allowed){
+	if (false && !su.env.cross_domain_allowed){
 		suReady(function(){
 			yepnope({
 				load:  [bpath + 'js/common-libs/soundmanager2.mod.min.js', bpath + 'js/prototypes/player.sm2-internal.js'],
 				complete: function(){
-					var pcore = new sm2internal("http://arestov.github.com/SoundManager2/swf/", sm2opts);
+					var pcore = new sm2internal(bpath + "swf/", sm2opts);
 					var pcon = $(pcore.getC());
 					var complete;
 
@@ -155,16 +155,19 @@ if (h5a){
 							if (!complete){
 								pcon.addClass('long-appearance')
 							}
-						}, 20000);
+						}, 7000);
 					});
 					
 					
 					pcore
 						.done(function(){
 							complete = true;
-							//su.p.setCore(pcore);
-							//pcon.addClass('hidden');
-							//su.main_level.updateState('flash-internet', true);
+							su.p.setCore(pcore);
+							setTimeout(function(){
+								pcon.addClass('sm2-complete');
+							}, 1000);
+							//
+							su.main_level.updateState('flash-internet', true);
 
 						})
 						.fail(function(){
@@ -212,7 +215,9 @@ if (h5a){
 							.done(function(){
 								complete = true;
 								su.p.setCore(pcore);
-								pcon.addClass('hidden');
+								setTimeout(function(){
+									pcon.addClass('sm2-complete');
+								}, 1000);
 								su.main_level.updateState('flash-internet', true);
 
 							})
@@ -235,9 +240,3 @@ if (h5a){
 	}
 	
 }
-
-
-
-
-
-	
