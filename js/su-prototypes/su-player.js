@@ -138,7 +138,7 @@ var seesuPlayer;
 	if (h5a){
 		jsLoadComplete(function() {
 			yepnope({
-				load:  [bpath + 'player.html5.js'],
+				load:  [bpath + 'js/prototypes/player.html5.js'],
 				complete: function() {
 					su.p.setCore(new html5AudioCore());
 				}
