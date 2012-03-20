@@ -19,8 +19,9 @@ var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret')
 
 var main_level = new mainLevel();
 
-var seesuApp = function() {
+var seesuApp = function(version) {
 	this.init();
+	this.version = version;
 
 	this._url = get_url_parameters(location.search);
 
@@ -166,7 +167,6 @@ eemiter.extendTo(seesuApp, {
 	  		ar.push(cb);
 	},
 	fs: {},//fast search
-	version: 2.8,
 	env: app_env,
 	track_event:function(){
 		var args = Array.prototype.slice.call(arguments);
@@ -189,7 +189,7 @@ eemiter.extendTo(seesuApp, {
 	}	  
 });
 
-window.seesu = window.su = new seesuApp(); 
+window.seesu = window.su = new seesuApp(2.9); 
 
 
 /*
