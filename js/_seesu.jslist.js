@@ -61,6 +61,8 @@ var jsLoadComplete,
 
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
+
+	
 	"js/prototypes/player.html5.js",
 	//"js/common-libs/soundmanager2.mod.min.js",
 	"js/prototypes/player.sm2-internal.js",

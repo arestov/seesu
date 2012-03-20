@@ -113,7 +113,7 @@ su.p
 			});
 		}
 	});
-var sm2opts = {};
+var sm2opts = {debugMode: true};
 if (su.env.opera_extension){
 	sm2opts.wmode = 'opaque'
 	sm2opts.useHighPerformance = false;
@@ -127,90 +127,117 @@ if (su.env.opera_extension){
 
 var h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
 if (h5a){
-	su.p.setCore(new html5AudioCore());
-} else {
-	suReady(function(){
-		var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
-		var pcon = $(pcore.getC());
-		var complete;
-
-
-		pcon
-			.addClass('sm2proxy')
-			.attr('scrolling', 'no');
-		
-		pcon.on('load', function() {
-			setTimeout(function() {
-				if (!complete){
-					pcon.addClass('long-appearance')
-				}
-			}, 7000);
+	jsLoadComplete(function() {
+		yepnope({
+			load:  [bpath + 'player.html5.js'],
+			complete: function() {
+				su.p.setCore(new html5AudioCore());
+			}
 		});
-		
-		
-		pcore
-			.done(function(){
-				complete = true;
-				su.p.setCore(pcore);
-				pcon.addClass('hidden');
-				su.main_level.updateState('flash-internet', true);
-
-			})
-			.fail(function(){
-				complete = true;
-				pcon.addClass('hidden');
-			})
-		$(function(){
-			$(document.body).append(pcon)
-			//$(su.ui.nav).after(pcon);
-		});
-		
-		//$(document.body).append(_this.c);
 	});
+} else {
+	if (!su.env.cross_domain_allowed){
+		suReady(function(){
+			yepnope({
+				load:  [bpath + 'js/common-libs/soundmanager2.mod.min.js', bpath + 'js/prototypes/player.sm2-internal.js'],
+				complete: function(){
+					var pcore = new sm2internal("http://arestov.github.com/SoundManager2/swf/", sm2opts);
+					var pcon = $(pcore.getC());
+					var complete;
+
+
+					pcon
+						.addClass('sm2proxy')
+						.attr('scrolling', 'no');
+					
+					pcon.on('load', function() {
+						setTimeout(function() {
+							if (!complete){
+								pcon.addClass('long-appearance')
+							}
+						}, 20000);
+					});
+					
+					
+					pcore
+						.done(function(){
+							complete = true;
+							//su.p.setCore(pcore);
+							//pcon.addClass('hidden');
+							//su.main_level.updateState('flash-internet', true);
+
+						})
+						.fail(function(){
+							complete = true;
+							//pcon.addClass('hidden');
+						})
+					$(function(){
+						$(document.body).append(pcon);
+						pcore.appended();
+						//$(su.ui.nav).after(pcon);
+					});
+					
+					//$(document.body).append(_this.c);
+				}
+			});
+		});
+
+	} else {
+		if (su.env.iframe_support){
+
+			
+			suReady(function(){
+				yepnope({
+					load:  [bpath + 'js/prototypes/player.sm2-proxy.js'],
+					complete: function(){
+						var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
+						var pcon = $(pcore.getC());
+						var complete;
+
+
+						pcon
+							.addClass('sm2proxy')
+							.attr('scrolling', 'no');
+						
+						pcon.on('load', function() {
+							setTimeout(function() {
+								if (!complete){
+									pcon.addClass('long-appearance')
+								}
+							}, 7000);
+						});
+						
+						
+						pcore
+							.done(function(){
+								complete = true;
+								su.p.setCore(pcore);
+								pcon.addClass('hidden');
+								su.main_level.updateState('flash-internet', true);
+
+							})
+							.fail(function(){
+								complete = true;
+								pcon.addClass('hidden');
+							})
+						$(function(){
+							$(document.body).append(pcon)
+							//$(su.ui.nav).after(pcon);
+						});
+						
+						//$(document.body).append(_this.c);
+					}
+				});
+
+				
+			});
+		}
+	}
+	
 }
 
 
 
-suReady(function(){
-	return
-	var pcore = new sm2internal("http://arestov.github.com/SoundManager2/swf/", sm2opts);
-	var pcon = $(pcore.getC());
-	var complete;
-
-
-	pcon
-		.addClass('sm2proxy')
-		.attr('scrolling', 'no');
-	
-	pcon.on('load', function() {
-		setTimeout(function() {
-			if (!complete){
-				pcon.addClass('long-appearance')
-			}
-		}, 20000);
-	});
-	
-	
-	pcore
-		.done(function(){
-			complete = true;
-			//su.p.setCore(pcore);
-			//pcon.addClass('hidden');
-			//su.main_level.updateState('flash-internet', true);
-
-		})
-		.fail(function(){
-			complete = true;
-			//pcon.addClass('hidden');
-		})
-	$(function(){
-		$(document.body).append(pcon);
-		pcore.appended();
-		//$(su.ui.nav).after(pcon);
-	});
-	
-	//$(document.body).append(_this.c);
-});
 
 
 	
