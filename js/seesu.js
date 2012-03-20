@@ -58,6 +58,26 @@ var seesuApp = function() {
 		};
 	})();
 
+	this.last_usage = suStore('su-usage-last') || 0;
+	this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
+
+	var _this = this;
+	setInterval(function(){
+
+		var now = new Date();
+
+		if (_this.ui){
+			if (_this.ui.isAlive() || (now - _this.ui.created_at)/(1000*60) > 40){
+				if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
+					suStore('su-usage-last', _this.last_usage = new Date(), true);
+					suStore('su-usage-counter', ++_this.usage_counter, true);
+				}
+			}
+		}
+
+		
+	}, 1000 * 60 * 20);
+
 	  
 	this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 	this.vk = {};
@@ -72,7 +92,7 @@ var seesuApp = function() {
 	);
 	this.main_level = main_level;
 	this.map = (new browseMap(main_level)).makeMainLevel();
-	this.ui = new seesu_ui(document);
+//	this.ui = new seesu_ui(document);
 	this.soundcloud_queue = new funcsQueue(1000, 5000 , 7),
 	this.delayed_search = {
 		vk_api:{
@@ -140,21 +160,6 @@ eemiter.extendTo(seesuApp, {
 				}
 			}
 	  	});
-	},
-	createUI: function(d, connect_dom){
-	  	var _this = this;
-	  	if (this.ui && this.ui.checkLiveState){
-	  		this.ui.checkLiveState();
-	  	}
-		this.ui = new seesu_ui(d, connect_dom, function(opts){
-			var cbs = _this.ui_creation_callbacks;
-			if (cbs){
-				for (var i = 0; i < cbs.length; i++) {
-					cbs[i](opts);
-				}
-			}
-			
-		});
 	},
 	onUICreation: function(cb){
 	  	var ar = (this.ui_creation_callbacks = this.ui_creation_callbacks || []);

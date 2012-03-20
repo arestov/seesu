@@ -371,6 +371,7 @@ window.seesu_ui = function(d, with_dom){
 	this.nums = ++countergg;
 	this.d = d;
 	this.cbs = [];
+	this.created_at = new Date();
 	console.log(this.nums);
 
 	var _this = this;
