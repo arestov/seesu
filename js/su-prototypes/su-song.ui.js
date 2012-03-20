@@ -248,9 +248,17 @@ cloneObj(songUI.prototype, {
 		
 		var tp = this.requirePart('tp');
 
-		this.appendModelTo(this.md.mf_cor, function(ui_c){
-			context.prepend(ui_c);
-		});
+
+
+		var mf_cor_view = this.md.mf_cor.getFreeView();
+		if (mf_cor_view){
+			var mf_cor_view_c = mf_cor_view.getC();
+			this.addChild(mf_cor_view);
+			context.prepend(mf_cor_view_c);
+			mf_cor_view.appended(this);
+
+		
+		}
 
 		this.requirePart('song_row_context');
 		

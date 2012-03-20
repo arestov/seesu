@@ -144,7 +144,7 @@ if (h5a){
 				if (!complete){
 					pcon.addClass('long-appearance')
 				}
-			}, 20000);
+			}, 7000);
 		});
 		
 		
@@ -153,7 +153,7 @@ if (h5a){
 				complete = true;
 				su.p.setCore(pcore);
 				pcon.addClass('hidden');
-				dstates.add_state('body','flash-internet');
+				su.main_level.updateState('flash-internet', true);
 
 			})
 			.fail(function(){
@@ -196,7 +196,7 @@ suReady(function(){
 			complete = true;
 			//su.p.setCore(pcore);
 			//pcon.addClass('hidden');
-			//dstates.add_state('body','flash-internet');
+			//su.main_level.updateState('flash-internet', true);
 
 		})
 		.fail(function(){

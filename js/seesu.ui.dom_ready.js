@@ -4,12 +4,6 @@ window.connect_dom_to_som = function(d, cb){
 		console.log('dom ready');
 		d.head = d.head || d.getElementsByTagName('head')[0];
 
-		if (app_env.check_resize){
-			dstates.add_state('body', 'slice-for-height');
-		}
-		if (app_env.deep_sanbdox){
-			dstates.add_state('body', 'deep-sandbox');
-		}
 		dstates.connect_ui(d);
 
 		var lang = app_env.lang;

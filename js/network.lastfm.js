@@ -87,7 +87,7 @@ $.extend(lastfm_api.prototype, {
 	},
 	open_lfm_to_login: function(token){
 		app_env.openURL('http://www.last.fm/api/auth/?api_key=' + this.apikey + '&token=' + token);
-		dstates.add_state('body','lfm-waiting-for-finish');
+		su.main_level.updateState('lfm-waiting-for-finish', true);
 	},
 	try_to_login: function(callback){
 		var _this = this

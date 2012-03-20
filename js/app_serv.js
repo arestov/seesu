@@ -101,7 +101,6 @@ var document_states = function(d){
 		d: d
 	};
 	this.html_el_state= d.documentElement.className || '';
-	this.body_state= (d.body && d.body.className) || '';
 
 };
 document_states.prototype = {
@@ -112,12 +111,7 @@ document_states.prototype = {
 				this.dub.documentElement.className = this.html_el_state;
 			}
 			
-		} else if (state_of == 'body'){
-			this.body_state = addClass(this.body_state, state);
-			if (this.dub && this.dub.body) {
-				this.dub.body.className = this.body_state;
-			}
-		}
+		} 
 	},
 	toggleState: function(state_of, state){
 		if (state_of == 'html_el'){
@@ -126,12 +120,7 @@ document_states.prototype = {
 				this.dub.documentElement.className  = this.html_el_state;
 			}
 			
-		} else if (state_of == 'body'){
-			this.body_state = toggleClass(this.body_state, state);
-			if (this.dub && this.dub.body) {
-				this.dub.body.className = this.body_state;
-			}
-		}
+		} 
 	},
 	remove_state: function(state_of, state){
 		if (state_of == 'html_el'){
@@ -140,23 +129,12 @@ document_states.prototype = {
 				this.dub.documentElement.className  = this.html_el_state;
 			}
 			
-		} else if (state_of == 'body'){
-			this.body_state = removeClass(this.body_state, state);
-			if (this.dub && this.dub.body) {
-				this.dub.body.className = this.body_state;
-			}
 		}
 	}, 
 	connect_ui: function(dub){
-		
-			if (dub.documentElement){
-				dub.documentElement.className =  this.html_el_state;
-			}
-			if (dub.body){
-				dub.body.className = this.body_state;
-			}
-			
-		
+		if (dub.documentElement){
+			dub.documentElement.className =  this.html_el_state;
+		}
 		this.dub = dub;
 	//	this.ui = ui;
 	}
