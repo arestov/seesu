@@ -11,8 +11,10 @@ suServView.extendTo(investigationUI, {
 		for (var i = 0; i < this.invstg.sections.length; i++) {
 			var cur_ui = this.invstg.sections[i].getFreeView();
 			if (cur_ui){
+				this.addChild(cur_ui);
 				this.c.append(cur_ui.getC());
-				cur_ui.appended(this)
+				cur_ui.appended(this);
+
 			}
 		};
 	},
