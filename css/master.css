@@ -1080,3 +1080,15 @@ iframe.you-tube-video,embed.you-tube-video{
 .pokki-app ::-webkit-scrollbar-button: { 
     display: none; 
 }
+.attention-message{
+	overflow: hidden;
+	padding: 12px;
+	margin: 0 -12px;
+	background: #404040;
+	color: #999;
+	border-radius: 6px;
+	}
+	.attention-message .message-image{
+		float: left;
+		margin-right: 12px;
+		}

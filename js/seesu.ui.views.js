@@ -171,12 +171,18 @@ createPrototype(mainLevelUI, new suServView(), {
 				var spm_c = this.els.start_screen.find('.start-page-messages');
 				this.message_arh_c = $('<div class="attention-message"></div>');
 
-				var img = $('<img class="message-image"/>').attr({
+				$('<img class="message-image"/>').attr({
 					src: 'http://cs9767.userapi.com/u198193/b_b379d470.jpg',
 					width: 100,
 					height: 126,
 					alt: "Gleb Arestov"
 				}).appendTo(this.message_arh_c);
+
+				$('<span></span>')
+					.text("Hi! My name is Gleb. I've created seesu and I have been developing it since september 2009. If you like it, than set rating at %app_url% please. This is very important for me")
+					.appendTo(this.message_arh_c);
+				
+
 
 				spm_c.append(this.message_arh_c);
 

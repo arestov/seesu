@@ -1,5 +1,5 @@
 var
-	addEvent, removeEvent, getDefaultView, domReady,
+	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
 	doesContain, arrayExclude, getFields, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
 	cloneObj,  getUnitBaseNum, stringifyParams, separateNum, createPrototype, Class, depdc,
@@ -554,6 +554,51 @@ throttle = function(fn, timeout, ctx) {
 	};
 
 };
+
+
+
+(function(){
+	var splitter = new RegExp("\\%[^\\s\\%]+?\\%", 'gi');
+	var var_name = new RegExp("\\%([^\\s\\%]+?)\\%");
+
+	var pushName = function(obj, name, i){
+		if (!obj[name]){
+			obj[name] = [];
+		}
+		obj[name].push(i);
+	};
+
+	var setVar = function(name, value) {
+		if (this.vars[name]){
+			for (var i = 0; i < this.vars[name].length; i++) {
+				this[this.vars[name][i]] = value;
+			}
+		}
+		return this;
+	};
+	createComlexText = function(text){
+		var
+			vars = text.match(splitter),
+			parts = text.split(splitter),
+			result = [];
+
+		result.vars = {};
+		result.setVar = setVar;
+
+		for (var i = 0; i < parts.length; i++) {
+			result.push(parts[i]);
+
+			if (vars[i]){
+				var name = vars[i].match(var_name)[1];
+				pushName(result.vars, name, result.length);
+				result.push(null);
+			}
+		}
+		return result;
+	};
+
+})();
+
 
 
 depdc = function(init) {
