@@ -241,7 +241,9 @@ createPrototype(mainLevel, new suMapModel(), {
 	getTitle: function() {
 		return this.short_title;
 	},
+	showMessage: function(message_name) {
 
+	},
 	setDocTitle: function(title) {
 		this.updateState('doc-title', title);
 	}

@@ -11,7 +11,7 @@ $.support.cors = true;
 window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 
 var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret'), function(key){
-	return suStore(key)
+	return suStore(key);
 }, function(key, value){
 	return suStore(key, value, true);
 }, cache_ajax, app_env.cross_domain_allowed, new funcsQueue(100));
@@ -37,9 +37,9 @@ var seesuApp = function(version) {
 		_gaq.push(['myTracker._setAccount', 'UA-XXXXX-X']);
 
 		_gaq.push(function() {
-		  var pageTracker = _gat._getTrackerByName('myTracker');
-		  var link = document.getElementById('my-link-id');
-		  link.href = pageTracker._getLinkerUrl('http://example.com/');
+			var pageTracker = _gat._getTrackerByName('myTracker');
+			var link = document.getElementById('my-link-id');
+			link.href = pageTracker._getLinkerUrl('http://example.com/');
 		});
 		http://code.google.com/apis/analytics/docs/tracking/asyncUsageGuide.html
 		*/
@@ -63,7 +63,7 @@ var seesuApp = function(version) {
 
 	this.last_usage = (lu && new Date(lu)) || 0;
 	this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
-
+	this.checkStats();
 	var _this = this;
 	setInterval(function(){
 
@@ -72,6 +72,7 @@ var seesuApp = function(version) {
 		if (_this.ui){
 			if (_this.ui.isAlive() || (now - _this.ui.created_at)/(1000*60) > 40){
 				if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
+					_this.checkStats();
 					suStore('su-usage-last', _this.last_usage = new Date(), true);
 					suStore('su-usage-counter', ++_this.usage_counter, true);
 				}
@@ -81,13 +82,13 @@ var seesuApp = function(version) {
 		
 	}, 1000 * 60 * 20);
 
-	  
+
 	this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 	this.vk = {};
 
 	this.notf = new gMessagesStore(
-	  	function(value) {
-	  		return suStore('notification', value, true);
+		function(value) {
+			return suStore('notification', value, true);
 		}, 
 		function() {
 			return suStore('notification');
@@ -96,7 +97,7 @@ var seesuApp = function(version) {
 	this.main_level = main_level;
 	this.map = (new browseMap(main_level)).makeMainLevel();
 //	this.ui = new seesu_ui(document);
-	this.soundcloud_queue = new funcsQueue(1000, 5000 , 7),
+	this.soundcloud_queue = new funcsQueue(1000, 5000 , 7);
 	this.delayed_search = {
 		vk_api:{
 			queue:  new funcsQueue(1000, 8000 , 7)
@@ -132,7 +133,7 @@ var seesuApp = function(version) {
 			})
 			.fail(function(r) {
 				
-			})
+			});
 	});
 
 
@@ -150,23 +151,28 @@ eemiter.extendTo(seesuApp, {
 	removeDOM: function(d, ui) {
 		this.fire('dom-die', d, this.ui == ui, this.ui);
 	},
+	checkStats: function() {
+		if (this.usage_counter > 2){
+			this.main_level.showMessage('rating-help');
+		}
+	},
 	setUI: function(ui){
 		var _this = this;
-	  	if (this.ui){
-	  		this.ui.die();
-	  	}
-	  	this.ui = ui.onReady(function(opts){
-	  		var cbs = _this.ui_creation_callbacks;
+		if (this.ui){
+			this.ui.die();
+		}
+		this.ui = ui.onReady(function(opts){
+			var cbs = _this.ui_creation_callbacks;
 			if (cbs){
 				for (var i = 0; i < cbs.length; i++) {
 					cbs[i](opts);
 				}
 			}
-	  	});
+		});
 	},
 	onUICreation: function(cb){
-	  	var ar = (this.ui_creation_callbacks = this.ui_creation_callbacks || []);
-	  		ar.push(cb);
+		var ar = (this.ui_creation_callbacks = this.ui_creation_callbacks || []);
+			ar.push(cb);
 	},
 	fs: {},//fast search
 	env: app_env,
@@ -188,7 +194,7 @@ eemiter.extendTo(seesuApp, {
 	setVkApi: function(vkapi, user_id) {
 		this.vk_api = vkapi;
 		this.fire('vk-api', vkapi, user_id);
-	}	  
+	}
 });
 
 window.seesu = window.su = new seesuApp(2.9); 
@@ -212,8 +218,8 @@ var updating_notify = function(r){
 	var cver = r.latest_version.number;
 	if (cver > seesu.version) {
 		var message = 
-		 'Suddenly, Seesu ' + cver + ' has come. ' + 
-		 'You have version ' + seesu.version + '. ';
+			'Suddenly, Seesu ' + cver + ' has come. ' + 
+			'You have version ' + seesu.version + '. ';
 		var link = r.latest_version.link;
 		if (link.indexOf('http') != -1) {
 			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
@@ -226,14 +232,13 @@ var updating_notify = function(r){
 var check_seesu_updates = function(){
 	
 		$.ajax({
-		  url: su.s.url + 'update',
-		  global: false,
-		  type: "POST",
-		  dataType: "json",
-		  data: {},
-		  error: function(){
-		  },
-		  success: updating_notify
+			url: su.s.url + 'update',
+			global: false,
+			type: "POST",
+			dataType: "json",
+			data: {},
+			error: function(){},
+			success: updating_notify
 		});
 	
 	
@@ -302,7 +307,7 @@ su.mp3_search = (new mp3Search())
 		s: sc_search_source,
 		preferred: null,
 		q: su.soundcloud_queue
-	})
+	});
 	
 	
 })();
@@ -385,25 +390,25 @@ var render_loved = function(user_name){
 	su.views.show_playlist_page(pl_r);
 };
 var render_recommendations_by_username = function(username){
-	var pl_r = prepare_playlist('Recommendations for ' +  username, 'artists by recommendations').loading()
+	var pl_r = prepare_playlist('Recommendations for ' +  username, 'artists by recommendations').loading();
 	$.ajax({
 		url: 'http://ws.audioscrobbler.com/1.0/user/' + username + '/systemrecs.rss',
-		  global: false,
-		  type: "GET",
-		  dataType: "xml",
-		  error: function(xml){
-		  },
-		  success: function(xml){
-			var artists = $(xml).find('channel item title');
-			if (artists && artists.length) {
-				var artist_list = [];
-				for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-					var artist = $(artists[i]).text();
-					artist_list.push(artist);
+			global: false,
+			type: "GET",
+			dataType: "xml",
+			error: function(xml){
+			},
+			success: function(xml){
+				var artists = $(xml).find('channel item title');
+				if (artists && artists.length) {
+					var artist_list = [];
+					for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
+						var artist = $(artists[i]).text();
+						artist_list.push(artist);
+					}
+					proxy_render_artists_tracks(artist_list, pl_r);
 				}
-				proxy_render_artists_tracks(artist_list, pl_r);
 			}
-		  }
 	});
 
 	su.views.show_playlist_page(pl_r);
@@ -524,8 +529,8 @@ jsLoadComplete(function() {
 				var plsts = [];
 				var playlists = _this.playlists;
 				for (var i=0; i < playlists.length; i++) {
-					plsts.push(playlists[i].simplify())
-				};
+					plsts.push(playlists[i].simplify());
+				}
 				suStore('user_playlists', plsts, true);
 			},10);
 			
@@ -541,13 +546,13 @@ jsLoadComplete(function() {
 			pl_r.push = function(){
 				oldpush.apply(this, arguments);
 				_this.save_playlists();
-			}
+			};
 			return pl_r;
 		}
 		
 	};
 
-	function rebuildPlaylist(saved_pl){
+	var rebuildPlaylist = function(saved_pl){
 		var p = prepare_playlist(saved_pl.playlist_title, saved_pl.playlist_type, {name: saved_pl.playlist_title});
 		for (var i=0; i < saved_pl.length; i++) {
 			p.push(saved_pl[i]);
@@ -564,21 +569,21 @@ jsLoadComplete(function() {
 			var spls = plsts_str;
 			for (var i=0; i < spls.length; i++) {
 				pls[i] = rebuildPlaylist(spls[i]);
-			};
+			}
 		} 
 		
 		
 		pls.push = function(){
 			Array.prototype.push.apply(this, arguments);
 			su.ui.create_playlists_link();
-		}
+		};
 		pls.find = function(puppet){
 			for (var i=0; i < pls.length; i++) {
 				if (pls[i].compare(puppet)){
-					return pls[i]
+					return pls[i];
 				}
 				
-			};	
+			}
 		};
 		return pls;
 	})();
