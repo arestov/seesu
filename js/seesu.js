@@ -59,7 +59,9 @@ var seesuApp = function(version) {
 		};
 	})();
 
-	this.last_usage = suStore('su-usage-last') || 0;
+	var lu = suStore('su-usage-last');
+
+	this.last_usage = (lu && new Date(lu)) || 0;
 	this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
 
 	var _this = this;
