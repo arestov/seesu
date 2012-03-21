@@ -73,7 +73,7 @@ var seesuApp = function(version) {
 			if (_this.ui.isAlive() || (now - _this.ui.created_at)/(1000*60) > 40){
 				if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
 					_this.checkStats();
-					suStore('su-usage-last', _this.last_usage = new Date(), true);
+					suStore('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
 					suStore('su-usage-counter', ++_this.usage_counter, true);
 				}
 			}
@@ -176,6 +176,12 @@ eemiter.extendTo(seesuApp, {
 	},
 	fs: {},//fast search
 	env: app_env,
+	app_pages: {
+		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi",
+		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko",
+		opera_widget: "http://widgets.opera.com/widget/15872/",
+		opera_extension: "https://addons.opera.com/ru/addons/extensions/details/seesu"
+	},
 	track_event:function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackEvent');

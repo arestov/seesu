@@ -79,7 +79,8 @@ createPrototype(mainLevelNavUI, new baseNavUI(), {
 
 
 var mainLevelUI = function(m_l){
-	this.m_l = m_l;
+
+	this.md = this.m_l = m_l;
 	
 	this.callParentMethod('init');
 
@@ -164,6 +165,20 @@ createPrototype(mainLevelUI, new suServView(), {
 		},
 		"doc-title": function(title) {
 			this.d.title = 	title || "";
+		},
+		"ask-rating-help": function(state){
+			if (state){
+				var spm_c = this.els.start_screen.find('.start-page-messages');
+				this.message_arh_c = $('<span></span>').text('Прошу не обессудте');
+				spm_c.append(message_arh_c);
+
+				/*
+				Поддержи сису — поставь оценку
+				Привет, меня зовут Глеб, я создал сису и развиваю её с сентября 2009 года. Если она нравится прошу поставить оценку на %app_url% — это очень важно для меня.
+				*/
+			} else {
+				this.message_arh_c.remove();
+			}
 		}
 	},
 	toggleBodyClass: function(add, class_name){
@@ -241,8 +256,17 @@ createPrototype(mainLevel, new suMapModel(), {
 	getTitle: function() {
 		return this.short_title;
 	},
+	messages: {
+		"rating-help": function(){
+			if (su.app_pages[su.env.app_type]){
+				this.updateState('ask-rating-help', true);
+			}
+		}
+	},
 	showMessage: function(message_name) {
-
+		if (this.messages[message_name]){
+			this.messages[message_name].call(this);
+		}
 	},
 	setDocTitle: function(title) {
 		this.updateState('doc-title', title);

@@ -1200,7 +1200,7 @@ seesu_ui.prototype = {
 					_ui.search(':playlists');
 					e.preventDefault();
 				}) 
-			).appendTo(_ui.els.start_screen.children('.for-startpage'));
+			).appendTo(_ui.els.start_page_place);
 		}
 	}
 
