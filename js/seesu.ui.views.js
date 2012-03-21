@@ -166,13 +166,23 @@ createPrototype(mainLevelUI, new suServView(), {
 		"doc-title": function(title) {
 			this.d.title = 	title || "";
 		},
-		"ask-rating-help": function(state){
-			if (state){
+		"ask-rating-help": function(link){
+			if (link){
 				var spm_c = this.els.start_screen.find('.start-page-messages');
-				this.message_arh_c = $('<span></span>').text('Прошу не обессудте');
-				spm_c.append(message_arh_c);
+				this.message_arh_c = $('<div class="attention-message"></div>');
+
+				var img = $('<img class="message-image"/>').attr({
+					src: 'http://cs9767.userapi.com/u198193/b_b379d470.jpg',
+					width: 100,
+					height: 126,
+					alt: "Gleb Arestov"
+				}).appendTo(this.message_arh_c);
+
+				spm_c.append(this.message_arh_c);
 
 				/*
+				Hi! My name is Gleb. I've created seesu and I have been developing it since september 2009. If you like it, than set rating at %app_url% please. This is very important for me
+
 				Поддержи сису — поставь оценку
 				Привет, меня зовут Глеб, я создал сису и развиваю её с сентября 2009 года. Если она нравится прошу поставить оценку на %app_url% — это очень важно для меня.
 				*/
@@ -259,7 +269,7 @@ createPrototype(mainLevel, new suMapModel(), {
 	messages: {
 		"rating-help": function(){
 			if (su.app_pages[su.env.app_type]){
-				this.updateState('ask-rating-help', true);
+				this.updateState('ask-rating-help', su.app_pages[su.env.app_type]);
 			}
 		}
 	},
