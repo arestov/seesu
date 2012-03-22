@@ -141,6 +141,7 @@ var seesuPlayer;
 				load:  [bpath + 'js/prototypes/player.html5.js'],
 				complete: function() {
 					su.p.setCore(new html5AudioCore());
+					su.main_level.updateState('flash-internet', true);
 				}
 			});
 		});
