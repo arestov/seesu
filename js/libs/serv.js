@@ -567,16 +567,24 @@ throttle = function(fn, timeout, ctx) {
 		}
 		obj[name].push(i);
 	};
-
-	var setVar = function(name, value) {
-		if (this.vars[name]){
-			for (var i = 0; i < this.vars[name].length; i++) {
-				this[this.vars[name][i]] = value;
+	var makeDom = function(d) {
+		d = d || window.document;
+		for (var i = 0; i < this.length; i++) {
+			if (this[i] && typeof this[i] == 'string'){
+				this[i] = d.createTextNode(this[i]);
 			}
 		}
 		return this;
 	};
-	createComlexText = function(text){
+	var setVar = function(name, value) {
+		
+		for (var i = 0; i < this.vars[name].length; i++) {
+			this[this.vars[name][i]] = value;
+		}
+	
+		return this;
+	};
+	createComlexText = function(text, not_make_dom){
 		var
 			vars = text.match(splitter),
 			parts = text.split(splitter),
@@ -584,7 +592,7 @@ throttle = function(fn, timeout, ctx) {
 
 		result.vars = {};
 		result.setVar = setVar;
-
+		result.makeDom = makeDom;
 		for (var i = 0; i < parts.length; i++) {
 			result.push(parts[i]);
 
@@ -593,6 +601,9 @@ throttle = function(fn, timeout, ctx) {
 				pushName(result.vars, name, result.length);
 				result.push(null);
 			}
+		}
+		if (!not_make_dom){
+			result.makeDom();
 		}
 		return result;
 	};

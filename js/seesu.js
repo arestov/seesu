@@ -63,7 +63,7 @@ var seesuApp = function(version) {
 
 	this.last_usage = (lu && new Date(lu)) || 0;
 	this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
-	this.checkStats();
+	
 	var _this = this;
 	setInterval(function(){
 
@@ -96,6 +96,8 @@ var seesuApp = function(version) {
 	);
 	this.main_level = main_level;
 	this.map = (new browseMap(main_level)).makeMainLevel();
+
+
 //	this.ui = new seesu_ui(document);
 	this.soundcloud_queue = new funcsQueue(1000, 5000 , 7);
 	this.delayed_search = {
@@ -103,6 +105,7 @@ var seesuApp = function(version) {
 			queue:  new funcsQueue(1000, 8000 , 7)
 		}
 	};
+
 
 
 	this.s  = new seesuServerAPI(suStore('dg_auth'));
@@ -155,6 +158,7 @@ eemiter.extendTo(seesuApp, {
 		if (this.usage_counter > 2){
 			this.main_level.showMessage('rating-help');
 		}
+		return this;
 	},
 	setUI: function(ui){
 		var _this = this;
@@ -204,7 +208,7 @@ eemiter.extendTo(seesuApp, {
 });
 
 window.seesu = window.su = new seesuApp(2.9); 
-
+su.checkStats();
 
 /*
 if (su._url.q){

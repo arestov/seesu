@@ -525,8 +525,6 @@ display:none;
 		.artist-bio{
 			height:4.7em;
 		}
-		
-		
 	}
 	
 	
@@ -1092,3 +1090,16 @@ iframe.you-tube-video,embed.you-tube-video{
 		float: left;
 		margin-right: 12px;
 		}
+	.attention-message .close-message{
+		font-size:3em;
+		float:right;
+		cursor: pointer;
+		line-height: 1;
+		height: 0.5em;
+		margin-top: -0.3em;
+		margin-left: 12px;
+		color:#999;
+		}
+		.attention-message .close-message:hover{
+			color:#ccc;
+			}

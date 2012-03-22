@@ -167,10 +167,15 @@ createPrototype(mainLevelUI, new suServView(), {
 			this.d.title = 	title || "";
 		},
 		"ask-rating-help": function(link){
+			var _this = this;
+
 			if (link){
 				var spm_c = this.els.start_screen.find('.start-page-messages');
 				this.message_arh_c = $('<div class="attention-message"></div>');
 
+				$("<a class='close-message'>×</a>").appendTo(this.message_arh_c).click(function() {
+					_this.md.closeMessage('rating-help');
+				});
 				$('<img class="message-image"/>').attr({
 					src: 'http://cs9767.userapi.com/u198193/b_b379d470.jpg',
 					width: 100,
@@ -178,19 +183,18 @@ createPrototype(mainLevelUI, new suServView(), {
 					alt: "Gleb Arestov"
 				}).appendTo(this.message_arh_c);
 
-				$('<span></span>')
-					.text("Hi! My name is Gleb. I've created seesu and I have been developing it since september 2009. If you like it, than set rating at %app_url% please. This is very important for me")
-					.appendTo(this.message_arh_c);
+
 				
 
-
+				var url = $("<a class='external'></a>").attr('href', link).text(localize('at-this-page'));
+				this.message_arh_c.append(createComlexText(localize("ask-rating-help")).setVar("app_url", url[0]));
 				spm_c.append(this.message_arh_c);
 
 				/*
-				Hi! My name is Gleb. I've created seesu and I have been developing it since september 2009. If you like it, than set rating at %app_url% please. This is very important for me
+				
 
 				Поддержи сису — поставь оценку
-				Привет, меня зовут Глеб, я создал сису и развиваю её с сентября 2009 года. Если она нравится прошу поставить оценку на %app_url% — это очень важно для меня.
+				
 				*/
 			} else {
 				this.message_arh_c.remove();
@@ -245,7 +249,7 @@ mainLevel = function() {
 			} 
 		}
 	});
-
+	this.closed_messages = suStore('closed-messages') || {};
 };
 
 
@@ -273,15 +277,27 @@ createPrototype(mainLevel, new suMapModel(), {
 		return this.short_title;
 	},
 	messages: {
-		"rating-help": function(){
+		"rating-help": function(state){
 			if (su.app_pages[su.env.app_type]){
-				this.updateState('ask-rating-help', su.app_pages[su.env.app_type]);
+				if (state){
+					this.updateState('ask-rating-help', su.app_pages[su.env.app_type]);
+				} else {
+					this.updateState('ask-rating-help', false);
+				}
+				
 			}
 		}
 	},
+	closeMessage: function(message_name) {
+		if (this.messages[message_name] && !this.closed_messages[message_name]){
+			this.closed_messages[message_name] = true;
+			suStore('closed-messages', this.closed_messages, true);
+			this.messages[message_name].call(this, false);
+		}
+	},
 	showMessage: function(message_name) {
-		if (this.messages[message_name]){
-			this.messages[message_name].call(this);
+		if (this.messages[message_name] && !this.closed_messages[message_name]){
+			this.messages[message_name].call(this, true);
 		}
 	},
 	setDocTitle: function(title) {
