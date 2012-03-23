@@ -105,18 +105,32 @@ createPrototype(muAns, new eemiter(), {
 var fileInTorrent = function(query, torrent_link){
 
 }
+/*
+<div id="cse" style="width: 100%;">Loading</div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript"> 
+  google.load('search', '1', {language : 'en', style : google.loader.themes.V2_DEFAULT});
+  google.setOnLoadCallback(function() {
+    var customSearchOptions = {};  var customSearchControl = new google.search.CustomSearchControl(
+      '001069742470440223270:3zaccy_n32i', customSearchOptions);
+    customSearchControl.setResultSetSize(google.search.Search.FILTERED_CSE_RESULTSET);
+    customSearchControl.draw('cse');
+  }, true);
+</script>
 
+001069742470440223270:3zaccy_n32i
+      
+*/
 
-var findTorrentMP3Song = function(song) {
+//"Hudson Mohawke" "All Your Love" -inurl:(htm|html|php) intitle:"index of" "last modified" "parent directory" description size mp3
+
+var findTorrentMP3Song = function(data) {
 	$.ajax({
 		global: false,
 		type: "GET",
 		dataType: "jsonp",
-		url: "http://ajax.googleapis.com/ajax/services/search/web?cx=001069742470440223270:ftotl-vgnbs",
-		data: {
-			v: "1.0",
-			q: "allintext:" + song + '.mp3'
-		},
+		url: "http://ajax.googleapis.com/ajax/services/search/web?v=1.0",//cx=001069742470440223270:ftotl-vgnbs
+		data: data,
 		error:function(){
 			console.log('google search requset error')
 		},
