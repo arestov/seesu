@@ -128,7 +128,11 @@ var vkApi = function(vk_t, params) {
 
 	var _this = this;
 
-	this.asearch = {
+	this.asearch = new vkSearch(this);
+
+
+
+	/*{
 		test: function(mo){
 			return canUseSearch(mo, _this.search_source);
 		},
@@ -142,11 +146,40 @@ var vkApi = function(vk_t, params) {
 		s: this.search_source,
 		q: p.queue
 	};
-
+	*/
 
 };
 
 vkCoreApi.extendTo(vkApi, {
+	search_source: {
+		name: 'vk',
+		key: 'nice'
+	}
+});
+
+
+
+var vkSearch = function(vk_api) {
+	this.vk_api = vk_api;
+	var _this = this;
+	this.search =  function(){
+		return _this.audio_search.apply(_this, arguments);
+	};
+};
+vkSearch.prototype = {
+	constructor: vkSearch,
+	test: function(mo){
+		return canUseSearch(mo, this.s);
+	},
+	name: "vk",
+	description: 'vkontakte.ru',
+	slave: false,
+	preferred: null,
+	//q: p.queue,
+	s: {
+		name: 'vk',
+		key: 'nice'
+	},
 	makeVKSong: function(cursor){
 		if (cursor && cursor.url){
 			return {
@@ -157,12 +190,13 @@ vkCoreApi.extendTo(vkApi, {
 				from		: 'vk',
 				downloadable: false,
 				_id			: cursor.owner_id + '_' + cursor.aid,
-				type: 'mp3'
+				type: 'mp3',
+				models: {},
+				getSongFileModel: getSongFileModel
 			}
 		}
-		
 	},
-	makeMusicList: function(r) {
+	makeMusicList: function(r, msq) {
 		var music_list = [];
 		for (var i=1, l = r.length; i < l; i++) {
 			var entity = this.makeVKSong(r[i]);
@@ -171,12 +205,12 @@ vkCoreApi.extendTo(vkApi, {
 				music_list.push(entity);
 			}
 		}
+		music_list.sort(function(g,f){
+			return by_best_matching_index(g,f, msq);
+		});
 		return music_list;
 	},
-	search_source: {
-		name: 'vk',
-		key: 'nice'
-	},
+	
 	audio_search: function(msq, callback, error, nocache, after_ajax, only_cache) {
 		var _this = this;
 
@@ -187,7 +221,7 @@ vkCoreApi.extendTo(vkApi, {
 			})
 				.done(function(r) {
 					if (r && r.length){
-						callback(r, _this.search_source);
+						callback(r, _this.s);
 					} else {
 						error();
 					}
@@ -202,29 +236,6 @@ vkCoreApi.extendTo(vkApi, {
 				});
 
 		return async_ans.queued || async_ans.cache_used;
-
-
-		/*
-		var used_successful = this.use('audio.search', params_u, 
-		function(r){
-			if (r.response && (r.response.length > 1 )) {
-				_this.audioResponceHandler(r.response, callback, error);
-			} else{
-				if (error) {error(_this.search_source);}
-			}
-			
-		}, function(xhr){
-			if (error){error(_this.search_source);}
-		}, {
-			nocache: nocache, 
-			after_ajax: after_ajax, 
-			cache_key: query, 
-			only_cache: only_cache,
-			not_init_queue: true
-		});
-		return used_successful;
-*/
-
 	},
 	findAudio: function(msq, opts) {
 		var _this		= this,
@@ -250,13 +261,13 @@ vkCoreApi.extendTo(vkApi, {
 			params_u.q = query;
 			params_u.count = 30;
 
-		var async_ans = this.get('audio.search', params_u, opts)
+		var async_ans = this.vk_api.get('audio.search', params_u, opts)
 			.done(function(r) {
 				if (r.error){
 					deferred.reject.apply(deferred, arguments);
 				} else{
 					if (r.response && (r.response.length > 1 )){
-						var ml = _this.makeMusicList(r.response);
+						var ml = _this.makeMusicList(r.response, msq);
 
 						deferred.resolve.call(deferred, !!ml.length && ml);
 					} else {
@@ -277,7 +288,4 @@ vkCoreApi.extendTo(vkApi, {
 		
 		return complex_response;
 	}
-});
-
-
-
+};

@@ -1,6 +1,7 @@
-var scApi = function(key, queue) {
+var scApi = function(key, queue, crossdomain) {
 	this.queue = queue;
 	this.key = key;
+	this.crossdomain = crossdomain;
 };
 scApi.prototype = {
 	constructor: scApi,
@@ -29,7 +30,9 @@ scApi.prototype = {
 				description : cursor.description || false,
 				downloadable: cursor.downloadable,
 				_id			: cursor.id,
-				type: 'mp3'
+				type: 'mp3',
+				models: {},
+				getSongFileModel: getSongFileModel
 			};
 			
 		}
@@ -64,7 +67,7 @@ scApi.prototype = {
 				url: "http://api.soundcloud.com/tracks.js",
 				global: false,
 				type: "GET",
-				dataType: "jsonp",
+				dataType: _this.crossdomain ? "json": "jsonp",
 				data: data,
 				error:function(xhr){
 					if  (error) {error(search_source);}
@@ -82,6 +85,9 @@ scApi.prototype = {
 						};
 					}
 					if (music_list && music_list.length){
+						music_list.sort(function(g,f){
+							return by_best_matching_index(g,f, msq);
+						});
 						cache_ajax.set('soundcloud', query, music_list);
 						if (callback ){
 							callback(music_list, search_source);
@@ -146,5 +152,24 @@ scApi.prototype = {
 			if (after_ajax) {after_ajax();}
 		}, true);
 	}
+};
+
+var scMusicSearch = function(sc_api) {
+	this.sc_api = sc_api;
+	var _this = this;
+	this.search = function() {
+		return _this.sc_api.find.apply(_this.sc_api, arguments);
+	}
+};
+scMusicSearch.prototype = {
+	constructor: scMusicSearch,
+	getById: function() {
+		return this.sc_api.getSongById.apply(sc_api, arguments);
+	},
+	name: "soundcloud",
+	description:'soundcloud.com',
+	slave: false,
+	s: {name: 'soundcloud', key: 0},
+	preferred: null
 };
 
