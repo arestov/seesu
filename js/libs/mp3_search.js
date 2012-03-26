@@ -471,9 +471,8 @@ var by_best_matching_index;
 				
 			});
 		},
-		request: function(msq, options, p, just_after_request){
+		sendRequest: function(msq, options, p, just_after_request){
 			var o = options || {};
-			var search_query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
 			var deferred = $.Deferred(),
 				complex_response = new depdc(true);
 			complex_response.abort = function() {
@@ -483,37 +482,14 @@ var by_best_matching_index;
 				}
 			};
 			deferred.promise( complex_response );
-
 			var callback_success = function(music_list, search_source){
-
-				cache_ajax.set(search_source.name + 'mp3', search_query, {
-					music_list: music_list,
-					search_source: search_source
-				});
-				
-				
-				//success
-				for (var i=0; i < music_list.length; i++) {
-					music_list[i].raw = true;
-				}
 				deferred.resolve(search_source, music_list);
-
-				//count_down(search_source, music_list);
-				
 			};
-			
 			var callback_error = function(search_source, non_fixable){
-				//error
 				deferred.reject(search_source, non_fixable);
-				//count_down(search_source, false, can_be_fixed);
 			};
-
-			//
-			
 			var searchMethod = options.search_eng[ !options.only_cache ? 'search' : 'collectiveSearch'];
-
 			var used_successful = searchMethod.call(options.search_eng, msq, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
-			
 			if (used_successful){
 				if (used_successful === Object(used_successful)){
 					complex_response.queued = used_successful;
@@ -579,8 +555,21 @@ var by_best_matching_index;
 
 
 			var request = function(sem, search_eng, o, p){
-				var used_successful =  _this.request(query, {search_eng: search_eng, get_next: o.get_next, only_cache: o.only_cache}, p, function(){sem.notify();})
+				var used_successful =  _this.sendRequest(query, {search_eng: search_eng, get_next: o.get_next, only_cache: o.only_cache}, p, function(){sem.notify();})
 					.done(function(search_source, music_list){
+						var search_query = query.q ? query.q: ((query.artist || '') + ' - ' + (query.track || ''));
+						cache_ajax.set(search_source.name + 'mp3', search_query, {
+							music_list: music_list,
+							search_source: search_source
+						});
+						
+						
+						//success
+						for (var i=0; i < music_list.length; i++) {
+							music_list[i].raw = true;
+						}
+
+
 						if (music_list && music_list.length){
 							sem.addSteamPart(search_source, music_list);
 						} else {
