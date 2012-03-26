@@ -274,50 +274,38 @@ var random_track_plable = function(track_list){
 	
 };
 
-
-su.mp3_search = (new mp3Search())
-	.on('new-search', function(search, name){
-		var player = su.p;
-		if (player){
-			if (player.c_song){
-				if (player.c_song.sem){
-					su.mp3_search.searchFor(player.c_song.sem.query);
+su.mp3_search = (new mp3Search({
+		vk: 0,
+		lastfm:-10,
+		soundcloud: -5
+	}))
+		.on('new-search', function(search, name){
+			var player = su.p;
+			if (player){
+				if (player.c_song){
+					if (player.c_song.sem){
+						su.mp3_search.searchFor(player.c_song.sem.query);
+					}
+					
+					if (player.c_song.next_preload_song && player.c_song.next_preload_song.sem){
+						su.mp3_search.searchFor(player.c_song.next_preload_song.sem.query);
+					}
 				}
-				
-				if (player.c_song.next_preload_song && player.c_song.next_preload_song.sem){
-					su.mp3_search.searchFor(player.c_song.next_preload_song.sem.query);
+				//fixme
+				if (player.v_song && player.v_song != player.c_song ){
+					if (player.v_song.sem){
+						su.mp3_search.searchFor(player.v_song.sem.query);
+					}
+					
 				}
 			}
-			//fixme
-			if (player.v_song && player.v_song != player.c_song ){
-				if (player.v_song.sem){
-					su.mp3_search.searchFor(player.v_song.sem.query);
-				}
-				
-			}
-		}
-	});
+		});
 
 
 
 (function(){
-	var sc_api = new scApi(getPreloadedNK('sc_key'), su.soundcloud_queue);
-
-	var sc_search_source = {name: 'soundcloud', key: 0};
-	su.mp3_search.add({
-		getById: function() {
-			return sc_api.getSongById.apply(sc_api, arguments);
-		},
-		search: function() {
-			return sc_api.find.apply(sc_api, arguments);
-		},
-		name: sc_search_source.name,
-		description:'soundcloud.com',
-		slave: false,
-		s: sc_search_source,
-		preferred: null,
-		q: su.soundcloud_queue
-	});
+	var sc_api = new scApi(getPreloadedNK('sc_key'), su.soundcloud_queue, app_env.cross_domain_allowed, cache_ajax);
+	su.mp3_search.add(new scMusicSearch(sc_api));
 	
 	
 })();
@@ -524,8 +512,8 @@ var get_artist_album_info = function(artist, album, callback){
 
 
 suReady(function(){
-	check_seesu_updates();
 	try_mp3_providers();
+	check_seesu_updates();
 });
 
 jsLoadComplete(function() {

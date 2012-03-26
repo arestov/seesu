@@ -13,9 +13,9 @@ var get_youtube = function(q, callback){
 			},
 			success: function(r){
 				if (callback) {callback(r);}
-					cache_ajax.set('youtube', q, r)
+					cache_ajax.set('youtube', q, r);
 				} 
-		})
+		});
 	}
 	
 };
@@ -55,7 +55,7 @@ var dui = function() {
 			su.vk_auth.requestAuth({
 				ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
 				c: _this
-			})
+			});
 		
 		}
 		e.preventDefault();
@@ -120,37 +120,31 @@ servModel.extendTo(vkLogin, {
 		return new vkLoginUI(this);
 	},
 	waitData: function() {
-		this.updateState('wait', true)
+		this.updateState('wait', true);
 	},
 	notWaitData: function() {
-		this.updateState('wait', false)
+		this.updateState('wait', false);
 	},
 	setRequestDesc: function(text) {
 		this.updateState('request-description', text);
 	},
 	requestAuth: function(opts) {
-		this.fire('auth-request', opts)
+		this.fire('auth-request', opts);
 	}
 });
 
 
 
-function tryVKOAuth (){
+tryVKOAuth = function(){
 	var init_auth = vk_auth_box.requestAuth({not_open: true});
 	if (init_auth.bridgekey){
-		var i = document.createElement('iframe');	
+		var i = window.document.createElement('iframe');	
 		i.className = 'serv-container';
 		i.src = init_auth.link;
-		document.body.appendChild(i);
+		window.document.body.appendChild(i);
 	}
 };
-function tryVKApi(){
-	
-	
-	
-	
-	
-};
+
 var seesu_vkappid = 2271620;
 
 var connectApiToSeesu = function(vk_token, access, not_save) {
@@ -159,18 +153,19 @@ var connectApiToSeesu = function(vk_token, access, not_save) {
 		jsonp: !su.env.cross_domain_allowed
 	});
 
-	su.setVkApi(vkapi, vk_token.user_id)
+	su.setVkApi(vkapi, vk_token.user_id);
 	if (access){
 		su.mp3_search.add(vkapi.asearch, true);
 	}
 	
 	if (vk_token.expires_in){
 		setTimeout(function() {
+			su.mp3_search.remove(vkapi.asearch);
 			vkapi.asearch.dead = vkapi.asearch.disabled = true;
 			if (su.vk_api == vkapi){
 				delete su.vkapi;
 			}
-		}, vk_token.expires_in)
+		}, vk_token.expires_in);
 	}
 	if (!not_save){
 		suStore('vk_token_info', cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
@@ -178,7 +173,7 @@ var connectApiToSeesu = function(vk_token, access, not_save) {
 	return vkapi;
 };
 
-function try_mp3_providers(){
+try_mp3_providers = function(){
 	var _u = su._url;
 	if (su.env.vkontakte){
 		su.vk_app_mode = true;
@@ -208,7 +203,7 @@ function try_mp3_providers(){
 		});
 		*/
 
-		var _s = document.createElement('script');
+		var _s = window.document.createElement('script');
 		_s.src='http://vk.com/js/api/xd_connection.js';
 		_s.onload = function(){
 			if (window.VK){
@@ -227,11 +222,11 @@ function try_mp3_providers(){
 				});
 				window.documentScrollSizeChangeHandler = function(height){
 					VK.callMethod("resizeWindow", 640, Math.max(580, height + 70));
-				}
+				};
 			}
 			
 		};
-		document.documentElement.firstChild.appendChild(_s);
+		window.document.documentElement.firstChild.appendChild(_s);
 		
 		
 	} else {
@@ -290,4 +285,26 @@ function try_mp3_providers(){
 			});
 
 	}
-}	
+};
+
+
+
+var findTorrentMP3Song = function(song) {
+	$.ajax({
+		global: false,
+		type: "GET",
+		dataType: "jsonp",
+		url: "http://ajax.googleapis.com/ajax/services/search/web?cx=001069742470440223270:ftotl-vgnbs",
+		data: {
+			v: "1.0",
+			q: "allintext:" + song + '.mp3'
+		},
+		error:function(){
+			console.log('google search requset error')
+		},
+		success: function(r){
+			console.log(r);
+			
+		}
+	});
+};
