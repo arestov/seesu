@@ -78,10 +78,12 @@ Class.extendTo(vkCoreApi, {
 					if (complex_response.aborted){
 						return
 					}
-
-					cache_used = this.cache_ajax.get('vk_api', options.cache_key, function(r){
-						deferred.resolve(r);
-					});
+					if (!options.nocache){
+						cache_used = this.cache_ajax.get('vk_api', options.cache_key, function(r){
+							deferred.resolve(r);
+						});
+					}
+					
 					if (!cache_used){
 						$.ajax({
 						  url: _this.link + method,
@@ -120,6 +122,9 @@ Class.extendTo(vkCoreApi, {
 var vkApi = function(vk_t, params) {
 	this.init(params);
 	var p = params || {};
+	if (params.cache_ajax){
+		this.cache_ajax = params.cache_ajax;
+	}
 	this.setAccessToken(vk_t.access_token);
 
 	if (p.queue){
