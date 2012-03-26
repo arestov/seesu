@@ -507,7 +507,12 @@ var by_best_matching_index;
 				deferred.reject(search_source, non_fixable);
 				//count_down(search_source, false, can_be_fixed);
 			};
-			var used_successful = o.handler(msq, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
+
+			//
+			
+			var searchMethod = options.search_eng[ !options.only_cache ? 'search' : 'collectiveSearch'];
+
+			var used_successful = searchMethod.call(options.search_eng, msq, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
 			
 			if (used_successful){
 				if (used_successful === Object(used_successful)){
@@ -573,8 +578,8 @@ var by_best_matching_index;
 			var successful_uses = [];
 
 
-			var request = function(sem, handler, o, p){
-				var used_successful =  _this.request(query, {handler: handler, get_next: o.get_next}, p, function(){	sem.notify();})
+			var request = function(sem, search_eng, o, p){
+				var used_successful =  _this.request(query, {search_eng: search_eng, get_next: o.get_next, only_cache: o.only_cache}, p, function(){sem.notify();})
 					.done(function(search_source, music_list){
 						if (music_list && music_list.length){
 							sem.addSteamPart(search_source, music_list);
@@ -600,12 +605,12 @@ var by_best_matching_index;
 			if (search_handlers.length){
 				for (var i=0; i < search_handlers.length; i++) {
 					
-					var handler = (!o.only_cache && search_handlers[i].search) || search_handlers[i].collectiveSearch;
-					if (handler){
+					var handle = (!o.only_cache && search_handlers[i].search) || search_handlers[i].collectiveSearch;
+					if (handle){
 						if (!o.only_cache){
 							sem.getMusicStore(search_handlers[i].s).processing = true;
 						}
-						request(sem, handler, o, p);
+						request(sem, search_handlers[i], o, p);
 					}
 				}
 				$.when.apply($, successful_uses).always(function(){
