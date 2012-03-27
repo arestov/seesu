@@ -540,7 +540,7 @@ var by_best_matching_index;
 
 
 
-							var can_search = sem.canSearchBy(cursor);//cursor.test(sem);
+							var can_search = sem.canSearchBy(cursor.s);//cursor.test(sem);
 							if (can_search){
 								search_handlers.push(cursor);
 							}
@@ -555,40 +555,73 @@ var by_best_matching_index;
 
 
 			var request = function(sem, search_eng, o, p){
-				var used_successful =  _this.sendRequest(query, {search_eng: search_eng, get_next: o.get_next, only_cache: o.only_cache}, p, function(){sem.notify();})
-					.done(function(search_source, music_list){
-						var search_query = query.q ? query.q: ((query.artist || '') + ' - ' + (query.track || ''));
-						cache_ajax.set(search_source.name + 'mp3', search_query, {
-							music_list: music_list,
-							search_source: search_source
-						});
-						
-						
-						//success
-						for (var i=0; i < music_list.length; i++) {
-							music_list[i].raw = true;
-						}
+				/*
+				var used_successful = searchMethod.call(search_eng, msq, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
+				*/
 
-
-						if (music_list && music_list.length){
-							sem.addSteamPart(search_source, music_list);
-						} else {
-							sem.blockSteamPart(search_source, true);
-						}
-						
-					})
-					.fail(function(search_source, non_fixable){
-						if (search_source){
-							sem.blockSteamPart(search_source, !non_fixable);
-						}
-					})
-					.always(function(){
-						sem.change(o.get_next);
-					});
+				var complex_response = new depdc(true);
+				complex_response.abort = function() {
 					if (used_successful){
-						successful_uses.push(used_successful);
-						sem.addRequest(used_successful);
+						used_successful.abort();
 					}
+				};
+				
+
+				var searchMethod = search_eng[ !o.only_cache ? 'search' : 'collectiveSearch'];
+				var used_successful = 
+					searchMethod.call(search_eng, query, {
+						only_cache: o.only_cache,
+						nocache: o.nocache,
+					})
+						.progress(function(note){
+							if (note == 'just-requested'){
+								sem.notify();
+							}
+						})
+						.done(function(music_list){
+							if (music_list && music_list.length){
+								var search_query = query.q ? query.q: ((query.artist || '') + ' - ' + (query.track || ''));
+								cache_ajax.set(search_eng.s.name + 'mp3', search_query, {
+									music_list: music_list,
+									search_source: search_eng.s
+								});
+								
+								
+								//success
+								for (var i=0; i < music_list.length; i++) {
+									music_list[i].raw = true;
+								}
+								
+								sem.addSteamPart(search_eng.s, music_list);
+								
+							} else {
+								sem.blockSteamPart(search_eng.s);
+							}
+							
+						})
+						.fail(function(){
+							if (search_eng.s){
+								sem.blockSteamPart(search_eng.s, true);
+							}
+						})
+						.always(function(){
+							sem.change(o.get_next);
+						});
+
+
+				if (used_successful){
+					used_successful.promise( complex_response );
+					successful_uses.push(complex_response);
+					sem.addRequest(complex_response);
+				}
+
+
+
+				// _this.sendRequest(query, {search_eng: search_eng, get_next: o.get_next, only_cache: o.only_cache}, p, function(){sem.notify();})
+
+
+
+					
 			};
 			
 			if (search_handlers.length){

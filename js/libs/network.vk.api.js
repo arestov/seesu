@@ -168,7 +168,7 @@ var vkSearch = function(vk_api) {
 	this.vk_api = vk_api;
 	var _this = this;
 	this.search =  function(){
-		return _this.audio_search.apply(_this, arguments);
+		return _this.findAudio.apply(_this, arguments);
 	};
 };
 vkSearch.prototype = {

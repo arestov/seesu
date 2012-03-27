@@ -218,7 +218,7 @@ var scMusicSearch = function(sc_api) {
 	this.sc_api = sc_api;
 	var _this = this;
 	this.search = function() {
-		return _this.trashMusicSearch.apply(_this, arguments);
+		return _this.findAudio.apply(_this, arguments);
 	}
 };
 scMusicSearch.prototype = {
