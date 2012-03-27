@@ -471,9 +471,8 @@ var by_best_matching_index;
 				
 			});
 		},
-		request: function(msq, options, p, just_after_request){
+		sendRequest: function(msq, options, p, just_after_request){
 			var o = options || {};
-			var search_query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
 			var deferred = $.Deferred(),
 				complex_response = new depdc(true);
 			complex_response.abort = function() {
@@ -483,32 +482,14 @@ var by_best_matching_index;
 				}
 			};
 			deferred.promise( complex_response );
-
 			var callback_success = function(music_list, search_source){
-
-				cache_ajax.set(search_source.name + 'mp3', search_query, {
-					music_list: music_list,
-					search_source: search_source
-				});
-				
-				
-				//success
-				for (var i=0; i < music_list.length; i++) {
-					music_list[i].raw = true;
-				}
 				deferred.resolve(search_source, music_list);
-
-				//count_down(search_source, music_list);
-				
 			};
-			
 			var callback_error = function(search_source, non_fixable){
-				//error
 				deferred.reject(search_source, non_fixable);
-				//count_down(search_source, false, can_be_fixed);
 			};
-			var used_successful = o.handler(msq, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
-			
+			var searchMethod = options.search_eng[ !options.only_cache ? 'search' : 'collectiveSearch'];
+			var used_successful = searchMethod.call(options.search_eng, msq, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
 			if (used_successful){
 				if (used_successful === Object(used_successful)){
 					complex_response.queued = used_successful;
@@ -559,7 +540,7 @@ var by_best_matching_index;
 
 
 
-							var can_search = sem.canSearchBy(cursor);//cursor.test(sem);
+							var can_search = sem.canSearchBy(cursor.s);//cursor.test(sem);
 							if (can_search){
 								search_handlers.push(cursor);
 							}
@@ -573,39 +554,85 @@ var by_best_matching_index;
 			var successful_uses = [];
 
 
-			var request = function(sem, handler, o, p){
-				var used_successful =  _this.request(query, {handler: handler, get_next: o.get_next}, p, function(){	sem.notify();})
-					.done(function(search_source, music_list){
-						if (music_list && music_list.length){
-							sem.addSteamPart(search_source, music_list);
-						} else {
-							sem.blockSteamPart(search_source, true);
-						}
-						
-					})
-					.fail(function(search_source, non_fixable){
-						if (search_source){
-							sem.blockSteamPart(search_source, !non_fixable);
-						}
-					})
-					.always(function(){
-						sem.change(o.get_next);
-					});
+			var request = function(sem, search_eng, o, p){
+				/*
+				var used_successful = searchMethod.call(search_eng, msq, callback_success, callback_error, o.nocache, just_after_request, o.only_cache);
+				*/
+
+				var complex_response = new depdc(true);
+				complex_response.abort = function() {
 					if (used_successful){
-						successful_uses.push(used_successful);
-						sem.addRequest(used_successful);
+						used_successful.abort();
 					}
+				};
+				
+
+				var searchMethod = search_eng[ !o.only_cache ? 'search' : 'collectiveSearch'];
+				var used_successful = 
+					searchMethod.call(search_eng, query, {
+						only_cache: o.only_cache,
+						nocache: o.nocache,
+					})
+						.progress(function(note){
+							if (note == 'just-requested'){
+								sem.notify();
+							}
+						})
+						.done(function(music_list){
+							if (music_list && music_list.length){
+								var search_query = query.q ? query.q: ((query.artist || '') + ' - ' + (query.track || ''));
+								cache_ajax.set(search_eng.s.name + 'mp3', search_query, {
+									music_list: music_list,
+									search_source: search_eng.s
+								});
+								
+								
+								//success
+								for (var i=0; i < music_list.length; i++) {
+									music_list[i].raw = true;
+								}
+								
+								sem.addSteamPart(search_eng.s, music_list);
+								
+							} else {
+								sem.blockSteamPart(search_eng.s);
+							}
+							
+						})
+						.fail(function(){
+							if (search_eng.s){
+								sem.blockSteamPart(search_eng.s, true);
+							}
+						})
+						.always(function(){
+							sem.change(o.get_next);
+						});
+
+
+				if (used_successful){
+					used_successful.promise( complex_response );
+					successful_uses.push(complex_response);
+					sem.addRequest(complex_response);
+				}
+
+
+
+				// _this.sendRequest(query, {search_eng: search_eng, get_next: o.get_next, only_cache: o.only_cache}, p, function(){sem.notify();})
+
+
+
+					
 			};
 			
 			if (search_handlers.length){
 				for (var i=0; i < search_handlers.length; i++) {
 					
-					var handler = (!o.only_cache && search_handlers[i].search) || search_handlers[i].collectiveSearch;
-					if (handler){
+					var handle = (!o.only_cache && search_handlers[i].search) || search_handlers[i].collectiveSearch;
+					if (handle){
 						if (!o.only_cache){
 							sem.getMusicStore(search_handlers[i].s).processing = true;
 						}
-						request(sem, handler, o, p);
+						request(sem, search_handlers[i], o, p);
 					}
 				}
 				$.when.apply($, successful_uses).always(function(){
