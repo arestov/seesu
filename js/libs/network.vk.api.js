@@ -173,9 +173,6 @@ var vkSearch = function(vk_api) {
 };
 vkSearch.prototype = {
 	constructor: vkSearch,
-	test: function(mo){
-		return canUseSearch(mo, this.s);
-	},
 	name: "vk",
 	description: 'vkontakte.ru',
 	slave: false,
