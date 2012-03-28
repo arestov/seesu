@@ -7,7 +7,14 @@ var fileInTorrentUI = function(md) {
 suServView.extendTo(fileInTorrentUI,{
 	createBase: function() {
 		this.c = $('<li></li>');
-		this.c.text(this.md.sr_item.titleNoFormatting)
+
+
+		$('<span class="play-button-place"></span>').appendTo(this.c)
+		
+
+		var pg = $('<span class="mf-progress"></span>')
+		var f_text = $('<span class="mf-text"></span>').text(this.md.sr_item.titleNoFormatting).appendTo(pg);
+		pg.appendTo(this.c);
 
 	}
 });
