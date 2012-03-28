@@ -1,3 +1,38 @@
+var fileInTorrentUI = function(md) {
+	this.init();
+	this.md = md;
+	this.createBase();
+
+};
+suServView.extendTo(fileInTorrentUI,{
+	createBase: function() {
+		this.c = $('<li></li>');
+		this.c.text(this.md.sr_item.titleNoFormatting)
+
+	}
+});
+
+var fileInTorrent = function(sr_item, mo){
+
+	this.init();
+	this.sr_item = sr_item;
+};
+
+servModel.extendTo(fileInTorrent, {
+	ui_constr: function() {
+		return new fileInTorrentUI(this);
+	},
+	setPlayer: function() {
+		return this;
+	},
+	activate: function() {
+		return this;
+	},
+	deactivate: function() {
+		return this;
+	}
+});
+
 (function(){
 	var counter = 0;
 

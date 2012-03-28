@@ -26,6 +26,7 @@ scApi.prototype = {
 		if (method) {
 			options = options || {};
 			options.nocache = options.nocache || !this.cache_ajax;
+			options.cache_key = options.cache_key || hex_md5(method + stringifyParams(params));
 			var cache_used;
 
 			var	params_full = params || {};
@@ -33,8 +34,9 @@ scApi.prototype = {
 
 
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
+
 			if (!options.nocache){
-				options.cache_key = options.cache_key || hex_md5(method + stringifyParams(params));
+				
 				cache_used = this.cache_ajax.get('soundcloud_api', options.cache_key, function(r){
 					deferred.resolve(r);
 				});
@@ -48,7 +50,7 @@ scApi.prototype = {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set('soundcloud_api', params.api_sig, r)
+						_this.cache_ajax.set('soundcloud_api', options.cache_key, r)
 					}
 				};
 
@@ -229,7 +231,7 @@ scMusicSearch.prototype = {
 	name: "soundcloud",
 	description:'soundcloud.com',
 	slave: false,
-	s: {name: 'soundcloud', key: 0},
+	s: {name: 'soundcloud', key: 0, type:'mp3'},
 	preferred: null,
 	makeSong: function(cursor, sc_key){
 		var search_string = cursor.title || cursor.description;

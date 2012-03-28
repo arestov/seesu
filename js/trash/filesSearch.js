@@ -102,9 +102,6 @@ createPrototype(muAns, new eemiter(), {
 	}
 });
 
-var fileInTorrent = function(query, torrent_link){
-
-}
 
 
 var findTorrentMP3Song = function(song) {
