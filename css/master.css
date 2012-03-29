@@ -1103,3 +1103,6 @@ iframe.you-tube-video,embed.you-tube-video{
 		.attention-message .close-message:hover{
 			color:#ccc;
 			}
+.download-song-link{
+	float:right;
+	}

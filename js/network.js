@@ -367,9 +367,10 @@ torrentSearch.prototype = {
 		async_ans.done = function(cb) {
 			olddone.call(this, function(r) {
 				if (!result){
-					result = r.responseData.results;
-					for (var i = 0; i < result.length; i++) {
-						_this.wrapItem(result[i], msq);
+					result = [];
+
+					for (var i = 0; i < r.responseData.results.length; i++) {
+						_this.wrapItem(result, r.responseData.results[i], msq);
 					};
 					/*
 					var music_list = [];
@@ -398,12 +399,19 @@ torrentSearch.prototype = {
 		};
 		return async_ans;
 	},
-	wrapItem: function(item, query) {
-		item.query = query;
-		item.models = {};
-		item.getSongFileModel = function(mo, player) {
-			return this.models[mo.uid] = this.models[mo.uid] || (new fileInTorrent(this, mo)).setPlayer(player);
-		};
+	url_regexp: /torrent\_details\/(\d*)\//,
+	wrapItem: function(r, item, query) {
+		var isohunt_id = item && item.url && item.url.match(this.url_regexp);
+		if (isohunt_id && isohunt_id[1]){
+			r.push(item);
+			item.isohunt_id = isohunt_id[1];
+			item.query = query;
+			item.models = {};
+			item.getSongFileModel = function(mo, player) {
+				return this.models[mo.uid] = this.models[mo.uid] || (new fileInTorrent(this, mo)).setPlayer(player);
+			};
+		}
+		
 	}
 };
 

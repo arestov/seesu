@@ -14,6 +14,9 @@ suServView.extendTo(fileInTorrentUI,{
 
 		var pg = $('<span class="mf-progress"></span>')
 		var f_text = $('<span class="mf-text"></span>').text(this.md.sr_item.titleNoFormatting).appendTo(pg);
+
+		var link = $('<a class="external download-song-link"></a>').text('torrent').attr('href', 'http://isohunt.com/download/' + this.md.sr_item.isohunt_id).appendTo(this.c);
+
 		pg.appendTo(this.c);
 
 	}
