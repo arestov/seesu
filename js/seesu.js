@@ -277,7 +277,8 @@ var random_track_plable = function(track_list){
 su.mp3_search = (new mp3Search({
 		vk: 0,
 		lastfm:-10,
-		soundcloud: -5
+		soundcloud: -5,
+		torrents: -15
 	}))
 		.on('new-search', function(search, name){
 			var player = su.p;
@@ -307,6 +308,7 @@ su.mp3_search = (new mp3Search({
 	var sc_api = new scApi(getPreloadedNK('sc_key'), su.soundcloud_queue, app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch(sc_api));
 	
+	su.mp3_search.add(new torrentSearch());
 	
 })();
 

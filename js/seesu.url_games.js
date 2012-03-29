@@ -3,6 +3,7 @@ if (app_env.needs_url_history) {
 		(function(){
 			var hash = location.hash.replace(/^\#/, '');
 			window.onhashchange = function(e){
+				e = e || window.Event;
 				var newhash = location.hash.replace(/^\#/, '');
 				if (newhash != hash){
 					var hnew = decodeURI(e.newURL || newhash);

@@ -40,6 +40,7 @@ Class.extendTo(vkCoreApi, {
 		if (method) {
 			options = options || {};
 			options.nocache = options.nocache || !this.cache_ajax;
+			options.cache_key = options.cache_key || hex_md5(method + stringifyParams(params));
 			var cache_used;
 
 			var	params_full = params || {};
@@ -48,8 +49,9 @@ Class.extendTo(vkCoreApi, {
 			}
 
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
+
 			if (!options.nocache){
-				options.cache_key = options.cache_key || hex_md5(method + stringifyParams(params));
+				
 				cache_used = this.cache_ajax.get('vk_api', options.cache_key, function(r){
 					deferred.resolve(r);
 				});
@@ -63,7 +65,7 @@ Class.extendTo(vkCoreApi, {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set('vk_api', params.api_sig, r)
+						_this.cache_ajax.set('vk_api', options.cache_key, r)
 					}
 				};
 
@@ -180,7 +182,8 @@ vkSearch.prototype = {
 	//q: p.queue,
 	s: {
 		name: 'vk',
-		key: 'nice'
+		key: 'nice',
+		type: 'mp3'
 	},
 	makeVKSong: function(cursor){
 		if (cursor && cursor.url){

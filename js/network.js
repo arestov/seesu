@@ -20,65 +20,6 @@ var get_youtube = function(q, callback){
 	
 };
 
-
-
-
-
-var dui = function() {
-	//ui_samples.children('.vk-login-context'),
-//this.oos.removeClass("waiting-vk-login");
-
-	var _this = this;
-	var nvk = this.o.clone();
-	if (su.vk.wait_for_finish){
-		nvk.addClass('vk-finishing');
-	}	
-	if (this.load_indicator){
-		nvk.addClass("waiting-vk-login");
-	}
-	if (request_description){
-		nvk.find('.login-request-desc').text(request_description);
-	}
-//	var auth_c =  nvk.find('.auth-container');
-	nvk.find('.sign-in-to-vk').click(function(e){
-		var class_name = this.className;
-		var clicked_node = $(this);
-		
-
-		var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
-		if (su.vk_app_mode){
-			if (window.VK){
-				VK.callMethod('showSettingsBox', 8);
-			}
-		} else{
-			
-			su.vk_auth.requestAuth({
-				ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
-				c: _this
-			});
-		
-		}
-		e.preventDefault();
-	});
-
-	_this.oos =  _this.oos.add(nvk);
-	return nvk;
-};
-/*
-if (su.vk_app_mode){
-	if (window.VK){
-		VK.callMethod('showSettingsBox', 8);
-	}
-} else{
-	
-	su.vk_auth.requestAuth({
-		ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
-		c: _this
-	})
-
-}
-*/
-
 var vkLoginUI = function(md) {
 	this.init();
 	this.md = md;
@@ -286,6 +227,195 @@ try_mp3_providers = function(){
 
 	}
 };
+
+
+var torrentSearch = function(cross_domain_allowed) {
+	this.crossdomain = cross_domain_allowed;
+	var _this = this;
+	this.search =  function(){
+		return _this.findAudio.apply(_this, arguments);
+	};
+};
+torrentSearch.prototype = {
+	constructor: torrentSearch,
+	cache_namespace: 'google_isohunt',
+	name: "torrents",
+	s: {
+		name:"torrents",
+		key:0,
+		type: "torrent"
+	},
+	send: function(query, options) {
+		var
+			_this				= this,
+			deferred 			= $.Deferred(),
+			complex_response 	= {
+				abort: function(){
+					this.aborted = true;
+					deferred.reject('abort');
+					if (this.queued){
+						this.queued.abort();
+					}
+					if (this.xhr){
+						this.xhr.abort();
+					}
+				}
+			};
+		deferred.promise( complex_response );
+		if (query) {
+			options = options || {};
+			options.nocache = options.nocache || !this.cache_ajax;
+			options.cache_key = options.cache_key || hex_md5(new Date() + query);
+
+			var cache_used;
+
+			
+			if (!options.nocache){
+				
+				cache_used = this.cache_ajax.get(this.cache_namespace, options.cache_key, function(r){
+					deferred.resolve(r);
+				});
+				if (cache_used) {
+					complex_response.cache_used = true;
+					return complex_response;
+				}
+			}
+
+			if (!cache_used){
+				var success = function(r){
+					deferred.resolve.apply(deferred, arguments);
+					if (_this.cache_ajax){
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r)
+					}
+				};
+
+				var sendRequest = function() {
+					if (complex_response.aborted){
+						return
+					}
+					if (!options.nocache){
+						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
+							deferred.resolve(r);
+						});
+					}
+					
+					if (!cache_used){
+						$.ajax({
+							url: "http://ajax.googleapis.com/ajax/services/search/web?cx=001069742470440223270:ftotl-vgnbs",
+							type: "GET",
+							dataType: "jsonp",
+							data: {
+								v: "1.0",
+								q: query //"allintext:" + song + '.mp3'
+							},
+							timeout: 20000,
+							success: success,
+							error:function(){
+								deferred.reject.apply(deferred, arguments);
+							},
+							
+						});
+
+
+
+						if (options.after_ajax){
+							options.after_ajax();
+						}
+						if (deferred.notify){
+							deferred.notify('just-requested');
+						}
+					}
+
+				};
+
+				if (this.queue){
+					complex_response.queued = this.queue.add(sendRequest, options.not_init_queue);
+				} else{
+					sendRequest();
+				}
+			}
+
+			
+
+		}
+		return complex_response;
+	},
+	findAudio: function(msq, opts) {
+		var
+			_this = this,
+			query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+
+		opts = opts || {};
+		opts.cache_key = opts.cache_key || query;
+
+
+		/*var sc_key = this.key;
+
+
+		var params_u = {
+			filter:'streamable,downloadable',
+			limit: 30,
+			q: query	
+		};
+*/
+		var async_ans = this.send("allintext:" + query + '.mp3', opts);
+
+		var
+			result,
+			olddone = async_ans.done;
+
+		async_ans.done = function(cb) {
+			olddone.call(this, function(r) {
+				if (!result){
+					result = [];
+
+					for (var i = 0; i < r.responseData.results.length; i++) {
+						_this.wrapItem(result, r.responseData.results[i], msq);
+					};
+					/*
+					var music_list = [];
+					if (r && r.length){
+						for (var i=0; i < r.length; i++) {
+							var ent = _this.makeSong(r[i], _this.sc_api.key);
+							if (ent){
+								if (!has_music_copy(music_list,ent)){
+									music_list.push(ent)
+								}
+							}
+						};
+					}
+					if (music_list.length){
+						music_list.sort(function(g,f){
+							return by_best_matching_index(g,f, msq);
+						});
+						
+					}
+					result = music_list;*/
+				}
+				cb(result);
+
+			});
+			return this;
+		};
+		return async_ans;
+	},
+	url_regexp: /torrent\_details\/(\d*)\//,
+	wrapItem: function(r, item, query) {
+		var isohunt_id = item && item.url && item.url.match(this.url_regexp);
+		if (isohunt_id && isohunt_id[1]){
+			r.push(item);
+			item.isohunt_id = isohunt_id[1];
+			item.query = query;
+			item.titleNoFormatting = HTMLDecode(item.titleNoFormatting);
+			item.models = {};
+			item.getSongFileModel = function(mo, player) {
+				return this.models[mo.uid] = this.models[mo.uid] || (new fileInTorrent(this, mo)).setPlayer(player);
+			};
+		}
+		
+	}
+};
+
 
 
 
