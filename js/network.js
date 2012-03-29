@@ -406,6 +406,7 @@ torrentSearch.prototype = {
 			r.push(item);
 			item.isohunt_id = isohunt_id[1];
 			item.query = query;
+			item.titleNoFormatting = HTMLDecode(titleNoFormatting);
 			item.models = {};
 			item.getSongFileModel = function(mo, player) {
 				return this.models[mo.uid] = this.models[mo.uid] || (new fileInTorrent(this, mo)).setPlayer(player);
