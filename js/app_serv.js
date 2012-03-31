@@ -176,14 +176,14 @@ var detectBrowser;
 	
 })(window);
 
-window.app_env = (function(){
+window.app_env = (function(wd){
 
 	var bro = detectBrowser();
 
 	var env = {};
-	env.url = get_url_parameters(window.location.search);
+	env.url = get_url_parameters(wd.location.search);
 	
-	env.cross_domain_allowed = !window.location.protocol.match(/(http\:)|(file\:)/);
+	env.cross_domain_allowed = !wd.location.protocol.match(/(http\:)|(file\:)/);
 	
 	
 	if (typeof widget == 'object' && !widget.fake_widget){
@@ -201,8 +201,8 @@ window.app_env = (function(){
 		env.deep_sanbdox = true;
 		env.as_application = true;
 	} else
-	if (typeof chrome === 'object' && window.location.protocol == 'chrome-extension:'){
-		if (window.location.pathname == '/index.html'){
+	if (typeof chrome === 'object' && wd.location.protocol == 'chrome-extension:'){
+		if (wd.location.pathname == '/index.html'){
 			env.app_type = 'chrome_app';
 			env.as_application = false;
 			env.needs_url_history = true;
@@ -212,9 +212,9 @@ window.app_env = (function(){
 		}
 		
 	} else
-	if (window.location.protocol.match(/http/)){
+	if (wd.location.protocol.match(/http/)){
 		
-		if (window.parent != window && env.url.access_token && env.url.user_id){
+		if (wd.parent != wd && env.url.access_token && env.url.user_id){
 			env.app_type = 'vkontakte';
 			env.check_resize = true;
 		} else{
@@ -224,7 +224,7 @@ window.app_env = (function(){
 		env.needs_url_history = true;
 		
 	} else 
-	if (window.pokki && window.pokki.openPopup){
+	if (wd.pokki && wd.pokki.openPopup){
 		env.safe_data = true;
 		env.app_type = 'pokki_app';
 		env.cross_domain_allowed = true;
@@ -246,7 +246,7 @@ window.app_env = (function(){
 		env.needs_url_history = true;
 	}
 	try{
-		if (window.document.createEvent('TouchEvent')){
+		if (wd.document.createEvent('TouchEvent')){
 			env.touch_support = true;
 		}
 	} catch(e){}
@@ -256,13 +256,15 @@ window.app_env = (function(){
 	//env.needs_url_history = false; //TEMP
 	
 	if (!env.app_type){
-		env.app_type = 'unknown_app_type' + (navigator.userAgent && ': ' + navigator.userAgent);
+		env.app_type = 'unknown_app_type' + (wd.navigator.userAgent && ': ' + wd.navigator.userAgent);
 		env.unknown_app_type = true;
 		env.deep_sanbdox = true;
 	} else{
 		env[env.app_type] = true;
 	}
-	env.iframe_support = !env.utorrent_app && !env.unknown_app_type;
+	
+
+	env.iframe_support = !env.utorrent_app && (!env.unknown_app_type || wd.location.protocol == 'file:');
 	
 	
 	if (env.touch_support){dstates.add_state('html_el', 'touch-screen');}
@@ -283,10 +285,10 @@ window.app_env = (function(){
 		} else if (env.url.language === '3'){
 			env.lang = 'en';
 		} else{
-			env.lang = (navigator.language || navigator.browserLanguage).slice(0,2).toLowerCase();
+			env.lang = (wd.navigator.language || wd.navigator.browserLanguage).slice(0,2).toLowerCase();
 		}
 	} else{
-		env.lang = (navigator.language || navigator.browserLanguage).slice(0,2).toLowerCase();
+		env.lang = (wd.navigator.language || wd.navigator.browserLanguage).slice(0,2).toLowerCase();
 	}
 	
 	if (env.check_resize){
@@ -317,7 +319,7 @@ window.app_env = (function(){
 	
 	
 	return env;
-})();
+})(window);
 (function(){
 	var sensitive_keys = ['vk_token_info', 'dg_auth', 'lfm_scrobble_s', 'lfmsk', 'big_vk_cookie'];
 	var parse = function(r_value){
@@ -455,7 +457,7 @@ var hard_testing = false;
 if (typeof console != 'object'){
 	var console = {};
 	
-	if  (navigator.userAgent.match(/Opera/)){
+	if  (window.navigator.userAgent.match(/Opera/)){
 		console.log = function(){
 				opera.postError.apply(opera, arguments);
 			
