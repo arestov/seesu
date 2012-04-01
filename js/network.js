@@ -312,7 +312,7 @@ torrentSearch.prototype = {
 							success: success,
 							error:function(){
 								deferred.reject.apply(deferred, arguments);
-							},
+							}
 							
 						});
 
@@ -392,7 +392,7 @@ torrentSearch.prototype = {
 					}
 					result = music_list;*/
 				}
-				cb(result);
+				cb(result, 'torrent');
 
 			});
 			return this;

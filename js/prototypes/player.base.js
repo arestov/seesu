@@ -84,9 +84,9 @@ eemiter.extendTo(playerBase, {
 			this.volume = vol;
 		}
 	},
-	setPosition: function(song_file, pos){
+	setPosition: function(song_file, pos, fac){
 		if (song_file && this.core){
-			this.core.callSongMethod("setPosition", song_file.uid, pos);
+			this.core.callSongMethod("setPosition", song_file.uid, pos, fac);
 		}
 	},
 	load: function(song_file){

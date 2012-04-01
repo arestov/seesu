@@ -274,7 +274,7 @@ vkSearch.prototype = {
 					if (r.response && (r.response.length > 1 )){
 						var ml = _this.makeMusicList(r.response, msq);
 
-						deferred.resolve.call(deferred, !!ml.length && ml);
+						deferred.resolve.call(deferred, !!ml.length && ml, 'mp3');
 					} else {
 						deferred.resolve.call(deferred);
 					}

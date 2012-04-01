@@ -111,7 +111,7 @@ var musicSeachEmitter;
 			}
 			return nice_steam || ugly_steam || false;
 		},
-		addSteamPart: function(search_source, t ){
+		addSteamPart: function(search_source, t, type){
 			
 			var _ms = this.getMusicStore(search_source);
 			if (!_ms.t){
@@ -119,7 +119,7 @@ var musicSeachEmitter;
 
 				this.changed = _ms.changed = (+new Date() > this.changed ? +new Date() : +new Date() + 10);
 				_ms.t = t;
-				
+				_ms.type = type;
 				this.have_tracks = true;
 				_ms.processing = false;
 				this.some_results = true;
@@ -161,11 +161,23 @@ var musicSeachEmitter;
 				return false;
 			}
 		},
-		getSomeTracks: function(steam){
+		getSomeTracks: function(steam, typefilter){
 			var many_tracks = [];
 			for(var source in steam){
 				if (!steam[source].failed && steam[source].t){
-					many_tracks.push.apply(many_tracks, steam[source].t);
+					if (!typefilter){
+						many_tracks.push.apply(many_tracks, steam[source].t);
+					} else {
+						if (typeof typefilter == 'function'){
+							if ( typefilter(steam[source].type)){
+								many_tracks.push.apply(many_tracks, steam[source].t);
+							}
+							
+						} else if (steam[source].type == typefilter){
+							many_tracks.push.apply(many_tracks, steam[source].t);
+						}
+					}
+					
 				}
 			}
 			return !!many_tracks.length && many_tracks;
@@ -193,14 +205,14 @@ var musicSeachEmitter;
 				return 0;
 			}
 		},
-		getAllSongTracks: function(){
+		getAllSongTracks: function(typefilter){
 			var _this = this;
 			if (!this.steams){
 				return false;
 			}
 			var tracks_pack = [];
 			for(var steam in this.steams){
-				var m = this.getSomeTracks(this.steams[steam]);
+				var m = this.getSomeTracks(this.steams[steam], typefilter);
 				if (m){
 					tracks_pack.push({
 						name: steam,
@@ -466,7 +478,7 @@ var by_best_matching_index;
 		getCache: function(sem, name){
 			return cache_ajax.get(name + 'mp3', sem.q, function(r){
 				
-				sem.addSteamPart(r.search_source, r.music_list);
+				sem.addSteamPart(r.search_source, r.music_list, r.type);
 				sem.change();
 				
 			});
@@ -571,19 +583,20 @@ var by_best_matching_index;
 				var used_successful = 
 					searchMethod.call(search_eng, query, {
 						only_cache: o.only_cache,
-						nocache: o.nocache,
+						nocache: o.nocache
 					})
 						.progress(function(note){
 							if (note == 'just-requested'){
 								sem.notify();
 							}
 						})
-						.done(function(music_list){
+						.done(function(music_list, type){
 							if (music_list && music_list.length){
 								var search_query = query.q ? query.q: ((query.artist || '') + ' - ' + (query.track || ''));
 								cache_ajax.set(search_eng.s.name + 'mp3', search_query, {
 									music_list: music_list,
-									search_source: search_eng.s
+									search_source: search_eng.s,
+									type: type
 								});
 								
 								
@@ -592,7 +605,7 @@ var by_best_matching_index;
 									music_list[i].raw = true;
 								}
 								
-								sem.addSteamPart(search_eng.s, music_list);
+								sem.addSteamPart(search_eng.s, music_list, type);
 								
 							} else {
 								sem.blockSteamPart(search_eng.s);

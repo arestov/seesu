@@ -134,13 +134,26 @@ var seesuPlayer;
 
 	//su.p.setCore(pcore);
 
-	var h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
+	var
+		h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, '')),
+		aw = document.createElement('object'); aw.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95";
+
 	if (h5a){
 		jsLoadComplete(function() {
 			yepnope({
 				load:  [bpath + 'js/prototypes/player.html5.js'],
 				complete: function() {
 					su.p.setCore(new html5AudioCore());
+					su.main_level.updateState('flash-internet', true);
+				}
+			});
+		});
+	} else if ('EnableContextMenu' in aw && aw.attachEvent){
+		jsLoadComplete(function() {
+			yepnope({
+				load:  [bpath + 'js/prototypes/player.wmp.js'],
+				complete: function() {
+					su.p.setCore(new wmpAudioCore());
 					su.main_level.updateState('flash-internet', true);
 				}
 			});

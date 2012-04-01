@@ -337,7 +337,7 @@ scMusicSearch.prototype = {
 					}
 					result = music_list;
 				}
-				cb(result);
+				cb(result, 'mp3');
 
 			});
 			return this;

@@ -501,9 +501,12 @@ createPrototype(mfCor, new servModel(), {
 					cmf.stop();
 				}
 				mopla = mopla || this.song();
-				this.setCurrentMopla(mopla);
-				this.fire('before-mf-play', mopla);
-				mopla.play();
+				if (mopla){
+					this.setCurrentMopla(mopla);
+					this.fire('before-mf-play', mopla);
+					mopla.play();
+				}
+				
 
 			}
 		}
@@ -530,7 +533,7 @@ createPrototype(mfCor, new servModel(), {
 		if (this.raw()){
 			return this.omo.getSongFileModel(this.mo, this.mo.player);
 		} else if (this.sem) {
-			var s = this.sem.getAllSongTracks();
+			var s = this.sem.getAllSongTracks('mp3');
 			return !!s && s[0].t[0].getSongFileModel(this.mo, this.mo.player);
 		} else{
 			return false;
@@ -540,7 +543,7 @@ createPrototype(mfCor, new servModel(), {
 		if (this.raw()){
 			return [{t:[this.omo.getSongFileModel(this.mo, this.mo.player)]}];
 		} else if (this.sem){
-			return this.sem.getAllSongTracks();
+			return this.sem.getAllSongTracks('mp3');
 		} else{
 			return false;
 		}

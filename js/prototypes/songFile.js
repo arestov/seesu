@@ -150,7 +150,8 @@ servModel.extendTo(fileInTorrent, {
 			var pb_place = $('<span class="play-button-place"></span>');
 			var pc_place = $('<span class="pc-indicator big-indicator play-indicator pc-place"></span>').appendTo(pb_place);
 			var button = $('<span class="pc pc-play big-control"></span>').appendTo(pc_place);
-			button.click(function() {
+			button.click(function(e) {
+				e.stopPropagation();
 				if (_this.state('play')){
 
 					if (_this.state('play') == 'play'){
@@ -281,7 +282,7 @@ servModel.extendTo(fileInTorrent, {
 				this.updateState('play', false);
 			},
 			stop: function(opts){
-				throw "Do not rely on stop event"
+				//throw "Do not rely on stop event"
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
 					mo.updateState('play', false);
@@ -328,11 +329,11 @@ servModel.extendTo(fileInTorrent, {
 			}
 		},
 		setPositionByFactor: function(fac){
-			this.setPosition((this.loaded_duration || this.duration) * fac);
+			this.setPosition((this.loaded_duration || this.duration || 0) * fac, fac);
 		},
-		setPosition: function(pos){
+		setPosition: function(pos, fac){
 			if (this.player){
-				this.player.setPosition(this, pos);
+				this.player.setPosition(this, pos, fac);
 			}
 		},
 		load: function(){
