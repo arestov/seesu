@@ -1,3 +1,58 @@
+var gg = {
+	sq_match_index: 0// 0 - полное совпадение, -1000 - полный провал
+};
+
+
+
+var detectSQMatchindex = function(item, msq, epicFailTest, downGrateTests) {
+	var
+		match_index = 0,
+		query		= msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+
+	if (epicFailTest(item, msq, query)){
+		match_index = -1000;
+	} else {
+		for (var i = 0; i < downGrateTests.length; i++) {
+			if (downGrateTests[i](item, msq, query)){
+				break
+			} else {
+				--match_index
+			}
+		}
+	}
+	return match_index;
+};
+
+
+var epicFailTest = function(item, msq, query){
+	var full_item_string = (item.artist || '') + (item.track || '');
+	return full_item_string.indexOf(msq.artist.replace(/^The /, '')) == -1 && full_item_string.indexOf(msq.track) == -1;
+};
+
+var downGrateTests = [
+	function(item, msq, query){
+		return item.artist == msq.artist && item.track == msq.track;
+	},
+	function(item, msq, query){
+		return item.artist.toLowerCase() == msq.artist.toLowerCase() && item.track.toLowerCase() == msq.track.toLowerCase();
+	},
+	function(item, msq, query){
+		return (item.artist.replace(/^The /, '') == msq.artist.replace(/^The /, '')) && (item.track == msq.track)
+	},
+	function(item, msq, query){
+		return (item.artist.replace(/^The /, '') == msq.artist.replace(/^The /, '')) && (item.track.replace(/.mp3$/, '') == msq.track);
+	},
+	function(item, msq, query){
+		return (item.artist.toLowerCase() == msq.artist.replace(/^The /).toLowerCase()) && (item.track.toLowerCase() == msq.track.toLowerCase());
+	},
+	function(item, msq, query){
+		return item.artist.indexOf(msq.artist) != -1 && item.track.indexOf(msq.track) != -1
+	},
+	function(item, msq, query){
+		return item.artist.toLowerCase().indexOf(msq.artist.toLowerCase()) != -1 && item.track.toLowerCase().indexOf(msq.track.toLowerCase()) != -1;
+	}
+];
+
 var getSongFileModel = function(mo, player){
 	return this.models[mo.uid] = this.models[mo.uid] || (new songFileModel(this, mo)).setPlayer(player);
 };
