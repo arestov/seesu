@@ -345,7 +345,7 @@ cloneObj(songUI.prototype, {
 			var pos = getClickPosition(e, this);
 			_this.md.setVolume((pos/50) * 100);
 			var volumeSheet = su.ui.els.volume_s && su.ui.els.volume_s;
-			var rules = volumeSheet.cssRules || volumeSheet.styleSheet.rules;
+			var rules = volumeSheet.cssRules || volumeSheet.sheet.rules;
 			rules[0].style.width = pos + 'px';
 		});
 		$('<div class="volume-state-position"></div>').appendTo(volume_state);
