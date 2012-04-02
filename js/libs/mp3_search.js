@@ -40,9 +40,6 @@ var downGrateTests = [
 		return (item.artist.replace(/^The /, '') == msq.artist.replace(/^The /, '')) && (item.track == msq.track)
 	},
 	function(item, msq, query){
-		return (item.artist.replace(/^The /, '') == msq.artist.replace(/^The /, '')) && (item.track.replace(/.mp3$/, '') == msq.track);
-	},
-	function(item, msq, query){
 		return (item.artist.toLowerCase() == msq.artist.replace(/^The /).toLowerCase()) && (item.track.toLowerCase() == msq.track.toLowerCase());
 	},
 	function(item, msq, query){
