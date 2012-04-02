@@ -73,7 +73,7 @@ var mainLevelNavUI = function(mal) {
 };
 createPrototype(mainLevelNavUI, new baseNavUI(), {
 	createBase: function(){
-		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b></span>');
+		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon"></span></span>');
 	}
 });
 
@@ -311,7 +311,7 @@ investgNavUI = function(mlm) {
 };
 createPrototype(investgNavUI, new baseNavUI(), {
 	createBase: function() {
-		this.c = $('<span class="nav-item nav-search-results" title="Search results"><b></b></span>');
+		this.c = $('<span class="nav-item nav-search-results" title="Search results"><b></b><span class="icon"></span></span>');
 	}
 });
 

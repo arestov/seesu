@@ -60,6 +60,14 @@ servModel.extendTo(fileInTorrent, {
 			'loading-progress': function(factor){
 				this.changeBar(this.cloading, factor);
 			},
+			buffering: function(state, oldstate) {
+				if (state){
+					this.c.addClass('buffering-progress')
+				} else if (oldstate){
+					this.c.removeClass('buffering-progress')
+				}
+				
+			},
 			play: function(state, oldstate){
 
 				if (state == 'play'){
@@ -255,6 +263,9 @@ servModel.extendTo(fileInTorrent, {
 				var dec = opts.position/opts.duration;
 				this.updateState('playing-progress', dec);
 				this.updateProp('loaded_duration', opts.duration);
+			},
+			buffering: function(state) {
+				this.updateState('buffering-progress', !!state);
 			},
 			loading: function(opts){
 				var factor;
