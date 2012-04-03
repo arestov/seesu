@@ -181,9 +181,7 @@ a.download-mp3:hover{
 	line-height:13px;
 
 }
-.track-progress, .moplas-block ul li.selected-mf .mf-progress{
-	background:#505050;
-	
+.track-progress, .moplas-block ul li.selected-mf .mf-progress{	
 	position:relative;
 	overflow:hidden;
 	max-width:100%;
@@ -192,7 +190,7 @@ a.download-mp3:hover{
 	right:0;
 	
 	
-	background: #444444;
+	background-color: #444444;
 	border-top: 1px solid #434343;
 	border-bottom: 1px solid #767676;
 	-moz-border-radius: 7px;

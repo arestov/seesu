@@ -256,6 +256,9 @@ a.desc{
 			.want-more-songs .selected-mf .mf-text{
 				font-size: inherit;
 				}
+		.selected-mf.buffering-progress .mf-progress{
+			background:url(../i/spinner_darkest_small.gif) no-repeat 95% 50%;
+			}
 	.moplas-block .moplas-list li.overstocked{
 		display: none;
 		}

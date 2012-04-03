@@ -60,7 +60,7 @@ servModel.extendTo(fileInTorrent, {
 			'loading-progress': function(factor){
 				this.changeBar(this.cloading, factor);
 			},
-			buffering: function(state, oldstate) {
+			"buffering-progress": function(state, oldstate) {
 				if (state){
 					this.c.addClass('buffering-progress')
 				} else if (oldstate){

@@ -126,6 +126,8 @@
 			
 		var bf;
 		a.attachEvent('Buffering', function(buffering_started){
+			cb('buffering', id, buffering_started);
+			/*
 			console.log('Buffering: ' + a.BufferingProgress)
 			//if (_this.current_song != aud){console.log('wrong event');return false}
 			
@@ -141,7 +143,7 @@
 			} else{
 				//_this.wmp_p_events.progress_loading(_this, aud.a.BufferingProgress, 100);
 				clearTimeout(bf);
-			}
+			}*/
 		});
 		
 	
