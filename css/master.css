@@ -477,6 +477,12 @@ display:none;
 		float:none;
 		
 	}
+	.artist-info .artist-tags, .artist-info .artist-similar{
+		height:auto;
+	}
+	.artist-meta-info .desc-name em{
+		padding:0;
+	}
 }
 
 .play-list-holder{
