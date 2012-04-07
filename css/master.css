@@ -1112,6 +1112,10 @@ iframe.you-tube-video,embed.you-tube-video{
 		.attention-message .close-message:hover{
 			color:#ccc;
 			}
-.download-song-link{
+.moplas-block ul li .download-song-link{
 	float:right;
+	margin-right:5px;
+	}
+.moplas-block ul li .download-pressed{
+	color: #757575;
 	}
