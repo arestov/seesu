@@ -139,21 +139,7 @@ var vkApi = function(vk_t, params) {
 
 
 
-	/*{
-		test: function(mo){
-			return canUseSearch(mo, _this.search_source);
-		},
-		search: function(){
-			return _this.audio_search.apply(_this, arguments);
-		},
-		name: this.search_source.name,
-		description: 'vkontakte.ru',
-		slave: false,
-		preferred: null,
-		s: this.search_source,
-		q: p.queue
-	};
-	*/
+
 
 };
 
@@ -214,33 +200,6 @@ vkSearch.prototype = {
 			return by_best_matching_index(g,f, msq);
 		});
 		return music_list;
-	},
-	
-	audio_search: function(msq, callback, error, nocache, after_ajax, only_cache) {
-		var _this = this;
-
-		var async_ans = this.findAudio(msq, {
-				only_cache: only_cache,
-				nocache: nocache,
-				not_init_queue: true
-			})
-				.done(function(r) {
-					if (r && r.length){
-						callback(r, _this.s);
-					} else {
-						error();
-					}
-				})
-				.fail(function() {
-					if (error){error();}
-				})
-				.progress(function(note){
-					if (note == 'just-requested' && after_ajax){
-						after_ajax();
-					}
-				});
-
-		return async_ans.queued || async_ans.cache_used;
 	},
 	findAudio: function(msq, opts) {
 		var _this		= this,

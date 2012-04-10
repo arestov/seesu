@@ -266,32 +266,6 @@ scMusicSearch.prototype = {
 		}
 		return entity
 	},
-	trashMusicSearch: function(msq, callback, error, nocache, after_ajax, only_cache) {
-		var _this = this;
-
-		var async_ans = this.findAudio(msq, {
-				only_cache: only_cache,
-				nocache: nocache,
-				not_init_queue: true
-			})
-				.done(function(r) {
-					if (r && r.length){
-						callback(r, _this.s);
-					} else {
-						error();
-					}
-				})
-				.fail(function() {
-					if (error){error();}
-				})
-				.progress(function(note){
-					if (note == 'just-requested' && after_ajax){
-						after_ajax();
-					}
-				});
-
-		return async_ans.queued || async_ans.cache_used;
-	},
 	findAudio: function(msq, opts) {
 		var
 			_this = this,

@@ -32,6 +32,7 @@ var jsLoadComplete,
 	"js/common-libs/htmlencoding.js",
 	
 	"js/network.js",
+	"js/network.songs-search.js",
 	"js/libs/network.soundcloud.js",
 	"js/libs/network.vk.auth.js",
 	"js/libs/network.vk.api.js",

@@ -18,6 +18,15 @@
 	
 })(window);
 
+
+
+var getHTMLText = function(text) {
+	var safe_node = document.createElement('div');
+	safe_node.innerHTML = text;
+	return $(safe_node).text();
+
+};
+
 var changeFavicon = function(d, src, type) {
 	var link = d.createElement('link'),
 		oldLink = d.getElementById('dynamic-favicon');

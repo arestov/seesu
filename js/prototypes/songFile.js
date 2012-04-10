@@ -21,13 +21,13 @@ suServView.extendTo(fileInTorrentUI,{
 		
 
 		var pg = $('<span class="mf-progress"></span>')
-		var f_text = $('<span class="mf-text"></span>').text(this.md.sr_item.titleNoFormatting).appendTo(pg);
+		var f_text = $('<span class="mf-text"></span>').text(this.md.sr_item.title || getHTMLText(this.md.sr_item.HTMLTitle)).appendTo(pg);
 
 		this.downloadlink = $('<a class="external download-song-link"></a>').click(function(e) {
 			e.stopPropagation();
 			e.preventDefault();
 			_this.md.download();
-		}).text('torrent').attr('href', 'http://isohunt.com/download/' + this.md.sr_item.isohunt_id).appendTo(this.c);
+		}).text('torrent').attr('href', this.md.sr_item.torrent_link).appendTo(this.c);
 
 		pg.appendTo(this.c);
 
@@ -55,9 +55,9 @@ servModel.extendTo(fileInTorrent, {
 	},
 	download: function() {
 		if (!window.btapp){
-			app_env.openURL('http://isohunt.com/download/' + this.sr_item.isohunt_id);
+			app_env.openURL(this.sr_item.torrent_link);
 		} else {
-			btapp.add.torrent('http://isohunt.com/download/' + this.sr_item.isohunt_id)
+			btapp.add.torrent(this.sr_item.torrent_link)
 		}
 		this.updateState('download-pressed', true)
 	}

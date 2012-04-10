@@ -16,12 +16,13 @@
   },
   "permissions": [
 	"https://*.vk.com/*",
+  "http://*.vk.com/*",
 	"http://*.last.fm/*",
 	"http://*.audioscrobbler.com/*",
 	"http://api.soundcloud.com/*",
-	"http://*.seesu.me/*",
-	"http://*.vk.com/*"
   "http://*.nigma.ru/*",
-  "https://ajax.googleapis.com/*"
+  "https://ajax.googleapis.com/*",
+  "http://*.isohunt.com/*",
+  "http://*.seesu.me/*"
   ]
 }

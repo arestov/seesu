@@ -57,6 +57,7 @@ lastfm_api.prototype= {
 		}
 	},
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
+	cache_namespace: "lastfm",
 	get: function(method, data, options){
 		return this.send(method, data, options);
 	},
@@ -102,7 +103,7 @@ lastfm_api.prototype= {
 
 			var cache_used;
 			if (!options.nocache){
-				cache_used = this.cache_ajax.get('lastfm', params.api_sig, function(r){
+				cache_used = this.cache_ajax.get(this.cache_namespace, params.api_sig, function(r){
 					deferred.resolve(r);
 				});
 				if (cache_used) {
@@ -120,7 +121,7 @@ lastfm_api.prototype= {
 					if (!use_post_serv){
 						var cache_used;
 						if (!options.nocache){
-							cache_used = cache_ajax.get('lastfm', params.api_sig, function(r){
+							cache_used = cache_ajax.get(_this.cache_namespace, params.api_sig, function(r){
 								deferred.resolve(r);
 							});
 						}
@@ -137,7 +138,7 @@ lastfm_api.prototype= {
 								success: function(r){
 									deferred.resolve.apply(deferred, arguments);
 									if (!post && _this.cache_ajax){
-										_this.cache_ajax.set('lastfm', params.api_sig, r);
+										_this.cache_ajax.set(_this.cache_namespace, params.api_sig, r);
 									}
 								},
 								complete: function(xhr){
