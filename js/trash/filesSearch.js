@@ -121,7 +121,7 @@ var fileInTorrent = function(query, torrent_link){
 001069742470440223270:3zaccy_n32i
       
 */
-
+//Star Slinger  Elizabeth Fraser ".mp3" -inurl:(htm|html|php) intitle:("index of")
 //"Hudson Mohawke" "All Your Love" -inurl:(htm|html|php) intitle:"index of" "last modified" "parent directory" description size mp3
 
 var findTorrentMP3Song = function(data) {
@@ -129,7 +129,7 @@ var findTorrentMP3Song = function(data) {
 		global: false,
 		type: "GET",
 		dataType: "jsonp",
-		url: "http://ajax.googleapis.com/ajax/services/search/web?v=1.0",//cx=001069742470440223270:ftotl-vgnbs
+		url: "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&cx=001069742470440223270:3zaccy_n32i",
 		data: data,
 		error:function(){
 			console.log('google search requset error')
