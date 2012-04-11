@@ -70,7 +70,7 @@ isohuntTorrentSearch.prototype = {
 					
 					if (!cache_used){
 						$.ajax({
-							url: "http://isohunt.com/js/json.php",
+							url: "http://ca.isohunt.com/js/json.php",
 							type: "GET",
 							dataType: "json",
 							data: {
