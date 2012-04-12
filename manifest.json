@@ -24,5 +24,6 @@
   "https://ajax.googleapis.com/*",
   "http://*.isohunt.com/*",
   "http://*.seesu.me/*"
+  "http://api.songkick.com/*"
   ]
 }
