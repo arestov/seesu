@@ -252,6 +252,7 @@ eemiter.extendTo(browseMap, {
 			if (cb) {
 				cb(nv, ov);
 			}
+			return {nv: nv, ov: ov};
 		}
 	},
 	updateNav: function(tl, url_restoring){
@@ -279,8 +280,25 @@ eemiter.extendTo(browseMap, {
 			this.old_nav_tree = old_tree;
 		}
 		this.nav_tree = tree;
-		this.setCurrentURL(tree, old_tree, url_restoring);
-		this.setCurrentNav(tree, old_tree, url_restoring);
+		var 
+			url_changed = this.setCurrentURL(tree, old_tree, url_restoring),
+			title_changed = this.setCurrentNav(tree, old_tree, url_restoring);
+		if (url_changed){
+				
+			this.fire('nav-change', 
+				{
+					url: url_changed.nv || "",
+					map_level: this.getCurMapL()
+				},
+				{
+					url: url_changed.ov || "",
+					map_level: this.getPrevMampL()
+				}, 
+				!!url_restoring, title_changed);
+		};
+
+		
+
 	},
 	getPrevMampL: function() {
 		return this.old_nav_tree && this.old_nav_tree[0];
@@ -319,14 +337,13 @@ eemiter.extendTo(browseMap, {
 			new_nav[i].onTitleChange(this.onNavTitleChange);
 		}
 
-		this.setTitle(this.joinNavTitle(new_nav));
+		return this.setTitle(this.joinNavTitle(new_nav));
 	},
 	setTitle: function(new_title) {
 		var _this = this;
-		this.sProp('cur_title', new_title, function(nv, ov) {
+		return this.sProp('cur_title', new_title, function(nv, ov) {
 			_this.fire('title-change', nv, ov);
 		});
-		return this;
 	},
 	joinNavTitle: function(nav) {
 		var nav_t = [];
@@ -363,7 +380,7 @@ eemiter.extendTo(browseMap, {
 		for (var i = 0; i < new_tree.length; i++) {
 			new_tree[i].on('url-change', this.onNavUrlChange);
 		}
-		this.setURL(this.joinNavURL(new_tree), false, url_restoring);
+		return this.setURL(this.joinNavURL(new_tree), false, url_restoring);
 	},
 	joinNavURL: function(nav) {
 		var url = [];
@@ -377,7 +394,7 @@ eemiter.extendTo(browseMap, {
 	},
 	setURL: function(url, replace, url_restoring) {
 		var _this = this;
-		this.sProp('cur_url', url, function(nv, ov) {
+		return this.sProp('cur_url', url, function(nv, ov) {
 			if (!url_restoring){
 				_this.fire('url-change', nv, ov || "", _this.getCurMapL(), replace);
 			}
@@ -395,7 +412,6 @@ eemiter.extendTo(browseMap, {
 			);
 
 		});
-		return this;
 	},
 	replaceURL: function(s_num) {
 		this.setURL(this.joinNavURL(this.getTreeResidents(this.nav_tree)), true);

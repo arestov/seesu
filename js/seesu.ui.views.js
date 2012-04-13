@@ -371,11 +371,15 @@ views = function(su_map){
 
 			//console.log(arguments);
 		})
-		.on('every-url-change', function(nd, od, replace) {
-
-			su.track_page(nd.map_level.resident.page_name);
+		.on('every-url-change', function(nv, ov, replace) {
+			if (replace){
+				su.track_page(nv.map_level.resident.page_name);
+			}
 			
 		})
+		.on('nav-change', function(nv, ov, history_restoring, title_changed){
+			su.track_page(nv.map_level.resident.page_name);
+		});
 
 };
 //su.ui.nav.daddy
