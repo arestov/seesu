@@ -276,16 +276,24 @@ cloneObj(songUI.prototype, {
 
 		var pl = this.md.plst_titl,
 			pl_type = pl.playlist_type;
-			
-		if (pl_type != 'artist'){
-			$('<a class="js-serv">' + localize('artcard') + '</a>')
+		
+		var artist_link_con = dominator_head.children('.closer-to-track');
+		
+		if (pl_type == 'artist'){
+			artist_link_con.addClass('one-artist-playlist');
+		}
+
+		$('<a class="js-serv">' + localize('artcard') + '</a>')
 				.data('artist', this.md.artist)
-				.appendTo(dominator_head.children('.closer-to-track'))
+				.appendTo(artist_link_con)
 				.click(function(){
 					su.views.showArtcardPage(_this.md.artist);
 					su.track_event('Artist navigation', 'art card', _this.md.artist);
 				});
-		}
+
+		
+			
+
 		
 		var users = context.children('.track-listeners');
 		var users_list = users.children('.song-listeners-list');

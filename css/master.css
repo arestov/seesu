@@ -595,6 +595,14 @@ display:none;
 		.track-info-dominator .dominator-head .closer-to-track{
 			padding-top:7px;
 		}
+		.one-artist-playlist a{
+			color:#666;
+			border-bottom-color: #666;
+			}
+			.one-artist-playlist a:hover{
+				color:#777;
+				border-bottom-color:#696969;
+				}
 	.track-context .extend-switcher{
 		border:0;
 		padding: 7px;
