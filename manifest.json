@@ -23,6 +23,7 @@
   "http://*.nigma.ru/*",
   "https://ajax.googleapis.com/*",
   "http://*.isohunt.com/*",
-  "http://*.seesu.me/*"
+  "http://*.seesu.me/*",
+  "http://api.songkick.com/*"
   ]
 }

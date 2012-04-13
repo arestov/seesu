@@ -126,9 +126,12 @@ isohuntTorrentSearch.prototype = {
 			olddone.call(this, function(r) {
 				if (!result){
 					result = [];
-					for (var i = 0; i < Math.min(r.items.list.length, 10); i++) {
-						_this.wrapItem(result, r.items.list[i], msq);
-					};
+					if (r.items && r.items.list){
+						for (var i = 0; i < Math.min(r.items.list.length, 10); i++) {
+							_this.wrapItem(result, r.items.list[i], msq);
+						};
+					}
+					
 				}
 				cb(result, 'torrent');
 
