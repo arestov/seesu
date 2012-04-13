@@ -22,6 +22,7 @@
 	"http://api.soundcloud.com/*",
   "http://*.nigma.ru/*",
   "https://ajax.googleapis.com/*",
+  "http://gdata.youtube.com/*",
   "http://*.isohunt.com/*",
   "http://*.seesu.me/*",
   "http://api.songkick.com/*"
