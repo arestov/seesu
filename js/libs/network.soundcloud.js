@@ -105,7 +105,7 @@ scApi.prototype = {
 		var query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
 		
 		var search_source = {name: 'soundcloud', key: 0};
-		var sc_key = getPreloadedNK('sc_key');
+		var sc_key = this.key;
 		var use_cache = !nocache;
 		if (use_cache){
 			var cache_used = cache_ajax.get('soundcloud', query, function(r){callback(r,search_source);})

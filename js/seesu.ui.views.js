@@ -155,12 +155,19 @@ createPrototype(mainLevelUI, new suServView(), {
 			var s = this.els.pllistlevel.add(this.now_playing_link);
 			if (state){
 				s.addClass('player-played');
-				this.changeFavicon('playing');
+
+				if (app_env.need_favicon){
+					this.changeFavicon('playing');
+				}
+				
 			} else {
 				s.each(function(i, el){
 					$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
 				});
-				this.changeFavicon('usual');
+				if (app_env.need_favicon){
+					this.changeFavicon('usual');
+				}
+				
 			}
 		},
 		"doc-title": function(title) {

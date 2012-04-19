@@ -184,9 +184,6 @@ model.extendTo(baseSong, {
 		if (this.mp3_search){
 			opts = opts || {};
 			opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this);
-
-
-
 		
 			if (!this.artist || !this.track || this.raw() ){
 				return false;
@@ -196,9 +193,6 @@ model.extendTo(baseSong, {
 				artist:this.artist,
 				track: this.track
 			};
-			var mqs = this.artist + ' - '+ this.track;
-
-			
 
 			var oldFilesSearchCb = this.filesSearchCb;
 

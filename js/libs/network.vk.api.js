@@ -124,8 +124,8 @@ Class.extendTo(vkCoreApi, {
 var vkApi = function(vk_t, params) {
 	this.init(params);
 	var p = params || {};
-	if (params.cache_ajax){
-		this.cache_ajax = params.cache_ajax;
+	if (p.cache_ajax){
+		this.cache_ajax = p.cache_ajax;
 	}
 	this.setAccessToken(vk_t.access_token);
 

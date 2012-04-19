@@ -480,7 +480,7 @@ var by_best_matching_index;
 		this.ids = [];
 		this.se_list = [];
 		this.search_emitters = {};
-		this.searches_pr  = searches_pr;
+		this.searches_pr  = searches_pr || {};
 	};
 
 	eemiter.extendTo(mp3Search,  {

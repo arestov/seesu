@@ -1,3 +1,8 @@
+var createInvestigComplect = function(){
+
+};
+
+
 var investigationUI = function(invstg){
 	this.invstg = invstg;
 	this.init();

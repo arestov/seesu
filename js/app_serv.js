@@ -215,6 +215,7 @@ window.app_env = (function(wd){
 			env.app_type = 'chrome_app';
 			env.as_application = false;
 			env.needs_url_history = true;
+			env.need_favicon = true;
 		} else{
 			env.app_type = 'chrome_extension';
 			env.as_application = true;
@@ -227,6 +228,7 @@ window.app_env = (function(wd){
 			env.app_type = 'vkontakte';
 			env.check_resize = true;
 		} else{
+			env.need_favicon = true;
 			env.app_type = 'web_app';
 		}
 		env.as_application = false;
