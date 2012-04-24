@@ -1,5 +1,12 @@
-var eemiter = function(){};
-Class.extendTo(eemiter, {
+var provoda = {
+	Eventor: function(){},
+	StatesEmitter: function() {},
+	Model: function(){},
+	View: function(){}
+};
+
+var eemiter = provoda.Eventor;
+Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
 		this.reg_fires = {};
@@ -98,8 +105,8 @@ Class.extendTo(eemiter, {
 	}
 });
 
-var statesEmmiter = function() {};
-eemiter.extendTo(statesEmmiter, {
+var statesEmmiter = provoda.StatesEmitter;
+eemiter.extendTo(provoda.StatesEmitter, {
 	init: function(){
 		this._super();
 		this.states = {};
@@ -189,8 +196,8 @@ eemiter.extendTo(statesEmmiter, {
 });
 
 
-var servModel = function(){};
-statesEmmiter.extendTo(servModel, {
+var servModel = provoda.Model;
+statesEmmiter.extendTo(provoda.Model, {
 	init: function(){
 		this._super();
 		this.states = {};
@@ -328,8 +335,8 @@ statesEmmiter.extendTo(servModel, {
 });
 
 
-var servView = function(){};
-statesEmmiter.extendTo(servView, {
+var servView = provoda.View;
+statesEmmiter.extendTo(provoda.View, {
 	init: function(){
 		this._super();
 		this.children = [];
