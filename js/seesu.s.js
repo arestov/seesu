@@ -241,7 +241,7 @@ seesuServerAPI.prototype = {
 							//su.s.setInfo('vk', su.vk.user_info);
 
 							//su.s.api('user.update', su.vk.user_info);
-							su.fire('dg-auth');
+							su.trigger('dg-auth');
 							if (callback){callback();}
 						}
 					});

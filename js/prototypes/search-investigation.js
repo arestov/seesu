@@ -162,7 +162,7 @@ suMapModel.extendTo(investigation, {
 		for (var i = 0; i < this.sections.length; i++) {
 			rc += this.sections[i].r.length;
 		};
-		this.fire('resultsChanged', rc);
+		this.trigger('resultsChanged', rc);
 	},
 	doEverythingForQuery: function(){
 		this.searchf.call(this);
@@ -188,10 +188,10 @@ suMapModel.extendTo(investigation, {
 		return q == this.q;
 	},
 	loading:function(){
-		this.fire('stateChange', 'loading');
+		this.trigger('stateChange', 'loading');
 	},
 	loaded: function(){
-		this.fire('stateChange', 'complete');
+		this.trigger('stateChange', 'complete');
 	},
 	remarkStyles: function(){
 		var c = 0;
@@ -313,7 +313,7 @@ suMapModel.extendTo(investigation, {
 			delete this.selected_inum;
 			this.changeResultsCounter();
 			this.doEverythingForQuery();
-			this.fire('url-change')//fixme; place before changing ui!?
+			this.trigger('url-change')//fixme; place before changing ui!?
 		}
 		
 	},
@@ -435,7 +435,7 @@ servModel.extendTo(baseSuggest, {
 		if (this.onView){
 			this.onView();
 		}
-		this.fire('view');
+		this.trigger('view');
 	}
 });
 

@@ -70,7 +70,7 @@ servModel.extendTo(vkLogin, {
 		this.updateState('request-description', text);
 	},
 	requestAuth: function(opts) {
-		this.fire('auth-request', opts);
+		this.trigger('auth-request', opts);
 	}
 });
 

@@ -290,7 +290,7 @@ createPrototype(seesuSection,  new searchSection(), {
 					_this.loadMore();
 				})
 				.on('disabled-state-change', function(state){
-					_this.fire('items-change');
+					_this.trigger('items-change');
 				});
 			this.setButtonText();
 		}

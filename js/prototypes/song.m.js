@@ -302,12 +302,12 @@ model.extendTo(baseSong, {
 		if (opts.have_tracks){
 			this.updateState('playable', true);
 		}
-		this.fire('files_search', opts);
+		this.trigger('files_search', opts);
 		this.updateState('files_search', opts);
 	},
 	view: function(no_navi, user_want){
 		if (!this.state('mp-show')){
-			this.fire('view', no_navi, user_want);
+			this.trigger('view', no_navi, user_want);
 			this.findFiles();
 		}
 	},

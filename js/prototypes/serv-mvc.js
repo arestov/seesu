@@ -45,7 +45,7 @@ Class.extendTo(eemiter, {
 		}
 		return this;
 	},
-	fire: function(){
+	trigger: function(){
 		var args = Array.prototype.slice.call(arguments);
 		var name = args.shift();
 		var cbs = this.subscribes[name];
@@ -68,7 +68,7 @@ Class.extendTo(eemiter, {
 				}
 			}
 			this.requests.push(rq);
-			this.fire('request', rq);
+			this.trigger('request', rq);
 		}
 		return this;
 		
@@ -244,7 +244,7 @@ statesEmmiter.extendTo(servModel, {
 		for (var i = 0; i < this.children.length; i++) {
 			this.children[i].die();
 		}
-		this.fire('die');
+		this.trigger('die');
 	},
 	addChild: function() {
 		this.children.push.apply(this.children, arguments);
@@ -302,7 +302,7 @@ statesEmmiter.extendTo(servModel, {
 			for (var i = 0; i < this.views.length; i++) {
 				this.views[i].change(is_prop, name, value);
 			}
-			this.fire(name + '-state-change', value, old_value[0]);
+			this.trigger(name + '-state-change', value, old_value[0]);
 			if (!is_prop){
 				this.callStateWatchers(name, value, old_value[0]);
 				this.iterateCSWatchers(name);
@@ -341,7 +341,7 @@ statesEmmiter.extendTo(servView, {
 	},
 	markAsDead: function() {
 		this.dead = true;
-		this.fire('die');
+		this.trigger('die');
 		for (var i = 0; i < this.children.length; i++) {
 			this.children[i].markAsDead();
 		};
@@ -441,7 +441,7 @@ statesEmmiter.extendTo(servView, {
 		value = value || false;
 		var old_value = this.replaceState(is_prop, name, value);
 		if (old_value){
-			this.fire(name + '-state-change', value, old_value[0]);
+			this.trigger(name + '-state-change', value, old_value[0]);
 			if (!is_prop){
 				this.callStateWatchers(name, value, old_value[0]);
 				if (allow_complex_watchers){

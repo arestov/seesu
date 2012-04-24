@@ -69,7 +69,7 @@ eemiter.extendTo(commonMessagesStore, {
 	markAsReaded: function(message) {
 		var changed = this.glob_store.set(this.store_name, message);
 		if (changed){
-			this.fire('read', message);
+			this.trigger('read', message);
 		}
 	},
 	getReadedMessages: function() {

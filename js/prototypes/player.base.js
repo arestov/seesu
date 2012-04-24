@@ -39,7 +39,7 @@ eemiter.extendTo(playerBase, {
 				});
 			}
 
-			this.fire(event_name, {
+			this.trigger(event_name, {
 				song_file: song_file,
 				song_id: id,
 				opts: opts

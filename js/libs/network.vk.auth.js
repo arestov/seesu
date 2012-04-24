@@ -26,7 +26,7 @@ eemiter.extendTo(vkAuth, {
 		
 	},
 	waitData: function() {
-		this.fire('data-wait');
+		this.trigger('data-wait');
 	},
 	createAuthFrame: function(first_key){
 		var _this = this;
@@ -37,16 +37,16 @@ eemiter.extendTo(vkAuth, {
 		addEvent(window, 'message', function(e){
 			if (e.data == 'vk_bridge_ready:'){
 				console.log('vk_bridge_ready')
-				_this.fire('vk-bridge-ready');
+				_this.trigger('vk-bridge-ready');
 				e.source.postMessage("add_keys:" + first_key, '*');
 			} else if(e.data.indexOf('vk_token:') === 0){
-				_this.fire('vk-token-receive', e.data.replace('vk_token:',''));
+				_this.trigger('vk-token-receive', e.data.replace('vk_token:',''));
 				//vkTokenAuth(e.data.replace('vk_token:',''));
 				console.log('got vk_token!!!!')
 				console.log(e.data.replace('vk_token:',''));
 				//seesu.track_event('Auth to vk', 'end');
 			} else if (e.data == 'vk_error:'){
-				_this.fire('vk-token-error');
+				_this.trigger('vk-token-error');
 			}
 		});
 		$(i).addClass('hidden');
@@ -76,7 +76,7 @@ eemiter.extendTo(vkAuth, {
 		//open_urls
 
 		if (!p.not_open){
-			this.fire('want-open-url', init_auth_data.link, init_auth_data);
+			this.trigger('want-open-url', init_auth_data.link, init_auth_data);
 			this.waitData();
 		} else{
 			this.startIndicating();

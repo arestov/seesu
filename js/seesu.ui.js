@@ -437,7 +437,7 @@ seesu_ui.prototype = {
 							state_recovered = true;
 						}
 					}
-					su.fire('dom', _this);
+					su.trigger('dom', _this);
 					console.log('fired dom!')
 					_this.can_fire_on_domreg = true;
 					

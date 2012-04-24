@@ -152,7 +152,7 @@ var seesuApp = function(version) {
 };
 eemiter.extendTo(seesuApp, {
 	removeDOM: function(d, ui) {
-		this.fire('dom-die', d, this.ui == ui, this.ui);
+		this.trigger('dom-die', d, this.ui == ui, this.ui);
 	},
 	checkStats: function() {
 		if (this.usage_counter > 2){
@@ -203,7 +203,7 @@ eemiter.extendTo(seesuApp, {
 	},
 	setVkApi: function(vkapi, user_id) {
 		this.vk_api = vkapi;
-		this.fire('vk-api', vkapi, user_id);
+		this.trigger('vk-api', vkapi, user_id);
 	}
 });
 

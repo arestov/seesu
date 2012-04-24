@@ -7,7 +7,7 @@ var mapLevel = function(num, parent_levels, resident, map){
 	if (resident){
 		this.setResident(resident);
 		resident.assignMapLev(this);
-		resident.fire('mpl-attach');
+		resident.trigger('mpl-attach');
 		//this.buildResident();
 	}
 };
@@ -39,7 +39,7 @@ Class.extendTo(mapLevel, {
 	},
 	die: function(){
 		this.resident.mlmDie();
-		this.resident.fire('mpl-detach');
+		this.resident.trigger('mpl-detach');
 		delete this.map;
 	},
 	_sliceTM: function(transit, url_restoring){ //private alike
@@ -285,7 +285,7 @@ eemiter.extendTo(browseMap, {
 			title_changed = this.setCurrentNav(tree, old_tree, url_restoring);
 		if (url_changed){
 				
-			this.fire('nav-change', 
+			this.trigger('nav-change', 
 				{
 					url: url_changed.nv || "",
 					map_level: this.getCurMapL()
@@ -342,7 +342,7 @@ eemiter.extendTo(browseMap, {
 	setTitle: function(new_title) {
 		var _this = this;
 		return this.sProp('cur_title', new_title, function(nv, ov) {
-			_this.fire('title-change', nv, ov);
+			_this.trigger('title-change', nv, ov);
 		});
 	},
 	joinNavTitle: function(nav) {
@@ -396,9 +396,9 @@ eemiter.extendTo(browseMap, {
 		var _this = this;
 		return this.sProp('cur_url', url, function(nv, ov) {
 			if (!url_restoring){
-				_this.fire('url-change', nv, ov || "", _this.getCurMapL(), replace);
+				_this.trigger('url-change', nv, ov || "", _this.getCurMapL(), replace);
 			}
-			_this.fire(
+			_this.trigger(
 				'every-url-change', 
 				{
 					url: nv,

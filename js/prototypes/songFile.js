@@ -126,7 +126,7 @@ servModel.extendTo(fileInTorrent, {
 			this.progress_c = $('<div class="mf-progress"></div>');
 			this.c.click(function() {
 				if (!_this.state('play')){
-					_this.sf.fire('want-to-be-selected');
+					_this.sf.trigger('want-to-be-selected');
 				} 
 			});
 
@@ -141,7 +141,7 @@ servModel.extendTo(fileInTorrent, {
 					}
 					_this.sf.setPositionByFactor(_this.width && ((pos/_this.width)));
 				} else {
-					_this.sf.fire('want-to-be-selected');
+					_this.sf.trigger('want-to-be-selected');
 				}
 				return false;
 				//su.ui.hidePopups();
@@ -188,7 +188,7 @@ servModel.extendTo(fileInTorrent, {
 						_this.sf.play();
 					}
 				} else {
-					_this.sf.fire('want-to-be-selected');
+					_this.sf.trigger('want-to-be-selected');
 				}
 			});
 

@@ -503,7 +503,7 @@ createPrototype(mfCor, new servModel(), {
 				mopla = mopla || this.song();
 				if (mopla){
 					this.setCurrentMopla(mopla);
-					this.fire('before-mf-play', mopla);
+					this.trigger('before-mf-play', mopla);
 					mopla.play();
 				}
 				
@@ -553,14 +553,14 @@ createPrototype(mfCor, new servModel(), {
 
 /*
 
-this.fire('got-results')
+this.trigger('got-results')
 
-this.fire('got-result')
+this.trigger('got-result')
 
-this.fire('error')
+this.trigger('error')
 
 
-this.fire('got-nothing')
+this.trigger('got-nothing')
 
 в процессе
 

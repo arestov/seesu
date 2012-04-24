@@ -297,7 +297,7 @@ var musicSeachEmitter;
 				};
 			}
 			if (space_added){
-				this.fire('space-added');
+				this.trigger('space-added');
 			}
 			return this.steams[name][key];
 		},
@@ -338,7 +338,7 @@ var musicSeachEmitter;
 			},100);
 		},
 		emit: function(get_next){
-			this.fire('changed', this.search_completed, get_next);
+			this.trigger('changed', this.search_completed, get_next);
 
 			for (var i=0; i < this.fdefs.length; i++) {
 				this.emmit_handler(this.fdefs[i], this.search_completed, get_next);
@@ -346,7 +346,7 @@ var musicSeachEmitter;
 			
 		},
 		notify: function(){
-			this.fire('progress');
+			this.trigger('progress');
 			for (var i=0; i < this.fdefs.length; i++) {
 				if (!this.fdefs[i].done && this.fdefs[i].while_wait){
 					this.fdefs[i].while_wait(); 
@@ -755,7 +755,7 @@ var by_best_matching_index;
 					}
 				}
 			}
-			this.fire('new-search', search, filter);
+			this.trigger('new-search', search, filter);
 			
 		},
 		getMasterSlaveSearch: function(filter){

@@ -51,7 +51,7 @@ createPrototype(muAns, new eemiter(), {
 		}
 		this.fin = true;
 		this.busy(false);
-		this.fire('fail', non_fixable, only_others);
+		this.trigger('fail', non_fixable, only_others);
 	},
 	resolve: function(files) {
 		delete this.error;
@@ -61,7 +61,7 @@ createPrototype(muAns, new eemiter(), {
 		}
 		this.fin = true;
 		this.busy(false);
-		this.fire('done', this.t);
+		this.trigger('done', this.t);
 	},
 	done: function(cb){
 		this.on('done', cb);

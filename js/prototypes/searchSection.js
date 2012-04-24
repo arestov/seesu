@@ -140,12 +140,12 @@ createPrototype(searchSection, new servModel(), {
 	},
 	setActive: function(){
 		this.updateState('active', true);
-		this.fire('state-change', true);
+		this.trigger('state-change', true);
 	},
 	setInactive: function(){
 		
 		this.updateState('active', false);
-		this.fire('state-change', false);
+		this.trigger('state-change', false);
 	},
 	loading: function(){
 		this.updateState('loading', true);
@@ -197,7 +197,7 @@ createPrototype(searchSection, new servModel(), {
 		this.edges_list = []
 		this.setButtonText(false, q);
 		this.showButton();
-		this.fire('items-change');
+		this.trigger('items-change');
 	},
 	removeOldResults: function(){
 
@@ -237,6 +237,6 @@ createPrototype(searchSection, new servModel(), {
 		this.updateState('changed', new Date());
 
 		this.setButtonText(!!this.r.length, this.r.query);
-		this.fire('items-change', this.r.length);
+		this.trigger('items-change', this.r.length);
 	}
 });
