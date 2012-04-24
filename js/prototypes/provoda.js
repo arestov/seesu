@@ -5,7 +5,6 @@ var provoda = {
 	View: function(){}
 };
 
-var eemiter = provoda.Eventor;
 Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
@@ -106,7 +105,7 @@ Class.extendTo(provoda.Eventor, {
 });
 
 var statesEmmiter = provoda.StatesEmitter;
-eemiter.extendTo(provoda.StatesEmitter, {
+provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	init: function(){
 		this._super();
 		this.states = {};
@@ -197,7 +196,7 @@ eemiter.extendTo(provoda.StatesEmitter, {
 
 
 var servModel = provoda.Model;
-statesEmmiter.extendTo(provoda.Model, {
+provoda.StatesEmitter.extendTo(provoda.Model, {
 	init: function(){
 		this._super();
 		this.states = {};
@@ -334,9 +333,7 @@ statesEmmiter.extendTo(provoda.Model, {
 	}
 });
 
-
-var servView = provoda.View;
-statesEmmiter.extendTo(provoda.View, {
+provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(){
 		this._super();
 		this.children = [];

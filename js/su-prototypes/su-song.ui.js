@@ -11,10 +11,9 @@ var songUI = function(mo, complex){
 
 	this.setModel(mo);
 };
-songUI.prototype = new suServView();
 
-cloneObj(songUI.prototype, {
-	constructor: songUI,
+
+suServView.extendTo(songUI, {
 	appendChildren: function() {
 		//this.expand();
 	},

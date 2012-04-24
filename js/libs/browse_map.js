@@ -90,7 +90,7 @@ function browseMap(mainLevelResident){
 	//today seesu has no deeper level
 };
 
-eemiter.extendTo(browseMap, {
+provoda.Eventor.extendTo(browseMap, {
 	makeMainLevel: function(){
 		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
 		return this;

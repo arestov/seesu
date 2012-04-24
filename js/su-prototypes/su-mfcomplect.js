@@ -1,12 +1,12 @@
 
 
 var notifyCounterUI = function(md) {
-	this.callParentMethod('init');
+	this.init();
 	this.createBase();
 	this.setModel(md);
 };
 
-createPrototype(notifyCounterUI, new suServView(), {
+suServView.extendTo(notifyCounterUI, {
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
@@ -23,13 +23,13 @@ createPrototype(notifyCounterUI, new suServView(), {
 });
 
 var notifyCounter = function(name, banned_messages) {
-	this.callParentMethod('init');
+	this.init();
 	this.messages = {};
 	this.banned_messages = banned_messages || [];
 	this.name = name;
 };
 
-createPrototype(notifyCounter, new servModel(), {
+provoda.Model.extendTo(notifyCounter, {
 	ui_constr: function() {
 		return new notifyCounterUI(this);
 	},
@@ -60,12 +60,12 @@ createPrototype(notifyCounter, new servModel(), {
 
 var mfComplectUI = function(mf) {
 	this.md = this.mf = mf;
-	this.callParentMethod('init');
+	this.init();
 	this.createBase();
 	this.setModel(mf);
 	
 };
-createPrototype(mfComplectUI, new suServView(), {
+suServView.extendTo(mfComplectUI, {
 	createBase: function() {
 		this.c = $('<div class="moplas-list"></div>');
 		this.header_text = this.mf.sem_part.name;
@@ -104,7 +104,7 @@ createPrototype(mfComplectUI, new suServView(), {
 });
 
 var mfComplect = function(mf_cor, sem_part, mo) {
-	this.callParentMethod('init');
+	this.init();
 	this.sem_part = sem_part;
 	this.mo = mo;
 	this.mf_cor = mf_cor;
@@ -131,7 +131,7 @@ var mfComplect = function(mf_cor, sem_part, mo) {
 	}
 };
 
-createPrototype(mfComplect, new servModel(), {
+provoda.Model.extendTo(mfComplect, {
 	ui_constr: function() {
 		return new mfComplectUI(this);
 	},
@@ -147,12 +147,12 @@ createPrototype(mfComplect, new servModel(), {
 
 
 var mfCorUI = function(md) {
-	this.callParentMethod('init');
+	this.init();
 	this.md = md;
 	this.createBase();
 	this.setModel(md);
 };
-createPrototype(mfCorUI, new suServView(), {
+suServView.extendTo(mfCorUI, {
 	state_change: {
 		changed: function(val) {
 			this.appendChildren();
@@ -252,7 +252,7 @@ createPrototype(mfCorUI, new suServView(), {
 
 
 var mfCor = function(mo, omo) {
-	this.callParentMethod('init');
+	this.init();
 	this.omo = omo;
 	this.mo = mo;
 	this.complects = {};
@@ -280,7 +280,7 @@ var mfCor = function(mo, omo) {
 		}
 	});
 };
-createPrototype(mfCor, new servModel(), {
+provoda.Model.extendTo(mfCor, {
 	ui_constr: function() {
 		return new mfCorUI(this);
 	},

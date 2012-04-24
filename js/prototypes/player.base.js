@@ -1,6 +1,6 @@
 
 var playerBase = function(){};
-eemiter.extendTo(playerBase, {
+provoda.Eventor.extendTo(playerBase, {
 	constructor: playerBase,
 	global_volume: true,
 	init: function(volume){

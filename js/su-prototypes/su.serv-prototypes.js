@@ -21,7 +21,7 @@ mapLevelModel.extendTo(suMapModel, {
 
 var suServView = function() {};
 
-servView.extendTo(suServView, {
+provoda.View.extendTo(suServView, {
 	init: function() {
 		this._super();
 
@@ -65,7 +65,7 @@ var commonMessagesStore = function(glob_store, store_name) {
 };
 
 
-eemiter.extendTo(commonMessagesStore, {
+provoda.Eventor.extendTo(commonMessagesStore, {
 	markAsReaded: function(message) {
 		var changed = this.glob_store.set(this.store_name, message);
 		if (changed){

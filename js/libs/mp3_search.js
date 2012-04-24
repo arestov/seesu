@@ -72,7 +72,7 @@ var musicSeachEmitter;
 	};
 	
 
-	eemiter.extendTo(musicSeachEmitter, {
+	provoda.Eventor.extendTo(musicSeachEmitter, {
 		canSearchBy: function (search_source){
 			if (!this.steams){
 				return true;
@@ -483,7 +483,7 @@ var by_best_matching_index;
 		this.searches_pr  = searches_pr || {};
 	};
 
-	eemiter.extendTo(mp3Search,  {
+	provoda.Eventor.extendTo(mp3Search,  {
 		updateStoringOfId: function(really_save, subraw, handler, stillNeed, i){
 				if (this.ids[i]){
 					if (!really_save){

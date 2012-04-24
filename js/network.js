@@ -27,7 +27,7 @@ var vkLoginUI = function(md) {
 	this.setModel(md);
 };
 
-servView.extendTo(vkLoginUI, {
+provoda.View.extendTo(vkLoginUI, {
 	state_change: {
 		wait: function(state) {
 			if (state){

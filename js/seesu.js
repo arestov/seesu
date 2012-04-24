@@ -150,7 +150,7 @@ var seesuApp = function(version) {
 	});
 
 };
-eemiter.extendTo(seesuApp, {
+provoda.Eventor.extendTo(seesuApp, {
 	removeDOM: function(d, ui) {
 		this.trigger('dom-die', d, this.ui == ui, this.ui);
 	},

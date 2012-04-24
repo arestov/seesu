@@ -68,11 +68,11 @@ servModel.extendTo(fileInTorrent, {
 
 	var songFileModelUI = function(sf) {
 		this.sf = sf;
-		this.callParentMethod('init');
+		this.init();
 		this.createBase();
 		this.setModel(sf);
 	};
-	createPrototype(songFileModelUI, new suServView(), {
+	suServView.extendTo(songFileModelUI, {
 		state_change: {
 			'playing-progress': function(factor){
 				this.changeBar(this.cplayng, factor);
@@ -234,7 +234,7 @@ servModel.extendTo(fileInTorrent, {
 	});
 
 	songFileModel = function(file, mo){
-		servModel.prototype.init.call(this);
+		this.init();
 		this.mo = mo;
 		for (var a in file){
 			if (typeof file[a] != 'function' && typeof file[a] != 'object'){
@@ -244,8 +244,7 @@ servModel.extendTo(fileInTorrent, {
 		this.uid = 'song-file-' + counter++;
 		this.parent = file;
 	};
-	songFileModel.prototype = new servModel();
-	cloneObj(songFileModel.prototype, {
+	provoda.Model.extendTo(songFileModel, {
 		ui_constr: function() {
 			return new songFileModelUI(this);
 		},

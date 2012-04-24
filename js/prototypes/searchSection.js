@@ -3,9 +3,9 @@
 var searchSectionUI = function(seasc){};
 
 
-createPrototype(searchSectionUI, new suServView(), {
+suServView.extendTo(searchSectionUI, {
 	init: function(seasc){
-		this.callParentMethod('init');
+		this._super();
 		this.seasc = seasc;
 		this.createCon();
 		this.createHead();
@@ -129,9 +129,9 @@ createPrototype(searchSectionUI, new suServView(), {
 
 var searchSection = function(sectionInfo){};
 
-createPrototype(searchSection, new servModel(), {
+provoda.Model.extendTo(searchSection, {
 	init: function(){
-		this.callParentMethod('init');
+		this._super();
 		this.edges_list = [];
 		this.rendering_list = [];
 	},

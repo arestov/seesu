@@ -10,7 +10,7 @@ show_track_page
 (function() {
 var baseNavUI = function() {};
 
-createPrototype(baseNavUI, new suServView(), {
+suServView.extendTo( baseNavUI, {
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
@@ -48,7 +48,7 @@ createPrototype(baseNavUI, new suServView(), {
 		}
 	},
 	init: function(mlm) {
-		this.callParentMethod('init');
+		this._super();
 		this.createBase();
 		this.bindClick();
 		var text_place = this.c.find('span');
@@ -82,7 +82,7 @@ var mainLevelUI = function(m_l){
 
 	this.md = this.m_l = m_l;
 	
-	this.callParentMethod('init');
+	this.init();
 
 	this.sui = su.ui;
 	this.d = su.ui.d;
@@ -93,7 +93,8 @@ var mainLevelUI = function(m_l){
 
 	this.setModel(m_l);
 };
-createPrototype(mainLevelUI, new suServView(), {
+
+suServView.extendTo(mainLevelUI, {
 
 	state_change: {
 		'mp-show': function(opts) {

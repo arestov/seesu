@@ -1,15 +1,16 @@
 var artCardUI = function(artcard) {
 	this.artcard = artcard;
 	
-	this.callParentMethod('init')
+	this.init();
 	this.createBase();
 	this.setModel(artcard);
 	
 };
-createPrototype(artCardUI, new suServView(), {
+
+suServView.extendTo(artCardUI, {
 	die: function() {
 		this.blur();
-		this.callParentMethod('die');	
+		this._super();	
 	},
 	blur: function() {
 		$(su.ui.els.slider).removeClass('show-art-card');

@@ -1,7 +1,7 @@
 var vkAuth = function(app_id, urls, permissions, open_api, deep_sanbdox) {
 	this.init(app_id, urls, permissions, open_api, deep_sanbdox);
 };
-eemiter.extendTo(vkAuth, {
+provoda.Eventor.extendTo(vkAuth, {
 	init: function(app_id, urls, permissions, open_api, deep_sanbdox) {
 		this.app_id = app_id;
 		this.urls = urls;
