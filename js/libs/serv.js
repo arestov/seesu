@@ -461,7 +461,7 @@ createPrototype = function(constr, assi_prototype, clone_prototype){
 	Class = function(){};
 
 	// Create a new Class that inherits from this class
-	var extend = Class.extendTo = function(namedClass, prop) {
+	Class.extendTo = function(namedClass, prop) {
 		var _super = this.prototype;
 
 		// Instantiate a base class (but only create the instance,
@@ -484,10 +484,14 @@ createPrototype = function(constr, assi_prototype, clone_prototype){
 		namedClass.prototype.constructor = namedClass;
 
 		// And make this class extendable
-		namedClass.extendTo = extend;
-
+		namedClass.extendTo = Class.extendTo;
+		namedClass.extend = Class.extend;
 		return namedClass;
-   };
+	};
+	Class.extend = function(prop){
+		return this.extendTo(function(){}, prop);
+	}
+
 })();
 
 
