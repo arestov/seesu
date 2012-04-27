@@ -1,6 +1,7 @@
 (function() {
 	var createAE = function(id, url, cb) {
 		var a = new Audio(url);
+		a.volume = 1;
 		addEvent(a, 'play', function(){
 			cb('play', id);
 		});

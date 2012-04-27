@@ -3,6 +3,7 @@ var soundManager;
 	var createSoundSample = function(cb) {
 		return {
 			multiShot: false,
+			volume: 100,
 			onplay: function(){
 				cb('play', this.sID)
 			},

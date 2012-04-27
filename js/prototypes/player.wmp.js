@@ -10,6 +10,7 @@
 			au.SendPlayStateChangeEvents = true;
 			au.ShowControls = false;
 			au.autostart = false;
+			au.Volume = 0;
 		return au;
 	};
 	var 
