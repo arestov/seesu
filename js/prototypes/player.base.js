@@ -3,12 +3,11 @@ var playerBase = function(){};
 provoda.Eventor.extendTo(playerBase, {
 	constructor: playerBase,
 	global_volume: true,
-	init: function(volume){
+	init: function(){
 		this._super();
 		this.song_files = {};
 		this.attached = {};
 	},
-	volume: 100,
 	setCore: function(core){
 		if (!this.subscriber){
 			var _this = this;
@@ -62,7 +61,7 @@ provoda.Eventor.extendTo(playerBase, {
 	play: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("play", song_file.uid);
-			if (this.global_volume){
+			if (this.global_volume && typeof this.volume == 'number'){
 				this.setVolume(song_file, this.volume);
 			}
 			

@@ -48,7 +48,7 @@ window.connect_dom_to_som = function(d, cb){
 			search_form: search_form,
 			start_page_place: start_screen.children('.for-startpage')
 		};
-		
+		/*
 		jsLoadComplete({
 			test: function() {
 				return window.su && window.su.p;
@@ -67,7 +67,7 @@ window.connect_dom_to_som = function(d, cb){
 				su_dom.els.volume_s = volume_s;
 
 			}
-		});
+		});*/
 		jsLoadComplete({
 			test: function() {
 				return window.button_menu;

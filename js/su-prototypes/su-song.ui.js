@@ -347,7 +347,7 @@ suServView.extendTo(songUI, {
 
 
 		var tbus = tp.find('.track-buttons');
-
+		/*
 		var volume_state = $('<div class="volume-state"></div>').click(function(e){
 			var pos = getClickPosition(e, this);
 			_this.md.setVolume((pos/50) * 100);
@@ -359,7 +359,7 @@ suServView.extendTo(songUI, {
 
 
 		tbus.before(volume_state)
-
+		*/
 		this.c.append(context);
 			
 	

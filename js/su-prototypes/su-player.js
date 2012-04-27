@@ -7,16 +7,9 @@ var seesuPlayer;
 
 
 	playerComplex.extendTo(seesuPlayer, {
+		global_volume: false,
 		init: function(){
 			this._super();
-			var volume =  suStore('vkplayer-volume');
-				volume = volume && parseFloat(volume);
-			if (volume){
-				this.volume = volume;
-			}
-		},
-		saveVolume: function(vol) {
-			suStore('vkplayer-volume', vol, true);
 		},
 		events: {
 			finish: function(e){

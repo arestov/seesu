@@ -2,6 +2,7 @@ var fileInTorrentUI = function(md) {
 	this.init();
 	this.md = md;
 	this.createBase();
+	this.setModel(md);
 
 };
 suServView.extendTo(fileInTorrentUI,{
@@ -9,6 +10,13 @@ suServView.extendTo(fileInTorrentUI,{
 		"download-pressed": function(state) {
 			if (state){
 				this.downloadlink.addClass('download-pressed')
+			}
+		},
+		overstock: function(state) {
+			if (state){
+				this.c.addClass('overstocked');
+			} else {
+				this.c.removeClass('overstocked');
 			}
 		}
 	},
