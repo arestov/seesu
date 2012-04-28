@@ -849,8 +849,7 @@ display:none;
 	font-size: 0;
 }
 	.rc-s-arrow,.tl-arrow {		
-		margin-left: -11px;
-		top: -22px;
+		top:-11px;
 		border: 11px solid;
 		border-color: transparent   transparent  #555 transparent ;
 		}
@@ -863,7 +862,15 @@ display:none;
 	.tl-arrow{
 		margin-left:0;
 	}	
-
+.rc-arrow{
+	display:block;
+	height:11px;
+	width:22px;
+	margin-left: -11px;
+	top: -11px;
+	overflow: hidden;
+	position: absolute;
+	}
 .triangle {
 	position: absolute;
 	width: 21px;
