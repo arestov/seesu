@@ -125,6 +125,15 @@
 			this.updateState('changed', 'ta' + Math.random() + new Date());
 			return this;
 		},
+		injectExpectedSongs: function(playlist) {
+			if (playlist){
+				for (var i=0, l = playlist.length; i < l; i++) {
+					this.push(playlist[i]);
+				}
+			}
+			this.loadComplete(!playlist || !playlist.length);
+			return this;
+		},
 		loadComplete: function(error){
 			error = ((typeof error == 'string') ? error : (!this.palist.length && error));
 			this.updateState('error', error);
