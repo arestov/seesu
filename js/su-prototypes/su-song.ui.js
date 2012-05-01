@@ -2,18 +2,22 @@
 
 
 
-var songUI = function(mo, complex){
-	this.init();
-	this.md = mo;
-	this.c = $('<li></li>').data('mo', mo);
-	this.rowcs = {};
-	this.createBase();
-
-	this.setModel(mo);
+var songUI = function(mo){
+	this.init(mo);
+	
 };
 
 
 suServView.extendTo(songUI, {
+	init: function() {
+		this._super();
+		this.md = mo;
+		this.rowcs = {};
+		this.createBase();
+		this.setModel(mo);
+	
+		return this;
+	},
 	appendChildren: function() {
 		//this.expand();
 	},
@@ -208,6 +212,7 @@ suServView.extendTo(songUI, {
 	},
 	createBase: function(){
 		var _this = this;
+		this.c = $('<li></li>').data('mo', this.md);
 		this.node = $("<a></a>")
 			.addClass('track-node waiting-full-render')
 			.data('mo', this.md)

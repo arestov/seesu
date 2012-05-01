@@ -640,7 +640,7 @@ seesu_ui.prototype = {
 						for (var i=0, l = Math.min(tracks.length, 30); i < l; i++) {
 							track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
 						}
-						create_playlist(track_list, pl);
+						pl.injectExpectedSongs(track_list);
 					}
 				});
 		}
