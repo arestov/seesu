@@ -9,7 +9,7 @@ var songUI = function(mo){
 
 
 suServView.extendTo(songUI, {
-	init: function() {
+	init: function(mo) {
 		this._super();
 		this.md = mo;
 		this.rowcs = {};

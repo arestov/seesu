@@ -370,18 +370,7 @@
 						_this.palist[i].render();
 						this.appendSongUI(_this.palist[i]);
 					}
-					for (var i=0; i < ordered.length; i++) {
-						if (ordered[i].ui){
-							ordered[i].ui.expand()
-						} else{}
-					};
-					setTimeout(function(){
-						for (var i=0; i < etc.length; i++) {
-							if (etc[i].ui){
-								etc[i].ui.expand()
-							} else{}
-						};
-					},1000);
+
 				} else{
 					for (var i=0; i < _this.palist.length; i++) {
 						_this.palist[i].render(true);
