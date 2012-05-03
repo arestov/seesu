@@ -373,17 +373,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.setStates(md.states);
 		return this;
 	},
-	appendModelTo: function(m, c) {
-		var ui = m.getFreeView();
-		if (ui){
-			if (typeof c == 'function'){
-				c(ui.getC());
-			} else {
-				c.append(ui.getC());
-			}
-			ui.appended();
-		}
-	},
 	wasAppended: function() {
 		return !!this.append_done;
 	},
