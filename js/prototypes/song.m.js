@@ -337,12 +337,6 @@ model.extendTo(baseSong, {
 		this.playable_info = info;
 		return this;
 	},
-	render: function(complex){
-		var v = this.getView();
-		if (!v){
-			this.addView(new songUI(this, complex));
-		}
-	},
 	isNeedsAuth: function(service_name){
 		return !this.raw() && this.mp3_search && (this.mp3_search.isNoMasterOfSlave(service_name) || !this.mp3_search.haveSearch(service_name));
 	},
@@ -352,8 +346,8 @@ model.extendTo(baseSong, {
 	isHaveAnyResultsFrom: function(source_name){
 		return this.mf_cor && this.mf_cor.isHaveAnyResultsFrom(source_name);
 	},
-	isHaveTracks: function(){
-		return this.mf_cor && this.mf_cor.isHaveTracks();
+	isHaveTracks: function(type){
+		return this.mf_cor && this.mf_cor.isHaveTracks(type);
 	},
 	isSearchCompleted: function(){
 		return this.mf_cor && this.mf_cor.isSearchCompleted();

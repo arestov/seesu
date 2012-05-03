@@ -301,6 +301,14 @@ var musicSeachEmitter;
 			}
 			return this.steams[name][key];
 		},
+		isHaveTracks: function(type) {
+			if (type){
+				var s = this.getAllSongTracks('mp3');
+				return !!s[0] && s[0].t[0];
+			} else {
+				return this.have_tracks
+			}
+		},
 		isHaveAnyResultsFrom: function(source_name){
 			return !!this.getSteamData(source_name);
 		},

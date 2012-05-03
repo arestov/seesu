@@ -79,7 +79,7 @@ var song;
 		page_name: 'song page',
 		updateFilesSearchState: function(complete, get_next){
 			this._super.apply(this, arguments);
-			if (this.isHaveTracks()){
+			if (this.isHaveTracks('mp3')){
 				this.plst_titl.markAsPlayable();
 			}
 		},

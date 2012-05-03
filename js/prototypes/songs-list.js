@@ -215,7 +215,7 @@
 			var can_use = [];
 			for (var i=0; i < this.palist.length; i++) {
 				var cur = this.palist[i];
-				if (cur && (cur.isHaveTracks() || !cur.isSearchCompleted())){
+				if (cur && (cur.isHaveTracks('mp3') || !cur.isSearchCompleted())){
 					can_use.push(i);
 				}
 			};	
@@ -307,7 +307,8 @@
 			this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);	
 		},
 		appendSongUI: function(mo){
-			var pl_ui_element = mo.getC();
+			var pl_ui_element = mo.getFreeView();
+				pl_ui_element = pl_ui_element && pl_ui_element.getC();
 			if (!pl_ui_element){
 				return
 			}
@@ -347,36 +348,11 @@
 		render_playlist: function(load_finished) {
 			var _this = this.md;
 			if (_this.palist.length){
-				if (_this.player && _this.player.isPlaying(_this)){
-					var ordered = [];
-					var etc = [];
-
-					var current_song = _this.player && _this.player.c_song;
-					if (current_song) {
-						for (var i = 0; i < _this.palist.length; i++) {
-							if (current_song.isNeighbour(_this.palist[i])){
-								ordered.push(_this.palist[i]);
-							}
-						};
-					}
-					for (var i=0; i < _this.palist.length; i++) {
-						var mo = _this.palist[i];
-						if (ordered.indexOf(mo) == -1){
-							etc.push(mo);
-						}
-						
-					};
-					for (var i=0; i < _this.palist.length; i++) {
-						_this.palist[i].render();
-						this.appendSongUI(_this.palist[i]);
-					}
-
-				} else{
-					for (var i=0; i < _this.palist.length; i++) {
-						_this.palist[i].render(true);
-						this.appendSongUI(_this.palist[i]);
-					}
+			
+				for (var i=0; i < _this.palist.length; i++) {
+					this.appendSongUI(_this.palist[i]);
 				}
+			
 				var actives_mo = $filter(_this.palist, 'states.mp-show', function(v) {return !!v});
 				for (var i = 0; i < actives_mo.length; i++) {
 					actives_mo[i].checkAndFixNeighbours();

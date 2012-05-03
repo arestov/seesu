@@ -350,7 +350,7 @@ provoda.Model.extendTo(mfCor, {
 			
 			this.vk_audio_auth.setRequestDesc(
 					(
-						this.isHaveTracks() ? 
+						this.isHaveTracks('mp3') ? 
 							localize('to-find-better') : 
 							localize("to-find-and-play")
 					)  + " " +  localize('music-files-from-vk'));
@@ -494,7 +494,7 @@ provoda.Model.extendTo(mfCor, {
 	play: function(mopla){
 		var cmf = this.state('current_mopla');
 		var dmf = this.state('default_mopla');
-		if (this.isHaveTracks()){
+		if (this.isHaveTracks('mp3')){
 			mopla = mopla || dmf;
 			if (mopla != cmf || !this.state('play')){
 				if (cmf && mopla != cmf){
@@ -517,8 +517,8 @@ provoda.Model.extendTo(mfCor, {
 	isHaveAnyResultsFrom: function(source_name){
 		return !!this.raw() || !!this.sem && this.sem.isHaveAnyResultsFrom(source_name);
 	},
-	isHaveTracks: function(){
-		return !!this.raw() || !!this.sem && this.sem.have_tracks ;
+	isHaveTracks: function(type){
+		return !!this.raw() || !!this.sem && this.sem.isHaveTracks(type);
 	},
 	isSearchCompleted: function(){
 		return !!this.raw() || !!this.sem && this.sem.search_completed;
