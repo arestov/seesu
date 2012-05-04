@@ -152,9 +152,11 @@ suServView.extendTo(songUI, {
 			});
 			return tidominator;
 		},
+		soact: function(){
+			return this.requirePart('context').children('.song-actions');
+		},
 		tp: function() {
-			var context = this.requirePart('context');
-			var tp = context.children('.track-panel');
+			var tp = this.requirePart('soact').children('.track-panel');
 
 			tp.find('.pc').data('mo', this.md);
 			if (lfm.scrobbling) {
@@ -164,10 +166,8 @@ suServView.extendTo(songUI, {
 		},
 		song_row_context: function() {
 			var tp = this.requirePart('tp');
-
-			var context = this.requirePart('context');
-				
-			var song_row_context = context.children('.row-song-context');
+			
+			var song_row_context = this.requirePart('soact').children('.row-song-context');
 			var song_context  = new contextRow(song_row_context);
 			
 			this.files = song_row_context.children('.track-files');

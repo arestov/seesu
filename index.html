@@ -106,80 +106,84 @@
 			
 			
 		<div class="track-context" >
-			<div class="track-panel">
-				<div class="buttons-panel">
-					<ul class="track-buttons">
-						<li title="About «Adobe Flash Player Security»" class="flash-secur">
-							<a href="javascript:void(0)" class="flash-security-status trackbutton flash-secur-button">fl</a>
-						</li>
-						<li class="scrobbling-button"  title="Last.fm scrobbling" class="l">
-							<a href="javascript:void(0)" class="trackbutton lfm-scrobbling-button"></a>
-						</li>
-					</ul>
-					<div class="nice-buttons-place">
-						<span class="pc-place">
-							<a class="pc pc-add " href="javascript:void(0)" title="add to playlist"></a>
-						</span>
-					</div>
-					
-				</div>
+			<div class="song-actions">
 				
-			</div>
-			<div class="song-row-content row-song-context">
-				<span class="rc-arrow hidden">
-					<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
-				</span>
-				<div class="track-files"></div>
-				<div class="last-fm-scrobbling">
-					<form class="scrobbling-switches" id="scrobbling-switches">
-						<p>scrobbling to last.fm</p>
-					
-						<p><label><input type="radio"  disabled="disabled" class="enable-scrobbling" /> enabled</label></p>	
-						<p><label><input type="radio"  disabled="disabled" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
-					</form>
-					
-					<div class="lfm-granting">
-						<p>
-							<button class="lang localize-grant login-lastfm-button" type="button"  name="scrobbling" >grant</button>
-							<span class="lang localize-lastfm-scrobble-access">To scrobble to last.fm you must grant access to Seesu</span>
-							
-							
-						</p>
-						<div class="lfm-finish">
-							<div class="lang localize-enter-code">
-								Enter here code
-							</div>
-							<div>
-								
-								<input type="text" placeholder='Put your code here' class="lfm-code"/> 
-								<button class="use-lfm-code lang localize-use-code">Use code</button>
-								
-							</div>
-							
-							
+				<div class="track-panel">
+					<div class="buttons-panel">
+						<ul class="track-buttons">
+							<li title="About «Adobe Flash Player Security»" class="flash-secur">
+								<a href="javascript:void(0)" class="flash-security-status trackbutton flash-secur-button">fl</a>
+							</li>
+							<li class="scrobbling-button"  title="Last.fm scrobbling" class="l">
+								<a href="javascript:void(0)" class="trackbutton lfm-scrobbling-button"></a>
+							</li>
+						</ul>
+						<div class="nice-buttons-place">
+							<span class="pc-place">
+								<a class="pc pc-add " href="javascript:void(0)" title="add to playlist"></a>
+							</span>
 						</div>
 						
 					</div>
+					
 				</div>
-				<div class='flash-error'>
-					<p class="lang localize-stop-flash">To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
-					<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
-					<p>
-						<span class="lang localize-add-to-wl"><strong>add</strong> it to white list on  </span>
+				<div class="song-row-content row-song-context">
+					<span class="rc-arrow hidden">
+						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
+					</span>
+					<div class="track-files"></div>
+					<div class="last-fm-scrobbling">
+						<form class="scrobbling-switches" id="scrobbling-switches">
+							<p>scrobbling to last.fm</p>
 						
-						<strong>
-							<a class="flash-s lang localize-flashpage ">flash internet security page</a>
+							<p><label><input type="radio"  disabled="disabled" class="enable-scrobbling" /> enabled</label></p>	
+							<p><label><input type="radio"  disabled="disabled" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
+						</form>
+						
+						<div class="lfm-granting">
+							<p>
+								<button class="lang localize-grant login-lastfm-button" type="button"  name="scrobbling" >grant</button>
+								<span class="lang localize-lastfm-scrobble-access">To scrobble to last.fm you must grant access to Seesu</span>
+								
+								
+							</p>
+							<div class="lfm-finish">
+								<div class="lang localize-enter-code">
+									Enter here code
+								</div>
+								<div>
+									
+									<input type="text" placeholder='Put your code here' class="lfm-code"/> 
+									<button class="use-lfm-code lang localize-use-code">Use code</button>
+									
+								</div>
+								
+								
+							</div>
 							
-						</strong> 
+						</div>
+					</div>
+					<div class='flash-error'>
+						<p class="lang localize-stop-flash">To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
+						<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
+						<p>
+							<span class="lang localize-add-to-wl"><strong>add</strong> it to white list on  </span>
 							
-							<span class="lang localize-and-restart">and then restart Seesu</span>
-							
-					</p>
-					<p class="flash-desandboxing" title="flash security steps"></p>
-					<p class="lang localize-bad-flash-desc">About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
+							<strong>
+								<a class="flash-s lang localize-flashpage ">flash internet security page</a>
+								
+							</strong> 
+								
+								<span class="lang localize-and-restart">and then restart Seesu</span>
+								
+						</p>
+						<p class="flash-desandboxing" title="flash security steps"></p>
+						<p class="lang localize-bad-flash-desc">About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
 
+					</div>
 				</div>
 			</div>
+			
 			
 			<div class="track-info-dominator">
 				<div class="dominator-head">
