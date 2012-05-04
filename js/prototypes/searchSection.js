@@ -1,19 +1,16 @@
-
-
-var searchSectionUI = function(seasc){};
-
+var searchSectionUI = function(){};
 
 suServView.extendTo(searchSectionUI, {
-	init: function(seasc){
+	init: function(md){
 		this._super();
-		this.seasc = seasc;
+		this.md = md;
 		this.createCon();
 		this.createHead();
-		this.button = seasc.button;
+		this.button = md.button;
 
 		this.gc = this.header ? this.header.add(this.c) : this.c;
 
-		this.setModel(seasc);
+		this.setModel(md);
 	},
 	getC: function(){
 		return this.gc;	
@@ -96,8 +93,8 @@ suServView.extendTo(searchSectionUI, {
 			
 		}
 
-		var rendering_list = this.seasc.rendering_list;
-		var last_rendered = this.seasc.edges_list;
+		var rendering_list = this.md.rendering_list;
+		var last_rendered = this.md.edges_list;
 		if (rendering_list){
 			for (var i = 0; i < rendering_list.length; i++) {
 
@@ -135,9 +132,7 @@ provoda.Model.extendTo(searchSection, {
 		this.edges_list = [];
 		this.rendering_list = [];
 	},
-	ui_constr: function(){
-		return new searchSectionUI(this);
-	},
+	ui_constr: searchSectionUI,
 	setActive: function(){
 		this.updateState('active', true);
 		this.trigger('state-change', true);

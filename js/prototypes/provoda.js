@@ -269,7 +269,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			constr;
 
 		args.shift();
-
+		args.unshift(this);
 		if (!v){
 			if (typeof this.ui_constr == 'function'){
 				constr = name == 'main' && this.ui_constr;
@@ -277,11 +277,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 				constr = this.ui_constr[name];
 			}
 			if (constr){
-				v = (new constr()).init.apply(this, args);
-				if (v){
-					this.addView(v, name);
-					return v;
-				}
+				v = new constr();
+				v.init.apply(v, args);
+				this.addView(v, name);
+				return v;
 				
 			}
 		}

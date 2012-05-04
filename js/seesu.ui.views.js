@@ -11,6 +11,16 @@ show_track_page
 var baseNavUI = function() {};
 
 suServView.extendTo( baseNavUI, {
+	init: function(mlm) {
+		this._super();
+		this.createBase();
+		this.bindClick();
+		var text_place = this.c.find('span');
+		if (text_place){
+			this.text_place = text_place;
+		}
+		this.setModel(mlm);
+	},
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
@@ -47,16 +57,7 @@ suServView.extendTo( baseNavUI, {
 			
 		}
 	},
-	init: function(mlm) {
-		this._super();
-		this.createBase();
-		this.bindClick();
-		var text_place = this.c.find('span');
-		if (text_place){
-			this.text_place = text_place;
-		}
-		this.setModel(mlm);
-	},
+
 	resetStackMark: function() {
 		this.c.removeClass('stack-bottom stack-middle stack-top');
 	},
@@ -68,34 +69,32 @@ suServView.extendTo( baseNavUI, {
 	}
 });
 
-var mainLevelNavUI = function(mal) {
-	this.callParentMethod('init', mal);
-};
-createPrototype(mainLevelNavUI, new baseNavUI(), {
+var mainLevelNavUI = function(mal) {};
+
+baseNavUI.extendTo(mainLevelNavUI, {
 	createBase: function(){
 		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon"></span></span>');
 	}
 });
 
 
-var mainLevelUI = function(m_l){
-
-	this.md = this.m_l = m_l;
-	
-	this.init();
-
-	this.sui = su.ui;
-	this.d = su.ui.d;
-
-	this.els = su.ui.els;
-	this.nav = su.ui.nav;
-	this.c = $(this.d.body);
-
-	this.setModel(m_l);
-};
+var mainLevelUI = function(){};
 
 suServView.extendTo(mainLevelUI, {
+	init: function(md){
+		this.md = this.m_l = md;
+	
+		this._super();
 
+		this.sui = su.ui;
+		this.d = su.ui.d;
+
+		this.els = su.ui.els;
+		this.nav = su.ui.nav;
+		this.c = $(this.d.body);
+
+		this.setModel(md);
+	},
 	state_change: {
 		'mp-show': function(opts) {
 			if (opts){
@@ -234,7 +233,7 @@ suServView.extendTo(mainLevelUI, {
 
 
 mainLevel = function() {
-	this.callParentMethod('init');
+	this.init();
 	this.updateState('nav-title', 'Seesu start page');
 
 	if (app_env.check_resize){
@@ -261,14 +260,10 @@ mainLevel = function() {
 };
 
 
-createPrototype(mainLevel, new suMapModel(), {
+suMapModel.extendTo(mainLevel, {
 	ui_constr: {
-		main: function() {
-			return new mainLevelUI(this);
-		},
-		nav: function() {
-			return new mainLevelNavUI(this);
-		}
+		main: mainLevelUI,
+		nav: mainLevelNavUI
 	},
 	page_name: 'start page',
 	nowPlaying: function(text) {
@@ -314,39 +309,32 @@ createPrototype(mainLevel, new suMapModel(), {
 });
 
 
-investgNavUI = function(mlm) {
-	this.callParentMethod('init', mlm);
-};
-createPrototype(investgNavUI, new baseNavUI(), {
+investgNavUI = function() {};
+
+baseNavUI.extendTo(investgNavUI, {
 	createBase: function() {
 		this.c = $('<span class="nav-item nav-search-results" title="Search results"><b></b><span class="icon"></span></span>');
 	}
 });
 
-artCardNavUI = function(mlm) {
-	this.callParentMethod('init', mlm);
-};
-createPrototype(artCardNavUI, new baseNavUI(), {
+artCardNavUI = function() {};
+baseNavUI.extendTo(artCardNavUI, {
 	createBase: function() {
 		this.c = $('<span class="nav-item "><span></span><b></b></span>');
 	}
 });
 
 
-playlistNavUI = function(mlm) {
-	this.callParentMethod('init', mlm);
-};
-createPrototype(playlistNavUI, new baseNavUI(), {
+playlistNavUI = function() {};
+baseNavUI.extendTo(playlistNavUI, {
 	createBase: function() {
 		this.c = $('<span class="nav-item nav-playlist-page"><span></span><b></b></span>');
 	}
 });
 
 
-trackNavUI = function(mlm) {
-	this.callParentMethod('init', mlm);
-};
-createPrototype(trackNavUI, new baseNavUI(), {
+trackNavUI = function(mlm) {};
+baseNavUI.extendTo(trackNavUI, {
 	createBase: function() {
 		this.c = $('<span class="nav-item nav-track-zoom"><span></span><b></b></span>');
 	}

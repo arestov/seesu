@@ -1,13 +1,12 @@
-var artCardUI = function(artcard) {
-	this.artcard = artcard;
-	
-	this.init();
-	this.createBase();
-	this.setModel(artcard);
-	
-};
+var artCardUI = function() {};
 
 suServView.extendTo(artCardUI, {
+	init: function(md){
+		this.md = this.artcard = md;
+		this._super();
+		this.createBase();
+		this.setModel(md);
+	},
 	die: function() {
 		this.blur();
 		this._super();	
@@ -157,7 +156,7 @@ suServView.extendTo(artCardUI, {
 
 
 var artCard = function(artist) {
-	this.callParentMethod('init')
+	this.init();
 	this.artist= artist;
 	this.updateState('nav-text', artist);
 	this.updateState('nav-title', artist);
@@ -185,14 +184,10 @@ var artCard = function(artist) {
 
 
 };
-createPrototype(artCard, new suMapModel(), {
+suMapModel.extendTo(artCard, {
 	ui_constr: {
-		main: function(){
-			return new artCardUI(this)
-		},
-		nav: function() {
-			return new artCardNavUI(this)
-		}	
+		main: artCardUI,
+		nav: artCardNavUI	
 	},
 	page_name: "art card",
 	getURL: function() {

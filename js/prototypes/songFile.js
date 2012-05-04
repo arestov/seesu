@@ -1,11 +1,11 @@
-var fileInTorrentUI = function(md) {
-	this.init();
-	this.md = md;
-	this.createBase();
-	this.setModel(md);
-
-};
+var fileInTorrentUI = function() {};
 suServView.extendTo(fileInTorrentUI,{
+	init: function(md){
+		this._super();
+		this.md = md;
+		this.createBase();
+		this.setModel(md);
+	},
 	state_change: {
 		"download-pressed": function(state) {
 			if (state){
@@ -49,9 +49,7 @@ var fileInTorrent = function(sr_item, mo){
 };
 
 servModel.extendTo(fileInTorrent, {
-	ui_constr: function() {
-		return new fileInTorrentUI(this);
-	},
+	ui_constr: fileInTorrentUI,
 	setPlayer: function() {
 		return this;
 	},
@@ -74,13 +72,14 @@ servModel.extendTo(fileInTorrent, {
 (function(){
 	var counter = 0;
 
-	var songFileModelUI = function(sf) {
-		this.sf = sf;
-		this.init();
-		this.createBase();
-		this.setModel(sf);
-	};
+	var songFileModelUI = function() {};
 	suServView.extendTo(songFileModelUI, {
+		init: function(md){
+			this.md = md;
+			this._super();
+			this.createBase();
+			this.setModel(md);
+		},
 		state_change: {
 			'playing-progress': function(factor){
 				this.changeBar(this.cplayng, factor);
@@ -134,7 +133,7 @@ servModel.extendTo(fileInTorrent, {
 			this.progress_c = $('<div class="mf-progress"></div>');
 			this.c.click(function() {
 				if (!_this.state('play')){
-					_this.sf.trigger('want-to-be-selected');
+					_this.md.trigger('want-to-be-selected');
 				} 
 			});
 
@@ -147,9 +146,9 @@ servModel.extendTo(fileInTorrent, {
 					if (!_this.width){
 						_this.fixWidth();
 					}
-					_this.sf.setPositionByFactor(_this.width && ((pos/_this.width)));
+					_this.md.setPositionByFactor(_this.width && ((pos/_this.width)));
 				} else {
-					_this.sf.trigger('want-to-be-selected');
+					_this.md.trigger('want-to-be-selected');
 				}
 				return false;
 				//su.ui.hidePopups();
@@ -159,23 +158,23 @@ servModel.extendTo(fileInTorrent, {
 			this.cplayng = $('<div class="mf-play-progress"></div>').appendTo(this.progress_c);
 			this.track_text = $('<div class="mf-text"></div>').appendTo(this.progress_c);
 
-			if (this.sf.description){
-				this.track_text.attr('title', this.sf.description);
+			if (this.md.description){
+				this.track_text.attr('title', this.md.description);
 			}
 			
 
 			//this.title_c = $('<span></span>');
 			this.duration_c = $('<span class="mf-duration"></span>').appendTo(this.track_text);
-			if (this.sf.duration){
-				var duration = Math.floor(this.sf.duration/1000);
+			if (this.md.duration){
+				var duration = Math.floor(this.md.duration/1000);
 				if (duration){
 					var digits = duration % 60;
 					this.duration_c.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits ));
 				}
 			}
 
-			$('<span class="main-mf-text"></span>').text(this.sf.getTitle()).appendTo(this.track_text);
-			$('<span class="mf-source"></span>').text(this.sf.from).appendTo(this.track_text);
+			$('<span class="main-mf-text"></span>').text(this.md.getTitle()).appendTo(this.track_text);
+			$('<span class="mf-source"></span>').text(this.md.from).appendTo(this.track_text);
 			//this.title_c.appendTo(this.c);
 
 			this.c.append(this.progress_c);
@@ -191,12 +190,12 @@ servModel.extendTo(fileInTorrent, {
 				if (_this.state('play')){
 
 					if (_this.state('play') == 'play'){
-						_this.sf.pause();
+						_this.md.pause();
 					} else {
-						_this.sf.play();
+						_this.md.play();
 					}
 				} else {
-					_this.sf.trigger('want-to-be-selected');
+					_this.md.trigger('want-to-be-selected');
 				}
 			});
 
@@ -253,9 +252,7 @@ servModel.extendTo(fileInTorrent, {
 		this.parent = file;
 	};
 	provoda.Model.extendTo(songFileModel, {
-		ui_constr: function() {
-			return new songFileModelUI(this);
-		},
+		ui_constr: songFileModelUI,
 		getTitle: function() {
 			var title = [];
 

@@ -3,18 +3,18 @@ var createInvestigComplect = function(){
 };
 
 
-var investigationUI = function(invstg){
-	this.invstg = invstg;
-	this.init();
-	this.createBase();
-	this.setStates(invstg.states);
-	
-};
+var investigationUI = function(){};
 
 suServView.extendTo(investigationUI, {
+	init: function(md){
+		this.md = this.invstg = md;
+		this._super();
+		this.createBase();
+		this.setStates(md.states);
+	},
 	expand: function(){
-		for (var i = 0; i < this.invstg.sections.length; i++) {
-			var cur_ui = this.invstg.sections[i].getFreeView();
+		for (var i = 0; i < this.md.sections.length; i++) {
+			var cur_ui = this.md.sections[i].getFreeView();
 			if (cur_ui){
 				this.addChild(cur_ui);
 				this.c.append(cur_ui.getC());
@@ -137,12 +137,8 @@ investigation = function(init, searchf){
 
 suMapModel.extendTo(investigation, {
 	ui_constr: {
-		main: function(){
-			return new investigationUI(this);
-		},
-		nav: function() {
-			return new investgNavUI(this);
-		}
+		main: investigationUI,
+		nav: investgNavUI
 	},
 	state_change: {
 		"mp-show": function(opts) {
@@ -366,10 +362,10 @@ var searchResults = function(query, prepared, valueOf){
 var baseSuggestUI = function(){};
 
 suServView.extendTo(baseSuggestUI, {
-	init: function(sugg){
+	init: function(md){
 		this._super();
-		if (sugg){
-			this.sugg = sugg;
+		if (md){
+			this.md = md;
 		}
 		
 		this.createBase();
@@ -378,7 +374,7 @@ suServView.extendTo(baseSuggestUI, {
 				.createItem()
 				.bindClick();
 		};
-		this.setModel(sugg)
+		this.setModel(md)
 	},
 	state_change: {
 		active: function(state){
@@ -414,7 +410,7 @@ suServView.extendTo(baseSuggestUI, {
 		if (this.a){
 			var _this = this;
 			this.a.click(function(){
-				_this.sugg.view();
+				_this.md.view();
 			});
 		}
 		
@@ -447,10 +443,7 @@ servModel.extendTo(baseSuggest, {
 
 
 
-var baseSectionButtonUI = function(sugg){
-	this.init(sugg);
-};
-
+var baseSectionButtonUI = function(sugg){};
 baseSuggestUI.extendTo(baseSectionButtonUI, {
 	state_change:  cloneObj({
 		button_text: function(text){
@@ -467,9 +460,7 @@ var baseSectionButton = function(){
 	this.init();
 };
 baseSuggest.extendTo(baseSectionButton, {
-	ui_constr: function(){
-		return new baseSectionButtonUI(this);
-	},
+	ui_constr: baseSectionButtonUI,
 	setText: function(text){
 		this.updateState('button_text', text);
 	},

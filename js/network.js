@@ -57,9 +57,7 @@ var vkLogin = function() {
 }; 
 
 servModel.extendTo(vkLogin, {
-	ui_constr: function() {
-		return new vkLoginUI(this);
-	},
+	ui_constr: vkLoginUI,
 	waitData: function() {
 		this.updateState('wait', true);
 	},

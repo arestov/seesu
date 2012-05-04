@@ -1,12 +1,13 @@
 
 
-var notifyCounterUI = function(md) {
-	this.init();
-	this.createBase();
-	this.setModel(md);
-};
+var notifyCounterUI = function() {};
 
 suServView.extendTo(notifyCounterUI, {
+	init: function(md){
+		this._super();
+		this.createBase();
+		this.setModel(md);
+	},
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
@@ -30,9 +31,7 @@ var notifyCounter = function(name, banned_messages) {
 };
 
 provoda.Model.extendTo(notifyCounter, {
-	ui_constr: function() {
-		return new notifyCounterUI(this);
-	},
+	ui_constr: notifyCounterUI,
 	addMessage: function(m) {
 		if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
 			this.messages[m] = true;
@@ -58,22 +57,22 @@ provoda.Model.extendTo(notifyCounter, {
 	}
 });
 
-var mfComplectUI = function(mf) {
-	this.md = this.mf = mf;
-	this.init();
-	this.createBase();
-	this.setModel(mf);
-	
-};
+var mfComplectUI = function() {};
 suServView.extendTo(mfComplectUI, {
+	init: function(md){
+		this.md = md;
+		this._super();
+		this.createBase();
+		this.setModel(md);
+	},
 	createBase: function() {
 		this.c = $('<div class="moplas-list"></div>');
-		this.header_text = this.mf.sem_part.name;
+		this.header_text = this.md.sem_part.name;
 		this.header_c = $('<h4></h4>').text(this.header_text).appendTo(this.c);
 		this.lc = $('<ul></ul>').appendTo(this.c);
 	},
 	appendChildren: function() {
-		var moplas_list = this.mf.moplas_list;
+		var moplas_list = this.md.moplas_list;
 
 		for (var i = 0; i < moplas_list.length; i++) {
 			var ui  = moplas_list[i].getFreeView();
@@ -132,9 +131,7 @@ var mfComplect = function(mf_cor, sem_part, mo) {
 };
 
 provoda.Model.extendTo(mfComplect, {
-	ui_constr: function() {
-		return new mfComplectUI(this);
-	},
+	ui_constr: mfComplectUI,
 	toggleOverstocked: function() {
 		this.updateState('show-overstocked', !this.state('show-overstocked'));
 	},
@@ -146,13 +143,14 @@ provoda.Model.extendTo(mfComplect, {
 
 
 
-var mfCorUI = function(md) {
-	this.init();
-	this.md = md;
-	this.createBase();
-	this.setModel(md);
-};
+var mfCorUI = function(md) {};
 suServView.extendTo(mfCorUI, {
+	init: function(md){
+		this.md = md;
+		this._super();
+		this.createBase();
+		this.setModel(md);
+	},
 	state_change: {
 		changed: function(val) {
 			this.appendChildren();
@@ -281,9 +279,7 @@ var mfCor = function(mo, omo) {
 	});
 };
 provoda.Model.extendTo(mfCor, {
-	ui_constr: function() {
-		return new mfCorUI(this);
-	},
+	ui_constr: mfCorUI,
 	state_change: {
 		"current_mopla": function(nmf, omf) {
 			if (omf){

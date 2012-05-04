@@ -1,7 +1,5 @@
 (function(){
-	var songsListView = function(pl){
-		this.init(pl);
-	};
+	var songsListView = function(pl){};
 	songsListViewBase.extendTo(songsListView, {
 		appendChildren: function() {
 			
@@ -94,12 +92,8 @@
 	
 	songsListModel.extendTo(songsList, {
 		ui_constr: {
-			main: function(){
-				return new songsListView(this);
-			},
-			nav: function() {
-				return new playlistNavUI(this);
-			}
+			main: songsListView,
+			nav: playlistNavUI
 		},
 		page_name: 'playlist',
 		getURL: function(){

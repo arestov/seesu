@@ -1,20 +1,12 @@
-
-
-
-
-var songUI = function(mo){
-	this.init(mo);
-	
-};
-
+var songUI = function(){};
 
 suServView.extendTo(songUI, {
-	init: function(mo) {
+	init: function(md) {
 		this._super();
-		this.md = mo;
+		this.md = md;
 		this.rowcs = {};
 		this.createBase();
-		this.setModel(mo);
+		this.setModel(md);
 	
 		return this;
 	},

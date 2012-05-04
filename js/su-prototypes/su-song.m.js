@@ -69,12 +69,8 @@ var song;
 
 	baseSong.extendTo(song, {
 		ui_constr: {
-			main: function(){
-				return new songUI(this);
-			},
-			nav: function() {
-				return new trackNavUI(this);
-			}
+			main: songUI,
+			nav: trackNavUI
 		},
 		page_name: 'song page',
 		updateFilesSearchState: function(complete, get_next){
