@@ -263,16 +263,21 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	},
 	getFreeView: function(name){
 		name = name || 'main';
-		var v = this.getView(name, true);
+		var
+			args	= Array.prototype.slice.call(arguments),
+			v		= this.getView(name, true),
+			constr;
+
+		args.shift();
+
 		if (!v){
-			var constr;
 			if (typeof this.ui_constr == 'function'){
 				constr = name == 'main' && this.ui_constr;
 			} else if (this.ui_constr){
 				constr = this.ui_constr[name];
 			}
 			if (constr){
-				v = constr.call(this);
+				v = (new constr()).init.apply(this, args);
 				if (v){
 					this.addView(v, name);
 					return v;
