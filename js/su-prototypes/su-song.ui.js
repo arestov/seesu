@@ -170,9 +170,7 @@ suServView.extendTo(songUI, {
 			var song_row_context = this.requirePart('soact').children('.row-song-context');
 			var song_context  = new contextRow(song_row_context);
 			
-			this.files = song_row_context.children('.track-files');
-			
-			song_context.addPart(this.files, 'files');
+
 			
 			song_context.addPart(song_row_context.children('.last-fm-scrobbling'), 'lastfm');
 			
@@ -333,7 +331,6 @@ suServView.extendTo(songUI, {
 		
 		this.rowcs.users_context = users_context;
 
-		this.files_time_stamp = 0;
 
 
 		var getClickPosition = function(e, node){

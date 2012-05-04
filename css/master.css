@@ -439,10 +439,7 @@ display:none;
 	.desc-text2{
 		overflow:hidden;
 	}
-	.track-files .files-source{
-		float:right;
-		
-	}
+
 @media (max-width:550px) {
 	.daddy .stack-bottom, .daddy .stack-middle{
 		display:none;
@@ -476,10 +473,7 @@ display:none;
 	.desc-text2{
 		overflow:visible;
 	}
-	.track-files .files-source{
-		float:none;
-		
-	}
+
 	.artist-info .artist-tags, .artist-info .artist-similar{
 		height:auto;
 	}
