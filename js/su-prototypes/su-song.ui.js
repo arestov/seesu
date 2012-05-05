@@ -151,56 +151,6 @@ suServView.extendTo(songUI, {
 				}
 			});
 			return tidominator;
-		},
-		soact: function(){
-			return this.requirePart('context').children('.song-actions');
-		},
-		tp: function() {
-			var tp = this.requirePart('soact').children('.track-panel');
-
-			tp.find('.pc').data('mo', this.md);
-			if (lfm.scrobbling) {
-				su.ui.lfm_change_scrobbling(true, tp.find('.track-buttons'));
-			}
-			return tp;
-		},
-		song_row_context: function() {
-			//var tp = this.requirePart('tp');
-
-			//this.md.traackrow.getFreeView(false, this.requirePart('soact'));
-
-			
-			var song_row_context = this.requirePart('soact').children('.row-song-context');
-			var song_context  = new contextRow(song_row_context);
-			
-
-			
-			song_context.addPart(song_row_context.children('.last-fm-scrobbling'), 'lastfm');
-			
-			
-			tp.find('.lfm-scrobbling-button').click(function(){
-				if (!song_context.isActive('lastfm')){
-					var p = su.ui.getRtPP(this);
-					song_context.show('lastfm', p.left + $(this).outerWidth()/2);
-				} else{
-					song_context.hide();
-				}
-			});
-			
-			song_context.addPart(song_row_context.children('.flash-error'), 'flash-error');
-			
-			
-			tp.find('.flash-secur-button').click(function(){
-				if (!song_context.isActive('flash-error')){
-					var p = su.ui.getRtPP(this);
-					song_context.show('flash-error', p.left + $(this).outerWidth()/2);
-				} else{
-					song_context.hide();
-				}
-			});
-			
-			this.rowcs.song_context = song_context;
-			return song_row_context;
 		}
 	},
 	createBase: function(){
@@ -241,7 +191,7 @@ suServView.extendTo(songUI, {
 
 		var context = this.requirePart('context');
 
-		this.md.traackrow.getFreeView(false, this.requirePart('soact'));
+		this.md.traackrow.getFreeView(false, context.children('.song-actions'));
 
 		var mf_cor_view = this.md.mf_cor.getFreeView();
 		if (mf_cor_view){
