@@ -83,5 +83,36 @@ var song;
 			this.hide();
 		}
 	});
+
+
+	var TrackActionsRowUI = function() {};
+	suServView.extendTo(TrackActionsRowUI, {
+		init: function(md, c) {
+			this.md = md;
+			this._super();
+			this.c = c;
+			this.setModel(md);
+		},
+		state_change: {
+			active_part: function(state) {
+				if (state){
+
+				} else {
+					
+				}
+			}
+		}
+	});
+
+	var TrackActionsRow = function(mo) {
+		this.init(mo);
+	};
+	ContextRow.extendTo(TrackActionsRow, {
+		init: function(mo) {
+			this._super();
+
+		},
+		ui_constr: TrackActionsRowUI
+	})
 	//song.prototype = song_methods;
 })();

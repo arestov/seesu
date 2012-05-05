@@ -105,3 +105,28 @@ Class.extendTo(gMessagesStore, {
 
 
 
+var ContextRow = function() {};
+
+provoda.Model.extendTo(ContextRow, {
+	init: function() {
+		this._super();
+		this.context_parts = {};
+		this.active_part = null;
+	},
+	addPart: function(name, model) {
+		if (!this.context_parts[name]){
+			this.context_parts[name] = model;
+		}
+	},
+	switchPart: function(name) {
+		if (this.context_parts[name]){
+			if (this.context_parts[name] != this.active_part){
+				this.active_part.deacivate();
+				this.active_part = this.context_parts[name];
+				this.active_part.acivate();
+			}
+		} else if (this.active_part){
+			this.active_part.deacivate();
+		}
+	}
+});
