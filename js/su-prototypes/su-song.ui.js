@@ -165,7 +165,10 @@ suServView.extendTo(songUI, {
 			return tp;
 		},
 		song_row_context: function() {
-			var tp = this.requirePart('tp');
+			//var tp = this.requirePart('tp');
+
+			//this.md.traackrow.getFreeView(false, this.requirePart('soact'));
+
 			
 			var song_row_context = this.requirePart('soact').children('.row-song-context');
 			var song_context  = new contextRow(song_row_context);
@@ -238,11 +241,7 @@ suServView.extendTo(songUI, {
 
 		var context = this.requirePart('context');
 
-		this.requirePart('song_row_context');
-		
-		var tp = this.requirePart('tp');
-
-
+		this.md.traackrow.getFreeView(false, this.requirePart('soact'));
 
 		var mf_cor_view = this.md.mf_cor.getFreeView();
 		if (mf_cor_view){
@@ -253,8 +252,6 @@ suServView.extendTo(songUI, {
 
 		
 		}
-
-		this.requirePart('song_row_context');
 		
 		
 		
@@ -340,20 +337,6 @@ suServView.extendTo(songUI, {
 		};
 
 
-		var tbus = tp.find('.track-buttons');
-		/*
-		var volume_state = $('<div class="volume-state"></div>').click(function(e){
-			var pos = getClickPosition(e, this);
-			_this.md.setVolume((pos/50) * 100);
-			var volumeSheet = su.ui.els.volume_s && su.ui.els.volume_s;
-			var rules = volumeSheet.cssRules || volumeSheet.sheet.rules;
-			rules[0].style.width = pos + 'px';
-		});
-		$('<div class="volume-state-position"></div>').appendTo(volume_state);
-
-
-		tbus.before(volume_state)
-		*/
 		this.c.append(context);
 			
 	

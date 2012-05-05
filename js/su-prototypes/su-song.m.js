@@ -21,7 +21,9 @@ var song;
 			}
 			
 		});
-		
+		this.traackrow = new TrackActionsRow(this);
+		this.addChild(this.traackrow);
+
 		this.mf_cor = new mfCor(this, this.omo);
 		this.addChild(this.mf_cor);
 		this.mf_cor.on('before-mf-play', function(mopla) {
@@ -84,6 +86,92 @@ var song;
 		}
 	});
 
+	var BaseCRowUI = function(){};
+	suServView.extendTo(BaseCRowUI, {
+		bindClick: function(){
+			if (this.button){
+				var md = this.md;
+				this.button.click(function(){
+					md.switchView();
+				});
+			}
+		},
+		state_change: {
+			'active_view': function(state){
+				if (state){
+					this.c.removeClass('hidden')
+				} else {
+					this.c.addClass('hidden')
+				}
+			}
+		}
+	});
+
+	var BaseCRow = function(){};
+	provoda.Model.extendTo(BaseCRow, {
+		switchView: function(){
+			this.traackrow.switchPart(this.row_name);
+		},
+		deacivate: function(){
+			this.updateState("active_view", false);
+		},
+		acivate: function(){
+			this.updateState("active_view", true);
+		}
+	});
+
+
+
+
+
+	var LastfmRowUI = function(){};
+	BaseCRowUI.extendTo(LastfmRowUI, {
+		init: function(md, parent_c, buttons_panel){
+			this.md = md;
+			this._super();
+			this.c = parent_c.children('.last-fm-scrobbling');
+			this.button = buttons_panel.find('.lfm-scrobbling-button');
+			this.bindClick();
+			this.setModel(md);
+		}
+	});
+
+	var LastfmRow = function(traackrow){
+		this.init(traackrow);
+	};
+	BaseCRow.extendTo(LastfmRow, {
+		init: function(traackrow){
+			this.traackrow = traackrow;
+			this._super();
+		},
+		row_name: 'lastfm',
+		ui_constr: LastfmRowUI
+	});
+
+
+
+	var FlashErrorRowUI = function(){};
+	BaseCRowUI.extendTo(FlashErrorRowUI, {
+		init: function(md, parent_c, buttons_panel){
+			this.md = md;
+			this._super();
+			this.c = parent_c.children('.flash-error');
+			this.button = buttons_panel.find('.flash-secur-button');
+			this.bindClick();
+			this.setModel(md);
+		}
+	});
+
+	var FlashErrorRow = function(){};
+	BaseCRow.extendTo(FlashErrorRow, {
+		init: function(traackrow){
+			this.traackrow = traackrow;
+			this._super();
+		},
+		row_name: 'flash-error',
+		ui_constr: FlashErrorRowUI
+	});
+
 
 	var TrackActionsRowUI = function() {};
 	suServView.extendTo(TrackActionsRowUI, {
@@ -91,16 +179,56 @@ var song;
 			this.md = md;
 			this._super();
 			this.c = c;
+			this.song_row_context = this.c.children('.row-song-context');
 			this.setModel(md);
+
+			var	
+				parts = this.md.getAllParts(),
+				tp = this.getTP();
+
+			
+
+			for (var i in parts) {
+				parts[i].getFreeView(false, this.song_row_context, tp);
+			};
+/*
+
+			var song_context  = new contextRow(song_row_context);
+
+			song_context.addPart(song_row_context.children('.last-fm-scrobbling'), 'lastfm');
+			song_context.addPart(song_row_context.children('.flash-error'), 'flash-error');
+
+
+			tp.find('.lfm-scrobbling-button')
+			tp.find('.flash-secur-button').click(function(){
+				if (!song_context.isActive('flash-error')){
+					var p = su.ui.getRtPP(this);
+					song_context.show('flash-error', p.left + $(this).outerWidth()/2);
+				} else{
+					song_context.hide();
+				}
+			});
+*/
+
+
 		},
 		state_change: {
-			active_part: function(state) {
-				if (state){
-
+			active_part: function(nv, ov) {
+				if (nv){
+					this.song_row_context.removeClass('hidden');
 				} else {
-					
+					this.song_row_context.addClass('hidden');
 				}
 			}
+		},
+		getTP: function() {
+			var tp = this.c.children('.track-panel');
+
+			tp.find('.pc').data('mo', this.md.mo);
+			if (lfm.scrobbling) {
+				su.ui.lfm_change_scrobbling(true, tp.find('.track-buttons'));
+			}
+			return tp;
 		}
 	});
 
@@ -110,9 +238,11 @@ var song;
 	ContextRow.extendTo(TrackActionsRow, {
 		init: function(mo) {
 			this._super();
-
+			this.mo = mo;
+			this.updateState('active_part', false);
+			this.addPart("lastfm", new LastfmRow(this));
 		},
 		ui_constr: TrackActionsRowUI
-	})
+	});
 	//song.prototype = song_methods;
 })();

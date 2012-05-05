@@ -118,15 +118,22 @@ provoda.Model.extendTo(ContextRow, {
 			this.context_parts[name] = model;
 		}
 	},
+	getAllParts: function(){
+		return this.context_parts;
+	},
 	switchPart: function(name) {
-		if (this.context_parts[name]){
-			if (this.context_parts[name] != this.active_part){
+		if (this.context_parts[name] && this.context_parts[name] != this.active_part){
+			if (this.active_part){
 				this.active_part.deacivate();
-				this.active_part = this.context_parts[name];
-				this.active_part.acivate();
 			}
+			this.active_part = this.context_parts[name];
+			this.active_part.acivate();
+			this.updateState('active_part', name);
+	
 		} else if (this.active_part){
+			this.updateState('active_part', false);
 			this.active_part.deacivate();
+			this.active_part = null;
 		}
 	}
 });
