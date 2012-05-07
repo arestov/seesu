@@ -85,7 +85,7 @@ var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_previe
 	);
 };
 
-var parseFastSuggests = function(r, artistSuggest, trackSuggest, tagSuggest, albumSuggest){
+var parseFastSuggests = function(r){
 	
 	
 	
