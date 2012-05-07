@@ -208,6 +208,20 @@ provoda.Eventor.extendTo(seesuApp, {
 	preparePlaylist: function(playlist_title, playlist_type, info, first_song){
 		var pl = new songsList(playlist_title, playlist_type, info, first_song, this.mp3_search, this.p);
 		return pl;
+	},
+	searchPlaylists: function(query) {
+		var r = [];
+		if (this.gena){
+			for (i=0; i < this.gena.playlists.length; i++) {
+				var cur = this.gena.playlists[i];
+				if (cur.playlist_title == query){
+					r.unshift(cur);
+				} else if (cur.playlist_title.match(new  RegExp('\\b' + query))){
+					r.push(cur);
+				}
+			}
+		}
+		return r;
 	}
 });
 

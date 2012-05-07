@@ -133,6 +133,13 @@ provoda.Model.extendTo(searchSection, {
 		this.rendering_list = [];
 	},
 	ui_constr: searchSectionUI,
+	appendResults: function(arr) {
+		var r = [];
+		for (var i = 0; i < arr.length; i++) {
+			r.push(new this.resItem(arr[i]));
+		};
+		this.r.append(r);
+	},
 	setActive: function(){
 		this.updateState('active', true);
 		this.trigger('state-change', true);

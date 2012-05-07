@@ -5,7 +5,12 @@ var parseArtistsResults = function(r, sectionItem){
 	var artists = r.results.artistmatches.artist || false; 
 	artists = artists && toRealArray(artists, 'name');
 	for (var i=0; i < artists.length; i++) {
-		artists_results.push(    new sectionItem(artists[i].name, artists[i].image && artists[i].image[1]['#text'].replace('/serve/64/','/serve/64s/'))    );
+		artists_results.push(    
+			{
+				artist: artists[i].name,
+				image:artists[i].image && artists[i].image[1]['#text'].replace('/serve/64/','/serve/64s/')
+			}
+		);
 	};
 	return artists_results;
 };
@@ -16,7 +21,14 @@ var parseTracksResults = function(r, sectionItem){
 	var tracks = r.results.trackmatches.track || false; 
 	tracks = tracks && toRealArray(tracks, 'name');
 	for (var i=0; i < tracks.length; i++) {
-		tracks_results.push(    new sectionItem(tracks[i].artist, tracks[i].name, tracks[i].image && tracks[i].image[1]['#text'].replace('/serve/64/','/serve/64s/'))   );
+		tracks_results.push(    
+			{
+				artist: tracks[i].artist,
+				track: tracks[i].name,
+				image: tracks[i].image && tracks[i].image[1]['#text'].replace('/serve/64/','/serve/64s/')
+
+			}   
+		);
 	};
 	return tracks_results;
 };
@@ -28,7 +40,9 @@ var parseTagsResults = function(r, sectionItem){
 	var tags = r.results.tagmatches.tag || false; 
 	tags = tags && toRealArray(tags, 'name');
 	for (var i=0; i < tags.length; i++) {
-		tags_results.push(new sectionItem(tags[i].name));
+		tags_results.push({
+			tag: tags[i].name
+		});
 	};
 	return tags_results;
 };
@@ -37,7 +51,11 @@ var parseAlbumsResults = function(r, sectionItem){
 	var albums =  r.results.albummatches.album || false;
 	albums = albums && toRealArray(albums, 'name');
 	for (var i=0; i < albums.length; i++) {
-		pdr.push(     new sectionItem(albums[i].artist, albums[i].name, albums[i].image && albums[i].image[1]['#text'].replace('/serve/64/','/serve/64s/'))   );
+		pdr.push({
+			artist: albums[i].artist,
+			image: albums[i].image && albums[i].image[1]['#text'].replace('/serve/64/','/serve/64s/'),
+			album: albums[i].name
+		});
 	};
 	return pdr;
 };
@@ -52,7 +70,7 @@ var getLastfmSuggests = function(method, lfmquery, q, section, parser, no_previe
 					section.loaded();
 					r = r && parser(r, section.resItem);
 					if (r.length){
-						section.r.append(r);
+						section.appendResults(r);
 						section.renderSuggests(true, !no_preview);
 					} else{
 						section.renderSuggests(true, !no_preview);
@@ -73,35 +91,38 @@ var parseFastSuggests = function(r, artistSuggest, trackSuggest, tagSuggest, alb
 	
 	var sugg_arts = $filter(r.response.docs, 'restype', 6);
 	$.each(sugg_arts, function(i, el){
-		sugg_arts[i] = new artistSuggest(
-			el.artist, 
-			el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false);
+		sugg_arts[i] = {
+			artist: el.artist, 
+			image: el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false
+		};
 	});
 
 	var sugg_tracks = $filter(r.response.docs, 'restype', 9);
 	$.each(sugg_tracks, function(i, el){
-		sugg_tracks[i] = new trackSuggest(
-			el.artist, 
-			el.track,
-			el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false,
-			el.duration
-		);
+		sugg_tracks[i] ={
+			artist: el.artist, 
+			track: el.track,
+			image: el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false,
+			duration: el.duration
+		};
 	});
 
 	var sugg_tags = $filter(r.response.docs, 'restype', 32);
 	$.each(sugg_tags, function(i, el){
-		sugg_tags[i] = new tagSuggest(el.tag);
+		sugg_tags[i] = {
+			tag: el.tag
+		};
 	});
 
 	
 	var sugg_albums = $filter(r.response.docs, 'restype', 8);
 	$.each(sugg_albums, function(i, el){
-		sugg_albums[i] = new albumSuggest(
-			el.artist, 
-			el.album, 
-			el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false,
-			el.resid
-		);
+		sugg_albums[i] = {
+			artist: el.artist, 
+			album: el.album, 
+			image: el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false,
+			resid: el.resid
+		};
 	});
 	
 	
@@ -120,18 +141,18 @@ var fast_suggestion = function(r, q, invstg){
 			tags = invstg.g('tags'),
 			albums = invstg.g('albums');
 
-		r = parseFastSuggests(r, artists.resItem, tracks.resItem, tags.resItem, albums.resItem);
+		r = parseFastSuggests(r);
 
-			artists.r.append(r.artists);
+			artists.appendResults(r.artists);
 			artists.renderSuggests();
 	
-			tracks.r.append(r.tracks);
+			tracks.appendResults(r.tracks);
 			tracks.renderSuggests();
 	
-			tags.r.append(r.tags);
+			tags.appendResults(r.tags);
 			tags.renderSuggests();
 		
-			albums.r.append(r.albums);
+			albums.appendResults(r.albums);
 			albums.renderSuggests();
 	}
 };

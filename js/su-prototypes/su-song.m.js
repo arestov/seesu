@@ -125,7 +125,48 @@ var song;
 	});
 
 
+	var PlaylistAddRowUI = function() {};
+	BaseCRowUI.extendTo(PlaylistAddRowUI, {
+		init: function(md, parent_c, buttons_panel){
+			this.md = md;
+			this._super();
+			this.c = parent_c.children('.addsong-to-playlist');
+			this.button = buttons_panel.find('.pc-place .pc-add');
+			this.bindClick();
+			this.setModel(md);
+			/*
+			var rpp = su.ui.getRtPP(node);
+				su.ui.els.pl_search.wp
+					.data('current_song', clicked_node.data('mo'))
+					.css({
+						top: rpp.top + 'px',
+						left: rpp.left + 'px',
+						display: 'block'
+					});
+					
+				su.ui.els.pl_search.visible = true;
+				
+				if (rpp.left > rpp.cwidth/2){
+					su.ui.els.pl_search.wp.addClass('close-to-right');
+				} else{
+					su.ui.els.pl_search.wp.removeClass('close-to-right');
+				}
+				su.ui.els.pl_r.val('')[0].focus();
+				*/
+		}
+	});
 
+	var PlaylistAddRow = function(traackrow) {
+		this.init(traackrow);
+	};
+	BaseCRow.extendTo(PlaylistAddRow, {
+		init: function(traackrow){
+			this.traackrow = traackrow;
+			this._super();
+		},
+		row_name: 'playlist-add',
+		ui_constr: PlaylistAddRowUI
+	});
 
 
 	var LastfmRowUI = function(){};
@@ -166,7 +207,9 @@ var song;
 		}
 	});
 
-	var FlashErrorRow = function(){};
+	var FlashErrorRow = function(traackrow){
+		this.init(traackrow);
+	};
 	BaseCRow.extendTo(FlashErrorRow, {
 		init: function(traackrow){
 			this.traackrow = traackrow;
@@ -201,24 +244,6 @@ var song;
 					this.parts_views[i] = pv;
 				}
 			};
-/*
-
-			var song_context  = new contextRow(song_row_context);
-
-			song_context.addPart(song_row_context.children('.last-fm-scrobbling'), 'lastfm');
-			song_context.addPart(song_row_context.children('.flash-error'), 'flash-error');
-
-
-			tp.find('.lfm-scrobbling-button')
-			tp.find('.flash-secur-button').click(function(){
-				if (!song_context.isActive('flash-error')){
-					var p = su.ui.getRtPP(this);
-					song_context.show('flash-error', p.left + $(this).outerWidth()/2);
-				} else{
-					song_context.hide();
-				}
-			});
-*/
 
 
 		},
@@ -257,6 +282,11 @@ var song;
 			this.mo = mo;
 			this.updateState('active_part', false);
 			this.addPart("lastfm", new LastfmRow(this));
+			this.addPart("flash-error", new FlashErrorRow(this));
+			this.addPart("playlist-add", new PlaylistAddRow(this));
+			
+
+
 		},
 		ui_constr: TrackActionsRowUI
 	});

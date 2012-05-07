@@ -182,11 +182,7 @@ var viewBlocks = function(sui, d){
 			});
 			
 		
-		$('.ext-playlists', pl_search_wrap).click(function(e){
-			$(this).parent().toggleClass('not-want-to');
-			e.preventDefault();
-		});
-		
+
 		
 		sui.create_playlists_link();
 		}
@@ -198,15 +194,7 @@ var viewBlocks = function(sui, d){
 	
 	
 	
-	
-	sui.addPopup(pl_search_wrap, function(){
-		return sui.els.pl_search.visible;
-		
-	}, function(){
-		sui.els.pl_search.hide();
-	});
-	
-	
+
 	
 
 	

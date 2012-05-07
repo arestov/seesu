@@ -100,42 +100,35 @@ suServView.extendTo(investigationUI, {
 
 
 
-investigation = function(init, searchf){
-	this.init();
-
-	this.sections = [];
-	this.names = {};
-	this.enter_items = false;
-	
-	if (init){
-		init.call(this);
-	}
-	this.searchf = searchf;
-
-	this.setInactiveAll();
-
-	var _this = this;
-	this.regDOMDocChanges(function() {
-		if (su.ui.els.searchres){
-			var child_ui = _this.getFreeView();
-			if (child_ui){
-				su.ui.els.searchres.append(child_ui.getC());
-				child_ui.appended();
-			}
-		}
-		if (su.ui.nav.daddy){
-			var child_ui = _this.getFreeView('nav');
-			if (child_ui){
-				su.ui.nav.daddy.append(child_ui.getC());
-				child_ui.appended();
-			}
-		}
-	});
-	
-};
+investigation = function(){};
 
 
 suMapModel.extendTo(investigation, {
+	init: function() {
+		this._super();
+		this.sections = [];
+		this.names = {};
+		this.enter_items = false;
+		this.setInactiveAll();
+
+		var _this = this;
+		this.regDOMDocChanges(function() {
+			if (su.ui.els.searchres){
+				var child_ui = _this.getFreeView();
+				if (child_ui){
+					su.ui.els.searchres.append(child_ui.getC());
+					child_ui.appended();
+				}
+			}
+			if (su.ui.nav.daddy){
+				var child_ui = _this.getFreeView('nav');
+				if (child_ui){
+					su.ui.nav.daddy.append(child_ui.getC());
+					child_ui.appended();
+				}
+			}
+		});
+	},
 	ui_constr: {
 		main: investigationUI,
 		nav: investgNavUI

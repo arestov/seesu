@@ -108,27 +108,6 @@ var test_pressed_node = function(e, opts){
 				seesu.track_event('Controls', 'next', mouseup ? 'mouseup' : '');
 				
 			} 
-			else if (bN(class_list.indexOf('pc-add'))){
-
-				var rpp = su.ui.getRtPP(node);
-				su.ui.els.pl_search.wp
-					.data('current_song', clicked_node.data('mo'))
-					.css({
-						top: rpp.top + 'px',
-						left: rpp.left + 'px',
-						display: 'block'
-					});
-					
-				su.ui.els.pl_search.visible = true;
-				
-				if (rpp.left > rpp.cwidth/2){
-					su.ui.els.pl_search.wp.addClass('close-to-right');
-				} else{
-					su.ui.els.pl_search.wp.removeClass('close-to-right');
-				}
-				su.ui.els.pl_r.val('')[0].focus();
-				
-			}  
 		}  
 		else if ((node.nodeName == 'INPUT' || node.nodeName == 'BUTTON')) {
 			if (bN(class_list.indexOf('login-lastfm-button')) ){
