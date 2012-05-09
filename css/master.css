@@ -1128,3 +1128,35 @@ iframe.you-tube-video,embed.you-tube-video{
 .moplas-block ul li .download-pressed{
 	color: #757575;
 	}
+
+.addsong-to-playlist{
+	padding:12px 0 0;
+	}
+	.addsong-to-playlist h4{
+		font-weight:400;
+		font-size: 12px;
+		margin: 0 0 10px 3px;
+		padding: 0;
+		}
+	.addsong-to-playlist .playlist-query{
+		background: #777;
+		border-color:#555;
+		margin-bottom: 12px;
+		}
+		.addsong-to-playlist .create-named-playlist{
+			color:#757575;
+			}
+			.addsong-to-playlist .create-named-playlist span{
+				color: #ccc;
+				}
+		.addsong-to-playlist .suggest{
+			cursor: pointer;
+			border-radius:3px;
+			padding:3px;
+			}
+			.addsong-to-playlist .suggest:hover{
+				background-color: #494949;
+				}
+		.addsong-to-playlist .list-of-playlists{
+			width:200px;
+			}

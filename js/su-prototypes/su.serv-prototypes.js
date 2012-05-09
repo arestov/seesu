@@ -137,3 +137,41 @@ provoda.Model.extendTo(ContextRow, {
 		}
 	}
 });
+
+var BaseCRowUI = function(){};
+suServView.extendTo(BaseCRowUI, {
+	bindClick: function(){
+		if (this.button){
+			var md = this.md;
+			this.button.click(function(){
+				md.switchView();
+			});
+		}
+	},
+	getArrowPos: function(){
+		var p = su.ui.getRtPP(this.button);
+		return p.left + this.button.outerWidth()/2;
+	},
+	state_change: {
+		'active_view': function(state){
+			if (state){
+				this.c.removeClass('hidden')
+			} else {
+				this.c.addClass('hidden')
+			}
+		}
+	}
+});
+
+var BaseCRow = function(){};
+provoda.Model.extendTo(BaseCRow, {
+	switchView: function(){
+		this.traackrow.switchPart(this.row_name);
+	},
+	deacivate: function(){
+		this.updateState("active_view", false);
+	},
+	acivate: function(){
+		this.updateState("active_view", true);
+	}
+});

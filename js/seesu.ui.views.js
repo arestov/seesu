@@ -409,7 +409,7 @@ views.prototype = {
 		}
 		
 		var invstg = lev.resident;
-		invstg.scratchResults(query);
+		invstg.changeQuery(query);
 
 	},
 	showArtcardPage: function(artist, save_parents, no_navi){

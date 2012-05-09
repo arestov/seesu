@@ -13,6 +13,11 @@ suServView.extendTo(investigationUI, {
 		this.setStates(md.states);
 	},
 	expand: function(){
+		if (this.expanded){
+			return 
+		} else {
+			this.expanded = true;
+		}
 		for (var i = 0; i < this.md.sections.length; i++) {
 			var cur_ui = this.md.sections[i].getFreeView();
 			if (cur_ui){
@@ -21,7 +26,7 @@ suServView.extendTo(investigationUI, {
 				cur_ui.appended(this);
 
 			}
-		};
+		}
 	},
 	state_change: {
 		"mp-show": function(opts) {
@@ -44,6 +49,11 @@ suServView.extendTo(investigationUI, {
 				this.blur();
 			} else {
 				$(su.ui.els.slider).addClass('show-search-results');
+			}
+		},
+		"can-expand": function(state) {
+			if (state){
+				this.expand();
 			}
 		}
 	},
@@ -110,37 +120,10 @@ suMapModel.extendTo(investigation, {
 		this.names = {};
 		this.enter_items = false;
 		this.setInactiveAll();
-
-		var _this = this;
-		this.regDOMDocChanges(function() {
-			if (su.ui.els.searchres){
-				var child_ui = _this.getFreeView();
-				if (child_ui){
-					su.ui.els.searchres.append(child_ui.getC());
-					child_ui.appended();
-				}
-			}
-			if (su.ui.nav.daddy){
-				var child_ui = _this.getFreeView('nav');
-				if (child_ui){
-					su.ui.nav.daddy.append(child_ui.getC());
-					child_ui.appended();
-				}
-			}
-		});
 	},
 	ui_constr: {
 		main: investigationUI,
 		nav: investgNavUI
-	},
-	state_change: {
-		"mp-show": function(opts) {
-			if (opts){
-				su.search_el = this;
-			}
-			
-			
-		}
 	},
 	page_name: "search results",
 	addCallback: function(event_name, func){
@@ -288,18 +271,19 @@ suMapModel.extendTo(investigation, {
 	getURL: function() {
 		return '?q=' + (this.q || '');	
 	},
-	scratchResults: function(q){
+	changeQuery: function(q){
 		if (this.q != q){
 			this.stopRequests();
 			this.updateState('nav-title', this.getTitleString(q));
 			this.loaded();
 			this.setItemForEnter();
 			for (var i=0; i < this.sections.length; i++) {
-				this.sections[i].scratchResults(q);
+				this.sections[i].changeQuery(q);
 			};
 			this.q = q;
 			
 			delete this.selected_inum;
+			this.updateState('query', q);
 			this.changeResultsCounter();
 			this.doEverythingForQuery();
 			this.trigger('url-change')//fixme; place before changing ui!?
@@ -394,6 +378,13 @@ suServView.extendTo(baseSuggestUI, {
 				this.c.addClass('hidden')
 			}
 		}
+	},
+	createItem: function() {
+		var that = this.md;
+		this.a = $('<a></a>')
+			.text(that.valueOf())
+			.appendTo(this.c);
+		return this;
 	},
 	createBase: function(){
 		this.c = $("<li class='suggest'></li>");

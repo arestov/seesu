@@ -472,5 +472,9 @@ localizer = {
 	"at-this-page": {
 		"original": "at this page",
 		"ru": "на этой странице"
+	},
+	"cr-new-playlist": {
+		"original": "new playlist named",
+		"ru": "новый плейлист"
 	}
 }

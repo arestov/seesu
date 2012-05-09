@@ -185,7 +185,7 @@ provoda.Model.extendTo(searchSection, {
 	doesNeed: function(q){
 		return q == (this.r && this.r.query);
 	},
-	scratchResults: function(q){
+	changeQuery: function(q){
 		if (!q && !this.no_results_text){
 			this.setInactive();
 		}
@@ -197,6 +197,7 @@ provoda.Model.extendTo(searchSection, {
 		this.r = new searchResults(q);
 		this.rendering_list = [];
 		this.edges_list = []
+		this.updateState('query', q);
 		this.setButtonText(false, q);
 		this.showButton();
 		this.trigger('items-change');

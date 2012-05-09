@@ -86,87 +86,8 @@ var song;
 		}
 	});
 
-	var BaseCRowUI = function(){};
-	suServView.extendTo(BaseCRowUI, {
-		bindClick: function(){
-			if (this.button){
-				var md = this.md;
-				this.button.click(function(){
-					md.switchView();
-				});
-			}
-		},
-		getArrowPos: function(){
-			var p = su.ui.getRtPP(this.button);
-			return p.left + this.button.outerWidth()/2;
-		},
-		state_change: {
-			'active_view': function(state){
-				if (state){
-					this.c.removeClass('hidden')
-				} else {
-					this.c.addClass('hidden')
-				}
-			}
-		}
-	});
-
-	var BaseCRow = function(){};
-	provoda.Model.extendTo(BaseCRow, {
-		switchView: function(){
-			this.traackrow.switchPart(this.row_name);
-		},
-		deacivate: function(){
-			this.updateState("active_view", false);
-		},
-		acivate: function(){
-			this.updateState("active_view", true);
-		}
-	});
 
 
-	var PlaylistAddRowUI = function() {};
-	BaseCRowUI.extendTo(PlaylistAddRowUI, {
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
-			this.c = parent_c.children('.addsong-to-playlist');
-			this.button = buttons_panel.find('.pc-place .pc-add');
-			this.bindClick();
-			this.setModel(md);
-			/*
-			var rpp = su.ui.getRtPP(node);
-				su.ui.els.pl_search.wp
-					.data('current_song', clicked_node.data('mo'))
-					.css({
-						top: rpp.top + 'px',
-						left: rpp.left + 'px',
-						display: 'block'
-					});
-					
-				su.ui.els.pl_search.visible = true;
-				
-				if (rpp.left > rpp.cwidth/2){
-					su.ui.els.pl_search.wp.addClass('close-to-right');
-				} else{
-					su.ui.els.pl_search.wp.removeClass('close-to-right');
-				}
-				su.ui.els.pl_r.val('')[0].focus();
-				*/
-		}
-	});
-
-	var PlaylistAddRow = function(traackrow) {
-		this.init(traackrow);
-	};
-	BaseCRow.extendTo(PlaylistAddRow, {
-		init: function(traackrow){
-			this.traackrow = traackrow;
-			this._super();
-		},
-		row_name: 'playlist-add',
-		ui_constr: PlaylistAddRowUI
-	});
 
 
 	var LastfmRowUI = function(){};
@@ -281,9 +202,9 @@ var song;
 			this._super();
 			this.mo = mo;
 			this.updateState('active_part', false);
-			this.addPart("lastfm", new LastfmRow(this));
-			this.addPart("flash-error", new FlashErrorRow(this));
-			this.addPart("playlist-add", new PlaylistAddRow(this));
+			this.addPart("lastfm", new LastfmRow(this, mo));
+			this.addPart("flash-error", new FlashErrorRow(this, mo));
+			this.addPart("playlist-add", new PlaylistAddRow(this, mo));
 			
 
 

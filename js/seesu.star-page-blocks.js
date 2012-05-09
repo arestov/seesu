@@ -97,94 +97,14 @@ var viewBlocks = function(sui, d){
 	
 	
 	
-	
-	
-	var pl_search_wrap = $('#playlist-search', d);
-	
-	sui.els.pl_search = {
-		wp: pl_search_wrap,
-		visible: false,
-		hide: function(){
-			this.wp.attr('style', '');
-			this.visible = false;
-		}
-	};
 
 
-
-	//[{name: 'loved tracks'}, {name: 'killers'}, {name: 'top british 30'}, {name: 'vkontakte'}, {name: 'best beatles'}];
-	var create_plr_entity = function(playlist, song){
-		var entity = $('<li></li>', d).text(playlist.playlist_title).click(function(){
-			sui.els.pl_search.hide();
-			playlist.add(song);
-		});
-		return entity;
-	};
-	var new_playlist_desc = 'new playlist named ';
-	var pl_r = $('.pl-r', pl_search_wrap);
-	var pl_q = sui.els.pl_r = $('#pl-q',pl_search_wrap)
-	
 	jsLoadComplete({
 		test: function(){
 			return window.su && window.su.gena
 		}, 
 		fn: function(){
-			var playlists = su.gena.playlists;
-
-			pl_q.on('change keyup focus', function(e){
-				var searching_for = this.value;
-				if (searching_for && searching_for == pl_q.data('lastv')){return false;}
-				
-				var current_song = pl_search_wrap.data('current_song');
-				if (searching_for){
-					var matches = [];
-					for (var i=0; i < playlists.length; i++) {
-						if (playlists[i].playlist_title == searching_for){
-							matches.unshift(i);
-							matches.full_match = true;
-						} else if (playlists[i].playlist_title.match(new  RegExp('\\b' + searching_for))){
-							matches.push(i);
-						}
-
-					}
-					var pl_results = $();
-					
-					if (!matches.full_match && searching_for){
-						var new_pl_button = $('<li></li>')
-							.text('"'+searching_for+'"')
-							.prepend($('<span></span>').text(new_playlist_desc));
-						new_pl_button.click(function(e){
-								sui.els.pl_search.hide();
-								su.gena.create_userplaylist(searching_for).add(current_song);
-							});
-							
-						pl_results = pl_results.add(new_pl_button);
-					}
-					for (var i=0; i < matches.length; i++) {
-						pl_results = pl_results.add(create_plr_entity(playlists[matches[i]], current_song));
-					}
-					pl_r.empty();
-					if (pl_results.length > 0){
-						pl_r.append(pl_results);
-					}
-				} else{
-					console.log(current_song);
-					var pl_results = $();
-					for (var i=0; i < playlists.length; i++) {
-						pl_results = pl_results.add(create_plr_entity(playlists[i], current_song));
-					}
-					pl_r.empty();
-					if (pl_results.length > 0){
-						pl_r.append(pl_results);
-					}
-				}
-				pl_q.data('lastv', searching_for);
-			});
-			
-		
-
-		
-		sui.create_playlists_link();
+			sui.create_playlists_link();
 		}
 	});
 

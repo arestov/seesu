@@ -84,21 +84,10 @@ baseSuggest.extendTo(artistSuggest, {
 
 
 
-var playlistSuggestUI = function(sugg){};
-baseSuggestUI.extendTo(playlistSuggestUI, {
-	createItem: function() {
-		var that = this.md;
-		this.a = $('<a></a>')
-			.text(that.valueOf())
-			.appendTo(this.c);
-		return this;
-	}
-});
 
-
-var playlistSuggest = function(pl){
+var playlistSuggest = function(data){
 	this.init();
-	this.pl = pl;
+	this.pl = data.playlist;
 };
 baseSuggest.extendTo(playlistSuggest, {
 	valueOf: function(){
@@ -107,7 +96,7 @@ baseSuggest.extendTo(playlistSuggest, {
 	onView: function(){
 		su.views.showStaticPlaylist(this.pl, true);
 	},
-	ui_constr: playlistSuggestUI
+	ui_constr: baseSuggestUI
 });
 
 
@@ -441,13 +430,19 @@ var network_search = seesu.env.cross_domain_allowed ?
 		invstg.loading();
 		var hash = hex_md5(q);
 		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
-			if (su.ui.els.search_input.val() != q){return;}
+			
 			invstg.loaded();
 			fast_suggestion(r, q, invstg);
 		});
 		if (!cache_used) {
+			var all_parts = [invstg.g('artists'), invstg.g('tracks'), invstg.g('tags'), invstg.g('albums')];
+			$.each(all_parts, function(i, el) {
+				el.loading();
+			});
 			get_fast_suggests(q, function(r){	
-				if (su.ui.els.search_input.val() != q){return;}
+				$.each(all_parts, function(i, el) {
+					el.loaded();
+				});
 				fast_suggestion(r, q, invstg);
 			}, hash, invstg);
 			
@@ -478,8 +473,35 @@ investigation.extendTo(SuInvestg, {
 		this.addSection('albums', new albumsSection());
 		this.addSection('tags', new tagsSection());
 		this.addSection('tracks', new tracksSection());
+		var _this = this;
+		this.regDOMDocChanges(function() {
+			if (su.ui.els.searchres){
+				var child_ui = _this.getFreeView();
+				if (child_ui){
+					su.ui.els.searchres.append(child_ui.getC());
+					child_ui.appended();
+				}
+			}
+			if (su.ui.nav.daddy){
+				var child_ui = _this.getFreeView('nav');
+				if (child_ui){
+					su.ui.nav.daddy.append(child_ui.getC());
+					child_ui.appended();
+				}
+			}
+		});
 	},
-	searchf: function(q) {
+
+	state_change: {
+		"mp-show": function(opts) {
+			if (opts){
+				su.search_el = this;
+			}
+			
+			
+		}
+	},
+	searchf: function() {
 		var playlists = seesu.gena.playlists,
 			pl_results = [],
 			pl_sec,
@@ -488,11 +510,18 @@ investigation.extendTo(SuInvestg, {
 			this.setInactiveAll('playlists');
 			pl_sec = this.g('playlists');
 			pl_sec.setActive();
-			pl_sec.scratchResults(this.q);
+			pl_sec.changeQuery(this.q);
 
-			for (i=0; i < playlists.length; i++) {
-				pl_results.push(new playlistSuggest(playlists[i]));
+
+			var serplr = su.getPlaylists();
+			if (serplr.length){
+				for (var i = 0; i < serplr.length; i++) {
+					pl_results.push({
+						playlist: serplr[i]
+					});
+				}
 			}
+
 			pl_sec.appendResults(pl_results);
 			pl_sec.renderSuggests(true);
 		} else if (!this.q.match(/^:/)){
@@ -500,10 +529,12 @@ investigation.extendTo(SuInvestg, {
 			//playlist search
 			
 
-			var serplr = su.searchPlaylists(this.q);
+			var serplr = su.getPlaylists(this.q);
 			if (serplr.length){
 				for (var i = 0; i < serplr.length; i++) {
-					pl_results.push(new playlistSuggest(serplr[i]));
+					pl_results.push({
+						playlist: serplr[i]
+					});
 				}
 			}
 			
@@ -512,7 +543,7 @@ investigation.extendTo(SuInvestg, {
 				
 				pl_sec.setActive();
 				pl_sec.appendResults(pl_results);
-				pl_sec.renderSuggests();
+				pl_sec.renderSuggests(true);
 			}
 			
 			//===playlists search
@@ -522,21 +553,7 @@ investigation.extendTo(SuInvestg, {
 	}
 });
 createSuInvestigation = function(){
-	/*
-	investg.on('stateChange', function(state){
-		if (state == 'complete'){
-			su.ui.els.search_label.removeClass('loading');
-		} else if (state == 'loading'){
-			su.ui.els.search_label.addClass('loading');
-		}
-
-	});
-	*/
 	return new SuInvestg();
-	//return investg;
 };
-
-
-
 
 })();

@@ -49,6 +49,7 @@ var jsLoadComplete,
 	"js/libs/mp3_search.js",
 	"js/su-prototypes/su-song.ui.js",
 	"js/prototypes/song.m.js",
+
 	"js/su-prototypes/su-song.m.js",
 	"js/su-prototypes/su-mfcomplect.js",
 	"js/seesu.js",
@@ -57,9 +58,10 @@ var jsLoadComplete,
 	"js/prototypes/songFile.js",
 	"js/prototypes/search-investigation.js",
 	"js/prototypes/searchSection.js",
+	
 	"js/libs/lastfm.search.js",
 	"js/seesu.search.js",
-
+	"js/su-prototypes/su-playlists-row.js",
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
 

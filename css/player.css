@@ -278,41 +278,7 @@ a.download-mp3:hover{
 	}	
 		
 	
-	.addsong-to-playlist h4{
-		margin:0 0 10px;
-		padding:0;
-		font-size:12px;
-	}
-	.addsong-to-playlist .ext-playlists-getting{
-		margin:15px 0 50px 3px;
-		
-	}
-	.addsong-to-playlist .ext-playlists-getting.not-want-to{
-		margin-bottom:15px;
-	}
-	
-	.addsong-to-playlist .pl-r{
-		padding:0;
-		margin-top:15px;
-		list-style:none;
-		max-height:140px;
-		overflow-y:auto;
-		}
-		.addsong-to-playlist .pl-r li{
-			margin-bottom:5px;
-			padding:3px;
-			border-radius:4px;
-			}
-			.addsong-to-playlist .pl-r li span{
-				color:#999;
-			}
-			.addsong-to-playlist .pl-r li:hover{
-				background:#eee;
-				cursor:pointer;
-				}
-	.ext-playlists-getting.not-want-to div{
-		display:none;
-	}
+
 .flash-desandboxing{
 	background: url(http://img-fotki.yandex.ru/get/4603/gleb-arestov.0/0_55167_ceb4a878_orig) no-repeat 0 0;
 	width:446px;
