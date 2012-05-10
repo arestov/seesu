@@ -20,14 +20,15 @@ var get_youtube = function(q, callback){
 	
 };
 
-var vkLoginUI = function(md) {
-	this.init();
-	this.md = md;
-	this.createBase();
-	this.setModel(md);
-};
+var vkLoginUI = function() {};
 
 provoda.View.extendTo(vkLoginUI, {
+	init: function(md) {
+		this._super();
+		this.md = md;
+		this.createBase();
+		this.setModel(md);
+	},
 	state_change: {
 		wait: function(state) {
 			if (state){
