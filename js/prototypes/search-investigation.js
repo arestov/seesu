@@ -393,7 +393,7 @@ suServView.extendTo(baseSuggestUI, {
 	bindClick: function(){
 		if (this.a){
 			var _this = this;
-			this.a.click(function(){
+			this.c.click(function(){
 				_this.md.view();
 			});
 		}

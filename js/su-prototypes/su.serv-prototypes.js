@@ -120,6 +120,11 @@ provoda.Model.extendTo(ContextRow, {
 			this.active_part = null;
 		}
 	},
+	hide: function(name){
+		if (this.context_parts[name] === this.active_part){
+			this.hideAll();
+		}
+	},
 	addPart: function(name, model) {
 		if (!this.context_parts[name]){
 			this.context_parts[name] = model;
@@ -172,6 +177,9 @@ var BaseCRow = function(){};
 provoda.Model.extendTo(BaseCRow, {
 	switchView: function(){
 		this.traackrow.switchPart(this.row_name);
+	},
+	hide: function(){
+		this.traackrow.hide(this.row_name);
 	},
 	deacivate: function(){
 		this.updateState("active_view", false);

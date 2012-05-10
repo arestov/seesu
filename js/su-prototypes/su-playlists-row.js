@@ -8,6 +8,7 @@ var playlistSuggest = function(data){
 	this.init();
 	this.pl = data.playlist;
 	this.mo = data.mo;
+	this.rpl = data.rpl;
 
 };
 baseSuggest.extendTo(playlistSuggest, {
@@ -16,6 +17,7 @@ baseSuggest.extendTo(playlistSuggest, {
 	},
 	onView: function(){
 		this.pl.add(this.mo);
+		this.rpl.hide();
 		//su.views.showStaticPlaylist(this.pl, true);
 	},
 	ui_constr: baseSuggestUI
@@ -38,12 +40,13 @@ searchSection.extendTo(PlaylistRSSection, {
 
 
 
-var PlaylistRowSearch = function(mo) {
-	this.init(mo);
+var PlaylistRowSearch = function(rpl, mo) {
+	this.init(rpl, mo);
 };
 investigation.extendTo(PlaylistRowSearch, {
-	init: function(mo) {
+	init: function(rpl, mo) {
 		this._super();
+		this.rpl = rpl;
 		this.mo = mo;
 		this.addSection('playlists', new PlaylistRSSection());
 	},
@@ -61,7 +64,8 @@ investigation.extendTo(PlaylistRowSearch, {
 			for (var i = 0; i < serplr.length; i++) {
 				pl_results.push({
 					playlist: serplr[i],
-					mo: this.mo
+					mo: this.mo,
+					rpl: this.rpl
 				});
 			}
 		}
@@ -95,7 +99,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		var inputSearch = debounce(function(e) {
 			_this.md.search(this.value);
 		}, 100);
-		this.input = this.c.find('.playlist-query').bind('keyup change', inputSearch);
+		this.input = this.c.find('.playlist-query').bind('keyup change mousemove', inputSearch);
 
 		this.lpl = $('<div class="list-of-playlists"></div>').appendTo(this.c);
 
@@ -156,7 +160,7 @@ BaseCRow.extendTo(PlaylistAddRow, {
 		this.traackrow = traackrow;
 		this.mo = mo;
 		this._super();
-		this.searcher = new PlaylistRowSearch(mo);
+		this.searcher = new PlaylistRowSearch(this, mo);
 
 	},
 	row_name: 'playlist-add',
@@ -170,7 +174,7 @@ BaseCRow.extendTo(PlaylistAddRow, {
 		if (current_query){
 			su.gena.create_userplaylist(current_query).add(this.mo);
 		}
-		
+		this.hide();
 	}
 });
 //su.gena.create_userplaylist(searching_for).add(current_song);
