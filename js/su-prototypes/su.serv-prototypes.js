@@ -128,6 +128,7 @@ provoda.Model.extendTo(ContextRow, {
 	addPart: function(name, model) {
 		if (!this.context_parts[name]){
 			this.context_parts[name] = model;
+			this.addChild(model);
 		}
 	},
 	getAllParts: function(){

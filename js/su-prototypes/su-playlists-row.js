@@ -161,7 +161,7 @@ BaseCRow.extendTo(PlaylistAddRow, {
 		this.mo = mo;
 		this._super();
 		this.searcher = new PlaylistRowSearch(this, mo);
-
+		this.addChild(this.searcher);
 	},
 	row_name: 'playlist-add',
 	ui_constr: PlaylistAddRowUI,

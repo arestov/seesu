@@ -331,7 +331,7 @@ var searchResults = function(query, prepared, valueOf){
 			for (var i=0; i < array.length; i++) {
 				this.add(array[i], valueOf);
 				
-			};
+			}
 		}
 	});
 
