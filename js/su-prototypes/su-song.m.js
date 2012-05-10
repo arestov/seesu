@@ -149,7 +149,7 @@ var song;
 			this.c = c;
 			this.song_row_context = this.c.children('.row-song-context');
 			this.arrow = this.song_row_context.children('.rc-arrow');
-			this.setModel(md);
+			
 
 			this.parts_views = {};
 
@@ -165,6 +165,7 @@ var song;
 					this.parts_views[i] = pv;
 				}
 			};
+			this.setModel(md);
 
 
 		},
