@@ -113,6 +113,13 @@ provoda.Model.extendTo(ContextRow, {
 		this.context_parts = {};
 		this.active_part = null;
 	},
+	hideAll: function() {
+		if (this.active_part){
+			this.updateState('active_part', false);
+			this.active_part.deacivate();
+			this.active_part = null;
+		}
+	},
 	addPart: function(name, model) {
 		if (!this.context_parts[name]){
 			this.context_parts[name] = model;
@@ -130,10 +137,8 @@ provoda.Model.extendTo(ContextRow, {
 			this.active_part.acivate();
 			this.updateState('active_part', name);
 	
-		} else if (this.active_part){
-			this.updateState('active_part', false);
-			this.active_part.deacivate();
-			this.active_part = null;
+		} else {
+			this.hideAll();
 		}
 	}
 });

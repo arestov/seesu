@@ -129,7 +129,8 @@ suServView.extendTo(songUI, {
 			this.rowcs[a].hide();
 		};
 		//this.tidominator.removeClass('want-more-info');
-		
+			
+		this.md.traackrow.hideAll();
 		
 		su.ui.hidePopups();
 		this.md.mf_cor.collapseExpanders();
