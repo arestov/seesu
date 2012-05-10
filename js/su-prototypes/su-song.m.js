@@ -164,7 +164,8 @@ var song;
 				if (pv){
 					this.parts_views[i] = pv;
 				}
-			};
+			}
+			
 			this.setModel(md);
 
 
