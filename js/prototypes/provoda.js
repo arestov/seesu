@@ -42,8 +42,8 @@ Class.extendTo(provoda.Eventor, {
 
 		if (cb){
 			for (var i = 0; i < queried.matched.length; i++) {
-				if (queried.matched.cb[i] !== cb){
-					clean.push(queried.matched.cb[i]);
+				if (queried.matched[i].cb !== cb){
+					clean.push(queried.matched[i]);
 				}
 			}
 		}
@@ -63,7 +63,7 @@ Class.extendTo(provoda.Eventor, {
 				not_matched: []
 			};
 
-		var cb_cs = this.subscribes[name];
+		var cb_cs = this.subscribes[short_name];
 		if (cb_cs){
 			for (var i = 0; i < cb_cs.length; i++) {
 				if (cb_cs[i].namespace.indexOf(namespace) === 0){
