@@ -59,8 +59,8 @@ Class.extendTo(provoda.Eventor, {
 		var
 			short_name = namespace.split('.')[0],
 			r = {
-				matched = [],
-				not_matched = [];
+				matched: [],
+				not_matched: []
 			};
 
 		var cb_cs = this.subscribes[name];
