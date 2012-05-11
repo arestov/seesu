@@ -12,38 +12,69 @@ Class.extendTo(provoda.Eventor, {
 		this.requests = [];
 		return this;
 	},
-	on: function(name, cb){
+	on: function(namespace, cb, exlusive){
 		var _this = this;
-		if (!this.subscribes[name]){
-			this.subscribes[name] = [];
+		var short_name = namespace.split('.')[0];
+
+		if (exlusive){
+			this.off(namespace);
 		}
-		this.subscribes[name].push(cb);
-		if (this.reg_fires[name]){
-			this.reg_fires[name].call(this,  function() {
+
+		if (!this.subscribes[short_name]){
+			this.subscribes[short_name] = [];
+		}
+		this.subscribes[short_name].push({
+			namespace: namespace,
+			cb: cb
+		});
+		if (this.reg_fires[short_name]){
+			this.reg_fires[short_name].call(this,  function() {
 				cb.apply(_this, arguments);
 			});
 		}
 		return this;
 	},
-	off: function(name, cb){
-		var cbs = this.subscribes[name];
-		if (cbs){
-			if (cb){
-				var clean = [];
-				for (var i = 0; i < cbs.length; i++) {
-					if (cbs[i] !== cb){
-						clean.push(cbs[i]);
-					}
+	off: function(namespace, cb){
+		var
+			clean = [],
+			short_name = namespace.split('.')[0],
+			queried = this.getMatchedCallbacks(namespace);
+
+		if (cb){
+			for (var i = 0; i < queried.matched.length; i++) {
+				if (queried.matched.cb[i] !== cb){
+					clean.push(queried.matched.cb[i]);
 				}
-				if (clean.length != cbs.length){
-					this.subscribes[name] = clean;
-				}
-			} else {
-				delete this.subscribes[name];
 			}
-			
 		}
+		clean.push.apply(clean, queried.not_matched);
+		if (clean.length != this.subscribes[short_name].length){
+			this.subscribes[short_name] = clean;
+		}
+	
+		
 		return this;
+	},
+	getMatchedCallbacks: function(namespace){
+		var
+			short_name = namespace.split('.')[0],
+			r = {
+				matched = [],
+				not_matched = [];
+			};
+
+		var cb_cs = this.subscribes[name];
+		if (cb_cs){
+			for (var i = 0; i < cb_cs.length; i++) {
+				if (cb_cs[i].namespace.indexOf(namespace) === 0){
+					r.matched.push(cb_cs[i])
+				} else {
+					r.not_matched.push(cb_cs[i]);
+				}	
+			}
+		}
+		
+		return r;
 	},
 	onRegistration: function(name, cb) {
 		if (name){
@@ -54,11 +85,11 @@ Class.extendTo(provoda.Eventor, {
 	trigger: function(){
 		var args = Array.prototype.slice.call(arguments);
 		var name = args.shift();
-		var cbs = this.subscribes[name];
+		var cb_cs = this.getMatchedCallbacks(name).matched;
 
-		if (cbs){
-			for (var i = 0; i < cbs.length; i++) {
-				cbs[i].apply(this, args);
+		if (cb_cs){
+			for (var i = 0; i < cb_cs.length; i++) {
+				cb_cs[i].cb.apply(this, args);
 			}
 		}
 		return this;
