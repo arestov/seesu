@@ -99,7 +99,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		var inputSearch = debounce(function(e) {
 			_this.md.search(this.value);
 		}, 100);
-		this.input = this.c.find('.playlist-query').bind('keyup change mousemove', inputSearch);
+		this.input = this.c.find('.playlist-query').bind('keyup change search mousemove', inputSearch);
 
 		this.lpl = $('<div class="list-of-playlists"></div>').appendTo(this.c);
 

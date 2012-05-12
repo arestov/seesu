@@ -1153,7 +1153,6 @@ iframe.you-tube-video,embed.you-tube-video{
 			cursor: pointer;
 			border-radius:3px;
 			padding:3px;
-			display: block;
 			}
 			.addsong-to-playlist .suggest:hover{
 				background-color: #494949;
