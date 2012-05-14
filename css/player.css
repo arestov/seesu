@@ -12,6 +12,7 @@
 }
 .track-panel .pc-place{
 	float:left;
+	margin-right:6px;
 }
 .player-played .playing-song .buttons-panel .big-indicator.play-indicator,
 .playing-file .big-indicator.play-indicator{
