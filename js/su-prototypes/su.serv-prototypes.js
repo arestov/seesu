@@ -125,9 +125,9 @@ provoda.Model.extendTo(ContextRow, {
 			this.hideAll();
 		}
 	},
-	addPart: function(name, model) {
-		if (!this.context_parts[name]){
-			this.context_parts[name] = model;
+	addPart: function(model) {
+		if (!this.context_parts[model.row_name]){
+			this.context_parts[model.row_name] = model;
 			this.addChild(model);
 		}
 	},
@@ -166,6 +166,9 @@ suServView.extendTo(BaseCRowUI, {
 	state_change: {
 		'active_view': function(state){
 			if (state){
+				if (this.expand){
+					this.expand();
+				}
 				this.c.removeClass('hidden')
 			} else {
 				this.c.addClass('hidden')
