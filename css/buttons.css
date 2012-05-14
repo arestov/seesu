@@ -85,7 +85,15 @@
 	.pc-remove:active{
 		background-image:url(../i/buttons/pc-m-remove-a.png);
 		}			
-		
+.pc-rupor{
+	background-image:url(../i/buttons/pc-m-rupor-l.png);
+	}
+	.pc-rupor:hover{
+		background-image:url(../i/buttons/pc-m-rupor-h.png);
+		}
+	.pc-rupor:active{
+		background-image:url(../i/buttons/pc-m-rupor-a.png);
+		}
 		
 .pc-love{
 	background-image:url(../i/buttons/pc-m-love-l.png);
