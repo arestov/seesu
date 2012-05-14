@@ -211,7 +211,7 @@ suServView.extendTo(songUI, {
 		//
 		var tidominator = this.requirePart('tidominator');
 		//this.tidominator = this.context.children('.track-info-dominator');
-		var dominator_head = tidominator.children('.dominator-head');
+		this.dominator_head = tidominator.children('.dominator-head');
 		this.a_info = tidominator.children('.artist-info');
 		this.t_info = tidominator.children('.track-info');
 		this.tv		= this.t_info.children('.track-video')
@@ -219,7 +219,7 @@ suServView.extendTo(songUI, {
 		var pl = this.md.plst_titl,
 			pl_type = pl.playlist_type;
 		
-		var artist_link_con = dominator_head.children('.closer-to-track');
+		var artist_link_con = this.dominator_head.children('.closer-to-track');
 		
 		if (pl_type == 'artist'){
 			artist_link_con.addClass('one-artist-playlist');
@@ -247,7 +247,7 @@ suServView.extendTo(songUI, {
 		users_context.addPart(uinfo_part, 'user-info');
 		
 		
-		var extend_switcher = dominator_head.children('.extend-switcher').click(function(e){
+		var extend_switcher = this.dominator_head.children('.extend-switcher').click(function(e){
 			tidominator.toggleClass('want-more-info');
 			e.preventDefault();
 		});
@@ -385,57 +385,26 @@ suServView.extendTo(songUI, {
 	},
 	update_artist_info: function(artist, a_info, show_link_to_artist_page){
 		var _this = this;
-		if (a_info.data('artist') != artist || a_info.data('artist-lfm') != true){
-			var ainf = {
-				name: a_info.children('.artist-name'), 
+		if (artist && !this.has_artist_info){
+			this.has_artist_info = true;
+			this.ainf = {
 				image: a_info.children('.image'),
 				bio: a_info.children('.artist-bio'),
 				meta_info: a_info.children('.artist-meta-info'),
 				c : a_info
 			};
-			if (a_info.data('artist') != artist){
-				a_info.data('artist', artist);
-				ainf.name.empty()
-				var arts_name = $('<span class="desc-name"></span>')
-					.appendTo(ainf.name);
-					
-				
-				
-				$('<a></a>')
-					.attr('href', 'http://www.last.fm/music/' + artist.replace(' ', '+'))
-					.text(localize('profile'))
-					.attr('title', 'last.fm profile')
-					.click(function(e){
-						var link = 'http://www.last.fm/music/' + artist.replace(' ', '+');
-						app_env.openURL(link);
-						seesu.track_event('Links', 'lastfm', link);
-						e.preventDefault();
-					})
-					.appendTo(arts_name);
-				
-				$('<span class="desc-text"></span>')
-					.text(artist)
-					.appendTo(ainf.name);
-					
-				
-				ainf.bio.text('...');
-				ainf.meta_info.empty();
-				
-				
-			}
-			
-			
-			if (a_info.data('artist-lfm') != true){
-				lfm.get('artist.getInfo',{'artist': artist })
-					.done(function(r){
-						if (a_info.data('artist') == artist && a_info.data('artist-lfm') != true){
-							a_info.data('artist-lfm', true);
-							_this.show_artist_info(r, ainf, artist);
-							
-						}
 						
-					});
-			}
+			this.ainf.bio.text('...');
+			this.ainf.meta_info.empty();
+		
+			
+			lfm.get('artist.getInfo',{'artist': artist })
+				.done(function(r){
+					_this.show_artist_info(r, this.ainf, artist);
+
+				});
+
+		
 
 		}
 		
@@ -456,17 +425,17 @@ suServView.extendTo(songUI, {
 		} 
 			
 		if (artist && artist == oa) {
-			ainf.bio.parent().addClass('background-changes');
+			this.ainf.bio.parent().addClass('background-changes');
 			if (su.env.opera_widget){
 				image += '?somer=' + Math.random();
 			}
-			ainf.image.append($('<img class="artist-image"/>').attr({'src': image ,'alt': artist}));
+			this.ainf.image.append($('<img class="artist-image"/>').attr({'src': image ,'alt': artist}));
 		} else{
 			return false
 		}
 		if (bio){
-			ainf.bio.html(bio);
-			ainf.bio.append('<span class="forced-end"></span>');
+			this.ainf.bio.html(bio);
+			this.ainf.bio.append('<span class="forced-end"></span>');
 			if (!has_some_info_extenders){
 				has_some_info_extenders = true;
 			}
@@ -477,8 +446,8 @@ suServView.extendTo(songUI, {
 		
 		
 		if (tags && tags.length) {
-			var tags_p = $("<p class='artist-tags'></p>").append('<span class="desc-name"><em>'+localize('Tags')+':</em></span>');
-			var tags_text = $('<span class="desc-text"></span>').appendTo(tags_p).append('<span class="forced-end"></span>');
+			var tags_p = $("<p class='artist-tags'></p>").append('<span class="simple-header"><em>'+localize('Tags')+':</em></span>');
+			var tags_text = $('<span class=""></span>').appendTo(tags_p).append('<span class="forced-end"></span>');
 			for (var i=0, l = tags.length; i < l; i++) {
 				var tag = tags[i],
 					arts_tag_node = $("<a></a>")
@@ -491,7 +460,7 @@ suServView.extendTo(songUI, {
 						.appendTo(tags_text); //!using in DOM
 				tags_text.append(" ");
 			}
-			ainf.meta_info.append(tags_p);
+			this.dominator_head.append(tags_p);
 		}
 		
 		if (similars && similars.length) {
@@ -514,10 +483,10 @@ suServView.extendTo(songUI, {
 					  .appendTo(similars_text);//!using in DOM
 				similars_text.append(" ");
 			}
-			ainf.meta_info.append(similars_p);
+			this.ainf.meta_info.append(similars_p);
 		}
 		
-		ainf.bio.parent().removeClass('background-changes');
+		this.ainf.bio.parent().removeClass('background-changes');
 		if (has_some_info_extenders){
 			this.extend_info.base_info = artist;
 			this.extend_info.updateUI();
