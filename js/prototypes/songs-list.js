@@ -215,7 +215,7 @@
 			var can_use = [];
 			for (var i=0; i < this.palist.length; i++) {
 				var cur = this.palist[i];
-				if (cur && (cur.isHaveTracks('mp3') || !cur.isSearchCompleted())){
+				if (cur && (cur.isHaveTracks('mp3') || (cur.canSearchFiles() && !cur.isSearchCompleted()))){
 					can_use.push(i);
 				}
 			};	

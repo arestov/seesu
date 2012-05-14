@@ -1128,7 +1128,13 @@ iframe.you-tube-video,embed.you-tube-video{
 .moplas-block ul li .download-pressed{
 	color: #757575;
 	}
-
+.share-song{
+	padding-top:12px;
+	}
+	.share-song .song-link{
+		width:100%;
+		box-sizing: border-box;
+		}
 .addsong-to-playlist{
 	padding:12px 0 0;
 	}

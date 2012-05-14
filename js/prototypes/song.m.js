@@ -333,6 +333,9 @@ model.extendTo(baseSong, {
 	isNeighbour: function(mo){
 		return (mo == this.prev_song) || (mo == this.next_song);
 	},
+	canSearchFiles: function(){
+		return !!(this.artist && this.track);
+	},
 	setPlayableInfo: function(info){
 		this.playable_info = info;
 		return this;
