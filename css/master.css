@@ -510,8 +510,11 @@ display:none;
 	.artist-image[src]{
 		display:block;
 	}
-
-.artist-info .artist-tags, .artist-info .artist-similar{
+.track-info-dominator .artist-tags{
+	padding:7px 0 0;
+	margin:0;
+}
+.track-info-dominator .artist-tags, .track-info-dominator .artist-similar{
 	position:relative;
 	height:1.55em;
 }
@@ -661,16 +664,19 @@ display:none;
 	}
 
 	
-.artist-name{
-	overflow:hidden;
-	padding-bottom:2px;
-}
+
 .artist-albums, .artist-similar,.artist-tags{
 	overflow: hidden;
+	
+}
+.artist-info .artist-albums, .artist-info .artist-similar{
 	padding: 2px 0;
 	margin: 6px 0;
-	
-}		
+}
+.artist-tags .simple-header{
+	margin-right:12px;
+	font-style:normal;
+	}
 .desc-name{
 	margin-right: 13px;
 }
