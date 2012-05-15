@@ -181,14 +181,14 @@ a.desc{
 	.moplas-block ul {
 		
 		}
-		.moplas-block ul li{
+		.moplas-block .moplas-list li{
 			cursor: pointer;
 			border-top: 1px solid #5d5d5d;
 			padding:6px 5px;
 			color:#999;
 			border-bottom: 1px solid #555555;
 			}
-			.moplas-block ul li .play-button-place{
+			.moplas-block .moplas-list li .play-button-place{
 				float: left;
 				margin-right: 5px;
 				margin-top: -8px;
@@ -197,13 +197,13 @@ a.desc{
 				height: 31px;
 				width: 32px;
 			}
-			.moplas-block ul li .play-button-place .pc-place{
+			.moplas-block .moplas-list li .play-button-place .pc-place{
 				display: none;
 				}
-			.moplas-block ul li.selected-mf .play-button-place .pc-place{
+			.moplas-block .moplas-list li.selected-mf .play-button-place .pc-place{
 				display:block;
 				}
-			.moplas-block ul li .mf-progress{
+			.moplas-block .moplas-list li .mf-progress{
 				overflow: hidden;
 				min-height: 15px;
 				max-height:15px;
@@ -212,12 +212,12 @@ a.desc{
 				.moplas-block.want-more-songs ul li .mf-progress{
 					max-height:none;
 					}
-			.moplas-block ul li .mf-duration{
+			.moplas-block .moplas-list li .mf-duration{
 				float:right;
 				margin-left: 5px;
 				margin-bottom: 2px;
 				}
-			.moplas-block ul li .mf-source{
+			.moplas-block .moplas-list li .mf-source{
 				margin-left:10px;
 				color:#777;
 				}
@@ -225,7 +225,7 @@ a.desc{
 					display: none;
 					}
 		
-			.moplas-block ul li a{
+			.moplas-block .moplas-list li a{
 				color:inherit;
 			}
 
@@ -993,6 +993,7 @@ iframe.you-tube-video,embed.you-tube-video{
 	}
 .track-video{
 	overflow:hidden;
+	padding: 12px 0 12px 48px;
 	}
 	.track-video .desc-text{
 		display:block;
@@ -1123,11 +1124,11 @@ iframe.you-tube-video,embed.you-tube-video{
 		.attention-message .close-message:hover{
 			color:#ccc;
 			}
-.moplas-block ul li .download-song-link{
+.moplas-block .moplas-list li .download-song-link{
 	float:right;
 	margin-right:5px;
 	}
-.moplas-block ul li .download-pressed{
+.moplas-block .moplas-list li .download-pressed{
 	color: #757575;
 	}
 .share-song{

@@ -170,6 +170,10 @@ suServView.extendTo(mfCorUI, {
 	},
 	createBase: function() {
 		this.c = $('<div class="song-row-content moplas-block"></div>');
+		
+		
+		
+
 
 		if (!this.more_songs_b){
 			var _this = this;
@@ -191,6 +195,11 @@ suServView.extendTo(mfCorUI, {
 
 			this.messages_c = $('<div class="messages-c"></div>').appendTo(this.c);
 		}
+		this.video_c = $('<div class="track-video hidden"></div>');
+		if (this.md.mo.artist && this.md.mo.track){
+			this.show_video_info(this.video_c, this.md.mo.artist + " - " + this.md.mo.track);
+		}
+		this.c.append(this.video_c);
 	},
 	appendChildren: function() {
 		var _this = this;
@@ -226,7 +235,8 @@ suServView.extendTo(mfCorUI, {
 					if (next_c){
 						next_c.before(ui_c);
 					} else {
-						_this.c.append(ui_c);
+						_this.video_c.before(ui_c);
+						//_this.c.append(ui_c);
 					}
 				}
 				_this.addChild(cur_view);
@@ -245,6 +255,86 @@ suServView.extendTo(mfCorUI, {
 			var cur_mf = cur_name && this.md.complects[cur_name];
 			return cur_mf && cur_mf.getC();
 		}
+	},
+	showYoutubeVideo: function(id, c, link){
+		if (this.video){
+			this.hideYoutubeVideo();
+		}
+		this.video = {
+			link: link.addClass('active'),
+			node: $(su.ui.create_youtube_video(id)).appendTo(c)
+		};
+	},
+	hideYoutubeVideo: function(){
+		if (this.video){
+			if (this.video.link){
+				this.video.link.removeClass('active');
+				this.video.link[0].showed = false;
+				this.video.link = false;
+				
+			}
+			if (this.video.node){
+				this.video.node.remove();
+				this.video.node = false;
+			}
+			delete this.video;
+		}
+	},
+	show_video_info: function(vi_c, q){
+		if (vi_c.data('has-info')){return true;}
+
+		var _this = this;
+		get_youtube(q, function(r){			
+			var vs = r && r.feed && r.feed.entry;
+			if (vs && vs.length){
+				vi_c.data('has-info', true);
+				vi_c.empty();
+				//vi_c.append('<span class="desc-name"><a target="_blank" href="http://www.youtube.com/results?search_query='+ q +'">' + localize('video','Video') + '</a>:</span>');
+				var v_content = $('<ul class=""></ul>');
+			
+				var make_v_link = function(img_link, vid, _title){
+					var li = $('<li class="you-tube-video-link"></li>').click(function(e){
+						var showed = this.showed;
+						
+						if (!showed){
+							_this.showYoutubeVideo(vid, vi_c, $(this));
+							_this.md.pause();
+							this.showed = true;
+						} else{
+							_this.hideYoutubeVideo();
+							_this.md.play();
+							this.showed = false;
+						}
+						e.preventDefault();
+					});
+					
+					$("<a class='video-preview'></a>")
+						.attr('href', 'http://www.youtube.com/watch?v=' + v_id)
+						.append($('<img  alt=""/>').attr('src', img_link))
+						.appendTo(li);
+					
+					$('<span class="video-title"></span>')
+						.text(_title).appendTo(li);
+						
+					li.appendTo(v_content)
+				}
+				
+				//set up filter app$control.yt$state.reasonCode != limitedSyndication
+				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
+					var _v = vs[i],
+						tmn = _v['media$group']['media$thumbnail'][0].url,
+						v_id = _v['media$group']['yt$videoid']['$t'],
+						v_title = _v['media$group']['media$title']['$t'];
+						
+					make_v_link(tmn, v_id, v_title);
+					
+				};
+				
+				vi_c.append(v_content).removeClass('hidden')
+				
+			}
+		});
+		
 	}
 });
 

@@ -177,12 +177,12 @@ a.download-mp3:hover{
 		color:#757575;
 		margin:0 4px;
 		}
-.track-progress, .moplas-block ul li .mf-progress{
+.track-progress, .moplas-block .moplas-list li .mf-progress{
 
 	line-height:13px;
 
 }
-.track-progress, .moplas-block ul li.selected-mf .mf-progress{	
+.track-progress, .moplas-block .moplas-list li.selected-mf .mf-progress{	
 	position:relative;
 	overflow:hidden;
 	max-width:100%;
