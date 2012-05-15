@@ -993,8 +993,11 @@ iframe.you-tube-video,embed.you-tube-video{
 	}
 .track-video{
 	overflow:hidden;
-	padding: 12px 0 12px 48px;
+	padding: 12px 0 12px;
 	}
+	.track-video ul{
+		margin-left:48px;
+		}
 	.track-video .desc-text{
 		display:block;
 		}
