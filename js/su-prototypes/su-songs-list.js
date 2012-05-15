@@ -1,6 +1,14 @@
 (function(){
+	"use strict";
+	var songsListBaseView = function() {};
+	provoda.extendFromTo("songsListBaseView", suServView, songsListBaseView);
+	var songsListBase = function() {};
+	provoda.extendFromTo("songsListBase", suMapModel, songsListBase);
+
+
+
 	var songsListView = function(pl){};
-	songsListViewBase.extendTo(songsListView, {
+	songsListBaseView.extendTo(songsListView, {
 		appendChildren: function() {
 			
 		}
@@ -89,8 +97,12 @@
 		});
 			
 	};
+
 	
-	songsListModel.extendTo(songsList, {
+
+
+	
+	songsListBase.extendTo(songsList, {
 		ui_constr: {
 			main: songsListView,
 			nav: playlistNavUI
@@ -141,7 +153,7 @@
 				}
 					
 				
-			};
+			}
 			
 			if (simple_playlist.length){
 				this.current_external_playlist = new external_playlist(simple_playlist);
@@ -149,7 +161,7 @@
 				if (this.current_external_playlist.result) {
 					app_env.openURL(
 						'http://seesu.me/generated_files/seesu_playlist.m3u?mime=m3u&content=' + escape(this.current_external_playlist.result)
-					)
+					);
 				}
 					
 			}
