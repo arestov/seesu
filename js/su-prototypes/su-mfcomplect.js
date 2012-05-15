@@ -292,24 +292,35 @@ suServView.extendTo(mfCorUI, {
 				//vi_c.append('<span class="desc-name"><a target="_blank" href="http://www.youtube.com/results?search_query='+ q +'">' + localize('video','Video') + '</a>:</span>');
 				var v_content = $('<ul class=""></ul>');
 			
-				var make_v_link = function(img_link, vid, _title){
+				var make_v_link = function(img_link, vid, _title, cant_show){
+					var link = 'http://www.youtube.com/watch?v=' + v_id
+
 					var li = $('<li class="you-tube-video-link"></li>').click(function(e){
-						var showed = this.showed;
-						
-						if (!showed){
-							_this.showYoutubeVideo(vid, vi_c, $(this));
-							_this.md.pause();
-							this.showed = true;
+						if (!cant_show){
+							var showed = this.showed;
+							
+							if (!showed){
+								_this.showYoutubeVideo(vid, vi_c, $(this));
+								_this.md.pause();
+								this.showed = true;
+							} else{
+								_this.hideYoutubeVideo();
+								_this.md.play();
+								this.showed = false;
+							}
+							
 						} else{
-							_this.hideYoutubeVideo();
-							_this.md.play();
-							this.showed = false;
+							app_env.openURL(link);
 						}
+						e.stopPropagation();
 						e.preventDefault();
 					});
+					if (cant_show){
+						li.addClass("cant-show")
+					}
 					
-					$("<a class='video-preview'></a>")
-						.attr('href', 'http://www.youtube.com/watch?v=' + v_id)
+					$("<a class='video-preview external'></a>")
+						.attr('href', link)
 						.append($('<img  alt=""/>').attr('src', img_link))
 						.appendTo(li);
 					
@@ -321,12 +332,15 @@ suServView.extendTo(mfCorUI, {
 				
 				//set up filter app$control.yt$state.reasonCode != limitedSyndication
 				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
-					var _v = vs[i],
+					var 
+						_v = vs[i],
 						tmn = _v['media$group']['media$thumbnail'][0].url,
 						v_id = _v['media$group']['yt$videoid']['$t'],
 						v_title = _v['media$group']['media$title']['$t'];
-						
-					make_v_link(tmn, v_id, v_title);
+					var cant_show = getTargetField(_v, "app$control.yt$state.name") == "restricted";
+					cant_show = cant_show || getTargetField($filter(getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
+					//getTargetField($filter(getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
+					make_v_link(tmn, v_id, v_title, cant_show);
 					
 				};
 				

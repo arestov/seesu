@@ -1,3 +1,4 @@
+var songsList;
 (function(){
 	"use strict";
 	

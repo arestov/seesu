@@ -414,8 +414,6 @@ display:none;
 	.desc-name{
 		float:left;
 		min-height:1.5em;
-		width:126px;
-		text-align:right;
 	}
 	.desc-text{
 		overflow:hidden;
@@ -457,9 +455,6 @@ display:none;
 	.artist-info .artist-tags, .artist-info .artist-similar{
 		height:auto;
 	}
-	.artist-meta-info .desc-name em{
-		padding:0;
-	}
 }
 
 .play-list-holder{
@@ -489,10 +484,20 @@ display:none;
 .artist-image{
 	height:126px;
 	}
+
+
 .track-info-dominator .artist-tags{
 	padding:7px 0 0;
 	margin:0;
-}
+	}
+.want-more-info .artist-tags{
+	clear:both;
+	margin-bottom:12px;
+	padding-left:13px;
+	}
+
+
+
 .track-info-dominator .artist-tags, .track-info-dominator .artist-similar{
 	position:relative;
 	height:1.55em;
@@ -531,9 +536,7 @@ display:none;
 		}
 		.artist-meta-info .desc-name em {
 			font-style:normal;
-			background:#5a5a5a;
-			padding:3px 0 3px 5px;
-			border-radius: 4px 0 0 4px;
+			
 		}
 
 .artist-info .forced-end{
@@ -993,10 +996,9 @@ iframe.you-tube-video,embed.you-tube-video{
 	}
 .track-video{
 	overflow:hidden;
-	padding: 12px 0 12px;
+	padding: 1px;
 	}
 	.track-video ul{
-		margin-left:48px;
 		}
 	.track-video .desc-text{
 		display:block;
@@ -1005,18 +1007,20 @@ iframe.you-tube-video,embed.you-tube-video{
 	.you-tube-video-link{
 		float:left;
 		cursor:pointer;
-		margin-right:14px;
 		}
+	.you-tube-video-link.cant-show{
+		opacity: 0.5;
+		-moz-opacity: 0.5;
+		filter:alpha(opacity=5);
+	}	
 		.video-title{
 			display:none;
 			}
 		.video-preview{
-			border-radius:2px;
 			height:48px;
 			overflow:hidden;
 			width:85px;
 			float:left;
-			border:1px solid #737373;
 			}
 			.video-preview img{
 				height:64px;

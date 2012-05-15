@@ -98,10 +98,7 @@
 			
 	};
 
-	
 
-
-	
 	songsListBase.extendTo(songsList, {
 		ui_constr: {
 			main: songsListView,
@@ -165,10 +162,6 @@
 				}
 					
 			}
-
-
-
-			
 		}
 	});
 
