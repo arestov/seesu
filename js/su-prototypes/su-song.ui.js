@@ -388,7 +388,6 @@ suServView.extendTo(songUI, {
 		if (artist && !this.has_artist_info){
 			this.has_artist_info = true;
 			this.ainf = {
-				image: a_info.children('.image'),
 				bio: a_info.children('.artist-bio'),
 				meta_info: a_info.children('.artist-meta-info'),
 				c : a_info
@@ -396,7 +395,11 @@ suServView.extendTo(songUI, {
 						
 			this.ainf.bio.text('...');
 			this.ainf.meta_info.empty();
-		
+			
+			var tidominator = this.requirePart('tidominator');
+			this.photo_c = tidominator.find('.photo-cont-lift');
+			this.photo_data = {};
+
 			
 			lfm.get('artist.getInfo',{'artist': artist })
 				.done(function(r){
@@ -404,7 +407,24 @@ suServView.extendTo(songUI, {
 
 				});
 
-		
+			lfm.get('artist.getImages',{'artist': artist })
+				.done(function(r){
+					var images = r.images.image;
+					if (images){
+						images = toRealArray(images);
+						_this.photo_data.cool_photos = images;
+						var fragment = document.createDocumentFragment();
+
+						for (var i = 0; i < Math.min(images.length, 10); i++) {
+							var sizes = toRealArray(images[i].sizes.size);
+							fragment.appendChild($('<img class="artist-image" alt=""/>').attr('src', (sizes[5] || sizes[0])["#text"])[0]);
+						}
+						_this.photo_c.empty().append(fragment);
+					}
+					console.log(r)
+
+				});
+			
 
 		}
 		
@@ -422,6 +442,8 @@ suServView.extendTo(songUI, {
 			tags	 = ai.tags;
 			bio		 = ai.bio;
 			image	 = (ai.images && ai.images[2]) || lfm_image_artist;
+			this.photo_data.first_image = ai.images;
+
 		} 
 			
 		if (artist && artist == oa) {
@@ -429,7 +451,10 @@ suServView.extendTo(songUI, {
 			if (su.env.opera_widget){
 				image += '?somer=' + Math.random();
 			}
-			this.ainf.image.append($('<img class="artist-image"/>').attr({'src': image ,'alt': artist}));
+			if (!this.photo_data.cool_photos){
+				this.photo_c.append($('<img class="artist-image"/>').attr({'src': image ,'alt': artist}));
+			}
+			
 		} else{
 			return false
 		}
