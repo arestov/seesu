@@ -5,7 +5,10 @@ var
 	baseSuggestUI,
 	baseSuggest,
 	baseSectionButtonUI,
-	baseSectionButton;
+	baseSectionButton,
+	searchSectionUI,
+	searchSection;
+
 
 (function() {
 var 
@@ -69,6 +72,13 @@ provoda.extendFromTo('baseSectionButton', baseSuggest, baseSectionButton);
 baseSectionButton.prototype.ui_constr = baseSectionButtonUI;
 
 
+
+searchSectionUI = function(){};
+provoda.extendFromTo("searchSectionView", suServView, searchSectionUI);
+
+searchSection = function(){};
+provoda.extendFromTo("searchSection", provoda.Model, searchSection);
+searchSection.prototype.ui_constr = searchSectionUI;
 
 
 var artistSuggest = function(data){

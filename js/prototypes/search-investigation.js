@@ -1,12 +1,5 @@
-var createInvestigComplect = function(){
-
-};
-var inquiry;
 (function(){
 	"use strict";
-
-
-
 	provoda.addPrototype("InvestigationView",{
 		init: function(md){
 			this.md = this.invstg = md;
@@ -399,19 +392,5 @@ var inquiry;
 		}
 	});
 
-	inquiry = {
-		getPrecious: function(name, base, fn){
-			base.extendTo(fn, this.data[name]);
-			return fn;
-		},
-		data: {
-			InvestigationView: InvestigationViewPrototype,
-			Investigation: InvestigationPrototype,
-			baseSectionButton: baseSectionButtonPrototype,
-			baseSectionButtonView: baseSectionButtonViewPrototype,
-			baseSuggest: baseSuggestPrototype,
-			baseSuggestView: baseSuggestViewPrototype
-		}
-	};
 
 })();
