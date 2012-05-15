@@ -50,6 +50,7 @@ investigation.extendTo(PlaylistRowSearch, {
 		this.mo = mo;
 		this.addSection('playlists', new PlaylistRSSection());
 	},
+	ui_constr: investigationUI,
 	searchf: function() {
 		var
 			pl_results = [],
@@ -132,7 +133,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 				var inp = this.input[0];
 				setTimeout(function() {
 					inp.focus();
-				}, 100)
+				}, 100);
 				
 			} else {
 				this.c.addClass('hidden');
@@ -146,7 +147,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 				} else {
 					this.pl_creation_b.addClass('hidden');
 				}
-			} 
+			}
 			
 		}
 	}

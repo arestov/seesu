@@ -123,6 +123,35 @@ suServView.extendTo(searchSectionUI, {
 	}
 });
 
+var searchResults = function(query, prepared, valueOf){
+	if (query){
+		this.query = query;
+	}
+	if (prepared){
+		this.append(prepared, valueOf);
+	};
+};
+searchResults.prototype = [];
+cloneObj(searchResults.prototype, {
+	setQuery: function(q){
+		this.query=q;
+	},
+	doesContain: doesContain,
+	add: function(target, valueOf){
+		if (this.doesContain(target, valueOf) == -1){
+			target.q = this.query;
+			return this.push(target);
+		} else{
+			return false;
+		}
+	},
+	append: function(array, valueOf){
+		for (var i=0; i < array.length; i++) {
+			this.add(array[i], valueOf);
+			
+		}
+	}
+});
 
 var searchSection = function(sectionInfo){};
 

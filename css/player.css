@@ -257,28 +257,7 @@ a.download-mp3:hover{
 		display:inline;
 	}
 
-				
-	#people-connecting{
-		position: absolute;
-		z-index: 20;
-		margin: -5px 0px 0px 0;
-		display: none; 
-		}
-	.people-connecting-content{
-		width: 400px;
-		background: #E8E8E8;
-		color: #555;
-		position:absolute;
-		bottom:0;
-		border-radius: 5px;
-		padding: 15px;
-		box-shadow: 0px 0px 30px 0px #000;
-		}	
-	.close-to-right .people-connecting-content{
-		right:-55px;
-	}	
-		
-	
+
 
 .flash-desandboxing{
 	background: url(http://img-fotki.yandex.ru/get/4603/gleb-arestov.0/0_55167_ceb4a878_orig) no-repeat 0 0;

@@ -1,8 +1,20 @@
 var provoda = {
+	prototypes: {},
 	Eventor: function(){},
 	StatesEmitter: function() {},
 	Model: function(){},
-	View: function(){}
+	View: function(){},
+	addPrototype: function(name, obj){
+		if (!this.prototypes[name]){
+			this.prototypes[name] = obj;
+		} else{
+			throw new Error('Already has such prototype');
+		}
+	},
+	extendFromTo: function(name, base, fn){
+		base.extendTo(fn, this.prototypes[name]);
+		return fn;
+	}
 };
 
 Class.extendTo(provoda.Eventor, {

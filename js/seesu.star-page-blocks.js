@@ -78,23 +78,7 @@ var viewBlocks = function(sui, d){
 			arrows_keys_nav(e);
 		});
 	}
-	var wtm_wrap = $('#people-connecting', d);
-	var wtm_content = wtm_wrap.find('.people-connecting-content');
-	sui.els.wtm = {
-		wp:wtm_wrap,
-		con: wtm_content,
-		visible: false,
-		id: false
-	};
-	
-	sui.els.wtm.id = sui.addPopup(wtm_wrap, function(){
-		return sui.els.wtm.visible;
-	}, function(){
-		wtm_wrap.hide();
-		wtm_content.empty();
-		sui.els.wtm.visible = false;
-	});
-	
+
 	
 	
 

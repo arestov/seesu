@@ -1,4 +1,11 @@
-var inputChange;
+var 
+	inputChange,
+	investigationUI,
+	investigation,
+	baseSuggestUI,
+	baseSuggest,
+	baseSectionButtonUI,
+	baseSectionButton;
 
 (function() {
 var 
@@ -37,6 +44,29 @@ var offlineSearch = debounce(function(q, invstg){
 		
 },150);
 
+
+baseSuggestUI = function(){};
+provoda.extendFromTo('baseSuggestView', suServView, baseSuggestUI);
+
+
+baseSuggest = function(){};
+provoda.extendFromTo('baseSuggest', servModel, baseSuggest);
+
+
+baseSectionButtonUI = function(sugg){};
+provoda.extendFromTo('baseSectionButtonView', baseSuggestUI, baseSectionButtonUI);
+
+baseSectionButtonUI.prototype.state_change = cloneObj({
+	button_text: function(text){
+		this.text_span.text(text);
+	}
+}, baseSuggestUI.prototype.state_change);
+
+baseSectionButton = function(){
+	this.init();
+};
+provoda.extendFromTo('baseSectionButton', baseSuggest, baseSectionButton);
+baseSectionButton.prototype.ui_constr = baseSectionButtonUI;
 
 
 
@@ -77,14 +107,6 @@ baseSuggest.extendTo(artistSuggest, {
 });
 
 
-
-
-
-
-
-
-
-
 var playlistSuggest = function(data){
 	this.init();
 	this.pl = data.playlist;
@@ -98,19 +120,6 @@ baseSuggest.extendTo(playlistSuggest, {
 	},
 	ui_constr: baseSuggestUI
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -460,6 +469,12 @@ var network_search = seesu.env.cross_domain_allowed ?
 
 
 
+investigationUI  = function(){};
+provoda.extendFromTo('InvestigationView', suServView, investigationUI);
+
+
+investigation = function(){};
+provoda.extendFromTo('Investigation', suMapModel, investigation);
 
 
 var SuInvestg = function() {
@@ -491,7 +506,10 @@ investigation.extendTo(SuInvestg, {
 			}
 		});
 	},
-
+	ui_constr: {
+		main: investigationUI,
+		nav: investgNavUI
+	},
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){

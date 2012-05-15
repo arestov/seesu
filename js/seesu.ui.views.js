@@ -343,11 +343,6 @@ baseNavUI.extendTo(trackNavUI, {
 
 
 
-//getCurrentSearchResultsContainer
-//	getSearchResultsContainer: function(){
-
-//this.getPlaylistContainer(save_parents)
-//getCurrentPlaylistContainer
 views = function(su_map){
 	var _this = this;
 	this.m = su_map;
