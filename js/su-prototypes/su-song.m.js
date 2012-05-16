@@ -1,7 +1,10 @@
 var song;
 (function(){
 	"use strict";
-	var baseSong = createSongBase(suMapModel);
+
+	var baseSong = function() {};
+	provoda.extendFromTo("baseSong", suMapModel, baseSong);
+
 	song = function(omo, player, mp3_search){
 		this.init.call(this, omo, player, mp3_search);
 		var _this = this;

@@ -1,8 +1,8 @@
-createSongBase = function(model) {
-
+(function() {
+"use strict";
 var counter = 0;
-var baseSong = function(){};
-model.extendTo(baseSong, {
+
+provoda.addPrototype("baseSong",{
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
@@ -40,18 +40,18 @@ model.extendTo(baseSong, {
 		} else if (this.track){
 			n = this.track;
 		}
-		return n || 'no title'
+		return n || 'no title';
 	},
 	updateNavTexts: function() {
-		var title = this.getFullName(true); 
+		var title = this.getFullName(true);
 		this.updateState('nav-text', title);
 		this.updateState('nav-title', title);
 	},
 	playNext: function(auto) {
-		this.plst_titl.switchTo(this, true, auto)
+		this.plst_titl.switchTo(this, true, auto);
 	},
 	playPrev: function() {
-		this.plst_titl.switchTo(this)
+		this.plst_titl.switchTo(this);
 	},
 
 	findNeighbours: function(){
@@ -77,7 +77,7 @@ model.extendTo(baseSong, {
 		this.mf_cor.pause();
 	},
 	play: function(mopla){
-		this.mf_cor.play(mopla)
+		this.mf_cor.play(mopla);
 
 	},
 	markAs: function(neighbour, mo){
@@ -153,7 +153,7 @@ model.extendTo(baseSong, {
 		this.addRequest(
 			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30 })
 				.done(function(r){
-					var tracks = toRealArray(getTargetField(r, 'toptracks.track'))
+					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 					tracks = $filter(tracks, 'name');
 					var some_track = tracks[Math.floor(Math.random()*tracks.length)];
 					if (some_track){
@@ -210,7 +210,7 @@ model.extendTo(baseSong, {
 					}
 					sem.on('progress', function() {
 						_this.filesSearchStarted();
-					})
+					});
 				}
 
 				if (oldFilesSearchCb){
@@ -237,12 +237,12 @@ model.extendTo(baseSong, {
 			var reqs = this.sem.getRequests();
 			for (var i = 0; i < reqs.length; i++) {
 				this.addRequest(reqs[i], true);
-			};
+			}
 			
 			var queued = this.sem.getQueued();
 			for (var i = 0; i < queued.length; i++) {
 				queued[i].q.init();
-			};
+			}
 
 			//this.mp3_search.find_mp3(this, opts);
 		}
@@ -257,7 +257,7 @@ model.extendTo(baseSong, {
 			
 		} else{
 			if (this.isSearchCompleted()){
-				this.updateFilesSearchState(true)
+				this.updateFilesSearchState(true);
 			}
 			this.findFiles({
 				only_cache: !full_allowing,
@@ -275,9 +275,9 @@ model.extendTo(baseSong, {
 
 		var opts = {
 			complete: complete,
-			have_tracks: this.isHaveTracks(), 
+			have_tracks: this.isHaveTracks(),
 			have_best_tracks: this.isHaveBestTracks()
-		}
+		};
 		if (complete){
 			this.updateState('searching-files', false);
 			if (opts.have_tracks){
@@ -285,7 +285,7 @@ model.extendTo(baseSong, {
 					if (this.player.c_song.ready_to_preload && (this == this.player.c_song.next_song)) {
 						this.preloadSongFile();
 					}
-				} 
+				}
 			} else{
 				if (get_next){
 					if (this.player.c_song) {
@@ -298,7 +298,7 @@ model.extendTo(baseSong, {
 					}
 				}
 			}
-		} 
+		}
 		if (opts.have_tracks){
 			this.updateState('playable', true);
 		}
@@ -367,8 +367,7 @@ model.extendTo(baseSong, {
 	}
 });
 
-return baseSong;
 
-};
+})();
 
 
