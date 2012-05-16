@@ -170,8 +170,11 @@ a.desc{
 .moplas-block{
 	font-size: 14px;
 	padding:0;
-	min-height:31px;
+	min-height:79px;
 	
+	}
+	.music-files-lists{
+		min-height: 31px;
 	}
 	.moplas-block h4{
 		font-weight: 400;

@@ -172,6 +172,8 @@ suServView.extendTo(mfCorUI, {
 		this.c = $('<div class="song-row-content moplas-block"></div>');
 		
 		
+
+		
 		
 
 
@@ -199,7 +201,9 @@ suServView.extendTo(mfCorUI, {
 		if (this.md.mo.artist && this.md.mo.track){
 			this.show_video_info(this.video_c, this.md.mo.artist + " - " + this.md.mo.track);
 		}
+		this.mufils_c = $("<div class='music-files-lists'></div>").appendTo(this.c);
 		this.c.append(this.video_c);
+
 	},
 	appendChildren: function() {
 		var _this = this;
@@ -235,8 +239,8 @@ suServView.extendTo(mfCorUI, {
 					if (next_c){
 						next_c.before(ui_c);
 					} else {
-						_this.video_c.before(ui_c);
-						//_this.c.append(ui_c);
+						//_this.video_c.before(ui_c);
+						_this.mufils_c.append(ui_c);
 					}
 				}
 				_this.addChild(cur_view);
