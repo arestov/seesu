@@ -478,15 +478,23 @@ display:none;
 		position:relative;
 		}
 .photo-cont{
-	height:126px;
+	height:135px;
 	overflow: hidden;
 	}
+	@media (min-height:700px) {
+		.photo-cont{
+			/*237-48+16*/
+			height:172px;
+		}
+	}
+
 	.photo-cont-lift{
 		width:200%;
+		height:100%;
 	}
-.artist-image{
-	height:126px;
-	}
+	.photo-cont .artist-image{
+		height:100%;
+		}
 
 
 .track-info-dominator .artist-tags{
