@@ -992,11 +992,12 @@ iframe.you-tube-video,embed.you-tube-video{
 	border:0;
 	width:100%;
 	height:360px;
-	margin:20px 0 40px;
+	display: block;
+	margin:0;
 	}
 .track-video{
 	overflow:hidden;
-	padding: 1px;
+	padding: 0px;
 	}
 	.track-video ul{
 		}
@@ -1021,13 +1022,34 @@ iframe.you-tube-video,embed.you-tube-video{
 			overflow:hidden;
 			width:85px;
 			float:left;
+			border:0 !important;
 			}
 			.video-preview img{
 				height:64px;
 				width:85px;
+				
+				}
+			.video-preview img.whole{
 				margin-top:-8px;
 				}
-	
+				.video-preview .preview-slicer{
+					display: block;
+					height:16px;
+					position: relative;
+					overflow: hidden;
+					}
+			.video-preview .preview-part{
+				position: absolute;
+				}
+			.video-preview .preview-start{
+				top:-8px;
+				}
+			.video-preview .preview-middle{
+				top:-24px; /*8 + (48/3)*/
+				}
+			.video-preview .preview-end{
+				top:-40px; /*8 + (48/3)x2*/
+				}
 		.video-preview:hover, .you-tube-video-link.active .video-preview{
 			border-color:#9C9C9C;
 			}

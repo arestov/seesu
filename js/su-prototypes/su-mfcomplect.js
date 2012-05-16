@@ -292,7 +292,7 @@ suServView.extendTo(mfCorUI, {
 				//vi_c.append('<span class="desc-name"><a target="_blank" href="http://www.youtube.com/results?search_query='+ q +'">' + localize('video','Video') + '</a>:</span>');
 				var v_content = $('<ul class=""></ul>');
 			
-				var make_v_link = function(img_link, vid, _title, cant_show){
+				var make_v_link = function(thmn, vid, _title, cant_show){
 					var link = 'http://www.youtube.com/watch?v=' + v_id
 
 					var li = $('<li class="you-tube-video-link"></li>').click(function(e){
@@ -318,10 +318,30 @@ suServView.extendTo(mfCorUI, {
 					if (cant_show){
 						li.addClass("cant-show")
 					}
+
+
+					var imgs = $();
+
+					//thmn $('<img  alt=""/>').attr('src', img_link);
+
+					if (thmn.start && thmn.middle &&  thmn.end){
+						$.each(["start","middle","end"], function(i, el) {
+
+							var span = $("<span class='preview-slicer'></span>");
+
+							$('<img  alt=""/>').addClass('preview-part preview-' + el).attr('src', thmn[el]).appendTo(span);
+
+							imgs = imgs.add(span);
+
+							tmn[el] = $filter(thmn_arr, 'yt$name', el)[0].url;
+						});
+					} else {
+						imgs.add($('<img  alt="" class="whole"/>').attr('src', thmn.default))
+					}
 					
 					$("<a class='video-preview external'></a>")
 						.attr('href', link)
-						.append($('<img  alt=""/>').attr('src', img_link))
+						.append(imgs)
 						.appendTo(li);
 					
 					$('<span class="video-title"></span>')
@@ -329,20 +349,47 @@ suServView.extendTo(mfCorUI, {
 						
 					li.appendTo(v_content)
 				}
-				
+				var preview_types = ["default","start","middle","end"];
+
 				//set up filter app$control.yt$state.reasonCode != limitedSyndication
+
+				var video_arr = []
+
 				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
 					var 
 						_v = vs[i],
-						tmn = _v['media$group']['media$thumbnail'][0].url,
+						tmn = {},
 						v_id = _v['media$group']['yt$videoid']['$t'],
 						v_title = _v['media$group']['media$title']['$t'];
 					var cant_show = getTargetField(_v, "app$control.yt$state.name") == "restricted";
 					cant_show = cant_show || getTargetField($filter(getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
-					//getTargetField($filter(getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
-					make_v_link(tmn, v_id, v_title, cant_show);
+
+
+					var thmn_arr = getTargetField(_v, "media$group.media$thumbnail");
+					
+					$.each(preview_types, function(i, el) {
+						tmn[el] = $filter(thmn_arr, 'yt$name', el)[0].url;
+					});
+
+					video_arr.push({
+						thmn: tmn,
+						vid: v_id,
+						title: v_title,
+						cant_show: cant_show
+					});
+
+					
 					
 				};
+
+				video_arr.sort(function(a, b){
+					return sortByRules(a, b, ["cant_show"]);
+				});
+				$.each(video_arr, function(i, el) {
+					make_v_link(el.thmn, el.vid, el.title, el.cant_show);
+				});
+
+				
 				
 				vi_c.append(v_content).removeClass('hidden')
 				

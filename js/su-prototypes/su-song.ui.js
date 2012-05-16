@@ -421,7 +421,6 @@ suServView.extendTo(songUI, {
 						}
 						_this.photo_c.empty().append(fragment);
 					}
-					console.log(r)
 
 				});
 			
