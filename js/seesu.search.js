@@ -53,7 +53,7 @@ provoda.extendFromTo('baseSuggestView', suServView, baseSuggestUI);
 
 
 baseSuggest = function(){};
-provoda.extendFromTo('baseSuggest', servModel, baseSuggest);
+provoda.extendFromTo('baseSuggest', provoda.Model, baseSuggest);
 
 
 baseSectionButtonUI = function(sugg){};

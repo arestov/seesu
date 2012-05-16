@@ -57,7 +57,7 @@ var vkLogin = function() {
 	this.init();
 }; 
 
-servModel.extendTo(vkLogin, {
+provoda.Model.extendTo(vkLogin, {
 	ui_constr: vkLoginUI,
 	waitData: function() {
 		this.updateState('wait', true);

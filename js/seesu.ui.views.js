@@ -6,7 +6,7 @@ show_now_playing
 !!!show_playlist_page
 show_track_page
 */
-
+var mainLevel;
 (function() {
 var baseNavUI = function() {};
 

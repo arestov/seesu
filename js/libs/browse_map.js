@@ -444,7 +444,7 @@ provoda.Eventor.extendTo(browseMap, {
 });
 var mapLevelModel = function() {};
 
-servModel.extendTo(mapLevelModel, {
+provoda.Model.extendTo(mapLevelModel, {
 	assignMapLev: function(lev){
 		this.lev = lev;
 		if (this.onMapLevAssign){

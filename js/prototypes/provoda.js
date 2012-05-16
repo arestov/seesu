@@ -1,4 +1,8 @@
-var provoda = {
+var provoda;
+
+(function(){
+	"use strict";
+provoda = {
 	prototypes: {},
 	Eventor: function(){},
 	StatesEmitter: function() {},
@@ -79,10 +83,10 @@ Class.extendTo(provoda.Eventor, {
 		if (cb_cs){
 			for (var i = 0; i < cb_cs.length; i++) {
 				if (cb_cs[i].namespace.indexOf(namespace) === 0){
-					r.matched.push(cb_cs[i])
+					r.matched.push(cb_cs[i]);
 				} else {
 					r.not_matched.push(cb_cs[i]);
-				}	
+				}
 			}
 		}
 		
@@ -136,7 +140,7 @@ Class.extendTo(provoda.Eventor, {
 		return this;
 	},
 	getQueued: function() {
-		return $filter(this.requests, 'queued');	
+		return $filter(this.requests, 'queued');
 	},
 	setPrio: function(type) {
 		var queued = this.getQueued();
@@ -238,7 +242,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 });
 
 
-var servModel = provoda.Model;
 provoda.StatesEmitter.extendTo(provoda.Model, {
 	init: function(){
 		this._super();
@@ -302,25 +305,25 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		var v = this.getView(name);
 		if (v){
 			return v.getC();
-		}	
+		}
 	},
 	getFreeView: function(name){
 		name = name || 'main';
 		var
 			args	= Array.prototype.slice.call(arguments),
 			v		= this.getView(name, true),
-			constr;
+			Constr;
 
 		args.shift();
 		args.unshift(this);
 		if (!v){
 			if (typeof this.ui_constr == 'function'){
-				constr = name == 'main' && this.ui_constr;
+				Constr = name == 'main' && this.ui_constr;
 			} else if (this.ui_constr){
-				constr = this.ui_constr[name];
+				Constr = this.ui_constr[name];
 			}
-			if (constr){
-				v = new constr();
+			if (Constr){
+				v = new Constr();
 				v.init.apply(v, args);
 				this.addView(v, name);
 				return v;
@@ -395,7 +398,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.trigger('die');
 		for (var i = 0; i < this.children.length; i++) {
 			this.children[i].markAsDead();
-		};
+		}
 	},
 	addChild: function() {
 		this.children.push.apply(this.children, arguments);
@@ -438,7 +441,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this;
 	},
 	getC: function(){
-		return this.c;	
+		return this.c;
 	},
 	setC: function(c){
 		this.c = c;
@@ -504,4 +507,4 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		
 	}
 });
-
+})();

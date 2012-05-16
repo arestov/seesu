@@ -48,7 +48,7 @@ var fileInTorrent = function(sr_item, mo){
 	this.sr_item = sr_item;
 };
 
-servModel.extendTo(fileInTorrent, {
+provoda.Model.extendTo(fileInTorrent, {
 	ui_constr: fileInTorrentUI,
 	setPlayer: function() {
 		return this;
