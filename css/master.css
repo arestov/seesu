@@ -593,9 +593,8 @@ display:none;
 				}
 	.track-context .extend-switcher{
 		border:0;
-		padding: 7px;
+		padding: 6px 10px;
 		margin-left:-7px;
-		margin-bottom:5px;
 		float:right;
 		border-radius: 0 0 0 6px;
 		color:#808080;
