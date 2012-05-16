@@ -554,12 +554,13 @@ display:none;
 	background:#5a5a5a;
 	margin:5px -13px 0;
 	padding: 0 0 0;
-	min-height:200px;
+	/*200px - 48px + 14*/
+	min-height:166px;
 	}	
 	@media (min-height:700px) {
 		.track-info-dominator{
-			
-			min-height:237px;
+			/*237-48+16*/
+			min-height:203px;
 		}
 	}
 
