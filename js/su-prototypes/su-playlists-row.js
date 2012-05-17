@@ -1,7 +1,4 @@
-
-
 var PlaylistAddRow;
-
 (function() {
 "use strict";
 var playlistSuggest = function(data){
