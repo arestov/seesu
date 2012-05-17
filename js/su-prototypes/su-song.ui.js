@@ -417,12 +417,12 @@ suServView.extendTo(songUI, {
 						if (images.length){
 							var fragment = document.createDocumentFragment();
 							images = images.slice(0, 10);
-							var shuffled_images = [images.shift()];
+							//var shuffled_images = [images.shift()];
 
-							shuffled_images.push.apply(shuffled_images, shuffleArray(images));
-							//var first_image = images//shuffleArray
-							for (var i = 0; i < shuffled_images.length; i++) {
-								var sizes = toRealArray(shuffled_images[i].sizes.size);
+							//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
+
+							for (var i = 0; i < images.length; i++) {
+								var sizes = toRealArray(images[i].sizes.size);
 
 
 								fragment.appendChild($('<img class="artist-image" alt=""/>').attr('src', (sizes[5] || sizes[0])["#text"])[0]);
