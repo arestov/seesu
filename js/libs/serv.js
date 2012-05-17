@@ -1,6 +1,6 @@
 var
 	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
-	doesContain, arrayExclude, getFields, searchInArray, getStringPattern,
+	doesContain, shuffleArray, arrayExclude, getFields, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
 	cloneObj,  getUnitBaseNum, stringifyParams, separateNum, createPrototype, Class, depdc,
 	debounce, throttle;
@@ -92,6 +92,16 @@ arrayExclude = function(arr, obj){
 	return r;
 };
 
+shuffleArray = function(obj) {
+    var shuffled = [], rand, value;
+    for (var index = 0; index < obj.length; index++) {
+    	value = obj[index];
+    	rand = Math.floor(Math.random() * (index + 1));
+    	shuffled[index] = shuffled[rand];
+    	shuffled[rand] = value;
+    }
+    return shuffled;
+};
 
 getFields = function(obj, fields){
 	var r = [];
