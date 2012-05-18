@@ -21,11 +21,6 @@ baseSuggest.extendTo(playlistSuggest, {
 });
 
 
-
-
-
-
-
 var PlaylistRSSection = function() {
 	this.init();
 };
@@ -33,8 +28,6 @@ searchSection.extendTo(PlaylistRSSection, {
 	resItem: playlistSuggest,
 	ui_constr: searchSectionUI
 });
-
-
 
 
 var PlaylistRowSearch = function(rpl, mo) {

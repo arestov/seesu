@@ -65,7 +65,7 @@ Class.extendTo(vkCoreApi, {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set('vk_api', options.cache_key, r)
+						_this.cache_ajax.set('vk_api', options.cache_key, r, options.cache_timeout)
 					}
 				};
 

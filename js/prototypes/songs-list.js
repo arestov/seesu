@@ -125,7 +125,7 @@ var songsList;
 			return this;
 		},
 		changed: function(){
-			this.updateState('changed', 'ta' + Math.random() + new Date());
+			this.updateState('changed', 'ta' + Math.random() + (+ new Date()));
 			return this;
 		},
 		injectExpectedSongs: function(playlist) {

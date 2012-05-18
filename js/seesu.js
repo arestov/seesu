@@ -227,6 +227,23 @@ provoda.Eventor.extendTo(seesuApp, {
 			}
 		}
 		return r;
+	},
+	getVKFriends: function(){
+		var _this = this;
+		if (!this.vk_fr_req){
+			this.vk_fr_req = this.vk_api.get("friends.get", {fields: "uid, photo"})
+				.done(function(){
+					delete _this.vk_fr_req;
+				});
+		}
+		this.vk_fr_req
+			.done(function(r){
+				_this.fire("vk-friends", r);
+			})
+			.fail(function(){
+
+			});
+
 	}
 });
 

@@ -28,37 +28,53 @@ Class.extendTo(provoda.Eventor, {
 		this.requests = [];
 		return this;
 	},
-	on: function(namespace, cb, exlusive){
-		var _this = this;
-		var short_name = namespace.split('.')[0];
+	_addEventHandler: function(namespace, cb, exlusive, once){
+		var
+			fired,
+			_this = this,
+			short_name = namespace.split('.')[0];
 
 		if (exlusive){
 			this.off(namespace);
 		}
 
-		if (!this.subscribes[short_name]){
-			this.subscribes[short_name] = [];
-		}
-		this.subscribes[short_name].push({
-			namespace: namespace,
-			cb: cb
-		});
 		if (this.reg_fires[short_name]){
 			this.reg_fires[short_name].call(this,  function() {
 				cb.apply(_this, arguments);
+
+			});
+			fired = true;
+		}
+		if (!(once && fired)){
+			if (!this.subscribes[short_name]){
+				this.subscribes[short_name] = [];
+			}
+			this.subscribes[short_name].push({
+				namespace: namespace,
+				cb: cb,
+				once: once
 			});
 		}
+		
+
 		return this;
 	},
-	off: function(namespace, cb){
+	once: function(namespace, cb, exlusive){
+		return this._addEventHandler(namespace, cb, exlusive, true);
+	},
+	on: function(namespace, cb, exlusive){
+		return this._addEventHandler(namespace, cb, exlusive);
+	},
+	off: function(namespace, cb, obj){
 		var
 			clean = [],
 			short_name = namespace.split('.')[0],
 			queried = this.getMatchedCallbacks(namespace);
 
-		if (cb){
+		if (cb || obj){
 			for (var i = 0; i < queried.matched.length; i++) {
-				if (queried.matched[i].cb !== cb){
+				var cur = queried.matched[i];
+				if (obj ? (obj !== cur) : (cur.cb !== cb)){
 					clean.push(queried.matched[i]);
 				}
 			}
@@ -105,7 +121,13 @@ Class.extendTo(provoda.Eventor, {
 
 		if (cb_cs){
 			for (var i = 0; i < cb_cs.length; i++) {
-				cb_cs[i].cb.apply(this, args);
+				var cur = cb_cs[i]
+				cur.cb.apply(this, args);
+				if (cur.once){
+					this.off(name, false, cur);
+				}
+
+				
 			}
 		}
 		return this;

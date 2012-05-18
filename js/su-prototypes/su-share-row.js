@@ -8,9 +8,6 @@ var struserSuggest = function(data) {
 	this.online = this.online;
 	this.name = data.name;
 };
-
-
-
 baseSuggest.extendTo(struserSuggest, {
 	valueOf: function(){
 		return this.id;
@@ -23,6 +20,7 @@ baseSuggest.extendTo(struserSuggest, {
 	ui_constr: baseSuggestUI
 });
 
+
 var StrusersRSSection = function() {
 	this.init();
 };
@@ -31,9 +29,43 @@ searchSection.extendTo(StrusersRSSection, {
 	ui_constr: searchSectionUI
 });
 
+
 var StrusersRowSearch = function(rpl, mo) {
 	this.init(rpl, mo);
 };
+investigation.extendTo(StrusersRowSearch, {
+	init: function(rpl, mo) {
+		this._super();
+		this.rpl = rpl;
+		this.mo = mo;
+		this.addSection('users', new StrusersRSSection());
+	},
+	ui_constr: investigationUI,
+	searchf: function() {
+		var
+			pl_results = [],
+			pl_sec = this.g('users');
+
+		pl_sec.setActive();
+		pl_sec.changeQuery(this.q);
+		/*
+
+		var serplr = su.getPlaylists(this.q);
+		if (serplr.length){
+			for (var i = 0; i < serplr.length; i++) {
+				pl_results.push({
+					playlist: serplr[i],
+					mo: this.mo,
+					rpl: this.rpl
+				});
+			}
+		}
+
+		pl_sec.appendResults(pl_results);
+		pl_sec.renderSuggests(true);
+		*/
+	}
+});
 
 
 
