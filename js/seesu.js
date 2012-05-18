@@ -231,14 +231,14 @@ provoda.Eventor.extendTo(seesuApp, {
 	getVKFriends: function(){
 		var _this = this;
 		if (!this.vk_fr_req){
-			this.vk_fr_req = this.vk_api.get("friends.get", {fields: "uid, photo"})
+			this.vk_fr_req = this.vk_api.get("friends.get", {fields: "uid, photo"}, {cache_timeout: 1000*60*5})
 				.done(function(){
 					delete _this.vk_fr_req;
 				});
 		}
 		this.vk_fr_req
 			.done(function(r){
-				_this.fire("vk-friends", r);
+				_this.trigger("vk-friends", r && r.response);
 			})
 			.fail(function(){
 

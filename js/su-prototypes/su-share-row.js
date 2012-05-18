@@ -1,3 +1,5 @@
+
+
 var ShareRow;
 (function(){
 "use strict";
@@ -7,6 +9,7 @@ var struserSuggest = function(data) {
 	this.photo = data.photo;
 	this.online = this.online;
 	this.name = data.name;
+	//this.text_title = this.getTitle();
 };
 baseSuggest.extendTo(struserSuggest, {
 	valueOf: function(){
@@ -41,13 +44,22 @@ investigation.extendTo(StrusersRowSearch, {
 		this.addSection('users', new StrusersRSSection());
 	},
 	ui_constr: investigationUI,
+	handleVKFriendsSearch: function(list){
+		this.g('users').appendResults(searchInArray(list, this.q, ["first_name", "last_name"]));
+	},
 	searchf: function() {
 		var
-			pl_results = [],
+			_this = this,
 			pl_sec = this.g('users');
 
 		pl_sec.setActive();
 		pl_sec.changeQuery(this.q);
+
+		su
+			.once("vk-friends.share-row", function(list){
+				_this.handleVKFriendsSearch(list);
+			}, true)
+			.getVKFriends();
 		/*
 
 		var serplr = su.getPlaylists(this.q);

@@ -6,7 +6,7 @@ var playlistSuggest = function(data){
 	this.pl = data.playlist;
 	this.mo = data.mo;
 	this.rpl = data.rpl;
-
+	this.text_title = this.getTitle();
 };
 baseSuggest.extendTo(playlistSuggest, {
 	valueOf: function(){
@@ -15,7 +15,6 @@ baseSuggest.extendTo(playlistSuggest, {
 	onView: function(){
 		this.pl.add(this.mo);
 		this.rpl.hide();
-		//su.views.showStaticPlaylist(this.pl, true);
 	},
 	ui_constr: baseSuggestUI
 });

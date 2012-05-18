@@ -86,6 +86,7 @@ var artistSuggest = function(data){
 	this.init();
 	this.artist = data.artist;
 	this.image = data.image;
+	this.text_title = this.getTitle();
 };
 
 
@@ -98,7 +99,7 @@ baseSuggestUI.extendTo(artistSuggestUI, {
 		var a = $("<a></a>");
 		$("<img/>").attr({ src: (that.image || default_sugg_artimage), alt: that.artist })
 			.appendTo(a);
-		$("<span></span>").text(that.valueOf())
+		$("<span></span>").text(that.text_title)
 			.appendTo(a);
 		this.a = a.appendTo(this.c);
 		return this;
@@ -120,6 +121,7 @@ baseSuggest.extendTo(artistSuggest, {
 var playlistSuggest = function(data){
 	this.init();
 	this.pl = data.playlist;
+	this.text_title = this.getTitle();
 };
 baseSuggest.extendTo(playlistSuggest, {
 	valueOf: function(){
@@ -212,7 +214,7 @@ baseSuggestUI.extendTo(trackSuggestUI, {
 			track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
 			a.append('<span class="sugg-track-dur">' + track_dur + '</span>');
 		}
-		$("<span></span>").text(that.valueOf()).appendTo(a);
+		$("<span></span>").text(that.text_title).appendTo(a);
 		this.a = a.appendTo(this.c);
 		return this;
 	}
@@ -228,6 +230,7 @@ var trackSuggest = function(data){
 	if (data.duration){
 		this.duration = data.duration;
 	}
+	this.text_title = this.getTitle();
 };
 baseSuggest.extendTo(trackSuggest, {
 	valueOf: function(){
@@ -283,7 +286,7 @@ baseSuggestUI.extendTo(tagSuggestUI,  {
 	createItem: function() {
 		var that = this.md;
 		this.a = $("<a></a>")
-			.append("<span>" + that.valueOf() + "</span>")
+			.append("<span>" + that.text_title + "</span>")
 			.appendTo(this.c);
 		return this;
 	}
@@ -296,7 +299,7 @@ var tagSuggest = function(data){
 	if (data.image){
 		this.image = data.image;
 	}
-	
+	this.text_title = this.getTitle();
 };
 
 baseSuggest.extendTo(tagSuggest, {
@@ -351,8 +354,8 @@ baseSuggestUI.extendTo(albumSuggestUI, {
 	createItem: function(){
 		var that = this.md;
 		var a = $("<a></a>");
-		$("<img/>").attr({ src: (that.image || default_sugg_artimage), alt: that.valueOf() }).appendTo(a);
-		$("<span></span>").text(that.valueOf()).appendTo(a);
+		$("<img/>").attr({ src: (that.image || default_sugg_artimage), alt: that.text_title }).appendTo(a);
+		$("<span></span>").text(that.text_title).appendTo(a);
 		this.a = a.appendTo(this.c);
 		return this;
 	}
@@ -372,6 +375,7 @@ var albumSuggest = function(data){
 	if (data.resid){
 		this.aid = data.resid;
 	}
+	this.text_title = this.getTitle();
 };
 baseSuggest.extendTo(albumSuggest, {
 	valueOf: function(){
@@ -383,7 +387,7 @@ baseSuggest.extendTo(albumSuggest, {
 			album_name: this.name,
 			album_id: this.aid
 		}, {save_parents: true});
-		seesu.track_event('Music search', this.q, "album: " + this.valueOf());
+		seesu.track_event('Music search', this.q, "album: " + this.text_title);
 	},
 	ui_constr: albumSuggestUI
 });

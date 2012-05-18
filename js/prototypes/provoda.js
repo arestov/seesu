@@ -1,7 +1,7 @@
 var provoda;
 
 (function(){
-	"use strict";
+"use strict";
 provoda = {
 	prototypes: {},
 	Eventor: function(){},
@@ -71,18 +71,21 @@ Class.extendTo(provoda.Eventor, {
 			short_name = namespace.split('.')[0],
 			queried = this.getMatchedCallbacks(namespace);
 
-		if (cb || obj){
-			for (var i = 0; i < queried.matched.length; i++) {
-				var cur = queried.matched[i];
-				if (obj ? (obj !== cur) : (cur.cb !== cb)){
-					clean.push(queried.matched[i]);
+		if (this.subscribes[short_name]){
+			if (cb || obj){
+				for (var i = 0; i < queried.matched.length; i++) {
+					var cur = queried.matched[i];
+					if (obj ? (obj !== cur) : (cur.cb !== cb)){
+						clean.push(queried.matched[i]);
+					}
 				}
 			}
+			clean.push.apply(clean, queried.not_matched);
+			if (clean.length != this.subscribes[short_name].length){
+				this.subscribes[short_name] = clean;
+			}
 		}
-		clean.push.apply(clean, queried.not_matched);
-		if (clean.length != this.subscribes[short_name].length){
-			this.subscribes[short_name] = clean;
-		}
+		
 	
 		
 		return this;

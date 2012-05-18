@@ -90,7 +90,8 @@ var seesu_vkappid = 2271620;
 var connectApiToSeesu = function(vk_token, access, not_save) {
 	var vkapi = new vkApi(vk_token, {
 		queue: su.delayed_search.vk_api.queue,
-		jsonp: !su.env.cross_domain_allowed
+		jsonp: !su.env.cross_domain_allowed,
+		cache_ajax: cache_ajax
 	});
 
 	su.setVkApi(vkapi, vk_token.user_id);

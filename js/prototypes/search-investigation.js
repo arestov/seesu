@@ -357,7 +357,7 @@
 		createItem: function() {
 			var that = this.md;
 			this.a = $('<a></a>')
-				.text(that.valueOf())
+				.text(that.text_title)
 				.appendTo(this.c);
 			return this;
 		},
@@ -383,6 +383,9 @@
 		},
 		setInactive: function(){
 			this.updateState('active', false);
+		},
+		getTitle: function(){
+			return this.valueOf();
 		},
 		view: function(){
 			if (this.onView){
