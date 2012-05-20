@@ -19,18 +19,8 @@
 .daddy{
 	padding-right:17px;
 }
-.np{
-	cursor:pointer;
-	height:20px;
-	width:20px;
-	background:url(../i/equalaizer_stoped.gif) no-repeat;
-	float: right;
-	margin-top:4px;
-	position:absolute;
-	right:25px;
-	top:8px;
-}
-.player-played.np{
+
+.player-played .np{
 	background-image:url(../i/equalaizer.gif);
 }
 #search_result{
@@ -250,24 +240,31 @@ ul.tracks-for-play > li{
 		height:20px;
 		background: no-repeat;
 	}
-			
+.nav-button{
+	display: inline-block;
+	padding:4px 8px;
+	border-left:1px solid #751679;
+	border-radius:6px;
+}	
+.nnav, .nav-button{
+	cursor:pointer;
+	
+	background:url(../i/nav/button-gradient.png) repeat-x 100% 0;
+	
+	text-shadow:0 1px 0 #000;
+	border-right:1px solid #751679;
+	border-top:1px solid #C16CC6;
+	border-bottom:1px solid #580A5C;
+}
 
 .nnav{
 	float:left;
-	cursor:pointer;
-
-	padding:4px 14px 4px 9px;
-
-	border-right:1px solid #731677;
-	border-top:1px solid #cb85cf;
-	border-bottom:1px solid #3d0740;
-	
-	background:url(../i/nav/button-gradient.png) repeat-x 100% 0;
 	position:relative;
+	padding:4px 14px 4px 9px;
+	
+	
 	overflow: visible;
 	
-	
-	text-shadow:0 1px 0 #000;
 	margin-right:10px;
 	-moz-border-radius:0 6px 6px 0;
 	-webkit-border-radius:0 6px 6px 0;
@@ -285,25 +282,28 @@ ul.tracks-for-play > li{
 		top:-1px;
 		}
 
-.nnav:after{
+.nnav:after, .nav-button:after{
 	content: " ";
 	position:absolute;
 	left:0;right:0;
 	height:28px;
 	bottom:-2px;
-	border-bottom:1px solid #904695;
+	border-bottom:1px solid #783B7D;
 	border-radius:0 0 6px 0;
 	display:block;
 }
+.nav-button:after{
+	border-radius:0 6px 6px 0;
+}
 
-.nnav:hover{
+.nnav:hover,.nav-button:hover{
 	color:#fff;
 	background-image:url(../i/nav/button-gradient-hover.png);
 	}
 	.nnav:hover b{
 		background-image:url(../i/nav/button-arrow-hover.png) ;
 		}
-.nnav:active{
+.nnav:active, .nav-button:active{
 	text-shadow:none;
 	background-image:url(../i/nav/button-gradient-active.png);
 	
@@ -361,6 +361,22 @@ ul.tracks-for-play > li{
 	.nav-search-results:active .icon{
 		background-image:url(../i/nav/seesu-nav-search-active.png);
 		}
+
+.np-button{
+	width:20px;	
+	position:absolute;
+	right:25px;
+	top:8px;
+	padding: 4px 8px;
+	border-right: 1px solid transparent;
+	}
+	.np{
+		cursor:pointer;
+		height:20px;
+		width:20px;
+		background:url(../i/equalaizer_stoped.gif) no-repeat;
+		}
+
 
 .art-card{
 	max-width: 750px;

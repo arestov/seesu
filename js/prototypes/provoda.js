@@ -441,7 +441,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this;
 	},
 	setModel: function(md, puppet_model){
+		if (this.md && this.md !== md && this.reset){
+			this.reset();
+		}
 		this.md = md;
+		var was
 		if (puppet_model){
 			this.puppet_model = puppet_model;
 		}
@@ -471,8 +475,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	setC: function(c){
 		this.c = c;
 	},
-	setStates: function(states){
-		if (this.reset){
+	setStates: function(states, reset){
+		if (reset && this.reset){
 			this.reset();
 		}
 		this.states = {};

@@ -97,6 +97,9 @@ var seesuApp = function(version) {
 	this.main_level = main_level;
 	this.map = (new browseMap(main_level)).makeMainLevel();
 
+	this.map.on('map-tree-change', function(nav_tree) {
+		_this.main_level.changeNavTree(nav_tree);
+	});
 
 //	this.ui = new seesu_ui(document);
 	this.soundcloud_queue = new funcsQueue(1000, 5000 , 7);

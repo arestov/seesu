@@ -140,10 +140,19 @@ suServView.extendTo(mainLevelUI, {
 		"flash-internet":function(state){
 			this.toggleBodyClass(state, 'flash-internet');
 		},
+		"viewing-playing": function(state) {
+			if (this.now_playing_link){
+				if (state){
+					this.now_playing_link.removeClass("nav-button");
+				} else {
+					this.now_playing_link.addClass("nav-button");
+				}
+			}	
+		},
 		'now-playing': function(text) {
 			
 			if (!this.now_playing_link && this.nav){
-				this.now_playing_link = $('<a class="np"></a>').click(function(){
+				this.now_playing_link = $('<a class="nav-item np-button"><span class="np"></span></a>').click(function(){
 					su.views.show_now_playing(true);
 				}).appendTo(this.nav.justhead);
 			}
@@ -266,9 +275,21 @@ suMapModel.extendTo(mainLevel, {
 		nav: mainLevelNavUI
 	},
 	page_name: 'start page',
-	nowPlaying: function(text) {
-		this.updateState('now-playing', text);
+	changeNavTree: function(nav_tree) {
+		this.nav_tree = $filter(nav_tree, 'resident');
+		this.checkNowPlayNav();
 	},
+	nowPlaying: function(mo) {
+		this.updateState('now-playing', mo.getTitle());
+		this.current_playing = mo;
+		this.checkNowPlayNav();
+	},
+	checkNowPlayNav: debounce(function() {
+		if (this.current_playing){
+			this.updateState('viewing-playing', this.nav_tree.indexOf(this.current_playing) != -1);
+		}
+		
+	}, 30),
 	playing: function() {
 		this.updateState('playing', true);
 	},

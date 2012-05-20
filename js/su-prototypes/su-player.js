@@ -67,7 +67,7 @@ var seesuPlayer;
 			}
 		},
 		nowPlaying: function(mo){
-			su.main_level.nowPlaying(mo.getTitle());
+			su.main_level.nowPlaying(mo);
 		}
 	});
 })();

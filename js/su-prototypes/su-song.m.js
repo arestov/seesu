@@ -78,6 +78,13 @@ var song;
 			nav: trackNavUI
 		},
 		page_name: 'song page',
+		getShareUrl: function() {
+			if (this.artist && this.track){
+				return "http://seesu.me/o" + "#/catalog/" + this.artist + "/_/" + this.track;
+			} else {
+				return "";
+			}
+		},
 		updateFilesSearchState: function(complete, get_next){
 			this._super.apply(this, arguments);
 			if (this.isHaveTracks('mp3')){

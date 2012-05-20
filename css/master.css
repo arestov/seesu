@@ -1178,6 +1178,46 @@ iframe.you-tube-video,embed.you-tube-video{
 		width:100%;
 		box-sizing: border-box;
 		}
+	.share-song .users-list{
+		overflow: hidden;
+		margin-top:24px;
+		}
+		.share-song .users-list .search-results-container{
+			margin-top:12px;
+		}
+		.share-song .users-list .suggest{
+			float:left;
+			width:50%;
+			}
+.share-user-suggest{
+	min-width:200px;
+	margin-bottom:6px;
+	cursor: pointer;
+	}
+	.share-user-suggest a{
+		display: block;
+		padding: 3px 6px 3px 3px;
+		overflow: hidden;
+		border-radius:3px;
+		}
+
+	.share-user-suggest img{
+		float:left;
+		margin-right:6px;
+		}
+	.share-user-suggest:hover a{
+		background-color: #494949;	
+		}		
+
+.row-song-context input{
+	background: #777;
+	border-color:#919191;
+	border-radius:4px;
+	color:#eee;
+	margin:0;
+
+}
+
 .addsong-to-playlist{
 	padding:12px 0 0;
 	}
@@ -1188,8 +1228,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		padding: 0;
 		}
 	.addsong-to-playlist .playlist-query{
-		background: #777;
-		border-color:#555;
+		
 		margin-bottom: 12px;
 		}
 		.addsong-to-playlist .create-named-playlist{

@@ -231,12 +231,14 @@ provoda.Model.extendTo(fileInTorrent, {
 		},
 		onAppend: function(parent_view) {
 			var _this = this;
-			parent_view.parent_view.on('want-more-songs-state-change', function() {
-				if (_this.state('selected')){
-					_this.fixBars();
+			parent_view.parent_view.on('want-more-songs-state-change', function(nv, ov) {
+				if (nv || ov){
+					if (_this.state('selected')){
+						_this.fixBars();
+					}
 				}
-				
-			})
+			});
+
 		}
 	});
 
@@ -350,6 +352,11 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.pause();
 				this.setPosition(0);
 				this.player.remove(this);
+
+				this.updateState('play', false);
+				this.updateState('loading-progress', 0);
+				this.updateState('playing-progress', 0);
+				
 				delete this.sound;
 			}
 		},

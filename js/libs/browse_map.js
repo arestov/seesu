@@ -296,7 +296,7 @@ provoda.Eventor.extendTo(browseMap, {
 				}, 
 				!!url_restoring, title_changed);
 		};
-
+		this.trigger("map-tree-change", this.nav_tree, this.old_nav_tree);
 		
 
 	},
@@ -384,13 +384,16 @@ provoda.Eventor.extendTo(browseMap, {
 	},
 	joinNavURL: function(nav) {
 		var url = [];
+		nav = nav.slice().reverse();
+
 		for (var i = 0; i < nav.length; i++) {
 			var url_part = nav[i].getURL();
 			if (url_part){
 				url.push(url_part);
 			}
+			nav[i].setFullUrl(url.join(''));
 		};
-		return url.reverse().join('');
+		return url.join('');
 	},
 	setURL: function(url, replace, url_restoring) {
 		var _this = this;
@@ -482,6 +485,9 @@ provoda.Model.extendTo(mapLevelModel, {
 		if (this.lev && (this.state('mp-stack') || (this.state('mp-show') && this.state('mp-blured')) )){
 			this.lev._sliceTM();
 		}
+	},
+	setFullUrl: function(url) {
+		this.updateState('mp-full-url', url);
 	},
 	getTitle: function() {
 		return this.state('nav-title');

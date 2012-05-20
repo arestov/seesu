@@ -161,12 +161,16 @@
 			this.edges_list = [];
 			this.rendering_list = [];
 		},
-		appendResults: function(arr) {
+		appendResults: function(arr, render, no_more_results) {
 			var r = [];
 			for (var i = 0; i < arr.length; i++) {
 				r.push(new this.resItem(arr[i]));
 			};
 			this.r.append(r);
+			if (render){
+				this.renderSuggests(no_more_results);
+			}
+			return this;
 		},
 		setActive: function(){
 			this.updateState('active', true);
@@ -229,6 +233,7 @@
 			this.setButtonText(false, q);
 			this.showButton();
 			this.trigger('items-change');
+			return this;
 		},
 		removeOldResults: function(){
 
@@ -269,6 +274,7 @@
 
 			this.setButtonText(!!this.r.length, this.r.query);
 			this.trigger('items-change', this.r.length);
+			return this;
 		}
 	});
 })();

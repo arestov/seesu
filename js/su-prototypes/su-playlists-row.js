@@ -60,8 +60,7 @@ investigation.extendTo(PlaylistRowSearch, {
 			}
 		}
 
-		pl_sec.appendResults(pl_results);
-		pl_sec.renderSuggests(true);
+		pl_sec.appendResults(pl_results, true, true);
 	}
 });
 
