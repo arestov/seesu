@@ -210,7 +210,7 @@ var song;
 	var TrackActionsRow = function(mo) {
 		this.init(mo);
 	};
-	ContextRow.extendTo(TrackActionsRow, {
+	PartsSwitcher.extendTo(TrackActionsRow, {
 		init: function(mo) {
 			this._super();
 			this.mo = mo;

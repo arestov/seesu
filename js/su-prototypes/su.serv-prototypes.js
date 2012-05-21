@@ -105,9 +105,9 @@ Class.extendTo(gMessagesStore, {
 
 
 
-var ContextRow = function() {};
+var PartsSwitcher = function() {};
 
-provoda.Model.extendTo(ContextRow, {
+provoda.Model.extendTo(PartsSwitcher, {
 	init: function() {
 		this._super();
 		this.context_parts = {};
