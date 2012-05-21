@@ -690,6 +690,21 @@ provoda.Model.extendTo(mfCor, {
 			return false;
 		}
 	},
+	getVKFile: function(){
+		var file = this.state('current_mopla');
+		if (file && file.from == 'vk'){
+			return file
+		} else{
+			var files = this.getFiles(false, 'vk');
+			return files && files[0];
+		}
+	},
+	getFiles: function(type, source_name){
+		type = type || 'mp3';
+		var songs = this.sem.getAllSongTracks(type);
+		songs = $filter(songs, 'name', source_name);
+		return getTargetField(songs, '0.t');
+	},
 	songs: function(){
 		if (this.raw()){
 			return [{t:[this.omo.getSongFileModel(this.mo, this.mo.player)]}];

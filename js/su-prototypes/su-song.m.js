@@ -93,6 +93,22 @@ var song;
 		},
 		mlmDie: function() {
 			this.hide();
+		},
+		postToVKWall: function(uid){
+			var
+				data = {},
+				file = this.mf_cor.getVKFile();
+			if (uid){
+				data.owner_id = uid;
+			}
+			if (file){
+				data.attachments = "audio" + file._id;
+			}
+			
+			data.message = this.getFullName() + " " + encodeURI(su.p.c_song.getShareUrl());
+
+			return su.vk_api.get("wall.post", data, {nocache: true});
+			//console.log(uid);
 		}
 	});
 

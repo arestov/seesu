@@ -88,7 +88,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.c = parent_c.children('.share-song');
 		this.button = buttons_panel.find('.pc-place .pc-rupor');
 		
-		this.users_c = $('<div class="users-list"></div>').appendTo(this.c)
+		this.users_c = $('<div class="users-list"></div>').text("Поместить песню").appendTo(this.c)
 
 		this.bindClick();
 		this.setModel(md);
@@ -120,7 +120,10 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.input = $("<input type='text'/>").appendTo(this.users_c)
 			.bind('keyup change search mousemove', inputSearch);
 
-
+		this.mywall_button = $("<div></div>").click(function(){
+			_this.md.mo.postToVKWall();
+		}).text("на свою стену").appendTo(this.users_c)
+		this.users_c.append("<span>или на стену одного из друзей</span>");
 		var searcher_ui = this.md.searcher.getFreeView();
 		if (searcher_ui){
 			this.users_c.append(searcher_ui.getC());
