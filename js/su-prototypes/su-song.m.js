@@ -80,7 +80,7 @@ var song;
 		page_name: 'song page',
 		getShareUrl: function() {
 			if (this.artist && this.track){
-				return "http://seesu.me/o" + "#/catalog/" + this.artist + "/_/" + this.track;
+				return "http://seesu.me/o" + "#/catalog/" + (this.artist + "/_/" + this.track).replace(/\s/gi, "+");
 			} else {
 				return "";
 			}

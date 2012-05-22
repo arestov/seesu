@@ -1189,13 +1189,20 @@ iframe.you-tube-video,embed.you-tube-video{
 			float:left;
 			width:50%;
 			}
+.post-to-my-vk-wall{
+
+}
 .share-user-suggest{
-	min-width:200px;
+	
 	margin-bottom:6px;
-	cursor: pointer;
+	
 	}
 	.share-user-suggest a{
+		min-width:200px;
+	}
+	.share-user-suggest a, .post-to-my-vk-wall{
 		display: block;
+		cursor: pointer;
 		padding: 3px 6px 3px 3px;
 		overflow: hidden;
 		border-radius:3px;
@@ -1205,7 +1212,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		float:left;
 		margin-right:6px;
 		}
-	.share-user-suggest:hover a{
+	.share-user-suggest:hover a,.post-to-my-vk-wall:hover{
 		background-color: #494949;	
 		}		
 

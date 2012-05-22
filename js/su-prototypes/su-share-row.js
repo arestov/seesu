@@ -88,7 +88,9 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.c = parent_c.children('.share-song');
 		this.button = buttons_panel.find('.pc-place .pc-rupor');
 		
-		this.users_c = $('<div class="users-list"></div>').text("Поместить песню").appendTo(this.c)
+		this.users_c = $('<div class="users-list"></div>').appendTo(this.c);
+
+		$("<h3></h3>").text("Поместить песню").appendTo(this.users_c);
 
 		this.bindClick();
 		this.setModel(md);
@@ -117,13 +119,16 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			
 		}, 100);
 
-		this.input = $("<input type='text'/>").appendTo(this.users_c)
+		var input_place = $("<div classs='list-search-input-place'></div>").appendTo(this.users_c);
+
+
+		this.input = $("<input type='text'/>").appendTo(input_place)
 			.bind('keyup change search mousemove', inputSearch);
 
-		this.mywall_button = $("<div></div>").click(function(){
+		this.mywall_button = $("<div class='post-to-my-vk-wall'></div>").click(function(){
 			_this.md.mo.postToVKWall();
 		}).text("на свою стену").appendTo(this.users_c)
-		this.users_c.append("<span>или на стену одного из друзей</span>");
+		this.users_c.append($("<div></div>").text("или на стену одного из друзей"));
 		var searcher_ui = this.md.searcher.getFreeView();
 		if (searcher_ui){
 			this.users_c.append(searcher_ui.getC());
