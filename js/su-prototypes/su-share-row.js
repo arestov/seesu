@@ -119,7 +119,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			
 		}, 100);
 
-		var input_place = $("<div classs='list-search-input-place'></div>").appendTo(this.users_c);
+		var input_place = $("<div class='list-search-input-place'></div>").appendTo(this.users_c);
 
 
 		this.input = $("<input type='text'/>").appendTo(input_place)
@@ -128,7 +128,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.mywall_button = $("<div class='post-to-my-vk-wall'></div>").click(function(){
 			_this.md.mo.postToVKWall();
 		}).text("на свою стену").appendTo(this.users_c)
-		this.users_c.append($("<div></div>").text("или на стену одного из друзей"));
+		this.users_c.append($("<div class='friends-search-desc desc'></div>").text("или на стену одного из друзей"));
 		var searcher_ui = this.md.searcher.getFreeView();
 		if (searcher_ui){
 			this.users_c.append(searcher_ui.getC());

@@ -1192,6 +1192,11 @@ iframe.you-tube-video,embed.you-tube-video{
 .post-to-my-vk-wall{
 
 }
+.list-search-input-place{
+	float:left;
+	width:50%;
+	margin-bottom:6px;
+}
 .share-user-suggest{
 	
 	margin-bottom:6px;
