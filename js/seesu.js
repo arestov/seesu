@@ -231,6 +231,7 @@ provoda.Eventor.extendTo(seesuApp, {
 		}
 		return r;
 	},
+	vkappid: 2271620,
 	getVKFriends: function(){
 		var _this = this;
 		if (!this.vk_fr_req){

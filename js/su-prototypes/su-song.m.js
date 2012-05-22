@@ -106,8 +106,19 @@ var song;
 			}
 			
 			data.message = this.getFullName() + " " + encodeURI(su.p.c_song.getShareUrl());
+			if (window.VK){
 
-			return su.vk_api.get("wall.post", data, {nocache: true});
+			} else {
+			
+
+				app_env.openURL( "http://seesu.me/vk/share.html" + 
+					"?" + 
+					stringifyParams({app_id: su.vkappid}, false, '=', '&') + 
+					"#?" + 
+					stringifyParams(data, false, '=', '&'));
+			}
+
+			return //su.vk_api.get("wall.post", data, {nocache: true});
 			//console.log(uid);
 		}
 	});

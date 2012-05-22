@@ -125,7 +125,7 @@ var test_pressed_node = function(e, opts){
 			} else if (bN(class_list.indexOf('use-vk-code'))){
 				var vk_t_raw = clicked_node.parent().find('.vk-code').val();
 				if (vk_t_raw){
-					var vk_token = new vkTokenAuth(seesu_vkappid, vk_t_raw);			
+					var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);			
 						connectApiToSeesu(vk_token, true);
 				}
 				

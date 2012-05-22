@@ -85,7 +85,6 @@ tryVKOAuth = function(){
 	}
 };
 
-var seesu_vkappid = 2271620;
 
 var connectApiToSeesu = function(vk_token, access, not_save) {
 	var vkapi = new vkApi(vk_token, {
@@ -172,7 +171,7 @@ try_mp3_providers = function(){
 		
 	} else {
 	
-		su.vk_auth = new vkAuth(seesu_vkappid, {
+		su.vk_auth = new vkAuth(su.vkappid, {
 			bridge: 'http://seesu.me/vk/bridge.html',
 			callbacker: 'http://seesu.me/vk/callbacker.html'
 		}, ["friends", "video", "offline", "audio", "wall"], false, su.env.deep_sanbdox);
@@ -181,13 +180,13 @@ try_mp3_providers = function(){
 		var save_token = suStore('vk_token_info');
 		if (save_token){
 			//console.log('token!')
-			connectApiToSeesu( new vkTokenAuth(seesu_vkappid, save_token), true);
+			connectApiToSeesu( new vkTokenAuth(su.vkappid, save_token), true);
 			//console.log(save_token)
 		}
 
 		su.vk_auth
 			.on('vk-token-receive', function(token){
-				var vk_token = new vkTokenAuth(seesu_vkappid, token);			
+				var vk_token = new vkTokenAuth(su.vkappid, token);			
 				connectApiToSeesu(vk_token, true);
 			})
 			.on('want-open-url', function(wurl){
@@ -209,7 +208,7 @@ try_mp3_providers = function(){
 									at.expires_in = hashurlparams.expires_in;
 								}
 								at.user_id = hashurlparams.user_id;
-								var vk_token = new vkTokenAuth(seesu_vkappid, at);
+								var vk_token = new vkTokenAuth(su.vkappid, at);
 								connectApiToSeesu(vk_token, true);
 
 							}
