@@ -1213,13 +1213,18 @@ iframe.you-tube-video,embed.you-tube-video{
 		border-radius:3px;
 		}
 
-	.share-user-suggest img{
+	.share-user-suggest img, .post-to-my-vk-wall img{
 		float:left;
 		margin-right:6px;
+		height:25px;
+		width:25px;
 		}
 	.share-user-suggest:hover a,.post-to-my-vk-wall:hover{
 		background-color: #494949;	
 		}		
+.friends-search-desc{
+	clear: both;
+	}
 
 .row-song-context input{
 	background: #777;

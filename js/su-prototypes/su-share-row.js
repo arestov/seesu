@@ -1,13 +1,15 @@
-
-
 var ShareRow;
 (function(){
 "use strict";
 
 
 var struserSuggestView = function() {};
-var struserSuggest = function(user) {
+var struserSuggest = function(wrap) {
+	var user = wrap.user;
+
 	this.init();
+	this.mo = wrap.mo;
+	this.row = wrap.row;
 	this.user_id = user.uid;
 	this.photo = user.photo;
 	this.online = this.online;
@@ -22,6 +24,8 @@ baseSuggest.extendTo(struserSuggest, {
 		//this.pl.add(this.mo);
 		//this.rpl.hide();
 		//su.views.showStaticPlaylist(this.pl, true);
+		this.mo.postToVKWall();
+		this.row.hide();
 	},
 	ui_constr: struserSuggestView
 });
@@ -31,8 +35,8 @@ baseSuggestUI.extendTo(struserSuggestView, {
 		this.a = $('<a></a>')
 			.text(that.text_title)
 			.appendTo(this.c);
-		$('<img width="25" height="25"/>').attr("src", that.photo).prependTo(this.a);
-		this.c.addClass('share-user-suggest')
+		$('<img />').attr("src", that.photo).prependTo(this.a);
+		this.c.addClass('share-user-suggest');
 		return this;
 	}
 });
@@ -58,7 +62,19 @@ investigation.extendTo(StrusersRowSearch, {
 	},
 	ui_constr: investigationUI,
 	handleVKFriendsSearch: function(list){
-		this.g('users').appendResults((this.q ? searchInArray(list, this.q, ["first_name", "last_name"]) : list), true);
+		var r = (this.q ? searchInArray(list, this.q, ["first_name", "last_name"]) : list);
+		if (r.length){
+			r = r.concat();
+			for (var i = 0; i < r.length; i++) {
+				r[i] = {
+					mo: this.mo,
+					user: r[i],
+					row: this.rpl
+				};
+			}
+		}
+
+		this.g('users').appendResults(r, true);
 	},
 	searchf: function() {
 		var
@@ -127,7 +143,13 @@ BaseCRowUI.extendTo(ShareRowUI, {
 
 		this.mywall_button = $("<div class='post-to-my-vk-wall'></div>").click(function(){
 			_this.md.mo.postToVKWall();
-		}).text("на свою стену").appendTo(this.users_c)
+		}).text("на свою стену").appendTo(this.users_c);
+
+		var current_user_info = su.s.getInfo('vk');
+		if (current_user_info && current_user_info.photo){
+			$("<img />").attr("src", current_user_info.photo).prependTo(this.mywall_button)
+		}
+
 		this.users_c.append($("<div class='friends-search-desc desc'></div>").text("или на стену одного из друзей"));
 		var searcher_ui = this.md.searcher.getFreeView();
 		if (searcher_ui){

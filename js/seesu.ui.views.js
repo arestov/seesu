@@ -21,6 +21,7 @@ suServView.extendTo( baseNavUI, {
 		}
 		this.setModel(mlm);
 	},
+	stack_types: ['top', 'bottom', 'middle'],
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
@@ -38,9 +39,8 @@ suServView.extendTo( baseNavUI, {
 		},
 		'mp-stack': function(state) {
 			if (state){
-				state = ['top', 'bottom', 'middle'].indexOf(state) > -1 && state;
-				if (state){
-					this.c.addClass('stack-' + state + ' stacked');
+				if (this.stack_types.indexOf(state) != -1){
+					this.c.addClass('stack-' + state);
 				}
 
 			} else {
@@ -74,7 +74,23 @@ var mainLevelNavUI = function(mal) {};
 baseNavUI.extendTo(mainLevelNavUI, {
 	createBase: function(){
 		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon"></span></span>');
-	}
+	},
+	state_change: cloneObj(cloneObj({}, baseNavUI.prototype.state_change), {
+		'mp-stack': function(state) {
+			if (state && state == !!state){
+				this.c.addClass('stacked');
+			} else {
+				this.c.removeClass('stacked');
+			}
+		},
+		'mp-blured': function(state) {
+			if (state){
+				this.c.addClass("nav-button");
+			} else {
+				this.c.removeClass("nav-button");
+			}
+		}
+	})
 });
 
 

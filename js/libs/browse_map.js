@@ -257,16 +257,17 @@ provoda.Eventor.extendTo(browseMap, {
 	},
 	updateNav: function(tl, url_restoring){
 		var lvls = [tl].concat(tl.parent_levels);
-		if (tl != this.getLevel(-1)){
-			lvls.push(this.getLevel(-1));
-		}
+		//if (tl != this.getLevel(-1)){
+		//	lvls.push(this.getLevel(-1));
+		//}
 
 		var prev = lvls[1];
 		if (prev){
-			if (lvls[2]){
+			//if (lvls[2]){
 				// this is top of stack, but only we have "stack";
 				prev.resident.stackNav('top');
-			}
+				this.getLevel(-1).resident.stackNav(true);
+			//}
 		}
 
 		for (var i = 2; i < lvls.length; i++) {
