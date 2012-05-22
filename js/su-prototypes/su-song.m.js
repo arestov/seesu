@@ -109,7 +109,9 @@ var song;
 			if (window.VK){
 
 			} else {
-			
+				if (data.attachments){
+					data.attachment = data.attachments;
+				}
 
 				app_env.openURL( "http://seesu.me/vk/share.html" + 
 					"?" + 
