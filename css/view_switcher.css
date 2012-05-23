@@ -1,8 +1,8 @@
 .navs{
 	overflow:hidden;
 	padding-top:6px;
-	padding-left:25px;
-	padding-right:25px;
+	padding-left:12px;
+	padding-right:12px;
 	min-height:36px;
 	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
 	border-bottom:1px solid #333;
@@ -368,7 +368,7 @@ ul.tracks-for-play > li{
 .np-button{
 	width:20px;	
 	position:absolute;
-	right:25px;
+	right:12px;
 	top:8px;
 	padding: 4px 8px;
 	border-right: 1px solid transparent;
