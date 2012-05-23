@@ -533,6 +533,7 @@ investigation.extendTo(SuInvestg, {
 			
 		}
 	},
+
 	searchf: function() {
 		var playlists = seesu.gena.playlists,
 			pl_results = [],
@@ -581,6 +582,17 @@ investigation.extendTo(SuInvestg, {
 			//===playlists search
 			offlineSearch(this.q, this);
 			network_search(this.q, this);
+		}
+	},
+	getTitleString: function(text){
+		var original = localize('Search-resuls');
+		
+		if (text){
+			return original.replace(this.query_regexp, ' «' + text + '» ').replace(/^\ |\ $/gi, '');
+		} else{
+			var usual_text = original.replace(this.query_regexp, '');
+			var cap = usual_text.charAt(0).toLocaleUpperCase();
+			return cap + usual_text.slice(1);
 		}
 	}
 });
