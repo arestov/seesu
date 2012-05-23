@@ -200,7 +200,9 @@ ul.tracks-for-play > li{
 	}
 	
 	
-	
+.nav-start{
+	border-left:1px solid transparent;
+}	
 .not-as-application .navs .nav-title{
 	float:left;
 }
@@ -344,7 +346,9 @@ ul.tracks-for-play > li{
 	width: 20px;
 	float: left;
 	margin-right: 10px;
+	
 }
+
 .stacked{
 	margin-right: 37px;
 }
