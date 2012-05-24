@@ -227,6 +227,9 @@ ul.tracks-for-play > li{
 	border-top:1px solid transparent;
 	padding:4px 0;
 	overflow: hidden;
+
+	-webkit-transition-property: margin-left;  
+  	-webkit-transition-duration: 0.1s;  
 }
 	.nav-item span{
 		display:block;
