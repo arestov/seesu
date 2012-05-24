@@ -326,10 +326,6 @@ ul.tracks-for-play > li{
 	
 	}
 
-.stack-bottom, .stack-middle{
-	max-width:15px;
-	display:block;
-	}
 
 .stack-middle, .stack-top, .stack-bottom{
 	margin-left:-42px;
@@ -339,6 +335,10 @@ ul.tracks-for-play > li{
 		background-position:0 -1px;
 		}	
 	
+.stack-bottom, .stack-middle{
+	max-width:15px;
+	display:block;
+	}
 
 		
 .nav-start{
