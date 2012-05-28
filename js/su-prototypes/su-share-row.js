@@ -170,6 +170,10 @@ BaseCRow.extendTo(ShareRow, {
 		this.traackrow = traackrow;
 		this.mo = mo;
 		this._super();
+		if (app_env.vkontakte || su.vk_api){
+			this.updateState("can-post-to-current-user", true);
+		} 
+
 		this.searcher = new StrusersRowSearch(this, mo);
 		this.addChild(this.searcher);
 		//this.share_url = this.mo.getShareUrl();
