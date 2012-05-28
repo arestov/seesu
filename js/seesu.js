@@ -111,7 +111,7 @@ var seesuApp = function(version) {
 
 
 
-	this.s  = new seesuServerAPI(suStore('dg_auth'));
+	this.s  = new seesuServerAPI(suStore('dg_auth'), this.server_url);
 	this.on('vk-api', function(vkapi, user_id) {
 		var _this = this;
 		vkapi.get('getProfiles', {
@@ -183,6 +183,7 @@ provoda.Eventor.extendTo(seesuApp, {
 	},
 	fs: {},//fast search
 	env: app_env,
+	server_url: 'http://seesu.me/',
 	app_pages: {
 		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi",
 		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko",

@@ -73,7 +73,7 @@ var mainLevelNavUI = function(mal) {};
 
 baseNavUI.extendTo(mainLevelNavUI, {
 	createBase: function(){
-		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon"></span></span>');
+		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>');
 	},
 	state_change: cloneObj(cloneObj({}, baseNavUI.prototype.state_change), {
 		'mp-stack': function(state) {
@@ -350,7 +350,7 @@ investgNavUI = function() {};
 
 baseNavUI.extendTo(investgNavUI, {
 	createBase: function() {
-		this.c = $('<span class="nav-item nav-search-results" title="Search results"><b></b><span class="icon"></span></span>');
+		this.c = $('<span class="nav-item nav-search-results" title="Search results"><b></b><span class="icon">.</span></span>');
 	}
 });
 

@@ -1,5 +1,3 @@
-var local_server = false && 'http://127.0.0.1:9013/';
-
 var asyncDataSteam = function(getDataFunc, freshness, interval, data){
 	this._getDataFunc = getDataFunc;
 	this._interval = interval;
@@ -114,10 +112,10 @@ asyncDataSteam.prototype = {
 	}
 };
 
-var seesuServerAPI = function(auth){
+var seesuServerAPI = function(auth, url){
 	var _this = this;
 	
-	
+	this.url  = url;
 	if (auth){
 		this.setAuth(auth, true);
 	};
@@ -146,7 +144,7 @@ var seesuServerAPI = function(auth){
 	
 	this.susd.ligs =  new asyncDataSteam(function(callback){		
 		$.ajax({
-		  url: 'http://seesu.me/last_listenings/',
+		  url: _this.url + 'last_listenings/',
 		  type: "GET",
 		  dataType: "json",
 		  error: function(){
@@ -213,7 +211,6 @@ seesuServerAPI.prototype = {
 		var auth = this.auth._store;
 		return !!(auth.secret && auth.sid && auth.userid)
 	},
-	url: local_server || 'http://seesu.me/',
 
 	setAuth: function(auth_data, not_save){
 		var _this = this;

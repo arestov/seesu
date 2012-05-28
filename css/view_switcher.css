@@ -17,7 +17,11 @@
 	display:none;
 }
 .daddy{
-	padding-right:17px;
+	margin-right:19px;
+	height: 31px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .player-played .np{
@@ -200,9 +204,7 @@ ul.tracks-for-play > li{
 	}
 	
 	
-.nav-start{
-	border-left:1px solid transparent;
-}	
+
 .not-as-application .navs .nav-title{
 	float:left;
 }
@@ -221,17 +223,17 @@ ul.tracks-for-play > li{
 	display:none;
 }
 .nav-item{
-	display:block;
+	display:inline-block;
 	height:20px;
 	line-height:20px;
 	border-top:1px solid transparent;
 	padding:4px 0;
 	overflow: hidden;
-
-	-webkit-transition-property: margin-left;  
-  	-webkit-transition-duration: 0.1s;  
+	margin-left:12px;
+  	-webkit-transition: margin-left 0.1s ease-out;  
 }
 	.nav-item span{
+		line-height:20px;
 		display:block;
 		white-space: nowrap;
 		text-overflow: ellipsis;
@@ -243,6 +245,8 @@ ul.tracks-for-play > li{
 	.nav-item .icon{
 		width:20px;
 		height:20px;
+		overflow: hidden;
+		text-indent: -200px;
 		background: no-repeat;
 	}
 .nav-button{
@@ -265,12 +269,9 @@ ul.tracks-for-play > li{
 }
 
 .nnav{
-	float:left;
 	
 	padding:4px 14px 4px 9px;
-	
-	
-	
+
 	
 	margin-right:10px;
 	-moz-border-radius:0 6px 6px 0;
@@ -326,7 +327,7 @@ ul.tracks-for-play > li{
 	
 	}
 .stack-top{
-	
+	width:48px !important;
 	}
 
 
@@ -340,20 +341,24 @@ ul.tracks-for-play > li{
 	
 .stack-bottom, .stack-middle{
 	max-width:15px;
-	display:block;
 	}
 
 		
 .nav-start{
 	padding: 4px 18px 4px;
 	width: 20px;
-	float: left;
-	margin-right: 10px;
-	
+	margin-right: 0;
+	margin-left: 0;
 }
+
+.nav-start{
+	-webkit-transition: margin-right 0.1s ease-out;  
+	border-left:1px solid transparent;
+}	
 
 .stacked{
 	margin-right: 37px;
+	
 }
 .nav-start .icon{
 	background-image:url(../i/nav/seesu-nav-logo.png);
@@ -386,7 +391,13 @@ ul.tracks-for-play > li{
 		width:20px;
 		background:url(../i/equalaizer_stoped.gif) no-repeat;
 		}
+@media (max-width:550px) {
 
+	.daddy .stack-top{
+		width:30px;
+		}
+	
+}
 
 .art-card{
 	max-width: 750px;
@@ -458,21 +469,27 @@ ul.tracks-for-play > li{
 		margin: 0 -10px 24px;
 
 		clear:both;
-		height:174px;
-		overflow:hidden;
+		
 		}
 		.art-card-albums.loading .row-header{
 			background: url(../i/spinner_dark_small.gif) no-repeat 100% 0%;
 			}
 	.art-card-albums.show-all-albums{
-		height:auto;
-	}
-	
+		
+		}
+		.art-card-albums .albums-groups{
+			height:126px;
+			overflow:hidden;
+		}
+		.art-card-albums.show-all-albums .albums-groups{
+			height:auto;
+		}
 		.art-card-albums ul{
 			overflow:hidden;
-			margin:14px 0 0;
+			margin:0 0 12px;
 			padding-left:0;
 			}
+
 			.art-card-albums ul li{
 				float:left;
 				}
@@ -481,30 +498,39 @@ ul.tracks-for-play > li{
 				}
 				
 			.art-card-albums ul li{
-				width:145px;
-				margin-bottom:30px;
+				width:126px;
+
 				}
 				.art-card-albums ul li a{
 					display:block;
 					border-bottom:0;
 					color:#aaaaaa;
+					position: relative;
 					}
 					.art-card-albums ul li a:hover{
 						color:#fff;
 						}
+						.art-card-albums ul li a:hover  .album-name{
+							opacity: 1;
+						}
 				.art-card-albums ul li img{
-					width:64px;
-					min-height:64px;
+					width:126px;
+					display:block;
+					height:126px;
 					margin-right:4px;
-					padding:2px;
 					background:#ccc url(http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png) no-repeat 2px 2px;
 				}
 				.art-card-albums ul li .album-name{
-					width:110px;
-					height:64px;
+					
 					text-overflow: ellipsis;
 					overflow:hidden;
-					display:block;
+					
+					bottom:0;
+					left:0;
+					right:0;
+					position: absolute;
+					background: black;
+					opacity: 0.7;
 					
 					}
 	.art-card-bio{

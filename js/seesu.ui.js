@@ -56,11 +56,14 @@ suServView.extendTo(artCardUI, {
 			var all_albums = Array.prototype.concat.apply([], ob.ordered);
 
 			var _this = this;
+			var albs_groups = $("<div class='albums-groups'></div>");
 			for (var i=0; i < ob.ordered.length; i++) {
 				var aul =  $('<ul></ul>');
 				su.ui.renderArtistAlbums(ob.ordered[i], _this.artcard.artist, aul, true, true);
-				aul.appendTo(this.ui.albumsc);
+				
+				aul.appendTo(albs_groups);
 			};
+			albs_groups.appendTo(this.ui.albumsc);
 			
 			$('<a class="js-serv extends-header"></a>').text(localize("Show-all")  + " (" + all_albums.length + ")").click(function(){
 				_this.ui.albumsc.toggleClass('show-all-albums')
@@ -1036,7 +1039,7 @@ seesu_ui.prototype = {
 		var _sui = this;
 		if (albums.length) {
 			for (var i=0; i < albums.length; i++) {
-				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[1]['#text']) || '', albums[i].artist.name, original_artist, save_parents, simple));
+				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, save_parents, simple));
 			}
 		} 
 		return albums_ul;

@@ -426,18 +426,7 @@ display:none;
 		overflow:hidden;
 	}
 
-@media (max-width:550px) {
-	.daddy .stack-bottom, .daddy .stack-middle{
-		display:none;
-	}
-	.daddy .stack-top{
-		margin-left:0;
-		}
-		.daddy .stack-top > b{
-			top:-1px;
-			background-position:0 0;
-			}
-}
+
 
 	
 

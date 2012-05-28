@@ -463,7 +463,7 @@ var forceOperaRepaint = function() {
 };
 
 
-var hard_testing = false;
+
 
 if (typeof console != 'object'){
 	var console = {};
@@ -482,18 +482,6 @@ if (typeof console != 'object'){
 	}	
 }
 
-if (hard_testing) {
-	yepnope({
-		load: "http://userscripts.ru/js/nice-alert/nice_alert.js",
-		complete: function(){
-		}
-	});
-	
-	console.log = function(text){
-		if (!hard_testing) {return false;}
-		alert(text);
-	};
-}
 
 var handleDocument = function(d) {
 	/*
