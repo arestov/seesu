@@ -35,3 +35,4 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 		глобально
 		среди выбранного жанра
 	speeddating в разных местах (где быстро обновляются текущие пользователи)
+		анимация обновляющихся списков
