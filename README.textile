@@ -30,6 +30,12 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 подргузка плейлиста
 
 
+дополнительные данные
+	чарты hypem
+	картчка артиста
+		трендовые треки артиста
+		новая музыка на soundcloud
+
 
 социальное
 	возможность поставить трек и себя первым рейтинге
