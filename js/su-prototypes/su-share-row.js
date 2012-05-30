@@ -112,14 +112,56 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.setModel(md);
 	},
 	state_change: cloneObj(cloneObj({},BaseCRowUI.prototype.state_change), {
-
 		"share-url": {
 			fn: function(state){
 				this.getPart("share_input").val(state || "")
 			//	dep_vp
 			},
 			dep_vp: ['share_input']
+		},
+		"can-post-to-own-wall":{
+			fn: function(state){
+				this.mywall_button = $("<div class='post-to-my-vk-wall'></div>").click(function(){
+					_this.md.mo.postToVKWall();
+				}).text("на свою стену").insertBefore(this.getPart("pch-ws-own"));
+
+				var current_user_info = su.s.getInfo('vk');
+				if (current_user_info && current_user_info.photo){
+					$("<img />").attr("src", current_user_info.photo).prependTo(this.mywall_button)
+				}
+			},
+			dep_vp: ['pch-ws-own']
+		},
+		"can-search-friends": {
+			fn: function(state){
+				var oldv;
+				var inputSearch = debounce(function(e) {
+					var newval = this.value;
+					if (oldv !== newval){
+						_this.md.search(newval);
+						oldv = newval;
+					}
+					
+				}, 100);
+
+				var input_place = $("<div class='list-search-input-place'></div>").insertBefore(this.getPart("pch-ws-i"));
+
+				this.input = $("<input type='text'/>").appendTo(input_place)
+					.bind('keyup change search mousemove', inputSearch);
+
+				this.users_c.append($("<div class='friends-search-desc desc'></div>").text("или на стену одного из друзей"));
+				var searcher_ui = this.md.searcher.getFreeView();
+				if (searcher_ui){
+					this.users_c.append(searcher_ui.getC());
+					searcher_ui.expand();
+					searcher_ui.appended();
+				}
+
+				this.md.search("");
+			},
+			dep_vp: ['pch-ws-i']
 		}
+
 	}),
 	parts_builder: {
 		share_input: function(){
@@ -128,6 +170,12 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				this.select();
 			});
 			return share_input;
+		},
+		"pch-ws-own": function(){
+			return $(document.createTextNode("")).appendTo(this.users_c);
+		},
+		"pch-ws-i": function(){
+			return $(document.createTextNode("")).appendTo(this.users_c);
 		}
 	},
 	expand: function(){
@@ -145,41 +193,10 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			this.select();
 		});
 */
+		this.requirePart("pch-ws-i");
+		this.requirePart("pch-ws-own");
 
-		var oldv;
-		var inputSearch = debounce(function(e) {
-			var newval = this.value;
-			if (oldv !== newval){
-				_this.md.search(newval);
-				oldv = newval;
-			}
-			
-		}, 100);
-
-		var input_place = $("<div class='list-search-input-place'></div>").appendTo(this.users_c);
-
-
-		this.input = $("<input type='text'/>").appendTo(input_place)
-			.bind('keyup change search mousemove', inputSearch);
-
-		this.mywall_button = $("<div class='post-to-my-vk-wall'></div>").click(function(){
-			_this.md.mo.postToVKWall();
-		}).text("на свою стену").appendTo(this.users_c);
-
-		var current_user_info = su.s.getInfo('vk');
-		if (current_user_info && current_user_info.photo){
-			$("<img />").attr("src", current_user_info.photo).prependTo(this.mywall_button)
-		}
-
-		this.users_c.append($("<div class='friends-search-desc desc'></div>").text("или на стену одного из друзей"));
-		var searcher_ui = this.md.searcher.getFreeView();
-		if (searcher_ui){
-			this.users_c.append(searcher_ui.getC());
-			searcher_ui.expand();
-			searcher_ui.appended();
-		}
-
-		this.md.search("");
+		
 	}
 });
 
@@ -207,6 +224,9 @@ BaseCRow.extendTo(ShareRow, {
 		this.mo.on("url-change", function(){
 			updateSongURL();
 		});
+
+		this.updateState("can-post-to-own-wall", true);
+		this.updateState("can-search-friends", true);
 		//this.share_url = this.mo.getShareUrl();
 		
 	},
