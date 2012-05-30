@@ -144,7 +144,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 					
 				}, 100);
 
-				var input_place = $("<div class='list-search-input-place'></div>").insertBefore(this.getPart("pch-ws-i"));
+				var input_place = $("<div class='list-search-input-place'></div>").insertBefore(this.getPart("pch-ws-input"));
 
 				this.input = $("<input type='text'/>").appendTo(input_place)
 					.bind('keyup change search mousemove', inputSearch);
@@ -159,7 +159,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 
 				this.md.search("");
 			},
-			dep_vp: ['pch-ws-i']
+			dep_vp: ['pch-ws-input']
 		}
 
 	}),
@@ -174,7 +174,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		"pch-ws-own": function(){
 			return $(document.createTextNode("")).appendTo(this.users_c);
 		},
-		"pch-ws-i": function(){
+		"pch-ws-input": function(){
 			return $(document.createTextNode("")).appendTo(this.users_c);
 		}
 	},
@@ -193,7 +193,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			this.select();
 		});
 */
-		this.requirePart("pch-ws-i");
+		this.requirePart("pch-ws-input");
 		this.requirePart("pch-ws-own");
 
 		
