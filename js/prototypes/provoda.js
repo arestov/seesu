@@ -193,7 +193,23 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		if (name){
 			var obj_to_change	= is_prop ? this : this.states,
 				old_value		= obj_to_change && obj_to_change[name],
-				method			= is_prop ? this.prop_change[name] : this.state_change[name];
+				method			= is_prop && this.prop_change[name];
+
+			if (!method && this.state_change[name]){
+				var stateChanger = this.state_change[name];
+
+				if (typeof stateChanger == 'function'){
+					method = stateChanger;
+				} else if (this.checkDepVP){
+
+					var has_all_dependings = this.checkDepVP(stateChanger);
+					if (has_all_dependings){
+						method = stateChanger.fn;
+					}
+					
+				}
+				
+			}
 			
 			if (old_value != value){
 				obj_to_change[name] = value;
@@ -506,8 +522,32 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (this.view_parts[name]){
 			return this.view_parts[name];
 		} else {
-			return (this.view_parts[name] = this.parts_builder[name].call(this));
+			this.view_parts[name] = this.parts_builder[name].call(this);
+			for (var i in this.state_change){
+				if (i in this.states && typeof this.state_change[i] != 'function'){
+					if (this.checkDepVP(this.state_change[i], name)){
+						this.state_change[i].fn.call(this, this.states[i]);
+					}
+				}
+			}
+			return this.view_parts[name];
 		}
+	},
+	checkDepVP: function(state_changer, builded_vp_name) {
+		var has_all_dependings;
+		if (builded_vp_name && state_changer.dep_vp.indexOf(builded_vp_name) == -1){
+			return false;
+		}
+		for (var i = 0; i < state_changer.dep_vp.length; i++) {
+			var cur = state_changer.dep_vp[i];
+			if (!this.view_parts[cur]){
+				has_all_dependings = false;
+				break;
+			} else {
+				has_all_dependings = true;
+			}
+		}
+		return has_all_dependings;
 	},
 	changeState: function(is_prop, name, value, allow_complex_watchers) {
 		value = value || false;
