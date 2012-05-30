@@ -166,6 +166,7 @@ provoda.addPrototype("baseSong",{
 							collect_for: from_collection,
 							last_in_collection: last_in_collection
 						});
+						_this.trigger('url-change');
 					}
 					
 				})

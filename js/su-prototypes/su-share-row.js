@@ -111,6 +111,25 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.bindClick();
 		this.setModel(md);
 	},
+	state_change: cloneObj(cloneObj({},BaseCRowUI.prototype.state_change), {
+
+		"share-url": {
+			fn: function(state){
+				this.getPart("share_input").val(state || "")
+			//	dep_vp
+			},
+			dep_vp: ['share_input']
+		}
+	}),
+	parts_builder: {
+		share_input: function(){
+			var share_input = this.c.find('.song-link');
+			share_input.bind("click focus", function() {
+				this.select();
+			});
+			return share_input;
+		}
+	},
 	expand: function(){
 		if (this.expanded){
 			return;
@@ -118,12 +137,14 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			this.expanded = true;
 		}
 		var _this = this;
-		this.share_input = this.c.find('.song-link').val(this.md.mo.getShareUrl());
-		this.share_input[0].select();
+
+		this.requirePart("share_input");
+		/*
+		this.share_input = this.c.find('.song-link').val();
 		this.share_input.bind("click focus", function() {
 			this.select();
 		});
-
+*/
 
 		var oldv;
 		var inputSearch = debounce(function(e) {
@@ -167,6 +188,7 @@ ShareRow = function(traackrow, mo){
 };
 BaseCRow.extendTo(ShareRow, {
 	init: function(traackrow, mo){
+		var _this = this;
 		this.traackrow = traackrow;
 		this.mo = mo;
 		this._super();
@@ -176,6 +198,15 @@ BaseCRow.extendTo(ShareRow, {
 
 		this.searcher = new StrusersRowSearch(this, mo);
 		this.addChild(this.searcher);
+
+		var updateSongURL = function(){
+			_this.updateState('share-url', _this.mo.getShareUrl());
+		};
+		updateSongURL();
+
+		this.mo.on("url-change", function(){
+			updateSongURL();
+		});
 		//this.share_url = this.mo.getShareUrl();
 		
 	},
