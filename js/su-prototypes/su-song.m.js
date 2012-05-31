@@ -94,6 +94,22 @@ var song;
 		mlmDie: function() {
 			this.hide();
 		},
+		getURL: function(mopla){
+			var url ="";
+			if (mopla || this.raw()){
+				var s = mopla || this.omo;
+				url += "/" + su.encodeURLPart(s.from) + '/' + su.encodeURLPart(s._id);
+			} else{
+				if (this.plst_titl && this.plst_titl.playlist_type == 'artist'){
+					if (this.track){
+						url += '/' + su.encodeURLPart(this.track);
+					}
+				} else if (this.artist){
+					url += '/' + su.encodeURLPart(this.artist) + '/' + su.encodeURLPart(this.track || '_');
+				}
+			}
+			return url;
+		},
 		postToVKWall: function(uid){
 			var
 				data = {},
@@ -105,10 +121,11 @@ var song;
 				data.attachments = "audio" + file._id;
 			}
 			
-			data.message = this.getFullName() + " " + encodeURI(su.p.c_song.getShareUrl());
+			
 			if (window.VK){
 
 			} else {
+				data.message = this.getFullName() + " " + encodeURIComponent(su.p.c_song.getShareUrl());
 				if (data.attachments){
 					data.attachment = data.attachments;
 				}

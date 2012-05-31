@@ -184,12 +184,20 @@ provoda.Eventor.extendTo(seesuApp, {
 	fs: {},//fast search
 	env: app_env,
 	server_url: 'http://seesu.me/',
+	encodeURLPart: function(part){
+		var spaced = part.split(" ");
+		$.each(spaced, function(i, el){
+			spaced[i] = encodeURIComponent(el);
+		});
+		return spaced.join("+");
+	},
 	app_pages: {
 		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi",
 		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko",
 		opera_widget: "http://widgets.opera.com/widget/15872/",
 		opera_extension: "https://addons.opera.com/ru/addons/extensions/details/seesu"
 	},
+	
 	track_event:function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackEvent');

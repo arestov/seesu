@@ -520,6 +520,9 @@ investigation.extendTo(SuInvestg, {
 			}
 		});
 	},
+	getURL: function() {
+		return '?q=' + encodeURIComponent(this.q || '');
+	},
 	ui_constr: {
 		main: investigationUI,
 		nav: investgNavUI

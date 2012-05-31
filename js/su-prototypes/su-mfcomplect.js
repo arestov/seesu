@@ -505,15 +505,7 @@ provoda.Model.extendTo(mfCor, {
 							localize('to-find-better') : 
 							localize("to-find-and-play")
 					)  + " " +  localize('music-files-from-vk'));
-			/*
-				if (!songs.length){
-					this.vk_login_notify = su.ui.samples.vk_login.clone();
-				} else if(!this.mo.isHaveAnyResultsFrom('vk')){
-					this.vk_login_notify = su.ui.samples.vk_login.clone( localize('to-find-better') + " " +  localize('music-files-from-vk'));
-				} else {
-					this.vk_login_notify = su.ui.samples.vk_login.clone(localize('stabilization-of-vk'));
-					
-				}*/
+
 		}
 	},
 	checkVKAuthNeed: function() {

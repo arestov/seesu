@@ -6,8 +6,8 @@ if (app_env.needs_url_history) {
 				e = e || window.Event;
 				var newhash = location.hash.replace(/^\#/, '');
 				if (newhash != hash){
-					var hnew = decodeURI(e.newURL || newhash);
-					var hold = decodeURI(e.oldURL || hash);
+					var hnew = e.newURL || newhash;
+					var hold = e.oldURL || hash;
 					var have_new_hash = hnew.indexOf('#')+1;
 					var have_old_hash = hold.indexOf('#')+1;
 
@@ -31,9 +31,9 @@ if (app_env.needs_url_history) {
 		
 	} else{
 		(function(){
-			var hash = decodeURI(location.hash);
+			var hash = location.hash;
 			setInterval(function(){
-				var newhash = decodeURI(location.hash);
+				var newhash = location.hash;
 				if (newhash != hash){
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
@@ -90,7 +90,7 @@ if (app_env.needs_url_history) {
 		getURLData: function(url){
 			var tags		= (tag = url.match(tag_regexp)) && tag[0],
 				clear_url	= url.replace(tag_regexp, ''),
-				uniq_url	= url.replace(/\ /gi, '+') + (tag || (' $' + this.getUniqId()));
+				uniq_url	= url + (tag || (' $' + this.getUniqId()));
 
 			return {
 				clear_url: clear_url,
@@ -211,7 +211,9 @@ pathData.prototype = {
 			data: data
 		});
 	}
-}
+};
+
+
 
 var url_parser = {
 	parse: function(pth_string){
@@ -230,6 +232,11 @@ var url_parser = {
 		http://www.lastfm.ru/music/65daysofstatic/+similar
 		*/
 		var pth = pth_string.replace(/^\//,'').split('/');
+		//
+		for (var i = 0; i < pth.length; i++) {
+			pth[i] = decodeURIComponent(pth[i]).replace(/([^\/])\+/g, '$1 ');
+		}
+
 		var con = new pathData();
 		switch (pth.shift()) {
 			case 'catalog':
@@ -423,7 +430,7 @@ var getFakeURLParameters = function(str){
 		sp.push({
 			type: 'search',
 			data: {
-				query: params.q
+				query: decodeURIComponent(params.q)
 			}
 		});
 	}
@@ -559,7 +566,7 @@ var hashChangeQueue = new funcsQueue(0);
  
 
 var hashChangeRecover = function(e){
-	var url = e.newURL.replace(/([^\/])\+/g, '$1 ');
+	var url = e.newURL;
 
 	
 	var state_from_history = navi.findHistory(e.newURL);
@@ -616,7 +623,7 @@ var hashchangeHandler=  function(e, force){
 	}
 };
 (function(){
-	var url = window.location && decodeURI(location.hash.replace(/^\#/,''));
+	var url = window.location && location.hash.replace(/^\#/,'');
 	if (url){
 		su.onUICreation(function(opts){
 			if (!opts.state_recovered && !opts.has_query){

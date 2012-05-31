@@ -110,11 +110,11 @@
 			if (this.playlist_type == 'artist'){
 				url += '/_';
 			} else if (this.playlist_type == 'album'){
-				url += '/' + this.info.album;
+				url += '/' + su.encodeURLPart(this.info.album);
 			} else if (this.playlist_type == 'similar artists'){
 				url += '/+similar';
 			} else if (this.playlist_type == 'artists by tag'){
-				url += '/tags/' + this.info.tag;
+				url += '/tags/' + su.encodeURLPart(this.info.tag);
 			} else if (this.playlist_type == 'tracks'){
 				url += '/ds';
 			} else if (this.playlist_type == 'artists by recommendations'){
@@ -122,9 +122,9 @@
 			} else if (this.playlist_type == 'artists by loved'){
 				url += '/loved';
 			} else if (this.playlist_type == 'cplaylist'){
-				url += '/playlist/' + this.info.name;
+				url += '/playlist/' + su.encodeURLPart(this.info.name);
 			} else if (this.playlist_type == 'chart'){
-				url += '/chart/' +  this.info.country + '/' + this.info.metro;
+				url += '/chart/' +  su.encodeURLPart(this.info.country) + '/' + su.encodeURLPart(this.info.metro);
 			}
 			return url;
 		},

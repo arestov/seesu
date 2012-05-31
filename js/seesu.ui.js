@@ -194,7 +194,7 @@ suMapModel.extendTo(artCard, {
 	},
 	page_name: "art card",
 	getURL: function() {
-		return '/catalog/' + this.artist;	
+		return '/catalog/' + su.encodeURLPart(this.artist);	
 	},
 	loadInfo: function(){
 		this.loadAlbums();

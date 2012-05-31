@@ -121,6 +121,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		},
 		"can-post-to-own-wall":{
 			fn: function(state){
+				var _this = this;
 				this.mywall_button = $("<div class='post-to-my-vk-wall'></div>").click(function(){
 					_this.md.mo.postToVKWall();
 				}).text("на свою стену").insertBefore(this.getPart("pch-ws-own"));

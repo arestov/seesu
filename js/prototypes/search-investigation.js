@@ -255,9 +255,6 @@
 			}
 			return r;
 		},
-		getURL: function() {
-			return '?q=' + (this.q || '');
-		},
 		changeQuery: function(q){
 			if (this.q != q){
 				this.stopRequests();
