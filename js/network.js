@@ -148,6 +148,7 @@ try_mp3_providers = function(){
 		_s.onload = function(){
 			if (window.VK){
 				VK.init(function(){});
+				su.trigger("vk-site-api");
 				VK.addCallback('onSettingsChanged', function(sts){
 					if ((sts & 8)*1){
 						if (!music_connected){

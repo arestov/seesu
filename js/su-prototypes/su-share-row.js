@@ -220,7 +220,32 @@ BaseCRow.extendTo(ShareRow, {
 		this.mo = mo;
 		this._super();
 		if (app_env.vkontakte || su.vk_api){
-			this.updateState("can-post-to-current-user", true);
+			this.updateState("can-post-to-own-wall", true);
+		} 
+		if (!app_env.vkontakte){
+			if (su.vk_api){
+				this.updateState("can-search-friends", true);
+			} else {
+				su.on("vk-api", function() {
+					_this.updateState("can-search-friends", true);
+				});
+			}
+		} else {
+			this.checkVKFriendsAccess(su._url.api_settings);
+
+			var binded;
+			var bindFriendsAccessChange = function() {
+				if (!binded && window.VK){
+					binded = true;
+					window.VK.addCallback('onSettingsChanged', function(vk_opts) {
+						_this.checkVKFriendsAccess(vk_opts);
+					});
+				}
+			};
+			bindFriendsAccessChange();
+			if (!binded){
+				su.once("vk-site-api", bindFriendsAccessChange);
+			}
 		} 
 
 		this.searcher = new StrusersRowSearch(this, mo);
@@ -235,10 +260,13 @@ BaseCRow.extendTo(ShareRow, {
 			updateSongURL();
 		});
 
-		this.updateState("can-post-to-own-wall", true);
-		this.updateState("can-search-friends", true);
+		
+		
 		//this.share_url = this.mo.getShareUrl();
 		
+	},
+	checkVKFriendsAccess: function(vk_opts) {
+		this.updateState("can-search-friends", (vk_opts & 2) * 1);
 	},
 	search: function(q) {
 		this.updateState('query', q);
