@@ -6,6 +6,7 @@ var scApi = function(key, queue, crossdomain, cache_ajax) {
 };
 scApi.prototype = {
 	constructor: scApi,
+	cache_namespace: "soundcloud_api",
 	get: function(method, params, options) {
 		var
 			_this				= this,
@@ -37,7 +38,7 @@ scApi.prototype = {
 
 			if (!options.nocache){
 				
-				cache_used = this.cache_ajax.get('soundcloud_api', options.cache_key, function(r){
+				cache_used = this.cache_ajax.get(this.cache_namespace, options.cache_key, function(r){
 					deferred.resolve(r);
 				});
 				if (cache_used) {
@@ -50,7 +51,7 @@ scApi.prototype = {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set('soundcloud_api', options.cache_key, r, options.cache_timeout)
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout)
 					}
 				};
 
@@ -59,7 +60,7 @@ scApi.prototype = {
 						return
 					}
 					if (!options.nocache){
-						cache_used = this.cache_ajax.get('soundcloud_api', options.cache_key, function(r){
+						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
 							deferred.resolve(r);
 						});
 					}

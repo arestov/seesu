@@ -19,6 +19,7 @@ Class.extendTo(vkCoreApi, {
 	get: function() {
 		return this.send.apply(this, arguments);
 	},
+	cache_namespace: "vk_api",
 	send: function(method, params, options){ //nocache, after_ajax, cache_key, only_cache
 		var _this				= this,
 			deferred 			= $.Deferred(),
@@ -48,11 +49,10 @@ Class.extendTo(vkCoreApi, {
 				params_full.access_token = this.access_token;
 			}
 
-			//cache_ajax.get('vk_api', p.cache_key, function(r){
 
 			if (!options.nocache){
 				
-				cache_used = this.cache_ajax.get('vk_api', options.cache_key, function(r){
+				cache_used = this.cache_ajax.get(this.cache_namespace, options.cache_key, function(r){
 					deferred.resolve(r);
 				});
 				if (cache_used) {
@@ -65,7 +65,7 @@ Class.extendTo(vkCoreApi, {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set('vk_api', options.cache_key, r, options.cache_timeout)
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout)
 					}
 				};
 
@@ -81,7 +81,7 @@ Class.extendTo(vkCoreApi, {
 						return
 					}
 					if (!options.nocache){
-						cache_used = this.cache_ajax.get('vk_api', options.cache_key, function(r){
+						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
 							deferred.resolve(r);
 						});
 					}

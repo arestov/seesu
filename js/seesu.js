@@ -362,6 +362,8 @@ var random_track_plable = function(track_list){
 (function(){
 	var sc_api = new scApi(getPreloadedNK('sc_key'), su.soundcloud_queue, app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch(sc_api));
+	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi()));
+
 	
 	if (app_env.cross_domain_allowed){
 		su.mp3_search.add(new isohuntTorrentSearch());
