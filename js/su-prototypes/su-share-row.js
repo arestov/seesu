@@ -166,6 +166,17 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				this.md.search("");
 			},
 			dep_vp: ['pch-ws-input', "pch-ws-friends"]
+		},
+		"needs-vk-auth": {
+			fn: function(state) {
+				if (state){
+					var auth_ui = this.md.vk_auth.getFreeView();
+					if (auth_ui){
+						auth_ui.getC().insertBefore(this.getPart("pch-vk-auth"));
+					}
+				}
+			},
+			dep_vp: ["pch-vk-auth"]
 		}
 
 	}),
@@ -177,15 +188,21 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			});
 			return share_input;
 		},
+		"pch-vk-auth": function() {
+			return this.addWSChunk();
+		},
 		"pch-ws-own": function(){
-			return $(document.createTextNode("")).appendTo(this.users_c);
+			return this.addWSChunk();
 		},
 		"pch-ws-input": function(){
-			return $(document.createTextNode("")).appendTo(this.users_c);
+			return this.addWSChunk();
 		},
 		"pch-ws-friends": function(){
-			return $(document.createTextNode("")).appendTo(this.users_c);
+			return this.addWSChunk();
 		}
+	},
+	addWSChunk: function() {
+		return $(document.createTextNode("")).appendTo(this.users_c);
 	},
 	expand: function(){
 		if (this.expanded){
@@ -196,6 +213,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		var _this = this;
 
 		this.requirePart("share_input");
+		
 		/*
 		this.share_input = this.c.find('.song-link').val();
 		this.share_input.bind("click focus", function() {
@@ -204,6 +222,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 */		
 		this.requirePart("pch-ws-input");
 		this.requirePart("pch-ws-own");
+		this.requirePart("pch-vk-auth");
 		this.requirePart("pch-ws-friends");
 		
 
@@ -226,8 +245,12 @@ BaseCRow.extendTo(ShareRow, {
 		if (!app_env.vkontakte){
 			if (su.vk_api){
 				this.updateState("can-search-friends", true);
+				this.removeVKAudioAuth();
 			} else {
+				this.addVKAudioAuth();
+				
 				su.on("vk-api", function() {
+					_this.removeVKAudioAuth();
 					_this.updateState("can-search-friends", true);
 				});
 			}
@@ -267,7 +290,51 @@ BaseCRow.extendTo(ShareRow, {
 		
 	},
 	checkVKFriendsAccess: function(vk_opts) {
-		this.updateState("can-search-friends", (vk_opts & 2) * 1);
+		var can = (vk_opts & 2) * 1;
+		this.updateState("can-search-friends", can);
+		if (can){
+			this.addVKAudioAuth(true);
+		} else {
+			this.removeVKAudioAuth();
+		}
+	},
+	addVKAudioAuth: function(improve) {
+		if (!this.vk_auth){
+
+			this.vk_auth = new vkLogin();
+			this.vk_auth.on('auth-request', function() {
+				if (su.vk_app_mode){
+					if (window.VK){
+						VK.callMethod('showSettingsBox', 2);
+					}
+				} else {
+					su.vk_auth.requestAuth();
+				}
+				//console.log()
+			});
+			this.addChild(this.vk_auth);
+
+		}
+		//to find you friends
+
+		this.vk_auth.setRequestDesc(
+				(
+					improve ? 
+						localize('to-find-better') : 
+						localize("to-find-and-play")
+				)  + " " +  localize('music-files-from-vk'));
+
+		this.updateState("needs-vk-auth", true);
+
+	},
+	removeVKAudioAuth: function() {
+		if (this.vk_auth){
+			this.vk_auth.die();
+			delete this.vk_auth;
+
+		}
+		this.updateState("needs-vk-auth", false);
+
 	},
 	search: function(q) {
 		this.updateState('query', q);

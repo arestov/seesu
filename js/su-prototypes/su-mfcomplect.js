@@ -467,57 +467,53 @@ provoda.Model.extendTo(mfCor, {
 		this.sf_notf.markAsReaded('vk-audio-auth');
 		//this.notifier.banMessage('vk-audio-auth');
 	},
-	vkAudioAuth: function(remove) {
-		if (remove){
-			this.notifier.removeMessage('vk-audio-auth');
-			if (this.vk_audio_auth){
-				this.updateState('vk-audio-auth', false);
-				this.vk_audio_auth.die();
-				delete this.vk_audio_auth;
-			}
-		} else {
-			
-			this.notifier.addMessage('vk-audio-auth');
-			if (!this.vk_audio_auth){
+	addVKAudioAuth: function() {
+		this.notifier.addMessage('vk-audio-auth');
+		if (!this.vk_audio_auth){
 
-				this.vk_audio_auth = new vkLogin();
-				this.vk_audio_auth.on('auth-request', function() {
-					if (su.vk_app_mode){
-						if (window.VK){
-							VK.callMethod('showSettingsBox', 8);
-						}
-					} else {
-						su.vk_auth.requestAuth();
+			this.vk_audio_auth = new vkLogin();
+			this.vk_audio_auth.on('auth-request', function() {
+				if (su.vk_app_mode){
+					if (window.VK){
+						VK.callMethod('showSettingsBox', 8);
 					}
-					//console.log()
-				});
-				this.addChild(this.vk_audio_auth);
-				this.updateState('changed', new Date());
-				this.updateState('vk-audio-auth', true);
-			}
-
-			
-			
-			
-			this.vk_audio_auth.setRequestDesc(
-					(
-						this.isHaveTracks('mp3') ? 
-							localize('to-find-better') : 
-							localize("to-find-and-play")
-					)  + " " +  localize('music-files-from-vk'));
-
+				} else {
+					su.vk_auth.requestAuth();
+				}
+				//console.log()
+			});
+			this.addChild(this.vk_audio_auth);
+			this.updateState('changed', new Date());
+			this.updateState('vk-audio-auth', true);
 		}
+
+		this.vk_audio_auth.setRequestDesc(
+				(
+					this.isHaveTracks('mp3') ? 
+						localize('to-find-better') : 
+						localize("to-find-and-play")
+				)  + " " +  localize('music-files-from-vk'));
+
+	},
+	removeVKAudioAuth: function() {
+		this.notifier.removeMessage('vk-audio-auth');
+		if (this.vk_audio_auth){
+			this.updateState('vk-audio-auth', false);
+			this.vk_audio_auth.die();
+			delete this.vk_audio_auth;
+		}
+
 	},
 	checkVKAuthNeed: function() {
 		if (this.mo.mp3_search){
 				
 			if (this.mo.mp3_search.haveSearch('vk')){
-				this.vkAudioAuth(true);
+				this.removeVKAudioAuth();
 			} else {
 				if (this.isHaveAnyResultsFrom('vk')){
-					this.vkAudioAuth(true);
+					this.removeVKAudioAuth();
 				} else {
-					this.vkAudioAuth();
+					this.addVKAudioAuth();
 				}
 			}
 		}
@@ -530,7 +526,7 @@ provoda.Model.extendTo(mfCor, {
 			
 			this.mo.mp3_search.on('new-search', function(search, name) {
 				if (name == 'vk'){
-					_this.vkAudioAuth(true);
+					_this.removeVKAudioAuth();
 				}
 			});
 		}
