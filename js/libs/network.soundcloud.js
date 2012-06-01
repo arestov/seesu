@@ -50,7 +50,7 @@ scApi.prototype = {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set('soundcloud_api', options.cache_key, r)
+						_this.cache_ajax.set('soundcloud_api', options.cache_key, r, options.cache_timeout)
 					}
 				};
 
@@ -98,121 +98,6 @@ scApi.prototype = {
 
 		}
 		return complex_response;
-	},
-	
-	find: function(msq, callback, error, nocache, after_ajax, only_cache){
-		var _this = this;
-		var query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
-		
-		var search_source = {name: 'soundcloud', key: 0};
-		var sc_key = this.key;
-		var use_cache = !nocache;
-		if (use_cache){
-			var cache_used = cache_ajax.get('soundcloud', query, function(r){callback(r,search_source);})
-			if (cache_used) {return true;}
-		}
-		if (only_cache){
-			return false;
-		}
-
-		var data = {
-			consumer_key: sc_key,
-			filter:'streamable,downloadable'
-		}
-		if (query){
-			data.q= query
-		}
-		return this.queue.add(function(){
-			seesu.track_event('mp3 search', 'soundcloud search');
-			$.ajax({
-				timeout: 10000,
-				url: "http://api.soundcloud.com/tracks.js",
-				global: false,
-				type: "GET",
-				dataType: _this.crossdomain ? "json": "jsonp",
-				data: data,
-				error:function(xhr){
-					if  (error) {error(search_source);}
-				},
-				success:function(r,xhr){
-					if (r && r.length){
-						var music_list = [];
-						for (var i=0; i < r.length; i++) {
-							var ent = _this.makeSong(r[i], sc_key);
-							if (ent){
-								if (!has_music_copy(music_list,ent)){
-									music_list.push(ent)
-								}
-							}
-						};
-					}
-					if (music_list && music_list.length){
-						music_list.sort(function(g,f){
-							return by_best_matching_index(g,f, msq);
-						});
-						cache_ajax.set('soundcloud', query, music_list);
-						if (callback ){
-							callback(music_list, search_source);
-						}
-					} else {
-						if  (error) {error(search_source, true);}
-					}
-					
-				}
-				  
-			})
-			if (after_ajax) {after_ajax();}
-		}, true);
-	},
-	getSongById: function(id, callback, error, nocache, after_ajax, only_cache) {
-		var _this = this;
-		var search_source = {name: 'soundcloud', key: 0};
-		var sc_key = this.key;
-		var use_cache = !nocache;
-		if (use_cache){
-			var cache_used = cache_ajax.get('soundcloudgetbyid', id, function(r){callback && callback(r,search_source);})
-			if (cache_used) {return true;}
-		}
-		if (only_cache){
-			return false;
-		}
-
-		var data = {
-			consumer_key: sc_key,
-			filter:'streamable,downloadable'
-		}
-		if (id){
-			data.ids= id;
-		}
-		return this.queue.add(function(){
-			seesu.track_event('mp3 search', 'soundcloud search');
-			$.ajax({
-				timeout: 10000,
-				url: "http://api.soundcloud.com/tracks.js",
-				global: false,
-				type: "GET",
-				dataType: "jsonp",
-				data: data,
-				error:function(xhr){
-					if  (error) {error(search_source, true);}
-				},
-				success:function(r,xhr){
-					if (r && r[0] && r[0].download_url){
-						var entity = _this.makeSong(r[0], sc_key);
-						if (entity){
-							cache_ajax.set('soundcloudgetbyid', id, entity);
-							if (callback ){
-								callback(entity, search_source);
-							}
-						} else{
-							if  (error) {error(search_source, true);}
-						}
-					}
-				}
-				  
-			})
-			if (after_ajax) {after_ajax();}
-		}, true);
 	}
 };
 
