@@ -5,6 +5,9 @@ Class.extendTo(vkCoreApi, {
 		if (params.jsonp){
 			this.jsonp = true;
 		}
+		if (params.onAuthLost){
+			this.onAuthLost = params.onAuthLost;
+		}
 	},
 	link: 'https://api.vk.com/method/',
 	setAccessToken: function(at){
@@ -63,6 +66,11 @@ Class.extendTo(vkCoreApi, {
 			
 			if (!cache_used){
 				var success = function(r){
+					if (r && r.error && r.error.error_code == 5){
+						if (_this.onAuthLost){
+							_this.onAuthLost();
+						}
+					}
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
 						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout)

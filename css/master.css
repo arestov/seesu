@@ -1168,8 +1168,15 @@ iframe.you-tube-video,embed.you-tube-video{
 		box-sizing: border-box;
 		}
 	.share-song .users-list{
-		overflow: hidden;
+		
 		margin-top:24px;
+		}
+		.share-song .users-list .search-results-container{
+			overflow: hidden;
+			}
+		.share-song .users-list .vk-login-context{
+			border-radius: 0;
+			margin:12px -13px 0;
 		}
 		.share-song .users-list .search-results-container{
 			margin-top:12px;

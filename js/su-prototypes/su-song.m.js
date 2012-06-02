@@ -127,7 +127,7 @@ var song;
 			}
 
 			if (window.VK){
-				VK.api.call("wall.post", data, function() {
+				VK.Api.call("wall.post", data, function() {
 
 				});
 			} else {
@@ -266,8 +266,19 @@ var song;
 			this.updateState('active_part', false);
 			this.addPart(new LastfmRow(this, mo));
 			this.addPart(new FlashErrorRow(this, mo));
-			this.addPart(new PlaylistAddRow(this, mo));
-			this.addPart(new ShareRow(this, mo));
+
+			var _this = this;
+
+			jsLoadComplete({
+				test: function() {
+					return typeof PlaylistAddRow != 'undefined' && typeof ShareRow != 'undefined';
+				},
+				fn: function() {
+					_this.addPart(new PlaylistAddRow(_this, mo));
+					_this.addPart(new ShareRow(_this, mo));
+				}
+			});
+			
 			
 
 

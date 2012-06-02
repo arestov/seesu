@@ -231,6 +231,9 @@ ul.tracks-for-play > li{
 	overflow: hidden;
 	margin-left:12px;
   	-webkit-transition: margin-left 0.1s ease-out;  
+  	-moz-transition: margin-left 0.1s ease-out; 
+  	-o-transition: margin-left 0.1s ease-out; 
+  	transition: margin-left 0.1s ease-out; 
 }
 	.nav-item span{
 		line-height:20px;
@@ -238,13 +241,13 @@ ul.tracks-for-play > li{
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow:hidden;
+		height:24px;
 		}
 	.nav-item b{
 		display:none;
 	}
 	.nav-item .icon{
 		width:20px;
-		height:20px;
 		overflow: hidden;
 		text-indent: -200px;
 		background: no-repeat;
@@ -352,7 +355,10 @@ ul.tracks-for-play > li{
 }
 
 .nav-start{
-	-webkit-transition: margin-right 0.1s ease-out;  
+	-webkit-transition: margin-right 0.1s ease-out;
+	-moz-transition: margin-right 0.1s ease-out;
+	-o-transition: margin-right 0.1s ease-out;
+	transition: margin-right 0.1s ease-out;
 	border-left:1px solid transparent;
 }	
 

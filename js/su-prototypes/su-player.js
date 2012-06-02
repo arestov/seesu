@@ -128,8 +128,8 @@ var seesuPlayer;
 	//su.p.setCore(pcore);
 
 	var
-		h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, '')),
-		aw = document.createElement('object'); aw.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95";
+		aw, 
+		h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
 
 	if (h5a){
 		jsLoadComplete(function() {
@@ -141,7 +141,7 @@ var seesuPlayer;
 				}
 			});
 		});
-	} else if ('EnableContextMenu' in aw && aw.attachEvent){
+	} else if ((aw = document.createElement('object'), aw.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95") && 'EnableContextMenu' in aw && aw.attachEvent){
 		jsLoadComplete(function() {
 			yepnope({
 				load:  [bpath + 'js/prototypes/player.wmp.js'],
