@@ -176,15 +176,9 @@ var musicSeachEmitter;
 				_ms.processing = false;
 				this.some_results = true;
 				_ms.failed = false;
-				var searches_indexes=[];
-				for (var s in this.mp3_search.searches_pr) {
-					if (this.mp3_search.searches_pr[s] < 1){
-						searches_indexes.push(this.mp3_search.searches_pr[s]);
-					}
-					
-				}
-				var best = Math.max.apply(Math, searches_indexes);
-				if (this.mp3_search.searches_pr[search_source.name] === best){
+
+				var num = this.mp3_search.searches_pr[search_source.name];
+				if (typeof num == 'number' && num >= 0 ){
 					this.have_best = true;
 				}
 					

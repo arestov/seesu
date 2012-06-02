@@ -66,7 +66,7 @@ provoda.Model.extendTo(vkLogin, {
 		this.updateState('wait', false);
 	},
 	setRequestDesc: function(text) {
-		this.updateState('request-description', text);
+		this.updateState('request-description', text ? text + " " + localize("vk-auth-invitation") : "");
 	},
 	requestAuth: function(opts) {
 		this.trigger('auth-request', opts);
@@ -89,7 +89,7 @@ tryVKOAuth = function(){
 var connectApiToSeesu = function(vk_token, access, not_save) {
 	var vkapi = new vkApi(vk_token, {
 		queue: su.delayed_search.vk_api.queue,
-		jsonp: !su.env.cross_domain_allowed,
+		jsonp: !app_env.cross_domain_allowed,
 		cache_ajax: cache_ajax
 	});
 
@@ -112,10 +112,25 @@ var connectApiToSeesu = function(vk_token, access, not_save) {
 	}
 	return vkapi;
 };
+var appendVKSiteApi = function(cb) {
+	var _s = window.document.createElement('script');
+	_s.src='http://vk.com/js/api/xd_connection.js';
+	_s.onload = function(){
+		if (window.VK){
+			VK.init(function(){
+
+			});
+			su.trigger("vk-site-api");
+			
+		}
+		
+	};
+	window.document.documentElement.firstChild.appendChild(_s);
+};
 
 try_mp3_providers = function(){
 	var _u = su._url;
-	if (su.env.vkontakte){
+	if (app_env.vkontakte){
 		su.vk_app_mode = true;
 
 		var
@@ -142,32 +157,25 @@ try_mp3_providers = function(){
 			}
 		});
 		*/
-
-		var _s = window.document.createElement('script');
-		_s.src='http://vk.com/js/api/xd_connection.js';
-		_s.onload = function(){
-			if (window.VK){
-				VK.init(function(){});
-				su.trigger("vk-site-api");
-				VK.addCallback('onSettingsChanged', function(sts){
-					if ((sts & 8)*1){
-						if (!music_connected){
-							music_connected = true;
-							su.mp3_search.add(vkapi.asearch, true);
-						}
-					} else{
-						if (music_connected){
-							su.mp3_search.remove(vkapi.asearch, true);
-						}
+		appendVKSiteApi();
+		su.once("vk-site-api", function() {
+			VK.addCallback('onSettingsChanged', function(sts){
+				if ((sts & 8)*1){
+					if (!music_connected){
+						music_connected = true;
+						su.mp3_search.add(vkapi.asearch, true);
 					}
-				});
-				window.documentScrollSizeChangeHandler = function(height){
-					VK.callMethod("resizeWindow", 640, Math.max(580, height + 70));
-				};
-			}
-			
-		};
-		window.document.documentElement.firstChild.appendChild(_s);
+				} else{
+					if (music_connected){
+						su.mp3_search.remove(vkapi.asearch, true);
+					}
+				}
+			});
+			window.documentScrollSizeChangeHandler = function(height){
+				VK.callMethod("resizeWindow", 640, Math.max(580, height + 70));
+			};
+		});
+		
 		
 		
 	} else {
@@ -175,7 +183,7 @@ try_mp3_providers = function(){
 		su.vk_auth = new vkAuth(su.vkappid, {
 			bridge: 'http://seesu.me/vk/bridge.html',
 			callbacker: 'http://seesu.me/vk/callbacker.html'
-		}, ["friends", "video", "offline", "audio", "wall"], false, su.env.deep_sanbdox);
+		}, ["friends", "video", "offline", "audio", "wall"], false, app_env.deep_sanbdox);
 
 
 		var save_token = suStore('vk_token_info');
@@ -183,12 +191,19 @@ try_mp3_providers = function(){
 			//console.log('token!')
 			connectApiToSeesu( new vkTokenAuth(su.vkappid, save_token), true);
 			//console.log(save_token)
+			if (app_env.web_app){
+				appendVKSiteApi();
+			}
+			
 		}
 
 		su.vk_auth
 			.on('vk-token-receive', function(token){
 				var vk_token = new vkTokenAuth(su.vkappid, token);			
 				connectApiToSeesu(vk_token, true);
+				if (app_env.web_app){
+					appendVKSiteApi();
+				}
 			})
 			.on('want-open-url', function(wurl){
 				if (app_env.showWebPage){

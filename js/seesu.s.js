@@ -113,6 +113,7 @@ asyncDataSteam.prototype = {
 };
 
 var seesuServerAPI = function(auth, url){
+	this.init();
 	var _this = this;
 	
 	this.url  = url;
@@ -160,7 +161,8 @@ var seesuServerAPI = function(auth, url){
 	});
 	
 };
-seesuServerAPI.prototype = {
+
+provoda.Eventor.extendTo(seesuServerAPI, {
 	susd: {
 		rl: false,
 		ri: false,
@@ -201,6 +203,7 @@ seesuServerAPI.prototype = {
 	},
 	setInfo: function(type, data){
 		this.susd.user_info[type] = data;
+		this.trigger('info-change.' + type, data);
 	},
 
 	
@@ -291,4 +294,4 @@ seesuServerAPI.prototype = {
 		});
 		
 	}
-};
+});

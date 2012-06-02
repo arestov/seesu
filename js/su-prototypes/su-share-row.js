@@ -24,7 +24,7 @@ baseSuggest.extendTo(struserSuggest, {
 		//this.pl.add(this.mo);
 		//this.rpl.hide();
 		//su.views.showStaticPlaylist(this.pl, true);
-		this.mo.postToVKWall();
+		this.mo.postToVKWall(this.user_id);
 		this.row.hide();
 	},
 	ui_constr: struserSuggestView
@@ -106,7 +106,9 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		
 		this.users_c = $('<div class="users-list"></div>').appendTo(this.c);
 
-		$("<h3></h3>").text("Поместить песню").appendTo(this.users_c);
+		$("<h3></h3>").text(localize('post-song')).appendTo(this.users_c);
+
+
 
 		this.bindClick();
 		this.setModel(md);
@@ -121,17 +123,20 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		},
 		"can-post-to-own-wall":{
 			fn: function(state){
-				var _this = this;
-				this.mywall_button = $("<div class='post-to-my-vk-wall'></div>").click(function(){
-					_this.md.mo.postToVKWall();
-				}).text("на свою стену").insertBefore(this.getPart("pch-ws-own"));
-
-				var current_user_info = su.s.getInfo('vk');
-				if (current_user_info && current_user_info.photo){
-					$("<img />").attr("src", current_user_info.photo).prependTo(this.mywall_button)
-				}
+				this.requirePart("own-wall-button");
 			},
 			dep_vp: ['pch-ws-own']
+		},
+		"own-photo": {
+			fn: function(state) {
+				if (state){
+					if (this.own_photo){
+						this.own_photo.remove();
+					}
+					this.own_photo = $("<img />").attr("src", state).prependTo(this.getPart("own-wall-button"));
+				}
+			},
+			dep_vp: ["own-wall-button"]
 		},
 		"can-search-friends": {
 			fn: function(state){
@@ -152,7 +157,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 					.bind('keyup change search mousemove', inputSearch);
 
 				$("<div class='friends-search-desc desc'></div>")
-					.text("или на стену одного из друзей")
+					.text(localize("or-wall-of-f"))
 					.insertBefore(this.getPart("pch-ws-friends"));
 
 				this.getPart("pch-ws-friends").after();
@@ -187,6 +192,12 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				this.select();
 			});
 			return share_input;
+		},
+		"own-wall-button": function() {
+			var _this = this;
+			return $("<div class='post-to-my-vk-wall'></div>").click(function(){
+				_this.md.mo.postToVKWall();
+			}).text(localize("to-own-wall")).insertBefore(this.getPart("pch-ws-own"));
 		},
 		"pch-vk-auth": function() {
 			return this.addWSChunk();
@@ -241,7 +252,11 @@ BaseCRow.extendTo(ShareRow, {
 		this._super();
 		if (app_env.vkontakte || su.vk_api){
 			this.updateState("can-post-to-own-wall", true);
-		} 
+		} else {
+			su.on("vk-api", function() {
+				_this.updateState("can-post-to-own-wall", true);
+			});
+		}
 		if (!app_env.vkontakte){
 			if (su.vk_api){
 				this.updateState("can-search-friends", true);
@@ -285,7 +300,19 @@ BaseCRow.extendTo(ShareRow, {
 		});
 
 		
-		
+		var cu_info = su.s.getInfo('vk');
+		if (cu_info){
+			if (cu_info.photo){
+				this.updateState("own-photo", cu_info.photo);
+			}
+		} else {
+			su.s.once("info-change.vk", function(cu_info) {
+				if (cu_info.photo){
+					_this.updateState("own-photo", cu_info.photo);
+				}
+			});
+		}
+
 		//this.share_url = this.mo.getShareUrl();
 		
 	},
@@ -317,12 +344,7 @@ BaseCRow.extendTo(ShareRow, {
 		}
 		//to find you friends
 
-		this.vk_auth.setRequestDesc(
-				(
-					improve ? 
-						localize('to-find-better') : 
-						localize("to-find-and-play")
-				)  + " " +  localize('music-files-from-vk'));
+		this.vk_auth.setRequestDesc(improve ? localize('to-find-vk-friends') : localize("to-post-and-find-vk"));
 
 		this.updateState("needs-vk-auth", true);
 

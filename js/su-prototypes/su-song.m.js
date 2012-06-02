@@ -80,7 +80,7 @@ var song;
 		page_name: 'song page',
 		getShareUrl: function() {
 			if (this.artist && this.track){
-				return "http://seesu.me/o" + "#/catalog/" + (this.artist + "/_/" + this.track).replace(/\s/gi, "+");
+				return "http://seesu.me/o" + "#/catalog/" + su.encodeURLPart(this.artist) + "/_/" + su.encodeURLPart(this.track);
 			} else {
 				return "";
 			}
@@ -121,14 +121,17 @@ var song;
 				data.attachments = "audio" + file._id;
 			}
 			
-			
-			if (window.VK){
+			data.message = this.getFullName() + " " + encodeURI(this.getShareUrl());
+			if (data.attachments){
+				data.attachment = data.attachments;
+			}
 
+			if (window.VK){
+				VK.api.call("wall.post", data, function() {
+
+				});
 			} else {
-				data.message = this.getFullName() + " " + encodeURIComponent(su.p.c_song.getShareUrl());
-				if (data.attachments){
-					data.attachment = data.attachments;
-				}
+				
 
 				app_env.openURL( "http://seesu.me/vk/share.html" + 
 					"?" + 

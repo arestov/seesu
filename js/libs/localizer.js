@@ -295,8 +295,12 @@ localizer = {
 		"ru": "Что бы найти более подходящие"
 	},
 	"music-files-from-vk":{
-		"original": "music files you need to login to vk.com (vkontakte.ru)",
-		"ru": "музыкальные файлы тебе необходимо войти во vkontakte.ru (vk.com)"
+		"original": "music files you",
+		"ru": "музыкальные файлы"
+	},
+	"vk-auth-invitation": {
+		"original" : "need to login to vk.com (vkontakte.ru)",
+		"ru": "тебе необходимо войти во vkontakte.ru (vk.com)"
 	},
 	
 	"stabilization-of-vk":{
@@ -304,18 +308,7 @@ localizer = {
 		"ru": "Некоторые файлы найдены с помощью тестовой учётной записи vkontakte.ru (vk.com), поиск файлов для новых композиций может прекратится в любой момент. Этого не произойдёт, если ты будешь использовать свою учётную запись vkontakte"
 	},
 	
-	"":{
-		"original": "",
-		"ru": ""
-	},
-	"":{
-		"original": "",
-		"ru": ""
-	},
-	"":{
-		"original": "",
-		"ru": ""
-	},
+	
 	"to-meet-man-vk":{
 		"original": "If you want to meet this man you need to sign in to vk.com (vkontakte.ru)",
 		"ru": "Если ты хочешь познакомиться с этим человеком, то ты должен войти во vkontakte.ru (vk.com)"
@@ -363,7 +356,7 @@ localizer = {
 	},
 	"playlist-getmp3": {
 		"original": "Make playable all tracks in playlist",
-		"ru": 'Сделать все песни доступными'
+		"ru": 'Сделать все композиции доступными'
 	},
 	"playlist-export": {
 		"original": "Save playlist to *.m3u file",
@@ -476,5 +469,29 @@ localizer = {
 	"cr-new-playlist": {
 		"original": "new playlist named",
 		"ru": "новый плейлист"
+	},
+	"post-song":{
+		"original": "Post song",
+		"ru": "Отправить композицию"
+	},
+	"to-own-wall":{
+		"original": "to own wall",
+		"ru": "на свою стену"
+	},
+	"or-wall-of-f":{
+		"original": "or to the friend's wall",
+		"ru": "или на стену одного из друзей"
+	},
+	"to-find-vk-friends":{
+		"original": "To select your vk.com friend",
+		"ru": "Чтобы выбрать стену друга на vk.com"
+	},
+	"to-post-and-find-vk":{
+		"original": "To select your vk.com friend and post him song",
+		"ru": "Чтобы выбрать стену друга и отправить композицию на его стену"
+	},
+	"":{
+		"original": "",
+		"ru": ""
 	}
 }

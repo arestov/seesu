@@ -22,7 +22,7 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 
 обновление инонки и надписи у кнопок расширений
 + исправить сложные url
-добавить ex.fm
++ добавить ex.fm
 
 шаринг
 	есть vk api
