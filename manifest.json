@@ -25,6 +25,7 @@
   "http://gdata.youtube.com/*",
   "http://*.isohunt.com/*",
   "http://*.seesu.me/*",
-  "http://api.songkick.com/*"
+  "http://api.songkick.com/*",
+  "http://ex.fm/api/*"
   ]
 }

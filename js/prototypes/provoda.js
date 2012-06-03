@@ -424,6 +424,54 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	}
 });
 
+
+var
+	requestAnimationFrame,
+	cancelAnimationFrame;
+
+(function() {
+	var
+		raf,
+		caf,
+		lastTime = 0,
+		vendors = ['ms', 'moz', 'webkit', 'o'];
+
+	if (window.requestAnimationFrame){
+		raf = window.requestAnimationFrame;
+		caf = window.cancelAnimationFrame || window.cancelRequestAnimationFrame;
+	} else {
+		for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+			raf = window[vendors[x]+'RequestAnimationFrame'];
+			caf = caf || 
+			  window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+		}
+	}
+	
+ 
+	if (!raf) {
+		raf = function(callback, element) {
+			var currTime = new Date().getTime();
+			var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+			var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
+			  timeToCall);
+			lastTime = currTime + timeToCall;
+			return id;
+		};
+		caf = function(id) {
+			clearTimeout(id);
+		};
+	}
+	if (!caf){
+		caf = function() {};
+	}
+	requestAnimationFrame = raf;
+	cancelAnimationFrame = caf;
+		
+}());
+
+
+
+
 provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(){
 		this._super();
@@ -491,21 +539,30 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	setC: function(c){
 		this.c = c;
 	},
+	requestAnimationFrame: function(cb, el, w) {
+		var c = this.getC() && (this.getC()[0] || this.getC());
+		requestAnimationFrame.call(getDefaultView(c), cb, c);
+	},
 	setStates: function(states, reset){
 		if (reset && this.reset){
 			this.reset();
 		}
 		this.states = {};
-		for (var name in states){
-			this.changeState(false, name, states[name]);
-		}
-		for (var i = 0; i < this.complex_states_watchers.length; i++) {
-			var watcher = this.complex_states_watchers[i];
-			if (this.checkCSWatcher(watcher)){
-				this.callCSWatcher(watcher);
+		var _this = this;
+
+		this.requestAnimationFrame(function() {
+			for (var name in states){
+				_this.changeState(false, name, states[name], false, true);
 			}
-			
-		}
+			for (var i = 0; i < _this.complex_states_watchers.length; i++) {
+				var watcher = _this.complex_states_watchers[i];
+				if (_this.checkCSWatcher(watcher)){
+					_this.callCSWatcher(watcher);
+				}
+				
+			}
+		});
+		
 		return this;
 	},
 	
@@ -549,7 +606,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return has_all_dependings;
 	},
-	changeState: function(is_prop, name, value, allow_complex_watchers) {
+	changeState: function(is_prop, name, value, allow_complex_watchers, skip_animation_frame) {
 		value = value || false;
 		var old_value = this.replaceState(is_prop, name, value);
 		if (old_value){
