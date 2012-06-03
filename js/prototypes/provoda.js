@@ -541,7 +541,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	requestAnimationFrame: function(cb, el, w) {
 		var c = this.getC() && (this.getC()[0] || this.getC());
-		requestAnimationFrame.call(getDefaultView(c), cb);
+		requestAnimationFrame.call(w || getDefaultView(c.ownerDocument), cb);
 	},
 	setStates: function(states, reset){
 		if (reset && this.reset){
@@ -550,18 +550,16 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.states = {};
 		var _this = this;
 
-		this.requestAnimationFrame(function() {
-			for (var name in states){
-				_this.changeState(false, name, states[name], false, true);
+		for (var name in states){
+			this.changeState(false, name, states[name], false, true);
+		}
+		for (var i = 0; i < this.complex_states_watchers.length; i++) {
+			var watcher = this.complex_states_watchers[i];
+			if (this.checkCSWatcher(watcher)){
+				this.callCSWatcher(watcher);
 			}
-			for (var i = 0; i < _this.complex_states_watchers.length; i++) {
-				var watcher = _this.complex_states_watchers[i];
-				if (_this.checkCSWatcher(watcher)){
-					_this.callCSWatcher(watcher);
-				}
-				
-			}
-		});
+			
+		}
 		
 		return this;
 	},
@@ -609,27 +607,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	changeState: function(is_prop, name, value, allow_complex_watchers, skip_animation_frame) {
 		value = value || false;
 
-		var _this = this;
 
-		var func = function() {
-			var old_value = _this.replaceState(is_prop, name, value);
-			if (old_value){
-				_this.trigger(name + '-state-change', value, old_value[0]);
-				if (!is_prop){
-					_this.callStateWatchers(name, value, old_value[0]);
-					if (allow_complex_watchers){
-						_this.iterateCSWatchers(name);
-					}
+		var old_value = this.replaceState(is_prop, name, value);
+		if (old_value){
+			this.trigger(name + '-state-change', value, old_value[0]);
+			if (!is_prop){
+				this.callStateWatchers(name, value, old_value[0]);
+				if (allow_complex_watchers){
+					this.iterateCSWatchers(name);
 				}
 			}
-
-
-		};
-		if (!skip_animation_frame){
-			this.requestAnimationFrame(func);
-		} else {
-			func();
 		}
+
 		
 		return this;
 	},
