@@ -357,7 +357,7 @@ baseNavUI.extendTo(investgNavUI, {
 artCardNavUI = function() {};
 baseNavUI.extendTo(artCardNavUI, {
 	createBase: function() {
-		this.c = $('<span class="nav-item "><span></span><b></b></span>');
+		this.c = $('<span class="nav-item "><span>.</span><b></b></span>');
 	}
 });
 
@@ -365,7 +365,7 @@ baseNavUI.extendTo(artCardNavUI, {
 playlistNavUI = function() {};
 baseNavUI.extendTo(playlistNavUI, {
 	createBase: function() {
-		this.c = $('<span class="nav-item nav-playlist-page"><span></span><b></b></span>');
+		this.c = $('<span class="nav-item nav-playlist-page"><span>.</span><b></b></span>');
 	}
 });
 
@@ -373,7 +373,7 @@ baseNavUI.extendTo(playlistNavUI, {
 trackNavUI = function(mlm) {};
 baseNavUI.extendTo(trackNavUI, {
 	createBase: function() {
-		this.c = $('<span class="nav-item nav-track-zoom"><span></span><b></b></span>');
+		this.c = $('<span class="nav-item nav-track-zoom"><span>.</span><b></b></span>');
 	}
 });
 

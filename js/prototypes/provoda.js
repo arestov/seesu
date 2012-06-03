@@ -440,7 +440,7 @@ var
 		raf = window.requestAnimationFrame;
 		caf = window.cancelAnimationFrame || window.cancelRequestAnimationFrame;
 	} else {
-		for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+		for(var x = 0; x < vendors.length && !raf; ++x) {
 			raf = window[vendors[x]+'RequestAnimationFrame'];
 			caf = caf || 
 			  window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
@@ -451,7 +451,7 @@ var
 	if (!raf) {
 		raf = function(callback, element) {
 			var currTime = new Date().getTime();
-			var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+			var timeToCall = 0;
 			var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
 			  timeToCall);
 			lastTime = currTime + timeToCall;
@@ -541,7 +541,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	requestAnimationFrame: function(cb, el, w) {
 		var c = this.getC() && (this.getC()[0] || this.getC());
-		requestAnimationFrame.call(getDefaultView(c), cb, c);
+		requestAnimationFrame.call(getDefaultView(c), cb);
 	},
 	setStates: function(states, reset){
 		if (reset && this.reset){
@@ -608,16 +608,29 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	changeState: function(is_prop, name, value, allow_complex_watchers, skip_animation_frame) {
 		value = value || false;
-		var old_value = this.replaceState(is_prop, name, value);
-		if (old_value){
-			this.trigger(name + '-state-change', value, old_value[0]);
-			if (!is_prop){
-				this.callStateWatchers(name, value, old_value[0]);
-				if (allow_complex_watchers){
-					this.iterateCSWatchers(name);
+
+		var _this = this;
+
+		var func = function() {
+			var old_value = _this.replaceState(is_prop, name, value);
+			if (old_value){
+				_this.trigger(name + '-state-change', value, old_value[0]);
+				if (!is_prop){
+					_this.callStateWatchers(name, value, old_value[0]);
+					if (allow_complex_watchers){
+						_this.iterateCSWatchers(name);
+					}
 				}
 			}
+
+
+		};
+		if (!skip_animation_frame){
+			this.requestAnimationFrame(func);
+		} else {
+			func();
 		}
+		
 		return this;
 	},
 	change: function(is_prop, name, value){
