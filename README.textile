@@ -19,7 +19,8 @@ Alexander Belov <porqz@mesquite.ru>
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
 
-
+исправить предварительный поиск следующего трека
+обработка ошибок загрузки
 обновление инонки и надписи у кнопок расширений
 + исправить сложные url
 + добавить ex.fm
