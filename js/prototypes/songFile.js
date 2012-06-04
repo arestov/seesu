@@ -353,6 +353,12 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.setPosition(0);
 				this.player.remove(this);
 
+				var mo = ((this == this.mo.mopla) && this.mo);
+				if (mo){
+					mo.updateState('play', false);
+					delete mo.start_time;
+				}
+
 				this.updateState('play', false);
 				this.updateState('loading-progress', 0);
 				this.updateState('playing-progress', 0);
