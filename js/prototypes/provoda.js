@@ -220,6 +220,53 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
+	/*
+complex_states: {
+	submit_mark: {
+		depends_on: ["want_submit", "submited_as"],
+		fn: function(want_submit, submited_as){
+			return submited_as || want_submit;
+		}
+	}
+},
+getComplexStatesIterateArray: function(state){
+	var r = [];
+	for (var i in this.complex_states){
+		var cur = this.complex_states[i];
+		if (!state || _indexOf(cur.depends_on, state) != -1){
+			r.push({
+				name: i,
+				done: false,
+				obj: this.complex_states[i]
+			});
+		}
+	}
+	return r;
+},
+checkComplexStates: function(md, state){
+	return this.getChangedComplexStates(md, this.getComplexStatesIterateArray(state));
+},
+
+
+		
+updateState: function(state, value, skip_view_change){
+	var md = this.current_model;
+	if (md[state] !== value){
+		md[state] = value;
+		if (!skip_view_change){
+			this.changeViewer(state, value);
+		}
+		var changes = this.checkComplexStates(md);
+		for (var i = 0; i < changes.length; i++) {
+			md[changes[i].name] = changes[i].value;
+			if (!skip_view_change){
+				this.changeViewer(changes[i].name, changes[i].value);
+			}
+		}
+
+	}
+},
+*/
 	iterateCSWatchers: function(state_name) {
 		if (this.complex_states[state_name]){
 			for (var i = 0; i < this.complex_states[state_name].length; i++) {
