@@ -22,6 +22,11 @@ suServView.extendTo(songUI, {
 				$(su.ui.els.slider).removeClass("show-zoom-to-track");
 				this.deactivate();
 			}
+			
+			var tidominator = this.getPart('tidominator');
+			if (tidominator && !opts){
+				tidominator.removeClass('want-more-info');
+			}
 		},
 		"mp-blured": function(state) {
 			
@@ -145,13 +150,7 @@ suServView.extendTo(songUI, {
 			return su.ui.samples.track_c.clone(true);
 		},
 		tidominator: function() {
-			var tidominator = this.requirePart('context').children('.track-info-dominator');
-			this.watchState('mp-show', function(nv, ov) {
-				if (!nv){
-					this.getPart('tidominator').removeClass('want-more-info');
-				}
-			});
-			return tidominator;
+			return this.requirePart('context').children('.track-info-dominator');
 		}
 	},
 	createBase: function(){
