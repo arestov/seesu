@@ -319,7 +319,7 @@ BaseCRow.extendTo(ShareRow, {
 	checkVKFriendsAccess: function(vk_opts) {
 		var can = (vk_opts & 2) * 1;
 		this.updateState("can-search-friends", can);
-		if (can){
+		if (!can){
 			this.addVKAudioAuth(true);
 		} else {
 			this.removeVKAudioAuth();
