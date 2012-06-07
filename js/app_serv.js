@@ -24,10 +24,52 @@ var aReq = function(options){
 	} else {
 		//осуществление запроса через xhr2 если позволяет сервис
 
-		//создание script с предзагрузкой с помощью img.onerror
+		//создание script с предзагрузкой с помощью img.onerror если сервис не запрещает кеширование
+		var params_url = $.param(options.data)
+		var full_url = (options.url || "") + (params_url ? "?" + params_url : "");
+
+		var img = document.createElement("img");
+		var script;
+		var done;
+		var loadScript = function(){
+			script = document.createElement("script");
+			script.async = true;
+			script.onload = function(){
+				console.log("script done");
+			};
+			script.onerror = function(){
+				console.log("script loading error")
+			};
+			script.src = full_url;
+			document.body.appendChild(script);
+		};
+		var completeImage = function(){
+			if (!done){
+				done = true;
+
+				console.log("image done");
+				loadScript();
+			}
+		};
+
+		var unbindImage = function(){
+			img.onload = null;
+			img.onerror = null;
+		};
+
+		img.src = full_url;
+		
+		if (img.complete){
+			setTimeout(completeImage,0);
+		} else {
+			img.onload = completeImage;
+			img.onerror = completeImage;
+		}
+
+		
 	}
 };
-
+//.noop()
 var getHTMLText = function(text) {
 	var safe_node = document.createElement('div');
 	safe_node.innerHTML = text;
@@ -75,7 +117,7 @@ var abortage = {
 (function(){
 	var jsonp_counter = 0;
 	window.create_jsonp_callback = function(func){
-		var func_name = 'jsonp_callback_' + (++jsonp_counter);
+		var func_name = 'jspc_' + (++jsonp_counter);
 		window[func_name] = func;
 		
 		
