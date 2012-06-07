@@ -140,35 +140,38 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		},
 		"can-search-friends": {
 			fn: function(state){
-				var _this = this;
-				var oldv;
-				var inputSearch = debounce(function(e) {
-					var newval = this.value;
-					if (oldv !== newval){
-						_this.md.search(newval);
-						oldv = newval;
+				if (state){
+					var _this = this;
+					var oldv;
+					var inputSearch = debounce(function(e) {
+						var newval = this.value;
+						if (oldv !== newval){
+							_this.md.search(newval);
+							oldv = newval;
+						}
+						
+					}, 100);
+
+					var input_place = $("<div class='list-search-input-place'></div>").insertBefore(this.getPart("pch-ws-input"));
+
+					this.input = $("<input type='text'/>").appendTo(input_place)
+						.bind('keyup change search mousemove', inputSearch);
+
+					$("<div class='friends-search-desc desc'></div>")
+						.text(localize("or-wall-of-f"))
+						.insertBefore(this.getPart("pch-ws-friends"));
+
+					this.getPart("pch-ws-friends").after();
+					var searcher_ui = this.md.searcher.getFreeView();
+					if (searcher_ui){
+						searcher_ui.getC().insertBefore(this.getPart("pch-ws-friends"));
+						searcher_ui.expand();
+						searcher_ui.appended();
 					}
-					
-				}, 100);
 
-				var input_place = $("<div class='list-search-input-place'></div>").insertBefore(this.getPart("pch-ws-input"));
-
-				this.input = $("<input type='text'/>").appendTo(input_place)
-					.bind('keyup change search mousemove', inputSearch);
-
-				$("<div class='friends-search-desc desc'></div>")
-					.text(localize("or-wall-of-f"))
-					.insertBefore(this.getPart("pch-ws-friends"));
-
-				this.getPart("pch-ws-friends").after();
-				var searcher_ui = this.md.searcher.getFreeView();
-				if (searcher_ui){
-					searcher_ui.getC().insertBefore(this.getPart("pch-ws-friends"));
-					searcher_ui.expand();
-					searcher_ui.appended();
+					this.md.search("");
 				}
-
-				this.md.search("");
+				
 			},
 			dep_vp: ['pch-ws-input', "pch-ws-friends"]
 		},
