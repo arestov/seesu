@@ -200,7 +200,7 @@ try_mp3_providers = function(){
 				}
 			});
 			window.documentScrollSizeChangeHandler = function(height){
-				VK.callMethod("resizeWindow", 640, Math.max(580, height + 70));
+				VK.callMethod("resizeWindow", 640, Math.max(700, height + 70));
 			};
 		});
 		
