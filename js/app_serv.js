@@ -18,7 +18,15 @@
 	
 })(window);
 
+var aReq = function(options){
+	if (options.dataType != "jsonp"){
+		return $.ajax(options);
+	} else {
+		//осуществление запроса через xhr2 если позволяет сервис
 
+		//создание script с предзагрузкой с помощью img.onerror
+	}
+};
 
 var getHTMLText = function(text) {
 	var safe_node = document.createElement('div');
