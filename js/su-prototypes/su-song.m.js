@@ -127,7 +127,7 @@ var song;
 			}
 
 			if (window.VK){
-				VK.Api.call("wall.post", data, function() {
+				VK.api("wall.post", data, function() {
 
 				});
 			} else {
