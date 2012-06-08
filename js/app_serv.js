@@ -27,6 +27,9 @@ var aReq = function(options){
 			script,
 			timeout,
 			callback_func_name,
+			script_loaded,
+			script_loaded_time,
+			script_executed,
 			deferred 			= $.Deferred(),
 			complex_response 	= {
 				abort: function(){
@@ -69,6 +72,16 @@ var aReq = function(options){
 
 		if (!options.jsonpCallback && !params[callback_param_name]){
 			callback_func_name = create_jsonp_callback(function(r){
+				script_executed = true;
+				if (script_loaded){
+					clearTimeout(script_loaded);
+				}
+				
+				if (script_loaded_time){
+					console.log("script wait:")
+					console.log((new Date()).getTime() - script_loaded_time.getTime());
+				}
+				
 				deferred.resolve(r);
 			});
 			params[callback_param_name] = callback_func_name;
@@ -86,14 +99,23 @@ var aReq = function(options){
 			script = document.createElement("script");
 			script.async = true;
 			script.onload = function(){
-				//document.documentElement.firstChild.appendChild(script);
+				script_loaded_time = new Date();
+				//document.documentElement.firstChild.removeChild(script);
+				
+				if (!script_executed){
+					script_loaded = setTimeout(function(){
+						console.log("waiting other scripts!!!! :((( ")
+					}, 100);
+				}
+				
 			};
 			script.onerror = function(){
 				deferred.reject();
 			};
 			script.src = full_url;
-			document.documentElement.firstChild.appendChild(script);
-			document.documentElement.firstChild.removeChild(script);
+			document.documentElement.firstChild.insertBefore(script, document.documentElement.firstChild.firstChild);
+			//document.documentElement.firstChild.appendChild(script);
+			//document.documentElement.firstChild.removeChild(script);
 		};
 
 
@@ -101,7 +123,7 @@ var aReq = function(options){
 			img.onload = null;
 			img.onerror = null;
 		};
-		if (options.resourceCachingAvailable){
+		if (false && options.resourceCachingAvailable){
 			img = document.createElement("img");
 			var completeImage = function(){
 				if (!done){
