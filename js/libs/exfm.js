@@ -67,16 +67,14 @@ ExfmApi.prototype = {
 					}
 					
 					if (!cache_used){
-						$.ajax({
+						aReq({
 							url: "http://ex.fm/api/v3/" + method,
 							type: "GET",
 							dataType: _this.crossdomain ? "json": "jsonp",
 							data: params_full,
 							timeout: 20000,
-							success: success,
-							error:function(xhr){
-								deferred.reject.apply(deferred, arguments);
-							}
+						}).done(success).fail(function(xhr){
+							deferred.reject.apply(deferred, arguments);
 						});
 
 						if (options.after_ajax){

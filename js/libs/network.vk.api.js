@@ -95,17 +95,18 @@ Class.extendTo(vkCoreApi, {
 					}
 					
 					if (!cache_used){
-						$.ajax({
+						aReq({
 						  url: _this.link + method,
 						  type: "GET",
-						  dataType: params_full.callback ? 'script' : ( this.jsonp ? 'jsonp' : 'json'),
+						//  dataType: params_full.callback ? 'script' : ( this.jsonp ? 'jsonp' : 'json'),
+						  dataType: "jsonp",
 						  data: params_full,
 						  timeout: 20000,
-						  success: !params_full.callback ? success : false,
 						  jsonpCallback: params_full.callback ? params_full.callback : false, 
-						  error: function(xhr, text){
+						})
+						.done(!params_full.callback ? success : $.noop)
+						.fail(function(xhr, text){
 						  	deferred.reject.apply(deferred, arguments);
-						  }
 						});
 						if (options.after_ajax){
 							options.after_ajax();

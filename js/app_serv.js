@@ -22,14 +22,54 @@ var aReq = function(options){
 	if (options.dataType != "jsonp"){
 		return $.ajax(options);
 	} else {
+		var
+			img,
+			script,
+			callback_func_name,
+			deferred 			= $.Deferred(),
+			complex_response 	= {
+				abort: function(){
+					this.aborted = true;
+				//	deferred.reject('abort');
+					if (img){
+						img.src = null;
+
+					}
+					if (script){
+						script.src = null;
+					}
+					if (window[callback_func_name]){
+						window[callback_func_name] = $.noop()
+					}
+					
+					//if (this.queued){
+					//	this.queued.abort();
+					//}
+					//if (this.xhr){
+					//	this.xhr.abort();
+					//}
+				}
+			};
+		deferred.promise( complex_response );
+		//.noop()
 		//осуществление запроса через xhr2 если позволяет сервис
 
 		//создание script с предзагрузкой с помощью img.onerror если сервис не запрещает кеширование
-		var params_url = $.param(options.data)
+
+		callback_func_name = create_jsonp_callback(function(r){
+			deferred.resolve(r);
+		});
+		var params = {};
+		$.extend(params, options.data || {}, {
+			callback: callback_func_name
+		});
+
+		var params_url = $.param(params);
 		var full_url = (options.url || "") + (params_url ? "?" + params_url : "");
 
-		var img = document.createElement("img");
-		var script;
+		
+
+		img = document.createElement("img");
 		var done;
 		var loadScript = function(){
 			script = document.createElement("script");
@@ -38,6 +78,7 @@ var aReq = function(options){
 				console.log("script done");
 			};
 			script.onerror = function(){
+				deferred.reject();
 				console.log("script loading error")
 			};
 			script.src = full_url;
@@ -65,11 +106,11 @@ var aReq = function(options){
 			img.onload = completeImage;
 			img.onerror = completeImage;
 		}
-
+		return deferred;
 		
 	}
 };
-//.noop()
+
 var getHTMLText = function(text) {
 	var safe_node = document.createElement('div');
 	safe_node.innerHTML = text;
