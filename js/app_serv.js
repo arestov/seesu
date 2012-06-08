@@ -123,7 +123,7 @@ var aReq = function(options){
 			img.onload = null;
 			img.onerror = null;
 		};
-		if (false && options.resourceCachingAvailable){
+		if (options.resourceCachingAvailable){
 			img = document.createElement("img");
 			var completeImage = function(){
 				if (!done){
@@ -141,7 +141,41 @@ var aReq = function(options){
 				img.onerror = completeImage;
 			}
 		} else {
-			loadScript();
+			if (app_env.iframe_support &&  window.postMessage && window.JSON){
+			
+				var iframe = document.createElement("iframe");
+				$(iframe).css({
+					top:0,
+					left: "-1000px",
+					position: "absolute"
+				});
+				var cb_id = params[callback_param_name];
+				iframe.src = "jsonp-loader.html#?" + $.param({
+					url: full_url, 
+					callback_func: params[callback_param_name],
+					callback_id: cb_id
+				});
+				document.body.appendChild(iframe);
+				addEvent(window, 'message', function(e){
+					if (e.source == iframe.contentWindow){
+						var r = JSON.parse(e.data);
+						if (r.callback_id == cb_id){
+							if (r.error){
+								deferred.reject();
+							} else {
+								window[cb_id](r.data);
+							}
+							
+							
+						}
+					}
+				});
+
+
+			} else {
+				loadScript();
+			}
+			
 		}
 		
 		return complex_response;
