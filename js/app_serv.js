@@ -34,7 +34,7 @@ var aReq = function(options){
 				//	deferred.reject('abort');
 					if (img){
 						img.src = null;
-
+						unbindImage();
 					}
 					if (script){
 						script.src = null;
@@ -54,12 +54,13 @@ var aReq = function(options){
 		deferred.promise( complex_response );
 		//.noop()
 		//осуществление запроса через xhr2 если поддерживается и позволяет сервис
-			//last.fm, soundcloud, ex.fm, 
+			//window.XMLHttpRequest && "withCredentials" in new XMLHttpRequest https://gist.github.com/1431660
+			//last.fm, soundcloud, ex.fm, youtube
 
 		//создание script с предзагрузкой с помощью img.onerror если сервис не запрещает кеширование
 
 		
-		//resourceCachingAllowed
+		//resourceCachingAvailable
 		
 		var params = {};
 		$.extend(params, options.data || {});
@@ -79,7 +80,7 @@ var aReq = function(options){
 
 		
 
-		img = document.createElement("img");
+		
 		var done;
 		var loadScript = function(){
 			script = document.createElement("script");
@@ -94,26 +95,33 @@ var aReq = function(options){
 			document.documentElement.firstChild.appendChild(script);
 			document.documentElement.firstChild.removeChild(script);
 		};
-		var completeImage = function(){
-			if (!done){
-				done = true;
-				loadScript();
-			}
-		};
+
 
 		var unbindImage = function(){
 			img.onload = null;
 			img.onerror = null;
 		};
+		if (options.resourceCachingAvailable){
+			img = document.createElement("img");
+			var completeImage = function(){
+				if (!done){
+					done = true;
+					loadScript();
+				}
+			};
 
-		img.src = full_url;
-		
-		if (img.complete){
-			setTimeout(completeImage,0);
+			img.src = full_url;
+			
+			if (img.complete){
+				setTimeout(completeImage,0);
+			} else {
+				img.onload = completeImage;
+				img.onerror = completeImage;
+			}
 		} else {
-			img.onload = completeImage;
-			img.onerror = completeImage;
+			loadScript();
 		}
+		
 		return complex_response;
 		
 	}

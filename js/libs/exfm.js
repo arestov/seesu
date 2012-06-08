@@ -67,7 +67,7 @@ ExfmApi.prototype = {
 					}
 					
 					if (!cache_used){
-						aReq({
+						complex_response.xhr = aReq({
 							url: "http://ex.fm/api/v3/" + method,
 							type: "GET",
 							dataType: _this.crossdomain ? "json": "jsonp",

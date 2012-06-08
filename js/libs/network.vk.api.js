@@ -91,7 +91,7 @@ Class.extendTo(vkCoreApi, {
 					}
 					
 					if (!cache_used){
-						aReq({
+						complex_response.xhr = aReq({
 						  url: _this.link + method,
 						  type: "GET",
 						  dataType: this.jsonp ? 'jsonp' : 'json',

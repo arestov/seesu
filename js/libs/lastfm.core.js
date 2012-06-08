@@ -126,25 +126,24 @@ lastfm_api.prototype= {
 							});
 						}
 						if (!cache_used){
-							complex_response.xhr = $.ajax({
+							complex_response.xhr = aReq({
 								url: _this.api_path,
 								global: false,
 								type: post ? "POST" : "GET",
 								dataType: _this.crossdomain ? 'json' : 'jsonp',
 								data: params,
-								error: function(r){
-									deferred.reject.apply(deferred, arguments);
-								},
-								success: function(r){
-									deferred.resolve.apply(deferred, arguments);
-									if (!post && _this.cache_ajax){
-										_this.cache_ajax.set(_this.cache_namespace, params.api_sig, r, options.cache_timeout);
-									}
-								},
-								complete: function(xhr){
-								//console.log(xhr.responseText)
+								resourceCachingAvailable: true
+							})
+							.fail(function(r){
+								deferred.reject.apply(deferred, arguments);
+							})
+							.done(function(r){
+								deferred.resolve.apply(deferred, arguments);
+								if (!post && _this.cache_ajax){
+									_this.cache_ajax.set(_this.cache_namespace, params.api_sig, r, options.cache_timeout);
 								}
 							});
+
 							if (options.after_ajax){
 								options.after_ajax();
 							}

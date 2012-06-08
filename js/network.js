@@ -2,7 +2,7 @@
 var get_youtube = function(q, callback){
 	var cache_used = cache_ajax.get('youtube', q, callback);
 	if (!cache_used){
-		$.ajax({
+		aReq({
 			url: 'http://gdata.youtube.com/feeds/api/videos',
 			dataType: 'jsonp',
 			data: {
@@ -10,11 +10,10 @@ var get_youtube = function(q, callback){
 				v: 2,
 				alt: 'json-in-script'
 				
-			},
-			success: function(r){
-				if (callback) {callback(r);}
-					cache_ajax.set('youtube', q, r);
-				} 
+			}
+		}).done(function(r){
+			if (callback) {callback(r);}
+			cache_ajax.set('youtube', q, r);
 		});
 	}
 	
