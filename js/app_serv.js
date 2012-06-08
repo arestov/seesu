@@ -19,12 +19,13 @@
 })(window);
 
 var aReq = function(options){
-	if (options.dataType != "jsonp"){
+	if (false && options.dataType != "jsonp"){
 		return $.ajax(options);
 	} else {
 		var
 			img,
 			script,
+			timeout,
 			callback_func_name,
 			deferred 			= $.Deferred(),
 			complex_response 	= {
@@ -52,17 +53,26 @@ var aReq = function(options){
 			};
 		deferred.promise( complex_response );
 		//.noop()
-		//осуществление запроса через xhr2 если позволяет сервис
+		//осуществление запроса через xhr2 если поддерживается и позволяет сервис
+			//last.fm, soundcloud, ex.fm, 
 
 		//создание script с предзагрузкой с помощью img.onerror если сервис не запрещает кеширование
 
-		callback_func_name = create_jsonp_callback(function(r){
-			deferred.resolve(r);
-		});
+		
+		//resourceCachingAllowed
+		
 		var params = {};
-		$.extend(params, options.data || {}, {
-			callback: callback_func_name
-		});
+		$.extend(params, options.data || {});
+
+		var callback_param_name = options.callback || "callback";
+
+		if (!options.jsonpCallback && !params[callback_param_name]){
+			callback_func_name = create_jsonp_callback(function(r){
+				deferred.resolve(r);
+			});
+			params[callback_param_name] = callback_func_name;
+		}
+
 
 		var params_url = $.param(params);
 		var full_url = (options.url || "") + (params_url ? "?" + params_url : "");
@@ -75,20 +85,18 @@ var aReq = function(options){
 			script = document.createElement("script");
 			script.async = true;
 			script.onload = function(){
-				console.log("script done");
+				//document.documentElement.firstChild.appendChild(script);
 			};
 			script.onerror = function(){
 				deferred.reject();
-				console.log("script loading error")
 			};
 			script.src = full_url;
-			document.body.appendChild(script);
+			document.documentElement.firstChild.appendChild(script);
+			document.documentElement.firstChild.removeChild(script);
 		};
 		var completeImage = function(){
 			if (!done){
 				done = true;
-
-				console.log("image done");
 				loadScript();
 			}
 		};
@@ -106,7 +114,7 @@ var aReq = function(options){
 			img.onload = completeImage;
 			img.onerror = completeImage;
 		}
-		return deferred;
+		return complex_response;
 		
 	}
 };

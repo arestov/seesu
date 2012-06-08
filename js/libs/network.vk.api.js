@@ -77,11 +77,7 @@ Class.extendTo(vkCoreApi, {
 					}
 				};
 
-				if (this.jsonp && typeof window.create_jsonp_callback == 'function'){
-					params_full.callback = window.create_jsonp_callback(success);
-				}
 
-				
 
 
 				var sendRequest = function() {
@@ -98,13 +94,11 @@ Class.extendTo(vkCoreApi, {
 						aReq({
 						  url: _this.link + method,
 						  type: "GET",
-						//  dataType: params_full.callback ? 'script' : ( this.jsonp ? 'jsonp' : 'json'),
-						  dataType: "jsonp",
+						  dataType: this.jsonp ? 'jsonp' : 'json',
 						  data: params_full,
 						  timeout: 20000,
-						  jsonpCallback: params_full.callback ? params_full.callback : false, 
 						})
-						.done(!params_full.callback ? success : $.noop)
+						.done(success)
 						.fail(function(xhr, text){
 						  	deferred.reject.apply(deferred, arguments);
 						});
