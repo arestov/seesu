@@ -715,6 +715,7 @@ provoda.Model.extendTo(mfCor, {
 		var cm = this.state("controll_current_mopla");
 		if (cm){
 			if (!cm.state("play")){
+				this.trigger('before-mf-play', cm);
 				cm.play();
 			}
 		} else {

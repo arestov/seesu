@@ -18,7 +18,7 @@ Alexander Belov <porqz@mesquite.ru>
 
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
-
+добавлять soundcloud ключ для песен с ex.fm
 нормальное получение json данных где возможно (вместо jsonp)
 + обработка ошибок загрузки
   + выбор файла
