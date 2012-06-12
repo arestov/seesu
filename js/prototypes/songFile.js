@@ -323,9 +323,21 @@ provoda.Model.extendTo(fileInTorrent, {
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
 					mo.updateState('play', false);
-					delete mo.start_time;
 				}
 				this.updateState('play', false);
+			},
+			error: function() {
+				var d = new Date()
+				this.updateState("error", d);
+				this.parent.error = d;
+				var _this = this;
+				getInternetConnectionStatus(function(has_connection) {
+					if (has_connection) {
+						_this.updateState("unavailable", true);
+						_this.parent.unavailable = true;
+						_this.trigger("unavailable")
+					}
+				});
 			}
 		},
 		setPlayer: function(player){
@@ -356,7 +368,6 @@ provoda.Model.extendTo(fileInTorrent, {
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
 					mo.updateState('play', false);
-					delete mo.start_time;
 				}
 
 				this.updateState('play', false);

@@ -34,6 +34,9 @@ var song;
 			_this.findNeighbours();
 			_this.mopla = mopla;
 		});
+		this.mf_cor.on("error", function(can_play) {
+			_this.player.trigger("song-play-error", _this, can_play);
+		});
 		this.regDOMDocChanges(function() {
 			if (su.ui.nav.daddy){
 				var child_ui = _this.getFreeView('nav');

@@ -66,17 +66,18 @@ scApi.prototype = {
 					}
 					
 					if (!cache_used){
-						$.ajax({
+						complex_response.xhr = aReq({
 							url: "http://api.soundcloud.com/" + method + ".js",
 							type: "GET",
 							dataType: _this.crossdomain ? "json": "jsonp",
 							data: params_full,
 							timeout: 20000,
-							success: success,
-							error:function(xhr){
-								deferred.reject.apply(deferred, arguments);
-							}
-						});
+							thisOriginAllowed: true
+						})
+						.fail(function(xhr){
+							deferred.reject.apply(deferred, arguments);
+						})
+						.done(success);
 
 						if (options.after_ajax){
 							options.after_ajax();

@@ -2,7 +2,7 @@ function lastfm_api(apikey, s, stGet, stSet, cache_ajax, crossdomain, init, queu
 	if (arguments.length){
 		this.init.apply(this, arguments);
 	}
-}
+};
 
 lastfm_api.prototype= {
 	initers: [],
@@ -132,7 +132,8 @@ lastfm_api.prototype= {
 								type: post ? "POST" : "GET",
 								dataType: _this.crossdomain ? 'json' : 'jsonp',
 								data: params,
-								resourceCachingAvailable: true
+								resourceCachingAvailable: true,
+								thisOriginAllowed: true
 							})
 							.fail(function(r){
 								deferred.reject.apply(deferred, arguments);

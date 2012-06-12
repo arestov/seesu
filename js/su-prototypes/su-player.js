@@ -74,7 +74,7 @@ var seesuPlayer;
 
 (function() {
 	"use strict";
-	su.p = new seesuPlayer();
+	var player = su.p = new seesuPlayer();
 
 	su.p
 		.on('finish', function(e){
@@ -93,6 +93,16 @@ var seesuPlayer;
 					title: mo.track,
 					timestamp: ((new Date()).getTime()/1000).toFixed(0)
 				});
+			}
+			delete mo.start_time;
+		})
+		.on('song-play-error', function(song, can_play) {
+			if (this.c_song == song){
+				if (!can_play){
+					this.playNext(this.c_song, true);
+				} else {
+					song.play();
+				}
 			}
 		})
 		.on('play', function(e){

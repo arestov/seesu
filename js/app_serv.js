@@ -18,8 +18,27 @@
 	
 })(window);
 
+var getInternetConnectionStatus = function(cb) {
+	var img = new Image();
+	img.onload = function() {
+		cb(true);
+	};
+	img.onerror = function() {
+		cb(false);
+	};
+	img.src = "http://www.google-analytics.com/__utm.gif?" + Math.random() + new Date();
+};
+var async_script_support = "async" in document.createElement("script");
+var xhr2_support = window.XMLHttpRequest && "withCredentials" in new XMLHttpRequest;  //https://gist.github.com/1431660
 var aReq = function(options){
-	if (false && options.dataType != "jsonp"){
+	if (options.dataType != "jsonp"){
+		return $.ajax(options);
+	} else if (xhr2_support && options.thisOriginAllowed) {
+		options.dataType = "json";
+		options.crossDomain = true;
+		if (options.afterChange){
+			options.afterChange(options);
+		}
 		return $.ajax(options);
 	} else {
 		var
@@ -57,7 +76,7 @@ var aReq = function(options){
 		deferred.promise( complex_response );
 		//.noop()
 		//осуществление запроса через xhr2 если поддерживается и позволяет сервис
-			//window.XMLHttpRequest && "withCredentials" in new XMLHttpRequest https://gist.github.com/1431660
+			// 
 			//last.fm, soundcloud, ex.fm, youtube
 
 		//создание script с предзагрузкой с помощью img.onerror если сервис не запрещает кеширование
@@ -78,8 +97,8 @@ var aReq = function(options){
 				}
 				
 				if (script_loaded_time){
-					console.log("script wait:")
-					console.log((new Date()).getTime() - script_loaded_time.getTime());
+					
+					
 				}
 				
 				deferred.resolve(r);
@@ -103,9 +122,7 @@ var aReq = function(options){
 				//document.documentElement.firstChild.removeChild(script);
 				
 				if (!script_executed){
-					script_loaded = setTimeout(function(){
-						console.log("waiting other scripts!!!! :((( ")
-					}, 100);
+					
 				}
 				
 			};
@@ -123,7 +140,9 @@ var aReq = function(options){
 			img.onload = null;
 			img.onerror = null;
 		};
-		if (options.resourceCachingAvailable){
+		if (async_script_support){
+			loadScript();
+		} else if (options.resourceCachingAvailable){
 			img = document.createElement("img");
 			var completeImage = function(){
 				if (!done){
@@ -141,10 +160,10 @@ var aReq = function(options){
 				img.onerror = completeImage;
 			}
 		} else {
-				loadScript();
-			}
-			
+			loadScript();
 		}
+			
+		
 		
 		return complex_response;
 		

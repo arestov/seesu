@@ -182,7 +182,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this._super();
 		this.states = {};
 		this.states_watchers = {};
-		this.complex_states = {};
+		this.complex_states_index = {};
 		this.complex_states_watchers = [];
 		return this;
 	},
@@ -233,7 +233,7 @@ getComplexStatesIterateArray: function(state){
 	var r = [];
 	for (var i in this.complex_states){
 		var cur = this.complex_states[i];
-		if (!state || _indexOf(cur.depends_on, state) != -1){
+		if (!state || cur.depends_on.indexOf(state) != -1){
 			r.push({
 				name: i,
 				done: false,
@@ -266,11 +266,40 @@ updateState: function(state, value, skip_view_change){
 
 	}
 },
-*/
+*/	getTargetComplexStates: function(state) {
+		var r = [];
+		for (var i in this.complex_states){
+			var cur = this.complex_states[i];
+			if (!state || cur.depends_on.indexOf(state) != -1){
+				var temp_comx = {
+					name: i,
+					obj: this.complex_states[i]
+				};
+				this.compoundComplexState(temp_comx);
+				r.push(temp_comx);
+			}
+		}
+		return r;
+	},
+	compoundComplexState: function(temp_comx) {
+		var values = [];
+		for (var i = 0; i < temp_comx.obj.depends_on.length; i++) {
+			values.push(this.state(temp_comx.obj.depends_on[i]));
+		};
+		var value = temp_comx.obj.fn.apply(this, values);
+		temp_comx.value = value;
+	},
+	checkComplexStates: function(state) {
+		var co_sts = this.getTargetComplexStates(state);
+		for (var i = 0; i < co_sts.length; i++) {
+			this._updateProxy(false, co_sts[i].name, co_sts[i].value);
+		};
+
+	},
 	iterateCSWatchers: function(state_name) {
-		if (this.complex_states[state_name]){
-			for (var i = 0; i < this.complex_states[state_name].length; i++) {
-				this.callCSWatcher(this.complex_states[state_name][i]);
+		if (this.complex_states_index[state_name]){
+			for (var i = 0; i < this.complex_states_index[state_name].length; i++) {
+				this.callCSWatcher(this.complex_states_index[state_name][i]);
 			}
 		}
 		return this;
@@ -300,10 +329,10 @@ updateState: function(state, value, skip_view_change){
 
 		for (var i = 0; i < states_list.length; i++) {
 			var cur = states_list[i];
-			if (!this.complex_states[cur]){
-				this.complex_states[cur] = [];
+			if (!this.complex_states_index[cur]){
+				this.complex_states_index[cur] = [];
 			}
-			this.complex_states[cur].push(watcher);
+			this.complex_states_index[cur].push(watcher);
 			
 		}
 		this.complex_states_watchers.push(watcher);
@@ -448,6 +477,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			}
 			this.trigger(name + '-state-change', value, old_value[0]);
 			if (!is_prop){
+				this.checkComplexStates(name);
 				this.callStateWatchers(name, value, old_value[0]);
 				this.iterateCSWatchers(name);
 			}
@@ -461,6 +491,9 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.updateState(name, !this.state(name));
 	},
 	updateState: function(name, value){
+		if (this.complex_states && this.complex_states[name]){
+			throw new Error("you can't change complex state");
+		}
 		return this._updateProxy(false, name, value);
 	},
 	prop_change: {

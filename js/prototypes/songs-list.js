@@ -178,7 +178,7 @@ var songsList;
 	
 			var playlist = [];
 			for (var i=0; i < this.palist.length; i++) {
-				var ts = this.palist[i].song();
+				var ts = this.palist[i].canPlay();
 				if (ts){
 					playlist.push(this.palist[i]);
 				}
@@ -204,6 +204,8 @@ var songsList;
 				if (s){
 					s.play();
 				}
+			} else if (playlist[0]){
+				playlist[0].play();
 			}
 		
 		},

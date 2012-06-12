@@ -61,6 +61,9 @@ provoda.addPrototype("baseSong",{
 		this.findNeighbours();
 		this.addMarksToNeighbours();
 	},
+	canPlay: function() {
+		return this.mf_cor.canPlay();
+	},
 	preloadSongFile: function(){
 		this.mf_cor.preloadSongFile();
 	},
