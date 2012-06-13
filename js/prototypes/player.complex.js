@@ -26,14 +26,17 @@ playerBase.extendTo(playerComplex, {
 			} else {
 				var filesSearch = function(opts){
 					if (_this.wanted_song == mo){
-						if (opts.complete || opts.have_best_tracks){
-							clearTimeout(mo.cantwait_toplay);
-							mo.play()
-						} else if (!mo.cantwait_toplay){
-							mo.cantwait_toplay = setTimeout(function(){
-								mo.play();
-							}, 20000);
+						if (mo.canPlay()){
+							if (opts.complete || opts.have_best_tracks){
+								clearTimeout(mo.cantwait_toplay);
+								mo.play()
+							} else if (!mo.cantwait_toplay){
+								mo.cantwait_toplay = setTimeout(function(){
+									mo.play();
+								}, 20000);
+							}	
 						}
+						
 					} else {
 						mo.off('files_search', filesSearch);
 					}

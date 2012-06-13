@@ -99,7 +99,10 @@ var seesuPlayer;
 		.on('song-play-error', function(song, can_play) {
 			if (this.c_song == song){
 				if (!can_play){
-					this.playNext(this.c_song, true);
+					if (song.isSearchCompleted()){
+						this.playNext(this.c_song, true);	
+					}
+					
 				} else {
 					song.play();
 				}

@@ -6,7 +6,7 @@ $.extend(lastfm_api.prototype, {
 				sk: _this.sk,
 				artist: mo.artist,
 				track: mo.track,
-				duration: duration
+				duration: duration || ""
 				
 			});
 	},
@@ -19,11 +19,11 @@ $.extend(lastfm_api.prototype, {
 			timestamp = ((new Date()).getTime()/1000).toFixed(0);
 			
 		
-		if (((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
+		if (!duration || ((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
 			this.music.push({
 				'artist': artist, 
 				'track': track,
-				'duration': duration, 
+				'duration': duration || "", 
 				'timestamp': timestamp
 			});
 			mo.start_time = false;
@@ -36,7 +36,9 @@ $.extend(lastfm_api.prototype, {
 					post_m_obj['artist[' + i + ']'] = _this.music[i].artist;
 					post_m_obj['track[' + i + ']'] = _this.music[i].track;
 					post_m_obj['timestamp[' + i + ']'] = _this.music[i].timestamp;
-					post_m_obj['duration[' + i + ']'] = _this.music[i].duration;
+					if (_this.music[i].duration){
+						post_m_obj['duration[' + i + ']'] = _this.music[i].duration;
+					}
 				};
 				
 				
