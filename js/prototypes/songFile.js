@@ -81,6 +81,13 @@ provoda.Model.extendTo(fileInTorrent, {
 			this.setModel(md);
 		},
 		state_change: {
+			"unavailable": function(state) {
+				if (state){
+					this.c.addClass("mf-unavailable");
+				} else {
+					this.c.removeClass("mf-unavailable");
+				}
+			},
 			'playing-progress': function(factor){
 				this.changeBar(this.cplayng, factor);
 			},

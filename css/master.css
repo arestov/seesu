@@ -191,6 +191,9 @@ a.desc{
 			color:#999;
 			border-bottom: 1px solid #555555;
 			}
+		.moplas-block .moplas-list li.mf-unavailable{
+			color:#666;
+			}
 			.moplas-block .moplas-list li .play-button-place{
 				float: left;
 				margin-right: 5px;
