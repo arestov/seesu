@@ -171,6 +171,7 @@ ul.tracks-for-play > li{
 	.show-zoom-to-track ul.tracks-for-play > li.viewing-song .track-node{
 		font-size:1.3em;
 		cursor:default;
+		height:19px;
 		}
 	.show-zoom-to-track ul.tracks-for-play > li.viewing-song .song{
 		

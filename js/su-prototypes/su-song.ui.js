@@ -99,6 +99,7 @@ suServView.extendTo(songUI, {
 		},
 		'song-title': function(title) {
 			this.titlec.text(title);
+			this.node.attr("title", title);
 		}
 	},
 	markAsPlaying: function(){
