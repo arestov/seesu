@@ -231,10 +231,11 @@ googleTorrentSearch.prototype = {
 					
 					if (!cache_used){
 						aReq({
-							url: "http://ajax.googleapis.com/ajax/services/search/web?cx=001069742470440223270:ftotl-vgnbs",
+							url: "http://ajax.googleapis.com/ajax/services/search/web",
 							type: "GET",
 							dataType: this.crossdomain ? "json": "jsonp",
 							data: {
+								cx: "001069742470440223270:ftotl-vgnbs",
 								v: "1.0",
 								q: query //"allintext:" + song + '.mp3'
 							},
