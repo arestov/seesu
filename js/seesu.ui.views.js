@@ -94,6 +94,23 @@ baseNavUI.extendTo(mainLevelNavUI, {
 });
 
 
+var ChromeExtensionButtonView = function() {};
+provoda.View.extendTo(ChromeExtensionButtonView, {
+	state_change: {
+		"playing": function(state) {
+			if (state){
+				chrome.browserAction.setIcon({path:"/icons/icon19p.png"});
+			} else {
+				chrome.browserAction.setIcon({path:"/icons/icon19.png"});
+			}
+		},
+		'now-playing': function(text) {
+			chrome.browserAction.setTitle({title: localize('now-playing','Now Playing') + ': ' + text});
+		}
+	}
+});
+
+
 var mainLevelUI = function(){};
 
 suServView.extendTo(mainLevelUI, {
@@ -288,7 +305,8 @@ mainLevel = function() {
 suMapModel.extendTo(mainLevel, {
 	ui_constr: {
 		main: mainLevelUI,
-		nav: mainLevelNavUI
+		nav: mainLevelNavUI,
+		chrome_ext: ChromeExtensionButtonView
 	},
 	page_name: 'start page',
 	changeNavTree: function(nav_tree) {

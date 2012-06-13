@@ -17,7 +17,7 @@ var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret')
 }, cache_ajax, app_env.cross_domain_allowed, new funcsQueue(100));
 
 
-var main_level = new mainLevel();
+
 
 var seesuApp = function(version) {
 	this.init();
@@ -94,8 +94,13 @@ var seesuApp = function(version) {
 			return suStore('notification');
 		}
 	);
-	this.main_level = main_level;
-	this.map = (new browseMap(main_level)).makeMainLevel();
+	this.main_level = new mainLevel();
+	this.map = (new browseMap(this.main_level)).makeMainLevel();
+
+	if (app_env.chrome_extension){
+		this.main_level.getFreeView("chrome_ext");
+	}
+	
 
 	this.map.on('map-tree-change', function(nav_tree) {
 		_this.main_level.changeNavTree(nav_tree);
