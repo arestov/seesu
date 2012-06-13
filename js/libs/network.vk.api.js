@@ -94,7 +94,7 @@ Class.extendTo(vkCoreApi, {
 						complex_response.xhr = aReq({
 						  url: _this.link + method,
 						  type: "GET",
-						  dataType: this.jsonp ? 'jsonp' : 'json',
+						  dataType: _this.jsonp ? 'jsonp' : 'json',
 						  data: params_full,
 						  timeout: 20000,
 						})
