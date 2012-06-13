@@ -377,7 +377,7 @@ var random_track_plable = function(track_list){
 	if (app_env.cross_domain_allowed){
 		su.mp3_search.add(new isohuntTorrentSearch());
 	} else {
-		su.mp3_search.add(new googleTorrentSearch());
+		su.mp3_search.add(new googleTorrentSearch(app_env.cross_domain_allowed));
 	}
 	
 	

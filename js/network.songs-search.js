@@ -230,20 +230,20 @@ googleTorrentSearch.prototype = {
 					}
 					
 					if (!cache_used){
-						$.ajax({
+						aReq({
 							url: "http://ajax.googleapis.com/ajax/services/search/web?cx=001069742470440223270:ftotl-vgnbs",
 							type: "GET",
-							dataType: "jsonp",
+							dataType: this.crossdomain ? "json": "jsonp",
 							data: {
 								v: "1.0",
 								q: query //"allintext:" + song + '.mp3'
 							},
-							timeout: 20000,
-							success: success,
-							error:function(){
-								deferred.reject.apply(deferred, arguments);
-							}
+							timeout: 20000
 							
+						})
+						.done(success)
+						.fail(function(){
+							deferred.reject.apply(deferred, arguments);
 						});
 
 
