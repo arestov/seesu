@@ -12,6 +12,7 @@ var get_youtube = function(q, callback){
 			url: 'http://gdata.youtube.com/feeds/api/videos',
 			dataType: 'jsonp',
 			data: data,
+			resourceCachingAvailable: true,
 			afterChange: function(opts) {
 				if (opts.dataType == 'json'){
 					data.alt = 'json';
