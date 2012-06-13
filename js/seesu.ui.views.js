@@ -109,7 +109,21 @@ provoda.View.extendTo(ChromeExtensionButtonView, {
 		}
 	}
 });
-
+var OperaExtensionButtonView = function() {};
+provoda.View.extendTo(OperaExtensionButtonView, {
+	state_change: {
+		"playing": function(state) {
+			if (state){
+				su.opera_ext_b.icon = "/icons/icon18p.png";
+			} else {
+				su.opera_ext_b.icon = "/icons/icon18.png";
+			}
+		},
+		'now-playing': function(text) {
+			su.opera_ext_b.title = localize('now-playing','Now Playing') + ': ' + text;
+		}
+	}
+});
 
 var mainLevelUI = function(){};
 
@@ -306,7 +320,8 @@ suMapModel.extendTo(mainLevel, {
 	ui_constr: {
 		main: mainLevelUI,
 		nav: mainLevelNavUI,
-		chrome_ext: ChromeExtensionButtonView
+		chrome_ext: ChromeExtensionButtonView,
+		opera_ext: OperaExtensionButtonView
 	},
 	page_name: 'start page',
 	changeNavTree: function(nav_tree) {

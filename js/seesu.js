@@ -99,6 +99,9 @@ var seesuApp = function(version) {
 
 	if (app_env.chrome_extension){
 		this.main_level.getFreeView("chrome_ext");
+	} else if (app_env.opera_extension && window.opera_extension_button){
+		this.opera_ext_b = opera_extension_button;
+		this.main_level.getFreeView("opera_ext");
 	}
 	
 
@@ -292,6 +295,7 @@ provoda.Eventor.extendTo(seesuApp, {
 			});
 
 	}
+
 });
 
 window.seesu = window.su = new seesuApp(2.9); 
