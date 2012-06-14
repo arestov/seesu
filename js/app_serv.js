@@ -46,44 +46,36 @@ var aReq = function(options){
 			script,
 			timeout,
 			callback_func_name,
-			script_loaded,
-			script_loaded_time,
-			script_executed,
+			script_load_timeout,
 			deferred 			= $.Deferred(),
+			cancelLoad = function() {
+				if (img){
+					img.src = null;
+					unbindImage();
+				}
+				if (script){
+					script.src = null;
+				}
+				if (callback_func_name && window[callback_func_name]){
+					window[callback_func_name] = $.noop()
+				}
+			},
 			complex_response 	= {
 				abort: function(){
 					this.aborted = true;
-				//	deferred.reject('abort');
-					if (img){
-						img.src = null;
-						unbindImage();
-					}
-					if (script){
-						script.src = null;
-					}
-					if (window[callback_func_name]){
-						window[callback_func_name] = $.noop()
-					}
+					cancelLoad();
 					
-					//if (this.queued){
-					//	this.queued.abort();
-					//}
-					//if (this.xhr){
-					//	this.xhr.abort();
-					//}
+
 				}
 			};
 		deferred.promise( complex_response );
-		//.noop()
-		//осуществление запроса через xhr2 если поддерживается и позволяет сервис
-			// 
-			//last.fm, soundcloud, ex.fm, youtube
-
-		//создание script с предзагрузкой с помощью img.onerror если сервис не запрещает кеширование
-
 		
-		//resourceCachingAvailable
-		
+		if (options.timeout){
+			script_load_timeout = setTimeout(function() {
+				deferred.reject();
+			}, options.timeout);
+		}
+
 		var params = {};
 		$.extend(params, options.data || {});
 
@@ -91,15 +83,10 @@ var aReq = function(options){
 
 		if (!options.jsonpCallback && !params[callback_param_name]){
 			callback_func_name = create_jsonp_callback(function(r){
-				script_executed = true;
-				if (script_loaded){
-					clearTimeout(script_loaded);
+				if (script_load_timeout){
+					clearTimeout(script_load_timeout);
 				}
 				
-				if (script_loaded_time){
-					
-					
-				}
 				
 				deferred.resolve(r);
 			});
@@ -118,12 +105,9 @@ var aReq = function(options){
 			script = document.createElement("script");
 			script.async = true;
 			script.onload = function(){
-				script_loaded_time = new Date();
 				//document.documentElement.firstChild.removeChild(script);
 				
-				if (!script_executed){
-					
-				}
+
 				
 			};
 			script.onerror = function(){
@@ -131,8 +115,6 @@ var aReq = function(options){
 			};
 			script.src = full_url;
 			document.documentElement.firstChild.insertBefore(script, document.documentElement.firstChild.firstChild);
-			//document.documentElement.firstChild.appendChild(script);
-			//document.documentElement.firstChild.removeChild(script);
 		};
 
 
