@@ -3,17 +3,26 @@ var songsList;
 	"use strict";
 	
 	provoda.addPrototype("songsListBase", {
+		complex_states: {
+			more_load_available: {
+				depends_on: ["can-load-more", "loading"],
+				fn: function(can_load_more, loading) {
+					if (can_load_more){
+						return !loading;
+					} else {
+
+					}
+				}
+			}
+		},
 		init: function(){
 			this.palist = [];
 			this._super();
 		},
-		push: function(omo, view){
+		push: function(omo){
 			var mo = this.extendSong(omo, this.player, this.findMp3);
 			mo.plst_titl = this;
-			if (view){
-				mo.render(true);
-				mo.view();
-			}
+
 
 			if (this.first_song){
 				if (this.first_song.omo==omo){
@@ -35,9 +44,9 @@ var songsList;
 				this.palist.push(mo);
 			}
 		},
-		add: function(omo, view){
+		add: function(omo){
 			var mo = cloneObj({}, omo, false, ['track', 'artist']);
-			this.push(mo, view);
+			this.push(mo);
 		},
 		findSongOwnPosition: function(first_song){
 			var can_find_context;
@@ -55,6 +64,38 @@ var songsList;
 			if (this.first_song){
 				this.push(this.first_song.omo);
 			}
+		},
+		getPagingInfo: function() {
+			var length = this.getLength();
+			var has_pages = Math.floor(length/this.page_limit);
+			var remainder = length % this.page_limit;
+			var next_page = has_pages + 1;
+
+			return {
+				current_length: length,
+				has_pages: has_pages,
+				page_limit: this.page_limit,
+				remainder: remainder,
+				next_page: next_page
+			};
+		},
+		page_limit: 30,
+		getLength: function() {
+			return this.palist.length;
+		},
+		setLoaderFinish: function() {
+			this.updateState("can-load-more", false);
+		},
+		setLoader: function(cb, trigger) {
+			this.updateState("can-load-more", true);
+			this.on("load-more", cb);
+			if (trigger){
+				this.loadMoreSongs()
+			}
+
+		},
+		loadMoreSongs: function() {
+			this.trigger("load-more");
 		},
 		die: function(){
 			this.hide();
@@ -150,9 +191,7 @@ var songsList;
 			if (!error){
 				this.changed();
 			}
-			
 			return this;
-
 		},
 		makePlayable: function(full_allowing) {
 			for (var i = 0; i < this.palist.length; i++) {
@@ -271,6 +310,17 @@ var songsList;
 					this.lc.removeClass('loading');
 				}
 			},
+			"more_load_available": function(state) {
+				
+				if (state){
+					this.requirePart("load-more-b").removeClass("hidden");
+				} else {
+					var button = this.getPart("load-more-b");
+					if (button){
+						button.addClass("hidden");
+					}
+				}
+			},
 			changed: function(){
 				this.render_playlist();
 			},
@@ -281,6 +331,14 @@ var songsList;
 				} else {
 					this.export_playlist.removeClass('can-be-used');
 				}
+			}
+		},
+		parts_builder: {
+			"load-more-b": function() {
+				var _this = this;
+				return $("<a class='load-more-songs'></a>").click(function() {
+						_this.md.trigger("load-more")
+					}).text("загрузить больше").appendTo(this.c);
 			}
 		},
 		createC: function() {

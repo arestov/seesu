@@ -32,9 +32,9 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 + добавить ex.fm
 + исправить предварительный поиск следующего трека
 
-шаринг
-	есть vk api
-	есть vk api и есть доступ к друзьям
++ шаринг
+	+ есть vk api
+	+ есть vk api и есть доступ к друзьям
 
 добавление в избранное на ласт.фм
 подргузка плейлиста

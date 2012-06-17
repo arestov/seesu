@@ -255,8 +255,8 @@ provoda.Eventor.extendTo(seesuApp, {
 		this.vk_api = vkapi;
 		this.trigger('vk-api', vkapi, user_id);
 	},
-	preparePlaylist: function(playlist_title, playlist_type, info, first_song){
-		var pl = new songsList(playlist_title, playlist_type, info, first_song, this.mp3_search, this.p);
+	preparePlaylist: function(params, first_song){
+		var pl = new songsList(params, first_song, this.mp3_search, this.p);
 		return pl;
 	},
 	getPlaylists: function(query) {
@@ -401,24 +401,49 @@ var proxy_render_artists_tracks = function(artist_list, pl_r){
 	pl_r.injectExpectedSongs(track_list_without_tracks);
 };
 var render_loved = function(user_name){
-	var pl_r = su.preparePlaylist(localize('loved-tracks'), 'artists by loved').loading();
-	lfm.get('user.getLovedTracks',{user: (user_name || lfm.user_name), limit: 30})
-		.done(function(r){
-			var tracks = r.lovedtracks.track || false;
-			var track_list = [];
-			if (tracks) {
-				
-				for (var i=0, l = Math.min(tracks.length, 30); i < l; i++) {
-					track_list.push({'artist' : tracks[i].artist.name ,'track': tracks[i].name});
+	var pl_r = su.preparePlaylist({
+		title: localize('loved-tracks'),
+		type: 'artists by loved'
+	})
+
+	
+
+	pl_r.setLoader(function() {
+
+		var paging_opts = this.getPagingInfo();
+		this.loading();
+
+		lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page})
+			.done(function(r){
+				var tracks = r.lovedtracks.track || false;
+				var track_list = [];
+				if (tracks) {
+					
+					for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
+						track_list.push({'artist' : tracks[i].artist.name ,'track': tracks[i].name});
+					}
+
 				}
 
-			}
-			pl_r.injectExpectedSongs(track_list);
-		});
+				if (track_list.length < paging_opts.page_limit){
+					pl_r.setLoaderFinish();
+				}
+
+				pl_r.injectExpectedSongs(track_list);
+
+			})
+			.fail(function() {
+				pl_r.loadComplete(true);
+			});
+	}, true);
+	
 	su.views.show_playlist_page(pl_r);
 };
 var render_recommendations_by_username = function(username){
-	var pl_r = su.preparePlaylist('Recommendations for ' +  username, 'artists by recommendations').loading();
+	var pl_r = su.preparePlaylist({
+		title: 'Recommendations for ' +  username,
+		type: 'artists by recommendations'
+	}).loading();
 	$.ajax({
 		url: 'http://ws.audioscrobbler.com/1.0/user/' + username + '/systemrecs.rss',
 			global: false,
@@ -442,21 +467,40 @@ var render_recommendations_by_username = function(username){
 	su.views.show_playlist_page(pl_r);
 };
 var render_recommendations = function(){
-	var pl_r = su.preparePlaylist('Recommendations for you', 'artists by recommendations').loading();
-	lfm.get('user.getRecommendedArtists', {sk: lfm.sk}, {nocache: true})
-		.done(function(r){
-			var artists = r.recommendations.artist;
-			if (artists && artists.length) {
-				var artist_list = [];
-				for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-					artist_list.push(artists[i].name);
+	var pl_r = su.preparePlaylist({
+		title: 'Recommendations for you', 
+		type: 'artists by recommendations'
+	});
+
+	pl_r.setLoader(function() {
+		var paging_opts = this.getPagingInfo();
+		this.loading();
+
+
+		lfm.get('user.getRecommendedArtists', {sk: lfm.sk, limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
+			.done(function(r){
+				var artists = r.recommendations.artist;
+				var track_list = [];
+				if (artists && artists.length) {
+					
+					for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
+						track_list.push({
+							artist: artists[i].name
+						});
+					}
+					//proxy_render_artists_tracks(artist_list,pl_r);
 				}
-				proxy_render_artists_tracks(artist_list,pl_r);
-			}
-		})
-		.fail(function(){
-			proxy_render_artists_tracks(false, pl_r);
-		});
+				pl_r.injectExpectedSongs(track_list);
+
+				if (track_list.length < paging_opts.page_limit){
+					pl_r.setLoaderFinish();
+				}
+			})
+			.fail(function(){
+				pl_r.loadComplete(true);
+			});
+	}, true);
+	
 
 	su.views.show_playlist_page(pl_r);
 
@@ -533,7 +577,11 @@ jsLoadComplete(function() {
 		},
 		create_userplaylist: function(title,p, manual_inject){
 			var _this = this;
-			var pl_r = p || su.preparePlaylist(title, 'cplaylist', {name: title});
+			var pl_r = p || su.preparePlaylist({
+				title: title,
+				type: "cplaylist",
+				data: {name: title} 
+			});
 			if (!manual_inject){
 				this.playlists.push(pl_r);
 			}
@@ -549,7 +597,11 @@ jsLoadComplete(function() {
 	};
 
 	var rebuildPlaylist = function(saved_pl){
-		var p = su.preparePlaylist(saved_pl.playlist_title, saved_pl.playlist_type, {name: saved_pl.playlist_title});
+		var p = su.preparePlaylist({
+			title: saved_pl.playlist_title, 
+			type: saved_pl.playlist_type,
+			data: {name: saved_pl.playlist_title}
+		});
 		for (var i=0; i < saved_pl.length; i++) {
 			p.push(saved_pl[i]);
 		}

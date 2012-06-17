@@ -134,7 +134,9 @@ li.playing-song .play-controls{
 .show-zoom-to-track .playlist-info{
 	display:none;
 }
-
+.show-zoom-to-track .load-more-songs{
+	display: none;
+}
 
 .show-zoom-to-track .tracks-magic{
 	position:static;

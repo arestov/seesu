@@ -231,7 +231,7 @@ suMapModel.extendTo(artCard, {
 		var _this = this;
 		this.updateState('loading-toptracks', true);
 		this.addRequest(
-			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30 })
+			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
 				.done(function(r){
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 
@@ -508,7 +508,11 @@ seesu_ui.prototype = {
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		var pl_r = su.preparePlaylist('Tag: ' + tag, 'artists by tag', {tag: tag}, start_song).loading();
+		var pl_r = su.preparePlaylist({//can autoload
+			title: 'Tag: ' + tag,
+			type: 'artists by tag',
+			data: {tag: tag}
+		}, start_song).loading();
 		get_artists_by_tag(tag, function(pl){
 			proxy_render_artists_tracks(pl, pl_r);
 		}, function(){
@@ -589,7 +593,11 @@ seesu_ui.prototype = {
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		var pl = su.preparePlaylist('(' + artist + ') ' + name, 'album', {artist: original_artist || artist, album: name}, start_song).loading();
+		var pl = su.preparePlaylist({
+			title: '(' + artist + ') ' + name,
+			type: 'album',
+			data: {artist: original_artist || artist, album: name}
+		}, start_song).loading();
 	
 		var recovered = this.showArtistPlaylist(original_artist || artist, pl, vopts);
 		
@@ -623,31 +631,53 @@ seesu_ui.prototype = {
 		
 		
 		
-		var pl = su.preparePlaylist('Top of ' + artist, 'artist', {artist: artist}, start_song).loading();
+		var pl = su.preparePlaylist({
+			title: 'Top of ' + artist,
+			type: 'artist',
+			data: {artist: artist}
+		}, start_song).loading();
 		
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		
 		if (!recovered){
-			lfm.get('artist.getTopTracks',{'artist': artist, limit: 30 })
-				.done(function(r){
-					var tracks = r.toptracks.track || false;
-					if (tracks) {
+			pl.setLoader(function() {
+				var paging_opts = this.getPagingInfo();
+				this.loading();
+
+				lfm.get('artist.getTopTracks', {'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
+					.done(function(r){
+						var tracks = r.toptracks.track || false;
 						var track_list = [];
-						tracks = toRealArray(tracks);
-						
-						for (var i=0, l = Math.min(tracks.length, 30); i < l; i++) {
-							track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
+						if (tracks) {
+							
+							tracks = toRealArray(tracks);
+							
+							for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
+								track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
+							}
+							
 						}
 						pl.injectExpectedSongs(track_list);
-					}
-				});
+						if (track_list.length < paging_opts.page_limit){
+							pl.setLoaderFinish();
+						}
+					})
+					.fail(function() {
+						pl.loadComplete(true);
+					});
+			}, true);
+
 		}
 		if (start_song){
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
 	showTrackById: function(sub_raw, vopts){
-		var pl_r = su.preparePlaylist('Track' , 'tracks', {time: + new Date()});
+		var pl_r = su.preparePlaylist({
+			title: 'Track' ,
+			type: 'tracks',
+			data: {time: + new Date()}
+		});
 		su.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
 		
 		if (sub_raw.type && sub_raw.id){
@@ -685,7 +715,11 @@ seesu_ui.prototype = {
 	},
 	showMetroChart: function(country, metro, vopts){
 		vopts = vopts || {};
-		var plr = su.preparePlaylist('Chart of ' + metro, 'chart', {country: country, metro: metro}).loading();
+		var plr = su.preparePlaylist({//can autoload
+			title: 'Chart of ' + metro,
+			type: 'chart',
+			data: {country: country, metro: metro}
+		}).loading();
 
 		lfm.get('geo.getMetroUniqueTrackChart', {country: country, metro: metro, start: new Date - 60*60*24*7})
 			.done(function(r){
@@ -711,7 +745,11 @@ seesu_ui.prototype = {
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		var pl = su.preparePlaylist('Similar to «' + artist + '» artists', 'similar artists', {artist: artist}, start_song).loading();
+		var pl = su.preparePlaylist({//can autoload
+			title: 'Similar to «' + artist + '» artists',
+			type: 'similar artists',
+			data: {artist: artist}
+		}, start_song).loading();
 		//su.views.show_playlist_page(pl, false, no_navi || !!start_song);
 		
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);

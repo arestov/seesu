@@ -54,14 +54,16 @@
 	}, songsListView.prototype.state_change);
 
 
-	songsList = function(playlist_title, playlist_type, info, first_song, findMp3, player){
+	songsList = function(params, first_song, findMp3, player){
+		//playlist_title, playlist_type, info
+		//params.title, params.type, params.data
 		this.init();
-		this.info = info || {};
-		if (playlist_title){
-			this.playlist_title = playlist_title;
+		this.info = params.data || {};
+		if (params.title){
+			this.playlist_title = params.title;
 		}
-		if (playlist_type){
-			this.playlist_type = playlist_type;
+		if (params.type){
+			this.playlist_type = params.type;
 			this.updateState('nav-text', this.playlist_title);
 			this.updateState('nav-title', this.playlist_title);
 		}

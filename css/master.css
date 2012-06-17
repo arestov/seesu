@@ -91,7 +91,7 @@ a.bbcode_tag{
 		border-bottom-color:#999  !important;
 		}
 .hidden{
-	display:none;
+	display:none !important;
 }
 a.desc{
 	color:#666;
@@ -458,12 +458,28 @@ display:none;
 	position:relative;
 }
 	
+.playlist-container{
+
+	}
+	.load-more-songs{
+		display:block;
+	}
+	.playlist-container .load-more-songs{
+		padding:6px;
+		
+		cursor:pointer;
+		border-radius:4px;
+		color: gray;
+		}
+		.playlist-container .load-more-songs:hover{
+			background-color: #595959;
+		}
 .tracks-for-play{
 	clear:both;
 	}
 	ul.tracks-for-play.tracks-c.loading{
-		background: url(../i/spinner.gif) no-repeat 4px 10px;
-		padding-top: 38px;
+		background: url(../i/spinner.gif) no-repeat 4px 100%;
+		padding-bottom: 30px;
 	}
 	ul.tracks-for-play > li{
 		margin: 0 0 3px 0;

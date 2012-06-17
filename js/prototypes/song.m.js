@@ -7,6 +7,7 @@ provoda.addPrototype("baseSong",{
 		"mp-show": function(opts) {
 			if (opts){
 				this.checkAndFixNeighbours();
+				this.makeSongPlayalbe(true);
 			} else {
 				this.removeMarksFromNeighbours();
 			}
@@ -154,7 +155,7 @@ provoda.addPrototype("baseSong",{
 		this.updateState('loading', true);
 		var _this = this;
 		this.addRequest(
-			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30 })
+			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
 				.done(function(r){
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 					tracks = $filter(tracks, 'name');
