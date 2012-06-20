@@ -71,6 +71,7 @@ playerBase.extendTo(playerComplex, {
 			}
 			if (last_mo){
 				last_mo.stop();
+				last_mo.updateState("player-song", false);
 			}
 			if (this.nowPlaying){
 				this.nowPlaying(mo);
@@ -78,6 +79,7 @@ playerBase.extendTo(playerComplex, {
 			
 			mo.plst_titl.lev.freeze();
 			this.c_song = mo;
+			mo.updateState("player-song", true);
 		}
 	}
 });

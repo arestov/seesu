@@ -6,8 +6,14 @@ provoda.addPrototype("baseSong",{
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
-				this.checkAndFixNeighbours();
 				this.makeSongPlayalbe(true);
+				
+				if (this.isSearchCompleted() || this.isHaveBestTracks()){
+					this.checkNeighboursChanges(false, true);
+				} else {
+					this.checkAndFixNeighbours();
+				}
+				
 			} else {
 				this.removeMarksFromNeighbours();
 			}
@@ -151,33 +157,88 @@ provoda.addPrototype("baseSong",{
 			delete this.waiting_to_load_next;
 		}
 	},
+	isImportant: function() {
+		return !!(this.state("mp-show") || this.state("player-song"));
+	},
+	checkNeighboursChanges: function(changed_mo, viewing) {
+		this.findNeighbours();
+
+		viewing = viewing || !!this.state("mp-show");
+		var playing = !!this.state("player-song");
+
+		if (viewing){
+			this.addMarksToNeighbours();
+			if (this.prev_song && !this.prev_song.track){
+				this.prev_song.getRandomTrackName();
+			}
+			
+		}
+		if ((viewing || playing) && this.next_preload_song && this.next_preload_song != changed_mo){
+			this.next_preload_song.makeSongPlayalbe(true);
+		}
+
+	},
+	canFindTrackTitle: function() {
+		return !this.state("no-track-title")
+	},
 	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){
 		this.updateState('loading', true);
 		var _this = this;
-		this.addRequest(
-			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
-				.done(function(r){
-					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
-					tracks = $filter(tracks, 'name');
-					var some_track = tracks[Math.floor(Math.random()*tracks.length)];
-					if (some_track){
-						_this.track = some_track;
-						_this.updateState('song-title', _this.getFullName());
-						//_this.updateProp('track', some_track);
-						_this.updateNavTexts();
-						_this.findFiles({
-							only_cache: !full_allowing,
-							collect_for: from_collection,
-							last_in_collection: last_in_collection
-						});
-						_this.trigger('url-change');
-					}
-					
-				})
-				.always(function(){
-					_this.updateState('loading', false);
-				}));
-		
+		if (!this.track){
+			this.addRequest(
+				lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
+					.done(function(r){
+						var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+						tracks = $filter(tracks, 'name');
+						var some_track = tracks[Math.floor(Math.random()*tracks.length)];
+						if (some_track){
+							_this.track = some_track;
+							_this.updateState('song-title', _this.getFullName());
+							//_this.updateProp('track', some_track);
+							_this.updateNavTexts();
+
+							_this.findFiles({
+								only_cache: !full_allowing,
+								collect_for: from_collection,
+								last_in_collection: last_in_collection
+							});
+							_this.trigger('url-change');
+
+
+
+						} else {
+							_this.updateState("no-track-title", true);
+						}
+
+						if (_this.isImportant()){
+							_this.checkNeighboursChanges(_this);
+						} else {
+							var v_song = _this.plst_titl.getViewingSong(_this);
+							var p_song = _this.plst_titl.getPlayerSong(_this);
+
+							if (v_song && v_song.isPossibleNeighbour(_this)) {
+								v_song.checkNeighboursChanges(_this);
+							}
+							
+							if (p_song && v_song != p_song && p_song.isPossibleNeighbour(_this)){
+								p_song.checkNeighboursChanges(_this);
+							}
+						}
+						
+						
+
+
+
+						
+
+
+						
+						
+					})
+					.always(function(){
+						_this.updateState('loading', false);
+					}));
+		}
 	},
 	prefindFiles: function(){
 		this.findFiles({
@@ -255,7 +316,7 @@ provoda.addPrototype("baseSong",{
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
 		if (this.raw()){
 			this.updateState('playable', true);
-		} else if (!this.track){
+		} else if (!this.track && full_allowing){
 			if (this.getRandomTrackName){
 				this.getRandomTrackName(full_allowing, from_collection, last_in_collection);
 			}
@@ -283,26 +344,26 @@ provoda.addPrototype("baseSong",{
 			have_tracks: this.isHaveTracks("mp3"),
 			have_best_tracks: this.isHaveBestTracks()
 		};
-		if (complete){
-			this.updateState('searching-files', false);
-			if (opts.have_tracks){
-				if (get_next && this.player.c_song){
-					if (this.player.c_song.ready_to_preload && (this == this.player.c_song.next_song)) {
-						this.preloadSongFile();
-					}
+		if (this.isImportant()){
+			if (complete || this.isHaveBestTracks()){
+				this.checkNeighboursChanges(this);
+			}
+		} else {
+			if (complete){
+				var v_song = this.plst_titl.getViewingSong(this);
+				var p_song = this.plst_titl.getPlayerSong(this);
+				
+				if (v_song && v_song.isPossibleNeighbour(this)) {
+					v_song.checkNeighboursChanges(this);
 				}
-			} else{
-				if (get_next){
-					if (this.player.c_song) {
-						if (this.player.c_song.isNeighbour(this) || this == this.player.c_song.next_preload_song){
-							this.player.c_song.checkAndFixNeighbours();
-						}
-						if (this.player.c_song.next_preload_song){
-							this.player.c_song.next_preload_song.prefindFiles();
-						}
-					}
+				
+				if (p_song && v_song != p_song && p_song.isPossibleNeighbour(this)){
+					p_song.checkNeighboursChanges(this);
 				}
 			}
+		}
+		if (complete){
+			this.updateState('searching-files', false);
 		}
 		if (opts.have_tracks){
 			this.updateState('playable', true);
@@ -318,6 +379,9 @@ provoda.addPrototype("baseSong",{
 	},
 	valueOf:function(){
 		return (this.artist ? this.artist + ' - ' : '') + this.track;
+	},
+	isPossibleNeighbour: function(mo) {
+		return this.isNeighbour(mo) || mo == this.next_preload_song;
 	},
 	isNeighbour: function(mo){
 		return (mo == this.prev_song) || (mo == this.next_song);

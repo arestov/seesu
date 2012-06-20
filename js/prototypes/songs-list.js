@@ -248,14 +248,58 @@ var songsList;
 			}
 		
 		},
+		getViewingSong: function(exept) {
+			var song = $filter(this.palist, 'states.mp-show', function(v) {return !!v;})[0]
+			return song != exept && song ;
+		},
+		getPlayerSong: function(exept) {
+			var song = $filter(this.palist, "states.player-song", true)[0];
+			return song != exept && song;
+		},
 		findNeighbours: function(mo) {
 			//using for visual markering and determination of what to presearch
-			mo.next_preload_song = false;
-			mo.next_song = false;
-			mo.prev_song = false;
+			//mo.next_preload_song = false;
+		//	mo.next_song = false;
+		//	mo.prev_song = false;
 			
 			var c_num = this.palist.indexOf(mo);//this.play_order
 
+			//нет названия трека, но его можно найти
+			//нет файлов, но поиск не закончен
+
+			var canUse = function(song) {
+				return (song.canSearchFiles() && (song.canPlay() || !song.isSearchCompleted())) || (!song.track && song.canFindTrackTitle());
+			};
+
+			mo.next_song = false;
+			mo.prev_song = false;
+
+			mo.next_preload_song = false;
+			
+			for (var i = c_num - 1; i >= 0; i--) {
+				if (canUse(this.palist[i])){
+					mo.prev_song = this.palist[i];
+					break;
+				}
+			}
+
+			for (var i = c_num + 1; i < this.palist.length; i++) {
+				if (canUse(this.palist[i])){
+					mo.next_song = mo.next_preload_song = this.palist[i];
+					break;
+				}
+			}
+			if (!mo.next_preload_song){
+				for (var i = 0; i < c_num; i++) {
+					if (canUse(this.palist[i])){
+						mo.next_preload_song = this.palist[i];
+						break;
+					}
+				}
+			}
+
+
+			/*
 			var can_use = [];
 			for (var i=0; i < this.palist.length; i++) {
 				var cur = this.palist[i];
@@ -290,6 +334,34 @@ var songsList;
 					mo.next_preload_song = preload_song;
 				}
 			}
+*/
+
+			/*
+			for (var i = c_num - 1; i >= 0; i--) {
+				var cur = this.palist[i];
+				if (cur.track && (cur.isHaveTracks('mp3') || !cur.isSearchCompleted())) {
+					mo.setPossiblePrevSong(null);
+					break;
+				} else if (!cur.track && cur.canFindTrackTitle()){
+					mo.setPossiblePrevSong(cur);
+
+					//console.log(this.palist[i])
+					break;
+				}
+			}
+			for (var i = c_num + 1; i < this.palist.length; i++) {
+				var cur = this.palist[i];
+				if (cur.track && (cur.isHaveTracks('mp3') || !cur.isSearchCompleted())) {
+					mo.setPossibleNextSong(null);
+					break;
+				} else if (!cur.track && cur.canFindTrackTitle()){
+
+					mo.setPossibleNextSong(cur);
+					//console.log(this.palist[i])
+					break;
+				}
+			};*/
+
 		}
 
 
@@ -414,9 +486,9 @@ var songsList;
 					this.appendSongUI(_this.palist[i]);
 				}
 			
-				var actives_mo = $filter(_this.palist, 'states.mp-show', function(v) {return !!v;});
-				for (var i = 0; i < actives_mo.length; i++) {
-					actives_mo[i].checkAndFixNeighbours();
+				var v_song = this.md.getViewingSong();
+				if (v_song){
+					v_song.checkAndFixNeighbours();
 				}
 			}
 		}
