@@ -101,7 +101,7 @@ var songsList;
 			}
 
 		},
-		loadMoreSongs: function() {
+		loadMoreSongs: function(force) {
 			this.trigger("load-more");
 		},
 		die: function(){
@@ -275,24 +275,20 @@ var songsList;
 			var song = $filter(this.palist, "states.player-song", true)[0];
 			return song != exept && song;
 		},
+		getNeighbours: function(mo, only_changes){
+
+		},
 		findNeighbours: function(mo) {
-			//using for visual markering and determination of what to presearch
-			//mo.next_preload_song = false;
-		//	mo.next_song = false;
-		//	mo.prev_song = false;
+
 			
-			var c_num = this.palist.indexOf(mo);//this.play_order
 
-			//нет названия трека, но его можно найти
-			//нет файлов, но поиск не закончен
-
+			var c_num = this.palist.indexOf(mo);
 			var canUse = function(song) {
 				return (song.canSearchFiles() && (song.canPlay() || !song.isSearchCompleted())) || (!song.track && song.canFindTrackTitle());
 			};
 
 			mo.next_song = false;
 			mo.prev_song = false;
-
 			mo.next_preload_song = false;
 			
 			for (var i = c_num - 1; i >= 0; i--) {
@@ -317,69 +313,6 @@ var songsList;
 				}
 			}
 
-
-			/*
-			var can_use = [];
-			for (var i=0; i < this.palist.length; i++) {
-				var cur = this.palist[i];
-				if (cur && (cur.isHaveTracks('mp3') || (cur.canSearchFiles() && !cur.isSearchCompleted()))){
-					can_use.push(i);
-				}
-			}
-			if (typeof c_num == 'number'){
-				if (c_num-1 >= 0) {
-					for (var i = c_num-1, _p = false;  i >= 0; i--){
-						
-						if (bN(can_use.indexOf(i))){
-							mo.prev_song = this.palist[i];
-							break;
-						}
-					}
-				}
-				var next_song = c_num+1;
-				var preload_song;
-				for (var i = 0, _n = false; i < this.palist.length ; i++) {
-					if (bN(can_use.indexOf(i))){
-						if (!preload_song){
-							preload_song = this.palist[i];
-						}
-						if (i >= next_song){
-							mo.next_song = preload_song =  this.palist[i];
-							break;
-						}
-					}
-				}
-				if (preload_song){
-					mo.next_preload_song = preload_song;
-				}
-			}
-*/
-
-			/*
-			for (var i = c_num - 1; i >= 0; i--) {
-				var cur = this.palist[i];
-				if (cur.track && (cur.isHaveTracks('mp3') || !cur.isSearchCompleted())) {
-					mo.setPossiblePrevSong(null);
-					break;
-				} else if (!cur.track && cur.canFindTrackTitle()){
-					mo.setPossiblePrevSong(cur);
-
-					//console.log(this.palist[i])
-					break;
-				}
-			}
-			for (var i = c_num + 1; i < this.palist.length; i++) {
-				var cur = this.palist[i];
-				if (cur.track && (cur.isHaveTracks('mp3') || !cur.isSearchCompleted())) {
-					mo.setPossibleNextSong(null);
-					break;
-				} else if (!cur.track && cur.canFindTrackTitle()){
-
-					mo.setPossibleNextSong(cur);
-					//console.log(this.palist[i])
-					break;
-				}
-			};*/
 
 		}
 
@@ -428,7 +361,7 @@ var songsList;
 			"load-more-b": function() {
 				var _this = this;
 				return $("<a class='load-more-songs'></a>").click(function() {
-						_this.md.trigger("load-more")
+						_this.md.loadMoreSongs(true);
 					}).text("загрузить больше").appendTo(this.c);
 			}
 		},

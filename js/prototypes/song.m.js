@@ -9,7 +9,7 @@ provoda.addPrototype("baseSong",{
 				this.makeSongPlayalbe(true);
 				
 				if (this.isSearchCompleted() || this.isHaveBestTracks()){
-					this.checkNeighboursChanges(false, true);
+					this.checkNeighboursChanges(false, true, "track view");
 				} else {
 					this.checkAndFixNeighbours();
 				}
@@ -60,7 +60,9 @@ provoda.addPrototype("baseSong",{
 	playPrev: function() {
 		this.plst_titl.switchTo(this);
 	},
-
+	getNeighbours: function(only_changes){
+		return this.plst_titl.getNeighbours(this, only_changes);
+	},
 	findNeighbours: function(){
 		this.plst_titl.findNeighbours(this);
 	},
@@ -160,7 +162,7 @@ provoda.addPrototype("baseSong",{
 	isImportant: function() {
 		return !!(this.state("mp-show") || this.state("player-song"));
 	},
-	checkNeighboursChanges: function(changed_mo, viewing) {
+	checkNeighboursChanges: function(changed_mo, viewing, log) {
 		this.findNeighbours();
 
 		viewing = viewing || !!this.state("mp-show");
@@ -175,6 +177,18 @@ provoda.addPrototype("baseSong",{
 		}
 		if ((viewing || playing) && this.next_preload_song && this.next_preload_song != changed_mo){
 			this.next_preload_song.makeSongPlayalbe(true);
+		}
+		if (!this.cncco){
+			this.cncco = [];
+		} else {
+			this.cncco.push(log);
+		}
+
+		if (viewing || playing){
+			var last_song = this.plst_titl.getLastSong();
+			if (last_song == this){
+				//this.plst_titl.loadMoreSongs();
+			}
 		}
 
 	},
@@ -213,17 +227,17 @@ provoda.addPrototype("baseSong",{
 					}
 
 					if (_this.isImportant()){
-						_this.checkNeighboursChanges(_this);
+						_this.checkNeighboursChanges(_this, false, "important; track name");
 					} else {
 						var v_song = _this.plst_titl.getViewingSong(_this);
 						var p_song = _this.plst_titl.getPlayerSong(_this);
 
 						if (v_song && v_song.isPossibleNeighbour(_this)) {
-							v_song.checkNeighboursChanges(_this);
+							v_song.checkNeighboursChanges(_this, false, "nieghbour of viewing song; track name");
 						}
 						
 						if (p_song && v_song != p_song && p_song.isPossibleNeighbour(_this)){
-							p_song.checkNeighboursChanges(_this);
+							p_song.checkNeighboursChanges(_this, false, "nieghbour of playing song; track name");
 						}
 					}
 					
@@ -353,7 +367,7 @@ provoda.addPrototype("baseSong",{
 		};
 		if (this.isImportant()){
 			if (complete || this.isHaveBestTracks()){
-				this.checkNeighboursChanges(this);
+				this.checkNeighboursChanges(this, false, 'important; files search');
 			}
 		} else {
 			if (complete){
@@ -361,11 +375,11 @@ provoda.addPrototype("baseSong",{
 				var p_song = this.plst_titl.getPlayerSong(this);
 				
 				if (v_song && v_song.isPossibleNeighbour(this)) {
-					v_song.checkNeighboursChanges(this);
+					v_song.checkNeighboursChanges(this,false, "nieghbour of viewing song; files search");
 				}
 				
 				if (p_song && v_song != p_song && p_song.isPossibleNeighbour(this)){
-					p_song.checkNeighboursChanges(this);
+					p_song.checkNeighboursChanges(this,false, "nieghbour of playing song; files search");
 				}
 			}
 		}
