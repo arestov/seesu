@@ -184,60 +184,67 @@ provoda.addPrototype("baseSong",{
 	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){
 		this.updateState('loading', true);
 		var _this = this;
-		if (!this.track){
-			this.addRequest(
-				lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
-					.done(function(r){
-						var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
-						tracks = $filter(tracks, 'name');
-						var some_track = tracks[Math.floor(Math.random()*tracks.length)];
-						if (some_track){
-							_this.track = some_track;
-							_this.updateState('song-title', _this.getFullName());
-							//_this.updateProp('track', some_track);
-							_this.updateNavTexts();
+		if (!this.track && !this.rtn_request){
+			var request = this.rtn_request = lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
+				.done(function(r){
+					if (_this.track){
+						return;
+					}
+					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+					tracks = $filter(tracks, 'name');
+					var some_track = tracks[Math.floor(Math.random()*tracks.length)];
+					if (some_track){
+						_this.track = some_track;
+						_this.updateState('song-title', _this.getFullName());
+						//_this.updateProp('track', some_track);
+						_this.updateNavTexts();
 
-							_this.findFiles({
-								only_cache: !full_allowing,
-								collect_for: from_collection,
-								last_in_collection: last_in_collection
-							});
-							_this.trigger('url-change');
+						_this.findFiles({
+							only_cache: !full_allowing,
+							collect_for: from_collection,
+							last_in_collection: last_in_collection
+						});
+						_this.trigger('url-change');
 
 
 
-						} else {
-							_this.updateState("no-track-title", true);
-						}
+					} else {
+						_this.updateState("no-track-title", true);
+					}
 
-						if (_this.isImportant()){
-							_this.checkNeighboursChanges(_this);
-						} else {
-							var v_song = _this.plst_titl.getViewingSong(_this);
-							var p_song = _this.plst_titl.getPlayerSong(_this);
+					if (_this.isImportant()){
+						_this.checkNeighboursChanges(_this);
+					} else {
+						var v_song = _this.plst_titl.getViewingSong(_this);
+						var p_song = _this.plst_titl.getPlayerSong(_this);
 
-							if (v_song && v_song.isPossibleNeighbour(_this)) {
-								v_song.checkNeighboursChanges(_this);
-							}
-							
-							if (p_song && v_song != p_song && p_song.isPossibleNeighbour(_this)){
-								p_song.checkNeighboursChanges(_this);
-							}
+						if (v_song && v_song.isPossibleNeighbour(_this)) {
+							v_song.checkNeighboursChanges(_this);
 						}
 						
-						
+						if (p_song && v_song != p_song && p_song.isPossibleNeighbour(_this)){
+							p_song.checkNeighboursChanges(_this);
+						}
+					}
+					
+					
 
 
 
-						
+					
 
 
-						
-						
-					})
-					.always(function(){
-						_this.updateState('loading', false);
-					}));
+					
+					
+				})
+				.always(function(){
+					_this.updateState('loading', false);
+					if (_this.rtn_request == request){
+						delete _this.rtn_request;
+					}
+				});
+
+			this.addRequest(request);
 		}
 	},
 	prefindFiles: function(){

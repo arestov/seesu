@@ -299,7 +299,11 @@ suServView.extendTo(mfCorUI, {
 				var make_v_link = function(thmn, vid, _title, cant_show){
 					var link = 'http://www.youtube.com/watch?v=' + v_id
 
-					var li = $('<li class="you-tube-video-link"></li>').click(function(e){
+					var li = $('<li class="you-tube-video-link"></li>')
+					.attr({
+						title: _title
+					})
+					.click(function(e){
 						if (!cant_show){
 							var showed = this.showed;
 							
@@ -441,6 +445,9 @@ var mfCor = function(mo, omo) {
 	this.mfError = function() {
 		_this.checkMoplas(this);
 	};
+	this.semChange = function(val) {
+		_this.semChanged(val);
+	};
 };
 provoda.Model.extendTo(mfCor, {
 	ui_constr: mfCorUI,
@@ -572,11 +579,14 @@ provoda.Model.extendTo(mfCor, {
 		this.updateState('want-more-songs', false);
 	},
 	setSem: function(sem) {
-		this.sem  = sem;
-		var _this = this;
-		sem.on('changed', function(val) {
-			_this.semChanged(val);
-		});
+		if (this.sem != sem){
+			if (this.sem){
+				sem.off('changed', this.semChange);
+			}
+			this.sem  = sem;
+			sem.on('changed', this.semChange);
+		}
+		
 	},
 	semChanged: function(complete) {
 		this.checkVKAuthNeed();

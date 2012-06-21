@@ -44,7 +44,6 @@ var aReq = function(options){
 		var
 			img,
 			script,
-			timeout,
 			callback_func_name,
 			script_load_timeout,
 			deferred 			= $.Deferred(),
@@ -70,10 +69,11 @@ var aReq = function(options){
 			};
 		deferred.promise( complex_response );
 		
-		if (options.timeout){
+		var timeout = options.timeout || ($.ajaxSettings && $.ajaxSettings.timeout);
+		if (timeout){
 			script_load_timeout = setTimeout(function() {
 				deferred.reject();
-			}, options.timeout);
+			}, timeout);
 		}
 
 		var params = {};
