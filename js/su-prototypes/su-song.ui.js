@@ -538,6 +538,9 @@ suServView.extendTo(songUI, {
 		}
 	},
 	hideYoutubeVideo: function(){
-		this.mf_cor_view.hideYoutubeVideo();
+		if (this.mf_cor_view){
+			this.mf_cor_view.hideYoutubeVideo();
+		}
+		
 	}
 });

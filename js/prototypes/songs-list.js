@@ -19,10 +19,11 @@ var songsList;
 			this.palist = [];
 			this._super();
 		},
-		push: function(omo){
+		push: function(omo, skip_changes){
 			var mo = this.extendSong(omo, this.player, this.findMp3);
 			mo.plst_titl = this;
 
+			var last_song = this.getLastSong();
 
 			if (this.first_song){
 				if (this.first_song.omo==omo){
@@ -42,6 +43,9 @@ var songsList;
 				}
 			} else {
 				this.palist.push(mo);
+			}
+			if (!skip_changes && this.onChanges){
+				this.onChanges(last_song);
 			}
 		},
 		add: function(omo){
@@ -82,6 +86,9 @@ var songsList;
 		page_limit: 30,
 		getLength: function() {
 			return this.palist.length;
+		},
+		getLastSong: function(){
+			return this.palist.length ? this.palist[this.palist.length - 1] : false;
 		},
 		setLoaderFinish: function() {
 			this.updateState("can-load-more", false);
@@ -142,7 +149,6 @@ var songsList;
 			}
 			
 			
-			console.log('want to find and show');
 			
 			for (var i=0; i < this.palist.length; i++) {
 				if (artist_track.track == this.palist[i].track && (will_ignore_artist || artist_track.artist == this.palist[i].artist)){
@@ -170,13 +176,26 @@ var songsList;
 			return this;
 		},
 		injectExpectedSongs: function(playlist) {
-			if (playlist){
+			var song;
+			if (playlist && playlist.length){
+				song = this.getLastSong();
+
 				for (var i=0, l = playlist.length; i < l; i++) {
-					this.push(playlist[i]);
+					this.push(playlist[i], true);
 				}
+				
 			}
 			this.loadComplete(!playlist || !playlist.length);
+			if (this.onChanges){
+				this.onChanges(song);
+			}
 			return this;
+		},
+		onChanges: function(ending_song){
+			if (ending_song && ending_song.isImportant()){
+				ending_song.checkNeighboursChanges();
+
+			}
 		},
 		loadComplete: function(error){
 			error = ((typeof error == 'string') ? error : (!this.palist.length && error));
