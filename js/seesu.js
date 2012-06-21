@@ -14,7 +14,7 @@ var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret')
 	return suStore(key);
 }, function(key, value){
 	return suStore(key, value, true);
-}, cache_ajax, app_env.cross_domain_allowed, new funcsQueue(100));
+}, cache_ajax, app_env.cross_domain_allowed, new funcsQueue(700));
 
 
 
