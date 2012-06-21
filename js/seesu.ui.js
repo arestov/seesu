@@ -755,20 +755,32 @@ seesu_ui.prototype = {
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		if (!recovered){
 
-			lfm.get('artist.getSimilar',{'artist': artist})
-				.done(function(r){
-					var artists = r.similarartists.artist;
-					if (artists && artists.length) {
-						var artist_list = [];
-						for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-							artist_list.push(artists[i].name);
+			pl.setLoader(function(){
+				var paging_opts = this.getPagingInfo();
+				this.loading();
+				lfm.get('artist.getSimilar',{'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
+					.done(function(r){
+						var artists = r.similarartists.artist;
+						var track_list = [];
+
+						if (artists && artists.length) {
+							for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
+								track_list.push({
+									artist: artists[i].name
+								});
+							}
+
 						}
-						proxy_render_artists_tracks(artist_list, pl);
-					}
-				})
-				.fail(function() {
-					proxy_render_artists_tracks(false, pl);
-				});
+						pl.injectExpectedSongs(track_list);
+						if (track_list.length < paging_opts.page_limit){
+							pl.setLoaderFinish();
+						}
+					})
+					.fail(function() {
+						pl.loadComplete(true);
+					});
+			}, true);
+			
 		
 		}
 		
