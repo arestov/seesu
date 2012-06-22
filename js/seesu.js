@@ -165,7 +165,8 @@ var seesuApp = function(version) {
 		soundcloud: -5,
 		lastfm:-10,
 		torrents: -15
-	}))
+	}));
+	/*
 		.on('new-search', function(search, name){
 			var player = _this.p;
 			if (player){
@@ -186,7 +187,7 @@ var seesuApp = function(version) {
 					
 				}
 			}
-		});
+		});*/
 
 
 };
