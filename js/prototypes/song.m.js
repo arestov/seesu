@@ -60,9 +60,6 @@ provoda.addPrototype("baseSong",{
 	playPrev: function() {
 		this.plst_titl.switchTo(this);
 	},
-	getNeighbours: function(only_changes){
-		return this.plst_titl.getNeighbours(this, only_changes);
-	},
 	findNeighbours: function(){
 		this.plst_titl.findNeighbours(this);
 	},
@@ -281,13 +278,6 @@ provoda.addPrototype("baseSong",{
 				track: this.track
 			};
 
-			var oldFilesSearchCb = this.filesSearchCb;
-
-			this.filesSearchCb = function(complete) {
-				_this.updateFilesSearchState(complete, opts.get_next);
-			};
-
-
 			this.mp3_search.searchFor(music_query, function(sem){
 
 				if (!_this.sem){
@@ -298,13 +288,10 @@ provoda.addPrototype("baseSong",{
 					sem.on('progress', function() {
 						_this.filesSearchStarted();
 					});
+					sem.on('changed', function(complete){
+						_this.updateFilesSearchState(complete);
+					});
 				}
-
-				if (oldFilesSearchCb){
-					sem.off('changed', oldFilesSearchCb);
-				}
-
-				sem.on('changed', _this.filesSearchCb);
 
 				var force_changed;
 				if (!_this.was_forced){
@@ -343,9 +330,9 @@ provoda.addPrototype("baseSong",{
 			}
 			
 		} else{
-			if (this.isSearchCompleted()){
-				this.updateFilesSearchState(true);
-			}
+		//	if (this.isSearchCompleted()){
+			//	this.updateFilesSearchState(true);
+			//}
 			this.findFiles({
 				only_cache: !full_allowing,
 				collect_for: from_collection,
@@ -356,7 +343,7 @@ provoda.addPrototype("baseSong",{
 	filesSearchStarted: function(){
 		this.updateState('searching-files', true);
 	},
-	updateFilesSearchState: function(complete, get_next){
+	updateFilesSearchState: function(complete){
 
 		var _this = this;
 
@@ -383,6 +370,9 @@ provoda.addPrototype("baseSong",{
 				}
 			}
 		}
+		this.fuco = this.fuco || 0;
+		++this.fuco;
+
 		if (complete){
 			this.updateState('searching-files', false);
 		}

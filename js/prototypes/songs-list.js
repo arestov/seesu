@@ -275,9 +275,6 @@ var songsList;
 			var song = $filter(this.palist, "states.player-song", true)[0];
 			return song != exept && song;
 		},
-		getNeighbours: function(mo, only_changes){
-
-		},
 		findNeighbours: function(mo) {
 
 			
