@@ -13,9 +13,31 @@ provoda.addPrototype("baseSong",{
 				} else {
 					this.checkAndFixNeighbours();
 				}
-				
+				var _this = this;
+				this.mp3_search.on("new-search.viewing-song", function(){
+					_this.findFiles();
+					if (_this.next_preload_song){
+						_this.next_preload_song.findFiles();
+					}
+
+				}, {exlusive: true});
 			} else {
 				this.removeMarksFromNeighbours();
+			}
+		},
+		"player-song": function(state){
+			if (state){
+				if (!this.state("mp-show") && this.isSearchCompleted()){
+					this.checkNeighboursChanges(false, true, "player song");
+				}
+				
+				var _this = this;
+				this.mp3_search.on("new-search.player-song", function(){
+					_this.findFiles();
+					if (_this.next_preload_song){
+						_this.next_preload_song.findFiles();
+					}
+				}, {exlusive: true});
 			}
 		}
 	},
@@ -385,7 +407,6 @@ provoda.addPrototype("baseSong",{
 	view: function(no_navi, user_want){
 		if (!this.state('mp-show')){
 			this.trigger('view', no_navi, user_want);
-			this.findFiles();
 		}
 	},
 	valueOf:function(){

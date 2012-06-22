@@ -28,13 +28,13 @@ Class.extendTo(provoda.Eventor, {
 		this.requests = [];
 		return this;
 	},
-	_addEventHandler: function(namespace, cb, exlusive, once){
+	_addEventHandler: function(namespace, cb, opts, once){
 		var
 			fired,
 			_this = this,
 			short_name = namespace.split('.')[0];
 
-		if (exlusive){
+		if (opts && opts.exlusive){
 			this.off(namespace);
 		}
 
@@ -59,11 +59,11 @@ Class.extendTo(provoda.Eventor, {
 
 		return this;
 	},
-	once: function(namespace, cb, exlusive){
-		return this._addEventHandler(namespace, cb, exlusive, true);
+	once: function(namespace, cb, opts){
+		return this._addEventHandler(namespace, cb, opts, true);
 	},
-	on: function(namespace, cb, exlusive){
-		return this._addEventHandler(namespace, cb, exlusive);
+	on: function(namespace, cb, opts){
+		return this._addEventHandler(namespace, cb, opts);
 	},
 	off: function(namespace, cb, obj){
 		var

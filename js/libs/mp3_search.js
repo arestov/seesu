@@ -303,6 +303,22 @@ var musicSeachEmitter;
 				return this.have_tracks
 			}
 		},
+		isSearching: function(){
+			for (var a in this.steams){
+				var arr = [];
+				for (var i in this.steams[a]){
+					arr.push(this.steams[a][i]);
+				}
+				var processing = $filter(arr, "processing", true);
+				if (processing.length){
+					return true;
+				}
+			}
+			return false;
+		},
+		isSearchCompleted: function(){
+			return this.search_completed;
+		},
 		isHaveAnyResultsFrom: function(source_name){
 			return !!this.getSteamData(source_name);
 		},
@@ -708,7 +724,7 @@ var by_best_matching_index;
 					}
 					
 				});
-			} else if (!o.only_cache && !seeking_something_fresh){
+			} else if (!o.only_cache && !seeking_something_fresh && !sem.isSearching()){
 				sem.search_completed = true;
 				sem.change(o.get_next);
 			}
