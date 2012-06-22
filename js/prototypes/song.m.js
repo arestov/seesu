@@ -417,7 +417,6 @@ provoda.addPrototype("baseSong",{
 	view: function(no_navi, user_want){
 		if (!this.state('mp-show')){
 			this.trigger('view', no_navi, user_want);
-			this.findFiles();
 		}
 	},
 	valueOf:function(){
