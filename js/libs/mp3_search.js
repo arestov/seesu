@@ -303,6 +303,9 @@ var musicSeachEmitter;
 				return this.have_tracks
 			}
 		},
+		isSearchCompleted: function(){
+			return this.search_completed;
+		},
 		isHaveAnyResultsFrom: function(source_name){
 			return !!this.getSteamData(source_name);
 		},

@@ -748,7 +748,7 @@ provoda.Model.extendTo(mfCor, {
 		return !!this.raw() || !!this.sem && this.sem.isHaveTracks(type);
 	},
 	isSearchCompleted: function(){
-		return !!this.raw() || !!this.sem && this.sem.search_completed;
+		return !!this.raw() || !!this.sem && this.sem.isSearchCompleted();
 	},
 	isHaveBestTracks: function(){
 		return !!this.raw() || !!this.sem && this.sem.have_best;
