@@ -16,8 +16,9 @@ provoda.addPrototype("baseSong",{
 				var _this = this;
 				this.mp3_search.on("new-search.viewing-song", function(){
 					_this.findFiles();
+					_this.checkNeighboursChanges(false, true, "track view");
 					if (_this.next_preload_song){
-						_this.next_preload_song.findFiles();
+					//	_this.next_preload_song.findFiles();
 					}
 
 				}, {exlusive: true});
@@ -34,8 +35,9 @@ provoda.addPrototype("baseSong",{
 				var _this = this;
 				this.mp3_search.on("new-search.player-song", function(){
 					_this.findFiles();
+					_this.checkNeighboursChanges(false, false, "new search, player song");
 					if (_this.next_preload_song){
-						_this.next_preload_song.findFiles();
+					//	_this.next_preload_song.findFiles();
 					}
 				}, {exlusive: true});
 			}
