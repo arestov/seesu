@@ -28,7 +28,7 @@ provoda.addPrototype("baseSong",{
 		"player-song": function(state){
 			if (state){
 				if (!this.state("mp-show") && this.isSearchCompleted()){
-					this.checkNeighboursChanges(false, true, "player song");
+					this.checkNeighboursChanges(false, false, "player song");
 				}
 				
 				var _this = this;
