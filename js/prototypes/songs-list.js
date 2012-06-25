@@ -281,7 +281,7 @@ var songsList;
 
 			var c_num = this.palist.indexOf(mo);
 			var canUse = function(song) {
-				return (song.canSearchFiles() && (song.canPlay() || !song.isSearchCompleted())) || (!song.track && song.canFindTrackTitle());
+				
 			};
 
 			mo.next_song = false;
@@ -289,21 +289,21 @@ var songsList;
 			mo.next_preload_song = false;
 			
 			for (var i = c_num - 1; i >= 0; i--) {
-				if (canUse(this.palist[i])){
+				if (this.palist[i].canUseAsNeighbour()){
 					mo.prev_song = this.palist[i];
 					break;
 				}
 			}
 
 			for (var i = c_num + 1; i < this.palist.length; i++) {
-				if (canUse(this.palist[i])){
+				if (this.palist[i].canUseAsNeighbour()){
 					mo.next_song = mo.next_preload_song = this.palist[i];
 					break;
 				}
 			}
 			if (!mo.next_preload_song){
 				for (var i = 0; i < c_num; i++) {
-					if (canUse(this.palist[i])){
+					if (this.palist[i].canUseAsNeighbour()){
 						mo.next_preload_song = this.palist[i];
 						break;
 					}

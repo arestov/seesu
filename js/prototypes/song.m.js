@@ -183,6 +183,24 @@ provoda.addPrototype("baseSong",{
 	isImportant: function() {
 		return !!(this.state("mp-show") || this.state("player-song"));
 	},
+	canUseAsNeighbour: function(){
+		return (this.canSearchFiles() && (this.canPlay() || !this.isSearchCompleted())) || (!this.track && this.canFindTrackTitle());
+	},
+	getNeighboursChanges: function(to_check){
+		var
+			check_list,
+			o_ste = {
+				next_song: this.next_song,
+				prev_song: this.prev_song,
+				next_preload_song: this.next_preload_song
+			};
+
+		for (var i in o_ste){
+			check_list[i] = !to_check || o_ste[i] == to_check;
+		}
+
+
+	},
 	checkNeighboursChanges: function(changed_mo, viewing, log) {
 		this.findNeighbours();
 
