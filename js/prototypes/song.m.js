@@ -189,6 +189,8 @@ provoda.addPrototype("baseSong",{
 	getNeighboursChanges: function(to_check){
 		var
 			check_list,
+			ste_diff = {},
+			n_ste = {},
 			o_ste = {
 				next_song: this.next_song,
 				prev_song: this.prev_song,
@@ -198,6 +200,10 @@ provoda.addPrototype("baseSong",{
 		for (var i in o_ste){
 			check_list[i] = !to_check || o_ste[i] == to_check;
 		}
+
+		cloneObj(n_ste, o_ste);
+
+		
 
 
 	},
