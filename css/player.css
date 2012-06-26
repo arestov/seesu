@@ -34,7 +34,7 @@ a.song:hover{
 }
 a.search-mp3{
 	background:url(../i/spinner.gif) no-repeat 100% 50%;
-	color:#6c1471;
+	
 }
 a.loading{
 	background:url(../i/spinner.gif) no-repeat 100% 50%;
