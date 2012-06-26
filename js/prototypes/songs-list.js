@@ -275,42 +275,50 @@ var songsList;
 			var song = $filter(this.palist, "states.player-song", true)[0];
 			return song != exept && song;
 		},
-		findNeighbours: function(mo) {
-
-			
-
+		getNeighbours: function(mo, neitypes){
+			var obj = {};
 			var c_num = this.palist.indexOf(mo);
-			var canUse = function(song) {
-				
-			};
 
-			mo.next_song = false;
-			mo.prev_song = false;
-			mo.next_preload_song = false;
-			
-			for (var i = c_num - 1; i >= 0; i--) {
-				if (this.palist[i].canUseAsNeighbour()){
-					mo.prev_song = this.palist[i];
-					break;
-				}
-			}
-
-			for (var i = c_num + 1; i < this.palist.length; i++) {
-				if (this.palist[i].canUseAsNeighbour()){
-					mo.next_song = mo.next_preload_song = this.palist[i];
-					break;
-				}
-			}
-			if (!mo.next_preload_song){
-				for (var i = 0; i < c_num; i++) {
+			if (neitypes.prev_song){
+				for (var i = c_num - 1; i >= 0; i--) {
 					if (this.palist[i].canUseAsNeighbour()){
-						mo.next_preload_song = this.palist[i];
+						obj.prev_song = this.palist[i];
 						break;
 					}
 				}
 			}
 
+			if (neitypes.next_song){
+				for (var i = c_num + 1; i < this.palist.length; i++) {
+					if (this.palist[i].canUseAsNeighbour()){
+						obj.next_song = obj.next_preload_song = this.palist[i];
+						break;
+					}
+				}
+			}
+			if (neitypes.next_preload_song && !obj.next_preload_song){
+				for (var i = 0; i < c_num; i++) {
+					if (this.palist[i].canUseAsNeighbour()){
+						obj.next_preload_song = this.palist[i];
+						break;
+					}
+				}
+			}
+			return obj;
 
+		},
+		findNeighbours: function(mo) {
+
+			mo.next_song = false;
+			mo.prev_song = false;
+			mo.next_preload_song = false;
+
+			var changes = this.getNeighbours(mo, {
+				next_song: true,
+				prev_song: true,
+				next_preload_song: true
+			});
+			cloneObj(mo, changes);
 		}
 
 
@@ -430,14 +438,8 @@ var songsList;
 		render_playlist: function(load_finished) {
 			var _this = this.md;
 			if (_this.palist.length){
-			
 				for (var i=0; i < _this.palist.length; i++) {
 					this.appendSongUI(_this.palist[i]);
-				}
-			
-				var v_song = this.md.getViewingSong();
-				if (v_song){
-					v_song.checkAndFixNeighbours();
 				}
 			}
 		}

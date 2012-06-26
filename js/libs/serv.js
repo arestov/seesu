@@ -2,7 +2,7 @@ var
 	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
 	doesContain, shuffleArray, arrayExclude, getFields, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
-	cloneObj,  getUnitBaseNum, stringifyParams, separateNum, createPrototype, Class, depdc,
+	cloneObj, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, createPrototype, Class, depdc,
 	debounce, throttle;
 
 function bN(num){
@@ -114,6 +114,26 @@ getFields = function(obj, fields){
 		}
 	}
 	return r;
+};
+getDiffObj = function(one, two) {
+	var
+		i,
+		diff = {},
+		all_props = {};
+
+	for (i in one){
+		all_props[i] = true;
+	}
+	for (i in two){
+		all_props[i] = true;
+	}
+
+	for (i in all_props){
+		if (one[i] !== two[i]){
+			diff[i] = two[i];
+		}
+	}
+	return diff;
 };
 
 searchInArray = function (array, query, fields) {

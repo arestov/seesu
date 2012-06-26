@@ -31,7 +31,6 @@ var song;
 		this.addChild(this.mf_cor);
 		this.mf_cor.on('before-mf-play', function(mopla) {
 			_this.player.changeNowPlaying(_this);
-			_this.findNeighbours();
 			_this.mopla = mopla;
 		});
 		this.mf_cor.on("error", function(can_play) {

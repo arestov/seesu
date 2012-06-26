@@ -11,7 +11,7 @@ provoda.addPrototype("baseSong",{
 				if (this.isSearchCompleted() || this.isHaveBestTracks()){
 					this.checkNeighboursChanges(false, true, "track view");
 				} else {
-					this.checkAndFixNeighbours();
+					//this.checkAndFixNeighbours();
 				}
 				var _this = this;
 				this.mp3_search.on("new-search.viewing-song", function(){
@@ -188,7 +188,8 @@ provoda.addPrototype("baseSong",{
 	},
 	getNeighboursChanges: function(to_check){
 		var
-			check_list,
+			check_list = {},
+			need_list = {},
 			ste_diff = {},
 			n_ste = {},
 			o_ste = {
@@ -203,25 +204,48 @@ provoda.addPrototype("baseSong",{
 
 		cloneObj(n_ste, o_ste);
 
+		var fastCheck = function(neighbour_name){
+			if (o_ste[neighbour_name]){
+				n_ste[neighbour_name] = o_ste[neighbour_name] && o_ste[neighbour_name].canUseAsNeighbour() && o_ste[neighbour_name]; 
+			}
+			need_list[neighbour_name] = !n_ste[neighbour_name];
+		};
 
+		for (var i in check_list){
+			if (check_list[i]){
+				fastCheck(i);
+			}
+		}
+
+		var changes = this.plst_titl.getNeighbours(this, need_list);
+
+		cloneObj(n_ste, changes);
+
+
+		return getDiffObj(o_ste, n_ste);
 
 
 	},
-	checkNeighboursChanges: function(changed_mo, viewing, log) {
-		this.findNeighbours();
+	checkNeighboursChanges: function(changed_neighbour, viewing, log) {
+		var changes = this.getNeighboursChanges(changed_neighbour)
+		//console.log("changes");
+		//console.log();
+		cloneObj(this, changes)
+
+		//this.findNeighbours();
 
 		viewing = viewing || !!this.state("mp-show");
 		var playing = !!this.state("player-song");
 
 		if (viewing){
 			this.addMarksToNeighbours();
-			if (this.prev_song && !this.prev_song.track){
-				this.prev_song.getRandomTrackName();
+			if (changes.prev_song && !changes.prev_song.track){
+				changes.prev_song.getRandomTrackName();
 			}
 			
 		}
-		if ((viewing || playing) && this.next_preload_song && this.next_preload_song != changed_mo){
-			this.next_preload_song.makeSongPlayalbe(true);
+		if ((viewing || playing) && changes.next_preload_song){
+			changes.next_preload_song.makeSongPlayalbe(true);
 		}
 		if (!this.cncco){
 			this.cncco = [];
@@ -272,7 +296,7 @@ provoda.addPrototype("baseSong",{
 					}
 
 					if (_this.isImportant()){
-						_this.checkNeighboursChanges(_this, false, "important; track name");
+						_this.checkNeighboursChanges(false, false, "important; track name");
 					} else {
 						var v_song = _this.plst_titl.getViewingSong(_this);
 						var p_song = _this.plst_titl.getPlayerSong(_this);
@@ -402,7 +426,7 @@ provoda.addPrototype("baseSong",{
 		};
 		if (this.isImportant()){
 			if (complete || this.isHaveBestTracks()){
-				this.checkNeighboursChanges(this, false, 'important; files search');
+				this.checkNeighboursChanges(false, false, 'important; files search');
 			}
 		} else {
 			if (complete){
