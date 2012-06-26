@@ -7,12 +7,13 @@ provoda.addPrototype("baseSong",{
 		"mp-show": function(opts) {
 			if (opts){
 				this.makeSongPlayalbe(true);
-				
+				this.checkNeighboursChanges(false, true, "track view");
+				/*
 				if (this.isSearchCompleted() || this.isHaveBestTracks()){
 					this.checkNeighboursChanges(false, true, "track view");
 				} else {
 					//this.checkAndFixNeighbours();
-				}
+				}*/
 				var _this = this;
 				this.mp3_search.on("new-search.viewing-song", function(){
 					_this.findFiles();
