@@ -508,25 +508,6 @@ var render_recommendations = function(){
 };
 
 
-var get_artists_by_tag = function(tag,callback,error_c){
-
-	//fixme
-	lfm.get('tag.getTopArtists', {'tag':tag, limit: 30})
-		.done(function(r){
-			var artists = r.topartists.artist;
-			if (artists && artists.length) {
-				var artist_list = [];
-				for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-					artist_list.push(artists[i].name);
-				}
-				if (callback) {callback(artist_list);}
-			}
-		})
-		.fail(error_c);
-	return true;
-};
-
-
 
 
 

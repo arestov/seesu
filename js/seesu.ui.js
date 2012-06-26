@@ -508,61 +508,48 @@ seesu_ui.prototype = {
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		var pl_r = su.preparePlaylist({//can autoload
+		var pl_r = su.preparePlaylist({
 			title: 'Tag: ' + tag,
 			type: 'artists by tag',
 			data: {tag: tag}
-		}, start_song).loading();
-		get_artists_by_tag(tag, function(pl){
-			proxy_render_artists_tracks(pl, pl_r);
-		}, function(){
-			proxy_render_artists_tracks(false, pl_r);
-		});
+		}, start_song);
+
+		pl_r.setLoader(function() {
+			var paging_opts = this.getPagingInfo();
+			this.loading();
+
+			lfm.get('tag.getTopArtists',{'tag':tag, limit: paging_opts.page_limit, page: paging_opts.next_page})
+				.done(function(r){
+					var artists = r.topartists.artist;
+					var track_list = [];
+
+					if (artists && artists.length) {
+						for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
+							track_list.push({
+								artist: artists[i].name
+							});
+						}
+
+					}
+					pl_r.injectExpectedSongs(track_list);
+					if (track_list.length < paging_opts.page_limit){
+						pl_r.setLoaderFinish();
+					}
+				})
+				.fail(function() {
+					pl_r.loadComplete(true);
+				});
+
+		}, true);
+
+
 		su.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
 		
 		if (start_song){
 			pl_r.showTrack(start_song, full_no_navi);
 		}
 	},
-	/*
-	show_track: function(q){
-		var title;
-		if (q.q){
-			title= q.q;
-		} else if (q.artist || q.track){
-			title = (q.artist || '') + " - " + (q.track || '');
-		} else{
-			title = 'unknow';
-		}
-		
-		var pl_r = su.preparePlaylist(title , 'tracks', {query: q} , title).loading();
-		su.views.show_playlist_page(pl_r, !!q);
-		su.mp3_search.find_files(q, false, function(err, pl, c, complete){
-			if (complete){
-				c.done = true;
-				var playlist = [];
-				if (pl && pl.length){
-					for (var i=0; i < pl.length; i++) {
-						if (pl[i].t){
-							playlist.push.apply(playlist, pl[i].t);
-						}
-					};
-				}
-				
-				var playlist_ui = create_playlist(playlist.length && playlist, pl_r);
-				if (!su.mp3_search.haveSearch('vk')){
-					playlist_ui.prepend($('<li></li>').append(su.ui.samples.vk_login.clone()));
-				}
-				
-			}
-			
-			
-		}, false);
 
-		
-		
-	},*/
-	//showArtistPlaylist: function(artist, pl, save_parents, no_navi, simple){
 	showArtistPlaylist: function(artist, pl, vopts){
 		vopts = vopts || {};
 		var cpl = su.p.isPlaying(pl);
