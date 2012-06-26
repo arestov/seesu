@@ -203,7 +203,7 @@ provoda.addPrototype("baseSong",{
 
 		cloneObj(n_ste, o_ste);
 
-		if (check_list.)
+		//if (check_list.)
 		
 
 

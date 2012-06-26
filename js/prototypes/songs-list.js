@@ -299,7 +299,7 @@ var songsList;
 			if (neitypes.next_preload_song && !obj.next_preload_song){
 				for (var i = 0; i < c_num; i++) {
 					if (this.palist[i].canUseAsNeighbour()){
-						mo.next_preload_song = this.palist[i];
+						obj.next_preload_song = this.palist[i];
 						break;
 					}
 				}
@@ -314,11 +314,11 @@ var songsList;
 			mo.next_preload_song = false;
 
 			var changes = this.getNeighbours(mo, {
-				next_song; true,
+				next_song: true,
 				prev_song: true,
 				next_preload_song: true
 			});
-			cloneObj(this, changes);
+			cloneObj(mo, changes);
 		}
 
 
