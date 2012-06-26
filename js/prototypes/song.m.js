@@ -198,12 +198,12 @@ provoda.addPrototype("baseSong",{
 			};
 
 		for (var i in o_ste){
-			check_list[i] = !to_check || o_ste[i] == to_check;
+			check_list[i] = !to_check || (o_ste[i] == to_check);
 		}
 
 		cloneObj(n_ste, o_ste);
 
-		
+
 
 
 	},
