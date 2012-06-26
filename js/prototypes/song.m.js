@@ -170,10 +170,10 @@ provoda.addPrototype("baseSong",{
 	waitToLoadNext: function(ready){
 		this.ready_to_preload = ready;
 		if (ready){
-			if (!this.waiting_to_load_next && this.player.c_song == this && this.next_song){
-				var next_song = this.next_song;
+			if (!this.waiting_to_load_next && this.player.c_song == this && this.next_preload_song){
+				var nsong = this.next_preload_song;
 				this.waiting_to_load_next = setTimeout(function(){
-					next_song.preloadSongFile();
+					nsong.preloadSongFile();
 				}, 4000);
 			}
 		} else if (this.waiting_to_load_next){
