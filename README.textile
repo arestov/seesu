@@ -38,6 +38,8 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 
 добавление в избранное на ласт.фм
 подргузка плейлиста
+	+ непосредственно подгрузка
+	 автоподгрузка
 
 
 дополнительные данные
