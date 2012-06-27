@@ -409,12 +409,11 @@ var render_loved = function(user_name){
 
 	
 
-	pl_r.setLoader(function() {
+	pl_r.setLoader(function(paging_opts) {
 
 		var request_info = {};
 
-		var paging_opts = this.getPagingInfo();
-		this.loading();
+		
 
 		lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page})
 			.done(function(r){
@@ -480,10 +479,9 @@ var render_recommendations = function(){
 		type: 'artists by recommendations'
 	});
 
-	pl_r.setLoader(function() {
-		var paging_opts = this.getPagingInfo();
-		this.loading();
-
+	pl_r.setLoader(function(paging_opts) {
+		
+		var request_info = {};
 
 		lfm.get('user.getRecommendedArtists', {sk: lfm.sk, limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
 			.done(function(r){
@@ -506,7 +504,10 @@ var render_recommendations = function(){
 			})
 			.fail(function(){
 				pl_r.loadComplete(true);
+			}).always(function() {
+				request_info.done = true;
 			});
+		return request_info;
 	}, true);
 	
 

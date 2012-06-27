@@ -514,10 +514,9 @@ seesu_ui.prototype = {
 			data: {tag: tag}
 		}, start_song);
 
-		pl_r.setLoader(function() {
-			var paging_opts = this.getPagingInfo();
-			this.loading();
-
+		pl_r.setLoader(function(paging_opts) {
+			
+			var request_info = {};
 			lfm.get('tag.getTopArtists',{'tag':tag, limit: paging_opts.page_limit, page: paging_opts.next_page})
 				.done(function(r){
 					var artists = r.topartists.artist;
@@ -538,8 +537,10 @@ seesu_ui.prototype = {
 				})
 				.fail(function() {
 					pl_r.loadComplete(true);
+				}).always(function() {
+					request_info.done = true;
 				});
-
+			return request_info;
 		}, true);
 
 
@@ -627,10 +628,9 @@ seesu_ui.prototype = {
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		
 		if (!recovered){
-			pl.setLoader(function() {
-				var paging_opts = this.getPagingInfo();
-				this.loading();
-
+			pl.setLoader(function(paging_opts) {
+				
+				var request_info = {};
 				lfm.get('artist.getTopTracks', {'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
 					.done(function(r){
 						var tracks = r.toptracks.track || false;
@@ -651,7 +651,11 @@ seesu_ui.prototype = {
 					})
 					.fail(function() {
 						pl.loadComplete(true);
+					})
+					.always(function() {
+						request_info.done = true;
 					});
+				return request_info;
 			}, true);
 
 		}
@@ -742,9 +746,8 @@ seesu_ui.prototype = {
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		if (!recovered){
 
-			pl.setLoader(function(){
-				var paging_opts = this.getPagingInfo();
-				this.loading();
+			pl.setLoader(function(paging_opts){
+				var request_info = {};
 				lfm.get('artist.getSimilar',{'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
 					.done(function(r){
 						var artists = r.similarartists.artist;
@@ -765,6 +768,9 @@ seesu_ui.prototype = {
 					})
 					.fail(function() {
 						pl.loadComplete(true);
+					})
+					.always(function() {
+						request_info.done = true;
 					});
 			}, true);
 			

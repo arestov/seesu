@@ -256,7 +256,7 @@ provoda.addPrototype("baseSong",{
 
 		if (viewing || playing){
 			if (!this.hasNextSong()){
-				//this.plst_titl.loadMoreSongs();
+				this.plst_titl.loadMoreSongs();
 			}
 		}
 

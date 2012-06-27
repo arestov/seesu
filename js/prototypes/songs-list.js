@@ -95,15 +95,23 @@ var songsList;
 		},
 		setLoader: function(cb, trigger) {
 			this.updateState("can-load-more", true);
-			this.on("load-more", cb);
+			this.requestMoreSongs = cb;
+
+			//this.on("load-more", cb);
 			if (trigger){
 				this.loadMoreSongs()
 			}
 
 		},
 		loadMoreSongs: function(force) {
-			if (this.state("can-load-more")){
-				this.trigger("load-more");
+			if (this.state("can-load-more") && this.requestMoreSongs){
+				if (!this.song_request || this.song_request.done){
+					this.loading();
+					this.song_request = this.requestMoreSongs.call(this, this.getPagingInfo());
+				}
+				
+				
+				//this.trigger("load-more");
 			}
 			
 		},
