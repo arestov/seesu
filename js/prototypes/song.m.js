@@ -255,12 +255,14 @@ provoda.addPrototype("baseSong",{
 		}
 
 		if (viewing || playing){
-			var last_song = this.plst_titl.getLastSong();
-			if (last_song == this){
+			if (!this.hasNextSong()){
 				//this.plst_titl.loadMoreSongs();
 			}
 		}
 
+	},
+	hasNextSong: function(){
+		return !!this.next_song;
 	},
 	canFindTrackTitle: function() {
 		return !this.state("no-track-title")

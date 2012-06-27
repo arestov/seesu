@@ -411,6 +411,8 @@ var render_loved = function(user_name){
 
 	pl_r.setLoader(function() {
 
+		var request_info = {};
+
 		var paging_opts = this.getPagingInfo();
 		this.loading();
 
@@ -435,7 +437,12 @@ var render_loved = function(user_name){
 			})
 			.fail(function() {
 				pl_r.loadComplete(true);
+			})
+			.always(function() {
+				request_info.done = true;
 			});
+
+		return request_info;
 	}, true);
 	
 	su.views.show_playlist_page(pl_r);

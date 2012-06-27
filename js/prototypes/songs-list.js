@@ -23,7 +23,7 @@ var songsList;
 			var mo = this.extendSong(omo, this.player, this.findMp3);
 			mo.plst_titl = this;
 
-			var last_song = this.getLastSong();
+			var last_usable_song = this.getLastUsableSong();
 
 			if (this.first_song){
 				if (this.first_song.omo==omo){
@@ -45,7 +45,7 @@ var songsList;
 				this.palist.push(mo);
 			}
 			if (!skip_changes && this.onChanges){
-				this.onChanges(last_song);
+				this.onChanges(last_usable_song);
 			}
 		},
 		add: function(omo){
@@ -102,7 +102,10 @@ var songsList;
 
 		},
 		loadMoreSongs: function(force) {
-			this.trigger("load-more");
+			if (this.state("can-load-more")){
+				this.trigger("load-more");
+			}
+			
 		},
 		die: function(){
 			this.hide();
@@ -178,7 +181,7 @@ var songsList;
 		injectExpectedSongs: function(playlist) {
 			var song;
 			if (playlist && playlist.length){
-				song = this.getLastSong();
+				song = this.getLastUsableSong();
 
 				for (var i=0, l = playlist.length; i < l; i++) {
 					this.push(playlist[i], true);
@@ -191,10 +194,19 @@ var songsList;
 			}
 			return this;
 		},
-		onChanges: function(ending_song){
-			if (ending_song && ending_song.isImportant()){
-				ending_song.checkNeighboursChanges();
+		onChanges: function(last_usable_song){
+			if (last_usable_song && last_usable_song.isImportant()){
+				//last_usable_song.checkNeighboursChanges();
+			}
+			var v_song = this.getViewingSong();
+			var p_song = this.getPlayerSong();
 
+			if (v_song && !v_song.hasNextSong()) {
+				v_song.checkNeighboursChanges(false, false, "playlist load");
+			}
+			
+			if (p_song && v_song != p_song && p_song.hasNextSong()){
+				p_song.checkNeighboursChanges(false, false, "playlist load");
 			}
 		},
 		loadComplete: function(error){
@@ -274,6 +286,15 @@ var songsList;
 		getPlayerSong: function(exept) {
 			var song = $filter(this.palist, "states.player-song", true)[0];
 			return song != exept && song;
+		},
+		getLastUsableSong: function(){
+			for (var i = this.palist.length - 1; i >= 0; i--) {
+				var cur = this.palist[i];
+				if (cur.canUseAsNeighbour()){
+					return cur;
+				}
+				
+			};
 		},
 		getNeighbours: function(mo, neitypes){
 			var obj = {};
