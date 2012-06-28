@@ -39,8 +39,9 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 добавление в избранное на ласт.фм
 подргузка плейлиста
 	+ непосредственно подгрузка
-	 автоподгрузка
+	+ автоподгрузка
 
+перевод oext
 
 дополнительные данные
 	чарты hypem
