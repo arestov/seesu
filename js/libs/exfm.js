@@ -73,6 +73,12 @@ ExfmApi.prototype = {
 							dataType: _this.crossdomain ? "json": "jsonp",
 							data: params_full,
 							timeout: 20000,
+							afterChange: function(opts) {
+								if (opts.dataType == 'json'){
+									opts.headers = null;
+								}
+								
+							},
 							thisOriginAllowed: true
 						}).done(success).fail(function(xhr){
 							deferred.reject.apply(deferred, arguments);

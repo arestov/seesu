@@ -16,7 +16,9 @@ var get_youtube = function(q, callback){
 			afterChange: function(opts) {
 				if (opts.dataType == 'json'){
 					data.alt = 'json';
+					opts.headers = null;
 				}
+
 			},
 			thisOriginAllowed: true
 		}).done(function(r){
