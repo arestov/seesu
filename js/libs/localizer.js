@@ -490,6 +490,19 @@ localizer = {
 		"original": "To select your vk.com friend and post him song",
 		"ru": "Чтобы выбрать стену друга и отправить композицию на его стену"
 	},
+	"load-more":{
+		"original": "load more",
+		"ru": "загрузить больше"
+	},
+	"accept-inv": {
+		"original": "Accept invite",
+		"ru": "Принять приглашение"
+	},
+	"more-ab-info":{
+		"original": "more «%s» info",
+		"ru": "больше о «%s»"
+	},
+	
 	"":{
 		"original": "",
 		"ru": ""

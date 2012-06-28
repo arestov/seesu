@@ -268,7 +268,8 @@ suServView.extendTo(songUI, {
 					str: '',
 					prev: false
 				};
-				su.ui.infoGen(this.base_info, c, 'more «%s» info');
+				
+				su.ui.infoGen(this.base_info, c, localize("more-ab-info"));
 				//su.ui.infoGen(this.files, c, 'files: %s');
 				//su.ui.infoGen(this.videos, c, 'video: %s');
 				if (c.str){

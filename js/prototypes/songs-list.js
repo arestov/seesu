@@ -394,9 +394,10 @@ var songsList;
 		parts_builder: {
 			"load-more-b": function() {
 				var _this = this;
+				
 				return $("<a class='load-more-songs'></a>").click(function() {
 						_this.md.loadMoreSongs(true);
-					}).text("загрузить больше").appendTo(this.c);
+					}).text(localize("load-more")).appendTo(this.c);
 			}
 		},
 		createC: function() {
