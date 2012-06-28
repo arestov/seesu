@@ -233,7 +233,7 @@ provoda.Eventor.extendTo(seesuApp, {
 		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi",
 		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko",
 		opera_widget: "http://widgets.opera.com/widget/15872/",
-		opera_extension: "https://addons.opera.com/addons/extensions/details/seesu",
+		opera_extension: "https://addons.opera.com/addons/extensions/details/seesu-music",
 		pokki_app: "https://www.pokki.com/app/Seesu"
 	},
 	
@@ -300,7 +300,7 @@ provoda.Eventor.extendTo(seesuApp, {
 
 });
 
-window.seesu = window.su = new seesuApp(3.0); 
+window.seesu = window.su = new seesuApp(3.1); 
 su.checkStats();
 
 /*
