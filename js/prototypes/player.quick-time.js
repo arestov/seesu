@@ -9,17 +9,23 @@
 		a.type = "application/x-quicktimeplayer";
 		a.width = 0;
 		a.height = 0;
+		a.id = a.name = id + "_" + (new Date()).valueOf();
 
 		a.EnableJavaScript = true;
 		a.postdomevents = true;
+		a.QTSRCDONTUSEBROWSER = true;
+		//a.QTSRC = url;
 
+		$(document.body).append(a);
 
-		a.src = url;
+		a.SetURL(url);
+
+		//a.src = url;
 
 
 		return a;
 
-		
+
 		var a = new Audio(url);
 		a.volume = 1;
 		addEvent(a, 'play', function(){
@@ -76,19 +82,21 @@
 		unload: function() {
 			if (this.a){
 				try {
-					this.a.pause();
+					this.a.Pause();
 				} catch (e){}
-				this.a.url = null;
+				$(this.a).remove();
+				//this.a
+				//this.a.url = null;
 				delete this.a;
 			}
 		},
 		play: function() {
 			this.requireAE();
-			this.a.play();
+			this.a.Play();
 		},
 		load: function() {
 			this.requireAE();
-			this.a.load();
+			//this.a.load();
 		},
 		stop: function() {
 			try{
@@ -97,7 +105,7 @@
 			} catch(e){}
 		},
 		pause: function() {
-			this.a.pause();
+			this.a.Pause();
 		},
 		setVolume: function(vol) {
 			this.a.volume = vol/100;
@@ -110,7 +118,7 @@
 	};
 
 
-	html5AudioCore = function(path, opts) {
+	quickTimeAudioCore = function(path, opts) {
 		var _this = this;
 		this.sounds_store = {};
 		this.feedBack = function() {
@@ -120,7 +128,7 @@
 		};
 	};
 
-	html5AudioCore.prototype = {
+	quickTimeAudioCore.prototype = {
 		subscribe: function(cb){
 			this.subr = cb;
 			return this;
