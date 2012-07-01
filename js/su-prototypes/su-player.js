@@ -138,136 +138,239 @@ var seesuPlayer;
 		}
 	}
 
-	//su.p.setCore(pcore);
-
-	var
-		aw, 
-		h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
-
-	if (h5a){
-		jsLoadComplete(function() {
-			yepnope({
-				load:  [bpath + 'js/prototypes/player.html5.js'],
-				complete: function() {
-					su.p.setCore(new html5AudioCore());
-					su.main_level.updateState('flash-internet', true);
-				}
-			});
-		});
-	} else if ((aw = document.createElement('object'), aw.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95") && 'EnableContextMenu' in aw && aw.attachEvent){
-		jsLoadComplete(function() {
-			yepnope({
-				load:  [bpath + 'js/prototypes/player.wmp.js'],
-				complete: function() {
-					su.p.setCore(new wmpAudioCore());
-					su.main_level.updateState('flash-internet', true);
-				}
-			});
-		});
-	} else {
-		if (false && !su.env.cross_domain_allowed){
-			suReady(function(){
-				yepnope({
-					load:  [bpath + 'js/common-libs/soundmanager2.mod.min.js', bpath + 'js/prototypes/player.sm2-internal.js'],
-					complete: function(){
-						var pcore = new sm2internal(bpath + "swf/", sm2opts);
-						var pcon = $(pcore.getC());
-						var complete;
-
-
-						pcon
-							.addClass('sm2proxy')
-							.attr('scrolling', 'no');
-						
-						pcon.on('load', function() {
-							setTimeout(function() {
-								if (!complete){
-									pcon.addClass('long-appearance');
-								}
-							}, 7000);
-						});
-						
-						
-						pcore
-							.done(function(){
-								complete = true;
-								su.p.setCore(pcore);
-								setTimeout(function(){
-									pcon.addClass('sm2-complete');
-								}, 1000);
-								//
+	var features = {};
+	var done;
+	var useLib = function(cb){
+		if (!done){
+			done = true;
+			cb();
+			
+		}
+	};
+	var addFeature = function(feature){
+		features[feature];
+		switch (feature){
+			case "html5mp3": 
+				useLib(function(){
+					jsLoadComplete(function() {
+						yepnope({
+							load:  [bpath + 'js/prototypes/player.html5.js'],
+							complete: function() {
+								su.p.setCore(new html5AudioCore());
 								su.main_level.updateState('flash-internet', true);
-
-							})
-							.fail(function(){
-								complete = true;
-								//pcon.addClass('hidden');
-							});
-						$(function(){
-							$(document.body).append(pcon);
-							pcore.appended();
-							//$(su.ui.nav).after(pcon);
+							}
 						});
-						
-						//$(document.body).append(_this.c);
-					}
+					});
 				});
-			});
+				break;
+			case "wmpactivex":
+				useLib(function(){
+					jsLoadComplete(function() {
+						yepnope({
+							load:  [bpath + 'js/prototypes/player.wmp.js'],
+							complete: function() {
+								su.p.setCore(new wmpAudioCore());
+								su.main_level.updateState('flash-internet', true);
+							}
+						});
+					});
+				});
+				break;
+			case "sm2-proxy": 
+				useLib(function(){
+					suReady(function(){
+						yepnope({
+							load:  [bpath + 'js/prototypes/player.sm2-proxy.js'],
+							complete: function(){
+								var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
+								var pcon = $(pcore.getC());
+								var complete;
 
-		} else {
-			if (su.env.iframe_support){
 
-				
-				suReady(function(){
-					yepnope({
-						load:  [bpath + 'js/prototypes/player.sm2-proxy.js'],
-						complete: function(){
-							var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
-							var pcon = $(pcore.getC());
-							var complete;
-
-
-							pcon
-								.addClass('sm2proxy')
-								.attr('scrolling', 'no');
-							
-							pcon.on('load', function() {
-								setTimeout(function() {
-									if (!complete){
-										pcon.addClass('long-appearance');
-									}
-								}, 7000);
-							});
-							
-							
-							pcore
-								.done(function(){
-									complete = true;
-									su.p.setCore(pcore);
-									setTimeout(function(){
-										pcon.addClass('sm2-complete');
-									}, 1000);
-									su.main_level.updateState('flash-internet', true);
-
-								})
-								.fail(function(){
-									complete = true;
-									pcon.addClass('hidden');
+								pcon
+									.addClass('sm2proxy')
+									.attr('scrolling', 'no');
+								
+								pcon.on('load', function() {
+									setTimeout(function() {
+										if (!complete){
+											pcon.addClass('long-appearance');
+										}
+									}, 7000);
 								});
-							$(function(){
-								$(document.body).append(pcon);
-								//$(su.ui.nav).after(pcon);
-							});
-							
-							//$(document.body).append(_this.c);
-						}
+								
+								
+								pcore
+									.done(function(){
+										complete = true;
+										su.p.setCore(pcore);
+										setTimeout(function(){
+											pcon.addClass('sm2-complete');
+										}, 1000);
+										su.main_level.updateState('flash-internet', true);
+
+									})
+									.fail(function(){
+										complete = true;
+										pcon.addClass('hidden');
+									});
+								$(function(){
+									$(document.body).append(pcon);
+									//$(su.ui.nav).after(pcon);
+								});
+								
+								//$(document.body).append(_this.c);
+							}
+						});
+
+						
+					});
+				});
+				break;
+			case "sm2-internal":
+				useLib(function(){
+					suReady(function(){
+						yepnope({
+							load:  [bpath + 'js/common-libs/soundmanager2.mod.min.js', bpath + 'js/prototypes/player.sm2-internal.js'],
+							complete: function(){
+								var pcore = new sm2internal(bpath + "swf/", sm2opts);
+								var pcon = $(pcore.getC());
+								var complete;
+
+
+								pcon
+									.addClass('sm2proxy')
+									.attr('scrolling', 'no');
+								
+								pcon.on('load', function() {
+									setTimeout(function() {
+										if (!complete){
+											pcon.addClass('long-appearance');
+										}
+									}, 7000);
+								});
+								
+								
+								pcore
+									.done(function(){
+										complete = true;
+										su.p.setCore(pcore);
+										setTimeout(function(){
+											pcon.addClass('sm2-complete');
+										}, 1000);
+										//
+										su.main_level.updateState('flash-internet', true);
+
+									})
+									.fail(function(){
+										complete = true;
+										//pcon.addClass('hidden');
+									});
+								$(function(){
+									$(document.body).append(pcon);
+									pcore.appended();
+									//$(su.ui.nav).after(pcon);
+								});
+								
+								//$(document.body).append(_this.c);
+							}
+						});
 					});
 
-					
 				});
+				
+
+		}
+	};
+	/*
+
+
+var plugins_list = toRealArray(navigator.plugins);
+
+
+var flash_plgs = $filter(toRealArray(navigator.plugins),"name", "Shockwave Flash");
+var vlc_plgs = $filter(plugins_list,"name", function(el){
+	return el.indexOf("VLC") != -1
+});
+var quick_time_plgs = $filter(plugins_list,"name", function(el){
+	return el.indexOf("QuickTime") != -1
+});
+*/
+
+	var detectors = [
+		function(h5a){
+			h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
+			if (h5a){
+				return
+				addFeature("html5mp3");
+			}
+		},
+		function(awmp){
+			awmp = document.createElement('object');
+			awmp.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95";
+			if ( 'EnableContextMenu' in awmp && awmp.attachEvent ){
+				addFeature("wmpactivex");
+			}
+		},
+		function(){
+			domReady(document, function(){
+				var
+					can_use,
+					aqt = document.createElement("embed");
+
+				aqt.style.position = "absolute";
+				aqt.style.top = "0px";
+				aqt.style.left = "0px";
+				aqt.width = 300;
+				aqt.height = 240;
+				aqt.id = aqt.name = "qt_test" + (new Date()).valueOf();
+
+				aqt.setAttribute("EnableJavaScript", true);
+				aqt.setAttribute("postdomevents", true);
+
+				aqt.setAttribute("src", "http://www.google-analytics.com/__utm.gif?" + (new Date()).valueOf())
+
+				addEvent(aqt, "qt_error ", function(){
+					console.log("error!");
+				});
+
+				addEvent(aqt, "qt_begin", function(){
+					console.log("begin!");
+				});
+				addEvent(aqt, "load", function(){
+					console.log("load!");
+				});
+
+				aqt.type= "video/quicktime";
+				
+
+				
+				window.dizi = aqt;
+				try {
+					document.body.appendChild(aqt);
+					if (aqt.GetPluginVersion && aqt.GetPluginVersion()){
+						addFeature("quicktime");
+					}
+					//document.body.removeChild(aqt);
+				} catch (e){}
+			});
+			
+		},
+		function(){
+			if (su.env.iframe_support){
+				addFeature("sm2-proxy");
+			}
+		},
+		function(){
+			if (false && !su.env.cross_domain_allowed){
+				addFeature("sm2-internal");
 			}
 		}
-		
+
+	];
+
+	while (!done && detectors.length){
+		detectors.shift()();
 	}
 })();
 

@@ -1,14 +1,35 @@
 (function() {
+
+	var using_mime_type = "video/quicktime";
+	//"application/x-quicktimeplayer"
+
 	var createAE = function(id, url, cb) {
 		var a//
 		//application/x-quicktimeplayer
 		//'<object id="sound_#{track}_#{id}" width="0" height="0" type="application/x-quicktimeplayer" data="#{url}"/>')
 	
 
+	/*
+
+	application/x-vlc-plugin
+
+VLC media player Web Plugin 2.0.0
+
+
+video/quicktime
+
+
+var a = document.createElement("embed");a.onload = function(){console.log("load")}; a.width = 0;a.height = 0; a.type="video/quicktime"; document.body.appendChild(a);
+
+var a = document.createElement("object");a.onload = function(){console.log("load")}; a.type="application/x-ms-wmp"; $(document.body).append(a);
+
+
+*/
+
 		var a = document.createElement("embed");
-		a.type = "application/x-quicktimeplayer";
-		a.width = 0;
-		a.height = 0;
+		a.type = using_mime_type;
+		a.style.position = "absolute";
+		a.style.top = "-1000px";
 		a.id = a.name = id + "_" + (new Date()).valueOf();
 
 		a.EnableJavaScript = true;
