@@ -303,7 +303,7 @@ var seesuPlayer;
 		for (var i = 0; i < quick_time_plgs.length; i++) {
 			Array.prototype.push.apply(all_qt_mimetypes, quick_time_plgs[i])
 			//quick_time_plgs[i]
-		};
+		}
 		//"application/x-quicktimeplayer" || "video/quicktime";
 		//var ;
 
@@ -366,7 +366,7 @@ var seesuPlayer;
 				
 
 				
-				window.dizi = aqt;
+				//window.dizi = aqt;
 				try {
 					document.body.appendChild(aqt);
 					if (aqt.GetPluginVersion && aqt.GetPluginVersion()){

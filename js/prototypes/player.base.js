@@ -7,6 +7,7 @@ provoda.Eventor.extendTo(playerBase, {
 		this._super();
 		this.song_files = {};
 		this.attached = {};
+		// this.
 	},
 	setCore: function(core){
 		if (!this.subscriber){
