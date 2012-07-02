@@ -282,20 +282,39 @@ var seesuPlayer;
 
 		}
 	};
-	/*
+	
 
 
-var plugins_list = toRealArray(navigator.plugins);
+	var plugins_list = toRealArray(navigator.plugins);
 
 
-var flash_plgs = $filter(toRealArray(navigator.plugins),"name", "Shockwave Flash");
-var vlc_plgs = $filter(plugins_list,"name", function(el){
-	return el.indexOf("VLC") != -1
-});
-var quick_time_plgs = $filter(plugins_list,"name", function(el){
-	return el.indexOf("QuickTime") != -1
-});
-*/
+	var flash_plgs = $filter(toRealArray(navigator.plugins),"name", "Shockwave Flash");
+	var vlc_plgs = $filter(plugins_list,"name", function(el){
+		return el.indexOf("VLC") != -1
+	});
+
+	var quick_time_plgs = $filter(plugins_list,"name", function(el){
+		return el.indexOf("QuickTime") != -1
+	});
+	var vlc_plugin = !!vlc_plgs.length;
+	var qt_plugin = !!quick_time_plgs.length;
+	if (qt_plugin){
+		var all_qt_mimetypes = [];
+		for (var i = 0; i < quick_time_plgs.length; i++) {
+			Array.prototype.push.apply(all_qt_mimetypes, quick_time_plgs[i])
+			//quick_time_plgs[i]
+		};
+		//"application/x-quicktimeplayer" || "video/quicktime";
+		//var ;
+
+		var best_mimetypes = [].concat(
+			$filter(all_qt_mimetypes, 'type', "application/x-quicktimeplayer"),
+			$filter(all_qt_mimetypes, 'type', "video/quicktime")
+		);
+		console.log(best_mimetypes);
+	}
+
+	
 
 	var detectors = [
 		function(h5a){
@@ -341,7 +360,9 @@ var quick_time_plgs = $filter(plugins_list,"name", function(el){
 					console.log("load!");
 				});
 
-				aqt.type= "video/quicktime";
+				//check preffered mimetype!!!
+
+				aqt.type= "application/x-quicktimeplayer" || "video/quicktime";
 				
 
 				
@@ -357,11 +378,13 @@ var quick_time_plgs = $filter(plugins_list,"name", function(el){
 			
 		},
 		function(){
+			return
 			if (su.env.iframe_support){
 				addFeature("sm2-proxy");
 			}
 		},
 		function(){
+			return
 			if (false && !su.env.cross_domain_allowed){
 				addFeature("sm2-internal");
 			}
