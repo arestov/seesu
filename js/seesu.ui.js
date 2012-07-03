@@ -623,7 +623,7 @@ seesu_ui.prototype = {
 			title: 'Top of ' + artist,
 			type: 'artist',
 			data: {artist: artist}
-		}, start_song).loading();
+		}, start_song);
 		
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		
