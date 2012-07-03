@@ -330,70 +330,80 @@ var seesuPlayer;
 			if ( 'EnableContextMenu' in awmp && awmp.attachEvent ){
 				addFeature("wmpactivex");
 			}
-		},
-		function(){
-			domReady(document, function(){
-				var
-					can_use,
-					aqt = document.createElement("embed");
-
-				aqt.style.position = "absolute";
-				aqt.style.top = "0px";
-				aqt.style.left = "0px";
-				aqt.width = 300;
-				aqt.height = 240;
-				aqt.id = aqt.name = "qt_test" + (new Date()).valueOf();
-
-				aqt.setAttribute("EnableJavaScript", true);
-				aqt.setAttribute("postdomevents", true);
-
-				aqt.setAttribute("src", "http://www.google-analytics.com/__utm.gif?" + (new Date()).valueOf())
-
-				addEvent(aqt, "qt_error ", function(){
-					console.log("error!");
-				});
-
-				addEvent(aqt, "qt_begin", function(){
-					console.log("begin!");
-				});
-				addEvent(aqt, "load", function(){
-					console.log("load!");
-				});
-
-				//check preffered mimetype!!!
-
-				aqt.type= "application/x-quicktimeplayer" || "video/quicktime";
-				
-
-				
-				//window.dizi = aqt;
-				try {
-					document.body.appendChild(aqt);
-					if (aqt.GetPluginVersion && aqt.GetPluginVersion()){
-						addFeature("quicktime");
-					}
-					//document.body.removeChild(aqt);
-				} catch (e){}
-			});
-			
-		},
-		function(){
-			return
-			if (su.env.iframe_support){
-				addFeature("sm2-proxy");
-			}
-		},
-		function(){
-			return
-			if (false && !su.env.cross_domain_allowed){
-				addFeature("sm2-internal");
-			}
 		}
+		
 
 	];
 
 	while (!done && detectors.length){
 		detectors.shift()();
+	}
+	if (!done){
+		domReady(document, function(){
+			detectors.push(
+				function(){
+					return;
+					var
+						can_use,
+						aqt = document.createElement("embed");
+
+					aqt.style.position = "absolute";
+					aqt.style.top = "0px";
+					aqt.style.left = "0px";
+					aqt.width = 300;
+					aqt.height = 240;
+					aqt.id = aqt.name = "qt_test" + (new Date()).valueOf();
+
+					aqt.setAttribute("EnableJavaScript", true);
+					aqt.setAttribute("postdomevents", true);
+
+					aqt.setAttribute("src", "http://www.google-analytics.com/__utm.gif?" + (new Date()).valueOf())
+
+					addEvent(aqt, "qt_error ", function(){
+						console.log("error!");
+					});
+
+					addEvent(aqt, "qt_begin", function(){
+						console.log("begin!");
+					});
+					addEvent(aqt, "load", function(){
+						console.log("load!");
+					});
+
+					//check preffered mimetype!!!
+
+					aqt.type= "application/x-quicktimeplayer" || "video/quicktime";
+					
+
+					
+					//window.dizi = aqt;
+					try {
+						document.body.appendChild(aqt);
+						if (aqt.GetPluginVersion && aqt.GetPluginVersion()){
+							addFeature("quicktime");
+						}
+						//document.body.removeChild(aqt);
+					} catch (e){}
+					
+					
+				},
+				function(){
+					if (su.env.iframe_support){
+						addFeature("sm2-proxy");
+					}
+				},
+				function(){
+					return
+					if (false && !su.env.cross_domain_allowed){
+						addFeature("sm2-internal");
+					}
+				}
+			);
+			while (!done && detectors.length){
+				detectors.shift()();
+			}
+		});
+		
 	}
 })();
 
