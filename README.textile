@@ -14,7 +14,7 @@ Copyright (c) 2009—2010
 Aleksandr Koss <kossnocorp@gmail.com>
 "Nikita Vasilyev":http://github.com/NV/
 Alexander Belov <porqz@mesquite.ru>
-(http://github.com/kossnocorp/seesu)
+(https://github.com/arestov/seesu)
 
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
