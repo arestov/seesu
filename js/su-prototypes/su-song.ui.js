@@ -417,18 +417,41 @@ suServView.extendTo(songUI, {
 						
 						if (images.length){
 							var fragment = document.createDocumentFragment();
-							images = images.slice(0, 10);
+
 							//var shuffled_images = [images.shift()];
 
 							//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
 
-							for (var i = 0; i < images.length; i++) {
-								var sizes = toRealArray(images[i].sizes.size);
+							var appendImage = function(el, first_image) {
+								var sizes = toRealArray(el.sizes.size);
 
+								var image_jnode = $('<img class="artist-image hidden" alt=""/>');
+								su.lfm_imgq.add(function(){
+									loadImage({
+										node: image_jnode[0],
+										url: (sizes[5] || sizes[0])["#text"],
+										timeout: 40000
+									}).done(function(){
+										if (first_image && _this.first_image){
+											_this.first_image.remove();
+										}
+										image_jnode.removeClass("hidden");
+									}).fail(function(){
+										image_jnode.remove();
+									})
+								});
 
-								fragment.appendChild($('<img class="artist-image" alt=""/>').attr('src', (sizes[5] || sizes[0])["#text"])[0]);
+								
+								fragment.appendChild(image_jnode[0]);
+								
+							};
+							if (images[0]){
+								appendImage(images[0], true);
 							}
-							_this.photo_c.empty().append(fragment);
+							$.each(images.slice(1, 10), function(i, el){
+								appendImage(el);
+							});
+							_this.photo_c.append(fragment);
 						}
 						
 					}
@@ -462,7 +485,8 @@ suServView.extendTo(songUI, {
 				image += '?somer=' + Math.random();
 			}
 			if (!this.photo_data.cool_photos){
-				this.photo_c.append($('<img class="artist-image"/>').attr({'src': image ,'alt': artist}));
+				this.first_image = $('<img class="artist-image"/>').attr({'src': image ,'alt': artist});
+				this.photo_c.append(this.first_image);
 			}
 			
 		} else{

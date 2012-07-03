@@ -151,6 +151,7 @@ var seesuApp = function(version) {
 	});
 
 
+
 	this.views = new views(this.map);
 
 
@@ -188,7 +189,7 @@ var seesuApp = function(version) {
 				}
 			}
 		});*/
-
+	this.lfm_imgq = new funcsQueue(700);
 
 };
 provoda.Eventor.extendTo(seesuApp, {
