@@ -320,7 +320,6 @@ var seesuPlayer;
 		function(h5a){
 			h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
 			if (h5a){
-				return
 				addFeature("html5mp3");
 			}
 		},
