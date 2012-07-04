@@ -28,10 +28,7 @@ a.song{
 	border:0  !important;
 	border-radius:4px;
 	}
-a.song:hover{
-	color:#fff;
-	background-color:#595959;
-}
+
 a.search-mp3{
 	background:url(../i/spinner.gif) no-repeat 100% 50%;
 	
@@ -53,6 +50,10 @@ a.track-node{
 	border:0 !important;
 	overflow:hidden;
 	}
+	a.track-node:hover{
+		color:#fff;
+		background-color:#595959;
+	}
 	.song-duration{
 		color:#666;
 		}
@@ -65,9 +66,7 @@ a.track-node{
 a.waiting-full-render.marked-for-play{
 	outline:1px dotted #888 ;
 }
-a.waiting-full-render:hover{
-	color:#6c1471;
-}
+
 a.download-mp3{
 	text-decoration:none;
 	padding:3px 5px 1px;
