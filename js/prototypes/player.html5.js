@@ -83,10 +83,10 @@
 			this.a.volume = vol/100;
 		},
 		setPosition: function(pos) {
-			pos = Math.min(this.a.buffered.end(0) - 2, pos);
-			if (pos > 0){
+			var target_pos = Math.min(this.a.buffered.end(0) - 2, pos);
+			if (pos == 0 || (target_pos > 0)){
 				try{
-					this.a.currentTime = pos;
+					this.a.currentTime = (pos == 0) ? pos: target_pos ;
 				} catch(e){}
 			}
 			
