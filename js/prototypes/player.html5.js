@@ -84,7 +84,7 @@
 		},
 		setPosition: function(pos) {
 			try{
-				this.a.currentTime = Math.min(this.a.buffered.end(0), pos);
+				this.a.currentTime = Math.min(this.a.buffered.end(0) - 2, pos);
 			} catch(e){}
 		}
 	};
