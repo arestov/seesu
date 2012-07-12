@@ -340,12 +340,26 @@ provoda.Model.extendTo(fileInTorrent, {
 				var _this = this;
 				getInternetConnectionStatus(function(has_connection) {
 					if (has_connection) {
-						_this.updateState("unavailable", true);
-						_this.parent.unavailable = true;
-						_this.trigger("unavailable")
+						var pp = _this.state("playing-progress");
+						if (!pp){
+							_this.failPlaying();
+						} else {
+							
+							setTimeout(function() {
+								if (this.state("playing-progress") == pp){
+									_this.failPlaying();
+								}
+							}, 10000);
+						}
+						
 					}
 				});
 			}
+		},
+		failPlaying: function() {
+			this.updateState("unavailable", true);
+			this.parent.unavailable = true;
+			this.trigger("unavailable");
 		},
 		setPlayer: function(player){
 			if (player){
