@@ -83,9 +83,13 @@
 			this.a.volume = vol/100;
 		},
 		setPosition: function(pos) {
-			try{
-				this.a.currentTime = Math.min(this.a.buffered.end(0) - 2, pos);
-			} catch(e){}
+			pos = Math.min(0, this.a.buffered.end(0) - 2, pos);
+			if (pos > 0){
+				try{
+					this.a.currentTime = 
+				} catch(e){}
+			}
+			
 		}
 	};
 
