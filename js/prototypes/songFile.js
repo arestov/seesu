@@ -346,7 +346,7 @@ provoda.Model.extendTo(fileInTorrent, {
 						} else {
 							
 							setTimeout(function() {
-								if (this.state("playing-progress") == pp){
+								if (_this.state("playing-progress") == pp){
 									_this.failPlaying();
 								}
 							}, 10000);
