@@ -633,6 +633,10 @@ seesu_ui.prototype = {
 				var request_info = {};
 				lfm.get('artist.getTopTracks', {'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
 					.done(function(r){
+						if (r.error){
+							pl.loadComplete(true);
+							return;
+						}
 						var tracks = r.toptracks.track || false;
 						var track_list = [];
 						if (tracks) {
@@ -714,7 +718,10 @@ seesu_ui.prototype = {
 
 		lfm.get('geo.getMetroUniqueTrackChart', {country: country, metro: metro, start: new Date - 60*60*24*7})
 			.done(function(r){
-					
+				if (r.error){
+					pl_r.loadComplete(true);
+					return;
+				}
 				if (r && r.toptracks && r.toptracks.track){
 					var metro_tracks = toRealArray(r.toptracks.track);
 					for (var i=0; i < Math.min(metro_tracks.length, 30); i++) {
