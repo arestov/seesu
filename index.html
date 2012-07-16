@@ -123,9 +123,16 @@
 								<a class="pc pc-add " href="javascript:void(0)" title="add to playlist"></a>
 							</span>
 							<span class="pc-place">
+								<a class="pc pc-remove " href="javascript:void(0)" title="remove from playlist"></a>
+							</span>
+							<span class="pc-place">
 								<a class="pc pc-rupor " href="javascript:void(0)" title="share song"></a>
 							</span>
+							<span class="pc-place">
+								<a class="pc pc-love " href="javascript:void(0)" title="love song"></a>
+							</span>
 						</div>
+
 						
 					</div>
 					
@@ -142,6 +149,30 @@
 					</div>
 					<div class="share-song hidden">
 						<input type="text" readonly="readonly" class="song-link"/>
+					</div>
+					<div class="love-song hidden">
+						<div class="lfm-granting">
+							<p>
+								<button class="lang localize-grant login-lastfm-button" type="button"  name="scrobbling" >grant</button>
+								<span class="lang localize-lastfm-scrobble-access">To scrobble to last.fm you must grant access to Seesu</span>
+								
+								
+							</p>
+							<div class="lfm-finish">
+								<div class="lang localize-enter-code">
+									Enter here code
+								</div>
+								<div>
+									
+									<input type="text" placeholder='Put your code here' class="lfm-code"/> 
+									<button class="use-lfm-code lang localize-use-code">Use code</button>
+									
+								</div>
+								
+								
+							</div>
+							
+						</div>
 					</div>
 					<div class="last-fm-scrobbling hidden">
 						<form class="scrobbling-switches" id="scrobbling-switches">
