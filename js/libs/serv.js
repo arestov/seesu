@@ -48,7 +48,7 @@ getDefaultView = function(d) {
 	return d.defaultView || d.parentWindow;
 };
 domReady = function(d, callback){
-	if (d.readyState == 'complete' || d.readyState == 'loaded'){
+	if (d.readyState == 'complete' || d.readyState == 'loaded' || d.readyState == "interactive"){
 		callback();
 	} else{
 		var done;
