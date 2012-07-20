@@ -380,10 +380,11 @@ var random_track_plable = function(track_list){
 	if (app_env.cross_domain_allowed){
 		su.mp3_search.add(new isohuntTorrentSearch());
 
-		false && yepnope({
+		yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
 			complete: function(){
-				su.mp3_search.add(new NigmaMusicSearch(new funcsQueue(1200)));
+				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(1200)))
+				su.mp3_search.add(window.nms);
 				
 				//$(document.body).append(_this.c);
 			}

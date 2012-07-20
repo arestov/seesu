@@ -1,13 +1,15 @@
 //http://ex.fm/api/v3/song/search/rameau
-
-var ExfmApi = function(queue, crossdomain, cache_ajax) {
-	this.queue = queue;
-	this.crossdomain = crossdomain;
-	this.cache_ajax = cache_ajax;
+var NigmaAPI = function(queue, cache_ajax) {
+	if (queue){
+		this.queue = queue;
+	}
+	if (cache_ajax){
+		this.cache_ajax = cache_ajax;
+	}
 };
-ExfmApi.prototype = {
-	constructor: ExfmApi,
-	cache_namespace: "nigma",
+NigmaAPI.prototype = {
+	constructor: NigmaAPI,
+	cache_namespace:"nigma",
 	get: function(method, params, options) {
 		var
 			_this				= this,
@@ -25,7 +27,7 @@ ExfmApi.prototype = {
 				}
 			};
 		deferred.promise( complex_response );
-		if (method) {
+		
 			options = options || {};
 			options.nocache = options.nocache || !this.cache_ajax;
 			options.cache_key = options.cache_key || hex_md5(method + stringifyParams(params));
@@ -68,18 +70,11 @@ ExfmApi.prototype = {
 					
 					if (!cache_used){
 						complex_response.xhr = aReq({
-							url: "http://ex.fm/api/v3/" + method,
+							url: "http://nigma.ru/" + (method || ""),
 							type: "GET",
-							dataType: _this.crossdomain ? "json": "jsonp",
+							dataType: "text",
 							data: params_full,
 							timeout: 20000,
-							afterChange: function(opts) {
-								if (opts.dataType == 'json'){
-									opts.headers = null;
-								}
-								
-							},
-							thisOriginAllowed: true
 						}).done(success).fail(function(xhr){
 							deferred.reject.apply(deferred, arguments);
 						});
@@ -103,27 +98,29 @@ ExfmApi.prototype = {
 
 			
 
-		}
+		
 		return complex_response;
 	}
 };
 
-var ExfmMusicSearch = function(exfm_api) {
-	this.exfm_api = exfm_api;
+
+var NigmaMusicSearch = function(api) {
+	this.api = api;
 	var _this = this;
 	this.search = function() {
 		return _this.findAudio.apply(_this, arguments);
 	}
 };
-ExfmMusicSearch.prototype = {
-	constructor: ExfmMusicSearch,
+
+NigmaMusicSearch.prototype = {
+	constructor: NigmaMusicSearch,
 	getById: function() {
-		return this.exfm_api.getSongById.apply(exfm_api, arguments);
+		return this.api.getSongById.apply(this.api, arguments);
 	},
-	name: "exfm",
-	description:'ex.fm',
+	name: "nigma",
+	description:'nigma.ru',
 	slave: false,
-	s: {name: 'exfm', key: 0, type:'mp3'},
+	s: {name: 'nigma', key: 0, type:'mp3'},
 	preferred: null,
 	makeSong: function(cursor, sc_key){
 
@@ -151,10 +148,11 @@ ExfmMusicSearch.prototype = {
 		opts.cache_key = opts.cache_key || query;
 
 		var params_u = {
-			results: 30
+			t: "music",
+			s: query
 		};
 
-		var async_ans = this.exfm_api.get('song/search/' + query, params_u, opts);
+		var async_ans = this.api.get(false, params_u, opts);
 
 		var olddone = async_ans.done,
 			result;
@@ -163,6 +161,42 @@ ExfmMusicSearch.prototype = {
 			olddone.call(this, function(r) {
 				if (!result){
 					var music_list = [];
+					if (r){
+						var doc =  getCleanDocumentBodyHTML(r);
+						var snippets = $(doc).find(".musicSnippet");
+						snippets.each(function(i, el) {
+							var title_node = $(el).parent().children(".snippet_title");
+							var full_title = title_node.text().split(/(?:\s)[\—\-\—](?:\s)/gi);
+							var artist = $.trim(full_title[0]);
+							if (msq.artist && msq.artist != artist){
+								if (msq.artist.toLowerCase() != artist.toLowerCase()){
+									return
+								}
+								
+							}
+							var track = $.trim(full_title[1]);
+
+
+							var mp3_links = [];
+
+							snippets.find("td.download a").each(function(i, el){
+								mp3_links.push($(el).attr("href"));
+								
+							});
+							console.log(full_title)
+							console.log(mp3_links);
+
+						});
+					}
+					
+						
+
+					
+
+					//snippet_title
+					//musicSnippet
+					
+					/*
 					if (r && r.songs.length){
 						for (var i=0; i < r.songs.length; i++) {
 							var ent = _this.makeSong(r.songs[i]);
@@ -180,6 +214,7 @@ ExfmMusicSearch.prototype = {
 						
 					}
 					result = music_list;
+					*/
 				}
 				cb(result, 'mp3');
 
@@ -188,5 +223,7 @@ ExfmMusicSearch.prototype = {
 		};
 		return async_ans;
 	}
+
 };
+
 

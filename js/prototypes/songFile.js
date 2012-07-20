@@ -349,7 +349,7 @@ provoda.Model.extendTo(fileInTorrent, {
 								if (_this.state("playing-progress") == pp){
 									_this.failPlaying();
 								}
-							}, 10000);
+							}, 3500);
 						}
 						
 					}
