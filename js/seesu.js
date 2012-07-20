@@ -110,7 +110,7 @@ var seesuApp = function(version) {
 	});
 
 //	this.ui = new seesu_ui(document);
-	this.soundcloud_queue = new funcsQueue(1000, 5000 , 7);
+
 	this.delayed_search = {
 		vk_api:{
 			queue:  new funcsQueue(1000, 8000 , 7)
@@ -372,16 +372,26 @@ var random_track_plable = function(track_list){
 
 
 (function(){
-	var sc_api = new scApi(getPreloadedNK('sc_key'), su.soundcloud_queue, app_env.cross_domain_allowed, cache_ajax);
+	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(1000, 5000 , 7), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch(sc_api));
-	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi()));
+	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(1200), app_env.cross_domain_allowed, cache_ajax)));
 
 	
 	if (app_env.cross_domain_allowed){
 		su.mp3_search.add(new isohuntTorrentSearch());
+
+		false && yepnope({
+			load:  [bpath + 'js/libs/nigma.search.js'],
+			complete: function(){
+				su.mp3_search.add(new NigmaMusicSearch(new funcsQueue(1200)));
+				
+				//$(document.body).append(_this.c);
+			}
+		});
 	} else {
 		su.mp3_search.add(new googleTorrentSearch(app_env.cross_domain_allowed));
 	}
+
 	
 	
 })();

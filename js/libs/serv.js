@@ -2,7 +2,7 @@ var
 	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
 	doesContain, shuffleArray, arrayExclude, getFields, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
-	cloneObj, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, createPrototype, Class, depdc,
+	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, createPrototype, Class, depdc,
 	debounce, throttle;
 
 function bN(num){
@@ -134,6 +134,14 @@ getDiffObj = function(one, two) {
 		}
 	}
 	return diff;
+};
+
+createObjClone = function(obj){
+	var clonner = function(){};
+	clonner.prototype = obj;
+	var nobj = new clonner();
+	nobj.constructor = clonner;
+	return nobj;
 };
 
 searchInArray = function (array, query, fields) {
