@@ -174,9 +174,9 @@ vkSearch.prototype = {
 		key: 'nice',
 		type: 'mp3'
 	},
-	makeVKSong: function(cursor){
+	makeVKSong: function(cursor, msq){
 		if (cursor && cursor.url){
-			return {
+			var entity = {
 				artist	: HTMLDecode(cursor.artist ? cursor.artist : cursor.audio.artist),
 				duration	: parseFloat(typeof cursor.duration == 'number' ? cursor.duration : cursor.audio.duration) * 1000,
 				link		: cursor.url ? cursor.url : cursor.audio.url,
@@ -187,21 +187,28 @@ vkSearch.prototype = {
 				type: 'mp3',
 				models: {},
 				getSongFileModel: getSongFileModel
-			}
+			};
+			entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+			return entity
 		}
 	},
 	makeMusicList: function(r, msq) {
 		var music_list = [];
 		for (var i=1, l = r.length; i < l; i++) {
-			var entity = this.makeVKSong(r[i]);
+			var entity = this.makeVKSong(r[i], msq);
 			
-			if (entity && !entity.link.match(/audio\/.mp3$/) && !has_music_copy( music_list, entity)){
-				music_list.push(entity);
+			if (entity){
+				if (ent.query_match_index == -1){
+					console.log(entity)
+				} else if (!entity.link.match(/audio\/.mp3$/) && !has_music_copy( music_list, entity)){
+					music_list.push(ent)
+				}
 			}
 		}
-		music_list.sort(function(g,f){
-			return by_best_matching_index(g,f, msq);
-		});
+		if (music_list.length){
+			sortMusicFilesArray(music_list);
+		}
+		
 		return music_list;
 	},
 	findAudio: function(msq, opts) {

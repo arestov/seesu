@@ -139,6 +139,12 @@ NigmaMusicSearch.prototype = {
 		
 		return entity
 	},
+	nigma_file: {
+		from: "nigma",
+		type: 'mp3',
+		raw: true,
+		getSongFileModel: getSongFileModel
+	},
 	findAudio: function(msq, opts) {
 		var
 			_this = this,
@@ -166,55 +172,60 @@ NigmaMusicSearch.prototype = {
 						var snippets = $(doc).find(".musicSnippet");
 						snippets.each(function(i, el) {
 							var title_node = $(el).parent().children(".snippet_title");
-							var full_title = title_node.text().split(/(?:\s)[\—\-\—](?:\s)/gi);
-							var artist = $.trim(full_title[0]);
-							if (msq.artist && msq.artist != artist){
-								if (msq.artist.toLowerCase() != artist.toLowerCase()){
-									return
-								}
-								
-							}
-							var track = $.trim(full_title[1]);
+							var full_title = $.trim(title_node.text());
 
+							var guess_info = guessArtist(full_title, msq.artist);
+							var file_original = createObjClone(_this.nigma_file);
+							file_original.artist = guess_info.artist;
+							file_original.track = guess_info.track;
+							if (!file_original.track){
+								return;
+							}
 
 							var mp3_links = [];
 
-							snippets.find("td.download a").each(function(i, el){
-								mp3_links.push($(el).attr("href"));
+							$(el).find(".musicPlayBtn td.download a").each(function(i, el){
+								var file = createObjClone(file_original);
+								file.models = {};
+
+								var node = $(el);
+
+								file.link = node.attr("href");
+
+								var dur_and_size = $.trim(node.parent().siblings(".info").text()).split(/\s?\|\s?/gi);
+								var dur;
+								if (dur_and_size.length == 3){
+									dur = dur_and_size[1]
+								} else if (dur_and_size.length == 2) {
+									dur = dur_and_size[0]
+								}
+								if (dur){
+									dur = dur.split(":");
+
+									file.duration = (parseFloat(dur[0]) * 60 + parseFloat(dur[1])) * 1000;
+								} else {
+									//throw "shii!"
+								}
+								file.query_match_index = new SongQueryMatchIndex(file, msq) * 1;
+
+								if (file.query_match_index != -1){
+									music_list.push(file);
+								}
+
+								
+								
+								//mp3_links.push();
 								
 							});
-							console.log(full_title)
-							console.log(mp3_links);
-
-						});
-					}
-					
 						
 
-					
-
-					//snippet_title
-					//musicSnippet
-					
-					/*
-					if (r && r.songs.length){
-						for (var i=0; i < r.songs.length; i++) {
-							var ent = _this.makeSong(r.songs[i]);
-							if (ent){
-								if (!has_music_copy(music_list,ent)){
-									music_list.push(ent)
-								}
-							}
-						};
-					}
-					if (music_list.length){
-						music_list.sort(function(g,f){
-							return by_best_matching_index(g,f, msq);
 						});
-						
+
+						if (music_list.length){
+							sortMusicFilesArray(music_list);
+						}
 					}
 					result = music_list;
-					*/
 				}
 				cb(result, 'mp3');
 

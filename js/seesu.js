@@ -162,6 +162,7 @@ var seesuApp = function(version) {
 	});
 	this.mp3_search = (new mp3Search({
 		vk: 5,
+		nigma: 1,
 		exfm: 0,
 		soundcloud: -5,
 		lastfm:-10,
@@ -383,7 +384,7 @@ var random_track_plable = function(track_list){
 		yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
 			complete: function(){
-				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(1200)))
+				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(2500, 5000, 4)))
 				su.mp3_search.add(window.nms);
 				
 				//$(document.body).append(_this.c);

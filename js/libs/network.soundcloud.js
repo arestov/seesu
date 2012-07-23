@@ -126,35 +126,28 @@ scMusicSearch.prototype = {
 	slave: false,
 	s: {name: 'soundcloud', key: 0, type:'mp3'},
 	preferred: null,
-	makeSong: function(cursor, sc_key){
-		var search_string = cursor.title || cursor.description;
+	makeSong: function(cursor, sc_key, msq){
+		var search_string = cursor.title;
 		if (search_string){
-			var replacer = hex_md5(Math.random()+'aaaaaaaaf');
-			var t =search_string.replace('-', replacer)
-			var _ttl = search_string.split(replacer,2);
-			var artist = (_ttl.length == 2) && _ttl[0];
-			var track_title = (_ttl.length == 2) && (_ttl[1] && _ttl[1].replace(/^\s*|\s*$/,'') || '') || _ttl[0];
-			
-			
-			if (!artist){
-				artist = cursor.user.permalink || '';
-			}
+
+			var guess_info = guessArtist(search_string, msq.artist);
 			
 			var entity = {
-				artist  	: HTMLDecode(artist),
-				track		: HTMLDecode(track_title),
+				artist  	: HTMLDecode(guess_info.artist || cursor.user.permalink || ""),
+				track		: HTMLDecode(guess_info.track || search_string),
 				duration	: cursor.duration,
 				link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + sc_key,
 				from		: 'soundcloud',
 				real_title	: cursor.title,
 				page_link	: cursor.permalink_url,
-				description : cursor.description || false,
+				description : HTMLDecode(cursor.description) || false,
 				downloadable: cursor.downloadable,
 				_id			: cursor.id,
 				type: 'mp3',
 				models: {},
 				getSongFileModel: getSongFileModel
 			};
+			entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
 			
 		}
 		return entity
@@ -188,18 +181,18 @@ scMusicSearch.prototype = {
 					var music_list = [];
 					if (r && r.length){
 						for (var i=0; i < r.length; i++) {
-							var ent = _this.makeSong(r[i], _this.sc_api.key);
+							var ent = _this.makeSong(r[i], _this.sc_api.key, msq);
 							if (ent){
-								if (!has_music_copy(music_list,ent)){
+								if (ent.query_match_index == -1){
+									console.log(ent)
+								} else if (!has_music_copy(music_list,ent)){
 									music_list.push(ent)
 								}
 							}
 						};
 					}
 					if (music_list.length){
-						music_list.sort(function(g,f){
-							return by_best_matching_index(g,f, msq);
-						});
+						sortMusicFilesArray(music_list);
 						
 					}
 					result = music_list;

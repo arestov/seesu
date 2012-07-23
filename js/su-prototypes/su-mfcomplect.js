@@ -751,7 +751,7 @@ provoda.Model.extendTo(mfCor, {
 		return !!this.raw() || !!this.sem && this.sem.isSearchCompleted();
 	},
 	isHaveBestTracks: function(){
-		return !!this.raw() || !!this.sem && this.sem.have_best;
+		return !!this.raw() || !!this.sem && this.sem.isHaveBestTracks();
 	},
 	song: function(){
 		if (this.raw()){

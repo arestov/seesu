@@ -273,7 +273,7 @@ a.desc{
 			display: block;
 		}
 				
-	.moplas-block .moplas-list .selected-mf{
+	.moplas-block .moplas-list li.selected-mf{
 		display: block;
 		overflow: hidden;
 		}

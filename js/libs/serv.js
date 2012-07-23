@@ -1,6 +1,6 @@
 var
 	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
-	doesContain, shuffleArray, arrayExclude, getFields, searchInArray, getStringPattern,
+	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
 	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, createPrototype, Class, depdc,
 	debounce, throttle;
@@ -142,6 +142,34 @@ createObjClone = function(obj){
 	var nobj = new clonner();
 	nobj.constructor = clonner;
 	return nobj;
+};
+matchWords = function(source, query){
+	var words = query.split(/[\s\.\—\-\—\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]+/gi);
+	var r = {};
+	if (words.length){
+		r.forward = true;
+		var any_order = true;
+		var source_sliced = source;
+		for (var i = 0; i < words.length; i++) {
+			var index = source_sliced.indexOf(words[i]);
+			if (index != -1){
+				source_sliced.slice(index + words[i].length);
+			} else {
+				r.forward = false;
+				break
+			}
+		};
+		if (!r.forward){
+			for (var i = 0; i < words.length; i++) {
+				if (source.indexOf(words[i]) == -1){
+					any_order = false;
+					break;
+				}
+			}
+		}
+		r.any = any_order
+	}
+	return r;
 };
 
 searchInArray = function (array, query, fields) {

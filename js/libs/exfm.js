@@ -125,7 +125,7 @@ ExfmMusicSearch.prototype = {
 	slave: false,
 	s: {name: 'exfm', key: 0, type:'mp3'},
 	preferred: null,
-	makeSong: function(cursor, sc_key){
+	makeSong: function(cursor, msq){
 
 		var entity = {
 			artist  	: HTMLDecode(cursor.artist),
@@ -138,7 +138,14 @@ ExfmMusicSearch.prototype = {
 			models: {},
 			getSongFileModel: getSongFileModel
 		};
-		
+		if (!entity.artist){
+			var guess_info = guessArtist(entity.track, msq.artist);
+			if (guess_info.artist){
+				entity.artist = guess_info.artist;
+				entity.track = guess_info.track;
+			}
+		}
+		entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
 		
 		return entity
 	},
@@ -165,18 +172,19 @@ ExfmMusicSearch.prototype = {
 					var music_list = [];
 					if (r && r.songs.length){
 						for (var i=0; i < r.songs.length; i++) {
-							var ent = _this.makeSong(r.songs[i]);
-							if (ent){
-								if (!has_music_copy(music_list,ent)){
-									music_list.push(ent)
-								}
+							var ent = _this.makeSong(r.songs[i], msq);
+							if (ent.query_match_index == -1){
+								console.log(ent)
+							} else {
+								music_list.push(ent)
 							}
+
+
+						
 						};
 					}
 					if (music_list.length){
-						music_list.sort(function(g,f){
-							return by_best_matching_index(g,f, msq);
-						});
+						sortMusicFilesArray(music_list);
 						
 					}
 					result = music_list;
