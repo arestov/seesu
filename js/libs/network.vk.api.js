@@ -198,10 +198,10 @@ vkSearch.prototype = {
 			var entity = this.makeVKSong(r[i], msq);
 			
 			if (entity){
-				if (ent.query_match_index == -1){
+				if (entity.query_match_index == -1){
 					console.log(entity)
 				} else if (!entity.link.match(/audio\/.mp3$/) && !has_music_copy( music_list, entity)){
-					music_list.push(ent)
+					music_list.push(entity)
 				}
 			}
 		}
