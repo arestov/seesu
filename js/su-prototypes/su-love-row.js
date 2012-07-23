@@ -9,8 +9,8 @@ BaseCRowUI.extendTo(LoveRowUI, {
 	init: function(md, parent_c, buttons_panel){
 		this.md = md;
 		this._super();
-		this.c = parent_c.children('.share-song');
-		this.button = buttons_panel.find('.pc-place .pc-rupor');
+		this.c = parent_c.children('.love-song');
+		this.button = buttons_panel.find('.pc-place .pc-love');
 		
 		
 
