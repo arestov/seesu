@@ -64,6 +64,7 @@ var jsLoadComplete,
 	"js/seesu.search.js",
 	"js/su-prototypes/su-playlists-row.js",
 	"js/su-prototypes/su-share-row.js",
+	"js/su-prototypes/su-love-row.js",
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
 
