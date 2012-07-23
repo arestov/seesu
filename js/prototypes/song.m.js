@@ -329,6 +329,9 @@ provoda.addPrototype("baseSong",{
 						delete _this.rtn_request;
 					}
 				});
+			if (this.state("mp-show")){
+				request.queued.setPrio('highest');
+			}
 
 			this.addRequest(request);
 		}

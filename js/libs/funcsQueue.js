@@ -23,8 +23,6 @@ var funcsQueue;
 
 
 	funcsQueue = function(small_delay, big_delay, big_delay_interval){
-		this.big_queue = [];
-
 		var _this = this;
 		
 		var selectNext = function(prev, args) {

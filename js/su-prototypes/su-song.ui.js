@@ -143,8 +143,16 @@ suServView.extendTo(songUI, {
 	},
 	activate: function(opts){
 		this.expand();
+		this.setImagesPrio();
 		this.updateSongListeners();
 		this.c.addClass('viewing-song');
+	},
+	setImagesPrio: function(){
+		if (this.img_load_stack){
+			for (var i = this.img_load_stack.length - 1; i >= 0; i--) {
+				this.img_load_stack[i].setPrio("highest");
+			}
+		}
 	},
 	parts_builder: {
 		context: function() {
@@ -402,13 +410,13 @@ suServView.extendTo(songUI, {
 			this.photo_data = {};
 
 			
-			lfm.get('artist.getInfo',{'artist': artist })
+			var info_request = lfm.get('artist.getInfo',{'artist': artist })
 				.done(function(r){
 					_this.show_artist_info(r, this.ainf, artist);
 
 				});
 
-			lfm.get('artist.getImages',{'artist': artist })
+			var images_request = lfm.get('artist.getImages',{'artist': artist })
 				.done(function(r){
 					var images = r.images.image;
 					if (images){
@@ -421,12 +429,13 @@ suServView.extendTo(songUI, {
 							//var shuffled_images = [images.shift()];
 
 							//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
+							_this.img_load_stack = [];
 
 							var appendImage = function(el, first_image) {
 								var sizes = toRealArray(el.sizes.size);
 
 								var image_jnode = $('<img class="artist-image hidden" alt=""/>');
-								su.lfm_imgq.add(function(){
+								_this.img_load_stack.push(su.lfm_imgq.add(function(){
 									loadImage({
 										node: image_jnode[0],
 										url: (sizes[5] || sizes[0])["#text"],
@@ -439,7 +448,8 @@ suServView.extendTo(songUI, {
 									}).fail(function(){
 										image_jnode.remove();
 									})
-								});
+								}));
+								
 
 								
 								fragment.appendChild(image_jnode[0]);
@@ -452,12 +462,21 @@ suServView.extendTo(songUI, {
 								appendImage(el);
 							});
 							_this.photo_c.append(fragment);
+							if (_this.state("mp-show")){
+								_this.setImagesPrio();
+							}
+							
+							
+
 						}
 						
 					}
 
 				});
-			
+			if (this.state("mp-show")){
+				info_request.queued.setPrio('highest');
+				images_request.queued.setPrio('highest');
+			}
 
 		}
 		
