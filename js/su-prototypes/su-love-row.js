@@ -2,8 +2,6 @@ var LoveRow;
 (function(){
 "use strict";
 
-return;
-
 
 
 var LoveRowUI = function(){};

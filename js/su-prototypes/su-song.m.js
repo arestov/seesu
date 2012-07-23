@@ -273,11 +273,12 @@ var song;
 
 			jsLoadComplete({
 				test: function() {
-					return typeof PlaylistAddRow != 'undefined' && typeof ShareRow != 'undefined';
+					return typeof PlaylistAddRow != 'undefined' && typeof ShareRow != 'undefined' && typeof LoveRow != 'undefined';
 				},
 				fn: function() {
 					_this.addPart(new PlaylistAddRow(_this, mo));
 					_this.addPart(new ShareRow(_this, mo));
+					_this.addPart(new LoveRow(_this, mo));
 				}
 			});
 			
