@@ -174,7 +174,7 @@ ExfmMusicSearch.prototype = {
 						for (var i=0; i < r.songs.length; i++) {
 							var ent = _this.makeSong(r.songs[i], msq);
 							if (ent.query_match_index == -1){
-								console.log(ent)
+								//console.log(ent)
 							} else {
 								music_list.push(ent)
 							}

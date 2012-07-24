@@ -184,7 +184,7 @@ scMusicSearch.prototype = {
 							var ent = _this.makeSong(r[i], _this.sc_api.key, msq);
 							if (ent){
 								if (ent.query_match_index == -1){
-									console.log(ent)
+									//console.log(ent)
 								} else if (!has_music_copy(music_list,ent)){
 									music_list.push(ent)
 								}

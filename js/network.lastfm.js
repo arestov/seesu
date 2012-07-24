@@ -58,8 +58,15 @@ lastfm_api.prototype.initers.push(function(){
 	this.music = this.stGet && this.stGet('lfm_scrobble_music') || [];
 });
 
-
-$.extend(lastfm_api.prototype, {
+var lfmAuth = function(lfm, opts) {
+	this.api = lfm;
+	this.opts = opts;
+	if (init){
+		this.init();
+	}
+};
+provoda.Eventor.extendTo(lfmAuth, {
+	//init: function() {};
 	login: function(r, callback){
 		this.sk = r.session.key;
 		this.user_name = r.session.name;
@@ -124,8 +131,105 @@ $.extend(lastfm_api.prototype, {
 						
 					});
 		}
-	}
+	},
+	lfmRequestAuth: function(){
+		
+		this.lfmAuthInit();
+		return 
+	},
+	lfmCreateAuthFrame: function(first_key){
+		if (this.lfm_auth_inited){
+			return false;
+		}
+		var i = this.auth_frame = document.createElement('iframe');	
+		addEvent(window, 'message', function(e){
+			if (e.data == 'lastfm_bridge_ready:'){
+				e.source.postMessage("add_keys:" + first_key, '*');
+			} else if(e.data.indexOf('lastfm_token:') === 0){
+				this.newtoken = e.data.replace('lastfm_token:','');
+				this.try_to_login(seesu.ui.lfm_logged);
+				console.log('got token!!!!')
+				console.log(e.data.replace('lastfm_token:',''));
+			}
+		});
+		i.className = 'serv-container';
+		i.src = 'http://seesu.me/lastfm/bridge.html';
+		document.body.appendChild(i);
+		this.lfm_auth_inited = true;
+	},
+	lfmSetAuthBridgeKey: function(key){
+		if (!this.lfm_auth_inited){
+			this.lfmCreateAuthFrame(key)
+		} else{
+			this.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
+		}
+	},
+	lfmAuthInit: function(){
+		
+		
+		//init_auth_data.bridgekey		
+		
+		var init_auth_data = this.getInitAuthData();
+		if (init_auth_data.bridgekey){
+			this.lfmSetAuthBridgeKey(init_auth_data.bridgekey)
+		} 
+		if (app_env.showWebPage){
+			
+			app_env.showWebPage(init_auth_data.link, function(url){
+				var path = url.split('/')[3];
+				if (!path || path == 'home'){
+					app_env.hideWebPages();
+					app_env.clearWebPageCookies();
+					return true
+				} else{
+					var sb = 'http://seesu.me/lastfm/callbacker.html';
+					if (url.indexOf(sb) == 0){
+						var params = get_url_parameters(url.replace(sb, ''));
+						if (params.token){
+							this.newtoken = params.token;
+							this.try_to_login(seesu.ui.lfm_logged);
+						}
+
+						app_env.hideWebPages();
+						app_env.clearWebPageCookies();
+						return true;
+					}
+				}
+				
+			}, function(e){
+				app_env.openURL(init_auth_data.link);
+				
+			}, 960, 750);
+		} else{
+			app_env.openURL(init_auth_data.link);
+		}
+	
+		
+		su.main_level.updateState('lfm-waiting-for-finish', true);
+		
+		
+		return
+		
+	},
+	lfm_logged : function(){
+		su.main_level.updateState('lfm-auth-done', true);
+		su.main_level.updateState('lfm-auth-req-loved', false);
+		su.main_level.updateState('lfm-auth-req-recomm', false);
+		$('.lfm-finish input[type=checkbox]',this.d).prop('checked', true);
+		var f = $('.scrobbling-switches', this.d);
+		var ii = f.find('input');
+		ii.removeAttr('disabled');
+	},
+	lfm_change_scrobbling:function(enable, context){
+		var lfm_ssw = $('.scrobbling-switches', context || this.d);
+		if (lfm_ssw) {
+			lfm_ssw.find('.enable-scrobbling').prop('checked', enable ? true : false);
+			lfm_ssw.find('.disable-scrobbling').prop('checked',enable ? false : true);
+		}
+	},
 });
+
+
 lastfm_api.prototype.initers.push(function(){
 	this.scrobbling = this.stGet && !!this.stGet('lfm_scrobbling_enabled');	
 	var _this = this;

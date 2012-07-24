@@ -199,7 +199,7 @@ vkSearch.prototype = {
 			
 			if (entity){
 				if (entity.query_match_index == -1){
-					console.log(entity)
+					//console.log(entity)
 				} else if (!entity.link.match(/audio\/.mp3$/) && !has_music_copy( music_list, entity)){
 					music_list.push(entity)
 				}

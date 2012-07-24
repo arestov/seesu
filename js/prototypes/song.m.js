@@ -330,7 +330,7 @@ provoda.addPrototype("baseSong",{
 					}
 				});
 			if (this.state("mp-show")){
-				request.queued.setPrio('highest');
+				request.queued && request.queued.setPrio('highest');
 			}
 
 			this.addRequest(request);
