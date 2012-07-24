@@ -474,8 +474,8 @@ suServView.extendTo(songUI, {
 
 				});
 			if (this.state("mp-show")){
-				info_request.queued.setPrio('highest');
-				images_request.queued.setPrio('highest');
+				info_request.queued && info_request.queued.setPrio('highest');
+				images_request.queued && images_request.queued.setPrio('highest');
 			}
 
 		}
