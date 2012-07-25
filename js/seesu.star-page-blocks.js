@@ -24,11 +24,11 @@ var viewBlocks = function(sui, d){
 	}
 
 	if (lfm.scrobbling) {
-		sui.lfm_change_scrobbling(true);
+		su.lfm_auth.lfm_change_scrobbling(true);
 	}
 	
 	if (lfm.sk) {
-		sui.lfm_logged();	
+		su.lfm_auth.lfm_logged();	
 	}
 	
 	

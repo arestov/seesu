@@ -58,14 +58,14 @@ lastfm_api.prototype.initers.push(function(){
 	this.music = this.stGet && this.stGet('lfm_scrobble_music') || [];
 });
 
-var lfmAuth = function(lfm, opts) {
+var LfmAuth = function(lfm, opts) {
 	this.api = lfm;
 	this.opts = opts;
-	if (init){
+	if (opts){
 		this.init();
 	}
 };
-provoda.Eventor.extendTo(lfmAuth, {
+provoda.Eventor.extendTo(LfmAuth, {
 	//init: function() {};
 	login: function(r, callback){
 		this.sk = r.session.key;
@@ -116,7 +116,7 @@ provoda.Eventor.extendTo(lfmAuth, {
 								  case('scrobbling'):
 									_this.stSet('lfm_scrobbling_enabled', 'true', true);
 									_this.scrobbling = true;
-									su.ui.lfm_change_scrobbling(true);
+									_this.lfm_change_scrobbling(true);
 									break;
 								  default:
 									//console.log('Do nothing');
@@ -221,7 +221,7 @@ provoda.Eventor.extendTo(lfmAuth, {
 		ii.removeAttr('disabled');
 	},
 	lfm_change_scrobbling:function(enable, context){
-		var lfm_ssw = $('.scrobbling-switches', context || this.d);
+		var lfm_ssw = $('.scrobbling-switches', context || su.ui.d);
 		if (lfm_ssw) {
 			lfm_ssw.find('.enable-scrobbling').prop('checked', enable ? true : false);
 			lfm_ssw.find('.disable-scrobbling').prop('checked',enable ? false : true);

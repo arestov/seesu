@@ -118,8 +118,8 @@ var test_pressed_node = function(e, opts){
 			else if (bN(class_list.indexOf('use-lfm-code'))){
 				var token = clicked_node.parent().find('.lfm-code').val();
 				if (token){
-					lfm.newtoken = token;
-					lfm.try_to_login(seesu.ui.lfm_logged);
+					su.lfm_auth.newtoken = token;
+					su.lfm_auth.try_to_login(seesu.ui.lfm_logged);
 				}
 				
 			} else if (bN(class_list.indexOf('use-vk-code'))){
@@ -132,12 +132,12 @@ var test_pressed_node = function(e, opts){
 			} else if (bN(class_list.indexOf('enable-scrobbling'))){
 				suStore('lfm_scrobbling_enabled', 'true', true);
 				lfm.scrobbling = true;
-				su.ui.lfm_change_scrobbling(true);
+				su.lfm_auth.lfm_change_scrobbling(true);
 				
 			} else if (bN(class_list.indexOf('disable-scrobbling'))){
 				suStore('lfm_scrobbling_enabled', '', true);
 				lfm.scrobbling = false;
-				su.ui.lfm_change_scrobbling();
+				su.lfm_auth.lfm_change_scrobbling();
 			}
 		}
 	

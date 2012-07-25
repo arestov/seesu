@@ -190,7 +190,14 @@ var seesuApp = function(version) {
 				}
 			}
 		});*/
+	this.lfm_auth = new LfmAuth(lfm, {deep_sanbdox: app_env.deep_sanbdox, callback_url: 'http://seesu.me/lastfm/callbacker.html'});
 	this.lfm_imgq = new funcsQueue(700);
+	this.checkStats();
+
+	suReady(function() {
+		_this.lfm_auth.try_to_login();
+	});
+
 
 };
 provoda.Eventor.extendTo(seesuApp, {
@@ -303,16 +310,6 @@ provoda.Eventor.extendTo(seesuApp, {
 });
 
 window.seesu = window.su = new seesuApp(3.1); 
-su.checkStats();
-
-/*
-if (su._url.q){
-	su.start_query = su._url.q;
-}
-*/
-suReady(function() {
-	lfm.try_to_login();
-});
 
 var vkReferer = '';
 

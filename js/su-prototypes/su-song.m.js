@@ -252,7 +252,7 @@ var song;
 
 			tp.find('.pc').data('mo', this.md.mo);
 			if (lfm.scrobbling) {
-				su.ui.lfm_change_scrobbling(true, tp.find('.track-buttons'));
+				su.lfm_auth.lfm_change_scrobbling(true, tp.find('.track-buttons'));
 			}
 			return tp;
 		}
