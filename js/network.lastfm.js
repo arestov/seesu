@@ -58,6 +58,16 @@ lastfm_api.prototype.initers.push(function(){
 	this.music = this.stGet && this.stGet('lfm_scrobble_music') || [];
 });
 
+var LfmLogin = function(auth) {};
+
+provoda.Model.extendTo(LfmLogin, {
+	init: function(auth) {
+		this.auth = auth;
+		this._super();
+	}
+});
+
+
 var LfmAuth = function(lfm, opts) {
 	this.api = lfm;
 	this.opts = opts;
