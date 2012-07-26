@@ -67,16 +67,21 @@ var LfmAuth = function(lfm, opts) {
 };
 provoda.Eventor.extendTo(LfmAuth, {
 	//init: function() {};
+	requestAuth: function(p){
+		
+		this.authInit(p || {});
+		return 
+	},
 	login: function(r, callback){
 		this.sk = r.session.key;
 		this.user_name = r.session.name;
-		this.stSet('lfm_user_name', this.user_name, true);
-		this.stSet('lfmsk', this.sk, true);
+		this.api.stSet('lfm_user_name', this.user_name, true);
+		this.api.stSet('lfmsk', this.sk, true);
 		if (callback){callback();}
 	},
 	getInitAuthData: function(){
 		var o = {};
-		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.apikey ;
+		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.api.apikey ;
 		var link_tag = 'http://seesu.me/lastfm/callbacker.html';
 		if (!su.env.deep_sanbdox){
 			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
@@ -86,9 +91,65 @@ provoda.Eventor.extendTo(LfmAuth, {
 		o.link += '&cb=' + encodeURIComponent(link_tag);
 		return o;
 	},
+	waitData: function() {
+		this.trigger('data-wait');
+	},
+	createAuthFrame: function(first_key){
+		if (this.lfm_auth_inited){
+			return false;
+		}
+		var _this = this;
+		var i = this.auth_frame = document.createElement('iframe');	
+		addEvent(window, 'message', function(e){
+			if (e.data == 'lastfm_bridge_ready:'){
+				e.source.postMessage("add_keys:" + first_key, '*');
+			} else if(e.data.indexOf('lastfm_token:') === 0){
+				_this.setToken(e.data.replace('lastfm_token:',''))
+				console.log('got token!!!!')
+				console.log(e.data.replace('lastfm_token:',''));
+			}
+		});
+		i.className = 'serv-container';
+		i.src = 'http://seesu.me/lastfm/bridge.html';
+		document.body.appendChild(i);
+		this.lfm_auth_inited = true;
+	},
+	setAuthBridgeKey: function(key){
+		if (!this.lfm_auth_inited){
+			this.createAuthFrame(key)
+		} else{
+			this.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
+		}
+	},
+	authInit: function(p){
+		
+		
+		//init_auth_data.bridgekey		
+		
+		var init_auth_data = this.getInitAuthData();
+		if (init_auth_data.bridgekey){
+			this.setAuthBridgeKey(init_auth_data.bridgekey)
+		} 
+		if (!p.not_open){
+			this.trigger('want-open-url', init_auth_data.link, init_auth_data);
+			this.waitData();
+		} 
+		
+	
+		
+		su.main_level.updateState('lfm-waiting-for-finish', true);
+		
+		
+		return
+		
+	},
+	setToken: function(token){
+		this.newtoken = token;
+		this.try_to_login(seesu.ui.lfm_logged);
+	},
 	get_lfm_token: function(open){
 		var _this = this;
-		this.get('auth.getToken', false, {nocache: true})
+		this.api.get('auth.getToken', false, {nocache: true})
 			.done(function(r){
 				_this.newtoken = r.token;
 				if (open){_this.open_lfm_to_login(r.token);}
@@ -101,7 +162,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 	try_to_login: function(callback){
 		var _this = this
 		if (_this.newtoken ){
-				_this.get('auth.getSession', {'token':_this.newtoken })
+				_this.api.get('auth.getSession', {'token':_this.newtoken })
 					.done(function(r){
 						if (!r.error) {
 							_this.login(r,callback);
@@ -114,8 +175,8 @@ provoda.Eventor.extendTo(LfmAuth, {
 									render_loved();
 									break;    
 								  case('scrobbling'):
-									_this.stSet('lfm_scrobbling_enabled', 'true', true);
-									_this.scrobbling = true;
+									_this.api.stSet('lfm_scrobbling_enabled', 'true', true);
+									_this.api.scrobbling = true;
 									_this.lfm_change_scrobbling(true);
 									break;
 								  default:
@@ -132,85 +193,10 @@ provoda.Eventor.extendTo(LfmAuth, {
 					});
 		}
 	},
-	lfmRequestAuth: function(){
-		
-		this.lfmAuthInit();
-		return 
-	},
-	lfmCreateAuthFrame: function(first_key){
-		if (this.lfm_auth_inited){
-			return false;
-		}
-		var i = this.auth_frame = document.createElement('iframe');	
-		addEvent(window, 'message', function(e){
-			if (e.data == 'lastfm_bridge_ready:'){
-				e.source.postMessage("add_keys:" + first_key, '*');
-			} else if(e.data.indexOf('lastfm_token:') === 0){
-				this.newtoken = e.data.replace('lastfm_token:','');
-				this.try_to_login(seesu.ui.lfm_logged);
-				console.log('got token!!!!')
-				console.log(e.data.replace('lastfm_token:',''));
-			}
-		});
-		i.className = 'serv-container';
-		i.src = 'http://seesu.me/lastfm/bridge.html';
-		document.body.appendChild(i);
-		this.lfm_auth_inited = true;
-	},
-	lfmSetAuthBridgeKey: function(key){
-		if (!this.lfm_auth_inited){
-			this.lfmCreateAuthFrame(key)
-		} else{
-			this.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
-		}
-	},
-	lfmAuthInit: function(){
-		
-		
-		//init_auth_data.bridgekey		
-		
-		var init_auth_data = this.getInitAuthData();
-		if (init_auth_data.bridgekey){
-			this.lfmSetAuthBridgeKey(init_auth_data.bridgekey)
-		} 
-		if (app_env.showWebPage){
-			
-			app_env.showWebPage(init_auth_data.link, function(url){
-				var path = url.split('/')[3];
-				if (!path || path == 'home'){
-					app_env.hideWebPages();
-					app_env.clearWebPageCookies();
-					return true
-				} else{
-					var sb = 'http://seesu.me/lastfm/callbacker.html';
-					if (url.indexOf(sb) == 0){
-						var params = get_url_parameters(url.replace(sb, ''));
-						if (params.token){
-							this.newtoken = params.token;
-							this.try_to_login(seesu.ui.lfm_logged);
-						}
-
-						app_env.hideWebPages();
-						app_env.clearWebPageCookies();
-						return true;
-					}
-				}
-				
-			}, function(e){
-				app_env.openURL(init_auth_data.link);
-				
-			}, 960, 750);
-		} else{
-			app_env.openURL(init_auth_data.link);
-		}
 	
-		
-		su.main_level.updateState('lfm-waiting-for-finish', true);
-		
-		
-		return
-		
-	},
+	
+	
+	
 	lfm_logged : function(){
 		su.main_level.updateState('lfm-auth-done', true);
 		su.main_level.updateState('lfm-auth-req-loved', false);
@@ -236,7 +222,7 @@ lastfm_api.prototype.initers.push(function(){
 	
 	if (!this.sk) {
 		suReady(function(){
-			_this.get_lfm_token();
+			su.lfm_auth.get_lfm_token();
 		});
 		
 	}

@@ -111,8 +111,8 @@ var test_pressed_node = function(e, opts){
 		}  
 		else if ((node.nodeName == 'INPUT' || node.nodeName == 'BUTTON')) {
 			if (bN(class_list.indexOf('login-lastfm-button')) ){
-				lfm.waiting_for = clicked_node.attr('name');
-				su.ui.lfmRequestAuth();
+				su.lfm_auth.waiting_for = clicked_node.attr('name');
+				su.lfm_auth.requestAuth();
 				
 			}
 			else if (bN(class_list.indexOf('use-lfm-code'))){

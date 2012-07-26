@@ -190,7 +190,43 @@ var seesuApp = function(version) {
 				}
 			}
 		});*/
-	this.lfm_auth = new LfmAuth(lfm, {deep_sanbdox: app_env.deep_sanbdox, callback_url: 'http://seesu.me/lastfm/callbacker.html'});
+	this.lfm_auth = new LfmAuth(lfm, {
+		deep_sanbdox: app_env.deep_sanbdox, 
+		callback_url: 'http://seesu.me/lastfm/callbacker.html'
+	});
+	this.lfm_auth.on('want-open-url', function(wurl){
+		if (app_env.showWebPage){
+			
+			app_env.showWebPage(wurl, function(url){
+				var path = url.split('/')[3];
+				if (!path || path == 'home'){
+					app_env.hideWebPages();
+					app_env.clearWebPageCookies();
+					return true
+				} else{
+					var sb = 'http://seesu.me/lastfm/callbacker.html';
+					if (url.indexOf(sb) == 0){
+						var params = get_url_parameters(url.replace(sb, ''));
+						if (params.token){
+							_this.lfm_auth.setToken(params.token);
+							
+						}
+
+						app_env.hideWebPages();
+						app_env.clearWebPageCookies();
+						return true;
+					}
+				}
+				
+			}, function(e){
+				app_env.openURL(wurl);
+				
+			}, 960, 750);
+		} else{
+			app_env.openURL(wurl);
+		}
+	});
+
 	this.lfm_imgq = new funcsQueue(700);
 	this.checkStats();
 
