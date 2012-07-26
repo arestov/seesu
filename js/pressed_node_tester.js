@@ -111,15 +111,34 @@ var test_pressed_node = function(e, opts){
 		}  
 		else if ((node.nodeName == 'INPUT' || node.nodeName == 'BUTTON')) {
 			if (bN(class_list.indexOf('login-lastfm-button')) ){
-				su.lfm_auth.waiting_for = clicked_node.attr('name');
+				var waiting_for = clicked_node.attr('name');
+				su.lfm_auth.once("session.input_click", function() {
+					if (waiting_for){
+						switch(waiting_for) {
+						  case('recommendations'):
+							render_recommendations();
+							break;
+						  case('loved'):
+							render_loved();
+							break;    
+						  case('scrobbling'):
+							lfm.stSet('lfm_scrobbling_enabled', 'true', true);
+							lfm.api.scrobbling = true;
+							su.lfm_auth.lfm_change_scrobbling(true);
+							break;
+						  default:
+							//console.log('Do nothing');
+						}
+						waiting_for = false;
+					}
+				}, true);
 				su.lfm_auth.requestAuth();
 				
 			}
 			else if (bN(class_list.indexOf('use-lfm-code'))){
 				var token = clicked_node.parent().find('.lfm-code').val();
 				if (token){
-					su.lfm_auth.newtoken = token;
-					su.lfm_auth.try_to_login(seesu.ui.lfm_logged);
+					su.lfm_auth.setToken(token);
 				}
 				
 			} else if (bN(class_list.indexOf('use-vk-code'))){

@@ -73,7 +73,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 		return 
 	},
 	login: function(r, callback){
-		this.sk = r.session.key;
+		this.api.sk = r.session.key;
 		this.user_name = r.session.name;
 		this.api.stSet('lfm_user_name', this.user_name, true);
 		this.api.stSet('lfmsk', this.sk, true);
@@ -145,7 +145,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 	},
 	setToken: function(token){
 		this.newtoken = token;
-		this.try_to_login(seesu.ui.lfm_logged);
+		this.try_to_login();
 	},
 	get_lfm_token: function(open){
 		var _this = this;
@@ -166,24 +166,10 @@ provoda.Eventor.extendTo(LfmAuth, {
 					.done(function(r){
 						if (!r.error) {
 							_this.login(r,callback);
-							if (_this.waiting_for){
-								switch(_this.waiting_for) {
-								  case('recommendations'):
-									render_recommendations();
-									break;
-								  case('loved'):
-									render_loved();
-									break;    
-								  case('scrobbling'):
-									_this.api.stSet('lfm_scrobbling_enabled', 'true', true);
-									_this.api.scrobbling = true;
-									_this.lfm_change_scrobbling(true);
-									break;
-								  default:
-									//console.log('Do nothing');
-								}
-								_this.waiting_for = false;
-							}
+							_this.lfm_logged();
+							_this.trigger("session");
+
+							
 							
 							console.log('lfm scrobble access granted')
 						} else{
@@ -201,8 +187,8 @@ provoda.Eventor.extendTo(LfmAuth, {
 		su.main_level.updateState('lfm-auth-done', true);
 		su.main_level.updateState('lfm-auth-req-loved', false);
 		su.main_level.updateState('lfm-auth-req-recomm', false);
-		$('.lfm-finish input[type=checkbox]',this.d).prop('checked', true);
-		var f = $('.scrobbling-switches', this.d);
+		$('.lfm-finish input[type=checkbox]',su.ui.d).prop('checked', true);
+		var f = $('.scrobbling-switches', su.ui.d);
 		var ii = f.find('input');
 		ii.removeAttr('disabled');
 	},
