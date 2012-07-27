@@ -90,6 +90,7 @@ window.connect_dom_to_som = function(d, cb){
 			track_c : track_c,
 			playlist_panel: ui_samples.children('.play-list-panel'),
 			vklc: vklc,
+			lfm_authsampl: ui_samples.children('.lfm-auth-module'),
 			vk_login: {
 				o: vklc,
 				oos: $(),

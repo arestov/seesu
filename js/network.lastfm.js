@@ -58,12 +58,59 @@ lastfm_api.prototype.initers.push(function(){
 	this.music = this.stGet && this.stGet('lfm_scrobble_music') || [];
 });
 
+var lfmLoginUI = function() {};
+
+provoda.View.extendTo(lfmLoginUI, {
+	init: function(md) {
+		this._super();
+		this.md = md;
+		this.createBase();
+		this.setModel(md);
+	},
+	state_change: {
+		wait: function(state) {
+			if (state){
+				this.c.addClass("waiting-lfm-auth");
+			} else {
+				this.c.removeClass("waiting-lfm-auth");
+			}
+		},
+		"request-description": function(state) {
+			this.c.find('.lfm-auth-request-desc').text(state || "");
+		}
+	},
+	createBase: function() {
+		this.c = su.ui.samples.lfm_authsampl.clone();
+		var _this = this;
+		this.c.find('.sign-in-to-vk').click(function(e){
+			_this.md.requestAuth();
+			e.preventDefault();
+		});
+
+	}
+});
+
+
 var LfmLogin = function(auth) {};
 
 provoda.Model.extendTo(LfmLogin, {
+	ui_constr: lfmLoginUI,
 	init: function(auth) {
 		this.auth = auth;
 		this._super();
+	},
+
+	waitData: function() {
+		this.updateState('wait', true);
+	},
+	notWaitData: function() {
+		this.updateState('wait', false);
+	},
+	setRequestDesc: function(text) {
+		this.updateState('request-description', text ? text + " " + localize("vk-auth-invitation") : "");
+	},
+	requestAuth: function(opts) {
+		this.auth.requestAuth(opts);
 	}
 });
 
@@ -172,21 +219,21 @@ provoda.Eventor.extendTo(LfmAuth, {
 	try_to_login: function(callback){
 		var _this = this
 		if (_this.newtoken ){
-				_this.api.get('auth.getSession', {'token':_this.newtoken })
-					.done(function(r){
-						if (!r.error) {
-							_this.login(r,callback);
-							_this.lfm_logged();
-							_this.trigger("session");
+			_this.api.get('auth.getSession', {'token':_this.newtoken })
+				.done(function(r){
+					if (!r.error) {
+						_this.login(r,callback);
+						_this.lfm_logged();
+						_this.trigger("session");
 
-							
-							
-							console.log('lfm scrobble access granted')
-						} else{
-							console.log('error while granting lfm scrobble access')
-						}
 						
-					});
+						
+						console.log('lfm scrobble access granted')
+					} else{
+						console.log('error while granting lfm scrobble access')
+					}
+					
+				});
 		}
 	},
 	
@@ -197,7 +244,6 @@ provoda.Eventor.extendTo(LfmAuth, {
 		su.main_level.updateState('lfm-auth-done', true);
 		su.main_level.updateState('lfm-auth-req-loved', false);
 		su.main_level.updateState('lfm-auth-req-recomm', false);
-		$('.lfm-finish input[type=checkbox]',su.ui.d).prop('checked', true);
 		var f = $('.scrobbling-switches', su.ui.d);
 		var ii = f.find('input');
 		ii.removeAttr('disabled');

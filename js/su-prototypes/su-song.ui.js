@@ -435,20 +435,28 @@ suServView.extendTo(songUI, {
 								var sizes = toRealArray(el.sizes.size);
 
 								var image_jnode = $('<img class="artist-image hidden" alt=""/>');
-								_this.img_load_stack.push(su.lfm_imgq.add(function(){
-									loadImage({
-										node: image_jnode[0],
-										url: (sizes[5] || sizes[0])["#text"],
-										timeout: 40000
-									}).done(function(){
-										if (first_image && _this.first_image){
-											_this.first_image.remove();
-										}
-										image_jnode.removeClass("hidden");
-									}).fail(function(){
-										image_jnode.remove();
-									})
-								}));
+								var req = loadImage({
+									node: image_jnode[0],
+									url: (sizes[5] || sizes[0])["#text"],
+									timeout: 40000,
+									queue: su.lfm_imgq,
+									cache_allowed: true
+								}).done(function(){
+									if (first_image && _this.first_image){
+										_this.first_image.remove();
+									}
+									image_jnode.removeClass("hidden");
+								}).fail(function(){
+									image_jnode.remove();
+								});
+								/*
+								su.lfm_imgq.add(function(){
+									
+								});*/
+								if (req.queued) {
+									_this.img_load_stack.push(req.queued);
+								}
+								
 								
 
 								

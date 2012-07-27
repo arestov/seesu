@@ -39,8 +39,11 @@ var getCleanDocumentBodyHTML = function(text) {
 		return wrap;
 	}
 };
-
+var loaded_images = {};
 var loadImage = function(opts) {
+	
+
+	//queue
 	var node = opts.node || new Image();
 	var deferred = $.Deferred();
 
@@ -56,6 +59,18 @@ var loadImage = function(opts) {
 		deferred.reject(node);
 		unbindEvents();
 	};
+
+	var async_obj = deferred.promise({
+		abort: function() {
+			delete node.src;
+			if (this.queued){
+				this.queued.abort();
+			}
+			unbindEvents();
+		}
+	});
+
+
 	addEvent(node, "load", loadCb);
 	addEvent(node, "error", errorCb);
 	if (opts.timeout){
@@ -64,17 +79,26 @@ var loadImage = function(opts) {
 			unbindEvents();
 		}, opts.timeout)
 	}
-	node.src = opts.url;
-	if (node.complete){
-		deferred.resolve(node);
-		unbindEvents();
-	}
-	return deferred.promise({
-		abort: function() {
-			delete node.src;
+
+	var completeLoad = function() {
+		node.src = opts.url;
+		if (node.complete){
+			if (opts.cache_allowed){
+				loaded_images[opts.url] = true;
+			}
+			deferred.resolve(node);
 			unbindEvents();
 		}
-	});
+	};
+	if (opts.queue && !loaded_images[opts.url]){
+		async_obj.queued = opts.queue.add(completeLoad);
+		
+	} else {
+		completeLoad();
+	}
+	
+	
+	return async_obj;
 };
 
 var getInternetConnectionStatus = function(cb) {
