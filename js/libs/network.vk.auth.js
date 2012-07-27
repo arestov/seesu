@@ -25,6 +25,24 @@ provoda.Eventor.extendTo(vkAuth, {
 	stopIndicating: function() {
 		
 	},
+	getInitAuthData: function(p){
+		var ru = p && p.ru;
+		
+		var o = {};
+		
+		var domain = ru ? "vkontakte.ru" :  'vk.com';
+		var base = this.open_api ? 'http://api.' + domain + "/oauth/authorize?" : "http://oauth." + domain + "/authorize?" ; 
+
+		o.link = base + 'client_id=' + this.app_id +'&scope=' + this.permissions.join(',')+ '&display=page&response_type=token';
+		var link_tag = this.urls.callbacker;
+		
+		if (!this.deep_sanbdox){
+			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
+			link_tag += '?key=' + o.bridgekey;
+		}
+		o.link += '&redirect_uri=' + encodeURIComponent(link_tag);
+		return o;
+	},
 	waitData: function() {
 		this.trigger('data-wait');
 	},
@@ -54,7 +72,6 @@ provoda.Eventor.extendTo(vkAuth, {
 		$(function() {
 			document.body.appendChild(i);
 		});
-		
 		this.auth_inited = true;
 	},
 	setAuthBridgeKey: function(key){
@@ -86,25 +103,8 @@ provoda.Eventor.extendTo(vkAuth, {
 			
 		}
 		return init_auth_data;
-	},
-	getInitAuthData: function(p){
-		var ru = p && p.ru;
-		
-		var o = {};
-		
-		var domain = ru ? "vkontakte.ru" :  'vk.com';
-		var base = this.open_api ? 'http://api.' + domain + "/oauth/authorize?" : "http://oauth." + domain + "/authorize?" ; 
-
-		o.link = base + 'client_id=' + this.app_id +'&scope=' + this.permissions.join(',')+ '&display=page&response_type=token';
-		var link_tag = this.urls.callbacker;
-		
-		if (!this.deep_sanbdox){
-			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
-			link_tag += '?key=' + o.bridgekey;
-		}
-		o.link += '&redirect_uri=' + encodeURIComponent(link_tag);
-		return o;
 	}
+	
 });
 
 var vkTokenAuth = function(app_id, vk_t) {
