@@ -92,6 +92,12 @@ provoda.addPrototype("baseSong",{
 		this.findNeighbours();
 		this.addMarksToNeighbours();
 	},
+	downloadLazy: debounce(function(){
+		var song = getTargetField(this.mf_cor.songs(), "0.t.0");
+		if (song){
+			downloadFile(song.link);
+		}
+	}, 200),
 	canPlay: function() {
 		return this.mf_cor.canPlay();
 	},

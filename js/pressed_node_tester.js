@@ -91,11 +91,19 @@ var test_pressed_node = function(e, opts){
 				}
 				seesu.track_event('Controls', 'stop', mouseup ? 'mouseup' : '');
 				 
+			}else if ( bN(class_list.indexOf('pc-add'))){
+				var mo = clicked_node.data('mo');
+				if (mo && su.download_hack){
+					mo.downloadLazy();
+				}
 			}
 			else if ( bN(class_list.indexOf('pc-prev'))){
 				var mo = clicked_node.data('mo');
 				if (mo){
+
 					mo.playPrev();
+					
+					
 				}
 				seesu.track_event('Controls', 'prev', mouseup ? 'mouseup' : '');
 				

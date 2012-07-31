@@ -18,6 +18,51 @@
 	
 })(window);
 
+
+
+var tempTool = {
+	loadPlaylist: function() {
+		$.ajax({
+			url: "playlist.txt",
+			type: "text"
+		}).done(function(r) {
+			//var playlist = [];
+			var title ="крым,карпаты 2012";
+
+			var playlist = su.preparePlaylist({
+				title: title,
+				type: "cplaylist",
+				data: {name: title} 
+			});
+
+			var arr = r.split(/\n/);
+			$.each(arr, function(i, el){
+				if (el){
+					var song = guessArtist(el);
+					if (!song.artist){
+						throw "Shhiii!"
+					}
+					playlist.add(song);
+				}
+			});
+			su.views.showStaticPlaylist(playlist);
+			dizi = playlist;
+		})
+	},
+	downloadFile: function(url) {
+		app_env.openURL(url);
+		return;
+		$(function() {
+			var iframe = document.createElement("iframe");
+			iframe.style.display = 'none';
+			iframe.src = url;
+			$(document.body).append(iframe);
+		});
+	}
+};
+
+var downloadFile = tempTool.downloadFile;
+
 var getTagRegExp = function(tag_name, simple, flags){
 	var reg_string = "<" + tag_name + "[\\s\\S]*?>";
 	if (!simple){

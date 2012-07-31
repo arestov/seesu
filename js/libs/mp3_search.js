@@ -406,17 +406,18 @@ var guessArtist = function(track_title, query_artist){
 	var r = {};
 	var remove_digits = !query_artist || !query_artist.search(/^\d+?\s?\S*?\s/) == 0;
 	if (remove_digits){
-		track_title = track_title.replace(/^\d+?\s?\S*?\s/,"");
+		track_title = track_title.replace(/^\d+?[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*?\s/,"");
+		//01 The Killers - Song - ::remove number
 	}
 
-	var title_parts = track_title.split(/\s?[\—\-\—]\s/);
-	var artist_name_match = track_title.match(/([\s\S]*?)\s?[\—\-\—]\s/);
+	var title_parts = track_title.split(/\s?[\—\-\—\–]\s/);
+	var artist_name_match = track_title.match(/([\s\S]*?)\s?[\—\-\—\–]\s/);
 	if (title_parts && title_parts.length > 1){
 		if (title_parts[0] == query_artist){
 			r.artist = artist_name_match[1];
 			r.track = track_title.replace(artist_name_match[0], '');
 		} else if (title_parts[title_parts.length-1] == query_artist){
-			var end_artist_name_match = track_title.match(/\s?[\—\-\—]\s([\s\S]*?)$/);
+			var end_artist_name_match = track_title.match(/\s?[\—\-\—\–]\s([\s\S]*?)$/);
 			if (end_artist_name_match && end_artist_name_match[1]){
 				r.artist = end_artist_name_match[1];
 				r.track = track_title.replace(end_artist_name_match[0], '');
@@ -566,7 +567,7 @@ SongQueryMatchIndex.prototype = {
 		}
 	},
 	hardTrim: function(string, min_length){
-		var trimmed = string.toLowerCase().replace(/^The /, '').replace(/[\.\—\-\—\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]/gi, '').replace(/\s+/gi, ' ');
+		var trimmed = string.toLowerCase().replace(/^The /, '').replace(/[\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]/gi, '').replace(/\s+/gi, ' ');
 		if (!min_length){
 			return trimmed;
 		} else {

@@ -144,7 +144,7 @@ createObjClone = function(obj){
 	return nobj;
 };
 matchWords = function(source, query){
-	var words = query.split(/[\s\.\—\-\—\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]+/gi);
+	var words = query.split(/[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]+/gi);
 	var r = {};
 	if (words.length){
 		r.forward = true;
