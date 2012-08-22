@@ -285,6 +285,10 @@ localizer = {
 		"original": "To scrobble to last.fm you must grant access to Seesu",
 		"ru": "Для скроблинга тебе нужно дать Сису доступ к своей учётной записи на last.fm"
 	},
+	"lfm-auth-invitation": {
+		"original": "you must grant access to Seesu from last.fm",
+		"ru": "тебе нужно дать Сису доступ к своей учётной записи на last.fm" 
+	},
 	"to-find-and-play":{
 		
 		"original": "To find and play",

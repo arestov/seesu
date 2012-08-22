@@ -238,8 +238,8 @@ provoda.Model.extendTo(fileInTorrent, {
 		},
 		onAppend: function(parent_view) {
 			var _this = this;
-			parent_view.parent_view.on('want-more-songs-state-change', function(nv, ov) {
-				if (nv || ov){
+			parent_view.parent_view.on('state-change.want-more-songs', function(e) {
+				if (e.value || e.old_value){
 					if (_this.state('selected')){
 						_this.fixBars();
 					}
@@ -295,7 +295,7 @@ provoda.Model.extendTo(fileInTorrent, {
 			playing: function(opts){
 				var dec = opts.position/opts.duration;
 				this.updateState('playing-progress', dec);
-				this.updateProp('loaded_duration', opts.duration);
+				this.updateState('loaded_duration', opts.duration);
 			},
 			buffering: function(state) {
 				this.updateState('buffering-progress', !!state);
@@ -409,7 +409,7 @@ provoda.Model.extendTo(fileInTorrent, {
 			}
 		},
 		setPositionByFactor: function(fac){
-			this.setPosition((this.loaded_duration || this.duration || 0) * fac, fac);
+			this.setPosition((this.state('loaded_duration') || this.duration || 0) * fac, fac);
 		},
 		setPosition: function(pos, fac){
 			if (this.player){

@@ -11,13 +11,8 @@
 	songsListBaseView.extendTo(songsListView, {
 		appendChildren: function() {
 			
-		}
-	});
-
-
-
-	songsListView.prototype.state_change = cloneObj({
-		"mp-show": function(opts) {
+		},
+		'stch-mp-show': function(opts) {
 			if (opts){
 				this.c.removeClass('hidden');
 				$(su.ui.els.slider).addClass('show-player-page');
@@ -26,14 +21,14 @@
 				this.c.addClass('hidden');
 			}
 		},
-		"mp-blured": function(state) {
+		'stch-mp-blured': function(state) {
 			if (state){
 				
 			} else {
 				
 			}
 		},
-		error: function(error){
+		'stch-error': function(error){
 			if (this.error_b && this.error_b.v !== error){
 				this.error_b.n.remove();
 			}
@@ -51,8 +46,11 @@
 				}
 			}
 		}
-	}, songsListView.prototype.state_change);
+	});
 
+
+
+	
 
 	songsList = function(params, first_song, findMp3, player){
 		//playlist_title, playlist_type, info

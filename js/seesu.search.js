@@ -59,11 +59,9 @@ provoda.extendFromTo('baseSuggest', provoda.Model, baseSuggest);
 baseSectionButtonUI = function(sugg){};
 provoda.extendFromTo('baseSectionButtonView', baseSuggestUI, baseSectionButtonUI);
 
-baseSectionButtonUI.prototype.state_change = cloneObj({
-	button_text: function(text){
-		this.text_span.text(text);
-	}
-}, baseSuggestUI.prototype.state_change);
+baseSectionButtonUI.prototype['stch-button_text'] =  function(text){
+	this.text_span.text(text);
+};
 
 baseSectionButton = function(){
 	this.init();
@@ -147,7 +145,7 @@ searchSection.extendTo(seesuSection, {
 					this.hide();
 					_this.loadMore();
 				})
-				.on('disabled-state-change', function(state){
+				.on('state-change.disabled', function(e){
 					_this.trigger('items-change');
 				});
 			this.setButtonText();

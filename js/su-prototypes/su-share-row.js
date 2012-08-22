@@ -113,81 +113,78 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.bindClick();
 		this.setModel(md);
 	},
-	state_change: cloneObj(cloneObj({},BaseCRowUI.prototype.state_change), {
-		"share-url": {
-			fn: function(state){
-				this.getPart("share_input").val(state || "")
-			//	dep_vp
-			},
-			dep_vp: ['share_input']
+	'stch-share-url': {
+		fn: function(state){
+			this.getPart("share_input").val(state || "")
+		//	dep_vp
 		},
-		"can-post-to-own-wall":{
-			fn: function(state){
-				this.requirePart("own-wall-button");
-			},
-			dep_vp: ['pch-ws-own']
+		dep_vp: ['share_input']
+	},
+	'stch-can-post-to-own-wall':{
+		fn: function(state){
+			this.requirePart("own-wall-button");
 		},
-		"own-photo": {
-			fn: function(state) {
-				if (state){
-					if (this.own_photo){
-						this.own_photo.remove();
-					}
-					this.own_photo = $("<img />").attr("src", state).prependTo(this.getPart("own-wall-button"));
+		dep_vp: ['pch-ws-own']
+	},
+	'stch-own-photo': {
+		fn: function(state) {
+			if (state){
+				if (this.own_photo){
+					this.own_photo.remove();
 				}
-			},
-			dep_vp: ["own-wall-button"]
+				this.own_photo = $("<img />").attr("src", state).prependTo(this.getPart("own-wall-button"));
+			}
 		},
-		"can-search-friends": {
-			fn: function(state){
-				if (state){
-					var _this = this;
-					var oldv;
-					var inputSearch = debounce(function(e) {
-						var newval = this.value;
-						if (oldv !== newval){
-							_this.md.search(newval);
-							oldv = newval;
-						}
-						
-					}, 100);
-
-					var input_place = $("<div class='list-search-input-place'></div>").insertBefore(this.getPart("pch-ws-input"));
-
-					this.input = $("<input type='text'/>").appendTo(input_place)
-						.bind('keyup change search mousemove', inputSearch);
-
-					$("<div class='friends-search-desc desc'></div>")
-						.text(localize("or-wall-of-f"))
-						.insertBefore(this.getPart("pch-ws-friends"));
-
-					this.getPart("pch-ws-friends").after();
-					var searcher_ui = this.md.searcher.getFreeView();
-					if (searcher_ui){
-						searcher_ui.getC().insertBefore(this.getPart("pch-ws-friends"));
-						searcher_ui.expand();
-						searcher_ui.appended();
+		dep_vp: ["own-wall-button"]
+	},
+	'stch-can-search-friends': {
+		fn: function(state){
+			if (state){
+				var _this = this;
+				var oldv;
+				var inputSearch = debounce(function(e) {
+					var newval = this.value;
+					if (oldv !== newval){
+						_this.md.search(newval);
+						oldv = newval;
 					}
+					
+				}, 100);
 
-					this.md.search("");
+				var input_place = $("<div class='list-search-input-place'></div>").insertBefore(this.getPart("pch-ws-input"));
+
+				this.input = $("<input type='text'/>").appendTo(input_place)
+					.bind('keyup change search mousemove', inputSearch);
+
+				$("<div class='friends-search-desc desc'></div>")
+					.text(localize("or-wall-of-f"))
+					.insertBefore(this.getPart("pch-ws-friends"));
+
+				this.getPart("pch-ws-friends").after();
+				var searcher_ui = this.md.searcher.getFreeView();
+				if (searcher_ui){
+					searcher_ui.getC().insertBefore(this.getPart("pch-ws-friends"));
+					searcher_ui.expand();
+					searcher_ui.appended();
 				}
-				
-			},
-			dep_vp: ['pch-ws-input', "pch-ws-friends"]
+
+				this.md.search("");
+			}
+			
 		},
-		"needs-vk-auth": {
-			fn: function(state) {
-				if (state){
-					var auth_ui = this.md.vk_auth.getFreeView();
-					if (auth_ui){
-						auth_ui.getC().insertBefore(this.getPart("pch-vk-auth"));
-					}
+		dep_vp: ['pch-ws-input', "pch-ws-friends"]
+	},
+	'stch-needs-vk-auth': {
+		fn: function(state) {
+			if (state){
+				var auth_ui = this.md.vk_auth.getFreeView();
+				if (auth_ui){
+					auth_ui.getC().insertBefore(this.getPart("pch-vk-auth"));
 				}
-			},
-			dep_vp: ["pch-vk-auth"]
-		}
-
-	}),
+			}
+		},
+		dep_vp: ["pch-vk-auth"]
+	},
 	parts_builder: {
 		share_input: function(){
 			var share_input = this.c.find('.song-link');

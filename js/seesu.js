@@ -94,7 +94,12 @@ var seesuApp = function(version) {
 			return suStore('notification');
 		}
 	);
-	this.main_level = new mainLevel();
+	this.lfm_auth = new LfmAuth(lfm, {
+		deep_sanbdox: app_env.deep_sanbdox, 
+		callback_url: 'http://seesu.me/lastfm/callbacker.html',
+		bridge_url: 'http://seesu.me/lastfm/bridge.html',
+	});
+	this.main_level = new mainLevel(this);
 	this.map = (new browseMap(this.main_level)).makeMainLevel();
 
 	if (app_env.chrome_extension){
@@ -190,10 +195,8 @@ var seesuApp = function(version) {
 				}
 			}
 		});*/
-	this.lfm_auth = new LfmAuth(lfm, {
-		deep_sanbdox: app_env.deep_sanbdox, 
-		callback_url: 'http://seesu.me/lastfm/callbacker.html'
-	});
+
+	
 	this.lfm_auth.on('want-open-url', function(wurl){
 		if (app_env.showWebPage){
 			

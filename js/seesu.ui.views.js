@@ -75,22 +75,20 @@ baseNavUI.extendTo(mainLevelNavUI, {
 	createBase: function(){
 		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>');
 	},
-	state_change: cloneObj(cloneObj({}, baseNavUI.prototype.state_change), {
-		'mp-stack': function(state) {
-			if (state && state == !!state){
-				this.c.addClass('stacked');
-			} else {
-				this.c.removeClass('stacked');
-			}
-		},
-		'mp-blured': function(state) {
-			if (state){
-				this.c.addClass("nav-button");
-			} else {
-				this.c.removeClass("nav-button");
-			}
+	'stch-mp-stack':function(state) {
+		if (state && state == !!state){
+			this.c.addClass('stacked');
+		} else {
+			this.c.removeClass('stacked');
 		}
-	})
+	}, 
+	'stch-mp-blured': function(state) {
+		if (state){
+			this.c.addClass("nav-button");
+		} else {
+			this.c.removeClass("nav-button");
+		}
+	}
 });
 
 
@@ -141,6 +139,14 @@ suServView.extendTo(mainLevelUI, {
 		this.c = $(this.d.body);
 
 		this.setModel(md);
+
+		var _this = this;
+
+		this.sui.els.start_screen.find("#lfm-recomm").click(function(){
+
+			_this.md.lfm_reccoms.switchView();
+			return false;
+		});
 	},
 	state_change: {
 		'mp-show': function(opts) {
@@ -264,6 +270,12 @@ suServView.extendTo(mainLevelUI, {
 			}
 		}
 	},
+	appendChildren: function(){
+		var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView();
+		if (lfm_reccoms_view){
+			su.ui.els.start_screen.find('.lfm-recomm').append(lfm_reccoms_view.getC());
+		}
+	},
 	toggleBodyClass: function(add, class_name){
 		if (add){
 			this.c.addClass(class_name);
@@ -288,7 +300,7 @@ suServView.extendTo(mainLevelUI, {
 });
 
 
-mainLevel = function() {
+mainLevel = function(su) {
 	this.init();
 	this.updateState('nav-title', 'Seesu start page');
 
@@ -300,10 +312,13 @@ mainLevel = function() {
 	}
 
 
+	this.lfm_reccoms = new LfmReccoms(su.lfm_auth);
+
 	var _this = this;
 
 	this.regDOMDocChanges(function() {
-		_this.getFreeView();
+		var this_view = _this.getFreeView().appended();
+
 		if (su.ui.nav.daddy){
 			var child_ui = _this.getFreeView('nav');
 			if (child_ui){
@@ -311,6 +326,8 @@ mainLevel = function() {
 				child_ui.appended();
 			} 
 		}
+
+		
 	});
 	this.closed_messages = suStore('closed-messages') || {};
 };

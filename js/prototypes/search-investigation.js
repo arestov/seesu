@@ -64,7 +64,7 @@
 		},
 		prop_change: {
 			enter_item: function(item){
-				this.scrollTo(item);
+				
 			}
 		},
 		setViewport: function(vp){
@@ -224,7 +224,8 @@
 					delete this.enter_item;
 				}
 				if (item){
-					this.updateProp('enter_item', item);
+					this.enter_item = item;
+					//this.scrollTo(item);
 					this.enter_item.setActive();
 				}
 			}
@@ -316,30 +317,28 @@
 			}
 			this.setModel(md);
 		},
-		state_change: {
-			active: function(state){
-				if (this.a){
-					if (state){
-						this.a.addClass('active');
-					} else {
-						this.a.removeClass('active');
-					}
-				}
-				
-			},
-			bordered: function(state){
+		'stch-active': function(state){
+			if (this.a){
 				if (state){
-					this.c.addClass('searched-bordered');
+					this.a.addClass('active');
 				} else {
-					this.c.removeClass('searched-bordered');
+					this.a.removeClass('active');
 				}
-			},
-			disabled: function(state){
-				if (!state){
-					this.c.removeClass('hidden');
-				} else {
-					this.c.addClass('hidden');
-				}
+			}
+			
+		},
+		'stch-bordered': function(state){
+			if (state){
+				this.c.addClass('searched-bordered');
+			} else {
+				this.c.removeClass('searched-bordered');
+			}
+		},
+		'stch-disabled': function(state){
+			if (!state){
+				this.c.removeClass('hidden');
+			} else {
+				this.c.addClass('hidden');
 			}
 		},
 		createItem: function() {

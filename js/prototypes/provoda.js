@@ -189,26 +189,22 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	state: function(name){
 		return this.states[name];
 	},
-	replaceState: function(is_prop, name, value) {
+	replaceState: function(name, value) {
 		if (name){
-			var obj_to_change	= is_prop ? this : this.states,
+			var obj_to_change	= this.states,
 				old_value		= obj_to_change && obj_to_change[name],
-				method			= is_prop && this.prop_change[name];
+				method;
 
-			if (!method && this.state_change[name]){
-				var stateChanger = this.state_change[name];
-
+			var stateChanger = this['stch-' + name] || (this.state_change && this.state_change[name]);
+			if (stateChanger){
 				if (typeof stateChanger == 'function'){
 					method = stateChanger;
 				} else if (this.checkDepVP){
-
-					var has_all_dependings = this.checkDepVP(stateChanger);
-					if (has_all_dependings){
+					if (this.checkDepVP(stateChanger)){
 						method = stateChanger.fn;
 					}
 					
 				}
-				
 			}
 			
 			if (old_value != value){
@@ -292,7 +288,7 @@ updateState: function(state, value, skip_view_change){
 	checkComplexStates: function(state) {
 		var co_sts = this.getTargetComplexStates(state);
 		for (var i = 0; i < co_sts.length; i++) {
-			this._updateProxy(false, co_sts[i].name, co_sts[i].value);
+			this._updateProxy(co_sts[i].name, co_sts[i].value);
 		};
 
 	},
@@ -467,40 +463,31 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		(this.views_index[name] = this.views_index[name] || []).push(v);
 		return this;
 	},
-	_updateProxy: function(is_prop, name, value){
+	_updateProxy: function(name, value){
 		value = value || false;
-		var old_value = this.replaceState(is_prop, name, value);
+		var old_value = this.replaceState(name, value);
 		if (old_value){
 			this.removeDeadViews();
 			for (var i = 0; i < this.views.length; i++) {
-				this.views[i].change(is_prop, name, value);
+				this.views[i].change(name, value);
 			}
-			this.trigger(name + '-state-change', value, old_value[0]);
-			if (!is_prop){
-				this.checkComplexStates(name);
-				this.callStateWatchers(name, value, old_value[0]);
-				this.iterateCSWatchers(name);
-			}
+			this.trigger('state-change.' + name, {type: name, value: value, old_value: old_value[0]});
+		
+			this.checkComplexStates(name);
+			this.callStateWatchers(name, value, old_value[0]);
+			this.iterateCSWatchers(name);
+		
 		}
 		return this;
-	},
-	updateProp: function(name, value){
-		return this._updateProxy(true, name, value);
 	},
 	toggleState: function(name){
 		this.updateState(name, !this.state(name));
 	},
 	updateState: function(name, value){
 		if (this.complex_states && this.complex_states[name]){
-			throw new Error("you can't change complex state");
+			throw new Error("you can't change complex state in this way");
 		}
-		return this._updateProxy(false, name, value);
-	},
-	prop_change: {
-		
-	},
-	state_change: {
-		
+		return this._updateProxy(name, value);
 	}
 });
 
@@ -631,7 +618,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var _this = this;
 
 		for (var name in states){
-			this.changeState(false, name, states[name], false, true);
+			this.changeState(name, states[name], false, true);
 		}
 		for (var i = 0; i < this.complex_states_watchers.length; i++) {
 			var watcher = this.complex_states_watchers[i];
@@ -653,15 +640,34 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	getPart: function(name) {
 		return this.view_parts[name];
 	},
+	getStateChangeHandlers: function(){
+		var r = {};
+		for (var i in this) {
+			if (i.indexOf('stch-') == 0){
+				r[i.replace('stch-','')] = this[i];
+			}
+		}
+		if (this.state_change){
+			for (var i in this.state_change) {
+				if (!r[i]){
+					r[i] = this.state_change[i];
+				}
+				
+			}	
+		}
+		
+		return r;
+	},
 	requirePart: function(name) {
 		if (this.view_parts[name]){
 			return this.view_parts[name];
 		} else {
 			this.view_parts[name] = this.parts_builder[name].call(this);
-			for (var i in this.state_change){
-				if (i in this.states && typeof this.state_change[i] != 'function'){
-					if (this.checkDepVP(this.state_change[i], name)){
-						this.state_change[i].fn.call(this, this.states[i]);
+			var stch_hands = this.getStateChangeHandlers();
+			for (var i in stch_hands){
+				if (i in this.states && typeof stch_hands[i] != 'function'){
+					if (this.checkDepVP(stch_hands[i], name)){
+						stch_hands[i].fn.call(this, this.states[i]);
 					}
 				}
 			}
@@ -684,34 +690,28 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return has_all_dependings;
 	},
-	changeState: function(is_prop, name, value, allow_complex_watchers, skip_animation_frame) {
+	changeState: function(name, value, allow_complex_watchers, skip_animation_frame) {
 		value = value || false;
 
 
-		var old_value = this.replaceState(is_prop, name, value);
+		var old_value = this.replaceState(name, value);
 		if (old_value){
-			this.trigger(name + '-state-change', value, old_value[0]);
-			if (!is_prop){
-				this.callStateWatchers(name, value, old_value[0]);
-				if (allow_complex_watchers){
-					this.iterateCSWatchers(name);
-				}
+			this.trigger('state-change.' + name, {type: name, value: value, old_value: old_value[0]});
+			
+			this.callStateWatchers(name, value, old_value[0]);
+			if (allow_complex_watchers){
+				this.iterateCSWatchers(name);
 			}
+		
 		}
 
 		
 		return this;
 	},
-	change: function(is_prop, name, value){
-		this.changeState(is_prop, name, value, true);
+	change: function(name, value){
+		this.changeState(name, value, true);
 	},
 	parts_builder: {
-		
-	},
-	prop_change: {
-		
-	},
-	state_change: {
 		
 	}
 });

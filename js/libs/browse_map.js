@@ -494,10 +494,10 @@ provoda.Model.extendTo(mapLevelModel, {
 		return this.state('nav-title');
 	},
 	onTitleChange: function(cb) {
-		return this.on('nav-title-state-change', cb);
+		return this.on('state-change.nav-title', cb);
 	},
 	offTitleChange: function(cb) {
-		return this.off('nav-title-state-change', cb);
+		return this.off('state-change.nav-title', cb);
 	},
 	getURL: function() {
 		return '';	

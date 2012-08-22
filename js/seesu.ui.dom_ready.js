@@ -91,6 +91,7 @@ window.connect_dom_to_som = function(d, cb){
 			playlist_panel: ui_samples.children('.play-list-panel'),
 			vklc: vklc,
 			lfm_authsampl: ui_samples.children('.lfm-auth-module'),
+			lfm_input: ui_samples.children('.lfm-manual-user'),
 			vk_login: {
 				o: vklc,
 				oos: $(),

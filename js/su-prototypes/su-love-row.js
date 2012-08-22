@@ -18,17 +18,13 @@ BaseCRowUI.extendTo(LoveRowUI, {
 		this.bindClick();
 		this.setModel(md);
 	},
-	state_change: cloneObj(cloneObj({},BaseCRowUI.prototype.state_change), {
-		"share-url": {
-			fn: function(state){
-				this.getPart("share_input").val(state || "")
-			//	dep_vp
-			},
-			dep_vp: ['share_input']
-		}
-		
-
-	}),
+	'stch-share-url': {
+		fn: function(state){
+			this.getPart("share_input").val(state || "")
+		//	dep_vp
+		},
+		dep_vp: ['share_input']
+	},
 	parts_builder: {
 		share_input: function(){
 			var share_input = this.c.find('.song-link');

@@ -58,35 +58,48 @@ lastfm_api.prototype.initers.push(function(){
 	this.music = this.stGet && this.stGet('lfm_scrobble_music') || [];
 });
 
-var lfmLoginUI = function() {};
+var LfmLoginUI = function() {};
 
-provoda.View.extendTo(lfmLoginUI, {
+provoda.View.extendTo(LfmLoginUI, {
 	init: function(md) {
 		this._super();
 		this.md = md;
 		this.createBase();
 		this.setModel(md);
 	},
-	state_change: {
-		wait: function(state) {
-			if (state){
-				this.c.addClass("waiting-lfm-auth");
-			} else {
-				this.c.removeClass("waiting-lfm-auth");
-			}
-		},
-		"request-description": function(state) {
-			this.c.find('.lfm-auth-request-desc').text(state || "");
+	'stch-active': function(state){
+		if (state){
+			this.c.removeClass("hidden");
+		} else {
+			this.c.addClass("hidden");
 		}
+	},
+	'stch-deep-sanbdox': function(state){
+		if (state){
+			this.c.addClass("deep-sandbox");
+		} else {
+			this.c.removeClass("deep-sandbox");
+		}
+	},
+	'stch-wait': function(state) {
+		if (state){
+			this.c.addClass("waiting-lfm-auth");
+		} else {
+			this.c.removeClass("waiting-lfm-auth");
+		}
+	},
+	'stch-request-description': function(state) {
+		this.c.find('.lfm-auth-request-desc').text(state || "");
 	},
 	createBase: function() {
 		this.c = su.ui.samples.lfm_authsampl.clone();
+		this.auth_block = this.c.children(".auth-block");
 		var _this = this;
-		this.c.find('.sign-in-to-vk').click(function(e){
+		this.auth_block.find('.login-lastfm-button').click(function(e){
 			_this.md.requestAuth();
 			e.preventDefault();
 		});
-
+		//bind manual code input
 	}
 });
 
@@ -94,10 +107,22 @@ provoda.View.extendTo(lfmLoginUI, {
 var LfmLogin = function(auth) {};
 
 provoda.Model.extendTo(LfmLogin, {
-	ui_constr: lfmLoginUI,
+	ui_constr: LfmLoginUI,
 	init: function(auth) {
-		this.auth = auth;
 		this._super();
+
+		var _this = this;
+		this.auth = auth;
+		if (auth.opts.deep_sanbdox){
+			_this.updateState('deep-sanbdox', true);
+		}
+		if (this.auth.has_session){
+			this.updateState('has-session', true);
+		}
+		this.auth.once('session', function(){
+			_this.updateState('has-session', true);
+		});
+		
 	},
 
 	waitData: function() {
@@ -107,23 +132,50 @@ provoda.Model.extendTo(LfmLogin, {
 		this.updateState('wait', false);
 	},
 	setRequestDesc: function(text) {
-		this.updateState('request-description', text ? text + " " + localize("vk-auth-invitation") : "");
+		this.updateState('request-description', text ? text + " " + localize("lfm-auth-invitation") : "");
 	},
 	requestAuth: function(opts) {
 		this.auth.requestAuth(opts);
+	},
+	switchView: function(){
+		this.updateState('active', !this.state('active'));
 	}
 });
 
+var LfmReccomsView = function(){};
+LfmLoginUI.extendTo(LfmReccomsView, {
+	createBase: function(){
+		this._super();
+		su.ui.samples.lfm_input.clone().appendTo(this.c);
+	}
+});
+
+var LfmReccoms = function(auth){
+	this.init(auth);
+};
+LfmLogin.extendTo(LfmReccoms, {
+	init: function(auth){
+		this._super(auth);
+	},
+	ui_constr: LfmReccomsView
+});
+
+var LfmLoved = function(){}; 
 
 var LfmAuth = function(lfm, opts) {
 	this.api = lfm;
-	this.opts = opts;
-	if (opts){
-		this.init();
+	this.opts = opts || {};
+	if (this.opts){
+		this.init(this.opts);
 	}
 };
 provoda.Eventor.extendTo(LfmAuth, {
-	//init: function() {};
+	init: function(opts) {
+		this._super();
+		if (this.api.sk){
+			this.has_session = true;
+		}
+	},
 	requestAuth: function(p){
 		
 		this.authInit(p || {});
@@ -139,8 +191,8 @@ provoda.Eventor.extendTo(LfmAuth, {
 	getInitAuthData: function(){
 		var o = {};
 		o.link = 'http://www.last.fm/api/auth/?api_key=' + this.api.apikey ;
-		var link_tag = 'http://seesu.me/lastfm/callbacker.html';
-		if (!su.env.deep_sanbdox){
+		var link_tag = this.opts.callback_url;
+		if (!this.opts.deep_sanbdox){
 			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
 			link_tag += '?key=' + o.bridgekey;
 		}
@@ -167,7 +219,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 			}
 		});
 		i.className = 'serv-container';
-		i.src = 'http://seesu.me/lastfm/bridge.html';
+		i.src = this.opts.bridge_url;
 		document.body.appendChild(i);
 		this.lfm_auth_inited = true;
 	},
@@ -225,6 +277,8 @@ provoda.Eventor.extendTo(LfmAuth, {
 						_this.login(r,callback);
 						_this.lfm_logged();
 						_this.trigger("session");
+						_this.has_session = true;
+
 
 						
 						

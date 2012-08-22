@@ -437,9 +437,9 @@ var mfCor = function(mo, omo) {
 		}
 	});
 
-	this.mfPlayStateChange = function(state) {
+	this.mfPlayStateChange = function(e) {
 		if (_this.state('controll_current_mopla') == this){
-			_this.updateState('play', state);
+			_this.updateState('play', e.value);
 		}
 	};
 	this.mfError = function() {
@@ -614,7 +614,7 @@ provoda.Model.extendTo(mfCor, {
 	},
 	listenMopla: function(mopla) {
 		if (this.subscribed_to.indexOf(mopla) == -1){
-			mopla.on('play-state-change', this.mfPlayStateChange);
+			mopla.on('state-change.play', this.mfPlayStateChange);
 			mopla.on('unavailable', this.mfError);
 
 			this.subscribed_to.push(mopla);

@@ -288,7 +288,6 @@ provoda.addPrototype("baseSong",{
 					if (some_track){
 						_this.track = some_track;
 						_this.updateState('song-title', _this.getFullName());
-						//_this.updateProp('track', some_track);
 						_this.updateNavTexts();
 
 						_this.findFiles({

@@ -336,27 +336,27 @@
 			
 		</div>
 		<div class="lfm-auth-module hidden">
-			<p>
-				<button class="lang localize-grant login-lastfm-button" type="button"  name="scrobbling" >grant</button>
-				<span class="lfm-auth-request-desc"></span>
-				
-				
-			</p>
-			<div class="lfm-finish">
-				<div class="lang localize-enter-code">
-					Enter here code
+			<div class="auth-block">
+				<p>
+					<button class="lang localize-grant login-lastfm-button" type="button"  name="scrobbling" >grant</button>
+					<span class="lfm-auth-request-desc"></span>
+				</p>
+				<div class="lfm-finish">
+					<div class="lang localize-enter-code">
+						Enter here code
+					</div>
+					<div>
+						<input type="text" placeholder='Put your code here' class="lfm-code"/> 
+						<button class="use-lfm-code lang localize-use-code">Use code</button>
+					</div>	
 				</div>
-				<div>
-					
-					<input type="text" placeholder='Put your code here' class="lfm-code"/> 
-					<button class="use-lfm-code lang localize-use-code">Use code</button>
-					
-				</div>
-				
-				
 			</div>
-			
 		</div>
+		<form class="lfm-manual-user needs-cross-domain">
+			<p class="lang localize-or-type-username">or type username</p>
+			<p><input type="text" name="username" value="YodaPunk"> <button type='submit'>ok</button></p>
+			<p class="lang localize-type-friend-desc"> (you can type your friend)</p>
+		</form>
 		<!-- // ui samples -->
   	</div>
 <div id="slider" class="show-start">
@@ -403,6 +403,7 @@
 					<div class="lfm-start">
 						<div class="lfm-recomm">
 							<p><a  id="lfm-recomm" class="js-serv lang localize-reccoms">Recommendations</a></p>
+							<!--
 							<div class="lfm-auth">
 								<div class="real-lfm-auth-part">
 									<p>
@@ -432,9 +433,11 @@
 									<p class="lang localize-type-friend-desc"> (you can type your friend)</p>
 								</form>
 							</div>
+							-->
 						</div>
 						<div class="lfm-loved">
 							<p><a class="js-serv lang localize-loved-tracks " id="lfm-loved">Loved Tracks</a></p>
+
 							<div class="lfm-auth">
 								<div class="real-lfm-auth-part">
 									<p>				
