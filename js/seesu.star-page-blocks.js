@@ -34,13 +34,7 @@ var viewBlocks = function(sui, d){
 	
 	
 
-	var lfm_recomm = $('#lfm-recomm',d).click(function(){
-		if(!lfm.sk){
-			su.main_level.toggleState('lfm-auth-req-recomm');
-		}else {
-			render_recommendations();
-		}
-	});
+	
 	
 	var lfm_loved = $('#lfm-loved',d).click(function(){
 		if(!lfm.sk){
@@ -57,12 +51,7 @@ var viewBlocks = function(sui, d){
 		
 		return false;
 	});
-	$('#lfm-recomm-for-username',d).submit(function(e){
-		var _this = $(this);
-		render_recommendations_by_username(_this[0].recomm_for_username.value);
-		
-		return false;
-	});
+	
 
 
 

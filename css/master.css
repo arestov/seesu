@@ -348,7 +348,8 @@ a.desc{
 	margin-bottom: 20px;
 	margin-bottom:20px;
 }
-.login-lastfm-button{
+
+.login-lastfm-button,.lastfm-auth-button{
 	float:right;
 }
 .lfm-auth form{

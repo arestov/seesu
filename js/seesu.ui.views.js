@@ -142,9 +142,32 @@ suServView.extendTo(mainLevelUI, {
 
 		var _this = this;
 
-		this.sui.els.start_screen.find("#lfm-recomm").click(function(){
+		/*
+		var lfm_recomm = $('#lfm-recomm',d).click(function(){
+			if(!lfm.sk){
+				su.main_level.toggleState('lfm-auth-req-recomm');
+			}else {
+				render_recommendations();
+			}
+		});
+		$('#lfm-recomm-for-username',d).submit(function(e){
+			var _this = $(this);
+			render_recommendations_by_username(_this[0].recomm_for_username.value);
+			
+			return false;
+		});
 
-			_this.md.lfm_reccoms.switchView();
+		*/
+
+
+
+		this.sui.els.start_screen.find("#lfm-recomm").click(function(){
+			if (!lfm.sk){
+				_this.md.lfm_reccoms.switchView();
+			} else {
+				render_recommendations();
+			}
+			
 			return false;
 		});
 	},

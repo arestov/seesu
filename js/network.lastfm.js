@@ -95,7 +95,7 @@ provoda.View.extendTo(LfmLoginUI, {
 		this.c = su.ui.samples.lfm_authsampl.clone();
 		this.auth_block = this.c.children(".auth-block");
 		var _this = this;
-		this.auth_block.find('.login-lastfm-button').click(function(e){
+		this.auth_block.find('.lastfm-auth-button').click(function(e){
 			_this.md.requestAuth();
 			e.preventDefault();
 		});
@@ -124,7 +124,6 @@ provoda.Model.extendTo(LfmLogin, {
 		});
 		
 	},
-
 	waitData: function() {
 		this.updateState('wait', true);
 	},
@@ -135,6 +134,9 @@ provoda.Model.extendTo(LfmLogin, {
 		this.updateState('request-description', text ? text + " " + localize("lfm-auth-invitation") : "");
 	},
 	requestAuth: function(opts) {
+		if (this.beforeRequest){
+			this.beforeRequest();
+		}
 		this.auth.requestAuth(opts);
 	},
 	switchView: function(){
@@ -146,9 +148,40 @@ var LfmReccomsView = function(){};
 LfmLoginUI.extendTo(LfmReccomsView, {
 	createBase: function(){
 		this._super();
-		su.ui.samples.lfm_input.clone().appendTo(this.c);
+		this.un_form = su.ui.samples.lfm_input.clone().appendTo(this.c);
+		this.un_input = this.un_form.find('.lfm-username');
+
+		var _this = this;
+		this.un_form.on('submit', function(e) {
+			_this.md.handleUsername(_this.un_input.val());
+			return false;
+		});
 	}
 });
+/*
+
+su.lfm_auth.once("session.input_click", function() {
+	if (waiting_for){
+		switch(waiting_for) {
+		  case('recommendations'):
+			render_recommendations();
+			break;
+		  case('loved'):
+			render_loved();
+			break;    
+		  case('scrobbling'):
+			lfm.stSet('lfm_scrobbling_enabled', 'true', true);
+			lfm.api.scrobbling = true;
+			su.lfm_auth.lfm_change_scrobbling(true);
+			break;
+		  default:
+			//console.log('Do nothing');
+		}
+		waiting_for = false;
+	}
+}, true);
+
+*/
 
 var LfmReccoms = function(auth){
 	this.init(auth);
@@ -156,6 +189,16 @@ var LfmReccoms = function(auth){
 LfmLogin.extendTo(LfmReccoms, {
 	init: function(auth){
 		this._super(auth);
+	},
+	beforeRequest: function() {
+		su.lfm_auth.once("session.input_click", function() {
+			render_recommendations();
+		}, true);
+	},
+	handleUsername: function(username) {
+		//
+		//render_loved(_this[0].loved_by_user_name.value);
+		render_recommendations_by_username(username);
 	},
 	ui_constr: LfmReccomsView
 });
