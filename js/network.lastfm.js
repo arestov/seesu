@@ -107,7 +107,6 @@ provoda.View.extendTo(LfmLoginView, {
 			}
 			return false;
 		});
-		//bind manual code input
 	}
 });
 
@@ -169,32 +168,17 @@ LfmLoginView.extendTo(LfmCommonLoginView, {
 			_this.md.handleUsername(_this.un_input.val());
 			return false;
 		});
+	},
+	'stch-can-fetch-crossdomain': function(state) {
+		if (state){
+			this.un_form.removeClass('needs-cross-domain');
+		} else {
+			this.un_form.addClass('needs-cross-domain');
+		}
+		
 	}
 });
-/*
 
-su.lfm_auth.once("session.input_click", function() {
-	if (waiting_for){
-		switch(waiting_for) {
-		  case('recommendations'):
-			render_recommendations();
-			break;
-		  case('loved'):
-			render_loved();
-			break;    
-		  case('scrobbling'):
-			lfm.stSet('lfm_scrobbling_enabled', 'true', true);
-			lfm.api.scrobbling = true;
-			su.lfm_auth.lfm_change_scrobbling(true);
-			break;
-		  default:
-			//console.log('Do nothing');
-		}
-		waiting_for = false;
-	}
-}, true);
-
-*/
 
 var LfmReccoms = function(auth){
 	this.init(auth);
@@ -225,6 +209,7 @@ LfmLogin.extendTo(LfmLoved, {
 	init: function(auth){
 		this._super(auth);
 		this.setRequestDesc(localize('grant-love-lfm-access'));
+		this.updateState('can-fetch-crossdomain', true);
 	},
 	onSession: function(){
 		this.updateState('active', false);
@@ -246,6 +231,30 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 	createBase: function(){
 		this._super();
 		this.scrobbling_switchers = su.ui.samples.lfm_scrobling.clone().appendTo(this.c);
+		this.chbx_enabl = this.scrobbling_switchers.find('.enable-scrobbling');
+		this.chbx_disabl = this.scrobbling_switchers.find('.disable-scrobbling');
+		var _this = this;
+		this.chbx_enabl.click(function() {
+			_this.md.setScrobbling(true);
+		});
+		this.chbx_disabl.click(function() {
+			_this.md.setScrobbling(false);
+		});
+	},
+	"stch-has-session": function(state) {
+		if (state){
+			this.c.addClass('has-session');
+			this.auth_block.addClass('hidden');
+			this.chbx_enabl.add(this.chbx_disabl).removeProp('disabled');
+		} else {
+			this.c.removeClass('has-session');
+			this.auth_block.removeClass('hidden');
+			this.chbx_enabl.add(this.chbx_disabl).prop('disabled', true);
+		}
+	},
+	"stch-scrobbling": function(state) {
+		this.chbx_enabl.prop('checked', !!state);
+		this.chbx_disabl.prop('checked', !state);
 	}
 });
 
@@ -259,18 +268,24 @@ LfmLogin.extendTo(LfmScrobble, {
 			this.updateState('scrobbling', true);
 		}
 		var _this = this;
-		this.auth.on('scrobbling', function(state), {
+		this.auth.on('scrobbling', function(state) {
 			_this.updateState('scrobbling', state);
-		})
+		});
+		this.setRequestDesc(localize('lastfm-scrobble-access'));
+		this.updateState('active', true);
 	},
 	onSession: function(){
-		this.updateState('has-session');
+		this.updateState('has-session', true);
 	},
 	beforeRequest: function() {
 		var _this = this;
 		this.auth.once("session.input_click", function() {
 			_this.auth.setScrobbling(true);
 		}, true);
+	},
+	setScrobbling: function(state) {
+		this.updateState('scrobbling', state);
+		this.auth.setScrobbling(state);
 	},
 	ui_constr: LfmScrobbleView
 });
@@ -389,7 +404,6 @@ provoda.Eventor.extendTo(LfmAuth, {
 				.done(function(r){
 					if (!r.error) {
 						_this.login(r,callback);
-						_this.lfm_logged();
 						_this.trigger("session");
 						_this.has_session = true;
 
@@ -404,67 +418,12 @@ provoda.Eventor.extendTo(LfmAuth, {
 				});
 		}
 	},
-	
-	
 	setScrobbling: function(active){
 		active = !!active;
-		this.api.stSet('lfm_scrobbling_enabled', 'true', active);
+		this.api.stSet('lfm_scrobbling_enabled', active || '');
 		this.api.scrobbling = active;
-		this.fire('scrobbling', active);
-		/*if (bN(class_list.indexOf('login-lastfm-button')) ){
-				var waiting_for = clicked_node.attr('name');
-				su.lfm_auth.once('session.input_click', function() {
-					if (waiting_for){
-						switch(waiting_for) {
-						  case('recommendations'):
-							//render_recommendations();
-							break;
-						  case('loved'):
-							render_loved();
-							break;    
-						  case('scrobbling'):
-							lfm.stSet('lfm_scrobbling_enabled', 'true', true);
-							lfm.scrobbling = true;
-							su.lfm_auth.lfm_change_scrobbling(true);
-							break;
-						  default:
-							//console.log('Do nothing');
-						}
-						waiting_for = false;
-					}
-				}, true);
-				su.lfm_auth.requestAuth();
-				
-			}
-			else if (bN(class_list.indexOf('enable-scrobbling'))){
-				suStore('lfm_scrobbling_enabled', 'true', true);
-				lfm.scrobbling = true;
-				su.lfm_auth.lfm_change_scrobbling(true);
-				
-			} else if (bN(class_list.indexOf('disable-scrobbling'))){
-				suStore('lfm_scrobbling_enabled', '', true);
-				lfm.scrobbling = false;
-				su.lfm_auth.lfm_change_scrobbling();
-			}
-
-			*/
-	},
-	
-	lfm_logged : function(){
-		su.main_level.updateState('lfm-auth-done', true);
-		su.main_level.updateState('lfm-auth-req-loved', false);
-		su.main_level.updateState('lfm-auth-req-recomm', false);
-		var f = $('.scrobbling-switches', su.ui.d);
-		var ii = f.find('input');
-		ii.removeAttr('disabled');
-	},
-	lfm_change_scrobbling:function(enable, context){
-		var lfm_ssw = $('.scrobbling-switches', context || su.ui.d);
-		if (lfm_ssw) {
-			lfm_ssw.find('.enable-scrobbling').prop('checked', enable ? true : false);
-			lfm_ssw.find('.disable-scrobbling').prop('checked',enable ? false : true);
-		}
-	},
+		this.trigger('scrobbling', active);
+	}
 });
 
 

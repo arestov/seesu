@@ -161,6 +161,11 @@ var song;
 			this.button = buttons_panel.find('.lfm-scrobbling-button');
 			this.bindClick();
 			this.setModel(md);
+		},
+		appendChildren: function() {
+			var lsc_view = this.md.lfm_scrobble.getFreeView();
+			this.c.append(lsc_view.getC());
+			lsc_view.appended();
 		}
 	});
 
@@ -172,6 +177,7 @@ var song;
 			this.traackrow = traackrow;
 			this._super();
 			this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
+			this.addChild(this.lfm_scrobble);
 		},
 		row_name: 'lastfm',
 		ui_constr: LastfmRowUI
@@ -253,9 +259,7 @@ var song;
 			var tp = this.c.children('.track-panel');
 
 			tp.find('.pc').data('mo', this.md.mo);
-			if (lfm.scrobbling) {
-				su.lfm_auth.lfm_change_scrobbling(true, tp.find('.track-buttons'));
-			}
+			
 			return tp;
 		}
 	});

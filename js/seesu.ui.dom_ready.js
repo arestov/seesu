@@ -92,7 +92,7 @@ window.connect_dom_to_som = function(d, cb){
 			vklc: vklc,
 			lfm_authsampl: ui_samples.children('.lfm-auth-module'),
 			lfm_input: ui_samples.children('.lfm-manual-user'),
-			lfm_scrobling: ui_samples.children('.scrobbling-switches')
+			lfm_scrobling: ui_samples.children('.scrobbling-switches'),
 			vk_login: {
 				o: vklc,
 				oos: $(),

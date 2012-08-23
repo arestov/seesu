@@ -359,22 +359,8 @@ a.desc{
 	.lfm-start{
 		border-top:1px solid #666;
 	}
-.lfm-auth-req-recomm
-.lfm-recomm
-.lfm-auth{
-display:block;
-}
-.lfm-auth-req-loved
-.lfm-loved
-.lfm-auth{
-display:block;
-}
-.lfm-auth-done
-#slider
-.lfm-start
-.lfm-auth{
-display:none;
-}
+
+
 	
 .search-start{
 	margin-bottom:1em;
@@ -734,13 +720,11 @@ display:none;
 			background:#fff;
 			border:1px solid #eee  !important;
 		}
-.lfm-auth-done #scrobbling-switches{ 
+.has-session .scrobbling-switches{ 
 	opacity:1;
 	}
-.lfm-auth-done .lfm-granting{
-	display:none
-}
-#scrobbling-switches{
+
+.scrobbling-switches{
 	opacity:0.3;
 	
 	}

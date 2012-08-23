@@ -142,25 +142,6 @@ suServView.extendTo(mainLevelUI, {
 
 		var _this = this;
 
-		/*
-		var lfm_recomm = $('#lfm-recomm',d).click(function(){
-			if(!lfm.sk){
-				su.main_level.toggleState('lfm-auth-req-recomm');
-			}else {
-				render_recommendations();
-			}
-		});
-		$('#lfm-recomm-for-username',d).submit(function(e){
-			var _this = $(this);
-			render_recommendations_by_username(_this[0].recomm_for_username.value);
-			
-			return false;
-		});
-
-		*/
-
-
-
 		this.sui.els.start_screen.find("#lfm-recomm").click(function(){
 			if (!lfm.sk){
 				_this.md.lfm_reccoms.switchView();
@@ -208,20 +189,11 @@ suServView.extendTo(mainLevelUI, {
 		"lfm-waiting-for-finish": function(state){
 			this.toggleBodyClass(state, 'lfm-waiting-for-finish');
 		},
-		"lfm-auth-req-recomm": function(state){
-			this.toggleBodyClass(state, 'lfm-auth-req-recomm');
-		},
-		"lfm-auth-req-loved": function(state){
-			this.toggleBodyClass(state, 'lfm-auth-req-loved');
-		},
 		"slice-for-height": function(state){
 			this.toggleBodyClass(state, 'slice-for-height');
 		},
 		"deep-sandbox": function(state){
 			this.toggleBodyClass(state, 'deep-sandbox');
-		},
-		"lfm-auth-done":function(state){
-			this.toggleBodyClass(state, 'lfm-auth-done');
 		},
 		"flash-internet":function(state){
 			this.toggleBodyClass(state, 'flash-internet');
@@ -351,6 +323,8 @@ mainLevel = function(su) {
 
 	this.lfm_reccoms = new LfmReccoms(su.lfm_auth);
 	this.lfm_loves = new LfmLoved(su.lfm_auth);
+	this.addChild(this.lfm_reccoms);
+	this.addChild(this.lfm_loves);
 
 	var _this = this;
 

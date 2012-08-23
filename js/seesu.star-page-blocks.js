@@ -17,14 +17,6 @@ var viewBlocks = function(sui, d){
 			})
 			.prependTo(sui.els.slider);
 	}
-
-	if (lfm.scrobbling) {
-		su.lfm_auth.lfm_change_scrobbling(true);
-	}
-	
-	if (lfm.sk) {
-		su.lfm_auth.lfm_logged();	
-	}
 	
 	$('#app_type', sui.els.search_form).val(su.env.app_type);
 	
