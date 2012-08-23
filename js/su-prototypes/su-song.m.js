@@ -226,6 +226,7 @@ var song;
 				var pv = parts[i].getFreeView(false, this.song_row_context, tp);
 				if (pv){
 					this.parts_views[i] = pv;
+					pv.appended();
 				}
 			}
 
