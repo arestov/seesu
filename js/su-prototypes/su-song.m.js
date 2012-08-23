@@ -171,6 +171,7 @@ var song;
 		init: function(traackrow){
 			this.traackrow = traackrow;
 			this._super();
+			this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
 		},
 		row_name: 'lastfm',
 		ui_constr: LastfmRowUI

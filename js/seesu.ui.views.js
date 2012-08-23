@@ -170,6 +170,16 @@ suServView.extendTo(mainLevelUI, {
 			
 			return false;
 		});
+
+
+		this.sui.els.start_screen.find('#lfm-loved').click(function(){
+			if (!lfm.sk){
+				_this.md.lfm_loves.switchView();
+			} else {
+				render_loved();
+			}
+		});
+
 	},
 	state_change: {
 		'mp-show': function(opts) {
@@ -298,6 +308,10 @@ suServView.extendTo(mainLevelUI, {
 		if (lfm_reccoms_view){
 			su.ui.els.start_screen.find('.lfm-recomm').append(lfm_reccoms_view.getC());
 		}
+		var lfm_loves_view = this.md.lfm_loves.getFreeView();
+		if (lfm_loves_view){
+			su.ui.els.start_screen.find('.lfm-loved').append(lfm_loves_view.getC());
+		}
 	},
 	toggleBodyClass: function(add, class_name){
 		if (add){
@@ -336,6 +350,7 @@ mainLevel = function(su) {
 
 
 	this.lfm_reccoms = new LfmReccoms(su.lfm_auth);
+	this.lfm_loves = new LfmLoved(su.lfm_auth);
 
 	var _this = this;
 

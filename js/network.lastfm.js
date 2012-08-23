@@ -58,9 +58,9 @@ lastfm_api.prototype.initers.push(function(){
 	this.music = this.stGet && this.stGet('lfm_scrobble_music') || [];
 });
 
-var LfmLoginUI = function() {};
+var LfmLoginView = function() {};
 
-provoda.View.extendTo(LfmLoginUI, {
+provoda.View.extendTo(LfmLoginView, {
 	init: function(md) {
 		this._super();
 		this.md = md;
@@ -99,6 +99,14 @@ provoda.View.extendTo(LfmLoginUI, {
 			_this.md.requestAuth();
 			e.preventDefault();
 		});
+		this.code_input = this.auth_block.find('.lfm-code');
+		this.auth_block.find('.use-lfm-code').click(function(){
+			var value = _this.code_input.val();
+			if (value){
+				_this.md.useCode(value)
+			}
+			return false;
+		});
 		//bind manual code input
 	}
 });
@@ -107,7 +115,7 @@ provoda.View.extendTo(LfmLoginUI, {
 var LfmLogin = function(auth) {};
 
 provoda.Model.extendTo(LfmLogin, {
-	ui_constr: LfmLoginUI,
+	ui_constr: LfmLoginView,
 	init: function(auth) {
 		this._super();
 
@@ -116,11 +124,13 @@ provoda.Model.extendTo(LfmLogin, {
 		if (auth.opts.deep_sanbdox){
 			_this.updateState('deep-sanbdox', true);
 		}
-		if (this.auth.has_session){
-			this.updateState('has-session', true);
+		if (this.auth.has_session && this.onSession){
+			this.onSession();
 		}
 		this.auth.once('session', function(){
-			_this.updateState('has-session', true);
+			if (_this.onSession){
+				_this.onSession();
+			}
 		});
 		
 	},
@@ -133,6 +143,9 @@ provoda.Model.extendTo(LfmLogin, {
 	setRequestDesc: function(text) {
 		this.updateState('request-description', text ? text + " " + localize("lfm-auth-invitation") : "");
 	},
+	useCode: function(auth_code){
+		this.auth.setToken(auth_code);
+	},
 	requestAuth: function(opts) {
 		if (this.beforeRequest){
 			this.beforeRequest();
@@ -144,8 +157,8 @@ provoda.Model.extendTo(LfmLogin, {
 	}
 });
 
-var LfmReccomsView = function(){};
-LfmLoginUI.extendTo(LfmReccomsView, {
+var LfmCommonLoginView = function(){};
+LfmLoginView.extendTo(LfmCommonLoginView, {
 	createBase: function(){
 		this._super();
 		this.un_form = su.ui.samples.lfm_input.clone().appendTo(this.c);
@@ -189,21 +202,79 @@ var LfmReccoms = function(auth){
 LfmLogin.extendTo(LfmReccoms, {
 	init: function(auth){
 		this._super(auth);
+		this.setRequestDesc(localize('lastfm-reccoms-access'));
+	},
+	onSession: function(){
+		this.updateState('active', false);
 	},
 	beforeRequest: function() {
-		su.lfm_auth.once("session.input_click", function() {
+		this.auth.once("session.input_click", function() {
 			render_recommendations();
 		}, true);
 	},
 	handleUsername: function(username) {
-		//
-		//render_loved(_this[0].loved_by_user_name.value);
 		render_recommendations_by_username(username);
 	},
-	ui_constr: LfmReccomsView
+	ui_constr: LfmCommonLoginView
 });
 
-var LfmLoved = function(){}; 
+var LfmLoved = function(auth){
+	this.init(auth);
+}; 
+LfmLogin.extendTo(LfmLoved, {
+	init: function(auth){
+		this._super(auth);
+		this.setRequestDesc(localize('grant-love-lfm-access'));
+	},
+	onSession: function(){
+		this.updateState('active', false);
+	},
+	beforeRequest: function() {
+		this.auth.once("session.input_click", function() {
+			render_loved();
+		}, true);
+	},
+	handleUsername: function(username) {
+		render_loved(username);
+	},
+	ui_constr: LfmCommonLoginView
+});
+
+
+var LfmScrobbleView = function(){};
+LfmLoginView.extendTo(LfmScrobbleView, {
+	createBase: function(){
+		this._super();
+		this.scrobbling_switchers = su.ui.samples.lfm_scrobling.clone().appendTo(this.c);
+	}
+});
+
+var LfmScrobble = function(auth){
+	this.init(auth);
+};
+LfmLogin.extendTo(LfmScrobble, {
+	init: function(auth){
+		this._super(auth);
+		if (this.auth.api.scrobbling){
+			this.updateState('scrobbling', true);
+		}
+		var _this = this;
+		this.auth.on('scrobbling', function(state), {
+			_this.updateState('scrobbling', state);
+		})
+	},
+	onSession: function(){
+		this.updateState('has-session');
+	},
+	beforeRequest: function() {
+		var _this = this;
+		this.auth.once("session.input_click", function() {
+			_this.auth.setScrobbling(true);
+		}, true);
+	},
+	ui_constr: LfmScrobbleView
+});
+
 
 var LfmAuth = function(lfm, opts) {
 	this.api = lfm;
@@ -228,7 +299,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 		this.api.sk = r.session.key;
 		this.user_name = r.session.name;
 		this.api.stSet('lfm_user_name', this.user_name, true);
-		this.api.stSet('lfmsk', this.sk, true);
+		this.api.stSet('lfmsk', this.api.sk, true);
 		if (callback){callback();}
 	},
 	getInitAuthData: function(){
@@ -335,7 +406,49 @@ provoda.Eventor.extendTo(LfmAuth, {
 	},
 	
 	
-	
+	setScrobbling: function(active){
+		active = !!active;
+		this.api.stSet('lfm_scrobbling_enabled', 'true', active);
+		this.api.scrobbling = active;
+		this.fire('scrobbling', active);
+		/*if (bN(class_list.indexOf('login-lastfm-button')) ){
+				var waiting_for = clicked_node.attr('name');
+				su.lfm_auth.once('session.input_click', function() {
+					if (waiting_for){
+						switch(waiting_for) {
+						  case('recommendations'):
+							//render_recommendations();
+							break;
+						  case('loved'):
+							render_loved();
+							break;    
+						  case('scrobbling'):
+							lfm.stSet('lfm_scrobbling_enabled', 'true', true);
+							lfm.scrobbling = true;
+							su.lfm_auth.lfm_change_scrobbling(true);
+							break;
+						  default:
+							//console.log('Do nothing');
+						}
+						waiting_for = false;
+					}
+				}, true);
+				su.lfm_auth.requestAuth();
+				
+			}
+			else if (bN(class_list.indexOf('enable-scrobbling'))){
+				suStore('lfm_scrobbling_enabled', 'true', true);
+				lfm.scrobbling = true;
+				su.lfm_auth.lfm_change_scrobbling(true);
+				
+			} else if (bN(class_list.indexOf('disable-scrobbling'))){
+				suStore('lfm_scrobbling_enabled', '', true);
+				lfm.scrobbling = false;
+				su.lfm_auth.lfm_change_scrobbling();
+			}
+
+			*/
+	},
 	
 	lfm_logged : function(){
 		su.main_level.updateState('lfm-auth-done', true);

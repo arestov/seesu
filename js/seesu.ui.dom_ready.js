@@ -92,15 +92,16 @@ window.connect_dom_to_som = function(d, cb){
 			vklc: vklc,
 			lfm_authsampl: ui_samples.children('.lfm-auth-module'),
 			lfm_input: ui_samples.children('.lfm-manual-user'),
+			lfm_scrobling: ui_samples.children('.scrobbling-switches')
 			vk_login: {
 				o: vklc,
 				oos: $(),
 				hideLoadIndicator: function(){
-					this.oos.removeClass("waiting-vk-login");
+					this.oos.removeClass('waiting-vk-login');
 					this.load_indicator = false;
 				},
 				showLoadIndicator:function() {
-					this.oos.addClass("waiting-vk-login");
+					this.oos.addClass('waiting-vk-login');
 					this.load_indicator = true;
 				},
 				remove: function(){
@@ -127,7 +128,7 @@ window.connect_dom_to_som = function(d, cb){
 					
 					
 					if (this.load_indicator){
-						nvk.addClass("waiting-vk-login");
+						nvk.addClass('waiting-vk-login');
 					}
 					if (request_description){
 						nvk.find('.login-request-desc').text(request_description);

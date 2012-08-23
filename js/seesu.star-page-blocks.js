@@ -6,12 +6,7 @@ var viewBlocks = function(sui, d){
 	$('#widget-url',d).val(location.href.replace('index.html', ''));
 	var seesu_me_link = $('#seesu-me-link',d);
 	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', su.env.app_type));
-	
-	
-	
-	
-	
-	
+
 	//var vk_save_pass = $('#vk-save-pass',d);
 
 	if ($.browser.opera && ((typeof window.opera.version == 'function') && (parseFloat(window.opera.version()) <= 10.1))){
@@ -31,32 +26,6 @@ var viewBlocks = function(sui, d){
 		su.lfm_auth.lfm_logged();	
 	}
 	
-	
-	
-
-	
-	
-	var lfm_loved = $('#lfm-loved',d).click(function(){
-		if(!lfm.sk){
-			su.main_level.toggleState('lfm-auth-req-loved');
-		}else {
-			render_loved();
-		}
-	});
-
-	
-	$('#lfm-loved-by-username',d).submit(function(){
-		var _this = $(this);
-		render_loved(_this[0].loved_by_user_name.value);
-		
-		return false;
-	});
-	
-
-
-
-	
-	
 	$('#app_type', sui.els.search_form).val(su.env.app_type);
 	
 	sui.els.search_form.submit(function(){return false;});
@@ -68,9 +37,6 @@ var viewBlocks = function(sui, d){
 		});
 	}
 
-	
-	
-
 
 	jsLoadComplete({
 		test: function(){
@@ -81,16 +47,6 @@ var viewBlocks = function(sui, d){
 		}
 	});
 
-	
-	
-
-	
-	
-	
-
-	
-
-	
 	var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(sui.els.start_screen);
 	var users_limit = 6;
 	var showUsers = function(listenings,c, above_limit_value){

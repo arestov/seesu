@@ -118,54 +118,16 @@ var test_pressed_node = function(e, opts){
 			} 
 		}  
 		else if ((node.nodeName == 'INPUT' || node.nodeName == 'BUTTON')) {
-			if (bN(class_list.indexOf('login-lastfm-button')) ){
-				var waiting_for = clicked_node.attr('name');
-				su.lfm_auth.once("session.input_click", function() {
-					if (waiting_for){
-						switch(waiting_for) {
-						  case('recommendations'):
-							render_recommendations();
-							break;
-						  case('loved'):
-							render_loved();
-							break;    
-						  case('scrobbling'):
-							lfm.stSet('lfm_scrobbling_enabled', 'true', true);
-							lfm.api.scrobbling = true;
-							su.lfm_auth.lfm_change_scrobbling(true);
-							break;
-						  default:
-							//console.log('Do nothing');
-						}
-						waiting_for = false;
-					}
-				}, true);
-				su.lfm_auth.requestAuth();
-				
-			}
-			else if (bN(class_list.indexOf('use-lfm-code'))){
-				var token = clicked_node.parent().find('.lfm-code').val();
-				if (token){
-					su.lfm_auth.setToken(token);
-				}
-				
-			} else if (bN(class_list.indexOf('use-vk-code'))){
+			if (bN(class_list.indexOf('use-vk-code'))){
 				var vk_t_raw = clicked_node.parent().find('.vk-code').val();
 				if (vk_t_raw){
 					var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);			
 						connectApiToSeesu(vk_token, true);
 				}
 				
-			} else if (bN(class_list.indexOf('enable-scrobbling'))){
-				suStore('lfm_scrobbling_enabled', 'true', true);
-				lfm.scrobbling = true;
-				su.lfm_auth.lfm_change_scrobbling(true);
-				
-			} else if (bN(class_list.indexOf('disable-scrobbling'))){
-				suStore('lfm_scrobbling_enabled', '', true);
-				lfm.scrobbling = false;
-				su.lfm_auth.lfm_change_scrobbling();
-			}
+			} 
+
+			
 		}
 	
 	

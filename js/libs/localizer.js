@@ -184,10 +184,6 @@ localizer = {
 		"original": "Recommendations",
 		"ru": "Рекомендации"
 	},
-	"lastfm-reccoms-access": {
-		"original": "To get your music recommendations you need to grant Seesu your last.fm account access",
-		"ru": "Что бы получить рекомендации тебе нужно дать Сису доступ к своей учётной записи на last.fm"
-	},
 	"grant": {
 		"original": "grant",
 		"ru": "дать доступ"
@@ -211,10 +207,6 @@ localizer = {
 	"type-friend-desc": {
 		"original": " (you can type your friend)",
 		"ru": "(ты можешь ввести своего друга)"
-	},
-	"grant-love-lfm-access": {
-		"original": "To get your favorite tracks you need to grant Seesu your last.fm account access ",
-		"ru": "Что бы получить свои любимые треки тебе нужно дать Сису доступ к своей учётной записи на last.fm"
 	},
 	"give-love": {
 		"original": "give me loved tracks",
@@ -282,8 +274,16 @@ localizer = {
 		"ru": "О безопасности флеша: по умолчанию флеш плеер работает среди ограничений накладывающееся на виджеты, при этом не имеет доступа в интернет. Чтобы дать доступ к mp3 файлам располагающихся на сайтах тебе нужно изменить настройки на соответствующей странице. Там же ты можешь ограничить доступ."
 	},
 	"lastfm-scrobble-access": {
-		"original": "To scrobble to last.fm you must grant access to Seesu",
-		"ru": "Для скроблинга тебе нужно дать Сису доступ к своей учётной записи на last.fm"
+		"original": "To scrobble to last.fm",
+		"ru": "Для скроблинга в last.fm"
+	},
+	"lastfm-reccoms-access": {
+		"original": "To get your music recommendations",
+		"ru": "Что бы получить рекомендации"
+	},
+	"grant-love-lfm-access": {
+		"original": "To get your favorite tracks",
+		"ru": "Что бы получить свои любимые треки"
 	},
 	"lfm-auth-invitation": {
 		"original": "you must grant access to Seesu from last.fm",
