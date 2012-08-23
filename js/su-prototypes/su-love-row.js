@@ -39,7 +39,7 @@ BaseCRow.extendTo(LoveRow, {
 		this.traackrow = traackrow;
 		this.mo = mo;
 		this._super();
-		this.lfm_loveit = new LfmLoveIt(su.lfm_auth);
+		this.lfm_loveit = new LfmLoveIt(su.lfm_auth, this.mo);
 		this.lfm_loveit.on('love-success', function() {
 			_this.hide();
 		});

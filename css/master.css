@@ -322,7 +322,9 @@ a.desc{
 .has-session .add-to-lfmfav{
 	opacity: 1;
 	}
-	
+.wait-love-done .add-to-lfmfav{
+	background: url(../i/spinner_t.gif) no-repeat 100% 0
+}
 .add-to-lfmfav{
 	margin-top:12px;
 	opacity: 0.3;

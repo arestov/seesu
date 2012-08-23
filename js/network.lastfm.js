@@ -303,35 +303,58 @@ LfmLoginView.extendTo(LfmLoveItView, {
 		});
 	},
 	"stch-has-session": function(state) {
-		if (state){
-			this.c.addClass('has-session');
-			this.auth_block.addClass('hidden');
-			this.love_button.removeProp('disabled');
-
-		} else {
-			this.c.removeClass('has-session');
-			this.auth_block.removeClass('hidden');
-			this.love_button.prop('disabled', true);
-		}
+		state = !!state;
+		this.c.toggleClass('has-session', state);
+		this.auth_block.toggleClass('hidden', state);
+		this.love_button.prop('disabled', !state);
 	},
+	"stch-wait-love-done": function(state){
+		this.c.toggleClass('wait-love-done', !!state);
+	}
 });
 
 
-var LfmLoveIt = function(auth) {
-	this.init(auth);
+var LfmLoveIt = function(auth, mo) {
+	this.init(auth, mo);
 };
 
 LfmLogin.extendTo(LfmLoveIt, {
-	init: function(auth) {
+	init: function(auth, mo) {
 		this._super(auth);
+		this.song = {
+			artist: mo.artist,
+			track: mo.track
+		};
 		this.setRequestDesc(localize('lastfm-loveit-access'));
 		this.updateState('active', true);
 	},
 	onSession: function(){
 		this.updateState('has-session', true);
 	},
+	beforeRequest: function() {
+		var _this = this;
+		this.auth.once("session.input_click", function() {
+			_this.makeLove();
+		}, true);
+	},
 	makeLove: function() {
-		this.fire('love-success');
+
+		if (lfm.sk){
+			var _this = this;
+			this.updateState('wait-love-done', true);
+			lfm.post('Track.love', {
+				sk: lfm.sk,
+				artist: this.song.artist,
+				track: this.song.track
+			})
+				.always(function(){
+					_this.updateState('wait-love-done', false);
+					_this.trigger('love-success');
+				})
+			
+		}
+		
+		
 	},
 	ui_constr: LfmLoveItView
 });

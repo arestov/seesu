@@ -464,7 +464,7 @@ var render_loved = function(user_name){
 
 		
 
-		lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page})
+		lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
 			.done(function(r){
 				var tracks = r.lovedtracks.track || false;
 				var track_list = [];
