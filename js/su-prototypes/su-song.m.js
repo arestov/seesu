@@ -162,7 +162,13 @@ var song;
 			this.bindClick();
 			this.setModel(md);
 		},
-		appendChildren: function() {
+		expand: function() {
+			if (this.expanded){
+				return;
+			} else {
+				this.expanded = true;
+			}
+
 			var lsc_view = this.md.lfm_scrobble.getFreeView();
 			this.c.append(lsc_view.getC());
 			lsc_view.appended();

@@ -319,7 +319,14 @@ a.desc{
 .cross-domain-allowed .no-needs-cross-domain{
 	display:none;
 }
-
+.has-session .add-to-lfmfav{
+	opacity: 1;
+	}
+	
+.add-to-lfmfav{
+	margin-top:12px;
+	opacity: 0.3;
+	}
 
 	.lfm-auth{
 		display:none;
@@ -348,9 +355,13 @@ a.desc{
 	margin-bottom: 20px;
 	margin-bottom:20px;
 }
+.lfm-auth-module .auth-block{
+	overflow: hidden;
+}
 
 .login-lastfm-button,.lastfm-auth-button{
 	float:right;
+	margin-left:12px;
 }
 .lfm-auth form{
 	margin-bottom:2.5em;

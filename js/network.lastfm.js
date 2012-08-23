@@ -289,7 +289,52 @@ LfmLogin.extendTo(LfmScrobble, {
 	},
 	ui_constr: LfmScrobbleView
 });
+var LfmLoveItView = function() {};
+LfmLoginView.extendTo(LfmLoveItView, {
+	createBase: function() {
+		this._super();
+		var wrap = $('<div class="add-to-lfmfav"></div>');
 
+		this.love_button = $('<button type="button" disabled="disabled" class="lfm-loveit"></button>').text(localize('addto-lfm-favs')).appendTo(wrap);
+		this.c.append(wrap);
+		var _this = this;
+		this.love_button.click(function() {
+			_this.md.makeLove();
+		});
+	},
+	"stch-has-session": function(state) {
+		if (state){
+			this.c.addClass('has-session');
+			this.auth_block.addClass('hidden');
+			this.love_button.removeProp('disabled');
+
+		} else {
+			this.c.removeClass('has-session');
+			this.auth_block.removeClass('hidden');
+			this.love_button.prop('disabled', true);
+		}
+	},
+});
+
+
+var LfmLoveIt = function(auth) {
+	this.init(auth);
+};
+
+LfmLogin.extendTo(LfmLoveIt, {
+	init: function(auth) {
+		this._super(auth);
+		this.setRequestDesc(localize('lastfm-loveit-access'));
+		this.updateState('active', true);
+	},
+	onSession: function(){
+		this.updateState('has-session', true);
+	},
+	makeLove: function() {
+		this.fire('love-success');
+	},
+	ui_constr: LfmLoveItView
+});
 
 var LfmAuth = function(lfm, opts) {
 	this.api = lfm;
