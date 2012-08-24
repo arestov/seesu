@@ -131,6 +131,14 @@ provoda.Model.extendTo(LfmLogin, {
 				_this.onSession();
 			}
 		});
+		if (this.auth.wait_data){
+			this.waitData();
+		} else {
+			this.auth.on('data-wait', function(){
+				_this.waitData();
+			})
+		}
+
 		
 	},
 	waitData: function() {
@@ -143,7 +151,11 @@ provoda.Model.extendTo(LfmLogin, {
 		this.updateState('request-description', text ? text + " " + localize("lfm-auth-invitation") : "");
 	},
 	useCode: function(auth_code){
+		if (this.bindAuthCallback){
+			this.bindAuthCallback();
+		}
 		this.auth.setToken(auth_code);
+
 	},
 	requestAuth: function(opts) {
 		if (this.beforeRequest){
@@ -192,9 +204,13 @@ LfmLogin.extendTo(LfmReccoms, {
 		this.updateState('active', false);
 	},
 	beforeRequest: function() {
+		this.bindAuthCallback();
+		
+	},
+	bindAuthCallback: function(){
 		this.auth.once("session.input_click", function() {
 			render_recommendations();
-		}, true);
+		}, {exlusive: true});
 	},
 	handleUsername: function(username) {
 		render_recommendations_by_username(username);
@@ -215,9 +231,13 @@ LfmLogin.extendTo(LfmLoved, {
 		this.updateState('active', false);
 	},
 	beforeRequest: function() {
+		this.bindAuthCallback();
+		
+	},
+	bindAuthCallback: function(){
 		this.auth.once("session.input_click", function() {
 			render_loved();
-		}, true);
+		}, {exlusive: true});
 	},
 	handleUsername: function(username) {
 		render_loved(username);
@@ -278,10 +298,13 @@ LfmLogin.extendTo(LfmScrobble, {
 		this.updateState('has-session', true);
 	},
 	beforeRequest: function() {
+		this.bindAuthCallback();
+	},
+	bindAuthCallback: function(){
 		var _this = this;
 		this.auth.once("session.input_click", function() {
 			_this.auth.setScrobbling(true);
-		}, true);
+		}, {exlusive: true});
 	},
 	setScrobbling: function(state) {
 		this.updateState('scrobbling', state);
@@ -332,10 +355,13 @@ LfmLogin.extendTo(LfmLoveIt, {
 		this.updateState('has-session', true);
 	},
 	beforeRequest: function() {
+		this.bindAuthCallback();
+	},
+	bindAuthCallback: function(){
 		var _this = this;
 		this.auth.once("session.input_click", function() {
 			_this.makeLove();
-		}, true);
+		}, {exlusive: true});
 	},
 	makeLove: function() {
 
@@ -380,8 +406,8 @@ provoda.Eventor.extendTo(LfmAuth, {
 	},
 	login: function(r, callback){
 		this.api.sk = r.session.key;
-		this.user_name = r.session.name;
-		this.api.stSet('lfm_user_name', this.user_name, true);
+		this.api.user_name = r.session.name;
+		this.api.stSet('lfm_user_name', r.session.name, true);
 		this.api.stSet('lfmsk', this.api.sk, true);
 		if (callback){callback();}
 	},
@@ -399,6 +425,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 	},
 	waitData: function() {
 		this.trigger('data-wait');
+		this.wait_data = true;
 	},
 	createAuthFrame: function(first_key){
 		if (this.lfm_auth_inited){
@@ -440,11 +467,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 			this.trigger('want-open-url', init_auth_data.link, init_auth_data);
 			this.waitData();
 		} 
-		
-	
-		
-		su.main_level.updateState('lfm-waiting-for-finish', true);
-		
+			
 		
 		return
 		
@@ -453,17 +476,12 @@ provoda.Eventor.extendTo(LfmAuth, {
 		this.newtoken = token;
 		this.try_to_login();
 	},
-	get_lfm_token: function(open){
+	get_lfm_token: function(){
 		var _this = this;
 		this.api.get('auth.getToken', false, {nocache: true})
 			.done(function(r){
 				_this.newtoken = r.token;
-				if (open){_this.open_lfm_to_login(r.token);}
 			})
-	},
-	open_lfm_to_login: function(token){
-		app_env.openURL('http://www.last.fm/api/auth/?api_key=' + this.apikey + '&token=' + token);
-		su.main_level.updateState('lfm-waiting-for-finish', true);
 	},
 	try_to_login: function(callback){
 		var _this = this

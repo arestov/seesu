@@ -186,9 +186,6 @@ suServView.extendTo(mainLevelUI, {
 		"vk-waiting-for-finish": function(state){
 			this.toggleBodyClass(state, 'vk-waiting-for-finish');
 		},
-		"lfm-waiting-for-finish": function(state){
-			this.toggleBodyClass(state, 'lfm-waiting-for-finish');
-		},
 		"slice-for-height": function(state){
 			this.toggleBodyClass(state, 'slice-for-height');
 		},
@@ -279,10 +276,12 @@ suServView.extendTo(mainLevelUI, {
 		var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView();
 		if (lfm_reccoms_view){
 			su.ui.els.start_screen.find('.lfm-recomm').append(lfm_reccoms_view.getC());
+			this.addChild(lfm_reccoms_view);
 		}
 		var lfm_loves_view = this.md.lfm_loves.getFreeView();
 		if (lfm_loves_view){
 			su.ui.els.start_screen.find('.lfm-loved').append(lfm_loves_view.getC());
+			this.addChild(lfm_loves_view);
 		}
 	},
 	toggleBodyClass: function(add, class_name){

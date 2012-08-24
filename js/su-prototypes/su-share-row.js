@@ -87,7 +87,7 @@ investigation.extendTo(StrusersRowSearch, {
 		su
 			.once("vk-friends.share-row", function(list){
 				_this.handleVKFriendsSearch(list);
-			}, true)
+			}, {exlusive: true})
 			.getVKFriends();
 	}
 });
@@ -163,6 +163,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				this.getPart("pch-ws-friends").after();
 				var searcher_ui = this.md.searcher.getFreeView();
 				if (searcher_ui){
+					this.addChild(searcher_ui);
 					searcher_ui.getC().insertBefore(this.getPart("pch-ws-friends"));
 					searcher_ui.expand();
 					searcher_ui.appended();
@@ -179,6 +180,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			if (state){
 				var auth_ui = this.md.vk_auth.getFreeView();
 				if (auth_ui){
+					this.addChild(auth_ui);
 					auth_ui.getC().insertBefore(this.getPart("pch-vk-auth"));
 				}
 			}

@@ -170,8 +170,12 @@ var song;
 			}
 
 			var lsc_view = this.md.lfm_scrobble.getFreeView();
-			this.c.append(lsc_view.getC());
-			lsc_view.appended();
+			if (lsc_view){
+				this.addChild(lsc_view);
+				this.c.append(lsc_view.getC());
+				lsc_view.appended();
+			}
+			
 		}
 	});
 
@@ -239,6 +243,7 @@ var song;
 				if (pv){
 					this.parts_views[i] = pv;
 					pv.appended();
+					this.addChild(pv);
 				}
 			}
 

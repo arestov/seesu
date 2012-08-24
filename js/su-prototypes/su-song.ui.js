@@ -200,8 +200,10 @@ suServView.extendTo(songUI, {
 
 		var context = this.requirePart('context');
 
-		this.md.traackrow.getFreeView(false, context.children('.song-actions'));
-
+		var track_row_view = this.md.traackrow.getFreeView(false, context.children('.song-actions'));
+		if (track_row_view){
+			this.addChild(track_row_view);
+		}
 
 		this.mf_cor_view = this.md.mf_cor.getFreeView();
 		if (this.mf_cor_view){

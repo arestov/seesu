@@ -347,7 +347,7 @@ a.desc{
 	width: 314px;
 	margin-right: 24px;
 }
-.lfm-waiting-for-finish .lfm-finish{
+.waiting-lfm-auth .lfm-finish{
 	opacity:1;
 }
 .lfm-auth p{

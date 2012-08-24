@@ -32,7 +32,7 @@ var viewBlocks = function(sui, d){
 
 	jsLoadComplete({
 		test: function(){
-			return window.su && window.su.gena
+			return window.su && window.su.gena && window.su.gena.playlists;
 		}, 
 		fn: function(){
 			sui.create_playlists_link();

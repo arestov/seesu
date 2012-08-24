@@ -24,7 +24,7 @@ BaseCRowUI.extendTo(LoveRowUI, {
 		var llit_view = this.md.lfm_loveit.getFreeView();
 		this.c.append(llit_view.getC());
 		llit_view.appended();
-		
+		this.addChild(llit_view);
 
 		
 	}

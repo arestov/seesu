@@ -78,7 +78,8 @@ suServView.extendTo(mfComplectUI, {
 			var ui  = moplas_list[i].getFreeView();
 			if (ui){
 				this.lc.append(ui.getC())
-				ui.appended(this)
+				ui.appended(this);
+				this.addChild(ui);
 			}
 		}
 	},
@@ -208,12 +209,18 @@ suServView.extendTo(mfCorUI, {
 	appendChildren: function() {
 		var _this = this;
 		if (this.md.vk_audio_auth){
-			var vk_auth_mess = this.md.vk_audio_auth.getFreeView(),
-				vk_auth_mess_c = vk_auth_mess && vk_auth_mess.getC();
-			if (vk_auth_mess_c){
+			var
+				vk_auth_mess = this.md.vk_audio_auth.getFreeView(),
+				vk_auth_mess_c = vk_auth_mess && vk_auth_mess.getC()
+
+				
+			if (vk_auth_mess){
 				this.addChild(vk_auth_mess);
-				this.messages_c.append(vk_auth_mess_c);
-				vk_auth_mess.appended(this);
+				if (vk_auth_mess_c){
+					this.messages_c.append(vk_auth_mess_c);
+					vk_auth_mess.appended(this);
+				}
+				
 			}
 
 		}
