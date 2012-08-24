@@ -46,6 +46,7 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 добавлять soundcloud ключ для песен с ex.fm
 + загрузка изображений с last.fm
 	панорамный просмотр
+зацикливание песен по одной
 
 дополнительные данные
 	чарты hypem
@@ -59,6 +60,6 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 		глобально
 		среди выбранного жанра
 		среди треков артиста
-		
+
 	speeddating в разных местах (где быстро обновляются текущие пользователи)
 		анимация обновляющихся списков
