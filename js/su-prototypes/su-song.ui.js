@@ -522,21 +522,25 @@ suServView.extendTo(songUI, {
 			return false
 		}
 
-		var stat_c = $('<div></div>')//$(document.createDocumentFragment());//$(document.createTextNode(""));
+		var stat_c = $('<p class="artist-stat-in-song"></p>')//$(document.createDocumentFragment());//$(document.createTextNode(""));
 
 		var listeners = getTargetField(r, 'artist.stats.listeners');
 		var playcount = getTargetField(r, 'artist.stats.playcount');
 
 		if (listeners){
-			$('<span></span>').text('Listeners: ' + listeners).appendTo(stat_c);
-			//stat_c.append($(''))
+			$('<span class="desc"></span>').text('Listeners: ').appendTo(stat_c);
+			$('<span></span>').text(listeners).appendTo(stat_c);
+			stat_c.append(" ");
+			
 		}
 		if (playcount){
-			$('<span></span>').text('Playcount: ' + playcount).appendTo(stat_c);
+			$('<span class="desc"></span>').text('Playcount: ').appendTo(stat_c);
+			$('<span></span>').text(playcount).appendTo(stat_c);
+			stat_c.append(" ")
 		}
 
 		if (playcount || listeners){
-			this.ainf.c.append(stat_c);
+			this.ainf.c.prepend(stat_c);
 			if (!has_some_info_extenders){
 				has_some_info_extenders = true;
 			}

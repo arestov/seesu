@@ -544,6 +544,9 @@ a.desc{
 	.artist-tags a.music-tag{
 		margin-right:6px;
 		}
+.artist-stat-in-song span{
+	
+}
 .artist-meta-info{
 	overflow:hidden;
 	clear:left;
