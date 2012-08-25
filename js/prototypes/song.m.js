@@ -52,12 +52,31 @@ provoda.addPrototype("baseSong",{
 		this.uid = ++counter;
 		cloneObj(this, omo, false, ['artist', 'track']);
 		this.omo = omo;
-		this.updateState('song-title', this.getFullName());
+		if (omo.artist){
+			this.updateState('artist', omo.artist);
+		}
+		if (omo.track){
+			this.updateState('track', omo.track);
+		}
 	},
 	mlmDie: function() {
 		
 	},
-	getFullName: function(allow_short){
+	complex_states: {
+		'song-title': {
+			depends_on: ['artist', 'track'],
+			fn: function(artist, track){
+				return this.getFullName(artist, track, true);
+			}
+		},
+		'full-title': {
+			depends_on: ['artist', 'track'],
+			fn: function(artist, track){
+				return this.getFullName(artist, track);
+			}
+		}
+	},
+	getFullName: function(artist, track, allow_short){
 		var n = '';
 		if (this.artist){
 			if (this.track){
@@ -75,7 +94,7 @@ provoda.addPrototype("baseSong",{
 		return n || 'no title';
 	},
 	updateNavTexts: function() {
-		var title = this.getFullName(true);
+		var title = this.state('song-title');
 		this.updateState('nav-text', title);
 		this.updateState('nav-title', title);
 	},
@@ -287,7 +306,7 @@ provoda.addPrototype("baseSong",{
 					var some_track = tracks[Math.floor(Math.random()*tracks.length)];
 					if (some_track){
 						_this.track = some_track;
-						_this.updateState('song-title', _this.getFullName());
+						_this.updateState('track', some_track);
 						_this.updateNavTexts();
 
 						_this.findFiles({

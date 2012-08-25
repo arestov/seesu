@@ -123,7 +123,7 @@ var song;
 				data.attachments = "audio" + file._id;
 			}
 			
-			data.message = this.getFullName() + " " + encodeURI(this.getShareUrl());
+			data.message = this.state('full-title') + " " + encodeURI(this.getShareUrl());
 			if (data.attachments){
 				data.attachment = data.attachments;
 			}
