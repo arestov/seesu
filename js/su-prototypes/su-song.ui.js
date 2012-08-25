@@ -521,6 +521,27 @@ suServView.extendTo(songUI, {
 		} else{
 			return false
 		}
+
+		var stat_c = $('<div></div>')//$(document.createDocumentFragment());//$(document.createTextNode(""));
+
+		var listeners = getTargetField(r, 'artist.stats.listeners');
+		var playcount = getTargetField(r, 'artist.stats.playcount');
+
+		if (listeners){
+			$('<span></span>').text('Listeners: ' + listeners).appendTo(stat_c);
+			//stat_c.append($(''))
+		}
+		if (playcount){
+			$('<span></span>').text('Playcount: ' + playcount).appendTo(stat_c);
+		}
+
+		if (playcount || listeners){
+			this.ainf.c.append(stat_c);
+			if (!has_some_info_extenders){
+				has_some_info_extenders = true;
+			}
+		}
+
 		if (bio){
 			this.ainf.bio.html(bio);
 			this.ainf.bio.append('<span class="forced-end"></span>');
