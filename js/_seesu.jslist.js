@@ -15,7 +15,7 @@ var jsLoadComplete,
 	"js/app_serv.js",
 
 	"js/seesu.ui.dom_ready.js",
-	"js/common-libs/jquery-1.7.2pre.mod.min.js",
+	"js/common-libs/jquery-1.8.0.mod.min.js",
 	"js/libs/localizer.js",
 	
 	"js/libs/c_cache_ajax.js",

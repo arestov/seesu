@@ -414,12 +414,18 @@ suServView.extendTo(songUI, {
 			
 			var info_request = lfm.get('artist.getInfo',{'artist': artist })
 				.done(function(r){
+					if (!_this.isAlive()){
+						return
+					}
 					_this.show_artist_info(r, this.ainf, artist);
 
 				});
 
 			var images_request = lfm.get('artist.getImages',{'artist': artist })
 				.done(function(r){
+					if (!_this.isAlive()){
+						return
+					}
 					var images = r.images.image;
 					if (images){
 						images = toRealArray(images);

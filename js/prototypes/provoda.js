@@ -603,8 +603,27 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	getC: function(){
 		return this.c;
 	},
-	setC: function(c){
-		this.c = c;
+	getCNode: function(c) {
+		return (c = this.getC()) && (typeof length != 'undefined' ? c[0] : c);
+	},
+	isAlive: function(dead_doc) {
+		if (this.dead){
+			return false;
+		} else {
+			if (this.getC()){
+				var c = this.getCNode();
+				if (!c || (dead_doc && dead_doc === c.ownerDocument) || !getDefaultView(c.ownerDocument)){
+					this.markAsDead();
+					return false;
+				} else {
+					return true;
+				}
+			} else {
+				return true;
+			}
+			
+			
+		}
 	},
 	requestAnimationFrame: function(cb, el, w) {
 		var c = this.getC() && (this.getC()[0] || this.getC());
