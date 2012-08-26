@@ -488,7 +488,11 @@ a.desc{
 .photo-cont{
 	height:135px;
 	overflow: hidden;
+	position: relative;
 	}
+	.photo-cont.loading-images{
+		background: url(../i/spinner_t.gif) no-repeat 100% 0;
+		}
 	@media (min-height:700px) {
 		.photo-cont{
 			/*237-48+16*/
@@ -500,8 +504,18 @@ a.desc{
 		width:200%;
 		height:100%;
 	}
+	.photo-cont-lift.ready-to-use{
+		overflow: hidden;
+        position: absolute;
+        top: 0;
+        left: 0;
+	}
+	.photo-cont-lift.ready-to-use .artist-image{
+		position: relative;
+	}
 	.photo-cont .artist-image{
 		height:100%;
+		
 		}
 
 

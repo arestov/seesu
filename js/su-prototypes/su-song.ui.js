@@ -146,6 +146,10 @@ suServView.extendTo(songUI, {
 		this.setImagesPrio();
 		this.updateSongListeners();
 		this.c.addClass('viewing-song');
+		if (this.img_panorama){
+			this.img_panorama.checkSize();
+		}
+		
 	},
 	setImagesPrio: function(){
 		if (this.img_load_stack){
@@ -438,8 +442,25 @@ suServView.extendTo(songUI, {
 
 							//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
 							_this.img_load_stack = [];
+							_this.img_requests = [];
+							_this.img_panorama = new Panoramator();
+							var main_c = _this.photo_c.parent()
+							main_c.click(function(e){
+								//_this.img_panorama.next();
+							});
+							_this.img_panorama.init(main_c, _this.photo_c);
 
-							var appendImage = function(el, first_image) {
+							var images_collection = [];
+
+							var updatePanorama = function(){
+								images_collection.sort(function(a, b){
+									return sortByRules(a, b, ['num']);
+								});
+
+								_this.img_panorama.setCollection($filter(images_collection, 'item'));
+							}
+
+							var appendImage = function(el, index, first_image) {
 								var sizes = toRealArray(el.sizes.size);
 
 								var image_jnode = $('<img class="artist-image hidden" alt=""/>');
@@ -453,7 +474,16 @@ suServView.extendTo(songUI, {
 									if (first_image && _this.first_image){
 										_this.first_image.remove();
 									}
+									
+
 									image_jnode.removeClass("hidden");
+
+									images_collection.push({
+										num: index,
+										item: image_jnode
+									});
+
+									updatePanorama();
 								}).fail(function(){
 									image_jnode.remove();
 								});
@@ -461,10 +491,11 @@ suServView.extendTo(songUI, {
 								su.lfm_imgq.add(function(){
 									
 								});*/
+
 								if (req.queued) {
 									_this.img_load_stack.push(req.queued);
 								}
-								
+								_this.img_requests.push(req);
 								
 
 								
@@ -472,16 +503,21 @@ suServView.extendTo(songUI, {
 								
 							};
 							if (images[0]){
-								appendImage(images[0], true);
+								appendImage(images[0], 0, true);
 							}
 							$.each(images.slice(1, 10), function(i, el){
-								appendImage(el);
+								appendImage(el, i + 1);
 							});
 							_this.photo_c.append(fragment);
 							if (_this.state("mp-show")){
 								_this.setImagesPrio();
 							}
-							
+							main_c.addClass('loading-images');
+
+							$.when.apply($, _this.img_requests).always(function(){
+								main_c.removeClass('loading-images');
+							});
+							_this.img_panorama.checkSize();
 							
 
 						}
