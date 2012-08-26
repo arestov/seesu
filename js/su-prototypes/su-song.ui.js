@@ -445,11 +445,20 @@ suServView.extendTo(songUI, {
 							_this.img_requests = [];
 							_this.img_panorama = new Panoramator();
 							var main_c = _this.photo_c.parent()
-							main_c.click(function(e){
-								console.log('click');
-								//_this.img_panorama.next();
-							});
+				
 							_this.img_panorama.init(main_c, _this.photo_c);
+
+							var my_window = getDefaultView(_this.getC()[0].ownerDocument);
+							
+							var checkPanoramaSize = function(){
+								_this.img_panorama.checkSize();
+							};
+
+							$(my_window).on('resize', checkPanoramaSize);
+
+							_this.onDie(function(){
+								$(my_window).off('resize', checkPanoramaSize);
+							});
 
 							var images_collection = [];
 
