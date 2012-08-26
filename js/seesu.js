@@ -231,7 +231,9 @@ var seesuApp = function(version) {
 	});
 
 	this.lfm_imgq = new funcsQueue(700);
-	this.checkStats();
+	setTimeout(function(){
+		_this.checkStats();
+	},100)
 
 	suReady(function() {
 		_this.lfm_auth.try_to_login();
