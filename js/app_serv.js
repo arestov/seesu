@@ -76,9 +76,6 @@ Panoramator.prototype = {
 			e.preventDefault();
 			_this.handleUserStart(e)
 		});
-		this.viewport.on('mouseup', function(e){
-			
-		});
 		this.lift = lift;
 		this.ready_class_name = ready_class_name || 'ready-to-use';
 		this.lift_items = [];
@@ -203,7 +200,7 @@ Panoramator.prototype = {
 		}
 
 
-		$(document)
+		$(this.viewport[0].ownerDocument)
 			.off('mouseup', this.mouseUp)
 			.off('mousemove', this.mouseMove);
 		this.viewport.removeClass('touching-this');
@@ -220,8 +217,9 @@ Panoramator.prototype = {
 			time: e.timeStamp
 		});
 		this.viewport.addClass('touching-this');
-		$(document).on('mousemove', this.mouseMove);
-		$(document).on('mouseup', this.mouseUp);
+		$(this.viewport[0].ownerDocument)
+			.on('mousemove', this.mouseMove)
+			.on('mouseup', this.mouseUp);
 
 	},
 	setCollection: function(array){
