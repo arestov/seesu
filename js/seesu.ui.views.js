@@ -268,8 +268,11 @@ suServView.extendTo(mainLevelUI, {
 				
 				*/
 			} else {
-				this.message_arh_c.remove();
-			}
+				if (this.message_arh_c){
+					this.message_arh_c.remove();
+	
+				}
+							}
 		}
 	},
 	appendChildren: function(){
