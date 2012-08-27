@@ -350,7 +350,7 @@ provoda.Eventor.extendTo(seesuApp, {
 
 });
 
-window.seesu = window.su = new seesuApp(3.1); 
+window.seesu = window.su = new seesuApp(3.2); 
 
 var vkReferer = '';
 
