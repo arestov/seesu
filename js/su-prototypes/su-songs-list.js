@@ -130,7 +130,7 @@
 		},
 		extendSong: function(omo, player, mp3_search){
 			if (!(omo instanceof song)){
-				return new song(omo, player, mp3_search);
+				return new song(omo, this, player, mp3_search);
 			} else{
 				return omo;
 			}

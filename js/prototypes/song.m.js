@@ -44,8 +44,9 @@ provoda.addPrototype("baseSong",{
 			}
 		}
 	},
-	init: function(omo, player, mp3_search){
+	init: function(omo, playlist, player, mp3_search){
 		this._super();
+		this.plst_titl = playlist;
 		this.mp3_search = mp3_search;
 		this.player = player;
 		
@@ -66,7 +67,7 @@ provoda.addPrototype("baseSong",{
 		'song-title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track){
-				return this.getFullName(artist, track, true);
+				return this.getFullName(artist, track);
 			}
 		},
 		'full-title': {
@@ -94,7 +95,7 @@ provoda.addPrototype("baseSong",{
 		return n || 'no title';
 	},
 	updateNavTexts: function() {
-		var title = this.state('song-title');
+		var title = this.state('full-title');
 		this.updateState('nav-text', title);
 		this.updateState('nav-title', title);
 	},

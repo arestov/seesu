@@ -21,7 +21,6 @@ var songsList;
 		},
 		push: function(omo, skip_changes){
 			var mo = this.extendSong(omo, this.player, this.findMp3);
-			mo.plst_titl = this;
 
 			var last_usable_song = this.getLastUsableSong();
 

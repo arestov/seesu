@@ -5,8 +5,8 @@ var song;
 	var baseSong = function() {};
 	provoda.extendFromTo("baseSong", suMapModel, baseSong);
 
-	song = function(omo, player, mp3_search){
-		this.init.call(this, omo, player, mp3_search);
+	song = function(omo, playlist, player, mp3_search){
+		this.init.call(this, omo, playlist, player, mp3_search);
 		var _this = this;
 		this.updateNavTexts();
 

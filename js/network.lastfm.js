@@ -344,10 +344,7 @@ var LfmLoveIt = function(auth, mo) {
 LfmLogin.extendTo(LfmLoveIt, {
 	init: function(auth, mo) {
 		this._super(auth);
-		this.song = {
-			artist: mo.artist,
-			track: mo.track
-		};
+		this.song = mo;
 		this.setRequestDesc(localize('lastfm-loveit-access'));
 		this.updateState('active', true);
 	},
