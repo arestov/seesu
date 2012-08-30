@@ -73,6 +73,9 @@ Panoramator.prototype = {
 		var _this = this;
 		this.viewport = viewport;
 		this.viewport.on('mousedown', function(e){
+			if (e.which && e.which != 1){
+				return true;
+			}
 			e.preventDefault();
 			_this.handleUserStart(e)
 		});
@@ -80,9 +83,15 @@ Panoramator.prototype = {
 		this.ready_class_name = ready_class_name || 'ready-to-use';
 		this.lift_items = [];
 		this.mouseMove = function(e){
+			if (e.which && e.which != 1){
+				return true;
+			}
 			_this.cursorMove(e);
 		};
 		this.mouseUp = function(e){
+			if (e.which && e.which != 1){
+				return true;
+			}
 			_this.handleUserEnd(e);
 		};
 

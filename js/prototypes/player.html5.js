@@ -11,11 +11,34 @@
 		addEvent(a, 'ended', function(){
 			cb('finish', id);
 		});
+
+		/*
+		addEvent(a, 'suspend', function(){
+			console.log('suspend');
+		});
+		addEvent(a, 'emptied', function(){
+			console.log('emptied');
+		});
+		addEvent(a, 'waiting', function(){
+			console.log('waiting');
+		});
+		*/
+		
 		addEvent(a, 'timeupdate', function(){
+			var current_time = a.currentTime;
+			var duration = a.duration;
 			cb('playing', id, {
-				duration:  a.duration,
-				position: a.currentTime
+				duration:  duration,
+				position: current_time
 			});
+			if (a.loadme && a.networkState === 1){
+				var available = a.buffered.length && a.buffered.end(0);
+				if (available && available < duration && (available - current_time < 1.5)){
+			//		a.pause();
+			//		a.play();
+				//	a.load();
+				}
+			}
 		});
 		var at_finish;
 		var fireProgress = function() {
@@ -54,7 +77,9 @@
 			}
 		},
 		unload: function() {
+
 			if (this.a){
+				this.a.loadme = false;
 				try {
 					this.a.pause();
 				} catch (e){}
@@ -63,20 +88,30 @@
 			}
 		},
 		play: function() {
+			
 			this.requireAE();
+			this.a.loadme = true;
 			this.a.play();
 		},
 		load: function() {
+			
 			this.requireAE();
-			this.a.load();
+			this.a.loadme = true;
+			if (this.a.networkState === 0){
+				this.a.load();
+			}
+			
 		},
 		stop: function() {
+			
 			try{
+				this.a.loadme = false;
 				this.a.pause();
 				this.a.currentTime = 0;
 			} catch(e){}
 		},
 		pause: function() {
+			this.a.loadme = false;
 			this.a.pause();
 		},
 		setVolume: function(vol) {
@@ -84,13 +119,24 @@
 		},
 		setPosition: function(pos) {
 			var target_pos;
-
+			var available;
 			
 			try{
-				target_pos = Math.min(this.a.buffered.end(0) - 2, pos);
-				if (pos == 0 || (target_pos > 0)){
-					this.a.currentTime = (pos == 0) ? pos: target_pos ;
+				available = this.a.buffered.end(0);
+				if (available){
+					if (pos > available){
+						if (available > 2){
+							target_pos = Math.min(available - 2, pos);
+						}
+						
+					} else {
+						target_pos = Math.max(0, pos);
+					}
+
+					this.a.currentTime = target_pos;
 				}
+				
+				
 				
 			} catch(e){}
 			

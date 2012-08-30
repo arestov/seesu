@@ -840,13 +840,19 @@ seesu_ui.prototype = {
 		}
 		
 	},
-	verticalAlign: function(img, target_height, fix){
-		var real_height = img.naturalHeight ||  img.height;
+	verticalAlign: function(img, opts){
+		//target_height, fix
+		var real_height = opts.real_height || (img.naturalHeight ||  img.height);
 		if (real_height){
-			var offset = (target_height - real_height)/2;
+			var offset = (opts.target_height - real_height)/2;
 			
-			if (offset && fix){
-				$(img).animate({'margin-top':  offset + 'px'}, 200);
+			if (offset){
+				if (opts.animate){
+					$(img).animate({'margin-top':  offset + 'px'}, 200);
+				} else {
+					$(img).css({'margin-top':  offset + 'px'});
+				}
+				
 			}
 			return offset;
 		}
@@ -867,9 +873,12 @@ seesu_ui.prototype = {
 		}
 		image.src = src;
 		if (image.complete){
-			if (callback){
-				callback(image)
-			}
+			setTimeout(function(){
+				if (callback){
+					callback(image)
+				}
+			}, 10)
+			
 		}
 		return image;
 	},
@@ -979,9 +988,31 @@ seesu_ui.prototype = {
 		c.empty();
 		
 		if (lig.info && lig.info.photo_big){
-			var image = _this.preloadImage(lig.info.photo_big, 'user photo', function(img){
-				_this.verticalAlign(img, 252, true);	
+			var algd;
+			var doAlign = function(){
+
+			};
+			var img = _this.preloadImage(lig.info.photo_big, 'user photo', function(img){
+				if (!algd){
+					algd = true;
+					_this.verticalAlign(img, {
+						target_height: 252,
+						animate: true
+					});
+				}
+					
 			}, $('<div class="big-user-avatar"></div>').appendTo(c));
+
+			var real_height = (img.naturalHeight ||  img.height);
+			if (real_height){
+				algd = true;
+				this.verticalAlign(img, {
+					real_height: real_height,
+					target_height: 252
+				});
+
+			}
+
 		}
 		
 		if (su.s.loggedIn()){
