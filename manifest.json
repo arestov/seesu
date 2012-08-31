@@ -1,12 +1,13 @@
 {
-  "name": "Seesu Music App",
+  "name": "Seesu Music",
   "version": "3.4",
   "description": "Seesu is for searching and listening music. Free last.fm player.",
-  "app": {
-    "launch": {
-      "local_path":"index.html"
-    }
+  "browser_action": {
+	"default_icon": "icons/icon19.png",
+	"default_title": "Seesu",
+	"default_popup": "index.html"
   },
+  "background_page": "bg.html",
   "icons": {
 	"16": "icons/icon16.png",
 	"32": "icons/icon32.png",
@@ -14,12 +15,13 @@
 	"64": "icons/icon64.png",
 	"128": "icons/icon128.png"
   },
+  "update_url": "http://clients2.google.com/service/update2/crx",
   "permissions": [
-	"https://*.vk.com/*",
+  "https://*.vk.com/*",
   "http://*.vk.com/*",
-	"http://*.last.fm/*",
-	"http://*.audioscrobbler.com/*",
-	"http://api.soundcloud.com/*",
+  "http://*.last.fm/*",
+  "http://*.audioscrobbler.com/*",
+  "http://api.soundcloud.com/*",
   "http://*.nigma.ru/*",
   "https://ajax.googleapis.com/*",
   "http://gdata.youtube.com/*",
