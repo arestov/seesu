@@ -3,11 +3,15 @@
 	"name": "__MSG_extName__",
 	"description": "__MSG_extDesc__",
 	"default_locale": "en",
-	"app": {
-		"launch": {
-			"local_path":"index.html"
-		}
+	"browser_action": {
+		"default_icon": "icons/icon19.png",
+		"default_title": "Seesu",
+		"default_popup": "index.html"
 	},
+	"background": {
+		"page": "bg.html"
+	},
+	"update_url": "http://clients2.google.com/service/update2/crx",
 	"icons": {
 		"16": "icons/icon16.png",
 		"32": "icons/icon32.png",
@@ -31,5 +35,4 @@
 		"http://ex.fm/api/*"
 	],
 	"content_security_policy": "script-src 'self'; object-src 'self' https://www.youtube.com/v/"
-	
 }
