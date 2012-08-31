@@ -51,6 +51,7 @@ $.extend(lastfm_api.prototype, {
 			} else{
 				_this.stSet('lfm_scrobble_music', _this.music);
 			}
+			return timestamp;
 		}
 	}
 });
