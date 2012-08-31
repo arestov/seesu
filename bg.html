@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8">
+	<title>Seesu</title>
+	<script type="text/javascript">
+		var bpath = '';
+	</script>
+	<script type="text/javascript">
+		(function(){
+		function isFileReady ( readyState ) {
+		    // Check to see if any of the ways a file can be ready are available as properties on the file's element
+		    return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
+		  }	
+			
+			
+		var p = document.getElementsByTagName('script'),
+			p = p[p.length-1]; 
+				
+		window.loadJS = function(src, callback){
+			var s = document.createElement('script'),
+				done;
+			s.onreadystatechange = s.onload = function () {
+
+			  if ( ! done && isFileReady( s.readyState ) ) {
+		
+				// Set done to prevent this function from being called twice.
+				done = true;
+				callback();
+		
+				// Handle memory leak in IE
+				s.onload = s.onreadystatechange = null;
+			  }
+			};
+			s.src = src;
+			p.parentNode.insertBefore(s, p);
+		};
+		})();
+		loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
+			yepnope({
+				load: 'js/_seesu.jslist.js',
+				complete: function(){
+					
+				}
+			});
+		});
+	</script>
+	<script type="text/javascript">
+		if (typeof chrome === 'object' && chrome.extension){
+			
+		} else if (window.opera){
+			var opera_extension_button = opera.contexts.toolbar.createItem( {
+				  disabled: false,
+				  title: "Seesu - search and listen music",
+				  icon: "icons/icon18.png",
+				  popup:{
+				  	href: "index.html",
+					  width: 600,
+					  height: 570
+				  }
+				  
+				});
+			opera.contexts.toolbar.addItem( opera_extension_button );
+			
+		}
+	</script>
+
+  </head>
+  <body></body>
+</html>
