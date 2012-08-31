@@ -346,46 +346,48 @@ provoda.Eventor.extendTo(seesuApp, {
 
 			});
 
+	},
+	checkUpdates: function(){
+		var _this = this;
+
+		$.ajax({
+			url: this.s.url + 'update',
+			global: false,
+			type: "POST",
+			dataType: "json",
+			data: {
+				ver: this.version,
+				app_type: app_env.app_type
+			},
+			error: function(){},
+			success: function(r){
+				if (!r){return;}
+
+				
+				var cver = r.latest_version.number;
+				if (cver > _this.version) {
+					var message = 
+						'Suddenly, Seesu ' + cver + ' has come. ' + 
+						'You have version ' + _this.version + '. ';
+					var link = r.latest_version.link;
+					if (link.indexOf('http') != -1) {
+						$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
+					}
+				}
+				
+				console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
+
+			}
+		});
 	}
 
 });
 
 window.seesu = window.su = new seesuApp(3.3); 
 
-var vkReferer = '';
 
-var updating_notify = function(r){
-	if (!r){return;}
 
-	
-	var cver = r.latest_version.number;
-	if (cver > su.version) {
-		var message = 
-			'Suddenly, Seesu ' + cver + ' has come. ' + 
-			'You have version ' + su.version + '. ';
-		var link = r.latest_version.link;
-		if (link.indexOf('http') != -1) {
-			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
-		}
-	}
-	
-	console.log('lv: ' +  cver + ' reg link: ' + (vkReferer = r.vk_referer));
 
-};
-var check_seesu_updates = function(){
-	
-		$.ajax({
-			url: su.s.url + 'update',
-			global: false,
-			type: "POST",
-			dataType: "json",
-			data: {},
-			error: function(){},
-			success: updating_notify
-		});
-	
-	
-};
 
 var external_playlist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
 	this.result = this.header + '\n';
@@ -596,7 +598,7 @@ var make_lastfm_playlist = function(r, pl_r){
 
 suReady(function(){
 	try_mp3_providers();
-	check_seesu_updates();
+	seesu.checkUpdates();
 });
 
 jsLoadComplete(function() {

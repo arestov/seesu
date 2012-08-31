@@ -16,7 +16,7 @@ var test_pressed_node = function(e, opts){
 			
 		  }
 		  else if (bN(class_list.indexOf('vk-reg-ref'))){
-			app_env.openURL(vkReferer || 'http://vk.com/reg198193');
+			app_env.openURL(su.vkReferer || 'http://vk.com/reg198193');
 			seesu.track_event('Links', 'vk registration');
 			
 		  }
