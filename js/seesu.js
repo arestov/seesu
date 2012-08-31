@@ -199,11 +199,11 @@ var seesuApp = function(version) {
 	
 	this.lfm_auth.on('want-open-url', function(wurl){
 		if (app_env.showWebPage){
-			
-			app_env.showWebPage(wurl, function(url){
+			app_env.openURL(wurl);
+			/*
+			var opend = app_env.showWebPage(wurl, function(url){
 				var path = url.split('/')[3];
 				if (!path || path == 'home'){
-					app_env.hideWebPages();
 					app_env.clearWebPageCookies();
 					return true
 				} else{
@@ -214,8 +214,6 @@ var seesuApp = function(version) {
 							_this.lfm_auth.setToken(params.token);
 							
 						}
-
-						app_env.hideWebPages();
 						app_env.clearWebPageCookies();
 						return true;
 					}
@@ -225,6 +223,10 @@ var seesuApp = function(version) {
 				app_env.openURL(wurl);
 				
 			}, 960, 750);
+			if (!opend){
+				app_env.openURL(wurl);
+			}
+			*/
 		} else{
 			app_env.openURL(wurl);
 		}

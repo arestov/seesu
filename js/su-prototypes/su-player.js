@@ -51,16 +51,10 @@ var seesuPlayer;
 		},
 		changeAppMode: function(playing){
 			if (playing){
-				if (app_env.pokki_app){
-					pokki.setIdleDetect('popup', false);
-				}
 				if (window.btapp){
 					btapp.properties.set('background', true);
 				}
 			} else{
-				if (app_env.pokki_app){
-					pokki.setIdleDetect('popup', true);
-				}
 				if (window.btapp){
 					btapp.properties.set('background', false);
 				}
@@ -301,7 +295,7 @@ var seesuPlayer;
 	if (qt_plugin){
 		var all_qt_mimetypes = [];
 		for (var i = 0; i < quick_time_plgs.length; i++) {
-			Array.prototype.push.apply(all_qt_mimetypes, quick_time_plgs[i])
+			Array.prototype.push.apply(all_qt_mimetypes, toRealArray(quick_time_plgs[i]))
 			//quick_time_plgs[i]
 		}
 		//"application/x-quicktimeplayer" || "video/quicktime";
