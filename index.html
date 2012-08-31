@@ -2,8 +2,16 @@
 <html class="not-as-application">
   <head>
 	<meta charset="utf-8">
-	<title>Seesu</title>
-	<link id="dynamic-favicon" rel="shortcut icon" href="icons/icon16.png"/>
+	<title>Seesu online</title>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		var bpath = location.protocol+'//'+location.host +location.pathname + '/';
+		document.write('<'+'base '+'href="' + bpath + '"/>')
+		/* ]]>*/
+	</script>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<link id="dynamic-favicon" rel="shortcut icon" href="icons/icon16.png"/>	
+	<link rel="alternate" type="application/x-opera-widgets" title="Seesu" href="http://widgets.opera.com/widget/15872/" />
 	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/buttons.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/view_switcher.css" type="text/css" media="screen" />
@@ -14,11 +22,20 @@
 	<link rel="stylesheet" href="css/play-list-panel.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/abs_layout.css" type="text/css" media="screen" />
 	<meta name="keywords"  content="seesu, seesu for iphone, seesu for android, seesu for mobile, seesu online, last.fm, vk.com music, vkontakte.ru and last.fm" >
-	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
+	<meta name="description" content="Online version of Seesu. It is for searching and listening music. Hot last.fm acceleration"  >
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport"  content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
+	
 	<script type="text/javascript">
-		var bpath = '';
+	/*<![CDATA[*/
+	var openstat = { counter: 2101409, next: openstat };
+	(function(){
+		var opst = document.createElement('script');
+			opst.setAttribute('async', 'true');
+			opst.src = '//openstat.net/cnt.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(opst, s);
+	})();
+	/* ]]>*/
 	</script>
 	<script type="text/javascript">
 		(function(){
@@ -342,7 +359,7 @@
 								<label>
 									<span class='lbl lang localize-search'>Search</span>
 									<span class="inpt"><input type="search" name="q" id="q" size="50"  autocomplete="off"/></span>
-									
+
 								</label>
 								
 							</p>
