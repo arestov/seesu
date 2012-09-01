@@ -775,7 +775,7 @@ window.app_env = (function(wd){
 		env.needs_url_history = true;
 		
 	} else 
-	if (wd.pokki && wd.pokki.openPopup){
+	if (wd.pokki && wd.pokki.show){
 		env.safe_data = true;
 		env.app_type = 'pokki_app';
 		env.cross_domain_allowed = true;
@@ -967,16 +967,23 @@ if (typeof widget != 'object'){
 
 	if (window.pokki && pokki.showWebSheet){
 		app_env.showWebPage = function(url, beforeLoadedCb, error, width, height){
+			var errorCb = function(error_name){
+				if (error) {
+					error(error_name);
+				}
+				pokki.hideWebSheet();
+			};
 			var beforeLoaded = function(nurl){
 				var done = beforeLoadedCb.apply(this, arguments);
 				//beforeLoaded func must contain "return true" in it's body 
 				if (!done) {
 					return true;
 				} else{
+					app_env.hideWebPages();
 					return false;
 				}
 			};
-			return pokki.showWebSheet(url, width, height, beforeLoaded, error);
+			return pokki.showWebSheet(url, width || 640, height || 480, beforeLoaded, errorCb);
 		};
 		app_env.hideWebPages = function(){
 			return pokki.hideWebSheet();

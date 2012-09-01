@@ -176,12 +176,6 @@ window.connect_dom_to_som = function(d, cb){
 		justhead.children('.daddy').empty().removeClass('not-inited');
 		
 
-		if (app_env.pokki_app){
-			$('<span class="minimize-button"></span>').click(function(){
-				pokki.closePopup();
-			}).appendTo(justhead);
-		}
-
 		su_dom.els.search_input.on('keyup change', function(e) {
 			var input_value = this.value;
 			if (input_value != su.search_query){

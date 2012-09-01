@@ -17,26 +17,7 @@
 	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport"  content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
-	<script type="text/javascript">
-		var bpath = '';
-	</script>
-	<script type="text/javascript">
-		var d = window.document;
-		var cbp;
-		if (window.chrome && chrome.extension){
-			cbp = chrome.extension.getBackgroundPage();	
-		} else if (window.opera && opera.extension && opera.extension.bgProcess){
-			cbp = opera.extension.bgProcess;
-		}
-		cbp.jsLoadComplete({
-			test: function() {
-				return cbp.app_env
-			},
-			fn: function() {
-				cbp.handleDocument(d);
-			}
-		});
-	</script>
+	<script type="text/javascript" src="ui-init.js"></script>
   </head>
   
   <body>

@@ -1108,7 +1108,7 @@ seesu_ui.prototype = {
 		
 		
 			youtube_video.setAttribute('type',"application/x-shockwave-flash");
-			youtube_video.setAttribute('src', 'http://www.youtube.com/v/' + id);
+			youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id);
 			youtube_video.setAttribute('allowfullscreen',"true");
 			youtube_video.setAttribute('class',"you-tube-video");
 			

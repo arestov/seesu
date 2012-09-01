@@ -46,7 +46,8 @@ var seesuApp = function(version) {
 
 		suReady(function(){
 			yepnope( {
-				load: 'http://seesu.me/st/ga.mod.min.js',
+				
+				load: bpath + 'js/common-libs/ga.mod.min.js',
 				complete: function(){
 					_gaq.push(['_setAccount', 'UA-17915703-1']);
 					_gaq.push(['_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1]);
@@ -199,11 +200,11 @@ var seesuApp = function(version) {
 	
 	this.lfm_auth.on('want-open-url', function(wurl){
 		if (app_env.showWebPage){
-			
-			app_env.showWebPage(wurl, function(url){
+			app_env.openURL(wurl);
+			/*
+			var opend = app_env.showWebPage(wurl, function(url){
 				var path = url.split('/')[3];
 				if (!path || path == 'home'){
-					app_env.hideWebPages();
 					app_env.clearWebPageCookies();
 					return true
 				} else{
@@ -214,8 +215,6 @@ var seesuApp = function(version) {
 							_this.lfm_auth.setToken(params.token);
 							
 						}
-
-						app_env.hideWebPages();
 						app_env.clearWebPageCookies();
 						return true;
 					}
@@ -225,6 +224,10 @@ var seesuApp = function(version) {
 				app_env.openURL(wurl);
 				
 			}, 960, 750);
+			if (!opend){
+				app_env.openURL(wurl);
+			}
+			*/
 		} else{
 			app_env.openURL(wurl);
 		}
@@ -346,46 +349,48 @@ provoda.Eventor.extendTo(seesuApp, {
 
 			});
 
+	},
+	checkUpdates: function(){
+		var _this = this;
+
+		$.ajax({
+			url: this.s.url + 'update',
+			global: false,
+			type: "POST",
+			dataType: "json",
+			data: {
+				ver: this.version,
+				app_type: app_env.app_type
+			},
+			error: function(){},
+			success: function(r){
+				if (!r){return;}
+
+				
+				var cver = r.latest_version.number;
+				if (cver > _this.version) {
+					var message = 
+						'Suddenly, Seesu ' + cver + ' has come. ' + 
+						'You have version ' + _this.version + '. ';
+					var link = r.latest_version.link;
+					if (link.indexOf('http') != -1) {
+						$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
+					}
+				}
+				
+				console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
+
+			}
+		});
 	}
 
 });
 
 window.seesu = window.su = new seesuApp(3.3); 
 
-var vkReferer = '';
 
-var updating_notify = function(r){
-	if (!r){return;}
 
-	
-	var cver = r.latest_version.number;
-	if (cver > su.version) {
-		var message = 
-			'Suddenly, Seesu ' + cver + ' has come. ' + 
-			'You have version ' + su.version + '. ';
-		var link = r.latest_version.link;
-		if (link.indexOf('http') != -1) {
-			$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
-		}
-	}
-	
-	console.log('lv: ' +  cver + ' reg link: ' + (vkReferer = r.vk_referer));
 
-};
-var check_seesu_updates = function(){
-	
-		$.ajax({
-			url: su.s.url + 'update',
-			global: false,
-			type: "POST",
-			dataType: "json",
-			data: {},
-			error: function(){},
-			success: updating_notify
-		});
-	
-	
-};
 
 var external_playlist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
 	this.result = this.header + '\n';
@@ -596,7 +601,7 @@ var make_lastfm_playlist = function(r, pl_r){
 
 suReady(function(){
 	try_mp3_providers();
-	check_seesu_updates();
+	seesu.checkUpdates();
 });
 
 jsLoadComplete(function() {
