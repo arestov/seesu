@@ -46,7 +46,8 @@ var seesuApp = function(version) {
 
 		suReady(function(){
 			yepnope( {
-				load: 'http://seesu.me/st/ga.mod.min.js',
+				
+				load: bpath + 'js/common-libs/ga.mod.min.js',
 				complete: function(){
 					_gaq.push(['_setAccount', 'UA-17915703-1']);
 					_gaq.push(['_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1]);
