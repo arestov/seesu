@@ -318,6 +318,7 @@ suServView.extendTo(mfCorUI, {
 								_this.showYoutubeVideo(vid, vi_c, $(this));
 								_this.md.pause();
 								this.showed = true;
+								su.trackEvent('Navigation', 'youtube video');
 							} else{
 								_this.hideYoutubeVideo();
 								_this.md.play();

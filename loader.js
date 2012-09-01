@@ -1,4 +1,21 @@
 var bpath = '';
+window._gaq = window._gaq || [];
+var big_timer = {
+	setN: function(name){
+		var time = new Date() * 1;
+		if (name){
+			this[name] = time;
+		}
+		return time;
+	},
+	comp: function(name) {
+		var now = this.setN();
+		return now - this[name];
+	},
+	base_category: 'App init',
+	"page-start": new Date() * 1,
+	q: []
+};
 		
 (function(){
 function isFileReady ( readyState ) {
@@ -30,17 +47,31 @@ window.loadJS = function(src, callback){
 };
 })();
 loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
+	big_timer.q.push([big_timer.base_category, 'ready-yepnope', big_timer.comp('page-start'), 'yepnope loaded', 100]);
+
 	yepnope({
 		load: bpath + 'js/_seesu.jslist.js',
 		complete: function(){
-			jsLoadComplete({
-				test: function() {
-					return window.app_env
-				},
-				fn: function() {
-					handleDocument(window.document);
-				}
-			});
+			var cbp;
+			if (window.chrome && chrome.extension){
+				cbp = chrome.extension.getBackgroundPage();	
+			} else if (window.opera && opera.extension && opera.extension.bgProcess){
+				cbp = opera.extension.bgProcess;
+			}
+
+			if (!cbp || cbp != window){
+				//big_timer.sui_want = new Date();
+				jsLoadComplete({
+					test: function() {
+						return window.app_env
+					},
+					fn: function() {
+						handleDocument(window.document, {category: big_timer.base_category, start_time: "page-start"});
+						//
+					}
+				});
+			}
+			
 		}
 	});
 });

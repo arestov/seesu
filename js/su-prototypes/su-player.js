@@ -141,6 +141,13 @@ var seesuPlayer;
 			
 		}
 	};
+	var checkTracking = function(last_try){
+		if (done){
+			su.trackVar(3, 'canplay', 'yes', 1);
+		} else if (last_try){
+			su.trackVar(3, 'canplay', 'no', 1);
+		}
+	};
 	var addFeature = function(feature){
 		features[feature];
 		switch (feature){
@@ -331,6 +338,7 @@ var seesuPlayer;
 	while (!done && detectors.length){
 		detectors.shift()();
 	}
+	checkTracking();
 	if (!done){
 		domReady(document, function(){
 			detectors.push(
@@ -395,6 +403,7 @@ var seesuPlayer;
 			while (!done && detectors.length){
 				detectors.shift()();
 			}
+			checkTracking(true);
 		});
 		
 	}

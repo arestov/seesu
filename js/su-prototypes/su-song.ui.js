@@ -245,7 +245,7 @@ suServView.extendTo(songUI, {
 				.appendTo(artist_link_con)
 				.click(function(){
 					su.views.showArtcardPage(_this.md.artist);
-					su.track_event('Artist navigation', 'art card', _this.md.artist);
+					su.trackEvent('Artist navigation', 'art card', _this.md.artist);
 				});
 
 		
@@ -446,7 +446,13 @@ suServView.extendTo(songUI, {
 							_this.img_panorama = new Panoramator();
 							var main_c = _this.photo_c.parent()
 				
-							_this.img_panorama.init(main_c, _this.photo_c);
+							_this.img_panorama.init({
+								viewport: main_c, 
+								lift: _this.photo_c,
+								onUseEnd: function(){
+									seesu.trackEvent('Panoramator', 'artist photos');
+								}
+							});
 
 							var my_window = getDefaultView(_this.getC()[0].ownerDocument);
 							

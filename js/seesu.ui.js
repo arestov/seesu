@@ -416,7 +416,7 @@ seesu_ui.prototype = {
 		}
 		return !this.checkLiveState();
 	},
-	setDOM: function(opts) {
+	setDOM: function(opts, tracking_opts) {
 		var _this = this;
 		if (this.isAlive()){
 
@@ -446,6 +446,7 @@ seesu_ui.prototype = {
 					for (var i = 0; i < _this.cbs.length; i++) {
 						_this.cbs[i](opts);
 					};
+					big_timer.q.push([tracking_opts.category, 'process-thins-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui in process', 100]);
 				});
 				viewBlocks(_this, _this.d);
 			}
@@ -454,6 +455,7 @@ seesu_ui.prototype = {
 
 			
 		}
+		big_timer.q.push([tracking_opts.category, 'ready-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui ready', 100]);
 		return this;
 	},
 	onReady: function(cb){
@@ -914,7 +916,7 @@ seesu_ui.prototype = {
 				su.s.api('relations.setLike', {to: lig.user}, function(r){
 					
 					if (r.done){
-						su.track_event('people likes', 'liked');
+						su.trackEvent('people likes', 'liked');
 						var gc = $("<div></div>");
 						nb.c.after(gc);
 
@@ -942,7 +944,7 @@ seesu_ui.prototype = {
 				su.s.api('relations.acceptInvite', {from: lig.user}, function(r){
 					
 					if (r.done){
-						su.track_event('people likes', 'accepted');
+						su.trackEvent('people likes', 'accepted', false, 5);
 						nb.c.after(
 							$('<span class="people-list-desc desc"></span>')
 								.text(su.ui.getRemainTimeText(r.done.est, true))
@@ -1076,6 +1078,7 @@ seesu_ui.prototype = {
 				});
 				
 				uc.show('user-info', (p.left + $(li[0]).outerWidth()/2) -13 );
+				su.trackEvent('peoples', 'view');
 			} else{
 				uc.hide();
 			}
@@ -1142,7 +1145,7 @@ seesu_ui.prototype = {
 						save_parents: save_parents,
 						from_artcard: from_artcard
 					});
-					seesu.track_event('Artist navigation', 'album', al_artist + ": " + al_name);
+					seesu.trackEvent('Artist navigation', 'album', al_artist + ": " + al_name);
 				})
 				.appendTo(li);
 			$('<img/>').attr('src', al_image).appendTo(a_href);

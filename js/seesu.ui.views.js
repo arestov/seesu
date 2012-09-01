@@ -444,7 +444,7 @@ baseNavUI.extendTo(trackNavUI, {
 
 
 
-views = function(su_map){
+views = function(su_map, su){
 	var _this = this;
 	this.m = su_map;
 
@@ -455,22 +455,25 @@ views = function(su_map){
 
 		})
 		.on('url-change', function(nu, ou, data, replace) {
-			if (replace){
-				navi.replace(ou, nu, data);
-			} else {
-				navi.set(nu, data);
-			}
+			jsLoadComplete(function(){
+				if (replace){
+					navi.replace(ou, nu, data);
+				} else {
+					navi.set(nu, data);
+				}
+			});
+			
 
 			//console.log(arguments);
 		})
 		.on('every-url-change', function(nv, ov, replace) {
 			if (replace){
-				su.track_page(nv.map_level.resident.page_name);
+				//su.trackPage(nv.map_level.resident.page_name);
 			}
 			
 		})
 		.on('nav-change', function(nv, ov, history_restoring, title_changed){
-			su.track_page(nv.map_level.resident.page_name);
+			su.trackPage(nv.map_level.resident.page_name);
 		});
 
 };
@@ -482,7 +485,7 @@ views.prototype = {
 
 	show_now_playing: function(no_stat){
 		if (!no_stat){
-			seesu.track_event('Navigation', 'now playing');
+			su.trackEvent('Navigation', 'now playing');
 		}
 		//var cl = su.map.getCurMapL();
 		//cl = cl && cl.resident;

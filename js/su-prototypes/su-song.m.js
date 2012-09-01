@@ -15,11 +15,11 @@ var song;
 			if (user_want){
 				//fixme - never true!
 				if (_this.wasMarkedAsPrev()){
-					su.track_event('Song click', 'previous song');
+					su.trackEvent('Song click', 'previous song');
 				} else if (_this.wasMarkedAsNext()){
-					su.track_event('Song click', 'next song');
+					su.trackEvent('Song click', 'next song');
 				} else if (_this.state('play')){
-					su.track_event('Song click', 'zoom to itself');
+					su.trackEvent('Song click', 'zoom to itself');
 				}
 			}
 			
@@ -141,6 +141,7 @@ var song;
 					"#?" + 
 					stringifyParams(data, false, '=', '&'));
 			}
+			seesu.trackEvent('song actions', 'vk share');
 
 			return //su.vk_api.get("wall.post", data, {nocache: true});
 			//console.log(uid);

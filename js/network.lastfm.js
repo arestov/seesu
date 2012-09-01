@@ -375,7 +375,7 @@ LfmLogin.extendTo(LfmLoveIt, {
 					_this.updateState('wait-love-done', false);
 					_this.trigger('love-success');
 				})
-			
+			seesu.trackEvent('song actions', 'love');
 		}
 		
 		

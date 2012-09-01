@@ -2,6 +2,7 @@
 	var ready = false;
 	jsLoadComplete(function(){
 		domReady(w.document, function(){
+			big_timer.q.push([big_timer.base_category, 'ready-dom', big_timer.comp('page-start'), 'DOM loaded', 100]);
 			ready = true;
 		});
 	});
@@ -69,9 +70,15 @@ var downloadFile = tempTool.downloadFile;
 var Panoramator = function(){};
 Panoramator.prototype = {
 	constructor: Panoramator,
-	init: function(viewport, lift, ready_class_name){
+	init: function(opts){
+
+		if (opts.onUseEnd){
+			this.onUseEnd = opts.onUseEnd;
+		}
+		
+
 		var _this = this;
-		this.viewport = viewport;
+		this.viewport = opts.viewport;
 		this.viewport.on('mousedown', function(e){
 			if (e.which && e.which != 1){
 				return true;
@@ -79,8 +86,8 @@ Panoramator.prototype = {
 			e.preventDefault();
 			_this.handleUserStart(e)
 		});
-		this.lift = lift;
-		this.ready_class_name = ready_class_name || 'ready-to-use';
+		this.lift = opts.lift;
+		this.ready_class_name = opts.ready_class_name || 'ready-to-use';
 		this.lift_items = [];
 		this.mouseMove = function(e){
 			if (e.which && e.which != 1){
@@ -213,6 +220,9 @@ Panoramator.prototype = {
 			.off('mouseup', this.mouseUp)
 			.off('mousemove', this.mouseMove);
 		this.viewport.removeClass('touching-this');
+		if (this.onUseEnd){
+			this.onUseEnd();
+		}
 		//this.viewport
 	},
 	handleUserStart: function(e){
@@ -1030,7 +1040,7 @@ if (typeof console != 'object'){
 }
 
 
-var handleDocument = function(d) {
+var handleDocument = function(d, tracking_opts) {
 	/*
 	jsLoadComplete({
 		test: function() {
@@ -1056,7 +1066,7 @@ var handleDocument = function(d) {
 
 		if (!done && ui && dom_opts){
 			done = true;
-			ui.setDOM(dom_opts);
+			ui.setDOM(dom_opts, tracking_opts);
 		}
 	};
 
@@ -1067,6 +1077,7 @@ var handleDocument = function(d) {
 		},
 		fn: function() {
 			connect_dom_to_som(d, function(opts) {
+				big_timer.q.push([tracking_opts.category, 'ready-som', big_timer.comp(tracking_opts.start_time), 'SeesuOM loaded', 100]);
 				dom_opts = opts;
 				tryComplete();
 			});
@@ -1081,6 +1092,7 @@ var handleDocument = function(d) {
 			var g = new seesu_ui(d, true);
 			su.setUI(g);
 			ui = g;
+			big_timer.q.push([tracking_opts.category, 'created-sui', big_timer.comp(tracking_opts.start_time), 'new seesu ui created', 100]);
 			tryComplete();
 		}
 	});

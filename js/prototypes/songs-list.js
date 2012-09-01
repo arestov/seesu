@@ -412,7 +412,7 @@ var songsList;
 
 			pl_panel.find(".make-trs-plable").click(function(){
 				_this.md.makePlayable(true);
-				su.track_event('Controls', 'make playable all tracks in playlist');
+				su.trackEvent('Controls', 'make playable all tracks in playlist');
 			});
 			
 			this.export_playlist = pl_panel.find('.open-external-playlist').click(function(e){
