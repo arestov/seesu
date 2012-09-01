@@ -33,14 +33,24 @@ loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
 	yepnope({
 		load: bpath + 'js/_seesu.jslist.js',
 		complete: function(){
-			jsLoadComplete({
-				test: function() {
-					return window.app_env
-				},
-				fn: function() {
-					handleDocument(window.document);
-				}
-			});
+			var cbp;
+			if (window.chrome && chrome.extension){
+				cbp = chrome.extension.getBackgroundPage();	
+			} else if (window.opera && opera.extension && opera.extension.bgProcess){
+				cbp = opera.extension.bgProcess;
+			}
+
+			if (!cbp || cbp != window){
+				jsLoadComplete({
+					test: function() {
+						return window.app_env
+					},
+					fn: function() {
+						handleDocument(window.document);
+					}
+				});
+			}
+			
 		}
 	});
 });
