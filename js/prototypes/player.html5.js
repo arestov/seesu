@@ -25,14 +25,14 @@
 		*/
 		
 		addEvent(a, 'timeupdate', function(){
-			var current_time = a.currentTime;
-			var duration = a.duration;
+			var current_time = a.currentTime * 1000;
+			var duration = a.duration * 1000;
 			cb('playing', id, {
 				duration:  duration,
 				position: current_time
 			});
 			if (a.loadme && a.networkState === 1){
-				var available = a.buffered.length && a.buffered.end(0);
+				var available = a.buffered.length && (a.buffered.end(0) * 1000);
 				if (available && available < duration && (available - current_time < 1.5)){
 			//		a.pause();
 			//		a.play();
@@ -43,8 +43,8 @@
 		var at_finish;
 		var fireProgress = function() {
 			cb('loading', id, {
-				duration: a.duration,
-				fetched: a.buffered.end(0)
+				duration: a.duration * 1000,
+				fetched: a.buffered.end(0) * 1000
 			});
 		};
 		addEvent(a, 'progress', function(e){

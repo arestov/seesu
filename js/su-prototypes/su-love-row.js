@@ -30,13 +30,13 @@ BaseCRowUI.extendTo(LoveRowUI, {
 	}
 });
 
-LoveRow = function(traackrow, mo){
-	this.init(traackrow, mo);
+LoveRow = function(actionsrow, mo){
+	this.init(actionsrow, mo);
 };
 BaseCRow.extendTo(LoveRow, {
-	init: function(traackrow, mo){
+	init: function(actionsrow, mo){
 		var _this = this;
-		this.traackrow = traackrow;
+		this.actionsrow = actionsrow;
 		this.mo = mo;
 		this._super();
 		this.lfm_loveit = new LfmLoveIt(su.lfm_auth, this.mo);

@@ -127,6 +127,59 @@ provoda.Model.extendTo(PartsSwitcher, {
 	}
 });
 
+var ActionsRowUI = function(){}
+suServView.extendTo(ActionsRowUI, {
+	init: function(md, c) {
+		this.md = md;
+		this._super();
+		this.createBase(c);
+
+		this.parts_views = {};
+
+		var	
+			parts = this.md.getAllParts(),
+			tp = this.getTP();
+
+		
+
+		for (var i in parts) {
+			var pv = parts[i].getFreeView(false, this.row_context, tp);
+			if (pv){
+				this.parts_views[i] = pv;
+				pv.appended();
+				this.addChild(pv);
+			}
+		}
+
+		this.setModel(md);
+
+
+	},
+	state_change: {
+		active_part: function(nv, ov) {
+			if (nv){
+				this.row_context.removeClass('hidden');
+
+				var ar_pos = this.parts_views[nv].getArrowPos();
+				if (ar_pos){
+					this.arrow.css('left', ar_pos + 'px').removeClass('hidden');
+				}
+			} else {
+				this.row_context.addClass('hidden');
+			}
+		}
+	},
+	getTP: function() {
+		var tp = this.c.children('.track-panel');
+
+		tp.find('.pc').data('mo', this.md.mo);
+		
+		return tp;
+	}
+});
+
+
+
 var BaseCRowUI = function(){};
 suServView.extendTo(BaseCRowUI, {
 	bindClick: function(){
@@ -158,10 +211,10 @@ suServView.extendTo(BaseCRowUI, {
 var BaseCRow = function(){};
 provoda.Model.extendTo(BaseCRow, {
 	switchView: function(){
-		this.traackrow.switchPart(this.row_name);
+		this.actionsrow.switchPart(this.row_name);
 	},
 	hide: function(){
-		this.traackrow.hide(this.row_name);
+		this.actionsrow.hide(this.row_name);
 	},
 	deacivate: function(){
 		this.updateState("active_view", false);

@@ -357,6 +357,7 @@ var songsList;
 	
 	provoda.addPrototype("songsListBaseView", {
 		init: function(pl){
+			this.md = pl;
 			this._super();
 			this.createBase();
 			this.setModel(pl);
@@ -387,9 +388,9 @@ var songsList;
 			"can-play": function(state) {
 				if (state){
 					//make-trs-plable
-					this.export_playlist.addClass('can-be-used');
+					this.c.addClass('has-files-in-songs');
 				} else {
-					this.export_playlist.removeClass('can-be-used');
+					this.c.removeClass('has-files-in-songs');
 				}
 			}
 		},
@@ -402,29 +403,12 @@ var songsList;
 					}).text(localize("load-more")).appendTo(this.c);
 			}
 		},
-		createC: function() {
-			this.c = $('<div class="playlist-container"></div>');
-
-			var pl_panel = su.ui.samples.playlist_panel.clone();
-
-
-			var _this = this;
-
-			pl_panel.find(".make-trs-plable").click(function(){
-				_this.md.makePlayable(true);
-				su.trackEvent('Controls', 'make playable all tracks in playlist');
-			});
-			
-			this.export_playlist = pl_panel.find('.open-external-playlist').click(function(e){
-				_this.md.makeExternalPlaylist();
-				e.preventDefault();
-			});
-			this.c.append(pl_panel);
-			
-			return this;
-		},
 		createBase: function() {
-			this.createC();
+			this.c = $('<div class="playlist-container"></div>');
+			if (this.createPanel){
+				this.createPanel();
+			}
+			this.panel.appendTo(this.c)
 			this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);
 		},
 		appendSongUI: function(mo){

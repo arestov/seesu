@@ -517,6 +517,9 @@ provoda.Model.extendTo(mfCor, {
 		}
 
 	},
+	getCurrentMopla: function(){
+		return this.state('current_mopla')
+	},
 	switchMoreSongsView: function() {
 		if (!this.state('want-more-songs')){
 			this.updateState('want-more-songs', true);

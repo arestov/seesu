@@ -136,7 +136,7 @@ suServView.extendTo(songUI, {
 		};
 		//this.tidominator.removeClass('want-more-info');
 			
-		this.md.traackrow.hideAll();
+		this.md.actionsrow.hideAll();
 		
 		su.ui.hidePopups();
 		this.md.mf_cor.collapseExpanders();
@@ -204,7 +204,7 @@ suServView.extendTo(songUI, {
 
 		var context = this.requirePart('context');
 
-		var track_row_view = this.md.traackrow.getFreeView(false, context.children('.song-actions'));
+		var track_row_view = this.md.actionsrow.getFreeView(false, context.children('.song-actions'));
 		if (track_row_view){
 			this.addChild(track_row_view);
 		}

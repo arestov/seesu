@@ -24,8 +24,8 @@ var song;
 			}
 			
 		});
-		this.traackrow = new TrackActionsRow(this);
-		this.addChild(this.traackrow);
+		this.actionsrow = new TrackActionsRow(this);
+		this.addChild(this.actionsrow);
 
 		this.mf_cor = new mfCor(this, this.omo);
 		this.addChild(this.mf_cor);
@@ -180,12 +180,12 @@ var song;
 		}
 	});
 
-	var LastfmRow = function(traackrow){
-		this.init(traackrow);
+	var LastfmRow = function(actionsrow){
+		this.init(actionsrow);
 	};
 	BaseCRow.extendTo(LastfmRow, {
-		init: function(traackrow){
-			this.traackrow = traackrow;
+		init: function(actionsrow){
+			this.actionsrow = actionsrow;
 			this._super();
 			this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
 			this.addChild(this.lfm_scrobble);
@@ -208,12 +208,12 @@ var song;
 		}
 	});
 
-	var FlashErrorRow = function(traackrow){
-		this.init(traackrow);
+	var FlashErrorRow = function(actionsrow){
+		this.init(actionsrow);
 	};
 	BaseCRow.extendTo(FlashErrorRow, {
-		init: function(traackrow){
-			this.traackrow = traackrow;
+		init: function(actionsrow){
+			this.actionsrow = actionsrow;
 			this._super();
 		},
 		row_name: 'flash-error',
@@ -221,58 +221,14 @@ var song;
 	});
 
 
+	
+
 	var TrackActionsRowUI = function() {};
-	suServView.extendTo(TrackActionsRowUI, {
-		init: function(md, c) {
-			this.md = md;
-			this._super();
+	ActionsRowUI.extendTo(TrackActionsRowUI, {
+		createBase: function(c){
 			this.c = c;
-			this.song_row_context = this.c.children('.row-song-context');
-			this.arrow = this.song_row_context.children('.rc-arrow');
-			
-
-			this.parts_views = {};
-
-			var	
-				parts = this.md.getAllParts(),
-				tp = this.getTP();
-
-			
-
-			for (var i in parts) {
-				var pv = parts[i].getFreeView(false, this.song_row_context, tp);
-				if (pv){
-					this.parts_views[i] = pv;
-					pv.appended();
-					this.addChild(pv);
-				}
-			}
-
-			this.setModel(md);
-
-
-		},
-		state_change: {
-			active_part: function(nv, ov) {
-				if (nv){
-					this.song_row_context.removeClass('hidden');
-
-					var ar_pos = this.parts_views[nv].getArrowPos();
-					if (ar_pos){
-						this.arrow.css('left', ar_pos + 'px').removeClass('hidden');
-					}
-					//this.arrow.css('left', arrow_left + 'px').removeClass('hidden');
-				} else {
-					this.song_row_context.addClass('hidden');
-				}
-			}
-		},
-		getTP: function() {
-			var tp = this.c.children('.track-panel');
-
-			tp.find('.pc').data('mo', this.md.mo);
-			
-			return tp;
+			this.row_context = this.c.children('.row-song-context');
+			this.arrow = this.row_context.children('.rc-arrow');
 		}
 	});
 
@@ -299,10 +255,6 @@ var song;
 					_this.addPart(new LoveRow(_this, mo));
 				}
 			});
-			
-			
-
-
 		},
 		ui_constr: TrackActionsRowUI
 	});

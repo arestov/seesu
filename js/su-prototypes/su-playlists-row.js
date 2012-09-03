@@ -142,12 +142,12 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 	}
 });
 
-PlaylistAddRow = function(traackrow, mo) {
-	this.init(traackrow, mo);
+PlaylistAddRow = function(actionsrow, mo) {
+	this.init(actionsrow, mo);
 };
 BaseCRow.extendTo(PlaylistAddRow, {
-	init: function(traackrow, mo){
-		this.traackrow = traackrow;
+	init: function(actionsrow, mo){
+		this.actionsrow = actionsrow;
 		this.mo = mo;
 		this._super();
 		this.searcher = new PlaylistRowSearch(this, mo);

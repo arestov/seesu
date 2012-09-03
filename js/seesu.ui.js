@@ -790,58 +790,6 @@ seesu_ui.prototype = {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-	createFilesListElement: function(mopla, mo){
-		
-		var li = $('<li></li>');
-		
-		var desc_part = $('<span class="desc-name"></span>').appendTo(li);
-		var main_part = $('<span class="desc-text"></span>').appendTo(li);
-		
-		
-		var songitself = $('<a class="js-serv"></a>')
-			.attr('href', 'http://seesu.me/o#/ds' + mo.getURL(mopla))
-			.text(mopla.artist + " - " + mopla.track)
-			.click(function(e){
-				mo.play(mopla);
-				e.preventDefault();
-			}).appendTo(main_part);
-			
-		var d = $('<span class="duration"></span>').appendTo(desc_part);
-		if (mopla.duration){
-			var duration = Math.floor(mopla.duration/1000);
-			var digits = duration % 60;
-			d.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+digits : digits ));
-		}
-		
-		
-		var mp3l = $('<a class="desc external"></a>').appendTo($('<span class="mp3-file-link"></span>').appendTo(desc_part));
-		if (mopla.downloadable){
-			mp3l.attr('href', mopla.link).text('mp3')
-		}
-			
-		if (mopla.page_link){
-			$('<a class="external desc page-link" href="' + mopla.page_link + '">page</a>').appendTo(desc_part);
-			
-		}
-		return li;
-	},
-	createFilesList: function(part, mo){
-		if (part.t && part.t.length){
-			var fl = $();
-			fl = fl.add($('<div class="files-source"></div>').text(part.name));
-			var ul = $('<ul></ul>');
-			fl = fl.add(ul);
-			for (var i=0; i < part.t.length; i++) {
-				var el = this.createFilesListElement(part.t[i], mo);
-				if (i > 2){
-					el.addClass('addition-file')
-				}
-				ul.append(el);
-			};
-			return fl;
-		}
-		
-	},
 	verticalAlign: function(img, opts){
 		//target_height, fix
 		var real_height = opts.real_height || (img.naturalHeight ||  img.height);

@@ -1,58 +1,51 @@
 $.extend(lastfm_api.prototype, {
-	nowplay: function(mo, duration){
+	nowplay: function(omo, duration){
 		var _this = this;
 		if (!_this.sk){return false}
 			_this.post('track.updateNowPlaying', {
 				sk: _this.sk,
-				artist: mo.artist,
-				track: mo.track,
+				artist: omo.artist,
+				track: omo.track,
 				duration: duration || ""
 				
 			});
 	},
-	submit: function(mo, duration){
+	submit: function(mo, duration, timestamp){
 		var _this = this;
-		var artist = mo.artist,
-			track = mo.track,
-			starttime = mo.start_time,
-			last_scrobble = mo.last_scrobble,
-			timestamp = ((new Date()).getTime()/1000).toFixed(0);
-			
+		var artist = omo.artist,
+			track = omo.track;
+
+
+		this.music.push({
+			'artist': artist, 
+			'track': track,
+			'duration': duration || "", 
+			'timestamp': timestamp
+		});
 		
-		if (!duration || ((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
-			this.music.push({
-				'artist': artist, 
-				'track': track,
-				'duration': duration || "", 
-				'timestamp': timestamp
-			});
-			mo.start_time = false;
-			mo.last_scrobble = timestamp;
-		} 
-		if (this.music.length){
-			if (this.sk){
-				var post_m_obj = {sk: _this.sk};
-				for (var i=0,l=_this.music.length; i < l; i++) {
-					post_m_obj['artist[' + i + ']'] = _this.music[i].artist;
-					post_m_obj['track[' + i + ']'] = _this.music[i].track;
-					post_m_obj['timestamp[' + i + ']'] = _this.music[i].timestamp;
-					if (_this.music[i].duration){
-						post_m_obj['duration[' + i + ']'] = _this.music[i].duration;
-					}
-				};
-				
-				
-				_this.post('track.scrobble', post_m_obj)
-					.done(function(r){
-						_this.music = [];
-						_this.stSet('lfm_scrobble_music', '');
-						
-					});
-			} else{
-				_this.stSet('lfm_scrobble_music', _this.music);
-			}
-			return timestamp;
+		if (this.sk){
+			var post_m_obj = {sk: _this.sk};
+			for (var i=0,l=_this.music.length; i < l; i++) {
+				post_m_obj['artist[' + i + ']'] = _this.music[i].artist;
+				post_m_obj['track[' + i + ']'] = _this.music[i].track;
+				post_m_obj['timestamp[' + i + ']'] = _this.music[i].timestamp;
+				if (_this.music[i].duration){
+					post_m_obj['duration[' + i + ']'] = _this.music[i].duration;
+				}
+			};
+			
+			
+			_this.post('track.scrobble', post_m_obj)
+				.done(function(r){
+					_this.music = [];
+					_this.stSet('lfm_scrobble_music', '');
+					
+				});
+		} else{
+			_this.stSet('lfm_scrobble_music', _this.music);
 		}
+		return timestamp;
+		
 	}
 });
 lastfm_api.prototype.initers.push(function(){

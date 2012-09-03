@@ -70,25 +70,14 @@ var seesuPlayer;
 	"use strict";
 	var player = su.p = new seesuPlayer();
 
+
+	var canSubmit = function(mo){
+
+	}
+
 	su.p
 		.on('finish', function(e){
-			var mo = e.song_file.mo;
-			
-			var duration = Math.round(mo.mopla.duration/1000);
-			if (lfm.scrobbling) {
-				lfm.submit(mo, duration);
-			}
-			if (su.s.loggedIn()){
-				su.s.api('track.scrobble', {
-					client: su.env.app_type,
-					status: 'finished',
-					duration: duration,
-					artist: mo.artist,
-					title: mo.track,
-					timestamp: ((new Date()).getTime()/1000).toFixed(0)
-				});
-			}
-			delete mo.start_time;
+			var mo = e.song_file.mo.submitPlayed();
 		})
 		.on('song-play-error', function(song, can_play) {
 			if (this.c_song == song){
@@ -103,21 +92,7 @@ var seesuPlayer;
 			}
 		})
 		.on('play', function(e){
-			var mo = e.song_file.mo;
-			var duration = Math.round(mo.mopla.duration/1000);
-			if (lfm.scrobbling) {
-				lfm.nowplay(mo, duration);
-			}
-			if (su.s.loggedIn()){
-				su.s.api('track.scrobble', {
-					client: su.env.app_type,
-					status: 'playing',
-					duration: duration,
-					artist: mo.artist,
-					title: mo.track,
-					timestamp: ((new Date()).getTime()/1000).toFixed(0)
-				});
-			}
+			e.song_file.mo.submitNowPlaying();
 		});
 })();
 (function() {

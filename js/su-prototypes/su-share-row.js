@@ -243,13 +243,13 @@ BaseCRowUI.extendTo(ShareRowUI, {
 	}
 });
 
-ShareRow = function(traackrow, mo){
-	this.init(traackrow, mo);
+ShareRow = function(actionsrow, mo){
+	this.init(actionsrow, mo);
 };
 BaseCRow.extendTo(ShareRow, {
-	init: function(traackrow, mo){
+	init: function(actionsrow, mo){
 		var _this = this;
-		this.traackrow = traackrow;
+		this.actionsrow = actionsrow;
 		this.mo = mo;
 		this._super();
 		if (app_env.vkontakte || su.vk_api){

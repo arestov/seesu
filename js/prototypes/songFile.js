@@ -482,12 +482,19 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.player.setVolume(this, vol);
 			}
 		},
+		getDuration: function(){
+			return this.duration || this.state('loaded_duration');
+		},
 		setPositionByFactor: function(fac){
-			this.setPosition((this.state('loaded_duration') || this.duration || 0) * fac, fac);
+			this.setPosition((this.getDuration()/1000) * fac, fac);
 		},
 		setPosition: function(pos, fac){
 			if (this.player){
 				this.player.setPosition(this, pos, fac);
+			
+				this.mo.posistionChangeInMopla(this);
+				
+				
 			}
 		},
 		load: function(){

@@ -1,21 +1,33 @@
-.play-list-holder
-#tracks-search{
-	float:right;
-	position:relative;
-	color:#ddd;
-}
+
 .play-list-panel{
 	padding-top:8px;
 	padding-left:6px;
 	margin-bottom:10px;
-	overflow:hidden;
-	height:20px;
-}
+	}
+	.play-list-panel .playlist-actions{
+
+		}
+		.play-list-panel .playlist-actions .pla-panel{
+
+			}
+			.play-list-panel .playlist-actions .pla-button{
+				float:left;
+				}
+			.play-list-panel .playlist-actions .pl-settings-button{
+				float:right;
+				}
+	.play-list-panel .pla-row-content{
+		margin-top:12px;
+		position:relative;
+		background: #5A5A5A;
+		padding:12px;
+		border-radius: 6px;
+		}
 .open-external-playlist{
 	display:none;
 	position:relative;
 }
-.open-external-playlist.can-be-used{
+.has-files-in-songs .open-external-playlist{
 	display:inline;
 }
 .open-external-playlist .music-programs{
