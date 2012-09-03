@@ -8,7 +8,7 @@
 
 		}
 		.play-list-panel .playlist-actions .pla-panel{
-
+			overflow: hidden;
 			}
 			.play-list-panel .playlist-actions .pla-button{
 				float:left;
@@ -20,6 +20,7 @@
 		margin-top:12px;
 		position:relative;
 		background: #5A5A5A;
+		line-height: 1.5;
 		padding:12px;
 		border-radius: 6px;
 		}
