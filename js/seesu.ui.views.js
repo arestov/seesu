@@ -272,7 +272,29 @@ suServView.extendTo(mainLevelUI, {
 					this.message_arh_c.remove();
 	
 				}
-							}
+			}
+		},
+		"have-playlists": function(state){
+			if (state){
+				if (!this.plts_link){
+					this.plts_link =  this.els.fast_personal_start.children('.cus-playlist-b');
+					this.plts_link.children('a').click(function(e){
+						e.preventDefault();
+						su.ui.search(':playlists');
+					});
+				}
+				this.plts_link.removeClass('hidden');
+				/*
+				
+				this.plts_link =  $('<a></a>').text(localize('playlists')).attr('class', 'js-serv').click(function(e){
+					su.ui.search(':playlists');
+					
+				}) 
+				*/
+				//$('<p></p>').attr('id', 'cus-playlist-b').append(
+				//	_ui.link =
+				//).appendTo(_ui.els.start_page_place);
+			}
 		}
 	},
 	appendChildren: function(){

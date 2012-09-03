@@ -59,7 +59,7 @@
 	display:none;
 	margin-top:2em;
 }
-.lfm-start{
+.fast-personal-start{
 	display:none;
 	}
 .show-start{
@@ -68,7 +68,7 @@
 	.show-start #search{
 		display:block;
 	}
-	.show-start .lfm-start,
+	.show-start .fast-personal-start,
 	.show-start .for-startpage,
 	.show-start .block-for-startpage {
 		display:block;

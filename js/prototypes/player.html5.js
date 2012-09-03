@@ -44,7 +44,7 @@
 		var fireProgress = function() {
 			cb('loading', id, {
 				duration: a.duration * 1000,
-				fetched: a.buffered.end(0) * 1000
+				fetched: a.buffered.length && (a.buffered.end(0) * 1000)
 			});
 		};
 		addEvent(a, 'progress', function(e){
@@ -122,7 +122,7 @@
 			var available;
 			
 			try{
-				available = this.a.buffered.end(0);
+				available = this.a.buffered.length && this.a.buffered.end(0);
 				if (available){
 					if (pos > available){
 						if (available > 2){

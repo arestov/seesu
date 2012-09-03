@@ -10,7 +10,7 @@ $.extend(lastfm_api.prototype, {
 				
 			});
 	},
-	submit: function(mo, duration, timestamp){
+	submit: function(omo, duration, timestamp){
 		var _this = this;
 		var artist = omo.artist,
 			track = omo.track;

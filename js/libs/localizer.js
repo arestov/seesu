@@ -169,7 +169,7 @@ localizer = {
 	},
 	"trysearches": {
 		"original": "try to search",
-		"ru": "Попробуйте найти"
+		"ru": "Попробуй найти"
 	},
 	"Download": {
 		"original": "Download",
@@ -177,7 +177,7 @@ localizer = {
 	},
 	"search-control-hint": {
 		"original": "Use keyboard: up and down arrows, enter",
-		"ru": "Используйте клавиатуру: стрелки вверх, вниз и клавишу ввод"
+		"ru": "Используй клавиатуру: стрелки вверх, вниз и клавишу ввод"
 		
 	},
 	"reccoms": {
@@ -202,7 +202,7 @@ localizer = {
 	},
 	"or-type-username": {
 		"original": "or type username",
-		"ru": "или введите имя пользователя"
+		"ru": "или введи имя пользователя"
 	},
 	"type-friend-desc": {
 		"original": " (you can type your friend)",
@@ -254,11 +254,11 @@ localizer = {
 	},
 	"stop-flash": {
 		"original": "To stop annoing «Adobe Flash Player Security» window copy this address:",
-		"ru": "Что бы убрать сообщение об  «Adobe Flash Player Security» скопируйте следующий адрес"
+		"ru": "Что бы убрать сообщение об  «Adobe Flash Player Security» скопируй следующий адрес"
 	},
 	"add-to-wl": {
 		"original": "add it to white list on",
-		"ru": "добавьте его в белый список на"
+		"ru": "добавь его в белый список на"
 	},
 	"flashpage": {
 		"original": "flash internet security page",
@@ -266,7 +266,7 @@ localizer = {
 	},
 	"and-restart": {
 		"original": "and then restart Seesu",
-		"ru": "и перезапустите Сису"
+		"ru": "и перезапусти Сису"
 	},
 	
 	"bad-flash-desc": {
@@ -339,7 +339,7 @@ localizer = {
 	},
 	"you-may": {
 		"original": "You may",
-		"ru": "Вы можете"
+		"ru": "Ты можешь"
 	},
 	"create-acc": {
 		"original": "create new account",
@@ -352,7 +352,7 @@ localizer = {
    
 	"open-api-secure": {
 		"original": "Try both if you get «Open API security breach».",
-		"ru": "Попробуйте и то и другое, если у тебя появляется сообщение «Open API security breach»."
+		"ru": "Попробуй и то и другое, если у тебя появляется сообщение «Open API security breach»."
 	},
 	"email": {
 		"original": "E-mail",

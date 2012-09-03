@@ -254,7 +254,14 @@ var seesuApp = function(version) {
 			}
 		}, 300)
 	});
-
+	jsLoadComplete({
+		test: function(){
+			return window.su && window.su.gena && window.su.gena.playlists;
+		}, 
+		fn: function(){
+			su.chechPlaylists();
+		}
+	});
 
 };
 provoda.Eventor.extendTo(seesuApp, {
@@ -284,6 +291,11 @@ provoda.Eventor.extendTo(seesuApp, {
 	onUICreation: function(cb){
 		var ar = (this.ui_creation_callbacks = this.ui_creation_callbacks || []);
 			ar.push(cb);
+	},
+	chechPlaylists: function(){
+		if (this.gena){
+			this.main_level.updateState('have-playlists', !!this.gena.playlists.length);
+		}
 	},
 	fs: {},//fast search
 	env: app_env,
@@ -661,6 +673,8 @@ jsLoadComplete(function() {
 			var oldpush = pl_r.push;
 			pl_r.push = function(){
 				oldpush.apply(this, arguments);
+
+				seesu.trackEvent('song actions', 'add to playlist');
 				_this.save_playlists();
 			};
 			return pl_r;
@@ -695,8 +709,8 @@ jsLoadComplete(function() {
 		
 		pls.push = function(){
 			Array.prototype.push.apply(this, arguments);
-			su.ui.create_playlists_link();
-			seesu.trackEvent('song actions', 'add to playlist');
+			su.chechPlaylists();
+			
 		};
 		pls.find = function(puppet){
 			for (var i=0; i < pls.length; i++) {

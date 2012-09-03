@@ -29,16 +29,6 @@ var viewBlocks = function(sui, d){
 		});
 	}
 
-
-	jsLoadComplete({
-		test: function(){
-			return window.su && window.su.gena && window.su.gena.playlists;
-		}, 
-		fn: function(){
-			sui.create_playlists_link();
-		}
-	});
-
 	var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(sui.els.start_screen);
 	var users_limit = 6;
 	var showUsers = function(listenings,c, above_limit_value){

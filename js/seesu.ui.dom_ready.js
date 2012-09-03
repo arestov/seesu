@@ -46,6 +46,7 @@ window.connect_dom_to_som = function(d, cb){
 			searchres: $('#search_result',d),
 			search_input: $('#q',d),
 			search_form: search_form,
+			fast_personal_start: start_screen.children('.fast-personal-start'),
 			start_page_place: start_screen.children('.for-startpage')
 		};
 		/*

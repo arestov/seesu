@@ -233,18 +233,17 @@
 					<span class="pla-button" style="color: #585858;cursor:pointer">● ● ●</span>
 					<span class="pl-settings-button">settings</span>
 				</div>
-				<div class="pla-row-content hidden" style="position:relative">
+				<div class="pla-row-content has-dark-buttons hidden" style="position:relative">
 					<span class="rc-arrow hidden">
 						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
 					</span>
 					<div class="pla-row hidden">
-						<div class="search-music-files">
-							<a class="js-serv make-trs-plable lang localize-playlist-getmp3 ">Make playable all tracks in playlist</a>
-						</div>
-						<a class="js-serv open-external-playlist" href="http://seesu.me/generated_files/seesu_playlist.m3u">
-							<span class="lang localize-playlist-export">Save playlist to *.m3u file</span> <span class="music-programs"></span>
-						</a>
+						<span class="button-hole"><a class="search-music-files nicebutton lang localize-playlist-getmp3">Make playable all tracks in playlist</a></span>
 
+						<!-- href="http://seesu.me/generated_files/seesu_playlist.m3u"-->
+						<span class="button-hole">
+							<a class="open-external-playlist nicebutton lang localize-playlist-export">Save playlist to *.m3u file</a>
+						</span>
 					</div>
 					<div class="pla-settings hidden">
 						settings settings settings
@@ -272,9 +271,8 @@
 			</div>
 		</div>
 		<form class="lfm-manual-user needs-cross-domain">
-			<p class="lang localize-or-type-username">or type username</p>
+			<p><span class="lang localize-or-type-username">or type username</span> <span class="lang localize-type-friend-desc">(you can type your friend)</span></p>
 			<p><input type="text" name="username" value="YodaPunk" class="lfm-username"> <button type='submit'>ok</button></p>
-			<p class="lang localize-type-friend-desc"> (you can type your friend)</p>
 		</form>
 		<form class="scrobbling-switches">
 			<p>scrobbling to last.fm</p>
@@ -325,13 +323,19 @@
 						</form>
 						<div id="search_result" class="search-results-holder" ></div>
 					</div>
-					<div class="lfm-start">
-						<div class="lfm-recomm">
-							<p><a  id="lfm-recomm" class="js-serv lang localize-reccoms">Recommendations</a></p>
-						</div>
-						<div class="lfm-loved">
-							<p><a class="js-serv lang localize-loved-tracks " id="lfm-loved">Loved Tracks</a></p>
-						</div>
+					<div class="fast-personal-start has-dark-buttons">
+						
+						<span class="button-hole hidden cus-playlist-b">
+							<a class="nicebutton lang localize-playlists">Playlists</a>
+						</span>
+						<span class="button-hole">
+							<a id="lfm-recomm" class="nicebutton lang localize-reccoms">Recommendations</a>
+						</span>
+						<span class="button-hole">
+							<a id="lfm-loved" class="nicebutton lang localize-loved-tracks">Loved Tracks</a>
+						</span>
+						<div class="lfm-recomm"></div>
+						<div class="lfm-loved"></div>
 					</div>
 					<div class="for-startpage"></div>
 					<div class="block-for-startpage start-page-messages"></div>

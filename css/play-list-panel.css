@@ -17,12 +17,18 @@
 				float:right;
 				}
 	.play-list-panel .pla-row-content{
-		margin-top:12px;
+		
 		position:relative;
-		background: #5A5A5A;
 		line-height: 1.5;
-		padding:12px;
-		border-radius: 6px;
+		margin:12px -12px 0;
+
+		color:#999;
+		background: #4D4D4D;
+		border-radius: 12px;
+		border-top: 1px solid #444;
+		border-bottom: 1px solid #555;
+		padding: 12px;
+
 		}
 .open-external-playlist{
 	display:none;
@@ -30,17 +36,13 @@
 }
 .has-files-in-songs .open-external-playlist{
 	display:inline;
-}
-.open-external-playlist .music-programs{
-	position:absolute;
-	width:61px;
-	height:18px;
-	right:-64px;
-	background:url(../i/icons_programs_inactive.png) no-repeat 0 0;
-}
-.open-external-playlist:hover .music-programs{
-	background-image:url(../i/icons_programs.png)
-}
+	}
+	.has-files-in-songs .open-external-playlist.nicebutton{
+		display: block
+		}
+
+
+
 
 .scrobbling-button .trackbutton{
 	background:#333 url(../i/last-fm-gray.png) no-repeat;
