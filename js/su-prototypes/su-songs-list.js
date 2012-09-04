@@ -249,18 +249,20 @@
 			this.md = md;
 			this._super();
 			this.c =  parent_c.children('.pla-row');
-			this.button = parent_c.parent().children('.pla-panel').children('.pla-button');// buttons_panel.find('.flash-secur-button');
+			this.button = parent_c.parent().children('.pla-panel').children('.pla-button');
 
 
 			var _this = this;
 
-			this.c.find(".make-trs-plable").click(function(){
-				//_this.md.pl.makePlayable(true);
-				//su.trackEvent('Controls', 'make playable all tracks in playlist');
+			this.c.find(".search-music-files").click(function(){
+				_this.md.actionsrow.pl.makePlayable(true);
+				su.trackEvent('Controls', 'make playable all tracks in playlist');
+				//
 			});
 			
 			this.c.find('.open-external-playlist').click(function(e){
-				//_this.md.pl.makeExternalPlaylist();
+				_this.md.actionsrow.pl.makeExternalPlaylist();
+				su.trackEvent('Controls', 'make *.m3u');
 				//e.preventDefault();
 			});
 

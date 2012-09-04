@@ -10,6 +10,10 @@
 		.play-list-panel .playlist-actions .pla-panel{
 			overflow: hidden;
 			}
+			.pla-panel .pla-button{
+				color: #585858;
+				cursor: pointer;
+				}
 			.play-list-panel .playlist-actions .pla-button{
 				float:left;
 				}
