@@ -89,7 +89,7 @@ provoda.View.extendTo(LfmLoginView, {
 		this.c = su.ui.samples.lfm_authsampl.clone();
 		this.auth_block = this.c.children(".auth-block");
 		var _this = this;
-		this.auth_block.find('.lastfm-auth-button').click(function(e){
+		this.auth_block.find('.lastfm-auth-bp a').click(function(e){
 			_this.md.requestAuth();
 			e.preventDefault();
 		});
@@ -193,6 +193,7 @@ LfmLogin.extendTo(LfmReccoms, {
 	init: function(auth){
 		this._super(auth);
 		this.setRequestDesc(localize('lastfm-reccoms-access'));
+		this.updateState('active', true);
 	},
 	onSession: function(){
 		this.updateState('active', false);
@@ -220,6 +221,7 @@ LfmLogin.extendTo(LfmLoved, {
 		this._super(auth);
 		this.setRequestDesc(localize('grant-love-lfm-access'));
 		this.updateState('can-fetch-crossdomain', true);
+		this.updateState('active', true);
 	},
 	onSession: function(){
 		this.updateState('active', false);
@@ -310,20 +312,26 @@ var LfmLoveItView = function() {};
 LfmLoginView.extendTo(LfmLoveItView, {
 	createBase: function() {
 		this._super();
+		var _this = this;
 		var wrap = $('<div class="add-to-lfmfav"></div>');
 
-		this.love_button = $('<button type="button" disabled="disabled" class="lfm-loveit"></button>').text(localize('addto-lfm-favs')).appendTo(wrap);
-		this.c.append(wrap);
-		var _this = this;
-		this.love_button.click(function() {
-			_this.md.makeLove();
+		this.nloveb = su.ui.createNiceButton();
+		this.nloveb.c.appendTo(wrap);
+		this.nloveb.b.click(function(){
+			if (_this.nloveb._enabled){
+				_this.md.makeLove();
+			}
 		});
+		this.nloveb.b.text(localize('addto-lfm-favs'));
+		this.c.append(wrap);
+		
+	
 	},
 	"stch-has-session": function(state) {
 		state = !!state;
 		this.c.toggleClass('has-session', state);
 		this.auth_block.toggleClass('hidden', state);
-		this.love_button.prop('disabled', !state);
+		this.nloveb.toggle(state);
 	},
 	"stch-wait-love-done": function(state){
 		this.c.toggleClass('wait-love-done', !!state);

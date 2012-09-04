@@ -1132,6 +1132,7 @@ seesu_ui.prototype = {
 					this.b.data('disabled', false);
 					this._enabled = true;
 				}
+				return this;
 				
 			},
 			disable: function(){
@@ -1139,6 +1140,16 @@ seesu_ui.prototype = {
 					this.b.removeClass('nicebutton').addClass('disabledbutton');	
 					this.b.data('disabled', true);
 					this._enabled = false;
+				}
+				return this;
+			},
+			toggle: function(state){
+				if (typeof state != 'undefined'){
+					if (state){
+						this.enable();
+					} else {
+						this.disable();
+					}
 				}
 				
 			}

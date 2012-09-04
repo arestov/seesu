@@ -30,6 +30,12 @@
 		padding: 12px;
 
 		}
+		.play-list-panel .pla-row-content .rc-s-arrow{
+			border-bottom-color:#444 
+			}
+			.play-list-panel .pla-row-content .rc-s-arrow-bg{
+				border-bottom-color:#4D4D4D;
+				}
 .open-external-playlist{
 	display:none;
 	position:relative;

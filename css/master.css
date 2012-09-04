@@ -361,7 +361,7 @@ a.desc{
 	overflow: hidden;
 }
 
-.login-lastfm-button,.lastfm-auth-button{
+.login-lastfm-button,.lastfm-auth-bp{
 	float:right;
 	margin-left:12px;
 }
@@ -379,7 +379,8 @@ a.desc{
 		margin: 0 -12px;
 		}
 
-		.fast-personal-start .lfm-auth-module{
+		.fast-personal-start .row-context{
+			position: relative;
 			border-top: 1px solid #424242;
 			margin: 12px -12px -12px;
 			padding: 0 12px 12px;
@@ -387,7 +388,12 @@ a.desc{
 			background: #474747;
 			border-bottom: 1px solid #666;
 			}
-
+			.fast-personal-start .row-context .rc-s-arrow{
+				border-bottom-color:#424242 
+				}
+			.fast-personal-start .row-context .rc-s-arrow-bg{
+				border-bottom-color:#474747;
+				}
 		.fast-personal-start .cus-playlist-b{
 			float:right;
 			}

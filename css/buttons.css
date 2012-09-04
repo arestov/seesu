@@ -156,10 +156,7 @@
 .button-hole{
 	background:#555;
 	font: 12px/1.5 Arial, sans-serif;
-	background-image: -o-linear-gradient(#5a5a5a,#4a4a4a);
-	background-image: -moz-linear-gradient(100% 100% 180deg, #5a5a5a, #4a4a4a);
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5a5a5a), to(#4a4a4a)) !important;
-	background-image: linear-gradient(#5a5a5a,#4a4a4a);
+	
 
 	border-top:1px solid #474747;
 	border-radius:11px;
@@ -172,10 +169,7 @@
 	.button-hole:hover{
 		background-color:#4a4a4a;
 		
-		background-image: -o-linear-gradient(#5d5d5d,#444);
-		background-image: -moz-linear-gradient(100% 100% 180deg, #5d5d5d, #444);
-		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5d5d5d), to(#444)) !important;
-		background-image: linear-gradient(#5c5c5c,#444);
+		
 		
 
 		}
@@ -198,11 +192,22 @@
 .nicebutton{
 	cursor:pointer;
 	color:#aaa;
+	border-left: 0;
+	border-right: 0; 
 	border-top:1px solid #626262;
 	border-bottom:1px solid #3D3D3D;
-	
+	background-image: -o-linear-gradient(#5a5a5a,#4a4a4a);
+	background-image: -moz-linear-gradient(100% 100% 180deg, #5a5a5a, #4a4a4a);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5a5a5a), to(#4a4a4a)) !important;
+	background-image: linear-gradient(#5a5a5a,#4a4a4a);
 		
 }
+.nicebutton:hover{
+	background-image: -o-linear-gradient(#5a5a5a,#444);
+	background-image: -moz-linear-gradient(100% 100% 180deg, #5a5a5a, #444);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5a5a5a), to(#444)) !important;
+	background-image: linear-gradient(#5a5a5a,#444);
+	}
 .disabledbutton{
 	background:#595959;
 	color:#777;

@@ -142,24 +142,7 @@ suServView.extendTo(mainLevelUI, {
 
 		var _this = this;
 
-		this.sui.els.start_screen.find("#lfm-recomm").click(function(){
-			if (!lfm.sk){
-				_this.md.lfm_reccoms.switchView();
-			} else {
-				render_recommendations();
-			}
-			
-			return false;
-		});
-
-
-		this.sui.els.start_screen.find('#lfm-loved').click(function(){
-			if (!lfm.sk){
-				_this.md.lfm_loves.switchView();
-			} else {
-				render_loved();
-			}
-		});
+		
 
 	},
 	state_change: {
@@ -278,36 +261,24 @@ suServView.extendTo(mainLevelUI, {
 			if (state){
 				if (!this.plts_link){
 					this.plts_link =  this.els.fast_personal_start.children('.cus-playlist-b');
+					var _this = this;
 					this.plts_link.children('a').click(function(e){
+						_this.md.fast_pstart.hideAll();
 						e.preventDefault();
 						su.ui.search(':playlists');
 					});
 				}
 				this.plts_link.removeClass('hidden');
-				/*
-				
-				this.plts_link =  $('<a></a>').text(localize('playlists')).attr('class', 'js-serv').click(function(e){
-					su.ui.search(':playlists');
-					
-				}) 
-				*/
-				//$('<p></p>').attr('id', 'cus-playlist-b').append(
-				//	_ui.link =
-				//).appendTo(_ui.els.start_page_place);
 			}
 		}
 	},
 	appendChildren: function(){
-		var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView();
-		if (lfm_reccoms_view){
-			su.ui.els.start_screen.find('.lfm-recomm').append(lfm_reccoms_view.getC());
-			this.addChild(lfm_reccoms_view);
+
+		var fast_pstart_view = this.md.fast_pstart.getFreeView(false, su.ui.els.fast_personal_start);
+		if (fast_pstart_view){
+			this.addChild(fast_pstart_view);
 		}
-		var lfm_loves_view = this.md.lfm_loves.getFreeView();
-		if (lfm_loves_view){
-			su.ui.els.start_screen.find('.lfm-loved').append(lfm_loves_view.getC());
-			this.addChild(lfm_loves_view);
-		}
+
 	},
 	toggleBodyClass: function(add, class_name){
 		if (add){
@@ -335,6 +306,7 @@ suServView.extendTo(mainLevelUI, {
 
 mainLevel = function(su) {
 	this.init();
+	this.su = su;
 	this.updateState('nav-title', 'Seesu start page');
 
 	if (app_env.check_resize){
@@ -344,11 +316,8 @@ mainLevel = function(su) {
 		this.updateState('deep-sandbox', true);
 	}
 
+	this.fast_pstart = new FastPSRow(this);
 
-	this.lfm_reccoms = new LfmReccoms(su.lfm_auth);
-	this.lfm_loves = new LfmLoved(su.lfm_auth);
-	this.addChild(this.lfm_reccoms);
-	this.addChild(this.lfm_loves);
 
 	var _this = this;
 
@@ -431,6 +400,269 @@ suMapModel.extendTo(mainLevel, {
 	}
 });
 
+
+var FastPSRowView = function(){};
+ActionsRowUI.extendTo(FastPSRowView, {
+	createBase: function(c){
+		this.c = c;
+		this.row_context = this.c.find('.row-context');
+		this.arrow = this.row_context.children('.rc-arrow');
+
+	}
+});
+
+
+var FastPSRow = function(parent_m){
+	this.init(parent_m);
+};
+
+PartsSwitcher.extendTo(FastPSRow, {
+	init: function(ml) {
+		this._super();
+		this.ml = ml;
+		this.updateState('active_part', false);
+		this.addPart(new LastfmRecommRow(this, ml));
+		this.addPart(new LastfmLoveRow(this, ml));
+	//	this.addPart(new MultiAtcsRow(this, pl));
+	//	this.addPart(new PlaylistSettingsRow(this, pl));
+	},
+	ui_constr: FastPSRowView
+});
+
+
+
+
+var LastfmRecommRowView = function(){};
+	BaseCRowUI.extendTo(LastfmRecommRowView, {
+		init: function(md, parent_c, buttons_panel){
+			this.md = md;
+			this._super();
+
+			this.c = parent_c.children('.lfm-recomm');
+			this.button = parent_c.parent().find('#lfm-recomm').click(function(){
+				if (!lfm.sk){
+					md.switchView();
+				} else {
+					render_recommendations();
+				}
+				
+				return false;
+			});
+			//this.bindClick();
+			this.setModel(md);
+		},
+		expand: function() {
+			if (this.expanded){
+				return;
+			} else {
+				this.expanded = true;
+			}
+			var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView();
+			if (lfm_reccoms_view){
+				this.c.append(lfm_reccoms_view.getC());
+				this.addChild(lfm_reccoms_view);
+			}
+		}
+	});
+
+
+
+
+var LastfmRecommRow = function(actionsrow){
+		this.init(actionsrow);
+};
+BaseCRow.extendTo(LastfmRecommRow, {
+	init: function(actionsrow){
+		this.actionsrow = actionsrow;
+		this._super();
+		//this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
+		this.lfm_reccoms = new LfmReccoms(this.actionsrow.ml.su.lfm_auth);
+		this.addChild(this.lfm_reccoms);
+	},
+	row_name: 'lastfm-recomm',
+	ui_constr: LastfmRecommRowView
+});
+
+
+var LastfmLoveRowView = function(){};
+	BaseCRowUI.extendTo(LastfmLoveRowView, {
+		init: function(md, parent_c, buttons_panel){
+			this.md = md;
+			this._super();
+
+			this.c = parent_c.children('.lfm-loved');
+			this.button = parent_c.parent().find('#lfm-loved').click(function(){
+				if (!lfm.sk){
+					md.switchView();
+				} else {
+					render_loved();
+				}
+				
+				return false;
+			});
+			//this.bindClick();
+			this.setModel(md);
+		},
+		expand: function() {
+			if (this.expanded){
+				return;
+			} else {
+				this.expanded = true;
+			}
+			var lfm_loves_view = this.md.lfm_loves.getFreeView();
+			if (lfm_loves_view){
+				this.c.append(lfm_loves_view.getC());
+				this.addChild(lfm_loves_view);
+			}
+		}
+	});
+
+
+
+
+var LastfmLoveRow = function(actionsrow){
+		this.init(actionsrow);
+};
+BaseCRow.extendTo(LastfmLoveRow, {
+	init: function(actionsrow){
+		this.actionsrow = actionsrow;
+		this._super();
+		//this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
+		this.lfm_loves = new LfmLoved(this.actionsrow.ml.su.lfm_auth);
+		this.addChild(this.lfm_loves);
+	},
+	row_name: 'lastfm-love',
+	ui_constr: LastfmLoveRowView
+});
+
+
+/*
+
+			
+	this.lfm_loves = new LfmLoved(su.lfm_auth);
+	this.addChild(this.lfm_reccoms);
+	this.addChild(this.lfm_loves);
+	
+
+	this.sui.els.start_screen.find("#lfm-recomm").click(function(){
+			if (!lfm.sk){
+				_this.md.lfm_reccoms.switchView();
+			} else {
+				render_recommendations();
+			}
+			
+			return false;
+		});
+
+
+		this.sui.els.start_screen.find('#lfm-loved').click(function(){
+			if (!lfm.sk){
+				_this.md.lfm_loves.switchView();
+			} else {
+				render_loved();
+			}
+		});
+
+
+
+
+
+		var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView();
+		if (lfm_reccoms_view){
+			su.ui.els.start_screen.find('.lfm-recomm').append(lfm_reccoms_view.getC());
+			this.addChild(lfm_reccoms_view);
+		}
+		var lfm_loves_view = this.md.lfm_loves.getFreeView();
+		if (lfm_loves_view){
+			su.ui.els.start_screen.find('.lfm-loved').append(lfm_loves_view.getC());
+			this.addChild(lfm_loves_view);
+		}
+
+
+
+
+	var LastfmRowUI = function(){};
+	BaseCRowUI.extendTo(LastfmRowUI, {
+		init: function(md, parent_c, buttons_panel){
+			this.md = md;
+			this._super();
+			this.c = parent_c.children('.last-fm-scrobbling');
+			this.button = buttons_panel.find('.lfm-scrobbling-button');
+			this.bindClick();
+			this.setModel(md);
+		},
+		expand: function() {
+			if (this.expanded){
+				return;
+			} else {
+				this.expanded = true;
+			}
+
+			var lsc_view = this.md.lfm_scrobble.getFreeView();
+			if (lsc_view){
+				this.addChild(lsc_view);
+				this.c.append(lsc_view.getC());
+				lsc_view.appended();
+			}
+			
+		}
+	});
+
+	var LastfmRow = function(actionsrow){
+		this.init(actionsrow);
+	};
+	BaseCRow.extendTo(LastfmRow, {
+		init: function(actionsrow){
+			this.actionsrow = actionsrow;
+			this._super();
+			this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
+			this.addChild(this.lfm_scrobble);
+		},
+		row_name: 'lastfm',
+		ui_constr: LastfmRowUI
+	});
+
+
+
+
+
+
+
+
+var PlaylistSettingsRowView = function(){};
+BaseCRowUI.extendTo(PlaylistSettingsRowView, {
+	init: function(md, parent_c, buttons_panel){
+		this.md = md;
+		this._super();
+		this.c =  parent_c.children('.pla-settings');
+		this.button = parent_c.parent().children('.pla-panel').children('.pl-settings-button');
+
+		this.bindClick();
+		this.setModel(md);
+	}
+});
+
+
+
+var PlaylistSettingsRow = function(actionsrow){
+	this.init(actionsrow);
+};
+BaseCRow.extendTo(PlaylistSettingsRow, {
+	init: function(actionsrow){
+		this.actionsrow = actionsrow;
+		this._super();
+	},
+	row_name: 'pl-settings',
+	ui_constr: PlaylistSettingsRowView
+});
+
+
+
+
+
+
+
+*/
 
 investgNavUI = function() {};
 

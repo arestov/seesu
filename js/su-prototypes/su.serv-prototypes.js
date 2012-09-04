@@ -159,10 +159,9 @@ suServView.extendTo(ActionsRowUI, {
 		active_part: function(nv, ov) {
 			if (nv){
 				this.row_context.removeClass('hidden');
-
-				var ar_pos = this.parts_views[nv].getArrowPos();
-				if (ar_pos){
-					this.arrow.css('left', ar_pos + 'px').removeClass('hidden');
+				var b_pos = this.parts_views[nv].getButtonPos();
+				if (b_pos){
+					this.arrow.removeClass('hidden').css('left', b_pos - this.arrow.offsetParent().offset().left + 'px');
 				}
 			} else {
 				this.row_context.addClass('hidden');
@@ -190,9 +189,9 @@ suServView.extendTo(BaseCRowUI, {
 			});
 		}
 	},
-	getArrowPos: function(){
-		var p = su.ui.getRtPP(this.button);
-		return p.left + this.button.outerWidth()/2;
+	getButtonPos: function(){
+		var button_shift = this.button_shift || 0;
+		return this.button.offset().left + (this.button.outerWidth()/2) + button_shift;
 	},
 	state_change: {
 		'active_view': function(state){

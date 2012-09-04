@@ -206,25 +206,6 @@
 			this.updateState('active_part', false);
 			this.addPart(new MultiAtcsRow(this, pl));
 			this.addPart(new PlaylistSettingsRow(this, pl));
-			/*
-			this.mo = mo;
-			
-			this.addPart(new LastfmRow(this, mo));
-			
-
-			var _this = this;
-
-			jsLoadComplete({
-				test: function() {
-					return typeof PlaylistAddRow != 'undefined' && typeof ShareRow != 'undefined' && typeof LoveRow != 'undefined';
-				},
-				fn: function() {
-					_this.addPart(new PlaylistAddRow(_this, mo));
-					_this.addPart(new ShareRow(_this, mo));
-					_this.addPart(new LoveRow(_this, mo));
-				}
-			});
-			*/
 		},
 		ui_constr: PlARowView
 	});

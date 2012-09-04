@@ -256,7 +256,9 @@
 		<div class="lfm-auth-module hidden">
 			<div class="auth-block">
 				<p>
-					<button class="lang localize-grant lastfm-auth-button" type="button"  name="scrobbling" >grant</button>
+					<span class="button-hole lastfm-auth-bp">
+						<a class="nicebutton lang localize-grant">grant</a>
+					</span>
 					<span class="lfm-auth-request-desc"></span>
 				</p>
 				<div class="lfm-finish">
@@ -264,8 +266,11 @@
 						Enter here code
 					</div>
 					<div>
-						<input type="text" placeholder='Put your code here' class="lfm-code"/> 
-						<button class="use-lfm-code lang localize-use-code">Use code</button>
+						<input type="text" placeholder='Put your code here' class="lfm-code"/>
+						<span class="button-hole">
+							<a class="use-lfm-code nicebutton lang localize-use-code">Use code</a>
+						</span>
+						
 					</div>	
 				</div>
 			</div>
@@ -334,8 +339,15 @@
 						<span class="button-hole">
 							<a id="lfm-loved" class="nicebutton lang localize-loved-tracks">Loved Tracks</a>
 						</span>
-						<div class="lfm-recomm"></div>
-						<div class="lfm-loved"></div>
+						<div class="row-context hidden">
+							<span class="rc-arrow hidden">
+								<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
+							</span>
+							<div class="lfm-recomm hidden"></div>
+							<div class="lfm-loved hidden"></div>
+						</div>
+
+						
 					</div>
 					<div class="for-startpage"></div>
 					<div class="block-for-startpage start-page-messages"></div>
