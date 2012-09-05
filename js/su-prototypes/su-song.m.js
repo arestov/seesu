@@ -231,6 +231,7 @@ var song;
 		},
 		parts_builder: {
 			"rept-chbx": function() {
+				var _this = this;
 				return this.c.find('.rept-song-label input').click(function() {
 					_this.md.setDnRp($(this).prop('checked'));
 				});
