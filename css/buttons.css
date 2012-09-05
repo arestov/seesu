@@ -208,6 +208,9 @@
 		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5a5a5a), to(#444)) !important;
 		background-image: linear-gradient(#5a5a5a,#444);
 		}
+.left-buttons-group .button-hole{
+	margin-right:6px;
+	}
 .has-dark-buttons{
 
 	}

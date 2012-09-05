@@ -87,13 +87,14 @@
 		this.changed();
 		
 		var _this = this;
-		if (su.settings['dont-rept-pl']){
-			this.updateState('dont-rept-pl', true)
-		}
-
-		su.on('settings.dont-rept-pl', function(state){
+		
+		var doNotReptPl = function(state) {
 			_this.updateState('dont-rept-pl', state);
-		});
+		};
+		if (su.settings['dont-rept-pl']){
+			doNotReptPl(true);
+		}
+		su.on('settings.dont-rept-pl', doNotReptPl);
 
 		this.regDOMDocChanges(function() {
 			var child_ui;
@@ -223,6 +224,9 @@
 
 	var PlaylistSettingsRowView = function(){};
 	BaseCRowUI.extendTo(PlaylistSettingsRowView, {
+		"stch-dont-rept-pl": function(state) {
+			this.dont_rept_pl_chbx.prop('checked', !!state);
+		},
 		init: function(md, parent_c, buttons_panel){
 			this.md = md;
 			this._super();
@@ -230,6 +234,11 @@
 			this.button = parent_c.parent().children('.pla-panel').children('.pl-settings-button');
 
 			this.bindClick();
+			var _this = this;
+
+			this.dont_rept_pl_chbx = this.c.find('.dont-rept-pl input').click(function() {
+				md.setDnRp($(this).prop('checked'));
+			});
 			this.setModel(md);
 		}
 	});
@@ -243,6 +252,22 @@
 		init: function(actionsrow){
 			this.actionsrow = actionsrow;
 			this._super();
+
+			var _this = this;
+
+			var doNotReptPl = function(state) {
+				_this.updateState('dont-rept-pl', state);
+			};
+			if (su.settings['dont-rept-pl']){
+				doNotReptPl(true);
+			}
+			su.on('settings.dont-rept-pl', doNotReptPl);
+
+
+		},
+		setDnRp: function(state) {
+			this.updateState('dont-rept-pl', state);
+			su.setSetting('dont-rept-pl', state);
 		},
 		row_name: 'pl-settings',
 		ui_constr: PlaylistSettingsRowView

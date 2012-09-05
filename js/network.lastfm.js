@@ -280,13 +280,19 @@ var LfmScrobble = function(auth){
 LfmLogin.extendTo(LfmScrobble, {
 	init: function(auth){
 		this._super(auth);
-		if (this.auth.api.scrobbling){
-			this.updateState('scrobbling', true);
-		}
+
 		var _this = this;
-		this.auth.on('scrobbling', function(state) {
+
+		var setScrobbling = function(state) {
 			_this.updateState('scrobbling', state);
-		});
+		};
+		if (su.settings['lfm-scrobbling']){
+			setScrobbling(true);
+		}
+		su.on('settings.lfm-scrobbling', setScrobbling);
+
+
+	
 		this.setRequestDesc(localize('lastfm-scrobble-access'));
 		this.updateState('active', true);
 	},
@@ -299,12 +305,14 @@ LfmLogin.extendTo(LfmScrobble, {
 	bindAuthCallback: function(){
 		var _this = this;
 		this.auth.once("session.input_click", function() {
-			_this.auth.setScrobbling(true);
+			su.setSetting('lfm-scrobbling', true);
+			//_this.auth.setScrobbling(true);
 		}, {exlusive: true});
 	},
 	setScrobbling: function(state) {
 		this.updateState('scrobbling', state);
-		this.auth.setScrobbling(state);
+		su.setSetting('lfm-scrobbling', state);
+		//this.auth.setScrobbling(state);
 	},
 	ui_constr: LfmScrobbleView
 });
@@ -502,18 +510,11 @@ provoda.Eventor.extendTo(LfmAuth, {
 					
 				});
 		}
-	},
-	setScrobbling: function(active){
-		active = !!active;
-		this.api.stSet('lfm_scrobbling_enabled', active || '');
-		this.api.scrobbling = active;
-		this.trigger('scrobbling', active);
 	}
 });
 
 
 lastfm_api.prototype.initers.push(function(){
-	this.scrobbling = this.stGet && !!this.stGet('lfm_scrobbling_enabled');	
 	var _this = this;
 	
 	if (!this.sk) {

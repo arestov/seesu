@@ -664,16 +664,6 @@ suServView.extendTo(songUI, {
 		}
 		
 	},
-	toogle_art_alb_container: function(link){
-		var artist_albums_container = link.parent().parent();
-		if (artist_albums_container.is('.collapse-albums')){
-			artist_albums_container.removeClass('collapse-albums');
-			link.text(localize('hide-them', 'hide them'));
-		} else{
-			artist_albums_container.addClass('collapse-albums');
-			link.text(localize('show-them', 'show them'));
-		}
-	},
 	hideYoutubeVideo: function(){
 		if (this.mf_cor_view){
 			this.mf_cor_view.hideYoutubeVideo();

@@ -101,6 +101,15 @@ a.desc{
 		color:#5e5e5e;
 		border-bottom-color:#5a5a5a !important;
 		}
+.app-loading-mark{
+	height: 24px;
+	background: url(../i/spinner.gif) no-repeat;
+	margin: 12px 0;
+	}
+	.app-loaded .app-loading-mark{
+		display: none;
+		}
+
 .sm2proxy{
 	position: absolute;
 	top:40px;

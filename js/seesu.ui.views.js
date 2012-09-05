@@ -141,7 +141,7 @@ suServView.extendTo(mainLevelUI, {
 		this.setModel(md);
 
 		var _this = this;
-
+		this.c.addClass('app-loaded');
 		
 
 	},
@@ -537,124 +537,6 @@ BaseCRow.extendTo(LastfmLoveRow, {
 
 
 /*
-
-			
-	this.lfm_loves = new LfmLoved(su.lfm_auth);
-	this.addChild(this.lfm_reccoms);
-	this.addChild(this.lfm_loves);
-	
-
-	this.sui.els.start_screen.find("#lfm-recomm").click(function(){
-			if (!lfm.sk){
-				_this.md.lfm_reccoms.switchView();
-			} else {
-				render_recommendations();
-			}
-			
-			return false;
-		});
-
-
-		this.sui.els.start_screen.find('#lfm-loved').click(function(){
-			if (!lfm.sk){
-				_this.md.lfm_loves.switchView();
-			} else {
-				render_loved();
-			}
-		});
-
-
-
-
-
-		var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView();
-		if (lfm_reccoms_view){
-			su.ui.els.start_screen.find('.lfm-recomm').append(lfm_reccoms_view.getC());
-			this.addChild(lfm_reccoms_view);
-		}
-		var lfm_loves_view = this.md.lfm_loves.getFreeView();
-		if (lfm_loves_view){
-			su.ui.els.start_screen.find('.lfm-loved').append(lfm_loves_view.getC());
-			this.addChild(lfm_loves_view);
-		}
-
-
-
-
-	var LastfmRowUI = function(){};
-	BaseCRowUI.extendTo(LastfmRowUI, {
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
-			this.c = parent_c.children('.last-fm-scrobbling');
-			this.button = buttons_panel.find('.lfm-scrobbling-button');
-			this.bindClick();
-			this.setModel(md);
-		},
-		expand: function() {
-			if (this.expanded){
-				return;
-			} else {
-				this.expanded = true;
-			}
-
-			var lsc_view = this.md.lfm_scrobble.getFreeView();
-			if (lsc_view){
-				this.addChild(lsc_view);
-				this.c.append(lsc_view.getC());
-				lsc_view.appended();
-			}
-			
-		}
-	});
-
-	var LastfmRow = function(actionsrow){
-		this.init(actionsrow);
-	};
-	BaseCRow.extendTo(LastfmRow, {
-		init: function(actionsrow){
-			this.actionsrow = actionsrow;
-			this._super();
-			this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
-			this.addChild(this.lfm_scrobble);
-		},
-		row_name: 'lastfm',
-		ui_constr: LastfmRowUI
-	});
-
-
-
-
-
-
-
-
-var PlaylistSettingsRowView = function(){};
-BaseCRowUI.extendTo(PlaylistSettingsRowView, {
-	init: function(md, parent_c, buttons_panel){
-		this.md = md;
-		this._super();
-		this.c =  parent_c.children('.pla-settings');
-		this.button = parent_c.parent().children('.pla-panel').children('.pl-settings-button');
-
-		this.bindClick();
-		this.setModel(md);
-	}
-});
-
-
-
-var PlaylistSettingsRow = function(actionsrow){
-	this.init(actionsrow);
-};
-BaseCRow.extendTo(PlaylistSettingsRow, {
-	init: function(actionsrow){
-		this.actionsrow = actionsrow;
-		this._super();
-	},
-	row_name: 'pl-settings',
-	ui_constr: PlaylistSettingsRowView
-});
 
 
 

@@ -575,7 +575,7 @@ provoda.addPrototype("baseSong",{
 			delete this.start_time;
 
 
-			if (lfm.scrobbling) {
+			if (su.settings['lfm-scrobbling']){
 				lfm.submit({
 					artist: this.artist,
 					track: this.track
@@ -595,7 +595,7 @@ provoda.addPrototype("baseSong",{
 	},
 	submitNowPlaying: function(){
 		var duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
-		if (lfm.scrobbling) {
+		if (su.settings['lfm-scrobbling']){
 			lfm.nowplay({
 				artist: this.artist,
 				track: this.track

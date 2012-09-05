@@ -270,7 +270,10 @@ var songsList;
 				var s = false;
 				if (direction) {
 					if (current_number == (total-1)) {
-						s = playlist[0];
+						if (!this.state('dont-rept-pl')){
+							s = playlist[0];
+						}
+						
 					} else {
 						s = playlist[current_number+1];
 					}

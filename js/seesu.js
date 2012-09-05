@@ -263,9 +263,30 @@ var seesuApp = function(version) {
 			su.chechPlaylists();
 		}
 	});
+	setTimeout(function() {
+		for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
+			var cur = _this.supported_settings[i];
+			var value = suStore('settings.' + cur);
+			_this.letAppKnowSetting(cur, value);
+		};
+		var last_ver = suStore('last-su-ver');
+		_this.migrateStorage(last_ver);
+		suStore('last-su-ver', version, true);
+		
+	}, 200)
 
 };
 provoda.Eventor.extendTo(seesuApp, {
+	migrateStorage: function(ver){
+		if (!ver){
+			var lfm_scrobbling_enabled = suStore('lfm_scrobbling_enabled');
+			if (lfm_scrobbling_enabled){
+
+				suStore('lfm_scrobbling_enable', '');
+				this.setSetting('lfm-scrobbling', lfm_scrobbling_enabled);
+			}
+		}
+	},
 	removeDOM: function(d, ui) {
 		this.trigger('dom-die', d, this.ui == ui, this.ui);
 	},
@@ -289,12 +310,15 @@ provoda.Eventor.extendTo(seesuApp, {
 			}
 		});
 	},
-	supported_settings: ['lfm_scrobbling_enabled'],
+	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song'],
+	letAppKnowSetting: function(name, value){
+		this.settings[name] = value;
+		this.trigger('settings.' + name, value);
+	},
 	setSetting: function(name, value){
 		if (this.supported_settings.indexOf(name) != -1){
-			suStore(name, value, true);
-			this.settings[name] = value;
-			this.trigger('settings.' + name, value);
+			suStore('settings.'+ name, value, true);
+			this.letAppKnowSetting(name, value);
 		} else{
 			
 		}

@@ -153,8 +153,8 @@ var song;
 
 
 
-	var LastfmRowUI = function(){};
-	BaseCRowUI.extendTo(LastfmRowUI, {
+	var ScrobbleRowUI = function(){};
+	BaseCRowUI.extendTo(ScrobbleRowUI, {
 		init: function(md, parent_c, buttons_panel){
 			this.md = md;
 			this._super();
@@ -180,10 +180,10 @@ var song;
 		}
 	});
 
-	var LastfmRow = function(actionsrow){
+	var ScrobbleRow = function(actionsrow){
 		this.init(actionsrow);
 	};
-	BaseCRow.extendTo(LastfmRow, {
+	BaseCRow.extendTo(ScrobbleRow, {
 		init: function(actionsrow){
 			this.actionsrow = actionsrow;
 			this._super();
@@ -191,7 +191,7 @@ var song;
 			this.addChild(this.lfm_scrobble);
 		},
 		row_name: 'lastfm',
-		ui_constr: LastfmRowUI
+		ui_constr: ScrobbleRowUI
 	});
 
 
@@ -221,6 +221,73 @@ var song;
 	});
 
 
+	var RepeatSongRowView = function(){};
+	BaseCRowUI.extendTo(RepeatSongRowView, {
+		"stch-rept-song": {
+			fn: function(state) {
+				this.getPart('rept-chbx').prop('checked', !!state);
+			},
+			dep_vp: ["rept-chbx"]
+		},
+		parts_builder: {
+			"rept-chbx": function() {
+				return this.c.find('.rept-song-label input').click(function() {
+					_this.md.setDnRp($(this).prop('checked'));
+				});
+			}
+		},
+		init: function(md, parent_c, buttons_panel){
+			this.md = md;
+			this._super();
+			this.c =  parent_c.children('.rept-song');
+			this.button = buttons_panel.find('.rept-song-button');
+
+			this.bindClick();
+			
+			this.setModel(md);
+		},
+		expand: function() {
+			if (this.expanded){
+				return;
+			} else {
+				this.expanded = true;
+			}
+			var _this = this;
+
+			this.requirePart("rept-chbx");
+		}
+	});
+
+
+
+	var RepeatSongRow = function(actionsrow){
+		this.init(actionsrow);
+	};
+	BaseCRow.extendTo(RepeatSongRow, {
+		init: function(actionsrow){
+			this.actionsrow = actionsrow;
+			this._super();
+
+			var _this = this;
+
+			var doNotReptPl = function(state) {
+				_this.updateState('rept-song', state);
+			};
+			if (su.settings['rept-song']){
+				doNotReptPl(true);
+			}
+			su.on('settings.rept-song', doNotReptPl);
+
+
+		},
+		setDnRp: function(state) {
+			this.updateState('rept-song', state);
+			su.setSetting('rept-song', state);
+		},
+		row_name: 'repeat-song',
+		ui_constr: RepeatSongRowView
+	});
+
 	
 
 	var TrackActionsRowUI = function() {};
@@ -240,8 +307,9 @@ var song;
 			this._super();
 			this.mo = mo;
 			this.updateState('active_part', false);
-			this.addPart(new LastfmRow(this, mo));
+			this.addPart(new ScrobbleRow(this, mo));
 			this.addPart(new FlashErrorRow(this, mo));
+			this.addPart(new RepeatSongRow(this, mo));
 
 			var _this = this;
 

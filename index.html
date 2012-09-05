@@ -66,8 +66,11 @@
 							<li title="About «Adobe Flash Player Security»" class="flash-secur">
 								<a href="javascript:void(0)" class="flash-security-status trackbutton flash-secur-button">fl</a>
 							</li>
-							<li class="scrobbling-button"  title="Last.fm scrobbling" class="l">
+							<li class="scrobbling-button"  title="Last.fm scrobbling">
 								<a href="javascript:void(0)" class="trackbutton lfm-scrobbling-button"></a>
+							</li>
+							<li >
+								<a href="javascript:void(0)" class="trackbutton rept-song-button">xx</a>
 							</li>
 						</ul>
 						<div class="nice-buttons-place">
@@ -125,6 +128,15 @@
 						<p class="flash-desandboxing" title="flash security steps"></p>
 						<p class="lang localize-bad-flash-desc">About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
 
+					</div>
+					<div class="rept-song hidden">
+						<p>
+							<label class="rept-song-label">
+								<input type="checkbox"/>
+								<span class="">Repeat this songs</span>
+							</label>
+						</p>
+						
 					</div>
 				</div>
 			</div>
@@ -238,12 +250,16 @@
 						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
 					</span>
 					<div class="pla-row hidden">
-						<span class="button-hole"><a class="search-music-files nicebutton lang localize-playlist-getmp3">Find files for compositions</a></span>
+						<div class="left-buttons-group">
+							<span class="button-hole"><a class="search-music-files nicebutton lang localize-playlist-getmp3">Find files for compositions</a></span>
 
-						<!-- href="http://seesu.me/generated_files/seesu_playlist.m3u"-->
-						<span class="button-hole">
-							<a class="open-external-playlist nicebutton lang localize-playlist-export">Save playlist to *.m3u file</a>
-						</span>
+							<!-- href="http://seesu.me/generated_files/seesu_playlist.m3u"-->
+							<span class="button-hole">
+								<a class="open-external-playlist nicebutton lang localize-playlist-export">Save playlist to *.m3u file</a>
+							</span>
+
+						</div>
+						
 					</div>
 					<div class="pla-settings hidden">
 						<label class="dont-rept-pl">
@@ -336,12 +352,15 @@
 						<span class="button-hole hidden cus-playlist-b">
 							<a class="nicebutton lang localize-playlists">Playlists</a>
 						</span>
-						<span class="button-hole">
-							<a id="lfm-recomm" class="nicebutton lang localize-reccoms">Recommendations</a>
-						</span>
-						<span class="button-hole">
-							<a id="lfm-loved" class="nicebutton lang localize-loved-tracks">Loved Tracks</a>
-						</span>
+						<div class="left-buttons-group">
+							<span class="button-hole">
+								<a id="lfm-recomm" class="nicebutton lang localize-reccoms">Recommendations</a>
+							</span>
+							<span class="button-hole">
+								<a id="lfm-loved" class="nicebutton lang localize-loved-tracks">Loved Tracks</a>
+							</span>
+						</div>
+						
 						<div class="row-context hidden">
 							<span class="rc-arrow hidden">
 								<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
@@ -352,6 +371,7 @@
 
 						
 					</div>
+					<div class="app-loading-mark"></div>
 					<div class="for-startpage"></div>
 					<div class="block-for-startpage start-page-messages"></div>
 					<div class="block-for-startpage relations-invites-wrap"></div>
