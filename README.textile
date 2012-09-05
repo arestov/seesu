@@ -102,3 +102,20 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 
 	speeddating в разных местах (где быстро обновляются текущие пользователи)
 		анимация обновляющихся списков
+
+
+
+
+схема для торрентов
+	найти торренты
+		получить список файлов
+		найти среди файлов нужные
+			скачать нужные
+
+The Killers - This Is Your Life
+http://ca.isohunt.com/js/json.php?ihq=The+Killers+-+This+Is+Your+Life			
+
+scheme for torrents
+	find torrents (i'm using isohunt api)
+		read torrents paths and filenames
+		find files

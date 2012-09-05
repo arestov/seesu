@@ -230,15 +230,15 @@
 		<div class="play-list-panel">
 			<div class="playlist-actions">
 				<div class="pla-panel">
-					<span class="pla-button" style="color: #585858;cursor:pointer">● ● ●</span>
-					<span class="pl-settings-button">settings</span>
+					<span class="pla-button">● ● ●</span>
+					<span class="pl-settings-button" title="Playlists settings"></span>
 				</div>
 				<div class="pla-row-content has-dark-buttons hidden" style="position:relative">
 					<span class="rc-arrow hidden">
 						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
 					</span>
 					<div class="pla-row hidden">
-						<span class="button-hole"><a class="search-music-files nicebutton lang localize-playlist-getmp3">Make playable all tracks in playlist</a></span>
+						<span class="button-hole"><a class="search-music-files nicebutton lang localize-playlist-getmp3">Find files for compositions</a></span>
 
 						<!-- href="http://seesu.me/generated_files/seesu_playlist.m3u"-->
 						<span class="button-hole">
@@ -246,7 +246,10 @@
 						</span>
 					</div>
 					<div class="pla-settings hidden">
-						settings settings settings
+						<label class="dont-rept-pl">
+							<input type="checkbox"/>
+							<span class="lang localize-dont-rept-pl">Do not repeat playlist</span>
+						</label>
 					</div>
 				</div>
 			</div>

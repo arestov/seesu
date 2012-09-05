@@ -24,6 +24,7 @@ var seesuApp = function(version) {
 	this.version = version;
 
 	this._url = get_url_parameters(location.search);
+	this.settings = {};
 
 	this.track_stat = (function(){
 		window._gaq = window._gaq || [];
@@ -287,6 +288,18 @@ provoda.Eventor.extendTo(seesuApp, {
 				}
 			}
 		});
+	},
+	supported_settings: ['lfm_scrobbling_enabled'],
+	setSetting: function(name, value){
+		if (this.supported_settings.indexOf(name) != -1){
+			suStore(name, value, true);
+			this.settings[name] = value;
+			this.trigger('settings.' + name, value);
+		} else{
+			
+		}
+		
+
 	},
 	onUICreation: function(cb){
 		var ar = (this.ui_creation_callbacks = this.ui_creation_callbacks || []);

@@ -366,9 +366,13 @@ localizer = {
 		"original": "Save password in Seesu",
 		"ru": "Сохранить пароль в Сису"
 	},
+	"dont-rept-pl": {
+		"original": "Do not repeat playlist",
+		"ru": "Не повторять плейлист" 
+	},
 	"playlist-getmp3": {
-		"original": "Make playable all tracks in playlist",
-		"ru": 'Сделать все композиции доступными'
+		"original": "Find files for compositions",
+		"ru": 'Найти композициям файлы'
 	},
 	"playlist-export": {
 		"original": "Save playlist to *.m3u file",

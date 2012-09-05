@@ -11,7 +11,7 @@
 			overflow: hidden;
 			}
 			.pla-panel .pla-button{
-				color: #585858;
+				color: #5e5e5e;
 				cursor: pointer;
 				}
 			.play-list-panel .playlist-actions .pla-button{
@@ -19,6 +19,16 @@
 				}
 			.play-list-panel .playlist-actions .pl-settings-button{
 				float:right;
+				width: 16px;
+				height: 16px;
+				background: url(../i/settings-icon.png);
+				cursor: pointer;
+				}
+				.pla-settings{
+
+					}
+				.pla-settings input{
+					margin:0 6px 0 0;
 				}
 	.play-list-panel .pla-row-content{
 		

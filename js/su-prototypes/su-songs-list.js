@@ -87,6 +87,13 @@
 		this.changed();
 		
 		var _this = this;
+		if (su.settings['dont-rept-pl']){
+			this.updateState('dont-rept-pl', true)
+		}
+
+		su.on('settings.dont-rept-pl', function(state){
+			_this.updateState('dont-rept-pl', state);
+		});
 
 		this.regDOMDocChanges(function() {
 			var child_ui;
