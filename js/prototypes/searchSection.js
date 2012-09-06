@@ -88,7 +88,7 @@
 			var _this = this;
 
 			if (this.button){
-				var bui = this.button.getFreeView();
+				var bui = this.button.getFreeView(this);
 				if (bui){
 					this.button_c = bui.getC().appendTo(this.c);
 					this.addChild(bui);
@@ -101,7 +101,7 @@
 			if (rendering_list){
 				for (var i = 0; i < rendering_list.length; i++) {
 
-					var cur_ui = rendering_list[i].getFreeView();
+					var cur_ui = rendering_list[i].getFreeView(this);
 					if (cur_ui){
 						this.addChild(cur_ui);
 						var ccon = cur_ui.getC();

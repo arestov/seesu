@@ -170,14 +170,14 @@ var artCard = function(artist) {
 
 	this.regDOMDocChanges(function() {
 		if (su.ui.els.artcards){
-			var child_ui = _this.getFreeView();
+			var child_ui = _this.getFreeView(this);
 			if (child_ui){
 				su.ui.els.artcards.append(child_ui.getC());
 				child_ui.appended();
 			}
 		}
 		if (su.ui.nav.daddy){
-			var child_ui = _this.getFreeView('nav');
+			var child_ui = _this.getFreeView(this, 'nav');
 			if (child_ui){
 				su.ui.nav.daddy.append(child_ui.getC());
 				child_ui.appended();

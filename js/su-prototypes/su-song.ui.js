@@ -208,12 +208,12 @@ suServView.extendTo(songUI, {
 
 		var context = this.requirePart('context');
 
-		var track_row_view = this.md.actionsrow.getFreeView(false, context.children('.song-actions'));
+		var track_row_view = this.md.actionsrow.getFreeView(this, false, context.children('.song-actions'));
 		if (track_row_view){
 			this.addChild(track_row_view);
 		}
 
-		this.mf_cor_view = this.md.mf_cor.getFreeView();
+		this.mf_cor_view = this.md.mf_cor.getFreeView(this);
 		if (this.mf_cor_view){
 			var mf_cor_view_c = this.mf_cor_view.getC();
 			this.addChild(this.mf_cor_view);

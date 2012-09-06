@@ -101,7 +101,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		this.lpl.append(this.pl_creation_b);
 
 
-		var searcher_ui = this.md.searcher.getFreeView();
+		var searcher_ui = this.md.searcher.getFreeView(this);
 		if (searcher_ui){
 			this.addChild(searcher_ui);
 			this.lpl.append(searcher_ui.getC());

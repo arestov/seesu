@@ -360,13 +360,14 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			return v.getC();
 		}
 	},
-	getFreeView: function(name){
+	getFreeView: function(parent_view, name){
 		name = name || 'main';
 		var
 			args	= Array.prototype.slice.call(arguments),
 			v		= this.getView(name, true),
 			Constr;
 
+		args.shift();
 		args.shift();
 		args.unshift(this);
 		if (!v){
@@ -377,6 +378,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			}
 			if (Constr){
 				v = new Constr();
+				v.parent_view = parent_view;
 				v.init.apply(v, args);
 				this.addView(v, name);
 				return v;
@@ -679,8 +681,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	promiseStateUpdate: function(name, value) {
 		this._updateProxy(name, value);
-	};
-	setVisState: function(name) {
+	},
+	setVisState: function(name, value) {
 		this._updateProxy('vis-' + name, value);
 	},
 	parts_builder: {

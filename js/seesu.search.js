@@ -503,14 +503,14 @@ investigation.extendTo(SuInvestg, {
 		var _this = this;
 		this.regDOMDocChanges(function() {
 			if (su.ui.els.searchres){
-				var child_ui = _this.getFreeView();
+				var child_ui = _this.getFreeView(this);
 				if (child_ui){
 					su.ui.els.searchres.append(child_ui.getC());
 					child_ui.appended();
 				}
 			}
 			if (su.ui.nav.daddy){
-				var child_ui = _this.getFreeView('nav');
+				var child_ui = _this.getFreeView(this, 'nav');
 				if (child_ui){
 					su.ui.nav.daddy.append(child_ui.getC());
 					child_ui.appended();

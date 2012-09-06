@@ -38,7 +38,7 @@ var song;
 		});
 		this.regDOMDocChanges(function() {
 			if (su.ui.nav.daddy){
-				var child_ui = _this.getFreeView('nav');
+				var child_ui = _this.getFreeView(this, 'nav');
 				if (child_ui){
 					su.ui.nav.daddy.append(child_ui.getC());
 					child_ui.appended();
@@ -171,7 +171,7 @@ var song;
 				this.expanded = true;
 			}
 
-			var lsc_view = this.md.lfm_scrobble.getFreeView();
+			var lsc_view = this.md.lfm_scrobble.getFreeView(this);
 			if (lsc_view){
 				this.addChild(lsc_view);
 				this.c.append(lsc_view.getC());
@@ -303,37 +303,40 @@ var song;
 			this.createVolumeControl();
 			
 			this.arrow = this.row_context.children('.rc-arrow');
-		},
-		"stch-volume": function(state) {
-			var tw;
-			if (this.requestMVBW()){
-				tw = (state * this.max_vol_bar_width) + 'px';
-			} else {
-				tw = (state * 100 ) + '%'
-			}
-			this.vol_bar.css({
-				width: tw
+			var _this = this;
+
+			this.parent_view.on('state-change.mp-show', function(e){
+				_this.setVisState('is-visible', !!e.value);
 			});
 		},
-		requestVHW: function() {
-			if (!this.vol_hole_width){
-				this.vol_hole_width = this.vol_hole.width();
-			}
-			if (this.vol_hole_width < 0){
-				delete this.vol_hole_width;
-			}
-			return this.vol_hole_width;
+		"stch-vis-volume": function(state) {
+			this.vol_bar.css({
+				width: state
+			});
 		},
-		requestMVBW: function() {
-			this.requestVHW();
-			if (this.vol_hole_width && !this.max_vol_bar_width){
-				
-				this.max_vol_bar_width = this.vol_hole_width  - ( this.vol_bar.outerWidth() - this.vol_bar.width());//    this.vol_hole_width - //
+		complex_states: {
+			"vis-volume-hole-width": {
+				depends_on: ['vis-is-visible'],
+				fn: function(visile){
+					return visile && this.vol_hole.width();
+				}
+			},
+			"vis-volume-bar-max-width": {
+				depends_on: ['vis-volume-hole-width'],
+				fn: function(vvh_w){
+					return vvh_w && vvh_w - ( this.vol_bar.outerWidth() - this.vol_bar.width());
+				}
+			},
+			"vis-volume": {
+				depends_on: ['volume', 'vis-volume-bar-max-width'],
+				fn: function(volume, vvb_mw){
+					if (vvb_mw){
+						return (volume * vvb_mw) + 'px';
+					} else {
+						return (volume * 100) + '%';
+					}
+				}
 			}
-			if (this.max_vol_bar_width < 0){
-				delete this.max_vol_bar_width;
-			}
-			return this.max_vol_bar_width;
 		},
 		createVolumeControl: function() {
 			this.vol_cc = this.buttons_panel.find('.volume-control');
@@ -351,11 +354,17 @@ var song;
 			var path_points;
 			var volumeChange = function(){
 				var last = path_points[path_points.length - 1];
-				if (!_this.vol_hole_width){
-					_this.vol_hole_width = _this.vol_hole.width();
+
+				//promiseStateUpdate
+				//setVisState
+				var hole_width = _this.state('vis-volume-hole-width');
+				if (!hole_width){
+					console.log("no width :!((")
 				}
-				var twid = Math.min(_this.vol_hole_width, Math.max(0, last.cpos));
-				_this.md.setVolume(twid/_this.vol_hole_width);
+				var twid = Math.min(hole_width, Math.max(0, last.cpos));
+
+				_this.promiseStateUpdate('volume', twid/hole_width);
+				_this.md.setVolume(twid/hole_width);
 				/*
 				if (!_this.width){
 					_this.fixWidth();

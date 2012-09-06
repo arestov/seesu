@@ -49,7 +49,7 @@
 		createPanel: function() {
 			this.panel = su.ui.samples.playlist_panel.clone();
 
-			var actsrow_view = this.md.plarow.getFreeView(false, this.panel);
+			var actsrow_view = this.md.plarow.getFreeView(this, false, this.panel);
 			if (actsrow_view){
 				this.addChild(actsrow_view);
 			}
@@ -101,7 +101,7 @@
 			if (su.ui && su.ui.els.artsTracks){
 
 
-				child_ui = _this.getFreeView();
+				child_ui = _this.getFreeView(this);
 				if (child_ui){
 					su.ui.els.artsTracks.append(child_ui.getC());
 
@@ -111,7 +111,7 @@
 			}
 
 			if (su.ui.nav.daddy){
-				child_ui = _this.getFreeView('nav');
+				child_ui = _this.getFreeView(this, 'nav');
 				if (child_ui){
 					su.ui.nav.daddy.append(child_ui.getC());
 					child_ui.appended();

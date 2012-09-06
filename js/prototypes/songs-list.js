@@ -416,7 +416,7 @@ var songsList;
 		},
 		appendSongUI: function(mo){
 			var moc;
-			var pl_ui_element = mo.getFreeView();
+			var pl_ui_element = mo.getFreeView(this);
 			if (pl_ui_element){
 				this.addChild(pl_ui_element);
 				pl_ui_element = pl_ui_element && pl_ui_element.getC();

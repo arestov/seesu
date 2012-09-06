@@ -161,7 +161,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 					.insertBefore(this.getPart("pch-ws-friends"));
 
 				this.getPart("pch-ws-friends").after();
-				var searcher_ui = this.md.searcher.getFreeView();
+				var searcher_ui = this.md.searcher.getFreeView(this);
 				if (searcher_ui){
 					this.addChild(searcher_ui);
 					searcher_ui.getC().insertBefore(this.getPart("pch-ws-friends"));
@@ -178,7 +178,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 	'stch-needs-vk-auth': {
 		fn: function(state) {
 			if (state){
-				var auth_ui = this.md.vk_auth.getFreeView();
+				var auth_ui = this.md.vk_auth.getFreeView(this);
 				if (auth_ui){
 					this.addChild(auth_ui);
 					auth_ui.getC().insertBefore(this.getPart("pch-vk-auth"));

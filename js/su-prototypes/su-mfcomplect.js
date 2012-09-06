@@ -75,7 +75,7 @@ suServView.extendTo(mfComplectUI, {
 		var moplas_list = this.md.moplas_list;
 
 		for (var i = 0; i < moplas_list.length; i++) {
-			var ui  = moplas_list[i].getFreeView();
+			var ui  = moplas_list[i].getFreeView(this);
 			if (ui){
 				this.lc.append(ui.getC())
 				ui.appended(this);
@@ -189,7 +189,7 @@ suServView.extendTo(mfCorUI, {
 			$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
 			this.c.prepend(this.sall_songs);
 
-			var nof_ui = this.md.notifier.getFreeView();
+			var nof_ui = this.md.notifier.getFreeView(this);
 			if (nof_ui){
 				this.sall_songs.append(nof_ui.getC());
 				nof_ui.appended(this);
@@ -210,7 +210,7 @@ suServView.extendTo(mfCorUI, {
 		var _this = this;
 		if (this.md.vk_audio_auth){
 			var
-				vk_auth_mess = this.md.vk_audio_auth.getFreeView(),
+				vk_auth_mess = this.md.vk_audio_auth.getFreeView(this),
 				vk_auth_mess_c = vk_auth_mess && vk_auth_mess.getC()
 
 				
@@ -255,7 +255,7 @@ suServView.extendTo(mfCorUI, {
 			};
 
 			for (var i = 0; i < pa.length; i++) {
-				append(this.md.complects[pa[i]].getFreeView());
+				append(this.md.complects[pa[i]].getFreeView(this));
 			}
 		}
 		

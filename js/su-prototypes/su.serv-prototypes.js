@@ -141,7 +141,7 @@ suServView.extendTo(ActionsRowUI, {
 		
 
 		for (var i in parts) {
-			var pv = parts[i].getFreeView(false, this.row_context, this.buttons_panel);
+			var pv = parts[i].getFreeView(this, false, this.row_context, this.buttons_panel);
 			if (pv){
 				this.parts_views[i] = pv;
 				pv.appended();

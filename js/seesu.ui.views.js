@@ -274,7 +274,7 @@ suServView.extendTo(mainLevelUI, {
 	},
 	appendChildren: function(){
 
-		var fast_pstart_view = this.md.fast_pstart.getFreeView(false, su.ui.els.fast_personal_start);
+		var fast_pstart_view = this.md.fast_pstart.getFreeView(this, false, su.ui.els.fast_personal_start);
 		if (fast_pstart_view){
 			this.addChild(fast_pstart_view);
 		}
@@ -322,10 +322,10 @@ mainLevel = function(su) {
 	var _this = this;
 
 	this.regDOMDocChanges(function() {
-		var this_view = _this.getFreeView().appended();
+		var this_view = _this.getFreeView(this).appended();
 
 		if (su.ui.nav.daddy){
-			var child_ui = _this.getFreeView('nav');
+			var child_ui = _this.getFreeView(this, 'nav');
 			if (child_ui){
 				su.ui.nav.daddy.append(child_ui.getC());
 				child_ui.appended();
@@ -457,7 +457,7 @@ var LastfmRecommRowView = function(){};
 			} else {
 				this.expanded = true;
 			}
-			var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView();
+			var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView(this);
 			if (lfm_reccoms_view){
 				this.c.append(lfm_reccoms_view.getC());
 				this.addChild(lfm_reccoms_view);
@@ -509,7 +509,7 @@ var LastfmLoveRowView = function(){};
 			} else {
 				this.expanded = true;
 			}
-			var lfm_loves_view = this.md.lfm_loves.getFreeView();
+			var lfm_loves_view = this.md.lfm_loves.getFreeView(this);
 			if (lfm_loves_view){
 				this.c.append(lfm_loves_view.getC());
 				this.addChild(lfm_loves_view);
