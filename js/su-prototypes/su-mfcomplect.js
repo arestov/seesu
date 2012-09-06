@@ -440,11 +440,12 @@ var mfCor = function(mo, omo) {
 	this.checkVKAuthNeed();
 
 	var _this = this;
+	/*
 	this.watchStates(['has_files', 'vk-audio-auth'], function(has_files, vkaa) {
 		if (has_files || vkaa){
 			_this.updateState('must-be-expandable', true);
 		}
-	});
+	});*/
 
 	this.mfPlayStateChange = function(e) {
 		if (_this.state('used_mopla') == this){
@@ -461,6 +462,12 @@ var mfCor = function(mo, omo) {
 provoda.Model.extendTo(mfCor, {
 	ui_constr: mfCorUI,
 	complex_states: {
+		"must-be-expandable": {
+			depends_on: ['has_files', 'vk-audio-auth'],
+			fn: function(has_files, vk_a_auth){
+				return !!(has_files || vk_a_auth);
+			}
+		},
 		mopla_to_use: {
 			depends_on: ["user_preferred", "default_mopla"],
 			fn: function(user_preferred, default_mopla){

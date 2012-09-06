@@ -164,6 +164,10 @@ suServView.extendTo(songUI, {
 		},
 		tidominator: function() {
 			return this.requirePart('context').children('.track-info-dominator');
+		},
+		volume_c: function(){
+			
+			
 		}
 	},
 	createBase: function(){

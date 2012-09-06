@@ -310,7 +310,7 @@ provoda.Eventor.extendTo(seesuApp, {
 			}
 		});
 	},
-	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song'],
+	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song', 'volume'],
 	letAppKnowSetting: function(name, value){
 		this.settings[name] = value;
 		this.trigger('settings.' + name, value);

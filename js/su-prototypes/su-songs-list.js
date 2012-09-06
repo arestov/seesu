@@ -198,7 +198,7 @@
 			this.c = c;
 			this.row_context = this.c.find('.pla-row-content');
 			this.arrow = this.row_context.children('.rc-arrow');
-
+			this.buttons_panel = c.children().children('.pla-panel');
 			
 
 		}
@@ -231,7 +231,7 @@
 			this.md = md;
 			this._super();
 			this.c =  parent_c.children('.pla-settings');
-			this.button = parent_c.parent().children('.pla-panel').children('.pl-settings-button');
+			this.button = buttons_panel.children('.pl-settings-button');
 
 			this.bindClick();
 			var _this = this;
@@ -281,8 +281,9 @@
 			this.md = md;
 			this._super();
 			this.c =  parent_c.children('.pla-row');
-			this.button = parent_c.parent().children('.pla-panel').children('.pla-button');
+			this.button = buttons_panel.children('.pla-button');
 
+			
 
 			var _this = this;
 

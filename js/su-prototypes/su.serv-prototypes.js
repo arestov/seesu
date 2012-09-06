@@ -136,14 +136,12 @@ suServView.extendTo(ActionsRowUI, {
 
 		this.parts_views = {};
 
-		var	
-			parts = this.md.getAllParts(),
-			tp = this.getTP();
+		var	parts = this.md.getAllParts()
 
 		
 
 		for (var i in parts) {
-			var pv = parts[i].getFreeView(false, this.row_context, tp);
+			var pv = parts[i].getFreeView(false, this.row_context, this.buttons_panel);
 			if (pv){
 				this.parts_views[i] = pv;
 				pv.appended();
@@ -167,13 +165,6 @@ suServView.extendTo(ActionsRowUI, {
 				this.row_context.addClass('hidden');
 			}
 		}
-	},
-	getTP: function() {
-		var tp = this.c.children('.track-panel');
-
-		tp.find('.pc').data('mo', this.md.mo);
-		
-		return tp;
 	}
 });
 

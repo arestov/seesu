@@ -52,12 +52,13 @@ var song;
 				this.updateState('can-expand', false);
 			}
 		});
-		this.watchState('mp-show', function(opts) {
+		this.on('state-change.mp-show', function(e) {
+			
 			var
 				_this = this,
 				oldCb = this.makePlayableOnNewSearch;
 
-			if (opts){
+			if (e.value){
 				if (!oldCb){
 					this.makePlayableOnNewSearch = function() {
 						_this.makeSongPlayalbe(true);
@@ -143,7 +144,7 @@ var song;
 			}
 			seesu.trackEvent('song actions', 'vk share');
 
-			return //su.vk_api.get("wall.post", data, {nocache: true});
+			return; //su.vk_api.get("wall.post", data, {nocache: true});
 			//console.log(uid);
 		}
 	});
@@ -296,7 +297,125 @@ var song;
 		createBase: function(c){
 			this.c = c;
 			this.row_context = this.c.children('.row-song-context');
+
+			this.buttons_panel = this.c.children('.track-panel');
+			this.buttons_panel.find('.pc').data('mo', this.md.mo);
+			this.createVolumeControl();
+			
 			this.arrow = this.row_context.children('.rc-arrow');
+		},
+		"stch-volume": function(state) {
+			var tw;
+			if (this.requestMVBW()){
+				tw = (state * this.max_vol_bar_width) + 'px';
+			} else {
+				tw = (state * 100 ) + '%'
+			}
+			this.vol_bar.css({
+				width: tw
+			});
+		},
+		requestVHW: function() {
+			if (!this.vol_hole_width){
+				this.vol_hole_width = this.vol_hole.width();
+			}
+			if (this.vol_hole_width < 0){
+				delete this.vol_hole_width;
+			}
+			return this.vol_hole_width;
+		},
+		requestMVBW: function() {
+			this.requestVHW();
+			if (this.vol_hole_width && !this.max_vol_bar_width){
+				
+				this.max_vol_bar_width = this.vol_hole_width  - ( this.vol_bar.outerWidth() - this.vol_bar.width());//    this.vol_hole_width - //
+			}
+			if (this.max_vol_bar_width < 0){
+				delete this.max_vol_bar_width;
+			}
+			return this.max_vol_bar_width;
+		},
+		createVolumeControl: function() {
+			this.vol_cc = this.buttons_panel.find('.volume-control');
+			this.vol_hole = this.vol_cc.find('.v-hole');
+			this.vol_bar = this.vol_hole.find('.v-bar');
+
+			var _this = this;
+
+			var getClickPosition = function(e, node){
+				//e.offsetX || 
+				var pos = e.pageX - $(node).offset().left;
+				return pos;
+			};
+
+			var path_points;
+			var volumeChange = function(){
+				var last = path_points[path_points.length - 1];
+				if (!_this.vol_hole_width){
+					_this.vol_hole_width = _this.vol_hole.width();
+				}
+				var twid = Math.min(_this.vol_hole_width, Math.max(0, last.cpos));
+				_this.md.setVolume(twid/_this.vol_hole_width);
+				/*
+				if (!_this.width){
+					_this.fixWidth();
+				}
+				_this.md.setVolumeByFactor(_this.width && (last.cpos/_this.width));
+				*/
+
+			}
+
+			var touchDown = function(e){
+				path_points = [];
+				e.preventDefault();
+				path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
+				volumeChange();
+			};
+			var touchMove = function(e){
+
+				if (e.which && e.which != 1){
+					return true;
+				}
+				e.preventDefault();
+				path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
+				volumeChange();
+			};
+			var touchUp = function(e){
+
+				if (e.which && e.which != 1){
+					return true;
+				}
+				$(_this.vol_cc[0].ownerDocument)
+					.off('mouseup', touchUp)
+					.off('mousemove', touchMove);
+
+				var travel;
+				if (!travel){
+					//
+				}
+
+
+				path_points = null;
+
+				
+			};
+			_this.vol_cc.on('mousedown', function(e){
+
+				$(_this.vol_cc[0].ownerDocument)
+					.off('mouseup', touchUp)
+					.off('mousemove', touchMove);
+
+				if (e.which && e.which != 1){
+					return true;
+				}
+
+				$(_this.vol_cc[0].ownerDocument)
+					.on('mouseup', touchUp)
+					.on('mousemove', touchMove);
+
+				touchDown(e);
+
+			});
 		}
 	});
 
@@ -314,6 +433,14 @@ var song;
 
 			var _this = this;
 
+			var setVolume = function(state) {
+				_this.updateState('volume', state);
+			};
+			if (su.settings['volume']){
+				setVolume(true);
+			}
+			su.on('settings.volume', setVolume);
+
 			jsLoadComplete({
 				test: function() {
 					return typeof PlaylistAddRow != 'undefined' && typeof ShareRow != 'undefined' && typeof LoveRow != 'undefined';
@@ -324,6 +451,14 @@ var song;
 					_this.addPart(new LoveRow(_this, mo));
 				}
 			});
+		},
+		sendVolume: debounce(function(vol) {
+			su.setSetting('volume', vol);
+		}, 333),
+		setVolume: function(state) {
+			this.updateState('volume', state);
+			this.sendVolume(state);
+			
 		},
 		ui_constr: TrackActionsRowUI
 	});

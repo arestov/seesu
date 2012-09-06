@@ -407,7 +407,7 @@ ActionsRowUI.extendTo(FastPSRowView, {
 		this.c = c;
 		this.row_context = this.c.find('.row-context');
 		this.arrow = this.row_context.children('.rc-arrow');
-
+		this.buttons_panel = c.parent();
 	}
 });
 
@@ -439,7 +439,7 @@ var LastfmRecommRowView = function(){};
 			this._super();
 
 			this.c = parent_c.children('.lfm-recomm');
-			this.button = parent_c.parent().find('#lfm-recomm').click(function(){
+			this.button = buttons_panel.find('#lfm-recomm').click(function(){
 				if (!lfm.sk){
 					md.switchView();
 				} else {
@@ -491,7 +491,7 @@ var LastfmLoveRowView = function(){};
 			this._super();
 
 			this.c = parent_c.children('.lfm-loved');
-			this.button = parent_c.parent().find('#lfm-loved').click(function(){
+			this.button = buttons_panel.find('#lfm-loved').click(function(){
 				if (!lfm.sk){
 					md.switchView();
 				} else {

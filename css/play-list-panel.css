@@ -14,6 +14,10 @@
 				color: #5e5e5e;
 				cursor: pointer;
 				}
+			.pla-panel .pla-button:hover{
+				color:#666;
+				}
+				
 			.play-list-panel .playlist-actions .pla-button{
 				float:left;
 				}
@@ -61,7 +65,38 @@
 		display: block
 		}
 
-
+.buttons-panel .track-buttons li.volume-control{
+	width: 62px;
+	background: #5E5E5E url(../i/volume-icon.png) no-repeat 3px 50%;
+	padding: 6px 6px 6px 22px;
+	height: 8px;
+	border-radius: 10px;
+	border: 1px solid #515151;
+	margin-top: -3px;
+	}
+	.buttons-panel .track-buttons li.volume-control:hover{
+		background-color: #5A5A5A;
+		border-color: #4F4F4F;
+		}
+	.v-hole{
+		position: relative;
+		border: 1px solid transparent;
+		border-radius: 3px;
+		border-top: 1px solid #4D4D4D;
+		border-bottom: 1px solid #5E5E5E;
+		background: #555;
+		}
+		.v-bar{
+			height: 6px;
+			border: 1px solid transparent;
+			background: #5E5E5E;
+			border-radius: 3px;
+			border-top: 1px solid #666;
+			border-bottom: 1px solid #454545;
+			}
+		.buttons-panel .track-buttons li.volume-control:hover .v-bar{
+			background-color: #5f5f5f;
+		}
 .rept-song-button-wrap .trackbutton{
 	background: url(../i/repeat-icon.png) no-repeat 50% 50%;
 }
