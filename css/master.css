@@ -131,7 +131,10 @@ a.desc{
 	background: #5a5a5a;
 	margin: 5px -13px 11px;
 	padding: 0 13px 14px;
-}
+	}
+	.song-row-content .rept-song{
+		padding-top:12px;
+		}
 .row-listeners-context{
 	margin-top:15px;
 }

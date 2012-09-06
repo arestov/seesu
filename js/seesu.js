@@ -282,7 +282,7 @@ provoda.Eventor.extendTo(seesuApp, {
 			var lfm_scrobbling_enabled = suStore('lfm_scrobbling_enabled');
 			if (lfm_scrobbling_enabled){
 
-				suStore('lfm_scrobbling_enable', '');
+				suStore('lfm_scrobbling_enabled', '', true);
 				this.setSetting('lfm-scrobbling', lfm_scrobbling_enabled);
 			}
 		}

@@ -63,14 +63,54 @@
 				<div class="track-panel">
 					<div class="buttons-panel">
 						<ul class="track-buttons">
+
 							<li title="About «Adobe Flash Player Security»" class="flash-secur">
 								<a href="javascript:void(0)" class="flash-security-status trackbutton flash-secur-button">fl</a>
 							</li>
 							<li class="scrobbling-button"  title="Last.fm scrobbling">
 								<a href="javascript:void(0)" class="trackbutton lfm-scrobbling-button"></a>
 							</li>
-							<li >
-								<a href="javascript:void(0)" class="trackbutton rept-song-button">xx</a>
+							<li class="rept-song-button-wrap">
+								<a href="javascript:void(0)" class="trackbutton rept-song-button"></a>
+							</li>
+							<style type="text/css">
+								.buttons-panel .track-buttons li.volume-control{
+									width: 62px;
+									background: #5E5E5E url(i/volume-icon.png) no-repeat 3px 50%;
+									padding: 6px 6px 6px 22px;
+									height: 8px;
+									border-radius: 10px;
+									border: 1px solid #515151;
+									margin-top: -3px;
+									}
+									.buttons-panel .track-buttons li.volume-control:hover{
+										background-color: #5A5A5A;
+										border-color: #4F4F4F;
+										}
+									.v-hole{
+										border: 1px solid transparent;
+										border-radius: 3px;
+										border-top: 1px solid #4D4D4D;
+										border-bottom: 1px solid #5E5E5E;
+										background: #555;
+										}
+										.v-bar{
+											height: 6px;
+											border: 1px solid transparent;
+											background: #5E5E5E;
+											border-radius: 3px;
+											border-top: 1px solid #666;
+											border-bottom: 1px solid #454545;
+											width: 33%;
+											}
+										.buttons-panel .track-buttons li.volume-control:hover .v-bar{
+											background-color: #5f5f5f;
+										}
+							</style>
+							<li class="volume-control">
+								<div class="v-hole">
+									<div class="v-bar"></div>
+								</div>
 							</li>
 						</ul>
 						<div class="nice-buttons-place">
@@ -130,12 +170,10 @@
 
 					</div>
 					<div class="rept-song hidden">
-						<p>
-							<label class="rept-song-label">
-								<input type="checkbox"/>
-								<span class="">Repeat this songs</span>
-							</label>
-						</p>
+						<label class="rept-song-label">
+							<input type="checkbox"/>
+							<span class="lang localize-flashpage">Repeat playling song</span>
+						</label>
 						
 					</div>
 				</div>
