@@ -180,9 +180,6 @@ ul.tracks-for-play > li{
 		
 		text-shadow: 0 1px 0 #333;
 		}
-		.show-zoom-to-track ul.tracks-for-play>li.viewing-song .song .song-duration{
-			color:#aaa;
-		}
 	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .search-mp3-failed{
 		color:#737373;
 	}

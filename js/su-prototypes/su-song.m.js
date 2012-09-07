@@ -275,6 +275,7 @@ var song;
 
 			var doNotReptPl = function(state) {
 				_this.updateState('rept-song', state);
+				actionsrow.mo.updateState('rept-song', state);
 			};
 			if (su.settings['rept-song']){
 				doNotReptPl(true);
@@ -382,6 +383,7 @@ var song;
 				e.preventDefault();
 				path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
 				volumeChange();
+				_this.vol_cc.addClass('interactive-state');
 			};
 			var touchMove = function(e){
 
@@ -405,7 +407,7 @@ var song;
 				if (!travel){
 					//
 				}
-
+				_this.vol_cc.removeClass('interactive-state');
 
 				path_points = null;
 

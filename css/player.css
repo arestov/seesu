@@ -22,20 +22,19 @@
 	margin-top:-4px;
 }
 
-a.song{
-	padding:3px 1px 0;
-	color:#ccc;
-	border:0  !important;
-	border-radius:4px;
-	}
+
 
 a.search-mp3{
 	background:url(../i/spinner.gif) no-repeat 100% 50%;
-	
 }
 a.loading{
 	background:url(../i/spinner.gif) no-repeat 100% 50%;
 }
+
+a.search-mp3:hover, a.loading:hover{
+	background-image:url(../i/spinner_t.gif);
+}
+
 a.search-mp3-failed{
 	color:#5E5E5E;
 }
@@ -43,7 +42,17 @@ a.waiting-full-render{
 	cursor:pointer;
 	color:gray;
 }
+a.song{
+	padding:3px 1px 0;
+	color:#ccc;
+	border:0  !important;
+	
+	}
+	a.song:hover{
+		color:#fff;
+		}
 a.track-node{
+	border-radius:4px;
 	display:block;
 	padding:6px;
 	cursor:pointer;
@@ -51,22 +60,40 @@ a.track-node{
 	overflow:hidden;
 	}
 	a.track-node:hover{
-		color:#fff;
 		background-color:#595959;
-	}
-	.song-duration{
-		color:#666;
 		}
-	a.track-node .song-duration,
-	.track-node-text .song-duration{
-		float:right;
-		padding-left:10px;
-	}
 
 a.waiting-full-render.marked-for-play{
 	outline:1px dotted #888 ;
 }
+.song .nothing-toy, 
+.search-mp3-failed .nothing-toy,
+.search-mp3 .nothing-toy{
+	display: none;
+	}
 
+.nothing-toy{
+	background: #555;
+	display: block;
+	position: absolute;
+	right:3px;
+	top:10px;
+	border-radius: 6px;
+	border-top: 1px solid #666;
+	border-bottom: 1px solid #444;
+	width:10px;
+	height:10px;
+	}
+	a.track-node:hover .nothing-toy{
+		border-top-color:#777;
+		background-color: #666;
+		border-bottom-color: #555;
+		}
+	a.track-node:active .nothing-toy{
+		border-top-color:#444;
+		background-color: #555;
+		border-bottom-color: #666;
+		}
 a.download-mp3{
 	text-decoration:none;
 	padding:3px 5px 1px;

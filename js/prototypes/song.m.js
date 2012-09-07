@@ -113,7 +113,12 @@ provoda.addPrototype("baseSong",{
 		this.updateState('nav-title', title);
 	},
 	playNext: function(auto) {
-		this.plst_titl.switchTo(this, true, auto);
+		if (this.state('rept-song')){
+			this.play()
+		} else {
+			this.plst_titl.switchTo(this, true, auto);
+		}
+		
 	},
 	playPrev: function() {
 		this.plst_titl.switchTo(this);
@@ -472,6 +477,19 @@ provoda.addPrototype("baseSong",{
 			have_tracks: this.isHaveTracks("mp3"),
 			have_best_tracks: this.isHaveBestTracks()
 		};
+		
+
+
+		if (complete){
+			this.updateState('searching-files', false);
+		}
+		if (opts.have_tracks){
+			this.updateState('playable', true);
+		}
+		this.trigger('files_search', opts);
+		this.updateState('files_search', opts);
+
+
 		if (this.isImportant()){
 			if (complete || this.isHaveBestTracks()){
 				this.checkNeighboursChanges(false, false, 'important; files search');
@@ -490,17 +508,9 @@ provoda.addPrototype("baseSong",{
 				}
 			}
 		}
-		this.fuco = this.fuco || 0;
-		++this.fuco;
 
-		if (complete){
-			this.updateState('searching-files', false);
-		}
-		if (opts.have_tracks){
-			this.updateState('playable', true);
-		}
-		this.trigger('files_search', opts);
-		this.updateState('files_search', opts);
+
+		
 	},
 	view: function(no_navi, user_want){
 		if (!this.state('mp-show')){

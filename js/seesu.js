@@ -322,6 +322,9 @@ provoda.Eventor.extendTo(seesuApp, {
 		clearTimeout(this.settings_timers[name]);
 
 		this.settings_timers[name] = setTimeout(function(){
+			if (typeof value != 'number'){
+				value = value || '';
+			}
 			suStore('settings.'+ name, value, true);
 		}, 333);
 		

@@ -74,6 +74,7 @@
 	border: 1px solid #515151;
 	margin-top: -3px;
 	}
+
 	.buttons-panel .track-buttons li.volume-control:hover{
 		background-color: #5A5A5A;
 		border-color: #4F4F4F;
@@ -96,6 +97,10 @@
 			}
 		.buttons-panel .track-buttons li.volume-control:hover .v-bar{
 			background-color: #5f5f5f;
+		}
+	.buttons-panel .track-buttons li.volume-control.interactive-state{
+		background-color:transparent;
+		border-color:transparent;
 		}
 .rept-song-button-wrap .trackbutton{
 	background: url(../i/repeat-icon.png) no-repeat 50% 50%;

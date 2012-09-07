@@ -173,6 +173,8 @@ suServView.extendTo(songUI, {
 	createBase: function(){
 		var _this = this;
 		this.c = $('<li></li>').data('mo', this.md);
+		
+
 		this.node = $("<a></a>")
 			.addClass('track-node waiting-full-render')
 			.data('mo', this.md)
@@ -188,13 +190,13 @@ suServView.extendTo(songUI, {
 				mo.view(false, true);
 				return false;
 			});
-		
+		$('<span class="nothing-toy"></span>').appendTo(this.node);
+
 		var buttmen = su.ui.els.play_controls.node.clone(true).data('mo', this.md);
 			buttmen.find('.pc').data('mo', this.md);
 		this.c.prepend(buttmen);
 
 		this.titlec = $("<span></span>").appendTo(this.node);
-		this.durationc = $('<a class="song-duration"></a>').prependTo(this.node);
 		this.c.append(this.node);
 	},
 	expand: function(){
