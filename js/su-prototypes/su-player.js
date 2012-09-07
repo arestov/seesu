@@ -7,7 +7,6 @@ var seesuPlayer;
 
 
 	playerComplex.extendTo(seesuPlayer, {
-		global_volume: false,
 		init: function(){
 			this._super();
 		},
@@ -94,6 +93,19 @@ var seesuPlayer;
 		.on('play', function(e){
 			e.song_file.mo.submitNowPlaying();
 		});
+
+	var setVolume = function(vol){
+		if (su.p.c_song){
+			su.p.c_song.setVolume(vol);
+		} else {
+			su.p.setVolume(false, vol);
+		}
+		
+	};
+	if (su.settings['volume']){
+		setVolume(su.settings['volume'])
+	}
+	su.on('settings.volume', setVolume);
 })();
 (function() {
 	"use strict";

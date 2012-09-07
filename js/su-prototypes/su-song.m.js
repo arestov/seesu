@@ -30,6 +30,7 @@ var song;
 		this.mf_cor = new mfCor(this, this.omo);
 		this.addChild(this.mf_cor);
 		this.mf_cor.on('before-mf-play', function(mopla) {
+
 			_this.player.changeNowPlaying(_this);
 			_this.mopla = mopla;
 		});
@@ -305,6 +306,8 @@ var song;
 			this.arrow = this.row_context.children('.rc-arrow');
 			var _this = this;
 
+			this.setVisState('is-visible', !!this.parent_view.state('mp-show'))
+
 			this.parent_view.on('state-change.mp-show', function(e){
 				_this.setVisState('is-visible', !!e.value);
 			});
@@ -317,8 +320,8 @@ var song;
 		complex_states: {
 			"vis-volume-hole-width": {
 				depends_on: ['vis-is-visible'],
-				fn: function(visile){
-					return visile && this.vol_hole.width();
+				fn: function(visible){
+					return visible && this.vol_hole.width();
 				}
 			},
 			"vis-volume-bar-max-width": {
@@ -331,9 +334,9 @@ var song;
 				depends_on: ['volume', 'vis-volume-bar-max-width'],
 				fn: function(volume, vvb_mw){
 					if (vvb_mw){
-						return (volume * vvb_mw) + 'px';
+						return ((volume/100) * vvb_mw) + 'px';
 					} else {
-						return (volume * 100) + '%';
+						return volume  + '%';
 					}
 				}
 			}
@@ -363,8 +366,8 @@ var song;
 				}
 				var twid = Math.min(hole_width, Math.max(0, last.cpos));
 
-				_this.promiseStateUpdate('volume', twid/hole_width);
-				_this.md.setVolume(twid/hole_width);
+				_this.promiseStateUpdate('volume', 100*twid/hole_width);
+				_this.md.setVolume(100*twid/hole_width);
 				/*
 				if (!_this.width){
 					_this.fixWidth();
@@ -446,7 +449,7 @@ var song;
 				_this.updateState('volume', state);
 			};
 			if (su.settings['volume']){
-				setVolume(true);
+				setVolume(su.settings['volume']);
 			}
 			su.on('settings.volume', setVolume);
 
@@ -461,9 +464,9 @@ var song;
 				}
 			});
 		},
-		sendVolume: debounce(function(vol) {
+		sendVolume: function(vol) {
 			su.setSetting('volume', vol);
-		}, 333),
+		},
 		setVolume: function(state) {
 			this.updateState('volume', state);
 			this.sendVolume(state);

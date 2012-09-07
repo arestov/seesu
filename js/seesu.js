@@ -25,6 +25,7 @@ var seesuApp = function(version) {
 
 	this._url = get_url_parameters(location.search);
 	this.settings = {};
+	this.settings_timers = {};
 
 	this.track_stat = (function(){
 		window._gaq = window._gaq || [];
@@ -263,6 +264,7 @@ var seesuApp = function(version) {
 			su.chechPlaylists();
 		}
 	});
+
 	setTimeout(function() {
 		for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
 			var cur = _this.supported_settings[i];
@@ -311,14 +313,23 @@ provoda.Eventor.extendTo(seesuApp, {
 		});
 	},
 	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song', 'volume'],
+
 	letAppKnowSetting: function(name, value){
 		this.settings[name] = value;
 		this.trigger('settings.' + name, value);
 	},
+	storeSetting: function(name, value){
+		clearTimeout(this.settings_timers[name]);
+
+		this.settings_timers[name] = setTimeout(function(){
+			suStore('settings.'+ name, value, true);
+		}, 333);
+		
+	},
 	setSetting: function(name, value){
 		if (this.supported_settings.indexOf(name) != -1){
-			suStore('settings.'+ name, value, true);
 			this.letAppKnowSetting(name, value);
+			this.storeSetting(name, value);
 		} else{
 			
 		}

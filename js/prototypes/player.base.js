@@ -78,10 +78,7 @@ provoda.Eventor.extendTo(playerBase, {
 			this.core.callSongMethod("setVolume", song_file.uid, vol);
 		}
 		if (this.global_volume){
-			if (this.saveVolume){
-				this.saveVolume(vol);
-			}
-			this.volume = vol;
+			this.volume = parseFloat(vol);
 		}
 	},
 	setPosition: function(song_file, pos, fac){

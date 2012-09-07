@@ -121,7 +121,7 @@ var mfComplect = function(mf_cor, sem_part, mo) {
 	for (var i = 0; i < this.sem_part.t.length; i++) {
 		var sf = this.sem_part.t[i]
 				.getSongFileModel(mo, mo.player)
-					.on('want-to-be-selected', selectMf);
+					.on('want-to-play-sf', selectMf);
 
 		if (i + 1 > this.overstock_limit){
 			sf.updateState('overstock', true);
