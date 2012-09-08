@@ -215,7 +215,7 @@ var songsList;
 				v_song.checkNeighboursChanges(false, false, "playlist load");
 			}
 			
-			if (p_song && v_song != p_song && p_song.hasNextSong()){
+			if (p_song && v_song != p_song && !p_song.hasNextSong()){
 				p_song.checkNeighboursChanges(false, false, "playlist load");
 			}
 		},

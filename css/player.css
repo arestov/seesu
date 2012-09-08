@@ -66,9 +66,10 @@ a.track-node{
 a.waiting-full-render.marked-for-play{
 	outline:1px dotted #888 ;
 }
-.song .nothing-toy, 
-.search-mp3-failed .nothing-toy,
-.search-mp3 .nothing-toy{
+a.song .nothing-toy, 
+a.search-mp3-failed .nothing-toy,
+a.search-mp3 .nothing-toy,
+a.loading .nothing-toy{
 	display: none;
 	}
 

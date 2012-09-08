@@ -345,30 +345,8 @@ provoda.addPrototype("baseSong",{
 						_this.updateState("no-track-title", true);
 					}
 
-					if (_this.isImportant()){
-						_this.checkNeighboursChanges(false, false, "important; track name");
-					} else {
-						var v_song = _this.plst_titl.getViewingSong(_this);
-						var p_song = _this.plst_titl.getPlayerSong(_this);
+					_this.checkChangesSinceFS();
 
-						if (v_song && v_song.isPossibleNeighbour(_this)) {
-							v_song.checkNeighboursChanges(_this, false, "nieghbour of viewing song; track name");
-						}
-						
-						if (p_song && v_song != p_song && p_song.isPossibleNeighbour(_this)){
-							p_song.checkNeighboursChanges(_this, false, "nieghbour of playing song; track name");
-						}
-					}
-					
-					
-
-
-
-					
-
-
-					
-					
 				})
 				.always(function(){
 					_this.updateState('loading', false);
@@ -490,26 +468,31 @@ provoda.addPrototype("baseSong",{
 		this.updateState('files_search', opts);
 
 
+		this.checkChangesSinceFS();
+		
+
+
+		
+	},
+	checkChangesSinceFS: function(opts){
 		if (this.isImportant()){
-			if (complete || this.isHaveBestTracks()){
+			if (!opts || (opts.complete || opts.have_best_tracks)){
 				this.checkNeighboursChanges(false, false, 'important; files search');
 			}
-		} else {
-			if (complete){
-				var v_song = this.plst_titl.getViewingSong(this);
-				var p_song = this.plst_titl.getPlayerSong(this);
-				
-				if (v_song && v_song.isPossibleNeighbour(this)) {
-					v_song.checkNeighboursChanges(this,false, "nieghbour of viewing song; files search");
-				}
-				
-				if (p_song && v_song != p_song && p_song.isPossibleNeighbour(this)){
-					p_song.checkNeighboursChanges(this,false, "nieghbour of playing song; files search");
-				}
+		} 
+
+		if (!opts || opts.complete){
+			var v_song = this.plst_titl.getViewingSong(this);
+			var p_song = this.plst_titl.getPlayerSong(this);
+			
+			if (v_song && v_song.isPossibleNeighbour(this)) {
+				v_song.checkNeighboursChanges(this,false, "nieghbour of viewing song; files search");
+			}
+			
+			if (p_song && v_song != p_song && p_song.isPossibleNeighbour(this)){
+				p_song.checkNeighboursChanges(this,false, "nieghbour of playing song; files search");
 			}
 		}
-
-
 		
 	},
 	view: function(no_navi, user_want){
