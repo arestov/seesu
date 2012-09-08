@@ -110,7 +110,7 @@ baseSuggest.extendTo(artistSuggest, {
 	},
 	onView: function(){
 		su.views.showArtcardPage(this.artist, true);
-		su.track_event('Music search', this.q, "artist: " + this.artist );
+		su.trackEvent('Music search', this.q, "artist: " + this.artist );
 	},
 	ui_constr: artistSuggestUI
 });
@@ -240,7 +240,7 @@ baseSuggest.extendTo(trackSuggest, {
 			track: this.track
 		});
 
-		seesu.track_event('Music search', this.q, "track: " + this.artist + ' - ' + this.track );
+		seesu.trackEvent('Music search', this.q, "track: " + this.artist + ' - ' + this.track );
 	},
 	ui_constr: trackSuggestUI
 });
@@ -306,7 +306,7 @@ baseSuggest.extendTo(tagSuggest, {
 	},
 	onView: function(){
 		su.ui.show_tag(this.tag, {save_parents: true});
-		seesu.track_event('Music search', this.q, "tag: " + this.tag );
+		seesu.trackEvent('Music search', this.q, "tag: " + this.tag );
 	},
 	ui_constr: tagSuggestUI
 });
@@ -385,7 +385,7 @@ baseSuggest.extendTo(albumSuggest, {
 			album_name: this.name,
 			album_id: this.aid
 		}, {save_parents: true});
-		seesu.track_event('Music search', this.q, "album: " + this.text_title);
+		seesu.trackEvent('Music search', this.q, "album: " + this.text_title);
 	},
 	ui_constr: albumSuggestUI
 });
@@ -503,14 +503,14 @@ investigation.extendTo(SuInvestg, {
 		var _this = this;
 		this.regDOMDocChanges(function() {
 			if (su.ui.els.searchres){
-				var child_ui = _this.getFreeView();
+				var child_ui = _this.getFreeView(this);
 				if (child_ui){
 					su.ui.els.searchres.append(child_ui.getC());
 					child_ui.appended();
 				}
 			}
 			if (su.ui.nav.daddy){
-				var child_ui = _this.getFreeView('nav');
+				var child_ui = _this.getFreeView(this, 'nav');
 				if (child_ui){
 					su.ui.nav.daddy.append(child_ui.getC());
 					child_ui.appended();

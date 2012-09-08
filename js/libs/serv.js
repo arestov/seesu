@@ -205,7 +205,7 @@ getStringPattern = function (str) {
 		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
 		str = str.replace(/([$\^*()+\[\]{}|.\/?\\])/g, '\\$1').split(/\s/g);  //escaping regexp symbols
 		for (var i=0; i < str.length; i++) {
-			str[i] = '(\\b' + str[i] + ')';
+			str[i] = '((^\|\\s)' + str[i] + ')';
 		}
 		str = str.join('|');
 		

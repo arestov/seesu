@@ -29,16 +29,6 @@ var viewBlocks = function(sui, d){
 		});
 	}
 
-
-	jsLoadComplete({
-		test: function(){
-			return window.su && window.su.gena && window.su.gena.playlists;
-		}, 
-		fn: function(){
-			sui.create_playlists_link();
-		}
-	});
-
 	var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(sui.els.start_screen);
 	var users_limit = 6;
 	var showUsers = function(listenings,c, above_limit_value){
@@ -221,10 +211,11 @@ var viewBlocks = function(sui, d){
 				
 				nb.b.click(function(){
 					if (!pliking){
-						var p =
+						//var p =
 						su.s.api('relations.acceptInvite', {from: man.user}, function(r){
 							
 							if (r.done){
+								su.trackEvent('people likes', 'accepted', false, 5);
 								$('<span class="desc"></span>').text(sui.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
 								if (new Date(r.done.est) < new Date()){
 									checkRelationsInvites();
@@ -321,7 +312,7 @@ var viewBlocks = function(sui, d){
 			.text(tag)
 			.click(function(e){
 				sui.show_tag(tag);
-				su.track_event('Navigation', 'hyped at start page', "tag: " + tag );
+				su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
 				e.preventDefault();
 			}).appendTo(c);
 		c.append(' ');

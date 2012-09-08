@@ -24,26 +24,17 @@ var seesuApp = function(version) {
 	this.version = version;
 
 	this._url = get_url_parameters(location.search);
+	this.settings = {};
+	this.settings_timers = {};
 
 	this.track_stat = (function(){
-		window._gaq = [];
+		window._gaq = window._gaq || [];
 		_gaq.sV = debounce(function(v){
 			suStore('ga_store', v, true);
 		},130);
 		_gaq.gV = function(){
 			return suStore('ga_store');
 		};
-		/*
-		_gaq.push(['myTracker._setAccount', 'UA-XXXXX-X']);
-
-		_gaq.push(function() {
-			var pageTracker = _gat._getTrackerByName('myTracker');
-			var link = document.getElementById('my-link-id');
-			link.href = pageTracker._getLinkerUrl('http://example.com/');
-		});
-		http://code.google.com/apis/analytics/docs/tracking/asyncUsageGuide.html
-		*/
-
 		suReady(function(){
 			yepnope( {
 				
@@ -101,13 +92,13 @@ var seesuApp = function(version) {
 		bridge_url: 'http://seesu.me/lastfm/bridge.html',
 	});
 	this.main_level = new mainLevel(this);
-	this.map = (new browseMap(this.main_level)).makeMainLevel();
+	this.map = (new browseMap(this.main_level));
 
 	if (app_env.chrome_extension){
-		this.main_level.getFreeView("chrome_ext");
+		this.main_level.getFreeView(this, this, "chrome_ext");
 	} else if (app_env.opera_extension && window.opera_extension_button){
 		this.opera_ext_b = opera_extension_button;
-		this.main_level.getFreeView("opera_ext");
+		this.main_level.getFreeView(this, this, "opera_ext");
 	}
 	
 
@@ -158,8 +149,8 @@ var seesuApp = function(version) {
 
 
 
-	this.views = new views(this.map);
-
+	this.views = new views(this.map, this);
+	this.map.makeMainLevel();
 
 	this.onRegistration('dom', function(cb) {
 		if (this.ui && this.ui.can_fire_on_domreg){
@@ -174,6 +165,8 @@ var seesuApp = function(version) {
 		lastfm:-10,
 		torrents: -15
 	}));
+
+
 	/*
 		.on('new-search', function(search, name){
 			var player = _this.p;
@@ -197,7 +190,21 @@ var seesuApp = function(version) {
 			}
 		});*/
 
-	
+	var reportSearchEngs = debounce(function(string){
+		_this.trackVar(4, 'search', string, 1);
+	}, 300);
+
+	this.mp3_search.on('list-changed', function(list){
+		list = $filter(list, 'name').sort();
+		for (var i = 0; i < list.length; i++) {
+			list[i] = list[i].slice(0, 2)
+		};
+		reportSearchEngs(list.join(','));
+	});
+
+	this.lfm_auth.on('session.ga_tracking', function(){
+		_this.trackEvent('Auth to lfm', 'end');
+	});
 	this.lfm_auth.on('want-open-url', function(wurl){
 		if (app_env.showWebPage){
 			app_env.openURL(wurl);
@@ -231,6 +238,8 @@ var seesuApp = function(version) {
 		} else{
 			app_env.openURL(wurl);
 		}
+		_this.trackEvent('Auth to lfm', 'start');
+
 	});
 
 	this.lfm_imgq = new funcsQueue(700);
@@ -240,11 +249,46 @@ var seesuApp = function(version) {
 
 	suReady(function() {
 		_this.lfm_auth.try_to_login();
+		setTimeout(function(){
+			while (big_timer.q.length){
+				_this.trackTime.apply(_this, big_timer.q.shift());
+				//console.log()
+			}
+		}, 300)
+	});
+	jsLoadComplete({
+		test: function(){
+			return window.su && window.su.gena && window.su.gena.playlists;
+		}, 
+		fn: function(){
+			su.chechPlaylists();
+		}
 	});
 
+	setTimeout(function() {
+		for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
+			var cur = _this.supported_settings[i];
+			var value = suStore('settings.' + cur);
+			_this.letAppKnowSetting(cur, value);
+		};
+		var last_ver = suStore('last-su-ver');
+		_this.migrateStorage(last_ver);
+		suStore('last-su-ver', version, true);
+		
+	}, 200)
 
 };
 provoda.Eventor.extendTo(seesuApp, {
+	migrateStorage: function(ver){
+		if (!ver){
+			var lfm_scrobbling_enabled = suStore('lfm_scrobbling_enabled');
+			if (lfm_scrobbling_enabled){
+
+				suStore('lfm_scrobbling_enabled', '', true);
+				this.setSetting('lfm-scrobbling', lfm_scrobbling_enabled);
+			}
+		}
+	},
 	removeDOM: function(d, ui) {
 		this.trigger('dom-die', d, this.ui == ui, this.ui);
 	},
@@ -268,9 +312,41 @@ provoda.Eventor.extendTo(seesuApp, {
 			}
 		});
 	},
+	supported_settings: ['lfm-scrobbling', 'dont-rept-pl', 'rept-song', 'volume'],
+
+	letAppKnowSetting: function(name, value){
+		this.settings[name] = value;
+		this.trigger('settings.' + name, value);
+	},
+	storeSetting: function(name, value){
+		clearTimeout(this.settings_timers[name]);
+
+		this.settings_timers[name] = setTimeout(function(){
+			if (typeof value != 'number'){
+				value = value || '';
+			}
+			suStore('settings.'+ name, value, true);
+		}, 333);
+		
+	},
+	setSetting: function(name, value){
+		if (this.supported_settings.indexOf(name) != -1){
+			this.letAppKnowSetting(name, value);
+			this.storeSetting(name, value);
+		} else{
+			
+		}
+		
+
+	},
 	onUICreation: function(cb){
 		var ar = (this.ui_creation_callbacks = this.ui_creation_callbacks || []);
 			ar.push(cb);
+	},
+	chechPlaylists: function(){
+		if (this.gena){
+			this.main_level.updateState('have-playlists', !!this.gena.playlists.length);
+		}
 	},
 	fs: {},//fast search
 	env: app_env,
@@ -290,17 +366,30 @@ provoda.Eventor.extendTo(seesuApp, {
 		pokki_app: "https://www.pokki.com/app/Seesu"
 	},
 	
-	track_event:function(){
-		var args = Array.prototype.slice.call(arguments);
-		args.unshift('_trackEvent');
-		this.track_stat.call(this, args);
+	trackEvent:function(){
+		var current_page = this.current_page || '(nonono)';
+	//	var args = Array.prototype.slice.call(arguments);
+	//	args.unshift('_trackEvent');
+		this.track_stat.call(this, function() {
+			var pageTracker = _gat._getTrackerByName(current_page);
+			pageTracker._trackEvent.apply(pageTracker, arguments);
+		});
 	},
-	track_page:function(){
+	trackPage:function(page_name){
+		this.current_page = page_name;
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
 		this.track_stat.call(this, args);
 	},
-	track_var: function(){
+	trackTime: function(){
+		var args = arguments;
+		var current_page = this.current_page || '(nonono)';
+		this.track_stat.call(this, function() {
+			var pageTracker = _gat._getTrackerByName(current_page);
+			pageTracker._trackTiming.apply(pageTracker, args);
+		});
+	},
+	trackVar: function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_setCustomVar');
 		this.track_stat.call(this, args);
@@ -635,6 +724,8 @@ jsLoadComplete(function() {
 			var oldpush = pl_r.push;
 			pl_r.push = function(){
 				oldpush.apply(this, arguments);
+
+				seesu.trackEvent('song actions', 'add to playlist');
 				_this.save_playlists();
 			};
 			return pl_r;
@@ -669,7 +760,8 @@ jsLoadComplete(function() {
 		
 		pls.push = function(){
 			Array.prototype.push.apply(this, arguments);
-			su.ui.create_playlists_link();
+			su.chechPlaylists();
+			
 		};
 		pls.find = function(puppet){
 			for (var i=0; i < pls.length; i++) {

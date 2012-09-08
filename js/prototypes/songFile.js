@@ -140,7 +140,7 @@ provoda.Model.extendTo(fileInTorrent, {
 			this.progress_c = $('<div class="mf-progress"></div>');
 			this.c.click(function() {
 				if (!_this.state('selected')){
-					_this.md.trigger('want-to-be-selected');
+					_this.md.trigger('want-to-play-sf');
 				}
 			});
 
@@ -225,7 +225,7 @@ provoda.Model.extendTo(fileInTorrent, {
 					}
 					_this.md.setPositionByFactor(_this.width && (pos/_this.width));
 				} else {
-					_this.md.trigger('want-to-be-selected');
+					_this.md.trigger('want-to-play-sf');
 				}
 				return false;
 				//su.ui.hidePopups();
@@ -270,10 +270,11 @@ provoda.Model.extendTo(fileInTorrent, {
 					if (_this.state('play') == 'play'){
 						_this.md.pause();
 					} else {
-						_this.md.play();
+						_this.md.trigger('want-to-play-sf');
+						//_this.md.play();
 					}
 				} else {
-					_this.md.trigger('want-to-be-selected');
+					_this.md.trigger('want-to-play-sf');
 				}
 			});
 
@@ -482,12 +483,19 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.player.setVolume(this, vol);
 			}
 		},
+		getDuration: function(){
+			return this.duration || this.state('loaded_duration');
+		},
 		setPositionByFactor: function(fac){
-			this.setPosition((this.state('loaded_duration') || this.duration || 0) * fac, fac);
+			this.setPosition((this.getDuration()/1000) * fac, fac);
 		},
 		setPosition: function(pos, fac){
 			if (this.player){
 				this.player.setPosition(this, pos, fac);
+			
+				this.mo.posistionChangeInMopla(this);
+				
+				
 			}
 		},
 		load: function(){

@@ -7,7 +7,6 @@ var seesuPlayer;
 
 
 	playerComplex.extendTo(seesuPlayer, {
-		global_volume: false,
 		init: function(){
 			this._super();
 		},
@@ -70,25 +69,14 @@ var seesuPlayer;
 	"use strict";
 	var player = su.p = new seesuPlayer();
 
+
+	var canSubmit = function(mo){
+
+	}
+
 	su.p
 		.on('finish', function(e){
-			var mo = e.song_file.mo;
-			
-			var duration = Math.round(mo.mopla.duration/1000);
-			if (lfm.scrobbling) {
-				lfm.submit(mo, duration);
-			}
-			if (su.s.loggedIn()){
-				su.s.api('track.scrobble', {
-					client: su.env.app_type,
-					status: 'finished',
-					duration: duration,
-					artist: mo.artist,
-					title: mo.track,
-					timestamp: ((new Date()).getTime()/1000).toFixed(0)
-				});
-			}
-			delete mo.start_time;
+			var mo = e.song_file.mo.submitPlayed();
 		})
 		.on('song-play-error', function(song, can_play) {
 			if (this.c_song == song){
@@ -103,22 +91,21 @@ var seesuPlayer;
 			}
 		})
 		.on('play', function(e){
-			var mo = e.song_file.mo;
-			var duration = Math.round(mo.mopla.duration/1000);
-			if (lfm.scrobbling) {
-				lfm.nowplay(mo, duration);
-			}
-			if (su.s.loggedIn()){
-				su.s.api('track.scrobble', {
-					client: su.env.app_type,
-					status: 'playing',
-					duration: duration,
-					artist: mo.artist,
-					title: mo.track,
-					timestamp: ((new Date()).getTime()/1000).toFixed(0)
-				});
-			}
+			e.song_file.mo.submitNowPlaying();
 		});
+
+	var setVolume = function(vol){
+		if (su.p.c_song){
+			su.p.c_song.setVolume(vol);
+		} else {
+			su.p.setVolume(false, vol);
+		}
+		
+	};
+	if (su.settings['volume']){
+		setVolume(su.settings['volume'])
+	}
+	su.on('settings.volume', setVolume);
 })();
 (function() {
 	"use strict";
@@ -139,6 +126,13 @@ var seesuPlayer;
 			done = true;
 			cb();
 			
+		}
+	};
+	var checkTracking = function(last_try){
+		if (done){
+			su.trackVar(3, 'canplay', 'yes', 1);
+		} else if (last_try){
+			su.trackVar(3, 'canplay', 'no', 1);
 		}
 	};
 	var addFeature = function(feature){
@@ -331,6 +325,7 @@ var seesuPlayer;
 	while (!done && detectors.length){
 		detectors.shift()();
 	}
+	checkTracking();
 	if (!done){
 		domReady(document, function(){
 			detectors.push(
@@ -395,6 +390,7 @@ var seesuPlayer;
 			while (!done && detectors.length){
 				detectors.shift()();
 			}
+			checkTracking(true);
 		});
 		
 	}

@@ -136,7 +136,7 @@ suServView.extendTo(songUI, {
 		};
 		//this.tidominator.removeClass('want-more-info');
 			
-		this.md.traackrow.hideAll();
+		this.md.actionsrow.hideAll();
 		
 		su.ui.hidePopups();
 		this.md.mf_cor.collapseExpanders();
@@ -164,11 +164,17 @@ suServView.extendTo(songUI, {
 		},
 		tidominator: function() {
 			return this.requirePart('context').children('.track-info-dominator');
+		},
+		volume_c: function(){
+			
+			
 		}
 	},
 	createBase: function(){
 		var _this = this;
 		this.c = $('<li></li>').data('mo', this.md);
+		
+
 		this.node = $("<a></a>")
 			.addClass('track-node waiting-full-render')
 			.data('mo', this.md)
@@ -184,13 +190,13 @@ suServView.extendTo(songUI, {
 				mo.view(false, true);
 				return false;
 			});
-		
+		$('<span class="nothing-toy"></span>').appendTo(this.node);
+
 		var buttmen = su.ui.els.play_controls.node.clone(true).data('mo', this.md);
 			buttmen.find('.pc').data('mo', this.md);
 		this.c.prepend(buttmen);
 
 		this.titlec = $("<span></span>").appendTo(this.node);
-		this.durationc = $('<a class="song-duration"></a>').prependTo(this.node);
 		this.c.append(this.node);
 	},
 	expand: function(){
@@ -204,12 +210,12 @@ suServView.extendTo(songUI, {
 
 		var context = this.requirePart('context');
 
-		var track_row_view = this.md.traackrow.getFreeView(false, context.children('.song-actions'));
+		var track_row_view = this.md.actionsrow.getFreeView(this, false, context.children('.song-actions'));
 		if (track_row_view){
 			this.addChild(track_row_view);
 		}
 
-		this.mf_cor_view = this.md.mf_cor.getFreeView();
+		this.mf_cor_view = this.md.mf_cor.getFreeView(this);
 		if (this.mf_cor_view){
 			var mf_cor_view_c = this.mf_cor_view.getC();
 			this.addChild(this.mf_cor_view);
@@ -245,7 +251,7 @@ suServView.extendTo(songUI, {
 				.appendTo(artist_link_con)
 				.click(function(){
 					su.views.showArtcardPage(_this.md.artist);
-					su.track_event('Artist navigation', 'art card', _this.md.artist);
+					su.trackEvent('Artist navigation', 'art card', _this.md.artist);
 				});
 
 		
@@ -446,7 +452,13 @@ suServView.extendTo(songUI, {
 							_this.img_panorama = new Panoramator();
 							var main_c = _this.photo_c.parent()
 				
-							_this.img_panorama.init(main_c, _this.photo_c);
+							_this.img_panorama.init({
+								viewport: main_c, 
+								lift: _this.photo_c,
+								onUseEnd: function(){
+									seesu.trackEvent('Panoramator', 'artist photos');
+								}
+							});
 
 							var my_window = getDefaultView(_this.getC()[0].ownerDocument);
 							
@@ -657,16 +669,6 @@ suServView.extendTo(songUI, {
 			this.extend_info.updateUI();
 		}
 		
-	},
-	toogle_art_alb_container: function(link){
-		var artist_albums_container = link.parent().parent();
-		if (artist_albums_container.is('.collapse-albums')){
-			artist_albums_container.removeClass('collapse-albums');
-			link.text(localize('hide-them', 'hide them'));
-		} else{
-			artist_albums_container.addClass('collapse-albums');
-			link.text(localize('show-them', 'show them'));
-		}
 	},
 	hideYoutubeVideo: function(){
 		if (this.mf_cor_view){

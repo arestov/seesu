@@ -75,7 +75,7 @@ suServView.extendTo(mfComplectUI, {
 		var moplas_list = this.md.moplas_list;
 
 		for (var i = 0; i < moplas_list.length; i++) {
-			var ui  = moplas_list[i].getFreeView();
+			var ui  = moplas_list[i].getFreeView(this);
 			if (ui){
 				this.lc.append(ui.getC())
 				ui.appended(this);
@@ -121,7 +121,7 @@ var mfComplect = function(mf_cor, sem_part, mo) {
 	for (var i = 0; i < this.sem_part.t.length; i++) {
 		var sf = this.sem_part.t[i]
 				.getSongFileModel(mo, mo.player)
-					.on('want-to-be-selected', selectMf);
+					.on('want-to-play-sf', selectMf);
 
 		if (i + 1 > this.overstock_limit){
 			sf.updateState('overstock', true);
@@ -189,7 +189,7 @@ suServView.extendTo(mfCorUI, {
 			$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
 			this.c.prepend(this.sall_songs);
 
-			var nof_ui = this.md.notifier.getFreeView();
+			var nof_ui = this.md.notifier.getFreeView(this);
 			if (nof_ui){
 				this.sall_songs.append(nof_ui.getC());
 				nof_ui.appended(this);
@@ -210,7 +210,7 @@ suServView.extendTo(mfCorUI, {
 		var _this = this;
 		if (this.md.vk_audio_auth){
 			var
-				vk_auth_mess = this.md.vk_audio_auth.getFreeView(),
+				vk_auth_mess = this.md.vk_audio_auth.getFreeView(this),
 				vk_auth_mess_c = vk_auth_mess && vk_auth_mess.getC()
 
 				
@@ -255,7 +255,7 @@ suServView.extendTo(mfCorUI, {
 			};
 
 			for (var i = 0; i < pa.length; i++) {
-				append(this.md.complects[pa[i]].getFreeView());
+				append(this.md.complects[pa[i]].getFreeView(this));
 			}
 		}
 		
@@ -318,6 +318,7 @@ suServView.extendTo(mfCorUI, {
 								_this.showYoutubeVideo(vid, vi_c, $(this));
 								_this.md.pause();
 								this.showed = true;
+								su.trackEvent('Navigation', 'youtube video');
 							} else{
 								_this.hideYoutubeVideo();
 								_this.md.play();
@@ -439,11 +440,12 @@ var mfCor = function(mo, omo) {
 	this.checkVKAuthNeed();
 
 	var _this = this;
+	/*
 	this.watchStates(['has_files', 'vk-audio-auth'], function(has_files, vkaa) {
 		if (has_files || vkaa){
 			_this.updateState('must-be-expandable', true);
 		}
-	});
+	});*/
 
 	this.mfPlayStateChange = function(e) {
 		if (_this.state('used_mopla') == this){
@@ -460,6 +462,12 @@ var mfCor = function(mo, omo) {
 provoda.Model.extendTo(mfCor, {
 	ui_constr: mfCorUI,
 	complex_states: {
+		"must-be-expandable": {
+			depends_on: ['has_files', 'vk-audio-auth'],
+			fn: function(has_files, vk_a_auth){
+				return !!(has_files || vk_a_auth);
+			}
+		},
 		mopla_to_use: {
 			depends_on: ["user_preferred", "default_mopla"],
 			fn: function(user_preferred, default_mopla){
@@ -515,6 +523,9 @@ provoda.Model.extendTo(mfCor, {
 			
 		}
 
+	},
+	getCurrentMopla: function(){
+		return this.state('current_mopla')
 	},
 	switchMoreSongsView: function() {
 		if (!this.state('want-more-songs')){

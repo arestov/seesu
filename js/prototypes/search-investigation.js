@@ -14,7 +14,7 @@
 				this.expanded = true;
 			}
 			for (var i = 0; i < this.md.sections.length; i++) {
-				var cur_ui = this.md.sections[i].getFreeView();
+				var cur_ui = this.md.sections[i].getFreeView(this);
 				if (cur_ui){
 					this.addChild(cur_ui);
 					this.c.append(cur_ui.getC());

@@ -44,8 +44,8 @@
 			tplaying = setInterval(function(){
 				if (a.IsDurationValid){
 					cb('playing', id, {
-						duration:  a.Duration,
-						position: a.CurrentPosition
+						duration:  a.Duration * 1000,
+						position: a.CurrentPosition * 1000
 					});						
 				}
 			},250);
