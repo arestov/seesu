@@ -334,7 +334,9 @@ var song;
 			"vis-volume": {
 				depends_on: ['volume', 'vis-volume-bar-max-width'],
 				fn: function(volume, vvb_mw){
-					if (vvb_mw){
+					if (typeof volume =='undefined'){
+						return 'auto';
+					} else if (vvb_mw){
 						return ((volume/100) * vvb_mw) + 'px';
 					} else {
 						return volume  + '%';
