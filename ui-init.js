@@ -5,11 +5,13 @@ if (window.chrome && chrome.extension){
 } else if (window.opera && opera.extension && opera.extension.bgProcess){
 	cbp = opera.extension.bgProcess;
 }
+cbp.big_timer.setN('popup-start');
 cbp.jsLoadComplete({
 	test: function() {
 		return cbp.app_env
 	},
 	fn: function() {
-		cbp.handleDocument(d);
+		cbp.handleDocument(window.document, {category: 'popup-init', start_time: 'popup-start'});
+		//cbp.handleDocument(d);
 	}
 });

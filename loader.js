@@ -1,6 +1,6 @@
 var bpath = '';
 window._gaq = window._gaq || [];
-var big_timer = {
+window.big_timer = {
 	setN: function(name){
 		var time = new Date() * 1;
 		if (name){
