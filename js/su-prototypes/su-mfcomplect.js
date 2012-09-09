@@ -3,10 +3,8 @@
 var notifyCounterUI = function() {};
 
 suServView.extendTo(notifyCounterUI, {
-	init: function(md){
-		this._super();
+	createDetailes: function(){
 		this.createBase();
-		this.setModel(md);
 	},
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
@@ -59,11 +57,9 @@ provoda.Model.extendTo(notifyCounter, {
 
 var mfComplectUI = function() {};
 suServView.extendTo(mfComplectUI, {
-	init: function(md){
-		this.md = md;
-		this._super();
+	createDetailes: function(){
 		this.createBase();
-		this.setModel(md);
+		this.orderChildren();
 	},
 	createBase: function() {
 		this.c = $('<div class="moplas-list"></div>');
@@ -71,14 +67,14 @@ suServView.extendTo(mfComplectUI, {
 		this.header_c = $('<h4></h4>').text(this.header_text).appendTo(this.c);
 		this.lc = $('<ul></ul>').appendTo(this.c);
 	},
-	appendChildren: function() {
+	orderChildren: function() {
 		var moplas_list = this.md.moplas_list;
 
 		for (var i = 0; i < moplas_list.length; i++) {
 			var ui  = moplas_list[i].getFreeView(this);
 			if (ui){
-				this.lc.append(ui.getC())
-				ui.appended(this);
+				this.lc.append(ui.getA())
+			//	ui.appended(this);
 				this.addChild(ui);
 			}
 		}
@@ -146,15 +142,12 @@ provoda.Model.extendTo(mfComplect, {
 
 var mfCorUI = function(md) {};
 suServView.extendTo(mfCorUI, {
-	init: function(md){
-		this.md = md;
-		this._super();
+	createDetailes: function(){
 		this.createBase();
-		this.setModel(md);
 	},
 	state_change: {
 		changed: function(val) {
-			this.appendChildren();
+			this.renderChildren();
 		},
 		"want-more-songs": function(state) {
 			if (state){
@@ -191,9 +184,12 @@ suServView.extendTo(mfCorUI, {
 
 			var nof_ui = this.md.notifier.getFreeView(this);
 			if (nof_ui){
-				this.sall_songs.append(nof_ui.getC());
-				nof_ui.appended(this);
+				this.sall_songs.append(nof_ui.getA());
+
 				this.addChild(nof_ui);
+				//
+			//	nof_ui.appended(this);
+			//todo
 			}
 
 			this.messages_c = $('<div class="messages-c"></div>').appendTo(this.c);
@@ -206,19 +202,19 @@ suServView.extendTo(mfCorUI, {
 		this.c.append(this.video_c);
 
 	},
-	appendChildren: function() {
+	orderChildren: function(){
 		var _this = this;
 		if (this.md.vk_audio_auth){
 			var
 				vk_auth_mess = this.md.vk_audio_auth.getFreeView(this),
-				vk_auth_mess_c = vk_auth_mess && vk_auth_mess.getC()
+				vk_auth_mess_c = vk_auth_mess && vk_auth_mess.getA()
 
 				
 			if (vk_auth_mess){
 				this.addChild(vk_auth_mess);
 				if (vk_auth_mess_c){
 					this.messages_c.append(vk_auth_mess_c);
-					vk_auth_mess.appended(this);
+				//	vk_auth_mess.appended(this);
 				}
 				
 			}
@@ -231,40 +227,45 @@ suServView.extendTo(mfCorUI, {
 			var pa = this.md.pa_o;
 
 			var append = function(cur_view){
-				var ui_c = cur_view && cur_view.getC();
+				var ui_c = cur_view && cur_view.getA();
 				if (!ui_c){
 					return;
 				}
 
 				var prev_name = pa[i-1];
 				var prev = prev_name && _this.md.complects[prev_name];
-				var prev_c = prev && prev.getC();
+				var prev_c = prev && prev.getThing();
 				if (prev_c){
-					prev_c.after(ui_c);
+					$(prev_c).after(ui_c);
 				} else {
 					var next_c = _this.getNextSemC(pa, i+1);
 					if (next_c){
-						next_c.before(ui_c);
+						$(next_c).before(ui_c);
 					} else {
 						//_this.video_c.before(ui_c);
 						_this.mufils_c.append(ui_c);
 					}
 				}
 				_this.addChild(cur_view);
-				cur_view.appended(_this);
+		//		cur_view.appended(_this);
 			};
 
 			for (var i = 0; i < pa.length; i++) {
 				append(this.md.complects[pa[i]].getFreeView(this));
 			}
 		}
+	},
+	renderChildren: function() {
+		this.orderChildren();
+		this.requestAll();
 		
 	},
 	getNextSemC: function(packs, start) {
 		for (var i = start; i < packs.length; i++) {
 			var cur_name = packs[i];
 			var cur_mf = cur_name && this.md.complects[cur_name];
-			return cur_mf && cur_mf.getC();
+			
+			return cur_mf && cur_mf.getThing();
 		}
 	},
 	showYoutubeVideo: function(id, c, link){
@@ -850,62 +851,3 @@ provoda.Model.extendTo(mfCor, {
 		return !!this.state("mopla_to_use");
 	}
 });
-
-/*
-
-this.trigger('got-results')
-
-this.trigger('got-result')
-
-this.trigger('error')
-
-
-this.trigger('got-nothing')
-
-в процессе
-
-завершен
-
-
-
-имеет результаты
-
-0 результатов
-
-
-имеет ошибку
-
- непоправимую ошибку
-
- ошибку поправимую кем угодно
- ошибку поправимую только несамостоятельно
-
-
-*/
-
-
-/*
-
-var songs = this.mo.songs();
-
-			if (this.mo.isSearchCompleted() && this.mo.isNeedsAuth('vk')){
-				
-				var vklc = this.rowcs.song_context.getC();
-				var oldvk_login_notify = this.vk_login_notify;
-				if (!songs.length){
-					this.vk_login_notify = su.ui.samples.vk_login.clone();
-				} else if(!this.mo.isHaveAnyResultsFrom('vk')){
-					this.vk_login_notify = su.ui.samples.vk_login.clone( localize('to-find-better') + " " +  localize('music-files-from-vk'));
-				} else {
-					this.vk_login_notify = su.ui.samples.vk_login.clone(localize('stabilization-of-vk'));
-					
-				}
-				if (oldvk_login_notify){
-					oldvk_login_notify.remove();
-				}
-				if (this.vk_login_notify){
-					vklc.after(this.vk_login_notify);
-				}
-			} 
-
-			*/

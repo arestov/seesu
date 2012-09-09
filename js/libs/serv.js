@@ -93,14 +93,14 @@ arrayExclude = function(arr, obj){
 };
 
 shuffleArray = function(obj) {
-    var shuffled = [], rand, value;
-    for (var index = 0; index < obj.length; index++) {
-    	value = obj[index];
-    	rand = Math.floor(Math.random() * (index + 1));
-    	shuffled[index] = shuffled[rand];
-    	shuffled[rand] = value;
-    }
-    return shuffled;
+	var shuffled = [], rand, value;
+	for (var index = 0; index < obj.length; index++) {
+		value = obj[index];
+		rand = Math.floor(Math.random() * (index + 1));
+		shuffled[index] = shuffled[rand];
+		shuffled[rand] = value;
+	}
+	return shuffled;
 };
 
 getFields = function(obj, fields){
@@ -137,10 +137,10 @@ getDiffObj = function(one, two) {
 };
 
 createObjClone = function(obj){
-	var clonner = function(){};
-	clonner.prototype = obj;
-	var nobj = new clonner();
-	nobj.constructor = clonner;
+	var Clonner = function(){};
+	Clonner.prototype = obj;
+	var nobj = new Clonner();
+	nobj.constructor = Clonner;
 	return nobj;
 };
 matchWords = function(source, query){
@@ -156,9 +156,9 @@ matchWords = function(source, query){
 				source_sliced.slice(index + words[i].length);
 			} else {
 				r.forward = false;
-				break
+				break;
 			}
-		};
+		}
 		if (!r.forward){
 			for (var i = 0; i < words.length; i++) {
 				if (source.indexOf(words[i]) == -1){
@@ -167,7 +167,7 @@ matchWords = function(source, query){
 				}
 			}
 		}
-		r.any = any_order
+		r.any = any_order;
 	}
 	return r;
 };

@@ -1,11 +1,8 @@
 var artCardUI = function() {};
 
 suServView.extendTo(artCardUI, {
-	init: function(md){
-		this.md = this.artcard = md;
-		this._super();
+	createDetailes: function(){
 		this.createBase();
-		this.setModel(md);
 	},
 	die: function() {
 		this.blur();
@@ -59,7 +56,7 @@ suServView.extendTo(artCardUI, {
 			var albs_groups = $("<div class='albums-groups'></div>");
 			for (var i=0; i < ob.ordered.length; i++) {
 				var aul =  $('<ul></ul>');
-				su.ui.renderArtistAlbums(ob.ordered[i], _this.artcard.artist, aul, true, true);
+				su.ui.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, true, true);
 				
 				aul.appendTo(albs_groups);
 			};
@@ -76,8 +73,8 @@ suServView.extendTo(artCardUI, {
 				if (i < 5){
 					if (el.track){
 						var a = $('<a class="js-serv"></a>').click(function(){
-							su.ui.showTopTacks(_this.artcard.artist, {save_parents: true, from_artcard: true}, {
-								artist: _this.artcard.artist,
+							su.ui.showTopTacks(_this.md.artist, {save_parents: true, from_artcard: true}, {
+								artist: _this.md.artist,
 								track: el.track
 							});
 						}).text(el.track);
@@ -131,7 +128,7 @@ suServView.extendTo(artCardUI, {
 			
 			var header_link = $('<a class="js-serv"></a>')
 				.click(function(){
-					su.ui.showSimilarArtists(_this.artcard.artist, {save_parents: true, from_artcard: true});	
+					su.ui.showSimilarArtists(_this.md.artist, {save_parents: true, from_artcard: true});	
 				})
 				.text(localize('similar-arts'))
 			var header = this.ui.similarsc.children('h5').empty().append(header_link);
@@ -152,7 +149,7 @@ suServView.extendTo(artCardUI, {
 			bioc: this.c.find('.art-card-bio')
 		};
 		this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
-			su.ui.showTopTacks(_this.artcard.artist, {save_parents: true, from_artcard: true});
+			su.ui.showTopTacks(_this.md.artist, {save_parents: true, from_artcard: true});
 		});
 	}
 });
@@ -172,15 +169,15 @@ var artCard = function(artist) {
 		if (su.ui.els.artcards){
 			var child_ui = _this.getFreeView(this);
 			if (child_ui){
-				su.ui.els.artcards.append(child_ui.getC());
-				child_ui.appended();
+				su.ui.els.artcards.append(child_ui.getA());
+				child_ui.requestAll();
 			}
 		}
 		if (su.ui.nav.daddy){
 			var child_ui = _this.getFreeView(this, 'nav');
 			if (child_ui){
-				su.ui.nav.daddy.append(child_ui.getC());
-				child_ui.appended();
+				su.ui.nav.daddy.append(child_ui.getA());
+				child_ui.requestAll();
 			}
 		}
 	});

@@ -98,20 +98,14 @@ investigation.extendTo(StrusersRowSearch, {
 
 var ShareRowUI = function(){};
 BaseCRowUI.extendTo(ShareRowUI, {
-	init: function(md, parent_c, buttons_panel){
-		this.md = md;
-		this._super();
+	createDetailes: function(){
+		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.share-song');
 		this.button = buttons_panel.find('.pc-place .pc-rupor');
-		
 		this.users_c = $('<div class="users-list"></div>').appendTo(this.c);
-
 		$("<h3></h3>").text(localize('post-song')).appendTo(this.users_c);
-
-
-
 		this.bindClick();
-		this.setModel(md);
+
 	},
 	'stch-share-url': {
 		fn: function(state){
@@ -164,11 +158,12 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				var searcher_ui = this.md.searcher.getFreeView(this);
 				if (searcher_ui){
 					this.addChild(searcher_ui);
-					searcher_ui.getC().insertBefore(this.getPart("pch-ws-friends"));
+					$(searcher_ui.getA()).insertBefore(this.getPart("pch-ws-friends"));
+					
 					searcher_ui.expand();
-					searcher_ui.appended();
+				//	searcher_ui.appended();
 				}
-
+				this.requestAll();
 				this.md.search("");
 			}
 			
@@ -181,7 +176,8 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				var auth_ui = this.md.vk_auth.getFreeView(this);
 				if (auth_ui){
 					this.addChild(auth_ui);
-					auth_ui.getC().insertBefore(this.getPart("pch-vk-auth"));
+					$(auth_ui.getA()).insertBefore(this.getPart("pch-vk-auth"));
+					this.requestAll();
 				}
 			}
 		},

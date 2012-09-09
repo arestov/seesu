@@ -67,14 +67,11 @@ investigation.extendTo(PlaylistRowSearch, {
 
 var PlaylistAddRowUI = function() {};
 BaseCRowUI.extendTo(PlaylistAddRowUI, {
-	init: function(md, parent_c, buttons_panel){
-		this.md = md;
-		this._super();
+	createDetailes: function(){
+		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.addsong-to-playlist');
 		this.button = buttons_panel.find('.pc-place .pc-add');
 		this.bindClick();
-		this.setModel(md);
-
 	},
 	expand: function() {
 		if (this.expanded){
@@ -104,14 +101,15 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		var searcher_ui = this.md.searcher.getFreeView(this);
 		if (searcher_ui){
 			this.addChild(searcher_ui);
-			this.lpl.append(searcher_ui.getC());
+			this.lpl.append(searcher_ui.getA());
+			
 			searcher_ui.expand();
-			searcher_ui.appended();
+		//	searcher_ui.appended();
 		}
 		this.md.search("");
 
 		
-
+		this.requestAll();
 		
 	},
 	state_change: {

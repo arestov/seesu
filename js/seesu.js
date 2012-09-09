@@ -95,10 +95,10 @@ var seesuApp = function(version) {
 	this.map = (new browseMap(this.main_level));
 
 	if (app_env.chrome_extension){
-		this.main_level.getFreeView(this, this, "chrome_ext");
+		this.main_level.getFreeView(this, "chrome_ext");
 	} else if (app_env.opera_extension && window.opera_extension_button){
 		this.opera_ext_b = opera_extension_button;
-		this.main_level.getFreeView(this, this, "opera_ext");
+		this.main_level.getFreeView(this, "opera_ext");
 	}
 	
 
@@ -505,9 +505,9 @@ var random_track_plable = function(track_list){
 
 
 (function(){
-	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(1000, 5000 , 7), app_env.cross_domain_allowed, cache_ajax);
+	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(1500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch(sc_api));
-	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(1200), app_env.cross_domain_allowed, cache_ajax)));
+	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(1500, 5000, 4), app_env.cross_domain_allowed, cache_ajax)));
 
 	
 	if (app_env.cross_domain_allowed){

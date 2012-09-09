@@ -505,15 +505,15 @@ investigation.extendTo(SuInvestg, {
 			if (su.ui.els.searchres){
 				var child_ui = _this.getFreeView(this);
 				if (child_ui){
-					su.ui.els.searchres.append(child_ui.getC());
-					child_ui.appended();
+					su.ui.els.searchres.append(child_ui.getA());
+					child_ui.requestAll();
 				}
 			}
 			if (su.ui.nav.daddy){
 				var child_ui = _this.getFreeView(this, 'nav');
 				if (child_ui){
-					su.ui.nav.daddy.append(child_ui.getC());
-					child_ui.appended();
+					su.ui.nav.daddy.append(child_ui.getA());
+					child_ui.requestAll();
 				}
 			}
 		});

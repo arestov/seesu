@@ -1,10 +1,7 @@
 var fileInTorrentUI = function() {};
 suServView.extendTo(fileInTorrentUI,{
-	init: function(md){
-		this._super();
-		this.md = md;
+	createDetailes: function(){
 		this.createBase();
-		this.setModel(md);
 	},
 	state_change: {
 		"download-pressed": function(state) {
@@ -74,11 +71,25 @@ provoda.Model.extendTo(fileInTorrent, {
 
 	var songFileModelUI = function() {};
 	suServView.extendTo(songFileModelUI, {
-		init: function(md){
-			this.md = md;
-			this._super();
+		createDetailes: function(){
 			this.createBase();
-			this.setModel(md);
+
+			var _this = this;
+
+			var mf_cor_view = this.parent_view.parent_view;
+			this.setVisState('p-wmss', !!mf_cor_view.state('want-more-songs'))
+			mf_cor_view.on('state-change.want-more-songs', function(e){
+				_this.setVisState('p-wmss', !!e.value);
+			});
+
+			var song_view = mf_cor_view.parent_view;
+			this.setVisState('is-visible', !!song_view.state('mp-show'))
+			song_view.on('state-change.mp-show', function(e){
+				_this.setVisState('is-visible', !!e.value);
+			});
+			
+			
+
 		},
 		state_change: {
 			"unavailable": function(state) {
@@ -89,10 +100,10 @@ provoda.Model.extendTo(fileInTorrent, {
 				}
 			},
 			'playing-progress': function(factor){
-				this.changeBar(this.cplayng, factor);
+				//this.changeBar(this.cplayng, factor);
 			},
 			'loading-progress': function(factor){
-				this.changeBar(this.cloading, factor);
+				//this.changeBar(this.cloading, factor);
 			},
 			"buffering-progress": function(state, oldstate) {
 				if (state){
@@ -123,6 +134,72 @@ provoda.Model.extendTo(fileInTorrent, {
 				} else {
 					this.c.removeClass('overstocked');
 				}
+			},
+			"vis-loading-p": function(state){
+				this.cloading.css({
+					width: state
+				});
+				
+			},
+			"vis-playing-p": function(state){
+				this.cplayng.css({
+					width: state
+				});
+			}
+		},
+		complex_states: {
+			"can-progress": {
+				depends_on: ['vis-is-visible', 'vis-con-appended', 'selected'],
+				fn: function(vis, apd, sel){
+					var can = vis && apd && sel;
+					if (can){
+						var _this = this;
+
+						$(window).off('resize.song_file_progress');
+						$(window).on('resize.song_file_progress', debounce(function(e){
+							_this.setVisState('win-resize-time', e.timeStamp)
+						}, 100));
+					}
+					return can;
+				}
+			},
+			"vis-progress-c-width": {
+				depends_on: ['can-progress', 'vis-p-wmss', 'vis-win-resize-time'],
+				fn: function(can, p_wmss, wrsz_time){
+					if (can){
+						return this.progress_c.width();
+					} else {
+						return 0;
+					}
+				}
+			},
+			"vis-loading-p": {
+				depends_on: ['vis-progress-c-width', 'loading-progress'],
+				fn: function(width, factor){
+					if (factor) {
+						if (width){
+							return (factor * width) + 'px';
+						} else {
+							return (factor * 100) + '%';
+						}
+					} else {
+						return 'auto';
+					}
+				}
+			},
+			"vis-playing-p": {
+				depends_on: ['vis-progress-c-width', 'playing-progress'],
+				fn: function(width, factor){
+					if (factor) {
+						if (width){
+							return (factor * width) + 'px';
+						} else {
+							return (factor * 100) + '%';
+						}
+					} else {
+						return 'auto';
+					}
+				}
 			}
 		},
 		createBase: function() {
@@ -151,10 +228,16 @@ provoda.Model.extendTo(fileInTorrent, {
 			var path_points;
 			var positionChange = function(){
 				var last = path_points[path_points.length - 1];
-				if (!_this.width){
-					_this.fixWidth();
+
+				var width = _this.state('vis-progress-c-width');
+
+				if (!width){
+					console.log("no width for pb :!((")
 				}
-				_this.md.setPositionByFactor(_this.width && (last.cpos/_this.width));
+				if (width){
+					_this.md.setPositionByFactor(width && (last.cpos/width));
+				}
+				
 			}
 
 			var touchDown = function(e){
@@ -216,22 +299,6 @@ provoda.Model.extendTo(fileInTorrent, {
 
 			})
 			
-			/*
-			this.progress_c.click(function(e){
-				if (_this.state('play')){
-					var pos = getClickPosition(e, this);
-					if (!_this.width){
-						_this.fixWidth();
-					}
-					_this.md.setPositionByFactor(_this.width && (pos/_this.width));
-				} else {
-					_this.md.trigger('want-to-play-sf');
-				}
-				return false;
-				//su.ui.hidePopups();
-				//e.stopPropagation();	
-			});
-			*/
 			this.cloading = $('<div class="mf-load-progress"></div>').appendTo(this.progress_c);
 			this.cplayng = $('<div class="mf-play-progress"></div>').appendTo(this.progress_c);
 			this.track_text = $('<div class="mf-text"></div>').appendTo(this.progress_c);
@@ -298,26 +365,6 @@ provoda.Model.extendTo(fileInTorrent, {
 			this.fixWidth();
 			this.changeBar(this.cplayng, this.state('playing-progress'));
 			this.changeBar(this.cloading, this.state('loading-progress'));
-		},
-		resetPlayPosition: function(){
-			this.changeBar(this.cplayng,0);
-		},
-		reset: function(){
-			this.fixWidth();
-			this.resetPlayPosition();
-			this.changeBar(this.cloading, 0);
-			
-		},
-		onAppend: function(parent_view) {
-			var _this = this;
-			parent_view.parent_view.on('state-change.want-more-songs', function(e) {
-				if (e.value || e.old_value){
-					if (_this.state('selected')){
-						_this.fixBars();
-					}
-				}
-			});
-
 		}
 	});
 
