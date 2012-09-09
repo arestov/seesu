@@ -159,11 +159,11 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				if (searcher_ui){
 					this.addChild(searcher_ui);
 					$(searcher_ui.getA()).insertBefore(this.getPart("pch-ws-friends"));
-					
+					this.requestAll();
 					searcher_ui.expand();
 				//	searcher_ui.appended();
 				}
-				this.requestAll();
+				
 				this.md.search("");
 			}
 			

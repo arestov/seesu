@@ -102,14 +102,14 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		if (searcher_ui){
 			this.addChild(searcher_ui);
 			this.lpl.append(searcher_ui.getA());
-			
+			this.requestAll();
 			searcher_ui.expand();
 		//	searcher_ui.appended();
 		}
 		this.md.search("");
 
 		
-		this.requestAll();
+		
 		
 	},
 	state_change: {
