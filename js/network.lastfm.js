@@ -55,11 +55,8 @@ lastfm_api.prototype.initers.push(function(){
 var LfmLoginView = function() {};
 
 provoda.View.extendTo(LfmLoginView, {
-	init: function(md) {
-		this._super();
-		this.md = md;
+	createDetailes: function(){
 		this.createBase();
-		this.setModel(md);
 	},
 	'stch-active': function(state){
 		if (state){

@@ -41,8 +41,8 @@ var song;
 			if (su.ui.nav.daddy){
 				var child_ui = _this.getFreeView(this, 'nav');
 				if (child_ui){
-					su.ui.nav.daddy.append(child_ui.getC());
-					child_ui.appended();
+					su.ui.nav.daddy.append(child_ui.getA());
+					child_ui.requestAll();
 				}
 			}
 		});
@@ -157,13 +157,12 @@ var song;
 
 	var ScrobbleRowUI = function(){};
 	BaseCRowUI.extendTo(ScrobbleRowUI, {
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
+		createDetailes: function(){
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 			this.c = parent_c.children('.last-fm-scrobbling');
 			this.button = buttons_panel.find('.lfm-scrobbling-button');
 			this.bindClick();
-			this.setModel(md);
+
 		},
 		expand: function() {
 			if (this.expanded){
@@ -175,10 +174,11 @@ var song;
 			var lsc_view = this.md.lfm_scrobble.getFreeView(this);
 			if (lsc_view){
 				this.addChild(lsc_view);
-				this.c.append(lsc_view.getC());
-				lsc_view.appended();
+				this.c.append(lsc_view.getA());
+				
+				//lsc_view.appended();
 			}
-			
+			this.requestAll();
 		}
 	});
 
@@ -200,13 +200,11 @@ var song;
 
 	var FlashErrorRowUI = function(){};
 	BaseCRowUI.extendTo(FlashErrorRowUI, {
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
+		createDetailes: function(){
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 			this.c = parent_c.children('.flash-error');
 			this.button = buttons_panel.find('.flash-secur-button');
 			this.bindClick();
-			this.setModel(md);
 		}
 	});
 
@@ -239,15 +237,12 @@ var song;
 				});
 			}
 		},
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
+		createDetailes: function(){
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 			this.c =  parent_c.children('.rept-song');
 			this.button = buttons_panel.find('.rept-song-button');
 
 			this.bindClick();
-			
-			this.setModel(md);
 		},
 		expand: function() {
 			if (this.expanded){
@@ -296,8 +291,9 @@ var song;
 
 	var TrackActionsRowUI = function() {};
 	ActionsRowUI.extendTo(TrackActionsRowUI, {
-		createBase: function(c){
-			this.c = c;
+		createBase: function(){
+
+			this.c = this.parent_view.song_actions_c;
 			this.row_context = this.c.children('.row-song-context');
 
 			this.buttons_panel = this.c.children('.track-panel');
@@ -320,9 +316,9 @@ var song;
 		},
 		complex_states: {
 			"vis-volume-hole-width": {
-				depends_on: ['vis-is-visible'],
-				fn: function(visible){
-					return visible && this.vol_hole.width();
+				depends_on: ['vis-is-visible', 'vis-con-appended'],
+				fn: function(visible, apd){
+					return !!(visible && apd) && this.vol_hole.width();
 				}
 			},
 			"vis-volume-bar-max-width": {

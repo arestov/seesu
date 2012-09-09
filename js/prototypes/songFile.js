@@ -1,10 +1,7 @@
 var fileInTorrentUI = function() {};
 suServView.extendTo(fileInTorrentUI,{
-	init: function(md){
-		this._super();
-		this.md = md;
+	createDetailes: function(){
 		this.createBase();
-		this.setModel(md);
 	},
 	state_change: {
 		"download-pressed": function(state) {
@@ -74,11 +71,8 @@ provoda.Model.extendTo(fileInTorrent, {
 
 	var songFileModelUI = function() {};
 	suServView.extendTo(songFileModelUI, {
-		init: function(md){
-			this.md = md;
-			this._super();
+		createDetailes: function(){
 			this.createBase();
-			this.setModel(md);
 		},
 		state_change: {
 			"unavailable": function(state) {
@@ -309,6 +303,7 @@ provoda.Model.extendTo(fileInTorrent, {
 			
 		},
 		onAppend: function(parent_view) {
+			//todo
 			var _this = this;
 			parent_view.parent_view.on('state-change.want-more-songs', function(e) {
 				if (e.value || e.old_value){

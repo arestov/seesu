@@ -505,9 +505,9 @@ var random_track_plable = function(track_list){
 
 
 (function(){
-	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(1000, 5000 , 7), app_env.cross_domain_allowed, cache_ajax);
+	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(1500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch(sc_api));
-	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(1200), app_env.cross_domain_allowed, cache_ajax)));
+	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(1500, 5000, 4), app_env.cross_domain_allowed, cache_ajax)));
 
 	
 	if (app_env.cross_domain_allowed){

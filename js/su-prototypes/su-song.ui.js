@@ -1,14 +1,9 @@
 var songUI = function(){};
 
 suServView.extendTo(songUI, {
-	init: function(md) {
-		this._super();
-		this.md = md;
+	createDetailes: function(){
 		this.rowcs = {};
 		this.createBase();
-		this.setModel(md);
-	
-		return this;
 	},
 	appendChildren: function() {
 		//this.expand();
@@ -210,17 +205,23 @@ suServView.extendTo(songUI, {
 
 		var context = this.requirePart('context');
 
-		var track_row_view = this.md.actionsrow.getFreeView(this, false, context.children('.song-actions'));
+		this.song_actions_c =  context.children('.song-actions');
+
+		var track_row_view = this.md.actionsrow.getFreeView(this);
 		if (track_row_view){
+
 			this.addChild(track_row_view);
+			
+			
 		}
 
 		this.mf_cor_view = this.md.mf_cor.getFreeView(this);
 		if (this.mf_cor_view){
-			var mf_cor_view_c = this.mf_cor_view.getC();
+			var mf_cor_view_c = this.mf_cor_view.getA();
 			this.addChild(this.mf_cor_view);
 			context.prepend(mf_cor_view_c);
-			this.mf_cor_view.appended(this);
+			
+			//this.mf_cor_view.appended(this);
 			//fixme - remove link to view (this.mf_cor_view) when dieing 
 		
 		}
@@ -315,15 +316,15 @@ suServView.extendTo(songUI, {
 	
 
 		this.updateSongContext(true);
-
 		
+		this.requestAll();
 	},
 	die: function(){
 		this.remove();
 		this.dead = true;
 	},
 	remove: function(){
-		this.c.remove();
+		this.c && this.c.remove();
 	},
 	updateSongContext: function(){
 		var artist = this.md.artist;

@@ -1,11 +1,8 @@
 (function(){
 	"use strict";
-	provoda.addPrototype("InvestigationView",{
-		init: function(md){
-			this.md = this.invstg = md;
-			this._super();
+	provoda.addPrototype("InvestigationView", {
+		createDetailes: function(){
 			this.createBase();
-			this.setStates(md.states);
 		},
 		expand: function(){
 			if (this.expanded){
@@ -17,11 +14,12 @@
 				var cur_ui = this.md.sections[i].getFreeView(this);
 				if (cur_ui){
 					this.addChild(cur_ui);
-					this.c.append(cur_ui.getC());
-					cur_ui.appended(this);
+					this.c.append(cur_ui.getA());
+				//	cur_ui.appended(this);
 
 				}
 			}
+			this.requestAll();
 		},
 		state_change: {
 			"mp-show": function(opts) {
@@ -303,19 +301,13 @@
 
 
 	provoda.addPrototype("baseSuggestView", {
-		init: function(md){
-			this._super();
-			if (md){
-				this.md = md;
-			}
-			
+		createDetailes: function(){
 			this.createBase();
 			if (this.createItem){
 				this
 					.createItem()
 					.bindClick();
 			}
-			this.setModel(md);
 		},
 		'stch-active': function(state){
 			if (this.a){

@@ -22,8 +22,8 @@ mapLevelModel.extendTo(suMapModel, {
 var suServView = function() {};
 
 provoda.View.extendTo(suServView, {
-	init: function() {
-		this._super();
+	init: function(md, opts) {
+		this._super(md, opts);
 
 		var _this = this;
 		var onDOMDie = function(dead_doc, is_current_ui, ui) {
@@ -127,31 +127,25 @@ provoda.Model.extendTo(PartsSwitcher, {
 	}
 });
 
-var ActionsRowUI = function(){}
+var ActionsRowUI = function(){};
 suServView.extendTo(ActionsRowUI, {
-	init: function(md, c) {
-		this.md = md;
-		this._super();
-		this.createBase(c);
+	createDetailes: function(){
+		this.createBase();
 
 		this.parts_views = {};
 
-		var	parts = this.md.getAllParts()
+		var	parts = this.md.getAllParts();
 
 		
 
 		for (var i in parts) {
-			var pv = parts[i].getFreeView(this, false, this.row_context, this.buttons_panel);
+			var pv = parts[i].getFreeView(this);
 			if (pv){
 				this.parts_views[i] = pv;
 				pv.appended();
 				this.addChild(pv);
 			}
 		}
-
-		this.setModel(md);
-
-
 	},
 	state_change: {
 		active_part: function(nv, ov) {
@@ -190,9 +184,9 @@ suServView.extendTo(BaseCRowUI, {
 				if (this.expand){
 					this.expand();
 				}
-				this.c.removeClass('hidden')
+				this.c.removeClass('hidden');
 			} else {
-				this.c.addClass('hidden')
+				this.c.addClass('hidden');
 			}
 		}
 	}

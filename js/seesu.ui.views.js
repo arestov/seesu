@@ -11,15 +11,13 @@ var mainLevel;
 var baseNavUI = function() {};
 
 suServView.extendTo( baseNavUI, {
-	init: function(mlm) {
-		this._super();
+	createDetailes: function(){
 		this.createBase();
 		this.bindClick();
 		var text_place = this.c.find('span');
 		if (text_place){
 			this.text_place = text_place;
 		}
-		this.setModel(mlm);
 	},
 	stack_types: ['top', 'bottom', 'middle'],
 	state_change: {
@@ -126,24 +124,20 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 var mainLevelUI = function(){};
 
 suServView.extendTo(mainLevelUI, {
-	init: function(md){
-		this.md = this.m_l = md;
-	
-		this._super();
-
+	createDetailes: function(){
 		this.sui = su.ui;
 		this.d = su.ui.d;
 
 		this.els = su.ui.els;
 		this.nav = su.ui.nav;
 		this.c = $(this.d.body);
-
-		this.setModel(md);
-
-		var _this = this;
 		this.c.addClass('app-loaded');
-		
 
+
+		var fast_pstart_view = this.md.fast_pstart.getFreeView(this, false, su.ui.els.fast_personal_start);
+		if (fast_pstart_view){
+			this.addChild(fast_pstart_view);
+		}
 	},
 	state_change: {
 		'mp-show': function(opts) {
@@ -272,14 +266,6 @@ suServView.extendTo(mainLevelUI, {
 			}
 		}
 	},
-	appendChildren: function(){
-
-		var fast_pstart_view = this.md.fast_pstart.getFreeView(this, false, su.ui.els.fast_personal_start);
-		if (fast_pstart_view){
-			this.addChild(fast_pstart_view);
-		}
-
-	},
 	toggleBodyClass: function(add, class_name){
 		if (add){
 			this.c.addClass(class_name);
@@ -323,12 +309,13 @@ mainLevel = function(su) {
 
 	this.regDOMDocChanges(function() {
 		var this_view = _this.getFreeView(this).appended();
+		this_view.requestAll();
 
 		if (su.ui.nav.daddy){
 			var child_ui = _this.getFreeView(this, 'nav');
 			if (child_ui){
-				su.ui.nav.daddy.append(child_ui.getC());
-				child_ui.appended();
+				su.ui.nav.daddy.append(child_ui.getA());
+				child_ui.requestAll();
 			} 
 		}
 
@@ -404,10 +391,10 @@ suMapModel.extendTo(mainLevel, {
 var FastPSRowView = function(){};
 ActionsRowUI.extendTo(FastPSRowView, {
 	createBase: function(c){
-		this.c = c;
+		this.c = this.parent_view.els.fast_personal_start;
 		this.row_context = this.c.find('.row-context');
 		this.arrow = this.row_context.children('.rc-arrow');
-		this.buttons_panel = c.parent();
+		this.buttons_panel = this.c;
 	}
 });
 
@@ -434,10 +421,11 @@ PartsSwitcher.extendTo(FastPSRow, {
 
 var LastfmRecommRowView = function(){};
 	BaseCRowUI.extendTo(LastfmRecommRowView, {
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
+		createDetailes: function(){
 
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
+			var md = this.md;
 			this.c = parent_c.children('.lfm-recomm');
 			this.button = buttons_panel.find('#lfm-recomm').click(function(){
 				if (!lfm.sk){
@@ -448,8 +436,6 @@ var LastfmRecommRowView = function(){};
 				
 				return false;
 			});
-			//this.bindClick();
-			this.setModel(md);
 		},
 		expand: function() {
 			if (this.expanded){
@@ -459,9 +445,11 @@ var LastfmRecommRowView = function(){};
 			}
 			var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView(this);
 			if (lfm_reccoms_view){
-				this.c.append(lfm_reccoms_view.getC());
+				this.c.append(lfm_reccoms_view.getA());
 				this.addChild(lfm_reccoms_view);
+				
 			}
+			this.requestAll();
 		}
 	});
 
@@ -486,10 +474,9 @@ BaseCRow.extendTo(LastfmRecommRow, {
 
 var LastfmLoveRowView = function(){};
 	BaseCRowUI.extendTo(LastfmLoveRowView, {
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
-
+		createDetailes: function(){
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
+			var md = this.md;
 			this.c = parent_c.children('.lfm-loved');
 			this.button = buttons_panel.find('#lfm-loved').click(function(){
 				if (!lfm.sk){
@@ -500,8 +487,6 @@ var LastfmLoveRowView = function(){};
 				
 				return false;
 			});
-			//this.bindClick();
-			this.setModel(md);
 		},
 		expand: function() {
 			if (this.expanded){
@@ -511,9 +496,11 @@ var LastfmLoveRowView = function(){};
 			}
 			var lfm_loves_view = this.md.lfm_loves.getFreeView(this);
 			if (lfm_loves_view){
-				this.c.append(lfm_loves_view.getC());
+				this.c.append(lfm_loves_view.getA());
 				this.addChild(lfm_loves_view);
+				
 			}
+			this.requestAll();
 		}
 	});
 

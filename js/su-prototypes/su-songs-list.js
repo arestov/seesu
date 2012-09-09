@@ -9,9 +9,6 @@
 
 	var songsListView = function(pl){};
 	songsListBaseView.extendTo(songsListView, {
-		appendChildren: function() {
-			
-		},
 		'stch-mp-show': function(opts) {
 			if (opts){
 				this.c.removeClass('hidden');
@@ -49,7 +46,7 @@
 		createPanel: function() {
 			this.panel = su.ui.samples.playlist_panel.clone();
 
-			var actsrow_view = this.md.plarow.getFreeView(this, false, this.panel);
+			var actsrow_view = this.md.plarow.getFreeView(this);
 			if (actsrow_view){
 				this.addChild(actsrow_view);
 			}
@@ -103,18 +100,18 @@
 
 				child_ui = _this.getFreeView(this);
 				if (child_ui){
-					su.ui.els.artsTracks.append(child_ui.getC());
+					su.ui.els.artsTracks.append(child_ui.getA());
 
 					
-					child_ui.appended();
+					child_ui.requestAll();
 				}
 			}
 
 			if (su.ui.nav.daddy){
 				child_ui = _this.getFreeView(this, 'nav');
 				if (child_ui){
-					su.ui.nav.daddy.append(child_ui.getC());
-					child_ui.appended();
+					su.ui.nav.daddy.append(child_ui.getA());
+					child_ui.requestAll();
 				}
 			}
 		});
@@ -195,10 +192,11 @@
 	var PlARowView = function() {};
 	ActionsRowUI.extendTo(PlARowView, {
 		createBase: function(c){
-			this.c = c;
+		//	var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
+			this.c = this.parent_view.panel;
 			this.row_context = this.c.find('.pla-row-content');
 			this.arrow = this.row_context.children('.rc-arrow');
-			this.buttons_panel = c.children().children('.pla-panel');
+			this.buttons_panel = this.c.children().children('.pla-panel');
 			
 
 		}
@@ -227,19 +225,18 @@
 		"stch-dont-rept-pl": function(state) {
 			this.dont_rept_pl_chbx.prop('checked', !!state);
 		},
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
+		createDetailes: function(){
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 			this.c =  parent_c.children('.pla-settings');
 			this.button = buttons_panel.children('.pl-settings-button');
 
 			this.bindClick();
-			var _this = this;
+			//var _this = this;
+			var md = this.md
 
 			this.dont_rept_pl_chbx = this.c.find('.dont-rept-pl input').click(function() {
 				md.setDnRp($(this).prop('checked'));
 			});
-			this.setModel(md);
 		}
 	});
 
@@ -277,9 +274,8 @@
 
 	var MultiAtcsRowView = function(){};
 	BaseCRowUI.extendTo(MultiAtcsRowView, {
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
+		createDetailes: function(){
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 			this.c =  parent_c.children('.pla-row');
 			this.button = buttons_panel.children('.pla-button');
 
@@ -301,7 +297,6 @@
 
 
 			this.bindClick();
-			this.setModel(md);
 		}
 	});
 

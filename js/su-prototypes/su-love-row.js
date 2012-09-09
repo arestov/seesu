@@ -6,14 +6,12 @@ var LoveRow;
 
 var LoveRowUI = function(){};
 BaseCRowUI.extendTo(LoveRowUI, {
-	init: function(md, parent_c, buttons_panel){
-		this.md = md;
-		this._super();
+	createDetailes: function(){
+	var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.love-song');
 		this.button = buttons_panel.find('.pc-place .pc-love');
 
 		this.bindClick();
-		this.setModel(md);
 	},
 	expand: function(){
 		if (this.expanded){
@@ -22,9 +20,10 @@ BaseCRowUI.extendTo(LoveRowUI, {
 			this.expanded = true;
 		}
 		var llit_view = this.md.lfm_loveit.getFreeView(this);
-		this.c.append(llit_view.getC());
-		llit_view.appended();
+		this.c.append(llit_view.getA());
+		//llit_view.appended();
 		this.addChild(llit_view);
+		this.requestAll();
 
 		
 	}
