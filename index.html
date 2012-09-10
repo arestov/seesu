@@ -2,7 +2,14 @@
 <html class="not-as-application">
   <head>
 	<meta charset="utf-8">
-	<title>Seesu</title>
+	<title>Seesu online</title>
+	<script type="text/javascript">
+		/*<![CDATA[*/
+		var bpath = location.protocol+'//'+location.host +location.pathname + '/';
+		document.write('<'+'base '+'href="' + bpath + '"/>')
+		/* ]]>*/
+	</script>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<link id="dynamic-favicon" rel="shortcut icon" href="icons/icon16.png"/>
 	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
 	<link rel="stylesheet" href="css/buttons.css" type="text/css" media="screen" />
@@ -17,7 +24,96 @@
 	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport"  content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
-	<script type="text/javascript" src="loader.js"></script>
+	<script type="text/javascript">
+		window._gaq = window._gaq || [];
+		var big_timer = {
+			setN: function(name){
+				var time = new Date() * 1;
+				if (name){
+					this[name] = time;
+				}
+				return time;
+			},
+			comp: function(name) {
+				var now = this.setN();
+				return now - this[name];
+			},
+			base_category: 'App init',
+			"page-start": new Date() * 1,
+			q: []
+		};
+				
+		(function(){
+		function isFileReady ( readyState ) {
+		    // Check to see if any of the ways a file can be ready are available as properties on the file's element
+		    return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
+		  }	
+			
+			
+		var p = document.getElementsByTagName('script'),
+			p = p[p.length-1]; 
+				
+		window.loadJS = function(src, callback){
+			var s = document.createElement('script'),
+				done;
+			s.onreadystatechange = s.onload = function () {
+
+			  if ( ! done && isFileReady( s.readyState ) ) {
+
+				// Set done to prevent this function from being called twice.
+				done = true;
+				callback();
+
+				// Handle memory leak in IE
+				s.onload = s.onreadystatechange = null;
+			  }
+			};
+			s.src = src;
+			p.parentNode.insertBefore(s, p);
+		};
+		})();
+		loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
+			big_timer.q.push([big_timer.base_category, 'ready-yepnope', big_timer.comp('page-start'), 'yepnope loaded', 100]);
+
+			yepnope({
+				load: bpath + 'js/_seesu.jslist.js',
+				complete: function(){
+					var cbp;
+					if (window.chrome && chrome.extension){
+						cbp = chrome.extension.getBackgroundPage();	
+					} else if (window.opera && opera.extension && opera.extension.bgProcess){
+						cbp = opera.extension.bgProcess;
+					}
+
+					if (!cbp || cbp != window){
+						//big_timer.sui_want = new Date();
+						jsLoadComplete({
+							test: function() {
+								return window.app_env
+							},
+							fn: function() {
+								handleDocument(window.document, {category: big_timer.base_category, start_time: "page-start"});
+								//
+							}
+						});
+					}
+					
+				}
+			});
+		});
+
+	</script>
+	<script type="text/javascript">
+	/*<![CDATA[*/
+	var openstat = { counter: 2101409, next: openstat };
+	(function(){
+		var opst = document.createElement('script');
+			opst.setAttribute('async', 'true');
+			opst.src = '//openstat.net/cnt.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(opst, s);
+	})();
+	/* ]]>*/
+	</script>
   </head>
   
   <body>
