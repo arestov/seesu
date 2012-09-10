@@ -775,8 +775,14 @@ a.desc{
 	position: relative;
 	max-width: 750px;
 	margin: 0 auto;
-	z-index: 2;
+	z-index: 3;
+	right: 0px;
+	
 	}
+	.as-application .footer{
+		position: absolute;
+		bottom:0;
+		}
 #seesu-me-link{
 	font-size:0.8em;
 	border-radius: 5px;
@@ -793,6 +799,8 @@ a.desc{
 		}
 .as-application #promo{
 	position: absolute;
+	bottom: 10px;
+	z-index:3;
 	}
 .as-application #seesu-me-link{
 	
