@@ -443,7 +443,7 @@ a.desc{
 	margin-top:6px;
 	min-height: 383px;
 	}
-	@media (min-height:700px) {
+	@media (min-height:600px) {
 		.track-context{
 			min-height: 420px;
 			}
@@ -532,7 +532,7 @@ a.desc{
 	.photo-cont.loading-images{
 		background: url(../i/spinner_t.gif) no-repeat 100% 0;
 		}
-	@media (min-height:700px) {
+	@media (min-height:600px) {
 		.photo-cont{
 			/*237-48+16*/
 			height:172px;
@@ -583,7 +583,7 @@ a.desc{
 	
 	}
 	
-	@media (min-height:700px) {
+	@media (min-height:600px) {
 		.artist-bio{
 			height:4.7em;
 		}
@@ -632,7 +632,7 @@ a.desc{
 	/*200px - 48px + 14*/
 	min-height:166px;
 	}	
-	@media (min-height:700px) {
+	@media (min-height:600px) {
 		.track-info-dominator{
 			/*237-48+16*/
 			min-height:203px;
@@ -770,12 +770,33 @@ a.desc{
 	position: relative;
 	background:#505050;
 	z-index:2;
-}
-
+	}
+.footer{
+	position: relative;
+	max-width: 750px;
+	margin: 0 auto;
+	z-index: 2;
+	}
 #seesu-me-link{
+	font-size:0.8em;
+	border-radius: 5px;
+	border: 1px solid transparent;
 	position: absolute;
 	right: 18px;
-}
+	bottom: 10px;
+	z-index: 4;
+	}
+	#seesu-me-link:hover{
+		color:#222;
+		background:#fff;
+		border:1px solid #eee  !important;
+		}
+.as-application #promo{
+	position: absolute;
+	}
+.as-application #seesu-me-link{
+	
+	}
 #promo{
 	font-size:0.8em;
 	height:10px;
@@ -786,12 +807,10 @@ a.desc{
 	#promo a{
 		background:#505050;
 		padding: 1px 6px;
-		border-radius: 5px;
+		
 		}
 		#promo a:hover{
-			color:#222;
-			background:#fff;
-			border:1px solid #eee  !important;
+			
 		}
 .has-session .scrobbling-switches{ 
 	opacity:1;

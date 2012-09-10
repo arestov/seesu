@@ -170,7 +170,7 @@ var seesuPlayer;
 						yepnope({
 							load:  [bpath + 'js/prototypes/player.sm2-proxy.js'],
 							complete: function(){
-								var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/", sm2opts);
+								var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/?" + su.version, sm2opts);
 								var pcon = $(pcore.getC());
 								var complete;
 
