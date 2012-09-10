@@ -159,12 +159,13 @@ var jsLoadComplete,
 			load: bpathWrap(js_toload),
 			complete: function(){
 				completed = true;
+				big_timer.q.push([big_timer.base_category, 'ready-jsload', big_timer.comp('page-start'), 'All JSs loaded', 100]);
 				while (js_loadcomplete.length){
 					js_loadcomplete.shift()();
 				}
 			},
 			callback: function(url){
-				testCbs();			
+				testCbs();
 			}
 		}
 	]);

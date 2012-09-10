@@ -101,6 +101,15 @@ a.desc{
 		color:#5e5e5e;
 		border-bottom-color:#5a5a5a !important;
 		}
+.app-loading-mark{
+	height: 24px;
+	background: url(../i/spinner.gif) no-repeat;
+	margin: 12px 0;
+	}
+	.app-loaded .app-loading-mark{
+		display: none;
+		}
+
 .sm2proxy{
 	position: absolute;
 	top:40px;
@@ -122,7 +131,10 @@ a.desc{
 	background: #5a5a5a;
 	margin: 5px -13px 11px;
 	padding: 0 13px 14px;
-}
+	}
+	.song-row-content .rept-song{
+		padding-top:12px;
+		}
 .row-listeners-context{
 	margin-top:15px;
 }
@@ -361,7 +373,7 @@ a.desc{
 	overflow: hidden;
 }
 
-.login-lastfm-button,.lastfm-auth-button{
+.login-lastfm-button,.lastfm-auth-bp{
 	float:right;
 	margin-left:12px;
 }
@@ -369,11 +381,34 @@ a.desc{
 	margin-bottom:2.5em;
 	padding-bottom:1em;
 	}
-	.lfm-start{
-		border-top:1px solid #666;
-	}
+	.fast-personal-start{
+		color:#999;
+		background: #4D4D4D;
+		border-radius: 12px;
+		border-top: 1px solid #444;
+		border-bottom: 1px solid #555;
+		padding: 12px;
+		margin: 0 -10px;
+		}
 
-
+		.fast-personal-start .row-context{
+			position: relative;
+			border-top: 1px solid #424242;
+			margin: 12px -12px -12px;
+			padding: 0 12px 12px;
+			border-radius: 12px;
+			background: #474747;
+			border-bottom: 1px solid #666;
+			}
+			.fast-personal-start .row-context .rc-s-arrow{
+				border-bottom-color:#424242 
+				}
+			.fast-personal-start .row-context .rc-s-arrow-bg{
+				border-bottom-color:#474747;
+				}
+		.fast-personal-start .cus-playlist-b{
+			float:right;
+			}
 	
 .search-start{
 	margin-bottom:1em;
@@ -733,11 +768,15 @@ a.desc{
 	z-index:2;
 }
 
-
+#seesu-me-link{
+	position: absolute;
+	right: 18px;
+}
 #promo{
 	font-size:0.8em;
 	height:10px;
 	padding-left:18px;
+	padding-right: 18px;
 	color:#999;
 }
 	#promo a{

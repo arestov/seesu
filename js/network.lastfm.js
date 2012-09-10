@@ -1,58 +1,51 @@
 $.extend(lastfm_api.prototype, {
-	nowplay: function(mo, duration){
+	nowplay: function(omo, duration){
 		var _this = this;
 		if (!_this.sk){return false}
 			_this.post('track.updateNowPlaying', {
 				sk: _this.sk,
-				artist: mo.artist,
-				track: mo.track,
+				artist: omo.artist,
+				track: omo.track,
 				duration: duration || ""
 				
 			});
 	},
-	submit: function(mo, duration){
+	submit: function(omo, duration, timestamp){
 		var _this = this;
-		var artist = mo.artist,
-			track = mo.track,
-			starttime = mo.start_time,
-			last_scrobble = mo.last_scrobble,
-			timestamp = ((new Date()).getTime()/1000).toFixed(0);
-			
+		var artist = omo.artist,
+			track = omo.track;
+
+
+		this.music.push({
+			'artist': artist, 
+			'track': track,
+			'duration': duration || "", 
+			'timestamp': timestamp
+		});
 		
-		if (!duration || ((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
-			this.music.push({
-				'artist': artist, 
-				'track': track,
-				'duration': duration || "", 
-				'timestamp': timestamp
-			});
-			mo.start_time = false;
-			mo.last_scrobble = timestamp;
-		} 
-		if (this.music.length){
-			if (this.sk){
-				var post_m_obj = {sk: _this.sk};
-				for (var i=0,l=_this.music.length; i < l; i++) {
-					post_m_obj['artist[' + i + ']'] = _this.music[i].artist;
-					post_m_obj['track[' + i + ']'] = _this.music[i].track;
-					post_m_obj['timestamp[' + i + ']'] = _this.music[i].timestamp;
-					if (_this.music[i].duration){
-						post_m_obj['duration[' + i + ']'] = _this.music[i].duration;
-					}
-				};
-				
-				
-				_this.post('track.scrobble', post_m_obj)
-					.done(function(r){
-						_this.music = [];
-						_this.stSet('lfm_scrobble_music', '');
-						
-					});
-			} else{
-				_this.stSet('lfm_scrobble_music', _this.music);
-			}
-			return timestamp;
+		if (this.sk){
+			var post_m_obj = {sk: _this.sk};
+			for (var i=0,l=_this.music.length; i < l; i++) {
+				post_m_obj['artist[' + i + ']'] = _this.music[i].artist;
+				post_m_obj['track[' + i + ']'] = _this.music[i].track;
+				post_m_obj['timestamp[' + i + ']'] = _this.music[i].timestamp;
+				if (_this.music[i].duration){
+					post_m_obj['duration[' + i + ']'] = _this.music[i].duration;
+				}
+			};
+			
+			
+			_this.post('track.scrobble', post_m_obj)
+				.done(function(r){
+					_this.music = [];
+					_this.stSet('lfm_scrobble_music', '');
+					
+				});
+		} else{
+			_this.stSet('lfm_scrobble_music', _this.music);
 		}
+		return timestamp;
+		
 	}
 });
 lastfm_api.prototype.initers.push(function(){
@@ -62,11 +55,8 @@ lastfm_api.prototype.initers.push(function(){
 var LfmLoginView = function() {};
 
 provoda.View.extendTo(LfmLoginView, {
-	init: function(md) {
-		this._super();
-		this.md = md;
+	createDetailes: function(){
 		this.createBase();
-		this.setModel(md);
 	},
 	'stch-active': function(state){
 		if (state){
@@ -96,7 +86,7 @@ provoda.View.extendTo(LfmLoginView, {
 		this.c = su.ui.samples.lfm_authsampl.clone();
 		this.auth_block = this.c.children(".auth-block");
 		var _this = this;
-		this.auth_block.find('.lastfm-auth-button').click(function(e){
+		this.auth_block.find('.lastfm-auth-bp a').click(function(e){
 			_this.md.requestAuth();
 			e.preventDefault();
 		});
@@ -200,6 +190,7 @@ LfmLogin.extendTo(LfmReccoms, {
 	init: function(auth){
 		this._super(auth);
 		this.setRequestDesc(localize('lastfm-reccoms-access'));
+		this.updateState('active', true);
 	},
 	onSession: function(){
 		this.updateState('active', false);
@@ -227,6 +218,7 @@ LfmLogin.extendTo(LfmLoved, {
 		this._super(auth);
 		this.setRequestDesc(localize('grant-love-lfm-access'));
 		this.updateState('can-fetch-crossdomain', true);
+		this.updateState('active', true);
 	},
 	onSession: function(){
 		this.updateState('active', false);
@@ -285,13 +277,19 @@ var LfmScrobble = function(auth){
 LfmLogin.extendTo(LfmScrobble, {
 	init: function(auth){
 		this._super(auth);
-		if (this.auth.api.scrobbling){
-			this.updateState('scrobbling', true);
-		}
+
 		var _this = this;
-		this.auth.on('scrobbling', function(state) {
+
+		var setScrobbling = function(state) {
 			_this.updateState('scrobbling', state);
-		});
+		};
+		if (su.settings['lfm-scrobbling']){
+			setScrobbling(true);
+		}
+		su.on('settings.lfm-scrobbling', setScrobbling);
+
+
+	
 		this.setRequestDesc(localize('lastfm-scrobble-access'));
 		this.updateState('active', true);
 	},
@@ -304,12 +302,14 @@ LfmLogin.extendTo(LfmScrobble, {
 	bindAuthCallback: function(){
 		var _this = this;
 		this.auth.once("session.input_click", function() {
-			_this.auth.setScrobbling(true);
+			su.setSetting('lfm-scrobbling', true);
+			//_this.auth.setScrobbling(true);
 		}, {exlusive: true});
 	},
 	setScrobbling: function(state) {
 		this.updateState('scrobbling', state);
-		this.auth.setScrobbling(state);
+		su.setSetting('lfm-scrobbling', state);
+		//this.auth.setScrobbling(state);
 	},
 	ui_constr: LfmScrobbleView
 });
@@ -317,20 +317,26 @@ var LfmLoveItView = function() {};
 LfmLoginView.extendTo(LfmLoveItView, {
 	createBase: function() {
 		this._super();
+		var _this = this;
 		var wrap = $('<div class="add-to-lfmfav"></div>');
 
-		this.love_button = $('<button type="button" disabled="disabled" class="lfm-loveit"></button>').text(localize('addto-lfm-favs')).appendTo(wrap);
-		this.c.append(wrap);
-		var _this = this;
-		this.love_button.click(function() {
-			_this.md.makeLove();
+		this.nloveb = su.ui.createNiceButton();
+		this.nloveb.c.appendTo(wrap);
+		this.nloveb.b.click(function(){
+			if (_this.nloveb._enabled){
+				_this.md.makeLove();
+			}
 		});
+		this.nloveb.b.text(localize('addto-lfm-favs'));
+		this.c.append(wrap);
+		
+	
 	},
 	"stch-has-session": function(state) {
 		state = !!state;
 		this.c.toggleClass('has-session', state);
 		this.auth_block.toggleClass('hidden', state);
-		this.love_button.prop('disabled', !state);
+		this.nloveb.toggle(state);
 	},
 	"stch-wait-love-done": function(state){
 		this.c.toggleClass('wait-love-done', !!state);
@@ -375,7 +381,7 @@ LfmLogin.extendTo(LfmLoveIt, {
 					_this.updateState('wait-love-done', false);
 					_this.trigger('love-success');
 				})
-			
+			seesu.trackEvent('song actions', 'love');
 		}
 		
 		
@@ -501,18 +507,11 @@ provoda.Eventor.extendTo(LfmAuth, {
 					
 				});
 		}
-	},
-	setScrobbling: function(active){
-		active = !!active;
-		this.api.stSet('lfm_scrobbling_enabled', active || '');
-		this.api.scrobbling = active;
-		this.trigger('scrobbling', active);
 	}
 });
 
 
 lastfm_api.prototype.initers.push(function(){
-	this.scrobbling = this.stGet && !!this.stGet('lfm_scrobbling_enabled');	
 	var _this = this;
 	
 	if (!this.sk) {

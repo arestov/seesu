@@ -22,8 +22,8 @@ mapLevelModel.extendTo(suMapModel, {
 var suServView = function() {};
 
 provoda.View.extendTo(suServView, {
-	init: function() {
-		this._super();
+	init: function(md, opts) {
+		this._super(md, opts);
 
 		var _this = this;
 		var onDOMDie = function(dead_doc, is_current_ui, ui) {
@@ -127,6 +127,43 @@ provoda.Model.extendTo(PartsSwitcher, {
 	}
 });
 
+var ActionsRowUI = function(){};
+suServView.extendTo(ActionsRowUI, {
+	createDetailes: function(){
+		this.createBase();
+
+		this.parts_views = {};
+
+		var	parts = this.md.getAllParts();
+
+		
+
+		for (var i in parts) {
+			var pv = parts[i].getFreeView(this);
+			if (pv){
+				this.parts_views[i] = pv;
+				pv.appended();
+				this.addChild(pv);
+			}
+		}
+	},
+	state_change: {
+		active_part: function(nv, ov) {
+			if (nv){
+				this.row_context.removeClass('hidden');
+				var b_pos = this.parts_views[nv].getButtonPos();
+				if (b_pos){
+					this.arrow.removeClass('hidden').css('left', b_pos - this.arrow.offsetParent().offset().left + 'px');
+				}
+			} else {
+				this.row_context.addClass('hidden');
+			}
+		}
+	}
+});
+
+
+
 var BaseCRowUI = function(){};
 suServView.extendTo(BaseCRowUI, {
 	bindClick: function(){
@@ -137,9 +174,9 @@ suServView.extendTo(BaseCRowUI, {
 			});
 		}
 	},
-	getArrowPos: function(){
-		var p = su.ui.getRtPP(this.button);
-		return p.left + this.button.outerWidth()/2;
+	getButtonPos: function(){
+		var button_shift = this.button_shift || 0;
+		return this.button.offset().left + (this.button.outerWidth()/2) + button_shift;
 	},
 	state_change: {
 		'active_view': function(state){
@@ -147,9 +184,9 @@ suServView.extendTo(BaseCRowUI, {
 				if (this.expand){
 					this.expand();
 				}
-				this.c.removeClass('hidden')
+				this.c.removeClass('hidden');
 			} else {
-				this.c.addClass('hidden')
+				this.c.addClass('hidden');
 			}
 		}
 	}
@@ -158,10 +195,10 @@ suServView.extendTo(BaseCRowUI, {
 var BaseCRow = function(){};
 provoda.Model.extendTo(BaseCRow, {
 	switchView: function(){
-		this.traackrow.switchPart(this.row_name);
+		this.actionsrow.switchPart(this.row_name);
 	},
 	hide: function(){
-		this.traackrow.hide(this.row_name);
+		this.actionsrow.hide(this.row_name);
 	},
 	deacivate: function(){
 		this.updateState("active_view", false);

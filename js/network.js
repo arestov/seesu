@@ -32,11 +32,8 @@ var get_youtube = function(q, callback){
 var vkLoginUI = function() {};
 
 provoda.View.extendTo(vkLoginUI, {
-	init: function(md) {
-		this._super();
-		this.md = md;
+	createDetailes: function(){
 		this.createBase();
-		this.setModel(md);
 	},
 	state_change: {
 		wait: function(state) {
@@ -244,10 +241,11 @@ try_mp3_providers = function(){
 			})
 			.on('want-open-url', function(wurl){
 				if (app_env.showWebPage){
-					app_env.showWebPage(wurl, function(url){
+					app_env.openURL(wurl);
+					/*
+					var opend = app_env.showWebPage(wurl, function(url){
 						var sb = 'http://seesu.me/vk/callbacker.html';
 						if (url.indexOf(sb) == 0){
-							app_env.hideWebPages();
 							app_env.clearWebPageCookies();
 
 							var hash = url.replace(sb, '');
@@ -271,10 +269,15 @@ try_mp3_providers = function(){
 					}, function(e){
 						app_env.openURL(wurl);
 					}, 700, 600);
+					if (!opend){
+						app_env.openURL(wurl);
+					} 
+					*/
 				} else{
 					app_env.openURL(wurl);
 				}
 				su.main_level.updateState('wait-vk-login', true);
+				seesu.trackEvent('Auth to vk', 'start');
 			});
 
 	}

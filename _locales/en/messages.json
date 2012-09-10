@@ -1,0 +1,9 @@
+{
+	"extName": {
+		"message": "Seesu Music App",
+		"description": "Extension name"
+	},
+	"extDesc": {
+		"message": "Music search, player and meetings. Powered by last.fm and others."
+	}
+}

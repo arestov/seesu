@@ -74,13 +74,15 @@ provoda.Eventor.extendTo(playerBase, {
 		}
 	},
 	setVolume: function(song_file, vol){
+		vol = parseFloat(vol);
+		if (isNaN(vol)){
+			vol = 100;
+			console.log('don\'t give me shit')
+		}
 		if (song_file && this.core){
 			this.core.callSongMethod("setVolume", song_file.uid, vol);
 		}
 		if (this.global_volume){
-			if (this.saveVolume){
-				this.saveVolume(vol);
-			}
 			this.volume = vol;
 		}
 	},

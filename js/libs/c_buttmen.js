@@ -65,7 +65,7 @@ button_menu.prototype = {
 			e.preventDefault();
 			var _tr = function(text){
 				setTimeout(function(text){
-					seesu.track_event('Buttmen', text);
+					seesu.trackEvent('Buttmen', text);
 				},1000)
 			};
 			var _this = $(this);

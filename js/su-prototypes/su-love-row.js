@@ -6,14 +6,12 @@ var LoveRow;
 
 var LoveRowUI = function(){};
 BaseCRowUI.extendTo(LoveRowUI, {
-	init: function(md, parent_c, buttons_panel){
-		this.md = md;
-		this._super();
+	createDetailes: function(){
+	var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.love-song');
 		this.button = buttons_panel.find('.pc-place .pc-love');
 
 		this.bindClick();
-		this.setModel(md);
 	},
 	expand: function(){
 		if (this.expanded){
@@ -21,22 +19,23 @@ BaseCRowUI.extendTo(LoveRowUI, {
 		} else {
 			this.expanded = true;
 		}
-		var llit_view = this.md.lfm_loveit.getFreeView();
-		this.c.append(llit_view.getC());
-		llit_view.appended();
+		var llit_view = this.md.lfm_loveit.getFreeView(this);
+		this.c.append(llit_view.getA());
+		//llit_view.appended();
 		this.addChild(llit_view);
+		this.requestAll();
 
 		
 	}
 });
 
-LoveRow = function(traackrow, mo){
-	this.init(traackrow, mo);
+LoveRow = function(actionsrow, mo){
+	this.init(actionsrow, mo);
 };
 BaseCRow.extendTo(LoveRow, {
-	init: function(traackrow, mo){
+	init: function(actionsrow, mo){
 		var _this = this;
-		this.traackrow = traackrow;
+		this.actionsrow = actionsrow;
 		this.mo = mo;
 		this._super();
 		this.lfm_loveit = new LfmLoveIt(su.lfm_auth, this.mo);

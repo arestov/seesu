@@ -1007,7 +1007,7 @@ var by_best_matching_index;
 				}
 			}
 			this.trigger('new-search', search, filter);
-			
+			this.trigger('list-changed', this.se_list);
 		},
 		getMasterSlaveSearch: function(filter){
 			var o = {
@@ -1085,7 +1085,12 @@ var by_best_matching_index;
 			}
 		},
 		remove: function(msearch) {
-			this.se_list = arrayExclude(this.se_list, msearch); 
+			var se_list = this.se_list;
+			this.se_list = arrayExclude(this.se_list, msearch);
+			if (se_list.length != this.se_list){
+				this.trigger('list-changed', this.se_list);
+			}
+			
 		}
 
 	});

@@ -278,8 +278,8 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 				if (r){
 					if (r.error && r.error[0]  && r.error[0] == 'wrong signature'){
 						
-						_this.setAuth('');
-						_this.getAuth(_this.vk_id);
+						//_this.setAuth('');
+						//_this.getAuth(_this.vk_id);
 						
 						
 						

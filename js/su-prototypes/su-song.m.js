@@ -15,21 +15,22 @@ var song;
 			if (user_want){
 				//fixme - never true!
 				if (_this.wasMarkedAsPrev()){
-					su.track_event('Song click', 'previous song');
+					su.trackEvent('Song click', 'previous song');
 				} else if (_this.wasMarkedAsNext()){
-					su.track_event('Song click', 'next song');
+					su.trackEvent('Song click', 'next song');
 				} else if (_this.state('play')){
-					su.track_event('Song click', 'zoom to itself');
+					su.trackEvent('Song click', 'zoom to itself');
 				}
 			}
 			
 		});
-		this.traackrow = new TrackActionsRow(this);
-		this.addChild(this.traackrow);
+		this.actionsrow = new TrackActionsRow(this);
+		this.addChild(this.actionsrow);
 
 		this.mf_cor = new mfCor(this, this.omo);
 		this.addChild(this.mf_cor);
 		this.mf_cor.on('before-mf-play', function(mopla) {
+
 			_this.player.changeNowPlaying(_this);
 			_this.mopla = mopla;
 		});
@@ -38,10 +39,10 @@ var song;
 		});
 		this.regDOMDocChanges(function() {
 			if (su.ui.nav.daddy){
-				var child_ui = _this.getFreeView('nav');
+				var child_ui = _this.getFreeView(this, 'nav');
 				if (child_ui){
-					su.ui.nav.daddy.append(child_ui.getC());
-					child_ui.appended();
+					su.ui.nav.daddy.append(child_ui.getA());
+					child_ui.requestAll();
 				}
 			}
 		});
@@ -52,12 +53,13 @@ var song;
 				this.updateState('can-expand', false);
 			}
 		});
-		this.watchState('mp-show', function(opts) {
+		this.on('state-change.mp-show', function(e) {
+			
 			var
 				_this = this,
 				oldCb = this.makePlayableOnNewSearch;
 
-			if (opts){
+			if (e.value){
 				if (!oldCb){
 					this.makePlayableOnNewSearch = function() {
 						_this.makeSongPlayalbe(true);
@@ -141,8 +143,9 @@ var song;
 					"#?" + 
 					stringifyParams(data, false, '=', '&'));
 			}
+			seesu.trackEvent('song actions', 'vk share');
 
-			return //su.vk_api.get("wall.post", data, {nocache: true});
+			return; //su.vk_api.get("wall.post", data, {nocache: true});
 			//console.log(uid);
 		}
 	});
@@ -152,15 +155,14 @@ var song;
 
 
 
-	var LastfmRowUI = function(){};
-	BaseCRowUI.extendTo(LastfmRowUI, {
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
+	var ScrobbleRowUI = function(){};
+	BaseCRowUI.extendTo(ScrobbleRowUI, {
+		createDetailes: function(){
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 			this.c = parent_c.children('.last-fm-scrobbling');
 			this.button = buttons_panel.find('.lfm-scrobbling-button');
 			this.bindClick();
-			this.setModel(md);
+
 		},
 		expand: function() {
 			if (this.expanded){
@@ -169,50 +171,49 @@ var song;
 				this.expanded = true;
 			}
 
-			var lsc_view = this.md.lfm_scrobble.getFreeView();
+			var lsc_view = this.md.lfm_scrobble.getFreeView(this);
 			if (lsc_view){
 				this.addChild(lsc_view);
-				this.c.append(lsc_view.getC());
-				lsc_view.appended();
+				this.c.append(lsc_view.getA());
+				
+				//lsc_view.appended();
 			}
-			
+			this.requestAll();
 		}
 	});
 
-	var LastfmRow = function(traackrow){
-		this.init(traackrow);
+	var ScrobbleRow = function(actionsrow){
+		this.init(actionsrow);
 	};
-	BaseCRow.extendTo(LastfmRow, {
-		init: function(traackrow){
-			this.traackrow = traackrow;
+	BaseCRow.extendTo(ScrobbleRow, {
+		init: function(actionsrow){
+			this.actionsrow = actionsrow;
 			this._super();
 			this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
 			this.addChild(this.lfm_scrobble);
 		},
 		row_name: 'lastfm',
-		ui_constr: LastfmRowUI
+		ui_constr: ScrobbleRowUI
 	});
 
 
 
 	var FlashErrorRowUI = function(){};
 	BaseCRowUI.extendTo(FlashErrorRowUI, {
-		init: function(md, parent_c, buttons_panel){
-			this.md = md;
-			this._super();
+		createDetailes: function(){
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 			this.c = parent_c.children('.flash-error');
 			this.button = buttons_panel.find('.flash-secur-button');
 			this.bindClick();
-			this.setModel(md);
 		}
 	});
 
-	var FlashErrorRow = function(traackrow){
-		this.init(traackrow);
+	var FlashErrorRow = function(actionsrow){
+		this.init(actionsrow);
 	};
 	BaseCRow.extendTo(FlashErrorRow, {
-		init: function(traackrow){
-			this.traackrow = traackrow;
+		init: function(actionsrow){
+			this.actionsrow = actionsrow;
 			this._super();
 		},
 		row_name: 'flash-error',
@@ -220,58 +221,213 @@ var song;
 	});
 
 
-	var TrackActionsRowUI = function() {};
-	suServView.extendTo(TrackActionsRowUI, {
-		init: function(md, c) {
-			this.md = md;
+	var RepeatSongRowView = function(){};
+	BaseCRowUI.extendTo(RepeatSongRowView, {
+		"stch-rept-song": {
+			fn: function(state) {
+				this.getPart('rept-chbx').prop('checked', !!state);
+			},
+			dep_vp: ["rept-chbx"]
+		},
+		parts_builder: {
+			"rept-chbx": function() {
+				var _this = this;
+				return this.c.find('.rept-song-label input').click(function() {
+					_this.md.setDnRp($(this).prop('checked'));
+				});
+			}
+		},
+		createDetailes: function(){
+			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
+			this.c =  parent_c.children('.rept-song');
+			this.button = buttons_panel.find('.rept-song-button');
+
+			this.bindClick();
+		},
+		expand: function() {
+			if (this.expanded){
+				return;
+			} else {
+				this.expanded = true;
+			}
+			var _this = this;
+
+			this.requirePart("rept-chbx");
+		}
+	});
+
+
+
+	var RepeatSongRow = function(actionsrow){
+		this.init(actionsrow);
+	};
+	BaseCRow.extendTo(RepeatSongRow, {
+		init: function(actionsrow){
+			this.actionsrow = actionsrow;
 			this._super();
-			this.c = c;
-			this.song_row_context = this.c.children('.row-song-context');
-			this.arrow = this.song_row_context.children('.rc-arrow');
-			
 
-			this.parts_views = {};
+			var _this = this;
 
-			var	
-				parts = this.md.getAllParts(),
-				tp = this.getTP();
-
-			
-
-			for (var i in parts) {
-				var pv = parts[i].getFreeView(false, this.song_row_context, tp);
-				if (pv){
-					this.parts_views[i] = pv;
-					pv.appended();
-					this.addChild(pv);
-				}
+			var doNotReptPl = function(state) {
+				_this.updateState('rept-song', state);
+				actionsrow.mo.updateState('rept-song', state);
+			};
+			if (su.settings['rept-song']){
+				doNotReptPl(true);
 			}
-
-			this.setModel(md);
+			su.on('settings.rept-song', doNotReptPl);
 
 
 		},
-		state_change: {
-			active_part: function(nv, ov) {
-				if (nv){
-					this.song_row_context.removeClass('hidden');
+		setDnRp: function(state) {
+			this.updateState('rept-song', state);
+			su.setSetting('rept-song', state);
+		},
+		row_name: 'repeat-song',
+		ui_constr: RepeatSongRowView
+	});
 
-					var ar_pos = this.parts_views[nv].getArrowPos();
-					if (ar_pos){
-						this.arrow.css('left', ar_pos + 'px').removeClass('hidden');
+	
+
+	var TrackActionsRowUI = function() {};
+	ActionsRowUI.extendTo(TrackActionsRowUI, {
+		createBase: function(){
+
+			this.c = this.parent_view.song_actions_c;
+			this.row_context = this.c.children('.row-song-context');
+
+			this.buttons_panel = this.c.children('.track-panel');
+			this.buttons_panel.find('.pc').data('mo', this.md.mo);
+			this.createVolumeControl();
+			
+			this.arrow = this.row_context.children('.rc-arrow');
+			var _this = this;
+
+			this.setVisState('is-visible', !!this.parent_view.state('mp-show'))
+
+			this.parent_view.on('state-change.mp-show', function(e){
+				_this.setVisState('is-visible', !!e.value);
+			});
+		},
+		"stch-vis-volume": function(state) {
+			this.vol_bar.css({
+				width: state
+			});
+		},
+		complex_states: {
+			"vis-volume-hole-width": {
+				depends_on: ['vis-is-visible', 'vis-con-appended'],
+				fn: function(visible, apd){
+					return !!(visible && apd) && this.vol_hole.width();
+				}
+			},
+			"vis-volume-bar-max-width": {
+				depends_on: ['vis-volume-hole-width'],
+				fn: function(vvh_w){
+					return vvh_w && vvh_w - ( this.vol_bar.outerWidth() - this.vol_bar.width());
+				}
+			},
+			"vis-volume": {
+				depends_on: ['volume', 'vis-volume-bar-max-width'],
+				fn: function(volume, vvb_mw){
+					if (typeof volume =='undefined'){
+						return 'auto';
+					} else if (vvb_mw){
+						return ((volume/100) * vvb_mw) + 'px';
+					} else {
+						return volume  + '%';
 					}
-					//this.arrow.css('left', arrow_left + 'px').removeClass('hidden');
-				} else {
-					this.song_row_context.addClass('hidden');
 				}
 			}
 		},
-		getTP: function() {
-			var tp = this.c.children('.track-panel');
+		createVolumeControl: function() {
+			this.vol_cc = this.buttons_panel.find('.volume-control');
+			this.vol_hole = this.vol_cc.find('.v-hole');
+			this.vol_bar = this.vol_hole.find('.v-bar');
 
-			tp.find('.pc').data('mo', this.md.mo);
-			
-			return tp;
+			var _this = this;
+
+			var getClickPosition = function(e, node){
+				//e.offsetX || 
+				var pos = e.pageX - $(node).offset().left;
+				return pos;
+			};
+
+			var path_points;
+			var volumeChange = function(){
+				var last = path_points[path_points.length - 1];
+
+				//promiseStateUpdate
+				//setVisState
+				var hole_width = _this.state('vis-volume-hole-width');
+				if (!hole_width){
+					console.log("no width :!((")
+				}
+				var twid = Math.min(hole_width, Math.max(0, last.cpos));
+
+				_this.promiseStateUpdate('volume', 100*twid/hole_width);
+				_this.md.setVolume(100*twid/hole_width);
+				/*
+				if (!_this.width){
+					_this.fixWidth();
+				}
+				_this.md.setVolumeByFactor(_this.width && (last.cpos/_this.width));
+				*/
+
+			}
+
+			var touchDown = function(e){
+				path_points = [];
+				e.preventDefault();
+				path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
+				volumeChange();
+				_this.vol_cc.addClass('interactive-state');
+			};
+			var touchMove = function(e){
+
+				if (e.which && e.which != 1){
+					return true;
+				}
+				e.preventDefault();
+				path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
+				volumeChange();
+			};
+			var touchUp = function(e){
+
+				if (e.which && e.which != 1){
+					return true;
+				}
+				$(_this.vol_cc[0].ownerDocument)
+					.off('mouseup', touchUp)
+					.off('mousemove', touchMove);
+
+				var travel;
+				if (!travel){
+					//
+				}
+				_this.vol_cc.removeClass('interactive-state');
+
+				path_points = null;
+
+				
+			};
+			_this.vol_cc.on('mousedown', function(e){
+
+				$(_this.vol_cc[0].ownerDocument)
+					.off('mouseup', touchUp)
+					.off('mousemove', touchMove);
+
+				if (e.which && e.which != 1){
+					return true;
+				}
+
+				$(_this.vol_cc[0].ownerDocument)
+					.on('mouseup', touchUp)
+					.on('mousemove', touchMove);
+
+				touchDown(e);
+
+			});
 		}
 	});
 
@@ -283,10 +439,19 @@ var song;
 			this._super();
 			this.mo = mo;
 			this.updateState('active_part', false);
-			this.addPart(new LastfmRow(this, mo));
+			this.addPart(new ScrobbleRow(this, mo));
 			this.addPart(new FlashErrorRow(this, mo));
+			this.addPart(new RepeatSongRow(this, mo));
 
 			var _this = this;
+
+			var setVolume = function(state) {
+				_this.updateState('volume', state);
+			};
+			if (su.settings['volume']){
+				setVolume(su.settings['volume']);
+			}
+			su.on('settings.volume', setVolume);
 
 			jsLoadComplete({
 				test: function() {
@@ -298,10 +463,14 @@ var song;
 					_this.addPart(new LoveRow(_this, mo));
 				}
 			});
+		},
+		sendVolume: function(vol) {
+			su.setSetting('volume', vol);
+		},
+		setVolume: function(state) {
+			this.updateState('volume', state);
+			this.sendVolume(state);
 			
-			
-
-
 		},
 		ui_constr: TrackActionsRowUI
 	});
