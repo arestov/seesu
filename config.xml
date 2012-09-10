@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <widget xmlns="http://www.w3.org/ns/widgets">
-	<name>Seesu Music</name>
-	<description xml:lang="en">You can find &amp; get any music you need. Type in an artist or genre.</description>
-	<description xml:lang="ru">Находит и проигрывает музыку, которую ты любишь. Просто набери артиста или жанр в поле ввода</description>
+	<name xml:lang="en">Seesu Music</name>
+	<name xml:lang="ru">Сису музыкальная</name>
+	<description xml:lang="en">Music search, player and meetings. Powered by last.fm and others.</description>
+	<description xml:lang="ru">Музыкальные поиск, проигрыватель и знакомства. Технологии last.fm и др. сервисов</description>
 	<author href="http://arestov.me/" email='gleb.arestov@gmail.com'>Gleb Arestov</author>
 	<icon width="128" height="128" src="icons/icon128.png"/>
 	<icon width="64" height="64" src="icons/icon64.png"/>
