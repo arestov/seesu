@@ -501,7 +501,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this;
 	},
 	requestDetailes: function(){
-		this.createDetailes();
+		if (this.createDetailes){
+			this.createDetailes();
+		}
+		
 		this._detailed = true;
 		this._states_set_processing = true;
 		this._setStates(this.undetailed_states);
