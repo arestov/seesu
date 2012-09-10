@@ -235,7 +235,7 @@ provoda.Model.extendTo(fileInTorrent, {
 					console.log("no width for pb :!((")
 				}
 				if (width){
-					_this.md.setPositionByFactor(width && (last.cpos/width));
+					_this.md.setPositionByFactor([last.cpos, width]);
 				}
 				
 			}
@@ -525,16 +525,19 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.player.pause(this);
 			}
 		},
-		setVolume: function(vol){
+		setVolumeByFactor: function(fac){
+			this.setVolumeByFactor(false, fac);
+		},
+		setVolume: function(vol, fac){
 			if (this.player){
-				this.player.setVolume(this, vol);
+				this.player.setVolume(this, vol, fac);
 			}
 		},
 		getDuration: function(){
 			return this.duration || this.state('loaded_duration');
 		},
 		setPositionByFactor: function(fac){
-			this.setPosition((this.getDuration()/1000) * fac, fac);
+			this.setPosition(false, fac);
 		},
 		setPosition: function(pos, fac){
 			if (this.player){

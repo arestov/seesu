@@ -719,10 +719,10 @@ provoda.Model.extendTo(mfCor, {
 		this.updateState('preload-allowed', !!this.preload_initors.length);
 
 	},
-	setVolume: function(vol){
+	setVolume: function(vol, fac){
 		var cmf = this.state('current_mopla');
 		if (cmf){
-			cmf.setVolume(vol);
+			cmf.setVolume(vol, fac);
 		}
 	},
 	stop: function(){

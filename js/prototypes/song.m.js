@@ -145,8 +145,8 @@ provoda.addPrototype("baseSong",{
 	unloadFor: function(id){
 		this.mf_cor.unloadFor(id);
 	},
-	setVolume: function(vol){
-		this.mf_cor.setVolume(vol);
+	setVolume: function(vol, fac){
+		this.mf_cor.setVolume(vol, fac);
 	},
 	stop: function(){
 		this.mf_cor.stop();
