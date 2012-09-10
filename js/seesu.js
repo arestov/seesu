@@ -487,7 +487,7 @@ provoda.Eventor.extendTo(seesuApp, {
 
 });
 
-window.seesu = window.su = new seesuApp(3.3); 
+window.seesu = window.su = new seesuApp(3.6); 
 
 
 
