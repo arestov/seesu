@@ -46,6 +46,7 @@ window.connect_dom_to_som = function(d, cb){
 			searchres: $('#search_result',d),
 			search_input: $('#q',d),
 			search_form: search_form,
+			fast_personal_start: start_screen.children('.fast-personal-start'),
 			start_page_place: start_screen.children('.for-startpage')
 		};
 		/*
@@ -175,12 +176,6 @@ window.connect_dom_to_som = function(d, cb){
 
 		justhead.children('.daddy').empty().removeClass('not-inited');
 		
-
-		if (app_env.pokki_app){
-			$('<span class="minimize-button"></span>').click(function(){
-				pokki.closePopup();
-			}).appendTo(justhead);
-		}
 
 		su_dom.els.search_input.on('keyup change', function(e) {
 			var input_value = this.value;

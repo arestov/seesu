@@ -1,11 +1,8 @@
 var artCardUI = function() {};
 
 suServView.extendTo(artCardUI, {
-	init: function(md){
-		this.md = this.artcard = md;
-		this._super();
+	createDetailes: function(){
 		this.createBase();
-		this.setModel(md);
 	},
 	die: function() {
 		this.blur();
@@ -59,7 +56,7 @@ suServView.extendTo(artCardUI, {
 			var albs_groups = $("<div class='albums-groups'></div>");
 			for (var i=0; i < ob.ordered.length; i++) {
 				var aul =  $('<ul></ul>');
-				su.ui.renderArtistAlbums(ob.ordered[i], _this.artcard.artist, aul, true, true);
+				su.ui.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, true, true);
 				
 				aul.appendTo(albs_groups);
 			};
@@ -76,8 +73,8 @@ suServView.extendTo(artCardUI, {
 				if (i < 5){
 					if (el.track){
 						var a = $('<a class="js-serv"></a>').click(function(){
-							su.ui.showTopTacks(_this.artcard.artist, {save_parents: true, from_artcard: true}, {
-								artist: _this.artcard.artist,
+							su.ui.showTopTacks(_this.md.artist, {save_parents: true, from_artcard: true}, {
+								artist: _this.md.artist,
 								track: el.track
 							});
 						}).text(el.track);
@@ -131,7 +128,7 @@ suServView.extendTo(artCardUI, {
 			
 			var header_link = $('<a class="js-serv"></a>')
 				.click(function(){
-					su.ui.showSimilarArtists(_this.artcard.artist, {save_parents: true, from_artcard: true});	
+					su.ui.showSimilarArtists(_this.md.artist, {save_parents: true, from_artcard: true});	
 				})
 				.text(localize('similar-arts'))
 			var header = this.ui.similarsc.children('h5').empty().append(header_link);
@@ -152,7 +149,7 @@ suServView.extendTo(artCardUI, {
 			bioc: this.c.find('.art-card-bio')
 		};
 		this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
-			su.ui.showTopTacks(_this.artcard.artist, {save_parents: true, from_artcard: true});
+			su.ui.showTopTacks(_this.md.artist, {save_parents: true, from_artcard: true});
 		});
 	}
 });
@@ -170,17 +167,17 @@ var artCard = function(artist) {
 
 	this.regDOMDocChanges(function() {
 		if (su.ui.els.artcards){
-			var child_ui = _this.getFreeView();
+			var child_ui = _this.getFreeView(this);
 			if (child_ui){
-				su.ui.els.artcards.append(child_ui.getC());
-				child_ui.appended();
+				su.ui.els.artcards.append(child_ui.getA());
+				child_ui.requestAll();
 			}
 		}
 		if (su.ui.nav.daddy){
-			var child_ui = _this.getFreeView('nav');
+			var child_ui = _this.getFreeView(this, 'nav');
 			if (child_ui){
-				su.ui.nav.daddy.append(child_ui.getC());
-				child_ui.appended();
+				su.ui.nav.daddy.append(child_ui.getA());
+				child_ui.requestAll();
 			}
 		}
 	});
@@ -416,7 +413,7 @@ seesu_ui.prototype = {
 		}
 		return !this.checkLiveState();
 	},
-	setDOM: function(opts) {
+	setDOM: function(opts, tracking_opts) {
 		var _this = this;
 		if (this.isAlive()){
 
@@ -446,6 +443,7 @@ seesu_ui.prototype = {
 					for (var i = 0; i < _this.cbs.length; i++) {
 						_this.cbs[i](opts);
 					};
+					big_timer.q.push([tracking_opts.category, 'process-thins-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui in process', 100]);
 				});
 				viewBlocks(_this, _this.d);
 			}
@@ -454,6 +452,7 @@ seesu_ui.prototype = {
 
 			
 		}
+		big_timer.q.push([tracking_opts.category, 'ready-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui ready', 100]);
 		return this;
 	},
 	onReady: function(cb){
@@ -788,58 +787,6 @@ seesu_ui.prototype = {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-	createFilesListElement: function(mopla, mo){
-		
-		var li = $('<li></li>');
-		
-		var desc_part = $('<span class="desc-name"></span>').appendTo(li);
-		var main_part = $('<span class="desc-text"></span>').appendTo(li);
-		
-		
-		var songitself = $('<a class="js-serv"></a>')
-			.attr('href', 'http://seesu.me/o#/ds' + mo.getURL(mopla))
-			.text(mopla.artist + " - " + mopla.track)
-			.click(function(e){
-				mo.play(mopla);
-				e.preventDefault();
-			}).appendTo(main_part);
-			
-		var d = $('<span class="duration"></span>').appendTo(desc_part);
-		if (mopla.duration){
-			var duration = Math.floor(mopla.duration/1000);
-			var digits = duration % 60;
-			d.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+digits : digits ));
-		}
-		
-		
-		var mp3l = $('<a class="desc external"></a>').appendTo($('<span class="mp3-file-link"></span>').appendTo(desc_part));
-		if (mopla.downloadable){
-			mp3l.attr('href', mopla.link).text('mp3')
-		}
-			
-		if (mopla.page_link){
-			$('<a class="external desc page-link" href="' + mopla.page_link + '">page</a>').appendTo(desc_part);
-			
-		}
-		return li;
-	},
-	createFilesList: function(part, mo){
-		if (part.t && part.t.length){
-			var fl = $();
-			fl = fl.add($('<div class="files-source"></div>').text(part.name));
-			var ul = $('<ul></ul>');
-			fl = fl.add(ul);
-			for (var i=0; i < part.t.length; i++) {
-				var el = this.createFilesListElement(part.t[i], mo);
-				if (i > 2){
-					el.addClass('addition-file')
-				}
-				ul.append(el);
-			};
-			return fl;
-		}
-		
-	},
 	verticalAlign: function(img, opts){
 		//target_height, fix
 		var real_height = opts.real_height || (img.naturalHeight ||  img.height);
@@ -914,7 +861,7 @@ seesu_ui.prototype = {
 				su.s.api('relations.setLike', {to: lig.user}, function(r){
 					
 					if (r.done){
-						su.track_event('people likes', 'liked');
+						su.trackEvent('people likes', 'liked');
 						var gc = $("<div></div>");
 						nb.c.after(gc);
 
@@ -942,7 +889,7 @@ seesu_ui.prototype = {
 				su.s.api('relations.acceptInvite', {from: lig.user}, function(r){
 					
 					if (r.done){
-						su.track_event('people likes', 'accepted');
+						su.trackEvent('people likes', 'accepted', false, 5);
 						nb.c.after(
 							$('<span class="people-list-desc desc"></span>')
 								.text(su.ui.getRemainTimeText(r.done.est, true))
@@ -1076,6 +1023,7 @@ seesu_ui.prototype = {
 				});
 				
 				uc.show('user-info', (p.left + $(li[0]).outerWidth()/2) -13 );
+				su.trackEvent('peoples', 'view');
 			} else{
 				uc.hide();
 			}
@@ -1108,7 +1056,7 @@ seesu_ui.prototype = {
 		
 		
 			youtube_video.setAttribute('type',"application/x-shockwave-flash");
-			youtube_video.setAttribute('src', 'http://www.youtube.com/v/' + id);
+			youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id);
 			youtube_video.setAttribute('allowfullscreen',"true");
 			youtube_video.setAttribute('class',"you-tube-video");
 			
@@ -1142,7 +1090,7 @@ seesu_ui.prototype = {
 						save_parents: save_parents,
 						from_artcard: from_artcard
 					});
-					seesu.track_event('Artist navigation', 'album', al_artist + ": " + al_name);
+					seesu.trackEvent('Artist navigation', 'album', al_artist + ": " + al_name);
 				})
 				.appendTo(li);
 			$('<img/>').attr('src', al_image).appendTo(a_href);
@@ -1181,6 +1129,7 @@ seesu_ui.prototype = {
 					this.b.data('disabled', false);
 					this._enabled = true;
 				}
+				return this;
 				
 			},
 			disable: function(){
@@ -1188,6 +1137,16 @@ seesu_ui.prototype = {
 					this.b.removeClass('nicebutton').addClass('disabledbutton');	
 					this.b.data('disabled', true);
 					this._enabled = false;
+				}
+				return this;
+			},
+			toggle: function(state){
+				if (typeof state != 'undefined'){
+					if (state){
+						this.enable();
+					} else {
+						this.disable();
+					}
 				}
 				
 			}

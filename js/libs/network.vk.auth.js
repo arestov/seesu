@@ -62,7 +62,7 @@ provoda.Eventor.extendTo(vkAuth, {
 				//vkTokenAuth(e.data.replace('vk_token:',''));
 				console.log('got vk_token!!!!')
 				console.log(e.data.replace('vk_token:',''));
-				//seesu.track_event('Auth to vk', 'end');
+				seesu.trackEvent('Auth to vk', 'end');
 			} else if (e.data == 'vk_error:'){
 				_this.trigger('vk-token-error');
 			}

@@ -98,20 +98,14 @@ investigation.extendTo(StrusersRowSearch, {
 
 var ShareRowUI = function(){};
 BaseCRowUI.extendTo(ShareRowUI, {
-	init: function(md, parent_c, buttons_panel){
-		this.md = md;
-		this._super();
+	createDetailes: function(){
+		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.share-song');
 		this.button = buttons_panel.find('.pc-place .pc-rupor');
-		
 		this.users_c = $('<div class="users-list"></div>').appendTo(this.c);
-
 		$("<h3></h3>").text(localize('post-song')).appendTo(this.users_c);
-
-
-
 		this.bindClick();
-		this.setModel(md);
+
 	},
 	'stch-share-url': {
 		fn: function(state){
@@ -161,14 +155,15 @@ BaseCRowUI.extendTo(ShareRowUI, {
 					.insertBefore(this.getPart("pch-ws-friends"));
 
 				this.getPart("pch-ws-friends").after();
-				var searcher_ui = this.md.searcher.getFreeView();
+				var searcher_ui = this.md.searcher.getFreeView(this);
 				if (searcher_ui){
 					this.addChild(searcher_ui);
-					searcher_ui.getC().insertBefore(this.getPart("pch-ws-friends"));
+					$(searcher_ui.getA()).insertBefore(this.getPart("pch-ws-friends"));
+					this.requestAll();
 					searcher_ui.expand();
-					searcher_ui.appended();
+				//	searcher_ui.appended();
 				}
-
+				
 				this.md.search("");
 			}
 			
@@ -178,10 +173,11 @@ BaseCRowUI.extendTo(ShareRowUI, {
 	'stch-needs-vk-auth': {
 		fn: function(state) {
 			if (state){
-				var auth_ui = this.md.vk_auth.getFreeView();
+				var auth_ui = this.md.vk_auth.getFreeView(this);
 				if (auth_ui){
 					this.addChild(auth_ui);
-					auth_ui.getC().insertBefore(this.getPart("pch-vk-auth"));
+					$(auth_ui.getA()).insertBefore(this.getPart("pch-vk-auth"));
+					this.requestAll();
 				}
 			}
 		},
@@ -243,13 +239,13 @@ BaseCRowUI.extendTo(ShareRowUI, {
 	}
 });
 
-ShareRow = function(traackrow, mo){
-	this.init(traackrow, mo);
+ShareRow = function(actionsrow, mo){
+	this.init(actionsrow, mo);
 };
 BaseCRow.extendTo(ShareRow, {
-	init: function(traackrow, mo){
+	init: function(actionsrow, mo){
 		var _this = this;
-		this.traackrow = traackrow;
+		this.actionsrow = actionsrow;
 		this.mo = mo;
 		this._super();
 		if (app_env.vkontakte || su.vk_api){

@@ -22,8 +22,8 @@ mapLevelModel.extendTo(suMapModel, {
 var suServView = function() {};
 
 provoda.View.extendTo(suServView, {
-	init: function() {
-		this._super();
+	init: function(md, opts) {
+		this._super(md, opts);
 
 		var _this = this;
 		var onDOMDie = function(dead_doc, is_current_ui, ui) {
@@ -118,14 +118,49 @@ provoda.Model.extendTo(PartsSwitcher, {
 				this.active_part.deacivate();
 			}
 			this.active_part = this.context_parts[name];
-			this.active_part.acivate();
 			this.updateState('active_part', name);
+			this.active_part.acivate();
+			
 	
 		} else {
 			this.hideAll();
 		}
 	}
 });
+
+var ActionsRowUI = function(){};
+suServView.extendTo(ActionsRowUI, {
+	createDetailes: function(){
+		this.createBase();
+
+		this.parts_views = {};
+
+		var	parts = this.md.getAllParts();
+
+		
+
+		for (var i in parts) {
+			var pv = parts[i].getFreeView(this);
+			if (pv){
+				this.parts_views[i] = pv;
+				pv.appended();
+				this.addChild(pv);
+			}
+		}
+	},
+	state_change: {
+		active_part: function(nv, ov) {
+			if (nv){
+				this.row_context.removeClass('hidden');
+				this.arrow.removeClass('hidden');
+			} else {
+				this.row_context.addClass('hidden');
+			}
+		}
+	}
+});
+
+
 
 var BaseCRowUI = function(){};
 suServView.extendTo(BaseCRowUI, {
@@ -137,31 +172,35 @@ suServView.extendTo(BaseCRowUI, {
 			});
 		}
 	},
-	getArrowPos: function(){
-		var p = su.ui.getRtPP(this.button);
-		return p.left + this.button.outerWidth()/2;
+	getButtonPos: function(){
+		var button_shift = this.button_shift || 0;
+		return this.button.offset().left + (this.button.outerWidth()/2) + button_shift;
 	},
-	state_change: {
-		'active_view': function(state){
-			if (state){
-				if (this.expand){
-					this.expand();
-				}
-				this.c.removeClass('hidden')
-			} else {
-				this.c.addClass('hidden')
+	"stch-active_view": function(state){
+		if (state){
+			if (this.expand){
+				this.expand();
 			}
+			var b_pos = this.getButtonPos();
+			if (b_pos){
+				var arrow = this.parent_view.arrow;
+				arrow.css('left', b_pos - arrow.offsetParent().offset().left + 'px');
+			}
+			this.c.removeClass('hidden');
+		} else {
+			this.c.addClass('hidden');
 		}
 	}
+
 });
 
 var BaseCRow = function(){};
 provoda.Model.extendTo(BaseCRow, {
 	switchView: function(){
-		this.traackrow.switchPart(this.row_name);
+		this.actionsrow.switchPart(this.row_name);
 	},
 	hide: function(){
-		this.traackrow.hide(this.row_name);
+		this.actionsrow.hide(this.row_name);
 	},
 	deacivate: function(){
 		this.updateState("active_view", false);

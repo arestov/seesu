@@ -113,7 +113,12 @@ provoda.addPrototype("baseSong",{
 		this.updateState('nav-title', title);
 	},
 	playNext: function(auto) {
-		this.plst_titl.switchTo(this, true, auto);
+		if (this.state('rept-song')){
+			this.play()
+		} else {
+			this.plst_titl.switchTo(this, true, auto);
+		}
+		
 	},
 	playPrev: function() {
 		this.plst_titl.switchTo(this);
@@ -340,30 +345,8 @@ provoda.addPrototype("baseSong",{
 						_this.updateState("no-track-title", true);
 					}
 
-					if (_this.isImportant()){
-						_this.checkNeighboursChanges(false, false, "important; track name");
-					} else {
-						var v_song = _this.plst_titl.getViewingSong(_this);
-						var p_song = _this.plst_titl.getPlayerSong(_this);
+					_this.checkChangesSinceFS();
 
-						if (v_song && v_song.isPossibleNeighbour(_this)) {
-							v_song.checkNeighboursChanges(_this, false, "nieghbour of viewing song; track name");
-						}
-						
-						if (p_song && v_song != p_song && p_song.isPossibleNeighbour(_this)){
-							p_song.checkNeighboursChanges(_this, false, "nieghbour of playing song; track name");
-						}
-					}
-					
-					
-
-
-
-					
-
-
-					
-					
 				})
 				.always(function(){
 					_this.updateState('loading', false);
@@ -472,26 +455,8 @@ provoda.addPrototype("baseSong",{
 			have_tracks: this.isHaveTracks("mp3"),
 			have_best_tracks: this.isHaveBestTracks()
 		};
-		if (this.isImportant()){
-			if (complete || this.isHaveBestTracks()){
-				this.checkNeighboursChanges(false, false, 'important; files search');
-			}
-		} else {
-			if (complete){
-				var v_song = this.plst_titl.getViewingSong(this);
-				var p_song = this.plst_titl.getPlayerSong(this);
-				
-				if (v_song && v_song.isPossibleNeighbour(this)) {
-					v_song.checkNeighboursChanges(this,false, "nieghbour of viewing song; files search");
-				}
-				
-				if (p_song && v_song != p_song && p_song.isPossibleNeighbour(this)){
-					p_song.checkNeighboursChanges(this,false, "nieghbour of playing song; files search");
-				}
-			}
-		}
-		this.fuco = this.fuco || 0;
-		++this.fuco;
+		
+
 
 		if (complete){
 			this.updateState('searching-files', false);
@@ -501,6 +466,34 @@ provoda.addPrototype("baseSong",{
 		}
 		this.trigger('files_search', opts);
 		this.updateState('files_search', opts);
+
+
+		this.checkChangesSinceFS();
+		
+
+
+		
+	},
+	checkChangesSinceFS: function(opts){
+		if (this.isImportant()){
+			if (!opts || (opts.complete || opts.have_best_tracks)){
+				this.checkNeighboursChanges(false, false, 'important; files search');
+			}
+		} 
+
+		if (!opts || opts.complete){
+			var v_song = this.plst_titl.getViewingSong(this);
+			var p_song = this.plst_titl.getPlayerSong(this);
+			
+			if (v_song && v_song.isPossibleNeighbour(this)) {
+				v_song.checkNeighboursChanges(this,false, "nieghbour of viewing song; files search");
+			}
+			
+			if (p_song && v_song != p_song && p_song.isPossibleNeighbour(this)){
+				p_song.checkNeighboursChanges(this,false, "nieghbour of playing song; files search");
+			}
+		}
+		
 	},
 	view: function(no_navi, user_want){
 		if (!this.state('mp-show')){
@@ -541,16 +534,78 @@ provoda.addPrototype("baseSong",{
 	isHaveBestTracks: function(){
 		return this.mf_cor && this.mf_cor.isHaveBestTracks();
 	},
-	
 	song: function(){
 		return this.mf_cor && this.mf_cor.song();
 	},
 	songs: function(){
 		return this.mf_cor && this.mf_cor.songs();
+	},
+	posistionChangeInMopla: function(mopla){
+		if (this.getCurrentMopla() == mopla){
+			this.submitPlayed(true);
+			this.submitNowPlaying();
+
+			if (!this.start_time){
+				this.start_time = ((new Date() * 1)/1000).toFixed(0);
+			}
+		}
+	},
+	getCurrentMopla: function(){
+		return this.mf_cor.getCurrentMopla();
+	},
+	submitPlayed: function(careful){
+		var
+			starttime = this.start_time,
+			last_scrobble = this.last_scrobble,
+			timestamp = ((new Date() * 1)/1000).toFixed(0),
+			duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
+
+
+		if ((!duration && !careful) || ((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
+
+			this.start_time = false;
+			this.last_scrobble = timestamp;
+			delete this.start_time;
+
+
+			if (su.settings['lfm-scrobbling']){
+				lfm.submit({
+					artist: this.artist,
+					track: this.track
+				}, duration, timestamp);
+			}
+			if (su.s.loggedIn()){
+				su.s.api('track.scrobble', {
+					client: su.env.app_type,
+					status: 'finished',
+					duration: duration,
+					artist: this.artist,
+					title: this.track,
+					timestamp: timestamp
+				});
+			}
+		}
+	},
+	submitNowPlaying: function(){
+		var duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
+		if (su.settings['lfm-scrobbling']){
+			lfm.nowplay({
+				artist: this.artist,
+				track: this.track
+			}, duration);
+		}
+		if (su.s.loggedIn()){
+			su.s.api('track.scrobble', {
+				client: su.env.app_type,
+				status: 'playing',
+				duration: duration,
+				artist: this.artist,
+				title: this.track,
+				timestamp: ((new Date()).getTime()/1000).toFixed(0)
+			});
+		}
 	}
 });
 
 
 })();
-
-

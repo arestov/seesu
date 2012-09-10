@@ -215,7 +215,7 @@ var songsList;
 				v_song.checkNeighboursChanges(false, false, "playlist load");
 			}
 			
-			if (p_song && v_song != p_song && p_song.hasNextSong()){
+			if (p_song && v_song != p_song && !p_song.hasNextSong()){
 				p_song.checkNeighboursChanges(false, false, "playlist load");
 			}
 		},
@@ -270,7 +270,10 @@ var songsList;
 				var s = false;
 				if (direction) {
 					if (current_number == (total-1)) {
-						s = playlist[0];
+						if (!this.state('dont-rept-pl')){
+							s = playlist[0];
+						}
+						
 					} else {
 						s = playlist[current_number+1];
 					}
@@ -356,11 +359,9 @@ var songsList;
 	});
 	
 	provoda.addPrototype("songsListBaseView", {
-		init: function(pl){
-			this._super();
+		createDetailes: function(){
 			this.createBase();
-			this.setModel(pl);
-			
+			this.orderChildren();
 		},
 		state_change: {
 			loading: function(loading){
@@ -382,14 +383,14 @@ var songsList;
 				}
 			},
 			changed: function(){
-				this.render_playlist();
+				this.renderChildren();
 			},
 			"can-play": function(state) {
 				if (state){
 					//make-trs-plable
-					this.export_playlist.addClass('can-be-used');
+					this.c.addClass('has-files-in-songs');
 				} else {
-					this.export_playlist.removeClass('can-be-used');
+					this.c.removeClass('has-files-in-songs');
 				}
 			}
 		},
@@ -402,37 +403,20 @@ var songsList;
 					}).text(localize("load-more")).appendTo(this.c);
 			}
 		},
-		createC: function() {
-			this.c = $('<div class="playlist-container"></div>');
-
-			var pl_panel = su.ui.samples.playlist_panel.clone();
-
-
-			var _this = this;
-
-			pl_panel.find(".make-trs-plable").click(function(){
-				_this.md.makePlayable(true);
-				su.track_event('Controls', 'make playable all tracks in playlist');
-			});
-			
-			this.export_playlist = pl_panel.find('.open-external-playlist').click(function(e){
-				_this.md.makeExternalPlaylist();
-				e.preventDefault();
-			});
-			this.c.append(pl_panel);
-			
-			return this;
-		},
 		createBase: function() {
-			this.createC();
+			this.c = $('<div class="playlist-container"></div>');
+			if (this.createPanel){
+				this.createPanel();
+			}
+			this.panel.appendTo(this.c)
 			this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);
 		},
 		appendSongUI: function(mo){
 			var moc;
-			var pl_ui_element = mo.getFreeView();
+			var pl_ui_element = mo.getFreeView(this);
 			if (pl_ui_element){
 				this.addChild(pl_ui_element);
-				pl_ui_element = pl_ui_element && pl_ui_element.getC();
+				pl_ui_element = pl_ui_element && pl_ui_element.getA();
 			} else {
 				return;
 			}
@@ -444,7 +428,7 @@ var songsList;
 					if (mo == _this.first_song.mo){
 						this.lc.append(pl_ui_element);
 					} else{
-						moc = _this.first_song.mo.getC();
+						moc = _this.first_song.mo.getThing();
 						if (moc){
 							moc.before(pl_ui_element);
 						}
@@ -453,7 +437,7 @@ var songsList;
 					var f_position = _this.palist.indexOf(_this.first_song.mo);
 					var t_position = _this.palist.indexOf(mo);
 					if (t_position < f_position){
-						moc = _this.first_song.mo.getC();
+						moc = _this.first_song.mo.getThing();
 						if (moc){
 							moc.before(pl_ui_element);
 						}
@@ -469,7 +453,11 @@ var songsList;
 				this.lc.append(pl_ui_element);
 			}
 		},
-		render_playlist: function(load_finished) {
+		renderChildren: function(){
+			this.orderChildren();
+			this.requestAll();
+		},
+		orderChildren: function(load_finished) {
 			var _this = this.md;
 			if (_this.palist.length){
 				for (var i=0; i < _this.palist.length; i++) {

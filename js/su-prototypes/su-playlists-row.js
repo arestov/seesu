@@ -67,14 +67,11 @@ investigation.extendTo(PlaylistRowSearch, {
 
 var PlaylistAddRowUI = function() {};
 BaseCRowUI.extendTo(PlaylistAddRowUI, {
-	init: function(md, parent_c, buttons_panel){
-		this.md = md;
-		this._super();
+	createDetailes: function(){
+		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.addsong-to-playlist');
 		this.button = buttons_panel.find('.pc-place .pc-add');
 		this.bindClick();
-		this.setModel(md);
-
 	},
 	expand: function() {
 		if (this.expanded){
@@ -101,33 +98,31 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		this.lpl.append(this.pl_creation_b);
 
 
-		var searcher_ui = this.md.searcher.getFreeView();
+		var searcher_ui = this.md.searcher.getFreeView(this);
 		if (searcher_ui){
 			this.addChild(searcher_ui);
-			this.lpl.append(searcher_ui.getC());
+			this.lpl.append(searcher_ui.getA());
+			this.requestAll();
 			searcher_ui.expand();
-			searcher_ui.appended();
+		//	searcher_ui.appended();
 		}
 		this.md.search("");
 
 		
-
+		
 		
 	},
+	"stch-active_view": function(state){
+		this._super(state);
+		if (state){
+			var inp = this.input[0];
+			setTimeout(function() {
+				inp.focus();
+			}, 100);
+			
+		}
+	},
 	state_change: {
-		'active_view': function(state){
-			if (state){
-				this.expand();
-				this.c.removeClass('hidden');
-				var inp = this.input[0];
-				setTimeout(function() {
-					inp.focus();
-				}, 100);
-				
-			} else {
-				this.c.addClass('hidden');
-			}
-		},
 		query: function(state) {
 			if (this.pl_creation_b){
 				if (state){
@@ -142,12 +137,12 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 	}
 });
 
-PlaylistAddRow = function(traackrow, mo) {
-	this.init(traackrow, mo);
+PlaylistAddRow = function(actionsrow, mo) {
+	this.init(actionsrow, mo);
 };
 BaseCRow.extendTo(PlaylistAddRow, {
-	init: function(traackrow, mo){
-		this.traackrow = traackrow;
+	init: function(actionsrow, mo){
+		this.actionsrow = actionsrow;
 		this.mo = mo;
 		this._super();
 		this.searcher = new PlaylistRowSearch(this, mo);

@@ -59,7 +59,7 @@
 	display:none;
 	margin-top:2em;
 }
-.lfm-start{
+.fast-personal-start{
 	display:none;
 	}
 .show-start{
@@ -68,7 +68,7 @@
 	.show-start #search{
 		display:block;
 	}
-	.show-start .lfm-start,
+	.show-start .fast-personal-start,
 	.show-start .for-startpage,
 	.show-start .block-for-startpage {
 		display:block;
@@ -179,9 +179,6 @@ ul.tracks-for-play > li{
 		
 		
 		text-shadow: 0 1px 0 #333;
-		}
-		.show-zoom-to-track ul.tracks-for-play>li.viewing-song .song .song-duration{
-			color:#aaa;
 		}
 	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .search-mp3-failed{
 		color:#737373;

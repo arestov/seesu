@@ -3,16 +3,13 @@
 
 
 	provoda.addPrototype("searchSectionView", {
-		init: function(md){
-			this._super();
-			this.md = md;
+		createDetailes: function(){
 			this.createCon();
 			this.createHead();
-			this.button = md.button;
+			this.button = this.md.button;
 
 			this.gc = this.header ? this.header.add(this.c) : this.c;
-
-			this.setModel(md);
+			this.orderChildren();
 		},
 		getC: function(){
 			return this.gc;	
@@ -46,7 +43,7 @@
 				}
 			},
 			changed: function(time){
-				this.appendChildren();
+				this.renderChildren();
 			},
 			loading: function(state){
 				if (this.header){
@@ -84,13 +81,19 @@
 				}
 			}
 		},
-		appendChildren: function(){
+		renderChildren: function(){
+			this.orderChildren();
+			this.requestAll();
+		},
+		orderChildren: function(){
 			var _this = this;
 
 			if (this.button){
-				var bui = this.button.getFreeView();
+				var bui = this.button.getFreeView(this);
 				if (bui){
-					this.button_c = bui.getC().appendTo(this.c);
+					this.button_c = $(bui.getA());
+					this.c.append(this.button_c)
+				//	.appendTo(this.c);
 					this.addChild(bui);
 				}
 				
@@ -101,10 +104,10 @@
 			if (rendering_list){
 				for (var i = 0; i < rendering_list.length; i++) {
 
-					var cur_ui = rendering_list[i].getFreeView();
+					var cur_ui = rendering_list[i].getFreeView(this);
 					if (cur_ui){
 						this.addChild(cur_ui);
-						var ccon = cur_ui.getC();
+						var ccon = cur_ui.getA();
 						if (this.button_c){
 							this.button_c.before(ccon);
 						} else{
