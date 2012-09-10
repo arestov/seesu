@@ -6,7 +6,7 @@ body{
 	height:596px;
 	line-height:1.5;
 	font-size:14px;
-	font-family:Helvetica , Arial ,sans-serif;
+	font-family: Arial, Helvetica ,sans-serif;
 	}
 body.slice-for-height{
 	overflow:hidden;
@@ -198,10 +198,10 @@ a.desc{
 		}
 		.moplas-block .moplas-list li{
 			cursor: pointer;
-			border-top: 1px solid #5d5d5d;
+			border-top: 1px solid transparent;
 			padding:6px 5px;
 			color:#999;
-			border-bottom: 1px solid #555555;
+			border-bottom: 1px solid transparent;
 			}
 		.moplas-block .moplas-list li.mf-unavailable{
 			color:#666;
@@ -227,6 +227,10 @@ a.desc{
 				max-height:15px;
 				padding:1px 0;
 				}
+				.moplas-block.want-more-songs .moplas-list li{
+					border-top-color:#5D5D5D;
+					border-bottom-color:#555555;
+					}
 				.moplas-block.want-more-songs ul li .mf-progress{
 					max-height:none;
 					}

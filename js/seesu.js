@@ -94,11 +94,15 @@ var seesuApp = function(version) {
 	this.main_level = new mainLevel(this);
 	this.map = (new browseMap(this.main_level));
 
+	var ext_view;
 	if (app_env.chrome_extension){
-		this.main_level.getFreeView(this, "chrome_ext");
+		ext_view = this.main_level.getFreeView(this, "chrome_ext");
 	} else if (app_env.opera_extension && window.opera_extension_button){
 		this.opera_ext_b = opera_extension_button;
-		this.main_level.getFreeView(this, "opera_ext");
+		ext_view = this.main_level.getFreeView(this, "opera_ext");
+	}
+	if (ext_view){
+		ext_view.requestAll();
 	}
 	
 
@@ -269,6 +273,11 @@ var seesuApp = function(version) {
 		for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
 			var cur = _this.supported_settings[i];
 			var value = suStore('settings.' + cur);
+			if (value){
+				try {
+					value = JSON.parse(value);
+				} catch(e){}
+			}
 			_this.letAppKnowSetting(cur, value);
 		};
 		var last_ver = suStore('last-su-ver');
@@ -287,6 +296,9 @@ provoda.Eventor.extendTo(seesuApp, {
 				suStore('lfm_scrobbling_enabled', '', true);
 				this.setSetting('lfm-scrobbling', lfm_scrobbling_enabled);
 			}
+		}
+		if (typeof this.settings['volume'] == 'number'){
+			this.setSetting('volume', [this.settings['volume'], 100]);
 		}
 	},
 	removeDOM: function(d, ui) {

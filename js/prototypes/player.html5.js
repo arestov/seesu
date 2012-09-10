@@ -114,23 +114,34 @@
 			this.a.loadme = false;
 			this.a.pause();
 		},
-		setVolume: function(vol) {
-			this.a.volume = vol/100;
+		setVolume: function(vol, fac) {
+			if (fac){
+				this.a.volume = fac[0]/fac[1];
+			} else {
+				this.a.volume = vol/100;
+			}
+			
 		},
-		setPosition: function(pos) {
+		setPosition: function(pos, fac) {
 			var target_pos;
 			var available;
+			var possible_position;
 			
 			try{
 				available = this.a.buffered.length && this.a.buffered.end(0);
+				if (fac){
+					possible_position = this.a.duration * fac[0]/fac[1];
+				} else {
+					possible_position = pos;
+				}
 				if (available){
-					if (pos > available){
+					if (possible_position > available){
 						if (available > 2){
-							target_pos = Math.min(available - 2, pos);
+							target_pos = Math.min(available - 2, possible_position);
 						}
 						
 					} else {
-						target_pos = Math.max(0, pos);
+						target_pos = Math.max(0, possible_position);
 					}
 
 					this.a.currentTime = target_pos;
@@ -141,7 +152,7 @@
 			} catch(e){}
 			
 			
-		}
+			}
 	};
 
 
@@ -206,14 +217,14 @@
 					s.pause();
 				}
 			},
-			setVolume: function(s, vol){
+			setVolume: function(s, vol, fac){
 				if (s){
-					s.setVolume(parseFloat(vol));
+					s.setVolume(parseFloat(vol), fac);
 				}
 			},
-			setPosition: function(s, pos){
+			setPosition: function(s, pos, fac){
 				if (s){
-					s.setPosition(parseFloat(pos));
+					s.setPosition(parseFloat(pos), fac);
 				}
 			},
 			load: function(s){
@@ -228,12 +239,12 @@
 			}
 		},
 
-		callCore: function(method, id, opts) {
+		callCore: function(method, id, opts, more_opts) {
 			if (method && this.plc[method] && id){
 				if (opts && opts === Object(opts)){
 					cloneObj(opts, {id: id});
 				}
-				this.plc[method].call(this, this.getSound(id), opts);
+				this.plc[method].call(this, this.getSound(id), opts, more_opts);
 			}	
 		},
 		callSongMethod: function() {

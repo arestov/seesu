@@ -13,6 +13,7 @@
 			.pla-panel .pla-button{
 				color: #5e5e5e;
 				cursor: pointer;
+				font-size: 14px;
 				}
 			.pla-panel .pla-button:hover{
 				color:#666;
