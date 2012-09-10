@@ -112,20 +112,17 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		
 		
 	},
+	"stch-active_view": function(state){
+		this._super(state);
+		if (state){
+			var inp = this.input[0];
+			setTimeout(function() {
+				inp.focus();
+			}, 100);
+			
+		}
+	},
 	state_change: {
-		'active_view': function(state){
-			if (state){
-				this.expand();
-				this.c.removeClass('hidden');
-				var inp = this.input[0];
-				setTimeout(function() {
-					inp.focus();
-				}, 100);
-				
-			} else {
-				this.c.addClass('hidden');
-			}
-		},
 		query: function(state) {
 			if (this.pl_creation_b){
 				if (state){

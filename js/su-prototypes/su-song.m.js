@@ -333,7 +333,7 @@ var song;
 					if (typeof volume =='undefined'){
 						return 'auto';
 					} else if (vvb_mw){
-						return ((volume/100) * vvb_mw) + 'px';
+						return Math.floor((volume/100) * vvb_mw) + 'px';
 					} else {
 						return volume  + '%';
 					}
