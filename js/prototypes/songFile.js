@@ -178,7 +178,7 @@ provoda.Model.extendTo(fileInTorrent, {
 				fn: function(width, factor){
 					if (factor) {
 						if (width){
-							return (factor * width) + 'px';
+							return Math.floor(factor * width) + 'px';
 						} else {
 							return (factor * 100) + '%';
 						}
@@ -192,7 +192,7 @@ provoda.Model.extendTo(fileInTorrent, {
 				fn: function(width, factor){
 					if (factor) {
 						if (width){
-							return (factor * width) + 'px';
+							return Math.floor(factor * width) + 'px';
 						} else {
 							return (factor * 100) + '%';
 						}
