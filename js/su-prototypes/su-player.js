@@ -94,11 +94,11 @@ var seesuPlayer;
 			e.song_file.mo.submitNowPlaying();
 		});
 
-	var setVolume = function(vol){
+	var setVolume = function(fac){
 		if (su.p.c_song){
-			su.p.c_song.setVolume(vol);
+			su.p.c_song.setVolume(false, fac);
 		} else {
-			su.p.setVolume(false, vol);
+			su.p.setVolume(false, false, fac);
 		}
 		
 	};
