@@ -94,11 +94,15 @@ var seesuApp = function(version) {
 	this.main_level = new mainLevel(this);
 	this.map = (new browseMap(this.main_level));
 
+	var ext_view;
 	if (app_env.chrome_extension){
-		this.main_level.getFreeView(this, "chrome_ext");
+		ext_view = this.main_level.getFreeView(this, "chrome_ext");
 	} else if (app_env.opera_extension && window.opera_extension_button){
 		this.opera_ext_b = opera_extension_button;
-		this.main_level.getFreeView(this, "opera_ext");
+		ext_view = this.main_level.getFreeView(this, "opera_ext");
+	}
+	if (ext_view){
+		ext_view.requestAll();
 	}
 	
 

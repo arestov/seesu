@@ -183,12 +183,13 @@ LfmLoginView.extendTo(LfmCommonLoginView, {
 });
 
 
-var LfmReccoms = function(auth){
-	this.init(auth);
+var LfmReccoms = function(auth, pm){
+	this.init(auth, pm);
 };
 LfmLogin.extendTo(LfmReccoms, {
-	init: function(auth){
+	init: function(auth, pm){
 		this._super(auth);
+		this.pm = pm
 		this.setRequestDesc(localize('lastfm-reccoms-access'));
 		this.updateState('active', true);
 	},
@@ -200,8 +201,10 @@ LfmLogin.extendTo(LfmReccoms, {
 		
 	},
 	bindAuthCallback: function(){
+		var _this = this;
 		this.auth.once("session.input_click", function() {
 			render_recommendations();
+			_this.pm.hide();
 		}, {exlusive: true});
 	},
 	handleUsername: function(username) {
@@ -210,12 +213,13 @@ LfmLogin.extendTo(LfmReccoms, {
 	ui_constr: LfmCommonLoginView
 });
 
-var LfmLoved = function(auth){
-	this.init(auth);
+var LfmLoved = function(auth, pm){
+	this.init(auth, pm);
 }; 
 LfmLogin.extendTo(LfmLoved, {
-	init: function(auth){
+	init: function(auth, pm){
 		this._super(auth);
+		this.pm = pm;
 		this.setRequestDesc(localize('grant-love-lfm-access'));
 		this.updateState('can-fetch-crossdomain', true);
 		this.updateState('active', true);
@@ -228,8 +232,10 @@ LfmLogin.extendTo(LfmLoved, {
 		
 	},
 	bindAuthCallback: function(){
+		var _this = this;
 		this.auth.once("session.input_click", function() {
 			render_loved();
+			_this.pm.hide();
 		}, {exlusive: true});
 	},
 	handleUsername: function(username) {
