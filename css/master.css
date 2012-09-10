@@ -776,12 +776,13 @@ a.desc{
 	max-width: 750px;
 	margin: 0 auto;
 	z-index: 3;
-	right: 0px;
+	
 	
 	}
 	.as-application .footer{
 		position: absolute;
 		bottom:0;
+		right: 12px;
 		}
 #seesu-me-link{
 	font-size:0.8em;
