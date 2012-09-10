@@ -329,13 +329,13 @@ var song;
 			},
 			"vis-volume": {
 				depends_on: ['volume', 'vis-volume-bar-max-width'],
-				fn: function(volume, vvb_mw){
-					if (typeof volume =='undefined'){
+				fn: function(volume_fac, vvb_mw){
+					if (typeof volume_fac =='undefined'){
 						return 'auto';
 					} else if (vvb_mw){
-						return Math.floor((volume/100) * vvb_mw) + 'px';
+						return Math.floor(volume_fac * vvb_mw) + 'px';
 					} else {
-						return volume  + '%';
+						return (volume_fac * 100)  + '%';
 					}
 				}
 			}
@@ -365,8 +365,8 @@ var song;
 				}
 				var twid = Math.min(hole_width, Math.max(0, last.cpos));
 
-				_this.promiseStateUpdate('volume', 100*twid/hole_width);
-				_this.md.setVolume(100*twid/hole_width);
+				_this.promiseStateUpdate('volume', twid/hole_width);
+				_this.md.setVolume([twid, hole_width]);
 				/*
 				if (!_this.width){
 					_this.fixWidth();
@@ -445,8 +445,8 @@ var song;
 
 			var _this = this;
 
-			var setVolume = function(state) {
-				_this.updateState('volume', state);
+			var setVolume = function(fac) {
+				_this.updateState('volume', fac[0]/fac[1]);
 			};
 			if (su.settings['volume']){
 				setVolume(su.settings['volume']);
@@ -467,9 +467,9 @@ var song;
 		sendVolume: function(vol) {
 			su.setSetting('volume', vol);
 		},
-		setVolume: function(state) {
-			this.updateState('volume', state);
-			this.sendVolume(state);
+		setVolume: function(fac) {
+			this.updateState('volume', fac[0]/fac[1]);
+			this.sendVolume(fac);
 			
 		},
 		ui_constr: TrackActionsRowUI

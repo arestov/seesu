@@ -62,8 +62,8 @@ provoda.Eventor.extendTo(playerBase, {
 	play: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("play", song_file.uid);
-			if (this.global_volume && typeof this.volume == 'number'){
-				this.setVolume(song_file, this.volume);
+			if (this.global_volume && (this.volume || this.volume_fac)){
+				this.setVolume(song_file, this.volume, this.volume_fac);
 			}
 			
 		}
@@ -73,16 +73,17 @@ provoda.Eventor.extendTo(playerBase, {
 			this.core.callSongMethod("pause", song_file.uid);
 		}
 	},
-	setVolume: function(song_file, vol){
+	setVolume: function(song_file, vol, fac){
 		vol = parseFloat(vol);
 		if (isNaN(vol)){
 			vol = 100;
 			console.log('don\'t give me shit')
 		}
 		if (song_file && this.core){
-			this.core.callSongMethod("setVolume", song_file.uid, vol);
+			this.core.callSongMethod("setVolume", song_file.uid, vol, fac);
 		}
 		if (this.global_volume){
+			this.volume_fac = fac;
 			this.volume = vol;
 		}
 	},
