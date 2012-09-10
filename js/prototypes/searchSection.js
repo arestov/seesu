@@ -61,8 +61,9 @@
 						this.message.remove();
 					}
 					this.message = $('<li></li>').text(text);
-					if (this.button_c){
-						this.button_c.before(this.message);
+					var butn_th = this.button && this.button.getThing();
+					if (butn_th){
+						butn_th(this.message);
 					} else{
 						this.c.append(this.message);
 					}
@@ -91,14 +92,14 @@
 			if (this.button){
 				var bui = this.button.getFreeView(this);
 				if (bui){
-					this.button_c = $(bui.getA());
-					this.c.append(this.button_c)
+					var bunc = $(bui.getA());
+					this.c.append(bunc)
 				//	.appendTo(this.c);
 					this.addChild(bui);
 				}
-				
+				var butn_th = this.button.getThing();
 			}
-
+			
 			var rendering_list = this.md.rendering_list;
 			var last_rendered = this.md.edges_list;
 			if (rendering_list){
@@ -108,8 +109,8 @@
 					if (cur_ui){
 						this.addChild(cur_ui);
 						var ccon = cur_ui.getA();
-						if (this.button_c){
-							this.button_c.before(ccon);
+						if (butn_th){
+							butn_th.before(ccon);
 						} else{
 							this.c.append(ccon);
 						}
