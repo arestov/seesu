@@ -464,7 +464,7 @@ BaseCRow.extendTo(LastfmRecommRow, {
 		this.actionsrow = actionsrow;
 		this._super();
 		//this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
-		this.lfm_reccoms = new LfmReccoms(this.actionsrow.ml.su.lfm_auth);
+		this.lfm_reccoms = new LfmReccoms(this.actionsrow.ml.su.lfm_auth, this);
 		this.addChild(this.lfm_reccoms);
 	},
 	row_name: 'lastfm-recomm',
@@ -515,7 +515,7 @@ BaseCRow.extendTo(LastfmLoveRow, {
 		this.actionsrow = actionsrow;
 		this._super();
 		//this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
-		this.lfm_loves = new LfmLoved(this.actionsrow.ml.su.lfm_auth);
+		this.lfm_loves = new LfmLoved(this.actionsrow.ml.su.lfm_auth, this);
 		this.addChild(this.lfm_loves);
 	},
 	row_name: 'lastfm-love',
