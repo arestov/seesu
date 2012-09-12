@@ -492,16 +492,16 @@ window.seesu = window.su = new seesuApp(3.6);
 
 
 suReady(function() {
-	var fp = bpath + 'btapp/template/javascripts/';
+	var fp = bpath + 'btapp/btapp/';
 	yepnope({
 		load: [
 			bpath + 'btapp/underscore-min.js',
 			bpath + 'btapp/backbone-min.js',
-			fp + 'jStorage/jstorage.js',
-			fp + 'btapp/btapp.js',
-			fp + 'btapp/client.btapp.js',
-			fp + 'btapp/plugin.btapp.js',
-			fp + 'btapp/pairing.btapp.js'
+			bpath + 'btapp/jstorage.js',
+			fp + 'btapp.js',
+			fp + 'client.btapp.js',
+			fp + 'plugin.btapp.js',
+			fp + 'pairing.btapp.js'
 
 		],
 		complete: function() {
@@ -510,29 +510,49 @@ suReady(function() {
 
 			var btapp = bap;
 
-			var test_link = 'http://isohunt.com/download/402892101'
+			var test_link = 'http://isohunt.com/download/402892101';
 
+			btapp.on('add:add', function(add){
+				setTimeout(function(){
+					add.torrent({
+						url: test_link,
+						callback: function(trt){
+							var colln = btapp.get('torrent');
+							var array = colln.models;
+						//	array.length
+						//	.models[]
+							var torrent = array[array.length - 1];//.models
+							setTimeout(function(){
+								btapp.get('torrent').each(function(t){
+									t.get('file').each(function(file){
+										console.log(file.get('properties').get('name'));
+									})
+								})
+							})
 
-			btapp.live('add').torrent({
-				url: test_link,
-				callback: function(trt){
-					trt.get('file').each(function(file) {
-						var name = file.get('properties').get('name');
+							return
+							trt.get('file').each(function(file) {
+								var name = file.get('properties').get('name');
 
-						console.log(name);
+								console.log(name);
 
-						/*
-						var ext = name.substr(name.lastIndexOf('.') + 1);
-						
-						if(ext !== 'mp3') {
-						  file.get('properties').save({
-							priority: 0 // Will be adding file priority constants shortly
-						  });
-						}*/
+								/*
+								var ext = name.substr(name.lastIndexOf('.') + 1);
+								
+								if(ext !== 'mp3') {
+								  file.get('properties').save({
+									priority: 0 // Will be adding file priority constants shortly
+								  });
+								}*/
+							});
+						},
+						priority: Btapp.TORRENT.PRIORITY.METADATA_ONLY
 					});
-				},
-				priority: Btapp.TORRENT.PRIORITY.METADATA_ONLY
+				},0)
+				
 			});
+
+
 
 
 			
