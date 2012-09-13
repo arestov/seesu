@@ -114,7 +114,7 @@ var seesuApp = function(version) {
 
 	this.delayed_search = {
 		vk_api:{
-			queue:  new funcsQueue(1000, 8000 , 7)
+			queue:  new funcsQueue(2000, 8000 , 7)
 		}
 	};
 
@@ -517,9 +517,9 @@ var random_track_plable = function(track_list){
 
 
 (function(){
-	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(1500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch(sc_api));
-	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(1500, 5000, 4), app_env.cross_domain_allowed, cache_ajax)));
+	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax)));
 
 	
 	if (app_env.cross_domain_allowed){
@@ -528,7 +528,7 @@ var random_track_plable = function(track_list){
 		yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
 			complete: function(){
-				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(2500, 5000, 4)))
+				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(3500, 5000, 4)))
 				su.mp3_search.add(window.nms);
 				
 				//$(document.body).append(_this.c);
