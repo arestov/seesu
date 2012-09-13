@@ -1,0 +1,3 @@
+[submodule "btapp/btapp"]
+	path = btapp/btapp
+	url = git://github.com/bittorrenttorque/btapp.git
