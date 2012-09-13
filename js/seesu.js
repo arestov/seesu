@@ -528,27 +528,11 @@ suReady(function() {
 										console.log(file.get('properties').get('name'));
 									})
 								})
-							})
-
-							return
-							trt.get('file').each(function(file) {
-								var name = file.get('properties').get('name');
-
-								console.log(name);
-
-								/*
-								var ext = name.substr(name.lastIndexOf('.') + 1);
-								
-								if(ext !== 'mp3') {
-								  file.get('properties').save({
-									priority: 0 // Will be adding file priority constants shortly
-								  });
-								}*/
 							});
 						},
 						priority: Btapp.TORRENT.PRIORITY.METADATA_ONLY
 					});
-				},0)
+				},100)
 				
 			});
 
