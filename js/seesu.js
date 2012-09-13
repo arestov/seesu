@@ -27,7 +27,7 @@ var seesuApp = function(version) {
 	this.settings = {};
 	this.settings_timers = {};
 
-	this.track_stat = (function(){
+	this.trackStat = (function(){
 		window._gaq = window._gaq || [];
 		_gaq.sV = debounce(function(v){
 			suStore('ga_store', v, true);
@@ -114,7 +114,7 @@ var seesuApp = function(version) {
 
 	this.delayed_search = {
 		vk_api:{
-			queue:  new funcsQueue(1000, 8000 , 7)
+			queue:  new funcsQueue(2000, 8000 , 7)
 		}
 	};
 
@@ -380,23 +380,24 @@ provoda.Eventor.extendTo(seesuApp, {
 	
 	trackEvent:function(){
 		var current_page = this.current_page || '(nonono)';
-	//	var args = Array.prototype.slice.call(arguments);
+		var args = Array.prototype.slice.call(arguments);
 	//	args.unshift('_trackEvent');
-		this.track_stat.call(this, function() {
+
+		this.trackStat.call(this, function() {
 			var pageTracker = _gat._getTrackerByName(current_page);
-			pageTracker._trackEvent.apply(pageTracker, arguments);
+			pageTracker._trackEvent.apply(pageTracker, args);
 		});
 	},
 	trackPage:function(page_name){
 		this.current_page = page_name;
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
-		this.track_stat.call(this, args);
+		this.trackStat.call(this, args);
 	},
 	trackTime: function(){
-		var args = arguments;
+		var args = Array.prototype.slice.call(arguments);
 		var current_page = this.current_page || '(nonono)';
-		this.track_stat.call(this, function() {
+		this.trackStat.call(this, function() {
 			var pageTracker = _gat._getTrackerByName(current_page);
 			pageTracker._trackTiming.apply(pageTracker, args);
 		});
@@ -404,7 +405,7 @@ provoda.Eventor.extendTo(seesuApp, {
 	trackVar: function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_setCustomVar');
-		this.track_stat.call(this, args);
+		this.trackStat.call(this, args);
 	},
 	setVkApi: function(vkapi, user_id) {
 		this.vk_api = vkapi;
@@ -569,9 +570,9 @@ var random_track_plable = function(track_list){
 
 
 (function(){
-	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(1500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch(sc_api));
-	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(1500, 5000, 4), app_env.cross_domain_allowed, cache_ajax)));
+	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax)));
 
 	
 	if (app_env.cross_domain_allowed){
@@ -580,7 +581,7 @@ var random_track_plable = function(track_list){
 		yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
 			complete: function(){
-				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(2500, 5000, 4)))
+				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(3500, 5000, 4)))
 				su.mp3_search.add(window.nms);
 				
 				//$(document.body).append(_this.c);
