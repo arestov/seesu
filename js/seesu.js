@@ -27,7 +27,7 @@ var seesuApp = function(version) {
 	this.settings = {};
 	this.settings_timers = {};
 
-	this.track_stat = (function(){
+	this.trackStat = (function(){
 		window._gaq = window._gaq || [];
 		_gaq.sV = debounce(function(v){
 			suStore('ga_store', v, true);
@@ -380,23 +380,24 @@ provoda.Eventor.extendTo(seesuApp, {
 	
 	trackEvent:function(){
 		var current_page = this.current_page || '(nonono)';
-	//	var args = Array.prototype.slice.call(arguments);
+		var args = Array.prototype.slice.call(arguments);
 	//	args.unshift('_trackEvent');
-		this.track_stat.call(this, function() {
+
+		this.trackStat.call(this, function() {
 			var pageTracker = _gat._getTrackerByName(current_page);
-			pageTracker._trackEvent.apply(pageTracker, arguments);
+			pageTracker._trackEvent.apply(pageTracker, args);
 		});
 	},
 	trackPage:function(page_name){
 		this.current_page = page_name;
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
-		this.track_stat.call(this, args);
+		this.trackStat.call(this, args);
 	},
 	trackTime: function(){
-		var args = arguments;
+		var args = Array.prototype.slice.call(arguments);
 		var current_page = this.current_page || '(nonono)';
-		this.track_stat.call(this, function() {
+		this.trackStat.call(this, function() {
 			var pageTracker = _gat._getTrackerByName(current_page);
 			pageTracker._trackTiming.apply(pageTracker, args);
 		});
@@ -404,7 +405,7 @@ provoda.Eventor.extendTo(seesuApp, {
 	trackVar: function(){
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_setCustomVar');
-		this.track_stat.call(this, args);
+		this.trackStat.call(this, args);
 	},
 	setVkApi: function(vkapi, user_id) {
 		this.vk_api = vkapi;
