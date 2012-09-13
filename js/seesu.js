@@ -491,7 +491,59 @@ window.seesu = window.su = new seesuApp(3.6);
 
 
 
+suReady(function() {
+	var fp = bpath + 'btapp/btapp/';
+	yepnope({
+		load: [
+			bpath + 'btapp/underscore-min.js',
+			bpath + 'btapp/backbone-min.js',
+			bpath + 'btapp/jstorage.min.js',
+			fp + 'btapp.js',
+			fp + 'client.btapp.js',
+			fp + 'plugin.btapp.js',
+			fp + 'pairing.btapp.js'
 
+		],
+		complete: function() {
+			window.bap = new Btapp();
+			bap.connect();
+
+			var btapp = bap;
+
+			var test_link = 'http://isohunt.com/download/402892101';
+
+			btapp.on('add:add', function(add){
+				setTimeout(function(){
+					add.torrent({
+						url: test_link,
+						callback: function(trt){
+							var colln = btapp.get('torrent');
+							var array = colln.models;
+						//	array.length
+						//	.models[]
+							var torrent = array[array.length - 1];//.models
+							setTimeout(function(){
+								btapp.get('torrent').each(function(t){
+									t.get('file').each(function(file){
+										console.log(file.get('properties').get('name'));
+									})
+								})
+							});
+						},
+						priority: Btapp.TORRENT.PRIORITY.METADATA_ONLY
+					});
+				},100)
+				
+			});
+
+
+
+
+			
+		}
+	})
+	
+});
 
 var external_playlist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
 	this.result = this.header + '\n';
