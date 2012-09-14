@@ -7,6 +7,7 @@ show_now_playing
 show_track_page
 */
 var mainLevel;
+var appModel;
 (function() {
 var baseNavUI = function() {};
 
@@ -125,16 +126,12 @@ var mainLevelUI = function(){};
 
 suServView.extendTo(mainLevelUI, {
 	createDetailes: function(){
-		this.sui = su.ui;
-		this.d = su.ui.d;
+
 
 		this.els = su.ui.els;
-		this.nav = su.ui.nav;
-		this.c = $(this.d.body);
-		this.c.addClass('app-loaded');
 
 
-		var fast_pstart_view = this.md.fast_pstart.getFreeView(this, false, su.ui.els.fast_personal_start);
+		var fast_pstart_view = this.md.fast_pstart.getFreeView(this, false, this.els.fast_personal_start);
 		if (fast_pstart_view){
 			this.addChild(fast_pstart_view);
 		}
@@ -157,6 +154,73 @@ suServView.extendTo(mainLevelUI, {
 				$(this.els.slider).addClass("show-start");
 			}
 		},
+		"have-playlists": function(state){
+			if (state){
+				if (!this.plts_link){
+					this.plts_link =  this.els.fast_personal_start.children('.cus-playlist-b');
+					var _this = this;
+					this.plts_link.children('a').click(function(e){
+						e.preventDefault();
+						_this.md.fast_pstart.hideAll();
+						_this.md.showPlaylists();
+						
+					});
+				}
+				this.plts_link.removeClass('hidden');
+			}
+		},
+		"ask-rating-help": function(link){
+			var _this = this;
+
+			if (link){
+				var spm_c = this.els.start_screen.find('.start-page-messages');
+				this.message_arh_c = $('<div class="attention-message"></div>');
+
+				$("<a class='close-message'>×</a>").appendTo(this.message_arh_c).click(function() {
+					_this.md.closeMessage('rating-help');
+				});
+				$('<img class="message-image"/>').attr({
+					src: 'http://cs9767.userapi.com/u198193/b_b379d470.jpg',
+					width: 100,
+					height: 126,
+					alt: "Gleb Arestov"
+				}).appendTo(this.message_arh_c);
+
+
+				
+
+				var url = $("<a class='external'></a>").attr('href', link).text(localize('at-this-page'));
+				this.message_arh_c.append(createComlexText(localize("ask-rating-help")).setVar("app_url", url[0]));
+				spm_c.append(this.message_arh_c);
+
+				/*
+				
+
+				Поддержи сису — поставь оценку
+				
+				*/
+			} else {
+				if (this.message_arh_c){
+					this.message_arh_c.remove();
+	
+				}
+			}
+		}
+	}
+});
+
+var appModelView = function(){};
+provoda.View.extendTo(appModelView, {
+	createDetailes: function(){
+		this.sui = su.ui;
+		this.d = su.ui.d;
+
+		this.els = su.ui.els;
+		this.nav = su.ui.nav;
+		this.c = $(this.d.body);
+		this.c.addClass('app-loaded');
+	},
+	state_change: {
 		"wait-vk-login": function(state) {
 			this.toggleBodyClass(state, 'wait-vk-login');
 		},
@@ -213,57 +277,6 @@ suServView.extendTo(mainLevelUI, {
 		},
 		"doc-title": function(title) {
 			this.d.title = 	title || "";
-		},
-		"ask-rating-help": function(link){
-			var _this = this;
-
-			if (link){
-				var spm_c = this.els.start_screen.find('.start-page-messages');
-				this.message_arh_c = $('<div class="attention-message"></div>');
-
-				$("<a class='close-message'>×</a>").appendTo(this.message_arh_c).click(function() {
-					_this.md.closeMessage('rating-help');
-				});
-				$('<img class="message-image"/>').attr({
-					src: 'http://cs9767.userapi.com/u198193/b_b379d470.jpg',
-					width: 100,
-					height: 126,
-					alt: "Gleb Arestov"
-				}).appendTo(this.message_arh_c);
-
-
-				
-
-				var url = $("<a class='external'></a>").attr('href', link).text(localize('at-this-page'));
-				this.message_arh_c.append(createComlexText(localize("ask-rating-help")).setVar("app_url", url[0]));
-				spm_c.append(this.message_arh_c);
-
-				/*
-				
-
-				Поддержи сису — поставь оценку
-				
-				*/
-			} else {
-				if (this.message_arh_c){
-					this.message_arh_c.remove();
-	
-				}
-			}
-		},
-		"have-playlists": function(state){
-			if (state){
-				if (!this.plts_link){
-					this.plts_link =  this.els.fast_personal_start.children('.cus-playlist-b');
-					var _this = this;
-					this.plts_link.children('a').click(function(e){
-						_this.md.fast_pstart.hideAll();
-						e.preventDefault();
-						su.ui.search(':playlists');
-					});
-				}
-				this.plts_link.removeClass('hidden');
-			}
 		}
 	},
 	toggleBodyClass: function(add, class_name){
@@ -289,50 +302,22 @@ suServView.extendTo(mainLevelUI, {
 	}
 });
 
+appModel = function(){};
 
-mainLevel = function(su) {
-	this.init();
-	this.su = su;
-	this.updateState('nav-title', 'Seesu start page');
+provoda.Model.extendTo(appModel, {
+	init: function(){
+		this._super();
+		this.su = su;
 
-	if (app_env.check_resize){
-		this.updateState('slice-for-height', true);
-	}
-	if (app_env.deep_sanbdox){
-		this.updateState('deep-sandbox', true);
-	}
-
-	this.fast_pstart = new FastPSRow(this);
-
-
-	var _this = this;
-
-	this.regDOMDocChanges(function() {
-		var this_view = _this.getFreeView(this).appended();
-		this_view.requestAll();
-
-		if (su.ui.nav.daddy){
-			var child_ui = _this.getFreeView(this, 'nav');
-			if (child_ui){
-				su.ui.nav.daddy.append(child_ui.getA());
-				child_ui.requestAll();
-			} 
+		if (app_env.check_resize){
+			this.updateState('slice-for-height', true);
+		}
+		if (app_env.deep_sanbdox){
+			this.updateState('deep-sandbox', true);
 		}
 
-		
-	});
-	this.closed_messages = suStore('closed-messages') || {};
-};
-
-
-suMapModel.extendTo(mainLevel, {
-	ui_constr: {
-		main: mainLevelUI,
-		nav: mainLevelNavUI,
-		chrome_ext: ChromeExtensionButtonView,
-		opera_ext: OperaExtensionButtonView
+		return this;
 	},
-	page_name: 'start page',
 	changeNavTree: function(nav_tree) {
 		this.nav_tree = $filter(nav_tree, 'resident');
 		this.checkNowPlayNav();
@@ -353,6 +338,53 @@ suMapModel.extendTo(mainLevel, {
 	},
 	notPlaying: function() {
 		this.updateState('playing', false);
+	},
+	setDocTitle: function(title) {
+		this.updateState('doc-title', title);
+	}
+});
+
+mainLevel = function() {};
+
+
+suMapModel.extendTo(mainLevel, {
+	ui_constr: {
+		main: mainLevelUI,
+		nav: mainLevelNavUI,
+		chrome_ext: ChromeExtensionButtonView,
+		opera_ext: OperaExtensionButtonView
+	},
+	page_name: 'start page',
+	showPlaylists: function(){
+		su.ui.search(':playlists');
+	},
+	init: function(su){
+		this._super();
+		
+		this.updateState('nav-title', 'Seesu start page');
+
+		
+
+		this.fast_pstart = new FastPSRow(this);
+
+
+		var _this = this;
+
+		this.regDOMDocChanges(function() {
+			var this_view = _this.getFreeView(this).appended();
+			this_view.requestAll();
+
+			if (su.ui.nav.daddy){
+				var child_ui = _this.getFreeView(this, 'nav');
+				if (child_ui){
+					su.ui.nav.daddy.append(child_ui.getA());
+					child_ui.requestAll();
+				} 
+			}
+
+			
+		});
+		this.closed_messages = suStore('closed-messages') || {};
 	},
 	short_title: 'Seesu',
 	getTitle: function() {
@@ -381,9 +413,6 @@ suMapModel.extendTo(mainLevel, {
 		if (this.messages[message_name] && !this.closed_messages[message_name]){
 			this.messages[message_name].call(this, true);
 		}
-	},
-	setDocTitle: function(title) {
-		this.updateState('doc-title', title);
 	}
 });
 
@@ -573,8 +602,7 @@ views = function(su_map, su){
 
 	this.m
 		.on('title-change', function(title) {
-			su.main_level.setDocTitle(title);
-
+			su.app_md.setDocTitle(title);
 
 		})
 		.on('url-change', function(nu, ou, data, replace) {

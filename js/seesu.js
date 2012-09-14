@@ -91,15 +91,23 @@ var seesuApp = function(version) {
 		callback_url: 'http://seesu.me/lastfm/callbacker.html',
 		bridge_url: 'http://seesu.me/lastfm/bridge.html',
 	});
-	this.main_level = new mainLevel(this);
-	this.map = (new browseMap(this.main_level));
+
+	this.map = new browseMap();
+
+	this.app_md = (new appModel()).init(this, this.map);
+	this.main_level = new mainLevel();
+	this.main_level.init(this);
+	
+	this.map.init(this.main_level);
+
+
 
 	var ext_view;
 	if (app_env.chrome_extension){
-		ext_view = this.main_level.getFreeView(this, "chrome_ext");
+		ext_view = this.app_md.getFreeView(this, "chrome_ext");
 	} else if (app_env.opera_extension && window.opera_extension_button){
 		this.opera_ext_b = opera_extension_button;
-		ext_view = this.main_level.getFreeView(this, "opera_ext");
+		ext_view = this.app_md.getFreeView(this, "opera_ext");
 	}
 	if (ext_view){
 		ext_view.requestAll();
@@ -107,7 +115,7 @@ var seesuApp = function(version) {
 	
 
 	this.map.on('map-tree-change', function(nav_tree) {
-		_this.main_level.changeNavTree(nav_tree);
+		_this.app_md.changeNavTree(nav_tree);
 	});
 
 //	this.ui = new seesu_ui(document);

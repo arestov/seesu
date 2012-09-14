@@ -77,20 +77,21 @@ Class.extendTo(mapLevel, {
 });
 
 
-function browseMap(mainLevelResident){
-	this.init();
-	this.levels = [];
-	this.mainLevelResident = mainLevelResident;
-	
-	//zoom levels
-	
-	// -1, start page
-	//0 - search results
-	//1 - playlist page
-	//today seesu has no deeper level
-};
+function browseMap(){};
 
 provoda.Eventor.extendTo(browseMap, {
+	init: function(maleres){
+		this._super();
+		this.levels = [];
+		this.mainLevelResident = maleres;
+		
+		//zoom levels
+		
+		// -1, start page
+		//0 - search results
+		//1 - playlist page
+		//today seesu has no deeper level
+	},
 	makeMainLevel: function(){
 		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
 		return this;

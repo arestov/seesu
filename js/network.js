@@ -276,7 +276,7 @@ try_mp3_providers = function(){
 				} else{
 					app_env.openURL(wurl);
 				}
-				su.main_level.updateState('wait-vk-login', true);
+				su.app_md.updateState('wait-vk-login', true);
 				seesu.trackEvent('Auth to vk', 'start');
 			});
 
