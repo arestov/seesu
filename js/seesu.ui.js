@@ -418,28 +418,16 @@ seesu_ui.prototype = {
 			if (_this.isAlive()){
 
 				jsLoadComplete(function() {
-					if (opts.ext_search_query) {
-						_this.search(opts.ext_search_query);
-					}
-
-					var state_recovered;
-					if (window.su && su.p && su.p.c_song){
-						if (su.p.c_song && su.p.c_song.plst_titl){
-							su.app_md.show_now_playing(true);
-							state_recovered = true;
-						}
-					}
+					
 					su.trigger('dom', _this);
 					console.log('fired dom!')
 					_this.can_fire_on_domreg = true;
 					
-					if (state_recovered){
-						opts.state_recovered = true;
-					}
+					
 					for (var i = 0; i < _this.cbs.length; i++) {
 						_this.cbs[i](opts);
-					};
-					big_timer.q.push([tracking_opts.category, 'process-thins-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui in process', 100]);
+					}
+					
 				});
 				viewBlocks(_this, _this.d);
 			}
@@ -823,17 +811,6 @@ seesu_ui.prototype = {
 		}
 		bb.disable();
 		return bb;
-	},
-	create_playlists_link: function(){
-		var _ui = this;
-		if (!_ui.link && su.gena.playlists.length > 0 && _ui.els.start_screen){
-			$('<p></p>').attr('id', 'cus-playlist-b').append(
-				_ui.link = $('<a></a>').text(localize('playlists')).attr('class', 'js-serv').click(function(e){
-					_ui.search(':playlists');
-					e.preventDefault();
-				}) 
-			).appendTo(_ui.els.start_page_place);
-		}
 	}
 
 

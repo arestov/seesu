@@ -1114,6 +1114,7 @@ var handleDocument = function(d, tracking_opts) {
 			});
 		}
 	});
+	/*
 	jsLoadComplete({
 		test: function() {
 			return window.connect_dom_to_som && window.jQuery;
@@ -1125,13 +1126,14 @@ var handleDocument = function(d, tracking_opts) {
 				tryComplete();
 			});
 		}
-	});
+	});*/
 
 	jsLoadComplete({
 		test: function() {
 			return window.su && window.seesu_ui;
 		},
 		fn: function() {
+			return;
 			var g = new seesu_ui(d, true);
 			su.setUI(g);
 			ui = g;

@@ -1,6 +1,6 @@
 var appTelegrapher = function(){};
 appTelegrapher.prototype = {
-	init: function(wd, tracking_opts) {
+	init: function(wd, tracking_opts, can_die) {
 
 		var md = su.app_md;
 
@@ -8,7 +8,7 @@ appTelegrapher.prototype = {
 		var view = (new this.appView());
 		md.addView(view);
 
-		view.init(md, false, {d: wd.document, allow_url_history: true});
+		view.init(md, false, {d: wd.document, allow_url_history: true, can_die: can_die});
 		view.requestAll();
 	},
 	appView: appModelView

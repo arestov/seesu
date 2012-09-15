@@ -9,86 +9,7 @@ show_track_page
 var mainLevel;
 var appModel;
 (function() {
-var baseNavUI = function() {};
 
-suServView.extendTo( baseNavUI, {
-	createDetailes: function(){
-		this.createBase();
-		this.bindClick();
-		var text_place = this.c.find('span');
-		if (text_place){
-			this.text_place = text_place;
-		}
-	},
-	stack_types: ['top', 'bottom', 'middle'],
-	state_change: {
-		"mp-show": function(opts) {
-			if (opts){
-				this.c.removeClass('hidden');
-			} else {
-				this.c.addClass('hidden');
-			}
-		},
-		'mp-blured': function(state) {
-			if (state){
-				this.c.addClass('nnav');
-			} else {
-				this.c.removeClass('nnav');
-			}
-		},
-		'mp-stack': function(state) {
-			if (state){
-				if (this.stack_types.indexOf(state) != -1){
-					this.c.addClass('stack-' + state);
-				}
-
-			} else {
-				this.resetStackMark();
-			}
-		},
-		"nav-text": function(text) {
-			if (this.text_place){
-				this.text_place.text(text || '');
-			}
-		},
-		"nav-title": function(text) {
-			this.c.attr('title', text || '');
-			
-		}
-	},
-
-	resetStackMark: function() {
-		this.c.removeClass('stack-bottom stack-middle stack-top');
-	},
-	bindClick: function() {
-		var _this = this;
-		this.c.click(function(){
-			_this.md.zoomOut();
-		});
-	}
-});
-
-var mainLevelNavUI = function(mal) {};
-
-baseNavUI.extendTo(mainLevelNavUI, {
-	createBase: function(){
-		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>');
-	},
-	'stch-mp-stack':function(state) {
-		if (state && state == !!state){
-			this.c.addClass('stacked');
-		} else {
-			this.c.removeClass('stacked');
-		}
-	}, 
-	'stch-mp-blured': function(state) {
-		if (state){
-			this.c.addClass("nav-button");
-		} else {
-			this.c.removeClass("nav-button");
-		}
-	}
-});
 
 
 var ChromeExtensionButtonView = function() {};
@@ -121,94 +42,6 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 		}
 	}
 });
-
-var mainLevelUI = function(){};
-
-suServView.extendTo(mainLevelUI, {
-	createDetailes: function(){
-
-
-		this.els = su.ui.els;
-
-
-		var fast_pstart_view = this.md.fast_pstart.getFreeView(this, false);
-		if (fast_pstart_view){
-			this.addChild(fast_pstart_view);
-		}
-	},
-	state_change: {
-		'mp-show': function(opts) {
-			if (opts){
-				if (opts.userwant){
-					this.els.search_input[0].focus();
-					this.els.search_input[0].select();
-				}
-			} else {
-				
-			}
-		},
-		'mp-blured': function(state) {
-			if (state){
-				$(this.els.slider).removeClass("show-start");
-			} else {
-				$(this.els.slider).addClass("show-start");
-			}
-		},
-		"have-playlists": function(state){
-			if (state){
-				if (!this.plts_link){
-					this.plts_link =  this.els.fast_personal_start.children('.cus-playlist-b');
-					var _this = this;
-					this.plts_link.children('a').click(function(e){
-						e.preventDefault();
-						_this.md.fast_pstart.hideAll();
-						_this.md.showPlaylists();
-						
-					});
-				}
-				this.plts_link.removeClass('hidden');
-			}
-		},
-		"ask-rating-help": function(link){
-			var _this = this;
-
-			if (link){
-				var spm_c = this.els.start_screen.find('.start-page-messages');
-				this.message_arh_c = $('<div class="attention-message"></div>');
-
-				$("<a class='close-message'>×</a>").appendTo(this.message_arh_c).click(function() {
-					_this.md.closeMessage('rating-help');
-				});
-				$('<img class="message-image"/>').attr({
-					src: 'http://cs9767.userapi.com/u198193/b_b379d470.jpg',
-					width: 100,
-					height: 126,
-					alt: "Gleb Arestov"
-				}).appendTo(this.message_arh_c);
-
-
-				
-
-				var url = $("<a class='external'></a>").attr('href', link).text(localize('at-this-page'));
-				this.message_arh_c.append(createComlexText(localize("ask-rating-help")).setVar("app_url", url[0]));
-				spm_c.append(this.message_arh_c);
-
-				/*
-				
-
-				Поддержи сису — поставь оценку
-				
-				*/
-			} else {
-				if (this.message_arh_c){
-					this.message_arh_c.remove();
-	
-				}
-			}
-		}
-	}
-});
-
 
 
 appModel = function(){};
@@ -267,6 +100,27 @@ provoda.Model.extendTo(appModel, {
 			.makeMainLevel();
 
 		return this;
+	},
+	checkUserInput: function(opts) {
+		if (opts.ext_search_query) {
+			_this.search(opts.ext_search_query);
+		}
+
+		var state_recovered;
+		if (window.su && su.p && su.p.c_song){
+			if (su.p.c_song && su.p.c_song.plst_titl){
+				su.app_md.show_now_playing(true);
+				state_recovered = true;
+			}
+		}
+
+		if (state_recovered){
+			opts.state_recovered = true;
+		}
+
+		//big_timer.q.push([tracking_opts.category, 'process-thins-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui in process', 100]);
+		this.start_page.updateState('can-expand', true);
+		
 	},
 	changeNavTree: function(nav_tree) {
 		this.nav_tree = $filter(nav_tree, 'resident');
@@ -653,10 +507,6 @@ mainLevel = function() {};
 
 
 suMapModel.extendTo(mainLevel, {
-	ui_constr: {
-		main: mainLevelUI,
-		nav: mainLevelNavUI,
-	},
 	page_name: 'start page',
 	showPlaylists: function(){
 		su.ui.search(':playlists');
@@ -864,36 +714,7 @@ BaseCRow.extendTo(LastfmLoveRow, {
 
 */
 
-investgNavUI = function() {};
 
-baseNavUI.extendTo(investgNavUI, {
-	createBase: function() {
-		this.c = $('<span class="nav-item nav-search-results" title="Search results"><b></b><span class="icon">.</span></span>');
-	}
-});
-
-artCardNavUI = function() {};
-baseNavUI.extendTo(artCardNavUI, {
-	createBase: function() {
-		this.c = $('<span class="nav-item "><span>.</span><b></b></span>');
-	}
-});
-
-
-playlistNavUI = function() {};
-baseNavUI.extendTo(playlistNavUI, {
-	createBase: function() {
-		this.c = $('<span class="nav-item nav-playlist-page"><span>.</span><b></b></span>');
-	}
-});
-
-
-trackNavUI = function(mlm) {};
-baseNavUI.extendTo(trackNavUI, {
-	createBase: function() {
-		this.c = $('<span class="nav-item nav-track-zoom"><span>.</span><b></b></span>');
-	}
-});
 
 
 })();

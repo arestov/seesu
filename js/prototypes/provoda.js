@@ -490,7 +490,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (parent_view){
 			this.parent_view = parent_view;
 		}
-		this.children_views = {};
 		this.opts = opts;
 		this._super();
 		this.children = [];
@@ -504,6 +503,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		cloneObj(this.undetailed_states, this.md.states);
 		return this;
 	},
+	children_views: {},
 	connectStates: function() {
 		this._setStates(this.undetailed_states);
 		delete this.undetailed_states;
@@ -543,11 +543,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	getFreeChildView: function(child_name, md, view_space, opts) {
-		var view = this.md.getView(view_space, true);
+		var view = md.getView(view_space, true);
 		if (view){
 			return false;
 		} else {
-			view = new this.children_views[child_name]();
+			view_space = view_space || 'main';
+			var ConstrObj = this.children_views[child_name];
+
+			if (typeof ConstrObj == 'function' && view_space == 'main'){
+				view = new ConstrObj();
+			} else {
+				view = new ConstrObj[view_space]();
+			}
 			view.init(md, this, opts);
 			md.addView(view, view_space);
 			return view;

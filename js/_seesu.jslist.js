@@ -44,6 +44,8 @@ var jsLoadComplete,
 	"js/su-prototypes/su.serv-prototypes.js",
 	"js/seesu.star-page-blocks.js",
 
+	"js/views/navigation.js",
+
 	"js/seesu.ui.views.js",
 	"js/seesu.ui.js",
 	"js/seesu.s.js",
@@ -72,6 +74,7 @@ var jsLoadComplete,
 
 	"js/libs/c_buttmen.js",
 	"js/pressed_node_tester.js",
+	"js/views/main_level.js",
 	"js/app_view.js",
 	"js/app.tph.js"
 	];

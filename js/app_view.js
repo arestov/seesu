@@ -4,13 +4,45 @@ provoda.View.extendTo(appModelView, {
 	createDetailes: function(){
 	//	this.sui = su.ui;
 		this.d = this.opts.d;
-		this.buildSOM();
 
+		var _this = this;
+		setTimeout(function() {
+			_this.buildSOM();
+		});
+		
+		if (this.opts.can_die && getDefaultView(d)){
+			this.can_die = true;
+			this.checkLiveState = function() {
+				if (!getDefaultView(d)){
+					_this.reportDomDeath();
+					return true;
+				}
+			};
 
+			this.lst_interval = setInterval(this.checkLiveState, 1000);
+			
+		}
+
+	},
+	reportDomDeath: function() {
+		if (this.can_die && !this.dom_dead){
+			this.dom_dead = true;
+			clearInterval(this.lst_interval);
+		//	var d = this.d;
+		//	delete this.d;
+		//	su.removeDOM(d, this);
+			
+			console.log('DOM dead! ' + this.nums);
+			
+		}
 	},
 	children_views: {
-		"start_page" : mainLevelUI
+		"start_page" : {
+			main: mainLevelUI,
+			nav: mainLevelNavUI
+		}
 	},
+
 	manual_states_connect: true,
 	state_change: {
 		"wait-vk-login": function(state) {
@@ -271,19 +303,20 @@ provoda.View.extendTo(appModelView, {
 		this.c = $(this.d.body);
 		this.c.addClass('app-loaded');
 		this.connectStates();
-		/*
+
+		var start_page_view = this.getFreeChildView('start_page', this.md.start_page, 'main');
+		
+		this.addChild(start_page_view);
+
+		this.requestAll();
+		
 		
 		var ext_search_query = this.els.search_input.val();
 
-		if (cb){
-			cb({
-				ext_search_query: ext_search_query,
-				has_query: !!ext_search_query,
-				su_dom: this
-			});
-		}
-
-		*/
+		this.md.checkUserInput({
+			ext_search_query: ext_search_query
+		});
+		
 	},
 	appendStyle: function(style_text){
 		//fixme - check volume ondomready
