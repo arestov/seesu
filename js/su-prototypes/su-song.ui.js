@@ -132,8 +132,6 @@ suServView.extendTo(songUI, {
 		//this.tidominator.removeClass('want-more-info');
 			
 		this.md.actionsrow.hideAll();
-		
-		su.ui.hidePopups();
 		this.md.mf_cor.collapseExpanders();
 	},
 	activate: function(opts){
@@ -251,7 +249,7 @@ suServView.extendTo(songUI, {
 				.data('artist', this.md.artist)
 				.appendTo(artist_link_con)
 				.click(function(){
-					su.views.showArtcardPage(_this.md.artist);
+					su.app_md.showArtcardPage(_this.md.artist);
 					su.trackEvent('Artist navigation', 'art card', _this.md.artist);
 				});
 

@@ -2,23 +2,9 @@ var viewBlocks = function(sui, d){
 	if (!getDefaultView(d)){
 		return false;
 	}
-	$('#hint-query',d).text(su.popular_artists[(Math.random()*10).toFixed(0)]);
-	$('#widget-url',d).val(location.href.replace('index.html', ''));
-	var seesu_me_link = $('#seesu-me-link',d);
-	seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', su.env.app_type));
+	sui.els.search_form.find('#hint-query').text(su.popular_artists[(Math.random()*10).toFixed(0)]);
 
-	//var vk_save_pass = $('#vk-save-pass',d);
-
-	if ($.browser.opera && ((typeof window.opera.version == 'function') && (parseFloat(window.opera.version()) <= 10.1))){
-		
-		$('<a id="close-widget">&times;</a>',d)
-			.click(function(){
-				window.close();
-			})
-			.prependTo(sui.els.slider);
-	}
-	
-	$('#app_type', sui.els.search_form).val(su.env.app_type);
+	sui.els.search_form.find('#app_type').val(su.env.app_type);
 	
 	sui.els.search_form.submit(function(){return false;});
 	if (sui.els.search_form) {
@@ -28,6 +14,14 @@ var viewBlocks = function(sui, d){
 			arrows_keys_nav(e);
 		});
 	}
+	sui.els.search_input.on('keyup change', function(e) {
+		var input_value = this.value;
+		if (input_value != su.search_query){
+			su.search_query = input_value;
+			inputChange(input_value, su_dom.els.search_label);
+		}
+		
+	});
 
 	var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(sui.els.start_screen);
 	var users_limit = 6;
@@ -94,7 +88,7 @@ var viewBlocks = function(sui, d){
 	var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(sui.els.start_screen);
 	var createTrackLink = function(artist, track, track_obj, playlist){
 		return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(e){
-			su.views.show_playlist_page(playlist);
+			su.app_md.show_playlist_page(playlist);
 			playlist.showTrack(track_obj);
 			e.preventDefault();
 		});

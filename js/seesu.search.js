@@ -18,9 +18,9 @@ inputChange = function(input_value, label, no_navi){
 	label.removeClass('loading');
 
 	if (!input_value) {
-		su.views.showStartPage();
+		su.app_md.showStartPage();
 	} else {
-		su.views.showResultsPage(input_value, no_navi);
+		su.app_md.showResultsPage(input_value, no_navi);
 	}
 };
 
@@ -109,7 +109,7 @@ baseSuggest.extendTo(artistSuggest, {
 		return this.artist;
 	},
 	onView: function(){
-		su.views.showArtcardPage(this.artist, true);
+		su.app_md.showArtcardPage(this.artist, true);
 		su.trackEvent('Music search', this.q, "artist: " + this.artist );
 	},
 	ui_constr: artistSuggestUI
@@ -126,7 +126,7 @@ baseSuggest.extendTo(playlistSuggest, {
 		return this.pl.playlist_title;
 	},
 	onView: function(){
-		su.views.showStaticPlaylist(this.pl, true);
+		su.app_md.showStaticPlaylist(this.pl, true);
 	},
 	ui_constr: baseSuggestUI
 });

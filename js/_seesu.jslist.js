@@ -11,12 +11,12 @@ var jsLoadComplete,
 	
 	var js_toload = [
 	"js/libs/serv.js",
-	"js/libs/w_storage.js",
 	"js/app_serv.js",
-
+	"js/libs/localizer.js",
+	"js/libs/w_storage.js",
 	"js/seesu.ui.dom_ready.js",
 	"js/common-libs/jquery-1.8.0.mod.min.js",
-	"js/libs/localizer.js",
+	
 	
 	"js/libs/c_cache_ajax.js",
 	"js/common-libs/md5.min.js",
@@ -71,7 +71,9 @@ var jsLoadComplete,
 	"js/su-prototypes/su-player.js",
 
 	"js/libs/c_buttmen.js",
-	"js/pressed_node_tester.js"
+	"js/pressed_node_tester.js",
+	"js/app_view.js",
+	"js/app.tph.js"
 	];
 	var bpathWrap = function(array){
 		if (base_path){

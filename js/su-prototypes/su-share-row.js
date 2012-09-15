@@ -23,7 +23,7 @@ baseSuggest.extendTo(struserSuggest, {
 	onView: function(){
 		//this.pl.add(this.mo);
 		//this.rpl.hide();
-		//su.views.showStaticPlaylist(this.pl, true);
+		//su.app_md.showStaticPlaylist(this.pl, true);
 		this.mo.postToVKWall(this.user_id);
 		this.row.hide();
 	},

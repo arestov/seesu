@@ -1,22 +1,4 @@
-sviga = {};
-var localize= (function(){
-	var lang = app_env.lang;
-	return function(string, j){
-		if (localizer[string]){
-			return localizer[string][lang] || localizer[string].original;
-		} else{
-			if (j){
-				sviga[string] ={
-					original:j
-				};
-				return j;
-			}
-			
-			return 'no this localization';
-		}
-		
-	}
-})();
+
 
 /*
 "":{

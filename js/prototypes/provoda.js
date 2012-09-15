@@ -384,8 +384,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			}
 			if (Constr){
 				v = new Constr();
-				v.parent_view = parent_view;
-				v.init.apply(v, args);
+				v.init(this, parent_view);
 				this.addView(v, name);
 				return v;
 				
@@ -487,7 +486,12 @@ var
 
 
 provoda.StatesEmitter.extendTo(provoda.View, {
-	init: function(md, opts){
+	init: function(md, parent_view, opts){
+		if (parent_view){
+			this.parent_view = parent_view;
+		}
+		this.children_views = {};
+		this.opts = opts;
 		this._super();
 		this.children = [];
 		this.view_parts = {};
@@ -500,16 +504,21 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		cloneObj(this.undetailed_states, this.md.states);
 		return this;
 	},
+	connectStates: function() {
+		this._setStates(this.undetailed_states);
+		delete this.undetailed_states;
+	},
 	requestDetailes: function(){
 		if (this.createDetailes){
 			this.createDetailes();
 		}
 		
 		this._detailed = true;
-		this._states_set_processing = true;
-		this._setStates(this.undetailed_states);
+		if (!this.manual_states_connect){
+			this.connectStates();
+		}
+		
 		this.appendCon();
-		this._states_set_processing = false;
 	},
 	appendCon: function(){
 		var con = this.getC();
@@ -531,6 +540,17 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.trigger('die');
 		for (var i = 0; i < this.children.length; i++) {
 			this.children[i].markAsDead();
+		}
+	},
+	getFreeChildView: function(child_name, md, view_space, opts) {
+		var view = this.md.getView(view_space, true);
+		if (view){
+			return false;
+		} else {
+			view = new this.children_views[child_name]();
+			view.init(md, this, opts);
+			md.addView(view, view_space);
+			return view;
 		}
 	},
 	addChild: function() {
@@ -649,6 +669,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		requestAnimationFrame.call(w || getDefaultView(c.ownerDocument), cb);
 	},
 	_setStates: function(states){
+		this._states_set_processing = true;
+		//disallow chilren request untill all states will be setted
 
 		this.states = {};
 		var _this = this;
@@ -672,7 +694,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 			
 		}
-		
+		this._states_set_processing = false;
 		return this;
 	},
 	
@@ -741,7 +763,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	changeState: function(name, value, allow_complex_watchers, skip_animation_frame) {
 		value = value || false;
 
-		if (!this._detailed){
+		if (this.undetailed_states){
 			this.undetailed_states[name] = value;
 			return this;
 		}

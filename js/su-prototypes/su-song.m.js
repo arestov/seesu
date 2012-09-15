@@ -11,7 +11,7 @@ var song;
 		this.updateNavTexts();
 
 		this.on('view', function(no_navi, user_want){
-			su.views.show_track_page(this, no_navi);
+			su.app_md.show_track_page(this, no_navi);
 			if (user_want){
 				//fixme - never true!
 				if (_this.wasMarkedAsPrev()){

@@ -10,6 +10,7 @@ var mapLevel = function(num, parent_levels, resident, map){
 		resident.trigger('mpl-attach');
 		//this.buildResident();
 	}
+	return this;
 };
 
 Class.extendTo(mapLevel, {
@@ -83,6 +84,9 @@ provoda.Eventor.extendTo(browseMap, {
 	init: function(maleres){
 		this._super();
 		this.levels = [];
+		if (!maleres){
+			throw new Error('give me 0 index level (start screen)')
+		}
 		this.mainLevelResident = maleres;
 		
 		//zoom levels
@@ -91,6 +95,7 @@ provoda.Eventor.extendTo(browseMap, {
 		//0 - search results
 		//1 - playlist page
 		//today seesu has no deeper level
+		return this;
 	},
 	makeMainLevel: function(){
 		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});

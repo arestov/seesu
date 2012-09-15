@@ -536,10 +536,10 @@ var recoverHistoryTreeBranch = function(branch, sub_branch, prev_branch){
 	var sub_branch_handled;
 	switch (branch.type) {
 		case 'search':
-			su.views.showResultsPage(branch.data.query, true);
+			su.app_md.showResultsPage(branch.data.query, true);
 			break
 		case 'artcard':
-			su.views.showArtcardPage(branch.data.artist, true, true);
+			su.app_md.showArtcardPage(branch.data.artist, true, true);
 			break
 		case 'pl':
 			var song;
@@ -576,21 +576,21 @@ var hashChangeRecover = function(e){
 		if (dl.live.length){
 			var deepest = dl.live[dl.live.length -1];
 			if (!deepest.isOpened()){
-				su.views.restoreFreezed(!!dl.dead.length, true);
+				su.app_md.restoreFreezed(!!dl.dead.length, true);
 			}
 			deepest.sliceTillMe(!!dl.dead.length, true);
 		} else{
-			su.views.showStartPage(true);
+			su.app_md.showStartPage(true);
 		}
 		
 		if (dl.dead.length){
 			for (var i=0; i < dl.dead.length; i++) {
-				su.views.m.resurrectLevel(dl.dead[i], i != dl.dead.length - 1, true );
+				su.app_md.m.resurrectLevel(dl.dead[i], i != dl.dead.length - 1, true );
 			};
 		}	
 	} else{
 		var jn = getFakeURLParameters(url.replace(/\ ?\$...$/, ''));
-		su.views.showStartPage(true);
+		su.app_md.showStartPage(true);
 		if (jn.tree.length){
 			var prev_branch;
 			while (jn.tree.length) {

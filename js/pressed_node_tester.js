@@ -1,6 +1,4 @@
-var test_pressed_node = function(e, opts){
-	su.ui.hidePopups(e, opts && opts.stay_popup);
-	
+var test_pressed_node = function(e, opts){	
 	var mouseup = opts && opts.mouseup;
 	
 	var node = e.target;
@@ -27,32 +25,32 @@ var test_pressed_node = function(e, opts){
 		  }
 		  else if (bN(class_list.indexOf('artist'))){
 			artist_name = decodeURIComponent(clicked_node.data('artist'));
-			su.views.showArtcardPage(artist_name);
+			su.app_md.showArtcardPage(artist_name);
 			seesu.trackEvent('Artist navigation', 'artist', artist_name);
 			
 		  }
 		  else if (bN(class_list.indexOf('music-tag'))){
 			tag_name = decodeURIComponent(clicked_node.data('music_tag'));
-			su.ui.show_tag(tag_name);
+			su.app_md.show_tag(tag_name);
 			seesu.trackEvent('Artist navigation', 'tag', tag_name);
 			
 		  }
 		  else if (bN(class_list.indexOf('bbcode_artist'))){
 			
 			artist_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
-			su.views.showArtcardPage(artist_name);
+			su.app_md.showArtcardPage(artist_name);
 			seesu.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
 			
 		  }
 		  else if (bN(class_list.indexOf('bbcode_tag'))){
 			tag_name = decodeURIComponent(clicked_node.attr('href').replace('http://www.last.fm/tag/','').replace(/\+/g, ' '));
-			su.ui.show_tag(tag_name);
+			su.app_md.show_tag(tag_name);
 			seesu.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
 			
 		  }
 		  else if (bN(class_list.indexOf('similar-artists'))){
 			var artist = clicked_node.data('artist');
-			su.ui.showSimilarArtists(artist);
+			su.app_md.showSimilarArtists(artist);
 			seesu.trackEvent('Artist navigation', 'similar artists to', artist);
 		  }
 		  else if (bN(class_list.indexOf('external'))){

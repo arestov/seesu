@@ -92,13 +92,8 @@ var seesuApp = function(version) {
 		bridge_url: 'http://seesu.me/lastfm/bridge.html',
 	});
 
-	this.map = new browseMap();
+	this.app_md = (new appModel()).init(this);
 
-	this.app_md = (new appModel()).init(this, this.map);
-	this.main_level = new mainLevel();
-	this.main_level.init(this);
-	
-	this.map.init(this.main_level);
 
 
 
@@ -114,11 +109,8 @@ var seesuApp = function(version) {
 	}
 	
 
-	this.map.on('map-tree-change', function(nav_tree) {
-		_this.app_md.changeNavTree(nav_tree);
-	});
+	
 
-//	this.ui = new seesu_ui(document);
 
 	this.delayed_search = {
 		vk_api:{
@@ -158,11 +150,6 @@ var seesuApp = function(version) {
 				
 			});
 	});
-
-
-
-	this.views = new views(this.map, this);
-	this.map.makeMainLevel();
 
 	this.onRegistration('dom', function(cb) {
 		if (this.ui && this.ui.can_fire_on_domreg){
@@ -314,7 +301,7 @@ provoda.Eventor.extendTo(seesuApp, {
 	},
 	checkStats: function() {
 		if (this.usage_counter > 2){
-			this.main_level.showMessage('rating-help');
+			this.app_md.start_page.showMessage('rating-help');
 		}
 		return this;
 	},
@@ -365,7 +352,7 @@ provoda.Eventor.extendTo(seesuApp, {
 	},
 	chechPlaylists: function(){
 		if (this.gena){
-			this.main_level.updateState('have-playlists', !!this.gena.playlists.length);
+			this.app_md.start_page.updateState('have-playlists', !!this.gena.playlists.length);
 		}
 	},
 	fs: {},//fast search
@@ -610,7 +597,7 @@ var render_loved = function(user_name){
 		return request_info;
 	}, true);
 	
-	su.views.show_playlist_page(pl_r);
+	su.app_md.show_playlist_page(pl_r);
 };
 var render_recommendations_by_username = function(username){
 	var pl_r = su.preparePlaylist({
@@ -637,7 +624,7 @@ var render_recommendations_by_username = function(username){
 			}
 	});
 
-	su.views.show_playlist_page(pl_r);
+	su.app_md.show_playlist_page(pl_r);
 };
 var render_recommendations = function(){
 	var pl_r = su.preparePlaylist({
@@ -677,7 +664,7 @@ var render_recommendations = function(){
 	}, true);
 	
 
-	su.views.show_playlist_page(pl_r);
+	su.app_md.show_playlist_page(pl_r);
 
 };
 

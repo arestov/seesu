@@ -46,7 +46,7 @@ var tempTool = {
 					playlist.add(song);
 				}
 			});
-			su.views.showStaticPlaylist(playlist);
+			su.app_md.showStaticPlaylist(playlist);
 			dizi = playlist;
 		})
 	},
@@ -1070,10 +1070,53 @@ var handleDocument = function(d, tracking_opts) {
 		}
 	};
 
+	domReady(d, function() {
+		dstates.connect_ui(d);
+	});
+	
 
 	jsLoadComplete({
 		test: function() {
-			return window.connect_dom_to_som && window.jQuery && window.localizer;
+			return window.localizer;
+		},
+		fn: function() {
+			domReady(d, function() {
+				d.head = d.head || d.getElementsByTagName('head')[0];
+
+				var emptyNode = function(node) {
+					while (node.firstChild){
+						node.removeChild( node.firstChild );
+					}
+					return node;
+				};
+
+				var lang = app_env.lang;
+
+				var nodes_array = d.getElementsByClassName('lang');
+				var translate = function(el) {
+					var cn = el.className;
+					var classes = cn.split(/\s/);
+					for (var i = 0; i < classes.length; i++) {
+						var cl = classes[i];
+						if (cl.match(/localize/)){
+							var term = localizer[cl.replace('localize-','')];
+							if (term && term[lang]){
+								emptyNode(el).appendChild(d.createTextNode(term[lang]))
+								//$(el).text();
+								break;
+							}
+						}
+					}
+				};
+				for (var i = 0; i < nodes_array.length; i++) {
+					translate(nodes_array[i]);
+				}
+			});
+		}
+	});
+	jsLoadComplete({
+		test: function() {
+			return window.connect_dom_to_som && window.jQuery;
 		},
 		fn: function() {
 			connect_dom_to_som(d, function(opts) {
@@ -1096,11 +1139,25 @@ var handleDocument = function(d, tracking_opts) {
 			tryComplete();
 		}
 	});
-
-	jsLoadComplete(function() {
-		
-		
-		//su.createUI(d, true);
-	});
 	
 };
+
+sviga = {};
+var localize= (function(){
+	var lang = app_env.lang;
+	return function(string, j){
+		if (localizer[string]){
+			return localizer[string][lang] || localizer[string].original;
+		} else{
+			if (j){
+				sviga[string] ={
+					original:j
+				};
+				return j;
+			}
+			
+			return 'no this localization';
+		}
+		
+	}
+})();

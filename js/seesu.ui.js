@@ -119,7 +119,7 @@ suServView.extendTo(artCardUI, {
 			$.each(artists, function(i, el){
 				var li = $('<li></li>');
 				$('<a class="js-serv"></a>').click(function(){
-					su.views.showArtcardPage(el.name);
+					su.app_md.showArtcardPage(el.name);
 				}).text(el.name).appendTo(li);
 				li.appendTo(ul);
 				ul.append(' ');
@@ -389,10 +389,6 @@ window.seesu_ui = function(d, with_dom){
 	if (!with_dom){
 		dstates.connect_ui(d);
 	}
-	
-	this.popups = [];
-	this.popups_counter = 0;
-	this.buttons_li = {};
 };
 seesu_ui.prototype = {
 	die: function(){
@@ -429,7 +425,7 @@ seesu_ui.prototype = {
 					var state_recovered;
 					if (window.su && su.p && su.p.c_song){
 						if (su.p.c_song && su.p.c_song.plst_titl){
-							su.views.show_now_playing(true);
+							su.app_md.show_now_playing(true);
 							state_recovered = true;
 						}
 					}
@@ -459,334 +455,8 @@ seesu_ui.prototype = {
 		this.cbs.push(cb);
 		return this;
 	},
-	appendStyle: function(style_text){
-		//fixme - check volume ondomready
-		var style_node = this.d.createElement('style');
-			style_node.setAttribute('title', 'button_menu');
-			style_node.setAttribute('type', 'text/css');
 
-		if (!style_node.styleSheet){
-			style_node.appendChild(this.d.createTextNode(style_text));
-		} else{
-			style_node.styleSheet.cssText = style_text;
-		}
-
-		this.d.documentElement.firstChild.appendChild(style_node);
-			
-	},
-	addPopup: function(popup_node, testf, hidef){
-		var ob = {
-			test: testf,
-			hide: hidef,
-			id: ++this.popups_counter
-		}
-		popup_node.click(function(e){
-			e.stopPropagation();
-			test_pressed_node(e, {
-				stay_popup: ob.id
-			})
-		});
-		this.popups.push(ob);
-		return ob.id;
-	},
-	hidePopups: function(e, exlude_id){
-		for (var i=0; i < this.popups.length; i++) {
-			var c = this.popups[i];
-			if (c.id != exlude_id && c.test(e)){
-				if (c.hide){
-					c.hide();
-				}
-				
-			}
-			
-		};	
-	},
-	show_tag: function(tag, vopts, start_song){
-		//save_parents, no_navi
-		vopts = vopts || {};
-		var full_no_navi = vopts.no_navi;
-		vopts.no_navi = vopts.no_navi || !!start_song;
-		
-		var pl_r = su.preparePlaylist({
-			title: 'Tag: ' + tag,
-			type: 'artists by tag',
-			data: {tag: tag}
-		}, start_song);
-
-		pl_r.setLoader(function(paging_opts) {
-			
-			var request_info = {};
-			lfm.get('tag.getTopArtists',{'tag':tag, limit: paging_opts.page_limit, page: paging_opts.next_page})
-				.done(function(r){
-					var artists = r.topartists.artist;
-					var track_list = [];
-
-					if (artists && artists.length) {
-						for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
-							track_list.push({
-								artist: artists[i].name
-							});
-						}
-
-					}
-					pl_r.injectExpectedSongs(track_list);
-					if (track_list.length < paging_opts.page_limit){
-						pl_r.setLoaderFinish();
-					}
-				})
-				.fail(function() {
-					pl_r.loadComplete(true);
-				}).always(function() {
-					request_info.done = true;
-				});
-			return request_info;
-		}, true);
-
-
-		su.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
-		
-		if (start_song){
-			pl_r.showTrack(start_song, full_no_navi);
-		}
-	},
-
-	showArtistPlaylist: function(artist, pl, vopts){
-		vopts = vopts || {};
-		var cpl = su.p.isPlaying(pl);
-		if (!cpl){
-			if (!vopts.from_artcard){
-				su.views.showArtcardPage(artist, vopts.save_parents, true);
-			}
-			su.views.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
-			return false;
-		} else{
-			su.views.restoreFreezed();
-			return cpl;
-		}
-	},
-	/*
-	var vopts = {
-		save_parents: save_parents,
-		no_navi,
-		from_artcard
-	}*/
-	showAlbum: function(opts, vopts, start_song){
-	//showAlbum: function(opts, save_parents, start_song, simple){
-		var artist			= opts.artist, 
-			name			= opts.album_name,
-			id				= opts.album_id, 
-			original_artist	= opts.original_artist,
-			vopts = vopts || {};
-		var full_no_navi = vopts.no_navi;
-		vopts.no_navi = vopts.no_navi || !!start_song;
-		
-		var pl = su.preparePlaylist({
-			title: '(' + artist + ') ' + name,
-			type: 'album',
-			data: {artist: original_artist || artist, album: name}
-		}, start_song).loading();
 	
-		var recovered = this.showArtistPlaylist(original_artist || artist, pl, vopts);
-		
-		if (!recovered){
-			var get_artist_album_playlist = function(album_id, pl_r){
-				if (album_id) {
-					lfm.get('playlist.fetch',{'playlistURL': 'lastfm://playlist/album/' + album_id})
-						.done(function(pl_data){
-							make_lastfm_playlist(pl_data, pl_r);
-						});
-				}
-			};
-			if (id){
-				get_artist_album_playlist(id, pl);
-			} else{
-				lfm.get('album.getInfo',{'artist': artist, album : name})
-					.done(function(alb_data){
-						get_artist_album_playlist(alb_data.album.id, pl);
-					});
-			}
-		}
-		if (start_song){
-			(recovered || pl).showTrack(start_song, vopts.no_navi);
-		}
-	},
-	showTopTacks: function (artist, vopts, start_song) {
-	//showTopTacks: function (artist, save_parents, no_navi, start_song, simple) {
-		vopts = vopts || {};
-		var full_no_navi = vopts.no_navi;
-		vopts.no_navi = vopts.no_navi || !!start_song;
-		
-		
-		
-		var pl = su.preparePlaylist({
-			title: 'Top of ' + artist,
-			type: 'artist',
-			data: {artist: artist}
-		}, start_song);
-		
-		var recovered = this.showArtistPlaylist(artist, pl, vopts);
-		
-		if (!recovered){
-			pl.setLoader(function(paging_opts) {
-				
-				var request_info = {};
-				lfm.get('artist.getTopTracks', {'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
-					.done(function(r){
-						if (r.error){
-							pl.loadComplete(true);
-							return;
-						}
-						var tracks = r.toptracks.track || false;
-						var track_list = [];
-						if (tracks) {
-							
-							tracks = toRealArray(tracks);
-							
-							for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
-								track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
-							}
-							
-						}
-						pl.injectExpectedSongs(track_list);
-						if (track_list.length < paging_opts.page_limit){
-							pl.setLoaderFinish();
-						}
-					})
-					.fail(function() {
-						pl.loadComplete(true);
-					})
-					.always(function() {
-						request_info.done = true;
-					});
-				return request_info;
-			}, true);
-
-		}
-		if (start_song){
-			(recovered || pl).showTrack(start_song, full_no_navi);
-		}
-	},
-	showTrackById: function(sub_raw, vopts){
-		var pl_r = su.preparePlaylist({
-			title: 'Track' ,
-			type: 'tracks',
-			data: {time: + new Date()}
-		});
-		su.views.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
-		
-		if (sub_raw.type && sub_raw.id){
-			su.mp3_search.getById(sub_raw, function(song, want_auth){
-				
-				if (pl_r.ui){
-					if (!song){
-						if (want_auth){
-							if (sub_raw.type == 'vk'){
-								pl_r.loadComplete('vk_auth');
-							} else{
-								pl_r.loadComplete(true);							
-							}
-						} else {
-							pl_r.loadComplete(true);
-
-						}
-					} else{
-						pl_r.push(song, true);
-						pl_r.loadComplete();
-					}
-					if (want_auth){
-						return true;
-					}
-					console.log(song)
-				} 
-			}, function(){
-				return !!pl_r.getC();
-			}, function(){
-
-			})
-		} else{
-			
-		}
-	},
-	showMetroChart: function(country, metro, vopts){
-		vopts = vopts || {};
-		var plr = su.preparePlaylist({//can autoload
-			title: 'Chart of ' + metro,
-			type: 'chart',
-			data: {country: country, metro: metro}
-		}).loading();
-
-		lfm.get('geo.getMetroUniqueTrackChart', {country: country, metro: metro, start: new Date - 60*60*24*7})
-			.done(function(r){
-				if (r.error){
-					pl_r.loadComplete(true);
-					return;
-				}
-				if (r && r.toptracks && r.toptracks.track){
-					var metro_tracks = toRealArray(r.toptracks.track);
-					for (var i=0; i < Math.min(metro_tracks.length, 30); i++) {
-						
-						var _trm = metro_tracks[i];
-						plr.push({artist: _trm.artist.name, track: _trm.name});
-					};
-					pl_r.loadComplete(metro_tracks.length);
-				} else {
-					pl_r.loadComplete(true);
-				}
-
-				
-			});
-		su.views.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
-	},
-	showSimilarArtists: function(artist, vopts, start_song){
-		vopts = vopts || {};
-		var full_no_navi = vopts.no_navi;
-		vopts.no_navi = vopts.no_navi || !!start_song;
-		
-		var pl = su.preparePlaylist({//can autoload
-			title: 'Similar to «' + artist + '» artists',
-			type: 'similar artists',
-			data: {artist: artist}
-		}, start_song).loading();
-		//su.views.show_playlist_page(pl, false, no_navi || !!start_song);
-		
-		var recovered = this.showArtistPlaylist(artist, pl, vopts);
-		if (!recovered){
-
-			pl.setLoader(function(paging_opts){
-				var request_info = {};
-				lfm.get('artist.getSimilar',{'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
-					.done(function(r){
-						var artists = r.similarartists.artist;
-						var track_list = [];
-
-						if (artists && artists.length) {
-							for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
-								track_list.push({
-									artist: artists[i].name
-								});
-							}
-
-						}
-						pl.injectExpectedSongs(track_list);
-						if (track_list.length < paging_opts.page_limit){
-							pl.setLoaderFinish();
-						}
-					})
-					.fail(function() {
-						pl.loadComplete(true);
-					})
-					.always(function() {
-						request_info.done = true;
-					});
-			}, true);
-			
-		
-		}
-		
-		if (start_song){
-			(recovered || pl).showTrack(start_song, full_no_navi);
-		}
-	},
 	verticalAlign: function(img, opts){
 		//target_height, fix
 		var real_height = opts.real_height || (img.naturalHeight ||  img.height);
@@ -1154,19 +824,6 @@ seesu_ui.prototype = {
 		bb.disable();
 		return bb;
 	},
-	setSearchInputValue: function(value) {
-		this.els.search_input.val(value);
-	},
-	search: function(query, no_navi, new_browse){
-		if (new_browse){
-			su.views.showStartPage();
-		}
-		if (su.search_query != query){
-			su.search_query = query;
-			this.setSearchInputValue(query);
-		}
-		inputChange(query, this.els.search_label, no_navi);
-	},
 	create_playlists_link: function(){
 		var _ui = this;
 		if (!_ui.link && su.gena.playlists.length > 0 && _ui.els.start_screen){
@@ -1181,4 +838,4 @@ seesu_ui.prototype = {
 
 
 
-}
+};

@@ -66,7 +66,18 @@ loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
 						return window.app_env
 					},
 					fn: function() {
-						handleDocument(window.document, {category: big_timer.base_category, start_time: "page-start"});
+						//handleDocument(window.document, {category: big_timer.base_category, start_time: "page-start"});
+						//
+					}
+				});
+				jsLoadComplete({
+					test: function() {
+						return window.appTelegrapher
+					},
+					fn: function() {
+
+						var app_tph = new appTelegrapher();
+						app_tph.init(window, {category: big_timer.base_category, start_time: "page-start"});
 						//
 					}
 				});

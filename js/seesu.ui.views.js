@@ -131,7 +131,7 @@ suServView.extendTo(mainLevelUI, {
 		this.els = su.ui.els;
 
 
-		var fast_pstart_view = this.md.fast_pstart.getFreeView(this, false, this.els.fast_personal_start);
+		var fast_pstart_view = this.md.fast_pstart.getFreeView(this, false);
 		if (fast_pstart_view){
 			this.addChild(fast_pstart_view);
 		}
@@ -209,103 +209,17 @@ suServView.extendTo(mainLevelUI, {
 	}
 });
 
-var appModelView = function(){};
-provoda.View.extendTo(appModelView, {
-	createDetailes: function(){
-		this.sui = su.ui;
-		this.d = su.ui.d;
 
-		this.els = su.ui.els;
-		this.nav = su.ui.nav;
-		this.c = $(this.d.body);
-		this.c.addClass('app-loaded');
-	},
-	state_change: {
-		"wait-vk-login": function(state) {
-			this.toggleBodyClass(state, 'wait-vk-login');
-		},
-		"vk-waiting-for-finish": function(state){
-			this.toggleBodyClass(state, 'vk-waiting-for-finish');
-		},
-		"slice-for-height": function(state){
-			this.toggleBodyClass(state, 'slice-for-height');
-		},
-		"deep-sandbox": function(state){
-			this.toggleBodyClass(state, 'deep-sandbox');
-		},
-		"flash-internet":function(state){
-			this.toggleBodyClass(state, 'flash-internet');
-		},
-		"viewing-playing": function(state) {
-			if (this.now_playing_link){
-				if (state){
-					this.now_playing_link.removeClass("nav-button");
-				} else {
-					this.now_playing_link.addClass("nav-button");
-				}
-			}	
-		},
-		'now-playing': function(text) {
-			
-			if (!this.now_playing_link && this.nav){
-				this.now_playing_link = $('<a class="nav-item np-button"><span class="np"></span></a>').click(function(){
-					su.views.show_now_playing(true);
-				}).appendTo(this.nav.justhead);
-			}
-			if (this.now_playing_link){
-				this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));	
-			}	
-		},
-		playing: function(state) {
-			var s = this.els.pllistlevel.add(this.now_playing_link);
-			if (state){
-				s.addClass('player-played');
-
-				if (app_env.need_favicon){
-					this.changeFavicon('playing');
-				}
-				
-			} else {
-				s.each(function(i, el){
-					$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
-				});
-				if (app_env.need_favicon){
-					this.changeFavicon('usual');
-				}
-				
-			}
-		},
-		"doc-title": function(title) {
-			this.d.title = 	title || "";
-		}
-	},
-	toggleBodyClass: function(add, class_name){
-		if (add){
-			this.c.addClass(class_name);
-		} else {
-			this.c.removeClass(class_name);
-		}
-	},
-	changeFavicon: debounce(function(state){
-		if (this.isAlive()){
-			if (state && this.favicon_states[state]){
-				changeFavicon(this.d, this.favicon_states[state], 'image/png');
-			} else{
-				changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
-			}
-		}
-		
-	},300),
-	favicon_states: {
-		playing: 'icons/icon16p.png',
-		usual: 'icons/icon16.png'
-	}
-});
 
 appModel = function(){};
 
 provoda.Model.extendTo(appModel, {
-	init: function(){
+	ui_constr: {
+	//	main: appModelView,
+		chrome_ext: ChromeExtensionButtonView,
+		opera_ext: OperaExtensionButtonView
+	},
+	init: function(su){
 		this._super();
 		this.su = su;
 
@@ -315,6 +229,42 @@ provoda.Model.extendTo(appModel, {
 		if (app_env.deep_sanbdox){
 			this.updateState('deep-sandbox', true);
 		}
+		var _this = this;
+
+
+		this.map = new browseMap();
+		this.start_page = (new mainLevel()).init(su);
+		this.map
+			.init(this.start_page)
+			.on('map-tree-change', function(nav_tree) {
+				_this.changeNavTree(nav_tree);
+			})
+			.on('title-change', function(title) {
+				_this.setDocTitle(title);
+
+			})
+			.on('url-change', function(nu, ou, data, replace) {
+				jsLoadComplete(function(){
+					if (replace){
+						navi.replace(ou, nu, data);
+					} else {
+						navi.set(nu, data);
+					}
+				});
+				
+
+				//console.log(arguments);
+			})
+			.on('every-url-change', function(nv, ov, replace) {
+				if (replace){
+					//su.trackPage(nv.map_level.resident.page_name);
+				}
+				
+			})
+			.on('nav-change', function(nv, ov, history_restoring, title_changed){
+				su.trackPage(nv.map_level.resident.page_name);
+			})
+			.makeMainLevel();
 
 		return this;
 	},
@@ -341,7 +291,362 @@ provoda.Model.extendTo(appModel, {
 	},
 	setDocTitle: function(title) {
 		this.updateState('doc-title', title);
+	},
+	restoreFreezed: function(transit, url_restoring){
+		this.map.restoreFreezed(transit, url_restoring);
+	},
+	// <<<< browser map
+	show_now_playing: function(no_stat){
+		if (!no_stat){
+			su.trackEvent('Navigation', 'now playing');
+		}
+		this.restoreFreezed(true);
+		this.show_track_page(su.p.c_song);
+		
+		
+	},
+	showStartPage: function(url_restoring){
+		//mainaly for hash url games
+		this.map.startNewBrowse(url_restoring);
+	},
+	showResultsPage: function(query, no_navi){
+		var lev;
+		if (!su.search_el || !su.search_el.lev.isOpened()){
+			lev = this.map.goDeeper(false, createSuInvestigation());
+		} else {
+			lev = su.search_el.lev;
+		}
+		
+		var invstg = lev.resident;
+		invstg.changeQuery(query);
+
+	},
+	showArtcardPage: function(artist, save_parents, no_navi){
+		var lev = this.map.goDeeper(save_parents, new artCard(artist));
+	},
+	showStaticPlaylist: function(pl, save_parents, no_navi) {
+		if (pl.lev && pl.lev.canUse() && !pl.lev.isOpened()){
+			this.restoreFreezed();
+		} else {
+			this.show_playlist_page(pl, save_parents, no_navi);
+		}
+	},
+	show_playlist_page: function(pl, save_parents, no_navi){
+		var lev = this.map.goDeeper(save_parents, pl);
+	},
+	show_track_page: function(mo, no_navi){
+		var _this = this,
+			title = (mo.plst_titl.belongsToArtist(mo.artist) ? '' : (mo.artist + ' - '))  + mo.track;
+		
+		var pl = mo.plst_titl;
+			pl.lev.sliceTillMe(true);
+		var lev = this.map.goDeeper(true, mo);
+	},
+
+	// browser map >>>>>
+
+	show_tag: function(tag, vopts, start_song){
+		//save_parents, no_navi
+		vopts = vopts || {};
+		var full_no_navi = vopts.no_navi;
+		vopts.no_navi = vopts.no_navi || !!start_song;
+		
+		var pl_r = su.preparePlaylist({
+			title: 'Tag: ' + tag,
+			type: 'artists by tag',
+			data: {tag: tag}
+		}, start_song);
+
+		pl_r.setLoader(function(paging_opts) {
+			
+			var request_info = {};
+			lfm.get('tag.getTopArtists',{'tag':tag, limit: paging_opts.page_limit, page: paging_opts.next_page})
+				.done(function(r){
+					var artists = r.topartists.artist;
+					var track_list = [];
+
+					if (artists && artists.length) {
+						for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
+							track_list.push({
+								artist: artists[i].name
+							});
+						}
+
+					}
+					pl_r.injectExpectedSongs(track_list);
+					if (track_list.length < paging_opts.page_limit){
+						pl_r.setLoaderFinish();
+					}
+				})
+				.fail(function() {
+					pl_r.loadComplete(true);
+				}).always(function() {
+					request_info.done = true;
+				});
+			return request_info;
+		}, true);
+
+
+		su.app_md.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
+		
+		if (start_song){
+			pl_r.showTrack(start_song, full_no_navi);
+		}
+	},
+
+	showArtistPlaylist: function(artist, pl, vopts){
+		vopts = vopts || {};
+		var cpl = su.p.isPlaying(pl);
+		if (!cpl){
+			if (!vopts.from_artcard){
+				su.app_md.showArtcardPage(artist, vopts.save_parents, true);
+			}
+			su.app_md.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
+			return false;
+		} else{
+			su.app_md.restoreFreezed();
+			return cpl;
+		}
+	},
+	/*
+	var vopts = {
+		save_parents: save_parents,
+		no_navi,
+		from_artcard
+	}*/
+	showAlbum: function(opts, vopts, start_song){
+	//showAlbum: function(opts, save_parents, start_song, simple){
+		var artist			= opts.artist, 
+			name			= opts.album_name,
+			id				= opts.album_id, 
+			original_artist	= opts.original_artist,
+			vopts = vopts || {};
+		var full_no_navi = vopts.no_navi;
+		vopts.no_navi = vopts.no_navi || !!start_song;
+		
+		var pl = su.preparePlaylist({
+			title: '(' + artist + ') ' + name,
+			type: 'album',
+			data: {artist: original_artist || artist, album: name}
+		}, start_song).loading();
+	
+		var recovered = this.showArtistPlaylist(original_artist || artist, pl, vopts);
+		
+		if (!recovered){
+			var get_artist_album_playlist = function(album_id, pl_r){
+				if (album_id) {
+					lfm.get('playlist.fetch',{'playlistURL': 'lastfm://playlist/album/' + album_id})
+						.done(function(pl_data){
+							make_lastfm_playlist(pl_data, pl_r);
+						});
+				}
+			};
+			if (id){
+				get_artist_album_playlist(id, pl);
+			} else{
+				lfm.get('album.getInfo',{'artist': artist, album : name})
+					.done(function(alb_data){
+						get_artist_album_playlist(alb_data.album.id, pl);
+					});
+			}
+		}
+		if (start_song){
+			(recovered || pl).showTrack(start_song, vopts.no_navi);
+		}
+	},
+	showTopTacks: function (artist, vopts, start_song) {
+	//showTopTacks: function (artist, save_parents, no_navi, start_song, simple) {
+		vopts = vopts || {};
+		var full_no_navi = vopts.no_navi;
+		vopts.no_navi = vopts.no_navi || !!start_song;
+		
+		
+		
+		var pl = su.preparePlaylist({
+			title: 'Top of ' + artist,
+			type: 'artist',
+			data: {artist: artist}
+		}, start_song);
+		
+		var recovered = this.showArtistPlaylist(artist, pl, vopts);
+		
+		if (!recovered){
+			pl.setLoader(function(paging_opts) {
+				
+				var request_info = {};
+				lfm.get('artist.getTopTracks', {'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
+					.done(function(r){
+						if (r.error){
+							pl.loadComplete(true);
+							return;
+						}
+						var tracks = r.toptracks.track || false;
+						var track_list = [];
+						if (tracks) {
+							
+							tracks = toRealArray(tracks);
+							
+							for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
+								track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
+							}
+							
+						}
+						pl.injectExpectedSongs(track_list);
+						if (track_list.length < paging_opts.page_limit){
+							pl.setLoaderFinish();
+						}
+					})
+					.fail(function() {
+						pl.loadComplete(true);
+					})
+					.always(function() {
+						request_info.done = true;
+					});
+				return request_info;
+			}, true);
+
+		}
+		if (start_song){
+			(recovered || pl).showTrack(start_song, full_no_navi);
+		}
+	},
+	showTrackById: function(sub_raw, vopts){
+		var pl_r = su.preparePlaylist({
+			title: 'Track' ,
+			type: 'tracks',
+			data: {time: + new Date()}
+		});
+		su.app_md.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
+		
+		if (sub_raw.type && sub_raw.id){
+			su.mp3_search.getById(sub_raw, function(song, want_auth){
+				
+				if (pl_r.ui){
+					if (!song){
+						if (want_auth){
+							if (sub_raw.type == 'vk'){
+								pl_r.loadComplete('vk_auth');
+							} else{
+								pl_r.loadComplete(true);							
+							}
+						} else {
+							pl_r.loadComplete(true);
+
+						}
+					} else{
+						pl_r.push(song, true);
+						pl_r.loadComplete();
+					}
+					if (want_auth){
+						return true;
+					}
+					console.log(song)
+				} 
+			}, function(){
+				return !!pl_r.getC();
+			}, function(){
+
+			})
+		} else{
+			
+		}
+	},
+	showMetroChart: function(country, metro, vopts){
+		vopts = vopts || {};
+		var plr = su.preparePlaylist({//can autoload
+			title: 'Chart of ' + metro,
+			type: 'chart',
+			data: {country: country, metro: metro}
+		}).loading();
+
+		lfm.get('geo.getMetroUniqueTrackChart', {country: country, metro: metro, start: new Date - 60*60*24*7})
+			.done(function(r){
+				if (r.error){
+					pl_r.loadComplete(true);
+					return;
+				}
+				if (r && r.toptracks && r.toptracks.track){
+					var metro_tracks = toRealArray(r.toptracks.track);
+					for (var i=0; i < Math.min(metro_tracks.length, 30); i++) {
+						
+						var _trm = metro_tracks[i];
+						plr.push({artist: _trm.artist.name, track: _trm.name});
+					};
+					pl_r.loadComplete(metro_tracks.length);
+				} else {
+					pl_r.loadComplete(true);
+				}
+
+				
+			});
+		su.app_md.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
+	},
+	showSimilarArtists: function(artist, vopts, start_song){
+		vopts = vopts || {};
+		var full_no_navi = vopts.no_navi;
+		vopts.no_navi = vopts.no_navi || !!start_song;
+		
+		var pl = su.preparePlaylist({//can autoload
+			title: 'Similar to «' + artist + '» artists',
+			type: 'similar artists',
+			data: {artist: artist}
+		}, start_song).loading();
+		//su.app_md.show_playlist_page(pl, false, no_navi || !!start_song);
+		
+		var recovered = this.showArtistPlaylist(artist, pl, vopts);
+		if (!recovered){
+
+			pl.setLoader(function(paging_opts){
+				var request_info = {};
+				lfm.get('artist.getSimilar',{'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
+					.done(function(r){
+						var artists = r.similarartists.artist;
+						var track_list = [];
+
+						if (artists && artists.length) {
+							for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
+								track_list.push({
+									artist: artists[i].name
+								});
+							}
+
+						}
+						pl.injectExpectedSongs(track_list);
+						if (track_list.length < paging_opts.page_limit){
+							pl.setLoaderFinish();
+						}
+					})
+					.fail(function() {
+						pl.loadComplete(true);
+					})
+					.always(function() {
+						request_info.done = true;
+					});
+			}, true);
+			
+		
+		}
+		
+		if (start_song){
+			(recovered || pl).showTrack(start_song, full_no_navi);
+		}
+	},
+	setSearchInputValue: function(value) {
+		this.els.search_input.val(value);
+	},
+	search: function(query, no_navi, new_browse){
+		if (new_browse){
+			this.showStartPage();
+		}
+		if (su.search_query != query){
+			su.search_query = query;
+			this.setSearchInputValue(query);
+		}
+		inputChange(query, this.els.search_label, no_navi);
 	}
+
+
+
 });
 
 mainLevel = function() {};
@@ -351,8 +656,6 @@ suMapModel.extendTo(mainLevel, {
 	ui_constr: {
 		main: mainLevelUI,
 		nav: mainLevelNavUI,
-		chrome_ext: ChromeExtensionButtonView,
-		opera_ext: OperaExtensionButtonView
 	},
 	page_name: 'start page',
 	showPlaylists: function(){
@@ -360,10 +663,8 @@ suMapModel.extendTo(mainLevel, {
 	},
 	init: function(su){
 		this._super();
-		
+		this.su = su;
 		this.updateState('nav-title', 'Seesu start page');
-
-		
 
 		this.fast_pstart = new FastPSRow(this);
 
@@ -379,12 +680,13 @@ suMapModel.extendTo(mainLevel, {
 				if (child_ui){
 					su.ui.nav.daddy.append(child_ui.getA());
 					child_ui.requestAll();
-				} 
+				}
 			}
 
 			
 		});
 		this.closed_messages = suStore('closed-messages') || {};
+		return this;
 	},
 	short_title: 'Seesu',
 	getTitle: function() {
@@ -594,94 +896,4 @@ baseNavUI.extendTo(trackNavUI, {
 });
 
 
-
-
-views = function(su_map, su){
-	var _this = this;
-	this.m = su_map;
-
-	this.m
-		.on('title-change', function(title) {
-			su.app_md.setDocTitle(title);
-
-		})
-		.on('url-change', function(nu, ou, data, replace) {
-			jsLoadComplete(function(){
-				if (replace){
-					navi.replace(ou, nu, data);
-				} else {
-					navi.set(nu, data);
-				}
-			});
-			
-
-			//console.log(arguments);
-		})
-		.on('every-url-change', function(nv, ov, replace) {
-			if (replace){
-				//su.trackPage(nv.map_level.resident.page_name);
-			}
-			
-		})
-		.on('nav-change', function(nv, ov, history_restoring, title_changed){
-			su.trackPage(nv.map_level.resident.page_name);
-		});
-
-};
-//su.ui.nav.daddy
-views.prototype = {
-	restoreFreezed: function(transit, url_restoring){
-		this.m.restoreFreezed(transit, url_restoring);
-	},
-
-	show_now_playing: function(no_stat){
-		if (!no_stat){
-			su.trackEvent('Navigation', 'now playing');
-		}
-		//var cl = su.map.getCurMapL();
-		//cl = cl && cl.resident;
-
-		this.restoreFreezed(true);
-		su.views.show_track_page(su.p.c_song);
-		
-		
-	},
-	showStartPage: function(url_restoring){
-		//mainaly for hash url games
-		this.m.startNewBrowse(url_restoring);
-	},
-	showResultsPage: function(query, no_navi){
-		var lev;
-		if (!su.search_el || !su.search_el.lev.isOpened()){
-			lev = this.m.goDeeper(false, createSuInvestigation());
-		} else {
-			lev = su.search_el.lev;
-		}
-		
-		var invstg = lev.resident;
-		invstg.changeQuery(query);
-
-	},
-	showArtcardPage: function(artist, save_parents, no_navi){
-		var lev = this.m.goDeeper(save_parents, new artCard(artist));
-	},
-	showStaticPlaylist: function(pl, save_parents, no_navi) {
-		if (pl.lev && pl.lev.canUse() && !pl.lev.isOpened()){
-			this.restoreFreezed();
-		} else {
-			this.show_playlist_page(pl, save_parents, no_navi);
-		}
-	},
-	show_playlist_page: function(pl, save_parents, no_navi){
-		var lev = this.m.goDeeper(save_parents, pl);
-	},
-	show_track_page: function(mo, no_navi){
-		var _this = this,
-			title = (mo.plst_titl.belongsToArtist(mo.artist) ? '' : (mo.artist + ' - '))  + mo.track;
-		
-		var pl = mo.plst_titl;
-			pl.lev.sliceTillMe(true);
-		var lev = this.m.goDeeper(true, mo);
-	}
-};
 })();
