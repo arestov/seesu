@@ -75,6 +75,7 @@ var jsLoadComplete,
 	"js/pressed_node_tester.js",
 	"js/views/song-actionsrow.js",
 	"js/views/main_level.js",
+	"js/views/songs-list.base.js",
 	"js/views/songs-list.js",
 	"js/views/app_view.js",
 	"js/app.tph.js"

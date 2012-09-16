@@ -105,7 +105,7 @@ provoda.View.extendTo(LfmLoginView, {
 var LfmLogin = function(auth) {};
 
 provoda.Model.extendTo(LfmLogin, {
-	ui_constr: LfmLoginView,
+//	ui_constr: LfmLoginView,
 	init: function(auth) {
 		this._super();
 
@@ -159,90 +159,7 @@ provoda.Model.extendTo(LfmLogin, {
 	}
 });
 
-var LfmCommonLoginView = function(){};
-LfmLoginView.extendTo(LfmCommonLoginView, {
-	createBase: function(){
-		this._super();
-		this.un_form = app_view.samples.lfm_input.clone().appendTo(this.c);
-		this.un_input = this.un_form.find('.lfm-username');
 
-		var _this = this;
-		this.un_form.on('submit', function(e) {
-			_this.md.handleUsername(_this.un_input.val());
-			return false;
-		});
-	},
-	'stch-can-fetch-crossdomain': function(state) {
-		if (state){
-			this.un_form.removeClass('needs-cross-domain');
-		} else {
-			this.un_form.addClass('needs-cross-domain');
-		}
-		
-	}
-});
-
-
-var LfmReccoms = function(auth, pm){
-	this.init(auth, pm);
-};
-LfmLogin.extendTo(LfmReccoms, {
-	init: function(auth, pm){
-		this._super(auth);
-		this.pm = pm
-		this.setRequestDesc(localize('lastfm-reccoms-access'));
-		this.updateState('active', true);
-	},
-	onSession: function(){
-		this.updateState('active', false);
-	},
-	beforeRequest: function() {
-		this.bindAuthCallback();
-		
-	},
-	bindAuthCallback: function(){
-		var _this = this;
-		this.auth.once("session.input_click", function() {
-			render_recommendations();
-			_this.pm.hide();
-		}, {exlusive: true});
-	},
-	handleUsername: function(username) {
-		render_recommendations_by_username(username);
-	},
-	ui_constr: LfmCommonLoginView
-});
-
-var LfmLoved = function(auth, pm){
-	this.init(auth, pm);
-}; 
-LfmLogin.extendTo(LfmLoved, {
-	init: function(auth, pm){
-		this._super(auth);
-		this.pm = pm;
-		this.setRequestDesc(localize('grant-love-lfm-access'));
-		this.updateState('can-fetch-crossdomain', true);
-		this.updateState('active', true);
-	},
-	onSession: function(){
-		this.updateState('active', false);
-	},
-	beforeRequest: function() {
-		this.bindAuthCallback();
-		
-	},
-	bindAuthCallback: function(){
-		var _this = this;
-		this.auth.once("session.input_click", function() {
-			render_loved();
-			_this.pm.hide();
-		}, {exlusive: true});
-	},
-	handleUsername: function(username) {
-		render_loved(username);
-	},
-	ui_constr: LfmCommonLoginView
-});
 
 
 var LfmScrobbleView = function(){};

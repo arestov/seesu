@@ -132,7 +132,8 @@ var songsListView;
 		children_views: {
 			plarow: {
 				main: PlARowView
-			}
+			},
+			'song': songUI
 		}
 
 	});

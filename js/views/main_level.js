@@ -1,3 +1,29 @@
+var LfmCommonLoginView = function(){};
+LfmLoginView.extendTo(LfmCommonLoginView, {
+	createBase: function(){
+		this._super();
+		this.un_form = app_view.samples.lfm_input.clone().appendTo(this.c);
+		this.un_input = this.un_form.find('.lfm-username');
+
+		var _this = this;
+		this.un_form.on('submit', function(e) {
+			_this.md.handleUsername(_this.un_input.val());
+			return false;
+		});
+	},
+	'stch-can-fetch-crossdomain': function(state) {
+		if (state){
+			this.un_form.removeClass('needs-cross-domain');
+		} else {
+			this.un_form.addClass('needs-cross-domain');
+		}
+		
+	}
+});
+
+
+
+
 var LastfmRecommRowView = function(){};
 BaseCRowUI.extendTo(LastfmRecommRowView, {
 	createDetailes: function(){
@@ -24,15 +50,19 @@ BaseCRowUI.extendTo(LastfmRecommRowView, {
 		} else {
 			this.expanded = true;
 		}
-		var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView(this);
-		if (lfm_reccoms_view){
-			this.c.append(lfm_reccoms_view.getA());
-			this.addChild(lfm_reccoms_view);
-			
-		}
+
+		var lfm_reccoms = this.getCollection('lfm_reccoms', true);
+		var lfm_reccoms_view = this.getFreeChildView('lfm_reccoms', lfm_reccoms, 'main');
+		this.c.append(lfm_reccoms_view.getA());
+
 		this.requestAll();
+	},
+	children_views: {
+		'lfm_reccoms': LfmCommonLoginView
 	}
 });
+
+
 
 var LastfmLoveRowView = function(){};
 BaseCRowUI.extendTo(LastfmLoveRowView, {
@@ -57,13 +87,15 @@ BaseCRowUI.extendTo(LastfmLoveRowView, {
 		} else {
 			this.expanded = true;
 		}
-		var lfm_loves_view = this.md.lfm_loves.getFreeView(this);
-		if (lfm_loves_view){
-			this.c.append(lfm_loves_view.getA());
-			this.addChild(lfm_loves_view);
-			
-		}
+
+		var lfm_loves = this.getCollection('lfm_loves', true);
+		var lfmlove_view = this.getFreeChildView('lfm_loves', lfm_loves, 'main');
+		this.c.append(lfmlove_view.getA());
+
 		this.requestAll();
+	},
+	children_views: {
+		'lfm_loves': LfmCommonLoginView
 	}
 });
 

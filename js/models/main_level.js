@@ -61,10 +61,39 @@ PartsSwitcher.extendTo(FastPSRow, {
 		this.updateState('active_part', false);
 		this.addPart(new LastfmRecommRow(this, ml));
 		this.addPart(new LastfmLoveRow(this, ml));
-	//	this.addPart(new MultiAtcsRow(this, pl));
-	//	this.addPart(new PlaylistSettingsRow(this, pl));
 	}
 });
+
+
+var LfmReccoms = function(){};
+LfmLogin.extendTo(LfmReccoms, {
+	init: function(auth, pm){
+		this._super(auth);
+		this.pm = pm
+		this.setRequestDesc(localize('lastfm-reccoms-access'));
+		this.updateState('active', true);
+	},
+	onSession: function(){
+		this.updateState('active', false);
+	},
+	beforeRequest: function() {
+		this.bindAuthCallback();
+		
+	},
+	bindAuthCallback: function(){
+		var _this = this;
+		this.auth.once("session.input_click", function() {
+			render_recommendations();
+			_this.pm.hide();
+		}, {exlusive: true});
+	},
+	handleUsername: function(username) {
+		render_recommendations_by_username(username);
+	}
+});
+
+
+
 
 var LastfmRecommRow = function(actionsrow){
 		this.init(actionsrow);
@@ -73,12 +102,48 @@ BaseCRow.extendTo(LastfmRecommRow, {
 	init: function(actionsrow){
 		this.actionsrow = actionsrow;
 		this._super();
-		//this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
-		this.lfm_reccoms = new LfmReccoms(this.actionsrow.ml.su.lfm_auth, this);
-		this.addChild(this.lfm_reccoms);
+
+		var lfm_reccoms = new LfmReccoms();
+		lfm_reccoms.init(this.actionsrow.ml.su.lfm_auth, this);
+		this.setChildren('lfm_reccoms', [lfm_reccoms]);
+		this.addChild(lfm_reccoms);
+
+
 	},
 	row_name: 'lastfm-recomm'
 });
+
+
+
+var LfmLoved = function(){}; 
+LfmLogin.extendTo(LfmLoved, {
+	init: function(auth, pm){
+		this._super(auth);
+		this.pm = pm;
+		this.setRequestDesc(localize('grant-love-lfm-access'));
+		this.updateState('can-fetch-crossdomain', true);
+		this.updateState('active', true);
+	},
+	onSession: function(){
+		this.updateState('active', false);
+	},
+	beforeRequest: function() {
+		this.bindAuthCallback();
+		
+	},
+	bindAuthCallback: function(){
+		var _this = this;
+		this.auth.once("session.input_click", function() {
+			render_loved();
+			_this.pm.hide();
+		}, {exlusive: true});
+	},
+	handleUsername: function(username) {
+		render_loved(username);
+	}
+});
+
+
 
 var LastfmLoveRow = function(actionsrow){
 		this.init(actionsrow);
@@ -87,9 +152,10 @@ BaseCRow.extendTo(LastfmLoveRow, {
 	init: function(actionsrow){
 		this.actionsrow = actionsrow;
 		this._super();
-		//this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
-		this.lfm_loves = new LfmLoved(this.actionsrow.ml.su.lfm_auth, this);
-		this.addChild(this.lfm_loves);
+		var lfm_loves = new LfmLoved();
+		lfm_loves.init(this.actionsrow.ml.su.lfm_auth, this);
+		this.setChildren('lfm_loves', [lfm_loves]);
+		this.addChild(lfm_loves);
 	},
 	row_name: 'lastfm-love'
 });

@@ -378,6 +378,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		return view && view.getT();
 	},
 	getFreeView: function(parent_view, name){
+		throw new Error ('detach view from model - use parent view attaching!')
 		name = name || 'main';
 		var
 			args	= Array.prototype.slice.call(arguments),
@@ -834,6 +835,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.collectionChange(i, collections[i]);
 		}
 		this._collections_set_processing = false;
+	},
+	getCollection: function(name, one_thing) {
+		var array = this.children_models[name]
+		return one_thing ? array && array[0] : array;
 	},
 	collectionChange: function(name, array) {
 		if (this.undetailed_children_models){
