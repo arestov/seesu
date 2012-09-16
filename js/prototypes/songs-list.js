@@ -3,6 +3,7 @@ var songsList;
 	"use strict";
 	
 	provoda.addPrototype("songsListBase", {
+		model_name: "playlist",
 		complex_states: {
 			more_load_available: {
 				depends_on: ["can-load-more", "loading"],

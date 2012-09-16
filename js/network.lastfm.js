@@ -83,7 +83,7 @@ provoda.View.extendTo(LfmLoginView, {
 		this.c.find('.lfm-auth-request-desc').text(state || "");
 	},
 	createBase: function() {
-		this.c = su.ui.samples.lfm_authsampl.clone();
+		this.c = app_view.samples.lfm_authsampl.clone();
 		this.auth_block = this.c.children(".auth-block");
 		var _this = this;
 		this.auth_block.find('.lastfm-auth-bp a').click(function(e){
@@ -163,7 +163,7 @@ var LfmCommonLoginView = function(){};
 LfmLoginView.extendTo(LfmCommonLoginView, {
 	createBase: function(){
 		this._super();
-		this.un_form = su.ui.samples.lfm_input.clone().appendTo(this.c);
+		this.un_form = app_view.samples.lfm_input.clone().appendTo(this.c);
 		this.un_input = this.un_form.find('.lfm-username');
 
 		var _this = this;
@@ -249,7 +249,7 @@ var LfmScrobbleView = function(){};
 LfmLoginView.extendTo(LfmScrobbleView, {
 	createBase: function(){
 		this._super();
-		this.scrobbling_switchers = su.ui.samples.lfm_scrobling.clone().appendTo(this.c);
+		this.scrobbling_switchers = app_view.samples.lfm_scrobling.clone().appendTo(this.c);
 		this.chbx_enabl = this.scrobbling_switchers.find('.enable-scrobbling');
 		this.chbx_disabl = this.scrobbling_switchers.find('.disable-scrobbling');
 		var _this = this;
@@ -326,7 +326,7 @@ LfmLoginView.extendTo(LfmLoveItView, {
 		var _this = this;
 		var wrap = $('<div class="add-to-lfmfav"></div>');
 
-		this.nloveb = su.ui.createNiceButton();
+		this.nloveb = app_view.createNiceButton();
 		this.nloveb.c.appendTo(wrap);
 		this.nloveb.b.click(function(){
 			if (_this.nloveb._enabled){

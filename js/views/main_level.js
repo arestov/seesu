@@ -18,13 +18,13 @@ suServView.extendTo(mainLevelUI, {
 			if (_this.parent_view.d.activeElement.nodeName == 'BUTTON'){return;}
 			arrows_keys_nav(e);
 		});
+		this.search_input = this.els.search_input;
 	
-		this.els.search_input.on('keyup change', function(e) {
+		this.search_input.on('keyup change', function(e) {
 			var input_value = this.value;
-			if (input_value != su.search_query){
-				su.search_query = input_value;
-				inputChange(input_value, su_dom.els.search_label);
-			}
+			_this.overrideStateSilently('search-query', input_value);
+			_this.parent_view.md.search(input_value);
+			
 			
 		});
 
@@ -37,8 +37,8 @@ suServView.extendTo(mainLevelUI, {
 		'mp-show': function(opts) {
 			if (opts){
 				if (opts.userwant){
-					this.els.search_input[0].focus();
-					this.els.search_input[0].select();
+					this.search_input[0].focus();
+					this.search_input[0].select();
 				}
 			} else {
 				
@@ -70,6 +70,9 @@ suServView.extendTo(mainLevelUI, {
 				}
 				this.plts_link.removeClass('hidden');
 			}
+		},
+		"search-query": function(state) {
+			this.search_input.val(state || '');
 		},
 		"ask-rating-help": function(link){
 			var _this = this;
@@ -284,10 +287,10 @@ suServView.extendTo(mainLevelUI, {
 				
 				
 				if (o.links){
-					pui.lp.append(sui.getAcceptedDesc(man));
+					pui.lp.append(_this.parent_view.getAcceptedDesc(man));
 				
 				} else if (o.accept_button){
-					var nb = sui.createNiceButton();
+					var nb = _this.parent_view.createNiceButton();
 						nb.b.text( localize('accept-inv', 'Accept invite'));
 						nb.enable();
 						
@@ -300,7 +303,7 @@ suServView.extendTo(mainLevelUI, {
 									
 									if (r.done){
 										su.trackEvent('people likes', 'accepted', false, 5);
-										$('<span class="desc"></span>').text(sui.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
+										$('<span class="desc"></span>').text(su.app_md.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
 										if (new Date(r.done.est) < new Date()){
 											checkRelationsInvites();
 										}

@@ -1,5 +1,4 @@
 var 
-	inputChange,
 	investigationUI,
 	investigation,
 	baseSuggestUI,
@@ -13,16 +12,6 @@ var
 (function() {
 var 
 	default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-
-inputChange = function(input_value, label, no_navi){
-	label.removeClass('loading');
-
-	if (!input_value) {
-		su.app_md.showStartPage();
-	} else {
-		su.app_md.showResultsPage(input_value, no_navi);
-	}
-};
 
 
 var searchTags = function(q){
@@ -235,7 +224,7 @@ baseSuggest.extendTo(trackSuggest, {
 		return this.artist + ' - ' + this.track;
 	},
 	onView: function(){
-		su.ui.showTopTacks(this.artist, {save_parents: true}, {
+		su.app_md.showTopTacks(this.artist, {save_parents: true}, {
 			artist: this.artist,
 			track: this.track
 		});
@@ -305,7 +294,7 @@ baseSuggest.extendTo(tagSuggest, {
 		return this.tag;
 	},
 	onView: function(){
-		su.ui.show_tag(this.tag, {save_parents: true});
+		su.app_md.show_tag(this.tag, {save_parents: true});
 		seesu.trackEvent('Music search', this.q, "tag: " + this.tag );
 	},
 	ui_constr: tagSuggestUI
@@ -380,7 +369,7 @@ baseSuggest.extendTo(albumSuggest, {
 		return '( ' + this.artist + ' ) ' + this.name;
 	},
 	onView: function(){
-		su.ui.showAlbum({
+		su.app_md.showAlbum({
 			artist: this.artist,
 			album_name: this.name,
 			album_id: this.aid
@@ -500,23 +489,7 @@ investigation.extendTo(SuInvestg, {
 		this.addSection('albums', new albumsSection());
 		this.addSection('tags', new tagsSection());
 		this.addSection('tracks', new tracksSection());
-		var _this = this;
-		this.regDOMDocChanges(function() {
-			if (su.ui.els.searchres){
-				var child_ui = _this.getFreeView(this);
-				if (child_ui){
-					su.ui.els.searchres.append(child_ui.getA());
-					child_ui.requestAll();
-				}
-			}
-			if (su.ui.nav.daddy){
-				var child_ui = _this.getFreeView(this, 'nav');
-				if (child_ui){
-					su.ui.nav.daddy.append(child_ui.getA());
-					child_ui.requestAll();
-				}
-			}
-		});
+		
 	},
 	getURL: function() {
 		return '?q=' + encodeURIComponent(this.q || '');

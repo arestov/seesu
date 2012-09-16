@@ -11,10 +11,10 @@ suServView.extendTo(songUI, {
 	state_change : {
 		"mp-show": function(opts, old_opts) {
 			if (opts){
-				$(su.ui.els.slider).addClass("show-zoom-to-track");
+				$(app_view.els.slider).addClass("show-zoom-to-track");
 				this.activate();
 			} else if (old_opts) {
-				$(su.ui.els.slider).removeClass("show-zoom-to-track");
+				$(app_view.els.slider).removeClass("show-zoom-to-track");
 				this.deactivate();
 			}
 			
@@ -153,7 +153,7 @@ suServView.extendTo(songUI, {
 	},
 	parts_builder: {
 		context: function() {
-			return su.ui.samples.track_c.clone(true);
+			return app_view.samples.track_c.clone(true);
 		},
 		tidominator: function() {
 			return this.requirePart('context').children('.track-info-dominator');
@@ -185,7 +185,7 @@ suServView.extendTo(songUI, {
 			});
 		$('<span class="nothing-toy"></span>').appendTo(this.node);
 
-		var buttmen = su.ui.els.play_controls.node.clone(true).data('mo', this.md);
+		var buttmen = app_view.els.play_controls.node.clone(true).data('mo', this.md);
 			buttmen.find('.pc').data('mo', this.md);
 		this.c.prepend(buttmen);
 
@@ -288,7 +288,7 @@ suServView.extendTo(songUI, {
 					prev: false
 				};
 				
-				su.ui.infoGen(this.base_info, c, localize("more-ab-info"));
+				su.app_md.infoGen(this.base_info, c, localize("more-ab-info"));
 				//su.ui.infoGen(this.files, c, 'files: %s');
 				//su.ui.infoGen(this.videos, c, 'video: %s');
 				if (c.str){
@@ -341,7 +341,7 @@ suServView.extendTo(songUI, {
 	createCurrentUserUI: function(mo, user_info){
 		if (this.t_users && !this.t_users.current_user){
 			var div = this.t_users.current_user = $('<div class="song-listener current-user-listen"></div>');
-			su.ui.createUserAvatar(user_info, div);
+			app_view.createUserAvatar(user_info, div);
 			this.t_users.list.append(div);
 			return div;
 		}
@@ -381,7 +381,7 @@ suServView.extendTo(songUI, {
 						var uul = $("<ul></ul>");
 						for (var i=0; i < r.done.length; i++) {
 							if (r.done[i] && r.done[i].length){
-								above_limit_value = su.ui.createSongListeners(r.done[i], uul, above_limit_value, current_user, _this.rowcs.users_context);
+								above_limit_value = app_view.createSongListeners(r.done[i], uul, above_limit_value, current_user, _this.rowcs.users_context);
 							}
 							
 						}; 

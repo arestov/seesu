@@ -30,7 +30,7 @@
 					this.c.removeClass('hidden');
 					
 					if (!opts.closed){
-						$(su.ui.els.slider).addClass('show-search');
+						$(app_view.els.slider).addClass('show-search');
 					}
 				} else {
 					this.blur();
@@ -41,7 +41,7 @@
 				if (state){
 					this.blur();
 				} else {
-					$(su.ui.els.slider).addClass('show-search-results');
+					$(app_view.els.slider).addClass('show-search-results');
 				}
 			},
 			"can-expand": function(state) {
@@ -58,7 +58,7 @@
 			this._super();
 		},
 		blur: function() {
-			$(su.ui.els.slider).removeClass('show-search show-search-results');
+			$(app_view.els.slider).removeClass('show-search show-search-results');
 		},
 		prop_change: {
 			enter_item: function(item){
@@ -103,6 +103,8 @@
 
 
 	provoda.addPrototype("Investigation", {
+		
+		model_name: 'invstg',
 		init: function() {
 			this._super();
 			this.sections = [];
@@ -147,8 +149,11 @@
 		loading:function(){
 			this.trigger('stateChange', 'loading');
 		},
-		loaded: function(){
-			this.trigger('stateChange', 'complete');
+		loaded: function(q){
+			if (!q || this.doesNeed(q)){
+				this.trigger('stateChange', 'complete');
+			}
+			
 		},
 		remarkStyles: function(){
 			var c = 0;

@@ -274,7 +274,7 @@ suServView.extendTo(mfCorUI, {
 		}
 		this.video = {
 			link: link.addClass('active'),
-			node: $(su.ui.create_youtube_video(id)).appendTo(c)
+			node: $(app_view.create_youtube_video(id)).appendTo(c)
 		};
 	},
 	hideYoutubeVideo: function(){

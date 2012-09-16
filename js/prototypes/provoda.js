@@ -188,13 +188,13 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	state: function(name){
 		return this.states[name];
 	},
-	replaceState: function(name, value) {
+	replaceState: function(name, value, skip_handler) {
 		if (name){
 			var obj_to_change	= this.states,
 				old_value		= obj_to_change && obj_to_change[name],
 				method;
 
-			var stateChanger = this['stch-' + name] || (this.state_change && this.state_change[name]);
+			var stateChanger = !skip_handler && this['stch-' + name] || (this.state_change && this.state_change[name]);
 			if (stateChanger){
 				if (typeof stateChanger == 'function'){
 					method = stateChanger;
@@ -303,6 +303,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.views = [];
 		this.views_index = {};
 		this.children = [];
+		this.children_models = {};
 		return this;
 	},
 	removeView: function(view){
@@ -351,6 +352,16 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			this.children[i].die();
 		}
 		this.trigger('die');
+	},
+	getChildren: function(collection_name) {
+		return this.children_models[collection_name]
+	},
+	setChildren: function(collection_name, array, changed) {
+		this.children_models[collection_name] = array;
+		if (changed){
+			this.sendCollectionChange(collection_name, array);
+		}
+		return this;
 	},
 	addChild: function() {
 		this.children.push.apply(this.children, arguments);
@@ -409,6 +420,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		name = name || 'main';
 		(this.views_index[name] = this.views_index[name] || []).push(v);
 		return this;
+	},
+	sendCollectionChange: function(collection_name, array) {
+		this.removeDeadViews();
+		for (var i = 0; i < this.views.length; i++) {
+			this.views[i].collectionChange(collection_name, array);
+		}
 	},
 	_updateProxy: function(name, value){
 		value = value || false;
@@ -493,20 +510,32 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.opts = opts;
 		this._super();
 		this.children = [];
+		this.children_models = {};
 		this.view_parts = {};
 		if (!md){
 			throw new Error('give me model!');
 		}
 		this.md = md;
 		this.undetailed_states = {};
+		this.undetailed_children_models = {};
+		this.children_viewed = {};
 
 		cloneObj(this.undetailed_states, this.md.states);
+		cloneObj(this.undetailed_children_models, this.md.children_models);
 		return this;
 	},
 	children_views: {},
+	connectChildrenModels: function() {
+		var udchm = this.undetailed_children_models;
+		delete this.undetailed_children_models
+		this.setCollections(udchm);
+		 
+	},
 	connectStates: function() {
-		this._setStates(this.undetailed_states);
+		var states = this.undetailed_states;
 		delete this.undetailed_states;
+		this._setStates(states);
+		
 	},
 	requestDetailes: function(){
 		if (this.createDetailes){
@@ -619,7 +648,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this.requestDeepDetLevels();
 	},
 	requestDeepDetLevels: function(){
-		if (this._states_set_processing){
+		if (this._states_set_processing || this._collections_set_processing){
 			return this;
 		}
 		//iterate TREE
@@ -688,7 +717,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		var states_list = [];
 		for (var name in states){
-			this.changeState(name, states[name], false, true);
+			this.changeState(name, states[name], false);
 			states_list.push(name);
 		}
 		
@@ -767,7 +796,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	_updateProxy: function(name, value){
 		this.changeState(name, value, true);
 	},
-	changeState: function(name, value, allow_complex_watchers, skip_animation_frame) {
+	changeState: function(name, value, allow_complex_watchers, skip_handler) {
 		value = value || false;
 
 		if (this.undetailed_states){
@@ -775,7 +804,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return this;
 		}
 
-		var old_value = this.replaceState(name, value);
+		var old_value = this.replaceState(name, value, skip_handler);
 		if (old_value){
 			this.trigger('state-change.' + name, {type: name, value: value, old_value: old_value[0]});
 			if (allow_complex_watchers){
@@ -789,11 +818,47 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	change: function(name, value){
 		this._updateProxy(name, value);
 	},
+	overrideStateSilently: function(name, value) {
+		this.changeState(name, value, true, true);
+	},
 	promiseStateUpdate: function(name, value) {
 		this._updateProxy(name, value);
 	},
 	setVisState: function(name, value) {
 		this._updateProxy('vis-' + name, value);
+	},
+	/*
+	getChildren: function(collection_name) {
+		return this.children_models[collection_name];
+	},
+	setChildren: function(collection_name, array, changed) {
+		this.children_models[collection_name] = array;
+		if (changed){
+			this.sendCollectionChange(collection_name, array);
+		}
+		return this;
+	},*/
+	setCollections: function(collections) {
+		this._collections_set_processing = true;
+		for (var i in collections) {
+			this.collectionChange(i, collections[i]);
+		}
+		this._collections_set_processing = false;
+	},
+	collectionChange: function(name, array) {
+		if (this.undetailed_children_models){
+			this.undetailed_children_models[name] = array;
+			return this;
+		}
+
+
+		var old_value = this.children_models[name];
+		this.children_models[name] = array;
+		var collectionChanger = this['collch-' + name];
+		if (collectionChanger){
+			collectionChanger.call(this, name, array, old_value);
+		}
+		return this;
 	},
 	parts_builder: {
 		

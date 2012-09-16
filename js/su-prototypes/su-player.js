@@ -204,10 +204,8 @@ var seesuPlayer;
 									});
 								$(function(){
 									$(document.body).append(pcon);
-									//$(su.ui.nav).after(pcon);
 								});
 								
-								//$(document.body).append(_this.c);
 							}
 						});
 
@@ -257,10 +255,7 @@ var seesuPlayer;
 								$(function(){
 									$(document.body).append(pcon);
 									pcore.appended();
-									//$(su.ui.nav).after(pcon);
 								});
-								
-								//$(document.body).append(_this.c);
 							}
 						});
 					});

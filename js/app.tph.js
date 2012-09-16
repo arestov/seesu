@@ -10,6 +10,7 @@ appTelegrapher.prototype = {
 
 		view.init(md, false, {d: wd.document, allow_url_history: true, can_die: can_die});
 		view.requestAll();
+		this.app_view = view;
 	},
 	appView: appModelView
 };

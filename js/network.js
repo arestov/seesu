@@ -48,7 +48,7 @@ provoda.View.extendTo(vkLoginUI, {
 		}
 	},
 	createBase: function() {
-		this.c = su.ui.samples.vklc.clone();
+		this.c = app_view.samples.vklc.clone();
 		var _this = this;
 		this.c.find('.sign-in-to-vk').click(function(e){
 			_this.md.requestAuth();

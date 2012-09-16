@@ -64,7 +64,7 @@ var test_pressed_node = function(e, opts){
 		  }
 		  else if (bN(class_list.indexOf('hint-query'))){
 			var query = clicked_node.text();
-			su.ui.search(query);
+			su.app_md.search(query);
 			clicked_node.text(seesu.popular_artists[(Math.random()*10).toFixed(0)]);
 			seesu.trackEvent('Navigation', 'hint artist');
 			

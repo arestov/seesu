@@ -1,3 +1,4 @@
+var songsListView 
 (function(){
 	"use strict";
 	var songsListBaseView = function() {};
@@ -7,14 +8,14 @@
 
 
 
-	var songsListView = function(pl){};
+	songsListView = function(pl){};
 	songsListBaseView.extendTo(songsListView, {
 		'stch-mp-show': function(opts) {
 			if (opts){
 				this.c.removeClass('hidden');
-				$(su.ui.els.slider).addClass('show-player-page');
+				$(app_view.els.slider).addClass('show-player-page');
 			} else {
-				$(su.ui.els.slider).removeClass('show-player-page');
+				$(app_view.els.slider).removeClass('show-player-page');
 				this.c.addClass('hidden');
 			}
 		},
@@ -33,7 +34,7 @@
 				if (error == 'vk_auth'){
 					this.error_b = {
 						v: error,
-						n: $('<li></li>').append(su.ui.samples.vk_login.clone()).prependTo(this.c)
+						n: $('<li></li>').append(app_view.samples.vk_login.clone()).prependTo(this.c)
 					};
 				} else {
 					this.error_b = {
@@ -44,7 +45,7 @@
 			}
 		},
 		createPanel: function() {
-			this.panel = su.ui.samples.playlist_panel.clone();
+			this.panel = app_view.samples.playlist_panel.clone();
 
 			var actsrow_view = this.md.plarow.getFreeView(this);
 			if (actsrow_view){
@@ -93,28 +94,7 @@
 		}
 		su.on('settings.dont-rept-pl', doNotReptPl);
 
-		this.regDOMDocChanges(function() {
-			var child_ui;
-			if (su.ui && su.ui.els.artsTracks){
-
-
-				child_ui = _this.getFreeView(this);
-				if (child_ui){
-					su.ui.els.artsTracks.append(child_ui.getA());
-
-					
-					child_ui.requestAll();
-				}
-			}
-
-			if (su.ui.nav.daddy){
-				child_ui = _this.getFreeView(this, 'nav');
-				if (child_ui){
-					su.ui.nav.daddy.append(child_ui.getA());
-					child_ui.requestAll();
-				}
-			}
-		});
+		
 			
 	};
 

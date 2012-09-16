@@ -3,6 +3,7 @@
 var counter = 0;
 
 provoda.addPrototype("baseSong",{
+	model_name: "song",
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){

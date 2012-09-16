@@ -55,6 +55,15 @@ provoda.Model.extendTo(appModel, {
 	init: function(su){
 		this._super();
 		this.su = su;
+		this.navigation = [];
+		this.children_models = {
+			navigation: [],
+			start_page: [],
+			invstg: [],
+			artcard: [],
+			playlist: []
+		};
+
 
 		if (app_env.check_resize){
 			this.updateState('slice-for-height', true);
@@ -67,6 +76,9 @@ provoda.Model.extendTo(appModel, {
 
 		this.map = new browseMap();
 		this.start_page = (new mainLevel()).init(su);
+		this.children_models.navigation.push(this.start_page);
+		this.children_models.start_page.push(this.start_page);
+
 		this.map
 			.init(this.start_page)
 			.on('map-tree-change', function(nav_tree) {
@@ -84,8 +96,6 @@ provoda.Model.extendTo(appModel, {
 						navi.set(nu, data);
 					}
 				});
-				
-
 				//console.log(arguments);
 			})
 			.on('every-url-change', function(nv, ov, replace) {
@@ -117,10 +127,38 @@ provoda.Model.extendTo(appModel, {
 		if (state_recovered){
 			opts.state_recovered = true;
 		}
+		if (!state_recovered && !opts.ext_search_query){
+			su.trigger('handle-location');
+		}
 
 		//big_timer.q.push([tracking_opts.category, 'process-thins-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui in process', 100]);
 		this.start_page.updateState('can-expand', true);
+
+	},
+	infoGen: function(dp, c, base_string){
+		if (dp){
+			if (c.prev){
+				c.str += ', ';
+			}
+			c.str += base_string.replace('%s', dp);
+			if (!c.prev){
+				c.prev = true
+			}
+		}	
+	},
+	getRemainTimeText: function(time_string, full){
+		var d = new Date(time_string);
+		var remain_desc = '';
+		if (full){
+			remain_desc += localize('wget-link') + ' ';
+		}
 		
+		
+		remain_desc += d.getDate() + 
+		" " + localize('m'+(d.getMonth()+1)) + 
+		" " + localize('attime') + ' ' + d.getHours() + ":" + d.getMinutes();
+		
+		return remain_desc;
 	},
 	changeNavTree: function(nav_tree) {
 		this.nav_tree = $filter(nav_tree, 'resident');
@@ -163,10 +201,45 @@ provoda.Model.extendTo(appModel, {
 		//mainaly for hash url games
 		this.map.startNewBrowse(url_restoring);
 	},
+	bindMMapStateChanges: function(md, place) {
+		var _this = this;
+		var navigation = this.getChildren('navigation');
+		var target_array = this.getChildren(place) || [];
+
+		md.on('mpl-attach', function() {
+			if (navigation.indexOf(md) == -1) {
+				navigation.push(md);
+				_this.setChildren('navigation', navigation, true);
+			}
+			if (place){
+				if (target_array.indexOf(md) == -1){
+					target_array.push(md);
+					_this.setChildren(place, target_array, true);
+				}
+			}
+
+		});
+		md.on('mpl-detach', function(){
+			var new_nav = arrayExclude(navigation, md);
+			if (new_nav.length != navigation.length){
+				_this.setChildren('navigation', new_nav, true);
+			}
+			if (place){
+				var new_tarr = arrayExclude(target_array, md);
+
+				if (new_tarr.length != target_array.length){
+					_this.setChildren(place, new_tarr, true);
+				}
+			}
+			
+		});
+	},
 	showResultsPage: function(query, no_navi){
 		var lev;
 		if (!su.search_el || !su.search_el.lev.isOpened()){
-			lev = this.map.goDeeper(false, createSuInvestigation());
+			var md = createSuInvestigation();
+			this.bindMMapStateChanges(md, 'invstg');
+			lev = this.map.goDeeper(false, md);
 		} else {
 			lev = su.search_el.lev;
 		}
@@ -176,7 +249,9 @@ provoda.Model.extendTo(appModel, {
 
 	},
 	showArtcardPage: function(artist, save_parents, no_navi){
-		var lev = this.map.goDeeper(save_parents, new artCard(artist));
+		var md = new artCard(artist);
+		this.bindMMapStateChanges(md, 'artcard');
+		var lev = this.map.goDeeper(save_parents, md);
 	},
 	showStaticPlaylist: function(pl, save_parents, no_navi) {
 		if (pl.lev && pl.lev.canUse() && !pl.lev.isOpened()){
@@ -186,6 +261,7 @@ provoda.Model.extendTo(appModel, {
 		}
 	},
 	show_playlist_page: function(pl, save_parents, no_navi){
+		this.bindMMapStateChanges(pl, 'playlist');
 		var lev = this.map.goDeeper(save_parents, pl);
 	},
 	show_track_page: function(mo, no_navi){
@@ -194,6 +270,7 @@ provoda.Model.extendTo(appModel, {
 		
 		var pl = mo.plst_titl;
 			pl.lev.sliceTillMe(true);
+		this.bindMMapStateChanges(mo);
 		var lev = this.map.goDeeper(true, mo);
 	},
 
@@ -214,7 +291,11 @@ provoda.Model.extendTo(appModel, {
 		pl_r.setLoader(function(paging_opts) {
 			
 			var request_info = {};
-			lfm.get('tag.getTopArtists',{'tag':tag, limit: paging_opts.page_limit, page: paging_opts.next_page})
+			lfm.get('tag.getTopArtists',{
+				tag:tag,
+				limit: paging_opts.page_limit,
+				page: paging_opts.next_page
+			})
 				.done(function(r){
 					var artists = r.topartists.artist;
 					var track_list = [];
@@ -328,7 +409,11 @@ provoda.Model.extendTo(appModel, {
 			pl.setLoader(function(paging_opts) {
 				
 				var request_info = {};
-				lfm.get('artist.getTopTracks', {'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
+				lfm.get('artist.getTopTracks', {
+					'artist': artist, 
+					limit: paging_opts.page_limit, 
+					page: paging_opts.next_page
+				})
 					.done(function(r){
 						if (r.error){
 							pl.loadComplete(true);
@@ -413,7 +498,11 @@ provoda.Model.extendTo(appModel, {
 			data: {country: country, metro: metro}
 		}).loading();
 
-		lfm.get('geo.getMetroUniqueTrackChart', {country: country, metro: metro, start: new Date - 60*60*24*7})
+		lfm.get('geo.getMetroUniqueTrackChart', {
+			country: country, 
+			metro: metro, 
+			start: new Date - 60*60*24*7
+		})
 			.done(function(r){
 				if (r.error){
 					pl_r.loadComplete(true);
@@ -452,7 +541,11 @@ provoda.Model.extendTo(appModel, {
 
 			pl.setLoader(function(paging_opts){
 				var request_info = {};
-				lfm.get('artist.getSimilar',{'artist': artist, limit: paging_opts.page_limit, page: paging_opts.next_page})
+				lfm.get('artist.getSimilar',{
+					artist: artist, 
+					limit: paging_opts.page_limit, 
+					page: paging_opts.next_page
+				})
 					.done(function(r){
 						var artists = r.similarartists.artist;
 						var track_list = [];
@@ -485,236 +578,63 @@ provoda.Model.extendTo(appModel, {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-	setSearchInputValue: function(value) {
-		this.els.search_input.val(value);
+	
+	"stch-search-query": function(state) {
+		
 	},
 	search: function(query, no_navi, new_browse){
 		if (new_browse){
 			this.showStartPage();
 		}
-		if (su.search_query != query){
+	//	this.updateState('search-query', query);
+
+		var old_v = this.start_page.state('search-query');
+		if (query != old_v){
+			if (!query) {
+				su.app_md.showStartPage();
+			} else {
+				su.app_md.showResultsPage(query, no_navi);
+			}
+
+		}
+
+	
+
+		this.start_page.updateState('search-query', query);
+		
+	},
+
+	/*
+	if (su.search_query != query){
 			su.search_query = query;
 			this.setSearchInputValue(query);
 		}
 		inputChange(query, this.els.search_label, no_navi);
-	}
 
-
-
-});
-
-mainLevel = function() {};
-
-
-suMapModel.extendTo(mainLevel, {
-	page_name: 'start page',
-	showPlaylists: function(){
-		su.ui.search(':playlists');
+		setSearchInputValue: function(value) {
+		this.els.search_input.val(value);
 	},
-	init: function(su){
-		this._super();
-		this.su = su;
-		this.updateState('nav-title', 'Seesu start page');
-
-		this.fast_pstart = new FastPSRow(this);
 
 
-		var _this = this;
 
-		this.regDOMDocChanges(function() {
-			var this_view = _this.getFreeView(this).appended();
-			this_view.requestAll();
-
-			if (su.ui.nav.daddy){
-				var child_ui = _this.getFreeView(this, 'nav');
-				if (child_ui){
-					su.ui.nav.daddy.append(child_ui.getA());
-					child_ui.requestAll();
-				}
+	if (input_value != su.search_query){
+				su.search_query = input_value;
+				inputChange(input_value, _this.els.search_label);
 			}
-
 			
-		});
-		this.closed_messages = suStore('closed-messages') || {};
-		return this;
-	},
-	short_title: 'Seesu',
-	getTitle: function() {
-		return this.short_title;
-	},
-	messages: {
-		"rating-help": function(state){
-			if (su.app_pages[su.env.app_type]){
-				if (state){
-					this.updateState('ask-rating-help', su.app_pages[su.env.app_type]);
-				} else {
-					this.updateState('ask-rating-help', false);
-				}
-				
-			}
-		}
-	},
-	closeMessage: function(message_name) {
-		if (this.messages[message_name] && !this.closed_messages[message_name]){
-			this.closed_messages[message_name] = true;
-			suStore('closed-messages', this.closed_messages, true);
-			this.messages[message_name].call(this, false);
-		}
-	},
-	showMessage: function(message_name) {
-		if (this.messages[message_name] && !this.closed_messages[message_name]){
-			this.messages[message_name].call(this, true);
+	inputChange: function(input_value, label, no_navi){
+		label.removeClass('loading');
+
+		if (!input_value) {
+			su.app_md.showStartPage();
+		} else {
+			su.app_md.showResultsPage(input_value, no_navi);
 		}
 	}
-});
-
-
-var FastPSRowView = function(){};
-ActionsRowUI.extendTo(FastPSRowView, {
-	createBase: function(c){
-		this.c = this.parent_view.els.fast_personal_start;
-		this.row_context = this.c.find('.row-context');
-		this.arrow = this.row_context.children('.rc-arrow');
-		this.buttons_panel = this.c;
-	}
-});
-
-
-var FastPSRow = function(parent_m){
-	this.init(parent_m);
-};
-
-PartsSwitcher.extendTo(FastPSRow, {
-	init: function(ml) {
-		this._super();
-		this.ml = ml;
-		this.updateState('active_part', false);
-		this.addPart(new LastfmRecommRow(this, ml));
-		this.addPart(new LastfmLoveRow(this, ml));
-	//	this.addPart(new MultiAtcsRow(this, pl));
-	//	this.addPart(new PlaylistSettingsRow(this, pl));
-	},
-	ui_constr: FastPSRowView
-});
-
-
-
-
-var LastfmRecommRowView = function(){};
-	BaseCRowUI.extendTo(LastfmRecommRowView, {
-		createDetailes: function(){
-
-			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-			var md = this.md;
-			this.c = parent_c.children('.lfm-recomm');
-			this.button = buttons_panel.find('#lfm-recomm').click(function(){
-				if (!lfm.sk){
-					md.switchView();
-				} else {
-					render_recommendations();
-				}
-				
-				return false;
-			});
-		},
-		expand: function() {
-			if (this.expanded){
-				return;
-			} else {
-				this.expanded = true;
-			}
-			var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView(this);
-			if (lfm_reccoms_view){
-				this.c.append(lfm_reccoms_view.getA());
-				this.addChild(lfm_reccoms_view);
-				
-			}
-			this.requestAll();
-		}
-	});
-
-
-
-
-var LastfmRecommRow = function(actionsrow){
-		this.init(actionsrow);
-};
-BaseCRow.extendTo(LastfmRecommRow, {
-	init: function(actionsrow){
-		this.actionsrow = actionsrow;
-		this._super();
-		//this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
-		this.lfm_reccoms = new LfmReccoms(this.actionsrow.ml.su.lfm_auth, this);
-		this.addChild(this.lfm_reccoms);
-	},
-	row_name: 'lastfm-recomm',
-	ui_constr: LastfmRecommRowView
-});
-
-
-var LastfmLoveRowView = function(){};
-	BaseCRowUI.extendTo(LastfmLoveRowView, {
-		createDetailes: function(){
-			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-			var md = this.md;
-			this.c = parent_c.children('.lfm-loved');
-			this.button = buttons_panel.find('#lfm-loved').click(function(){
-				if (!lfm.sk){
-					md.switchView();
-				} else {
-					render_loved();
-				}
-				
-				return false;
-			});
-		},
-		expand: function() {
-			if (this.expanded){
-				return;
-			} else {
-				this.expanded = true;
-			}
-			var lfm_loves_view = this.md.lfm_loves.getFreeView(this);
-			if (lfm_loves_view){
-				this.c.append(lfm_loves_view.getA());
-				this.addChild(lfm_loves_view);
-				
-			}
-			this.requestAll();
-		}
-	});
-
-
-
-
-var LastfmLoveRow = function(actionsrow){
-		this.init(actionsrow);
-};
-BaseCRow.extendTo(LastfmLoveRow, {
-	init: function(actionsrow){
-		this.actionsrow = actionsrow;
-		this._super();
-		//this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
-		this.lfm_loves = new LfmLoved(this.actionsrow.ml.su.lfm_auth, this);
-		this.addChild(this.lfm_loves);
-	},
-	row_name: 'lastfm-love',
-	ui_constr: LastfmLoveRowView
-});
-
-
-/*
-
-
-
-
-
-
-
 */
 
 
 
+});
 
 })();

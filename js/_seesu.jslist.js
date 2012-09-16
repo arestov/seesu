@@ -14,7 +14,6 @@ var jsLoadComplete,
 	"js/app_serv.js",
 	"js/libs/localizer.js",
 	"js/libs/w_storage.js",
-	"js/seesu.ui.dom_ready.js",
 	"js/common-libs/jquery-1.8.0.mod.min.js",
 	
 	
@@ -42,12 +41,13 @@ var jsLoadComplete,
 	"js/network.lastfm.js",
 	"js/lastfm.data.js",
 	"js/su-prototypes/su.serv-prototypes.js",
-	"js/seesu.star-page-blocks.js",
 
 	"js/views/navigation.js",
 
-	"js/seesu.ui.views.js",
-	"js/seesu.ui.js",
+
+	"js/seesu.main_level.js",
+	"js/app_md.js",
+	"js/seesu.artcard.js",
 	"js/seesu.s.js",
 	"js/libs/mp3_search.js",
 	"js/su-prototypes/su-song.ui.js",

@@ -122,7 +122,7 @@ button_menu.prototype = {
 			var sector_vertical = height/_this.data('buttmen').sectors;
 			var sector_horizontal = width/_this.data('buttmen').sectors;
 			
-			$(seesu.ui.d).mousemove(function(e){
+			$(d).mousemove(function(e){
 				e.preventDefault();
 				var x = e.pageX;
 				var y = e.pageY;

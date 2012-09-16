@@ -37,15 +37,7 @@ var song;
 		this.mf_cor.on("error", function(can_play) {
 			_this.player.trigger("song-play-error", _this, can_play);
 		});
-		this.regDOMDocChanges(function() {
-			if (su.ui.nav.daddy){
-				var child_ui = _this.getFreeView(this, 'nav');
-				if (child_ui){
-					su.ui.nav.daddy.append(child_ui.getA());
-					child_ui.requestAll();
-				}
-			}
-		});
+		
 		this.watchStates(['files_search', 'marked_as'], function(files_search, marked_as) {
 			if (marked_as && files_search && files_search.complete){
 				this.updateState('can-expand', true);
