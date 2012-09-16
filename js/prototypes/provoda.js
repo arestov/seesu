@@ -363,8 +363,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 		return this;
 	},
-	addChild: function() {
-		this.children.push.apply(this.children, arguments);
+	addChild: function(md, name) {
+		this.children.push.call(this.children, md);
 	},
 	getC: function(name){
 		throw new Error('take it easy');
@@ -545,6 +545,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._detailed = true;
 		if (!this.manual_states_connect){
 			this.connectStates();
+			this.connectChildrenModels();
 		}
 		
 		this.appendCon();
@@ -586,11 +587,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 			view.init(md, this, opts);
 			md.addView(view, view_space);
+			this.addChildView(view, child_name);
 			return view;
 		}
 	},
-	addChild: function() {
-		this.children.push.apply(this.children, arguments);
+	addChildView: function(view, child_name) {
+		this.children.push.call(this.children, view);
+	},
+	addChild: function(view, child_name) {
+		this.children.push.call(this.children, view);
 	},
 	die: function(){
 		if (!this.dead){
@@ -616,21 +621,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.puppet_model = puppet_model;
 		}
 		this.setStates(md.states);
-		return this;
-	},
-	wasAppended: function() {
-		return !!this.append_done;
-	},
-	appended: function(parent_view){
-		this.append_done = true;
-		if (parent_view){
-			this.parent_view = parent_view;
-		}
-		if (this.appendChildren){
-			this.appendChildren();
-			throw new Error('use other way')
-		}
-		
 		return this;
 	},
 	getT: function(){

@@ -61,7 +61,7 @@ provoda.View.extendTo(appModelView, {
 		return !this.checkLiveState || !this.checkLiveState();
 	},
 	children_views: {
-		"start_page" : {
+		start_page : {
 			main: mainLevelUI,
 			nav: mainLevelNavUI
 		},
@@ -89,7 +89,6 @@ provoda.View.extendTo(appModelView, {
 			var view = _this.getFreeChildView(md_name, el, 'nav');
 			if (view){
 				_this.nav.daddy.append(view.getA());
-				_this.addChild(view);
 			}
 
 		});
@@ -103,7 +102,6 @@ provoda.View.extendTo(appModelView, {
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
 				_this.els.searchres.append(view.getA());
-				_this.addChild(view);
 			}
 
 		});
@@ -116,7 +114,6 @@ provoda.View.extendTo(appModelView, {
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
 				_this.els.artcards.append(view.getA());
-				_this.addChild(view);
 			}
 
 		});
@@ -129,7 +126,6 @@ provoda.View.extendTo(appModelView, {
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
 				_this.els.artsTracks.append(view.getA());
-				_this.addChild(view);
 			}
 
 		});
@@ -138,9 +134,6 @@ provoda.View.extendTo(appModelView, {
 	},
 	'collch-start_page': function(name, arr) {
 		var view = this.getFreeChildView(name, arr[0], 'main');
-		if (view){
-			this.addChild(view);
-		}
 		this.requestAll();
 	},
 	manual_states_connect: true,

@@ -1,64 +1,9 @@
-var songsListView 
+var songsList;
 (function(){
 	"use strict";
-	var songsListBaseView = function() {};
-	provoda.extendFromTo("songsListBaseView", suServView, songsListBaseView);
+
 	var songsListBase = function() {};
 	provoda.extendFromTo("songsListBase", suMapModel, songsListBase);
-
-
-
-	songsListView = function(pl){};
-	songsListBaseView.extendTo(songsListView, {
-		'stch-mp-show': function(opts) {
-			if (opts){
-				this.c.removeClass('hidden');
-				$(app_view.els.slider).addClass('show-player-page');
-			} else {
-				$(app_view.els.slider).removeClass('show-player-page');
-				this.c.addClass('hidden');
-			}
-		},
-		'stch-mp-blured': function(state) {
-			if (state){
-				
-			} else {
-				
-			}
-		},
-		'stch-error': function(error){
-			if (this.error_b && this.error_b.v !== error){
-				this.error_b.n.remove();
-			}
-			if (error){
-				if (error == 'vk_auth'){
-					this.error_b = {
-						v: error,
-						n: $('<li></li>').append(app_view.samples.vk_login.clone()).prependTo(this.c)
-					};
-				} else {
-					this.error_b = {
-						v: error,
-						n: $('<li>' + localize('nothing-found','Nothing found') + '</li>').appendTo(this.c)
-					};
-				}
-			}
-		},
-		createPanel: function() {
-			this.panel = app_view.samples.playlist_panel.clone();
-
-			var actsrow_view = this.md.plarow.getFreeView(this);
-			if (actsrow_view){
-				this.addChild(actsrow_view);
-			}
-			
-			
-			return this;
-		}
-	});
-
-
-
 	
 
 	songsList = function(params, first_song, findMp3, player){
@@ -78,8 +23,10 @@ var songsListView
 		this.findMp3 = findMp3;
 		this.findSongOwnPosition(first_song);
 
-		this.plarow = new PlARow();
-		this.plarow.init(this);
+		var plarow = new PlARow();
+		plarow.init(this);
+
+		this.setChildren('plarow', [plarow]);
 
 
 		this.changed();
@@ -100,10 +47,6 @@ var songsListView
 
 
 	songsListBase.extendTo(songsList, {
-		ui_constr: {
-			main: songsListView,
-			nav: playlistNavUI
-		},
 		page_name: 'playlist',
 		getURL: function(){
 			var url ='';
@@ -165,23 +108,6 @@ var songsListView
 		}
 	});
 	
-	
-
-
-
-	var PlARowView = function() {};
-	ActionsRowUI.extendTo(PlARowView, {
-		createBase: function(c){
-		//	var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-			this.c = this.parent_view.panel;
-			this.row_context = this.c.find('.pla-row-content');
-			this.arrow = this.row_context.children('.rc-arrow');
-			this.buttons_panel = this.c.children().children('.pla-panel');
-			
-
-		}
-	});
-
 
 	var PlARow = function(){};
 
@@ -192,34 +118,8 @@ var songsListView
 			this.updateState('active_part', false);
 			this.addPart(new MultiAtcsRow(this, pl));
 			this.addPart(new PlaylistSettingsRow(this, pl));
-		},
-		ui_constr: PlARowView
-	});
-
-
-
-
-
-	var PlaylistSettingsRowView = function(){};
-	BaseCRowUI.extendTo(PlaylistSettingsRowView, {
-		"stch-dont-rept-pl": function(state) {
-			this.dont_rept_pl_chbx.prop('checked', !!state);
-		},
-		createDetailes: function(){
-			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-			this.c =  parent_c.children('.pla-settings');
-			this.button = buttons_panel.children('.pl-settings-button');
-
-			this.bindClick();
-			//var _this = this;
-			var md = this.md
-
-			this.dont_rept_pl_chbx = this.c.find('.dont-rept-pl input').click(function() {
-				md.setDnRp($(this).prop('checked'));
-			});
 		}
 	});
-
 
 
 	var PlaylistSettingsRow = function(actionsrow){
@@ -246,39 +146,11 @@ var songsListView
 			this.updateState('dont-rept-pl', state);
 			su.setSetting('dont-rept-pl', state);
 		},
-		row_name: 'pl-settings',
-		ui_constr: PlaylistSettingsRowView
+		row_name: 'pl-settings'
 	});
 
 
 
-	var MultiAtcsRowView = function(){};
-	BaseCRowUI.extendTo(MultiAtcsRowView, {
-		createDetailes: function(){
-			var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-			this.c =  parent_c.children('.pla-row');
-			this.button = buttons_panel.children('.pla-button');
-
-			
-
-			var _this = this;
-
-			this.c.find(".search-music-files").click(function(){
-				_this.md.actionsrow.pl.makePlayable(true);
-				su.trackEvent('Controls', 'make playable all tracks in playlist');
-				//
-			});
-			
-			this.c.find('.open-external-playlist').click(function(e){
-				_this.md.actionsrow.pl.makeExternalPlaylist();
-				su.trackEvent('Controls', 'make *.m3u');
-				//e.preventDefault();
-			});
-
-
-			this.bindClick();
-		}
-	});
 
 	var MultiAtcsRow = function(actionsrow){
 		this.init(actionsrow);
@@ -288,8 +160,7 @@ var songsListView
 			this.actionsrow = actionsrow;
 			this._super();
 		},
-		row_name: 'multiatcs',
-		ui_constr: MultiAtcsRowView
+		row_name: 'multiatcs'
 	});
 
 

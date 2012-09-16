@@ -107,6 +107,11 @@ provoda.Model.extendTo(PartsSwitcher, {
 		if (!this.context_parts[model.row_name]){
 			this.context_parts[model.row_name] = model;
 			this.addChild(model);
+
+			var array = this.getChildren('context_parts') || [];
+			array.push(model);
+			this.setChildren('context_parts', array, true);
+
 		}
 	},
 	getAllParts: function(){
@@ -132,21 +137,15 @@ var ActionsRowUI = function(){};
 suServView.extendTo(ActionsRowUI, {
 	createDetailes: function(){
 		this.createBase();
+	},
+	'collch-context_parts': function(name, arr) {
+		var _this = this;
+		$.each(arr, function(i, el){
+			var md_name = el.row_name;
+			_this.getFreeChildView(md_name, el, 'main');
+		});
 
-		this.parts_views = {};
-
-		var	parts = this.md.getAllParts();
-
-		
-
-		for (var i in parts) {
-			var pv = parts[i].getFreeView(this);
-			if (pv){
-				this.parts_views[i] = pv;
-				pv.appended();
-				this.addChild(pv);
-			}
-		}
+		this.requestAll();
 	},
 	state_change: {
 		active_part: function(nv, ov) {

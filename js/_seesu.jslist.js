@@ -45,12 +45,13 @@ var jsLoadComplete,
 	"js/views/navigation.js",
 
 
-	"js/seesu.main_level.js",
-	"js/app_md.js",
+	"js/models/main_level.js",
+	"js/models/app_md.js",
+	
 	"js/seesu.artcard.js",
 	"js/seesu.s.js",
 	"js/libs/mp3_search.js",
-	"js/su-prototypes/su-song.ui.js",
+	"js/views/su-song.ui.js",
 	"js/prototypes/song.m.js",
 
 	"js/su-prototypes/su-song.m.js",
@@ -64,9 +65,7 @@ var jsLoadComplete,
 	
 	"js/libs/lastfm.search.js",
 	"js/seesu.search.js",
-	"js/su-prototypes/su-playlists-row.js",
-	"js/su-prototypes/su-share-row.js",
-	"js/su-prototypes/su-love-row.js",
+	"js/models/song-actionsrow.js",
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
 
@@ -74,8 +73,10 @@ var jsLoadComplete,
 
 	"js/libs/c_buttmen.js",
 	"js/pressed_node_tester.js",
+	"js/views/song-actionsrow.js",
 	"js/views/main_level.js",
-	"js/app_view.js",
+	"js/views/songs-list.js",
+	"js/views/app_view.js",
 	"js/app.tph.js"
 	];
 	var bpathWrap = function(array){

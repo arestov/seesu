@@ -1,3 +1,95 @@
+var LastfmRecommRowView = function(){};
+BaseCRowUI.extendTo(LastfmRecommRowView, {
+	createDetailes: function(){
+
+		var parent_c = this.parent_view.row_context;
+		var buttons_panel = this.parent_view.buttons_panel;
+		var parent_c = this.parent_view.row_context; 
+		var buttons_panel = this.parent_view.buttons_panel;
+		var md = this.md;
+		this.c = parent_c.children('.lfm-recomm');
+		this.button = buttons_panel.find('#lfm-recomm').click(function(){
+			if (!lfm.sk){
+				md.switchView();
+			} else {
+				render_recommendations();
+			}
+			
+			return false;
+		});
+	},
+	expand: function() {
+		if (this.expanded){
+			return;
+		} else {
+			this.expanded = true;
+		}
+		var lfm_reccoms_view = this.md.lfm_reccoms.getFreeView(this);
+		if (lfm_reccoms_view){
+			this.c.append(lfm_reccoms_view.getA());
+			this.addChild(lfm_reccoms_view);
+			
+		}
+		this.requestAll();
+	}
+});
+
+var LastfmLoveRowView = function(){};
+BaseCRowUI.extendTo(LastfmLoveRowView, {
+	createDetailes: function(){
+		var parent_c = this.parent_view.row_context; 
+		var buttons_panel = this.parent_view.buttons_panel;
+		var md = this.md;
+		this.c = parent_c.children('.lfm-loved');
+		this.button = buttons_panel.find('#lfm-loved').click(function(){
+			if (!lfm.sk){
+				md.switchView();
+			} else {
+				render_loved();
+			}
+			
+			return false;
+		});
+	},
+	expand: function() {
+		if (this.expanded){
+			return;
+		} else {
+			this.expanded = true;
+		}
+		var lfm_loves_view = this.md.lfm_loves.getFreeView(this);
+		if (lfm_loves_view){
+			this.c.append(lfm_loves_view.getA());
+			this.addChild(lfm_loves_view);
+			
+		}
+		this.requestAll();
+	}
+});
+
+
+
+var FastPSRowView = function(){};
+ActionsRowUI.extendTo(FastPSRowView, {
+	createBase: function(c){
+		this.c = this.parent_view.els.fast_personal_start;
+		this.row_context = this.c.find('.row-context');
+		this.arrow = this.row_context.children('.rc-arrow');
+		this.buttons_panel = this.c;
+	},
+
+	children_views: {
+		"lastfm-recomm": {
+			main: LastfmRecommRowView
+		},
+		"lastfm-love": {
+			main: LastfmLoveRowView
+		}
+	}
+});
+
+
+
 
 
 var mainLevelUI = function(){};
@@ -28,9 +120,15 @@ suServView.extendTo(mainLevelUI, {
 			
 		});
 
-		var fast_pstart_view = this.md.fast_pstart.getFreeView(this, false);
-		if (fast_pstart_view){
-			this.addChild(fast_pstart_view);
+		
+	},
+	'collch-fast_pstart': function(name, arr) {
+		var view = this.getFreeChildView(name, arr[0], 'main');
+		this.requestAll();
+	},
+	children_views: {
+		fast_pstart: {
+			main: FastPSRowView
 		}
 	},
 	state_change: {

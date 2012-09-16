@@ -74,7 +74,6 @@ suServView.extendTo(mfComplectUI, {
 			var ui  = moplas_list[i].getFreeView(this);
 			if (ui){
 				this.lc.append(ui.getA())
-			//	ui.appended(this);
 				this.addChild(ui);
 			}
 		}
@@ -187,9 +186,6 @@ suServView.extendTo(mfCorUI, {
 				this.sall_songs.append(nof_ui.getA());
 
 				this.addChild(nof_ui);
-				//
-			//	nof_ui.appended(this);
-			//todo
 			}
 
 			this.messages_c = $('<div class="messages-c"></div>').appendTo(this.c);
@@ -214,7 +210,6 @@ suServView.extendTo(mfCorUI, {
 				this.addChild(vk_auth_mess);
 				if (vk_auth_mess_c){
 					this.messages_c.append(vk_auth_mess_c);
-				//	vk_auth_mess.appended(this);
 				}
 				
 			}
@@ -242,12 +237,10 @@ suServView.extendTo(mfCorUI, {
 					if (next_c){
 						$(next_c).before(ui_c);
 					} else {
-						//_this.video_c.before(ui_c);
 						_this.mufils_c.append(ui_c);
 					}
 				}
 				_this.addChild(cur_view);
-		//		cur_view.appended(_this);
 			};
 
 			for (var i = 0; i < pa.length; i++) {

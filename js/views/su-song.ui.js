@@ -5,9 +5,6 @@ suServView.extendTo(songUI, {
 		this.rowcs = {};
 		this.createBase();
 	},
-	appendChildren: function() {
-		//this.expand();
-	},
 	state_change : {
 		"mp-show": function(opts, old_opts) {
 			if (opts){
@@ -219,8 +216,6 @@ suServView.extendTo(songUI, {
 			this.addChild(this.mf_cor_view);
 			context.prepend(mf_cor_view_c);
 			
-			//this.mf_cor_view.appended(this);
-			//fixme - remove link to view (this.mf_cor_view) when dieing 
 		
 		}
 		

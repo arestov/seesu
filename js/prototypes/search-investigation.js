@@ -15,7 +15,6 @@
 				if (cur_ui){
 					this.addChild(cur_ui);
 					this.c.append(cur_ui.getA());
-				//	cur_ui.appended(this);
 
 				}
 			}
