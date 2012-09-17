@@ -24,8 +24,9 @@ var song;
 			}
 			
 		});
-		this.actionsrow = new TrackActionsRow(this);
-		this.addChild(this.actionsrow);
+		var actionsrow = new TrackActionsRow(this);
+		this.setChildren('actionsrow', actionsrow);
+		this.addChild(actionsrow);
 
 		this.mf_cor = new mfCor(this, this.omo);
 		this.addChild(this.mf_cor);
