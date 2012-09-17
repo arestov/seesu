@@ -53,21 +53,12 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 var seesuApp = function(version) {};
 appModel.extendTo(seesuApp, {
 	ui_constr: {
-	//	main: appModelView,
 		chrome_ext: ChromeExtensionButtonView,
 		opera_ext: OperaExtensionButtonView
 	},
 	init: function(version){
 		this._super();
 		this.version = version;
-
-		this.children_models = {
-			navigation: [],
-			start_page: [],
-			invstg: [],
-			artcard: [],
-			playlist: []
-		};
 
 		this._url = get_url_parameters(location.search);
 		this.settings = {};
@@ -151,8 +142,10 @@ appModel.extendTo(seesuApp, {
 
 		
 		this.start_page = (new StartPage()).init(this);
-		this.children_models.navigation.push(this.start_page);
-		this.children_models.start_page.push(this.start_page);
+		this.setChild('navigation', [this.start_page]);
+		this.setChild('start_page', this.start_page);
+
+
 
 		this.map
 			.init(this.start_page)

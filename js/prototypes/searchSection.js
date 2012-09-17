@@ -63,7 +63,7 @@
 					this.message = $('<li></li>').text(text);
 					var butn_th = this.button && this.button.getThing();
 					if (butn_th){
-						butn_th(this.message);
+						butn_th.before(this.message);
 					} else{
 						this.c.append(this.message);
 					}

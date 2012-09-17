@@ -108,9 +108,9 @@ provoda.Model.extendTo(PartsSwitcher, {
 			this.context_parts[model.row_name] = model;
 			this.addChild(model);
 
-			var array = this.getChildren('context_parts') || [];
+			var array = this.getChild('context_parts') || [];
 			array.push(model);
-			this.setChildren('context_parts', array, true);
+			this.setChild('context_parts', array, true);
 
 		}
 	},

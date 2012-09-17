@@ -2,7 +2,7 @@ var appTelegrapher = function(){};
 appTelegrapher.prototype = {
 	init: function(wd, tracking_opts, can_die) {
 
-		var md = su.app_md;
+		var md = su;
 
 
 		var view = (new this.appView());

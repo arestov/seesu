@@ -15,7 +15,7 @@ mapLevelModel.extendTo(StartPage, {
 		var fast_pagestart = new FastPSRow();
 		fast_pagestart.init(this);
 
-		this.setChildren('fast_pstart', [fast_pagestart]);
+		this.setChild('fast_pstart', fast_pagestart);
 
 		this.closed_messages = suStore('closed-messages') || {};
 		return this;
@@ -103,7 +103,7 @@ BaseCRow.extendTo(LastfmRecommRow, {
 
 		var lfm_reccoms = new LfmReccoms();
 		lfm_reccoms.init(this.actionsrow.ml.su.lfm_auth, this);
-		this.setChildren('lfm_reccoms', [lfm_reccoms]);
+		this.setChild('lfm_reccoms', lfm_reccoms);
 		this.addChild(lfm_reccoms);
 
 
@@ -152,7 +152,7 @@ BaseCRow.extendTo(LastfmLoveRow, {
 		this._super();
 		var lfm_loves = new LfmLoved();
 		lfm_loves.init(this.actionsrow.ml.su.lfm_auth, this);
-		this.setChildren('lfm_loves', [lfm_loves]);
+		this.setChild('lfm_loves', lfm_loves);
 		this.addChild(lfm_loves);
 	},
 	row_name: 'lastfm-love'

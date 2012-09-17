@@ -51,7 +51,7 @@ BaseCRowUI.extendTo(LastfmRecommRowView, {
 			this.expanded = true;
 		}
 
-		var lfm_reccoms = this.getCollection('lfm_reccoms', true);
+		var lfm_reccoms = this.getMdChild('lfm_reccoms', true);
 		var lfm_reccoms_view = this.getFreeChildView('lfm_reccoms', lfm_reccoms, 'main');
 		this.c.append(lfm_reccoms_view.getA());
 
@@ -88,7 +88,7 @@ BaseCRowUI.extendTo(LastfmLoveRowView, {
 			this.expanded = true;
 		}
 
-		var lfm_loves = this.getCollection('lfm_loves', true);
+		var lfm_loves = this.getMdChild('lfm_loves', true);
 		var lfmlove_view = this.getFreeChildView('lfm_loves', lfm_loves, 'main');
 		this.c.append(lfmlove_view.getA());
 
@@ -154,8 +154,8 @@ suServView.extendTo(StartPageView, {
 
 		
 	},
-	'collch-fast_pstart': function(name, arr) {
-		var view = this.getFreeChildView(name, arr[0], 'main');
+	'collch-fast_pstart': function(name, md) {
+		var view = this.getFreeChildView(name, md, 'main');
 		this.requestAll();
 	},
 	children_views: {

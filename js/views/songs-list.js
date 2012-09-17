@@ -125,8 +125,8 @@ var songsListView;
 			this.panel = app_view.samples.playlist_panel.clone();			
 			return this;
 		},
-		'collch-plarow': function(name, arr) {
-			var view = this.getFreeChildView(name, arr[0], 'main');
+		'collch-plarow': function(name, md) {
+			var view = this.getFreeChildView(name, md, 'main');
 			this.requestAll();
 		},
 		children_views: {

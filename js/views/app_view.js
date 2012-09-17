@@ -6,7 +6,7 @@ provoda.View.extendTo(appModelView, {
 
 		var _this = this;
 		setTimeout(function() {
-			_this.buildSOM();
+			_this.buildAppDOM();
 		});
 		
 		if (this.opts.can_die && getDefaultView(d)){
@@ -132,8 +132,8 @@ provoda.View.extendTo(appModelView, {
 
 		this.requestAll();
 	},
-	'collch-start_page': function(name, arr) {
-		var view = this.getFreeChildView(name, arr[0], 'main');
+	'collch-start_page': function(name, md) {
+		var view = this.getFreeChildView(name, md, 'main');
 		this.requestAll();
 	},
 	manual_states_connect: true,
@@ -219,7 +219,7 @@ provoda.View.extendTo(appModelView, {
 		playing: 'icons/icon16p.png',
 		usual: 'icons/icon16.png'
 	},
-	buildSOM: function() {
+	buildAppDOM: function() {
 		var _this = this;
 		var d = this.d;
 		domReady(this.d, function() {

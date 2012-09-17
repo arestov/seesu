@@ -25,7 +25,7 @@ var song;
 			
 		});
 		var actionsrow = new TrackActionsRow(this);
-		this.setChildren('actionsrow', actionsrow);
+		this.setChild('actionsrow', actionsrow);
 		this.addChild(actionsrow);
 
 		this.mf_cor = new mfCor(this, this.omo);

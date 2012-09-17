@@ -44,7 +44,7 @@ var songsList;
 			} else {
 				this.palist.push(mo);
 			}
-			this.setChildren('song', this.palist);
+			this.setChild('song', this.palist);
 			if (!skip_changes){
 				if (this.onChanges){
 					this.onChanges(last_usable_song);
@@ -190,7 +190,7 @@ var songsList;
 			return this;
 		},
 		changed: function(){
-			this.setChildren('song', this.palist, true);
+			this.setChild('song', this.palist, true);
 			return this;
 		},
 		injectExpectedSongs: function(playlist) {

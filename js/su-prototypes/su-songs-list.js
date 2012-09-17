@@ -26,7 +26,7 @@ var songsList;
 		var plarow = new PlARow();
 		plarow.init(this);
 
-		this.setChildren('plarow', [plarow]);
+		this.setChild('plarow', plarow);
 
 
 		this.changed();

@@ -353,10 +353,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 		this.trigger('die');
 	},
-	getChildren: function(collection_name) {
+	getChild: function(collection_name) {
 		return this.children_models[collection_name]
 	},
-	setChildren: function(collection_name, array, changed) {
+	setChild: function(collection_name, array, changed) {
 		this.children_models[collection_name] = array;
 		if (changed){
 			this.sendCollectionChange(collection_name, array);
@@ -529,7 +529,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;
 		delete this.undetailed_children_models
-		this.setCollections(udchm);
+		this.setMdChildren(udchm);
 		 
 	},
 	connectStates: function() {
@@ -757,6 +757,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return this.view_parts[name];
 		} else {
 			this.view_parts[name] = this.parts_builder[name].call(this);
+			if (!this.view_parts[name]){
+				throw new Error('"return" me some build result please');
+			}
 			var stch_hands = this.getStateChangeHandlers();
 			for (var i in stch_hands){
 				if (i in this.states && typeof stch_hands[i] != 'function'){
@@ -818,25 +821,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	setVisState: function(name, value) {
 		this._updateProxy('vis-' + name, value);
 	},
-	/*
-	getChildren: function(collection_name) {
-		return this.children_models[collection_name];
-	},
-	setChildren: function(collection_name, array, changed) {
-		this.children_models[collection_name] = array;
-		if (changed){
-			this.sendCollectionChange(collection_name, array);
-		}
-		return this;
-	},*/
-	setCollections: function(collections) {
+	setMdChildren: function(collections) {
 		this._collections_set_processing = true;
 		for (var i in collections) {
 			this.collectionChange(i, collections[i]);
 		}
 		this._collections_set_processing = false;
 	},
-	getCollection: function(name, one_thing) {
+	getMdChild: function(name, one_thing) {
 		var array = this.children_models[name]
 		return one_thing ? array && array[0] : array;
 	},

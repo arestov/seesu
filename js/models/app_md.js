@@ -114,18 +114,18 @@ provoda.Model.extendTo(appModel, {
 	},
 	bindMMapStateChanges: function(md, place) {
 		var _this = this;
-		var navigation = this.getChildren('navigation');
-		var target_array = this.getChildren(place) || [];
+		var navigation = this.getChild('navigation');
+		var target_array = this.getChild(place) || [];
 
 		md.on('mpl-attach', function() {
 			if (navigation.indexOf(md) == -1) {
 				navigation.push(md);
-				_this.setChildren('navigation', navigation, true);
+				_this.setChild('navigation', navigation, true);
 			}
 			if (place){
 				if (target_array.indexOf(md) == -1){
 					target_array.push(md);
-					_this.setChildren(place, target_array, true);
+					_this.setChild(place, target_array, true);
 				}
 			}
 
@@ -133,13 +133,13 @@ provoda.Model.extendTo(appModel, {
 		md.on('mpl-detach', function(){
 			var new_nav = arrayExclude(navigation, md);
 			if (new_nav.length != navigation.length){
-				_this.setChildren('navigation', new_nav, true);
+				_this.setChild('navigation', new_nav, true);
 			}
 			if (place){
 				var new_tarr = arrayExclude(target_array, md);
 
 				if (new_tarr.length != target_array.length){
-					_this.setChildren(place, new_tarr, true);
+					_this.setChild(place, new_tarr, true);
 				}
 			}
 			
