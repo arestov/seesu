@@ -617,7 +617,7 @@ var proxy_render_artists_tracks = function(artist_list, pl_r){
 	pl_r.injectExpectedSongs(track_list_without_tracks);
 };
 var render_loved = function(user_name){
-	var pl_r = su.app_md.preparePlaylist({
+	var pl_r = su.preparePlaylist({
 		title: localize('loved-tracks'),
 		type: 'artists by loved'
 	})
@@ -659,10 +659,10 @@ var render_loved = function(user_name){
 		return request_info;
 	}, true);
 	
-	su.app_md.show_playlist_page(pl_r);
+	su.show_playlist_page(pl_r);
 };
 var render_recommendations_by_username = function(username){
-	var pl_r = su.app_md.preparePlaylist({
+	var pl_r = su.preparePlaylist({
 		title: 'Recommendations for ' +  username,
 		type: 'artists by recommendations'
 	}).loading();
@@ -686,10 +686,10 @@ var render_recommendations_by_username = function(username){
 			}
 	});
 
-	su.app_md.show_playlist_page(pl_r);
+	su.show_playlist_page(pl_r);
 };
 var render_recommendations = function(){
-	var pl_r = su.app_md.preparePlaylist({
+	var pl_r = su.preparePlaylist({
 		title: 'Recommendations for you', 
 		type: 'artists by recommendations'
 	});
@@ -726,7 +726,7 @@ var render_recommendations = function(){
 	}, true);
 	
 
-	su.app_md.show_playlist_page(pl_r);
+	su.show_playlist_page(pl_r);
 
 };
 
@@ -782,7 +782,7 @@ jsLoadComplete(function() {
 		},
 		create_userplaylist: function(title,p, manual_inject){
 			var _this = this;
-			var pl_r = p || su.app_md.preparePlaylist({
+			var pl_r = p || su.preparePlaylist({
 				title: title,
 				type: "cplaylist",
 				data: {name: title} 
@@ -804,7 +804,7 @@ jsLoadComplete(function() {
 	};
 
 	var rebuildPlaylist = function(saved_pl){
-		var p = su.app_md.preparePlaylist({
+		var p = su.preparePlaylist({
 			title: saved_pl.playlist_title, 
 			type: saved_pl.playlist_type,
 			data: {name: saved_pl.playlist_title}

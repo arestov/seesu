@@ -2,7 +2,6 @@ provoda.addPrototype("searchSectionView", {
 	createDetailes: function(){
 		this.createCon();
 		this.createHead();
-		this.button = this.md.button;
 
 		this.gc = this.header ? this.header.add(this.c) : this.c;
 		this.orderChildren();
@@ -57,7 +56,7 @@ provoda.addPrototype("searchSectionView", {
 					this.message.remove();
 				}
 				this.message = $('<li></li>').text(text);
-				var butn_th = this.button && this.button.getThing();
+				var butn_th = this.button_view && this.button_view.getT();
 				if (butn_th){
 					butn_th.before(this.message);
 				} else{
@@ -85,23 +84,27 @@ provoda.addPrototype("searchSectionView", {
 	orderChildren: function(){
 		var _this = this;
 
-		if (this.button){
-			var bui = this.button.getFreeView(this);
-			if (bui){
-				var bunc = $(bui.getA());
-				this.c.append(bunc)
-			//	.appendTo(this.c);
-				this.addChild(bui);
-			}
-			var butn_th = this.button.getThing();
-		}
+
+
+
+		var button = this.getMdChild('button');
+
 		
-		var rendering_list = this.md.rendering_list;
-		var last_rendered = this.md.edges_list;
+		if (button){
+			var button_view = this.getFreeChildView('button', button);
+			if (button_view){
+				this.button_view = button_view;
+				this.c.append(button_view.getA())
+			}	
+		}
+		var butn_th = this.button_view && $(this.button_view.getT());
+
+		var rendering_list = this.getMdChild('rendering_list');
 		if (rendering_list){
 			for (var i = 0; i < rendering_list.length; i++) {
+				var cur = rendering_list[i];
 
-				var cur_ui = rendering_list[i].getFreeView(this);
+				var cur_ui = this.getFreeChildView('item', cur);
 				if (cur_ui){
 					this.addChild(cur_ui);
 					var ccon = cur_ui.getA();
@@ -112,15 +115,8 @@ provoda.addPrototype("searchSectionView", {
 					}
 				}
 
-			};
-			for (var i = 0; i < last_rendered.length; i++) {
-				
-				var cur = rendering_list[last_rendered[i]];
-				if (cur){
-					cur.updateState('bordered', true)
-				}
-				
-			};
+			}
+			
 		}
 		
 		

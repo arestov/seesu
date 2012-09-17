@@ -42,11 +42,11 @@ var seesuPlayer;
 			}
 		},
 		notPlaying: function(){
-			su.app_md.notPlaying();
+			su.notPlaying();
 			
 		},
 		playing: function(){
-			su.app_md.playing();
+			su.playing();
 		},
 		changeAppMode: function(playing){
 			if (playing){
@@ -60,7 +60,7 @@ var seesuPlayer;
 			}
 		},
 		nowPlaying: function(mo){
-			su.app_md.nowPlaying(mo);
+			su.nowPlaying(mo);
 		}
 	});
 })();
@@ -145,7 +145,7 @@ var seesuPlayer;
 							load:  [bpath + 'js/prototypes/player.html5.js'],
 							complete: function() {
 								su.p.setCore(new html5AudioCore());
-								su.app_md.updateState('flash-internet', true);
+								su.updateState('flash-internet', true);
 							}
 						});
 					});
@@ -158,7 +158,7 @@ var seesuPlayer;
 							load:  [bpath + 'js/prototypes/player.wmp.js'],
 							complete: function() {
 								su.p.setCore(new wmpAudioCore());
-								su.app_md.updateState('flash-internet', true);
+								su.updateState('flash-internet', true);
 							}
 						});
 					});
@@ -195,7 +195,7 @@ var seesuPlayer;
 										setTimeout(function(){
 											pcon.addClass('sm2-complete');
 										}, 1000);
-										su.app_md.updateState('flash-internet', true);
+										su.updateState('flash-internet', true);
 
 									})
 									.fail(function(){
@@ -245,7 +245,7 @@ var seesuPlayer;
 											pcon.addClass('sm2-complete');
 										}, 1000);
 										//
-										su.app_md.updateState('flash-internet', true);
+										su.updateState('flash-internet', true);
 
 									})
 									.fail(function(){

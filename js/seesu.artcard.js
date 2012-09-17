@@ -73,7 +73,7 @@ suServView.extendTo(artCardUI, {
 				if (i < 5){
 					if (el.track){
 						var a = $('<a class="js-serv"></a>').click(function(){
-							su.app_md.showTopTacks(_this.md.artist, {save_parents: true, from_artcard: true}, {
+							su.showTopTacks(_this.md.artist, {save_parents: true, from_artcard: true}, {
 								artist: _this.md.artist,
 								track: el.track
 							});
@@ -99,7 +99,7 @@ suServView.extendTo(artCardUI, {
 				if (el && el.name){
 					var li = $('<li></li>');
 					$('<a class="js-serv"></a>').click(function(){
-						su.app_md.show_tag(el.name);
+						su.show_tag(el.name);
 					}).text(el.name).attr('url', el.url).appendTo(li);
 					li.appendTo(ul);
 					ul.append(' ');
@@ -119,7 +119,7 @@ suServView.extendTo(artCardUI, {
 			$.each(artists, function(i, el){
 				var li = $('<li></li>');
 				$('<a class="js-serv"></a>').click(function(){
-					su.app_md.showArtcardPage(el.name);
+					su.showArtcardPage(el.name);
 				}).text(el.name).appendTo(li);
 				li.appendTo(ul);
 				ul.append(' ');
@@ -128,7 +128,7 @@ suServView.extendTo(artCardUI, {
 			
 			var header_link = $('<a class="js-serv"></a>')
 				.click(function(){
-					su.app_md.showSimilarArtists(_this.md.artist, {save_parents: true, from_artcard: true});	
+					su.showSimilarArtists(_this.md.artist, {save_parents: true, from_artcard: true});	
 				})
 				.text(localize('similar-arts'))
 			var header = this.ui.similarsc.children('h5').empty().append(header_link);
@@ -149,7 +149,7 @@ suServView.extendTo(artCardUI, {
 			bioc: this.c.find('.art-card-bio')
 		};
 		this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
-			su.app_md.showTopTacks(_this.md.artist, {save_parents: true, from_artcard: true});
+			su.showTopTacks(_this.md.artist, {save_parents: true, from_artcard: true});
 		});
 	}
 });

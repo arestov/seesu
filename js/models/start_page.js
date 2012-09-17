@@ -5,7 +5,7 @@ mapLevelModel.extendTo(StartPage, {
 	model_name: 'start_page',
 	page_name: 'start page',
 	showPlaylists: function(){
-		su.app_md.search(':playlists');
+		su.search(':playlists');
 	},
 	init: function(su){
 		this._super();

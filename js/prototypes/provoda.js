@@ -508,7 +508,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (parent_view){
 			this.parent_view = parent_view;
 		}
-		this.opts = opts;
+		if (opts){
+			this.opts = opts;
+		}
+		
 		this._super();
 		this.children = [];
 		this.children_models = {};

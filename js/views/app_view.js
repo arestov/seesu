@@ -66,7 +66,7 @@ provoda.View.extendTo(appModelView, {
 			nav: StartPageNavView
 		},
 		invstg: {
-			main: investigationUI,
+			main: searchPageView,
 			nav: investgNavUI
 		},
 		artcard: {
@@ -513,7 +513,7 @@ provoda.View.extendTo(appModelView, {
 						su.trackEvent('people likes', 'accepted', false, 5);
 						nb.c.after(
 							$('<span class="people-list-desc desc"></span>')
-								.text(su.app_md.getRemainTimeText(r.done.est, true))
+								.text(su.getRemainTimeText(r.done.est, true))
 						);
 						nb.c.remove();
 					}

@@ -46,7 +46,7 @@ baseSuggest.extendTo(struserSuggest, {
 	onView: function(){
 		//this.pl.add(this.mo);
 		//this.rpl.hide();
-		//su.app_md.showStaticPlaylist(this.pl, true);
+		//su.showStaticPlaylist(this.pl, true);
 		this.mo.postToVKWall(this.user_id);
 		this.row.hide();
 	}
@@ -71,7 +71,6 @@ investigation.extendTo(StrusersRowSearch, {
 		this.mo = mo;
 		this.addSection('users', new StrusersRSSection());
 	},
-//	ui_constr: investigationUI,
 	handleVKFriendsSearch: function(list){
 		var r = (this.q ? searchInArray(list, this.q, ["first_name", "last_name"]) : list);
 		if (r.length){
@@ -260,7 +259,6 @@ var PlaylistRSSection = function() {
 };
 searchSection.extendTo(PlaylistRSSection, {
 	resItem: playlistSuggest
-//	ui_constr: searchSectionUI
 });
 
 
@@ -274,7 +272,6 @@ investigation.extendTo(PlaylistRowSearch, {
 		this.mo = mo;
 		this.addSection('playlists', new PlaylistRSSection());
 	},
-//	ui_constr: investigationUI,
 	searchf: function() {
 		var
 			pl_results = [],

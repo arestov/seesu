@@ -19,8 +19,9 @@
 		},
 		changeResultsCounter: function(){
 			var rc = 0;
-			for (var i = 0; i < this.sections.length; i++) {
-				rc += this.sections[i].r.length;
+			var sections_array = this.getChild('section');
+			for (var i = 0; i < sections_array.length; i++) {
+				rc += sections_array[i].r.length;
 			}
 			this.trigger('resultsChanged', rc);
 		},
@@ -156,8 +157,9 @@
 		},
 		getAllItems: function(no_button){
 			var r = [];
-			for (var i=0; i < this.sections.length; i++) {
-				var cur = this.sections[i];
+			var sections_array = this.getChild('section');
+			for (var i=0; i < sections_array.length; i++) {
+				var cur = sections_array[i];
 				var items = cur.getItems(no_button);
 				if (items.length){
 					r = r.concat(items);
@@ -173,8 +175,9 @@
 				}
 				this.loaded();
 				this.setItemForEnter();
-				for (var i=0; i < this.sections.length; i++) {
-					this.sections[i].changeQuery(q);
+				var sections_array = this.getChild('section');
+				for (var i=0; i < sections_array.length; i++) {
+					sections_array[i].changeQuery(q);
 				}
 				this.q = q;
 				

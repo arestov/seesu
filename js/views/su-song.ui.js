@@ -244,7 +244,7 @@ suServView.extendTo(songUI, {
 				.data('artist', this.md.artist)
 				.appendTo(artist_link_con)
 				.click(function(){
-					su.app_md.showArtcardPage(_this.md.artist);
+					su.showArtcardPage(_this.md.artist);
 					su.trackEvent('Artist navigation', 'art card', _this.md.artist);
 				});
 
@@ -283,7 +283,7 @@ suServView.extendTo(songUI, {
 					prev: false
 				};
 				
-				su.app_md.infoGen(this.base_info, c, localize("more-ab-info"));
+				su.infoGen(this.base_info, c, localize("more-ab-info"));
 				//su.ui.infoGen(this.files, c, 'files: %s');
 				//su.ui.infoGen(this.videos, c, 'video: %s');
 				if (c.str){

@@ -487,40 +487,40 @@ var recoverPlaylistBranch = function(pldata, songdata, has_artcard){
 	console.log(pldata)
 	switch (pldata.type) {
 		case 'similar':
-			su.app_md.showSimilarArtists(pldata.artist, {no_navi: true, from_artcard: has_artcard, save_parents: true}, songdata);
+			su.showSimilarArtists(pldata.artist, {no_navi: true, from_artcard: has_artcard, save_parents: true}, songdata);
 			break
 		case 'album':
-			su.app_md.showAlbum({
+			su.showAlbum({
 				album_name: pldata.album_name,
 				artist: pldata.artist
 			}, {no_navi: true, from_artcard: has_artcard, save_parents: true}, start_song);
 			break
 		case 'top':
-			su.app_md.showTopTacks(pldata.artist, {no_navi: true, from_artcard: has_artcard, save_parents: true}, start_song);
+			su.showTopTacks(pldata.artist, {no_navi: true, from_artcard: has_artcard, save_parents: true}, start_song);
 			break
 		case 'tag':
-			su.app_md.show_tag(pldata.tag_name, {no_navi: true, save_parents: true}, start_song);
+			su.show_tag(pldata.tag_name, {no_navi: true, save_parents: true}, start_song);
 			break
 		case 'recommendations':
 			if (start_song){
-				su.app_md.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
 			}
 			break
 		case 'cplaylist':
 			if (start_song){
-				su.app_md.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
 			}
 			break
 		case 'chart':
 			if (start_song){
-				su.app_md.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
 			} else{
-				su.app_md.showMetroChart(pldata.country, pldata.metro, {no_navi: true, save_parents: true});
+				su.showMetroChart(pldata.country, pldata.metro, {no_navi: true, save_parents: true});
 			}
 			break
 		case 'loved':
 			if (start_song){
-				su.app_md.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
 			}
 			break
 		default:
@@ -532,10 +532,10 @@ var recoverHistoryTreeBranch = function(branch, sub_branch, prev_branch){
 	var sub_branch_handled;
 	switch (branch.type) {
 		case 'search':
-			su.su.app_md.showResultsPage(branch.data.query, true);
+			su.showResultsPage(branch.data.query, true);
 			break
 		case 'artcard':
-			su.su.app_md.showArtcardPage(branch.data.artist, true, true);
+			su.showArtcardPage(branch.data.artist, true, true);
 			break
 		case 'pl':
 			var song;
@@ -572,21 +572,21 @@ var hashChangeRecover = function(e){
 		if (dl.live.length){
 			var deepest = dl.live[dl.live.length -1];
 			if (!deepest.isOpened()){
-				su.app_md.restoreFreezed(!!dl.dead.length, true);
+				su.restoreFreezed(!!dl.dead.length, true);
 			}
 			deepest.sliceTillMe(!!dl.dead.length, true);
 		} else{
-			su.app_md.showStartPage(true);
+			su.showStartPage(true);
 		}
 		
 		if (dl.dead.length){
 			for (var i=0; i < dl.dead.length; i++) {
-				su.app_md.m.resurrectLevel(dl.dead[i], i != dl.dead.length - 1, true );
+				su.m.resurrectLevel(dl.dead[i], i != dl.dead.length - 1, true );
 			};
 		}	
 	} else{
 		var jn = getFakeURLParameters(url.replace(/\ ?\$...$/, ''));
-		su.app_md.showStartPage(true);
+		su.showStartPage(true);
 		if (jn.tree.length){
 			var prev_branch;
 			while (jn.tree.length) {

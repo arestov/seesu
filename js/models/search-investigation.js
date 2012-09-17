@@ -1,42 +1,11 @@
 var 
-	,
 	investigation,
-	baseSuggestUI,
 	baseSuggest,
-	baseSectionButtonUI,
 	baseSectionButton,
-	searchSectionUI,
 	searchSection;
 
 
 (function() {
-var 
-	default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-
-
-var searchTags = function(q){
-	var tags_results = [];
-	
-	var tags = searchInArray(lastfm_toptags, q);
-	for (var i=0; i < tags.length; i++) {
-		tags_results.push({
-			tag: tags[i]
-		});
-	}
-	return tags_results;
-};
-	
-var offlineSearch = debounce(function(q, invstg){
-	var tags = invstg.g('tags');
-		var r = searchTags(q);
-		if (r.length){
-			tags.appendResults(r);
-			tags.renderSuggests(r);
-		}
-		
-},150);
-
-
 
 
 
@@ -45,16 +14,10 @@ provoda.extendFromTo('baseSuggest', provoda.Model, baseSuggest);
 
 
 
-
-
 baseSectionButton = function(){
 	this.init();
 };
 provoda.extendFromTo('baseSectionButton', baseSuggest, baseSectionButton);
-
-
-
-
 
 
 searchSection = function(){};
@@ -71,28 +34,14 @@ var artistSuggest = function(data){
 };
 
 
-var artistSuggestUI = function(sugg){};
 
-baseSuggestUI.extendTo(artistSuggestUI, {
-	createItem: function(){
-		var that = this.md;
-
-		var a = $("<a></a>");
-		$("<img/>").attr({ src: (that.image || default_sugg_artimage), alt: that.artist })
-			.appendTo(a);
-		$("<span></span>").text(that.text_title)
-			.appendTo(a);
-		this.a = a.appendTo(this.c);
-		return this;
-	}
-});
 
 baseSuggest.extendTo(artistSuggest, {
 	valueOf: function(){
 		return this.artist;
 	},
 	onView: function(){
-		su.app_md.showArtcardPage(this.artist, true);
+		su.showArtcardPage(this.artist, true);
 		su.trackEvent('Music search', this.q, "artist: " + this.artist );
 	},
 //	ui_constr: artistSuggestUI
@@ -109,7 +58,7 @@ baseSuggest.extendTo(playlistSuggest, {
 		return this.pl.playlist_title;
 	},
 	onView: function(){
-		su.app_md.showStaticPlaylist(this.pl, true);
+		su.showStaticPlaylist(this.pl, true);
 	},
 //	ui_constr: baseSuggestUI
 });
@@ -132,6 +81,7 @@ searchSection.extendTo(seesuSection, {
 					_this.trigger('items-change');
 				});
 			this.setButtonText();
+			this.setChild('button', this.button);
 		}
 	}
 });
@@ -142,6 +92,7 @@ var playlistsSection = function() {
 };
 searchSection.extendTo(playlistsSection, {
 //	ui_constr: playlistsSectionUI,
+	model_name: 'section-playlist',
 	resItem: playlistSuggest
 });
 
@@ -154,6 +105,7 @@ var artistsSection = function(){
 };
 
 seesuSection.extendTo(artistsSection, {
+	model_name: 'section-artist',
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» ' + localize('oartists', 'artists');
@@ -172,24 +124,6 @@ seesuSection.extendTo(artistsSection, {
 });
 
 
-var trackSuggestUI = function(sugg){};
-baseSuggestUI.extendTo(trackSuggestUI, {
-	createItem: function(){
-		var that = this.md;
-		var a = $("<a></a>");
-		
-		$("<img/>").attr({ src: (that.image || default_sugg_artimage) , alt: that.artist }).appendTo(a);
-		if (that.duration){
-			var track_dur = parseInt(that.duration);
-			var digits = track_dur % 60;
-			track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-			a.append('<span class="sugg-track-dur">' + track_dur + '</span>');
-		}
-		$("<span></span>").text(that.text_title).appendTo(a);
-		this.a = a.appendTo(this.c);
-		return this;
-	}
-});
 
 
 var trackSuggest = function(data){
@@ -208,7 +142,7 @@ baseSuggest.extendTo(trackSuggest, {
 		return this.artist + ' - ' + this.track;
 	},
 	onView: function(){
-		su.app_md.showTopTacks(this.artist, {save_parents: true}, {
+		su.showTopTacks(this.artist, {save_parents: true}, {
 			artist: this.artist,
 			track: this.track
 		});
@@ -226,6 +160,7 @@ var tracksSection = function() {
 	this.init();
 };
 seesuSection.extendTo(tracksSection, {
+	model_name: 'section-track',
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('otracks', 'tracks');
@@ -248,16 +183,6 @@ seesuSection.extendTo(tracksSection, {
 
 
 
-var tagSuggestUI = function(sugg){};
-baseSuggestUI.extendTo(tagSuggestUI,  {
-	createItem: function() {
-		var that = this.md;
-		this.a = $("<a></a>")
-			.append("<span>" + that.text_title + "</span>")
-			.appendTo(this.c);
-		return this;
-	}
-});
 
 
 var tagSuggest = function(data){
@@ -274,7 +199,7 @@ baseSuggest.extendTo(tagSuggest, {
 		return this.tag;
 	},
 	onView: function(){
-		su.app_md.show_tag(this.tag, {save_parents: true});
+		su.show_tag(this.tag, {save_parents: true});
 		seesu.trackEvent('Music search', this.q, "tag: " + this.tag );
 	},
 //	ui_constr: tagSuggestUI
@@ -286,6 +211,7 @@ var tagsSection = function() {
 	this.init();
 };
 seesuSection.extendTo(tagsSection, {
+	model_name: 'section-tag',
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('otags', 'tags');
@@ -309,20 +235,6 @@ seesuSection.extendTo(tagsSection, {
 
 
 
-var albumSuggestUI = function(sugg){};
-
-baseSuggestUI.extendTo(albumSuggestUI, {
-	createItem: function(){
-		var that = this.md;
-		var a = $("<a></a>");
-		$("<img/>").attr({ src: (that.image || default_sugg_artimage), alt: that.text_title }).appendTo(a);
-		$("<span></span>").text(that.text_title).appendTo(a);
-		this.a = a.appendTo(this.c);
-		return this;
-	}
-});
-
-
 var albumSuggest = function(data){
 	this.init();
 
@@ -343,7 +255,7 @@ baseSuggest.extendTo(albumSuggest, {
 		return '( ' + this.artist + ' ) ' + this.name;
 	},
 	onView: function(){
-		su.app_md.showAlbum({
+		su.showAlbum({
 			artist: this.artist,
 			album_name: this.name,
 			album_id: this.aid
@@ -358,6 +270,7 @@ var albumsSection = function() {
 	this.init();
 };
 seesuSection.extendTo(albumsSection, {
+	model_name: 'section-album',
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('oalbums', 'albums');
@@ -403,38 +316,6 @@ arrows_keys_nav = function(e){
 
 
 
-var network_search = seesu.env.cross_domain_allowed ? 
-	function(q, invstg){
-		invstg.loading();
-		var hash = hex_md5(q);
-		var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
-			
-			invstg.loaded();
-			fast_suggestion(r, q, invstg);
-		});
-		if (!cache_used) {
-			var all_parts = [invstg.g('artists'), invstg.g('tracks'), invstg.g('tags'), invstg.g('albums')];
-			$.each(all_parts, function(i, el) {
-				el.loading();
-			});
-			get_fast_suggests(q, function(r){	
-				$.each(all_parts, function(i, el) {
-					el.loaded();
-				});
-				fast_suggestion(r, q, invstg);
-			}, hash, invstg);
-			
-		}
-	} 
-	:
-	debounce(function(q, invstg){
-		getLastfmSuggests('artist.search', {artist: q}, q, invstg.g('artists'), parseArtistsResults);
-		getLastfmSuggests('track.search', {track: q}, q, invstg.g('tracks'), parseTracksResults);
-		getLastfmSuggests('tag.search', {tag: q}, q, invstg.g('tags'), parseTagsResults);	
-		getLastfmSuggests('album.search', {album: q}, q, invstg.g('albums'), parseAlbumsResults);
-	}, 400);
-	
-
 
 
 
@@ -443,10 +324,8 @@ investigation = function(){};
 provoda.extendFromTo('Investigation', mapLevelModel, investigation);
 
 
-var SuInvestg = function() {
-	this.init();
-};
-investigation.extendTo(SuInvestg, {
+var SearchPage = function() {};
+investigation.extendTo(SearchPage, {
 	init: function() {
 		this._super();
 		this.addSection('playlists', new playlistsSection());
@@ -458,10 +337,6 @@ investigation.extendTo(SuInvestg, {
 	},
 	getURL: function() {
 		return '?q=' + encodeURIComponent(this.q || '');
-	},
-	ui_constr: {
-//		main: investigationUI,
-//		nav: investgNavUI
 	},
 	state_change: {
 		"mp-show": function(opts) {
@@ -519,10 +394,61 @@ investigation.extendTo(SuInvestg, {
 			}
 			
 			//===playlists search
-			offlineSearch(this.q, this);
-			network_search(this.q, this);
+			this.searchOffline(this.q);
+			this.searchNetwork(this.q);
 		}
 	},
+	searchOffline: debounce(function(q){
+		var tags = this.g('tags');
+		var r = this.searchTags(q);
+		if (r.length){
+			tags.appendResults(r);
+			tags.renderSuggests(r);
+		}
+			
+	},150),
+	searchTags: function(q){
+		var tags_results = [];
+		
+		var tags = searchInArray(lastfm_toptags, q);
+		for (var i=0; i < tags.length; i++) {
+			tags_results.push({
+				tag: tags[i]
+			});
+		}
+		return tags_results;
+	},
+	searchNetwork: seesu.env.cross_domain_allowed ? 
+		function(q){
+			var _this = this;
+			this.loading();
+			var hash = hex_md5(q);
+			var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
+				
+				_this.loaded();
+				fast_suggestion(r, q, _this);
+			});
+			if (!cache_used) {
+				var all_parts = [this.g('artists'), this.g('tracks'), this.g('tags'), this.g('albums')];
+				$.each(all_parts, function(i, el) {
+					el.loading();
+				});
+				get_fast_suggests(q, function(r){	
+					$.each(all_parts, function(i, el) {
+						el.loaded();
+					});
+					fast_suggestion(r, q, _this);
+				}, hash, this);
+				
+			}
+		} 
+		:
+		debounce(function(q){
+			getLastfmSuggests('artist.search', {artist: q}, q, this.g('artists'), parseArtistsResults);
+			getLastfmSuggests('track.search', {track: q}, q, this.g('tracks'), parseTracksResults);
+			getLastfmSuggests('tag.search', {tag: q}, q, this.g('tags'), parseTagsResults);	
+			getLastfmSuggests('album.search', {album: q}, q, this.g('albums'), parseAlbumsResults);
+		}, 400),
 	getTitleString: function(text){
 		var original = localize('Search-resuls');
 		
@@ -536,7 +462,9 @@ investigation.extendTo(SuInvestg, {
 	}
 });
 createSuInvestigation = function(){
-	return new SuInvestg();
+	var sp = new SearchPage();
+	sp.init()
+	return sp;
 };
 
 })();

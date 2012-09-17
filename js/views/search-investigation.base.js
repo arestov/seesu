@@ -4,7 +4,10 @@ provoda.addPrototype("baseSectionButtonView", {
 		this.a = $('<button type="button"></button>').appendTo(this.c);
 		this.text_span = $("<span></span>").appendTo(this.a);
 		return this;
-	}
+	},
+	"stch-button_text": function(text){
+		this.text_span.text(text);
+	},
 });
 
 
@@ -80,7 +83,7 @@ provoda.addPrototype("InvestigationView", {
 
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
-			var view = this.getFreeChildView('section', cur);
+			var view = this.getFreeChildView(cur.model_name, cur);
 			if (view){
 				this.c.append(view.getA());
 			}

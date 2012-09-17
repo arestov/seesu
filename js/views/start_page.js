@@ -311,7 +311,7 @@ suServView.extendTo(StartPageView, {
 			var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(this.els.start_screen);
 			var createTrackLink = function(artist, track, track_obj, playlist){
 				return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(e){
-					su.app_md.show_playlist_page(playlist);
+					su.show_playlist_page(playlist);
 					playlist.showTrack(track_obj);
 					e.preventDefault();
 				});
@@ -335,7 +335,7 @@ suServView.extendTo(StartPageView, {
 								fn: function() {
 									_cmetro.empty();
 							
-									var plr = su.app_md.preparePlaylist({//fix params for cache
+									var plr = su.preparePlaylist({//fix params for cache
 										title: 'Chart of ' + random_metro.name,
 										type: 'chart', 
 										data: {country: random_metro.country, metro: random_metro.name}
@@ -433,7 +433,7 @@ suServView.extendTo(StartPageView, {
 									
 									if (r.done){
 										su.trackEvent('people likes', 'accepted', false, 5);
-										$('<span class="desc"></span>').text(su.app_md.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
+										$('<span class="desc"></span>').text(su.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
 										if (new Date(r.done.est) < new Date()){
 											checkRelationsInvites();
 										}

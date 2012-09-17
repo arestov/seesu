@@ -46,7 +46,7 @@ var tempTool = {
 					playlist.add(song);
 				}
 			});
-			su.app_md.showStaticPlaylist(playlist);
+			su.showStaticPlaylist(playlist);
 			dizi = playlist;
 		})
 	},

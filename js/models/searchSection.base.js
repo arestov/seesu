@@ -119,6 +119,7 @@
 			for (var i = 0; i < this.rendering_list.length; i++) {
 				this.rendering_list[i].die();
 			};
+			this.setChild('rendering_list', [], true);
 			
 		},
 		renderSuggests: function(no_more_results, preview){
@@ -147,8 +148,18 @@
 				}
 			}
 
+			for (var i = 0; i < this.edges_list.length; i++) {
+				
+				var cur = this.rendering_list[this.edges_list[i]];
+				if (cur){
+					cur.updateState('bordered', true)
+				}
+				
+			};
+
 			this.updateState('no_more_results', no_more_results);
 			this.updateState('preview', preview);
+			this.setChild('rendering_list', this.rendering_list, true);
 			this.updateState('changed', new Date());
 
 			this.setButtonText(!!this.r.length, this.r.query);
