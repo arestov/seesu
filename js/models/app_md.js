@@ -13,9 +13,7 @@ var appModel;
 
 
 appModel = function(){};
-
 provoda.Model.extendTo(appModel, {
-	
 	init: function(){
 		this._super();
 		
@@ -217,7 +215,8 @@ provoda.Model.extendTo(appModel, {
 					var track_list = [];
 
 					if (artists && artists.length) {
-						for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
+						var l = Math.min(artists.length, paging_opts.page_limit);
+						for (var i=0; i < l; i++) {
 							track_list.push({
 								artist: artists[i].name
 							});
@@ -285,7 +284,9 @@ provoda.Model.extendTo(appModel, {
 		if (!recovered){
 			var get_artist_album_playlist = function(album_id, pl_r){
 				if (album_id) {
-					lfm.get('playlist.fetch',{'playlistURL': 'lastfm://playlist/album/' + album_id})
+					lfm.get('playlist.fetch',{
+						'playlistURL': 'lastfm://playlist/album/' + album_id
+					})
 						.done(function(pl_data){
 							make_lastfm_playlist(pl_data, pl_r);
 						});
@@ -339,8 +340,12 @@ provoda.Model.extendTo(appModel, {
 							
 							tracks = toRealArray(tracks);
 							
-							for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
-								track_list.push({'artist' : artist ,'track': tracks[i].name, images: tracks[i].image});
+							var l = Math.min(tracks.length, paging_opts.page_limit)
+							for (var i=paging_opts.remainder; i < l; i++) {
+								track_list.push({'artist' : artist ,
+									'track': tracks[i].name, 
+									images: tracks[i].image
+								});
 							}
 							
 						}
@@ -424,7 +429,8 @@ provoda.Model.extendTo(appModel, {
 						var track_list = [];
 
 						if (artists && artists.length) {
-							for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
+							var l = Math.min(artists.length, paging_opts.page_limit);
+							for (var i=0; i < l; i++) {
 								track_list.push({
 									artist: artists[i].name
 								});
