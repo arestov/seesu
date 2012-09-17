@@ -475,7 +475,7 @@ provoda.extendFromTo('InvestigationView', suServView, investigationUI);
 
 
 investigation = function(){};
-provoda.extendFromTo('Investigation', suMapModel, investigation);
+provoda.extendFromTo('Investigation', mapLevelModel, investigation);
 
 
 var SuInvestg = function() {

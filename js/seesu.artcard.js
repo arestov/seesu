@@ -166,7 +166,7 @@ var artCard = function(artist) {
 	
 
 };
-suMapModel.extendTo(artCard, {
+mapLevelModel.extendTo(artCard, {
 	ui_constr: {
 		main: artCardUI,
 		nav: artCardNavUI	

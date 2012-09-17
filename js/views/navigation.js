@@ -58,9 +58,9 @@ suServView.extendTo( baseNavUI, {
 });
 
 
-mainLevelNavUI = function(mal) {};
+StartPageNavView = function(mal) {};
 
-baseNavUI.extendTo(mainLevelNavUI, {
+baseNavUI.extendTo(StartPageNavView, {
 	createBase: function(){
 		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>');
 	},

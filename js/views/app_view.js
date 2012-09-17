@@ -62,8 +62,8 @@ provoda.View.extendTo(appModelView, {
 	},
 	children_views: {
 		start_page : {
-			main: mainLevelUI,
-			nav: mainLevelNavUI
+			main: StartPageView,
+			nav: StartPageNavView
 		},
 		invstg: {
 			main: investigationUI,

@@ -45,7 +45,7 @@ var jsLoadComplete,
 	"js/views/navigation.js",
 
 
-	"js/models/main_level.js",
+	"js/models/start_page.js",
 	"js/models/app_md.js",
 	
 	"js/seesu.artcard.js",
@@ -74,7 +74,7 @@ var jsLoadComplete,
 	"js/libs/c_buttmen.js",
 	"js/pressed_node_tester.js",
 	"js/views/song-actionsrow.js",
-	"js/views/main_level.js",
+	"js/views/start_page.js",
 	"js/views/songs-list.base.js",
 	"js/views/songs-list.js",
 	"js/views/app_view.js",

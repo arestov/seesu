@@ -150,7 +150,7 @@ appModel.extendTo(seesuApp, {
 
 
 		
-		this.start_page = (new mainLevel()).init(this);
+		this.start_page = (new StartPage()).init(this);
 		this.children_models.navigation.push(this.start_page);
 		this.children_models.start_page.push(this.start_page);
 

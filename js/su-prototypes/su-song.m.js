@@ -3,7 +3,7 @@ var song;
 	"use strict";
 
 	var baseSong = function() {};
-	provoda.extendFromTo("baseSong", suMapModel, baseSong);
+	provoda.extendFromTo("baseSong", mapLevelModel, baseSong);
 
 	song = function(omo, playlist, player, mp3_search){
 		this.init.call(this, omo, playlist, player, mp3_search);

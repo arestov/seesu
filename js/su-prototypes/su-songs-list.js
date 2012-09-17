@@ -3,7 +3,7 @@ var songsList;
 	"use strict";
 
 	var songsListBase = function() {};
-	provoda.extendFromTo("songsListBase", suMapModel, songsListBase);
+	provoda.extendFromTo("songsListBase", mapLevelModel, songsListBase);
 	
 
 	songsList = function(params, first_song, findMp3, player){

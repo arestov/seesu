@@ -124,9 +124,9 @@ ActionsRowUI.extendTo(FastPSRowView, {
 
 
 
-var mainLevelUI = function(){};
+var StartPageView = function(){};
 
-suServView.extendTo(mainLevelUI, {
+suServView.extendTo(StartPageView, {
 	createDetailes: function(){
 		var _this = this;
 

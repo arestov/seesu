@@ -1,7 +1,7 @@
 
-mainLevel = function() {};
+StartPage = function() {};
 
-suMapModel.extendTo(mainLevel, {
+mapLevelModel.extendTo(StartPage, {
 	model_name: 'start_page',
 	page_name: 'start page',
 	showPlaylists: function(){
@@ -16,8 +16,6 @@ suMapModel.extendTo(mainLevel, {
 		fast_pagestart.init(this);
 
 		this.setChildren('fast_pstart', [fast_pagestart]);
-
-
 
 		this.closed_messages = suStore('closed-messages') || {};
 		return this;
