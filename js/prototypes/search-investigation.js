@@ -1,104 +1,6 @@
 (function(){
 	"use strict";
-	provoda.addPrototype("InvestigationView", {
-		createDetailes: function(){
-			this.createBase();
-		},
-		expand: function(){
-			if (this.expanded){
-				return;
-			} else {
-				this.expanded = true;
-			}
-			for (var i = 0; i < this.md.sections.length; i++) {
-				var cur_ui = this.md.sections[i].getFreeView(this);
-				if (cur_ui){
-					this.addChild(cur_ui);
-					this.c.append(cur_ui.getA());
-
-				}
-			}
-			this.requestAll();
-		},
-		state_change: {
-			"mp-show": function(opts) {
-				if (opts){
-					if (!opts.transit){
-						this.expand();
-					}
-					this.c.removeClass('hidden');
-					
-					if (!opts.closed){
-						$(app_view.els.slider).addClass('show-search');
-					}
-				} else {
-					this.blur();
-					this.c.addClass('hidden');
-				}
-			},
-			"mp-blured": function(state) {
-				if (state){
-					this.blur();
-				} else {
-					$(app_view.els.slider).addClass('show-search-results');
-				}
-			},
-			"can-expand": function(state) {
-				if (state){
-					this.expand();
-				}
-			}
-		},
-		createBase: function() {
-			this.c = $('<div class="search-results-container current-src"></div');
-		},
-		die: function() {
-			this.blur();
-			this._super();
-		},
-		blur: function() {
-			$(app_view.els.slider).removeClass('show-search show-search-results');
-		},
-		prop_change: {
-			enter_item: function(item){
-				
-			}
-		},
-		setViewport: function(vp){
-			this.view_port = vp;
-		},
-		scrollTo: function(item){
-			if (!item){return false;}
-			if (!this.view_port || !this.view_port.node){return false;}
-
-			var element = item.getC();
-			var svp = this.view_port,
-				scroll_c = svp.offset ?   $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0])   :   svp.node,
-				scroll_top = scroll_c.scrollTop(), //top
-				scrolling_viewport_height = svp.node.height(), //height
-				scroll_bottom = scroll_top + scrolling_viewport_height; //bottom
-			
-			var node_position;
-			if (svp.offset){
-				node_position = element.offset().top;
-			} else{
-				node_position = element.position().top + scroll_top + this.c.parent().position().top;
-			}
-
-			var el_bottom = element.height() + node_position;
-
-			var new_position;
-			if ( el_bottom > scroll_bottom){
-				new_position =  el_bottom - scrolling_viewport_height/2;
-			} else if (el_bottom < scroll_top){
-				new_position =  el_bottom - scrolling_viewport_height/2;
-			}
-			if (new_position){
-				scroll_c.scrollTop(new_position);
-			}
-			
-		}
-	});
+	
 
 
 	provoda.addPrototype("Investigation", {
@@ -106,9 +8,9 @@
 		model_name: 'invstg',
 		init: function() {
 			this._super();
-			this.sections = [];
 			this.names = {};
 			this.enter_items = false;
+			this.setChild('section', []);
 			this.setInactiveAll();
 		},
 		page_name: "search results",
@@ -130,8 +32,10 @@
 		},
 		_changeActiveStatus: function(remove, except){
 			except = except && this.g(except);
-			for (var i=0; i < this.sections.length; i++) {
-				var cur = this.sections[i];
+			var sections_array = this.getChild('section');
+
+			for (var i=0; i < sections_array.length; i++) {
+				var cur = sections_array[i];
 				
 				if ((!except || cur != except) && !remove){
 					cur.setActive();
@@ -156,8 +60,9 @@
 		},
 		remarkStyles: function(){
 			var c = 0;
-			for (var i=0; i < this.sections.length; i++) {
-				var cur = this.sections[i];
+			var sections_array = this.getChild('section');
+			for (var i=0; i < sections_array.length; i++) {
+				var cur = sections_array[i];
 				if (!cur.nos){
 					cur.markOdd( !cur.state('active') || !(++c % 2 == 0) );
 				}
@@ -185,8 +90,10 @@
 				.on('request', function(rq){
 					_this.addRequest(rq);
 				});
+			var sections_array = this.getChild('section');
 
-			this.sections.push(s);
+			sections_array.push(s);
+			this.setChild('section', sections_array, true);
 
 
 			this.names[name] = s;
@@ -294,71 +201,7 @@
 		}
 	});
 
-	provoda.addPrototype("baseSectionButtonView", {
-		createItem: function(){
-
-			this.a = $('<button type="button"></button>').appendTo(this.c);
-			this.text_span = $("<span></span>").appendTo(this.a);
-			return this;
-		}
-	});
-
-
-	provoda.addPrototype("baseSuggestView", {
-		createDetailes: function(){
-			this.createBase();
-			if (this.createItem){
-				this
-					.createItem()
-					.bindClick();
-			}
-		},
-		'stch-active': function(state){
-			if (this.a){
-				if (state){
-					this.a.addClass('active');
-				} else {
-					this.a.removeClass('active');
-				}
-			}
-			
-		},
-		'stch-bordered': function(state){
-			if (state){
-				this.c.addClass('searched-bordered');
-			} else {
-				this.c.removeClass('searched-bordered');
-			}
-		},
-		'stch-disabled': function(state){
-			if (!state){
-				this.c.removeClass('hidden');
-			} else {
-				this.c.addClass('hidden');
-			}
-		},
-		createItem: function() {
-			var that = this.md;
-			this.a = $('<a></a>')
-				.text(that.text_title)
-				.appendTo(this.c);
-			return this;
-		},
-		createBase: function(){
-			this.c = $("<li class='suggest'></li>");
-			return this;
-		},
-		bindClick: function(){
-			if (this.a){
-				var _this = this;
-				this.c.click(function(){
-					_this.md.view();
-				});
-			}
-			
-			return this;
-		}
-	});
+	
 
 	provoda.addPrototype("baseSuggest", {
 		setActive: function(){

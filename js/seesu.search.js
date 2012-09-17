@@ -1,5 +1,5 @@
 var 
-	investigationUI,
+	,
 	investigation,
 	baseSuggestUI,
 	baseSuggest,
@@ -37,35 +37,29 @@ var offlineSearch = debounce(function(q, invstg){
 },150);
 
 
-baseSuggestUI = function(){};
-provoda.extendFromTo('baseSuggestView', suServView, baseSuggestUI);
+
 
 
 baseSuggest = function(){};
 provoda.extendFromTo('baseSuggest', provoda.Model, baseSuggest);
 
 
-baseSectionButtonUI = function(sugg){};
-provoda.extendFromTo('baseSectionButtonView', baseSuggestUI, baseSectionButtonUI);
 
-baseSectionButtonUI.prototype['stch-button_text'] =  function(text){
-	this.text_span.text(text);
-};
+
 
 baseSectionButton = function(){
 	this.init();
 };
 provoda.extendFromTo('baseSectionButton', baseSuggest, baseSectionButton);
-baseSectionButton.prototype.ui_constr = baseSectionButtonUI;
 
 
 
-searchSectionUI = function(){};
-provoda.extendFromTo("searchSectionView", suServView, searchSectionUI);
+
+
 
 searchSection = function(){};
 provoda.extendFromTo("searchSection", provoda.Model, searchSection);
-searchSection.prototype.ui_constr = searchSectionUI;
+//searchSection.prototype.ui_constr = searchSectionUI;
 
 
 var artistSuggest = function(data){
@@ -101,7 +95,7 @@ baseSuggest.extendTo(artistSuggest, {
 		su.app_md.showArtcardPage(this.artist, true);
 		su.trackEvent('Music search', this.q, "artist: " + this.artist );
 	},
-	ui_constr: artistSuggestUI
+//	ui_constr: artistSuggestUI
 });
 
 
@@ -117,7 +111,7 @@ baseSuggest.extendTo(playlistSuggest, {
 	onView: function(){
 		su.app_md.showStaticPlaylist(this.pl, true);
 	},
-	ui_constr: baseSuggestUI
+//	ui_constr: baseSuggestUI
 });
 
 
@@ -142,29 +136,19 @@ searchSection.extendTo(seesuSection, {
 	}
 });
 
-var playlistsSectionUI = function(seasc) {};
-searchSectionUI.extendTo(playlistsSectionUI, {
-	head_text: localize('playlists'),
-	c_class: 'sugg-section playlist-results'
-});
 
 var playlistsSection = function() {
 	this.init();
 };
 searchSection.extendTo(playlistsSection, {
-	ui_constr: playlistsSectionUI,
+//	ui_constr: playlistsSectionUI,
 	resItem: playlistSuggest
 });
 
 
 
 
-var artistsSectionUI = function(seasc){};
 
-searchSectionUI.extendTo(artistsSectionUI, {
-	head_text: localize('Artists','Artists'),
-	c_class: 'sugg-section results-suggests'
-});
 var artistsSection = function(){
 	this.init();
 };
@@ -183,7 +167,7 @@ seesuSection.extendTo(artistsSection, {
 			getLastfmSuggests('artist.search', {artist: q}, q, this, parseArtistsResults, true);
 		}
 	},
-	ui_constr: artistsSectionUI,
+//	ui_constr: artistsSectionUI,
 	resItem: artistSuggest
 });
 
@@ -231,16 +215,12 @@ baseSuggest.extendTo(trackSuggest, {
 
 		seesu.trackEvent('Music search', this.q, "track: " + this.artist + ' - ' + this.track );
 	},
-	ui_constr: trackSuggestUI
+//	ui_constr: trackSuggestUI
 });
 
 
 
-var tracksSectionUI = function(seasc){};
-searchSectionUI.extendTo(tracksSectionUI, {
-	head_text: localize('Tracks','Tracks'),
-	c_class: "sugg-section results-suggests"
-});
+
 
 var tracksSection = function() {
 	this.init();
@@ -259,7 +239,7 @@ seesuSection.extendTo(tracksSection, {
 			getLastfmSuggests('track.search', {track: q}, q, this, parseTracksResults, true);
 		}
 	},
-	ui_constr: tracksSectionUI,
+//	ui_constr: tracksSectionUI,
 	resItem: trackSuggest
 });
 
@@ -297,16 +277,10 @@ baseSuggest.extendTo(tagSuggest, {
 		su.app_md.show_tag(this.tag, {save_parents: true});
 		seesu.trackEvent('Music search', this.q, "tag: " + this.tag );
 	},
-	ui_constr: tagSuggestUI
+//	ui_constr: tagSuggestUI
 });
 
 
-
-var tagsSectionUI = function(seasc) {};
-searchSectionUI.extendTo(tagsSectionUI, {
-	head_text: localize('Tags'),
-	c_class: "sugg-section results-suggests recommend-tags"
-});
 
 var tagsSection = function() {
 	this.init();
@@ -325,7 +299,7 @@ seesuSection.extendTo(tagsSection, {
 			getLastfmSuggests('tag.search', {tag: q}, q, this, parseTagsResults, true);
 		}
 	},
-	ui_constr: tagsSectionUI,
+//	ui_constr: tagsSectionUI,
 	resItem: tagSuggest
 });
 
@@ -376,15 +350,9 @@ baseSuggest.extendTo(albumSuggest, {
 		}, {save_parents: true});
 		seesu.trackEvent('Music search', this.q, "album: " + this.text_title);
 	},
-	ui_constr: albumSuggestUI
+//	ui_constr: albumSuggestUI
 });
 
-
-var albumsSectionUI = function(seasc) {};
-searchSectionUI.extendTo(albumsSectionUI, {
-	head_text: localize('Albums', 'Albums'),
-	c_class: 'sugg-section results-suggests recommend-albums'
-});
 
 var albumsSection = function() {
 	this.init();
@@ -403,7 +371,7 @@ seesuSection.extendTo(albumsSection, {
 			getLastfmSuggests('album.search', {'album': q}, q, this, parseAlbumsResults, true);
 		}
 	},
-	ui_constr: albumsSectionUI,
+//	ui_constr: albumsSectionUI,
 	resItem: albumSuggest
 });
 
@@ -470,9 +438,6 @@ var network_search = seesu.env.cross_domain_allowed ?
 
 
 
-investigationUI  = function(){};
-provoda.extendFromTo('InvestigationView', suServView, investigationUI);
-
 
 investigation = function(){};
 provoda.extendFromTo('Investigation', mapLevelModel, investigation);
@@ -495,8 +460,8 @@ investigation.extendTo(SuInvestg, {
 		return '?q=' + encodeURIComponent(this.q || '');
 	},
 	ui_constr: {
-		main: investigationUI,
-		nav: investgNavUI
+//		main: investigationUI,
+//		nav: investgNavUI
 	},
 	state_change: {
 		"mp-show": function(opts) {
