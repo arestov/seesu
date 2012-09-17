@@ -6,108 +6,21 @@ show_now_playing
 !!!show_playlist_page
 show_track_page
 */
-var mainLevel;
 var appModel;
 (function() {
 
 
 
-var ChromeExtensionButtonView = function() {};
-provoda.View.extendTo(ChromeExtensionButtonView, {
-	state_change: {
-		"playing": function(state) {
-			if (state){
-				chrome.browserAction.setIcon({path:"/icons/icon19p.png"});
-			} else {
-				chrome.browserAction.setIcon({path:"/icons/icon19.png"});
-			}
-		},
-		'now-playing': function(text) {
-			chrome.browserAction.setTitle({title: localize('now-playing','Now Playing') + ': ' + text});
-		}
-	}
-});
-var OperaExtensionButtonView = function() {};
-provoda.View.extendTo(OperaExtensionButtonView, {
-	state_change: {
-		"playing": function(state) {
-			if (state){
-				su.opera_ext_b.icon = "/icons/icon18p.png";
-			} else {
-				su.opera_ext_b.icon = "/icons/icon18.png";
-			}
-		},
-		'now-playing': function(text) {
-			su.opera_ext_b.title = localize('now-playing','Now Playing') + ': ' + text;
-		}
-	}
-});
-
 
 appModel = function(){};
 
 provoda.Model.extendTo(appModel, {
-	ui_constr: {
-	//	main: appModelView,
-		chrome_ext: ChromeExtensionButtonView,
-		opera_ext: OperaExtensionButtonView
-	},
-	init: function(su){
+	
+	init: function(){
 		this._super();
-		this.su = su;
+		
 		this.navigation = [];
-		this.children_models = {
-			navigation: [],
-			start_page: [],
-			invstg: [],
-			artcard: [],
-			playlist: []
-		};
-
-
-		if (app_env.check_resize){
-			this.updateState('slice-for-height', true);
-		}
-		if (app_env.deep_sanbdox){
-			this.updateState('deep-sandbox', true);
-		}
-		var _this = this;
-
-
 		this.map = new browseMap();
-		this.start_page = (new mainLevel()).init(su);
-		this.children_models.navigation.push(this.start_page);
-		this.children_models.start_page.push(this.start_page);
-
-		this.map
-			.init(this.start_page)
-			.on('map-tree-change', function(nav_tree) {
-				_this.changeNavTree(nav_tree);
-			})
-			.on('title-change', function(title) {
-				_this.setDocTitle(title);
-
-			})
-			.on('url-change', function(nu, ou, data, replace) {
-				jsLoadComplete(function(){
-					if (replace){
-						navi.replace(ou, nu, data);
-					} else {
-						navi.set(nu, data);
-					}
-				});
-				//console.log(arguments);
-			})
-			.on('every-url-change', function(nv, ov, replace) {
-				if (replace){
-					//su.trackPage(nv.map_level.resident.page_name);
-				}
-				
-			})
-			.on('nav-change', function(nv, ov, history_restoring, title_changed){
-				su.trackPage(nv.map_level.resident.page_name);
-			})
-			.makeMainLevel();
 
 		return this;
 	},
@@ -117,9 +30,9 @@ provoda.Model.extendTo(appModel, {
 		}
 
 		var state_recovered;
-		if (window.su && su.p && su.p.c_song){
-			if (su.p.c_song && su.p.c_song.plst_titl){
-				su.app_md.show_now_playing(true);
+		if (this.p && this.p.c_song){
+			if (this.p.c_song && this.p.c_song.plst_titl){
+				this.show_now_playing(true);
 				state_recovered = true;
 			}
 		}
@@ -128,7 +41,7 @@ provoda.Model.extendTo(appModel, {
 			opts.state_recovered = true;
 		}
 		if (!state_recovered && !opts.ext_search_query){
-			su.trigger('handle-location');
+			this.trigger('handle-location');
 		}
 
 		//big_timer.q.push([tracking_opts.category, 'process-thins-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui in process', 100]);
@@ -190,10 +103,10 @@ provoda.Model.extendTo(appModel, {
 	// <<<< browser map
 	show_now_playing: function(no_stat){
 		if (!no_stat){
-			su.trackEvent('Navigation', 'now playing');
+			this.trackEvent('Navigation', 'now playing');
 		}
 		this.restoreFreezed(true);
-		this.show_track_page(su.p.c_song);
+		this.show_track_page(this.p.c_song);
 		
 		
 	},
@@ -236,12 +149,12 @@ provoda.Model.extendTo(appModel, {
 	},
 	showResultsPage: function(query, no_navi){
 		var lev;
-		if (!su.search_el || !su.search_el.lev.isOpened()){
+		if (!this.search_el || !this.search_el.lev.isOpened()){
 			var md = createSuInvestigation();
 			this.bindMMapStateChanges(md, 'invstg');
 			lev = this.map.goDeeper(false, md);
 		} else {
-			lev = su.search_el.lev;
+			lev = this.search_el.lev;
 		}
 		
 		var invstg = lev.resident;
@@ -273,7 +186,10 @@ provoda.Model.extendTo(appModel, {
 		this.bindMMapStateChanges(mo);
 		var lev = this.map.goDeeper(true, mo);
 	},
-
+	preparePlaylist: function(params, first_song){
+		var pl = new songsList(params, first_song, this.mp3_search, this.p);
+		return pl;
+	},
 	// browser map >>>>>
 
 	show_tag: function(tag, vopts, start_song){
@@ -282,7 +198,7 @@ provoda.Model.extendTo(appModel, {
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		var pl_r = su.preparePlaylist({
+		var pl_r = this.preparePlaylist({
 			title: 'Tag: ' + tag,
 			type: 'artists by tag',
 			data: {tag: tag}
@@ -322,7 +238,7 @@ provoda.Model.extendTo(appModel, {
 		}, true);
 
 
-		su.app_md.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
+		this.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
 		
 		if (start_song){
 			pl_r.showTrack(start_song, full_no_navi);
@@ -331,15 +247,15 @@ provoda.Model.extendTo(appModel, {
 
 	showArtistPlaylist: function(artist, pl, vopts){
 		vopts = vopts || {};
-		var cpl = su.p.isPlaying(pl);
+		var cpl = this.p.isPlaying(pl);
 		if (!cpl){
 			if (!vopts.from_artcard){
-				su.app_md.showArtcardPage(artist, vopts.save_parents, true);
+				this.showArtcardPage(artist, vopts.save_parents, true);
 			}
-			su.app_md.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
+			this.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
 			return false;
 		} else{
-			su.app_md.restoreFreezed();
+			this.restoreFreezed();
 			return cpl;
 		}
 	},
@@ -350,7 +266,6 @@ provoda.Model.extendTo(appModel, {
 		from_artcard
 	}*/
 	showAlbum: function(opts, vopts, start_song){
-	//showAlbum: function(opts, save_parents, start_song, simple){
 		var artist			= opts.artist, 
 			name			= opts.album_name,
 			id				= opts.album_id, 
@@ -359,7 +274,7 @@ provoda.Model.extendTo(appModel, {
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		var pl = su.preparePlaylist({
+		var pl = this.preparePlaylist({
 			title: '(' + artist + ') ' + name,
 			type: 'album',
 			data: {artist: original_artist || artist, album: name}
@@ -390,14 +305,13 @@ provoda.Model.extendTo(appModel, {
 		}
 	},
 	showTopTacks: function (artist, vopts, start_song) {
-	//showTopTacks: function (artist, save_parents, no_navi, start_song, simple) {
 		vopts = vopts || {};
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
 		
 		
-		var pl = su.preparePlaylist({
+		var pl = this.preparePlaylist({
 			title: 'Top of ' + artist,
 			type: 'artist',
 			data: {artist: artist}
@@ -449,50 +363,9 @@ provoda.Model.extendTo(appModel, {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-	showTrackById: function(sub_raw, vopts){
-		var pl_r = su.preparePlaylist({
-			title: 'Track' ,
-			type: 'tracks',
-			data: {time: + new Date()}
-		});
-		su.app_md.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
-		
-		if (sub_raw.type && sub_raw.id){
-			su.mp3_search.getById(sub_raw, function(song, want_auth){
-				
-				if (pl_r.ui){
-					if (!song){
-						if (want_auth){
-							if (sub_raw.type == 'vk'){
-								pl_r.loadComplete('vk_auth');
-							} else{
-								pl_r.loadComplete(true);							
-							}
-						} else {
-							pl_r.loadComplete(true);
-
-						}
-					} else{
-						pl_r.push(song, true);
-						pl_r.loadComplete();
-					}
-					if (want_auth){
-						return true;
-					}
-					console.log(song)
-				} 
-			}, function(){
-				return !!pl_r.getC();
-			}, function(){
-
-			})
-		} else{
-			
-		}
-	},
 	showMetroChart: function(country, metro, vopts){
 		vopts = vopts || {};
-		var plr = su.preparePlaylist({//can autoload
+		var plr = this.preparePlaylist({//can autoload
 			title: 'Chart of ' + metro,
 			type: 'chart',
 			data: {country: country, metro: metro}
@@ -522,19 +395,19 @@ provoda.Model.extendTo(appModel, {
 
 				
 			});
-		su.app_md.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
+		this.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
 	},
 	showSimilarArtists: function(artist, vopts, start_song){
 		vopts = vopts || {};
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
-		var pl = su.preparePlaylist({//can autoload
+		var pl = this.preparePlaylist({//can autoload
 			title: 'Similar to «' + artist + '» artists',
 			type: 'similar artists',
 			data: {artist: artist}
 		}, start_song).loading();
-		//su.app_md.show_playlist_page(pl, false, no_navi || !!start_song);
+
 		
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);
 		if (!recovered){
@@ -578,22 +451,17 @@ provoda.Model.extendTo(appModel, {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-	
-	"stch-search-query": function(state) {
-		
-	},
 	search: function(query, no_navi, new_browse){
 		if (new_browse){
 			this.showStartPage();
 		}
-	//	this.updateState('search-query', query);
 
 		var old_v = this.start_page.state('search-query');
 		if (query != old_v){
 			if (!query) {
-				su.app_md.showStartPage();
+				this.showStartPage();
 			} else {
-				su.app_md.showResultsPage(query, no_navi);
+				this.showResultsPage(query, no_navi);
 			}
 
 		}
@@ -602,38 +470,7 @@ provoda.Model.extendTo(appModel, {
 
 		this.start_page.updateState('search-query', query);
 		
-	},
-
-	/*
-	if (su.search_query != query){
-			su.search_query = query;
-			this.setSearchInputValue(query);
-		}
-		inputChange(query, this.els.search_label, no_navi);
-
-		setSearchInputValue: function(value) {
-		this.els.search_input.val(value);
-	},
-
-
-
-	if (input_value != su.search_query){
-				su.search_query = input_value;
-				inputChange(input_value, _this.els.search_label);
-			}
-			
-	inputChange: function(input_value, label, no_navi){
-		label.removeClass('loading');
-
-		if (!input_value) {
-			su.app_md.showStartPage();
-		} else {
-			su.app_md.showResultsPage(input_value, no_navi);
-		}
 	}
-*/
-
-
 
 });
 

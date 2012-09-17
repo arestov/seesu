@@ -1127,7 +1127,7 @@ var handleDocument = function(d, tracking_opts) {
 			});
 		}
 	});*/
-
+	/*
 	jsLoadComplete({
 		test: function() {
 			return window.su && window.seesu_ui;
@@ -1135,13 +1135,13 @@ var handleDocument = function(d, tracking_opts) {
 		fn: function() {
 			return;
 			var g = new seesu_ui(d, true);
-			su.setUI(g);
+			//su.setUI(g);
 			ui = g;
 			big_timer.q.push([tracking_opts.category, 'created-sui', big_timer.comp(tracking_opts.start_time), 'new seesu ui created', 100]);
 			tryComplete();
 		}
 	});
-	
+	*/
 };
 
 sviga = {};

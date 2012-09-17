@@ -523,9 +523,6 @@ var recoverPlaylistBranch = function(pldata, songdata, has_artcard){
 				su.app_md.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
 			}
 			break
-		case 'directsearch':
-			su.app_md.showTrackById({type: pldata.source, id: pldata.rawid}, {no_navi: true, save_parents: true});
-			break
 		default:
 			;
 	}

@@ -335,7 +335,7 @@ suServView.extendTo(mainLevelUI, {
 								fn: function() {
 									_cmetro.empty();
 							
-									var plr = su.preparePlaylist({//fix params for cache
+									var plr = su.app_md.preparePlaylist({//fix params for cache
 										title: 'Chart of ' + random_metro.name,
 										type: 'chart', 
 										data: {country: random_metro.country, metro: random_metro.name}
