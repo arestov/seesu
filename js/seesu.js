@@ -470,7 +470,9 @@ appModel.extendTo(seesuApp, {
 		this.vk_api = vkapi;
 		this.trigger('vk-api', vkapi, user_id);
 	},
-
+	createSearchPage: function() {
+		return createSuInvestigation();
+	},
 	getPlaylists: function(query) {
 		var r = [];
 		if (this.gena){

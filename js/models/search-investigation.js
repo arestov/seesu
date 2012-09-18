@@ -338,16 +338,6 @@ investigation.extendTo(SearchPage, {
 	getURL: function() {
 		return '?q=' + encodeURIComponent(this.q || '');
 	},
-	state_change: {
-		"mp-show": function(opts) {
-			if (opts){
-				su.search_el = this;
-			}
-			
-			
-		}
-	},
-
 	searchf: function() {
 		var playlists = seesu.gena.playlists,
 			pl_results = [],

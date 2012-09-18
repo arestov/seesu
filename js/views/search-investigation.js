@@ -151,10 +151,6 @@ searchSectionUI.extendTo(playlistsSectionView, {
 
 
 
-
-
-
-
 var searchPageView = function() {};
 investigationView.extendTo(searchPageView, {
 	children_views: {

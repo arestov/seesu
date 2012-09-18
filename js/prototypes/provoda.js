@@ -16,6 +16,9 @@ provoda = {
 		}
 	},
 	extendFromTo: function(name, base, fn){
+		if (!this.prototypes[name]){
+			throw new Error('there is no prototype ' + name + ' in my store');
+		}
 		base.extendTo(fn, this.prototypes[name]);
 		return fn;
 	}
@@ -548,8 +551,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		
 		this._detailed = true;
 		if (!this.manual_states_connect){
-			this.connectStates();
 			this.connectChildrenModels();
+			this.connectStates();
 		}
 		
 		this.appendCon();
