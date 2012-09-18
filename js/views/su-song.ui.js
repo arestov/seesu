@@ -127,9 +127,14 @@ suServView.extendTo(songUI, {
 			this.rowcs[a].hide();
 		};
 		//this.tidominator.removeClass('want-more-info');
-			
-		this.md.actionsrow.hideAll();
-		this.md.mf_cor.collapseExpanders();
+
+
+		this.getMdChild('actionsrow').hideAll();
+		this.getMdChild('mf_cor').collapseExpanders();
+	},
+	children_views: {
+		actionsrow: TrackActionsRowUI,
+		mf_cor: mfCorUI
 	},
 	activate: function(opts){
 		this.expand();
@@ -202,18 +207,16 @@ suServView.extendTo(songUI, {
 
 		this.song_actions_c =  context.children('.song-actions');
 
-		var track_row_view = this.md.actionsrow.getFreeView(this);
-		if (track_row_view){
 
-			this.addChild(track_row_view);
-			
-			
-		}
+		var actionsrow = this.getMdChild('actionsrow')
+		var track_row_view = this.getFreeChildView('actionsrow', actionsrow);
 
-		this.mf_cor_view = this.md.mf_cor.getFreeView(this);
+
+
+		var mf_cor = this.getMdChild('mf_cor');
+		this.mf_cor_view = this.getFreeChildView('mf_cor', mf_cor);
 		if (this.mf_cor_view){
 			var mf_cor_view_c = this.mf_cor_view.getA();
-			this.addChild(this.mf_cor_view);
 			context.prepend(mf_cor_view_c);
 			
 		

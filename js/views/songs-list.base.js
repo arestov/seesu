@@ -47,7 +47,7 @@ provoda.addPrototype("songsListBaseView", {
 		this.panel.appendTo(this.c)
 		this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);
 	},
-	appendSongDOM: function(song_view, mo, array){
+	appendSongDOM: function(song_view, mo, array, current_index){
 		var
 			moc,
 			song_dom = song_view.getA();
@@ -55,44 +55,24 @@ provoda.addPrototype("songsListBaseView", {
 			return;
 		}
 
-		var _this = this.md;
-
-		// todo USE SIMPLE DETECT OF NEXT SONG VIEW;
-		if (_this.first_song){
-			if (!_this.firstsong_inseting_done){
-				if (mo == _this.first_song.mo){
-					this.lc.append(song_dom);
-				} else{
-					moc = _this.first_song.mo.getThing();
-					if (moc){
-						moc.before(song_dom);
-					}
-				}
-			} else if (_this.first_song.mo != mo){
-				var f_position = array.indexOf(_this.first_song.mo);
-				var t_position = array.indexOf(mo);
-				if (t_position < f_position){
-					moc = _this.first_song.mo.getThing();
-					if (moc){
-						moc.before(song_dom);
-					}
-				} else{
-					this.lc.append(song_dom);
-				}
-			} else{
+		var prev_dom_hook = this.getPrevView(array, current_index);
+		if (prev_dom_hook){
+			$(prev_dom_hook).after(song_dom);
+		} else {
+			var next_dom_hook = this.getNextView(array, current_index);
+			if (next_dom_hook){
+				$(next_dom_hook).before(song_dom)
+			} else {
 				this.lc.append(song_dom);
 			}
-			
-			
-		} else{
-			this.lc.append(song_dom);
 		}
+
 	},
 	'collch-song': function(name, arr) {
 		for (var i = 0; i < arr.length; i++) {
-			var view = this.getFreeChildView(name, arr[i], 'main');
+			var view = this.getFreeChildView(name, arr[i]);
 			if (view){
-				this.appendSongDOM(view, arr[i], arr);
+				this.appendSongDOM(view, arr[i], arr, i);
 			}
 		}
 		this.requestAll();

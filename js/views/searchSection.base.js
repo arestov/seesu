@@ -97,7 +97,7 @@ provoda.addPrototype("searchSectionView", {
 				this.c.append(button_view.getA())
 			}	
 		}
-		var butn_th = this.button_view && $(this.button_view.getT());
+	//	var butn_th = this.button_view && $(this.button_view.getT());
 
 		var rendering_list = this.getMdChild('rendering_list');
 		if (rendering_list){
@@ -106,12 +106,13 @@ provoda.addPrototype("searchSectionView", {
 
 				var cur_ui = this.getFreeChildView('item', cur);
 				if (cur_ui){
-					this.addChild(cur_ui);
 					var ccon = cur_ui.getA();
-					if (butn_th){
-						butn_th.before(ccon);
-					} else{
-						this.c.append(ccon);
+
+					var prev_dom_hook = this.getPrevView(rendering_list, i);
+					if (prev_dom_hook){
+						$(prev_dom_hook).after(ccon);
+					} else {
+						this.c.prepend(ccon);
 					}
 				}
 

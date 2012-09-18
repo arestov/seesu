@@ -29,6 +29,7 @@ var song;
 		this.addChild(actionsrow);
 
 		this.mf_cor = new mfCor(this, this.omo);
+		this.setChild('mf_cor', this.mf_cor);
 		this.addChild(this.mf_cor);
 		this.mf_cor.on('before-mf-play', function(mopla) {
 
@@ -70,10 +71,6 @@ var song;
 	};
 
 	baseSong.extendTo(song, {
-		ui_constr: {
-			main: songUI,
-			nav: trackNavUI
-		},
 		page_name: 'song page',
 		getShareUrl: function() {
 			if (this.artist && this.track){

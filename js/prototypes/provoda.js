@@ -832,8 +832,35 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._collections_set_processing = false;
 	},
 	getMdChild: function(name, one_thing) {
-		var array = this.children_models[name]
-		return one_thing ? array && array[0] : array;
+		return this.children_models[name]
+	},
+	getPrevView: function(array, start_index, name) {
+		var i = start_index - 1; 
+		if (i >= array.length || i < 0){
+			return;
+		}
+		for (; i >= 0; i--) {
+			var view = array[i].getView(name);
+			var dom_hook = view && view.getT();
+			if (dom_hook){
+				return dom_hook;
+			}
+			
+		}
+	},
+	getNextView: function(array, start_index, name) {
+		var i = start_index + 1;
+		if (i >= array.length || i < 0){
+			return;
+		}
+		for (; i < array.length; i++) {
+			var view = array[i].getView(name);
+			var dom_hook = view && view.getT();
+			if (dom_hook){
+				return dom_hook;
+			}
+			
+		}
 	},
 	collectionChange: function(name, array) {
 		if (this.undetailed_children_models){
