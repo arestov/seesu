@@ -213,14 +213,9 @@ suServView.extendTo(songUI, {
 
 
 
-		var mf_cor = this.getMdChild('mf_cor');
-		this.mf_cor_view = this.getFreeChildView('mf_cor', mf_cor);
-		if (this.mf_cor_view){
-			var mf_cor_view_c = this.mf_cor_view.getA();
-			context.prepend(mf_cor_view_c);
-			
+
+		context.prepend(this.getAFreeCV('mf_cor'));
 		
-		}
 		
 		
 		

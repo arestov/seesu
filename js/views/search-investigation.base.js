@@ -176,7 +176,6 @@ provoda.addPrototype("searchSectionView", {
 		this.createHead();
 
 		this.gc = this.header ? this.header.add(this.c) : this.c;
-		this.orderChildren();
 	},
 	getC: function(){
 		return this.gc;	
@@ -208,9 +207,6 @@ provoda.addPrototype("searchSectionView", {
 				}
 				
 			}
-		},
-		changed: function(time){
-			this.renderChildren();
 		},
 		loading: function(state){
 			if (this.header){
@@ -249,49 +245,31 @@ provoda.addPrototype("searchSectionView", {
 			}
 		}
 	},
-	renderChildren: function(){
-		this.orderChildren();
+	'collch-rendering_list': function(name, array) {
+		for (var i = 0; i < array.length; i++) {
+				var cur = array[i];
+
+			var cur_ui = this.getFreeChildView('item', cur);
+			if (cur_ui){
+				var ccon = cur_ui.getA();
+
+				var prev_dom_hook = this.getPrevView(array, i);
+				if (prev_dom_hook){
+					$(prev_dom_hook).after(ccon);
+				} else {
+					this.c.prepend(ccon);
+				}
+			}
+
+		}
 		this.requestAll();
 	},
-	orderChildren: function(){
-		var _this = this;
-
-
-
-
-		var button = this.getMdChild('button');
-
-		
-		if (button){
-			var button_view = this.getFreeChildView('button', button);
-			if (button_view){
-				this.button_view = button_view;
-				this.c.append(button_view.getA())
-			}	
+	'collch-button': function(name, md) {
+		var view = this.getFreeChildView(name, md);
+		if (view){
+			this.button_view = view;
+			this.c.append(view.getA())
 		}
-	//	var butn_th = this.button_view && $(this.button_view.getT());
-
-		var rendering_list = this.getMdChild('rendering_list');
-		if (rendering_list){
-			for (var i = 0; i < rendering_list.length; i++) {
-				var cur = rendering_list[i];
-
-				var cur_ui = this.getFreeChildView('item', cur);
-				if (cur_ui){
-					var ccon = cur_ui.getA();
-
-					var prev_dom_hook = this.getPrevView(rendering_list, i);
-					if (prev_dom_hook){
-						$(prev_dom_hook).after(ccon);
-					} else {
-						this.c.prepend(ccon);
-					}
-				}
-
-			}
-			
-		}
-		
-		
+		this.requestAll();
 	}
 });

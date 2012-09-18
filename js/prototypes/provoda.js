@@ -579,6 +579,25 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.children[i].markAsDead();
 		}
 	},
+	getFreeCV: function(child_name, view_space, opts) {
+		var md = this.getMdChild(child_name);
+		if (md){
+			var view = this.getFreeChildView(child_name, md, view_space, opts);
+			return view;
+		} else {
+			throw new Error('there is no ' + child_name + ' child model');
+		}
+	},
+	getAFreeCV: function(child_name, view_space, opts) {
+		var view = this.getFreeCV(child_name, view_space, opts);
+		var anchor = view.getA();
+		if (anchor){
+			return anchor;
+		} else {
+			throw new Error('there is no anchor for view of ' + child_name + ' child model');
+		}
+	
+	},
 	getFreeChildView: function(child_name, md, view_space, opts) {
 		var view = md.getView(view_space, true);
 		if (view){

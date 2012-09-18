@@ -114,10 +114,13 @@ provoda.Model.extendTo(appModel, {
 	},
 	bindMMapStateChanges: function(md, place) {
 		var _this = this;
-		var navigation = this.getChild('navigation');
-		var target_array = this.getChild(place) || [];
+		
 
 		md.on('mpl-attach', function() {
+			var navigation = _this.getChild('navigation');
+			var target_array = _this.getChild(place) || [];
+
+
 			if (navigation.indexOf(md) == -1) {
 				navigation.push(md);
 				_this.setChild('navigation', navigation, true);
@@ -131,6 +134,9 @@ provoda.Model.extendTo(appModel, {
 
 		});
 		md.on('mpl-detach', function(){
+			var navigation = _this.getChild('navigation');
+			var target_array = _this.getChild(place) || [];
+
 			var new_nav = arrayExclude(navigation, md);
 			if (new_nav.length != navigation.length){
 				_this.setChild('navigation', new_nav, true);

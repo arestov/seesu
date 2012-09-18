@@ -16,6 +16,9 @@ baseSuggestUI.extendTo(struserSuggestView, {
 
 var ShareRowUI = function(){};
 BaseCRowUI.extendTo(ShareRowUI, {
+	children_views: {
+		
+	},
 	createDetailes: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.share-song');
@@ -73,13 +76,10 @@ BaseCRowUI.extendTo(ShareRowUI, {
 					.insertBefore(this.getPart("pch-ws-friends"));
 
 				this.getPart("pch-ws-friends").after();
-				var searcher_ui = this.md.searcher.getFreeView(this);
-				if (searcher_ui){
-					this.addChild(searcher_ui);
-					$(searcher_ui.getA()).insertBefore(this.getPart("pch-ws-friends"));
-					this.requestAll();
-					searcher_ui.expand();
-				}
+				var searcher_ui = this.getFreeCV('searcher');
+				$(searcher_ui.getA()).insertBefore(this.getPart("pch-ws-friends"));
+				this.requestAll();
+				searcher_ui.expand();
 				
 				this.md.search("");
 			}
@@ -90,12 +90,8 @@ BaseCRowUI.extendTo(ShareRowUI, {
 	'stch-needs-vk-auth': {
 		fn: function(state) {
 			if (state){
-				var auth_ui = this.md.vk_auth.getFreeView(this);
-				if (auth_ui){
-					this.addChild(auth_ui);
-					$(auth_ui.getA()).insertBefore(this.getPart("pch-vk-auth"));
-					this.requestAll();
-				}
+				$(this.getAFreeCV('vk_auth')).insertBefore(this.getPart("pch-vk-auth"));
+				this.requestAll();
 			}
 		},
 		dep_vp: ["pch-vk-auth"]
@@ -154,12 +150,16 @@ BaseCRowUI.extendTo(ShareRowUI, {
 
 		
 	}
+
 });
 
 
 
 var PlaylistAddRowUI = function() {};
 BaseCRowUI.extendTo(PlaylistAddRowUI, {
+	children_views: {
+		
+	},
 	createDetailes: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.addsong-to-playlist');
@@ -191,13 +191,11 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		this.lpl.append(this.pl_creation_b);
 
 
-		var searcher_ui = this.md.searcher.getFreeView(this);
-		if (searcher_ui){
-			this.addChild(searcher_ui);
-			this.lpl.append(searcher_ui.getA());
-			this.requestAll();
-			searcher_ui.expand();
-		}
+		var searcher_ui = this.getFreeCV('searcher');
+		this.lpl.append(searcher_ui.getA());
+		this.requestAll();
+		searcher_ui.expand();
+		
 		this.md.search("");
 
 		
@@ -227,14 +225,19 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 			
 		}
 	}
+	
 });
 
 
 
 var LoveRowUI = function(){};
 BaseCRowUI.extendTo(LoveRowUI, {
+	children_views: {
+		
+	},
 	createDetailes: function(){
-	var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
+		var parent_c = this.parent_view.row_context; 
+		var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.love-song');
 		this.button = buttons_panel.find('.pc-place .pc-love');
 
@@ -246,17 +249,16 @@ BaseCRowUI.extendTo(LoveRowUI, {
 		} else {
 			this.expanded = true;
 		}
-		var llit_view = this.md.lfm_loveit.getFreeView(this);
-		this.c.append(llit_view.getA());
-		this.addChild(llit_view);
+		this.c.append(this.getAFreeCV('lfm_loveit'));
 		this.requestAll();
-
-		
 	}
 });
 
 var ScrobbleRowUI = function(){};
 BaseCRowUI.extendTo(ScrobbleRowUI, {
+	children_views: {
+
+	},
 	createDetailes: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.last-fm-scrobbling');
@@ -271,13 +273,10 @@ BaseCRowUI.extendTo(ScrobbleRowUI, {
 			this.expanded = true;
 		}
 
-		var lsc_view = this.md.lfm_scrobble.getFreeView(this);
-		if (lsc_view){
-			this.addChild(lsc_view);
-			this.c.append(lsc_view.getA());
-		}
+		this.c.append(this.getAFreeCV('lfm_scrobble'));
 		this.requestAll();
 	}
+	
 });
 
 

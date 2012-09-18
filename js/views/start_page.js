@@ -51,9 +51,7 @@ BaseCRowUI.extendTo(LastfmRecommRowView, {
 			this.expanded = true;
 		}
 
-		var lfm_reccoms = this.getMdChild('lfm_reccoms');
-		var lfm_reccoms_view = this.getFreeChildView('lfm_reccoms', lfm_reccoms, 'main');
-		this.c.append(lfm_reccoms_view.getA());
+		this.c.append(this.getAFreeCV('lfm_reccoms'));
 
 		this.requestAll();
 	},
@@ -88,9 +86,8 @@ BaseCRowUI.extendTo(LastfmLoveRowView, {
 			this.expanded = true;
 		}
 
-		var lfm_loves = this.getMdChild('lfm_loves');
-		var lfmlove_view = this.getFreeChildView('lfm_loves', lfm_loves, 'main');
-		this.c.append(lfmlove_view.getA());
+
+		this.c.append(this.getAFreeCV('lfm_loves'));
 
 		this.requestAll();
 	},
