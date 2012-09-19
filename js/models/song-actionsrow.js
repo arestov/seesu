@@ -105,7 +105,8 @@ var StrusersRSSection = function() {
 	this.init();
 };
 searchSection.extendTo(StrusersRSSection, {
-	resItem: struserSuggest
+	resItem: struserSuggest,
+	model_name: "section-vk-users"
 });
 
 
@@ -308,7 +309,8 @@ var PlaylistRSSection = function() {
 	this.init();
 };
 searchSection.extendTo(PlaylistRSSection, {
-	resItem: playlistSuggest
+	resItem: playlistSuggest,
+	model_name: "section-playlist"
 });
 
 

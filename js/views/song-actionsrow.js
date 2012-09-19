@@ -1,3 +1,4 @@
+
 var struserSuggestView = function() {};
 baseSuggestUI.extendTo(struserSuggestView, {
 	createItem: function() {
@@ -11,13 +12,43 @@ baseSuggestUI.extendTo(struserSuggestView, {
 	}
 });
 
+var ShSSectionView = function() {};
+searchSectionUI.extendTo(ShSSectionView, {
+	children_views: {
+		item: struserSuggestView
+	}
+});
+
+var ShareSearchView = function() {};
+investigationView.extendTo(ShareSearchView, {
+	children_views: {
+		"section-vk-users": ShSSectionView
+	}
+});
+
+var PASSectionView = function() {};
+searchSectionUI.extendTo(PASSectionView, {
+	children_views: {
+		item: baseSuggestUI
+	}
+	
+});
+
+var PlaylistAddSsearchView = function() {};
+investigationView.extendTo(PlaylistAddSsearchView, {
+	children_views: {
+		"section-playlist": PASSectionView
+	}
+});
+
 
 
 
 var ShareRowUI = function(){};
 BaseCRowUI.extendTo(ShareRowUI, {
 	children_views: {
-		vk_auth: vkLoginUI
+		vk_auth: vkLoginUI,
+		searcher: ShareSearchView
 	},
 	createDetailes: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
@@ -153,12 +184,10 @@ BaseCRowUI.extendTo(ShareRowUI, {
 
 });
 
-
-
 var PlaylistAddRowUI = function() {};
 BaseCRowUI.extendTo(PlaylistAddRowUI, {
 	children_views: {
-		
+		searcher: PlaylistAddSsearchView
 	},
 	createDetailes: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;

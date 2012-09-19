@@ -581,7 +581,7 @@ var hashChangeRecover = function(e){
 		
 		if (dl.dead.length){
 			for (var i=0; i < dl.dead.length; i++) {
-				su.m.resurrectLevel(dl.dead[i], i != dl.dead.length - 1, true );
+				su.map.resurrectLevel(dl.dead[i], i != dl.dead.length - 1, true );
 			};
 		}	
 	} else{
