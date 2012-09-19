@@ -22,7 +22,6 @@ provoda.extendFromTo('baseSectionButton', baseSuggest, baseSectionButton);
 
 searchSection = function(){};
 provoda.extendFromTo("searchSection", provoda.Model, searchSection);
-//searchSection.prototype.ui_constr = searchSectionUI;
 
 
 var artistSuggest = function(data){
@@ -43,8 +42,7 @@ baseSuggest.extendTo(artistSuggest, {
 	onView: function(){
 		su.showArtcardPage(this.artist, true);
 		su.trackEvent('Music search', this.q, "artist: " + this.artist );
-	},
-//	ui_constr: artistSuggestUI
+	}
 });
 
 
@@ -59,8 +57,7 @@ baseSuggest.extendTo(playlistSuggest, {
 	},
 	onView: function(){
 		su.showStaticPlaylist(this.pl, true);
-	},
-//	ui_constr: baseSuggestUI
+	}
 });
 
 
@@ -91,7 +88,6 @@ var playlistsSection = function() {
 	this.init();
 };
 searchSection.extendTo(playlistsSection, {
-//	ui_constr: playlistsSectionUI,
 	model_name: 'section-playlist',
 	resItem: playlistSuggest
 });
@@ -119,7 +115,6 @@ seesuSection.extendTo(artistsSection, {
 			getLastfmSuggests('artist.search', {artist: q}, q, this, parseArtistsResults, true);
 		}
 	},
-//	ui_constr: artistsSectionUI,
 	resItem: artistSuggest
 });
 
@@ -148,8 +143,7 @@ baseSuggest.extendTo(trackSuggest, {
 		});
 
 		seesu.trackEvent('Music search', this.q, "track: " + this.artist + ' - ' + this.track );
-	},
-//	ui_constr: trackSuggestUI
+	}
 });
 
 
@@ -174,7 +168,6 @@ seesuSection.extendTo(tracksSection, {
 			getLastfmSuggests('track.search', {track: q}, q, this, parseTracksResults, true);
 		}
 	},
-//	ui_constr: tracksSectionUI,
 	resItem: trackSuggest
 });
 
@@ -201,8 +194,7 @@ baseSuggest.extendTo(tagSuggest, {
 	onView: function(){
 		su.show_tag(this.tag, {save_parents: true});
 		seesu.trackEvent('Music search', this.q, "tag: " + this.tag );
-	},
-//	ui_constr: tagSuggestUI
+	}
 });
 
 
@@ -225,7 +217,6 @@ seesuSection.extendTo(tagsSection, {
 			getLastfmSuggests('tag.search', {tag: q}, q, this, parseTagsResults, true);
 		}
 	},
-//	ui_constr: tagsSectionUI,
 	resItem: tagSuggest
 });
 
@@ -261,8 +252,7 @@ baseSuggest.extendTo(albumSuggest, {
 			album_id: this.aid
 		}, {save_parents: true});
 		seesu.trackEvent('Music search', this.q, "album: " + this.text_title);
-	},
-//	ui_constr: albumSuggestUI
+	}
 });
 
 
@@ -284,7 +274,6 @@ seesuSection.extendTo(albumsSection, {
 			getLastfmSuggests('album.search', {'album': q}, q, this, parseAlbumsResults, true);
 		}
 	},
-//	ui_constr: albumsSectionUI,
 	resItem: albumSuggest
 });
 

@@ -73,6 +73,9 @@ var jsLoadComplete,
 
 	"js/libs/c_buttmen.js",
 	"js/pressed_node_tester.js",
+	
+	"js/views/etc.views.js",
+	"js/views/su-mfcomplect.js",
 	"js/views/search-investigation.base.js",
 	"js/views/search-investigation.js",
 	"js/views/song-actionsrow.js",

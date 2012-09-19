@@ -167,10 +167,6 @@ var artCard = function(artist) {
 
 };
 mapLevelModel.extendTo(artCard, {
-	ui_constr: {
-		main: artCardUI,
-		nav: artCardNavUI	
-	},
 	model_name: 'artcard',
 	page_name: "art card",
 	getURL: function() {
