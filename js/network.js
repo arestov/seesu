@@ -29,34 +29,6 @@ var get_youtube = function(q, callback){
 	
 };
 
-var vkLoginUI = function() {};
-
-provoda.View.extendTo(vkLoginUI, {
-	createDetailes: function(){
-		this.createBase();
-	},
-	state_change: {
-		wait: function(state) {
-			if (state){
-				this.c.addClass("waiting-vk-login");
-			} else {
-				this.c.removeClass("waiting-vk-login");
-			}
-		},
-		"request-description": function(state) {
-			this.c.find('.login-request-desc').text(state || "");
-		}
-	},
-	createBase: function() {
-		this.c = app_view.samples.vklc.clone();
-		var _this = this;
-		this.c.find('.sign-in-to-vk').click(function(e){
-			_this.md.requestAuth();
-			e.preventDefault();
-		});
-
-	}
-});
 
 
 var vkLogin = function() {
@@ -64,7 +36,6 @@ var vkLogin = function() {
 }; 
 
 provoda.Model.extendTo(vkLogin, {
-	ui_constr: vkLoginUI,
 	waitData: function() {
 		this.updateState('wait', true);
 	},

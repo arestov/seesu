@@ -1,6 +1,53 @@
 var LoveRow;
 (function(){
 "use strict";
+
+
+
+
+var LfmLoveIt = function(auth, mo) {
+	this.init(auth, mo);
+};
+
+LfmLogin.extendTo(LfmLoveIt, {
+	init: function(auth, mo) {
+		this._super(auth);
+		this.song = mo;
+		this.setRequestDesc(localize('lastfm-loveit-access'));
+		this.updateState('active', true);
+	},
+	onSession: function(){
+		this.updateState('has-session', true);
+	},
+	beforeRequest: function() {
+		this.bindAuthCallback();
+	},
+	bindAuthCallback: function(){
+		var _this = this;
+		this.auth.once("session.input_click", function() {
+			_this.makeLove();
+		}, {exlusive: true});
+	},
+	makeLove: function() {
+
+		if (lfm.sk){
+			var _this = this;
+			this.updateState('wait-love-done', true);
+			lfm.post('Track.love', {
+				sk: lfm.sk,
+				artist: this.song.artist,
+				track: this.song.track
+			})
+				.always(function(){
+					_this.updateState('wait-love-done', false);
+					_this.trigger('love-success');
+				})
+			seesu.trackEvent('song actions', 'love');
+		}
+		
+		
+	}
+});
 LoveRow = function(actionsrow, mo){
 	this.init(actionsrow, mo);
 };

@@ -17,7 +17,7 @@ baseSuggestUI.extendTo(struserSuggestView, {
 var ShareRowUI = function(){};
 BaseCRowUI.extendTo(ShareRowUI, {
 	children_views: {
-		
+		vk_auth: vkLoginUI
 	},
 	createDetailes: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
@@ -230,10 +230,15 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 
 
 
+
+
+
+
+
 var LoveRowUI = function(){};
 BaseCRowUI.extendTo(LoveRowUI, {
 	children_views: {
-		
+		lfm_loveit: LfmLoveItView
 	},
 	createDetailes: function(){
 		var parent_c = this.parent_view.row_context; 
@@ -257,7 +262,7 @@ BaseCRowUI.extendTo(LoveRowUI, {
 var ScrobbleRowUI = function(){};
 BaseCRowUI.extendTo(ScrobbleRowUI, {
 	children_views: {
-
+		lfm_scrobble: LfmScrobbleView
 	},
 	createDetailes: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
