@@ -21,8 +21,8 @@ cbp.jsLoadComplete({
 	},
 	fn: function() {
 
-		var app_tph = new appTelegrapher();
-		app_tph.init(window, {category: 'popup-init', start_time: 'popup-start'});
+		var app_tph = new cbp.appTelegrapher();
+		app_tph.init(window, {category: 'popup-init', start_time: 'popup-start'}, true);
 		//
 		cbp.app_view = app_tph.app_view;
 	}
