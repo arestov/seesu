@@ -1,5 +1,5 @@
 var fileInTorrentUI = function() {};
-suServView.extendTo(fileInTorrentUI,{
+provoda.View.extendTo(fileInTorrentUI,{
 	createDetailes: function(){
 		this.createBase();
 	},
@@ -39,7 +39,7 @@ suServView.extendTo(fileInTorrentUI,{
 	}
 });
 var songFileModelUI = function() {};
-suServView.extendTo(songFileModelUI, {
+provoda.View.extendTo(songFileModelUI, {
 	createDetailes: function(){
 		this.createBase();
 

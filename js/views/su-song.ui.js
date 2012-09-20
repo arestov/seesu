@@ -1,6 +1,6 @@
 var songUI = function(){};
 
-suServView.extendTo(songUI, {
+provoda.View.extendTo(songUI, {
 	createDetailes: function(){
 		this.rowcs = {};
 		this.createBase();
