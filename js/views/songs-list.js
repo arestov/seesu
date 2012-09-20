@@ -122,7 +122,8 @@ var songsListView;
 			}
 		},
 		createPanel: function() {
-			this.panel = app_view.samples.playlist_panel.clone();			
+			this.panel = app_view.samples.playlist_panel.clone();
+			this.panel.appendTo(this.c)		
 			return this;
 		},
 		'collch-plarow': function(name, md) {

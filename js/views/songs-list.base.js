@@ -44,7 +44,7 @@ provoda.addPrototype("songsListBaseView", {
 		if (this.createPanel){
 			this.createPanel();
 		}
-		this.panel.appendTo(this.c)
+		
 		this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);
 	},
 	appendSongDOM: function(song_view, mo, array, current_index){

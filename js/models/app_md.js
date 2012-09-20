@@ -200,7 +200,8 @@ provoda.Model.extendTo(appModel, {
 		var lev = this.map.goDeeper(true, mo);
 	},
 	preparePlaylist: function(params, first_song){
-		var pl = new songsList(params, first_song, this.mp3_search, this.p);
+		var pl = new songsList();
+		pl.init(params, first_song, this.mp3_search, this.p);
 		return pl;
 	},
 	// browser map >>>>>
