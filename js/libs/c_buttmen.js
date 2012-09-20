@@ -1,13 +1,10 @@
 
-var button_menu = function(jq_node){
+var button_menu = function(jq_node, d){
+	this.d = d;
 	this.node = jq_node;
 	this.sectors = 20;
 	this.node.data('buttmen', this);
-	
-	var but_hl_style = seesu.ui.d.createElement('style');
-		but_hl_style.setAttribute('title', 'button_menu');
-		but_hl_style.setAttribute('type', 'text/css');
-	
+		
 	
 	var style = '  ';
 	for (var i=1; i <= this.sectors; i++) {
@@ -21,12 +18,20 @@ var button_menu = function(jq_node){
 		style += style_ver + '.buttmen-hlt-top {opacity:' +  (1 - y) + ';}';
 		style += style_ver + '.buttmen-hlt-bottom {opacity:' + (y) + ';}';
 	};
-	su.ui.appendStyle(style);
+	this.style = style;
 
+
+	var _this = this;
 	jq_node
-		.mousedown(this.events.mousedown)
-		.mouseup(this.events.mouseup)
-		.mousemove(this.events.mousemove);
+		.mousedown(function(e) {
+			_this.events.mousedown(e, d);
+		})
+		.mouseup(function(e) {
+			_this.events.mouseup(e, d);
+		})
+		.mousemove(function(e) {
+			this.events.mousemove(e, d)
+		});
 		
 	
 	this.node.find('.pc')
@@ -61,7 +66,7 @@ button_menu.prototype = {
 		
 	},
 	events:{
-		mousedown: function(e){
+		mousedown: function(e, d){
 			e.preventDefault();
 			var _tr = function(text){
 				setTimeout(function(text){
@@ -87,7 +92,7 @@ button_menu.prototype = {
 				_tr('buttons are here');
 				$(this).unbind('mouseleave');
 			});
-			$(seesu.ui.d).mouseup(function(e){
+			$(d).mouseup(function(e){
 				clearTimeout(stat);
 				e.preventDefault();
 				butt_main.unbind('mouseleave');
@@ -98,8 +103,8 @@ button_menu.prototype = {
 					_tr('some button was pressed');
 				},10);
 				
-				$(seesu.ui.d).unbind('mouseup');
-				$(seesu.ui.d).unbind('mousemove');
+				$(d).unbind('mouseup');
+				$(d).unbind('mousemove');
 				
 				return test_pressed_node(e, {mouseup: true})
 			})
@@ -117,7 +122,7 @@ button_menu.prototype = {
 			var sector_vertical = height/_this.data('buttmen').sectors;
 			var sector_horizontal = width/_this.data('buttmen').sectors;
 			
-			$(seesu.ui.d).mousemove(function(e){
+			$(d).mousemove(function(e){
 				e.preventDefault();
 				var x = e.pageX;
 				var y = e.pageY;
@@ -140,15 +145,15 @@ button_menu.prototype = {
 			
 			
 		},
-		mouseup: function(e){
+		mouseup: function(e, d){
 			e.preventDefault();
 			var _this = $(this);
 			_this.removeClass('buttmen-butting');
 		},
-		mousemove: function(e){
+		mousemove: function(e, d){
 			e.preventDefault();
 			if (window.getSelection) { window.getSelection().removeAllRanges(); } else 
-			if (seesu.ui.d.selection && seesu.ui.d.selection.clear) {seesu.ui.d.selection.clear();}
+			if (d.selection && d.selection.clear) {d.selection.clear();}
 		}
 	}
 }

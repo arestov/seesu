@@ -175,8 +175,7 @@ var get_fast_suggests = debounce(function(q, callback, hash, invstg){
 		if (callback){callback(r);}
 	  }	,
 	  complete: function(xhr){
-	  	if (su.ui.els.search_input.val() != q){return}
-	  	invstg.loaded();
+	  	invstg.loaded(q);
 	  }
 	});
 	

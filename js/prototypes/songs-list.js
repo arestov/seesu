@@ -3,6 +3,7 @@ var songsList;
 	"use strict";
 	
 	provoda.addPrototype("songsListBase", {
+		model_name: "playlist",
 		complex_states: {
 			more_load_available: {
 				depends_on: ["can-load-more", "loading"],
@@ -43,8 +44,12 @@ var songsList;
 			} else {
 				this.palist.push(mo);
 			}
-			if (!skip_changes && this.onChanges){
-				this.onChanges(last_usable_song);
+			this.setChild('song', this.palist);
+			if (!skip_changes){
+				if (this.onChanges){
+					this.onChanges(last_usable_song);
+				}
+				
 			}
 		},
 		add: function(omo){
@@ -185,7 +190,7 @@ var songsList;
 			return this;
 		},
 		changed: function(){
-			this.updateState('changed', 'ta' + Math.random() + (+ new Date()));
+			this.setChild('song', this.palist, true);
 			return this;
 		},
 		injectExpectedSongs: function(playlist) {
@@ -358,113 +363,6 @@ var songsList;
 
 	});
 	
-	provoda.addPrototype("songsListBaseView", {
-		createDetailes: function(){
-			this.createBase();
-			this.orderChildren();
-		},
-		state_change: {
-			loading: function(loading){
-				if (loading){
-					this.lc.addClass('loading');
-				} else {
-					this.lc.removeClass('loading');
-				}
-			},
-			"more_load_available": function(state) {
-				
-				if (state){
-					this.requirePart("load-more-b").removeClass("hidden");
-				} else {
-					var button = this.getPart("load-more-b");
-					if (button){
-						button.addClass("hidden");
-					}
-				}
-			},
-			changed: function(){
-				this.renderChildren();
-			},
-			"can-play": function(state) {
-				if (state){
-					//make-trs-plable
-					this.c.addClass('has-files-in-songs');
-				} else {
-					this.c.removeClass('has-files-in-songs');
-				}
-			}
-		},
-		parts_builder: {
-			"load-more-b": function() {
-				var _this = this;
-				
-				return $("<a class='load-more-songs'></a>").click(function() {
-						_this.md.loadMoreSongs(true);
-					}).text(localize("load-more")).appendTo(this.c);
-			}
-		},
-		createBase: function() {
-			this.c = $('<div class="playlist-container"></div>');
-			if (this.createPanel){
-				this.createPanel();
-			}
-			this.panel.appendTo(this.c)
-			this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);
-		},
-		appendSongUI: function(mo){
-			var moc;
-			var pl_ui_element = mo.getFreeView(this);
-			if (pl_ui_element){
-				this.addChild(pl_ui_element);
-				pl_ui_element = pl_ui_element && pl_ui_element.getA();
-			} else {
-				return;
-			}
-			var _this = this.md;
-
-
-			if (_this.first_song){
-				if (!_this.firstsong_inseting_done){
-					if (mo == _this.first_song.mo){
-						this.lc.append(pl_ui_element);
-					} else{
-						moc = _this.first_song.mo.getThing();
-						if (moc){
-							moc.before(pl_ui_element);
-						}
-					}
-				} else if (_this.first_song.mo != mo){
-					var f_position = _this.palist.indexOf(_this.first_song.mo);
-					var t_position = _this.palist.indexOf(mo);
-					if (t_position < f_position){
-						moc = _this.first_song.mo.getThing();
-						if (moc){
-							moc.before(pl_ui_element);
-						}
-					} else{
-						this.lc.append(pl_ui_element);
-					}
-				} else{
-					this.lc.append(pl_ui_element);
-				}
-				
-				
-			} else{
-				this.lc.append(pl_ui_element);
-			}
-		},
-		renderChildren: function(){
-			this.orderChildren();
-			this.requestAll();
-		},
-		orderChildren: function(load_finished) {
-			var _this = this.md;
-			if (_this.palist.length){
-				for (var i=0; i < _this.palist.length; i++) {
-					this.appendSongUI(_this.palist[i]);
-				}
-			}
-		}
-	});
+	
 
 })();

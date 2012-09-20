@@ -3,6 +3,7 @@
 var counter = 0;
 
 provoda.addPrototype("baseSong",{
+	model_name: "song",
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
@@ -345,10 +346,11 @@ provoda.addPrototype("baseSong",{
 						_this.updateState("no-track-title", true);
 					}
 
-					_this.checkChangesSinceFS();
+					
 
 				})
 				.always(function(){
+					_this.checkChangesSinceFS();
 					_this.updateState('loading', false);
 					if (_this.rtn_request == request){
 						delete _this.rtn_request;

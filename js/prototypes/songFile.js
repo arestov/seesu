@@ -38,6 +38,319 @@ suServView.extendTo(fileInTorrentUI,{
 
 	}
 });
+var songFileModelUI = function() {};
+suServView.extendTo(songFileModelUI, {
+	createDetailes: function(){
+		this.createBase();
+
+		var _this = this;
+
+		var mf_cor_view = this.parent_view.parent_view;
+		this.setVisState('p-wmss', !!mf_cor_view.state('want-more-songs'))
+		mf_cor_view.on('state-change.want-more-songs', function(e){
+			_this.setVisState('p-wmss', !!e.value);
+		});
+
+		var song_view = mf_cor_view.parent_view;
+		this.setVisState('is-visible', !!song_view.state('mp-show'))
+		song_view.on('state-change.mp-show', function(e){
+			_this.setVisState('is-visible', !!e.value);
+		});
+		
+		
+
+	},
+	state_change: {
+		"unavailable": function(state) {
+			if (state){
+				this.c.addClass("mf-unavailable");
+			} else {
+				this.c.removeClass("mf-unavailable");
+			}
+		},
+		'playing-progress': function(factor){
+			//this.changeBar(this.cplayng, factor);
+		},
+		'loading-progress': function(factor){
+			//this.changeBar(this.cloading, factor);
+		},
+		"buffering-progress": function(state, oldstate) {
+			if (state){
+				this.c.addClass('buffering-progress')
+			} else if (oldstate){
+				this.c.removeClass('buffering-progress')
+			}
+			
+		},
+		play: function(state, oldstate){
+
+			if (state == 'play'){
+				this.c.addClass('playing-file')
+			} else {
+				this.c.removeClass('playing-file')
+			}
+		},
+		selected: function(state) {
+			if (state){
+				this.c.addClass('selected-mf');
+			} else {
+				this.c.removeClass('selected-mf');
+			}
+		},
+		overstock: function(state) {
+			if (state){
+				this.c.addClass('overstocked');
+			} else {
+				this.c.removeClass('overstocked');
+			}
+		},
+		"vis-loading-p": function(state){
+			this.cloading.css({
+				width: state
+			});
+			
+		},
+		"vis-playing-p": function(state){
+			this.cplayng.css({
+				width: state
+			});
+		}
+	},
+	complex_states: {
+		"can-progress": {
+			depends_on: ['vis-is-visible', 'vis-con-appended', 'selected'],
+			fn: function(vis, apd, sel){
+				var can = vis && apd && sel;
+				if (can){
+					var _this = this;
+
+					$(window).off('resize.song_file_progress');
+					$(window).on('resize.song_file_progress', debounce(function(e){
+						_this.setVisState('win-resize-time', e.timeStamp)
+					}, 100));
+				}
+				return can;
+			}
+		},
+		"vis-progress-c-width": {
+			depends_on: ['can-progress', 'vis-p-wmss', 'vis-win-resize-time'],
+			fn: function(can, p_wmss, wrsz_time){
+				if (can){
+					return this.progress_c.width();
+				} else {
+					return 0;
+				}
+			}
+		},
+		"vis-loading-p": {
+			depends_on: ['vis-progress-c-width', 'loading-progress'],
+			fn: function(width, factor){
+				if (factor) {
+					if (width){
+						return Math.floor(factor * width) + 'px';
+					} else {
+						return (factor * 100) + '%';
+					}
+				} else {
+					return 'auto';
+				}
+			}
+		},
+		"vis-playing-p": {
+			depends_on: ['vis-progress-c-width', 'playing-progress'],
+			fn: function(width, factor){
+				if (factor) {
+					if (width){
+						return Math.floor(factor * width) + 'px';
+					} else {
+						return (factor * 100) + '%';
+					}
+				} else {
+					return 'auto';
+				}
+			}
+		}
+	},
+	createBase: function() {
+		this.c = $('<li></li>');
+
+		this.createPlayButton();
+
+
+		var getClickPosition = function(e, node){
+			//e.offsetX || 
+			var pos = e.pageX - $(node).offset().left;
+			return pos;
+		};
+
+		this.progress_c = $('<div class="mf-progress"></div>');
+		this.c.click(function() {
+			if (!_this.state('selected')){
+				_this.md.trigger('want-to-play-sf');
+			}
+		});
+
+		var _this = this;
+
+		var path_points;
+		var positionChange = function(){
+			var last = path_points[path_points.length - 1];
+
+			var width = _this.state('vis-progress-c-width');
+
+			if (!width){
+				console.log("no width for pb :!((")
+			}
+			if (width){
+				_this.md.setPositionByFactor([last.cpos, width]);
+			}
+			
+		}
+
+		var touchDown = function(e){
+			path_points = [];
+			e.preventDefault();
+			path_points.push({cpos: getClickPosition(e, _this.progress_c[0]), time: e.timeStamp});
+			positionChange();
+		};
+		var touchMove = function(e){
+			if (!_this.state('selected')){
+				return true;
+			}
+			if (e.which && e.which != 1){
+				return true;
+			}
+			e.preventDefault();
+			path_points.push({cpos: getClickPosition(e, _this.progress_c[0]), time: e.timeStamp});
+			positionChange();
+		};
+		var touchUp = function(e){
+			if (!_this.state('selected')){
+				return true;
+			}
+			if (e.which && e.which != 1){
+				return true;
+			}
+			$(_this.progress_c[0].ownerDocument)
+				.off('mouseup', touchUp)
+				.off('mousemove', touchMove);
+
+			var travel;
+			if (!travel){
+				//
+			}
+
+
+			path_points = null;
+
+			
+		};
+		this.progress_c.on('mousedown', function(e){
+
+			$(_this.progress_c[0].ownerDocument)
+				.off('mouseup', touchUp)
+				.off('mousemove', touchMove);
+
+			if (!_this.state('selected')){
+				return true;
+			}
+			if (e.which && e.which != 1){
+				return true;
+			}
+
+			$(_this.progress_c[0].ownerDocument)
+				.on('mouseup', touchUp)
+				.on('mousemove', touchMove);
+
+			touchDown(e);
+
+		})
+		
+		this.cloading = $('<div class="mf-load-progress"></div>').appendTo(this.progress_c);
+		this.cplayng = $('<div class="mf-play-progress"></div>').appendTo(this.progress_c);
+		this.track_text = $('<div class="mf-text"></div>').appendTo(this.progress_c);
+
+		if (this.md.description){
+			this.track_text.attr('title', this.md.description);
+		}
+		
+
+		//this.title_c = $('<span></span>');
+		this.duration_c = $('<span class="mf-duration"></span>').appendTo(this.track_text);
+		if (this.md.duration){
+			var duration = Math.floor(this.md.duration/1000);
+			if (duration){
+				var digits = duration % 60;
+				this.duration_c.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits ));
+			}
+		}
+
+		$('<span class="main-mf-text"></span>').text(this.md.getTitle()).appendTo(this.track_text);
+		$('<span class="mf-source"></span>').text(this.md.from).appendTo(this.track_text);
+		//this.title_c.appendTo(this.c);
+
+		this.c.append(this.progress_c);
+	},
+	createPlayButton: function() {
+		var _this = this;
+
+		var pb_place = $('<span class="play-button-place"></span>');
+		var pc_place = $('<span class="pc-indicator big-indicator play-indicator pc-place"></span>').appendTo(pb_place);
+		var button = $('<span class="pc pc-play big-control"></span>').appendTo(pc_place);
+		button.click(function(e) {
+			e.stopPropagation();
+			if (_this.state('selected')){
+
+				if (_this.state('play') == 'play'){
+					_this.md.pause();
+				} else {
+					_this.md.trigger('want-to-play-sf');
+					//_this.md.play();
+				}
+			} else {
+				_this.md.trigger('want-to-play-sf');
+			}
+		});
+
+		this.c.append(pb_place);
+	},
+	changeBar: function(bar, factor){
+		if (factor){
+			if (this.width){
+				bar[0].style.width = Math.floor(factor * this.width) + 'px';
+			} else {
+				bar[0].style.width = factor * 100 + '%';
+			}
+		} else {
+			bar[0].style.width = 0;
+		}
+	},
+	fixWidth: function(){
+		this.width = this.progress_c.width();
+	},
+	fixBars: function() {
+		this.fixWidth();
+		this.changeBar(this.cplayng, this.state('playing-progress'));
+		this.changeBar(this.cloading, this.state('loading-progress'));
+	}
+});
+
+
+
+
+
+
+
+
+
+//!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+
+
+
 
 var fileInTorrent = function(sr_item, mo){
 
@@ -46,7 +359,7 @@ var fileInTorrent = function(sr_item, mo){
 };
 
 provoda.Model.extendTo(fileInTorrent, {
-	ui_constr: fileInTorrentUI,
+	model_name: 'file-torrent',
 	setPlayer: function() {
 		return this;
 	},
@@ -69,304 +382,7 @@ provoda.Model.extendTo(fileInTorrent, {
 (function(){
 	var counter = 0;
 
-	var songFileModelUI = function() {};
-	suServView.extendTo(songFileModelUI, {
-		createDetailes: function(){
-			this.createBase();
-
-			var _this = this;
-
-			var mf_cor_view = this.parent_view.parent_view;
-			this.setVisState('p-wmss', !!mf_cor_view.state('want-more-songs'))
-			mf_cor_view.on('state-change.want-more-songs', function(e){
-				_this.setVisState('p-wmss', !!e.value);
-			});
-
-			var song_view = mf_cor_view.parent_view;
-			this.setVisState('is-visible', !!song_view.state('mp-show'))
-			song_view.on('state-change.mp-show', function(e){
-				_this.setVisState('is-visible', !!e.value);
-			});
-			
-			
-
-		},
-		state_change: {
-			"unavailable": function(state) {
-				if (state){
-					this.c.addClass("mf-unavailable");
-				} else {
-					this.c.removeClass("mf-unavailable");
-				}
-			},
-			'playing-progress': function(factor){
-				//this.changeBar(this.cplayng, factor);
-			},
-			'loading-progress': function(factor){
-				//this.changeBar(this.cloading, factor);
-			},
-			"buffering-progress": function(state, oldstate) {
-				if (state){
-					this.c.addClass('buffering-progress')
-				} else if (oldstate){
-					this.c.removeClass('buffering-progress')
-				}
-				
-			},
-			play: function(state, oldstate){
-
-				if (state == 'play'){
-					this.c.addClass('playing-file')
-				} else {
-					this.c.removeClass('playing-file')
-				}
-			},
-			selected: function(state) {
-				if (state){
-					this.c.addClass('selected-mf');
-				} else {
-					this.c.removeClass('selected-mf');
-				}
-			},
-			overstock: function(state) {
-				if (state){
-					this.c.addClass('overstocked');
-				} else {
-					this.c.removeClass('overstocked');
-				}
-			},
-			"vis-loading-p": function(state){
-				this.cloading.css({
-					width: state
-				});
-				
-			},
-			"vis-playing-p": function(state){
-				this.cplayng.css({
-					width: state
-				});
-			}
-		},
-		complex_states: {
-			"can-progress": {
-				depends_on: ['vis-is-visible', 'vis-con-appended', 'selected'],
-				fn: function(vis, apd, sel){
-					var can = vis && apd && sel;
-					if (can){
-						var _this = this;
-
-						$(window).off('resize.song_file_progress');
-						$(window).on('resize.song_file_progress', debounce(function(e){
-							_this.setVisState('win-resize-time', e.timeStamp)
-						}, 100));
-					}
-					return can;
-				}
-			},
-			"vis-progress-c-width": {
-				depends_on: ['can-progress', 'vis-p-wmss', 'vis-win-resize-time'],
-				fn: function(can, p_wmss, wrsz_time){
-					if (can){
-						return this.progress_c.width();
-					} else {
-						return 0;
-					}
-				}
-			},
-			"vis-loading-p": {
-				depends_on: ['vis-progress-c-width', 'loading-progress'],
-				fn: function(width, factor){
-					if (factor) {
-						if (width){
-							return Math.floor(factor * width) + 'px';
-						} else {
-							return (factor * 100) + '%';
-						}
-					} else {
-						return 'auto';
-					}
-				}
-			},
-			"vis-playing-p": {
-				depends_on: ['vis-progress-c-width', 'playing-progress'],
-				fn: function(width, factor){
-					if (factor) {
-						if (width){
-							return Math.floor(factor * width) + 'px';
-						} else {
-							return (factor * 100) + '%';
-						}
-					} else {
-						return 'auto';
-					}
-				}
-			}
-		},
-		createBase: function() {
-			this.c = $('<li></li>');
-
-			this.createPlayButton();
-
-
-			var getClickPosition = function(e, node){
-				//e.offsetX || 
-				var pos = e.pageX - $(node).offset().left;
-				return pos;
-			};
-
-			this.progress_c = $('<div class="mf-progress"></div>');
-			this.c.click(function() {
-				if (!_this.state('selected')){
-					_this.md.trigger('want-to-play-sf');
-				}
-			});
-
-
-			//this.c = $('<div class="track-progress"></div>')
-			var _this = this;
-
-			var path_points;
-			var positionChange = function(){
-				var last = path_points[path_points.length - 1];
-
-				var width = _this.state('vis-progress-c-width');
-
-				if (!width){
-					console.log("no width for pb :!((")
-				}
-				if (width){
-					_this.md.setPositionByFactor([last.cpos, width]);
-				}
-				
-			}
-
-			var touchDown = function(e){
-				path_points = [];
-				e.preventDefault();
-				path_points.push({cpos: getClickPosition(e, _this.progress_c[0]), time: e.timeStamp});
-				positionChange();
-			};
-			var touchMove = function(e){
-				if (!_this.state('selected')){
-					return true;
-				}
-				if (e.which && e.which != 1){
-					return true;
-				}
-				e.preventDefault();
-				path_points.push({cpos: getClickPosition(e, _this.progress_c[0]), time: e.timeStamp});
-				positionChange();
-			};
-			var touchUp = function(e){
-				if (!_this.state('selected')){
-					return true;
-				}
-				if (e.which && e.which != 1){
-					return true;
-				}
-				$(_this.progress_c[0].ownerDocument)
-					.off('mouseup', touchUp)
-					.off('mousemove', touchMove);
-
-				var travel;
-				if (!travel){
-					//
-				}
-
-
-				path_points = null;
-
-				
-			};
-			this.progress_c.on('mousedown', function(e){
-
-				$(_this.progress_c[0].ownerDocument)
-					.off('mouseup', touchUp)
-					.off('mousemove', touchMove);
-
-				if (!_this.state('selected')){
-					return true;
-				}
-				if (e.which && e.which != 1){
-					return true;
-				}
-
-				$(_this.progress_c[0].ownerDocument)
-					.on('mouseup', touchUp)
-					.on('mousemove', touchMove);
-
-				touchDown(e);
-
-			})
-			
-			this.cloading = $('<div class="mf-load-progress"></div>').appendTo(this.progress_c);
-			this.cplayng = $('<div class="mf-play-progress"></div>').appendTo(this.progress_c);
-			this.track_text = $('<div class="mf-text"></div>').appendTo(this.progress_c);
-
-			if (this.md.description){
-				this.track_text.attr('title', this.md.description);
-			}
-			
-
-			//this.title_c = $('<span></span>');
-			this.duration_c = $('<span class="mf-duration"></span>').appendTo(this.track_text);
-			if (this.md.duration){
-				var duration = Math.floor(this.md.duration/1000);
-				if (duration){
-					var digits = duration % 60;
-					this.duration_c.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits ));
-				}
-			}
-
-			$('<span class="main-mf-text"></span>').text(this.md.getTitle()).appendTo(this.track_text);
-			$('<span class="mf-source"></span>').text(this.md.from).appendTo(this.track_text);
-			//this.title_c.appendTo(this.c);
-
-			this.c.append(this.progress_c);
-		},
-		createPlayButton: function() {
-			var _this = this;
-
-			var pb_place = $('<span class="play-button-place"></span>');
-			var pc_place = $('<span class="pc-indicator big-indicator play-indicator pc-place"></span>').appendTo(pb_place);
-			var button = $('<span class="pc pc-play big-control"></span>').appendTo(pc_place);
-			button.click(function(e) {
-				e.stopPropagation();
-				if (_this.state('selected')){
-
-					if (_this.state('play') == 'play'){
-						_this.md.pause();
-					} else {
-						_this.md.trigger('want-to-play-sf');
-						//_this.md.play();
-					}
-				} else {
-					_this.md.trigger('want-to-play-sf');
-				}
-			});
-
-			this.c.append(pb_place);
-		},
-		changeBar: function(bar, factor){
-			if (factor){
-				if (this.width){
-					bar[0].style.width = Math.floor(factor * this.width) + 'px';
-				} else {
-					bar[0].style.width = factor * 100 + '%';
-				}
-			} else {
-				bar[0].style.width = 0;
-			}
-		},
-		fixWidth: function(){
-			this.width = this.progress_c.width();
-		},
-		fixBars: function() {
-			this.fixWidth();
-			this.changeBar(this.cplayng, this.state('playing-progress'));
-			this.changeBar(this.cloading, this.state('loading-progress'));
-		}
-	});
+	
 
 	songFileModel = function(file, mo){
 		this.init();
@@ -380,7 +396,7 @@ provoda.Model.extendTo(fileInTorrent, {
 		this.parent = file;
 	};
 	provoda.Model.extendTo(songFileModel, {
-		ui_constr: songFileModelUI,
+		model_name: 'file-http',
 		getTitle: function() {
 			var title = [];
 
