@@ -2,7 +2,7 @@
 
 var notifyCounterUI = function() {};
 
-suServView.extendTo(notifyCounterUI, {
+provoda.View.extendTo(notifyCounterUI, {
 	createDetailes: function(){
 		this.createBase();
 	},
@@ -22,7 +22,7 @@ suServView.extendTo(notifyCounterUI, {
 });
 
 var mfComplectUI = function() {};
-suServView.extendTo(mfComplectUI, {
+provoda.View.extendTo(mfComplectUI, {
 	createDetailes: function(){
 		this.createBase();
 	},
@@ -70,7 +70,7 @@ suServView.extendTo(mfComplectUI, {
 
 
 var mfCorUI = function(md) {};
-suServView.extendTo(mfCorUI, {
+provoda.View.extendTo(mfCorUI, {
 	children_views:{
 		notifier: notifyCounterUI,
 		vk_auth: vkLoginUI,

@@ -1,6 +1,6 @@
 var baseNavUI = function() {};
 
-suServView.extendTo( baseNavUI, {
+provoda.View.extendTo( baseNavUI, {
 	createDetailes: function(){
 		this.createBase();
 		this.bindClick();

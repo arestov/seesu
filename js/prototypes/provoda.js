@@ -623,18 +623,21 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	addChild: function(view, child_name) {
 		this.children.push.call(this.children, view);
 	},
+	remove: function() {
+		var c = this.getC();
+		if (c){
+			c.remove();
+		}
+		if (this._anchor){
+			$(this._anchor).remove();
+		}
+	},
 	die: function(){
 		if (!this.dead){
-			var c = this.getC();
-			if (c){
-				c.remove();
-			}
-			if (this._anchor){
-				$(this._anchor).remove();
-			}
-
+			this.remove();
+			this.markAsDead();
 		}
-		this.markAsDead();
+		
 		
 		return this;
 	},

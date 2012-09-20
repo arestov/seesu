@@ -80,7 +80,7 @@ var songsListView;
 
 
 	var songsListBaseView = function() {};
-	provoda.extendFromTo("songsListBaseView", suServView, songsListBaseView);
+	provoda.extendFromTo("songsListBaseView", provoda.View, songsListBaseView);
 	
 
 

@@ -123,7 +123,7 @@ ActionsRowUI.extendTo(FastPSRowView, {
 
 var StartPageView = function(){};
 
-suServView.extendTo(StartPageView, {
+provoda.View.extendTo(StartPageView, {
 	createDetailes: function(){
 		var _this = this;
 

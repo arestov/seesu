@@ -1,41 +1,3 @@
-var suMapModel = function() {};
-
-mapLevelModel.extendTo(suMapModel, {
-	regDOMDocChanges: function(cb) {
-		this
-			.on('mpl-attach', function() {
-				jsLoadComplete(function() {
-					su.on('dom', cb);
-				});
-				
-			})
-			.on('mpl-detach', function() {
-				jsLoadComplete(function() {
-					su.off('dom', cb);
-				});
-			});
-	}
-});
-
-
-
-var suServView = function() {};
-
-provoda.View.extendTo(suServView, {
-	init: function(md, opts) {
-		this._super(md, opts);
-
-		var _this = this;
-		var onDOMDie = function(dead_doc, is_current_ui, ui) {
-			_this.isAlive(dead_doc);
-		};
-		su.on('dom-die', onDOMDie);
-		this.onDie(function() {
-			su.off('dom-die', onDOMDie);	
-		});
-	}
-});
-
 var commonMessagesStore = function(glob_store, store_name) {
 	this.init();
 	this.glob_store = glob_store;
@@ -134,7 +96,7 @@ provoda.Model.extendTo(PartsSwitcher, {
 });
 
 var ActionsRowUI = function(){};
-suServView.extendTo(ActionsRowUI, {
+provoda.View.extendTo(ActionsRowUI, {
 	createDetailes: function(){
 		this.createBase();
 	},
@@ -162,7 +124,7 @@ suServView.extendTo(ActionsRowUI, {
 
 
 var BaseCRowUI = function(){};
-suServView.extendTo(BaseCRowUI, {
+provoda.View.extendTo(BaseCRowUI, {
 	bindClick: function(){
 		if (this.button){
 			var md = this.md;
