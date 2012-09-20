@@ -137,6 +137,58 @@ var song;
 
 			return; //su.vk_api.get("wall.post", data, {nocache: true});
 			//console.log(uid);
+		},
+		submitPlayed: function(careful){
+			var
+				starttime = this.start_time,
+				last_scrobble = this.last_scrobble,
+				timestamp = ((new Date() * 1)/1000).toFixed(0),
+				duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
+
+
+			if ((!duration && !careful) || ((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
+
+				this.start_time = false;
+				this.last_scrobble = timestamp;
+				delete this.start_time;
+
+
+				if (su.settings['lfm-scrobbling']){
+					lfm.submit({
+						artist: this.artist,
+						track: this.track
+					}, duration, timestamp);
+				}
+				if (su.s.loggedIn()){
+					su.s.api('track.scrobble', {
+						client: su.env.app_type,
+						status: 'finished',
+						duration: duration,
+						artist: this.artist,
+						title: this.track,
+						timestamp: timestamp
+					});
+				}
+			}
+		},
+		submitNowPlaying: function(){
+			var duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
+			if (su.settings['lfm-scrobbling']){
+				lfm.nowplay({
+					artist: this.artist,
+					track: this.track
+				}, duration);
+			}
+			if (su.s.loggedIn()){
+				su.s.api('track.scrobble', {
+					client: su.env.app_type,
+					status: 'playing',
+					duration: duration,
+					artist: this.artist,
+					title: this.track,
+					timestamp: ((new Date()).getTime()/1000).toFixed(0)
+				});
+			}
 		}
 	});
 
