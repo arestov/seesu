@@ -9,10 +9,10 @@ provoda.View.extendTo(appModelView, {
 			_this.buildAppDOM();
 		});
 		
-		if (this.opts.can_die && getDefaultView(d)){
+		if (this.opts.can_die && getDefaultView(this.d)){
 			this.can_die = true;
 			this.checkLiveState = function() {
-				if (!getDefaultView(d)){
+				if (!getDefaultView(_this.d)){
 					_this.reportDomDeath();
 					return true;
 				}
@@ -30,20 +30,18 @@ provoda.View.extendTo(appModelView, {
 		this.connectChildrenModels();
 
 		
+		var ext_search_query = this.els.search_input.val();
+		//must be before start_page view set its value to search_input
 
 		this.requestAll();
-		
-		
-		var ext_search_query = this.els.search_input.val();
-
 		this.md.checkUserInput({
 			ext_search_query: ext_search_query
 		});
 		
 	},
 	reportDomDeath: function() {
-		if (this.can_die && !this.dom_dead){
-			this.dom_dead = true;
+		if (this.can_die && !this.dead){
+			this.dead = true;
 			clearInterval(this.lst_interval);
 		//	var d = this.d;
 		//	delete this.d;
