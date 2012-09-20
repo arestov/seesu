@@ -414,12 +414,13 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			return this.views;
 		}
 	},
-	getView: function(name, hard_deads_check){
-		this.removeDeadViews(hard_deads_check);
+	getView: function(name){
+		this.removeDeadViews(true);
 		name = name || 'main';
 		return this.views_index[name] && this.views_index[name][0];
 	},
 	addView: function(v, name) {
+		this.removeDeadViews(true);
 		this.views.push( v );
 		name = name || 'main';
 		(this.views_index[name] = this.views_index[name] || []).push(v);
@@ -633,9 +634,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	die: function(){
-		if (!this.dead){
+		if (!this.marked_as_dead){
 			this.remove();
 			this.markAsDead();
+			this.marked_as_dead = true;
 		}
 		
 		
