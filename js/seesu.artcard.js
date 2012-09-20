@@ -1,6 +1,6 @@
 var artCardUI = function() {};
 
-suServView.extendTo(artCardUI, {
+provoda.View.extendTo(artCardUI, {
 	createDetailes: function(){
 		this.createBase();
 	},
