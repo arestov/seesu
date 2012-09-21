@@ -211,17 +211,17 @@ var songsList;
 		},
 		onChanges: function(last_usable_song){
 			if (last_usable_song && last_usable_song.isImportant()){
-				//last_usable_song.checkNeighboursChanges();
+				//this.checkNeighboursChanges(last_usable_song);
 			}
 			var v_song = this.getViewingSong();
 			var p_song = this.getPlayerSong();
 
 			if (v_song && !v_song.hasNextSong()) {
-				v_song.checkNeighboursChanges(false, false, "playlist load");
+				this.checkNeighboursChanges(v_song, false, false, "playlist load");
 			}
 			
 			if (p_song && v_song != p_song && !p_song.hasNextSong()){
-				p_song.checkNeighboursChanges(false, false, "playlist load");
+				this.checkNeighboursChanges(p_song, false, false, "playlist load");
 			}
 		},
 		loadComplete: function(error){
@@ -358,8 +358,101 @@ var songsList;
 				next_preload_song: true
 			});
 			cloneObj(mo, changes);
-		}
+		},
+		getNeighboursChanges: function(target_song, to_check) {
+			var
+				check_list = {},
+				need_list = {},
+				ste_diff = {},
+				n_ste = {},
+				o_ste = {
+					next_song: target_song.next_song,
+					prev_song: target_song.prev_song,
+					next_preload_song: target_song.next_preload_song
+				};
 
+			for (var i in o_ste){
+				check_list[i] = !to_check || (o_ste[i] == to_check);
+			}
+
+			cloneObj(n_ste, o_ste);
+
+			var fastCheck = function(neighbour_name){
+				if (o_ste[neighbour_name]){
+					n_ste[neighbour_name] = o_ste[neighbour_name] && o_ste[neighbour_name].canUseAsNeighbour() && o_ste[neighbour_name]; 
+				}
+				need_list[neighbour_name] = !n_ste[neighbour_name];
+			};
+
+			for (var i in check_list){
+				if (check_list[i]){
+					fastCheck(i);
+				}
+			}
+
+			var changes = this.getNeighbours(target_song, need_list);
+
+			cloneObj(n_ste, changes);
+
+
+			return getDiffObj(o_ste, n_ste);
+		},
+		checkNeighboursChanges: function(target_song, changed_neighbour, viewing, log) {
+			var changes = this.getNeighboursChanges(target_song, changed_neighbour)
+			//console.log("changes");
+			//console.log();
+			cloneObj(target_song, changes)
+
+			//this.findNeighbours();
+
+			viewing = viewing || !!target_song.state("mp-show");
+			var playing = !!target_song.state("player-song");
+
+			if (viewing){
+				target_song.addMarksToNeighbours();
+				if (changes.prev_song && !changes.prev_song.track){
+					changes.prev_song.getRandomTrackName();
+				}
+				
+			}
+			if ((viewing || playing) && changes.next_preload_song){
+				changes.next_preload_song.makeSongPlayalbe(true);
+			}
+			if (!target_song.cncco){
+				target_song.cncco = [];
+			} else {
+				target_song.cncco.push(log);
+			}
+
+			if (viewing || playing){
+				if (!target_song.hasNextSong()){
+					this.loadMoreSongs();
+				}
+			}
+
+		},
+		checkChangesSinceFS: function(target_song, opts) {
+			if (target_song.isImportant()){
+				if (!opts || (opts.complete || opts.have_best_tracks)){
+					this.checkNeighboursChanges(target_song, false, false, 'important; files search');
+					
+				}
+			} 
+
+			if (!opts || opts.complete){
+				var v_song = this.getViewingSong(target_song);
+				var p_song = this.getPlayerSong(target_song);
+				
+				if (v_song && v_song.isPossibleNeighbour(target_song)) {
+					
+					this.checkNeighboursChanges(v_song, target_song, false, "nieghbour of viewing song; files search");
+				}
+				
+				if (p_song && v_song != p_song && p_song.isPossibleNeighbour(target_song)){
+					this.checkNeighboursChanges(p_song, target_song, false, "nieghbour of playing song; files search");
+				}
+			}
+		}
 
 	});
 	
