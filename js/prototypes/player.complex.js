@@ -77,7 +77,9 @@ playerBase.extendTo(playerComplex, {
 				this.nowPlaying(mo);
 			}
 			
-			mo.plst_titl.lev.freeze();
+			if (mo.plst_titl.lev){
+				mo.plst_titl.lev.freeze()
+			}
 			this.c_song = mo;
 			mo.updateState("player-song", true);
 		}

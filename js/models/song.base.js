@@ -7,23 +7,8 @@ provoda.addPrototype("baseSong",{
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
-				this.makeSongPlayalbe(true);
-				this.checkNeighboursChanges(false, true, "track view");
-				/*
-				if (this.isSearchCompleted() || this.isHaveBestTracks()){
-					this.checkNeighboursChanges(false, true, "track view");
-				} else {
-					//this.checkAndFixNeighbours();
-				}*/
-				var _this = this;
-				this.mp3_search.on("new-search.viewing-song", function(){
-					_this.findFiles();
-					_this.checkNeighboursChanges(false, true, "track view");
-					if (_this.next_preload_song){
-					//	_this.next_preload_song.findFiles();
-					}
-
-				}, {exlusive: true});
+				this.prepareForPlaying();
+				
 				
 			} else {
 				this.removeMarksFromNeighbours();
@@ -56,6 +41,15 @@ provoda.addPrototype("baseSong",{
 				});
 			}
 		}
+	},
+	prepareForPlaying: function() {
+		this.makeSongPlayalbe(true);
+		this.checkNeighboursChanges(false, true, "track view");
+		var _this = this;
+		this.mp3_search.on("new-search.viewing-song", function(){
+			_this.findFiles();
+			_this.checkNeighboursChanges(false, true, "track view");
+		}, {exlusive: true});
 	},
 	init: function(omo, playlist, player, mp3_search){
 		this._super();

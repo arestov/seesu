@@ -521,7 +521,7 @@ provoda.Model.extendTo(fileInTorrent, {
 		stop: function(){
 			if (this.player){
 				this.pause();
-				this.setPosition(0);
+				this.setPosition(0, false, true);
 				this.removeCache();
 
 				var mo = ((this == this.mo.mopla) && this.mo);
@@ -555,11 +555,13 @@ provoda.Model.extendTo(fileInTorrent, {
 		setPositionByFactor: function(fac){
 			this.setPosition(false, fac);
 		},
-		setPosition: function(pos, fac){
+		setPosition: function(pos, fac, not_submit){
 			if (this.player){
 				this.player.setPosition(this, pos, fac);
-			
-				this.mo.posistionChangeInMopla(this);
+				if (!not_submit){
+					this.mo.posistionChangeInMopla(this);
+				}
+				
 				
 				
 			}
