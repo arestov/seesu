@@ -76,40 +76,40 @@ provoda.Model.extendTo(mfComplect, {
 
 
 
-
-var mfCor = function(mo, omo) {
-	this.init();
-	this.omo = omo;
-	this.mo = mo;
-	this.complects = {};
-	this.subscribed_to = [];
-	this.preload_initors = [];
-
-	this.intMessages();
-
-	
-
-	var _this = this;
-	/*
-	this.watchStates(['has_files', 'vk-audio-auth'], function(has_files, vkaa) {
-		if (has_files || vkaa){
-			_this.updateState('must-be-expandable', true);
-		}
-	});*/
-
-	this.mfPlayStateChange = function(e) {
-		if (_this.state('used_mopla') == this){
-			_this.updateState('play', e.value);
-		}
-	};
-	this.mfError = function() {
-		_this.checkMoplas(this);
-	};
-	this.semChange = function(val) {
-		_this.semChanged(val);
-	};
-};
+var mfCor = function() {};
 provoda.Model.extendTo(mfCor, {
+	init: function(mo, omo) {
+		this._super();
+		this.omo = omo;
+		this.mo = mo;
+		this.complects = {};
+		this.subscribed_to = [];
+		this.preload_initors = [];
+
+		this.intMessages();
+
+		
+
+		var _this = this;
+		/*
+		this.watchStates(['has_files', 'vk-audio-auth'], function(has_files, vkaa) {
+			if (has_files || vkaa){
+				_this.updateState('must-be-expandable', true);
+			}
+		});*/
+
+		this.mfPlayStateChange = function(e) {
+			if (_this.state('used_mopla') == this){
+				_this.updateState('play', e.value);
+			}
+		};
+		this.mfError = function() {
+			_this.checkMoplas(this);
+		};
+		this.semChange = function(val) {
+			_this.semChanged(val);
+		};
+	},
 	complex_states: {
 		"must-be-expandable": {
 			depends_on: ['has_files', 'vk-audio-auth'],

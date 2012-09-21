@@ -39,13 +39,16 @@ provoda.addPrototype("songsListBaseView", {
 				}).text(localize("load-more")).appendTo(this.c);
 		}
 	},
+	createListBase: function() {
+		this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);
+	},
 	createBase: function() {
 		this.c = $('<div class="playlist-container"></div>');
 		if (this.createPanel){
 			this.createPanel();
 		}
+		this.createListBase();
 		
-		this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);
 	},
 	appendSongDOM: function(song_view, mo, array, current_index){
 		var
