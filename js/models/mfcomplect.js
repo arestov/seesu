@@ -85,21 +85,9 @@ var mfCor = function(mo, omo) {
 	this.subscribed_to = [];
 	this.preload_initors = [];
 
-	this.notifier = new notifyCounter();
-	this.setChild('notifier', this.notifier);
-	this.sf_notf = su.notf.getStore('song-files');
-	var rd_msgs = this.sf_notf.getReadedMessages();
-	for (var i = 0; i < rd_msgs.length; i++) {
-		this.notifier.banMessage(rd_msgs[i]);
-	};
-	this.bindMessagesRecieving();
+	this.intMessages();
+
 	
-
-
-	this.addChild(this.notifier);
-	
-
-	this.checkVKAuthNeed();
 
 	var _this = this;
 	/*
@@ -184,6 +172,23 @@ provoda.Model.extendTo(mfCor, {
 			
 		}
 
+	},
+	intMessages: function() {
+		this.notifier = new notifyCounter();
+		this.setChild('notifier', this.notifier);
+		this.sf_notf = su.notf.getStore('song-files');
+		var rd_msgs = this.sf_notf.getReadedMessages();
+		for (var i = 0; i < rd_msgs.length; i++) {
+			this.notifier.banMessage(rd_msgs[i]);
+		};
+		this.bindMessagesRecieving();
+		
+
+
+		this.addChild(this.notifier);
+		
+
+		this.checkVKAuthNeed();
 	},
 	getCurrentMopla: function(){
 		return this.state('current_mopla')

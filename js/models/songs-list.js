@@ -69,7 +69,9 @@ var songsList;
 		},
 		extendSong: function(omo, player, mp3_search){
 			if (!(omo instanceof song)){
-				return new song(omo, this, player, mp3_search);
+				var mo = new song();
+				mo.init(omo, this, player, mp3_search)
+				return mo;
 			} else{
 				return omo;
 			}

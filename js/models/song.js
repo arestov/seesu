@@ -5,73 +5,74 @@ var song;
 	var baseSong = function() {};
 	provoda.extendFromTo("baseSong", mapLevelModel, baseSong);
 
-	song = function(omo, playlist, player, mp3_search){
-		this.init.call(this, omo, playlist, player, mp3_search);
-		var _this = this;
-		this.updateNavTexts();
-
-		this.on('view', function(no_navi, user_want){
-			su.show_track_page(this, no_navi);
-			if (user_want){
-				//fixme - never true!
-				if (_this.wasMarkedAsPrev()){
-					su.trackEvent('Song click', 'previous song');
-				} else if (_this.wasMarkedAsNext()){
-					su.trackEvent('Song click', 'next song');
-				} else if (_this.state('play')){
-					su.trackEvent('Song click', 'zoom to itself');
-				}
-			}
-			
-		});
-		var actionsrow = new TrackActionsRow(this);
-		this.setChild('actionsrow', actionsrow);
-		this.addChild(actionsrow);
-
-		this.mf_cor = new mfCor(this, this.omo);
-		this.setChild('mf_cor', this.mf_cor);
-		this.addChild(this.mf_cor);
-		this.mf_cor.on('before-mf-play', function(mopla) {
-
-			_this.player.changeNowPlaying(_this);
-			_this.mopla = mopla;
-		});
-		this.mf_cor.on("error", function(can_play) {
-			_this.player.trigger("song-play-error", _this, can_play);
-		});
-		
-		this.watchStates(['files_search', 'marked_as'], function(files_search, marked_as) {
-			if (marked_as && files_search && files_search.complete){
-				this.updateState('can-expand', true);
-			} else {
-				this.updateState('can-expand', false);
-			}
-		});
-		this.on('state-change.mp-show', function(e) {
-			
-			var
-				_this = this,
-				oldCb = this.makePlayableOnNewSearch;
-
-			if (e.value){
-				if (!oldCb){
-					this.makePlayableOnNewSearch = function() {
-						_this.makeSongPlayalbe(true);
-					};
-					this.mp3_search.on('new-search', this.makePlayableOnNewSearch);
-					
-				}
-			} else {
-				if (oldCb){
-					this.mp3_search.off('new-search', oldCb);
-					delete this.makePlayableOnNewSearch;
-				}
-			}
-		});
-	};
+	song = function(omo, playlist, player, mp3_search){};
 
 	baseSong.extendTo(song, {
 		page_name: 'song page',
+		init: function(omo, playlist, player, mp3_search) {
+			this._super(omo, playlist, player, mp3_search);
+			var _this = this;
+			this.updateNavTexts();
+
+			this.on('view', function(no_navi, user_want){
+				su.show_track_page(this, no_navi);
+				if (user_want){
+					//fixme - never true!
+					if (_this.wasMarkedAsPrev()){
+						su.trackEvent('Song click', 'previous song');
+					} else if (_this.wasMarkedAsNext()){
+						su.trackEvent('Song click', 'next song');
+					} else if (_this.state('play')){
+						su.trackEvent('Song click', 'zoom to itself');
+					}
+				}
+				
+			});
+			var actionsrow = new TrackActionsRow(this);
+			this.setChild('actionsrow', actionsrow);
+			this.addChild(actionsrow);
+
+			this.mf_cor = new mfCor(this, this.omo);
+			this.setChild('mf_cor', this.mf_cor);
+			this.addChild(this.mf_cor);
+			this.mf_cor.on('before-mf-play', function(mopla) {
+
+				_this.player.changeNowPlaying(_this);
+				_this.mopla = mopla;
+			});
+			this.mf_cor.on("error", function(can_play) {
+				_this.player.trigger("song-play-error", _this, can_play);
+			});
+			
+			this.watchStates(['files_search', 'marked_as'], function(files_search, marked_as) {
+				if (marked_as && files_search && files_search.complete){
+					this.updateState('can-expand', true);
+				} else {
+					this.updateState('can-expand', false);
+				}
+			});
+			this.on('state-change.mp-show', function(e) {
+				
+				var
+					_this = this,
+					oldCb = this.makePlayableOnNewSearch;
+
+				if (e.value){
+					if (!oldCb){
+						this.makePlayableOnNewSearch = function() {
+							_this.makeSongPlayalbe(true);
+						};
+						this.mp3_search.on('new-search', this.makePlayableOnNewSearch);
+						
+					}
+				} else {
+					if (oldCb){
+						this.mp3_search.off('new-search', oldCb);
+						delete this.makePlayableOnNewSearch;
+					}
+				}
+			});
+		},
 		getShareUrl: function() {
 			if (this.artist && this.track){
 				return "http://seesu.me/o" + "#/catalog/" + su.encodeURLPart(this.artist) + "/_/" + su.encodeURLPart(this.track);

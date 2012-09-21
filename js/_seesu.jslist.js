@@ -54,7 +54,7 @@ var jsLoadComplete,
 	
 	"js/models/song.base.js",
 	"js/models/song.js",
-	"js/su-prototypes/su-mfcomplect.js",
+	"js/models/mfcomplect.js",
 	"js/seesu.js",
 	"js/models/songs-list.base.js",
 	"js/models/songs-list.js",
