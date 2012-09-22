@@ -72,15 +72,20 @@ a.loading .nothing-toy{
 	}
 
 
-ul.tracks-for-play.list-overview > li:nth-of-type(odd) > .track-node{
+ul.tracks-for-play.list-overview > li:nth-of-type(even) > .track-node{
 	background-color: #4D4D4D;
 	}
 
 
-	a.track-node:hover{
-		background-color:#595959;
-		}
-
+ul.tracks-for-play.list-overview > li > a.track-node:hover{
+	background-color:#535353;
+	}
+.show-zoom-to-track ul.tracks-for-play > li > a.track-node:hover{
+	background-color:#535353;
+	}
+.show-zoom-to-track ul.tracks-for-play > li.viewing-song > a.track-node{
+	background-color: transparent;
+	}
 .nothing-toy{
 	border: 1px solid transparent;
 	display: block;
