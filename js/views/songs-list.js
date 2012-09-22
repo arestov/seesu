@@ -90,9 +90,9 @@ var songsListView;
 		'stch-mp-show': function(opts) {
 			if (opts){
 				this.c.removeClass('hidden');
-				$(app_view.els.slider).addClass('show-player-page');
+				$(this.root_view.els.slider).addClass('show-player-page');
 			} else {
-				$(app_view.els.slider).removeClass('show-player-page');
+				$(this.root_view.els.slider).removeClass('show-player-page');
 				this.c.addClass('hidden');
 			}
 		},
@@ -111,7 +111,7 @@ var songsListView;
 				if (error == 'vk_auth'){
 					this.error_b = {
 						v: error,
-						n: $('<li></li>').append(app_view.samples.vk_login.clone()).prependTo(this.c)
+						n: $('<li></li>').append(this.root_view.samples.vk_login.clone()).prependTo(this.c)
 					};
 				} else {
 					this.error_b = {
@@ -122,7 +122,7 @@ var songsListView;
 			}
 		},
 		createPanel: function() {
-			this.panel = app_view.samples.playlist_panel.clone();
+			this.panel = this.root_view.samples.playlist_panel.clone();
 			this.panel.appendTo(this.c)		
 			return this;
 		},

@@ -1,6 +1,11 @@
-//make_history_step
+var
+	browseMap,
+	mapLevelModel;
+
+(function() {
+"use strict";
+
 var mapLevel = function(num, parent_levels, resident, map){
-	var _this = this;
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
@@ -8,7 +13,6 @@ var mapLevel = function(num, parent_levels, resident, map){
 		this.setResident(resident);
 		resident.assignMapLev(this);
 		resident.trigger('mpl-attach');
-		//this.buildResident();
 	}
 	return this;
 };
@@ -78,14 +82,14 @@ Class.extendTo(mapLevel, {
 });
 
 
-function browseMap(){};
+browseMap = function (){};
 
 provoda.Eventor.extendTo(browseMap, {
 	init: function(maleres){
 		this._super();
 		this.levels = [];
 		if (!maleres){
-			throw new Error('give me 0 index level (start screen)')
+			throw new Error('give me 0 index level (start screen)');
 		}
 		this.mainLevelResident = maleres;
 		
@@ -164,7 +168,6 @@ provoda.Eventor.extendTo(browseMap, {
 		return lvls;
 	},
 	getFreeLevel: function(num, save_parents, resident){//goDeeper
-		var _this = this;
 		if (!this.levels[num]){
 			this.levels[num] = {};
 		}
@@ -176,9 +179,12 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 	},
 	freezeMapOfLevel : function(num){
-		var fresh_freeze = false;
-		var l = Math.min(num, this.levels.length - 1);
-		for (var i = l; i >= 0; i--){
+		var
+			i,
+			fresh_freeze = false,
+			l = Math.min(num, this.levels.length - 1);
+
+		for (i = l; i >= 0; i--){
 			if (this.levels[i]){
 				if (this.levels[i].free){
 					if (this.levels[i].free != this.levels[i].freezed){
@@ -199,7 +205,7 @@ provoda.Eventor.extendTo(browseMap, {
 		
 		//clearing if have too much levels !?!?!??!?!?!
 		if (l + 1 < this.levels.length -1) {
-			for (var i= l + 1; i < this.levels.length; i++) {
+			for (i= l + 1; i < this.levels.length; i++) {
 				if (this.levels[i].freezed){
 					this.levels[i].freezed.die();
 					delete this.levels[i].freezed;
@@ -302,7 +308,7 @@ provoda.Eventor.extendTo(browseMap, {
 					map_level: this.getPrevMampL()
 				}, 
 				!!url_restoring, title_changed);
-		};
+		}
 		this.trigger("map-tree-change", this.nav_tree, this.old_nav_tree);
 		
 
@@ -311,7 +317,7 @@ provoda.Eventor.extendTo(browseMap, {
 		return this.old_nav_tree && this.old_nav_tree[0];
 	},
 	getCurMapL: function() {
-		return this.nav_tree[0]
+		return this.nav_tree[0];
 	},
 	getTreeResidents: function(n) {
 		return n && $filter(n, 'resident');
@@ -332,15 +338,18 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 		old_nav = this.getTitleNav(old_nav);
 
+
+		var i;
+
 		if (old_nav){
-			for (var i = 0; i < old_nav.length; i++) {
+			for (i = 0; i < old_nav.length; i++) {
 				old_nav[i].offTitleChange( this.onNavTitleChange); //unbind
 			}
 		}
 
 		new_nav = this.getTitleNav(new_nav);
 
-		for (var i = 0; i < new_nav.length; i++) {
+		for (i = 0; i < new_nav.length; i++) {
 			new_nav[i].onTitleChange(this.onNavTitleChange);
 		}
 
@@ -377,14 +386,15 @@ provoda.Eventor.extendTo(browseMap, {
 			};
 		}
 		old_tree = this.getTreeResidents(old_tree);
+		var i;
 		if (old_tree){
-			for (var i = 0; i < old_tree.length; i++) {
+			for (i = 0; i < old_tree.length; i++) {
 				old_tree[i].off('url-change', this.onNavUrlChange); //unbind
 			}
 		}
 
 		new_tree = this.getTreeResidents(new_tree);
-		for (var i = 0; i < new_tree.length; i++) {
+		for (i = 0; i < new_tree.length; i++) {
 			new_tree[i].on('url-change', this.onNavUrlChange);
 		}
 		return this.setURL(this.joinNavURL(new_tree), false, url_restoring);
@@ -399,7 +409,7 @@ provoda.Eventor.extendTo(browseMap, {
 				url.push(url_part);
 			}
 			nav[i].setFullUrl(url.join(''));
-		};
+		}
 		return url.join('');
 	},
 	setURL: function(url, replace, url_restoring) {
@@ -452,7 +462,7 @@ provoda.Eventor.extendTo(browseMap, {
 	}
 	
 });
-var mapLevelModel = function() {};
+mapLevelModel = function() {};
 
 provoda.Model.extendTo(mapLevelModel, {
 	assignMapLev: function(lev){
@@ -509,3 +519,4 @@ provoda.Model.extendTo(mapLevelModel, {
 		return '';	
 	}
 });
+})();

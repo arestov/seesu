@@ -17,6 +17,11 @@ playerBase.extendTo(playerComplex, {
 		var _this = this;
 		if (this.wanted_song !== mo){
 			this.removeCurrentWantedSong();
+			if (!this.c_song){
+				if (mo.plst_titl.lev){
+					mo.plst_titl.lev.freeze()
+				}
+			}
 			(this.wanted_song = mo).updateState('want_to_play', true);
 			mo.setPrio('highest');
 

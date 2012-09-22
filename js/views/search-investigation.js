@@ -1,14 +1,18 @@
 
-/*
-baseSuggestUI
-baseSectionButtonUI
-searchSectionUI
 
-investigationView
+var 
+	baseSuggestUI,
+	baseSectionButtonUI,
+	searchSectionUI,
+	investigationView,
+	searchPageView;
 
 
 
-*/
+
+
+(function() {
+"use strict";
 var 
 	default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 
@@ -24,9 +28,18 @@ baseSectionButtonUI = function(sugg){};
 provoda.extendFromTo('baseSectionButtonView', baseSuggestUI, baseSectionButtonUI);
 
 
+var searchPageSuggestView = function() {};
+baseSuggestUI.extendTo(searchPageSuggestView, {
+	autoscroll: true
+});
+
+var searchPageButtonView = function() {};
+baseSectionButtonUI.extendTo(searchPageButtonView, {
+	autoscroll: true
+});
 
 var artistSuggestUI = function(sugg){};
-baseSuggestUI.extendTo(artistSuggestUI, {
+searchPageSuggestView.extendTo(artistSuggestUI, {
 	createItem: function(){
 		var that = this.md;
 
@@ -43,7 +56,7 @@ baseSuggestUI.extendTo(artistSuggestUI, {
 });
 
 var trackSuggestUI = function(sugg){};
-baseSuggestUI.extendTo(trackSuggestUI, {
+searchPageSuggestView.extendTo(trackSuggestUI, {
 	createItem: function(){
 		var that = this.md;
 		var a = $("<a></a>");
@@ -65,7 +78,7 @@ baseSuggestUI.extendTo(trackSuggestUI, {
 
 
 var tagSuggestUI = function(sugg){};
-baseSuggestUI.extendTo(tagSuggestUI,  {
+searchPageSuggestView.extendTo(tagSuggestUI,  {
 	createItem: function() {
 		var that = this.md;
 		this.a = $("<a></a>")
@@ -77,7 +90,7 @@ baseSuggestUI.extendTo(tagSuggestUI,  {
 
 
 var albumSuggestUI = function(sugg){};
-baseSuggestUI.extendTo(albumSuggestUI, {
+searchPageSuggestView.extendTo(albumSuggestUI, {
 	createItem: function(){
 		var that = this.md;
 		var a = $("<a></a>");
@@ -102,7 +115,7 @@ searchSectionUI.extendTo(tracksSectionView, {
 	c_class: "sugg-section results-suggests",
 	children_views:{
 		item: trackSuggestUI,
-		button: baseSectionButtonUI
+		button: searchPageButtonView
 	}
 });
 
@@ -113,7 +126,7 @@ searchSectionUI.extendTo(tagsSectionView, {
 	c_class: "sugg-section results-suggests recommend-tags",
 	children_views:{
 		item: tagSuggestUI,
-		button: baseSectionButtonUI
+		button: searchPageButtonView
 	}
 });
 
@@ -124,7 +137,7 @@ searchSectionUI.extendTo(albumsSectionView, {
 	c_class: 'sugg-section results-suggests recommend-albums',
 	children_views:{
 		item: albumSuggestUI,
-		button: baseSectionButtonUI
+		button: searchPageButtonView
 	}
 });
 
@@ -135,7 +148,7 @@ searchSectionUI.extendTo(artistsSectionView, {
 	c_class: 'sugg-section results-suggests',
 	children_views:{
 		item: artistSuggestUI,
-		button: baseSectionButtonUI
+		button: searchPageButtonView
 	}
 });
 
@@ -145,13 +158,13 @@ searchSectionUI.extendTo(playlistsSectionView, {
 	head_text: localize('playlists'),
 	c_class: 'sugg-section playlist-results',
 	children_views:{
-		item: baseSuggestUI
+		item: searchPageSuggestView
 	}
 });
 
 
 
-var searchPageView = function() {};
+searchPageView = function() {};
 investigationView.extendTo(searchPageView, {
 	children_views: {
 		'section-artist': artistsSectionView,
@@ -161,3 +174,5 @@ investigationView.extendTo(searchPageView, {
 		'section-track': tracksSectionView
 	}
 });
+
+})();

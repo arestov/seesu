@@ -15,12 +15,19 @@ provoda.addPrototype("baseSong",{
 			}
 		},
 		"player-song": function(state){
+			var _this = this;
+
 			if (state){
-				if (!this.state("mp-show") && this.isSearchCompleted()){
-					this.checkNeighboursChanges(false, false, "player song");
-				}
+				setTimeout(function() {
+					if (!_this.state("mp-show") && _this.isSearchCompleted()){
+						
+						_this.checkNeighboursChanges(false, false, "player song");
+					}
+					
+				}, 0);
 				
-				var _this = this;
+				
+				
 				this.mp3_search.on("new-search.player-song", function(){
 					_this.findFiles();
 					_this.checkNeighboursChanges(false, false, "new search, player song");
@@ -43,9 +50,12 @@ provoda.addPrototype("baseSong",{
 		}
 	},
 	prepareForPlaying: function() {
-		this.makeSongPlayalbe(true);
-		this.checkNeighboursChanges(false, true, "track view");
 		var _this = this;
+
+		this.makeSongPlayalbe(true);
+		setTimeout(function() {
+			_this.checkNeighboursChanges(false, true, "track view");
+		}, 0);
 		this.mp3_search.on("new-search.viewing-song", function(){
 			_this.findFiles();
 			_this.checkNeighboursChanges(false, true, "track view");
@@ -279,11 +289,12 @@ provoda.addPrototype("baseSong",{
 
 				})
 				.always(function(){
-					_this.checkChangesSinceFS();
+					
 					_this.updateState('loading', false);
 					if (_this.rtn_request == request){
 						delete _this.rtn_request;
 					}
+					_this.checkChangesSinceFS();
 				});
 			if (this.state("mp-show")){
 				request.queued && request.queued.setPrio('highest');

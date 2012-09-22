@@ -27,7 +27,7 @@ provoda.Model.extendTo(notifyCounter, {
 	recount: function() {
 		var counter = 0;
 		for (var a in this.messages){
-			++counter
+			++counter;
 		}
 		this.updateState('counter', counter);
 	}
@@ -162,7 +162,7 @@ provoda.Model.extendTo(mfCor, {
 		},
 		"mopla_to_preload": function(nmf, omf){
 			if (omf){
-				omf.removeCache()
+				omf.removeCache();
 			}
 			if (nmf) {
 				nmf.load();
@@ -180,7 +180,7 @@ provoda.Model.extendTo(mfCor, {
 		var rd_msgs = this.sf_notf.getReadedMessages();
 		for (var i = 0; i < rd_msgs.length; i++) {
 			this.notifier.banMessage(rd_msgs[i]);
-		};
+		}
 		this.bindMessagesRecieving();
 		
 
@@ -191,7 +191,7 @@ provoda.Model.extendTo(mfCor, {
 		this.checkVKAuthNeed();
 	},
 	getCurrentMopla: function(){
-		return this.state('current_mopla')
+		return this.state('current_mopla');
 	},
 	switchMoreSongsView: function() {
 		if (!this.state('want-more-songs')){
@@ -476,7 +476,7 @@ provoda.Model.extendTo(mfCor, {
 	getVKFile: function(){
 		var file = this.state('current_mopla');
 		if (file && file.from == 'vk'){
-			return file
+			return file;
 		} else{
 			var files = this.getFiles(false, 'vk');
 			return files && files[0];
@@ -494,12 +494,12 @@ provoda.Model.extendTo(mfCor, {
 		if (fn){
 			$.each(mfs, function(i, el) {
 				if (fn(el)){
-					r.push(el)
+					r.push(el);
 				}
 			});
 			return r; 
 		} else {
-			return mfs
+			return mfs;
 		}
 
 	},

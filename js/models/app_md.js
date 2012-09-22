@@ -8,7 +8,7 @@ show_track_page
 */
 var appModel;
 (function() {
-
+"use strict";
 
 
 
@@ -24,7 +24,7 @@ provoda.Model.extendTo(appModel, {
 	},
 	checkUserInput: function(opts) {
 		if (opts.ext_search_query) {
-			_this.search(opts.ext_search_query);
+			this.search(opts.ext_search_query);
 		}
 
 		var state_recovered;
@@ -53,7 +53,7 @@ provoda.Model.extendTo(appModel, {
 			}
 			c.str += base_string.replace('%s', dp);
 			if (!c.prev){
-				c.prev = true
+				c.prev = true;
 			}
 		}	
 	},
@@ -111,6 +111,14 @@ provoda.Model.extendTo(appModel, {
 	showStartPage: function(url_restoring){
 		//mainaly for hash url games
 		this.map.startNewBrowse(url_restoring);
+	},
+	keyNav: function(key_name) {
+		var md = this.map.getCurMapL().resident;
+		if (md.key_name_nav){
+			var func = md.key_name_nav[key_name];
+			func.call(md);
+		}
+
 	},
 	bindMMapStateChanges: function(md, place) {
 		var _this = this;
@@ -284,8 +292,9 @@ provoda.Model.extendTo(appModel, {
 		var artist			= opts.artist, 
 			name			= opts.album_name,
 			id				= opts.album_id, 
-			original_artist	= opts.original_artist,
-			vopts = vopts || {};
+			original_artist	= opts.original_artist;
+
+		vopts = vopts || {};
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
 		
@@ -356,7 +365,7 @@ provoda.Model.extendTo(appModel, {
 							
 							tracks = toRealArray(tracks);
 							
-							var l = Math.min(tracks.length, paging_opts.page_limit)
+							var l = Math.min(tracks.length, paging_opts.page_limit);
 							for (var i=paging_opts.remainder; i < l; i++) {
 								track_list.push({'artist' : artist ,
 									'track': tracks[i].name, 
@@ -395,7 +404,7 @@ provoda.Model.extendTo(appModel, {
 		lfm.get('geo.getMetroUniqueTrackChart', {
 			country: country, 
 			metro: metro, 
-			start: new Date - 60*60*24*7
+			start: (new Date()) - 60*60*24*7
 		})
 			.done(function(r){
 				if (r.error){
@@ -408,7 +417,7 @@ provoda.Model.extendTo(appModel, {
 						
 						var _trm = metro_tracks[i];
 						plr.push({artist: _trm.artist.name, track: _trm.name});
-					};
+					}
 					pl_r.loadComplete(metro_tracks.length);
 				} else {
 					pl_r.loadComplete(true);
