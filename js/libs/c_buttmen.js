@@ -23,15 +23,9 @@ var button_menu = function(jq_node, d){
 
 	var _this = this;
 	jq_node
-		.mousedown(function(e) {
-			_this.events.mousedown(e, d);
-		})
-		.mouseup(function(e) {
-			_this.events.mouseup(e, d);
-		})
-		.mousemove(function(e) {
-			this.events.mousemove(e, d)
-		});
+		.mousedown(this.events.mousedown)
+		.mouseup(this.events.mouseup)
+		.mousemove(this.events.mousemove);
 		
 	
 	this.node.find('.pc')
@@ -66,7 +60,8 @@ button_menu.prototype = {
 		
 	},
 	events:{
-		mousedown: function(e, d){
+		mousedown: function(e){
+			var d = this.ownerDocument;
 			e.preventDefault();
 			var _tr = function(text){
 				setTimeout(function(text){
@@ -145,12 +140,14 @@ button_menu.prototype = {
 			
 			
 		},
-		mouseup: function(e, d){
+		mouseup: function(e){
+			var d = this.ownerDocument;
 			e.preventDefault();
 			var _this = $(this);
 			_this.removeClass('buttmen-butting');
 		},
-		mousemove: function(e, d){
+		mousemove: function(e){
+			var d = this.ownerDocument;
 			e.preventDefault();
 			if (window.getSelection) { window.getSelection().removeAllRanges(); } else 
 			if (d.selection && d.selection.clear) {d.selection.clear();}

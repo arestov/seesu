@@ -28,6 +28,12 @@ provoda.addPrototype("baseSuggestView", {
 				this.a.removeClass('active');
 			}
 		}
+		if (this.autoscroll && state){
+			var active_invstg = this.parent_view.parent_view.state('mp-show');
+			if (!active_invstg.transit){
+				this.root_view.scrollTo(this);
+			}
+		}
 		
 	},
 	'stch-bordered': function(state){
@@ -99,7 +105,7 @@ provoda.addPrototype("InvestigationView", {
 				this.c.removeClass('hidden');
 				
 				if (!opts.closed){
-					$(app_view.els.slider).addClass('show-search');
+					$(this.root_view.els.slider).addClass('show-search');
 				}
 			} else {
 				this.blur();
@@ -110,7 +116,7 @@ provoda.addPrototype("InvestigationView", {
 			if (state){
 				this.blur();
 			} else {
-				$(app_view.els.slider).addClass('show-search-results');
+				$(this.root_view.els.slider).addClass('show-search-results');
 			}
 		},
 		"can-expand": function(state) {
@@ -127,46 +133,7 @@ provoda.addPrototype("InvestigationView", {
 		this._super();
 	},
 	blur: function() {
-		$(app_view.els.slider).removeClass('show-search show-search-results');
-	},
-	prop_change: {
-		enter_item: function(item){
-			
-		}
-	},
-	setViewport: function(vp){
-		this.view_port = vp;
-	},
-	scrollTo: function(item){
-		if (!item){return false;}
-		if (!this.view_port || !this.view_port.node){return false;}
-
-		var element = item.getC();
-		var svp = this.view_port,
-			scroll_c = svp.offset ?   $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0])   :   svp.node,
-			scroll_top = scroll_c.scrollTop(), //top
-			scrolling_viewport_height = svp.node.height(), //height
-			scroll_bottom = scroll_top + scrolling_viewport_height; //bottom
-		
-		var node_position;
-		if (svp.offset){
-			node_position = element.offset().top;
-		} else{
-			node_position = element.position().top + scroll_top + this.c.parent().position().top;
-		}
-
-		var el_bottom = element.height() + node_position;
-
-		var new_position;
-		if ( el_bottom > scroll_bottom){
-			new_position =  el_bottom - scrolling_viewport_height/2;
-		} else if (el_bottom < scroll_top){
-			new_position =  el_bottom - scrolling_viewport_height/2;
-		}
-		if (new_position){
-			scroll_c.scrollTop(new_position);
-		}
-		
+		$(this.root_view.els.slider).removeClass('show-search show-search-results');
 	}
 });
 
@@ -191,6 +158,9 @@ provoda.addPrototype("searchSectionView", {
 		if (this.c_class){
 			this.c.addClass(this.c_class);
 		}
+	},
+	'': {
+
 	},
 	state_change: {
 		active: function(state){
@@ -247,7 +217,7 @@ provoda.addPrototype("searchSectionView", {
 	},
 	'collch-rendering_list': function(name, array) {
 		for (var i = 0; i < array.length; i++) {
-				var cur = array[i];
+			var cur = array[i];
 
 			var cur_ui = this.getFreeChildView('item', cur);
 			if (cur_ui){

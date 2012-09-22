@@ -2,11 +2,13 @@ var
 	investigation,
 	baseSuggest,
 	baseSectionButton,
-	searchSection;
+	searchSection,
+	SearchPage;
+
 
 
 (function() {
-
+"use strict";
 
 
 baseSuggest = function(){};
@@ -279,41 +281,11 @@ seesuSection.extendTo(albumsSection, {
 
 
 
-
-
-arrows_keys_nav = function(e){
-	
-	var invstg = su.search_el;
-	
-	if (invstg){
-		var _key = e.keyCode;
-		if (_key == '13'){
-			e.preventDefault();
-			invstg.pressEnter();
-		} else 
-		if((_key == '40') || (_key == '63233')){
-			e.preventDefault();
-			invstg.selectEnterItemAbove();
-		} else 
-		if((_key == '38') || (_key == '63232')){
-			e.preventDefault();
-			invstg.selectEnterItemBelow();
-		}
-	}
-	
-};
-
-
-
-
-
-
-
 investigation = function(){};
 provoda.extendFromTo('Investigation', mapLevelModel, investigation);
 
 
-var SearchPage = function() {};
+SearchPage = function() {};
 investigation.extendTo(SearchPage, {
 	init: function() {
 		this._super();
@@ -323,6 +295,17 @@ investigation.extendTo(SearchPage, {
 		this.addSection('tags', new tagsSection());
 		this.addSection('tracks', new tracksSection());
 		
+	},
+	key_name_nav: {
+		'Enter': function() {
+			this.pressEnter();
+		},
+		"Up": function() {
+			this.selectEnterItemAbove();
+		},
+		"Down": function() {
+			this.selectEnterItemBelow();
+		}
 	},
 	getURL: function() {
 		return '?q=' + encodeURIComponent(this.q || '');
@@ -440,10 +423,5 @@ investigation.extendTo(SearchPage, {
 		}
 	}
 });
-createSuInvestigation = function(){
-	var sp = new SearchPage();
-	sp.init()
-	return sp;
-};
 
 })();

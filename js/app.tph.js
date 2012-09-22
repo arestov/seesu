@@ -8,7 +8,9 @@ appTelegrapher.prototype = {
 		var view = (new this.appView());
 		md.addView(view);
 
-		view.init(md, false, {d: wd.document, allow_url_history: true, can_die: can_die});
+		view.init({
+			md: md
+		}, {d: wd.document, allow_url_history: true, can_die: can_die});
 		view.requestAll();
 		this.app_view = view;
 	},

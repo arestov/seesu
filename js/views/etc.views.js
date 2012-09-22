@@ -17,7 +17,7 @@ provoda.View.extendTo(vkLoginUI, {
 		}
 	},
 	createBase: function() {
-		this.c = app_view.samples.vklc.clone();
+		this.c = this.root_view.samples.vklc.clone();
 		var _this = this;
 		this.c.find('.sign-in-to-vk').click(function(e){
 			_this.md.requestAuth();
@@ -57,7 +57,7 @@ provoda.View.extendTo(LfmLoginView, {
 		this.c.find('.lfm-auth-request-desc').text(state || "");
 	},
 	createBase: function() {
-		this.c = app_view.samples.lfm_authsampl.clone();
+		this.c = this.root_view.samples.lfm_authsampl.clone();
 		this.auth_block = this.c.children(".auth-block");
 		var _this = this;
 		this.auth_block.find('.lastfm-auth-bp a').click(function(e){
@@ -82,7 +82,7 @@ LfmLoginView.extendTo(LfmLoveItView, {
 		var _this = this;
 		var wrap = $('<div class="add-to-lfmfav"></div>');
 
-		this.nloveb = app_view.createNiceButton();
+		this.nloveb = this.root_view.createNiceButton();
 		this.nloveb.c.appendTo(wrap);
 		this.nloveb.b.click(function(){
 			if (_this.nloveb._enabled){
@@ -110,7 +110,7 @@ var LfmScrobbleView = function(){};
 LfmLoginView.extendTo(LfmScrobbleView, {
 	createBase: function(){
 		this._super();
-		this.scrobbling_switchers = app_view.samples.lfm_scrobling.clone().appendTo(this.c);
+		this.scrobbling_switchers = this.root_view.samples.lfm_scrobling.clone().appendTo(this.c);
 		this.chbx_enabl = this.scrobbling_switchers.find('.enable-scrobbling');
 		this.chbx_disabl = this.scrobbling_switchers.find('.disable-scrobbling');
 		var _this = this;

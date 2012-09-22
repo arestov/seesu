@@ -6,47 +6,43 @@ var songsList;
 	provoda.extendFromTo("songsListBase", mapLevelModel, songsListBase);
 	
 
-	songsList = function(params, first_song, findMp3, player){
-		//playlist_title, playlist_type, info
-		//params.title, params.type, params.data
-		this.init();
-		this.info = params.data || {};
-		if (params.title){
-			this.playlist_title = params.title;
-		}
-		if (params.type){
-			this.playlist_type = params.type;
-			this.updateState('nav-text', this.playlist_title);
-			this.updateState('nav-title', this.playlist_title);
-		}
-		this.player = player;
-		this.findMp3 = findMp3;
-		this.findSongOwnPosition(first_song);
-
-		var plarow = new PlARow();
-		plarow.init(this);
-
-		this.setChild('plarow', plarow);
-
-
-		this.changed();
-		
-		var _this = this;
-		
-		var doNotReptPl = function(state) {
-			_this.updateState('dont-rept-pl', state);
-		};
-		if (su.settings['dont-rept-pl']){
-			doNotReptPl(true);
-		}
-		su.on('settings.dont-rept-pl', doNotReptPl);
-
-		
-			
-	};
-
-
+	songsList = function(){};
 	songsListBase.extendTo(songsList, {
+		init: function(params, first_song, findMp3, player) {
+			//playlist_title, playlist_type, info
+			//params.title, params.type, params.data
+			this._super();
+			this.info = params.data || {};
+			if (params.title){
+				this.playlist_title = params.title;
+			}
+			if (params.type){
+				this.playlist_type = params.type;
+				this.updateState('nav-text', this.playlist_title);
+				this.updateState('nav-title', this.playlist_title);
+			}
+			this.player = player;
+			this.findMp3 = findMp3;
+			this.findSongOwnPosition(first_song);
+
+			var plarow = new PlARow();
+			plarow.init(this);
+
+			this.setChild('plarow', plarow);
+
+
+			this.changed();
+			
+			var _this = this;
+			
+			var doNotReptPl = function(state) {
+				_this.updateState('dont-rept-pl', state);
+			};
+			if (su.settings['dont-rept-pl']){
+				doNotReptPl(true);
+			}
+			su.on('settings.dont-rept-pl', doNotReptPl);
+		},
 		page_name: 'playlist',
 		getURL: function(){
 			var url ='';
@@ -73,7 +69,9 @@ var songsList;
 		},
 		extendSong: function(omo, player, mp3_search){
 			if (!(omo instanceof song)){
-				return new song(omo, this, player, mp3_search);
+				var mo = new song();
+				mo.init(omo, this, player, mp3_search)
+				return mo;
 			} else{
 				return omo;
 			}

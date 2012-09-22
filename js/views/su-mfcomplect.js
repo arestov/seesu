@@ -162,7 +162,7 @@ provoda.View.extendTo(mfCorUI, {
 		}
 		this.video = {
 			link: link.addClass('active'),
-			node: $(app_view.create_youtube_video(id)).appendTo(c)
+			node: $(this.root_view.create_youtube_video(id)).appendTo(c)
 		};
 	},
 	hideYoutubeVideo: function(){

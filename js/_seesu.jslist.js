@@ -52,13 +52,12 @@ var jsLoadComplete,
 	"js/seesu.s.js",
 	"js/libs/mp3_search.js",
 	
-	"js/prototypes/song.m.js",
-
-	"js/su-prototypes/su-song.m.js",
-	"js/su-prototypes/su-mfcomplect.js",
+	"js/models/song.base.js",
+	"js/models/song.js",
+	"js/models/mfcomplect.js",
 	"js/seesu.js",
-	"js/prototypes/songs-list.js",
-	"js/su-prototypes/su-songs-list.js",
+	"js/models/songs-list.base.js",
+	"js/models/songs-list.js",
 	"js/prototypes/songFile.js",
 
 	"js/models/search-investigation.base.js",

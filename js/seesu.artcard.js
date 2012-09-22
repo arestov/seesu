@@ -9,7 +9,7 @@ provoda.View.extendTo(artCardUI, {
 		this._super();	
 	},
 	blur: function() {
-		$(app_view.els.slider).removeClass('show-art-card');
+		$(this.root_view.els.slider).removeClass('show-art-card');
 	},
 	state_change: {
 		"mp-show": function(opts) {
@@ -23,7 +23,7 @@ provoda.View.extendTo(artCardUI, {
 			if (state){
 				this.blur();
 			} else {
-				$(app_view.els.slider).addClass('show-art-card');
+				$(this.root_view.els.slider).addClass('show-art-card');
 			}
 		},
 		"loading-albums": function(state) {
@@ -56,7 +56,7 @@ provoda.View.extendTo(artCardUI, {
 			var albs_groups = $("<div class='albums-groups'></div>");
 			for (var i=0; i < ob.ordered.length; i++) {
 				var aul =  $('<ul></ul>');
-				app_view.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, true, true);
+				this.root_view.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, true, true);
 				
 				aul.appendTo(albs_groups);
 			};
@@ -139,7 +139,7 @@ provoda.View.extendTo(artCardUI, {
 	},
 	createBase: function() {
 		var _this = this;
-		this.c = app_view.samples.artcard.clone();
+		this.c = this.root_view.samples.artcard.clone();
 		this.ui = {
 			imagec: this.c.find('.art-card-image .art-card-image-padding'),
 			topc: this.c.find('.top-tracks'),

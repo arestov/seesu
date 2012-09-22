@@ -471,7 +471,11 @@ appModel.extendTo(seesuApp, {
 		this.trigger('vk-api', vkapi, user_id);
 	},
 	createSearchPage: function() {
-		return createSuInvestigation();
+		var sp = new SearchPage();
+		sp.init();
+		return sp;
+
+		return sp;
 	},
 	getPlaylists: function(query) {
 		var r = [];

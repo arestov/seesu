@@ -1,3 +1,6 @@
+var StartPage;
+(function() {
+"use strict";
 
 StartPage = function() {};
 
@@ -157,3 +160,4 @@ BaseCRow.extendTo(LastfmLoveRow, {
 	},
 	row_name: 'lastfm-love'
 });
+})();

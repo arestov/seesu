@@ -508,9 +508,12 @@ var
 
 
 provoda.StatesEmitter.extendTo(provoda.View, {
-	init: function(md, parent_view, opts){
-		if (parent_view){
-			this.parent_view = parent_view;
+	init: function(view_otps, opts){
+		if (view_otps.parent_view){
+			this.parent_view = view_otps.parent_view;
+		}
+		if (view_otps.root_view){
+			this.root_view = view_otps.root_view;
 		}
 		if (opts){
 			this.opts = opts;
@@ -520,10 +523,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.children = [];
 		this.children_models = {};
 		this.view_parts = {};
-		if (!md){
+		if (!view_otps.md){
 			throw new Error('give me model!');
 		}
-		this.md = md;
+		this.md = view_otps.md;
 		this.undetailed_states = {};
 		this.undetailed_children_models = {};
 		this.children_viewed = {};
@@ -612,7 +615,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			} else {
 				view = new ConstrObj[view_space]();
 			}
-			view.init(md, this, opts);
+			view.init({
+				md: md,
+				parent_view: this,
+				root_view: this.root_view
+			}, opts);
 			md.addView(view, view_space);
 			this.addChildView(view, child_name);
 			return view;

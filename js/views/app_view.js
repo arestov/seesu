@@ -2,6 +2,7 @@ var appModelView = function(){};
 provoda.View.extendTo(appModelView, {
 
 	createDetailes: function(){
+		this.root_view = this;
 		this.d = this.opts.d;
 
 		var _this = this;
@@ -196,6 +197,45 @@ provoda.View.extendTo(appModelView, {
 			this.d.title = 	title || "";
 		}
 	},
+	scrollTo: function(view) {
+		if (!view){return false;}
+	//	if (!this.view_port || !this.view_port.node){return false;}
+
+		//var scrollingv_port = ;
+
+		//var element = view.getC();
+
+		var jnode = $(view.getC());
+		if (!jnode[0]){
+			return
+		}
+
+
+
+		var svp = this.els.scrolling_viewport,
+			scroll_c = svp.offset ? $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0]) :   svp.node,
+			scroll_top = scroll_c.scrollTop(), //top
+			scrolling_viewport_height = svp.node.height(), //height
+			scroll_bottom = scroll_top + scrolling_viewport_height; //bottom
+		
+		var node_position;
+		if (svp.offset){
+			node_position = jnode.offset().top;
+		} else{
+			throw new Error('fix this!');
+			node_position = jnode.position().top + scroll_top + this.c.parent().position().top;
+		}
+
+		var el_bottom = jnode.height() + node_position;
+
+		var new_position;
+		if ( el_bottom > scroll_bottom || el_bottom < scroll_top){
+			new_position =  el_bottom - scrolling_viewport_height/2;
+		}
+		if (new_position){
+			scroll_c.scrollTop(new_position);
+		}
+	},
 	toggleBodyClass: function(add, class_name){
 		if (add){
 			this.c.addClass(class_name);
@@ -242,7 +282,12 @@ provoda.View.extendTo(appModelView, {
 
 			var start_screen = $('#start-screen',d);
 			_this.els = {
-				scrolling_viewport: app_env.as_application ? {node:$('#screens',d)} : {node: $(d.body), offset: true},
+				scrolling_viewport: app_env.as_application ? {
+					node:$('#screens',d)
+				} : {
+					node: $(d.body), 
+					offset: true
+				},
 				slider: slider,
 				navs: $(slider).children('.navs'),
 				start_screen: start_screen,
@@ -255,6 +300,10 @@ provoda.View.extendTo(appModelView, {
 				fast_personal_start: start_screen.children('.fast-personal-start'),
 				start_page_place: start_screen.children('.for-startpage')
 			};
+
+
+
+
 			jsLoadComplete({
 				test: function() {
 					return window.button_menu;
@@ -380,6 +429,7 @@ provoda.View.extendTo(appModelView, {
 			justhead.children('.daddy').empty().removeClass('not-inited');
 			
 
+
 			
 			jsLoadComplete(function(){
 				$(d).click(function(e) {
@@ -388,9 +438,34 @@ provoda.View.extendTo(appModelView, {
 			});
 			
 			_this.onDomBuild();
+
+			$(d).keydown(function(e){
+				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
+				_this.arrowsKeysNav(e);
+			});
 		});
 	},
+	arrowsKeysNav: function(e) {
+		var
+			key_name,
+			_key = e.keyCode;
 
+		if (_key == '13'){
+			e.preventDefault();
+			key_name = 'Enter';
+		} else 
+		if((_key == '40') || (_key == '63233')){
+			e.preventDefault();
+			key_name = 'Up';
+		} else 
+		if((_key == '38') || (_key == '63232')){
+			e.preventDefault();
+			key_name = 'Down';
+		}
+		if (key_name){
+			this.md.keyNav(key_name);
+		}
+	},
 	appendStyle: function(style_text){
 		//fixme - check volume ondomready
 		var style_node = this.d.createElement('style');

@@ -2,7 +2,7 @@ var LfmCommonLoginView = function(){};
 LfmLoginView.extendTo(LfmCommonLoginView, {
 	createBase: function(){
 		this._super();
-		this.un_form = app_view.samples.lfm_input.clone().appendTo(this.c);
+		this.un_form = this.root_view.samples.lfm_input.clone().appendTo(this.c);
 		this.un_input = this.un_form.find('.lfm-username');
 
 		var _this = this;
@@ -134,11 +134,7 @@ provoda.View.extendTo(StartPageView, {
 		
 		this.els.search_form.submit(function(){return false;});
 		
-		$(this.parent_view.d).keydown(function(e){
-			if (!_this.els.slider.className.match(/show-search-results/)) {return;}
-			if (_this.parent_view.d.activeElement.nodeName == 'BUTTON'){return;}
-			arrows_keys_nav(e);
-		});
+		
 		this.search_input = this.els.search_input;
 	
 		this.search_input.on('keyup change', function(e) {
