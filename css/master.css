@@ -516,7 +516,7 @@ a.desc{
 .tracks-for-play{
 	clear:both;
 	}
-	ul.tracks-for-play.tracks-c.loading{
+	ul.tracks-for-play.loading{
 		background: url(../i/spinner.gif) no-repeat 4px 100%;
 		padding-bottom: 30px;
 	}
