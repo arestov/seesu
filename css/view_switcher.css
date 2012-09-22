@@ -155,6 +155,9 @@ ul.tracks-for-play > li{
 	background-color: #505050;
 }
 
+ul.tracks-for-play > li:nth-of-type(odd) > .track-node{
+	background-color: #4A4A4A;
+	}
 .show-zoom-to-track ul.tracks-for-play > li.to-play-previous{
 	margin-top:-31px;
 	}
