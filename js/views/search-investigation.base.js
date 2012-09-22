@@ -196,7 +196,7 @@ provoda.addPrototype("searchSectionView", {
 				this.message = $('<li></li>').text(text);
 				var butn_th = this.button_view && this.button_view.getT();
 				if (butn_th){
-					butn_th.before(this.message);
+					$(butn_th).before(this.message);
 				} else{
 					this.c.append(this.message);
 				}

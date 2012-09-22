@@ -219,11 +219,15 @@ provoda.View.extendTo(appModelView, {
 			scroll_bottom = scroll_top + scrolling_viewport_height; //bottom
 		
 		var node_position;
+		var node_top_post =  jnode.offset().top;
 		if (svp.offset){
-			node_position = jnode.offset().top;
+			node_position = node_top_post;
 		} else{
-			throw new Error('fix this!');
-			node_position = jnode.position().top + scroll_top + this.c.parent().position().top;
+			//throw new Error('fix this!');
+			var spv_top_pos = scroll_c.offset().top;
+			node_position = scroll_top + (node_top_post - spv_top_pos);
+
+			//node_position = jnode.position().top + scroll_top + this.c.parent().position().top;
 		}
 
 		var el_bottom = jnode.height() + node_position;
