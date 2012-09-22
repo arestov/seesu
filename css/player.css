@@ -59,9 +59,7 @@ a.track-node{
 	border:0 !important;
 	overflow:hidden;
 	}
-	a.track-node:hover{
-		background-color:#595959;
-		}
+	
 
 a.waiting-full-render.marked-for-play{
 	outline:1px dotted #888 ;
@@ -73,22 +71,33 @@ a.loading .nothing-toy{
 	display: none;
 	}
 
+
+ul.tracks-for-play.list-overview > li:nth-of-type(odd) > .track-node{
+	background-color: #4D4D4D;
+	}
+
+
+	a.track-node:hover{
+		background-color:#595959;
+		}
+
 .nothing-toy{
-	background: #555;
+	border: 1px solid transparent;
 	display: block;
 	position: absolute;
 	right:3px;
 	top:10px;
 	border-radius: 6px;
 	border-top: 1px solid #666;
+	background: #555;
 	border-bottom: 1px solid #444;
 	width:10px;
 	height:10px;
 	}
 	a.track-node:hover .nothing-toy{
-		border-top-color:#777;
-		background-color: #666;
-		border-bottom-color: #555;
+		border-top-color:#6e6e6e;
+		background-color: #5e5e5e;
+		border-bottom-color: #4e4e4e;
 		}
 	a.track-node:active .nothing-toy{
 		border-top-color:#444;

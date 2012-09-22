@@ -97,11 +97,7 @@ var songsListView;
 			}
 		},
 		'stch-mp-blured': function(state) {
-			if (state){
-				
-			} else {
-				
-			}
+			this.lc.toggleClass('list-overview', !state);
 		},
 		'stch-error': function(error){
 			if (this.error_b && this.error_b.v !== error){

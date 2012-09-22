@@ -40,7 +40,7 @@ provoda.addPrototype("songsListBaseView", {
 		}
 	},
 	createListBase: function() {
-		this.lc = $('<ul class="tracks-for-play"></ul>').appendTo(this.c);
+		this.lc = $('<ul class="tracks-for-play list-overview"></ul>').appendTo(this.c);
 	},
 	createBase: function() {
 		this.c = $('<div class="playlist-container"></div>');
