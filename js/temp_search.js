@@ -6,30 +6,11 @@ var btapp = bap;
 
 var test_link = 'http://isohunt.com/download/402892101';
 
-btapp.on('add:add', function(add){
-	//setTimeout(function(){
-		add.torrent({
-			url: test_link,
-			callback: function(trt){
-				var colln = btapp.get('torrent');
-				var array = colln.models;
-			//	array.length
-			//	.models[]
-				var torrent = array[array.length - 1];//.models
-				setTimeout(function(){
-					btapp.get('torrent').each(function(t){
-						t.get('file').each(function(file){
-							console.log(file.get('properties').get('name'));
-						})
-					})
-				});
-			},
-			priority: Btapp.TORRENT.PRIORITY.METADATA_ONLY
-		});
-	//},100)
-	
-});
 
+var torrentAdding = function(add) {
+
+
+};
 
 var findFileInTorrents = function(msq) {
 	var complex_search = new funcsStack();
@@ -38,25 +19,101 @@ var findFileInTorrents = function(msq) {
 	complex_search
 	.next(function() {
 		var _this = this;
-
-
 		torrent_search
 		.findAudio(msq)
 			.done(function(r) {
 				_this.done(r);
-				console.log(r)
 			})
 			.fail(function() {
-
 			});
-		//_this.done();
 		//find torrents
 	})
-	.next(function() {
+	.next(function(array) {
+
+		//get torrent files list 
+		var _this = this;
+		console.log(array);
+		if (!array.length){
+			return
+		}
+
+		var torrent_link = array[0].torrent_link;
+
+
+		var getTorrent = function(){
+			var torrent;
+			var colln = btapp.get('torrent');
+			var array = colln.models;
+			torrent = $filter(array, 'attributes.properties.attributes.download_url', torrent_link);
+			return torrent[0];
+		};
+
+		var getFiles = function(torrent) {
+			var files_array = [];
+			setTimeout(function(){
+				torrent.get('file').each(function(file){
+					files_array.push({
+						name: file.get('properties').get('name'),
+						file: file,
+					})
+				});
+
+						
+				_this.done({
+					files: files_array,
+					torrent: torrent
+				})
+			});
+		};
+
+		var torrentAdding = function(add) {
+			var torrent ;
+			torrent = getTorrent();
+			if (torrent){
+
+				getFiles(torrent);
+				return
+			} else {
+				add.torrent({
+					url: torrent_link,
+					callback: function(trt){
+						setTimeout(function() {
+							torrent = getTorrent();
+							if (torrent){
+								getFiles(torrent);
+							}
+
+							
+						},0)
+					},
+					priority: Btapp.TORRENT.PRIORITY.METADATA_ONLY
+				});
+			}
+			
+			
+		};
+
+		var add = btapp.get('add');
+		if (add){
+			torrentAdding(add)
+		} else {
+			btapp.on('add:add', function(add){
+				
+				//setTimeout(function(){
+					torrentAdding(add);
+				//},100)
+			});
+		}
+
+		
 		//get files list
 	})
-	.next(function() {
+	.next(function(obj) {
 		//find 
+		console.log(obj.files);
+		
+
+
 	})
 	.start(function() {
 
