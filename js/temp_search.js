@@ -13,6 +13,9 @@ var torrentAdding = function(add) {
 };
 
 var findFileInTorrents = function(msq) {
+	if (typeof msq == 'string'){
+		msq = guessArtist(msq);
+	}
 	var complex_search = new funcsStack();
 
 
