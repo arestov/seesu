@@ -199,7 +199,7 @@ appModel.extendTo(seesuApp, {
 
 		this.delayed_search = {
 			vk_api:{
-				queue:  new funcsQueue(2000, 8000 , 7)
+				queue:  new funcsQueue(700, 8000 , 7)
 			}
 		};
 
