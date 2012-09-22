@@ -3,38 +3,31 @@
 var counter = 0;
 
 provoda.addPrototype("baseSong",{
+	model_name: "song",
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
-				this.makeSongPlayalbe(true);
-				this.checkNeighboursChanges(false, true, "track view");
-				/*
-				if (this.isSearchCompleted() || this.isHaveBestTracks()){
-					this.checkNeighboursChanges(false, true, "track view");
-				} else {
-					//this.checkAndFixNeighbours();
-				}*/
-				var _this = this;
-				this.mp3_search.on("new-search.viewing-song", function(){
-					_this.findFiles();
-					_this.checkNeighboursChanges(false, true, "track view");
-					if (_this.next_preload_song){
-					//	_this.next_preload_song.findFiles();
-					}
-
-				}, {exlusive: true});
+				this.prepareForPlaying();
+				
 				
 			} else {
 				this.removeMarksFromNeighbours();
 			}
 		},
 		"player-song": function(state){
+			var _this = this;
+
 			if (state){
-				if (!this.state("mp-show") && this.isSearchCompleted()){
-					this.checkNeighboursChanges(false, false, "player song");
-				}
+				setTimeout(function() {
+					if (!_this.state("mp-show") && _this.isSearchCompleted()){
+						
+						_this.checkNeighboursChanges(false, false, "player song");
+					}
+					
+				}, 0);
 				
-				var _this = this;
+				
+				
 				this.mp3_search.on("new-search.player-song", function(){
 					_this.findFiles();
 					_this.checkNeighboursChanges(false, false, "new search, player song");
@@ -47,8 +40,26 @@ provoda.addPrototype("baseSong",{
 		"is_important": function(state){
 			if (!state){
 				this.unloadFor(this.uid);
+
+				cloneObj(this, {
+					next_song: false,
+					prev_song: false,
+					next_preload_song: false
+				});
 			}
 		}
+	},
+	prepareForPlaying: function() {
+		var _this = this;
+
+		this.makeSongPlayalbe(true);
+		setTimeout(function() {
+			_this.checkNeighboursChanges(false, true, "track view");
+		}, 0);
+		this.mp3_search.on("new-search.viewing-song", function(){
+			_this.findFiles();
+			_this.checkNeighboursChanges(false, true, "track view");
+		}, {exlusive: true});
 	},
 	init: function(omo, playlist, player, mp3_search){
 		this._super();
@@ -235,79 +246,8 @@ provoda.addPrototype("baseSong",{
 	canUseAsNeighbour: function(){
 		return (this.canSearchFiles() && (this.canPlay() || !this.isSearchCompleted())) || (!this.track && this.canFindTrackTitle());
 	},
-	getNeighboursChanges: function(to_check){
-		var
-			check_list = {},
-			need_list = {},
-			ste_diff = {},
-			n_ste = {},
-			o_ste = {
-				next_song: this.next_song,
-				prev_song: this.prev_song,
-				next_preload_song: this.next_preload_song
-			};
-
-		for (var i in o_ste){
-			check_list[i] = !to_check || (o_ste[i] == to_check);
-		}
-
-		cloneObj(n_ste, o_ste);
-
-		var fastCheck = function(neighbour_name){
-			if (o_ste[neighbour_name]){
-				n_ste[neighbour_name] = o_ste[neighbour_name] && o_ste[neighbour_name].canUseAsNeighbour() && o_ste[neighbour_name]; 
-			}
-			need_list[neighbour_name] = !n_ste[neighbour_name];
-		};
-
-		for (var i in check_list){
-			if (check_list[i]){
-				fastCheck(i);
-			}
-		}
-
-		var changes = this.plst_titl.getNeighbours(this, need_list);
-
-		cloneObj(n_ste, changes);
-
-
-		return getDiffObj(o_ste, n_ste);
-
-
-	},
 	checkNeighboursChanges: function(changed_neighbour, viewing, log) {
-		var changes = this.getNeighboursChanges(changed_neighbour)
-		//console.log("changes");
-		//console.log();
-		cloneObj(this, changes)
-
-		//this.findNeighbours();
-
-		viewing = viewing || !!this.state("mp-show");
-		var playing = !!this.state("player-song");
-
-		if (viewing){
-			this.addMarksToNeighbours();
-			if (changes.prev_song && !changes.prev_song.track){
-				changes.prev_song.getRandomTrackName();
-			}
-			
-		}
-		if ((viewing || playing) && changes.next_preload_song){
-			changes.next_preload_song.makeSongPlayalbe(true);
-		}
-		if (!this.cncco){
-			this.cncco = [];
-		} else {
-			this.cncco.push(log);
-		}
-
-		if (viewing || playing){
-			if (!this.hasNextSong()){
-				this.plst_titl.loadMoreSongs();
-			}
-		}
-
+		this.plst_titl.checkNeighboursChanges(this, changed_neighbour, viewing, log);
 	},
 	hasNextSong: function(){
 		return !!this.next_song;
@@ -345,14 +285,16 @@ provoda.addPrototype("baseSong",{
 						_this.updateState("no-track-title", true);
 					}
 
-					_this.checkChangesSinceFS();
+					
 
 				})
 				.always(function(){
+					
 					_this.updateState('loading', false);
 					if (_this.rtn_request == request){
 						delete _this.rtn_request;
 					}
+					_this.checkChangesSinceFS();
 				});
 			if (this.state("mp-show")){
 				request.queued && request.queued.setPrio('highest');
@@ -365,7 +307,7 @@ provoda.addPrototype("baseSong",{
 		this.findFiles({
 			get_next: true
 		});
-		this.setPrio('highest');
+		this.setPrio('as-top');
 	},
 	findFiles: function(opts){
 		if (this.mp3_search){
@@ -466,34 +408,10 @@ provoda.addPrototype("baseSong",{
 		}
 		this.trigger('files_search', opts);
 		this.updateState('files_search', opts);
-
-
-		this.checkChangesSinceFS();
-		
-
-
-		
+		this.checkChangesSinceFS(opts);
 	},
 	checkChangesSinceFS: function(opts){
-		if (this.isImportant()){
-			if (!opts || (opts.complete || opts.have_best_tracks)){
-				this.checkNeighboursChanges(false, false, 'important; files search');
-			}
-		} 
-
-		if (!opts || opts.complete){
-			var v_song = this.plst_titl.getViewingSong(this);
-			var p_song = this.plst_titl.getPlayerSong(this);
-			
-			if (v_song && v_song.isPossibleNeighbour(this)) {
-				v_song.checkNeighboursChanges(this,false, "nieghbour of viewing song; files search");
-			}
-			
-			if (p_song && v_song != p_song && p_song.isPossibleNeighbour(this)){
-				p_song.checkNeighboursChanges(this,false, "nieghbour of playing song; files search");
-			}
-		}
-		
+		this.plst_titl.checkChangesSinceFS(this, opts);
 	},
 	view: function(no_navi, user_want){
 		if (!this.state('mp-show')){
@@ -552,58 +470,6 @@ provoda.addPrototype("baseSong",{
 	},
 	getCurrentMopla: function(){
 		return this.mf_cor.getCurrentMopla();
-	},
-	submitPlayed: function(careful){
-		var
-			starttime = this.start_time,
-			last_scrobble = this.last_scrobble,
-			timestamp = ((new Date() * 1)/1000).toFixed(0),
-			duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
-
-
-		if ((!duration && !careful) || ((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
-
-			this.start_time = false;
-			this.last_scrobble = timestamp;
-			delete this.start_time;
-
-
-			if (su.settings['lfm-scrobbling']){
-				lfm.submit({
-					artist: this.artist,
-					track: this.track
-				}, duration, timestamp);
-			}
-			if (su.s.loggedIn()){
-				su.s.api('track.scrobble', {
-					client: su.env.app_type,
-					status: 'finished',
-					duration: duration,
-					artist: this.artist,
-					title: this.track,
-					timestamp: timestamp
-				});
-			}
-		}
-	},
-	submitNowPlaying: function(){
-		var duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
-		if (su.settings['lfm-scrobbling']){
-			lfm.nowplay({
-				artist: this.artist,
-				track: this.track
-			}, duration);
-		}
-		if (su.s.loggedIn()){
-			su.s.api('track.scrobble', {
-				client: su.env.app_type,
-				status: 'playing',
-				duration: duration,
-				artist: this.artist,
-				title: this.track,
-				timestamp: ((new Date()).getTime()/1000).toFixed(0)
-			});
-		}
 	}
 });
 

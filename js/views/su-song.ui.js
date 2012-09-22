@@ -1,20 +1,17 @@
 var songUI = function(){};
 
-suServView.extendTo(songUI, {
+provoda.View.extendTo(songUI, {
 	createDetailes: function(){
 		this.rowcs = {};
 		this.createBase();
 	},
-	appendChildren: function() {
-		//this.expand();
-	},
 	state_change : {
 		"mp-show": function(opts, old_opts) {
 			if (opts){
-				$(su.ui.els.slider).addClass("show-zoom-to-track");
+				$(this.root_view.els.slider).addClass("show-zoom-to-track");
 				this.activate();
 			} else if (old_opts) {
-				$(su.ui.els.slider).removeClass("show-zoom-to-track");
+				$(this.root_view.els.slider).removeClass("show-zoom-to-track");
 				this.deactivate();
 			}
 			
@@ -130,11 +127,14 @@ suServView.extendTo(songUI, {
 			this.rowcs[a].hide();
 		};
 		//this.tidominator.removeClass('want-more-info');
-			
-		this.md.actionsrow.hideAll();
-		
-		su.ui.hidePopups();
-		this.md.mf_cor.collapseExpanders();
+
+
+		this.getMdChild('actionsrow').hideAll();
+		this.getMdChild('mf_cor').collapseExpanders();
+	},
+	children_views: {
+		actionsrow: TrackActionsRowUI,
+		mf_cor: mfCorUI
 	},
 	activate: function(opts){
 		this.expand();
@@ -155,7 +155,7 @@ suServView.extendTo(songUI, {
 	},
 	parts_builder: {
 		context: function() {
-			return su.ui.samples.track_c.clone(true);
+			return this.root_view.samples.track_c.clone(true);
 		},
 		tidominator: function() {
 			return this.requirePart('context').children('.track-info-dominator');
@@ -178,16 +178,13 @@ suServView.extendTo(songUI, {
 				if (mo.player){
 					mo.player.wantSong(mo);
 				}
-				if (mo.plst_titl.lev){
-					mo.plst_titl.lev.freeze()
-				}
-				
+
 				mo.view(false, true);
 				return false;
 			});
 		$('<span class="nothing-toy"></span>').appendTo(this.node);
 
-		var buttmen = su.ui.els.play_controls.node.clone(true).data('mo', this.md);
+		var buttmen = this.root_view.els.play_controls.node.clone(true).data('mo', this.md);
 			buttmen.find('.pc').data('mo', this.md);
 		this.c.prepend(buttmen);
 
@@ -207,24 +204,15 @@ suServView.extendTo(songUI, {
 
 		this.song_actions_c =  context.children('.song-actions');
 
-		var track_row_view = this.md.actionsrow.getFreeView(this);
-		if (track_row_view){
 
-			this.addChild(track_row_view);
-			
-			
-		}
+		var actionsrow = this.getMdChild('actionsrow')
+		var track_row_view = this.getFreeChildView('actionsrow', actionsrow);
 
-		this.mf_cor_view = this.md.mf_cor.getFreeView(this);
-		if (this.mf_cor_view){
-			var mf_cor_view_c = this.mf_cor_view.getA();
-			this.addChild(this.mf_cor_view);
-			context.prepend(mf_cor_view_c);
-			
-			//this.mf_cor_view.appended(this);
-			//fixme - remove link to view (this.mf_cor_view) when dieing 
+
+
+
+		context.prepend(this.getAFreeCV('mf_cor'));
 		
-		}
 		
 		
 		
@@ -251,7 +239,7 @@ suServView.extendTo(songUI, {
 				.data('artist', this.md.artist)
 				.appendTo(artist_link_con)
 				.click(function(){
-					su.views.showArtcardPage(_this.md.artist);
+					su.showArtcardPage(_this.md.artist);
 					su.trackEvent('Artist navigation', 'art card', _this.md.artist);
 				});
 
@@ -290,7 +278,7 @@ suServView.extendTo(songUI, {
 					prev: false
 				};
 				
-				su.ui.infoGen(this.base_info, c, localize("more-ab-info"));
+				su.infoGen(this.base_info, c, localize("more-ab-info"));
 				//su.ui.infoGen(this.files, c, 'files: %s');
 				//su.ui.infoGen(this.videos, c, 'video: %s');
 				if (c.str){
@@ -343,7 +331,7 @@ suServView.extendTo(songUI, {
 	createCurrentUserUI: function(mo, user_info){
 		if (this.t_users && !this.t_users.current_user){
 			var div = this.t_users.current_user = $('<div class="song-listener current-user-listen"></div>');
-			su.ui.createUserAvatar(user_info, div);
+			this.root_view.createUserAvatar(user_info, div);
 			this.t_users.list.append(div);
 			return div;
 		}
@@ -383,7 +371,7 @@ suServView.extendTo(songUI, {
 						var uul = $("<ul></ul>");
 						for (var i=0; i < r.done.length; i++) {
 							if (r.done[i] && r.done[i].length){
-								above_limit_value = su.ui.createSongListeners(r.done[i], uul, above_limit_value, current_user, _this.rowcs.users_context);
+								above_limit_value = _this.root_view.createSongListeners(r.done[i], uul, above_limit_value, current_user, _this.rowcs.users_context);
 							}
 							
 						}; 

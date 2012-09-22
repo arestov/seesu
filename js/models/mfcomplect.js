@@ -1,26 +1,5 @@
 
 
-var notifyCounterUI = function() {};
-
-suServView.extendTo(notifyCounterUI, {
-	createDetailes: function(){
-		this.createBase();
-	},
-	createBase: function() {
-		this.c = $('<span class="notifier hidden"></span>');
-	},
-	state_change: {
-		counter: function(state) {
-			if (state){
-				this.c.text(state);
-				this.c.removeClass('hidden');
-			} else {
-				this.c.addClass('hidden');
-			}
-		}
-	}
-});
-
 var notifyCounter = function(name, banned_messages) {
 	this.init();
 	this.messages = {};
@@ -29,7 +8,6 @@ var notifyCounter = function(name, banned_messages) {
 };
 
 provoda.Model.extendTo(notifyCounter, {
-	ui_constr: notifyCounterUI,
 	addMessage: function(m) {
 		if (!this.messages[m] && this.banned_messages.indexOf(m) == -1){
 			this.messages[m] = true;
@@ -49,55 +27,13 @@ provoda.Model.extendTo(notifyCounter, {
 	recount: function() {
 		var counter = 0;
 		for (var a in this.messages){
-			++counter
+			++counter;
 		}
 		this.updateState('counter', counter);
 	}
 });
 
-var mfComplectUI = function() {};
-suServView.extendTo(mfComplectUI, {
-	createDetailes: function(){
-		this.createBase();
-		this.orderChildren();
-	},
-	createBase: function() {
-		this.c = $('<div class="moplas-list"></div>');
-		this.header_text = this.md.sem_part.name;
-		this.header_c = $('<h4></h4>').text(this.header_text).appendTo(this.c);
-		this.lc = $('<ul></ul>').appendTo(this.c);
-	},
-	orderChildren: function() {
-		var moplas_list = this.md.moplas_list;
 
-		for (var i = 0; i < moplas_list.length; i++) {
-			var ui  = moplas_list[i].getFreeView(this);
-			if (ui){
-				this.lc.append(ui.getA())
-			//	ui.appended(this);
-				this.addChild(ui);
-			}
-		}
-	},
-	state_change: {
-		overstock: function(state) {
-			if (state){
-				var _this = this;
-				var header = $('<a class="js-serv"></a>').click(function() {
-					_this.md.toggleOverstocked();
-				}).text(this.header_text);
-				this.header_c.empty().append(header);
-			}
-		},
-		"show-overstocked": function(state, oldstate){
-			if (state){
-				this.c.addClass('want-overstocked-songs');
-			} else if (oldstate){
-				this.c.removeClass('want-overstocked-songs');
-			}
-		}
-	}
-});
 
 var mfComplect = function(mf_cor, sem_part, mo) {
 	this.init();
@@ -125,10 +61,10 @@ var mfComplect = function(mf_cor, sem_part, mo) {
 		this.addChild(sf);
 		this.moplas_list.push(sf);
 	}
+	this.setChild('moplas_list', this.moplas_list);
 };
 
 provoda.Model.extendTo(mfComplect, {
-	ui_constr: mfComplectUI,
 	toggleOverstocked: function() {
 		this.updateState('show-overstocked', !this.state('show-overstocked'));
 	},
@@ -140,328 +76,40 @@ provoda.Model.extendTo(mfComplect, {
 
 
 
-var mfCorUI = function(md) {};
-suServView.extendTo(mfCorUI, {
-	createDetailes: function(){
-		this.createBase();
-	},
-	state_change: {
-		changed: function(val) {
-			this.renderChildren();
-		},
-		"want-more-songs": function(state) {
-			if (state){
-				this.c.addClass('want-more-songs');
-			} else {
-				this.c.removeClass('want-more-songs');
-			}
-		},
-		"must-be-expandable": function(state) {
-			if (state){
-				this.sall_songs.removeClass('hidden')
-			}
-		}
-	},
-	createBase: function() {
-		this.c = $('<div class="song-row-content moplas-block"></div>');
-		
-		
+var mfCor = function() {};
+provoda.Model.extendTo(mfCor, {
+	init: function(mo, omo) {
+		this._super();
+		this.omo = omo;
+		this.mo = mo;
+		this.complects = {};
+		this.subscribed_to = [];
+		this.preload_initors = [];
+
+		this.intMessages();
 
 		
-		
 
-
-		if (!this.more_songs_b){
-			var _this = this;
-			this.sall_songs =  $('<div class="show-all-songs hidden"></div>');
-
-			this.more_songs_b = $('<a class=""></a>').appendTo(this.sall_songs);
-			this.more_songs_b.click(function() {
-				_this.md.switchMoreSongsView();
-			});
-			$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
-			this.c.prepend(this.sall_songs);
-
-			var nof_ui = this.md.notifier.getFreeView(this);
-			if (nof_ui){
-				this.sall_songs.append(nof_ui.getA());
-
-				this.addChild(nof_ui);
-				//
-			//	nof_ui.appended(this);
-			//todo
-			}
-
-			this.messages_c = $('<div class="messages-c"></div>').appendTo(this.c);
-		}
-		this.video_c = $('<div class="track-video hidden"></div>');
-		if (this.md.mo.artist && this.md.mo.track){
-			this.show_video_info(this.video_c, this.md.mo.artist + " - " + this.md.mo.track);
-		}
-		this.mufils_c = $("<div class='music-files-lists'></div>").appendTo(this.c);
-		this.c.append(this.video_c);
-
-	},
-	orderChildren: function(){
 		var _this = this;
-		if (this.md.vk_audio_auth){
-			var
-				vk_auth_mess = this.md.vk_audio_auth.getFreeView(this),
-				vk_auth_mess_c = vk_auth_mess && vk_auth_mess.getA()
-
-				
-			if (vk_auth_mess){
-				this.addChild(vk_auth_mess);
-				if (vk_auth_mess_c){
-					this.messages_c.append(vk_auth_mess_c);
-				//	vk_auth_mess.appended(this);
-				}
-				
+		/*
+		this.watchStates(['has_files', 'vk-audio-auth'], function(has_files, vkaa) {
+			if (has_files || vkaa){
+				_this.updateState('must-be-expandable', true);
 			}
+		});*/
 
-		}
-		
-
-
-		if (this.md.pa_o){
-			var pa = this.md.pa_o;
-
-			var append = function(cur_view){
-				var ui_c = cur_view && cur_view.getA();
-				if (!ui_c){
-					return;
-				}
-
-				var prev_name = pa[i-1];
-				var prev = prev_name && _this.md.complects[prev_name];
-				var prev_c = prev && prev.getThing();
-				if (prev_c){
-					$(prev_c).after(ui_c);
-				} else {
-					var next_c = _this.getNextSemC(pa, i+1);
-					if (next_c){
-						$(next_c).before(ui_c);
-					} else {
-						//_this.video_c.before(ui_c);
-						_this.mufils_c.append(ui_c);
-					}
-				}
-				_this.addChild(cur_view);
-		//		cur_view.appended(_this);
-			};
-
-			for (var i = 0; i < pa.length; i++) {
-				append(this.md.complects[pa[i]].getFreeView(this));
+		this.mfPlayStateChange = function(e) {
+			if (_this.state('used_mopla') == this){
+				_this.updateState('play', e.value);
 			}
-		}
-	},
-	renderChildren: function() {
-		this.orderChildren();
-		this.requestAll();
-		
-	},
-	getNextSemC: function(packs, start) {
-		for (var i = start; i < packs.length; i++) {
-			var cur_name = packs[i];
-			var cur_mf = cur_name && this.md.complects[cur_name];
-			
-			return cur_mf && cur_mf.getThing();
-		}
-	},
-	showYoutubeVideo: function(id, c, link){
-		if (this.video){
-			this.hideYoutubeVideo();
-		}
-		this.video = {
-			link: link.addClass('active'),
-			node: $(su.ui.create_youtube_video(id)).appendTo(c)
+		};
+		this.mfError = function() {
+			_this.checkMoplas(this);
+		};
+		this.semChange = function(val) {
+			_this.semChanged(val);
 		};
 	},
-	hideYoutubeVideo: function(){
-		if (this.video){
-			if (this.video.link){
-				this.video.link.removeClass('active');
-				this.video.link[0].showed = false;
-				this.video.link = false;
-				
-			}
-			if (this.video.node){
-				this.video.node.remove();
-				this.video.node = false;
-			}
-			delete this.video;
-		}
-	},
-	show_video_info: function(vi_c, q){
-		if (vi_c.data('has-info')){return true;}
-
-		var _this = this;
-		get_youtube(q, function(r){			
-			var vs = r && r.feed && r.feed.entry;
-			if (vs && vs.length){
-				vi_c.data('has-info', true);
-				vi_c.empty();
-				//vi_c.append('<span class="desc-name"><a target="_blank" href="http://www.youtube.com/results?search_query='+ q +'">' + localize('video','Video') + '</a>:</span>');
-				var v_content = $('<ul class=""></ul>');
-			
-				var make_v_link = function(thmn, vid, _title, cant_show){
-					var link = 'http://www.youtube.com/watch?v=' + v_id
-
-					var li = $('<li class="you-tube-video-link"></li>')
-					.attr({
-						title: _title
-					})
-					.click(function(e){
-						if (!cant_show){
-							var showed = this.showed;
-							
-							if (!showed){
-								_this.showYoutubeVideo(vid, vi_c, $(this));
-								_this.md.pause();
-								this.showed = true;
-								su.trackEvent('Navigation', 'youtube video');
-							} else{
-								_this.hideYoutubeVideo();
-								_this.md.play();
-								this.showed = false;
-							}
-							
-						} else{
-							app_env.openURL(link);
-						}
-						e.stopPropagation();
-						e.preventDefault();
-					});
-					if (cant_show){
-						li.addClass("cant-show")
-					}
-
-
-					var imgs = $();
-
-					//thmn $('<img  alt=""/>').attr('src', img_link);
-
-					if (thmn.start && thmn.middle &&  thmn.end){
-						$.each(["start","middle","end"], function(i, el) {
-
-							var span = $("<span class='preview-slicer'></span>");
-
-							$('<img  alt=""/>').addClass('preview-part preview-' + el).attr('src', thmn[el]).appendTo(span);
-
-							imgs = imgs.add(span);
-
-							tmn[el] = $filter(thmn_arr, 'yt$name', el)[0].url;
-						});
-					} else {
-						imgs.add($('<img  alt="" class="whole"/>').attr('src', thmn.default))
-					}
-					
-					$("<a class='video-preview external'></a>")
-						.attr('href', link)
-						.append(imgs)
-						.appendTo(li);
-					
-					$('<span class="video-title"></span>')
-						.text(_title).appendTo(li);
-						
-					li.appendTo(v_content)
-				}
-				var preview_types = ["default","start","middle","end"];
-
-				//set up filter app$control.yt$state.reasonCode != limitedSyndication
-
-				var video_arr = []
-
-				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
-					var 
-						_v = vs[i],
-						tmn = {},
-						v_id = _v['media$group']['yt$videoid']['$t'],
-						v_title = _v['media$group']['media$title']['$t'];
-					var cant_show = getTargetField(_v, "app$control.yt$state.name") == "restricted";
-					cant_show = cant_show || getTargetField($filter(getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
-
-
-					var thmn_arr = getTargetField(_v, "media$group.media$thumbnail");
-					
-					$.each(preview_types, function(i, el) {
-						tmn[el] = $filter(thmn_arr, 'yt$name', el)[0].url;
-					});
-
-					video_arr.push({
-						thmn: tmn,
-						vid: v_id,
-						title: v_title,
-						cant_show: cant_show
-					});
-
-					
-					
-				};
-
-				video_arr.sort(function(a, b){
-					return sortByRules(a, b, ["cant_show"]);
-				});
-				$.each(video_arr, function(i, el) {
-					make_v_link(el.thmn, el.vid, el.title, el.cant_show);
-				});
-
-				
-				
-				vi_c.append(v_content).removeClass('hidden')
-				
-			}
-		});
-		
-	}
-});
-
-
-var mfCor = function(mo, omo) {
-	this.init();
-	this.omo = omo;
-	this.mo = mo;
-	this.complects = {};
-	this.subscribed_to = [];
-	this.preload_initors = [];
-
-	this.notifier = new notifyCounter();
-	this.sf_notf = su.notf.getStore('song-files');
-	var rd_msgs = this.sf_notf.getReadedMessages();
-	for (var i = 0; i < rd_msgs.length; i++) {
-		this.notifier.banMessage(rd_msgs[i]);
-	};
-	this.bindMessagesRecieving();
-	
-
-
-	this.addChild(this.notifier);
-	
-
-	this.checkVKAuthNeed();
-
-	var _this = this;
-	/*
-	this.watchStates(['has_files', 'vk-audio-auth'], function(has_files, vkaa) {
-		if (has_files || vkaa){
-			_this.updateState('must-be-expandable', true);
-		}
-	});*/
-
-	this.mfPlayStateChange = function(e) {
-		if (_this.state('used_mopla') == this){
-			_this.updateState('play', e.value);
-		}
-	};
-	this.mfError = function() {
-		_this.checkMoplas(this);
-	};
-	this.semChange = function(val) {
-		_this.semChanged(val);
-	};
-};
-provoda.Model.extendTo(mfCor, {
-	ui_constr: mfCorUI,
 	complex_states: {
 		"must-be-expandable": {
 			depends_on: ['has_files', 'vk-audio-auth'],
@@ -514,7 +162,7 @@ provoda.Model.extendTo(mfCor, {
 		},
 		"mopla_to_preload": function(nmf, omf){
 			if (omf){
-				omf.removeCache()
+				omf.removeCache();
 			}
 			if (nmf) {
 				nmf.load();
@@ -525,8 +173,25 @@ provoda.Model.extendTo(mfCor, {
 		}
 
 	},
+	intMessages: function() {
+		this.notifier = new notifyCounter();
+		this.setChild('notifier', this.notifier);
+		this.sf_notf = su.notf.getStore('song-files');
+		var rd_msgs = this.sf_notf.getReadedMessages();
+		for (var i = 0; i < rd_msgs.length; i++) {
+			this.notifier.banMessage(rd_msgs[i]);
+		}
+		this.bindMessagesRecieving();
+		
+
+
+		this.addChild(this.notifier);
+		
+
+		this.checkVKAuthNeed();
+	},
 	getCurrentMopla: function(){
-		return this.state('current_mopla')
+		return this.state('current_mopla');
 	},
 	switchMoreSongsView: function() {
 		if (!this.state('want-more-songs')){
@@ -556,6 +221,7 @@ provoda.Model.extendTo(mfCor, {
 				}
 				//console.log()
 			});
+			this.setChild('vk_auth', this.vk_audio_auth);
 			this.addChild(this.vk_audio_auth);
 			this.updateState('changed', new Date());
 			this.updateState('vk-audio-auth', true);
@@ -630,24 +296,29 @@ provoda.Model.extendTo(mfCor, {
 		this.pa_o = $filter(songs_packs, 'name');
 
 		var many_files = this.pa_o.length > 1;
+
+		var sorted_completcs = [];
+
 		for (var i = 0; i < this.pa_o.length; i++) {
 			var cp_name = this.pa_o[i];
 			if (!this.complects[cp_name]){
-				this.complects[cp_name] = new mfComplect(this, songs_packs[i], this.mo);
-				this.addChild(this.complects[cp_name]);
-				many_files = many_files || this.complects[cp_name].hasManyFiles();
+				var complect = new mfComplect(this, songs_packs[i], this.mo);
+				this.complects[cp_name] = complect;
+				this.addChild(complect);
+				many_files = many_files || complect.hasManyFiles();
 			}
+			sorted_completcs.push(this.complects[cp_name]);
 		}
+
+
 		this.updateState('has_files', many_files);
 		this.updateDefaultMopla();
-
-
-		this.updateState('changed', new Date());
 
 		if (this.isHaveBestTracks() || this.isSearchCompleted()){
 			this.updateState('search-ready', true);
 		}
-		
+
+		this.setChild('sorted_completcs', sorted_completcs, true);
 
 	},
 	listenMopla: function(mopla) {
@@ -805,7 +476,7 @@ provoda.Model.extendTo(mfCor, {
 	getVKFile: function(){
 		var file = this.state('current_mopla');
 		if (file && file.from == 'vk'){
-			return file
+			return file;
 		} else{
 			var files = this.getFiles(false, 'vk');
 			return files && files[0];
@@ -823,12 +494,12 @@ provoda.Model.extendTo(mfCor, {
 		if (fn){
 			$.each(mfs, function(i, el) {
 				if (fn(el)){
-					r.push(el)
+					r.push(el);
 				}
 			});
 			return r; 
 		} else {
-			return mfs
+			return mfs;
 		}
 
 	},
