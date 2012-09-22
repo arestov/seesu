@@ -124,7 +124,7 @@
 }
 
 li.playing-song .play-controls{
-	display:block;
+	
 }
 
 .show-zoom-to-track .play-list-holder{
@@ -154,6 +154,7 @@ li.playing-song .play-controls{
 ul.tracks-for-play > li{
 	background-color: #505050;
 }
+
 
 .show-zoom-to-track ul.tracks-for-play > li.to-play-previous{
 	margin-top:-31px;

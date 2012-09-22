@@ -42,11 +42,11 @@ var seesuPlayer;
 			}
 		},
 		notPlaying: function(){
-			su.main_level.notPlaying();
+			su.notPlaying();
 			
 		},
 		playing: function(){
-			su.main_level.playing();
+			su.playing();
 		},
 		changeAppMode: function(playing){
 			if (playing){
@@ -60,7 +60,7 @@ var seesuPlayer;
 			}
 		},
 		nowPlaying: function(mo){
-			su.main_level.nowPlaying(mo);
+			su.nowPlaying(mo);
 		}
 	});
 })();
@@ -145,7 +145,7 @@ var seesuPlayer;
 							load:  [bpath + 'js/prototypes/player.html5.js'],
 							complete: function() {
 								su.p.setCore(new html5AudioCore());
-								su.main_level.updateState('flash-internet', true);
+								su.updateState('flash-internet', true);
 							}
 						});
 					});
@@ -158,7 +158,7 @@ var seesuPlayer;
 							load:  [bpath + 'js/prototypes/player.wmp.js'],
 							complete: function() {
 								su.p.setCore(new wmpAudioCore());
-								su.main_level.updateState('flash-internet', true);
+								su.updateState('flash-internet', true);
 							}
 						});
 					});
@@ -195,7 +195,7 @@ var seesuPlayer;
 										setTimeout(function(){
 											pcon.addClass('sm2-complete');
 										}, 1000);
-										su.main_level.updateState('flash-internet', true);
+										su.updateState('flash-internet', true);
 
 									})
 									.fail(function(){
@@ -204,10 +204,8 @@ var seesuPlayer;
 									});
 								$(function(){
 									$(document.body).append(pcon);
-									//$(su.ui.nav).after(pcon);
 								});
 								
-								//$(document.body).append(_this.c);
 							}
 						});
 
@@ -247,7 +245,7 @@ var seesuPlayer;
 											pcon.addClass('sm2-complete');
 										}, 1000);
 										//
-										su.main_level.updateState('flash-internet', true);
+										su.updateState('flash-internet', true);
 
 									})
 									.fail(function(){
@@ -257,10 +255,7 @@ var seesuPlayer;
 								$(function(){
 									$(document.body).append(pcon);
 									pcore.appended();
-									//$(su.ui.nav).after(pcon);
 								});
-								
-								//$(document.body).append(_this.c);
 							}
 						});
 					});

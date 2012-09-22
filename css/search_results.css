@@ -35,8 +35,8 @@
 		.search-results-holder ul li:first-child{
 			border-top:0 !important;
 			}
-		.search-results-holder   a,
-		.search-results-holder   button{
+		.search-results-holder a,
+		.search-results-holder button{
 			display:block;
 			cursor:pointer;
 			overflow: hidden;

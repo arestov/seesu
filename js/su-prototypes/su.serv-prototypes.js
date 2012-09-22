@@ -1,41 +1,3 @@
-var suMapModel = function() {};
-
-mapLevelModel.extendTo(suMapModel, {
-	regDOMDocChanges: function(cb) {
-		this
-			.on('mpl-attach', function() {
-				jsLoadComplete(function() {
-					su.on('dom', cb);
-				});
-				
-			})
-			.on('mpl-detach', function() {
-				jsLoadComplete(function() {
-					su.off('dom', cb);
-				});
-			});
-	}
-});
-
-
-
-var suServView = function() {};
-
-provoda.View.extendTo(suServView, {
-	init: function(md, opts) {
-		this._super(md, opts);
-
-		var _this = this;
-		var onDOMDie = function(dead_doc, is_current_ui, ui) {
-			_this.isAlive(dead_doc);
-		};
-		su.on('dom-die', onDOMDie);
-		this.onDie(function() {
-			su.off('dom-die', onDOMDie);	
-		});
-	}
-});
-
 var commonMessagesStore = function(glob_store, store_name) {
 	this.init();
 	this.glob_store = glob_store;
@@ -107,6 +69,11 @@ provoda.Model.extendTo(PartsSwitcher, {
 		if (!this.context_parts[model.row_name]){
 			this.context_parts[model.row_name] = model;
 			this.addChild(model);
+
+			var array = this.getChild('context_parts') || [];
+			array.push(model);
+			this.setChild('context_parts', array, true);
+
 		}
 	},
 	getAllParts: function(){
@@ -129,24 +96,18 @@ provoda.Model.extendTo(PartsSwitcher, {
 });
 
 var ActionsRowUI = function(){};
-suServView.extendTo(ActionsRowUI, {
+provoda.View.extendTo(ActionsRowUI, {
 	createDetailes: function(){
 		this.createBase();
+	},
+	'collch-context_parts': function(name, arr) {
+		var _this = this;
+		$.each(arr, function(i, el){
+			var md_name = el.row_name;
+			_this.getFreeChildView(md_name, el, 'main');
+		});
 
-		this.parts_views = {};
-
-		var	parts = this.md.getAllParts();
-
-		
-
-		for (var i in parts) {
-			var pv = parts[i].getFreeView(this);
-			if (pv){
-				this.parts_views[i] = pv;
-				pv.appended();
-				this.addChild(pv);
-			}
-		}
+		this.requestAll();
 	},
 	state_change: {
 		active_part: function(nv, ov) {
@@ -163,7 +124,7 @@ suServView.extendTo(ActionsRowUI, {
 
 
 var BaseCRowUI = function(){};
-suServView.extendTo(BaseCRowUI, {
+provoda.View.extendTo(BaseCRowUI, {
 	bindClick: function(){
 		if (this.button){
 			var md = this.md;
