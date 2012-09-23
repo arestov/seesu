@@ -24,25 +24,49 @@ songFileModel.extendTo(FileInTorque, {
 			this.player.load(this);
 		}
 	},
+	play: function(){
+		if (this.player){
+			this.load();
+
+			this.player.play(this);
+		}
+	},
 	loadOutBox: function() {
 		var _this = this;
-		this.torrent.get('file').each(function(file) {
-			if (file != _this.file_in_torrent){
-				file.get('properties').save({priority: 0});
+
+		var download_started = this.file_in_torrent.get('properties').get('downloaded');
+		if (!download_started){
+			this.torrent.get('file').each(function(file) {
+				if (file != _this.file_in_torrent){
+					file.get('properties').save({priority: 0});
+				}
+
+			});
+			this.file_in_torrent.get('properties').save({priority: 15});
+			if (!download_started){
+				this.file_in_torrent.stream();
 			}
 
-		});
-		this.file_in_torrent.get('properties').save({priority: 15});
-		this.forceStream();
-		this.torrent.set_priority(Btapp.TORRENT.PRIORITY.MEDIUM);
-		this.torrent.start();
-		this.forceStream();
+			this.torrent.set_priority(Btapp.TORRENT.PRIORITY.MEDIUM);
+			this.torrent.start();
+		} else {
+			this.file_in_torrent.get('properties').save({priority: 15});
+		}
+
+		
+		
+		
+		
+		
+	//	this.forceStream();
+		
+		//this.forceStream();
 	},
 	forceStream: function() {
 		this.file_in_torrent.stream();
-		this.file_in_torrent.force_stream();
-		this.torrent.stream();
-		this.torrent.force_stream();
+	//	this.file_in_torrent.force_stream();
+		//this.torrent.stream();
+	//	this.torrent.force_stream();
 	}
 });
 
@@ -128,9 +152,9 @@ TorqueSearch.prototype = {
 			var getTorrent = function(){
 				var torrent;
 				var colln = btapp.get('torrent');
-				var array = colln.models;
-				torrent = $filter(array, 'attributes.properties.attributes.download_url', torrent_link);
-				return torrent[0];
+				var array = colln && colln.models;
+				torrent = array && $filter(array, 'attributes.properties.attributes.download_url', torrent_link);
+				return torrent && torrent[0];
 			};
 
 			var getFiles = function(torrent) {
