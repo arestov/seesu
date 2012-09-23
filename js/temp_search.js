@@ -1,3 +1,50 @@
+var FileInTorque = function() {};
+
+songFileModel.extendTo(FileInTorque, {
+	init: function(opts) {
+		this.file_in_torrent = opts.file_in_torrent;
+		this.file_name = opts.name;
+		this.torrent = opts.torrent;
+		this.link = this.file_in_torrent.get('properties').get('streaming_url');
+		return this._super(opts);
+	},
+	getTitle: function() {
+		return this.file_name;
+	},
+	unloadOutBox: function() {
+
+	},
+	load: function(){
+		var _this = this;
+		if (this.player){
+			if (this.loadOutBox){
+				this.loadOutBox();
+			}
+			this._createSound();
+			this.player.load(this);
+		}
+	},
+	loadOutBox: function() {
+		var _this = this;
+		this.torrent.get('file').each(function(file) {
+			if (file != _this.file_in_torrent){
+				file.get('properties').save({priority: 0});
+			}
+
+		});
+		this.file_in_torrent.get('properties').save({priority: 15});
+		this.forceStream();
+		this.torrent.set_priority(Btapp.TORRENT.PRIORITY.MEDIUM);
+		this.torrent.start();
+		this.forceStream();
+	},
+	forceStream: function() {
+		this.file_in_torrent.stream();
+		this.file_in_torrent.force_stream();
+		this.torrent.stream();
+		this.torrent.force_stream();
+	}
+});
 
 window.bap = new Btapp();
 bap.connect();
@@ -15,9 +62,19 @@ var torrentAdding = function(add) {
 
 
 var TorqueSearch = function() {
-	
+	var _this = this;
+
+	this.search = function() {
+		return _this.findFiles.apply(_this, arguments);
+	}
 };
 TorqueSearch.prototype = {
+	name: "torq-torrents",
+	s: {
+		name:"Torque torrents",
+		key:0,
+		type: "mp3"
+	},
 	constructor: TorqueSearch,
 	findFiles: function(msq) {
 		var
@@ -140,7 +197,7 @@ TorqueSearch.prototype = {
 			//find 
 			console.log(obj.files);
 			var target = {
-				torrent: obj.obj
+				torrent: obj.torrent
 			}
 			
 			for (var i = 0; i < obj.files.length; i++) {
@@ -148,21 +205,30 @@ TorqueSearch.prototype = {
 					target.file = obj.files[i].file;
 					target.name = obj.files[i].name;
 					break;
-
 				}
-				
-			};
+			}
 
 			if (target.file){
 				var array = [];
-				array.push({
+
+
+				var pusher = {};
+				cloneObj(pusher, msq);
+				cloneObj(pusher, {
 					models: {},
 					getSongFileModel: function(mo, player) {
-						return this.models[mo.uid] = this.models[mo.uid] || (new fileInTorrent(this, mo)).setPlayer(player);
+						return this.models[mo.uid] = this.models[mo.uid] || (new FileInTorque()).init({
+							mo: mo, 
+							file_in_torrent: target.file, 
+							name: target.name, 
+							torrent: target.torrent
+						}).setPlayer(player);
 					}
-				});
+				})
+				array.push(pusher);
+				deferred.resolve(array, 'mp3')
 			} else {
-
+				deferred.reject();
 			}
 		})
 		.start(function() {
@@ -173,16 +239,10 @@ TorqueSearch.prototype = {
 
 
 
-
+		return deferred;
 	}
 };
 
-var search = function() {
+su.mp3_search.add(new TorqueSearch());
 
-};
-
-
-var findFileInTorrents = function(msq) {
-	
-};
-
+//su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax)));
