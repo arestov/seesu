@@ -197,6 +197,7 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.unloadOutBox();
 			}
 			this.player.remove(this);
+			delete this.sound;
 		},
 		stop: function(){
 			if (this.player){
