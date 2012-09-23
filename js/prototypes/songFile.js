@@ -44,8 +44,30 @@ provoda.Model.extendTo(fileInTorrent, {
 				}
 				this.parent = file;
 			}
+
 			this.uid = 'song-file-' + counter++;
+			this.createTextStates();
 			return this;
+		},
+		createTextStates: function() {
+			this.updateState('title', this.getTitle());
+			if (this.from){
+				this.updateState('source_name', this.from);
+			}
+			if (this.description){
+				this.updateState('description', this.description);
+			}
+			if (this.duration){
+				this.updateState('duration', this.duration);
+			}
+		},
+		complex_states: {
+			"visible_duration": {
+				depends_on: ['duration', 'loaded_duration'],
+				fn: function(duration, loaded_duration) {
+					return duration || loaded_duration;
+				}
+			}
 		},
 		getTitle: function() {
 			var title = [];

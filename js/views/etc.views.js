@@ -255,6 +255,32 @@ provoda.View.extendTo(songFileModelUI, {
 			this.cplayng.css({
 				width: state
 			});
+		},
+		visible_duration: function(state) {
+
+			if (state){
+				var duration = Math.floor(state/1000);
+				if (duration){
+					var digits = duration % 60;
+					this.duration_c.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits ));
+				}
+			}
+
+
+		//this.title_c = $('<span></span>');
+		//this.title_c.appendTo(this.c);
+
+		},
+		title: function(state) {
+			this.track_title.text(state || '');
+		//	.text(this.md.getTitle())
+		},
+		source_name: function(state) {
+			this.source_name.text(state || '');
+			//.text(this.md.from)
+		},
+		description: function(state) {
+			this.track_text.attr('title', state || '');
 		}
 	},
 	complex_states: {
@@ -410,26 +436,10 @@ provoda.View.extendTo(songFileModelUI, {
 		this.cloading = $('<div class="mf-load-progress"></div>').appendTo(this.progress_c);
 		this.cplayng = $('<div class="mf-play-progress"></div>').appendTo(this.progress_c);
 		this.track_text = $('<div class="mf-text"></div>').appendTo(this.progress_c);
-
-		if (this.md.description){
-			this.track_text.attr('title', this.md.description);
-		}
-		
-
-		//this.title_c = $('<span></span>');
 		this.duration_c = $('<span class="mf-duration"></span>').appendTo(this.track_text);
-		if (this.md.duration){
-			var duration = Math.floor(this.md.duration/1000);
-			if (duration){
-				var digits = duration % 60;
-				this.duration_c.text((Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits ));
-			}
-		}
-
-		$('<span class="main-mf-text"></span>').text(this.md.getTitle()).appendTo(this.track_text);
-		$('<span class="mf-source"></span>').text(this.md.from).appendTo(this.track_text);
-		//this.title_c.appendTo(this.c);
-
+		this.track_title = $('<span class="main-mf-text"></span>').appendTo(this.track_text);
+		this.source_name = $('<span class="mf-source"></span>').appendTo(this.track_text);
+		
 		this.c.append(this.progress_c);
 	},
 	createPlayButton: function() {
