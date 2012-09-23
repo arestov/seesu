@@ -38,7 +38,7 @@ songFileModel.extendTo(FileInTorque, {
 		if (!download_started){
 			this.torrent.get('file').each(function(file) {
 				if (file != _this.file_in_torrent){
-					file.get('properties').save({priority: 0});
+					//file.get('properties').save({priority: 0});
 				}
 
 			});
@@ -157,10 +157,12 @@ TorqueSearch.prototype = {
 				return torrent && torrent[0];
 			};
 
-			var getFiles = function(torrent) {
+			var getFiles = function(torrent, just_added) {
 				var files_array = [];
 				setTimeout(function(){
 					torrent.get('file').each(function(file){
+						file.get('properties').save({priority: 0});
+
 						files_array.push({
 							name: file.get('properties').get('name'),
 							file: file,
@@ -189,7 +191,7 @@ TorqueSearch.prototype = {
 							setTimeout(function() {
 								torrent = getTorrent();
 								if (torrent){
-									getFiles(torrent);
+									getFiles(torrent, true);
 								}
 
 								
@@ -267,6 +269,15 @@ TorqueSearch.prototype = {
 	}
 };
 
-su.mp3_search.add(new TorqueSearch());
+(function() {
+	//removing other search sources!
+	var list = su.mp3_search.se_list;
+	for (var i = 0; i < list.length; i++) {
+		su.mp3_search.remove(list[i])
+		
+	}
 
-//su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax)));
+})()
+
+
+su.mp3_search.add(new TorqueSearch());
