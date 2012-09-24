@@ -159,9 +159,6 @@ provoda.addPrototype("searchSectionView", {
 			this.c.addClass(this.c_class);
 		}
 	},
-	'': {
-
-	},
 	state_change: {
 		active: function(state){
 			if (state){
