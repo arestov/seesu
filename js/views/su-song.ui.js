@@ -20,7 +20,7 @@ provoda.View.extendTo(songUI, {
 				tidominator.removeClass('want-more-info');
 			}
 		},
-		"mp-blured": function(state) {
+		"mp-has-focus": function(state) {
 			
 		},
 		want_to_play: function(state, oldstate){

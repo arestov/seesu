@@ -112,8 +112,8 @@ provoda.addPrototype("InvestigationView", {
 				this.c.addClass('hidden');
 			}
 		},
-		"mp-blured": function(state) {
-			if (state){
+		"mp-has-focus": function(state) {
+			if (!state){
 				this.blur();
 			} else {
 				$(this.root_view.els.slider).addClass('show-search-results');

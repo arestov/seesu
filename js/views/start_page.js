@@ -167,8 +167,8 @@ provoda.View.extendTo(StartPageView, {
 				
 			}
 		},
-		'mp-blured': function(state) {
-			if (state){
+		'mp-has-focus': function(state) {
+			if (!state){
 				$(this.els.slider).removeClass("show-start");
 			} else {
 				$(this.els.slider).addClass("show-start");

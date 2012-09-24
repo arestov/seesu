@@ -486,12 +486,12 @@ provoda.Model.extendTo(mapLevelModel, {
 	},
 	blur: function() {
 		this.stackNav(false);
-		this.updateState('mp-blured', true);
+		this.updateState('mp-has-focus', false);
 		return this;
 	},
 	focus: function() {
 		this.stackNav(false);
-		this.updateState('mp-blured', false);
+		this.updateState('mp-has-focus', true);
 		return this;
 	},
 	stackNav: function(stack_v){
@@ -499,7 +499,7 @@ provoda.Model.extendTo(mapLevelModel, {
 		return this;
 	},
 	zoomOut: function() {
-		if (this.lev && (this.state('mp-stack') || (this.state('mp-show') && this.state('mp-blured')) )){
+		if (this.lev && (this.state('mp-stack') || (this.state('mp-show')) )){
 			this.lev._sliceTM();
 		}
 	},
