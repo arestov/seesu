@@ -197,6 +197,9 @@ provoda.View.extendTo(appModelView, {
 			this.d.title = 	title || "";
 		}
 	},
+	getScrollVP: function() {
+		return this.els.scrolling_viewport;
+	},
 	scrollTo: function(view) {
 		if (!view){return false;}
 	//	if (!this.view_port || !this.view_port.node){return false;}
@@ -212,7 +215,7 @@ provoda.View.extendTo(appModelView, {
 
 
 
-		var svp = this.els.scrolling_viewport,
+		var svp = this.getScrollVP(),
 			scroll_c = svp.offset ? $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0]) :   svp.node,
 			scroll_top = scroll_c.scrollTop(), //top
 			scrolling_viewport_height = svp.node.height(), //height
