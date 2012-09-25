@@ -161,7 +161,8 @@ provoda.Model.extendTo(appModel, {
 	},
 	showResultsPage: function(query, no_navi){
 		var lev;
-		if (!this.search_el || !this.search_el.lev.isOpened()){
+		var cur_el = this.search_el;
+		if (!cur_el || !cur_el.state('mp-has-focus') || !cur_el.lev.isOpened()){
 			var md = this.createSearchPage();
 			var _this = this;
 			md.on('state-change.mp-show', function(e) {
