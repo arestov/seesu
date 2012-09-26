@@ -169,7 +169,7 @@ ul.tracks-for-play > li{
 	padding: 5px;
 	border-radius: 10px;
 	color:#fff;
-	margin-top:5px;
+	margin:0 -5px;
 	}
 	.show-zoom-to-track ul.tracks-for-play > li.viewing-song .track-node{
 		font-size:1.3em;
