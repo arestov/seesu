@@ -467,6 +467,7 @@ mapLevelModel = function() {};
 provoda.Model.extendTo(mapLevelModel, {
 	assignMapLev: function(lev){
 		this.lev = lev;
+		this.map_level_num = this.lev.num;
 		if (this.onMapLevAssign){
 			this.onMapLevAssign();
 		}

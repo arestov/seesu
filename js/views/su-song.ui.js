@@ -8,10 +8,10 @@ provoda.View.extendTo(songUI, {
 	state_change : {
 		"mp-show": function(opts, old_opts) {
 			if (opts){
-				$(this.root_view.els.slider).addClass("show-zoom-to-track");
+				this.parent_view.c.addClass("show-zoom-to-track");
 				this.activate();
 			} else if (old_opts) {
-				$(this.root_view.els.slider).removeClass("show-zoom-to-track");
+				this.parent_view.c.removeClass("show-zoom-to-track");
 				this.deactivate();
 			}
 			

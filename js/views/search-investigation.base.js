@@ -102,21 +102,21 @@ provoda.addPrototype("InvestigationView", {
 				if (!opts.transit){
 					this.expand();
 				}
-				this.c.removeClass('hidden');
+				
 				
 				if (!opts.closed){
-					$(this.root_view.els.slider).addClass('show-search');
+					this.root_view.els.search_form.removeClass('hidden');
 				}
 			} else {
 				this.blur();
-				this.c.addClass('hidden');
 			}
+			this.c.toggleClass('hidden', !opts);
 		},
 		"mp-has-focus": function(state) {
 			if (!state){
 				this.blur();
 			} else {
-				$(this.root_view.els.slider).addClass('show-search-results');
+				this.c.removeClass('hidden');
 			}
 		},
 		"can-expand": function(state) {
@@ -126,14 +126,16 @@ provoda.addPrototype("InvestigationView", {
 		}
 	},
 	createBase: function() {
-		this.c = $('<div class="search-results-container current-src"></div');
+		this.c = $('<div class="search-results-block"></div');
 	},
 	die: function() {
 		this.blur();
 		this._super();
 	},
 	blur: function() {
-		$(this.root_view.els.slider).removeClass('show-search show-search-results');
+		this.root_view.els.search_form.addClass('hidden');
+		this.c.addClass('hidden');
+		
 	}
 });
 

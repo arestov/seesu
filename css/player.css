@@ -1,7 +1,4 @@
-.tracks-magic{
-	position:relative;
-	padding-top:1px;
-}
+
 .tracks-for-play .play-controls{
 	position:absolute;
 	right:115px;
@@ -14,7 +11,6 @@
 	float:left;
 	margin-right:6px;
 }
-.player-played .playing-song .buttons-panel .big-indicator.play-indicator,
 .playing-file .big-indicator.play-indicator{
 	background-image: url(../i/buttons/pc-indicator-b.png);
 }
@@ -122,18 +118,10 @@ a.download-mp3:hover{
 	}
 .viewing-song a.song{
 	background-color:transparent;
-	
+	color: #fff;
 }
 
 
-
-	.player-played
-	.playing-song
-	a.song{
-		
-		
-		color: #fff;
-	}
 
 
 .track-zoomin,

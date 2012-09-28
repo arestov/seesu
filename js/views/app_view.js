@@ -22,7 +22,7 @@ provoda.View.extendTo(appModelView, {
 			this.lst_interval = setInterval(this.checkLiveState, 1000);
 			
 		}
-
+		this.lev_containers = {};
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);
@@ -58,6 +58,13 @@ provoda.View.extendTo(appModelView, {
 			return false;
 		}
 		return !this.checkLiveState || !this.checkLiveState();
+	},
+	getLevelContainer: function(num) {
+		if (this.lev_containers[num]){
+			return this.lev_containers[num];
+		} else {
+			return this.lev_containers[num] = $('<div class="complex-page"></div>').appendTo(this.els.screens)
+		}
 	},
 	children_views: {
 		start_page : {
@@ -100,7 +107,8 @@ provoda.View.extendTo(appModelView, {
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
-				_this.els.searchres.append(view.getA());
+
+				_this.getLevelContainer(el.map_level_num).append(view.getA());
 			}
 
 		});
@@ -112,7 +120,7 @@ provoda.View.extendTo(appModelView, {
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
-				_this.els.artcards.append(view.getA());
+				_this.getLevelContainer(el.map_level_num).append(view.getA());
 			}
 
 		});
@@ -124,7 +132,7 @@ provoda.View.extendTo(appModelView, {
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
-				_this.els.artsTracks.append(view.getA());
+				_this.getLevelContainer(el.map_level_num).append(view.getA());
 			}
 
 		});
@@ -133,6 +141,21 @@ provoda.View.extendTo(appModelView, {
 	},
 	'collch-start_page': function(name, md) {
 		var view = this.getFreeChildView(name, md, 'main');
+		if (view){
+			var _this = this;
+
+			var checkFocus = function(opts) {
+				if (opts && opts.userwant){
+					_this.search_input[0].focus();
+					_this.search_input[0].select();
+				}
+			};
+			checkFocus(view.state('mp-show'));
+
+			view.on('state-change.mp-show', function(e) {
+				checkFocus(e.value)
+			});
+		}
 		this.requestAll();
 	},
 	manual_states_connect: true,
@@ -161,6 +184,9 @@ provoda.View.extendTo(appModelView, {
 				}
 			}	
 		},
+		"search-query": function(state) {
+			this.search_input.val(state || '');
+		},
 		'now-playing': function(text) {
 
 			var md = this.md;
@@ -175,7 +201,7 @@ provoda.View.extendTo(appModelView, {
 			}	
 		},
 		playing: function(state) {
-			var s = this.els.pllistlevel.add(this.now_playing_link);
+			var s = this.now_playing_link;
 			if (state){
 				s.addClass('player-played');
 
@@ -288,9 +314,14 @@ provoda.View.extendTo(appModelView, {
 			
 
 			var start_screen = $('#start-screen',d);
+
+			var screens_block = $('#screens',d);
+			var shared_parts_c = screens_block.children('.shared-parts');
+
 			_this.els = {
+				screens: screens_block,
 				scrolling_viewport: app_env.as_application ? {
-					node:$('#screens',d)
+					node: screens_block
 				} : {
 					node: $(d.body), 
 					offset: true
@@ -298,10 +329,7 @@ provoda.View.extendTo(appModelView, {
 				slider: slider,
 				navs: $(slider).children('.navs'),
 				start_screen: start_screen,
-				artcards: $('#art-cards', d),
 				pllistlevel: pllistlevel,
-				artsTracks: pllistlevel.find('#tracks-magic'),
-				searchres: $('#search_result',d),
 				search_input: $('#q',d),
 				search_form: search_form,
 				fast_personal_start: start_screen.children('.fast-personal-start'),
@@ -309,6 +337,20 @@ provoda.View.extendTo(appModelView, {
 			};
 
 
+			_this.els.search_form.find('#hint-query').text(su.popular_artists[(Math.random()*10).toFixed(0)]);
+
+			_this.els.search_form.find('#app_type').val(su.env.app_type);
+			
+			_this.els.search_form.submit(function(){return false;});
+			
+			
+			_this.search_input = _this.els.search_input;
+		
+			_this.search_input.on('keyup change', function(e) {
+				var input_value = this.value;
+				_this.overrideStateSilently('search-query', input_value);
+				_this.md.search(input_value);
+			});
 
 
 			jsLoadComplete({

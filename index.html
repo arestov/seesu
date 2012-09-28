@@ -310,7 +310,7 @@
 		</form>
 		<!-- // ui samples -->
   	</div>
-<div id="slider" class="show-start">
+<div id="slider">
 	<div class="navs ">
 		<div class="daddy not-inited">
 			<span class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
@@ -319,38 +319,34 @@
 	<div id="slider-materail" class="shadowed">
 		
 			<div class="screens" id="screens">
-				
+				<div class="shared-parts">
+					<form id="search" name="search" action='/o' method="post">
+						<!-- google stat for custom search in browsers -->
+						<div>
+							<input type="hidden" name="utm_source" value="web_app" id="app_type">
+							<input type="hidden" name="utm_medium" value="form search">
+							<input type="hidden" name="utm_campaign" value="application">
+						</div>
+						<!-- / google stat -->
+						<p id="search-p">
+							<label>
+								<span class='lbl lang localize-search'>Search</span>
+								<span class="inpt"><input type="search" name="q" id="q" size="50"  autocomplete="off"/></span>
+								
+							</label>
+							
+						</p>
+						
+						
+					</form>
+				</div>
 				
 				<div class="start-screen" id="start-screen">
-					
-
-					
-					<div class="search-start">
-						<form id="search" name="search" action='/o' method="post">
-							<!-- google stat for custom search in browsers -->
-							<div>
-								<input type="hidden" name="utm_source" value="web_app" id="app_type">
-								<input type="hidden" name="utm_medium" value="form search">
-								<input type="hidden" name="utm_campaign" value="application">
-							</div>
-							<!-- / google stat -->
-							<p id="search-p">
-								<label>
-									<span class='lbl lang localize-search'>Search</span>
-									<span class="inpt"><input type="search" name="q" id="q" size="50"  autocomplete="off"/></span>
-									
-								</label>
-								
-							</p>
-							<p id="search-use-hint" class="search-desc">
-								<span class="lang localize-trysearches">try to search</span> 
-								<a id='hint-query'  class="hint-query js-serv">The Beatles</a>
-								
-							</p>
-							<p id="search-desciption" class="search-desc lang localize-search-control-hint">Use keyboard: up and down arrows, enter</p>
-						</form>
-						<div id="search_result" class="search-results-holder" ></div>
-					</div>
+					<p id="search-use-hint" class="search-desc">
+						<span class="lang localize-trysearches">try to search</span> 
+						<a id='hint-query'  class="hint-query js-serv">The Beatles</a>
+						
+					</p>
 					<div class="fast-personal-start has-dark-buttons">
 						
 						<span class="button-hole hidden cus-playlist-b">
@@ -382,8 +378,7 @@
 					<div class="block-for-startpage relations-likes-wrap"></div>
 				</div>
 
-				<div id="art-cards"></div>
-				<div id="playlist-level" class="artist-page screen play-screen">
+				<div id="playlist-level">
 					<div class="play-list-holder" id="play-list-holder">
 						<div id="tracks-magic" class="tracks-magic"></div>
 					</div>

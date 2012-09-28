@@ -128,22 +128,7 @@ provoda.View.extendTo(StartPageView, {
 		var _this = this;
 
 		this.els = this.parent_view.els;
-		this.els.search_form.find('#hint-query').text(su.popular_artists[(Math.random()*10).toFixed(0)]);
-
-		this.els.search_form.find('#app_type').val(su.env.app_type);
-		
-		this.els.search_form.submit(function(){return false;});
-		
-		
-		this.search_input = this.els.search_input;
-	
-		this.search_input.on('keyup change', function(e) {
-			var input_value = this.value;
-			_this.overrideStateSilently('search-query', input_value);
-			_this.parent_view.md.search(input_value);
-			
-			
-		});
+		this.c = this.els.start_screen;
 
 		
 	},
@@ -160,19 +145,24 @@ provoda.View.extendTo(StartPageView, {
 		'mp-show': function(opts) {
 			if (opts){
 				if (opts.userwant){
-					this.search_input[0].focus();
-					this.search_input[0].select();
+			//		this.search_input[0].focus();
+				//	this.search_input[0].select();
 				}
 			} else {
 				
 			}
 		},
 		'mp-has-focus': function(state) {
+			this.els.search_form.toggleClass('hidden', !state);
+
+
+			this.c.toggleClass('hidden', !state);
+			/*
 			if (!state){
 				$(this.els.slider).removeClass("show-start");
 			} else {
 				$(this.els.slider).addClass("show-start");
-			}
+			}*/
 		},
 		"can-expand": function(state) {
 			if (state){
@@ -194,9 +184,7 @@ provoda.View.extendTo(StartPageView, {
 				this.plts_link.removeClass('hidden');
 			}
 		},
-		"search-query": function(state) {
-			this.search_input.val(state || '');
-		},
+	
 		"ask-rating-help": function(link){
 			var _this = this;
 
