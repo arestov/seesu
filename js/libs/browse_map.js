@@ -33,10 +33,13 @@ Class.extendTo(mapLevel, {
 	show: function(opts){
 		var o = opts || {};
 		o.closed = this.closed;
-		var parent = this.getParentLev();
-		if (parent){
-			parent.resident.blur();
+		if (!opts.zoom_out){
+			var parent = this.getParentLev();
+			if (parent){
+				parent.resident.blur();
+			}
 		}
+		
 		this.resident.show(o);
 	},
 	hide: function(){
@@ -48,8 +51,20 @@ Class.extendTo(mapLevel, {
 		delete this.map;
 	},
 	_sliceTM: function(transit, url_restoring){ //private alike
+		var aycocha = this.map.isCollectingChanges();
+		if (!aycocha){
+			this.map.startChangesCollecting();
+		}
+		
+
+
+
 		this.map.clearShallow(this);
-		this.map.sliceDeepUntil(this.num, true, transit, url_restoring);	
+		this.map.sliceDeepUntil(this.num, true, transit, url_restoring);
+
+		if (!aycocha){
+			this.map.finishChangesCollecting();
+		}
 	},
 	sliceTillMe: function(transit, url_restoring){
 		this._sliceTM(transit, url_restoring);
@@ -92,7 +107,7 @@ provoda.Eventor.extendTo(browseMap, {
 			throw new Error('give me 0 index level (start screen)');
 		}
 		this.mainLevelResident = maleres;
-		
+		this.changes_collection = [];
 		//zoom levels
 		
 		// -1, start page
@@ -100,6 +115,35 @@ provoda.Eventor.extendTo(browseMap, {
 		//1 - playlist page
 		//today seesu has no deeper level
 		return this;
+	},
+	isCollectingChanges: function() {
+		return this.collecting_changes;
+	},
+	startChangesCollecting: function() {
+		if (this.collecting_changes){
+			throw new Error('already collecting');
+		} else {
+			this.collecting_changes = true;
+			
+		}
+	},
+	finishChangesCollecting: function() {
+		if (!this.collecting_changes){
+			throw new Error('none to finish');
+		} else {
+			this.collecting_changes = false;
+			this.emitChanges();
+		}
+	},
+	addChange: function(change) {
+		this.changes_collection.push(change);
+		if (!this.collecting_changes){
+			this.emitChanges();
+		}
+	},
+	emitChanges: function() {
+		this.trigger('changes', this.changes_collection);
+		this.changes_collection = [];
 	},
 	makeMainLevel: function(){
 		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
@@ -127,9 +171,6 @@ provoda.Eventor.extendTo(browseMap, {
 	resurrectLevel: function(lev, transit, url_restoring){
 		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), transit, url_restoring);
 		return nlev;
-	},
-	goShallow: function(to){ //up!
-		this.sliceDeepUntil(to.num, true);
 	},
 	_goDeeper: function(orealy, resident, transit, url_restoring){
 		var cl = this.getActiveLevelNum();
@@ -225,21 +266,7 @@ provoda.Eventor.extendTo(browseMap, {
 				url_restoring: url_restoring
 			});
 		}
-		/*
-		for (var i=0; i < this.levels.length; i++) {
-			var cur = this.levels[i]
-			if (cur){
-				if (cur.freezed){
-					this.setLevelPartActive(cur.freezed, {userwant: true});
-					r.push(cur.freezed)
-				}
-			}
-		}
-		
-		!!!! bb, r
-		console.log(bb);
-		console.log(r);
-		*/
+
 	},
 	hideLevel: function(lev, exept){
 		if (lev){
@@ -447,14 +474,18 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 	},
 	sliceDeepUntil: function(num, fullhouse, transit, url_restoring){
+		var
+			current_lev = this.getLevel(num),
+			target_lev;
+
 		if (num < this.levels.length){
 			for (var i = this.levels.length-1; i > num; i--){
 				this.hideLevel(this.levels[i]);
 			}
 		}
-		num = this.getLevel(num);
-		if (num){
-			this.setLevelPartActive(num, {userwant: fullhouse, transit: transit, url_restoring: url_restoring});
+		target_lev = this.getLevel(num);
+		if (target_lev ){
+			this.setLevelPartActive(target_lev, {userwant: fullhouse, transit: transit, url_restoring: url_restoring, zoom_out: true});
 		}
 	},
 	startNewBrowse: function(url_restoring){
@@ -474,25 +505,45 @@ provoda.Model.extendTo(mapLevelModel, {
 		return this;	
 	},
 	mlmDie: function(){
-		this.die();	
+		this.die();
+		this.lev.map.addChange({
+			target: this,
+			type: 'die'
+		});
 	},
 	hide: function() {
 		this.updateState('mp-show', false);
+		this.lev.map.addChange({
+			target: this,
+			type: 'hide'
+		});
 		return this;
 	},
 	show: function(opts) {
 		this.focus();
 		this.updateState('mp-show', opts || true);
+		this.lev.map.addChange({
+			target: this,
+			type: 'show'
+		});
 		return this;
 	},
 	blur: function() {
 		this.stackNav(false);
 		this.updateState('mp-has-focus', false);
+		this.lev.map.addChange({
+			target: this,
+			type: 'blur'
+		});
 		return this;
 	},
 	focus: function() {
 		this.stackNav(false);
 		this.updateState('mp-has-focus', true);
+		this.lev.map.addChange({
+			target: this,
+			type: 'focus'
+		});
 		return this;
 	},
 	stackNav: function(stack_v){
