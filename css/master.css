@@ -618,12 +618,12 @@ a.desc{
 	margin:5px -13px 0;
 	padding: 0 0 0;
 	/*200px - 48px + 14*/
-	min-height:166px;
+	min-height:168px;
 	}	
 	@media (min-height:600px) {
 		.track-info-dominator{
 			/*237-48+16*/
-			min-height:203px;
+			min-height:205px;
 		}
 	}
 
