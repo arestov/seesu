@@ -108,6 +108,9 @@ provoda.Model.extendTo(appModel, {
 		//mainaly for hash url games
 		this.map.startNewBrowse(url_restoring);
 	},
+	animateMapChanges: function(array) {
+		this.updateState('map-animation', array);
+	},
 	keyNav: function(key_name) {
 		var md = this.map.getCurMapL().resident;
 		if (md.key_name_nav){

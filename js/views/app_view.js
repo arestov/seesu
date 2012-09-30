@@ -63,7 +63,7 @@ provoda.View.extendTo(appModelView, {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
-			return this.lev_containers[num] = $('<div class="complex-page"></div>').appendTo(this.els.screens)
+			return this.lev_containers[num] = $('<div class="complex-page"></div>').addClass('indexof-cp-is' + num).appendTo(this.els.screens)
 		}
 	},
 	children_views: {
@@ -159,6 +159,25 @@ provoda.View.extendTo(appModelView, {
 		this.requestAll();
 	},
 	manual_states_connect: true,
+	'stch-map-animation': function(array) {
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			var handler = this["animation-type"][cur.type];
+
+			if (handler){
+				handler.call(this, cur.target, cur.type);
+			}
+			//array[i]
+		};
+	},
+	"animation-type":{
+		"mp-has-focus": function(target, state) {
+
+		},
+		"mp-show": function(target, state) {
+
+		}
+	},
 	state_change: {
 		"wait-vk-login": function(state) {
 			this.toggleBodyClass(state, 'wait-vk-login');
