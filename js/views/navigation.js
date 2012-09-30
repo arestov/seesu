@@ -25,11 +25,15 @@ provoda.View.extendTo( baseNavUI, {
 				this.c.removeClass('nnav');
 			}
 		},
-		'mp-stack': function(state) {
+		'mp-stack': function(state, old_state) {
 			if (state){
 				if (this.stack_types.indexOf(state) != -1){
 					this.c.addClass('stack-' + state);
 				}
+				if (old_state){
+					this.c.removeClass('stack-' + old_state);
+				}
+				
 
 			} else {
 				this.resetStackMark();
