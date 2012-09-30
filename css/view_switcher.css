@@ -27,93 +27,30 @@
 .player-played .np{
 	background-image:url(../i/equalaizer.gif);
 }
-#search_result{
-	display:none;
-	}	
+
 
 .start-screen{
-	display:none;
 	max-width: 750px;
 	margin:0 auto;
-	padding-top:12px;
 	padding-bottom:20px;
 	}
 
-#art-cards{
-	display:none;
-	
-}	
-	
-#playlist-level{
-	padding-top:4px;
-	display:none;
+
+.complex-page{
 	max-width: 750px;
 	margin:0 auto;
-	position: relative;
-}
+	}
 
-#search-desciption{
-	display:none;
-}
+
+
+
 .block-for-startpage, .for-startpage{
-	display:none;
 	margin-top:2em;
 }
-.fast-personal-start{
-	display:none;
-	}
-.show-start{
-	
-	}
-	.show-start #search{
-		display:block;
-	}
-	.show-start .fast-personal-start,
-	.show-start .for-startpage,
-	.show-start .block-for-startpage {
-		display:block;
-		}
-	.show-start .start-screen{
-		display:block;
-		}	
-#search{
-	display:none;
-}
-.show-search{
-	}
-	.show-search #search{
-		display:block;
-	}
-	.show-search #search-use-hint{
-		display:none;
-	}
-	.show-search #search-desciption{
-		display:block;
-	}
-	.show-search .start-screen{
-		display:block;
-		}	
-.show-search-results {
-	}
-	.show-search-results .start-screen{
-		display:block;
-		} 
-	.show-search-results #search_result{
-		display:block;
-		}
 
-.show-player-page{
-	}
-	.show-player-page #playlist-level{
-		display:block;
-		}
 
-.show-art-card{
-	
-	}
-	.show-art-card #art-cards{
-		display:block;
-		}			
+
+			
 		
 /**  New nav **/	
 .show-zoom-to-track li.viewing-song .track-context{
@@ -124,13 +61,10 @@
 }
 
 li.playing-song .play-controls{
-	display:block;
+	
 }
 
-.show-zoom-to-track .play-list-holder{
-	position:static;
-	padding-top:0px;
-}
+
 .show-zoom-to-track .playlist-info{
 	display:none;
 }
@@ -138,9 +72,7 @@ li.playing-song .play-controls{
 	display: none;
 }
 
-.show-zoom-to-track .tracks-magic{
-	position:static;
-}
+
 .show-zoom-to-track .play-list-panel{
 	display:none;
 }
@@ -149,14 +81,15 @@ li.playing-song .play-controls{
 }
 .show-zoom-to-track ul.tracks-for-play{
 
-	padding-top:31px;
+	padding-top:33px;
 }
 ul.tracks-for-play > li{
 	background-color: #505050;
 }
 
+
 .show-zoom-to-track ul.tracks-for-play > li.to-play-previous{
-	margin-top:-31px;
+	margin-top:-33px;
 	}
 .show-zoom-to-track ul.tracks-for-play > li.to-play-next{
 	
@@ -168,7 +101,7 @@ ul.tracks-for-play > li{
 	padding: 5px;
 	border-radius: 10px;
 	color:#fff;
-	margin-top:5px;
+	margin:0 -5px;
 	}
 	.show-zoom-to-track ul.tracks-for-play > li.viewing-song .track-node{
 		font-size:1.3em;

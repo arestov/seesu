@@ -18,8 +18,8 @@ provoda.View.extendTo( baseNavUI, {
 				this.c.addClass('hidden');
 			}
 		},
-		'mp-blured': function(state) {
-			if (state){
+		'mp-has-focus': function(state) {
+			if (!state){
 				this.c.addClass('nnav');
 			} else {
 				this.c.removeClass('nnav');
@@ -71,8 +71,8 @@ baseNavUI.extendTo(StartPageNavView, {
 			this.c.removeClass('stacked');
 		}
 	}, 
-	'stch-mp-blured': function(state) {
-		if (state){
+	'stch-mp-has-focus': function(state) {
+		if (!state){
 			this.c.addClass("nav-button");
 		} else {
 			this.c.removeClass("nav-button");

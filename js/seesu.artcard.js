@@ -9,21 +9,17 @@ provoda.View.extendTo(artCardUI, {
 		this._super();	
 	},
 	blur: function() {
-		$(this.root_view.els.slider).removeClass('show-art-card');
+		this.c.addClass('hidden');
 	},
 	state_change: {
 		"mp-show": function(opts) {
-			if (opts){
-				this.c.removeClass('hidden');
-			} else {
-				this.c.addClass('hidden');
-			}
+			this.c.toggleClass('hidden', !opts);
 		},
-		"mp-blured": function(state) {
-			if (state){
+		"mp-has-focus": function(state) {
+			if (!state){
 				this.blur();
 			} else {
-				$(this.root_view.els.slider).addClass('show-art-card');
+				this.c.removeClass('hidden');
 			}
 		},
 		"loading-albums": function(state) {

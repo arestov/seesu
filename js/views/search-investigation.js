@@ -172,6 +172,10 @@ investigationView.extendTo(searchPageView, {
 		'section-tag': tagsSectionView,
 		'section-playlist': playlistsSectionView,
 		'section-track': tracksSectionView
+	},
+	createBase: function() {
+		this.c = $('<div class="search-results-container"></div>');
+		$('<p class="search-desc"></p>').text(localize('search-control-hint')).appendTo(this.c);
 	}
 });
 

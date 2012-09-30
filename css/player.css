@@ -1,7 +1,4 @@
-.tracks-magic{
-	position:relative;
-	padding-top:1px;
-}
+
 .tracks-for-play .play-controls{
 	position:absolute;
 	right:115px;
@@ -14,7 +11,6 @@
 	float:left;
 	margin-right:6px;
 }
-.player-played .playing-song .buttons-panel .big-indicator.play-indicator,
 .playing-file .big-indicator.play-indicator{
 	background-image: url(../i/buttons/pc-indicator-b.png);
 }
@@ -52,16 +48,13 @@ a.song{
 		color:#fff;
 		}
 a.track-node{
-	border-radius:4px;
 	display:block;
 	padding:6px;
 	cursor:pointer;
 	border:0 !important;
 	overflow:hidden;
 	}
-	a.track-node:hover{
-		background-color:#595959;
-		}
+	
 
 a.waiting-full-render.marked-for-play{
 	outline:1px dotted #888 ;
@@ -73,22 +66,38 @@ a.loading .nothing-toy{
 	display: none;
 	}
 
+
+ul.tracks-for-play.list-overview > li:nth-of-type(even) > .track-node{
+	background-color: #4D4D4D;
+	}
+
+
+ul.tracks-for-play.list-overview > li > a.track-node:hover{
+	background-color:#535353;
+	}
+.show-zoom-to-track ul.tracks-for-play > li > a.track-node:hover{
+	background-color:#535353;
+	}
+.show-zoom-to-track ul.tracks-for-play > li.viewing-song > a.track-node{
+	background-color: transparent;
+	}
 .nothing-toy{
-	background: #555;
+	border: 1px solid transparent;
 	display: block;
 	position: absolute;
 	right:3px;
 	top:10px;
 	border-radius: 6px;
 	border-top: 1px solid #666;
+	background: #555;
 	border-bottom: 1px solid #444;
 	width:10px;
 	height:10px;
 	}
 	a.track-node:hover .nothing-toy{
-		border-top-color:#777;
-		background-color: #666;
-		border-bottom-color: #555;
+		border-top-color:#6e6e6e;
+		background-color: #5e5e5e;
+		border-bottom-color: #4e4e4e;
 		}
 	a.track-node:active .nothing-toy{
 		border-top-color:#444;
@@ -109,18 +118,10 @@ a.download-mp3:hover{
 	}
 .viewing-song a.song{
 	background-color:transparent;
-	
+	color: #fff;
 }
 
 
-
-	.player-played
-	.playing-song
-	a.song{
-		
-		
-		color: #fff;
-	}
 
 
 .track-zoomin,

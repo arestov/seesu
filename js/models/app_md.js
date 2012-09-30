@@ -95,19 +95,15 @@ provoda.Model.extendTo(appModel, {
 	setDocTitle: function(title) {
 		this.updateState('doc-title', title);
 	},
+	preparePlaylist: function(params, first_song){
+		var pl = new songsList();
+		pl.init(params, first_song, this.mp3_search, this.p);
+		return pl;
+	},
 	restoreFreezed: function(transit, url_restoring){
 		this.map.restoreFreezed(transit, url_restoring);
 	},
-	// <<<< browser map
-	show_now_playing: function(no_stat){
-		if (!no_stat){
-			this.trackEvent('Navigation', 'now playing');
-		}
-		this.restoreFreezed(true);
-		this.show_track_page(this.p.c_song);
-		
-		
-	},
+	
 	showStartPage: function(url_restoring){
 		//mainaly for hash url games
 		this.map.startNewBrowse(url_restoring);
@@ -159,9 +155,64 @@ provoda.Model.extendTo(appModel, {
 			
 		});
 	},
-	showResultsPage: function(query, no_navi){
+	collectChanges: function(fn, args) {
+		var aycocha = this.map.isCollectingChanges();
+		if (!aycocha){
+			this.map.startChangesCollecting();
+		}
+
+		fn.apply(this, args);
+
+		if (!aycocha){
+			this.map.finishChangesCollecting();
+		}
+	},
+	showTopTacks: function (artist, vopts, start_song) {
+		this.collectChanges(this._showTopTacks, arguments);
+	},
+	showMetroChart: function() {
+		this.collectChanges(this._showMetroChart, arguments);
+	},
+	showResultsPage: function() {
+		this.collectChanges(this._showResultsPage, arguments);
+	},
+	showArtcardPage: function() {
+		this.collectChanges(this._showArtcardPage, arguments);
+	},
+	showStaticPlaylist: function() {
+		this.collectChanges(this._showStaticPlaylist, arguments);
+	},
+	show_playlist_page: function() {
+		this.collectChanges(this._show_playlist_page, arguments);
+	},
+	show_track_page: function() {
+		this.collectChanges(this._show_track_page, arguments);
+	},
+	show_now_playing: function() {
+		this.collectChanges(this._show_now_playing, arguments);
+	},
+	show_tag:function() {
+		this.collectChanges(this._show_tag, arguments);
+	},
+	showArtistPlaylist:function() {
+		this.collectChanges(this._showArtistPlaylist, arguments);
+	},
+	showAlbum:function() {
+		this.collectChanges(this._showAlbum, arguments);
+	},
+	_show_now_playing: function(no_stat){
+		if (!no_stat){
+			this.trackEvent('Navigation', 'now playing');
+		}
+		this.restoreFreezed(true);
+		this.show_track_page(this.p.c_song);
+		
+		
+	},
+	_showResultsPage: function(query, no_navi){
 		var lev;
-		if (!this.search_el || !this.search_el.lev.isOpened()){
+		var cur_el = this.search_el;
+		if (!cur_el || !cur_el.state('mp-has-focus') || !cur_el.lev.isOpened()){
 			var md = this.createSearchPage();
 			var _this = this;
 			md.on('state-change.mp-show', function(e) {
@@ -182,23 +233,23 @@ provoda.Model.extendTo(appModel, {
 		invstg.changeQuery(query);
 
 	},
-	showArtcardPage: function(artist, save_parents, no_navi){
+	_showArtcardPage: function(artist, save_parents, no_navi){
 		var md = new artCard(artist);
 		this.bindMMapStateChanges(md, 'artcard');
 		var lev = this.map.goDeeper(save_parents, md);
 	},
-	showStaticPlaylist: function(pl, save_parents, no_navi) {
+	_showStaticPlaylist: function(pl, save_parents, no_navi) {
 		if (pl.lev && pl.lev.canUse() && !pl.lev.isOpened()){
 			this.restoreFreezed();
 		} else {
 			this.show_playlist_page(pl, save_parents, no_navi);
 		}
 	},
-	show_playlist_page: function(pl, save_parents, no_navi){
+	_show_playlist_page: function(pl, save_parents, no_navi){
 		this.bindMMapStateChanges(pl, 'playlist');
 		var lev = this.map.goDeeper(save_parents, pl);
 	},
-	show_track_page: function(mo, no_navi){
+	_show_track_page: function(mo, no_navi){
 		var _this = this,
 			title = (mo.plst_titl.belongsToArtist(mo.artist) ? '' : (mo.artist + ' - '))  + mo.track;
 		
@@ -207,14 +258,9 @@ provoda.Model.extendTo(appModel, {
 		this.bindMMapStateChanges(mo);
 		var lev = this.map.goDeeper(true, mo);
 	},
-	preparePlaylist: function(params, first_song){
-		var pl = new songsList();
-		pl.init(params, first_song, this.mp3_search, this.p);
-		return pl;
-	},
-	// browser map >>>>>
+	
 
-	show_tag: function(tag, vopts, start_song){
+	_show_tag: function(tag, vopts, start_song){
 		//save_parents, no_navi
 		vopts = vopts || {};
 		var full_no_navi = vopts.no_navi;
@@ -268,7 +314,7 @@ provoda.Model.extendTo(appModel, {
 		}
 	},
 
-	showArtistPlaylist: function(artist, pl, vopts){
+	_showArtistPlaylist: function(artist, pl, vopts){
 		vopts = vopts || {};
 		var cpl = this.p.isPlaying(pl);
 		if (!cpl){
@@ -288,7 +334,7 @@ provoda.Model.extendTo(appModel, {
 		no_navi,
 		from_artcard
 	}*/
-	showAlbum: function(opts, vopts, start_song){
+	_showAlbum: function(opts, vopts, start_song){
 		var artist			= opts.artist, 
 			name			= opts.album_name,
 			id				= opts.album_id, 
@@ -330,7 +376,8 @@ provoda.Model.extendTo(appModel, {
 			(recovered || pl).showTrack(start_song, vopts.no_navi);
 		}
 	},
-	showTopTacks: function (artist, vopts, start_song) {
+
+	_showTopTacks: function(artist, vopts, start_song) {
 		vopts = vopts || {};
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
@@ -393,7 +440,8 @@ provoda.Model.extendTo(appModel, {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-	showMetroChart: function(country, metro, vopts){
+
+	_showMetroChart: function(country, metro, vopts){
 		vopts = vopts || {};
 		var plr = this.preparePlaylist({//can autoload
 			title: 'Chart of ' + metro,
@@ -487,7 +535,7 @@ provoda.Model.extendTo(appModel, {
 			this.showStartPage();
 		}
 
-		var old_v = this.start_page.state('search-query');
+		var old_v = this.state('search-query');
 		if (query != old_v){
 			if (!query) {
 				this.showStartPage();
@@ -499,7 +547,7 @@ provoda.Model.extendTo(appModel, {
 
 	
 
-		this.start_page.updateState('search-query', query);
+		this.updateState('search-query', query);
 		
 	}
 

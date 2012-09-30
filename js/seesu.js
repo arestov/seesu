@@ -175,6 +175,9 @@ appModel.extendTo(seesuApp, {
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
 				_this.trackPage(nv.map_level.resident.page_name);
 			})
+			.on('changes', function(array) {
+				console.log(array)
+			})
 			.makeMainLevel();
 
 		//(new appModel()).init(this);
@@ -199,7 +202,7 @@ appModel.extendTo(seesuApp, {
 
 		this.delayed_search = {
 			vk_api:{
-				queue:  new funcsQueue(2000, 8000 , 7)
+				queue:  new funcsQueue(700, 8000 , 7)
 			}
 		};
 
