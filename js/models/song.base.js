@@ -307,7 +307,7 @@ provoda.addPrototype("baseSong",{
 		this.findFiles({
 			get_next: true
 		});
-		this.setPrio('highest');
+		this.setPrio('as-top');
 	},
 	findFiles: function(opts){
 		if (this.mp3_search){
