@@ -530,11 +530,7 @@ provoda.Model.extendTo(appModel, {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-	search: function(query, no_navi, new_browse){
-		if (new_browse){
-			this.showStartPage();
-		}
-
+	search: function(query, no_navi){
 		var old_v = this.state('search-query');
 		if (query != old_v){
 			if (!query) {
@@ -544,9 +540,6 @@ provoda.Model.extendTo(appModel, {
 			}
 
 		}
-
-	
-
 		this.updateState('search-query', query);
 		
 	}

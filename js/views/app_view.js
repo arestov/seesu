@@ -308,7 +308,6 @@ provoda.View.extendTo(appModelView, {
 			
 			var ui_samples = $('#ui-samples',d);
 
-			var pllistlevel = $('#playlist-level',d);
 			
 			var search_form = $('#search',d); 
 			
@@ -329,7 +328,6 @@ provoda.View.extendTo(appModelView, {
 				slider: slider,
 				navs: $(slider).children('.navs'),
 				start_screen: start_screen,
-				pllistlevel: pllistlevel,
 				search_input: $('#q',d),
 				search_form: search_form,
 				fast_personal_start: start_screen.children('.fast-personal-start'),
@@ -573,7 +571,7 @@ provoda.View.extendTo(appModelView, {
 		return image;
 	},
 	getRtPP: function(node){
-			
+		throw new Error('cant detect position');
 		var clicked_node = $(node);
 		
 		var target_offset = clicked_node.offset();
