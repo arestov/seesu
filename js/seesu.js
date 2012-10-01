@@ -176,7 +176,8 @@ appModel.extendTo(seesuApp, {
 				_this.trackPage(nv.map_level.resident.page_name);
 			})
 			.on('changes', function(array) {
-				console.log(array)
+				console.log(array);
+				_this.animateMapChanges(array);
 			})
 			.makeMainLevel();
 

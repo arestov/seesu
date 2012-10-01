@@ -33,14 +33,15 @@ Class.extendTo(mapLevel, {
 	show: function(opts){
 		var o = opts || {};
 		o.closed = this.closed;
+		var parent;
 		if (!opts.zoom_out){
-			var parent = this.getParentLev();
+			parent = this.getParentLev();
 			if (parent){
 				parent.resident.blur();
 			}
 		}
 		
-		this.resident.show(o);
+		this.resident.show(o, parent);
 	},
 	hide: function(){
 		this.resident.hide();
@@ -60,7 +61,11 @@ Class.extendTo(mapLevel, {
 
 
 		//this.map.clearShallow(this);
+		var just_started = this.map.startChangesGrouping('zoom-out', true);
 		this.map.sliceDeepUntil(this.num, true, transit, url_restoring);
+		if (just_started){
+			this.map.finishChangesGrouping('zoom-out');
+		}
 
 		if (!aycocha){
 			this.map.finishChangesCollecting();
@@ -120,14 +125,69 @@ provoda.Eventor.extendTo(browseMap, {
 		//today seesu has no deeper level
 		return this;
 	},
+	isGroupingChanges: function() {
+		return this.grouping_changes;
+	},
+	startChangesGrouping: function(group_name, soft_allowed) {
+		if (this.grouping_changes){
+			if (!soft_allowed){
+				throw new Error('already grouping')
+			}
+			
+		} else {
+			this.changes_group = {
+				name: group_name,
+				changes: []
+			},
+			this.grouping_changes = true;
+			return true;
+		}
+	},
+	finishChangesGrouping: function(group_name) {
+		if (!this.grouping_changes){
+			throw new Error('none to finish');
+		} else {
+			this.grouping_changes = false;
+			this.emitChangesGroup(group_name);
+		}
+	},
+	emitChangesGroup: function(group_name) {
+		if (this.changes_group.name != group_name){
+			throw new Error('wrong changes group name');
+		}
+		if (this.changes_group.changes.length){
+
+			this.changes_collection.push(this.changes_group);
+			delete this.changes_group;
+		}
+	},
+	addChangeToGroup: function(change) {
+		if (this.grouping_changes){
+			this.changes_group.changes.push(change);
+		} else {
+			var last_group = this.changes_collection[this.changes_collection.length-1];
+			if (last_group && !last_group.name){
+				last_group.changes.push(change);
+			} else {
+				this.changes_collection.push({
+					name: '',
+					changes: [change]
+				})
+			}
+		}
+	},
 	isCollectingChanges: function() {
 		return this.collecting_changes;
 	},
-	startChangesCollecting: function() {
+	startChangesCollecting: function(soft_allowed) {
 		if (this.collecting_changes){
-			throw new Error('already collecting');
+			if (!soft_allowed){
+				throw new Error('already collecting');
+			}
+			
 		} else {
 			this.collecting_changes = true;
+			return true;
 			
 		}
 	},
@@ -140,13 +200,34 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 	},
 	addChange: function(change) {
-		this.changes_collection.push(change);
+		this.addChangeToGroup(change);
 		if (!this.collecting_changes){
 			this.emitChanges();
 		}
 	},
+	zipChanges: function() {
+		var
+			cur,
+			prev,
+			zipped = [];
+
+		for (var i = 0; i < this.changes_collection.length; i++) {
+			prev = cur;
+			cur = this.changes_collection[i];
+			if (prev && cur.name == prev.name){
+				prev.changes = prev.changes.concat(cur.changes);
+				prev.zipped=  true;
+			} else {
+				zipped.push(cur);
+			}
+		}
+		if (zipped.length < this.changes_collection.length){
+			this.changes_collection = zipped;
+		}
+	},
 	emitChanges: function() {
 		if (this.changes_collection.length){
+			this.zipChanges();
 			this.trigger('changes', this.changes_collection);
 			this.changes_collection = [];
 		}
@@ -189,8 +270,12 @@ provoda.Eventor.extendTo(browseMap, {
 			this.clearCurrent();
 		}
 		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
+
+		var just_started = this.startChangesGrouping('zoom-in');
 		this.setLevelPartActive(cl, {userwant: true, transit: transit, url_restoring: url_restoring});
-		
+		if (just_started){
+			this.finishChangesGrouping('zoom-in');
+		}
 		return cl;
 		
 	},
@@ -287,20 +372,30 @@ provoda.Eventor.extendTo(browseMap, {
 		var defzactv = this.findDeepestActiveFreezed();
 		var f_lvs = $filter(this.levels, 'freezed');
 
+
+		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
 		if (defzactv){
 			this.clearShallow(defzactv, true);
 		} else {
 			this.hideMap(true);
 		}
+		if (just_started_zoomout){
+			this.finishChangesGrouping('zoom-out')
+		}
 
 		var dfa_pos = defzactv ? f_lvs.indexOf(defzactv) : 0;
 
+
+		var just_started_zoomin = this.startChangesGrouping('zoom-in', true);
 		for (var i=dfa_pos; i < f_lvs.length; i++) {
 			this.setLevelPartActive(f_lvs[i], {
 				userwant: (i == f_lvs.length - 1), 
 				transit: transit, 
 				url_restoring: url_restoring
 			});
+		}
+		if (just_started_zoomin){
+			this.finishChangesGrouping('zoom-in')
 		}
 
 	},
@@ -560,12 +655,18 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 	},
 	startNewBrowse: function(url_restoring){
+
+		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
+		
 		this.clearCurrent();
 		this.setLevelPartActive(this.getLevel(-1), {
 			userwant: true, 
 			transit: false, 
 			url_restoring: url_restoring
 		});
+		if (just_started_zoomout){
+			this.finishChangesGrouping('zoom-out');
+		}
 		/*var
 			current_lev = this.getLevel(this.getActiveLevelNum()),
 			current_levs = [current_lev].concat(current_lev.parent_levels);
@@ -597,16 +698,19 @@ provoda.Model.extendTo(mapLevelModel, {
 		this.updateState('mp-show', false);
 		this.lev.map.addChange({
 			target: this,
-			type: 'hide'
+			type: 'mp-show',
+			value: false
 		});
 		return this;
 	},
-	show: function(opts) {
+	show: function(opts, parent) {
 		this.focus();
 		this.updateState('mp-show', opts || true);
 		this.lev.map.addChange({
 			target: this,
-			type: 'show'
+			type: 'mp-show',
+			value: opts,
+			parent: parent
 		});
 		return this;
 	},
@@ -615,7 +719,8 @@ provoda.Model.extendTo(mapLevelModel, {
 		this.updateState('mp-has-focus', false);
 		this.lev.map.addChange({
 			target: this,
-			type: 'blur'
+			type: 'mp-has-focus',
+			value: false
 		});
 		return this;
 	},
@@ -624,7 +729,8 @@ provoda.Model.extendTo(mapLevelModel, {
 		this.updateState('mp-has-focus', true);
 		this.lev.map.addChange({
 			target: this,
-			type: 'focus'
+			type: 'mp-has-focus',
+			value: true
 		});
 		return this;
 	},

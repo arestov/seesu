@@ -63,7 +63,7 @@ provoda.View.extendTo(appModelView, {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
-			return this.lev_containers[num] = $('<div class="complex-page"></div>').appendTo(this.els.screens)
+			return this.lev_containers[num] = $('<div class="complex-page"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
 		}
 	},
 	children_views: {
@@ -152,13 +152,45 @@ provoda.View.extendTo(appModelView, {
 			};
 			checkFocus(view.state('mp-show'));
 
-			view.on('state-change.mp-show', function(e) {
+			view.on('state-change.vis-mp-show', function(e) {
 				checkFocus(e.value)
 			});
 		}
 		this.requestAll();
 	},
 	manual_states_connect: true,
+	'stch-map-animation': function(array) {
+		var all_changhes = $filter(array, 'changes');
+		all_changhes = [].concat.apply([], all_changhes);
+		console.log(all_changhes);
+		for (var i = 0; i < all_changhes.length; i++) {
+			var cur = all_changhes[i];
+
+			if (cur.type == 'mp-show'){
+				cur.target.updateState('vis-mp-show', cur.value);
+				//MUST UPDATE VIEW, NOT MODEL!!!!!
+			}
+			
+		}
+		/*
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			var handler = this["animation-type"][cur.type];
+
+			if (handler){
+				handler.call(this, cur.target, cur.type);
+			}
+			//array[i]
+		};*/
+	},
+	"animation-type":{
+		"mp-has-focus": function(target, state) {
+
+		},
+		"mp-show": function(target, state) {
+
+		}
+	},
 	state_change: {
 		"wait-vk-login": function(state) {
 			this.toggleBodyClass(state, 'wait-vk-login');
