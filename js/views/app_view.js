@@ -152,7 +152,7 @@ provoda.View.extendTo(appModelView, {
 			};
 			checkFocus(view.state('mp-show'));
 
-			view.on('state-change.mp-show', function(e) {
+			view.on('state-change.vis-mp-show', function(e) {
 				checkFocus(e.value)
 			});
 		}
@@ -160,6 +160,19 @@ provoda.View.extendTo(appModelView, {
 	},
 	manual_states_connect: true,
 	'stch-map-animation': function(array) {
+		var all_changhes = $filter(array, 'changes');
+		all_changhes = [].concat.apply([], all_changhes);
+		console.log(all_changhes);
+		for (var i = 0; i < all_changhes.length; i++) {
+			var cur = all_changhes[i];
+
+			if (cur.type == 'mp-show'){
+				cur.target.updateState('vis-mp-show', cur.value);
+				//MUST UPDATE VIEW, NOT MODEL!!!!!
+			}
+			
+		}
+		/*
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
 			var handler = this["animation-type"][cur.type];
@@ -168,7 +181,7 @@ provoda.View.extendTo(appModelView, {
 				handler.call(this, cur.target, cur.type);
 			}
 			//array[i]
-		};
+		};*/
 	},
 	"animation-type":{
 		"mp-has-focus": function(target, state) {

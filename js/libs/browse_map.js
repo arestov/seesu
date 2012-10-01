@@ -33,14 +33,15 @@ Class.extendTo(mapLevel, {
 	show: function(opts){
 		var o = opts || {};
 		o.closed = this.closed;
+		var parent;
 		if (!opts.zoom_out){
-			var parent = this.getParentLev();
+			parent = this.getParentLev();
 			if (parent){
 				parent.resident.blur();
 			}
 		}
 		
-		this.resident.show(o);
+		this.resident.show(o, parent);
 	},
 	hide: function(){
 		this.resident.hide();
@@ -702,13 +703,14 @@ provoda.Model.extendTo(mapLevelModel, {
 		});
 		return this;
 	},
-	show: function(opts) {
+	show: function(opts, parent) {
 		this.focus();
 		this.updateState('mp-show', opts || true);
 		this.lev.map.addChange({
 			target: this,
 			type: 'mp-show',
-			value: opts
+			value: opts,
+			parent: parent
 		});
 		return this;
 	},
