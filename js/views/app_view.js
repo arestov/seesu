@@ -159,6 +159,26 @@ provoda.View.extendTo(appModelView, {
 		this.requestAll();
 	},
 	manual_states_connect: true,
+	getLevByNum: function(num) {
+		return num == -1 ? this.els.start_screen : this.getLevelContainer(num);
+	},
+	hideLevNum: function(num) {
+
+		var levc = this.getLevByNum(num);
+		levc.addClass('hidden');
+	},
+	showLevNum: function(num) {
+		var levc = this.getLevByNum(num);
+		levc.removeClass('hidden');
+	},
+	'stch-active-lev-num': function(num, old_num) {
+		if (old_num){
+			this.hideLevNum(old_num.n);
+		}
+		
+
+		this.showLevNum(num.n);
+	},
 	'stch-map-animation': function(array) {
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
@@ -169,6 +189,9 @@ provoda.View.extendTo(appModelView, {
 			}
 			//array[i]
 		};
+	},
+	'stch-show-search-form': function(state) {
+		this.els.search_form.toggleClass('hidden', !state);
 	},
 	"animation-type":{
 		"mp-has-focus": function(target, state) {

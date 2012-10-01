@@ -1,7 +1,10 @@
+.does-not-need-search-from{
+	padding-top:28px;
+	}
 .search-results-container{
 	padding-left:60px;
 	position:relative;
-}
+	}
 	.search-results-container h4{
 		position:absolute;
 		left:0;
@@ -11,7 +14,7 @@
 		width:60px;
 		height:20px;
 		z-index:2;
-	}
+		}
 	.search-results-container h4.loading{
 		background: url(../i/spinner_small.gif) no-repeat 100% 50%;
 	}

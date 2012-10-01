@@ -77,6 +77,10 @@ Class.extendTo(mapLevel, {
 	sliceTillMe: function(transit, url_restoring){
 		this._sliceTM(transit, url_restoring);
 	},
+	markAsFreezed: function() {
+		this.closed = true;
+		this.resident.updateState('mp-freezed', true);
+	},
 	freeze: function(){
 		if (this.isOpened()){
 			this.map.freezeMapOfLevel(this.num);
@@ -158,6 +162,9 @@ provoda.Eventor.extendTo(browseMap, {
 
 			this.changes_collection.push(this.changes_group);
 			delete this.changes_group;
+			if (!this.isCollectingChanges()){
+				this.emitChanges();
+			}
 		}
 	},
 	addChangeToGroup: function(change) {
@@ -168,6 +175,7 @@ provoda.Eventor.extendTo(browseMap, {
 			if (last_group && !last_group.name){
 				last_group.changes.push(change);
 			} else {
+				throw new Error('unknow changes');
 				this.changes_collection.push({
 					name: '',
 					changes: [change]
@@ -233,7 +241,9 @@ provoda.Eventor.extendTo(browseMap, {
 		
 	},
 	makeMainLevel: function(){
+		this.startChangesGrouping('zoom-in');
 		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
+		this.finishChangesGrouping('zoom-in');
 		return this;
 	},
 	getLevel: function(num){
@@ -261,12 +271,16 @@ provoda.Eventor.extendTo(browseMap, {
 	},
 	_goDeeper: function(orealy, resident, transit, url_restoring){
 		var cl = this.getActiveLevelNum();
-		if (orealy){
 
+		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
+		if (orealy){
 			//this.sliceDeepUntil(cl, false, true);
 		}  else{
 			//this.sliceDeepUntil(-1, false, true);
 			this.clearCurrent();
+		}
+		if (just_started_zoomout){
+			this.finishChangesGrouping('zoom-out');
 		}
 		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
 
@@ -318,6 +332,8 @@ provoda.Eventor.extendTo(browseMap, {
 			fresh_freeze = false,
 			l = Math.min(num, this.levels.length - 1);
 
+		this.startChangesGrouping('freezing');
+
 		for (i = l; i >= 0; i--){
 			if (this.levels[i]){
 				if (this.levels[i].free){
@@ -327,7 +343,7 @@ provoda.Eventor.extendTo(browseMap, {
 							delete this.levels[i].freezed;
 						}
 						this.levels[i].freezed = this.levels[i].free;
-						this.levels[i].freezed.closed = true;
+						this.levels[i].freezed.markAsFreezed();
 						fresh_freeze = true;
 					}	
 				}
@@ -336,6 +352,7 @@ provoda.Eventor.extendTo(browseMap, {
 			
 			
 		}
+
 		
 		//clearing if have too much levels !?!?!??!?!?!
 		if (l + 1 < this.levels.length -1) {
@@ -347,6 +364,7 @@ provoda.Eventor.extendTo(browseMap, {
 				
 			}
 		}
+		this.finishChangesGrouping('freezing');
 		return fresh_freeze;
 	},
 	findDeepestActiveFreezed: function() {
@@ -678,6 +696,9 @@ provoda.Eventor.extendTo(browseMap, {
 mapLevelModel = function() {};
 
 provoda.Model.extendTo(mapLevelModel, {
+	getLevNum: function() {
+		return this.map_level_num;
+	},
 	assignMapLev: function(lev){
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
