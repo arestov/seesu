@@ -63,7 +63,7 @@ provoda.View.extendTo(appModelView, {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
-			return this.lev_containers[num] = $('<div class="complex-page"></div>').addClass('indexof-cp-is' + num).appendTo(this.els.screens)
+			return this.lev_containers[num] = $('<div class="complex-page"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
 		}
 	},
 	children_views: {
