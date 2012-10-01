@@ -205,7 +205,24 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 	},
 	zipChanges: function() {
+		var
+			cur,
+			prev,
+			zipped = [];
 
+		for (var i = 0; i < this.changes_collection.length; i++) {
+			prev = cur;
+			cur = this.changes_collection[i];
+			if (prev && cur.name == prev.name){
+				prev.changes = prev.changes.concat(cur.changes);
+				prev.zipped=  true;
+			} else {
+				zipped.push(cur);
+			}
+		}
+		if (zipped.length < this.changes_collection.length){
+			this.changes_collection = zipped;
+		}
 	},
 	emitChanges: function() {
 		if (this.changes_collection.length){
