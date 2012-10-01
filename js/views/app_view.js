@@ -63,7 +63,7 @@ provoda.View.extendTo(appModelView, {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
-			return this.lev_containers[num] = $('<div class="complex-page"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
+			return this.lev_containers[num] = $('<div class="complex-page hidden"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
 		}
 	},
 	children_views: {
@@ -159,7 +159,30 @@ provoda.View.extendTo(appModelView, {
 		this.requestAll();
 	},
 	manual_states_connect: true,
+	getLevByNum: function(num) {
+		return num == -1 ? this.els.start_screen : this.getLevelContainer(num);
+	},
+	hideLevNum: function(num) {
+
+		var levc = this.getLevByNum(num);
+		levc.addClass('hidden');
+	},
+	showLevNum: function(num) {
+		var levc = this.getLevByNum(num);
+		levc.removeClass('hidden');
+	},
+	'stch-active-lev-num': function(num, old_num) {
+		if (old_num){
+			this.hideLevNum(old_num.n);
+		}
+		
+
+		this.showLevNum(num.n);
+	},
 	'stch-map-animation': function(array) {
+		if (!array){
+			return
+		}
 		var all_changhes = $filter(array, 'changes');
 		all_changhes = [].concat.apply([], all_changhes);
 		console.log(all_changhes);
@@ -182,6 +205,9 @@ provoda.View.extendTo(appModelView, {
 			}
 			//array[i]
 		};*/
+	},
+	'stch-show-search-form': function(state) {
+		this.els.search_form.toggleClass('hidden', !state);
 	},
 	"animation-type":{
 		"mp-has-focus": function(target, state) {

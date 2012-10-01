@@ -9,6 +9,9 @@ var song;
 
 	baseSong.extendTo(song, {
 		page_name: 'song page',
+		getLevNum: function() {
+			return this.map_level_num - 1;
+		},
 		init: function(omo, playlist, player, mp3_search) {
 			this._super(omo, playlist, player, mp3_search);
 			var _this = this;

@@ -5,22 +5,11 @@ provoda.View.extendTo(artCardUI, {
 		this.createBase();
 	},
 	die: function() {
-		this.blur();
 		this._super();	
-	},
-	blur: function() {
-		this.c.addClass('hidden');
 	},
 	state_change: {
 		"mp-show": function(opts) {
 			this.c.toggleClass('hidden', !opts);
-		},
-		"mp-has-focus": function(state) {
-			if (!state){
-				this.blur();
-			} else {
-				this.c.removeClass('hidden');
-			}
 		},
 		"loading-albums": function(state) {
 			if (state){
