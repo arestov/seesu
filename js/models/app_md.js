@@ -110,6 +110,7 @@ provoda.Model.extendTo(appModel, {
 	},
 	animateMapChanges: function(array) {
 		this.updateState('map-animation', array);
+		this.updateState('map-animation', false);
 	},
 	keyNav: function(key_name) {
 		var md = this.map.getCurMapL().resident;

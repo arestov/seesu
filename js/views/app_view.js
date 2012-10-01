@@ -63,7 +63,7 @@ provoda.View.extendTo(appModelView, {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
-			return this.lev_containers[num] = $('<div class="complex-page"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
+			return this.lev_containers[num] = $('<div class="complex-page hidden"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
 		}
 	},
 	children_views: {
@@ -160,6 +160,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	manual_states_connect: true,
 	'stch-map-animation': function(array) {
+		if (!array){
+			return
+		}
 		var all_changhes = $filter(array, 'changes');
 		all_changhes = [].concat.apply([], all_changhes);
 		console.log(all_changhes);
