@@ -108,7 +108,48 @@ provoda.Model.extendTo(appModel, {
 		//mainaly for hash url games
 		this.map.startNewBrowse(url_restoring);
 	},
+	'mapch-handlers': {
+		"zoom-in": function(array) {
+			var target;
+			for (var i = array.length - 1; i >= 0; i--) {
+				var cur = array[i];
+				if (cur.type == 'mp-show' && cur.value){
+					target = cur.target;
+					break;
+				}
+				
+			}
+			return target;
+		},
+		"zoom-out": function(array) {
+			var target;
+			for (var i = array.length - 1; i >= 0; i--) {
+				var cur = array[i];
+				if (cur.type == 'mp-show' ){//&& cur.value
+					target = cur.target;
+					break;
+				}
+				
+			}
+			return target;
+		},
+	},
 	animateMapChanges: function(array) {
+		var target_md;
+
+		for (var i = array.length - 1; i >= 0; i--) {
+			var cur = array[i];
+			if (this['mapch-handlers'][cur.name]){
+				target_md = this['mapch-handlers'][cur.name].call(this, cur.changes);
+				break;
+			}	
+		}
+		if (target_md){
+			this.updateState('active-lev-num', {n: target_md.getLevNum()});
+			this.updateState('show-search-form', target_md.state('needs-search-from'));
+		}
+
+		
 		this.updateState('map-animation', array);
 		this.updateState('map-animation', false);
 	},

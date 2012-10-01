@@ -152,18 +152,6 @@ provoda.View.extendTo(StartPageView, {
 				
 			}
 		},
-		'mp-has-focus': function(state) {
-			this.els.search_form.toggleClass('hidden', !state);
-
-
-			this.c.toggleClass('hidden', !state);
-			/*
-			if (!state){
-				$(this.els.slider).removeClass("show-start");
-			} else {
-				$(this.els.slider).addClass("show-start");
-			}*/
-		},
 		"can-expand": function(state) {
 			if (state){
 				this.requirePart('start-page-blocks');

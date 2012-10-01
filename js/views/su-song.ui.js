@@ -20,9 +20,6 @@ provoda.View.extendTo(songUI, {
 				tidominator.removeClass('want-more-info');
 			}
 		},
-		"mp-has-focus": function(state) {
-			
-		},
 		want_to_play: function(state, oldstate){
 			if (state){
 				this.node.addClass('marked-for-play');

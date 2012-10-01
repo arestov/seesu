@@ -294,7 +294,16 @@ investigation.extendTo(SearchPage, {
 		this.addSection('albums', new albumsSection());
 		this.addSection('tags', new tagsSection());
 		this.addSection('tracks', new tracksSection());
+		this.updateState('mp-freezed', false);
 		
+	},
+	complex_states: {
+		"needs-search-from": {
+			depends_on: ['mp-freezed'],
+			fn: function(frzd) {
+				return !frzd
+			}
+		}
 	},
 	key_name_nav: {
 		'Enter': function() {

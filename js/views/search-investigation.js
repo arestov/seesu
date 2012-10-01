@@ -173,6 +173,9 @@ investigationView.extendTo(searchPageView, {
 		'section-playlist': playlistsSectionView,
 		'section-track': tracksSectionView
 	},
+	'stch-needs-search-from': function(state) {
+		this.c.toggleClass('does-not-need-search-from', !state);
+	},
 	createBase: function() {
 		this.c = $('<div class="search-results-container"></div>');
 		$('<p class="search-desc"></p>').text(localize('search-control-hint')).appendTo(this.c);

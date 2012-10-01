@@ -102,22 +102,10 @@ provoda.addPrototype("InvestigationView", {
 				if (!opts.transit){
 					this.expand();
 				}
-				
-				
-				if (!opts.closed){
-					this.root_view.els.search_form.removeClass('hidden');
-				}
 			} else {
-				this.blur();
+
 			}
 			this.c.toggleClass('hidden', !opts);
-		},
-		"mp-has-focus": function(state) {
-			if (!state){
-				this.blur();
-			} else {
-				this.c.removeClass('hidden');
-			}
 		},
 		"can-expand": function(state) {
 			if (state){
@@ -129,13 +117,7 @@ provoda.addPrototype("InvestigationView", {
 		this.c = $('<div class="search-results-block"></div');
 	},
 	die: function() {
-		this.blur();
 		this._super();
-	},
-	blur: function() {
-		this.root_view.els.search_form.addClass('hidden');
-		this.c.addClass('hidden');
-		
 	}
 });
 
@@ -160,9 +142,6 @@ provoda.addPrototype("searchSectionView", {
 		if (this.c_class){
 			this.c.addClass(this.c_class);
 		}
-	},
-	'': {
-
 	},
 	state_change: {
 		active: function(state){
