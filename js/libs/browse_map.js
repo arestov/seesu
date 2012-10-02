@@ -30,9 +30,18 @@ Class.extendTo(mapLevel, {
 	getParentLev: function(){
 		return this.parent_levels[0] || ((this.num > -1) && this.map.levels[-1].free);
 	},
+	getParentResident: function() {
+		var parent = this.getParentLev();
+		return parent && parent.resident;
+	},
 	show: function(opts){
+		this.map.addChange({
+			type: 'zoom-in',
+			target: this.resident
+		});
+
+		/*
 		var o = opts || {};
-		o.closed = this.closed;
 		var parent;
 		if (!opts.zoom_out){
 			parent = this.getParentLev();
@@ -41,13 +50,21 @@ Class.extendTo(mapLevel, {
 			}
 		}
 		
-		this.resident.show(o, parent);
+		this.resident.show(o, parent);*/
 	},
 	hide: function(){
-		this.resident.hide();
+		this.map.addChange({
+			type: 'zoom-out',
+			target: this.resident
+		});
+		//this.resident.hide();
 	},
 	die: function(){
-		this.resident.mlmDie();
+		this.map.addChange({
+			type: 'destroy',
+			target: this.resident
+		});
+		//this.resident.mlmDie();
 		this.resident.trigger('mpl-detach');
 		delete this.map;
 	},
@@ -707,6 +724,9 @@ provoda.Model.extendTo(mapLevelModel, {
 			this.onMapLevAssign();
 		}
 		return this;	
+	},
+	getParentMapModel: function() {
+		return this.lev.getParentResident();
 	},
 	mlmDie: function(){
 		this.die();
