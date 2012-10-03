@@ -104,7 +104,9 @@ Class.extendTo(provoda.Eventor, {
 		var cb_cs = this.subscribes[short_name];
 		if (cb_cs){
 			for (var i = 0; i < cb_cs.length; i++) {
-				if (cb_cs[i].namespace.indexOf(namespace) === 0){
+				var curn = cb_cs[i].namespace;
+				var canbe_matched = !curn.charAt(namespace.length) || curn.charAt(namespace.length) == '.';
+				if (canbe_matched &&  curn.indexOf(namespace) === 0){
 					r.matched.push(cb_cs[i]);
 				} else {
 					r.not_matched.push(cb_cs[i]);

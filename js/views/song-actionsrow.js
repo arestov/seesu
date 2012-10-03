@@ -376,7 +376,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 
 		this.setVisState('is-visible', !!this.parent_view.state('mp-show'))
 
-		this.parent_view.on('state-change.vis-mp-show', function(e){
+		this.parent_view.on('state-change.mp-show-end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});
 	},

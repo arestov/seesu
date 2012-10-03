@@ -36,8 +36,9 @@ Class.extendTo(mapLevel, {
 	},
 	show: function(opts){
 		this.map.addChange({
-			type: 'zoom-in',
-			target: this.resident
+			type: 'move-view',
+			target: this.resident,
+			value: opts
 		});
 
 		/*
@@ -730,49 +731,53 @@ provoda.Model.extendTo(mapLevelModel, {
 	},
 	mlmDie: function(){
 		this.die();
-		this.lev.map.addChange({
+		/*this.lev.map.addChange({
 			target: this,
 			type: 'die'
-		});
+		});*/
 	},
 	hide: function() {
 		this.updateState('mp-show', false);
+		/*
 		this.lev.map.addChange({
 			target: this,
 			type: 'mp-show',
 			value: false
-		});
+		});*/
 		return this;
 	},
 	show: function(opts, parent) {
 		this.focus();
 		this.updateState('mp-show', opts || true);
+		/*
 		this.lev.map.addChange({
 			target: this,
 			type: 'mp-show',
 			value: opts,
 			parent: parent
-		});
+		});*/
 		return this;
 	},
 	blur: function() {
 		//this.stackNav(false);
 		this.updateState('mp-has-focus', false);
+		/*
 		this.lev.map.addChange({
 			target: this,
 			type: 'mp-has-focus',
 			value: false
-		});
+		});*/
 		return this;
 	},
 	focus: function() {
 	//	this.stackNav(false);
 		this.updateState('mp-has-focus', true);
+		/*
 		this.lev.map.addChange({
 			target: this,
 			type: 'mp-has-focus',
 			value: true
-		});
+		});*/
 		return this;
 	},
 	stackNav: function(stack_v){

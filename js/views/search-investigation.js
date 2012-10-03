@@ -176,6 +176,18 @@ investigationView.extendTo(searchPageView, {
 	'stch-needs-search-from': function(state) {
 		this.c.toggleClass('does-not-need-search-from', !state);
 	},
+	complex_states: {
+		'mp-show-end': {
+			depends_on: ['map-animating', 'vis-mp-show', 'mp-show'],
+			fn: function(anim, vis_mp_show, mp_show) {
+				if (anim) {
+					return vis_mp_show;
+				} else {
+					return mp_show
+				}
+			}
+		}
+	},
 	createBase: function() {
 		this.c = $('<div class="search-results-container"></div>');
 		$('<p class="search-desc"></p>').text(localize('search-control-hint')).appendTo(this.c);

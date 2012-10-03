@@ -141,6 +141,18 @@ provoda.View.extendTo(StartPageView, {
 			main: FastPSRowView
 		}
 	},
+	complex_states: {
+		'mp-show-end': {
+			depends_on: ['map-animating', 'vis-mp-show', 'mp-show'],
+			fn: function(anim, vis_mp_show, mp_show) {
+				if (anim) {
+					return vis_mp_show;
+				} else {
+					return mp_show
+				}
+			}
+		}
+	},
 	state_change: {
 		'mp-show': function(opts) {
 			if (opts){

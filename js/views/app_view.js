@@ -150,9 +150,9 @@ provoda.View.extendTo(appModelView, {
 					_this.search_input[0].select();
 				}
 			};
-			checkFocus(view.state('mp-show'));
+			checkFocus(view.state('mp-show-end'));
 
-			view.on('state-change.vis-mp-show', function(e) {
+			view.on('state-change.mp-show-end', function(e) {
 				checkFocus(e.value)
 			});
 		}
@@ -189,7 +189,7 @@ provoda.View.extendTo(appModelView, {
 		for (var i = 0; i < all_changhes.length; i++) {
 			var cur = all_changhes[i];
 
-			if (cur.type == 'mp-show'){
+			if (cur.type == 'move-view'){
 				cur.target.updateState('vis-mp-show', cur.value);
 				//MUST UPDATE VIEW, NOT MODEL!!!!!
 			}

@@ -30,7 +30,7 @@ provoda.addPrototype("baseSuggestView", {
 		}
 		if (this.autoscroll && state){
 			var active_invstg = this.parent_view.parent_view.state('mp-show');
-			if (!active_invstg.transit){
+			if (active_invstg && !active_invstg.transit){
 				this.root_view.scrollTo(this);
 			}
 		}
