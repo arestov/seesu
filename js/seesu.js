@@ -175,9 +175,9 @@ appModel.extendTo(seesuApp, {
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
 				_this.trackPage(nv.map_level.resident.page_name);
 			})
-			.on('changes', function(array) {
-				console.log(array);
-				_this.animateMapChanges(array);
+			.on('changes', function(changes) {
+				console.log(changes);
+				_this.animateMapChanges(changes);
 			})
 			.makeMainLevel();
 

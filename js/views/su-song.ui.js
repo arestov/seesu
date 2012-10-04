@@ -5,7 +5,31 @@ provoda.View.extendTo(songUI, {
 		this.rowcs = {};
 		this.createBase();
 	},
+	complex_states: {
+		'mp-show-end': {
+			depends_on: ['map-animating', 'vis-mp-show', 'mp-show'],
+			fn: function(anim, vis_mp_show, mp_show) {
+				if (anim) {
+					if (vis_mp_show && anim == vis_mp_show.anid){
+						return vis_mp_show.value;
+					} else {
+						return false;
+					}
+					
+				} else {
+					return mp_show
+				}
+			}
+		}
+	},
 	state_change : {
+		"mp-show-end": function(opts) {
+			if (opts){
+				if (this.img_panorama){
+					this.img_panorama.checkSize();
+				}
+			}
+		},
 		"mp-show": function(opts, old_opts) {
 			if (opts){
 				this.parent_view.c.addClass("show-zoom-to-track");
@@ -138,9 +162,6 @@ provoda.View.extendTo(songUI, {
 		this.setImagesPrio();
 		this.updateSongListeners();
 		this.c.addClass('viewing-song');
-		if (this.img_panorama){
-			this.img_panorama.checkSize();
-		}
 		
 	},
 	setImagesPrio: function(){
