@@ -160,17 +160,37 @@ provoda.View.extendTo(appModelView, {
 	},
 	manual_states_connect: true,
 	getLevByNum: function(num) {
-		return num == -1 ? this.els.start_screen : this.getLevelContainer(num);
+		return num == -1 ? false : this.getLevelContainer(num);
 	},
 	hideLevNum: function(num) {
 
 		var levc = this.getLevByNum(num);
-		levc.addClass('hidden');
+		if (levc){
+			levc.addClass('hidden');
+		}
+		
 	},
 	showLevNum: function(num) {
 		var levc = this.getLevByNum(num);
-		levc.removeClass('hidden');
+		if (levc){
+			levc.removeClass('hidden');
+		}
+		
 	},
+	complex_states: {
+		'start-level': {
+			depends_on: ['active-lev-num'],
+			fn: function(nwrap) {
+				if (!nwrap || nwrap.n == -1){
+					return true;
+				}
+			}
+		}
+	},
+	'stch-start-level': function(state) {
+		this.els.start_screen.toggleClass('hidden', !state);
+	},
+	//
 	'stch-active-lev-num': function(num, old_num) {
 		if (old_num){
 			this.hideLevNum(old_num.n);
