@@ -179,18 +179,21 @@ provoda.View.extendTo(appModelView, {
 
 		this.showLevNum(num.n);
 	},
-	'stch-map-animation': function(array) {
-		if (!array){
+	'stch-map-animation': function(changes) {
+		if (!changes){
 			return
 		}
-		var all_changhes = $filter(array, 'changes');
+		var all_changhes = $filter(changes.array, 'changes');
 		all_changhes = [].concat.apply([], all_changhes);
 		console.log(all_changhes);
 		for (var i = 0; i < all_changhes.length; i++) {
 			var cur = all_changhes[i];
 
 			if (cur.type == 'move-view'){
-				cur.target.updateState('vis-mp-show', cur.value);
+				cur.target.updateState('vis-mp-show', {
+					anid: changes.anid,
+					value: cur.value
+				});
 				//MUST UPDATE VIEW, NOT MODEL!!!!!
 			}
 			

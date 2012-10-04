@@ -151,28 +151,29 @@ provoda.Model.extendTo(appModel, {
 	},
 	animationMark: function(models, mark) {
 		for (var i = 0; i < models.length; i++) {
-			models[i].updateState('map-animating', !!mark);
+			models[i].updateState('map-animating', mark);
 		}
 	},
-	animateMapChanges: function(array) {
+	animateMapChanges: function(changes) {
 		var 
 			target_md,
-			all_changhes = $filter(array, 'changes');
+			all_changhes = $filter(changes.array, 'changes');
 
 		all_changhes = [].concat.apply([], all_changhes);
 		var models = $filter(all_changhes, 'target');
-		this.animationMark(models, true);
+		this.animationMark(models, changes.anid);
 
 		for (var i = 0; i < all_changhes.length; i++) {
 			var change = all_changhes[i];
+		//	change.anid = changes.anid;
 			var handler = this['model-mapch'][change.type];
 			if (handler){
 				handler.call(this, change);
 			}
 		}
 
-		for (var i = array.length - 1; i >= 0; i--) {
-			var cur = array[i];
+		for (var i = changes.array.length - 1; i >= 0; i--) {
+			var cur = changes.array[i];
 			if (this['mapch-handlers'][cur.name]){
 				target_md = this['mapch-handlers'][cur.name].call(this, cur.changes);
 				break;
@@ -185,7 +186,7 @@ provoda.Model.extendTo(appModel, {
 		}
 
 		
-		this.updateState('map-animation', array);
+		this.updateState('map-animation', changes);
 		this.updateState('map-animation', false);
 		this.animationMark(models, false);
 	},
@@ -282,6 +283,11 @@ provoda.Model.extendTo(appModel, {
 		this.collectChanges(this._showAlbum, arguments);
 	},
 	_show_now_playing: function(no_stat){
+
+		var current_map_md = this.map.getCurrentResident();
+		if (!this.p.c_song || current_map_md == this.p.c_song){
+			return false;
+		}
 		if (!no_stat){
 			this.trackEvent('Navigation', 'now playing');
 		}

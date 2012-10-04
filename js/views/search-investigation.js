@@ -181,7 +181,12 @@ investigationView.extendTo(searchPageView, {
 			depends_on: ['map-animating', 'vis-mp-show', 'mp-show'],
 			fn: function(anim, vis_mp_show, mp_show) {
 				if (anim) {
-					return vis_mp_show;
+					if (vis_mp_show && anim == vis_mp_show.anid){
+						return vis_mp_show.value;
+					} else {
+						return false;
+					}
+					
 				} else {
 					return mp_show
 				}
