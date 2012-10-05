@@ -283,8 +283,11 @@ contextRow.prototype = {
 	isActive: function(name){
 		return !!this.parts[name].active;
 	},
-	show: function(name, arrow_left, callback){
+	showPart: function(name, posFn, callback){
+		
+
 		if (!this.parts[name].active){
+
 			this.hide(true);
 		
 		
@@ -298,13 +301,19 @@ contextRow.prototype = {
 			}
 			
 		}
-		if (arrow_left){
+		if (posFn){
 			//used for positioning 
-			this.arrow.css('left', arrow_left + 'px').removeClass('hidden');
+			this.arrow.removeClass('hidden');
+			var pos = posFn();
+			var arrow_papos = this.arrow.offsetParent().offset();
+
+			//.removeClass('hidden');
+			this.arrow.css('left', ((pos.left + pos.owidth/2) - arrow_papos.left) + 'px')
 			
 		} 
+		
 	},
-	hide: function(not_itself){
+	hide: function(not_itself, skip_arrow){
 		if (!not_itself){
 			if (this.m.active){
 				this.m.c.addClass('hidden');
@@ -320,8 +329,11 @@ contextRow.prototype = {
 			}
 			
 		}
+		if (!skip_arrow){
+			this.arrow.addClass('hidden');
+		}
 		
-		this.arrow.addClass('hidden');
+		
 		
 	}
 };

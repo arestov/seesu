@@ -651,18 +651,6 @@ provoda.View.extendTo(appModelView, {
 		}
 		return image;
 	},
-	getRtPP: function(node){
-		throw new Error('cant detect position');
-		var clicked_node = $(node);
-		
-		var target_offset = clicked_node.offset();
-		var container_offset = this.els.pllistlevel.offset();
-		return {
-			left: target_offset.left - container_offset.left,
-			top: target_offset.top - container_offset.top,
-			cwidth: this.els.pllistlevel.width()
-		};
-	},
 	createUserAvatar: function(info, c, size){
 		var _this = this;
 		var imageplace = $("<div class='image-cropper'></div>").appendTo(c)
@@ -812,6 +800,19 @@ provoda.View.extendTo(appModelView, {
 		
 		
 	},
+
+	getRtPP: function(node){
+		throw new Error('cant detect position');
+		var clicked_node = $(node);
+		
+		var target_offset = clicked_node.offset();
+		var container_offset = this.els.pllistlevel.offset();
+		return {
+			left: target_offset.left - container_offset.left,
+			top: target_offset.top - container_offset.top,
+			cwidth: this.els.pllistlevel.width()
+		};
+	},
 	createSongListener: function(lig, uc){
 		var _this = this;
 		
@@ -822,7 +823,7 @@ provoda.View.extendTo(appModelView, {
 				
 				
 				uc.D('user-info', 'current-user', lig.user);
-				var p = _this.getRtPP(li[0]);
+
 				
 				var c = uc.C('user-info');
 
@@ -831,7 +832,17 @@ provoda.View.extendTo(appModelView, {
 					_this.showBigListener(c, lig);
 				});
 				
-				uc.show('user-info', (p.left + $(li[0]).outerWidth()/2) -13 );
+				//var p = _this.getRtPP(li[0]);
+
+				//var li_pos = ;
+				// 5 /*(p.left + $(li[0]).outerWidth()/2) -13 */
+
+				uc.showPart('user-info', function() {
+					return {
+						left: li.offset().left,
+						owidth: li.outerWidth()
+					};
+				});
 				su.trackEvent('peoples', 'view');
 			} else{
 				uc.hide();
