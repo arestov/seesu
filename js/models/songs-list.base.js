@@ -223,6 +223,7 @@ var songsList;
 			if (p_song && v_song != p_song && !p_song.hasNextSong()){
 				this.checkNeighboursChanges(p_song, false, false, "playlist load");
 			}
+			this.trigger('palist-change', this.palist);
 		},
 		loadComplete: function(error){
 			error = ((typeof error == 'string') ? error : (!this.palist.length && error));
