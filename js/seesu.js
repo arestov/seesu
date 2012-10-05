@@ -410,7 +410,7 @@ appModel.extendTo(seesuApp, {
 		
 
 	},
-	chechPlaylists: function(){
+	checkPlaylists: function(){
 		if (this.gena){
 			this.app_md.start_page.updateState('have-playlists', !!this.gena.playlists.length);
 		}
@@ -766,6 +766,10 @@ suReady(function(){
 });
 var UserPlaylists = function() {};
 provoda.Eventor.extendTo(UserPlaylists, {
+	init: function() {
+		this._super();
+		this.playlists = [];
+	},
 	savePlaylists: function(){
 		var _this = this;
 		if (this.save_timeout){clearTimeout(this.save_timeout);}
@@ -843,7 +847,7 @@ UserPlaylists.extendTo(SuUsersPlaylists, {
 		this._super();
 		this
 			.on('playlsits-change', function(array) {
-				su.chechPlaylists(array);
+				su.checkPlaylists(array);
 			})
 			.on('each-playlist-change', function() {
 				su.trackEvent('song actions', 'add to playlist');
