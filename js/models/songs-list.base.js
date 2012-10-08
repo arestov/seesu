@@ -51,10 +51,11 @@ var songsList;
 				}
 				
 			}
+			return mo;
 		},
 		add: function(omo){
 			var mo = cloneObj({}, omo, false, ['track', 'artist']);
-			this.push(mo);
+			return this.push(mo);
 		},
 		findSongOwnPosition: function(first_song){
 			var can_find_context;

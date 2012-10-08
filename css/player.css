@@ -292,3 +292,51 @@ a.download-mp3:hover{
 	width:446px;
 	height:150px;
 }
+
+.song-track-name {
+	display: block;
+	margin-right:0.5em;
+	}
+
+.song-artist-name {
+	display: block;
+	font-size: 12px;
+	color: #666;
+	}
+	.viewing-song .song-track-name, .viewing-song .song-artist-name{
+		display: inline;
+		}
+	.viewing-song .song-artist-name{
+		color: #AAA;
+		font-size: 0.8em;
+		}
+.show-zoom-to-track .tracks-for-play{
+	position: relative;
+	padding-top:51px !important;
+	}
+/*
+	.tracks-for-play .to-play-previous{
+		position: absolute;
+		top: 0;
+		width: 35%;
+		margin-top: :0;
+		left: 0;
+		}
+	.tracks-for-play .to-play-next {
+		position: absolute;
+		top: 0;
+		width: 35%;
+		right: 0;
+		}
+.placeholder-decor{
+	display: none;
+	}
+	.show-zoom-to-track .placeholder-decor{
+		display: block;
+		position: absolute;
+		width: 30%;
+		top:0;
+		left:35%;
+		background-color: #5E5E5E;
+		border-top: 1px solid #737373
+		}*/

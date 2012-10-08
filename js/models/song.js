@@ -12,6 +12,50 @@ var song;
 		getLevNum: function() {
 			return this.map_level_num - 1;
 		},
+		'stch-can-expand': function(state) {
+			if (state && !this.expanded){
+				this.expanded = true;
+				var _this = this;
+				var info_request = lfm.get('artist.getInfo',{'artist': this.artist })
+					.done(function(r){
+						su.art_images.checkLfmData('artist.getInfo', r);
+
+						var ai = parseArtistInfo(r);
+
+
+						_this.updateState('listeners', getTargetField(r, 'artist.stats.listeners'));
+						_this.updateState('playcount', getTargetField(r, 'artist.stats.playcount'));
+						_this.updateState('bio', ai.bio);
+						_this.updateState('tags', ai.tags);
+						_this.updateState('similars', ai.similars);
+						_this.updateState('artist-image', ai.images && ai.images[2] || lfm_image_artist)
+						/*
+						similars
+						tags
+						bio
+
+						similars = ai.similars;
+			artist	 = ai.artist;
+			tags	 = ai.tags;
+			bio		 = ai.bio;
+			image
+
+						*/
+						/*
+						if (!_this.isAlive()){
+							return
+						}
+						_this.show_artist_info(r, this.ainf, artist);
+						*/
+
+					});
+
+				if (this.state("mp-show")){
+					info_request.queued && info_request.queued.setPrio('highest');
+				}
+				
+			}
+		},
 		init: function(omo, playlist, player, mp3_search) {
 			this._super(omo, playlist, player, mp3_search);
 			var _this = this;
@@ -48,8 +92,10 @@ var song;
 				_this.player.trigger("song-play-error", _this, can_play);
 			});
 			
-			this.watchStates(['files_search', 'marked_as'], function(files_search, marked_as) {
+			this.watchStates(['files_search', 'marked_as', 'mp-show'], function(files_search, marked_as, mp_show) {
 				if (marked_as && files_search && files_search.complete){
+					this.updateState('can-expand', true);
+				} else if (mp_show){
 					this.updateState('can-expand', true);
 				} else {
 					this.updateState('can-expand', false);

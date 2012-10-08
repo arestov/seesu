@@ -261,10 +261,15 @@ provoda.addPrototype("baseSong",{
 		if (!this.track && !this.rtn_request){
 			var request = this.rtn_request = lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
 				.done(function(r){
+					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+
+					su.art_images.checkLfmData('artist.getTopTracks', r, tracks);
+					
+
 					if (_this.track){
 						return;
 					}
-					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+
 					tracks = $filter(tracks, 'name');
 					var some_track = tracks[Math.floor(Math.random()*tracks.length)];
 					if (some_track){

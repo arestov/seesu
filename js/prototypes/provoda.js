@@ -904,7 +904,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return this;
 		}
 
-
 		var old_value = this.children_models[name];
 		this.children_models[name] = array;
 		var collectionChanger = this['collch-' + name];

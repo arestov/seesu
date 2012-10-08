@@ -195,6 +195,7 @@ mapLevelModel.extendTo(artCard, {
 			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
 				.done(function(r){
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+					su.art_images.checkLfmData('artist.getTopTracks', r, tracks);
 
 					if (tracks.length){
 						var track_list = [];
@@ -219,6 +220,7 @@ mapLevelModel.extendTo(artCard, {
 		this.updateState('loading-baseinfo', true);
 		this.addRequest(lfm.get('artist.getInfo',{'artist': this.artist })
 			.done(function(r){
+				su.art_images.checkLfmData('artist.getInfo', r);
 				_this.updateState('loading-baseinfo', false);
 				r = parseArtistInfo(r);
 				if (r.images){
