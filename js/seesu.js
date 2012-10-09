@@ -555,21 +555,6 @@ su.init(3.6);
 
 
 
-var external_playlist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
-	this.result = this.header + '\n';
-	for (var i=0; i < array.length; i++) {
-		this.result += this.preline + ':' + (array[i].duration || '-1') + ',' + array[i].artist_name + ' - ' + array[i].track_title + '\n' + array[i].mp3link + '\n';
-	}
-	this.data_uri = this.request_header + escape(this.result);
-	
-};
-external_playlist.prototype = {
-	header : '#EXTM3U',
-	preline: '#EXTINF',
-	request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
-};
-
-
 
 
 (function(){

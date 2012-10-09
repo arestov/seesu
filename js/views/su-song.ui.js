@@ -447,7 +447,7 @@ provoda.View.extendTo(songUI, {
 			buttmen.find('.pc').data('mo', this.md);
 		this.c.prepend(buttmen);
 
-		this.song_imagec = $('<span class=""></span>');
+		this.song_imagec = $('<span class="song-image-con"></span>').appendTo(this.node);
 
 
 		this.titlec = $('<span class="full-song-title has-no-track-title"></span>')

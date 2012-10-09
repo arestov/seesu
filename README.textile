@@ -137,7 +137,7 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 		артисты
 		теги
 		треки
-		состовные радио
+		составные радио
 	информация о треке
 	концерты артиста в карточке трека
 	чарты hypem
@@ -152,6 +152,11 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 	скроблинг и проигрывание vk.com
 	discogs
 	last.fm
+
+Промо
+	сделать промо изображения для хрома (использовать потенциал google +1)
+		малельнкое
+		большое	
 
 ....
 сохранение в избранное альбомов, артистов, 

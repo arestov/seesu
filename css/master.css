@@ -1349,3 +1349,11 @@ iframe.you-tube-video,embed.you-tube-video{
 		.addsong-to-playlist .list-of-playlists{
 			width:200px;
 			}
+.song-image-con {
+	width: 24px;
+	height: 24px;
+	float: left;
+	background: #595959;
+	margin-right: 12px;
+	border-radius: 2px;
+	}
