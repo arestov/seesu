@@ -132,6 +132,8 @@ provoda.View.extendTo(songUI, {
 			this.artist_name_c.text(name);
 		},
 		'track': function(name) {
+			this.titlec.toggleClass('has-no-track-title', !name);
+			
 			this.track_name_c.text(name);
 		},
 		'song-title': function(title) {
@@ -445,9 +447,15 @@ provoda.View.extendTo(songUI, {
 			buttmen.find('.pc').data('mo', this.md);
 		this.c.prepend(buttmen);
 
-		this.titlec = $('<span class="full-song-title"></span>').appendTo(this.node);
-		this.track_name_c = $('<span class="song-track-name"></span>').appendTo(this.titlec);
-		this.artist_name_c = $('<span class="song-artist-name"></span>').appendTo(this.titlec);
+		this.song_imagec = $('<span class=""></span>');
+
+
+		this.titlec = $('<span class="full-song-title has-no-track-title"></span>')
+			.appendTo(this.node);
+		this.track_name_c = $('<span class="song-track-name"></span>')
+			.appendTo(this.titlec);
+		this.artist_name_c = $('<span class="song-artist-name"></span>')
+			.appendTo(this.titlec);
 		
 
 		$('<span class="placeholder-decor"></span>').appendTo(this.node);
