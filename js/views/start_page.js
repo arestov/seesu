@@ -130,7 +130,7 @@ provoda.View.extendTo(StartPageView, {
 		this.els = this.parent_view.els;
 		this.c = this.els.start_screen;
 
-		
+		this.c.find('#hint-query').text(su.popular_artists[(Math.random()*10).toFixed(0)]);
 	},
 	'collch-fast_pstart': function(name, md) {
 		var view = this.getFreeChildView(name, md, 'main');
@@ -320,6 +320,8 @@ provoda.View.extendTo(StartPageView, {
 								},
 								fn: function() {
 									_cmetro.empty();
+
+									var ppp = su.createMetroChartPlaylist(random_metro.country, random_metro.name);
 							
 									var plr = su.preparePlaylist({//fix params for cache
 										title: 'Chart of ' + random_metro.name,

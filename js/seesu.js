@@ -569,12 +569,6 @@ external_playlist.prototype = {
 	request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
 };
 
-var random_track_plable = function(track_list){
-	var random_track_num = Math.floor(Math.random()*track_list.length);
-	return track_list[random_track_num];
-	
-};
-
 
 
 

@@ -416,7 +416,7 @@ provoda.View.extendTo(appModelView, {
 			};
 
 
-			_this.els.search_form.find('#hint-query').text(su.popular_artists[(Math.random()*10).toFixed(0)]);
+			
 
 			_this.els.search_form.find('#app_type').val(su.env.app_type);
 			
