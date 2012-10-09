@@ -264,13 +264,16 @@ provoda.View.extendTo(songUI, {
 		}
 		
 	},
-	'stch-bio': function(bio) {
-		if (bio){
-			this.ainf.bio.empty();
-			this.ainf.bio.html(bio);
-			this.ainf.bio.append('<span class="forced-end"></span>');
-		}
-		
+	'stch-bio': {
+		fn: function(bio) {
+			if (bio){
+				this.ainf.bio.empty();
+				this.ainf.bio.html(bio);
+				this.ainf.bio.append('<span class="forced-end"></span>');
+			}
+			
+		},
+		dep_vp: ['artist-info']
 	},
 	'stch-listeners': {
 		fn: function(state) {
@@ -352,11 +355,14 @@ provoda.View.extendTo(songUI, {
 		},
 		dep_vp: ['artist-info']
 	},
-	'stch-has-info-exts': function(state) {
-		if (state){
-			this.extend_info.base_info = state; //artist name;
-			this.extend_info.updateUI();
-		}
+	'stch-has-info-exts': {
+		fn: function(state) {
+			if (state){
+				this.extend_info.base_info = state; //artist name;
+				this.extend_info.updateUI();
+			}
+		},
+		dep_vp: ['artist-info']
 	},
 	parts_builder: {
 		context: function() {
