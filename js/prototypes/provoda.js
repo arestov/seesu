@@ -44,9 +44,9 @@ Class.extendTo(provoda.Eventor, {
 		if (this.reg_fires[short_name]){
 			this.reg_fires[short_name].call(this,  function() {
 				cb.apply(_this, arguments);
-
+				fired = true;
 			});
-			fired = true;
+			
 		}
 		if (!(once && fired)){
 			if (!this.subscribes[short_name]){
@@ -300,10 +300,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	}
 });
 
-
+var models_counters = 0;
 provoda.StatesEmitter.extendTo(provoda.Model, {
 	init: function(){
+
 		this._super();
+		this.provoda_id = models_counters++;
 		this.states = {};
 		this.views = [];
 		this.views_index = {};
@@ -508,9 +510,10 @@ var
 
 
 
-
+var views_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(view_otps, opts){
+		this.view_id = views_counter++;
 		if (view_otps.parent_view){
 			this.parent_view = view_otps.parent_view;
 		}
@@ -605,7 +608,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	
 	},
 	getFreeChildView: function(child_name, md, view_space, opts) {
-		var view = md.getView(view_space, true);
+		var complex_id = this.view_id  + '_' +view_space;
+		var view = md.getView(complex_id, true);
 		if (view){
 			return false;
 		} else {
@@ -622,7 +626,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				parent_view: this,
 				root_view: this.root_view
 			}, opts);
-			md.addView(view, view_space);
+			md.addView(view, complex_id);
 			this.addChildView(view, child_name);
 			return view;
 		}
