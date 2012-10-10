@@ -96,16 +96,15 @@ provoda.View.extendTo(songUI, {
 				this.node.removeClass('loading');
 			}
 		},
+		"player-song": function(state) {
+			this.c.toggleClass('player-song', !!state);
+		},
 		play: function(state, oldstate){
 			if (state == 'play'){
 				this.hideYoutubeVideo();
 			}
-			if (!state){
-				this.unmarkAsPlaying();
-			} else if (!oldstate){
-				this.markAsPlaying();
-			}
-
+			this.c.toggleClass('playing-song', !!state);
+			this.player_song_mark.toggleClass('playing-process', state == 'play');
 		},
 		playable: function(new_state, old_state){
 			if (new_state && !!new_state != !!old_state){
@@ -140,12 +139,6 @@ provoda.View.extendTo(songUI, {
 			//this.titlec.text(title);
 			this.node.attr("title", title);
 		}
-	},
-	markAsPlaying: function(){
-		this.c.addClass('playing-song');
-	},
-	unmarkAsPlaying: function(){
-		this.c.removeClass('playing-song');
 	},
 	unmark: function(){
 		this.c.removeClass('to-play-next to-play-previous');
@@ -442,7 +435,8 @@ provoda.View.extendTo(songUI, {
 				return false;
 			});
 		$('<span class="nothing-toy"></span>').appendTo(this.node);
-
+		//
+		this.player_song_mark = $('<span class="playing-song-mark"></span>').appendTo(this.node);
 		var buttmen = this.root_view.els.play_controls.node.clone(true).data('mo', this.md);
 			buttmen.find('.pc').data('mo', this.md);
 		this.c.prepend(buttmen);

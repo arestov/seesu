@@ -434,7 +434,7 @@ provoda.Model.extendTo(mfCor, {
 	play: function(){
 		var cm = this.state("used_mopla");
 		if (cm){
-			if (!cm.state("play")){
+			if (!cm.state('play')){
 				this.trigger('before-mf-play', cm);
 				cm.play();
 			}

@@ -36,11 +36,10 @@ a.search-mp3-failed{
 }
 a.waiting-full-render{
 	cursor:pointer;
-	color:gray;
 }
 a.song{
 	padding:3px 1px 0;
-	color:#ccc;
+	
 	border:0  !important;
 	
 	}
@@ -53,8 +52,11 @@ a.track-node{
 	cursor:pointer;
 	border:0 !important;
 	overflow:hidden;
+	color:#8C8C8C;
 	}
-	
+.playing-song a.track-node {
+	color:#ccc;
+}
 
 a.waiting-full-render.marked-for-play{
 	outline:1px dotted #888 ;
@@ -340,3 +342,25 @@ a.download-mp3:hover{
 		background-color: #5E5E5E;
 		border-top: 1px solid #737373
 		}*/
+.playing-song-mark{
+	display: none;
+	position: absolute;
+	top:5px;
+	right:20px;
+	height: 20px;
+	width: 20px;
+	background: url(../i/equalaizer_stoped.gif) no-repeat;
+	}
+	.playing-process.playing-song-mark{
+		background-image: url(../i/equalaizer.gif);
+	}
+.player-song .playing-song-mark{
+	display: block;
+	}
+.viewing-song .playing-song-mark{
+	display: none;
+	}
+.full-song-title{
+	display: block;
+	min-height: 39px;
+	}
