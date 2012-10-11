@@ -61,6 +61,9 @@ provoda.addPrototype("baseSong",{
 			_this.checkNeighboursChanges(false, true, "track view");
 		}, {exlusive: true});
 	},
+	simplify: function() {
+		return cloneObj({}, this, false, ['track', 'artist']);
+	},
 	init: function(omo, playlist, player, mp3_search){
 		this._super();
 		this.plst_titl = playlist;

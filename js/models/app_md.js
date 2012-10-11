@@ -579,7 +579,7 @@ provoda.Model.extendTo(appModel, {
 					}
 
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
-					su.art_images.checkLfmData('geo.getMetroUniqueTrackChart', r, metro_tracks);
+					su.art_images.checkLfmData('geo.getMetroUniqueTrackChart', r, tracks);
 					var track_list = [];
 					if (tracks.length) {
 						var l = Math.min(tracks.length, paging_opts.page_limit);
@@ -614,7 +614,7 @@ provoda.Model.extendTo(appModel, {
 		vopts = vopts || {};
 		var pl = this.createMetroChartPlaylist(country, metro);
 		pl.loadMoreSongs();
-		this.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
+		this.show_playlist_page(pl, vopts.save_parents, vopts.no_navi);
 	},
 	showSimilarArtists: function(artist, vopts, start_song){
 		vopts = vopts || {};

@@ -717,6 +717,7 @@ suReady(function(){
 	try_mp3_providers();
 	seesu.checkUpdates();
 });
+
 var UserPlaylists = function() {};
 provoda.Eventor.extendTo(UserPlaylists, {
 	init: function() {
@@ -748,7 +749,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 		});
 		this.watchOwnPlaylist(pl_r);
 		this.playlists.push(pl_r);
-		this.trigger('playlsits-change', this.playlists)
+		this.trigger('playlsits-change', this.playlists);
 		return pl_r;
 	},
 	watchOwnPlaylist: function(pl) {
@@ -757,6 +758,15 @@ provoda.Eventor.extendTo(UserPlaylists, {
 			this.trigger('each-playlist-change');
 			_this.savePlaylists();
 		});
+	},
+	removePlaylist: function(pl) {
+		var length = this.playlists.length;
+		this.playlists = arrayExclude(this.playlists, pl);
+		if (this.playlists.length != length){
+			this.trigger('playlsits-change', this.playlists);
+			this.savePlaylists();
+		}
+		
 	},
 	rebuildPlaylist: function(saved_pl){
 		var p = this.createEnvPlaylist({
@@ -779,16 +789,6 @@ provoda.Eventor.extendTo(UserPlaylists, {
 			}
 		} 
 		
-		
-		recovered.find = function(puppet){
-			for (var i=0; i < recovered.length; i++) {
-				if (recovered[i].compare(puppet)){
-					return recovered[i];
-				}
-				
-			}
-		};
-
 		this.playlists = recovered;
 		this.trigger('playlsits-change', this.playlists);
 	}
