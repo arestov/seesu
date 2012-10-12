@@ -363,4 +363,10 @@ a.download-mp3:hover{
 .full-song-title{
 	display: block;
 	min-height: 39px;
+	overflow: hidden;
+	}
+.has-no-track-title .song-artist-name {
+	font-size: 14px;
+	margin-top: 6px;
+	color: #8C8C8C;
 	}
