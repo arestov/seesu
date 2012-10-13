@@ -30,7 +30,7 @@ provoda.addPrototype("baseSuggestView", {
 		}
 		if (this.autoscroll && state){
 			var active_invstg = this.parent_view.parent_view.state('mp-show');
-			if (!active_invstg.transit){
+			if (active_invstg && !active_invstg.transit){
 				this.root_view.scrollTo(this);
 			}
 		}
@@ -102,22 +102,10 @@ provoda.addPrototype("InvestigationView", {
 				if (!opts.transit){
 					this.expand();
 				}
-				this.c.removeClass('hidden');
-				
-				if (!opts.closed){
-					$(this.root_view.els.slider).addClass('show-search');
-				}
 			} else {
-				this.blur();
-				this.c.addClass('hidden');
+
 			}
-		},
-		"mp-blured": function(state) {
-			if (state){
-				this.blur();
-			} else {
-				$(this.root_view.els.slider).addClass('show-search-results');
-			}
+			this.c.toggleClass('hidden', !opts);
 		},
 		"can-expand": function(state) {
 			if (state){
@@ -126,14 +114,10 @@ provoda.addPrototype("InvestigationView", {
 		}
 	},
 	createBase: function() {
-		this.c = $('<div class="search-results-container current-src"></div');
+		this.c = $('<div class="search-results-block"></div');
 	},
 	die: function() {
-		this.blur();
 		this._super();
-	},
-	blur: function() {
-		$(this.root_view.els.slider).removeClass('show-search show-search-results');
 	}
 });
 
@@ -158,9 +142,6 @@ provoda.addPrototype("searchSectionView", {
 		if (this.c_class){
 			this.c.addClass(this.c_class);
 		}
-	},
-	'': {
-
 	},
 	state_change: {
 		active: function(state){

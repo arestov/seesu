@@ -26,6 +26,8 @@ provoda.View.extendTo(vkLoginUI, {
 
 	}
 });
+
+
 var LfmLoginView = function() {};
 
 provoda.View.extendTo(LfmLoginView, {
@@ -194,7 +196,7 @@ provoda.View.extendTo(songFileModelUI, {
 
 		var song_view = mf_cor_view.parent_view;
 		this.setVisState('is-visible', !!song_view.state('mp-show'))
-		song_view.on('state-change.mp-show', function(e){
+		song_view.on('state-change.mp-show-end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});
 		

@@ -44,6 +44,169 @@ Class.extendTo(gMessagesStore, {
 
 
 
+var TrackImages  = function() {};
+provoda.Model.extendTo(TrackImages, {
+	init: function(artmd, info) {
+		this._super();
+
+		this.artmd = artmd;
+		this.artist = info.artist;
+		this.track = info.track;
+
+		var _this = this;
+		artmd.on('best-image-change', function(value) {
+			_this.updateState('best-artist-image', value);
+		});
+		this.images_by_source = {};
+	},
+	addImage: function(lfm_arr, source) {
+		if (!this.images_by_source[source]){
+			this.images_by_source[source] = lfm_arr;
+			this.checkImages();
+		}
+	},
+	checkImages: function() {
+
+	}
+});
+
+var ArtistImages = function() {};
+provoda.Model.extendTo(ArtistImages, {
+	init: function(artist_name) {
+		this._super();
+
+		this.artist_name = artist_name;
+		this.images_by_source = {};
+	},
+	addImage: function(lfm_arr, source) {
+		if (!this.images_by_source[source]){
+			this.images_by_source[source] = lfm_arr;
+			this.checkImages();
+		}
+	},
+	checkImages: function() {
+
+	}
+});
+
+var LastFMArtistImagesSelector = function() {};
+provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
+	init: function() {
+		this._super();
+		this.art_models = {};
+		this.track_models = {};
+		this.unknown_methods = {};
+	},
+	setArtistImage: function(artist_name, lfm_arr, source) {
+		this.getArtistImagesModel(artist_name).addImage(lfm_arr, source);
+	},
+	setTrackImage: function(info, lfm_arr, source) {
+		this.getTrackImagesModel(info).addImage(lfm_arr, source);
+	},
+	setImage: function(info, source) {
+		if (!info.artist){
+			throw new Error('give me artist name');
+		}
+		if (!source){
+			throw new Error('give me source');
+		}
+	},
+	getTrackImagesModel: function(info) {
+		if (!info.artist || !info.track){
+			throw new Error ('give me full track info')
+		}
+		var model_id = info.artist + ' - ' + info.track;
+		if (!this.track_models[model_id]){
+
+			var md = new TrackImages();
+			md.init(this.getArtistImagesModel(info.artist), info);
+			this.track_models[model_id] = md;
+		}
+		return this.track_models[model_id];
+	},
+	getArtistImagesModel: function(artist_name) {
+		if (!artist_name){
+			throw new Error('give me artist name');
+		}
+		if (!this.art_models[artist_name]){
+			var md = new ArtistImages();
+			md.init(artist_name);
+			this.art_models[artist_name] = md
+		}
+		return this.art_models[artist_name];
+	},
+	checkLfmData: function(method, r, parsed) {
+		if (this.resp_handlers[method]){
+			this.resp_handlers[method].call(this, r, method, parsed);
+		} else {
+			this.unknown_methods[method] = true;
+		}
+	},
+	resp_handlers: {
+		'artist.getInfo': function(r) {
+
+		},
+		'artist.getSimilar': function() {
+
+		},//	var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
+		'geo.getMetroUniqueTrackChart': function() {
+			//	var metro_tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+		},
+		'album.getInfo': function() {
+
+		},
+		'playlist.fetch': function() {
+			//var playlist = toRealArray(getTargetField(r, 'playlist.trackList.track'));
+		},
+		'user.getLovedTracks': function(r, method, tracks) {
+			//	var tracks = toRealArray(getTargetField(r, 'lovedtracks.track'));
+		},
+		'user.getRecommendedArtists': function(r, method, artists) {
+			//var artists = toRealArray(getTargetField(r, 'recommendations.artist'));
+		},
+		'track.search': function(r, method) {
+			var tracks = toRealArray(getTargetField(r, 'results.trackmatches.track'));
+
+			for (var i = 0; i < tracks.length; i++) {
+				var cur = tracks[i];
+				su.art_images.setTrackImage({
+					artist: cur.artist,
+					track: cur.name
+				}, cur.image, method);
+				
+			}
+
+		},
+		'artist.search': function(r, method) {
+			var artists = toRealArray(getTargetField(r, 'results.artistmatches.artist'));
+			for (var i = 0; i < artists.length; i++) {
+				var cur = artists[i];
+
+				this.setArtistImage(cur.name, cur.image, method);
+
+			}
+		},
+		'artist.getTopTracks': function(r, method, tracks) {
+			tracks = tracks || toRealArray(getTargetField(r, 'toptracks.track'));
+			for (var i = 0; i < tracks.length; i++) {
+				var cur = tracks[i];
+				su.art_images.setTrackImage({
+					artist: cur.artist.name,
+					track: cur.name
+				}, cur.image, method);
+				
+			}
+		},
+		'tag.getTopArtists': function(r, method, artists) {
+			artists = artists || toRealArray(getTargetField(r, 'topartists.artist'));
+			for (var i = 0; i < artists.length; i++) {
+				var cur = artists[i];
+				su.art_images.setArtistImage(cur.name, cur.image, method);
+			}
+
+		}
+	}
+});
 
 var PartsSwitcher = function() {};
 
@@ -170,3 +333,19 @@ provoda.Model.extendTo(BaseCRow, {
 		this.updateState("active_view", true);
 	}
 });
+
+
+
+var external_playlist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
+	this.result = this.header + '\n';
+	for (var i=0; i < array.length; i++) {
+		this.result += this.preline + ':' + (array[i].duration || '-1') + ',' + array[i].artist_name + ' - ' + array[i].track_title + '\n' + array[i].mp3link + '\n';
+	}
+	this.data_uri = this.request_header + escape(this.result);
+	
+};
+external_playlist.prototype = {
+	header : '#EXTM3U',
+	preline: '#EXTINF',
+	request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
+};

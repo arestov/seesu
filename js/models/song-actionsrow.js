@@ -371,12 +371,12 @@ BaseCRow.extendTo(PlaylistAddRow, {
 	createPlaylist: function() {
 		var current_query = this.state('query');
 		if (current_query){
-			su.gena.create_userplaylist(current_query).add(this.mo);
+			su.gena.createUserPlaylist(current_query).add(this.mo);
 		}
 		this.hide();
 	}
 });
-//su.gena.create_userplaylist(searching_for).add(current_song);
+//su.gena.createUserPlaylist(searching_for).add(current_song);
 //playlist.add(song);
 
 })();

@@ -128,24 +128,9 @@ provoda.View.extendTo(StartPageView, {
 		var _this = this;
 
 		this.els = this.parent_view.els;
-		this.els.search_form.find('#hint-query').text(su.popular_artists[(Math.random()*10).toFixed(0)]);
+		this.c = this.els.start_screen;
 
-		this.els.search_form.find('#app_type').val(su.env.app_type);
-		
-		this.els.search_form.submit(function(){return false;});
-		
-		
-		this.search_input = this.els.search_input;
-	
-		this.search_input.on('keyup change', function(e) {
-			var input_value = this.value;
-			_this.overrideStateSilently('search-query', input_value);
-			_this.parent_view.md.search(input_value);
-			
-			
-		});
-
-		
+		this.c.find('#hint-query').text(su.popular_artists[(Math.random()*10).toFixed(0)]);
 	},
 	'collch-fast_pstart': function(name, md) {
 		var view = this.getFreeChildView(name, md, 'main');
@@ -156,22 +141,32 @@ provoda.View.extendTo(StartPageView, {
 			main: FastPSRowView
 		}
 	},
+	complex_states: {
+		'mp-show-end': {
+			depends_on: ['map-animating', 'vis-mp-show', 'mp-show'],
+			fn: function(anim, vis_mp_show, mp_show) {
+				if (anim) {
+					if (vis_mp_show && anim == vis_mp_show.anid){
+						return vis_mp_show.value;
+					} else {
+						return false;
+					}
+					
+				} else {
+					return mp_show
+				}
+			}
+		}
+	},
 	state_change: {
 		'mp-show': function(opts) {
 			if (opts){
 				if (opts.userwant){
-					this.search_input[0].focus();
-					this.search_input[0].select();
+			//		this.search_input[0].focus();
+				//	this.search_input[0].select();
 				}
 			} else {
 				
-			}
-		},
-		'mp-blured': function(state) {
-			if (state){
-				$(this.els.slider).removeClass("show-start");
-			} else {
-				$(this.els.slider).addClass("show-start");
 			}
 		},
 		"can-expand": function(state) {
@@ -194,9 +189,7 @@ provoda.View.extendTo(StartPageView, {
 				this.plts_link.removeClass('hidden');
 			}
 		},
-		"search-query": function(state) {
-			this.search_input.val(state || '');
-		},
+	
 		"ask-rating-help": function(link){
 			var _this = this;
 
@@ -327,6 +320,8 @@ provoda.View.extendTo(StartPageView, {
 								},
 								fn: function() {
 									_cmetro.empty();
+
+									var ppp = su.createMetroChartPlaylist(random_metro.country, random_metro.name);
 							
 									var plr = su.preparePlaylist({//fix params for cache
 										title: 'Chart of ' + random_metro.name,
@@ -355,7 +350,13 @@ provoda.View.extendTo(StartPageView, {
 												var con = $('<li></li>').appendTo(ulm);
 												$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
 												
-												var tobj = {artist: _trm.artist.name, track: _trm.name};
+												var tobj = {
+													artist: _trm.artist.name, 
+													track: _trm.name,
+													lfm_image: {
+														array: _trm.image
+													}
+												};
 												plr.push(tobj);
 												createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
 												
