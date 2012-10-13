@@ -130,6 +130,8 @@ appModel.extendTo(seesuApp, {
 		});
 
 		this.app_md = this;
+		this.art_images = new LastFMArtistImagesSelector();
+		this.art_images.init();
 
 		if (app_env.check_resize){
 			this.updateState('slice-for-height', true);
@@ -175,6 +177,10 @@ appModel.extendTo(seesuApp, {
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
 				_this.trackPage(nv.map_level.resident.page_name);
 			})
+			.on('changes', function(changes) {
+				console.log(changes);
+				_this.animateMapChanges(changes);
+			})
 			.makeMainLevel();
 
 		//(new appModel()).init(this);
@@ -199,7 +205,7 @@ appModel.extendTo(seesuApp, {
 
 		this.delayed_search = {
 			vk_api:{
-				queue:  new funcsQueue(2000, 8000 , 7)
+				queue:  new funcsQueue(700, 8000 , 7)
 			}
 		};
 
@@ -340,14 +346,6 @@ appModel.extendTo(seesuApp, {
 				}
 			}, 300)
 		});
-		jsLoadComplete({
-			test: function(){
-				return window.su && window.su.gena && window.su.gena.playlists;
-			}, 
-			fn: function(){
-				su.chechPlaylists();
-			}
-		});
 
 		setTimeout(function() {
 			for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
@@ -384,7 +382,7 @@ appModel.extendTo(seesuApp, {
 	},
 	checkStats: function() {
 		if (this.usage_counter > 2){
-			this.app_md.start_page.showMessage('rating-help');
+			this.start_page.showMessage('rating-help');
 		}
 		return this;
 	},
@@ -414,9 +412,9 @@ appModel.extendTo(seesuApp, {
 		
 
 	},
-	chechPlaylists: function(){
+	checkPlaylists: function(){
 		if (this.gena){
-			this.app_md.start_page.updateState('have-playlists', !!this.gena.playlists.length);
+			this.start_page.updateState('have-playlists', !!this.gena.playlists.length);
 		}
 	},
 	fs: {},//fast search
@@ -557,27 +555,6 @@ su.init(3.6);
 
 
 
-var external_playlist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
-	this.result = this.header + '\n';
-	for (var i=0; i < array.length; i++) {
-		this.result += this.preline + ':' + (array[i].duration || '-1') + ',' + array[i].artist_name + ' - ' + array[i].track_title + '\n' + array[i].mp3link + '\n';
-	}
-	this.data_uri = this.request_header + escape(this.result);
-	
-};
-external_playlist.prototype = {
-	header : '#EXTM3U',
-	preline: '#EXTINF',
-	request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
-};
-
-var random_track_plable = function(track_list){
-	var random_track_num = Math.floor(Math.random()*track_list.length);
-	return track_list[random_track_num];
-	
-};
-
-
 
 
 (function(){
@@ -609,41 +586,30 @@ var random_track_plable = function(track_list){
 
 
 
-var proxy_render_artists_tracks = function(artist_list, pl_r){
-	//fixme
-	var track_list_without_tracks = [];
-	if (artist_list){
-		
-		for (var i=0; i < artist_list.length; i++) {
-			track_list_without_tracks.push({"artist" :artist_list[i]});
-		}
-		
-		
-	}
-	pl_r.injectExpectedSongs(track_list_without_tracks);
-};
+
 var render_loved = function(user_name){
 	var pl_r = su.preparePlaylist({
 		title: localize('loved-tracks'),
 		type: 'artists by loved'
-	})
-
-	
+	});
 
 	pl_r.setLoader(function(paging_opts) {
-
 		var request_info = {};
-
-		
-
 		lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
 			.done(function(r){
-				var tracks = r.lovedtracks.track || false;
+				var tracks = toRealArray(getTargetField(r, 'lovedtracks.track'));
+				su.art_images.checkLfmData('user.getLovedTracks', r, tracks);
 				var track_list = [];
 				if (tracks) {
 					
 					for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
-						track_list.push({'artist' : tracks[i].artist.name ,'track': tracks[i].name});
+						track_list.push({
+							'artist' : tracks[i].artist.name,
+							'track': tracks[i].name,
+							lfm_image:  {
+								array: tracks[i].image
+							}
+						});
 					}
 
 				}
@@ -687,7 +653,13 @@ var render_recommendations_by_username = function(username){
 						var artist = $(artists[i]).text();
 						artist_list.push(artist);
 					}
-					proxy_render_artists_tracks(artist_list, pl_r);
+					var track_list_without_tracks = [];
+					if (artist_list){
+						for (var i=0; i < artist_list.length; i++) {
+							track_list_without_tracks.push({"artist" :artist_list[i]});
+						}
+					}
+					pl_r.injectExpectedSongs(track_list_without_tracks);
 				}
 			}
 	});
@@ -706,16 +678,19 @@ var render_recommendations = function(){
 
 		lfm.get('user.getRecommendedArtists', {sk: lfm.sk, limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
 			.done(function(r){
-				var artists = r.recommendations.artist;
+				var artists = toRealArray(getTargetField(r, 'recommendations.artist'));
+				su.art_images.checkLfmData('user.getRecommendedArtists', r, artists);
 				var track_list = [];
 				if (artists && artists.length) {
 					
 					for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
 						track_list.push({
-							artist: artists[i].name
+							artist: artists[i].name,
+							lfm_image: {
+								array: artists[i].image
+							}
 						});
 					}
-					//proxy_render_artists_tracks(artist_list,pl_r);
 				}
 				pl_r.injectExpectedSongs(track_list);
 
@@ -743,23 +718,6 @@ var render_recommendations = function(){
 
 
 
-var make_lastfm_playlist = function(r, pl_r){
-	var playlist = r.playlist.trackList.track;
-	var music_list = [];
-	if  (playlist){
-		
-		if (playlist.length){
-			
-			for (var i=0; i < playlist.length; i++) {
-				music_list.push({track: playlist[i].title, artist: playlist[i].creator });
-			}
-		} else if (playlist.title){
-			music_list.push({track: playlist.title, artist: playlist.creator });
-		}
-
-	} 
-	pl_r.injectExpectedSongs(music_list);
-};
 
 
 
@@ -769,48 +727,58 @@ suReady(function(){
 	seesu.checkUpdates();
 });
 
-jsLoadComplete(function() {
-	su.gena = { //this work with playlists
-
-		save_playlists: function(){
-			var _this = this;
-			if (this.save_timeout){clearTimeout(this.save_timeout);}
-			
-			this.save_timeout = setTimeout(function(){
-				var plsts = [];
-				var playlists = _this.playlists;
-				for (var i=0; i < playlists.length; i++) {
-					plsts.push(playlists[i].simplify());
-				}
-				suStore('user_playlists', plsts, true);
-			},10);
-			
-		},
-		create_userplaylist: function(title,p, manual_inject){
-			var _this = this;
-			var pl_r = p || su.preparePlaylist({
-				title: title,
-				type: "cplaylist",
-				data: {name: title} 
-			});
-			if (!manual_inject){
-				this.playlists.push(pl_r);
+var UserPlaylists = function() {};
+provoda.Eventor.extendTo(UserPlaylists, {
+	init: function() {
+		this._super();
+		this.playlists = [];
+	},
+	savePlaylists: function(){
+		var _this = this;
+		if (this.save_timeout){clearTimeout(this.save_timeout);}
+		
+		this.save_timeout = setTimeout(function(){
+			var plsts = [];
+			var playlists = _this.playlists;
+			for (var i=0; i < playlists.length; i++) {
+				plsts.push(playlists[i].simplify());
 			}
+			_this.saveToStore(plsts);
 			
-			var oldpush = pl_r.push;
-			pl_r.push = function(){
-				oldpush.apply(this, arguments);
+		},10);
+		
+	},
+	
+	createUserPlaylist: function(title){
 
-				seesu.trackEvent('song actions', 'add to playlist');
-				_this.save_playlists();
-			};
-			return pl_r;
+		var pl_r = this.createEnvPlaylist({
+			title: title,
+			type: "cplaylist",
+			data: {name: title} 
+		});
+		this.watchOwnPlaylist(pl_r);
+		this.playlists.push(pl_r);
+		this.trigger('playlsits-change', this.playlists);
+		return pl_r;
+	},
+	watchOwnPlaylist: function(pl) {
+		var _this = this;
+		pl.on('palist-change', function(array) {
+			this.trigger('each-playlist-change');
+			_this.savePlaylists();
+		});
+	},
+	removePlaylist: function(pl) {
+		var length = this.playlists.length;
+		this.playlists = arrayExclude(this.playlists, pl);
+		if (this.playlists.length != length){
+			this.trigger('playlsits-change', this.playlists);
+			this.savePlaylists();
 		}
 		
-	};
-
-	var rebuildPlaylist = function(saved_pl){
-		var p = su.preparePlaylist({
+	},
+	rebuildPlaylist: function(saved_pl){
+		var p = this.createEnvPlaylist({
 			title: saved_pl.playlist_title, 
 			type: saved_pl.playlist_type,
 			data: {name: saved_pl.playlist_title}
@@ -818,36 +786,56 @@ jsLoadComplete(function() {
 		for (var i=0; i < saved_pl.length; i++) {
 			p.push(saved_pl[i]);
 		}
-		delete p.loading;
-		su.gena.create_userplaylist(false, p, true);
+		this.watchOwnPlaylist(p);
 		return p;
-	};
-	su.gena.playlists = (function(){
-		var pls = [];
-		
-		var plsts_str = suStore('user_playlists');
-		if (plsts_str){
-			var spls = plsts_str;
+	},
+	setSavedPlaylists: function(spls) {
+		var recovered = [];
+
+		if (spls){
 			for (var i=0; i < spls.length; i++) {
-				pls[i] = rebuildPlaylist(spls[i]);
+				recovered[i] = this.rebuildPlaylist(spls[i]);
 			}
 		} 
 		
-		
-		pls.push = function(){
-			Array.prototype.push.apply(this, arguments);
-			su.chechPlaylists();
-			
-		};
-		pls.find = function(puppet){
-			for (var i=0; i < pls.length; i++) {
-				if (pls[i].compare(puppet)){
-					return pls[i];
-				}
-				
-			}
-		};
-		return pls;
-	})();
+		this.playlists = recovered;
+		this.trigger('playlsits-change', this.playlists);
+	}
+});
+
+SuUsersPlaylists = function() {};
+UserPlaylists.extendTo(SuUsersPlaylists, {
+	init: function() {
+		this._super();
+		this
+			.on('playlsits-change', function(array) {
+				su.checkPlaylists(array);
+			})
+			.on('each-playlist-change', function() {
+				su.trackEvent('song actions', 'add to playlist');
+			});
+	},
+	saveToStore: function(value) {
+		suStore('user_playlists', value, true);
+	},
+	createEnvPlaylist: function(opts) {
+		return su.preparePlaylist(opts);
+	}
+});
+
+
+jsLoadComplete(function() {
+
+
+	su.gena = new SuUsersPlaylists();
+	su.gena.init();
+
+
+	var plsts_str = suStore('user_playlists');
+	if (plsts_str){
+		su.gena.setSavedPlaylists(plsts_str);
+	}
+
+	
 	jsLoadComplete.change();
 });

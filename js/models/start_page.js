@@ -13,6 +13,7 @@ mapLevelModel.extendTo(StartPage, {
 	init: function(su){
 		this._super();
 		this.su = su;
+		this.updateState('needs-search-from', true);
 		this.updateState('nav-title', 'Seesu start page');
 
 		var fast_pagestart = new FastPSRow();

@@ -51,7 +51,7 @@ var downGrateTests = [
 ];
 
 var getSongFileModel = function(mo, player){
-	return this.models[mo.uid] = this.models[mo.uid] || (new songFileModel(this, mo)).setPlayer(player);
+	return this.models[mo.uid] = this.models[mo.uid] || (new songFileModel()).init({file: this, mo: mo}).setPlayer(player);
 };
 var musicSeachEmitter;
 

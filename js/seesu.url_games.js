@@ -564,7 +564,8 @@ var hashChangeQueue = new funcsQueue(0);
 var hashChangeRecover = function(e){
 	var url = e.newURL;
 
-	
+	su.map.startChangesCollecting();
+
 	var state_from_history = navi.findHistory(e.newURL);
 	if (state_from_history){
 		var dl = gunm(state_from_history.data);
@@ -601,6 +602,8 @@ var hashChangeRecover = function(e){
 			
 		}
 	}
+	
+	su.map.finishChangesCollecting();
 }
 
 

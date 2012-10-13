@@ -95,22 +95,100 @@ provoda.Model.extendTo(appModel, {
 	setDocTitle: function(title) {
 		this.updateState('doc-title', title);
 	},
+	preparePlaylist: function(params, first_song){
+		var pl = new songsList();
+		pl.init(params, first_song, this.mp3_search, this.p);
+		return pl;
+	},
 	restoreFreezed: function(transit, url_restoring){
 		this.map.restoreFreezed(transit, url_restoring);
 	},
-	// <<<< browser map
-	show_now_playing: function(no_stat){
-		if (!no_stat){
-			this.trackEvent('Navigation', 'now playing');
-		}
-		this.restoreFreezed(true);
-		this.show_track_page(this.p.c_song);
-		
-		
-	},
+	
 	showStartPage: function(url_restoring){
 		//mainaly for hash url games
 		this.map.startNewBrowse(url_restoring);
+	},
+	'mapch-handlers': {
+		"zoom-in": function(array) {
+			var target;
+			for (var i = array.length - 1; i >= 0; i--) {
+				var cur = array[i];
+				if (cur.type == 'move-view' && cur.value){
+					target = cur.target;
+					break;
+				}
+				
+			}
+			return target;
+		},
+		"zoom-out": function(array) {
+			var target;
+			for (var i = array.length - 1; i >= 0; i--) {
+				var cur = array[i];
+				if (cur.type == 'zoom-out' || cur.type == 'move-view'){//&& cur.value
+					target = cur.target;
+					break;
+				}
+				
+			}
+			return target;
+		},
+	},
+	'model-mapch': {
+		'move-view': function(change) {
+			var parent = change.target.getParentMapModel();
+			if (parent){
+				parent.updateState('mp-has-focus', false);
+			}
+			change.target.updateState('mp-show', change.value);
+		},
+		'zoom-out': function(change) {
+			change.target.updateState('mp-show', false);
+		},
+		'destroy': function(change) {
+			change.target.mlmDie();
+		}
+	},
+	animationMark: function(models, mark) {
+		for (var i = 0; i < models.length; i++) {
+			models[i].updateState('map-animating', mark);
+		}
+	},
+	animateMapChanges: function(changes) {
+		var 
+			target_md,
+			all_changhes = $filter(changes.array, 'changes');
+
+		all_changhes = [].concat.apply([], all_changhes);
+		var models = $filter(all_changhes, 'target');
+		this.animationMark(models, changes.anid);
+
+		for (var i = 0; i < all_changhes.length; i++) {
+			var change = all_changhes[i];
+		//	change.anid = changes.anid;
+			var handler = this['model-mapch'][change.type];
+			if (handler){
+				handler.call(this, change);
+			}
+		}
+
+		for (var i = changes.array.length - 1; i >= 0; i--) {
+			var cur = changes.array[i];
+			if (this['mapch-handlers'][cur.name]){
+				target_md = this['mapch-handlers'][cur.name].call(this, cur.changes);
+				break;
+			}	
+		}
+		if (target_md){
+			target_md.updateState('mp-has-focus', true);
+			this.updateState('active-lev-num', {n: target_md.getLevNum()});
+			this.updateState('show-search-form', target_md.state('needs-search-from'));
+		}
+
+		
+		this.updateState('map-animation', changes);
+		this.updateState('map-animation', false);
+		this.animationMark(models, false);
 	},
 	keyNav: function(key_name) {
 		var md = this.map.getCurMapL().resident;
@@ -159,9 +237,69 @@ provoda.Model.extendTo(appModel, {
 			
 		});
 	},
-	showResultsPage: function(query, no_navi){
+	collectChanges: function(fn, args) {
+		var aycocha = this.map.isCollectingChanges();
+		if (!aycocha){
+			this.map.startChangesCollecting();
+		}
+
+		fn.apply(this, args);
+
+		if (!aycocha){
+			this.map.finishChangesCollecting();
+		}
+	},
+	showTopTacks: function (artist, vopts, start_song) {
+		this.collectChanges(this._showTopTacks, arguments);
+	},
+	showMetroChart: function() {
+		this.collectChanges(this._showMetroChart, arguments);
+	},
+	showResultsPage: function() {
+		this.collectChanges(this._showResultsPage, arguments);
+	},
+	showArtcardPage: function() {
+		this.collectChanges(this._showArtcardPage, arguments);
+	},
+	showStaticPlaylist: function() {
+		this.collectChanges(this._showStaticPlaylist, arguments);
+	},
+	show_playlist_page: function() {
+		this.collectChanges(this._show_playlist_page, arguments);
+	},
+	show_track_page: function() {
+		this.collectChanges(this._show_track_page, arguments);
+	},
+	show_now_playing: function() {
+		this.collectChanges(this._show_now_playing, arguments);
+	},
+	show_tag:function() {
+		this.collectChanges(this._show_tag, arguments);
+	},
+	showArtistPlaylist:function() {
+		this.collectChanges(this._showArtistPlaylist, arguments);
+	},
+	showAlbum:function() {
+		this.collectChanges(this._showAlbum, arguments);
+	},
+	_show_now_playing: function(no_stat){
+
+		var current_map_md = this.map.getCurrentResident();
+		if (!this.p.c_song || current_map_md == this.p.c_song){
+			return false;
+		}
+		if (!no_stat){
+			this.trackEvent('Navigation', 'now playing');
+		}
+		this.restoreFreezed(true);
+		this.show_track_page(this.p.c_song);
+		
+		
+	},
+	_showResultsPage: function(query, no_navi){
 		var lev;
-		if (!this.search_el || !this.search_el.lev.isOpened()){
+		var cur_el = this.search_el;
+		if (!cur_el || !cur_el.state('mp-has-focus') || !cur_el.lev.isOpened()){
 			var md = this.createSearchPage();
 			var _this = this;
 			md.on('state-change.mp-show', function(e) {
@@ -182,23 +320,23 @@ provoda.Model.extendTo(appModel, {
 		invstg.changeQuery(query);
 
 	},
-	showArtcardPage: function(artist, save_parents, no_navi){
+	_showArtcardPage: function(artist, save_parents, no_navi){
 		var md = new artCard(artist);
 		this.bindMMapStateChanges(md, 'artcard');
 		var lev = this.map.goDeeper(save_parents, md);
 	},
-	showStaticPlaylist: function(pl, save_parents, no_navi) {
+	_showStaticPlaylist: function(pl, save_parents, no_navi) {
 		if (pl.lev && pl.lev.canUse() && !pl.lev.isOpened()){
 			this.restoreFreezed();
 		} else {
 			this.show_playlist_page(pl, save_parents, no_navi);
 		}
 	},
-	show_playlist_page: function(pl, save_parents, no_navi){
+	_show_playlist_page: function(pl, save_parents, no_navi){
 		this.bindMMapStateChanges(pl, 'playlist');
 		var lev = this.map.goDeeper(save_parents, pl);
 	},
-	show_track_page: function(mo, no_navi){
+	_show_track_page: function(mo, no_navi){
 		var _this = this,
 			title = (mo.plst_titl.belongsToArtist(mo.artist) ? '' : (mo.artist + ' - '))  + mo.track;
 		
@@ -207,14 +345,9 @@ provoda.Model.extendTo(appModel, {
 		this.bindMMapStateChanges(mo);
 		var lev = this.map.goDeeper(true, mo);
 	},
-	preparePlaylist: function(params, first_song){
-		var pl = new songsList();
-		pl.init(params, first_song, this.mp3_search, this.p);
-		return pl;
-	},
-	// browser map >>>>>
+	
 
-	show_tag: function(tag, vopts, start_song){
+	_show_tag: function(tag, vopts, start_song){
 		//save_parents, no_navi
 		vopts = vopts || {};
 		var full_no_navi = vopts.no_navi;
@@ -235,14 +368,19 @@ provoda.Model.extendTo(appModel, {
 				page: paging_opts.next_page
 			})
 				.done(function(r){
-					var artists = r.topartists.artist;
+					var artists = toRealArray(getTargetField(r, 'topartists.artist'));
 					var track_list = [];
 
+					su.art_images.checkLfmData('tag.getTopArtists', r, artists);
 					if (artists && artists.length) {
+
 						var l = Math.min(artists.length, paging_opts.page_limit);
 						for (var i=0; i < l; i++) {
 							track_list.push({
-								artist: artists[i].name
+								artist: artists[i].name,
+								lfm_image: {
+									array: artists[i].image
+								}
 							});
 						}
 
@@ -268,7 +406,7 @@ provoda.Model.extendTo(appModel, {
 		}
 	},
 
-	showArtistPlaylist: function(artist, pl, vopts){
+	_showArtistPlaylist: function(artist, pl, vopts){
 		vopts = vopts || {};
 		var cpl = this.p.isPlaying(pl);
 		if (!cpl){
@@ -288,7 +426,7 @@ provoda.Model.extendTo(appModel, {
 		no_navi,
 		from_artcard
 	}*/
-	showAlbum: function(opts, vopts, start_song){
+	_showAlbum: function(opts, vopts, start_song){
 		var artist			= opts.artist, 
 			name			= opts.album_name,
 			id				= opts.album_id, 
@@ -306,23 +444,54 @@ provoda.Model.extendTo(appModel, {
 	
 		var recovered = this.showArtistPlaylist(original_artist || artist, pl, vopts);
 		
+
+
+
 		if (!recovered){
-			var get_artist_album_playlist = function(album_id, pl_r){
+			var getAlbumPlaylist = function(album_id, pl){
 				if (album_id) {
 					lfm.get('playlist.fetch',{
 						'playlistURL': 'lastfm://playlist/album/' + album_id
 					})
-						.done(function(pl_data){
-							make_lastfm_playlist(pl_data, pl_r);
+						.done(function(r){
+							su.art_images.checkLfmData('playlist.fetch', r);
+							var playlist = toRealArray(getTargetField(r, 'playlist.trackList.track'));
+							var music_list = [];
+							for (var i=0; i < playlist.length; i++) {
+								music_list.push({
+									track: playlist[i].title, 
+									artist: playlist[i].creator,
+									lfm_image: {
+										item: playlist[i].image
+									}
+								});
+							}
+							pl_r.injectExpectedSongs(music_list);
 						});
 				}
 			};
 			if (id){
-				get_artist_album_playlist(id, pl);
+				getAlbumPlaylist(id, pl);
 			} else{
 				lfm.get('album.getInfo',{'artist': artist, album : name})
-					.done(function(alb_data){
-						get_artist_album_playlist(alb_data.album.id, pl);
+					.done(function(r){
+						su.art_images.checkLfmData('album.getInfo', r);
+						var tracks = toRealArray(getTargetField(r, 'album.tracks.track'));
+						var track_list = [];
+						var imgs = getTargetField(r, 'album.image');
+						for (var i = 0; i < tracks.length; i++) {
+							var cur = tracks[i];
+							track_list.push({
+								artist: cur.artist.name,
+								track: cur.name,
+								lfm_image: {
+									array: imgs
+								}
+							});
+							tracks[i]
+						}
+						pl.injectExpectedSongs(track_list);
+						//getAlbumPlaylist(r.album.id, pl);
 					});
 			}
 		}
@@ -330,7 +499,8 @@ provoda.Model.extendTo(appModel, {
 			(recovered || pl).showTrack(start_song, vopts.no_navi);
 		}
 	},
-	showTopTacks: function (artist, vopts, start_song) {
+
+	_showTopTacks: function(artist, vopts, start_song) {
 		vopts = vopts || {};
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
@@ -359,17 +529,21 @@ provoda.Model.extendTo(appModel, {
 							pl.loadComplete(true);
 							return;
 						}
-						var tracks = r.toptracks.track || false;
+						var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+
+						su.art_images.checkLfmData('artist.getTopTracks', r, tracks);
+
 						var track_list = [];
-						if (tracks) {
-							
-							tracks = toRealArray(tracks);
-							
+						if (tracks.length) {
 							var l = Math.min(tracks.length, paging_opts.page_limit);
 							for (var i=paging_opts.remainder; i < l; i++) {
-								track_list.push({'artist' : artist ,
-									'track': tracks[i].name, 
-									images: tracks[i].image
+								track_list.push({
+									artist : artist ,
+									track: tracks[i].name,
+									lfm_image: {
+										array: tracks[i].image 
+									}
+									
 								});
 							}
 							
@@ -393,39 +567,66 @@ provoda.Model.extendTo(appModel, {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-	showMetroChart: function(country, metro, vopts){
-		vopts = vopts || {};
-		var plr = this.preparePlaylist({//can autoload
+	createMetroChartPlaylist: function(country, metro) {
+		var pl = this.preparePlaylist({//can autoload
 			title: 'Chart of ' + metro,
 			type: 'chart',
 			data: {country: country, metro: metro}
-		}).loading();
-
-		lfm.get('geo.getMetroUniqueTrackChart', {
-			country: country, 
-			metro: metro, 
-			start: (new Date()) - 60*60*24*7
-		})
-			.done(function(r){
-				if (r.error){
-					pl_r.loadComplete(true);
-					return;
-				}
-				if (r && r.toptracks && r.toptracks.track){
-					var metro_tracks = toRealArray(r.toptracks.track);
-					for (var i=0; i < Math.min(metro_tracks.length, 30); i++) {
-						
-						var _trm = metro_tracks[i];
-						plr.push({artist: _trm.artist.name, track: _trm.name});
+		});
+		pl.setLoader(function(paging_opts) {
+			var request_info = {};
+			lfm.get('geo.getMetroUniqueTrackChart', {
+				country: country, 
+				metro: metro,
+				limit: 30,
+				start: (new Date()) - 60*60*24*7,
+				page: paging_opts.next_page
+			})
+				.done(function(r) {
+					if (r.error){
+						pl.loadComplete(true);
+						return;
 					}
-					pl_r.loadComplete(metro_tracks.length);
-				} else {
-					pl_r.loadComplete(true);
-				}
 
-				
-			});
-		this.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
+					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+					su.art_images.checkLfmData('geo.getMetroUniqueTrackChart', r, tracks);
+					var track_list = [];
+					if (tracks.length) {
+						var l = Math.min(tracks.length, paging_opts.page_limit);
+						for (var i=paging_opts.remainder; i < l; i++) {
+							var cur = tracks[i];
+							track_list.push({
+								artist : cur.artist.name,
+								track: cur.name, 
+								lfm_image: {
+									array: cur.image 
+								} 
+							});
+						}
+						
+					}
+					pl.injectExpectedSongs(track_list);
+					if (track_list.length < paging_opts.page_limit){
+						pl.setLoaderFinish();
+					}
+
+				})
+				.fail(function() {
+					pl.loadComplete(true);
+				})
+				.always(function() {
+					request_info.done = true;
+				});
+
+			return request_info;
+		});
+		return pl;
+	},
+	_showMetroChart: function(country, metro, vopts){
+		vopts = vopts || {};
+		var pl = this.createMetroChartPlaylist(country, metro);
+		pl.loadMoreSongs();
+		this.show_playlist_page(pl, vopts.save_parents, vopts.no_navi);
 	},
 	showSimilarArtists: function(artist, vopts, start_song){
 		vopts = vopts || {};
@@ -450,14 +651,18 @@ provoda.Model.extendTo(appModel, {
 					page: paging_opts.next_page
 				})
 					.done(function(r){
-						var artists = r.similarartists.artist;
+						var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
+						su.art_images.checkLfmData('artist.getSimilar', r, artists);
 						var track_list = [];
 
 						if (artists && artists.length) {
 							var l = Math.min(artists.length, paging_opts.page_limit);
 							for (var i=0; i < l; i++) {
 								track_list.push({
-									artist: artists[i].name
+									artist: artists[i].name,
+									lfm_image: {
+										array: artists[i].image
+									}
 								});
 							}
 
@@ -482,12 +687,8 @@ provoda.Model.extendTo(appModel, {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-	search: function(query, no_navi, new_browse){
-		if (new_browse){
-			this.showStartPage();
-		}
-
-		var old_v = this.start_page.state('search-query');
+	search: function(query, no_navi){
+		var old_v = this.state('search-query');
 		if (query != old_v){
 			if (!query) {
 				this.showStartPage();
@@ -496,10 +697,7 @@ provoda.Model.extendTo(appModel, {
 			}
 
 		}
-
-	
-
-		this.start_page.updateState('search-query', query);
+		this.updateState('search-query', query);
 		
 	}
 

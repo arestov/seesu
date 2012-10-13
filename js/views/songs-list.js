@@ -90,14 +90,12 @@ var songsListView;
 		'stch-mp-show': function(opts) {
 			if (opts){
 				this.c.removeClass('hidden');
-				$(this.root_view.els.slider).addClass('show-player-page');
 			} else {
-				$(this.root_view.els.slider).removeClass('show-player-page');
 				this.c.addClass('hidden');
 			}
 		},
-		'stch-mp-blured': function(state) {
-			this.lc.toggleClass('list-overview', !state);
+		'stch-mp-has-focus': function(state) {
+			this.lc.toggleClass('list-overview', !!state);
 		},
 		'stch-error': function(error){
 			if (this.error_b && this.error_b.v !== error){

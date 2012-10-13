@@ -5,26 +5,11 @@ provoda.View.extendTo(artCardUI, {
 		this.createBase();
 	},
 	die: function() {
-		this.blur();
 		this._super();	
-	},
-	blur: function() {
-		$(this.root_view.els.slider).removeClass('show-art-card');
 	},
 	state_change: {
 		"mp-show": function(opts) {
-			if (opts){
-				this.c.removeClass('hidden');
-			} else {
-				this.c.addClass('hidden');
-			}
-		},
-		"mp-blured": function(state) {
-			if (state){
-				this.blur();
-			} else {
-				$(this.root_view.els.slider).addClass('show-art-card');
-			}
+			this.c.toggleClass('hidden', !opts);
 		},
 		"loading-albums": function(state) {
 			if (state){
@@ -210,6 +195,7 @@ mapLevelModel.extendTo(artCard, {
 			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
 				.done(function(r){
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+					su.art_images.checkLfmData('artist.getTopTracks', r, tracks);
 
 					if (tracks.length){
 						var track_list = [];
@@ -234,6 +220,7 @@ mapLevelModel.extendTo(artCard, {
 		this.updateState('loading-baseinfo', true);
 		this.addRequest(lfm.get('artist.getInfo',{'artist': this.artist })
 			.done(function(r){
+				su.art_images.checkLfmData('artist.getInfo', r);
 				_this.updateState('loading-baseinfo', false);
 				r = parseArtistInfo(r);
 				if (r.images){
@@ -298,8 +285,11 @@ contextRow.prototype = {
 	isActive: function(name){
 		return !!this.parts[name].active;
 	},
-	show: function(name, arrow_left, callback){
+	showPart: function(name, posFn, callback){
+		
+
 		if (!this.parts[name].active){
+
 			this.hide(true);
 		
 		
@@ -313,13 +303,19 @@ contextRow.prototype = {
 			}
 			
 		}
-		if (arrow_left){
+		if (posFn){
 			//used for positioning 
-			this.arrow.css('left', arrow_left + 'px').removeClass('hidden');
+			this.arrow.removeClass('hidden');
+			var pos = posFn();
+			var arrow_papos = this.arrow.offsetParent().offset();
+
+			//.removeClass('hidden');
+			this.arrow.css('left', ((pos.left + pos.owidth/2) - arrow_papos.left) + 'px')
 			
 		} 
+		
 	},
-	hide: function(not_itself){
+	hide: function(not_itself, skip_arrow){
 		if (!not_itself){
 			if (this.m.active){
 				this.m.c.addClass('hidden');
@@ -335,8 +331,11 @@ contextRow.prototype = {
 			}
 			
 		}
+		if (!skip_arrow){
+			this.arrow.addClass('hidden');
+		}
 		
-		this.arrow.addClass('hidden');
+		
 		
 	}
 };

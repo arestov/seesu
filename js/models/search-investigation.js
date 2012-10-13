@@ -11,6 +11,22 @@ var
 "use strict";
 
 
+var suParseArtistsResults = function(r, item_constr, method) {
+	su.art_images.checkLfmData(method, r);
+	
+
+	return parseArtistsResults.apply(this, arguments);
+};
+
+var suParseTracksResults = function(r, item_constr, method) {
+	su.art_images.checkLfmData(method, r);
+	
+
+	return parseTracksResults.apply(this, arguments);
+};
+var suParseTagsResults = parseTagsResults;
+var suParseAlbumsResults = parseAlbumsResults;
+
 baseSuggest = function(){};
 provoda.extendFromTo('baseSuggest', provoda.Model, baseSuggest);
 
@@ -114,7 +130,7 @@ seesuSection.extendTo(artistsSection, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			getLastfmSuggests('artist.search', {artist: q}, q, this, parseArtistsResults, true);
+			getLastfmSuggests('artist.search', {artist: q}, q, this, suParseArtistsResults, true);
 		}
 	},
 	resItem: artistSuggest
@@ -167,7 +183,7 @@ seesuSection.extendTo(tracksSection, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			getLastfmSuggests('track.search', {track: q}, q, this, parseTracksResults, true);
+			getLastfmSuggests('track.search', {track: q}, q, this, suParseTracksResults, true);
 		}
 	},
 	resItem: trackSuggest
@@ -216,7 +232,7 @@ seesuSection.extendTo(tagsSection, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			getLastfmSuggests('tag.search', {tag: q}, q, this, parseTagsResults, true);
+			getLastfmSuggests('tag.search', {tag: q}, q, this, suParseTagsResults, true);
 		}
 	},
 	resItem: tagSuggest
@@ -273,7 +289,7 @@ seesuSection.extendTo(albumsSection, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			getLastfmSuggests('album.search', {'album': q}, q, this, parseAlbumsResults, true);
+			getLastfmSuggests('album.search', {'album': q}, q, this, suParseAlbumsResults, true);
 		}
 	},
 	resItem: albumSuggest
@@ -294,7 +310,16 @@ investigation.extendTo(SearchPage, {
 		this.addSection('albums', new albumsSection());
 		this.addSection('tags', new tagsSection());
 		this.addSection('tracks', new tracksSection());
+		this.updateState('mp-freezed', false);
 		
+	},
+	complex_states: {
+		"needs-search-from": {
+			depends_on: ['mp-freezed'],
+			fn: function(frzd) {
+				return !frzd
+			}
+		}
 	},
 	key_name_nav: {
 		'Enter': function() {
@@ -406,10 +431,10 @@ investigation.extendTo(SearchPage, {
 		} 
 		:
 		debounce(function(q){
-			getLastfmSuggests('artist.search', {artist: q}, q, this.g('artists'), parseArtistsResults);
-			getLastfmSuggests('track.search', {track: q}, q, this.g('tracks'), parseTracksResults);
-			getLastfmSuggests('tag.search', {tag: q}, q, this.g('tags'), parseTagsResults);	
-			getLastfmSuggests('album.search', {album: q}, q, this.g('albums'), parseAlbumsResults);
+			getLastfmSuggests('artist.search', {artist: q}, q, this.g('artists'), suParseArtistsResults);
+			getLastfmSuggests('track.search', {track: q}, q, this.g('tracks'), suParseTracksResults);
+			getLastfmSuggests('tag.search', {tag: q}, q, this.g('tags'), suParseTagsResults);	
+			getLastfmSuggests('album.search', {album: q}, q, this.g('albums'), suParseAlbumsResults);
 		}, 400),
 	getTitleString: function(text){
 		var original = localize('Search-resuls');

@@ -22,7 +22,7 @@ provoda.View.extendTo(appModelView, {
 			this.lst_interval = setInterval(this.checkLiveState, 1000);
 			
 		}
-
+		this.lev_containers = {};
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);
@@ -58,6 +58,13 @@ provoda.View.extendTo(appModelView, {
 			return false;
 		}
 		return !this.checkLiveState || !this.checkLiveState();
+	},
+	getLevelContainer: function(num) {
+		if (this.lev_containers[num]){
+			return this.lev_containers[num];
+		} else {
+			return this.lev_containers[num] = $('<div class="complex-page hidden"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
+		}
 	},
 	children_views: {
 		start_page : {
@@ -100,7 +107,8 @@ provoda.View.extendTo(appModelView, {
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
-				_this.els.searchres.append(view.getA());
+
+				_this.getLevelContainer(el.map_level_num).append(view.getA());
 			}
 
 		});
@@ -112,7 +120,7 @@ provoda.View.extendTo(appModelView, {
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
-				_this.els.artcards.append(view.getA());
+				_this.getLevelContainer(el.map_level_num).append(view.getA());
 			}
 
 		});
@@ -124,7 +132,7 @@ provoda.View.extendTo(appModelView, {
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
-				_this.els.artsTracks.append(view.getA());
+				_this.getLevelContainer(el.map_level_num).append(view.getA());
 			}
 
 		});
@@ -133,9 +141,105 @@ provoda.View.extendTo(appModelView, {
 	},
 	'collch-start_page': function(name, md) {
 		var view = this.getFreeChildView(name, md, 'main');
+		if (view){
+			var _this = this;
+
+			var checkFocus = function(opts) {
+				if (opts && opts.userwant){
+					_this.search_input[0].focus();
+					_this.search_input[0].select();
+				}
+			};
+			checkFocus(view.state('mp-show-end'));
+
+			view.on('state-change.mp-show-end', function(e) {
+				checkFocus(e.value)
+			});
+		}
 		this.requestAll();
 	},
 	manual_states_connect: true,
+	getLevByNum: function(num) {
+		return num == -1 ? false : this.getLevelContainer(num);
+	},
+	hideLevNum: function(num) {
+
+		var levc = this.getLevByNum(num);
+		if (levc){
+			levc.addClass('hidden');
+		}
+		
+	},
+	showLevNum: function(num) {
+		var levc = this.getLevByNum(num);
+		if (levc){
+			levc.removeClass('hidden');
+		}
+		
+	},
+	complex_states: {
+		'start-level': {
+			depends_on: ['active-lev-num'],
+			fn: function(nwrap) {
+				if (!nwrap || nwrap.n == -1){
+					return true;
+				}
+			}
+		}
+	},
+	'stch-start-level': function(state) {
+		this.els.start_screen.toggleClass('hidden', !state);
+	},
+	//
+	'stch-active-lev-num': function(num, old_num) {
+		if (old_num){
+			this.hideLevNum(old_num.n);
+		}
+		
+
+		this.showLevNum(num.n);
+	},
+	'stch-map-animation': function(changes) {
+		if (!changes){
+			return
+		}
+		var all_changhes = $filter(changes.array, 'changes');
+		all_changhes = [].concat.apply([], all_changhes);
+		console.log(all_changhes);
+		for (var i = 0; i < all_changhes.length; i++) {
+			var cur = all_changhes[i];
+
+			if (cur.type == 'move-view'){
+				cur.target.updateState('vis-mp-show', {
+					anid: changes.anid,
+					value: cur.value
+				});
+				//MUST UPDATE VIEW, NOT MODEL!!!!!
+			}
+			
+		}
+		/*
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			var handler = this["animation-type"][cur.type];
+
+			if (handler){
+				handler.call(this, cur.target, cur.type);
+			}
+			//array[i]
+		};*/
+	},
+	'stch-show-search-form': function(state) {
+		this.els.search_form.toggleClass('hidden', !state);
+	},
+	"animation-type":{
+		"mp-has-focus": function(target, state) {
+
+		},
+		"mp-show": function(target, state) {
+
+		}
+	},
 	state_change: {
 		"wait-vk-login": function(state) {
 			this.toggleBodyClass(state, 'wait-vk-login');
@@ -161,6 +265,9 @@ provoda.View.extendTo(appModelView, {
 				}
 			}	
 		},
+		"search-query": function(state) {
+			this.search_input.val(state || '');
+		},
 		'now-playing': function(text) {
 
 			var md = this.md;
@@ -175,7 +282,7 @@ provoda.View.extendTo(appModelView, {
 			}	
 		},
 		playing: function(state) {
-			var s = this.els.pllistlevel.add(this.now_playing_link);
+			var s = this.now_playing_link;
 			if (state){
 				s.addClass('player-played');
 
@@ -197,6 +304,9 @@ provoda.View.extendTo(appModelView, {
 			this.d.title = 	title || "";
 		}
 	},
+	getScrollVP: function() {
+		return this.els.scrolling_viewport;
+	},
 	scrollTo: function(view) {
 		if (!view){return false;}
 	//	if (!this.view_port || !this.view_port.node){return false;}
@@ -212,7 +322,7 @@ provoda.View.extendTo(appModelView, {
 
 
 
-		var svp = this.els.scrolling_viewport,
+		var svp = this.getScrollVP(),
 			scroll_c = svp.offset ? $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0]) :   svp.node,
 			scroll_top = scroll_c.scrollTop(), //top
 			scrolling_viewport_height = svp.node.height(), //height
@@ -279,15 +389,19 @@ provoda.View.extendTo(appModelView, {
 			
 			var ui_samples = $('#ui-samples',d);
 
-			var pllistlevel = $('#playlist-level',d);
 			
 			var search_form = $('#search',d); 
 			
 
 			var start_screen = $('#start-screen',d);
+
+			var screens_block = $('#screens',d);
+			var shared_parts_c = screens_block.children('.shared-parts');
+
 			_this.els = {
+				screens: screens_block,
 				scrolling_viewport: app_env.as_application ? {
-					node:$('#screens',d)
+					node: screens_block
 				} : {
 					node: $(d.body), 
 					offset: true
@@ -295,10 +409,6 @@ provoda.View.extendTo(appModelView, {
 				slider: slider,
 				navs: $(slider).children('.navs'),
 				start_screen: start_screen,
-				artcards: $('#art-cards', d),
-				pllistlevel: pllistlevel,
-				artsTracks: pllistlevel.find('#tracks-magic'),
-				searchres: $('#search_result',d),
 				search_input: $('#q',d),
 				search_form: search_form,
 				fast_personal_start: start_screen.children('.fast-personal-start'),
@@ -306,6 +416,20 @@ provoda.View.extendTo(appModelView, {
 			};
 
 
+			
+
+			_this.els.search_form.find('#app_type').val(su.env.app_type);
+			
+			_this.els.search_form.submit(function(){return false;});
+			
+			
+			_this.search_input = _this.els.search_input;
+		
+			_this.search_input.on('keyup change', function(e) {
+				var input_value = this.value;
+				_this.overrideStateSilently('search-query', input_value);
+				_this.md.search(input_value);
+			});
 
 
 			jsLoadComplete({
@@ -527,18 +651,6 @@ provoda.View.extendTo(appModelView, {
 		}
 		return image;
 	},
-	getRtPP: function(node){
-			
-		var clicked_node = $(node);
-		
-		var target_offset = clicked_node.offset();
-		var container_offset = this.els.pllistlevel.offset();
-		return {
-			left: target_offset.left - container_offset.left,
-			top: target_offset.top - container_offset.top,
-			cwidth: this.els.pllistlevel.width()
-		};
-	},
 	createUserAvatar: function(info, c, size){
 		var _this = this;
 		var imageplace = $("<div class='image-cropper'></div>").appendTo(c)
@@ -688,6 +800,19 @@ provoda.View.extendTo(appModelView, {
 		
 		
 	},
+
+	getRtPP: function(node){
+		throw new Error('cant detect position');
+		var clicked_node = $(node);
+		
+		var target_offset = clicked_node.offset();
+		var container_offset = this.els.pllistlevel.offset();
+		return {
+			left: target_offset.left - container_offset.left,
+			top: target_offset.top - container_offset.top,
+			cwidth: this.els.pllistlevel.width()
+		};
+	},
 	createSongListener: function(lig, uc){
 		var _this = this;
 		
@@ -698,7 +823,7 @@ provoda.View.extendTo(appModelView, {
 				
 				
 				uc.D('user-info', 'current-user', lig.user);
-				var p = _this.getRtPP(li[0]);
+
 				
 				var c = uc.C('user-info');
 
@@ -707,7 +832,17 @@ provoda.View.extendTo(appModelView, {
 					_this.showBigListener(c, lig);
 				});
 				
-				uc.show('user-info', (p.left + $(li[0]).outerWidth()/2) -13 );
+				//var p = _this.getRtPP(li[0]);
+
+				//var li_pos = ;
+				// 5 /*(p.left + $(li[0]).outerWidth()/2) -13 */
+
+				uc.showPart('user-info', function() {
+					return {
+						left: li.offset().left,
+						owidth: li.outerWidth()
+					};
+				});
 				su.trackEvent('peoples', 'view');
 			} else{
 				uc.hide();
