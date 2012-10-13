@@ -377,7 +377,10 @@ provoda.Model.extendTo(appModel, {
 						var l = Math.min(artists.length, paging_opts.page_limit);
 						for (var i=0; i < l; i++) {
 							track_list.push({
-								artist: artists[i].name
+								artist: artists[i].name,
+								lfm_image: {
+									array: artists[i].image
+								}
 							});
 						}
 
@@ -458,7 +461,9 @@ provoda.Model.extendTo(appModel, {
 								music_list.push({
 									track: playlist[i].title, 
 									artist: playlist[i].creator,
-									image_src: playlist[i].image
+									lfm_image: {
+										item: playlist[i].image
+									}
 								});
 							}
 							pl_r.injectExpectedSongs(music_list);
@@ -479,7 +484,9 @@ provoda.Model.extendTo(appModel, {
 							track_list.push({
 								artist: cur.artist.name,
 								track: cur.name,
-								image: imgs
+								lfm_image: {
+									array: imgs
+								}
 							});
 							tracks[i]
 						}
@@ -532,8 +539,11 @@ provoda.Model.extendTo(appModel, {
 							for (var i=paging_opts.remainder; i < l; i++) {
 								track_list.push({
 									artist : artist ,
-									track: tracks[i].name, 
-									images: tracks[i].image
+									track: tracks[i].name,
+									lfm_image: {
+										array: tracks[i].image 
+									}
+									
 								});
 							}
 							
@@ -588,7 +598,9 @@ provoda.Model.extendTo(appModel, {
 							track_list.push({
 								artist : cur.artist.name,
 								track: cur.name, 
-								images: cur.image
+								lfm_image: {
+									array: cur.image 
+								} 
 							});
 						}
 						
@@ -647,7 +659,10 @@ provoda.Model.extendTo(appModel, {
 							var l = Math.min(artists.length, paging_opts.page_limit);
 							for (var i=0; i < l; i++) {
 								track_list.push({
-									artist: artists[i].name
+									artist: artists[i].name,
+									lfm_image: {
+										array: artists[i].image
+									}
 								});
 							}
 

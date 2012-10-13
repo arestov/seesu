@@ -193,7 +193,7 @@ provoda.View.extendTo(mfCorUI, {
 				var v_content = $('<ul class=""></ul>');
 			
 				var make_v_link = function(thmn, vid, _title, cant_show){
-					var link = 'http://www.youtube.com/watch?v=' + v_id
+					var link = 'http://www.youtube.com/watch?v=' + vid;
 
 					var li = $('<li class="you-tube-video-link"></li>')
 					.attr({

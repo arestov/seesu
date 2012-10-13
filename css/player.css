@@ -43,9 +43,6 @@ a.song{
 	border:0  !important;
 	
 	}
-	a.song:hover{
-		color:#fff;
-		}
 a.track-node{
 	display:block;
 	padding:6px;
@@ -54,6 +51,9 @@ a.track-node{
 	overflow:hidden;
 	color:#8C8C8C;
 	}
+	a.track-node:hover{
+		color:#aaa;
+		}
 .playing-song a.track-node {
 	color:#ccc;
 }
@@ -314,7 +314,6 @@ a.download-mp3:hover{
 		}
 .show-zoom-to-track .tracks-for-play{
 	position: relative;
-	padding-top:51px !important;
 	}
 /*
 	.tracks-for-play .to-play-previous{
@@ -367,6 +366,6 @@ a.download-mp3:hover{
 	}
 .has-no-track-title .song-artist-name {
 	font-size: 14px;
-	margin-top: 6px;
+	margin-top: 16px;
 	color: #8C8C8C;
 	}

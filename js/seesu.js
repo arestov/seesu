@@ -603,7 +603,13 @@ var render_loved = function(user_name){
 				if (tracks) {
 					
 					for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
-						track_list.push({'artist' : tracks[i].artist.name ,'track': tracks[i].name});
+						track_list.push({
+							'artist' : tracks[i].artist.name,
+							'track': tracks[i].name,
+							lfm_image:  {
+								array: tracks[i].image
+							}
+						});
 					}
 
 				}
@@ -679,7 +685,10 @@ var render_recommendations = function(){
 					
 					for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
 						track_list.push({
-							artist: artists[i].name
+							artist: artists[i].name,
+							lfm_image: {
+								array: artists[i].image
+							}
 						});
 					}
 				}

@@ -350,7 +350,13 @@ provoda.View.extendTo(StartPageView, {
 												var con = $('<li></li>').appendTo(ulm);
 												$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
 												
-												var tobj = {artist: _trm.artist.name, track: _trm.name};
+												var tobj = {
+													artist: _trm.artist.name, 
+													track: _trm.name,
+													lfm_image: {
+														array: _trm.image
+													}
+												};
 												plr.push(tobj);
 												createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
 												

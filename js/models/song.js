@@ -12,6 +12,17 @@ var song;
 		getLevNum: function() {
 			return this.map_level_num - 1;
 		},
+		'stch-lfm-image': function(state) {
+			if (state){
+				if (state.array){
+					
+					this.updateState('song-image', state.array[1]['#text'].replace('/64/', '/64s/'));
+				} else if (state.item){
+					this.updateState('song-image', state.item);
+				}
+
+			}
+		},
 		'stch-can-expand': function(state) {
 			if (state && !this.expanded){
 				this.expanded = true;
@@ -60,6 +71,10 @@ var song;
 			this._super(omo, playlist, player, mp3_search);
 			var _this = this;
 			this.updateNavTexts();
+
+			if (omo.lfm_image){
+				this.updateState('lfm-image', omo.lfm_image);
+			}
 
 			this.on('view', function(no_navi, user_want){
 				su.show_track_page(this, no_navi);

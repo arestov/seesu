@@ -1350,10 +1350,35 @@ iframe.you-tube-video,embed.you-tube-video{
 			width:200px;
 			}
 .song-image-con {
-	width: 24px;
-	height: 24px;
+	width: 38px;
+	height: 38px;
 	float: left;
 	background: #595959;
 	margin-right: 12px;
 	border-radius: 2px;
+	}
+	.song-image-con img{
+		max-width: 100%;
+		max-height: 100%;
+		border-radius: 2px;
+		}
+.viewing-song .song-image-con{
+	height: 24px;
+	width: 24px;
+	}
+.show-zoom-to-track .track-node {
+
+	}
+	.show-zoom-to-track .track-node .full-song-title{
+		min-height: auto;
+		}
+	.show-zoom-to-track .track-node .song-image-con{
+		height: 24px;
+		width: 24px;
+		}
+	.show-zoom-to-track .track-node .song-track-name{
+		display: inline;
+		}
+	.show-zoom-to-track .song-artist-name{
+		display: inline;
 	}

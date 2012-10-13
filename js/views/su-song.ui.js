@@ -48,6 +48,7 @@ provoda.View.extendTo(songUI, {
 				}
 			}
 		},
+
 		"mp-show": function(opts, old_opts) {
 			if (opts){
 				this.parent_view.c.addClass("show-zoom-to-track");
@@ -138,7 +139,19 @@ provoda.View.extendTo(songUI, {
 		'song-title': function(title) {
 			//this.titlec.text(title);
 			this.node.attr("title", title);
-		}
+		},
+		'song-image': function(url) {
+			this.song_imagec.empty();
+			if (url){
+				$('<img/>')
+					.attr({
+						src: url,
+						alt: this.state('artist')
+					})
+					.appendTo(this.song_imagec);
+			}
+			
+		},
 	},
 	unmark: function(){
 		this.c.removeClass('to-play-next to-play-previous');
