@@ -3,6 +3,7 @@ var songsList;
 	"use strict";
 	
 	provoda.addPrototype("songsListBase", {
+		model_name: "playlist",
 		complex_states: {
 			more_load_available: {
 				depends_on: ["can-load-more", "loading"],
@@ -25,11 +26,10 @@ var songsList;
 			var last_usable_song = this.getLastUsableSong();
 
 			if (this.first_song){
-				if (this.first_song.omo==omo){
-					this.first_song.mo = mo;
+				if (this.first_song==mo){
 					this.palist.push(mo);
 				} else if (!this.firstsong_inseting_done){
-					if (mo.artist != this.first_song.omo.artist || mo.track != this.first_song.omo.track){
+					if (mo.artist != this.first_song.artist || mo.track != this.first_song.track){
 						var fs = this.palist.pop();
 						this.palist.push(mo);
 						this.palist.push(fs);
@@ -43,16 +43,22 @@ var songsList;
 			} else {
 				this.palist.push(mo);
 			}
-			if (!skip_changes && this.onChanges){
-				this.onChanges(last_usable_song);
+			this.setChild('song', this.palist);
+			if (!skip_changes){
+				if (this.onChanges){
+					this.onChanges(last_usable_song);
+				}
+				
 			}
+			return mo;
 		},
 		add: function(omo){
 			var mo = cloneObj({}, omo, false, ['track', 'artist']);
-			this.push(mo);
+			return this.push(mo);
 		},
 		findSongOwnPosition: function(first_song){
 			var can_find_context;
+
 			if (bN(['artist', 'album', 'cplaylist'].indexOf(this.playlist_type ))){
 				can_find_context = true;
 			}
@@ -60,12 +66,10 @@ var songsList;
 			this.firstsong_inseting_done = !can_find_context;
 			
 			if (first_song && first_song.track && first_song.artist){
-				this.first_song = {
-					omo: first_song
-				};
+				this.first_song = this.extendSong(first_song, this.player, this.findMp3);;
 			}
 			if (this.first_song){
-				this.push(this.first_song.omo);
+				this.push(this.first_song);
 			}
 		},
 		getPagingInfo: function() {
@@ -134,7 +138,7 @@ var songsList;
 		simplify: function(){
 			var npl = this.palist.slice();
 			for (var i=0; i < npl.length; i++) {
-				npl[i] = cloneObj({}, npl[i], false, ['track', 'artist']);
+				npl[i] = npl[i].simplify();
 			}
 			npl = cloneObj({
 				length: npl.length,
@@ -185,7 +189,7 @@ var songsList;
 			return this;
 		},
 		changed: function(){
-			this.updateState('changed', 'ta' + Math.random() + (+ new Date()));
+			this.setChild('song', this.palist, true);
 			return this;
 		},
 		injectExpectedSongs: function(playlist) {
@@ -206,18 +210,19 @@ var songsList;
 		},
 		onChanges: function(last_usable_song){
 			if (last_usable_song && last_usable_song.isImportant()){
-				//last_usable_song.checkNeighboursChanges();
+				//this.checkNeighboursChanges(last_usable_song);
 			}
 			var v_song = this.getViewingSong();
 			var p_song = this.getPlayerSong();
 
 			if (v_song && !v_song.hasNextSong()) {
-				v_song.checkNeighboursChanges(false, false, "playlist load");
+				this.checkNeighboursChanges(v_song, false, false, "playlist load");
 			}
 			
 			if (p_song && v_song != p_song && !p_song.hasNextSong()){
-				p_song.checkNeighboursChanges(false, false, "playlist load");
+				this.checkNeighboursChanges(p_song, false, false, "playlist load");
 			}
+			this.trigger('palist-change', this.palist);
 		},
 		loadComplete: function(error){
 			error = ((typeof error == 'string') ? error : (!this.palist.length && error));
@@ -353,118 +358,104 @@ var songsList;
 				next_preload_song: true
 			});
 			cloneObj(mo, changes);
-		}
+		},
+		getNeighboursChanges: function(target_song, to_check) {
+			var
+				check_list = {},
+				need_list = {},
+				ste_diff = {},
+				n_ste = {},
+				o_ste = {
+					next_song: target_song.next_song,
+					prev_song: target_song.prev_song,
+					next_preload_song: target_song.next_preload_song
+				};
 
+			for (var i in o_ste){
+				check_list[i] = !to_check || (o_ste[i] == to_check);
+			}
+
+			cloneObj(n_ste, o_ste);
+
+			var fastCheck = function(neighbour_name){
+				if (o_ste[neighbour_name]){
+					n_ste[neighbour_name] = o_ste[neighbour_name] && o_ste[neighbour_name].canUseAsNeighbour() && o_ste[neighbour_name]; 
+				}
+				need_list[neighbour_name] = !n_ste[neighbour_name];
+			};
+
+			for (var i in check_list){
+				if (check_list[i]){
+					fastCheck(i);
+				}
+			}
+
+			var changes = this.getNeighbours(target_song, need_list);
+
+			cloneObj(n_ste, changes);
+
+
+			return getDiffObj(o_ste, n_ste);
+		},
+		checkNeighboursChanges: function(target_song, changed_neighbour, viewing, log) {
+			var changes = this.getNeighboursChanges(target_song, changed_neighbour)
+			//console.log("changes");
+			//console.log();
+			cloneObj(target_song, changes)
+
+			//this.findNeighbours();
+
+			viewing = viewing || !!target_song.state("mp-show");
+			var playing = !!target_song.state("player-song");
+
+			if (viewing){
+				target_song.addMarksToNeighbours();
+				if (changes.prev_song && !changes.prev_song.track){
+					changes.prev_song.getRandomTrackName();
+				}
+				
+			}
+			if ((viewing || playing) && changes.next_preload_song){
+				changes.next_preload_song.makeSongPlayalbe(true);
+			}
+			if (!target_song.cncco){
+				target_song.cncco = [];
+			} else {
+				target_song.cncco.push(log);
+			}
+
+			if (viewing || playing){
+				if (!target_song.hasNextSong()){
+					this.loadMoreSongs();
+				}
+			}
+
+		},
+		checkChangesSinceFS: function(target_song, opts) {
+			if (target_song.isImportant()){
+				if (!opts || (opts.complete || opts.have_best_tracks)){
+					this.checkNeighboursChanges(target_song, false, false, 'important; files search');
+					
+				}
+			} 
+
+			if (!opts || opts.complete){
+				var v_song = this.getViewingSong(target_song);
+				var p_song = this.getPlayerSong(target_song);
+				
+				if (v_song && v_song.isPossibleNeighbour(target_song)) {
+					
+					this.checkNeighboursChanges(v_song, target_song, false, "nieghbour of viewing song; files search");
+				}
+				
+				if (p_song && v_song != p_song && p_song.isPossibleNeighbour(target_song)){
+					this.checkNeighboursChanges(p_song, target_song, false, "nieghbour of playing song; files search");
+				}
+			}
+		}
 
 	});
 	
-	provoda.addPrototype("songsListBaseView", {
-		createDetailes: function(){
-			this.createBase();
-			this.orderChildren();
-		},
-		state_change: {
-			loading: function(loading){
-				if (loading){
-					this.lc.addClass('loading');
-				} else {
-					this.lc.removeClass('loading');
-				}
-			},
-			"more_load_available": function(state) {
-				
-				if (state){
-					this.requirePart("load-more-b").removeClass("hidden");
-				} else {
-					var button = this.getPart("load-more-b");
-					if (button){
-						button.addClass("hidden");
-					}
-				}
-			},
-			changed: function(){
-				this.renderChildren();
-			},
-			"can-play": function(state) {
-				if (state){
-					//make-trs-plable
-					this.c.addClass('has-files-in-songs');
-				} else {
-					this.c.removeClass('has-files-in-songs');
-				}
-			}
-		},
-		parts_builder: {
-			"load-more-b": function() {
-				var _this = this;
-				
-				return $("<a class='load-more-songs'></a>").click(function() {
-						_this.md.loadMoreSongs(true);
-					}).text(localize("load-more")).appendTo(this.c);
-			}
-		},
-		createBase: function() {
-			this.c = $('<div class="playlist-container"></div>');
-			if (this.createPanel){
-				this.createPanel();
-			}
-			this.panel.appendTo(this.c)
-			this.lc = $('<ul class="tracks-c current-tracks-c tracks-for-play"></ul>').appendTo(this.c);
-		},
-		appendSongUI: function(mo){
-			var moc;
-			var pl_ui_element = mo.getFreeView(this);
-			if (pl_ui_element){
-				this.addChild(pl_ui_element);
-				pl_ui_element = pl_ui_element && pl_ui_element.getA();
-			} else {
-				return;
-			}
-			var _this = this.md;
-
-
-			if (_this.first_song){
-				if (!_this.firstsong_inseting_done){
-					if (mo == _this.first_song.mo){
-						this.lc.append(pl_ui_element);
-					} else{
-						moc = _this.first_song.mo.getThing();
-						if (moc){
-							moc.before(pl_ui_element);
-						}
-					}
-				} else if (_this.first_song.mo != mo){
-					var f_position = _this.palist.indexOf(_this.first_song.mo);
-					var t_position = _this.palist.indexOf(mo);
-					if (t_position < f_position){
-						moc = _this.first_song.mo.getThing();
-						if (moc){
-							moc.before(pl_ui_element);
-						}
-					} else{
-						this.lc.append(pl_ui_element);
-					}
-				} else{
-					this.lc.append(pl_ui_element);
-				}
-				
-				
-			} else{
-				this.lc.append(pl_ui_element);
-			}
-		},
-		renderChildren: function(){
-			this.orderChildren();
-			this.requestAll();
-		},
-		orderChildren: function(load_finished) {
-			var _this = this.md;
-			if (_this.palist.length){
-				for (var i=0; i < _this.palist.length; i++) {
-					this.appendSongUI(_this.palist[i]);
-				}
-			}
-		}
-	});
+	
 
 })();

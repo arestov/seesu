@@ -1,7 +1,4 @@
-.tracks-magic{
-	position:relative;
-	padding-top:1px;
-}
+
 .tracks-for-play .play-controls{
 	position:absolute;
 	right:115px;
@@ -14,7 +11,6 @@
 	float:left;
 	margin-right:6px;
 }
-.player-played .playing-song .buttons-panel .big-indicator.play-indicator,
 .playing-file .big-indicator.play-indicator{
 	background-image: url(../i/buttons/pc-indicator-b.png);
 }
@@ -40,28 +36,27 @@ a.search-mp3-failed{
 }
 a.waiting-full-render{
 	cursor:pointer;
-	color:gray;
 }
 a.song{
 	padding:3px 1px 0;
-	color:#ccc;
+	
 	border:0  !important;
 	
 	}
-	a.song:hover{
-		color:#fff;
-		}
 a.track-node{
-	border-radius:4px;
 	display:block;
 	padding:6px;
 	cursor:pointer;
 	border:0 !important;
 	overflow:hidden;
+	color:#8C8C8C;
 	}
 	a.track-node:hover{
-		background-color:#595959;
+		color:#aaa;
 		}
+.playing-song a.track-node {
+	color:#ccc;
+}
 
 a.waiting-full-render.marked-for-play{
 	outline:1px dotted #888 ;
@@ -73,22 +68,38 @@ a.loading .nothing-toy{
 	display: none;
 	}
 
+
+ul.tracks-for-play.list-overview > li:nth-of-type(even) > .track-node{
+	background-color: #4D4D4D;
+	}
+
+
+ul.tracks-for-play.list-overview > li > a.track-node:hover{
+	background-color:#535353;
+	}
+.show-zoom-to-track ul.tracks-for-play > li > a.track-node:hover{
+	background-color:#535353;
+	}
+.show-zoom-to-track ul.tracks-for-play > li.viewing-song > a.track-node{
+	background-color: transparent;
+	}
 .nothing-toy{
-	background: #555;
+	border: 1px solid transparent;
 	display: block;
 	position: absolute;
 	right:3px;
 	top:10px;
 	border-radius: 6px;
 	border-top: 1px solid #666;
+	background: #555;
 	border-bottom: 1px solid #444;
 	width:10px;
 	height:10px;
 	}
 	a.track-node:hover .nothing-toy{
-		border-top-color:#777;
-		background-color: #666;
-		border-bottom-color: #555;
+		border-top-color:#6e6e6e;
+		background-color: #5e5e5e;
+		border-bottom-color: #4e4e4e;
 		}
 	a.track-node:active .nothing-toy{
 		border-top-color:#444;
@@ -109,18 +120,10 @@ a.download-mp3:hover{
 	}
 .viewing-song a.song{
 	background-color:transparent;
-	
+	color: #fff;
 }
 
 
-
-	.player-played
-	.playing-song
-	a.song{
-		
-		
-		color: #fff;
-	}
 
 
 .track-zoomin,
@@ -291,3 +294,78 @@ a.download-mp3:hover{
 	width:446px;
 	height:150px;
 }
+
+.song-track-name {
+	display: block;
+	margin-right:0.5em;
+	}
+
+.song-artist-name {
+	display: block;
+	font-size: 12px;
+	color: #666;
+	}
+	.viewing-song .song-track-name, .viewing-song .song-artist-name{
+		display: inline;
+		}
+	.viewing-song .song-artist-name{
+		color: #AAA;
+		font-size: 0.8em;
+		}
+.show-zoom-to-track .tracks-for-play{
+	position: relative;
+	}
+/*
+	.tracks-for-play .to-play-previous{
+		position: absolute;
+		top: 0;
+		width: 35%;
+		margin-top: :0;
+		left: 0;
+		}
+	.tracks-for-play .to-play-next {
+		position: absolute;
+		top: 0;
+		width: 35%;
+		right: 0;
+		}
+.placeholder-decor{
+	display: none;
+	}
+	.show-zoom-to-track .placeholder-decor{
+		display: block;
+		position: absolute;
+		width: 30%;
+		top:0;
+		left:35%;
+		background-color: #5E5E5E;
+		border-top: 1px solid #737373
+		}*/
+.playing-song-mark{
+	display: none;
+	position: absolute;
+	top:5px;
+	right:20px;
+	height: 20px;
+	width: 20px;
+	background: url(../i/equalaizer_stoped.gif) no-repeat;
+	}
+	.playing-process.playing-song-mark{
+		background-image: url(../i/equalaizer.gif);
+	}
+.player-song .playing-song-mark{
+	display: block;
+	}
+.viewing-song .playing-song-mark{
+	display: none;
+	}
+.full-song-title{
+	display: block;
+	min-height: 39px;
+	overflow: hidden;
+	}
+.has-no-track-title .song-artist-name {
+	font-size: 14px;
+	margin-top: 16px;
+	color: #8C8C8C;
+	}

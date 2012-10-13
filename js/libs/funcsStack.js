@@ -2,7 +2,6 @@ var funcsStack;
 
 (function() {
 "use strict";
-
 var fstackAtom = function(stack, func, done, data) {
 	this.stack = stack;
 	this.func = func;
@@ -15,6 +14,8 @@ var fstackAtom = function(stack, func, done, data) {
 
 funcsStack = function(selectNext, initAtom) {
 	this.arr = [];
+
+
 	var _this = this;
 	if (initAtom){
 		this.initAtom = initAtom;
@@ -28,7 +29,12 @@ funcsStack = function(selectNext, initAtom) {
 		}:
 		function() {
 			if (this.stack === _this.arr){
+				if (this.atom_completed){
+					throw new Error('executing second time!');
+				}
 				if (_this.arr[0] === this){
+					this.atom_completed = true;
+
 					_this.arr.shift();
 					if (_this.arr[0]){
 						_this.goAhead(_this.arr[0], arguments);

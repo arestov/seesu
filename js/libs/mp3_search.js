@@ -51,7 +51,7 @@ var downGrateTests = [
 ];
 
 var getSongFileModel = function(mo, player){
-	return this.models[mo.uid] = this.models[mo.uid] || (new songFileModel(this, mo)).setPlayer(player);
+	return this.models[mo.uid] = this.models[mo.uid] || (new songFileModel()).init({file: this, mo: mo}).setPlayer(player);
 };
 var musicSeachEmitter;
 
@@ -537,6 +537,9 @@ SongQueryMatchIndex.prototype = {
 		inDescription: function(file_song, query){
 			if (file_song.description){
 				var full_title = this.hardTrim(file_song.description, 3);
+				if (!full_title){
+					return false;
+				}
 				var query_artist = this.hardTrim(query.artist, 3);
 				var query_track = this.hardTrim(query.track, 3);
 
@@ -544,9 +547,13 @@ SongQueryMatchIndex.prototype = {
 				var raw = file_song.description.split(/\n/);
 				if (raw.length > 1){
 					for (var i = 0; i < raw.length; i++) {
+						if (!raw[i] || !raw[i].replace(/\s/gi, '')){
+							continue;
+						}
 						var guess_info  = guessArtist(raw[i], query.artist);
 						if (!guess_info.artist){
-							guess_info.track = full_title;
+							continue;
+							//guess_info.track = full_title; - why!?!?
 						}
 						var maindex = new SongQueryMatchIndex(guess_info, query);
 						if (maindex != -1){
