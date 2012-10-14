@@ -158,9 +158,6 @@ vkCoreApi.extendTo(vkApi, {
 var vkSearch = function(vk_api) {
 	this.vk_api = vk_api;
 	var _this = this;
-	this.search =  function(){
-		return _this.findAudio.apply(_this, arguments);
-	};
 };
 vkSearch.prototype = {
 	constructor: vkSearch,
