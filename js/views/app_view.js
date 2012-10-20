@@ -448,9 +448,7 @@ provoda.View.extendTo(appModelView, {
 			
 			
 			$('#widget-url',d).val(location.href.replace('index.html', ''));
-			var seesu_me_link = $('#seesu-me-link',d);
-			seesu_me_link.attr('href', seesu_me_link.attr('href').replace('seesu%2Bapplication', su.env.app_type));
-
+			
 
 			if ($.browser.opera && ((typeof window.opera.version == 'function') && (parseFloat(window.opera.version()) <= 10.1))){
 				
