@@ -78,8 +78,8 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover{
 	border: 1px solid transparent;
 	display: block;
 	position: absolute;
-	left:6px;
-	top:10px;
+	left:12px;
+	top:5px;
 	border-radius: 6px;
 	border-top: 1px solid #666;
 	background: #555;
@@ -335,8 +335,8 @@ a.download-mp3:hover{
 .playing-song-mark{
 	display: none;
 	position: absolute;
-	top:5px;
-	right:20px;
+	top:3px;
+	right:5px;
 	height: 20px;
 	width: 20px;
 	background: url(../i/equalaizer_stoped.gif) no-repeat;
@@ -352,7 +352,7 @@ a.download-mp3:hover{
 	}
 .full-song-title{
 	display: block;
-	padding-left: 26px;
+	padding-left: 32px;
 	min-height: 39px;
 	overflow: hidden;
 	position: relative;
@@ -405,8 +405,8 @@ a.download-mp3:hover{
 	height: 7px;
 	width: 7px;
 	position: absolute;
-	left: 9px;
-	top: 12px;
+	left: 14px;
+	top: 6px;
 	background: no-repeat 0 0; 
 	}
 	.song-files-search-status.has-none-files{
@@ -423,10 +423,10 @@ a.download-mp3:hover{
 		}
 
 a.search-mp3 .full-song-title{
-	background:url(../i/spinner_small_t.gif) no-repeat 5px 7px;
+	background:url(../i/spinner_small_t.gif) no-repeat 10px 1px;
 }
 a.track-name-loading .full-song-title{
-	background:url(../i/spinner.gif) no-repeat 26px 0;
+	background:url(../i/spinner.gif) no-repeat 31px 0;
 }
 
 a.track-name-loading:hover .full-song-title{
@@ -434,4 +434,9 @@ a.track-name-loading:hover .full-song-title{
 }
 li.viewing-song a.track-name-loading .full-song-title{
 	background-image:url(../i/spinner_bright.gif);
+}
+
+.show-zoom-to-track .player-song.to-play-next .full-song-title,
+.show-zoom-to-track .player-song.to-play-previous .full-song-title{
+	padding-right: 22px;
 }
