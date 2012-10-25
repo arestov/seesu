@@ -20,16 +20,7 @@
 
 
 
-a.search-mp3{
-	background:url(../i/spinner.gif) no-repeat 100% 50%;
-}
-a.loading{
-	background:url(../i/spinner.gif) no-repeat 100% 50%;
-}
 
-a.search-mp3:hover, a.loading:hover{
-	background-image:url(../i/spinner_t.gif);
-}
 
 a.search-mp3-failed{
 	color:#5E5E5E;
@@ -64,7 +55,7 @@ a.waiting-full-render.marked-for-play{
 a.song .nothing-toy, 
 a.search-mp3-failed .nothing-toy,
 a.search-mp3 .nothing-toy,
-a.loading .nothing-toy{
+a.track-name-loading .nothing-toy{
 	display: none;
 	}
 
@@ -87,8 +78,8 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover{
 	border: 1px solid transparent;
 	display: block;
 	position: absolute;
-	right:3px;
-	top:10px;
+	left:12px;
+	top:5px;
 	border-radius: 6px;
 	border-top: 1px solid #666;
 	background: #555;
@@ -344,8 +335,8 @@ a.download-mp3:hover{
 .playing-song-mark{
 	display: none;
 	position: absolute;
-	top:5px;
-	right:20px;
+	top:3px;
+	right:5px;
 	height: 20px;
 	width: 20px;
 	background: url(../i/equalaizer_stoped.gif) no-repeat;
@@ -361,11 +352,91 @@ a.download-mp3:hover{
 	}
 .full-song-title{
 	display: block;
+	padding-left: 32px;
 	min-height: 39px;
 	overflow: hidden;
+	position: relative;
 	}
 .has-no-track-title .song-artist-name {
 	font-size: 14px;
 	margin-top: 16px;
 	color: #8C8C8C;
 	}
+.song-image-con {
+	width: 38px;
+	height: 38px;
+	float: left;
+	background: #595959;
+	
+	border-radius: 2px;
+	}
+	.song-image-con img{
+		max-width: 100%;
+		max-height: 100%;
+		border-radius: 2px;
+		}
+.viewing-song .song-image-con{
+	height: 24px;
+	width: 24px;
+	}
+.show-zoom-to-track .track-node {
+
+	}
+	.show-zoom-to-track .track-node .full-song-title{
+		min-height: auto;
+		}
+	.show-zoom-to-track .track-node .song-image-con{
+		height: 24px;
+		width: 24px;
+		}
+	.show-zoom-to-track .track-node .song-track-name{
+		display: inline;
+		float:left;
+		}
+	.show-zoom-to-track .has-no-track-title .song-artist-name{
+		margin-top: 0;
+		}
+	.show-zoom-to-track .song-artist-name{
+		display: inline;
+		float: right;
+		}
+.song-files-search-status{
+	display: block;
+	height: 7px;
+	width: 7px;
+	position: absolute;
+	left: 14px;
+	top: 6px;
+	background: no-repeat 0 0; 
+	}
+	.song-files-search-status.has-none-files{
+		background-image: url(../i/nano-fail.png);
+		opacity: 0.4;
+		}
+	.song-files-search-status.has-best-files{
+		background-image: url(../i/nano-done.png);
+		opacity: 0.4;
+		}
+	.song-files-search-status.has-some-files{
+		background-image: url(../i/nano-done.png);
+		opacity: 0.2;
+		}
+
+a.search-mp3 .full-song-title{
+	background:url(../i/spinner_small_t.gif) no-repeat 10px 1px;
+}
+a.track-name-loading .full-song-title{
+	background:url(../i/spinner.gif) no-repeat 31px 0;
+}
+
+a.track-name-loading:hover .full-song-title{
+	background-image:url(../i/spinner_t.gif);
+}
+li.viewing-song a.track-name-loading .full-song-title{
+	background-image:url(../i/spinner_bright.gif);
+}
+
+.show-zoom-to-track .player-song.to-play-next .full-song-title,
+.show-zoom-to-track .player-song.to-play-previous .full-song-title{
+	padding-right: 22px;
+}

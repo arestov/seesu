@@ -77,25 +77,28 @@ provoda.View.extendTo(songUI, {
 			
 		},
 		files_search: function(opts){
-			if (opts.complete){
+			this.fsearch_status_c.attr('class', 'song-files-search-status');
+			if (opts.complete && !opts.have_tracks){
+				this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
 				if (!opts.have_tracks){
-					this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
+					
 				}
+				this.fsearch_status_c.addClass('has-none-files');
+
+			} else if (opts.have_best_tracks){
+				this.fsearch_status_c.addClass('has-best-files');
+			} else if (opts.have_tracks){
+				this.fsearch_status_c.addClass('has-some-files');
 			}
+
+			
 		},
 		'searching-files': function(searching){
-			if (searching){
-				this.node.addClass('search-mp3');
-			} else{
-				this.node.removeClass('search-mp3');
-			}
+			this.node.toggleClass('search-mp3', searching);
+		
 		},
-		loading : function(loading){
-			if (loading){
-				this.node.addClass('loading');
-			} else {
-				this.node.removeClass('loading');
-			}
+		'track-name-loading': function(state) {
+			this.node.toggleClass('track-name-loading', state);
 		},
 		"player-song": function(state) {
 			this.c.toggleClass('player-song', !!state);
@@ -447,7 +450,7 @@ provoda.View.extendTo(songUI, {
 				mo.view(false, true);
 				return false;
 			});
-		$('<span class="nothing-toy"></span>').appendTo(this.node);
+		
 		//
 		this.player_song_mark = $('<span class="playing-song-mark"></span>').appendTo(this.node);
 		var buttmen = this.root_view.els.play_controls.node.clone(true).data('mo', this.md);
@@ -459,6 +462,11 @@ provoda.View.extendTo(songUI, {
 
 		this.titlec = $('<span class="full-song-title has-no-track-title"></span>')
 			.appendTo(this.node);
+		this.fsearch_status_c = $('<span class="song-files-search-status"></span>').appendTo(this.titlec);
+
+		$('<span class="nothing-toy"></span>').appendTo(this.titlec);
+
+		
 		this.track_name_c = $('<span class="song-track-name"></span>')
 			.appendTo(this.titlec);
 		this.artist_name_c = $('<span class="song-artist-name"></span>')

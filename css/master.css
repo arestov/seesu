@@ -760,20 +760,7 @@ a.desc{
 		bottom:0;
 		right: 12px;
 		}
-#seesu-me-link{
-	font-size:0.8em;
-	border-radius: 5px;
-	border: 1px solid transparent;
-	position: absolute;
-	right: 18px;
-	bottom: 10px;
-	z-index: 4;
-	}
-	#seesu-me-link:hover{
-		color:#222;
-		background:#fff;
-		border:1px solid #eee  !important;
-		}
+
 .as-application #promo{
 	position: absolute;
 	bottom: 10px;
@@ -1349,36 +1336,3 @@ iframe.you-tube-video,embed.you-tube-video{
 		.addsong-to-playlist .list-of-playlists{
 			width:200px;
 			}
-.song-image-con {
-	width: 38px;
-	height: 38px;
-	float: left;
-	background: #595959;
-	margin-right: 12px;
-	border-radius: 2px;
-	}
-	.song-image-con img{
-		max-width: 100%;
-		max-height: 100%;
-		border-radius: 2px;
-		}
-.viewing-song .song-image-con{
-	height: 24px;
-	width: 24px;
-	}
-.show-zoom-to-track .track-node {
-
-	}
-	.show-zoom-to-track .track-node .full-song-title{
-		min-height: auto;
-		}
-	.show-zoom-to-track .track-node .song-image-con{
-		height: 24px;
-		width: 24px;
-		}
-	.show-zoom-to-track .track-node .song-track-name{
-		display: inline;
-		}
-	.show-zoom-to-track .song-artist-name{
-		display: inline;
-	}

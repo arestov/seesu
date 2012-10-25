@@ -111,9 +111,7 @@ ExfmApi.prototype = {
 var ExfmMusicSearch = function(exfm_api) {
 	this.exfm_api = exfm_api;
 	var _this = this;
-	this.search = function() {
-		return _this.findAudio.apply(_this, arguments);
-	}
+
 };
 ExfmMusicSearch.prototype = {
 	constructor: ExfmMusicSearch,

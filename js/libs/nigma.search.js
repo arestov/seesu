@@ -107,9 +107,6 @@ NigmaAPI.prototype = {
 var NigmaMusicSearch = function(api) {
 	this.api = api;
 	var _this = this;
-	this.search = function() {
-		return _this.findAudio.apply(_this, arguments);
-	}
 };
 
 NigmaMusicSearch.prototype = {

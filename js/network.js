@@ -254,9 +254,6 @@ try_mp3_providers = function(){
 	}
 };
 
-var isohuntTorrentSearch = function() {
-
-};
 
 
 
