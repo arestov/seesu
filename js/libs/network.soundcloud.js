@@ -112,9 +112,6 @@ scApi.prototype = {
 var scMusicSearch = function(sc_api) {
 	this.sc_api = sc_api;
 	var _this = this;
-	this.search = function() {
-		return _this.findAudio.apply(_this, arguments);
-	}
 };
 scMusicSearch.prototype = {
 	constructor: scMusicSearch,

@@ -130,7 +130,7 @@ provoda.View.extendTo(StartPageView, {
 		this.els = this.parent_view.els;
 		this.c = this.els.start_screen;
 
-		
+		this.c.find('#hint-query').text(su.popular_artists[(Math.random()*10).toFixed(0)]);
 	},
 	'collch-fast_pstart': function(name, md) {
 		var view = this.getFreeChildView(name, md, 'main');
@@ -320,6 +320,8 @@ provoda.View.extendTo(StartPageView, {
 								},
 								fn: function() {
 									_cmetro.empty();
+
+									var ppp = su.createMetroChartPlaylist(random_metro.country, random_metro.name);
 							
 									var plr = su.preparePlaylist({//fix params for cache
 										title: 'Chart of ' + random_metro.name,
@@ -348,7 +350,13 @@ provoda.View.extendTo(StartPageView, {
 												var con = $('<li></li>').appendTo(ulm);
 												$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
 												
-												var tobj = {artist: _trm.artist.name, track: _trm.name};
+												var tobj = {
+													artist: _trm.artist.name, 
+													track: _trm.name,
+													lfm_image: {
+														array: _trm.image
+													}
+												};
 												plr.push(tobj);
 												createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
 												

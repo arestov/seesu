@@ -318,9 +318,6 @@ a.desc{
 	#close-widget:active{
 		color:#F4AF16;
 	}
-.background-changes{
-	height:200px;
-}
 
 
 .needs-cross-domain{
@@ -763,20 +760,7 @@ a.desc{
 		bottom:0;
 		right: 12px;
 		}
-#seesu-me-link{
-	font-size:0.8em;
-	border-radius: 5px;
-	border: 1px solid transparent;
-	position: absolute;
-	right: 18px;
-	bottom: 10px;
-	z-index: 4;
-	}
-	#seesu-me-link:hover{
-		color:#222;
-		background:#fff;
-		border:1px solid #eee  !important;
-		}
+
 .as-application #promo{
 	position: absolute;
 	bottom: 10px;

@@ -90,9 +90,7 @@ var songsListView;
 		'stch-mp-show': function(opts) {
 			if (opts){
 				this.c.removeClass('hidden');
-				$(this.root_view.els.slider).addClass('show-player-page');
 			} else {
-				$(this.root_view.els.slider).removeClass('show-player-page');
 				this.c.addClass('hidden');
 			}
 		},

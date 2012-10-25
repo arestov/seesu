@@ -368,14 +368,19 @@ provoda.Model.extendTo(appModel, {
 				page: paging_opts.next_page
 			})
 				.done(function(r){
-					var artists = r.topartists.artist;
+					var artists = toRealArray(getTargetField(r, 'topartists.artist'));
 					var track_list = [];
 
+					su.art_images.checkLfmData('tag.getTopArtists', r, artists);
 					if (artists && artists.length) {
+
 						var l = Math.min(artists.length, paging_opts.page_limit);
 						for (var i=0; i < l; i++) {
 							track_list.push({
-								artist: artists[i].name
+								artist: artists[i].name,
+								lfm_image: {
+									array: artists[i].image
+								}
 							});
 						}
 
@@ -439,23 +444,54 @@ provoda.Model.extendTo(appModel, {
 	
 		var recovered = this.showArtistPlaylist(original_artist || artist, pl, vopts);
 		
+
+
+
 		if (!recovered){
-			var get_artist_album_playlist = function(album_id, pl_r){
+			var getAlbumPlaylist = function(album_id, pl){
 				if (album_id) {
 					lfm.get('playlist.fetch',{
 						'playlistURL': 'lastfm://playlist/album/' + album_id
 					})
-						.done(function(pl_data){
-							make_lastfm_playlist(pl_data, pl_r);
+						.done(function(r){
+							su.art_images.checkLfmData('playlist.fetch', r);
+							var playlist = toRealArray(getTargetField(r, 'playlist.trackList.track'));
+							var music_list = [];
+							for (var i=0; i < playlist.length; i++) {
+								music_list.push({
+									track: playlist[i].title, 
+									artist: playlist[i].creator,
+									lfm_image: {
+										item: playlist[i].image
+									}
+								});
+							}
+							pl_r.injectExpectedSongs(music_list);
 						});
 				}
 			};
 			if (id){
-				get_artist_album_playlist(id, pl);
+				getAlbumPlaylist(id, pl);
 			} else{
 				lfm.get('album.getInfo',{'artist': artist, album : name})
-					.done(function(alb_data){
-						get_artist_album_playlist(alb_data.album.id, pl);
+					.done(function(r){
+						su.art_images.checkLfmData('album.getInfo', r);
+						var tracks = toRealArray(getTargetField(r, 'album.tracks.track'));
+						var track_list = [];
+						var imgs = getTargetField(r, 'album.image');
+						for (var i = 0; i < tracks.length; i++) {
+							var cur = tracks[i];
+							track_list.push({
+								artist: cur.artist.name,
+								track: cur.name,
+								lfm_image: {
+									array: imgs
+								}
+							});
+							tracks[i]
+						}
+						pl.injectExpectedSongs(track_list);
+						//getAlbumPlaylist(r.album.id, pl);
 					});
 			}
 		}
@@ -493,17 +529,21 @@ provoda.Model.extendTo(appModel, {
 							pl.loadComplete(true);
 							return;
 						}
-						var tracks = r.toptracks.track || false;
+						var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+
+						su.art_images.checkLfmData('artist.getTopTracks', r, tracks);
+
 						var track_list = [];
-						if (tracks) {
-							
-							tracks = toRealArray(tracks);
-							
+						if (tracks.length) {
 							var l = Math.min(tracks.length, paging_opts.page_limit);
 							for (var i=paging_opts.remainder; i < l; i++) {
-								track_list.push({'artist' : artist ,
-									'track': tracks[i].name, 
-									images: tracks[i].image
+								track_list.push({
+									artist : artist ,
+									track: tracks[i].name,
+									lfm_image: {
+										array: tracks[i].image 
+									}
+									
 								});
 							}
 							
@@ -527,40 +567,66 @@ provoda.Model.extendTo(appModel, {
 			(recovered || pl).showTrack(start_song, full_no_navi);
 		}
 	},
-
-	_showMetroChart: function(country, metro, vopts){
-		vopts = vopts || {};
-		var plr = this.preparePlaylist({//can autoload
+	createMetroChartPlaylist: function(country, metro) {
+		var pl = this.preparePlaylist({//can autoload
 			title: 'Chart of ' + metro,
 			type: 'chart',
 			data: {country: country, metro: metro}
-		}).loading();
-
-		lfm.get('geo.getMetroUniqueTrackChart', {
-			country: country, 
-			metro: metro, 
-			start: (new Date()) - 60*60*24*7
-		})
-			.done(function(r){
-				if (r.error){
-					pl_r.loadComplete(true);
-					return;
-				}
-				if (r && r.toptracks && r.toptracks.track){
-					var metro_tracks = toRealArray(r.toptracks.track);
-					for (var i=0; i < Math.min(metro_tracks.length, 30); i++) {
-						
-						var _trm = metro_tracks[i];
-						plr.push({artist: _trm.artist.name, track: _trm.name});
+		});
+		pl.setLoader(function(paging_opts) {
+			var request_info = {};
+			lfm.get('geo.getMetroUniqueTrackChart', {
+				country: country, 
+				metro: metro,
+				limit: 30,
+				start: (new Date()) - 60*60*24*7,
+				page: paging_opts.next_page
+			})
+				.done(function(r) {
+					if (r.error){
+						pl.loadComplete(true);
+						return;
 					}
-					pl_r.loadComplete(metro_tracks.length);
-				} else {
-					pl_r.loadComplete(true);
-				}
 
-				
-			});
-		this.show_playlist_page(plr, vopts.save_parents, vopts.no_navi);
+					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+					su.art_images.checkLfmData('geo.getMetroUniqueTrackChart', r, tracks);
+					var track_list = [];
+					if (tracks.length) {
+						var l = Math.min(tracks.length, paging_opts.page_limit);
+						for (var i=paging_opts.remainder; i < l; i++) {
+							var cur = tracks[i];
+							track_list.push({
+								artist : cur.artist.name,
+								track: cur.name, 
+								lfm_image: {
+									array: cur.image 
+								} 
+							});
+						}
+						
+					}
+					pl.injectExpectedSongs(track_list);
+					if (track_list.length < paging_opts.page_limit){
+						pl.setLoaderFinish();
+					}
+
+				})
+				.fail(function() {
+					pl.loadComplete(true);
+				})
+				.always(function() {
+					request_info.done = true;
+				});
+
+			return request_info;
+		});
+		return pl;
+	},
+	_showMetroChart: function(country, metro, vopts){
+		vopts = vopts || {};
+		var pl = this.createMetroChartPlaylist(country, metro);
+		pl.loadMoreSongs();
+		this.show_playlist_page(pl, vopts.save_parents, vopts.no_navi);
 	},
 	showSimilarArtists: function(artist, vopts, start_song){
 		vopts = vopts || {};
@@ -585,14 +651,18 @@ provoda.Model.extendTo(appModel, {
 					page: paging_opts.next_page
 				})
 					.done(function(r){
-						var artists = r.similarartists.artist;
+						var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
+						su.art_images.checkLfmData('artist.getSimilar', r, artists);
 						var track_list = [];
 
 						if (artists && artists.length) {
 							var l = Math.min(artists.length, paging_opts.page_limit);
 							for (var i=0; i < l; i++) {
 								track_list.push({
-									artist: artists[i].name
+									artist: artists[i].name,
+									lfm_image: {
+										array: artists[i].image
+									}
 								});
 							}
 

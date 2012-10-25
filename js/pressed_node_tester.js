@@ -58,10 +58,6 @@ var test_pressed_node = function(e, opts){
 			seesu.trackEvent('Links', 'just link');
 			
 		  }
-		  else if (bN(class_list.indexOf('seesu-me-link'))){
-			app_env.openURL(node.href)
-			
-		  }
 		  else if (bN(class_list.indexOf('hint-query'))){
 			var query = clicked_node.text();
 			su.search(query);

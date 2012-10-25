@@ -32,7 +32,9 @@
 		"http://*.isohunt.com/*",
 		"http://*.seesu.me/*",
 		"http://api.songkick.com/*",
-		"http://ex.fm/api/*"
+		"http://ex.fm/api/*",
+		"http://developer.echonest.com/api/*",
+		"http://hypem.com/*"
 	],
 	"content_security_policy": "script-src 'self'; object-src 'self' https://www.youtube.com/v/"
 }

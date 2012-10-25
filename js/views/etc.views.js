@@ -26,6 +26,8 @@ provoda.View.extendTo(vkLoginUI, {
 
 	}
 });
+
+
 var LfmLoginView = function() {};
 
 provoda.View.extendTo(LfmLoginView, {

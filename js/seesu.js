@@ -130,6 +130,8 @@ appModel.extendTo(seesuApp, {
 		});
 
 		this.app_md = this;
+		this.art_images = new LastFMArtistImagesSelector();
+		this.art_images.init();
 
 		if (app_env.check_resize){
 			this.updateState('slice-for-height', true);
@@ -380,7 +382,7 @@ appModel.extendTo(seesuApp, {
 	},
 	checkStats: function() {
 		if (this.usage_counter > 2){
-			this.app_md.start_page.showMessage('rating-help');
+			this.start_page.showMessage('rating-help');
 		}
 		return this;
 	},
@@ -412,7 +414,7 @@ appModel.extendTo(seesuApp, {
 	},
 	checkPlaylists: function(){
 		if (this.gena){
-			this.app_md.start_page.updateState('have-playlists', !!this.gena.playlists.length);
+			this.start_page.updateState('have-playlists', !!this.gena.playlists.length);
 		}
 	},
 	fs: {},//fast search
@@ -553,27 +555,6 @@ su.init(3.6);
 
 
 
-var external_playlist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
-	this.result = this.header + '\n';
-	for (var i=0; i < array.length; i++) {
-		this.result += this.preline + ':' + (array[i].duration || '-1') + ',' + array[i].artist_name + ' - ' + array[i].track_title + '\n' + array[i].mp3link + '\n';
-	}
-	this.data_uri = this.request_header + escape(this.result);
-	
-};
-external_playlist.prototype = {
-	header : '#EXTM3U',
-	preline: '#EXTINF',
-	request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
-};
-
-var random_track_plable = function(track_list){
-	var random_track_num = Math.floor(Math.random()*track_list.length);
-	return track_list[random_track_num];
-	
-};
-
-
 
 
 (function(){
@@ -605,41 +586,30 @@ var random_track_plable = function(track_list){
 
 
 
-var proxy_render_artists_tracks = function(artist_list, pl_r){
-	//fixme
-	var track_list_without_tracks = [];
-	if (artist_list){
-		
-		for (var i=0; i < artist_list.length; i++) {
-			track_list_without_tracks.push({"artist" :artist_list[i]});
-		}
-		
-		
-	}
-	pl_r.injectExpectedSongs(track_list_without_tracks);
-};
+
 var render_loved = function(user_name){
 	var pl_r = su.preparePlaylist({
 		title: localize('loved-tracks'),
 		type: 'artists by loved'
-	})
-
-	
+	});
 
 	pl_r.setLoader(function(paging_opts) {
-
 		var request_info = {};
-
-		
-
 		lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
 			.done(function(r){
-				var tracks = r.lovedtracks.track || false;
+				var tracks = toRealArray(getTargetField(r, 'lovedtracks.track'));
+				su.art_images.checkLfmData('user.getLovedTracks', r, tracks);
 				var track_list = [];
 				if (tracks) {
 					
 					for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
-						track_list.push({'artist' : tracks[i].artist.name ,'track': tracks[i].name});
+						track_list.push({
+							'artist' : tracks[i].artist.name,
+							'track': tracks[i].name,
+							lfm_image:  {
+								array: tracks[i].image
+							}
+						});
 					}
 
 				}
@@ -683,7 +653,13 @@ var render_recommendations_by_username = function(username){
 						var artist = $(artists[i]).text();
 						artist_list.push(artist);
 					}
-					proxy_render_artists_tracks(artist_list, pl_r);
+					var track_list_without_tracks = [];
+					if (artist_list){
+						for (var i=0; i < artist_list.length; i++) {
+							track_list_without_tracks.push({"artist" :artist_list[i]});
+						}
+					}
+					pl_r.injectExpectedSongs(track_list_without_tracks);
 				}
 			}
 	});
@@ -702,16 +678,19 @@ var render_recommendations = function(){
 
 		lfm.get('user.getRecommendedArtists', {sk: lfm.sk, limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
 			.done(function(r){
-				var artists = r.recommendations.artist;
+				var artists = toRealArray(getTargetField(r, 'recommendations.artist'));
+				su.art_images.checkLfmData('user.getRecommendedArtists', r, artists);
 				var track_list = [];
 				if (artists && artists.length) {
 					
 					for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
 						track_list.push({
-							artist: artists[i].name
+							artist: artists[i].name,
+							lfm_image: {
+								array: artists[i].image
+							}
 						});
 					}
-					//proxy_render_artists_tracks(artist_list,pl_r);
 				}
 				pl_r.injectExpectedSongs(track_list);
 
@@ -739,23 +718,6 @@ var render_recommendations = function(){
 
 
 
-var make_lastfm_playlist = function(r, pl_r){
-	var playlist = r.playlist.trackList.track;
-	var music_list = [];
-	if  (playlist){
-		
-		if (playlist.length){
-			
-			for (var i=0; i < playlist.length; i++) {
-				music_list.push({track: playlist[i].title, artist: playlist[i].creator });
-			}
-		} else if (playlist.title){
-			music_list.push({track: playlist.title, artist: playlist.creator });
-		}
-
-	} 
-	pl_r.injectExpectedSongs(music_list);
-};
 
 
 
@@ -764,6 +726,7 @@ suReady(function(){
 	try_mp3_providers();
 	seesu.checkUpdates();
 });
+
 var UserPlaylists = function() {};
 provoda.Eventor.extendTo(UserPlaylists, {
 	init: function() {
@@ -795,7 +758,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 		});
 		this.watchOwnPlaylist(pl_r);
 		this.playlists.push(pl_r);
-		this.trigger('playlsits-change', this.playlists)
+		this.trigger('playlsits-change', this.playlists);
 		return pl_r;
 	},
 	watchOwnPlaylist: function(pl) {
@@ -804,6 +767,15 @@ provoda.Eventor.extendTo(UserPlaylists, {
 			this.trigger('each-playlist-change');
 			_this.savePlaylists();
 		});
+	},
+	removePlaylist: function(pl) {
+		var length = this.playlists.length;
+		this.playlists = arrayExclude(this.playlists, pl);
+		if (this.playlists.length != length){
+			this.trigger('playlsits-change', this.playlists);
+			this.savePlaylists();
+		}
+		
 	},
 	rebuildPlaylist: function(saved_pl){
 		var p = this.createEnvPlaylist({
@@ -826,16 +798,6 @@ provoda.Eventor.extendTo(UserPlaylists, {
 			}
 		} 
 		
-		
-		recovered.find = function(puppet){
-			for (var i=0; i < recovered.length; i++) {
-				if (recovered[i].compare(puppet)){
-					return recovered[i];
-				}
-				
-			}
-		};
-
 		this.playlists = recovered;
 		this.trigger('playlsits-change', this.playlists);
 	}

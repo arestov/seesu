@@ -81,7 +81,7 @@ li.playing-song .play-controls{
 }
 .show-zoom-to-track ul.tracks-for-play{
 
-	padding-top:33px;
+	padding-top:36px;
 }
 ul.tracks-for-play > li{
 	background-color: #505050;
@@ -89,7 +89,7 @@ ul.tracks-for-play > li{
 
 
 .show-zoom-to-track ul.tracks-for-play > li.to-play-previous{
-	margin-top:-33px;
+	margin-top:-36px;
 	}
 .show-zoom-to-track ul.tracks-for-play > li.to-play-next{
 	
@@ -119,10 +119,7 @@ ul.tracks-for-play > li{
 	.show-zoom-to-track ul.tracks-for-play>li.viewing-song a.download-mp3{
 		right:8px;
 	}
-	.show-zoom-to-track ul.tracks-for-play>li.viewing-song a.loading,
-	.show-zoom-to-track ul.tracks-for-play>li.viewing-song a.search-mp3{
-		background-image:url(../i/spinner_bright.gif);
-	}
+
 	
 .show-zoom-to-track ul.tracks-for-play>li{
 	display:none;
