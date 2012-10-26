@@ -457,14 +457,21 @@ provoda.View.extendTo(songUI, {
 			buttmen.find('.pc').data('mo', this.md);
 		this.c.prepend(buttmen);
 
+
+		var filesload_states_c = $('<span class="files-load-states"></span>');
+
+		this.fsearch_status_c = $('<span class="song-files-search-status"></span>').appendTo(filesload_states_c);
+		$('<span class="nothing-toy"></span>').appendTo(filesload_states_c);
+		filesload_states_c.appendTo(this.node);
+
 		this.song_imagec = $('<span class="song-image-con"></span>').appendTo(this.node);
 
 
 		this.titlec = $('<span class="full-song-title has-no-track-title"></span>')
 			.appendTo(this.node);
-		this.fsearch_status_c = $('<span class="song-files-search-status"></span>').appendTo(this.titlec);
+		
 
-		$('<span class="nothing-toy"></span>').appendTo(this.titlec);
+		
 
 		
 		this.track_name_c = $('<span class="song-track-name"></span>')
