@@ -266,7 +266,6 @@ provoda.addPrototype("baseSong",{
 				.done(function(r){
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 
-					su.art_images.checkLfmData('artist.getTopTracks', r, tracks);
 					
 
 					if (_this.track){

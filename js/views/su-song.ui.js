@@ -218,7 +218,7 @@ provoda.View.extendTo(songUI, {
 			artist	 = ai.artist;
 			tags	 = ai.tags;
 			bio		 = ai.bio;
-			image	 = (ai.images && ai.images[2]) || lfm_image_artist;
+		//	image	 = (ai.images && ai.images[2]) || lfm_image_artist;
 			this.photo_data.first_image = ai.images;
 
 		} 

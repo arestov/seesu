@@ -172,6 +172,7 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 		радио тега echo
 		радио самодельное?
 		популярные треки по тегу
+		бесплатные треки http://ws.audioscrobbler.com/2.0/tag/dubstep/podcast.rss
 
 	составное радио echo через поиск
 		артисты

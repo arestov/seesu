@@ -438,14 +438,19 @@ a.download-mp3:hover{
 		}
 
 
-a.track-name-loading .full-song-title{
-	background:url(../i/spinner.gif) no-repeat 31px 0;
-}
-
-a.track-name-loading:hover .full-song-title{
+a.track-name-loading{
+	background:url(../i/spinner.gif) no-repeat 78px 6px;
+	}
+	.show-zoom-to-track a.track-name-loading{
+		background-position: 64px 6px
+		}
+	.viewing-song a.track-name-loading{
+		
+		}
+a.track-name-loading:hover{
 	background-image:url(../i/spinner_t.gif);
 }
-li.viewing-song a.track-name-loading .full-song-title{
+li.viewing-song a.track-name-loading{
 	background-image:url(../i/spinner_bright.gif);
 }
 
