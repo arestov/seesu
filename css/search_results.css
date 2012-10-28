@@ -1,9 +1,11 @@
-.search-results-holder{
+.does-not-need-search-from{
+	padding-top:28px;
+	}
+.search-results-container{
 	padding-left:60px;
 	position:relative;
-	margin-top:20px;
 	}
-	.search-results-holder h4{
+	.search-results-container h4{
 		position:absolute;
 		left:0;
 		padding:4px 0 0;
@@ -12,11 +14,11 @@
 		width:60px;
 		height:20px;
 		z-index:2;
-	}
-	.search-results-holder h4.loading{
+		}
+	.search-results-container h4.loading{
 		background: url(../i/spinner_small.gif) no-repeat 100% 50%;
 	}
-	.search-results-holder ul.sugg-section{
+	.search-results-container ul.sugg-section{
 		overflow:hidden;
 		zoom:1;
 		position:relative;
@@ -26,17 +28,17 @@
 		min-height:26px;
 		}
 
-		.search-results-holder ul li{
+		.search-results-container ul li{
 			position:relative;
 			}
-		.search-results-holder ul li.searched-bordered{
+		.search-results-container ul li.searched-bordered{
 			border-top: 1px dashed #5d5d5d;
 			}
-		.search-results-holder ul li:first-child{
+		.search-results-container ul li:first-child{
 			border-top:0 !important;
 			}
-		.search-results-holder   a,
-		.search-results-holder   button{
+		.search-results-container a,
+		.search-results-container button{
 			display:block;
 			cursor:pointer;
 			overflow: hidden;
@@ -45,13 +47,13 @@
 			margin: 0;
 			padding:5px;
 			}
-			.search-results-holder
+			.search-results-container
 			ul
 			.sugg-track-dur{
 				float:right;
 				margin:0;
 			}
-		.search-results-holder button{
+		.search-results-container button{
 			border:0;
 			text-align:left;
 			width:100%;
@@ -60,13 +62,13 @@
 			position:relative;
 		}
 
-		.search-results-holder a.active,
-		.search-results-holder button.active{
+		.search-results-container a.active,
+		.search-results-container button.active{
 			background-color:#555  !important;
 			padding-right:23px;
 		}
-		.search-results-holder a.active:after,
-		.search-results-holder button.active:after{
+		.search-results-container a.active:after,
+		.search-results-container button.active:after{
 			content: '↩';
 			position:absolute;
 			top:12px;
@@ -77,61 +79,58 @@
 			vertical-align:middle;
 			color:#fff;
 		}
-		.search-results-holder a:hover,
-		.search-results-holder button:hover
+		.search-results-container a:hover,
+		.search-results-container button:hover
 		{
 			color:#f6f0e1;
 			background-color:#666  !important;
 			}
 		
-			.search-results-holder	ul.results-suggests img{
+			.search-results-container	ul.results-suggests img{
 				float:left;
 				width:34px;
 				height:34px;
 				margin-right:8px;
 				border:1px solid #eee;
 				}
-			.search-results-holder	ul.results-suggests	span{
+			.search-results-container	ul.results-suggests	span{
 				overflow:hidden;
 				zoom:1;
 				margin-top:1px;
 				margin-bottom:0;
 				
 				}
-	.search-results-holder	ul.sugg-section:last-child{
+	.search-results-container	ul.sugg-section:last-child{
 		border-bottom:0;
 	}
-	.search-results-holder ul{
+	.search-results-container ul{
 		display:none;
 	}
-	.search-results-holder ul.active-section{
+	.search-results-container ul.active-section{
 		display: block;
 	}
-	.search-results-holder ul.sugg-section.odd-section{
+	.search-results-container ul.sugg-section.odd-section{
 		background-color:#4d4d4d;
 	}
-	.search-results-holder ul.playlist-results a{padding-left:47px;}
-	.search-results-holder	ul.recommend-tags a{
+	.search-results-container ul.playlist-results a{padding-left:47px;}
+	.search-results-container	ul.recommend-tags a{
 		padding-left:47px;
 		background: url(../i/tag-icon.png) no-repeat 26px 50%;
 	}
 
-	.search-results-holder .nothing-found{
+	.search-results-container .nothing-found{
 		padding-left:47px  !important;
 		background:inherit  !important;
 		}
-		.search-results-holder .nothing-found:hover{
+		.search-results-container .nothing-found:hover{
 			background:inherit  !important;
 			color:inherit  !important;
 			cursor:default  !important;
 		}
-	.search-results-holder button span{
+	.search-results-container button span{
 		border-bottom:1px dashed #5c5c5c;
 	}
-#search_result p{
-	margin:0;
-	position:relative;
-	}
+
 .vk-track-suggest{
 	display:block;
 	font-size: 10px;

@@ -318,9 +318,6 @@ a.desc{
 	#close-widget:active{
 		color:#F4AF16;
 	}
-.background-changes{
-	height:200px;
-}
 
 
 .needs-cross-domain{
@@ -414,13 +411,6 @@ a.desc{
 			float:right;
 			}
 	
-.search-start{
-	margin-bottom:1em;
-	}
-	.search-start
-	form{
-		margin:0;
-		}
 		.window-bottom{
 			height:20px;
 			position:absolute;
@@ -491,14 +481,9 @@ a.desc{
 	}
 }
 
-.play-list-holder{
-	padding-top:0;
-	line-height:1.4em;
-	position:relative;
-}
-	
-.playlist-container{
 
+.playlist-container{
+	padding-top: 4px;
 	}
 	.load-more-songs{
 		display:block;
@@ -516,12 +501,12 @@ a.desc{
 .tracks-for-play{
 	clear:both;
 	}
-	ul.tracks-for-play.tracks-c.loading{
+	ul.tracks-for-play.loading{
 		background: url(../i/spinner.gif) no-repeat 4px 100%;
 		padding-bottom: 30px;
 	}
 	ul.tracks-for-play > li{
-		margin: 0 0 3px 0;
+		margin: 0 0 0 0;
 		position:relative;
 		}
 .photo-cont{
@@ -630,12 +615,12 @@ a.desc{
 	margin:5px -13px 0;
 	padding: 0 0 0;
 	/*200px - 48px + 14*/
-	min-height:166px;
+	min-height:168px;
 	}	
 	@media (min-height:600px) {
 		.track-info-dominator{
 			/*237-48+16*/
-			min-height:203px;
+			min-height:205px;
 		}
 	}
 
@@ -756,15 +741,6 @@ a.desc{
 	padding-bottom:2px;
 }	
 
-#playlist-level h3{
-	margin-top:0
-	}
-	#playlist-level h3 a{
-		font-size:0.8em;
-		margin-left:6px;
-		display: inline-block;
-	}
-
 	
 #slider-materail{
 	position: relative;
@@ -784,20 +760,7 @@ a.desc{
 		bottom:0;
 		right: 12px;
 		}
-#seesu-me-link{
-	font-size:0.8em;
-	border-radius: 5px;
-	border: 1px solid transparent;
-	position: absolute;
-	right: 18px;
-	bottom: 10px;
-	z-index: 4;
-	}
-	#seesu-me-link:hover{
-		color:#222;
-		background:#fff;
-		border:1px solid #eee  !important;
-		}
+
 .as-application #promo{
 	position: absolute;
 	bottom: 10px;
@@ -828,6 +791,11 @@ a.desc{
 .scrobbling-switches{
 	opacity:0.3;
 	
+	}
+#search{
+	padding-top:12px;
+	max-width: 750px;
+	margin: 0 auto;
 	}
 #search #q{
 
@@ -932,10 +900,12 @@ a.desc{
 	color:#999;
 }
 .search-desc {
-	padding-left:60px;
 	font-size:0.9em;
 	
 	margin-top:0;
+}
+.start-screen .search-desc {
+	padding-left: 60px;
 }
 
 #update-star{
@@ -1276,14 +1246,14 @@ iframe.you-tube-video,embed.you-tube-video{
 		
 		margin-top:24px;
 		}
-		.share-song .users-list .search-results-container{
+		.share-song .users-list .search-results-block{
 			overflow: hidden;
 			}
 		.share-song .users-list .vk-login-context{
 			border-radius: 0;
 			margin:12px -13px 0;
 		}
-		.share-song .users-list .search-results-container{
+		.share-song .users-list .search-results-block{
 			margin-top:12px;
 		}
 		.share-song .users-list .suggest{

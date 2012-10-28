@@ -11,12 +11,11 @@ var jsLoadComplete,
 	
 	var js_toload = [
 	"js/libs/serv.js",
-	"js/libs/w_storage.js",
 	"js/app_serv.js",
-
-	"js/seesu.ui.dom_ready.js",
-	"js/common-libs/jquery-1.8.0.mod.min.js",
 	"js/libs/localizer.js",
+	"js/libs/w_storage.js",
+	"js/common-libs/jquery-1.8.0.mod.min.js",
+	
 	
 	"js/libs/c_cache_ajax.js",
 	"js/common-libs/md5.min.js",
@@ -42,36 +41,49 @@ var jsLoadComplete,
 	"js/network.lastfm.js",
 	"js/lastfm.data.js",
 	"js/su-prototypes/su.serv-prototypes.js",
-	"js/seesu.star-page-blocks.js",
 
-	"js/seesu.ui.views.js",
-	"js/seesu.ui.js",
+	"js/views/navigation.js",
+
+
+	"js/models/start_page.js",
+	"js/models/app_md.js",
+	
+	"js/seesu.artcard.js",
 	"js/seesu.s.js",
 	"js/libs/mp3_search.js",
-	"js/su-prototypes/su-song.ui.js",
-	"js/prototypes/song.m.js",
-
-	"js/su-prototypes/su-song.m.js",
-	"js/su-prototypes/su-mfcomplect.js",
+	
+	"js/models/song.base.js",
+	"js/models/song.js",
+	"js/models/mfcomplect.js",
 	"js/seesu.js",
-	"js/prototypes/songs-list.js",
-	"js/su-prototypes/su-songs-list.js",
+	"js/models/songs-list.base.js",
+	"js/models/songs-list.js",
 	"js/prototypes/songFile.js",
-	"js/prototypes/search-investigation.js",
-	"js/prototypes/searchSection.js",
+
+	"js/models/search-investigation.base.js",
 	
 	"js/libs/lastfm.search.js",
-	"js/seesu.search.js",
-	"js/su-prototypes/su-playlists-row.js",
-	"js/su-prototypes/su-share-row.js",
-	"js/su-prototypes/su-love-row.js",
+	"js/models/search-investigation.js",
+	"js/models/song-actionsrow.js",
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
 
 	"js/su-prototypes/su-player.js",
 
 	"js/libs/c_buttmen.js",
-	"js/pressed_node_tester.js"
+	"js/pressed_node_tester.js",
+	
+	"js/views/etc.views.js",
+	"js/views/su-mfcomplect.js",
+	"js/views/search-investigation.base.js",
+	"js/views/search-investigation.js",
+	"js/views/song-actionsrow.js",
+	"js/views/su-song.ui.js",
+	"js/views/start_page.js",
+	"js/views/songs-list.base.js",
+	"js/views/songs-list.js",
+	"js/views/app_view.js",
+	"js/app.tph.js"
 	];
 	var bpathWrap = function(array){
 		if (base_path){

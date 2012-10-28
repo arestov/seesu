@@ -70,6 +70,18 @@ loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
 						//
 					}
 				});
+				jsLoadComplete({
+					test: function() {
+						return window.appTelegrapher
+					},
+					fn: function() {
+
+						var app_tph = new appTelegrapher();
+						app_tph.init(window, {category: big_timer.base_category, start_time: "page-start"});
+						//
+						window.app_view = app_tph.app_view;
+					}
+				});
 			}
 			
 		}

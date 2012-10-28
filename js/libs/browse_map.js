@@ -1,6 +1,11 @@
-//make_history_step
+var
+	browseMap,
+	mapLevelModel;
+
+(function() {
+"use strict";
+
 var mapLevel = function(num, parent_levels, resident, map){
-	var _this = this;
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
@@ -8,8 +13,8 @@ var mapLevel = function(num, parent_levels, resident, map){
 		this.setResident(resident);
 		resident.assignMapLev(this);
 		resident.trigger('mpl-attach');
-		//this.buildResident();
 	}
+	return this;
 };
 
 Class.extendTo(mapLevel, {
@@ -25,29 +30,79 @@ Class.extendTo(mapLevel, {
 	getParentLev: function(){
 		return this.parent_levels[0] || ((this.num > -1) && this.map.levels[-1].free);
 	},
-	show: function(opts){
-		var o = opts || {};
-		o.closed = this.closed;
+	getParentResident: function() {
 		var parent = this.getParentLev();
-		if (parent){
-			parent.resident.blur();
+		return parent && parent.resident;
+	},
+	show: function(opts){
+		this.map.addChange({
+			type: 'move-view',
+			target: this.resident,
+			value: opts
+		});
+
+		/*
+		var o = opts || {};
+		var parent;
+		if (!opts.zoom_out){
+			parent = this.getParentLev();
+			if (parent){
+				parent.resident.blur();
+			}
 		}
-		this.resident.show(o);
+		
+		this.resident.show(o, parent);*/
 	},
 	hide: function(){
-		this.resident.hide();
+		this.map.addChange({
+			type: 'zoom-out',
+			target: this.resident
+		});
+		//this.resident.hide();
 	},
 	die: function(){
-		this.resident.mlmDie();
+		this.map.addChange({
+			type: 'destroy',
+			target: this.resident
+		});
+		//this.resident.mlmDie();
 		this.resident.trigger('mpl-detach');
 		delete this.map;
 	},
 	_sliceTM: function(transit, url_restoring){ //private alike
-		this.map.clearShallow(this);
-		this.map.sliceDeepUntil(this.num, true, transit, url_restoring);	
+		var current_level = this.map.getCurrentLevel();
+		if (current_level == this){
+			return
+		}
+		var aycocha = this.map.isCollectingChanges();
+		if (!aycocha){
+			this.map.startChangesCollecting();
+		}
+		
+
+
+
+		//this.map.clearShallow(this);
+		var just_started = this.map.startChangesGrouping('zoom-out', true);
+		this.map.sliceDeepUntil(this.num, true, transit, url_restoring);
+		if (just_started){
+			this.map.finishChangesGrouping('zoom-out');
+		}
+
+		if (!aycocha){
+			this.map.finishChangesCollecting();
+		}
+	},
+	zoomOut: function() {
+		//this.map.clearShallow(this);
+		this._sliceTM();
 	},
 	sliceTillMe: function(transit, url_restoring){
 		this._sliceTM(transit, url_restoring);
+	},
+	markAsFreezed: function() {
+		this.closed = true;
+		this.resident.updateState('mp-freezed', true);
 	},
 	freeze: function(){
 		if (this.isOpened()){
@@ -77,23 +132,160 @@ Class.extendTo(mapLevel, {
 });
 
 
-function browseMap(mainLevelResident){
-	this.init();
-	this.levels = [];
-	this.mainLevelResident = mainLevelResident;
-	
-	//zoom levels
-	
-	// -1, start page
-	//0 - search results
-	//1 - playlist page
-	//today seesu has no deeper level
-};
+browseMap = function (){};
 
 provoda.Eventor.extendTo(browseMap, {
-	makeMainLevel: function(){
-		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
+	init: function(maleres){
+		this._super();
+		this.levels = [];
+		if (!maleres){
+			throw new Error('give me 0 index level (start screen)');
+		}
+		this.mainLevelResident = maleres;
+
+
+		this.cha_counter = 0;
+		this.chans_coll = [];
+		//zoom levels
+		
+		// -1, start page
+		//0 - search results
+		//1 - playlist page
+		//today seesu has no deeper level
 		return this;
+	},
+	isGroupingChanges: function() {
+		return this.grouping_changes;
+	},
+	startChangesGrouping: function(group_name, soft_allowed) {
+		if (this.grouping_changes){
+			if (!soft_allowed){
+				throw new Error('already grouping')
+			}
+			
+		} else {
+			this.changes_group = {
+				name: group_name,
+				changes: []
+			},
+			this.grouping_changes = true;
+			return true;
+		}
+	},
+	finishChangesGrouping: function(group_name) {
+		if (!this.grouping_changes){
+			throw new Error('none to finish');
+		} else {
+			this.grouping_changes = false;
+			this.emitChangesGroup(group_name);
+		}
+	},
+	emitChangesGroup: function(group_name) {
+		if (this.changes_group.name != group_name){
+			throw new Error('wrong changes group name');
+		}
+		if (this.changes_group.changes.length){
+
+			this.chans_coll.push(this.changes_group);
+			delete this.changes_group;
+			if (!this.isCollectingChanges()){
+				this.emitChanges();
+			}
+		}
+	},
+	addChangeToGroup: function(change) {
+		if (this.grouping_changes){
+			this.changes_group.changes.push(change);
+		} else {
+			var last_group = this.chans_coll[this.chans_coll.length-1];
+			if (last_group && !last_group.name){
+				last_group.changes.push(change);
+			} else {
+				throw new Error('unknow changes');
+				this.chans_coll.push({
+					name: '',
+					changes: [change]
+				})
+			}
+		}
+	},
+	isCollectingChanges: function() {
+		return this.collecting_changes;
+	},
+	startChangesCollecting: function(soft_allowed) {
+		if (this.collecting_changes){
+			if (!soft_allowed){
+				throw new Error('already collecting');
+			}
+			
+		} else {
+			this.collecting_changes = true;
+			return true;
+			
+		}
+	},
+	finishChangesCollecting: function() {
+		if (!this.collecting_changes){
+			throw new Error('none to finish');
+		} else {
+			this.collecting_changes = false;
+			this.emitChanges();
+		}
+	},
+	addChange: function(change) {
+		this.addChangeToGroup(change);
+		if (!this.collecting_changes){
+			this.emitChanges();
+		}
+	},
+	zipChanges: function() {
+		var
+			cur,
+			prev,
+			zipped = [];
+
+		for (var i = 0; i < this.chans_coll.length; i++) {
+			if (cur){
+				if (!prev || cur.name != prev.name){
+					prev = cur;
+				}
+			}
+			
+			cur = this.chans_coll[i];
+			if (prev && cur.name == prev.name){
+				prev.changes = prev.changes.concat(cur.changes);
+				prev.zipped=  true;
+			} else {
+				zipped.push(cur);
+			}
+		}
+		if (zipped.length < this.chans_coll.length){
+			this.chans_coll = zipped;
+		}
+	},
+	emitChanges: function() {
+		if (this.chans_coll.length){
+			this.zipChanges();
+			this.trigger('changes', {
+				array: this.chans_coll,
+				anid: this.cha_counter
+			});
+			this.chans_coll = [];
+			this.chans_coll.anid = ++this.cha_counter;
+		}
+		
+	},
+	makeMainLevel: function(){
+		this.startChangesGrouping('zoom-in');
+		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
+		this.finishChangesGrouping('zoom-in');
+		return this;
+	},
+	getCurrentLevel: function() {
+		return this.getLevel(this.getActiveLevelNum());
+	},
+	getCurrentResident: function() {
+		return this.getCurrentLevel().resident;
 	},
 	getLevel: function(num){
 		if (this.levels[num]){
@@ -118,19 +310,26 @@ provoda.Eventor.extendTo(browseMap, {
 		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), transit, url_restoring);
 		return nlev;
 	},
-	goShallow: function(to){ //up!
-		this.sliceDeepUntil(to.num, true);
-	},
 	_goDeeper: function(orealy, resident, transit, url_restoring){
 		var cl = this.getActiveLevelNum();
+
+		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
 		if (orealy){
-			this.sliceDeepUntil(cl, false, true);
+			//this.sliceDeepUntil(cl, false, true);
 		}  else{
-			this.sliceDeepUntil(-1, false, true);
+			//this.sliceDeepUntil(-1, false, true);
+			this.clearCurrent();
+		}
+		if (just_started_zoomout){
+			this.finishChangesGrouping('zoom-out');
 		}
 		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
+
+		var just_started = this.startChangesGrouping('zoom-in');
 		this.setLevelPartActive(cl, {userwant: true, transit: transit, url_restoring: url_restoring});
-		
+		if (just_started){
+			this.finishChangesGrouping('zoom-in');
+		}
 		return cl;
 		
 	},
@@ -158,7 +357,6 @@ provoda.Eventor.extendTo(browseMap, {
 		return lvls;
 	},
 	getFreeLevel: function(num, save_parents, resident){//goDeeper
-		var _this = this;
 		if (!this.levels[num]){
 			this.levels[num] = {};
 		}
@@ -170,9 +368,14 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 	},
 	freezeMapOfLevel : function(num){
-		var fresh_freeze = false;
-		var l = Math.min(num, this.levels.length - 1);
-		for (var i = l; i >= 0; i--){
+		var
+			i,
+			fresh_freeze = false,
+			l = Math.min(num, this.levels.length - 1);
+
+		this.startChangesGrouping('freezing');
+
+		for (i = l; i >= 0; i--){
 			if (this.levels[i]){
 				if (this.levels[i].free){
 					if (this.levels[i].free != this.levels[i].freezed){
@@ -181,7 +384,7 @@ provoda.Eventor.extendTo(browseMap, {
 							delete this.levels[i].freezed;
 						}
 						this.levels[i].freezed = this.levels[i].free;
-						this.levels[i].freezed.closed = true;
+						this.levels[i].freezed.markAsFreezed();
 						fresh_freeze = true;
 					}	
 				}
@@ -190,10 +393,11 @@ provoda.Eventor.extendTo(browseMap, {
 			
 			
 		}
+
 		
 		//clearing if have too much levels !?!?!??!?!?!
 		if (l + 1 < this.levels.length -1) {
-			for (var i= l + 1; i < this.levels.length; i++) {
+			for (i= l + 1; i < this.levels.length; i++) {
 				if (this.levels[i].freezed){
 					this.levels[i].freezed.die();
 					delete this.levels[i].freezed;
@@ -201,48 +405,79 @@ provoda.Eventor.extendTo(browseMap, {
 				
 			}
 		}
+		this.finishChangesGrouping('freezing');
 		return fresh_freeze;
 	},
+	findDeepestActiveFreezed: function() {
+		var
+			target,
+			f_lvs = $filter(this.levels, 'freezed'),
+			current_lev = this.getCurrentLevel(),
+			active_tree = [current_lev].concat(current_lev.parent_levels);
+
+		for (var i = 0; i < active_tree.length; i++) {
+			if (f_lvs.indexOf(active_tree[i]) != -1){
+				target = active_tree[i];
+				break;
+			}
+			
+		}
+		return target;
+
+	},
 	restoreFreezed: function(transit, url_restoring){
-		this.hideMap();
+		//this.hideMap();
+		var defzactv = this.findDeepestActiveFreezed();
 		var f_lvs = $filter(this.levels, 'freezed');
-		for (var i=0; i < f_lvs.length; i++) {
+
+
+		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
+		if (defzactv){
+			this.clearShallow(defzactv, true);
+		} else {
+			this.hideMap(true);
+		}
+		if (just_started_zoomout){
+			this.finishChangesGrouping('zoom-out')
+		}
+
+		var dfa_pos = defzactv ? f_lvs.indexOf(defzactv) : 0;
+
+
+		var just_started_zoomin = this.startChangesGrouping('zoom-in', true);
+		for (var i=dfa_pos; i < f_lvs.length; i++) {
 			this.setLevelPartActive(f_lvs[i], {
 				userwant: (i == f_lvs.length - 1), 
 				transit: transit, 
 				url_restoring: url_restoring
 			});
 		}
-		/*
-		for (var i=0; i < this.levels.length; i++) {
-			var cur = this.levels[i]
-			if (cur){
-				if (cur.freezed){
-					this.setLevelPartActive(cur.freezed, {userwant: true});
-					r.push(cur.freezed)
+		if (just_started_zoomin){
+			this.finishChangesGrouping('zoom-in')
+		}
+
+	},
+	hideFreeLevel: function(lev, exept) {
+		if (lev.free && lev.free != exept){
+			lev.free.die();
+			delete lev.free;
+		}
+	},
+	hideLevel: function(lev, exept, only_free){
+		if (lev){
+			if (!only_free){
+				if (lev.freezed && lev.freezed != exept){ 
+					lev.freezed.hide();
 				}
 			}
-		}
-		
-		!!!! bb, r
-		console.log(bb);
-		console.log(r);
-		*/
-	},
-	hideLevel: function(lev, exept){
-		if (lev){
-			if (lev.freezed && lev.freezed != exept){ 
-				lev.freezed.hide();
-			}
-			if (lev.free && lev.free != exept){
-				lev.free.die();
-				delete lev.free;
-			}
+			
+			this.hideFreeLevel(lev, exept);
+			
 		}
 	},
-	hideMap: function(){
-		for (var i=0; i < this.levels.length; i++) {
-			this.hideLevel(this.levels[i]);
+	hideMap: function(only_free){
+		for (var i = this.levels.length - 1; i >= 0; i--) {
+			this.hideLevel(this.levels[i], false, only_free);
 		}
 	},
 	sProp: function(name, nv, cb) {
@@ -260,6 +495,10 @@ provoda.Eventor.extendTo(browseMap, {
 		//if (tl != this.getLevel(-1)){
 		//	lvls.push(this.getLevel(-1));
 		//}
+		//if (tl){
+			tl.resident.stackNav(false);
+	//	}
+		
 
 		var prev = lvls[1];
 		if (prev){
@@ -268,6 +507,8 @@ provoda.Eventor.extendTo(browseMap, {
 				prev.resident.stackNav('top');
 				this.getLevel(-1).resident.stackNav(true);
 			//}
+		} else {
+			this.getLevel(-1).resident.stackNav(false);
 		}
 
 		for (var i = 2; i < lvls.length; i++) {
@@ -296,7 +537,7 @@ provoda.Eventor.extendTo(browseMap, {
 					map_level: this.getPrevMampL()
 				}, 
 				!!url_restoring, title_changed);
-		};
+		}
 		this.trigger("map-tree-change", this.nav_tree, this.old_nav_tree);
 		
 
@@ -305,7 +546,7 @@ provoda.Eventor.extendTo(browseMap, {
 		return this.old_nav_tree && this.old_nav_tree[0];
 	},
 	getCurMapL: function() {
-		return this.nav_tree[0]
+		return this.nav_tree[0];
 	},
 	getTreeResidents: function(n) {
 		return n && $filter(n, 'resident');
@@ -326,15 +567,18 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 		old_nav = this.getTitleNav(old_nav);
 
+
+		var i;
+
 		if (old_nav){
-			for (var i = 0; i < old_nav.length; i++) {
+			for (i = 0; i < old_nav.length; i++) {
 				old_nav[i].offTitleChange( this.onNavTitleChange); //unbind
 			}
 		}
 
 		new_nav = this.getTitleNav(new_nav);
 
-		for (var i = 0; i < new_nav.length; i++) {
+		for (i = 0; i < new_nav.length; i++) {
 			new_nav[i].onTitleChange(this.onNavTitleChange);
 		}
 
@@ -371,14 +615,15 @@ provoda.Eventor.extendTo(browseMap, {
 			};
 		}
 		old_tree = this.getTreeResidents(old_tree);
+		var i;
 		if (old_tree){
-			for (var i = 0; i < old_tree.length; i++) {
+			for (i = 0; i < old_tree.length; i++) {
 				old_tree[i].off('url-change', this.onNavUrlChange); //unbind
 			}
 		}
 
 		new_tree = this.getTreeResidents(new_tree);
-		for (var i = 0; i < new_tree.length; i++) {
+		for (i = 0; i < new_tree.length; i++) {
 			new_tree[i].on('url-change', this.onNavUrlChange);
 		}
 		return this.setURL(this.joinNavURL(new_tree), false, url_restoring);
@@ -393,7 +638,7 @@ provoda.Eventor.extendTo(browseMap, {
 				url.push(url_part);
 			}
 			nav[i].setFullUrl(url.join(''));
-		};
+		}
 		return url.join('');
 	},
 	setURL: function(url, replace, url_restoring) {
@@ -421,61 +666,140 @@ provoda.Eventor.extendTo(browseMap, {
 		this.setURL(this.joinNavURL(this.getTreeResidents(this.nav_tree)), true);
 		return this;
 	},
-	clearShallow: function(lev){
-		var exept_levels = [].concat(lev, lev.parent_levels);
-			exept_levels.reverse();
-		
-		for (var i=0; i < this.levels.length; i++) {
-			var cur = this.levels[i];
-			this.hideLevel(cur, exept_levels[i]);
+
+	clearShallow: function(lev, only_free){
+	//	var exept_levels = [].concat(lev, lev.parent_levels);
+	//		exept_levels.reverse();
+
+
+		for (var i = this.levels.length - 1; i > lev.num; i--) {
+			this.hideLevel(this.levels[i], false, only_free);
+			
 		}
+			/*
+
+		for (var i = this.levels.length - 1; i >= 0; i--) {
+			this.levels[i]
+		}*/
+		
+	//	for (var i=0; i < this.levels.length; i++) {
+	//		var cur = this.levels[i];
+	//		this.hideLevel(cur, exept_levels[i], only_free);
+	//	}
 	},
 	sliceDeepUntil: function(num, fullhouse, transit, url_restoring){
+		var
+			current_lev = this.getCurrentLevel(),
+			target_lev;
+
 		if (num < this.levels.length){
 			for (var i = this.levels.length-1; i > num; i--){
 				this.hideLevel(this.levels[i]);
 			}
 		}
-		num = this.getLevel(num);
-		if (num){
-			this.setLevelPartActive(num, {userwant: fullhouse, transit: transit, url_restoring: url_restoring});
+		target_lev = this.getLevel(num);
+		if (target_lev && target_lev != current_lev){
+		//	throw new Error('fix nav!');
+			this.setLevelPartActive(target_lev, {userwant: fullhouse, transit: transit, url_restoring: url_restoring, zoom_out: true});
+		}
+	},
+	clearCurrent: function() {
+		var current_num = this.getActiveLevelNum();
+		if (current_num != -1){
+			for (var i = current_num; i >= 0; i--) {
+				this.hideLevel(this.levels[i]);
+				
+			}
 		}
 	},
 	startNewBrowse: function(url_restoring){
-		this.sliceDeepUntil(-1, true, false, url_restoring);
+
+		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
+		
+		this.clearCurrent();
+		this.setLevelPartActive(this.getLevel(-1), {
+			userwant: true, 
+			transit: false, 
+			url_restoring: url_restoring
+		});
+		if (just_started_zoomout){
+			this.finishChangesGrouping('zoom-out');
+		}
+		/*var
+			current_lev = this.getLevel(this.getActiveLevelNum()),
+			current_levs = [current_lev].concat(current_lev.parent_levels);
+
+*/
+		//this.sliceDeepUntil(-1, true, false, url_restoring);
 	}
 	
 });
-var mapLevelModel = function() {};
+mapLevelModel = function() {};
 
 provoda.Model.extendTo(mapLevelModel, {
+	getLevNum: function() {
+		return this.map_level_num;
+	},
 	assignMapLev: function(lev){
 		this.lev = lev;
+		this.map_level_num = this.lev.num;
 		if (this.onMapLevAssign){
 			this.onMapLevAssign();
 		}
 		return this;	
 	},
+	getParentMapModel: function() {
+		return this.lev.getParentResident();
+	},
 	mlmDie: function(){
-		this.die();	
+		this.die();
+		/*this.lev.map.addChange({
+			target: this,
+			type: 'die'
+		});*/
 	},
 	hide: function() {
 		this.updateState('mp-show', false);
+		/*
+		this.lev.map.addChange({
+			target: this,
+			type: 'mp-show',
+			value: false
+		});*/
 		return this;
 	},
-	show: function(opts) {
+	show: function(opts, parent) {
 		this.focus();
 		this.updateState('mp-show', opts || true);
+		/*
+		this.lev.map.addChange({
+			target: this,
+			type: 'mp-show',
+			value: opts,
+			parent: parent
+		});*/
 		return this;
 	},
 	blur: function() {
-		this.stackNav(false);
-		this.updateState('mp-blured', true);
+		//this.stackNav(false);
+		this.updateState('mp-has-focus', false);
+		/*
+		this.lev.map.addChange({
+			target: this,
+			type: 'mp-has-focus',
+			value: false
+		});*/
 		return this;
 	},
 	focus: function() {
-		this.stackNav(false);
-		this.updateState('mp-blured', false);
+	//	this.stackNav(false);
+		this.updateState('mp-has-focus', true);
+		/*
+		this.lev.map.addChange({
+			target: this,
+			type: 'mp-has-focus',
+			value: true
+		});*/
 		return this;
 	},
 	stackNav: function(stack_v){
@@ -483,8 +807,8 @@ provoda.Model.extendTo(mapLevelModel, {
 		return this;
 	},
 	zoomOut: function() {
-		if (this.lev && (this.state('mp-stack') || (this.state('mp-show') && this.state('mp-blured')) )){
-			this.lev._sliceTM();
+		if (this.lev && (this.state('mp-stack') || (this.state('mp-show')) )){
+			this.lev.zoomOut();
 		}
 	},
 	setFullUrl: function(url) {
@@ -503,3 +827,4 @@ provoda.Model.extendTo(mapLevelModel, {
 		return '';	
 	}
 });
+})();

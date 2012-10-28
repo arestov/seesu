@@ -1,9 +1,6 @@
 var isohuntTorrentSearch = function(cross_domain_allowed) {
 	this.crossdomain = cross_domain_allowed;
 	var _this = this;
-	this.search =  function(){
-		return _this.findAudio.apply(_this, arguments);
-	};
 };
 isohuntTorrentSearch.prototype = {
 	constructor: isohuntTorrentSearch,
@@ -162,9 +159,6 @@ isohuntTorrentSearch.prototype = {
 var googleTorrentSearch = function(cross_domain_allowed) {
 	this.crossdomain = cross_domain_allowed;
 	var _this = this;
-	this.search =  function(){
-		return _this.findAudio.apply(_this, arguments);
-	};
 };
 googleTorrentSearch.prototype = {
 	constructor: googleTorrentSearch,

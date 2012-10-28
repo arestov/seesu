@@ -54,6 +54,9 @@ provoda.Eventor.extendTo(playerBase, {
 	},
 	create: function(song_file){
 		if (song_file && this.core){
+			if (!song_file.link){
+				throw new Error('give me url of file!');
+			}
 			this.core.callSongMethod("create", song_file.uid, {
 				url: song_file.link
 			});
