@@ -371,7 +371,6 @@ provoda.Model.extendTo(appModel, {
 					var artists = toRealArray(getTargetField(r, 'topartists.artist'));
 					var track_list = [];
 
-					su.art_images.checkLfmData('tag.getTopArtists', r, artists);
 					if (artists && artists.length) {
 
 						var l = Math.min(artists.length, paging_opts.page_limit);
@@ -454,7 +453,6 @@ provoda.Model.extendTo(appModel, {
 						'playlistURL': 'lastfm://playlist/album/' + album_id
 					})
 						.done(function(r){
-							su.art_images.checkLfmData('playlist.fetch', r);
 							var playlist = toRealArray(getTargetField(r, 'playlist.trackList.track'));
 							var music_list = [];
 							for (var i=0; i < playlist.length; i++) {
@@ -466,7 +464,7 @@ provoda.Model.extendTo(appModel, {
 									}
 								});
 							}
-							pl_r.injectExpectedSongs(music_list);
+							pl.injectExpectedSongs(music_list);
 						});
 				}
 			};
@@ -475,7 +473,6 @@ provoda.Model.extendTo(appModel, {
 			} else{
 				lfm.get('album.getInfo',{'artist': artist, album : name})
 					.done(function(r){
-						su.art_images.checkLfmData('album.getInfo', r);
 						var tracks = toRealArray(getTargetField(r, 'album.tracks.track'));
 						var track_list = [];
 						var imgs = getTargetField(r, 'album.image');
@@ -531,7 +528,6 @@ provoda.Model.extendTo(appModel, {
 						}
 						var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 
-						su.art_images.checkLfmData('artist.getTopTracks', r, tracks);
 
 						var track_list = [];
 						if (tracks.length) {
@@ -589,7 +585,6 @@ provoda.Model.extendTo(appModel, {
 					}
 
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
-					su.art_images.checkLfmData('geo.getMetroUniqueTrackChart', r, tracks);
 					var track_list = [];
 					if (tracks.length) {
 						var l = Math.min(tracks.length, paging_opts.page_limit);
@@ -652,7 +647,6 @@ provoda.Model.extendTo(appModel, {
 				})
 					.done(function(r){
 						var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
-						su.art_images.checkLfmData('artist.getSimilar', r, artists);
 						var track_list = [];
 
 						if (artists && artists.length) {
