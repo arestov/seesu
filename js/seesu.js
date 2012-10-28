@@ -41,13 +41,13 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 	state_change: {
 		"playing": function(state) {
 			if (state){
-				su.opera_ext_b.icon = "/icons/icon18p.png";
+				this.opts.opera_ext_b.icon = "/icons/icon18p.png";
 			} else {
-				su.opera_ext_b.icon = "/icons/icon18.png";
+				this.opts.opera_ext_b.icon = "/icons/icon18.png";
 			}
 		},
 		'now-playing': function(text) {
-			su.opera_ext_b.title = localize('now-playing','Now Playing') + ': ' + text;
+			this.opts.opera_ext_b.title = localize('now-playing','Now Playing') + ': ' + text;
 		}
 	}
 });
@@ -55,10 +55,6 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 
 var seesuApp = function(version) {};
 appModel.extendTo(seesuApp, {
-	ui_constr: {
-		chrome_ext: ChromeExtensionButtonView,
-		opera_ext: OperaExtensionButtonView
-	},
 	init: function(version){
 		this._super();
 		this.version = version;
@@ -190,20 +186,28 @@ appModel.extendTo(seesuApp, {
 
 
 
+		var addBrowserView = function(Constr, name, opts) {
+			var view = new Constr();
+
+			md.addView(view, view.view_id  + '_' + name);
+
+			view.init({
+				md: md
+			}, opts);
+			view.requestAll();
+
+		};
 
 		var ext_view;
 		if (app_env.chrome_extension){
+			addBrowserView(ChromeExtensionButtonView, 'chrome_ext')
 			//ext_view = this.getFreeView(this, "chrome_ext");
 		} else if (app_env.opera_extension && window.opera_extension_button){
 			this.opera_ext_b = opera_extension_button;
 			//ext_view = this.getFreeView(this, "opera_ext");
+			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: opera_extension_button})
 		}
-		if (ext_view){
-			//ext_view.requestAll();
-		}
-		
-
-		
+				
 
 
 		this.delayed_search = {
