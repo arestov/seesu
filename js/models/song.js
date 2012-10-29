@@ -14,12 +14,20 @@ var song;
 		},
 		'stch-lfm-image': function(state) {
 			if (state){
+				if (state.lfm_id){
+
+					this.updateState('song-image', "http://userserve-ak.last.fm/serve/64s/" + state.lfm_id);
+				} else if (state.url){
+					this.updateState('song-image', state.url);
+				}
+				/*
 				if (state.array){
 					
 					this.updateState('song-image', state.array[1]['#text'].replace('/64/', '/64s/'));
 				} else if (state.item){
 					this.updateState('song-image', state.item);
-				}
+				}*/
+//				console.log(state);
 
 			}
 		},
@@ -29,7 +37,6 @@ var song;
 				var _this = this;
 				var info_request = lfm.get('artist.getInfo',{'artist': this.artist })
 					.done(function(r){
-						su.art_images.checkLfmData('artist.getInfo', r);
 
 						var ai = parseArtistInfo(r);
 
@@ -72,8 +79,35 @@ var song;
 			var _this = this;
 			this.updateNavTexts();
 
+
+
+			var spec_image_wrap;
+
 			if (omo.lfm_image){
-				this.updateState('lfm-image', omo.lfm_image);
+				spec_image_wrap = su.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
+				//this.updateState('lfm-image', omo.lfm_image);
+			}
+			var images_pack;
+
+			if (spec_image_wrap) {
+				this.updateState('lfm-image', spec_image_wrap);
+
+			} else if (this.state('track')){
+				images_pack = su.art_images.getTrackImagesModel({
+					artist: this.state('artist'),
+					track: this.state('track')
+				})
+					.on('state-change.image-to-use', function(e) {
+						_this.updateState('lfm-image', e.value);
+					});
+				this.updateState('lfm-image', images_pack.state('image-to-use'));
+
+			} else {
+				images_pack = su.art_images.getArtistImagesModel(this.state('artist'))
+					.on('state-change.image-to-use', function(e) {
+						_this.updateState('lfm-image', e.value);
+					});
+				this.updateState('lfm-image', images_pack.state('image-to-use'));
 			}
 
 			this.on('view', function(no_navi, user_want){

@@ -139,6 +139,9 @@ lastfm_api.prototype= {
 								deferred.reject.apply(deferred, arguments);
 							})
 							.done(function(r){
+								if (!post && _this.checkMethodResponse){
+									_this.checkMethodResponse(method, params, r);
+								}
 								deferred.resolve.apply(deferred, arguments);
 								if (!post && _this.cache_ajax){
 									_this.cache_ajax.set(_this.cache_namespace, params.api_sig, r, options.cache_timeout);

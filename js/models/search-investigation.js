@@ -12,16 +12,10 @@ var
 
 
 var suParseArtistsResults = function(r, item_constr, method) {
-	su.art_images.checkLfmData(method, r);
-	
-
 	return parseArtistsResults.apply(this, arguments);
 };
 
 var suParseTracksResults = function(r, item_constr, method) {
-	su.art_images.checkLfmData(method, r);
-	
-
 	return parseTracksResults.apply(this, arguments);
 };
 var suParseTagsResults = parseTagsResults;
