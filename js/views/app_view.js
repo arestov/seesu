@@ -205,7 +205,7 @@ provoda.View.extendTo(appModelView, {
 		}
 		var all_changhes = $filter(changes.array, 'changes');
 		all_changhes = [].concat.apply([], all_changhes);
-		console.log(all_changhes);
+		
 		for (var i = 0; i < all_changhes.length; i++) {
 			var cur = all_changhes[i];
 
