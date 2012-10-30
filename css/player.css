@@ -361,7 +361,7 @@ a.download-mp3:hover{
 
 	}
 	.show-zoom-to-track .track-node .full-song-title{
-		min-height: auto;
+		min-height: 0;
 		}
 	.show-zoom-to-track .track-node .song-image-con{
 		height: 24px;

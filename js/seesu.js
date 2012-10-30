@@ -165,7 +165,6 @@ appModel.extendTo(seesuApp, {
 						navi.set(nu, data);
 					}
 				});
-				//console.log(arguments);
 			})
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
@@ -182,7 +181,6 @@ appModel.extendTo(seesuApp, {
 			})
 			.makeMainLevel();
 
-		//(new appModel()).init(this);
 
 
 
@@ -201,10 +199,8 @@ appModel.extendTo(seesuApp, {
 		var ext_view;
 		if (app_env.chrome_extension){
 			addBrowserView(ChromeExtensionButtonView, 'chrome_ext')
-			//ext_view = this.getFreeView(this, "chrome_ext");
 		} else if (app_env.opera_extension && window.opera_extension_button){
 			this.opera_ext_b = opera_extension_button;
-			//ext_view = this.getFreeView(this, "opera_ext");
 			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: opera_extension_button})
 		}
 				
