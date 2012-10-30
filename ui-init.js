@@ -15,3 +15,15 @@ cbp.jsLoadComplete({
 		//cbp.handleDocument(d);
 	}
 });
+cbp.jsLoadComplete({
+	test: function() {
+		return cbp.appTelegrapher
+	},
+	fn: function() {
+
+		var app_tph = new cbp.appTelegrapher();
+		app_tph.init(window, {category: 'popup-init', start_time: 'popup-start'}, true);
+		//
+		cbp.app_view = app_tph.app_view;
+	}
+});

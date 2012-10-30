@@ -53,11 +53,7 @@ loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
 		load: bpath + 'js/_seesu.jslist.js',
 		complete: function(){
 			var cbp = location.pathname == '/bg.html';
-			if (window.chrome && chrome.extension){
-				cbp = chrome.extension.getBackgroundPage();	
-			} else if (window.opera && opera.extension && opera.extension.bgProcess){
-				cbp = opera.extension.bgProcess;
-			}
+			
 
 			if (!cbp){
 				//big_timer.sui_want = new Date();
