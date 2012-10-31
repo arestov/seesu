@@ -494,8 +494,10 @@ var songsList;
 					delete this.waiting_next;
 				} else {
 					if (this.waiting_next.next_preload_song.canPlay()){
-						this.waiting_next.next_preload_song.play();
-						delete this.waiting_next;
+						this.player.wantSong(this.waiting_next.next_preload_song);
+						
+						//this.waiting_next.next_preload_song.play();
+						//delete this.waiting_next;
 					}
 					
 				}
