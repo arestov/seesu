@@ -97,9 +97,9 @@ provoda.addPrototype("baseSong",{
 			}
 		},
 		is_important: {
-			depends_on: ['mp-show', 'player-song'],
-			fn: function(mp_show, player_song){
-				return !!(mp_show || player_song);
+			depends_on: ['mp-show', 'player-song', 'want_to_play'],
+			fn: function(mp_show, player_song, wapl){
+				return !!(mp_show || player_song || wapl);
 
 			}
 		}

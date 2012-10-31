@@ -88,5 +88,6 @@ playerBase.extendTo(playerComplex, {
 			this.c_song = mo;
 			mo.updateState("player-song", true);
 		}
+		this.trigger('now-playing-signal', last_mo != mo, mo, last_mo);
 	}
 });
