@@ -212,9 +212,12 @@ var songsList;
 			if (last_usable_song && last_usable_song.isImportant()){
 				//this.checkNeighboursChanges(last_usable_song);
 			}
-			var v_song = this.getViewingSong();
-			var p_song = this.getPlayerSong();
-
+			var w_song = this.getWantedSong();
+			var v_song = this.getViewingSong(w_song);
+			var p_song = this.getPlayerSong(v_song);
+			if (w_song && !w_song.hasNextSong()){
+				this.checkNeighboursChanges(v_song, false, false, "playlist load");
+			}
 			if (v_song && !v_song.hasNextSong()) {
 				this.checkNeighboursChanges(v_song, false, false, "playlist load");
 			}
@@ -296,6 +299,9 @@ var songsList;
 				playlist[0].play();
 			}
 		
+		},
+		getWantedSong: function() {
+			return $filter(this.palist, 'states.want_to_play', function(v) {return !!v;})[0];
 		},
 		getViewingSong: function(exept) {
 			var song = $filter(this.palist, 'states.mp-show', function(v) {return !!v;})[0]
@@ -407,6 +413,7 @@ var songsList;
 
 			viewing = viewing || !!target_song.state("mp-show");
 			var playing = !!target_song.state("player-song");
+			var wanted = target_song.state('want_to_play')
 
 			if (viewing){
 				target_song.addMarksToNeighbours();
@@ -424,7 +431,7 @@ var songsList;
 				target_song.cncco.push(log);
 			}
 
-			if (viewing || playing){
+			if (viewing || playing || wanted){
 				if (!target_song.hasNextSong()){
 					this.loadMoreSongs();
 				}
