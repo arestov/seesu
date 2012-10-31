@@ -213,10 +213,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			
 			if (old_value != value){
 				
+				obj_to_change[name] = value;
+				
 				if (method){
 					method.call(this, value, old_value);
 				}
-				obj_to_change[name] = value;
+				
 				return [old_value];
 			}
 		}

@@ -99,6 +99,7 @@ provoda.addPrototype("baseSong",{
 		is_important: {
 			depends_on: ['mp-show', 'player-song', 'want_to_play'],
 			fn: function(mp_show, player_song, wapl){
+				this.plst_titl.checkRequestsPriority();
 				return !!(mp_show || player_song || wapl);
 
 			}

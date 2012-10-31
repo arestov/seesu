@@ -502,6 +502,9 @@ var songsList;
 					
 				}
 			}
+		},
+		checkRequestsPriority: function() {
+			
 		}
 
 	});
