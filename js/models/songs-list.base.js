@@ -262,6 +262,15 @@ var songsList;
 			}
 			return this;
 		},
+		setWaitingNextSong: function(mo) {
+			this.waiting_next = mo;
+			var _this = this;
+			this.player.once('now-playing-signal', function() {
+				if (_this.waiting_next == mo){
+					delete _this.waiting_next;
+				}
+			});
+		},
 		switchTo: function(mo, direction, auto) {
 	
 			var playlist = [];
@@ -277,14 +286,35 @@ var songsList;
 			if (playlist.length > 1) {
 				var s = false;
 				if (direction) {
-					if (current_number == (total-1)) {
-						if (!this.state('dont-rept-pl')){
-							s = playlist[0];
+					var next_preload_song = mo.next_preload_song;
+					var can_repeat = !this.state('dont-rept-pl');
+					if (next_preload_song){
+						var real_cur_pos = this.palist.indexOf(mo);
+						var nps_pos = this.palist.indexOf(next_preload_song);
+						if (can_repeat || nps_pos > real_cur_pos){
+							if (next_preload_song.canPlay()){
+								s = next_preload_song;
+							} else {
+								this.setWaitingNextSong(mo);
+								next_preload_song.makeSongPlayalbe(true);
+							}
 						}
 						
+					} else if (this.updateState('loading')){
+						this.setWaitingNextSong(mo);
+
 					} else {
-						s = playlist[current_number+1];
+						if (current_number == (total-1)) {
+							if (can_repeat){
+								s = playlist[0];
+							}
+							
+						} else {
+							s = playlist[current_number+1];
+						}
 					}
+
+					
 				} else {
 					if ( current_number == 0 ) {
 						s = playlist[total-1];
@@ -457,6 +487,17 @@ var songsList;
 				
 				if (p_song && v_song != p_song && p_song.isPossibleNeighbour(target_song)){
 					this.checkNeighboursChanges(p_song, target_song, false, "nieghbour of playing song; files search");
+				}
+			}
+			if (this.waiting_next){
+				if (!this.waiting_next.next_preload_song){
+					delete this.waiting_next;
+				} else {
+					if (this.waiting_next.next_preload_song.canPlay()){
+						this.waiting_next.next_preload_song.play();
+						delete this.waiting_next;
+					}
+					
 				}
 			}
 		}
