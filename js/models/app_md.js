@@ -362,7 +362,7 @@ provoda.Model.extendTo(appModel, {
 		pl_r.setLoader(function(paging_opts) {
 			
 			var request_info = {};
-			lfm.get('tag.getTopArtists',{
+			request_info.request = lfm.get('tag.getTopArtists',{
 				tag:tag,
 				limit: paging_opts.page_limit,
 				page: paging_opts.next_page
@@ -516,7 +516,7 @@ provoda.Model.extendTo(appModel, {
 			pl.setLoader(function(paging_opts) {
 				
 				var request_info = {};
-				lfm.get('artist.getTopTracks', {
+				request_info.request = lfm.get('artist.getTopTracks', {
 					'artist': artist, 
 					limit: paging_opts.page_limit, 
 					page: paging_opts.next_page
@@ -571,7 +571,7 @@ provoda.Model.extendTo(appModel, {
 		});
 		pl.setLoader(function(paging_opts) {
 			var request_info = {};
-			lfm.get('geo.getMetroUniqueTrackChart', {
+			request_info.request = lfm.get('geo.getMetroUniqueTrackChart', {
 				country: country, 
 				metro: metro,
 				limit: 30,
@@ -640,7 +640,7 @@ provoda.Model.extendTo(appModel, {
 
 			pl.setLoader(function(paging_opts){
 				var request_info = {};
-				lfm.get('artist.getSimilar',{
+				request_info.request = lfm.get('artist.getSimilar',{
 					artist: artist, 
 					limit: paging_opts.page_limit, 
 					page: paging_opts.next_page

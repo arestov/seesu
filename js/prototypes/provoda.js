@@ -28,7 +28,7 @@ Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
 		this.reg_fires = {};
-		this.requests = [];
+		this.requests = {};
 		return this;
 	},
 	_addEventHandler: function(namespace, cb, opts, once){
@@ -140,25 +140,55 @@ Class.extendTo(provoda.Eventor, {
 		}
 		return this;
 	},
-	getRequests: function() {
-		return this.requests;
+	getRequests: function(space) {
+		space = space || 'common';
+		return this.requests[space] || [];
 	},
-	addRequest: function(rq, depend){
-		if (this.requests.indexOf(rq) == -1){
-			if (depend){
+	addRequest: function(rq, opts){
+		opts = opts || {};
+		//space, depend
+		var space = opts.space || 'common';
+		if (opts.order){
+			rq.order = opts.order;
+		}
+		if (!this.requests[space]){
+			this.requests[space] = []
+		}
+		var target_arr = this.requests[space];
+
+
+		if (target_arr.indexOf(rq) == -1){
+			if (opts.depend){
 				if (rq){
 					rq.addDepend(this);
 				}
 			}
-			this.requests.push(rq);
-			this.trigger('request', rq);
+		//	console.group(target_arr);
+			target_arr.push(rq);
+			this.sortRequests(target_arr, space);
+		//	console.group(target_arr);
+		//	console.groupEnd()
+			this.trigger('request', rq, space);
 		}
 		return this;
 		
 	},
+	sortRequests: function(requests, space) {
+		return requests.sort(function(a,b ){return sortByRules(a, b, ['order'])});
+	},
+	getAllRequests: function() {
+		var all_requests = [];
+		for (var space in this.requests){
+			all_requests = all_requests.concat(this.requests[space]);
+		}
+		return all_requests;
+	},
 	stopRequests: function(){
-		while (this.requests.length) {
-			var rq = this.requests.pop();
+
+		var all_requests = this.getAllRequests();
+
+		while (all_requests.length) {
+			var rq = all_requests.pop();
 			if (rq) {
 				if (rq.softAbort){
 					rq.softAbort(this);
@@ -167,13 +197,15 @@ Class.extendTo(provoda.Eventor, {
 				}
 			}
 		}
+		this.requests = {};
 		return this;
 	},
-	getQueued: function() {
-		return $filter(this.requests, 'queued');
+	getQueued: function(space) {
+		var requests = this.getRequests(space);
+		return $filter(requests, 'queued');
 	},
-	setPrio: function(type) {
-		var queued = this.getQueued();
+	setPrio: function(type, space) {
+		var queued = this.getQueued(space);
 		for (var i = 0; i < queued.length; i++) {
 			queued[i].setPrio(type);
 		}
@@ -213,10 +245,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			
 			if (old_value != value){
 				
+				obj_to_change[name] = value;
+				
 				if (method){
 					method.call(this, value, old_value);
 				}
-				obj_to_change[name] = value;
+				
 				return [old_value];
 			}
 		}
