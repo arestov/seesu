@@ -517,6 +517,7 @@ var songsList;
 			var common = [];
 			var demonstration = [];
 
+			var w_song = this.getWantedSong();
 			var waiting_next = this.waiting_next;
 			var v_song = this.getViewingSong();
 			var p_song = this.getPlayerSong();
@@ -528,6 +529,9 @@ var songsList;
 					return true;
 				}
 			};
+			if (w_song){
+				addToArray(common, w_song);
+			}
 
 			if (waiting_next){
 				if (waiting_next.next_song){
