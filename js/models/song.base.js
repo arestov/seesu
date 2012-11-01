@@ -4,6 +4,25 @@ var counter = 0;
 
 provoda.addPrototype("baseSong",{
 	model_name: "song",
+	init: function(omo, playlist, player, mp3_search){
+		this._super();
+		this.plst_titl = playlist;
+		this.mp3_search = mp3_search;
+		this.player = player;
+		
+		this.uid = ++counter;
+		cloneObj(this, omo, false, ['artist', 'track']);
+		this.omo = omo;
+		if (omo.artist){
+			this.updateState('artist', omo.artist);
+		}
+		if (omo.track){
+			this.updateState('track', omo.track);
+		}
+		this.on('request', function() {
+			this.plst_titl.checkRequestsPriority();
+		});
+	},
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
@@ -64,22 +83,7 @@ provoda.addPrototype("baseSong",{
 	simplify: function() {
 		return cloneObj({}, this, false, ['track', 'artist']);
 	},
-	init: function(omo, playlist, player, mp3_search){
-		this._super();
-		this.plst_titl = playlist;
-		this.mp3_search = mp3_search;
-		this.player = player;
-		
-		this.uid = ++counter;
-		cloneObj(this, omo, false, ['artist', 'track']);
-		this.omo = omo;
-		if (omo.artist){
-			this.updateState('artist', omo.artist);
-		}
-		if (omo.track){
-			this.updateState('track', omo.track);
-		}
-	},
+	
 	mlmDie: function() {
 		
 	},
@@ -97,9 +101,10 @@ provoda.addPrototype("baseSong",{
 			}
 		},
 		is_important: {
-			depends_on: ['mp-show', 'player-song'],
-			fn: function(mp_show, player_song){
-				return !!(mp_show || player_song);
+			depends_on: ['mp-show', 'player-song', 'want_to_play'],
+			fn: function(mp_show, player_song, wapl){
+				this.plst_titl.checkRequestsPriority();
+				return !!(mp_show || player_song || wapl);
 
 			}
 		}
@@ -303,10 +308,7 @@ provoda.addPrototype("baseSong",{
 					}
 					_this.checkChangesSinceFS();
 				});
-			if (this.state("mp-show")){
-				request.queued && request.queued.setPrio('highest');
-			}
-
+		
 			this.addRequest(request);
 		}
 	},
@@ -314,7 +316,6 @@ provoda.addPrototype("baseSong",{
 		this.findFiles({
 			get_next: true
 		});
-		this.setPrio('as-top');
 	},
 	findFiles: function(opts){
 		if (this.mp3_search){
@@ -357,12 +358,12 @@ provoda.addPrototype("baseSong",{
 			}, false, opts);
 
 
-			if (this.state('want_to_play')) {
-				this.sem.setPrio('highest');
-			}
+			
 			var reqs = this.sem.getRequests();
 			for (var i = 0; i < reqs.length; i++) {
-				this.addRequest(reqs[i], true);
+				this.addRequest(reqs[i], {
+					depend: true
+				});
 			}
 			
 			var queued = this.sem.getQueued();
