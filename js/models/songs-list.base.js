@@ -300,7 +300,7 @@ var songsList;
 							}
 						}
 						
-					} else if (this.updateState('loading')){
+					} else if (this.state('can-load-more')){
 						this.setWaitingNextSong(mo);
 
 					} else {
