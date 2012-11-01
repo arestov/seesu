@@ -247,7 +247,7 @@ var songsList;
 				var mo = this.palist[i];
 				var pi = mo.playable_info || {};
 				mo.makeSongPlayalbe(pi.full_allowing || full_allowing, pi.packsearch, pi.last_in_collection);
-				mo.setPrio('as-top');
+				
 			}
 		},
 		markTracksForFilesPrefinding: function(){

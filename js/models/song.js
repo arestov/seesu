@@ -68,9 +68,7 @@ var song;
 
 					});
 
-				if (this.state("mp-show")){
-					info_request.queued && info_request.queued.setPrio('highest');
-				}
+				this.addRequest(info_request, 'demonstration');
 				
 			}
 		},
