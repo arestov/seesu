@@ -19,6 +19,11 @@ var songsList;
 		init: function(){
 			this.palist = [];
 			this._super();
+			var _this = this;
+			this.on('request', function() {
+				_this.checkRequestsPriority();
+			});
+			
 		},
 		push: function(omo, skip_changes){
 			var mo = this.extendSong(omo, this.player, this.findMp3);
@@ -111,9 +116,14 @@ var songsList;
 		},
 		loadMoreSongs: function(force) {
 			if (this.state("can-load-more") && this.requestMoreSongs){
-				if (!this.song_request || this.song_request.done){
+				if (!this.song_request_info || this.song_request_info.done){
 					this.loading();
-					this.song_request = this.requestMoreSongs.call(this, this.getPagingInfo());
+					this.song_request_info = this.requestMoreSongs.call(this, this.getPagingInfo());
+					if (!this.song_request_info.request){
+						throw new Error('give me request');
+					} else {
+						this.addRequest(this.song_request_info.request);
+					}
 				}
 				
 				
@@ -216,7 +226,7 @@ var songsList;
 			var v_song = this.getViewingSong(w_song);
 			var p_song = this.getPlayerSong(v_song);
 			if (w_song && !w_song.hasNextSong()){
-				this.checkNeighboursChanges(v_song, false, false, "playlist load");
+				this.checkNeighboursChanges(w_song, false, false, "playlist load");
 			}
 			if (v_song && !v_song.hasNextSong()) {
 				this.checkNeighboursChanges(v_song, false, false, "playlist load");
@@ -520,32 +530,38 @@ var songsList;
 			};
 
 			if (waiting_next){
-				if (waiting_next.next_preload_song){
-					addToArray(common, waiting_next.next_preload_song);
-					
+				if (waiting_next.next_song){
+					addToArray(common, waiting_next.next_song);
 				} else if (this.state('can-load-more')){
 					addToArray(common, this);
+				} else if (waiting_next.next_preload_song){
+					addToArray(common, waiting_next.next_preload_song);
 					
-				}
+				} 
 				addToArray(common, waiting_next);
 			
 			}
 			if (v_song){
-				if (v_song.next_preload_song){
-					addToArray(common, v_song.next_preload_song);
+				if (v_song.next_song){
+					addToArray(common, v_song.next_song);
 				} else if (this.state('can-load-more')){
 					addToArray(common, this);
+				} else if (v_song.next_preload_song){
+					addToArray(common, v_song.next_preload_song);
 					
-				}
+				} 
 				addToArray(common, v_song);
 			}
 			if (p_song){
-				if (p_song.next_preload_song){
-					addToArray(common, p_song.next_preload_song);
+				if (p_song.next_song){
+					addToArray(common, p_song.next_song);
 				} else if (this.state('can-load-more')){
 					addToArray(common, this);
+				} else if (p_song.next_preload_song){
+					addToArray(common, p_song.next_preload_song);
 					
-				}
+				} 
+				addToArray(common, p_song);
 			}
 			if (v_song && v_song.prev_song){
 				addToArray(common, v_song.prev_song);

@@ -598,7 +598,7 @@ var render_loved = function(user_name){
 
 	pl_r.setLoader(function(paging_opts) {
 		var request_info = {};
-		lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
+		request_info.request = lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
 			.done(function(r){
 				var tracks = toRealArray(getTargetField(r, 'lovedtracks.track'));
 				var track_list = [];
@@ -678,7 +678,7 @@ var render_recommendations = function(){
 		
 		var request_info = {};
 
-		lfm.get('user.getRecommendedArtists', {sk: lfm.sk, limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
+		request_info.request = lfm.get('user.getRecommendedArtists', {sk: lfm.sk, limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
 			.done(function(r){
 				var artists = toRealArray(getTargetField(r, 'recommendations.artist'));
 				var track_list = [];
