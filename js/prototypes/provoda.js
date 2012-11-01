@@ -144,8 +144,13 @@ Class.extendTo(provoda.Eventor, {
 		space = space || 'common';
 		return this.requests[space] || [];
 	},
-	addRequest: function(rq, space, depend){
-		space = space || 'common';
+	addRequest: function(rq, opts){
+		opts = opts || {};
+		//space, depend
+		var space = opts.space || 'common';
+		if (opts.order){
+			rq.order = opts.order;
+		}
 		if (!this.requests[space]){
 			this.requests[space] = []
 		}
@@ -153,16 +158,23 @@ Class.extendTo(provoda.Eventor, {
 
 
 		if (target_arr.indexOf(rq) == -1){
-			if (depend){
+			if (opts.depend){
 				if (rq){
 					rq.addDepend(this);
 				}
 			}
+		//	console.group(target_arr);
 			target_arr.push(rq);
+			this.sortRequests(target_arr, space);
+		//	console.group(target_arr);
+		//	console.groupEnd()
 			this.trigger('request', rq, space);
 		}
 		return this;
 		
+	},
+	sortRequests: function(requests, space) {
+		return requests.sort(function(a,b ){return sortByRules(a, b, ['order'])});
 	},
 	getAllRequests: function() {
 		var all_requests = [];

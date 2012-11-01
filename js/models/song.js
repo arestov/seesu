@@ -68,7 +68,9 @@ var song;
 
 					});
 
-				this.addRequest(info_request, 'demonstration');
+				this.addRequest(info_request, {
+					space: 'demonstration'
+				});
 				
 			}
 		},

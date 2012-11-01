@@ -361,7 +361,9 @@ provoda.addPrototype("baseSong",{
 			
 			var reqs = this.sem.getRequests();
 			for (var i = 0; i < reqs.length; i++) {
-				this.addRequest(reqs[i], false, true);
+				this.addRequest(reqs[i], {
+					depend: true
+				});
 			}
 			
 			var queued = this.sem.getQueued();

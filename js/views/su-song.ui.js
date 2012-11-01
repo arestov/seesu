@@ -802,7 +802,9 @@ provoda.View.extendTo(songUI, {
 							main_c.addClass('loading-images');
 
 							for (var i = _this.img_requests.length - 1; i >= 0; i--) {
-								_this.md.addRequest(_this.img_requests[i], 'demonstration');
+								_this.md.addRequest(_this.img_requests[i], {
+									space: 'demonstration'
+								});
 								
 							};
 
@@ -817,7 +819,9 @@ provoda.View.extendTo(songUI, {
 					}
 
 				});
-			this.md.addRequest(images_request, 'demonstration');
+			this.md.addRequest(images_request, {
+				space: 'demonstration'
+			});
 			
 
 		}

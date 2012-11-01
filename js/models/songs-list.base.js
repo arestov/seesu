@@ -504,6 +504,89 @@ var songsList;
 			}
 		},
 		checkRequestsPriority: function() {
+			var common = [];
+			var demonstration = [];
+
+			var waiting_next = this.waiting_next;
+			var v_song = this.getViewingSong();
+			var p_song = this.getPlayerSong();
+
+
+			var addToArray = function(arr, item) {
+				if (arr.indexOf(item) == -1){
+					arr.push(item);
+					return true;
+				}
+			};
+
+			if (waiting_next){
+				if (waiting_next.next_preload_song){
+					addToArray(common, waiting_next.next_preload_song);
+					
+				} else if (this.state('can-load-more')){
+					addToArray(common, this);
+					
+				}
+				addToArray(common, waiting_next);
+			
+			}
+			if (v_song){
+				if (v_song.next_preload_song){
+					addToArray(common, v_song.next_preload_song);
+				} else if (this.state('can-load-more')){
+					addToArray(common, this);
+					
+				}
+				addToArray(common, v_song);
+			}
+			if (p_song){
+				if (p_song.next_preload_song){
+					addToArray(common, p_song.next_preload_song);
+				} else if (this.state('can-load-more')){
+					addToArray(common, this);
+					
+				}
+			}
+			if (v_song && v_song.prev_song){
+				addToArray(common, v_song.prev_song);
+			}
+
+			
+			
+			if (v_song){
+				addToArray(demonstration, v_song);
+				if (v_song.next_song){
+					addToArray(demonstration, v_song.next_song);
+				} else if (this.state('can-load-more')){
+					addToArray(demonstration, this);
+				}
+				if (v_song.prev_song){
+					addToArray(demonstration, v_song.prev_song);
+				}
+			}
+			if (p_song){
+				addToArray(demonstration, p_song);
+
+				if (p_song.next_song){
+					addToArray(demonstration, p_song.next_song);
+				}
+			}
+			if (waiting_next){
+				addToArray(demonstration, waiting_next);
+				if (waiting_next.next_song){
+					addToArray(demonstration, waiting_next.next_song);
+				}
+			}
+
+			demonstration.reverse();
+			common.reverse();
+			
+			for (var i = 0; i < demonstration.length; i++) {
+				demonstration[i].setPrio('highest', 'demonstration');
+			}
+			for (var i = 0; i < common.length; i++) {
+				common[i].setPrio('highest', 'common');
+			}
 			
 		}
 

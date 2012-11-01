@@ -158,9 +158,10 @@ mapLevelModel.extendTo(artCard, {
 		return '/catalog/' + su.encodeURLPart(this.artist);	
 	},
 	loadInfo: function(){
+		this.loadTopTracks();
 		this.loadAlbums();
 		this.loadBaseInfo();
-		this.loadTopTracks();
+		
 		this.setPrio('highest');
 		
 	},
@@ -184,7 +185,9 @@ mapLevelModel.extendTo(artCard, {
 			})
 			.fail(function(){
 				_this.updateState('loading-albums', false)
-			})
+			}), {
+				order: 1
+			}
 		);
 	},
 	loadTopTracks: function(){
@@ -209,7 +212,10 @@ mapLevelModel.extendTo(artCard, {
 				})
 				.always(function(){
 					_this.updateState('loading-toptracks', false);
-				})
+				}),
+			{
+				order: 3
+			}
 		);
 		
 	},
@@ -237,7 +243,9 @@ mapLevelModel.extendTo(artCard, {
 			})
 			.fail(function(){
 				_this.updateState('loading-baseinfo', false);
-			})
+			}), {
+				order: 2
+			}
 		);
 	
 	}
