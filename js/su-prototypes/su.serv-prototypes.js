@@ -229,6 +229,12 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 				var images = getTargetField(r, 'artist.image');
 				this.setArtistImage(artist_name, images, method);
 			}
+			var artists = toRealArray(getTargetField(r, 'artist.similar.artist'));
+			for (var i = 0; i < artists.length; i++) {
+				var cur = artists[i];
+				this.setArtistImage(cur.name, cur.image, method + '.similar');
+			}
+			
 			
 		},
 		'artist.getSimilar': function(r, method) {
