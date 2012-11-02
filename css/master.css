@@ -431,7 +431,7 @@ a.desc{
 .track-context{
 	padding:0 8px 10px;
 	margin-top:6px;
-	min-height: 383px;
+	min-height: 387px;
 	}
 	@media (min-height:600px) {
 		.track-context{
