@@ -83,6 +83,8 @@ var seesuPlayer;
 				if (!can_play){
 					if (song.isSearchCompleted()){
 						this.playNext(this.c_song, true);	
+					} else {
+						this.wantSong(song);
 					}
 					
 				} else {

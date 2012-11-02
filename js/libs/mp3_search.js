@@ -898,6 +898,7 @@ var by_best_matching_index;
 
 
 				if (used_successful){
+					complex_response.queued = used_successful.queued;
 					used_successful.promise( complex_response );
 					successful_uses.push(complex_response);
 					sem.addRequest(complex_response);

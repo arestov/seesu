@@ -23,8 +23,7 @@ playerBase.extendTo(playerComplex, {
 				}
 			}
 			(this.wanted_song = mo).updateState('want_to_play', true);
-			mo.setPrio('highest');
-
+			
 			var opts = mo.state('files_search');
 			if (opts && ((opts.complete && opts.have_tracks) || opts.have_best_tracks)){
 				mo.play();
@@ -88,5 +87,6 @@ playerBase.extendTo(playerComplex, {
 			this.c_song = mo;
 			mo.updateState("player-song", true);
 		}
+		this.trigger('now-playing-signal', last_mo != mo, mo, last_mo);
 	}
 });
