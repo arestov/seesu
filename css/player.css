@@ -75,18 +75,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover{
 	background-color: transparent;
 	}
 
-a.download-mp3{
-	text-decoration:none;
-	padding:3px 5px 1px;
-	border-bottom:0  !important;
-	position:absolute;
-	right:0;
-	margin-top:3px;
-	}
-a.download-mp3:hover{
-	background:#666;
-	color:#fff;
-	}
+
 .viewing-song a.song{
 	background-color:transparent;
 	color: #fff;

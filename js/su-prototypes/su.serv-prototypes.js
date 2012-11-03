@@ -428,6 +428,7 @@ provoda.View.extendTo(BaseCRowUI, {
 			this.button.click(function(){
 				md.switchView();
 			});
+			this.addWayPoint(this.button);
 		}
 	},
 	getButtonPos: function(){

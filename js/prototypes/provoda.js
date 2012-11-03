@@ -345,7 +345,11 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.views_index = {};
 		this.children = [];
 		this.children_models = {};
+		this.way_points = [];
 		return this;
+	},
+	addWayPoint: function(point) {
+		this.way_points.push(point);
 	},
 	removeView: function(view){
 		var views = [];
