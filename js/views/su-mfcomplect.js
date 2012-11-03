@@ -225,7 +225,7 @@ provoda.View.extendTo(mfCorUI, {
 					if (cant_show){
 						li.addClass("cant-show")
 					}
-					this.addWayPoint(li);
+					_this.addWayPoint(li);
 
 
 					var imgs = $();

@@ -194,7 +194,7 @@ provoda.View.extendTo(fileInTorrentUI,{
 			_this.md.download();
 		}).text('torrent').attr('href', this.md.sr_item.torrent_link).appendTo(this.c);
 
-		this.addWayPoint(downloadlink);
+		this.addWayPoint(this.downloadlink);
 
 		pg.appendTo(this.c);
 
