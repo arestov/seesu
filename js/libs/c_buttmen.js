@@ -101,7 +101,7 @@ button_menu.prototype = {
 				$(d).unbind('mouseup');
 				$(d).unbind('mousemove');
 				
-				return test_pressed_node(e, {mouseup: true})
+				//return test_pressed_node(e, {mouseup: true})
 			})
 			
 			

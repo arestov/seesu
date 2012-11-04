@@ -96,6 +96,7 @@ provoda.View.extendTo(artCardUI, {
 		bio: function(text) {
 			if (text){
 				this.ui.bioc.html(text.replace(/\n+/gi, '<br/><br/>'));
+				this.root_view.bindLfmTextClicks(this.ui.bioc);
 			}
 		},
 		similars: function(artists) {

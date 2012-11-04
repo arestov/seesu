@@ -101,6 +101,10 @@ a.desc{
 		color:#5e5e5e;
 		border-bottom-color:#5a5a5a !important;
 		}
+.keys-navigation-focus{
+	box-shadow: 0px 0px 3pt 2pt orange;
+	}
+	
 .app-loading-mark{
 	height: 24px;
 	background: url(../i/spinner.gif) no-repeat;
@@ -1071,8 +1075,8 @@ iframe.you-tube-video,embed.you-tube-video{
 	margin:0;
 	}
 .track-video{
-	overflow:hidden;
 	padding: 0px;
+	min-height: 48px;
 	}
 	.track-video ul{
 		}
@@ -1088,7 +1092,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		opacity: 0.5;
 		-moz-opacity: 0.5;
 		filter:alpha(opacity=5);
-	}	
+		}	
 		.video-title{
 			display:none;
 			}

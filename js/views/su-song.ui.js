@@ -4,7 +4,9 @@ provoda.View.extendTo(songUI, {
 	createDetailes: function(){
 		this.rowcs = {};
 		this.createBase();
+		
 	},
+	
 	complex_states: {
 		'mp-show-end': {
 			depends_on: ['map-animating', 'vis-mp-show', 'mp-show'],
@@ -247,10 +249,6 @@ provoda.View.extendTo(songUI, {
 			}
 		}
 		
-		
-		
-		
-		
 		if (tags && tags.length) {
 			
 		}
@@ -272,6 +270,7 @@ provoda.View.extendTo(songUI, {
 			if (bio){
 				this.ainf.bio.empty();
 				this.ainf.bio.html(bio);
+				this.root_view.bindLfmTextClicks(this.ainf.bio);
 				this.ainf.bio.append('<span class="forced-end"></span>');
 			}
 			
@@ -294,6 +293,15 @@ provoda.View.extendTo(songUI, {
 		},
 		dep_vp: ['playcount-c']
 	},
+	bindTagClick: function(node, tag_name) {
+
+		node.click(function() {
+			su.show_tag(tag_name);
+			seesu.trackEvent('Artist navigation', 'tag', tag_name);
+		});
+		this.addWayPoint(node);
+		
+	},
 	'stch-tags': {
 		fn: function(state) {
 			var tags = state;
@@ -307,8 +315,8 @@ provoda.View.extendTo(songUI, {
 								href: tag.url,
 								'class': 'music-tag js-serv'
 							})
-							.data('music_tag', tag.name)
-							.appendTo(this.tags_text_c); //!using in DOM
+							.appendTo(this.tags_text_c); 
+					this.bindTagClick(arts_tag_node, tag.name);
 					this.tags_text_c.append(" ");
 				}
 
@@ -318,6 +326,13 @@ provoda.View.extendTo(songUI, {
 			tags_c.toggleClass('hidden', !(state && state.length));
 		},
 		dep_vp: ['tags-c']
+	},
+	bindSimArtistClick: function(node, artist_name) {
+		node.click(function() {
+			su.showArtcardPage(artist_name);
+			seesu.trackEvent('Artist navigation', 'artist', artist_name);
+		});
+		this.addWayPoint(node);
 	},
 	'stch-similars': {
 		fn: function(state) {
@@ -332,8 +347,8 @@ provoda.View.extendTo(songUI, {
 							href: similar.url, 
 							'class' : 'artist js-serv' 
 						  })
-						  .data('artist', similar.name )
-						  .appendTo(this.similars_text_c);//!using in DOM
+						  .appendTo(this.similars_text_c);
+					this.bindSimArtistClick(arts_similar_node, similar.name);
 					this.similars_text_c.append(" ");
 				}
 			}
@@ -385,11 +400,21 @@ provoda.View.extendTo(songUI, {
 			
 		},
 		'similars-c': function() {
+
+			var artist = this.state('artist');
+
 			var similars_p = $("<p class='artist-similar hidden'></p>"),
-				similars_a = $('<em></em>').append($('<a></a>').append(localize('similar-arts') + ":").attr({ 'class': 'similar-artists js-serv'}).data('artist', this.state('artist')));	
+				similars_link = $('<a></a>').append(localize('similar-arts') + ":").attr({ 'class': 'similar-artists js-serv'}),
+				similars_a = $('<em></em>').append(similars_link);	
 			$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p);
+
+			similars_link.click(function() {
+				su.showSimilarArtists(artist);
+				seesu.trackEvent('Artist navigation', 'similar artists to', artist);
+			});
+
 			this.similars_text_c = $('<span class="desc-text"></span>').appendTo(similars_p).append('<span class="forced-end"></span>');
-			
+			this.addWayPoint(similars_link);
 			return similars_p;
 		},
 		'playcount-c': function() {
@@ -427,12 +452,11 @@ provoda.View.extendTo(songUI, {
 	},
 	createBase: function(){
 		var _this = this;
-		this.c = $('<li></li>').data('mo', this.md);
+		this.c = $('<li></li>');
 		
 
 		this.node = $("<a></a>")
 			.addClass('track-node waiting-full-render')
-			.data('mo', this.md)
 			.click(function(){
 				var mo = _this.md;
 				if (mo.player){
@@ -442,12 +466,13 @@ provoda.View.extendTo(songUI, {
 				mo.view(false, true);
 				return false;
 			});
-		
+		this.addWayPoint(this.node);
 		//
 		this.player_song_mark = $('<span class="playing-song-mark"></span>').appendTo(this.node);
-		var buttmen = this.root_view.els.play_controls.node.clone(true).data('mo', this.md);
+		
+		/*var buttmen = this.root_view.els.play_controls.node.clone(true).data('mo', this.md);
 			buttmen.find('.pc').data('mo', this.md);
-		this.c.prepend(buttmen);
+		this.c.prepend(buttmen);*/
 
 
 		var filesload_states_c = $('<span class="files-load-states"></span>');
@@ -521,15 +546,14 @@ provoda.View.extendTo(songUI, {
 			artist_link_con.addClass('one-artist-playlist');
 		}
 
-		$('<a class="js-serv">' + localize('artcard') + '</a>')
-				.data('artist', this.md.artist)
+		var artcard_link = $('<a class="js-serv">' + localize('artcard') + '</a>')
 				.appendTo(artist_link_con)
 				.click(function(){
 					su.showArtcardPage(_this.md.artist);
 					su.trackEvent('Artist navigation', 'art card', _this.md.artist);
 				});
 
-		
+		this.addWayPoint(artcard_link);
 			
 
 		
@@ -547,7 +571,7 @@ provoda.View.extendTo(songUI, {
 			tidominator.toggleClass('want-more-info');
 			e.preventDefault();
 		});
-		
+		this.addWayPoint(extend_switcher);
 		
 		this.t_users= {
 			c: users,
@@ -704,7 +728,8 @@ provoda.View.extendTo(songUI, {
 					if (!_this.isAlive()){
 						return
 					}
-					var images = r.images.image;
+
+					var images = toRealArray(getTargetField(r, 'images.image'));
 					if (images){
 						images = toRealArray(images);
 						_this.setVisState('cool_photos', true);//cool_photos
