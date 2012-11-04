@@ -345,8 +345,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.views_index = {};
 		this.children = [];
 		this.children_models = {};
+		
 		return this;
 	},
+	
 	removeView: function(view){
 		var views = [];
 		for (var i = 0; i < this.views.length; i++) {
@@ -532,12 +534,16 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.undetailed_states = {};
 		this.undetailed_children_models = {};
 		this.children_viewed = {};
+		this.way_points = [];
 
 		cloneObj(this.undetailed_states, this.md.states);
 		cloneObj(this.undetailed_children_models, this.md.children_models);
 		return this;
 	},
 	children_views: {},
+	addWayPoint: function(point) {
+		this.way_points.push(point);
+	},
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;
 		delete this.undetailed_children_models

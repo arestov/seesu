@@ -133,13 +133,16 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			share_input.bind("click focus", function() {
 				this.select();
 			});
+			this.addWayPoint(share_input);
 			return share_input;
 		},
 		"own-wall-button": function() {
 			var _this = this;
-			return $("<div class='post-to-my-vk-wall'></div>").click(function(){
+			var ptmw_link = $("<div class='post-to-my-vk-wall'></div>").click(function(){
 				_this.md.mo.postToVKWall();
 			}).text(localize("to-own-wall")).insertBefore(this.getPart("pch-ws-own"));
+			this.addWayPoint(ptmw_link);
+			return ptmw_link;
 		},
 		"pch-vk-auth": function() {
 			return this.addWSChunk();
@@ -215,6 +218,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		this.pl_creation_b = $("<div class='create-named-playlist hidden suggest'></div>").click(function() {
 			_this.md.createPlaylist();
 		});
+		this.addWayPoint(this.pl_creation_b);
 		this.pl_creation_b_text = $('<span></span>');
 		this.pl_creation_b.append(localize("cr-new-playlist") + ' "').append(this.pl_creation_b_text).append('"');
 		this.lpl.append(this.pl_creation_b);
@@ -335,9 +339,11 @@ BaseCRowUI.extendTo(RepeatSongRowView, {
 	parts_builder: {
 		"rept-chbx": function() {
 			var _this = this;
-			return this.c.find('.rept-song-label input').click(function() {
+			var input = this.c.find('.rept-song-label input').click(function() {
 				_this.md.setDnRp($(this).prop('checked'));
 			});
+			this.addWayPoint(input)
+			return input;
 		}
 	},
 	createDetailes: function(){

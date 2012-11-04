@@ -116,9 +116,7 @@ ul.tracks-for-play > li{
 	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .search-mp3-failed{
 		color:#737373;
 	}
-	.show-zoom-to-track ul.tracks-for-play>li.viewing-song a.download-mp3{
-		right:8px;
-	}
+	
 
 	
 .show-zoom-to-track ul.tracks-for-play>li{

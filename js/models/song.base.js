@@ -402,7 +402,7 @@ provoda.addPrototype("baseSong",{
 
 		var opts = {
 			complete: complete,
-			have_tracks: this.isHaveTracks("mp3"),
+			have_tracks: !!this.isHaveTracks("mp3"),
 			have_best_tracks: this.isHaveBestTracks()
 		};
 		

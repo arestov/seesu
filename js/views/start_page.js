@@ -130,7 +130,18 @@ provoda.View.extendTo(StartPageView, {
 		this.els = this.parent_view.els;
 		this.c = this.els.start_screen;
 
-		this.c.find('#hint-query').text(su.popular_artists[(Math.random()*10).toFixed(0)]);
+		var hq_link = this.c.find('#hint-query');
+		hq_link.text(su.popular_artists[(Math.random()*10).toFixed(0)]);
+		hq_link.click(function(e) {
+			e.preventDefault();
+			var query = hq_link.text();
+			su.search(query);
+			hq_link.text(su.popular_artists[(Math.random()*10).toFixed(0)]);
+			su.trackEvent('Navigation', 'hint artist');
+
+		});
+		
+		
 	},
 	'collch-fast_pstart': function(name, md) {
 		var view = this.getFreeChildView(name, md, 'main');

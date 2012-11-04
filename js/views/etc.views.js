@@ -19,10 +19,20 @@ provoda.View.extendTo(vkLoginUI, {
 	createBase: function() {
 		this.c = this.root_view.samples.vklc.clone();
 		var _this = this;
-		this.c.find('.sign-in-to-vk').click(function(e){
+		var sign_link = this.c.find('.sign-in-to-vk').click(function(e){
 			_this.md.requestAuth();
 			e.preventDefault();
 		});
+		this.addWayPoint(sign_link);
+		var input = this.c.find('.vk-code');
+		var use_code_button = this.c.find('.use-vk-code').click(function() {
+			var vk_t_raw = input.val();
+			if (vk_t_raw){
+				var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);			
+					connectApiToSeesu(vk_token, true);
+			}
+		});
+		this.addWayPoint(this.addWayPoint);
 
 	}
 });
@@ -62,18 +72,20 @@ provoda.View.extendTo(LfmLoginView, {
 		this.c = this.root_view.samples.lfm_authsampl.clone();
 		this.auth_block = this.c.children(".auth-block");
 		var _this = this;
-		this.auth_block.find('.lastfm-auth-bp a').click(function(e){
+		var auth_link = this.auth_block.find('.lastfm-auth-bp a').click(function(e){
 			_this.md.requestAuth();
 			e.preventDefault();
 		});
+		this.addWayPoint(auth_link);
 		this.code_input = this.auth_block.find('.lfm-code');
-		this.auth_block.find('.use-lfm-code').click(function(){
+		var use_code_button = this.auth_block.find('.use-lfm-code').click(function(){
 			var value = _this.code_input.val();
 			if (value){
 				_this.md.useCode(value)
 			}
 			return false;
 		});
+		this.addWayPoint(use_code_button);
 	}
 });
 
@@ -91,6 +103,7 @@ LfmLoginView.extendTo(LfmLoveItView, {
 				_this.md.makeLove();
 			}
 		});
+		this.addWayPoint(this.nloveb.b);
 		this.nloveb.b.text(localize('addto-lfm-favs'));
 		this.c.append(wrap);
 		
@@ -116,12 +129,16 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 		this.chbx_enabl = this.scrobbling_switchers.find('.enable-scrobbling');
 		this.chbx_disabl = this.scrobbling_switchers.find('.disable-scrobbling');
 		var _this = this;
+		
+
 		this.chbx_enabl.click(function() {
 			_this.md.setScrobbling(true);
 		});
 		this.chbx_disabl.click(function() {
 			_this.md.setScrobbling(false);
 		});
+		this.addWayPoint(this.chbx_enabl);
+		this.addWayPoint(this.chbx_disabl);
 	},
 	"stch-has-session": function(state) {
 		if (state){
@@ -176,6 +193,8 @@ provoda.View.extendTo(fileInTorrentUI,{
 			e.preventDefault();
 			_this.md.download();
 		}).text('torrent').attr('href', this.md.sr_item.torrent_link).appendTo(this.c);
+
+		this.addWayPoint(this.downloadlink);
 
 		pg.appendTo(this.c);
 
@@ -358,6 +377,7 @@ provoda.View.extendTo(songFileModelUI, {
 				_this.md.trigger('want-to-play-sf');
 			}
 		});
+		this.addWayPoint(this.c);
 
 		var _this = this;
 
@@ -464,6 +484,7 @@ provoda.View.extendTo(songFileModelUI, {
 				_this.md.trigger('want-to-play-sf');
 			}
 		});
+		this.addWayPoint(button);
 
 		this.c.append(pb_place);
 	},

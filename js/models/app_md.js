@@ -672,6 +672,7 @@ provoda.Model.extendTo(appModel, {
 					.always(function() {
 						request_info.done = true;
 					});
+				return request_info;
 			}, true);
 			
 		
