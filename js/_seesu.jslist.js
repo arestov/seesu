@@ -71,7 +71,6 @@ var jsLoadComplete,
 	"js/su-prototypes/su-player.js",
 
 	"js/libs/c_buttmen.js",
-	"js/pressed_node_tester.js",
 	
 	"js/views/etc.views.js",
 	"js/views/su-mfcomplect.js",

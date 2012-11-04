@@ -431,7 +431,7 @@ provoda.View.extendTo(appModelView, {
 				_this.md.search(input_value);
 			});
 
-
+			/*
 			jsLoadComplete({
 				test: function() {
 					return window.button_menu;
@@ -444,7 +444,7 @@ provoda.View.extendTo(appModelView, {
 					_this.els.play_controls = buttmen;
 
 				}
-			});
+			});*/
 			
 			
 			$('#widget-url',d).val(location.href.replace('index.html', ''));
@@ -535,6 +535,14 @@ provoda.View.extendTo(appModelView, {
 							
 							e.preventDefault();
 					 	});
+					 	var input = this.nvk.find('.vk-code');
+						nvk.find('.use-vk-code').click(function() {
+							var vk_t_raw = input.val();
+							if (vk_t_raw){
+								var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);			
+									connectApiToSeesu(vk_token, true);
+							}
+						});
 						
 						_this.oos =  _this.oos.add(nvk);
 						return nvk;
@@ -555,13 +563,13 @@ provoda.View.extendTo(appModelView, {
 			justhead.children('.daddy').empty().removeClass('not-inited');
 			
 
-
-			
-			jsLoadComplete(function(){
-				$(d).click(function(e) {
-					return test_pressed_node(e);
-				});
+			$(d).on('click', '.external', function(e) {
+				e.preventDefault();
+				app_env.openURL($(this).attr('href'));
+				seesu.trackEvent('Links', 'just link');
 			});
+			
+		
 			
 			_this.onDomBuild();
 
@@ -895,8 +903,6 @@ provoda.View.extendTo(appModelView, {
 		var li = $('<li></li>');
 			var a_href= $('<a></a>')
 				.attr('href', al_url )
-				.data('artist', al_artist)
-				.data('album', al_name)
 				.click(function(e){
 					e.preventDefault(); 
 					_this.md.showAlbum({
@@ -915,7 +921,28 @@ provoda.View.extendTo(appModelView, {
 			
 		return li;
 	},
+	bindLfmTextClicks: function(con) {
 
+		con.on('click', '.bbcode_artist', function(e) {
+			e.preventDefault();
+
+			var artist_name = decodeURIComponent($(this).attr('href').replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
+			su.showArtcardPage(artist_name);
+			seesu.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
+
+		});
+
+		con.on('click', '.bbcode_tag', function(e) {
+			e.preventDefault();
+
+			var tag_name = decodeURIComponent($(this).attr('href').replace('http://www.last.fm/tag/','').replace(/\+/g, ' '));
+			su.show_tag(tag_name);
+			seesu.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
+		});
+
+
+	
+	},
 	createNiceButton: function(position){
 		var c = $('<span class="button-hole"><a class="nicebutton"></a></span>');
 		var b = c.children('a');
