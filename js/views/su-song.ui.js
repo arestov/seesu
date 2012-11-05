@@ -295,7 +295,8 @@ provoda.View.extendTo(songUI, {
 	},
 	bindTagClick: function(node, tag_name) {
 
-		node.click(function() {
+		node.click(function(e) {
+			e.preventDefault();
 			su.show_tag(tag_name);
 			seesu.trackEvent('Artist navigation', 'tag', tag_name);
 		});
@@ -328,7 +329,8 @@ provoda.View.extendTo(songUI, {
 		dep_vp: ['tags-c']
 	},
 	bindSimArtistClick: function(node, artist_name) {
-		node.click(function() {
+		node.click(function(e) {
+			e.preventDefault();
 			su.showArtcardPage(artist_name);
 			seesu.trackEvent('Artist navigation', 'artist', artist_name);
 		});
