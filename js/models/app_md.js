@@ -323,22 +323,28 @@ provoda.Model.extendTo(appModel, {
 		return invstg;
 
 	},
-	_showArtcardPage: function(artist, save_parents, no_navi){
+	_showArtcardPage: function(artist, source_info, no_navi){
 		var md = new artCard(artist);
 		this.bindMMapStateChanges(md, 'artcard');
+		if (source_info && !source_info.page_md){
+			throw new Error('give me page_md')
+		}
 		var lev = this.map.goDeeper(save_parents, md);
 		return md;
 	},
-	_showStaticPlaylist: function(pl, save_parents, no_navi) {
+	_showStaticPlaylist: function(pl, source_info, no_navi) {
 		if (pl.lev && pl.lev.canUse() && !pl.lev.isOpened()){
 			this.restoreFreezed();
 			return pl;
 		} else {
-			return this.show_playlist_page(pl, save_parents, no_navi);
+			return this.show_playlist_page(pl, source_info, no_navi);
 		}
 	},
-	_show_playlist_page: function(pl, save_parents, no_navi){
+	_show_playlist_page: function(pl, source_info, no_navi){
 		this.bindMMapStateChanges(pl, 'playlist');
+		if (source_info && !source_info.page_md){
+			throw new Error('give me page_md')
+		}
 		var lev = this.map.goDeeper(save_parents, pl);
 		return pl;
 	},
@@ -349,6 +355,13 @@ provoda.Model.extendTo(appModel, {
 		var pl = mo.plst_titl;
 			pl.lev.sliceTillMe(true);
 		this.bindMMapStateChanges(mo);
+		var source_info = {
+			page_md: pl,
+			source_md: mo
+		};
+		if (source_info && !source_info.page_md){
+			throw new Error('give me page_md')
+		}
 		var lev = this.map.goDeeper(true, mo);
 		return mo;
 	},
@@ -405,7 +418,7 @@ provoda.Model.extendTo(appModel, {
 		}, true);
 
 
-		this.show_playlist_page(pl_r, vopts.save_parents, vopts.no_navi);
+		this.show_playlist_page(pl_r, vopts.source_info, vopts.no_navi);
 		
 		if (start_song){
 			pl_r.showTrack(start_song, full_no_navi);
@@ -418,9 +431,9 @@ provoda.Model.extendTo(appModel, {
 		var cpl = this.p.isPlaying(pl);
 		if (!cpl){
 			if (!vopts.from_artcard){
-				this.showArtcardPage(artist, vopts.save_parents, true);
+				this.showArtcardPage(artist, vopts.source_info, true);
 			}
-			this.show_playlist_page(pl, !vopts.from_artcard || !!vopts.save_parents, vopts.no_navi);
+			this.show_playlist_page(pl, vopts.source_info, vopts.no_navi);
 			return pl;
 		} else{
 			this.restoreFreezed();
@@ -631,7 +644,7 @@ provoda.Model.extendTo(appModel, {
 		vopts = vopts || {};
 		var pl = this.createMetroChartPlaylist(country, metro);
 		pl.loadMoreSongs();
-		this.show_playlist_page(pl, vopts.save_parents, vopts.no_navi);
+		this.show_playlist_page(pl, vopts.source_info, vopts.no_navi);
 	},
 	showSimilarArtists: function(artist, vopts, start_song){
 		vopts = vopts || {};

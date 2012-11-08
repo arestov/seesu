@@ -156,8 +156,10 @@ baseSuggest.extendTo(trackSuggest, {
 	},
 	onView: function(){
 		su.showTopTacks(this.artist, {
-			page_md: this.invstg,
-			source_md: this
+			source_info: {
+				page_md: this.invstg,
+				source_md: this
+			}
 		}, {
 			artist: this.artist,
 			track: this.track
@@ -214,8 +216,10 @@ baseSuggest.extendTo(tagSuggest, {
 	},
 	onView: function(){
 		su.show_tag(this.tag, {
-			page_md: this.invstg,
-			source_md: this
+			source_info: {
+				page_md: this.invstg,
+				source_md: this
+			}
 		});
 		seesu.trackEvent('Music search', this.q, "tag: " + this.tag );
 	}
@@ -275,8 +279,10 @@ baseSuggest.extendTo(albumSuggest, {
 			album_name: this.name,
 			album_id: this.aid
 		}, {
-			page_md: this.invstg,
-			source_md: this
+			source_info: {
+				page_md: this.invstg,
+				source_md: this
+			}
 		});
 		seesu.trackEvent('Music search', this.q, "album: " + this.text_title);
 	}
