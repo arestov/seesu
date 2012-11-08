@@ -19,6 +19,9 @@ Alexander Belov <porqz@mesquite.ru>
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
 
+ проверять работоспособность "истории"
+
+
 + нормальное получение json данных где возможно (вместо jsonp)
 + обработка ошибок загрузки
   + выбор файла

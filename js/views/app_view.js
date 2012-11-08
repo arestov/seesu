@@ -920,15 +920,15 @@ provoda.View.extendTo(appModelView, {
 	},
 	
 	
-	renderArtistAlbums: function(albums, original_artist, albums_ul, save_parents, simple){
+	renderArtistAlbums: function(albums, original_artist, albums_ul, vopts){
 		if (albums.length) {
 			for (var i=0; i < albums.length; i++) {
-				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, save_parents, simple));
+				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, vopts));
 			}
 		} 
 		return albums_ul;
 	},
-	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, save_parents, from_artcard){
+	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, vopts){
 		var _this = this;
 		var li = $('<li></li>');
 			var a_href= $('<a></a>')
@@ -939,10 +939,7 @@ provoda.View.extendTo(appModelView, {
 						artist: al_artist, 
 						album_name: al_name,
 						original_artist: original_artist
-					}, {
-						save_parents: save_parents,
-						from_artcard: from_artcard
-					});
+					}, vopts);
 					seesu.trackEvent('Artist navigation', 'album', al_artist + ": " + al_name);
 				})
 				.appendTo(li);

@@ -52,7 +52,10 @@ baseSuggest.extendTo(artistSuggest, {
 		return this.artist;
 	},
 	onView: function(){
-		su.showArtcardPage(this.artist, true);
+		su.showArtcardPage(this.artist, {
+			page_md: this.invstg,
+			source_md: this
+		});
 		su.trackEvent('Music search', this.q, "artist: " + this.artist );
 	}
 });
@@ -68,7 +71,10 @@ baseSuggest.extendTo(playlistSuggest, {
 		return this.pl.playlist_title;
 	},
 	onView: function(){
-		su.showStaticPlaylist(this.pl, true);
+		su.showStaticPlaylist(this.pl, {
+			page_md: this.invstg,
+			source_md: this
+		});
 	}
 });
 
@@ -149,7 +155,10 @@ baseSuggest.extendTo(trackSuggest, {
 		return this.artist + ' - ' + this.track;
 	},
 	onView: function(){
-		su.showTopTacks(this.artist, {save_parents: true}, {
+		su.showTopTacks(this.artist, {
+			page_md: this.invstg,
+			source_md: this
+		}, {
 			artist: this.artist,
 			track: this.track
 		});
@@ -204,7 +213,10 @@ baseSuggest.extendTo(tagSuggest, {
 		return this.tag;
 	},
 	onView: function(){
-		su.show_tag(this.tag, {save_parents: true});
+		su.show_tag(this.tag, {
+			page_md: this.invstg,
+			source_md: this
+		});
 		seesu.trackEvent('Music search', this.q, "tag: " + this.tag );
 	}
 });
@@ -262,7 +274,10 @@ baseSuggest.extendTo(albumSuggest, {
 			artist: this.artist,
 			album_name: this.name,
 			album_id: this.aid
-		}, {save_parents: true});
+		}, {
+			page_md: this.invstg,
+			source_md: this
+		});
 		seesu.trackEvent('Music search', this.q, "album: " + this.text_title);
 	}
 });

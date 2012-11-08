@@ -41,7 +41,11 @@ provoda.View.extendTo(artCardUI, {
 			var albs_groups = $("<div class='albums-groups'></div>");
 			for (var i=0; i < ob.ordered.length; i++) {
 				var aul =  $('<ul></ul>');
-				this.root_view.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, true, true);
+				this.root_view.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, {
+					page_md: _this.md,
+					source_name: 'artist-albums',
+					from_artcard: true
+				});
 				
 				aul.appendTo(albs_groups);
 			};
@@ -58,7 +62,10 @@ provoda.View.extendTo(artCardUI, {
 				if (i < 5){
 					if (el.track){
 						var a = $('<a class="js-serv"></a>').click(function(){
-							su.showTopTacks(_this.md.artist, {save_parents: true, from_artcard: true}, {
+							su.showTopTacks(_this.md.artist, {
+								page_md: _this,
+								source_name: 'top-tracks'
+							}, {
 								artist: _this.md.artist,
 								track: el.track
 							});
@@ -114,7 +121,11 @@ provoda.View.extendTo(artCardUI, {
 			
 			var header_link = $('<a class="js-serv"></a>')
 				.click(function(){
-					su.showSimilarArtists(_this.md.artist, {save_parents: true, from_artcard: true});	
+					su.showSimilarArtists(_this.md.artist, {
+						page_md: _this.md,
+						source_name: 'similar-artists',
+						from_artcard: true
+					});	
 				})
 				.text(localize('similar-arts'))
 			var header = this.ui.similarsc.children('h5').empty().append(header_link);
@@ -135,7 +146,11 @@ provoda.View.extendTo(artCardUI, {
 			bioc: this.c.find('.art-card-bio')
 		};
 		this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
-			su.showTopTacks(_this.md.artist, {save_parents: true, from_artcard: true});
+			su.showTopTacks(_this.md.artist, {
+				page_md: _this,
+				source_name: 'top-tracks',
+				from_artcard: true
+			});
 		});
 	}
 });
