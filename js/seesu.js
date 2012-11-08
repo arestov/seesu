@@ -552,7 +552,7 @@ appModel.extendTo(seesuApp, {
 });
 
 window.seesu = window.su = new seesuApp(); 
-su.init(3.6);
+su.init(3.8);
 
 
 

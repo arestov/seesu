@@ -63,7 +63,7 @@ provoda.View.extendTo(appModelView, {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
-			return this.lev_containers[num] = $('<div class="complex-page hidden"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
+			return this.lev_containers[num] = $('<div class="complex-page inactive-page"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
 		}
 	},
 	children_views: {
@@ -81,6 +81,7 @@ provoda.View.extendTo(appModelView, {
 		},
 		playlist: {
 			main: songsListView,
+			details: songsListView,
 			nav: playlistNavUI
 		},
 		song: {
@@ -123,6 +124,7 @@ provoda.View.extendTo(appModelView, {
 				_this.getLevelContainer(el.map_level_num).append(view.getA());
 			}
 
+
 		});
 
 		this.requestAll();
@@ -133,6 +135,10 @@ provoda.View.extendTo(appModelView, {
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
 				_this.getLevelContainer(el.map_level_num).append(view.getA());
+			}
+			var det_view = _this.getFreeChildView(name, el, 'details');
+			if (det_view){
+				_this.getLevelContainer(el.map_level_num + 1).append(det_view.getA());
 			}
 
 		});
@@ -159,23 +165,46 @@ provoda.View.extendTo(appModelView, {
 		this.requestAll();
 	},
 	manual_states_connect: true,
-	getLevByNum: function(num) {
-		return num == -1 ? false : this.getLevelContainer(num);
+	getLevByNum: function(num, exclude_start_lev) {
+		if (num < -1){
+			return false;
+		} else if (exclude_start_lev){
+			return num == -1 ? false : this.getLevelContainer(num);
+		} else {
+			if (num == -1){
+				return this.els.start_screen
+			} else {
+				return this.getLevelContainer(num);
+			}
+		}
+		
 	},
 	hideLevNum: function(num) {
 
-		var levc = this.getLevByNum(num);
+		var levc = this.getLevByNum(num, true);
 		if (levc){
-			levc.addClass('hidden');
+			levc.addClass('inactive-page');
 		}
 		
 	},
 	showLevNum: function(num) {
-		var levc = this.getLevByNum(num);
+		var levc = this.getLevByNum(num, true);
 		if (levc){
-			levc.removeClass('hidden');
+			levc.removeClass('inactive-page');
 		}
 		
+	},
+	removePageOverviewMark: function(num) {
+		var levc = this.getLevByNum(num);
+		if (levc){
+			levc.removeClass('page-overview');
+		}
+	},
+	addPageOverviewMark: function(num) {
+		var levc = this.getLevByNum(num);
+		if (levc){
+			levc.addClass('page-overview');
+		}
 	},
 	complex_states: {
 		'start-level': {
@@ -188,15 +217,16 @@ provoda.View.extendTo(appModelView, {
 		}
 	},
 	'stch-start-level': function(state) {
-		this.els.start_screen.toggleClass('hidden', !state);
+		this.els.start_screen.toggleClass('inactive-page', !state);
 	},
 	//
 	'stch-active-lev-num': function(num, old_num) {
 		if (old_num){
 			this.hideLevNum(old_num.n);
+			this.removePageOverviewMark(old_num.n-1);
 		}
 		
-
+		this.addPageOverviewMark(num.n - 1);
 		this.showLevNum(num.n);
 	},
 	'stch-map-animation': function(changes) {

@@ -27,18 +27,31 @@
 .player-played .np{
 	background-image:url(../i/equalaizer.gif);
 }
-
+ #slider .screens{
+ 	max-width: 750px;
+	margin: 0 auto;
+}
 
 .start-screen{
-	max-width: 750px;
-	margin:0 auto;
 	padding-bottom:20px;
 	}
 
-
-.complex-page{
+#search {
 	max-width: 750px;
-	margin:0 auto;
+	margin: 0 auto;
+	}
+.complex-page{
+	padding:0 14px;
+	display: inline-block;
+	}
+.inactive-page{
+	display: none;
+}
+
+.page-overview{
+	display: block;
+	float:left;
+	width: 200px;
 	}
 
 
