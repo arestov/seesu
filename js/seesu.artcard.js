@@ -66,7 +66,7 @@ provoda.View.extendTo(artCardUI, {
 						var a = $('<a class="js-serv"></a>').click(function(){
 							su.showTopTacks(_this.md.artist, {
 								source_info: {
-									page_md: _this,
+									page_md: _this.md,
 									source_name: 'top-tracks'
 								}
 							}, {
@@ -155,7 +155,7 @@ provoda.View.extendTo(artCardUI, {
 		this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
 			su.showTopTacks(_this.md.artist, {
 				source_info: {
-					page_md: _this,
+					page_md: _this.md,
 					source_name: 'top-tracks',
 				},
 				from_artcard: true

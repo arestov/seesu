@@ -53,10 +53,10 @@ provoda.View.extendTo(songUI, {
 
 		"mp-show": function(opts, old_opts) {
 			if (opts){
-				this.parent_view.c.addClass("show-zoom-to-track");
+			//	this.parent_view.c.addClass("show-zoom-to-track");
 				this.activate();
 			} else if (old_opts) {
-				this.parent_view.c.removeClass("show-zoom-to-track");
+			//	this.parent_view.c.removeClass("show-zoom-to-track");
 				this.deactivate();
 			}
 			
@@ -505,6 +505,9 @@ provoda.View.extendTo(songUI, {
 		this.c.append(this.node);
 	},
 	expand: function(){
+		if (this.opts && this.opts.lite){
+			return false;
+		}
 		if (this.expanded){
 			return true
 		} else{

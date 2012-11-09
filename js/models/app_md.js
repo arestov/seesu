@@ -329,7 +329,7 @@ provoda.Model.extendTo(appModel, {
 		if (source_info && !source_info.page_md){
 			throw new Error('give me page_md')
 		}
-		var lev = this.map.goDeeper(save_parents, md);
+		var lev = this.map.goDeeper(source_info && source_info.page_md, md);
 		return md;
 	},
 	_showStaticPlaylist: function(pl, source_info, no_navi) {
@@ -345,7 +345,7 @@ provoda.Model.extendTo(appModel, {
 		if (source_info && !source_info.page_md){
 			throw new Error('give me page_md')
 		}
-		var lev = this.map.goDeeper(save_parents, pl);
+		var lev = this.map.goDeeper(source_info && source_info.page_md, pl);
 		return pl;
 	},
 	_show_track_page: function(mo, no_navi){
@@ -362,7 +362,7 @@ provoda.Model.extendTo(appModel, {
 		if (source_info && !source_info.page_md){
 			throw new Error('give me page_md')
 		}
-		var lev = this.map.goDeeper(true, mo);
+		var lev = this.map.goDeeper(source_info && source_info.page_md, mo);
 		return mo;
 	},
 	

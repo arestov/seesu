@@ -28,21 +28,29 @@
 	background-image:url(../i/equalaizer.gif);
 }
  #slider .screens{
- 	max-width: 750px;
-	margin: 0 auto;
+ 	max-width: 900px;
+	
 }
 
 .start-screen{
 	padding-bottom:20px;
+
+
+	margin-left: 240px;
+	max-width: 750px;
 	}
 
 #search {
 	max-width: 750px;
 	margin: 0 auto;
+	margin-left: 240px;
 	}
 .complex-page{
 	padding:0 14px;
-	display: inline-block;
+	overflow: hidden;
+	margin-left: 240px;
+
+	max-width: 750px;
 	}
 .inactive-page{
 	display: none;
@@ -52,6 +60,7 @@
 	display: block;
 	float:left;
 	width: 200px;
+	margin-left:0;
 	}
 
 

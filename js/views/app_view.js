@@ -132,7 +132,7 @@ provoda.View.extendTo(appModelView, {
 	'collch-playlist': function(name, arr) {
 		var _this = this;
 		$.each(arr, function(i, el){
-			var view = _this.getFreeChildView(name, el, 'main');
+			var view = _this.getFreeChildView(name, el, 'main', {overview: true});
 			if (view){
 				_this.getLevelContainer(el.map_level_num).append(view.getA());
 			}

@@ -572,7 +572,7 @@ su.init(3.8);
 		yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
 			complete: function(){
-				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(3500, 5000, 4)))
+				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(5000, 10000, 4)))
 				su.mp3_search.add(window.nms);
 				
 				//$(document.body).append(_this.c);
