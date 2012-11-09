@@ -221,13 +221,21 @@ provoda.View.extendTo(appModelView, {
 	},
 	//
 	'stch-active-lev-num': function(num, old_num) {
+
+		var oved_now_active = old_num && (old_num.n-1 ===  num.n);
 		if (old_num){
 			this.hideLevNum(old_num.n);
-			this.removePageOverviewMark(old_num.n-1);
+			if (!oved_now_active){
+				this.removePageOverviewMark(old_num.n-1);
+			}
+			
 		}
 		
 		this.addPageOverviewMark(num.n - 1);
 		this.showLevNum(num.n);
+		if (oved_now_active){
+			this.removePageOverviewMark(old_num.n-1);
+		}
 	},
 	'stch-map-animation': function(changes) {
 		if (!changes){
