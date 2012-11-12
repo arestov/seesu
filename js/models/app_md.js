@@ -191,8 +191,9 @@ provoda.Model.extendTo(appModel, {
 		*/
 		if (target_md){
 			target_md.updateState('mp-has-focus', true);
+			this.updateState('current-mp-md', target_md);
 			target_md.updateState('mp-highlight', false);
-			this.updateState('active-lev-num', {n: target_md.map_level_num});
+			
 			this.updateState('show-search-form', target_md.state('needs-search-from'));
 		}
 

@@ -19,8 +19,8 @@ Alexander Belov <porqz@mesquite.ru>
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
 
- проверять работоспособность "истории"
-
+проверять работоспособность "истории"
+курсор в поле поиска перескакивает в конец
 
 + нормальное получение json данных где возможно (вместо jsonp)
 + обработка ошибок загрузки

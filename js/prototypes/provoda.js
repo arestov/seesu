@@ -610,6 +610,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	
 	},
+	getChildView: function(md, view_space) {
+		var complex_id = this.view_id  + '_' + view_space;
+		return md.getView(complex_id, true);
+	},
 	getFreeChildView: function(child_name, md, view_space, opts) {
 		view_space = view_space || 'main';
 		var complex_id = this.view_id  + '_' + view_space;

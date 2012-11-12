@@ -211,9 +211,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	complex_states: {
 		'start-level': {
-			depends_on: ['active-lev-num'],
-			fn: function(nwrap) {
-				if (!nwrap || nwrap.n == -1){
+			depends_on: ['current-mp-md'],
+			fn: function(md) {
+				if (!md || md.map_level_num == -1){
 					return true;
 				}
 			}
@@ -223,22 +223,54 @@ provoda.View.extendTo(appModelView, {
 		this.els.start_screen.toggleClass('inactive-page', !state);
 	},
 	//
-	'stch-active-lev-num': function(num, old_num) {
+	'stch-current-mp-md': function(md, old_md) {
 
-		var oved_now_active = old_num && (old_num.n-1 ===  num.n);
-		if (old_num){
-			this.hideLevNum(old_num.n);
+		//map_level_num
+		//md.map_level_num
+		var oved_now_active = old_md && (old_md.map_level_num-1 ===  md.map_level_num);
+		if (old_md){
+			this.hideLevNum(old_md.map_level_num);
 			if (!oved_now_active){
-				this.removePageOverviewMark(old_num.n-1);
+				this.removePageOverviewMark(old_md.map_level_num-1);
 			}
 			
 		}
 		
-		this.addPageOverviewMark(num.n - 1);
-		this.showLevNum(num.n);
+		this.addPageOverviewMark(md.map_level_num - 1);
+		this.showLevNum(md.map_level_num);
 		if (oved_now_active){
-			this.removePageOverviewMark(old_num.n-1);
+			this.removePageOverviewMark(old_md.map_level_num-1);
 		}
+		var highlight = md.state('mp-highlight');
+		if (highlight && highlight.source_md){
+			var source_md = highlight.source_md;
+
+			var md_view = this.getChildView(md, 'main');
+			if (md_view){
+				var hl_view = md_view.getChildView(source_md, 'main');
+				if (hl_view){
+					this.scrollTo(hl_view);
+				}
+			}
+		}
+
+		var ov_md = md.getParentMapModel();
+		var ov_highlight = ov_md && ov_md.state('mp-highlight');
+		if (ov_highlight && ov_highlight.source_md){
+			var source_md = ov_highlight.source_md;
+			var ov_view = this.getChildView(ov_md, 'main');
+			if (ov_view){
+				var hl_view = ov_view.getChildView(source_md, 'main');
+				if (hl_view){
+					this.scrollTo(hl_view, {
+						node: this.getLevByNum(md.map_level_num - 1)
+					});
+				}
+			}
+		}
+
+		//var parent_md = md.getParentMapModel();
+		//this.getChildView()
 	},
 	'stch-map-animation': function(changes) {
 		if (!changes){
@@ -349,7 +381,7 @@ provoda.View.extendTo(appModelView, {
 	getScrollVP: function() {
 		return this.els.scrolling_viewport;
 	},
-	scrollTo: function(view) {
+	scrollTo: function(view, view_port) {
 		if (!view){return false;}
 	//	if (!this.view_port || !this.view_port.node){return false;}
 
@@ -364,7 +396,7 @@ provoda.View.extendTo(appModelView, {
 
 
 
-		var svp = this.getScrollVP(),
+		var svp = view_port || this.getScrollVP(),
 			scroll_c = svp.offset ? $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0]) :   svp.node,
 			scroll_top = scroll_c.scrollTop(), //top
 			scrolling_viewport_height = svp.node.height(), //height
