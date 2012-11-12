@@ -59,10 +59,13 @@ provoda.View.extendTo(appModelView, {
 		}
 		return !this.checkLiveState || !this.checkLiveState();
 	},
-	getLevelContainer: function(num) {
+	getLevelContainer: function(num, view) {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
+			if (!view){
+				throw new Error('give me "view"');
+			}
 			return this.lev_containers[num] = $('<div class="complex-page inactive-page"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
 		}
 	},
@@ -109,7 +112,7 @@ provoda.View.extendTo(appModelView, {
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
 
-				_this.getLevelContainer(el.map_level_num).append(view.getA());
+				_this.getLevelContainer(el.map_level_num, view).append(view.getA());
 			}
 
 		});
@@ -121,7 +124,7 @@ provoda.View.extendTo(appModelView, {
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
-				_this.getLevelContainer(el.map_level_num).append(view.getA());
+				_this.getLevelContainer(el.map_level_num, view).append(view.getA());
 			}
 
 
@@ -134,11 +137,11 @@ provoda.View.extendTo(appModelView, {
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main', {overview: true});
 			if (view){
-				_this.getLevelContainer(el.map_level_num).append(view.getA());
+				_this.getLevelContainer(el.map_level_num, view).append(view.getA());
 			}
 			var det_view = _this.getFreeChildView(name, el, 'details');
 			if (det_view){
-				_this.getLevelContainer(el.map_level_num + 1).append(det_view.getA());
+				_this.getLevelContainer(el.map_level_num + 1, view).append(det_view.getA());
 			}
 
 		});
@@ -256,6 +259,7 @@ provoda.View.extendTo(appModelView, {
 			}
 			
 		}
+		console.log(all_changhes)
 		/*
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];

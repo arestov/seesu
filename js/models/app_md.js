@@ -138,6 +138,11 @@ provoda.Model.extendTo(appModel, {
 		'move-view': function(change) {
 			var parent = change.target.getParentMapModel();
 			if (parent){
+				//mp-source
+				var mp_source = target.state('mp-source');
+				if (mp_source){
+					parent.updateState('mp-highlight', mp_source)
+				}
 				parent.updateState('mp-has-focus', false);
 			}
 			change.target.updateState('mp-show', change.value);
@@ -179,9 +184,15 @@ provoda.Model.extendTo(appModel, {
 				break;
 			}	
 		}
+		/*
+			подсветить/заменить текущий источник 
+			проскроллить к источнику при отдалении
+			просроллить к источнику при приближении
+		*/
 		if (target_md){
 			target_md.updateState('mp-has-focus', true);
-			this.updateState('active-lev-num', {n: target_md.getLevNum()});
+			target_md.updateState('mp-highlight', false);
+			this.updateState('active-lev-num', {n: target_md.map_level_num});
 			this.updateState('show-search-form', target_md.state('needs-search-from'));
 		}
 
@@ -313,6 +324,8 @@ provoda.Model.extendTo(appModel, {
 
 
 			this.bindMMapStateChanges(md, 'invstg');
+
+			//md.updateState({source_md: , source_name})
 			lev = this.map.goDeeper(false, md);
 		} else {
 			lev = this.search_el.lev;
@@ -329,6 +342,7 @@ provoda.Model.extendTo(appModel, {
 		if (source_info && !source_info.page_md){
 			throw new Error('give me page_md')
 		}
+		md.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
 		var lev = this.map.goDeeper(source_info && source_info.page_md, md);
 		return md;
 	},
@@ -345,6 +359,7 @@ provoda.Model.extendTo(appModel, {
 		if (source_info && !source_info.page_md){
 			throw new Error('give me page_md')
 		}
+		pl.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
 		var lev = this.map.goDeeper(source_info && source_info.page_md, pl);
 		return pl;
 	},
@@ -362,6 +377,10 @@ provoda.Model.extendTo(appModel, {
 		if (source_info && !source_info.page_md){
 			throw new Error('give me page_md')
 		}
+		if (!mo.state('mp-source')){
+			mo.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
+		}
+		
 		var lev = this.map.goDeeper(source_info && source_info.page_md, mo);
 		return mo;
 	},
@@ -430,10 +449,15 @@ provoda.Model.extendTo(appModel, {
 		vopts = vopts || {};
 		var cpl = this.p.isPlaying(pl);
 		if (!cpl){
+			var artcard_md;
 			if (!vopts.from_artcard){
-				this.showArtcardPage(artist, vopts.source_info, true);
+				artcard_md = this.showArtcardPage(artist, vopts.source_info, true);
 			}
-			this.show_playlist_page(pl, vopts.source_info, vopts.no_navi);
+			var source_info = vopts.source_info || {
+				page_md: artcard_md,
+				source_name: 'top-tracks'
+			};
+			this.show_playlist_page(pl, source_info, vopts.no_navi);
 			return pl;
 		} else{
 			this.restoreFreezed();

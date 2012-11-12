@@ -516,3 +516,40 @@ ul.tracks-for-play > li{
 		width:auto;
 	}
 }
+
+
+
+
+
+.page-overview{
+
+	}
+	.page-overview .art-card{
+
+		}
+		.page-overview .art-card-meta{
+			float:none;
+			width: auto;
+			}
+		.page-overview .art-card-similar{
+			float:none;
+			width: auto;
+			}
+			.page-overview .art-card-albums .albums-groups{
+				height: auto
+				}
+			.page-overview .art-card-albums ul li{
+				float:none;
+				overflow: hidden;
+				width: auto;
+				margin-bottom: 14px;
+				}
+			.page-overview .art-card-albums ul li img{
+				width: 38px;
+				height: 38px;
+				float:left;
+				}
+			.page-overview .art-card-albums ul li .album-name{
+				position: static;
+				background: transparent;
+				}

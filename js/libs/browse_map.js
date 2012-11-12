@@ -11,8 +11,7 @@ var mapLevel = function(num, parent_levels, resident, map){
 	this.parent_levels = parent_levels;
 	if (resident){
 		this.setResident(resident);
-		resident.assignMapLev(this);
-		resident.trigger('mpl-attach');
+		
 	}
 	return this;
 };
@@ -20,6 +19,10 @@ var mapLevel = function(num, parent_levels, resident, map){
 Class.extendTo(mapLevel, {
 	setResident: function(resident){
 		this.resident = resident;
+		resident.updateState('')
+		resident.assignMapLev(this);
+		resident.trigger('mpl-attach');
+
 	},
 	getResident: function(){
 		return this.resident;
@@ -751,15 +754,9 @@ provoda.Eventor.extendTo(browseMap, {
 mapLevelModel = function() {};
 
 provoda.Model.extendTo(mapLevelModel, {
-	getLevNum: function() {
-		return this.map_level_num;
-	},
 	assignMapLev: function(lev){
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
-		if (this.onMapLevAssign){
-			this.onMapLevAssign();
-		}
 		return this;	
 	},
 	getParentMapModel: function() {
