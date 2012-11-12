@@ -139,7 +139,7 @@ provoda.Model.extendTo(appModel, {
 			var parent = change.target.getParentMapModel();
 			if (parent){
 				//mp-source
-				var mp_source = target.state('mp-source');
+				var mp_source = change.target.state('mp-source');
 				if (mp_source){
 					parent.updateState('mp-highlight', mp_source)
 				}
