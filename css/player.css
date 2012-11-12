@@ -61,13 +61,13 @@ a.track-name-loading .nothing-toy{
 
 
 ul.tracks-for-play.list-overview > li:nth-of-type(even) > .track-node,
-.page-overview ul.tracks-for-play > li:nth-of-type(even) > .track-node{
+.page-scheme ul.tracks-for-play > li:nth-of-type(even) > .track-node{
 	background-color: #4D4D4D;
 	}
 
 
 ul.tracks-for-play.list-overview > li > a.track-node:hover,
-.page-overview ul.tracks-for-play > li > a.track-node:hover{
+.page-scheme ul.tracks-for-play > li > a.track-node:hover{
 	background-color:#535353;
 	}
 .show-zoom-to-track ul.tracks-for-play > li > a.track-node:hover{
@@ -449,17 +449,17 @@ a.track-name-loading:hover{
 .show-zoom-to-track .player-song.to-play-previous .full-song-title{
 	padding-right: 22px;
 }
-.page-overview .has-no-track-title .song-track-name{
+.page-scheme .has-no-track-title .song-track-name{
 	display: none;
 }
 
-.page-overview .song-track-name {
+.page-scheme .song-track-name {
 	height: 1.5em;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	}
-.page-overview .song-artist-name{
+.page-scheme .song-artist-name{
 	height: 1.5em;
 	overflow: hidden;
 	text-overflow: ellipsis;

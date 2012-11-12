@@ -184,29 +184,29 @@ provoda.View.extendTo(appModelView, {
 	},
 	hideLevNum: function(num) {
 
-		var levc = this.getLevByNum(num, true);
+		var levc = this.getLevByNum(num);
 		if (levc){
-			levc.addClass('inactive-page');
+			levc.addClass('inactive-page').removeClass('full-page');
 		}
 		
 	},
 	showLevNum: function(num) {
-		var levc = this.getLevByNum(num, true);
+		var levc = this.getLevByNum(num);
 		if (levc){
-			levc.removeClass('inactive-page');
+			levc.removeClass('inactive-page').addClass('full-page');
 		}
 		
 	},
 	removePageOverviewMark: function(num) {
 		var levc = this.getLevByNum(num);
 		if (levc){
-			levc.removeClass('page-overview');
+			levc.removeClass('page-scheme');
 		}
 	},
 	addPageOverviewMark: function(num) {
 		var levc = this.getLevByNum(num);
 		if (levc){
-			levc.addClass('page-overview');
+			levc.addClass('page-scheme');
 		}
 	},
 	complex_states: {
