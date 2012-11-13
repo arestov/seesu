@@ -1,16 +1,21 @@
 .does-not-need-search-from{
 	padding-top:28px;
 	}
-.search-results-container{
+.full-page .search-results-container{
 	padding-left:60px;
 	position:relative;
 	}
+
 	.search-results-container h4{
+		
+		font-weight:400;
+		margin:0;
+		
+		}
+	.full-page .search-results-container h4{
 		position:absolute;
 		left:0;
 		padding:4px 0 0;
-		font-weight:400;
-		margin:0;
 		width:60px;
 		height:20px;
 		z-index:2;
@@ -23,11 +28,13 @@
 		zoom:1;
 		position:relative;
 		margin:0;
-		border-left:1px solid #5d5d5d;
+		
 		border-bottom:1px solid #5d5d5d;
 		min-height:26px;
 		}
-
+	.full-page .search-results-container ul.sugg-section{
+		border-left:1px solid #5d5d5d;
+		}
 		.search-results-container ul li{
 			position:relative;
 			}
