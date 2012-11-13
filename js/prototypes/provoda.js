@@ -231,7 +231,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				old_value		= obj_to_change && obj_to_change[name],
 				method;
 
-			var stateChanger = !skip_handler && this['stch-' + name] || (this.state_change && this.state_change[name]);
+			var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
 			if (stateChanger){
 				if (typeof stateChanger == 'function'){
 					method = stateChanger;
