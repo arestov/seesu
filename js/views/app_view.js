@@ -183,9 +183,9 @@ provoda.View.extendTo(appModelView, {
 			}
 			var det_view = _this.getFreeChildView(name, el, 'details');
 			if (det_view){
-				var lev_conj = _this.getLevelContainer(el.map_level_num + 1, view);
+				var lev_conj = _this.getLevelContainer(el.map_level_num + 1, det_view);
 				if (lev_conj){
-					lev_conj.scroll_con.append(view.getA());
+					lev_conj.scroll_con.append(det_view.getA());
 				}
 			}
 
