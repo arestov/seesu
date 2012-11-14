@@ -137,7 +137,8 @@ html.opera-extension{
 	width: 100%;
 	padding-right: 30px;
 	height: 100%;
-	overflow-y: auto; 
+	overflow-y: auto;
+	overflow-x: hidden;
 	}
 	.complex-page.page-scheme .complex-page_material{
 		width: 100%;

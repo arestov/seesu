@@ -780,15 +780,20 @@ html.not-as-application, .not-as-application  body{
 	.metro-tracks li{
 		overflow:hidden;
 		margin-bottom:14px;
+	}
+	.full-page .metro-tracks li{
 		float:left;
 		width:50%
+
 	}
+
 	.metro-tracks li img{
 		float:left;
 		margin-right:14px;
 		width:32px;
 		height:32px;
 	}
+
 .block-for-startpage.loading{
 	background: url(../i/spinner_small.gif) no-repeat 100% 4px;
 	min-height:30px;
