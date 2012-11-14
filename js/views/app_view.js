@@ -23,9 +23,11 @@ provoda.View.extendTo(appModelView, {
 			
 		}
 		this.lev_containers = {};
+
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);
+
 		this.c.addClass('app-loaded');
 		this.connectStates();
 		this.connectChildrenModels();
@@ -66,7 +68,17 @@ provoda.View.extendTo(appModelView, {
 			if (!view){
 				throw new Error('give me "view"');
 			}
-			return this.lev_containers[num] = $('<div class="complex-page inactive-page"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
+			if (num == -1){
+				throw new Error('start_screen must exist')
+			}
+
+			var container = $('<div class="complex-page inactive-page"></div>').addClass('index-of-cp-is-' + num);
+			var scroll_con = $('<div class="complex-page_scroll-con"></div>').appendTo(container);
+
+			return this.lev_containers[num] = {
+				c: container.appendTo(this.els.screens),
+				scroll_con: scroll_con
+			}
 		}
 	},
 	children_views: {
@@ -112,7 +124,11 @@ provoda.View.extendTo(appModelView, {
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
 
-				_this.getLevelContainer(el.map_level_num, view).append(view.getA());
+				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
+				if (lev_conj){
+					lev_conj.scroll_con.append(view.getA());
+				}
+				
 			}
 
 		});
@@ -124,24 +140,53 @@ provoda.View.extendTo(appModelView, {
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
-				_this.getLevelContainer(el.map_level_num, view).append(view.getA());
+				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
+				if (lev_conj){
+					lev_conj.scroll_con.append(view.getA());
+				}
 			}
 
 
 		});
 
 		this.requestAll();
+		/*
+
+		'collch-playlist': function(name, arr) {
+			var _this = this;
+			$.each(arr, function(i, el){
+				var view = _this.getFreeChildView(name, el, 'main', {overview: true});
+				if (view){
+					_this.getLevelContainer(el.map_level_num, view).append(view.getA());
+				}
+				var det_view = _this.getFreeChildView(name, el, 'details');
+				if (det_view){
+					_this.getLevelContainer(el.map_level_num + 1, view).append(det_view.getA());
+				}
+
+			});
+
+			this.requestAll();
+		},
+
+		*/
 	},
 	'collch-playlist': function(name, arr) {
 		var _this = this;
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main', {overview: true});
 			if (view){
-				_this.getLevelContainer(el.map_level_num, view).append(view.getA());
+				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
+				if (lev_conj){
+					lev_conj.scroll_con.append(view.getA());
+				}
 			}
 			var det_view = _this.getFreeChildView(name, el, 'details');
 			if (det_view){
-				_this.getLevelContainer(el.map_level_num + 1, view).append(det_view.getA());
+				var lev_conj = _this.getLevelContainer(el.map_level_num + 1, view);
+				if (lev_conj){
+					lev_conj.scroll_con.append(view.getA());
+				}
 			}
 
 		});
@@ -174,11 +219,7 @@ provoda.View.extendTo(appModelView, {
 		} else if (exclude_start_lev){
 			return num == -1 ? false : this.getLevelContainer(num);
 		} else {
-			if (num == -1){
-				return this.els.start_screen
-			} else {
-				return this.getLevelContainer(num);
-			}
+			return this.getLevelContainer(num);
 		}
 		
 	},
@@ -186,27 +227,27 @@ provoda.View.extendTo(appModelView, {
 
 		var levc = this.getLevByNum(num);
 		if (levc){
-			levc.addClass('inactive-page').removeClass('full-page');
+			levc.c.addClass('inactive-page').removeClass('full-page');
 		}
 		
 	},
 	showLevNum: function(num) {
 		var levc = this.getLevByNum(num);
 		if (levc){
-			levc.removeClass('inactive-page').addClass('full-page');
+			levc.c.removeClass('inactive-page').addClass('full-page');
 		}
 		
 	},
 	removePageOverviewMark: function(num) {
 		var levc = this.getLevByNum(num);
 		if (levc){
-			levc.removeClass('page-scheme');
+			levc.c.removeClass('page-scheme');
 		}
 	},
 	addPageOverviewMark: function(num) {
 		var levc = this.getLevByNum(num);
 		if (levc){
-			levc.addClass('page-scheme');
+			levc.c.addClass('page-scheme');
 		}
 	},
 	complex_states: {
@@ -220,7 +261,7 @@ provoda.View.extendTo(appModelView, {
 		}
 	},
 	'stch-start-level': function(state) {
-		this.els.start_screen.toggleClass('inactive-page', !state);
+		//this.els.start_screen.toggleClass('inactive-page', !state);
 	},
 	//
 	'stch-current-mp-md': function(md, old_md) {
@@ -263,7 +304,7 @@ provoda.View.extendTo(appModelView, {
 				var hl_view = ov_view.getChildView(source_md, 'main');
 				if (hl_view){
 					this.scrollTo(hl_view, {
-						node: this.getLevByNum(md.map_level_num - 1)
+						node: this.getLevByNum(md.map_level_num - 1).scroll_con
 					});
 				}
 			}
@@ -489,8 +530,11 @@ provoda.View.extendTo(appModelView, {
 				start_page_place: start_screen.children('.for-startpage')
 			};
 
-
-			
+			_this.lev_containers[-1] = {
+				c: start_screen.parent().parent(),
+				material: start_screen
+			}
+				
 
 			_this.els.search_form.find('#app_type').val(su.env.app_type);
 			
