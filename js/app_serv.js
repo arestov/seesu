@@ -21,6 +21,41 @@
 
 
 
+var animate = function(opts, update, calculate) {
+	var animating = true;
+
+	var step_time;
+	opts = opts || {};
+	var now_time = 1 * new Date();
+	var calculate_params = {
+		start_time: now_time,
+		start_value: opts.from,
+		end_value: opts.to
+	};
+	var velocity = opts.velocity || (opts.time && (opts.to - opts.from)) || false;
+	var getTargetValue = function(params) {
+		if (calculate){
+			return calculate(params);
+		} else {
+			var now_time = 1 * new Date();
+			var target_value = velocity * (now_time - params.start_time);
+			return params.start_value + target_value;
+		
+		}
+	};
+
+
+	var makeStep = function() {
+		var target_value = getTargetValue(calculate_params);
+
+		//target_value 
+		//timeout
+		//
+	};
+	
+
+};
+
 
 
 var tempTool = {
