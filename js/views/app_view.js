@@ -305,7 +305,7 @@ provoda.View.extendTo(appModelView, {
 				if (hl_view){
 					this.scrollTo(hl_view, {
 						node: this.getLevByNum(md.map_level_num - 1).scroll_con
-					});
+					}, {vp_limit: 0.4, animate: 117});
 				}
 			}
 		}
@@ -422,8 +422,9 @@ provoda.View.extendTo(appModelView, {
 	getScrollVP: function() {
 		return this.els.scrolling_viewport;
 	},
-	scrollTo: function(view, view_port) {
+	scrollTo: function(view, view_port, opts) {
 		if (!view){return false;}
+		opts = opts || {};
 	//	if (!this.view_port || !this.view_port.node){return false;}
 
 		//var scrollingv_port = ;
@@ -435,13 +436,17 @@ provoda.View.extendTo(appModelView, {
 			return
 		}
 
-
+		var view_port_limit = opts.vp_limit || 1;
 
 		var svp = view_port || this.getScrollVP(),
 			scroll_c = svp.offset ? $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0]) :   svp.node,
 			scroll_top = scroll_c.scrollTop(), //top
 			scrolling_viewport_height = svp.node.height(), //height
+			padding = (scrolling_viewport_height * (1 - view_port_limit))/2,
 			scroll_bottom = scroll_top + scrolling_viewport_height; //bottom
+
+		var top_limit = scroll_top + padding,
+			bottom_limit = scroll_bottom - padding;
 		
 		var node_position;
 		var node_top_post =  jnode.offset().top;
@@ -458,11 +463,21 @@ provoda.View.extendTo(appModelView, {
 		var el_bottom = jnode.height() + node_position;
 
 		var new_position;
-		if ( el_bottom > scroll_bottom || el_bottom < scroll_top){
+		if ( el_bottom > bottom_limit || el_bottom < top_limit){
 			new_position =  el_bottom - scrolling_viewport_height/2;
 		}
 		if (new_position){
-			scroll_c.scrollTop(new_position);
+			if (opts.animate){
+				scroll_c
+					.stop(false, true)
+					.animate({
+						scrollTop: new_position
+					}, opts.animate);
+				
+			} else {
+				scroll_c.scrollTop(new_position);
+			}
+			
 		}
 	},
 	toggleBodyClass: function(add, class_name){
