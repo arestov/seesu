@@ -34,10 +34,13 @@
 
 .start-screen{
 	padding-bottom:20px;
-
-
-	
 	}
+.page-scheme .start-screen{
+	padding-top: 14px;
+	}
+.page-scheme .art_card{
+	padding-top: 14px;
+}
 
 #search {
 	max-width: 750px;
@@ -67,10 +70,45 @@
 	margin-top:2em;
 }
 
+.page-scheme .relations-invites-wrap,
+.page-scheme .relations-likes-wrap,
+.page-scheme .users-play-this{
+	display: none;
+	}
+
+.random-metro-chart{
+
+	}
+	.random-metro-chart .show-in-header{
+		display: none;
+		margin-left: 0 !important;
+		}
+	.page-scheme .random-metro-chart ul{
+		display: none;
+		}		
+	.page-scheme .random-metro-chart .refresh-in-header{
+		display: none;
+		}
+	.page-scheme .random-metro-chart .show-in-header{
+		display: inline;
+		}
 
 
-			
-		
+.tags-hyped{
+
+	}
+	.page-scheme .tags-hyped a{
+		display: block;
+		padding:3px 6px;
+		border: 0;
+		}
+	.page-scheme .tags-hyped a:nth-of-type(even){
+		background-color: #4D4D4D;
+
+		}
+	.page-scheme .tags-hyped a:hover{
+		background-color: #535353;
+	}
 /**  New nav **/	
 .show-zoom-to-track li.viewing-song .track-context{
 	display:block;

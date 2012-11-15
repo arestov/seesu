@@ -117,7 +117,8 @@
 					}
 				ul.results-suggests .suggest .suggest-artist_name{
 					line-height: 1.2em;
-					color:#666;
+					color: #777;
+					display: block;
 					}
 	.search-results-container	ul.sugg-section:last-child{
 		border-bottom:0;

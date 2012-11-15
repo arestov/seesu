@@ -276,6 +276,7 @@ var albumSuggest = function(data){
 	
 	if (data.image){
 		this.image = data.image;
+		this.updateState('image', data.image);
 	}
 	if (data.resid){
 		this.aid = data.resid;

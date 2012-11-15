@@ -105,11 +105,26 @@ searchPageSuggestView.extendTo(albumSuggestUI, {
 	createItem: function(){
 		var that = this.md;
 		var a = $("<a></a>");
-		$("<img/>").attr({ src: (that.image || default_sugg_artimage), alt: that.text_title }).appendTo(a);
-		$("<span></span>").text(that.text_title).appendTo(a);
+		this.img_c = $('<img/>').attr('src', default_sugg_artimage).appendTo(a);
+
+		this.artist_name_c  = $('<span class="suggest-artist_name"></span>').appendTo(a);
+		this.album_name_c  = $('<span class="suggest-album_name"></span>').appendTo(a);
+
 		this.a = a.appendTo(this.c);
 		return this;
-	}
+	},
+	"stch-name": function(state) {
+		this.album_name_c.text(state);
+		this.img_c.attr('alt', state);
+
+	},
+	"stch-artist": function(state) {
+		this.artist_name_c.text(state);
+		
+	},
+	"stch-image": function(state) {
+		this.img_c.attr('src', state);
+	},
 });
 
 
