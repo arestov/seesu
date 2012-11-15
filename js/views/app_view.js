@@ -583,7 +583,7 @@ provoda.View.extendTo(appModelView, {
 
 			var track_c = ui_samples.children('.track-context');
 			_this.samples = {
-				artcard: ui_samples.children('.art-card'),
+				artcard: ui_samples.children('.art_card'),
 				track_c : track_c,
 				playlist_panel: ui_samples.children('.play-list-panel'),
 				vklc: vklc,

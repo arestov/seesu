@@ -212,65 +212,65 @@ ul.tracks-for-play > li{
 	
 }
 
-.art-card{
+.art_card{
 	max-width: 750px;
 	margin: 0 auto;
 	
 	overflow:hidden;
 	padding-bottom: 20px;
 	}
-.full-page .art-card{
+.full-page .art_card{
 	padding: 24px 10px;
 	}
-	.art-card ul{
+	.art_card ul{
 		
 	}
-	.art-card .row-header{
+	.art_card .row-header{
 		margin-bottom:7px;
 	}
-	.art-card h5{
+	.art_card h5{
 	
 		}
-		.art-card h5 a.extends-header{
+		.art_card h5 a.extends-header{
 			margin-left:14px;
 			}
-	.art-card-meta{
+	.art_card-meta{
 		float:left;
 		width:50%;
 		
 		min-height:140px;
 		margin-bottom:24px;
 		}
-		.top-tracks,.art-card-tags{
+		.top-tracks,.art_card-tags{
 			margin-right:24px;
 			margin-bottom:24px;
 			}
-			.top-tracks.loading,.art-card-tags.loading{
+			.top-tracks.loading,.art_card-tags.loading{
 				background: url(../i/spinner_small.gif) no-repeat 100% 4px;
 				}
 					
 	
-			.art-card-meta ul{
+			.art_card-meta ul{
 				overflow:hidden;
 				}
-				.art-card-meta ul li{
+				.art_card-meta ul li{
 					float:left;
 					white-space:nowrap;
 					margin-right:1em;
 					}
 	
-	.art-card-similar{
+	.art_card-similar{
 		float:right;
 		width:50%;
 		margin-bottom:24px;
 		}
-		.art-card-similar.loading{
+		.art_card-similar.loading{
 			background: url(../i/spinner_small.gif) no-repeat 100% 4px;
 			}
-		.art-card-similar ul{
+		.art_card-similar ul{
 			overflow:hidden;
 			}
-			.art-card-similar ul li{
+			.art_card-similar ul li{
 				float:left;
 				margin-right:1em;
 				white-space:nowrap;
@@ -278,7 +278,7 @@ ul.tracks-for-play > li{
 
 	
 	
-	.full-page .art-card-albums{
+	.full-page .art_card-albums{
 		background: #3f3f3f;
 		padding: 10px 10px;
 		border-radius: 6px;
@@ -287,59 +287,59 @@ ul.tracks-for-play > li{
 		clear:both;
 		
 		}
-		.art-card-albums.loading .row-header{
+		.art_card-albums.loading .row-header{
 			background: url(../i/spinner_dark_small.gif) no-repeat 100% 0%;
 			}
-	.art-card-albums.show-all-albums{
+	.art_card-albums.show-all-albums{
 		
 		}
-		.art-card-albums .albums-groups{
+		.art_card-albums .albums-groups{
 			height:126px;
 			overflow:hidden;
 		}
-		.art-card-albums.show-all-albums .albums-groups{
+		.art_card-albums.show-all-albums .albums-groups{
 			height:auto;
 		}
-		.art-card-albums ul{
+		.art_card-albums ul{
 			overflow:hidden;
 			margin:0 0 12px;
 			padding-left:0;
 			}
 
-			.art-card-albums ul li{
+			.art_card-albums ul li{
 				float:left;
 				}
-			.art-card-albums ul li img{
+			.art_card-albums ul li img{
 				
 				}
 				
-			.art-card-albums ul li{
+			.art_card-albums ul li{
 				width:126px;
 
 				}
-				.art-card-albums ul li a{
+				.art_card-albums ul li a{
 					display:block;
 					border-bottom:0;
 					color:#aaaaaa;
 					position: relative;
 					}
-				.page-scheme .art-card-albums ul li a{
+				.page-scheme .art_card-albums ul li a{
 					overflow: hidden;
 					}
-					.art-card-albums ul li a:hover{
+					.art_card-albums ul li a:hover{
 						color:#fff;
 						}
-						.art-card-albums ul li a:hover  .album-name{
+						.art_card-albums ul li a:hover  .album-name{
 							opacity: 1;
 						}
-				.art-card-albums ul li img{
+				.art_card-albums ul li img{
 					width:126px;
 					display:block;
 					height:126px;
 					margin-right:4px;
 					background:#ccc url(http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png) no-repeat 2px 2px;
 				}
-				.art-card-albums ul li .album-name{
+				.art_card-albums ul li .album-name{
 					
 					text-overflow: ellipsis;
 					overflow:hidden;
@@ -352,31 +352,37 @@ ul.tracks-for-play > li{
 					opacity: 0.7;
 					
 					}
-	.full-page .art-card-bio{
+	.page-scheme .art_card-albums .row-header .extends-header{
+		display: none;
+		}
+	.page-scheme .art_card-image{
+		display: none;
+		}
+	.full-page .art_card-bio{
 		float: right;
 		width: 50%;
 		}
-		.art-card-bio.loading{
+		.art_card-bio.loading{
 			min-height:20px;
 			background: url(../i/spinner_small.gif) no-repeat 100% 0%;
 			}
-	.page-scheme .art-card-bio{
+	.page-scheme .art_card-bio{
 		display: none;
 		}
-	.full-page .art-card-image{
+	.full-page .art_card-image{
 		width:50%;
 		float:left;
 		}
 		
-		.full-page .art-card-image-padding{
+		.full-page .art_card-image-padding{
 			padding-right:24px;
 		}
-		.art-card-image img{
+		.art_card-image img{
 			width:100%;
 			margin-bottom:24px;
 		}
 @media (max-width:550px) {
-	.art-card-similar, .art-card-meta{
+	.art_card-similar, .art_card-meta{
 		float:none;
 		width:auto;
 	}
@@ -389,32 +395,32 @@ ul.tracks-for-play > li{
 .page-scheme{
 
 	}
-	.page-scheme .art-card{
+	.page-scheme .art_card{
 
 		}
-		.page-scheme .art-card-meta{
+		.page-scheme .art_card-meta{
 			float:none;
 			width: auto;
 			}
-		.page-scheme .art-card-similar{
+		.page-scheme .art_card-similar{
 			float:none;
 			width: auto;
 			}
-			.page-scheme .art-card-albums .albums-groups{
+			.page-scheme .art_card-albums .albums-groups{
 				height: auto
 				}
-			.page-scheme .art-card-albums ul li{
+			.page-scheme .art_card-albums ul li{
 				float:none;
 				overflow: hidden;
 				width: auto;
 				margin-bottom: 14px;
 				}
-			.page-scheme .art-card-albums ul li img{
+			.page-scheme .art_card-albums ul li img{
 				width: 38px;
 				height: 38px;
 				float:left;
 				}
-			.page-scheme .art-card-albums ul li .album-name{
+			.page-scheme .art_card-albums ul li .album-name{
 				position: static;
 				background: transparent;
 				}

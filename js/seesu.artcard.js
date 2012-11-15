@@ -145,12 +145,12 @@ provoda.View.extendTo(artCardUI, {
 		var _this = this;
 		this.c = this.root_view.samples.artcard.clone();
 		this.ui = {
-			imagec: this.c.find('.art-card-image .art-card-image-padding'),
+			imagec: this.c.find('.art_card-image .art_card-image-padding'),
 			topc: this.c.find('.top-tracks'),
-			tagsc: this.c.find('.art-card-tags'),
-			albumsc: this.c.find('.art-card-albums'),
-			similarsc: this.c.find('.art-card-similar'),
-			bioc: this.c.find('.art-card-bio')
+			tagsc: this.c.find('.art_card-tags'),
+			albumsc: this.c.find('.art_card-albums'),
+			similarsc: this.c.find('.art_card-similar'),
+			bioc: this.c.find('.art_card-bio')
 		};
 		this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
 			su.showTopTacks(_this.md.artist, {

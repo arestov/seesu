@@ -454,10 +454,10 @@ provoda.Model.extendTo(appModel, {
 			if (!vopts.from_artcard){
 				artcard_md = this.showArtcardPage(artist, vopts.source_info, true);
 			}
-			var source_info = vopts.source_info || {
+			var source_info = artcard_md ? {
 				page_md: artcard_md,
 				source_name: 'top-tracks'
-			};
+			} : vopts.source_info;
 			this.show_playlist_page(pl, source_info, vopts.no_navi);
 			return pl;
 		} else{

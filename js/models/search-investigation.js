@@ -145,8 +145,19 @@ var trackSuggest = function(data){
 	this.artist = data.artist;
 	this.track = data.track;
 	this.image = data.image;
+	this.updateState('artist', data.artist);
+	this.updateState('track', data.track);
+	if (this.image){
+		this.updateState('image', data.image);
+	}
+	
+
 	if (data.duration){
 		this.duration = data.duration;
+		var track_dur = parseInt(this.duration);
+		var digits = track_dur % 60;
+		track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+		this.updateState('duration-text', track_dur);
 	}
 	this.text_title = this.getTitle();
 };
@@ -260,6 +271,8 @@ var albumSuggest = function(data){
 	//artist, name, image, id
 	this.artist = data.artist;
 	this.name = data.album;
+	this.updateState('artist', data.artist);
+	this.updateState('name', data.album);
 	
 	if (data.image){
 		this.image = data.image;

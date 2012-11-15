@@ -107,6 +107,18 @@
 				margin-bottom:0;
 				
 				}
+
+			ul.results-suggests .suggest{
+
+				}
+				ul.results-suggests .suggest .suggest-track_name{
+					line-height: 1.2em;
+					display: block;
+					}
+				ul.results-suggests .suggest .suggest-artist_name{
+					line-height: 1.2em;
+					color:#666;
+					}
 	.search-results-container	ul.sugg-section:last-child{
 		border-bottom:0;
 	}
