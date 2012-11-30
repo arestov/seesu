@@ -345,8 +345,15 @@ provoda.View.extendTo(StartPageView, {
 										.append(localize('last-week-с') + ' ' + random_metro.name)
 										.append('<span class="desc"> (' + random_metro.country + ') </span>')
 										.append(localize('listen-this') + " ");
-									$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
+
+									$('<a class="js-serv refresh-in-header"></a>').text(localize('refresh')).click(function(e){
 										showMetroRandom();
+										e.preventDefault();
+									}).appendTo(_header);
+
+
+									$('<a class="js-serv show-in-header"></a>').text(localize('show')).click(function(e){
+										su.show_playlist_page(plr);
 										e.preventDefault();
 									}).appendTo(_header);
 										

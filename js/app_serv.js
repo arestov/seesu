@@ -20,9 +20,6 @@
 })(window);
 
 
-
-
-
 var tempTool = {
 	loadPlaylist: function() {
 		$.ajax({

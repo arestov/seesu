@@ -435,6 +435,10 @@ localizer = {
 		"original": "show them",
 		"ru": "показать их"
 	},
+	"show": {
+		"original": "show",
+		"ru": "показать"
+	},
 	"direct-vk-search": {
 		"original": "Search mp3  directly in vkontakte",
 		"ru": 'Искать mp3 прямо во вконтакте'

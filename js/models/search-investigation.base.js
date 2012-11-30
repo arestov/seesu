@@ -96,7 +96,7 @@
 			sections_array.push(s);
 			this.setChild('section', sections_array, true);
 
-
+			s.invstg = this;
 			this.names[name] = s;
 			return s;
 		},
@@ -271,8 +271,11 @@
 		appendResults: function(arr, render, no_more_results) {
 			var r = [];
 			for (var i = 0; i < arr.length; i++) {
-				r.push(new this.resItem(arr[i]));
+				var item = new this.resItem(arr[i]);
+				item.invstg = this.invstg;
+				r.push(item);
 			};
+
 			this.r.append(r);
 			if (render){
 				this.renderSuggests(no_more_results);

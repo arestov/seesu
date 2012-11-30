@@ -53,10 +53,10 @@ provoda.View.extendTo(songUI, {
 
 		"mp-show": function(opts, old_opts) {
 			if (opts){
-				this.parent_view.c.addClass("show-zoom-to-track");
+			//	this.parent_view.c.addClass("show-zoom-to-track");
 				this.activate();
 			} else if (old_opts) {
-				this.parent_view.c.removeClass("show-zoom-to-track");
+			//	this.parent_view.c.removeClass("show-zoom-to-track");
 				this.deactivate();
 			}
 			
@@ -159,17 +159,17 @@ provoda.View.extendTo(songUI, {
 		},
 	},
 	unmark: function(){
-		this.c.removeClass('to-play-next to-play-previous');
+		this.c.removeClass('to-play-next to-play-previous v-song-sibling');
 		
 	},
 	markAs: function(statev){
 	
 		switch (statev) {
 			case 'next':
-				this.c.addClass('to-play-next');
+				this.c.addClass('to-play-next v-song-sibling');
 				break
 			case 'prev':
-				this.c.addClass('to-play-previous');
+				this.c.addClass('to-play-previous v-song-sibling');
 				break
 			default:
 		}
@@ -505,6 +505,9 @@ provoda.View.extendTo(songUI, {
 		this.c.append(this.node);
 	},
 	expand: function(){
+		if (this.opts && this.opts.lite){
+			return false;
+		}
 		if (this.expanded){
 			return true
 		} else{

@@ -11,8 +11,7 @@ var mapLevel = function(num, parent_levels, resident, map){
 	this.parent_levels = parent_levels;
 	if (resident){
 		this.setResident(resident);
-		resident.assignMapLev(this);
-		resident.trigger('mpl-attach');
+		
 	}
 	return this;
 };
@@ -20,6 +19,10 @@ var mapLevel = function(num, parent_levels, resident, map){
 Class.extendTo(mapLevel, {
 	setResident: function(resident){
 		this.resident = resident;
+		resident.updateState('')
+		resident.assignMapLev(this);
+		resident.trigger('mpl-attach');
+
 	},
 	getResident: function(){
 		return this.resident;
@@ -310,12 +313,13 @@ provoda.Eventor.extendTo(browseMap, {
 		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), transit, url_restoring);
 		return nlev;
 	},
-	_goDeeper: function(orealy, resident, transit, url_restoring){
-		var cl = this.getActiveLevelNum();
+	_goDeeper: function(parent_md, resident, transit, url_restoring){
+		//var cl = this.getActiveLevelNum();
 
 		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
-		if (orealy){
+		if (parent_md){
 			//this.sliceDeepUntil(cl, false, true);
+			parent_md.lev.sliceTillMe(true);
 		}  else{
 			//this.sliceDeepUntil(-1, false, true);
 			this.clearCurrent();
@@ -323,18 +327,20 @@ provoda.Eventor.extendTo(browseMap, {
 		if (just_started_zoomout){
 			this.finishChangesGrouping('zoom-out');
 		}
-		cl = this.getFreeLevel(orealy ? cl + 1 : 0, orealy, resident);
+		var new_level = this.getFreeLevel(parent_md ? parent_md.lev.num + 1 : 0, parent_md, resident);
+		
+		//
 
 		var just_started = this.startChangesGrouping('zoom-in');
-		this.setLevelPartActive(cl, {userwant: true, transit: transit, url_restoring: url_restoring});
+		this.setLevelPartActive(new_level, {userwant: true, transit: transit, url_restoring: url_restoring});
 		if (just_started){
 			this.finishChangesGrouping('zoom-in');
 		}
-		return cl;
+		return new_level;
 		
 	},
-	goDeeper: function(orealy, resident){
-		return this._goDeeper(orealy, resident);
+	goDeeper: function(parent_md, resident){
+		return this._goDeeper(parent_md, resident);
 	},
 	createLevel: function(num, parent_levels, resident){
 		return new mapLevel(num, parent_levels, resident, this);
@@ -356,14 +362,25 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 		return lvls;
 	},
-	getFreeLevel: function(num, save_parents, resident){//goDeeper
+	getFreeLevel: function(num, parent_md, resident){//goDeeper
 		if (!this.levels[num]){
 			this.levels[num] = {};
 		}
 		if (this.levels[num].free && this.levels[num].free != this.levels[num].freezed){
 			return this.levels[num].free;
 		} else{
-			var parent_levels = save_parents ? this.getCurrentShallowLevelsAsParents(num) : [];
+			//this.getCurrentShallowLevelsAsParents(num)
+			var parent_levels;
+
+			if (parent_md){
+				var parents_of_parent = parent_md.lev.parent_levels;
+				parent_levels = [parent_md.lev];
+				if (parents_of_parent && parents_of_parent.length){
+					parent_levels = parent_levels.concat(parents_of_parent);
+				}
+			} else { 
+				parent_levels = [];
+			}
 			return this.levels[num].free = this.createLevel(num, parent_levels, resident);
 		}
 	},
@@ -737,15 +754,9 @@ provoda.Eventor.extendTo(browseMap, {
 mapLevelModel = function() {};
 
 provoda.Model.extendTo(mapLevelModel, {
-	getLevNum: function() {
-		return this.map_level_num;
-	},
 	assignMapLev: function(lev){
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
-		if (this.onMapLevAssign){
-			this.onMapLevAssign();
-		}
 		return this;	
 	},
 	getParentMapModel: function() {

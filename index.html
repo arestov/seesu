@@ -11,15 +11,17 @@
 	</script>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<link id="dynamic-favicon" rel="shortcut icon" href="icons/icon16.png"/>
-	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/buttons.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/view_switcher.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/vkontakte_switcher.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/search_results.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/player.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/buttmen.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/play-list-panel.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/abs_layout.css" type="text/css" media="screen" />
+	<link rel="stylesheet" type="text/css" media="screen" href="css/base.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/buttons.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/master.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/view_switcher.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/vkontakte_switcher.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/search_results.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/player.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/buttmen.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/play-list-panel.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/abs_layout.css"/>
+
 	<meta name="keywords"  content="seesu, seesu for iphone, seesu for android, seesu for mobile, seesu online, last.fm, vk.com music, vkontakte.ru and last.fm" >
 	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -134,10 +136,10 @@
   
   <body>
   	<div id="ui-samples" style="display:none">
-  		<div class="art-card">
+  		<div class="art_card">
 			
 			
-			<div class="art-card-meta">
+			<div class="art_card-meta">
 				<div class="top-tracks">
 			
 					<h5 class="row-header lang localize-Best-tracks">Best tracks</h5>
@@ -145,25 +147,25 @@
 				
 					
 				</div>
-				<div class='art-card-tags'>
+				<div class='art_card-tags'>
 					<h5 class="row-header lang localize-Tags">Tags</h5>
 					<ul class="hidden"></ul>
 				</div>
 			</div>
-			<div class="art-card-similar">
+			<div class="art_card-similar">
 				<h5 class="row-header lang localize-similar-arts" >Similar artists</h5>
 				<ul class="hidden"></ul>
 			</div>
-			<div class="art-card-albums">
+			<div class="art_card-albums">
 				<h5 class="row-header lang localize-Albums" >Albums</h5>				
 			</div>
 			
-			<div class="art-card-image">
-				<div class="art-card-image-padding">
+			<div class="art_card-image">
+				<div class="art_card-image-padding">
 					
 				</div>
 			</div>
-			<div class="art-card-bio"></div>
+			<div class="art_card-bio"></div>
 		</div>
   		
   		
@@ -456,42 +458,50 @@
 					</form>
 				</div>
 				
-				<div class="start-screen" id="start-screen">
-					<p id="search-use-hint" class="search-desc">
-						<span class="lang localize-trysearches">try to search</span> 
-						<a id='hint-query'  class="hint-query js-serv">The Beatles</a>
-						
-					</p>
-					<div class="fast-personal-start has-dark-buttons">
-						
-						<span class="button-hole hidden cus-playlist-b">
-							<a class="nicebutton lang localize-playlists">Playlists</a>
-						</span>
-						<div class="left-buttons-group">
-							<span class="button-hole">
-								<a id="lfm-recomm" class="nicebutton lang localize-reccoms">Recommendations</a>
-							</span>
-							<span class="button-hole">
-								<a id="lfm-loved" class="nicebutton lang localize-loved-tracks">Loved Tracks</a>
-							</span>
-						</div>
-						
-						<div class="row-context hidden">
-							<span class="rc-arrow hidden">
-								<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
-							</span>
-							<div class="lfm-recomm hidden"></div>
-							<div class="lfm-loved hidden"></div>
-						</div>
+				<div class="complex-page full-page">
+					<div class="complex-page_scroll-con">
 
-						
+						<div class="complex-page_material start-screen " id="start-screen">
+							<p id="search-use-hint" class="search-desc">
+								<span class="lang localize-trysearches">try to search</span> 
+								<a id='hint-query'  class="hint-query js-serv">The Beatles</a>
+								
+							</p>
+							<div class="fast-personal-start has-dark-buttons">
+								
+								<span class="button-hole hidden cus-playlist-b">
+									<a class="nicebutton lang localize-playlists">Playlists</a>
+								</span>
+								<div class="left-buttons-group">
+									<span class="button-hole">
+										<a id="lfm-recomm" class="nicebutton lang localize-reccoms">Recommendations</a>
+									</span>
+									<span class="button-hole">
+										<a id="lfm-loved" class="nicebutton lang localize-loved-tracks">Loved Tracks</a>
+									</span>
+								</div>
+								
+								<div class="row-context hidden">
+									<span class="rc-arrow hidden">
+										<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
+									</span>
+									<div class="lfm-recomm hidden"></div>
+									<div class="lfm-loved hidden"></div>
+								</div>
+
+								
+							</div>
+							<div class="app-loading-mark"></div>
+							<div class="for-startpage"></div>
+							<div class="block-for-startpage start-page-messages"></div>
+							<div class="block-for-startpage relations-invites-wrap"></div>
+							<div class="block-for-startpage relations-likes-wrap"></div>
+						</div>
 					</div>
-					<div class="app-loading-mark"></div>
-					<div class="for-startpage"></div>
-					<div class="block-for-startpage start-page-messages"></div>
-					<div class="block-for-startpage relations-invites-wrap"></div>
-					<div class="block-for-startpage relations-likes-wrap"></div>
+
+
 				</div>
+				
 			</div>
 
 			<div id="promo"></div>

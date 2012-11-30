@@ -231,7 +231,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				old_value		= obj_to_change && obj_to_change[name],
 				method;
 
-			var stateChanger = !skip_handler && this['stch-' + name] || (this.state_change && this.state_change[name]);
+			var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
 			if (stateChanger){
 				if (typeof stateChanger == 'function'){
 					method = stateChanger;
@@ -609,6 +609,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			throw new Error('there is no anchor for view of ' + child_name + ' child model');
 		}
 	
+	},
+	getChildView: function(md, view_space) {
+		var complex_id = this.view_id  + '_' + view_space;
+		return md.getView(complex_id, true);
 	},
 	getFreeChildView: function(child_name, md, view_space, opts) {
 		view_space = view_space || 'main';

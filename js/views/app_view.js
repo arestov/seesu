@@ -23,9 +23,11 @@ provoda.View.extendTo(appModelView, {
 			
 		}
 		this.lev_containers = {};
+
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);
+
 		this.c.addClass('app-loaded');
 		this.connectStates();
 		this.connectChildrenModels();
@@ -59,11 +61,24 @@ provoda.View.extendTo(appModelView, {
 		}
 		return !this.checkLiveState || !this.checkLiveState();
 	},
-	getLevelContainer: function(num) {
+	getLevelContainer: function(num, view) {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
-			return this.lev_containers[num] = $('<div class="complex-page hidden"></div>').addClass('index-of-cp-is-' + num).appendTo(this.els.screens)
+			if (!view){
+				throw new Error('give me "view"');
+			}
+			if (num == -1){
+				throw new Error('start_screen must exist')
+			}
+
+			var container = $('<div class="complex-page inactive-page"></div>').addClass('index-of-cp-is-' + num);
+			var scroll_con = $('<div class="complex-page_scroll-con"></div>').appendTo(container);
+
+			return this.lev_containers[num] = {
+				c: container.appendTo(this.els.screens),
+				scroll_con: scroll_con
+			}
 		}
 	},
 	children_views: {
@@ -81,6 +96,7 @@ provoda.View.extendTo(appModelView, {
 		},
 		playlist: {
 			main: songsListView,
+			details: songsListView,
 			nav: playlistNavUI
 		},
 		song: {
@@ -108,7 +124,11 @@ provoda.View.extendTo(appModelView, {
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
 
-				_this.getLevelContainer(el.map_level_num).append(view.getA());
+				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
+				if (lev_conj){
+					lev_conj.scroll_con.append(view.getA());
+				}
+				
 			}
 
 		});
@@ -120,19 +140,53 @@ provoda.View.extendTo(appModelView, {
 		$.each(arr, function(i, el){
 			var view = _this.getFreeChildView(name, el, 'main');
 			if (view){
-				_this.getLevelContainer(el.map_level_num).append(view.getA());
+				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
+				if (lev_conj){
+					lev_conj.scroll_con.append(view.getA());
+				}
 			}
+
 
 		});
 
 		this.requestAll();
+		/*
+
+		'collch-playlist': function(name, arr) {
+			var _this = this;
+			$.each(arr, function(i, el){
+				var view = _this.getFreeChildView(name, el, 'main', {overview: true});
+				if (view){
+					_this.getLevelContainer(el.map_level_num, view).append(view.getA());
+				}
+				var det_view = _this.getFreeChildView(name, el, 'details');
+				if (det_view){
+					_this.getLevelContainer(el.map_level_num + 1, view).append(det_view.getA());
+				}
+
+			});
+
+			this.requestAll();
+		},
+
+		*/
 	},
 	'collch-playlist': function(name, arr) {
 		var _this = this;
 		$.each(arr, function(i, el){
-			var view = _this.getFreeChildView(name, el, 'main');
+			var view = _this.getFreeChildView(name, el, 'main', {overview: true});
 			if (view){
-				_this.getLevelContainer(el.map_level_num).append(view.getA());
+				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
+				if (lev_conj){
+					lev_conj.scroll_con.append(view.getA());
+				}
+			}
+			var det_view = _this.getFreeChildView(name, el, 'details');
+			if (det_view){
+				var lev_conj = _this.getLevelContainer(el.map_level_num + 1, det_view);
+				if (lev_conj){
+					lev_conj.scroll_con.append(det_view.getA());
+				}
 			}
 
 		});
@@ -159,45 +213,105 @@ provoda.View.extendTo(appModelView, {
 		this.requestAll();
 	},
 	manual_states_connect: true,
-	getLevByNum: function(num) {
-		return num == -1 ? false : this.getLevelContainer(num);
+	getLevByNum: function(num, exclude_start_lev) {
+		if (num < -1){
+			return false;
+		} else if (exclude_start_lev){
+			return num == -1 ? false : this.getLevelContainer(num);
+		} else {
+			return this.getLevelContainer(num);
+		}
+		
 	},
 	hideLevNum: function(num) {
 
 		var levc = this.getLevByNum(num);
 		if (levc){
-			levc.addClass('hidden');
+			levc.c.addClass('inactive-page').removeClass('full-page');
 		}
 		
 	},
 	showLevNum: function(num) {
 		var levc = this.getLevByNum(num);
 		if (levc){
-			levc.removeClass('hidden');
+			levc.c.removeClass('inactive-page').addClass('full-page');
 		}
 		
 	},
+	removePageOverviewMark: function(num) {
+		var levc = this.getLevByNum(num);
+		if (levc){
+			levc.c.removeClass('page-scheme');
+		}
+	},
+	addPageOverviewMark: function(num) {
+		var levc = this.getLevByNum(num);
+		if (levc){
+			levc.c.addClass('page-scheme');
+		}
+	},
 	complex_states: {
 		'start-level': {
-			depends_on: ['active-lev-num'],
-			fn: function(nwrap) {
-				if (!nwrap || nwrap.n == -1){
+			depends_on: ['current-mp-md'],
+			fn: function(md) {
+				if (!md || md.map_level_num == -1){
 					return true;
 				}
 			}
 		}
 	},
 	'stch-start-level': function(state) {
-		this.els.start_screen.toggleClass('hidden', !state);
+		//this.els.start_screen.toggleClass('inactive-page', !state);
 	},
 	//
-	'stch-active-lev-num': function(num, old_num) {
-		if (old_num){
-			this.hideLevNum(old_num.n);
+	'stch-current-mp-md': function(md, old_md) {
+
+		//map_level_num
+		//md.map_level_num
+		var oved_now_active = old_md && (old_md.map_level_num-1 ===  md.map_level_num);
+		if (old_md){
+			this.hideLevNum(old_md.map_level_num);
+			if (!oved_now_active){
+				this.removePageOverviewMark(old_md.map_level_num-1);
+			}
+			
 		}
 		
+		this.addPageOverviewMark(md.map_level_num - 1);
+		this.showLevNum(md.map_level_num);
+		if (oved_now_active){
+			this.removePageOverviewMark(old_md.map_level_num-1);
+		}
+		var highlight = md.state('mp-highlight');
+		if (highlight && highlight.source_md){
+			var source_md = highlight.source_md;
 
-		this.showLevNum(num.n);
+			var md_view = this.getChildView(md, 'main');
+			if (md_view){
+				var hl_view = md_view.getChildView(source_md, 'main');
+				if (hl_view){
+					this.scrollTo(hl_view);
+				}
+			}
+		}
+
+		var ov_md = md.getParentMapModel();
+		var ov_highlight = ov_md && ov_md.state('mp-highlight');
+		if (ov_highlight && ov_highlight.source_md){
+			var source_md = ov_highlight.source_md;
+			var ov_view = this.getChildView(ov_md, 'main');
+			if (ov_view){
+				var hl_view = ov_view.getChildView(source_md, 'main');
+				if (hl_view){
+					this.scrollTo(hl_view, {
+						node: this.getLevByNum(md.map_level_num - 1).scroll_con
+					}, {vp_limit: 0.4, animate: 117});
+				}
+			}
+		}
+
+		//var parent_md = md.getParentMapModel();
+		//this.getChildView()
 	},
 	'stch-map-animation': function(changes) {
 		if (!changes){
@@ -218,6 +332,7 @@ provoda.View.extendTo(appModelView, {
 			}
 			
 		}
+		console.log(all_changhes)
 		/*
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
@@ -307,8 +422,9 @@ provoda.View.extendTo(appModelView, {
 	getScrollVP: function() {
 		return this.els.scrolling_viewport;
 	},
-	scrollTo: function(view) {
+	scrollTo: function(view, view_port, opts) {
 		if (!view){return false;}
+		opts = opts || {};
 	//	if (!this.view_port || !this.view_port.node){return false;}
 
 		//var scrollingv_port = ;
@@ -320,13 +436,17 @@ provoda.View.extendTo(appModelView, {
 			return
 		}
 
+		var view_port_limit = opts.vp_limit || 1;
 
-
-		var svp = this.getScrollVP(),
+		var svp = view_port || this.getScrollVP(),
 			scroll_c = svp.offset ? $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0]) :   svp.node,
 			scroll_top = scroll_c.scrollTop(), //top
 			scrolling_viewport_height = svp.node.height(), //height
+			padding = (scrolling_viewport_height * (1 - view_port_limit))/2,
 			scroll_bottom = scroll_top + scrolling_viewport_height; //bottom
+
+		var top_limit = scroll_top + padding,
+			bottom_limit = scroll_bottom - padding;
 		
 		var node_position;
 		var node_top_post =  jnode.offset().top;
@@ -343,11 +463,21 @@ provoda.View.extendTo(appModelView, {
 		var el_bottom = jnode.height() + node_position;
 
 		var new_position;
-		if ( el_bottom > scroll_bottom || el_bottom < scroll_top){
+		if ( el_bottom > bottom_limit || el_bottom < top_limit){
 			new_position =  el_bottom - scrolling_viewport_height/2;
 		}
 		if (new_position){
-			scroll_c.scrollTop(new_position);
+			if (opts.animate){
+				scroll_c
+					.stop(false, true)
+					.animate({
+						scrollTop: new_position
+					}, opts.animate);
+				
+			} else {
+				scroll_c.scrollTop(new_position);
+			}
+			
 		}
 	},
 	toggleBodyClass: function(add, class_name){
@@ -415,8 +545,11 @@ provoda.View.extendTo(appModelView, {
 				start_page_place: start_screen.children('.for-startpage')
 			};
 
-
-			
+			_this.lev_containers[-1] = {
+				c: start_screen.parent().parent(),
+				material: start_screen
+			}
+				
 
 			_this.els.search_form.find('#app_type').val(su.env.app_type);
 			
@@ -465,7 +598,7 @@ provoda.View.extendTo(appModelView, {
 
 			var track_c = ui_samples.children('.track-context');
 			_this.samples = {
-				artcard: ui_samples.children('.art-card'),
+				artcard: ui_samples.children('.art_card'),
 				track_c : track_c,
 				playlist_panel: ui_samples.children('.play-list-panel'),
 				vklc: vklc,
@@ -890,15 +1023,15 @@ provoda.View.extendTo(appModelView, {
 	},
 	
 	
-	renderArtistAlbums: function(albums, original_artist, albums_ul, save_parents, simple){
+	renderArtistAlbums: function(albums, original_artist, albums_ul, vopts){
 		if (albums.length) {
 			for (var i=0; i < albums.length; i++) {
-				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, save_parents, simple));
+				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, vopts));
 			}
 		} 
 		return albums_ul;
 	},
-	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, save_parents, from_artcard){
+	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, vopts){
 		var _this = this;
 		var li = $('<li></li>');
 			var a_href= $('<a></a>')
@@ -909,10 +1042,7 @@ provoda.View.extendTo(appModelView, {
 						artist: al_artist, 
 						album_name: al_name,
 						original_artist: original_artist
-					}, {
-						save_parents: save_parents,
-						from_artcard: from_artcard
-					});
+					}, vopts);
 					seesu.trackEvent('Artist navigation', 'album', al_artist + ": " + al_name);
 				})
 				.appendTo(li);
