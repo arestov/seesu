@@ -159,17 +159,17 @@ provoda.View.extendTo(songUI, {
 		},
 	},
 	unmark: function(){
-		this.c.removeClass('to-play-next to-play-previous');
+		this.c.removeClass('to-play-next to-play-previous v-song-sibling');
 		
 	},
 	markAs: function(statev){
 	
 		switch (statev) {
 			case 'next':
-				this.c.addClass('to-play-next');
+				this.c.addClass('to-play-next v-song-sibling');
 				break
 			case 'prev':
-				this.c.addClass('to-play-previous');
+				this.c.addClass('to-play-previous v-song-sibling');
 				break
 			default:
 		}

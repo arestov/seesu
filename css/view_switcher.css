@@ -138,17 +138,15 @@ li.playing-song .play-controls{
 }
 .show-zoom-to-track ul.tracks-for-play{
 
-	padding-top:36px;
+	padding-top:40px;
 }
 ul.tracks-for-play > li{
 	background-color: #505050;
 }
 
 
-.show-zoom-to-track ul.tracks-for-play > li.to-play-previous{
-	margin-top:-36px;
-	}
-.show-zoom-to-track ul.tracks-for-play > li.to-play-next{
+
+.show-zoom-to-track li.to-play-next{
 	
 	}
 .show-zoom-to-track ul.tracks-for-play > li.viewing-song{
@@ -156,14 +154,14 @@ ul.tracks-for-play > li{
 	border-top: 1px solid #737373;
 	background: #5E5E5E;
 	padding: 5px;
-	border-radius: 10px;
+	border-radius: 0 0 10px 10px;
 	color:#fff;
 	margin:0 -5px;
 	}
 	.show-zoom-to-track ul.tracks-for-play > li.viewing-song .track-node{
-		font-size:1.3em;
+		
 		cursor:default;
-		height:19px;
+		
 		}
 	.show-zoom-to-track ul.tracks-for-play > li.viewing-song .song{
 		
@@ -176,16 +174,13 @@ ul.tracks-for-play > li{
 	
 
 	
-.show-zoom-to-track ul.tracks-for-play>li{
+.show-zoom-to-track .tracks-for-play>li{
 	display:none;
 	}	
 	
-.show-zoom-to-track ul.tracks-for-play>li.to-play-previous,
-.show-zoom-to-track ul.tracks-for-play>li.viewing-song,
-.show-zoom-to-track ul.tracks-for-play>li.to-play-next{
-		display: list-item;
-		left:0;
-		right:0;
+.show-zoom-to-track li.v-song-sibling,
+.show-zoom-to-track ul.tracks-for-play>li.viewing-song{
+	display: list-item;
 	}
 	
 	
