@@ -110,79 +110,7 @@
 		background-color: #535353;
 	}
 /**  New nav **/	
-.show-zoom-to-track li.viewing-song .track-context{
-	display:block;
-}
-.track-context{
-	display:none;
-}
 
-li.playing-song .play-controls{
-	
-}
-
-
-.show-zoom-to-track .playlist-info{
-	display:none;
-}
-.show-zoom-to-track .load-more-songs{
-	display: none;
-}
-
-
-.show-zoom-to-track .play-list-panel{
-	display:none;
-}
-.show-zoom-to-track ul.tracks-for-play .play-controls{
-	display:none;
-}
-.show-zoom-to-track ul.tracks-for-play{
-
-	padding-top:40px;
-}
-ul.tracks-for-play > li{
-	background-color: #505050;
-}
-
-
-
-.show-zoom-to-track li.to-play-next{
-	
-	}
-.show-zoom-to-track ul.tracks-for-play > li.viewing-song{
-	border-bottom: 1px solid #4D4D4D;
-	border-top: 1px solid #737373;
-	background: #5E5E5E;
-	padding: 5px;
-	border-radius: 0 0 10px 10px;
-	color:#fff;
-	margin:0 -5px;
-	}
-	.show-zoom-to-track ul.tracks-for-play > li.viewing-song .track-node{
-		
-		cursor:default;
-		
-		}
-	.show-zoom-to-track ul.tracks-for-play > li.viewing-song .song{
-		
-		
-		text-shadow: 0 1px 0 #333;
-		}
-	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .search-mp3-failed{
-		color:#737373;
-	}
-	
-
-	
-.show-zoom-to-track .tracks-for-play>li{
-	display:none;
-	}	
-	
-.show-zoom-to-track li.v-song-sibling,
-.show-zoom-to-track ul.tracks-for-play>li.viewing-song{
-	display: list-item;
-	}
-	
 	
 
 .not-as-application .navs .nav-title{

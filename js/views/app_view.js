@@ -199,7 +199,7 @@ provoda.View.extendTo(appModelView, {
 			var _this = this;
 
 			var checkFocus = function(opts) {
-				if (opts && opts.userwant){
+				if (opts && opts.userwant && !(opts.url_restoring || opts.transit)){
 					_this.search_input[0].focus();
 					_this.search_input[0].select();
 				}
