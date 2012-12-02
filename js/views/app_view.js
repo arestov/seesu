@@ -199,9 +199,14 @@ provoda.View.extendTo(appModelView, {
 			var _this = this;
 
 			var checkFocus = function(opts) {
-				if (opts && opts.userwant && !(opts.url_restoring || opts.transit)){
-					_this.search_input[0].focus();
-					_this.search_input[0].select();
+				if (opts){
+					if (opts.userwant && !(opts.url_restoring || opts.transit)){
+						_this.search_input[0].focus();
+						_this.search_input[0].select();
+					} else {
+						_this.search_input[0].blur();
+					}
+					
 				}
 			};
 			checkFocus(view.state('mp-show-end'));
