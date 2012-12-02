@@ -512,13 +512,13 @@ provoda.View.extendTo(appModelView, {
 		domReady(this.d, function() {
 			console.log('dom ready');
 			
-
+			if (app_env.readySteadyResize){
+				app_env.readySteadyResize(d);
+			}
 			
 
 			var slider = d.getElementById('slider');
-			if (app_env.readySteadyResize){
-				app_env.readySteadyResize(slider);
-			}
+			
 			
 
 			
