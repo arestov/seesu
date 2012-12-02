@@ -479,8 +479,8 @@ var gunm = function(lev){
 
 
 };
-/*
-var recoverPlaylistBranch = function(pldata, songdata, has_artcard){
+
+var recoverPlaylistBranch = function(pldata, parent_md, songdata, has_artcard){
 	if (songdata && songdata.current_track && songdata.current_artist){
 		var start_song = {artist: songdata.current_artist, track: songdata.current_track}
 	};
@@ -488,52 +488,109 @@ var recoverPlaylistBranch = function(pldata, songdata, has_artcard){
 	console.log(pldata)
 	switch (pldata.type) {
 		case 'similar':
-	//		su.showSimilarArtists(pldata.artist, {no_navi: true, from_artcard: has_artcard, save_parents: true}, songdata);
+			su.showSimilarArtists(pldata.artist, {
+				no_navi: true, 
+				from_artcard: has_artcard,
+				source_info: parent_md && {
+					page_md: parent_md,
+					source_name: has_artcard && 'similar-artists',
+				},
+			}, songdata);
 			break
 		case 'album':
-	//		su.showAlbum({
+			su.showAlbum({
 				album_name: pldata.album_name,
 				artist: pldata.artist
-			}, {no_navi: true, from_artcard: has_artcard, save_parents: true}, start_song);
+			}, {
+				no_navi: true, 
+				from_artcard: has_artcard, 
+				source_info: parent_md && {
+					page_md: parent_md,
+					source_name: has_artcard && 'artist-albums',
+				},
+			}, start_song);
 			break
 		case 'top':
-	//		su.showTopTacks(pldata.artist, {no_navi: true, from_artcard: has_artcard, save_parents: true}, start_song);
+			su.showTopTacks(pldata.artist, {
+				no_navi: true, 
+				from_artcard: has_artcard,
+				source_info: parent_md && {
+					page_md: parent_md,
+					source_name: has_artcard && 'top-tracks'
+				}
+			}, start_song);
 			break
 		case 'tag':
-//			su.show_tag(pldata.tag_name, {no_navi: true, save_parents: true}, start_song);
+			su.show_tag(pldata.tag_name, {
+				no_navi: true, 
+				source_info: parent_md && {
+					page_md: parent_md
+				}
+			}, start_song);
 			break
 		case 'recommendations':
 			if (start_song){
-//				su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {
+					no_navi: true, 
+					from_artcard: has_artcard,
+					source_info: parent_md && {
+						page_md: parent_md
+					}
+				}, start_song);
 			}
 			break
 		case 'cplaylist':
 			if (start_song){
-	//			su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {
+					no_navi: true,
+					from_artcard: has_artcard,
+					source_info: parent_md && {
+						page_md: parent_md
+					}
+				}, start_song);
 			}
 			break
 		case 'chart':
 			if (start_song){
-	//			su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {
+					no_navi: true,
+					from_artcard: has_artcard,
+					source_info: parent_md && {
+						page_md: parent_md
+					}
+				}, start_song);
 			} else{
-	//			su.showMetroChart(pldata.country, pldata.metro, {no_navi: true, save_parents: true});
+				su.showMetroChart(pldata.country, pldata.metro, {
+					no_navi: true, 
+					source_info: parent_md && {
+						page_md: parent_md
+					}
+				}); //fghjfghj
 			}
 			break
 		case 'loved':
 			if (start_song){
-	//			su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {
+					no_navi: true,
+					from_artcard: has_artcard,
+					source_info: {
+						page_md: parent_md
+					}
+				}, start_song);
 			}
 			break
 		default:
 			;
 	}
-};*/
+};
 var history_btypes = {
 	'search': function(branch, build_result, sub_branch, prev_branch) {
 		return su.showResultsPage(branch.data.query, true);
 	},
 	'artcard': function(branch, build_result, sub_branch, prev_branch) {
-		return su.showArtcardPage(branch.data.artist, true, true);
+		return su.showArtcardPage(branch.data.artist, build_result && {
+			page_md: build_result
+		}, true);
 	},
 	'pl': function(branch, build_result, sub_branch, prev_branch) {
 		var song;
@@ -590,7 +647,7 @@ var hashChangeRecover = function(e){
 		su.showStartPage(true);
 		if (jn.tree.length){
 			var prev_branch;
-			var build_result = su.start_page;
+			var build_result;// = su.start_page;
 			while (jn.tree.length) {
 				var branch = jn.tree.shift();
 				if (!branch.done){
