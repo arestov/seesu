@@ -310,7 +310,9 @@ provoda.Eventor.extendTo(browseMap, {
 		this.current_level_num = lp.num;
 	},
 	resurrectLevel: function(lev, transit, url_restoring){
-		var nlev = lev.clone = this._goDeeper(true, lev.getResident(), transit, url_restoring);
+		var resident = lev.getResident();
+
+		var nlev = lev.clone = this._goDeeper(resident.pamamo, resident, transit, url_restoring);
 		return nlev;
 	},
 	_goDeeper: function(parent_md, resident, transit, url_restoring){
@@ -757,6 +759,7 @@ provoda.Model.extendTo(mapLevelModel, {
 	assignMapLev: function(lev){
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
+		this.pamamo = this.getParentMapModel();
 		return this;	
 	},
 	getParentMapModel: function() {
