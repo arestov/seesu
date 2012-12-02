@@ -512,13 +512,15 @@ provoda.View.extendTo(appModelView, {
 		domReady(this.d, function() {
 			console.log('dom ready');
 			
-			if (app_env.readySteadyResize){
-				app_env.readySteadyResize(d.body);
-			}
+
 			
 
 			var slider = d.getElementById('slider');
-			
+			var screens_block = $('#screens',d);
+
+			if (app_env.readySteadyResize){
+				app_env.readySteadyResize(screens_block[0]);
+			}
 			
 
 			
@@ -530,7 +532,7 @@ provoda.View.extendTo(appModelView, {
 
 			var start_screen = $('#start-screen',d);
 
-			var screens_block = $('#screens',d);
+			
 			var shared_parts_c = screens_block.children('.shared-parts');
 
 			_this.els = {
