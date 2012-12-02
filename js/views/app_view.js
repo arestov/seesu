@@ -513,7 +513,7 @@ provoda.View.extendTo(appModelView, {
 			console.log('dom ready');
 			
 			if (app_env.readySteadyResize){
-				app_env.readySteadyResize(d);
+				app_env.readySteadyResize(d.body);
 			}
 			
 
