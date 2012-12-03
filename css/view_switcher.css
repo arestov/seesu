@@ -45,10 +45,10 @@
 #search {
 	max-width: 750px;
 	margin: 0 auto;
-	margin-left: 240px;
+
 	}
 .complex-page{
-	margin-left: 240px;
+	
 
 	max-width: 750px;
 	}
@@ -57,13 +57,26 @@
 }
 
 .page-scheme{
-	display: block;
+	
 	float:left;
-	width: 200px;
-	margin-left:0;
+	
+
 	}
 
-
+@media (min-width:760px) {
+	
+	.complex-page{
+		margin-left: 240px;
+		}
+	#search {
+		margin-left: 240px;
+		}
+	.page-scheme{
+		display: block;
+		width: 200px;
+		margin-left:0;
+		}
+}
 
 
 .block-for-startpage, .for-startpage{

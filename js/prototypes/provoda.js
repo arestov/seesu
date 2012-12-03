@@ -387,6 +387,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			this.views[i].die();
 		}
 		this.removeDeadViews();
+		return this;
 	},
 	die: function(){
 		this.stopRequests();
@@ -395,6 +396,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			this.children[i].die();
 		}
 		this.trigger('die');
+		return this;
 	},
 	getChild: function(collection_name) {
 		return this.children_models[collection_name]
