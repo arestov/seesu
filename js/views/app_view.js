@@ -73,11 +73,13 @@ provoda.View.extendTo(appModelView, {
 			}
 
 			var container = $('<div class="complex-page inactive-page"></div>').addClass('index-of-cp-is-' + num);
-			var scroll_con = $('<div class="complex-page_scroll-con"></div>').appendTo(container);
+			var scroll_con = $('<div class="complex-page-scroll_con"></div>').appendTo(container);
+			var material = $('<div class="complex-page_material"></div>').appendTo(scroll_con);
 
 			return this.lev_containers[num] = {
 				c: container.appendTo(this.els.screens),
-				scroll_con: scroll_con
+				scroll_con: scroll_con,
+				material: material
 			}
 		}
 	},
@@ -126,7 +128,7 @@ provoda.View.extendTo(appModelView, {
 
 				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
 				if (lev_conj){
-					lev_conj.scroll_con.append(view.getA());
+					lev_conj.material.append(view.getA());
 				}
 				
 			}
@@ -142,7 +144,7 @@ provoda.View.extendTo(appModelView, {
 			if (view){
 				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
 				if (lev_conj){
-					lev_conj.scroll_con.append(view.getA());
+					lev_conj.material.append(view.getA());
 				}
 			}
 
@@ -178,14 +180,14 @@ provoda.View.extendTo(appModelView, {
 			if (view){
 				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
 				if (lev_conj){
-					lev_conj.scroll_con.append(view.getA());
+					lev_conj.material.append(view.getA());
 				}
 			}
 			var det_view = _this.getFreeChildView(name, el, 'details');
 			if (det_view){
 				var lev_conj = _this.getLevelContainer(el.map_level_num + 1, det_view);
 				if (lev_conj){
-					lev_conj.scroll_con.append(det_view.getA());
+					lev_conj.material.append(det_view.getA());
 				}
 			}
 
@@ -552,9 +554,12 @@ provoda.View.extendTo(appModelView, {
 				start_page_place: start_screen.children('.for-startpage')
 			};
 
+			var st_scr_scrl_con = start_screen.parent();
+
 			_this.lev_containers[-1] = {
-				c: start_screen.parent().parent(),
-				material: start_screen
+				c: st_scr_scrl_con.parent(),
+				material: start_screen,				
+				scroll_con: st_scr_scrl_con
 			}
 				
 

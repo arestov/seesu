@@ -62,6 +62,16 @@
 	
 
 	}
+.complex-page.page-scheme .complex-page-scroll_con{
+	
+	margin-right: -30px;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	}
+	.complex-page.page-scheme .complex-page_material{
+		width: 200px;
+		}
 
 @media (min-width:760px) {
 	

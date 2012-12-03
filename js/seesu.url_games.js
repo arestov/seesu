@@ -20,7 +20,7 @@ if (app_env.needs_url_history) {
 					var too_fast_hash_change = (o.newURL != newhash);
 					if (!too_fast_hash_change){
 						if (typeof hashchangeHandler == 'function'){
-							hashchangeHandler(o)
+							hashchangeHandler(o);
 						}
 						hash = newhash;
 					}
@@ -618,7 +618,7 @@ var recoverHistoryTreeBranch = function(branch, build_result, sub_branch, prev_b
 var hashChangeQueue = new funcsQueue(0);
  
 
-var hashChangeRecover = function(e){
+var hashChangeRecover = function(e, soft){
 	var url = e.newURL;
 
 	su.map.startChangesCollecting();
@@ -644,8 +644,12 @@ var hashChangeRecover = function(e){
 		}	
 	} else{
 		var jn = getFakeURLParameters(url.replace(/\ ?\$...$/, ''));
-		su.showStartPage(true);
-		if (jn.tree.length){
+		if (!jn.tree.length){
+			if (!soft){
+				su.showStartPage(true);
+			}
+		} else {
+			su.showStartPage(true);
 			var prev_branch;
 			var build_result;// = su.start_page;
 			while (jn.tree.length) {
@@ -657,8 +661,6 @@ var hashChangeRecover = function(e){
 				}
 				prev_branch = branch;
 			}
-			
-			
 		}
 	}
 	
@@ -672,11 +674,11 @@ var hashChangeReciever = function(e){
 	});
 };
 
-var hashchangeHandler=  function(e, force){
+var hashchangeHandler=  function(e, soft){
 	if (e.newURL != navi.getFakeURL()){
 		navi.setFakeURL(e.newURL)
 		if (e.oldURL != e.newURL){
-			hashChangeRecover(e);
+			hashChangeRecover(e, soft);
 		}
 	}
 };
@@ -686,7 +688,7 @@ var hashchangeHandler=  function(e, force){
 		su.on('handle-location', function() {
 			hashchangeHandler({
 				newURL: url
-			});
+			}, true);
 
 		});
 	}

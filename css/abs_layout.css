@@ -133,13 +133,3 @@ html.opera-extension{
 			-o-transition: margin-left 0.2s ease-out;
 			transition: margin-left 0.2s ease-out;
 			}
-.complex-page.page-scheme .complex-page_scroll-con{
-	width: 100%;
-	padding-right: 30px;
-	height: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
-	}
-	.complex-page.page-scheme .complex-page_material{
-		width: 100%;
-		}
