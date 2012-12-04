@@ -651,7 +651,7 @@ var hashChangeRecover = function(e, soft){
 		} else {
 			su.showStartPage(true);
 			var prev_branch;
-			var build_result;// = su.start_page;
+			var build_result = su.start_page;
 			while (jn.tree.length) {
 				var branch = jn.tree.shift();
 				if (!branch.done){

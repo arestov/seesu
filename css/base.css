@@ -77,7 +77,9 @@ a.desc{
 		
 .button-hole{
 	background:#555;
-	font: 12px/1.5 Arial, sans-serif;
+	font: Arial, sans-serif;
+	font-size: 12px;
+	line-height: 1.5;
 	border-top:1px solid #474747;
 	border-radius:11px;
 	border-bottom:1px solid #676767;
