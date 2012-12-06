@@ -431,7 +431,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 					} else {
 						return cur;
 					}
-				}	 
+				}
 			}
 		}
 	},

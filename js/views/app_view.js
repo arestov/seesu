@@ -741,7 +741,39 @@ provoda.View.extendTo(appModelView, {
 			key_name = 'Down';
 		}
 		if (key_name){
-			this.md.keyNav(key_name);
+			//this.md.keyNav(key_name);
+			this.wayPointsNav(key_name)
+		}
+	},
+	wayPointsNav: function(nav_type) {
+		var all_waypoints = [];
+		var cur_mp_md = this.state('current-mp-md');
+		var roocon_view =  cur_mp_md && cur_mp_md.getRooConPresentation(true);
+		if (roocon_view){
+			if (nav_type == 'Up' || nav_type == 'Down'){
+				
+				all_waypoints = all_waypoints.concat(roocon_view.way_points);
+				if (this.current_wpoint){
+					var old_wpoint = this.current_wpoint;
+					var pos = all_waypoints.indexOf(old_wpoint);
+					var new_wpoint;
+					if (nav_type == 'Up'){
+						new_wpoint = all_waypoints[--pos]
+					} else if (nav_type == 'Down'){
+						new_wpoint = all_waypoints[++pos]
+					}
+					if (new_wpoint){
+						this.current_wpoint = new_wpoint;
+						old_wpoint.css('box-shadow', '');
+						new_wpoint.css('box-shadow', '0px 0px 0px 2pt red');
+					}
+					
+				} else {
+					this.current_wpoint = all_waypoints[0];
+					this.current_wpoint.css('box-shadow', '0px 0px 0px 2pt red');
+				}
+			}
+			
 		}
 	},
 	appendStyle: function(style_text){
