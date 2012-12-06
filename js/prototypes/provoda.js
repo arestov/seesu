@@ -411,6 +411,30 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	addChild: function(md, name) {
 		this.children.push.call(this.children, md);
 	},
+	getRooConPresentation: function(mplev_view, get_ancestor) {
+		var views = this.getViews();
+		for (var i = 0; i < views.length; i++) {
+			var cur = views[i];
+			var target = cur.root_view.getChildView(this, 'main');
+			if (target == cur){
+				return cur;
+			} else {
+				var ancestor;
+				if (mplev_view){
+					ancestor = cur.getAncestorByRooViCon('details');
+				} else {
+					ancestor = cur.getAncestorByRooViCon('main');
+				}
+				if (ancestor){
+					if (get_ancestor){
+						return ancestor;
+					} else {
+						return cur;
+					}
+				}	 
+			}
+		}
+	},
 	getViews: function(name, hard_deads_check) {
 		this.removeDeadViews(hard_deads_check);
 		if (name){
@@ -543,7 +567,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this;
 	},
 	children_views: {},
-	addWayPoint: function(point) {
+	addWayPoint: function(point, opts) {
 		this.way_points.push(point);
 	},
 	connectChildrenModels: function() {
@@ -611,6 +635,26 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			throw new Error('there is no anchor for view of ' + child_name + ' child model');
 		}
 	
+	},
+	getAncestorByRooViCon: function(view_space) {
+		//by root view connection
+		var target_ancestor;
+		var cur_ancestor = this;
+		while (!target_ancestor && cur_ancestor){
+			if (cur_ancestor == this.root_view){
+				break;
+			} else {
+				if (cur_ancestor.parent_view == this.root_view){
+					if (cur_ancestor == this.root_view.getChildView(cur_ancestor.md, view_space)){
+						target_ancestor = cur_ancestor;
+						break;
+					}
+				}
+			}
+
+			cur_ancestor = cur_ancestor.parent_view;
+		}
+		return target_ancestor;
 	},
 	getChildView: function(md, view_space) {
 		var complex_id = this.view_id  + '_' + view_space;

@@ -306,15 +306,14 @@ provoda.View.extendTo(appModelView, {
 		var ov_highlight = ov_md && ov_md.state('mp-highlight');
 		if (ov_highlight && ov_highlight.source_md){
 			var source_md = ov_highlight.source_md;
-			var ov_view = this.getChildView(ov_md, 'main');
-			if (ov_view){
-				var hl_view = ov_view.getChildView(source_md, 'main');
-				if (hl_view){
-					this.scrollTo(hl_view, {
-						node: this.getLevByNum(md.map_level_num - 1).scroll_con
-					}, {vp_limit: 0.4, animate: 117});
-				}
+			var mplev_item_view = source_md.getRooConPresentation();
+			if (mplev_item_view){
+				this.scrollTo(mplev_item_view, {
+					node: this.getLevByNum(md.map_level_num - 1).scroll_con
+				}, {vp_limit: 0.4, animate: 117});
 			}
+
+			
 		}
 
 		//var parent_md = md.getParentMapModel();
