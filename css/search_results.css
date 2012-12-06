@@ -78,7 +78,7 @@
 		.search-results-container button.active:after{
 			content: '↩';
 			position:absolute;
-			top:12px;
+			top:14px;
 			right:5px;
 			line-height:20px;
 			height:20px;

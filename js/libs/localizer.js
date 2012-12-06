@@ -141,6 +141,10 @@ localizer = {
 		"original": "regisration",
 		"ru": "регистрация"
 	},
+	"listening": {
+		"original": "is listening",
+		"ru": "слушает"
+	},
 	"listen-this":{
 		"original": "listen this",
 		"ru": "слушал это"	

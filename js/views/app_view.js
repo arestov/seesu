@@ -297,7 +297,7 @@ provoda.View.extendTo(appModelView, {
 			if (md_view){
 				var hl_view = md_view.getChildView(source_md, 'main');
 				if (hl_view){
-					this.scrollTo(hl_view);
+					//this.scrollTo(hl_view);
 				}
 			}
 		}
@@ -310,9 +310,9 @@ provoda.View.extendTo(appModelView, {
 			if (ov_view){
 				var hl_view = ov_view.getChildView(source_md, 'main');
 				if (hl_view){
-					/*this.scrollTo(hl_view, {
+					this.scrollTo(hl_view, {
 						node: this.getLevByNum(md.map_level_num - 1).scroll_con
-					}, {vp_limit: 0.4, animate: 117});*/
+					}, {vp_limit: 0.4, animate: 117});
 				}
 			}
 		}

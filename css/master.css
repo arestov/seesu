@@ -30,13 +30,13 @@ html.not-as-application, .not-as-application  body{
 
 
 .keys-navigation-focus{
-	box-shadow: 0px 0px 3pt 2pt orange;
+	box-shadow: 0 0 3pt 2pt orange;
 	}
 	
 .app-loading-mark{
 	height: 24px;
 	background: url(../i/spinner.gif) no-repeat;
-	margin: 12px 0;
+	margin: 14px 0;
 	}
 	.app-loaded .app-loading-mark{
 		display: none;
@@ -65,14 +65,14 @@ html.not-as-application, .not-as-application  body{
 	padding: 0 13px 14px;
 	}
 	.song-row-content .rept-song{
-		padding-top:12px;
+		padding-top:14px;
 		}
 .row-listeners-context{
 	margin-top:15px;
 }
 .big-listener-info{
 	overflow:hidden;
-	padding-top:12px;
+	padding-top:14px;
 }
 .moplas-block .show-all-songs{
 	float:right;
@@ -94,7 +94,7 @@ html.not-as-application, .not-as-application  body{
 		cursor: pointer;
 		color:gray;
 		display: inline-block;
-		padding:6px 10px;
+		padding:5px 10px;
 		text-shadow: 0 1px 0 #4A4A4A;
 		}
 		.moplas-block .show-all-songs a:hover{
@@ -109,16 +109,15 @@ html.not-as-application, .not-as-application  body{
 			border-bottom: 1px dotted;
 			}
 	.moplas-block.want-more-songs .show-all-songs a{
-		border-bottom-left-radius: 6px;
+		border-bottom-left-radius: 7px;
 		}
 .moplas-block{
-	font-size: 14px;
 	padding:0;
-	min-height:79px;
+	min-height:81px;
 	
 	}
 	.music-files-lists{
-		min-height: 31px;
+		min-height: 33px;
 	}
 	.moplas-block h4{
 		font-weight: 400;
@@ -131,7 +130,7 @@ html.not-as-application, .not-as-application  body{
 		.moplas-block .moplas-list li{
 			cursor: pointer;
 			border-top: 1px solid transparent;
-			padding:6px 5px;
+			padding:7px 5px;
 			color:#999;
 			border-bottom: 1px solid transparent;
 			}
@@ -142,7 +141,7 @@ html.not-as-application, .not-as-application  body{
 				float: left;
 				margin-right: 5px;
 				margin-top: -8px;
-				margin-bottom: -12px;
+				margin-bottom: -14px;
 				margin-left: 5px;
 				height: 31px;
 				width: 32px;
@@ -271,7 +270,7 @@ html.not-as-application, .not-as-application  body{
 	background: url(../i/spinner_t.gif) no-repeat 100% 0
 }
 .add-to-lfmfav{
-	margin-top:12px;
+	margin-top:14px;
 	opacity: 0.3;
 	}
 
@@ -308,7 +307,7 @@ html.not-as-application, .not-as-application  body{
 
 .login-lastfm-button,.lastfm-auth-bp{
 	float:right;
-	margin-left:12px;
+	margin-left:14px;
 }
 .page-scheme .nicebutton{
 	height: 19px;
@@ -318,7 +317,7 @@ html.not-as-application, .not-as-application  body{
 	display: block;
 	}
 .full-page .left-buttons-group .button-hole{
-	margin-right:6px;
+	margin-right:7px;
 	}
 .lfm-auth form{
 	margin-bottom:2.5em;
@@ -327,19 +326,19 @@ html.not-as-application, .not-as-application  body{
 	.full-page .fast-personal-start{
 		color:#999;
 		background: #4D4D4D;
-		border-radius: 12px;
+		border-radius: 14px;
 		border-top: 1px solid #444;
 		border-bottom: 1px solid #555;
-		padding: 12px;
-		margin: 0 -10px;
+		padding: 14px;
+		margin: 0 -12px;
 		}
 
 		.full-page .fast-personal-start .row-context{
 			position: relative;
 			border-top: 1px solid #424242;
-			margin: 12px -12px -12px;
-			padding: 0 12px 12px;
-			border-radius: 12px;
+			margin: 14px -14px -14px;
+			padding: 0 14px 14px;
+			border-radius: 14px;
 			background: #474747;
 			border-bottom: 1px solid #666;
 			}
@@ -372,12 +371,12 @@ html.not-as-application, .not-as-application  body{
 				}
 .track-context{
 	padding:0 8px 10px;
-	margin-top:6px;
-	min-height: 387px;
+	margin-top:7px;
+	min-height: 389px;
 	}
 	@media (min-height:600px) {
 		.track-context{
-			min-height: 420px;
+			min-height: 422px;
 			}
 		}
 .artist-info{
@@ -431,7 +430,7 @@ html.not-as-application, .not-as-application  body{
 		display:block;
 	}
 	.playlist-container .load-more-songs{
-		padding:6px;
+		padding:7px;
 		
 		cursor:pointer;
 		border-radius:4px;
@@ -491,8 +490,8 @@ html.not-as-application, .not-as-application  body{
 	}
 .want-more-info .artist-tags{
 	clear:both;
-	margin-bottom:12px;
-	padding-left:13px;
+	margin-bottom:14px;
+	padding-left:14px;
 	}
 
 
@@ -522,7 +521,7 @@ html.not-as-application, .not-as-application  body{
 		}
 	
 	.artist-tags a.music-tag{
-		margin-right:6px;
+		margin-right:7px;
 		}
 .artist-stat-in-song span{
 	
@@ -556,13 +555,11 @@ html.not-as-application, .not-as-application  body{
 	background:#5a5a5a;
 	margin:5px -13px 0;
 	padding: 0 0 0;
-	/*200px - 48px + 14*/
-	min-height:168px;
+	min-height:170px;
 	}	
 	@media (min-height:600px) {
 		.track-info-dominator{
-			/*237-48+16*/
-			min-height:205px;
+			min-height:207px;
 		}
 	}
 
@@ -576,8 +573,8 @@ html.not-as-application, .not-as-application  body{
 		}
 		.track-info-dominator .dominator-head .closer-to-track{
 			padding-top:7px;
-			padding-left:13px;
-			margin-right:12px;
+			padding-left:14px;
+			margin-right:14px;
 			float:left;
 			width:126px;
 
@@ -592,10 +589,10 @@ html.not-as-application, .not-as-application  body{
 				}
 	.track-context .extend-switcher{
 		border:0;
-		padding: 6px 10px;
+		padding: 7px 10px;
 		margin-left:-7px;
 		float:right;
-		border-radius: 0 0 0 6px;
+		border-radius: 0 0 0 7px;
 		color:#808080;
 		text-shadow: 0 1px 0 #4A4A4A;
 		}
@@ -667,10 +664,10 @@ html.not-as-application, .not-as-application  body{
 }
 .artist-info .artist-albums, .artist-info .artist-similar{
 	padding: 2px 0;
-	margin: 6px 0;
+	margin: 7px 0;
 }
 .artist-tags .simple-header{
-	margin-right:12px;
+	margin-right:14px;
 	font-style:normal;
 	}
 .desc-name{
@@ -700,7 +697,7 @@ html.not-as-application, .not-as-application  body{
 	.as-application .footer{
 		position: absolute;
 		bottom:0;
-		right: 12px;
+		right: 14px;
 		}
 
 .as-application #promo{
@@ -720,7 +717,7 @@ html.not-as-application, .not-as-application  body{
 }
 	#promo a{
 		background:#505050;
-		padding: 1px 6px;
+		padding: 1px 7px;
 		
 		}
 		#promo a:hover{
@@ -735,7 +732,7 @@ html.not-as-application, .not-as-application  body{
 	
 	}
 #search{
-	padding-top:12px;
+	padding-top:14px;
 	
 	}
 #search #q{
@@ -753,14 +750,24 @@ html.not-as-application, .not-as-application  body{
 	overflow:hidden;
 	
 }
+.full-page .metro-tracks li{
+	overflow:hidden;
+	float:left;
+	width:30%;
+	min-width:195px;
+	margin-bottom:1em;
+}
+.chart-song{
+	display: block;
+	overflow:hidden;
+}
 
 .users-play-this li{
 	overflow:hidden;
 	float:left;
-	height:75px;
-	width:250px;
-	margin-bottom:15px;
-	line-height:1.5;
+	width:30%;
+	min-width:195px;
+	margin-bottom:1em;
 }
 	.users-play-this li .vk-ava{
 		float:left;
@@ -773,17 +780,16 @@ html.not-as-application, .not-as-application  body{
 		padding:2px;
 		border-radius:2px;
 	}
-	.metro-tracks{
-		margin-bottom:44px;
-		overflow:hidden
+.metro-tracks{
+	margin-bottom:44px;
+	overflow:hidden
 	}
 	.metro-tracks li{
 		overflow:hidden;
 		margin-bottom:14px;
 	}
 	.full-page .metro-tracks li{
-		float:left;
-		width:50%
+		
 
 	}
 
@@ -916,11 +922,11 @@ html.not-as-application, .not-as-application  body{
 	display:block;
 	position: absolute;
 	background-color:#ddd;
-	-moz-border-radius:6px;
-	-webkit-border-radius:6px;
-	border-radius:6px;
+	-moz-border-radius:7px;
+	-webkit-border-radius:7px;
+	border-radius:7px;
 	width: 100%;
-	padding:10px;
+	padding:14px;
 }
 	.balun a{
 		color:blue;
@@ -963,7 +969,7 @@ html.not-as-application, .not-as-application  body{
 	float:left;
 	margin-right:24px;
 	background: #545454;
-	border-radius: 6px;
+	border-radius: 7px;
 }
 .song-listeners-list{
 	height: 56px;
@@ -1021,7 +1027,7 @@ iframe.you-tube-video,embed.you-tube-video{
 	margin:0;
 	}
 .track-video{
-	padding: 0px;
+	padding: 0;
 	min-height: 48px;
 	}
 	.track-video ul{
@@ -1089,15 +1095,15 @@ iframe.you-tube-video,embed.you-tube-video{
 	}
 	.full-page .people-list>li{
 		float:left;
-		padding-right:12px;
-		margin-bottom:12px;
+		padding-right:14px;
+		margin-bottom:14px;
 	}
 .people-list-desc{
-	font-size:12px;
-	margin-top:-12px;
+	font-size:14px;
+	margin-top:-14px;
 	}
 	.button-place-people-el .button-hole{
-		margin-top:6px;
+		margin-top:7px;
 	}
 
 
@@ -1145,15 +1151,15 @@ iframe.you-tube-video,embed.you-tube-video{
 }
 .attention-message{
 	overflow: hidden;
-	padding: 12px;
-	margin: 0 -12px;
+	padding: 14px;
+	margin: 0 -14px;
 	background: #404040;
 	color: #999;
-	border-radius: 6px;
+	border-radius: 7px;
 	}
 	.attention-message .message-image{
 		float: left;
-		margin-right: 12px;
+		margin-right: 14px;
 		}
 	.attention-message .close-message{
 		font-size:3em;
@@ -1162,7 +1168,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		line-height: 1;
 		height: 0.5em;
 		margin-top: -0.3em;
-		margin-left: 12px;
+		margin-left: 14px;
 		color:#999;
 		}
 		.attention-message .close-message:hover{
@@ -1176,7 +1182,7 @@ iframe.you-tube-video,embed.you-tube-video{
 	color: #757575;
 	}
 .share-song{
-	padding-top:12px;
+	padding-top:14px;
 	}
 	.share-song .song-link{
 		width:100%;
@@ -1191,10 +1197,10 @@ iframe.you-tube-video,embed.you-tube-video{
 			}
 		.share-song .users-list .vk-login-context{
 			border-radius: 0;
-			margin:12px -13px 0;
+			margin:14px -14px 0;
 		}
 		.share-song .users-list .search-results-block{
-			margin-top:12px;
+			margin-top:14px;
 		}
 		.share-song .users-list .suggest{
 			float:left;
@@ -1206,11 +1212,11 @@ iframe.you-tube-video,embed.you-tube-video{
 .list-search-input-place{
 	float:left;
 	width:50%;
-	margin-bottom:6px;
+	margin-bottom:7px;
 }
 .share-user-suggest{
 	
-	margin-bottom:6px;
+	margin-bottom:7px;
 	
 	}
 	.share-user-suggest a{
@@ -1226,7 +1232,7 @@ iframe.you-tube-video,embed.you-tube-video{
 
 	.share-user-suggest img, .post-to-my-vk-wall img{
 		float:left;
-		margin-right:6px;
+		margin-right:7px;
 		height:25px;
 		width:25px;
 		}
@@ -1247,17 +1253,17 @@ iframe.you-tube-video,embed.you-tube-video{
 }
 
 .addsong-to-playlist{
-	padding:12px 0 0;
+	padding:1em 0 0;
 	}
 	.addsong-to-playlist h4{
 		font-weight:400;
-		font-size: 12px;
-		margin: 0 0 10px 3px;
+		
+		margin: 0 0 0.5em 0.2em;
 		padding: 0;
 		}
 	.addsong-to-playlist .playlist-query{
 		
-		margin-bottom: 12px;
+		margin-bottom: 1em;
 		}
 		.addsong-to-playlist .create-named-playlist{
 			color:#757575;
@@ -1267,8 +1273,8 @@ iframe.you-tube-video,embed.you-tube-video{
 				}
 		.addsong-to-playlist .suggest{
 			cursor: pointer;
-			border-radius:3px;
-			padding:3px;
+			border-radius:0.3em;
+			padding:0.3em;
 			}
 			.addsong-to-playlist .suggest:hover{
 				background-color: #494949;
@@ -1276,3 +1282,24 @@ iframe.you-tube-video,embed.you-tube-video{
 		.addsong-to-playlist .list-of-playlists{
 			width:200px;
 			}
+.song-by-user{
+	display: block;
+	overflow: hidden;
+	cursor: pointer;
+	margin-right: 1em;
+	border-radius: 0.5em;
+	background-color: #4D4D4D;
+	}
+	.users-play-this .desc-row,
+	.song-by-user .song-track-name,
+	.song-by-user .song-artist-name{
+		height: 1.5em;
+		line-height: 1.5em;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		}
+.song-by-user:hover{
+	background-color:#535353;
+
+	}

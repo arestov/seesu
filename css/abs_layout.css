@@ -45,7 +45,7 @@ html.opera-extension{
 	 #slider .screens{
 		
 		
-		padding:0 10px 0px;
+		padding:0 1em 0;
 		position:relative;
 		z-index:2;
 		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
@@ -56,9 +56,9 @@ html.opera-extension{
 	border:1px solid #666;
 	border-top:0;
 	position: absolute;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	top: 43px;
 }
 
@@ -77,9 +77,9 @@ html.opera-extension{
 		}
 .as-application:not(.chrome-extension) #slider #screens{
 	position: absolute;
-	top: 0px;
-	left: 0px;
-	right: 0px;
+	top: 0;
+	left: 0;
+	right: 0;
 	width:auto;
 	height:auto;
 	bottom: 20px;
