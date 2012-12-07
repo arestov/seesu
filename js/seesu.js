@@ -569,7 +569,7 @@ su.init(3.8);
 	if (app_env.cross_domain_allowed){
 		su.mp3_search.add(new isohuntTorrentSearch());
 
-		yepnope({
+		/*yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
 			complete: function(){
 				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(5000, 10000, 4)))
@@ -577,7 +577,7 @@ su.init(3.8);
 				
 				//$(document.body).append(_this.c);
 			}
-		});
+		});*/
 	} else {
 		su.mp3_search.add(new googleTorrentSearch(app_env.cross_domain_allowed));
 	}
