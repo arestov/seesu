@@ -42,14 +42,14 @@
 		
 		position:relative;
 		line-height: 1.5;
-		margin:12px -12px 0;
+		margin:14px -14px 0;
 
 		color:#999;
 		background: #4D4D4D;
-		border-radius: 12px;
+		border-radius: 14px;
 		border-top: 1px solid #444;
 		border-bottom: 1px solid #555;
-		padding: 12px;
+		padding: 14px;
 
 		}
 		.play-list-panel .pla-row-content .rc-s-arrow{
@@ -178,7 +178,7 @@
 	background:#fff;
 	top:25px;
 	left:auto;
-	right:12px;
+	right:14px;
 	z-index:10;
 	color:#555;
 }

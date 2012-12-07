@@ -141,14 +141,14 @@
 			}
 			
 		},
-		selectEnterItemBelow: function(){
+		selectEnterItemAbove: function(){
 			var ci = (this.enter_item && this.enter_item.serial_number) || 0,
 				ni = (ci ? ci : this.enter_items.length) - 1,
 				t = this.enter_items[ni];
 			this.setItemForEnter(t);
 			this.selected_inum = ni;
 		},
-		selectEnterItemAbove: function(){
+		selectEnterItemBelow: function(){
 			var ci = (this.enter_item && this.enter_item.serial_number) || 0,
 				ni = (ci + 1 < this.enter_items.length) ? ci + 1 : 0,
 				t = this.enter_items[ni];

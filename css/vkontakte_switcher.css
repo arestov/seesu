@@ -5,14 +5,14 @@
 .vk-login-context{
 	clear:left;
 	border-radius:6px;
-	padding:12px;
+	padding:14px;
 	margin: 10px 0 15px;
-	background:#faebd7 no-repeat 100% 12px;
+	background:#faebd7 no-repeat 100% 14px;
 	color:#000;
 	overflow:hidden;
 	}
 	.moplas-block .vk-login-context{
-		border-radius:0px;
+		border-radius:0;
 		display: none;
 		clear:both;
 
@@ -53,7 +53,7 @@
 	}
 	.vk-login-reg-link{
 		float:right;
-		margin-left:12px;
+		margin-left:14px;
 		text-align:right;
 		}
 		.vk-login-reg-link div{

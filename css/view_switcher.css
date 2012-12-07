@@ -1,8 +1,8 @@
 .navs{
 	overflow:hidden;
 	padding-top:6px;
-	padding-left:12px;
-	padding-right:12px;
+	padding-left:14px;
+	padding-right:14px;
 	min-height:36px;
 	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
 	border-bottom:1px solid #333;
@@ -33,22 +33,25 @@
 }
 
 .start-screen{
-	padding-bottom:20px;
+	padding-bottom:1.5em;
+	}
+.full-page .start-screen{
+	padding: 0 1em 1.5em;
 	}
 .page-scheme .start-screen{
-	padding-top: 14px;
+	padding-top: 1em;
 	}
 .page-scheme .art_card{
-	padding-top: 14px;
+	padding-top: 1em;
 }
 
 #search {
 	max-width: 750px;
 	margin: 0 auto;
-	margin-left: 240px;
+
 	}
 .complex-page{
-	margin-left: 240px;
+	
 
 	max-width: 750px;
 	}
@@ -57,13 +60,36 @@
 }
 
 .page-scheme{
-	display: block;
+	
 	float:left;
-	width: 200px;
-	margin-left:0;
+	
+
 	}
+.complex-page.page-scheme .complex-page-scroll_con{
+	
+	margin-right: -30px;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	}
+	.complex-page.page-scheme .complex-page_material{
+		width: 200px;
+		}
 
-
+@media (min-width:760px) {
+	
+	.complex-page{
+		margin-left: 240px;
+		}
+	#search {
+		margin-left: 240px;
+		}
+	.page-scheme{
+		display: block;
+		width: 200px;
+		margin-left:0;
+		}
+}
 
 
 .block-for-startpage, .for-startpage{
@@ -99,7 +125,7 @@
 	}
 	.page-scheme .tags-hyped a{
 		display: block;
-		padding:3px 6px;
+		padding:0.2em 0.5em;
 		border: 0;
 		}
 	.page-scheme .tags-hyped a:nth-of-type(even){
@@ -154,7 +180,7 @@
 .np-button{
 	width:20px;	
 	position:absolute;
-	right:12px;
+	right:14px;
 	top:8px;
 	padding: 4px 8px;
 	border-right: 1px solid transparent;
@@ -263,7 +289,7 @@
 		}
 		.art_card-albums ul{
 			overflow:hidden;
-			margin:0 0 12px;
+			margin:0 0 14px;
 			padding-left:0;
 			}
 

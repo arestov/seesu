@@ -376,10 +376,13 @@ provoda.Eventor.extendTo(browseMap, {
 
 			if (parent_md){
 				var parents_of_parent = parent_md.lev.parent_levels;
-				if (parent_md.lev == this.getLevel(-1)){
-					throw new Error('start level can\'t be parent')
+				parent_levels = []
+				if (parent_md.lev != this.getLevel(-1)){
+					parent_levels.push(parent_md.lev)
+					//throw new Error('start level can\'t be parent')
+					//parent_levels = [parent_md.lev];
 				}
-				parent_levels = [parent_md.lev];
+				
 				if (parents_of_parent && parents_of_parent.length){
 					parent_levels = parent_levels.concat(parents_of_parent);
 				}

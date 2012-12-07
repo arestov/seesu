@@ -73,11 +73,13 @@ provoda.View.extendTo(appModelView, {
 			}
 
 			var container = $('<div class="complex-page inactive-page"></div>').addClass('index-of-cp-is-' + num);
-			var scroll_con = $('<div class="complex-page_scroll-con"></div>').appendTo(container);
+			var scroll_con = $('<div class="complex-page-scroll_con"></div>').appendTo(container);
+			var material = $('<div class="complex-page_material"></div>').appendTo(scroll_con);
 
 			return this.lev_containers[num] = {
 				c: container.appendTo(this.els.screens),
-				scroll_con: scroll_con
+				scroll_con: scroll_con,
+				material: material
 			}
 		}
 	},
@@ -126,7 +128,7 @@ provoda.View.extendTo(appModelView, {
 
 				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
 				if (lev_conj){
-					lev_conj.scroll_con.append(view.getA());
+					lev_conj.material.append(view.getA());
 				}
 				
 			}
@@ -142,7 +144,7 @@ provoda.View.extendTo(appModelView, {
 			if (view){
 				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
 				if (lev_conj){
-					lev_conj.scroll_con.append(view.getA());
+					lev_conj.material.append(view.getA());
 				}
 			}
 
@@ -178,14 +180,14 @@ provoda.View.extendTo(appModelView, {
 			if (view){
 				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
 				if (lev_conj){
-					lev_conj.scroll_con.append(view.getA());
+					lev_conj.material.append(view.getA());
 				}
 			}
 			var det_view = _this.getFreeChildView(name, el, 'details');
 			if (det_view){
 				var lev_conj = _this.getLevelContainer(el.map_level_num + 1, det_view);
 				if (lev_conj){
-					lev_conj.scroll_con.append(det_view.getA());
+					lev_conj.material.append(det_view.getA());
 				}
 			}
 
@@ -295,7 +297,7 @@ provoda.View.extendTo(appModelView, {
 			if (md_view){
 				var hl_view = md_view.getChildView(source_md, 'main');
 				if (hl_view){
-					this.scrollTo(hl_view);
+					//this.scrollTo(hl_view);
 				}
 			}
 		}
@@ -304,15 +306,14 @@ provoda.View.extendTo(appModelView, {
 		var ov_highlight = ov_md && ov_md.state('mp-highlight');
 		if (ov_highlight && ov_highlight.source_md){
 			var source_md = ov_highlight.source_md;
-			var ov_view = this.getChildView(ov_md, 'main');
-			if (ov_view){
-				var hl_view = ov_view.getChildView(source_md, 'main');
-				if (hl_view){
-					this.scrollTo(hl_view, {
-						node: this.getLevByNum(md.map_level_num - 1).scroll_con
-					}, {vp_limit: 0.4, animate: 117});
-				}
+			var mplev_item_view = source_md.getRooConPresentation();
+			if (mplev_item_view){
+				this.scrollTo(mplev_item_view, {
+					node: this.getLevByNum(md.map_level_num - 1).scroll_con
+				}, {vp_limit: 0.4, animate: 117});
 			}
+
+			
 		}
 
 		//var parent_md = md.getParentMapModel();
@@ -552,9 +553,12 @@ provoda.View.extendTo(appModelView, {
 				start_page_place: start_screen.children('.for-startpage')
 			};
 
+			var st_scr_scrl_con = start_screen.parent();
+
 			_this.lev_containers[-1] = {
-				c: start_screen.parent().parent(),
-				material: start_screen
+				c: st_scr_scrl_con.parent(),
+				material: start_screen,				
+				scroll_con: st_scr_scrl_con
 			}
 				
 
@@ -728,16 +732,230 @@ provoda.View.extendTo(appModelView, {
 			e.preventDefault();
 			key_name = 'Enter';
 		} else 
+		if (_key == '37'){
+			e.preventDefault();
+			key_name = 'Left';
+		} else
+		if (_key == '39'){
+			e.preventDefault();
+			key_name = 'Right';
+		} else
 		if((_key == '40') || (_key == '63233')){
 			e.preventDefault();
-			key_name = 'Up';
+			key_name = 'Down';
 		} else 
 		if((_key == '38') || (_key == '63232')){
 			e.preventDefault();
-			key_name = 'Down';
+			key_name = 'Up';
 		}
 		if (key_name){
-			this.md.keyNav(key_name);
+			//this.md.keyNav(key_name);
+			this.wayPointsNav(key_name)
+		}
+	},
+	wayPointsNav: function(nav_type) {
+		var all_waypoints = [];
+		var cur_mp_md = this.state('current-mp-md');
+		var roocon_view =  cur_mp_md && cur_mp_md.getRooConPresentation(true);
+		if (roocon_view){
+			var directions = {
+				'Up': true,
+				'Down': true,
+				'Left': true,
+				'Right': true
+			};
+			var horizontal_directions = {
+				'Left': true,
+				'Right': true
+			};
+			var vertical_directions = {
+				'Up': true,
+				'Down': true
+			};
+			var backward_directions = {
+				'Up': true,
+				'Left': true
+			};
+			var forward_directions = {
+				'Down': true,
+				'Right': true
+			};
+
+
+			if (directions[nav_type]){
+				
+				all_waypoints = all_waypoints.concat(roocon_view.way_points);
+
+				var wayp_pack = [];
+
+				for (var i = 0; i < all_waypoints.length; i++) {
+					var cur = all_waypoints[i];
+					var height = cur.height();
+					if (!height){
+						continue
+					}
+					var width = cur.width();
+					if (!width){
+						continue
+					}
+					var pos = cur.position();
+					if ((pos.top + height) <= 0){
+						continue
+					}
+					if ((pos.left + width) <= 0){
+						continue
+					}
+
+					var parent = cur.offsetParent();
+					
+					
+					if (pos.top >= parent.height()){
+						continue
+					}
+					if ((pos.left + width) >= parent.width()){
+						continue
+					}
+
+					var dems = {
+						node: cur,
+						height: height,
+						width: width,
+						offset: cur.offset()
+					};
+					cur.data('dems', dems)
+					wayp_pack.push(dems);
+
+					
+				}
+
+				if (!this.current_wpoint){
+					this.current_wpoint = wayp_pack[0];
+					this.current_wpoint.node.addClass('surface_navigation');
+				} else {
+					var cwp = this.current_wpoint;
+					var cur_dems = cwp.node.data('dems');
+				//	cwp.offset
+					var corridor = [];
+					if (horizontal_directions[nav_type]){
+						
+						for (var i = 0; i < wayp_pack.length; i++) {
+							var cur = wayp_pack[i];
+							if (cur == cur_dems){
+								continue;
+							}
+							if ((cur.offset.top + cur.height) < cur_dems.offset.top){
+								continue;
+							}
+
+							if (cur.offset.top > (cur_dems.offset.top + cur_dems.height)){
+								continue;
+							}
+							if (forward_directions[nav_type]){
+								if (cur.offset.left < (cur_dems.offset.left + cur_dems.width)){
+									continue;
+								}
+							} else {
+								if (cur.offset.left > cur_dems.offset.left){
+									continue;
+								}
+							}
+							corridor.push(cur);
+						}
+					} else {
+						for (var i = 0; i < wayp_pack.length; i++) {
+							var cur = wayp_pack[i];
+							if (cur == cur_dems){
+								continue;
+							}
+							if ((cur.offset.left + cur.width )< cur_dems.offset.left){
+								continue;
+							}
+							if (cur.offset.left > (cur_dems.offset.left + cur_dems.width)){
+								continue;
+							}
+							if (forward_directions[nav_type]){
+								if (cur.offset.top < (cur_dems.offset.top + cur_dems.height)){
+									continue;
+								}
+							} else {
+								if (cur.offset.top > cur_dems.offset.top){
+									continue;
+								}
+							}
+							
+							corridor.push(cur);
+						}
+					};
+
+					corridor.sort(function(a, b) {
+						return sortByRules(a, b, [
+							function(el) {
+								var start_point = {};
+								var end_point = {};
+								if (horizontal_directions[nav_type]){
+									start_point.top = cur_dems.offset.top;
+									if (forward_directions[nav_type]){
+										start_point.left = cur_dems.offset.left + cur_dems.width;
+									} else {
+										start_point.left = cur_dems.offset.left;
+									}
+								} else {
+									start_point.left = cur_dems.offset.left;
+									
+								}
+								
+
+
+
+								/*if (horizontal_directions[nav_type]){
+									return el.offset.top == cur_dems.offset.top;
+								} else {
+									return el.offset.left == cur_dems.offset.left;
+								}*/
+							}
+							/*{
+								field: horizontal_directions[nav_type] ? 'offset.left' : 'offset.top',
+								reverse: !forward_directions[nav_type]
+							}*/
+						])
+					});
+
+					var old_wpoint = this.current_wpoint;
+					var new_wpoint = corridor[0];
+					if (new_wpoint && new_wpoint != old_wpoint){
+						this.current_wpoint = new_wpoint;
+						old_wpoint.node.removeClass('surface_navigation');
+
+						
+						new_wpoint.node.addClass('surface_navigation')
+					}
+
+				}
+
+				/*
+				if (this.current_wpoint){
+					var old_wpoint = this.current_wpoint;
+					var pos = all_waypoints.indexOf(old_wpoint);
+					var new_wpoint;
+					if (nav_type == 'Up'){
+						new_wpoint = all_waypoints[--pos]
+					} else if (nav_type == 'Down'){
+						new_wpoint = all_waypoints[++pos]
+					}
+					if (new_wpoint){
+						this.current_wpoint = new_wpoint;
+						old_wpoint.removeClass('surface_navigation');
+
+						
+						new_wpoint.addClass('surface_navigation')
+					}
+					
+				} else {
+					this.current_wpoint = all_waypoints[0];
+					this.current_wpoint.addClass('surface_navigation')
+				}*/
+			}
+			
 		}
 	},
 	appendStyle: function(style_text){

@@ -1,6 +1,16 @@
 var StartPage;
 (function() {
 "use strict";
+var MetroChartBlock = function() {};
+provoda.Model.extendTo(MetroChartBlock, {
+	init: function() {
+		this._super();
+		this.getRandomChart();
+	},
+	getRandomChart: function() {
+
+	}
+});
 
 StartPage = function() {};
 

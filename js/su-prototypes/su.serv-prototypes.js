@@ -338,6 +338,13 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 
+		},
+		'tag.getWeeklyArtistChart': function(r, method, artists) {
+			artists = artists || toRealArray(getTargetField(r, 'weeklyartistchart.artist'));
+			for (var i = 0; i < artists.length; i++) {
+				var cur = artists[i];
+				this.setArtistImage(cur.name, cur.image, method);
+			}
 		}
 	}
 });
