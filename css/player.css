@@ -206,7 +206,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		display:none;
 		
 		margin-right: 7px;
-		font-size: 12px;
+		font-size: 0.85em;
 		color: #666;
 	}
 	.track-progress:hover .track-node-text{
@@ -228,7 +228,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 .song-artist-name {
 	display: block;
-	font-size: 12px;
+	font-size: 0.85em;
 	color: #6B6B6B;
 	}
 

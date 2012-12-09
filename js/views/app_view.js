@@ -128,6 +128,7 @@ provoda.View.extendTo(appModelView, {
 
 				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
 				if (lev_conj){
+					view.wayp_scan_stop = true;
 					lev_conj.material.append(view.getA());
 				}
 				
@@ -144,6 +145,7 @@ provoda.View.extendTo(appModelView, {
 			if (view){
 				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
 				if (lev_conj){
+					view.wayp_scan_stop = true;
 					lev_conj.material.append(view.getA());
 				}
 			}
@@ -180,6 +182,7 @@ provoda.View.extendTo(appModelView, {
 			if (view){
 				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
 				if (lev_conj){
+					view.wayp_scan_stop = true;
 					lev_conj.material.append(view.getA());
 				}
 			}
@@ -187,6 +190,7 @@ provoda.View.extendTo(appModelView, {
 			if (det_view){
 				var lev_conj = _this.getLevelContainer(el.map_level_num + 1, det_view);
 				if (lev_conj){
+					det_view.wayp_scan_stop = true;
 					lev_conj.material.append(det_view.getA());
 				}
 			}
@@ -297,7 +301,7 @@ provoda.View.extendTo(appModelView, {
 			if (md_view){
 				var hl_view = md_view.getChildView(source_md, 'main');
 				if (hl_view){
-					//this.scrollTo(hl_view);
+					//this.scrollTo(hl_view.getC());
 				}
 			}
 		}
@@ -308,7 +312,7 @@ provoda.View.extendTo(appModelView, {
 			var source_md = ov_highlight.source_md;
 			var mplev_item_view = source_md.getRooConPresentation();
 			if (mplev_item_view){
-				this.scrollTo(mplev_item_view, {
+				this.scrollTo(mplev_item_view.getC(), {
 					node: this.getLevByNum(md.map_level_num - 1).scroll_con
 				}, {vp_limit: 0.4, animate: 117});
 			}
@@ -392,11 +396,15 @@ provoda.View.extendTo(appModelView, {
 		'now-playing': function(text) {
 
 			var md = this.md;
-			
+			var _this = this;
 			if (!this.now_playing_link && this.nav){
 				this.now_playing_link = $('<a class="nav-item np-button"><span class="np"></span></a>').click(function(){
 					md.show_now_playing(true);
 				}).appendTo(this.nav.justhead);
+
+				this.addWayPoint(this.now_playing_link, function() {
+					return !_this.state('viewing-playing');
+				});
 			}
 			if (this.now_playing_link){
 				this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));	
@@ -428,8 +436,8 @@ provoda.View.extendTo(appModelView, {
 	getScrollVP: function() {
 		return this.els.scrolling_viewport;
 	},
-	scrollTo: function(view, view_port, opts) {
-		if (!view){return false;}
+	scrollTo: function(jnode, view_port, opts) {
+		if (!jnode){return false;}
 		opts = opts || {};
 	//	if (!this.view_port || !this.view_port.node){return false;}
 
@@ -437,7 +445,7 @@ provoda.View.extendTo(appModelView, {
 
 		//var element = view.getC();
 
-		var jnode = $(view.getC());
+	//	var jnode = $(view.getC());
 		if (!jnode[0]){
 			return
 		}
@@ -445,7 +453,7 @@ provoda.View.extendTo(appModelView, {
 		var view_port_limit = opts.vp_limit || 1;
 
 		var svp = view_port || this.getScrollVP(),
-			scroll_c = svp.offset ? $((svp.node[0] && svp.node[0].ownerDocument) || svp.node[0]) :   svp.node,
+			scroll_c = svp.offset ? svp.node :  svp.node,
 			scroll_top = scroll_c.scrollTop(), //top
 			scrolling_viewport_height = svp.node.height(), //height
 			padding = (scrolling_viewport_height * (1 - view_port_limit))/2,
@@ -753,207 +761,333 @@ provoda.View.extendTo(appModelView, {
 			this.wayPointsNav(key_name)
 		}
 	},
+	canUseWaypoint: function(cur_wayp ) {
+		var cur = cur_wayp.node;
+
+		if (cur_wayp.canUse && !cur_wayp.canUse()){
+			return;
+		}
+		if (cur.css('display') == 'none'){
+			return;
+		}
+
+		var height = cur.height();
+		if (!height){
+			return
+		}
+		var width = cur.width();
+		if (!width){
+			return
+		}
+		var pos = cur.position();
+		if ((pos.top + height) <= 0){
+			return
+		}
+		if ((pos.left + width) <= 0){
+			return
+		}
+
+
+		var parents = [];
+		var p_cur = cur.parent();
+		while (p_cur[0]){
+			parents.push(p_cur);
+			p_cur = p_cur.parent();
+		};
+
+		var break_of_disnone = false;
+		for (var ii = 0; ii < parents.length; ii++) {
+			if (parents[ii].css('display') == 'none'){
+				break_of_disnone = true;
+				break;
+			}
+			
+		};
+		if (break_of_disnone){
+			return;
+		}
+
+		var stop_parents = [];
+		var view_cur = cur_wayp.view;
+		while (view_cur){
+			if (view_cur.wayp_scan_stop){
+				var con = view_cur.getC();
+				if (con){
+					stop_parents.push(con[0] || con);
+				}
+			}
+			view_cur = view_cur.parent_view;
+		}
+
+
+		var ovh_parent = false;
+		for (var ii = 0; ii < parents.length; ii++) {
+			if (parents[ii].css('overflow') == 'hidden'){
+				ovh_parent = parents[ii];
+				break;
+			}
+			if (stop_parents.indexOf(parents[ii][0]) != -1){
+				break
+			}
+			
+		}
+		var offset = cur.offset();
+
+		if (ovh_parent){
+			var parent_offset = ovh_parent.offset();
+			if ((offset.top + height) < parent_offset.top){
+				return;
+			}
+			if ((offset.left + width) < parent_offset.left){
+				return;
+			}
+			if (offset.top > (parent_offset.top + ovh_parent.height())){
+				return;
+			}
+			if (offset.left > (parent_offset.left + ovh_parent.width())){
+				return;
+			}
+			
+		}
+
+		return {
+			height: height,
+			width: width,
+			offset: offset,
+		};
+	},
+	getWPPack: function(view) {
+		var all_waypoints = view.getAllWaypoints();
+		var wayp_pack = [];
+
+		for (var i = 0; i < all_waypoints.length; i++) {
+			var cur_wayp = all_waypoints[i];
+			var cur = cur_wayp.node;
+			var dems = this.canUseWaypoint(cur_wayp);
+			if (!dems){
+				cur.data('dems', null);
+				cloneObj(cur_wayp, {
+					height: null,
+					width: null,
+					offset: null,
+				});
+				continue;
+			} else {
+				cloneObj(cur_wayp, dems);
+			}
+			cur.data('dems', cur_wayp)
+			wayp_pack.push(cur_wayp);
+
+			
+		}
+		return wayp_pack;
+	},
+	getWPCorridor: function(cur_dems, wayp_pack, nav_type) {
+		var corridor = [];
+		if (this.wp_dirs.horizontal[nav_type]){
+			
+			for (var i = 0; i < wayp_pack.length; i++) {
+				var cur = wayp_pack[i];
+				if (cur == cur_dems || cur.node == cur_dems.node){
+					continue;
+				}
+				if ((cur.offset.top + cur.height) <= cur_dems.offset.top){
+					continue;
+				}
+
+				if (cur.offset.top >= (cur_dems.offset.top + cur_dems.height)){
+					continue;
+				}
+				if (this.wp_dirs.forward[nav_type]){
+					if (cur.offset.left <= cur_dems.offset.left){
+						continue;
+					}
+				} else {
+					if (cur.offset.left >= (cur_dems.offset.left + cur_dems.width)){
+						continue;
+					}
+				}
+				corridor.push(cur);
+			}
+		} else {
+			for (var i = 0; i < wayp_pack.length; i++) {
+				var cur = wayp_pack[i];
+				if (cur == cur_dems || cur.node == cur_dems.node){
+					continue;
+				}
+				if ((cur.offset.left + cur.width ) <= cur_dems.offset.left){
+					continue;
+				}
+				if (cur.offset.left >= (cur_dems.offset.left + cur_dems.width)){
+					continue;
+				}
+				if (this.wp_dirs.forward[nav_type]){
+					if (cur.offset.top <= cur_dems.offset.top){
+						continue;
+					}
+				} else {
+					if (cur.offset.top >= (cur_dems.offset.top + cur_dems.height)){
+						continue;
+					}
+				}
+				
+				corridor.push(cur);
+			}
+		};
+
+		var start_point = {};
+		if (this.wp_dirs.horizontal[nav_type]){
+			start_point.top = cur_dems.offset.top;
+			if (this.wp_dirs.forward[nav_type]){
+				start_point.left = cur_dems.offset.left + cur_dems.width;
+			} else {
+				start_point.left = cur_dems.offset.left;
+			}
+		} else {
+			start_point.left = cur_dems.offset.left;
+			if (this.wp_dirs.forward[nav_type]){
+				start_point.top = cur_dems.offset.top + cur_dems.height;
+			} else {
+				start_point.top = cur_dems.offset.top;
+			}
+
+		}
+		var _this = this;
+		corridor.sort(function(a, b) {
+			return sortByRules(a, b, [
+				function(el) {
+					
+					var end_point = {};
+					
+					if (_this.wp_dirs.horizontal[nav_type]){
+						end_point.top = el.offset.top;
+						if (_this.wp_dirs.forward[nav_type]){
+							end_point.left = el.offset.left;
+						} else {
+							end_point.left = el.offset.left + el.width;
+						}
+					} else {
+						end_point.left = el.offset.left;
+						if (_this.wp_dirs.forward[nav_type]){
+							end_point.top = el.offset.top;
+						} else {
+							end_point.top = el.offset.top + el.height;
+						}
+					}
+					var cathetus1 = Math.abs(end_point.top - start_point.top);
+					var cathetus2 = Math.abs(end_point.left - start_point.left);
+					var hypotenuse = Math.sqrt(Math.pow(cathetus1, 2) + Math.pow(cathetus2, 2));
+
+					var path = _this.wp_dirs.horizontal[nav_type] ? cathetus2 : cathetus1;
+
+					return (hypotenuse + path)/2;
+
+				
+				}
+			]);
+		});
+		return corridor;
+	},
+	wp_dirs: {
+		all: {
+			'Up': true,
+			'Down': true,
+			'Left': true,
+			'Right': true
+		},
+		horizontal: {
+			'Left': true,
+			'Right': true
+		},
+		backward: {
+			'Up': true,
+			'Left': true
+		},
+		forward: {
+			'Down': true,
+			'Right': true
+		}
+	},
+	checkCurrentWPoint: function() {
+		if (this.cwp_check){
+			clearTimeout(this.cwp_check);
+			delete this.cwp_check;
+		}
+		
+
+		var cwp = this.state('vis-current_wpoint');
+		if (cwp && !this.canUseWaypoint(cwp)){
+			//this.current_wpoint.node.removeClass('surface_navigation');
+			//delete this.current_wpoint;
+			this.setVisState('current_wpoint', false)
+		}
+
+	},
+	'stch-vis-current_wpoint': function(nst, ost) {
+		if (ost){
+			ost.node.removeClass('surface_navigation');
+		} 
+		if (nst) {
+			nst.node.addClass('surface_navigation');
+			//if (nst.view.getRooConPresentation() ==)
+			 
+			var cur_md_md = this.state('current-mp-md');
+			var parent_md = cur_md_md.getParentMapModel();
+			if (parent_md && nst.view.getAncestorByRooViCon('main') == parent_md.getRooConPresentation()){
+				this.scrollTo(nst.node, {
+					node: this.getLevByNum(parent_md.map_level_num).scroll_con
+				}, {vp_limit: 0.6, animate: 117});
+			}
+			//this.scrollTo(nst.node, false, {vp_limit: 0.4, animate: 117});
+		}
+		
+	},
 	wayPointsNav: function(nav_type) {
-		var all_waypoints = [];
+		
 		var cur_mp_md = this.state('current-mp-md');
 		var roocon_view =  cur_mp_md && cur_mp_md.getRooConPresentation(true);
 		if (roocon_view){
-			var directions = {
-				'Up': true,
-				'Down': true,
-				'Left': true,
-				'Right': true
-			};
-			var horizontal_directions = {
-				'Left': true,
-				'Right': true
-			};
-			var vertical_directions = {
-				'Up': true,
-				'Down': true
-			};
-			var backward_directions = {
-				'Up': true,
-				'Left': true
-			};
-			var forward_directions = {
-				'Down': true,
-				'Right': true
-			};
+			var cwp = this.state('vis-current_wpoint');
+			if (nav_type == 'Enter'){
+				if (cwp){
+					cwp.node.click();
+					var _this = this;
 
-
-			if (directions[nav_type]){
+					this.cwp_check = setTimeout(function() {
+						_this.checkCurrentWPoint();
+					},100);
+				}
 				
-				all_waypoints = all_waypoints.concat(roocon_view.way_points);
-
-				var wayp_pack = [];
-
-				for (var i = 0; i < all_waypoints.length; i++) {
-					var cur = all_waypoints[i];
-					var height = cur.height();
-					if (!height){
-						continue
-					}
-					var width = cur.width();
-					if (!width){
-						continue
-					}
-					var pos = cur.position();
-					if ((pos.top + height) <= 0){
-						continue
-					}
-					if ((pos.left + width) <= 0){
-						continue
-					}
-
-					var parent = cur.offsetParent();
+			} else if (this.wp_dirs.all[nav_type]){
+				this.checkCurrentWPoint();
+				
+				var cur_dems = cwp && cwp.node.data('dems');
+				if (!cwp){
+					wayp_pack = this.getWPPack(roocon_view);
+					this.setVisState('current_wpoint', wayp_pack[0]);
 					
-					
-					if (pos.top >= parent.height()){
-						continue
-					}
-					if ((pos.left + width) >= parent.width()){
-						continue
-					}
-
-					var dems = {
-						node: cur,
-						height: height,
-						width: width,
-						offset: cur.offset()
-					};
-					cur.data('dems', dems)
-					wayp_pack.push(dems);
-
-					
-				}
-
-				if (!this.current_wpoint){
-					this.current_wpoint = wayp_pack[0];
-					this.current_wpoint.node.addClass('surface_navigation');
 				} else {
-					var cwp = this.current_wpoint;
-					var cur_dems = cwp.node.data('dems');
-				//	cwp.offset
+				
+					
+					
+					
+
+					if (!cur_dems){
+						throw new Error('there is no demensions!')
+					}
 					var corridor = [];
-					if (horizontal_directions[nav_type]){
-						
-						for (var i = 0; i < wayp_pack.length; i++) {
-							var cur = wayp_pack[i];
-							if (cur == cur_dems){
-								continue;
-							}
-							if ((cur.offset.top + cur.height) < cur_dems.offset.top){
-								continue;
-							}
-
-							if (cur.offset.top > (cur_dems.offset.top + cur_dems.height)){
-								continue;
-							}
-							if (forward_directions[nav_type]){
-								if (cur.offset.left < (cur_dems.offset.left + cur_dems.width)){
-									continue;
-								}
-							} else {
-								if (cur.offset.left > cur_dems.offset.left){
-									continue;
-								}
-							}
-							corridor.push(cur);
-						}
-					} else {
-						for (var i = 0; i < wayp_pack.length; i++) {
-							var cur = wayp_pack[i];
-							if (cur == cur_dems){
-								continue;
-							}
-							if ((cur.offset.left + cur.width )< cur_dems.offset.left){
-								continue;
-							}
-							if (cur.offset.left > (cur_dems.offset.left + cur_dems.width)){
-								continue;
-							}
-							if (forward_directions[nav_type]){
-								if (cur.offset.top < (cur_dems.offset.top + cur_dems.height)){
-									continue;
-								}
-							} else {
-								if (cur.offset.top > cur_dems.offset.top){
-									continue;
-								}
-							}
-							
-							corridor.push(cur);
-						}
-					};
-
-					corridor.sort(function(a, b) {
-						return sortByRules(a, b, [
-							function(el) {
-								var start_point = {};
-								var end_point = {};
-								if (horizontal_directions[nav_type]){
-									start_point.top = cur_dems.offset.top;
-									if (forward_directions[nav_type]){
-										start_point.left = cur_dems.offset.left + cur_dems.width;
-									} else {
-										start_point.left = cur_dems.offset.left;
-									}
-								} else {
-									start_point.left = cur_dems.offset.left;
-									
-								}
-								
-
-
-
-								/*if (horizontal_directions[nav_type]){
-									return el.offset.top == cur_dems.offset.top;
-								} else {
-									return el.offset.left == cur_dems.offset.left;
-								}*/
-							}
-							/*{
-								field: horizontal_directions[nav_type] ? 'offset.left' : 'offset.top',
-								reverse: !forward_directions[nav_type]
-							}*/
-						])
-					});
-
-					var old_wpoint = this.current_wpoint;
+					var cur_view = cur_dems.view;
+					while (!corridor.length && cur_view){
+						wayp_pack = this.getWPPack(cur_view);
+						corridor = this.getWPCorridor(cwp.node.data('dems'), wayp_pack, nav_type);
+						cur_view = cur_view.parent_view;
+					}
 					var new_wpoint = corridor[0];
-					if (new_wpoint && new_wpoint != old_wpoint){
-						this.current_wpoint = new_wpoint;
-						old_wpoint.node.removeClass('surface_navigation');
-
-						
-						new_wpoint.node.addClass('surface_navigation')
+					if (new_wpoint ){
+						this.setVisState('current_wpoint', new_wpoint)
 					}
 
 				}
-
-				/*
-				if (this.current_wpoint){
-					var old_wpoint = this.current_wpoint;
-					var pos = all_waypoints.indexOf(old_wpoint);
-					var new_wpoint;
-					if (nav_type == 'Up'){
-						new_wpoint = all_waypoints[--pos]
-					} else if (nav_type == 'Down'){
-						new_wpoint = all_waypoints[++pos]
-					}
-					if (new_wpoint){
-						this.current_wpoint = new_wpoint;
-						old_wpoint.removeClass('surface_navigation');
-
-						
-						new_wpoint.addClass('surface_navigation')
-					}
-					
-				} else {
-					this.current_wpoint = all_waypoints[0];
-					this.current_wpoint.addClass('surface_navigation')
-				}*/
 			}
 			
 		}

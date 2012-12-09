@@ -58,6 +58,11 @@ provoda.View.extendTo( baseNavUI, {
 		this.c.click(function(){
 			_this.md.zoomOut();
 		});
+		this.addWayPoint(this.c, {
+			canUse: function() {
+				return _this.state('mp-stack') || !_this.state('mp-has-focus');
+			}
+		});
 	}
 });
 
@@ -67,6 +72,7 @@ StartPageNavView = function(mal) {};
 baseNavUI.extendTo(StartPageNavView, {
 	createBase: function(){
 		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>');
+
 	},
 	'stch-mp-stack':function(state) {
 		if (state && state == !!state){

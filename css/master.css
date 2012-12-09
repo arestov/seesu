@@ -522,6 +522,8 @@ html.not-as-application, .not-as-application  body{
 	
 	.artist-tags a.music-tag{
 		margin-right:7px;
+		white-space: nowrap;
+
 		}
 .artist-stat-in-song span{
 	
@@ -811,7 +813,7 @@ html.not-as-application, .not-as-application  body{
 }
 .block-for-startpage h3 a.js-serv{
 	margin-left:24px;
-	font-size:12px;
+	font-size:0.85em;
 }
 
 
@@ -1304,5 +1306,6 @@ iframe.you-tube-video,embed.you-tube-video{
 
 	}
 .surface_navigation{
-	box-shadow:0px 0px 0px 2pt red;
+	box-shadow:0px 0px 0px 2pt #1DD8B2;
+	background: #085948;
 	}

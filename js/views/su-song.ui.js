@@ -300,7 +300,9 @@ provoda.View.extendTo(songUI, {
 			su.show_tag(tag_name);
 			seesu.trackEvent('Artist navigation', 'tag', tag_name);
 		});
-		this.addWayPoint(node);
+		this.addWayPoint(node, {
+			simple_check: true
+		});
 		
 	},
 	'stch-tags': {
@@ -334,7 +336,9 @@ provoda.View.extendTo(songUI, {
 			su.showArtcardPage(artist_name);
 			seesu.trackEvent('Artist navigation', 'artist', artist_name);
 		});
-		this.addWayPoint(node);
+		this.addWayPoint(node, {
+			simple_check: true
+		});
 	},
 	'stch-similars': {
 		fn: function(state) {
@@ -416,7 +420,9 @@ provoda.View.extendTo(songUI, {
 			});
 
 			this.similars_text_c = $('<span class="desc-text"></span>').appendTo(similars_p).append('<span class="forced-end"></span>');
-			this.addWayPoint(similars_link);
+			this.addWayPoint(similars_link, {
+				simple_check: true
+			});
 			return similars_p;
 		},
 		'playcount-c': function() {
@@ -468,7 +474,16 @@ provoda.View.extendTo(songUI, {
 				mo.view(false, true);
 				return false;
 			});
-		this.addWayPoint(this.node);
+
+
+		this.canUseDeepWaypoints = function() {
+			return !(_this.opts && _this.opts.lite) && !!_this.state('mp-show');
+		};
+		this.addWayPoint(this.node, {
+			canUse: function() {
+				return (_this.opts && _this.opts.lite) || !_this.state('mp-show');
+			}
+		});
 		//
 		this.player_song_mark = $('<span class="playing-song-mark"></span>').appendTo(this.node);
 		
@@ -558,7 +573,9 @@ provoda.View.extendTo(songUI, {
 					su.trackEvent('Artist navigation', 'art card', _this.md.artist);
 				});
 
-		this.addWayPoint(artcard_link);
+		this.addWayPoint(artcard_link, {
+			simple_check: true
+		});
 			
 
 		
@@ -576,7 +593,9 @@ provoda.View.extendTo(songUI, {
 			tidominator.toggleClass('want-more-info');
 			e.preventDefault();
 		});
-		this.addWayPoint(extend_switcher);
+		this.addWayPoint(extend_switcher, {
+			simple_check: true
+		});
 		
 		this.t_users= {
 			c: users,
@@ -652,6 +671,9 @@ provoda.View.extendTo(songUI, {
 		}
 	},
 	updateSongListeners: function(){
+		if (!this.expanded){
+			return;
+		}
 		var _this = this;
 		var last_update = this.t_users.last_update;
 		var current_user = su.s.getId();
