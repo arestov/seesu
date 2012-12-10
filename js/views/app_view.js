@@ -1037,8 +1037,10 @@ provoda.View.extendTo(appModelView, {
 				this.scrollTo(nst.node, {
 					node: this.getLevByNum(parent_md.map_level_num).scroll_con
 				}, {vp_limit: 0.6, animate: 117});
+			} else {
+				this.scrollTo(nst.node, false, {vp_limit: 0.6, animate: 117});
 			}
-			//this.scrollTo(nst.node, false, {vp_limit: 0.4, animate: 117});
+			//
 		}
 		
 	},
