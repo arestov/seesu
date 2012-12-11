@@ -109,7 +109,7 @@ html.not-as-application, .not-as-application  body{
 			border-bottom: 1px dotted;
 			}
 	.moplas-block.want-more-songs .show-all-songs a{
-		border-bottom-left-radius: 7px;
+		border-bottom-left-radius: 0.5em;
 		}
 .moplas-block{
 	padding:0;
@@ -121,7 +121,7 @@ html.not-as-application, .not-as-application  body{
 	}
 	.moplas-block h4{
 		font-weight: 400;
-		margin:7px 0 7px 53px;
+		margin:0.5em 0 0.5em 53px;
 
 		}
 	.moplas-block ul {
@@ -130,7 +130,7 @@ html.not-as-application, .not-as-application  body{
 		.moplas-block .moplas-list li{
 			cursor: pointer;
 			border-top: 1px solid transparent;
-			padding:7px 5px;
+			padding:0.5em 5px;
 			color:#999;
 			border-bottom: 1px solid transparent;
 			}
@@ -317,7 +317,7 @@ html.not-as-application, .not-as-application  body{
 	display: block;
 	}
 .full-page .left-buttons-group .button-hole{
-	margin-right:7px;
+	margin-right:0.5em;
 	}
 .lfm-auth form{
 	margin-bottom:2.5em;
@@ -371,7 +371,7 @@ html.not-as-application, .not-as-application  body{
 				}
 .track-context{
 	padding:0 8px 10px;
-	margin-top:7px;
+	margin-top:0.5em;
 	min-height: 389px;
 	}
 	@media (min-height:600px) {
@@ -430,7 +430,7 @@ html.not-as-application, .not-as-application  body{
 		display:block;
 	}
 	.playlist-container .load-more-songs{
-		padding:7px;
+		padding:0.5em;
 		
 		cursor:pointer;
 		border-radius:4px;
@@ -485,7 +485,7 @@ html.not-as-application, .not-as-application  body{
 
 
 .track-info-dominator .artist-tags{
-	padding:7px 0 0;
+	padding:0.5em 0 0;
 	margin:0;
 	}
 .want-more-info .artist-tags{
@@ -521,7 +521,7 @@ html.not-as-application, .not-as-application  body{
 		}
 	
 	.artist-tags a.music-tag{
-		margin-right:7px;
+		margin-right:0.5em;
 		white-space: nowrap;
 
 		}
@@ -574,9 +574,9 @@ html.not-as-application, .not-as-application  body{
 			padding:0;
 		}
 		.track-info-dominator .dominator-head .closer-to-track{
-			padding-top:7px;
-			padding-left:14px;
-			margin-right:14px;
+			padding-top:0.5em;
+			padding-left:1em;
+			margin-right:1em;
 			float:left;
 			width:126px;
 
@@ -591,10 +591,10 @@ html.not-as-application, .not-as-application  body{
 				}
 	.track-context .extend-switcher{
 		border:0;
-		padding: 7px 10px;
-		margin-left:-7px;
+		padding: 0.5em 10px;
+		margin-left:-0.5em;
 		float:right;
-		border-radius: 0 0 0 7px;
+		border-radius: 0 0 0 0.5em;
 		color:#808080;
 		text-shadow: 0 1px 0 #4A4A4A;
 		}
@@ -666,7 +666,7 @@ html.not-as-application, .not-as-application  body{
 }
 .artist-info .artist-albums, .artist-info .artist-similar{
 	padding: 2px 0;
-	margin: 7px 0;
+	margin: 0.5em 0;
 }
 .artist-tags .simple-header{
 	margin-right:14px;
@@ -719,7 +719,7 @@ html.not-as-application, .not-as-application  body{
 }
 	#promo a{
 		background:#505050;
-		padding: 1px 7px;
+		padding: 1px 0.5em;
 		
 		}
 		#promo a:hover{
@@ -979,7 +979,7 @@ html.not-as-application, .not-as-application  body{
 	float:left;
 	margin-right:24px;
 	background: #545454;
-	border-radius: 7px;
+	border-radius: 0.5em;
 }
 .song-listeners-list{
 	height: 56px;

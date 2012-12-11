@@ -572,7 +572,7 @@ provoda.View.extendTo(StartPageView, {
 			});
 			
 			var wow_tags= function(tag,c){
-				$('<a class="js-serv hyped-tag"></a> ')
+				var link = $('<a class="js-serv hyped-tag"></a> ')
 					.text(tag)
 					.click(function(e){
 						_this.parent_view.md.show_tag(tag);
@@ -580,6 +580,9 @@ provoda.View.extendTo(StartPageView, {
 						e.preventDefault();
 					}).appendTo(c);
 				c.append(' ');
+				_this.addWayPoint(link,{
+					simple_check:true
+				});
 				
 			};
 			

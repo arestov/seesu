@@ -119,7 +119,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	position:absolute;
 }
 #i_f_sm2.sm-inited{
-	left:-250px;
+	left:-100em;
 	z-index:-10;
 }
 .selected-mf .mf-progress {

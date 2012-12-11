@@ -92,14 +92,14 @@ html.opera-extension{
 
 
 .as-application .navs{
-	-moz-border-radius:6px 6px 0 0;
-	-webkit-border-radius:6px 6px 0 0;
-	border-radius:6px 6px 0 0;
+	-moz-border-radius:0.5em 0.5em 0 0;
+	-webkit-border-radius:0.5em 0.5em 0 0;
+	border-radius:0.5em 0.5em 0 0;
 }
 .as-application #slider-materail{
-	-moz-border-radius:0 0 6px 6px;
-	-webkit-border-radius: 0 0 6px 6px;
-	border-radius: 0 0 6px 6px;
+	-moz-border-radius:0 0 0.5em 0.5em;
+	-webkit-border-radius: 0 0 0.5em 0.5em;
+	border-radius: 0 0 0.5em 0.5em;
 }
 
 

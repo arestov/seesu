@@ -67,6 +67,7 @@ provoda.addPrototype("baseSuggestView", {
 			this.c.click(function(){
 				_this.md.view();
 			});
+			this.addWayPoint(this.c);
 		}
 		
 		return this;
