@@ -762,7 +762,15 @@ html.not-as-application, .not-as-application  body{
 .chart-song{
 	display: block;
 	overflow:hidden;
-}
+	margin-right: 1em;
+	}
+	.chart-song .song-track-name, 
+	.chart-song .song-artist-name{
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow:hidden;
+	}
+		
 
 .users-play-this li{
 	overflow:hidden;
