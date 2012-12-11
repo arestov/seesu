@@ -23,7 +23,11 @@ provoda.View.extendTo(vkLoginUI, {
 			_this.md.requestAuth();
 			e.preventDefault();
 		});
-		this.addWayPoint(sign_link);
+		this.addWayPoint(sign_link, {
+			canUse: function() {
+
+			}
+		});
 		var input = this.c.find('.vk-code');
 		var use_code_button = this.c.find('.use-vk-code').click(function() {
 			var vk_t_raw = input.val();
@@ -32,7 +36,11 @@ provoda.View.extendTo(vkLoginUI, {
 					connectApiToSeesu(vk_token, true);
 			}
 		});
-		this.addWayPoint(this.addWayPoint);
+		this.addWayPoint(input, {
+			canUse: function() {
+
+			}
+		});
 
 	}
 });
@@ -137,8 +145,12 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 		this.chbx_disabl.click(function() {
 			_this.md.setScrobbling(false);
 		});
-		this.addWayPoint(this.chbx_enabl);
-		this.addWayPoint(this.chbx_disabl);
+		this.addWayPoint(this.chbx_enabl, {
+			simple_check: true
+		});
+		this.addWayPoint(this.chbx_disabl, {
+			simple_check: true
+		});
 	},
 	"stch-has-session": function(state) {
 		if (state){
@@ -194,7 +206,9 @@ provoda.View.extendTo(fileInTorrentUI,{
 			_this.md.download();
 		}).text('torrent').attr('href', this.md.sr_item.torrent_link).appendTo(this.c);
 
-		this.addWayPoint(this.downloadlink);
+		this.addWayPoint(this.downloadlink, {
+			simple_check: true
+		});
 
 		pg.appendTo(this.c);
 
@@ -377,7 +391,16 @@ provoda.View.extendTo(songFileModelUI, {
 				_this.md.trigger('want-to-play-sf');
 			}
 		});
-		this.addWayPoint(this.c);
+		this.addWayPoint(this.c, {
+			canUse: function() {
+				return !_this.state('selected');
+			}
+		});
+		this.addWayPoint(this.progress_c, {
+			canUse: function() {
+				return _this.state('selected');
+			}
+		});
 
 		var _this = this;
 
@@ -484,7 +507,9 @@ provoda.View.extendTo(songFileModelUI, {
 				_this.md.trigger('want-to-play-sf');
 			}
 		});
-		this.addWayPoint(button);
+		this.addWayPoint(button, {
+			simple_check: true
+		});
 
 		this.c.append(pb_place);
 	},

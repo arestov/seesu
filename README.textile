@@ -180,13 +180,12 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 		эксперементальные плейлисты
 		чарты вообще
 		чарты недельные
-			чарты артистов
-			чарты треков
+		чарты артистов
+		чарты треков
 		чарты альбомов
 		похожие теги
 		радио тега echo
 		радио самодельное?
-		популярные треки по тегу
 		бесплатные треки http://ws.audioscrobbler.com/2.0/tag/dubstep/podcast.rss
 
 	составное радио echo через поиск
