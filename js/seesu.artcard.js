@@ -5,7 +5,7 @@ provoda.View.extendTo(artCardUI, {
 		this.createBase();
 	},
 	die: function() {
-		this._super();	
+		this._super();
 	},
 	state_change: {
 		"mp-show": function(opts) {
@@ -44,17 +44,17 @@ provoda.View.extendTo(artCardUI, {
 				this.root_view.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, {
 					source_info: {
 						page_md: _this.md,
-						source_name: 'artist-albums',
+						source_name: 'artist-albums'
 					},
 					from_artcard: true
 				});
 				
 				aul.appendTo(albs_groups);
-			};
+			}
 			albs_groups.appendTo(this.ui.albumsc);
 			
 			$('<a class="js-serv extends-header"></a>').text(localize("Show-all")  + " (" + all_albums.length + ")").click(function(){
-				_this.ui.albumsc.toggleClass('show-all-albums')
+				_this.ui.albumsc.toggleClass('show-all-albums');
 			}).appendTo(_this.ui.albumsc.children(".row-header"));
 		},
 		toptracks: function(list) {
@@ -128,13 +128,13 @@ provoda.View.extendTo(artCardUI, {
 					su.showSimilarArtists(_this.md.artist, {
 						source_info: {
 							page_md: _this.md,
-							source_name: 'similar-artists',
+							source_name: 'similar-artists'
 						},
 						
 						from_artcard: true
-					});	
+					});
 				})
-				.text(localize('similar-arts'))
+				.text(localize('similar-arts'));
 			var header = this.ui.similarsc.children('h5').empty().append(header_link);
 			
 			ul.removeClass('hidden');
@@ -156,7 +156,7 @@ provoda.View.extendTo(artCardUI, {
 			su.showTopTacks(_this.md.artist, {
 				source_info: {
 					page_md: _this.md,
-					source_name: 'top-tracks',
+					source_name: 'top-tracks'
 				},
 				from_artcard: true
 			});
@@ -180,7 +180,7 @@ mapLevelModel.extendTo(artCard, {
 	model_name: 'artcard',
 	page_name: "art card",
 	getURL: function() {
-		return '/catalog/' + su.encodeURLPart(this.artist);	
+		return '/catalog/' + su.encodeURLPart(this.artist);
 	},
 	loadInfo: function(){
 		this.loadTopTracks();
@@ -196,7 +196,7 @@ mapLevelModel.extendTo(artCard, {
 		this.updateState('loading-albums', true);
 		this.addRequest(lfm.get('artist.getTopAlbums',{'artist': this.artist })
 			.done(function(r){
-				_this.updateState('loading-albums', false)
+				_this.updateState('loading-albums', false);
 				if (r){
 					var albums = toRealArray(r.topalbums.album);
 					
@@ -209,7 +209,7 @@ mapLevelModel.extendTo(artCard, {
 				}
 			})
 			.fail(function(){
-				_this.updateState('loading-albums', false)
+				_this.updateState('loading-albums', false);
 			}), {
 				order: 1
 			}
@@ -301,7 +301,7 @@ contextRow.prototype = {
 		
 	},
 	C: function(name){
-		return this.parts[name]	 && this.parts[name].c;
+		return this.parts[name] && this.parts[name].c;
 	},
 	D: function(name, key, value){
 		if (name && this.parts[name]){
@@ -335,15 +335,15 @@ contextRow.prototype = {
 			
 		}
 		if (posFn){
-			//used for positioning 
+			//used for positioning
 			this.arrow.removeClass('hidden');
 			var pos = posFn();
 			var arrow_papos = this.arrow.offsetParent().offset();
 
 			//.removeClass('hidden');
-			this.arrow.css('left', ((pos.left + pos.owidth/2) - arrow_papos.left) + 'px')
+			this.arrow.css('left', ((pos.left + pos.owidth/2) - arrow_papos.left) + 'px');
 			
-		} 
+		}
 		
 	},
 	hide: function(not_itself, skip_arrow){

@@ -1,7 +1,7 @@
 .buttmen{
 	position:relative;
 	width:25px;
-	height:24px;
+	height:1.72rem;
 	
 	}
 	.buttmen a{
@@ -19,7 +19,7 @@
 	}
 	.buttmen .main-button{
 		display:block;
-		height:24px;
+		height:1.72rem;
 		width:25px;
 		}
 .buttmen-highlighting{
@@ -50,7 +50,7 @@
 	.buttmen-butts li{
 		position:absolute;
 		width:25px;
-		height:24px;
+		height:1.72rem;
 		top:0;
 		left:0;
 	}
@@ -75,8 +75,8 @@
 	}
 	.buttmen-hlts li{
 		position:absolute;
-		width:24px;
-		height:24px;
+		width:1.72rem;
+		height:1.72rem;
 		top:0;
 		left:0;
 		background:url(../i/white-dot.png) no-repeat 50% 50%;
@@ -84,17 +84,19 @@
 		text-align:center;
 	}
 	.buttmen-hlts .buttmen-hlt-top{
-		top:-24px;
+		top:-1.72rem;
 		
 		}
 	.buttmen-hlts .buttmen-hlt-right{
-		right:-24px;
+		right:-1.72rem;
 		left:auto;
 		}
 	.buttmen-hlts .buttmen-hlt-bottom{
 		top:100%;
-		bottom:-24px;
+		bottom:-1.72rem;
 		}
 	.buttmen-hlts .buttmen-hlt-left{
 		left:-25px;
 		}
+
+

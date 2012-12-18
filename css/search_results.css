@@ -78,7 +78,7 @@
 		.search-results-container button.active:after{
 			content: '↩';
 			position:absolute;
-			top:14px;
+			top:1rem;
 			right:5px;
 			line-height:20px;
 			height:20px;
@@ -112,11 +112,11 @@
 
 				}
 				ul.results-suggests .suggest .suggest-track_name{
-					line-height: 1.2em;
+					line-height: 1.2rem;
 					display: block;
 					}
 				ul.results-suggests .suggest .suggest-artist_name{
-					line-height: 1.2em;
+					line-height: 1.2rem;
 					color: #777;
 					display: block;
 					}
@@ -151,10 +151,3 @@
 		border-bottom:1px dashed #5c5c5c;
 	}
 
-.vk-track-suggest{
-	display:block;
-	font-size: 10px;
-	border:0  !important;
-	color:#aaa;
-	padding-left:5px;
-}

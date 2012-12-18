@@ -4,10 +4,10 @@ label{cursor:pointer}
 
 input[type=text],input[type=search],input[type=password]{
 	background:#ccc;
-	border: 1px solid #666;
-	padding:2px;
-	font-size: 1.15em;
-	border-radius: 2px;
+	border: 0.0714rem  solid #666;
+	padding:0.125rem;
+	font-size: 1.15rem;
+	border-radius: 0.214rem;
 }
 input[type=text]:focus,input[type=search]:focus,input[type=password]:focus{
 	outline:1px solid #a37b1b;
@@ -15,7 +15,7 @@ input[type=text]:focus,input[type=search]:focus,input[type=password]:focus{
 input[type=submit],
 input[type=button],
 button{
-	font-size: 1.15em;
+	font-size: 1.15rem;
 }
 
 dl,dt,dd,h5{
@@ -42,7 +42,7 @@ a[href='javascript:void(0)']{
 }
 
 h5{
-	font-size:1em;
+	font-size:1rem;
 	font-weight:400;
 }
 a.js-serv,
@@ -78,7 +78,7 @@ a.desc{
 .button-hole{
 	background:#555;
 	font: Arial, sans-serif;
-	font-size: 14px;
+	font-size: 1rem;
 	line-height: 1.5;
 	border-top:1px solid #474747;
 	border-radius:11px;
@@ -113,7 +113,7 @@ a.desc{
 	border-top:1px solid transparent;
 	padding:4px 0;
 	overflow: hidden;
-	margin-left:14px;
+	margin-left:1rem;
   	-webkit-transition: margin-left 0.1s ease-out;  
   	-moz-transition: margin-left 0.1s ease-out; 
   	-o-transition: margin-left 0.1s ease-out; 
@@ -125,7 +125,7 @@ a.desc{
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		overflow:hidden;
-		height:24px;
+		height:1.72rem;
 		}
 	.nav-item b{
 		display:none;
@@ -157,7 +157,7 @@ a.desc{
 
 .nnav{
 	
-	padding:4px 14px 4px 9px;
+	padding:4px 1rem 4px 9px;
 
 	
 	margin-right:10px;
@@ -243,11 +243,13 @@ a.desc{
 	overflow: hidden;
 	}
 	.people-list-item .desc{
-		font-size:0.8em;
+		font-size:0.8rem;
 		line-height:1.4;
 		display:block;
 	}
 	.people-image{
-		margin-right:14px;
+		margin-right:1rem;
 		float:left;
 	}
+
+

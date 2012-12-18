@@ -96,7 +96,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	strong{
 		color:#333;
 		font-weight:700;
-		font-size:1.15em;
+		font-size:1.15rem;
 	}
 	#message-flash-secur
 	img{
@@ -119,7 +119,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	position:absolute;
 }
 #i_f_sm2.sm-inited{
-	left:-100em;
+	left:-100rem;
 	z-index:-10;
 }
 .selected-mf .mf-progress {
@@ -206,7 +206,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		display:none;
 		
 		margin-right: 7px;
-		font-size: 0.85em;
+		font-size: 0.85rem;
 		color: #666;
 	}
 	.track-progress:hover .track-node-text{
@@ -223,12 +223,12 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 .song-track-name {
 	display: block;
-	margin-right:0.5em;
+	margin-right:0.5rem;
 	}
 
 .song-artist-name {
 	display: block;
-	font-size: 0.85em;
+	font-size: 0.85rem;
 	color: #6B6B6B;
 	}
 
@@ -255,14 +255,14 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 .full-song-title{
 	display: block;
-	padding-left: 14px;
+	padding-left: 1rem;
 	min-height: 39px;
 	overflow: hidden;
 	position: relative;
 	}
 .has-no-track-title .song-artist-name {
-	font-size: 14px;
-	margin-top: 16px;
+	font-size: 1rem;
+	margin-top: 1.14rem;
 	color: #8C8C8C;
 	}
 .song-image-con {
@@ -363,13 +363,13 @@ a.track-name-loading:hover{
 }
 
 .page-scheme .song-track-name {
-	height: 1.5em;
+	height: 1.5rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	}
 .page-scheme .song-artist-name{
-	height: 1.5em;
+	height: 1.5rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -518,15 +518,15 @@ a.track-name-loading:hover{
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-image-con,
 	.page-scheme .tracks-for-play .track-node .song-image-con{
-		height: 24px;
-		width: 24px;
+		height: 1.72rem;
+		width: 1.72rem;
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-track-name,
 	.show-zoom-to-track .v-song-sibling .track-node .song-artist-name,
 	.page-scheme .tracks-for-play .track-node .song-track-name,
 	.page-scheme .tracks-for-play .track-node .song-artist-name{
 
-		font-size: 0.75em;
+		font-size: 0.75rem;
 		
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -542,7 +542,7 @@ a.track-name-loading:hover{
 		
 		height: 1.4em;
 		line-height: 1.4em;
-		margin-top: 0.2em;
+		margin-top: 0.2rem;
 		}
 .show-zoom-to-track .has-no-track-title .song-artist-name{
 	margin-top: 0;
@@ -567,4 +567,10 @@ a.track-name-loading:hover{
 .show-zoom-to-track .player-song.v-song-sibling .full-song-title{
 	padding-right: 22px;
 }
+
+
+
+
+
+
 

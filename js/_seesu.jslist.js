@@ -104,8 +104,8 @@ var jsLoadComplete,
 				js_loadtest[i] = null;
 				cur.fn();
 			}
-		};
-	};;
+		}
+	};
 
 
 
