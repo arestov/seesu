@@ -48,7 +48,7 @@ var jsLoadComplete,
 	"js/models/start_page.js",
 	"js/models/app_md.js",
 	
-	"js/seesu.artcard.js",
+	"js/models/artcard.js",
 	"js/seesu.s.js",
 	"js/libs/mp3_search.js",
 	
