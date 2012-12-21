@@ -73,7 +73,7 @@ provoda.addPrototype("songsListBaseView", {
 	},
 	'collch-song': function(name, arr) {
 		for (var i = 0; i < arr.length; i++) {
-			var view = this.getFreeChildView(name, arr[i]);
+			var view = this.getFreeChildView(name, arr[i], 'main', {lite: this.opts && this.opts.overview});
 			if (view){
 				this.appendSongDOM(view, arr[i], arr, i);
 			}

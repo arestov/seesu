@@ -54,7 +54,9 @@ provoda.View.extendTo(mfComplectUI, {
 				var header = $('<a class="js-serv"></a>').click(function() {
 					_this.md.toggleOverstocked();
 				}).text(this.header_text);
-				this.addWayPoint(header);
+				this.addWayPoint(header, {
+					simple_check: true
+				});
 				this.header_c.empty().append(header);
 			}
 		},
@@ -134,7 +136,9 @@ provoda.View.extendTo(mfCorUI, {
 		this.more_songs_b.click(function() {
 			_this.md.switchMoreSongsView();
 		});
-		this.addWayPoint(this.more_songs_b);
+		this.addWayPoint(this.more_songs_b, {
+			simple_check: true
+		});
 		$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
 		this.c.prepend(this.sall_songs);
 
@@ -225,7 +229,9 @@ provoda.View.extendTo(mfCorUI, {
 					if (cant_show){
 						li.addClass("cant-show")
 					}
-					_this.addWayPoint(li);
+					_this.addWayPoint(li, {
+						simple_check: true
+					});
 
 
 					var imgs = $();

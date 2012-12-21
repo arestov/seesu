@@ -141,6 +141,10 @@ localizer = {
 		"original": "regisration",
 		"ru": "регистрация"
 	},
+	"listening": {
+		"original": "is listening",
+		"ru": "слушает"
+	},
 	"listen-this":{
 		"original": "listen this",
 		"ru": "слушал это"	
@@ -434,6 +438,10 @@ localizer = {
 	"show-them": {
 		"original": "show them",
 		"ru": "показать их"
+	},
+	"show": {
+		"original": "show",
+		"ru": "показать"
 	},
 	"direct-vk-search": {
 		"original": "Search mp3  directly in vkontakte",

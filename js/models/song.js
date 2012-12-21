@@ -9,9 +9,6 @@ var song;
 
 	baseSong.extendTo(song, {
 		page_name: 'song page',
-		getLevNum: function() {
-			return this.map_level_num - 1;
-		},
 		'stch-lfm-image': function(state) {
 			if (state){
 				if (state.lfm_id){

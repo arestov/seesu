@@ -92,9 +92,6 @@ baseSuggest.extendTo(struserSuggest, {
 		return this.user_id;
 	},
 	onView: function(){
-		//this.pl.add(this.mo);
-		//this.rpl.hide();
-		//su.showStaticPlaylist(this.pl, true);
 		this.mo.postToVKWall(this.user_id);
 		this.row.hide();
 	}

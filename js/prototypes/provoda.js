@@ -231,7 +231,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				old_value		= obj_to_change && obj_to_change[name],
 				method;
 
-			var stateChanger = !skip_handler && this['stch-' + name] || (this.state_change && this.state_change[name]);
+			var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
 			if (stateChanger){
 				if (typeof stateChanger == 'function'){
 					method = stateChanger;
@@ -387,6 +387,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			this.views[i].die();
 		}
 		this.removeDeadViews();
+		return this;
 	},
 	die: function(){
 		this.stopRequests();
@@ -395,6 +396,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			this.children[i].die();
 		}
 		this.trigger('die');
+		return this;
 	},
 	getChild: function(collection_name) {
 		return this.children_models[collection_name]
@@ -408,6 +410,30 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	},
 	addChild: function(md, name) {
 		this.children.push.call(this.children, md);
+	},
+	getRooConPresentation: function(mplev_view, get_ancestor) {
+		var views = this.getViews();
+		for (var i = 0; i < views.length; i++) {
+			var cur = views[i];
+			var target = cur.root_view.getChildView(this, 'main');
+			if (target == cur){
+				return cur;
+			} else {
+				var ancestor;
+				if (mplev_view){
+					ancestor = cur.getAncestorByRooViCon('details');
+				} else {
+					ancestor = cur.getAncestorByRooViCon('main');
+				}
+				if (ancestor){
+					if (get_ancestor){
+						return ancestor;
+					} else {
+						return cur;
+					}
+				}
+			}
+		}
 	},
 	getViews: function(name, hard_deads_check) {
 		this.removeDeadViews(hard_deads_check);
@@ -541,8 +567,43 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this;
 	},
 	children_views: {},
-	addWayPoint: function(point) {
-		this.way_points.push(point);
+	canUseWaypoints: function() {
+		return true;
+	},
+	canUseDeepWaypoints: function() {
+		return true;
+	},
+	getWaypoints: function() {
+		return this.canUseWaypoints() ? this.way_points : [];
+	},
+	getAllWaypoints: function(exept) {
+		var  all = [];
+		all = all.concat(this.getWaypoints());
+		all = all.concat(this.getDeepWaypoints());
+		return all;
+	},
+	getDeepWaypoints: function(exept) {
+		var all = [];
+		if (this.canUseDeepWaypoints()){
+			var views = this.getDeepChildren(exept);
+			
+			for (var i = 0; i < views.length; i++) {
+				all = all.concat(views[i].getWaypoints());
+			}
+		}
+		
+		return all;
+	},
+	addWayPoint: function(point, opts) {
+		var obj = {
+			node: point,
+			canUse: opts && opts.canUse,
+			view: this
+		};
+		if (!opts || (!opts.simple_check && !opts.canUse)){
+			//throw new Error('give me check tool!');
+		}
+		this.way_points.push(obj);
 	},
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;
@@ -610,6 +671,30 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	
 	},
+	getAncestorByRooViCon: function(view_space) {
+		//by root view connection
+		var target_ancestor;
+		var cur_ancestor = this;
+		while (!target_ancestor && cur_ancestor){
+			if (cur_ancestor == this.root_view){
+				break;
+			} else {
+				if (cur_ancestor.parent_view == this.root_view){
+					if (cur_ancestor == this.root_view.getChildView(cur_ancestor.md, view_space)){
+						target_ancestor = cur_ancestor;
+						break;
+					}
+				}
+			}
+
+			cur_ancestor = cur_ancestor.parent_view;
+		}
+		return target_ancestor;
+	},
+	getChildView: function(md, view_space) {
+		var complex_id = this.view_id  + '_' + view_space;
+		return md.getView(complex_id, true);
+	},
 	getFreeChildView: function(child_name, md, view_space, opts) {
 		view_space = view_space || 'main';
 		var complex_id = this.view_id  + '_' + view_space;
@@ -639,6 +724,28 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	addChild: function(view, child_name) {
 		this.children.push.call(this.children, view);
+	},
+	getDeepChildren: function(exept) {
+		var all = [];
+		var big_tree = [];
+		exept = toRealArray(exept);
+
+		big_tree.push(this);
+		//var cursor = this;
+		while (big_tree.length){
+			var cursor = big_tree.shift();
+
+			for (var i = 0; i < cursor.children.length; i++) {
+				var cur = cursor.children[i];
+				if (all.indexOf(cur) == -1 && exept.indexOf(cur) == -1){
+					big_tree.push(cur);
+					all.push(cur);
+				}
+				
+			}
+
+		}
+		return all;
 	},
 	remove: function() {
 		var c = this.getC();

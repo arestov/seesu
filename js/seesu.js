@@ -117,15 +117,15 @@ appModel.extendTo(seesuApp, {
 		this.notf = new gMessagesStore(
 			function(value) {
 				return suStore('notification', value, true);
-			}, 
+			},
 			function() {
 				return suStore('notification');
 			}
 		);
 		this.lfm_auth = new LfmAuth(lfm, {
-			deep_sanbdox: app_env.deep_sanbdox, 
+			deep_sanbdox: app_env.deep_sanbdox,
 			callback_url: 'http://seesu.me/lastfm/callbacker.html',
-			bridge_url: 'http://seesu.me/lastfm/bridge.html',
+			bridge_url: 'http://seesu.me/lastfm/bridge.html'
 		});
 
 		this.app_md = this;
@@ -138,7 +138,6 @@ appModel.extendTo(seesuApp, {
 		if (app_env.deep_sanbdox){
 			this.updateState('deep-sandbox', true);
 		}
-		var _this = this;
 
 
 		
@@ -198,10 +197,10 @@ appModel.extendTo(seesuApp, {
 
 		var ext_view;
 		if (app_env.chrome_extension){
-			addBrowserView(ChromeExtensionButtonView, 'chrome_ext')
+			addBrowserView(ChromeExtensionButtonView, 'chrome_ext');
 		} else if (app_env.opera_extension && window.opera_extension_button){
 			this.opera_ext_b = opera_extension_button;
-			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: opera_extension_button})
+			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: opera_extension_button});
 		}
 				
 
@@ -248,7 +247,7 @@ appModel.extendTo(seesuApp, {
 		this.onRegistration('dom', function(cb) {
 			if (this.ui && this.ui.can_fire_on_domreg){
 				cb();
-			}	
+			}
 		});
 		this.mp3_search = (new mp3Search({
 			vk: 5,
@@ -290,8 +289,8 @@ appModel.extendTo(seesuApp, {
 		this.mp3_search.on('list-changed', function(list){
 			list = $filter(list, 'name').sort();
 			for (var i = 0; i < list.length; i++) {
-				list[i] = list[i].slice(0, 2)
-			};
+				list[i] = list[i].slice(0, 2);
+			}
 			reportSearchEngs(list.join(','));
 		});
 
@@ -338,7 +337,7 @@ appModel.extendTo(seesuApp, {
 		this.lfm_imgq = new funcsQueue(700);
 		setTimeout(function(){
 			_this.checkStats();
-		},100)
+		},100);
 
 		suReady(function() {
 			_this.lfm_auth.try_to_login();
@@ -347,7 +346,7 @@ appModel.extendTo(seesuApp, {
 					_this.trackTime.apply(_this, big_timer.q.shift());
 					//console.log()
 				}
-			}, 300)
+			}, 300);
 		});
 
 		setTimeout(function() {
@@ -360,12 +359,12 @@ appModel.extendTo(seesuApp, {
 					} catch(e){}
 				}
 				_this.letAppKnowSetting(cur, value);
-			};
+			}
 			var last_ver = suStore('last-su-ver');
 			_this.migrateStorage(last_ver);
 			suStore('last-su-ver', version, true);
 			
-		}, 200)
+		}, 200);
 	},
 	migrateStorage: function(ver){
 		if (!ver){
@@ -475,8 +474,6 @@ appModel.extendTo(seesuApp, {
 		var sp = new SearchPage();
 		sp.init();
 		return sp;
-
-		return sp;
 	},
 	getPlaylists: function(query) {
 		var r = [];
@@ -534,8 +531,8 @@ appModel.extendTo(seesuApp, {
 				
 				var cver = r.latest_version.number;
 				if (cver > _this.version) {
-					var message = 
-						'Suddenly, Seesu ' + cver + ' has come. ' + 
+					var message =
+						'Suddenly, Seesu ' + cver + ' has come. ' +
 						'You have version ' + _this.version + '. ';
 					var link = r.latest_version.link;
 					if (link.indexOf('http') != -1) {
@@ -551,8 +548,8 @@ appModel.extendTo(seesuApp, {
 
 });
 
-window.seesu = window.su = new seesuApp(); 
-su.init(3.6);
+window.seesu = window.su = new seesuApp();
+su.init(3.8);
 
 
 
@@ -569,15 +566,15 @@ su.init(3.6);
 	if (app_env.cross_domain_allowed){
 		su.mp3_search.add(new isohuntTorrentSearch());
 
-		yepnope({
+		/*yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
 			complete: function(){
-				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(3500, 5000, 4)))
+				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(5000, 10000, 4)))
 				su.mp3_search.add(window.nms);
 				
 				//$(document.body).append(_this.c);
 			}
-		});
+		});*/
 	} else {
 		su.mp3_search.add(new googleTorrentSearch(app_env.cross_domain_allowed));
 	}
@@ -670,7 +667,7 @@ var render_recommendations_by_username = function(username){
 };
 var render_recommendations = function(){
 	var pl_r = su.preparePlaylist({
-		title: 'Recommendations for you', 
+		title: 'Recommendations for you',
 		type: 'artists by recommendations'
 	});
 
@@ -755,7 +752,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 		var pl_r = this.createEnvPlaylist({
 			title: title,
 			type: "cplaylist",
-			data: {name: title} 
+			data: {name: title}
 		});
 		this.watchOwnPlaylist(pl_r);
 		this.playlists.push(pl_r);
@@ -780,7 +777,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 	},
 	rebuildPlaylist: function(saved_pl){
 		var p = this.createEnvPlaylist({
-			title: saved_pl.playlist_title, 
+			title: saved_pl.playlist_title,
 			type: saved_pl.playlist_type,
 			data: {name: saved_pl.playlist_title}
 		});
@@ -797,7 +794,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 			for (var i=0; i < spls.length; i++) {
 				recovered[i] = this.rebuildPlaylist(spls[i]);
 			}
-		} 
+		}
 		
 		this.playlists = recovered;
 		this.trigger('playlsits-change', this.playlists);

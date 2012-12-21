@@ -20,9 +20,6 @@
 })(window);
 
 
-
-
-
 var tempTool = {
 	loadPlaylist: function() {
 		$.ajax({
@@ -35,7 +32,7 @@ var tempTool = {
 			var playlist = su.preparePlaylist({
 				title: title,
 				type: "cplaylist",
-				data: {name: title} 
+				data: {name: title}
 			});
 
 			var arr = r.split(/\n/);
@@ -43,14 +40,14 @@ var tempTool = {
 				if (el){
 					var song = guessArtist(el);
 					if (!song.artist){
-						throw "Shhiii!"
+						throw "Shhiii!";
 					}
 					playlist.add(song);
 				}
 			});
 			su.showStaticPlaylist(playlist);
 			dizi = playlist;
-		})
+		});
 	},
 	downloadFile: function(url) {
 		app_env.openURL(url);
@@ -86,7 +83,7 @@ Panoramator.prototype = {
 				return true;
 			}
 			e.preventDefault();
-			_this.handleUserStart(e)
+			_this.handleUserStart(e);
 		});
 		this.lift = opts.lift;
 		this.ready_class_name = opts.ready_class_name || 'ready-to-use';
@@ -114,7 +111,7 @@ Panoramator.prototype = {
 			return {
 				main: 0,
 				above_limit: target_pos
-			}
+			};
 		} else {
 			var allowed_length = this.total_width - this.viewport_width;
 			if (-target_pos > allowed_length){
@@ -126,7 +123,7 @@ Panoramator.prototype = {
 				return {
 					main: target_pos,
 					above_limit: 0
-				}
+				};
 			}
 		}
 	},
@@ -166,7 +163,7 @@ Panoramator.prototype = {
 
 				return true;
 			}
-			// 
+			//
 			
 			//with speed or not?
 
@@ -177,7 +174,7 @@ Panoramator.prototype = {
 			}
 			if (all_path > 5){
 			//	console.log(all_path)
-				return true
+				return true;
 			} else {
 				var vwpp = this.viewport.offset().left;
 				var cur_pos = last.cpos - vwpp;
@@ -185,9 +182,9 @@ Panoramator.prototype = {
 				var center_factor = cur_pos * (1/(this.viewport_width/2));
 				if (center_factor > 0){
 
-					this.prev(false, 300 - 220 * Math.abs(center_factor))
+					this.prev(false, 300 - 220 * Math.abs(center_factor));
 				} else if (center_factor < 0) {
-					this.next(false, 300 - 220 * Math.abs(center_factor))
+					this.next(false, 300 - 220 * Math.abs(center_factor));
 				}
 			//	console.log(center_factor);
 				
@@ -210,9 +207,9 @@ Panoramator.prototype = {
 		if (this.checkVectorAndSpeed()){
 			var move_data = this.getMoveData(lift_target_pos);
 			if (move_data.above_limit){
-				 this.lift.animate({
-	                "margin-left": move_data.main + 'px'
-	            }, this.standart_animation_time);
+				this.lift.animate({
+					"margin-left": move_data.main + 'px'
+				}, this.standart_animation_time);
 			}
 
 		}
@@ -275,7 +272,7 @@ Panoramator.prototype = {
         return next ? Math.max(pos, -(this.total_width - this.viewport_width)) : Math.min(pos, 0);
     },
     getLiftPos: function(){
-    	return -parseFloat(this.lift.css("margin-left")) || 0;
+		return -parseFloat(this.lift.css("margin-left")) || 0;
     },
     getTotalWidth: function() {
         var width = 0;
@@ -291,7 +288,7 @@ Panoramator.prototype = {
 
     },
     getNextEdgeElem: function(lift_pos){
-    	var last_visible
+		var last_visible;
 
         for (var i = 0; i < this.lift_items.length; i++) {
 
@@ -304,7 +301,7 @@ Panoramator.prototype = {
         return last_visible;
     },
     getPrevEdgeElem: function(lift_pos){
-    	var last_visible;
+		var last_visible;
 
         for (var i = this.lift_items.length - 1; i >= 0; i--) {
             last_visible = this.isEdgeElem(this.lift_items[i], lift_pos);
@@ -315,7 +312,7 @@ Panoramator.prototype = {
         return last_visible;
     },
     getAnimationTime: function(target_pos, lift_pos, speed){
-    	return  ( target_pos - lift_pos )/(speed * 1.5);
+		return  ( target_pos - lift_pos )/(speed * 1.5);
     },
     next: function(speed, time){
 		this.lift.stop(false, true);
@@ -323,13 +320,13 @@ Panoramator.prototype = {
 		var last_visible = this.getNextEdgeElem(lift_pos);
        
         if (last_visible){
-        	var target_pos = this.getTargetPos(last_visible, true);
+			var target_pos = this.getTargetPos(last_visible, true);
             this.lift.animate({
                 "margin-left": target_pos + 'px'
             },  speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
-            return true
+			return true;
         } else {
-        	return false;
+			return false;
         }
 
         
@@ -340,14 +337,14 @@ Panoramator.prototype = {
 		var last_visible = this.getPrevEdgeElem(lift_pos);
         
         if (last_visible){
-        	var target_pos = this.getTargetPos(last_visible);
+			var target_pos = this.getTargetPos(last_visible);
             this.lift.animate({
                 "margin-left": target_pos + 'px'
             }, speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
             return true;
 
         } else {
-        	return false;
+			return false;
         }
         
 	}
@@ -414,7 +411,7 @@ var loadImage = function(opts) {
 		setTimeout(function() {
 			deferred.reject(node, 'timeout');
 			unbindEvents();
-		}, opts.timeout)
+		}, opts.timeout);
 	}
 
 	var completeLoad = function() {
@@ -449,7 +446,7 @@ var getInternetConnectionStatus = function(cb) {
 	img.src = "http://www.google-analytics.com/__utm.gif?" + Math.random() + new Date();
 };
 var async_script_support = "async" in document.createElement("script");
-var xhr2_support = window.XMLHttpRequest && "withCredentials" in new XMLHttpRequest;  //https://gist.github.com/1431660
+var xhr2_support = window.XMLHttpRequest && "withCredentials" in (new XMLHttpRequest());  //https://gist.github.com/1431660
 var aReq = function(options){
 	if (options.dataType != "jsonp"){
 		return $.ajax(options);
@@ -466,7 +463,7 @@ var aReq = function(options){
 			script,
 			callback_func_name,
 			script_load_timeout,
-			deferred 			= $.Deferred(),
+			deferred			= $.Deferred(),
 			cancelLoad = function() {
 				if (img){
 					img.src = null;
@@ -476,10 +473,10 @@ var aReq = function(options){
 					script.src = null;
 				}
 				if (callback_func_name && window[callback_func_name]){
-					window[callback_func_name] = $.noop()
+					window[callback_func_name] = $.noop();
 				}
 			},
-			complex_response 	= {
+			complex_response	= {
 				abort: function(){
 					this.aborted = true;
 					cancelLoad();
@@ -625,7 +622,7 @@ var abortage = {
 		
 		
 		return func_name;
-	};	
+	};
 })();
 function getSomething(array){
 	return array[(Math.random()*(array.length-1)).toFixed(0)];
@@ -672,7 +669,7 @@ document_states.prototype = {
 				this.dub.documentElement.className = this.html_el_state;
 			}
 			
-		} 
+		}
 	},
 	toggleState: function(state_of, state){
 		if (state_of == 'html_el'){
@@ -681,7 +678,7 @@ document_states.prototype = {
 				this.dub.documentElement.className  = this.html_el_state;
 			}
 			
-		} 
+		}
 	},
 	remove_state: function(state_of, state){
 		if (state_of == 'html_el'){
@@ -691,7 +688,7 @@ document_states.prototype = {
 			}
 			
 		}
-	}, 
+	},
 	connect_ui: function(dub){
 		if (dub.documentElement){
 			dub.documentElement.className =  this.html_el_state;
@@ -712,7 +709,7 @@ function get_url_parameters(str){
 		full_url[_h[0]] = _h[1];
 	}
 	return full_url;
-};
+}
 
 var detectBrowser;
 (function(w) {
@@ -786,14 +783,14 @@ window.app_env = (function(wd){
 		env.as_application = false;
 		env.needs_url_history = true;
 		
-	} else 
+	} else
 	if (wd.pokki && wd.pokki.show){
 		env.safe_data = true;
 		env.app_type = 'pokki_app';
 		env.cross_domain_allowed = true;
 		env.deep_sanbdox = true;
 		//env.as_application = true;
-	} else 
+	} else
 	if (typeof btapp == 'object'){
 		env.app_type = 'utorrent_app';
 		env.as_application = false;
@@ -987,7 +984,7 @@ if (typeof widget != 'object'){
 			};
 			var beforeLoaded = function(nurl){
 				var done = beforeLoadedCb.apply(this, arguments);
-				//beforeLoaded func must contain "return true" in it's body 
+				//beforeLoaded func must contain "return true" in it's body
 				if (!done) {
 					return true;
 				} else{
@@ -1038,7 +1035,7 @@ if (typeof console != 'object'){
 		};
 	} else {
 		console.log = function(){};
-	}	
+	}
 }
 
 
@@ -1103,7 +1100,7 @@ var handleDocument = function(d, tracking_opts) {
 						if (cl.match(/localize/)){
 							var term = localizer[cl.replace('localize-','')];
 							if (term && term[lang]){
-								emptyNode(el).appendChild(d.createTextNode(term[lang]))
+								emptyNode(el).appendChild(d.createTextNode(term[lang]));
 								//$(el).text();
 								break;
 							}
@@ -1163,5 +1160,131 @@ var localize= (function(){
 			return 'no this localization';
 		}
 		
-	}
+	};
 })();
+
+
+(function(global) {
+	
+
+
+	
+
+	
+	var getRulesString = function(arr, plus_original) {
+		var string = '';
+		for (var i = 0; i < arr.length; i++) {
+			if (plus_original){
+				string += '\t' + arr[i].name + ': ' + arr[i].original + ';\n';
+			}
+			string += '\t' + arr[i].name + ': ' + arr[i].new_values.join(' ') + ';\n';
+		}
+		return string;
+	};
+
+
+
+
+	var getRemUnitValue = function(value, root_font_size) {
+		return (value/root_font_size) + 'rem';
+	};
+
+	var culculateEMRule = function(rule, root_font_size) {
+		var result = [];
+		var parsed_rule = {};
+		var lines = rule.style.cssText.split(/\;\n|\;/);
+		var px_props = [];
+		for (var i = 0; i < lines.length; i++) {
+			var parts = lines[i] && lines[i].split(/\s?\:\s?/);
+			if (parts && parts[1].indexOf('px') != -1){
+				var values = parts[1].split(/\s/);
+				var new_values = [];
+				for (var j = 0; j < values.length; j++) {
+					var cur_val = values[j];
+					if (cur_val.indexOf('px') == -1){
+						new_values[j] = cur_val;
+					} else {
+						var real_val = parseFloat(cur_val.replace('px'));
+						if (real_val){
+							new_values[j] = getRemUnitValue(real_val, root_font_size);
+						} else {
+							new_values[j] = 0;
+						}
+						
+					}
+					
+				}
+				if (new_values.join(' ') != 0){
+					px_props.push({
+						name: parts[0].replace(/^\s*/,''),
+						original: parts[1],
+						value: values,
+						new_values: new_values
+					});
+				}
+
+
+				
+			}
+
+		}
+
+		return {
+			rules: px_props,
+			selector: rule.selectorText,
+			rule: rule,
+			string: px_props.length ? getRulesString(px_props) : ''
+		};
+
+	};
+
+	var createStyleSheet = function(sheet, root_font_size, string) {
+		if (sheet.href.indexOf('sizes.css') != -1){
+			return '';
+		}
+
+		var big_string = '/* path: ' + sheet.href.replace(location.origin, '') + '*/\n';
+
+		var complects = [];
+		for (var i = 0; i < sheet.rules.length; i++) {
+			var cur = sheet.rules[i];
+			//cur.selectorText
+			if (cur.style && cur.style.cssText.indexOf('px') != -1){
+				var rulll= culculateEMRule(cur, root_font_size);
+
+				complects.push(rulll);
+				if (rulll.string){
+
+					big_string += rulll.selector + ' {\n' + '\t/* rem hack */\n' + rulll.string + '}\n\n';
+				}
+				
+			}
+			
+		}
+
+		return string ? big_string : complects;
+	};
+	global.checkPX = function() {
+		var complects = [];
+
+	
+		var root_font_size = $(document.documentElement).css('font-size');
+		root_font_size = parseFloat(root_font_size.replace('px'));
+
+
+		var big_string = '';
+
+		for (var i = 0; i < document.styleSheets.length; i++) {
+
+			big_string += createStyleSheet(document.styleSheets[i], root_font_size, true);
+			
+		}
+
+		return big_string;
+
+	};
+	
+	
+})(this);
+	
+

@@ -1,3 +1,6 @@
+html{
+	font-size:14px;
+}
 body{
 	margin:0;
 	padding:0;
@@ -5,7 +8,7 @@ body{
 	
 	height:596px;
 	line-height:1.5;
-	font-size:14px;
+	
 	font-family: Arial, Helvetica ,sans-serif;
 	}
 body.slice-for-height{
@@ -28,87 +31,15 @@ html.not-as-application, .not-as-application  body{
 	padding-bottom:15px;
 }
 
-a img{border:0;}
-label{cursor:pointer}
-input[type=text],input[type=search],input[type=password]{
-	background:#ccc;
-	border: 1px solid #666;
-	padding:2px;
-	font-size: 1.15em;
-	border-radius: 2px;
-}
-input[type=text]:focus,input[type=search]:focus,input[type=password]:focus{
-	outline:1px solid #a37b1b;
-}
-input[type=submit],
-input[type=button],
-button{
-	font-size: 1.15em;
-}
 
-dl,dt,dd,h5{
-	margin:0;
-	padding:0;
-}
-ul{list-style:none;padding:0;margin:0;}
-a{color:#d5d5d5;}
-
-a[href],a.js-serv{
-	color:#ABABAB;
-	text-decoration:none;
-	border-bottom:1px solid #737373;
-	}
-	a[href]:hover,a.js-serv:hover{
-		color:#E6E6E6;
-		border-bottom-color:#9C9C9C;
-		}
-	a[href]:active,a.js-serv:active{
-		color:#999;
-		}
-a[href='javascript:void(0)']{
-	border-bottom-style:dotted;
-}
-
-h5{
-	font-size:1em;
-	font-weight:400;
-}
-a.js-serv,
-a.bbcode_artist,
-a.bbcode_tag{
-	cursor:pointer;
-	text-decoration:none;
-	border-bottom-style:dotted!important;
-	}
-	a.js-serv:hover,
-	a.bbcode_artist:hover,
-	a.bbcode_tag:hover{
-		border-bottom-color:#9C9C9C   !important;
-		}
-	a.js-serv:active,
-	a.bbcode_artist:active,
-	a.bbcode_tag:active{
-		border-bottom-color:#999  !important;
-		}
-.hidden{
-	display:none !important;
-}
-a.desc{
-	color:#666;
-	border-bottom-color:#5e5e5e !important;
-}
-	a.desc:hover{
-		color:#5e5e5e;
-		border-bottom-color:#5a5a5a !important;
-		}
 .keys-navigation-focus{
-	box-shadow: 0px 0px 3pt 2pt orange;
+	box-shadow: 0 0 3pt 2pt orange;
 	}
 	
 .app-loading-mark{
-	height: 24px;
+	height: 1.72rem;
 	background: url(../i/spinner.gif) no-repeat;
-	margin: 12px 0;
+	margin: 1rem 0;
 	}
 	.app-loaded .app-loading-mark{
 		display: none;
@@ -134,17 +65,17 @@ a.desc{
 	border-bottom: 1px solid #6e6e6e;
 	background: #5a5a5a;
 	margin: 5px -13px 11px;
-	padding: 0 13px 14px;
+	padding: 0 13px 1rem;
 	}
 	.song-row-content .rept-song{
-		padding-top:12px;
+		padding-top:1rem;
 		}
 .row-listeners-context{
 	margin-top:15px;
 }
 .big-listener-info{
 	overflow:hidden;
-	padding-top:12px;
+	padding-top:1rem;
 }
 .moplas-block .show-all-songs{
 	float:right;
@@ -166,7 +97,7 @@ a.desc{
 		cursor: pointer;
 		color:gray;
 		display: inline-block;
-		padding:6px 10px;
+		padding:5px 10px;
 		text-shadow: 0 1px 0 #4A4A4A;
 		}
 		.moplas-block .show-all-songs a:hover{
@@ -181,20 +112,19 @@ a.desc{
 			border-bottom: 1px dotted;
 			}
 	.moplas-block.want-more-songs .show-all-songs a{
-		border-bottom-left-radius: 6px;
+		border-bottom-left-radius: 0.5rem;
 		}
 .moplas-block{
-	font-size: 14px;
 	padding:0;
-	min-height:79px;
+	min-height:81px;
 	
 	}
 	.music-files-lists{
-		min-height: 31px;
+		min-height: 33px;
 	}
 	.moplas-block h4{
 		font-weight: 400;
-		margin:7px 0 7px 53px;
+		margin:0.5rem 0 0.5rem 53px;
 
 		}
 	.moplas-block ul {
@@ -203,7 +133,7 @@ a.desc{
 		.moplas-block .moplas-list li{
 			cursor: pointer;
 			border-top: 1px solid transparent;
-			padding:6px 5px;
+			padding:0.5rem 5px;
 			color:#999;
 			border-bottom: 1px solid transparent;
 			}
@@ -214,7 +144,7 @@ a.desc{
 				float: left;
 				margin-right: 5px;
 				margin-top: -8px;
-				margin-bottom: -12px;
+				margin-bottom: -1rem;
 				margin-left: 5px;
 				height: 31px;
 				width: 32px;
@@ -277,7 +207,7 @@ a.desc{
 	
 
 		.selected-mf .mf-text{
-			font-size: 12px;
+			font-size: 0.86rem;
 			}
 			.want-more-songs .selected-mf .mf-text{
 				font-size: inherit;
@@ -308,12 +238,11 @@ a.desc{
 	top:5px;
 	cursor:pointer;
 	right:8px;
-	font-size:16px;
 	color:#ffffff;
 	font-family:"Trebuchet MS", sans-serif;
 	height:25px;
-	font-size:1.4em;
-	line-height:25px;
+	font-size:1.2rem;
+	line-height:1;
 	}
 	
 	#close-widget:hover{
@@ -343,7 +272,7 @@ a.desc{
 	background: url(../i/spinner_t.gif) no-repeat 100% 0
 }
 .add-to-lfmfav{
-	margin-top:12px;
+	margin-top:1rem;
 	opacity: 0.3;
 	}
 
@@ -362,13 +291,13 @@ a.desc{
 }
 .lfm-finish .lfm-code{
 	width: 314px;
-	margin-right: 24px;
+	margin-right: 1.72rem;
 }
 .waiting-lfm-auth .lfm-finish{
 	opacity:1;
 }
 .lfm-auth p{
-	margin:0.3em 0;
+	margin:0.3rem 0;
 	}
 .lfm-auth .real-lfm-auth-part{
 	margin-bottom: 20px;
@@ -380,38 +309,48 @@ a.desc{
 
 .login-lastfm-button,.lastfm-auth-bp{
 	float:right;
-	margin-left:12px;
+	margin-left:1rem;
 }
-.lfm-auth form{
-	margin-bottom:2.5em;
-	padding-bottom:1em;
+.page-scheme .nicebutton{
+	height: 19px;
+	line-height: 19px;
 	}
-	.fast-personal-start{
+.page-scheme .button-hole{
+	display: block;
+	}
+.full-page .left-buttons-group .button-hole{
+	margin-right:0.5rem;
+	}
+.lfm-auth form{
+	margin-bottom:2.5rem;
+	padding-bottom:1rem;
+	}
+	.full-page .fast-personal-start{
 		color:#999;
 		background: #4D4D4D;
-		border-radius: 12px;
+		border-radius: 1rem;
 		border-top: 1px solid #444;
 		border-bottom: 1px solid #555;
-		padding: 12px;
-		margin: 0 -10px;
+		padding: 1rem;
+		margin: 0 -12px;
 		}
 
-		.fast-personal-start .row-context{
+		.full-page .fast-personal-start .row-context{
 			position: relative;
 			border-top: 1px solid #424242;
-			margin: 12px -12px -12px;
-			padding: 0 12px 12px;
-			border-radius: 12px;
+			margin: 1rem -1rem -1rem;
+			padding: 0 1rem 1rem;
+			border-radius: 1rem;
 			background: #474747;
 			border-bottom: 1px solid #666;
 			}
-			.fast-personal-start .row-context .rc-s-arrow{
+			.full-page .fast-personal-start .row-context .rc-s-arrow{
 				border-bottom-color:#424242 
 				}
-			.fast-personal-start .row-context .rc-s-arrow-bg{
+			.full-page .fast-personal-start .row-context .rc-s-arrow-bg{
 				border-bottom-color:#474747;
 				}
-		.fast-personal-start .cus-playlist-b{
+		.full-page .fast-personal-start .cus-playlist-b{
 			float:right;
 			}
 	
@@ -434,12 +373,12 @@ a.desc{
 				}
 .track-context{
 	padding:0 8px 10px;
-	margin-top:6px;
-	min-height: 387px;
+	margin-top:0.5rem;
+	min-height: 389px;
 	}
 	@media (min-height:600px) {
 		.track-context{
-			min-height: 420px;
+			min-height: 422px;
 			}
 		}
 .artist-info{
@@ -452,7 +391,7 @@ a.desc{
 
 	.desc-name{
 		float:left;
-		min-height:1.5em;
+		min-height:1.5rem;
 	}
 	.desc-text{
 		overflow:hidden;
@@ -493,7 +432,7 @@ a.desc{
 		display:block;
 	}
 	.playlist-container .load-more-songs{
-		padding:6px;
+		padding:0.5rem;
 		
 		cursor:pointer;
 		border-radius:4px;
@@ -548,33 +487,33 @@ a.desc{
 
 
 .track-info-dominator .artist-tags{
-	padding:7px 0 0;
+	padding:0.5rem 0 0;
 	margin:0;
 	}
 .want-more-info .artist-tags{
 	clear:both;
-	margin-bottom:12px;
-	padding-left:13px;
+	margin-bottom:1rem;
+	padding-left:1rem;
 	}
 
 
 
 .track-info-dominator .artist-tags, .track-info-dominator .artist-similar{
 	position:relative;
-	height:1.55em;
+	height:1.55rem;
 }
 .artist-bio{
-	line-height:1.5em;
+	line-height:1.5rem;
 	overflow:hidden;
 	position:relative;
 	top:-3px;
-	height:1.55em;
+	height:1.55rem;
 	
 	}
 	
 	@media (min-height:600px) {
 		.artist-bio{
-			height:4.7em;
+			height:4.7rem;
 		}
 	}
 	
@@ -584,7 +523,9 @@ a.desc{
 		}
 	
 	.artist-tags a.music-tag{
-		margin-right:6px;
+		margin-right:0.5rem;
+		white-space: nowrap;
+
 		}
 .artist-stat-in-song span{
 	
@@ -608,7 +549,7 @@ a.desc{
 	bottom: 0;
 	right: 0;
 	
-	height:1.7em;
+	height:1.7rem;
 	background:url(../i/img_forced_end.png) repeat-y 0 0;
 	width:76px;
 }
@@ -618,28 +559,26 @@ a.desc{
 	background:#5a5a5a;
 	margin:5px -13px 0;
 	padding: 0 0 0;
-	/*200px - 48px + 14*/
-	min-height:168px;
+	min-height:170px;
 	}	
 	@media (min-height:600px) {
 		.track-info-dominator{
-			/*237-48+16*/
-			min-height:205px;
+			min-height:207px;
 		}
 	}
 
 	.track-info-dominator > .vk-login-context, .track-context > .vk-login-context{
 		border-radius:0;
-		margin:5px -13px 24px;
+		margin:5px -13px 1.72rem;
 		}	
 	.track-info-dominator .dominator-head{
 			overflow:hidden;
 			padding:0;
 		}
 		.track-info-dominator .dominator-head .closer-to-track{
-			padding-top:7px;
-			padding-left:13px;
-			margin-right:12px;
+			padding-top:0.5rem;
+			padding-left:1rem;
+			margin-right:1rem;
 			float:left;
 			width:126px;
 
@@ -654,10 +593,10 @@ a.desc{
 				}
 	.track-context .extend-switcher{
 		border:0;
-		padding: 6px 10px;
-		margin-left:-7px;
+		padding: 0.5rem 10px;
+		margin-left:-0.5rem;
 		float:right;
-		border-radius: 0 0 0 6px;
+		border-radius: 0 0 0 0.5rem;
 		color:#808080;
 		text-shadow: 0 1px 0 #4A4A4A;
 		}
@@ -682,7 +621,7 @@ a.desc{
 	
 
 	.track-info-dominator.want-more-info{
-		padding-bottom:14px;
+		padding-bottom:1rem;
 	}
 	.track-info-dominator .artist-info, .track-info-dominator .track-info {
 		display: none;
@@ -700,7 +639,7 @@ a.desc{
 		
 	}	
 	.track-info-dominator .track-info{
-		margin-top:14px;
+		margin-top:1rem;
 	}
 	
 	
@@ -729,10 +668,10 @@ a.desc{
 }
 .artist-info .artist-albums, .artist-info .artist-similar{
 	padding: 2px 0;
-	margin: 6px 0;
+	margin: 0.5rem 0;
 }
 .artist-tags .simple-header{
-	margin-right:12px;
+	margin-right:1rem;
 	font-style:normal;
 	}
 .desc-name{
@@ -762,7 +701,7 @@ a.desc{
 	.as-application .footer{
 		position: absolute;
 		bottom:0;
-		right: 12px;
+		right: 1rem;
 		}
 
 .as-application #promo{
@@ -774,7 +713,7 @@ a.desc{
 	
 	}
 #promo{
-	font-size:0.8em;
+	font-size:0.8rem;
 	height:10px;
 	padding-left:18px;
 	padding-right: 18px;
@@ -782,7 +721,7 @@ a.desc{
 }
 	#promo a{
 		background:#505050;
-		padding: 1px 6px;
+		padding: 1px 0.5rem;
 		
 		}
 		#promo a:hover{
@@ -797,9 +736,8 @@ a.desc{
 	
 	}
 #search{
-	padding-top:12px;
-	max-width: 750px;
-	margin: 0 auto;
+	padding-top:1rem;
+	
 	}
 #search #q{
 
@@ -816,18 +754,36 @@ a.desc{
 	overflow:hidden;
 	
 }
+.full-page .metro-tracks li{
+	overflow:hidden;
+	float:left;
+	width:30%;
+	min-width:195px;
+	margin-bottom:1rem;
+}
+.chart-song{
+	display: block;
+	overflow:hidden;
+	margin-right: 1rem;
+	}
+	.chart-song .song-track-name, 
+	.chart-song .song-artist-name{
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow:hidden;
+	}
+		
 
 .users-play-this li{
 	overflow:hidden;
 	float:left;
-	height:75px;
-	width:250px;
-	margin-bottom:15px;
-	line-height:1.5;
+	width:30%;
+	min-width:195px;
+	margin-bottom:1rem;
 }
 	.users-play-this li .vk-ava{
 		float:left;
-		margin:0 14px 0 0;
+		margin:0 1rem 0 0;
 		padding:0;
 	}
 	.users-play-this li .vk-ava img{
@@ -836,22 +792,26 @@ a.desc{
 		padding:2px;
 		border-radius:2px;
 	}
-	.metro-tracks{
-		margin-bottom:44px;
-		overflow:hidden
+.metro-tracks{
+	margin-bottom:44px;
+	overflow:hidden
 	}
 	.metro-tracks li{
 		overflow:hidden;
-		margin-bottom:14px;
-		float:left;
-		width:50%
+		margin-bottom:1rem;
 	}
+	.full-page .metro-tracks li{
+		
+
+	}
+
 	.metro-tracks li img{
 		float:left;
-		margin-right:14px;
+		margin-right:1rem;
 		width:32px;
 		height:32px;
 	}
+
 .block-for-startpage.loading{
 	background: url(../i/spinner_small.gif) no-repeat 100% 4px;
 	min-height:30px;
@@ -862,8 +822,8 @@ a.desc{
 	line-height:1.5;
 }
 .block-for-startpage h3 a.js-serv{
-	margin-left:24px;
-	font-size:12px;
+	margin-left:1.72rem;
+	font-size:0.85rem;
 }
 
 
@@ -904,14 +864,18 @@ a.desc{
 	color:#999;
 }
 .search-desc {
-	font-size:0.9em;
+	font-size:0.9rem;
 	
 	margin-top:0;
+	display: none;
 }
 .start-screen .search-desc {
 	padding-left: 60px;
+	
 }
-
+.full-page .search-desc{
+	display: block;
+}
 #update-star{
 	position:relative;
 	bottom:-4px;
@@ -970,11 +934,11 @@ a.desc{
 	display:block;
 	position: absolute;
 	background-color:#ddd;
-	-moz-border-radius:6px;
-	-webkit-border-radius:6px;
-	border-radius:6px;
+	-moz-border-radius:7px;
+	-webkit-border-radius:7px;
+	border-radius:7px;
 	width: 100%;
-	padding:10px;
+	padding:1rem;
 }
 	.balun a{
 		color:blue;
@@ -1005,7 +969,7 @@ a.desc{
 }
 
 .track-listeners{
-	margin:0.5em 0 0;
+	margin:0.5rem 0 0;
 	min-height:10px;
 }
 .big-user-avatar {
@@ -1015,9 +979,9 @@ a.desc{
 	text-align: center;
 	width: 196px;
 	float:left;
-	margin-right:24px;
+	margin-right:1.72rem;
 	background: #545454;
-	border-radius: 6px;
+	border-radius: 0.5rem;
 }
 .song-listeners-list{
 	height: 56px;
@@ -1075,7 +1039,7 @@ iframe.you-tube-video,embed.you-tube-video{
 	margin:0;
 	}
 .track-video{
-	padding: 0px;
+	padding: 0;
 	min-height: 48px;
 	}
 	.track-video ul{
@@ -1124,7 +1088,7 @@ iframe.you-tube-video,embed.you-tube-video{
 				top:-8px;
 				}
 			.video-preview .preview-middle{
-				top:-24px; /*8 + (48/3)*/
+				top:-1.72rem; /*8 + (48/3)*/
 				}
 			.video-preview .preview-end{
 				top:-40px; /*8 + (48/3)x2*/
@@ -1133,37 +1097,27 @@ iframe.you-tube-video,embed.you-tube-video{
 			border-color:#9C9C9C;
 			}
 			
-.people-list{
-	overflow:hidden;
-	}
-	.people-list>li{
-		float:left;
-		padding-right:12px;
-		margin-bottom:12px;
-	}
+
 .people-l-wide .people-list-item{
 	width:238px;
 	
 }
-.people-list-item{
-	
+.full-page .people-list{
+	overflow:hidden;
 	}
-	.people-list-item .desc{
-		font-size:0.8em;
-		line-height:1.4;
-		display:block;
-	}
-	.people-image{
-		margin-right:12px;
+	.full-page .people-list>li{
 		float:left;
-	}
-	.button-place-people-el .button-hole{
-		margin-top:6px;
+		padding-right:1rem;
+		margin-bottom:1rem;
 	}
 .people-list-desc{
-	font-size:12px;
-	margin-top:-12px;
-}
+	font-size:1rem;
+	margin-top:-1rem;
+	}
+	.button-place-people-el .button-hole{
+		margin-top:7px;
+	}
+
 
 .minimize-button{
 	position: absolute;
@@ -1209,24 +1163,24 @@ iframe.you-tube-video,embed.you-tube-video{
 }
 .attention-message{
 	overflow: hidden;
-	padding: 12px;
-	margin: 0 -12px;
+	padding: 1rem;
+	margin: 0 -1rem;
 	background: #404040;
 	color: #999;
-	border-radius: 6px;
+	border-radius: 7px;
 	}
 	.attention-message .message-image{
 		float: left;
-		margin-right: 12px;
+		margin-right: 1rem;
 		}
 	.attention-message .close-message{
-		font-size:3em;
+		font-size:3rem;
 		float:right;
 		cursor: pointer;
 		line-height: 1;
-		height: 0.5em;
-		margin-top: -0.3em;
-		margin-left: 12px;
+		height: 0.5rem;
+		margin-top: -0.3rem;
+		margin-left: 1rem;
 		color:#999;
 		}
 		.attention-message .close-message:hover{
@@ -1240,7 +1194,7 @@ iframe.you-tube-video,embed.you-tube-video{
 	color: #757575;
 	}
 .share-song{
-	padding-top:12px;
+	padding-top:1rem;
 	}
 	.share-song .song-link{
 		width:100%;
@@ -1248,17 +1202,17 @@ iframe.you-tube-video,embed.you-tube-video{
 		}
 	.share-song .users-list{
 		
-		margin-top:24px;
+		margin-top:1.72rem;
 		}
 		.share-song .users-list .search-results-block{
 			overflow: hidden;
 			}
 		.share-song .users-list .vk-login-context{
 			border-radius: 0;
-			margin:12px -13px 0;
+			margin:1rem -1rem 0;
 		}
 		.share-song .users-list .search-results-block{
-			margin-top:12px;
+			margin-top:1rem;
 		}
 		.share-song .users-list .suggest{
 			float:left;
@@ -1270,11 +1224,11 @@ iframe.you-tube-video,embed.you-tube-video{
 .list-search-input-place{
 	float:left;
 	width:50%;
-	margin-bottom:6px;
+	margin-bottom:7px;
 }
 .share-user-suggest{
 	
-	margin-bottom:6px;
+	margin-bottom:7px;
 	
 	}
 	.share-user-suggest a{
@@ -1290,7 +1244,7 @@ iframe.you-tube-video,embed.you-tube-video{
 
 	.share-user-suggest img, .post-to-my-vk-wall img{
 		float:left;
-		margin-right:6px;
+		margin-right:7px;
 		height:25px;
 		width:25px;
 		}
@@ -1311,17 +1265,17 @@ iframe.you-tube-video,embed.you-tube-video{
 }
 
 .addsong-to-playlist{
-	padding:12px 0 0;
+	padding:1rem 0 0;
 	}
 	.addsong-to-playlist h4{
 		font-weight:400;
-		font-size: 12px;
-		margin: 0 0 10px 3px;
+		
+		margin: 0 0 0.5rem 0.2rem;
 		padding: 0;
 		}
 	.addsong-to-playlist .playlist-query{
 		
-		margin-bottom: 12px;
+		margin-bottom: 1rem;
 		}
 		.addsong-to-playlist .create-named-playlist{
 			color:#757575;
@@ -1331,8 +1285,8 @@ iframe.you-tube-video,embed.you-tube-video{
 				}
 		.addsong-to-playlist .suggest{
 			cursor: pointer;
-			border-radius:3px;
-			padding:3px;
+			border-radius:0.3rem;
+			padding:0.3rem;
 			}
 			.addsong-to-playlist .suggest:hover{
 				background-color: #494949;
@@ -1340,3 +1294,40 @@ iframe.you-tube-video,embed.you-tube-video{
 		.addsong-to-playlist .list-of-playlists{
 			width:200px;
 			}
+.song-by-user{
+	display: block;
+	overflow: hidden;
+	cursor: pointer;
+	margin-right: 1rem;
+	border-radius: 0.5rem;
+	background-color: #4D4D4D;
+	}
+	.users-play-this .desc-row,
+	.song-by-user .song-track-name,
+	.song-by-user .song-artist-name{
+		height: 1.5rem;
+		line-height: 1.5rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		}
+.song-by-user:hover{
+	background-color:#535353;
+
+	}
+.surface_navigation{
+	box-shadow:0 0 0 2pt #1DD8B2;
+	background: #085948;
+	}
+
+
+
+
+
+
+
+
+
+
+
+

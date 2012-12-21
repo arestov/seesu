@@ -254,21 +254,36 @@ provoda.View.extendTo(StartPageView, {
 					for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
 						var lig = listenings[i];
 						if (lig.info){
-							$('<li></li>')
-								.append("<p class='vk-ava'><img width='50' height='50' alt='user photo' src='" + lig.info.photo + "'/></p>")
+							var list_item = $('<li></li>')
+								.append("<div class='vk-ava'><img width='50' height='50' alt='user photo' src='" + lig.info.photo + "'/></div>");
+								
+
+
+							$('<div class="desc-row"></div>')
 								.append($('<a class="external"></a>').attr('href', 'http://vk.com/id' + lig.vk_id).text(lig.info.first_name))
-								.append(document.createTextNode(' слушает '))
-								.append('<br/>')
-								.append($('<a class="js-serv"></a>')
-									.text(lig.artist + ' - ' +  lig.title)
-									.data('artist', lig.artist)
-									.data('track', lig.title)
-									.click(function(){
-										var a = $(this).data('artist');
-										var t = $(this).data('track');	
-										_this.parent_view.md.showTopTacks(a, {}, {artist: a, track: t});			
-									}))
-								.appendTo(uc);
+								.append(document.createTextNode(' ' + localize ('listening') + ' '))
+								.appendTo(list_item);
+
+
+
+
+							var song_complect = $('<a class="song-by-user"></a>')
+								.data('artist', lig.artist)
+								.data('track', lig.title)
+								.attr('title',lig.artist + ' - ' + lig.title)
+								.click(function(){
+									var a = $(this).data('artist');
+									var t = $(this).data('track');	
+									_this.parent_view.md.showTopTacks(a, {}, {artist: a, track: t});			
+								});
+
+							$('<span class="song-track-name"></span>').text(lig.title).appendTo(song_complect);
+							$('<span class="song-artist-name"></span>').text(lig.artist).appendTo(song_complect);
+							
+
+							list_item.append(song_complect).appendTo(uc);
+								
+								
 						}
 					}
 					uc.appendTo(c);
@@ -307,11 +322,31 @@ provoda.View.extendTo(StartPageView, {
 			
 			var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(this.els.start_screen);
 			var createTrackLink = function(artist, track, track_obj, playlist){
-				return $('<a class="js-serv"></a>').text(artist + ' - ' + track).click(function(e){
-					su.show_playlist_page(playlist);
-					playlist.showTrack(track_obj);
-					e.preventDefault();
-				});
+
+
+				var chart_song = $('<a class="chart-song"></a>')
+					.attr('title', artist + ' - ' + track)
+					.click(function(e){
+						su.show_playlist_page(playlist);
+						playlist.showTrack(track_obj);
+						e.preventDefault();
+					});
+
+
+				$('<img width="34" height="34" alt="artist image"/>')
+					.attr('src', getTargetField(track_obj, 'lfm_image.array.0.#text') || '')
+					.appendTo(chart_song);
+
+				$('<span class="song-track-name"></span>').text(track).appendTo(chart_song);
+				$('<span class="song-artist-name"></span>').text(artist).appendTo(chart_song);
+
+
+				
+
+
+
+
+				return chart_song;
 			};
 			var showMetroRandom = function(){
 				var random_metro = getSomething(lastfm_metros);
@@ -345,8 +380,15 @@ provoda.View.extendTo(StartPageView, {
 										.append(localize('last-week-с') + ' ' + random_metro.name)
 										.append('<span class="desc"> (' + random_metro.country + ') </span>')
 										.append(localize('listen-this') + " ");
-									$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
+
+									$('<a class="js-serv refresh-in-header"></a>').text(localize('refresh')).click(function(e){
 										showMetroRandom();
+										e.preventDefault();
+									}).appendTo(_header);
+
+
+									$('<a class="js-serv show-in-header"></a>').text(localize('show')).click(function(e){
+										su.show_playlist_page(plr);
 										e.preventDefault();
 									}).appendTo(_header);
 										
@@ -359,7 +401,7 @@ provoda.View.extendTo(StartPageView, {
 											
 											if (_trm.image){
 												var con = $('<li></li>').appendTo(ulm);
-												$('<img width="32" height="32" alt="artist image"/>').attr('src', _trm.image[0]['#text']).appendTo(con);
+												
 												
 												var tobj = {
 													artist: _trm.artist.name, 
@@ -403,9 +445,9 @@ provoda.View.extendTo(StartPageView, {
 				};
 				var li = ui.c = $('<li class="people-list-item"></li>');
 				var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
-				if (img_src){
-					$('<img width="50" height="50"/>').attr('src', img_src).appendTo(img_c);
-				}
+				
+					$('<img width="50" height="50"/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
+				
 				ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
 				ui.lp = $('<div class="p-link-place"></div>').appendTo(li);
 				return ui;
@@ -530,7 +572,7 @@ provoda.View.extendTo(StartPageView, {
 			});
 			
 			var wow_tags= function(tag,c){
-				$('<a class="js-serv hyped-tag"></a> ')
+				var link = $('<a class="js-serv hyped-tag"></a> ')
 					.text(tag)
 					.click(function(e){
 						_this.parent_view.md.show_tag(tag);
@@ -538,6 +580,9 @@ provoda.View.extendTo(StartPageView, {
 						e.preventDefault();
 					}).appendTo(c);
 				c.append(' ');
+				_this.addWayPoint(link,{
+					simple_check:true
+				});
 				
 			};
 			
