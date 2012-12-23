@@ -862,12 +862,17 @@ window.app_env = (function(wd){
 			}
 			
 			var oldsize = detectSize(D);
+			var offset_top;
+
 			jz = setInterval(function(){
 				if (typeof documentScrollSizeChangeHandler == 'function'){
 					var newsize = detectSize(D);
 					
 					if (oldsize != newsize){
-						documentScrollSizeChangeHandler(oldsize = newsize);
+						if (typeof offset_top == 'undefined'){
+							offset_top = D.offsetTop || 0;
+						}
+						documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
 					}
 					
 				}

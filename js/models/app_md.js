@@ -97,7 +97,11 @@ provoda.Model.extendTo(appModel, {
 	},
 	preparePlaylist: function(params, first_song){
 		var pl = new songsList();
-		pl.init(params, first_song, this.mp3_search, this.p);
+		pl.init({
+			app: this,
+			player: this.p,
+			mp3_search: this.mp3_search
+		}, params, first_song);
 		return pl;
 	},
 	restoreFreezed: function(transit, url_restoring){
