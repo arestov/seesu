@@ -69,7 +69,7 @@ provoda.View.extendTo(appModelView, {
 				throw new Error('give me "view"');
 			}
 			if (num == -1){
-				throw new Error('start_screen must exist')
+				throw new Error('start_screen must exist');
 			}
 
 			var container = $('<div class="complex-page inactive-page"></div>').addClass('index-of-cp-is-' + num);
@@ -80,7 +80,7 @@ provoda.View.extendTo(appModelView, {
 				c: container.appendTo(this.els.screens),
 				scroll_con: scroll_con,
 				material: material
-			}
+			};
 		}
 	},
 	children_views: {
@@ -218,7 +218,7 @@ provoda.View.extendTo(appModelView, {
 			checkFocus(view.state('mp-show-end'));
 
 			view.on('state-change.mp-show-end', function(e) {
-				checkFocus(e.value)
+				checkFocus(e.value);
 			});
 		}
 		this.requestAll();
@@ -325,7 +325,7 @@ provoda.View.extendTo(appModelView, {
 	},
 	'stch-map-animation': function(changes) {
 		if (!changes){
-			return
+			return;
 		}
 		var all_changhes = $filter(changes.array, 'changes');
 		all_changhes = [].concat.apply([], all_changhes);
@@ -342,7 +342,7 @@ provoda.View.extendTo(appModelView, {
 			}
 			
 		}
-		console.log(all_changhes)
+		console.log(all_changhes);
 		/*
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
@@ -388,7 +388,7 @@ provoda.View.extendTo(appModelView, {
 				} else {
 					this.now_playing_link.addClass("nav-button");
 				}
-			}	
+			}
 		},
 		"search-query": function(state) {
 			this.search_input.val(state || '');
@@ -407,8 +407,8 @@ provoda.View.extendTo(appModelView, {
 				});
 			}
 			if (this.now_playing_link){
-				this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));	
-			}	
+				this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));
+			}
 		},
 		playing: function(state) {
 			var s = this.now_playing_link;
@@ -430,7 +430,7 @@ provoda.View.extendTo(appModelView, {
 			}
 		},
 		"doc-title": function(title) {
-			this.d.title = 	title || "";
+			this.d.title = title || "";
 		}
 	},
 	getScrollVP: function() {
@@ -447,7 +447,7 @@ provoda.View.extendTo(appModelView, {
 
 	//	var jnode = $(view.getC());
 		if (!jnode[0]){
-			return
+			return;
 		}
 
 		var view_port_limit = opts.vp_limit || 1;
@@ -536,7 +536,7 @@ provoda.View.extendTo(appModelView, {
 			var ui_samples = $('#ui-samples',d);
 
 			
-			var search_form = $('#search',d); 
+			var search_form = $('#search',d);
 			
 
 			var start_screen = $('#start-screen',d);
@@ -549,7 +549,7 @@ provoda.View.extendTo(appModelView, {
 				scrolling_viewport: app_env.as_application ? {
 					node: screens_block
 				} : {
-					node: $(d.body), 
+					node: $(d.body),
 					offset: true
 				},
 				slider: slider,
@@ -565,9 +565,9 @@ provoda.View.extendTo(appModelView, {
 
 			_this.lev_containers[-1] = {
 				c: st_scr_scrl_con.parent(),
-				material: start_screen,				
+				material: start_screen,
 				scroll_con: st_scr_scrl_con
-			}
+			};
 				
 
 			_this.els.search_form.find('#app_type').val(su.env.app_type);
@@ -644,7 +644,7 @@ provoda.View.extendTo(appModelView, {
 						this.oos.find('.auth-container').empty();
 					},
 					finishing: function(){
-						su.vk.wait_for_finish = true;	
+						su.vk.wait_for_finish = true;
 						
 						this.oos.addClass('vk-finishing');
 					},
@@ -686,13 +686,13 @@ provoda.View.extendTo(appModelView, {
 								
 							
 							e.preventDefault();
-					 	});
-					 	var input = this.nvk.find('.vk-code');
+						});
+						var input = this.nvk.find('.vk-code');
 						nvk.find('.use-vk-code').click(function() {
 							var vk_t_raw = input.val();
 							if (vk_t_raw){
-								var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);			
-									connectApiToSeesu(vk_token, true);
+								var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);
+								connectApiToSeesu(vk_token, true);
 							}
 						});
 						
@@ -739,7 +739,7 @@ provoda.View.extendTo(appModelView, {
 		if (_key == '13'){
 			e.preventDefault();
 			key_name = 'Enter';
-		} else 
+		} else
 		if (_key == '37'){
 			e.preventDefault();
 			key_name = 'Left';
@@ -751,14 +751,14 @@ provoda.View.extendTo(appModelView, {
 		if((_key == '40') || (_key == '63233')){
 			e.preventDefault();
 			key_name = 'Down';
-		} else 
+		} else
 		if((_key == '38') || (_key == '63232')){
 			e.preventDefault();
 			key_name = 'Up';
 		}
 		if (key_name){
 			//this.md.keyNav(key_name);
-			this.wayPointsNav(key_name)
+			this.wayPointsNav(key_name);
 		}
 	},
 	canUseWaypoint: function(cur_wayp ) {
@@ -773,18 +773,18 @@ provoda.View.extendTo(appModelView, {
 
 		var height = cur.height();
 		if (!height){
-			return
+			return;
 		}
 		var width = cur.width();
 		if (!width){
-			return
+			return;
 		}
 		var pos = cur.position();
 		if ((pos.top + height) <= 0){
-			return
+			return;
 		}
 		if ((pos.left + width) <= 0){
-			return
+			return;
 		}
 
 
@@ -793,7 +793,7 @@ provoda.View.extendTo(appModelView, {
 		while (p_cur[0]){
 			parents.push(p_cur);
 			p_cur = p_cur.parent();
-		};
+		}
 
 		var break_of_disnone = false;
 		for (var ii = 0; ii < parents.length; ii++) {
@@ -802,7 +802,7 @@ provoda.View.extendTo(appModelView, {
 				break;
 			}
 			
-		};
+		}
 		if (break_of_disnone){
 			return;
 		}
@@ -1019,14 +1019,14 @@ provoda.View.extendTo(appModelView, {
 		if (cwp && !this.canUseWaypoint(cwp)){
 			//this.current_wpoint.node.removeClass('surface_navigation');
 			//delete this.current_wpoint;
-			this.setVisState('current_wpoint', false)
+			this.setVisState('current_wpoint', false);
 		}
 
 	},
 	'stch-vis-current_wpoint': function(nst, ost) {
 		if (ost){
 			ost.node.removeClass('surface_navigation');
-		} 
+		}
 		if (nst) {
 			nst.node.addClass('surface_navigation');
 			//if (nst.view.getRooConPresentation() ==)
@@ -1208,7 +1208,7 @@ provoda.View.extendTo(appModelView, {
 					}
 					pliking = false;
 				})
-				pliking = true
+				pliking = true;
 			}
 			
 			
@@ -1222,7 +1222,7 @@ provoda.View.extendTo(appModelView, {
 		if (link && rel.info.full_name){
 			return $('<a class="external"></a>').attr('href', link).text(rel.info.full_name);
 		}  else if (rel.item.est){
-			return $("<span class='desc'></span>").text(this.getRemainTimeText(rel.item.est, true));
+			return $("<span class='desc'></span>").text(su.getRemainTimeText(rel.item.est, true));
 		}
 	},
 	showBigListener: function(c, lig){

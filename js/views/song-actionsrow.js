@@ -236,7 +236,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		
 	},
 	"stch-active_view": function(state){
-		this._super(state);
+		this._super.apply(this, arguments)//(state);
 		if (state){
 			var inp = this.input[0];
 			setTimeout(function() {

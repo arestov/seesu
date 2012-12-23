@@ -500,6 +500,11 @@ createPrototype = function(constr, assi_prototype, clone_prototype){
   */
 // Inspired by base2 and Prototype
 (function(){
+
+	var getNamedConstructor = function(name) {
+		var func = new Function('var ' + name + ' = function(){};return ' + name + ';');
+		return func();
+	};
 	var
 		fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/,
 		allowParentCall = function(name, fn, _super){
@@ -554,8 +559,8 @@ createPrototype = function(constr, assi_prototype, clone_prototype){
 		namedClass.extend = Class.extend;
 		return namedClass;
 	};
-	Class.extend = function(prop){
-		return this.extendTo(function(){}, prop);
+	Class.extend = function(props, class_name){
+		return this.extendTo(getNamedConstructor(class_name || 'DebugHelp' + new Date() * 1), props);
 	}
 
 })();

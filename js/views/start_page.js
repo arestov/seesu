@@ -445,9 +445,9 @@ provoda.View.extendTo(StartPageView, {
 				};
 				var li = ui.c = $('<li class="people-list-item"></li>');
 				var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
-				if (img_src){
-					$('<img width="50" height="50"/>').attr('src', img_src).appendTo(img_c);
-				}
+				
+					$('<img width="50" height="50"/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
+				
 				ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
 				ui.lp = $('<div class="p-link-place"></div>').appendTo(li);
 				return ui;
@@ -572,7 +572,7 @@ provoda.View.extendTo(StartPageView, {
 			});
 			
 			var wow_tags= function(tag,c){
-				$('<a class="js-serv hyped-tag"></a> ')
+				var link = $('<a class="js-serv hyped-tag"></a> ')
 					.text(tag)
 					.click(function(e){
 						_this.parent_view.md.show_tag(tag);
@@ -580,6 +580,9 @@ provoda.View.extendTo(StartPageView, {
 						e.preventDefault();
 					}).appendTo(c);
 				c.append(' ');
+				_this.addWayPoint(link,{
+					simple_check:true
+				});
 				
 			};
 			

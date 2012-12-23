@@ -1,15 +1,15 @@
 .navs{
 	overflow:hidden;
 	padding-top:6px;
-	padding-left:14px;
-	padding-right:14px;
+	padding-left:1rem;
+	padding-right:1rem;
 	min-height:36px;
 	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
 	border-bottom:1px solid #333;
 	font-family:"Trebuchet MS", sans-serif;
 	
 	
-	font-size:18px;
+	font-size:1.28rem;
 	font-family: "Trebuchet MS", sans-serif;
 
 }
@@ -33,16 +33,16 @@
 }
 
 .start-screen{
-	padding-bottom:1.5em;
+	padding-bottom:1.5rem;
 	}
 .full-page .start-screen{
-	padding: 0 1em 1.5em;
+	padding: 0 1rem 1.5rem;
 	}
 .page-scheme .start-screen{
-	padding-top: 1em;
+	padding-top: 1rem;
 	}
 .page-scheme .art_card{
-	padding-top: 1em;
+	padding-top: 1rem;
 }
 
 #search {
@@ -93,7 +93,7 @@
 
 
 .block-for-startpage, .for-startpage{
-	margin-top:2em;
+	margin-top:2rem;
 }
 
 .page-scheme .relations-invites-wrap,
@@ -125,7 +125,7 @@
 	}
 	.page-scheme .tags-hyped a{
 		display: block;
-		padding:0.2em 0.5em;
+		padding:0.2rem 0.5rem;
 		border: 0;
 		}
 	.page-scheme .tags-hyped a:nth-of-type(even){
@@ -167,7 +167,7 @@
 		background-image:url(../i/nav/seesu-nav-logo-active.png);
 		}
 .nav-search-results{
-	padding:4px 14px 4px 9px;
+	padding:4px 1rem 4px 9px;
 	width:15px;
 	}
 .nav-search-results .icon{
@@ -180,7 +180,7 @@
 .np-button{
 	width:20px;	
 	position:absolute;
-	right:14px;
+	right:1rem;
 	top:8px;
 	padding: 4px 8px;
 	border-right: 1px solid transparent;
@@ -207,30 +207,30 @@
 	padding-bottom: 20px;
 	}
 .full-page .art_card{
-	padding: 24px 10px;
+	padding: 1.72rem 10px;
 	}
 	.art_card ul{
 		
 	}
 	.art_card .row-header{
-		margin-bottom:7px;
+		margin-bottom:0.5rem;
 	}
 	.art_card h5{
 	
 		}
 		.art_card h5 a.extends-header{
-			margin-left:14px;
+			margin-left:1rem;
 			}
 	.art_card-meta{
 		float:left;
 		width:50%;
 		
 		min-height:140px;
-		margin-bottom:24px;
+		margin-bottom:1.72rem;
 		}
 		.top-tracks,.art_card-tags{
-			margin-right:24px;
-			margin-bottom:24px;
+			margin-right:1.72rem;
+			margin-bottom:1.72rem;
 			}
 			.top-tracks.loading,.art_card-tags.loading{
 				background: url(../i/spinner_small.gif) no-repeat 100% 4px;
@@ -243,13 +243,13 @@
 				.art_card-meta ul li{
 					float:left;
 					white-space:nowrap;
-					margin-right:1em;
+					margin-right:1rem;
 					}
 	
 	.art_card-similar{
 		float:right;
 		width:50%;
-		margin-bottom:24px;
+		margin-bottom:1.72rem;
 		}
 		.art_card-similar.loading{
 			background: url(../i/spinner_small.gif) no-repeat 100% 4px;
@@ -259,7 +259,7 @@
 			}
 			.art_card-similar ul li{
 				float:left;
-				margin-right:1em;
+				margin-right:1rem;
 				white-space:nowrap;
 				}
 
@@ -269,13 +269,13 @@
 		background: #3f3f3f;
 		padding: 10px 10px;
 		border-radius: 6px;
-		margin: 0 -10px 24px;
+		margin: 0 -10px 1.72rem;
 
 		clear:both;
 		
 		}
 		.art_card-albums.loading .row-header{
-			background: url(../i/spinner_dark_small.gif) no-repeat 100% 0%;
+			background: url(../i/spinner_dark_small.gif) no-repeat 100% 0;
 			}
 	.art_card-albums.show-all-albums{
 		
@@ -289,7 +289,7 @@
 		}
 		.art_card-albums ul{
 			overflow:hidden;
-			margin:0 0 14px;
+			margin:0 0 1rem;
 			padding-left:0;
 			}
 
@@ -362,11 +362,11 @@
 		}
 		
 		.full-page .art_card-image-padding{
-			padding-right:24px;
+			padding-right:1.72rem;
 		}
 		.art_card-image img{
 			width:100%;
-			margin-bottom:24px;
+			margin-bottom:1.72rem;
 		}
 @media (max-width:550px) {
 	.art_card-similar, .art_card-meta{
@@ -400,7 +400,7 @@
 				float:none;
 				overflow: hidden;
 				width: auto;
-				margin-bottom: 14px;
+				margin-bottom: 1rem;
 				}
 			.page-scheme .art_card-albums ul li img{
 				width: 38px;
@@ -411,3 +411,5 @@
 				position: static;
 				background: transparent;
 				}
+
+

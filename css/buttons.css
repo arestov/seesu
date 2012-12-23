@@ -36,7 +36,7 @@
 	display:inline-block;
 	background: transparent no-repeat;
 	cursor:pointer;
-	height:24px;
+	height:1.72rem;
 	width:25px;
 	border:0  !important; 
 	padding:0;
@@ -45,7 +45,7 @@
 .pc-indicator{
 	display:inline-block;
 	background: transparent no-repeat;
-	height:24px;
+	height:1.72rem;
 	width:25px;
 }
 .big-indicator{
@@ -234,4 +234,8 @@
 }
 .bposition-r .nicebutton, .bposition-r .disabledbutton{
 	border-left:1px solid #555;
-}	
+}
+
+
+
+

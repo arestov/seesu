@@ -8,10 +8,10 @@ var songsList;
 
 	songsList = function(){};
 	songsListBase.extendTo(songsList, {
-		init: function(params, first_song, findMp3, player) {
+		init: function(opts, params, first_song) {
 			//playlist_title, playlist_type, info
 			//params.title, params.type, params.data
-			this._super();
+			this._super.apply(this, arguments);
 			this.info = params.data || {};
 			if (params.title){
 				this.playlist_title = params.title;
@@ -21,8 +21,7 @@ var songsList;
 				this.updateState('nav-text', this.playlist_title);
 				this.updateState('nav-title', this.playlist_title);
 			}
-			this.player = player;
-			this.findMp3 = findMp3;
+			
 			this.findSongOwnPosition(first_song);
 
 			var plarow = new PlARow();
