@@ -870,7 +870,8 @@ window.app_env = (function(wd){
 					
 					if (oldsize != newsize){
 						if (typeof offset_top == 'undefined'){
-							offset_top = D.offsetTop || 0;
+							var offset = $(D).offset();
+							offset_top = (offset && offset.top) || 0;
 						}
 						documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
 					}
