@@ -48,7 +48,6 @@ provoda.View.extendTo(appModelView, {
 			clearInterval(this.lst_interval);
 		//	var d = this.d;
 		//	delete this.d;
-		//	su.removeDOM(d, this);
 			this.die();
 			
 			console.log('DOM dead! ' + this.nums);

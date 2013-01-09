@@ -89,7 +89,7 @@ appModel.extendTo(seesuApp, {
 
 		var lu = suStore('su-usage-last');
 
-		this.last_usage = (lu && new Date(lu)) || 0;
+		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.33);
 		this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
 		
 		var _this = this;
@@ -97,19 +97,20 @@ appModel.extendTo(seesuApp, {
 
 			var now = new Date();
 
-			if (_this.ui){
-				if (_this.ui.isAlive() || (now - _this.ui.created_at)/(1000*60) > 40){
-					if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
-						_this.checkStats();
-						suStore('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
-						suStore('su-usage-counter', ++_this.usage_counter, true);
-					}
-				}
+			if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
+				_this.checkStats();
+				suStore('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
+				suStore('su-usage-counter', ++_this.usage_counter, true);
 			}
 
 			
 		}, 1000 * 60 * 20);
-
+		setInterval(function(){
+			var rootvs = _this.getViews('root');
+			if (rootvs.length){
+				_this.updateLVTime();
+			}
+		}, 1000 * 60 * 2);
 
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 		this.vk = {};
@@ -244,11 +245,7 @@ appModel.extendTo(seesuApp, {
 				});
 		});
 
-		this.onRegistration('dom', function(cb) {
-			if (this.ui && this.ui.can_fire_on_domreg){
-				cb();
-			}
-		});
+
 		this.mp3_search = (new mp3Search({
 			vk: 5,
 			nigma: 1,
@@ -379,9 +376,7 @@ appModel.extendTo(seesuApp, {
 			this.setSetting('volume', [this.settings['volume'], 100]);
 		}
 	},
-	removeDOM: function(d, ui) {
-		this.trigger('dom-die', d, this.ui == ui, this.ui);
-	},
+	
 	checkStats: function() {
 		if (this.usage_counter > 2){
 			this.start_page.showMessage('rating-help');
@@ -512,6 +507,9 @@ appModel.extendTo(seesuApp, {
 			});
 
 	},
+	updateLVTime: function() {
+		this.last_view_time = new Date() * 1;
+	},
 	checkUpdates: function(){
 		var _this = this;
 
@@ -523,26 +521,24 @@ appModel.extendTo(seesuApp, {
 			data: {
 				ver: this.version,
 				app_type: app_env.app_type
-			},
-			error: function(){},
-			success: function(r){
-				if (!r){return;}
-
-				
-				var cver = r.latest_version.number;
-				if (cver > _this.version) {
-					var message =
-						'Suddenly, Seesu ' + cver + ' has come. ' +
-						'You have version ' + _this.version + '. ';
-					var link = r.latest_version.link;
-					if (link.indexOf('http') != -1) {
-						$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
-					}
-				}
-				
-				console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
-
 			}
+		}).done(function(r){
+			if (!r){return;}
+
+			
+			var cver = r.latest_version.number;
+			if (cver > _this.version) {
+				var message =
+					'Suddenly, Seesu ' + cver + ' has come. ' +
+					'You have version ' + _this.version + '. ';
+				var link = r.latest_version.link;
+				if (link.indexOf('http') != -1) {
+					$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
+				}
+			}
+			
+			console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
+
 		});
 	}
 
