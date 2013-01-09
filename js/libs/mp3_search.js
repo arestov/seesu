@@ -481,7 +481,7 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 			if (query.q){
 
 				if (full_title.indexOf(this.hardTrim(query.q, 3)) != -1){
-					return 0
+					return 0;
 				}
 			} else {
 				var query_artist = this.hardTrim(query.artist, 3);
@@ -758,6 +758,7 @@ var by_best_matching_index;
 		this.se_list = [];
 		this.search_emitters = {};
 		this.searches_pr  = searches_pr || {};
+		this.tools_by_name = {};
 	};
 
 	provoda.Eventor.extendTo(mp3Search,  {
@@ -979,6 +980,7 @@ var by_best_matching_index;
 			}
 			this.trigger('new-search', search, filter);
 			this.trigger('list-changed', this.se_list);
+			this.tools_by_name[filter] = search;
 		},
 		getMasterSlaveSearch: function(filter){
 			var o = {
@@ -1018,7 +1020,7 @@ var by_best_matching_index;
 			return o;
 		},
 		haveSearch: function(search_name){
-			var o = this.getMasterSlaveSearch(search_name);	
+			var o = this.getMasterSlaveSearch(search_name);
 			return !!o.exist_slave || !!o.exitst_master_of_slave || !!o.exist_alone_master;
 		},
 		isNoMasterOfSlave: function(filter){
@@ -1032,6 +1034,9 @@ var by_best_matching_index;
 
 			spaces[space] = msearch;
 		},
+		getSearchByName: function(tool_name) {
+			return this.tools_by_name[tool_name];
+		},
 		add: function(asearch, force){
 			var push_later;
 			var o = this.getMasterSlaveSearch(asearch.name);
@@ -1043,7 +1048,7 @@ var by_best_matching_index;
 					this.se_list.push(asearch);
 					o.exist_slave.preferred = asearch;
 					this.newSearchInit(asearch.name, asearch);
-				} 
+				}
 			} else if (o.exist_alone_master){
 				if (force){
 					o.exist_alone_master.disabled = true;

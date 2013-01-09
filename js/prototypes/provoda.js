@@ -725,6 +725,22 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	addChild: function(view, child_name) {
 		this.children.push.call(this.children, view);
 	},
+	removeChildViewsByMd: function(md) {
+		var views_to_remove = [];
+		var views = md.getViews();
+		for (var i = 0; i < this.children.length; i++) {
+			var cur = this.children[i]
+			if (views.indexOf(cur) != -1){
+				views_to_remove.push(cur);
+			}
+			
+		}
+		for (var i = 0; i < views_to_remove.length; i++) {
+			views_to_remove[i].die();
+		}
+		
+
+	},
 	getDeepChildren: function(exept) {
 		var all = [];
 		var big_tree = [];
@@ -778,7 +794,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this;
 	},
 	getT: function(){
-		return this.c || this._anchor; 
+		return this.c || this._anchor;
 	},
 	getC: function(){
 		return this.c;
@@ -819,7 +835,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	requestDetalizationLevel: function(rel_depth, last_request){
 		if (!this._detailed){
 			this.requestDetailes();
-		} 
+		}
 		return this.requestChildrenDetLev(rel_depth - 1);
 	},
 	getCNode: function(c) {

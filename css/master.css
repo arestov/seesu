@@ -325,7 +325,7 @@ html.not-as-application, .not-as-application  body{
 	margin-bottom:2.5rem;
 	padding-bottom:1rem;
 	}
-	.full-page .fast-personal-start{
+	.full-page .fast-personal-start, .full-page .personal-stuff-preview{
 		color:#999;
 		background: #4D4D4D;
 		border-radius: 1rem;

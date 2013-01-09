@@ -14,8 +14,8 @@ isohuntTorrentSearch.prototype = {
 	send: function(query, options) {
 		var
 			_this				= this,
-			deferred 			= $.Deferred(),
-			complex_response 	= {
+			deferred			= $.Deferred(),
+			complex_response	= {
 				abort: function(){
 					this.aborted = true;
 					deferred.reject('abort');
@@ -51,13 +51,13 @@ isohuntTorrentSearch.prototype = {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r)
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r);
 					}
 				};
 
 				var sendRequest = function() {
 					if (complex_response.aborted){
-						return
+						return;
 					}
 					if (!options.nocache){
 						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
@@ -126,7 +126,7 @@ isohuntTorrentSearch.prototype = {
 					if (r.items && r.items.list){
 						for (var i = 0; i < Math.min(r.items.list.length, 10); i++) {
 							_this.wrapItem(result, r.items.list[i], msq);
-						};
+						}
 					}
 					
 				}
@@ -148,7 +148,7 @@ isohuntTorrentSearch.prototype = {
 			getSongFileModel: function(mo, player) {
 				return this.models[mo.uid] = this.models[mo.uid] || (new fileInTorrent(this, mo)).setPlayer(player);
 			}
-		});		
+		});
 	}
 };
 
@@ -172,8 +172,8 @@ googleTorrentSearch.prototype = {
 	send: function(query, options) {
 		var
 			_this				= this,
-			deferred 			= $.Deferred(),
-			complex_response 	= {
+			deferred			= $.Deferred(),
+			complex_response	= {
 				abort: function(){
 					this.aborted = true;
 					deferred.reject('abort');
@@ -209,13 +209,13 @@ googleTorrentSearch.prototype = {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r)
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r);
 					}
 				};
 
 				var sendRequest = function() {
 					if (complex_response.aborted){
-						return
+						return;
 					}
 					if (!options.nocache){
 						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
@@ -285,7 +285,7 @@ googleTorrentSearch.prototype = {
 					result = [];
 					for (var i = 0; i < r.responseData.results.length; i++) {
 						_this.wrapItem(result, r.responseData.results[i], msq);
-					};
+					}
 				}
 				cb(result, 'torrent');
 

@@ -12,6 +12,7 @@
 			this.enter_items = false;
 			this.setChild('section', []);
 			this.setInactiveAll();
+			this.updateState('url-part', this.getURL());
 		},
 		page_name: "search results",
 		addCallback: function(event_name, func){
@@ -185,7 +186,7 @@
 				this.updateState('query', q);
 				this.changeResultsCounter();
 				this.doEverythingForQuery();
-				this.trigger('url-change');//fixme; place before changing ui!?
+				this.updateState('url-part', this.getURL());
 			}
 			
 		},

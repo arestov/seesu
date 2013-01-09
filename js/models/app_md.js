@@ -97,7 +97,9 @@ provoda.Model.extendTo(appModel, {
 	},
 	preparePlaylist: function(params, first_song){
 		var pl = new songsList();
-		pl.init(params, first_song, this.mp3_search, this.p);
+		pl.init({
+			app: this,
+		}, params, first_song);
 		return pl;
 	},
 	restoreFreezed: function(transit, url_restoring){
@@ -295,6 +297,9 @@ provoda.Model.extendTo(appModel, {
 	showAlbum:function() {
 		return this.collectChanges(this._showAlbum, arguments);
 	},
+	showUserPage: function() {
+		return this.collectChanges(this._showUserPage, arguments);
+	},
 	_show_now_playing: function(no_stat){
 
 		var current_song = this.p.c_song;
@@ -308,6 +313,13 @@ provoda.Model.extendTo(appModel, {
 		this.restoreFreezed(true);
 		this.show_track_page(current_song);
 		return current_song;
+		
+	},
+	_showUserPage: function(md, source_info, no_navi) {
+		this.bindMMapStateChanges(md, 'usercard');
+		md.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
+		var lev = this.map.goDeeper(source_info && source_info.page_md, md);
+		return md;
 		
 	},
 	_showResultsPage: function(query, no_navi){

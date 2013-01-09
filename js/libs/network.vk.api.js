@@ -171,7 +171,10 @@ vkSearch.prototype = {
 		key: 'nice',
 		type: 'mp3'
 	},
-	makeVKSong: function(cursor, msq){
+	makeSongFile: function(item) {
+		return this.makeSong(item);
+	},
+	makeSong: function(cursor, msq){
 		if (cursor && cursor.url){
 			var entity = {
 				artist	: HTMLDecode(cursor.artist ? cursor.artist : cursor.audio.artist),
@@ -185,20 +188,22 @@ vkSearch.prototype = {
 				models: {},
 				getSongFileModel: getSongFileModel
 			};
-			entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
-			return entity
+			if (msq){
+				entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+			}
+			return entity;
 		}
 	},
 	makeMusicList: function(r, msq) {
 		var music_list = [];
 		for (var i=1, l = r.length; i < l; i++) {
-			var entity = this.makeVKSong(r[i], msq);
+			var entity = this.makeSong(r[i], msq);
 			
 			if (entity){
 				if (entity.query_match_index == -1){
 					//console.log(entity)
 				} else if (!entity.link.match(/audio\/.mp3$/) && !has_music_copy( music_list, entity)){
-					music_list.push(entity)
+					music_list.push(entity);
 				}
 			}
 		}
@@ -210,8 +215,8 @@ vkSearch.prototype = {
 	},
 	findAudio: function(msq, opts) {
 		var _this		= this,
-			deferred 	= $.Deferred(),
-			complex_response 	= {
+			deferred	= $.Deferred(),
+			complex_response	= {
 				abort: function(){
 					this.aborted = true;
 					deferred.reject('abort');

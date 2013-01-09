@@ -1,6 +1,9 @@
 var baseNavUI = function() {};
 
 provoda.View.extendTo( baseNavUI, {
+	createBase: function() {
+		this.c = $('<span class="nav-item"><span>.</span><b></b></span>');
+	},
 	createDetailes: function(){
 		this.createBase();
 		this.bindClick();
@@ -39,14 +42,11 @@ provoda.View.extendTo( baseNavUI, {
 				this.resetStackMark();
 			}
 		},
-		"nav-text": function(text) {
+		"nav-title": function(text) {
+			this.c.attr('title', text || '');
 			if (this.text_place){
 				this.text_place.text(text || '');
 			}
-		},
-		"nav-title": function(text) {
-			this.c.attr('title', text || '');
-			
 		}
 	},
 
@@ -80,7 +80,7 @@ baseNavUI.extendTo(StartPageNavView, {
 		} else {
 			this.c.removeClass('stacked');
 		}
-	}, 
+	},
 	'stch-mp-has-focus': function(state) {
 		if (!state){
 			this.c.addClass("nav-button");
@@ -99,25 +99,3 @@ baseNavUI.extendTo(investgNavUI, {
 	}
 });
 
-artCardNavUI = function() {};
-baseNavUI.extendTo(artCardNavUI, {
-	createBase: function() {
-		this.c = $('<span class="nav-item "><span>.</span><b></b></span>');
-	}
-});
-
-
-playlistNavUI = function() {};
-baseNavUI.extendTo(playlistNavUI, {
-	createBase: function() {
-		this.c = $('<span class="nav-item nav-playlist-page"><span>.</span><b></b></span>');
-	}
-});
-
-
-trackNavUI = function(mlm) {};
-baseNavUI.extendTo(trackNavUI, {
-	createBase: function() {
-		this.c = $('<span class="nav-item nav-track-zoom"><span>.</span><b></b></span>');
-	}
-});
