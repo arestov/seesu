@@ -64,9 +64,10 @@ provoda.View.extendTo(appModelView, {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
+			/*
 			if (!view){
 				throw new Error('give me "view"');
-			}
+			}*/
 			if (num == -1){
 				throw new Error('start_screen must exist');
 			}
@@ -306,6 +307,9 @@ provoda.View.extendTo(appModelView, {
 				this.removePageOverviewMark(old_md.map_level_num-1);
 			}
 			
+		}
+		if (md.map_level_num != -1 && (!old_md || old_md.map_level_num != -1)){
+			this.hideLevNum(-1);
 		}
 		
 		this.addPageOverviewMark(md.map_level_num - 1);
