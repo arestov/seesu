@@ -632,6 +632,9 @@ var render_loved = function(user_name){
 	
 	su.show_playlist_page(pl_r);
 };
+
+
+
 var render_recommendations_by_username = function(username){
 	var pl_r = su.preparePlaylist({
 		title: 'Recommendations for ' +  username,
@@ -639,28 +642,27 @@ var render_recommendations_by_username = function(username){
 	}).loading();
 	$.ajax({
 		url: 'http://ws.audioscrobbler.com/1.0/user/' + username + '/systemrecs.rss',
-			global: false,
-			type: "GET",
-			dataType: "xml",
-			error: function(xml){
-			},
-			success: function(xml){
-				var artists = $(xml).find('channel item title');
-				if (artists && artists.length) {
-					var artist_list = [];
-					for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-						var artist = $(artists[i]).text();
-						artist_list.push(artist);
-					}
-					var track_list_without_tracks = [];
-					if (artist_list){
-						for (var i=0; i < artist_list.length; i++) {
-							track_list_without_tracks.push({"artist" :artist_list[i]});
-						}
-					}
-					pl_r.injectExpectedSongs(track_list_without_tracks);
+		type: "GET",
+		dataType: "xml",
+		error: function(xml){
+		},
+		success: function(xml){
+			var artists = $(xml).find('channel item title');
+			if (artists && artists.length) {
+				var artist_list = [];
+				for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
+					var artist = $(artists[i]).text();
+					artist_list.push(artist);
 				}
+				var track_list_without_tracks = [];
+				if (artist_list){
+					for (var i=0; i < artist_list.length; i++) {
+						track_list_without_tracks.push({"artist" :artist_list[i]});
+					}
+				}
+				pl_r.injectExpectedSongs(track_list_without_tracks);
 			}
+		}
 	});
 
 	su.show_playlist_page(pl_r);

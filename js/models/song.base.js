@@ -4,24 +4,26 @@ var counter = 0;
 
 provoda.addPrototype("baseSong",{
 	model_name: "song",
-	init: function(omo, playlist, player, mp3_search){
+	init: function(opts, params){
+
 		this._super();
-		this.plst_titl = playlist;
-		this.mp3_search = mp3_search;
-		this.player = player;
+		this.plst_titl = opts.plst_titl;
+		this.mp3_search = opts.mp3_search;
+		this.player = opts.player;
 		
 		this.uid = ++counter;
-		cloneObj(this, omo, false, ['artist', 'track']);
-		this.omo = omo;
-		if (omo.artist){
-			this.updateState('artist', omo.artist);
+		cloneObj(this, opts.omo, false, ['artist', 'track']);
+		this.omo = opts.omo;
+		if (opts.omo.artist){
+			this.updateState('artist', opts.omo.artist);
 		}
-		if (omo.track){
-			this.updateState('track', omo.track);
+		if (opts.omo.track){
+			this.updateState('track', opts.omo.track);
 		}
 		this.on('request', function() {
 			this.plst_titl.checkRequestsPriority();
 		});
+		this.updateState('url-part', this.getURL());
 	},
 	state_change: {
 		"mp-show": function(opts) {
@@ -128,12 +130,11 @@ provoda.addPrototype("baseSong",{
 	},
 	updateNavTexts: function() {
 		var title = this.state('full-title');
-		this.updateState('nav-text', title);
 		this.updateState('nav-title', title);
 	},
 	playNext: function(auto) {
 		if (this.state('rept-song')){
-			this.play()
+			this.play();
 		} else {
 			this.plst_titl.switchTo(this, true, auto);
 		}
@@ -230,9 +231,6 @@ provoda.addPrototype("baseSong",{
 			delete this.marked_next_song;
 		}
 	},
-	wheneWasChanged: function(){
-		return (this.raw() && 1) || (this.sem && this.sem.changed || 1);
-	},
 	waitToLoadNext: function(ready){
 		this.ready_to_preload = ready;
 		if (ready){
@@ -261,7 +259,7 @@ provoda.addPrototype("baseSong",{
 		return !!this.next_song;
 	},
 	canFindTrackTitle: function() {
-		return !this.state("no-track-title")
+		return !this.state("no-track-title");
 	},
 	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){
 		this.updateState('track-name-loading', true);
@@ -289,7 +287,7 @@ provoda.addPrototype("baseSong",{
 							collect_for: from_collection,
 							last_in_collection: last_in_collection
 						});
-						_this.trigger('url-change');
+						_this.updateState('url-part', _this.getURL());
 
 
 
@@ -317,14 +315,25 @@ provoda.addPrototype("baseSong",{
 			get_next: true
 		});
 	},
+	bindSemEvents:function(sem) {
+		this.sem = sem;
+		var _this = this;
+		sem.on('progress', function() {
+			_this.filesSearchStarted();
+		});
+		sem.on('changed', function(complete){
+			_this.updateFilesSearchState(complete);
+		});
+	},
 	findFiles: function(opts){
+		if (!this.artist || !this.track || !this.mf_cor.isSearchAllowed()){
+			return false;
+		}
 		if (this.mp3_search){
 			opts = opts || {};
 			opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this);
 		
-			if (!this.artist || !this.track || this.raw() ){
-				return false;
-			}
+			
 			var _this = this;
 			var music_query = {
 				artist:this.artist,
@@ -334,16 +343,10 @@ provoda.addPrototype("baseSong",{
 			this.mp3_search.searchFor(music_query, function(sem){
 
 				if (!_this.sem){
-					_this.sem = sem;
+					_this.bindSemEvents(sem);
 					if (_this.mf_cor){
 						_this.mf_cor.setSem(_this.sem);
 					}
-					sem.on('progress', function() {
-						_this.filesSearchStarted();
-					});
-					sem.on('changed', function(complete){
-						_this.updateFilesSearchState(complete);
-					});
 				}
 
 				var force_changed;
@@ -375,9 +378,7 @@ provoda.addPrototype("baseSong",{
 		}
 	},
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
-		if (this.raw()){
-			this.updateState('playable', true);
-		} else if (!this.track && full_allowing){
+		if (!this.track && full_allowing){
 			if (this.getRandomTrackName){
 				this.getRandomTrackName(full_allowing, from_collection, last_in_collection);
 			}
@@ -443,10 +444,7 @@ provoda.addPrototype("baseSong",{
 		return this;
 	},
 	isNeedsAuth: function(service_name){
-		return !this.raw() && this.mp3_search && (this.mp3_search.isNoMasterOfSlave(service_name) || !this.mp3_search.haveSearch(service_name));
-	},
-	raw: function(){
-		return this.mf_cor && this.mf_cor.raw();
+		return this.mp3_search && (this.mp3_search.isNoMasterOfSlave(service_name) || !this.mp3_search.haveSearch(service_name));
 	},
 	isHaveAnyResultsFrom: function(source_name){
 		return this.mf_cor && this.mf_cor.isHaveAnyResultsFrom(source_name);
@@ -459,12 +457,6 @@ provoda.addPrototype("baseSong",{
 	},
 	isHaveBestTracks: function(){
 		return this.mf_cor && this.mf_cor.isHaveBestTracks();
-	},
-	song: function(){
-		return this.mf_cor && this.mf_cor.song();
-	},
-	songs: function(){
-		return this.mf_cor && this.mf_cor.songs();
 	},
 	posistionChangeInMopla: function(mopla){
 		if (this.getCurrentMopla() == mopla){

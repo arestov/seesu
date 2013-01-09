@@ -43,8 +43,7 @@ provoda.View.extendTo(mfComplectUI, {
 	},
 	createBase: function() {
 		this.c = $('<div class="moplas-list"></div>');
-		this.header_text = this.md.sem_part.name;
-		this.header_c = $('<h4></h4>').text(this.header_text).appendTo(this.c);
+		this.header_c = $('<h4></h4>').appendTo(this.c);
 		this.lc = $('<ul></ul>').appendTo(this.c);
 	},
 	state_change: {
@@ -53,7 +52,7 @@ provoda.View.extendTo(mfComplectUI, {
 				var _this = this;
 				var header = $('<a class="js-serv"></a>').click(function() {
 					_this.md.toggleOverstocked();
-				}).text(this.header_text);
+				}).text(this.state('complect-name'));
 				this.addWayPoint(header, {
 					simple_check: true
 				});
@@ -66,6 +65,9 @@ provoda.View.extendTo(mfComplectUI, {
 			} else if (oldstate){
 				this.c.removeClass('want-overstocked-songs');
 			}
+		},
+		'complect-name': function(state) {
+			this.header_c.text(state);
 		}
 	}
 });

@@ -94,18 +94,39 @@ provoda.View.extendTo(appModelView, {
 		},
 		artcard: {
 			main: artCardUI,
-			nav: artCardNavUI
+			nav: baseNavUI
 		},
 		playlist: {
 			main: songsListView,
 			details: songsListView,
-			nav: playlistNavUI
+			nav: baseNavUI
+		},
+		usercard: {
+			nav: baseNavUI,
+			main: UserCardView
 		},
 		song: {
-			nav: trackNavUI
+			nav: baseNavUI
 		}
 	},
+	'collch-usercard': function(name, arr) {
+		var _this = this;
+		$.each(arr, function(i, el){
+			var view = _this.getFreeChildView(name, el, 'main');
+			if (view){
 
+				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
+				if (lev_conj){
+					view.wayp_scan_stop = true;
+					lev_conj.material.append(view.getA());
+				}
+				
+			}
+
+		});
+
+		this.requestAll();
+	},
 	'collch-navigation': function(name, arr) {
 		var _this = this;
 		$.each(arr, function(i, el){
@@ -339,6 +360,8 @@ provoda.View.extendTo(appModelView, {
 					value: cur.value
 				});
 				//MUST UPDATE VIEW, NOT MODEL!!!!!
+			} else if (cur.type == 'destroy'){
+				this.removeChildViewsByMd(cur.target);
 			}
 			
 		}
@@ -558,6 +581,7 @@ provoda.View.extendTo(appModelView, {
 				search_input: $('#q',d),
 				search_form: search_form,
 				fast_personal_start: start_screen.children('.fast-personal-start'),
+				pestf_preview: start_screen.children('.personal-stuff-preview'),
 				start_page_place: start_screen.children('.for-startpage')
 			};
 

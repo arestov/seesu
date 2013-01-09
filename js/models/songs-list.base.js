@@ -24,12 +24,18 @@ var songsList;
 				_this.checkRequestsPriority();
 			});
 			this.app = opts.app;
-			this.player = opts.player;
-			this.mp3_search = opts.mp3_search;
+			this.player = this.app.p;
+			this.mp3_search = this.app.mp3_search;
+			if (opts.pmd){
+				this.pmd = opts.pmd;
+			}
+			if (this.requestMoreSongs){
+				this.updateState('can-load-more', true);
+			}
 			
 		},
 		push: function(omo, skip_changes){
-			var mo = this.extendSong(omo, this.player, this.mp3_search);
+			var mo = this.extendSong(omo);
 
 			var last_usable_song = this.getLastUsableSong();
 
@@ -61,7 +67,7 @@ var songsList;
 			return mo;
 		},
 		add: function(omo){
-			var mo = cloneObj({}, omo, false, ['track', 'artist']);
+			var mo = cloneObj({}, omo, false, ['track', 'artist', 'file']);
 			return this.push(mo);
 		},
 		findSongOwnPosition: function(first_song){
@@ -74,7 +80,7 @@ var songsList;
 			this.firstsong_inseting_done = !can_find_context;
 			
 			if (first_song && first_song.track && first_song.artist){
-				this.first_song = this.extendSong(first_song, this.player, this.mp3_search);;
+				this.first_song = this.extendSong(first_song);;
 			}
 			if (this.first_song){
 				this.push(this.first_song);

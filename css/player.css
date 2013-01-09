@@ -262,7 +262,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	}
 .has-no-track-title .song-artist-name {
 	font-size: 1rem;
-	margin-top: 1.14rem;
 	color: #8C8C8C;
 	}
 .song-image-con {
@@ -534,15 +533,16 @@ a.track-name-loading:hover{
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-track-name,
 	.page-scheme .tracks-for-play .track-node .song-track-name{
-		height: 1em;
-		line-height: 1em;
-	}
-	.show-zoom-to-track .v-song-sibling .track-node .song-artist-name,
-	.page-scheme .tracks-for-play .track-node .song-artist-name{
-		
 		height: 1.4em;
 		line-height: 1.4em;
 		margin-top: 0.2rem;
+		
+	}
+	.show-zoom-to-track .v-song-sibling .track-node .song-artist-name,
+	.page-scheme .tracks-for-play .track-node .song-artist-name{
+		height: 1em;
+		line-height: 1em;
+		
 		}
 .show-zoom-to-track .has-no-track-title .song-artist-name{
 	margin-top: 0;

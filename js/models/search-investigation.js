@@ -346,7 +346,7 @@ investigation.extendTo(SearchPage, {
 		"needs-search-from": {
 			depends_on: ['mp-freezed'],
 			fn: function(frzd) {
-				return !frzd
+				return !frzd;
 			}
 		}
 	},
@@ -402,7 +402,7 @@ investigation.extendTo(SearchPage, {
 			}
 			
 			if (pl_results.length){
-				pl_sec =  this.g('playlists'); 
+				pl_sec =  this.g('playlists');
 				
 				pl_sec.setActive();
 				pl_sec.appendResults(pl_results);
@@ -434,7 +434,7 @@ investigation.extendTo(SearchPage, {
 		}
 		return tags_results;
 	},
-	searchNetwork: seesu.env.cross_domain_allowed ? 
+	searchNetwork: seesu.env.cross_domain_allowed ?
 		function(q){
 			var _this = this;
 			this.loading();
@@ -457,7 +457,7 @@ investigation.extendTo(SearchPage, {
 				}, hash, this);
 				
 			}
-		} 
+		}
 		:
 		debounce(function(q){
 			getLastfmSuggests('artist.search', {artist: q}, q, this.g('artists'), suParseArtistsResults);

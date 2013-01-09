@@ -5,7 +5,7 @@ var
 (function() {
 "use strict";
 
-var mapLevel = function(num, parent_levels, resident, map){
+var MapLevel = function(num, parent_levels, resident, map){
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
@@ -16,10 +16,10 @@ var mapLevel = function(num, parent_levels, resident, map){
 	return this;
 };
 
-Class.extendTo(mapLevel, {
+Class.extendTo(MapLevel, {
 	setResident: function(resident){
 		this.resident = resident;
-		resident.updateState('')
+		//resident.updateState('');
 		resident.assignMapLev(this);
 		resident.trigger('mpl-attach');
 
@@ -75,7 +75,7 @@ Class.extendTo(mapLevel, {
 	_sliceTM: function(transit, url_restoring){ //private alike
 		var current_level = this.map.getCurrentLevel();
 		if (current_level == this){
-			return
+			return;
 		}
 		var aycocha = this.map.isCollectingChanges();
 		if (!aycocha){
@@ -126,7 +126,7 @@ Class.extendTo(mapLevel, {
 		}
 	},
 	canUse: function(){
-		return !!this.map;	
+		return !!this.map;
 	},
 	isOpened: function(){
 		return !!this.map && !this.closed;
@@ -163,7 +163,7 @@ provoda.Eventor.extendTo(browseMap, {
 	startChangesGrouping: function(group_name, soft_allowed) {
 		if (this.grouping_changes){
 			if (!soft_allowed){
-				throw new Error('already grouping')
+				throw new Error('already grouping');
 			}
 			
 		} else {
@@ -205,10 +205,11 @@ provoda.Eventor.extendTo(browseMap, {
 				last_group.changes.push(change);
 			} else {
 				throw new Error('unknow changes');
+				/*
 				this.chans_coll.push({
 					name: '',
 					changes: [change]
-				})
+				});*/
 			}
 		}
 	},
@@ -345,7 +346,7 @@ provoda.Eventor.extendTo(browseMap, {
 		return this._goDeeper(parent_md, resident);
 	},
 	createLevel: function(num, parent_levels, resident){
-		return new mapLevel(num, parent_levels, resident, this);
+		return new MapLevel(num, parent_levels, resident, this);
 	},
 	getCurrentShallowLevelsAsParents: function(num){
 		var lvls = [];
@@ -376,9 +377,9 @@ provoda.Eventor.extendTo(browseMap, {
 
 			if (parent_md){
 				var parents_of_parent = parent_md.lev.parent_levels;
-				parent_levels = []
+				parent_levels = [];
 				if (parent_md.lev != this.getLevel(-1)){
-					parent_levels.push(parent_md.lev)
+					parent_levels.push(parent_md.lev);
 					//throw new Error('start level can\'t be parent')
 					//parent_levels = [parent_md.lev];
 				}
@@ -386,7 +387,7 @@ provoda.Eventor.extendTo(browseMap, {
 				if (parents_of_parent && parents_of_parent.length){
 					parent_levels = parent_levels.concat(parents_of_parent);
 				}
-			} else { 
+			} else {
 				parent_levels = [];
 			}
 			return this.levels[num].free = this.createLevel(num, parent_levels, resident);
@@ -411,7 +412,7 @@ provoda.Eventor.extendTo(browseMap, {
 						this.levels[i].freezed = this.levels[i].free;
 						this.levels[i].freezed.markAsFreezed();
 						fresh_freeze = true;
-					}	
+					}
 				}
 				delete this.levels[i].free;
 			}
@@ -463,7 +464,7 @@ provoda.Eventor.extendTo(browseMap, {
 			this.hideMap(true);
 		}
 		if (just_started_zoomout){
-			this.finishChangesGrouping('zoom-out')
+			this.finishChangesGrouping('zoom-out');
 		}
 
 		var dfa_pos = defzactv ? f_lvs.indexOf(defzactv) : 0;
@@ -472,13 +473,13 @@ provoda.Eventor.extendTo(browseMap, {
 		var just_started_zoomin = this.startChangesGrouping('zoom-in', true);
 		for (var i=dfa_pos; i < f_lvs.length; i++) {
 			this.setLevelPartActive(f_lvs[i], {
-				userwant: (i == f_lvs.length - 1), 
-				transit: transit, 
+				userwant: (i == f_lvs.length - 1),
+				transit: transit,
 				url_restoring: url_restoring
 			});
 		}
 		if (just_started_zoomin){
-			this.finishChangesGrouping('zoom-in')
+			this.finishChangesGrouping('zoom-in');
 		}
 
 	},
@@ -491,7 +492,7 @@ provoda.Eventor.extendTo(browseMap, {
 	hideLevel: function(lev, exept, only_free){
 		if (lev){
 			if (!only_free){
-				if (lev.freezed && lev.freezed != exept){ 
+				if (lev.freezed && lev.freezed != exept){
 					lev.freezed.hide();
 				}
 			}
@@ -547,12 +548,12 @@ provoda.Eventor.extendTo(browseMap, {
 			this.old_nav_tree = old_tree;
 		}
 		this.nav_tree = tree;
-		var 
+		var
 			url_changed = this.setCurrentURL(tree, old_tree, url_restoring),
 			title_changed = this.setCurrentNav(tree, old_tree, url_restoring);
 		if (url_changed){
 				
-			this.trigger('nav-change', 
+			this.trigger('nav-change',
 				{
 					url: url_changed.nv || "",
 					map_level: this.getCurMapL()
@@ -560,7 +561,7 @@ provoda.Eventor.extendTo(browseMap, {
 				{
 					url: url_changed.ov || "",
 					map_level: this.getPrevMampL()
-				}, 
+				},
 				!!url_restoring, title_changed);
 		}
 		this.trigger("map-tree-change", this.nav_tree, this.old_nav_tree);
@@ -577,7 +578,7 @@ provoda.Eventor.extendTo(browseMap, {
 		return n && $filter(n, 'resident');
 	},
 	getTitleNav: function(n) {
-		return n && (n = this.getTreeResidents(n)) && n.slice(0, 2); 
+		return n && (n = this.getTreeResidents(n)) && n.slice(0, 2);
 	},
 	setCurrentNav: function(new_nav, old_nav) {
 		var _this = this;
@@ -629,7 +630,7 @@ provoda.Eventor.extendTo(browseMap, {
 		return this;
 	},
 	setCurrentURL: function(new_tree, old_tree, url_restoring) {
-		var _this = this; 
+		var _this = this;
 		if (!this.onNavUrlChange){
 			this.onNavUrlChange = function() {
 				var cur_nav = _this.getTreeResidents(_this.nav_tree);
@@ -643,13 +644,13 @@ provoda.Eventor.extendTo(browseMap, {
 		var i;
 		if (old_tree){
 			for (i = 0; i < old_tree.length; i++) {
-				old_tree[i].off('url-change', this.onNavUrlChange); //unbind
+				old_tree[i].off('url-part', this.onNavUrlChange); //unbind
 			}
 		}
 
 		new_tree = this.getTreeResidents(new_tree);
 		for (i = 0; i < new_tree.length; i++) {
-			new_tree[i].on('url-change', this.onNavUrlChange);
+			new_tree[i].on('url-part', this.onNavUrlChange);
 		}
 		return this.setURL(this.joinNavURL(new_tree), false, url_restoring);
 	},
@@ -658,7 +659,7 @@ provoda.Eventor.extendTo(browseMap, {
 		nav = nav.slice().reverse();
 
 		for (var i = 0; i < nav.length; i++) {
-			var url_part = nav[i].getURL();
+			var url_part = nav[i].state('url-part');
 			if (url_part){
 				url.push(url_part);
 			}
@@ -673,15 +674,15 @@ provoda.Eventor.extendTo(browseMap, {
 				_this.trigger('url-change', nv, ov || "", _this.getCurMapL(), replace);
 			}
 			_this.trigger(
-				'every-url-change', 
+				'every-url-change',
 				{
 					url: nv,
-					map_level: _this.getCurMapL() 
+					map_level: _this.getCurMapL()
 				},
 				{
 					url: ov || "",
 					map_level: _this.getPrevMampL()
-				}, 
+				},
 				replace
 			);
 
@@ -743,8 +744,8 @@ provoda.Eventor.extendTo(browseMap, {
 		
 		this.clearCurrent();
 		this.setLevelPartActive(this.getLevel(-1), {
-			userwant: true, 
-			transit: false, 
+			userwant: true,
+			transit: false,
 			url_restoring: url_restoring
 		});
 		if (just_started_zoomout){
@@ -766,13 +767,16 @@ provoda.Model.extendTo(mapLevelModel, {
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
 		this.pamamo = this.getParentMapModel();
-		return this;	
+		return this;
 	},
 	getParentMapModel: function() {
 		return this.lev.getParentResident();
 	},
 	mlmDie: function(){
-		this.die();
+		if (!this.permanent_md){
+			this.die();
+		}
+		
 		/*this.lev.map.addChange({
 			target: this,
 			type: 'die'
@@ -844,7 +848,7 @@ provoda.Model.extendTo(mapLevelModel, {
 		return this.off('state-change.nav-title', cb);
 	},
 	getURL: function() {
-		return '';	
+		return '';
 	}
 });
 })();

@@ -5,19 +5,16 @@ var LoveRow;
 
 
 
-var LfmLoveIt = function(auth, mo) {
-	this.init(auth, mo);
+var LfmLoveIt = function(opts, mo) {
+	this.init(opts, mo);
 };
 
 LfmLogin.extendTo(LfmLoveIt, {
-	init: function(auth, mo) {
-		this._super(auth);
+	init: function(opts, mo) {
+		this._super(opts);
 		this.song = mo;
 		this.setRequestDesc(localize('lastfm-loveit-access'));
 		this.updateState('active', true);
-	},
-	onSession: function(){
-		this.updateState('has-session', true);
 	},
 	beforeRequest: function() {
 		this.bindAuthCallback();
@@ -57,7 +54,7 @@ BaseCRow.extendTo(LoveRow, {
 		this.actionsrow = actionsrow;
 		this.mo = mo;
 		this._super();
-		this.lfm_loveit = new LfmLoveIt(su.lfm_auth, this.mo);
+		this.lfm_loveit = new LfmLoveIt({auth: su.lfm_auth, pmd: this}, this.mo);
 		this.setChild('lfm_loveit', this.lfm_loveit);
 		this.lfm_loveit.on('love-success', function() {
 			_this.hide();
@@ -206,7 +203,7 @@ BaseCRow.extendTo(ShareRow, {
 		};
 		updateSongURL();
 
-		this.mo.on("url-change", function(){
+		this.mo.on("state-change.url-part", function(){
 			updateSongURL();
 		});
 
@@ -387,7 +384,7 @@ BaseCRow.extendTo(ScrobbleRow, {
 	init: function(actionsrow){
 		this.actionsrow = actionsrow;
 		this._super();
-		this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
+		this.lfm_scrobble = new LfmScrobble({auth: su.lfm_auth, pmd: this});
 		this.setChild('lfm_scrobble', this.lfm_scrobble);
 		this.addChild(this.lfm_scrobble);
 	},

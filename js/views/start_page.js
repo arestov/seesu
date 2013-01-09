@@ -30,8 +30,6 @@ BaseCRowUI.extendTo(LastfmRecommRowView, {
 
 		var parent_c = this.parent_view.row_context;
 		var buttons_panel = this.parent_view.buttons_panel;
-		var parent_c = this.parent_view.row_context; 
-		var buttons_panel = this.parent_view.buttons_panel;
 		var md = this.md;
 		this.c = parent_c.children('.lfm-recomm');
 		this.button = buttons_panel.find('#lfm-recomm').click(function(){
@@ -65,7 +63,7 @@ BaseCRowUI.extendTo(LastfmRecommRowView, {
 var LastfmLoveRowView = function(){};
 BaseCRowUI.extendTo(LastfmLoveRowView, {
 	createDetailes: function(){
-		var parent_c = this.parent_view.row_context; 
+		var parent_c = this.parent_view.row_context;
 		var buttons_panel = this.parent_view.buttons_panel;
 		var md = this.md;
 		this.c = parent_c.children('.lfm-loved');
@@ -117,8 +115,173 @@ ActionsRowUI.extendTo(FastPSRowView, {
 	}
 });
 
+var UserCardPreview = function() {};
+provoda.View.extendTo(UserCardPreview, {
+	createDetailes: function(){
+		this.createBase();
+	},
+	createBase: function() {
+		this.c = this.root_view.els.pestf_preview;
+		//this.c.text('Персональная музыка');
+		var _this = this;
+		this.c.find('.to-open-block').click(function() {
+			su.showUserPage(_this.md);
+			//_this.md
+		});
 
 
+		var createPeopleListEl = function(img_src, opts){
+			var o = opts || {};
+			
+			var ui = {
+				c: false,
+				bp: false,
+				imgc: false,
+				lp: false
+			};
+			var li = ui.c = $('<li class="people-list-item"></li>');
+			var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
+			
+				$('<img width="50" height="50"/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
+			
+			ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
+			ui.lp = $('<div class="p-link-place"></div>').appendTo(li);
+			return ui;
+		};
+		
+		
+
+		
+		var buildPeopleLE = function(man, opts){
+			var o = opts || {};
+			var el_opts = {};
+			
+			var pui = createPeopleListEl(man.info.photo);
+			
+			
+			if (o.links){
+				pui.lp.append(_this.root_view.getAcceptedDesc(man));
+			
+			} else if (o.accept_button){
+				var nb = _this.root_view.createNiceButton();
+					nb.b.text( localize('accept-inv', 'Accept invite'));
+					nb.enable();
+					
+					var pliking;
+					
+					nb.b.click(function(){
+						if (!pliking){
+							//var p =
+							su.s.api('relations.acceptInvite', {from: man.user}, function(r){
+								
+								if (r.done){
+									su.trackEvent('people likes', 'accepted', false, 5);
+									$('<span class="desc"></span>').text(su.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
+									if (new Date(r.done.est) < new Date()){
+										checkRelationsInvites();
+									}
+									nb.c.remove();
+								}
+								pliking = false;
+							});
+							pliking = true;
+						}
+					});
+				nb.c.appendTo(pui.bp);
+			}
+			
+			return pui.c;
+		};
+		var createPeopleList = function(people, opts){
+			var o = opts || {};
+			
+			var ul = $("<ul class='people-list'></ul>");
+			if (o.wide){
+				ul.addClass('people-l-wide');
+			}
+			
+			for (var i=0; i < people.length; i++) {
+				if (people[i].info){
+					ul.append(buildPeopleLE(people[i], opts));
+				}
+			}
+			return ul;
+		};
+		var rl_place = this.root_view.els.start_screen.find('.relations-likes-wrap');
+		var ri_place = this.root_view.els.start_screen.find('.relations-invites-wrap');
+		
+
+		su.s.susd.rl.regCallback('start-page', function(r){
+			rl_place.empty();
+			if (r.done && r.done.length){
+				var filtered = $filter(r.done, 'item.accepted', function(v){
+					return !!v;
+				});
+				$('<h3></h3>')
+					.text(localize('rels-you-people'))
+					.appendTo(rl_place)
+					.append($('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
+						$(this).remove();
+						setTimeout(function(){
+							su.s.susd.rl.getData();
+						},1000);
+						
+					}));
+				if (filtered.length){
+					createPeopleList(filtered, {links: true, wide: true}).appendTo(rl_place);
+				}
+				if (filtered.not.length){
+					createPeopleList(filtered.not).appendTo(rl_place);
+					$('<p class="desc people-list-desc"></p>').text(localize('if-one-accept-i') + ' ' + localize('will-get-link')).appendTo(rl_place);
+				}
+			}
+			
+		});
+		su.s.susd.ri.regCallback('start-page', function(r){
+			ri_place.empty();
+			if (r.done && r.done.length){
+				var filtered = $filter(r.done, 'item.accepted', function(v){
+					return !!v;
+				});
+				$('<h3></h3>')
+					.text(localize('rels-people-you'))
+					.appendTo(ri_place)
+					.append($('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
+						$(this).remove();
+						setTimeout(function(){
+							su.s.susd.ri.getData();
+						},1000);
+						
+					}));
+					
+					
+					
+				if (filtered.length){
+					createPeopleList(filtered, {links: true, wide: true}).appendTo(ri_place);
+				}
+				if (filtered.not.length){
+					createPeopleList(filtered.not, {wide: true, accept_button: true}).appendTo(ri_place);
+					$('<p class="desc people-list-desc"></p>').text(localize('if-you-accept-one-i') + ' ' + localize('will-get-link')).appendTo(ri_place);
+				}
+			}
+			
+		});
+	}
+});
+
+var MusicConductorView = function() {};
+provoda.View.extendTo(MusicConductorView, {
+	createDetailes: function() {
+		createBase();
+	},
+	createBase: function() {
+		this.c = $('<div></div>');
+		this.header = $('<h4></h4>').appendTo(this.c);
+	},
+	'stch-nav-title': function(state) {
+		this.header.text(state || '');
+	}
+});
 
 
 var StartPageView = function(){};
@@ -127,7 +290,7 @@ provoda.View.extendTo(StartPageView, {
 	createDetailes: function(){
 		var _this = this;
 
-		this.els = this.parent_view.els;
+		this.els = this.root_view.els;
 		this.c = this.els.start_screen;
 
 		var hq_link = this.c.find('#hint-query');
@@ -143,6 +306,13 @@ provoda.View.extendTo(StartPageView, {
 		
 		
 	},
+	'collch-muco': function(name, md) {
+
+	},
+	'collch-pstuff': function(name, md) {
+		var view = this.getFreeChildView(name, md, 'main');
+		this.requestAll();
+	},
 	'collch-fast_pstart': function(name, md) {
 		var view = this.getFreeChildView(name, md, 'main');
 		this.requestAll();
@@ -150,6 +320,9 @@ provoda.View.extendTo(StartPageView, {
 	children_views: {
 		fast_pstart: {
 			main: FastPSRowView
+		},
+		pstuff: {
+			main: UserCardPreview
 		}
 	},
 	complex_states: {
@@ -164,7 +337,7 @@ provoda.View.extendTo(StartPageView, {
 					}
 					
 				} else {
-					return mp_show
+					return mp_show;
 				}
 			}
 		}
@@ -273,8 +446,8 @@ provoda.View.extendTo(StartPageView, {
 								.attr('title',lig.artist + ' - ' + lig.title)
 								.click(function(){
 									var a = $(this).data('artist');
-									var t = $(this).data('track');	
-									_this.parent_view.md.showTopTacks(a, {}, {artist: a, track: t});			
+									var t = $(this).data('track');
+									_this.parent_view.md.showTopTacks(a, {}, {artist: a, track: t});
 								});
 
 							$('<span class="song-track-name"></span>').text(lig.title).appendTo(song_complect);
@@ -337,8 +510,9 @@ provoda.View.extendTo(StartPageView, {
 					.attr('src', getTargetField(track_obj, 'lfm_image.array.0.#text') || '')
 					.appendTo(chart_song);
 
-				$('<span class="song-track-name"></span>').text(track).appendTo(chart_song);
 				$('<span class="song-artist-name"></span>').text(artist).appendTo(chart_song);
+				$('<span class="song-track-name"></span>').text(track).appendTo(chart_song);
+				
 
 
 				
@@ -352,8 +526,8 @@ provoda.View.extendTo(StartPageView, {
 				var random_metro = getSomething(lastfm_metros);
 				_cmetro.addClass('loading');
 				lfm.get('geo.getMetroUniqueTrackChart', {
-					country: random_metro.country, 
-					metro: random_metro.name, 
+					country: random_metro.country,
+					metro: random_metro.name,
 					start: (new Date()) - 60*60*24*7})
 					.done(function(r){
 						_cmetro.removeClass('loading');
@@ -362,7 +536,7 @@ provoda.View.extendTo(StartPageView, {
 							
 							jsLoadComplete({
 								test: function() {
-									return window.su && window.songsList
+									return window.su && window.songsList;
 								},
 								fn: function() {
 									_cmetro.empty();
@@ -371,7 +545,7 @@ provoda.View.extendTo(StartPageView, {
 							
 									var plr = su.preparePlaylist({//fix params for cache
 										title: 'Chart of ' + random_metro.name,
-										type: 'chart', 
+										type: 'chart',
 										data: {country: random_metro.country, metro: random_metro.name}
 									});
 									
@@ -404,7 +578,7 @@ provoda.View.extendTo(StartPageView, {
 												
 												
 												var tobj = {
-													artist: _trm.artist.name, 
+													artist: _trm.artist.name,
 													track: _trm.name,
 													lfm_image: {
 														array: _trm.image
@@ -434,142 +608,7 @@ provoda.View.extendTo(StartPageView, {
 			showMetroRandom();
 			
 			
-			var createPeopleListEl = function(img_src, opts){
-				var o = opts || {};
-				
-				var ui = {
-					c: false,
-					bp: false,
-					imgc: false,
-					lp: false
-				};
-				var li = ui.c = $('<li class="people-list-item"></li>');
-				var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
-				
-					$('<img width="50" height="50"/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
-				
-				ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
-				ui.lp = $('<div class="p-link-place"></div>').appendTo(li);
-				return ui;
-			};
 			
-			
-
-			
-			var buildPeopleLE = function(man, opts){
-				var o = opts || {};
-				var el_opts = {};	
-				
-				var pui = createPeopleListEl(man.info.photo);
-				
-				
-				if (o.links){
-					pui.lp.append(_this.parent_view.getAcceptedDesc(man));
-				
-				} else if (o.accept_button){
-					var nb = _this.parent_view.createNiceButton();
-						nb.b.text( localize('accept-inv', 'Accept invite'));
-						nb.enable();
-						
-						var pliking;
-						
-						nb.b.click(function(){
-							if (!pliking){
-								//var p =
-								su.s.api('relations.acceptInvite', {from: man.user}, function(r){
-									
-									if (r.done){
-										su.trackEvent('people likes', 'accepted', false, 5);
-										$('<span class="desc"></span>').text(su.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
-										if (new Date(r.done.est) < new Date()){
-											checkRelationsInvites();
-										}
-										nb.c.remove();
-									}
-									pliking = false;
-								});
-								pliking = true;
-							}
-						});
-					nb.c.appendTo(pui.bp);
-				}
-				
-				return pui.c;
-			};
-			var createPeopleList = function(people, opts){
-				var o = opts || {};
-				
-				var ul = $("<ul class='people-list'></ul>");
-				if (o.wide){
-					ul.addClass('people-l-wide');
-				}
-				
-				for (var i=0; i < people.length; i++) {
-					if (people[i].info){
-						ul.append(buildPeopleLE(people[i], opts));
-					}
-				}
-				return ul;
-			};
-			var rl_place = this.els.start_screen.find('.relations-likes-wrap');
-			var ri_place = this.els.start_screen.find('.relations-invites-wrap');
-			
-
-			su.s.susd.rl.regCallback('start-page', function(r){
-				rl_place.empty();
-				if (r.done && r.done.length){
-					var filtered = $filter(r.done, 'item.accepted', function(v){
-						return !!v;
-					});
-					$('<h3></h3>')
-						.text(localize('rels-you-people'))
-						.appendTo(rl_place)
-						.append($('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
-							$(this).remove();
-							setTimeout(function(){
-								su.s.susd.rl.getData();
-							},1000);
-							
-						}));
-					if (filtered.length){
-						createPeopleList(filtered, {links: true, wide: true}).appendTo(rl_place);
-					}
-					if (filtered.not.length){
-						createPeopleList(filtered.not).appendTo(rl_place);
-						$('<p class="desc people-list-desc"></p>').text(localize('if-one-accept-i') + ' ' + localize('will-get-link')).appendTo(rl_place);
-					}
-				}
-				
-			});
-			su.s.susd.ri.regCallback('start-page', function(r){
-				ri_place.empty();
-				if (r.done && r.done.length){
-					var filtered = $filter(r.done, 'item.accepted', function(v){
-						return !!v;
-					});
-					$('<h3></h3>')
-						.text(localize('rels-people-you'))
-						.appendTo(ri_place)
-						.append($('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
-							$(this).remove();
-							setTimeout(function(){
-								su.s.susd.ri.getData();
-							},1000);
-							
-						}));
-						
-						
-						
-					if (filtered.length){
-						createPeopleList(filtered, {links: true, wide: true}).appendTo(ri_place);
-					}
-					if (filtered.not.length){
-						createPeopleList(filtered.not, {wide: true, accept_button: true}).appendTo(ri_place);
-						$('<p class="desc people-list-desc"></p>').text(localize('if-you-accept-one-i') + ' ' + localize('will-get-link')).appendTo(ri_place);
-					}
-				}
-				
-			});
 			
 			var wow_tags= function(tag,c){
 				var link = $('<a class="js-serv hyped-tag"></a> ')

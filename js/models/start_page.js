@@ -1,16 +1,6 @@
 var StartPage;
 (function() {
 "use strict";
-var MetroChartBlock = function() {};
-provoda.Model.extendTo(MetroChartBlock, {
-	init: function() {
-		this._super();
-		this.getRandomChart();
-	},
-	getRandomChart: function() {
-
-	}
-});
 
 StartPage = function() {};
 
@@ -30,6 +20,13 @@ mapLevelModel.extendTo(StartPage, {
 		fast_pagestart.init(this);
 
 		this.setChild('fast_pstart', fast_pagestart);
+
+
+		var personal_stuff = (new UserCard()).init({app: su, pmd: this}, {for_current_user: true});
+		this.setChild('pstuff', personal_stuff);
+
+		var muco = (new MusicConductor()).init({app: su});
+		this.setChild('muco', muco);
 
 		this.closed_messages = suStore('closed-messages') || {};
 		return this;
@@ -79,14 +76,9 @@ PartsSwitcher.extendTo(FastPSRow, {
 
 var LfmReccoms = function(){};
 LfmLogin.extendTo(LfmReccoms, {
-	init: function(auth, pm){
-		this._super(auth);
-		this.pm = pm
+	init: function(opts){
+		this._super(opts);
 		this.setRequestDesc(localize('lastfm-reccoms-access'));
-		this.updateState('active', true);
-	},
-	onSession: function(){
-		this.updateState('active', false);
 	},
 	beforeRequest: function() {
 		this.bindAuthCallback();
@@ -96,7 +88,7 @@ LfmLogin.extendTo(LfmReccoms, {
 		var _this = this;
 		this.auth.once("session.input_click", function() {
 			render_recommendations();
-			_this.pm.hide();
+			_this.pmd.hide();
 		}, {exlusive: true});
 	},
 	handleUsername: function(username) {
@@ -116,7 +108,10 @@ BaseCRow.extendTo(LastfmRecommRow, {
 		this._super();
 
 		var lfm_reccoms = new LfmReccoms();
-		lfm_reccoms.init(this.actionsrow.ml.su.lfm_auth, this);
+		lfm_reccoms.init({
+			pdm: this,
+			auth: this.actionsrow.ml.su.lfm_auth
+		});
 		this.setChild('lfm_reccoms', lfm_reccoms);
 		this.addChild(lfm_reccoms);
 
@@ -127,17 +122,12 @@ BaseCRow.extendTo(LastfmRecommRow, {
 
 
 
-var LfmLoved = function(){}; 
+var LfmLoved = function(){};
 LfmLogin.extendTo(LfmLoved, {
-	init: function(auth, pm){
-		this._super(auth);
-		this.pm = pm;
+	init: function(opts){
+		this._super(opts);
 		this.setRequestDesc(localize('grant-love-lfm-access'));
 		this.updateState('can-fetch-crossdomain', true);
-		this.updateState('active', true);
-	},
-	onSession: function(){
-		this.updateState('active', false);
 	},
 	beforeRequest: function() {
 		this.bindAuthCallback();
@@ -147,7 +137,7 @@ LfmLogin.extendTo(LfmLoved, {
 		var _this = this;
 		this.auth.once("session.input_click", function() {
 			render_loved();
-			_this.pm.hide();
+			_this.pmd.hide();
 		}, {exlusive: true});
 	},
 	handleUsername: function(username) {
@@ -165,7 +155,10 @@ BaseCRow.extendTo(LastfmLoveRow, {
 		this.actionsrow = actionsrow;
 		this._super();
 		var lfm_loves = new LfmLoved();
-		lfm_loves.init(this.actionsrow.ml.su.lfm_auth, this);
+		lfm_loves.init({
+			pdm: this,
+			auth: this.actionsrow.ml.su.lfm_auth
+		});
 		this.setChild('lfm_loves', lfm_loves);
 		this.addChild(lfm_loves);
 	},
