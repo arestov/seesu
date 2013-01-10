@@ -89,7 +89,7 @@ appModel.extendTo(seesuApp, {
 
 		var lu = suStore('su-usage-last');
 
-		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.33);
+		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
 		this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
 		
 		var _this = this;

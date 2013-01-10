@@ -283,7 +283,7 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 			}, {nocache: true})
 				.done(function(r){
 					var vk_search = _this.app.mp3_search.getSearchByName('vk');
-					console.log(r);
+				
 					var track_list = [];
 
 					for (var i = 0; i < r.response.length; i++) {

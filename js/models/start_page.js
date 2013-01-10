@@ -22,11 +22,18 @@ mapLevelModel.extendTo(StartPage, {
 		this.setChild('fast_pstart', fast_pagestart);
 
 
+
 		var personal_stuff = (new UserCard()).init({app: su, pmd: this}, {for_current_user: true});
 		this.setChild('pstuff', personal_stuff);
 
 		var muco = (new MusicConductor()).init({app: su});
 		this.setChild('muco', muco);
+
+		this.on('state-change.can-expand', function(e) {
+			muco.updateState('can-expand', e.value);
+			personal_stuff.updateState('can-expand', e.value);
+		});
+
 
 		this.closed_messages = suStore('closed-messages') || {};
 		return this;
