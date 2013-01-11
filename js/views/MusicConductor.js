@@ -1,3 +1,18 @@
+var WagonPreview = function() {};
+provoda.View.extendTo(WagonPreview, {
+	createDetailes: function() {
+		this.createBase();
+	},
+	createBase: function() {
+		this.c = $('<div></div>');
+		this.header = $('<h5></h5>').appendTo(this.c);
+	},
+	'stch-nav-title': function(state) {
+		this.header.text(state);
+	}
+});
+
+
 var MusicConductorPreview = function() {};
 provoda.View.extendTo(MusicConductorPreview, {
 	createDetailes: function() {
@@ -5,11 +20,24 @@ provoda.View.extendTo(MusicConductorPreview, {
 	},
 	createBase: function() {
 		this.c = this.root_view.els.start_screen.find('.music-conductor-preview');
+		this.ww_c = $('<div></div>').appendTo(this.c);
 	},
 	'stch-can-expand': function(state){
 		if (state){
 			this.requirePart('start-page-blocks');
 		}
+	},
+	children_views: {
+		allp_wagn: {
+			main: WagonPreview
+		}
+	},
+	'collch-allp_wagn': function(name, md) {
+		var view = this.getFreeChildView(name, md);
+		if (view){
+			this.ww_c.append(view.getA());
+		}
+		this.requestAll();
 	},
 	parts_builder: {
 		'start-page-blocks': function() {

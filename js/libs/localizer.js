@@ -280,7 +280,7 @@ localizer = {
 	},
 	"lfm-auth-invitation": {
 		"original": "you must grant access to Seesu from last.fm",
-		"ru": "тебе нужно дать Сису доступ к своей учётной записи на last.fm" 
+		"ru": "тебе нужно дать Сису доступ к своей учётной записи на last.fm"
 	},
 	"to-find-and-play":{
 		
