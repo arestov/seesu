@@ -506,8 +506,8 @@ var
 	} else {
 		for(var x = 0; x < vendors.length && !raf; ++x) {
 			raf = window[vendors[x]+'RequestAnimationFrame'];
-			caf = caf || 
-			  window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+			caf = caf ||
+				window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
 		}
 	}
 	
@@ -516,8 +516,8 @@ var
 		raf = function(callback, element) {
 			var currTime = new Date().getTime();
 			var timeToCall = 0;
-			var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
-			  timeToCall);
+			var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+				timeToCall);
 			lastTime = currTime + timeToCall;
 			return id;
 		};
@@ -735,7 +735,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var views_to_remove = [];
 		var views = md.getViews();
 		for (var i = 0; i < this.children.length; i++) {
-			var cur = this.children[i]
+			var cur = this.children[i];
 			if (views.indexOf(cur) != -1){
 				views_to_remove.push(cur);
 			}
@@ -792,7 +792,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		throw new Error('what do you do!?');
 
 		this.md = md;
-		var was
+		var was;
 		if (puppet_model){
 			this.puppet_model = puppet_model;
 		}
@@ -901,8 +901,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	
 	requireAllParts: function() {
-		for (var a in parts_builder){
-			this.requirePart(parts_builder[a]);
+		for (var a in this.parts_builder){
+			this.requirePart(a);
 		}
 		return this;
 	},
@@ -1004,13 +1004,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._collections_set_processing = false;
 	},
 	getMdChild: function(name, one_thing) {
-		return this.children_models[name]
+		return this.children_models[name];
 	},
 	getPrevView: function(array, start_index, view_space) {
 		view_space = view_space || 'main';
 		var complex_id = this.view_id  + '_' + view_space;
 
-		var i = start_index - 1; 
+		var i = start_index - 1;
 		if (i >= array.length || i < 0){
 			return;
 		}
