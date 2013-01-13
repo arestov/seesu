@@ -62,7 +62,7 @@ BaseCRow.extendTo(LoveRow, {
 		this.addChild(this.lfm_loveit);
 		
 	},
-	row_name: 'love'
+	model_name: 'row-love'
 });
 })()
 
@@ -271,7 +271,7 @@ BaseCRow.extendTo(ShareRow, {
 		this.updateState('query', q);
 		this.searcher.changeQuery(q);
 	},
-	row_name: 'share'
+	model_name: 'row-share'
 //	ui_constr: ShareRowUI
 });
 })()
@@ -356,7 +356,7 @@ BaseCRow.extendTo(PlaylistAddRow, {
 		this.setChild('searcher', this.searcher);
 		this.addChild(this.searcher);
 	},
-	row_name: 'playlist-add',
+	model_name: 'row-playlist-add',
 //	ui_constr: PlaylistAddRowUI,
 	search: function(q) {
 		this.updateState('query', q);
@@ -388,7 +388,7 @@ BaseCRow.extendTo(ScrobbleRow, {
 		this.setChild('lfm_scrobble', this.lfm_scrobble);
 		this.addChild(this.lfm_scrobble);
 	},
-	row_name: 'lastfm'
+	model_name: 'row-lastfm'
 });
 
 
@@ -403,7 +403,7 @@ BaseCRow.extendTo(FlashErrorRow, {
 		this.actionsrow = actionsrow;
 		this._super();
 	},
-	row_name: 'flash-error'
+	model_name: 'row-flash-error'
 });
 
 
@@ -435,7 +435,7 @@ BaseCRow.extendTo(RepeatSongRow, {
 		this.updateState('rept-song', state);
 		su.setSetting('rept-song', state);
 	},
-	row_name: 'repeat-song'
+	model_name: 'row-repeat-song'
 });
 
 

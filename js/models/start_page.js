@@ -26,7 +26,7 @@ mapLevelModel.extendTo(StartPage, {
 		var personal_stuff = (new UserCard()).init({app: su, pmd: this}, {for_current_user: true});
 		this.setChild('pstuff', personal_stuff);
 
-		var muco = (new MusicConductor()).init({app: su});
+		var muco = (new MusicConductor()).init({app: su, pmd: this});
 		this.setChild('muco', muco);
 
 		this.on('state-change.can-expand', function(e) {
@@ -124,7 +124,7 @@ BaseCRow.extendTo(LastfmRecommRow, {
 
 
 	},
-	row_name: 'lastfm-recomm'
+	model_name: 'row-lastfm-recomm'
 });
 
 
@@ -169,6 +169,6 @@ BaseCRow.extendTo(LastfmLoveRow, {
 		this.setChild('lfm_loves', lfm_loves);
 		this.addChild(lfm_loves);
 	},
-	row_name: 'lastfm-love'
+	model_name: 'row-lastfm-love'
 });
 })();

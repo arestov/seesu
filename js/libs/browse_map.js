@@ -784,6 +784,13 @@ provoda.Model.extendTo(mapLevelModel, {
 	canUnfreeze: function() {
 		return this.lev && this.lev.canUse() && !this.lev.isOpened();
 	},
+	showMyPage: function(source_info, no_navi) {
+		source_info = source_info || {
+			source_md: this,
+			page_md: this.pmd
+		};
+		this.app.showModelPage(this, source_info, no_navi);
+	},
 	mlmDie: function(){
 		if (!this.permanent_md){
 			this.die();

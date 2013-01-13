@@ -370,8 +370,8 @@ provoda.Model.extendTo(PartsSwitcher, {
 		}
 	},
 	addPart: function(model) {
-		if (!this.context_parts[model.row_name]){
-			this.context_parts[model.row_name] = model;
+		if (!this.context_parts[model.model_name]){
+			this.context_parts[model.model_name] = model;
 			this.addChild(model);
 
 			var array = this.getChild('context_parts') || [];
@@ -401,13 +401,10 @@ provoda.Model.extendTo(PartsSwitcher, {
 
 var ActionsRowUI = function(){};
 provoda.View.extendTo(ActionsRowUI, {
-	createDetailes: function(){
-		this.createBase();
-	},
 	'collch-context_parts': function(name, arr) {
 		var _this = this;
 		$.each(arr, function(i, el){
-			var md_name = el.row_name;
+			var md_name = el.model_name;
 			_this.getFreeChildView(md_name, el, 'main');
 		});
 
@@ -463,10 +460,10 @@ provoda.View.extendTo(BaseCRowUI, {
 var BaseCRow = function(){};
 provoda.Model.extendTo(BaseCRow, {
 	switchView: function(){
-		this.actionsrow.switchPart(this.row_name);
+		this.actionsrow.switchPart(this.model_name);
 	},
 	hide: function(){
-		this.actionsrow.hide(this.row_name);
+		this.actionsrow.hide(this.model_name);
 	},
 	deacivate: function(){
 		this.updateState("active_view", false);

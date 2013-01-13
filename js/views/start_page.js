@@ -106,10 +106,10 @@ ActionsRowUI.extendTo(FastPSRowView, {
 	},
 
 	children_views: {
-		"lastfm-recomm": {
+		"row-lastfm-recomm": {
 			main: LastfmRecommRowView
 		},
-		"lastfm-love": {
+		"row-lastfm-love": {
 			main: LastfmLoveRowView
 		}
 	}
@@ -152,18 +152,9 @@ provoda.View.extendTo(StartPageView, {
 		
 		
 	},
-	'collch-muco': function(name, md) {
-		var view = this.getFreeChildView(name, md, 'main');
-		this.requestAll();
-	},
-	'collch-pstuff': function(name, md) {
-		var view = this.getFreeChildView(name, md, 'main');
-		this.requestAll();
-	},
-	'collch-fast_pstart': function(name, md) {
-		var view = this.getFreeChildView(name, md, 'main');
-		this.requestAll();
-	},
+	'collch-muco': true,
+	'collch-pstuff': true,
+	'collch-fast_pstart': true,
 	children_views: {
 		muco:{
 			main: MusicConductorPreview

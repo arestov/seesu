@@ -1,8 +1,5 @@
 var WagonPreview = function() {};
 provoda.View.extendTo(WagonPreview, {
-	createDetailes: function() {
-		this.createBase();
-	},
 	createBase: function() {
 		this.c = $('<div></div>');
 		this.header = $('<h5></h5>').appendTo(this.c);
@@ -15,11 +12,13 @@ provoda.View.extendTo(WagonPreview, {
 
 var MusicConductorPreview = function() {};
 provoda.View.extendTo(MusicConductorPreview, {
-	createDetailes: function() {
-		this.createBase();
-	},
 	createBase: function() {
 		this.c = this.root_view.els.start_screen.find('.music-conductor-preview');
+		this.header = this.c.find('h2');
+		var _this = this;
+		this.header.click(function() {
+			_this.md.showMyPage();
+		});
 		this.ww_c = $('<div></div>').appendTo(this.c);
 	},
 	'stch-can-expand': function(state){
@@ -32,13 +31,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 			main: WagonPreview
 		}
 	},
-	'collch-allp_wagn': function(name, md) {
-		var view = this.getFreeChildView(name, md);
-		if (view){
-			this.ww_c.append(view.getA());
-		}
-		this.requestAll();
-	},
+	'collch-allp_wagn': 'ww_c',
 	parts_builder: {
 		'start-page-blocks': function() {
 			var _this = this;
@@ -270,3 +263,4 @@ provoda.View.extendTo(MusicConductorPreview, {
 });
 
 
+var MusicConductorView = MusicConductorPreview;

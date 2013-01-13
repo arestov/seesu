@@ -297,8 +297,8 @@ provoda.Model.extendTo(appModel, {
 	showAlbum:function() {
 		return this.collectChanges(this._showAlbum, arguments);
 	},
-	showUserPage: function() {
-		return this.collectChanges(this._showUserPage, arguments);
+	showModelPage: function() {
+		return this.collectChanges(this._showModelPage, arguments);
 	},
 	_show_now_playing: function(no_stat){
 
@@ -315,8 +315,11 @@ provoda.Model.extendTo(appModel, {
 		return current_song;
 		
 	},
-	_showUserPage: function(md, source_info, no_navi) {
-		this.bindMMapStateChanges(md, 'usercard');
+	_showModelPage: function(md, source_info, no_navi) {
+		if (!md.model_name){
+			throw new Error('model must have model_name prop');
+		}
+		this.bindMMapStateChanges(md, md.model_name);
 		md.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
 		var lev = this.map.goDeeper(source_info && source_info.page_md, md);
 		return md;

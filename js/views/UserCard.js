@@ -1,8 +1,5 @@
 var PlaylistPreview = function() {};
 provoda.View.extendTo(PlaylistPreview, {
-	createDetailes: function() {
-		this.createBase();
-	},
 	createBase: function() {
 		this.c = $('<div></div>');
 		this.prew_c = $('<div class="playlist_preview-c"></div>').appendTo(this.c);
@@ -22,13 +19,7 @@ provoda.View.extendTo(PlaylistPreview, {
 	'stch-nav-title': function(state) {
 		this.prew_c.text(state);
 	},
-	'collch-auth_part': function(name, md) {
-		var view = this.getFreeChildView(name, md);
-		if (view){
-			this.auth_c.append(view.getA());
-		}
-		this.requestAll();
-	},
+	'collch-auth_part': 'auth_c',
 	children_views: {
 		auth_part: {
 			main: LfmLoginView
@@ -39,29 +30,15 @@ provoda.View.extendTo(PlaylistPreview, {
 
 var UserCardView = function() {};
 provoda.View.extendTo(UserCardView, {
-	createDetailes: function() {
-		this.createBase();
-	},
 	createBase: function() {
 		this.c = $('<div></div>');
 	},
 	'stch-mp-show': function(state) {
 		this.c.toggleClass('hidden', !state);
 	},
-	'collch-arts_recomms': function(name, md) {
-		var view = this.getFreeChildView(name, md);
-		if (view){
-			this.c.append(view.getA());
-		}
-		this.requestAll();
-	},
-	'collch-vk_audio': function(name, md) {
-		var view = this.getFreeChildView(name, md);
-		if (view){
-			this.c.append(view.getA());
-		}
-		this.requestAll();
-	},
+	'collch-arts_recomms': 'c',
+	'collch-vk_audio': 'c',
+
 	children_views: {
 		arts_recomms: {
 			main: PlaylistPreview
@@ -78,15 +55,12 @@ provoda.View.extendTo(UserCardView, {
 
 var UserCardPreview = function() {};
 provoda.View.extendTo(UserCardPreview, {
-	createDetailes: function(){
-		this.createBase();
-	},
 	createBase: function() {
 		this.c = this.root_view.els.pestf_preview;
 		//this.c.text('Персональная музыка');
 		var _this = this;
 		this.c.find('.to-open-block').click(function() {
-			su.showUserPage(_this.md);
+			su.showModelPage(_this.md);
 			//_this.md
 		});
 

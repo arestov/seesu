@@ -123,6 +123,14 @@ var songsList;
 			}
 
 		},
+		preloadStart: function() {
+		this.loadPlStart();
+		},
+		loadPlStart: function() {
+			if (this.state('more_load_available') && !this.getLength()){
+				this.loadMoreSongs();
+			}
+		},
 		loadMoreSongs: function(force) {
 			if (this.state("can-load-more") && this.requestMoreSongs){
 				if (!this.song_request_info || this.song_request_info.done){

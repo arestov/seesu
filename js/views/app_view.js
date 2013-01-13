@@ -107,119 +107,68 @@ provoda.View.extendTo(appModelView, {
 		},
 		song: {
 			nav: baseNavUI
+		},
+		songswagon: {
+			nav: baseNavUI
+		},
+		artistswagon: {
+			nav: baseNavUI
+		},
+		tagswagon: {
+			nav: baseNavUI
+		},
+		allptrain: {
+			nav: baseNavUI
+		},
+		countytrain: {
+			nav: baseNavUI
+		},
+		citytrain: {
+			nav: baseNavUI
+		},
+		mconductor: {
+			nav: baseNavUI
 		}
 	},
-	'collch-usercard': function(name, arr) {
-		var _this = this;
-		$.each(arr, function(i, el){
-			var view = _this.getFreeChildView(name, el, 'main');
-			if (view){
-
-				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
-				if (lev_conj){
-					view.wayp_scan_stop = true;
-					lev_conj.material.append(view.getA());
-				}
-				
-			}
-
-		});
-
-		this.requestAll();
+	'collch-usercard': {
+		place: function(md, view) {
+			var lev_conj = this.getLevelContainer(md.map_level_num, view);
+			view.wayp_scan_stop = true;
+			return lev_conj.material;
+		}
 	},
-	'collch-navigation': function(name, arr) {
-		var _this = this;
-		$.each(arr, function(i, el){
-			var md_name = el.model_name;
-			var view = _this.getFreeChildView(md_name, el, 'nav');
-			if (view){
-				_this.nav.daddy.append(view.getA());
-			}
-
-		});
-
-		this.requestAll();
-
+	'collch-invstg': {
+		place: function(md, view) {
+			var lev_conj = this.getLevelContainer(md.map_level_num, view);
+			view.wayp_scan_stop = true;
+			return lev_conj.material;
+		}
 	},
-	'collch-invstg': function(name, arr) {
-		var _this = this;
-		$.each(arr, function(i, el){
-			var view = _this.getFreeChildView(name, el, 'main');
-			if (view){
-
-				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
-				if (lev_conj){
-					view.wayp_scan_stop = true;
-					lev_conj.material.append(view.getA());
-				}
-				
-			}
-
-		});
-
-		this.requestAll();
+	'collch-artcard':  {
+		place: function(md, view) {
+			var lev_conj = this.getLevelContainer(md.map_level_num, view);
+			view.wayp_scan_stop = true;
+			return lev_conj.material;
+		}
 	},
-	'collch-artcard':  function(name, arr) {
-		var _this = this;
-		$.each(arr, function(i, el){
-			var view = _this.getFreeChildView(name, el, 'main');
-			if (view){
-				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
-				if (lev_conj){
-					view.wayp_scan_stop = true;
-					lev_conj.material.append(view.getA());
-				}
-			}
-
-
-		});
-
-		this.requestAll();
-		/*
-
-		'collch-playlist': function(name, arr) {
-			var _this = this;
-			$.each(arr, function(i, el){
-				var view = _this.getFreeChildView(name, el, 'main', {overview: true});
-				if (view){
-					_this.getLevelContainer(el.map_level_num, view).append(view.getA());
-				}
-				var det_view = _this.getFreeChildView(name, el, 'details');
-				if (det_view){
-					_this.getLevelContainer(el.map_level_num + 1, view).append(det_view.getA());
-				}
-
-			});
-
-			this.requestAll();
+	'collch-playlist': [
+		{
+			place: function(md, view) {
+				var lev_conj = this.getLevelContainer(md.map_level_num, view);
+				view.wayp_scan_stop = true;
+				return lev_conj.material;
+			},
+			opts: {overview: true}
 		},
-
-		*/
-	},
-	'collch-playlist': function(name, arr) {
-		var _this = this;
-		$.each(arr, function(i, el){
-			var view = _this.getFreeChildView(name, el, 'main', {overview: true});
-			if (view){
-				var lev_conj = _this.getLevelContainer(el.map_level_num, view);
-				if (lev_conj){
-					view.wayp_scan_stop = true;
-					lev_conj.material.append(view.getA());
-				}
-			}
-			var det_view = _this.getFreeChildView(name, el, 'details');
-			if (det_view){
-				var lev_conj = _this.getLevelContainer(el.map_level_num + 1, det_view);
-				if (lev_conj){
-					det_view.wayp_scan_stop = true;
-					lev_conj.material.append(det_view.getA());
-				}
-			}
-
-		});
-
-		this.requestAll();
-	},
+		{
+			place: function(md, view){
+				var lev_conj = this.getLevelContainer(md.map_level_num + 1, view);
+				view.wayp_scan_stop = true;
+				return lev_conj.material;
+			},
+			space: 'details'
+		}
+	],
 	'collch-start_page': function(name, md) {
 		var view = this.getFreeChildView(name, md, 'main');
 		if (view){
@@ -243,6 +192,11 @@ provoda.View.extendTo(appModelView, {
 			});
 		}
 		this.requestAll();
+	},
+	'collch-navigation': {
+		place: 'nav.daddy',
+		space: 'nav',
+		by_model_name: true
 	},
 	manual_states_connect: true,
 	getLevByNum: function(num, exclude_start_lev) {

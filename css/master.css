@@ -812,6 +812,13 @@ html.not-as-application, .not-as-application  body{
 		height:32px;
 	}
 
+.start-page-messages{
+	display: none;
+	}
+	.full-page .start-page-messages{
+		display: block;
+		}
+
 .block-for-startpage.loading{
 	background: url(../i/spinner_small.gif) no-repeat 100% 4px;
 	min-height:30px;
