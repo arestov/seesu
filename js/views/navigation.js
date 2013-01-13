@@ -96,6 +96,9 @@ investgNavUI = function() {};
 baseNavUI.extendTo(investgNavUI, {
 	createBase: function() {
 		this.c = $('<span class="nav-item nav-search-results" title="Search results"><b></b><span class="icon">.</span></span>');
+	},
+	"stch-nav-title": function(text) {
+		this.c.attr('title', text || '');
 	}
 });
 

@@ -537,7 +537,6 @@ provoda.View.extendTo(appModelView, {
 				start_screen: start_screen,
 				search_input: $('#q',d),
 				search_form: search_form,
-				fast_personal_start: start_screen.children('.fast-personal-start'),
 				pestf_preview: start_screen.children('.personal-stuff-preview'),
 				start_page_place: start_screen.children('.for-startpage')
 			};
@@ -603,7 +602,6 @@ provoda.View.extendTo(appModelView, {
 				playlist_panel: ui_samples.children('.play-list-panel'),
 				vklc: vklc,
 				lfm_authsampl: ui_samples.children('.lfm-auth-module'),
-				lfm_input: ui_samples.children('.lfm-manual-user'),
 				lfm_scrobling: ui_samples.children('.scrobbling-switches'),
 				vk_login: {
 					o: vklc,

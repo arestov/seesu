@@ -1,11 +1,44 @@
+var WagonItemPreview = function() {};
+provoda.View.extendTo(WagonItemPreview, {
+	createBase: function() {
+		this.c = $('<span></span>');
+	},
+	'stch-nav-title': function(state) {
+		this.c.text(state);
+	}
+});
+
+
 var WagonPreview = function() {};
 provoda.View.extendTo(WagonPreview, {
 	createBase: function() {
 		this.c = $('<div></div>');
-		this.header = $('<h5></h5>').appendTo(this.c);
+		this.header = $('<h4></h4>').appendTo(this.c);
 	},
 	'stch-nav-title': function(state) {
 		this.header.text(state);
+	},
+	'collch-allp_allt_cart': 'c',
+	children_views: {
+		allp_allt_cart: WagonItemPreview
+	}
+
+});
+
+var TrainPreview = function() {};
+provoda.View.extendTo(TrainPreview, {
+	createBase: function() {
+		this.c = $('<div></div>');
+		this.header = $('<h3></h3>').appendTo(this.c);
+	},
+	'stch-nav-title': function(state) {
+		this.header.text(state);
+	},
+	'collch-wagn_songs': 'c',
+	children_views: {
+		wagn_songs: {
+			main: WagonPreview
+		}
 	}
 });
 
@@ -27,11 +60,11 @@ provoda.View.extendTo(MusicConductorPreview, {
 		}
 	},
 	children_views: {
-		allp_wagn: {
-			main: WagonPreview
+		allp_train: {
+			main: TrainPreview
 		}
 	},
-	'collch-allp_wagn': 'ww_c',
+	'collch-allp_train': 'ww_c',
 	parts_builder: {
 		'start-page-blocks': function() {
 			var _this = this;

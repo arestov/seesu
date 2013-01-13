@@ -47,7 +47,7 @@ localizer = {
 	},
 	"will-get-link":{
 		"original": "you will get link to his profile after 5 days",
-		"ru": "через 5 дней ты получешь ссылку на его профиль"	
+		"ru": "через 5 дней ты получешь ссылку на его профиль"
 	},
 	"wget-link":{
 		"original": "You will get profile link",
@@ -59,7 +59,7 @@ localizer = {
 	},
 	"attime":{
 		"original":"at",
-		"ru": "в"	
+		"ru": "в"
 	},
 	"m1":{
 		"original": "January",
@@ -123,7 +123,7 @@ localizer = {
 	},
 	"want-meet":{
 		"original": "Want to meet",
-		"ru": "Хочу познакомиться"	
+		"ru": "Хочу познакомиться"
 	},
 	"Pop-tags":{
 		"original": "Popular tags",
@@ -147,7 +147,7 @@ localizer = {
 	},
 	"listen-this":{
 		"original": "listen this",
-		"ru": "слушал это"	
+		"ru": "слушал это"
 	},
 	"search": {
 		"original": "Search",
@@ -170,6 +170,19 @@ localizer = {
 		"original": "Recommendations",
 		"ru": "Рекомендации"
 	},
+	"reccoms-for-you": {
+		"original" : "Recommendations for you",
+		"ru": "Рекомендации для тебя"
+	},
+	"reccoms-for": {
+		"original" : "Recommendations for",
+		"ru": "Рекомендации для"
+	},
+	"vk-audio": {
+		"original": "Vkontakte audio",
+		"ru": "Аудиозаписи во вконтакте"
+	},
+	
 	"grant": {
 		"original": "grant",
 		"ru": "дать доступ"
@@ -212,11 +225,11 @@ localizer = {
 	},
 	"Tags": {
 		"original": "Tags",
-		"ru": "Теги"	
+		"ru": "Теги"
 	},
 	"get-albums":{
 		"original": "get albums",
-		"ru": "получить альбомы"	
+		"ru": "получить альбомы"
 	},
 	"similar-arts": {
 		"original":	"Similar artists",
@@ -224,7 +237,7 @@ localizer = {
 	},
 	"albums": {
 		"original": "albums",
-		"ru": "альбомы"	
+		"ru": "альбомы"
 	},
 	"artcard": {
 		"original": "artist card",
@@ -236,7 +249,7 @@ localizer = {
 	},
 	"top-tracks":{
 		"original": "top tracks",
-		"ru": 'лучшие треки'	
+		"ru": 'лучшие треки'
 	},
 	"stop-flash": {
 		"original": "To stop annoing «Adobe Flash Player Security» window copy this address:",
@@ -357,7 +370,7 @@ localizer = {
 	},
 	"dont-rept-pl": {
 		"original": "Do not repeat playlist",
-		"ru": "Не повторять плейлист" 
+		"ru": "Не повторять плейлист"
 	},
 	"playlist-getmp3": {
 		"original": "Find files for compositions",
@@ -371,7 +384,7 @@ localizer = {
 		"original": "add song to",
 		"ru": "добавить композицию в"
 	},
-	 "to-search": {
+	"to-search": {
 		"original": "Search ",
 		"ru": "Искать "
 	},
@@ -409,7 +422,7 @@ localizer = {
 	},
 	"full-list":{
 		"original": "full list",
-		"ru": "полный список"	
+		"ru": "полный список"
 	},
 	"oartists": {
 		"original": "artists",
@@ -421,11 +434,11 @@ localizer = {
 	},
 	"otags": {
 		'original': 'tags',
-		"ru": 'тегов'	
+		"ru": 'тегов'
 	},
 	"oalbums":{
 		"original": "albums",
-		"ru": "альбомов"	
+		"ru": "альбомов"
 	},
 	"video": {
 		"original": "Video",
@@ -516,4 +529,4 @@ localizer = {
 		"original": "",
 		"ru": ""
 	}
-}
+};

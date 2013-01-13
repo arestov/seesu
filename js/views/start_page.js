@@ -1,119 +1,4 @@
-var LfmCommonLoginView = function(){};
-LfmLoginView.extendTo(LfmCommonLoginView, {
-	createBase: function(){
-		this._super();
-		this.un_form = this.root_view.samples.lfm_input.clone().appendTo(this.c);
-		this.un_input = this.un_form.find('.lfm-username');
 
-		var _this = this;
-		this.un_form.on('submit', function(e) {
-			_this.md.handleUsername(_this.un_input.val());
-			return false;
-		});
-	},
-	'stch-can-fetch-crossdomain': function(state) {
-		if (state){
-			this.un_form.removeClass('needs-cross-domain');
-		} else {
-			this.un_form.addClass('needs-cross-domain');
-		}
-		
-	}
-});
-
-
-
-
-var LastfmRecommRowView = function(){};
-BaseCRowUI.extendTo(LastfmRecommRowView, {
-	createDetailes: function(){
-
-		var parent_c = this.parent_view.row_context;
-		var buttons_panel = this.parent_view.buttons_panel;
-		var md = this.md;
-		this.c = parent_c.children('.lfm-recomm');
-		this.button = buttons_panel.find('#lfm-recomm').click(function(){
-			if (!lfm.sk){
-				md.switchView();
-			} else {
-				render_recommendations();
-			}
-			
-			return false;
-		});
-	},
-	expand: function() {
-		if (this.expanded){
-			return;
-		} else {
-			this.expanded = true;
-		}
-
-		this.c.append(this.getAFreeCV('lfm_reccoms'));
-
-		this.requestAll();
-	},
-	children_views: {
-		'lfm_reccoms': LfmCommonLoginView
-	}
-});
-
-
-
-var LastfmLoveRowView = function(){};
-BaseCRowUI.extendTo(LastfmLoveRowView, {
-	createDetailes: function(){
-		var parent_c = this.parent_view.row_context;
-		var buttons_panel = this.parent_view.buttons_panel;
-		var md = this.md;
-		this.c = parent_c.children('.lfm-loved');
-		this.button = buttons_panel.find('#lfm-loved').click(function(){
-			if (!lfm.sk){
-				md.switchView();
-			} else {
-				render_loved();
-			}
-			
-			return false;
-		});
-	},
-	expand: function() {
-		if (this.expanded){
-			return;
-		} else {
-			this.expanded = true;
-		}
-
-
-		this.c.append(this.getAFreeCV('lfm_loves'));
-
-		this.requestAll();
-	},
-	children_views: {
-		'lfm_loves': LfmCommonLoginView
-	}
-});
-
-
-
-var FastPSRowView = function(){};
-ActionsRowUI.extendTo(FastPSRowView, {
-	createBase: function(c){
-		this.c = this.parent_view.els.fast_personal_start;
-		this.row_context = this.c.find('.row-context');
-		this.arrow = this.row_context.children('.rc-arrow');
-		this.buttons_panel = this.c;
-	},
-
-	children_views: {
-		"row-lastfm-recomm": {
-			main: LastfmRecommRowView
-		},
-		"row-lastfm-love": {
-			main: LastfmLoveRowView
-		}
-	}
-});
 
 var MusicConductorView = function() {};
 provoda.View.extendTo(MusicConductorView, {
@@ -154,13 +39,9 @@ provoda.View.extendTo(StartPageView, {
 	},
 	'collch-muco': true,
 	'collch-pstuff': true,
-	'collch-fast_pstart': true,
 	children_views: {
 		muco:{
 			main: MusicConductorPreview
-		},
-		fast_pstart: {
-			main: FastPSRowView
 		},
 		pstuff: {
 			main: UserCardPreview
@@ -200,19 +81,7 @@ provoda.View.extendTo(StartPageView, {
 			}
 		},
 		"have-playlists": function(state){
-			if (state){
-				if (!this.plts_link){
-					this.plts_link =  this.els.fast_personal_start.children('.cus-playlist-b');
-					var _this = this;
-					this.plts_link.children('a').click(function(e){
-						e.preventDefault();
-						_this.md.getChild('fast_pstart').hideAll();
-						_this.md.showPlaylists();
-						
-					});
-				}
-				this.plts_link.removeClass('hidden');
-			}
+
 		},
 	
 		"ask-rating-help": function(link){

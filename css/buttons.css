@@ -167,6 +167,42 @@
 	border-bottom: 1px solid transparent;
 	border-radius:11px;
 }
+.area-button{
+	display: block;
+	cursor: pointer;
+	border-top: 1px solid #595959;
+	border-bottom: 1px solid hsl(0, 0%, 29%);
+	border-radius: 1rem;
+	background: #4f4f4f;
+	padding: 0.5rem 1rem;
+	color: #aaa;
+	margin-bottom:1rem;
+
+	background-image: -o-linear-gradient(#525252,#4d4d4d);
+	background-image: -moz-linear-gradient(100% 0% 270deg, #525252, #4d4d4d);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#525252), to(#4d4d4d)) !important;
+	background-image: linear-gradient(#525252,#4d4d4d);
+	}
+	.area-button:hover{
+		background-image: -o-linear-gradient(#525252,#4d4d4d);
+		background-image: -moz-linear-gradient(100% 0% 270deg, #525252, #4d4d4d);
+		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#545454), to(#4f4f4f)) !important;
+		background-image: linear-gradient(#525252,#4d4d4d);
+		}
+	.area-button:active{
+		box-shadow: inset 0 0 10px 1px #454545;
+		border-color:transparent;
+		background-image: none !important;
+		}
+	.area-button .area-description{
+		min-height: 2rem;
+		}
+	.page-scheme .area-button .area-description{
+		display: none;
+		}
+	.page-scheme .area-button{
+		margin: 0;
+		}
 
 .nicebutton{
 	cursor:pointer;

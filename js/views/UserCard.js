@@ -2,7 +2,9 @@ var PlaylistPreview = function() {};
 provoda.View.extendTo(PlaylistPreview, {
 	createBase: function() {
 		this.c = $('<div></div>');
-		this.prew_c = $('<div class="playlist_preview-c"></div>').appendTo(this.c);
+		this.prew_c = $('<div class="playlist_preview-c area-button"></div>').appendTo(this.c);
+		this.prew_text = $('<span></span>').appendTo(this.prew_c);
+		this.desc = $('<div class="area-description"></div>').appendTo(this.prew_c);
 		var _this = this;
 		this.prew_c.click(function() {
 			_this.md.requestPlaylist();
@@ -17,7 +19,7 @@ provoda.View.extendTo(PlaylistPreview, {
 		this.c.toggleClass('access-request', state);
 	},
 	'stch-nav-title': function(state) {
-		this.prew_c.text(state);
+		this.prew_text.text(state);
 	},
 	'collch-auth_part': 'auth_c',
 	children_views: {
@@ -32,11 +34,28 @@ var UserCardView = function() {};
 provoda.View.extendTo(UserCardView, {
 	createBase: function() {
 		this.c = $('<div></div>');
+		this.plts_link_a = $(document.createComment('')).appendTo(this.c);
 	},
 	'stch-mp-show': function(state) {
 		this.c.toggleClass('hidden', !state);
 	},
+	'stch-has-playlists': function(state){
+		this.requirePart('plts_link').toggleClass('hidden', !state);
+	},
+	parts_builder: {
+		plts_link: function() {
+			var wrap = $('<span class="button-hole"><a class="nicebutton"></a></span>');
+			var _this = this;
+			wrap.children('a').click(function(e){
+				e.preventDefault();
+				_this.root_view.md.showPlaylists();
+			}).text(localize('playlists'));
+			this.plts_link_a.after(wrap);
+			return wrap;
+		}
+	},
 	'collch-arts_recomms': 'c',
+	'collch-lfm_loved': 'c',
 	'collch-vk_audio': 'c',
 
 	children_views: {
@@ -44,6 +63,9 @@ provoda.View.extendTo(UserCardView, {
 			main: PlaylistPreview
 		},
 		vk_audio: {
+			main: PlaylistPreview
+		},
+		lfm_loved: {
 			main: PlaylistPreview
 		}
 	}

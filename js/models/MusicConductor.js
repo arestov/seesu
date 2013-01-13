@@ -69,6 +69,7 @@ mapLevelModel.extendTo(SongsWagon, {
 		this.allp_allt_cart.init({
 			app: this.app
 		});
+		this.setChild('allp_allt_cart', this.allp_allt_cart);
 		
 		this.updateState('nav-title', 'Композиции');
 		this.updateState('url-part', '/songs');
@@ -98,6 +99,7 @@ mapLevelModel.extendTo(AllPlacesTrain, {
 		this.wagn_songs.init({
 			app: this.app
 		});
+		this.setChild('wagn_songs', this.wagn_songs);
 		this.updateState('nav-title', 'Во всем мире');
 		this.updateState('url-part', '/all-places');
 
@@ -137,7 +139,7 @@ mapLevelModel.extendTo(MusicConductor, {
 			fn: function() {
 				(function() {
 					this.allp_trn.init({app: this.app});
-					this.setChild('allp_wagn', this.allp_trn);
+					this.setChild('allp_train', this.allp_trn);
 				}).call(_this);
 			}
 		});
