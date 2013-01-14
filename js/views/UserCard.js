@@ -52,7 +52,7 @@ provoda.View.extendTo(UserCardView, {
 				_this.root_view.md.showPlaylists();
 			}).text(localize('playlists'));
 			this.plts_link_a.after(wrap);
-			plts_link_a.remove();
+			this.plts_link_a.remove();
 			return wrap;
 		}
 	},
