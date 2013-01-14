@@ -8,6 +8,10 @@
 */
 
 localizer = {
+	"your-pmus-f-aq": {
+		"original": "Your personal music, friends and acquaintances",
+		"ru": "Твоя персональная музыка, друзья и знакомства"
+	},
 	"listeners-looks":{
 		"original": "People who listened to this track, look like this",
 		"ru": "Люди, слушавшие этот трек, выглядят примерно так:"

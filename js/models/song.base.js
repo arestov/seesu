@@ -343,10 +343,11 @@ provoda.addPrototype("baseSong",{
 			this.mp3_search.searchFor(music_query, function(sem){
 
 				if (!_this.sem){
-					_this.bindSemEvents(sem);
+					
 					if (_this.mf_cor){
-						_this.mf_cor.setSem(_this.sem);
+						_this.mf_cor.setSem(sem);
 					}
+					_this.bindSemEvents(sem);
 				}
 
 				var force_changed;

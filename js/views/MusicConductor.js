@@ -52,7 +52,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 		this.header.click(function() {
 			_this.md.showMyPage();
 		});
-		this.ww_c = $('<div></div>').appendTo(this.c);
+		this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
 	'stch-can-expand': function(state){
 		if (state){
