@@ -196,13 +196,12 @@
 		}
 	.area-button .area-description{
 		min-height: 2rem;
+		font-size: 0.8em;
 		}
 	.page-scheme .area-button .area-description{
 		display: none;
 		}
-	.page-scheme .area-button{
-		margin: 0;
-		}
+	
 
 .nicebutton{
 	cursor:pointer;
