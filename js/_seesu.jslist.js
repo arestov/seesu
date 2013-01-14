@@ -76,6 +76,7 @@ var jsLoadComplete,
 	
 	"js/views/etc.views.js",
 	"js/views/UserCard.js",
+	"js/views/MusicConductor.js",
 	"js/views/su-mfcomplect.js",
 	"js/views/search-investigation.base.js",
 	"js/views/search-investigation.js",

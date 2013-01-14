@@ -318,6 +318,11 @@ provoda.Eventor.extendTo(browseMap, {
 	},
 	_goDeeper: function(parent_md, resident, transit, url_restoring){
 		//var cl = this.getActiveLevelNum();
+		var cur_res = this.getCurrentResident();
+		if (cur_res == resident){
+			return cur_res.lev;
+		}
+
 
 		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
 		if (parent_md){
@@ -330,16 +335,20 @@ provoda.Eventor.extendTo(browseMap, {
 		if (just_started_zoomout){
 			this.finishChangesGrouping('zoom-out');
 		}
-		var new_level = this.getFreeLevel(parent_md ? parent_md.lev.num + 1 : 0, parent_md, resident);
-		
-		//
+		var target_lev;
+		if (resident.lev && resident.lev.canUse()){
+			target_lev = resident.lev;
+		} else {
+			//reusing freezed;
+			target_lev = this.getFreeLevel(parent_md ? parent_md.lev.num + 1 : 0, parent_md, resident);
+		}
 
 		var just_started = this.startChangesGrouping('zoom-in');
-		this.setLevelPartActive(new_level, {userwant: true, transit: transit, url_restoring: url_restoring});
+		this.setLevelPartActive(target_lev, {userwant: true, transit: transit, url_restoring: url_restoring});
 		if (just_started){
 			this.finishChangesGrouping('zoom-in');
 		}
-		return new_level;
+		return target_lev;
 		
 	},
 	goDeeper: function(parent_md, resident){
@@ -771,6 +780,16 @@ provoda.Model.extendTo(mapLevelModel, {
 	},
 	getParentMapModel: function() {
 		return this.lev.getParentResident();
+	},
+	canUnfreeze: function() {
+		return this.lev && this.lev.canUse() && !this.lev.isOpened();
+	},
+	showMyPage: function(source_info, no_navi) {
+		source_info = source_info || {
+			source_md: this,
+			page_md: this.pmd
+		};
+		this.app.showModelPage(this, source_info, no_navi);
 	},
 	mlmDie: function(){
 		if (!this.permanent_md){

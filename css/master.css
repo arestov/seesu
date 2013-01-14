@@ -253,18 +253,6 @@ html.not-as-application, .not-as-application  body{
 	}
 
 
-.needs-cross-domain{
-	display:none;
-}
-.cross-domain-allowed .needs-cross-domain{
-	display:block;
-}
-.cross-domain-allowed span.needs-cross-domain{
-	display:inline;
-}
-.cross-domain-allowed .no-needs-cross-domain{
-	display:none;
-}
 .has-session .add-to-lfmfav{
 	opacity: 1;
 	}
@@ -300,7 +288,6 @@ html.not-as-application, .not-as-application  body{
 	margin:0.3rem 0;
 	}
 .lfm-auth .real-lfm-auth-part{
-	margin-bottom: 20px;
 	margin-bottom:20px;
 }
 .lfm-auth-module .auth-block{
@@ -318,14 +305,12 @@ html.not-as-application, .not-as-application  body{
 .page-scheme .button-hole{
 	display: block;
 	}
-.full-page .left-buttons-group .button-hole{
-	margin-right:0.5rem;
-	}
+
 .lfm-auth form{
 	margin-bottom:2.5rem;
 	padding-bottom:1rem;
 	}
-	.full-page .fast-personal-start, .full-page .personal-stuff-preview{
+	.full-page .personal-stuff-preview{
 		color:#999;
 		background: #4D4D4D;
 		border-radius: 1rem;
@@ -334,25 +319,11 @@ html.not-as-application, .not-as-application  body{
 		padding: 1rem;
 		margin: 0 -12px;
 		}
-
-		.full-page .fast-personal-start .row-context{
-			position: relative;
-			border-top: 1px solid #424242;
-			margin: 1rem -1rem -1rem;
-			padding: 0 1rem 1rem;
-			border-radius: 1rem;
-			background: #474747;
-			border-bottom: 1px solid #666;
+		.full-page .personal-stuff-preview .area-button{
+			margin: -0.5rem;
 			}
-			.full-page .fast-personal-start .row-context .rc-s-arrow{
-				border-bottom-color:#424242 
-				}
-			.full-page .fast-personal-start .row-context .rc-s-arrow-bg{
-				border-bottom-color:#474747;
-				}
-		.full-page .fast-personal-start .cus-playlist-b{
-			float:right;
-			}
+		
+		
 	
 		.window-bottom{
 			height:20px;
@@ -811,6 +782,13 @@ html.not-as-application, .not-as-application  body{
 		width:32px;
 		height:32px;
 	}
+
+.start-page-messages{
+	display: none;
+	}
+	.full-page .start-page-messages{
+		display: block;
+		}
 
 .block-for-startpage.loading{
 	background: url(../i/spinner_small.gif) no-repeat 100% 4px;

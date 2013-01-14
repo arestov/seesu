@@ -198,7 +198,9 @@
 		}
 	
 }
-
+.full-page .usual_page{
+	margin-top:1.72rem;
+}
 .art_card{
 	max-width: 750px;
 	margin: 0 auto;

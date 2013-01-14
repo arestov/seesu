@@ -98,9 +98,6 @@ contextRow.prototype = {
 var vkLoginUI = function() {};
 
 provoda.View.extendTo(vkLoginUI, {
-	createDetailes: function(){
-		this.createBase();
-	},
 	state_change: {
 		wait: function(state) {
 			if (state){
@@ -146,9 +143,6 @@ provoda.View.extendTo(vkLoginUI, {
 var LfmLoginView = function() {};
 
 provoda.View.extendTo(LfmLoginView, {
-	createDetailes: function(){
-		this.createBase();
-	},
 	'stch-has-session': function(state){
 		if (!state){
 			this.c.removeClass("hidden");
@@ -264,9 +258,6 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 
 var fileInTorrentUI = function() {};
 provoda.View.extendTo(fileInTorrentUI,{
-	createDetailes: function(){
-		this.createBase();
-	},
 	state_change: {
 		"download-pressed": function(state) {
 			if (state){
@@ -632,9 +623,6 @@ provoda.View.extendTo(songFileModelUI, {
 var artCardUI = function() {};
 
 provoda.View.extendTo(artCardUI, {
-	createDetailes: function(){
-		this.createBase();
-	},
 	die: function() {
 		this._super();
 	},

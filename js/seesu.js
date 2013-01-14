@@ -89,7 +89,7 @@ appModel.extendTo(seesuApp, {
 
 		var lu = suStore('su-usage-last');
 
-		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.33);
+		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
 		this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
 		
 		var _this = this;
@@ -414,6 +414,9 @@ appModel.extendTo(seesuApp, {
 			this.start_page.updateState('have-playlists', !!this.gena.playlists.length);
 		}
 	},
+	showPlaylists: function() {
+		this.search(':playlists');
+	},
 	fs: {},//fast search
 	env: app_env,
 	server_url: 'http://seesu.me/',
@@ -628,85 +631,6 @@ var render_loved = function(user_name){
 	
 	su.show_playlist_page(pl_r);
 };
-
-
-
-var render_recommendations_by_username = function(username){
-	var pl_r = su.preparePlaylist({
-		title: 'Recommendations for ' +  username,
-		type: 'artists by recommendations'
-	}).loading();
-	$.ajax({
-		url: 'http://ws.audioscrobbler.com/1.0/user/' + username + '/systemrecs.rss',
-		type: "GET",
-		dataType: "xml",
-		error: function(xml){
-		},
-		success: function(xml){
-			var artists = $(xml).find('channel item title');
-			if (artists && artists.length) {
-				var artist_list = [];
-				for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-					var artist = $(artists[i]).text();
-					artist_list.push(artist);
-				}
-				var track_list_without_tracks = [];
-				if (artist_list){
-					for (var i=0; i < artist_list.length; i++) {
-						track_list_without_tracks.push({"artist" :artist_list[i]});
-					}
-				}
-				pl_r.injectExpectedSongs(track_list_without_tracks);
-			}
-		}
-	});
-
-	su.show_playlist_page(pl_r);
-};
-var render_recommendations = function(){
-	var pl_r = su.preparePlaylist({
-		title: 'Recommendations for you',
-		type: 'artists by recommendations'
-	});
-
-	pl_r.setLoader(function(paging_opts) {
-		
-		var request_info = {};
-
-		request_info.request = lfm.get('user.getRecommendedArtists', {sk: lfm.sk, limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
-			.done(function(r){
-				var artists = toRealArray(getTargetField(r, 'recommendations.artist'));
-				var track_list = [];
-				if (artists && artists.length) {
-					
-					for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
-						track_list.push({
-							artist: artists[i].name,
-							lfm_image: {
-								array: artists[i].image
-							}
-						});
-					}
-				}
-				pl_r.injectExpectedSongs(track_list);
-
-				if (track_list.length < paging_opts.page_limit){
-					pl_r.setLoaderFinish();
-				}
-			})
-			.fail(function(){
-				pl_r.loadComplete(true);
-			}).always(function() {
-				request_info.done = true;
-			});
-		return request_info;
-	}, true);
-	
-
-	su.show_playlist_page(pl_r);
-
-};
-
 
 
 

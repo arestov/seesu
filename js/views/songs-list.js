@@ -66,10 +66,10 @@ var songsListView;
 			this.buttons_panel = this.c.children().children('.pla-panel');
 		},
 		children_views: {
-			"multiatcs": {
+			"row-multiatcs": {
 				main: MultiAtcsRowView
 			},
-			"pl-settings": {
+			"row-pl-settings": {
 				main: PlaylistSettingsRowView
 			}
 		}

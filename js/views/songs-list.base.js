@@ -1,7 +1,4 @@
 provoda.addPrototype("songsListBaseView", {
-	createDetailes: function(){
-		this.createBase();
-	},
 	state_change: {
 		loading: function(loading){
 			if (loading){
@@ -64,7 +61,7 @@ provoda.addPrototype("songsListBaseView", {
 		} else {
 			var next_dom_hook = this.getNextView(array, current_index);
 			if (next_dom_hook){
-				$(next_dom_hook).before(song_dom)
+				$(next_dom_hook).before(song_dom);
 			} else {
 				this.lc.append(song_dom);
 			}

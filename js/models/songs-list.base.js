@@ -6,7 +6,7 @@ var songsList;
 		model_name: "playlist",
 		complex_states: {
 			more_load_available: {
-				depends_on: ["can-load-more", "loading"],
+				depends_on: ["has-loader", "loading"],
 				fn: function(can_load_more, loading) {
 					if (can_load_more){
 						return !loading;
@@ -30,7 +30,7 @@ var songsList;
 				this.pmd = opts.pmd;
 			}
 			if (this.requestMoreSongs){
-				this.updateState('can-load-more', true);
+				this.updateState('has-loader', true);
 			}
 			
 		},
@@ -111,10 +111,10 @@ var songsList;
 			return this.palist.length ? this.palist[this.palist.length - 1] : false;
 		},
 		setLoaderFinish: function() {
-			this.updateState("can-load-more", false);
+			this.updateState("has-loader", false);
 		},
 		setLoader: function(cb, trigger) {
-			this.updateState("can-load-more", true);
+			this.updateState("has-loader", true);
 			this.requestMoreSongs = cb;
 
 			//this.on("load-more", cb);
@@ -123,8 +123,16 @@ var songsList;
 			}
 
 		},
+		preloadStart: function() {
+		this.loadPlStart();
+		},
+		loadPlStart: function() {
+			if (this.state('more_load_available') && !this.getLength()){
+				this.loadMoreSongs();
+			}
+		},
 		loadMoreSongs: function(force) {
-			if (this.state("can-load-more") && this.requestMoreSongs){
+			if (this.state("has-loader") && this.requestMoreSongs){
 				if (!this.song_request_info || this.song_request_info.done){
 					this.loading();
 					this.song_request_info = this.requestMoreSongs.call(this, this.getPagingInfo());
@@ -319,7 +327,7 @@ var songsList;
 							}
 						}
 						
-					} else if (this.state('can-load-more')){
+					} else if (this.state('has-loader')){
 						this.setWaitingNextSong(mo);
 
 					} else {
@@ -545,7 +553,7 @@ var songsList;
 			if (waiting_next){
 				if (waiting_next.next_song){
 					addToArray(common, waiting_next.next_song);
-				} else if (this.state('can-load-more')){
+				} else if (this.state('has-loader')){
 					addToArray(common, this);
 				} else if (waiting_next.next_preload_song){
 					addToArray(common, waiting_next.next_preload_song);
@@ -557,7 +565,7 @@ var songsList;
 			if (v_song){
 				if (v_song.next_song){
 					addToArray(common, v_song.next_song);
-				} else if (this.state('can-load-more')){
+				} else if (this.state('has-loader')){
 					addToArray(common, this);
 				} else if (v_song.next_preload_song){
 					addToArray(common, v_song.next_preload_song);
@@ -568,7 +576,7 @@ var songsList;
 			if (p_song){
 				if (p_song.next_song){
 					addToArray(common, p_song.next_song);
-				} else if (this.state('can-load-more')){
+				} else if (this.state('has-loader')){
 					addToArray(common, this);
 				} else if (p_song.next_preload_song){
 					addToArray(common, p_song.next_preload_song);
@@ -586,7 +594,7 @@ var songsList;
 				addToArray(demonstration, v_song);
 				if (v_song.next_song){
 					addToArray(demonstration, v_song.next_song);
-				} else if (this.state('can-load-more')){
+				} else if (this.state('has-loader')){
 					addToArray(demonstration, this);
 				}
 				if (v_song.prev_song){
