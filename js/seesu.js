@@ -89,7 +89,7 @@ appModel.extendTo(seesuApp, {
 
 		var lu = suStore('su-usage-last');
 
-		this.last_usage = (lu && new Date(lu)) || 0;
+		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
 		this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
 		
 		var _this = this;
@@ -97,19 +97,20 @@ appModel.extendTo(seesuApp, {
 
 			var now = new Date();
 
-			if (_this.ui){
-				if (_this.ui.isAlive() || (now - _this.ui.created_at)/(1000*60) > 40){
-					if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
-						_this.checkStats();
-						suStore('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
-						suStore('su-usage-counter', ++_this.usage_counter, true);
-					}
-				}
+			if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
+				_this.checkStats();
+				suStore('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
+				suStore('su-usage-counter', ++_this.usage_counter, true);
 			}
 
 			
 		}, 1000 * 60 * 20);
-
+		setInterval(function(){
+			var rootvs = _this.getViews('root');
+			if (rootvs.length){
+				_this.updateLVTime();
+			}
+		}, 1000 * 60 * 2);
 
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 		this.vk = {};
@@ -244,11 +245,7 @@ appModel.extendTo(seesuApp, {
 				});
 		});
 
-		this.onRegistration('dom', function(cb) {
-			if (this.ui && this.ui.can_fire_on_domreg){
-				cb();
-			}
-		});
+
 		this.mp3_search = (new mp3Search({
 			vk: 5,
 			nigma: 1,
@@ -379,9 +376,7 @@ appModel.extendTo(seesuApp, {
 			this.setSetting('volume', [this.settings['volume'], 100]);
 		}
 	},
-	removeDOM: function(d, ui) {
-		this.trigger('dom-die', d, this.ui == ui, this.ui);
-	},
+	
 	checkStats: function() {
 		if (this.usage_counter > 2){
 			this.start_page.showMessage('rating-help');
@@ -418,6 +413,9 @@ appModel.extendTo(seesuApp, {
 		if (this.gena){
 			this.start_page.updateState('have-playlists', !!this.gena.playlists.length);
 		}
+	},
+	showPlaylists: function() {
+		this.search(':playlists');
 	},
 	fs: {},//fast search
 	env: app_env,
@@ -512,6 +510,9 @@ appModel.extendTo(seesuApp, {
 			});
 
 	},
+	updateLVTime: function() {
+		this.last_view_time = new Date() * 1;
+	},
 	checkUpdates: function(){
 		var _this = this;
 
@@ -523,26 +524,24 @@ appModel.extendTo(seesuApp, {
 			data: {
 				ver: this.version,
 				app_type: app_env.app_type
-			},
-			error: function(){},
-			success: function(r){
-				if (!r){return;}
-
-				
-				var cver = r.latest_version.number;
-				if (cver > _this.version) {
-					var message =
-						'Suddenly, Seesu ' + cver + ' has come. ' +
-						'You have version ' + _this.version + '. ';
-					var link = r.latest_version.link;
-					if (link.indexOf('http') != -1) {
-						$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
-					}
-				}
-				
-				console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
-
 			}
+		}).done(function(r){
+			if (!r){return;}
+
+			
+			var cver = r.latest_version.number;
+			if (cver > _this.version) {
+				var message =
+					'Suddenly, Seesu ' + cver + ' has come. ' +
+					'You have version ' + _this.version + '. ';
+				var link = r.latest_version.link;
+				if (link.indexOf('http') != -1) {
+					$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
+				}
+			}
+			
+			console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
+
 		});
 	}
 
@@ -632,83 +631,6 @@ var render_loved = function(user_name){
 	
 	su.show_playlist_page(pl_r);
 };
-var render_recommendations_by_username = function(username){
-	var pl_r = su.preparePlaylist({
-		title: 'Recommendations for ' +  username,
-		type: 'artists by recommendations'
-	}).loading();
-	$.ajax({
-		url: 'http://ws.audioscrobbler.com/1.0/user/' + username + '/systemrecs.rss',
-			global: false,
-			type: "GET",
-			dataType: "xml",
-			error: function(xml){
-			},
-			success: function(xml){
-				var artists = $(xml).find('channel item title');
-				if (artists && artists.length) {
-					var artist_list = [];
-					for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-						var artist = $(artists[i]).text();
-						artist_list.push(artist);
-					}
-					var track_list_without_tracks = [];
-					if (artist_list){
-						for (var i=0; i < artist_list.length; i++) {
-							track_list_without_tracks.push({"artist" :artist_list[i]});
-						}
-					}
-					pl_r.injectExpectedSongs(track_list_without_tracks);
-				}
-			}
-	});
-
-	su.show_playlist_page(pl_r);
-};
-var render_recommendations = function(){
-	var pl_r = su.preparePlaylist({
-		title: 'Recommendations for you',
-		type: 'artists by recommendations'
-	});
-
-	pl_r.setLoader(function(paging_opts) {
-		
-		var request_info = {};
-
-		request_info.request = lfm.get('user.getRecommendedArtists', {sk: lfm.sk, limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
-			.done(function(r){
-				var artists = toRealArray(getTargetField(r, 'recommendations.artist'));
-				var track_list = [];
-				if (artists && artists.length) {
-					
-					for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
-						track_list.push({
-							artist: artists[i].name,
-							lfm_image: {
-								array: artists[i].image
-							}
-						});
-					}
-				}
-				pl_r.injectExpectedSongs(track_list);
-
-				if (track_list.length < paging_opts.page_limit){
-					pl_r.setLoaderFinish();
-				}
-			})
-			.fail(function(){
-				pl_r.loadComplete(true);
-			}).always(function() {
-				request_info.done = true;
-			});
-		return request_info;
-	}, true);
-	
-
-	su.show_playlist_page(pl_r);
-
-};
-
 
 
 

@@ -1163,7 +1163,7 @@ var localize= (function(){
 				return j;
 			}
 			
-			return 'no this localization';
+			return 'no this localization: ' + string;
 		}
 		
 	};
@@ -1294,3 +1294,48 @@ var localize= (function(){
 })(this);
 	
 
+/*
+var getAuString = function(user) {
+	return 'API.audio.get({"uid": ' + user + '})';
+};
+
+var strings = []
+for (var i = 0; i < fr.length; i++) {
+	strings.push(getAuString(fr[i]));
+};
+*/
+
+
+//var vkFunc = function() {
+	/*
+	var all = {};
+	var friends = API.friends.get();
+	var count_down = friends.length;
+	
+	while (count_down != 0) {
+		
+		
+		count_down = count_down -1;
+	};
+	
+	return friends;
+	
+	*/
+//};
+/*
+
+return API.audio.get({"uid": friends[0]});
+
+for (var i = 0; i < friends.length; i++) {
+    all[friends[i]] = API.audio.get({"uid": friends[i]});
+    
+}
+
+
+
+su.vk_api
+.get('execute',{
+	code: vkFunc.toString().match(/\/\*([\s\S]*?)\*\//)[1]
+})
+.done(function(r){console.log(r)});
+*/

@@ -129,7 +129,7 @@ Class.extendTo(provoda.Eventor, {
 
 		if (cb_cs){
 			for (var i = 0; i < cb_cs.length; i++) {
-				var cur = cb_cs[i]
+				var cur = cb_cs[i];
 				cur.cb.apply(this, args);
 				if (cur.once){
 					this.off(name, false, cur);
@@ -152,7 +152,7 @@ Class.extendTo(provoda.Eventor, {
 			rq.order = opts.order;
 		}
 		if (!this.requests[space]){
-			this.requests[space] = []
+			this.requests[space] = [];
 		}
 		var target_arr = this.requests[space];
 
@@ -276,7 +276,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		var values = [];
 		for (var i = 0; i < temp_comx.obj.depends_on.length; i++) {
 			values.push(this.state(temp_comx.obj.depends_on[i]));
-		};
+		}
 		var value = temp_comx.obj.fn.apply(this, values);
 		temp_comx.value = value;
 	},
@@ -284,7 +284,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		var co_sts = this.getTargetComplexStates(state);
 		for (var i = 0; i < co_sts.length; i++) {
 			this._updateProxy(co_sts[i].name, co_sts[i].value);
-		};
+		}
 
 	},
 	iterateCSWatchers: function(state_name) {
@@ -399,7 +399,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		return this;
 	},
 	getChild: function(collection_name) {
-		return this.children_models[collection_name]
+		return this.children_models[collection_name];
 	},
 	setChild: function(collection_name, array, changed) {
 		this.children_models[collection_name] = array;
@@ -506,8 +506,8 @@ var
 	} else {
 		for(var x = 0; x < vendors.length && !raf; ++x) {
 			raf = window[vendors[x]+'RequestAnimationFrame'];
-			caf = caf || 
-			  window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+			caf = caf ||
+				window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
 		}
 	}
 	
@@ -516,8 +516,8 @@ var
 		raf = function(callback, element) {
 			var currTime = new Date().getTime();
 			var timeToCall = 0;
-			var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
-			  timeToCall);
+			var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+				timeToCall);
 			lastTime = currTime + timeToCall;
 			return id;
 		};
@@ -607,7 +607,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;
-		delete this.undetailed_children_models
+		delete this.undetailed_children_models;
 		this.setMdChildren(udchm);
 		 
 	},
@@ -617,10 +617,16 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._setStates(states);
 		
 	},
-	requestDetailes: function(){
-		if (this.createDetailes){
-			this.createDetailes();
+	createDetailes: function() {
+		if (this.createBase){
+			this.createBase();
 		}
+		
+	},
+	requestDetailes: function(){
+		
+		this.createDetailes();
+		
 		
 		this._detailed = true;
 		if (!this.manual_states_connect){
@@ -725,6 +731,22 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	addChild: function(view, child_name) {
 		this.children.push.call(this.children, view);
 	},
+	removeChildViewsByMd: function(md) {
+		var views_to_remove = [];
+		var views = md.getViews();
+		for (var i = 0; i < this.children.length; i++) {
+			var cur = this.children[i];
+			if (views.indexOf(cur) != -1){
+				views_to_remove.push(cur);
+			}
+			
+		}
+		for (var i = 0; i < views_to_remove.length; i++) {
+			views_to_remove[i].die();
+		}
+		
+
+	},
 	getDeepChildren: function(exept) {
 		var all = [];
 		var big_tree = [];
@@ -770,7 +792,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		throw new Error('what do you do!?');
 
 		this.md = md;
-		var was
+		var was;
 		if (puppet_model){
 			this.puppet_model = puppet_model;
 		}
@@ -778,7 +800,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this;
 	},
 	getT: function(){
-		return this.c || this._anchor; 
+		return this.c || this._anchor;
 	},
 	getC: function(){
 		return this.c;
@@ -819,7 +841,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	requestDetalizationLevel: function(rel_depth, last_request){
 		if (!this._detailed){
 			this.requestDetailes();
-		} 
+		}
 		return this.requestChildrenDetLev(rel_depth - 1);
 	},
 	getCNode: function(c) {
@@ -879,8 +901,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	
 	requireAllParts: function() {
-		for (var a in parts_builder){
-			this.requirePart(parts_builder[a]);
+		for (var a in this.parts_builder){
+			this.requirePart(a);
 		}
 		return this;
 	},
@@ -900,7 +922,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					r[i] = this.state_change[i];
 				}
 				
-			}	
+			}
 		}
 		
 		return r;
@@ -934,7 +956,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			if (!this.view_parts[cur]){
 				has_all_dependings = false;
 				break;
-			} else { 
+			} else {
 				has_all_dependings = true;
 			}
 		}
@@ -982,13 +1004,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._collections_set_processing = false;
 	},
 	getMdChild: function(name, one_thing) {
-		return this.children_models[name]
+		return this.children_models[name];
 	},
 	getPrevView: function(array, start_index, view_space) {
 		view_space = view_space || 'main';
 		var complex_id = this.view_id  + '_' + view_space;
 
-		var i = start_index - 1; 
+		var i = start_index - 1;
 		if (i >= array.length || i < 0){
 			return;
 		}
@@ -1026,11 +1048,95 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		var old_value = this.children_models[name];
 		this.children_models[name] = array;
-		var collectionChanger = this['collch-' + name];
-		if (collectionChanger){
-			collectionChanger.call(this, name, array, old_value);
+		var collch = this['collch-' + name];//collectionChanger
+		if (collch){
+			if (typeof collch == 'function'){
+				collch.call(this, name, array, old_value);
+			} else {
+				var not_request, collchs;
+				if (typeof collch == 'object'){
+					not_request = collch.not_request;
+					collchs = collch.spaces;
+				}
+
+				collchs = collchs || toRealArray(collch);
+
+				var declarations = [];
+				for (var i = 0; i < collchs.length; i++) {
+					declarations.push(this.parseCollectionChangeDeclaration(collchs[i]));
+				}
+				var real_array = toRealArray(array);
+				for (var bb = 0; bb < real_array.length; bb++) {
+					var cur = real_array[bb];
+					for (var jj = 0; jj < declarations.length; jj++) {
+						var declr = declarations[jj];
+						var opts = declr.opts;
+						this.appendFVAncorByVN({
+							md: cur,
+							name: (declr.by_model_name ? cur.model_name : name),
+							opts: (typeof opts == 'function' ? opts.call(this, cur) : opts),
+							place: declr.place,
+							space: declr.space,
+							strict: declr.strict
+						});
+					}
+				}
+
+				if (!not_request){
+					this.requestAll();
+				}
+			}
 		}
 		return this;
+	},
+	parseCollectionChangeDeclaration: function(collch) {
+		if (typeof collch == 'string'){
+			collch = {
+				place: collch
+			};
+		}
+		var place;
+		/*
+		{
+			place: 'c',
+			by_model_name: true,
+			space: 'nav'
+		}*/
+		if (typeof collch.place == 'string'){
+			place = getTargetField(this, collch.place);
+			if (!place){
+				throw new Error('wrong place declaration: "' + collch.place + '"');
+			}
+		} else if (typeof collch.place == 'function') {
+			place = collch.place;
+		}
+
+
+		return {
+			place: place,
+			by_model_name: collch.by_model_name,
+			space: collch.space,
+			strict: collch.strict,
+			opts: collch.opts
+		};
+	},
+	appendFVAncorByVN: function(opts) {
+		var view = this.getFreeChildView(opts.name, opts.md, opts.space, opts.opts);
+		var place = opts.place;
+		if ((opts.strict || view) && place){
+			var complex_place;
+			if (typeof opts.place == 'function'){
+				place = opts.place.call(this, opts.md, view);
+				if (!place && typeof place != 'boolean'){
+					throw new Error('give me place');
+				} else {
+					place.append(view.getA());
+				}
+			} else {
+				place.append(view.getA());
+			}
+			
+		}
 	},
 	parts_builder: {
 		

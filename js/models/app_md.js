@@ -99,8 +99,6 @@ provoda.Model.extendTo(appModel, {
 		var pl = new songsList();
 		pl.init({
 			app: this,
-			player: this.p,
-			mp3_search: this.mp3_search
 		}, params, first_song);
 		return pl;
 	},
@@ -136,7 +134,7 @@ provoda.Model.extendTo(appModel, {
 				
 			}
 			return target;
-		},
+		}
 	},
 	'model-mapch': {
 		'move-view': function(change) {
@@ -145,7 +143,7 @@ provoda.Model.extendTo(appModel, {
 				//mp-source
 				var mp_source = change.target.state('mp-source');
 				if (mp_source){
-					parent.updateState('mp-highlight', mp_source)
+					parent.updateState('mp-highlight', mp_source);
 				}
 				parent.updateState('mp-has-focus', false);
 			}
@@ -164,7 +162,7 @@ provoda.Model.extendTo(appModel, {
 		}
 	},
 	animateMapChanges: function(changes) {
-		var 
+		var
 			target_md,
 			all_changhes = $filter(changes.array, 'changes');
 
@@ -186,10 +184,10 @@ provoda.Model.extendTo(appModel, {
 			if (this['mapch-handlers'][cur.name]){
 				target_md = this['mapch-handlers'][cur.name].call(this, cur.changes);
 				break;
-			}	
+			}
 		}
 		/*
-			подсветить/заменить текущий источник 
+			подсветить/заменить текущий источник
 			проскроллить к источнику при отдалении
 			просроллить к источнику при приближении
 		*/
@@ -299,6 +297,9 @@ provoda.Model.extendTo(appModel, {
 	showAlbum:function() {
 		return this.collectChanges(this._showAlbum, arguments);
 	},
+	showModelPage: function() {
+		return this.collectChanges(this._showModelPage, arguments);
+	},
 	_show_now_playing: function(no_stat){
 
 		var current_song = this.p.c_song;
@@ -312,6 +313,16 @@ provoda.Model.extendTo(appModel, {
 		this.restoreFreezed(true);
 		this.show_track_page(current_song);
 		return current_song;
+		
+	},
+	_showModelPage: function(md, source_info, no_navi) {
+		if (!md.model_name){
+			throw new Error('model must have model_name prop');
+		}
+		this.bindMMapStateChanges(md, md.model_name);
+		md.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
+		var lev = this.map.goDeeper(source_info && source_info.page_md, md);
+		return md;
 		
 	},
 	_showResultsPage: function(query, no_navi){
@@ -345,14 +356,14 @@ provoda.Model.extendTo(appModel, {
 		var md = new artCard(artist);
 		this.bindMMapStateChanges(md, 'artcard');
 		if (source_info && !source_info.page_md){
-			throw new Error('give me page_md')
+			throw new Error('give me page_md');
 		}
 		md.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
 		var lev = this.map.goDeeper(source_info && source_info.page_md, md);
 		return md;
 	},
 	_showStaticPlaylist: function(pl, source_info, no_navi) {
-		if (pl.lev && pl.lev.canUse() && !pl.lev.isOpened()){
+		if (pl.canUnfreeze()){
 			this.restoreFreezed();
 			return pl;
 		} else {
@@ -477,9 +488,9 @@ provoda.Model.extendTo(appModel, {
 		from_artcard
 	}*/
 	_showAlbum: function(opts, vopts, start_song){
-		var artist			= opts.artist, 
+		var artist			= opts.artist,
 			name			= opts.album_name,
-			id				= opts.album_id, 
+			id				= opts.album_id,
 			original_artist	= opts.original_artist;
 
 		vopts = vopts || {};
@@ -508,7 +519,7 @@ provoda.Model.extendTo(appModel, {
 							var music_list = [];
 							for (var i=0; i < playlist.length; i++) {
 								music_list.push({
-									track: playlist[i].title, 
+									track: playlist[i].title,
 									artist: playlist[i].creator,
 									lfm_image: {
 										item: playlist[i].image
@@ -536,7 +547,6 @@ provoda.Model.extendTo(appModel, {
 									array: imgs
 								}
 							});
-							tracks[i]
 						}
 						pl.injectExpectedSongs(track_list);
 						//getAlbumPlaylist(r.album.id, pl);
@@ -569,7 +579,7 @@ provoda.Model.extendTo(appModel, {
 				var request_info = {};
 				request_info.request = lfm.get('artist.getTopTracks', {
 					'artist': artist, 
-					limit: paging_opts.page_limit, 
+					limit: paging_opts.page_limit,
 					page: paging_opts.next_page
 				})
 					.done(function(r){
@@ -588,7 +598,7 @@ provoda.Model.extendTo(appModel, {
 									artist : artist ,
 									track: tracks[i].name,
 									lfm_image: {
-										array: tracks[i].image 
+										array: tracks[i].image
 									}
 									
 								});
@@ -624,7 +634,7 @@ provoda.Model.extendTo(appModel, {
 		pl.setLoader(function(paging_opts) {
 			var request_info = {};
 			request_info.request = lfm.get('geo.getMetroUniqueTrackChart', {
-				country: country, 
+				country: country,
 				metro: metro,
 				limit: 30,
 				start: (new Date()) - 60*60*24*7,
@@ -644,10 +654,10 @@ provoda.Model.extendTo(appModel, {
 							var cur = tracks[i];
 							track_list.push({
 								artist : cur.artist.name,
-								track: cur.name, 
+								track: cur.name,
 								lfm_image: {
-									array: cur.image 
-								} 
+									array: cur.image
+								}
 							});
 						}
 						

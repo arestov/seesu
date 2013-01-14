@@ -158,7 +158,7 @@ a.desc{
 .nnav{
 	
 	padding:4px 1rem 4px 9px;
-
+	min-width: 15px;
 	
 	margin-right:10px;
 	-moz-border-radius:0 6px 6px 0;

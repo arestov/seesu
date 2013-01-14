@@ -6,7 +6,7 @@ var songsList;
 		model_name: "playlist",
 		complex_states: {
 			more_load_available: {
-				depends_on: ["can-load-more", "loading"],
+				depends_on: ["has-loader", "loading"],
 				fn: function(can_load_more, loading) {
 					if (can_load_more){
 						return !loading;
@@ -24,12 +24,18 @@ var songsList;
 				_this.checkRequestsPriority();
 			});
 			this.app = opts.app;
-			this.player = opts.player;
-			this.mp3_search = opts.mp3_search;
+			this.player = this.app.p;
+			this.mp3_search = this.app.mp3_search;
+			if (opts.pmd){
+				this.pmd = opts.pmd;
+			}
+			if (this.requestMoreSongs){
+				this.updateState('has-loader', true);
+			}
 			
 		},
 		push: function(omo, skip_changes){
-			var mo = this.extendSong(omo, this.player, this.mp3_search);
+			var mo = this.extendSong(omo);
 
 			var last_usable_song = this.getLastUsableSong();
 
@@ -61,7 +67,7 @@ var songsList;
 			return mo;
 		},
 		add: function(omo){
-			var mo = cloneObj({}, omo, false, ['track', 'artist']);
+			var mo = cloneObj({}, omo, false, ['track', 'artist', 'file']);
 			return this.push(mo);
 		},
 		findSongOwnPosition: function(first_song){
@@ -74,7 +80,7 @@ var songsList;
 			this.firstsong_inseting_done = !can_find_context;
 			
 			if (first_song && first_song.track && first_song.artist){
-				this.first_song = this.extendSong(first_song, this.player, this.mp3_search);;
+				this.first_song = this.extendSong(first_song);;
 			}
 			if (this.first_song){
 				this.push(this.first_song);
@@ -105,10 +111,10 @@ var songsList;
 			return this.palist.length ? this.palist[this.palist.length - 1] : false;
 		},
 		setLoaderFinish: function() {
-			this.updateState("can-load-more", false);
+			this.updateState("has-loader", false);
 		},
 		setLoader: function(cb, trigger) {
-			this.updateState("can-load-more", true);
+			this.updateState("has-loader", true);
 			this.requestMoreSongs = cb;
 
 			//this.on("load-more", cb);
@@ -117,8 +123,16 @@ var songsList;
 			}
 
 		},
+		preloadStart: function() {
+		this.loadPlStart();
+		},
+		loadPlStart: function() {
+			if (this.state('more_load_available') && !this.getLength()){
+				this.loadMoreSongs();
+			}
+		},
 		loadMoreSongs: function(force) {
-			if (this.state("can-load-more") && this.requestMoreSongs){
+			if (this.state("has-loader") && this.requestMoreSongs){
 				if (!this.song_request_info || this.song_request_info.done){
 					this.loading();
 					this.song_request_info = this.requestMoreSongs.call(this, this.getPagingInfo());
@@ -313,7 +327,7 @@ var songsList;
 							}
 						}
 						
-					} else if (this.state('can-load-more')){
+					} else if (this.state('has-loader')){
 						this.setWaitingNextSong(mo);
 
 					} else {
@@ -539,7 +553,7 @@ var songsList;
 			if (waiting_next){
 				if (waiting_next.next_song){
 					addToArray(common, waiting_next.next_song);
-				} else if (this.state('can-load-more')){
+				} else if (this.state('has-loader')){
 					addToArray(common, this);
 				} else if (waiting_next.next_preload_song){
 					addToArray(common, waiting_next.next_preload_song);
@@ -551,7 +565,7 @@ var songsList;
 			if (v_song){
 				if (v_song.next_song){
 					addToArray(common, v_song.next_song);
-				} else if (this.state('can-load-more')){
+				} else if (this.state('has-loader')){
 					addToArray(common, this);
 				} else if (v_song.next_preload_song){
 					addToArray(common, v_song.next_preload_song);
@@ -562,7 +576,7 @@ var songsList;
 			if (p_song){
 				if (p_song.next_song){
 					addToArray(common, p_song.next_song);
-				} else if (this.state('can-load-more')){
+				} else if (this.state('has-loader')){
 					addToArray(common, this);
 				} else if (p_song.next_preload_song){
 					addToArray(common, p_song.next_preload_song);
@@ -580,7 +594,7 @@ var songsList;
 				addToArray(demonstration, v_song);
 				if (v_song.next_song){
 					addToArray(demonstration, v_song.next_song);
-				} else if (this.state('can-load-more')){
+				} else if (this.state('has-loader')){
 					addToArray(demonstration, this);
 				}
 				if (v_song.prev_song){

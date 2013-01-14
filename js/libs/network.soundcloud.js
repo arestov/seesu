@@ -123,17 +123,21 @@ scMusicSearch.prototype = {
 	slave: false,
 	s: {name: 'soundcloud', key: 0, type:'mp3'},
 	preferred: null,
-	makeSong: function(cursor, sc_key, msq){
+	makeSongFile: function(item) {
+		return this.makeSong(item);
+	},
+	makeSong: function(cursor, msq){
 		var search_string = cursor.title;
+		var entity;
 		if (search_string){
 
-			var guess_info = guessArtist(search_string, msq.artist);
+			var guess_info = guessArtist(search_string, msq && msq.artist);
 			
-			var entity = {
-				artist  	: HTMLDecode(guess_info.artist || cursor.user.permalink || ""),
+			entity = {
+				artist		: HTMLDecode(guess_info.artist || cursor.user.permalink || ""),
 				track		: HTMLDecode(guess_info.track || search_string),
 				duration	: cursor.duration,
-				link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + sc_key,
+				link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + this.sc_api.key,
 				from		: 'soundcloud',
 				real_title	: cursor.title,
 				page_link	: cursor.permalink_url,
@@ -144,10 +148,13 @@ scMusicSearch.prototype = {
 				models: {},
 				getSongFileModel: getSongFileModel
 			};
-			entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+			if (msq){
+				entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+			}
+			
 			
 		}
-		return entity
+		return entity;
 	},
 	findAudio: function(msq, opts) {
 		var
@@ -164,7 +171,7 @@ scMusicSearch.prototype = {
 		var params_u = {
 			filter:'streamable,downloadable',
 			limit: 30,
-			q: query	
+			q: query
 		};
 
 		var async_ans = this.sc_api.get('tracks', params_u, opts);
@@ -178,7 +185,7 @@ scMusicSearch.prototype = {
 					var music_list = [];
 					if (r && r.length){
 						for (var i=0; i < r.length; i++) {
-							var ent = _this.makeSong(r[i], _this.sc_api.key, msq);
+							var ent = _this.makeSong(r[i], msq);
 							if (ent){
 								if (ent.query_match_index == -1){
 									//console.log(ent)

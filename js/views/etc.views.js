@@ -98,9 +98,6 @@ contextRow.prototype = {
 var vkLoginUI = function() {};
 
 provoda.View.extendTo(vkLoginUI, {
-	createDetailes: function(){
-		this.createBase();
-	},
 	state_change: {
 		wait: function(state) {
 			if (state){
@@ -146,11 +143,8 @@ provoda.View.extendTo(vkLoginUI, {
 var LfmLoginView = function() {};
 
 provoda.View.extendTo(LfmLoginView, {
-	createDetailes: function(){
-		this.createBase();
-	},
-	'stch-active': function(state){
-		if (state){
+	'stch-has-session': function(state){
+		if (!state){
 			this.c.removeClass("hidden");
 		} else {
 			this.c.addClass("hidden");
@@ -250,15 +244,10 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 		});
 	},
 	"stch-has-session": function(state) {
-		if (state){
-			this.c.addClass('has-session');
-			this.auth_block.addClass('hidden');
-			this.chbx_enabl.add(this.chbx_disabl).removeProp('disabled');
-		} else {
-			this.c.removeClass('has-session');
-			this.auth_block.removeClass('hidden');
-			this.chbx_enabl.add(this.chbx_disabl).prop('disabled', true);
-		}
+		state = !!state;
+		this.c.toggleClass('has-session', state);
+		this.auth_block.toggleClass('hidden', state);
+		this.chbx_enabl.add(this.chbx_disabl).prop('disabled', !state);
 	},
 	"stch-scrobbling": function(state) {
 		this.chbx_enabl.prop('checked', !!state);
@@ -269,9 +258,6 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 
 var fileInTorrentUI = function() {};
 provoda.View.extendTo(fileInTorrentUI,{
-	createDetailes: function(){
-		this.createBase();
-	},
 	state_change: {
 		"download-pressed": function(state) {
 			if (state){
@@ -637,9 +623,6 @@ provoda.View.extendTo(songFileModelUI, {
 var artCardUI = function() {};
 
 provoda.View.extendTo(artCardUI, {
-	createDetailes: function(){
-		this.createBase();
-	},
 	die: function() {
 		this._super();
 	},

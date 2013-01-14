@@ -3,9 +3,6 @@
 var notifyCounterUI = function() {};
 
 provoda.View.extendTo(notifyCounterUI, {
-	createDetailes: function(){
-		this.createBase();
-	},
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
@@ -23,28 +20,17 @@ provoda.View.extendTo(notifyCounterUI, {
 
 var mfComplectUI = function() {};
 provoda.View.extendTo(mfComplectUI, {
-	createDetailes: function(){
-		this.createBase();
-	},
 	children_views: {
 		'file-torrent': fileInTorrentUI,
-		'file-http': songFileModelUI 
+		'file-http': songFileModelUI
 	},
-	'collch-moplas_list': function(name, array) {
-		var _this = this;
-		$.each(array, function(i, el) {
-			var vn = el.model_name;
-			var view = _this.getFreeChildView(vn, el);
-			if (view){
-				_this.lc.append(view.getA());
-			}
-		});
-		this.requestAll();
+	'collch-moplas_list': {
+		place: 'lc',
+		by_model_name: true
 	},
 	createBase: function() {
 		this.c = $('<div class="moplas-list"></div>');
-		this.header_text = this.md.sem_part.name;
-		this.header_c = $('<h4></h4>').text(this.header_text).appendTo(this.c);
+		this.header_c = $('<h4></h4>').appendTo(this.c);
 		this.lc = $('<ul></ul>').appendTo(this.c);
 	},
 	state_change: {
@@ -53,7 +39,7 @@ provoda.View.extendTo(mfComplectUI, {
 				var _this = this;
 				var header = $('<a class="js-serv"></a>').click(function() {
 					_this.md.toggleOverstocked();
-				}).text(this.header_text);
+				}).text(this.state('complect-name'));
 				this.addWayPoint(header, {
 					simple_check: true
 				});
@@ -66,6 +52,9 @@ provoda.View.extendTo(mfComplectUI, {
 			} else if (oldstate){
 				this.c.removeClass('want-overstocked-songs');
 			}
+		},
+		'complect-name': function(state) {
+			this.header_c.text(state);
 		}
 	}
 });
@@ -79,9 +68,6 @@ provoda.View.extendTo(mfCorUI, {
 		vk_auth: vkLoginUI,
 		complect: mfComplectUI
 	},
-	createDetailes: function(){
-		this.createBase();
-	},
 	state_change: {
 		"want-more-songs": function(state) {
 			if (state){
@@ -92,7 +78,7 @@ provoda.View.extendTo(mfCorUI, {
 		},
 		"must-be-expandable": function(state) {
 			if (state){
-				this.sall_songs.removeClass('hidden')
+				this.sall_songs.removeClass('hidden');
 			}
 		}
 	},
@@ -108,7 +94,7 @@ provoda.View.extendTo(mfCorUI, {
 				} else {
 					var next_dom_hook = _this.getNextView(array, i);
 					if (next_dom_hook){
-						$(next_dom_hook).before(el_dom)
+						$(next_dom_hook).before(el_dom);
 					} else {
 						_this.mufils_c.append(el_dom);
 					}
@@ -118,13 +104,13 @@ provoda.View.extendTo(mfCorUI, {
 		});
 		this.requestAll();
 	},
-	'collch-vk_auth': function(name, md) {
-		this.messages_c.append(this.getFreeChildView(name, md).getA());
-		this.requestAll();
+	'collch-vk_auth': {
+		place: 'messages_c',
+		strict: true
 	},
-	'collch-notifier': function(name, md) {
-		this.sall_songs.append(this.getFreeChildView(name, md).getA());
-		this.requestAll();
+	'collch-notifier': {
+		place: 'sall_songs',
+		strict: true
 	},
 	createBase: function() {
 		this.c = $('<div class="song-row-content moplas-block"></div>');
@@ -190,7 +176,7 @@ provoda.View.extendTo(mfCorUI, {
 		if (vi_c.data('has-info')){return true;}
 
 		var _this = this;
-		get_youtube(q, function(r){			
+		get_youtube(q, function(r){
 			var vs = r && r.feed && r.feed.entry;
 			if (vs && vs.length){
 				vi_c.data('has-info', true);
@@ -227,7 +213,7 @@ provoda.View.extendTo(mfCorUI, {
 						e.preventDefault();
 					});
 					if (cant_show){
-						li.addClass("cant-show")
+						li.addClass("cant-show");
 					}
 					_this.addWayPoint(li, {
 						simple_check: true
@@ -250,7 +236,7 @@ provoda.View.extendTo(mfCorUI, {
 							tmn[el] = $filter(thmn_arr, 'yt$name', el)[0].url;
 						});
 					} else {
-						imgs.add($('<img  alt="" class="whole"/>').attr('src', thmn.default))
+						imgs.add($('<img  alt="" class="whole"/>').attr('src', thmn.default));
 					}
 					
 					$("<a class='video-preview external'></a>")
@@ -261,16 +247,16 @@ provoda.View.extendTo(mfCorUI, {
 					$('<span class="video-title"></span>')
 						.text(_title).appendTo(li);
 						
-					li.appendTo(v_content)
-				}
+					li.appendTo(v_content);
+				};
 				var preview_types = ["default","start","middle","end"];
 
 				//set up filter app$control.yt$state.reasonCode != limitedSyndication
 
-				var video_arr = []
+				var video_arr = [];
 
 				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
-					var 
+					var
 						_v = vs[i],
 						tmn = {},
 						v_id = _v['media$group']['yt$videoid']['$t'],
@@ -294,7 +280,7 @@ provoda.View.extendTo(mfCorUI, {
 
 					
 					
-				};
+				}
 
 				video_arr.sort(function(a, b){
 					return sortByRules(a, b, ["cant_show"]);
@@ -305,7 +291,7 @@ provoda.View.extendTo(mfCorUI, {
 
 				
 				
-				vi_c.append(v_content).removeClass('hidden')
+				vi_c.append(v_content).removeClass('hidden');
 				
 			}
 		});

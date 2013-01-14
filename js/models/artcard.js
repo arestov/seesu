@@ -3,12 +3,11 @@
 var artCard = function(artist) {
 	this.init();
 	this.artist= artist;
-	this.updateState('nav-text', artist);
 	this.updateState('nav-title', artist);
 
 	this.loadInfo();
 
-	
+	this.updateState('url-part', '/catalog/' + su.encodeURLPart(this.artist));
 
 };
 mapLevelModel.extendTo(artCard, {
