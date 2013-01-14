@@ -4,7 +4,7 @@ provoda.View.extendTo(PlaylistPreview, {
 		this.c = $('<div></div>');
 		this.prew_c = $('<div class="playlist_preview-c area-button"></div>').appendTo(this.c);
 		this.prew_text = $('<span></span>').appendTo(this.prew_c);
-		this.desc = $('<div class="area-description"></div>').appendTo(this.prew_c);
+		//this.desc = $('<div class="area-description"></div>').appendTo(this.prew_c);
 		var _this = this;
 		this.prew_c.click(function() {
 			_this.md.requestPlaylist();
@@ -33,7 +33,8 @@ provoda.View.extendTo(PlaylistPreview, {
 var UserCardView = function() {};
 provoda.View.extendTo(UserCardView, {
 	createBase: function() {
-		this.c = $('<div></div>');
+		this.c = $('<div class="usual_page"></div>');
+		this.items_c = $("<div></div>").appendTo(this.c);
 		this.plts_link_a = $(document.createComment('')).appendTo(this.c);
 	},
 	'stch-mp-show': function(state) {
@@ -51,12 +52,13 @@ provoda.View.extendTo(UserCardView, {
 				_this.root_view.md.showPlaylists();
 			}).text(localize('playlists'));
 			this.plts_link_a.after(wrap);
+			plts_link_a.remove();
 			return wrap;
 		}
 	},
-	'collch-arts_recomms': 'c',
-	'collch-lfm_loved': 'c',
-	'collch-vk_audio': 'c',
+	'collch-arts_recomms': 'items_c',
+	'collch-lfm_loved': 'items_c',
+	'collch-vk_audio': 'items_c',
 
 	children_views: {
 		arts_recomms: {
