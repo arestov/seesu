@@ -717,7 +717,7 @@ provoda.View.extendTo(artCardUI, {
 						su.show_tag(el.name);
 					}).text(el.name).attr('url', el.url).appendTo(li);
 					li.appendTo(ul);
-					ul.append(' ');
+					ul.append(document.createTextNode(' '));
 				}
 				
 			});
@@ -738,7 +738,7 @@ provoda.View.extendTo(artCardUI, {
 					su.showArtcardPage(el.name);
 				}).text(el.name).appendTo(li);
 				li.appendTo(ul);
-				ul.append(' ');
+				ul.append(document.createTextNode(' '));
 				
 			});
 			
@@ -771,7 +771,7 @@ provoda.View.extendTo(artCardUI, {
 			similarsc: this.c.find('.art_card-similar'),
 			bioc: this.c.find('.art_card-bio')
 		};
-		this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
+		this.top_tracks_link = $('<a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
 			su.showTopTacks(_this.md.artist, {
 				source_info: {
 					page_md: _this.md,

@@ -666,7 +666,7 @@ provoda.View.extendTo(appModelView, {
 							
 							e.preventDefault();
 						});
-						var input = this.nvk.find('.vk-code');
+						var input = nvk.find('.vk-code');
 						nvk.find('.use-vk-code').click(function() {
 							var vk_t_raw = input.val();
 							if (vk_t_raw){
