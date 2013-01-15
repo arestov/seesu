@@ -738,7 +738,9 @@ window.app_env = (function(wd){
 
 	var bro = detectBrowser();
 
-	var env = {};
+	var env = {
+		bro: bro
+	};
 	env.url = get_url_parameters(wd.location.search);
 	
 	env.cross_domain_allowed = !wd.location.protocol.match(/(http\:)|(file\:)/);

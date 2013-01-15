@@ -36,6 +36,7 @@ LfmLogin.extendTo(LfmReccomsLogin, {
 		}, {exlusive: true});
 	}
 });
+var VkAudioLogin = function() {};
 
 
 var EnhancedSongslist = function() {};

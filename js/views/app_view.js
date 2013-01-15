@@ -582,7 +582,7 @@ provoda.View.extendTo(appModelView, {
 			$('#widget-url',d).val(location.href.replace('index.html', ''));
 			
 
-			if ($.browser.opera && ((typeof window.opera.version == 'function') && (parseFloat(window.opera.version()) <= 10.1))){
+			if (app_env.bro.browser.opera && ((typeof window.opera.version == 'function') && (parseFloat(window.opera.version()) <= 10.1))){
 				
 				$('<a id="close-widget">&times;</a>',d)
 					.click(function(){
