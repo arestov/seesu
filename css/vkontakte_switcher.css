@@ -4,15 +4,15 @@
 
 .vk-login-context{
 	clear:left;
-	border-radius:6px;
-	padding:12px;
-	margin: 10px 0 15px;
-	background:#faebd7 no-repeat 100% 12px;
+	border-radius:0.5rem;
+	padding:1rem;
+	margin: 0.7rem 0 1rem;
+	background:#faebd7 no-repeat 100% 1rem;
 	color:#000;
 	overflow:hidden;
 	}
 	.moplas-block .vk-login-context{
-		border-radius:0px;
+		border-radius:0;
 		display: none;
 		clear:both;
 
@@ -25,7 +25,7 @@
 	}
 	.vk-login-context .auth-container{
 		display:none;
-		margin-top:20px;
+		margin-top:1.5rem;
 		}
 		.vk-login-context.vk-finishing .auth-container{
 			display:block;
@@ -34,7 +34,6 @@
 			display:block;
 			}
 	.vk-login-context .decor{
-		padding-right:16px;
 		background:no-repeat 100% 0;
 	}
 	.vk-login-context.waiting-vk-login .decor{
@@ -53,11 +52,11 @@
 	}
 	.vk-login-reg-link{
 		float:right;
-		margin-left:12px;
+		margin-left:1rem;
 		text-align:right;
 		}
 		.vk-login-reg-link div{
-			margin-bottom:5px;
+			margin-bottom:0.5rem;
 			}
 	.vk-login-context a.js-serv{
 		
@@ -84,7 +83,7 @@
 		}
 		.vk-login-context form p label span.label{
 			float:left;
-			padding:2px 2px 2px 6px;
+			padding:0.14rem 0.14rem 0.14rem 0.5rem;
 		}
 		.vk-login-context form p span.input-place{
 			float:left;
@@ -104,3 +103,9 @@
 .vk-auth{
 	display:none;
 }
+
+
+
+
+
+

@@ -19,7 +19,7 @@ provoda.View.extendTo(songUI, {
 					}
 					
 				} else {
-					return mp_show
+					return mp_show;
 				}
 			}
 		},
@@ -35,12 +35,12 @@ provoda.View.extendTo(songUI, {
 			depends_on: ['artist-image', 'vis-cool_photos'],
 			fn: function(img, cph) {
 				if (!cph){
-					return !!img && img
+					return !!img && img;
 				} else {
 					return false;
 				}
 			}
-		},
+		}
 	},
 	state_change : {
 		"mp-show-end": function(opts) {
@@ -53,10 +53,10 @@ provoda.View.extendTo(songUI, {
 
 		"mp-show": function(opts, old_opts) {
 			if (opts){
-				this.parent_view.c.addClass("show-zoom-to-track");
+			//	this.parent_view.c.addClass("show-zoom-to-track");
 				this.activate();
 			} else if (old_opts) {
-				this.parent_view.c.removeClass("show-zoom-to-track");
+			//	this.parent_view.c.removeClass("show-zoom-to-track");
 				this.deactivate();
 			}
 			
@@ -119,7 +119,7 @@ provoda.View.extendTo(songUI, {
 					.addClass('song')
 					.removeClass('search-mp3-failed')
 					.removeClass('waiting-full-render')
-					.removeClass('mp3-download-is-not-allowed')
+					.removeClass('mp3-download-is-not-allowed');
 			
 			}
 		},
@@ -156,21 +156,21 @@ provoda.View.extendTo(songUI, {
 					.appendTo(this.song_imagec);
 			}
 			
-		},
+		}
 	},
 	unmark: function(){
-		this.c.removeClass('to-play-next to-play-previous');
+		this.c.removeClass('to-play-next to-play-previous v-song-sibling');
 		
 	},
 	markAs: function(statev){
 	
 		switch (statev) {
 			case 'next':
-				this.c.addClass('to-play-next');
-				break
+				this.c.addClass('to-play-next v-song-sibling');
+				break;
 			case 'prev':
-				this.c.addClass('to-play-previous');
-				break
+				this.c.addClass('to-play-previous v-song-sibling');
+				break;
 			default:
 		}
 
@@ -183,7 +183,7 @@ provoda.View.extendTo(songUI, {
 
 		for (var a in this.rowcs) {
 			this.rowcs[a].hide();
-		};
+		}
 		//this.tidominator.removeClass('want-more-info');
 
 
@@ -215,13 +215,13 @@ provoda.View.extendTo(songUI, {
 		//	image	 = (ai.images && ai.images[2]) || lfm_image_artist;
 			this.photo_data.first_image = ai.images;
 
-		} 
+		}
 			
 		if (artist && artist == oa) {
 			
 			
 		} else{
-			return false
+			return false;
 		}
 
 		
@@ -300,7 +300,9 @@ provoda.View.extendTo(songUI, {
 			su.show_tag(tag_name);
 			seesu.trackEvent('Artist navigation', 'tag', tag_name);
 		});
-		this.addWayPoint(node);
+		this.addWayPoint(node, {
+			simple_check: true
+		});
 		
 	},
 	'stch-tags': {
@@ -312,11 +314,11 @@ provoda.View.extendTo(songUI, {
 					var tag = tags[i],
 						arts_tag_node = $("<a></a>")
 							.text(tag.name)
-							.attr({ 
+							.attr({
 								href: tag.url,
 								'class': 'music-tag js-serv'
 							})
-							.appendTo(this.tags_text_c); 
+							.appendTo(this.tags_text_c);
 					this.bindTagClick(arts_tag_node, tag.name);
 					this.tags_text_c.append(" ");
 				}
@@ -334,7 +336,9 @@ provoda.View.extendTo(songUI, {
 			su.showArtcardPage(artist_name);
 			seesu.trackEvent('Artist navigation', 'artist', artist_name);
 		});
-		this.addWayPoint(node);
+		this.addWayPoint(node, {
+			simple_check: true
+		});
 	},
 	'stch-similars': {
 		fn: function(state) {
@@ -344,12 +348,12 @@ provoda.View.extendTo(songUI, {
 				for (var i=0, l = similars.length; i < l; i++) {
 					var similar = similars[i],
 						arts_similar_node = $("<a class='js-serv'></a>")
-						  .text(similar.name)
-						  .attr({ 
-							href: similar.url, 
-							'class' : 'artist js-serv' 
-						  })
-						  .appendTo(this.similars_text_c);
+							.text(similar.name)
+							.attr({
+								href: similar.url,
+								'class' : 'artist js-serv'
+							})
+							.appendTo(this.similars_text_c);
 					this.bindSimArtistClick(arts_similar_node, similar.name);
 					this.similars_text_c.append(" ");
 				}
@@ -407,7 +411,7 @@ provoda.View.extendTo(songUI, {
 
 			var similars_p = $("<p class='artist-similar hidden'></p>"),
 				similars_link = $('<a></a>').append(localize('similar-arts') + ":").attr({ 'class': 'similar-artists js-serv'}),
-				similars_a = $('<em></em>').append(similars_link);	
+				similars_a = $('<em></em>').append(similars_link);
 			$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p);
 
 			similars_link.click(function() {
@@ -416,7 +420,9 @@ provoda.View.extendTo(songUI, {
 			});
 
 			this.similars_text_c = $('<span class="desc-text"></span>').appendTo(similars_p).append('<span class="forced-end"></span>');
-			this.addWayPoint(similars_link);
+			this.addWayPoint(similars_link, {
+				simple_check: true
+			});
 			return similars_p;
 		},
 		'playcount-c': function() {
@@ -436,7 +442,7 @@ provoda.View.extendTo(songUI, {
 			listeners_c.append(" ");
 			return listeners_c;
 
-		},	
+		},
 		'artist-info': function() {
 			var stat_c = this.requirePart('artist-stat-c');
 			this.requirePart('listeners-c').appendTo(stat_c);
@@ -468,7 +474,16 @@ provoda.View.extendTo(songUI, {
 				mo.view(false, true);
 				return false;
 			});
-		this.addWayPoint(this.node);
+
+
+		this.canUseDeepWaypoints = function() {
+			return !(_this.opts && _this.opts.lite) && !!_this.state('mp-show');
+		};
+		this.addWayPoint(this.node, {
+			canUse: function() {
+				return (_this.opts && _this.opts.lite) || !_this.state('mp-show');
+			}
+		});
 		//
 		this.player_song_mark = $('<span class="playing-song-mark"></span>').appendTo(this.node);
 		
@@ -492,11 +507,11 @@ provoda.View.extendTo(songUI, {
 
 		
 
-		
-		this.track_name_c = $('<span class="song-track-name"></span>')
-			.appendTo(this.titlec);
 		this.artist_name_c = $('<span class="song-artist-name"></span>')
 			.appendTo(this.titlec);
+		this.track_name_c = $('<span class="song-track-name"></span>')
+			.appendTo(this.titlec);
+		
 		
 
 		$('<span class="placeholder-decor"></span>').appendTo(this.node);
@@ -505,6 +520,9 @@ provoda.View.extendTo(songUI, {
 		this.c.append(this.node);
 	},
 	expand: function(){
+		if (this.opts && this.opts.lite){
+			return false;
+		}
 		if (this.expanded){
 			return true
 		} else{
@@ -555,7 +573,9 @@ provoda.View.extendTo(songUI, {
 					su.trackEvent('Artist navigation', 'art card', _this.md.artist);
 				});
 
-		this.addWayPoint(artcard_link);
+		this.addWayPoint(artcard_link, {
+			simple_check: true
+		});
 			
 
 		
@@ -573,7 +593,9 @@ provoda.View.extendTo(songUI, {
 			tidominator.toggleClass('want-more-info');
 			e.preventDefault();
 		});
-		this.addWayPoint(extend_switcher);
+		this.addWayPoint(extend_switcher, {
+			simple_check: true
+		});
 		
 		this.t_users= {
 			c: users,
@@ -649,6 +671,9 @@ provoda.View.extendTo(songUI, {
 		}
 	},
 	updateSongListeners: function(){
+		if (!this.expanded){
+			return;
+		}
 		var _this = this;
 		var last_update = this.t_users.last_update;
 		var current_user = su.s.getId();

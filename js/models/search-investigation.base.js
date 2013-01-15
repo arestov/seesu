@@ -12,6 +12,7 @@
 			this.enter_items = false;
 			this.setChild('section', []);
 			this.setInactiveAll();
+			this.updateState('url-part', this.getURL());
 		},
 		page_name: "search results",
 		addCallback: function(event_name, func){
@@ -96,7 +97,7 @@
 			sections_array.push(s);
 			this.setChild('section', sections_array, true);
 
-
+			s.invstg = this;
 			this.names[name] = s;
 			return s;
 		},
@@ -141,14 +142,14 @@
 			}
 			
 		},
-		selectEnterItemBelow: function(){
+		selectEnterItemAbove: function(){
 			var ci = (this.enter_item && this.enter_item.serial_number) || 0,
 				ni = (ci ? ci : this.enter_items.length) - 1,
 				t = this.enter_items[ni];
 			this.setItemForEnter(t);
 			this.selected_inum = ni;
 		},
-		selectEnterItemAbove: function(){
+		selectEnterItemBelow: function(){
 			var ci = (this.enter_item && this.enter_item.serial_number) || 0,
 				ni = (ci + 1 < this.enter_items.length) ? ci + 1 : 0,
 				t = this.enter_items[ni];
@@ -185,7 +186,7 @@
 				this.updateState('query', q);
 				this.changeResultsCounter();
 				this.doEverythingForQuery();
-				this.trigger('url-change');//fixme; place before changing ui!?
+				this.updateState('url-part', this.getURL());
 			}
 			
 		},
@@ -271,8 +272,11 @@
 		appendResults: function(arr, render, no_more_results) {
 			var r = [];
 			for (var i = 0; i < arr.length; i++) {
-				r.push(new this.resItem(arr[i]));
+				var item = new this.resItem(arr[i]);
+				item.invstg = this.invstg;
+				r.push(item);
 			};
+
 			this.r.append(r);
 			if (render){
 				this.renderSuggests(no_more_results);

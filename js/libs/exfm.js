@@ -123,6 +123,9 @@ ExfmMusicSearch.prototype = {
 	slave: false,
 	s: {name: 'exfm', key: 0, type:'mp3'},
 	preferred: null,
+	makeSongFile: function(item) {
+		return this.makeSong(item);
+	},
 	makeSong: function(cursor, msq){
 
 		var entity = {
@@ -137,13 +140,16 @@ ExfmMusicSearch.prototype = {
 			getSongFileModel: getSongFileModel
 		};
 		if (!entity.artist){
-			var guess_info = guessArtist(entity.track, msq.artist);
+			var guess_info = guessArtist(entity.track, msq && msq.artist);
 			if (guess_info.artist){
 				entity.artist = guess_info.artist;
 				entity.track = guess_info.track;
 			}
 		}
-		entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+		if (msq){
+			entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+		}
+		
 		
 		return entity
 	},

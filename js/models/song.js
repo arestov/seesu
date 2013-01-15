@@ -5,30 +5,17 @@ var song;
 	var baseSong = function() {};
 	provoda.extendFromTo("baseSong", mapLevelModel, baseSong);
 
-	song = function(omo, playlist, player, mp3_search){};
+	song = function(){};
 
 	baseSong.extendTo(song, {
 		page_name: 'song page',
-		getLevNum: function() {
-			return this.map_level_num - 1;
-		},
 		'stch-lfm-image': function(state) {
 			if (state){
 				if (state.lfm_id){
-
 					this.updateState('song-image', "http://userserve-ak.last.fm/serve/64s/" + state.lfm_id);
 				} else if (state.url){
 					this.updateState('song-image', state.url);
 				}
-				/*
-				if (state.array){
-					
-					this.updateState('song-image', state.array[1]['#text'].replace('/64/', '/64s/'));
-				} else if (state.item){
-					this.updateState('song-image', state.item);
-				}*/
-//				console.log(state);
-
 			}
 		},
 		'stch-can-expand': function(state) {
@@ -47,24 +34,7 @@ var song;
 						_this.updateState('tags', ai.tags);
 						_this.updateState('similars', ai.similars);
 						_this.updateState('artist-image', ai.images && ai.images[2] || lfm_image_artist)
-						/*
-						similars
-						tags
-						bio
 
-						similars = ai.similars;
-			artist	 = ai.artist;
-			tags	 = ai.tags;
-			bio		 = ai.bio;
-			image
-
-						*/
-						/*
-						if (!_this.isAlive()){
-							return
-						}
-						_this.show_artist_info(r, this.ainf, artist);
-						*/
 
 					});
 
@@ -74,15 +44,16 @@ var song;
 				
 			}
 		},
-		init: function(omo, playlist, player, mp3_search) {
-			this._super(omo, playlist, player, mp3_search);
+		init: function(opts) {
+
+			this._super.apply(this, arguments);
 			var _this = this;
 			this.updateNavTexts();
 
 
 
 			var spec_image_wrap;
-
+			var omo = opts.omo;
 			if (omo.lfm_image){
 				spec_image_wrap = su.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
 				//this.updateState('lfm-image', omo.lfm_image);
@@ -129,7 +100,18 @@ var song;
 			this.addChild(actionsrow);
 
 			this.mf_cor = new mfCor();
-			this.mf_cor.init(this, this.omo);
+			this.mf_cor.init({
+				mo: this,
+				omo: this.omo
+			}, omo.file);
+			if (omo.file){
+				this.updateState('playable', true);
+				this.updateState('files_search', {
+					complete: true,
+					have_best_tracks: true,
+					have_tracks: true
+				});
+			}
 			this.setChild('mf_cor', this.mf_cor);
 			this.addChild(this.mf_cor);
 			this.mf_cor.on('before-mf-play', function(mopla) {
@@ -190,7 +172,7 @@ var song;
 		},
 		getURL: function(mopla){
 			var url ="";
-			if (mopla || this.raw()){
+			if (mopla){
 				var s = mopla || this.omo;
 				url += "/" + su.encodeURLPart(s.from) + '/' + su.encodeURLPart(s._id);
 			} else{
@@ -227,9 +209,9 @@ var song;
 			} else {
 				
 
-				app_env.openURL( "http://seesu.me/vk/share.html" + 
+				app_env.openURL( "http://seesu.me/vk/share.html" +
 					"?" + 
-					stringifyParams({app_id: su.vkappid}, false, '=', '&') + 
+					stringifyParams({app_id: su.vkappid}, false, '=', '&') +
 					"#?" + 
 					stringifyParams(data, false, '=', '&'));
 			}

@@ -29,11 +29,70 @@ var get_youtube = function(q, callback){
 	
 };
 
+var VkLoginB = function() {};
+provoda.Model.extendTo(VkLoginB, {
+	init: function(opts) {
+		this._super();
 
+		var _this = this;
+		this.auth = opts.auth;
+		this.pmd = opts.pmd;
+
+		if (this.auth.deep_sanbdox){
+			_this.updateState('deep-sanbdox', true);
+		}
+		if (this.auth.has_session){
+			this.triggerSession();
+		}
+		this.auth.once('session', function(){
+			_this.triggerSession();
+		});
+		if (this.auth && this.auth.data_wait){
+			this.waitData();
+		} else {
+			this.auth.on('data-wait', function(){
+				_this.waitData();
+			});
+		}
+
+	},
+	triggerSession: function() {
+		this.updateState('has-session', true);
+		if (this.onSession){
+			this.onSession();
+		}
+		//onSession
+	},
+	waitData: function() {
+		this.updateState('data-wait', true);
+	},
+	notWaitData: function() {
+		this.updateState('data-wait', false);
+	},
+	setRequestDesc: function(text) {
+		this.updateState('request-description', text ? text + " " + localize("vk-auth-invitation") : "");
+	},
+	useCode: function(auth_code){
+		if (this.bindAuthCallback){
+			this.bindAuthCallback();
+		}
+		this.auth.setToken(auth_code);
+
+	},
+	requestAuth: function(opts) {
+		if (this.beforeRequest){
+			this.beforeRequest();
+		}
+		this.auth.requestAuth(opts);
+	},
+	switchView: function(){
+		this.updateState('active', !this.state('active'));
+	}
+});
 
 var vkLogin = function() {
 	this.init();
-}; 
+};
 
 provoda.Model.extendTo(vkLogin, {
 	waitData: function() {
@@ -55,7 +114,7 @@ provoda.Model.extendTo(vkLogin, {
 tryVKOAuth = function(){
 	var init_auth = vk_auth_box.requestAuth({not_open: true});
 	if (init_auth.bridgekey){
-		var i = window.document.createElement('iframe');	
+		var i = window.document.createElement('iframe');
 		i.className = 'serv-container';
 		i.src = init_auth.link;
 		window.document.body.appendChild(i);
@@ -63,8 +122,7 @@ tryVKOAuth = function(){
 };
 var checkDeadSavedToken = function(vk_token) {
 	var saved = suStore('vk_token_info');
-	if (saved) {
-		saved.access_token == vk_token;
+	if (saved && saved.access_token == vk_token) {
 		suStore("vk_token_info", "", true);
 	}
 };
@@ -176,8 +234,9 @@ try_mp3_providers = function(){
 					}
 				}
 			});
+			
 			window.documentScrollSizeChangeHandler = function(height){
-				VK.callMethod("resizeWindow", 640, Math.max(700, height + 70));
+				VK.callMethod("resizeWindow", 800, Math.max(700, height));
 			};
 		});
 		

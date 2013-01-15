@@ -7,7 +7,7 @@ provoda.addPrototype("baseSectionButtonView", {
 	},
 	"stch-button_text": function(text){
 		this.text_span.text(text);
-	},
+	}
 });
 
 
@@ -67,6 +67,7 @@ provoda.addPrototype("baseSuggestView", {
 			this.c.click(function(){
 				_this.md.view();
 			});
+			this.addWayPoint(this.c);
 		}
 		
 		return this;
@@ -74,9 +75,6 @@ provoda.addPrototype("baseSuggestView", {
 });
 
 provoda.addPrototype("InvestigationView", {
-	createDetailes: function(){
-		this.createBase();
-	},
 	expand: function(){
 		if (this.expanded){
 			return;
@@ -129,7 +127,7 @@ provoda.addPrototype("searchSectionView", {
 		this.gc = this.header ? this.header.add(this.c) : this.c;
 	},
 	getC: function(){
-		return this.gc;	
+		return this.gc;
 	},
 	createHead: function(){
 		if (this.head_text){
@@ -184,15 +182,15 @@ provoda.addPrototype("searchSectionView", {
 			} else {
 				if (this.message){
 					this.message.remove();
-					delete this.message
+					delete this.message;
 				}
 			}
 		},
 		'odd-section': function(state){
 			if (state){
-				this.c.addClass('odd-section')
+				this.c.addClass('odd-section');
 			} else {
-				this.c.removeClass('odd-section')
+				this.c.removeClass('odd-section');
 			}
 		}
 	},
@@ -219,7 +217,7 @@ provoda.addPrototype("searchSectionView", {
 		var view = this.getFreeChildView(name, md);
 		if (view){
 			this.button_view = view;
-			this.c.append(view.getA())
+			this.c.append(view.getA());
 		}
 		this.requestAll();
 	}

@@ -14,7 +14,7 @@ var songsListView;
 
 			this.bindClick();
 			//var _this = this;
-			var md = this.md
+			var md = this.md;
 
 			this.dont_rept_pl_chbx = this.c.find('.dont-rept-pl input').click(function() {
 				md.setDnRp($(this).prop('checked'));
@@ -66,10 +66,10 @@ var songsListView;
 			this.buttons_panel = this.c.children().children('.pla-panel');
 		},
 		children_views: {
-			"multiatcs": {
+			"row-multiatcs": {
 				main: MultiAtcsRowView
 			},
-			"pl-settings": {
+			"row-pl-settings": {
 				main: PlaylistSettingsRowView
 			}
 		}
@@ -96,6 +96,10 @@ var songsListView;
 		},
 		'stch-mp-has-focus': function(state) {
 			this.lc.toggleClass('list-overview', !!state);
+			if (!this.opts || !this.opts.overview){
+				this.c.toggleClass('show-zoom-to-track', !state);
+			}
+			
 		},
 		'stch-error': function(error){
 			if (this.error_b && this.error_b.v !== error){
@@ -117,11 +121,11 @@ var songsListView;
 		},
 		createPanel: function() {
 			this.panel = this.root_view.samples.playlist_panel.clone();
-			this.panel.appendTo(this.c)		
+			this.panel.appendTo(this.c);
 			return this;
 		},
 		'collch-plarow': function(name, md) {
-			var view = this.getFreeChildView(name, md, 'main');
+			var view = this.getFreeChildView(name, md, 'main', {lite: this.opts && this.opts.overview});
 			this.requestAll();
 		},
 		children_views: {

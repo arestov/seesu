@@ -1,6 +1,9 @@
 var baseNavUI = function() {};
 
 provoda.View.extendTo( baseNavUI, {
+	createBase: function() {
+		this.c = $('<span class="nav-item"><span>.</span><b></b></span>');
+	},
 	createDetailes: function(){
 		this.createBase();
 		this.bindClick();
@@ -39,14 +42,11 @@ provoda.View.extendTo( baseNavUI, {
 				this.resetStackMark();
 			}
 		},
-		"nav-text": function(text) {
+		"nav-title": function(text) {
+			this.c.attr('title', text || '');
 			if (this.text_place){
 				this.text_place.text(text || '');
 			}
-		},
-		"nav-title": function(text) {
-			this.c.attr('title', text || '');
-			
 		}
 	},
 
@@ -58,6 +58,11 @@ provoda.View.extendTo( baseNavUI, {
 		this.c.click(function(){
 			_this.md.zoomOut();
 		});
+		this.addWayPoint(this.c, {
+			canUse: function() {
+				return _this.state('mp-stack') || !_this.state('mp-has-focus');
+			}
+		});
 	}
 });
 
@@ -67,6 +72,7 @@ StartPageNavView = function(mal) {};
 baseNavUI.extendTo(StartPageNavView, {
 	createBase: function(){
 		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>');
+
 	},
 	'stch-mp-stack':function(state) {
 		if (state && state == !!state){
@@ -74,7 +80,7 @@ baseNavUI.extendTo(StartPageNavView, {
 		} else {
 			this.c.removeClass('stacked');
 		}
-	}, 
+	},
 	'stch-mp-has-focus': function(state) {
 		if (!state){
 			this.c.addClass("nav-button");
@@ -90,28 +96,9 @@ investgNavUI = function() {};
 baseNavUI.extendTo(investgNavUI, {
 	createBase: function() {
 		this.c = $('<span class="nav-item nav-search-results" title="Search results"><b></b><span class="icon">.</span></span>');
+	},
+	"stch-nav-title": function(text) {
+		this.c.attr('title', text || '');
 	}
 });
 
-artCardNavUI = function() {};
-baseNavUI.extendTo(artCardNavUI, {
-	createBase: function() {
-		this.c = $('<span class="nav-item "><span>.</span><b></b></span>');
-	}
-});
-
-
-playlistNavUI = function() {};
-baseNavUI.extendTo(playlistNavUI, {
-	createBase: function() {
-		this.c = $('<span class="nav-item nav-playlist-page"><span>.</span><b></b></span>');
-	}
-});
-
-
-trackNavUI = function(mlm) {};
-baseNavUI.extendTo(trackNavUI, {
-	createBase: function() {
-		this.c = $('<span class="nav-item nav-track-zoom"><span>.</span><b></b></span>');
-	}
-});

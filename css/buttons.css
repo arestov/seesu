@@ -36,7 +36,7 @@
 	display:inline-block;
 	background: transparent no-repeat;
 	cursor:pointer;
-	height:24px;
+	height:1.72rem;
 	width:25px;
 	border:0  !important; 
 	padding:0;
@@ -45,7 +45,7 @@
 .pc-indicator{
 	display:inline-block;
 	background: transparent no-repeat;
-	height:24px;
+	height:1.72rem;
 	width:25px;
 }
 .big-indicator{
@@ -152,27 +152,6 @@
 		background-image:url(../i/buttons/pc-b-play-a.png);
 		}	
 	
-		
-.button-hole{
-	background:#555;
-	font: 12px/1.5 Arial, sans-serif;
-	
-
-	border-top:1px solid #474747;
-	border-radius:11px;
-	border-bottom:1px solid #676767;
-	
-	display:inline-block;
-	
-	}
-	
-	.button-hole:hover{
-		background-color:#4a4a4a;
-		
-		
-		
-
-		}
 
 .nicebutton:active,.nicebutton:focus{
 	outline:0;
@@ -188,6 +167,41 @@
 	border-bottom: 1px solid transparent;
 	border-radius:11px;
 }
+.area-button{
+	display: block;
+	cursor: pointer;
+	border-top: 1px solid #595959;
+	border-bottom: 1px solid hsl(0, 0%, 29%);
+	border-radius: 1rem;
+	background: #4f4f4f;
+	padding: 0.5rem 1rem;
+	color: #aaa;
+	margin-bottom:1rem;
+
+	background-image: -o-linear-gradient(#525252,#4d4d4d);
+	background-image: -moz-linear-gradient(100% 0% 270deg, #525252, #4d4d4d);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#525252), to(#4d4d4d)) !important;
+	background-image: linear-gradient(#525252,#4d4d4d);
+	}
+	.area-button:hover{
+		background-image: -o-linear-gradient(#525252,#4d4d4d);
+		background-image: -moz-linear-gradient(100% 0% 270deg, #525252, #4d4d4d);
+		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#545454), to(#4f4f4f)) !important;
+		background-image: linear-gradient(#525252,#4d4d4d);
+		}
+	.area-button:active{
+		box-shadow: inset 0 0 10px 1px #454545;
+		border-color:transparent;
+		background-image: none !important;
+		}
+	.area-button .area-description{
+		min-height: 2rem;
+		font-size: 0.8em;
+		}
+	.page-scheme .area-button .area-description{
+		display: none;
+		}
+	
 
 .nicebutton{
 	cursor:pointer;
@@ -208,9 +222,7 @@
 		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5a5a5a), to(#444)) !important;
 		background-image: linear-gradient(#5a5a5a,#444);
 		}
-.left-buttons-group .button-hole{
-	margin-right:6px;
-	}
+
 .has-dark-buttons{
 
 	}
@@ -257,4 +269,8 @@
 }
 .bposition-r .nicebutton, .bposition-r .disabledbutton{
 	border-left:1px solid #555;
-}	
+}
+
+
+
+

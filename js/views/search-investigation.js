@@ -59,21 +59,32 @@ var trackSuggestUI = function(sugg){};
 searchPageSuggestView.extendTo(trackSuggestUI, {
 	createItem: function(){
 		var that = this.md;
-		var a = $("<a></a>");
+		var a = $('<a></a>');
+
+		this.img_c = $('<img/>').attr('src', default_sugg_artimage).appendTo(a);
+		this.duration_c = $('<span class="sugg-track-dur"></span>').appendTo(a);
 		
-		$("<img/>").attr({ 
-			src: (that.image || default_sugg_artimage) , 
-			alt: that.artist }).appendTo(a);
-		if (that.duration){
-			var track_dur = parseInt(that.duration);
-			var digits = track_dur % 60;
-			track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-			a.append('<span class="sugg-track-dur">' + track_dur + '</span>');
-		}
-		$("<span></span>").text(that.text_title).appendTo(a);
+		this.track_name_c = $('<span class="suggest-track_name"></span>').appendTo(a);
+		this.artist_name_c  = $('<span class="suggest-artist_name"></span>').appendTo(a);
+
+
 		this.a = a.appendTo(this.c);
 		return this;
+	},
+	"stch-artist": function(state) {
+		this.artist_name_c.text(state);
+		this.img_c.attr('alt', state);
+	},
+	"stch-track": function(state) {
+		this.track_name_c.text(state);
+	},
+	"stch-image": function(state) {
+		this.img_c.attr('src', state);
+	},
+	"stch-duration-text": function(state) {
+		this.duration_c.text(state);
 	}
+	
 });
 
 
@@ -94,11 +105,26 @@ searchPageSuggestView.extendTo(albumSuggestUI, {
 	createItem: function(){
 		var that = this.md;
 		var a = $("<a></a>");
-		$("<img/>").attr({ src: (that.image || default_sugg_artimage), alt: that.text_title }).appendTo(a);
-		$("<span></span>").text(that.text_title).appendTo(a);
+		this.img_c = $('<img/>').attr('src', default_sugg_artimage).appendTo(a);
+
+		this.artist_name_c  = $('<span class="suggest-artist_name"></span>').appendTo(a);
+		this.album_name_c  = $('<span class="suggest-album_name"></span>').appendTo(a);
+
 		this.a = a.appendTo(this.c);
 		return this;
-	}
+	},
+	"stch-name": function(state) {
+		this.album_name_c.text(state);
+		this.img_c.attr('alt', state);
+
+	},
+	"stch-artist": function(state) {
+		this.artist_name_c.text(state);
+		
+	},
+	"stch-image": function(state) {
+		this.img_c.attr('src', state);
+	},
 });
 
 

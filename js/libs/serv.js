@@ -554,9 +554,9 @@ createPrototype = function(constr, assi_prototype, clone_prototype){
 		namedClass.extend = Class.extend;
 		return namedClass;
 	};
-	Class.extend = function(prop){
-		return this.extendTo(function(){}, prop);
-	}
+	Class.extend = function(props, class_name){
+		return this.extendTo(function(){}, props);
+	};
 
 })();
 

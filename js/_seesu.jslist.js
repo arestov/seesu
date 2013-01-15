@@ -44,11 +44,14 @@ var jsLoadComplete,
 
 	"js/views/navigation.js",
 
-
+	"js/models/songs-list.base.js",
+	"js/models/songs-list.js",
+	"js/models/UserCard.js",
+	"js/models/MusicConductor.js",
 	"js/models/start_page.js",
 	"js/models/app_md.js",
 	
-	"js/seesu.artcard.js",
+	"js/models/artcard.js",
 	"js/seesu.s.js",
 	"js/libs/mp3_search.js",
 	
@@ -56,8 +59,7 @@ var jsLoadComplete,
 	"js/models/song.js",
 	"js/models/mfcomplect.js",
 	"js/seesu.js",
-	"js/models/songs-list.base.js",
-	"js/models/songs-list.js",
+	
 	"js/prototypes/songFile.js",
 
 	"js/models/search-investigation.base.js",
@@ -73,6 +75,8 @@ var jsLoadComplete,
 	"js/libs/c_buttmen.js",
 	
 	"js/views/etc.views.js",
+	"js/views/UserCard.js",
+	"js/views/MusicConductor.js",
 	"js/views/su-mfcomplect.js",
 	"js/views/search-investigation.base.js",
 	"js/views/search-investigation.js",
@@ -104,8 +108,8 @@ var jsLoadComplete,
 				js_loadtest[i] = null;
 				cur.fn();
 			}
-		};
-	};;
+		}
+	};
 
 
 
@@ -162,10 +166,6 @@ var jsLoadComplete,
 	});
 
 	yepnope([
-		{
-			test: window.JSON,
-			nope: "js/common-libs/json2.min.js"
-		},
 		{
 			load: bpathWrap(js_toload),
 			complete: function(){
