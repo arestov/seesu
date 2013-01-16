@@ -268,6 +268,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 						_this.login(r,callback);
 						_this.trigger("session");
 						_this.has_session = true;
+						_this.trigger('api-full-ready');
 
 
 						

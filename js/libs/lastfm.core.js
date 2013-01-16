@@ -151,14 +151,14 @@ lastfm_api.prototype= {
 							if (options.after_ajax){
 								options.after_ajax();
 							}
-							//console.log(params)	
+							//console.log(params)
 						}
 
 					} else{
 						_this.post_serv.post(params, function(){
 							deferred.resolve();
 						});
-					} 
+					}
 					
 				};
 

@@ -263,7 +263,7 @@ try_mp3_providers = function(){
 
 		su.vk_auth
 			.on('vk-token-receive', function(token){
-				var vk_token = new vkTokenAuth(su.vkappid, token);			
+				var vk_token = new vkTokenAuth(su.vkappid, token);
 				connectApiToSeesu(vk_token, true);
 				if (app_env.web_app){
 					appendVKSiteApi(su.vkappid);
@@ -301,7 +301,7 @@ try_mp3_providers = function(){
 					}, 700, 600);
 					if (!opend){
 						app_env.openURL(wurl);
-					} 
+					}
 					*/
 				} else{
 					app_env.openURL(wurl);
