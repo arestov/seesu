@@ -264,14 +264,14 @@ provoda.View.extendTo(MusicConductorPreview, {
 			
 			
 			var wow_tags= function(tag,c){
-				var link = $('<a class="js-serv hyped-tag"></a> ')
+				var link = $('<a class="js-serv hyped-tag"></a>')
 					.text(tag)
 					.click(function(e){
 						_this.root_view.md.show_tag(tag);
 						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
 						e.preventDefault();
 					}).appendTo(c);
-				c.append(' ');
+				c.append(document.createTextNode(' '));
 				_this.addWayPoint(link,{
 					simple_check:true
 				});

@@ -73,7 +73,7 @@ provoda.Model.extendTo(LfmLogin, {
 		this.auth.once('session', function(){
 			_this.triggerSession();
 		});
-		if (this.auth.wait_data){
+		if (this.auth && this.auth.data_wait){
 			this.waitData();
 		} else {
 			this.auth.on('data-wait', function(){
@@ -89,10 +89,10 @@ provoda.Model.extendTo(LfmLogin, {
 		//onSession
 	},
 	waitData: function() {
-		this.updateState('wait', true);
+		this.updateState('data-wait', true);
 	},
 	notWaitData: function() {
-		this.updateState('wait', false);
+		this.updateState('data-wait', false);
 	},
 	setRequestDesc: function(text) {
 		this.updateState('request-description', text ? text + " " + localize("lfm-auth-invitation") : "");
@@ -201,7 +201,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 	},
 	waitData: function() {
 		this.trigger('data-wait');
-		this.wait_data = true;
+		this.data_wait = true;
 	},
 	createAuthFrame: function(first_key){
 		if (this.lfm_auth_inited){
@@ -268,6 +268,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 						_this.login(r,callback);
 						_this.trigger("session");
 						_this.has_session = true;
+						_this.trigger('api-full-ready');
 
 
 						

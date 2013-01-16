@@ -31,7 +31,7 @@ provoda.Eventor.extendTo(vkAuth, {
 		var o = {};
 		
 		var domain = ru ? "vkontakte.ru" :  'vk.com';
-		var base = this.open_api ? 'http://api.' + domain + "/oauth/authorize?" : "http://oauth." + domain + "/authorize?" ; 
+		var base = this.open_api ? 'http://api.' + domain + "/oauth/authorize?" : "http://oauth." + domain + "/authorize?" ;
 
 		o.link = base + 'client_id=' + this.app_id +'&scope=' + this.permissions.join(',')+ '&display=page&response_type=token';
 		var link_tag = this.urls.callbacker;
@@ -45,22 +45,23 @@ provoda.Eventor.extendTo(vkAuth, {
 	},
 	waitData: function() {
 		this.trigger('data-wait');
+		this.data_wait = true;
 	},
 	createAuthFrame: function(first_key){
 		var _this = this;
 		if (this.auth_inited){
 			return false;
 		}
-		var i = this.auth_frame = document.createElement('iframe');	
+		var i = this.auth_frame = document.createElement('iframe');
 		addEvent(window, 'message', function(e){
 			if (e.data == 'vk_bridge_ready:'){
-				console.log('vk_bridge_ready')
+				console.log('vk_bridge_ready');
 				_this.trigger('vk-bridge-ready');
 				e.source.postMessage("add_keys:" + first_key, '*');
 			} else if(e.data.indexOf('vk_token:') === 0){
 				_this.trigger('vk-token-receive', e.data.replace('vk_token:',''));
 				//vkTokenAuth(e.data.replace('vk_token:',''));
-				console.log('got vk_token!!!!')
+				console.log('got vk_token!!!!');
 				console.log(e.data.replace('vk_token:',''));
 				seesu.trackEvent('Auth to vk', 'end');
 			} else if (e.data == 'vk_error:'){
@@ -76,7 +77,7 @@ provoda.Eventor.extendTo(vkAuth, {
 	},
 	setAuthBridgeKey: function(key){
 		if (!this.auth_inited){
-			this.createAuthFrame(key)
+			this.createAuthFrame(key);
 		} else{
 			this.auth_frame.contentWindow.postMessage("add_keys:" + key, '*');
 		}
@@ -84,7 +85,7 @@ provoda.Eventor.extendTo(vkAuth, {
 	authInit: function(p){
 		var _this = this;
 		
-		//init_auth_data.bridgekey	
+		//init_auth_data.bridgekey
 
 		var init_auth_data = this.getInitAuthData(p);
 		if (init_auth_data.bridgekey){

@@ -14,19 +14,19 @@ Class.extendTo(vkCoreApi, {
 		this.access_token = at;
 	},
 	removeAccessToken: function(){
-		delete this.access_token;	
+		delete this.access_token;
 	},
 	hasAccessToken: function(){
 		return !!this.access_token;
-	}, 
+	},
 	get: function() {
 		return this.send.apply(this, arguments);
 	},
 	cache_namespace: "vk_api",
 	send: function(method, params, options){ //nocache, after_ajax, cache_key, only_cache
 		var _this				= this,
-			deferred 			= $.Deferred(),
-			complex_response 	= {
+			deferred			= $.Deferred(),
+			complex_response	= {
 				abort: function(){
 					this.aborted = true;
 					deferred.reject('abort');
@@ -73,7 +73,7 @@ Class.extendTo(vkCoreApi, {
 					}
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout)
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout);
 					}
 				};
 
@@ -82,7 +82,7 @@ Class.extendTo(vkCoreApi, {
 
 				var sendRequest = function() {
 					if (complex_response.aborted){
-						return
+						return;
 					}
 					if (!options.nocache){
 						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
@@ -92,15 +92,15 @@ Class.extendTo(vkCoreApi, {
 					
 					if (!cache_used){
 						complex_response.xhr = aReq({
-						  url: _this.link + method,
-						  type: "GET",
-						  dataType: _this.jsonp ? 'jsonp' : 'json',
-						  data: params_full,
-						  timeout: 20000,
+							url: _this.link + method,
+							type: "GET",
+							dataType: _this.jsonp ? 'jsonp' : 'json',
+							data: params_full,
+							timeout: 20000
 						})
 						.done(success)
 						.fail(function(xhr, text){
-						  	deferred.reject.apply(deferred, arguments);
+							deferred.reject.apply(deferred, arguments);
 						});
 						if (options.after_ajax){
 							options.after_ajax();
