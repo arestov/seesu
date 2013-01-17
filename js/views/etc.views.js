@@ -107,7 +107,7 @@ provoda.View.extendTo(vkLoginUI, {
 			}
 		},
 		"request-description": function(state) {
-			this.c.find('.login-request-desc').text(state || "");
+			this.login_desc.text(state || "");
 		}
 	},
 	createBase: function() {
@@ -117,6 +117,7 @@ provoda.View.extendTo(vkLoginUI, {
 			_this.md.requestAuth();
 			e.preventDefault();
 		});
+		this.login_desc = this.c.find('.login-request-desc');
 		this.addWayPoint(sign_link, {
 			canUse: function() {
 

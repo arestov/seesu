@@ -31,12 +31,21 @@ var get_youtube = function(q, callback){
 
 var VkLoginB = function() {};
 provoda.Model.extendTo(VkLoginB, {
-	init: function(opts) {
+	init: function(opts, params) {
 		this._super();
 
 		var _this = this;
 		this.auth = opts.auth;
 		this.pmd = opts.pmd;
+
+		if (params){
+			if (params.open_opts){
+				this.open_opts = params.open_opts;
+			}
+			this.setRequestDesc(params.desc);
+		} else {
+			this.setRequestDesc();
+		}
 
 		if (this.auth.deep_sanbdox){
 			_this.updateState('deep-sanbdox', true);
@@ -44,7 +53,7 @@ provoda.Model.extendTo(VkLoginB, {
 		if (this.auth.has_session){
 			this.triggerSession();
 		}
-		this.auth.once('session', function(){
+		this.auth.once('full-ready', function(){
 			_this.triggerSession();
 		});
 		if (this.auth && this.auth.data_wait){
@@ -83,7 +92,7 @@ provoda.Model.extendTo(VkLoginB, {
 		if (this.beforeRequest){
 			this.beforeRequest();
 		}
-		this.auth.requestAuth(opts);
+		this.auth.requestAuth(opts || this.open_opts);
 	},
 	switchView: function(){
 		this.updateState('active', !this.state('active'));
@@ -244,11 +253,7 @@ try_mp3_providers = function(){
 		
 	} else {
 	
-		su.vk_auth = new vkAuth(su.vkappid, {
-			bridge: 'http://seesu.me/vk/bridge.html',
-			callbacker: 'http://seesu.me/vk/callbacker.html'
-		}, ["friends", "video", "offline", "audio", "wall"], false, app_env.deep_sanbdox);
-
+		
 
 		var save_token = suStore('vk_token_info');
 		if (save_token){
@@ -264,10 +269,12 @@ try_mp3_providers = function(){
 		su.vk_auth
 			.on('vk-token-receive', function(token){
 				var vk_token = new vkTokenAuth(su.vkappid, token);
-				connectApiToSeesu(vk_token, true);
+				this.api = connectApiToSeesu(vk_token, true);
 				if (app_env.web_app){
 					appendVKSiteApi(su.vkappid);
 				}
+				
+				this.trigger('full-ready', true);
 			})
 			.on('want-open-url', function(wurl){
 				if (app_env.showWebPage){

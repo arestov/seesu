@@ -1,23 +1,40 @@
-var vkAuth = function(app_id, urls, permissions, open_api, deep_sanbdox) {
-	this.init(app_id, urls, permissions, open_api, deep_sanbdox);
+var vkAuth = function(opts) {
+	this.init(opts);
 };
 provoda.Eventor.extendTo(vkAuth, {
-	init: function(app_id, urls, permissions, open_api, deep_sanbdox) {
-		this.app_id = app_id;
-		this.urls = urls;
-		this.permissions = toRealArray(permissions);
-		if (open_api){
+	init: function(opts) {
+
+		//app_id, urls, permissions, open_api, deep_sanbdox
+
+
+
+		this.app_id = opts.app_id;
+		this.urls = opts.urls;
+		this.permissions = toRealArray(opts.permissions);
+		if (opts.open_api){
 			this.open_api = true;
 		}
-		
-		if (deep_sanbdox){
+		if (opts.vksite_app){
+			this.vksite_app = true;
+		}
+		if (opts.deep_sanbdox){
 			this.deep_sanbdox = true;
 		}
 		this._super();
 		return this;
 	},
 	requestAuth: function(p){
-		return this.authInit(p || {});
+		if (this.vksite_app && p.settings_bits){
+			if (window.VK){
+				VK.callMethod('showSettingsBox', settings_bits);
+			} else {
+				
+			}
+			return true;
+		} else {
+			return this.authInit(p || {});
+		}
+		
 	},
 	startIndicating: function() {
 		

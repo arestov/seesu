@@ -346,9 +346,9 @@ mapLevelModel.extendTo(UserCard, {
 			this.lfm_loved.init({pmd: this, app: this.app});
 			this.setChild('lfm_loved', this.lfm_loved);
 
-			//this.my_vkaudio = new MyVkAudioList();
-			//this.my_vkaudio.init({pmd: this, app: this.app});
-			//this.setChild('vk_audio', this.my_vkaudio);
+			this.my_vkaudio = new MyVkAudioList();
+			this.my_vkaudio.init({pmd: this, app: this.app});
+			this.setChild('vk_audio', this.my_vkaudio);
 		};
 		jsLoadComplete({
 			test: function() {
