@@ -21,12 +21,23 @@ provoda.Eventor.extendTo(vkAuth, {
 			this.deep_sanbdox = true;
 		}
 		this._super();
+
+		this.on('vk-site-api', function(VK) {
+			var _this = this;
+			VK.addCallback('onSettingsChanged', function(sts){
+				_this.trigger('settings', sts);
+			});
+			_this.VK = VK;
+		});
 		return this;
 	},
 	requestAuth: function(p){
-		if (this.vksite_app && p.settings_bits){
-			if (window.VK){
-				VK.callMethod('showSettingsBox', settings_bits);
+		if (this.vksite_app){
+			if (!p.settings_bits){
+				throw new Error('give me settings bits');
+			}
+			if (this.VK){
+				this.VK.callMethod('showSettingsBox', settings_bits);
 			} else {
 				
 			}
@@ -35,6 +46,29 @@ provoda.Eventor.extendTo(vkAuth, {
 			return this.authInit(p || {});
 		}
 		
+	},
+	bindAuthReady: function(exlusive_space, callback, settings_bits) {
+		var event_name;
+		if (this.vksite_app){
+			event_name = exlusive_space ? 'settings.' + exlusive_space : 'settings';
+			this.on(event_name, function(sts) {
+				if (settings_bits){
+					if ((sts & settings_bits) * 1){
+						callback.call(this);
+					}
+				} else {
+					callback.call(this);
+				}
+				
+			}, {
+				exlusive: !!exlusive_space
+			});
+		} else {
+			event_name = exlusive_space ? 'full-ready.' + exlusive_space : 'full-ready';
+			this.on(event_name, callback,  {
+				exlusive: !!exlusive_space
+			});
+		}
 	},
 	startIndicating: function() {
 		

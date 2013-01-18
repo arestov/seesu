@@ -376,6 +376,10 @@ appModel.extendTo(seesuApp, {
 			vksite_app: app_env.vkontakte
 		});
 
+		this.once("vk-site-api", function() {
+			_this.vk_auth.trigger('vk-site-api', VK);
+		});
+
 	},
 	migrateStorage: function(ver){
 		if (!ver){

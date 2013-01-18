@@ -65,6 +65,9 @@ provoda.Model.extendTo(VkLoginB, {
 		}
 
 	},
+	bindAuthReady: function(exlusive_space, callback) {
+		this.auth.bindAuthReady(exlusive_space, callback, this.open_opts && this.open_opts.settings_bits);
+	},
 	triggerSession: function() {
 		this.updateState('has-session', true);
 		if (this.onSession){
