@@ -223,6 +223,10 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
 		}, {nocache: true})
 			.done(function(r){
+				if (!r || r.error){
+					_this.loadComplete(true);
+					return;
+				}
 				var vk_search = _this.app.mp3_search.getSearchByName('vk');
 			
 				var track_list = [];
@@ -234,7 +238,6 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 						track: cur.title,
 						file: vk_search.makeSongFile(cur)
 					});
-					
 				}
 
 				_this.injectExpectedSongs(track_list);

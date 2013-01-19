@@ -197,30 +197,24 @@ try_mp3_providers = function(){
 			load: 'http://vk.com/js/api/xd_connection.js',
 			complete: function() {
 				VK.init(function(){
-
+					su.trigger("vk-site-api");
 				});
-				su.trigger("vk-site-api");
+				
 				
 			}
 		});
 
-		su.once("vk-site-api", function() {
-			VK.addCallback('onSettingsChanged', function(sts){
-				if ((sts & 8)*1){
-					if (!music_connected){
-						music_connected = true;
-						su.mp3_search.add(vkapi.asearch, true);
-					}
-				} else{
-					if (music_connected){
-						su.mp3_search.remove(vkapi.asearch, true);
-					}
+		su.vk_auth.on('settings-change', function(sts) {
+			if ((sts & 8)*1){
+				if (!music_connected){
+					music_connected = true;
+					su.mp3_search.add(vkapi.asearch, true);
 				}
-			});
-			
-			window.documentScrollSizeChangeHandler = function(height){
-				VK.callMethod("resizeWindow", 800, Math.max(700, height));
-			};
+			} else{
+				if (music_connected){
+					su.mp3_search.remove(vkapi.asearch, true);
+				}
+			}
 		});
 		
 		
