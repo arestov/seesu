@@ -153,6 +153,9 @@ ShareRow = function(actionsrow, mo){
 };
 BaseCRow.extendTo(ShareRow, {
 	init: function(actionsrow, mo){
+
+		var su = window.su;
+		
 		var _this = this;
 		this.actionsrow = actionsrow;
 		this.mo = mo;
@@ -183,7 +186,7 @@ BaseCRow.extendTo(ShareRow, {
 			var bindFriendsAccessChange = function() {
 				if (!binded && window.VK){
 					binded = true;
-					window.VK.addCallback('onSettingsChanged', function(vk_opts) {
+					su.vk_auth.on('settings-change', function(vk_opts) {
 						_this.checkVKFriendsAccess(vk_opts);
 					});
 				}

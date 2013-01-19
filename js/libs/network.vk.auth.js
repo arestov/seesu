@@ -16,6 +16,9 @@ provoda.Eventor.extendTo(vkAuth, {
 		}
 		if (opts.vksite_app){
 			this.vksite_app = true;
+			if (opts.vksite_settings){
+				this.vksite_settings = parseFloat(opts.vksite_settings);
+			}
 		}
 		if (opts.deep_sanbdox){
 			this.deep_sanbdox = true;
@@ -25,11 +28,23 @@ provoda.Eventor.extendTo(vkAuth, {
 		this.on('vk-site-api', function(VK) {
 			var _this = this;
 			VK.addCallback('onSettingsChanged', function(sts){
-				_this.trigger('settings', sts);
+				_this.vksite_settings = sts;
+				setTimeout(function() {
+					_this.trigger('settings-change', sts);
+				}, 500);
+				
+				
 			});
 			_this.VK = VK;
 		});
 		return this;
+	},
+	checkSettings: function(settings_bits) {
+		if (this.vksite_app && this.vksite_settings){
+			if ((this.vksite_settings & settings_bits) * 1){
+				return true;
+			}
+		}
 	},
 	requestAuth: function(p){
 		if (this.vksite_app){
@@ -37,7 +52,7 @@ provoda.Eventor.extendTo(vkAuth, {
 				throw new Error('give me settings bits');
 			}
 			if (this.VK){
-				this.VK.callMethod('showSettingsBox', settings_bits);
+				this.VK.callMethod('showSettingsBox', p.settings_bits);
 			} else {
 				
 			}
@@ -50,7 +65,7 @@ provoda.Eventor.extendTo(vkAuth, {
 	bindAuthReady: function(exlusive_space, callback, settings_bits) {
 		var event_name;
 		if (this.vksite_app){
-			event_name = exlusive_space ? 'settings.' + exlusive_space : 'settings';
+			event_name = exlusive_space ? 'settings-change.' + exlusive_space : 'settings-change';
 			this.on(event_name, function(sts) {
 				if (settings_bits){
 					if ((sts & settings_bits) * 1){
