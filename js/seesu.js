@@ -608,66 +608,6 @@ su.init(3.8);
 	
 })();
 
-
-
-
-
-var render_loved = function(user_name){
-	var pl_r = su.preparePlaylist({
-		title: localize('loved-tracks'),
-		type: 'artists by loved'
-	});
-
-	pl_r.setLoader(function(paging_opts) {
-		var request_info = {};
-		request_info.request = lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
-			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'lovedtracks.track'));
-				var track_list = [];
-				if (tracks) {
-					
-					for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
-						track_list.push({
-							'artist' : tracks[i].artist.name,
-							'track': tracks[i].name,
-							lfm_image:  {
-								array: tracks[i].image
-							}
-						});
-					}
-
-				}
-
-				if (track_list.length < paging_opts.page_limit){
-					pl_r.setLoaderFinish();
-				}
-
-				pl_r.injectExpectedSongs(track_list);
-
-			})
-			.fail(function() {
-				pl_r.loadComplete(true);
-			})
-			.always(function() {
-				request_info.done = true;
-			});
-
-		return request_info;
-	}, true);
-	
-	su.show_playlist_page(pl_r);
-};
-
-
-
-
-
-
-
-
-
-
-
 suReady(function(){
 	try_mp3_providers();
 	seesu.checkUpdates();
