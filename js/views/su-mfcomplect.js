@@ -59,7 +59,35 @@ provoda.View.extendTo(mfComplectUI, {
 	}
 });
 
+var get_youtube = function(q, callback){
+	var cache_used = cache_ajax.get('youtube', q, callback);
+	if (!cache_used){
+		var data = {
+			q: q,
+			v: 2,
+			alt: 'json-in-script'
+			
+		};
+		aReq({
+			url: 'http://gdata.youtube.com/feeds/api/videos',
+			dataType: 'jsonp',
+			data: data,
+			resourceCachingAvailable: true,
+			afterChange: function(opts) {
+				if (opts.dataType == 'json'){
+					data.alt = 'json';
+					opts.headers = null;
+				}
 
+			},
+			thisOriginAllowed: true
+		}).done(function(r){
+			if (callback) {callback(r);}
+			cache_ajax.set('youtube', q, r);
+		});
+	}
+	
+};
 
 var mfCorUI = function(md) {};
 provoda.View.extendTo(mfCorUI, {
@@ -174,6 +202,10 @@ provoda.View.extendTo(mfCorUI, {
 	},
 	show_video_info: function(vi_c, q){
 		if (vi_c.data('has-info')){return true;}
+
+
+		
+
 
 		var _this = this;
 		get_youtube(q, function(r){

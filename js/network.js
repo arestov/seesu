@@ -1,33 +1,4 @@
 
-var get_youtube = function(q, callback){
-	var cache_used = cache_ajax.get('youtube', q, callback);
-	if (!cache_used){
-		var data = {
-			q: q,
-			v: 2,
-			alt: 'json-in-script'
-			
-		};
-		aReq({
-			url: 'http://gdata.youtube.com/feeds/api/videos',
-			dataType: 'jsonp',
-			data: data,
-			resourceCachingAvailable: true,
-			afterChange: function(opts) {
-				if (opts.dataType == 'json'){
-					data.alt = 'json';
-					opts.headers = null;
-				}
-
-			},
-			thisOriginAllowed: true
-		}).done(function(r){
-			if (callback) {callback(r);}
-			cache_ajax.set('youtube', q, r);
-		});
-	}
-	
-};
 
 var VkLoginB = function() {};
 provoda.Model.extendTo(VkLoginB, {
@@ -39,9 +10,14 @@ provoda.Model.extendTo(VkLoginB, {
 		this.auth = opts.auth;
 		this.pmd = opts.pmd;
 
+		var settings_bits;
+
 		if (params){
 			if (params.open_opts){
 				this.open_opts = params.open_opts;
+				if (this.open_opts.settings_bits){
+					settings_bits = this.open_opts.settings_bits;
+				}
 			}
 			this.setRequestDesc(params.desc);
 		} else {
@@ -51,12 +27,29 @@ provoda.Model.extendTo(VkLoginB, {
 		if (this.auth.deep_sanbdox){
 			_this.updateState('deep-sandbox', true);
 		}
+		
+
+		if (settings_bits){
+			if (this.auth.checkSettings(settings_bits)){
+				this.triggerSession();
+			}
+			this.auth.on('settings-change', function(sts) {
+				if ((sts & settings_bits) * 1){
+					_this.triggerSession();
+				} else {
+					_this.updateState('has-session', false);
+				}
+			});
+			
+		}
+
 		if (this.auth.has_session){
 			this.triggerSession();
 		}
 		this.auth.once('full-ready', function(){
 			_this.triggerSession();
 		});
+
 		if (this.auth && this.auth.data_wait){
 			this.waitData();
 		} else {
@@ -71,10 +64,6 @@ provoda.Model.extendTo(VkLoginB, {
 	},
 	triggerSession: function() {
 		this.updateState('has-session', true);
-		if (this.onSession){
-			this.onSession();
-		}
-		//onSession
 	},
 	waitData: function() {
 		this.updateState('data-wait', true);

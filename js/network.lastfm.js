@@ -84,10 +84,7 @@ provoda.Model.extendTo(LfmLogin, {
 	},
 	triggerSession: function() {
 		this.updateState('has-session', true);
-		if (this.onSession){
-			this.onSession();
-		}
-		//onSession
+		
 	},
 	waitData: function() {
 		this.updateState('data-wait', true);
