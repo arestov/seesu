@@ -281,7 +281,7 @@ html.not-as-application, .not-as-application  body{
 	width: 314px;
 	margin-right: 1.72rem;
 }
-.waiting-lfm-auth .lfm-finish{
+.waiting-auth .lfm-finish{
 	opacity:1;
 }
 .lfm-auth p{
@@ -1300,12 +1300,37 @@ iframe.you-tube-video,embed.you-tube-video{
 
 
 
-
-
-
-
-
-
+.playlist_preview-c{
+	margin-bottom: 1rem;
+	}
+.playlist_preview-c{
+	background: #4D4D4D;
+	border-radius: 1rem;
+	}
+	.playlist_preview-c .area-button{
+		margin-bottom: 0;
+		}
+	.playlist_preview-c .auth-con{
+		display: none;	
+		}
+	.access-request .auth-con{
+		display: block;
+		color:#999;
+		padding: 1rem;
+		}
+		.access-request .auth-con p {
+			margin:0;
+			}
+		.access-request .auth-con .vk-login-context{
+			margin: 0;
+			padding: 0;
+			background: transparent;
+			color:inherit;
+			}
+			.access-request .auth-con .vk-login-context a{
+				color:#ddd;
+				border-bottom-color: #ccc 
+				}
 
 
 

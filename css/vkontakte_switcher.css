@@ -30,13 +30,13 @@
 		.vk-login-context.vk-finishing .auth-container{
 			display:block;
 		}
-		.wait-vk-login .auth-container{
+		.waiting-auth.deep-sandbox .auth-container{
 			display:block;
 			}
 	.vk-login-context .decor{
 		background:no-repeat 100% 0;
 	}
-	.vk-login-context.waiting-vk-login .decor{
+	.vk-login-context.waiting-auth .decor{
 		background-image:url(../i/spinner_small_yellow.gif)
 	}
 	.vk-login-context button{

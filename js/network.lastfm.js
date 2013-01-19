@@ -57,6 +57,7 @@ lastfm_api.prototype.initers.push(function(){
 var LfmLogin = function(auth) {};
 
 provoda.Model.extendTo(LfmLogin, {
+	model_name: 'auth_block_lfm',
 	init: function(opts) {
 		this._super();
 
@@ -65,7 +66,7 @@ provoda.Model.extendTo(LfmLogin, {
 		this.pmd = opts.pmd;
 
 		if (this.auth.deep_sanbdox){
-			_this.updateState('deep-sanbdox', true);
+			_this.updateState('deep-sandbox', true);
 		}
 		if (this.auth.has_session){
 			this.triggerSession();
