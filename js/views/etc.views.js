@@ -144,7 +144,10 @@ provoda.View.extendTo(vkLoginUI, {
 			var vk_t_raw = input.val();
 			if (vk_t_raw){
 				var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);
-					connectApiToSeesu(vk_token, true);
+
+				su.vk_auth.api = connectApiToSeesu(vk_token, true);
+				su.vk_auth.trigger('full-ready', true);
+					
 			}
 		});
 		this.addWayPoint(input, {
@@ -167,7 +170,7 @@ provoda.View.extendTo(LfmLoginView, {
 			this.c.addClass("hidden");
 		}
 	},
-	'stch-deep-sanbdox': function(state){
+	'stch-deep-sandbox': function(state){
 		this.c.toggleClass('deep-sandbox', !!state);
 	},
 	'stch-data-wait': function(state) {
