@@ -31,6 +31,7 @@ var get_youtube = function(q, callback){
 
 var VkLoginB = function() {};
 provoda.Model.extendTo(VkLoginB, {
+	model_name: 'auth_block_vk',
 	init: function(opts, params) {
 		this._super();
 
@@ -99,25 +100,6 @@ provoda.Model.extendTo(VkLoginB, {
 	},
 	switchView: function(){
 		this.updateState('active', !this.state('active'));
-	}
-});
-
-var vkLogin = function() {
-	this.init();
-};
-
-provoda.Model.extendTo(vkLogin, {
-	waitData: function() {
-		this.updateState('wait', true);
-	},
-	notWaitData: function() {
-		this.updateState('wait', false);
-	},
-	setRequestDesc: function(text) {
-		this.updateState('request-description', text ? text + " " + localize("vk-auth-invitation") : "");
-	},
-	requestAuth: function(opts) {
-		this.trigger('auth-request', opts);
 	}
 });
 
@@ -261,11 +243,13 @@ try_mp3_providers = function(){
 		var save_token = suStore('vk_token_info');
 		if (save_token){
 			//console.log('token!')
-			connectApiToSeesu( new vkTokenAuth(su.vkappid, save_token), true);
+			su.vk_auth.api = connectApiToSeesu( new vkTokenAuth(su.vkappid, save_token), true);
+
 			//console.log(save_token)
 			if (app_env.web_app){
 				appendVKSiteApi(su.vkappid);
 			}
+			su.vk_auth.trigger('full-ready', true);
 			
 		}
 

@@ -106,14 +106,14 @@ provoda.Eventor.extendTo(vkAuth, {
 		var i = this.auth_frame = document.createElement('iframe');
 		addEvent(window, 'message', function(e){
 			if (e.data == 'vk_bridge_ready:'){
-				console.log('vk_bridge_ready');
+			//	console.log('vk_bridge_ready');
 				_this.trigger('vk-bridge-ready');
 				e.source.postMessage("add_keys:" + first_key, '*');
 			} else if(e.data.indexOf('vk_token:') === 0){
 				_this.trigger('vk-token-receive', e.data.replace('vk_token:',''));
 				//vkTokenAuth(e.data.replace('vk_token:',''));
-				console.log('got vk_token!!!!');
-				console.log(e.data.replace('vk_token:',''));
+			//	console.log('got vk_token!!!!');
+			//	console.log(e.data.replace('vk_token:',''));
 				seesu.trackEvent('Auth to vk', 'end');
 			} else if (e.data == 'vk_error:'){
 				_this.trigger('vk-token-error');

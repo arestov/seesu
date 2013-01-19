@@ -56,7 +56,21 @@ VkLoginB.extendTo(VkAudioLogin, {
 
 var EnhancedSongslist = function() {};
 songsList.extendTo(EnhancedSongslist, {
-	
+	init: function(opts) {
+		this._super(opts);
+		var _this = this;
+		
+		if (this.pmd){
+			this.switchPmd(false);
+			this.pmd.on('state-change.mp-has-focus', function(e) {
+				if (!e.value){
+					_this.switchPmd(false);
+				}
+				
+			});
+		}
+		
+	},
 	showPlPage: function() {
 		this.app.show_playlist_page(this, {
 			page_md: this.pmd,
@@ -114,7 +128,9 @@ songsList.extendTo(EnhancedSongslist, {
 			this.loadPlStart();
 			this.showPlPage();
 		} else {
+			this.pmd.zoomOut();
 			this.switchPmd();
+
 		}
 	}
 });

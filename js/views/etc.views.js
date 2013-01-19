@@ -95,19 +95,35 @@ contextRow.prototype = {
 };
 
 
+var AuthBlockView = function() {};
+provoda.View.extendTo(AuthBlockView, {
+
+});
+
 var vkLoginUI = function() {};
 
 provoda.View.extendTo(vkLoginUI, {
 	state_change: {
-		wait: function(state) {
+		'data-wait': function(state) {
 			if (state){
-				this.c.addClass("waiting-vk-login");
+				this.c.addClass("waiting-auth");
 			} else {
-				this.c.removeClass("waiting-vk-login");
+				this.c.removeClass("waiting-auth");
 			}
 		},
 		"request-description": function(state) {
 			this.login_desc.text(state || "");
+		},
+		'deep-sandbox': function(state) {
+			this.c.toggleClass('deep-sandbox', !!state);
+		}
+	},
+
+	'stch-has-session': function(state){
+		if (!state){
+			this.c.removeClass("hidden");
+		} else {
+			this.c.addClass("hidden");
 		}
 	},
 	createBase: function() {
@@ -152,17 +168,13 @@ provoda.View.extendTo(LfmLoginView, {
 		}
 	},
 	'stch-deep-sanbdox': function(state){
-		if (state){
-			this.c.addClass("deep-sandbox");
-		} else {
-			this.c.removeClass("deep-sandbox");
-		}
+		this.c.toggleClass('deep-sandbox', !!state);
 	},
-	'stch-wait': function(state) {
+	'stch-data-wait': function(state) {
 		if (state){
-			this.c.addClass("waiting-lfm-auth");
+			this.c.addClass("waiting-auth");
 		} else {
-			this.c.removeClass("waiting-lfm-auth");
+			this.c.removeClass("waiting-auth");
 		}
 	},
 	'stch-request-description': function(state) {
