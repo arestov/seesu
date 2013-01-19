@@ -17,7 +17,7 @@ provoda.Eventor.extendTo(vkAuth, {
 		if (opts.vksite_app){
 			this.vksite_app = true;
 			if (opts.vksite_settings){
-				this.vksite_settings = opts.vksite_settings;
+				this.vksite_settings = parseFloat(opts.vksite_settings);
 			}
 		}
 		if (opts.deep_sanbdox){
@@ -28,8 +28,12 @@ provoda.Eventor.extendTo(vkAuth, {
 		this.on('vk-site-api', function(VK) {
 			var _this = this;
 			VK.addCallback('onSettingsChanged', function(sts){
-				_this.trigger('settings-change', sts);
 				_this.vksite_settings = sts;
+				setTimeout(function() {
+					_this.trigger('settings-change', sts);
+				}, 500);
+				
+				
 			});
 			_this.VK = VK;
 		});

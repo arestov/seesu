@@ -377,9 +377,16 @@ appModel.extendTo(seesuApp, {
 			vksite_settings: this._url.api_settings
 		});
 
+
+
 		this.once("vk-site-api", function() {
+			window.documentScrollSizeChangeHandler = function(height){
+				VK.callMethod("resizeWindow", 800, Math.max(700, height));
+			};
 			_this.vk_auth.trigger('vk-site-api', VK);
 		});
+
+
 
 	},
 	migrateStorage: function(ver){
