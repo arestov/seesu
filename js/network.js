@@ -49,7 +49,7 @@ provoda.Model.extendTo(VkLoginB, {
 		}
 
 		if (this.auth.deep_sanbdox){
-			_this.updateState('deep-sanbdox', true);
+			_this.updateState('deep-sandbox', true);
 		}
 		if (this.auth.has_session){
 			this.triggerSession();
