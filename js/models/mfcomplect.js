@@ -247,39 +247,34 @@ provoda.Model.extendTo(mfCor, {
 	},
 	addVKAudioAuth: function() {
 		this.notifier.addMessage('vk-audio-auth');
-		if (!this.vk_audio_auth){
+		if (!this.vk_auth_rqb){
 
-			this.vk_audio_auth = new vkLogin();
-			this.vk_audio_auth.on('auth-request', function() {
-				if (su.vk_app_mode){
-					if (window.VK){
-						VK.callMethod('showSettingsBox', 8);
-					}
-				} else {
-					su.vk_auth.requestAuth();
-				}
-				//console.log()
+			this.vk_auth_rqb = new VkLoginB();
+			this.vk_auth_rqb.init({
+				auth: su.vk_auth
+			}, {
+				open_opts: {settings_bits: 8},
+				desc:
+					(
+						this.isHaveTracks('mp3') ?
+						localize('to-find-better') :
+						localize("to-find-and-play")
+					)  +
+					" " +  localize('music-files-from-vk')
 			});
-			this.setChild('vk_auth', this.vk_audio_auth);
-			this.addChild(this.vk_audio_auth);
+			this.setChild('vk_auth', this.vk_auth_rqb);
+			this.addChild(this.vk_auth_rqb);
 			this.updateState('changed', new Date());
 			this.updateState('vk-audio-auth', true);
 		}
 
-		this.vk_audio_auth.setRequestDesc(
-				(
-					this.isHaveTracks('mp3') ?
-						localize('to-find-better') :
-						localize("to-find-and-play")
-				)  + " " +  localize('music-files-from-vk'));
-
 	},
 	removeVKAudioAuth: function() {
 		this.notifier.removeMessage('vk-audio-auth');
-		if (this.vk_audio_auth){
+		if (this.vk_auth_rqb){
 			this.updateState('vk-audio-auth', false);
-			this.vk_audio_auth.die();
-			delete this.vk_audio_auth;
+			this.vk_auth_rqb.die();
+			delete this.vk_auth_rqb;
 		}
 
 	},

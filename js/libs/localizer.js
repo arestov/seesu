@@ -508,6 +508,11 @@ localizer = {
 		"original": "or to the friend's wall",
 		"ru": "или на стену одного из друзей"
 	},
+	"to-play-vk-audio": {
+		"original": "To play \"my audio\"",
+		"ru": "Чтобы проигрывать \"мои аудиозаписи\""
+
+	},
 	"to-find-vk-friends":{
 		"original": "To select your vk.com friend",
 		"ru": "Чтобы выбрать стену друга на vk.com"

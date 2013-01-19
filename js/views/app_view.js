@@ -607,11 +607,11 @@ provoda.View.extendTo(appModelView, {
 					o: vklc,
 					oos: $(),
 					hideLoadIndicator: function(){
-						this.oos.removeClass('waiting-vk-login');
+						this.oos.removeClass('waiting-auth');
 						this.load_indicator = false;
 					},
 					showLoadIndicator:function() {
-						this.oos.addClass('waiting-vk-login');
+						this.oos.addClass('waiting-auth');
 						this.load_indicator = true;
 					},
 					remove: function(){
@@ -638,7 +638,7 @@ provoda.View.extendTo(appModelView, {
 						
 						
 						if (this.load_indicator){
-							nvk.addClass('waiting-vk-login');
+							nvk.addClass('waiting-auth');
 						}
 						if (request_description){
 							nvk.find('.login-request-desc').text(request_description);
@@ -666,7 +666,7 @@ provoda.View.extendTo(appModelView, {
 							
 							e.preventDefault();
 						});
-						var input = this.nvk.find('.vk-code');
+						var input = nvk.find('.vk-code');
 						nvk.find('.use-vk-code').click(function() {
 							var vk_t_raw = input.val();
 							if (vk_t_raw){

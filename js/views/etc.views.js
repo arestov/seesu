@@ -95,19 +95,35 @@ contextRow.prototype = {
 };
 
 
+var AuthBlockView = function() {};
+provoda.View.extendTo(AuthBlockView, {
+
+});
+
 var vkLoginUI = function() {};
 
 provoda.View.extendTo(vkLoginUI, {
 	state_change: {
-		wait: function(state) {
+		'data-wait': function(state) {
 			if (state){
-				this.c.addClass("waiting-vk-login");
+				this.c.addClass("waiting-auth");
 			} else {
-				this.c.removeClass("waiting-vk-login");
+				this.c.removeClass("waiting-auth");
 			}
 		},
 		"request-description": function(state) {
-			this.c.find('.login-request-desc').text(state || "");
+			this.login_desc.text(state || "");
+		},
+		'deep-sandbox': function(state) {
+			this.c.toggleClass('deep-sandbox', !!state);
+		}
+	},
+
+	'stch-has-session': function(state){
+		if (!state){
+			this.c.removeClass("hidden");
+		} else {
+			this.c.addClass("hidden");
 		}
 	},
 	createBase: function() {
@@ -117,6 +133,7 @@ provoda.View.extendTo(vkLoginUI, {
 			_this.md.requestAuth();
 			e.preventDefault();
 		});
+		this.login_desc = this.c.find('.login-request-desc');
 		this.addWayPoint(sign_link, {
 			canUse: function() {
 
@@ -151,17 +168,13 @@ provoda.View.extendTo(LfmLoginView, {
 		}
 	},
 	'stch-deep-sanbdox': function(state){
-		if (state){
-			this.c.addClass("deep-sandbox");
-		} else {
-			this.c.removeClass("deep-sandbox");
-		}
+		this.c.toggleClass('deep-sandbox', !!state);
 	},
-	'stch-wait': function(state) {
+	'stch-data-wait': function(state) {
 		if (state){
-			this.c.addClass("waiting-lfm-auth");
+			this.c.addClass("waiting-auth");
 		} else {
-			this.c.removeClass("waiting-lfm-auth");
+			this.c.removeClass("waiting-auth");
 		}
 	},
 	'stch-request-description': function(state) {
@@ -717,7 +730,7 @@ provoda.View.extendTo(artCardUI, {
 						su.show_tag(el.name);
 					}).text(el.name).attr('url', el.url).appendTo(li);
 					li.appendTo(ul);
-					ul.append(' ');
+					ul.append(document.createTextNode(' '));
 				}
 				
 			});
@@ -738,7 +751,7 @@ provoda.View.extendTo(artCardUI, {
 					su.showArtcardPage(el.name);
 				}).text(el.name).appendTo(li);
 				li.appendTo(ul);
-				ul.append(' ');
+				ul.append(document.createTextNode(' '));
 				
 			});
 			
@@ -771,7 +784,7 @@ provoda.View.extendTo(artCardUI, {
 			similarsc: this.c.find('.art_card-similar'),
 			bioc: this.c.find('.art_card-bio')
 		};
-		this.top_tracks_link = $(' <a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
+		this.top_tracks_link = $('<a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
 			su.showTopTacks(_this.md.artist, {
 				source_info: {
 					page_md: _this.md,

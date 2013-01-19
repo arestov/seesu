@@ -192,7 +192,7 @@ BaseCRow.extendTo(ShareRow, {
 			if (!binded){
 				su.once("vk-site-api", bindFriendsAccessChange);
 			}
-		} 
+		}
 
 		this.searcher = new StrusersRowSearch(this, mo);
 		this.setChild('searcher', this.searcher);
@@ -234,34 +234,31 @@ BaseCRow.extendTo(ShareRow, {
 		}
 	},
 	addVKAudioAuth: function(improve) {
-		if (!this.vk_auth){
 
-			this.vk_auth = new vkLogin();
-			this.setChild('vk_auth', this.vk_auth);
-			this.vk_auth.on('auth-request', function() {
-				if (su.vk_app_mode){
-					if (window.VK){
-						VK.callMethod('showSettingsBox', 2);
-					}
-				} else {
-					su.vk_auth.requestAuth();
-				}
-				//console.log()
+		
+		if (!this.vk_auth_rqb){
+			
+			this.vk_auth_rqb = new VkLoginB();
+			this.vk_auth_rqb.init({
+				auth: su.vk_auth
+			}, {
+				open_opts: {settings_bits: 2},
+				desc: improve ? localize('to-find-vk-friends') : localize("to-post-and-find-vk")
 			});
-			this.addChild(this.vk_auth);
+			this.setChild('vk_auth', this.vk_auth_rqb);
+			this.addChild(this.vk_auth_rqb);
 
 		}
 		//to find you friends
 
-		this.vk_auth.setRequestDesc(improve ? localize('to-find-vk-friends') : localize("to-post-and-find-vk"));
 
 		this.updateState("needs-vk-auth", true);
 
 	},
 	removeVKAudioAuth: function() {
-		if (this.vk_auth){
-			this.vk_auth.die();
-			delete this.vk_auth;
+		if (this.vk_auth_rqb){
+			this.vk_auth_rqb.die();
+			delete this.vk_auth_rqb;
 
 		}
 		this.updateState("needs-vk-auth", false);

@@ -37,11 +37,40 @@ LfmLogin.extendTo(LfmReccomsLogin, {
 	}
 });
 var VkAudioLogin = function() {};
-
+VkLoginB.extendTo(VkAudioLogin, {
+	init: function(opts) {
+		this._super(opts,  {
+			open_opts: {settings_bits: 8},
+			desc: localize('to-play-vk-audio')
+		});
+	},
+	beforeRequest: function() {
+		var _this = this;
+		this.bindAuthReady('input_click', function() {
+			_this.pmd.loadPlStart();
+			_this.pmd.showPlPage();
+		});
+		
+	}
+});
 
 var EnhancedSongslist = function() {};
 songsList.extendTo(EnhancedSongslist, {
-	
+	init: function(opts) {
+		this._super(opts);
+		var _this = this;
+		
+		if (this.pmd){
+			this.switchPmd(false);
+			this.pmd.on('state-change.mp-has-focus', function(e) {
+				if (!e.value){
+					_this.switchPmd(false);
+				}
+				
+			});
+		}
+		
+	},
 	showPlPage: function() {
 		this.app.show_playlist_page(this, {
 			page_md: this.pmd,
@@ -67,10 +96,15 @@ songsList.extendTo(EnhancedSongslist, {
 		
 		
 	},
+	loadPlStart: function() {
+		if (this.state('has-access')){
+			this._super.apply(this, arguments);
+		}
+	},
 
-	authSwitching: function(AuthConstr) {
+	authSwitching: function(auth, AuthConstr, params) {
 		var auth_rqb = new AuthConstr();
-		auth_rqb.init({auth: this.app.lfm_auth, pmd: this});
+		auth_rqb.init({auth: auth, pmd: this}, params);
 		this.updateState('has-access', auth_rqb.state('has-session'));
 		auth_rqb.on('state-change.has-session', function() {
 			_this.updateState('has-access', true);
@@ -94,7 +128,9 @@ songsList.extendTo(EnhancedSongslist, {
 			this.loadPlStart();
 			this.showPlPage();
 		} else {
+			this.pmd.zoomOut();
 			this.switchPmd();
+
 		}
 	}
 });
@@ -114,7 +150,7 @@ EnhancedSongslist.extendTo(LfmLovedList, {
 			this.updateState('has-access', true);
 		} else {
 			this.permanent_md = true;
-			this.authSwitching(LfmLovedLogin);
+			this.authSwitching(this.app.lfm_auth, LfmLovedLogin);
 		}
 	},
 	requestMoreSongs: function(paging_opts) {
@@ -173,7 +209,8 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 		});
 
 		this.updateState('url-part', '/vk-audio');
-		this.updateState('has-access', true);
+		
+		this.authSwitching(this.app.vk_auth, VkAudioLogin);
 	},
 	requestMoreSongs: function(paging_opts) {
 		
@@ -226,7 +263,7 @@ EnhancedSongslist.extendTo(artistsRecommsList, {
 		});
 		this.updateState('url-part', '/recommendations');
 		
-		this.authSwitching(LfmReccomsLogin);
+		this.authSwitching(this.app.lfm_auth, LfmReccomsLogin);
 		
 		var _this = this;
 		if (!username){

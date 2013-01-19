@@ -57,6 +57,7 @@ lastfm_api.prototype.initers.push(function(){
 var LfmLogin = function(auth) {};
 
 provoda.Model.extendTo(LfmLogin, {
+	model_name: 'auth_block_lfm',
 	init: function(opts) {
 		this._super();
 
@@ -268,6 +269,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 						_this.login(r,callback);
 						_this.trigger("session");
 						_this.has_session = true;
+						_this.trigger('api-full-ready');
 
 
 						

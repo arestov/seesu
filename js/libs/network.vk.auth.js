@@ -1,23 +1,74 @@
-var vkAuth = function(app_id, urls, permissions, open_api, deep_sanbdox) {
-	this.init(app_id, urls, permissions, open_api, deep_sanbdox);
+var vkAuth = function(opts) {
+	this.init(opts);
 };
 provoda.Eventor.extendTo(vkAuth, {
-	init: function(app_id, urls, permissions, open_api, deep_sanbdox) {
-		this.app_id = app_id;
-		this.urls = urls;
-		this.permissions = toRealArray(permissions);
-		if (open_api){
+	init: function(opts) {
+
+		//app_id, urls, permissions, open_api, deep_sanbdox
+
+
+
+		this.app_id = opts.app_id;
+		this.urls = opts.urls;
+		this.permissions = toRealArray(opts.permissions);
+		if (opts.open_api){
 			this.open_api = true;
 		}
-		
-		if (deep_sanbdox){
+		if (opts.vksite_app){
+			this.vksite_app = true;
+		}
+		if (opts.deep_sanbdox){
 			this.deep_sanbdox = true;
 		}
 		this._super();
+
+		this.on('vk-site-api', function(VK) {
+			var _this = this;
+			VK.addCallback('onSettingsChanged', function(sts){
+				_this.trigger('settings', sts);
+			});
+			_this.VK = VK;
+		});
 		return this;
 	},
 	requestAuth: function(p){
-		return this.authInit(p || {});
+		if (this.vksite_app){
+			if (!p.settings_bits){
+				throw new Error('give me settings bits');
+			}
+			if (this.VK){
+				this.VK.callMethod('showSettingsBox', settings_bits);
+			} else {
+				
+			}
+			return true;
+		} else {
+			return this.authInit(p || {});
+		}
+		
+	},
+	bindAuthReady: function(exlusive_space, callback, settings_bits) {
+		var event_name;
+		if (this.vksite_app){
+			event_name = exlusive_space ? 'settings.' + exlusive_space : 'settings';
+			this.on(event_name, function(sts) {
+				if (settings_bits){
+					if ((sts & settings_bits) * 1){
+						callback.call(this);
+					}
+				} else {
+					callback.call(this);
+				}
+				
+			}, {
+				exlusive: !!exlusive_space
+			});
+		} else {
+			event_name = exlusive_space ? 'full-ready.' + exlusive_space : 'full-ready';
+			this.on(event_name, callback,  {
+				exlusive: !!exlusive_space
+			});
+		}
 	},
 	startIndicating: function() {
 		
@@ -55,14 +106,14 @@ provoda.Eventor.extendTo(vkAuth, {
 		var i = this.auth_frame = document.createElement('iframe');
 		addEvent(window, 'message', function(e){
 			if (e.data == 'vk_bridge_ready:'){
-				console.log('vk_bridge_ready');
+			//	console.log('vk_bridge_ready');
 				_this.trigger('vk-bridge-ready');
 				e.source.postMessage("add_keys:" + first_key, '*');
 			} else if(e.data.indexOf('vk_token:') === 0){
 				_this.trigger('vk-token-receive', e.data.replace('vk_token:',''));
 				//vkTokenAuth(e.data.replace('vk_token:',''));
-				console.log('got vk_token!!!!');
-				console.log(e.data.replace('vk_token:',''));
+			//	console.log('got vk_token!!!!');
+			//	console.log(e.data.replace('vk_token:',''));
 				seesu.trackEvent('Auth to vk', 'end');
 			} else if (e.data == 'vk_error:'){
 				_this.trigger('vk-token-error');

@@ -362,6 +362,24 @@ appModel.extendTo(seesuApp, {
 			suStore('last-su-ver', version, true);
 			
 		}, 200);
+
+
+		this.vk_auth = new vkAuth({
+			app_id: this.vkappid,
+			urls: {
+				bridge: 'http://seesu.me/vk/bridge.html',
+				callbacker: 'http://seesu.me/vk/callbacker.html'
+			},
+			permissions: ["friends", "video", "offline", "audio", "wall"],
+			open_api: false,
+			deep_sanbdox: app_env.deep_sanbdox,
+			vksite_app: app_env.vkontakte
+		});
+
+		this.once("vk-site-api", function() {
+			_this.vk_auth.trigger('vk-site-api', VK);
+		});
+
 	},
 	migrateStorage: function(ver){
 		if (!ver){
