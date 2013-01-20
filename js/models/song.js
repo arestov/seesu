@@ -153,6 +153,11 @@ var song;
 					}
 				}
 			});
+			this.on('state-change.is_important', function(e) {
+				if (e.value){
+					this.loadSongListeners();
+				}
+			});
 		},
 		getShareUrl: function() {
 			if (this.artist && this.track){
@@ -271,6 +276,9 @@ var song;
 					timestamp: ((new Date()).getTime()/1000).toFixed(0)
 				});
 			}
+		},
+		loadSongListeners: function() {
+			
 		}
 	});
 

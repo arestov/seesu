@@ -524,7 +524,7 @@ provoda.View.extendTo(songUI, {
 			return false;
 		}
 		if (this.expanded){
-			return true
+			return true;
 		} else{
 			this.expanded = true;
 		}
@@ -536,7 +536,7 @@ provoda.View.extendTo(songUI, {
 		this.song_actions_c =  context.children('.song-actions');
 
 
-		var actionsrow = this.getMdChild('actionsrow')
+		var actionsrow = this.getMdChild('actionsrow');
 		var track_row_view = this.getFreeChildView('actionsrow', actionsrow);
 
 
@@ -555,7 +555,7 @@ provoda.View.extendTo(songUI, {
 		this.dominator_head = tidominator.children('.dominator-head');
 		this.a_info = tidominator.children('.artist-info');
 		this.t_info = tidominator.children('.track-info');
-		this.tv		= this.t_info.children('.track-video')
+		this.tv		= this.t_info.children('.track-video');
 
 		var pl = this.md.plst_titl,
 			pl_type = pl.playlist_type;
@@ -627,7 +627,7 @@ provoda.View.extendTo(songUI, {
 
 
 		var getClickPosition = function(e, node){
-			//e.offsetX || 
+			//e.offsetX ||
 			var pos = e.pageX - $(node).offset().left;
 			return pos;
 		};
@@ -653,7 +653,7 @@ provoda.View.extendTo(songUI, {
 		var a_info = this && this.a_info;
 		if (a_info){
 			if (artist) {this.update_artist_info(artist, a_info, this.md.plst_titl.playlist_type != 'artist');}
-		} 
+		}
 	},
 	createListenersHeader: function(){
 		if (this && this.t_users){
@@ -676,10 +676,10 @@ provoda.View.extendTo(songUI, {
 		}
 		var _this = this;
 		var last_update = this.t_users.last_update;
-		var current_user = su.s.getId();
+		//var current_user = su.s.getId();
 		
 		
-		if (this.md.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 1)){
+		if (this.md.artist && (!last_update || (new Date() - last_update) > 1000 * 60 * 1)){
 			var d = {artist: this.md.artist};
 			if (this.md.track){
 				d.title = this.md.track;
@@ -699,7 +699,7 @@ provoda.View.extendTo(songUI, {
 				if (raw_users){
 					var users = $filter(raw_users, 'user', function(value){
 						if (value != current_user){
-							return true
+							return true;
 						}
 					});
 					if (users.length){
@@ -711,14 +711,14 @@ provoda.View.extendTo(songUI, {
 								above_limit_value = _this.root_view.createSongListeners(r.done[i], uul, above_limit_value, current_user, _this.rowcs.users_context);
 							}
 							
-						}; 
+						}
 						if (_this.t_users.other_users){
 							_this.t_users.other_users.remove();
 						}
 						
 						_this.createListenersHeader();
 						
-						_this.t_users.c.addClass('many-users')
+						_this.t_users.c.addClass('many-users');
 						uul.appendTo(_this.t_users.list);
 						_this.t_users.other_users = uul;
 					}
@@ -726,7 +726,7 @@ provoda.View.extendTo(songUI, {
 				//console.log(r)
 				
 			});
-			this.t_users.last_update = (+new Date);
+			this.t_users.last_update = (+new Date());
 		}
 		
 	},
@@ -753,7 +753,7 @@ provoda.View.extendTo(songUI, {
 			var images_request = lfm.get('artist.getImages',{'artist': artist })
 				.done(function(r){
 					if (!_this.isAlive()){
-						return
+						return;
 					}
 
 					var images = toRealArray(getTargetField(r, 'images.image'));
@@ -771,10 +771,10 @@ provoda.View.extendTo(songUI, {
 							
 							_this.img_requests = [];
 							_this.img_panorama = new Panoramator();
-							var main_c = _this.photo_c.parent()
+							var main_c = _this.photo_c.parent();
 				
 							_this.img_panorama.init({
-								viewport: main_c, 
+								viewport: main_c,
 								lift: _this.photo_c,
 								onUseEnd: function(){
 									seesu.trackEvent('Panoramator', 'artist photos');
@@ -801,7 +801,7 @@ provoda.View.extendTo(songUI, {
 								});
 
 								_this.img_panorama.setCollection($filter(images_collection, 'item'));
-							}
+							};
 
 							var appendImage = function(el, index, first_image) {
 								var sizes = toRealArray(el.sizes.size);
@@ -858,7 +858,7 @@ provoda.View.extendTo(songUI, {
 									space: 'demonstration'
 								});
 								
-							};
+							}
 
 							$.when.apply($, _this.img_requests).always(function(){
 								main_c.removeClass('loading-images');

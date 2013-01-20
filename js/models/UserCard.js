@@ -449,3 +449,18 @@ mapLevelModel.extendTo(UserCard, {
 		}
 	}
 });
+
+
+
+
+var SongListener = function() {};
+provoda.Model.extendTo(SongListener, {
+	init: function(opts, params) {
+		this.app = opts.app;
+		this.userdata = params.data;
+		//this.updateState('picture', this.userdata.big_pic.url);
+	},
+	showFullPreview: function() {
+
+	}
+});

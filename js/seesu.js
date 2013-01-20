@@ -215,34 +215,13 @@ appModel.extendTo(seesuApp, {
 
 
 		this.s  = new seesuServerAPI(suStore('dg_auth'), this.server_url);
+
+		this.s.on('info-change.vk', function(data) {
+			_this.updateState('vk-info', data);
+		});
+
 		this.on('vk-api', function(vkapi, user_id) {
-			var _this = this;
-			vkapi.get('getProfiles', {
-				uids: user_id,
-				fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
-				
-			},{nocache: true})
-				.done(function(info) {
-					info = info.response && info.response[0];
-					if (info){
-						_this.s.vk_id = user_id;
-
-						var _d = cloneObj({data_source: 'vkontakte'}, info);
-
-						_this.s.setInfo('vk', _d);
-
-						if (!_this.s.loggedIn()){
-							_this.s.getAuth(user_id);
-						} else{
-							_this.s.api('user.update', _d);
-						}
-					} else {
-						
-					}
-				})
-				.fail(function(r) {
-					
-				});
+			_this.getAuthAndTransferVKInfo(vkapi, user_id);
 		});
 
 
@@ -519,6 +498,44 @@ appModel.extendTo(seesuApp, {
 		return r;
 	},
 	vkappid: 2271620,
+	getAuthAndTransferVKInfo: function(vk_api, user_id) {
+		if (!user_id){
+			throw new Error('want to get photo but have not user id :(');
+		}
+		var _this = this;
+
+		vk_api.get('getProfiles', {
+			uids: user_id,
+			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
+			
+		},{nocache: true})
+			.done(function(info) {
+				info = info.response && info.response[0];
+				if (info){
+					_this.s.vk_id = user_id;
+
+					var _d = cloneObj({data_source: 'vkontakte'}, info);
+
+					_this.s.setInfo('vk', _d);
+
+					if (!_this.s.loggedIn()){
+						_this.s.getAuth(user_id, function() {
+							_this.s.api('user.update', _d);
+						});
+					} else{
+						_this.s.api('user.update', _d);
+					}
+				} else {
+					
+				}
+			})
+			.fail(function(r) {
+				
+			});
+	},
+	getPhotoFromVK: function() {
+		this.getAuthAndTransferVKInfo(this.vk_api, this.s.vk_id);
+	},
 	getVKFriends: function(){
 		var _this = this;
 		if (!this.vk_fr_req){
@@ -607,66 +624,6 @@ su.init(3.8);
 	
 	
 })();
-
-
-
-
-
-var render_loved = function(user_name){
-	var pl_r = su.preparePlaylist({
-		title: localize('loved-tracks'),
-		type: 'artists by loved'
-	});
-
-	pl_r.setLoader(function(paging_opts) {
-		var request_info = {};
-		request_info.request = lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
-			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'lovedtracks.track'));
-				var track_list = [];
-				if (tracks) {
-					
-					for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
-						track_list.push({
-							'artist' : tracks[i].artist.name,
-							'track': tracks[i].name,
-							lfm_image:  {
-								array: tracks[i].image
-							}
-						});
-					}
-
-				}
-
-				if (track_list.length < paging_opts.page_limit){
-					pl_r.setLoaderFinish();
-				}
-
-				pl_r.injectExpectedSongs(track_list);
-
-			})
-			.fail(function() {
-				pl_r.loadComplete(true);
-			})
-			.always(function() {
-				request_info.done = true;
-			});
-
-		return request_info;
-	}, true);
-	
-	su.show_playlist_page(pl_r);
-};
-
-
-
-
-
-
-
-
-
-
 
 suReady(function(){
 	try_mp3_providers();
