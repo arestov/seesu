@@ -159,14 +159,15 @@
 .disabledbutton, .nicebutton{
 	text-decoration:none;
 	font-style:normal;
-	line-height:16px;
-	height:15px;
 	padding:3px 11px;
 	display:block;
 	border-top:1px solid transparent;
 	border-bottom: 1px solid transparent;
 	border-radius:11px;
 }
+.get-vk-photo-request-b{
+	width: 15rem;
+	}
 .area-button{
 	display: block;
 	cursor: pointer;
@@ -201,7 +202,23 @@
 	.page-scheme .area-button .area-description{
 		display: none;
 		}
+
+
+.button-hole{
+	background:#555;
+	font: Arial, sans-serif;
+	font-size: 1rem;
 	
+	border-top:1px solid #474747;
+	border-radius:11px;
+	border-bottom:1px solid #676767;
+	display:inline-block;
+	}
+	
+	.button-hole:hover{
+		background-color:#4a4a4a;
+		}
+
 
 .nicebutton{
 	cursor:pointer;

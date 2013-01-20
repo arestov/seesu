@@ -1123,20 +1123,20 @@ provoda.View.extendTo(appModelView, {
 		if (image.complete){
 			setTimeout(function(){
 				if (callback){
-					callback(image)
+					callback(image);
 				}
-			}, 10)
+			}, 10);
 			
 		}
 		return image;
 	},
 	createUserAvatar: function(info, c, size){
 		var _this = this;
-		var imageplace = $("<div class='image-cropper'></div>").appendTo(c)
+		var imageplace = $("<div class='image-cropper'></div>").appendTo(c);
 		$('<img alt="user photo" width="50" height="50"/>').attr('src', info.photo).appendTo(imageplace);
 		/*
 		var image = this.preloadImage(info.photo, 'user photo', function(img){
-			_this.verticalAlign(img, 50, true);	
+			_this.verticalAlign(img, 50, true);
 		}, imageplace); */
 	},
 	createLikeButton: function(lig){
@@ -1158,8 +1158,8 @@ provoda.View.extendTo(appModelView, {
 						nb.c.remove();
 					}
 					pliking = false;
-				})
-				pliking = true
+				});
+				pliking = true;
 			}
 			
 			
@@ -1186,7 +1186,7 @@ provoda.View.extendTo(appModelView, {
 						nb.c.remove();
 					}
 					pliking = false;
-				})
+				});
 				pliking = true;
 			}
 			
@@ -1268,8 +1268,24 @@ provoda.View.extendTo(appModelView, {
 				}
 				
 			} else {
-				var lb = this.createLikeButton(lig);
-				lb.c.appendTo(c);
+				var current_user_info = su.s.getInfo('vk');
+
+				if (current_user_info && current_user_info.photo_big) {
+					this.createLikeButton(lig).c.appendTo(c);
+				} else {
+					var photoupreq_c = this.createPhotoUploadRequest();
+					c.append(photoupreq_c);
+
+					this.on('state-change.vk-info.song-listener', function(e) {
+						if (e.value.photo_big){
+							photoupreq_c.before(this.createLikeButton(lig).c);
+
+							photoupreq_c.remove();
+						}
+					}, {
+						exlusive: true
+					});
+				}
 			}
 			
 		} else{
@@ -1279,7 +1295,29 @@ provoda.View.extendTo(appModelView, {
 		
 		
 	},
+	createPhotoUploadRequest: function() {
+		var con = $('<div></div>');
 
+		var vk_photo_meet_need = localize('vk_photo_meet_need');
+		var vk_photo_update = localize('vk_photo_update');
+
+		var nb = this.createNiceButton();
+		nb.b.text( vk_photo_update );
+		nb.enable();
+		nb.c.addClass('get-vk-photo-request-b');
+		var _this = this;
+		nb.b.click(function(){
+			_this.md.getPhotoFromVK();
+		});
+		con.append(nb.c);
+
+		
+		var big_string = vk_photo_meet_need.replace('%button_name%', vk_photo_update);
+		var desc = document.createTextNode(big_string);
+		con.append(desc);
+		return con;
+
+	},
 	getRtPP: function(node){
 		throw new Error('cant detect position');
 		var clicked_node = $(node);
@@ -1342,7 +1380,7 @@ provoda.View.extendTo(appModelView, {
 			if (!exlude_user || (listenings[i].user != exlude_user && listenings[i].info)){
 				place.append(this.createSongListener(listenings[i], users_context));
 			}
-		};
+		}
 		return Math.max(users_limit - listenings.length, 0);
 	},
 	create_youtube_video: function(id, transparent){
@@ -1359,7 +1397,7 @@ provoda.View.extendTo(appModelView, {
 			youtube_video.setAttribute('allowfullscreen',"true");
 			youtube_video.setAttribute('class',"you-tube-video");
 			
-		return youtube_video;		
+		return youtube_video;
 	},
 	
 	
@@ -1368,7 +1406,7 @@ provoda.View.extendTo(appModelView, {
 			for (var i=0; i < albums.length; i++) {
 				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, vopts));
 			}
-		} 
+		}
 		return albums_ul;
 	},
 	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, vopts){
@@ -1377,9 +1415,9 @@ provoda.View.extendTo(appModelView, {
 			var a_href= $('<a></a>')
 				.attr('href', al_url )
 				.click(function(e){
-					e.preventDefault(); 
+					e.preventDefault();
 					_this.md.showAlbum({
-						artist: al_artist, 
+						artist: al_artist,
 						album_name: al_name,
 						original_artist: original_artist
 					}, vopts);
@@ -1418,9 +1456,9 @@ provoda.View.extendTo(appModelView, {
 		var b = c.children('a');
 		
 		if (position == 'left'){
-			c.addClass('bposition-l')
+			c.addClass('bposition-l');
 		} else if (position == 'right'){
-			c.addClass('bposition-r')
+			c.addClass('bposition-r');
 		}
 
 		var bb = {
@@ -1438,7 +1476,7 @@ provoda.View.extendTo(appModelView, {
 			},
 			disable: function(){
 				if (this._enabled){
-					this.b.removeClass('nicebutton').addClass('disabledbutton');	
+					this.b.removeClass('nicebutton').addClass('disabledbutton');
 					this.b.data('disabled', true);
 					this._enabled = false;
 				}
@@ -1454,7 +1492,7 @@ provoda.View.extendTo(appModelView, {
 				}
 				
 			}
-		}
+		};
 		bb.disable();
 		return bb;
 	}
