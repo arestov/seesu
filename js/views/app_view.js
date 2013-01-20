@@ -507,8 +507,47 @@ provoda.View.extendTo(appModelView, {
 			var slider = d.getElementById('slider');
 			var screens_block = $('#screens',d);
 
-			if (app_env.readySteadyResize){
-				app_env.readySteadyResize(screens_block[0]);
+			
+
+			if (app_env.check_resize){
+				var detectSize = function(D){
+					if (!D){
+						return 0;
+					} else {
+						return $(D).outerHeight();
+					}
+
+					//return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
+				};
+				var getCurrentNode = function() {
+					return _this.state('current-mp-md').getRooConPresentation(false, true).getC();
+				};
+
+				var readySteadyResize = function(){
+					if (_this.md.rsd_rz){
+						clearInterval(_this.md.rsd_rz);
+					}
+					
+					var oldsize = detectSize(getCurrentNode());
+					var offset_top;
+
+					_this.md.rsd_rz = setInterval(function(){
+						if (typeof documentScrollSizeChangeHandler == 'function'){
+							var newsize = detectSize(getCurrentNode());
+							
+							if (oldsize != newsize){
+								if (typeof offset_top == 'undefined'){
+									var offset = $(getCurrentNode()).offset();
+									offset_top = (offset && offset.top) || 0;
+								}
+								documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
+							}
+							
+						}
+					},100);
+				};
+				readySteadyResize();
+				
 			}
 			
 

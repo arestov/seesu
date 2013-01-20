@@ -853,37 +853,7 @@ window.app_env = (function(wd){
 		env.lang = (wd.navigator.language || wd.navigator.browserLanguage).slice(0,2).toLowerCase();
 	}
 	
-	if (env.check_resize){
-		var detectSize = function(D){
-			return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
-		};
-		var jz;
-		env.readySteadyResize = function(D){
-			if (jz){
-				clearInterval(jz);
-			}
-			
-			var oldsize = detectSize(D);
-			var offset_top;
-
-			jz = setInterval(function(){
-				if (typeof documentScrollSizeChangeHandler == 'function'){
-					var newsize = detectSize(D);
-					
-					if (oldsize != newsize){
-						if (typeof offset_top == 'undefined'){
-							var offset = $(D).offset();
-							offset_top = (offset && offset.top) || 0;
-						}
-						documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
-					}
-					
-				}
-			},100);
-		};
-		
-		
-	}
+	
 	
 	
 	return env;
