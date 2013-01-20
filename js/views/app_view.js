@@ -520,7 +520,8 @@ provoda.View.extendTo(appModelView, {
 					//return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
 				};
 				var getCurrentNode = function() {
-					return _this.state('current-mp-md').getRooConPresentation(false, true).getC();
+					var current_md = _this.state('current-mp-md');
+					return current_md && current_md.getRooConPresentation(true, true).getC();
 				};
 
 				var readySteadyResize = function(){
