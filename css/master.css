@@ -76,7 +76,12 @@ html.not-as-application, .not-as-application  body{
 .big-listener-info{
 	overflow:hidden;
 	padding-top:1rem;
-}
+	}
+	.big-listener-info .get-vk-photo-request-b{
+		float:right;
+		margin-left:1rem;
+		margin-bottom: 1rem;
+		}
 .moplas-block .show-all-songs{
 	float:right;
 	position: relative;

@@ -75,20 +75,6 @@ a.desc{
 		}
 
 		
-.button-hole{
-	background:#555;
-	font: Arial, sans-serif;
-	font-size: 1rem;
-	line-height: 1.5;
-	border-top:1px solid #474747;
-	border-radius:11px;
-	border-bottom:1px solid #676767;
-	display:inline-block;
-	}
-	
-	.button-hole:hover{
-		background-color:#4a4a4a;
-		}
 
 
 
