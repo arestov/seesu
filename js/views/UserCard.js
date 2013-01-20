@@ -1,8 +1,8 @@
 var PlaylistPreview = function() {};
 provoda.View.extendTo(PlaylistPreview, {
 	createBase: function() {
-		this.c = $('<div></div>');
-		this.prew_c = $('<div class="playlist_preview-c area-button"></div>').appendTo(this.c);
+		this.c = $('<div class="playlist_preview-c"></div>');
+		this.prew_c = $('<div class="area-button"></div>').appendTo(this.c);
 		this.prew_text = $('<span></span>').appendTo(this.prew_c);
 		//this.desc = $('<div class="area-description"></div>').appendTo(this.prew_c);
 		var _this = this;
@@ -21,10 +21,16 @@ provoda.View.extendTo(PlaylistPreview, {
 	'stch-nav-title': function(state) {
 		this.prew_text.text(state);
 	},
-	'collch-auth_part': 'auth_c',
+	'collch-auth_part': {
+		place: 'auth_c',
+		by_model_name: true
+	},
 	children_views: {
-		auth_part: {
+		auth_block_lfm: {
 			main: LfmLoginView
+		},
+		auth_block_vk: {
+			main: vkLoginUI
 		}
 	}
 });

@@ -57,6 +57,7 @@ lastfm_api.prototype.initers.push(function(){
 var LfmLogin = function(auth) {};
 
 provoda.Model.extendTo(LfmLogin, {
+	model_name: 'auth_block_lfm',
 	init: function(opts) {
 		this._super();
 
@@ -65,7 +66,7 @@ provoda.Model.extendTo(LfmLogin, {
 		this.pmd = opts.pmd;
 
 		if (this.auth.deep_sanbdox){
-			_this.updateState('deep-sanbdox', true);
+			_this.updateState('deep-sandbox', true);
 		}
 		if (this.auth.has_session){
 			this.triggerSession();
@@ -73,7 +74,7 @@ provoda.Model.extendTo(LfmLogin, {
 		this.auth.once('session', function(){
 			_this.triggerSession();
 		});
-		if (this.auth.wait_data){
+		if (this.auth && this.auth.data_wait){
 			this.waitData();
 		} else {
 			this.auth.on('data-wait', function(){
@@ -83,16 +84,13 @@ provoda.Model.extendTo(LfmLogin, {
 	},
 	triggerSession: function() {
 		this.updateState('has-session', true);
-		if (this.onSession){
-			this.onSession();
-		}
-		//onSession
+		
 	},
 	waitData: function() {
-		this.updateState('wait', true);
+		this.updateState('data-wait', true);
 	},
 	notWaitData: function() {
-		this.updateState('wait', false);
+		this.updateState('data-wait', false);
 	},
 	setRequestDesc: function(text) {
 		this.updateState('request-description', text ? text + " " + localize("lfm-auth-invitation") : "");
@@ -201,7 +199,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 	},
 	waitData: function() {
 		this.trigger('data-wait');
-		this.wait_data = true;
+		this.data_wait = true;
 	},
 	createAuthFrame: function(first_key){
 		if (this.lfm_auth_inited){
@@ -268,6 +266,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 						_this.login(r,callback);
 						_this.trigger("session");
 						_this.has_session = true;
+						_this.trigger('api-full-ready');
 
 
 						

@@ -8,6 +8,14 @@
 */
 
 localizer = {
+	"vk_photo_meet_need": {
+		"original": "If you want to meet this man you need to upload photo to your vk.com profile and press \"%button_name%\" button",
+		"ru":  "Что бы познакомиться, необходимо загрузить фотографию в свой профиль во вконтакте, после чего нажать кнопку \"%button_name%\""
+	},
+	"vk_photo_update": {
+		"original": "Get photo from my vk.com profile",
+		"ru": "Получить фотографию из моего профиля вконтакте"
+	},
 	"your-pmus-f-aq": {
 		"original": "Your personal music, friends and acquaintances",
 		"ru": "Твоя персональная музыка, друзья и знакомства"
@@ -507,6 +515,11 @@ localizer = {
 	"or-wall-of-f":{
 		"original": "or to the friend's wall",
 		"ru": "или на стену одного из друзей"
+	},
+	"to-play-vk-audio": {
+		"original": "To play \"my audio\"",
+		"ru": "Чтобы проигрывать \"мои аудиозаписи\""
+
 	},
 	"to-find-vk-friends":{
 		"original": "To select your vk.com friend",
