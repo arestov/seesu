@@ -531,7 +531,8 @@ provoda.View.extendTo(appModelView, {
 					var oldsize = detectSize(getCurrentNode());
 					var offset_top;
 
-					_this.md.rsd_rz = setInterval(function(){
+
+					var recheckFunc = function(){
 						if (typeof documentScrollSizeChangeHandler == 'function'){
 							var newsize = detectSize(getCurrentNode());
 							
@@ -544,7 +545,14 @@ provoda.View.extendTo(appModelView, {
 							}
 							
 						}
-					},100);
+					};
+
+					_this.md.rsd_rz = setInterval(recheckFunc,100);
+					_this.on('state-change.current-mp-md.resize-check', function(e) {
+						recheckFunc();
+					}, {
+						exlusive: true
+					});
 				};
 				readySteadyResize();
 				
