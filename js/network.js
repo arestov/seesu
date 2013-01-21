@@ -146,18 +146,18 @@ var connectApiToSeesu = function(vk_token, access, not_save) {
 	}
 	return vkapi;
 };
-var appendVKSiteApi = function(app_id, cb) {
+var appendVKSiteApi = function(app_id) {
 	yepnope({
 		load: 'http://vk.com/js/api/openapi.js',
 		complete: function() {
 			VK.init({
 				apiId: app_id
 			}, function(){
-				su.trigger("vk-site-api");
-				if (cb){
-					cb()
-				}
+				
 			});
+			setTimeout(function() {
+				su.trigger("vk-site-api");
+			}, 500);
 			
 			
 		}
@@ -233,11 +233,9 @@ try_mp3_providers = function(){
 
 			//console.log(save_token)
 			if (app_env.web_app){
-				appendVKSiteApi(su.vkappid, function() {
-					su.vk_auth.trigger('full-ready', true);
-				});
+				appendVKSiteApi(su.vkappid);
 			}
-			
+			su.vk_auth.trigger('full-ready', true);
 			
 		}
 
@@ -246,12 +244,10 @@ try_mp3_providers = function(){
 				var vk_token = new vkTokenAuth(su.vkappid, token);
 				this.api = connectApiToSeesu(vk_token, true);
 				if (app_env.web_app){
-					appendVKSiteApi(su.vkappid, function() {
-						this.trigger('full-ready', true);
-					});
+					appendVKSiteApi(su.vkappid);
 				}
 				
-				
+				this.trigger('full-ready', true);
 			})
 			.on('want-open-url', function(wurl){
 				if (app_env.showWebPage){
