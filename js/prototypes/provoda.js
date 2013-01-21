@@ -413,24 +413,27 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	},
 	getRooConPresentation: function(mplev_view, get_ancestor) {
 		var views = this.getViews();
+		var cur;
 		for (var i = 0; i < views.length; i++) {
-			var cur = views[i];
+			cur = views[i];
 			var target = cur.root_view.getChildView(this, 'main');
 			if (target == cur){
 				return cur;
+			}
+		}
+		for (var jj = 0; jj < views.length; jj++) {
+			cur = views[jj];
+			var ancestor;
+			if (mplev_view){
+				ancestor = cur.getAncestorByRooViCon('details');
 			} else {
-				var ancestor;
-				if (mplev_view){
-					ancestor = cur.getAncestorByRooViCon('details');
+				ancestor = cur.getAncestorByRooViCon('main');
+			}
+			if (ancestor){
+				if (get_ancestor){
+					return ancestor;
 				} else {
-					ancestor = cur.getAncestorByRooViCon('main');
-				}
-				if (ancestor){
-					if (get_ancestor){
-						return ancestor;
-					} else {
-						return cur;
-					}
+					return cur;
 				}
 			}
 		}
