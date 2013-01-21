@@ -27,14 +27,17 @@ provoda.Eventor.extendTo(vkAuth, {
 
 		this.on('vk-site-api', function(VK) {
 			var _this = this;
-			VK.addCallback('onSettingsChanged', function(sts){
-				_this.vksite_settings = sts;
-				setTimeout(function() {
-					_this.trigger('settings-change', sts);
-				}, 500);
-				
-				
-			});
+			if (_this.vksite_app){
+				VK.addCallback('onSettingsChanged', function(sts){
+					_this.vksite_settings = sts;
+					setTimeout(function() {
+						_this.trigger('settings-change', sts);
+					}, 500);
+					
+					
+				});
+			}
+			
 			_this.VK = VK;
 		});
 		return this;
