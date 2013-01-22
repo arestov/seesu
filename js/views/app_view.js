@@ -788,16 +788,12 @@ provoda.View.extendTo(appModelView, {
 			this.wayPointsNav(key_name);
 		}
 	},
-	canUseWaypoint: function(cur_wayp ) {
-		var cur = cur_wayp.node;
-
+	getWPDems: function(cur_wayp) {
+		
 		if (cur_wayp.canUse && !cur_wayp.canUse()){
 			return;
 		}
-		if (cur.css('display') == 'none'){
-			return;
-		}
-
+		var cur = cur_wayp.node;
 		var height = cur.height();
 		if (!height){
 			return;
@@ -806,6 +802,29 @@ provoda.View.extendTo(appModelView, {
 		if (!width){
 			return;
 		}
+
+		var dems = {
+			height: height,
+			width: width,
+			offset: cur.offset()
+		};
+
+		if (cur_wayp.simple_check){
+			return this.canUseWaypoint(cur_wayp, dems);
+		} else {
+			return dems;
+		}
+	},
+	canUseWaypoint: function(cur_wayp, dems) {
+		var cur = cur_wayp.node;
+
+		if (cur.css('display') == 'none'){
+			return;
+		}
+
+		var height = dems.height;
+		var width = dems.width;
+		
 		var pos = cur.position();
 		if ((pos.top + height) <= 0){
 			return;
@@ -854,7 +873,7 @@ provoda.View.extendTo(appModelView, {
 				break;
 			}
 			if (stop_parents.indexOf(parents[ii][0]) != -1){
-				break
+				break;
 			}
 			
 		}
@@ -880,7 +899,7 @@ provoda.View.extendTo(appModelView, {
 		return {
 			height: height,
 			width: width,
-			offset: offset,
+			offset: offset
 		};
 	},
 	getWPPack: function(view) {
@@ -890,19 +909,19 @@ provoda.View.extendTo(appModelView, {
 		for (var i = 0; i < all_waypoints.length; i++) {
 			var cur_wayp = all_waypoints[i];
 			var cur = cur_wayp.node;
-			var dems = this.canUseWaypoint(cur_wayp);
+			var dems = this.getWPDems(cur_wayp);
 			if (!dems){
 				cur.data('dems', null);
 				cloneObj(cur_wayp, {
 					height: null,
 					width: null,
-					offset: null,
+					offset: null
 				});
 				continue;
 			} else {
 				cloneObj(cur_wayp, dems);
 			}
-			cur.data('dems', cur_wayp)
+			cur.data('dems', cur_wayp);
 			wayp_pack.push(cur_wayp);
 
 			
@@ -1043,7 +1062,7 @@ provoda.View.extendTo(appModelView, {
 		
 
 		var cwp = this.state('vis-current_wpoint');
-		if (cwp && !this.canUseWaypoint(cwp)){
+		if (cwp && !this.getWPDems(cwp)){
 			//this.current_wpoint.node.removeClass('surface_navigation');
 			//delete this.current_wpoint;
 			this.setVisState('current_wpoint', false);

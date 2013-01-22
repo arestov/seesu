@@ -30,10 +30,17 @@ provoda.addPrototype("songsListBaseView", {
 	parts_builder: {
 		"load-more-b": function() {
 			var _this = this;
+			var node = $("<a class='load-more-songs'></a>").click(function() {
+				_this.md.loadMoreSongs(true);
+			}).text(localize("load-more")).appendTo(this.c);
+
+			this.addWayPoint(node, {
+				canUse: function() {
+					return _this.state('more_load_available');
+				}
+			});
 			
-			return $("<a class='load-more-songs'></a>").click(function() {
-					_this.md.loadMoreSongs(true);
-				}).text(localize("load-more")).appendTo(this.c);
+			return node;
 		}
 	},
 	createListBase: function() {

@@ -574,7 +574,7 @@ provoda.View.extendTo(songUI, {
 				});
 
 		this.addWayPoint(artcard_link, {
-			simple_check: true
+			
 		});
 			
 
@@ -594,7 +594,7 @@ provoda.View.extendTo(songUI, {
 			e.preventDefault();
 		});
 		this.addWayPoint(extend_switcher, {
-			simple_check: true
+			
 		});
 		
 		this.t_users= {
