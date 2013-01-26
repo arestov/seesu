@@ -235,28 +235,7 @@ appModel.extendTo(seesuApp, {
 		}));
 
 
-		/*
-			.on('new-search', function(search, name){
-				var player = _this.p;
-				if (player){
-					if (player.c_song){
-						if (player.c_song.sem){
-							_this.mp3_search.searchFor(player.c_song.sem.query);
-						}
-						
-						if (player.c_song.next_preload_song && player.c_song.next_preload_song.sem){
-							_this.mp3_search.searchFor(player.c_song.next_preload_song.sem.query);
-						}
-					}
-					//fixme
-					if (player.v_song && player.v_song != player.c_song ){
-						if (player.v_song.sem){
-							_this.mp3_search.searchFor(player.v_song.sem.query);
-						}
-						
-					}
-				}
-			});*/
+
 
 		var reportSearchEngs = debounce(function(string){
 			_this.trackVar(4, 'search', string, 1);
@@ -601,8 +580,12 @@ su.init(3.8);
 
 (function(){
 	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+	//su.sc_api = sc_api;
 	su.mp3_search.add(new scMusicSearch(sc_api));
-	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax)));
+
+
+	var exfm_api = new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax);
+	su.mp3_search.add(new ExfmMusicSearch(exfm_api));
 
 	
 	if (app_env.cross_domain_allowed){

@@ -34,7 +34,7 @@ var seesuPlayer;
 			stop: function(e){
 				if (this.c_song == e.song_file.mo){
 					this.notPlaying();
-					this.changeAppMode()
+					this.changeAppMode();
 				}
 			},
 			playing: function(e){
@@ -72,17 +72,17 @@ var seesuPlayer;
 
 	var canSubmit = function(mo){
 
-	}
+	};
 
-	su.p
+	player
 		.on('finish', function(e){
 			var mo = e.song_file.mo.submitPlayed();
 		})
 		.on('song-play-error', function(song, can_play) {
 			if (this.c_song == song){
 				if (!can_play){
-					if (song.isSearchCompleted()){
-						this.playNext(this.c_song, true);	
+					if (song.isSearchAllowed() && song.state('search-complete')){
+						this.playNext(this.c_song, true);
 					} else {
 						this.wantSong(song);
 					}

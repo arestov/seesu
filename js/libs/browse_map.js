@@ -861,7 +861,7 @@ provoda.Model.extendTo(mapLevelModel, {
 		return this.state('nav-title');
 	},
 	onTitleChange: function(cb) {
-		return this.on('state-change.nav-title', cb);
+		return this.on('state-change.nav-title', cb, {skip_reg: true});
 	},
 	offTitleChange: function(cb) {
 		return this.off('state-change.nav-title', cb);

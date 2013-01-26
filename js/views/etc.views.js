@@ -321,13 +321,11 @@ provoda.View.extendTo(songFileModelUI, {
 		var _this = this;
 
 		var mf_cor_view = this.parent_view.parent_view;
-		this.setVisState('p-wmss', !!mf_cor_view.state('want-more-songs'));
 		mf_cor_view.on('state-change.want-more-songs', function(e){
 			_this.setVisState('p-wmss', !!e.value);
 		});
 
 		var song_view = mf_cor_view.parent_view;
-		this.setVisState('is-visible', !!song_view.state('mp-show-end'));
 		song_view.on('state-change.mp-show-end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});

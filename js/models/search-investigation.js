@@ -94,7 +94,7 @@ searchSection.extendTo(seesuSection, {
 				})
 				.on('state-change.disabled', function(e){
 					_this.trigger('items-change');
-				});
+				}, {skip_reg: true});
 			this.setButtonText();
 			this.setChild('button', this.button);
 		}

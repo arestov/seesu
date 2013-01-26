@@ -380,8 +380,6 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		this.arrow = this.row_context.children('.rc-arrow');
 		var _this = this;
 
-		this.setVisState('is-visible', !!this.parent_view.state('mp-show-end'));
-
 		this.parent_view.on('state-change.mp-show-end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});

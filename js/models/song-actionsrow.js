@@ -204,7 +204,6 @@ BaseCRow.extendTo(ShareRow, {
 		var updateSongURL = function(){
 			_this.updateState('share-url', _this.mo.getShareUrl());
 		};
-		updateSongURL();
 
 		this.mo.on("state-change.url-part", function(){
 			updateSongURL();

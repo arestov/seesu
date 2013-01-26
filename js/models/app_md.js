@@ -335,7 +335,6 @@ provoda.Model.extendTo(appModel, {
 				if (e.value){
 					_this.search_el = this;
 				}
-				
 			});
 
 
