@@ -156,7 +156,7 @@ var funcsQueue;
 				var atom = q[i];
 				if (!atom.complete && !atom.qf.aborted){
 					if (atom.qf.pr && (atom.qf.pr > prior_num)){ //check priority
-						prior_num = atom.pr;
+						prior_num = atom.qf.pr;
 						prior_el = atom;
 					} else if (!first_el && (i < first_num)){// else check order
 						first_num = i;

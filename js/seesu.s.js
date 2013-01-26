@@ -174,12 +174,12 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 		addLike: function(user){
 			if (!this.relations.likes[user]){
 				this.relations.likes[user] = [{}];
-			}	
+			}
 		},
 		addInvite: function(user){
 			if (!this.relations.likes[user]){
 				this.relations.likes[user] = [{}];
-			}	
+			}
 		},
 		updateRelationsInvites: function(invites){
 			this.relations.invites = makeIndexByField(invites, 'user');
@@ -212,7 +212,7 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 	},
 	loggedIn: function(){
 		var auth = this.auth._store;
-		return !!(auth.secret && auth.sid && auth.userid)
+		return !!(auth.secret && auth.sid && auth.userid);
 	},
 
 	setAuth: function(auth_data, not_save){

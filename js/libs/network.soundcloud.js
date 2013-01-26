@@ -57,7 +57,7 @@ scApi.prototype = {
 
 				var sendRequest = function() {
 					if (complex_response.aborted){
-						return
+						return;
 					}
 					if (!options.nocache){
 						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
@@ -112,31 +112,29 @@ scApi.prototype = {
 var scMusicSearch = function(sc_api) {
 	this.sc_api = sc_api;
 	var _this = this;
-	this.search = function() {
-		return _this.findAudio.apply(_this, arguments);
-	}
 };
 scMusicSearch.prototype = {
 	constructor: scMusicSearch,
-	getById: function() {
-		return this.sc_api.getSongById.apply(sc_api, arguments);
-	},
 	name: "soundcloud",
 	description:'soundcloud.com',
 	slave: false,
 	s: {name: 'soundcloud', key: 0, type:'mp3'},
 	preferred: null,
-	makeSong: function(cursor, sc_key, msq){
+	makeSongFile: function(item) {
+		return this.makeSong(item);
+	},
+	makeSong: function(cursor, msq){
 		var search_string = cursor.title;
+		var entity;
 		if (search_string){
 
-			var guess_info = guessArtist(search_string, msq.artist);
+			var guess_info = guessArtist(search_string, msq && msq.artist);
 			
-			var entity = {
-				artist  	: HTMLDecode(guess_info.artist || cursor.user.permalink || ""),
+			entity = {
+				artist		: HTMLDecode(guess_info.artist || cursor.user.permalink || ""),
 				track		: HTMLDecode(guess_info.track || search_string),
 				duration	: cursor.duration,
-				link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + sc_key,
+				link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + this.sc_api.key,
 				from		: 'soundcloud',
 				real_title	: cursor.title,
 				page_link	: cursor.permalink_url,
@@ -147,15 +145,18 @@ scMusicSearch.prototype = {
 				models: {},
 				getSongFileModel: getSongFileModel
 			};
-			entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+			if (msq){
+				entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+			}
+			
 			
 		}
-		return entity
+		return entity;
 	},
 	findAudio: function(msq, opts) {
 		var
 			_this = this,
-			query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+			query = msq.q ? msq.q: ((msq.artist || '') + (msq.track ?  (' - ' + msq.track) : ''));
 
 		opts = opts || {};
 		opts.cache_key = opts.cache_key || query;
@@ -167,7 +168,7 @@ scMusicSearch.prototype = {
 		var params_u = {
 			filter:'streamable,downloadable',
 			limit: 30,
-			q: query	
+			q: query
 		};
 
 		var async_ans = this.sc_api.get('tracks', params_u, opts);
@@ -181,15 +182,15 @@ scMusicSearch.prototype = {
 					var music_list = [];
 					if (r && r.length){
 						for (var i=0; i < r.length; i++) {
-							var ent = _this.makeSong(r[i], _this.sc_api.key, msq);
+							var ent = _this.makeSong(r[i], msq);
 							if (ent){
 								if (ent.query_match_index == -1){
 									//console.log(ent)
 								} else if (!has_music_copy(music_list,ent)){
-									music_list.push(ent)
+									music_list.push(ent);
 								}
 							}
-						};
+						}
 					}
 					if (music_list.length){
 						sortMusicFilesArray(music_list);

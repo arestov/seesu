@@ -15,6 +15,9 @@ var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret')
 }, function(key, value){
 	return suStore(key, value, true);
 }, cache_ajax, app_env.cross_domain_allowed, new funcsQueue(700));
+lfm.checkMethodResponse = function(method, data, r) {
+	su.art_images.checkLfmData(method, r);
+};
 
 
 
@@ -38,13 +41,13 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 	state_change: {
 		"playing": function(state) {
 			if (state){
-				su.opera_ext_b.icon = "/icons/icon18p.png";
+				this.opts.opera_ext_b.icon = "/icons/icon18p.png";
 			} else {
-				su.opera_ext_b.icon = "/icons/icon18.png";
+				this.opts.opera_ext_b.icon = "/icons/icon18.png";
 			}
 		},
 		'now-playing': function(text) {
-			su.opera_ext_b.title = localize('now-playing','Now Playing') + ': ' + text;
+			this.opts.opera_ext_b.title = localize('now-playing','Now Playing') + ': ' + text;
 		}
 	}
 });
@@ -52,10 +55,6 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 
 var seesuApp = function(version) {};
 appModel.extendTo(seesuApp, {
-	ui_constr: {
-		chrome_ext: ChromeExtensionButtonView,
-		opera_ext: OperaExtensionButtonView
-	},
 	init: function(version){
 		this._super();
 		this.version = version;
@@ -90,7 +89,7 @@ appModel.extendTo(seesuApp, {
 
 		var lu = suStore('su-usage-last');
 
-		this.last_usage = (lu && new Date(lu)) || 0;
+		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
 		this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
 		
 		var _this = this;
@@ -98,19 +97,20 @@ appModel.extendTo(seesuApp, {
 
 			var now = new Date();
 
-			if (_this.ui){
-				if (_this.ui.isAlive() || (now - _this.ui.created_at)/(1000*60) > 40){
-					if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
-						_this.checkStats();
-						suStore('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
-						suStore('su-usage-counter', ++_this.usage_counter, true);
-					}
-				}
+			if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
+				_this.checkStats();
+				suStore('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
+				suStore('su-usage-counter', ++_this.usage_counter, true);
 			}
 
 			
 		}, 1000 * 60 * 20);
-
+		setInterval(function(){
+			var rootvs = _this.getViews('root');
+			if (rootvs.length){
+				_this.updateLVTime();
+			}
+		}, 1000 * 60 * 2);
 
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 		this.vk = {};
@@ -118,15 +118,15 @@ appModel.extendTo(seesuApp, {
 		this.notf = new gMessagesStore(
 			function(value) {
 				return suStore('notification', value, true);
-			}, 
+			},
 			function() {
 				return suStore('notification');
 			}
 		);
 		this.lfm_auth = new LfmAuth(lfm, {
-			deep_sanbdox: app_env.deep_sanbdox, 
+			deep_sanbdox: app_env.deep_sanbdox,
 			callback_url: 'http://seesu.me/lastfm/callbacker.html',
-			bridge_url: 'http://seesu.me/lastfm/bridge.html',
+			bridge_url: 'http://seesu.me/lastfm/bridge.html'
 		});
 
 		this.app_md = this;
@@ -139,7 +139,6 @@ appModel.extendTo(seesuApp, {
 		if (app_env.deep_sanbdox){
 			this.updateState('deep-sandbox', true);
 		}
-		var _this = this;
 
 
 		
@@ -166,7 +165,6 @@ appModel.extendTo(seesuApp, {
 						navi.set(nu, data);
 					}
 				});
-				//console.log(arguments);
 			})
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
@@ -178,29 +176,34 @@ appModel.extendTo(seesuApp, {
 				_this.trackPage(nv.map_level.resident.page_name);
 			})
 			.on('changes', function(changes) {
-				console.log(changes);
+				//console.log(changes);
 				_this.animateMapChanges(changes);
 			})
 			.makeMainLevel();
 
-		//(new appModel()).init(this);
 
 
 
+		var addBrowserView = function(Constr, name, opts) {
+			var view = new Constr();
+
+			_this.addView(view, name);
+
+			view.init({
+				md: _this
+			}, opts);
+			view.requestAll();
+
+		};
 
 		var ext_view;
 		if (app_env.chrome_extension){
-			//ext_view = this.getFreeView(this, "chrome_ext");
+			addBrowserView(ChromeExtensionButtonView, 'chrome_ext');
 		} else if (app_env.opera_extension && window.opera_extension_button){
 			this.opera_ext_b = opera_extension_button;
-			//ext_view = this.getFreeView(this, "opera_ext");
+			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: opera_extension_button});
 		}
-		if (ext_view){
-			//ext_view.requestAll();
-		}
-		
-
-		
+				
 
 
 		this.delayed_search = {
@@ -212,41 +215,16 @@ appModel.extendTo(seesuApp, {
 
 
 		this.s  = new seesuServerAPI(suStore('dg_auth'), this.server_url);
+
+		this.s.on('info-change.vk', function(data) {
+			_this.updateState('vk-info', data);
+		});
+
 		this.on('vk-api', function(vkapi, user_id) {
-			var _this = this;
-			vkapi.get('getProfiles', {
-				uids: user_id,
-				fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
-				
-			},{nocache: true})
-				.done(function(info) {
-					info = info.response && info.response[0];
-					if (info){
-						_this.s.vk_id = user_id;
-
-						var _d = cloneObj({data_source: 'vkontakte'}, info);
-
-						_this.s.setInfo('vk', _d);
-
-						if (!_this.s.loggedIn()){
-							_this.s.getAuth(user_id);
-						} else{
-							_this.s.api('user.update', _d);
-						}
-					} else {
-						
-					}
-				})
-				.fail(function(r) {
-					
-				});
+			_this.getAuthAndTransferVKInfo(vkapi, user_id);
 		});
 
-		this.onRegistration('dom', function(cb) {
-			if (this.ui && this.ui.can_fire_on_domreg){
-				cb();
-			}	
-		});
+
 		this.mp3_search = (new mp3Search({
 			vk: 5,
 			nigma: 1,
@@ -257,28 +235,7 @@ appModel.extendTo(seesuApp, {
 		}));
 
 
-		/*
-			.on('new-search', function(search, name){
-				var player = _this.p;
-				if (player){
-					if (player.c_song){
-						if (player.c_song.sem){
-							_this.mp3_search.searchFor(player.c_song.sem.query);
-						}
-						
-						if (player.c_song.next_preload_song && player.c_song.next_preload_song.sem){
-							_this.mp3_search.searchFor(player.c_song.next_preload_song.sem.query);
-						}
-					}
-					//fixme
-					if (player.v_song && player.v_song != player.c_song ){
-						if (player.v_song.sem){
-							_this.mp3_search.searchFor(player.v_song.sem.query);
-						}
-						
-					}
-				}
-			});*/
+
 
 		var reportSearchEngs = debounce(function(string){
 			_this.trackVar(4, 'search', string, 1);
@@ -287,8 +244,8 @@ appModel.extendTo(seesuApp, {
 		this.mp3_search.on('list-changed', function(list){
 			list = $filter(list, 'name').sort();
 			for (var i = 0; i < list.length; i++) {
-				list[i] = list[i].slice(0, 2)
-			};
+				list[i] = list[i].slice(0, 2);
+			}
 			reportSearchEngs(list.join(','));
 		});
 
@@ -335,7 +292,7 @@ appModel.extendTo(seesuApp, {
 		this.lfm_imgq = new funcsQueue(700);
 		setTimeout(function(){
 			_this.checkStats();
-		},100)
+		},100);
 
 		suReady(function() {
 			_this.lfm_auth.try_to_login();
@@ -344,7 +301,7 @@ appModel.extendTo(seesuApp, {
 					_this.trackTime.apply(_this, big_timer.q.shift());
 					//console.log()
 				}
-			}, 300)
+			}, 300);
 		});
 
 		setTimeout(function() {
@@ -357,12 +314,38 @@ appModel.extendTo(seesuApp, {
 					} catch(e){}
 				}
 				_this.letAppKnowSetting(cur, value);
-			};
+			}
 			var last_ver = suStore('last-su-ver');
 			_this.migrateStorage(last_ver);
 			suStore('last-su-ver', version, true);
 			
-		}, 200)
+		}, 200);
+
+
+		this.vk_auth = new vkAuth({
+			app_id: this.vkappid,
+			urls: {
+				bridge: 'http://seesu.me/vk/bridge.html',
+				callbacker: 'http://seesu.me/vk/callbacker.html'
+			},
+			permissions: ["friends", "video", "offline", "audio", "wall"],
+			open_api: false,
+			deep_sanbdox: app_env.deep_sanbdox,
+			vksite_app: app_env.vkontakte,
+			vksite_settings: this._url.api_settings
+		});
+
+
+
+		this.once("vk-site-api", function() {
+			window.documentScrollSizeChangeHandler = function(height){
+				VK.callMethod("resizeWindow", 800, Math.max(700, height));
+			};
+			_this.vk_auth.trigger('vk-site-api', VK);
+		});
+
+
+
 	},
 	migrateStorage: function(ver){
 		if (!ver){
@@ -377,9 +360,7 @@ appModel.extendTo(seesuApp, {
 			this.setSetting('volume', [this.settings['volume'], 100]);
 		}
 	},
-	removeDOM: function(d, ui) {
-		this.trigger('dom-die', d, this.ui == ui, this.ui);
-	},
+	
 	checkStats: function() {
 		if (this.usage_counter > 2){
 			this.start_page.showMessage('rating-help');
@@ -416,6 +397,9 @@ appModel.extendTo(seesuApp, {
 		if (this.gena){
 			this.start_page.updateState('have-playlists', !!this.gena.playlists.length);
 		}
+	},
+	showPlaylists: function() {
+		this.search(':playlists');
 	},
 	fs: {},//fast search
 	env: app_env,
@@ -472,8 +456,6 @@ appModel.extendTo(seesuApp, {
 		var sp = new SearchPage();
 		sp.init();
 		return sp;
-
-		return sp;
 	},
 	getPlaylists: function(query) {
 		var r = [];
@@ -495,6 +477,44 @@ appModel.extendTo(seesuApp, {
 		return r;
 	},
 	vkappid: 2271620,
+	getAuthAndTransferVKInfo: function(vk_api, user_id) {
+		if (!user_id){
+			throw new Error('want to get photo but have not user id :(');
+		}
+		var _this = this;
+
+		vk_api.get('getProfiles', {
+			uids: user_id,
+			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
+			
+		},{nocache: true})
+			.done(function(info) {
+				info = info.response && info.response[0];
+				if (info){
+					_this.s.vk_id = user_id;
+
+					var _d = cloneObj({data_source: 'vkontakte'}, info);
+
+					_this.s.setInfo('vk', _d);
+
+					if (!_this.s.loggedIn()){
+						_this.s.getAuth(user_id, function() {
+							_this.s.api('user.update', _d);
+						});
+					} else{
+						_this.s.api('user.update', _d);
+					}
+				} else {
+					
+				}
+			})
+			.fail(function(r) {
+				
+			});
+	},
+	getPhotoFromVK: function() {
+		this.getAuthAndTransferVKInfo(this.vk_api, this.s.vk_id);
+	},
 	getVKFriends: function(){
 		var _this = this;
 		if (!this.vk_fr_req){
@@ -512,6 +532,9 @@ appModel.extendTo(seesuApp, {
 			});
 
 	},
+	updateLVTime: function() {
+		this.last_view_time = new Date() * 1;
+	},
 	checkUpdates: function(){
 		var _this = this;
 
@@ -523,33 +546,31 @@ appModel.extendTo(seesuApp, {
 			data: {
 				ver: this.version,
 				app_type: app_env.app_type
-			},
-			error: function(){},
-			success: function(r){
-				if (!r){return;}
-
-				
-				var cver = r.latest_version.number;
-				if (cver > _this.version) {
-					var message = 
-						'Suddenly, Seesu ' + cver + ' has come. ' + 
-						'You have version ' + _this.version + '. ';
-					var link = r.latest_version.link;
-					if (link.indexOf('http') != -1) {
-						$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
-					}
-				}
-				
-				console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
-
 			}
+		}).done(function(r){
+			if (!r){return;}
+
+			
+			var cver = r.latest_version.number;
+			if (cver > _this.version) {
+				var message =
+					'Suddenly, Seesu ' + cver + ' has come. ' +
+					'You have version ' + _this.version + '. ';
+				var link = r.latest_version.link;
+				if (link.indexOf('http') != -1) {
+					$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
+				}
+			}
+			
+			console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
+
 		});
 	}
 
 });
 
-window.seesu = window.su = new seesuApp(); 
-su.init(3.6);
+window.seesu = window.su = new seesuApp();
+su.init(3.8);
 
 
 
@@ -611,22 +632,26 @@ suReady(function() {
 
 (function(){
 	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+	//su.sc_api = sc_api;
 	su.mp3_search.add(new scMusicSearch(sc_api));
-	su.mp3_search.add(new ExfmMusicSearch(new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax)));
+
+
+	var exfm_api = new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax);
+	su.mp3_search.add(new ExfmMusicSearch(exfm_api));
 
 	
 	if (app_env.cross_domain_allowed){
 		su.mp3_search.add(new isohuntTorrentSearch());
 
-		yepnope({
+		/*yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
 			complete: function(){
-				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(3500, 5000, 4)))
+				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(5000, 10000, 4)))
 				su.mp3_search.add(window.nms);
 				
 				//$(document.body).append(_this.c);
 			}
-		});
+		});*/
 	} else {
 		su.mp3_search.add(new googleTorrentSearch(app_env.cross_domain_allowed));
 	}
@@ -634,145 +659,6 @@ suReady(function() {
 	
 	
 })();
-
-
-
-
-
-var render_loved = function(user_name){
-	var pl_r = su.preparePlaylist({
-		title: localize('loved-tracks'),
-		type: 'artists by loved'
-	});
-
-	pl_r.setLoader(function(paging_opts) {
-		var request_info = {};
-		lfm.get('user.getLovedTracks', {user: (user_name || lfm.user_name), limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
-			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'lovedtracks.track'));
-				su.art_images.checkLfmData('user.getLovedTracks', r, tracks);
-				var track_list = [];
-				if (tracks) {
-					
-					for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
-						track_list.push({
-							'artist' : tracks[i].artist.name,
-							'track': tracks[i].name,
-							lfm_image:  {
-								array: tracks[i].image
-							}
-						});
-					}
-
-				}
-
-				if (track_list.length < paging_opts.page_limit){
-					pl_r.setLoaderFinish();
-				}
-
-				pl_r.injectExpectedSongs(track_list);
-
-			})
-			.fail(function() {
-				pl_r.loadComplete(true);
-			})
-			.always(function() {
-				request_info.done = true;
-			});
-
-		return request_info;
-	}, true);
-	
-	su.show_playlist_page(pl_r);
-};
-var render_recommendations_by_username = function(username){
-	var pl_r = su.preparePlaylist({
-		title: 'Recommendations for ' +  username,
-		type: 'artists by recommendations'
-	}).loading();
-	$.ajax({
-		url: 'http://ws.audioscrobbler.com/1.0/user/' + username + '/systemrecs.rss',
-			global: false,
-			type: "GET",
-			dataType: "xml",
-			error: function(xml){
-			},
-			success: function(xml){
-				var artists = $(xml).find('channel item title');
-				if (artists && artists.length) {
-					var artist_list = [];
-					for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
-						var artist = $(artists[i]).text();
-						artist_list.push(artist);
-					}
-					var track_list_without_tracks = [];
-					if (artist_list){
-						for (var i=0; i < artist_list.length; i++) {
-							track_list_without_tracks.push({"artist" :artist_list[i]});
-						}
-					}
-					pl_r.injectExpectedSongs(track_list_without_tracks);
-				}
-			}
-	});
-
-	su.show_playlist_page(pl_r);
-};
-var render_recommendations = function(){
-	var pl_r = su.preparePlaylist({
-		title: 'Recommendations for you', 
-		type: 'artists by recommendations'
-	});
-
-	pl_r.setLoader(function(paging_opts) {
-		
-		var request_info = {};
-
-		lfm.get('user.getRecommendedArtists', {sk: lfm.sk, limit: paging_opts.page_limit, page: paging_opts.next_page}, {nocache: true})
-			.done(function(r){
-				var artists = toRealArray(getTargetField(r, 'recommendations.artist'));
-				su.art_images.checkLfmData('user.getRecommendedArtists', r, artists);
-				var track_list = [];
-				if (artists && artists.length) {
-					
-					for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
-						track_list.push({
-							artist: artists[i].name,
-							lfm_image: {
-								array: artists[i].image
-							}
-						});
-					}
-				}
-				pl_r.injectExpectedSongs(track_list);
-
-				if (track_list.length < paging_opts.page_limit){
-					pl_r.setLoaderFinish();
-				}
-			})
-			.fail(function(){
-				pl_r.loadComplete(true);
-			}).always(function() {
-				request_info.done = true;
-			});
-		return request_info;
-	}, true);
-	
-
-	su.show_playlist_page(pl_r);
-
-};
-
-
-
-
-
-
-
-
-
-
-
 
 suReady(function(){
 	try_mp3_providers();
@@ -806,7 +692,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 		var pl_r = this.createEnvPlaylist({
 			title: title,
 			type: "cplaylist",
-			data: {name: title} 
+			data: {name: title}
 		});
 		this.watchOwnPlaylist(pl_r);
 		this.playlists.push(pl_r);
@@ -831,7 +717,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 	},
 	rebuildPlaylist: function(saved_pl){
 		var p = this.createEnvPlaylist({
-			title: saved_pl.playlist_title, 
+			title: saved_pl.playlist_title,
 			type: saved_pl.playlist_type,
 			data: {name: saved_pl.playlist_title}
 		});
@@ -848,7 +734,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 			for (var i=0; i < spls.length; i++) {
 				recovered[i] = this.rebuildPlaylist(spls[i]);
 			}
-		} 
+		}
 		
 		this.playlists = recovered;
 		this.trigger('playlsits-change', this.playlists);

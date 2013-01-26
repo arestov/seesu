@@ -554,9 +554,9 @@ createPrototype = function(constr, assi_prototype, clone_prototype){
 		namedClass.extend = Class.extend;
 		return namedClass;
 	};
-	Class.extend = function(prop){
-		return this.extendTo(function(){}, prop);
-	}
+	Class.extend = function(props, class_name){
+		return this.extendTo(function(){}, props);
+	};
 
 })();
 
@@ -609,16 +609,17 @@ throttle = function(fn, timeout, ctx) {
 		ctx = ctx || this;
 
 		if(!timer) {
-			(function() {
+			var wrap_func = function() {
 				if(needInvoke) {
 					fn.apply(ctx, args);
 					needInvoke = false;
-					timer = setTimeout(arguments.callee, timeout);
+					timer = setTimeout(wrap_func, timeout);
 				}
 				else {
 					timer = null;
 				}
-			})();
+			};
+			wrap_func();
 		}
 
 	};
@@ -710,3 +711,4 @@ depdc.prototype = {
 	}
 };
 })();
+

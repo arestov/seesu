@@ -4,6 +4,9 @@
 	padding-left:6px;
 	margin-bottom:10px;
 	}
+.page-scheme .play-list-panel{
+	display: none;
+	}
 	.play-list-panel .playlist-actions{
 
 		}
@@ -13,7 +16,6 @@
 			.pla-panel .pla-button{
 				color: #5e5e5e;
 				cursor: pointer;
-				font-size: 14px;
 				}
 			.pla-panel .pla-button:hover{
 				color:#666;
@@ -39,14 +41,14 @@
 		
 		position:relative;
 		line-height: 1.5;
-		margin:12px -12px 0;
+		margin:1rem -1rem 0;
 
 		color:#999;
 		background: #4D4D4D;
-		border-radius: 12px;
+		border-radius: 1rem;
 		border-top: 1px solid #444;
 		border-bottom: 1px solid #555;
-		padding: 12px;
+		padding: 1rem;
 
 		}
 		.play-list-panel .pla-row-content .rc-s-arrow{
@@ -175,14 +177,14 @@
 	background:#fff;
 	top:25px;
 	left:auto;
-	right:12px;
+	right:1rem;
 	z-index:10;
 	color:#555;
 }
 
 .track-button-content .triangle { 
 	left: auto;
-	right: -14px;
+	right: -1rem;
 	}
 
 .volume-state{
@@ -197,7 +199,7 @@
 	border: 1px solid #4A4A4A;
 	margin-top:2px;
 	
-	margin-left:14px;
+	margin-left:1rem;
 	}
 .player-holder{
 	height: 18px;
@@ -218,3 +220,6 @@
 .playlist-info .artist-info{
 	margin-bottom:30px;
 }
+
+
+

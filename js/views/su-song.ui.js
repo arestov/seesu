@@ -4,7 +4,9 @@ provoda.View.extendTo(songUI, {
 	createDetailes: function(){
 		this.rowcs = {};
 		this.createBase();
+		
 	},
+	
 	complex_states: {
 		'mp-show-end': {
 			depends_on: ['map-animating', 'vis-mp-show', 'mp-show'],
@@ -17,7 +19,7 @@ provoda.View.extendTo(songUI, {
 					}
 					
 				} else {
-					return mp_show
+					return mp_show;
 				}
 			}
 		},
@@ -33,12 +35,12 @@ provoda.View.extendTo(songUI, {
 			depends_on: ['artist-image', 'vis-cool_photos'],
 			fn: function(img, cph) {
 				if (!cph){
-					return !!img && img
+					return !!img && img;
 				} else {
 					return false;
 				}
 			}
-		},
+		}
 	},
 	state_change : {
 		"mp-show-end": function(opts) {
@@ -51,10 +53,10 @@ provoda.View.extendTo(songUI, {
 
 		"mp-show": function(opts, old_opts) {
 			if (opts){
-				this.parent_view.c.addClass("show-zoom-to-track");
+			//	this.parent_view.c.addClass("show-zoom-to-track");
 				this.activate();
 			} else if (old_opts) {
-				this.parent_view.c.removeClass("show-zoom-to-track");
+			//	this.parent_view.c.removeClass("show-zoom-to-track");
 				this.deactivate();
 			}
 			
@@ -77,25 +79,24 @@ provoda.View.extendTo(songUI, {
 			
 		},
 		files_search: function(opts){
-			if (opts.complete){
-				if (!opts.have_tracks){
-					this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
-				}
+			this.fsearch_status_c.attr('class', 'song-files-search-status');
+			if (opts.search_complete && !opts.have_mp3_tracks){
+				this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
+				this.fsearch_status_c.addClass('has-none-files');
+			} else if (opts.have_best_tracks){
+				this.fsearch_status_c.addClass('has-best-files');
+			} else if (opts.have_mp3_tracks){
+				this.fsearch_status_c.addClass('has-some-files');
 			}
+
+			
 		},
 		'searching-files': function(searching){
-			if (searching){
-				this.node.addClass('search-mp3');
-			} else{
-				this.node.removeClass('search-mp3');
-			}
+			this.node.toggleClass('search-mp3', searching);
+		
 		},
-		loading : function(loading){
-			if (loading){
-				this.node.addClass('loading');
-			} else {
-				this.node.removeClass('loading');
-			}
+		'track-name-loading': function(state) {
+			this.node.toggleClass('track-name-loading', state);
 		},
 		"player-song": function(state) {
 			this.c.toggleClass('player-song', !!state);
@@ -108,13 +109,13 @@ provoda.View.extendTo(songUI, {
 			this.player_song_mark.toggleClass('playing-process', state == 'play');
 		},
 		playable: function(new_state, old_state){
-			if (new_state && !!new_state != !!old_state){
+			if (new_state && (!!new_state) != (!!old_state)){
 				var _this = this;
 				this.node
 					.addClass('song')
 					.removeClass('search-mp3-failed')
 					.removeClass('waiting-full-render')
-					.removeClass('mp3-download-is-not-allowed')
+					.removeClass('mp3-download-is-not-allowed');
 			
 			}
 		},
@@ -151,21 +152,21 @@ provoda.View.extendTo(songUI, {
 					.appendTo(this.song_imagec);
 			}
 			
-		},
+		}
 	},
 	unmark: function(){
-		this.c.removeClass('to-play-next to-play-previous');
+		this.c.removeClass('to-play-next to-play-previous v-song-sibling');
 		
 	},
 	markAs: function(statev){
 	
 		switch (statev) {
 			case 'next':
-				this.c.addClass('to-play-next');
-				break
+				this.c.addClass('to-play-next v-song-sibling');
+				break;
 			case 'prev':
-				this.c.addClass('to-play-previous');
-				break
+				this.c.addClass('to-play-previous v-song-sibling');
+				break;
 			default:
 		}
 
@@ -178,7 +179,7 @@ provoda.View.extendTo(songUI, {
 
 		for (var a in this.rowcs) {
 			this.rowcs[a].hide();
-		};
+		}
 		//this.tidominator.removeClass('want-more-info');
 
 
@@ -191,17 +192,9 @@ provoda.View.extendTo(songUI, {
 	},
 	activate: function(opts){
 		this.expand();
-		this.setImagesPrio();
 		this.updateSongListeners();
 		this.c.addClass('viewing-song');
 		
-	},
-	setImagesPrio: function(){
-		if (this.img_load_stack){
-			for (var i = this.img_load_stack.length - 1; i >= 0; i--) {
-				this.img_load_stack[i].setPrio("highest");
-			}
-		}
 	},
 	show_artist_info: function(r, ainf, oa){
 		var _mui = this;
@@ -215,16 +208,16 @@ provoda.View.extendTo(songUI, {
 			artist	 = ai.artist;
 			tags	 = ai.tags;
 			bio		 = ai.bio;
-			image	 = (ai.images && ai.images[2]) || lfm_image_artist;
+		//	image	 = (ai.images && ai.images[2]) || lfm_image_artist;
 			this.photo_data.first_image = ai.images;
 
-		} 
+		}
 			
 		if (artist && artist == oa) {
 			
 			
 		} else{
-			return false
+			return false;
 		}
 
 		
@@ -252,10 +245,6 @@ provoda.View.extendTo(songUI, {
 			}
 		}
 		
-		
-		
-		
-		
 		if (tags && tags.length) {
 			
 		}
@@ -277,6 +266,7 @@ provoda.View.extendTo(songUI, {
 			if (bio){
 				this.ainf.bio.empty();
 				this.ainf.bio.html(bio);
+				this.root_view.bindLfmTextClicks(this.ainf.bio);
 				this.ainf.bio.append('<span class="forced-end"></span>');
 			}
 			
@@ -299,6 +289,18 @@ provoda.View.extendTo(songUI, {
 		},
 		dep_vp: ['playcount-c']
 	},
+	bindTagClick: function(node, tag_name) {
+
+		node.click(function(e) {
+			e.preventDefault();
+			su.show_tag(tag_name);
+			seesu.trackEvent('Artist navigation', 'tag', tag_name);
+		});
+		this.addWayPoint(node, {
+			simple_check: true
+		});
+		
+	},
 	'stch-tags': {
 		fn: function(state) {
 			var tags = state;
@@ -308,12 +310,12 @@ provoda.View.extendTo(songUI, {
 					var tag = tags[i],
 						arts_tag_node = $("<a></a>")
 							.text(tag.name)
-							.attr({ 
+							.attr({
 								href: tag.url,
 								'class': 'music-tag js-serv'
 							})
-							.data('music_tag', tag.name)
-							.appendTo(this.tags_text_c); //!using in DOM
+							.appendTo(this.tags_text_c);
+					this.bindTagClick(arts_tag_node, tag.name);
 					this.tags_text_c.append(" ");
 				}
 
@@ -324,6 +326,16 @@ provoda.View.extendTo(songUI, {
 		},
 		dep_vp: ['tags-c']
 	},
+	bindSimArtistClick: function(node, artist_name) {
+		node.click(function(e) {
+			e.preventDefault();
+			su.showArtcardPage(artist_name);
+			seesu.trackEvent('Artist navigation', 'artist', artist_name);
+		});
+		this.addWayPoint(node, {
+			simple_check: true
+		});
+	},
 	'stch-similars': {
 		fn: function(state) {
 			var similars = state;
@@ -332,13 +344,13 @@ provoda.View.extendTo(songUI, {
 				for (var i=0, l = similars.length; i < l; i++) {
 					var similar = similars[i],
 						arts_similar_node = $("<a class='js-serv'></a>")
-						  .text(similar.name)
-						  .attr({ 
-							href: similar.url, 
-							'class' : 'artist js-serv' 
-						  })
-						  .data('artist', similar.name )
-						  .appendTo(this.similars_text_c);//!using in DOM
+							.text(similar.name)
+							.attr({
+								href: similar.url,
+								'class' : 'artist js-serv'
+							})
+							.appendTo(this.similars_text_c);
+					this.bindSimArtistClick(arts_similar_node, similar.name);
 					this.similars_text_c.append(" ");
 				}
 			}
@@ -390,11 +402,23 @@ provoda.View.extendTo(songUI, {
 			
 		},
 		'similars-c': function() {
+
+			var artist = this.state('artist');
+
 			var similars_p = $("<p class='artist-similar hidden'></p>"),
-				similars_a = $('<em></em>').append($('<a></a>').append(localize('similar-arts') + ":").attr({ 'class': 'similar-artists js-serv'}).data('artist', this.state('artist')));	
+				similars_link = $('<a></a>').append(localize('similar-arts') + ":").attr({ 'class': 'similar-artists js-serv'}),
+				similars_a = $('<em></em>').append(similars_link);
 			$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p);
+
+			similars_link.click(function() {
+				su.showSimilarArtists(artist);
+				seesu.trackEvent('Artist navigation', 'similar artists to', artist);
+			});
+
 			this.similars_text_c = $('<span class="desc-text"></span>').appendTo(similars_p).append('<span class="forced-end"></span>');
-			
+			this.addWayPoint(similars_link, {
+				simple_check: true
+			});
 			return similars_p;
 		},
 		'playcount-c': function() {
@@ -414,7 +438,7 @@ provoda.View.extendTo(songUI, {
 			listeners_c.append(" ");
 			return listeners_c;
 
-		},	
+		},
 		'artist-info': function() {
 			var stat_c = this.requirePart('artist-stat-c');
 			this.requirePart('listeners-c').appendTo(stat_c);
@@ -432,12 +456,11 @@ provoda.View.extendTo(songUI, {
 	},
 	createBase: function(){
 		var _this = this;
-		this.c = $('<li></li>').data('mo', this.md);
+		this.c = $('<li></li>');
 		
 
 		this.node = $("<a></a>")
 			.addClass('track-node waiting-full-render')
-			.data('mo', this.md)
 			.click(function(){
 				var mo = _this.md;
 				if (mo.player){
@@ -447,22 +470,44 @@ provoda.View.extendTo(songUI, {
 				mo.view(false, true);
 				return false;
 			});
-		$('<span class="nothing-toy"></span>').appendTo(this.node);
+
+
+		this.canUseDeepWaypoints = function() {
+			return !(_this.opts && _this.opts.lite) && !!_this.state('mp-show');
+		};
+		this.addWayPoint(this.node, {
+			canUse: function() {
+				return (_this.opts && _this.opts.lite) || !_this.state('mp-show');
+			}
+		});
 		//
 		this.player_song_mark = $('<span class="playing-song-mark"></span>').appendTo(this.node);
-		var buttmen = this.root_view.els.play_controls.node.clone(true).data('mo', this.md);
+		
+		/*var buttmen = this.root_view.els.play_controls.node.clone(true).data('mo', this.md);
 			buttmen.find('.pc').data('mo', this.md);
-		this.c.prepend(buttmen);
+		this.c.prepend(buttmen);*/
+
+
+		var filesload_states_c = $('<span class="files-load-states"></span>');
+
+		this.fsearch_status_c = $('<span class="song-files-search-status"></span>').appendTo(filesload_states_c);
+		$('<span class="nothing-toy"></span>').appendTo(filesload_states_c);
+		filesload_states_c.appendTo(this.node);
 
 		this.song_imagec = $('<span class="song-image-con"></span>').appendTo(this.node);
 
 
 		this.titlec = $('<span class="full-song-title has-no-track-title"></span>')
 			.appendTo(this.node);
-		this.track_name_c = $('<span class="song-track-name"></span>')
-			.appendTo(this.titlec);
+		
+
+		
+
 		this.artist_name_c = $('<span class="song-artist-name"></span>')
 			.appendTo(this.titlec);
+		this.track_name_c = $('<span class="song-track-name"></span>')
+			.appendTo(this.titlec);
+		
 		
 
 		$('<span class="placeholder-decor"></span>').appendTo(this.node);
@@ -471,8 +516,11 @@ provoda.View.extendTo(songUI, {
 		this.c.append(this.node);
 	},
 	expand: function(){
+		if (this.opts && this.opts.lite){
+			return false;
+		}
 		if (this.expanded){
-			return true
+			return true;
 		} else{
 			this.expanded = true;
 		}
@@ -484,7 +532,7 @@ provoda.View.extendTo(songUI, {
 		this.song_actions_c =  context.children('.song-actions');
 
 
-		var actionsrow = this.getMdChild('actionsrow')
+		var actionsrow = this.getMdChild('actionsrow');
 		var track_row_view = this.getFreeChildView('actionsrow', actionsrow);
 
 
@@ -503,7 +551,7 @@ provoda.View.extendTo(songUI, {
 		this.dominator_head = tidominator.children('.dominator-head');
 		this.a_info = tidominator.children('.artist-info');
 		this.t_info = tidominator.children('.track-info');
-		this.tv		= this.t_info.children('.track-video')
+		this.tv		= this.t_info.children('.track-video');
 
 		var pl = this.md.plst_titl,
 			pl_type = pl.playlist_type;
@@ -514,15 +562,16 @@ provoda.View.extendTo(songUI, {
 			artist_link_con.addClass('one-artist-playlist');
 		}
 
-		$('<a class="js-serv">' + localize('artcard') + '</a>')
-				.data('artist', this.md.artist)
+		var artcard_link = $('<a class="js-serv">' + localize('artcard') + '</a>')
 				.appendTo(artist_link_con)
 				.click(function(){
 					su.showArtcardPage(_this.md.artist);
 					su.trackEvent('Artist navigation', 'art card', _this.md.artist);
 				});
 
-		
+		this.addWayPoint(artcard_link, {
+			
+		});
 			
 
 		
@@ -540,7 +589,9 @@ provoda.View.extendTo(songUI, {
 			tidominator.toggleClass('want-more-info');
 			e.preventDefault();
 		});
-		
+		this.addWayPoint(extend_switcher, {
+			
+		});
 		
 		this.t_users= {
 			c: users,
@@ -572,7 +623,7 @@ provoda.View.extendTo(songUI, {
 
 
 		var getClickPosition = function(e, node){
-			//e.offsetX || 
+			//e.offsetX ||
 			var pos = e.pageX - $(node).offset().left;
 			return pos;
 		};
@@ -598,7 +649,7 @@ provoda.View.extendTo(songUI, {
 		var a_info = this && this.a_info;
 		if (a_info){
 			if (artist) {this.update_artist_info(artist, a_info, this.md.plst_titl.playlist_type != 'artist');}
-		} 
+		}
 	},
 	createListenersHeader: function(){
 		if (this && this.t_users){
@@ -616,12 +667,15 @@ provoda.View.extendTo(songUI, {
 		}
 	},
 	updateSongListeners: function(){
+		if (!this.expanded){
+			return;
+		}
 		var _this = this;
 		var last_update = this.t_users.last_update;
-		var current_user = su.s.getId();
+		//var current_user = su.s.getId();
 		
 		
-		if (this.md.artist && (!last_update || (new Date - last_update) > 1000 * 60 * 1)){
+		if (this.md.artist && (!last_update || (new Date() - last_update) > 1000 * 60 * 1)){
 			var d = {artist: this.md.artist};
 			if (this.md.track){
 				d.title = this.md.track;
@@ -641,7 +695,7 @@ provoda.View.extendTo(songUI, {
 				if (raw_users){
 					var users = $filter(raw_users, 'user', function(value){
 						if (value != current_user){
-							return true
+							return true;
 						}
 					});
 					if (users.length){
@@ -653,14 +707,14 @@ provoda.View.extendTo(songUI, {
 								above_limit_value = _this.root_view.createSongListeners(r.done[i], uul, above_limit_value, current_user, _this.rowcs.users_context);
 							}
 							
-						}; 
+						}
 						if (_this.t_users.other_users){
 							_this.t_users.other_users.remove();
 						}
 						
 						_this.createListenersHeader();
 						
-						_this.t_users.c.addClass('many-users')
+						_this.t_users.c.addClass('many-users');
 						uul.appendTo(_this.t_users.list);
 						_this.t_users.other_users = uul;
 					}
@@ -668,7 +722,7 @@ provoda.View.extendTo(songUI, {
 				//console.log(r)
 				
 			});
-			this.t_users.last_update = (+new Date);
+			this.t_users.last_update = (+new Date());
 		}
 		
 	},
@@ -695,9 +749,10 @@ provoda.View.extendTo(songUI, {
 			var images_request = lfm.get('artist.getImages',{'artist': artist })
 				.done(function(r){
 					if (!_this.isAlive()){
-						return
+						return;
 					}
-					var images = r.images.image;
+
+					var images = toRealArray(getTargetField(r, 'images.image'));
 					if (images){
 						images = toRealArray(images);
 						_this.setVisState('cool_photos', true);//cool_photos
@@ -709,13 +764,13 @@ provoda.View.extendTo(songUI, {
 							//var shuffled_images = [images.shift()];
 
 							//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
-							_this.img_load_stack = [];
+							
 							_this.img_requests = [];
 							_this.img_panorama = new Panoramator();
-							var main_c = _this.photo_c.parent()
+							var main_c = _this.photo_c.parent();
 				
 							_this.img_panorama.init({
-								viewport: main_c, 
+								viewport: main_c,
 								lift: _this.photo_c,
 								onUseEnd: function(){
 									seesu.trackEvent('Panoramator', 'artist photos');
@@ -742,7 +797,7 @@ provoda.View.extendTo(songUI, {
 								});
 
 								_this.img_panorama.setCollection($filter(images_collection, 'item'));
-							}
+							};
 
 							var appendImage = function(el, index, first_image) {
 								var sizes = toRealArray(el.sizes.size);
@@ -776,9 +831,7 @@ provoda.View.extendTo(songUI, {
 									
 								});*/
 
-								if (req.queued) {
-									_this.img_load_stack.push(req.queued);
-								}
+	
 								_this.img_requests.push(req);
 								
 
@@ -793,10 +846,15 @@ provoda.View.extendTo(songUI, {
 								appendImage(el, i + 1);
 							});
 							_this.photo_c.append(fragment);
-							if (_this.state("mp-show")){
-								_this.setImagesPrio();
-							}
+							
 							main_c.addClass('loading-images');
+
+							for (var i = _this.img_requests.length - 1; i >= 0; i--) {
+								_this.md.addRequest(_this.img_requests[i], {
+									space: 'demonstration'
+								});
+								
+							}
 
 							$.when.apply($, _this.img_requests).always(function(){
 								main_c.removeClass('loading-images');
@@ -809,9 +867,10 @@ provoda.View.extendTo(songUI, {
 					}
 
 				});
-			if (this.state("mp-show")){
-				images_request.queued && images_request.queued.setPrio('highest');
-			}
+			this.md.addRequest(images_request, {
+				space: 'demonstration'
+			});
+			
 
 		}
 		

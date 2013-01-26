@@ -1,15 +1,15 @@
 .navs{
 	overflow:hidden;
 	padding-top:6px;
-	padding-left:12px;
-	padding-right:12px;
+	padding-left:1rem;
+	padding-right:1rem;
 	min-height:36px;
 	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
 	border-bottom:1px solid #333;
 	font-family:"Trebuchet MS", sans-serif;
 	
 	
-	font-size:18px;
+	font-size:1.28rem;
 	font-family: "Trebuchet MS", sans-serif;
 
 }
@@ -27,257 +27,122 @@
 .player-played .np{
 	background-image:url(../i/equalaizer.gif);
 }
-
-
-.start-screen{
-	max-width: 750px;
-	margin:0 auto;
-	padding-bottom:20px;
-	}
-
-
-.complex-page{
-	max-width: 750px;
-	margin:0 auto;
-	}
-
-
-
-
-.block-for-startpage, .for-startpage{
-	margin-top:2em;
-}
-
-
-
-			
-		
-/**  New nav **/	
-.show-zoom-to-track li.viewing-song .track-context{
-	display:block;
-}
-.track-context{
-	display:none;
-}
-
-li.playing-song .play-controls{
+ #slider .screens{
+ 	max-width: 900px;
 	
 }
 
-
-.show-zoom-to-track .playlist-info{
-	display:none;
+.start-screen{
+	padding-bottom:1.5rem;
+	}
+.full-page .start-screen{
+	padding: 0 1rem 1.5rem;
+	}
+.page-scheme .start-screen{
+	padding-top: 1rem;
+	}
+.page-scheme .art_card{
+	padding-top: 1rem;
 }
-.show-zoom-to-track .load-more-songs{
+
+#search {
+	max-width: 750px;
+	margin: 0 auto;
+
+	}
+.complex-page{
+	
+
+	max-width: 750px;
+	}
+.inactive-page{
 	display: none;
 }
 
-
-.show-zoom-to-track .play-list-panel{
-	display:none;
-}
-.show-zoom-to-track ul.tracks-for-play .play-controls{
-	display:none;
-}
-.show-zoom-to-track ul.tracks-for-play{
-
-	padding-top:33px;
-}
-ul.tracks-for-play > li{
-	background-color: #505050;
-}
-
-
-.show-zoom-to-track ul.tracks-for-play > li.to-play-previous{
-	margin-top:33px;
-	}
-.show-zoom-to-track ul.tracks-for-play > li.to-play-next{
+.page-scheme{
 	
+	float:left;
+	
+
 	}
-.show-zoom-to-track ul.tracks-for-play > li.viewing-song{
-	border-bottom: 1px solid #4D4D4D;
-	border-top: 1px solid #737373;
-	background: #5E5E5E;
-	padding: 5px;
-	border-radius: 10px;
-	color:#fff;
-	margin:0 -5px;
+.complex-page.page-scheme .complex-page-scroll_con{
+	
+	margin-right: -30px;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
 	}
-	.show-zoom-to-track ul.tracks-for-play > li.viewing-song .track-node{
-		font-size:1.3em;
-		cursor:default;
-		height:19px;
+	.complex-page.page-scheme .complex-page_material{
+		width: 200px;
 		}
-	.show-zoom-to-track ul.tracks-for-play > li.viewing-song .song{
-		
-		
-		text-shadow: 0 1px 0 #333;
+
+@media (min-width:760px) {
+	
+	.complex-page{
+		margin-left: 240px;
 		}
-	.show-zoom-to-track ul.tracks-for-play>li.viewing-song .search-mp3-failed{
-		color:#737373;
+	#search {
+		margin-left: 240px;
+		}
+	.page-scheme{
+		display: block;
+		width: 200px;
+		margin-left:0;
+		}
+}
+
+
+.block-for-startpage, .for-startpage{
+	margin-top:2rem;
+}
+
+.page-scheme .relations-invites-wrap,
+.page-scheme .relations-likes-wrap,
+.page-scheme .users-play-this{
+	display: none;
 	}
-	.show-zoom-to-track ul.tracks-for-play>li.viewing-song a.download-mp3{
-		right:8px;
+
+.random-metro-chart{
+
 	}
-	.show-zoom-to-track ul.tracks-for-play>li.viewing-song a.loading,
-	.show-zoom-to-track ul.tracks-for-play>li.viewing-song a.search-mp3{
-		background-image:url(../i/spinner_bright.gif);
+	.random-metro-chart .show-in-header{
+		display: none;
+		margin-left: 0 !important;
+		}
+	.page-scheme .random-metro-chart ul{
+		display: none;
+		}		
+	.page-scheme .random-metro-chart .refresh-in-header{
+		display: none;
+		}
+	.page-scheme .random-metro-chart .show-in-header{
+		display: inline;
+		}
+
+
+.tags-hyped{
+
 	}
-	
-.show-zoom-to-track ul.tracks-for-play>li{
-	display:none;
-	}	
-	
-.show-zoom-to-track ul.tracks-for-play>li.to-play-previous,
-.show-zoom-to-track ul.tracks-for-play>li.viewing-song,
-.show-zoom-to-track ul.tracks-for-play>li.to-play-next{
-		display: list-item;
-		left:0;
-		right:0;
+	.page-scheme .tags-hyped a{
+		display: block;
+		padding:0.2rem 0.5rem;
+		border: 0;
+		}
+	.page-scheme .tags-hyped a:nth-of-type(even){
+		background-color: #4D4D4D;
+
+		}
+	.page-scheme .tags-hyped a:hover{
+		background-color: #535353;
 	}
-	
+/**  New nav **/	
+
 	
 
 .not-as-application .navs .nav-title{
 	float:left;
 }
-.navs .nav-title{
-	display:block;
-	padding-top:5px;
-	padding-left:10px;
-	overflow:hidden;
-	white-space:nowrap;
-	
-	height:20px;
-	line-height:20px;
-	text-overflow: ellipsis; 
-}
-.nav-item.hidden{
-	display:none;
-}
-.nav-item{
-	display:inline-block;
-	height:20px;
-	line-height:20px;
-	border-top:1px solid transparent;
-	padding:4px 0;
-	overflow: hidden;
-	margin-left:12px;
-  	-webkit-transition: margin-left 0.1s ease-out;  
-  	-moz-transition: margin-left 0.1s ease-out; 
-  	-o-transition: margin-left 0.1s ease-out; 
-  	transition: margin-left 0.1s ease-out; 
-}
-	.nav-item span{
-		line-height:20px;
-		display:block;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow:hidden;
-		height:24px;
-		}
-	.nav-item b{
-		display:none;
-	}
-	.nav-item .icon{
-		width:20px;
-		overflow: hidden;
-		text-indent: -200px;
-		background: no-repeat;
-	}
-.nav-button{
-	display: inline-block;
-	padding:4px 8px;
-	border-left:1px solid #751679;
-	border-radius:6px;
-}	
-.nnav, .nav-button{
-	cursor:pointer;
-	overflow: visible;
-	background:url(../i/nav/button-gradient.png) repeat-x 100% 0;
-	
-	text-shadow:0 1px 0 #000;
-	border-right:1px solid #751679;
-	border-top:1px solid #C16CC6;
-	border-bottom:1px solid #580A5C;
 
-	position:relative;
-}
-
-.nnav{
-	
-	padding:4px 14px 4px 9px;
-
-	
-	margin-right:10px;
-	-moz-border-radius:0 6px 6px 0;
-	-webkit-border-radius:0 6px 6px 0;
-	border-radius:0 6px 6px 0;
-	}
-	.nnav b{
-		display:inline;
-		position:absolute;
-		width:15px;
-		left:-15px;
-		z-index:2;
-		
-		background:url(../i/nav/button-arrow.png) no-repeat 0 0;
-		height:30px;
-		top:-1px;
-		}
-
-.nnav:after, .nav-button:after{
-	content: " ";
-	position:absolute;
-	left:0;right:0;
-	height:28px;
-	bottom:-2px;
-	border-bottom:1px solid #783B7D;
-	border-radius:0 0 6px 0;
-	display:block;
-}
-.nav-button:after{
-	border-radius:0 0 6px 6px !important;
-}
-
-.nnav:hover,.nav-button:hover{
-	color:#fff;
-	background-image:url(../i/nav/button-gradient-hover.png);
-	}
-	.nnav:hover b{
-		background-image:url(../i/nav/button-arrow-hover.png) ;
-		}
-.nnav:active, .nav-button:active{
-	text-shadow:none;
-	background-image:url(../i/nav/button-gradient-active.png);
-	
-	}
-	.nnav:active b{
-		background-image:url(../i/nav/button-arrow-active.png) ;
-		}
-		
-.stack-bottom{
-	
-	}
-.stack-middle{
-	
-	}
-.stack-top{
-	width:48px !important;
-	}
-
-
-.stack-middle, .stack-top, .stack-bottom{
-	margin-left:-42px;
-	}
-	.stack-middle > b, .stack-top > b, .stack-bottom > b{
-		top: 0;
-		background-position:0 -1px;
-		}	
-	
-.stack-bottom, .stack-middle{
-	max-width:15px;
-	}
 
 		
 .nav-start{
@@ -295,10 +160,6 @@ ul.tracks-for-play > li{
 	border-left:1px solid transparent;
 }	
 
-.stacked{
-	margin-right: 37px;
-	
-}
 .nav-start .icon{
 	background-image:url(../i/nav/seesu-nav-logo.png);
 	}
@@ -306,7 +167,7 @@ ul.tracks-for-play > li{
 		background-image:url(../i/nav/seesu-nav-logo-active.png);
 		}
 .nav-search-results{
-	padding:4px 14px 4px 9px;
+	padding:4px 1rem 4px 9px;
 	width:15px;
 	}
 .nav-search-results .icon{
@@ -319,7 +180,7 @@ ul.tracks-for-play > li{
 .np-button{
 	width:20px;	
 	position:absolute;
-	right:12px;
+	right:1rem;
 	top:8px;
 	padding: 4px 8px;
 	border-right: 1px solid transparent;
@@ -337,129 +198,137 @@ ul.tracks-for-play > li{
 		}
 	
 }
-
-.art-card{
+.full-page .usual_page{
+	margin-top:1.72rem;
+}
+.art_card{
 	max-width: 750px;
 	margin: 0 auto;
-	padding: 24px 10px;
+	
 	overflow:hidden;
 	padding-bottom: 20px;
 	}
-	.art-card ul{
+.full-page .art_card{
+	padding: 1.72rem 10px;
+	}
+	.art_card ul{
 		
 	}
-	.art-card .row-header{
-		margin-bottom:7px;
+	.art_card .row-header{
+		margin-bottom:0.5rem;
 	}
-	.art-card h5{
+	.art_card h5{
 	
 		}
-		.art-card h5 a.extends-header{
-			margin-left:14px;
+		.art_card h5 a.extends-header{
+			margin-left:1rem;
 			}
-	.art-card-meta{
+	.art_card-meta{
 		float:left;
 		width:50%;
 		
 		min-height:140px;
-		margin-bottom:24px;
+		margin-bottom:1.72rem;
 		}
-		.top-tracks,.art-card-tags{
-			margin-right:24px;
-			margin-bottom:24px;
+		.top-tracks,.art_card-tags{
+			margin-right:1.72rem;
+			margin-bottom:1.72rem;
 			}
-			.top-tracks.loading,.art-card-tags.loading{
+			.top-tracks.loading,.art_card-tags.loading{
 				background: url(../i/spinner_small.gif) no-repeat 100% 4px;
 				}
 					
 	
-			.art-card-meta ul{
+			.art_card-meta ul{
 				overflow:hidden;
 				}
-				.art-card-meta ul li{
+				.art_card-meta ul li{
 					float:left;
 					white-space:nowrap;
-					margin-right:1em;
+					margin-right:1rem;
 					}
 	
-	.art-card-similar{
+	.art_card-similar{
 		float:right;
 		width:50%;
-		margin-bottom:24px;
+		margin-bottom:1.72rem;
 		}
-		.art-card-similar.loading{
+		.art_card-similar.loading{
 			background: url(../i/spinner_small.gif) no-repeat 100% 4px;
 			}
-		.art-card-similar ul{
+		.art_card-similar ul{
 			overflow:hidden;
 			}
-			.art-card-similar ul li{
+			.art_card-similar ul li{
 				float:left;
-				margin-right:1em;
+				margin-right:1rem;
 				white-space:nowrap;
 				}
 
 	
 	
-	.art-card-albums{
+	.full-page .art_card-albums{
 		background: #3f3f3f;
 		padding: 10px 10px;
 		border-radius: 6px;
-		margin: 0 -10px 24px;
+		margin: 0 -10px 1.72rem;
 
 		clear:both;
 		
 		}
-		.art-card-albums.loading .row-header{
-			background: url(../i/spinner_dark_small.gif) no-repeat 100% 0%;
+		.art_card-albums.loading .row-header{
+			background: url(../i/spinner_dark_small.gif) no-repeat 100% 0;
 			}
-	.art-card-albums.show-all-albums{
+	.art_card-albums.show-all-albums{
 		
 		}
-		.art-card-albums .albums-groups{
+		.art_card-albums .albums-groups{
 			height:126px;
 			overflow:hidden;
 		}
-		.art-card-albums.show-all-albums .albums-groups{
+		.art_card-albums.show-all-albums .albums-groups{
 			height:auto;
 		}
-		.art-card-albums ul{
+		.art_card-albums ul{
 			overflow:hidden;
-			margin:0 0 12px;
+			margin:0 0 1rem;
 			padding-left:0;
 			}
 
-			.art-card-albums ul li{
+			.art_card-albums ul li{
 				float:left;
 				}
-			.art-card-albums ul li img{
+			.art_card-albums ul li img{
 				
 				}
 				
-			.art-card-albums ul li{
+			.art_card-albums ul li{
 				width:126px;
 
 				}
-				.art-card-albums ul li a{
+				.art_card-albums ul li a{
 					display:block;
 					border-bottom:0;
 					color:#aaaaaa;
 					position: relative;
 					}
-					.art-card-albums ul li a:hover{
+				.page-scheme .art_card-albums ul li a{
+					overflow: hidden;
+					}
+					.art_card-albums ul li a:hover{
 						color:#fff;
 						}
-						.art-card-albums ul li a:hover  .album-name{
+						.art_card-albums ul li a:hover  .album-name{
 							opacity: 1;
 						}
-				.art-card-albums ul li img{
+				.art_card-albums ul li img{
 					width:126px;
 					display:block;
 					height:126px;
 					margin-right:4px;
 					background:#ccc url(http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png) no-repeat 2px 2px;
 				}
-				.art-card-albums ul li .album-name{
+				.art_card-albums ul li .album-name{
 					
 					text-overflow: ellipsis;
 					overflow:hidden;
@@ -472,30 +341,77 @@ ul.tracks-for-play > li{
 					opacity: 0.7;
 					
 					}
-	.art-card-bio{
+	.page-scheme .art_card-albums .row-header .extends-header{
+		display: none;
+		}
+	.page-scheme .art_card-image{
+		display: none;
+		}
+	.full-page .art_card-bio{
 		float: right;
 		width: 50%;
 		}
-		.art-card-bio.loading{
+		.art_card-bio.loading{
 			min-height:20px;
 			background: url(../i/spinner_small.gif) no-repeat 100% 0%;
 			}
-
-	.art-card-image{
+	.page-scheme .art_card-bio{
+		display: none;
+		}
+	.full-page .art_card-image{
 		width:50%;
 		float:left;
 		}
 		
-		.art-card-image-padding{
-			padding-right:24px;
+		.full-page .art_card-image-padding{
+			padding-right:1.72rem;
 		}
-		.art-card-image img{
+		.art_card-image img{
 			width:100%;
-			margin-bottom:24px;
+			margin-bottom:1.72rem;
 		}
 @media (max-width:550px) {
-	.art-card-similar, .art-card-meta{
+	.art_card-similar, .art_card-meta{
 		float:none;
 		width:auto;
 	}
 }
+
+
+
+
+
+.page-scheme{
+
+	}
+	.page-scheme .art_card{
+
+		}
+		.page-scheme .art_card-meta{
+			float:none;
+			width: auto;
+			}
+		.page-scheme .art_card-similar{
+			float:none;
+			width: auto;
+			}
+			.page-scheme .art_card-albums .albums-groups{
+				height: auto
+				}
+			.page-scheme .art_card-albums ul li{
+				float:none;
+				overflow: hidden;
+				width: auto;
+				margin-bottom: 1rem;
+				}
+			.page-scheme .art_card-albums ul li img{
+				width: 38px;
+				height: 38px;
+				float:left;
+				}
+			.page-scheme .art_card-albums ul li .album-name{
+				position: static;
+				background: transparent;
+				}
+
+

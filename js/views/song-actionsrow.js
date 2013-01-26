@@ -61,7 +61,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 	},
 	'stch-share-url': {
 		fn: function(state){
-			this.getPart("share_input").val(state || "")
+			this.getPart("share_input").val(state || "");
 		//	dep_vp
 		},
 		dep_vp: ['share_input']
@@ -133,13 +133,16 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			share_input.bind("click focus", function() {
 				this.select();
 			});
+			this.addWayPoint(share_input);
 			return share_input;
 		},
 		"own-wall-button": function() {
 			var _this = this;
-			return $("<div class='post-to-my-vk-wall'></div>").click(function(){
+			var ptmw_link = $("<div class='post-to-my-vk-wall'></div>").click(function(){
 				_this.md.mo.postToVKWall();
 			}).text(localize("to-own-wall")).insertBefore(this.getPart("pch-ws-own"));
+			this.addWayPoint(ptmw_link);
+			return ptmw_link;
 		},
 		"pch-vk-auth": function() {
 			return this.addWSChunk();
@@ -172,7 +175,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.share_input.bind("click focus", function() {
 			this.select();
 		});
-*/		
+*/
 		this.requirePart("pch-ws-input");
 		this.requirePart("pch-ws-own");
 		this.requirePart("pch-vk-auth");
@@ -215,6 +218,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		this.pl_creation_b = $("<div class='create-named-playlist hidden suggest'></div>").click(function() {
 			_this.md.createPlaylist();
 		});
+		this.addWayPoint(this.pl_creation_b);
 		this.pl_creation_b_text = $('<span></span>');
 		this.pl_creation_b.append(localize("cr-new-playlist") + ' "').append(this.pl_creation_b_text).append('"');
 		this.lpl.append(this.pl_creation_b);
@@ -232,7 +236,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		
 	},
 	"stch-active_view": function(state){
-		this._super(state);
+		this._super.apply(this, arguments);//(state);
 		if (state){
 			var inp = this.input[0];
 			setTimeout(function() {
@@ -270,7 +274,7 @@ BaseCRowUI.extendTo(LoveRowUI, {
 		lfm_loveit: LfmLoveItView
 	},
 	createDetailes: function(){
-		var parent_c = this.parent_view.row_context; 
+		var parent_c = this.parent_view.row_context;
 		var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.love-song');
 		this.button = buttons_panel.find('.pc-place .pc-love');
@@ -335,9 +339,11 @@ BaseCRowUI.extendTo(RepeatSongRowView, {
 	parts_builder: {
 		"rept-chbx": function() {
 			var _this = this;
-			return this.c.find('.rept-song-label input').click(function() {
+			var input = this.c.find('.rept-song-label input').click(function() {
 				_this.md.setDnRp($(this).prop('checked'));
 			});
+			this.addWayPoint(input);
+			return input;
 		}
 	},
 	createDetailes: function(){
@@ -374,29 +380,27 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		this.arrow = this.row_context.children('.rc-arrow');
 		var _this = this;
 
-		this.setVisState('is-visible', !!this.parent_view.state('mp-show'))
-
 		this.parent_view.on('state-change.mp-show-end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});
 	},
 	children_views: {
-		"repeat-song": {
+		"row-repeat-song": {
 			main: RepeatSongRowView
 		},
-		"flash-error": {
+		"row-flash-error": {
 			main: FlashErrorRowUI
 		},
-		'lastfm': {
+		'row-lastfm': {
 			main: ScrobbleRowUI
 		},
-		'love': {
+		'row-love': {
 			main: LoveRowUI
 		},
-		'share': {
+		'row-share': {
 			main: ShareRowUI
 		},
-		'playlist-add': {
+		'row-playlist-add': {
 			main: PlaylistAddRowUI
 		}
 	},
@@ -440,7 +444,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		var _this = this;
 
 		var getClickPosition = function(e, node){
-			//e.offsetX || 
+			//e.offsetX ||
 			var pos = e.pageX - $(node).offset().left;
 			return pos;
 		};
@@ -453,7 +457,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			//setVisState
 			var hole_width = _this.state('vis-volume-hole-width');
 			if (!hole_width){
-				console.log("no width :!((")
+				console.log("no width :!((");
 			}
 			var twid = Math.min(hole_width, Math.max(0, last.cpos));
 
@@ -466,7 +470,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			_this.md.setVolumeByFactor(_this.width && (last.cpos/_this.width));
 			*/
 
-		}
+		};
 
 		var touchDown = function(e){
 			path_points = [];

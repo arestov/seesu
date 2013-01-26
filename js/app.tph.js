@@ -6,7 +6,8 @@ appTelegrapher.prototype = {
 
 
 		var view = (new this.appView());
-		md.addView(view);
+		md.addView(view, 'root');
+		md.updateLVTime();
 
 		view.init({
 			md: md

@@ -11,8 +11,8 @@ ExfmApi.prototype = {
 	get: function(method, params, options) {
 		var
 			_this				= this,
-			deferred 			= $.Deferred(),
-			complex_response 	= {
+			deferred			= $.Deferred(),
+			complex_response	= {
 				abort: function(){
 					this.aborted = true;
 					deferred.reject('abort');
@@ -52,13 +52,13 @@ ExfmApi.prototype = {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout)
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout);
 					}
 				};
 
 				var sendRequest = function() {
 					if (complex_response.aborted){
-						return
+						return;
 					}
 					if (!options.nocache){
 						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
@@ -111,24 +111,22 @@ ExfmApi.prototype = {
 var ExfmMusicSearch = function(exfm_api) {
 	this.exfm_api = exfm_api;
 	var _this = this;
-	this.search = function() {
-		return _this.findAudio.apply(_this, arguments);
-	}
+
 };
 ExfmMusicSearch.prototype = {
 	constructor: ExfmMusicSearch,
-	getById: function() {
-		return this.exfm_api.getSongById.apply(exfm_api, arguments);
-	},
 	name: "exfm",
 	description:'ex.fm',
 	slave: false,
 	s: {name: 'exfm', key: 0, type:'mp3'},
 	preferred: null,
+	makeSongFile: function(item) {
+		return this.makeSong(item);
+	},
 	makeSong: function(cursor, msq){
 
 		var entity = {
-			artist  	: HTMLDecode(cursor.artist),
+			artist		: HTMLDecode(cursor.artist),
 			track		: HTMLDecode(cursor.title),
 			link		: cursor.url,
 			from		: 'exfm',
@@ -139,26 +137,31 @@ ExfmMusicSearch.prototype = {
 			getSongFileModel: getSongFileModel
 		};
 		if (!entity.artist){
-			var guess_info = guessArtist(entity.track, msq.artist);
+			var guess_info = guessArtist(entity.track, msq && msq.artist);
 			if (guess_info.artist){
 				entity.artist = guess_info.artist;
 				entity.track = guess_info.track;
 			}
 		}
-		entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+		if (msq){
+			entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+		}
 		
-		return entity
+		
+		return entity;
 	},
 	findAudio: function(msq, opts) {
 		var
 			_this = this,
-			query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+			query = msq.q ? msq.q: ((msq.artist || '') + (msq.track ?  (' - ' + msq.track) : ''));
 
 		opts = opts || {};
-		opts.cache_key = opts.cache_key || query;
+
+		var limit_value =  msq.limit || 30;
+		opts.cache_key = opts.cache_key || (query + '_' + limit_value);
 
 		var params_u = {
-			results: 30
+			results: limit_value
 		};
 
 		var async_ans = this.exfm_api.get('song/search/' + query, params_u, opts);
@@ -176,12 +179,12 @@ ExfmMusicSearch.prototype = {
 							if (ent.query_match_index == -1){
 								//console.log(ent)
 							} else {
-								music_list.push(ent)
+								music_list.push(ent);
 							}
 
 
 						
-						};
+						}
 					}
 					if (music_list.length){
 						sortMusicFilesArray(music_list);

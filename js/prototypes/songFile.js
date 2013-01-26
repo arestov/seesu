@@ -19,9 +19,9 @@ provoda.Model.extendTo(fileInTorrent, {
 		if (!window.btapp){
 			app_env.openURL(this.sr_item.torrent_link);
 		} else {
-			btapp.add.torrent(this.sr_item.torrent_link)
+			btapp.add.torrent(this.sr_item.torrent_link);
 		}
-		this.updateState('download-pressed', true)
+		this.updateState('download-pressed', true);
 	}
 });
 

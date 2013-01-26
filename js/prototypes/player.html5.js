@@ -74,29 +74,34 @@
 		requireAE: function() {
 			if (!this.a){
 				this.a = createAE(this.id, this.url, this.cb);
+			} else if (!this.a.src){
+				a.src = this.url;
+			}
+		},
+		clearLoad: function() {
+			if (this.a && this.a.loadme){
+				this.a.loadme = false;
 			}
 		},
 		unload: function() {
 
 			if (this.a){
-				this.a.loadme = false;
+				this.clearLoad();
 				try {
 					this.a.pause();
 				} catch (e){}
-				this.a.url = null;
-				delete this.a;
+				this.a.src = null;
+				//delete this.a;
 			}
 		},
 		play: function() {
 			
 			this.requireAE();
-			this.a.loadme = true;
 			this.a.play();
 		},
 		load: function() {
 			
 			this.requireAE();
-			this.a.loadme = true;
 			if (this.a.networkState === 0){
 				this.a.load();
 			}
@@ -105,13 +110,13 @@
 		stop: function() {
 			
 			try{
-				this.a.loadme = false;
+				this.clearLoad();
 				this.a.pause();
 				this.a.currentTime = 0;
 			} catch(e){}
 		},
 		pause: function() {
-			this.a.loadme = false;
+			//this.a.loadme = false;
 			this.a.pause();
 		},
 		setVolume: function(vol, fac) {
