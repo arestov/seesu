@@ -80,16 +80,12 @@ provoda.View.extendTo(songUI, {
 		},
 		files_search: function(opts){
 			this.fsearch_status_c.attr('class', 'song-files-search-status');
-			if (opts.complete && !opts.have_tracks){
+			if (opts.search_complete && !opts.have_mp3_tracks){
 				this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
-				if (!opts.have_tracks){
-					
-				}
 				this.fsearch_status_c.addClass('has-none-files');
-
 			} else if (opts.have_best_tracks){
 				this.fsearch_status_c.addClass('has-best-files');
-			} else if (opts.have_tracks){
+			} else if (opts.have_mp3_tracks){
 				this.fsearch_status_c.addClass('has-some-files');
 			}
 
@@ -113,7 +109,7 @@ provoda.View.extendTo(songUI, {
 			this.player_song_mark.toggleClass('playing-process', state == 'play');
 		},
 		playable: function(new_state, old_state){
-			if (new_state && !!new_state != !!old_state){
+			if (new_state && (!!new_state) != (!!old_state)){
 				var _this = this;
 				this.node
 					.addClass('song')
@@ -574,7 +570,7 @@ provoda.View.extendTo(songUI, {
 				});
 
 		this.addWayPoint(artcard_link, {
-			simple_check: true
+			
 		});
 			
 
@@ -594,7 +590,7 @@ provoda.View.extendTo(songUI, {
 			e.preventDefault();
 		});
 		this.addWayPoint(extend_switcher, {
-			simple_check: true
+			
 		});
 		
 		this.t_users= {

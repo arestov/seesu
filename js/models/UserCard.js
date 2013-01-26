@@ -105,15 +105,16 @@ songsList.extendTo(EnhancedSongslist, {
 	authSwitching: function(auth, AuthConstr, params) {
 		var auth_rqb = new AuthConstr();
 		auth_rqb.init({auth: auth, pmd: this}, params);
-		this.updateState('has-access', auth_rqb.state('has-session'));
-		auth_rqb.on('state-change.has-session', function() {
-			_this.updateState('has-access', true);
+		var _this = this;
+		
+		auth_rqb.on('state-change.has-session', function(e) {
+			_this.updateState('has-access', e.value);
 			_this.switchPmd(false);
 		});
 
 		this.setChild('auth_part', auth_rqb);
 
-		var _this = this;
+		
 
 		this.pmd.on('state-change.vswitched', function(e) {
 			_this.checkPMDSwiched(e.value);

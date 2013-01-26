@@ -86,7 +86,7 @@
 					}
 					_this.bindItemsView();
 				})
-				.on('state-change', function(state){
+				.on('state-change.active', function(e){
 					_this.remarkStyles();
 				})
 				.on('request', function(rq){
@@ -285,12 +285,10 @@
 		},
 		setActive: function(){
 			this.updateState('active', true);
-			this.trigger('state-change', true);
 		},
 		setInactive: function(){
 			
 			this.updateState('active', false);
-			this.trigger('state-change', false);
 		},
 		loading: function(){
 			this.updateState('loading', true);

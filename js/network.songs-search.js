@@ -108,7 +108,7 @@ isohuntTorrentSearch.prototype = {
 	findAudio: function(msq, opts) {
 		var
 			_this = this,
-			query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+			query = msq.q ? msq.q: ((msq.artist || '') + (msq.track ?  (' - ' + msq.track) : ''));
 
 		opts = opts || {};
 		opts.cache_key = opts.cache_key || query;
@@ -268,7 +268,7 @@ googleTorrentSearch.prototype = {
 	findAudio: function(msq, opts) {
 		var
 			_this = this,
-			query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+			query = msq.q ? msq.q: ((msq.artist || '') + (msq.track ?  (' - ' + msq.track) : ''));
 
 		opts = opts || {};
 		opts.cache_key = opts.cache_key || query;

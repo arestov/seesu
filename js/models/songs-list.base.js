@@ -497,13 +497,13 @@ var songsList;
 		},
 		checkChangesSinceFS: function(target_song, opts) {
 			if (target_song.isImportant()){
-				if (!opts || (opts.complete || opts.have_best_tracks)){
+				if (!opts || (opts.search_complete || opts.have_best_tracks)){
 					this.checkNeighboursChanges(target_song, false, false, 'important; files search');
 					
 				}
 			}
 
-			if (!opts || opts.complete){
+			if (!opts || opts.search_complete){
 				var v_song = this.getViewingSong(target_song);
 				var p_song = this.getPlayerSong(target_song);
 				

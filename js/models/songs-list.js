@@ -77,13 +77,13 @@ var songsList;
 			if (!(omo instanceof song)){
 				var mo = new song();
 				mo.init({
-					omo: omo, 
+					omo: omo,
 					plst_titl: this,
 					player: this.player,
 					mp3_search: this.mp3_search
 				}, {
 					file: omo.file
-				})
+				});
 				return mo;
 			} else{
 				return omo;
@@ -93,7 +93,8 @@ var songsList;
 			if (!this.palist.length){return false;}
 			var simple_playlist = [];
 			for (var i=0; i < this.palist.length; i++) {
-				var song = this.palist[i].song();
+				var files = this.palist[i].mf_cor.getFilteredFiles();
+				var song = files && files[0];
 				if (song){
 					simple_playlist.push({
 						track_title: song.track,

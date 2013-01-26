@@ -5,9 +5,10 @@ var provoda;
 provoda = {
 	prototypes: {},
 	Eventor: function(){},
-	StatesEmitter: function() {},
+	StatesEmitter: function(){},
 	Model: function(){},
 	View: function(){},
+	StatesArchiver: function(){},
 	addPrototype: function(name, obj){
 		if (!this.prototypes[name]){
 			this.prototypes[name] = obj;
@@ -24,6 +25,99 @@ provoda = {
 	}
 };
 
+
+Class.extendTo(provoda.StatesArchiver, {
+	init: function(state_name, opts) {
+		this.controls_list = [];
+		this.state_name = state_name;
+		this.returnResult = opts.returnResult;
+		var calcR = opts.calculateResult;
+		if (calcR){
+			if (typeof calcR == 'function'){
+				this.calculateResult = calcR;
+			} else {
+				if (calcR == 'some'){
+					this.calculateResult = this.some;
+				} else if (calcR == 'every'){
+					this.calculateResult = this.every;
+				}
+			}
+
+			
+		} else {
+			this.calculateResult = this.some;
+		}
+	},
+	calculateResult: null,
+	every: function(values_array) {
+		for (var i = 0; i < values_array.length; i++) {
+			var cur = values_array[i];
+			if (!cur){
+				return false;
+			}
+		}
+		return true;
+	},
+	some: function(values_array, fn) {
+		for (var i = 0; i < values_array.length; i++) {
+			var cur = values_array[i];
+			if (cur){
+				return true;
+			}
+		}
+		return false;
+	},
+	getItemsValues: function() {
+		var values_list = [];
+		for (var i = 0; i < this.items_list.length; i++) {
+			values_list.push(this.items_list[i].state(this.state_name));
+			
+		}
+		this.returnResult.call(this, this.calculateResult.call(this, values_list));
+		return values_list;
+	},
+	unsubcribeOld: function() {
+		if (this.controls_list.length){
+			for (var i = 0; i < this.controls_list.length; i++) {
+				this.controls_list[i].unsubcribe();
+			}
+		}
+	},
+	setItems: function(items_list) {
+		this.unsubcribeOld();
+		this.items_list = items_list;
+		var _this = this;
+		var checkFunc = function() {
+			_this.getItemsValues();
+		};
+		this.controls_list = [];
+		for (var i = 0; i < items_list.length; i++) {
+			this.controls_list.push(
+				items_list[i].on('state-change.' + this.state_name, checkFunc, {easy_bind_control: true})
+			);
+		}
+		checkFunc();
+	}
+});
+
+var BindControl = function() {};
+Class.extendTo(BindControl, {
+	init: function(eventor, short_name, namespace, cb, once) {
+		this.ev = eventor;
+		this.short_name = short_name;
+		this.namespace = namespace;
+		this.cb = cb;
+		this.once = once;
+	},
+	subscribe: function() {
+		this.unsubcribe();
+		this.ev._pushCallbackToStack(this.short_name, this.namespace, this.cb, this.once);
+	},
+	unsubcribe: function() {
+		this.ev.off(this.namespace, this.cb);
+	}
+});
+
 Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
@@ -31,36 +125,65 @@ Class.extendTo(provoda.Eventor, {
 		this.requests = {};
 		return this;
 	},
+	_pushCallbackToStack: function(short_name, namespace, cb, once) {
+		if (!this.subscribes[short_name]){
+			this.subscribes[short_name] = [];
+		}
+		this.subscribes[short_name].push({
+			namespace: namespace,
+			cb: cb,
+			once: once
+		});
+	},
+	getPossibleRegfires: function(namespace) {
+		var parts = namespace.split('.');
+		var funcs = [];
+		for (var i = parts.length - 1; i > -1; i--) {
+			var posb_namespace = parts.slice(0, i + 1).join('.');
+			if (this.reg_fires[posb_namespace]){
+				funcs.push(this.reg_fires[posb_namespace]);
+			}
+		}
+		return funcs;
+	},
 	_addEventHandler: function(namespace, cb, opts, once){
 		var
 			fired,
 			_this = this,
-			short_name = namespace.split('.')[0];
+			name_parts = namespace.split('.'),
+			short_name = name_parts[0];
 
 		if (opts && opts.exlusive){
 			this.off(namespace);
 		}
-
-		if (this.reg_fires[short_name]){
-			this.reg_fires[short_name].call(this,  function() {
-				cb.apply(_this, arguments);
-				fired = true;
-			});
-			
-		}
-		if (!(once && fired)){
-			if (!this.subscribes[short_name]){
-				this.subscribes[short_name] = [];
+		if (!opts || !opts.skip_reg){
+			var reg_fires = this.getPossibleRegfires(namespace);
+			if (reg_fires.length){
+				reg_fires[0].call(this, function() {
+					cb.apply(_this, arguments);
+					fired = true;
+				}, namespace, opts, name_parts);
 			}
-			this.subscribes[short_name].push({
-				namespace: namespace,
-				cb: cb,
-				once: once
-			});
 		}
 		
 
-		return this;
+		/*if (this.reg_fires[short_name]){
+			this.reg_fires[short_name]
+			
+		}*/
+		if (!(once && fired)){
+			this._pushCallbackToStack(short_name, namespace, cb, once);
+		}
+		if (opts && opts.easy_bind_control){
+			var bind_control = new BindControl();
+			bind_control.init(this, short_name, namespace, cb, once);
+			return bind_control;
+		} else {
+			return this;
+		}
+		
+
+		
 	},
 	once: function(namespace, cb, opts){
 		return this._addEventHandler(namespace, cb, opts, true);
@@ -220,6 +343,21 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.states = {};
 		this.complex_states_index = {};
 		this.complex_states_watchers = [];
+		this.onRegistration('child-change', function(cb, namespace, opts, name_parts) {
+			var child_name = name_parts[1];
+			var child = this.getChild(child_name);
+			if (child){
+				cb({
+					value: child
+				});
+			}
+		});
+		this.onRegistration('state-change', function(cb, namespace, opts, name_parts) {
+			var state_name = name_parts[1];
+			cb({
+				value: this.state(state_name)
+			});
+		});
 		return this;
 	},
 	state: function(name){
@@ -398,18 +536,40 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.trigger('die');
 		return this;
 	},
+	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
+		var _this = this;
+		var archiver = new provoda.StatesArchiver();
+		archiver.init(collection_state, {
+			returnResult: function(value) {
+				_this.updateState(result_state_name || collection_state, value);
+			},
+			calculateResult: statesCalcFunc
+		});
+		this.on('child-change.' + collection_name, function(e) {
+			archiver.setItems(e.value);
+		});
+	},
 	getChild: function(collection_name) {
 		return this.children_models[collection_name];
 	},
 	setChild: function(collection_name, array, changed) {
 		this.children_models[collection_name] = array;
+
+		this.trigger('child-change.' + collection_name, {
+			value: array
+		});
+
 		if (changed){
 			this.sendCollectionChange(collection_name, array);
 		}
+
 		return this;
 	},
 	addChild: function(md, name) {
-		this.children.push.call(this.children, md);
+		if (this.children.indexOf(md) == -1){
+			this.children.push.call(this.children, md);
+		}
+		
 	},
 	getRooConPresentation: function(mplev_view, get_ancestor) {
 		var views = this.getViews();
@@ -732,7 +892,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.children.push.call(this.children, view);
 	},
 	addChild: function(view, child_name) {
-		this.children.push.call(this.children, view);
+		if (this.children.indexOf(view) == -1){
+			this.children.push.call(this.children, view);
+		}
 	},
 	removeChildViewsByMd: function(md) {
 		var views_to_remove = [];
@@ -789,17 +951,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		
 		
-		return this;
-	},
-	setModel: function(md, puppet_model){
-		throw new Error('what do you do!?');
-
-		this.md = md;
-		var was;
-		if (puppet_model){
-			this.puppet_model = puppet_model;
-		}
-		this.setStates(md.states);
 		return this;
 	},
 	getT: function(){

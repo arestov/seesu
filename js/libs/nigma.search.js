@@ -111,9 +111,6 @@ var NigmaMusicSearch = function(api) {
 
 NigmaMusicSearch.prototype = {
 	constructor: NigmaMusicSearch,
-	getById: function() {
-		return this.api.getSongById.apply(this.api, arguments);
-	},
 	name: "nigma",
 	description:'nigma.ru',
 	slave: false,
@@ -145,7 +142,7 @@ NigmaMusicSearch.prototype = {
 	findAudio: function(msq, opts) {
 		var
 			_this = this,
-			query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+			query = msq.q ? msq.q: ((msq.artist || '') + (msq.track ?  (' - ' + msq.track) : ''));
 
 		opts = opts || {};
 		opts.cache_key = opts.cache_key || query;

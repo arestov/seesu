@@ -77,7 +77,7 @@ provoda.Model.extendTo(ImagesPack, {
 			
 		}
 	}
-})
+});
 var TrackImages  = function() {};
 ImagesPack.extendTo(TrackImages, {
 	init: function(artmd, info) {
@@ -91,10 +91,6 @@ ImagesPack.extendTo(TrackImages, {
 		artmd.on('state-change.image-to-use', function(e) {
 			_this.updateState('artist-image', e.value);
 		});
-		var art_image = artmd.state('image-to-use');
-		if (art_image){
-			this.updateState('artist-image', art_image);
-		}
 
 	},
 	complex_states: {

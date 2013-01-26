@@ -57,7 +57,7 @@ scApi.prototype = {
 
 				var sendRequest = function() {
 					if (complex_response.aborted){
-						return
+						return;
 					}
 					if (!options.nocache){
 						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
@@ -115,9 +115,6 @@ var scMusicSearch = function(sc_api) {
 };
 scMusicSearch.prototype = {
 	constructor: scMusicSearch,
-	getById: function() {
-		return this.sc_api.getSongById.apply(sc_api, arguments);
-	},
 	name: "soundcloud",
 	description:'soundcloud.com',
 	slave: false,
@@ -159,7 +156,7 @@ scMusicSearch.prototype = {
 	findAudio: function(msq, opts) {
 		var
 			_this = this,
-			query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+			query = msq.q ? msq.q: ((msq.artist || '') + (msq.track ?  (' - ' + msq.track) : ''));
 
 		opts = opts || {};
 		opts.cache_key = opts.cache_key || query;
@@ -190,10 +187,10 @@ scMusicSearch.prototype = {
 								if (ent.query_match_index == -1){
 									//console.log(ent)
 								} else if (!has_music_copy(music_list,ent)){
-									music_list.push(ent)
+									music_list.push(ent);
 								}
 							}
-						};
+						}
 					}
 					if (music_list.length){
 						sortMusicFilesArray(music_list);

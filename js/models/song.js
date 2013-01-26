@@ -71,14 +71,13 @@ var song;
 					.on('state-change.image-to-use', function(e) {
 						_this.updateState('lfm-image', e.value);
 					});
-				this.updateState('lfm-image', images_pack.state('image-to-use'));
+				
 
 			} else {
 				images_pack = su.art_images.getArtistImagesModel(this.state('artist'))
 					.on('state-change.image-to-use', function(e) {
 						_this.updateState('lfm-image', e.value);
 					});
-				this.updateState('lfm-image', images_pack.state('image-to-use'));
 			}
 
 			this.on('view', function(no_navi, user_want){
@@ -107,9 +106,9 @@ var song;
 			if (omo.file){
 				this.updateState('playable', true);
 				this.updateState('files_search', {
-					complete: true,
+					search_complete: true,
 					have_best_tracks: true,
-					have_tracks: true
+					have_mp3_tracks: true
 				});
 			}
 			this.setChild('mf_cor', this.mf_cor);
@@ -122,9 +121,23 @@ var song;
 			this.mf_cor.on("error", function(can_play) {
 				_this.player.trigger("song-play-error", _this, can_play);
 			});
+
+			if (this.mf_cor.isSearchAllowed()){
+				this.on('state-change.track', function(e) {
+					if (e.value){
+						_this.bindFilesSearchChanges();
+					}
+				});
+				
+				
+			}
+
+
+
+
 			
 			this.watchStates(['files_search', 'marked_as', 'mp-show'], function(files_search, marked_as, mp_show) {
-				if (marked_as && files_search && files_search.complete){
+				if (marked_as && files_search && files_search.search_complete){
 					this.updateState('can-expand', true);
 				} else if (mp_show){
 					this.updateState('can-expand', true);
@@ -164,12 +177,6 @@ var song;
 				return "http://seesu.me/o" + "#/catalog/" + su.encodeURLPart(this.artist) + "/_/" + su.encodeURLPart(this.track);
 			} else {
 				return "";
-			}
-		},
-		updateFilesSearchState: function(complete, get_next){
-			this._super.apply(this, arguments);
-			if (this.isHaveTracks('mp3')){
-				this.plst_titl.markAsPlayable();
 			}
 		},
 		mlmDie: function() {
