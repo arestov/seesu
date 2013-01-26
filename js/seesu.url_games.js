@@ -20,7 +20,7 @@ if (app_env.needs_url_history) {
 					var too_fast_hash_change = (o.newURL != newhash);
 					if (!too_fast_hash_change){
 						if (typeof hashchangeHandler == 'function'){
-							hashchangeHandler(o)
+							hashchangeHandler(o);
 						}
 						hash = newhash;
 					}
@@ -479,7 +479,8 @@ var gunm = function(lev){
 
 
 };
-var recoverPlaylistBranch = function(pldata, songdata, has_artcard){
+
+var recoverPlaylistBranch = function(pldata, parent_md, songdata, has_artcard){
 	if (songdata && songdata.current_track && songdata.current_artist){
 		var start_song = {artist: songdata.current_artist, track: songdata.current_track}
 	};
@@ -487,81 +488,137 @@ var recoverPlaylistBranch = function(pldata, songdata, has_artcard){
 	console.log(pldata)
 	switch (pldata.type) {
 		case 'similar':
-			su.showSimilarArtists(pldata.artist, {no_navi: true, from_artcard: has_artcard, save_parents: true}, songdata);
+			su.showSimilarArtists(pldata.artist, {
+				no_navi: true, 
+				from_artcard: has_artcard,
+				source_info: parent_md && {
+					page_md: parent_md,
+					source_name: has_artcard && 'similar-artists',
+				},
+			}, songdata);
 			break
 		case 'album':
 			su.showAlbum({
 				album_name: pldata.album_name,
 				artist: pldata.artist
-			}, {no_navi: true, from_artcard: has_artcard, save_parents: true}, start_song);
+			}, {
+				no_navi: true, 
+				from_artcard: has_artcard, 
+				source_info: parent_md && {
+					page_md: parent_md,
+					source_name: has_artcard && 'artist-albums',
+				},
+			}, start_song);
 			break
 		case 'top':
-			su.showTopTacks(pldata.artist, {no_navi: true, from_artcard: has_artcard, save_parents: true}, start_song);
+			su.showTopTacks(pldata.artist, {
+				no_navi: true, 
+				from_artcard: has_artcard,
+				source_info: parent_md && {
+					page_md: parent_md,
+					source_name: has_artcard && 'top-tracks'
+				}
+			}, start_song);
 			break
 		case 'tag':
-			su.show_tag(pldata.tag_name, {no_navi: true, save_parents: true}, start_song);
+			su.show_tag(pldata.tag_name, {
+				no_navi: true, 
+				source_info: parent_md && {
+					page_md: parent_md
+				}
+			}, start_song);
 			break
 		case 'recommendations':
 			if (start_song){
-				su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {
+					no_navi: true, 
+					from_artcard: has_artcard,
+					source_info: parent_md && {
+						page_md: parent_md
+					}
+				}, start_song);
 			}
 			break
 		case 'cplaylist':
 			if (start_song){
-				su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {
+					no_navi: true,
+					from_artcard: has_artcard,
+					source_info: parent_md && {
+						page_md: parent_md
+					}
+				}, start_song);
 			}
 			break
 		case 'chart':
 			if (start_song){
-				su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {
+					no_navi: true,
+					from_artcard: has_artcard,
+					source_info: parent_md && {
+						page_md: parent_md
+					}
+				}, start_song);
 			} else{
-				su.showMetroChart(pldata.country, pldata.metro, {no_navi: true, save_parents: true});
+				su.showMetroChart(pldata.country, pldata.metro, {
+					no_navi: true, 
+					source_info: parent_md && {
+						page_md: parent_md
+					}
+				}); //fghjfghj
 			}
 			break
 		case 'loved':
 			if (start_song){
-				su.showTopTacks(start_song.artist, {no_navi: true, save_parents: true}, start_song);
+				su.showTopTacks(start_song.artist, {
+					no_navi: true,
+					from_artcard: has_artcard,
+					source_info: {
+						page_md: parent_md
+					}
+				}, start_song);
 			}
 			break
 		default:
 			;
 	}
 };
-
-var recoverHistoryTreeBranch = function(branch, sub_branch, prev_branch){
-	var sub_branch_handled;
-	switch (branch.type) {
-		case 'search':
-			su.showResultsPage(branch.data.query, true);
-			break
-		case 'artcard':
-			su.showArtcardPage(branch.data.artist, true, true);
-			break
-		case 'pl':
-			var song;
+var history_btypes = {
+	'search': function(branch, build_result, sub_branch, prev_branch) {
+		return su.showResultsPage(branch.data.query, true);
+	},
+	'artcard': function(branch, build_result, sub_branch, prev_branch) {
+		return su.showArtcardPage(branch.data.artist, build_result && {
+			page_md: build_result
+		}, true);
+	},
+	'pl': function(branch, build_result, sub_branch, prev_branch) {
+		var song;
 			
-			if (sub_branch && sub_branch.type == 'track'){
-				song = sub_branch.data;
-				sub_branch_handled = true;
-			}
-			recoverPlaylistBranch(branch.data, song, prev_branch && prev_branch.type == 'artcard')
+		if (sub_branch && sub_branch.type == 'track'){
+			song = sub_branch.data;
+			sub_branch.done = true;
+			//sub_branch_handled = true;
+		}
+		return recoverPlaylistBranch(branch.data, build_result, song, prev_branch && prev_branch.type == 'artcard')
 
-			
-			break
-		case 'track':
-			//this.getLovedData(pth, con)
-			break
-		default:
-			;
+	},
+	'track': function(branch, sub_branch, prev_branch) {
+
 	}
-	return sub_branch_handled;
+};
+
+var recoverHistoryTreeBranch = function(branch, build_result, sub_branch, prev_branch){
+	var handler = history_btypes[branch.type];
+
+	return handler ? handler.call(this, branch, build_result, sub_branch, prev_branch) : false;
 };
 
 
 var hashChangeQueue = new funcsQueue(0);
  
 
-var hashChangeRecover = function(e){
+var hashChangeRecover = function(e, soft){
 	var url = e.newURL;
 
 	su.map.startChangesCollecting();
@@ -587,19 +644,23 @@ var hashChangeRecover = function(e){
 		}	
 	} else{
 		var jn = getFakeURLParameters(url.replace(/\ ?\$...$/, ''));
-		su.showStartPage(true);
-		if (jn.tree.length){
+		if (!jn.tree.length){
+			if (!soft){
+				su.showStartPage(true);
+			}
+		} else {
+			su.showStartPage(true);
 			var prev_branch;
+			var build_result = su.start_page;
 			while (jn.tree.length) {
 				var branch = jn.tree.shift();
-				var subhed = recoverHistoryTreeBranch(branch, jn.tree[0], prev_branch);
-				if (subhed){
-					jn.tree.shift();
+				if (!branch.done){
+					build_result = recoverHistoryTreeBranch(branch, build_result, jn.tree[0], prev_branch);
+				} else {
+					build_result = branch.build_result;
 				}
 				prev_branch = branch;
 			}
-			
-			
 		}
 	}
 	
@@ -613,11 +674,11 @@ var hashChangeReciever = function(e){
 	});
 };
 
-var hashchangeHandler=  function(e, force){
+var hashchangeHandler=  function(e, soft){
 	if (e.newURL != navi.getFakeURL()){
 		navi.setFakeURL(e.newURL)
 		if (e.oldURL != e.newURL){
-			hashChangeRecover(e);
+			hashChangeRecover(e, soft);
 		}
 	}
 };
@@ -627,7 +688,7 @@ var hashchangeHandler=  function(e, force){
 		su.on('handle-location', function() {
 			hashchangeHandler({
 				newURL: url
-			});
+			}, true);
 
 		});
 	}

@@ -139,6 +139,9 @@ lastfm_api.prototype= {
 								deferred.reject.apply(deferred, arguments);
 							})
 							.done(function(r){
+								if (!post && _this.checkMethodResponse){
+									_this.checkMethodResponse(method, params, r);
+								}
 								deferred.resolve.apply(deferred, arguments);
 								if (!post && _this.cache_ajax){
 									_this.cache_ajax.set(_this.cache_namespace, params.api_sig, r, options.cache_timeout);
@@ -148,14 +151,14 @@ lastfm_api.prototype= {
 							if (options.after_ajax){
 								options.after_ajax();
 							}
-							//console.log(params)	
+							//console.log(params)
 						}
 
 					} else{
 						_this.post_serv.post(params, function(){
 							deferred.resolve();
 						});
-					} 
+					}
 					
 				};
 

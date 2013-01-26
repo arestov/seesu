@@ -11,19 +11,26 @@
 	</script>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<link id="dynamic-favicon" rel="shortcut icon" href="icons/icon16.png"/>
-	<link rel="stylesheet" href="css/master.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/buttons.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/view_switcher.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/vkontakte_switcher.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/search_results.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/player.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/buttmen.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/play-list-panel.css" type="text/css" media="screen" />
-	<link rel="stylesheet" href="css/abs_layout.css" type="text/css" media="screen" />
+	<link rel="stylesheet" type="text/css" media="screen" href="css/base.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="css/buttons.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/master.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/view_switcher.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/vkontakte_switcher.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/search_results.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/player.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/buttmen.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/play-list-panel.css"/>
+	<link rel="stylesheet" type="text/css" media="screen" href="css/abs_layout.css"/>
+
 	<meta name="keywords"  content="seesu, seesu for iphone, seesu for android, seesu for mobile, seesu online, last.fm, vk.com music, vkontakte.ru and last.fm" >
 	<meta name="description" content="Seesu is amazing web application for searching and listening music. Hot last.fm acceleration"  >
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport"  content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" />
+
+	<link rel="image_src" href="http://seesu.me/i/page-poster.png"/>
+	<meta property="og:title" content="Seesu Music (online version)" />
+	<meta property="og:description" content="Seesu is a small mashup application which combines last.fm catalog, vk.com mp3 and soundcloud mp3 libraries to lets you listen to music and meet new people." />
+	<meta property="og:image" content="http://seesu.me/i/page-poster.png" />
 	<script type="text/javascript">
 		window._gaq = window._gaq || [];
 		var big_timer = {
@@ -129,10 +136,10 @@
   
   <body>
   	<div id="ui-samples" style="display:none">
-  		<div class="art-card">
+  		<div class="art_card">
 			
 			
-			<div class="art-card-meta">
+			<div class="art_card-meta">
 				<div class="top-tracks">
 			
 					<h5 class="row-header lang localize-Best-tracks">Best tracks</h5>
@@ -140,25 +147,25 @@
 				
 					
 				</div>
-				<div class='art-card-tags'>
+				<div class='art_card-tags'>
 					<h5 class="row-header lang localize-Tags">Tags</h5>
 					<ul class="hidden"></ul>
 				</div>
 			</div>
-			<div class="art-card-similar">
+			<div class="art_card-similar">
 				<h5 class="row-header lang localize-similar-arts" >Similar artists</h5>
 				<ul class="hidden"></ul>
 			</div>
-			<div class="art-card-albums">
+			<div class="art_card-albums">
 				<h5 class="row-header lang localize-Albums" >Albums</h5>				
 			</div>
 			
-			<div class="art-card-image">
-				<div class="art-card-image-padding">
+			<div class="art_card-image">
+				<div class="art_card-image-padding">
 					
 				</div>
 			</div>
-			<div class="art-card-bio"></div>
+			<div class="art_card-bio"></div>
 		</div>
   		
   		
@@ -231,11 +238,14 @@
 							<span class="lang localize-add-to-wl"><strong>add</strong> it to white list on  </span>
 							
 							<strong>
-								<a class="flash-s lang localize-flashpage ">flash internet security page</a>
+								<a 
+									class="flash-s lang localize-flashpage external" 
+									href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html"
+								>flash internet security page</a>
 								
 							</strong> 
 								
-								<span class="lang localize-and-restart">and then restart Seesu</span>
+							<span class="lang localize-and-restart">and then restart Seesu</span>
 								
 						</p>
 						<p class="flash-desandboxing" title="flash security steps"></p>
@@ -324,7 +334,7 @@
 		</dl>
 					
 					
-					
+				
 					
   		<div class="vk-login-context">
 			<div class="decor">
@@ -346,6 +356,28 @@
 				<div class="auth-container">
 					<input type="text" placeholder='Put your code here' class="vk-code"/> 
 					<button class="use-vk-code lang localize-use-code">Use code</button>
+				</div>
+			</div>
+		</div>
+		<div class="lfm-auth-module">
+			<div class="auth-block">
+				<p>
+					<span class="button-hole lastfm-auth-bp">
+						<a class="nicebutton lang localize-grant">grant</a>
+					</span>
+					<span class="lfm-auth-request-desc"></span>
+				</p>
+				<div class="lfm-finish">
+					<div class="lang localize-enter-code">
+						Enter here code
+					</div>
+					<div>
+						<input type="text" placeholder='Put your code here' class="lfm-code"/>
+						<span class="button-hole">
+							<a class="use-lfm-code nicebutton lang localize-use-code">Use code</a>
+						</span>
+						
+					</div>	
 				</div>
 			</div>
 		</div>
@@ -383,32 +415,8 @@
 			
 			
 		</div>
-		<div class="lfm-auth-module hidden">
-			<div class="auth-block">
-				<p>
-					<span class="button-hole lastfm-auth-bp">
-						<a class="nicebutton lang localize-grant">grant</a>
-					</span>
-					<span class="lfm-auth-request-desc"></span>
-				</p>
-				<div class="lfm-finish">
-					<div class="lang localize-enter-code">
-						Enter here code
-					</div>
-					<div>
-						<input type="text" placeholder='Put your code here' class="lfm-code"/>
-						<span class="button-hole">
-							<a class="use-lfm-code nicebutton lang localize-use-code">Use code</a>
-						</span>
-						
-					</div>	
-				</div>
-			</div>
-		</div>
-		<form class="lfm-manual-user needs-cross-domain">
-			<p><span class="lang localize-or-type-username">or type username</span> <span class="lang localize-type-friend-desc">(you can type your friend)</span></p>
-			<p><input type="text" name="username" value="YodaPunk" class="lfm-username"> <button type='submit'>ok</button></p>
-		</form>
+		
+		
 		<form class="scrobbling-switches">
 			<p>scrobbling to last.fm</p>
 		
@@ -448,47 +456,53 @@
 					</form>
 				</div>
 				
-				<div class="start-screen" id="start-screen">
-					<p id="search-use-hint" class="search-desc">
-						<span class="lang localize-trysearches">try to search</span> 
-						<a id='hint-query'  class="hint-query js-serv">The Beatles</a>
-						
-					</p>
-					<div class="fast-personal-start has-dark-buttons">
-						
-						<span class="button-hole hidden cus-playlist-b">
-							<a class="nicebutton lang localize-playlists">Playlists</a>
-						</span>
-						<div class="left-buttons-group">
-							<span class="button-hole">
-								<a id="lfm-recomm" class="nicebutton lang localize-reccoms">Recommendations</a>
-							</span>
-							<span class="button-hole">
-								<a id="lfm-loved" class="nicebutton lang localize-loved-tracks">Loved Tracks</a>
-							</span>
-						</div>
-						
-						<div class="row-context hidden">
-							<span class="rc-arrow hidden">
-								<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
-							</span>
-							<div class="lfm-recomm hidden"></div>
-							<div class="lfm-loved hidden"></div>
-						</div>
+				<div class="complex-page full-page">
+					<div class="complex-page-scroll_con">
 
-						
+						<div class="complex-page_material start-screen " id="start-screen">
+							<p id="search-use-hint" class="search-desc">
+								<span class="lang localize-trysearches">try to search</span> 
+								<a id='hint-query'  class="hint-query js-serv">The Beatles</a>
+								
+							</p>
+
+							
+							<div class="block-for-startpage start-page-messages"></div>
+							
+							<div class="personal-stuff-preview has-dark-buttons">
+								<div class="to-open-block area-button">
+									<span class="lang localize-your-pmus-f-aq">Your personal music, friends and acquaintances</span>
+									
+									<div class="area-description">
+										<span class="lang localize-reccoms-for-you">Recommendations for you</span>,
+										<span class="lang localize-loved-tracks">Loved Tracks</span>,
+										<span class="lang localize-vk-audio">Vkontakte audio</span>
+									</div>
+								</div>
+								
+
+								<div class="block-for-startpage relations-invites-wrap"></div>
+								<div class="block-for-startpage relations-likes-wrap"></div>
+
+							</div>
+							
+							<div class="for-startpage"></div>
+							<div class="block-for-startpage music-conductor-preview">
+								<h2 class="hidden">Музыкальный кондуктор</h2>
+							</div>
+							<div class="app-loading-mark"></div>
+							
+						</div>
 					</div>
-					<div class="app-loading-mark"></div>
-					<div class="for-startpage"></div>
-					<div class="block-for-startpage start-page-messages"></div>
-					<div class="block-for-startpage relations-invites-wrap"></div>
-					<div class="block-for-startpage relations-likes-wrap"></div>
+
+
 				</div>
+				
 			</div>
 
 			<div id="promo"></div>
 			<div class="footer">
-				<a href="http://seesu.me/?utm_source=seesu%2Bapplication&amp;utm_medium=footer%2Blink&amp;utm_campaign=application" class="seesu-me-link desc" id="seesu-me-link" target='_blank'>seesu.me</a>
+				
 			</div>
 			
 	</div>

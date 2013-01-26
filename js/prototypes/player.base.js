@@ -78,9 +78,9 @@ provoda.Eventor.extendTo(playerBase, {
 	},
 	setVolume: function(song_file, vol, fac){
 		vol = parseFloat(vol);
-		if (isNaN(vol)){
+		if ((!fac || (fac.length < 2)) && isNaN(vol)){
 			vol = 100;
-			console.log('don\'t give me shit')
+			console.log('wrong volume value')
 		}
 		if (song_file && this.core){
 			this.core.callSongMethod("setVolume", song_file.uid, vol, fac);

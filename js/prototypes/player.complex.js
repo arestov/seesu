@@ -10,7 +10,7 @@ playerBase.extendTo(playerComplex, {
 	removeCurrentWantedSong: function(){
 		if (this.wanted_song){
 			this.wanted_song.updateState('want_to_play', false);
-			delete this.wanted_song
+			delete this.wanted_song;
 		}
 	},
 	wantSong: function(mo){
@@ -19,34 +19,38 @@ playerBase.extendTo(playerComplex, {
 			this.removeCurrentWantedSong();
 			if (!this.c_song){
 				if (mo.plst_titl.lev){
-					mo.plst_titl.lev.freeze()
+					mo.plst_titl.lev.freeze();
 				}
 			}
 			(this.wanted_song = mo).updateState('want_to_play', true);
-			mo.setPrio('highest');
-
+			
 			var opts = mo.state('files_search');
-			if (opts && ((opts.complete && opts.have_tracks) || opts.have_best_tracks)){
+			if (opts && ((opts.search_complete && opts.have_mp3_tracks) || opts.have_best_tracks)){
 				mo.play();
+				clearTimeout(_this.cantwait_toplay);
 			} else {
-				var filesSearch = function(opts){
+				var filesSearch = function(e){
+					var opts = e.value;
 					if (_this.wanted_song == mo){
 						if (mo.canPlay()){
-							if (opts.complete || opts.have_best_tracks){
-								clearTimeout(mo.cantwait_toplay);
-								mo.play()
-							} else if (!mo.cantwait_toplay){
-								mo.cantwait_toplay = setTimeout(function(){
-									mo.play();
+							if (opts.search_complete || opts.have_best_tracks){
+								clearTimeout(_this.cantwait_toplay);
+								mo.play();
+							} else if (!_this.cantwait_toplay){
+								_this.cantwait_toplay = setTimeout(function(){
+									if (_this.wanted_song == mo){
+										mo.play();
+									}
+									
 								}, 20000);
-							}	
+							}
 						}
 						
 					} else {
-						mo.off('files_search', filesSearch);
+						mo.off('state-change.files_search', filesSearch);
 					}
 				};
-				mo.on('files_search', filesSearch);
+				mo.on('state-change.files_search', filesSearch, {skip_reg: true});
 			}
 			
 		}
@@ -72,7 +76,7 @@ playerBase.extendTo(playerComplex, {
 			this.removeCurrentWantedSong();
 
 			if (last_mo && last_mo.state('mp-show') && this.c_song != mo){
-				mo.view()
+				mo.view();
 			}
 			if (last_mo){
 				last_mo.stop();
@@ -83,10 +87,11 @@ playerBase.extendTo(playerComplex, {
 			}
 			
 			if (mo.plst_titl.lev){
-				mo.plst_titl.lev.freeze()
+				mo.plst_titl.lev.freeze();
 			}
 			this.c_song = mo;
 			mo.updateState("player-song", true);
 		}
+		this.trigger('now-playing-signal', last_mo != mo, mo, last_mo);
 	}
 });

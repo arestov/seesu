@@ -8,6 +8,18 @@
 */
 
 localizer = {
+	"vk_photo_meet_need": {
+		"original": "If you want to meet this man you need to upload photo to your vk.com profile and press \"%button_name%\" button",
+		"ru":  "Что бы познакомиться, необходимо загрузить фотографию в свой профиль во вконтакте, после чего нажать кнопку \"%button_name%\""
+	},
+	"vk_photo_update": {
+		"original": "Get photo from my vk.com profile",
+		"ru": "Получить фотографию из моего профиля вконтакте"
+	},
+	"your-pmus-f-aq": {
+		"original": "Your personal music, friends and acquaintances",
+		"ru": "Твоя персональная музыка, друзья и знакомства"
+	},
 	"listeners-looks":{
 		"original": "People who listened to this track, look like this",
 		"ru": "Люди, слушавшие этот трек, выглядят примерно так:"
@@ -47,7 +59,7 @@ localizer = {
 	},
 	"will-get-link":{
 		"original": "you will get link to his profile after 5 days",
-		"ru": "через 5 дней ты получешь ссылку на его профиль"	
+		"ru": "через 5 дней ты получешь ссылку на его профиль"
 	},
 	"wget-link":{
 		"original": "You will get profile link",
@@ -59,7 +71,7 @@ localizer = {
 	},
 	"attime":{
 		"original":"at",
-		"ru": "в"	
+		"ru": "в"
 	},
 	"m1":{
 		"original": "January",
@@ -123,7 +135,7 @@ localizer = {
 	},
 	"want-meet":{
 		"original": "Want to meet",
-		"ru": "Хочу познакомиться"	
+		"ru": "Хочу познакомиться"
 	},
 	"Pop-tags":{
 		"original": "Popular tags",
@@ -141,9 +153,13 @@ localizer = {
 		"original": "regisration",
 		"ru": "регистрация"
 	},
+	"listening": {
+		"original": "is listening",
+		"ru": "слушает"
+	},
 	"listen-this":{
 		"original": "listen this",
-		"ru": "слушал это"	
+		"ru": "слушал это"
 	},
 	"search": {
 		"original": "Search",
@@ -166,6 +182,19 @@ localizer = {
 		"original": "Recommendations",
 		"ru": "Рекомендации"
 	},
+	"reccoms-for-you": {
+		"original" : "Recommendations for you",
+		"ru": "Рекомендации для тебя"
+	},
+	"reccoms-for": {
+		"original" : "Recommendations for",
+		"ru": "Рекомендации для"
+	},
+	"vk-audio": {
+		"original": "Vkontakte audio",
+		"ru": "Аудиозаписи во вконтакте"
+	},
+	
 	"grant": {
 		"original": "grant",
 		"ru": "дать доступ"
@@ -208,11 +237,11 @@ localizer = {
 	},
 	"Tags": {
 		"original": "Tags",
-		"ru": "Теги"	
+		"ru": "Теги"
 	},
 	"get-albums":{
 		"original": "get albums",
-		"ru": "получить альбомы"	
+		"ru": "получить альбомы"
 	},
 	"similar-arts": {
 		"original":	"Similar artists",
@@ -220,7 +249,7 @@ localizer = {
 	},
 	"albums": {
 		"original": "albums",
-		"ru": "альбомы"	
+		"ru": "альбомы"
 	},
 	"artcard": {
 		"original": "artist card",
@@ -232,7 +261,7 @@ localizer = {
 	},
 	"top-tracks":{
 		"original": "top tracks",
-		"ru": 'лучшие треки'	
+		"ru": 'лучшие треки'
 	},
 	"stop-flash": {
 		"original": "To stop annoing «Adobe Flash Player Security» window copy this address:",
@@ -276,7 +305,7 @@ localizer = {
 	},
 	"lfm-auth-invitation": {
 		"original": "you must grant access to Seesu from last.fm",
-		"ru": "тебе нужно дать Сису доступ к своей учётной записи на last.fm" 
+		"ru": "тебе нужно дать Сису доступ к своей учётной записи на last.fm"
 	},
 	"to-find-and-play":{
 		
@@ -353,7 +382,7 @@ localizer = {
 	},
 	"dont-rept-pl": {
 		"original": "Do not repeat playlist",
-		"ru": "Не повторять плейлист" 
+		"ru": "Не повторять плейлист"
 	},
 	"playlist-getmp3": {
 		"original": "Find files for compositions",
@@ -367,7 +396,7 @@ localizer = {
 		"original": "add song to",
 		"ru": "добавить композицию в"
 	},
-	 "to-search": {
+	"to-search": {
 		"original": "Search ",
 		"ru": "Искать "
 	},
@@ -405,7 +434,7 @@ localizer = {
 	},
 	"full-list":{
 		"original": "full list",
-		"ru": "полный список"	
+		"ru": "полный список"
 	},
 	"oartists": {
 		"original": "artists",
@@ -417,11 +446,11 @@ localizer = {
 	},
 	"otags": {
 		'original': 'tags',
-		"ru": 'тегов'	
+		"ru": 'тегов'
 	},
 	"oalbums":{
 		"original": "albums",
-		"ru": "альбомов"	
+		"ru": "альбомов"
 	},
 	"video": {
 		"original": "Video",
@@ -434,6 +463,10 @@ localizer = {
 	"show-them": {
 		"original": "show them",
 		"ru": "показать их"
+	},
+	"show": {
+		"original": "show",
+		"ru": "показать"
 	},
 	"direct-vk-search": {
 		"original": "Search mp3  directly in vkontakte",
@@ -483,6 +516,11 @@ localizer = {
 		"original": "or to the friend's wall",
 		"ru": "или на стену одного из друзей"
 	},
+	"to-play-vk-audio": {
+		"original": "To play \"my audio\"",
+		"ru": "Чтобы проигрывать \"мои аудиозаписи\""
+
+	},
 	"to-find-vk-friends":{
 		"original": "To select your vk.com friend",
 		"ru": "Чтобы выбрать стену друга на vk.com"
@@ -508,4 +546,4 @@ localizer = {
 		"original": "",
 		"ru": ""
 	}
-}
+};

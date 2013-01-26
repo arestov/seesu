@@ -1,9 +1,6 @@
 var isohuntTorrentSearch = function(cross_domain_allowed) {
 	this.crossdomain = cross_domain_allowed;
 	var _this = this;
-	this.search =  function(){
-		return _this.findAudio.apply(_this, arguments);
-	};
 };
 isohuntTorrentSearch.prototype = {
 	constructor: isohuntTorrentSearch,
@@ -17,8 +14,8 @@ isohuntTorrentSearch.prototype = {
 	send: function(query, options) {
 		var
 			_this				= this,
-			deferred 			= $.Deferred(),
-			complex_response 	= {
+			deferred			= $.Deferred(),
+			complex_response	= {
 				abort: function(){
 					this.aborted = true;
 					deferred.reject('abort');
@@ -54,13 +51,13 @@ isohuntTorrentSearch.prototype = {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r)
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r);
 					}
 				};
 
 				var sendRequest = function() {
 					if (complex_response.aborted){
-						return
+						return;
 					}
 					if (!options.nocache){
 						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
@@ -111,7 +108,7 @@ isohuntTorrentSearch.prototype = {
 	findAudio: function(msq, opts) {
 		var
 			_this = this,
-			query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+			query = msq.q ? msq.q: ((msq.artist || '') + (msq.track ?  (' - ' + msq.track) : ''));
 
 		opts = opts || {};
 		opts.cache_key = opts.cache_key || query;
@@ -129,7 +126,7 @@ isohuntTorrentSearch.prototype = {
 					if (r.items && r.items.list){
 						for (var i = 0; i < Math.min(r.items.list.length, 10); i++) {
 							_this.wrapItem(result, r.items.list[i], msq);
-						};
+						}
 					}
 					
 				}
@@ -151,7 +148,7 @@ isohuntTorrentSearch.prototype = {
 			getSongFileModel: function(mo, player) {
 				return this.models[mo.uid] = this.models[mo.uid] || (new fileInTorrent(this, mo)).setPlayer(player);
 			}
-		});		
+		});
 	}
 };
 
@@ -162,9 +159,6 @@ isohuntTorrentSearch.prototype = {
 var googleTorrentSearch = function(cross_domain_allowed) {
 	this.crossdomain = cross_domain_allowed;
 	var _this = this;
-	this.search =  function(){
-		return _this.findAudio.apply(_this, arguments);
-	};
 };
 googleTorrentSearch.prototype = {
 	constructor: googleTorrentSearch,
@@ -178,8 +172,8 @@ googleTorrentSearch.prototype = {
 	send: function(query, options) {
 		var
 			_this				= this,
-			deferred 			= $.Deferred(),
-			complex_response 	= {
+			deferred			= $.Deferred(),
+			complex_response	= {
 				abort: function(){
 					this.aborted = true;
 					deferred.reject('abort');
@@ -215,13 +209,13 @@ googleTorrentSearch.prototype = {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r)
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r);
 					}
 				};
 
 				var sendRequest = function() {
 					if (complex_response.aborted){
-						return
+						return;
 					}
 					if (!options.nocache){
 						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
@@ -274,7 +268,7 @@ googleTorrentSearch.prototype = {
 	findAudio: function(msq, opts) {
 		var
 			_this = this,
-			query = msq.q ? msq.q: ((msq.artist || '') + ' - ' + (msq.track || ''));
+			query = msq.q ? msq.q: ((msq.artist || '') + (msq.track ?  (' - ' + msq.track) : ''));
 
 		opts = opts || {};
 		opts.cache_key = opts.cache_key || query;
@@ -291,7 +285,7 @@ googleTorrentSearch.prototype = {
 					result = [];
 					for (var i = 0; i < r.responseData.results.length; i++) {
 						_this.wrapItem(result, r.responseData.results[i], msq);
-					};
+					}
 				}
 				cb(result, 'torrent');
 

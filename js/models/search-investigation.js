@@ -12,16 +12,10 @@ var
 
 
 var suParseArtistsResults = function(r, item_constr, method) {
-	su.art_images.checkLfmData(method, r);
-	
-
 	return parseArtistsResults.apply(this, arguments);
 };
 
 var suParseTracksResults = function(r, item_constr, method) {
-	su.art_images.checkLfmData(method, r);
-	
-
 	return parseTracksResults.apply(this, arguments);
 };
 var suParseTagsResults = parseTagsResults;
@@ -58,7 +52,10 @@ baseSuggest.extendTo(artistSuggest, {
 		return this.artist;
 	},
 	onView: function(){
-		su.showArtcardPage(this.artist, true);
+		su.showArtcardPage(this.artist, {
+			page_md: this.invstg,
+			source_md: this
+		});
 		su.trackEvent('Music search', this.q, "artist: " + this.artist );
 	}
 });
@@ -74,7 +71,10 @@ baseSuggest.extendTo(playlistSuggest, {
 		return this.pl.playlist_title;
 	},
 	onView: function(){
-		su.showStaticPlaylist(this.pl, true);
+		su.showStaticPlaylist(this.pl, {
+			page_md: this.invstg,
+			source_md: this
+		});
 	}
 });
 
@@ -94,7 +94,7 @@ searchSection.extendTo(seesuSection, {
 				})
 				.on('state-change.disabled', function(e){
 					_this.trigger('items-change');
-				});
+				}, {skip_reg: true});
 			this.setButtonText();
 			this.setChild('button', this.button);
 		}
@@ -145,8 +145,19 @@ var trackSuggest = function(data){
 	this.artist = data.artist;
 	this.track = data.track;
 	this.image = data.image;
+	this.updateState('artist', data.artist);
+	this.updateState('track', data.track);
+	if (this.image){
+		this.updateState('image', data.image);
+	}
+	
+
 	if (data.duration){
 		this.duration = data.duration;
+		var track_dur = parseInt(this.duration);
+		var digits = track_dur % 60;
+		track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
+		this.updateState('duration-text', track_dur);
 	}
 	this.text_title = this.getTitle();
 };
@@ -155,7 +166,12 @@ baseSuggest.extendTo(trackSuggest, {
 		return this.artist + ' - ' + this.track;
 	},
 	onView: function(){
-		su.showTopTacks(this.artist, {save_parents: true}, {
+		su.showTopTacks(this.artist, {
+			source_info: {
+				page_md: this.invstg,
+				source_md: this
+			}
+		}, {
 			artist: this.artist,
 			track: this.track
 		});
@@ -210,7 +226,12 @@ baseSuggest.extendTo(tagSuggest, {
 		return this.tag;
 	},
 	onView: function(){
-		su.show_tag(this.tag, {save_parents: true});
+		su.show_tag(this.tag, {
+			source_info: {
+				page_md: this.invstg,
+				source_md: this
+			}
+		});
 		seesu.trackEvent('Music search', this.q, "tag: " + this.tag );
 	}
 });
@@ -250,9 +271,12 @@ var albumSuggest = function(data){
 	//artist, name, image, id
 	this.artist = data.artist;
 	this.name = data.album;
+	this.updateState('artist', data.artist);
+	this.updateState('name', data.album);
 	
 	if (data.image){
 		this.image = data.image;
+		this.updateState('image', data.image);
 	}
 	if (data.resid){
 		this.aid = data.resid;
@@ -268,7 +292,12 @@ baseSuggest.extendTo(albumSuggest, {
 			artist: this.artist,
 			album_name: this.name,
 			album_id: this.aid
-		}, {save_parents: true});
+		}, {
+			source_info: {
+				page_md: this.invstg,
+				source_md: this
+			}
+		});
 		seesu.trackEvent('Music search', this.q, "album: " + this.text_title);
 	}
 });
@@ -317,7 +346,7 @@ investigation.extendTo(SearchPage, {
 		"needs-search-from": {
 			depends_on: ['mp-freezed'],
 			fn: function(frzd) {
-				return !frzd
+				return !frzd;
 			}
 		}
 	},
@@ -373,7 +402,7 @@ investigation.extendTo(SearchPage, {
 			}
 			
 			if (pl_results.length){
-				pl_sec =  this.g('playlists'); 
+				pl_sec =  this.g('playlists');
 				
 				pl_sec.setActive();
 				pl_sec.appendResults(pl_results);
@@ -405,7 +434,7 @@ investigation.extendTo(SearchPage, {
 		}
 		return tags_results;
 	},
-	searchNetwork: seesu.env.cross_domain_allowed ? 
+	searchNetwork: seesu.env.cross_domain_allowed ?
 		function(q){
 			var _this = this;
 			this.loading();
@@ -428,7 +457,7 @@ investigation.extendTo(SearchPage, {
 				}, hash, this);
 				
 			}
-		} 
+		}
 		:
 		debounce(function(q){
 			getLastfmSuggests('artist.search', {artist: q}, q, this.g('artists'), suParseArtistsResults);

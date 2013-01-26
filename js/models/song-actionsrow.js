@@ -5,19 +5,16 @@ var LoveRow;
 
 
 
-var LfmLoveIt = function(auth, mo) {
-	this.init(auth, mo);
+var LfmLoveIt = function(opts, mo) {
+	this.init(opts, mo);
 };
 
 LfmLogin.extendTo(LfmLoveIt, {
-	init: function(auth, mo) {
-		this._super(auth);
+	init: function(opts, mo) {
+		this._super(opts);
 		this.song = mo;
 		this.setRequestDesc(localize('lastfm-loveit-access'));
 		this.updateState('active', true);
-	},
-	onSession: function(){
-		this.updateState('has-session', true);
 	},
 	beforeRequest: function() {
 		this.bindAuthCallback();
@@ -57,7 +54,7 @@ BaseCRow.extendTo(LoveRow, {
 		this.actionsrow = actionsrow;
 		this.mo = mo;
 		this._super();
-		this.lfm_loveit = new LfmLoveIt(su.lfm_auth, this.mo);
+		this.lfm_loveit = new LfmLoveIt({auth: su.lfm_auth, pmd: this}, this.mo);
 		this.setChild('lfm_loveit', this.lfm_loveit);
 		this.lfm_loveit.on('love-success', function() {
 			_this.hide();
@@ -65,7 +62,7 @@ BaseCRow.extendTo(LoveRow, {
 		this.addChild(this.lfm_loveit);
 		
 	},
-	row_name: 'love'
+	model_name: 'row-love'
 });
 })()
 
@@ -92,9 +89,6 @@ baseSuggest.extendTo(struserSuggest, {
 		return this.user_id;
 	},
 	onView: function(){
-		//this.pl.add(this.mo);
-		//this.rpl.hide();
-		//su.showStaticPlaylist(this.pl, true);
 		this.mo.postToVKWall(this.user_id);
 		this.row.hide();
 	}
@@ -159,6 +153,9 @@ ShareRow = function(actionsrow, mo){
 };
 BaseCRow.extendTo(ShareRow, {
 	init: function(actionsrow, mo){
+
+		var su = window.su;
+		
 		var _this = this;
 		this.actionsrow = actionsrow;
 		this.mo = mo;
@@ -189,7 +186,7 @@ BaseCRow.extendTo(ShareRow, {
 			var bindFriendsAccessChange = function() {
 				if (!binded && window.VK){
 					binded = true;
-					window.VK.addCallback('onSettingsChanged', function(vk_opts) {
+					su.vk_auth.on('settings-change', function(vk_opts) {
 						_this.checkVKFriendsAccess(vk_opts);
 					});
 				}
@@ -198,7 +195,7 @@ BaseCRow.extendTo(ShareRow, {
 			if (!binded){
 				su.once("vk-site-api", bindFriendsAccessChange);
 			}
-		} 
+		}
 
 		this.searcher = new StrusersRowSearch(this, mo);
 		this.setChild('searcher', this.searcher);
@@ -207,9 +204,8 @@ BaseCRow.extendTo(ShareRow, {
 		var updateSongURL = function(){
 			_this.updateState('share-url', _this.mo.getShareUrl());
 		};
-		updateSongURL();
 
-		this.mo.on("url-change", function(){
+		this.mo.on("state-change.url-part", function(){
 			updateSongURL();
 		});
 
@@ -240,34 +236,31 @@ BaseCRow.extendTo(ShareRow, {
 		}
 	},
 	addVKAudioAuth: function(improve) {
-		if (!this.vk_auth){
 
-			this.vk_auth = new vkLogin();
-			this.setChild('vk_auth', this.vk_auth);
-			this.vk_auth.on('auth-request', function() {
-				if (su.vk_app_mode){
-					if (window.VK){
-						VK.callMethod('showSettingsBox', 2);
-					}
-				} else {
-					su.vk_auth.requestAuth();
-				}
-				//console.log()
+		
+		if (!this.vk_auth_rqb){
+			
+			this.vk_auth_rqb = new VkLoginB();
+			this.vk_auth_rqb.init({
+				auth: su.vk_auth
+			}, {
+				open_opts: {settings_bits: 2},
+				desc: improve ? localize('to-find-vk-friends') : localize("to-post-and-find-vk")
 			});
-			this.addChild(this.vk_auth);
+			this.setChild('vk_auth', this.vk_auth_rqb);
+			this.addChild(this.vk_auth_rqb);
 
 		}
 		//to find you friends
 
-		this.vk_auth.setRequestDesc(improve ? localize('to-find-vk-friends') : localize("to-post-and-find-vk"));
 
 		this.updateState("needs-vk-auth", true);
 
 	},
 	removeVKAudioAuth: function() {
-		if (this.vk_auth){
-			this.vk_auth.die();
-			delete this.vk_auth;
+		if (this.vk_auth_rqb){
+			this.vk_auth_rqb.die();
+			delete this.vk_auth_rqb;
 
 		}
 		this.updateState("needs-vk-auth", false);
@@ -277,7 +270,7 @@ BaseCRow.extendTo(ShareRow, {
 		this.updateState('query', q);
 		this.searcher.changeQuery(q);
 	},
-	row_name: 'share'
+	model_name: 'row-share'
 //	ui_constr: ShareRowUI
 });
 })()
@@ -362,7 +355,7 @@ BaseCRow.extendTo(PlaylistAddRow, {
 		this.setChild('searcher', this.searcher);
 		this.addChild(this.searcher);
 	},
-	row_name: 'playlist-add',
+	model_name: 'row-playlist-add',
 //	ui_constr: PlaylistAddRowUI,
 	search: function(q) {
 		this.updateState('query', q);
@@ -390,11 +383,11 @@ BaseCRow.extendTo(ScrobbleRow, {
 	init: function(actionsrow){
 		this.actionsrow = actionsrow;
 		this._super();
-		this.lfm_scrobble = new LfmScrobble(su.lfm_auth);
+		this.lfm_scrobble = new LfmScrobble({auth: su.lfm_auth, pmd: this});
 		this.setChild('lfm_scrobble', this.lfm_scrobble);
 		this.addChild(this.lfm_scrobble);
 	},
-	row_name: 'lastfm'
+	model_name: 'row-lastfm'
 });
 
 
@@ -409,7 +402,7 @@ BaseCRow.extendTo(FlashErrorRow, {
 		this.actionsrow = actionsrow;
 		this._super();
 	},
-	row_name: 'flash-error'
+	model_name: 'row-flash-error'
 });
 
 
@@ -441,7 +434,7 @@ BaseCRow.extendTo(RepeatSongRow, {
 		this.updateState('rept-song', state);
 		su.setSetting('rept-song', state);
 	},
-	row_name: 'repeat-song'
+	model_name: 'row-repeat-song'
 });
 
 

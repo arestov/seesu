@@ -8,21 +8,16 @@ var songsList;
 
 	songsList = function(){};
 	songsListBase.extendTo(songsList, {
-		init: function(params, first_song, findMp3, player) {
+		init: function(opts, params, first_song) {
 			//playlist_title, playlist_type, info
 			//params.title, params.type, params.data
-			this._super();
-			this.info = params.data || {};
-			if (params.title){
-				this.playlist_title = params.title;
+			
+			this._super.apply(this, arguments);
+			if (params){
+				this.setBaseInfo(params);
 			}
-			if (params.type){
-				this.playlist_type = params.type;
-				this.updateState('nav-text', this.playlist_title);
-				this.updateState('nav-title', this.playlist_title);
-			}
-			this.player = player;
-			this.findMp3 = findMp3;
+			
+			
 			this.findSongOwnPosition(first_song);
 
 			var plarow = new PlARow();
@@ -42,8 +37,19 @@ var songsList;
 				doNotReptPl(true);
 			}
 			su.on('settings.dont-rept-pl', doNotReptPl);
+			this.updateState('url-part', this.getURL());
 		},
 		page_name: 'playlist',
+		setBaseInfo: function(params) {
+			this.info = params.data || {};
+			if (params.title){
+				this.playlist_title = params.title;
+			}
+			if (params.type){
+				this.playlist_type = params.type;
+				this.updateState('nav-title', this.playlist_title);
+			}
+		},
 		getURL: function(){
 			var url ='';
 			if (this.playlist_type == 'artist'){
@@ -67,10 +73,17 @@ var songsList;
 			}
 			return url;
 		},
-		extendSong: function(omo, player, mp3_search){
+		extendSong: function(omo){
 			if (!(omo instanceof song)){
 				var mo = new song();
-				mo.init(omo, this, player, mp3_search)
+				mo.init({
+					omo: omo,
+					plst_titl: this,
+					player: this.player,
+					mp3_search: this.mp3_search
+				}, {
+					file: omo.file
+				});
 				return mo;
 			} else{
 				return omo;
@@ -80,7 +93,8 @@ var songsList;
 			if (!this.palist.length){return false;}
 			var simple_playlist = [];
 			for (var i=0; i < this.palist.length; i++) {
-				var song = this.palist[i].song();
+				var files = this.palist[i].mf_cor.getFilteredFiles();
+				var song = files && files[0];
 				if (song){
 					simple_playlist.push({
 						track_title: song.track,
@@ -144,7 +158,7 @@ var songsList;
 			this.updateState('dont-rept-pl', state);
 			su.setSetting('dont-rept-pl', state);
 		},
-		row_name: 'pl-settings'
+		model_name: 'row-pl-settings'
 	});
 
 
@@ -158,10 +172,11 @@ var songsList;
 			this.actionsrow = actionsrow;
 			this._super();
 		},
-		row_name: 'multiatcs'
+		model_name: 'row-multiatcs'
 	});
 
 
 
 	
 })();
+
