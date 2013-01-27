@@ -281,25 +281,18 @@ provoda.addPrototype("baseSong",{
 			var request = this.rtn_request = lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
 				.done(function(r){
 					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
-
 					if (_this.track){
 						return;
 					}
-
 					tracks = $filter(tracks, 'name');
 					var some_track = tracks[Math.floor(Math.random()*tracks.length)];
 					if (some_track){
 						_this.setSongName(some_track, full_allowing, from_collection, last_in_collection);
-
-
-
 					} else {
 						_this.updateState("no-track-title", true);
 					}
-
 				})
 				.always(function(){
-					
 					_this.updateState('track-name-loading', false);
 					if (_this.rtn_request == request){
 						delete _this.rtn_request;
