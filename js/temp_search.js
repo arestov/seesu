@@ -89,8 +89,8 @@ var TorqueSearch = function() {
 	var _this = this;
 
 	this.search = function() {
-		return _this.findFiles.apply(_this, arguments);
-	}
+		return _this.findAudio.apply(_this, arguments);
+	};
 };
 TorqueSearch.prototype = {
 	name: "torq-torrents",
@@ -100,11 +100,11 @@ TorqueSearch.prototype = {
 		type: "mp3"
 	},
 	constructor: TorqueSearch,
-	findFiles: function(msq) {
+	findAudio: function(msq) {
 		var
-			tse				= this,
-			deferred 			= $.Deferred(),
-			complex_response 	= {
+			tse					= this,
+			deferred			= $.Deferred(),
+			complex_response	= {
 				abort: function(){
 					//this.aborted = true;
 					deferred.reject('abort');
@@ -139,11 +139,11 @@ TorqueSearch.prototype = {
 		})
 		.next(function(array) {
 
-			//get torrent files list 
+			//get torrent files list
 			var _this = this;
 			console.log(array);
 			if (!array.length){
-				return
+				return;
 			}
 
 			var torrent_link = array[0].torrent_link;
@@ -165,8 +165,8 @@ TorqueSearch.prototype = {
 
 						files_array.push({
 							name: file.get('properties').get('name'),
-							file: file,
-						})
+							file: file
+						});
 					});
 
 							
@@ -183,7 +183,7 @@ TorqueSearch.prototype = {
 				if (torrent){
 
 					getFiles(torrent);
-					return
+					return;
 				} else {
 					add.torrent({
 						url: torrent_link,
@@ -195,7 +195,7 @@ TorqueSearch.prototype = {
 								}
 
 								
-							},0)
+							},0);
 						},
 						priority: Btapp.TORRENT.PRIORITY.METADATA_ONLY
 					});
@@ -206,7 +206,7 @@ TorqueSearch.prototype = {
 
 			var add = btapp.get('add');
 			if (add){
-				torrentAdding(add)
+				torrentAdding(add);
 			} else {
 				btapp.on('add:add', function(add){
 					
@@ -220,11 +220,11 @@ TorqueSearch.prototype = {
 			//get files list
 		})
 		.next(function(obj) {
-			//find 
+			//find
 			console.log(obj.files);
 			var target = {
 				torrent: obj.torrent
-			}
+			};
 			
 			for (var i = 0; i < obj.files.length; i++) {
 				if (obj.files[i].name.match(/\.mp3$/)){
@@ -244,15 +244,15 @@ TorqueSearch.prototype = {
 					models: {},
 					getSongFileModel: function(mo, player) {
 						return this.models[mo.uid] = this.models[mo.uid] || (new FileInTorque()).init({
-							mo: mo, 
-							file_in_torrent: target.file, 
-							name: target.name, 
+							mo: mo,
+							file_in_torrent: target.file,
+							name: target.name,
 							torrent: target.torrent
 						}).setPlayer(player);
 					}
-				})
+				});
 				array.push(pusher);
-				deferred.resolve(array, 'mp3')
+				deferred.resolve(array, 'mp3');
 			} else {
 				deferred.reject();
 			}
@@ -273,11 +273,11 @@ TorqueSearch.prototype = {
 	//removing other search sources!
 	var list = su.mp3_search.se_list;
 	for (var i = 0; i < list.length; i++) {
-		su.mp3_search.remove(list[i])
+		su.mp3_search.remove(list[i]);
 		
 	}
 
-})()
+})();
 
 
 su.mp3_search.add(new TorqueSearch());
