@@ -218,16 +218,16 @@ googleTorrentSearch.prototype = {
 						return;
 					}
 					if (!options.nocache){
-						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
+						cache_used = _this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
 							deferred.resolve(r);
 						});
 					}
 					
 					if (!cache_used){
 						aReq({
-							url: "http://ajax.googleapis.com/ajax/services/search/web",
+							url: "https://ajax.googleapis.com/ajax/services/search/web",
 							type: "GET",
-							dataType: this.crossdomain ? "json": "jsonp",
+							dataType: _this.crossdomain ? "json": "jsonp",
 							data: {
 								cx: "001069742470440223270:ftotl-vgnbs",
 								v: "1.0",

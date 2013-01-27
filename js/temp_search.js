@@ -71,7 +71,9 @@ songFileModel.extendTo(FileInTorque, {
 });
 
 window.bap = new Btapp();
-bap.connect();
+bap.connect({
+	mime_type: 'application/x-bittorrent-torquechrome'
+});
 
 var btapp = bap;
 

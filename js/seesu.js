@@ -592,12 +592,12 @@ suReady(function() {
 			
 			
 		}
-	})
+	});
 	
 });
 
 
-var torrent_search; 
+var torrent_search;
 
 
 (function(){
@@ -610,7 +610,7 @@ var torrent_search;
 	su.mp3_search.add(new ExfmMusicSearch(exfm_api));
 
 	
-	if (app_env.cross_domain_allowed){
+	if (false && app_env.cross_domain_allowed){
 		su.mp3_search.add(torrent_search = new isohuntTorrentSearch());
 
 		/*yepnope({
