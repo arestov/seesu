@@ -581,10 +581,12 @@ suReady(function() {
 			bpath + 'btapp/underscore-min.js',
 			bpath + 'btapp/backbone-min.js',
 			bpath + 'btapp/jstorage.min.js',
-			fp + 'btapp.js',
-			fp + 'client.btapp.js',
 			fp + 'plugin.btapp.js',
 			fp + 'pairing.btapp.js',
+			fp + 'client.btapp.js',
+			
+			
+			fp + 'btapp.js',
 			bpath + 'js/temp_search.js'
 
 		],

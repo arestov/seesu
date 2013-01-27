@@ -4,10 +4,17 @@
 // http://pwmckenna.github.com/btapp
 
 (function() {
-
-    var MAX_PORT = 11000;
+    "use strict";
     
-    function assert(b, err) { if(!b) throw err; }
+    function assert(b, err) { if(!b) { throw err; } } 
+
+    var NUM_PORTS_SCANNED = 5;
+    var AJAX_TIMEOUT = 3000;
+
+    //validate dependencies
+    assert(typeof JSON !== 'undefined', 'JSON is a hard dependency');
+    assert(typeof _ !== 'undefined', 'underscore/lodash is a hard dependency');
+    assert(typeof jQuery !== 'undefined', 'jQuery is a hard dependency');
 
     function getCSS(url) {
         jQuery(document.createElement('link') ).attr({
@@ -17,10 +24,18 @@
         }).appendTo('head');
     }
     
-
+    function initializeFacebox() {
+        jQuery.facebox.settings.overlay = true; // to disable click outside overlay to disable it
+        jQuery.facebox.settings.closeImage = 
+            'https://torque.bittorrent.com/facebox/src/closelabel.png';
+        jQuery.facebox.settings.loadingImage = 
+            'https://torque.bittorrent.com/facebox/src/loading.gif';                     
+        jQuery.facebox.settings.opacity = 0.6;
+    }
 
     function isMac() {
-        return navigator.userAgent.match(/Macintosh/) != undefined;
+        var match = navigator.userAgent.match(/Macintosh/);
+        return match !== undefined && match !== null;
     }
 
     function get_domain(port) {
@@ -52,7 +67,7 @@
         return 7 * Math.pow(i, 3) + 3 * Math.pow(i, 2) + 5 * i + 10000;
     }
 
-    PairingView = Backbone.View.extend({
+    this.PairingView = Backbone.View.extend({
         initialize: function() {
             assert(this.model.get('pairing_type') !== 'native');
             this.model.on('pairing:authorize', this.authorize_iframe, this);
@@ -65,12 +80,7 @@
                 return;
             }
 
-            jQuery.facebox.settings.overlay = true; // to disable click outside overlay to disable it
-            jQuery.facebox.settings.closeImage =
-                'https://torque.bittorrent.com/facebox/src/closelabel.png';
-            jQuery.facebox.settings.loadingImage =
-                'https://torque.bittorrent.com/facebox/src/loading.gif';
-            jQuery.facebox.settings.opacity = 0.6;
+            initializeFacebox();
 
             var dialog = jQuery('<div></div>');
             dialog.attr('id', 'pairing');
@@ -82,11 +92,11 @@
 
             var frame = jQuery('<iframe></iframe>');
             var domain = 'https://torque.bittorrent.com';
-            var src = domain + '/pairing/index.html'
-                        + '?product=' + this.model.get('product')
-                        + '&mime=' + this.model.get('plugin_manager').get('mime_type')
-                        + '&name=' + encodeURIComponent(document.title)
-                        + '&permissions=download,create,remote';
+            var src = domain + '/pairing/index.html' + 
+                        '?product=' + this.model.get('product') +
+                        '&mime=' + this.model.get('plugin_manager').get('mime_type') +
+                        '&name=' + encodeURIComponent(document.title) +
+                        '&permissions=download,create,remote';
             frame.attr('src', src);
             frame.css('padding', '0px');
             frame.css('margin', '0px');
@@ -115,42 +125,35 @@
             jQuery.facebox({ div: '#pairing' });
         }
     });
-
-
-    var _plugin_native_pairing_requests = {};
-    PluginPairing = {
-        ping_port: function(port) {
-            //the plugin doesn't support binary data, which is what the image url returns...
-            //so lets just skip straight to the version query
-            this.on_ping_success(port);
-        },
+    var plugin_native_pairing_requests = {};
+    this.PluginPairing = {
         check_version: function(port) {
+            var ret = new jQuery.Deferred();
             this.trigger('pairing:check_version', {'port': port});
             this.get('plugin_manager').get_plugin().ajax(get_version_url(port), _.bind(function(response) {
                 if(!response.allowed || !response.success) {
-                    this.on_check_version_error(port);
+                    ret.reject();
                 } else {
                     var obj;
                     try {
-                        obj = JSON.parse(response.data);
+                        ret.resolve(JSON.parse(response.data));
                     } catch(e) {
-                        this.on_check_version_error(port);
+                        ret.reject();
                         return;
                     }
-                    this.on_check_version_success(port, obj);
                 }
             }, this));
+            return ret;
         },
         authorize_basic: function(port) {
             var deferred;
-            if(port in _plugin_native_pairing_requests) {
-                deferred = _plugin_native_pairing_requests[port];
-                console.log('recycling');
+            if(port in plugin_native_pairing_requests) {
+                deferred = plugin_native_pairing_requests[port];
             } else {
                 deferred = new jQuery.Deferred();
-                _plugin_native_pairing_requests[port] = deferred;
+                plugin_native_pairing_requests[port] = deferred;
                 deferred.done(function() {
-                    delete _plugin_native_pairing_requests[port];
+                    delete plugin_native_pairing_requests[port];
                 });
                 this.get('plugin_manager').get_plugin().ajax(get_dialog_pair_url(port), _.bind(function(response) {
                     if(!response.allowed || !response.success) {
@@ -159,105 +162,113 @@
                         deferred.resolve(response.data);
                     }
                 }, this));
-            }
+            }   
 
             deferred.then(_.bind(this.authorize_port_success, this, port));
             deferred.fail(_.bind(this.authorize_port_error, this, port));
         }
     };
-    var _image_native_pairing_requests = {};
-    ImagePairing = {
-        ping_port: function(port) {
-            var img = new Image();
-            img.onerror = _.bind(this.on_ping_error, this, port);
-            img.onload = _.bind(this.on_ping_success, this, port);
-            img.src = get_ping_img_url(port);
-        },
+    var image_native_pairing_requests = {};
+    this.JQueryPairing = {
         check_version: function(port) {
             this.trigger('pairing:check_version', {'port': port});
-            jQuery.ajax({
+            return jQuery.ajax({
                 url: get_version_url(port),
                 dataType: 'jsonp',
-                success: _.bind(this.on_check_version_success, this, port),
-                error: this.on_check_version_error
+                timeout: AJAX_TIMEOUT
             });
         },
         authorize_basic: function(port) {
             var success = _.bind(this.authorize_port_success, this, port);
             var failure = _.bind(this.authorize_port_error, this, port);
             var promise;
-            if(port in _image_native_pairing_requests) {
-                promise = _image_native_pairing_requests[port];
-                console.log('recycling');
+            if(port in image_native_pairing_requests) {
+                promise = image_native_pairing_requests[port];
             } else {
                 promise = jQuery.ajax({
                     url: get_dialog_pair_url(port),
-                    dataType: 'jsonp'
+                    dataType: 'jsonp',
+                    timeout: AJAX_TIMEOUT
                 });
-                _image_native_pairing_requests[port] = promise;
+                image_native_pairing_requests[port] = promise;
                 promise.done(function() {
-                    delete _image_native_pairing_requests[port];
+                    delete image_native_pairing_requests[port];            
                 });
             }
             promise.then(success);
             promise.fail(failure);
         }
     };
-
-    var _plugin_iframe_pairing_requests = {};
-    Pairing = Backbone.Model.extend({
+    var plugin_iframe_pairing_requests = {};
+    this.Pairing = Backbone.Model.extend({
         defaults: {
             pairing_type: 'iframe'
         },
         initialize: function() {
-            _.bindAll(this, 'on_ping_error', 'on_ping_success', 'on_check_version_error', 'on_check_version_success');
+            _.bindAll(this, 'on_check_version_success');
             //assert that we know what we're getting into
             assert(this.get('plugin') === false || this.get('plugin_manager'), 'pairing is not intentionally avoiding the plugin, nor is it providing a plugin manager');
             if(this.get('plugin_manager')) {
                 _.extend(this, PluginPairing);
             } else {
-                _.extend(this, ImagePairing);
+                _.extend(this, JQueryPairing);
             }
         },
-        scan: function() {
-            this.ping(get_port(0));
-        },
-        ping: function(port) {
-            if(port > MAX_PORT) {
-                this.trigger('pairing:stop', {'reason': 'max port reached'});
-                return;
-            }
+        connect: function() {
+            assert(!this.session, 'trying to port scan while one is already in progress');
+            var session = {
+                abort: false
+            };
+            var versionchecks = [];
+            var complete = _.after(NUM_PORTS_SCANNED, _.bind(function() { 
+                if(session.abort === true) {
+                    return;
+                }
+                this.disconnect();
+                //lets take a peek at versionchecks
+                var successes = _.reduce(versionchecks, function(memo, c) {
+                    assert(c.state() !== 'pending', 'executing pairing complete functionality while some queries are in flight');
+                    var success = c.state() === 'resolved';
+                    return memo + (success ? 1 : 0);
+                }, 0);
+                if(successes === 0) {
+                    this.trigger('pairing:stop');
+                }
+            }, this));
+            _.times(NUM_PORTS_SCANNED, function(i) {
+                var port = get_port(i);
+                var versioncheck = this.check_version(port);
+                versioncheck.done(_.bind(function() {
+                    if(session.abort) {
+                        return;
+                    }
+                    this.on_check_version_success.apply(this, arguments);
+                }, this, port));
+                versionchecks.push(versioncheck);
 
-            this.trigger('pairing:attempt', {'port': port});
-            this.ping_port(port);
+                versioncheck.always(complete);
+            }, this);
+            this.session = session;
         },
-        on_ping_error: function(port) {
-            this.ping(get_next_port(port));
-        },
-        on_ping_success: function(port) {
-            this.check_version(port);
-        },
-        on_check_version_error: function(port, data) {
-            this.ping(get_next_port(port));
+        disconnect: function() {
+            if(this.session) {
+                this.session.abort = true;
+                this.session = null;
+            }
         },
         on_check_version_success: function(port, data) {
-            var options = {
+            var options = { 
                 'version':(typeof data === 'object' ? data.version : 'unknown'),
-                'name':(typeof data === 'object' ? data.name : 'unknown'),
+                'name':(typeof data === 'object' ? data.name : 'unknown'), 
                 'port':port,
-                'authorize':true,
-                'abort':false
+                'authorize':true
             };
             
-            if(data == 'invalid request' || (data && data.version)) {
+            if(data === 'invalid request' || (data && data.version)) {
                 this.trigger('pairing:found', options);
 
                 if(options.authorize) {
                     this.authorize(port);
-                }
-
-                if(!options.abort) {
-                    this.ping(get_next_port(port));
                 }
             }
         },
@@ -272,14 +283,13 @@
                     this.authorize_port_success(port, pairing_key);
                 } else {
                     var deferred;
-                    if(port in _plugin_iframe_pairing_requests) {
-                        deferred = _plugin_iframe_pairing_requests[port];
-                        console.log('recycling');
+                    if(port in plugin_iframe_pairing_requests) {
+                        deferred = plugin_iframe_pairing_requests[port];
                     } else {
                         deferred = new jQuery.Deferred();
-                        _plugin_iframe_pairing_requests[port] = deferred;
+                        plugin_iframe_pairing_requests[port] = deferred;
                         deferred.done(function() {
-                            delete _plugin_iframe_pairing_requests[port];
+                            delete plugin_iframe_pairing_requests[port];
                         });
                         //let someone build a view to do something with this info
                         this.trigger('pairing:authorize', {

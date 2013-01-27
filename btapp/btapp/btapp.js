@@ -1,9 +1,9 @@
-// Btapp.js 0.1.0
+// Btapp.js 0.2.0
 
 // (c) 2012 Patrick Williams, BitTorrent Inc.
 // Btapp may be freely distributed under the MIT license.
 // For all details and documentation:
-// http://pwmckenna.github.com/btapp
+// http://btappjs.com
 
 // Welcome to Btapp!
 
@@ -19,13 +19,25 @@
 // rely on this as the  torrentStatus event function is set and the used to keep our models up to date
 
 (function() {
+    "use strict";
     // some of us are lost in the world without __asm int 3;
     // lets give ourselves an easy way to blow the world up if we're not happy about something
-    function assert(b, err) { if(!b) { debugger; throw err; } }
+    function assert(b, err) { if(!b) { throw err; } }
+
+    //validate dependencies
+    assert(typeof JSON !== 'undefined', 'JSON is a hard dependency');
+    assert(typeof _ !== 'undefined', 'underscore/lodash is a hard dependency');
+    assert(typeof TorrentClient !== 'undefined', 'client.btapp.js is a hard dependency');
+    assert(typeof jQuery !== 'undefined', 'jQuery is a hard dependency');
+    assert(typeof jQuery.jStorage !== 'undefined', 'jQuery.jStorage is a hard dependency');
     
     var MAX_POLL_FREQUENCY = 3000;
     var MIN_POLL_FREQUENCY = 0;
     var POLL_FREQUENCY_BACKOFF_INCREMENT = 100;
+
+    var isEmptyObject = function(obj) {
+        return _.isObject(obj) && !_.isArray(obj) &&  jQuery.isEmptyObject(obj);
+    };
 
     // BtappBase
     // -------------
@@ -34,7 +46,7 @@
     // reducing redundant code...both these types need a way to build up children elements
     // from data retrieved from the torrent client, as a way to clean that data up should
     // the client become unreachable.
-    BtappBase = {
+    var BtappBase = {
         initialize: function() {
             _.bindAll(this, 'initializeValues', 'updateState', 'clearState', 'isEmpty', 'destructor');
             this.initializeValues();
@@ -42,7 +54,7 @@
         clearRemoteProcedureCalls: function() {
             var keys = _.keys(this.bt || {});
             for(var i = 0; i < keys.length; i++) {
-                var key = keys[i]
+                var key = keys[i];
                 delete this.bt[key];
                 delete this[key];
             }
@@ -55,21 +67,20 @@
         },
         updateRemoveFunctionState: function(v) {
             //we have a special case for get...we never want the server rpc version
-            if(v === 'get') return;
-
             assert(v in this.bt, 'trying to remove a function that does not exist');
             this.trigger('remove:bt:' + v);
             this.trigger('remove:bt', this.bt[v], v);
             delete this.bt[v];
 
             //for set and unset, we don't want to set them directly on the objects
-            if(v === 'set' || v === 'unset') {
+            if(v === 'get' || v === 'set' || v === 'unset' || v === 'length') {
                 return;
             }
                  
             assert(v in this, 'trying to remove the function "' + v + '", which does not exist in the prototype of this object');
             this.trigger('remove:' + v);
             delete this[v];
+            return {};
         },
         updateRemoveObjectState: function(session, added, removed, childpath, v) {
             var ret = {};
@@ -88,15 +99,15 @@
             childpath.push(v);
             if(v === 'all') {
                 return this.updateState(this.session, added, removed, childpath);
-            } else if(typeof removed === 'object' && removed === null) {
+            } else if(_.isNull(removed)) {
                 return this.updateRemoveAttributeState(v, removed);
-            } else if(typeof removed === 'object') {
+            } else if(_.isObject(removed) && !_.isArray(removed)) {
                 return this.updateRemoveObjectState(session, added, removed, childpath, v);
-            } else if(typeof removed === 'string' && TorrentClient.prototype.isRPCFunctionSignature(removed)) {
+            } else if(_.isString(removed) && TorrentClient.prototype.isRPCFunctionSignature(removed)) {
                 return this.updateRemoveFunctionState(v);
-            } else if(typeof removed === 'string' && TorrentClient.prototype.isJSFunctionSignature(removed)) {
+            } else if(_.isString(removed) && TorrentClient.prototype.isJSFunctionSignature(removed)) {
                 return this.updateRemoveAttributeState(v, this.client.getStoredFunction(removed));
-            } else if(v != 'id') {
+            } else if(v !== 'id') {
                 return this.updateRemoveAttributeState(v, removed);
             }
         },
@@ -104,15 +115,13 @@
             var ret = {};
             for(var uv in remove) {
                 if(add[uv] === undefined) {
-                    _.extend(ret, this.updateRemoveElementState(session, add[uv], remove[uv], escape(uv), path));
+                    _.extend(ret, this.updateRemoveElementState(session, add[uv], remove[uv], uv, path));
                 }
             }
             return ret;
         },
         updateAddFunctionState: function(session, added, path, v) {
             //we have a special case for get...we never want the server rpc version
-            if(v === 'get') return {};
-
             var childpath = _.clone(path || []);
             childpath.push(v);
             var func = this.client.createFunction(session, childpath, added);
@@ -122,7 +131,7 @@
             this.bt[v] = func;
 
             //also set it on the object directly...this ends up being how people expect to use the objects
-            if(v !== 'set' && v !== 'unset') {
+            if(v !== 'get' && v !== 'set' && v !== 'unset' && v !== 'length') {
                 assert(!(v in this), 'trying to add the function "' + v + '", which already exists in the prototype of this object');
                 this[v] = func;
                 this.trigger('add:' + v);
@@ -139,7 +148,7 @@
             if(model === undefined) {
                 // Check if the path matches a valid collection path...if so that is the type that we should create
                 if(BtappCollection.prototype.verifyPath(childpath)) {
-                    model = new BtappCollection;
+                    model = new BtappCollection();
                 } else {
                     model = new BtappModel({'id':v});
                 }
@@ -157,7 +166,7 @@
 
             //make sure we transform the removed variable to the correct js function if
             //removed is the string representation
-            if(typeof removed === 'string' && TorrentClient.prototype.isJSFunctionSignature(removed)) {
+            if(_.isString(removed) && TorrentClient.prototype.isJSFunctionSignature(removed)) {
                 removed = this.client.getStoredFunction(removed);
             }
 
@@ -165,13 +174,13 @@
             // Special case all. It is a redundant layer that exists for the benefit of the torrent client
             if(v === 'all') {
                 return this.updateState(this.session, added, removed, childpath);
-            } else if(typeof added === 'object' && added === null) {
+            } else if(_.isNull(added)) {
                 return this.updateAddAttributeState(session, added, removed, childpath, v);
-            } else if(typeof added === 'object') {
+            } else if(_.isObject(added) && !_.isArray(added)) {
                 return this.updateAddObjectState(session, added, removed, childpath, v);
-            } else if(typeof added === 'string' && TorrentClient.prototype.isRPCFunctionSignature(added)) {
+            } else if(_.isString(added) && TorrentClient.prototype.isRPCFunctionSignature(added)) {
                 return this.updateAddFunctionState(session, added, path, v);
-            } else if(typeof added === 'string' && TorrentClient.prototype.isJSFunctionSignature(added)) {
+            } else if(_.isString(added) && TorrentClient.prototype.isJSFunctionSignature(added)) {
                 return this.updateAddAttributeState(session, this.client.getStoredFunction(added), removed, path, v);
             } else {
                 return this.updateAddAttributeState(session, added, removed, childpath, v);
@@ -180,12 +189,12 @@
         updateAddState: function(session, add, remove, path) {
             var ret = {};
             for(var uv in add) {
-                _.extend(ret, this.updateAddElementState(session, add[uv], remove[uv], escape(uv), path));
+                _.extend(ret, this.updateAddElementState(session, add[uv], remove[uv], uv, path));
             }
             return ret;
         },
         updateState: function(session, add, remove, path) {
-            assert(!jQuery.isEmptyObject(add) || !jQuery.isEmptyObject(remove), 'the client is outputing empty objects("' + path + '")...these should have been trimmed off');
+            assert(!isEmptyObject(add) || !isEmptyObject(remove), 'the client is outputing empty objects("' + path + '")...these should have been trimmed off');
             this.session = session;
             if(!this.path) {
                 this.path = path;
@@ -213,7 +222,7 @@
     // currently this can only be used to represent the list of torrents,
     // then within the torrents, their list of files...this will eventually
     // be used for rss feeds, etc as well.
-    BtappCollection = Backbone.Collection.extend(BtappBase).extend({
+    this.BtappCollection = Backbone.Collection.extend(BtappBase).extend({
         initialize: function(models, options) {
             Backbone.Collection.prototype.initialize.apply(this, arguments);
             BtappBase.initialize.apply(this, arguments);
@@ -224,7 +233,9 @@
         },
         customEvent: function(event, model) {
             //we want to ignore our internal add/remove events for our client rpc functions
-            if(typeof model === 'function') return;
+            if(_.isFunction(model)) {
+                return;
+            }
 
             assert(model && model.id, 'called a custom ' + event + ' event without a valid attribute');
             this.trigger(event + ':' + model.id, model);
@@ -259,18 +270,23 @@
                 ['btapp', 'label', 'all', '*', 'torrent'],
                 ['btapp', 'label', 'all', '*', 'torrent', 'all', '*', 'file'],
                 ['btapp', 'label', 'all', '*', 'torrent', 'all', '*', 'peer'],
-                ['btapp', 'rss_feed'],
-                ['btapp', 'rss_feed', 'all', '*', 'item'],
-                ['btapp', 'rss_filter'],
+                ['btapp', 'rss'],
+                ['btapp', 'rss', 'all', '*', 'item'],
                 ['btapp', 'stream'],
                 ['btapp', 'stream', 'all', '*', 'diskio']
             ];
 
             return _.any(collections, function(collection) {
-                if(collection.length !== path.length) return false;
+                if(collection.length !== path.length) {
+                    return false;
+                }
                 for(var i = 0; i < collection.length; i++) {
-                    if(collection[i] === '*') continue;
-                    if(collection[i] !== path[i]) return false;
+                    if(collection[i] === '*') {
+                        continue;
+                    }
+                    if(collection[i] !== path[i]) {
+                        return false;
+                    }
                 }
                 return true;
             });
@@ -282,7 +298,7 @@
             throw 'trying to add an invalid type to a BtappCollection';
         },
         isEmpty: function() {
-            return jQuery.isEmptyObject(this.bt) && this.length === 0;
+            return isEmptyObject(this.bt) && this.length === 0;
         },
         applyStateChanges: function(add, remove) {
             this.add(_.values(add));
@@ -298,7 +314,7 @@
     // hang off of most BtappModels is also a BtappModel...both BtappModel
     // and BtappCollection objects are responsible for taking the json object
     // that is returned by the client and turning that into attributes/functions/etc
-    BtappModel = Backbone.Model.extend(BtappBase).extend({
+    this.BtappModel = Backbone.Model.extend(BtappBase).extend({
         initialize: function(attributes) {
             Backbone.Model.prototype.initialize.apply(this, arguments);
             BtappBase.initialize.apply(this, arguments);
@@ -312,9 +328,11 @@
         clearState: function() {
             this.initializeValues();
             var clone = _.clone(this.attributes);
-            delete clone['id'];
+            delete clone.id;
             _.each(clone, function(attribute) { 
-                attribute && attribute.clearState && attribute.clearState(); 
+                if(attribute && _.isObject(attribute) && attribute.hasOwnProperty('clearState')) {
+                    attribute.clearState();
+                }
             });
             Backbone.Model.prototype.set.call(this, clone, {internal: true, unset: true});
             this.destructor();
@@ -338,7 +356,6 @@
         },
         updateRemoveAttributeState: function(v, removed) {
             var ret = {};
-            removed = typeof removed === 'string' ? unescape(removed) : removed;
             assert(this.get(v) === removed, 'trying to remove an attribute, but did not provide the correct previous value');
             ret[v] = this.get(v);
             return ret;
@@ -346,10 +363,8 @@
         updateAddAttributeState: function(session, added, removed, childpath, v) {
             var ret = {};
             // Set non function/object variables as model attributes
-            added = (typeof added === 'string') ? unescape(added) : added;
-            assert(!(this.get(v) === added), 'trying to set a variable to the existing value [' + childpath + ' -> ' + JSON.stringify(added) + ']');
-            if(!(removed === undefined)) {
-                removed = (typeof removed === 'string') ? unescape(removed) : removed;
+            assert(this.get(v) !== added, 'trying to set a variable to the existing value [' + childpath + ' -> ' + JSON.stringify(added) + ']');
+            if(removed !== undefined) {
                 assert(this.get(v) === removed, 'trying to update an attribute, but did not provide the correct previous value');
             }
             ret[v] = added;
@@ -357,7 +372,7 @@
         },
         isEmpty: function() {
             var keys = _.keys(this.toJSON());
-            return jQuery.isEmptyObject(this.bt) && (keys.length === 0 || (keys.length === 1 && keys[0] === 'id'));
+            return isEmptyObject(this.bt) && (keys.length === 0 || (keys.length === 1 && keys[0] === 'id'));
         },
         applyStateChanges: function(add, remove) {
             Backbone.Model.prototype.set.call(this, add, {internal: true});
@@ -365,15 +380,19 @@
         },
         set: function(key, value, options) {
             var evaluate = function(value, key) {
-                if(options && 'internal' in options) return;
-                if(typeof this.get(key) === 'undefined') return;  
+                if(options && 'internal' in options) {
+                    return;
+                }
+                if(_.isUndefined(this.get(key))) {
+                    return;
+                }
                 // We're trying to guide users towards using save
                 throw 'please use save to set attributes directly to the client';
             };
 
             // This code is basically right out of the Backbone.Model set code.
             // Have to handle a variety of function signatures
-            if (_.isObject(key) || key == null) {
+            if (_.isObject(key) || key === null) {
                _(key).each(evaluate, this);
             } else {
                 evaluate.call(this, value, key);
@@ -397,7 +416,7 @@
     // Btapp is the root of the client objects' tree, and generally the only object that clients should instantiate.
     // This mirrors the original api where document.btapp was the root of everything. generally, this api attempts to be
     // as similar as possible to that one...
-    Btapp = BtappModel.extend({
+    this.Btapp = BtappModel.extend({
         initialize: function() {
             BtappModel.prototype.initialize.apply(this, arguments);
 
@@ -405,6 +424,8 @@
             this.connected_state = false;
             this.client = null;
             this.queries = null;
+            this.session = null;
+            this.last_query = null;
 
             //bind stuff
             _.bindAll(this, 'connect', 'disconnect', 'connected', 'fetch', 'onEvents', 'onFetch', 'onConnectionError');
@@ -419,6 +440,8 @@
             assert(!this.client, 'trying to connect to an undefined client');
             assert(!this.connected_state, 'trying to connect when already connected');
             this.connected_state = true;
+            assert(!this.session, 'trying to create another session while one is active');
+
 
             // Initialize variables
             attributes = attributes || {};
@@ -427,10 +450,10 @@
 
 
             var error = 'the queries attribute must be an array of arrays of strings';
-            assert(typeof this.queries === 'object', error);
-            assert(this.queries && typeof this.queries === 'object' && _.all(this.queries, function(query) {
-                return typeof query === 'object' && _.all(query, function(segment) {
-                    return typeof segment === 'string';
+            assert(_.isArray(this.queries), error);
+            assert(_.all(this.queries, function(query) {
+                return _.isArray(query) && _.all(query, function(segment) {
+                    return _.isString(segment);
                 });
             }), error);
 
@@ -441,18 +464,20 @@
 
             // We'll check for TorrentClient and assume that FalconTorrentClient and LocalTorrentClient
             // come along for the ride.
-            if(typeof TorrentClient === 'undefined') {
-                jQuery.getScript(
-                    'https://torque.bittorrent.com/btapp/client.btapp.js',
-                    _.bind(this.setClient, this, attributes)
-                );
-            } else {
-                this.setClient(attributes);
-            }
+            assert(!_.isUndefined(TorrentClient), 'client.btapp.js is a hard dependency');
+            this.setClient(attributes);
+            var ret = new jQuery.Deferred();
+            var connected = function() {
+                this.off('client:connected', connected, this);
+                ret.resolve();
+            };
+            this.on('client:connected', connected, this);
+            return ret;
         },
         setClient: function(attributes) {
             if(('username' in attributes && 'password' in attributes) || 'remote_data' in attributes) {
                 this.client = new FalconTorrentClient(attributes);
+                this.client.bind('client:error_connecting', this.disconnect, this);
             } else {
                 this.client = new LocalTorrentClient(attributes);
             }
@@ -471,15 +496,35 @@
                     tmp[key] = _.bind(this.trigger, this, key);
                     events.save(tmp);
                 }
-            }, this);            
+            }, this);       
         },
         disconnect: function() {
+            this.trigger('disconnect', 'manual');
             assert(this.client, 'trying to disconnect from an undefined client');
             assert(this.connected_state, 'trying to disconnect when not connected');
+
+            //as a courtesy to the client maintaining state for all connections,
+            //let notify it that we no longer require its services.
+            if(this.session) {
+                this.client.query({
+                    type: 'disconnect',
+                    session: this.session
+                });
+            }
+
             this.connected_state = false;
+
+            //make sure that the last request never resolves and messes up our state
+            if(this.last_query) {
+                this.last_query.abort();
+                this.last_query = null;
+            }
+
+            this.session = null;
             if (this.next_timeout) {
                 clearTimeout( this.next_timeout );
             }
+            this.client.disconnect();
             this.client.btapp = null;
             this.client = null;
             this.queries = null;
@@ -489,35 +534,42 @@
             return this.connected_state;
         },
         onConnectionError: function() {
+            this.trigger('disconnect', 'error');
             //something terrible happened...back off abruptly
             this.poll_frequency = MAX_POLL_FREQUENCY;
             this.clearState();
+            this.session = null;
+            if(this.last_query) {
+                this.last_query.abort();
+                this.last_query = null;
+            }
+            
             if(this.client) {
                 _.delay(_.bind(this.client.reset, this.client), 500);
             }
         },
         onFetch: function(data) {
             assert('session' in data, 'did not recieve a session id from the client');
+            this.session = data.session;
             this.waitForEvents(data.session);
         },
         fetch: function() {
             if(this.client) {
-                this.client.query({
+                this.last_query = this.client.query({
                     type: 'state', 
                     queries: JSON.stringify(this.queries)
-                }, this.onFetch, this.onConnectionError);
+                }).done(this.onFetch).fail(this.onConnectionError);
             }
         },
         onEvent: function(session, data) {
-            this.trigger('sync', data);
             // There are two types of events...state updates and callbacks
             // Handle state updates the same way we handle the initial tree building
             if('add' in data || 'remove' in data) {
                 data.add = data.add || {};
                 data.remove = data.remove || {};
                 this.updateState(session, data.add.btapp, data.remove.btapp, ['btapp']);
-            } else if('callback' in data && 'arguments' in data) {
-                this.client.btappCallbacks[data.callback](data.arguments);
+            } else if('callback' in data) {
+                this.client.btappCallbacks[data.callback](data['arguments']);
             } else {
                 throw 'received invalid data from the client';
             }
@@ -527,9 +579,11 @@
         // it is generating a large diff tree. We should generally on get one element in data array. Anything more and
         // the client has wasted energy creating seperate diff trees.
         onEvents: function(session, data) {
+            assert(this.session === session, 'should not receive data for a different session after creating a new one. do not forget to abort the last call of your old session.');
             if(this.connected_state) {
+                this.trigger('sync', data);
                 //do a little bit of backoff if these requests are empty
-                if(data.length == 0) {
+                if(data.length === 0) {
                     this.poll_frequency = Math.min(MAX_POLL_FREQUENCY, 
                         this.poll_frequency + POLL_FREQUENCY_BACKOFF_INCREMENT);
                 } else {
@@ -543,15 +597,15 @@
         },
         waitForEvents: function(session) {
             if(this.client) {
-                this.client.query({
-                    type: 'update', 
+                this.last_query = this.client.query({
+                    type: 'update',
                     session: session
-                }, _.bind(this.onEvents, this, session), this.onConnectionError);
+                }).done(_.bind(this.onEvents, this, session)).fail(this.onConnectionError);
             }
         }
     });
 
-    Btapp.VERSION = '0.1.0';
+    Btapp.VERSION = '0.2.0';
     Btapp.QUERIES = {
         ALL: [['btapp']],
         DHT: [['btapp','dht']],
