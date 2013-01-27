@@ -72,7 +72,7 @@ songFileModel.extendTo(FileInTorque, {
 
 window.bap = new Btapp();
 bap.connect({
-	mime_type: 'application/x-bittorrent-torquechrome'
+	//mime_type: 'application/x-bittorrent-torquechrome'
 });
 
 var btapp = bap;
@@ -118,7 +118,7 @@ TorqueSearch.prototype = {
 				//	}
 				}
 			};
-
+		deferred.promise(complex_response);
 
 		if (typeof msq == 'string'){
 			msq = guessArtist(msq);
@@ -224,17 +224,25 @@ TorqueSearch.prototype = {
 		.next(function(obj) {
 			//find
 			console.log(obj.files);
-			var target = {
-				torrent: obj.torrent
-			};
-			
+
+			var targets = [];
+
 			for (var i = 0; i < obj.files.length; i++) {
-				if (obj.files[i].name.match(/\.mp3$/)){
-					target.file = obj.files[i].file;
-					target.name = obj.files[i].name;
-					break;
+				var cur = obj.files[i];
+				if (cur.name.match(/\.mp3$/)){
+					targets.push({
+						file: cur.file,
+						name: cur.name,
+						query_match_index: new FileNameSQMatchIndex(cur.name, msq) * 1,
+						torrent: obj.torrent
+					});
 				}
 			}
+
+			var possible = $filter(targets, 'query_match_index', -1).not;
+			sortMusicFilesArray(possible);
+			var target = possible[0];
+
 
 			if (target.file){
 				var array = [];
@@ -267,7 +275,7 @@ TorqueSearch.prototype = {
 
 
 
-		return deferred;
+		return complex_response;
 	}
 };
 

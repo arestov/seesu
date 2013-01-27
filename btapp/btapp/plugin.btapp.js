@@ -4,13 +4,37 @@
 // http://pwmckenna.github.com/btapp
 
 (function() {
-    var LATEST_PLUGIN_VERSION = '4.3.7';
+    "use strict";
 
-    function assert(b, err) { if(!b) throw err; }
+    function assert(b, err) { if(!b) { throw err; } }
+
+    //validate dependencies
+    assert(typeof JSON !== 'undefined', 'JSON is a hard dependency');
+    assert(typeof _ !== 'undefined', 'underscore/lodash is a hard dependency');
+    assert(typeof jQuery !== 'undefined', 'jQuery is a hard dependency');
 
     function isMac() {
-        return navigator.userAgent.match(/Macintosh/) != undefined;
+        var match = navigator.userAgent.match(/Macintosh/);
+        return match !== undefined && match !== null;
     }
+
+    var add_plugin = _.memoize(function(mime_type) {
+        var ret = new jQuery.Deferred();
+        var obj = document.createElement('object');
+        var onload = mime_type + '_onload';
+        window[onload] = function() {
+            ret.resolve();
+        };
+        var div = document.createElement('div');            
+        jQuery(div).css({'position':'absolute','left':'-999em','z-index':-1});
+        div.innerHTML =
+            '<object type="' + mime_type + '" width="0" height="0">' +
+                '<param name="onload" value="' + onload + '" />' +
+            '</object>';
+
+        document.body.appendChild(div);
+        return ret;
+    });
 
     //utility function to wait for some condition
     //this ends up being helpful as we toggle between a flow chart and a state diagram
@@ -42,7 +66,7 @@
         jQuery.facebox.settings.opacity = 0.6;
     }
 
-    PluginManagerView = Backbone.View.extend({
+    this.PluginManagerView = Backbone.View.extend({
         initialize: function(options) {
             this.model.on('plugin:install_plugin', this.download, this);
             this.model.on('plugin:plugin_updated', this.restart, this);
@@ -113,14 +137,16 @@
         }
     });
 
-    PluginManager = Backbone.Model.extend({
+    this.PluginManager = Backbone.Model.extend({
         soshare_props: {
+            latest_version: '4.4.1',
             mime_type: 'application/x-gyre-soshare',
             activex_progid: 'gyre.soshare',
             windows_download_url: 'https://torque.bittorrent.com/SoShare.msi',
             osx_download_url: 'https://torque.bittorrent.com/SoShare.pkg'
         },
         torque_props: {
+            latest_version: '4.3.8',
             mime_type: 'application/x-bittorrent-torque',
             activex_progid: 'bittorrent.torque',
             windows_download_url: 'https://torque.bittorrent.com/Torque.msi',
@@ -155,7 +181,8 @@
             //when we load jquery, we should defer a call to mime_type_check
             jQuery(_.bind(_.defer, this, this.mime_type_check));
         },
-
+        disconnect: function() {
+        },
         //we know nothing. we want:
         //the plugin installed
         //the plugin up to date
@@ -175,14 +202,15 @@
         },
         mime_type_check_yes: function() {
             this.trigger('plugin:plugin_installed');
-            this.add_plugin(_.bind(function() {
+            var add = add_plugin(this.get('mime_type'));
+            add.then(_.bind(function() {
                 this.trigger('plugin:plugin_running');
                 this.plugin_up_to_date_check();
             }, this));
         },
 
         plugin_up_to_date_check: function() {
-            if(isMac() || this.plugin_up_to_date()) {
+            if(this.plugin_up_to_date()) {
                 this.plugin_up_to_date_yes();
             } else {
                 this.plugin_up_to_date_no();
@@ -260,7 +288,7 @@
                 //if we're in a chrome extension, assume we have the mime type available
                 return true;
             }
-            var isIE  = (navigator.appVersion.indexOf('MSIE') != -1) ? true : false;
+            var isIE  = (navigator.appVersion.indexOf('MSIE') !== -1) ? true : false;
             if(isIE) {
                 try {
                     var tq = new ActiveXObject(this.get('activex_progid'));
@@ -272,7 +300,7 @@
                 navigator.plugins.refresh();
                 for (var i = 0; i < navigator.plugins.length; i++) {
                     var plugin = navigator.plugins[i][0];
-                    if (plugin.type == this.get('mime_type')) {
+                    if (plugin.type === this.get('mime_type')) {
                         return true;
                     }
                 }
@@ -280,52 +308,39 @@
             }
         },
         plugin_up_to_date: function() {
+            if(window.location.protocol === 'chrome-extension:') {
+                //if we're in a chrome extension, there's a different update path
+                return true;
+            }
+
             var version = this.get_plugin().version;
-            var version_arr = _.map(version.split('.'), function(i) { return parseInt(i); });
-            var required_version_arr = _.map(LATEST_PLUGIN_VERSION.split('.'), function(i) { return parseInt(i); });
+            var version_arr = _.map(version.split('.'), function(i) { return parseInt(i, 10); });
+            var required_version_arr = _.map(this.get('latest_version').split('.'), function(i) { return parseInt(i, 10); });
             for (var i=0; i<version_arr.length; i++) {
                 if (version_arr[i] < required_version_arr[i]) {
                     return false;
+                } else if(version_arr[i] > required_version_arr[i]) {
+                    return true;
                 }
             }
             return true;
         },
         get_plugin: function() {
-            var ret = document.getElementById(this.get('pid'));
-            assert(ret, 'cannot call get_plugin before adding the plugin');
-            return ret;
+            var plugins = jQuery('[type="' + this.get('mime_type') + '"]');
+            assert(plugins.length === 1, 'cannot call get_plugin before adding the plugin');
+            return plugins[0];
         },
         plugin_loaded: function() {
-            assert(this.supports_mime_type(), 'you have not installed the plugin yet')
+            assert(this.supports_mime_type(), 'you have not installed the plugin yet');
             assert(jQuery('#' + this.get('pid')).length !== 0, 'you have not yet added the plugin');
-            return get_plugin().version;
+            return this.get_plugin().version;
         },
-        add_plugin: function(cb) {
-            assert(this.supports_mime_type(), 'you have not installed the plugin yet')
-            assert(jQuery('#' + this.get('pid')).length === 0);
-            var obj = document.createElement('object');
-            var onload = this.get('pid') + 'onload';
-            window[onload] = cb;
-            var div = document.createElement('div');            
-            jQuery(div).css({'position':'absolute','left':'-999em','z-index':-1});
-            div.innerHTML =
-                '<object id="' + this.get('pid') + '" type="' + this.get('mime_type') + '" width="0" height="0">' +
-                    '<param name="onload" value="' + onload + '" />' +
-                '</object>';
-
-            document.body.appendChild(div);
-        },  
-        remove_plugin: function() {
-            jQuery('#btapp_plugin').remove();
-        },
-
-
 
         // Client Specific Functionality
         // ---------------------------
         // Lets ask the plugin if the specific client is running.
         get_window_name: function(product) {
-            if (product == 'uTorrent') {
+            if (product === 'uTorrent') {
                 return 'Torrent4823';
             } else {
                 return product;
