@@ -1,7 +1,7 @@
 var getSongFileModel = function(mo, player){
 	return this.models[mo.uid] = this.models[mo.uid] || (new songFileModel()).init({file: this, mo: mo}).setPlayer(player);
 };
-
+var FileNameSQMatchIndex;
 var FilesInvestg;
 (function(){
 	var FilesSourceStorage = function() {};
@@ -341,16 +341,18 @@ QueryMatchIndex.extendTo(FileNameSQMatchIndex, {
 		this.under_consideration = filename;
 		filename.split(/\//);
 		this.query = query;
-		this.match_order = [];
+		this.match_order = [this.matchers.bestMatch, this.matchers.anyGood];
 		this.match();
 		return this;
 	},
 	matchers: {
-		best_match: function(filename, query) {
+		bestMatch: function(filename, query) {
 
 		},
 		anyGood: function(filename, query) {
-
+			if (filename.indexOf(query.artist) != -1 && filename.indexOf(query.track) != -1){
+				return 0;
+			}
 		}
 	}
 });
