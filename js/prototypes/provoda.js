@@ -624,13 +624,17 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			this.views[i].collectionChange(collection_name, array);
 		}
 	},
+	sendStateToView: function(view, state_name, value) {
+		view.change(state_name, value);
+	},
 	_updateProxy: function(name, value){
 		value = value || false;
 		var old_value = this.replaceState(name, value);
 		if (old_value){
 			this.removeDeadViews();
 			for (var i = 0; i < this.views.length; i++) {
-				this.views[i].change(name, value);
+				this.sendStateToView(this.views[i], name, value);
+				
 			}
 			this.trigger('state-change.' + name, {type: name, value: value, old_value: old_value[0]});
 		
