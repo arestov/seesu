@@ -51,11 +51,11 @@ var seesuPlayer;
 		changeAppMode: function(playing){
 			if (playing){
 				if (window.btapp){
-					btapp.properties.set('background', true);
+					//btapp.properties.set('background', true);
 				}
 			} else{
 				if (window.btapp){
-					btapp.properties.set('background', false);
+					//btapp.properties.set('background', false);
 				}
 			}
 		},

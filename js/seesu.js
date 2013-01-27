@@ -584,50 +584,20 @@ suReady(function() {
 			fp + 'btapp.js',
 			fp + 'client.btapp.js',
 			fp + 'plugin.btapp.js',
-			fp + 'pairing.btapp.js'
+			fp + 'pairing.btapp.js',
+			bpath + 'js/temp_search.js'
 
 		],
 		complete: function() {
-			window.bap = new Btapp();
-			bap.connect();
-
-			var btapp = bap;
-
-			var test_link = 'http://isohunt.com/download/402892101';
-
-			btapp.on('add:add', function(add){
-				setTimeout(function(){
-					add.torrent({
-						url: test_link,
-						callback: function(trt){
-							var colln = btapp.get('torrent');
-							var array = colln.models;
-						//	array.length
-						//	.models[]
-							var torrent = array[array.length - 1];//.models
-							setTimeout(function(){
-								btapp.get('torrent').each(function(t){
-									t.get('file').each(function(file){
-										console.log(file.get('properties').get('name'));
-									})
-								})
-							});
-						},
-						priority: Btapp.TORRENT.PRIORITY.METADATA_ONLY
-					});
-				},100)
-				
-			});
-
-
-
-
+			
 			
 		}
 	})
 	
 });
 
+
+var torrent_search; 
 
 
 (function(){
@@ -641,7 +611,7 @@ suReady(function() {
 
 	
 	if (app_env.cross_domain_allowed){
-		su.mp3_search.add(new isohuntTorrentSearch());
+		su.mp3_search.add(torrent_search = new isohuntTorrentSearch());
 
 		/*yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
@@ -653,7 +623,7 @@ suReady(function() {
 			}
 		});*/
 	} else {
-		su.mp3_search.add(new googleTorrentSearch(app_env.cross_domain_allowed));
+		su.mp3_search.add(torrent_search = new googleTorrentSearch(app_env.cross_domain_allowed));
 	}
 
 	

@@ -25,7 +25,7 @@
     function assert(b, err) { if(!b) throw err; }
 
     //we will sadly need to fiddle with some globals for falcon one offs.
-    root = this; 
+    root = this;
 
     TorrentClient = Backbone.Model.extend({
         initialize: function(attributes) {
@@ -144,7 +144,7 @@
                     ret.reject(data);
                 };
                 this.query({
-                    type: 'function', 
+                    type: 'function',
                     path: JSON.stringify(path),
                     args: JSON.stringify(args),
                     session: session
@@ -383,7 +383,7 @@
                         this.connect_to_authenticated_port(options.port, key);
                     } else {
                         // We've found the port we want to work with, but we don't have a pairing key.
-                        // We'll set authorize to true so that a pairing dialog is presented 
+                        // We'll set authorize to true so that a pairing dialog is presented
                         // to the user
                         options.abort = true;
                         options.authorize = true;
@@ -474,5 +474,5 @@
             });
             this.ajax(url, cb, err);
         }
-    }); 
+    });
 }).call(this);

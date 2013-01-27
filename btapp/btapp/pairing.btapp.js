@@ -17,14 +17,7 @@
         }).appendTo('head');
     }
     
-    function initializeFacebox() {
-        jQuery.facebox.settings.overlay = true; // to disable click outside overlay to disable it
-        jQuery.facebox.settings.closeImage = 
-            'https://torque.bittorrent.com/facebox/src/closelabel.png';
-        jQuery.facebox.settings.loadingImage = 
-            'https://torque.bittorrent.com/facebox/src/loading.gif';                     
-        jQuery.facebox.settings.opacity = 0.6;
-    }
+
 
     function isMac() {
         return navigator.userAgent.match(/Macintosh/) != undefined;
@@ -72,7 +65,12 @@
                 return;
             }
 
-            initializeFacebox();
+            jQuery.facebox.settings.overlay = true; // to disable click outside overlay to disable it
+            jQuery.facebox.settings.closeImage =
+                'https://torque.bittorrent.com/facebox/src/closelabel.png';
+            jQuery.facebox.settings.loadingImage =
+                'https://torque.bittorrent.com/facebox/src/loading.gif';
+            jQuery.facebox.settings.opacity = 0.6;
 
             var dialog = jQuery('<div></div>');
             dialog.attr('id', 'pairing');
@@ -87,7 +85,7 @@
             var src = domain + '/pairing/index.html'
                         + '?product=' + this.model.get('product')
                         + '&mime=' + this.model.get('plugin_manager').get('mime_type')
-                        + '&name=' + encodeURIComponent(document.title) 
+                        + '&name=' + encodeURIComponent(document.title)
                         + '&permissions=download,create,remote';
             frame.attr('src', src);
             frame.css('padding', '0px');
@@ -117,6 +115,8 @@
             jQuery.facebox({ div: '#pairing' });
         }
     });
+
+
     var _plugin_native_pairing_requests = {};
     PluginPairing = {
         ping_port: function(port) {
@@ -137,7 +137,7 @@
                         this.on_check_version_error(port);
                         return;
                     }
-                    this.on_check_version_success(port, obj); 
+                    this.on_check_version_success(port, obj);
                 }
             }, this));
         },
@@ -159,7 +159,7 @@
                         deferred.resolve(response.data);
                     }
                 }, this));
-            }   
+            }
 
             deferred.then(_.bind(this.authorize_port_success, this, port));
             deferred.fail(_.bind(this.authorize_port_error, this, port));
@@ -196,10 +196,10 @@
                 });
                 _image_native_pairing_requests[port] = promise;
                 promise.done(function() {
-                    delete _image_native_pairing_requests[port];            
-                })
+                    delete _image_native_pairing_requests[port];
+                });
             }
-            promise.then(success)
+            promise.then(success);
             promise.fail(failure);
         }
     };
@@ -241,9 +241,9 @@
             this.ping(get_next_port(port));
         },
         on_check_version_success: function(port, data) {
-            var options = { 
+            var options = {
                 'version':(typeof data === 'object' ? data.version : 'unknown'),
-                'name':(typeof data === 'object' ? data.name : 'unknown'), 
+                'name':(typeof data === 'object' ? data.name : 'unknown'),
                 'port':port,
                 'authorize':true,
                 'abort':false
@@ -280,7 +280,7 @@
                         _plugin_iframe_pairing_requests[port] = deferred;
                         deferred.done(function() {
                             delete _plugin_iframe_pairing_requests[port];
-                        })
+                        });
                         //let someone build a view to do something with this info
                         this.trigger('pairing:authorize', {
                             'port': port,
