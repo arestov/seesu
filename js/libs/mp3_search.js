@@ -202,7 +202,8 @@ var FilesInvestg;
 					_this.setChild('sources_list', _this.sources_list);
 
 					//_this.trigger('child-change.sources_list', _this.sources_list);
-				}).on('state-change.big-files-list', function(e) {
+				})
+				.on('state-change.big-files-list', function(e) {
 					var array = e && e.value || [];
 					for (var i = 0; i < array.length; i++) {
 						_this.delayFileCheck(array[i]);
