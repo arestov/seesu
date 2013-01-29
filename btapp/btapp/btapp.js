@@ -32,7 +32,7 @@
     assert(typeof jQuery.jStorage !== 'undefined', 'jQuery.jStorage is a hard dependency');
     
     var MAX_POLL_FREQUENCY = 3000;
-    var MIN_POLL_FREQUENCY = 0;
+    var MIN_POLL_FREQUENCY = 1500;
     var POLL_FREQUENCY_BACKOFF_INCREMENT = 100;
 
     var isEmptyObject = function(obj) {

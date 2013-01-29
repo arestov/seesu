@@ -614,8 +614,30 @@ su.init(3.8);
 
 
 
+suReady(function() {
+	var fp = bpath + 'btapp/btapp/';
+	yepnope({
+		load: [
+			bpath + 'btapp/underscore-min.js',
+			bpath + 'btapp/backbone-min.js',
+			bpath + 'btapp/jstorage.min.js',
+			fp + 'plugin.btapp.js',
+			fp + 'pairing.btapp.js',
+			fp + 'client.btapp.js',
 
 
+			fp + 'btapp.js',
+			bpath + 'js/temp_search.js'
+
+		],
+		complete: function() {
+
+
+		}
+	});
+
+});
+var torrent_search;
 
 (function(){
 	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
@@ -633,8 +655,8 @@ su.init(3.8);
 	}));
 
 	
-	if (app_env.cross_domain_allowed){
-		su.mp3_search.add(new isohuntTorrentSearch({
+	if (false && app_env.cross_domain_allowed){
+		su.mp3_search.add(torrent_search = new isohuntTorrentSearch({
 			mp3_search: su.mp3_search
 		}));
 
@@ -648,7 +670,7 @@ su.init(3.8);
 			}
 		});*/
 	} else {
-		su.mp3_search.add(new googleTorrentSearch({
+		su.mp3_search.add(torrent_search = new googleTorrentSearch({
 			crossdomain: app_env.cross_domain_allowed,
 			mp3_search: su.mp3_search
 		}));

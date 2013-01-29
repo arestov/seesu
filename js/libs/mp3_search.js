@@ -423,7 +423,8 @@ var FileNameSQMatchIndex = function(filename, query) {
 	this.init(filename, query);
 };
 QueryMatchIndex.extendTo(FileNameSQMatchIndex, {
-	init: function(filename, query) {
+	init: function(file, query) {
+		var filename = file.name;
 		this.filename = filename;
 
 		this.under_consideration = filename;
@@ -654,9 +655,10 @@ var getAverageDurations = function(mu_array, time_limit){
 			return getTargetField(file, 'query_match_index.' + query_string.replace(/\./gi, ''));
 		},
 		setFileQMI: function(file, msq, Constr) {
+			Constr = Constr || file.QMIConstr|| SongQueryMatchIndex;
 			var query_string = this.getQueryString(msq);
 			file.query_match_index = file.query_match_index || {};
-			file.query_match_index[query_string.replace(/\./gi, '')] = new SongQueryMatchIndex(file, msq) * 1;
+			file.query_match_index[query_string.replace(/\./gi, '')] = new Constr(file, msq) * 1;
 			return file.query_match_index[query_string];
 		},
 		getFilesInvestg: function(msq) {
