@@ -477,7 +477,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	init: function(){
 
 		this._super();
-		this.provoda_id = models_counters++;
+		this._provoda_id = models_counters++;
 		this.states = {};
 		this.views = [];
 		this.views_index = {};
@@ -553,6 +553,9 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		return this.children_models[collection_name];
 	},
 	setChild: function(collection_name, array, changed) {
+		if (collection_name.indexOf('.') != -1){
+			throw new Error('remove "." (dot) from name');
+		}
 		this.children_models[collection_name] = array;
 
 		this.trigger('child-change.' + collection_name, {

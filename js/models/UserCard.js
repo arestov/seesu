@@ -86,7 +86,7 @@ songsList.extendTo(EnhancedSongslist, {
 		}
 		if (new_state){
 			if (!this.state('pmd-vswitched')){
-				this.pmd.updateState('vswitched', this.provoda_id);
+				this.pmd.updateState('vswitched', this._provoda_id);
 			}
 		} else {
 			if (this.state('pmd-vswitched')){
@@ -122,7 +122,7 @@ songsList.extendTo(EnhancedSongslist, {
 
 	},
 	checkPMDSwiched: function(value) {
-		this.updateState('pmd-vswitched', value == this.provoda_id);
+		this.updateState('pmd-vswitched', value == this._provoda_id);
 	},
 	requestPlaylist: function() {
 		if (this.state('has-access')){

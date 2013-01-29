@@ -109,43 +109,8 @@ var checkDeadSavedToken = function(vk_token) {
 		suStore("vk_token_info", "", true);
 	}
 };
-var lostAuth = function(vkapi) {
-	
-	su.mp3_search.remove(vkapi.asearch);
-	vkapi.asearch.dead = vkapi.asearch.disabled = true;
-	if (su.vk_api == vkapi){
-		delete su.vkapi;
-	}
-	
-};
 
 
-var connectApiToSeesu = function(vk_token, access, not_save) {
-	var vkapi = new vkApi(vk_token, {
-		queue: su.delayed_search.vk_api.queue,
-		jsonp: !app_env.cross_domain_allowed,
-		cache_ajax: cache_ajax,
-		onAuthLost: function() {
-			lostAuth(vkapi);
-			checkDeadSavedToken(vk_token);
-		}
-	});
-
-	su.setVkApi(vkapi, vk_token.user_id);
-	if (access){
-		su.mp3_search.add(vkapi.asearch, true);
-	}
-	
-	if (vk_token.expires_in){
-		setTimeout(function() {
-			lostAuth(vkapi);
-		}, vk_token.expires_in);
-	}
-	if (!not_save){
-		suStore('vk_token_info', cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
-	}
-	return vkapi;
-};
 var appendVKSiteApi = function(app_id) {
 	yepnope({
 		load: 'http://vk.com/js/api/openapi.js',
@@ -177,7 +142,7 @@ try_mp3_providers = function(){
 			music_connected = has_music_access;
 
 
-		var vkapi = connectApiToSeesu(vkt, has_music_access, true);
+		var vkapi = su.connectVKApi(vkt, has_music_access, true);
 
 
 		/*
@@ -229,7 +194,7 @@ try_mp3_providers = function(){
 		var save_token = suStore('vk_token_info');
 		if (save_token){
 			//console.log('token!')
-			su.vk_auth.api = connectApiToSeesu( new vkTokenAuth(su.vkappid, save_token), true);
+			su.vk_auth.api = su.connectVKApi( new vkTokenAuth(su.vkappid, save_token), true);
 
 			//console.log(save_token)
 			if (app_env.web_app){
@@ -242,7 +207,7 @@ try_mp3_providers = function(){
 		su.vk_auth
 			.on('vk-token-receive', function(token){
 				var vk_token = new vkTokenAuth(su.vkappid, token);
-				this.api = connectApiToSeesu(vk_token, true);
+				this.api = su.connectVKApi(vk_token, true);
 				if (app_env.web_app){
 					appendVKSiteApi(su.vkappid);
 				}
@@ -270,7 +235,7 @@ try_mp3_providers = function(){
 								}
 								at.user_id = hashurlparams.user_id;
 								var vk_token = new vkTokenAuth(su.vkappid, at);
-								connectApiToSeesu(vk_token, true);
+								su.connectVKApi(vk_token, true);
 
 							}
 							return true;

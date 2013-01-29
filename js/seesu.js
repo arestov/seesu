@@ -225,7 +225,7 @@ appModel.extendTo(seesuApp, {
 		});
 
 
-		this.mp3_search = (new mp3Search({
+		this.mp3_search = (new Mp3Search({
 			vk: 5,
 			nigma: 1,
 			exfm: 0,
@@ -535,6 +535,45 @@ appModel.extendTo(seesuApp, {
 	updateLVTime: function() {
 		this.last_view_time = new Date() * 1;
 	},
+	connectVKApi: function(vk_token, access, not_save) {
+		var _this = this;
+
+
+		var lostAuth = function(vkapi) {
+			
+			_this.mp3_search.remove(vkapi.asearch);
+			vkapi.asearch.dead = vkapi.asearch.disabled = true;
+			if (_this.vk_api == vkapi){
+				delete _this.vkapi;
+			}
+			
+		};
+		var vkapi = new vkApi(vk_token, {
+			queue: _this.delayed_search.vk_api.queue,
+			jsonp: !app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			onAuthLost: function() {
+				lostAuth(vkapi);
+				checkDeadSavedToken(vk_token);
+			},
+			mp3_search: _this.mp3_search
+		});
+
+		_this.setVkApi(vkapi, vk_token.user_id);
+		if (access){
+			_this.mp3_search.add(vkapi.asearch, true);
+		}
+		
+		if (vk_token.expires_in){
+			setTimeout(function() {
+				lostAuth(vkapi);
+			}, vk_token.expires_in);
+		}
+		if (!not_save){
+			suStore('vk_token_info', cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
+		}
+		return vkapi;
+	},
 	checkUpdates: function(){
 		var _this = this;
 
@@ -574,46 +613,30 @@ su.init(3.8);
 
 
 
-suReady(function() {
-	var fp = bpath + 'btapp/btapp/';
-	yepnope({
-		load: [
-			bpath + 'btapp/underscore-min.js',
-			bpath + 'btapp/backbone-min.js',
-			bpath + 'btapp/jstorage.min.js',
-			fp + 'plugin.btapp.js',
-			fp + 'pairing.btapp.js',
-			fp + 'client.btapp.js',
-			
-			
-			fp + 'btapp.js',
-			bpath + 'js/temp_search.js'
-
-		],
-		complete: function() {
-			
-			
-		}
-	});
-	
-});
 
 
-var torrent_search;
 
 
 (function(){
 	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
 	//su.sc_api = sc_api;
-	su.mp3_search.add(new scMusicSearch(sc_api));
+	su.mp3_search.add(new scMusicSearch({
+		api: sc_api,
+		mp3_search: su.mp3_search
+	}));
 
 
 	var exfm_api = new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax);
-	su.mp3_search.add(new ExfmMusicSearch(exfm_api));
+	su.mp3_search.add(new ExfmMusicSearch({
+		api: exfm_api,
+		mp3_search: su.mp3_search
+	}));
 
 	
-	if (false && app_env.cross_domain_allowed){
-		su.mp3_search.add(torrent_search = new isohuntTorrentSearch());
+	if (app_env.cross_domain_allowed){
+		su.mp3_search.add(new isohuntTorrentSearch({
+			mp3_search: su.mp3_search
+		}));
 
 		/*yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
@@ -625,7 +648,10 @@ var torrent_search;
 			}
 		});*/
 	} else {
-		su.mp3_search.add(torrent_search = new googleTorrentSearch(app_env.cross_domain_allowed));
+		su.mp3_search.add(new googleTorrentSearch({
+			crossdomain: app_env.cross_domain_allowed,
+			mp3_search: su.mp3_search
+		}));
 	}
 
 	

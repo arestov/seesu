@@ -138,7 +138,10 @@ var vkApi = function(vk_t, params) {
 
 	var _this = this;
 
-	this.asearch = new vkSearch(this);
+	this.asearch = new vkSearch({
+		api: this,
+		mp3_search: params.mp3_search
+	});
 
 
 
@@ -155,9 +158,9 @@ vkCoreApi.extendTo(vkApi, {
 
 
 
-var vkSearch = function(vk_api) {
-	this.vk_api = vk_api;
-	var _this = this;
+var vkSearch = function(opts) {
+	this.api = opts.api;
+	this.mp3_search = opts.mp3_search;
 };
 vkSearch.prototype = {
 	constructor: vkSearch,
@@ -185,11 +188,13 @@ vkSearch.prototype = {
 				downloadable: false,
 				_id			: cursor.owner_id + '_' + cursor.aid,
 				type: 'mp3',
+				media_type: 'mp3',
 				models: {},
 				getSongFileModel: getSongFileModel
 			};
 			if (msq){
-				entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+				this.mp3_search.setFileQMI(entity, msq);
+				
 			}
 			return entity;
 		}
@@ -200,15 +205,13 @@ vkSearch.prototype = {
 			var entity = this.makeSong(r[i], msq);
 			
 			if (entity){
-				if (entity.query_match_index == -1){
+
+				if (this.mp3_search.getFileQMI(entity, msq) == -1){
 					//console.log(entity)
 				} else if (!entity.link.match(/audio\/.mp3$/) && !has_music_copy( music_list, entity)){
 					music_list.push(entity);
 				}
 			}
-		}
-		if (music_list.length){
-			sortMusicFilesArray(music_list);
 		}
 		
 		return music_list;
@@ -237,7 +240,7 @@ vkSearch.prototype = {
 			params_u.q = query;
 			params_u.count = 30;
 
-		var async_ans = this.vk_api.get('audio.search', params_u, opts)
+		var async_ans = this.api.get('audio.search', params_u, opts)
 			.done(function(r) {
 				if (r.error){
 					deferred.reject.apply(deferred, arguments);
