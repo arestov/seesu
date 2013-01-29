@@ -145,7 +145,7 @@ provoda.View.extendTo(vkLoginUI, {
 			if (vk_t_raw){
 				var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);
 
-				su.vk_auth.api = connectApiToSeesu(vk_token, true);
+				su.vk_auth.api = su.connectVKApi(vk_token, true);
 				su.vk_auth.trigger('full-ready', true);
 					
 			}

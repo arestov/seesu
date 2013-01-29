@@ -462,7 +462,7 @@ provoda.Model.extendTo(mfCor, {
 		if (this.state("user_preferred") == unavailable_mopla){
 			this.updateState("selected_mopla_to_use", false);
 			var from = this.state("selected_mopla").from;
-			var available = this.getFilteredFiles(false, function(mf) {
+			var available = this.getFilteredFiles(from, function(mf) {
 				if (mf.from == from && !mf.unavailable){
 					return true;
 				}
@@ -613,6 +613,10 @@ provoda.Model.extendTo(mfCor, {
 				for (var i = 0; i < sources_list.length; i++) {
 					all_files = all_files.concat(sources_list[i].getFiles(type));
 				}
+				this.mo.mp3_search.sortMusicFilesArray(all_files, this.files_investg.msq);
+				
+
+
 			}
 			//all_files = this.files_investg.getFiles(source_name, type);
 		}

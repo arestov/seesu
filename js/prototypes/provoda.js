@@ -477,7 +477,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	init: function(){
 
 		this._super();
-		this.provoda_id = models_counters++;
+		this._provoda_id = models_counters++;
 		this.states = {};
 		this.views = [];
 		this.views_index = {};

@@ -69,6 +69,33 @@ provoda.View.extendTo(MusicConductorPreview, {
 		'start-page-blocks': function() {
 			var _this = this;
 
+
+			var wow_tags= function(tag,c){
+				var link = $('<a class="js-serv hyped-tag"></a>')
+					.text(tag)
+					.click(function(e){
+						_this.root_view.md.show_tag(tag);
+						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
+						e.preventDefault();
+					}).appendTo(c);
+				c.append(document.createTextNode(' '));
+				_this.addWayPoint(link,{
+					simple_check:true
+				});
+				
+			};
+			
+			
+			if (window.lastfm_toptags && lastfm_toptags.length){
+				var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(this.c);
+				$('<h3></h3>').appendTo(_c)
+								.append(localize('Pop-tags','Popular tags'));
+				for (var i=0; i < lastfm_toptags.length; i++) {
+					wow_tags(lastfm_toptags[i], _c);
+				}
+			}
+
+			
 			var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(this.c);
 			var users_limit = 6;
 			var showUsers = function(listenings,c, above_limit_value){
@@ -263,30 +290,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 			
 			
 			
-			var wow_tags= function(tag,c){
-				var link = $('<a class="js-serv hyped-tag"></a>')
-					.text(tag)
-					.click(function(e){
-						_this.root_view.md.show_tag(tag);
-						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
-						e.preventDefault();
-					}).appendTo(c);
-				c.append(document.createTextNode(' '));
-				_this.addWayPoint(link,{
-					simple_check:true
-				});
-				
-			};
 			
-			
-			if (window.lastfm_toptags && lastfm_toptags.length){
-				var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(this.c);
-				$('<h3></h3>').appendTo(_c)
-								.append(localize('Pop-tags','Popular tags'));
-				for (var i=0; i < lastfm_toptags.length; i++) {
-					wow_tags(lastfm_toptags[i], _c);
-				}
-			}
 
 
 			return true;

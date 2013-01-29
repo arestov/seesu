@@ -719,7 +719,7 @@ provoda.View.extendTo(appModelView, {
 							var vk_t_raw = input.val();
 							if (vk_t_raw){
 								var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);
-								connectApiToSeesu(vk_token, true);
+								su.connectVKApi(vk_token, true);
 							}
 						});
 						

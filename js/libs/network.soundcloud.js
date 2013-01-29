@@ -109,8 +109,9 @@ scApi.prototype = {
 	}
 };
 
-var scMusicSearch = function(sc_api) {
-	this.sc_api = sc_api;
+var scMusicSearch = function(opts) {
+	this.sc_api = opts.api;
+	this.mp3_search = opts.mp3_search;
 	var _this = this;
 };
 scMusicSearch.prototype = {
@@ -142,11 +143,12 @@ scMusicSearch.prototype = {
 				downloadable: cursor.downloadable,
 				_id			: cursor.id,
 				type: 'mp3',
+				media_type: 'mp3',
 				models: {},
 				getSongFileModel: getSongFileModel
 			};
 			if (msq){
-				entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+				this.mp3_search.setFileQMI(entity, msq);
 			}
 			
 			
@@ -184,17 +186,13 @@ scMusicSearch.prototype = {
 						for (var i=0; i < r.length; i++) {
 							var ent = _this.makeSong(r[i], msq);
 							if (ent){
-								if (ent.query_match_index == -1){
+								if (_this.mp3_search.getFileQMI(ent, msq) == -1){
 									//console.log(ent)
 								} else if (!has_music_copy(music_list,ent)){
 									music_list.push(ent);
 								}
 							}
 						}
-					}
-					if (music_list.length){
-						sortMusicFilesArray(music_list);
-						
 					}
 					result = music_list;
 				}
