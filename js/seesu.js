@@ -619,7 +619,7 @@ suReady(function() {
 	yepnope({
 		load: [
 			bpath + 'btapp/underscore-min.js',
-			bpath + 'btapp/backbone-min.js',
+			bpath + 'btapp/backbone.js',
 			bpath + 'btapp/jstorage.min.js',
 			fp + 'plugin.btapp.js',
 			fp + 'pairing.btapp.js',
