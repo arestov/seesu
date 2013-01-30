@@ -322,8 +322,14 @@ provoda.View.extendTo(songFileModelUI, {
 
 		var mf_cor_view = this.parent_view.parent_view;
 		mf_cor_view.on('state-change.want-more-songs', function(e){
-			_this.setVisState('p-wmss', !!e.value);
+			_this.setVisState('pp-wmss', !!e.value);
 		});
+
+		this.parent_view
+			.on('state-change.show-overstocked', function(e) {
+				_this.setVisState('p-show-ovst', e.value);
+			});
+
 
 		var song_view = mf_cor_view.parent_view;
 		song_view.on('state-change.mp-show-end', function(e){
@@ -431,8 +437,20 @@ provoda.View.extendTo(songFileModelUI, {
 				return can;
 			}
 		},
+		'vis-wp-usable': {
+			depends_on: ['overstock', 'vis-pp-wmss', 'vis-p-show-ovst'],
+			fn: function(overstock, pp_wmss, p_show_overstock) {
+				
+				if (overstock){
+					return pp_wmss && p_show_overstock;
+				} else {
+					return pp_wmss;
+				}
+			
+			}
+		},
 		"vis-progress-c-width": {
-			depends_on: ['can-progress', 'vis-p-wmss', 'vis-win-resize-time'],
+			depends_on: ['can-progress', 'vis-pp-wmss', 'vis-win-resize-time'],
 			fn: function(can, p_wmss, wrsz_time){
 				if (can){
 					return this.progress_c.width();
@@ -490,7 +508,7 @@ provoda.View.extendTo(songFileModelUI, {
 		});
 		this.addWayPoint(this.c, {
 			canUse: function() {
-				return !_this.state('selected');
+				return !_this.state('selected') && _this.state('vis-wp-usable');
 			}
 		});
 		this.addWayPoint(this.progress_c, {
@@ -587,10 +605,7 @@ provoda.View.extendTo(songFileModelUI, {
 	createPlayButton: function() {
 		var _this = this;
 
-		var pb_place = $('<span class="play-button-place"></span>');
-		var pc_place = $('<span class="pc-indicator big-indicator play-indicator pc-place"></span>').appendTo(pb_place);
-		var button = $('<span class="pc pc-play big-control"></span>').appendTo(pc_place);
-		button.click(function(e) {
+		var pb_place = $('<span class="play-button-place"></span>').click(function(e) {
 			e.stopPropagation();
 			if (_this.state('selected')){
 
@@ -604,8 +619,13 @@ provoda.View.extendTo(songFileModelUI, {
 				_this.md.trigger('want-to-play-sf');
 			}
 		});
-		this.addWayPoint(button, {
-			
+		var pc_place = $('<span class="pc-indicator big-indicator play-indicator pc-place"></span>').appendTo(pb_place);
+		var button = $('<span class="pc pc-play big-control"></span>').appendTo(pc_place);
+		//button
+		this.addWayPoint(pb_place, {
+			canUse: function() {
+				return _this.state('selected');
+			}
 		});
 
 		this.c.append(pb_place);

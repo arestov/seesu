@@ -754,11 +754,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	getDeepWaypoints: function(exept) {
 		var all = [];
-		if (this.canUseDeepWaypoints()){
-			var views = this.getDeepChildren(exept);
+		if (this.canUseWaypoints() && this.canUseDeepWaypoints()){
+			//var views = this.getDeepChildren(exept);
 			
-			for (var i = 0; i < views.length; i++) {
-				all = all.concat(views[i].getWaypoints());
+			for (var i = 0; i < this.children.length; i++) {
+				var cur = this.children[i];
+				all = all.concat(cur.getAllWaypoints());
 			}
 		}
 		

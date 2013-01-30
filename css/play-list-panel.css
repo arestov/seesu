@@ -28,7 +28,7 @@
 				float:right;
 				width: 16px;
 				height: 16px;
-				background: url(../i/settings-icon.png);
+				background-image: url(../i/settings-icon.png);
 				cursor: pointer;
 				}
 				.pla-settings{

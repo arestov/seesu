@@ -803,10 +803,15 @@ provoda.View.extendTo(appModelView, {
 			return;
 		}
 
+		var offset = cur.offset();
+		if (!offset.top && !offset.left){
+			return;
+		}
+
 		var dems = {
 			height: height,
 			width: width,
-			offset: cur.offset()
+			offset: offset
 		};
 
 		if (cur_wayp.simple_check){
@@ -934,6 +939,9 @@ provoda.View.extendTo(appModelView, {
 			
 			for (var i = 0; i < wayp_pack.length; i++) {
 				var cur = wayp_pack[i];
+				if (!cur){
+					continue;
+				}
 				if (cur == cur_dems || cur.node == cur_dems.node){
 					continue;
 				}
@@ -958,6 +966,9 @@ provoda.View.extendTo(appModelView, {
 		} else {
 			for (var i = 0; i < wayp_pack.length; i++) {
 				var cur = wayp_pack[i];
+				if (!cur){
+					continue;
+				}
 				if (cur == cur_dems || cur.node == cur_dems.node){
 					continue;
 				}
@@ -1108,6 +1119,7 @@ provoda.View.extendTo(appModelView, {
 				
 			} else if (this.wp_dirs.all[nav_type]){
 				this.checkCurrentWPoint();
+				cwp = this.state('vis-current_wpoint');
 				
 				var cur_dems = cwp && cwp.node.data('dems');
 				if (!cwp){

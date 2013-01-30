@@ -79,9 +79,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 						e.preventDefault();
 					}).appendTo(c);
 				c.append(document.createTextNode(' '));
-				_this.addWayPoint(link,{
-					simple_check:true
-				});
+				_this.addWayPoint(link);
 				
 			};
 			

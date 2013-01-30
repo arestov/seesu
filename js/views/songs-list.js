@@ -65,6 +65,9 @@ var songsListView;
 			this.arrow = this.row_context.children('.rc-arrow');
 			this.buttons_panel = this.c.children().children('.pla-panel');
 		},
+		canUseWaypoints: function() {
+			return this.parent_view.state('mp-has-focus');
+		},
 		children_views: {
 			"row-multiatcs": {
 				main: MultiAtcsRowView

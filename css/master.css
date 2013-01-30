@@ -1299,8 +1299,9 @@ iframe.you-tube-video,embed.you-tube-video{
 
 	}
 .surface_navigation{
-	box-shadow:0 0 0 2pt #1DD8B2;
-	background: #085948;
+	1box-shadow:0 0 0 2pt #1DD8B2;
+	background-color: #085948;
+	border-radius: 0.5rem;
 	}
 
 
