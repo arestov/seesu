@@ -10,6 +10,10 @@ provoda.Eventor.extendTo(playerBase, {
 		// this.
 	},
 	setCore: function(core){
+		if (core == this.core){
+			return;
+		}
+		
 		if (!this.subscriber){
 			var _this = this;
 			this.subscriber = function(){
@@ -17,7 +21,7 @@ provoda.Eventor.extendTo(playerBase, {
 			};
 		}
 		if (this.core){
-			this.core.desubscribe(this.subscriber)
+			this.core.desubscribe(this.subscriber);
 		}
 
 		this.core = core;

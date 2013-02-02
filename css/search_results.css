@@ -1,8 +1,8 @@
 .does-not-need-search-from{
-	padding-top:28px;
+	padding-top:2rem;
 	}
 .full-page .search-results-container{
-	padding-left:60px;
+	padding-left:4.3rem;
 	position:relative;
 	}
 
@@ -15,9 +15,9 @@
 	.full-page .search-results-container h4{
 		position:absolute;
 		left:0;
-		padding:4px 0 0;
-		width:60px;
-		height:20px;
+		padding:0.3rem 0 0;
+		width:4.3rem;
+		height:1.4rem;
 		z-index:2;
 		}
 	.search-results-container h4.loading{
@@ -30,7 +30,7 @@
 		margin:0;
 		
 		border-bottom:1px solid #5d5d5d;
-		min-height:26px;
+		min-height:1.7rem;
 		}
 	.full-page .search-results-container ul.sugg-section{
 		border-left:1px solid #5d5d5d;
@@ -72,7 +72,7 @@
 		.search-results-container a.active,
 		.search-results-container button.active{
 			background-color:#555  !important;
-			padding-right:23px;
+			padding-right:1.7rem;
 		}
 		.search-results-container a.active:after,
 		.search-results-container button.active:after{
@@ -97,7 +97,7 @@
 				float:left;
 				width:34px;
 				height:34px;
-				margin-right:8px;
+				margin-right:0.5rem;
 				border:1px solid #eee;
 				}
 			.search-results-container	ul.results-suggests	span{

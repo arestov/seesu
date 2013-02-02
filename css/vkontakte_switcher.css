@@ -91,7 +91,7 @@
 		}
 		.vk-login-context form p input[type=text],
 		.vk-login-context form p input[type=password]{
-			width:140px;
+			width:10rem;
 			margin:0;
 		}
 .vk-login-context input{

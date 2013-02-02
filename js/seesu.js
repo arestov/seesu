@@ -328,7 +328,7 @@ appModel.extendTo(seesuApp, {
 				bridge: 'http://seesu.me/vk/bridge.html',
 				callbacker: 'http://seesu.me/vk/callbacker.html'
 			},
-			permissions: ["friends", "video", "offline", "audio", "wall"],
+			permissions: ["friends", "video", "offline", "audio", "wall", "photos"],
 			open_api: false,
 			deep_sanbdox: app_env.deep_sanbdox,
 			vksite_app: app_env.vkontakte,

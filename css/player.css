@@ -67,18 +67,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	background-color:#535353;
 	}
 
-.track-zoomin,
-.track-zoomout{
-	display:none;
-	position:absolute;
-	top:-2px;
-}
-	.track-zoomin{
-		right:30px;
-	}
-	.track-zoomout{
-		left:-55px;
-	}
 
 .flash-internet .flash-secur{
 	display:none;
