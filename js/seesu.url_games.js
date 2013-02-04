@@ -26,8 +26,8 @@ if (app_env.needs_url_history) {
 					}
 					
 				}
-			}
-		})()
+			};
+		})();
 		
 	} else{
 		(function(){
@@ -45,8 +45,8 @@ if (app_env.needs_url_history) {
 					hash = newhash;
 				}
 				
-			},150)
-		})()
+			},150);
+		})();
 	}
 }
 
@@ -58,7 +58,7 @@ if (app_env.needs_url_history) {
 			cbase = location.href.slice(0, location.href.indexOf('#'));
 		} else{
 			cbase = location.href;
-		}	
+		}
 		return cbase;
 	};
 	var zerofy = function(str, digits){
@@ -85,7 +85,7 @@ if (app_env.needs_url_history) {
 			}
 		},
 		getFakeURL: function(){
-			return 	this.fake_current_url;
+			return this.fake_current_url;
 		},
 		getURLData: function(url){
 			var tags		= (tag = url.match(tag_regexp)) && tag[0],
@@ -372,8 +372,13 @@ var route_tree = {
 				'tags': {
 					branch: {
 						other: {
-							fn: function() {
-
+							fn: function(path_name, opts, sub_paths, parent_md) {
+								su.show_tag(path_name, {
+									no_navi: true,
+									source_info: {
+										page_md: parent_md
+									}
+								});
 							},
 							branch: {
 								names: {
@@ -460,194 +465,20 @@ var route_tree = {
 	}
 };
 
-var url_parser = {
-	parse: function(pth_string){
-		/*
-		#/catalog/The+Killers/_/Try me
-		#?q=be/tags/beautiful
-		#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Phone+Call
-		#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
-		#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
-		#/recommendations/Beastie+boys/Phone+Call
-		#/loved/Beastie+boys/Phone+Call
-		#/radio/artist/The+Killers/similarartist/Bestie+Boys/Intergalactic
-		#?q=be/directsearch/vk/345345
-		'artists by loved'
-		#/ds/vk/25325_2344446
-		http://www.lastfm.ru/music/65daysofstatic/+similar
-		*/
-		var pth = pth_string.replace(/^\//,'').split('/');
-		//
-		for (var i = 0; i < pth.length; i++) {
-			pth[i] = decodeURIComponent(pth[i].replace(/([^\/])\+/g, '$1 '));
-		}
-
-		var con = new pathData();
-		switch (pth.shift()) {
-			case 'catalog':
-				this.getCatalogData(pth, con);
-				break;
-			case 'tags':
-				this.getTagData(pth, con);
-				break;
-			case 'recommendations':
-				this.getRecommendationsData(pth, con);
-				break;
-			case 'loved':
-				this.getLovedData(pth, con);
-				break;
-			case 'playlist':
-				this.getCustomPlaylistData(pth, con);
-				break;
-			case 'ds': this.getDirectSearchData(pth, con);
-				break;
-			case 'chart':
-				this.getChartData(pth, con);
-				break;
-			default:
-		}
-		return con.p;
-	},
-	getCatalogData: function(pth, con){
-		var artist;
-		var artcard = pth.shift();
-		
-		if (artcard){
-			if (artcard != '_'){
-				con.add('artcard', {artist: (artist = artcard)});
-			} else{
-				
-			}
-			
-			var playlist = pth.shift();
-			if (playlist){
-				if (playlist.indexOf('+') == 0 && playlist == '+similar'){
-					//#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
-					con.add('pl', {
-						artist: artist,
-						type: 'similar',
-						pltype: 'similar artists'
-					});
-					
-					//current_artist and current_track
-					var current_music = getTrackAtristAndName(pth, artist);
-					if (current_music){
-						con.add('track', current_music);
-					}
-					
-				} else{
-					if (playlist != '_'){
-						//#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
-						con.add('pl', {
-							artist: artist,
-							type: 'album',
-							pltype: 'album',
-							album_name: playlist
-						});
-						
-	
-					} else {
-						//best tracks
-						con.add('pl', {
-							artist: artist,
-							type: 'top',
-							pltype: 'artist'
-						});
-						//#/catalog/KiEw/_/Doc.Div.
-					}
-				
-					var current_music = getTrackAtristAndName(pth, artist);
-					if (current_music){
-						con.add('track', current_music);
-					}
-					
-					
-				}
-			}
-			
-		}
-
-	},
-	getTagData: function(pth, con){
-		//#/tags/experimental/The+Mars+Volta/Tetragrammaton
-		var tag = pth.shift();
-		if (tag){
-			con.add('pl', {
-				tag_name: tag,
-				type: 'tag',
-				pltype: 'artists by tag'
-			});
-			
-			var current_music = getTrackAtristAndName(pth);
-			if (current_music){
-				con.add('track', current_music);
-			}
-		}
-	},
-	getChartData: function(pth, con){
-		var country = pth.shift();
-		var metro = pth.shift();
-
-		if (country && metro){
-			con.add('pl', {
-				country: country,
-				metro: metro,
-				type: 'chart'
-			});
-			var current_music = getTrackAtristAndName(pth);
-			if (current_music){
-				con.add('track', current_music);
-			}
-		}
-	},
-	getRecommendationsData: function(pth, con){
-		con.add('pl', {
-			type: 'recommendations',
-			pltype: 'artists by recommendations'
-		});
-		
-		var current_music = getTrackAtristAndName(pth);
-		if (current_music){
-			con.add('track', current_music);
-		}
-	},
-	getCustomPlaylistData: function(pth, con){
-		var playlist_name = pth.shift();
-		if (playlist_name){
-			con.add('pl', {
-				type: 'cplaylist',
-				playlist_name: playlist_name,
-				pltype: 'cplaylist'
-			});
-		}
-		
-		var current_music = getTrackAtristAndName(pth);
-		if (current_music){
-			con.add('track', current_music);
-		}
-	},
-	getLovedData: function(pth, con){
-		con.add('pl', {
-			type: 'loved',
-			pltype: 'artists by loved'
-		});
-		var current_music = getTrackAtristAndName(pth);
-		if (current_music){
-			con.add('track', current_music);
-		}
-	},
-	getDirectSearchData: function(pth, con){
-		var source = pth.shift();
-		var id = pth.shift();
-		if (source && id){
-			con.add('pl', {
-				type: 'directsearch',
-				source: source,
-				rawid: id
-			});
-		}
-	}
-};
+/*
+#/catalog/The+Killers/_/Try me
+#?q=be/tags/beautiful
+#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Phone+Call
+#/catalog/Varios+Artist/Eternal+Sunshine+of+the+spotless+mind/Beastie+boys/Phone+Call
+#/catalog/The+Killers/+similar/Beastie+boys/Phone+Call
+#/recommendations/Beastie+boys/Phone+Call
+#/loved/Beastie+boys/Phone+Call
+#/radio/artist/The+Killers/similarartist/Bestie+Boys/Intergalactic
+#?q=be/directsearch/vk/345345
+'artists by loved'
+#/ds/vk/25325_2344446
+http://www.lastfm.ru/music/65daysofstatic/+similar
+*/
 
 var handleHistoryState =function(e, jo, jn, oldstate, newstate, state_from_history){
 	if (newstate.current_artist || newstate.current_track){
@@ -658,43 +489,13 @@ var handleHistoryState =function(e, jo, jn, oldstate, newstate, state_from_histo
 	}
 	
 };
-var getFakeURLParameters = function(str){
-	var divider = str.indexOf('/');
-	if (divider != -1){
-		var search_part = str.slice(0, divider);
-		var path_part = str.slice(divider + 1);
-	} else{
-		var search_part = str;
-	}
-	var params = (search_part && get_url_parameters(search_part, true)) || {};
-	
-	var sp = [];
-	if (params.q){
-		sp.push({
-			type: 'search',
-			data: {
-				query: decodeURIComponent(params.q)
-			}
-		});
-	}
-	
-	if (path_part){
-		sp = sp.concat(url_parser.parse(path_part));
-	}
-	
-	
-	return {params:params || {}, path: path_part || '', tree: sp};
-	
-	
-};
+
 var gunm = function(lev){
 	var levs = [].concat(lev, lev.parent_levels),
 		live_levs = [],
 		dead_levs = [];
 		
 	levs.reverse();
-		
-	var live_levs = [];
 	
 	for (var i=0; i < levs.length; i++) {
 		var cur = levs[i];
@@ -724,144 +525,7 @@ var gunm = function(lev){
 
 };
 
-var recoverPlaylistBranch = function(pldata, parent_md, songdata, has_artcard){
-	if (songdata && songdata.current_track && songdata.current_artist){
-		var start_song = {artist: songdata.current_artist, track: songdata.current_track}
-	};
-	
-	console.log(pldata)
-	switch (pldata.type) {
-		case 'similar':
-			su.showSimilarArtists(pldata.artist, {
-				no_navi: true, 
-				from_artcard: has_artcard,
-				source_info: parent_md && {
-					page_md: parent_md,
-					source_name: has_artcard && 'similar-artists',
-				},
-			}, songdata);
-			break
-		case 'album':
-			su.showAlbum({
-				album_name: pldata.album_name,
-				artist: pldata.artist
-			}, {
-				no_navi: true, 
-				from_artcard: has_artcard, 
-				source_info: parent_md && {
-					page_md: parent_md,
-					source_name: has_artcard && 'artist-albums',
-				},
-			}, start_song);
-			break
-		case 'top':
-			su.showTopTacks(pldata.artist, {
-				no_navi: true, 
-				from_artcard: has_artcard,
-				source_info: parent_md && {
-					page_md: parent_md,
-					source_name: has_artcard && 'top-tracks'
-				}
-			}, start_song);
-			break
-		case 'tag':
-			su.show_tag(pldata.tag_name, {
-				no_navi: true, 
-				source_info: parent_md && {
-					page_md: parent_md
-				}
-			}, start_song);
-			break
-		case 'recommendations':
-			if (start_song){
-				su.showTopTacks(start_song.artist, {
-					no_navi: true, 
-					from_artcard: has_artcard,
-					source_info: parent_md && {
-						page_md: parent_md
-					}
-				}, start_song);
-			}
-			break
-		case 'cplaylist':
-			if (start_song){
-				su.showTopTacks(start_song.artist, {
-					no_navi: true,
-					from_artcard: has_artcard,
-					source_info: parent_md && {
-						page_md: parent_md
-					}
-				}, start_song);
-			}
-			break
-		case 'chart':
-			if (start_song){
-				su.showTopTacks(start_song.artist, {
-					no_navi: true,
-					from_artcard: has_artcard,
-					source_info: parent_md && {
-						page_md: parent_md
-					}
-				}, start_song);
-			} else{
-				su.showMetroChart(pldata.country, pldata.metro, {
-					no_navi: true, 
-					source_info: parent_md && {
-						page_md: parent_md
-					}
-				}); //fghjfghj
-			}
-			break
-		case 'loved':
-			if (start_song){
-				su.showTopTacks(start_song.artist, {
-					no_navi: true,
-					from_artcard: has_artcard,
-					source_info: {
-						page_md: parent_md
-					}
-				}, start_song);
-			}
-			break
-		default:
-			;
-	}
-};
-var history_btypes = {
-	'search': function(branch, build_result, sub_branch, prev_branch) {
-		return su.showResultsPage(branch.data.query, true);
-	},
-	'artcard': function(branch, build_result, sub_branch, prev_branch) {
-		return su.showArtcardPage(branch.data.artist, build_result && {
-			page_md: build_result
-		}, true);
-	},
-	'pl': function(branch, build_result, sub_branch, prev_branch) {
-		var song;
-			
-		if (sub_branch && sub_branch.type == 'track'){
-			song = sub_branch.data;
-			sub_branch.done = true;
-			//sub_branch_handled = true;
-		}
-		return recoverPlaylistBranch(branch.data, build_result, song, prev_branch && prev_branch.type == 'artcard')
-
-	},
-	'track': function(branch, sub_branch, prev_branch) {
-
-	}
-};
-
-var recoverHistoryTreeBranch = function(branch, build_result, sub_branch, prev_branch){
-	var handler = history_btypes[branch.type];
-
-	return handler ? handler.call(this, branch, build_result, sub_branch, prev_branch) : false;
-};
-
-
 var hashChangeQueue = new funcsQueue(0);
- 
-
 var hashChangeRecover = function(e, soft){
 	var url = e.newURL;
 
@@ -884,32 +548,22 @@ var hashChangeRecover = function(e, soft){
 		if (dl.dead.length){
 			for (var i=0; i < dl.dead.length; i++) {
 				su.map.resurrectLevel(dl.dead[i], i != dl.dead.length - 1, true );
-			};
-		}	
+			}
+		}
 	} else{
-		var jn = getFakeURLParameters(url.replace(/\ ?\$...$/, ''));
-		if (!jn.tree.length){
+
+		var finded_path = routePath(url.replace(/\ ?\$...$/, ''), route_tree);
+		if (!finded_path.length){
 			if (!soft){
 				su.showStartPage(true);
 			}
 		} else {
-			su.showStartPage(true);
-			var prev_branch;
-			var build_result = su.start_page;
-			while (jn.tree.length) {
-				var branch = jn.tree.shift();
-				if (!branch.done){
-					build_result = recoverHistoryTreeBranch(branch, build_result, jn.tree[0], prev_branch);
-				} else {
-					build_result = branch.build_result;
-				}
-				prev_branch = branch;
-			}
+			routeAppByPath(finded_path);
+
 		}
 	}
-	
 	su.map.finishChangesCollecting();
-}
+};
 
 
 var hashChangeReciever = function(e){
@@ -920,7 +574,7 @@ var hashChangeReciever = function(e){
 
 var hashchangeHandler=  function(e, soft){
 	if (e.newURL != navi.getFakeURL()){
-		navi.setFakeURL(e.newURL)
+		navi.setFakeURL(e.newURL);
 		if (e.oldURL != e.newURL){
 			hashChangeRecover(e, soft);
 		}
