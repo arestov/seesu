@@ -47,14 +47,14 @@ html.not-as-application, .not-as-application  body{
 
 .sm2proxy{
 	position: absolute;
-	top:40px;
-	width:170px;
-	height:170px;
+	top:3rem;
+	width:12rem;
+	height:12rem;
 	z-index:-10;
 	border: 0;	
 }		
 .sm2proxy.sm2-complete{
-	left:-1000px;
+	left:-70rem;
 }
 .sm2proxy.long-appearance{
 	z-index:10;
@@ -88,14 +88,14 @@ html.not-as-application, .not-as-application  body{
 	}
 	.moplas-block .show-all-songs .notifier{
 		position: absolute;
-		top: -11px;
+		top: -0.75rem;
 		left: 0;
 		background: red;
-		height: 20px;
-		line-height:20px;
-		width: 20px;
+		height: 1.5rem;
+		line-height: 1.5rem;
+		width: 1.5rem;
 		text-align: center;
-		border-radius: 10px;
+		border-radius: 0.75rem;
 		opacity: 0.8;
 		}
 	.moplas-block .show-all-songs a{
@@ -111,7 +111,7 @@ html.not-as-application, .not-as-application  body{
 			}
 		.moplas-block .show-all-songs a:active{
 			color:#aaa;
-			box-shadow: inset 0 0 11px 0 #444;
+			box-shadow: inset 0 0 0.8rem 0 #444;
 			}
 		.moplas-block .show-all-songs a span{
 			border-bottom: 1px dotted;
@@ -896,41 +896,7 @@ html.not-as-application, .not-as-application  body{
 	overflow: hidden;
 	position: absolute;
 	}
-.triangle {
-	position: absolute;
-	width: 21px;
-	height:17px;
-	background:url(../i/triangle.png) no-repeat 50% 0;
-	left: 15px;
-	top: -7px;
-}
-.triangle-bottom{
-	position: absolute;
-	width: 21px;
-	height:17px;
-	background:url(../i/triangle-bottom.png) no-repeat 50% 0;
-	bottom:-12px;
-	left: 15px;
-}
 
-.balun {
-	display:block;
-	position: absolute;
-	background-color:#ddd;
-	-moz-border-radius:7px;
-	-webkit-border-radius:7px;
-	border-radius:7px;
-	width: 100%;
-	padding:1rem;
-}
-	.balun a{
-		color:blue;
-		border-bottom-color:blue;
-		}
-		.balun a:hover{
-			color:#333;
-			border-bottom-color:#333;
-		}
 
 #sm2-container.swf_error{
 	display:none;

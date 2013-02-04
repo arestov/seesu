@@ -141,79 +141,6 @@ if (app_env.needs_url_history) {
 })();
 
 
-function getPuppetPlaylistOfViewState(stt){
-	if (!stt){
-		return false;
-	}
-	var puppet_playlist ={};
-	if (stt.type == 'catalog'){
-		if (!stt.subtype){
-			if (!stt.album_name){
-				puppet_playlist.key = stt.artist_name;
-				puppet_playlist.playlist_type = 'artist';
-			} else{
-				puppet_playlist.key = stt.album_name;
-				puppet_playlist.playlist_type = 'album';
-			}
-		} else if (stt.subtype =='similar'){
-			puppet_playlist.key = stt.artist_name;
-			puppet_playlist.playlist_type = 'similar artists';
-		} else if (stt.subtype =='tracks'){
-			puppet_playlist.playlist_type = 'tracks';
-		}
-	} else if (stt.type == 'tags'){
-		puppet_playlist.key = stt.tag_name;
-		puppet_playlist.playlist_type = 'artists by tag';
-	} else if (stt.type == 'recommendations'){
-		
-		puppet_playlist.playlist_type = 'artists by recommendations';
-	} else if (stt.type == 'loved'){
-		
-		puppet_playlist.playlist_type = 'artists by loved';
-	} else if (stt.type == 'playlist'){
-		puppet_playlist.key = stt.current_playlist;
-		puppet_playlist.playlist_type = 'cplaylist';
-	}
-	return puppet_playlist;
-}
-
-var getTrackAtristAndName = function(path, artist) {
-	var path_step = path.shift(),
-		next_step = path[0],
-		ob = {},
-		done;
-	
-	if (next_step && next_step.indexOf('+') !== 0){
-		done = true;
-		path.shift();
-		ob.current_artist = path_step;
-		ob.current_track  = next_step;
-	} else if (path_step && artist){
-		done = true;
-		ob.current_track = path_step;
-		if (artist){
-			ob.current_artist = artist;
-		}
-	}
-	return done && ob;
-};
-var checkPlstateArtistAndTrack = function(pvstate, splevels, first, second){
-	
-};
-
-var pathData = function(){
-	this.p = [];
-};
-pathData.prototype = {
-	add: function(type, data){
-		this.p.push({
-			type: type,
-			data: data
-		});
-	}
-};
-
-
 
 
 /*
@@ -459,6 +386,9 @@ var route_tree = {
 							}
 						}
 					}
+				},
+				'conductor': {
+
 				}
 			}
 		}
@@ -591,8 +521,3 @@ var hashchangeHandler=  function(e, soft){
 		});
 	}
 })();
-
-
-
-
-
