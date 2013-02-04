@@ -352,7 +352,12 @@ provoda.Model.extendTo(appModel, {
 
 	},
 	_showArtcardPage: function(artist, source_info, no_navi){
-		var md = new artCard(artist);
+		var md = new artCard();
+		md.init({
+			app: this
+		}, {
+			artist: artist
+		});
 		this.bindMMapStateChanges(md, 'artcard');
 		if (source_info && !source_info.page_md){
 			throw new Error('give me page_md');
@@ -693,7 +698,7 @@ provoda.Model.extendTo(appModel, {
 			title: 'Similar to «' + artist + '» artists',
 			type: 'similar artists',
 			data: {artist: artist}
-		}, start_song).loading();
+		}, start_song);
 
 		
 		var recovered = this.showArtistPlaylist(artist, pl, vopts);

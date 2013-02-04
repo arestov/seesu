@@ -262,7 +262,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 														array: _trm.image
 													}
 												};
-												plr.push(tobj);
+												plr.addOmo(tobj);
 												createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
 												
 												

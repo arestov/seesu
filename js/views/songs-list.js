@@ -107,19 +107,14 @@ var songsListView;
 		'stch-error': function(error){
 			if (this.error_b && this.error_b.v !== error){
 				this.error_b.n.remove();
+				delete this.error_b;
 			}
-			if (error){
-				if (error == 'vk_auth'){
-					this.error_b = {
-						v: error,
-						n: $('<li></li>').append(this.root_view.samples.vk_login.clone()).prependTo(this.c)
-					};
-				} else {
-					this.error_b = {
-						v: error,
-						n: $('<li>' + localize('nothing-found','Nothing found') + '</li>').appendTo(this.c)
-					};
-				}
+			if (error && !this.error_b){
+				this.error_b = {
+					v: error,
+					n: $('<li>' + localize('nothing-found','Nothing found') + '</li>').appendTo(this.c)
+				};
+				
 			}
 		},
 		createPanel: function() {

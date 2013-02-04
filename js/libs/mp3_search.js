@@ -671,6 +671,8 @@ var getAverageDurations = function(mu_array, time_limit){
 					query_string: query_string
 				});
 
+				this.investgs[query_string] = investg;
+
 				if (msq.artist){
 					var lc_artist = msq.artist.toLowerCase();
 					this.investgs_by_artist[lc_artist] = this.investgs_by_artist[lc_artist] || [];

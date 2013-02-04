@@ -80,9 +80,9 @@ var song;
 					});
 			}
 
-			this.on('view', function(no_navi, user_want){
+			this.on('view', function(no_navi, userwant){
 				su.show_track_page(this, no_navi);
-				if (user_want){
+				if (userwant){
 					//fixme - never true!
 					if (_this.wasMarkedAsPrev()){
 						su.trackEvent('Song click', 'previous song');

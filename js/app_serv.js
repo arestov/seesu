@@ -701,12 +701,20 @@ document_states.prototype = {
 window.dstates = new document_states(window.document);
 
 
-function get_url_parameters(str){
+function get_url_parameters(str, decode_uri_c){
 	var url_vars = str.replace(/^\?/,'').split('&');
 	var full_url = {};
 	for (var i=0; i < url_vars.length; i++) {
 		var _h = url_vars[i].split('=');
-		full_url[_h[0]] = _h[1];
+		var prop_name = _h[0];
+		var prop_value = _h[1];
+		if (decode_uri_c){
+			prop_name = decodeURIComponent(prop_name);
+			prop_value = decodeURIComponent(prop_value);
+		}
+
+		
+		full_url[prop_name] = prop_value;
 	}
 	return full_url;
 }
@@ -741,7 +749,7 @@ window.app_env = (function(wd){
 	var env = {
 		bro: bro
 	};
-	env.url = get_url_parameters(wd.location.search);
+	env.url = get_url_parameters(wd.location.search, true);
 	
 	env.cross_domain_allowed = !wd.location.protocol.match(/(http\:)|(file\:)/);
 	

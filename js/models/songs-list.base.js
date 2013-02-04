@@ -5,7 +5,7 @@ var songsList;
 	provoda.addPrototype("songsListBase", {
 		model_name: "playlist",
 		complex_states: {
-			more_load_available: {
+			'more_load_available': {
 				depends_on: ["has-loader", "loading"],
 				fn: function(can_load_more, loading) {
 					if (can_load_more){
@@ -34,7 +34,7 @@ var songsList;
 			}
 			
 		},
-		push: function(omo, skip_changes){
+		addOmo: function(omo, skip_changes){
 			var mo = this.extendSong(omo);
 
 			var last_usable_song = this.getLastUsableSong();
@@ -68,7 +68,7 @@ var songsList;
 		},
 		add: function(omo){
 			var mo = cloneObj({}, omo, false, ['track', 'artist', 'file']);
-			return this.push(mo);
+			return this.addOmo(mo);
 		},
 		findSongOwnPosition: function(first_song){
 			var can_find_context;
@@ -83,7 +83,7 @@ var songsList;
 				this.first_song = this.extendSong(first_song);;
 			}
 			if (this.first_song){
-				this.push(this.first_song);
+				this.addOmo(this.first_song);
 			}
 		},
 		getPagingInfo: function() {
@@ -110,9 +110,18 @@ var songsList;
 		getLastSong: function(){
 			return this.palist.length ? this.palist[this.palist.length - 1] : false;
 		},
-		setLoaderFinish: function() {
-			this.updateState("has-loader", false);
+
+
+
+		preloadStart: function() {
+			this.loadPlStart();
 		},
+		loadPlStart: function() {
+			if (this.state('more_load_available') && !this.getLength()){
+				this.loadMoreSongs();
+			}
+		},
+		
 		setLoader: function(cb, trigger) {
 			this.updateState("has-loader", true);
 			this.requestMoreSongs = cb;
@@ -122,14 +131,6 @@ var songsList;
 				this.loadMoreSongs();
 			}
 
-		},
-		preloadStart: function() {
-		this.loadPlStart();
-		},
-		loadPlStart: function() {
-			if (this.state('more_load_available') && !this.getLength()){
-				this.loadMoreSongs();
-			}
 		},
 		loadMoreSongs: function(force) {
 			if (this.state("has-loader") && this.requestMoreSongs){
@@ -147,6 +148,67 @@ var songsList;
 				//this.trigger("load-more");
 			}
 			
+		},
+		setLoaderFinish: function() {
+			this.updateState("has-loader", false);
+		},
+		loading: function(){
+			this.updateState('loading', true);
+			return this;
+		},
+		changed: function(){
+			this.setChild('song', this.palist, true);
+			return this;
+		},
+		injectExpectedSongs: function(playlist) {
+			var song;
+			if (playlist && playlist.length){
+				song = this.getLastUsableSong();
+
+				for (var i=0, l = playlist.length; i < l; i++) {
+					this.addOmo(playlist[i], true);
+				}
+				
+			}
+			this.loadComplete(!playlist || !playlist.length);
+			if (this.onChanges){
+				this.onChanges(song);
+			}
+			return this;
+		},
+		onChanges: function(last_usable_song){
+			if (last_usable_song && last_usable_song.isImportant()){
+				//this.checkNeighboursChanges(last_usable_song);
+			}
+			var w_song = this.getWantedSong();
+			var v_song = this.getViewingSong(w_song);
+			var p_song = this.getPlayerSong(v_song);
+			if (w_song && !w_song.hasNextSong()){
+				this.checkNeighboursChanges(w_song, false, false, "playlist load");
+			}
+			if (v_song && !v_song.hasNextSong()) {
+				this.checkNeighboursChanges(v_song, false, false, "playlist load");
+			}
+			
+			if (p_song && v_song != p_song && !p_song.hasNextSong()){
+				this.checkNeighboursChanges(p_song, false, false, "playlist load");
+			}
+			this.trigger('palist-change', this.palist);
+		},
+		loadComplete: function(error){
+			error = ((typeof error == 'string') ? error : (!this.palist.length && error));
+			this.updateState('error', error);
+			this.updateState('loading', false);
+			this.markTracksForFilesPrefinding();
+
+			var _this = this;
+			setTimeout(function() {
+				_this.makePlayable();
+			},300);
+			if (!error){
+				this.changed();
+			}
+			return this;
 		},
 		die: function(){
 			this.hide();
@@ -211,64 +273,7 @@ var songsList;
 		markAsPlayable: function() {
 			this.updateState('can-play', true);
 		},
-		loading: function(){
-			this.updateState('loading', true);
-			return this;
-		},
-		changed: function(){
-			this.setChild('song', this.palist, true);
-			return this;
-		},
-		injectExpectedSongs: function(playlist) {
-			var song;
-			if (playlist && playlist.length){
-				song = this.getLastUsableSong();
-
-				for (var i=0, l = playlist.length; i < l; i++) {
-					this.push(playlist[i], true);
-				}
-				
-			}
-			this.loadComplete(!playlist || !playlist.length);
-			if (this.onChanges){
-				this.onChanges(song);
-			}
-			return this;
-		},
-		onChanges: function(last_usable_song){
-			if (last_usable_song && last_usable_song.isImportant()){
-				//this.checkNeighboursChanges(last_usable_song);
-			}
-			var w_song = this.getWantedSong();
-			var v_song = this.getViewingSong(w_song);
-			var p_song = this.getPlayerSong(v_song);
-			if (w_song && !w_song.hasNextSong()){
-				this.checkNeighboursChanges(w_song, false, false, "playlist load");
-			}
-			if (v_song && !v_song.hasNextSong()) {
-				this.checkNeighboursChanges(v_song, false, false, "playlist load");
-			}
-			
-			if (p_song && v_song != p_song && !p_song.hasNextSong()){
-				this.checkNeighboursChanges(p_song, false, false, "playlist load");
-			}
-			this.trigger('palist-change', this.palist);
-		},
-		loadComplete: function(error){
-			error = ((typeof error == 'string') ? error : (!this.palist.length && error));
-			this.updateState('error', error);
-			this.updateState('loading', false);
-			this.markTracksForFilesPrefinding();
-
-			var _this = this;
-			setTimeout(function() {
-				_this.makePlayable();
-			},300);
-			if (!error){
-				this.changed();
-			}
-			return this;
-		},
+		
 		makePlayable: function(full_allowing) {
 			for (var i = 0; i < this.palist.length; i++) {
 				var mo = this.palist[i];

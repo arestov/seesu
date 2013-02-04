@@ -1,12 +1,3 @@
-var ArtistsList = function() {};
-mapLevelModel.extendTo(ArtistsList, {
-	requestArtists: function() {
-
-	},
-	generatePlaylist: function() {
-
-	}
-});
 
 
 var AllPAllTimeChart = function() {};

@@ -59,7 +59,7 @@ appModel.extendTo(seesuApp, {
 		this._super();
 		this.version = version;
 
-		this._url = get_url_parameters(location.search);
+		this._url = get_url_parameters(location.search, true);
 		this.settings = {};
 		this.settings_timers = {};
 
@@ -720,7 +720,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 			data: {name: saved_pl.playlist_title}
 		});
 		for (var i=0; i < saved_pl.length; i++) {
-			p.push(saved_pl[i]);
+			p.addOmo(saved_pl[i]);
 		}
 		this.watchOwnPlaylist(p);
 		return p;

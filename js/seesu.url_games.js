@@ -129,7 +129,7 @@ if (app_env.needs_url_history) {
 		},
 		set: function(url, data){
 			this._saveHistory(url, data);
-		}, 
+		},
 		replace: function(oldurl, url, data){
 			this._saveHistory(url, data, oldurl);
 		},
@@ -175,7 +175,7 @@ function getPuppetPlaylistOfViewState(stt){
 		puppet_playlist.playlist_type = 'cplaylist';
 	}
 	return puppet_playlist;
-};
+}
 
 var getTrackAtristAndName = function(path, artist) {
 	var path_step = path.shift(),
@@ -183,7 +183,7 @@ var getTrackAtristAndName = function(path, artist) {
 		ob = {},
 		done;
 	
-	if (next_step && next_step.indexOf('+') != 0){
+	if (next_step && next_step.indexOf('+') !== 0){
 		done = true;
 		path.shift();
 		ob.current_artist = path_step;
@@ -215,6 +215,251 @@ pathData.prototype = {
 
 
 
+
+/*
+catalog
+users
+tags
+*/
+var separatePathParts = function(pth) {
+	for (var i = 0; i < pth.length; i++) {
+		pth[i] = {
+			original_part: pth[i].replace(/([^\/])\+/g, '$1 ')
+		};
+	}
+	return pth;
+};
+
+var routePath = function(pth_string, route_tree) {
+	var pth = pth_string.replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
+	//
+	//separatePathParts(pth);
+	
+
+	var cur_brch = route_tree; //current_branch
+	var created_md;
+
+	var full_path = [];
+
+	for (var i = 0; i < pth.length; i++) {
+		var cur = pth[i];
+		var path_opts;
+		var path_name;
+		
+		if (cur_brch.parse_opts){
+			var path_name_parts = cur.split('?');
+			path_name = path_name_parts[0];
+			if (path_name_parts[1]){
+				path_opts = get_url_parameters(path_name_parts[1], true);
+			}
+		} else {
+			path_name = cur;
+		}
+		var selected_path;
+
+		if (cur_brch && cur_brch.names && cur_brch.names[path_name]){
+			selected_path = cur_brch.names[path_name];
+		} else if (cur_brch.other){
+			selected_path = cur_brch.other;
+		}
+
+		if (!selected_path){
+			break;
+		} else {
+			full_path.push({
+
+				selected_path: selected_path,
+				path_name: decodeURIComponent(path_name),
+				path_opts: path_opts || {},
+				sub_paths: pth.slice(i+1)
+			});
+			cur_brch = selected_path.branch;
+			//if (selected_path.fn){
+
+			//}
+
+		}
+		//
+		//pth[i]
+
+	}
+	return full_path;
+};
+var routeAppByPath = function(full_path) {
+	var result;
+	for (var i = 0; i < full_path.length; i++) {
+		var cur = full_path[i];
+		if (cur.selected_path.fn){
+			result = cur.selected_path.fn(cur.path_name, cur.path_opts, cur.sub_paths, result);
+		}
+	}
+};
+
+//var
+
+
+
+var route_tree = {
+	//before first flash (#?q=be/tags/beautiful) ----- ?q=be
+	parse_opts: true,
+	other: {
+		fn: function(path_name, opts) {
+			su.showStartPage(true);
+			if (opts.query){
+				return su.showResultsPage(opts.query, true);
+			} else {
+				return su.start_page;
+			}
+		},
+		branch: {//next
+			names: {
+				'catalog': {
+					branch: {
+						other: {
+							fn: function(path_name, opts, sub_paths, parent_md) {
+								//artist name
+								return su.showArtcardPage(path_name, {
+									page_md: parent_md
+								}, true);
+							},
+							branch: {
+								names: {
+									'_': {
+										fn: function(path_name, opts, sub_paths, parent_md) {
+											var track_name = sub_paths && sub_paths[0];
+											parent_md.showTopTacks({
+												no_navi: true
+											}, track_name);
+										}
+									},
+									'+similar': {
+										fn: function(path_name, opts, sub_paths, parent_md) {
+											parent_md.showSimilarArtists({
+												no_navi: true
+											});
+										},
+										branch: {
+											names: {
+												'~': {
+													fn: function() {
+
+													}
+												}
+											}
+										}
+									}
+								},
+								other: {
+									//albums
+									fn: function(path_name, opts, sub_paths, parent_md) {
+										parent_md.showAlbum(path_name, {
+											no_navi: true
+										});
+									},
+									branch: {
+										other: {
+											//artist name and track
+											fn: function() {
+
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				'tags': {
+					branch: {
+						other: {
+							fn: function() {
+
+							},
+							branch: {
+								names: {
+									'songs': {
+										fn: function() {
+
+										},
+										branch: {
+											names: {
+												'_': {
+
+												}
+											}
+										}
+									},
+									'artists': {
+										fn: function() {
+
+										},
+										branch: {
+											names: {
+												'_': {
+
+												},
+												'week': {
+
+												}
+											}
+										}
+
+									},
+									'albums': {
+										fn: function() {
+
+										},
+										branch: {
+											names: {
+												'_': {
+													fn: function() {
+
+													}
+												}
+											}
+										}
+									},
+									'tags': {
+										fn: function() {
+
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				'users': {
+					branch: {
+						name: {
+							'me': {
+								fn: function() {
+
+								},
+								branch: {
+									names: {
+										'recommendations': {
+
+										},
+										'loved': {
+
+										}
+									}
+								}
+							}
+						},
+						other: {
+							fn: function() {
+
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+
 var url_parser = {
 	parse: function(pth_string){
 		/*
@@ -234,33 +479,32 @@ var url_parser = {
 		var pth = pth_string.replace(/^\//,'').split('/');
 		//
 		for (var i = 0; i < pth.length; i++) {
-			pth[i] = decodeURIComponent(pth[i]).replace(/([^\/])\+/g, '$1 ');
+			pth[i] = decodeURIComponent(pth[i].replace(/([^\/])\+/g, '$1 '));
 		}
 
 		var con = new pathData();
 		switch (pth.shift()) {
 			case 'catalog':
-				this.getCatalogData(pth, con)
-				break
+				this.getCatalogData(pth, con);
+				break;
 			case 'tags':
-				this.getTagData(pth, con)
-				break
+				this.getTagData(pth, con);
+				break;
 			case 'recommendations':
-				this.getRecommendationsData(pth, con)
-				break
+				this.getRecommendationsData(pth, con);
+				break;
 			case 'loved':
-				this.getLovedData(pth, con)
-				break
+				this.getLovedData(pth, con);
+				break;
 			case 'playlist':
-				this.getCustomPlaylistData(pth, con)
-				break
-			case 'ds': this.getDirectSearchData(pth, con)
-				break
+				this.getCustomPlaylistData(pth, con);
+				break;
+			case 'ds': this.getDirectSearchData(pth, con);
+				break;
 			case 'chart':
-				this.getChartData(pth, con)
-				break
+				this.getChartData(pth, con);
+				break;
 			default:
-				;
 		}
 		return con.p;
 	},
@@ -338,7 +582,7 @@ var url_parser = {
 			if (current_music){
 				con.add('track', current_music);
 			}
-		} 
+		}
 	},
 	getChartData: function(pth, con){
 		var country = pth.shift();
@@ -400,17 +644,17 @@ var url_parser = {
 				type: 'directsearch',
 				source: source,
 				rawid: id
-			});	
+			});
 		}
 	}
-}
+};
 
 var handleHistoryState =function(e, jo, jn, oldstate, newstate, state_from_history){
 	if (newstate.current_artist || newstate.current_track){
 		var tk =  {
 			artist: newstate.current_artist,
 			track: newstate.current_track
-		}
+		};
 	}
 	
 };
@@ -422,7 +666,7 @@ var getFakeURLParameters = function(str){
 	} else{
 		var search_part = str;
 	}
-	var params = (search_part && get_url_parameters(search_part)) || {};
+	var params = (search_part && get_url_parameters(search_part, true)) || {};
 	
 	var sp = [];
 	if (params.q){
@@ -450,10 +694,10 @@ var gunm = function(lev){
 		
 	levs.reverse();
 		
-	var live_levs = []
+	var live_levs = [];
 	
 	for (var i=0; i < levs.length; i++) {
-		var cur = levs[i]; 
+		var cur = levs[i];
 		if (cur && !dead_levs.length){
 			if (cur.canUse()){
 				live_levs.push(cur);
@@ -470,7 +714,7 @@ var gunm = function(lev){
 		} else{
 			dead_levs.push(cur);
 		}
-	};
+	}
 	return {
 		live: live_levs,
 		dead: dead_levs

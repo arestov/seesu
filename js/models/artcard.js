@@ -1,20 +1,70 @@
 
 
-var artCard = function(artist) {
-	this.init();
-	this.artist= artist;
-	this.updateState('nav-title', artist);
-
-	this.loadInfo();
-
-	this.updateState('url-part', '/catalog/' + su.encodeURLPart(this.artist));
-
-};
+var artCard = function(artist) {};
 mapLevelModel.extendTo(artCard, {
 	model_name: 'artcard',
 	page_name: "art card",
 	getURL: function() {
-		return '/catalog/' + su.encodeURLPart(this.artist);
+		return '/catalog/' + this.app.encodeURLPart(this.artist);
+	},
+	init: function(opts, params) {
+		this._super();
+		this.app = opts.app;
+		this.artist = params.artist;
+		this.updateState('nav-title', params.artist);
+
+		if (params.lfm_image){
+			this.updateState('lfm-image', params.lfm_image);
+		}
+
+		var _this = this;
+		this.on('state-change.mp-show', function(e) {
+			if (e.value && e.value.userwant){
+				_this.loadInfo();
+			}
+		});
+
+		this.updateState('url-part', '/catalog/' + this.app.encodeURLPart(this.artist));
+	},
+	showTopTacks: function(opts, track_name) {
+		var start_song;
+		if (track_name){
+			start_song = {
+				artist: this.artist,
+				track: track_name
+			};
+		}
+		return this.app.showTopTacks(this.artist, {
+			no_navi: opts.no_navi,
+			from_artcard: true,
+			source_info: {
+				page_md: this,
+				source_name: 'top-tracks'
+			}
+		}, start_song);
+	},
+	showSimilarArtists: function(opts) {
+		return this.app.showSimilarArtists(this.artist, {
+			no_navi: opts.no_navi,
+			from_artcard: true,
+			source_info: {
+				page_md: this,
+				source_name: 'similar-artists'
+			}
+		});
+	},
+	showAlbum: function(album_name, opts, start_song) {
+		return this.app.showAlbum({
+			album_name: album_name,
+			artist: this.artist
+		}, {
+			no_navi: opts.no_navi,
+			from_artcard: true,
+			source_info: {
+				page_md: this,
+				source_name: 'artist-albums'
+			}
+		}, start_song);
 	},
 	loadInfo: function(){
 		this.loadTopTracks();
@@ -82,7 +132,7 @@ mapLevelModel.extendTo(artCard, {
 		var _this = this;
 
 		this.updateState('loading-baseinfo', true);
-		this.addRequest(lfm.get('artist.getInfo',{'artist': this.artist })
+		this.addRequest(lfm.get('artist.getInfo', {'artist': this.artist})
 			.done(function(r){
 				_this.updateState('loading-baseinfo', false);
 				r = parseArtistInfo(r);

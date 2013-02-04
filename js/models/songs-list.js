@@ -176,7 +176,161 @@ var songsList;
 	});
 
 
+var ArtistsList = function() {}; 
+window.ArtistsList = ArtistsList;
+mapLevelModel.extendTo(ArtistsList, {
+	init: function(opts, params) {
+		this._super();
+		this[this.main_list_name] = [];
+	},
+	main_list_name: 'artists',
+	page_limit: 30,
+	complex_states: {
+		'more_load_available': {
+			depends_on: ["has-loader", "loading"],
+			fn: function(can_load_more, loading) {
+				if (can_load_more){
+					return !loading;
+				} else {
 
+				}
+			}
+		}
+	},
+	requestArtists: function() {
+
+	},
+	generatePlaylist: function() {
+
+	},
+	preloadStart: function() {
+		this.loadPlStart();
+	},
+	getLength: function() {
+		var main_list = this[this.main_list_name];
+		return main_list.length;
+	},
+	loadStart: function() {
+		if (this.state('more_load_available') && !this.getLength()){
+			this.requestMoreData();
+		}
+	},
 	
+	setLoader: function(cb, trigger) {
+		this.updateState("has-loader", true);
+		this.sendMoreDataRequest = cb;
+
+		//this.on("load-more", cb);
+		if (trigger){
+			this.requestMoreData();
+		}
+
+	},
+	sendMoreDataRequest: function() {},
+	requestMoreData: function(force) {
+		if (this.state("has-loader") && this.sendMoreDataRequest){
+			if (!this.request_info || this.request_info.done){
+				this.markLoading();
+				this.request_info = this.sendMoreDataRequest.call(this, this.getPagingInfo());
+				if (!this.request_info.request){
+					throw new Error('give me request');
+				} else {
+					this.addRequest(this.request_info.request);
+				}
+			}
+			
+			
+			//this.trigger("load-more");
+		}
+		
+	},
+	setLoaderFinish: function() {
+		this.updateState("has-loader", false);
+	},
+	markLoading: function(){
+		this.updateState('loading', true);
+		return this;
+	},
+
+	putRequestedData: function(request, data_list, error) {
+		if (this.request_info.request == request){
+			var main_list = this[this.main_list_name];
+
+			this.requestComplete(request, error);
+
+			if (data_list && data_list.length){
+				for (var i = 0; i < data_list.length; i++) {
+					main_list.push(data_list[i]);
+				}
+				this.setChild(this.main_list_name, main_list, true);
+			}
+			if (!error && data_list.length < this.page_limit){
+				this.setLoaderFinish();
+			}
+			//this.request_info.request
+		}
+	},
+	requestComplete: function(request, error) {
+		if (this.request_info.request == request){
+			var main_list = this[this.main_list_name];
+
+			this.updateState('loading', false);
+			if (error && !main_list.length) {
+				this.updateState('error', true);
+			} else {
+				this.updateState('error', false);
+			}
+		}
+	}
+});
+
+var SimilarArtists = function() {};
+ArtistsList.extendTo(SimilarArtists, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.original_artist = params.artist;
+
+
+		this.updateState('nav-title', 'Similar to «' + this.original_artist + '» artists');
+		this.updateState('url-part', '/+similar');
+
+	},
+	sendMoreDataRequest: function(paging_opts){
+		var request_info = {};
+		var _this = this;
+		request_info.request = lfm.get('artist.getSimilar',{
+			artist: this.original_artist,
+			limit: paging_opts.page_limit,
+			page: paging_opts.next_page
+		})
+			.done(function(r){
+				var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
+				var data_list = [];
+
+				if (artists && artists.length) {
+					var l = Math.min(artists.length, paging_opts.page_limit);
+					for (var i=0; i < l; i++) {
+						data_list.push({
+							artist: artists[i].name,
+							lfm_image: {
+								array: artists[i].image
+							}
+						});
+					}
+
+				}
+				_this.putRequestedData(request_info.request, data_list, !!r.error);
+				
+			})
+			.fail(function() {
+				_this.requestComplete(request_info.request, true);
+			})
+			.always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	}
+});
+
 })();
 

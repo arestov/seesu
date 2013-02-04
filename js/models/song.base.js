@@ -613,9 +613,9 @@ provoda.addPrototype("baseSong",{
 	checkChangesSinceFS: function(opts){
 		this.plst_titl.checkChangesSinceFS(this, opts);
 	},
-	view: function(no_navi, user_want){
+	view: function(no_navi, userwant){
 		if (!this.state('mp-show')){
-			this.trigger('view', no_navi, user_want);
+			this.trigger('view', no_navi, userwant);
 		}
 	},
 	valueOf:function(){
