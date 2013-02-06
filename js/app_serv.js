@@ -1161,17 +1161,17 @@ var localize= (function(){
 
 
 
-
+/*
 jsLoadComplete(function() {
 	yepnope({
 		load: [ 'CSSOM/spec/utils.js', 'CSSOM/src/loader.js'],
 		complete: function() {
 			console.log('ddddd')
 		}
-	})
+	});
 });
 
-
+*/
 
 
 
@@ -1286,10 +1286,26 @@ jsLoadComplete(function() {
 
 
 	//	var big_string = '/* path: ' + href.replace(location.origin, '') + '*/\n';
+		var simple_rules = [];
+
+		var iterating_rules = [].concat(sheet.cssRules);
+		while (iterating_rules.length){
+			var cur = iterating_rules.shift();
+			if (cur.cssRules){
+				iterating_rules = [].concat(cur.cssRules, iterating_rules);
+			} else {
+				simple_rules.push(cur);
+			}
+		}
+
+		/*
+		simple_rules.sort(function(a, b){
+			return sortByRules(a, b, [''])
+		});*/
 
 		var complects = [];
-		for (var i = 0; i < sheet.cssRules.length; i++) {
-			var cur = sheet.cssRules[i];
+		for (var i = 0; i < simple_rules.length; i++) {
+			var cur = simple_rules[i];
 			//cur.selectorText
 			if (cur.style && cur.style.cssText.indexOf('px') != -1){
 				var rulll = culculateRemRule(cur, root_font_size);
@@ -1298,7 +1314,7 @@ jsLoadComplete(function() {
 
 				var sel_tabs = sel_prev_text.match(/\t+(?:$)/gi);
 				var sel_tabs_count = sel_tabs && sel_tabs[0].length || 0;
-				sel_tabs_count += 1;
+				//sel_tabs_count += 1;
 				
 			//	console.log(sel_tabs_count);
 				complects.push(rulll);
@@ -1309,11 +1325,16 @@ jsLoadComplete(function() {
 						getRulesString(rulll.px_props, sel_tabs_count + 1) +
 						getTabs(sel_tabs_count + 1) + '}\n';
 
-					var big_start = big_result.slice(0, rulll.rule_end + pos_shift);
-					var big_end = big_result.slice(rulll.rule_end + pos_shift);
 
-					big_result = big_start + rulll.full_string + big_end;
-					pos_shift += rulll.full_string.length;
+					var rules_string = '\n' +
+						getTabs(sel_tabs_count + 1) + '/* rem hack */\n' +
+						getRulesString(rulll.px_props, sel_tabs_count + 1);
+
+					var big_start = big_result.slice(0, rulll.rule_end -1 + pos_shift);
+					var big_end = big_result.slice(rulll.rule_end -1 + pos_shift);
+
+					big_result = big_start + rules_string + big_end;
+					pos_shift += rules_string.length;
 
 				//	big_string += rulll.full_string;
 
@@ -1340,27 +1361,12 @@ jsLoadComplete(function() {
 
 		var requests = [];
 
-		/*
-
-		for (var i = 0; i < document.styleSheets.length; i++) {
-			requests.push($.ajax({
-				url: document.styleSheets[i].href
-			}));
-			
-		};
-
-		for (var i = 0; i < document.styleSheets.length; i++) {
-
-			big_string += createStyleSheet(document.styleSheets[i], root_font_size, true);
-			
-		}
-		*/
 		$.ajax({
 			url: url
 		})
 		.done(function(r) {
-
-			console.log(createStyleSheet(url, r, root_font_size, true));
+			var test = createStyleSheet(url, r, root_font_size, true);
+			window.open('data:text/plain;base64,' + btoa(test));
 		});
 		
 		return big_string;
