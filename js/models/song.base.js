@@ -25,6 +25,28 @@ provoda.addPrototype("baseSong",{
 		});
 		this.updateState('url-part', this.getURL());
 	},
+	complex_states: {
+		'song-title': {
+			depends_on: ['artist', 'track'],
+			fn: function(artist, track){
+				return this.getFullName(artist, track);
+			}
+		},
+		'full-title': {
+			depends_on: ['artist', 'track'],
+			fn: function(artist, track){
+				return this.getFullName(artist, track);
+			}
+		},
+		is_important: {
+			depends_on: ['mp-show', 'player-song', 'want_to_play'],
+			fn: function(mp_show, player_song, wapl){
+				this.plst_titl.checkRequestsPriority();
+				return !!(mp_show || player_song || wapl);
+
+			}
+		}
+	},
 	state_change: {
 		"mp-show": function(opts) {
 			if (opts){
@@ -88,28 +110,6 @@ provoda.addPrototype("baseSong",{
 	
 	mlmDie: function() {
 		
-	},
-	complex_states: {
-		'song-title': {
-			depends_on: ['artist', 'track'],
-			fn: function(artist, track){
-				return this.getFullName(artist, track);
-			}
-		},
-		'full-title': {
-			depends_on: ['artist', 'track'],
-			fn: function(artist, track){
-				return this.getFullName(artist, track);
-			}
-		},
-		is_important: {
-			depends_on: ['mp-show', 'player-song', 'want_to_play'],
-			fn: function(mp_show, player_song, wapl){
-				this.plst_titl.checkRequestsPriority();
-				return !!(mp_show || player_song || wapl);
-
-			}
-		}
 	},
 	getFullName: function(artist, track, allow_short){
 		var n = '';

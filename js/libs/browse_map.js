@@ -81,9 +81,6 @@ Class.extendTo(MapLevel, {
 		if (!aycocha){
 			this.map.startChangesCollecting();
 		}
-		
-
-
 
 		//this.map.clearShallow(this);
 		var just_started = this.map.startChangesGrouping('zoom-out', true);
@@ -97,7 +94,6 @@ Class.extendTo(MapLevel, {
 		}
 	},
 	zoomOut: function() {
-		//this.map.clearShallow(this);
 		this._sliceTM();
 	},
 	sliceTillMe: function(transit, url_restoring){
@@ -151,7 +147,7 @@ provoda.Eventor.extendTo(browseMap, {
 		this.chans_coll = [];
 		//zoom levels
 		
-		// -1, start page
+		//-1 - start page
 		//0 - search results
 		//1 - playlist page
 		//today seesu has no deeper level

@@ -1,11 +1,19 @@
 
 
-var artCard = function(artist) {};
-mapLevelModel.extendTo(artCard, {
+var ArtCard = function(artist) {};
+mapLevelModel.extendTo(ArtCard, {
 	model_name: 'artcard',
 	page_name: "art card",
 	getURL: function() {
 		return '/catalog/' + this.app.encodeURLPart(this.artist);
+	},
+	complex_states: {
+		'selected-image': {
+			depends_on: ['lfm-image', 'profile-image'],
+			fn: function(lfmi_wrap, pi_wrap) {
+				return pi_wrap || lfmi_wrap;
+			}
+		}
 	},
 	init: function(opts, params) {
 		this._super();
@@ -13,9 +21,9 @@ mapLevelModel.extendTo(artCard, {
 		this.artist = params.artist;
 		this.updateState('nav-title', params.artist);
 
-		if (params.lfm_image){
-			this.updateState('lfm-image', params.lfm_image);
-		}
+
+		this.updateState('lfm-image', params.lfm_image &&
+			this.app.art_images.getImageWrap(params.lfm_image.array));
 
 		var _this = this;
 		this.on('state-change.mp-show', function(e) {
@@ -67,6 +75,12 @@ mapLevelModel.extendTo(artCard, {
 		}, start_song);
 	},
 	loadInfo: function(){
+		if (this.info_loaded){
+			return;
+		} else {
+			this.info_loaded = true;
+		}
+
 		this.loadTopTracks();
 		this.loadAlbums();
 		this.loadBaseInfo();
@@ -78,7 +92,7 @@ mapLevelModel.extendTo(artCard, {
 		
 		var _this = this;
 		this.updateState('loading-albums', true);
-		this.addRequest(lfm.get('artist.getTopAlbums',{'artist': this.artist })
+		this.addRequest(lfm.get('artist.getTopAlbums', {artist: this.artist})
 			.done(function(r){
 				_this.updateState('loading-albums', false);
 				if (r){
@@ -135,10 +149,10 @@ mapLevelModel.extendTo(artCard, {
 		this.addRequest(lfm.get('artist.getInfo', {'artist': this.artist})
 			.done(function(r){
 				_this.updateState('loading-baseinfo', false);
+				_this.updateState('profile-image', _this.app.art_images.getImageWrap(getTargetField(r, 'artist.image')));
+
 				r = parseArtistInfo(r);
-				if (r.images){
-					_this.updateState('images', r.images);
-				}
+	
 				if (r.tags){
 					_this.updateState('tags', r.tags);
 				}

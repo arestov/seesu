@@ -495,6 +495,9 @@ provoda.View.extendTo(appModelView, {
 		playing: 'icons/icon16p.png',
 		usual: 'icons/icon16.png'
 	},
+	getSample: function(name) {
+		return $(this.samples[name]).clone();
+	},
 	buildAppDOM: function() {
 		var _this = this;
 		var d = this.d;
@@ -651,6 +654,7 @@ provoda.View.extendTo(appModelView, {
 				vklc: vklc,
 				lfm_authsampl: ui_samples.children('.lfm-auth-module'),
 				lfm_scrobling: ui_samples.children('.scrobbling-switches'),
+				artists_list: ui_samples.children('.artists_list'),
 				vk_login: {
 					o: vklc,
 					oos: $(),

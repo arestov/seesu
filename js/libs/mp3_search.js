@@ -407,7 +407,11 @@ Class.extendTo(QueryMatchIndex, {
 		return this.match_index;
 	},
 	hardTrim: function(string, min_length){
-		var trimmed = string.toLowerCase().replace(/^The /, '').replace(/[\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]/gi, '').replace(/\s+/gi, ' ');
+		var trimmed = string.toLowerCase()
+			.replace(/^The /, '')
+			.replace(/[\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]/gi, '')
+			.replace(/(^\s+)|(\s+$)/gi, '')
+			.replace(/\s+/gi, ' ');
 		if (!min_length){
 			return trimmed;
 		} else {

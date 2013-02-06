@@ -17,7 +17,7 @@ var songsList;
 			}
 		},
 		init: function(opts){
-			this.palist = [];
+			this[this.main_list_name] = [];
 			this._super();
 			var _this = this;
 			this.on('request', function() {
@@ -29,11 +29,25 @@ var songsList;
 			if (opts.pmd){
 				this.pmd = opts.pmd;
 			}
-			if (this.requestMoreSongs){
+			if (this.sendMoreDataRequest){
 				this.updateState('has-loader', true);
 			}
+			this.on('child-change.songs-list', function(e) {
+				if (!e.no_changing_mark){
+					this.onChanges(e.last_usable_song);
+					this.markTracksForFilesPrefinding();
+
+					setTimeout(function() {
+						_this.makePlayable();
+					},300);
+				}
+			});
 			
 		},
+		getMainList: function() {
+			return this[this.main_list_name];
+		},
+		main_list_name: 'songs-list',
 		addOmo: function(omo, skip_changes){
 			var mo = this.extendSong(omo);
 
@@ -41,27 +55,27 @@ var songsList;
 
 			if (this.first_song){
 				if (this.first_song==mo){
-					this.palist.push(mo);
+					this[this.main_list_name].push(mo);
 				} else if (!this.firstsong_inseting_done){
 					if (mo.artist != this.first_song.artist || mo.track != this.first_song.track){
-						var fs = this.palist.pop();
-						this.palist.push(mo);
-						this.palist.push(fs);
+						var fs = this[this.main_list_name].pop();
+						this[this.main_list_name].push(mo);
+						this[this.main_list_name].push(fs);
 					} else {
 						this.firstsong_inseting_done = true;
 					}
 					
 				} else{
-					this.palist.push(mo);
+					this[this.main_list_name].push(mo);
 				}
 			} else {
-				this.palist.push(mo);
+				this[this.main_list_name].push(mo);
 			}
-			this.setChild('song', this.palist);
+			
 			if (!skip_changes){
-				if (this.onChanges){
-					this.onChanges(last_usable_song);
-				}
+				this.setChild(this.main_list_name, this[this.main_list_name], {
+					last_usable_song: last_usable_song
+				});
 				
 			}
 			return mo;
@@ -86,6 +100,16 @@ var songsList;
 				this.addOmo(this.first_song);
 			}
 		},
+		
+		getLastSong: function(){
+			return this[this.main_list_name].length ? this[this.main_list_name][this[this.main_list_name].length - 1] : false;
+		},
+		getMainListChangeOpts: function() {
+			return {
+				last_usable_song: this.getLastUsableSong()
+			};
+		},
+		page_limit: 30,
 		getPagingInfo: function() {
 			var length = this.getLength();
 			if (length && this.first_song && !this.firstsong_inseting_done){
@@ -103,40 +127,35 @@ var songsList;
 				next_page: next_page
 			};
 		},
-		page_limit: 30,
-		getLength: function() {
-			return this.palist.length;
-		},
-		getLastSong: function(){
-			return this.palist.length ? this.palist[this.palist.length - 1] : false;
-		},
-
-
-
 		preloadStart: function() {
 			this.loadPlStart();
 		},
+		getLength: function() {
+			return this[this.main_list_name].length;
+		},
 		loadPlStart: function() {
 			if (this.state('more_load_available') && !this.getLength()){
-				this.loadMoreSongs();
+				this.requestMoreData();
 			}
 		},
-		
+		addItemToDatalist: function(obj, silent) {
+			this.addOmo(obj, silent);
+		},
+
 		setLoader: function(cb, trigger) {
 			this.updateState("has-loader", true);
-			this.requestMoreSongs = cb;
+			this.sendMoreDataRequest = cb;
 
-			//this.on("load-more", cb);
 			if (trigger){
-				this.loadMoreSongs();
+				this.requestMoreData();
 			}
 
 		},
-		loadMoreSongs: function(force) {
-			if (this.state("has-loader") && this.requestMoreSongs){
+		requestMoreData: function(force) {
+			if (this.state("has-loader") && this.sendMoreDataRequest){
 				if (!this.song_request_info || this.song_request_info.done){
-					this.loading();
-					this.song_request_info = this.requestMoreSongs.call(this, this.getPagingInfo());
+					this.markLoading();
+					this.song_request_info = this.sendMoreDataRequest.call(this, this.getPagingInfo());
 					if (!this.song_request_info.request){
 						throw new Error('give me request');
 					} else {
@@ -152,27 +171,36 @@ var songsList;
 		setLoaderFinish: function() {
 			this.updateState("has-loader", false);
 		},
-		loading: function(){
+		markLoading: function(){
 			this.updateState('loading', true);
 			return this;
 		},
-		changed: function(){
-			this.setChild('song', this.palist, true);
+		putRequestedData: function(request, data_list, error) {
+			if (!this.request_info || this.request_info.request == request){
+				this.requestComplete(request, error);
+
+				if (!error && data_list && data_list.length){
+					var mlc_opts = this.getMainListChangeOpts();
+					for (var i = 0; i < data_list.length; i++) {
+						this.addItemToDatalist(data_list[i], true);
+					}
+
+					this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
+				}
+			}
 			return this;
 		},
-		injectExpectedSongs: function(playlist) {
-			var song;
-			if (playlist && playlist.length){
-				song = this.getLastUsableSong();
+		requestComplete: function(request, error) {
+			if (!this.request_info || this.request_info.request == request){
+				var main_list = this[this.main_list_name];
 
-				for (var i=0, l = playlist.length; i < l; i++) {
-					this.addOmo(playlist[i], true);
+				this.updateState('loading', false);
+				if (error && !main_list.length) {
+					this.updateState('error', true);
+				} else {
+					this.updateState('error', false);
 				}
-				
-			}
-			this.loadComplete(!playlist || !playlist.length);
-			if (this.onChanges){
-				this.onChanges(song);
+				delete this.request_info;
 			}
 			return this;
 		},
@@ -193,28 +221,12 @@ var songsList;
 			if (p_song && v_song != p_song && !p_song.hasNextSong()){
 				this.checkNeighboursChanges(p_song, false, false, "playlist load");
 			}
-			this.trigger('palist-change', this.palist);
-		},
-		loadComplete: function(error){
-			error = ((typeof error == 'string') ? error : (!this.palist.length && error));
-			this.updateState('error', error);
-			this.updateState('loading', false);
-			this.markTracksForFilesPrefinding();
-
-			var _this = this;
-			setTimeout(function() {
-				_this.makePlayable();
-			},300);
-			if (!error){
-				this.changed();
-			}
-			return this;
 		},
 		die: function(){
 			this.hide();
 			this._super();
-			for (var i = this.palist.length - 1; i >= 0; i--){
-				this.palist[i].die();
+			for (var i = this[this.main_list_name].length - 1; i >= 0; i--){
+				this[this.main_list_name][i].die();
 			}
 
 		},
@@ -225,7 +237,7 @@ var songsList;
 			return this.playlist_type == puppet.playlist_type && (key_string_o == key_string_p);
 		},
 		simplify: function(){
-			var npl = this.palist.slice();
+			var npl = this[this.main_list_name].slice();
 			for (var i=0; i < npl.length; i++) {
 				npl[i] = npl[i].simplify();
 			}
@@ -242,7 +254,7 @@ var songsList;
 			return !!(this.info && this.info.artist) && (!v || this.info.artist == v);
 		},
 		showExactlyTrack: function(mo, no_navi){
-			if (bN(this.palist.indexOf(mo))){
+			if (bN(this[this.main_list_name].indexOf(mo))){
 				mo.view(no_navi);
 				return true;
 			}
@@ -256,9 +268,9 @@ var songsList;
 			
 			
 			
-			for (var i=0; i < this.palist.length; i++) {
-				if (artist_track.track == this.palist[i].track && (will_ignore_artist || artist_track.artist == this.palist[i].artist)){
-					this.palist[i].view(no_navi);
+			for (var i=0; i < this[this.main_list_name].length; i++) {
+				if (artist_track.track == this[this.main_list_name][i].track && (will_ignore_artist || artist_track.artist == this[this.main_list_name][i].artist)){
+					this[this.main_list_name][i].view(no_navi);
 					return true;
 				}
 			}
@@ -275,8 +287,8 @@ var songsList;
 		},
 		
 		makePlayable: function(full_allowing) {
-			for (var i = 0; i < this.palist.length; i++) {
-				var mo = this.palist[i];
+			for (var i = 0; i < this[this.main_list_name].length; i++) {
+				var mo = this[this.main_list_name][i];
 				var pi = mo.playable_info || {};
 				mo.makeSongPlayalbe(pi.full_allowing || full_allowing, pi.packsearch, pi.last_in_collection);
 				
@@ -284,11 +296,11 @@ var songsList;
 		},
 		markTracksForFilesPrefinding: function(){
 			var from_collection = + (new Date());
-			for (var i=0; i < this.palist.length; i++) {
-				this.palist[i]
+			for (var i=0; i < this[this.main_list_name].length; i++) {
+				this[this.main_list_name][i]
 					.setPlayableInfo({
 						packsearch: from_collection,
-						last_in_collection: i == this.palist.length-1
+						last_in_collection: i == this[this.main_list_name].length-1
 					});
 				
 			}
@@ -306,10 +318,10 @@ var songsList;
 		switchTo: function(mo, direction, auto) {
 	
 			var playlist = [];
-			for (var i=0; i < this.palist.length; i++) {
-				var ts = this.palist[i].canPlay();
+			for (var i=0; i < this[this.main_list_name].length; i++) {
+				var ts = this[this.main_list_name][i].canPlay();
 				if (ts){
-					playlist.push(this.palist[i]);
+					playlist.push(this[this.main_list_name][i]);
 				}
 			}
 			var current_number  = playlist.indexOf(mo),
@@ -321,8 +333,8 @@ var songsList;
 					var next_preload_song = mo.next_preload_song;
 					var can_repeat = !this.state('dont-rept-pl');
 					if (next_preload_song){
-						var real_cur_pos = this.palist.indexOf(mo);
-						var nps_pos = this.palist.indexOf(next_preload_song);
+						var real_cur_pos = this[this.main_list_name].indexOf(mo);
+						var nps_pos = this[this.main_list_name].indexOf(next_preload_song);
 						if (can_repeat || nps_pos > real_cur_pos){
 							if (next_preload_song.canPlay()){
 								s = next_preload_song;
@@ -363,19 +375,19 @@ var songsList;
 		
 		},
 		getWantedSong: function() {
-			return $filter(this.palist, 'states.want_to_play', function(v) {return !!v;})[0];
+			return $filter(this[this.main_list_name], 'states.want_to_play', function(v) {return !!v;})[0];
 		},
 		getViewingSong: function(exept) {
-			var song = $filter(this.palist, 'states.mp-show', function(v) {return !!v;})[0];
+			var song = $filter(this[this.main_list_name], 'states.mp-show', function(v) {return !!v;})[0];
 			return song != exept && song ;
 		},
 		getPlayerSong: function(exept) {
-			var song = $filter(this.palist, "states.player-song", true)[0];
+			var song = $filter(this[this.main_list_name], "states.player-song", true)[0];
 			return song != exept && song;
 		},
 		getLastUsableSong: function(){
-			for (var i = this.palist.length - 1; i >= 0; i--) {
-				var cur = this.palist[i];
+			for (var i = this[this.main_list_name].length - 1; i >= 0; i--) {
+				var cur = this[this.main_list_name][i];
 				if (cur.canUseAsNeighbour()){
 					return cur;
 				}
@@ -384,29 +396,29 @@ var songsList;
 		},
 		getNeighbours: function(mo, neitypes){
 			var obj = {};
-			var c_num = this.palist.indexOf(mo);
+			var c_num = this[this.main_list_name].indexOf(mo);
 
 			if (neitypes.prev_song){
 				for (var i = c_num - 1; i >= 0; i--) {
-					if (this.palist[i].canUseAsNeighbour()){
-						obj.prev_song = this.palist[i];
+					if (this[this.main_list_name][i].canUseAsNeighbour()){
+						obj.prev_song = this[this.main_list_name][i];
 						break;
 					}
 				}
 			}
 
 			if (neitypes.next_song){
-				for (var i = c_num + 1; i < this.palist.length; i++) {
-					if (this.palist[i].canUseAsNeighbour()){
-						obj.next_song = obj.next_preload_song = this.palist[i];
+				for (var i = c_num + 1; i < this[this.main_list_name].length; i++) {
+					if (this[this.main_list_name][i].canUseAsNeighbour()){
+						obj.next_song = obj.next_preload_song = this[this.main_list_name][i];
 						break;
 					}
 				}
 			}
 			if (neitypes.next_preload_song && !obj.next_preload_song){
 				for (var i = 0; i < c_num; i++) {
-					if (this.palist[i].canUseAsNeighbour()){
-						obj.next_preload_song = this.palist[i];
+					if (this[this.main_list_name][i].canUseAsNeighbour()){
+						obj.next_preload_song = this[this.main_list_name][i];
 						break;
 					}
 				}
@@ -495,7 +507,7 @@ var songsList;
 
 			if (viewing || playing || wanted){
 				if (!target_song.hasNextSong()){
-					this.loadMoreSongs();
+					this.requestMoreData();
 				}
 			}
 

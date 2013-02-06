@@ -154,7 +154,7 @@ EnhancedSongslist.extendTo(LfmLovedList, {
 			this.authSwitching(this.app.lfm_auth, LfmLovedLogin);
 		}
 	},
-	requestMoreSongs: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
 		var request_info = {};
 		request_info.request = lfm.get('user.getLovedTracks', {
@@ -176,15 +176,13 @@ EnhancedSongslist.extendTo(LfmLovedList, {
 						});
 					}
 				}
-				if (track_list.length < paging_opts.page_limit){
-					_this.setLoaderFinish();
-				}
+				
 
-				_this.injectExpectedSongs(track_list);
+				_this.putRequestedData(request_info.request, track_list, r.error);
 
 			})
 			.fail(function() {
-				_this.loadComplete(true);
+				_this.requestComplete(request_info.request, true);
 			})
 			.always(function() {
 				request_info.done = true;
@@ -213,7 +211,7 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 		
 		this.authSwitching(this.app.vk_auth, VkAudioLogin);
 	},
-	requestMoreSongs: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts) {
 		
 		var request_info = {};
 		var _this = this;
@@ -225,7 +223,7 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 		}, {nocache: true})
 			.done(function(r){
 				if (!r || r.error){
-					_this.loadComplete(true);
+					_this.requestComplete(request_info.request, true);
 					return;
 				}
 				var vk_search = _this.app.mp3_search.getSearchByName('vk');
@@ -241,14 +239,12 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 					});
 				}
 
-				_this.injectExpectedSongs(track_list);
+				_this.putRequestedData(request_info.request, track_list, r.error);
 
-				if (track_list.length < paging_opts.page_limit){
-					_this.setLoaderFinish();
-				}
+				
 			})
 			.fail(function(){
-				_this.loadComplete(true);
+				_this.requestComplete(request_info.request, true);
 			}).always(function() {
 				request_info.done = true;
 			});
@@ -306,14 +302,12 @@ EnhancedSongslist.extendTo(artistsRecommsList, {
 						});
 					}
 				}
-				_this.injectExpectedSongs(track_list);
+				_this.putRequestedData(request_info.request, track_list, r.error);
 
-				if (track_list.length < paging_opts.page_limit){
-					_this.setLoaderFinish();
-				}
+				
 			})
 			.fail(function(){
-				_this.loadComplete(true);
+				_this.requestComplete(request_info.request, true);
 			}).always(function() {
 				request_info.done = true;
 			});
@@ -337,12 +331,12 @@ EnhancedSongslist.extendTo(artistsRecommsList, {
 							artist: artist
 						});
 					}
-					_this.injectExpectedSongs(track_list_without_tracks);
+					_this.putRequestedData(request_info.request, track_list_without_tracks);
 					_this.setLoaderFinish();
 				}
 			})
 			.fail(function() {
-				_this.loadComplete(true);
+				_this.requestComplete(request_info.request, true);
 			})
 			.always(function() {
 				request_info.done = true;

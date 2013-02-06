@@ -131,20 +131,20 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 	},
 	getImageWrap: function(array) {
 		if (!array){
-			return
+			return;
 		}
 		var
 			url,
 			lfm_id;
 
 		if (typeof array == 'string'){
-			url = array
+			url = array;
 		} else {
 			url = getTargetField(array, '3.#text');
 		}
 		if (url){
 			if (url.indexOf('http://cdn.last.fm/flatness/catalogue/noimage') === 0){
-				return
+				return;
 			} else {
 				lfm_id = this.getLFMImageId(url);
 
@@ -189,7 +189,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 	},
 	getTrackImagesModel: function(info) {
 		if (!info.artist || !info.track){
-			throw new Error ('give me full track info')
+			throw new Error ('give me full track info');
 		}
 		var model_id = info.artist + ' - ' + info.track;
 		if (!this.track_models[model_id]){
@@ -207,7 +207,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		if (!this.art_models[artist_name]){
 			var md = new ArtistImages();
 			md.init(artist_name);
-			this.art_models[artist_name] = md
+			this.art_models[artist_name] = md;
 		}
 		return this.art_models[artist_name];
 	},
@@ -239,7 +239,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 				var cur = artists[i];
 				this.setArtistImage(cur.name, cur.image, method);
 			}
-		},	
+		},
 		'geo.getMetroUniqueTrackChart': function(r, method) {
 			var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 			for (var i = 0; i < tracks.length; i++) {

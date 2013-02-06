@@ -55,7 +55,7 @@ provoda.Model.extendTo(appModel, {
 			if (!c.prev){
 				c.prev = true;
 			}
-		}	
+		}
 	},
 	getRemainTimeText: function(time_string, full){
 		var d = new Date(time_string);
@@ -352,7 +352,7 @@ provoda.Model.extendTo(appModel, {
 
 	},
 	_showArtcardPage: function(artist, source_info, no_navi){
-		var md = new artCard();
+		var md = new ArtCard();
 		md.init({
 			app: this
 		}, {
@@ -443,13 +443,11 @@ provoda.Model.extendTo(appModel, {
 						}
 
 					}
-					pl_r.injectExpectedSongs(track_list);
-					if (track_list.length < paging_opts.page_limit){
-						pl_r.setLoaderFinish();
-					}
+					pl_r.putRequestedData(request_info.request, track_list, r.error);
+					
 				})
 				.fail(function() {
-					pl_r.loadComplete(true);
+					pl_r.requestComplete(request_info.request, true);
 				}).always(function() {
 					request_info.done = true;
 				});
@@ -505,7 +503,7 @@ provoda.Model.extendTo(appModel, {
 			title: '(' + artist + ') ' + name,
 			type: 'album',
 			data: {artist: original_artist || artist, album: name}
-		}, start_song).loading();
+		}, start_song).markLoading();
 	
 		var recovered = this.showArtistPlaylist(original_artist || artist, pl, vopts);
 		
@@ -530,7 +528,7 @@ provoda.Model.extendTo(appModel, {
 									}
 								});
 							}
-							pl.injectExpectedSongs(music_list);
+							pl.putRequestedData(false, music_list);
 						});
 				}
 			};
@@ -552,7 +550,7 @@ provoda.Model.extendTo(appModel, {
 								}
 							});
 						}
-						pl.injectExpectedSongs(track_list);
+						pl.putRequestedData(false, track_list);
 						//getAlbumPlaylist(r.album.id, pl);
 					});
 			}
@@ -566,8 +564,6 @@ provoda.Model.extendTo(appModel, {
 		vopts = vopts || {};
 		var full_no_navi = vopts.no_navi;
 		vopts.no_navi = vopts.no_navi || !!start_song;
-		
-		
 		
 		var pl = this.preparePlaylist({
 			title: 'Top of ' + artist,
@@ -586,11 +582,8 @@ provoda.Model.extendTo(appModel, {
 					limit: paging_opts.page_limit,
 					page: paging_opts.next_page
 				})
-					.done(function(r){
-						if (r.error){
-							pl.loadComplete(true);
-							return;
-						}
+					.done(function(r){							
+						
 						var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 
 
@@ -609,13 +602,11 @@ provoda.Model.extendTo(appModel, {
 							}
 							
 						}
-						pl.injectExpectedSongs(track_list);
-						if (track_list.length < paging_opts.page_limit){
-							pl.setLoaderFinish();
-						}
+						pl.putRequestedData(request_info.request, track_list, r.error);
+						
 					})
 					.fail(function() {
-						pl.loadComplete(true);
+						pl.requestComplete(request_info.request, true);
 					})
 					.always(function() {
 						request_info.done = true;
@@ -646,7 +637,7 @@ provoda.Model.extendTo(appModel, {
 			})
 				.done(function(r) {
 					if (r.error){
-						pl.loadComplete(true);
+						pl.requestComplete(request_info.request, true);
 						return;
 					}
 
@@ -666,14 +657,12 @@ provoda.Model.extendTo(appModel, {
 						}
 						
 					}
-					pl.injectExpectedSongs(track_list);
-					if (track_list.length < paging_opts.page_limit){
-						pl.setLoaderFinish();
-					}
+					pl.putRequestedData(request_info.request, track_list, r.error);
+					
 
 				})
 				.fail(function() {
-					pl.loadComplete(true);
+					pl.requestComplete(request_info.request, true);
 				})
 				.always(function() {
 					request_info.done = true;
@@ -686,7 +675,7 @@ provoda.Model.extendTo(appModel, {
 	_showMetroChart: function(country, metro, vopts){
 		vopts = vopts || {};
 		var pl = this.createMetroChartPlaylist(country, metro);
-		pl.loadMoreSongs();
+		pl.requestMoreData();
 		this.show_playlist_page(pl, vopts.source_info, vopts.no_navi);
 	},
 	showSimilarArtists: function(artist, vopts, start_song){
@@ -727,13 +716,11 @@ provoda.Model.extendTo(appModel, {
 							}
 
 						}
-						pl.injectExpectedSongs(track_list);
-						if (track_list.length < paging_opts.page_limit){
-							pl.setLoaderFinish();
-						}
+						pl.putRequestedData(request_info.request, track_list, r.error);
+						
 					})
 					.fail(function() {
-						pl.loadComplete(true);
+						pl.requestComplete(request_info.request, true);
 					})
 					.always(function() {
 						request_info.done = true;

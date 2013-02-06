@@ -100,10 +100,11 @@ if (app_env.needs_url_history) {
 		_saveHistory: function(url, data, old_url){
 		
 			var fakeud = this.getURLData(this.fake_current_url);
+			var replace;
 			
 			if (old_url){
 				
-				var oldud = this.getURLData(old_url),
+				var oldud = this.getURLData(old_url);
 					replace = fakeud.clear_url == oldud.clear_url;
 			}
 			
@@ -172,6 +173,9 @@ var routePath = function(pth_string, route_tree) {
 		var cur = pth[i];
 		var path_opts;
 		var path_name;
+		if (!cur_brch){
+			break;
+		}
 		
 		if (cur_brch.parse_opts){
 			var path_name_parts = cur.split('?');
@@ -201,13 +205,7 @@ var routePath = function(pth_string, route_tree) {
 				sub_paths: pth.slice(i+1)
 			});
 			cur_brch = selected_path.branch;
-			//if (selected_path.fn){
-
-			//}
-
 		}
-		//
-		//pth[i]
 
 	}
 	return full_path;
@@ -222,12 +220,9 @@ var routeAppByPath = function(full_path) {
 	}
 };
 
-//var
-
-
 
 var route_tree = {
-	//before first flash (#?q=be/tags/beautiful) ----- ?q=be
+	//before first slash (#?q=be/tags/beautiful) ----- ?q=be
 	parse_opts: true,
 	other: {
 		fn: function(path_name, opts) {
@@ -455,7 +450,6 @@ var gunm = function(lev){
 
 };
 
-var hashChangeQueue = new funcsQueue(0);
 var hashChangeRecover = function(e, soft){
 	var url = e.newURL;
 
@@ -493,13 +487,6 @@ var hashChangeRecover = function(e, soft){
 		}
 	}
 	su.map.finishChangesCollecting();
-};
-
-
-var hashChangeReciever = function(e){
-	hashChangeQueue.add(function(){
-		hashchangeHandler(e);
-	});
 };
 
 var hashchangeHandler=  function(e, soft){

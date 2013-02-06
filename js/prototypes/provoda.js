@@ -558,9 +558,14 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 		this.children_models[collection_name] = array;
 
-		this.trigger('child-change.' + collection_name, {
-			value: array
-		});
+		var event_obj = {};
+		if (typeof changed == 'object'){
+			cloneObj(event_obj, changed);
+		}
+		event_obj.value = array;
+		event_obj.no_changing_mark = !changed;
+		
+		this.trigger('child-change.' + collection_name, event_obj);
 
 		if (changed){
 			this.sendCollectionChange(collection_name, array);

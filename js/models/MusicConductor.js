@@ -8,7 +8,7 @@ EnhancedSongslist.extendTo(AllPAllTimeChart, {
 		this.updateState('nav-title', 'Популярные');
 		this.updateState('url-part', '/chart');
 	},
-	requestMoreSongs: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts) {
 		var request_info = {};
 		var _this = this;
 
@@ -31,14 +31,10 @@ EnhancedSongslist.extendTo(AllPAllTimeChart, {
 						});
 					}
 				}*/
-				_this.injectExpectedSongs(track_list);
-
-				if (track_list.length < paging_opts.page_limit){
-					_this.setLoaderFinish();
-				}
+				_this.putRequestedData(request_info.request, track_list, r.error);
 			})
 			.fail(function(){
-				_this.loadComplete(true);
+				_this.requestComplete(request_info.request, true);
 			}).always(function() {
 				request_info.done = true;
 			});

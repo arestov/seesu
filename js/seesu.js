@@ -699,9 +699,11 @@ provoda.Eventor.extendTo(UserPlaylists, {
 	},
 	watchOwnPlaylist: function(pl) {
 		var _this = this;
-		pl.on('palist-change', function(array) {
+		pl.on('child-change.songs-list', function(e) {
 			this.trigger('each-playlist-change');
 			_this.savePlaylists();
+		}, {
+			skip_reg: true
 		});
 	},
 	removePlaylist: function(pl) {

@@ -91,11 +91,7 @@ var songsListView;
 	songsListView = function(pl){};
 	songsListBaseView.extendTo(songsListView, {
 		'stch-mp-show': function(opts) {
-			if (opts){
-				this.c.removeClass('hidden');
-			} else {
-				this.c.addClass('hidden');
-			}
+			this.c.toggleClass('hidden', !opts);
 		},
 		'stch-mp-has-focus': function(state) {
 			this.lc.toggleClass('list-overview', !!state);
@@ -118,7 +114,7 @@ var songsListView;
 			}
 		},
 		createPanel: function() {
-			this.panel = this.root_view.samples.playlist_panel.clone();
+			this.panel = this.root_view.getSample('playlist_panel');
 			this.panel.appendTo(this.c);
 			return this;
 		},
@@ -130,7 +126,7 @@ var songsListView;
 			plarow: {
 				main: PlARowView
 			},
-			'song': songUI
+			'songs-list': songUI
 		}
 
 	});

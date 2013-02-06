@@ -127,7 +127,7 @@ provoda.View.extendTo(vkLoginUI, {
 		}
 	},
 	createBase: function() {
-		this.c = this.root_view.samples.vklc.clone();
+		this.c = this.root_view.getSample('vklc');
 		var _this = this;
 		var sign_link = this.c.find('.sign-in-to-vk').click(function(e){
 			_this.md.requestAuth();
@@ -184,7 +184,7 @@ provoda.View.extendTo(LfmLoginView, {
 		this.c.find('.lfm-auth-request-desc').text(state || "");
 	},
 	createBase: function() {
-		this.c = this.root_view.samples.lfm_authsampl.clone();
+		this.c = this.root_view.getSample('lfm_authsampl');
 		this.auth_block = this.c.children(".auth-block");
 		var _this = this;
 		var auth_link = this.auth_block.find('.lastfm-auth-bp a').click(function(e){
@@ -240,7 +240,7 @@ var LfmScrobbleView = function(){};
 LfmLoginView.extendTo(LfmScrobbleView, {
 	createBase: function(){
 		this._super();
-		this.scrobbling_switchers = this.root_view.samples.lfm_scrobling.clone().appendTo(this.c);
+		this.scrobbling_switchers = this.root_view.getSample('lfm_scrobling').appendTo(this.c);
 		this.chbx_enabl = this.scrobbling_switchers.find('.enable-scrobbling');
 		this.chbx_disabl = this.scrobbling_switchers.find('.disable-scrobbling');
 		var _this = this;
@@ -652,167 +652,3 @@ provoda.View.extendTo(songFileModelUI, {
 });
 
 
-
-
-var artCardUI = function() {};
-
-provoda.View.extendTo(artCardUI, {
-	die: function() {
-		this._super();
-	},
-	state_change: {
-		"mp-show": function(opts) {
-			this.c.toggleClass('hidden', !opts);
-		},
-		"loading-albums": function(state) {
-			if (state){
-				this.ui.albumsc.addClass('loading');
-			} else {
-				this.ui.albumsc.removeClass('loading');
-			}
-		},
-		"loading-toptracks": function(state) {
-			if (state){
-				this.ui.topc.addClass('loading');
-			} else {
-				this.ui.topc.removeClass('loading');
-			}
-		},
-		"loading-baseinfo": function(state) {
-			var mark_loading_nodes = this.ui.tagsc.add(this.ui.bioc).add(this.ui.similarsc);
-
-			if (state){
-				mark_loading_nodes.addClass('loading');
-			} else {
-				mark_loading_nodes.removeClass('loading');
-			}
-		},
-		"sorted-albums": function(ob) {
-			var all_albums = Array.prototype.concat.apply([], ob.ordered);
-
-			var _this = this;
-			var albs_groups = $("<div class='albums-groups'></div>");
-			for (var i=0; i < ob.ordered.length; i++) {
-				var aul =  $('<ul></ul>');
-				this.root_view.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, {
-					source_info: {
-						page_md: _this.md,
-						source_name: 'artist-albums'
-					},
-					from_artcard: true
-				});
-				
-				aul.appendTo(albs_groups);
-			}
-			albs_groups.appendTo(this.ui.albumsc);
-			
-			$('<a class="js-serv extends-header"></a>').text(localize("Show-all")  + " (" + all_albums.length + ")").click(function(){
-				_this.ui.albumsc.toggleClass('show-all-albums');
-			}).appendTo(_this.ui.albumsc.children(".row-header"));
-		},
-		toptracks: function(list) {
-			var _this = this;
-			var ul = this.ui.topc.children('ul');
-			$.each(list, function(i, el){
-				if (i < 5){
-					if (el.track){
-						var a = $('<a class="js-serv"></a>').click(function(){
-							su.showTopTacks(_this.md.artist, {
-								source_info: {
-									page_md: _this.md,
-									source_name: 'top-tracks'
-								}
-							}, {
-								artist: _this.md.artist,
-								track: el.track
-							});
-						}).text(el.track);
-						$('<li></li>').append(a).appendTo(ul);
-					}
-				}
-				
-			});
-			ul.removeClass('hidden');
-		},
-		images: function(images) {
-			if (images[4]){
-				this.ui.imagec.empty();
-				this.ui.imagec.append(
-					$('<img/>').attr('src', images[4])
-				);
-			}
-		},
-		tags: function(tags) {
-			var ul = this.ui.tagsc.children('ul');
-			$.each(tags, function(i, el){
-				if (el && el.name){
-					var li = $('<li></li>');
-					$('<a class="js-serv"></a>').click(function(){
-						su.show_tag(el.name);
-					}).text(el.name).attr('url', el.url).appendTo(li);
-					li.appendTo(ul);
-					ul.append(document.createTextNode(' '));
-				}
-				
-			});
-			ul.removeClass('hidden');
-		},
-		bio: function(text) {
-			if (text){
-				this.ui.bioc.html(text.replace(/\n+/gi, '<br/><br/>'));
-				this.root_view.bindLfmTextClicks(this.ui.bioc);
-			}
-		},
-		similars: function(artists) {
-			var _this = this;
-			var ul = this.ui.similarsc.children('ul');
-			$.each(artists, function(i, el){
-				var li = $('<li></li>');
-				$('<a class="js-serv"></a>').click(function(){
-					su.showArtcardPage(el.name);
-				}).text(el.name).appendTo(li);
-				li.appendTo(ul);
-				ul.append(document.createTextNode(' '));
-				
-			});
-			
-			var header_link = $('<a class="js-serv"></a>')
-				.click(function(){
-					su.showSimilarArtists(_this.md.artist, {
-						source_info: {
-							page_md: _this.md,
-							source_name: 'similar-artists'
-						},
-						
-						from_artcard: true
-					});
-				})
-				.text(localize('similar-arts'));
-			var header = this.ui.similarsc.children('h5').empty().append(header_link);
-			
-			ul.removeClass('hidden');
-		}
-
-	},
-	createBase: function() {
-		var _this = this;
-		this.c = this.root_view.samples.artcard.clone();
-		this.ui = {
-			imagec: this.c.find('.art_card-image .art_card-image-padding'),
-			topc: this.c.find('.top-tracks'),
-			tagsc: this.c.find('.art_card-tags'),
-			albumsc: this.c.find('.art_card-albums'),
-			similarsc: this.c.find('.art_card-similar'),
-			bioc: this.c.find('.art_card-bio')
-		};
-		this.top_tracks_link = $('<a class="js-serv extends-header"></a>').text(localize('full-list')).appendTo(this.ui.topc.children('.row-header')).click(function(){
-			su.showTopTacks(_this.md.artist, {
-				source_info: {
-					page_md: _this.md,
-					source_name: 'top-tracks'
-				},
-				from_artcard: true
-			});
-		});
-	}
-});

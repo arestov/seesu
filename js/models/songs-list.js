@@ -24,9 +24,6 @@ var songsList;
 			plarow.init(this);
 
 			this.setChild('plarow', plarow);
-
-
-			this.changed();
 			
 			var _this = this;
 			
@@ -90,10 +87,11 @@ var songsList;
 			}
 		},
 		makeExternalPlaylist: function() {
-			if (!this.palist.length){return false;}
+			var songs_list = this.getMainList();
+			if (!songs_list.length){return false;}
 			var simple_playlist = [];
-			for (var i=0; i < this.palist.length; i++) {
-				var files = this.palist[i].mf_cor.getFilteredFiles();
+			for (var i=0; i < songs_list.length; i++) {
+				var files = songs_list[i].mf_cor.getFilteredFiles();
 				var song = files && files[0];
 				if (song){
 					simple_playlist.push({
@@ -175,16 +173,32 @@ var songsList;
 		model_name: 'row-multiatcs'
 	});
 
+var ArtistsListPlaylist = function() {};
+songsList.extendTo(ArtistsListPlaylist, {
+	init: function(opts, params) {
+		this._super();
+		this.artists_list = params.artists_list;
+		this.updateState('nav-title', params.title);
+		this.updateState('url-part', '/~');
+	},
+	sendMoreDataRequest: function() {
+		this.artists_list.sendMoreDataRequest.apply(this, arguments);
+	}
+});
 
 var ArtistsList = function() {}; 
 window.ArtistsList = ArtistsList;
 mapLevelModel.extendTo(ArtistsList, {
 	init: function(opts, params) {
 		this._super();
+		this.app = opts.app;
 		this[this.main_list_name] = [];
+		if (this.sendMoreDataRequest){
+			this.updateState("has-loader", true);
+		}
 	},
-	main_list_name: 'artists',
-	page_limit: 30,
+	main_list_name: 'artists_list',
+
 	complex_states: {
 		'more_load_available': {
 			depends_on: ["has-loader", "loading"],
@@ -200,11 +214,55 @@ mapLevelModel.extendTo(ArtistsList, {
 	requestArtists: function() {
 
 	},
-	generatePlaylist: function() {
-
+	createRPlist: function() {
+		if (this.ran_playlist){
+			var pl = new ArtistsListPlaylist();
+			pl.init({
+				app: this.app
+			}, {
+				title: this.state('nav-title'),
+				artists_list: this
+			});
+			this.ran_playlist = pl;
+		}
+		return this;
 	},
+	requestRandomPlaylist: function() {
+		
+		this.createRPlist();
+	},
+	getMainListChangeOpts: function() {},
+	addArtist: function(obj, silent) {
+		var main_list = this[this.main_list_name];
+		var artcard = new ArtCard();
+		artcard.init({
+			app: this.app
+		}, obj);
+		main_list.push(artcard);
+
+		if (!silent){
+			this.setChild(this.main_list_name, main_list, true);
+		}
+	},
+
+	page_limit: 30,
+	getPagingInfo: function() {
+		var length = this.getLength();
+		var has_pages = Math.floor(length/this.page_limit);
+		var remainder = length % this.page_limit;
+		var next_page = has_pages + 1;
+
+		return {
+			current_length: length,
+			has_pages: has_pages,
+			page_limit: this.page_limit,
+			remainder: remainder,
+			next_page: next_page
+		};
+	},
+	
 	preloadStart: function() {
-		this.loadPlStart();
+		this.loadStart();
 	},
 	getLength: function() {
 		var main_list = this[this.main_list_name];
@@ -215,18 +273,19 @@ mapLevelModel.extendTo(ArtistsList, {
 			this.requestMoreData();
 		}
 	},
+	addItemToDatalist: function(obj, silent) {
+		this.addArtist(obj, silent);
+	},
 	
 	setLoader: function(cb, trigger) {
 		this.updateState("has-loader", true);
 		this.sendMoreDataRequest = cb;
 
-		//this.on("load-more", cb);
 		if (trigger){
 			this.requestMoreData();
 		}
 
 	},
-	sendMoreDataRequest: function() {},
 	requestMoreData: function(force) {
 		if (this.state("has-loader") && this.sendMoreDataRequest){
 			if (!this.request_info || this.request_info.done){
@@ -238,8 +297,6 @@ mapLevelModel.extendTo(ArtistsList, {
 					this.addRequest(this.request_info.request);
 				}
 			}
-			
-			
 			//this.trigger("load-more");
 		}
 		
@@ -251,27 +308,26 @@ mapLevelModel.extendTo(ArtistsList, {
 		this.updateState('loading', true);
 		return this;
 	},
-
 	putRequestedData: function(request, data_list, error) {
-		if (this.request_info.request == request){
-			var main_list = this[this.main_list_name];
-
+		if (!this.request_info || this.request_info.request == request){
 			this.requestComplete(request, error);
 
-			if (data_list && data_list.length){
+			if (!error && data_list && data_list.length){
+				var mlc_opts = this.getMainListChangeOpts();
 				for (var i = 0; i < data_list.length; i++) {
-					main_list.push(data_list[i]);
+					this.addItemToDatalist(data_list[i], true);
 				}
-				this.setChild(this.main_list_name, main_list, true);
+				
+				this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
 			}
-			if (!error && data_list.length < this.page_limit){
+			if (!error && request && data_list.length < this.page_limit){
 				this.setLoaderFinish();
 			}
-			//this.request_info.request
 		}
+		return this;
 	},
 	requestComplete: function(request, error) {
-		if (this.request_info.request == request){
+		if (!this.request_info || this.request_info.request == request){
 			var main_list = this[this.main_list_name];
 
 			this.updateState('loading', false);
@@ -280,11 +336,13 @@ mapLevelModel.extendTo(ArtistsList, {
 			} else {
 				this.updateState('error', false);
 			}
+			delete this.request_info;
 		}
+		return this;
 	}
 });
 
-var SimilarArtists = function() {};
+var SimilarArtists  = window.SimilarArtists = function() {};
 ArtistsList.extendTo(SimilarArtists, {
 	init: function(opts, params) {
 		this._super(opts);
@@ -320,6 +378,8 @@ ArtistsList.extendTo(SimilarArtists, {
 
 				}
 				_this.putRequestedData(request_info.request, data_list, !!r.error);
+
+				_this.setLoaderFinish(); //"artist.getSimilar" does not support paging
 				
 			})
 			.fail(function() {

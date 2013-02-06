@@ -33,7 +33,7 @@ var song;
 						_this.updateState('bio', ai.bio);
 						_this.updateState('tags', ai.tags);
 						_this.updateState('similars', ai.similars);
-						_this.updateState('artist-image', ai.images && ai.images[2] || lfm_image_artist)
+						_this.updateState('artist-image', ai.images && ai.images[2] || lfm_image_artist);
 
 
 					});

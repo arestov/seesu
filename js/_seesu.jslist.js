@@ -75,6 +75,7 @@ var jsLoadComplete,
 	"js/libs/c_buttmen.js",
 	
 	"js/views/etc.views.js",
+	"js/views/ArtistsList.js",
 	"js/views/UserCard.js",
 	"js/views/MusicConductor.js",
 	"js/views/su-mfcomplect.js",

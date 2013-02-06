@@ -386,7 +386,7 @@ provoda.View.extendTo(songUI, {
 	},
 	parts_builder: {
 		context: function() {
-			return this.root_view.samples.track_c.clone(true);
+			return this.root_view.getSample('track_c');
 		},
 		tidominator: function() {
 			return this.requirePart('context').children('.track-info-dominator');
