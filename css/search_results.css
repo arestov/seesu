@@ -2,35 +2,35 @@
 	padding-top:2rem;
 	}
 .full-page .search-results-container{
-	padding-left:4.3rem;
 	position:relative;
+	padding-left:4.3rem;
 	}
 
 	.search-results-container h4{
+		margin:0;
 		
 		font-weight:400;
-		margin:0;
 		
 		}
 	.full-page .search-results-container h4{
 		position:absolute;
 		left:0;
+		z-index:2;
 		padding:0.3rem 0 0;
 		width:4.3rem;
 		height:1.4rem;
-		z-index:2;
 		}
 	.search-results-container h4.loading{
 		background: url(../i/spinner_small.gif) no-repeat 100% 50%;
 	}
 	.search-results-container ul.sugg-section{
-		overflow:hidden;
-		zoom:1;
 		position:relative;
+		overflow:hidden;
 		margin:0;
+		min-height:1.7rem;
 		
 		border-bottom:1px solid #5d5d5d;
-		min-height:1.7rem;
+		zoom:1;
 		}
 	.full-page .search-results-container ul.sugg-section{
 		border-left:1px solid #5d5d5d;
@@ -46,13 +46,13 @@
 			}
 		.search-results-container a,
 		.search-results-container button{
-			display:block;
-			cursor:pointer;
-			overflow: hidden;
-			zoom:1;
 			position:relative;
+			display:block;
+			overflow: hidden;
 			margin: 0;
 			padding:5px;
+			cursor:pointer;
+			zoom:1;
 			}
 			.search-results-container
 			ul
@@ -61,50 +61,50 @@
 				margin:0;
 			}
 		.search-results-container button{
-			border:0;
-			text-align:left;
+			position:relative;
 			width:100%;
+			border:0;
 			background: transparent;
 			color:#aaa;
-			position:relative;
+			text-align:left;
 		}
 
 		.search-results-container a.active,
 		.search-results-container button.active{
-			background-color:#555  !important;
 			padding-right:1.7rem;
+			background-color:#555  !important;
 		}
 		.search-results-container a.active:after,
 		.search-results-container button.active:after{
-			content: '↩';
 			position:absolute;
 			top:1rem;
 			right:5px;
-			line-height:20px;
-			height:20px;
 			margin-top:-10px;
-			vertical-align:middle;
+			height:20px;
 			color:#fff;
+			content: '↩';
+			vertical-align:middle;
+			line-height:20px;
 		}
 		.search-results-container a:hover,
 		.search-results-container button:hover
 		{
-			color:#f6f0e1;
 			background-color:#666  !important;
+			color:#f6f0e1;
 			}
 		
 			.search-results-container	ul.results-suggests img{
 				float:left;
+				margin-right:0.5rem;
 				width:34px;
 				height:34px;
-				margin-right:0.5rem;
 				border:1px solid #eee;
 				}
 			.search-results-container	ul.results-suggests	span{
 				overflow:hidden;
-				zoom:1;
 				margin-top:1px;
 				margin-bottom:0;
+				zoom:1;
 				
 				}
 
@@ -112,13 +112,13 @@
 
 				}
 				ul.results-suggests .suggest .suggest-track_name{
-					line-height: 1.2rem;
 					display: block;
+					line-height: 1.2rem;
 					}
 				ul.results-suggests .suggest .suggest-artist_name{
-					line-height: 1.2rem;
-					color: #777;
 					display: block;
+					color: #777;
+					line-height: 1.2rem;
 					}
 	.search-results-container	ul.sugg-section:last-child{
 		border-bottom:0;

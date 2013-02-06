@@ -1,11 +1,11 @@
 
 .tracks-for-play .play-controls{
 	position:absolute;
-	right:115px;
-	margin-top:5px;
 	top:0;
+	right:115px;
 	
 	z-index:7;
+	margin-top:5px;
 }
 .track-panel .pc-place{
 	float:left;
@@ -32,11 +32,11 @@ a.song{
 	}
 a.track-node{
 	display:block;
-	padding:6px 6px 6px 28px;
-	cursor:pointer;
-	border:0 !important;
 	overflow:hidden;
+	padding:6px 6px 6px 28px;
+	border:0 !important;
 	color:#8C8C8C;
+	cursor:pointer;
 	}
 	a.track-node:hover{
 		color:#aaa;
@@ -97,14 +97,14 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 
 #i_f_sm2{
-	width:30px;
+	position:absolute;
+	bottom:50px;
 	
 	left:19px;
 	z-index:10;
+	width:30px;
 	height:30px;
 	border:0;
-	bottom:50px;
-	position:absolute;
 }
 #i_f_sm2.sm-inited{
 	left:-100rem;
@@ -118,8 +118,8 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		margin:0 5px;
 		}
 	.selected-mf .mf-text{
-		color:#757575;
 		margin:0 4px;
+		color:#757575;
 		}
 .track-progress, .moplas-block .moplas-list li .mf-progress{
 
@@ -128,21 +128,21 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 }
 .track-progress, .moplas-block .moplas-list li.selected-mf .mf-progress{	
 	position:relative;
-	overflow:hidden;
-	max-width:100%;
-	padding:0;
-	left:0;
 	right:0;
+	left:0;
+	overflow:hidden;
+	padding:0;
+	max-width:100%;
+	border-top: 1px solid #434343;
+	border-right: 1px solid #4E4E4E;
+	border-bottom: 1px solid #767676;
+	border-left: 1px solid #4E4E4E;
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
 	
 	
 	background-color: #444444;
-	border-top: 1px solid #434343;
-	border-bottom: 1px solid #767676;
-	-moz-border-radius: 7px;
-	-webkit-border-radius: 7px;
-	border-radius: 7px;
-	border-left: 1px solid #4E4E4E;
-	border-right: 1px solid #4E4E4E;
 	
 	
 	
@@ -156,34 +156,34 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	}
 	.track-load-progress,  .selected-mf .mf-load-progress{
 		position:absolute;
-		display: block;
-		cursor:pointer;
-		width:0;
-		left:0;
 		top:0;
+		left:0;
+		display: block;
+		width:0;
 		height:100%;
-		background:#484848;
+		-webkit-border-radius: 5px;
 		
 		
 		-moz-border-radius: 5px;
-		-webkit-border-radius: 5px;
 		border-radius: 5px;
+		background:#484848;
+		cursor:pointer;
 	
 	
 		}
 	.track-play-progress, .selected-mf .mf-play-progress{
 		position:absolute;
-		display: block;
-		cursor:pointer;
-		width:0;
-		left:0;
 		top:0;
+		left:0;
+		display: block;
+		width:0;
 		height:100%;
-		background:#4f4f4f url(../i/playing-gradient.png) repeat-x 0 0;
+		-webkit-border-radius: 5px;
 		
 		-moz-border-radius: 5px;
-		-webkit-border-radius: 5px;
 		border-radius: 5px;
+		background:#4f4f4f url(../i/playing-gradient.png) repeat-x 0 0;
+		cursor:pointer;
 	
 		}
 	.track-node-text, .mf-text{
@@ -194,8 +194,8 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		display:none;
 		
 		margin-right: 7px;
-		font-size: 0.85rem;
 		color: #666;
+		font-size: 0.85rem;
 	}
 	.track-progress:hover .track-node-text{
 		display:inline;
@@ -204,9 +204,9 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 
 .flash-desandboxing{
-	background: url(http://img-fotki.yandex.ru/get/4603/gleb-arestov.0/0_55167_ceb4a878_orig) no-repeat 0 0;
 	width:446px;
 	height:150px;
+	background: url(http://img-fotki.yandex.ru/get/4603/gleb-arestov.0/0_55167_ceb4a878_orig) no-repeat 0 0;
 }
 
 .song-track-name {
@@ -216,8 +216,8 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 .song-artist-name {
 	display: block;
-	font-size: 0.85rem;
 	color: #6B6B6B;
+	font-size: 0.85rem;
 	}
 
 
@@ -226,12 +226,12 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	}
 	
 .playing-song-mark{
-	display: none;
 	position: absolute;
 	top:3px;
 	right:5px;
-	height: 20px;
+	display: none;
 	width: 20px;
+	height: 20px;
 	background: url(../i/equalaizer_stoped.gif) no-repeat;
 	}
 	.playing-process.playing-song-mark{
@@ -242,23 +242,23 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	}
 
 .full-song-title{
+	position: relative;
 	display: block;
+	overflow: hidden;
 	padding-left: 1rem;
 	min-height: 39px;
-	overflow: hidden;
-	position: relative;
 	}
 .has-no-track-title .song-artist-name {
-	font-size: 1rem;
 	color: #8C8C8C;
+	font-size: 1rem;
 	}
 .song-image-con {
+	float: left;
 	width: 38px;
 	height: 38px;
-	float: left;
-	background: #595959;
 	
 	border-radius: 2px;
+	background: #595959;
 	}
 	.song-image-con img{
 		max-width: 100%;
@@ -282,45 +282,45 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 .files-load-states{
 	position: absolute;
-	left: 5px;
 	top: 6px;
-	height: 16px;
+	left: 5px;
 	width: 16px;
+	height: 16px;
 	}
 	.search-mp3 .files-load-states{
 		background:url(../i/spinner_small_t.gif) no-repeat 0 0;
 		}
 	
 .nothing-toy{
-	border: 1px solid transparent;
-	display: block;
 	position: absolute;
-	left:3px;
 	top:3px;
-	border-radius: 6px;
-	border-top: 1px solid #666;
-	background: #555;
-	border-bottom: 1px solid #444;
+	left:3px;
+	display: block;
 	width:10px;
 	height:10px;
+	border: 1px solid transparent;
+	border-top: 1px solid #666;
+	border-bottom: 1px solid #444;
+	border-radius: 6px;
+	background: #555;
 	}
 	a.track-node:hover .nothing-toy{
 		border-top-color:#6e6e6e;
-		background-color: #5e5e5e;
 		border-bottom-color: #4e4e4e;
+		background-color: #5e5e5e;
 		}
 	a.track-node:active .nothing-toy{
 		border-top-color:#444;
-		background-color: #555;
 		border-bottom-color: #666;
+		background-color: #555;
 		}
 .song-files-search-status{
-	display: block;
-	height: 7px;
-	width: 7px;
 	position: absolute;
-	left: 5px;
 	top: 5px;
+	left: 5px;
+	display: block;
+	width: 7px;
+	height: 7px;
 	background: no-repeat 0 0; 
 	}
 	.song-files-search-status.has-none-files{
@@ -350,14 +350,14 @@ a.track-name-loading:hover{
 }
 
 .page-scheme .song-track-name {
-	height: 1.5rem;
 	overflow: hidden;
+	height: 1.5rem;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	}
 .page-scheme .song-artist-name{
-	height: 1.5rem;
 	overflow: hidden;
+	height: 1.5rem;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
@@ -370,9 +370,9 @@ a.track-name-loading:hover{
 	background-color:#535353;
 	}
 .show-zoom-to-track ul.tracks-for-play > li.viewing-song > a.track-node{
-	background-color: transparent;
 	padding-top: 2px;
 	padding-bottom: 2px;
+	background-color: transparent;
 	}
 
 
@@ -393,28 +393,28 @@ a.track-name-loading:hover{
 	.show-zoom-to-track .to-play-previous{
 		
 		right:50%;
-		margin-right: 20px;
-		margin-top: 0;
 		left: 0;
+		margin-top: 0;
+		margin-right: 20px;
 		border-top-left-radius:10px;
 		}
 	.show-zoom-to-track .to-play-next {
-		border-top-right-radius:10px;
+		right: 0;
 		left:50%;
 		margin-left: 20px;
-		right: 0;
+		border-top-right-radius:10px;
 		}
 
 .show-zoom-to-track .viewing-song .placeholder-decor{
-		display: block;
 		position: absolute;
-		width: 40px;
 		top: -41px;
 		left: 50%;
-		background-color: #5E5E5E;
-		border-top: 1px solid #737373;
-		height: 40px;
+		display: block;
 		margin-left: -20px;
+		width: 40px;
+		height: 40px;
+		border-top: 1px solid #737373;
+		background-color: #5E5E5E;
 		}
 .show-zoom-to-track .viewing-song .playing-song-mark{
 	display: none;
@@ -448,13 +448,13 @@ a.track-name-loading:hover{
 		
 		}
 	.show-zoom-to-track ul.tracks-for-play > li.viewing-song{
-		border-bottom: 1px solid #4D4D4D;
-		border-top: 1px solid #737373;
-		background: #5E5E5E;
-		padding: 5px;
-		border-radius: 0 0 10px 10px;
-		color:#fff;
 		margin:0 -5px;
+		padding: 5px;
+		border-top: 1px solid #737373;
+		border-bottom: 1px solid #4D4D4D;
+		border-radius: 0 0 10px 10px;
+		background: #5E5E5E;
+		color:#fff;
 		}
 		.show-zoom-to-track ul.tracks-for-play > li.viewing-song .track-node{
 			
@@ -485,9 +485,9 @@ a.track-name-loading:hover{
 
 		position: absolute;
 		top: 0;
-		background-color: #545454;
-		border-top: 1px solid #6E6E6E;
 		height: 39px;
+		border-top: 1px solid #6E6E6E;
+		background-color: #545454;
 		}
 	.show-zoom-to-track .v-song-sibling:hover a.track-node{
 		background-color: transparent; 
@@ -505,25 +505,25 @@ a.track-name-loading:hover{
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-image-con,
 	.page-scheme .tracks-for-play .track-node .song-image-con{
-		height: 1.72rem;
 		width: 1.72rem;
+		height: 1.72rem;
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-track-name,
 	.show-zoom-to-track .v-song-sibling .track-node .song-artist-name,
 	.page-scheme .tracks-for-play .track-node .song-track-name,
 	.page-scheme .tracks-for-play .track-node .song-artist-name{
-
-		font-size: 0.75rem;
 		
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+
+		font-size: 0.75rem;
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-track-name,
 	.page-scheme .tracks-for-play .track-node .song-track-name{
+		margin-top: 0.2rem;
 		height: 1.4em;
 		line-height: 1.4em;
-		margin-top: 0.2rem;
 		
 	}
 	.show-zoom-to-track .v-song-sibling .track-node .song-artist-name,
@@ -539,11 +539,11 @@ a.track-name-loading:hover{
 	
 	}
 .show-zoom-to-track .viewing-song .files-load-states{
-		left: 10px;
 		top: 11px;
+		left: 10px;
 		}
 .show-zoom-to-track a.track-name-loading{
-		background-position: 64px 6px
+		background-position: 64px 6px;
 		}
 	.show-zoom-to-track .viewing-song a.track-name-loading{
 		

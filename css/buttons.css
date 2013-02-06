@@ -5,12 +5,12 @@
 
 	.play-control{
 		display:inline-block;
-		cursor:pointer;
 		padding:0;
 		width:16px;
 		height:16px;
-		background: transparent no-repeat 0 0;
 		border:0  !important;
+		background: transparent no-repeat 0 0;
+		cursor:pointer;
 		}
 		.play-control:hover,.play-control.hover{
 			background-image:url(../i/buttons_hover.png) ;
@@ -28,34 +28,34 @@
 
 
 .play-control.pause{
-	display:inline-block
+	display:inline-block;
 	}
 	
 	
 .pc{
-	display:inline-block;
+	display:inline-block; 
+	padding:0;
+	width:25px;
+	height:1.72rem;
+	border:0  !important;
 	background: transparent no-repeat;
 	cursor:pointer;
-	height:1.72rem;
-	width:25px;
-	border:0  !important; 
-	padding:0;
 }
 
 .pc-indicator{
 	display:inline-block;
-	background: transparent no-repeat;
-	height:1.72rem;
 	width:25px;
+	height:1.72rem;
+	background: transparent no-repeat;
 }
 .big-indicator{
-	height:31px;
 	width:32px;
+	height:31px;
 }
 
 .pc.big-control{
-	height:31px;
 	width:32px;
+	height:31px;
 }
 
 .pc-play{
@@ -157,32 +157,32 @@
 	outline:0;
 }
 .disabledbutton, .nicebutton{
-	text-decoration:none;
-	font-style:normal;
-	padding:3px 11px;
 	display:block;
+	padding:3px 11px;
 	border-top:1px solid transparent;
 	border-bottom: 1px solid transparent;
 	border-radius:11px;
+	text-decoration:none;
+	font-style:normal;
 }
 .get-vk-photo-request-b{
 	width: 15rem;
 	}
 .area-button{
 	display: block;
-	cursor: pointer;
+	margin-bottom:1rem;
+	padding: 0.5rem 1rem;
 	border-top: 1px solid #595959;
 	border-bottom: 1px solid hsl(0, 0%, 29%);
 	border-radius: 1rem;
 	background: #4f4f4f;
-	padding: 0.5rem 1rem;
-	color: #aaa;
-	margin-bottom:1rem;
 
 	background-image: -o-linear-gradient(#525252,#4d4d4d);
 	background-image: -moz-linear-gradient(100% 0% 270deg, #525252, #4d4d4d);
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#525252), to(#4d4d4d)) !important;
 	background-image: linear-gradient(#525252,#4d4d4d);
+	color: #aaa;
+	cursor: pointer;
 	}
 	.area-button:hover{
 		background-image: -o-linear-gradient(#525252,#4d4d4d);
@@ -191,9 +191,9 @@
 		background-image: linear-gradient(#525252,#4d4d4d);
 		}
 	.area-button:active{
-		box-shadow: inset 0 0 10px 1px #454545;
 		border-color:transparent;
 		background-image: none !important;
+		box-shadow: inset 0 0 10px 1px #454545;
 		}
 	.area-button .area-description{
 		min-height: 2rem;
@@ -205,14 +205,14 @@
 
 
 .button-hole{
+	display:inline-block;
+	
+	border-top:1px solid #474747;
+	border-bottom:1px solid #676767;
+	border-radius:11px;
 	background:#555;
 	font: Arial, sans-serif;
 	font-size: 1rem;
-	
-	border-top:1px solid #474747;
-	border-radius:11px;
-	border-bottom:1px solid #676767;
-	display:inline-block;
 	}
 	
 	.button-hole:hover{
@@ -220,17 +220,17 @@
 		}
 
 
-.nicebutton{
-	cursor:pointer;
-	color:#aaa;
-	border-left: 0;
-	border-right: 0; 
+.nicebutton{ 
 	border-top:1px solid #626262;
+	border-right: 0;
 	border-bottom:1px solid #3D3D3D;
+	border-left: 0;
 	background-image: -o-linear-gradient(#5a5a5a,#4a4a4a);
 	background-image: -moz-linear-gradient(100% 0% 270deg, #5a5a5a, #4a4a4a);
 	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#5a5a5a), to(#4a4a4a)) !important;
 	background-image: linear-gradient(#5a5a5a,#4a4a4a);
+	color:#aaa;
+	cursor:pointer;
 		
 	}
 	.nicebutton:hover{
@@ -265,10 +265,10 @@
 	box-shadow:inset 0 0 10px 1px #111;
 	}
 	.nicebutton:active{
-		border-color:transparent;
-		border-width:0;
 		padding-top:4px;
 		padding-bottom:4px;
+		border-width:0;
+		border-color:transparent;
 	}
 	
 	

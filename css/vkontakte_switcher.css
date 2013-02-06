@@ -4,17 +4,17 @@
 
 .vk-login-context{
 	clear:left;
-	border-radius:0.5rem;
-	padding:1rem;
+	overflow:hidden;
 	margin: 0.7rem 0 1rem;
+	padding:1rem;
+	border-radius:0.5rem;
 	background:#faebd7 no-repeat 100% 1rem;
 	color:#000;
-	overflow:hidden;
 	}
 	.moplas-block .vk-login-context{
-		border-radius:0;
 		display: none;
 		clear:both;
+		border-radius:0;
 
 		}
 	.moplas-block.want-more-songs .vk-login-context{
@@ -37,18 +37,18 @@
 		background:no-repeat 100% 0;
 	}
 	.vk-login-context.waiting-auth .decor{
-		background-image:url(../i/spinner_small_yellow.gif)
+		background-image:url(../i/spinner_small_yellow.gif);
 	}
 	.vk-login-context button{
 		margin:0;
 	}
 	.vk-login-context a{
-		color:#83ac1b;
 		border-bottom-color:#dddba9;
+		color:#83ac1b;
 	}
 	.vk-login-context a:hover{
-		color:#a1d404;
 		border-bottom-color:#e3e5a0;
+		color:#a1d404;
 	}
 	.vk-login-reg-link{
 		float:right;
@@ -91,8 +91,8 @@
 		}
 		.vk-login-context form p input[type=text],
 		.vk-login-context form p input[type=password]{
-			width:10rem;
 			margin:0;
+			width:10rem;
 		}
 .vk-login-context input{
 	margin-left:0;
