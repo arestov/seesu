@@ -1150,20 +1150,51 @@ var localize= (function(){
 })();
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+jsLoadComplete(function() {
+	yepnope({
+		load: [ 'CSSOM/spec/utils.js', 'CSSOM/src/loader.js'],
+		complete: function() {
+			console.log('ddddd')
+		}
+	})
+});
+
+
+
+
+
+
+
 (function(global) {
 	
 
 
 	
-
+	var getTabs = function(count) {
+		var tabs_string = '';
+		while (count){
+			tabs_string += '\t';
+			--count;
+		}
+		return tabs_string;
+	};
 	
-	var getRulesString = function(arr, plus_original) {
+	var getRulesString = function(arr, tabs_count) {
 		var string = '';
 		for (var i = 0; i < arr.length; i++) {
-			if (plus_original){
-				string += '\t' + arr[i].name + ': ' + arr[i].original + ';\n';
-			}
-			string += '\t' + arr[i].name + ': ' + arr[i].new_values.join(' ') + ';\n';
+			string += getTabs(tabs_count) + arr[i].name + ': ' + arr[i].new_values.join(' ') + ';\n';
 		}
 		return string;
 	};
@@ -1175,7 +1206,7 @@ var localize= (function(){
 		return (value/root_font_size) + 'rem';
 	};
 
-	var culculateEMRule = function(rule, root_font_size) {
+	var culculateRemRule = function(rule, root_font_size) {
 		var result = [];
 		var parsed_rule = {};
 		var lines = rule.style.cssText.split(/\;\n|\;/);
@@ -1215,42 +1246,88 @@ var localize= (function(){
 
 		}
 
+		var original_selector = rule.selectorText;
+		var selector_parts = original_selector.split(',');
+		for (var i = 0; i < selector_parts.length; i++) {
+			selector_parts[i] = '.stretch-all ' + selector_parts[i];
+		}
+
+		var rule_start = rule.__starts,
+			rule_end = rule.__ends,
+			style_start = rule.style.__starts;
+
+
+
 		return {
-			rules: px_props,
-			selector: rule.selectorText,
+			px_props: px_props,
+			rule_start: rule_start,
+			rule_end: rule_end,
+			style_start: style_start,
+
+			selector: original_selector,
+			stretch_selector: selector_parts.join(', '),
 			rule: rule,
+
 			string: px_props.length ? getRulesString(px_props) : ''
 		};
 
 	};
+	
 
-	var createStyleSheet = function(sheet, root_font_size, string) {
-		if (sheet.href.indexOf('sizes.css') != -1){
+	var createStyleSheet = function(href, sheet_string, root_font_size, string) {
+		sheet = CSSOM.parse(sheet_string);
+		href = href || sheet.href;
+		if (href.indexOf('sizes.css') != -1){
 			return '';
 		}
+		var pos_shift = 0;
 
-		var big_string = '/* path: ' + sheet.href.replace(location.origin, '') + '*/\n';
+		var big_result = sheet_string;
+
+
+	//	var big_string = '/* path: ' + href.replace(location.origin, '') + '*/\n';
 
 		var complects = [];
-		for (var i = 0; i < sheet.rules.length; i++) {
-			var cur = sheet.rules[i];
+		for (var i = 0; i < sheet.cssRules.length; i++) {
+			var cur = sheet.cssRules[i];
 			//cur.selectorText
 			if (cur.style && cur.style.cssText.indexOf('px') != -1){
-				var rulll= culculateEMRule(cur, root_font_size);
+				var rulll = culculateRemRule(cur, root_font_size);
 
+				var sel_prev_text = sheet_string.slice(0, rulll.rule_start);
+
+				var sel_tabs = sel_prev_text.match(/\t+(?:$)/gi);
+				var sel_tabs_count = sel_tabs && sel_tabs[0].length || 0;
+				sel_tabs_count += 1;
+				
+			//	console.log(sel_tabs_count);
 				complects.push(rulll);
-				if (rulll.string){
+				if (rulll.px_props.length){
+					rulll.full_string = '\n' +
+						getTabs(sel_tabs_count) + rulll.stretch_selector + '{\n' +
+						getTabs(sel_tabs_count + 1) + '/* rem hack */\n' +
+						getRulesString(rulll.px_props, sel_tabs_count + 1) +
+						getTabs(sel_tabs_count + 1) + '}\n';
 
-					big_string += rulll.selector + ' {\n' + '\t/* rem hack */\n' + rulll.string + '}\n\n';
+					var big_start = big_result.slice(0, rulll.rule_end + pos_shift);
+					var big_end = big_result.slice(rulll.rule_end + pos_shift);
+
+					big_result = big_start + rulll.full_string + big_end;
+					pos_shift += rulll.full_string.length;
+
+				//	big_string += rulll.full_string;
+
+					//getRulesString
+				//	big_string += rulll.stretch_selector + ' {\n' + '\t/* rem hack */\n' + rulll.string + '}\n\n';
 				}
 				
 			}
 			
 		}
 
-		return string ? big_string : complects;
+		return string ? big_result : complects;
 	};
-	global.checkPX = function() {
+	global.checkPX = function(url) {
 		var complects = [];
 
 	
@@ -1260,12 +1337,32 @@ var localize= (function(){
 
 		var big_string = '';
 
+
+		var requests = [];
+
+		/*
+
+		for (var i = 0; i < document.styleSheets.length; i++) {
+			requests.push($.ajax({
+				url: document.styleSheets[i].href
+			}));
+			
+		};
+
 		for (var i = 0; i < document.styleSheets.length; i++) {
 
 			big_string += createStyleSheet(document.styleSheets[i], root_font_size, true);
 			
 		}
+		*/
+		$.ajax({
+			url: url
+		})
+		.done(function(r) {
 
+			console.log(createStyleSheet(url, r, root_font_size, true));
+		});
+		
 		return big_string;
 
 	};
