@@ -1387,14 +1387,14 @@ jsLoadComplete(function() {
 			.replace('\'\)','');
 
 		var structure = JSON.parse(bgIString);
-		console.log(structure);
+		//console.log(structure);
 
 		$.ajax({
 			url: structure.file,
 			dataType: 'xml'
 		}).done(function(r){
 			//$(r).find('#states-switcher')
-			console.log(r);
+			//console.log(r);
 			//r = $(r).clone()[0];
 
 			if (structure.viewBox){
@@ -1440,7 +1440,7 @@ jsLoadComplete(function() {
 			});
 			var style = document.createElement('style');
 			$(document.documentElement.firstChild).append(style);
-			console.log(svg_hacked);
+			//console.log(svg_hacked);
 			$.each(svg_hacked, function(i, el){
 				replaceSVGHImage(el, style);
 			});
