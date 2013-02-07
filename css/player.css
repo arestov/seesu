@@ -11,9 +11,7 @@
 	float:left;
 	margin-right:6px;
 }
-.playing-file .big-indicator.play-indicator{
-	background-image: url(../i/buttons/pc-indicator-b.png);
-}
+
 .nice-buttons-place .play-indicator.pc-place{
 	margin-top:-4px;
 }

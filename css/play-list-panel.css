@@ -105,12 +105,15 @@
 		border-color:transparent;
 		background-color:transparent;
 		}
+.trackbutton{
+	background: no-repeat 50% 50%;
+}
 .rept-song-button-wrap .trackbutton{
-	background: url(../i/repeat-icon.png) no-repeat 50% 50%;
+	background-image: url(../i/repeat-icon.png);
 }
 
 .scrobbling-button .trackbutton{
-	background: url(../i/lfm-icon.png) no-repeat 50% 50%;
+	background-image: url(../i/lfm-icon.png);
 	
 	}
 	.scrobbling-button .trackbutton:hover{

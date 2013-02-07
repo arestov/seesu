@@ -1272,7 +1272,22 @@ jsLoadComplete(function() {
 		};
 
 	};
-	
+
+	var getSimpleRules = function(sheet){
+		var simple_rules = [];
+
+		var iterating_rules = [].concat(Array.prototype.slice.call(sheet.cssRules));
+		while (iterating_rules.length){
+			var cur = iterating_rules.shift();
+			if (cur.cssRules){
+				iterating_rules = [].concat(Array.prototype.slice.call(cur.cssRules), iterating_rules);
+			} else {
+				simple_rules.push(cur);
+			}
+		}
+		return simple_rules;
+	};
+	app_env.getSimpleCSSRules = getSimpleRules;
 
 	var createStyleSheet = function(href, sheet_string, root_font_size, string) {
 		sheet = CSSOM.parse(sheet_string);
@@ -1286,17 +1301,8 @@ jsLoadComplete(function() {
 
 
 	//	var big_string = '/* path: ' + href.replace(location.origin, '') + '*/\n';
-		var simple_rules = [];
+		var simple_rules = getSimpleRules(sheet);
 
-		var iterating_rules = [].concat(sheet.cssRules);
-		while (iterating_rules.length){
-			var cur = iterating_rules.shift();
-			if (cur.cssRules){
-				iterating_rules = [].concat(cur.cssRules, iterating_rules);
-			} else {
-				simple_rules.push(cur);
-			}
-		}
 
 		/*
 		simple_rules.sort(function(a, b){
@@ -1372,6 +1378,76 @@ jsLoadComplete(function() {
 		return big_string;
 
 	};
+
+	var replaceSVGHImage = function(rule, style){
+
+		var bgIString = rule.style.backgroundImage;
+		bgIString = bgIString
+			.replace('url(\'data:text/plain;utf8,svg-hack,', '')
+			.replace('\'\)','');
+
+		var structure = JSON.parse(bgIString);
+		console.log(structure);
+
+		$.ajax({
+			url: structure.file,
+			dataType: 'xml'
+		}).done(function(r){
+			//$(r).find('#states-switcher')
+			console.log(r);
+			//r = $(r).clone()[0];
+
+			if (structure.viewBox){
+				$(r.documentElement).attr('viewBox', structure.viewBox);
+			}
+			if (structure.state){
+				$(r).find('#states-switcher').attr('class', structure.state);
+			}
+			if (structure.part){
+				$(r).find('#parts-switcher').attr('xlink:href', '#' + structure.part);
+			}
+			
+			var xml_text = new XMLSerializer().serializeToString(r);
+
+			var bg_image_string = 'url(\'data:image/svg+xml;base64,' + btoa(xml_text) + '\')';
+
+			var new_rule_text = '\n' +
+				rule.selectorText +
+				' {\n' + 'background-image:' + bg_image_string +
+				';\n}';
+
+
+
+			$(style).append(document.createTextNode(new_rule_text));
+
+			
+			
+		});
+		//var target
+	};
+
+
+	jsLoadComplete(function(){
+		domReady(window.document, function(){
+			
+			var big_list = [];
+			for (var i = 0; i < document.styleSheets.length; i++) {
+				big_list = big_list.concat(getSimpleRules(document.styleSheets[i]));
+				
+			}
+			var svg_hacked = $filter(big_list, 'style.backgroundImage', function(value){
+				return value && value.indexOf('data:text/plain;utf8,svg-hack,') !== -1;
+			});
+			var style = document.createElement('style');
+			$(document.documentElement.firstChild).append(style);
+			console.log(svg_hacked);
+			$.each(svg_hacked, function(i, el){
+				replaceSVGHImage(el, style);
+			});
+
+		});
+	});
+	
 	
 	
 })(this);
