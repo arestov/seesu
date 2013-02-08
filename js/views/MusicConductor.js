@@ -71,7 +71,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 			var wow_tags= function(tag,c){
-				var link = $('<a class="hyped-tag"></a>')
+				var link = $('<a class="hyped-tag js-serv"></a>')
 					.text(tag)
 					.click(function(e){
 						_this.root_view.md.show_tag(tag);

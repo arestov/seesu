@@ -825,29 +825,17 @@ html.not-as-application, .not-as-application  body{
 	}
 	.tags-hyped .hyped-tag{
 		margin-right:15px;
-		color:#ABABAB;
-		cursor: pointer;
 		}
 	.full-page .tags-hyped{
 		line-height: 2.5;
 		}
 	.full-page .tags-hyped .hyped-tag{
-		height: 1.286rem;
-		display: inline-block;
-		padding: 0.286rem;
-		line-height: 1.286rem;
-		background: #555;
-		border: 0.07142857142857142rem solid #4a4a4a;
-		border-radius: 0.5rem;
+		
 		}
 		.full-page .tags-hyped .hyped-tag:hover{
-			background-color: #4a4a4a;
-			border-color:#434343;
+			
 			}
-		.full-page .tags-hyped .hyped-tag.surface_navigation{
-			background: #000;
-			color:#eee;
-			}
+		
 
 #search #search-p{
 	overflow:hidden;
@@ -1291,8 +1279,7 @@ iframe.you-tube-video,embed.you-tube-video{
 
 	}
 .surface_navigation{
-	border-radius: 0.5rem;
-	background-color: #0C8D71;
+	background-color: #000;
 	1box-shadow:0 0 0 2pt #1DD8B2;
 	}
 

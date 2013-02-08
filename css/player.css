@@ -39,6 +39,12 @@ a.track-node{
 	a.track-node:hover{
 		color:#aaa;
 		}
+	.track-node.surface_navigation{
+		background: #000;
+		}
+		.track-node.surface_navigation .full-song-title, .track-node.surface_navigation .song-artist-name {
+			color:#fff;
+			}
 .playing-song a.track-node {
 	color:#ccc;
 }

@@ -53,7 +53,6 @@ a.js-serv{
 	color:#ABABAB;
 	cursor: pointer;
 	padding: 0.286rem;
-	line-height: 1.286rem;
 	background: #555;
 	border: 0.07142857142857142rem solid #4a4a4a;
 	border-radius: 0.5rem;
@@ -66,6 +65,11 @@ a.js-serv{
 		background-color: #444;
 		border-color:#3a3a3a;
 		}
+	a.js-serv.surface_navigation{
+		background: #000;
+		color:#eee;
+		}
+
 a.bbcode_artist,
 a.bbcode_tag{
 	border-bottom-style:dotted!important;
