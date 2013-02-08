@@ -25,16 +25,16 @@ dl,dt,dd,h5{
 ul{margin:0;padding:0;list-style:none;}
 a{color:#d5d5d5;}
 
-a[href],a.js-serv{
+a[href]{
 	border-bottom:1px solid #737373;
 	color:#ABABAB;
 	text-decoration:none;
 	}
-	a[href]:hover,a.js-serv:hover{
+	a[href]:hover{
 		border-bottom-color:#9C9C9C;
 		color:#E6E6E6;
 		}
-	a[href]:active,a.js-serv:active{
+	a[href]:active{
 		color:#999;
 		}
 a[href='javascript:void(0)']{
@@ -45,19 +45,37 @@ h5{
 	font-weight:400;
 	font-size:1rem;
 }
-a.js-serv,
+.links-list{
+	line-height: 2.25rem;
+}
+a.js-serv{
+	white-space: nowrap;
+	color:#ABABAB;
+	cursor: pointer;
+	padding: 0.286rem;
+	line-height: 1.286rem;
+	background: #555;
+	border: 0.07142857142857142rem solid #4a4a4a;
+	border-radius: 0.5rem;
+	}
+	a.js-serv:hover{
+		background-color: #4a4a4a;
+		border-color:#434343;
+		}
+	a.js-serv:active{
+		background-color: #444;
+		border-color:#3a3a3a;
+		}
 a.bbcode_artist,
 a.bbcode_tag{
 	border-bottom-style:dotted!important;
 	text-decoration:none;
 	cursor:pointer;
 	}
-	a.js-serv:hover,
 	a.bbcode_artist:hover,
 	a.bbcode_tag:hover{
 		border-bottom-color:#9C9C9C   !important;
 		}
-	a.js-serv:active,
 	a.bbcode_artist:active,
 	a.bbcode_tag:active{
 		border-bottom-color:#999  !important;

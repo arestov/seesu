@@ -224,11 +224,17 @@
 			margin-left:1rem;
 			}
 	.art_card-meta{
-		float:left;
+		
 		margin-bottom:1.72rem;
 		
-		min-height:140px;
+		
+		
+		}
+	.full-page .art_card-meta{
+		float:left;
 		width:50%;
+		min-height:18rem;
+		min-width: 15rem;
 		}
 		.top-tracks,.art_card-tags{
 			margin-right:1.72rem;
@@ -247,11 +253,21 @@
 					margin-right:1rem;
 					white-space:nowrap;
 					}
-	
+		.top-tracks .links-list,.art_card-similar .links-list{
+			min-height: 6.86rem;
+			}
+		.page-scheme .top-tracks .links-list,.page-scheme .art_card-similar .links-list{
+			display: none;
+			}
 	.art_card-similar{
-		float:right;
+		
 		margin-bottom:1.72rem;
+		
+		}
+	.full-page .art_card-similar{
 		width:50%;
+		float:right;
+		min-width: 15rem;
 		}
 		.art_card-similar.loading{
 			background: url(../i/spinner_small.gif) no-repeat 100% 4px;
