@@ -7,6 +7,7 @@ provoda.addPrototype("baseSong",{
 	init: function(opts, params){
 
 		this._super();
+		this.updateState('no-track-title', false);
 		this.plst_titl = opts.plst_titl;
 		this.mp3_search = opts.mp3_search;
 		this.player = opts.player;
@@ -45,7 +46,54 @@ provoda.addPrototype("baseSong",{
 				return !!(mp_show || player_song || wapl);
 
 			}
+		},
+		'can-use-as-neighbour':{
+			depends_on: ['has-none-files-to-play'],
+			fn: function(h_nftp) {
+				if (h_nftp){
+					return false;
+				} else {
+					return true;
+				}
+
+			}
+		},
+		'has-none-files-to-play': {
+			depends_on: ['search-complete', 'no-track-title', 'mf_cor-has-available-tracks'],
+			fn: function(scomt, ntt, mf_cor_tracks) {
+				//canUseAsNeighbour
+				/*
+				canSearchFiles: function(){
+					return !!(this.artist && this.track);
+				},
+				canPlay: function() {
+					return this.mf_cor.canPlay();
+				},
+
+				*/
+
+				//return (this.canSearchFiles() && (this.canPlay() || !this.state('search-complete')))
+				//(!this.track && this.canFindTrackTitle());
+				if (this.mf_cor && !mf_cor_tracks){
+					if (this.mf_cor.isSearchAllowed()){
+						if (scomt){
+							return true;
+						}
+					} else {
+						return true;
+					}
+				}
+				
+				if (ntt){
+					return true;
+				}
+				
+			}
 		}
+	},
+	canUseAsNeighbour: function(){
+		return this.state('can-use-as-neighbour');
+		//return (this.canSearchFiles() && (this.canPlay() || !this.state('search-complete'))) || (!this.track && this.canFindTrackTitle());
 	},
 	state_change: {
 		"mp-show": function(opts) {
@@ -250,9 +298,7 @@ provoda.addPrototype("baseSong",{
 	isImportant: function() {
 		return this.state('is_important');
 	},
-	canUseAsNeighbour: function(){
-		return (this.canSearchFiles() && (this.canPlay() || !this.state('search-complete'))) || (!this.track && this.canFindTrackTitle());
-	},
+	
 	checkNeighboursChanges: function(changed_neighbour, viewing, log) {
 		this.plst_titl.checkNeighboursChanges(this, changed_neighbour, viewing, log);
 	},
@@ -522,16 +568,6 @@ provoda.addPrototype("baseSong",{
 	prefindFiles: function(){
 		this.findFiles({
 			get_next: true
-		});
-	},
-	bindSemEvents:function(sem) {
-		this.sem = sem;
-		var _this = this;
-		sem.on('progress', function() {
-			_this.filesSearchStarted();
-		});
-		sem.on('changed', function(complete){
-			_this.updateFilesSearchState(complete);
 		});
 	},
 	updateFilesSearchState: function(opts){

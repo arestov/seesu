@@ -127,6 +127,7 @@
 		display: block;
 		padding:0.2rem 0.5rem;
 		border: 0;
+		border-radius: 0;
 		}
 	.page-scheme .tags-hyped a:nth-of-type(even){
 		background-color: #4D4D4D;
@@ -328,6 +329,13 @@
 					border-bottom:0;
 					color:#aaaaaa;
 					}
+				.art_card-albums a.surf_nav{
+
+					}
+					.art_card-albums a.surf_nav .album-name{
+						opacity: 1;
+						font-size: 1.4em;
+						}
 				.page-scheme .art_card-albums ul li a{
 					overflow: hidden;
 					}

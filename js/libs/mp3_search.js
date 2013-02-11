@@ -629,7 +629,7 @@ var getAverageDurations = function(mu_array, time_limit){
 
 			var field_name = "query_match_index." + query_string.replace(/\./gi, '');
 			music_list.qmi_index = makeIndexByField(music_list, field_name);
-			music_list.average_durs = getAverageDurations(music_list, time_limit);
+			var average_durs = getAverageDurations(music_list, time_limit);
 			music_list.sort(function(a, b){
 				return sortByRules(a, b, [
 					function(item) {
@@ -642,13 +642,18 @@ var getAverageDurations = function(mu_array, time_limit){
 						
 					}, function(item){
 
-						var average_dur = music_list.average_durs[getTargetField(item, field_name)];
-						if (item.duration && item.duration > time_limit){
-							return Math.abs(average_dur - item.duration);
-							
+						var average_dur = average_durs[getTargetField(item, field_name)];
+						if (average_dur){
+							if (item.duration && item.duration > time_limit){
+								return Math.abs(average_dur - item.duration);
+								
+							} else {
+								return average_dur * 1000;
+							}
 						} else {
-							return average_dur * 1000;
+							return Infinity;
 						}
+						
 					}
 				]);
 			});

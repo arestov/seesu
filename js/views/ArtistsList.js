@@ -62,6 +62,9 @@ provoda.View.extendTo(artCardUI, {
 
 			var _this = this;
 			var albs_groups = $("<div class='albums-groups'></div>");
+			var addWP = function(alb_dom) {
+				_this.addWayPoint(alb_dom.link);
+			};
 			for (var i=0; i < ob.ordered.length; i++) {
 				var aul =  $('<ul></ul>');
 				this.root_view.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, {
@@ -70,15 +73,18 @@ provoda.View.extendTo(artCardUI, {
 						source_name: 'artist-albums'
 					},
 					from_artcard: true
-				});
+				}, addWP);
 				
 				aul.appendTo(albs_groups);
 			}
 			albs_groups.appendTo(this.ui.albumsc);
 			
-			$('<a class="js-serv extends-header"></a>').text(localize("Show-all")  + " (" + all_albums.length + ")").click(function(){
+			var all_albs_link = $('<a class="js-serv extends-header"></a>').text(localize("Show-all")  + " (" + all_albums.length + ")").click(function(){
 				_this.ui.albumsc.toggleClass('show-all-albums');
 			}).appendTo(_this.ui.albumsc.children(".row-header"));
+			this.addWayPoint(all_albs_link, {
+				simple_check: true
+			});
 		},
 		toptracks: function(list) {
 			var _this = this;
@@ -98,6 +104,7 @@ provoda.View.extendTo(artCardUI, {
 							});
 						}).text(el.track);
 						$('<li></li>').append(a).appendTo(ul);
+						_this.addWayPoint(a);
 					}
 				}
 				
@@ -120,12 +127,14 @@ provoda.View.extendTo(artCardUI, {
 		},
 		tags: function(tags) {
 			var ul = this.ui.tagsc.children('ul');
+			var _this = this;
 			$.each(tags, function(i, el){
 				if (el && el.name){
 					var li = $('<li></li>');
-					$('<a class="js-serv"></a>').click(function(){
+					var a = $('<a class="js-serv"></a>').click(function(){
 						su.show_tag(el.name);
 					}).text(el.name).attr('url', el.url).appendTo(li);
+					_this.addWayPoint(a);
 					li.appendTo(ul);
 					ul.append(document.createTextNode(' '));
 				}
@@ -144,9 +153,10 @@ provoda.View.extendTo(artCardUI, {
 			var ul = this.ui.similarsc.children('ul');
 			$.each(artists, function(i, el){
 				var li = $('<li></li>');
-				$('<a class="js-serv"></a>').click(function(){
+				var a = $('<a class="js-serv"></a>').click(function(){
 					su.showArtcardPage(el.name);
 				}).text(el.name).appendTo(li);
+				_this.addWayPoint(a);
 				li.appendTo(ul);
 				ul.append(document.createTextNode(' '));
 				
@@ -178,7 +188,7 @@ provoda.View.extendTo(artCardUI, {
 					from_artcard: true
 				});
 			});
-
+		this.addWayPoint(this.top_tracks_link);
 
 		this.similars_link = $('<a class="js-serv extends-header"></a>')
 			.click(function(){
@@ -192,6 +202,7 @@ provoda.View.extendTo(artCardUI, {
 				});
 			})
 			.text(localize('full-list'));
+		this.addWayPoint(this.similars_link);
 		this.ui.similarsc.children('h5').append(this.similars_link);
 	}
 });

@@ -78,16 +78,19 @@ provoda.View.extendTo(songUI, {
 			}
 			
 		},
+		'has-none-files-to-play': function(state){
+			this.fsearch_status_c.toggleClass('has-none-files', !!state);
+			this.node
+				.toggleClass('search-mp3-failed', !!state)
+				.toggleClass('waiting-full-render', !state);
+
+		},
 		files_search: function(opts){
-			this.fsearch_status_c.attr('class', 'song-files-search-status');
-			if (opts.search_complete && !opts.have_mp3_tracks){
-				this.node.addClass('search-mp3-failed').removeClass('waiting-full-render');
-				this.fsearch_status_c.addClass('has-none-files');
-			} else if (opts.have_best_tracks){
-				this.fsearch_status_c.addClass('has-best-files');
-			} else if (opts.have_mp3_tracks){
-				this.fsearch_status_c.addClass('has-some-files');
-			}
+			//this.fsearch_status_c.attr('class', 'song-files-search-status');
+
+			this.fsearch_status_c.toggleClass('has-best-files', !!opts.have_best_tracks);
+			this.fsearch_status_c.toggleClass('has-some-files', !!opts.have_mp3_tracks);
+
 
 			
 		},

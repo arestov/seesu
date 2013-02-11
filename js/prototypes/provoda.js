@@ -67,12 +67,12 @@ Class.extendTo(provoda.StatesArchiver, {
 		}
 		return false;
 	},
-	getItemsValues: function() {
+	getItemsValues: function(item) {
 		var values_list = [];
 		for (var i = 0; i < this.items_list.length; i++) {
 			values_list.push(this.items_list[i].state(this.state_name));
-			
 		}
+		
 		this.returnResult.call(this, this.calculateResult.call(this, values_list));
 		return values_list;
 	},
@@ -87,8 +87,9 @@ Class.extendTo(provoda.StatesArchiver, {
 		this.unsubcribeOld();
 		this.items_list = items_list;
 		var _this = this;
-		var checkFunc = function() {
-			_this.getItemsValues();
+		var checkFunc = function(e) {
+			var item = this;
+			_this.getItemsValues(item);
 		};
 		this.controls_list = [];
 		for (var i = 0; i < items_list.length; i++) {
@@ -160,8 +161,18 @@ Class.extendTo(provoda.Eventor, {
 			var reg_fires = this.getPossibleRegfires(namespace);
 			if (reg_fires.length){
 				reg_fires[0].call(this, function() {
-					cb.apply(_this, arguments);
 					fired = true;
+					var args = arguments;
+					if (opts && opts.soft_reg){
+						setTimeout(function() {
+							cb.apply(_this, args);
+						}, 0);
+					} else {
+						cb.apply(_this, args);
+					}
+					
+					
+					
 				}, namespace, opts, name_parts);
 			}
 		}
@@ -711,6 +722,7 @@ var
 
 
 var views_counter = 0;
+var way_points_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(view_otps, opts){
 		this.view_id = views_counter++;
@@ -774,7 +786,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var obj = {
 			node: point,
 			canUse: opts && opts.canUse,
-			view: this
+			view: this,
+			wpid: ++way_points_counter
 		};
 		if (!opts || (!opts.simple_check && !opts.canUse)){
 			//throw new Error('give me check tool!');

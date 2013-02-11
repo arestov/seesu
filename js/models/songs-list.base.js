@@ -439,7 +439,7 @@ var songsList;
 			});
 			cloneObj(mo, changes);
 		},
-		getNeighboursChanges: function(target_song, to_check) {
+		getNeighboursChanges: function(target_song, changed_song) {
 			var
 				check_list = {},
 				need_list = {},
@@ -452,7 +452,7 @@ var songsList;
 				};
 
 			for (var i in o_ste){
-				check_list[i] = !to_check || (o_ste[i] == to_check);
+				check_list[i] = !changed_song || (o_ste[i] == changed_song);
 			}
 
 			cloneObj(n_ste, o_ste);

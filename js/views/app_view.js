@@ -792,6 +792,14 @@ provoda.View.extendTo(appModelView, {
 			this.wayPointsNav(key_name);
 		}
 	},
+	getWPDemsForStorage: function(cur_wayp, dems_storage) {
+		if (!cur_wayp.wpid){
+			throw new Error('waypoint must have ID (".wpid")');
+		}
+		var dems = this.getWPDems(cur_wayp);
+		dems_storage[cur_wayp.wpid] = dems || {disabled: true};
+		return dems;
+	},
 	getWPDems: function(cur_wayp) {
 		
 		if (cur_wayp.canUse && !cur_wayp.canUse()){
@@ -911,14 +919,22 @@ provoda.View.extendTo(appModelView, {
 			offset: offset
 		};
 	},
-	getWPPack: function(view) {
+	getWPPack: function(view, dems_storage) {
 		var all_waypoints = view.getAllWaypoints();
 		var wayp_pack = [];
 
 		for (var i = 0; i < all_waypoints.length; i++) {
 			var cur_wayp = all_waypoints[i];
 			var cur = cur_wayp.node;
-			var dems = this.getWPDems(cur_wayp);
+			var cur_id = cur_wayp.wpid;
+			if (!dems_storage[cur_id]){
+				var dems = this.getWPDemsForStorage(cur_wayp, dems_storage);
+				if (!dems){
+					continue;
+				}
+			}
+			
+			/*
 			if (!dems){
 				cur.data('dems', null);
 				cloneObj(cur_wayp, {
@@ -930,86 +946,33 @@ provoda.View.extendTo(appModelView, {
 			} else {
 				cloneObj(cur_wayp, dems);
 			}
+
 			cur.data('dems', cur_wayp);
-			wayp_pack.push(cur_wayp);
+			*/
+			if (!dems_storage[cur_id].disabled){
+				wayp_pack.push(cur_wayp);
+			}
+			
 
 			
 		}
 		return wayp_pack;
 	},
-	getWPCorridor: function(cur_dems, wayp_pack, nav_type) {
-		var corridor = [];
-		if (this.wp_dirs.horizontal[nav_type]){
-			
-			for (var i = 0; i < wayp_pack.length; i++) {
-				var cur = wayp_pack[i];
-				if (!cur){
-					continue;
-				}
-				if (cur == cur_dems || cur.node == cur_dems.node){
-					continue;
-				}
-				if ((cur.offset.top + cur.height) <= cur_dems.offset.top){
-					continue;
-				}
-
-				if (cur.offset.top >= (cur_dems.offset.top + cur_dems.height)){
-					continue;
-				}
-				if (this.wp_dirs.forward[nav_type]){
-					if (cur.offset.left <= cur_dems.offset.left){
-						continue;
-					}
-				} else {
-					if (cur.offset.left >= (cur_dems.offset.left + cur_dems.width)){
-						continue;
-					}
-				}
-				corridor.push(cur);
-			}
-		} else {
-			for (var i = 0; i < wayp_pack.length; i++) {
-				var cur = wayp_pack[i];
-				if (!cur){
-					continue;
-				}
-				if (cur == cur_dems || cur.node == cur_dems.node){
-					continue;
-				}
-				if ((cur.offset.left + cur.width ) <= cur_dems.offset.left){
-					continue;
-				}
-				if (cur.offset.left >= (cur_dems.offset.left + cur_dems.width)){
-					continue;
-				}
-				if (this.wp_dirs.forward[nav_type]){
-					if (cur.offset.top <= cur_dems.offset.top){
-						continue;
-					}
-				} else {
-					if (cur.offset.top >= (cur_dems.offset.top + cur_dems.height)){
-						continue;
-					}
-				}
-				
-				corridor.push(cur);
-			}
-		};
-
+	sortWPCorridor: function(target_dems, corridor, nav_type, dems_storage) {
 		var start_point = {};
 		if (this.wp_dirs.horizontal[nav_type]){
-			start_point.top = cur_dems.offset.top;
+			start_point.top = target_dems.offset.top;
 			if (this.wp_dirs.forward[nav_type]){
-				start_point.left = cur_dems.offset.left + cur_dems.width;
+				start_point.left = target_dems.offset.left + target_dems.width;
 			} else {
-				start_point.left = cur_dems.offset.left;
+				start_point.left = target_dems.offset.left;
 			}
 		} else {
-			start_point.left = cur_dems.offset.left;
+			start_point.left = target_dems.offset.left;
 			if (this.wp_dirs.forward[nav_type]){
-				start_point.top = cur_dems.offset.top + cur_dems.height;
+				start_point.top = target_dems.offset.top + target_dems.height;
 			} else {
-				start_point.top = cur_dems.offset.top;
+				start_point.top = target_dems.offset.top;
 			}
 
 		}
@@ -1017,22 +980,22 @@ provoda.View.extendTo(appModelView, {
 		corridor.sort(function(a, b) {
 			return sortByRules(a, b, [
 				function(el) {
-					
+					var cur_dems = dems_storage[el.wpid];
 					var end_point = {};
 					
 					if (_this.wp_dirs.horizontal[nav_type]){
-						end_point.top = el.offset.top;
+						end_point.top = cur_dems.offset.top;
 						if (_this.wp_dirs.forward[nav_type]){
-							end_point.left = el.offset.left;
+							end_point.left = cur_dems.offset.left;
 						} else {
-							end_point.left = el.offset.left + el.width;
+							end_point.left = cur_dems.offset.left + cur_dems.width;
 						}
 					} else {
-						end_point.left = el.offset.left;
+						end_point.left = cur_dems.offset.left;
 						if (_this.wp_dirs.forward[nav_type]){
-							end_point.top = el.offset.top;
+							end_point.top = cur_dems.offset.top;
 						} else {
-							end_point.top = el.offset.top + el.height;
+							end_point.top = cur_dems.offset.top + cur_dems.height;
 						}
 					}
 					var cathetus1 = Math.abs(end_point.top - start_point.top);
@@ -1047,6 +1010,122 @@ provoda.View.extendTo(appModelView, {
 				}
 			]);
 		});
+	},
+	getLenthBtwPoints: function(start_point, end_point) {
+		var cathetus1 = Math.abs(end_point.top - start_point.top);
+		var cathetus2 = Math.abs(end_point.left - start_point.left);
+		var hypotenuse = Math.sqrt(Math.pow(cathetus1, 2) + Math.pow(cathetus2, 2));
+		return hypotenuse;
+	},
+	getLastDot: function(point_a, point_t, angle_alpha) {
+		var a_length;
+		//var b_point_arg = point_j.left + a_length;
+		var sign;
+
+		var point_c;
+		/*
+
+		if (this.wp_dirs.horizontal[nav_type]){
+
+		} else {
+			if (this.wp_dirs.forward[nav_type]){
+				
+			} else {
+				point_c = {
+					left: point_a.left,
+					top: point_t.top
+				};
+			}
+		}*/
+
+		point_c = {
+			left: point_a.left,
+			top: point_t.top
+		};
+		var toRad = function(angle){
+			return angle * (Math.PI/180);
+		};
+
+		var angle_gamma = 90;
+		var angle_beta = 180 - angle_gamma - angle_alpha;
+		a_length = (this.getLenthBtwPoints(point_a, point_c) * Math.sin(toRad(angle_alpha)) )/ Math.sin(toRad(angle_beta));
+
+
+		var point_b = {
+			top: point_t.top,
+			left: point_c.left + a_length
+		};
+		return point_b;
+		
+	},
+	getWPCorridor: function(cwp, nav_type, wayp_pack, dems_storage) {
+		var corridor = [];
+		var target_dems = dems_storage[cwp.wpid];
+		if (this.wp_dirs.horizontal[nav_type]){
+
+			var cenp_top;
+			var cenp_left;
+			
+			for (var i = 0; i < wayp_pack.length; i++) {
+				var cur = wayp_pack[i];
+				
+
+				if (!cur){
+					continue;
+				}
+				var cur_dems = dems_storage[cur.wpid];
+				if (cur == cwp || cur.node == cwp.node){
+					continue;
+				}
+				if ((cur_dems.offset.top + cur_dems.height) <= target_dems.offset.top){
+					continue;
+				}
+
+				if (cur_dems.offset.top >= (target_dems.offset.top + target_dems.height)){
+					continue;
+				}
+				if (this.wp_dirs.forward[nav_type]){
+					if (cur_dems.offset.left <= target_dems.offset.left){
+						continue;
+					}
+				} else {
+					if (cur_dems.offset.left >= (target_dems.offset.left + target_dems.width)){
+						continue;
+					}
+				}
+				corridor.push(cur);
+			}
+		} else {
+			for (var i = 0; i < wayp_pack.length; i++) {
+				var cur = wayp_pack[i];
+				if (!cur){
+					continue;
+				}
+				var cur_dems = dems_storage[cur.wpid];
+				if (cur == cwp || cur.node == cwp.node){
+					continue;
+				}
+				if ((cur_dems.offset.left + cur_dems.width ) <= target_dems.offset.left){
+					continue;
+				}
+				if (cur_dems.offset.left >= (target_dems.offset.left + target_dems.width)){
+					continue;
+				}
+				if (this.wp_dirs.forward[nav_type]){
+					if (cur_dems.offset.top <= target_dems.offset.top){
+						continue;
+					}
+				} else {
+					if (cur_dems.offset.top >= (target_dems.offset.top + target_dems.height)){
+						continue;
+					}
+				}
+				
+				corridor.push(cur);
+			}
+		}
+		this.sortWPCorridor(target_dems, corridor, nav_type, dems_storage);
+		
 		return corridor;
 	},
 	wp_dirs: {
@@ -1069,7 +1148,7 @@ provoda.View.extendTo(appModelView, {
 			'Right': true
 		}
 	},
-	checkCurrentWPoint: function() {
+	checkCurrentWPoint: function(dems_storage) {
 		if (this.cwp_check){
 			clearTimeout(this.cwp_check);
 			delete this.cwp_check;
@@ -1077,19 +1156,20 @@ provoda.View.extendTo(appModelView, {
 		
 
 		var cwp = this.state('vis-current_wpoint');
-		if (cwp && !this.getWPDems(cwp)){
-			//this.current_wpoint.node.removeClass('surface_navigation');
+		if (cwp && !this.getWPDemsForStorage(cwp, dems_storage)){
+			//this.current_wpoint.node.removeClass('surf_nav');
 			//delete this.current_wpoint;
 			this.setVisState('current_wpoint', false);
 		}
+		return this.state('vis-current_wpoint');
 
 	},
 	'stch-vis-current_wpoint': function(nst, ost) {
 		if (ost){
-			ost.node.removeClass('surface_navigation');
+			ost.node.removeClass('surf_nav');
 		}
 		if (nst) {
-			nst.node.addClass('surface_navigation');
+			nst.node.addClass('surf_nav');
 			//if (nst.view.getRooConPresentation() ==)
 			 
 			var cur_md_md = this.state('current-mp-md');
@@ -1110,6 +1190,8 @@ provoda.View.extendTo(appModelView, {
 		var cur_mp_md = this.state('current-mp-md');
 		var roocon_view =  cur_mp_md && cur_mp_md.getRooConPresentation(true);
 		if (roocon_view){
+			var dems_storage = {};
+
 			var cwp = this.state('vis-current_wpoint');
 			if (nav_type == 'Enter'){
 				if (cwp){
@@ -1117,38 +1199,33 @@ provoda.View.extendTo(appModelView, {
 					var _this = this;
 
 					this.cwp_check = setTimeout(function() {
-						_this.checkCurrentWPoint();
+						_this.checkCurrentWPoint(dems_storage);
 					},100);
 				}
 				
 			} else if (this.wp_dirs.all[nav_type]){
-				this.checkCurrentWPoint();
-				cwp = this.state('vis-current_wpoint');
+				cwp = this.checkCurrentWPoint(dems_storage);
 				
-				var cur_dems = cwp && cwp.node.data('dems');
 				if (!cwp){
-					wayp_pack = this.getWPPack(roocon_view);
+					wayp_pack = this.getWPPack(roocon_view, dems_storage);
 					this.setVisState('current_wpoint', wayp_pack[0]);
 					
 				} else {
-				
-					
-					
-					
-
-					if (!cur_dems){
-						throw new Error('there is no demensions!')
+					var target_dems = cwp && dems_storage[cwp.wpid];
+					if (!target_dems){
+						throw new Error('there is no demensions!');
 					}
 					var corridor = [];
-					var cur_view = cur_dems.view;
+					var cur_view = cwp.view;
 					while (!corridor.length && cur_view){
-						wayp_pack = this.getWPPack(cur_view);
-						corridor = this.getWPCorridor(cwp.node.data('dems'), wayp_pack, nav_type);
+						//getting parent views until find some usable waypoints;
+						wayp_pack = this.getWPPack(cur_view, dems_storage);
+						corridor = this.getWPCorridor(cwp, nav_type, wayp_pack, dems_storage);
 						cur_view = cur_view.parent_view;
 					}
 					var new_wpoint = corridor[0];
 					if (new_wpoint ){
-						this.setVisState('current_wpoint', new_wpoint)
+						this.setVisState('current_wpoint', new_wpoint);
 					}
 
 				}
@@ -1484,10 +1561,13 @@ provoda.View.extendTo(appModelView, {
 	},
 	
 	
-	renderArtistAlbums: function(albums, original_artist, albums_ul, vopts){
+	renderArtistAlbums: function(albums, original_artist, albums_ul, vopts, iteratorFunc){
 		if (albums.length) {
 			for (var i=0; i < albums.length; i++) {
-				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, vopts));
+				var alb_data = this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, vopts);
+
+				if (iteratorFunc) {iteratorFunc(alb_data);}
+				albums_ul.append(alb_data.con);
 			}
 		}
 		return albums_ul;
@@ -1509,8 +1589,10 @@ provoda.View.extendTo(appModelView, {
 				.appendTo(li);
 			$('<img/>').attr('src', al_image).appendTo(a_href);
 			$('<span class="album-name"></span>').text(al_name).appendTo(a_href);
-			
-		return li;
+		return {
+			con: li,
+			link: a_href
+		};
 	},
 	bindLfmTextClicks: function(con) {
 

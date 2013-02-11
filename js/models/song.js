@@ -103,6 +103,7 @@ var song;
 				mo: this,
 				omo: this.omo
 			}, omo.file);
+
 			if (omo.file){
 				this.updateState('playable', true);
 				this.updateState('files_search', {
@@ -113,14 +114,18 @@ var song;
 			}
 			this.setChild('mf_cor', this.mf_cor);
 			this.addChild(this.mf_cor);
-			this.mf_cor.on('before-mf-play', function(mopla) {
+			this.mf_cor
+				.on('before-mf-play', function(mopla) {
 
-				_this.player.changeNowPlaying(_this);
-				_this.mopla = mopla;
-			});
-			this.mf_cor.on("error", function(can_play) {
-				_this.player.trigger("song-play-error", _this, can_play);
-			});
+					_this.player.changeNowPlaying(_this);
+					_this.mopla = mopla;
+				})
+				.on("error", function(can_play) {
+					_this.player.trigger("song-play-error", _this, can_play);
+				})
+				.on('state-change.mopla_to_use', function(e){
+					_this.updateState('mf_cor-has-available-tracks', !!e.value);
+				});
 
 			if (this.mf_cor.isSearchAllowed()){
 				this.on('state-change.track', function(e) {
