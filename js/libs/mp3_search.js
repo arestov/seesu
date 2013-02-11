@@ -28,7 +28,7 @@ var FilesInvestg;
 			//scope
 		},
 		startSearch: function(opts) {
-			if (!this.state('search-complete') && !this.state('search-progress')){
+			if ((!this.state('search-complete') || this.state('search-fail') ) && !this.state('search-progress')){
 				this.makeRequest(this.msq, {
 					only_cache: opts.only_cache,
 					nocache: opts.nocache
@@ -131,7 +131,6 @@ var FilesInvestg;
 				})
 				.done(function(music_list){
 					_this.updateState('search-result', music_list);
-					_this.updateState('search-complete', true);
 					_this.updateState('search-fail', false);
 				})
 				.fail(function(){
@@ -139,6 +138,8 @@ var FilesInvestg;
 					_this.updateState('search-fail', true);
 				})
 				.always(function() {
+					_this.updateState('search-complete', true);
+
 					_this.updateState('search-progress', false);
 					_this.updateState('has-request', false);
 				});

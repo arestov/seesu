@@ -8,6 +8,7 @@ provoda = {
 	StatesEmitter: function(){},
 	Model: function(){},
 	View: function(){},
+	ItemsEvents: function(){},
 	StatesArchiver: function(){},
 	addPrototype: function(name, obj){
 		if (!this.prototypes[name]){
@@ -25,11 +26,46 @@ provoda = {
 	}
 };
 
-
-Class.extendTo(provoda.StatesArchiver, {
-	init: function(state_name, opts) {
+Class.extendTo(provoda.ItemsEvents, {
+	init: function(event_name, eventCallback, skip_event_regf) {
 		this.controls_list = [];
+		this.event_name = event_name;
+		this.eventCallback = eventCallback;
+		this.skip_event_regf = skip_event_regf;
+	},
+	unsubcribeOld: function() {
+		if (this.controls_list.length){
+			for (var i = 0; i < this.controls_list.length; i++) {
+				this.controls_list[i].unsubcribe();
+			}
+		}
+	},
+	setItems: function(items_list) {
+		this.unsubcribeOld();
+		this.items_list = items_list;
+		this.controls_list = [];
+		for (var i = 0; i < items_list.length; i++) {
+			this.controls_list.push(
+				items_list[i].on(this.event_name, this.eventCallback, {
+					easy_bind_control: true,
+					skip_reg: this.skip_event_regf
+				})
+			);
+		}
+	}
+
+});
+
+provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
+	init: function(state_name, opts) {
+		var _this = this;
+		this.checkFunc = function(e) {
+			var item = this;
+			_this.getItemsValues(item);
+		};
 		this.state_name = state_name;
+		this._super('state-change.' + this.state_name, this.checkFunc, true);
+		
 		this.returnResult = opts.returnResult;
 		var calcR = opts.calculateResult;
 		if (calcR){
@@ -72,7 +108,7 @@ Class.extendTo(provoda.StatesArchiver, {
 		for (var i = 0; i < this.items_list.length; i++) {
 			values_list.push(this.items_list[i].state(this.state_name));
 		}
-		
+
 		this.returnResult.call(this, this.calculateResult.call(this, values_list));
 		return values_list;
 	},
@@ -84,20 +120,8 @@ Class.extendTo(provoda.StatesArchiver, {
 		}
 	},
 	setItems: function(items_list) {
-		this.unsubcribeOld();
-		this.items_list = items_list;
-		var _this = this;
-		var checkFunc = function(e) {
-			var item = this;
-			_this.getItemsValues(item);
-		};
-		this.controls_list = [];
-		for (var i = 0; i < items_list.length; i++) {
-			this.controls_list.push(
-				items_list[i].on('state-change.' + this.state_name, checkFunc, {easy_bind_control: true})
-			);
-		}
-		checkFunc();
+		this._super(items_list);
+		this.checkFunc();
 	}
 });
 
@@ -546,6 +570,18 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 		this.trigger('die');
 		return this;
+	},
+	watchChildrenStates: function(collection_name, state_name, callback) {
+		//
+		var items_events = new provoda.ItemsEvents('state-change.' + state_name, function() {
+			callback.apply(null, {
+				item: this,
+				args: arguments
+			});
+		}, true);
+		this.on('child-change.' + collection_name, function(e) {
+			items_events.setItems(e.value);
+		});
 	},
 	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
 		var _this = this;

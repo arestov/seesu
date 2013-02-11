@@ -398,7 +398,7 @@ var songsList;
 			var obj = {};
 			var c_num = this[this.main_list_name].indexOf(mo);
 
-			if (neitypes.prev_song){
+			if (!neitypes || neitypes.prev_song){
 				for (var i = c_num - 1; i >= 0; i--) {
 					if (this[this.main_list_name][i].canUseAsNeighbour()){
 						obj.prev_song = this[this.main_list_name][i];
@@ -407,7 +407,7 @@ var songsList;
 				}
 			}
 
-			if (neitypes.next_song){
+			if (!neitypes || neitypes.next_song){
 				for (var i = c_num + 1; i < this[this.main_list_name].length; i++) {
 					if (this[this.main_list_name][i].canUseAsNeighbour()){
 						obj.next_song = obj.next_preload_song = this[this.main_list_name][i];
@@ -415,7 +415,7 @@ var songsList;
 					}
 				}
 			}
-			if (neitypes.next_preload_song && !obj.next_preload_song){
+			if ((!neitypes || neitypes.next_preload_song) && !obj.next_preload_song){
 				for (var i = 0; i < c_num; i++) {
 					if (this[this.main_list_name][i].canUseAsNeighbour()){
 						obj.next_preload_song = this[this.main_list_name][i];
@@ -443,7 +443,6 @@ var songsList;
 			var
 				check_list = {},
 				need_list = {},
-				ste_diff = {},
 				n_ste = {},
 				o_ste = {
 					next_song: target_song.next_song,
@@ -451,36 +450,69 @@ var songsList;
 					next_preload_song: target_song.next_preload_song
 				};
 
-			for (var i in o_ste){
-				check_list[i] = !changed_song || (o_ste[i] == changed_song);
+
+			var neighbours_changes;
+			var changed_song_roles;
+
+			
+			if (changed_song){
+				/*
+				если знаем состояние какой именно композиции изменилось ("changed_song"),
+				то проверяем какое значение оно имеет для целевой песни,
+				если играет роль то проверяем их ухудшение иначе ищем все роли (улучшение состояние отвергнутых)
+				*/
+				for (var i in o_ste){
+					check_list[i] = o_ste[i] == changed_song;
+					if (o_ste[i] == changed_song){
+						changed_song_roles = changed_song_roles || true;
+					}
+				}
+				if (changed_song_roles){
+					if (changed_song.canUseAsNeighbour()){
+						//throw new Error('this means that previously wrong song was selected!');
+					}
+					if (!changed_song.canUseAsNeighbour()){
+						neighbours_changes = this.getNeighbours(target_song, check_list);
+					}
+				} else {
+					neighbours_changes = this.getNeighbours(target_song);
+				}
+			} else {
+				/*
+				если не знаем состояние каких ухудшилось, то проверяем ухудшились ли текущие роли
+				если нет, то ищем все (улучшение состояние отвергнутых)
+				*/
+
+				for (var i in o_ste){
+					if (o_ste[i] && !o_ste[i].canUseAsNeighbour()){
+						check_list[i] = true;
+						changed_song_roles = changed_song_roles || true;
+					}
+				}
+				if (changed_song_roles){
+					neighbours_changes = this.getNeighbours(target_song, check_list);
+				} else {
+					neighbours_changes = this.getNeighbours(target_song);
+				}
+
+
 			}
 
-			cloneObj(n_ste, o_ste);
 
-			var fastCheck = function(neighbour_name){
-				if (o_ste[neighbour_name]){
-					n_ste[neighbour_name] = o_ste[neighbour_name] && o_ste[neighbour_name].canUseAsNeighbour() && o_ste[neighbour_name];
-				}
-				need_list[neighbour_name] = !n_ste[neighbour_name];
-			};
-
-			for (var i in check_list){
-				if (check_list[i]){
-					fastCheck(i);
-				}
+			var original_clone = cloneObj({}, o_ste);
+			if (neighbours_changes){
+				cloneObj(original_clone, neighbours_changes);
 			}
 
-			var changes = this.getNeighbours(target_song, need_list);
-
-			cloneObj(n_ste, changes);
+			
 
 
-			return getDiffObj(o_ste, n_ste);
+			return getDiffObj(o_ste, original_clone);
 		},
 		checkNeighboursChanges: function(target_song, changed_neighbour, viewing, log) {
 			var changes = this.getNeighboursChanges(target_song, changed_neighbour)
 			//console.log("changes");
-			//console.log();
+			//console.log(); isImportant
 			cloneObj(target_song, changes);
 
 			//this.findNeighbours();
