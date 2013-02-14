@@ -176,7 +176,7 @@ provoda.View.extendTo(appModelView, {
 
 			var checkFocus = function(opts) {
 				if (opts){
-					if (opts.userwant && !(opts.url_restoring || opts.transit)){
+					if (opts.userwant){
 						_this.search_input[0].focus();
 						_this.search_input[0].select();
 					} else {
@@ -379,7 +379,7 @@ provoda.View.extendTo(appModelView, {
 			var _this = this;
 			if (!this.now_playing_link && this.nav){
 				this.now_playing_link = $('<a class="nav-item np-button"><span class="np"></span></a>').click(function(){
-					md.show_now_playing(true);
+					md.showNowPlaying();
 				}).appendTo(this.nav.justhead);
 
 				this.addWayPoint(this.now_playing_link, function() {
@@ -1561,10 +1561,10 @@ provoda.View.extendTo(appModelView, {
 	},
 	
 	
-	renderArtistAlbums: function(albums, original_artist, albums_ul, vopts, iteratorFunc){
+	renderArtistAlbums: function(albums, original_artist, albums_ul, artcard, iteratorFunc){
 		if (albums.length) {
 			for (var i=0; i < albums.length; i++) {
-				var alb_data = this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, vopts);
+				var alb_data = this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, artcard);
 
 				if (iteratorFunc) {iteratorFunc(alb_data);}
 				albums_ul.append(alb_data.con);
@@ -1572,19 +1572,18 @@ provoda.View.extendTo(appModelView, {
 		}
 		return albums_ul;
 	},
-	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, vopts){
+	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, artcard){
 		var _this = this;
 		var li = $('<li></li>');
 			var a_href= $('<a></a>')
 				.attr('href', al_url )
 				.click(function(e){
 					e.preventDefault();
-					_this.md.showAlbum({
-						artist: al_artist,
-						album_name: al_name,
-						original_artist: original_artist
-					}, vopts);
 					seesu.trackEvent('Artist navigation', 'album', al_artist + ": " + al_name);
+					artcard.showAlbum({
+						album_artist: al_artist,
+						album_name: al_name
+					});
 				})
 				.appendTo(li);
 			$('<img/>').attr('src', al_image).appendTo(a_href);

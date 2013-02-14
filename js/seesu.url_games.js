@@ -226,9 +226,9 @@ var route_tree = {
 	parse_opts: true,
 	other: {
 		fn: function(path_name, opts) {
-			su.showStartPage(true);
+			su.showStartPage();
 			if (opts.query){
-				return su.showResultsPage(opts.query, true);
+				return su.showResultsPage(opts.query);
 			} else {
 				return su.start_page;
 			}
@@ -240,25 +240,19 @@ var route_tree = {
 						other: {
 							fn: function(path_name, opts, sub_paths, parent_md) {
 								//artist name
-								return su.showArtcardPage(path_name, {
-									page_md: parent_md
-								}, true);
+								return su.showArtcardPage(path_name, parent_md);
 							},
 							branch: {
 								names: {
 									'_': {
 										fn: function(path_name, opts, sub_paths, parent_md) {
 											var track_name = sub_paths && sub_paths[0];
-											parent_md.showTopTacks({
-												no_navi: true
-											}, track_name);
+											parent_md.showTopTacks(track_name);
 										}
 									},
 									'+similar': {
 										fn: function(path_name, opts, sub_paths, parent_md) {
-											parent_md.showSimilarArtists({
-												no_navi: true
-											});
+											parent_md.showSimilarArtists();
 										},
 										branch: {
 											names: {
@@ -274,8 +268,8 @@ var route_tree = {
 								other: {
 									//albums
 									fn: function(path_name, opts, sub_paths, parent_md) {
-										parent_md.showAlbum(path_name, {
-											no_navi: true
+										parent_md.showAlbum({
+											album_name: path_name
 										});
 									},
 									branch: {
@@ -295,12 +289,7 @@ var route_tree = {
 					branch: {
 						other: {
 							fn: function(path_name, opts, sub_paths, parent_md) {
-								su.show_tag(path_name, {
-									no_navi: true,
-									source_info: {
-										page_md: parent_md
-									}
-								});
+								su.show_tag(path_name, parent_md);
 							},
 							branch: {
 								names: {
@@ -405,15 +394,7 @@ var route_tree = {
 http://www.lastfm.ru/music/65daysofstatic/+similar
 */
 
-var handleHistoryState =function(e, jo, jn, oldstate, newstate, state_from_history){
-	if (newstate.current_artist || newstate.current_track){
-		var tk =  {
-			artist: newstate.current_artist,
-			track: newstate.current_track
-		};
-	}
-	
-};
+
 
 var gunm = function(lev){
 	var levs = [].concat(lev, lev.parent_levels),
@@ -452,38 +433,22 @@ var gunm = function(lev){
 
 var hashChangeRecover = function(e, soft){
 	var url = e.newURL;
-
-	su.map.startChangesCollecting();
+	su.map.startChangesCollecting({
+		skip_url_change: true
+	});
 
 	var state_from_history = navi.findHistory(e.newURL);
 	if (state_from_history){
-		var dl = gunm(state_from_history.data);
-
-		if (dl.live.length){
-			var deepest = dl.live[dl.live.length -1];
-			if (!deepest.isOpened()){
-				su.restoreFreezed(!!dl.dead.length, true);
-			}
-			deepest.sliceTillMe(!!dl.dead.length, true);
-		} else{
-			su.showStartPage(true);
-		}
-		
-		if (dl.dead.length){
-			for (var i=0; i < dl.dead.length; i++) {
-				su.map.resurrectLevel(dl.dead[i], i != dl.dead.length - 1, true );
-			}
-		}
+		state_from_history.data.showOnMap();
 	} else{
 
 		var finded_path = routePath(url.replace(/\ ?\$...$/, ''), route_tree);
 		if (!finded_path.length){
 			if (!soft){
-				su.showStartPage(true);
+				su.showStartPage();
 			}
 		} else {
 			routeAppByPath(finded_path);
-
 		}
 	}
 	su.map.finishChangesCollecting();

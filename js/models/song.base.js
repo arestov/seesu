@@ -6,7 +6,7 @@ provoda.addPrototype("baseSong",{
 	model_name: "song",
 	init: function(opts, params){
 
-		this._super();
+		this._super(opts);
 		this.updateState('no-track-title', false);
 		this.plst_titl = opts.plst_titl;
 		this.mp3_search = opts.mp3_search;
@@ -42,9 +42,15 @@ provoda.addPrototype("baseSong",{
 		is_important: {
 			depends_on: ['mp-show', 'player-song', 'want_to_play'],
 			fn: function(mp_show, player_song, wapl){
-				this.plst_titl.checkRequestsPriority();
-				return !!(mp_show || player_song || wapl);
-
+				if (mp_show){
+					return 'mp-show';
+				}
+				if (player_song){
+					return 'player-song';
+				}
+				if (wapl){
+					return 'want_to_play';
+				}
 			}
 		},
 		'can-use-as-neighbour':{
@@ -60,20 +66,7 @@ provoda.addPrototype("baseSong",{
 		},
 		'has-none-files-to-play': {
 			depends_on: ['search-complete', 'no-track-title', 'mf_cor-has-available-tracks'],
-			fn: function(scomt, ntt, mf_cor_tracks) {
-				//canUseAsNeighbour
-				/*
-				canSearchFiles: function(){
-					return !!(this.artist && this.track);
-				},
-				canPlay: function() {
-					return this.mf_cor.canPlay();
-				},
-
-				*/
-
-				//return (this.canSearchFiles() && (this.canPlay() || !this.state('search-complete')))
-				//(!this.track && this.canFindTrackTitle());
+			fn: function(scomt, ntt, mf_cor_tracks) {	
 				if (this.mf_cor && !mf_cor_tracks){
 					if (this.mf_cor.isSearchAllowed()){
 						if (scomt){
@@ -93,7 +86,6 @@ provoda.addPrototype("baseSong",{
 	},
 	canUseAsNeighbour: function(){
 		return this.state('can-use-as-neighbour');
-		//return (this.canSearchFiles() && (this.canPlay() || !this.state('search-complete'))) || (!this.track && this.canFindTrackTitle());
 	},
 	state_change: {
 		"mp-show": function(opts) {
@@ -109,22 +101,9 @@ provoda.addPrototype("baseSong",{
 			var _this = this;
 
 			if (state){
-				setTimeout(function() {
-					if (!_this.state("mp-show") && _this.state('search-complete')){
-						
-						_this.checkNeighboursChanges(false, false, "player song");
-					}
-					
-				}, 0);
-				
-				
-				
 				this.mp3_search.on("new-search.player-song", function(){
 					_this.findFiles();
-					_this.checkNeighboursChanges(false, false, "new search, player song");
-					if (_this.next_preload_song){
-					//	_this.next_preload_song.findFiles();
-					}
+					
 				}, {exlusive: true});
 			}
 		},
@@ -144,12 +123,9 @@ provoda.addPrototype("baseSong",{
 		var _this = this;
 
 		this.makeSongPlayalbe(true);
-		setTimeout(function() {
-			_this.checkNeighboursChanges(false, true, "track view");
-		}, 0);
+
 		this.mp3_search.on("new-search.viewing-song", function(){
 			_this.findFiles();
-			_this.checkNeighboursChanges(false, true, "track view");
 		}, {exlusive: true});
 	},
 	simplify: function() {
@@ -193,10 +169,6 @@ provoda.addPrototype("baseSong",{
 	},
 	findNeighbours: function(){
 		this.plst_titl.findNeighbours(this);
-	},
-	checkAndFixNeighbours: function(){
-		this.findNeighbours();
-		this.addMarksToNeighbours();
 	},
 	/*
 	downloadLazy: debounce(function(){
@@ -304,9 +276,6 @@ provoda.addPrototype("baseSong",{
 	},
 	hasNextSong: function(){
 		return !!this.next_song;
-	},
-	canFindTrackTitle: function() {
-		return !this.state("no-track-title");
 	},
 	setSongName: function(song_name, full_allowing, from_collection, last_in_collection) {
 		this.track = song_name;
@@ -662,9 +631,6 @@ provoda.addPrototype("baseSong",{
 	},
 	isNeighbour: function(mo){
 		return (mo == this.prev_song) || (mo == this.next_song);
-	},
-	canSearchFiles: function(){
-		return !!(this.artist && this.track);
 	},
 	setPlayableInfo: function(info){
 		this.playable_info = info;

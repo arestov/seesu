@@ -6,8 +6,8 @@
 	provoda.addPrototype("Investigation", {
 		
 		model_name: 'invstg',
-		init: function() {
-			this._super();
+		init: function(opts) {
+			this._super(opts);
 			this.names = {};
 			this.enter_items = false;
 			this.setChild('section', []);

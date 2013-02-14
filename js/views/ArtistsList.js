@@ -67,13 +67,7 @@ provoda.View.extendTo(artCardUI, {
 			};
 			for (var i=0; i < ob.ordered.length; i++) {
 				var aul =  $('<ul></ul>');
-				this.root_view.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, {
-					source_info: {
-						page_md: _this.md,
-						source_name: 'artist-albums'
-					},
-					from_artcard: true
-				}, addWP);
+				this.root_view.renderArtistAlbums(ob.ordered[i], _this.md.artist, aul, _this.md, addWP);
 				
 				aul.appendTo(albs_groups);
 			}
@@ -93,15 +87,7 @@ provoda.View.extendTo(artCardUI, {
 				if (i < 5){
 					if (el.track){
 						var a = $('<a class="js-serv"></a>').click(function(){
-							su.showTopTacks(_this.md.artist, {
-								source_info: {
-									page_md: _this.md,
-									source_name: 'top-tracks'
-								}
-							}, {
-								artist: _this.md.artist,
-								track: el.track
-							});
+							_this.md.showTopTacks(el.track);
 						}).text(el.track);
 						$('<li></li>').append(a).appendTo(ul);
 						_this.addWayPoint(a);
@@ -180,26 +166,13 @@ provoda.View.extendTo(artCardUI, {
 			.text(localize('full-list'))
 			.appendTo(this.ui.topc.children('.row-header'))
 			.click(function(){
-				su.showTopTacks(_this.md.artist, {
-					source_info: {
-						page_md: _this.md,
-						source_name: 'top-tracks'
-					},
-					from_artcard: true
-				});
+				_this.md.showTopTacks();
 			});
 		this.addWayPoint(this.top_tracks_link);
 
 		this.similars_link = $('<a class="js-serv extends-header"></a>')
 			.click(function(){
-				su.showSimilarArtists(_this.md.artist, {
-					source_info: {
-						page_md: _this.md,
-						source_name: 'similar-artists'
-					},
-					
-					from_artcard: true
-				});
+				_this.md.showSimilarArtists();
 			})
 			.text(localize('full-list'));
 		this.addWayPoint(this.similars_link);

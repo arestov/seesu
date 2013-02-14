@@ -74,6 +74,8 @@ var songsList;
 			if (!(omo instanceof song)){
 				var mo = new song();
 				mo.init({
+					map_parent: this,
+					app: this.app,
 					omo: omo,
 					plst_titl: this,
 					player: this.player,
@@ -378,8 +380,10 @@ ArtistsList.extendTo(SimilarArtists, {
 
 				}
 				_this.putRequestedData(request_info.request, data_list, !!r.error);
-
-				_this.setLoaderFinish(); //"artist.getSimilar" does not support paging
+				if (!r.error){
+					_this.setLoaderFinish();
+				}
+				 //"artist.getSimilar" does not support paging
 				
 			})
 			.fail(function() {

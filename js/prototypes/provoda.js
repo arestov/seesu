@@ -573,8 +573,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	},
 	watchChildrenStates: function(collection_name, state_name, callback) {
 		//
-		var items_events = new provoda.ItemsEvents('state-change.' + state_name, function() {
-			callback.apply(null, {
+		var _this = this;
+		var items_events = new provoda.ItemsEvents();
+		items_events.init('state-change.' + state_name, function() {
+			callback.call(_this, {
 				item: this,
 				args: arguments
 			});

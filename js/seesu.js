@@ -142,7 +142,9 @@ appModel.extendTo(seesuApp, {
 
 
 		
-		this.start_page = (new StartPage()).init(this);
+		this.start_page = (new StartPage()).init({
+			app: this
+		});
 		this.setChild('navigation', [this.start_page]);
 		this.setChild('start_page', this.start_page);
 
@@ -160,9 +162,9 @@ appModel.extendTo(seesuApp, {
 			.on('url-change', function(nu, ou, data, replace) {
 				jsLoadComplete(function(){
 					if (replace){
-						navi.replace(ou, nu, data);
+						navi.replace(ou, nu, data.resident);
 					} else {
-						navi.set(nu, data);
+						navi.set(nu, data.resident);
 					}
 				});
 			})
@@ -454,7 +456,10 @@ appModel.extendTo(seesuApp, {
 	},
 	createSearchPage: function() {
 		var sp = new SearchPage();
-		sp.init();
+		sp.init({
+			app: this,
+			map_parent: this.start_page
+		});
 		return sp;
 	},
 	getPlaylists: function(query) {
@@ -756,8 +761,8 @@ UserPlaylists.extendTo(SuUsersPlaylists, {
 	saveToStore: function(value) {
 		suStore('user_playlists', value, true);
 	},
-	createEnvPlaylist: function(opts) {
-		return su.preparePlaylist(opts);
+	createEnvPlaylist: function(params) {
+		return su.createSonglist(su.start_page, params);
 	}
 });
 

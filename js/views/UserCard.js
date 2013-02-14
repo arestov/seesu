@@ -90,8 +90,7 @@ provoda.View.extendTo(UserCardPreview, {
 		//this.c.text('Персональная музыка');
 		var _this = this;
 		this.c.find('.to-open-block').click(function() {
-			su.showModelPage(_this.md);
-			//_this.md
+			_this.md.showOnMap();
 		});
 
 

@@ -16,8 +16,9 @@ mapLevelModel.extendTo(ArtCard, {
 		}
 	},
 	init: function(opts, params) {
-		this._super();
+		this._super(opts);
 		this.app = opts.app;
+		this.albums_models = {};
 		this.artist = params.artist;
 		this.updateState('nav-title', params.artist);
 
@@ -34,7 +35,7 @@ mapLevelModel.extendTo(ArtCard, {
 
 		this.updateState('url-part', '/catalog/' + this.app.encodeURLPart(this.artist));
 	},
-	showTopTacks: function(opts, track_name) {
+	showTopTacks: function(track_name) {
 		var start_song;
 		if (track_name){
 			start_song = {
@@ -42,37 +43,31 @@ mapLevelModel.extendTo(ArtCard, {
 				track: track_name
 			};
 		}
-		return this.app.showTopTacks(this.artist, {
-			no_navi: opts.no_navi,
-			from_artcard: true,
-			source_info: {
-				page_md: this,
-				source_name: 'top-tracks'
-			}
-		}, start_song);
+
+		var pl = this.getTopTracks(start_song);
+		pl.preloadStart();
+		pl.showOnMap();
+		if (start_song){
+			pl.showTrack(start_song);
+		}
+		return pl;
 	},
+
+
 	showSimilarArtists: function(opts) {
-		return this.app.showSimilarArtists(this.artist, {
-			no_navi: opts.no_navi,
-			from_artcard: true,
-			source_info: {
-				page_md: this,
-				source_name: 'similar-artists'
-			}
-		});
+		var pl = this.getSimilarArtists();
+		pl.preloadStart();
+		pl.showOnMap();
+		return pl;
 	},
-	showAlbum: function(album_name, opts, start_song) {
-		return this.app.showAlbum({
-			album_name: album_name,
-			artist: this.artist
-		}, {
-			no_navi: opts.no_navi,
-			from_artcard: true,
-			source_info: {
-				page_md: this,
-				source_name: 'artist-albums'
-			}
-		}, start_song);
+	showAlbum: function(params, start_song) {
+		if (!params.album_artist){
+			params.album_artist = this.artist;
+		}
+		var pl = this.getAlbum(params, start_song);
+		pl.preloadStart();
+		pl.showOnMap();
+		return pl;
 	},
 	loadInfo: function(){
 		if (this.info_loaded){
@@ -171,5 +166,187 @@ mapLevelModel.extendTo(ArtCard, {
 			}
 		);
 	
+	},
+	getTopTracks: function(start_song) {
+		if (this.top_artists_model){
+			return this.top_artists_model;
+		}
+
+		var pl = this.app.createSonglist(this, {
+			title: 'Top of ' + this.artist,
+			type: 'artist',
+			data: {artist: this.artist}
+		}, start_song);
+		this.top_artists_model = pl;
+
+		
+		var artist = this.artist;
+		pl.setLoader(function(paging_opts) {
+			
+			var request_info = {};
+			request_info.request = lfm.get('artist.getTopTracks', {
+				artist: artist,
+				limit: paging_opts.page_limit,
+				page: paging_opts.next_page
+			})
+				.done(function(r){
+					
+					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+
+
+					var track_list = [];
+					if (tracks.length) {
+						var l = Math.min(tracks.length, paging_opts.page_limit);
+						for (var i=paging_opts.remainder; i < l; i++) {
+							track_list.push({
+								artist : artist ,
+								track: tracks[i].name,
+								lfm_image: {
+									array: tracks[i].image
+								}
+								
+							});
+						}
+						
+					}
+					pl.putRequestedData(request_info.request, track_list, r.error);
+					
+				})
+				.fail(function() {
+					pl.requestComplete(request_info.request, true);
+				})
+				.always(function() {
+					request_info.done = true;
+				});
+			return request_info;
+		});
+		return pl;
+	},
+	getAlbum: function(params, start_song) {
+		var kystring = stringifyParams({artist: params.album_artist, name: params.album_name}, false, '=', '&');
+		if (this.albums_models[kystring]){
+			return this.albums_models[kystring];
+		}
+
+		var pl = this.app.createSonglist(this, {
+			title: '(' + params.album_artist + ') ' + params.album_name,
+			type: 'album',
+			data: {artist: this.artist || params.album_artist, album: params.album_name}
+		}, start_song);
+
+		this.albums_models[kystring] = pl;
+
+		/*
+		var loadById = function() {
+			if (album_id) {
+				lfm.get('playlist.fetch',{
+					'playlistURL': 'lastfm://playlist/album/' + album_id
+				})
+					.done(function(r){
+						var playlist = toRealArray(getTargetField(r, 'playlist.trackList.track'));
+						var music_list = [];
+						for (var i=0; i < playlist.length; i++) {
+							music_list.push({
+								track: playlist[i].title,
+								artist: playlist[i].creator,
+								lfm_image: {
+									item: playlist[i].image
+								}
+							});
+						}
+						pl.putRequestedData(false, music_list);
+					});
+			}
+		};*/
+		
+		pl.setLoader(function(paging_opts) {
+			var request_info = {};
+			var _this = this;
+			request_info.request = lfm.get('album.getInfo',{'artist': params.album_artist, album : params.album_name})
+				.done(function(r){
+					var tracks = toRealArray(getTargetField(r, 'album.tracks.track'));
+					var track_list = [];
+					var imgs = getTargetField(r, 'album.image');
+					for (var i = 0; i < tracks.length; i++) {
+						var cur = tracks[i];
+						track_list.push({
+							artist: cur.artist.name,
+							track: cur.name,
+							lfm_image: {
+								array: imgs
+							}
+						});
+					}
+					_this.putRequestedData(request_info.request, data_list, !!r.error);
+
+					if (!r.error){
+						_this.setLoaderFinish();
+					}
+					//pl.putRequestedData(false, track_list);
+					//getAlbumPlaylist(r.album.id, pl);
+				})
+				.fail(function() {
+				_this.requestComplete(request_info.request, true);
+				})
+				.always(function() {
+					request_info.done = true;
+				});
+		});
+		return pl;
+	},
+	getSimilarArtists: function() {
+		if (this.similar_artists){
+			return this.similar_artists;
+		}
+
+		var pl = this.app.createSonglist(this, {//can autoload
+			title: 'Similar to «' + this.artist + '» artists',
+			type: 'similar artists',
+			data: {artist: this.artist}
+		});
+
+		this.similar_artists = pl;
+		var artist = this.artist;
+
+		pl.setLoader(function(paging_opts){
+			var request_info = {};
+			var _this = this;
+			request_info.request = lfm.get('artist.getSimilar',{
+				artist: artist, 
+				limit: paging_opts.page_limit, 
+				page: paging_opts.next_page
+			})
+				.done(function(r){
+					var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
+					var track_list = [];
+
+					if (artists && artists.length) {
+						var l = Math.min(artists.length, paging_opts.page_limit);
+						for (var i=0; i < l; i++) {
+							track_list.push({
+								artist: artists[i].name,
+								lfm_image: {
+									array: artists[i].image
+								}
+							});
+						}
+
+					}
+					_this.putRequestedData(request_info.request, track_list, r.error);
+					if (!r.error){
+						_this.setLoaderFinish();
+					}
+					
+				})
+				.fail(function() {
+					_this.requestComplete(request_info.request, true);
+				})
+				.always(function() {
+					request_info.done = true;
+				});
+			return request_info;
+		});
+
+		return pl;
 	}
 });

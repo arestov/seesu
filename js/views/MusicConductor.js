@@ -50,7 +50,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 		this.header = this.c.find('h2');
 		var _this = this;
 		this.header.click(function() {
-			_this.md.showMyPage();
+			_this.md.showOnMap();
 		});
 		this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
@@ -99,7 +99,11 @@ provoda.View.extendTo(MusicConductorPreview, {
 			var showUsers = function(listenings,c, above_limit_value){
 				if (listenings.length){
 					
-						
+					var uselisteningClick = function(e) {
+						var a = $(this).data('artist');
+						var t = $(this).data('track');
+						_this.root_view.md.showArtistTopTracks(a, false, {artist: a, track: t});
+					};
 						
 					var uc = $('<ul></ul>');
 					for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
@@ -122,11 +126,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 								.data('artist', lig.artist)
 								.data('track', lig.title)
 								.attr('title',lig.artist + ' - ' + lig.title)
-								.click(function(){
-									var a = $(this).data('artist');
-									var t = $(this).data('track');
-									_this.root_view.md.showTopTacks(a, {}, {artist: a, track: t});
-								});
+								.click(uselisteningClick);
 
 							$('<span class="song-track-name"></span>').text(lig.title).appendTo(song_complect);
 							$('<span class="song-artist-name"></span>').text(lig.artist).appendTo(song_complect);
@@ -178,7 +178,6 @@ provoda.View.extendTo(MusicConductorPreview, {
 				var chart_song = $('<a class="chart-song"></a>')
 					.attr('title', artist + ' - ' + track)
 					.click(function(e){
-						su.show_playlist_page(playlist);
 						playlist.showTrack(track_obj);
 						e.preventDefault();
 					});
@@ -219,9 +218,9 @@ provoda.View.extendTo(MusicConductorPreview, {
 								fn: function() {
 									_cmetro.empty();
 
-									var ppp = su.createMetroChartPlaylist(random_metro.country, random_metro.name);
+									//var ppp = su.createMetroChartPlaylist(random_metro.country, random_metro.name);
 							
-									var plr = su.preparePlaylist({//fix params for cache
+									var plr = su.createSonglist(su.start_page, {//fix params for cache
 										title: 'Chart of ' + random_metro.name,
 										type: 'chart',
 										data: {country: random_metro.country, metro: random_metro.name}
@@ -240,7 +239,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 									$('<a class="js-serv show-in-header"></a>').text(localize('show')).click(function(e){
-										su.show_playlist_page(plr);
+										plr.showOnMap();
 										e.preventDefault();
 									}).appendTo(_header);
 										

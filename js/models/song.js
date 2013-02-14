@@ -80,20 +80,7 @@ var song;
 					});
 			}
 
-			this.on('view', function(no_navi, userwant){
-				su.show_track_page(this, no_navi);
-				if (userwant){
-					//fixme - never true!
-					if (_this.wasMarkedAsPrev()){
-						su.trackEvent('Song click', 'previous song');
-					} else if (_this.wasMarkedAsNext()){
-						su.trackEvent('Song click', 'next song');
-					} else if (_this.state('play')){
-						su.trackEvent('Song click', 'zoom to itself');
-					}
-				}
-				
-			});
+			
 			var actionsrow = new TrackActionsRow(this);
 			this.setChild('actionsrow', actionsrow);
 			this.addChild(actionsrow);
@@ -185,7 +172,7 @@ var song;
 			}
 		},
 		mlmDie: function() {
-			this.hide();
+			this.hideOnMap();
 		},
 		getURL: function(mopla){
 			var url ="";

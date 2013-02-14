@@ -108,6 +108,7 @@ var StrusersRowSearch = function(rpl, mo) {
 	this.init(rpl, mo);
 };
 investigation.extendTo(StrusersRowSearch, {
+	skip_map_init: true,
 	init: function(rpl, mo) {
 		this._super();
 		this.rpl = rpl;
@@ -311,6 +312,7 @@ var PlaylistRowSearch = function(rpl, mo) {
 	this.init(rpl, mo);
 };
 investigation.extendTo(PlaylistRowSearch, {
+	skip_map_init: true,
 	init: function(rpl, mo) {
 		this._super();
 		this.rpl = rpl;

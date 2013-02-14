@@ -76,7 +76,7 @@ playerBase.extendTo(playerComplex, {
 			this.removeCurrentWantedSong();
 
 			if (last_mo && last_mo.state('mp-show') && this.c_song != mo){
-				mo.view();
+				mo.showOnMap();
 			}
 			if (last_mo){
 				last_mo.stop();

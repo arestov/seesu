@@ -7,12 +7,13 @@ StartPage = function() {};
 mapLevelModel.extendTo(StartPage, {
 	model_name: 'start_page',
 	page_name: 'start page',
+	zero_map_level: true,
 	showPlaylists: function(){
 		su.search(':playlists');
 	},
-	init: function(su){
-		this._super();
-		this.su = su;
+	init: function(opts){
+		this._super(opts);
+		this.su = opts.app;
 		this.updateState('needs-search-from', true);
 		this.updateState('nav-title', 'Seesu start page');
 
@@ -20,10 +21,18 @@ mapLevelModel.extendTo(StartPage, {
 
 
 
-		var personal_stuff = (new UserCard()).init({app: su, pmd: this}, {for_current_user: true});
+		var personal_stuff = (new UserCard()).init({
+			app: su, 
+			pmd: this,
+			map_parent: this
+		}, {for_current_user: true});
 		this.setChild('pstuff', personal_stuff);
 
-		var muco = (new MusicConductor()).init({app: su, pmd: this});
+		var muco = (new MusicConductor()).init({
+			app: su,
+			pmd: this,
+			map_parent: this
+		});
 		this.setChild('muco', muco);
 
 		this.on('state-change.can-expand', function(e) {
