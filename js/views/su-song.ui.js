@@ -414,7 +414,7 @@ provoda.View.extendTo(songUI, {
 			$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p);
 
 			similars_link.click(function() {
-				su.showArtistSimilarArtists(false, artist);
+				su.showArtistSimilarArtists(artist);
 				seesu.trackEvent('Artist navigation', 'similar artists to', artist);
 			});
 

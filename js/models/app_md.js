@@ -355,6 +355,19 @@ provoda.Model.extendTo(appModel, {
 		},
 		
 		show_tag: function(tag, page_md, start_song){
+
+
+			var tag_page = new TagPage();
+			tag_page.init({
+				app: this,
+				map_parent: this.start_page
+			}, {
+				tag_name: tag
+			});
+			tag_page.showOnMap();
+			return tag_page;
+			
+			/*
 			
 			var pl_r = this.createSonglist(page_md || this.start_page, {
 				title: 'Tag: ' + tag,
@@ -404,6 +417,7 @@ provoda.Model.extendTo(appModel, {
 				pl_r.showTrack(start_song);
 			}
 			return pl_r;
+			*/
 		},
 		showArtistTopTracks: function(artist, page_md, start_song) {
 			var artcard = this.showArtcardPage(artist, page_md);

@@ -96,6 +96,10 @@ provoda.View.extendTo(appModelView, {
 			main: artCardUI,
 			nav: baseNavUI
 		},
+		artslist: {
+			main: ArtistListView,
+			nav: baseNavUI
+		},
 		playlist: {
 			main: songsListView,
 			details: songsListView,
@@ -128,6 +132,17 @@ provoda.View.extendTo(appModelView, {
 		},
 		mconductor: {
 			nav: baseNavUI
+		},
+		tag_page: {
+			main: TagPageView,
+			nav: baseNavUI
+		}
+	},
+	'collch-tag_page': {
+		place: function(md, view) {
+			var lev_conj = this.getLevelContainer(md.map_level_num, view);
+			view.wayp_scan_stop = true;
+			return lev_conj.material;
 		}
 	},
 	'collch-usercard': {
@@ -145,6 +160,13 @@ provoda.View.extendTo(appModelView, {
 		}
 	},
 	'collch-artcard':  {
+		place: function(md, view) {
+			var lev_conj = this.getLevelContainer(md.map_level_num, view);
+			view.wayp_scan_stop = true;
+			return lev_conj.material;
+		}
+	},
+	'collch-artslist': {
 		place: function(md, view) {
 			var lev_conj = this.getLevelContainer(md.map_level_num, view);
 			view.wayp_scan_stop = true;
@@ -792,6 +814,27 @@ provoda.View.extendTo(appModelView, {
 			this.wayPointsNav(key_name);
 		}
 	},
+	getWPEndPoint: function(cur_wayp, nav_type, dems_storage) {
+		var cur_dems = dems_storage[cur_wayp.wpid];
+		var end_point = {};
+		
+		if (this.wp_dirs.horizontal[nav_type]){
+			end_point.top = cur_dems.offset.top;
+			if (this.wp_dirs.forward[nav_type]){
+				end_point.left = cur_dems.offset.left;
+			} else {
+				end_point.left = cur_dems.offset.left + cur_dems.width;
+			}
+		} else {
+			end_point.left = cur_dems.offset.left;
+			if (this.wp_dirs.forward[nav_type]){
+				end_point.top = cur_dems.offset.top;
+			} else {
+				end_point.top = cur_dems.offset.top + cur_dems.height;
+			}
+		}
+		return end_point;
+	},
 	getWPDemsForStorage: function(cur_wayp, dems_storage) {
 		if (!cur_wayp.wpid){
 			throw new Error('waypoint must have ID (".wpid")');
@@ -825,6 +868,7 @@ provoda.View.extendTo(appModelView, {
 			width: width,
 			offset: offset
 		};
+
 
 		if (cur_wayp.simple_check){
 			return this.canUseWaypoint(cur_wayp, dems);
@@ -981,23 +1025,8 @@ provoda.View.extendTo(appModelView, {
 			return sortByRules(a, b, [
 				function(el) {
 					var cur_dems = dems_storage[el.wpid];
-					var end_point = {};
+					var end_point = _this.getWPEndPoint(el, nav_type, dems_storage);
 					
-					if (_this.wp_dirs.horizontal[nav_type]){
-						end_point.top = cur_dems.offset.top;
-						if (_this.wp_dirs.forward[nav_type]){
-							end_point.left = cur_dems.offset.left;
-						} else {
-							end_point.left = cur_dems.offset.left + cur_dems.width;
-						}
-					} else {
-						end_point.left = cur_dems.offset.left;
-						if (_this.wp_dirs.forward[nav_type]){
-							end_point.top = cur_dems.offset.top;
-						} else {
-							end_point.top = cur_dems.offset.top + cur_dems.height;
-						}
-					}
 					var cathetus1 = Math.abs(end_point.top - start_point.top);
 					var cathetus2 = Math.abs(end_point.left - start_point.left);
 					var hypotenuse = Math.sqrt(Math.pow(cathetus1, 2) + Math.pow(cathetus2, 2));
@@ -1017,48 +1046,172 @@ provoda.View.extendTo(appModelView, {
 		var hypotenuse = Math.sqrt(Math.pow(cathetus1, 2) + Math.pow(cathetus2, 2));
 		return hypotenuse;
 	},
-	getLastDot: function(point_a, point_t, angle_alpha) {
-		var a_length;
-		//var b_point_arg = point_j.left + a_length;
-		var sign;
+	matchWPForTriangles: function(dems_storage, nav_type, cur_wayp, target_wp, angle) {
+		var curwp_dems = dems_storage[cur_wayp.wpid];
+		var tagwp_dems = dems_storage[cur_wayp.wpid];
 
-		var point_c;
+		var point_a = {},
+			point_t = {},
+			point_c = {},
+			shift_length;
+
+		point_t = this.getWPEndPoint(target_wp, nav_type, dems_storage);
+
+		if (this.wp_dirs.horizontal[nav_type]){
+			point_a.top = curwp_dems.offset.top + curwp_dems.height;
+			shift_length = curwp_dems.height;
+			
+
+			point_c = {
+				left: point_t.left,
+				top: point_a.top
+			};
+
+			if (this.wp_dirs.forward[nav_type]){
+				point_a.left  = curwp_dems.offset.left + curwp_dems.width;
+				if (point_c.left < point_a.left){
+					return false;
+					//throw new Error('bad left position');
+				}
+
+			} else {
+				point_a.left = curwp_dems.offset.left;
+				if (point_c.left > point_a.left){
+					return false;
+					//throw new Error('bad left position');
+				}
+			}
+		} else {
+			point_a.left = curwp_dems.offset.left + curwp_dems.width;
+			shift_length = curwp_dems.width;
+			
+
+			point_c = {
+				left: point_a.left,
+				top: point_t.top
+			};
+
+			if (this.wp_dirs.forward[nav_type]){
+				point_a.top  = curwp_dems.offset.top + curwp_dems.height;
+				if (point_c.top < point_a.top){
+					return false;
+					//throw new Error('bad top position');
+				}
+
+			} else {
+				point_a.top = curwp_dems.offset.top;
+				if (point_c.top > point_a.top){
+					return false;
+					//throw new Error('bad top position');
+				}
+			}
+		}
+
+		var a_length = this.getALength(cloneObj({},point_a), cloneObj({}, point_c), angle);
+
+		var matched = this.matchTrianglesByPoints(point_a, point_c, nav_type, a_length, false, point_t);
+		if (!matched){
+			matched = this.matchTrianglesByPoints(point_a, point_c, nav_type, a_length, shift_length, point_t);
+		}
+		return matched;
+
+	},
+	matchTriaPoArray: function(arr) {
+		for (var i = 0; i < arr.length ; i++) {
+
+			if (arr[i] === 0){
+				return true;
+			} else {
+				if (arr[i + 1] && (arr[i + 1] * arr[i] <= 0)){
+					return false;
+				}
+			}
+			
+		}
+		return true;
+	},
+	matchTrianglesByPoints: function(point_a, point_c, nav_type, a_length, shift_length, point_t) {
+		var point_b = {};
+
+		var dyn_field;
+		var stat_field;
+		if (this.wp_dirs.horizontal[nav_type]){
+			stat_field = 'left';
+			dyn_field = 'top';
+		} else {
+			stat_field = 'top';
+			dyn_field = 'left';
+			
+		}
+
+		point_b[stat_field] = point_c[stat_field];
+		if (typeof shift_length == 'number'){
+			point_c[dyn_field] -= shift_length;
+			point_a[dyn_field] -= shift_length;
+			point_b[dyn_field] = point_c[dyn_field] - a_length;
+		} else {
+			point_b[dyn_field] = point_c[dyn_field] + a_length;
+		}
+
+		var arr = this.triangleHasPoint(point_a, point_b, point_c, point_t);
+
+		return this.matchTriaPoArray(arr);
+	},
+	triangleHasPoint: function(point_a, point_b, point_c, point_t) {
+		var line1 = (point_a.left - point_t.left) * (point_b.top - point_a.top) - (point_b.left - point_a.left) * (point_a.top - point_t.top);
+		var line2 = (point_b.left - point_t.left) * (point_c.top - point_b.top) - (point_c.left - point_b.left) * (point_b.top - point_t.top);
+		var line3 = (point_c.left - point_t.left) * (point_a.top - point_c.top) - (point_a.left - point_c.left) * (point_c.top - point_t.top);
+		return [line1, line2, line3];
 		/*
+		считаются произведения (1, 2, 3 - вершины треугольника, 0 - точка):
+		(x1 - x0) * (y2 - y1) - (x2 - x1) * (y1 - y0)
+		(x2 - x0) * (y3 - y2) - (x3 - x2) * (y2 - y0)
+		(x3 - x0) * (y1 - y3) - (x1 - x3) * (y3 - y0)
+		Если они одинакового знака, то точка внутри треугольника, если что-то из этого - ноль, то точка лежит на стороне, иначе точка вне треугольника.
+		*/
+	},
+	getLastDot: function(point_a, point_t, angle_alpha) {
+		var point_c;
+		
+		if (this.wp_dirs.horizontal[nav_type]){
+			point_c = {
+				left: point_t.left,
+				top: point_a.top
+			};
+		} else {
+			point_c = {
+				left: point_a.left,
+				top: point_t.top
+			};
+			
+		}
 
+		var a_length = this.getALength(point_a, point_c, angle_alpha);
 		if (this.wp_dirs.horizontal[nav_type]){
 
 		} else {
-			if (this.wp_dirs.forward[nav_type]){
-				
-			} else {
-				point_c = {
-					left: point_a.left,
-					top: point_t.top
-				};
-			}
-		}*/
 
-		point_c = {
-			left: point_a.left,
-			top: point_t.top
+		}
+		var point_b = {
+			top: point_t.top,
+			left: point_c.left + a_length
 		};
+	},
+	getALength: function(point_a, point_c, angle_alpha) {
+		//var b_point_arg = point_j.left + a_length;
+		var sign;
+
 		var toRad = function(angle){
 			return angle * (Math.PI/180);
 		};
 
 		var angle_gamma = 90;
 		var angle_beta = 180 - angle_gamma - angle_alpha;
-		a_length = (this.getLenthBtwPoints(point_a, point_c) * Math.sin(toRad(angle_alpha)) )/ Math.sin(toRad(angle_beta));
+		var a_length = (this.getLenthBtwPoints(point_a, point_c) * Math.sin(toRad(angle_alpha)) )/ Math.sin(toRad(angle_beta));
 
-
-		var point_b = {
-			top: point_t.top,
-			left: point_c.left + a_length
-		};
-		return point_b;
-		
+		return a_length;
 	},
-	getWPCorridor: function(cwp, nav_type, wayp_pack, dems_storage) {
+	getWPCorridor: function(cwp, nav_type, wayp_pack, dems_storage, angle) {
 		var corridor = [];
 		var target_dems = dems_storage[cwp.wpid];
 		if (this.wp_dirs.horizontal[nav_type]){
@@ -1077,13 +1230,7 @@ provoda.View.extendTo(appModelView, {
 				if (cur == cwp || cur.node == cwp.node){
 					continue;
 				}
-				if ((cur_dems.offset.top + cur_dems.height) <= target_dems.offset.top){
-					continue;
-				}
-
-				if (cur_dems.offset.top >= (target_dems.offset.top + target_dems.height)){
-					continue;
-				}
+				
 				if (this.wp_dirs.forward[nav_type]){
 					if (cur_dems.offset.left <= target_dems.offset.left){
 						continue;
@@ -1093,6 +1240,23 @@ provoda.View.extendTo(appModelView, {
 						continue;
 					}
 				}
+				if (!angle){
+					if ((cur_dems.offset.top + cur_dems.height) <= target_dems.offset.top){
+						continue;
+					}
+
+					if (cur_dems.offset.top >= (target_dems.offset.top + target_dems.height)){
+						continue;
+					}
+				} else {
+					if (!this.matchWPForTriangles(dems_storage, nav_type, cwp, cur, angle)){
+						continue;
+					}
+				}
+
+				
+
+
 				corridor.push(cur);
 			}
 		} else {
@@ -1105,12 +1269,7 @@ provoda.View.extendTo(appModelView, {
 				if (cur == cwp || cur.node == cwp.node){
 					continue;
 				}
-				if ((cur_dems.offset.left + cur_dems.width ) <= target_dems.offset.left){
-					continue;
-				}
-				if (cur_dems.offset.left >= (target_dems.offset.left + target_dems.width)){
-					continue;
-				}
+				
 				if (this.wp_dirs.forward[nav_type]){
 					if (cur_dems.offset.top <= target_dems.offset.top){
 						continue;
@@ -1120,7 +1279,18 @@ provoda.View.extendTo(appModelView, {
 						continue;
 					}
 				}
-				
+				if (!angle){
+					if ((cur_dems.offset.left + cur_dems.width ) <= target_dems.offset.left){
+					continue;
+					}
+					if (cur_dems.offset.left >= (target_dems.offset.left + target_dems.width)){
+						continue;
+					}
+				} else {
+					if (!this.matchWPForTriangles(dems_storage, nav_type, cwp, cur, angle)){
+						continue;
+					}
+				}
 				corridor.push(cur);
 			}
 		}
@@ -1215,14 +1385,8 @@ provoda.View.extendTo(appModelView, {
 					if (!target_dems){
 						throw new Error('there is no demensions!');
 					}
-					var corridor = [];
-					var cur_view = cwp.view;
-					while (!corridor.length && cur_view){
-						//getting parent views until find some usable waypoints;
-						wayp_pack = this.getWPPack(cur_view, dems_storage);
-						corridor = this.getWPCorridor(cwp, nav_type, wayp_pack, dems_storage);
-						cur_view = cur_view.parent_view;
-					}
+					var corridor = this.getAnyPossibleWaypoints(cwp, nav_type, dems_storage);
+					
 					var new_wpoint = corridor[0];
 					if (new_wpoint ){
 						this.setVisState('current_wpoint', new_wpoint);
@@ -1232,6 +1396,27 @@ provoda.View.extendTo(appModelView, {
 			}
 			
 		}
+	},
+	getAnyPossibleWaypoints: function(cwp, nav_type, dems_storage) {
+		var corridor = [];
+		var angle = 0;
+
+		while (!corridor.length && angle < 90){
+			var inner_corr = [];
+			var cur_view = cwp.view;
+			while (!inner_corr.length && cur_view){
+				//getting parent views until find some usable waypoints;
+				wayp_pack = this.getWPPack(cur_view, dems_storage);
+				inner_corr = this.getWPCorridor(cwp, nav_type, wayp_pack, dems_storage, Math.min(angle, 89));
+				cur_view = cur_view.parent_view;
+			}
+			corridor = inner_corr;
+			angle += 5;
+
+		}
+		
+
+		return corridor;
 	},
 	appendStyle: function(style_text){
 		//fixme - check volume ondomready

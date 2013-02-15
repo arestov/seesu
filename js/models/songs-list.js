@@ -35,6 +35,12 @@ var songsList;
 			}
 			su.on('settings.dont-rept-pl', doNotReptPl);
 			this.updateState('url-part', this.getURL());
+			this.on('state-change.mp-show', function(e) {
+				if (e.value && e.value.userwant){
+					this.preloadStart();
+				}
+				
+			}, {skip_reg: true});
 		},
 		page_name: 'playlist',
 		setBaseInfo: function(params) {
@@ -175,16 +181,26 @@ var songsList;
 		model_name: 'row-multiatcs'
 	});
 
+
+var ArtistInArtl = function() {};
+ArtCard.extendTo(ArtistInArtl, {
+	skip_map_init: true,
+	showArtcard: function() {
+		this.app.showArtcardPage(this.artist);
+	}
+});
+
 var ArtistsListPlaylist = function() {};
 songsList.extendTo(ArtistsListPlaylist, {
 	init: function(opts, params) {
-		this._super();
+		this._super(opts);
 		this.artists_list = params.artists_list;
+		this.original_artist = params.artist;
 		this.updateState('nav-title', params.title);
 		this.updateState('url-part', '/~');
 	},
 	sendMoreDataRequest: function() {
-		this.artists_list.sendMoreDataRequest.apply(this, arguments);
+		return this.artists_list.sendMoreDataRequest.apply(this, arguments);
 	}
 });
 
@@ -192,13 +208,19 @@ var ArtistsList = function() {};
 window.ArtistsList = ArtistsList;
 mapLevelModel.extendTo(ArtistsList, {
 	init: function(opts, params) {
-		this._super();
-		this.app = opts.app;
+		this._super(opts);
 		this[this.main_list_name] = [];
 		if (this.sendMoreDataRequest){
 			this.updateState("has-loader", true);
 		}
+		this.on('state-change.mp-show', function(e) {
+			if (e.value && e.value.userwant){
+				this.preloadStart();
+			}
+			
+		}, {skip_reg: true});
 	},
+	model_name: 'artslist',
 	main_list_name: 'artists_list',
 
 	complex_states: {
@@ -217,13 +239,15 @@ mapLevelModel.extendTo(ArtistsList, {
 
 	},
 	createRPlist: function() {
-		if (this.ran_playlist){
+		if (!this.ran_playlist){
 			var pl = new ArtistsListPlaylist();
 			pl.init({
-				app: this.app
+				app: this.app,
+				map_parent: this
 			}, {
 				title: this.state('nav-title'),
-				artists_list: this
+				artists_list: this,
+				artist: this.original_artist
 			});
 			this.ran_playlist = pl;
 		}
@@ -232,11 +256,12 @@ mapLevelModel.extendTo(ArtistsList, {
 	requestRandomPlaylist: function() {
 		
 		this.createRPlist();
+		this.ran_playlist.showOnMap();
 	},
 	getMainListChangeOpts: function() {},
 	addArtist: function(obj, silent) {
 		var main_list = this[this.main_list_name];
-		var artcard = new ArtCard();
+		var artcard = new ArtistInArtl();
 		artcard.init({
 			app: this.app
 		}, obj);

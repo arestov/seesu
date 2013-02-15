@@ -18,9 +18,9 @@ provoda.View.extendTo(WagonPreview, {
 	'stch-nav-title': function(state) {
 		this.header.text(state);
 	},
-	'collch-allp_allt_cart': 'c',
+	'collch-allp_allt_chart': 'c',
 	children_views: {
-		allp_allt_cart: WagonItemPreview
+		allp_allt_chart: WagonItemPreview
 	}
 
 });

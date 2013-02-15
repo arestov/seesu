@@ -1,6 +1,17 @@
 var ArtcardViewInList = function() {};
 provoda.View.extendTo(ArtcardViewInList, {
-
+	createBase: function() {
+		this.c = $('<li></li>');
+		var _this = this;
+		this.c.click(function() {
+			_this.md.showArtcard();
+		});
+		this.image_place = $('<span class=""></span>').appendTo(this.c);
+		this.addWayPoint(this.c);
+	},
+	'stch-artist-name': function(state) {
+		this.c.text(state);
+	}
 });
 
 
@@ -12,8 +23,10 @@ provoda.View.extendTo(ArtistListView, {
 		this.generate_button = this.c.find('.to-open-block').click(function() {
 			_this.md.requestRandomPlaylist();
 		});
-
+		this.listc = this.c.find('ul');
+		this.addWayPoint(this.generate_button);
 	},
+
 	'stch-mp-show': function(opts) {
 		this.c.toggleClass('hidden', !opts);
 	},
@@ -21,7 +34,8 @@ provoda.View.extendTo(ArtistListView, {
 		artists_list: {
 			main: ArtcardViewInList
 		}
-	}
+	},
+	'collch-artists_list': 'listc'
 });
 
 

@@ -20,7 +20,8 @@ mapLevelModel.extendTo(ArtCard, {
 		this.app = opts.app;
 		this.albums_models = {};
 		this.artist = params.artist;
-		this.updateState('nav-title', params.artist);
+		this.updateState('nav-title', this.artist);
+		this.updateState('artist-name', this.artist);
 
 
 		this.updateState('lfm-image', params.lfm_image &&
@@ -45,7 +46,6 @@ mapLevelModel.extendTo(ArtCard, {
 		}
 
 		var pl = this.getTopTracks(start_song);
-		pl.preloadStart();
 		pl.showOnMap();
 		if (start_song){
 			pl.showTrack(start_song);
@@ -55,17 +55,15 @@ mapLevelModel.extendTo(ArtCard, {
 
 
 	showSimilarArtists: function(opts) {
-		var pl = this.getSimilarArtists();
-		pl.preloadStart();
-		pl.showOnMap();
-		return pl;
+		var artl = this.getSimilarArtists();
+		artl.showOnMap();
+		return artl;
 	},
 	showAlbum: function(params, start_song) {
 		if (!params.album_artist){
 			params.album_artist = this.artist;
 		}
 		var pl = this.getAlbum(params, start_song);
-		pl.preloadStart();
 		pl.showOnMap();
 		return pl;
 	},
@@ -295,6 +293,28 @@ mapLevelModel.extendTo(ArtCard, {
 		return pl;
 	},
 	getSimilarArtists: function() {
+
+
+		if (this.similar_artists){
+			return this.similar_artists;
+		}
+		var artl = new SimilarArtists();
+		artl.init({
+			app: this.app,
+			map_parent: this
+		}, {
+			artist: this.artist
+		});
+		return artl;
+
+
+
+
+
+
+
+
+		/*
 		if (this.similar_artists){
 			return this.similar_artists;
 		}
@@ -347,6 +367,6 @@ mapLevelModel.extendTo(ArtCard, {
 			return request_info;
 		});
 
-		return pl;
+		return pl;*/
 	}
 });

@@ -52,12 +52,12 @@ mapLevelModel.extendTo(SongsWagon, {
 		this._super.apply(this, arguments);
 		this.app = opts.app;
 
-		this.allp_allt_cart = new AllPAllTimeChart();
-		this.allp_allt_cart.init({
+		this.allp_allt_chart = new AllPAllTimeChart();
+		this.allp_allt_chart.init({
 			app: this.app,
 			map_parent: this
 		});
-		this.setChild('allp_allt_cart', this.allp_allt_cart);
+		this.setChild('allp_allt_chart', this.allp_allt_chart);
 		
 		this.updateState('nav-title', 'Композиции');
 		this.updateState('url-part', '/songs');
