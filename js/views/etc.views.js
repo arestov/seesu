@@ -511,11 +511,12 @@ provoda.View.extendTo(songFileModelUI, {
 				return !_this.state('selected') && _this.state('vis-wp-usable');
 			}
 		});
+		/*
 		this.addWayPoint(this.progress_c, {
 			canUse: function() {
 				return _this.state('selected');
 			}
-		});
+		});*/
 
 		var _this = this;
 

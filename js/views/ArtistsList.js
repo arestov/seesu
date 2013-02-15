@@ -1,16 +1,18 @@
 var ArtcardViewInList = function() {};
 provoda.View.extendTo(ArtcardViewInList, {
 	createBase: function() {
-		this.c = $('<li></li>');
+		this.c = $('<li class="artist_in_list"></li>');
+		this.alink = $('<a class=""></a>').appendTo(this.c);
 		var _this = this;
-		this.c.click(function() {
+		this.alink.click(function() {
 			_this.md.showArtcard();
+			return false;
 		});
 		this.image_place = $('<span class=""></span>').appendTo(this.c);
-		this.addWayPoint(this.c);
+		this.addWayPoint(this.alink);
 	},
 	'stch-artist-name': function(state) {
-		this.c.text(state);
+		this.alink.text(state);
 	}
 });
 
@@ -29,6 +31,9 @@ provoda.View.extendTo(ArtistListView, {
 
 	'stch-mp-show': function(opts) {
 		this.c.toggleClass('hidden', !opts);
+	},
+	'stch-list-loading': function(state){
+		this.c.toggleClass('list_loading_state', !!state);
 	},
 	children_views: {
 		artists_list: {

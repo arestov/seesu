@@ -404,8 +404,10 @@ provoda.View.extendTo(appModelView, {
 					md.showNowPlaying();
 				}).appendTo(this.nav.justhead);
 
-				this.addWayPoint(this.now_playing_link, function() {
-					return !_this.state('viewing-playing');
+				this.addWayPoint(this.now_playing_link, {
+					canUse: function() {
+						return !_this.state('viewing-playing');
+					}
 				});
 			}
 			if (this.now_playing_link){
@@ -1000,6 +1002,15 @@ provoda.View.extendTo(appModelView, {
 
 			
 		}
+		var _this = this;
+
+		wayp_pack.sort(function(a, b) {
+			return sortByRules(a,b, [function(el) {
+				var cur_dems = dems_storage[el.wpid];
+				return _this.getLenthBtwPoints({left:0, top:0}, cur_dems.offset);
+			}]);
+		});
+
 		return wayp_pack;
 	},
 	sortWPCorridor: function(target_dems, corridor, nav_type, dems_storage) {

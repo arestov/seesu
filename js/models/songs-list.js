@@ -225,7 +225,7 @@ mapLevelModel.extendTo(ArtistsList, {
 
 	complex_states: {
 		'more_load_available': {
-			depends_on: ["has-loader", "loading"],
+			depends_on: ["has-loader", "list-loading"],
 			fn: function(can_load_more, loading) {
 				if (can_load_more){
 					return !loading;
@@ -332,7 +332,7 @@ mapLevelModel.extendTo(ArtistsList, {
 		this.updateState("has-loader", false);
 	},
 	markLoading: function(){
-		this.updateState('loading', true);
+		this.updateState('list-loading', true);
 		return this;
 	},
 	putRequestedData: function(request, data_list, error) {
@@ -357,7 +357,7 @@ mapLevelModel.extendTo(ArtistsList, {
 		if (!this.request_info || this.request_info.request == request){
 			var main_list = this[this.main_list_name];
 
-			this.updateState('loading', false);
+			this.updateState('list-loading', false);
 			if (error && !main_list.length) {
 				this.updateState('error', true);
 			} else {

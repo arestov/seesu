@@ -418,6 +418,10 @@ html.not-as-application, .not-as-application  body{
 		.playlist-container .load-more-songs:hover{
 			background-color: #595959;
 		}
+.artists_list.list_loading_state{
+	padding-bottom: 2rem;
+	background: url(../i/spinner.gif) no-repeat 0.5rem 100%;
+	}
 .tracks-for-play{
 	clear:both;
 	}
@@ -1029,6 +1033,9 @@ iframe.you-tube-video,embed.you-tube-video{
 			width:85px;
 			height:48px;
 			border:0 !important;
+			}
+		.surf_nav .video-preview{
+			opacity: 0.3;
 			}
 			.video-preview img{
 				width:85px;

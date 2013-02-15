@@ -824,6 +824,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var obj = {
 			node: point,
 			canUse: opts && opts.canUse,
+			simple_check: opts && opts.simple_check,
 			view: this,
 			wpid: ++way_points_counter
 		};
