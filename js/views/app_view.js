@@ -1,3 +1,9 @@
+var viewOnLevelP = function(md, view) {
+	var lev_conj = this.getLevelContainer(md.map_level_num, view);
+	view.wayp_scan_stop = true;
+	return lev_conj.material;
+};
+
 var appModelView = function(){};
 provoda.View.extendTo(appModelView, {
 
@@ -136,50 +142,40 @@ provoda.View.extendTo(appModelView, {
 		tag_page: {
 			main: TagPageView,
 			nav: baseNavUI
+		},
+		tag_artists: {
+			main: ListOfListsView,
+			nav: baseNavUI
+		},
+		tag_songs: {
+			main: ListOfListsView,
+			nav: baseNavUI
 		}
+	},
+	'collch-tag_songs': {
+		place: viewOnLevelP
+	},
+	'collch-tag_artists': {
+		place: viewOnLevelP
 	},
 	'collch-tag_page': {
-		place: function(md, view) {
-			var lev_conj = this.getLevelContainer(md.map_level_num, view);
-			view.wayp_scan_stop = true;
-			return lev_conj.material;
-		}
+		place: viewOnLevelP
 	},
 	'collch-usercard': {
-		place: function(md, view) {
-			var lev_conj = this.getLevelContainer(md.map_level_num, view);
-			view.wayp_scan_stop = true;
-			return lev_conj.material;
-		}
+		place: viewOnLevelP
 	},
 	'collch-invstg': {
-		place: function(md, view) {
-			var lev_conj = this.getLevelContainer(md.map_level_num, view);
-			view.wayp_scan_stop = true;
-			return lev_conj.material;
-		}
+		place: viewOnLevelP
 	},
 	'collch-artcard':  {
-		place: function(md, view) {
-			var lev_conj = this.getLevelContainer(md.map_level_num, view);
-			view.wayp_scan_stop = true;
-			return lev_conj.material;
-		}
+		place: viewOnLevelP
 	},
 	'collch-artslist': {
-		place: function(md, view) {
-			var lev_conj = this.getLevelContainer(md.map_level_num, view);
-			view.wayp_scan_stop = true;
-			return lev_conj.material;
-		}
+		place: viewOnLevelP
 	},
 	'collch-playlist': [
 		{
-			place: function(md, view) {
-				var lev_conj = this.getLevelContainer(md.map_level_num, view);
-				view.wayp_scan_stop = true;
-				return lev_conj.material;
-			},
+			place: viewOnLevelP,
 			opts: {overview: true}
 		},
 		{

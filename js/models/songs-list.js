@@ -196,11 +196,17 @@ songsList.extendTo(ArtistsListPlaylist, {
 		this._super(opts);
 		this.artists_list = params.artists_list;
 		this.original_artist = params.artist;
+		if (params.page_limit){
+			this.page_limit = params.page_limit;
+		}
 		this.updateState('nav-title', params.title);
 		this.updateState('url-part', '/~');
 	},
 	sendMoreDataRequest: function() {
 		return this.artists_list.sendMoreDataRequest.apply(this, arguments);
+	},
+	getRqData: function() {
+		return this.artists_list.getRqData.apply(this.artists_list, arguments);
 	}
 });
 
@@ -247,7 +253,7 @@ mapLevelModel.extendTo(ArtistsList, {
 			}, {
 				title: this.state('nav-title'),
 				artists_list: this,
-				artist: this.original_artist
+				page_limit: this.page_limit
 			});
 			this.ran_playlist = pl;
 		}
@@ -371,6 +377,7 @@ mapLevelModel.extendTo(ArtistsList, {
 
 var SimilarArtists  = window.SimilarArtists = function() {};
 ArtistsList.extendTo(SimilarArtists, {
+	page_limit: 100,
 	init: function(opts, params) {
 		this._super(opts);
 		this.original_artist = params.artist;
@@ -380,14 +387,17 @@ ArtistsList.extendTo(SimilarArtists, {
 		this.updateState('url-part', '/+similar');
 
 	},
-	sendMoreDataRequest: function(paging_opts){
-		var request_info = {};
-		var _this = this;
-		request_info.request = lfm.get('artist.getSimilar',{
+	getRqData: function(paging_opts) {
+		return {
 			artist: this.original_artist,
 			limit: paging_opts.page_limit,
 			page: paging_opts.next_page
-		})
+		};
+	},
+	sendMoreDataRequest: function(paging_opts){
+		var request_info = {};
+		var _this = this;
+		request_info.request = lfm.get('artist.getSimilar',this.getRqData(paging_opts))
 			.done(function(r){
 				var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
 				var data_list = [];

@@ -263,6 +263,14 @@ localizer = {
 		"original": "Best tracks",
 		"ru": "Лучшие треки"
 	},
+	"Week-chart":{
+		"original": "Week chart",
+		"ru": "Недельный чарт"
+	},
+	"Top": {
+		"original": "Top",
+		"ru": "Лучшие"
+	},
 	"top-tracks":{
 		"original": "top tracks",
 		"ru": 'лучшие треки'
@@ -419,6 +427,10 @@ localizer = {
 	"in-albums": {
 		"original": "in albums",
 		"ru": "в альбомах"
+	},
+	"Songs": {
+		"original": "Songs",
+		"ru": "Композиции"
 	},
 	"Artists": {
 		"original": "Artists",

@@ -205,6 +205,12 @@
 .get-vk-photo-request-b{
 	width: 15rem;
 	}
+.area_for_button{
+	padding: 0.5rem;
+	border-radius: 0.5rem;
+	background: #545454;
+	}
+
 .area-button{
 	display: block;
 	margin-bottom:1rem;
