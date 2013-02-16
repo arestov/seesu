@@ -60,6 +60,10 @@
 	width:32px;
 	height:32px;
 }
+.pc.surf_nav{
+	background-color: transparent;
+	}
+
 
 .pc-play{
 	background-image:url(../i/buttons/pc-m-play-l.png);
@@ -73,6 +77,9 @@
 		background-image:url(../i/buttons/pc-m-play-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"play-button"}');
 		}
+	.pc-play.surf_nav{
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"play-button"}');
+		}
 .pc-add{
 	background-image:url(../i/buttons/pc-m-add-l.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"link-icon-state","part":"add-button"}');
@@ -84,7 +91,10 @@
 	.pc-add:active{
 		background-image:url(../i/buttons/pc-m-add-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"add-button"}');
-		}	
+		}
+	.pc-add.surf_nav{
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"add-button"}');
+	}
 .pc-remove{
 	background-image:url(../i/buttons/pc-m-remove-l.png);
 	}
@@ -93,7 +103,8 @@
 		}
 	.pc-remove:active{
 		background-image:url(../i/buttons/pc-m-remove-a.png);
-		}			
+		}
+
 .pc-rupor{
 	background-image:url(../i/buttons/pc-m-rupor-l.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"link-icon-state","part":"rupor-button"}');
@@ -106,7 +117,9 @@
 		background-image:url(../i/buttons/pc-m-rupor-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"rupor-button"}');
 		}
-		
+	.pc-rupor.surf_nav{
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"rupor-button"}');
+		}
 .pc-love{
 	background-image:url(../i/buttons/pc-m-love-l.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"link-icon-state","part":"love-button"}');
@@ -119,7 +132,9 @@
 		background-image:url(../i/buttons/pc-m-love-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"love-button"}');
 		}	
-				
+	.pc-love.surf_nav{
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"love-button"}');
+		}
 .pc-stop{
 	background-image:url(../i/buttons/pc-m-stop-l.png);
 	}
@@ -169,8 +184,12 @@
 		background-image:url(../i/buttons/pc-b-play-a.png);
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"play-button-28", "viewBox": "0 0 32 32"}');
 		}	
-	
-
+	.surf_nav .pc-play.big-control{
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"play-button-28", "viewBox": "0 0 32 32"}');
+		}
+.play-button-place.surf_nav{
+	background-color: transparent;
+	}
 .nicebutton:active,.nicebutton:focus{
 	outline:0;
 }

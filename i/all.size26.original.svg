@@ -62,6 +62,9 @@
 			.active-icon-state #inner-shadow-icon{
 				display:none;
 				}
+		.surf_nav-icon-state #color-filled-icon{
+			fill:#000;
+			}
 		.highlight-state{
 
 			}
