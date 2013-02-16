@@ -21,7 +21,9 @@
 		</rdf:RDF>
 	</metadata>
 	<style>
-
+		#states-switcher{
+	    	pointer-events:none;
+	    }
 		#drop-shadow-icon{
 			opacity:0.42;
 			filter:url(#drop-shadow-filter)

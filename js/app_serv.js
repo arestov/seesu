@@ -1161,7 +1161,7 @@ var localize= (function(){
 
 
 
-/*
+
 jsLoadComplete(function() {
 	yepnope({
 		load: [ 'CSSOM/spec/utils.js', 'CSSOM/src/loader.js'],
@@ -1171,7 +1171,7 @@ jsLoadComplete(function() {
 	});
 });
 
-*/
+
 
 
 
