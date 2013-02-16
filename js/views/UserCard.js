@@ -9,6 +9,7 @@ provoda.View.extendTo(PlaylistPreview, {
 		this.prew_c.click(function() {
 			_this.md.requestPlaylist();
 		});
+		this.addWayPoint(this.prew_c);
 		this.auth_c = $('<div class="auth-con"></div>').appendTo(this.c);
 		//this.
 	},
@@ -53,12 +54,14 @@ provoda.View.extendTo(UserCardView, {
 		plts_link: function() {
 			var wrap = $('<span class="button-hole"><a class="nicebutton"></a></span>');
 			var _this = this;
-			wrap.children('a').click(function(e){
+			var link = wrap.children('a');
+			link.click(function(e){
 				e.preventDefault();
 				_this.root_view.md.showPlaylists();
 			}).text(localize('playlists'));
 			this.plts_link_a.after(wrap);
 			this.plts_link_a.remove();
+			this.addWayPoint(link);
 			return wrap;
 		}
 	},
@@ -89,10 +92,11 @@ provoda.View.extendTo(UserCardPreview, {
 		this.c = this.root_view.els.pestf_preview;
 		//this.c.text('Персональная музыка');
 		var _this = this;
-		this.c.find('.to-open-block').click(function() {
+
+		var button = this.c.find('.to-open-block').click(function() {
 			_this.md.showOnMap();
 		});
-
+		this.addWayPoint(button);
 
 		
 	},

@@ -1018,16 +1018,20 @@ provoda.View.extendTo(appModelView, {
 		if (this.wp_dirs.horizontal[nav_type]){
 			start_point.top = target_dems.offset.top;
 			if (this.wp_dirs.forward[nav_type]){
-				start_point.left = target_dems.offset.left + target_dems.width;
-			} else {
+				//when moving to Right - start from left edge
 				start_point.left = target_dems.offset.left;
+			} else {
+				//when moving to Left - start from right edge
+				start_point.left = target_dems.offset.left + target_dems.width;
 			}
 		} else {
 			start_point.left = target_dems.offset.left;
 			if (this.wp_dirs.forward[nav_type]){
-				start_point.top = target_dems.offset.top + target_dems.height;
-			} else {
+				//when moving to Bottom - start from top edge
 				start_point.top = target_dems.offset.top;
+			} else {
+				//when moving to Top - start from bottom edge
+				start_point.top = target_dems.offset.top + target_dems.height;
 			}
 
 		}
@@ -1237,26 +1241,28 @@ provoda.View.extendTo(appModelView, {
 				if (!cur){
 					continue;
 				}
-				var cur_dems = dems_storage[cur.wpid];
+				var pret_dems = dems_storage[cur.wpid];
 				if (cur == cwp || cur.node == cwp.node){
 					continue;
 				}
 				
 				if (this.wp_dirs.forward[nav_type]){
-					if (cur_dems.offset.left <= target_dems.offset.left){
+					if (pret_dems.offset.left + pret_dems.width <= target_dems.offset.left + target_dems.width){
+						//when move to Right - comparing Right edges
 						continue;
 					}
 				} else {
-					if (cur_dems.offset.left >= (target_dems.offset.left + target_dems.width)){
+					if (pret_dems.offset.left >= target_dems.offset.left){
+						//when move to Left - comparing left edges
 						continue;
 					}
 				}
 				if (!angle){
-					if ((cur_dems.offset.top + cur_dems.height) <= target_dems.offset.top){
+					if ((pret_dems.offset.top + pret_dems.height) <= target_dems.offset.top){
 						continue;
 					}
 
-					if (cur_dems.offset.top >= (target_dems.offset.top + target_dems.height)){
+					if (pret_dems.offset.top >= (target_dems.offset.top + target_dems.height)){
 						continue;
 					}
 				} else {
@@ -1276,25 +1282,27 @@ provoda.View.extendTo(appModelView, {
 				if (!cur){
 					continue;
 				}
-				var cur_dems = dems_storage[cur.wpid];
+				var pret_dems = dems_storage[cur.wpid];
 				if (cur == cwp || cur.node == cwp.node){
 					continue;
 				}
 				
 				if (this.wp_dirs.forward[nav_type]){
-					if (cur_dems.offset.top <= target_dems.offset.top){
+					if (pret_dems.offset.top + pret_dems.height <= target_dems.offset.top + target_dems.height){
+						//when move to Bottom - comparing Bottom edges
 						continue;
 					}
 				} else {
-					if (cur_dems.offset.top >= (target_dems.offset.top + target_dems.height)){
+					if (pret_dems.offset.top >= target_dems.offset.top){
+						//when move to Top - comparing Top edges
 						continue;
 					}
 				}
 				if (!angle){
-					if ((cur_dems.offset.left + cur_dems.width ) <= target_dems.offset.left){
+					if ((pret_dems.offset.left + pret_dems.width ) <= target_dems.offset.left){
 					continue;
 					}
-					if (cur_dems.offset.left >= (target_dems.offset.left + target_dems.width)){
+					if (pret_dems.offset.left >= (target_dems.offset.left + target_dems.width)){
 						continue;
 					}
 				} else {

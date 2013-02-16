@@ -321,6 +321,9 @@ investigation.extendTo(SearchPage, {
 		this.updateState('mp-freezed', false);
 		
 	},
+	setItemForEnter: function() {
+		
+	},
 	complex_states: {
 		"needs-search-from": {
 			depends_on: ['mp-freezed'],

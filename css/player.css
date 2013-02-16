@@ -39,7 +39,7 @@ a.track-node{
 	a.track-node:hover{
 		color:#aaa;
 		}
-	.track-node.surf_nav{
+	#slider .track-node.surf_nav{
 		background: #000;
 		}
 		.track-node.surf_nav .full-song-title, .track-node.surf_nav .song-artist-name {

@@ -275,7 +275,7 @@ mapLevelModel.extendTo(ArtCard, {
 							}
 						});
 					}
-					_this.putRequestedData(request_info.request, data_list, !!r.error);
+					_this.putRequestedData(request_info.request, track_list, !!r.error);
 
 					if (!r.error){
 						_this.setLoaderFinish();
@@ -289,6 +289,7 @@ mapLevelModel.extendTo(ArtCard, {
 				.always(function() {
 					request_info.done = true;
 				});
+			return request_info;
 		});
 		return pl;
 	},
