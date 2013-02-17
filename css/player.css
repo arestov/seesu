@@ -328,17 +328,18 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	background: no-repeat 0 0; 
 	}
 	.song-files-search-status.has-none-files{
-		background-image: url(../i/nano-fail.png);
-		opacity: 0.4;
-		}
-	.song-files-search-status.has-best-files{
-		background-image: url(../i/nano-done.png);
+		background-image: url(../i/nano-fail.svg);
 		opacity: 0.4;
 		}
 	.song-files-search-status.has-some-files{
-		background-image: url(../i/nano-done.png);
+		background-image: url(../i/nano-done.svg);
 		opacity: 0.2;
 		}
+	.song-files-search-status.has-best-files{
+		background-image: url(../i/nano-done.svg);
+		opacity: 0.3;
+		}
+	
 
 
 a.track-name-loading{

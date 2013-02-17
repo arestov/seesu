@@ -775,6 +775,8 @@ html.not-as-application, .not-as-application  body{
 	.users-play-this li .vk-ava img{
 		padding:2px;
 		border-radius:2px;
+		width: 50px;
+		height: 50px;
 		
 		background:#5C5C5C;
 	}
@@ -794,8 +796,8 @@ html.not-as-application, .not-as-application  body{
 	.metro-tracks li img{
 		float:left;
 		margin-right:1rem;
-		width:32px;
-		height:32px;
+		width:34px;
+		height:34px;
 	}
 
 .start-page-messages{
@@ -996,10 +998,15 @@ html.not-as-application, .not-as-application  body{
 			height:50px;
 			
 		}
+
 		.song-listener img{
 			width:50px;
 			border-radius:1px;
 		}
+		.image-cropper img{
+			width:50px;
+			height:50px;
+			}
 
 iframe.you-tube-video,embed.you-tube-video{
 	display: block;

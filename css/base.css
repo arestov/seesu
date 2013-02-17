@@ -264,4 +264,8 @@ a.desc{
 		float:left;
 		margin-right:1rem;
 	}
+	.people-image img{
+		width: 50px;
+		height: 50px;
+		}
 

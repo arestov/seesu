@@ -29,7 +29,11 @@ provoda.View.extendTo(appModelView, {
 			
 		}
 		this.lev_containers = {};
-
+		/*
+		this.on('state-change.current-mp-md', function(e) {
+			_this.setVisState('current_wpoint', false);
+		}, {skip_reg: true});
+		*/
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);
@@ -1493,7 +1497,7 @@ provoda.View.extendTo(appModelView, {
 	createUserAvatar: function(info, c, size){
 		var _this = this;
 		var imageplace = $("<div class='image-cropper'></div>").appendTo(c);
-		$('<img alt="user photo" width="50" height="50"/>').attr('src', info.photo).appendTo(imageplace);
+		$('<img alt="user photo" />').attr('src', info.photo).appendTo(imageplace);
 		/*
 		var image = this.preloadImage(info.photo, 'user photo', function(img){
 			_this.verticalAlign(img, 50, true);

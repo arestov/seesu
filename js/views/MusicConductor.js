@@ -110,7 +110,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 						var lig = listenings[i];
 						if (lig.info){
 							var list_item = $('<li></li>')
-								.append("<div class='vk-ava'><img width='50' height='50' alt='user photo' src='" + lig.info.photo + "'/></div>");
+								.append("<div class='vk-ava'><img alt='user photo' src='" + lig.info.photo + "'/></div>");
 								
 
 
@@ -183,7 +183,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 					});
 
 
-				$('<img width="34" height="34" alt="artist image"/>')
+				$('<img alt="artist image"/>')
 					.attr('src', getTargetField(track_obj, 'lfm_image.array.0.#text') || '')
 					.appendTo(chart_song);
 
