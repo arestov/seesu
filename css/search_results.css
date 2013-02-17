@@ -21,7 +21,9 @@
 		height:1.4rem;
 		}
 	.search-results-container h4.loading{
-		background: url(../i/spinner_small.gif) no-repeat 100% 50%;
+		background: url(../i/spinner.svg) no-repeat 100% 50%;
+
+		background-size: 1.143rem;
 	}
 	.search-results-container ul.sugg-section{
 		position:relative;

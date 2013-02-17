@@ -292,7 +292,8 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	height: 16px;
 	}
 	.search-mp3 .files-load-states{
-		background:url(../i/spinner_small_t.gif) no-repeat 0 0;
+		background:url(../i/spinner.svg) no-repeat 0 0;
+		background-size: 1.143rem;
 		}
 	
 .nothing-toy{
@@ -343,11 +344,13 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 
 a.track-name-loading{
-	background:url(../i/spinner.gif) no-repeat 78px 6px;
+	background:url(../i/spinner.svg) no-repeat 78px 6px;
+	background-size: 1.714rem;
 	}
 	
 a.track-name-loading:hover{
-	background-image:url(../i/spinner_t.gif);
+	background-image:url(../i/spinner.svg);
+	background-size: 1.714rem;
 }
 
 .page-scheme .has-no-track-title .song-track-name{
@@ -554,7 +557,9 @@ a.track-name-loading:hover{
 		
 		}
 .show-zoom-to-track li.viewing-song a.track-name-loading{
-	background-image:url(../i/spinner_bright.gif);
+	background-image:url(../i/spinner.svg);
+	background-size: 1.714rem;
+
 }
 
 .show-zoom-to-track .player-song.v-song-sibling .full-song-title{

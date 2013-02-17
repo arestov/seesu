@@ -40,7 +40,8 @@ html.not-as-application, .not-as-application  body{
 .app-loading-mark{
 	margin: 1rem 0;
 	height: 1.72rem;
-	background: url(../i/spinner.gif) no-repeat;
+	background: url(../i/spinner.svg) no-repeat;
+	background-size: 1.714rem;
 	}
 	.app-loaded .app-loading-mark{
 		display: none;
@@ -222,7 +223,8 @@ html.not-as-application, .not-as-application  body{
 				font-size: inherit;
 				}
 		.selected-mf.buffering-progress .mf-progress{
-			background:url(../i/spinner_darkest_small.gif) no-repeat 95% 50%;
+			background:url(../i/spinner.svg) no-repeat 95% 50%;
+			background-size: 1.143rem;
 			}
 	.moplas-block .moplas-list li.overstocked{
 		display: none;
@@ -266,7 +268,8 @@ html.not-as-application, .not-as-application  body{
 	opacity: 1;
 	}
 .wait-love-done .add-to-lfmfav{
-	background: url(../i/spinner_t.gif) no-repeat 100% 0;
+	background: url(../i/spinner.svg) no-repeat 100% 0;
+	background-size: 1.714rem;
 }
 .add-to-lfmfav{
 	margin-top:1rem;
@@ -423,14 +426,16 @@ html.not-as-application, .not-as-application  body{
 		}
 .artists_list.list_loading_state{
 	padding-bottom: 2rem;
-	background: url(../i/spinner.gif) no-repeat 0.5rem 100%;
+	background: url(../i/spinner.svg) no-repeat 0.5rem 100%;
+	background-size: 1.714rem;
 	}
 .tracks-for-play{
 	clear:both;
 	}
 	ul.tracks-for-play.loading{
 		padding-bottom: 30px;
-		background: url(../i/spinner.gif) no-repeat 4px 100%;
+		background: url(../i/spinner.svg) no-repeat 4px 100%;
+		background-size: 1.714rem;
 	}
 	ul.tracks-for-play > li{
 		position:relative;
@@ -442,7 +447,8 @@ html.not-as-application, .not-as-application  body{
 	height:135px;
 	}
 	.photo-cont.loading-images{
-		background: url(../i/spinner_t.gif) no-repeat 100% 0;
+		background: url(../i/spinner.svg) no-repeat 100% 0;
+		background-size: 1.714rem;
 		}
 	@media (min-height:600px) {
 		.photo-cont{
@@ -809,7 +815,8 @@ html.not-as-application, .not-as-application  body{
 
 .block-for-startpage.loading{
 	min-height:30px;
-	background: url(../i/spinner_small.gif) no-repeat 100% 4px;
+	background: url(../i/spinner.svg) no-repeat 100% 4px;
+	background-size: 1.143rem;
 }
 .block-for-startpage h3{
 	overflow:hidden;
@@ -859,7 +866,8 @@ html.not-as-application, .not-as-application  body{
 		font-style:normal;
 	}
 	#search #search-p label span.loading{
-		background: url(../i/spinner_small.gif) no-repeat 100% 50%;
+		background: url(../i/spinner.svg) no-repeat 100% 50%;
+		background-size: 1.143rem;
 	}
 	#search #search-p label span.inpt{
 		display:block;

@@ -37,7 +37,8 @@
 		background:no-repeat 100% 0;
 	}
 	.vk-login-context.waiting-auth .decor{
-		background-image:url(../i/spinner_small_yellow.gif);
+		background-image:url(../i/spinner.svg);
+		background-size: 1.143rem;
 	}
 	.vk-login-context button{
 		margin:0;
