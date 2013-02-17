@@ -127,7 +127,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		}
 .track-progress, .moplas-block .moplas-list li .mf-progress{
 
-	line-height:13px;
+	line-height:1.2;
 
 }
 .track-progress, .moplas-block .moplas-list li.selected-mf .mf-progress{	
