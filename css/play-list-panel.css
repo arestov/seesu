@@ -135,7 +135,9 @@
 .track-buttons{
 	position:relative;
 	float:right;
+	padding-top: 0.25rem;
 	height:16px;
+
 	}
 	.track-buttons>li{
 		position:relative;
@@ -191,14 +193,19 @@
 }
 .nice-buttons-place{
 	float:left;
-	margin-top:-4px;
 	margin-left: -2px;
 }
+.song-actions{
+	padding:0.5rem 0 0.65rem;
+	}
+	.song-actions .song-row-content{
+		margin-top: 1rem;
+		}
 .track-panel{
 	position:relative;
 	top:1px;
 	height:26px;
-}
+	}
 
 .playlist-info .artist-info{
 	margin-bottom:30px;
