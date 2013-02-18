@@ -363,6 +363,17 @@ provoda.addPrototype("baseSong",{
 						var tracks_list = toRealArray(getTargetField(r, 'rss.channel.item'));
 						var tracks_list_clean = [];
 						var files_list = [];
+						var createLFMFile = function(artist, track_name, link) {
+							return {
+								link: link,
+								artist: _this.artist,
+								track: track_name,
+								from:'lastfm',
+								media_type: 'mp3',
+								getSongFileModel: getSongFileModel,
+								models: {}
+							};
+						};
 						for (var i = 0; i < tracks_list.length; i++) {
 							var cur = tracks_list[i];
 							var link = decodeURI(cur.link);
@@ -372,13 +383,7 @@ provoda.addPrototype("baseSong",{
 								artist: _this.artist,
 								track: track_name
 							});
-							files_list.push({
-								link: link,
-								artist: _this.artist,
-								track: track_name,
-								from:'lastfm',
-								media_type: 'mp3'
-							});
+							files_list.push(createLFMFile(_this.artist, track_name, link));
 
 						}
 						_this.mp3_search.pushSomeResults(files_list);
