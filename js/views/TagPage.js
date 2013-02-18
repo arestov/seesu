@@ -25,6 +25,7 @@ provoda.View.extendTo(ItemOfLL, {
 		this.c.click(function() {
 			_this.md.showOnMap();
 		});
+		this.addWayPoint(this.c);
 	},
 	'stch-nav-title': function(state) {
 		this.c.text(state);
@@ -51,6 +52,7 @@ provoda.View.extendTo(ArtistsListsPreview, {
 		this.big_button.click(function() {
 			_this.md.showOnMap();
 		});
+		this.addWayPoint(this.big_button);
 		this.header = $('<span></span>').text(localize('Artists')).appendTo(this.big_button);
 		this.listc = $('<ul class="area-description"></ul>').appendTo(this.c);
 	},
