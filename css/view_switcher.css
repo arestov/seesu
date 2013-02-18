@@ -162,11 +162,9 @@
 }	
 
 .nav-start .icon{
-	background-image:url(../i/nav/seesu-nav-logo.png);
+	background-image:url(../i/seesu_logo.svg);
 	}
-	.nav-start:active .icon{
-		background-image:url(../i/nav/seesu-nav-logo-active.png);
-		}
+	
 .nav-search-results{
 	padding:4px 1rem 4px 9px;
 	width:15px;
