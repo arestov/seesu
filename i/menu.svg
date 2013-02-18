@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   style="pointer-events: none;"
+   viewBox="0 0 100 30">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="menu-grad"
+         x1="0"
+        y1="1"
+        x2="0"
+        y2="0"
+      gradientUnits="objectBoundingBox">
+      <stop
+         id="stop5215"
+         style="stop-color:#6f0d75;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop5221"
+         style="stop-color:#710d77;stop-opacity:1"
+         offset="0.41999999" />
+      <stop
+         id="stop5223"
+         style="stop-color:#8c0f93;stop-opacity:1"
+         offset="0.51999998" />
+      <stop
+         id="stop5217"
+         style="stop-color:#b526be;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+     <linearGradient
+       id="menu-grad-hover"
+         x1="0"
+        y1="1"
+        x2="0"
+        y2="0"
+      gradientUnits="objectBoundingBox">
+      <stop
+         id="stop5215"
+         style="stop-color:#6e0c74;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop5221"
+         style="stop-color:#6e0a74;stop-opacity:1"
+         offset="0.41999999" />
+      <stop
+         id="stop5223"
+         style="stop-color:#910c99;stop-opacity:1"
+         offset="0.51999998" />
+      <stop
+         id="stop5217"
+         style="stop-color:#c82ad1;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    
+    <filter
+       color-interpolation-filters="sRGB"
+       id="black-inner">
+      <feFlood
+         result="flood"
+         flood-color="rgb(0,0,0)"
+         flood-opacity="1"
+         id="feFlood5973" />
+      <feComposite
+         in2="SourceGraphic"
+         operator="in"
+         in="flood"
+         result="composite1"
+         id="feComposite5975" />
+      <feOffset
+         result="offset"
+         dy="1"
+         dx="0"
+         id="feOffset5977" />
+      <feComposite
+         in2="SourceGraphic"
+         operator="out"
+         in="offset"
+         result="composite2"
+         id="feComposite5979" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="white-inner">
+      <feFlood
+         result="flood"
+         flood-color="rgb(255,255,255)"
+         flood-opacity="1"
+         id="feFlood3005" />
+      <feComposite
+         in2="SourceGraphic"
+         operator="in"
+         in="flood"
+         result="composite1"
+         id="feComposite3007" />
+      <feOffset
+         result="offset"
+         dy="-1"
+         dx="-1"
+         id="feOffset3009" />
+      <feComposite
+         in2="SourceGraphic"
+         operator="out"
+         in="offset"
+         result="composite2"
+         id="feComposite3011" />
+    </filter>
+  </defs>
+  <style>
+    #states-switcher{
+      pointer-events:none;
+    }
+    .menu-part{
+      fill:url(#menu-grad);
+      }
+    .menu-top{
+      opacity:0.32;
+      filter:url(#white-inner)
+    }
+    .menu-bottom{
+      opacity:0.32;
+      filter:url(#black-inner)
+    }
+    .hover-state{
+
+      }
+      .hover-state .menu-part{
+        fill:url(#menu-grad-hover);
+        }
+    .active-state{
+
+      }
+      .active-state .menu-part{
+        fill: #78177D;
+        }
+    .surf_nav-state .menu-part{
+      fill: #000;
+    }
+  </style>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g id="states-switcher" class="">
+    <g>
+      <rect
+         width="32"
+         height="30"
+         ry="6"
+         x="68"
+         y="0"
+         id="rect5233"
+         class="menu-part"
+         style="" />
+      <use
+         transform="translate(0,-1)"
+         class="menu-bottom"
+         xlink:href="#rect5233" />
+      <use
+         transform="translate(1,1)"
+         id="use5257"
+         class="menu-top"
+
+         xlink:href="#rect5233" />
+    </g>
+    <g>
+       <path
+       d="M 40,0 40,30 15,30 0,15 15,0 z"
+       id="path5895"
+       class="menu-part"
+       style="" />
+      <use
+         transform="translate(0,-1)"
+         class="menu-bottom"
+         xlink:href="#path5895" />
+      <use
+         transform="translate(1,1)"
+         class="menu-top"
+         xlink:href="#path5895" />
+    </g>
+
+
+  </g>
+  
+ 
+</svg>

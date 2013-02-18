@@ -65,6 +65,9 @@ var songsListView;
 			this.arrow = this.row_context.children('.rc-arrow');
 			this.buttons_panel = this.c.children().children('.pla-panel');
 		},
+		canUseWaypoints: function() {
+			return this.parent_view.state('mp-has-focus');
+		},
 		children_views: {
 			"row-multiatcs": {
 				main: MultiAtcsRowView
@@ -88,11 +91,7 @@ var songsListView;
 	songsListView = function(pl){};
 	songsListBaseView.extendTo(songsListView, {
 		'stch-mp-show': function(opts) {
-			if (opts){
-				this.c.removeClass('hidden');
-			} else {
-				this.c.addClass('hidden');
-			}
+			this.c.toggleClass('hidden', !opts);
 		},
 		'stch-mp-has-focus': function(state) {
 			this.lc.toggleClass('list-overview', !!state);
@@ -104,23 +103,18 @@ var songsListView;
 		'stch-error': function(error){
 			if (this.error_b && this.error_b.v !== error){
 				this.error_b.n.remove();
+				delete this.error_b;
 			}
-			if (error){
-				if (error == 'vk_auth'){
-					this.error_b = {
-						v: error,
-						n: $('<li></li>').append(this.root_view.samples.vk_login.clone()).prependTo(this.c)
-					};
-				} else {
-					this.error_b = {
-						v: error,
-						n: $('<li>' + localize('nothing-found','Nothing found') + '</li>').appendTo(this.c)
-					};
-				}
+			if (error && !this.error_b){
+				this.error_b = {
+					v: error,
+					n: $('<li>' + localize('nothing-found','Nothing found') + '</li>').appendTo(this.c)
+				};
+				
 			}
 		},
 		createPanel: function() {
-			this.panel = this.root_view.samples.playlist_panel.clone();
+			this.panel = this.root_view.getSample('playlist_panel');
 			this.panel.appendTo(this.c);
 			return this;
 		},
@@ -132,7 +126,7 @@ var songsListView;
 			plarow: {
 				main: PlARowView
 			},
-			'song': songUI
+			'songs-list': songUI
 		}
 
 	});

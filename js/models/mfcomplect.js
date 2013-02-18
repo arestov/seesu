@@ -121,10 +121,11 @@ provoda.Model.extendTo(mfCor, {
 		this.mfError = function() {
 			_this.checkMoplas(this);
 		};
+		/*
 		this.semChange = function(val) {
 			_this.semChanged(val);
 		};
-		
+		*/
 
 		
 
@@ -342,6 +343,7 @@ provoda.Model.extendTo(mfCor, {
 	collapseExpanders: function() {
 		this.updateState('want-more-songs', false);
 	},
+	/*
 	setSem: function(sem) {
 		if (this.file){
 			throw new Error('already using single file instead of search');
@@ -354,7 +356,7 @@ provoda.Model.extendTo(mfCor, {
 			sem.on('changed', this.semChange);
 		}
 		
-	},
+	},*/
 	addMFComplect: function(complect, name, fire_collch) {
 		this.complects[name] = complect;
 		this.addChild(complect);
@@ -372,11 +374,14 @@ provoda.Model.extendTo(mfCor, {
 				source_name: source_name
 			});
 			this.addMFComplect(complect, source_name);
-			f_investg_s.on('state-change.files-list', function() {
-				_this.updateDefaultMopla();
-				_this.checkVKAuthNeed();
+			f_investg_s.on('state-change.files-list', function(e) {
+				if (e.value){
+					_this.updateDefaultMopla();
+					_this.checkVKAuthNeed();
+				}
+				
 			}, {
-				skip_reg: true
+				soft_reg: true
 			});
 			
 		//	many_files = many_files || complect.hasManyFiles();
@@ -406,6 +411,7 @@ provoda.Model.extendTo(mfCor, {
 		});
 
 	},
+	/*
 	semChanged: function(complete) {
 		this.checkVKAuthNeed();
 
@@ -440,7 +446,7 @@ provoda.Model.extendTo(mfCor, {
 
 		this.setChild('sorted_completcs', sorted_completcs, true);
 
-	},
+	},*/
 	listenMopla: function(mopla) {
 		if (this.subscribed_to.indexOf(mopla) == -1){
 			mopla.on('state-change.play', this.mfPlayStateChange);
@@ -462,7 +468,7 @@ provoda.Model.extendTo(mfCor, {
 		if (this.state("user_preferred") == unavailable_mopla){
 			this.updateState("selected_mopla_to_use", false);
 			var from = this.state("selected_mopla").from;
-			var available = this.getFilteredFiles(false, function(mf) {
+			var available = this.getFilteredFiles(from, function(mf) {
 				if (mf.from == from && !mf.unavailable){
 					return true;
 				}
@@ -613,6 +619,10 @@ provoda.Model.extendTo(mfCor, {
 				for (var i = 0; i < sources_list.length; i++) {
 					all_files = all_files.concat(sources_list[i].getFiles(type));
 				}
+				this.mo.mp3_search.sortMusicFilesArray(all_files, this.files_investg.msq);
+				
+
+
 			}
 			//all_files = this.files_investg.getFiles(source_name, type);
 		}

@@ -108,8 +108,9 @@ ExfmApi.prototype = {
 	}
 };
 
-var ExfmMusicSearch = function(exfm_api) {
-	this.exfm_api = exfm_api;
+var ExfmMusicSearch = function(opts) {
+	this.api = opts.api;
+	this.mp3_search = opts.mp3_search;
 	var _this = this;
 
 };
@@ -133,6 +134,7 @@ ExfmMusicSearch.prototype = {
 			page_link	: cursor.sources && cursor.sources[0],
 			_id			: cursor.id,
 			type: 'mp3',
+			media_type: 'mp3',
 			models: {},
 			getSongFileModel: getSongFileModel
 		};
@@ -144,7 +146,9 @@ ExfmMusicSearch.prototype = {
 			}
 		}
 		if (msq){
-			entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+			this.mp3_search.setFileQMI(entity, msq);
+			
+			
 		}
 		
 		
@@ -164,7 +168,7 @@ ExfmMusicSearch.prototype = {
 			results: limit_value
 		};
 
-		var async_ans = this.exfm_api.get('song/search/' + query, params_u, opts);
+		var async_ans = this.api.get('song/search/' + query, params_u, opts);
 
 		var olddone = async_ans.done,
 			result;
@@ -176,7 +180,7 @@ ExfmMusicSearch.prototype = {
 					if (r && r.songs.length){
 						for (var i=0; i < r.songs.length; i++) {
 							var ent = _this.makeSong(r.songs[i], msq);
-							if (ent.query_match_index == -1){
+							if (_this.mp3_search.getFileQMI(ent, msq) == -1){
 								//console.log(ent)
 							} else {
 								music_list.push(ent);
@@ -186,10 +190,7 @@ ExfmMusicSearch.prototype = {
 						
 						}
 					}
-					if (music_list.length){
-						sortMusicFilesArray(music_list);
-						
-					}
+					
 					result = music_list;
 				}
 				cb(result, 'mp3');

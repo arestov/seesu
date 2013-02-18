@@ -18,9 +18,9 @@ provoda.View.extendTo(WagonPreview, {
 	'stch-nav-title': function(state) {
 		this.header.text(state);
 	},
-	'collch-allp_allt_cart': 'c',
+	'collch-allp_allt_chart': 'c',
 	children_views: {
-		allp_allt_cart: WagonItemPreview
+		allp_allt_chart: WagonItemPreview
 	}
 
 });
@@ -50,7 +50,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 		this.header = this.c.find('h2');
 		var _this = this;
 		this.header.click(function() {
-			_this.md.showMyPage();
+			_this.md.showOnMap();
 		});
 		this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
@@ -69,19 +69,48 @@ provoda.View.extendTo(MusicConductorPreview, {
 		'start-page-blocks': function() {
 			var _this = this;
 
+
+			var wow_tags= function(tag,c){
+				var link = $('<a class="hyped-tag js-serv"></a>')
+					.text(tag)
+					.click(function(e){
+						_this.root_view.md.show_tag(tag);
+						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
+						e.preventDefault();
+					}).appendTo(c);
+				c.append(document.createTextNode(' '));
+				_this.addWayPoint(link);
+				
+			};
+			
+			
+			if (window.lastfm_toptags && lastfm_toptags.length){
+				var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(this.c);
+				$('<h3></h3>').appendTo(_c)
+								.append(localize('Pop-tags','Popular tags'));
+				for (var i=0; i < lastfm_toptags.length; i++) {
+					wow_tags(lastfm_toptags[i], _c);
+				}
+			}
+
+			
 			var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(this.c);
 			var users_limit = 6;
 			var showUsers = function(listenings,c, above_limit_value){
 				if (listenings.length){
 					
-						
+					var uselisteningClick = function(e) {
+						var a = $(this).data('artist');
+						var t = $(this).data('track');
+						_this.root_view.md.showArtistTopTracks(a, false, {artist: a, track: t});
+					};
 						
 					var uc = $('<ul></ul>');
 					for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
 						var lig = listenings[i];
 						if (lig.info){
 							var list_item = $('<li></li>')
-								.append("<div class='vk-ava'><img width='50' height='50' alt='user photo' src='" + lig.info.photo + "'/></div>");
+								.append("<div class='vk-ava'><img alt='user photo' src='" + lig.info.photo + "'/></div>");
 								
 
 
@@ -97,11 +126,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 								.data('artist', lig.artist)
 								.data('track', lig.title)
 								.attr('title',lig.artist + ' - ' + lig.title)
-								.click(function(){
-									var a = $(this).data('artist');
-									var t = $(this).data('track');
-									_this.root_view.md.showTopTacks(a, {}, {artist: a, track: t});
-								});
+								.click(uselisteningClick);
 
 							$('<span class="song-track-name"></span>').text(lig.title).appendTo(song_complect);
 							$('<span class="song-artist-name"></span>').text(lig.artist).appendTo(song_complect);
@@ -153,13 +178,12 @@ provoda.View.extendTo(MusicConductorPreview, {
 				var chart_song = $('<a class="chart-song"></a>')
 					.attr('title', artist + ' - ' + track)
 					.click(function(e){
-						su.show_playlist_page(playlist);
 						playlist.showTrack(track_obj);
 						e.preventDefault();
 					});
 
 
-				$('<img width="34" height="34" alt="artist image"/>')
+				$('<img alt="artist image"/>')
 					.attr('src', getTargetField(track_obj, 'lfm_image.array.0.#text') || '')
 					.appendTo(chart_song);
 
@@ -194,9 +218,9 @@ provoda.View.extendTo(MusicConductorPreview, {
 								fn: function() {
 									_cmetro.empty();
 
-									var ppp = su.createMetroChartPlaylist(random_metro.country, random_metro.name);
+									//var ppp = su.createMetroChartPlaylist(random_metro.country, random_metro.name);
 							
-									var plr = su.preparePlaylist({//fix params for cache
+									var plr = su.createSonglist(su.start_page, {//fix params for cache
 										title: 'Chart of ' + random_metro.name,
 										type: 'chart',
 										data: {country: random_metro.country, metro: random_metro.name}
@@ -215,7 +239,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 									$('<a class="js-serv show-in-header"></a>').text(localize('show')).click(function(e){
-										su.show_playlist_page(plr);
+										plr.showOnMap();
 										e.preventDefault();
 									}).appendTo(_header);
 										
@@ -237,7 +261,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 														array: _trm.image
 													}
 												};
-												plr.push(tobj);
+												plr.addOmo(tobj);
 												createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
 												
 												
@@ -263,30 +287,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 			
 			
 			
-			var wow_tags= function(tag,c){
-				var link = $('<a class="js-serv hyped-tag"></a>')
-					.text(tag)
-					.click(function(e){
-						_this.root_view.md.show_tag(tag);
-						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
-						e.preventDefault();
-					}).appendTo(c);
-				c.append(document.createTextNode(' '));
-				_this.addWayPoint(link,{
-					simple_check:true
-				});
-				
-			};
 			
-			
-			if (window.lastfm_toptags && lastfm_toptags.length){
-				var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(this.c);
-				$('<h3></h3>').appendTo(_c)
-								.append(localize('Pop-tags','Popular tags'));
-				for (var i=0; i < lastfm_toptags.length; i++) {
-					wow_tags(lastfm_toptags[i], _c);
-				}
-			}
 
 
 			return true;

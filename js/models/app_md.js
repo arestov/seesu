@@ -1,10 +1,7 @@
 /*
 freeze
 !restoreFreezed
-show_now_playing
 
-!!!show_playlist_page
-show_track_page
 */
 var appModel;
 (function() {
@@ -20,7 +17,18 @@ provoda.Model.extendTo(appModel, {
 		this.navigation = [];
 		this.map = new browseMap();
 
+
+		for (var func_name in this.bmap_travel){
+			this[func_name] = this.getBMapTravelFunc(this.bmap_travel[func_name], this);
+		}
+
 		return this;
+	},
+	getBMapTravelFunc: function(func, context) {
+		return function() {
+			return context.collectChanges(func, arguments);
+		};
+		
 	},
 	checkUserInput: function(opts) {
 		if (opts.ext_search_query) {
@@ -29,8 +37,8 @@ provoda.Model.extendTo(appModel, {
 
 		var state_recovered;
 		if (this.p && this.p.c_song){
-			if (this.p.c_song && this.p.c_song.plst_titl){
-				this.show_now_playing(true);
+			if (this.p.c_song){
+				this.showNowPlaying(true);
 				state_recovered = true;
 			}
 		}
@@ -55,7 +63,7 @@ provoda.Model.extendTo(appModel, {
 			if (!c.prev){
 				c.prev = true;
 			}
-		}	
+		}
 	},
 	getRemainTimeText: function(time_string, full){
 		var d = new Date(time_string);
@@ -95,20 +103,28 @@ provoda.Model.extendTo(appModel, {
 	setDocTitle: function(title) {
 		this.updateState('doc-title', title);
 	},
-	preparePlaylist: function(params, first_song){
+	createSonglist: function(map_parent, params, first_song) {
 		var pl = new songsList();
 		pl.init({
 			app: this,
+			map_parent: map_parent
 		}, params, first_song);
 		return pl;
 	},
-	restoreFreezed: function(transit, url_restoring){
-		this.map.restoreFreezed(transit, url_restoring);
+	preparePlaylist: function(params, first_song){
+		var pl = new songsList();
+		pl.init({
+			app: this
+		}, params, first_song);
+		return pl;
+	},
+	restoreFreezed: function(transit){
+		this.map.restoreFreezed(transit);
 	},
 	
-	showStartPage: function(url_restoring){
+	showStartPage: function(){
 		//mainaly for hash url games
-		this.map.startNewBrowse(url_restoring);
+		this.map.startNewBrowse();
 	},
 	'mapch-handlers': {
 		"zoom-in": function(array) {
@@ -141,10 +157,11 @@ provoda.Model.extendTo(appModel, {
 			var parent = change.target.getParentMapModel();
 			if (parent){
 				//mp-source
+				/*
 				var mp_source = change.target.state('mp-source');
 				if (mp_source){
 					parent.updateState('mp-highlight', mp_source);
-				}
+				}*/
 				parent.updateState('mp-has-focus', false);
 			}
 			change.target.updateState('mp-show', change.value);
@@ -193,10 +210,11 @@ provoda.Model.extendTo(appModel, {
 		*/
 		if (target_md){
 			target_md.updateState('mp-has-focus', true);
-			this.updateState('current-mp-md', target_md);
-			target_md.updateState('mp-highlight', false);
-			
 			this.updateState('show-search-form', target_md.state('needs-search-from'));
+			this.updateState('current-mp-md', target_md);
+			//target_md.updateState('mp-highlight', false);
+			
+			
 		}
 
 		
@@ -251,10 +269,10 @@ provoda.Model.extendTo(appModel, {
 			
 		});
 	},
-	collectChanges: function(fn, args) {
+	collectChanges: function(fn, args, opts) {
 		var aycocha = this.map.isCollectingChanges();
 		if (!aycocha){
-			this.map.startChangesCollecting();
+			this.map.startChangesCollecting(opts);
 		}
 
 		var result = fn.apply(this, args);
@@ -264,368 +282,167 @@ provoda.Model.extendTo(appModel, {
 		}
 		return result;
 	},
-	showTopTacks: function (artist, vopts, start_song) {
-		return this.collectChanges(this._showTopTacks, arguments);
-	},
-	showMetroChart: function() {
-		return this.collectChanges(this._showMetroChart, arguments);
-	},
-	showResultsPage: function() {
-		return this.collectChanges(this._showResultsPage, arguments);
-	},
-	showArtcardPage: function() {
-		return this.collectChanges(this._showArtcardPage, arguments);
-	},
-	showStaticPlaylist: function() {
-		return this.collectChanges(this._showStaticPlaylist, arguments);
-	},
-	show_playlist_page: function() {
-		return this.collectChanges(this._show_playlist_page, arguments);
-	},
-	show_track_page: function() {
-		return this.collectChanges(this._show_track_page, arguments);
-	},
-	show_now_playing: function() {
-		return this.collectChanges(this._show_now_playing, arguments);
-	},
-	show_tag:function() {
-		return this.collectChanges(this._show_tag, arguments);
-	},
-	showArtistPlaylist:function() {
-		return this.collectChanges(this._showArtistPlaylist, arguments);
-	},
-	showAlbum:function() {
-		return this.collectChanges(this._showAlbum, arguments);
-	},
-	showModelPage: function() {
-		return this.collectChanges(this._showModelPage, arguments);
-	},
-	_show_now_playing: function(no_stat){
+	bmap_travel: {
+		showMOnMap: function(model) {
+			if (!model.lev || !model.lev.canUse()){
+				//если модель не прикреплена к карте прежде чем что-то делать - отображаем "родительску" модель
+				this.showMOnMap(model.map_parent);
+			}
+			if (model.lev && model.lev.canUse()){//если модель прикреплена к карте
 
-		var current_song = this.p.c_song;
-		var current_map_md = this.map.getCurrentResident();
-		if (!current_song || current_map_md == current_song){
-			return false;
-		}
-		if (!no_stat){
-			this.trackEvent('Navigation', 'now playing');
-		}
-		this.restoreFreezed(true);
-		this.show_track_page(current_song);
-		return current_song;
-		
-	},
-	_showModelPage: function(md, source_info, no_navi) {
-		if (!md.model_name){
-			throw new Error('model must have model_name prop');
-		}
-		this.bindMMapStateChanges(md, md.model_name);
-		md.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
-		var lev = this.map.goDeeper(source_info && source_info.page_md, md);
-		return md;
-		
-	},
-	_showResultsPage: function(query, no_navi){
-		var lev;
-		var cur_el = this.search_el;
-		if (!cur_el || !cur_el.state('mp-has-focus') || !cur_el.lev.isOpened()){
-			var md = this.createSearchPage();
-			var _this = this;
-			md.on('state-change.mp-show', function(e) {
-				if (e.value){
-					_this.search_el = this;
+				if (model.lev.closed){
+					//если замарожены - удаляем "незамороженное" и углубляемся до нужного уровня
+					this.map.restoreFreezedLev(model.lev);
 				}
+				//отсекаем всё более глубокое
+				model.lev.sliceTillMe();
+			} else {
+				if (!model.model_name){
+					throw new Error('model must have model_name prop');
+				}
+				this.bindMMapStateChanges(model, model.model_name);
+				this.map.goDeeper(model);
+				
+			}
+			return model;
+			//
+		},
+		showArtcardPage: function(artist, page_md){
+			var md = new ArtCard();
+			md.init({
+				app: this,
+				map_parent: page_md || this.start_page
+			}, {
+				artist: artist
 			});
-
-
-			this.bindMMapStateChanges(md, 'invstg');
-
-			//md.updateState({source_md: , source_name})
-			lev = this.map.goDeeper(false, md);
-		} else {
-			lev = this.search_el.lev;
-		}
-		
-		var invstg = lev.resident;
-		invstg.changeQuery(query);
-		return invstg;
-
-	},
-	_showArtcardPage: function(artist, source_info, no_navi){
-		var md = new artCard(artist);
-		this.bindMMapStateChanges(md, 'artcard');
-		if (source_info && !source_info.page_md){
-			throw new Error('give me page_md');
-		}
-		md.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
-		var lev = this.map.goDeeper(source_info && source_info.page_md, md);
-		return md;
-	},
-	_showStaticPlaylist: function(pl, source_info, no_navi) {
-		if (pl.canUnfreeze()){
-			this.restoreFreezed();
+			md.showOnMap();
+			return md;
+		},
+		showArtistAlbum: function(params, page_md, start_song){
+			var artcard = this.showArtcardPage(params.album_artist, page_md);
+			var pl = artcard.showAlbum(params, start_song);
+			if (start_song) {
+				pl.showTrack(start_song);
+			}
 			return pl;
-		} else {
-			return this.show_playlist_page(pl, source_info, no_navi);
-		}
-	},
-	_show_playlist_page: function(pl, source_info, no_navi){
-		this.bindMMapStateChanges(pl, 'playlist');
-		if (source_info && !source_info.page_md){
-			throw new Error('give me page_md')
-		}
-		pl.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
-		var lev = this.map.goDeeper(source_info && source_info.page_md, pl);
-		return pl;
-	},
-	_show_track_page: function(mo, no_navi){
-		var _this = this,
-			title = (mo.plst_titl.belongsToArtist(mo.artist) ? '' : (mo.artist + ' - '))  + mo.track;
-		
-		var pl = mo.plst_titl;
-			pl.lev.sliceTillMe(true);
-		this.bindMMapStateChanges(mo);
-		var source_info = {
-			page_md: pl,
-			source_md: mo
-		};
-		if (source_info && !source_info.page_md){
-			throw new Error('give me page_md')
-		}
-		if (!mo.state('mp-source')){
-			mo.updateState('mp-source', cloneObj({}, source_info, false, ['source_md','source_name']));
-		}
-		
-		var lev = this.map.goDeeper(source_info && source_info.page_md, mo);
-		return mo;
-	},
-	
-
-	_show_tag: function(tag, vopts, start_song){
-		//save_parents, no_navi
-		vopts = vopts || {};
-		var full_no_navi = vopts.no_navi;
-		vopts.no_navi = vopts.no_navi || !!start_song;
-		
-		var pl_r = this.preparePlaylist({
-			title: 'Tag: ' + tag,
-			type: 'artists by tag',
-			data: {tag: tag}
-		}, start_song);
-
-		pl_r.setLoader(function(paging_opts) {
-			
-			var request_info = {};
-			request_info.request = lfm.get('tag.getTopArtists',{
-				tag:tag,
-				limit: paging_opts.page_limit,
-				page: paging_opts.next_page
-			})
-				.done(function(r){
-					var artists = toRealArray(getTargetField(r, 'topartists.artist'));
-					var track_list = [];
-
-					if (artists && artists.length) {
-
-						var l = Math.min(artists.length, paging_opts.page_limit);
-						for (var i=0; i < l; i++) {
-							track_list.push({
-								artist: artists[i].name,
-								lfm_image: {
-									array: artists[i].image
-								}
-							});
-						}
-
+		},
+		showNowPlaying: function(no_stat) {
+			this.p.c_song.showOnMap();
+			if (!no_stat){
+				this.trackEvent('Navigation', 'now playing');
+			}
+		},
+		showResultsPage: function(query){
+			var lev;
+			var cur_el = this.search_el;
+			if (!cur_el || !cur_el.state('mp-has-focus') || !cur_el.lev.isOpened()){
+				var md = this.createSearchPage();
+				var _this = this;
+				md.on('state-change.mp-show', function(e) {
+					if (e.value){
+						_this.search_el = this;
 					}
-					pl_r.injectExpectedSongs(track_list);
-					if (track_list.length < paging_opts.page_limit){
-						pl_r.setLoaderFinish();
-					}
-				})
-				.fail(function() {
-					pl_r.loadComplete(true);
-				}).always(function() {
-					request_info.done = true;
 				});
-			return request_info;
-		}, true);
 
-
-		this.show_playlist_page(pl_r, vopts.source_info, vopts.no_navi);
-		
-		if (start_song){
-			pl_r.showTrack(start_song, full_no_navi);
-		}
-		return pl_r;
-	},
-
-	_showArtistPlaylist: function(artist, pl, vopts){
-		vopts = vopts || {};
-		var cpl = this.p.isPlaying(pl);
-		if (!cpl){
-			var artcard_md;
-			if (!vopts.from_artcard){
-				artcard_md = this.showArtcardPage(artist, vopts.source_info, true);
+				md.showOnMap();
+				lev = md.lev;
+			} else {
+				lev = this.search_el.lev;
 			}
-			var source_info = artcard_md ? {
-				page_md: artcard_md,
-				source_name: 'top-tracks'
-			} : vopts.source_info;
-			this.show_playlist_page(pl, source_info, vopts.no_navi);
-			return pl;
-		} else{
-			this.restoreFreezed();
-			return cpl;
-		}
+			
+			var invstg = lev.resident;
+			invstg.changeQuery(query);
+			return invstg;
 
-	},
-	/*
-	var vopts = {
-		save_parents: save_parents,
-		no_navi,
-		from_artcard
-	}*/
-	_showAlbum: function(opts, vopts, start_song){
-		var artist			= opts.artist,
-			name			= opts.album_name,
-			id				= opts.album_id,
-			original_artist	= opts.original_artist;
-
-		vopts = vopts || {};
-		var full_no_navi = vopts.no_navi;
-		vopts.no_navi = vopts.no_navi || !!start_song;
+		},
 		
-		var pl = this.preparePlaylist({
-			title: '(' + artist + ') ' + name,
-			type: 'album',
-			data: {artist: original_artist || artist, album: name}
-		}, start_song).loading();
-	
-		var recovered = this.showArtistPlaylist(original_artist || artist, pl, vopts);
-		
+		show_tag: function(tag, page_md, start_song){
 
 
+			var tag_page = new TagPage();
+			tag_page.init({
+				app: this,
+				map_parent: this.start_page
+			}, {
+				tag_name: tag
+			});
+			tag_page.showOnMap();
+			return tag_page;
+			
+			/*
+			
+			var pl_r = this.createSonglist(page_md || this.start_page, {
+				title: 'Tag: ' + tag,
+				type: 'artists by tag',
+				data: {tag: tag}
+			}, start_song);
 
-		if (recovered == pl){
-			var getAlbumPlaylist = function(album_id, pl){
-				if (album_id) {
-					lfm.get('playlist.fetch',{
-						'playlistURL': 'lastfm://playlist/album/' + album_id
-					})
-						.done(function(r){
-							var playlist = toRealArray(getTargetField(r, 'playlist.trackList.track'));
-							var music_list = [];
-							for (var i=0; i < playlist.length; i++) {
-								music_list.push({
-									track: playlist[i].title,
-									artist: playlist[i].creator,
-									lfm_image: {
-										item: playlist[i].image
-									}
-								});
-							}
-							pl.injectExpectedSongs(music_list);
-						});
-				}
-			};
-			if (id){
-				getAlbumPlaylist(id, pl);
-			} else{
-				lfm.get('album.getInfo',{'artist': artist, album : name})
-					.done(function(r){
-						var tracks = toRealArray(getTargetField(r, 'album.tracks.track'));
-						var track_list = [];
-						var imgs = getTargetField(r, 'album.image');
-						for (var i = 0; i < tracks.length; i++) {
-							var cur = tracks[i];
-							track_list.push({
-								artist: cur.artist.name,
-								track: cur.name,
-								lfm_image: {
-									array: imgs
-								}
-							});
-						}
-						pl.injectExpectedSongs(track_list);
-						//getAlbumPlaylist(r.album.id, pl);
-					});
-			}
-		}
-		if (start_song){
-			(recovered || pl).showTrack(start_song, vopts.no_navi);
-		}
-	},
-
-	_showTopTacks: function(artist, vopts, start_song) {
-		vopts = vopts || {};
-		var full_no_navi = vopts.no_navi;
-		vopts.no_navi = vopts.no_navi || !!start_song;
-		
-		
-		
-		var pl = this.preparePlaylist({
-			title: 'Top of ' + artist,
-			type: 'artist',
-			data: {artist: artist}
-		}, start_song);
-		
-		var recovered = this.showArtistPlaylist(artist, pl, vopts);
-		
-		if (recovered == pl){
-			pl.setLoader(function(paging_opts) {
+			pl_r.setLoader(function(paging_opts) {
 				
 				var request_info = {};
-				request_info.request = lfm.get('artist.getTopTracks', {
-					'artist': artist, 
+				request_info.request = lfm.get('tag.getTopArtists', {
+					tag:tag,
 					limit: paging_opts.page_limit,
 					page: paging_opts.next_page
 				})
 					.done(function(r){
-						if (r.error){
-							pl.loadComplete(true);
-							return;
-						}
-						var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
-
-
+						var artists = toRealArray(getTargetField(r, 'topartists.artist'));
 						var track_list = [];
-						if (tracks.length) {
-							var l = Math.min(tracks.length, paging_opts.page_limit);
-							for (var i=paging_opts.remainder; i < l; i++) {
+
+						if (artists && artists.length) {
+
+							var l = Math.min(artists.length, paging_opts.page_limit);
+							for (var i=0; i < l; i++) {
 								track_list.push({
-									artist : artist ,
-									track: tracks[i].name,
+									artist: artists[i].name,
 									lfm_image: {
-										array: tracks[i].image
+										array: artists[i].image
 									}
-									
 								});
 							}
-							
+
 						}
-						pl.injectExpectedSongs(track_list);
-						if (track_list.length < paging_opts.page_limit){
-							pl.setLoaderFinish();
-						}
+						pl_r.putRequestedData(request_info.request, track_list, r.error);
+						
 					})
 					.fail(function() {
-						pl.loadComplete(true);
-					})
-					.always(function() {
+						pl_r.requestComplete(request_info.request, true);
+					}).always(function() {
 						request_info.done = true;
 					});
 				return request_info;
 			}, true);
+				
+			pl_r.showOnMap();
 
+			if (start_song){
+				pl_r.showTrack(start_song);
+			}
+			return pl_r;
+			*/
+		},
+		showArtistTopTracks: function(artist, page_md, start_song) {
+			var artcard = this.showArtcardPage(artist, page_md);
+
+			var track_name = start_song && start_song.track;
+			var pl = artcard.showTopTacks(track_name);
+			
+			
+			return pl;
+		},
+		showMetroChart: function(country, metro){
+			var pl = this.createMetroChartPlaylist(country, metro);
+			pl.requestMoreData();
+			pl.showOnMap();
+		},
+		showArtistSimilarArtists: function(artist, start_song){
+			var artcard = this.showArtcardPage(artist, this.start_page);
+			return artcard.showSimilarArtists();
 		}
-		if (start_song){
-			(recovered || pl).showTrack(start_song, full_no_navi);
-		}
-		return pl;
 	},
+	
 	createMetroChartPlaylist: function(country, metro) {
-		var pl = this.preparePlaylist({//can autoload
+		var pl = this.createSonglist(this.start_page, {//can autoload
 			title: 'Chart of ' + metro,
 			type: 'chart',
 			data: {country: country, metro: metro}
@@ -641,7 +458,7 @@ provoda.Model.extendTo(appModel, {
 			})
 				.done(function(r) {
 					if (r.error){
-						pl.loadComplete(true);
+						pl.requestComplete(request_info.request, true);
 						return;
 					}
 
@@ -661,14 +478,12 @@ provoda.Model.extendTo(appModel, {
 						}
 						
 					}
-					pl.injectExpectedSongs(track_list);
-					if (track_list.length < paging_opts.page_limit){
-						pl.setLoaderFinish();
-					}
+					pl.putRequestedData(request_info.request, track_list, r.error);
+					
 
 				})
 				.fail(function() {
-					pl.loadComplete(true);
+					pl.requestComplete(request_info.request, true);
 				})
 				.always(function() {
 					request_info.done = true;
@@ -678,78 +493,13 @@ provoda.Model.extendTo(appModel, {
 		});
 		return pl;
 	},
-	_showMetroChart: function(country, metro, vopts){
-		vopts = vopts || {};
-		var pl = this.createMetroChartPlaylist(country, metro);
-		pl.loadMoreSongs();
-		this.show_playlist_page(pl, vopts.source_info, vopts.no_navi);
-	},
-	showSimilarArtists: function(artist, vopts, start_song){
-		vopts = vopts || {};
-		var full_no_navi = vopts.no_navi;
-		vopts.no_navi = vopts.no_navi || !!start_song;
-		
-		var pl = this.preparePlaylist({//can autoload
-			title: 'Similar to «' + artist + '» artists',
-			type: 'similar artists',
-			data: {artist: artist}
-		}, start_song).loading();
-
-		
-		var recovered = this.showArtistPlaylist(artist, pl, vopts);
-		if (recovered == pl){
-
-			pl.setLoader(function(paging_opts){
-				var request_info = {};
-				request_info.request = lfm.get('artist.getSimilar',{
-					artist: artist, 
-					limit: paging_opts.page_limit, 
-					page: paging_opts.next_page
-				})
-					.done(function(r){
-						var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
-						var track_list = [];
-
-						if (artists && artists.length) {
-							var l = Math.min(artists.length, paging_opts.page_limit);
-							for (var i=0; i < l; i++) {
-								track_list.push({
-									artist: artists[i].name,
-									lfm_image: {
-										array: artists[i].image
-									}
-								});
-							}
-
-						}
-						pl.injectExpectedSongs(track_list);
-						if (track_list.length < paging_opts.page_limit){
-							pl.setLoaderFinish();
-						}
-					})
-					.fail(function() {
-						pl.loadComplete(true);
-					})
-					.always(function() {
-						request_info.done = true;
-					});
-				return request_info;
-			}, true);
-			
-		
-		}
-		
-		if (start_song){
-			(recovered || pl).showTrack(start_song, full_no_navi);
-		}
-	},
-	search: function(query, no_navi){
+	search: function(query){
 		var old_v = this.state('search-query');
 		if (query != old_v){
 			if (!query) {
 				this.showStartPage();
 			} else {
-				this.showResultsPage(query, no_navi);
+				this.showResultsPage(query);
 			}
 
 		}

@@ -1,3 +1,9 @@
+var viewOnLevelP = function(md, view) {
+	var lev_conj = this.getLevelContainer(md.map_level_num, view);
+	view.wayp_scan_stop = true;
+	return lev_conj.material;
+};
+
 var appModelView = function(){};
 provoda.View.extendTo(appModelView, {
 
@@ -23,7 +29,11 @@ provoda.View.extendTo(appModelView, {
 			
 		}
 		this.lev_containers = {};
-
+		/*
+		this.on('state-change.current-mp-md', function(e) {
+			_this.setVisState('current_wpoint', false);
+		}, {skip_reg: true});
+		*/
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);
@@ -96,6 +106,10 @@ provoda.View.extendTo(appModelView, {
 			main: artCardUI,
 			nav: baseNavUI
 		},
+		artslist: {
+			main: ArtistListView,
+			nav: baseNavUI
+		},
 		playlist: {
 			main: songsListView,
 			details: songsListView,
@@ -128,36 +142,44 @@ provoda.View.extendTo(appModelView, {
 		},
 		mconductor: {
 			nav: baseNavUI
+		},
+		tag_page: {
+			main: TagPageView,
+			nav: baseNavUI
+		},
+		tag_artists: {
+			main: ListOfListsView,
+			nav: baseNavUI
+		},
+		tag_songs: {
+			main: ListOfListsView,
+			nav: baseNavUI
 		}
+	},
+	'collch-tag_songs': {
+		place: viewOnLevelP
+	},
+	'collch-tag_artists': {
+		place: viewOnLevelP
+	},
+	'collch-tag_page': {
+		place: viewOnLevelP
 	},
 	'collch-usercard': {
-		place: function(md, view) {
-			var lev_conj = this.getLevelContainer(md.map_level_num, view);
-			view.wayp_scan_stop = true;
-			return lev_conj.material;
-		}
+		place: viewOnLevelP
 	},
 	'collch-invstg': {
-		place: function(md, view) {
-			var lev_conj = this.getLevelContainer(md.map_level_num, view);
-			view.wayp_scan_stop = true;
-			return lev_conj.material;
-		}
+		place: viewOnLevelP
 	},
 	'collch-artcard':  {
-		place: function(md, view) {
-			var lev_conj = this.getLevelContainer(md.map_level_num, view);
-			view.wayp_scan_stop = true;
-			return lev_conj.material;
-		}
+		place: viewOnLevelP
+	},
+	'collch-artslist': {
+		place: viewOnLevelP
 	},
 	'collch-playlist': [
 		{
-			place: function(md, view) {
-				var lev_conj = this.getLevelContainer(md.map_level_num, view);
-				view.wayp_scan_stop = true;
-				return lev_conj.material;
-			},
+			place: viewOnLevelP,
 			opts: {overview: true}
 		},
 		{
@@ -176,7 +198,7 @@ provoda.View.extendTo(appModelView, {
 
 			var checkFocus = function(opts) {
 				if (opts){
-					if (opts.userwant && !(opts.url_restoring || opts.transit)){
+					if (opts.userwant){
 						_this.search_input[0].focus();
 						_this.search_input[0].select();
 					} else {
@@ -260,7 +282,6 @@ provoda.View.extendTo(appModelView, {
 			if (!oved_now_active){
 				this.removePageOverviewMark(old_md.map_level_num-1);
 			}
-			
 		}
 		if (md.map_level_num != -1 && (!old_md || old_md.map_level_num != -1)){
 			this.hideLevNum(-1);
@@ -271,6 +292,7 @@ provoda.View.extendTo(appModelView, {
 		if (oved_now_active){
 			this.removePageOverviewMark(old_md.map_level_num-1);
 		}
+		/*
 		var highlight = md.state('mp-highlight');
 		if (highlight && highlight.source_md){
 			var source_md = highlight.source_md;
@@ -282,7 +304,8 @@ provoda.View.extendTo(appModelView, {
 					//this.scrollTo(hl_view.getC());
 				}
 			}
-		}
+		}*/
+		/*
 
 		var ov_md = md.getParentMapModel();
 		var ov_highlight = ov_md && ov_md.state('mp-highlight');
@@ -296,7 +319,17 @@ provoda.View.extendTo(appModelView, {
 			}
 
 			
+		}*/
+		var parent_md = md.getParentMapModel();
+		if (parent_md){
+			var mplev_item_view = md.getRooConPresentation();
+			if (mplev_item_view){
+				this.scrollTo(mplev_item_view.getC(), {
+					node: this.getLevByNum(md.map_level_num - 1).scroll_con
+				}, {vp_limit: 0.4, animate: 117});
+			}
 		}
+
 
 		//var parent_md = md.getParentMapModel();
 		//this.getChildView()
@@ -379,11 +412,13 @@ provoda.View.extendTo(appModelView, {
 			var _this = this;
 			if (!this.now_playing_link && this.nav){
 				this.now_playing_link = $('<a class="nav-item np-button"><span class="np"></span></a>').click(function(){
-					md.show_now_playing(true);
+					md.showNowPlaying();
 				}).appendTo(this.nav.justhead);
 
-				this.addWayPoint(this.now_playing_link, function() {
-					return !_this.state('viewing-playing');
+				this.addWayPoint(this.now_playing_link, {
+					canUse: function() {
+						return !_this.state('viewing-playing');
+					}
 				});
 			}
 			if (this.now_playing_link){
@@ -494,6 +529,9 @@ provoda.View.extendTo(appModelView, {
 	favicon_states: {
 		playing: 'icons/icon16p.png',
 		usual: 'icons/icon16.png'
+	},
+	getSample: function(name) {
+		return $(this.samples[name]).clone();
 	},
 	buildAppDOM: function() {
 		var _this = this;
@@ -651,6 +689,7 @@ provoda.View.extendTo(appModelView, {
 				vklc: vklc,
 				lfm_authsampl: ui_samples.children('.lfm-auth-module'),
 				lfm_scrobling: ui_samples.children('.scrobbling-switches'),
+				artists_list: ui_samples.children('.artists_list'),
 				vk_login: {
 					o: vklc,
 					oos: $(),
@@ -719,7 +758,7 @@ provoda.View.extendTo(appModelView, {
 							var vk_t_raw = input.val();
 							if (vk_t_raw){
 								var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);
-								connectApiToSeesu(vk_token, true);
+								su.connectVKApi(vk_token, true);
 							}
 						});
 						
@@ -788,6 +827,35 @@ provoda.View.extendTo(appModelView, {
 			this.wayPointsNav(key_name);
 		}
 	},
+	getWPEndPoint: function(cur_wayp, nav_type, dems_storage) {
+		var cur_dems = dems_storage[cur_wayp.wpid];
+		var end_point = {};
+		
+		if (this.wp_dirs.horizontal[nav_type]){
+			end_point.top = cur_dems.offset.top;
+			if (this.wp_dirs.forward[nav_type]){
+				end_point.left = cur_dems.offset.left;
+			} else {
+				end_point.left = cur_dems.offset.left + cur_dems.width;
+			}
+		} else {
+			end_point.left = cur_dems.offset.left;
+			if (this.wp_dirs.forward[nav_type]){
+				end_point.top = cur_dems.offset.top;
+			} else {
+				end_point.top = cur_dems.offset.top + cur_dems.height;
+			}
+		}
+		return end_point;
+	},
+	getWPDemsForStorage: function(cur_wayp, dems_storage) {
+		if (!cur_wayp.wpid){
+			throw new Error('waypoint must have ID (".wpid")');
+		}
+		var dems = this.getWPDems(cur_wayp);
+		dems_storage[cur_wayp.wpid] = dems || {disabled: true};
+		return dems;
+	},
 	getWPDems: function(cur_wayp) {
 		
 		if (cur_wayp.canUse && !cur_wayp.canUse()){
@@ -803,11 +871,17 @@ provoda.View.extendTo(appModelView, {
 			return;
 		}
 
+		var offset = cur.offset();
+		if (!offset.top && !offset.left){
+			return;
+		}
+
 		var dems = {
 			height: height,
 			width: width,
-			offset: cur.offset()
+			offset: offset
 		};
+
 
 		if (cur_wayp.simple_check){
 			return this.canUseWaypoint(cur_wayp, dems);
@@ -902,14 +976,22 @@ provoda.View.extendTo(appModelView, {
 			offset: offset
 		};
 	},
-	getWPPack: function(view) {
+	getWPPack: function(view, dems_storage) {
 		var all_waypoints = view.getAllWaypoints();
 		var wayp_pack = [];
 
 		for (var i = 0; i < all_waypoints.length; i++) {
 			var cur_wayp = all_waypoints[i];
 			var cur = cur_wayp.node;
-			var dems = this.getWPDems(cur_wayp);
+			var cur_id = cur_wayp.wpid;
+			if (!dems_storage[cur_id]){
+				var dems = this.getWPDemsForStorage(cur_wayp, dems_storage);
+				if (!dems){
+					continue;
+				}
+			}
+			
+			/*
 			if (!dems){
 				cur.data('dems', null);
 				cloneObj(cur_wayp, {
@@ -921,80 +1003,46 @@ provoda.View.extendTo(appModelView, {
 			} else {
 				cloneObj(cur_wayp, dems);
 			}
+
 			cur.data('dems', cur_wayp);
-			wayp_pack.push(cur_wayp);
+			*/
+			if (!dems_storage[cur_id].disabled){
+				wayp_pack.push(cur_wayp);
+			}
+			
 
 			
 		}
+		var _this = this;
+
+		wayp_pack.sort(function(a, b) {
+			return sortByRules(a,b, [function(el) {
+				var cur_dems = dems_storage[el.wpid];
+				return _this.getLenthBtwPoints({left:0, top:0}, cur_dems.offset);
+			}]);
+		});
+
 		return wayp_pack;
 	},
-	getWPCorridor: function(cur_dems, wayp_pack, nav_type) {
-		var corridor = [];
-		if (this.wp_dirs.horizontal[nav_type]){
-			
-			for (var i = 0; i < wayp_pack.length; i++) {
-				var cur = wayp_pack[i];
-				if (cur == cur_dems || cur.node == cur_dems.node){
-					continue;
-				}
-				if ((cur.offset.top + cur.height) <= cur_dems.offset.top){
-					continue;
-				}
-
-				if (cur.offset.top >= (cur_dems.offset.top + cur_dems.height)){
-					continue;
-				}
-				if (this.wp_dirs.forward[nav_type]){
-					if (cur.offset.left <= cur_dems.offset.left){
-						continue;
-					}
-				} else {
-					if (cur.offset.left >= (cur_dems.offset.left + cur_dems.width)){
-						continue;
-					}
-				}
-				corridor.push(cur);
-			}
-		} else {
-			for (var i = 0; i < wayp_pack.length; i++) {
-				var cur = wayp_pack[i];
-				if (cur == cur_dems || cur.node == cur_dems.node){
-					continue;
-				}
-				if ((cur.offset.left + cur.width ) <= cur_dems.offset.left){
-					continue;
-				}
-				if (cur.offset.left >= (cur_dems.offset.left + cur_dems.width)){
-					continue;
-				}
-				if (this.wp_dirs.forward[nav_type]){
-					if (cur.offset.top <= cur_dems.offset.top){
-						continue;
-					}
-				} else {
-					if (cur.offset.top >= (cur_dems.offset.top + cur_dems.height)){
-						continue;
-					}
-				}
-				
-				corridor.push(cur);
-			}
-		};
-
+	sortWPCorridor: function(target_dems, corridor, nav_type, dems_storage) {
 		var start_point = {};
 		if (this.wp_dirs.horizontal[nav_type]){
-			start_point.top = cur_dems.offset.top;
+			start_point.top = target_dems.offset.top;
 			if (this.wp_dirs.forward[nav_type]){
-				start_point.left = cur_dems.offset.left + cur_dems.width;
+				//when moving to Right - start from left edge
+				start_point.left = target_dems.offset.left;
 			} else {
-				start_point.left = cur_dems.offset.left;
+				//when moving to Left - start from right edge
+				start_point.left = target_dems.offset.left + target_dems.width;
 			}
 		} else {
-			start_point.left = cur_dems.offset.left;
+			start_point.left = target_dems.offset.left;
 			if (this.wp_dirs.forward[nav_type]){
-				start_point.top = cur_dems.offset.top + cur_dems.height;
+				//when moving to Bottom - start from top edge
+				start_point.top = target_dems.offset.top;
 			} else {
-				start_point.top = cur_dems.offset.top;
+				//when moving to Top - start from bottom edge
+				start_point.top = target_dems.offset.top + target_dems.height;
 			}
 
 		}
@@ -1002,24 +1050,9 @@ provoda.View.extendTo(appModelView, {
 		corridor.sort(function(a, b) {
 			return sortByRules(a, b, [
 				function(el) {
+					var cur_dems = dems_storage[el.wpid];
+					var end_point = _this.getWPEndPoint(el, nav_type, dems_storage);
 					
-					var end_point = {};
-					
-					if (_this.wp_dirs.horizontal[nav_type]){
-						end_point.top = el.offset.top;
-						if (_this.wp_dirs.forward[nav_type]){
-							end_point.left = el.offset.left;
-						} else {
-							end_point.left = el.offset.left + el.width;
-						}
-					} else {
-						end_point.left = el.offset.left;
-						if (_this.wp_dirs.forward[nav_type]){
-							end_point.top = el.offset.top;
-						} else {
-							end_point.top = el.offset.top + el.height;
-						}
-					}
 					var cathetus1 = Math.abs(end_point.top - start_point.top);
 					var cathetus2 = Math.abs(end_point.left - start_point.left);
 					var hypotenuse = Math.sqrt(Math.pow(cathetus1, 2) + Math.pow(cathetus2, 2));
@@ -1032,6 +1065,267 @@ provoda.View.extendTo(appModelView, {
 				}
 			]);
 		});
+	},
+	getLenthBtwPoints: function(start_point, end_point) {
+		var cathetus1 = Math.abs(end_point.top - start_point.top);
+		var cathetus2 = Math.abs(end_point.left - start_point.left);
+		var hypotenuse = Math.sqrt(Math.pow(cathetus1, 2) + Math.pow(cathetus2, 2));
+		return hypotenuse;
+	},
+	matchWPForTriangles: function(dems_storage, nav_type, cur_wayp, target_wp, angle) {
+		var curwp_dems = dems_storage[cur_wayp.wpid];
+		var tagwp_dems = dems_storage[cur_wayp.wpid];
+
+		var point_a = {},
+			point_t = {},
+			point_c = {},
+			shift_length;
+
+		point_t = this.getWPEndPoint(target_wp, nav_type, dems_storage);
+
+		if (this.wp_dirs.horizontal[nav_type]){
+			point_a.top = curwp_dems.offset.top + curwp_dems.height;
+			shift_length = curwp_dems.height;
+			
+
+			point_c = {
+				left: point_t.left,
+				top: point_a.top
+			};
+
+			if (this.wp_dirs.forward[nav_type]){
+				point_a.left  = curwp_dems.offset.left + curwp_dems.width;
+				if (point_c.left < point_a.left){
+					return false;
+					//throw new Error('bad left position');
+				}
+
+			} else {
+				point_a.left = curwp_dems.offset.left;
+				if (point_c.left > point_a.left){
+					return false;
+					//throw new Error('bad left position');
+				}
+			}
+		} else {
+			point_a.left = curwp_dems.offset.left + curwp_dems.width;
+			shift_length = curwp_dems.width;
+			
+
+			point_c = {
+				left: point_a.left,
+				top: point_t.top
+			};
+
+			if (this.wp_dirs.forward[nav_type]){
+				point_a.top  = curwp_dems.offset.top + curwp_dems.height;
+				if (point_c.top < point_a.top){
+					return false;
+					//throw new Error('bad top position');
+				}
+
+			} else {
+				point_a.top = curwp_dems.offset.top;
+				if (point_c.top > point_a.top){
+					return false;
+					//throw new Error('bad top position');
+				}
+			}
+		}
+
+		var a_length = this.getALength(cloneObj({},point_a), cloneObj({}, point_c), angle);
+
+		var matched = this.matchTrianglesByPoints(point_a, point_c, nav_type, a_length, false, point_t);
+		if (!matched){
+			matched = this.matchTrianglesByPoints(point_a, point_c, nav_type, a_length, shift_length, point_t);
+		}
+		return matched;
+
+	},
+	matchTriaPoArray: function(arr) {
+		for (var i = 0; i < arr.length ; i++) {
+
+			if (arr[i] === 0){
+				return true;
+			} else {
+				if (arr[i + 1] && (arr[i + 1] * arr[i] <= 0)){
+					return false;
+				}
+			}
+			
+		}
+		return true;
+	},
+	matchTrianglesByPoints: function(point_a, point_c, nav_type, a_length, shift_length, point_t) {
+		var point_b = {};
+
+		var dyn_field;
+		var stat_field;
+		if (this.wp_dirs.horizontal[nav_type]){
+			stat_field = 'left';
+			dyn_field = 'top';
+		} else {
+			stat_field = 'top';
+			dyn_field = 'left';
+			
+		}
+
+		point_b[stat_field] = point_c[stat_field];
+		if (typeof shift_length == 'number'){
+			point_c[dyn_field] -= shift_length;
+			point_a[dyn_field] -= shift_length;
+			point_b[dyn_field] = point_c[dyn_field] - a_length;
+		} else {
+			point_b[dyn_field] = point_c[dyn_field] + a_length;
+		}
+
+		var arr = this.triangleHasPoint(point_a, point_b, point_c, point_t);
+
+		return this.matchTriaPoArray(arr);
+	},
+	triangleHasPoint: function(point_a, point_b, point_c, point_t) {
+		var line1 = (point_a.left - point_t.left) * (point_b.top - point_a.top) - (point_b.left - point_a.left) * (point_a.top - point_t.top);
+		var line2 = (point_b.left - point_t.left) * (point_c.top - point_b.top) - (point_c.left - point_b.left) * (point_b.top - point_t.top);
+		var line3 = (point_c.left - point_t.left) * (point_a.top - point_c.top) - (point_a.left - point_c.left) * (point_c.top - point_t.top);
+		return [line1, line2, line3];
+		/*
+		считаются произведения (1, 2, 3 - вершины треугольника, 0 - точка):
+		(x1 - x0) * (y2 - y1) - (x2 - x1) * (y1 - y0)
+		(x2 - x0) * (y3 - y2) - (x3 - x2) * (y2 - y0)
+		(x3 - x0) * (y1 - y3) - (x1 - x3) * (y3 - y0)
+		Если они одинакового знака, то точка внутри треугольника, если что-то из этого - ноль, то точка лежит на стороне, иначе точка вне треугольника.
+		*/
+	},
+	getLastDot: function(point_a, point_t, angle_alpha) {
+		var point_c;
+		
+		if (this.wp_dirs.horizontal[nav_type]){
+			point_c = {
+				left: point_t.left,
+				top: point_a.top
+			};
+		} else {
+			point_c = {
+				left: point_a.left,
+				top: point_t.top
+			};
+			
+		}
+
+		var a_length = this.getALength(point_a, point_c, angle_alpha);
+		if (this.wp_dirs.horizontal[nav_type]){
+
+		} else {
+
+		}
+		var point_b = {
+			top: point_t.top,
+			left: point_c.left + a_length
+		};
+	},
+	getALength: function(point_a, point_c, angle_alpha) {
+		//var b_point_arg = point_j.left + a_length;
+		var sign;
+
+		var toRad = function(angle){
+			return angle * (Math.PI/180);
+		};
+
+		var angle_gamma = 90;
+		var angle_beta = 180 - angle_gamma - angle_alpha;
+		var a_length = (this.getLenthBtwPoints(point_a, point_c) * Math.sin(toRad(angle_alpha)) )/ Math.sin(toRad(angle_beta));
+
+		return a_length;
+	},
+	getWPCorridor: function(cwp, nav_type, wayp_pack, dems_storage, angle) {
+		var corridor = [];
+		var target_dems = dems_storage[cwp.wpid];
+		if (this.wp_dirs.horizontal[nav_type]){
+
+			var cenp_top;
+			var cenp_left;
+			
+			for (var i = 0; i < wayp_pack.length; i++) {
+				var cur = wayp_pack[i];
+				
+
+				if (!cur){
+					continue;
+				}
+				var pret_dems = dems_storage[cur.wpid];
+				if (cur == cwp || cur.node == cwp.node){
+					continue;
+				}
+				
+				if (this.wp_dirs.forward[nav_type]){
+					if (pret_dems.offset.left + pret_dems.width <= target_dems.offset.left + target_dems.width){
+						//when move to Right - comparing Right edges
+						continue;
+					}
+				} else {
+					if (pret_dems.offset.left >= target_dems.offset.left){
+						//when move to Left - comparing left edges
+						continue;
+					}
+				}
+				if (!angle){
+					if ((pret_dems.offset.top + pret_dems.height) <= target_dems.offset.top){
+						continue;
+					}
+
+					if (pret_dems.offset.top >= (target_dems.offset.top + target_dems.height)){
+						continue;
+					}
+				} else {
+					if (!this.matchWPForTriangles(dems_storage, nav_type, cwp, cur, angle)){
+						continue;
+					}
+				}
+
+				
+
+
+				corridor.push(cur);
+			}
+		} else {
+			for (var i = 0; i < wayp_pack.length; i++) {
+				var cur = wayp_pack[i];
+				if (!cur){
+					continue;
+				}
+				var pret_dems = dems_storage[cur.wpid];
+				if (cur == cwp || cur.node == cwp.node){
+					continue;
+				}
+				
+				if (this.wp_dirs.forward[nav_type]){
+					if (pret_dems.offset.top + pret_dems.height <= target_dems.offset.top + target_dems.height){
+						//when move to Bottom - comparing Bottom edges
+						continue;
+					}
+				} else {
+					if (pret_dems.offset.top >= target_dems.offset.top){
+						//when move to Top - comparing Top edges
+						continue;
+					}
+				}
+				if (!angle){
+					if ((pret_dems.offset.left + pret_dems.width ) <= target_dems.offset.left){
+					continue;
+					}
+					if (pret_dems.offset.left >= (target_dems.offset.left + target_dems.width)){
+						continue;
+					}
+				} else {
+					if (!this.matchWPForTriangles(dems_storage, nav_type, cwp, cur, angle)){
+						continue;
+					}
+				}
+				corridor.push(cur);
+			}
+		}
+		this.sortWPCorridor(target_dems, corridor, nav_type, dems_storage);
+		
 		return corridor;
 	},
 	wp_dirs: {
@@ -1054,7 +1348,7 @@ provoda.View.extendTo(appModelView, {
 			'Right': true
 		}
 	},
-	checkCurrentWPoint: function() {
+	checkCurrentWPoint: function(dems_storage) {
 		if (this.cwp_check){
 			clearTimeout(this.cwp_check);
 			delete this.cwp_check;
@@ -1062,19 +1356,20 @@ provoda.View.extendTo(appModelView, {
 		
 
 		var cwp = this.state('vis-current_wpoint');
-		if (cwp && !this.getWPDems(cwp)){
-			//this.current_wpoint.node.removeClass('surface_navigation');
+		if (cwp && !this.getWPDemsForStorage(cwp, dems_storage)){
+			//this.current_wpoint.node.removeClass('surf_nav');
 			//delete this.current_wpoint;
 			this.setVisState('current_wpoint', false);
 		}
+		return this.state('vis-current_wpoint');
 
 	},
 	'stch-vis-current_wpoint': function(nst, ost) {
 		if (ost){
-			ost.node.removeClass('surface_navigation');
+			ost.node.removeClass('surf_nav');
 		}
 		if (nst) {
-			nst.node.addClass('surface_navigation');
+			nst.node.addClass('surf_nav');
 			//if (nst.view.getRooConPresentation() ==)
 			 
 			var cur_md_md = this.state('current-mp-md');
@@ -1083,9 +1378,8 @@ provoda.View.extendTo(appModelView, {
 				this.scrollTo(nst.node, {
 					node: this.getLevByNum(parent_md.map_level_num).scroll_con
 				}, {vp_limit: 0.6, animate: 117});
-			} else {
-				this.scrollTo(nst.node, false, {vp_limit: 0.6, animate: 117});
 			}
+			this.scrollTo(nst.node, false, {vp_limit: 0.6, animate: 117});
 			//
 		}
 		
@@ -1095,6 +1389,8 @@ provoda.View.extendTo(appModelView, {
 		var cur_mp_md = this.state('current-mp-md');
 		var roocon_view =  cur_mp_md && cur_mp_md.getRooConPresentation(true);
 		if (roocon_view){
+			var dems_storage = {};
+
 			var cwp = this.state('vis-current_wpoint');
 			if (nav_type == 'Enter'){
 				if (cwp){
@@ -1102,43 +1398,54 @@ provoda.View.extendTo(appModelView, {
 					var _this = this;
 
 					this.cwp_check = setTimeout(function() {
-						_this.checkCurrentWPoint();
+						_this.checkCurrentWPoint(dems_storage);
 					},100);
 				}
 				
 			} else if (this.wp_dirs.all[nav_type]){
-				this.checkCurrentWPoint();
+				cwp = this.checkCurrentWPoint(dems_storage);
 				
-				var cur_dems = cwp && cwp.node.data('dems');
 				if (!cwp){
-					wayp_pack = this.getWPPack(roocon_view);
+					wayp_pack = this.getWPPack(roocon_view, dems_storage);
 					this.setVisState('current_wpoint', wayp_pack[0]);
 					
 				} else {
-				
-					
-					
-					
-
-					if (!cur_dems){
-						throw new Error('there is no demensions!')
+					var target_dems = cwp && dems_storage[cwp.wpid];
+					if (!target_dems){
+						throw new Error('there is no demensions!');
 					}
-					var corridor = [];
-					var cur_view = cur_dems.view;
-					while (!corridor.length && cur_view){
-						wayp_pack = this.getWPPack(cur_view);
-						corridor = this.getWPCorridor(cwp.node.data('dems'), wayp_pack, nav_type);
-						cur_view = cur_view.parent_view;
-					}
+					var corridor = this.getAnyPossibleWaypoints(cwp, nav_type, dems_storage);
+					
 					var new_wpoint = corridor[0];
 					if (new_wpoint ){
-						this.setVisState('current_wpoint', new_wpoint)
+						this.setVisState('current_wpoint', new_wpoint);
 					}
 
 				}
 			}
 			
 		}
+	},
+	getAnyPossibleWaypoints: function(cwp, nav_type, dems_storage) {
+		var corridor = [];
+		var angle = 0;
+
+		while (!corridor.length && angle < 90){
+			var inner_corr = [];
+			var cur_view = cwp.view;
+			while (!inner_corr.length && cur_view){
+				//getting parent views until find some usable waypoints;
+				wayp_pack = this.getWPPack(cur_view, dems_storage);
+				inner_corr = this.getWPCorridor(cwp, nav_type, wayp_pack, dems_storage, Math.min(angle, 89));
+				cur_view = cur_view.parent_view;
+			}
+			corridor = inner_corr;
+			angle += 5;
+
+		}
+		
+
+		return corridor;
 	},
 	appendStyle: function(style_text){
 		//fixme - check volume ondomready
@@ -1200,7 +1507,7 @@ provoda.View.extendTo(appModelView, {
 	createUserAvatar: function(info, c, size){
 		var _this = this;
 		var imageplace = $("<div class='image-cropper'></div>").appendTo(c);
-		$('<img alt="user photo" width="50" height="50"/>').attr('src', info.photo).appendTo(imageplace);
+		$('<img alt="user photo" />').attr('src', info.photo).appendTo(imageplace);
 		/*
 		var image = this.preloadImage(info.photo, 'user photo', function(img){
 			_this.verticalAlign(img, 50, true);
@@ -1460,7 +1767,7 @@ provoda.View.extendTo(appModelView, {
 		
 		
 			youtube_video.setAttribute('type',"application/x-shockwave-flash");
-			youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id);
+			youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id + '&autoplay=1');
 			youtube_video.setAttribute('allowfullscreen',"true");
 			youtube_video.setAttribute('class',"you-tube-video");
 			
@@ -1468,33 +1775,37 @@ provoda.View.extendTo(appModelView, {
 	},
 	
 	
-	renderArtistAlbums: function(albums, original_artist, albums_ul, vopts){
+	renderArtistAlbums: function(albums, original_artist, albums_ul, artcard, iteratorFunc){
 		if (albums.length) {
 			for (var i=0; i < albums.length; i++) {
-				albums_ul.append(this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, vopts));
+				var alb_data = this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, artcard);
+
+				if (iteratorFunc) {iteratorFunc(alb_data);}
+				albums_ul.append(alb_data.con);
 			}
 		}
 		return albums_ul;
 	},
-	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, vopts){
+	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, artcard){
 		var _this = this;
 		var li = $('<li></li>');
 			var a_href= $('<a></a>')
 				.attr('href', al_url )
 				.click(function(e){
 					e.preventDefault();
-					_this.md.showAlbum({
-						artist: al_artist,
-						album_name: al_name,
-						original_artist: original_artist
-					}, vopts);
 					seesu.trackEvent('Artist navigation', 'album', al_artist + ": " + al_name);
+					artcard.showAlbum({
+						album_artist: al_artist,
+						album_name: al_name
+					});
 				})
 				.appendTo(li);
 			$('<img/>').attr('src', al_image).appendTo(a_href);
 			$('<span class="album-name"></span>').text(al_name).appendTo(a_href);
-			
-		return li;
+		return {
+			con: li,
+			link: a_href
+		};
 	},
 	bindLfmTextClicks: function(con) {
 

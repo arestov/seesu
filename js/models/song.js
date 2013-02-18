@@ -33,7 +33,7 @@ var song;
 						_this.updateState('bio', ai.bio);
 						_this.updateState('tags', ai.tags);
 						_this.updateState('similars', ai.similars);
-						_this.updateState('artist-image', ai.images && ai.images[2] || lfm_image_artist)
+						_this.updateState('artist-image', ai.images && ai.images[2] || lfm_image_artist);
 
 
 					});
@@ -80,20 +80,7 @@ var song;
 					});
 			}
 
-			this.on('view', function(no_navi, user_want){
-				su.show_track_page(this, no_navi);
-				if (user_want){
-					//fixme - never true!
-					if (_this.wasMarkedAsPrev()){
-						su.trackEvent('Song click', 'previous song');
-					} else if (_this.wasMarkedAsNext()){
-						su.trackEvent('Song click', 'next song');
-					} else if (_this.state('play')){
-						su.trackEvent('Song click', 'zoom to itself');
-					}
-				}
-				
-			});
+			
 			var actionsrow = new TrackActionsRow(this);
 			this.setChild('actionsrow', actionsrow);
 			this.addChild(actionsrow);
@@ -103,6 +90,7 @@ var song;
 				mo: this,
 				omo: this.omo
 			}, omo.file);
+
 			if (omo.file){
 				this.updateState('playable', true);
 				this.updateState('files_search', {
@@ -113,14 +101,18 @@ var song;
 			}
 			this.setChild('mf_cor', this.mf_cor);
 			this.addChild(this.mf_cor);
-			this.mf_cor.on('before-mf-play', function(mopla) {
+			this.mf_cor
+				.on('before-mf-play', function(mopla) {
 
-				_this.player.changeNowPlaying(_this);
-				_this.mopla = mopla;
-			});
-			this.mf_cor.on("error", function(can_play) {
-				_this.player.trigger("song-play-error", _this, can_play);
-			});
+					_this.player.changeNowPlaying(_this);
+					_this.mopla = mopla;
+				})
+				.on("error", function(can_play) {
+					_this.player.trigger("song-play-error", _this, can_play);
+				})
+				.on('state-change.mopla_to_use', function(e){
+					_this.updateState('mf_cor-has-available-tracks', !!e.value);
+				});
 
 			if (this.mf_cor.isSearchAllowed()){
 				this.on('state-change.track', function(e) {
@@ -180,7 +172,7 @@ var song;
 			}
 		},
 		mlmDie: function() {
-			this.hide();
+			this.hideOnMap();
 		},
 		getURL: function(mopla){
 			var url ="";

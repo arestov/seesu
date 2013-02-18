@@ -110,9 +110,9 @@ provoda.Model.extendTo(fileInTorrent, {
 			loading: function(opts){
 				var factor;
 				if (opts.loaded && opts.total){
-					factor = opts.loaded/opts.total
+					factor = opts.loaded/opts.total;
 				} else if (opts.duration && opts.fetched){
-					factor = opts.fetched/opts.duration
+					factor = opts.fetched/opts.duration;
 				}
 				if (factor){
 					this.updateState('loading-progress', factor);
@@ -141,7 +141,7 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.updateState('play', false);
 			},
 			error: function() {
-				var d = new Date()
+				var d = new Date();
 				this.updateState("error", d);
 				if (this.parent){
 					this.parent.error = d;

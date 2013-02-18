@@ -1,6 +1,7 @@
-var isohuntTorrentSearch = function(cross_domain_allowed) {
-	this.crossdomain = cross_domain_allowed;
-	var _this = this;
+var isohuntTorrentSearch = function(opts) {
+	//this.crossdomain = cross_domain_allowed;
+	this.mp3_search = opts.mp3_search;
+	//var _this = this;
 };
 isohuntTorrentSearch.prototype = {
 	constructor: isohuntTorrentSearch,
@@ -142,6 +143,7 @@ isohuntTorrentSearch.prototype = {
 		r.push({
 			isohunt_id: sitem.guid,
 			HTMLTitle: sitem.title,
+			media_type: 'torrent',
 			torrent_link: 'http://isohunt.com/download/' + sitem.guid,
 			query: query,
 			models: {},
@@ -156,8 +158,9 @@ isohuntTorrentSearch.prototype = {
 
 
 
-var googleTorrentSearch = function(cross_domain_allowed) {
-	this.crossdomain = cross_domain_allowed;
+var googleTorrentSearch = function(opts) {
+	this.crossdomain = opts.crossdomain;
+	this.mp3_search = opts.mp3_search;
 	var _this = this;
 };
 googleTorrentSearch.prototype = {
@@ -218,16 +221,16 @@ googleTorrentSearch.prototype = {
 						return;
 					}
 					if (!options.nocache){
-						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
+						cache_used = _this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
 							deferred.resolve(r);
 						});
 					}
 					
 					if (!cache_used){
 						aReq({
-							url: "http://ajax.googleapis.com/ajax/services/search/web",
+							url: "https://ajax.googleapis.com/ajax/services/search/web",
 							type: "GET",
-							dataType: this.crossdomain ? "json": "jsonp",
+							dataType: _this.crossdomain ? "json": "jsonp",
 							data: {
 								cx: "001069742470440223270:ftotl-vgnbs",
 								v: "1.0",
@@ -302,6 +305,7 @@ googleTorrentSearch.prototype = {
 			item.isohunt_id = isohunt_id[1];
 			item.torrent_link = 'http://isohunt.com/download/' + item.isohunt_id;
 			item.query = query;
+			item.media_type = 'mp3';
 			item.title = item.titleNoFormatting = HTMLDecode(item.titleNoFormatting);
 			item.models = {};
 			item.getSongFileModel = function(mo, player) {

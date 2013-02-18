@@ -1,15 +1,15 @@
 .as-application:not(.chrome-extension) body{
 	position:relative;	/* complex bugfix for opera 10.10 weird widget scroll */
+	overflow:hidden;
 	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 	
 	background-color:transparent;
-	overflow:hidden;
 }
 
  
 html.as-application:not(.chrome-extension){
-	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
 	position: absolute; /* complex bugfix for opera 10.10 weird widget scroll */
+	overflow:hidden;	/* complex bugfix for opera 10.10 weird widget scroll */
 	width:100%;			/* complex bugfix for opera 10.10 weird widget scroll */
 }
 
@@ -33,8 +33,8 @@ html.opera-extension{
 		padding-bottom:5px;
 		}
 		.pokki-app #slider-materail{
-			height:661px;
 			overflow: auto;
+			height:661px;
 			}
 
 .chrome-extension #slider {
@@ -43,23 +43,23 @@ html.opera-extension{
 
 	
 	 #slider .screens{
+		position:relative;
+		z-index:2;
 		
 		
 		padding:0 1rem 0;
-		position:relative;
-		z-index:2;
 		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 		}
 
 .as-application:not(.chrome-extension) #slider-materail{
-	background-color: #505050;
-	border:1px solid #666;
-	border-top:0;
 	position: absolute;
-	left: 0;
+	top: 43px;
 	right: 0;
 	bottom: 0;
-	top: 43px;
+	left: 0;
+	border:1px solid #666;
+	border-top:0;
+	background-color: #505050;
 }
 
 #promo{
@@ -68,8 +68,8 @@ html.opera-extension{
 	z-index:3;
 }
 .as-application #slider .screens{
-		overflow-y:auto;
 		overflow-x:hidden;
+		overflow-y:auto;
 		height:549px;
 		}
 .chrome-extension.as-application #slider .screens{
@@ -78,11 +78,11 @@ html.opera-extension{
 .as-application:not(.chrome-extension) #slider #screens{
 	position: absolute;
 	top: 0;
-	left: 0;
 	right: 0;
+	bottom: 20px;
+	left: 0;
 	width:auto;
 	height:auto;
-	bottom: 20px;
 }
 
 
@@ -92,13 +92,13 @@ html.opera-extension{
 
 
 .as-application .navs{
-	-moz-border-radius:0.5rem 0.5rem 0 0;
 	-webkit-border-radius:0.5rem 0.5rem 0 0;
+	-moz-border-radius:0.5rem 0.5rem 0 0;
 	border-radius:0.5rem 0.5rem 0 0;
 }
 .as-application #slider-materail{
-	-moz-border-radius:0 0 0.5rem 0.5rem;
 	-webkit-border-radius: 0 0 0.5rem 0.5rem;
+	-moz-border-radius:0 0 0.5rem 0.5rem;
 	border-radius: 0 0 0.5rem 0.5rem;
 }
 
@@ -109,15 +109,15 @@ html.opera-extension{
 
 #slider-materail{
 	position: absolute;
-	right: 0;
-	left: 0;
-	bottom: 0;
 	top: 43px;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	}
 	#slider .screens{
 		position: absolute;
-		left: 0;
 		right: 0;
+		left: 0;
 		min-height: 100%;
 		}
 		.page-scheme{

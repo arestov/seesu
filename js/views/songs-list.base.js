@@ -31,7 +31,7 @@ provoda.addPrototype("songsListBaseView", {
 		"load-more-b": function() {
 			var _this = this;
 			var node = $("<a class='load-more-songs'></a>").click(function() {
-				_this.md.loadMoreSongs(true);
+				_this.md.requestMoreData(true);
 			}).text(localize("load-more")).appendTo(this.c);
 
 			this.addWayPoint(node, {
@@ -75,7 +75,7 @@ provoda.addPrototype("songsListBaseView", {
 		}
 
 	},
-	'collch-song': function(name, arr) {
+	'collch-songs-list': function(name, arr) {
 		for (var i = 0; i < arr.length; i++) {
 			var view = this.getFreeChildView(name, arr[i], 'main', {lite: this.opts && this.opts.overview});
 			if (view){

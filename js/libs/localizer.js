@@ -16,6 +16,10 @@ localizer = {
 		"original": "Get photo from my vk.com profile",
 		"ru": "Получить фотографию из моего профиля вконтакте"
 	},
+	"play-random-best-of-arts": {
+		"original": "Play random best tracks of this artists",
+		"ru": "Играть случайные лучшие композиции этих артистов"
+	},
 	"your-pmus-f-aq": {
 		"original": "Your personal music, friends and acquaintances",
 		"ru": "Твоя персональная музыка, друзья и знакомства"
@@ -259,6 +263,14 @@ localizer = {
 		"original": "Best tracks",
 		"ru": "Лучшие треки"
 	},
+	"Week-chart":{
+		"original": "Week chart",
+		"ru": "Недельный чарт"
+	},
+	"Top": {
+		"original": "Top",
+		"ru": "Лучшие"
+	},
 	"top-tracks":{
 		"original": "top tracks",
 		"ru": 'лучшие треки'
@@ -415,6 +427,10 @@ localizer = {
 	"in-albums": {
 		"original": "in albums",
 		"ru": "в альбомах"
+	},
+	"Songs": {
+		"original": "Songs",
+		"ru": "Композиции"
 	},
 	"Artists": {
 		"original": "Artists",

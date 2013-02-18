@@ -60,7 +60,7 @@ provoda.View.extendTo( baseNavUI, {
 		});
 		this.addWayPoint(this.c, {
 			canUse: function() {
-				return _this.state('mp-stack') || !_this.state('mp-has-focus');
+				return _this.state('mp-show') && (_this.state('mp-stack') || !_this.state('mp-has-focus'));
 			}
 		});
 	}

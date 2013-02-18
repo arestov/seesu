@@ -8,6 +8,7 @@ provoda = {
 	StatesEmitter: function(){},
 	Model: function(){},
 	View: function(){},
+	ItemsEvents: function(){},
 	StatesArchiver: function(){},
 	addPrototype: function(name, obj){
 		if (!this.prototypes[name]){
@@ -25,11 +26,46 @@ provoda = {
 	}
 };
 
-
-Class.extendTo(provoda.StatesArchiver, {
-	init: function(state_name, opts) {
+Class.extendTo(provoda.ItemsEvents, {
+	init: function(event_name, eventCallback, skip_event_regf) {
 		this.controls_list = [];
+		this.event_name = event_name;
+		this.eventCallback = eventCallback;
+		this.skip_event_regf = skip_event_regf;
+	},
+	unsubcribeOld: function() {
+		if (this.controls_list.length){
+			for (var i = 0; i < this.controls_list.length; i++) {
+				this.controls_list[i].unsubcribe();
+			}
+		}
+	},
+	setItems: function(items_list) {
+		this.unsubcribeOld();
+		this.items_list = items_list;
+		this.controls_list = [];
+		for (var i = 0; i < items_list.length; i++) {
+			this.controls_list.push(
+				items_list[i].on(this.event_name, this.eventCallback, {
+					easy_bind_control: true,
+					skip_reg: this.skip_event_regf
+				})
+			);
+		}
+	}
+
+});
+
+provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
+	init: function(state_name, opts) {
+		var _this = this;
+		this.checkFunc = function(e) {
+			var item = this;
+			_this.getItemsValues(item);
+		};
 		this.state_name = state_name;
+		this._super('state-change.' + this.state_name, this.checkFunc, true);
+		
 		this.returnResult = opts.returnResult;
 		var calcR = opts.calculateResult;
 		if (calcR){
@@ -67,12 +103,12 @@ Class.extendTo(provoda.StatesArchiver, {
 		}
 		return false;
 	},
-	getItemsValues: function() {
+	getItemsValues: function(item) {
 		var values_list = [];
 		for (var i = 0; i < this.items_list.length; i++) {
 			values_list.push(this.items_list[i].state(this.state_name));
-			
 		}
+
 		this.returnResult.call(this, this.calculateResult.call(this, values_list));
 		return values_list;
 	},
@@ -84,19 +120,8 @@ Class.extendTo(provoda.StatesArchiver, {
 		}
 	},
 	setItems: function(items_list) {
-		this.unsubcribeOld();
-		this.items_list = items_list;
-		var _this = this;
-		var checkFunc = function() {
-			_this.getItemsValues();
-		};
-		this.controls_list = [];
-		for (var i = 0; i < items_list.length; i++) {
-			this.controls_list.push(
-				items_list[i].on('state-change.' + this.state_name, checkFunc, {easy_bind_control: true})
-			);
-		}
-		checkFunc();
+		this._super(items_list);
+		this.checkFunc();
 	}
 });
 
@@ -147,6 +172,10 @@ Class.extendTo(provoda.Eventor, {
 		return funcs;
 	},
 	_addEventHandler: function(namespace, cb, opts, once){
+		if (this.convertEventName){
+			namespace = this.convertEventName(name);
+		}
+
 		var
 			fired,
 			_this = this,
@@ -160,8 +189,18 @@ Class.extendTo(provoda.Eventor, {
 			var reg_fires = this.getPossibleRegfires(namespace);
 			if (reg_fires.length){
 				reg_fires[0].call(this, function() {
-					cb.apply(_this, arguments);
 					fired = true;
+					var args = arguments;
+					if (opts && opts.soft_reg){
+						setTimeout(function() {
+							cb.apply(_this, args);
+						}, 0);
+					} else {
+						cb.apply(_this, args);
+					}
+					
+					
+					
 				}, namespace, opts, name_parts);
 			}
 		}
@@ -192,6 +231,9 @@ Class.extendTo(provoda.Eventor, {
 		return this._addEventHandler(namespace, cb, opts);
 	},
 	off: function(namespace, cb, obj){
+		if (this.convertEventName){
+			namespace = this.convertEventName(name);
+		}
 		var
 			clean = [],
 			short_name = namespace.split('.')[0],
@@ -248,6 +290,10 @@ Class.extendTo(provoda.Eventor, {
 	trigger: function(){
 		var args = Array.prototype.slice.call(arguments);
 		var name = args.shift();
+		if (this.convertEventName){
+			name = this.convertEventName(name);
+		}
+
 		var cb_cs = this.getMatchedCallbacks(name).matched;
 
 		if (cb_cs){
@@ -477,7 +523,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	init: function(){
 
 		this._super();
-		this.provoda_id = models_counters++;
+		this._provoda_id = models_counters++;
 		this.states = {};
 		this.views = [];
 		this.views_index = {};
@@ -536,6 +582,20 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.trigger('die');
 		return this;
 	},
+	watchChildrenStates: function(collection_name, state_name, callback) {
+		//
+		var _this = this;
+		var items_events = new provoda.ItemsEvents();
+		items_events.init('state-change.' + state_name, function() {
+			callback.call(_this, {
+				item: this,
+				args: arguments
+			});
+		}, true);
+		this.on('child-change.' + collection_name, function(e) {
+			items_events.setItems(e.value);
+		});
+	},
 	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
 		var _this = this;
 		var archiver = new provoda.StatesArchiver();
@@ -553,11 +613,19 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		return this.children_models[collection_name];
 	},
 	setChild: function(collection_name, array, changed) {
+		if (collection_name.indexOf('.') != -1){
+			throw new Error('remove "." (dot) from name');
+		}
 		this.children_models[collection_name] = array;
 
-		this.trigger('child-change.' + collection_name, {
-			value: array
-		});
+		var event_obj = {};
+		if (typeof changed == 'object'){
+			cloneObj(event_obj, changed);
+		}
+		event_obj.value = array;
+		event_obj.no_changing_mark = !changed;
+		
+		this.trigger('child-change.' + collection_name, event_obj);
 
 		if (changed){
 			this.sendCollectionChange(collection_name, array);
@@ -624,13 +692,17 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			this.views[i].collectionChange(collection_name, array);
 		}
 	},
+	sendStateToView: function(view, state_name, value) {
+		view.change(state_name, value);
+	},
 	_updateProxy: function(name, value){
 		value = value || false;
 		var old_value = this.replaceState(name, value);
 		if (old_value){
 			this.removeDeadViews();
 			for (var i = 0; i < this.views.length; i++) {
-				this.views[i].change(name, value);
+				this.sendStateToView(this.views[i], name, value);
+				
 			}
 			this.trigger('state-change.' + name, {type: name, value: value, old_value: old_value[0]});
 		
@@ -699,6 +771,7 @@ var
 
 
 var views_counter = 0;
+var way_points_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(view_otps, opts){
 		this.view_id = views_counter++;
@@ -747,11 +820,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	getDeepWaypoints: function(exept) {
 		var all = [];
-		if (this.canUseDeepWaypoints()){
-			var views = this.getDeepChildren(exept);
+		if (this.canUseWaypoints() && this.canUseDeepWaypoints()){
+			//var views = this.getDeepChildren(exept);
 			
-			for (var i = 0; i < views.length; i++) {
-				all = all.concat(views[i].getWaypoints());
+			for (var i = 0; i < this.children.length; i++) {
+				var cur = this.children[i];
+				all = all.concat(cur.getAllWaypoints());
 			}
 		}
 		
@@ -761,7 +835,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var obj = {
 			node: point,
 			canUse: opts && opts.canUse,
-			view: this
+			simple_check: opts && opts.simple_check,
+			view: this,
+			wpid: ++way_points_counter
 		};
 		if (!opts || (!opts.simple_check && !opts.canUse)){
 			//throw new Error('give me check tool!');

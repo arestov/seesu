@@ -35,7 +35,9 @@ provoda.View.extendTo(StartPageView, {
 
 		});
 		
-		
+		this.addWayPoint(hq_link, {
+			//simple_check: true
+		});
 	},
 	'collch-muco': true,
 	'collch-pstuff': true,

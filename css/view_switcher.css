@@ -1,15 +1,15 @@
 .navs{
 	overflow:hidden;
 	padding-top:6px;
-	padding-left:1rem;
 	padding-right:1rem;
+	padding-left:1rem;
 	min-height:36px;
-	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
 	border-bottom:1px solid #333;
-	font-family:"Trebuchet MS", sans-serif;
+	background:#6e1573 url(../i/nav/head-gradient.png) repeat-x;
 	
 	
 	font-size:1.28rem;
+	font-family:"Trebuchet MS", sans-serif;
 	font-family: "Trebuchet MS", sans-serif;
 
 }
@@ -17,9 +17,9 @@
 	display:none;
 }
 .daddy{
+	overflow: hidden;
 	margin-right:19px;
 	height: 31px;
-	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
@@ -46,8 +46,8 @@
 }
 
 #search {
-	max-width: 750px;
 	margin: 0 auto;
+	max-width: 750px;
 
 	}
 .complex-page{
@@ -66,11 +66,11 @@
 
 	}
 .complex-page.page-scheme .complex-page-scroll_con{
+	overflow-x: hidden;
+	overflow-y: auto;
 	
 	margin-right: -30px;
 	height: 100%;
-	overflow-y: auto;
-	overflow-x: hidden;
 	}
 	.complex-page.page-scheme .complex-page_material{
 		width: 200px;
@@ -86,8 +86,8 @@
 		}
 	.page-scheme{
 		display: block;
-		width: 200px;
 		margin-left:0;
+		width: 200px;
 		}
 }
 
@@ -127,6 +127,7 @@
 		display: block;
 		padding:0.2rem 0.5rem;
 		border: 0;
+		border-radius: 0;
 		}
 	.page-scheme .tags-hyped a:nth-of-type(even){
 		background-color: #4D4D4D;
@@ -146,18 +147,18 @@
 
 		
 .nav-start{
-	padding: 4px 18px 4px;
-	width: 20px;
 	margin-right: 0;
 	margin-left: 0;
+	padding: 4px 18px 4px;
+	width: 20px;
 }
 
 .nav-start{
+	border-left:1px solid transparent;
 	-webkit-transition: margin-right 0.1s ease-out;
 	-moz-transition: margin-right 0.1s ease-out;
 	-o-transition: margin-right 0.1s ease-out;
 	transition: margin-right 0.1s ease-out;
-	border-left:1px solid transparent;
 }	
 
 .nav-start .icon{
@@ -177,19 +178,19 @@
 		background-image:url(../i/nav/seesu-nav-search-active.png);
 		}
 
-.np-button{
-	width:20px;	
+.np-button{	
 	position:absolute;
-	right:1rem;
 	top:8px;
+	right:1rem;
 	padding: 4px 8px;
+	width:20px;
 	border-right: 1px solid transparent;
 	}
 	.np{
-		cursor:pointer;
-		height:20px;
 		width:20px;
+		height:20px;
 		background:url(../i/equalaizer_stoped.gif) no-repeat;
+		cursor:pointer;
 		}
 @media (max-width:550px) {
 
@@ -202,11 +203,11 @@
 	margin-top:1.72rem;
 }
 .art_card{
-	max-width: 750px;
-	margin: 0 auto;
 	
 	overflow:hidden;
+	margin: 0 auto;
 	padding-bottom: 20px;
+	max-width: 750px;
 	}
 .full-page .art_card{
 	padding: 1.72rem 10px;
@@ -224,18 +225,25 @@
 			margin-left:1rem;
 			}
 	.art_card-meta{
+		
+		margin-bottom:1.72rem;
+		
+		
+		
+		}
+	.full-page .art_card-meta{
 		float:left;
 		width:50%;
-		
-		min-height:140px;
-		margin-bottom:1.72rem;
+		min-height:18rem;
+		min-width: 15rem;
 		}
 		.top-tracks,.art_card-tags{
 			margin-right:1.72rem;
 			margin-bottom:1.72rem;
 			}
 			.top-tracks.loading,.art_card-tags.loading{
-				background: url(../i/spinner_small.gif) no-repeat 100% 4px;
+				background: url(../i/spinner.svg) no-repeat 100% 4px;
+				background-size: 1.143rem;
 				}
 					
 	
@@ -244,17 +252,28 @@
 				}
 				.art_card-meta ul li{
 					float:left;
-					white-space:nowrap;
 					margin-right:1rem;
+					white-space:nowrap;
 					}
-	
+		.top-tracks .links-list,.art_card-similar .links-list{
+			min-height: 6.86rem;
+			}
+		.page-scheme .top-tracks .links-list,.page-scheme .art_card-similar .links-list{
+			display: none;
+			}
 	.art_card-similar{
-		float:right;
-		width:50%;
+		
 		margin-bottom:1.72rem;
+		
+		}
+	.full-page .art_card-similar{
+		width:50%;
+		float:right;
+		min-width: 15rem;
 		}
 		.art_card-similar.loading{
-			background: url(../i/spinner_small.gif) no-repeat 100% 4px;
+			background: url(../i/spinner.svg) no-repeat 100% 4px;
+			background-size: 1.143rem;
 			}
 		.art_card-similar ul{
 			overflow:hidden;
@@ -268,23 +287,24 @@
 	
 	
 	.full-page .art_card-albums{
-		background: #3f3f3f;
-		padding: 10px 10px;
-		border-radius: 6px;
-		margin: 0 -10px 1.72rem;
 
 		clear:both;
+		margin: 0 -10px 1.72rem;
+		padding: 10px 10px;
+		border-radius: 6px;
+		background: #3f3f3f;
 		
 		}
 		.art_card-albums.loading .row-header{
-			background: url(../i/spinner_dark_small.gif) no-repeat 100% 0;
+			background: url(../i/spinner.svg) no-repeat 100% 0;
+			background-size: 1.143rem;
 			}
 	.art_card-albums.show-all-albums{
 		
 		}
 		.art_card-albums .albums-groups{
-			height:126px;
 			overflow:hidden;
+			height:126px;
 		}
 		.art_card-albums.show-all-albums .albums-groups{
 			height:auto;
@@ -307,11 +327,18 @@
 
 				}
 				.art_card-albums ul li a{
+					position: relative;
 					display:block;
 					border-bottom:0;
 					color:#aaaaaa;
-					position: relative;
 					}
+				.art_card-albums a.surf_nav{
+
+					}
+					.art_card-albums a.surf_nav .album-name{
+						opacity: 1;
+						font-size: 1.4em;
+						}
 				.page-scheme .art_card-albums ul li a{
 					overflow: hidden;
 					}
@@ -322,22 +349,22 @@
 							opacity: 1;
 						}
 				.art_card-albums ul li img{
-					width:126px;
 					display:block;
-					height:126px;
 					margin-right:4px;
+					width:126px;
+					height:126px;
 					background:#ccc url(http://cdn.last.fm/flatness/catalogue/noimage/2/default_album_medium.png) no-repeat 2px 2px;
 				}
 				.art_card-albums ul li .album-name{
-					
-					text-overflow: ellipsis;
-					overflow:hidden;
+					position: absolute;
+					right:0;
 					
 					bottom:0;
 					left:0;
-					right:0;
-					position: absolute;
+					overflow:hidden;
 					background: black;
+					
+					text-overflow: ellipsis;
 					opacity: 0.7;
 					
 					}
@@ -353,22 +380,23 @@
 		}
 		.art_card-bio.loading{
 			min-height:20px;
-			background: url(../i/spinner_small.gif) no-repeat 100% 0%;
+			background: url(../i/spinner.svg) no-repeat 100% 0%;
+			background-size: 1.143rem;
 			}
 	.page-scheme .art_card-bio{
 		display: none;
 		}
 	.full-page .art_card-image{
-		width:50%;
 		float:left;
+		width:50%;
 		}
 		
 		.full-page .art_card-image-padding{
 			padding-right:1.72rem;
 		}
 		.art_card-image img{
-			width:100%;
 			margin-bottom:1.72rem;
+			width:100%;
 		}
 @media (max-width:550px) {
 	.art_card-similar, .art_card-meta{
@@ -396,18 +424,18 @@
 			width: auto;
 			}
 			.page-scheme .art_card-albums .albums-groups{
-				height: auto
+				height: auto;
 				}
 			.page-scheme .art_card-albums ul li{
 				float:none;
 				overflow: hidden;
-				width: auto;
 				margin-bottom: 1rem;
+				width: auto;
 				}
 			.page-scheme .art_card-albums ul li img{
+				float:left;
 				width: 38px;
 				height: 38px;
-				float:left;
 				}
 			.page-scheme .art_card-albums ul li .album-name{
 				position: static;
