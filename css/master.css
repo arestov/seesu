@@ -226,7 +226,8 @@ html.not-as-application, .not-as-application  body{
 				font-size: inherit;
 				}
 		.selected-mf.buffering-progress .mf-progress{
-			background:url(../i/spinner.svg) no-repeat 95% 50%;
+			background:url(../i/spinner.svg) no-repeat ;
+			background-position: 95% 50%;
 			background-size: 1.143rem;
 			}
 	.moplas-block .moplas-list li.overstocked{
@@ -271,7 +272,8 @@ html.not-as-application, .not-as-application  body{
 	opacity: 1;
 	}
 .wait-love-done .add-to-lfmfav{
-	background: url(../i/spinner.svg) no-repeat 100% 0;
+	background: url(../i/spinner.svg) no-repeat;
+	background-position:  100% 0;
 	background-size: 1.714rem;
 }
 .add-to-lfmfav{
@@ -432,7 +434,8 @@ html.not-as-application, .not-as-application  body{
 		}
 .artists_list.list_loading_state{
 	padding-bottom: 2rem;
-	background: url(../i/spinner.svg) no-repeat 0.5rem 100%;
+	background: url(../i/spinner.svg) no-repeat ;
+	background-position: 0.5rem 100%;
 	background-size: 1.714rem;
 	}
 .tracks-for-play{
@@ -440,7 +443,8 @@ html.not-as-application, .not-as-application  body{
 	}
 	ul.tracks-for-play.loading{
 		padding-bottom: 30px;
-		background: url(../i/spinner.svg) no-repeat 4px 100%;
+		background: url(../i/spinner.svg) no-repeat ;
+		background-position: 4px 100%;
 		background-size: 1.714rem;
 	}
 	ul.tracks-for-play > li{
@@ -453,7 +457,8 @@ html.not-as-application, .not-as-application  body{
 	height:135px;
 	}
 	.photo-cont.loading-images{
-		background: url(../i/spinner.svg) no-repeat 100% 0;
+		background: url(../i/spinner.svg) no-repeat ;
+		background-position: 100% 0;
 		background-size: 1.714rem;
 		}
 	@media (min-height:600px) {
@@ -822,7 +827,8 @@ html.not-as-application, .not-as-application  body{
 
 .block-for-startpage.loading{
 	min-height:30px;
-	background: url(../i/spinner.svg) no-repeat 100% 4px;
+	background: url(../i/spinner.svg) no-repeat ;
+	background-position: 100% 4px;
 	background-size: 1.143rem;
 }
 .block-for-startpage h3{
@@ -873,7 +879,8 @@ html.not-as-application, .not-as-application  body{
 		font-style:normal;
 	}
 	#search #search-p label span.loading{
-		background: url(../i/spinner.svg) no-repeat 100% 50%;
+		background: url(../i/spinner.svg) no-repeat ;
+		background-position: 100% 50%;
 		background-size: 1.143rem;
 	}
 	#search #search-p label span.inpt{

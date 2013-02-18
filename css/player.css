@@ -290,7 +290,8 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	height: 16px;
 	}
 	.search-mp3 .files-load-states{
-		background:url(../i/spinner.svg) no-repeat 0 0;
+		background:url(../i/spinner.svg) no-repeat ;
+		background-position: 0 0;
 		background-size: 1.143rem;
 		}
 	
@@ -342,7 +343,8 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 
 a.track-name-loading{
-	background:url(../i/spinner.svg) no-repeat 78px 6px;
+	background:url(../i/spinner.svg) no-repeat;
+	background-position:  78px 6px;
 	background-size: 1.714rem;
 	}
 	

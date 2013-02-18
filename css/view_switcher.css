@@ -242,7 +242,8 @@
 			margin-bottom:1.72rem;
 			}
 			.top-tracks.loading,.art_card-tags.loading{
-				background: url(../i/spinner.svg) no-repeat 100% 4px;
+				background: url(../i/spinner.svg) no-repeat;
+				background-position:  100% 4px;
 				background-size: 1.143rem;
 				}
 					
@@ -272,7 +273,8 @@
 		min-width: 15rem;
 		}
 		.art_card-similar.loading{
-			background: url(../i/spinner.svg) no-repeat 100% 4px;
+			background: url(../i/spinner.svg) no-repeat ;
+			background-position: 100% 4px;
 			background-size: 1.143rem;
 			}
 		.art_card-similar ul{
@@ -296,7 +298,8 @@
 		
 		}
 		.art_card-albums.loading .row-header{
-			background: url(../i/spinner.svg) no-repeat 100% 0;
+			background: url(../i/spinner.svg) no-repeat;
+			background-position:  100% 0;
 			background-size: 1.143rem;
 			}
 	.art_card-albums.show-all-albums{
@@ -380,7 +383,8 @@
 		}
 		.art_card-bio.loading{
 			min-height:20px;
-			background: url(../i/spinner.svg) no-repeat 100% 0%;
+			background: url(../i/spinner.svg) no-repeat ;
+			background-position: 100% 0%;
 			background-size: 1.143rem;
 			}
 	.page-scheme .art_card-bio{
