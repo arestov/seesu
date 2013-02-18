@@ -157,10 +157,11 @@ provoda.Model.extendTo(appModel, {
 			var parent = change.target.getParentMapModel();
 			if (parent){
 				//mp-source
+				/*
 				var mp_source = change.target.state('mp-source');
 				if (mp_source){
 					parent.updateState('mp-highlight', mp_source);
-				}
+				}*/
 				parent.updateState('mp-has-focus', false);
 			}
 			change.target.updateState('mp-show', change.value);
@@ -209,10 +210,11 @@ provoda.Model.extendTo(appModel, {
 		*/
 		if (target_md){
 			target_md.updateState('mp-has-focus', true);
-			this.updateState('current-mp-md', target_md);
-			target_md.updateState('mp-highlight', false);
-			
 			this.updateState('show-search-form', target_md.state('needs-search-from'));
+			this.updateState('current-mp-md', target_md);
+			//target_md.updateState('mp-highlight', false);
+			
+			
 		}
 
 		

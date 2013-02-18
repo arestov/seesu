@@ -282,7 +282,6 @@ provoda.View.extendTo(appModelView, {
 			if (!oved_now_active){
 				this.removePageOverviewMark(old_md.map_level_num-1);
 			}
-			
 		}
 		if (md.map_level_num != -1 && (!old_md || old_md.map_level_num != -1)){
 			this.hideLevNum(-1);
@@ -293,6 +292,7 @@ provoda.View.extendTo(appModelView, {
 		if (oved_now_active){
 			this.removePageOverviewMark(old_md.map_level_num-1);
 		}
+		/*
 		var highlight = md.state('mp-highlight');
 		if (highlight && highlight.source_md){
 			var source_md = highlight.source_md;
@@ -304,7 +304,8 @@ provoda.View.extendTo(appModelView, {
 					//this.scrollTo(hl_view.getC());
 				}
 			}
-		}
+		}*/
+		/*
 
 		var ov_md = md.getParentMapModel();
 		var ov_highlight = ov_md && ov_md.state('mp-highlight');
@@ -318,7 +319,17 @@ provoda.View.extendTo(appModelView, {
 			}
 
 			
+		}*/
+		var parent_md = md.getParentMapModel();
+		if (parent_md){
+			var mplev_item_view = md.getRooConPresentation();
+			if (mplev_item_view){
+				this.scrollTo(mplev_item_view.getC(), {
+					node: this.getLevByNum(md.map_level_num - 1).scroll_con
+				}, {vp_limit: 0.4, animate: 117});
+			}
 		}
+
 
 		//var parent_md = md.getParentMapModel();
 		//this.getChildView()
@@ -1367,9 +1378,8 @@ provoda.View.extendTo(appModelView, {
 				this.scrollTo(nst.node, {
 					node: this.getLevByNum(parent_md.map_level_num).scroll_con
 				}, {vp_limit: 0.6, animate: 117});
-			} else {
-				this.scrollTo(nst.node, false, {vp_limit: 0.6, animate: 117});
 			}
+			this.scrollTo(nst.node, false, {vp_limit: 0.6, animate: 117});
 			//
 		}
 		
@@ -1757,7 +1767,7 @@ provoda.View.extendTo(appModelView, {
 		
 		
 			youtube_video.setAttribute('type',"application/x-shockwave-flash");
-			youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id);
+			youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id + '&autoplay=1');
 			youtube_video.setAttribute('allowfullscreen',"true");
 			youtube_video.setAttribute('class',"you-tube-video");
 			

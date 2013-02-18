@@ -172,6 +172,10 @@ Class.extendTo(provoda.Eventor, {
 		return funcs;
 	},
 	_addEventHandler: function(namespace, cb, opts, once){
+		if (this.convertEventName){
+			namespace = this.convertEventName(name);
+		}
+
 		var
 			fired,
 			_this = this,
@@ -227,6 +231,9 @@ Class.extendTo(provoda.Eventor, {
 		return this._addEventHandler(namespace, cb, opts);
 	},
 	off: function(namespace, cb, obj){
+		if (this.convertEventName){
+			namespace = this.convertEventName(name);
+		}
 		var
 			clean = [],
 			short_name = namespace.split('.')[0],
@@ -283,6 +290,10 @@ Class.extendTo(provoda.Eventor, {
 	trigger: function(){
 		var args = Array.prototype.slice.call(arguments);
 		var name = args.shift();
+		if (this.convertEventName){
+			name = this.convertEventName(name);
+		}
+
 		var cb_cs = this.getMatchedCallbacks(name).matched;
 
 		if (cb_cs){

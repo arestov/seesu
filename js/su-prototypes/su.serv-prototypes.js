@@ -129,6 +129,9 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		this.track_models = {};
 		this.unknown_methods = {};
 	},
+	convertEventName: function(event_name) {
+		return event_name.toLowerCase().replace(/^\s+|\s+$/, '');
+	},
 	getImageWrap: function(array) {
 		if (!array){
 			return;
@@ -191,6 +194,11 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		if (!info.artist || !info.track){
 			throw new Error ('give me full track info');
 		}
+		info = cloneObj({}, info);
+		
+		info.artist = this.convertEventName(info.artist);
+		info.track = this.convertEventName(info.track);
+
 		var model_id = info.artist + ' - ' + info.track;
 		if (!this.track_models[model_id]){
 
@@ -204,6 +212,8 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		if (!artist_name){
 			throw new Error('give me artist name');
 		}
+		artist_name = this.convertEventName(artist_name);
+		
 		if (!this.art_models[artist_name]){
 			var md = new ArtistImages();
 			md.init(artist_name);
