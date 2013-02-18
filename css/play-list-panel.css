@@ -135,7 +135,7 @@
 .track-buttons{
 	position:relative;
 	float:right;
-	padding-top: 0.25rem;
+	padding: 0.25rem 0;
 	height:16px;
 
 	}
@@ -196,6 +196,7 @@
 	margin-left: -2px;
 }
 .song-actions{
+	clear:both;
 	padding:0.5rem 0 0.65rem;
 	}
 	.song-actions .song-row-content{

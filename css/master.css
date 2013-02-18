@@ -130,7 +130,7 @@ html.not-as-application, .not-as-application  body{
 .moplas-block{
 	padding:0;
 	min-height:81px;
-	
+	overflow: hidden;
 	}
 	.music-files-lists{
 		min-height: 33px;
@@ -552,6 +552,7 @@ html.not-as-application, .not-as-application  body{
 	background:url(../i/img_forced_end.png) repeat-y 0 0;
 }
 .track-info-dominator{
+	clear: both;
 	margin:0 -13px;
 	padding:0;
 	min-height:170px;
