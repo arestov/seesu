@@ -1160,7 +1160,7 @@ var localize= (function(){
 
 
 
-
+/*
 
 jsLoadComplete(function() {
 	yepnope({
@@ -1171,7 +1171,7 @@ jsLoadComplete(function() {
 	});
 });
 
-
+*/
 
 
 
