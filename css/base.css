@@ -218,14 +218,14 @@ a.desc{
 	}
 	.nnav:active b{
 		background-image:url(../i/nav/button-arrow-active.png) ;
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"hover-state"}');
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"active-state"}');
 		}
 .nnav.surf_nav, .nav-button.surf_nav{
 	border-top-color: #555;
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"surf_nav-state"}');
 	}
 	.nnav.surf_nav b{
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"hover-state"}');
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"surf_nav-state"}');
 		}
 		
 
