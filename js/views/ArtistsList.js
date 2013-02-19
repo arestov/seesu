@@ -2,17 +2,31 @@ var ArtcardViewInList = function() {};
 provoda.View.extendTo(ArtcardViewInList, {
 	createBase: function() {
 		this.c = $('<li class="artist_in_list"></li>');
-		this.alink = $('<a class=""></a>').appendTo(this.c);
+		this.alink = $('<span class=""></span>').appendTo(this.c);
 		var _this = this;
-		this.alink.click(function() {
+		this.c.click(function() {
 			_this.md.showArtcard();
 			return false;
 		});
-		this.image_place = $('<span class=""></span>').appendTo(this.c);
-		this.addWayPoint(this.alink);
+		this.image_place = $('<span class="song-image-con"></span>').appendTo(this.c);
+		this.addWayPoint(this.c);
 	},
 	'stch-artist-name': function(state) {
 		this.alink.text(state);
+	},
+	'stch-selected-image': function(lfm_wrap) {
+		if (!lfm_wrap){
+			return;
+		}
+		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/64s/' + lfm_wrap.lfm_id : lfm_wrap.url;
+
+
+		if (url){
+			this.image_place.empty();
+			this.image_place.append(
+				$('<img/>').attr('src', url)
+			);
+		}
 	}
 });
 

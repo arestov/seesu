@@ -9,7 +9,7 @@ provoda.View.extendTo(PageView, {
 var ArtistsListPreviewLine = function() {};
 provoda.View.extendTo(ArtistsListPreviewLine, {
 	createBase: function() {
-		this.c = $('<li></li>');
+		this.c = $('<span></span>');
 	},
 	'stch-nav-title': function(state) {
 		this.c.text(state);
@@ -20,7 +20,7 @@ provoda.View.extendTo(ArtistsListPreviewLine, {
 var ItemOfLL = function() {};
 provoda.View.extendTo(ItemOfLL, {
 	createBase: function() {
-		this.c = $('<li></li>');
+		this.c = $('<div class="area-button"></div>');
 		var _this = this;
 		this.c.click(function() {
 			_this.md.showOnMap();
@@ -54,7 +54,7 @@ provoda.View.extendTo(ArtistsListsPreview, {
 		});
 		this.addWayPoint(this.big_button);
 		this.header = $('<span></span>').text(localize('Artists')).appendTo(this.big_button);
-		this.listc = $('<ul class="area-description"></ul>').appendTo(this.c);
+		this.listc = $('<div class="area-description desc"></div>').appendTo(this.c);
 	},
 	children_views: {
 		lists_list: ArtistsListPreviewLine

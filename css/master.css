@@ -1355,6 +1355,42 @@ body .surf_nav{
 				border-bottom-color: #ccc;
 				color:#ddd; 
 				}
+.area_for_button .area-button{
+	margin-bottom: 0.25rem;
+	}
+.area_for_button .area-description {
+	padding-left: 1rem;
+	}
+	.area_for_button .area-description span{
+		font-size: 0.8em;
+		margin-right: 0.5rem;
+		}
+.artists_list{
+	padding-top: 1rem;
+	}
+.artist_in_list {
+	overflow: hidden;
+	color: #aaa;
+	display: block;
+	background: #555;
+	padding: 0.5rem;
+	border: 1px solid #494949;
+	margin-bottom: 0.5rem;
+	border-radius: 0.54rem;
+	cursor: pointer;
+	}
+	.artist_in_list:hover{
+		background-color: #444;
+		}
 
-
-
+	.artist_in_list.surf_nav{
+		background-color: #000;
+		color:#fff;
+		}
+	.artist_in_list .song-image-con{
+		border-radius: 0.4rem;
+		margin-right: 0.5rem;
+		}
+		.artist_in_list .song-image-con img{
+			border-radius:inherit;
+			}

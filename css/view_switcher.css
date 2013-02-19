@@ -135,7 +135,11 @@
 		}
 	.page-scheme .tags-hyped a:hover{
 		background-color: #535353;
-	}
+		}
+	#slider .page-scheme .tags-hyped a.surf_nav{
+		background-color: #000;
+		}
+
 /**  New nav **/	
 
 	
