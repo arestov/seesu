@@ -1406,7 +1406,14 @@ provoda.View.extendTo(appModelView, {
 				cwp = this.checkCurrentWPoint(dems_storage);
 				
 				if (!cwp){
-					wayp_pack = this.getWPPack(roocon_view, dems_storage);
+					var cur_view = roocon_view;
+					var wayp_pack =[];
+
+					while (!wayp_pack.length && cur_view){
+						wayp_pack = this.getWPPack(cur_view, dems_storage);
+						cur_view = cur_view.parent_view;
+					}
+					
 					this.setVisState('current_wpoint', wayp_pack[0]);
 					
 				} else {
