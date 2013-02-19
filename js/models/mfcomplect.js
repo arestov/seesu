@@ -48,6 +48,8 @@ var mfComplect = function(opts, params) {
 		_this.mf_cor.playSelectedByUser(this);
 	};
 
+
+
 	var sf;
 	if (this.start_file){
 		sf = this.start_file
@@ -127,6 +129,13 @@ provoda.Model.extendTo(mfCor, {
 		};
 		*/
 
+		this.mo.on('state-change.is_important', function(e) {
+			if (e.value && e.value){
+				setTimeout(function() {
+					_this.loadVideos();
+				}, 100);
+			}
+		}, {skip_reg: true});
 		
 
 		if (file){
@@ -176,6 +185,62 @@ provoda.Model.extendTo(mfCor, {
 		});*/
 
 		
+	},
+	loadVideos: function() {
+		if (this.videos_loaded){
+			return this;
+		}
+		this.videos_loaded = true;
+		var _this = this;
+		var q = this.mo.artist + " - " + this.mo.track;
+		get_youtube(q, function(r){
+			var vs = r && r.feed && r.feed.entry;
+			if (vs && vs.length){
+				
+			
+				
+				var preview_types = ["default","start","middle","end"];
+
+				//set up filter app$control.yt$state.reasonCode != limitedSyndication
+
+				var video_arr = [];
+
+				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
+					var
+						_v = vs[i],
+						tmn = {},
+						v_id = _v['media$group']['yt$videoid']['$t'],
+						v_title = _v['media$group']['media$title']['$t'];
+					var cant_show = getTargetField(_v, "app$control.yt$state.name") == "restricted";
+					cant_show = cant_show || getTargetField($filter(getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
+
+
+					var thmn_arr = getTargetField(_v, "media$group.media$thumbnail");
+					
+					$.each(preview_types, function(i, el) {
+						tmn[el] = $filter(thmn_arr, 'yt$name', el)[0].url;
+					});
+
+					var yt_v = new YoutubeVideo();
+					yt_v.init({
+						app: _this.mo.app,
+						map_parent: _this.mo
+					}, {
+						yt_id: v_id,
+						cant_show: cant_show,
+						previews: tmn,
+						title: v_title,
+						mo: _this.mo
+					});
+					video_arr.push(yt_v);
+				}
+
+				video_arr.sort(function(a, b){
+					return sortByRules(a, b, ["cant_show"]);
+				});
+				_this.setChild('yt_videos', video_arr, true);
+			}
+		});
 	},
 	complex_states: {
 		"must-be-expandable": {

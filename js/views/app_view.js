@@ -112,6 +112,7 @@ provoda.View.extendTo(appModelView, {
 			main: artCardUI,
 			nav: baseNavUI
 		},
+
 		artslist: {
 			main: ArtistListView,
 			nav: baseNavUI
@@ -160,7 +161,14 @@ provoda.View.extendTo(appModelView, {
 		tag_songs: {
 			main: ListOfListsView,
 			nav: baseNavUI
+		},
+		youtube_video: {
+			main: YoutubeVideoView,
+			nav: baseNavUI
 		}
+	},
+	'collch-youtube_video': {
+		place: viewOnLevelP
 	},
 	'collch-tag_songs': {
 		place: viewOnLevelP
@@ -273,6 +281,9 @@ provoda.View.extendTo(appModelView, {
 				}
 			}
 		}
+	},
+	'stch-full-page-need': function(state) {
+		this.els.screens.toggleClass('full-page-need', !!state);
 	},
 	'stch-start-level': function(state) {
 		//this.els.start_screen.toggleClass('inactive-page', !state);

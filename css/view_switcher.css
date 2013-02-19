@@ -448,4 +448,13 @@
 				background: transparent;
 				}
 
-
+.full-page-need {
+	max-width: 100%;
+}
+.full-page-need .page-scheme{
+	display: none;
+	}
+.full-page-need .full-page{
+	margin-left: 0;
+	max-width: none;
+}

@@ -105,9 +105,6 @@ provoda.View.extendTo(songUI, {
 			this.c.toggleClass('player-song', !!state);
 		},
 		play: function(state, oldstate){
-			if (state == 'play'){
-				this.hideYoutubeVideo();
-			}
 			this.c.toggleClass('playing-song', !!state);
 			this.player_song_mark.toggleClass('playing-process', state == 'play');
 		},
@@ -178,7 +175,7 @@ provoda.View.extendTo(songUI, {
 	deactivate: function(opts){
 		this.c.removeClass('viewing-song');
 		
-		this.hideYoutubeVideo();
+		
 
 		for (var a in this.rowcs) {
 			this.rowcs[a].hide();
@@ -875,13 +872,6 @@ provoda.View.extendTo(songUI, {
 			});
 			
 
-		}
-		
-	},
-	
-	hideYoutubeVideo: function(){
-		if (this.mf_cor_view){
-			this.mf_cor_view.hideYoutubeVideo();
 		}
 		
 	}
