@@ -199,6 +199,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 				return chart_song;
 			};
+			var current_chart;
 			var showMetroRandom = function(){
 				var random_metro = getSomething(lastfm_metros);
 				_cmetro.addClass('loading');
@@ -226,23 +227,36 @@ provoda.View.extendTo(MusicConductorPreview, {
 										data: {country: random_metro.country, metro: random_metro.name}
 									});
 									
+
+									current_chart = plr;
+
 									var metro_tracks = r.toptracks.track;
 									var _header =  $('<h3></h3>').appendTo(_cmetro)
 										.append(localize('last-week-с') + ' ' + random_metro.name)
 										.append('<span class="desc"> (' + random_metro.country + ') </span>')
 										.append(localize('listen-this') + " ");
 
-									$('<a class="js-serv refresh-in-header"></a>').text(localize('refresh')).click(function(e){
+									var canUseWP = function() {
+										return current_chart == plr;
+									};
+
+									var refresh_b = $('<a class="js-serv refresh-in-header"></a>').text(localize('refresh')).click(function(e){
 										showMetroRandom();
 										e.preventDefault();
 									}).appendTo(_header);
+									_this.addWayPoint(refresh_b, {
+										canUse: canUseWP
+									});
 
 
-									$('<a class="js-serv show-in-header"></a>').text(localize('show')).click(function(e){
+									var show_pl_b = $('<a class="js-serv show-in-header"></a>').text(localize('show')).click(function(e){
 										plr.showOnMap();
 										e.preventDefault();
 									}).appendTo(_header);
-										
+									_this.addWayPoint(show_pl_b, {
+										canUse: canUseWP
+									});
+									
 						
 									var ulm = $('<ul class="metro-tracks"></ul>');
 									var counter = 0;
@@ -262,9 +276,11 @@ provoda.View.extendTo(MusicConductorPreview, {
 													}
 												};
 												plr.addOmo(tobj);
-												createTrackLink(_trm.artist.name, _trm.name, tobj, plr).appendTo(con);
+												var track_link = createTrackLink(_trm.artist.name, _trm.name, tobj, plr);
 												
-												
+												track_link.appendTo(con);
+												_this.addWayPoint(track_link, {canUse: canUseWP});
+
 												++counter;
 											
 											}
