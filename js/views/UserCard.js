@@ -120,7 +120,7 @@ provoda.View.extendTo(UserCardPreview, {
 				var li = ui.c = $('<li class="people-list-item"></li>');
 				var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
 				
-					$('<img/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
+				$('<img/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
 				
 				ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
 				ui.lp = $('<div class="p-link-place"></div>').appendTo(li);
@@ -131,16 +131,15 @@ provoda.View.extendTo(UserCardPreview, {
 
 			
 			var buildPeopleLE = function(man, opts){
-				var o = opts || {};
-				var el_opts = {};
+				opts = opts || {};
 				
 				var pui = createPeopleListEl(man.info.photo);
 				
 				
-				if (o.links){
+				if (opts.links){
 					pui.lp.append(_this.root_view.getAcceptedDesc(man));
 				
-				} else if (o.accept_button){
+				} else if (opts.accept_button){
 					var nb = _this.root_view.createNiceButton();
 						nb.b.text( localize('accept-inv', 'Accept invite'));
 						nb.enable();
@@ -171,10 +170,10 @@ provoda.View.extendTo(UserCardPreview, {
 				return pui.c;
 			};
 			var createPeopleList = function(people, opts){
-				var o = opts || {};
+				opts = opts || {};
 				
 				var ul = $("<ul class='people-list'></ul>");
-				if (o.wide){
+				if (opts.wide){
 					ul.addClass('people-l-wide');
 				}
 				

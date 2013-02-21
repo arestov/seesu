@@ -35,7 +35,7 @@ provoda.View.extendTo(ItemOfLL, {
 var ListOfListsView = function() {};
 PageView.extendTo(ListOfListsView, {
 	createBase: function() {
-		this.c = $('<div class="tag_artists"></div>');
+		this.c = $('<div class="lilists"></div>');
 	},
 	children_views: {
 		lists_list: ItemOfLL
@@ -43,8 +43,8 @@ PageView.extendTo(ListOfListsView, {
 	'collch-lists_list': 'c'
 });
 
-var ArtistsListsPreview = function() {};
-provoda.View.extendTo(ArtistsListsPreview, {
+var LiListsPreview = function() {};
+provoda.View.extendTo(LiListsPreview, {
 	createBase: function() {
 		this.c = $('<div class="tag_artists-preview area_for_button"></div>');
 		var _this = this;
@@ -53,8 +53,11 @@ provoda.View.extendTo(ArtistsListsPreview, {
 			_this.md.showOnMap();
 		});
 		this.addWayPoint(this.big_button);
-		this.header = $('<span></span>').text(localize('Artists')).appendTo(this.big_button);
+		this.header = $('<span></span>').appendTo(this.big_button);
 		this.listc = $('<div class="area-description desc"></div>').appendTo(this.c);
+	},
+	'stch-nav-title': function(state) {
+		this.header.text(state);
 	},
 	children_views: {
 		lists_list: ArtistsListPreviewLine
@@ -68,14 +71,19 @@ PageView.extendTo(TagPageView, {
 		this.c = $('<div class="tag_page"></div>');
 		this.header = $('<h2></h2>').appendTo(this.c);
 		this.artists_c = $('<div class="artists_lists"></div>').appendTo(this.c);
+		this.songs_c = $('<div class="songs_list"></div>').appendTo(this.c);
 	},
 	'stch-tag-name': function(state) {
 		this.header.text(state);
 	},
 	children_views: {
 		artists_lists: {
-			main: ArtistsListsPreview
+			main: LiListsPreview
+		},
+		songs_list: {
+			main: LiListsPreview
 		}
 	},
+	'collch-songs_list': 'songs_c',
 	'collch-artists_lists': 'artists_c'
 });

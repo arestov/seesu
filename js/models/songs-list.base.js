@@ -199,6 +199,9 @@ var songsList;
 
 					this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
 				}
+				if (!error && request && data_list.length < this.page_limit){
+					this.setLoaderFinish();
+				}
 			}
 			return this;
 		},

@@ -44,7 +44,18 @@ localizer = {
 		"original": "You want to meet this user",
 		"ru": "Ты хочешь познакомиться с этим пользователем"
 	},
-
+	"Free-songs": {
+		"original": "Free",
+		"ru": "Бесплатные"
+	},
+	"Explore-songs-exfm": {
+		"original": "Explorable from ex.fm",
+		"ru": "Ознакомляющие (ex.fm)"
+	},
+	"Trending-songs-exfm": {
+		"original": "Trending on ex.fm",
+		"ru": "Актуальные (ex.fm)"
+	},
 	"if-you-accept-one-i":{
 		"original": "If you accept invite from one of the users, then",
 		"ru": "Если ты примешь приглашение от одного из пользователей, то"

@@ -450,7 +450,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 					name: i,
 					obj: this.complex_states[i]
 				};
-				this.compoundComplexState(temp_comx);
+				temp_comx.value = this.compoundComplexState(temp_comx);
 				r.push(temp_comx);
 			}
 		}
@@ -461,8 +461,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		for (var i = 0; i < temp_comx.obj.depends_on.length; i++) {
 			values.push(this.state(temp_comx.obj.depends_on[i]));
 		}
-		var value = temp_comx.obj.fn.apply(this, values);
-		temp_comx.value = value;
+		return temp_comx.obj.fn.apply(this, values);
 	},
 	checkComplexStates: function(state) {
 		var co_sts = this.getTargetComplexStates(state);
