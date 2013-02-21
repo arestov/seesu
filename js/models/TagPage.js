@@ -123,6 +123,9 @@ songsList.extendTo(FreeTagSongs, {
 				if (tracks) {
 					
 					for (var i = 0; i < tracks.length; i++) {
+						if (!tracks[i].location){
+							continue;
+						}
 						var track_obj = {
 							artist: tracks[i].creator,
 							track: tracks[i].title,
