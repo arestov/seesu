@@ -5,9 +5,14 @@ provoda.View.extendTo(UserAcquaintanceView, {
 		var li = this.c;
 
 		this.userphoto_c = $('<div class="people-image"></div>').appendTo(li);
-		this.userphoto_img = $('<img/>').attr('src', 'http://vk.com/images/camera_b.gif').appendTo(img_c);
+		this.userphoto_img = $('<img/>').attr('src', 'http://vk.com/images/camera_b.gif').appendTo(this.userphoto_c);
 		this.button_place = $('<div class="button-place-people-el"></div>').appendTo(li);
 		this.link_place = $('<div class="p-link-place"></div>').appendTo(li);
+	},
+	'stch-user_photo': function(state) {
+		if (state){
+			this.userphoto_img.attr('src', state);
+		}
 	},
 	'stch-needs_accept_b': function(state) {
 		if (state){
@@ -17,7 +22,7 @@ provoda.View.extendTo(UserAcquaintanceView, {
 					nb.enable();
 				var _this = this;
 				nb.b.click(function() {
-					_this.acceptInvite();
+					_this.md.acceptInvite();
 				});
 				this.button_c = nb.c;
 				nb.c.appendTo(this.button_place);
@@ -29,13 +34,14 @@ provoda.View.extendTo(UserAcquaintanceView, {
 			}
 		}
 	},
+
 	'stch-userlink': function(state) {
 		if (state){
 			if (!this.ulink){
 				this.ulink = $('<a class="external"></a>').appendTo(this.link_place);
 			}
 			this.ulink
-				.attr('href', state.link)
+				.attr('href', state.href)
 				.text(state.text);
 		} else {
 			if (this.ulink){
@@ -56,4 +62,79 @@ provoda.View.extendTo(UserAcquaintanceView, {
 		}
 		
 	}
+});
+
+var UserAcquaintancesListView = function() {};
+PageView.extendTo(UserAcquaintancesListView, {
+	createBase: function() {
+		this._super();
+
+		var fr_so_wrap = $('<div class="relations-invites-wrap"></div>').appendTo(this.c);
+		
+		$('<h3></h3>')
+			.text(localize('rels-people-you'))
+			.appendTo(fr_so_wrap);
+
+		this.from_someone_c = $('<ul class="people-list people-l-wide"></ul>').appendTo(fr_so_wrap);
+
+		var fr_me_wrap = $('<div class="relations-likes-wrap"></div>').appendTo(this.c);
+
+		$('<h3></h3>')
+			.text(localize('rels-you-people'))
+			.appendTo(fr_me_wrap);
+
+		this.from_me_c = $('<ul class="people-list people-l-wide"></ul>').appendTo(fr_me_wrap);
+	},
+	children_views: {
+		acqs_from_someone: {
+			main: UserAcquaintanceView
+		},
+		acqs_from_me: {
+			main: UserAcquaintanceView
+		}
+	},
+	'collch-acqs_from_someone': 'from_someone_c',
+	'collch-acqs_from_me': 'from_me_c'
+});
+
+var UserAcqPreview = function() {};
+provoda.View.extendTo(UserAcqPreview, {
+	createBase: function() {
+		this.c = $("<span></span>");
+		this.userimg = $('<img/>').attr('src', 'http://vk.com/images/camera_b.gif').appendTo(this.c);
+		
+	},
+	'stch-user_photo': function(state) {
+		if (state){
+			this.userimg.attr('src', state);
+		}
+	}
+});
+var UserAcquaintancesListPreview = function() {};
+provoda.View.extendTo(UserAcquaintancesListPreview, {
+	createBase: function() {
+		this.c = $('<div class="user_acqes-preview"></div>');
+		this.sended_tome_c = $('<span></span>').appendTo(this.c);
+
+		var _this = this;
+
+		this.c.click(function() {
+			_this.md.showOnMap();
+		});
+
+		
+		this.acqs_frsmone_c = $('<span></span>').appendTo(this.c);
+		this.acqs_frme_c = $('<span></span>').appendTo(this.c);
+	},
+	children_views: {
+		acqs_from_someone: {
+			main: UserAcqPreview
+		},
+		acqs_from_me: {
+			main: UserAcqPreview
+		}
+	},
+	'collch-acqs_from_someone': 'acqs_frsmone_c',
+	'collch-acqs_from_me': 'acqs_frme_c'
+	
 });

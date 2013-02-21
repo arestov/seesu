@@ -165,7 +165,14 @@ provoda.View.extendTo(appModelView, {
 		youtube_video: {
 			main: YoutubeVideoView,
 			nav: baseNavUI
+		},
+		user_acqs_list: {
+			main: UserAcquaintancesListView,
+			nav: baseNavUI
 		}
+	},
+	'collch-user_acqs_list': {
+		place: viewOnLevelP
 	},
 	'collch-youtube_video': {
 		place: viewOnLevelP

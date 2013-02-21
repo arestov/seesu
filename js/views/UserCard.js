@@ -90,6 +90,8 @@ var UserCardPreview = function() {};
 provoda.View.extendTo(UserCardPreview, {
 	createBase: function() {
 		this.c = this.root_view.els.pestf_preview;
+		this.aqc_preview_c = this.c.find('.aqc_preview');
+
 		//this.c.text('Персональная музыка');
 		var _this = this;
 
@@ -105,6 +107,12 @@ provoda.View.extendTo(UserCardPreview, {
 			this.requirePart('start-page-blocks');
 		}
 	},
+	children_views: {
+		users_acqutes : {
+			main: UserAcquaintancesListPreview
+		}
+	},
+	'collch-users_acqutes': 'aqc_preview_c',
 	parts_builder: {
 		'start-page-blocks': function() {
 			var _this = this;
@@ -184,8 +192,10 @@ provoda.View.extendTo(UserCardPreview, {
 				}
 				return ul;
 			};
-			var rl_place = this.root_view.els.start_screen.find('.relations-likes-wrap');
-			var ri_place = this.root_view.els.start_screen.find('.relations-invites-wrap');
+			return true;
+			var rl_place = this.root_view.els.start_screen.find('.relations-likes-wrap').removeClass('hidden');
+			var ri_place = this.root_view.els.start_screen.find('.relations-invites-wrap').removeClass('hidden');
+			
 			
 
 			su.s.susd.rl.regCallback('start-page', function(r){

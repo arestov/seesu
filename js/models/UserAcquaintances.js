@@ -10,6 +10,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 		this.updateState('remainded_date', params.remainded_date);
 		this.accepted = params.accepted;
 		this.updateState('user-info', params.info);
+		this.updateState('user_photo', params.user_photo);
 
 		this.current_user_is_sender = params.current_user_is_sender;
 
@@ -48,10 +49,18 @@ provoda.Model.extendTo(UserAcquaintance, {
 				}
 				
 			}
+		},
+		needs_accept_b: {
+			depends_on: ['accepted', 'current_user_is_sender'],
+			fn: function(accepted, current_user_is_sender) {
+				if (!accepted && !current_user_is_sender){
+					return true;
+				}
+			}
 		}
 	},
 	/*
-	return localize('if-one-accept-i') + ' ' + localize('will-get-link');
+	return ;
 } else {
 	return localize('if-you-accept-one-i') + ' ' + localize('will-get-link');
 	*/
@@ -62,7 +71,8 @@ provoda.Model.extendTo(UserAcquaintance, {
 				su.trackEvent('people likes', 'accepted', false, 5);
 				_this.updateState('remainded_date', r.done.est);
 				if (new Date(r.done.est) < new Date()){
-					checkRelationsInvites();
+					su.s.susd.ri.getData();
+					//checkRelationsInvites();
 				}
 			}
 		});
@@ -71,6 +81,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 
 var UserAcquaintancesLists = function() {};
 mapLevelModel.extendTo(UserAcquaintancesLists, {
+	model_name: 'user_acqs_list',
 	init: function(opts) {
 		this._super(opts);
 		var _this = this;
@@ -88,8 +99,28 @@ mapLevelModel.extendTo(UserAcquaintancesLists, {
 			}
 		});
 
-		
+		this.archivateChildrenStates('acqs_from_someone', 'accepted', 'every', 'not_wait_me');
+		this.archivateChildrenStates('acqs_from_me', 'accepted', 'every', 'not_wait_someone');
 
+		this.updateState('nav-title', localize('Acquaintances'));
+		this.updateState('url-part', '/acquaintances');
+	},
+	'compx-wait_me_desc': {
+		depends_on: ['not_wait_me'],
+		fn: function(not_wait_me) {
+			if (!not_wait_me){
+				return localize('if-you-accept-one-i') + ' ' + localize('will-get-link');
+			}
+		}
+	},
+	'compx-wait_someone_desc': {
+		depends_on: ['not_wait_someone'],
+		fn: function(not_wait_someone) {
+			if (!not_wait_someone){
+				return localize('if-one-accept-i') + ' ' + localize('will-get-link');
+			}
+
+		}
 	},
 	bindDataSteams: function() {
 		if (this.data_st_binded){
@@ -97,11 +128,11 @@ mapLevelModel.extendTo(UserAcquaintancesLists, {
 		}
 		this.data_st_binded = true;
 		var _this = this;
-		su.s.susd.rl.regCallback('start-page', function(r){
-			_this.replaceChildrenArray('relations-likes', r.done);		
+		su.s.susd.rl.regCallback('user_acqes', function(r){
+			_this.replaceChildrenArray('acqs_from_me', r.done);
 		});
-		su.s.susd.ri.regCallback('start-page', function(r){
-			_this.replaceChildrenArray('relations-invites', r.done);
+		su.s.susd.ri.regCallback('user_acqes', function(r){
+			_this.replaceChildrenArray('acqs_from_someone', r.done);
 		});
 	},
 	replaceChildrenArray: function(array_name, new_array) {
@@ -139,6 +170,9 @@ mapLevelModel.extendTo(UserAcquaintancesLists, {
 		this.setChild(array_name, concated, true);
 	},
 	removeChildren: function(array_name) {
-
+		var array = this.getChild(array_name) || [];
+		for (var i = 0; i < array.length; i++) {
+			array[i].die();
+		}
 	}
 });

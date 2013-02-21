@@ -1,9 +1,3 @@
-var PageView = function() {};
-provoda.View.extendTo(PageView, {
-	'stch-mp-show': function(state) {
-		this.c.toggleClass('hidden', !state);
-	}
-});
 
 
 var ArtistsListPreviewLine = function() {};
@@ -35,7 +29,7 @@ provoda.View.extendTo(ItemOfLL, {
 var ListOfListsView = function() {};
 PageView.extendTo(ListOfListsView, {
 	createBase: function() {
-		this.c = $('<div class="lilists"></div>');
+		this.c = $('<div class="usual_page lilists"></div>');
 	},
 	children_views: {
 		lists_list: ItemOfLL
@@ -68,7 +62,7 @@ provoda.View.extendTo(LiListsPreview, {
 var TagPageView = function() {};
 PageView.extendTo(TagPageView, {
 	createBase: function() {
-		this.c = $('<div class="tag_page"></div>');
+		this.c = $('<div class="tag_page usual_page"></div>');
 		this.header = $('<h2></h2>').appendTo(this.c);
 		this.artists_c = $('<div class="artists_lists"></div>').appendTo(this.c);
 		this.songs_c = $('<div class="songs_list"></div>').appendTo(this.c);
