@@ -389,6 +389,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.states = {};
 		this.complex_states_index = {};
 		this.complex_states_watchers = [];
+		this.states_changing_stack = [];
 
 		this.onRegistration('state-change', function(cb, namespace, opts, name_parts) {
 			var state_name = name_parts[1];
@@ -400,6 +401,21 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	state: function(name){
 		return this.states[name];
+	},
+	compressStatesChanges: function(changes_list) {
+		var result_changes = {};
+		var result_changes_list = [];
+
+		for (var i = 0; i < changes_list.length; i++) {
+			var cur = changes_list[i];
+			if (!result_changes[cur.name]){
+				var obj = {name: cur.name};
+				result_changes[cur.name] = obj;
+				result_changes_list.push(obj);
+			}
+			result_changes[cur.name].value = cur.value;
+		}
+		return result_changes_list;
 	},
 	_replaceState: function(name, value, skip_handler) {
 		if (name){
@@ -418,6 +434,10 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 					
 				}
 			}
+			//
+			value = value || false;
+			//less calculations? (since false and "" and null and undefinded now os equeal and do not triggering changes)
+			//
 			
 			if (old_value != value){
 				
@@ -431,22 +451,166 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
-	getTargetComplexStates: function(state) {
-		var r = [];
-		var states = toRealArray(state);
-		//.indexOf(state) != -1
-		for (var i in this.complex_states){
-			var cur = this.complex_states[i];
-			if (!states.length || states.length != arrayExclude(states, cur.depends_on).length ){
-				var temp_comx = {
-					name: i,
-					obj: this.complex_states[i]
-				};
-				temp_comx.value = this.compoundComplexState(temp_comx);
-				r.push(temp_comx);
+	_updateProxy: function(changes_list, opts) {
+		var i, cur;
+		if (this.undetailed_states){
+			for (i = 0; i < changes_list.length; i++) {
+				cur = changes_list[i];
+				this.undetailed_states[cur.name] = cur.value;
+				
+			}
+			return this;
+		}
+		this.states_changing_stack.push({
+			list: changes_list,
+			opts: opts
+		});
+
+		if (this.collecting_states_changing){
+			return this;
+		}
+		this.collecting_states_changing = true;
+
+		var total_all_states_ch = [];
+
+		//пораждать события изменившихся состояний (в передлах одного стэка/вызова)
+		//для пользователя пока пользователь не перестанет изменять новые состояния
+		while (this.states_changing_stack.length){
+			var all_i_cg = [];
+			var original_states = cloneObj({}, this.states);
+			var cur_changes = this.states_changing_stack.shift();
+
+			//получить изменения для состояний, которые изменил пользователь через публичный метод
+			var changed_states = this.getChanges(cur_changes.list, cur_changes.opts);
+
+			var all_ch_compxs = [];
+			//проверить комплексные состояния
+			var first_compxs_chs = this.getComplexChanges(changed_states);
+			if (first_compxs_chs.length){
+				all_ch_compxs = all_ch_compxs.concat(first_compxs_chs);
+			}
+			
+			var current_compx_chs = first_compxs_chs;
+			
+			//довести изменения комплексных состояний до самого конца
+			while (current_compx_chs.length){
+				var cascade_part = this.getComplexChanges(current_compx_chs);
+				current_compx_chs = cascade_part;
+				if (cascade_part.length){
+					all_ch_compxs = all_ch_compxs.concat(cascade_part);
+				}
+				
+			}
+
+			//собираем все группы изменений
+			all_i_cg = all_i_cg.concat(changed_states, all_ch_compxs);
+
+			//устраняем измененное дважды и более
+			var result_changes_list = this.compressStatesChanges(all_i_cg);
+
+			
+
+
+			var called_watchers = [];
+			for (i = 0; i < result_changes_list.length; i++) {
+				cur = result_changes_list[i];
+
+
+				//вызов стандартного события
+				this.trigger('state-change.' + cur.name, {
+					type: cur.name,
+					value: cur.value,
+					old_value: original_states[cur.name]
+				});
+
+				//вызов комплексного наблюдателя
+				var watchers = this.complex_states_index[cur.name];
+				if (watchers){
+					for (var jj = 0; jj < watchers.length; jj++) {
+						var watcher = watchers[jj];
+						if (called_watchers.indexOf(watcher) == -1){
+							this.callCSWatcher(watcher);
+							called_watchers.push(watcher);
+						}
+					}
+				}
+			}
+			total_all_states_ch = total_all_states_ch.concat(result_changes_list);
+		}
+		//устраняем измененное дважды и более
+		var total_result_changes = this.compressStatesChanges(total_all_states_ch);
+
+		if (this.sendStatesToViews){
+			this.sendStatesToViews(total_result_changes);
+		}
+
+
+		this.collecting_states_changing = false;
+		return this;
+	},
+	getComplexChanges: function(changes_list) {
+		return this.getChanges(this.checkComplexStates(changes_list));
+	},
+	getChanges: function(changes_list, opts) {
+		var changed_states = [];
+		for (var i = 0; i < changes_list.length; i++) {
+			var cur = changes_list[i];
+			
+			var old_value = this._replaceState(cur.name, cur.value, opts && opts.skip_handler);
+			if (old_value){
+				changed_states.push({
+					name: cur.name,
+					old_value: old_value[0],
+					value: cur.value
+				});
 			}
 		}
-		return r;
+		return changed_states;
+	},
+	checkComplexStates: function(changed_states) {
+		var list = $filter(changed_states, 'name');
+		var co_sts = this.getTargetComplexStates(list);
+		return co_sts;
+	},
+	getTargetComplexStates: function(state) {
+		var states = toRealArray(state);
+		if (!state){
+			throw new Error('something wrong');
+		}
+
+		var compx_check = {};
+		var full_comlxs_list = [];
+		var result_array = [];
+		var comlx_name;
+
+		for (comlx_name in this){
+			if (comlx_name.indexOf('compx-') === 0){
+				var name = comlx_name.replace('compx-', '');
+				compx_check[name] = true;
+				full_comlxs_list.push({
+					name: name,
+					obj: this[comlx_name]
+				});
+			}
+		}
+		for (comlx_name in this.complex_states){
+			if (!compx_check[comlx_name]){
+				full_comlxs_list.push({
+					name: comlx_name,
+					obj: this.complex_states[comlx_name]
+				});
+			}
+		}
+
+		for (var i = 0; i < full_comlxs_list.length; i++) {
+			var cur = full_comlxs_list[i];
+			if (states.length != arrayExclude(states, cur.obj.depends_on).length ){
+				cur.value = this.compoundComplexState(cur);
+				result_array.push(cur);
+			}
+		}
+
+		return result_array;
 	},
 	compoundComplexState: function(temp_comx) {
 		var values = [];
@@ -454,13 +618,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			values.push(this.state(temp_comx.obj.depends_on[i]));
 		}
 		return temp_comx.obj.fn.apply(this, values);
-	},
-	checkComplexStates: function(state) {
-		var co_sts = this.getTargetComplexStates(state);
-		for (var i = 0; i < co_sts.length; i++) {
-			this._updateProxy(co_sts[i].name, co_sts[i].value);
-		}
-
 	},
 	iterateCSWatchers: function(state_name) {
 		if (this.complex_states_index[state_name]){
@@ -694,26 +851,6 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			this.views[i].collectionChange(collection_name, array);
 		}
 	},
-	sendStateToView: function(view, state_name, value) {
-		view.change(state_name, value);
-	},
-	_updateProxy: function(name, value){
-		value = value || false;
-		var old_value = this._replaceState(name, value);
-		if (old_value){
-			this.removeDeadViews();
-			for (var i = 0; i < this.views.length; i++) {
-				this.sendStateToView(this.views[i], name, value);
-				
-			}
-			this.trigger('state-change.' + name, {type: name, value: value, old_value: old_value[0]});
-		
-			this.checkComplexStates(name);
-			this.iterateCSWatchers(name);
-		
-		}
-		return this;
-	},
 	hasComplexStateFn: function(state_name) {
 		if (this.complex_states && this.complex_states[name]){
 			return true;
@@ -722,11 +859,23 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			return true;
 		}
 	},
+	sendStatesToView: function(view, states_list) {
+		view.recieveStatesChanges(states_list);
+	},
+	sendStatesToViews: function(states_list) {
+		for (var i = 0; i < this.views.length; i++) {
+			this.sendStatesToView(this.views[i], states_list);
+			
+		}
+	},
 	updateState: function(name, value){
 		if (this.hasComplexStateFn(name)){
 			throw new Error("you can't change complex state in this way");
 		}
-		return this._updateProxy(name, value);
+		return this._updateProxy([{
+			name: name,
+			value: value
+		}]);
 	}
 });
 
@@ -1119,21 +1268,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 
 		var states_list = [];
-		for (var name in states){
-			this._updateProxy(name, states[name], false, true);
-			states_list.push(name);
-		}
-		
-		this.checkComplexStates(states_list);
 
-		for (var i = 0; i < this.complex_states_watchers.length; i++) {
-			var watcher = this.complex_states_watchers[i];
-			if (this.checkCSWatcher(watcher)){
-				this.callCSWatcher(watcher);
-			}
-			
+		for (var name in states){
+			states_list.push({
+				name: name,
+				value: states[name]
+			});
 		}
+
+		this._updateProxy(states_list);
 		this._states_set_processing = false;
+
+		
 		return this;
 	},
 	
@@ -1199,39 +1345,26 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return has_all_dependings;
 	},
-	_updateProxy: function(name, value, opts, disallow_complex_watchers) {
-		value = value || false;
-
-		if (this.undetailed_states){
-			this.undetailed_states[name] = value;
-			return this;
-		}
-
-		var old_value = this._replaceState(name, value, opts && opts.skip_handler);
-		if (old_value){
-			this.trigger('state-change.' + name, {type: name, value: value, old_value: old_value[0]});
-			if (!disallow_complex_watchers){
-				this.checkComplexStates(name);
-				this.iterateCSWatchers(name);
-			}
-		
-		}
-		return this;
-	},
-	recieveStatesChanges: function() {
-
-	},
-	change: function(name, value){
-		this._updateProxy(name, value);
+	recieveStatesChanges: function(changes_list) {
+		this._updateProxy(changes_list);
 	},
 	overrideStateSilently: function(name, value) {
-		this._updateProxy(name, value, {skip_handler: true});
+		this._updateProxy([{
+			name: name,
+			value: value
+		}], {skip_handler: true});
 	},
 	promiseStateUpdate: function(name, value) {
-		this._updateProxy(name, value);
+		this._updateProxy([{
+			name: name,
+			value: value
+		}]);
 	},
 	setVisState: function(name, value) {
-		this._updateProxy('vis-' + name, value);
+		this._updateProxy([{
+			name: 'vis-' + name,
+			value: value
+		}]);
 	},
 	setMdChildren: function(collections) {
 		this._collections_set_processing = true;

@@ -80,7 +80,7 @@ provoda.addPrototype("baseSong",{
 				if (ntt){
 					return true;
 				}
-				
+				return false;
 			}
 		}
 	},
