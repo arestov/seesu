@@ -8,6 +8,7 @@ var ExfmApi = function(queue, crossdomain, cache_ajax) {
 ExfmApi.prototype = {
 	constructor: ExfmApi,
 	cache_namespace: "exfm_api",
+	thisOriginAllowed: true,
 	get: function(method, params, options) {
 		var
 			_this				= this,
@@ -79,7 +80,7 @@ ExfmApi.prototype = {
 								}
 								
 							},
-							thisOriginAllowed: true
+							thisOriginAllowed: _this.thisOriginAllowed
 						}).done(success).fail(function(xhr){
 							deferred.reject.apply(deferred, arguments);
 						});

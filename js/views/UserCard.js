@@ -43,6 +43,7 @@ provoda.View.extendTo(UserCardView, {
 		this.c = $('<div class="usual_page"></div>');
 		this.items_c = $("<div></div>").appendTo(this.c);
 		this.plts_link_a = $(document.createComment('')).appendTo(this.c);
+		this.aqc_preview_c = $('<div class="aqc_preview"></div>').appendTo(this.c);
 	},
 	'stch-mp-show': function(state) {
 		this.c.toggleClass('hidden', !state);
@@ -68,7 +69,7 @@ provoda.View.extendTo(UserCardView, {
 	'collch-arts_recomms': 'items_c',
 	'collch-lfm_loved': 'items_c',
 	'collch-vk_audio': 'items_c',
-
+	'collch-users_acqutes': 'aqc_preview_c',
 	children_views: {
 		arts_recomms: {
 			main: PlaylistPreview
@@ -78,6 +79,9 @@ provoda.View.extendTo(UserCardView, {
 		},
 		lfm_loved: {
 			main: PlaylistPreview
+		},
+		users_acqutes : {
+			main: UserAcquaintancesListPreview
 		}
 	}
 });

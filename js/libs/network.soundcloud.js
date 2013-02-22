@@ -7,6 +7,7 @@ var scApi = function(key, queue, crossdomain, cache_ajax) {
 scApi.prototype = {
 	constructor: scApi,
 	cache_namespace: "soundcloud_api",
+	thisOriginAllowed: true,
 	get: function(method, params, options) {
 		var
 			_this				= this,
@@ -51,7 +52,7 @@ scApi.prototype = {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout)
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout);
 					}
 				};
 
@@ -78,7 +79,7 @@ scApi.prototype = {
 								}
 								
 							},
-							thisOriginAllowed: true
+							thisOriginAllowed: _this.thisOriginAllowed
 						})
 						.fail(function(xhr){
 							deferred.reject.apply(deferred, arguments);

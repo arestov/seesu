@@ -868,6 +868,17 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			
 		}
 	},
+	updateManyStates: function(obj) {
+		var changes_list = [];
+		for (var i in obj) {
+			changes_list.push({
+				name: i,
+				value: obj[i]
+			});
+			
+		}
+		this._updateProxy(changes_list);
+	},
 	updateState: function(name, value){
 		if (this.hasComplexStateFn(name)){
 			throw new Error("you can't change complex state in this way");

@@ -58,6 +58,7 @@ lastfm_api.prototype= {
 	},
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
 	cache_namespace: "lastfm",
+	thisOriginAllowed: true,
 	get: function(method, data, options){
 		return this.send(method, data, options);
 	},
@@ -133,7 +134,7 @@ lastfm_api.prototype= {
 								dataType: _this.crossdomain ? 'json' : 'jsonp',
 								data: params,
 								resourceCachingAvailable: true,
-								thisOriginAllowed: true
+								thisOriginAllowed: _this.thisOriginAllowed
 							})
 							.fail(function(r){
 								deferred.reject.apply(deferred, arguments);
