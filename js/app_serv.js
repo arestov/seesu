@@ -1395,7 +1395,25 @@ jsLoadComplete(function() {
 			.replace('url(\"data:text/plain;utf8,svg-hack,', '')
 			.replace('}\"\)','}');
 */
-		var structure = JSON.parse(bgIString);
+		var structure;
+		var errors = [];
+		try {
+			structure = JSON.parse(bgIString);
+		} catch (e){
+			errors.push(e);
+		}
+		if (!structure){
+			try {
+				structure = JSON.parse(bgIString.replace(/\\([\s\S])/gi, '$1'));
+			} catch (e) {
+				errors.push(e);
+			}
+		}
+		if (!structure){
+			console.log(errors);
+			return;
+		}
+		 
 		//console.log(structure);
 
 		$.ajax({
