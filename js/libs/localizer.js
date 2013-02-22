@@ -8,6 +8,18 @@
 */
 
 localizer = {
+	"Blogged-all-hypem": {
+		"original": "Blogged, all and sundry (hypem.com)",
+		"ru": "Из блогов, все подряд (hypem.com)"
+	},
+	"Blogged-25-hypem": {
+		"original": "Blogged, 25-250 Favorites (hypem.com)",
+		"ru": "Из блогов, у 25-250 в избранном (hypem.com)"
+	},
+	"Blogged-250-hypem": {
+		"original": "Blogged, 250+ Favorites (hypem.com)",
+		"ru": "Из блогов, у 250+ в избранном (hypem.com)"
+	},
 	"Acquaintances": {
 		"original": "Acquaintances",
 		"ru": "Знакомства"

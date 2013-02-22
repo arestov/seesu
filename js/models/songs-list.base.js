@@ -6,10 +6,10 @@ var songsList;
 		model_name: "playlist",
 		complex_states: {
 			'more_load_available': {
-				depends_on: ["has-loader", "loading"],
-				fn: function(can_load_more, loading) {
+				depends_on: ["has-loader", "loading", "loader_disallowed"],
+				fn: function(can_load_more, loading, loader_disallowed) {
 					if (can_load_more){
-						return !loading;
+						return !loader_disallowed && !loading;
 					} else {
 
 					}
