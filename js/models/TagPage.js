@@ -1,3 +1,18 @@
+var AllHypeTagSongs = function() {};
+songsList.extendTo(AllHypeTagSongs, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.tag_name = params.tag_name;
+
+		this.updateState('nav-title', localize('Explore-songs-exfm'));
+		this.updateState('url-part', '/blogged');
+	},
+	sendMoreDataRequest: function(paging_opts) {
+		var _this = this;
+		var request_info = {};
+	}
+});
+
 var ExplorableTagSongs = function() {};
 songsList.extendTo(ExplorableTagSongs, {
 	init: function(opts, params) {
