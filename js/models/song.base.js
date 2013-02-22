@@ -7,7 +7,7 @@ provoda.addPrototype("baseSong",{
 	init: function(opts, params){
 
 		this._super(opts);
-		this.updateState('no-track-title', false);
+		
 		this.plst_titl = opts.plst_titl;
 		this.mp3_search = opts.mp3_search;
 		this.player = opts.player;
@@ -15,16 +15,23 @@ provoda.addPrototype("baseSong",{
 		this.uid = ++counter;
 		cloneObj(this, opts.omo, false, ['artist', 'track']);
 		this.omo = opts.omo;
+
+		var states = {
+			'no-track-title': false
+		};
 		if (opts.omo.artist){
-			this.updateState('artist', opts.omo.artist);
+			states['artist'] = opts.omo.artist;
 		}
 		if (opts.omo.track){
-			this.updateState('track', opts.omo.track);
+			states['track']= opts.omo.track;
 		}
+		states['url-part', this.getURL()];
+		this.updateManyStates(states);
+
+
 		this.on('request', function(rq) {
 			this.plst_titl.checkRequestsPriority();
 		});
-		this.updateState('url-part', this.getURL());
 	},
 	complex_states: {
 		'song-title': {
@@ -80,7 +87,7 @@ provoda.addPrototype("baseSong",{
 				if (ntt){
 					return true;
 				}
-				
+				return false;
 			}
 		}
 	},
@@ -363,6 +370,7 @@ provoda.addPrototype("baseSong",{
 						var tracks_list = toRealArray(getTargetField(r, 'rss.channel.item'));
 						var tracks_list_clean = [];
 						var files_list = [];
+						
 						for (var i = 0; i < tracks_list.length; i++) {
 							var cur = tracks_list[i];
 							var link = decodeURI(cur.link);
@@ -372,13 +380,7 @@ provoda.addPrototype("baseSong",{
 								artist: _this.artist,
 								track: track_name
 							});
-							files_list.push({
-								link: link,
-								artist: _this.artist,
-								track: track_name,
-								from:'lastfm',
-								media_type: 'mp3'
-							});
+							files_list.push(_this.app.createLFMFile(_this.artist, track_name, link));
 
 						}
 						_this.mp3_search.pushSomeResults(files_list);

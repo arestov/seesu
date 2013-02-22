@@ -418,6 +418,16 @@ mapLevelModel.extendTo(UserCard, {
 				}).call(_this);
 			}
 		});
+
+		var users_acqutes = new UserAcquaintancesLists();
+		users_acqutes.init({
+			app: this.app,
+			map_parent: this
+		});
+
+		this.setChild('users_acqutes', users_acqutes);
+		
+
 		this.updateState('url-part', '/users/' + (this.for_current_user ? 'me' : params.username));
 
 		this.updateState('nav-title', 'Персональная музыка, друзья и знакомства');

@@ -1,3 +1,12 @@
+var PageView = function() {};
+provoda.View.extendTo(PageView, {
+	'stch-mp-show': function(state) {
+		this.c.toggleClass('hidden', !state);
+	},
+	createBase: function() {
+		this.c = $('<div class="usual_page"></div>');
+	}
+});
 
 
 var contextRow = function(container){

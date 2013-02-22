@@ -135,7 +135,11 @@
 		}
 	.page-scheme .tags-hyped a:hover{
 		background-color: #535353;
-	}
+		}
+	#slider .page-scheme .tags-hyped a.surf_nav{
+		background-color: #000;
+		}
+
 /**  New nav **/	
 
 	
@@ -162,11 +166,9 @@
 }	
 
 .nav-start .icon{
-	background-image:url(../i/nav/seesu-nav-logo.png);
+	background-image:url(../i/seesu_logo.svg);
 	}
-	.nav-start:active .icon{
-		background-image:url(../i/nav/seesu-nav-logo-active.png);
-		}
+	
 .nav-search-results{
 	padding:4px 1rem 4px 9px;
 	width:15px;
@@ -242,7 +244,8 @@
 			margin-bottom:1.72rem;
 			}
 			.top-tracks.loading,.art_card-tags.loading{
-				background: url(../i/spinner.svg) no-repeat 100% 4px;
+				background: url(../i/spinner.svg) no-repeat;
+				background-position:  100% 4px;
 				background-size: 1.143rem;
 				}
 					
@@ -272,7 +275,8 @@
 		min-width: 15rem;
 		}
 		.art_card-similar.loading{
-			background: url(../i/spinner.svg) no-repeat 100% 4px;
+			background: url(../i/spinner.svg) no-repeat ;
+			background-position: 100% 4px;
 			background-size: 1.143rem;
 			}
 		.art_card-similar ul{
@@ -296,7 +300,8 @@
 		
 		}
 		.art_card-albums.loading .row-header{
-			background: url(../i/spinner.svg) no-repeat 100% 0;
+			background: url(../i/spinner.svg) no-repeat;
+			background-position:  100% 0;
 			background-size: 1.143rem;
 			}
 	.art_card-albums.show-all-albums{
@@ -380,7 +385,8 @@
 		}
 		.art_card-bio.loading{
 			min-height:20px;
-			background: url(../i/spinner.svg) no-repeat 100% 0%;
+			background: url(../i/spinner.svg) no-repeat ;
+			background-position: 100% 0%;
 			background-size: 1.143rem;
 			}
 	.page-scheme .art_card-bio{
@@ -442,4 +448,13 @@
 				background: transparent;
 				}
 
-
+.full-page-need {
+	max-width: 100%;
+}
+.full-page-need .page-scheme{
+	display: none;
+	}
+.full-page-need .full-page{
+	margin-left: 0;
+	max-width: none;
+}

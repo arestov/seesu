@@ -189,6 +189,7 @@ var songsList;
 		},
 		putRequestedData: function(request, data_list, error) {
 			if (!this.request_info || this.request_info.request == request){
+				console.profile('put');
 				this.requestComplete(request, error);
 
 				if (!error && data_list && data_list.length){
@@ -199,6 +200,10 @@ var songsList;
 
 					this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
 				}
+				if (!error && request && data_list.length < this.page_limit){
+					this.setLoaderFinish();
+				}
+				console.profileEnd();
 			}
 			return this;
 		},

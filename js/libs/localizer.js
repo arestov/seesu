@@ -8,6 +8,10 @@
 */
 
 localizer = {
+	"Acquaintances": {
+		"original": "Acquaintances",
+		"ru": "Знакомства"
+	},
 	"vk_photo_meet_need": {
 		"original": "If you want to meet this man you need to upload photo to your vk.com profile and press \"%button_name%\" button",
 		"ru":  "Что бы познакомиться, необходимо загрузить фотографию в свой профиль во вконтакте, после чего нажать кнопку \"%button_name%\""
@@ -44,7 +48,18 @@ localizer = {
 		"original": "You want to meet this user",
 		"ru": "Ты хочешь познакомиться с этим пользователем"
 	},
-
+	"Free-songs": {
+		"original": "Free",
+		"ru": "Бесплатные"
+	},
+	"Explore-songs-exfm": {
+		"original": "Explorable from ex.fm",
+		"ru": "Ознакомляющие (ex.fm)"
+	},
+	"Trending-songs-exfm": {
+		"original": "Trending on ex.fm",
+		"ru": "Актуальные (ex.fm)"
+	},
 	"if-you-accept-one-i":{
 		"original": "If you accept invite from one of the users, then",
 		"ru": "Если ты примешь приглашение от одного из пользователей, то"

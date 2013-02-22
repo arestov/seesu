@@ -29,11 +29,17 @@ provoda.View.extendTo(appModelView, {
 			
 		}
 		this.lev_containers = {};
-		/*
+		
 		this.on('state-change.current-mp-md', function(e) {
-			_this.setVisState('current_wpoint', false);
+			var cwp = this.state('vis-current_wpoint');
+			if (cwp){
+				if (cwp.canUse && !cwp.canUse()){
+					_this.setVisState('current_wpoint', false);
+				}
+			}
+			
 		}, {skip_reg: true});
-		*/
+		
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);
@@ -106,6 +112,7 @@ provoda.View.extendTo(appModelView, {
 			main: artCardUI,
 			nav: baseNavUI
 		},
+
 		artslist: {
 			main: ArtistListView,
 			nav: baseNavUI
@@ -154,7 +161,21 @@ provoda.View.extendTo(appModelView, {
 		tag_songs: {
 			main: ListOfListsView,
 			nav: baseNavUI
+		},
+		youtube_video: {
+			main: YoutubeVideoView,
+			nav: baseNavUI
+		},
+		user_acqs_list: {
+			main: UserAcquaintancesListView,
+			nav: baseNavUI
 		}
+	},
+	'collch-user_acqs_list': {
+		place: viewOnLevelP
+	},
+	'collch-youtube_video': {
+		place: viewOnLevelP
 	},
 	'collch-tag_songs': {
 		place: viewOnLevelP
@@ -268,6 +289,9 @@ provoda.View.extendTo(appModelView, {
 			}
 		}
 	},
+	'stch-full-page-need': function(state) {
+		this.els.screens.toggleClass('full-page-need', !!state);
+	},
 	'stch-start-level': function(state) {
 		//this.els.start_screen.toggleClass('inactive-page', !state);
 	},
@@ -367,6 +391,9 @@ provoda.View.extendTo(appModelView, {
 			//array[i]
 		};*/
 	},
+	'stch-root-lev-search-form': function(state) {
+		this.els.search_form.toggleClass('root-lev-search-form', !!state);
+	},
 	'stch-show-search-form': function(state) {
 		this.els.search_form.toggleClass('hidden', !state);
 	},
@@ -413,7 +440,7 @@ provoda.View.extendTo(appModelView, {
 			if (!this.now_playing_link && this.nav){
 				this.now_playing_link = $('<a class="nav-item np-button"><span class="np"></span></a>').click(function(){
 					md.showNowPlaying();
-				}).appendTo(this.nav.justhead);
+				}).appendTo(this.nav.daddy);
 
 				this.addWayPoint(this.now_playing_link, {
 					canUse: function() {
@@ -610,14 +637,29 @@ provoda.View.extendTo(appModelView, {
 			
 			var shared_parts_c = screens_block.children('.shared-parts');
 
+			var scrolling_viewport;
+			if (app_env.as_application){
+				scrolling_viewport = {
+					node: screens_block
+				};
+			} else {
+				if (app_env.lg_smarttv_app){
+					scrolling_viewport = {
+						node: $(slider)
+					};
+				} else {
+					scrolling_viewport = {
+						node: $(d.body),
+						offset: true
+					};
+				}
+				
+				/*
+				*/
+			}
 			_this.els = {
 				screens: screens_block,
-				scrolling_viewport: app_env.as_application ? {
-					node: screens_block
-				} : {
-					node: $(d.body),
-					offset: true
-				},
+				scrolling_viewport: scrolling_viewport,
 				slider: slider,
 				navs: $(slider).children('.navs'),
 				start_screen: start_screen,
@@ -778,7 +820,7 @@ provoda.View.extendTo(appModelView, {
 				daddy: justhead.children('.daddy')
 			};
 
-			justhead.children('.daddy').empty().removeClass('not-inited');
+			_this.nav.daddy.empty().removeClass('not-inited');
 			
 
 			$(d).on('click', '.external', function(e) {
@@ -1361,8 +1403,21 @@ provoda.View.extendTo(appModelView, {
 			//delete this.current_wpoint;
 			this.setVisState('current_wpoint', false);
 		}
+
 		return this.state('vis-current_wpoint');
 
+	},
+	scrollToWP: function(cwp) {
+		if (cwp){
+			var cur_md_md = this.state('current-mp-md');
+			var parent_md = cur_md_md.getParentMapModel();
+			if (parent_md && cwp.view.getAncestorByRooViCon('main') == parent_md.getRooConPresentation()){
+				this.scrollTo(cwp.node, {
+					node: this.getLevByNum(parent_md.map_level_num).scroll_con
+				}, {vp_limit: 0.6, animate: 117});
+			}
+			this.scrollTo(cwp.node, false, {vp_limit: 0.6, animate: 117});
+		}
 	},
 	'stch-vis-current_wpoint': function(nst, ost) {
 		if (ost){
@@ -1371,21 +1426,16 @@ provoda.View.extendTo(appModelView, {
 		if (nst) {
 			nst.node.addClass('surf_nav');
 			//if (nst.view.getRooConPresentation() ==)
-			 
-			var cur_md_md = this.state('current-mp-md');
-			var parent_md = cur_md_md.getParentMapModel();
-			if (parent_md && nst.view.getAncestorByRooViCon('main') == parent_md.getRooConPresentation()){
-				this.scrollTo(nst.node, {
-					node: this.getLevByNum(parent_md.map_level_num).scroll_con
-				}, {vp_limit: 0.6, animate: 117});
-			}
-			this.scrollTo(nst.node, false, {vp_limit: 0.6, animate: 117});
+			
+			this.scrollToWP(nst);
+			
 			//
 		}
 		
 	},
 	wayPointsNav: function(nav_type) {
-		
+		var _this = this;
+
 		var cur_mp_md = this.state('current-mp-md');
 		var roocon_view =  cur_mp_md && cur_mp_md.getRooConPresentation(true);
 		if (roocon_view){
@@ -1398,7 +1448,10 @@ provoda.View.extendTo(appModelView, {
 					var _this = this;
 
 					this.cwp_check = setTimeout(function() {
-						_this.checkCurrentWPoint(dems_storage);
+						var still_in_use = _this.checkCurrentWPoint(dems_storage);
+						if (still_in_use){
+							_this.scrollToWP(still_in_use);
+						}
 					},100);
 				}
 				
@@ -1406,7 +1459,14 @@ provoda.View.extendTo(appModelView, {
 				cwp = this.checkCurrentWPoint(dems_storage);
 				
 				if (!cwp){
-					wayp_pack = this.getWPPack(roocon_view, dems_storage);
+					var cur_view = roocon_view;
+					var wayp_pack =[];
+
+					while (!wayp_pack.length && cur_view){
+						wayp_pack = this.getWPPack(cur_view, dems_storage);
+						cur_view = cur_view.parent_view;
+					}
+					
 					this.setVisState('current_wpoint', wayp_pack[0]);
 					
 				} else {
@@ -1651,7 +1711,7 @@ provoda.View.extendTo(appModelView, {
 					c.append(photoupreq_c);
 
 					this.on('state-change.vk-info.song-listener', function(e) {
-						if (e.value.photo_big){
+						if (e.value && e.value.photo_big){
 							photoupreq_c.before(this.createLikeButton(lig).c);
 
 							photoupreq_c.remove();

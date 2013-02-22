@@ -158,7 +158,7 @@ a.desc{
 	border-right:1px solid #751679;
 	border-bottom:1px solid #580A5C;
 	background:url(../i/nav/button-gradient.png) repeat-x 100% 0;
-	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu.svg","viewBox": "85 1 1 28"}');
+	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect"}');
 	
 	text-shadow:0 1px 0 #000;
 	cursor:pointer;
@@ -181,10 +181,10 @@ a.desc{
 		z-index:2;
 		display:inline;
 		width:17px;
-		height:30px;
+		height:28px;
 		
 		background:url(../i/nav/button-arrow.png) no-repeat 0 0;
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu.svg","viewBox": "0 1 17 28"}');
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg"}');
 		}
 
 .nnav:after, .nav-button:after{
@@ -203,29 +203,29 @@ a.desc{
 
 .nnav:hover,.nav-button:hover{
 	background-image:url(../i/nav/button-gradient-hover.png);
-	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu.svg","viewBox": "85 1 1 28", "state":"hover-state"}');
+	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"hover-state"}');
 	color:#fff;
 	}
 	.nnav:hover b{
 		background-image:url(../i/nav/button-arrow-hover.png) ;
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu.svg","viewBox": "0 1 17 28", "state":"hover-state"}');
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"hover-state"}');
 		}
 .nnav:active, .nav-button:active{
 	background-image:url(../i/nav/button-gradient-active.png);
-	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu.svg","viewBox": "85 1 1 28", "state":"active-state"}');
+	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"active-state"}');
 	text-shadow:none;
 	
 	}
 	.nnav:active b{
 		background-image:url(../i/nav/button-arrow-active.png) ;
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu.svg","viewBox": "0 1 17 28", "state":"active-state"}');
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"active-state"}');
 		}
 .nnav.surf_nav, .nav-button.surf_nav{
 	border-top-color: #555;
-	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu.svg","viewBox": "85 1 1 28", "state":"surf_nav-state"}');
+	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"surf_nav-state"}');
 	}
 	.nnav.surf_nav b{
-		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu.svg","viewBox": "0 1 17 28", "state":"surf_nav-state"}');
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"surf_nav-state"}');
 		}
 		
 

@@ -26,14 +26,16 @@ var song;
 					.done(function(r){
 
 						var ai = parseArtistInfo(r);
+						_this.updateManyStates({
+							listeners: getTargetField(r, 'artist.stats.listeners'),
+							playcount: getTargetField(r, 'artist.stats.playcount'),
+							bio: ai.bio,
+							tags: ai.tags,
+							similars: ai.similars,
+							'artist-image': ai.images && ai.images[2] || lfm_image_artist
+						});
 
-
-						_this.updateState('listeners', getTargetField(r, 'artist.stats.listeners'));
-						_this.updateState('playcount', getTargetField(r, 'artist.stats.playcount'));
-						_this.updateState('bio', ai.bio);
-						_this.updateState('tags', ai.tags);
-						_this.updateState('similars', ai.similars);
-						_this.updateState('artist-image', ai.images && ai.images[2] || lfm_image_artist);
+						
 
 
 					});

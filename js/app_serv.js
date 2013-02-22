@@ -752,7 +752,7 @@ window.app_env = (function(wd){
 	env.url = get_url_parameters(wd.location.search, true);
 	
 	env.cross_domain_allowed = !wd.location.protocol.match(/(http\:)|(file\:)/);
-	
+	env.xhr2 = !!xhr2_support;
 	
 	if (typeof widget == 'object' && !widget.fake_widget){
 		if (bro.browser == 'opera'){
@@ -1160,7 +1160,7 @@ var localize= (function(){
 
 
 
-
+/*
 
 jsLoadComplete(function() {
 	yepnope({
@@ -1171,7 +1171,7 @@ jsLoadComplete(function() {
 	});
 });
 
-
+*/
 
 
 

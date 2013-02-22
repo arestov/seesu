@@ -217,6 +217,7 @@ appModel.extendTo(seesuApp, {
 
 
 		this.s  = new seesuServerAPI(suStore('dg_auth'), this.server_url);
+		this.updateState('su-server-api', true);
 
 		this.s.on('info-change.vk', function(data) {
 			_this.updateState('vk-info', data);
@@ -579,6 +580,17 @@ appModel.extendTo(seesuApp, {
 		}
 		return vkapi;
 	},
+	createLFMFile: function(artist, track_name, link) {
+		return {
+			link: link,
+			artist: artist,
+			track: track_name,
+			from:'lastfm',
+			media_type: 'mp3',
+			getSongFileModel: getSongFileModel,
+			models: {}
+		};
+	},
 	checkUpdates: function(){
 		var _this = this;
 
@@ -614,7 +626,7 @@ appModel.extendTo(seesuApp, {
 });
 
 window.seesu = window.su = new seesuApp();
-su.init(3.8);
+su.init(3.9);
 
 
 
@@ -632,6 +644,8 @@ su.init(3.8);
 
 
 	var exfm_api = new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax);
+	su.exfm = exfm_api;
+
 	su.mp3_search.add(new ExfmMusicSearch({
 		api: exfm_api,
 		mp3_search: su.mp3_search

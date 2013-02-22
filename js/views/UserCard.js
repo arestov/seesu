@@ -43,6 +43,7 @@ provoda.View.extendTo(UserCardView, {
 		this.c = $('<div class="usual_page"></div>');
 		this.items_c = $("<div></div>").appendTo(this.c);
 		this.plts_link_a = $(document.createComment('')).appendTo(this.c);
+		this.aqc_preview_c = $('<div class="aqc_preview"></div>').appendTo(this.c);
 	},
 	'stch-mp-show': function(state) {
 		this.c.toggleClass('hidden', !state);
@@ -68,7 +69,7 @@ provoda.View.extendTo(UserCardView, {
 	'collch-arts_recomms': 'items_c',
 	'collch-lfm_loved': 'items_c',
 	'collch-vk_audio': 'items_c',
-
+	'collch-users_acqutes': 'aqc_preview_c',
 	children_views: {
 		arts_recomms: {
 			main: PlaylistPreview
@@ -78,6 +79,9 @@ provoda.View.extendTo(UserCardView, {
 		},
 		lfm_loved: {
 			main: PlaylistPreview
+		},
+		users_acqutes : {
+			main: UserAcquaintancesListPreview
 		}
 	}
 });
@@ -90,6 +94,8 @@ var UserCardPreview = function() {};
 provoda.View.extendTo(UserCardPreview, {
 	createBase: function() {
 		this.c = this.root_view.els.pestf_preview;
+		this.aqc_preview_c = this.c.find('.aqc_preview');
+
 		//this.c.text('Персональная музыка');
 		var _this = this;
 
@@ -105,6 +111,12 @@ provoda.View.extendTo(UserCardPreview, {
 			this.requirePart('start-page-blocks');
 		}
 	},
+	children_views: {
+		users_acqutes : {
+			main: UserAcquaintancesListPreview
+		}
+	},
+	'collch-users_acqutes': 'aqc_preview_c',
 	parts_builder: {
 		'start-page-blocks': function() {
 			var _this = this;
@@ -120,7 +132,7 @@ provoda.View.extendTo(UserCardPreview, {
 				var li = ui.c = $('<li class="people-list-item"></li>');
 				var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
 				
-					$('<img/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
+				$('<img/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
 				
 				ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
 				ui.lp = $('<div class="p-link-place"></div>').appendTo(li);
@@ -131,16 +143,15 @@ provoda.View.extendTo(UserCardPreview, {
 
 			
 			var buildPeopleLE = function(man, opts){
-				var o = opts || {};
-				var el_opts = {};
+				opts = opts || {};
 				
 				var pui = createPeopleListEl(man.info.photo);
 				
 				
-				if (o.links){
+				if (opts.links){
 					pui.lp.append(_this.root_view.getAcceptedDesc(man));
 				
-				} else if (o.accept_button){
+				} else if (opts.accept_button){
 					var nb = _this.root_view.createNiceButton();
 						nb.b.text( localize('accept-inv', 'Accept invite'));
 						nb.enable();
@@ -171,10 +182,10 @@ provoda.View.extendTo(UserCardPreview, {
 				return pui.c;
 			};
 			var createPeopleList = function(people, opts){
-				var o = opts || {};
+				opts = opts || {};
 				
 				var ul = $("<ul class='people-list'></ul>");
-				if (o.wide){
+				if (opts.wide){
 					ul.addClass('people-l-wide');
 				}
 				
@@ -185,8 +196,10 @@ provoda.View.extendTo(UserCardPreview, {
 				}
 				return ul;
 			};
-			var rl_place = this.root_view.els.start_screen.find('.relations-likes-wrap');
-			var ri_place = this.root_view.els.start_screen.find('.relations-invites-wrap');
+			return true;
+			var rl_place = this.root_view.els.start_screen.find('.relations-likes-wrap').removeClass('hidden');
+			var ri_place = this.root_view.els.start_screen.find('.relations-invites-wrap').removeClass('hidden');
+			
 			
 
 			su.s.susd.rl.regCallback('start-page', function(r){

@@ -210,7 +210,9 @@ provoda.Model.extendTo(appModel, {
 		*/
 		if (target_md){
 			target_md.updateState('mp-has-focus', true);
+
 			this.updateState('show-search-form', target_md.state('needs-search-from'));
+			this.updateState('full-page-need', !!target_md.full_page_need);
 			this.updateState('current-mp-md', target_md);
 			//target_md.updateState('mp-highlight', false);
 			
