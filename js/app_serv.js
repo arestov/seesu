@@ -1384,7 +1384,11 @@ jsLoadComplete(function() {
 		var bgIString = rule.style.backgroundImage;
 		bgIString = bgIString
 			.replace('url(\'data:text/plain;utf8,svg-hack,', '')
-			.replace('\'\)','');
+			.replace('}\'\)','}')
+			.replace('url(data:text/plain;utf8,svg-hack,', '')
+			.replace('}\)','}')
+			.replace('url(\"data:text/plain;utf8,svg-hack,', '')
+			.replace('}\"\)','}');
 
 		var structure = JSON.parse(bgIString);
 		//console.log(structure);

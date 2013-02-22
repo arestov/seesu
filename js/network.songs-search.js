@@ -305,7 +305,7 @@ googleTorrentSearch.prototype = {
 			item.isohunt_id = isohunt_id[1];
 			item.torrent_link = 'http://isohunt.com/download/' + item.isohunt_id;
 			item.query = query;
-			item.media_type = 'mp3';
+			item.media_type = 'torrent';
 			item.title = item.titleNoFormatting = HTMLDecode(item.titleNoFormatting);
 			item.models = {};
 			item.getSongFileModel = function(mo, player) {
