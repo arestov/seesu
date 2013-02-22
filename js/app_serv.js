@@ -1383,13 +1383,18 @@ jsLoadComplete(function() {
 
 		var bgIString = rule.style.backgroundImage;
 		bgIString = bgIString
-			.replace('url(\'data:text/plain;utf8,svg-hack,', '')
+			.replace(/^url\(\s*[\"\']?/, '')
+			.replace('data:text/plain;utf8,svg-hack,', '')
+			.replace(/[\"\']?\s*\)$/, '');
+
+		/*
+			.replace('url(\'', '')
 			.replace('}\'\)','}')
 			.replace('url(data:text/plain;utf8,svg-hack,', '')
 			.replace('}\)','}')
 			.replace('url(\"data:text/plain;utf8,svg-hack,', '')
 			.replace('}\"\)','}');
-
+*/
 		var structure = JSON.parse(bgIString);
 		//console.log(structure);
 
