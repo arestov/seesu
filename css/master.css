@@ -1355,16 +1355,7 @@ body .surf_nav{
 				border-bottom-color: #ccc;
 				color:#ddd; 
 				}
-.area_for_button .area-button{
-	margin-bottom: 0.25rem;
-	}
-.area_for_button .area-description {
-	padding-left: 1rem;
-	}
-	.area_for_button .area-description span{
-		font-size: 0.8em;
-		margin-right: 0.5rem;
-		}
+
 .artists_list{
 	padding-top: 1rem;
 	}

@@ -4,21 +4,9 @@ var songsList;
 	
 	provoda.addPrototype("songsListBase", {
 		model_name: "playlist",
-		complex_states: {
-			'more_load_available': {
-				depends_on: ["has-loader", "loading", "loader_disallowed"],
-				fn: function(can_load_more, loading, loader_disallowed) {
-					if (can_load_more){
-						return !loader_disallowed && !loading;
-					} else {
-
-					}
-				}
-			}
-		},
 		init: function(opts){
-			this[this.main_list_name] = [];
 			this._super(opts);
+			
 			var _this = this;
 			this.on('request', function() {
 				_this.checkRequestsPriority();
@@ -29,9 +17,7 @@ var songsList;
 			if (opts.pmd){
 				this.pmd = opts.pmd;
 			}
-			if (this.sendMoreDataRequest){
-				this.updateState('has-loader', true);
-			}
+		
 			this.on('child-change.' + this.main_list_name, function(e) {
 				if (!e.no_changing_mark){
 					this.onChanges(e.last_usable_song);
@@ -43,13 +29,19 @@ var songsList;
 				}
 			});
 			this.watchChildrenStates(this.main_list_name, 'can-use-as-neighbour', function(e) {
-				_this.checkNeighboursStatesCh(e.item);
+				setTimeout(function() {
+					_this.checkNeighboursStatesCh(e.item);
+				}, 1000/60);
+				
 			});
 			this.watchChildrenStates(this.main_list_name, 'is_important', function(e) {
-				if (e.item.isImportant()){
-					_this.checkNeighboursChanges(e.item);
-				}
-				_this.checkRequestsPriority();
+				setTimeout(function() {
+					if (e.item.isImportant()){
+						_this.checkNeighboursChanges(e.item);
+					}
+					_this.checkRequestsPriority();
+				}, 1000/60);
+				
 			});
 		},
 		getMainList: function() {
@@ -117,27 +109,6 @@ var songsList;
 				last_usable_song: this.getLastUsableSong()
 			};
 		},
-		page_limit: 30,
-		getPagingInfo: function() {
-			var length = this.getLength();
-			if (length && this.first_song && !this.firstsong_inseting_done){
-				--length;
-			}
-			var has_pages = Math.floor(length/this.page_limit);
-			var remainder = length % this.page_limit;
-			var next_page = has_pages + 1;
-
-			return {
-				current_length: length,
-				has_pages: has_pages,
-				page_limit: this.page_limit,
-				remainder: remainder,
-				next_page: next_page
-			};
-		},
-		preloadStart: function() {
-			this.loadPlStart();
-		},
 		getLength: function() {
 			var length = this[this.main_list_name].length;
 			if (this.first_song && !this.firstsong_inseting_done){
@@ -145,81 +116,8 @@ var songsList;
 			}
 			return length;
 		},
-		loadPlStart: function() {
-			if (this.state('more_load_available') && !this.getLength()){
-				this.requestMoreData();
-			}
-		},
 		addItemToDatalist: function(obj, silent) {
 			this.addOmo(obj, silent);
-		},
-
-		setLoader: function(cb, trigger) {
-			this.updateState("has-loader", true);
-			this.sendMoreDataRequest = cb;
-
-			if (trigger){
-				this.requestMoreData();
-			}
-
-		},
-		requestMoreData: function(force) {
-			if (this.state("has-loader") && this.sendMoreDataRequest){
-				if (!this.song_request_info || this.song_request_info.done){
-					this.markLoading();
-					this.song_request_info = this.sendMoreDataRequest.call(this, this.getPagingInfo());
-					if (!this.song_request_info.request){
-						throw new Error('give me request');
-					} else {
-						this.addRequest(this.song_request_info.request);
-					}
-				}
-				
-				
-				//this.trigger("load-more");
-			}
-			
-		},
-		setLoaderFinish: function() {
-			this.updateState("has-loader", false);
-		},
-		markLoading: function(){
-			this.updateState('loading', true);
-			return this;
-		},
-		putRequestedData: function(request, data_list, error) {
-			if (!this.request_info || this.request_info.request == request){
-				console.profile('put');
-				this.requestComplete(request, error);
-
-				if (!error && data_list && data_list.length){
-					var mlc_opts = this.getMainListChangeOpts();
-					for (var i = 0; i < data_list.length; i++) {
-						this.addItemToDatalist(data_list[i], true);
-					}
-
-					this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
-				}
-				if (!error && request && data_list.length < this.page_limit){
-					this.setLoaderFinish();
-				}
-				console.profileEnd();
-			}
-			return this;
-		},
-		requestComplete: function(request, error) {
-			if (!this.request_info || this.request_info.request == request){
-				var main_list = this[this.main_list_name];
-
-				this.updateState('loading', false);
-				if (error && !main_list.length) {
-					this.updateState('error', true);
-				} else {
-					this.updateState('error', false);
-				}
-				delete this.request_info;
-			}
-			return this;
 		},
 		onChanges: function(last_usable_song){
 			if (last_usable_song && last_usable_song.isImportant()){

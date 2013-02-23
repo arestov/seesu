@@ -1435,9 +1435,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				collch.call(this, name, array, old_value);
 			} else {
 				var not_request, collchs;
+				var collchs_limit;
 				if (typeof collch == 'object'){
 					not_request = collch.not_request;
 					collchs = collch.spaces;
+					collchs_limit = collch.limit;
 				}
 
 				collchs = collchs || toRealArray(collch);
@@ -1447,7 +1449,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					declarations.push(this.parseCollectionChangeDeclaration(collchs[i]));
 				}
 				var real_array = toRealArray(array);
-				for (var bb = 0; bb < real_array.length; bb++) {
+				var array_limit;
+				if (collchs_limit){
+					array_limit = collchs_limit;
+				} else {
+					array_limit = real_array.length;
+				}
+
+				for (var bb = 0; bb < array_limit; bb++) {
 					var cur = real_array[bb];
 					for (var jj = 0; jj < declarations.length; jj++) {
 						var declr = declarations[jj];

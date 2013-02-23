@@ -331,7 +331,13 @@ mapLevelModel.extendTo(SongsLists, {
 		lists_list.push(new Fav25HypemTagSongs());
 		lists_list.push(new Fav250HypemTagSongs());
 
-
+		this.on('state-change.mp-show', function(e) {
+			if (e.value && e.value.userwant){
+				for (var i = 0; i < lists_list.length; i++) {
+					lists_list[i].preloadStart();
+				}
+			}
+		});
 
 		for (var i = 0; i < lists_list.length; i++) {
 			lists_list[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
@@ -462,16 +468,22 @@ mapLevelModel.extendTo(ArtistsLists, {
 
 		var lists_list = [];
 
-		var top_artists = new TagTopArtists();
-		var week_artists = new WeekTagArtists();
 
-		lists_list.push(top_artists);
-		lists_list.push(week_artists);
+		lists_list.push(new TagTopArtists());
+		lists_list.push(new WeekTagArtists());
 
 
 		for (var i = 0; i < lists_list.length; i++) {
 			lists_list[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
 		}
+		
+		this.on('state-change.mp-show', function(e) {
+			if (e.value && e.value.userwant){
+				for (var i = 0; i < lists_list.length; i++) {
+					lists_list[i].preloadStart();
+				}
+			}
+		});
 
 		this.setChild('lists_list', lists_list);
 

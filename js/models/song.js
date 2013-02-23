@@ -9,15 +9,6 @@ var song;
 
 	baseSong.extendTo(song, {
 		page_name: 'song page',
-		'stch-lfm-image': function(state) {
-			if (state){
-				if (state.lfm_id){
-					this.updateState('song-image', "http://userserve-ak.last.fm/serve/64s/" + state.lfm_id);
-				} else if (state.url){
-					this.updateState('song-image', state.url);
-				}
-			}
-		},
 		'stch-can-expand': function(state) {
 			if (state && !this.expanded){
 				this.expanded = true;

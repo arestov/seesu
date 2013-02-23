@@ -1,6 +1,6 @@
 provoda.addPrototype("songsListBaseView", {
 	state_change: {
-		loading: function(loading){
+		'list-loading': function(loading){
 			if (loading){
 				this.lc.addClass('loading');
 			} else {

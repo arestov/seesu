@@ -34,6 +34,12 @@ provoda.addPrototype("baseSong",{
 		});
 	},
 	complex_states: {
+		'selected-image': {
+			depends_on: ['lfm-image'],
+			fn: function(lfm_i) {
+				return lfm_i;
+			}
+		},
 		'song-title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track){

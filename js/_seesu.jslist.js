@@ -42,9 +42,9 @@ var jsLoadComplete,
 	"js/lastfm.data.js",
 	"js/su-prototypes/su.serv-prototypes.js",
 
-	"js/views/navigation.js",
+	
 
-
+	"js/models/LoadableList.js",
 	"js/models/artcard.js",
 	"js/models/songs-list.base.js",
 	"js/models/songs-list.js",
@@ -81,6 +81,7 @@ var jsLoadComplete,
 
 	"js/libs/c_buttmen.js",
 	
+	"js/views/navigation.js",
 	"js/views/etc.views.js",
 	"js/views/ArtistsList.js",
 	"js/views/UserAcquaintances.js",
