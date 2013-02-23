@@ -233,14 +233,16 @@ LoadableList.extendTo(ArtistsList, {
 		this.createRPlist();
 		this.ran_playlist.showOnMap();
 	},
-	
-	addArtist: function(obj, silent) {
-		var main_list = this[this.main_list_name];
+	makeArtist: function(obj) {
 		var artcard = new ArtistInArtl();
 		artcard.init({
 			app: this.app
 		}, obj);
-		main_list.push(artcard);
+		return artcard;
+	},
+	addArtist: function(obj, silent) {
+		var main_list = this[this.main_list_name];
+		main_list.push(this.makeArtist(obj));
 
 		if (!silent){
 			this.setChild(this.main_list_name, main_list, true);
@@ -294,7 +296,7 @@ ArtistsList.extendTo(SimilarArtists, {
 				if (!r.error){
 					_this.setLoaderFinish();
 				}
-				 //"artist.getSimilar" does not support paging
+				//"artist.getSimilar" does not support paging
 				
 			})
 			.fail(function() {
@@ -304,6 +306,17 @@ ArtistsList.extendTo(SimilarArtists, {
 				request_info.done = true;
 			});
 		return request_info;
+	},
+	setPreviewList: function(raw_array) {
+		var preview_list = this.getChild(this.preview_mlist_name);
+		if (!preview_list || !preview_list.length){
+			preview_list = [];
+			for (var i = 0; i < raw_array.length; i++) {
+				preview_list.push(this.makeArtist(raw_array[i]));
+				
+			}
+			this.setChild(this.preview_mlist_name, preview_list, true);
+		}
 	}
 });
 

@@ -63,6 +63,16 @@ provoda.View.extendTo(artCardUI, {
 	die: function() {
 		this._super();
 	},
+	children_views: {
+		top_songs: {
+			main: ItemOfLL
+		},
+		similar_artists: {
+			main: ItemOfLL
+		}
+	},
+	'collch-similar_artists': 'ui.similarsc',
+	'collch-top_songs': 'ui.topc',
 	state_change: {
 		"mp-show": function(opts) {
 			this.c.toggleClass('hidden', !opts);
@@ -74,15 +84,8 @@ provoda.View.extendTo(artCardUI, {
 				this.ui.albumsc.removeClass('loading');
 			}
 		},
-		"loading-toptracks": function(state) {
-			if (state){
-				this.ui.topc.addClass('loading');
-			} else {
-				this.ui.topc.removeClass('loading');
-			}
-		},
 		"loading-baseinfo": function(state) {
-			var mark_loading_nodes = this.ui.tagsc.add(this.ui.bioc).add(this.ui.similarsc);
+			var mark_loading_nodes = this.ui.tagsc.add(this.ui.bioc);
 
 			if (state){
 				mark_loading_nodes.addClass('loading');
@@ -112,23 +115,6 @@ provoda.View.extendTo(artCardUI, {
 			this.addWayPoint(all_albs_link, {
 				simple_check: true
 			});
-		},
-		toptracks: function(list) {
-			var _this = this;
-			var ul = this.ui.topc.children('ul');
-			$.each(list, function(i, el){
-				if (i < 5){
-					if (el.track){
-						var a = $('<a class="js-serv"></a>').click(function(){
-							_this.md.showTopTacks(el.track);
-						}).text(el.track);
-						$('<li></li>').append(a).appendTo(ul);
-						_this.addWayPoint(a);
-					}
-				}
-				
-			});
-			ul.removeClass('hidden');
 		},
 		'selected-image': function(lfm_wrap) {
 			if (!lfm_wrap){
@@ -162,25 +148,17 @@ provoda.View.extendTo(artCardUI, {
 			ul.removeClass('hidden');
 		},
 		bio: function(text) {
+
 			if (text){
-				this.ui.bioc.html(text.replace(/\n+/gi, '<br/><br/>'));
+				var safe_node = document.createElement('div');
+				safe_node.innerHTML = text.replace(/([^\n])\n+/gi, '$1<br/><br/>');
+
+				$(safe_node).find('script').remove();
+
+				this.ui.bioc.empty().append(safe_node);
+			//	this.ui.bioc.html(text.replace(/[^^]\n+/gi, '<br/><br/>'));
 				this.root_view.bindLfmTextClicks(this.ui.bioc);
 			}
-		},
-		similars: function(artists) {
-			var _this = this;
-			var ul = this.ui.similarsc.children('ul');
-			$.each(artists, function(i, el){
-				var li = $('<li></li>');
-				var a = $('<a class="js-serv"></a>').click(function(){
-					su.showArtcardPage(el.name);
-				}).text(el.name).appendTo(li);
-				_this.addWayPoint(a);
-				li.appendTo(ul);
-				ul.append(document.createTextNode(' '));
-				
-			});
-			ul.removeClass('hidden');
 		}
 
 	},
@@ -195,20 +173,8 @@ provoda.View.extendTo(artCardUI, {
 			similarsc: this.c.find('.art_card-similar'),
 			bioc: this.c.find('.art_card-bio')
 		};
-		this.top_tracks_link = $('<a class="js-serv extends-header"></a>')
-			.text(localize('full-list'))
-			.appendTo(this.ui.topc.children('.row-header'))
-			.click(function(){
-				_this.md.showTopTacks();
-			});
-		this.addWayPoint(this.top_tracks_link);
 
-		this.similars_link = $('<a class="js-serv extends-header"></a>')
-			.click(function(){
-				_this.md.showSimilarArtists();
-			})
-			.text(localize('full-list'));
-		this.addWayPoint(this.similars_link);
-		this.ui.similarsc.children('h5').append(this.similars_link);
+
+		
 	}
 });

@@ -9,7 +9,13 @@ provoda.View.extendTo(ListPreviewLine, {
 		this.text_c = $('<span class="desc_item-text"></span>').appendTo(this.c);
 
 	},
-	'stch-nav-title': function(state) {
+	'compx-selected-title': {
+		depends_on: ['nav-title', 'nav-short-title'],
+		fn: function(title, short_title) {
+			return short_title || title;
+		}
+	},
+	'stch-selected-title': function(state) {
 		this.text_c.text(state);
 	}
 });
@@ -62,14 +68,9 @@ ListPreview.extendTo(ItemOfLL, {
 		this.listc.toggleClass('list-loading', !!state);
 	},
 	children_views: {
-		artists_list: ArtistsListPreviewLine,
-		'songs-list': ArtistsListPreviewLine
+		preview_list: ArtistsListPreviewLine
 	},
-	'collch-songs-list': {
-		place: 'listc',
-		limit: 9
-	},
-	'collch-artists_list': {
+	'collch-preview_list': {
 		place: 'listc',
 		limit: 9
 	}

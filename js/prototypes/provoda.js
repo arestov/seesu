@@ -1451,7 +1451,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				var real_array = toRealArray(array);
 				var array_limit;
 				if (collchs_limit){
-					array_limit = collchs_limit;
+					array_limit = Math.min(collchs_limit, real_array.length);
 				} else {
 					array_limit = real_array.length;
 				}

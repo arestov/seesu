@@ -46,6 +46,12 @@ provoda.addPrototype("baseSong",{
 				return this.getFullName(artist, track);
 			}
 		},
+		'nav-short-title': {
+			depends_on: ['artist', 'track'],
+			fn: function(artist, track) {
+				return this.getFullName(artist, track, true);
+			}
+		},
 		'full-title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track){

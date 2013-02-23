@@ -83,11 +83,12 @@ var jsLoadComplete,
 	
 	"js/views/navigation.js",
 	"js/views/etc.views.js",
+	"js/views/TagPage.js",
 	"js/views/ArtistsList.js",
 	"js/views/UserAcquaintances.js",
 	"js/views/UserCard.js",
 	"js/views/MusicConductor.js",
-	"js/views/TagPage.js",
+	
 	"js/views/YoutubeVideo.js",
 	"js/views/su-mfcomplect.js",
 	"js/views/search-investigation.base.js",

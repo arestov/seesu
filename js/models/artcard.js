@@ -1,6 +1,17 @@
 
+var ArtCard;
 
-var ArtCard = function(artist) {};
+(function(){
+"use strict";
+/*
+var TopArtistSongs = function() {};
+songsList.extendTo(TopArtistSongs, {
+	init: function() {
+
+	}
+});*/
+
+ArtCard = function() {};
 mapLevelModel.extendTo(ArtCard, {
 	model_name: 'artcard',
 	page_name: "art card",
@@ -20,6 +31,8 @@ mapLevelModel.extendTo(ArtCard, {
 		this.app = opts.app;
 		this.albums_models = {};
 		this.artist = params.artist;
+		this.getTopTracks();
+		this.getSimilarArtists();
 		this.updateState('nav-title', this.artist);
 		this.updateState('artist-name', this.artist);
 
@@ -73,8 +86,8 @@ mapLevelModel.extendTo(ArtCard, {
 		} else {
 			this.info_loaded = true;
 		}
+		this.top_songs.preloadStart();
 
-		this.loadTopTracks();
 		this.loadAlbums();
 		this.loadBaseInfo();
 		
@@ -106,35 +119,7 @@ mapLevelModel.extendTo(ArtCard, {
 			}
 		);
 	},
-	loadTopTracks: function(){
-		
-		var _this = this;
-		this.updateState('loading-toptracks', true);
-		this.addRequest(
-			lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
-				.done(function(r){
-					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 
-					if (tracks.length){
-						var track_list = [];
-					
-						for (var i=0, l = Math.min(tracks.length, 30); i < l; i++) {
-							track_list.push({'artist' : this.artist ,'track': tracks[i].name, images: tracks[i].image});
-						}
-
-						_this.updateState('toptracks', track_list);
-					}
-					
-				})
-				.always(function(){
-					_this.updateState('loading-toptracks', false);
-				}),
-			{
-				order: 3
-			}
-		);
-		
-	},
 	loadBaseInfo: function(){
 		var _this = this;
 
@@ -144,16 +129,29 @@ mapLevelModel.extendTo(ArtCard, {
 				_this.updateState('loading-baseinfo', false);
 				_this.updateState('profile-image', _this.app.art_images.getImageWrap(getTargetField(r, 'artist.image')));
 
-				r = parseArtistInfo(r);
+				var psai = parseArtistInfo(r);
 	
-				if (r.tags){
-					_this.updateState('tags', r.tags);
+				if (psai.tags){
+					_this.updateState('tags', psai.tags);
 				}
-				if (r.bio){
-					_this.updateState('bio', r.bio);
+				if (psai.bio){
+					_this.updateState('bio', psai.bio);
 				}
-				if (r.similars){
-					_this.updateState('similars', r.similars);
+
+				
+				if (psai.similars){
+					var data_list = [];
+					for (var i = 0; i < psai.similars.length; i++) {
+						var cur = psai.similars[i];
+						data_list.push({
+							artist: cur.name,
+							lfm_image: {
+								array: cur.image
+							}
+						});
+						
+					}
+					_this.similar_artists.setPreviewList(data_list);
 				}
 				
 			})
@@ -166,8 +164,8 @@ mapLevelModel.extendTo(ArtCard, {
 	
 	},
 	getTopTracks: function(start_song) {
-		if (this.top_artists_model){
-			return this.top_artists_model;
+		if (this.top_songs){
+			return this.top_songs;
 		}
 
 		var pl = this.app.createSonglist(this, {
@@ -175,8 +173,8 @@ mapLevelModel.extendTo(ArtCard, {
 			type: 'artist',
 			data: {artist: this.artist}
 		}, start_song);
-		this.top_artists_model = pl;
-
+		this.top_songs = pl;
+		this.setChild('top_songs', pl, true);
 		
 		var artist = this.artist;
 		pl.setLoader(function(paging_opts) {
@@ -284,7 +282,7 @@ mapLevelModel.extendTo(ArtCard, {
 					//getAlbumPlaylist(r.album.id, pl);
 				})
 				.fail(function() {
-				_this.requestComplete(request_info.request, true);
+					_this.requestComplete(request_info.request, true);
 				})
 				.always(function() {
 					request_info.done = true;
@@ -306,68 +304,9 @@ mapLevelModel.extendTo(ArtCard, {
 		}, {
 			artist: this.artist
 		});
+		this.setChild('similar_artists', artl, true);
+		this.similar_artists = artl;
 		return artl;
-
-
-
-
-
-
-
-
-		/*
-		if (this.similar_artists){
-			return this.similar_artists;
-		}
-
-		var pl = this.app.createSonglist(this, {//can autoload
-			title: 'Similar to «' + this.artist + '» artists',
-			type: 'similar artists',
-			data: {artist: this.artist}
-		});
-
-		this.similar_artists = pl;
-		var artist = this.artist;
-
-		pl.setLoader(function(paging_opts){
-			var request_info = {};
-			var _this = this;
-			request_info.request = lfm.get('artist.getSimilar',{
-				artist: artist, 
-				limit: paging_opts.page_limit, 
-				page: paging_opts.next_page
-			})
-				.done(function(r){
-					var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
-					var track_list = [];
-
-					if (artists && artists.length) {
-						var l = Math.min(artists.length, paging_opts.page_limit);
-						for (var i=0; i < l; i++) {
-							track_list.push({
-								artist: artists[i].name,
-								lfm_image: {
-									array: artists[i].image
-								}
-							});
-						}
-
-					}
-					_this.putRequestedData(request_info.request, track_list, r.error);
-					if (!r.error){
-						_this.setLoaderFinish();
-					}
-					
-				})
-				.fail(function() {
-					_this.requestComplete(request_info.request, true);
-				})
-				.always(function() {
-					request_info.done = true;
-				});
-			return request_info;
-		});
-
-		return pl;*/
 	}
 });
+})();
