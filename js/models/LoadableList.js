@@ -89,22 +89,28 @@ mapLevelModel.extendTo(LoadableList, {
 		return this;
 	},
 	putRequestedData: function(request, data_list, error) {
+		console.profile('data list inject');
 		if (!this.request_info || this.request_info.request == request){
-			this.requestComplete(request, error);
+			
 
 			if (!error && data_list && data_list.length){
 				var mlc_opts = this.getMainListChangeOpts();
+				
 				for (var i = 0; i < data_list.length; i++) {
 					this.addItemToDatalist(data_list[i], true);
 				}
 				
 				this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
+				
 			}
 			if (!error && request && data_list.length < this.page_limit){
 				this.setLoaderFinish();
 			}
+			this.requestComplete(request, error);
 		}
+		console.profileEnd();
 		return this;
+
 	},
 	requestComplete: function(request, error) {
 		if (!this.request_info || this.request_info.request == request){

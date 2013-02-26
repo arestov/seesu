@@ -298,9 +298,9 @@ localizer = {
 		"original": "Top",
 		"ru": "Лучшие"
 	},
-	"top-tracks":{
-		"original": "top tracks",
-		"ru": 'лучшие треки'
+	"Top-tracks":{
+		"original": "Top tracks",
+		"ru": 'Лучшие треки'
 	},
 	"stop-flash": {
 		"original": "To stop annoing «Adobe Flash Player Security» window copy this address:",

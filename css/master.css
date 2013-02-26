@@ -419,19 +419,20 @@ html.not-as-application, .not-as-application  body{
 .playlist-container{
 	padding-top: 4px;
 	}
-	.load-more-songs{
-		display:block;
+
+.load-more-list-data{
+	display:block;
+	padding:0.5rem;
+	border-radius:4px;
+	color: gray;
+	
+	cursor:pointer;
 	}
-	.playlist-container .load-more-songs{
-		padding:0.5rem;
-		border-radius:4px;
-		color: gray;
-		
-		cursor:pointer;
+	.load-more-list-data:hover{
+		background-color: #595959;
 		}
-		.playlist-container .load-more-songs:hover{
-			background-color: #595959;
-		}
+
+
 .artists_list.list_loading_state{
 	padding-bottom: 2rem;
 	background: url(../i/spinner.svg) no-repeat ;
@@ -1037,6 +1038,10 @@ iframe.you-tube-video,embed.you-tube-video{
 	height:360px;
 	border:0;
 	}
+	.youtube-video-page iframe.you-tube-video,
+	.youtube-video-page embed.you-tube-video{
+		height: 100%;
+		}
 .track-video{
 	padding: 0;
 	min-height: 48px;
@@ -1402,4 +1407,31 @@ body .surf_nav{
 		}
 	.page-scheme .user_acqes-preview{
 		display: none;
+		}
+.album_preview{
+	height: 4.58rem;
+	width: 4.58rem;
+	}
+.albums_list_con{
+	overflow: hidden;
+	}
+.album_preview-big{
+	cursor: pointer;
+	}
+.full-page .album_preview-big{
+	float:left;
+	}
+	
+	.album_preview-big img{
+		display: block;
+		height: 9rem;
+		width: 9rem;
+		background-color: #666;
+		}
+	.album_preview-big .full_album_name{
+		width:9rem;
+		height: 4.5rem;
+		padding:0.5rem 0;
+		overflow: hidden;
+		bottom:0;
 		}

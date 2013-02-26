@@ -34,7 +34,10 @@ var songsList;
 				doNotReptPl(true);
 			}
 			su.on('settings.dont-rept-pl', doNotReptPl);
-			this.updateState('url-part', this.getURL());
+			if (this.playlist_type){
+				this.updateState('url-part', this.getURL());
+			}
+			
 		},
 		page_name: 'playlist',
 		setBaseInfo: function(params) {
@@ -175,150 +178,6 @@ var songsList;
 		model_name: 'row-multiatcs'
 	});
 
-
-var ArtistInArtl = function() {};
-ArtCard.extendTo(ArtistInArtl, {
-	skip_map_init: true,
-	showArtcard: function() {
-		this.app.showArtcardPage(this.artist);
-	}
-});
-
-var ArtistsListPlaylist = function() {};
-songsList.extendTo(ArtistsListPlaylist, {
-	init: function(opts, params) {
-		this._super(opts);
-		this.artists_list = params.artists_list;
-		this.original_artist = params.artist;
-		if (params.page_limit){
-			this.page_limit = params.page_limit;
-		}
-		this.updateState('nav-title', params.title);
-		this.updateState('url-part', '/~');
-	},
-	sendMoreDataRequest: function() {
-		return this.artists_list.sendMoreDataRequest.apply(this, arguments);
-	},
-	getRqData: function() {
-		return this.artists_list.getRqData.apply(this.artists_list, arguments);
-	}
-});
-
-
-var ArtistsList = function() {}; 
-window.ArtistsList = ArtistsList;
-LoadableList.extendTo(ArtistsList, {
-	model_name: 'artslist',
-	main_list_name: 'artists_list',
-	requestArtists: function() {
-
-	},
-	createRPlist: function() {
-		if (!this.ran_playlist){
-			var pl = new ArtistsListPlaylist();
-			pl.init({
-				app: this.app,
-				map_parent: this
-			}, {
-				title: this.state('nav-title'),
-				artists_list: this,
-				page_limit: this.page_limit
-			});
-			this.ran_playlist = pl;
-		}
-		return this;
-	},
-	requestRandomPlaylist: function() {
-		
-		this.createRPlist();
-		this.ran_playlist.showOnMap();
-	},
-	makeArtist: function(obj) {
-		var artcard = new ArtistInArtl();
-		artcard.init({
-			app: this.app
-		}, obj);
-		return artcard;
-	},
-	addArtist: function(obj, silent) {
-		var main_list = this[this.main_list_name];
-		main_list.push(this.makeArtist(obj));
-
-		if (!silent){
-			this.setChild(this.main_list_name, main_list, true);
-		}
-	},
-	addItemToDatalist: function(obj, silent) {
-		this.addArtist(obj, silent);
-	}
-});
-
-var SimilarArtists  = window.SimilarArtists = function() {};
-ArtistsList.extendTo(SimilarArtists, {
-	page_limit: 100,
-	init: function(opts, params) {
-		this._super(opts);
-		this.original_artist = params.artist;
-
-
-		this.updateState('nav-title', 'Similar to «' + this.original_artist + '» artists');
-		this.updateState('url-part', '/+similar');
-
-	},
-	getRqData: function(paging_opts) {
-		return {
-			artist: this.original_artist,
-			limit: paging_opts.page_limit,
-			page: paging_opts.next_page
-		};
-	},
-	sendMoreDataRequest: function(paging_opts){
-		var request_info = {};
-		var _this = this;
-		request_info.request = lfm.get('artist.getSimilar',this.getRqData(paging_opts))
-			.done(function(r){
-				var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
-				var data_list = [];
-
-				if (artists && artists.length) {
-					var l = Math.min(artists.length, paging_opts.page_limit);
-					for (var i=0; i < l; i++) {
-						data_list.push({
-							artist: artists[i].name,
-							lfm_image: {
-								array: artists[i].image
-							}
-						});
-					}
-
-				}
-				_this.putRequestedData(request_info.request, data_list, !!r.error);
-				if (!r.error){
-					_this.setLoaderFinish();
-				}
-				//"artist.getSimilar" does not support paging
-				
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
-			});
-		return request_info;
-	},
-	setPreviewList: function(raw_array) {
-		var preview_list = this.getChild(this.preview_mlist_name);
-		if (!preview_list || !preview_list.length){
-			preview_list = [];
-			for (var i = 0; i < raw_array.length; i++) {
-				preview_list.push(this.makeArtist(raw_array[i]));
-				
-			}
-			this.setChild(this.preview_mlist_name, preview_list, true);
-		}
-	}
-});
 
 })();
 

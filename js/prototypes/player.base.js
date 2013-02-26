@@ -64,6 +64,7 @@ provoda.Eventor.extendTo(playerBase, {
 			this.core.callSongMethod("create", song_file.uid, {
 				url: song_file.link
 			});
+			return true;
 		}
 	},
 	play: function(song_file){
@@ -72,12 +73,13 @@ provoda.Eventor.extendTo(playerBase, {
 			if (this.global_volume && (this.volume || this.volume_fac)){
 				this.setVolume(song_file, this.volume, this.volume_fac);
 			}
-			
+			return true;
 		}
 	},
 	pause: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("pause", song_file.uid);
+			return true;
 		}
 	},
 	setVolume: function(song_file, vol, fac){
@@ -93,25 +95,32 @@ provoda.Eventor.extendTo(playerBase, {
 			this.volume_fac = fac;
 			this.volume = vol;
 		}
+		if (this.core){
+			return true;
+		}
 	},
 	setPosition: function(song_file, pos, fac){
 		if (song_file && this.core){
 			this.core.callSongMethod("setPosition", song_file.uid, pos, fac);
+			return true;
 		}
 	},
 	load: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("load", song_file.uid);
+			return true;
 		}
 	},
 	unload: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("unload", song_file.uid);
+			return true;
 		}
 	},
 	remove: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("remove", song_file.uid);
+			return true;
 		}
 	}
 });

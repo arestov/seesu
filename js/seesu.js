@@ -58,6 +58,7 @@ appModel.extendTo(seesuApp, {
 	init: function(version){
 		this._super();
 		this.version = version;
+		this.lfm = lfm;
 
 		this._url = get_url_parameters(location.search, true);
 		this.settings = {};

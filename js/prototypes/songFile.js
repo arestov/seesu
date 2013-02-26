@@ -182,14 +182,17 @@ provoda.Model.extendTo(fileInTorrent, {
 		},
 		_createSound: function(){
 			if (!this.sound){
-				this.player.create(this);
-				this.sound = true;
+				this.sound = !!this.player.create(this);
 			}
 		},
 		play: function(){
 			if (this.player){
 				this._createSound();
-				this.player.play(this);
+				if (this.sound){
+					this.player.play(this);
+					return true;
+				}
+				
 			}
 		},
 		removeCache: function(){
@@ -197,7 +200,7 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.unloadOutBox();
 			}
 			this.player.remove(this);
-			delete this.sound;
+			this.sound = null;
 		},
 		stop: function(){
 			if (this.player){
@@ -214,7 +217,7 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.updateState('loading-progress', 0);
 				this.updateState('playing-progress', 0);
 				
-				delete this.sound;
+				this.sound = null;
 			}
 		},
 		pause: function(){
@@ -253,7 +256,10 @@ provoda.Model.extendTo(fileInTorrent, {
 					this.loadOutBox();
 				}
 				this._createSound();
-				this.player.load(this);
+				if (this.sound){
+					this.player.load(this);
+				}
+				
 			}
 		},
 		activate: function() {

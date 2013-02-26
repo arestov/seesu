@@ -128,10 +128,10 @@ html.opera-extension{
 			
 			}
 		.complex-page{
-			-webkit-transition: margin-left 0.2s ease-out;
-			-moz-transition: margin-left 0.2s ease-out;
-			-o-transition: margin-left 0.2s ease-out;
-			transition: margin-left 0.2s ease-out;
+			-webkit-transition: margin-left 0.12s ease-out;
+			-moz-transition: margin-left 0.12s ease-out;
+			-o-transition: margin-left 0.12s ease-out;
+			transition: margin-left 0.12s ease-out;
 			}
 
 

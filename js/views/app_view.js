@@ -169,7 +169,14 @@ provoda.View.extendTo(appModelView, {
 		user_acqs_list: {
 			main: UserAcquaintancesListView,
 			nav: baseNavUI
+		},
+		albslist: {
+			main: AlbumsListView,
+			nav: baseNavUI
 		}
+	},
+	'collch-albslist': {
+		place: viewOnLevelP
 	},
 	'collch-user_acqs_list': {
 		place: viewOnLevelP
@@ -557,8 +564,108 @@ provoda.View.extendTo(appModelView, {
 		playing: 'icons/icon16p.png',
 		usual: 'icons/icon16.png'
 	},
+	getPvViews: function(array) {
+		var result = {};
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			var name_parts = cur.view_name.split(' ');
+			var real_name;
+			var space = 'main';
+			if (name_parts[1]){
+				throw new Error('uncomplete code; fixme');
+			} else {
+				real_name = name_parts[0];
+			}
+			
+			if (!result[real_name]){
+				result[real_name] = {};
+			}
+			if (!result[real_name][space]){
+				result[real_name][space] = [];
+			}
+
+			result[real_name][space] = cur;
+			cur.views = [];
+		}
+		return result;
+	},
+	getPvAnchors: function(vroot_node) {
+		var match_stack =[];
+		var pv_views = [];
+		var anchors = [];
+		var result = {
+			_views: null
+		};
+		vroot_node = vroot_node && vroot_node[0] || vroot_node;
+		match_stack.push(vroot_node);
+
+		while (match_stack.length){
+			var cur_node = match_stack.shift();
+			if (cur_node.nodeType != 1){
+				continue;
+			}
+			var view_name = vroot_node !== cur_node && cur_node.getAttribute('pv-view');
+			if (typeof view_name == 'string'){
+				pv_views.push({
+					node: cur_node,
+					view_name: view_name
+				});
+			} else {
+				var anchor_name = cur_node.getAttribute('pv-anchor');
+
+				if (typeof anchor_name == 'string'){
+					if (result[anchor_name]){
+						throw new Error('anchors exists');
+					} else {
+						result[anchor_name] = $(cur_node);
+					}
+				}
+				for (var i = 0; i < cur_node.childNodes.length; i++) {
+					match_stack.push(cur_node.childNodes[i]);
+				}
+
+			}
+
+		}
+		result._views = this.getPvViews(pv_views);
+
+
+		return result;
+	},
+	parts_builder: {
+		//samples
+		alb_prev_big: function() {
+			return this.els.ui_samples.children('.album_preview-big');
+		},
+		artcard: function() {
+			return this.els.ui_samples.children('.art_card');
+		},
+		track_c: function() {
+			return this.els.ui_samples.children('.track-context');
+		},
+		playlist_panel: function() {
+			return this.els.ui_samples.children('.play-list-panel');
+		},
+		lfm_authsampl: function() {
+			return this.els.ui_samples.children('.lfm-auth-module');
+		},
+		lfm_scrobling: function() {
+			return this.els.ui_samples.children('.scrobbling-switches');
+		},
+		artists_list: function() {
+			return this.els.ui_samples.children('.artists_list');
+		},
+		albums_page: function() {
+			return this.els.ui_samples.children('.albums_page');
+		},
+		area_for_button: function() {
+			return this.els.ui_samples.children('.area_for_button');
+		}
+	},
 	getSample: function(name) {
-		return $(this.samples[name]).clone();
+		var sample_node = this.samples[name] || this.requirePart(name);
+
+		return $(sample_node).clone();
 	},
 	buildAppDOM: function() {
 		var _this = this;
@@ -658,6 +765,7 @@ provoda.View.extendTo(appModelView, {
 				*/
 			}
 			_this.els = {
+				ui_samples: ui_samples,
 				screens: screens_block,
 				scrolling_viewport: scrolling_viewport,
 				slider: slider,
@@ -723,15 +831,8 @@ provoda.View.extendTo(appModelView, {
 
 			var vklc = ui_samples.children('.vk-login-context');
 
-			var track_c = ui_samples.children('.track-context');
 			_this.samples = {
-				artcard: ui_samples.children('.art_card'),
-				track_c : track_c,
-				playlist_panel: ui_samples.children('.play-list-panel'),
 				vklc: vklc,
-				lfm_authsampl: ui_samples.children('.lfm-auth-module'),
-				lfm_scrobling: ui_samples.children('.scrobbling-switches'),
-				artists_list: ui_samples.children('.artists_list'),
 				vk_login: {
 					o: vklc,
 					oos: $(),
@@ -1832,40 +1933,6 @@ provoda.View.extendTo(appModelView, {
 			youtube_video.setAttribute('class',"you-tube-video");
 			
 		return youtube_video;
-	},
-	
-	
-	renderArtistAlbums: function(albums, original_artist, albums_ul, artcard, iteratorFunc){
-		if (albums.length) {
-			for (var i=0; i < albums.length; i++) {
-				var alb_data = this.createAlbum(albums[i].name, albums[i].url, (albums[i].image && albums[i].image[2]['#text']) || '', albums[i].artist.name, original_artist, artcard);
-
-				if (iteratorFunc) {iteratorFunc(alb_data);}
-				albums_ul.append(alb_data.con);
-			}
-		}
-		return albums_ul;
-	},
-	createAlbum: function(al_name, al_url, al_image, al_artist, original_artist, artcard){
-		var _this = this;
-		var li = $('<li></li>');
-			var a_href= $('<a></a>')
-				.attr('href', al_url )
-				.click(function(e){
-					e.preventDefault();
-					seesu.trackEvent('Artist navigation', 'album', al_artist + ": " + al_name);
-					artcard.showAlbum({
-						album_artist: al_artist,
-						album_name: al_name
-					});
-				})
-				.appendTo(li);
-			$('<img/>').attr('src', al_image).appendTo(a_href);
-			$('<span class="album-name"></span>').text(al_name).appendTo(a_href);
-		return {
-			con: li,
-			link: a_href
-		};
 	},
 	bindLfmTextClicks: function(con) {
 

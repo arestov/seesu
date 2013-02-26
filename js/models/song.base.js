@@ -25,7 +25,7 @@ provoda.addPrototype("baseSong",{
 		if (opts.omo.track){
 			states['track']= opts.omo.track;
 		}
-		states['url-part', this.getURL()];
+		states['url-part'] = this.getURL();
 		this.updateManyStates(states);
 
 

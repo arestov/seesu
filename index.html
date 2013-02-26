@@ -23,6 +23,17 @@
   
   <body>
   	<div id="ui-samples" style="display:none">
+  		<div class="album_preview-big">
+  			<img src="" alt="" pv-anchor="imgc"/>
+  			<div class="full_album_name">
+  				<div class="artist_name_alb" pv-anchor="artist_name_c"></div>
+  				<div class="album_name" pv-anchor="album_name_c"></div>
+  			</div>
+  		</div>
+  		<div class="usual_page albums_page">
+  			<div class="albums_list_con" pv-anchor="albums_list_c"></div>
+  			<div class="load-more-list-data hidden lang localize-load-more" pv-anchor='load_m_b'>Load more</div>
+  		</div>
   		<div class="artists_list">
   			<div class="to-open-block area-button">
 				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
@@ -31,27 +42,98 @@
 				
 			</ul>
   		</div>
+
+  		<div class="area_for_button">
+			<div class="area-button" pv-anchor='big_button'>
+				<span pv-anchor="header"></span>
+			</div>
+			<div class="area-description desc" pv-anchor="listc"></div>
+		</div>
+
   		<div class="art_card">
 			
-			
-			<div class="art_card-meta">
-				<div class="top-tracks"></div>
+			<div class="art_card_leftcol">
+				<div class="area_for_button" pv-view="top_songs">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-anchor="header">
+							Top
+						</span>
+					</div>
+					<div class="area-description desc" pv-anchor="listc"></div>
+				</div>
+
+				<div class="area_for_button" pv-view="hypem_new">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-anchor="header">
+							Свежее
+						</span>
+					</div>
+					<div class="area-description desc" pv-anchor="listc"></div>
+				</div>
+
+				<div class="area_for_button" pv-view="hypem_fav">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-anchor="header">
+							В избранном
+						</span>
+					</div>
+					<div class="area-description desc" pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-view="hypem_reblog">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-anchor="header">
+							Популярно в блогах
+						</span>
+					</div>
+					<div class="area-description desc" pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-view="soundc_prof">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-anchor="header">
+							Из souncloud профиля
+						</span>
+					</div>
+					<div class="area-description desc" pv-anchor="listc"></div>
+				</div>
+
+
+				<div class="area_for_button" pv-view="soundc_likes">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-anchor="header">
+							Понравившиеся артисту
+						</span>
+					</div>
+					<div class="area-description desc" pv-anchor="listc"></div>
+				</div>
+			</div>
+			<div class="art_card_rightcol">
 				<div class='art_card-tags'>
 					<h5 class="row-header lang localize-Tags">Tags</h5>
-					<ul class="links-list"></ul>
+					<div class="links-list"></div>
+				</div>
+				<div class="area_for_button" pv-view="similar_artists">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-anchor="header"></span>
+					</div>
+					<div class="area-description desc" pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-view="albums_list">
+					<div class="area-button" pv-anchor="big_button">
+						<span pv-anchor="header"></span>
+					</div>
+					<div class="area-description desc albums_previews" pv-anchor="listc"></div>
 				</div>
 			</div>
-			<div class="art_card-similar"></div>
-			<div class="art_card-albums">
-				<h5 class="row-header lang localize-Albums" >Albums</h5>				
+		
+			
+			
+			<div class="art_card-statinfo">
+				<div class="art_card-image">
+					<div class="art_card-image-padding"></div>
+				</div>
+				<div class="art_card-bio"></div>
 			</div>
 			
-			<div class="art_card-image">
-				<div class="art_card-image-padding">
-					
-				</div>
-			</div>
-			<div class="art_card-bio"></div>
 		</div>
   		
   		

@@ -435,7 +435,7 @@ a.track-name-loading:hover{
 	.show-zoom-to-track .playlist-info{
 		display:none;
 	}
-	.show-zoom-to-track .load-more-songs{
+	.show-zoom-to-track .load-more-list-data{
 		display: none;
 	}
 

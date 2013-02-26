@@ -72,10 +72,14 @@ var song;
 						_this.updateState('lfm-image', e.value);
 					});
 			}
-
+			_this.initHeavyPart();
 			
+		},
+		initHeavyPart: function() {
+			var _this = this;
+			var omo = this.omo;
 			var actionsrow = new TrackActionsRow(this);
-			this.setChild('actionsrow', actionsrow);
+			this.setChild('actionsrow', actionsrow, true);
 			this.addChild(actionsrow);
 
 			this.mf_cor = new mfCor();
@@ -92,7 +96,7 @@ var song;
 					have_mp3_tracks: true
 				});
 			}
-			this.setChild('mf_cor', this.mf_cor);
+			this.setChild('mf_cor', this.mf_cor, true);
 			this.addChild(this.mf_cor);
 			this.mf_cor
 				.on('before-mf-play', function(mopla) {

@@ -30,7 +30,7 @@ provoda.addPrototype("songsListBaseView", {
 	parts_builder: {
 		"load-more-b": function() {
 			var _this = this;
-			var node = $("<a class='load-more-songs'></a>").click(function() {
+			var node = $("<a class='load-more-list-data'></a>").click(function() {
 				_this.md.requestMoreData(true);
 			}).text(localize("load-more")).appendTo(this.c);
 

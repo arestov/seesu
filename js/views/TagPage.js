@@ -43,35 +43,40 @@ ListPreviewLine.extendTo(ArtistsListPreviewLine, {
 
 var ListPreview = function() {};
 provoda.View.extendTo(ListPreview, {
-	createBase: function() {
+	useBase: function(node) {
+		this.c = node;
+		this.bindBase();
+	},
+	bindBase: function() {
+		this.ancs = this.root_view.getPvAnchors(this.c);
 		var _this = this;
-		this.c = $('<div class="area_for_button"></div>').click(function() {
+		this.c.click(function() {
 			_this.md.showOnMap();
 		});
+
 		this.addWayPoint(this.c);
-		
-		this.big_button = $('<div class="area-button"></div>').appendTo(this.c);
-		
-		
-		this.header = $('<span></span>').appendTo(this.big_button);
-		this.listc = $('<div class="area-description desc"></div>').appendTo(this.c);
+	},
+	createBase: function() {
+		this.c = this.root_view.getSample('area_for_button');
+		this.bindBase();
+	},
+	'stch-nav-title': function(state) {
+		this.ancs.header.text(state);
 	}
 });
 
 
 var ItemOfLL = function() {};
 ListPreview.extendTo(ItemOfLL, {
-	'stch-nav-title': function(state) {
-		this.big_button.text(state);
-	},
+	
 	'stch-list-loading': function(state) {
-		this.listc.toggleClass('list-loading', !!state);
+		this.ancs.listc.toggleClass('list-loading', !!state);
 	},
 	children_views: {
 		preview_list: ArtistsListPreviewLine
 	},
 	'collch-preview_list': {
-		place: 'listc',
+		place: 'ancs.listc',
 		limit: 9
 	}
 });
@@ -95,13 +100,10 @@ ListPreview.extendTo(LiListsPreview, {
 		this._super();
 		this.c.addClass('tag_artists-preview');
 	},
-	'stch-nav-title': function(state) {
-		this.header.text(state);
-	},
 	children_views: {
 		lists_list: ListPreviewLine
 	},
-	'collch-lists_list': 'listc'
+	'collch-lists_list': 'ancs.listc'
 });
 
 var TagPageView = function() {};

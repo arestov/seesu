@@ -438,7 +438,8 @@ getUnitBaseNum = function(_c){
 };
 
 
-stringifyParams= function(params, ignore_params, splitter, joiner){
+stringifyParams= function(params, ignore_params, splitter, joiner, opts){
+	opts = opts || {};
 	splitter = splitter || '';
 	if (typeof params == 'string'){
 		return params;
@@ -449,7 +450,10 @@ stringifyParams= function(params, ignore_params, splitter, joiner){
 			pv_signature_list.push(p + splitter + params[p]);
 		}
 	}
-	pv_signature_list.sort();
+	if (!opts.not_sort){
+		pv_signature_list.sort();
+	}
+	
 	return pv_signature_list.join(joiner || '');
 };
 

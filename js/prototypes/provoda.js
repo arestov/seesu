@@ -1024,9 +1024,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		
 	},
 	createDetailes: function() {
-		if (this.createBase){
+		if (this.opts && this.opts.pv_view){
+			if (this.useBase){
+				this.useBase(this.opts.pv_view);
+			}
+		} else if (this.createBase){
 			this.createBase();
 		}
+
+		
 		
 	},
 	requestDetailes: function(){
@@ -1421,6 +1427,29 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			
 		}
 	},
+	checkCollchItemAgainstPvView: function(name, real_array, space_name, pv_view) {
+		if (real_array.length > 1){
+			throw new Error('uncomplete code; cant do this');
+		}
+
+		for (var mmm = 0; mmm < real_array.length; mmm++) {
+			var cur_md = real_array[mmm];
+			if (pv_view.done){
+				throw new Error('uncomplete');
+			}
+			pv_view.done = true;
+			if (mmm !== 0){
+				//document.createComment
+			}
+			var view = this.getFreeChildView(name, cur_md, space_name, {
+				pv_view: $(pv_view.node)
+			});
+			if (view){
+				pv_view.views.push(view.view_id);
+			}
+			
+		}
+	},
 	collectionChange: function(name, array) {
 		if (this.undetailed_children_models){
 			this.undetailed_children_models[name] = array;
@@ -1429,6 +1458,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		var old_value = this.children_models[name];
 		this.children_models[name] = array;
+
+		var real_array;
+
+		var pv_views = getTargetField(this, 'ancs._views.' + name);
+		if (pv_views){
+			for (var space_name in pv_views){
+				this.checkCollchItemAgainstPvView(name, toRealArray(array), space_name, pv_views[space_name]);
+			}
+			this.requestAll();
+		}
+
+
 		var collch = this['collch-' + name];//collectionChanger
 		if (collch){
 			if (typeof collch == 'function'){
@@ -1448,7 +1489,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				for (var i = 0; i < collchs.length; i++) {
 					declarations.push(this.parseCollectionChangeDeclaration(collchs[i]));
 				}
-				var real_array = toRealArray(array);
+				real_array = toRealArray(array);
 				var array_limit;
 				if (collchs_limit){
 					array_limit = Math.min(collchs_limit, real_array.length);

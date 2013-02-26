@@ -268,9 +268,10 @@ var route_tree = {
 								other: {
 									//albums
 									fn: function(path_name, opts, sub_paths, parent_md) {
+										/*
 										parent_md.showAlbum({
 											album_name: path_name
-										});
+										});*/
 									},
 									branch: {
 										other: {

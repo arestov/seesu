@@ -255,6 +255,14 @@
 		background:url(../i/spinner.svg) no-repeat 0.5rem 1rem;
 		background-size: 1.143rem;
 		}
+	
+	.page-scheme .area_for_button{
+		margin-bottom: 0;
+		padding-bottom: 0;
+		}
+		.page-scheme .area_for_button .area-description{
+			display: none;
+			}
 .area-button{
 	display: block;
 	margin-bottom:1rem;

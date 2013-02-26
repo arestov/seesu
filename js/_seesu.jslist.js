@@ -37,7 +37,6 @@ var jsLoadComplete,
 	"js/libs/network.vk.api.js",
 	"js/libs/exfm.js",
 	"js/libs/lastfm.core.js",
-	"js/libs/lastfm.serv.js",
 	"js/network.lastfm.js",
 	"js/lastfm.data.js",
 	"js/su-prototypes/su.serv-prototypes.js",
@@ -45,9 +44,10 @@ var jsLoadComplete,
 	
 
 	"js/models/LoadableList.js",
-	"js/models/artcard.js",
 	"js/models/songs-list.base.js",
 	"js/models/songs-list.js",
+	"js/models/artcard.js",
+	
 
 	"js/models/UserAcquaintances.js",
 	"js/models/UserCard.js",
