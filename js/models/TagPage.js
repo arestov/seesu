@@ -15,11 +15,7 @@ songsList.extendTo(HypemTagPlaylist, {
 	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
 		var request_info = {};
-		request_info.request = $.ajax({
-			url: 'http://hypem.com/playlist/tags/' + this.getHypeTagName() + '/json/' + paging_opts.next_page +'/data.js',
-			data: this.send_params,
-			dataType: 'json'
-		})
+		request_info.request = this.app.hypem.get('/playlist/tags/' + this.getHypeTagName() + '/json/' + paging_opts.next_page +'/data.js', this.send_params)
 			.done(function(r) {
 				var result_list = [];
 				for (var num in r){

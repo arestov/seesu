@@ -259,5 +259,91 @@ try_mp3_providers = function(){
 };
 
 
+var HypemApi;
+var GoogleSoundcloud;
+(function() {
+"use strict";
+GoogleSoundcloud = function() {};
+Class.extendTo(GoogleSoundcloud, {
+	init: function(opts) {
+		this.cache_ajax = opts.cache_ajax;
+		this.queue = opts.queue;
+		this.crossdomain = opts.crossdomain;
+	},
+	thisOriginAllowed: true,
+	cache_namespace: 'goog_sc',
+	get: function(query, params, options) {
+		if (!query){
+			throw new Error('wrong query');
+		}
+		var params_data = {
+			cx: "001069742470440223270:t1xni-63__0",
+			v: "1.0",
+			rsz: 1,
+			q: query //"allintext:" + song + '.mp3'
+		};
+		options = options || {};
+		var wrap_def = wrapRequest({
+			url: "https://ajax.googleapis.com/ajax/services/search/web",
+			type: "GET",
+			dataType: this.crossdomain ? "json": "jsonp",
+			data: params_data,
+			timeout: 20000,
+			thisOriginAllowed: this.thisOriginAllowed
+		}, {
+			cache_ajax: this.cache_ajax,
+			nocache: options.nocache,
+			cache_key: options.cache_key,
+			cache_timeout: options.cache_timeout,
+			cache_namespace: this.cache_namespace,
+			requestFn: function() {
+				return aReq.apply(this, arguments);
+			},
+			queue: this.queue
+		});
 
+		return wrap_def.complex;
+	}
+});
+
+HypemApi = function() {};
+Class.extendTo(HypemApi, {
+	init: function(opts) {
+		this.cache_ajax = opts.cache_ajax;
+		this.queue = opts.queue;
+		this.xhr2 = opts.xhr2;
+		this.crossdomain = opts.crossdomain;
+		this.can_send = this.xhr2 || this.crossdomain;
+
+	},
+	cache_namespace: 'hypem',
+	get: function(path, params, options) {
+		if (!path){
+			throw new Error('wrong path');
+		}
+		//path
+		var full_url = 'http://hypem.com' + path;
+		options = options || {};
+		options.cache_key = options.cache_key || hex_md5(full_url + stringifyParams(params));
+
+		var wrap_def = wrapRequest({
+			url: full_url,
+			type: "GET",
+			dataType: "json",
+			data: params,
+			timeout: 20000
+		}, {
+			cache_ajax: this.cache_ajax,
+			nocache: options.nocache,
+			cache_key: options.cache_key,
+			cache_timeout: options.cache_timeout,
+			cache_namespace: this.cache_namespace,
+			queue: this.queue
+		});
+
+		return wrap_def.complex;
+	}
+});
+
+})();
 

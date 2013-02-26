@@ -13,7 +13,6 @@ scApi.prototype = {
 		if (method) {
 			options = options || {};
 			options.cache_key = options.cache_key || hex_md5(method + stringifyParams(params));
-			var cache_used;
 
 			var	params_full = params || {};
 			params_full.consumer_key = this.key;

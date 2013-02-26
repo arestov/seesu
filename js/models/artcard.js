@@ -415,6 +415,19 @@ mapLevelModel.extendTo(ArtCard, {
 		} else {
 			this.info_loaded = true;
 		}
+		var _this = this;
+		this.addRequest(this.app.goog_sc.get(this.artist)
+			.done(function(r){
+				var url = getTargetField(r, 'responseData.results.0.url');
+				var link_node = document.createElement('a');
+				link_node.href = url;
+
+				var url_parts = link_node.pathname.replace(/^\//,'').split('/');
+				if (url_parts.length == 1){
+					_this.updateState('soundcloud_profile', url_parts[0]);
+				}
+			})
+		);
 		this.top_songs.preloadStart();
 		this.albums.preloadStart();
 		

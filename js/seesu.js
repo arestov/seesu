@@ -349,7 +349,19 @@ appModel.extendTo(seesuApp, {
 		});
 
 
-
+		this.hypem = new HypemApi();
+		this.hypem.init({
+			xhr2: app_env.xhr2,
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new funcsQueue(1700, 4000, 4)
+		});
+		this.goog_sc = new GoogleSoundcloud();
+		this.goog_sc.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new funcsQueue(1000, 3000, 4)
+		});
 	},
 	migrateStorage: function(ver){
 		if (!ver){

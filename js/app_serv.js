@@ -20,7 +20,7 @@
 })(window);
 
 var wrapRequest = function(request_params, options, complex_response){
-	"strict";
+	"use strict";
 	complex_response = complex_response || {};
 	var deferred = $.Deferred();
 	
