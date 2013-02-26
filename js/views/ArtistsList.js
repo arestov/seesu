@@ -141,12 +141,13 @@ provoda.View.extendTo(artCardUI, {
 		this._super();
 	},
 	children_views: {
-		top_songs: {
-			main: ItemOfLL
-		},
-		similar_artists: {
-			main: ItemOfLL
-		},
+		top_songs: ItemOfLL,
+		soundc_prof: ItemOfLL,
+		hypem_new: ItemOfLL,
+		hypem_fav: ItemOfLL,
+		hypem_reblog: ItemOfLL,
+		soundc_likes: ItemOfLL,
+		similar_artists: ItemOfLL,
 		albums_list: {
 			main: AlbumsListPreview
 		}

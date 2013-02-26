@@ -8,6 +8,18 @@
 */
 
 localizer = {
+	"Art-sc-likes": {
+		"original": "Artist soundcloud likes",
+		"ru": "Понравившиеся композиции на soundcloud"
+	},
+	"Art-sc-songs": {
+		"original": "From soundcloud profle",
+		"ru": "Из soundcloud профиля"
+	},
+	"Sc-profile-not-found": {
+		"original": "Artist soundcloud profile was not found",
+		"ru": "Soundcloud профиль артиста не был найден"
+	},
 	"Blogged-all-hypem": {
 		"original": "Blogged, all and sundry (hypem.com)",
 		"ru": "Из блогов, все подряд (hypem.com)"

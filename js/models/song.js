@@ -47,6 +47,9 @@ var song;
 
 			var spec_image_wrap;
 			var omo = opts.omo;
+			if (omo.image_url){
+				this.updateState('image_url', {url: omo.image_url});
+			}
 			if (omo.lfm_image){
 				spec_image_wrap = su.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
 				//this.updateState('lfm-image', omo.lfm_image);
@@ -62,14 +65,14 @@ var song;
 					track: this.state('track')
 				})
 					.on('state-change.image-to-use', function(e) {
-						_this.updateState('lfm-image', e.value);
+						_this.updateState('ext-lfm-image', e.value);
 					});
 				
 
 			} else {
 				images_pack = su.art_images.getArtistImagesModel(this.state('artist'))
 					.on('state-change.image-to-use', function(e) {
-						_this.updateState('lfm-image', e.value);
+						_this.updateState('ext-lfm-image', e.value);
 					});
 			}
 			_this.initHeavyPart();

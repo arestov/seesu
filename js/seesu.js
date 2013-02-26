@@ -362,6 +362,7 @@ appModel.extendTo(seesuApp, {
 			cache_ajax: cache_ajax,
 			queue: new funcsQueue(1000, 3000, 4)
 		});
+
 	},
 	migrateStorage: function(ver){
 		if (!ver){
@@ -648,10 +649,11 @@ su.init(3.9);
 
 
 (function(){
-	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+	
 	//su.sc_api = sc_api;
+	su.sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch({
-		api: sc_api,
+		api: su.sc_api,
 		mp3_search: su.mp3_search
 	}));
 

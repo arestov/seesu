@@ -283,6 +283,9 @@ Class.extendTo(GoogleSoundcloud, {
 			q: query //"allintext:" + song + '.mp3'
 		};
 		options = options || {};
+		options.cache_key = options.cache_key || hex_md5("https://ajax.googleapis.com/ajax/services/search/web" +  stringifyParams(params_data));
+
+
 		var wrap_def = wrapRequest({
 			url: "https://ajax.googleapis.com/ajax/services/search/web",
 			type: "GET",
