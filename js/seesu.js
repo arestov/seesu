@@ -655,6 +655,7 @@ su.init(3.9);
 	
 	if (app_env.cross_domain_allowed){
 		su.mp3_search.add(new isohuntTorrentSearch({
+			cache_ajax: cache_ajax,
 			mp3_search: su.mp3_search
 		}));
 
@@ -670,7 +671,8 @@ su.init(3.9);
 	} else {
 		su.mp3_search.add(new googleTorrentSearch({
 			crossdomain: app_env.cross_domain_allowed,
-			mp3_search: su.mp3_search
+			mp3_search: su.mp3_search,
+			cache_ajax: cache_ajax
 		}));
 	}
 

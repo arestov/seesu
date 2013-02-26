@@ -261,24 +261,3 @@ try_mp3_providers = function(){
 
 
 
-
-
-var findTorrentMP3Song = function(song) {
-	$.ajax({
-		global: false,
-		type: "GET",
-		dataType: "jsonp",
-		url: "http://ajax.googleapis.com/ajax/services/search/web?cx=001069742470440223270:ftotl-vgnbs",
-		data: {
-			v: "1.0",
-			q: "allintext:" + song + '.mp3'
-		},
-		error:function(){
-			console.log('google search requset error');
-		},
-		success: function(r){
-			console.log(r);
-			
-		}
-	});
-};
