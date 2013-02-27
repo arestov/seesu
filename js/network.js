@@ -379,7 +379,14 @@ Class.extendTo(HypemApi, {
 			type: "GET",
 			dataType: "json",
 			data: params,
-			timeout: 20000
+			timeout: 20000,
+			resourceCachingAvailable: true,
+			afterChange: function(opts) {
+				if (opts.dataType == 'json'){
+					opts.headers = null;
+				}
+				
+			}
 		}, {
 			cache_ajax: this.cache_ajax,
 			nocache: options.nocache,
