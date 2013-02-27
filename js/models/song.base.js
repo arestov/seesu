@@ -25,7 +25,7 @@ provoda.addPrototype("baseSong",{
 		if (opts.omo.track){
 			states['track']= opts.omo.track;
 		}
-		states['url-part', this.getURL()];
+		states['url-part'] = this.getURL();
 		this.updateManyStates(states);
 
 
@@ -34,10 +34,22 @@ provoda.addPrototype("baseSong",{
 		});
 	},
 	complex_states: {
+		'selected-image': {
+			depends_on: ['lfm-image', 'ext-lfm-image', 'image_url'],
+			fn: function(lfm_i, ext_lfm, just_url) {
+				return lfm_i || just_url || ext_lfm;
+			}
+		},
 		'song-title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track){
 				return this.getFullName(artist, track);
+			}
+		},
+		'nav-short-title': {
+			depends_on: ['artist', 'track'],
+			fn: function(artist, track) {
+				return this.getFullName(artist, track, true);
 			}
 		},
 		'full-title': {

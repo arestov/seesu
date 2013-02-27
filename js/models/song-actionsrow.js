@@ -452,24 +452,29 @@ PartsSwitcher.extendTo(TrackActionsRow, {
 		this.mo = mo;
 		this.updateState('active_part', false);
 
-		this.addPart(new ScrobbleRow(this, mo));
-		this.addPart(new FlashErrorRow(this, mo));
-		this.addPart(new RepeatSongRow(this, mo));
-		this.addPart(new PlaylistAddRow(this, mo));
-		this.addPart(new ShareRow(this, mo));
-		this.addPart(new LoveRow(this, mo));
-
 		var _this = this;
 
-		var setVolume = function(fac) {
-			_this.updateState('volume', fac[0]/fac[1]);
-		};
-		if (su.settings['volume']){
-			setVolume(su.settings['volume']);
-		}
-		su.on('settings.volume', setVolume);
+		var initHeavyPart = function() {
+			this.addPart(new ScrobbleRow(this, mo));
+			this.addPart(new FlashErrorRow(this, mo));
+			this.addPart(new RepeatSongRow(this, mo));
+			this.addPart(new PlaylistAddRow(this, mo));
+			this.addPart(new ShareRow(this, mo));
+			this.addPart(new LoveRow(this, mo));
 
-		
+			var setVolume = function(fac) {
+				_this.updateState('volume', fac[0]/fac[1]);
+			};
+			if (su.settings['volume']){
+				setVolume(su.settings['volume']);
+			}
+			su.on('settings.volume', setVolume);
+
+		};
+
+		setTimeout(function() {
+			initHeavyPart.call(_this);
+		}, 100);
 	},
 	sendVolume: function(vol) {
 		su.setSetting('volume', vol);

@@ -113,9 +113,14 @@ var songsListView;
 				
 			}
 		},
+		'stch-loader_disallowing_desc': function(state) {
+			this.loader_dis_c.toggleClass('hidden', !state);
+			this.loader_dis_c.text(state);
+		},
 		createPanel: function() {
 			this.panel = this.root_view.getSample('playlist_panel');
 			this.panel.appendTo(this.c);
+			this.loader_dis_c = this.panel.find('.loader_disallowing_desc');
 			return this;
 		},
 		'collch-plarow': function(name, md) {

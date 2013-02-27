@@ -1,6 +1,7 @@
 var isohuntTorrentSearch = function(opts) {
 	//this.crossdomain = cross_domain_allowed;
 	this.mp3_search = opts.mp3_search;
+	this.cache_ajax = opts.cache_ajax;
 	//var _this = this;
 };
 isohuntTorrentSearch.prototype = {
@@ -13,98 +14,31 @@ isohuntTorrentSearch.prototype = {
 		type: "torrent"
 	},
 	send: function(query, options) {
-		var
-			_this				= this,
-			deferred			= $.Deferred(),
-			complex_response	= {
-				abort: function(){
-					this.aborted = true;
-					deferred.reject('abort');
-					if (this.queued){
-						this.queued.abort();
-					}
-					if (this.xhr){
-						this.xhr.abort();
-					}
-				}
-			};
-		deferred.promise( complex_response );
+		var _this = this;
+
 		if (query) {
 			options = options || {};
-			options.nocache = options.nocache || !this.cache_ajax;
 			options.cache_key = options.cache_key || hex_md5('zzzzzzz' + query);
 
-			var cache_used;
+			var wrap_def = wrapRequest({
+				url: "http://ca.isohunt.com/js/json.php",
+				type: "GET",
+				dataType: "json",
+				data: {
+					ihq: query
+				},
+				timeout: 20000
+			}, {
+				cache_ajax: this.cache_ajax,
+				nocache: options.nocache,
+				cache_key: options.cache_key,
+				cache_timeout: options.cache_timeout,
+				cache_namespace: this.cache_namespace,
+				queue: this.queue
+			});
 
-			
-			if (!options.nocache){
-				
-				cache_used = this.cache_ajax.get(this.cache_namespace, options.cache_key, function(r){
-					deferred.resolve(r);
-				});
-				if (cache_used) {
-					complex_response.cache_used = true;
-					return complex_response;
-				}
-			}
-
-			if (!cache_used){
-				var success = function(r){
-					deferred.resolve.apply(deferred, arguments);
-					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r);
-					}
-				};
-
-				var sendRequest = function() {
-					if (complex_response.aborted){
-						return;
-					}
-					if (!options.nocache){
-						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
-							deferred.resolve(r);
-						});
-					}
-					
-					if (!cache_used){
-						$.ajax({
-							url: "http://ca.isohunt.com/js/json.php",
-							type: "GET",
-							dataType: "json",
-							data: {
-								ihq: query
-							},
-							timeout: 20000,
-							success: success,
-							error:function(){
-								deferred.reject.apply(deferred, arguments);
-							}
-							
-						});
-
-
-
-						if (options.after_ajax){
-							options.after_ajax();
-						}
-						if (deferred.notify){
-							deferred.notify('just-requested');
-						}
-					}
-
-				};
-
-				if (this.queue){
-					complex_response.queued = this.queue.add(sendRequest, options.not_init_queue);
-				} else{
-					sendRequest();
-				}
-			}
-
-			
-
+			return wrap_def.complex;
 		}
-		return complex_response;
 	},
 	findAudio: function(msq, opts) {
 		var
@@ -161,6 +95,7 @@ isohuntTorrentSearch.prototype = {
 var googleTorrentSearch = function(opts) {
 	this.crossdomain = opts.crossdomain;
 	this.mp3_search = opts.mp3_search;
+	this.cache_ajax = opts.cache_ajax;
 	var _this = this;
 };
 googleTorrentSearch.prototype = {
@@ -173,100 +108,38 @@ googleTorrentSearch.prototype = {
 		type: "torrent"
 	},
 	send: function(query, options) {
-		var
-			_this				= this,
-			deferred			= $.Deferred(),
-			complex_response	= {
-				abort: function(){
-					this.aborted = true;
-					deferred.reject('abort');
-					if (this.queued){
-						this.queued.abort();
-					}
-					if (this.xhr){
-						this.xhr.abort();
-					}
-				}
-			};
-		deferred.promise( complex_response );
+		var _this = this;
+			
 		if (query) {
 			options = options || {};
-			options.nocache = options.nocache || !this.cache_ajax;
 			options.cache_key = options.cache_key || hex_md5('zzzzzzz' + query);
 
-			var cache_used;
 
-			
-			if (!options.nocache){
+			var wrap_def = wrapRequest({
+				url: "https://ajax.googleapis.com/ajax/services/search/web",
+				type: "GET",
+				dataType: this.crossdomain ? "json": "jsonp",
+				data: {
+					cx: "001069742470440223270:ftotl-vgnbs",
+					v: "1.0",
+					q: query //"allintext:" + song + '.mp3'
+				},
+				timeout: 20000
 				
-				cache_used = this.cache_ajax.get(this.cache_namespace, options.cache_key, function(r){
-					deferred.resolve(r);
-				});
-				if (cache_used) {
-					complex_response.cache_used = true;
-					return complex_response;
-				}
-			}
+			}, {
+				cache_ajax: this.cache_ajax,
+				nocache: options.nocache,
+				cache_key: options.cache_key,
+				cache_timeout: options.cache_timeout,
+				cache_namespace: this.cache_namespace,
+				requestFn: function() {
+					return aReq.apply(this, arguments);
+				},
+				queue: this.queue
+			});
 
-			if (!cache_used){
-				var success = function(r){
-					deferred.resolve.apply(deferred, arguments);
-					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r);
-					}
-				};
-
-				var sendRequest = function() {
-					if (complex_response.aborted){
-						return;
-					}
-					if (!options.nocache){
-						cache_used = _this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
-							deferred.resolve(r);
-						});
-					}
-					
-					if (!cache_used){
-						aReq({
-							url: "https://ajax.googleapis.com/ajax/services/search/web",
-							type: "GET",
-							dataType: _this.crossdomain ? "json": "jsonp",
-							data: {
-								cx: "001069742470440223270:ftotl-vgnbs",
-								v: "1.0",
-								q: query //"allintext:" + song + '.mp3'
-							},
-							timeout: 20000
-							
-						})
-						.done(success)
-						.fail(function(){
-							deferred.reject.apply(deferred, arguments);
-						});
-
-
-
-						if (options.after_ajax){
-							options.after_ajax();
-						}
-						if (deferred.notify){
-							deferred.notify('just-requested');
-						}
-					}
-
-				};
-
-				if (this.queue){
-					complex_response.queued = this.queue.add(sendRequest, options.not_init_queue);
-				} else{
-					sendRequest();
-				}
-			}
-
-			
-
+			return wrap_def.complex;
 		}
-		return complex_response;
 	},
 	findAudio: function(msq, opts) {
 		var

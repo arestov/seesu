@@ -341,10 +341,18 @@ var has_music_copy = function (array, entity, from_position){
 
 
 var guessArtist = function(track_title, query_artist){
+
+
 	var r = {};
 	var remove_digits = !query_artist || query_artist.search(/^\d+?\s?\S*?\s/) === 0;
+
 	if (remove_digits){
-		track_title = track_title.replace(/^\d+?[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*?\s/,"");
+		var matched_spaces = track_title.match(/\s?[\—\-\—\–]\s/gi);
+		if (matched_spaces && matched_spaces.length > 1){
+			track_title = track_title.replace(/^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/,"");
+		}
+		///^\d+[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]*\s?/  for "813 - Elastique ( Rinse FM Rip )"
+		
 		//01 The Killers - Song - ::remove number
 	}
 

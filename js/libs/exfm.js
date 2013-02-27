@@ -10,27 +10,11 @@ ExfmApi.prototype = {
 	cache_namespace: "exfm_api",
 	thisOriginAllowed: true,
 	get: function(method, params, options) {
-		var
-			_this				= this,
-			deferred			= $.Deferred(),
-			complex_response	= {
-				abort: function(){
-					this.aborted = true;
-					deferred.reject('abort');
-					if (this.queued){
-						this.queued.abort();
-					}
-					if (this.xhr){
-						this.xhr.abort();
-					}
-				}
-			};
-		deferred.promise( complex_response );
+		var _this = this;
+
 		if (method) {
 			options = options || {};
-			options.nocache = options.nocache || !this.cache_ajax;
 			options.cache_key = options.cache_key || hex_md5(method + stringifyParams(params));
-			var cache_used;
 
 			var	params_full = params || {};
 			//params_full.consumer_key = this.key;
@@ -38,74 +22,33 @@ ExfmApi.prototype = {
 
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
 
-			if (!options.nocache){
-				
-				cache_used = this.cache_ajax.get(this.cache_namespace, options.cache_key, function(r){
-					deferred.resolve(r);
-				});
-				if (cache_used) {
-					complex_response.cache_used = true;
-					return complex_response;
-				}
-			}
-
-			if (!cache_used){
-				var success = function(r){
-					deferred.resolve.apply(deferred, arguments);
-					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout);
-					}
-				};
-
-				var sendRequest = function() {
-					if (complex_response.aborted){
-						return;
-					}
-					if (!options.nocache){
-						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
-							deferred.resolve(r);
-						});
+			var wrap_def = wrapRequest({
+				url: "http://ex.fm/api/v3/" + method,
+				type: "GET",
+				dataType: this.crossdomain ? "json": "jsonp",
+				data: params_full,
+				timeout: 20000,
+				afterChange: function(opts) {
+					if (opts.dataType == 'json'){
+						opts.headers = null;
 					}
 					
-					if (!cache_used){
-						complex_response.xhr = aReq({
-							url: "http://ex.fm/api/v3/" + method,
-							type: "GET",
-							dataType: _this.crossdomain ? "json": "jsonp",
-							data: params_full,
-							timeout: 20000,
-							afterChange: function(opts) {
-								if (opts.dataType == 'json'){
-									opts.headers = null;
-								}
-								
-							},
-							thisOriginAllowed: _this.thisOriginAllowed
-						}).done(success).fail(function(xhr){
-							deferred.reject.apply(deferred, arguments);
-						});
+				},
+				thisOriginAllowed: this.thisOriginAllowed
+			}, {
+				cache_ajax: this.cache_ajax,
+				nocache: options.nocache,
+				cache_key: options.cache_key,
+				cache_timeout: options.cache_timeout,
+				cache_namespace: this.cache_namespace,
+				requestFn: function() {
+					return aReq.apply(this, arguments);
+				},
+				queue: this.queue
+			});
 
-						if (options.after_ajax){
-							options.after_ajax();
-						}
-						if (deferred.notify){
-							deferred.notify('just-requested');
-						}
-					}
-
-				};
-
-				if (this.queue){
-					complex_response.queued = this.queue.add(sendRequest, options.not_init_queue);
-				} else{
-					sendRequest();
-				}
-			}
-
-			
-
+			return wrap_def.complex;
 		}
-		return complex_response;
 	}
 };
 

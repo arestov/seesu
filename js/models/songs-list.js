@@ -3,7 +3,7 @@ var songsList;
 	"use strict";
 
 	var songsListBase = function() {};
-	provoda.extendFromTo("songsListBase", mapLevelModel, songsListBase);
+	provoda.extendFromTo("songsListBase", LoadableList, songsListBase);
 	
 
 	songsList = function(){};
@@ -34,13 +34,10 @@ var songsList;
 				doNotReptPl(true);
 			}
 			su.on('settings.dont-rept-pl', doNotReptPl);
-			this.updateState('url-part', this.getURL());
-			this.on('state-change.mp-show', function(e) {
-				if (e.value && e.value.userwant){
-					this.preloadStart();
-				}
-				
-			}, {skip_reg: true});
+			if (this.playlist_type){
+				this.updateState('url-part', this.getURL());
+			}
+			
 		},
 		page_name: 'playlist',
 		setBaseInfo: function(params) {
@@ -181,245 +178,46 @@ var songsList;
 		model_name: 'row-multiatcs'
 	});
 
-
-var ArtistInArtl = function() {};
-ArtCard.extendTo(ArtistInArtl, {
-	skip_map_init: true,
-	showArtcard: function() {
-		this.app.showArtcardPage(this.artist);
-	}
-});
-
-var ArtistsListPlaylist = function() {};
-songsList.extendTo(ArtistsListPlaylist, {
-	init: function(opts, params) {
-		this._super(opts);
-		this.artists_list = params.artists_list;
-		this.original_artist = params.artist;
-		if (params.page_limit){
-			this.page_limit = params.page_limit;
-		}
-		this.updateState('nav-title', params.title);
-		this.updateState('url-part', '/~');
+window.HypemPlaylist = function() {};
+songsList.extendTo(HypemPlaylist, {
+	init: function() {
+		this._super.apply(this, arguments);
+		this.can_use = this.app.hypem.can_send;
+		this.updateState('possible_loader_disallowing', localize('Hypem-cant-load'));
 	},
-	sendMoreDataRequest: function() {
-		return this.artists_list.sendMoreDataRequest.apply(this, arguments);
-	},
-	getRqData: function() {
-		return this.artists_list.getRqData.apply(this.artists_list, arguments);
-	}
-});
-
-var ArtistsList = function() {}; 
-window.ArtistsList = ArtistsList;
-mapLevelModel.extendTo(ArtistsList, {
-	init: function(opts, params) {
-		this._super(opts);
-		this[this.main_list_name] = [];
-		if (this.sendMoreDataRequest){
-			this.updateState("has-loader", true);
-		}
-		this.on('state-change.mp-show', function(e) {
-			if (e.value && e.value.userwant){
-				this.preloadStart();
-			}
-			
-		}, {skip_reg: true});
-	},
-	model_name: 'artslist',
-	main_list_name: 'artists_list',
-
-	complex_states: {
-		'more_load_available': {
-			depends_on: ["has-loader", "list-loading"],
-			fn: function(can_load_more, loading) {
-				if (can_load_more){
-					return !loading;
-				} else {
-
-				}
-			}
-		}
-	},
-	requestArtists: function() {
-
-	},
-	createRPlist: function() {
-		if (!this.ran_playlist){
-			var pl = new ArtistsListPlaylist();
-			pl.init({
-				app: this.app,
-				map_parent: this
-			}, {
-				title: this.state('nav-title'),
-				artists_list: this,
-				page_limit: this.page_limit
-			});
-			this.ran_playlist = pl;
-		}
-		return this;
-	},
-	requestRandomPlaylist: function() {
-		
-		this.createRPlist();
-		this.ran_playlist.showOnMap();
-	},
-	getMainListChangeOpts: function() {},
-	addArtist: function(obj, silent) {
-		var main_list = this[this.main_list_name];
-		var artcard = new ArtistInArtl();
-		artcard.init({
-			app: this.app
-		}, obj);
-		main_list.push(artcard);
-
-		if (!silent){
-			this.setChild(this.main_list_name, main_list, true);
-		}
-	},
-
-	page_limit: 30,
-	getPagingInfo: function() {
-		var length = this.getLength();
-		var has_pages = Math.floor(length/this.page_limit);
-		var remainder = length % this.page_limit;
-		var next_page = has_pages + 1;
-
-		return {
-			current_length: length,
-			has_pages: has_pages,
-			page_limit: this.page_limit,
-			remainder: remainder,
-			next_page: next_page
-		};
-	},
-	
-	preloadStart: function() {
-		this.loadStart();
-	},
-	getLength: function() {
-		var main_list = this[this.main_list_name];
-		return main_list.length;
-	},
-	loadStart: function() {
-		if (this.state('more_load_available') && !this.getLength()){
-			this.requestMoreData();
-		}
-	},
-	addItemToDatalist: function(obj, silent) {
-		this.addArtist(obj, silent);
-	},
-	
-	setLoader: function(cb, trigger) {
-		this.updateState("has-loader", true);
-		this.sendMoreDataRequest = cb;
-
-		if (trigger){
-			this.requestMoreData();
-		}
-
-	},
-	requestMoreData: function(force) {
-		if (this.state("has-loader") && this.sendMoreDataRequest){
-			if (!this.request_info || this.request_info.done){
-				this.markLoading();
-				this.request_info = this.sendMoreDataRequest.call(this, this.getPagingInfo());
-				if (!this.request_info.request){
-					throw new Error('give me request');
-				} else {
-					this.addRequest(this.request_info.request);
-				}
-			}
-			//this.trigger("load-more");
-		}
-		
-	},
-	setLoaderFinish: function() {
-		this.updateState("has-loader", false);
-	},
-	markLoading: function(){
-		this.updateState('list-loading', true);
-		return this;
-	},
-	putRequestedData: function(request, data_list, error) {
-		if (!this.request_info || this.request_info.request == request){
-			this.requestComplete(request, error);
-
-			if (!error && data_list && data_list.length){
-				var mlc_opts = this.getMainListChangeOpts();
-				for (var i = 0; i < data_list.length; i++) {
-					this.addItemToDatalist(data_list[i], true);
-				}
-				
-				this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
-			}
-			if (!error && request && data_list.length < this.page_limit){
-				this.setLoaderFinish();
-			}
-		}
-		return this;
-	},
-	requestComplete: function(request, error) {
-		if (!this.request_info || this.request_info.request == request){
-			var main_list = this[this.main_list_name];
-
-			this.updateState('list-loading', false);
-			if (error && !main_list.length) {
-				this.updateState('error', true);
-			} else {
-				this.updateState('error', false);
-			}
-			delete this.request_info;
-		}
-		return this;
-	}
-});
-
-var SimilarArtists  = window.SimilarArtists = function() {};
-ArtistsList.extendTo(SimilarArtists, {
-	page_limit: 100,
-	init: function(opts, params) {
-		this._super(opts);
-		this.original_artist = params.artist;
-
-
-		this.updateState('nav-title', 'Similar to «' + this.original_artist + '» artists');
-		this.updateState('url-part', '/+similar');
-
-	},
-	getRqData: function(paging_opts) {
-		return {
-			artist: this.original_artist,
-			limit: paging_opts.page_limit,
-			page: paging_opts.next_page
-		};
-	},
-	sendMoreDataRequest: function(paging_opts){
-		var request_info = {};
+	page_limit: 20,
+	makePlaylistRequest: function(paging_opts, path) {
 		var _this = this;
-		request_info.request = lfm.get('artist.getSimilar',this.getRqData(paging_opts))
-			.done(function(r){
-				var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
-				var data_list = [];
-
-				if (artists && artists.length) {
-					var l = Math.min(artists.length, paging_opts.page_limit);
-					for (var i=0; i < l; i++) {
-						data_list.push({
-							artist: artists[i].name,
-							lfm_image: {
-								array: artists[i].image
-							}
-						});
+		var request_info = {};
+		request_info.request = this.app.hypem.get(path, this.send_params)
+			.done(function(r) {
+				var result_list = [];
+				for (var num in r){
+					if (num == parseInt(num, 10) && r[num]){
+						result_list.push(r[num]);
 					}
+				}
+				var track_list = [];
+				for (var i = 0; i < result_list.length; i++) {
+					var cur = result_list[i];
+					var song_omo = {
+						artist: cur.artist,
+						track: cur.title
+					};
+					if (!song_omo.artist){
+						song_omo = guessArtist(cur.title);
+					}
+					song_omo.image_url = cur.thumb_url;
+					if (song_omo.artist && song_omo.track){
+						track_list.push(song_omo);
+					} else {
+						console.log('there is no needed attributes');
+						console.log(cur);
+					}
+					
+				}
+				_this.putRequestedData(request_info.request, track_list);
 
-				}
-				_this.putRequestedData(request_info.request, data_list, !!r.error);
-				if (!r.error){
-					_this.setLoaderFinish();
-				}
-				 //"artist.getSimilar" does not support paging
-				
 			})
 			.fail(function() {
 				_this.requestComplete(request_info.request, true);
@@ -428,8 +226,21 @@ ArtistsList.extendTo(SimilarArtists, {
 				request_info.done = true;
 			});
 		return request_info;
+	},
+	'compx-loader_disallowing_desc': {
+		depends_on: ['loader_disallowed', 'possible_loader_disallowing'],
+		fn: function(disallowed, desc) {
+			if (disallowed){
+				return desc;
+			}
+		}
+	},
+	'compx-loader_disallowed': {
+		depends_on: ['browser_can_load'],
+		fn: function(can_load) {
+			return !can_load;
+		}
 	}
 });
-
 })();
 

@@ -141,17 +141,22 @@ provoda.View.extendTo(songUI, {
 			//this.titlec.text(title);
 			this.node.attr("title", title);
 		},
-		'song-image': function(url) {
-			this.song_imagec.empty();
+		'selected-image': function(lfm_wrap) {
+			if (!lfm_wrap){
+				return;
+			}
+			var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/64s/' + lfm_wrap.lfm_id : lfm_wrap.url;
+
+
 			if (url){
-				$('<img/>')
-					.attr({
-						src: url,
+				this.song_imagec.empty();
+				this.song_imagec.append(
+					$('<img/>').attr({
+						'src': url,
 						alt: this.state('artist')
 					})
-					.appendTo(this.song_imagec);
+				);
 			}
-			
 		}
 	},
 	unmark: function(){

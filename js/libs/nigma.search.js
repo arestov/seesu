@@ -79,9 +79,6 @@ NigmaAPI.prototype = {
 							deferred.reject.apply(deferred, arguments);
 						});
 
-						if (options.after_ajax){
-							options.after_ajax();
-						}
 						if (deferred.notify){
 							deferred.notify('just-requested');
 						}

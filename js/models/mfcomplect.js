@@ -129,6 +129,9 @@ provoda.Model.extendTo(mfCor, {
 		};
 		*/
 
+
+
+
 		this.mo.on('state-change.is_important', function(e) {
 			if (e.value && e.value){
 				setTimeout(function() {
@@ -163,6 +166,7 @@ provoda.Model.extendTo(mfCor, {
 			});
 			
 		}
+		
 		this.archivateChildrenStates('sorted_completcs', 'moplas_list', function(values_array) {
 			var args = values_array;
 			var many;
@@ -176,6 +180,9 @@ provoda.Model.extendTo(mfCor, {
 		}, 'has_files');
 
 		this.intMessages();
+
+
+		
 
 		/*
 		this.watchStates(['has_files', 'vk-audio-auth'], function(has_files, vkaa) {
@@ -310,7 +317,7 @@ provoda.Model.extendTo(mfCor, {
 	},
 	intMessages: function() {
 		this.notifier = new notifyCounter();
-		this.setChild('notifier', this.notifier);
+		this.setChild('notifier', this.notifier, true);
 		this.sf_notf = su.notf.getStore('song-files');
 		var rd_msgs = this.sf_notf.getReadedMessages();
 		for (var i = 0; i < rd_msgs.length; i++) {
@@ -463,7 +470,7 @@ provoda.Model.extendTo(mfCor, {
 		investg
 		.on('state-change.search-ready-to-use', function(e) {
 			_this.updateState('search-ready', e.value);
-		})
+		}, {soft_reg: true})
 		.on('child-change.sources_list', function(e) {
 			var sorted_completcs = [];
 			for (var i = 0; i < e.value.length; i++) {
@@ -473,7 +480,7 @@ provoda.Model.extendTo(mfCor, {
 			}
 			_this.setChild('sorted_completcs', sorted_completcs, true);
 			_this.updateState('few-sources', e.value.length > 1);
-		});
+		}, {soft_reg: true});
 
 	},
 	/*

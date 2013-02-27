@@ -11,7 +11,7 @@ LfmLogin.extendTo(LfmLovedLogin, {
 	bindAuthCallback: function(){
 		var _this = this;
 		this.auth.once("session.input_click", function() {
-			_this.pmd.loadPlStart();
+			_this.pmd.loadStart();
 			_this.pmd.showOnMap();
 		}, {exlusive: true});
 	}
@@ -31,7 +31,7 @@ LfmLogin.extendTo(LfmReccomsLogin, {
 	bindAuthCallback: function(){
 		var _this = this;
 		this.auth.once("session.input_click", function() {
-			_this.pmd.loadPlStart();
+			_this.pmd.loadStart();
 			_this.pmd.showOnMap();
 		}, {exlusive: true});
 	}
@@ -47,7 +47,7 @@ VkLoginB.extendTo(VkAudioLogin, {
 	beforeRequest: function() {
 		var _this = this;
 		this.bindAuthReady('input_click', function() {
-			_this.pmd.loadPlStart();
+			_this.pmd.loadStart();
 			_this.pmd.showOnMap();
 		});
 		
@@ -90,7 +90,7 @@ songsList.extendTo(EnhancedSongslist, {
 		
 		
 	},
-	loadPlStart: function() {
+	loadStart: function() {
 		if (this.state('has-access')){
 			this._super.apply(this, arguments);
 		}
@@ -120,7 +120,7 @@ songsList.extendTo(EnhancedSongslist, {
 	},
 	requestPlaylist: function() {
 		if (this.state('has-access')){
-			this.loadPlStart();
+			this.loadStart();
 			this.showOnMap();
 		} else {
 			this.pmd.zoomOut();
@@ -227,8 +227,8 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 				for (var i = 0; i < r.response.length; i++) {
 					var cur = r.response[i];
 					track_list.push({
-						artist: cur.artist,
-						track: cur.title,
+						artist: HTMLDecode(cur.artist),
+						track: HTMLDecode(cur.title),
 						file: vk_search.makeSongFile(cur)
 					});
 				}

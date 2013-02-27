@@ -58,6 +58,7 @@ appModel.extendTo(seesuApp, {
 	init: function(version){
 		this._super();
 		this.version = version;
+		this.lfm = lfm;
 
 		this._url = get_url_parameters(location.search, true);
 		this.settings = {};
@@ -349,6 +350,26 @@ appModel.extendTo(seesuApp, {
 
 
 
+		this.hypem = new HypemApi();
+		this.hypem.init({
+			xhr2: app_env.xhr2,
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new funcsQueue(1700, 4000, 4)
+		});
+		this.goog_sc = new GoogleSoundcloud();
+		this.goog_sc.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new funcsQueue(1000, 3000, 4)
+		});
+		this.discogs = new DiscogsApi();
+		this.discogs.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new funcsQueue(2000, 4000, 4)
+		});
+
 	},
 	migrateStorage: function(ver){
 		if (!ver){
@@ -635,10 +656,11 @@ su.init(3.9);
 
 
 (function(){
-	var sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+	
 	//su.sc_api = sc_api;
+	su.sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch({
-		api: sc_api,
+		api: su.sc_api,
 		mp3_search: su.mp3_search
 	}));
 
@@ -654,6 +676,7 @@ su.init(3.9);
 	
 	if (app_env.cross_domain_allowed){
 		su.mp3_search.add(new isohuntTorrentSearch({
+			cache_ajax: cache_ajax,
 			mp3_search: su.mp3_search
 		}));
 
@@ -669,7 +692,8 @@ su.init(3.9);
 	} else {
 		su.mp3_search.add(new googleTorrentSearch({
 			crossdomain: app_env.cross_domain_allowed,
-			mp3_search: su.mp3_search
+			mp3_search: su.mp3_search,
+			cache_ajax: cache_ajax
 		}));
 	}
 

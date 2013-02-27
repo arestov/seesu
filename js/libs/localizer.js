@@ -8,6 +8,34 @@
 */
 
 localizer = {
+	"Hypem-cant-load":{
+		"original": "Your browser does not support XHR2 to load data from hypem.com",
+		"ru": "Ваш браузер не поддерживает XHR2, необходимый что бы загружать данные с hypem.com"
+	},
+	"Art-sc-likes": {
+		"original": "Artist soundcloud likes",
+		"ru": "Понравившиеся композиции на soundcloud"
+	},
+	"Art-sc-songs": {
+		"original": "From soundcloud profle",
+		"ru": "Из soundcloud профиля"
+	},
+	"Sc-profile-not-found": {
+		"original": "Artist soundcloud profile was not found",
+		"ru": "Soundcloud профиль артиста не был найден"
+	},
+	"Blogged-all-hypem": {
+		"original": "Blogged, all and sundry (hypem.com)",
+		"ru": "Из блогов, все подряд (hypem.com)"
+	},
+	"Blogged-25-hypem": {
+		"original": "Blogged, 25-250 Favorites (hypem.com)",
+		"ru": "Из блогов, у 25-250 в избранном (hypem.com)"
+	},
+	"Blogged-250-hypem": {
+		"original": "Blogged, 250+ Favorites (hypem.com)",
+		"ru": "Из блогов, у 250+ в избранном (hypem.com)"
+	},
 	"Acquaintances": {
 		"original": "Acquaintances",
 		"ru": "Знакомства"
@@ -286,9 +314,9 @@ localizer = {
 		"original": "Top",
 		"ru": "Лучшие"
 	},
-	"top-tracks":{
-		"original": "top tracks",
-		"ru": 'лучшие треки'
+	"Top-tracks":{
+		"original": "Top tracks",
+		"ru": 'Лучшие треки'
 	},
 	"stop-flash": {
 		"original": "To stop annoing «Adobe Flash Player Security» window copy this address:",

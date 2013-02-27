@@ -9,15 +9,6 @@ var song;
 
 	baseSong.extendTo(song, {
 		page_name: 'song page',
-		'stch-lfm-image': function(state) {
-			if (state){
-				if (state.lfm_id){
-					this.updateState('song-image', "http://userserve-ak.last.fm/serve/64s/" + state.lfm_id);
-				} else if (state.url){
-					this.updateState('song-image', state.url);
-				}
-			}
-		},
 		'stch-can-expand': function(state) {
 			if (state && !this.expanded){
 				this.expanded = true;
@@ -56,6 +47,9 @@ var song;
 
 			var spec_image_wrap;
 			var omo = opts.omo;
+			if (omo.image_url){
+				this.updateState('image_url', {url: omo.image_url});
+			}
 			if (omo.lfm_image){
 				spec_image_wrap = su.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
 				//this.updateState('lfm-image', omo.lfm_image);
@@ -71,20 +65,24 @@ var song;
 					track: this.state('track')
 				})
 					.on('state-change.image-to-use', function(e) {
-						_this.updateState('lfm-image', e.value);
+						_this.updateState('ext-lfm-image', e.value);
 					});
 				
 
 			} else {
 				images_pack = su.art_images.getArtistImagesModel(this.state('artist'))
 					.on('state-change.image-to-use', function(e) {
-						_this.updateState('lfm-image', e.value);
+						_this.updateState('ext-lfm-image', e.value);
 					});
 			}
-
+			_this.initHeavyPart();
 			
+		},
+		initHeavyPart: function() {
+			var _this = this;
+			var omo = this.omo;
 			var actionsrow = new TrackActionsRow(this);
-			this.setChild('actionsrow', actionsrow);
+			this.setChild('actionsrow', actionsrow, true);
 			this.addChild(actionsrow);
 
 			this.mf_cor = new mfCor();
@@ -101,7 +99,7 @@ var song;
 					have_mp3_tracks: true
 				});
 			}
-			this.setChild('mf_cor', this.mf_cor);
+			this.setChild('mf_cor', this.mf_cor, true);
 			this.addChild(this.mf_cor);
 			this.mf_cor
 				.on('before-mf-play', function(mopla) {

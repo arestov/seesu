@@ -1,15 +1,69 @@
-var AllHypeTagSongs = function() {};
-songsList.extendTo(AllHypeTagSongs, {
+var HypemTagPlaylist = function() {};
+HypemPlaylist.extendTo(HypemTagPlaylist, {
+	
+	getHypeTagName: function() {
+		// instrumental hip-hop >> instrumental hip hop,
+		//but trip-hip >> trip-hip (not change)
+		var test_regexp = /\s|-/gi;
+		var result = this.tag_name.match(test_regexp);
+		if (result && result.length >= 2){
+			return this.tag_name.replace(test_regexp, ' ');
+		} else {
+			return this.tag_name;
+		}
+	},
+	sendMoreDataRequest: function(paging_opts) {
+		return this.makePlaylistRequest(paging_opts, '/playlist/tags/' + this.getHypeTagName() + '/json/' + paging_opts.next_page +'/data.js');
+	}
+});
+var Fav25HypemTagSongs = function() {};
+HypemTagPlaylist.extendTo(Fav25HypemTagSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav-title', localize('Explore-songs-exfm'));
-		this.updateState('url-part', '/blogged');
+		this.updateManyStates({
+			'nav-title': localize('Blogged-25-hypem'),
+			'url-part': '/blogged?fav_from=25&fav_to=250',
+			'browser_can_load': this.can_use
+		});
+
 	},
-	sendMoreDataRequest: function(paging_opts) {
-		var _this = this;
-		var request_info = {};
+	send_params: {
+		fav_from: 25,
+		fav_to: 250
+	}
+});
+var Fav250HypemTagSongs = function() {};
+HypemTagPlaylist.extendTo(Fav250HypemTagSongs, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.tag_name = params.tag_name;
+
+		this.updateManyStates({
+			'nav-title': localize('Blogged-250-hypem'),
+			'url-part': '/blogged?fav_from=250&fav_to=100000',
+			'browser_can_load': this.can_use
+		});
+
+	},
+	send_params: {
+		fav_from: 250,
+		fav_to: 100000
+	}
+});
+
+var AllHypemTagSongs = function() {};
+HypemTagPlaylist.extendTo(AllHypemTagSongs, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.tag_name = params.tag_name;
+
+		this.updateManyStates({
+			'nav-title': localize('Blogged-all-hypem'),
+			'url-part': '/blogged',
+			'loader_disallowed': !(this.app.env.cross_domain_allowed || this.app.env.xhr2)
+		});
 	}
 });
 
@@ -243,6 +297,17 @@ mapLevelModel.extendTo(SongsLists, {
 		lists_list.push(new FreeTagSongs());
 		lists_list.push(new TrendingTagSongs());
 		lists_list.push(new ExplorableTagSongs());
+		lists_list.push(new AllHypemTagSongs());
+		lists_list.push(new Fav25HypemTagSongs());
+		lists_list.push(new Fav250HypemTagSongs());
+
+		this.on('state-change.mp-show', function(e) {
+			if (e.value && e.value.userwant){
+				for (var i = 0; i < lists_list.length; i++) {
+					lists_list[i].preloadStart();
+				}
+			}
+		});
 
 		for (var i = 0; i < lists_list.length; i++) {
 			lists_list[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
@@ -373,16 +438,22 @@ mapLevelModel.extendTo(ArtistsLists, {
 
 		var lists_list = [];
 
-		var top_artists = new TagTopArtists();
-		var week_artists = new WeekTagArtists();
 
-		lists_list.push(top_artists);
-		lists_list.push(week_artists);
+		lists_list.push(new TagTopArtists());
+		lists_list.push(new WeekTagArtists());
 
 
 		for (var i = 0; i < lists_list.length; i++) {
 			lists_list[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
 		}
+		
+		this.on('state-change.mp-show', function(e) {
+			if (e.value && e.value.userwant){
+				for (var i = 0; i < lists_list.length; i++) {
+					lists_list[i].preloadStart();
+				}
+			}
+		});
 
 		this.setChild('lists_list', lists_list);
 

@@ -37,17 +37,17 @@ var jsLoadComplete,
 	"js/libs/network.vk.api.js",
 	"js/libs/exfm.js",
 	"js/libs/lastfm.core.js",
-	"js/libs/lastfm.serv.js",
 	"js/network.lastfm.js",
 	"js/lastfm.data.js",
 	"js/su-prototypes/su.serv-prototypes.js",
 
-	"js/views/navigation.js",
+	
 
-
-	"js/models/artcard.js",
+	"js/models/LoadableList.js",
 	"js/models/songs-list.base.js",
 	"js/models/songs-list.js",
+	"js/models/artcard.js",
+	
 
 	"js/models/UserAcquaintances.js",
 	"js/models/UserCard.js",
@@ -81,12 +81,14 @@ var jsLoadComplete,
 
 	"js/libs/c_buttmen.js",
 	
+	"js/views/navigation.js",
 	"js/views/etc.views.js",
+	"js/views/TagPage.js",
 	"js/views/ArtistsList.js",
 	"js/views/UserAcquaintances.js",
 	"js/views/UserCard.js",
 	"js/views/MusicConductor.js",
-	"js/views/TagPage.js",
+	
 	"js/views/YoutubeVideo.js",
 	"js/views/su-mfcomplect.js",
 	"js/views/search-investigation.base.js",

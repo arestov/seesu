@@ -1,28 +1,83 @@
-
-
-var ArtistsListPreviewLine = function() {};
-provoda.View.extendTo(ArtistsListPreviewLine, {
+var ListPreviewLine = function() {};
+provoda.View.extendTo(ListPreviewLine, {
 	createBase: function() {
-		this.c = $('<span></span>');
+		this.c = $('<span class="desc_item"></span>');
+		if (this.extended_viewing){
+			this.image_c = $('<span class="desc_item-imgcon"></span>').appendTo(this.c);
+		}
+		
+		this.text_c = $('<span class="desc_item-text"></span>').appendTo(this.c);
+
+	},
+	'compx-selected-title': {
+		depends_on: ['nav-title', 'nav-short-title'],
+		fn: function(title, short_title) {
+			return short_title || title;
+		}
+	},
+	'stch-selected-title': function(state) {
+		this.text_c.text(state);
+	}
+});
+var ArtistsListPreviewLine = function() {};
+ListPreviewLine.extendTo(ArtistsListPreviewLine, {
+	extended_viewing: true,
+	'stch-selected-image': function(lfm_wrap) {
+		if (!lfm_wrap){
+			return;
+		}
+		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/64s/' + lfm_wrap.lfm_id : lfm_wrap.url;
+
+
+		if (url){
+			this.image_c.empty();
+			this.image_c.append(
+				$('<img/>').attr({
+					'src': url,
+					alt: this.state('artist')
+				})
+			);
+		}
+	}
+});
+
+var ListPreview = function() {};
+provoda.View.extendTo(ListPreview, {
+	useBase: function(node) {
+		this.c = node;
+		this.bindBase();
+	},
+	bindBase: function() {
+		this.ancs = this.root_view.getPvAnchors(this.c);
+		var _this = this;
+		this.c.click(function() {
+			_this.md.showOnMap();
+		});
+
+		this.addWayPoint(this.c);
+	},
+	createBase: function() {
+		this.c = this.root_view.getSample('area_for_button');
+		this.bindBase();
 	},
 	'stch-nav-title': function(state) {
-		this.c.text(state);
+		this.ancs.header.text(state);
 	}
 });
 
 
 var ItemOfLL = function() {};
-provoda.View.extendTo(ItemOfLL, {
-	createBase: function() {
-		this.c = $('<div class="area-button"></div>');
-		var _this = this;
-		this.c.click(function() {
-			_this.md.showOnMap();
-		});
-		this.addWayPoint(this.c);
+ListPreview.extendTo(ItemOfLL, {
+	
+	'stch-list-loading': function(state) {
+		this.ancs.listc.toggleClass('list-loading', !!state);
 	},
-	'stch-nav-title': function(state) {
-		this.c.text(state);
+	children_views: {
+		preview_list: ArtistsListPreviewLine
+	},
+	'collch-preview_list': {
+		place: 'ancs.listc',
+		limit: 9
 	}
 });
 
@@ -37,26 +92,18 @@ PageView.extendTo(ListOfListsView, {
 	'collch-lists_list': 'c'
 });
 
+
+
 var LiListsPreview = function() {};
-provoda.View.extendTo(LiListsPreview, {
+ListPreview.extendTo(LiListsPreview, {
 	createBase: function() {
-		this.c = $('<div class="tag_artists-preview area_for_button"></div>');
-		var _this = this;
-		this.big_button = $('<div class="area-button"></div>').appendTo(this.c);
-		this.big_button.click(function() {
-			_this.md.showOnMap();
-		});
-		this.addWayPoint(this.big_button);
-		this.header = $('<span></span>').appendTo(this.big_button);
-		this.listc = $('<div class="area-description desc"></div>').appendTo(this.c);
-	},
-	'stch-nav-title': function(state) {
-		this.header.text(state);
+		this._super();
+		this.c.addClass('tag_artists-preview');
 	},
 	children_views: {
-		lists_list: ArtistsListPreviewLine
+		lists_list: ListPreviewLine
 	},
-	'collch-lists_list': 'listc'
+	'collch-lists_list': 'ancs.listc'
 });
 
 var TagPageView = function() {};

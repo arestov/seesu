@@ -420,7 +420,7 @@ a.track-name-loading:hover{
 		display: block;
 		margin-left: -20px;
 		width: 40px;
-		height: 4rem;
+		height: 3rem;
 		border-top: 1px solid #737373;
 		background-color: #5E5E5E;
 		}
@@ -435,7 +435,7 @@ a.track-name-loading:hover{
 	.show-zoom-to-track .playlist-info{
 		display:none;
 	}
-	.show-zoom-to-track .load-more-songs{
+	.show-zoom-to-track .load-more-list-data{
 		display: none;
 	}
 
