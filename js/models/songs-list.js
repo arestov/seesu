@@ -208,7 +208,7 @@ songsList.extendTo(HypemPlaylist, {
 						song_omo = guessArtist(cur.title);
 					}
 					song_omo.image_url = cur.thumb_url;
-					if (song_omo.artist && song_omo.title){
+					if (song_omo.artist && song_omo.track){
 						track_list.push(song_omo);
 					} else {
 						console.log('there is no needed attributes');

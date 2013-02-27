@@ -633,11 +633,11 @@ mapLevelModel.extendTo(ArtCard, {
 			);
 		})
 		.next(function(nick_name) {
-			_this.app.sc_api.get('resolve', {
-				'_status_code_map[302]': 200,
-				'_status_format': 'json',
-				url: 'http://soundcloud.com/' + nick_name
-			})
+			_this.addRequest(_this.app.sc_api.get('resolve', {
+					'_status_code_map[302]': 200,
+					'_status_format': 'json',
+					url: 'http://soundcloud.com/' + nick_name
+				})
 				.done(function(r) {
 					if (r.location){
 						
@@ -655,10 +655,46 @@ mapLevelModel.extendTo(ArtCard, {
 				.always(function() {
 					_this.updateState('sc-profile-searching', false);
 					
-				});
+				})
+			);
 			//this.reset();
 		})
 		.start();
+
+		this.updateState('discogs-id-searching', true);
+
+		var simplifyArtistName = function(name) {
+			return name.replace(/\([\s\S]*?\)/, '').split(/\s|,/).sort().join('').toLowerCase();
+		};
+		var artist_name = this.artist;
+		_this.addRequest(this.app.discogs.get('/database/search', {q: artist_name, type:"artist"})
+			.done(function(r) {
+				var artists_list = r && r.results;
+				var artist_info;
+				var simplified_artist = simplifyArtistName(artist_name);
+				for (var i = 0; i < artists_list.length; i++) {
+					var cur = artists_list[i];
+					if (simplified_artist == simplifyArtistName(cur.title)){
+						if (cur.thumb && cur.thumb.indexOf('images/record90') == -1){
+							artist_info = {
+								artist_name: cur.title,
+								image_url: cur.thumb,
+								id: cur.id
+							};
+							break;
+						}
+					}
+				}
+				if (artist_info){
+					_this.updateState('discogs-id', artist_info.id);
+				}
+			})
+			.always(function() {
+				_this.updateState('discogs-id-searching', false);
+			})
+		);
+
+
 
 		this.preloadChildren();
 		

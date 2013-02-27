@@ -308,6 +308,51 @@ Class.extendTo(GoogleSoundcloud, {
 		return wrap_def.complex;
 	}
 });
+window.DiscogsApi = function() {};
+Class.extendTo(DiscogsApi, {
+	init: function(opts) {
+		this.cache_ajax = opts.cache_ajax;
+		this.queue = opts.queue;
+		this.crossdomain = opts.crossdomain;
+	},
+	cache_namespace: 'discogs',
+	get: function(path, params, options) {
+		var	_this = this;
+
+		if (!path){
+			throw new Error('wrong path');
+		}
+
+		options = options || {};
+		options.cache_key = options.cache_key || hex_md5("http://api.discogs.com" + path + stringifyParams(params));
+
+		var	params_full = params || {};
+
+		//cache_ajax.get('vk_api', p.cache_key, function(r){
+
+		var wrap_def = wrapRequest({
+			url: "http://api.discogs.com" + path,
+			type: "GET",
+			dataType: this.crossdomain ? "json": "jsonp",
+			data: params_full,
+			timeout: 20000,
+			resourceCachingAvailable: true
+		}, {
+			cache_ajax: this.cache_ajax,
+			nocache: options.nocache,
+			cache_key: options.cache_key,
+			cache_timeout: options.cache_timeout,
+			cache_namespace: this.cache_namespace,
+			requestFn: function() {
+				return aReq.apply(this, arguments);
+			},
+			queue: this.queue
+		});
+
+		return wrap_def.complex;
+		
+	}
+});
 
 HypemApi = function() {};
 Class.extendTo(HypemApi, {

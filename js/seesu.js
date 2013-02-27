@@ -349,6 +349,7 @@ appModel.extendTo(seesuApp, {
 		});
 
 
+
 		this.hypem = new HypemApi();
 		this.hypem.init({
 			xhr2: app_env.xhr2,
@@ -361,6 +362,12 @@ appModel.extendTo(seesuApp, {
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
 			queue: new funcsQueue(1000, 3000, 4)
+		});
+		this.discogs = new DiscogsApi();
+		this.discogs.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new funcsQueue(2000, 4000, 4)
 		});
 
 	},

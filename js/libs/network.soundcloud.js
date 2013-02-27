@@ -26,6 +26,7 @@ scApi.prototype = {
 				dataType: this.crossdomain ? "json": "jsonp",
 				data: params_full,
 				timeout: 20000,
+				resourceCachingAvailable: true,
 				afterChange: function(opts) {
 					if (opts.dataType == 'json'){
 						opts.headers = null;
