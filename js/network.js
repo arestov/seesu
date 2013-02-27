@@ -380,7 +380,8 @@ Class.extendTo(HypemApi, {
 			dataType: "json",
 			data: params,
 			timeout: 20000,
-			resourceCachingAvailable: true,
+			headers: null,
+			thisOriginAllowed: true,
 			afterChange: function(opts) {
 				if (opts.dataType == 'json'){
 					opts.headers = null;
