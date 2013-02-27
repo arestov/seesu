@@ -8,6 +8,10 @@
 */
 
 localizer = {
+	"Hypem-cant-load":{
+		"original": "Your browser does not support XHR2 to load data from hypem.com",
+		"ru": "Ваш браузер не поддерживает XHR2, необходимый что бы загружать данные с hypem.com"
+	},
 	"Art-sc-likes": {
 		"original": "Artist soundcloud likes",
 		"ru": "Понравившиеся композиции на soundcloud"

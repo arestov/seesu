@@ -598,6 +598,7 @@ html.not-as-application, .not-as-application  body{
 				}
 	.track-context .extend-switcher{
 		float:right;
+		max-width: 20rem;
 		margin-left:-0.5rem;
 		padding: 0.5rem 10px;
 		border:0;

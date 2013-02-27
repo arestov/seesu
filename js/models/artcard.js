@@ -198,6 +198,59 @@ songsList.extendTo(ArtistAlbumSongs, {
 	}
 });
 
+
+var HypemArtistSeFreshSongs = function() {};
+HypemPlaylist.extendTo(HypemArtistSeFreshSongs, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.artist = params.artist;
+		this.updateManyStates({
+			'nav-title': 'Fresh songs',
+			'url-part': '/fresh'
+		});
+	},
+	send_params: {},
+	sendMoreDataRequest: function(paging_opts) {
+		return this.makePlaylistRequest(paging_opts, '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js');
+	}
+});
+var HypemArtistSeUFavSongs = function() {};
+HypemPlaylist.extendTo(HypemArtistSeUFavSongs, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.artist = params.artist;
+		this.updateManyStates({
+			'nav-title': 'Most Favorites',
+			'url-part': '/most_favorites'
+		});
+	},
+	send_params: {
+		sortby:'fav'
+	},
+	sendMoreDataRequest: function(paging_opts) {
+		return this.makePlaylistRequest(paging_opts, '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js');
+	}
+});
+var HypemArtistSeBlogged = function() {};
+HypemPlaylist.extendTo(HypemArtistSeBlogged, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.artist = params.artist;
+		this.updateManyStates({
+			'nav-title': 'Most Reblogged',
+			'url-part': '/blogged'
+		});
+	},
+	send_params: {
+		sortby:'blogged'
+	},
+	sendMoreDataRequest: function(paging_opts) {
+		return this.makePlaylistRequest(paging_opts, '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js');
+	}
+});
+
+
+
 var SoundcloudArtcardSongs = function() {};
 songsList.extendTo(SoundcloudArtcardSongs, {
 	init: function() {
@@ -208,7 +261,7 @@ songsList.extendTo(SoundcloudArtcardSongs, {
 		});
 	},
 	'compx-loader_disallowing_desc': {
-		depends_on: ['searching-sc-profile', 'compx-loader_disallowed', 'possible_loader_disallowing'],
+		depends_on: ['searching-sc-profile', 'loader_disallowed', 'possible_loader_disallowing'],
 		fn: function(searching, disallowed, desc) {
 			if (disallowed && !searching){
 				return desc;
@@ -253,8 +306,10 @@ songsList.extendTo(SoundcloudArtcardSongs, {
 									track: cur.title
 								};
 							}
+
 							
 						}
+						song_data.track = HTMLDecode(song_data.track);
 						song_data.image_url = cur.artwork_url;
 						song_data.file = _this.app.mp3_search.getSearchByName('soundcloud').makeSongFile(cur);
 						track_list.push(song_data);
@@ -459,7 +514,10 @@ mapLevelModel.extendTo(ArtCard, {
 		this.albums = new ArtistAlbums();
 		this.soundc_prof = new SoundcloudArtistSongs();
 		this.soundc_likes = new SoundcloudArtistLikes();
-		children_lists.push(this.albums, this.soundc_prof, this.soundc_likes);
+		this.hypem_new = new HypemArtistSeFreshSongs();
+		this.hypem_fav = new HypemArtistSeUFavSongs();
+		this.hypem_reblog = new HypemArtistSeBlogged();
+		children_lists.push(this.albums, this.soundc_prof, this.soundc_likes, this.hypem_new, this.hypem_fav, this.hypem_reblog);
 
 
 
@@ -474,6 +532,9 @@ mapLevelModel.extendTo(ArtCard, {
 		this.setChild('albums_list', this.albums);
 		this.setChild('soundc_prof', this.soundc_prof);
 		this.setChild('soundc_likes', this.soundc_likes);
+		this.setChild('hypem_new', this.hypem_new);
+		this.setChild('hypem_fav', this.hypem_fav);
+		this.setChild('hypem_reblog', this.hypem_reblog);
 
 		this.updateState('lfm-image', params.lfm_image &&
 			this.app.art_images.getImageWrap(params.lfm_image.array));
@@ -519,7 +580,7 @@ mapLevelModel.extendTo(ArtCard, {
 		return pl;
 	},
 	preloadChildren: function() {
-		var list = [this.top_songs, this.albums, this.soundc_prof, this.soundc_likes];
+		var list = [this.top_songs, this.hypem_new, this.hypem_fav, this.hypem_reblog, this.albums, this.soundc_prof, this.soundc_likes];
 		for (var i = 0; i < list.length; i++) {
 			list[i].preloadStart();
 		}

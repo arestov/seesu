@@ -287,6 +287,7 @@
 		.art_card-image img{
 			margin-bottom:1.72rem;
 			width:100%;
+			background: #666;
 		}
 @media (max-width:550px) {
 

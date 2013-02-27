@@ -1,6 +1,6 @@
 var HypemTagPlaylist = function() {};
-songsList.extendTo(HypemTagPlaylist, {
-	page_limit: 20,
+HypemPlaylist.extendTo(HypemTagPlaylist, {
+	
 	getHypeTagName: function() {
 		// instrumental hip-hop >> instrumental hip hop,
 		//but trip-hip >> trip-hip (not change)
@@ -13,33 +13,7 @@ songsList.extendTo(HypemTagPlaylist, {
 		}
 	},
 	sendMoreDataRequest: function(paging_opts) {
-		var _this = this;
-		var request_info = {};
-		request_info.request = this.app.hypem.get('/playlist/tags/' + this.getHypeTagName() + '/json/' + paging_opts.next_page +'/data.js', this.send_params)
-			.done(function(r) {
-				var result_list = [];
-				for (var num in r){
-					if (num == parseInt(num, 10) && r[num]){
-						result_list.push(r[num]);
-					}
-				}
-				var track_list = [];
-				for (var i = 0; i < result_list.length; i++) {
-					track_list.push({
-						artist: result_list[i].artist,
-						track: result_list[i].title
-					});
-				}
-				_this.putRequestedData(request_info.request, track_list);
-
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
-			});
-		return request_info;
+		return this.makePlaylistRequest(paging_opts, '/playlist/tags/' + this.getHypeTagName() + '/json/' + paging_opts.next_page +'/data.js');
 	}
 });
 var Fav25HypemTagSongs = function() {};
@@ -51,7 +25,7 @@ HypemTagPlaylist.extendTo(Fav25HypemTagSongs, {
 		this.updateManyStates({
 			'nav-title': localize('Blogged-25-hypem'),
 			'url-part': '/blogged?fav_from=25&fav_to=250',
-			'loader_disallowed': !(this.app.env.cross_domain_allowed || this.app.env.xhr2)
+			'browser_can_load': this.can_use
 		});
 
 	},
@@ -69,7 +43,7 @@ HypemTagPlaylist.extendTo(Fav250HypemTagSongs, {
 		this.updateManyStates({
 			'nav-title': localize('Blogged-250-hypem'),
 			'url-part': '/blogged?fav_from=250&fav_to=100000',
-			'loader_disallowed': !(this.app.env.cross_domain_allowed || this.app.env.xhr2)
+			'browser_can_load': this.can_use
 		});
 
 	},
