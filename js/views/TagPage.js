@@ -48,7 +48,7 @@ provoda.View.extendTo(ListPreview, {
 		this.bindBase();
 	},
 	bindBase: function() {
-		this.ancs = this.root_view.getPvAnchors(this.c);
+		this.createTemplate();
 		var _this = this;
 		this.c.click(function() {
 			_this.md.showOnMap();
@@ -61,7 +61,7 @@ provoda.View.extendTo(ListPreview, {
 		this.bindBase();
 	},
 	'stch-nav-title': function(state) {
-		this.ancs.header.text(state);
+		this.tpl.ancs.header.text(state);
 	}
 });
 
@@ -70,13 +70,13 @@ var ItemOfLL = function() {};
 ListPreview.extendTo(ItemOfLL, {
 	
 	'stch-list-loading': function(state) {
-		this.ancs.listc.toggleClass('list-loading', !!state);
+		this.tpl.ancs.listc.toggleClass('list-loading', !!state);
 	},
 	children_views: {
 		preview_list: ArtistsListPreviewLine
 	},
 	'collch-preview_list': {
-		place: 'ancs.listc',
+		place: 'tpl.ancs.listc',
 		limit: 9
 	}
 });
@@ -103,21 +103,21 @@ ListPreview.extendTo(LiListsPreview, {
 	children_views: {
 		lists_list: ListPreviewLine
 	},
-	'collch-lists_list': 'ancs.listc'
+	'collch-lists_list': 'tpl.ancs.listc'
 });
 
 var TagPageView = function() {};
 PageView.extendTo(TagPageView, {
 	createBase: function() {
 		this.c = this.root_view.getSample('tag_page');
-		this.ancs = this.root_view.getPvAnchors(this.c);
+		this.createTemplate();
 		//$('<div class="tag_page usual_page"></div>');
-		this.header = $('<h2></h2>').appendTo(this.c);
+		//this.header = $('<h2></h2>').appendTo(this.c);
 		//this.artists_c = $('<div class="artists_lists"></div>').appendTo(this.c);
 		//this.songs_c = $('<div class="songs_list"></div>').appendTo(this.c);
 	},
 	'stch-tag-name': function(state) {
-		this.ancs.header.text(state);
+		this.tpl.ancs.header.text(state);
 	},
 	children_views: {
 		artists_lists: LiListsPreview,

@@ -17,7 +17,7 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 				req.abort();
 			});
 		} else {
-			this.ancs.imgc.attr('src', '');
+			this.tpl.ancs.imgc.attr('src', '');
 		}
 	}
 });
@@ -27,7 +27,7 @@ var BigAlbumPreview = function() {};
 provoda.View.extendTo(BigAlbumPreview, {
 	createBase: function() {
 		this.c = this.root_view.getSample('alb_prev_big');
-		this.ancs = this.root_view.getPvAnchors(this.c);
+		this.createTemplate();
 		var _this = this;
 
 		this.c.click(function() {
@@ -37,20 +37,20 @@ provoda.View.extendTo(BigAlbumPreview, {
 		this.addWayPoint(this.c);
 	},
 	'stch-can-hide-artist-name': function(state) {
-		this.ancs.artist_name_c.toggleClass('hidden', state);
+		this.tpl.ancs.artist_name_c.toggleClass('hidden', state);
 	},
 	'stch-album_name': function(state) {
 		this.c.attr('title', state);
-		this.ancs.album_name_c.text(state);
+		this.tpl.ancs.album_name_c.text(state);
 	},
 	'stch-album_artist': function(state) {
-		this.ancs.artist_name_c.text(state);
+		this.tpl.ancs.artist_name_c.text(state);
 	},
 	'stch-selected-image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
 			var req = this.root_view.loadImage({
-					node: this.ancs.imgc[0],
+					node: this.tpl.ancs.imgc[0],
 					url: url,
 					cache_allowed: true
 				}).done(function(){
@@ -60,7 +60,7 @@ provoda.View.extendTo(BigAlbumPreview, {
 				req.abort();
 			});
 		} else {
-			this.ancs.imgc.attr('src', '');
+			this.tpl.ancs.imgc.attr('src', '');
 		}
 		
 	}
@@ -70,10 +70,10 @@ var AlbumsListView = function() {};
 PageView.extendTo(AlbumsListView, {
 	createBase: function() {
 		this.c = this.root_view.getSample('albums_page');
-		this.ancs = this.root_view.getPvAnchors(this.c);
+		this.createTemplate();
 		
 		var _this = this;
-		this.ancs.load_m_b.click(function() {
+		this.tpl.ancs.load_m_b.click(function() {
 			_this.md.requestMoreData();
 			return false;
 		});
@@ -81,9 +81,9 @@ PageView.extendTo(AlbumsListView, {
 	children_views: {
 		preview_list: BigAlbumPreview
 	},
-	'collch-preview_list': 'ancs.albums_list_c',
+	'collch-preview_list': 'tpl.ancs.albums_list_c',
 	'stch-more_load_available': function(state) {
-		this.ancs.load_m_b.toggleClass('hidden', !state);
+		this.tpl.ancs.load_m_b.toggleClass('hidden', !state);
 	}
 });
 
@@ -91,13 +91,13 @@ var AlbumsListPreview = function() {};
 ItemOfLL.extendTo(AlbumsListPreview, {
 	createBase: function() {
 		this._super();
-		this.ancs.listc.addClass('albums_previews');
+		this.tpl.ancs.listc.addClass('albums_previews');
 	},
 	children_views: {
 		preview_list: AlbumsListPreviewItem
 	},
 	'collch-preview_list': {
-		place: 'ancs.listc',
+		place: 'tpl.ancs.listc',
 		limit: 15
 	}
 });
@@ -245,8 +245,7 @@ provoda.View.extendTo(artCardUI, {
 			tagsc: this.c.find('.art_card-tags'),
 			bioc: this.c.find('.art_card-bio')
 		};
-
-		this.ancs = this.root_view.getPvAnchors(this.c);
+		this.createTemplate();
 
 		
 	}

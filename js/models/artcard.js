@@ -684,14 +684,23 @@ mapLevelModel.extendTo(ArtCard, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.app = opts.app;
-		this.albums_models = {};
+		
 		this.artist = params.artist;
-		this.getTopTracks();
-		this.getSimilarArtists();
+		
 		this.updateState('nav-title', this.artist);
 		this.updateState('artist-name', this.artist);
 
 
+
+		this.updateState('lfm-image', params.lfm_image &&
+			this.app.art_images.getImageWrap(params.lfm_image.array));
+
+		
+	},
+	heavyInit: function() {
+		this.albums_models = {};
+		this.getTopTracks();
+		this.getSimilarArtists();
 		var children_lists = [];
 
 		this.dgs_albums = new DiscogsAlbums();
@@ -721,9 +730,6 @@ mapLevelModel.extendTo(ArtCard, {
 		this.setChild('hypem_new', this.hypem_new);
 		this.setChild('hypem_fav', this.hypem_fav);
 		this.setChild('hypem_reblog', this.hypem_reblog);
-
-		this.updateState('lfm-image', params.lfm_image &&
-			this.app.art_images.getImageWrap(params.lfm_image.array));
 
 		var _this = this;
 		this.on('state-change.mp-show', function(e) {
@@ -1051,6 +1057,7 @@ mapLevelModel.extendTo(ArtCard, {
 var ArtistInArtl = function() {};
 ArtCard.extendTo(ArtistInArtl, {
 	skip_map_init: true,
+	heavyInit: function() {},
 	showArtcard: function() {
 		this.app.showArtcardPage(this.artist);
 	}

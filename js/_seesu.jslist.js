@@ -23,6 +23,7 @@ var jsLoadComplete,
 	"js/libs/funcsStack.js",
 	"js/libs/funcsQueue.js",
 	//"js/libs/c_quene.js",
+	"js/libs/StatementsAngularParser.min.js",
 	"js/prototypes/provoda.js",
 	
 	//"js/common-libs/jquery.debounce-1.0.5.js", //remove!

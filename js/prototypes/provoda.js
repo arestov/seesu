@@ -880,6 +880,9 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this._updateProxy(changes_list);
 	},
 	updateState: function(name, value){
+		if (name.indexOf('-') != -1){
+			console.warn('fix prop name: ' + name);
+		}
 		if (this.hasComplexStateFn(name)){
 			throw new Error("you can't change complex state in this way");
 		}
@@ -936,6 +939,142 @@ var
 }());
 
 
+var Template = function() {};
+var angbo = window.angbo;
+
+Class.extendTo(Template, {
+	init: function(opts) {
+		this.root_node = opts.node;
+		this.ancs = {};
+		this.children_templates = {};
+		this.directives_names_list = [];
+		this.states_watchers = [];
+		this.stwat_index = {};
+		
+		for (var directive_name in this.directives){
+			this.directives_names_list.push(directive_name);
+		}
+		this.getPvAnchors(this.root_node);
+		if (!window.angbo || !window.angbo.interpolateExpressions){
+			console.log('cant pasre statements');
+		}
+	},
+	directives: {
+		'pv-text': function(node, attr_obj){
+			var text_statement = attr_obj.value;
+			if (text_statement){
+				var calculator = angbo.interpolateExpressions(text_statement);
+				if (calculator){
+					var all_values = $filter(calculator.parts,'propsToWatch');
+					var all_vs = [];
+					all_vs = all_vs.concat.apply(all_vs, all_values);
+
+					console.log('all propsToWatch');
+					console.log(all_vs);
+					var sfy_values = [];
+					for (var i = 0; i < all_vs.length; i++) {
+						var parts = all_vs[i].split('.');
+						var main_part = parts[0];
+						sfy_values.push(main_part);
+					}
+
+					this.states_watchers.push({
+						values: all_vs,
+						sfy_values: sfy_values
+					});
+				}
+			}
+
+		},
+		'px-class': function() {
+
+		},
+		'pv-anchor': function(node, attr_obj) {
+			var anchor_name = attr_obj.value;
+			//if (typeof anchor_name)
+
+			if (this.ancs[anchor_name]){
+				throw new Error('anchors exists');
+			} else {
+				this.ancs[anchor_name] = $(node);
+			}
+
+			/*
+			.getAttribute('pv-anchor');
+
+			if (typeof anchor_name == 'string'){
+				
+			}
+			*/
+
+		}
+	},
+	handleDirective: function(directive_name, node, attr_obj, result_cache) {
+		this.directives[directive_name].call(this, node, attr_obj, result_cache);
+	},
+	getPvViews: function(array) {
+		var result = this.children_templates;
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			var name_parts = cur.view_name.split(' ');
+			var real_name;
+			var space = 'main';
+			if (name_parts[1]){
+				throw new Error('uncomplete code; fixme');
+			} else {
+				real_name = name_parts[0];
+			}
+			
+			if (!result[real_name]){
+				result[real_name] = {};
+			}
+			if (!result[real_name][space]){
+				result[real_name][space] = [];
+			}
+
+			result[real_name][space] = cur;
+			cur.views = [];
+		}
+		return result;
+	},
+	getPvAnchors: function(vroot_node) {
+		var match_stack =[];
+		var pv_views = [];
+		//var anchors = [];
+
+		vroot_node = vroot_node && vroot_node[0] || vroot_node;
+		match_stack.push(vroot_node);
+
+		while (match_stack.length){
+			var cur_node = match_stack.shift();
+			if (cur_node.nodeType != 1){
+				continue;
+			}
+			var view_name = vroot_node !== cur_node && cur_node.getAttribute('pv-view');
+			if (typeof view_name == 'string'){
+				pv_views.push({
+					node: cur_node,
+					view_name: view_name
+				});
+			} else {
+				var i, attributes = cur_node.attributes;
+				for (i = 0; i < attributes.length; i++) {
+					var attr_name = attributes[i].name;
+					if (this.directives_names_list.indexOf(attr_name) != -1){
+						this.handleDirective(attr_name, cur_node, attributes[i]);
+					}
+				}
+				for (i = 0; i < cur_node.childNodes.length; i++) {
+					match_stack.push(cur_node.childNodes[i]);
+				}
+
+			}
+
+		}
+		this.getPvViews(pv_views);
+		this.stwat_index = makeIndexByField(this.states_watchers, 'sfy_values');
+	}
+});
 
 var views_counter = 0;
 var way_points_counter = 0;
@@ -1010,6 +1149,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			//throw new Error('give me check tool!');
 		}
 		this.way_points.push(obj);
+	},
+	getTemplate: function(node) {
+		node = node[0] || node;
+		var template = new Template();
+		template.init({node: node});
+		return template;
+	},
+	createTemplate: function() {
+		if (!this.c){
+			throw new Error('cant create template');
+		}
+		this.tpl = this.getTemplate(this.c);
 	},
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;
@@ -1461,7 +1612,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		var real_array;
 
-		var pv_views = getTargetField(this, 'ancs._views.' + name);
+		var pv_views = getTargetField(this, 'tpl.children_templates.' + name);
 		if (pv_views){
 			for (var space_name in pv_views){
 				this.checkCollchItemAgainstPvView(name, toRealArray(array), space_name, pv_views[space_name]);
