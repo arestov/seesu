@@ -11,6 +11,8 @@ provoda.View.extendTo(appModelView, {
 		this.root_view = this;
 		this.d = this.opts.d;
 
+		this.lfm_imgq = new funcsQueue(700);
+		this.dgs_imgq = new funcsQueue(1200);
 		var _this = this;
 		setTimeout(function() {
 			_this.buildAppDOM();
@@ -634,6 +636,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	parts_builder: {
 		//samples
+		tag_page: function() {
+			return this.els.ui_samples.children('.tag_page');
+		},
 		alb_prev_big: function() {
 			return this.els.ui_samples.children('.album_preview-big');
 		},
@@ -1955,6 +1960,21 @@ provoda.View.extendTo(appModelView, {
 
 
 	
+	},
+	loadImage: function(opts) {
+		
+		if (opts.url){
+			var queue;
+			if (opts.url.indexOf('last.fm') != -1){
+				queue = this.lfm_imgq;
+			} else if (opts.url.indexOf('discogs.com') != -1) {
+				queue = this.dgs_imgq;
+			}
+			opts.timeout = opts.timeout || 40000;
+			opts.queue = opts.queue || queue;
+			return loadImage(opts);
+		}
+		
 	},
 	createNiceButton: function(position){
 		var c = $('<span class="button-hole"><a class="nicebutton"></a></span>');

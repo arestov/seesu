@@ -12,11 +12,13 @@ mapLevelModel.extendTo(LoadableList, {
 			}
 			
 		}, {skip_reg: true});
-		this.on('child-change.' + this.main_list_name, function(e) {
-			if (!e.no_changing_mark){
-				this.setChild(this.preview_mlist_name, e.value, true);
-			}
-		});
+		if (!this.manual_previews){
+			this.on('child-change.' + this.main_list_name, function(e) {
+				if (!e.no_changing_mark){
+					this.setChild(this.preview_mlist_name, e.value, true);
+				}
+			});
+		}
 	},
 	'compx-more_load_available': {
 		depends_on: ["has-loader", "list-loading", "loader_disallowed"],

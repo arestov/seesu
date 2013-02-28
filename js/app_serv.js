@@ -489,7 +489,9 @@ var getCleanDocumentBodyHTML = function(text) {
 };
 var loaded_images = {};
 var loadImage = function(opts) {
-	
+	if (typeof opts.cache_allowed != 'boolean'){
+		throw new Error('cache_allowed must be true or false');
+	}
 
 	//queue
 	var node = opts.node || new Image();

@@ -812,7 +812,7 @@ provoda.View.extendTo(songUI, {
 									node: image_jnode[0],
 									url: (sizes[5] || sizes[0])["#text"],
 									timeout: 40000,
-									queue: su.lfm_imgq,
+									queue: _this.root_view.lfm_imgq,
 									cache_allowed: true
 								}).done(function(){
 									if (first_image && _this.first_image){

@@ -109,22 +109,20 @@ ListPreview.extendTo(LiListsPreview, {
 var TagPageView = function() {};
 PageView.extendTo(TagPageView, {
 	createBase: function() {
-		this.c = $('<div class="tag_page usual_page"></div>');
+		this.c = this.root_view.getSample('tag_page');
+		this.ancs = this.root_view.getPvAnchors(this.c);
+		//$('<div class="tag_page usual_page"></div>');
 		this.header = $('<h2></h2>').appendTo(this.c);
-		this.artists_c = $('<div class="artists_lists"></div>').appendTo(this.c);
-		this.songs_c = $('<div class="songs_list"></div>').appendTo(this.c);
+		//this.artists_c = $('<div class="artists_lists"></div>').appendTo(this.c);
+		//this.songs_c = $('<div class="songs_list"></div>').appendTo(this.c);
 	},
 	'stch-tag-name': function(state) {
-		this.header.text(state);
+		this.ancs.header.text(state);
 	},
 	children_views: {
-		artists_lists: {
-			main: LiListsPreview
-		},
-		songs_list: {
-			main: LiListsPreview
-		}
-	},
-	'collch-songs_list': 'songs_c',
-	'collch-artists_lists': 'artists_c'
+		artists_lists: LiListsPreview,
+		songs_list: LiListsPreview
+	}
+	//'collch-songs_list': 'songs_c',
+	//'collch-artists_lists': 'artists_c'
 });

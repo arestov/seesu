@@ -5,7 +5,20 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 	},
 	'stch-selected-image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/64s/' + lfm_wrap.lfm_id : lfm_wrap.url;
-		this.c.attr('src', url);
+		if (url){
+			var req = this.root_view.loadImage({
+					node: this.c[0],
+					url: url,
+					cache_allowed: true
+				}).done(function(){
+				}).fail(function(){
+				});
+			this.on('die', function() {
+				req.abort();
+			});
+		} else {
+			this.ancs.imgc.attr('src', '');
+		}
 	}
 });
 
@@ -35,7 +48,21 @@ provoda.View.extendTo(BigAlbumPreview, {
 	},
 	'stch-selected-image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
-		this.ancs.imgc.attr('src', url);
+		if (url){
+			var req = this.root_view.loadImage({
+					node: this.ancs.imgc[0],
+					url: url,
+					cache_allowed: true
+				}).done(function(){
+				}).fail(function(){
+				});
+			this.on('die', function() {
+				req.abort();
+			});
+		} else {
+			this.ancs.imgc.attr('src', '');
+		}
+		
 	}
 });
 
@@ -148,9 +175,8 @@ provoda.View.extendTo(artCardUI, {
 		hypem_reblog: ItemOfLL,
 		soundc_likes: ItemOfLL,
 		similar_artists: ItemOfLL,
-		albums_list: {
-			main: AlbumsListPreview
-		}
+		albums_list: AlbumsListPreview,
+		dgs_albums: AlbumsListPreview
 	},
 	state_change: {
 		"mp-show": function(opts) {

@@ -293,7 +293,6 @@ appModel.extendTo(seesuApp, {
 
 		});
 
-		this.lfm_imgq = new funcsQueue(700);
 		setTimeout(function(){
 			_this.checkStats();
 		},100);
