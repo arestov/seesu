@@ -565,6 +565,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				});
 			}
 		}
+		if (this.tpl){
+			this.tpl.setStates(this.states);
+		}
 		return changed_states;
 	},
 	checkComplexStates: function(changed_states) {
@@ -959,35 +962,73 @@ Class.extendTo(Template, {
 			console.log('cant pasre statements');
 		}
 	},
+	bindStandartChange: function(node, attr_obj, getValue, setValue, simplifyValue) {
+		var text_statement = attr_obj.value;
+		if (text_statement){
+			var calculator = angbo.interpolateExpressions(text_statement);
+			if (calculator){
+				var original_value = getValue.call(this, node, attr_obj);
+				if (simplifyValue){
+					original_value = simplifyValue.call(this, original_value);
+				}
+
+				var all_values = $filter(calculator.parts,'propsToWatch');
+				var all_vs = [];
+				all_vs = all_vs.concat.apply(all_vs, all_values);
+
+				console.log('all propsToWatch');
+				console.log(all_vs);
+				var sfy_values = [];
+				for (var i = 0; i < all_vs.length; i++) {
+					var parts = all_vs[i].split('.');
+					var main_part = parts[0];
+					sfy_values.push(main_part);
+				}
+				var _this = this;
+
+				this.states_watchers.push({
+					values: all_vs,
+					sfy_values: sfy_values,
+					checkFunc: function(states) {
+						var new_value = calculator(states);
+						if (simplifyValue){
+							new_value = simplifyValue.call(_this, new_value);
+						}
+						if (original_value != new_value){
+							setValue.call(_this, node, attr_obj, new_value, original_value);
+							original_value = new_value;
+						}
+					}
+				});
+			}
+		}
+	},
+	dom_helpres: {
+		getTextValue: function(node) {
+			return $(node).text();
+		},
+		setTextValue: function(node, attr_obj, new_value, old_value) {
+			$(node).text(new_value);
+		},
+		getClass: function(node, attr_obj) {
+			return attr_obj.value;
+		},
+		setClass: function(node, attr_obj, new_value, old_value) {
+			attr_obj.value = new_value;
+		}
+	},
 	directives: {
 		'pv-text': function(node, attr_obj){
-			var text_statement = attr_obj.value;
-			if (text_statement){
-				var calculator = angbo.interpolateExpressions(text_statement);
-				if (calculator){
-					var all_values = $filter(calculator.parts,'propsToWatch');
-					var all_vs = [];
-					all_vs = all_vs.concat.apply(all_vs, all_values);
-
-					console.log('all propsToWatch');
-					console.log(all_vs);
-					var sfy_values = [];
-					for (var i = 0; i < all_vs.length; i++) {
-						var parts = all_vs[i].split('.');
-						var main_part = parts[0];
-						sfy_values.push(main_part);
-					}
-
-					this.states_watchers.push({
-						values: all_vs,
-						sfy_values: sfy_values
-					});
-				}
-			}
+			this.bindStandartChange(node, attr_obj, this.dom_helpres.getTextValue, this.dom_helpres.setTextValue);
 
 		},
-		'px-class': function() {
-
+		'px-class': function(node, attr_obj) {
+			this.bindStandartChange(node, attr_obj, this.dom_helpres.getClass, this.dom_helpres.setClass, function(value) {
+				if (!value){
+					return value;
+				}
+				return value.replace(/\s+/gi,' ').replace(/^\s|\s$/gi,'');
+			});
 		},
 		'pv-anchor': function(node, attr_obj) {
 			var anchor_name = attr_obj.value;
@@ -1009,6 +1050,19 @@ Class.extendTo(Template, {
 
 		}
 	},
+	setStates: function(states) {
+		for (var i = 0; i < this.states_watchers.length; i++) {
+			this.states_watchers[i].checkFunc(states);
+		}
+	},
+	/*
+	checkValues: function(array, all_states) {
+		var checked = [];
+
+		for (var i = 0; i < array.length; i++) {
+			array[i]
+		}
+	},*/
 	handleDirective: function(directive_name, node, attr_obj, result_cache) {
 		this.directives[directive_name].call(this, node, attr_obj, result_cache);
 	},

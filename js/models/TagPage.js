@@ -471,7 +471,6 @@ mapLevelModel.extendTo(TagPage, {
 		this.updateState('url-part', '/tags/' + this.tag_name);
 		this.updateState('tag-name', this.tag_name);
 
-
 		var artists_lists = new ArtistsLists();
 		artists_lists.init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
 		this.setChild('artists_lists', artists_lists);
