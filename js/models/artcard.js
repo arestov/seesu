@@ -845,7 +845,7 @@ mapLevelModel.extendTo(ArtCard, {
 
 						if (artist_scid){
 							_this.updateState('soundcloud_profile', artist_scid);
-							_this.preloadChildren([this.soundc_prof, this.soundc_likes]);
+							_this.preloadChildren([_this.soundc_prof, _this.soundc_likes]);
 						}
 					}
 				})
