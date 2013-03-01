@@ -1,18 +1,18 @@
 .does-not-need-search-from{
 	padding-top:2rem;
 	}
-.full-page .search-results-container{
+.full-page .search_results-container{
 	position:relative;
 	padding-left:4.3rem;
 	}
 
-	.search-results-container h4{
+	.search_results-container h4{
 		margin:0;
 		
 		font-weight:400;
 		
 		}
-	.full-page .search-results-container h4{
+	.full-page .search_results-container h4{
 		position:absolute;
 		left:0;
 		z-index:2;
@@ -20,12 +20,12 @@
 		width:4.3rem;
 		height:1.4rem;
 		}
-	.search-results-container h4.loading{
+	.search_results-container h4.loading{
 		background: url(../i/spinner.svg) no-repeat ;
 		background-position: 100% 50%;
 		background-size: 1.143rem;
 	}
-	.search-results-container ul.sugg-section{
+	.search_results-container ul.sugg-section{
 		position:relative;
 		overflow:hidden;
 		margin:0;
@@ -34,20 +34,20 @@
 		border-bottom:1px solid #5d5d5d;
 		zoom:1;
 		}
-	.full-page .search-results-container ul.sugg-section{
+	.full-page .search_results-container ul.sugg-section{
 		border-left:1px solid #5d5d5d;
 		}
-		.search-results-container ul li{
+		.search_results-container ul li{
 			position:relative;
 			}
-		.search-results-container ul li.searched-bordered{
+		.search_results-container ul li.searched-bordered{
 			border-top: 1px dashed #5d5d5d;
 			}
-		.search-results-container ul li:first-child{
+		.search_results-container ul li:first-child{
 			border-top:0 !important;
 			}
-		.search-results-container a,
-		.search-results-container button{
+		.search_results-container a,
+		.search_results-container button{
 			position:relative;
 			display:block;
 			overflow: hidden;
@@ -56,13 +56,13 @@
 			cursor:pointer;
 			zoom:1;
 			}
-			.search-results-container
+			.search_results-container
 			ul
 			.sugg-track-dur{
 				float:right;
 				margin:0;
 			}
-		.search-results-container button{
+		.search_results-container button{
 			position:relative;
 			width:100%;
 			border:0;
@@ -71,13 +71,13 @@
 			text-align:left;
 		}
 
-		.search-results-container a.active,
-		.search-results-container button.active{
+		.search_results-container a.active,
+		.search_results-container button.active{
 			padding-right:1.7rem;
 			background-color:#555  !important;
 		}
-		.search-results-container a.active:after,
-		.search-results-container button.active:after{
+		.search_results-container a.active:after,
+		.search_results-container button.active:after{
 			position:absolute;
 			top:1rem;
 			right:5px;
@@ -88,21 +88,21 @@
 			vertical-align:middle;
 			line-height:20px;
 		}
-		.search-results-container a:hover,
-		.search-results-container button:hover
+		.search_results-container a:hover,
+		.search_results-container button:hover
 		{
 			background-color:#666  !important;
 			color:#f6f0e1;
 			}
 		
-			.search-results-container	ul.results-suggests img{
+			.search_results-container	ul.results-suggests img{
 				float:left;
 				margin-right:0.5rem;
 				width:34px;
 				height:34px;
 				border:1px solid #eee;
 				}
-			.search-results-container	ul.results-suggests	span{
+			.search_results-container	ul.results-suggests	span{
 				overflow:hidden;
 				margin-top:1px;
 				margin-bottom:0;
@@ -122,34 +122,34 @@
 					color: #777;
 					line-height: 1.2rem;
 					}
-	.search-results-container	ul.sugg-section:last-child{
+	.search_results-container	ul.sugg-section:last-child{
 		border-bottom:0;
 	}
-	.search-results-container ul{
+	.search_results-container ul{
 		display:none;
 	}
-	.search-results-container ul.active-section{
+	.search_results-container ul.active-section{
 		display: block;
 	}
-	.search-results-container ul.sugg-section.odd-section{
+	.search_results-container ul.sugg-section.odd-section{
 		background-color:#4d4d4d;
 	}
-	.search-results-container ul.playlist-results a{padding-left:47px;}
-	.search-results-container	ul.recommend-tags a{
+	.search_results-container ul.playlist-results a{padding-left:47px;}
+	.search_results-container	ul.recommend-tags a{
 		padding-left:47px;
 		background: url(../i/tag-icon.png) no-repeat 26px 50%;
 	}
 
-	.search-results-container .nothing-found{
+	.search_results-container .nothing-found{
 		padding-left:47px  !important;
 		background:inherit  !important;
 		}
-		.search-results-container .nothing-found:hover{
+		.search_results-container .nothing-found:hover{
 			background:inherit  !important;
 			color:inherit  !important;
 			cursor:default  !important;
 		}
-	.search-results-container button span{
+	.search_results-container button span{
 		border-bottom:1px dashed #5c5c5c;
 	}
 

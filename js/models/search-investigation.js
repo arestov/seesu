@@ -325,7 +325,7 @@ investigation.extendTo(SearchPage, {
 		
 	},
 	complex_states: {
-		"needs-search-from": {
+		"needs_search_from": {
 			depends_on: ['mp-freezed'],
 			fn: function(frzd) {
 				return !frzd;

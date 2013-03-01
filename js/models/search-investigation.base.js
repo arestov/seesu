@@ -12,7 +12,7 @@
 			this.enter_items = false;
 			this.setChild('section', []);
 			this.setInactiveAll();
-			this.updateState('url-part', this.getURL());
+			this.updateState('url_part', this.getURL());
 		},
 		page_name: "search results",
 		addCallback: function(event_name, func){
@@ -172,7 +172,7 @@
 			if (this.q != q){
 				this.stopRequests();
 				if (this.getTitleString){
-					this.updateState('nav-title', this.getTitleString(q));
+					this.updateState('nav_title', this.getTitleString(q));
 				}
 				this.loaded();
 				this.setItemForEnter();
@@ -186,7 +186,7 @@
 				this.updateState('query', q);
 				this.changeResultsCounter();
 				this.doEverythingForQuery();
-				this.updateState('url-part', this.getURL());
+				this.updateState('url_part', this.getURL());
 			}
 			
 		},

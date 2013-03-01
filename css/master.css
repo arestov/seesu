@@ -124,7 +124,7 @@ html.not-as-application, .not-as-application  body{
 		.moplas-block .show-all-songs a span{
 			border-bottom: 1px dotted;
 			}
-	.moplas-block.want-more-songs .show-all-songs a{
+	.moplas-block.want_more_songs .show-all-songs a{
 		border-bottom-left-radius: 0.5rem;
 		}
 .moplas-block{
@@ -174,11 +174,11 @@ html.not-as-application, .not-as-application  body{
 				min-height: 15px;
 				max-height:15px;
 				}
-				.moplas-block.want-more-songs .moplas-list li{
+				.moplas-block.want_more_songs .moplas-list li{
 					border-top-color:#5D5D5D;
 					border-bottom-color:#555555;
 					}
-				.moplas-block.want-more-songs ul li .mf-progress{
+				.moplas-block.want_more_songs ul li .mf-progress{
 					max-height:none;
 					}
 			.moplas-block .moplas-list li .mf-duration{
@@ -190,7 +190,7 @@ html.not-as-application, .not-as-application  body{
 				margin-left:10px;
 				color:#777;
 				}
-				.moplas-block.want-more-songs ul .mf-source{
+				.moplas-block.want_more_songs ul .mf-source{
 					display: none;
 					}
 		
@@ -206,13 +206,13 @@ html.not-as-application, .not-as-application  body{
 		}
 
 
-		.want-more-songs.moplas-block  .moplas-list h4{
+		.want_more_songs.moplas-block  .moplas-list h4{
 			display: block;
 			}
-		.want-more-songs.moplas-block .moplas-list ul{
+		.want_more_songs.moplas-block .moplas-list ul{
 			margin-bottom:42px;
 			}
-		.want-more-songs.moplas-block .moplas-list li{
+		.want_more_songs.moplas-block .moplas-list li{
 			display: block;
 			}
 
@@ -222,7 +222,7 @@ html.not-as-application, .not-as-application  body{
 		.selected-mf .mf-text{
 			font-size: 0.86rem;
 			}
-			.want-more-songs .selected-mf .mf-text{
+			.want_more_songs .selected-mf .mf-text{
 				font-size: inherit;
 				}
 		.selected-mf.buffering-progress .mf-progress{
@@ -234,7 +234,7 @@ html.not-as-application, .not-as-application  body{
 		display: none;
 		}
 	
-		.want-more-songs.moplas-block .moplas-list.want-overstocked-songs .overstocked{
+		.want_more_songs.moplas-block .moplas-list.want-overstocked-songs .overstocked{
 			display: block;
 		}
 				
@@ -473,16 +473,16 @@ html.not-as-application, .not-as-application  body{
 		width:200%;
 		height:100%;
 	}
-	.photo-cont-lift.ready-to-use{
+	.photo-cont-lift.ready_to_use{
         position: absolute;
         top: 0;
         left: 0;
 		overflow: hidden;
 	}
-	.photo-cont-lift.ready-to-use .artist-image{
+	.photo-cont-lift.ready_to_use .artist_image{
 		position: relative;
 	}
-	.photo-cont .artist-image{
+	.photo-cont .artist_image{
 		height:100%;
 		
 		}
@@ -662,7 +662,7 @@ html.not-as-application, .not-as-application  body{
 		display:none;
 		}
 
-	.track-context .want-more-info .image img.artist-image{
+	.track-context .want-more-info .image img.artist_image{
 		position:static;
 	}
 
@@ -1212,14 +1212,14 @@ iframe.you-tube-video,embed.you-tube-video{
 		
 		margin-top:1.72rem;
 		}
-		.share-song .users-list .search-results-block{
+		.share-song .users-list .search_results-block{
 			overflow: hidden;
 			}
 		.share-song .users-list .vk-login-context{
 			margin:1rem -1rem 0;
 			border-radius: 0;
 		}
-		.share-song .users-list .search-results-block{
+		.share-song .users-list .search_results-block{
 			margin-top:1rem;
 		}
 		.share-song .users-list .suggest{

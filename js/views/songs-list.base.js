@@ -1,6 +1,6 @@
 provoda.addPrototype("songsListBaseView", {
 	state_change: {
-		'list-loading': function(loading){
+		'list_loading': function(loading){
 			if (loading){
 				this.lc.addClass('loading');
 			} else {
@@ -21,9 +21,9 @@ provoda.addPrototype("songsListBaseView", {
 		"can-play": function(state) {
 			if (state){
 				//make-trs-plable
-				this.c.addClass('has-files-in-songs');
+				this.c.addClass('has_files-in-songs');
 			} else {
-				this.c.removeClass('has-files-in-songs');
+				this.c.removeClass('has_files-in-songs');
 			}
 		}
 	},

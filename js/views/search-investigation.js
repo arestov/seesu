@@ -199,12 +199,12 @@ investigationView.extendTo(searchPageView, {
 		'section-playlist': playlistsSectionView,
 		'section-track': tracksSectionView
 	},
-	'stch-needs-search-from': function(state) {
+	'stch-needs_search_from': function(state) {
 		this.c.toggleClass('does-not-need-search-from', !state);
 	},
 	complex_states: {
-		'mp-show-end': {
-			depends_on: ['map-animating', 'vis-mp-show', 'mp-show'],
+		'mp_show-end': {
+			depends_on: ['map_animating', 'vis-mp_show', 'mp_show'],
 			fn: function(anim, vis_mp_show, mp_show) {
 				if (anim) {
 					if (vis_mp_show && anim == vis_mp_show.anid){
@@ -220,7 +220,7 @@ investigationView.extendTo(searchPageView, {
 		}
 	},
 	createBase: function() {
-		this.c = $('<div class="search-results-container"></div>');
+		this.c = $('<div class="search_results-container"></div>');
 		$('<p class="search-desc"></p>').text(localize('search-control-hint')).appendTo(this.c);
 	}
 });

@@ -169,14 +169,14 @@
 	background-image:url(../i/seesu_logo.svg);
 	}
 	
-.nav-search-results{
+.nav-search_results{
 	padding:4px 1rem 4px 9px;
 	width:15px;
 	}
-.nav-search-results .icon{
+.nav-search_results .icon{
 	background-image:url(../i/nav/seesu-nav-search.png);
 	}
-	.nav-search-results:active .icon{
+	.nav-search_results:active .icon{
 		background-image:url(../i/nav/seesu-nav-search-active.png);
 		}
 

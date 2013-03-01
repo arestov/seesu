@@ -3,7 +3,7 @@ provoda.View.extendTo(WagonItemPreview, {
 	createBase: function() {
 		this.c = $('<span></span>');
 	},
-	'stch-nav-title': function(state) {
+	'stch-nav_title': function(state) {
 		this.c.text(state);
 	}
 });
@@ -15,7 +15,7 @@ provoda.View.extendTo(WagonPreview, {
 		this.c = $('<div></div>');
 		this.header = $('<h4></h4>').appendTo(this.c);
 	},
-	'stch-nav-title': function(state) {
+	'stch-nav_title': function(state) {
 		this.header.text(state);
 	},
 	'collch-allp_allt_chart': 'c',
@@ -31,7 +31,7 @@ provoda.View.extendTo(TrainPreview, {
 		this.c = $('<div></div>');
 		this.header = $('<h3></h3>').appendTo(this.c);
 	},
-	'stch-nav-title': function(state) {
+	'stch-nav_title': function(state) {
 		this.header.text(state);
 	},
 	'collch-wagn_songs': 'c',
@@ -54,7 +54,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 		});
 		this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
-	'stch-can-expand': function(state){
+	'stch-can_expand': function(state){
 		if (state){
 			this.requirePart('start-page-blocks');
 		}

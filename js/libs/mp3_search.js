@@ -28,7 +28,7 @@ var FilesInvestg;
 			//scope
 		},
 		startSearch: function(opts) {
-			if ((!this.state('search-complete') || this.state('search-fail') ) && !this.state('search-progress')){
+			if ((!this.state('search_complete') || this.state('search_fail') ) && !this.state('search_progress')){
 				this.makeRequest(this.msq, {
 					only_cache: opts.only_cache,
 					nocache: opts.nocache
@@ -59,7 +59,7 @@ var FilesInvestg;
 		},
 		complex_states: {
 			'files-list': {
-				depends_on: ['search-result', 'injected-files'],
+				depends_on: ['search_result', 'injected-files'],
 				fn: function(sarr, inj_f) {
 					var all = [];
 					if (sarr && sarr.length){
@@ -74,7 +74,7 @@ var FilesInvestg;
 					return !!all.length && all;
 				}
 			},
-			'has-mp3-files': {
+			'has_mp3_files': {
 				depends_on: ['files-list'],
 				fn: function(sarr) {
 					for (var i = 0; i < sarr.length; i++) {
@@ -84,7 +84,7 @@ var FilesInvestg;
 					}
 				}
 			},
-			'has-best-files': {
+			'has_best_files': {
 				depends_on: ['files-list'],
 				fn: function(fslist) {
 					var field_name = 'query_match_index.' + this.mp3_search.getQueryString(this.msq).replace(/\./gi, '');
@@ -96,7 +96,7 @@ var FilesInvestg;
 					return !!best_songs.length;
 				}
 			},
-			'has-files': {
+			'has_files': {
 				depends_on: ['files-list'],
 				fn: function(fslist) {
 					return !!fslist.length;
@@ -104,7 +104,7 @@ var FilesInvestg;
 			}
 		},
 		makeRequest: function(msq, opts) {
-			if (!this.search_eng || opts.only_cache || this.state('has-request')){
+			if (!this.search_eng || opts.only_cache || this.state('has_request')){
 				return;
 			}
 			
@@ -127,21 +127,21 @@ var FilesInvestg;
 					if (note == 'just-requested'){
 						
 					}
-					_this.updateState('search-progress', true);
+					_this.updateState('search_progress', true);
 				})
 				.done(function(music_list){
-					_this.updateState('search-result', music_list);
-					_this.updateState('search-fail', false);
+					_this.updateState('search_result', music_list);
+					_this.updateState('search_fail', false);
 				})
 				.fail(function(){
 					
-					_this.updateState('search-fail', true);
+					_this.updateState('search_fail', true);
 				})
 				.always(function() {
-					_this.updateState('search-complete', true);
+					_this.updateState('search_complete', true);
 
-					_this.updateState('search-progress', false);
-					_this.updateState('has-request', false);
+					_this.updateState('search_progress', false);
+					_this.updateState('has_request', false);
 				});
 
 
@@ -150,7 +150,7 @@ var FilesInvestg;
 				used_successful.promise( complex_response );
 				this.addRequest(complex_response);
 			}
-			this.updateState('has-request', true);
+			this.updateState('has_request', true);
 
 
 		}
@@ -168,19 +168,19 @@ var FilesInvestg;
 			this.query_string = params.query_string;
 			var _this = this;
 
-			this.archivateChildrenStates('sources_list', 'has-request');
-			this.archivateChildrenStates('sources_list', 'search-progress');
-			this.archivateChildrenStates('sources_list', 'search-complete', 'every');
+			this.archivateChildrenStates('sources_list', 'has_request');
+			this.archivateChildrenStates('sources_list', 'search_progress');
+			this.archivateChildrenStates('sources_list', 'search_complete', 'every');
 			
-			this.archivateChildrenStates('sources_list', 'has-files');
-			this.archivateChildrenStates('sources_list', 'has-mp3-files');
-			this.archivateChildrenStates('sources_list', 'has-best-files');
+			this.archivateChildrenStates('sources_list', 'has_files');
+			this.archivateChildrenStates('sources_list', 'has_mp3_files');
+			this.archivateChildrenStates('sources_list', 'has_best_files');
 
 
 
 
-			//this.on('state-change.search-progress', function(e) {
-			//	console.log('search-progress: ' + e.value);
+			//this.on('state-change.search_progress', function(e) {
+			//	console.log('search_progress: ' + e.value);
 			//});
 			
 			this.mp3_search
@@ -242,7 +242,7 @@ var FilesInvestg;
 		},
 		complex_states: {
 			'legacy-files-search': {
-				depends_on: ['has-best-files', 'has-files', 'has-mp3-files', 'search-complete'],
+				depends_on: ['has_best_files', 'has_files', 'has_mp3_files', 'search_complete'],
 				fn: function(h_best_f, h_files, h_mp3_files, s_complete) {
 					return {
 						search_complete: s_complete,
@@ -252,8 +252,8 @@ var FilesInvestg;
 					};
 				}
 			},
-			'search-ready-to-use': {
-				depends_on: ['has-best-files', 'search-complete'],
+			'search_ready_to_use': {
+				depends_on: ['has_best_files', 'search_complete'],
 				fn: function(h_best_f, s_complete) {
 					return h_best_f || s_complete;
 				}

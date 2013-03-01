@@ -3,7 +3,7 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 	createBase: function() {
 		this.c = $('<img class="album_preview" src=""/>');
 	},
-	'stch-selected-image': function(lfm_wrap) {
+	'stch-selected_image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/64s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
 			var req = this.root_view.loadImage({
@@ -46,7 +46,7 @@ provoda.View.extendTo(BigAlbumPreview, {
 	'stch-album_artist': function(state) {
 		this.tpl.ancs.artist_name_c.text(state);
 	},
-	'stch-selected-image': function(lfm_wrap) {
+	'stch-selected_image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
 			var req = this.root_view.loadImage({
@@ -118,7 +118,7 @@ provoda.View.extendTo(ArtcardViewInList, {
 	'stch-artist-name': function(state) {
 		this.alink.text(state);
 	},
-	'stch-selected-image': function(lfm_wrap) {
+	'stch-selected_image': function(lfm_wrap) {
 		if (!lfm_wrap){
 			return;
 		}
@@ -147,10 +147,10 @@ provoda.View.extendTo(ArtistListView, {
 		this.addWayPoint(this.generate_button);
 	},
 
-	'stch-mp-show': function(opts) {
+	'stch-mp_show': function(opts) {
 		this.c.toggleClass('hidden', !opts);
 	},
-	'stch-list-loading': function(state){
+	'stch-list_loading': function(state){
 		this.c.toggleClass('list_loading_state', !!state);
 	},
 	children_views: {
@@ -179,7 +179,7 @@ provoda.View.extendTo(artCardUI, {
 		dgs_albums: AlbumsListPreview
 	},
 	state_change: {
-		"mp-show": function(opts) {
+		"mp_show": function(opts) {
 			this.c.toggleClass('hidden', !opts);
 		},
 		"loading-baseinfo": function(state) {
@@ -191,7 +191,7 @@ provoda.View.extendTo(artCardUI, {
 				mark_loading_nodes.removeClass('loading');
 			}
 		},
-		'selected-image': function(lfm_wrap) {
+		'selected_image': function(lfm_wrap) {
 			if (!lfm_wrap){
 				return;
 			}

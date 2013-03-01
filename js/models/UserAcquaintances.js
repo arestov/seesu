@@ -9,7 +9,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 		this.remainded_date = params.remainded_date;
 		this.updateState('remainded_date', params.remainded_date);
 		this.accepted = params.accepted;
-		this.updateState('user-info', params.info);
+		this.updateState('user_info', params.info);
 		this.updateState('user_photo', params.user_photo);
 
 		this.current_user_is_sender = params.current_user_is_sender;
@@ -29,7 +29,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 	},
 	complex_states: {
 		userlink: {
-			depends_on: ['accepted', 'user-info'],
+			depends_on: ['accepted', 'user_info'],
 			fn: function(accepted, user_info) {
 				if (accepted){
 					if (user_info && user_info.full_name && (user_info.domain || user_info.uid)){
@@ -86,14 +86,14 @@ mapLevelModel.extendTo(UserAcquaintancesLists, {
 		this._super(opts);
 		var _this = this;
 
-		this.app.on('state-change.su-userid', function(e) {
+		this.app.on('state-change.su_userid', function(e) {
 			if (e.value){
 				_this.updateState('current_user', e.value);
 			}
 		});
 		var su = this.app;
 
-		su.on('state-change.su-server-api', function(e) {
+		su.on('state-change.su_server_api', function(e) {
 			if (e.value){
 				_this.bindDataSteams();
 			}
@@ -102,8 +102,8 @@ mapLevelModel.extendTo(UserAcquaintancesLists, {
 		this.archivateChildrenStates('acqs_from_someone', 'accepted', 'every', 'not_wait_me');
 		this.archivateChildrenStates('acqs_from_me', 'accepted', 'every', 'not_wait_someone');
 
-		this.updateState('nav-title', localize('Acquaintances'));
-		this.updateState('url-part', '/acquaintances');
+		this.updateState('nav_title', localize('Acquaintances'));
+		this.updateState('url_part', '/acquaintances');
 	},
 	'compx-wait_me_desc': {
 		depends_on: ['not_wait_me'],

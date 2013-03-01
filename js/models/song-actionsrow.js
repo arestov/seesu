@@ -162,22 +162,22 @@ BaseCRow.extendTo(ShareRow, {
 		this.mo = mo;
 		this._super();
 		if (app_env.vkontakte || su.vk_api){
-			this.updateState("can-post-to-own-wall", true);
+			this.updateState("can_post_to_own_wall", true);
 		} else {
 			su.on("vk-api", function() {
-				_this.updateState("can-post-to-own-wall", true);
+				_this.updateState("can_post_to_own_wall", true);
 			});
 		}
 		if (!app_env.vkontakte){
 			if (su.vk_api){
-				this.updateState("can-search-friends", true);
+				this.updateState("can_search_friends", true);
 				this.removeVKAudioAuth();
 			} else {
 				this.addVKAudioAuth();
 				
 				su.on("vk-api", function() {
 					_this.removeVKAudioAuth();
-					_this.updateState("can-search-friends", true);
+					_this.updateState("can_search_friends", true);
 				});
 			}
 		} else {
@@ -203,10 +203,10 @@ BaseCRow.extendTo(ShareRow, {
 		this.addChild(this.searcher);
 
 		var updateSongURL = function(){
-			_this.updateState('share-url', _this.mo.getShareUrl());
+			_this.updateState('share_url', _this.mo.getShareUrl());
 		};
 
-		this.mo.on("state-change.url-part", function(){
+		this.mo.on("state-change.url_part", function(){
 			updateSongURL();
 		});
 
@@ -229,7 +229,7 @@ BaseCRow.extendTo(ShareRow, {
 	},
 	checkVKFriendsAccess: function(vk_opts) {
 		var can = (vk_opts & 2) * 1;
-		this.updateState("can-search-friends", can);
+		this.updateState("can_search_friends", can);
 		if (!can){
 			this.addVKAudioAuth(true);
 		} else {

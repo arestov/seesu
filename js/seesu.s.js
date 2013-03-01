@@ -221,7 +221,7 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 			suStore('dg_auth', auth_data, true);
 		}
 		this.auth.setNewData(auth_data);
-		su.updateState('su-userid', auth_data.userid);
+		su.updateState('su_userid', auth_data.userid);
 	},
 
 	getAuth: function(vk_user_id, callback){

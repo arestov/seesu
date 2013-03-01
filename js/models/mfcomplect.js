@@ -84,7 +84,7 @@ var mfComplect = function(opts, params) {
 
 	}
 
-	this.updateState('complect-name', this.source_name);
+	this.updateState('complect_name', this.source_name);
 	
 };
 
@@ -251,7 +251,7 @@ provoda.Model.extendTo(mfCor, {
 	},
 	complex_states: {
 		"must-be-expandable": {
-			depends_on: ['has_files', 'vk-audio-auth', 'few-sources'],
+			depends_on: ['has_files', 'vk-audio-auth', 'few_sources'],
 			fn: function(has_files, vk_a_auth, fsrs){
 				return !!(has_files || vk_a_auth || fsrs);
 			}
@@ -275,7 +275,7 @@ provoda.Model.extendTo(mfCor, {
 			}
 		},
 		mopla_to_preload: {
-			depends_on: ['current_mopla', 'search-ready', 'preload-allowed'],
+			depends_on: ['current_mopla', 'search_ready', 'preload_allowed'],
 			fn: function(current_mopla, search_ready, preload_allowed){
 				return !!(preload_allowed && search_ready && current_mopla) && current_mopla;
 			}
@@ -336,11 +336,11 @@ provoda.Model.extendTo(mfCor, {
 		return this.state('current_mopla');
 	},
 	switchMoreSongsView: function() {
-		if (!this.state('want-more-songs')){
-			this.updateState('want-more-songs', true);
+		if (!this.state('want_more_songs')){
+			this.updateState('want_more_songs', true);
 			this.markMessagesReaded();
 		} else {
-			this.updateState('want-more-songs', false);
+			this.updateState('want_more_songs', false);
 		}
 		
 	},
@@ -359,7 +359,7 @@ provoda.Model.extendTo(mfCor, {
 				open_opts: {settings_bits: 8},
 				desc:
 					(
-						this.files_investg && this.files_investg.state('has-mp3-files') ?
+						this.files_investg && this.files_investg.state('has_mp3_files') ?
 						localize('to-find-better') :
 						localize("to-find-and-play")
 					)  +
@@ -413,7 +413,7 @@ provoda.Model.extendTo(mfCor, {
 		
 	},
 	collapseExpanders: function() {
-		this.updateState('want-more-songs', false);
+		this.updateState('want_more_songs', false);
 	},
 	/*
 	setSem: function(sem) {
@@ -468,8 +468,8 @@ provoda.Model.extendTo(mfCor, {
 			return;
 		}
 		investg
-		.on('state-change.search-ready-to-use', function(e) {
-			_this.updateState('search-ready', e.value);
+		.on('state-change.search_ready_to_use', function(e) {
+			_this.updateState('search_ready', e.value);
 		}, {soft_reg: true})
 		.on('child-change.sources_list', function(e) {
 			var sorted_completcs = [];
@@ -479,7 +479,7 @@ provoda.Model.extendTo(mfCor, {
 				sorted_completcs.push(_this.complects[cur.search_name]);
 			}
 			_this.setChild('sorted_completcs', sorted_completcs, true);
-			_this.updateState('few-sources', e.value.length > 1);
+			_this.updateState('few_sources', e.value.length > 1);
 		}, {soft_reg: true});
 
 	},
@@ -581,11 +581,11 @@ provoda.Model.extendTo(mfCor, {
 		if (this.preload_initors.indexOf(id) == -1){
 			this.preload_initors.push(id);
 		}
-		this.updateState('preload-allowed', true);
+		this.updateState('preload_allowed', true);
 	},
 	unloadFor: function(id){
 		this.preload_initors = arrayExclude(this.preload_initors, id);
-		this.updateState('preload-allowed', !!this.preload_initors.length);
+		this.updateState('preload_allowed', !!this.preload_initors.length);
 
 	},
 	setVolume: function(vol, fac){
@@ -651,7 +651,7 @@ provoda.Model.extendTo(mfCor, {
 	},
 	isHaveAnyResultsFrom: function(source_name){
 		var complect = this.complects[source_name];
-		return complect && complect.search_source && complect.search_source.state('search-complete');
+		return complect && complect.search_source && complect.search_source.state('search_complete');
 	},
 	song: function(){
 		if (this.raw()){

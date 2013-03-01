@@ -37,7 +37,7 @@ provoda.Model.extendTo(VkLoginB, {
 				if ((sts & settings_bits) * 1){
 					_this.triggerSession();
 				} else {
-					_this.updateState('has-session', false);
+					_this.updateState('has_session', false);
 				}
 			});
 			
@@ -63,7 +63,7 @@ provoda.Model.extendTo(VkLoginB, {
 		this.auth.bindAuthReady(exlusive_space, callback, this.open_opts && this.open_opts.settings_bits);
 	},
 	triggerSession: function() {
-		this.updateState('has-session', true);
+		this.updateState('has_session', true);
 	},
 	waitData: function() {
 		this.updateState('data-wait', true);
@@ -72,7 +72,7 @@ provoda.Model.extendTo(VkLoginB, {
 		this.updateState('data-wait', false);
 	},
 	setRequestDesc: function(text) {
-		this.updateState('request-description', text ? text + " " + localize("vk-auth-invitation") : "");
+		this.updateState('request_description', text ? text + " " + localize("vk-auth-invitation") : "");
 	},
 	useCode: function(auth_code){
 		if (this.bindAuthCallback){

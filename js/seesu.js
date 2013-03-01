@@ -31,8 +31,8 @@ provoda.View.extendTo(ChromeExtensionButtonView, {
 				chrome.browserAction.setIcon({path:"/icons/icon19.png"});
 			}
 		},
-		'now-playing': function(text) {
-			chrome.browserAction.setTitle({title: localize('now-playing','Now Playing') + ': ' + text});
+		'now_playing': function(text) {
+			chrome.browserAction.setTitle({title: localize('now_playing','Now Playing') + ': ' + text});
 		}
 	}
 });
@@ -46,8 +46,8 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 				this.opts.opera_ext_b.icon = "/icons/icon18.png";
 			}
 		},
-		'now-playing': function(text) {
-			this.opts.opera_ext_b.title = localize('now-playing','Now Playing') + ': ' + text;
+		'now_playing': function(text) {
+			this.opts.opera_ext_b.title = localize('now_playing','Now Playing') + ': ' + text;
 		}
 	}
 });
@@ -218,10 +218,10 @@ appModel.extendTo(seesuApp, {
 
 
 		this.s  = new seesuServerAPI(suStore('dg_auth'), this.server_url);
-		this.updateState('su-server-api', true);
+		this.updateState('su_server_api', true);
 
 		this.s.on('info-change.vk', function(data) {
-			_this.updateState('vk-info', data);
+			_this.updateState('vk_info', data);
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
@@ -418,7 +418,7 @@ appModel.extendTo(seesuApp, {
 	},
 	checkPlaylists: function(){
 		if (this.gena){
-			this.start_page.updateState('have-playlists', !!this.gena.playlists.length);
+			this.start_page.updateState('have_playlists', !!this.gena.playlists.length);
 		}
 	},
 	showPlaylists: function() {

@@ -8,8 +8,8 @@ provoda.View.extendTo(songUI, {
 	},
 	
 	complex_states: {
-		'mp-show-end': {
-			depends_on: ['map-animating', 'vis-mp-show', 'mp-show'],
+		'mp_show-end': {
+			depends_on: ['map_animating', 'vis-mp_show', 'mp_show'],
 			fn: function(anim, vis_mp_show, mp_show) {
 				if (anim) {
 					if (vis_mp_show && anim == vis_mp_show.anid){
@@ -31,8 +31,8 @@ provoda.View.extendTo(songUI, {
 				}
 			}
 		},
-		'usable-artist-image': {
-			depends_on: ['artist-image', 'vis-cool_photos'],
+		'usable-artist_image': {
+			depends_on: ['artist_image', 'vis-cool_photos'],
 			fn: function(img, cph) {
 				if (!cph){
 					return !!img && img;
@@ -43,7 +43,7 @@ provoda.View.extendTo(songUI, {
 		}
 	},
 	state_change : {
-		"mp-show-end": function(opts) {
+		"mp_show-end": function(opts) {
 			if (opts){
 				if (this.img_panorama){
 					this.img_panorama.checkSize();
@@ -51,7 +51,7 @@ provoda.View.extendTo(songUI, {
 			}
 		},
 
-		"mp-show": function(opts, old_opts) {
+		"mp_show": function(opts, old_opts) {
 			if (opts){
 			//	this.parent_view.c.addClass("show-zoom-to-track");
 				this.activate();
@@ -72,7 +72,7 @@ provoda.View.extendTo(songUI, {
 				this.node.removeClass('marked-for-play');
 			}
 		},
-		"can-expand": function(state) {
+		"can_expand": function(state) {
 			if (state){
 				this.expand();
 			}
@@ -88,21 +88,21 @@ provoda.View.extendTo(songUI, {
 		files_search: function(opts){
 			//this.fsearch_status_c.attr('class', 'song-files-search-status');
 
-			this.fsearch_status_c.toggleClass('has-best-files', !!opts.have_best_tracks);
+			this.fsearch_status_c.toggleClass('has_best_files', !!opts.have_best_tracks);
 			this.fsearch_status_c.toggleClass('has-some-files', !!opts.have_mp3_tracks);
 
 
 			
 		},
-		'searching-files': function(searching){
+		'searching_files': function(searching){
 			this.node.toggleClass('search-mp3', searching);
 		
 		},
 		'track-name-loading': function(state) {
 			this.node.toggleClass('track-name-loading', state);
 		},
-		"player-song": function(state) {
-			this.c.toggleClass('player-song', !!state);
+		"player_song": function(state) {
+			this.c.toggleClass('player_song', !!state);
 		},
 		play: function(state, oldstate){
 			this.c.toggleClass('playing-song', !!state);
@@ -141,7 +141,7 @@ provoda.View.extendTo(songUI, {
 			//this.titlec.text(title);
 			this.node.attr("title", title);
 		},
-		'selected-image': function(lfm_wrap) {
+		'selected_image': function(lfm_wrap) {
 			if (!lfm_wrap){
 				return;
 			}
@@ -187,8 +187,11 @@ provoda.View.extendTo(songUI, {
 		}
 		//this.tidominator.removeClass('want-more-info');
 
-
-		this.getMdChild('actionsrow').hideAll();
+		var acts_row = this.getMdChild('actionsrow');
+		if (acts_row) {
+			acts_row.hideAll();
+		}
+		
 		this.getMdChild('mf_cor').collapseExpanders();
 	},
 	children_views: {
@@ -365,14 +368,14 @@ provoda.View.extendTo(songUI, {
 		dep_vp: ['similars-c']
 	},
 	
-	'stch-usable-artist-image': {
+	'stch-usable-artist_image': {
 		fn: function(state) {
 			if (state){
 				if (su.env.opera_widget){
 					state += '?somer=' + Math.random();
 				}
 				if (!this.photo_data.cool_photos){
-					this.first_image = $('<img class="artist-image"/>').attr({'src': state ,'alt': this.state('artist')});
+					this.first_image = $('<img class="artist_image"/>').attr({'src': state ,'alt': this.state('artist')});
 					this.photo_c.append(this.first_image);
 				}
 			}
@@ -478,11 +481,11 @@ provoda.View.extendTo(songUI, {
 
 
 		this.canUseDeepWaypoints = function() {
-			return !(_this.opts && _this.opts.lite) && !!_this.state('mp-show');
+			return !(_this.opts && _this.opts.lite) && !!_this.state('mp_show');
 		};
 		this.addWayPoint(this.node, {
 			canUse: function() {
-				return (_this.opts && _this.opts.lite) || !_this.state('mp-show');
+				return (_this.opts && _this.opts.lite) || !_this.state('mp_show');
 			}
 		});
 		//
@@ -536,9 +539,11 @@ provoda.View.extendTo(songUI, {
 
 		this.song_actions_c =  context.children('.song-actions');
 
+		this['collch-actionsrow'] = true;
+		this.checkCollectionChange('actionsrow');
 
-		var actionsrow = this.getMdChild('actionsrow');
-		var track_row_view = this.getFreeChildView('actionsrow', actionsrow);
+	//	var actionsrow = this.getMdChild('actionsrow');
+	//	var track_row_view = this.getFreeChildView('actionsrow', actionsrow);
 
 
 
@@ -556,7 +561,6 @@ provoda.View.extendTo(songUI, {
 		this.dominator_head = tidominator.children('.dominator-head');
 		this.a_info = tidominator.children('.artist-info');
 		this.t_info = tidominator.children('.track-info');
-		this.tv		= this.t_info.children('.track-video');
 
 		var pl = this.md.plst_titl,
 			pl_type = pl.playlist_type;
@@ -587,7 +591,7 @@ provoda.View.extendTo(songUI, {
 		var users_row_context =  context.children('.row-listeners-context');
 		var users_context = new contextRow(users_row_context);
 		var uinfo_part = users_row_context.children('.big-listener-info');
-		users_context.addPart(uinfo_part, 'user-info');
+		users_context.addPart(uinfo_part, 'user_info');
 		
 		
 		var extend_switcher = this.dominator_head.children('.extend-switcher').click(function(e){
@@ -807,7 +811,7 @@ provoda.View.extendTo(songUI, {
 							var appendImage = function(el, index, first_image) {
 								var sizes = toRealArray(el.sizes.size);
 
-								var image_jnode = $('<img class="artist-image hidden" alt=""/>');
+								var image_jnode = $('<img class="artist_image hidden" alt=""/>');
 								var req = loadImage({
 									node: image_jnode[0],
 									url: (sizes[5] || sizes[0])["#text"],

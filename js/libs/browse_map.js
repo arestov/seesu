@@ -687,13 +687,13 @@ provoda.Eventor.extendTo(browseMap, {
 		var i;
 		if (old_tree){
 			for (i = 0; i < old_tree.length; i++) {
-				old_tree[i].off('state-change.url-part', this.onNavUrlChange); //unbind
+				old_tree[i].off('state-change.url_part', this.onNavUrlChange); //unbind
 			}
 		}
 
 		new_tree = this.getTreeResidents(new_tree);
 		for (i = 0; i < new_tree.length; i++) {
-			new_tree[i].on('state-change.url-part', this.onNavUrlChange, {
+			new_tree[i].on('state-change.url_part', this.onNavUrlChange, {
 				skip_reg: true
 			});
 		}
@@ -704,11 +704,11 @@ provoda.Eventor.extendTo(browseMap, {
 		nav = nav.slice().reverse();
 
 		for (var i = 0; i < nav.length; i++) {
-			var url_part = nav[i].state('url-part');
+			var url_part = nav[i].state('url_part');
 			if (url_part){
 				url.push(url_part);
 			}
-			nav[i].setFullUrl(url.join(''));
+			//nav[i].setFullUrl(url.join(''));
 		}
 		return url.join('');
 	},
@@ -822,49 +822,49 @@ provoda.Model.extendTo(mapLevelModel, {
 		}
 	},
 	hideOnMap: function() {
-		this.updateState('mp-show', false);
+		this.updateState('mp_show', false);
 	},
 	hide: function() {
 		debugger
-		this.updateState('mp-show', false);
+		this.updateState('mp_show', false);
 		return this;
 	},
 	show: function(opts, parent) {
 		debugger
 		this.focus();
-		this.updateState('mp-show', opts || true);
+		this.updateState('mp_show', opts || true);
 		return this;
 	},
 	blur: function() {
 		debugger
-		this.updateState('mp-has-focus', false);
+		this.updateState('mp_has_focus', false);
 		return this;
 	},
 	focus: function() {
 		debugger
-		this.updateState('mp-has-focus', true);
+		this.updateState('mp_has_focus', true);
 		return this;
 	},
 	stackNav: function(stack_v){
-		this.updateState('mp-stack', stack_v);
+		this.updateState('mp_stack', stack_v);
 		return this;
 	},
 	zoomOut: function() {
-		if (this.lev && (this.state('mp-stack') || (this.state('mp-show')) )){
+		if (this.lev && (this.state('mp_stack') || (this.state('mp_show')) )){
 			this.lev.zoomOut();
 		}
 	},
 	setFullUrl: function(url) {
-		this.updateState('mp-full-url', url);
+		this.updateState('mp_full_url ', url);
 	},
 	getTitle: function() {
-		return this.state('nav-title');
+		return this.state('nav_title');
 	},
 	onTitleChange: function(cb) {
-		return this.on('state-change.nav-title', cb, {skip_reg: true});
+		return this.on('state-change.nav_title', cb, {skip_reg: true});
 	},
 	offTitleChange: function(cb) {
-		return this.off('state-change.nav-title', cb);
+		return this.off('state-change.nav_title', cb);
 	},
 	getURL: function() {
 		return '';

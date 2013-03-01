@@ -226,7 +226,7 @@ var songsList;
 		setWaitingNextSong: function(mo) {
 			this.waiting_next = mo;
 			var _this = this;
-			this.player.once('now-playing-signal', function() {
+			this.player.once('now_playing-signal', function() {
 				if (_this.waiting_next == mo){
 					delete _this.waiting_next;
 				}
@@ -248,7 +248,7 @@ var songsList;
 				var s = false;
 				if (direction) {
 					var next_preload_song = mo.next_preload_song;
-					var can_repeat = !this.state('dont-rept-pl');
+					var can_repeat = !this.state('dont_rept_pl');
 					if (next_preload_song){
 						var real_cur_pos = this[this.main_list_name].indexOf(mo);
 						var nps_pos = this[this.main_list_name].indexOf(next_preload_song);
@@ -261,7 +261,7 @@ var songsList;
 							}
 						}
 						
-					} else if (this.state('has-loader')){
+					} else if (this.state('has_loader')){
 						this.setWaitingNextSong(mo);
 
 					} else {
@@ -296,11 +296,11 @@ var songsList;
 			return song != exept && song ;
 		},
 		getViewingSong: function(exept) {
-			var song = $filter(this[this.main_list_name], 'states.mp-show', function(v) {return !!v;})[0];
+			var song = $filter(this[this.main_list_name], 'states.mp_show', function(v) {return !!v;})[0];
 			return song != exept && song ;
 		},
 		getPlayerSong: function(exept) {
-			var song = $filter(this[this.main_list_name], "states.player-song", true)[0];
+			var song = $filter(this[this.main_list_name], "states.player_song", true)[0];
 			return song != exept && song;
 		},
 		getLastUsableSong: function(){
@@ -441,8 +441,8 @@ var songsList;
 
 			//this.findNeighbours();
 
-			viewing = viewing || !!target_song.state("mp-show");
-			var playing = !!target_song.state("player-song");
+			viewing = viewing || !!target_song.state("mp_show");
+			var playing = !!target_song.state("player_song");
 			var wanted = target_song.state('want_to_play');
 
 			if (viewing){
@@ -519,7 +519,7 @@ var songsList;
 			if (waiting_next){
 				if (waiting_next.next_song){
 					addToArray(common, waiting_next.next_song);
-				} else if (this.state('has-loader')){
+				} else if (this.state('has_loader')){
 					addToArray(common, this);
 				} else if (waiting_next.next_preload_song){
 					addToArray(common, waiting_next.next_preload_song);
@@ -531,7 +531,7 @@ var songsList;
 			if (v_song){
 				if (v_song.next_song){
 					addToArray(common, v_song.next_song);
-				} else if (this.state('has-loader')){
+				} else if (this.state('has_loader')){
 					addToArray(common, this);
 				} else if (v_song.next_preload_song){
 					addToArray(common, v_song.next_preload_song);
@@ -542,7 +542,7 @@ var songsList;
 			if (p_song){
 				if (p_song.next_song){
 					addToArray(common, p_song.next_song);
-				} else if (this.state('has-loader')){
+				} else if (this.state('has_loader')){
 					addToArray(common, this);
 				} else if (p_song.next_preload_song){
 					addToArray(common, p_song.next_preload_song);
@@ -560,7 +560,7 @@ var songsList;
 				addToArray(demonstration, v_song);
 				if (v_song.next_song){
 					addToArray(demonstration, v_song.next_song);
-				} else if (this.state('has-loader')){
+				} else if (this.state('has_loader')){
 					addToArray(demonstration, this);
 				}
 				if (v_song.prev_song){

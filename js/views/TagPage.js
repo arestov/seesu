@@ -9,20 +9,20 @@ provoda.View.extendTo(ListPreviewLine, {
 		this.text_c = $('<span class="desc_item-text"></span>').appendTo(this.c);
 
 	},
-	'compx-selected-title': {
-		depends_on: ['nav-title', 'nav-short-title'],
+	'compx-selected_title': {
+		depends_on: ['nav_title', 'nav-short-title'],
 		fn: function(title, short_title) {
 			return short_title || title;
 		}
 	},
-	'stch-selected-title': function(state) {
+	'stch-selected_title': function(state) {
 		this.text_c.text(state);
 	}
 });
 var ArtistsListPreviewLine = function() {};
 ListPreviewLine.extendTo(ArtistsListPreviewLine, {
 	extended_viewing: true,
-	'stch-selected-image': function(lfm_wrap) {
+	'stch-selected_image': function(lfm_wrap) {
 		if (!lfm_wrap){
 			return;
 		}
@@ -60,7 +60,7 @@ provoda.View.extendTo(ListPreview, {
 		this.c = this.root_view.getSample('area_for_button');
 		this.bindBase();
 	},
-	'stch-nav-title': function(state) {
+	'stch-nav_title': function(state) {
 		this.tpl.ancs.header.text(state);
 	}
 });
@@ -69,8 +69,8 @@ provoda.View.extendTo(ListPreview, {
 var ItemOfLL = function() {};
 ListPreview.extendTo(ItemOfLL, {
 	
-	'stch-list-loading': function(state) {
-		this.tpl.ancs.listc.toggleClass('list-loading', !!state);
+	'stch-list_loading': function(state) {
+		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
 	children_views: {
 		preview_list: ArtistsListPreviewLine
@@ -116,7 +116,7 @@ PageView.extendTo(TagPageView, {
 		//this.artists_c = $('<div class="artists_lists"></div>').appendTo(this.c);
 		//this.songs_c = $('<div class="songs_list"></div>').appendTo(this.c);
 	},
-	'stch-tag-name': function(state) {
+	'stch-tag_name': function(state) {
 		this.tpl.ancs.header.text(state);
 	},
 	children_views: {

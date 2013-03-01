@@ -1655,6 +1655,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			
 		}
 	},
+	checkCollectionChange: function(name) {
+		if (this.children_models[name]){
+			this.collectionChange(name, this.children_models[name]);
+		}
+	},
 	collectionChange: function(name, array) {
 		if (this.undetailed_children_models){
 			this.undetailed_children_models[name] = array;

@@ -200,7 +200,7 @@ Panoramator.prototype = {
 			_this.handleUserStart(e);
 		});
 		this.lift = opts.lift;
-		this.ready_class_name = opts.ready_class_name || 'ready-to-use';
+		this.ready_class_name = opts.ready_class_name || 'ready_to_use';
 		this.lift_items = [];
 		this.mouseMove = function(e){
 			if (e.which && e.which != 1){

@@ -3,7 +3,7 @@ var songsListView;
 
 	var PlaylistSettingsRowView = function(){};
 	BaseCRowUI.extendTo(PlaylistSettingsRowView, {
-		"stch-dont-rept-pl": function(state) {
+		"stch-dont_rept_pl": function(state) {
 			this.dont_rept_pl_chbx.prop('checked', !!state);
 		},
 		createDetailes: function(){
@@ -66,7 +66,7 @@ var songsListView;
 			this.buttons_panel = this.c.children().children('.pla-panel');
 		},
 		canUseWaypoints: function() {
-			return this.parent_view.state('mp-has-focus');
+			return this.parent_view.state('mp_has_focus');
 		},
 		children_views: {
 			"row-multiatcs": {
@@ -90,10 +90,10 @@ var songsListView;
 
 	songsListView = function(pl){};
 	songsListBaseView.extendTo(songsListView, {
-		'stch-mp-show': function(opts) {
+		'stch-mp_show': function(opts) {
 			this.c.toggleClass('hidden', !opts);
 		},
-		'stch-mp-has-focus': function(state) {
+		'stch-mp_has_focus': function(state) {
 			this.lc.toggleClass('list-overview', !!state);
 			if (!this.opts || !this.opts.overview){
 				this.c.toggleClass('show-zoom-to-track', !state);

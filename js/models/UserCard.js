@@ -62,7 +62,7 @@ songsList.extendTo(EnhancedSongslist, {
 		
 		if (this.pmd){
 			this.switchPmd(false);
-			this.pmd.on('state-change.mp-has-focus', function(e) {
+			this.pmd.on('state-change.mp_has_focus', function(e) {
 				if (!e.value){
 					_this.switchPmd(false);
 				}
@@ -76,14 +76,14 @@ songsList.extendTo(EnhancedSongslist, {
 		if (typeof toggle == 'boolean')	{
 			new_state = toggle;
 		} else {
-			new_state = !this.state('pmd-vswitched');
+			new_state = !this.state('pmd_vswitched');
 		}
 		if (new_state){
-			if (!this.state('pmd-vswitched')){
+			if (!this.state('pmd_vswitched')){
 				this.pmd.updateState('vswitched', this._provoda_id);
 			}
 		} else {
-			if (this.state('pmd-vswitched')){
+			if (this.state('pmd_vswitched')){
 				this.pmd.updateState('vswitched', false);
 			}
 		}
@@ -91,7 +91,7 @@ songsList.extendTo(EnhancedSongslist, {
 		
 	},
 	loadStart: function() {
-		if (this.state('has-access')){
+		if (this.state('has_access')){
 			this._super.apply(this, arguments);
 		}
 	},
@@ -101,8 +101,8 @@ songsList.extendTo(EnhancedSongslist, {
 		auth_rqb.init({auth: auth, pmd: this}, params);
 		var _this = this;
 		
-		auth_rqb.on('state-change.has-session', function(e) {
-			_this.updateState('has-access', e.value);
+		auth_rqb.on('state-change.has_session', function(e) {
+			_this.updateState('has_access', e.value);
 			_this.switchPmd(false);
 		});
 
@@ -116,10 +116,10 @@ songsList.extendTo(EnhancedSongslist, {
 
 	},
 	checkPMDSwiched: function(value) {
-		this.updateState('pmd-vswitched', value == this._provoda_id);
+		this.updateState('pmd_vswitched', value == this._provoda_id);
 	},
 	requestPlaylist: function() {
-		if (this.state('has-access')){
+		if (this.state('has_access')){
 			this.loadStart();
 			this.showOnMap();
 		} else {
@@ -139,10 +139,10 @@ EnhancedSongslist.extendTo(LfmLovedList, {
 			title: localize('loved-tracks'),
 			type: 'artists by loved'
 		});
-		this.updateState('url-part', '/loved');
+		this.updateState('url_part', '/loved');
 		if (username){
 			this.username = username;
-			this.updateState('has-access', true);
+			this.updateState('has_access', true);
 		} else {
 			this.permanent_md = true;
 			this.authSwitching(this.app.lfm_auth, LfmLovedLogin);
@@ -201,7 +201,7 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 			type: 'vk-audio'
 		});
 
-		this.updateState('url-part', '/vk-audio');
+		this.updateState('url_part', '/vk-audio');
 		
 		this.authSwitching(this.app.vk_auth, VkAudioLogin);
 	},
@@ -255,7 +255,7 @@ EnhancedSongslist.extendTo(artistsRecommsList, {
 			title: username ? (localize('reccoms-for') + username) : localize('reccoms-for-you'),
 			type: 'artists by recommendations'
 		});
-		this.updateState('url-part', '/recommendations');
+		this.updateState('url_part', '/recommendations');
 		
 		this.authSwitching(this.app.lfm_auth, LfmReccomsLogin);
 		
@@ -408,7 +408,7 @@ mapLevelModel.extendTo(UserCard, {
 					
 
 					var hasPlaylistCheck = function(items) {
-						_this.updateState('has-playlists', !!items.length);
+						_this.updateState('has_playlists', !!items.length);
 					};
 					hasPlaylistCheck(this.app.gena.playlists);
 					
@@ -428,9 +428,9 @@ mapLevelModel.extendTo(UserCard, {
 		this.setChild('users_acqutes', users_acqutes);
 		
 
-		this.updateState('url-part', '/users/' + (this.for_current_user ? 'me' : params.username));
+		this.updateState('url_part', '/users/' + (this.for_current_user ? 'me' : params.username));
 
-		this.updateState('nav-title', 'Персональная музыка, друзья и знакомства');
+		this.updateState('nav_title', 'Персональная музыка, друзья и знакомства');
 		/*
 
 		аудиозаписи
@@ -442,7 +442,7 @@ mapLevelModel.extendTo(UserCard, {
 
 		return this;
 	},
-	'stch-mp-show': function(state) {
+	'stch-mp_show': function(state) {
 		if (state && state.userwant){
 			var list_to_preload = [
 				this.getChild('arts_recomms'),

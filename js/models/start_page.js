@@ -14,8 +14,8 @@ mapLevelModel.extendTo(StartPage, {
 	init: function(opts){
 		this._super(opts);
 		this.su = opts.app;
-		this.updateState('needs-search-from', true);
-		this.updateState('nav-title', 'Seesu start page');
+		this.updateState('needs_search_from', true);
+		this.updateState('nav_title', 'Seesu start page');
 
 		
 
@@ -35,9 +35,9 @@ mapLevelModel.extendTo(StartPage, {
 		});
 		this.setChild('muco', muco);
 
-		this.on('state-change.can-expand', function(e) {
-			muco.updateState('can-expand', e.value);
-			personal_stuff.updateState('can-expand', e.value);
+		this.on('state-change.can_expand', function(e) {
+			muco.updateState('can_expand', e.value);
+			personal_stuff.updateState('can_expand', e.value);
 		});
 
 

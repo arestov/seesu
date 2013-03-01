@@ -1,6 +1,6 @@
 var PageView = function() {};
 provoda.View.extendTo(PageView, {
-	'stch-mp-show': function(state) {
+	'stch-mp_show': function(state) {
 		this.c.toggleClass('hidden', !state);
 	},
 	createBase: function() {
@@ -120,7 +120,7 @@ provoda.View.extendTo(vkLoginUI, {
 				this.c.removeClass("waiting-auth");
 			}
 		},
-		"request-description": function(state) {
+		"request_description": function(state) {
 			this.login_desc.text(state || "");
 		},
 		'deep-sandbox': function(state) {
@@ -128,7 +128,7 @@ provoda.View.extendTo(vkLoginUI, {
 		}
 	},
 
-	'stch-has-session': function(state){
+	'stch-has_session': function(state){
 		if (!state){
 			this.c.removeClass("hidden");
 		} else {
@@ -172,7 +172,7 @@ provoda.View.extendTo(vkLoginUI, {
 var LfmLoginView = function() {};
 
 provoda.View.extendTo(LfmLoginView, {
-	'stch-has-session': function(state){
+	'stch-has_session': function(state){
 		if (!state){
 			this.c.removeClass("hidden");
 		} else {
@@ -189,7 +189,7 @@ provoda.View.extendTo(LfmLoginView, {
 			this.c.removeClass("waiting-auth");
 		}
 	},
-	'stch-request-description': function(state) {
+	'stch-request_description': function(state) {
 		this.c.find('.lfm-auth-request-desc').text(state || "");
 	},
 	createBase: function() {
@@ -233,9 +233,9 @@ LfmLoginView.extendTo(LfmLoveItView, {
 		
 	
 	},
-	"stch-has-session": function(state) {
+	"stch-has_session": function(state) {
 		state = !!state;
-		this.c.toggleClass('has-session', state);
+		this.c.toggleClass('has_session', state);
 		this.auth_block.toggleClass('hidden', state);
 		this.nloveb.toggle(state);
 	},
@@ -268,9 +268,9 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 			
 		});
 	},
-	"stch-has-session": function(state) {
+	"stch-has_session": function(state) {
 		state = !!state;
-		this.c.toggleClass('has-session', state);
+		this.c.toggleClass('has_session', state);
 		this.auth_block.toggleClass('hidden', state);
 		this.chbx_enabl.add(this.chbx_disabl).prop('disabled', !state);
 	},
@@ -330,7 +330,7 @@ provoda.View.extendTo(songFileModelUI, {
 		var _this = this;
 
 		var mf_cor_view = this.parent_view.parent_view;
-		mf_cor_view.on('state-change.want-more-songs', function(e){
+		mf_cor_view.on('state-change.want_more_songs', function(e){
 			_this.setVisState('pp-wmss', !!e.value);
 		});
 
@@ -341,7 +341,7 @@ provoda.View.extendTo(songFileModelUI, {
 
 
 		var song_view = mf_cor_view.parent_view;
-		song_view.on('state-change.mp-show-end', function(e){
+		song_view.on('state-change.mp_show-end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});
 		
@@ -356,10 +356,10 @@ provoda.View.extendTo(songFileModelUI, {
 				this.c.removeClass("mf-unavailable");
 			}
 		},
-		'playing-progress': function(factor){
+		'playing_progress': function(factor){
 			//this.changeBar(this.cplayng, factor);
 		},
-		'loading-progress': function(factor){
+		'loading_progress': function(factor){
 			//this.changeBar(this.cloading, factor);
 		},
 		"buffering-progress": function(state, oldstate) {
@@ -469,7 +469,7 @@ provoda.View.extendTo(songFileModelUI, {
 			}
 		},
 		"vis-loading-p": {
-			depends_on: ['vis-progress-c-width', 'loading-progress'],
+			depends_on: ['vis-progress-c-width', 'loading_progress'],
 			fn: function(width, factor){
 				if (factor) {
 					if (width){
@@ -483,7 +483,7 @@ provoda.View.extendTo(songFileModelUI, {
 			}
 		},
 		"vis-playing-p": {
-			depends_on: ['vis-progress-c-width', 'playing-progress'],
+			depends_on: ['vis-progress-c-width', 'playing_progress'],
 			fn: function(width, factor){
 				if (factor) {
 					if (width){
@@ -656,8 +656,8 @@ provoda.View.extendTo(songFileModelUI, {
 	},
 	fixBars: function() {
 		this.fixWidth();
-		this.changeBar(this.cplayng, this.state('playing-progress'));
-		this.changeBar(this.cloading, this.state('loading-progress'));
+		this.changeBar(this.cplayng, this.state('playing_progress'));
+		this.changeBar(this.cloading, this.state('loading_progress'));
 	}
 });
 

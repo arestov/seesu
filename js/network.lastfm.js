@@ -83,7 +83,7 @@ provoda.Model.extendTo(LfmLogin, {
 		}
 	},
 	triggerSession: function() {
-		this.updateState('has-session', true);
+		this.updateState('has_session', true);
 		
 	},
 	waitData: function() {
@@ -93,7 +93,7 @@ provoda.Model.extendTo(LfmLogin, {
 		this.updateState('data-wait', false);
 	},
 	setRequestDesc: function(text) {
-		this.updateState('request-description', text ? text + " " + localize("lfm-auth-invitation") : "");
+		this.updateState('request_description', text ? text + " " + localize("lfm-auth-invitation") : "");
 	},
 	useCode: function(auth_code){
 		if (this.bindAuthCallback){
