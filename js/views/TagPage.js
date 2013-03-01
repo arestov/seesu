@@ -59,9 +59,6 @@ provoda.View.extendTo(ListPreview, {
 	createBase: function() {
 		this.c = this.root_view.getSample('area_for_button');
 		this.bindBase();
-	},
-	'stch-nav_title': function(state) {
-		this.tpl.ancs.header.text(state);
 	}
 });
 
@@ -111,18 +108,9 @@ PageView.extendTo(TagPageView, {
 	createBase: function() {
 		this.c = this.root_view.getSample('tag_page');
 		this.createTemplate();
-		//$('<div class="tag_page usual_page"></div>');
-		//this.header = $('<h2></h2>').appendTo(this.c);
-		//this.artists_c = $('<div class="artists_lists"></div>').appendTo(this.c);
-		//this.songs_c = $('<div class="songs_list"></div>').appendTo(this.c);
-	},
-	'stch-tag_name': function(state) {
-		this.tpl.ancs.header.text(state);
 	},
 	children_views: {
 		artists_lists: LiListsPreview,
 		songs_list: LiListsPreview
 	}
-	//'collch-songs_list': 'songs_c',
-	//'collch-artists_lists': 'artists_c'
 });

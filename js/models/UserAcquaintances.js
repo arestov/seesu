@@ -68,8 +68,10 @@ provoda.Model.extendTo(UserAcquaintance, {
 		var _this = this;
 		su.s.api('relations.acceptInvite', {from: this.sender}, function(r){
 			if (r.done){
-				su.trackEvent('people likes', 'accepted', false, 5);
 				_this.updateState('remainded_date', r.done.est);
+				_this.updateState('accepted', true);
+				su.trackEvent('people likes', 'accepted', false, 5);
+				
 				if (new Date(r.done.est) < new Date()){
 					su.s.susd.ri.getData();
 					//checkRelationsInvites();

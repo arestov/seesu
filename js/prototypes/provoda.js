@@ -883,7 +883,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this._updateProxy(changes_list);
 	},
 	updateState: function(name, value){
-		if (name.indexOf('-') != -1){
+		if (name.indexOf('-') != -1 && console.warn){
 			console.warn('fix prop name: ' + name);
 		}
 		if (this.hasComplexStateFn(name)){

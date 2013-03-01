@@ -17,7 +17,7 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 				req.abort();
 			});
 		} else {
-			this.tpl.ancs.imgc.attr('src', '');
+			this.c.attr('src', '');
 		}
 	}
 });

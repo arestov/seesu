@@ -307,14 +307,14 @@
 		}
 		
 
-#slider .full-page-need#screens{
+#slider .full_page_need#screens{
 	max-width: 100%;
 	padding:0;
 }
-.full-page-need .page-scheme{
+.full_page_need .page-scheme{
 	display: none;
 	}
-.full-page-need .full-page{
+.full_page_need .full-page{
 	margin-left: 0;
 	max-width: none;
 }
