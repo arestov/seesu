@@ -51,7 +51,7 @@ provoda.Model.extendTo(appModel, {
 		}
 
 		//big_timer.q.push([tracking_opts.category, 'process-thins-sui', big_timer.comp(tracking_opts.start_time), 'seesu ui in process', 100]);
-		this.start_page.updateState('can-expand', true);
+		this.start_page.updateState('can_expand', true);
 
 	},
 	infoGen: function(dp, c, base_string){
@@ -84,13 +84,13 @@ provoda.Model.extendTo(appModel, {
 		this.checkNowPlayNav();
 	},
 	nowPlaying: function(mo) {
-		this.updateState('now-playing', mo.getTitle());
+		this.updateState('now_playing', mo.getTitle());
 		this.current_playing = mo;
 		this.checkNowPlayNav();
 	},
 	checkNowPlayNav: debounce(function() {
 		if (this.current_playing){
-			this.updateState('viewing-playing', this.nav_tree.indexOf(this.current_playing) != -1);
+			this.updateState('viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
 		}
 		
 	}, 30),
@@ -101,7 +101,7 @@ provoda.Model.extendTo(appModel, {
 		this.updateState('playing', false);
 	},
 	setDocTitle: function(title) {
-		this.updateState('doc-title', title);
+		this.updateState('doc_title', title);
 	},
 	createSonglist: function(map_parent, params, first_song) {
 		var pl = new songsList();
@@ -162,12 +162,12 @@ provoda.Model.extendTo(appModel, {
 				if (mp_source){
 					parent.updateState('mp-highlight', mp_source);
 				}*/
-				parent.updateState('mp-has-focus', false);
+				parent.updateState('mp_has_focus', false);
 			}
-			change.target.updateState('mp-show', change.value);
+			change.target.updateState('mp_show', change.value);
 		},
 		'zoom-out': function(change) {
-			change.target.updateState('mp-show', false);
+			change.target.updateState('mp_show', false);
 		},
 		'destroy': function(change) {
 			change.target.mlmDie();
@@ -175,7 +175,7 @@ provoda.Model.extendTo(appModel, {
 	},
 	animationMark: function(models, mark) {
 		for (var i = 0; i < models.length; i++) {
-			models[i].updateState('map-animating', mark);
+			models[i].updateState('map_animating', mark);
 		}
 	},
 	animateMapChanges: function(changes) {
@@ -209,19 +209,19 @@ provoda.Model.extendTo(appModel, {
 			просроллить к источнику при приближении
 		*/
 		if (target_md){
-			target_md.updateState('mp-has-focus', true);
+			target_md.updateState('mp_has_focus', true);
 
-			this.updateState('show-search-form', target_md.state('needs-search-from'));
-			this.updateState('full-page-need', !!target_md.full_page_need);
-			this.updateState('current-mp-md', target_md);
+			this.updateState('show_search_form', target_md.state('needs_search_from'));
+			this.updateState('full_page_need', !!target_md.full_page_need);
+			this.updateState('current_mp_md', target_md);
 			//target_md.updateState('mp-highlight', false);
 			
 			
 		}
 
 		
-		this.updateState('map-animation', changes);
-		this.updateState('map-animation', false);
+		this.updateState('map_animation', changes);
+		this.updateState('map_animation', false);
 		this.animationMark(models, false);
 	},
 	keyNav: function(key_name) {
@@ -337,10 +337,10 @@ provoda.Model.extendTo(appModel, {
 		showResultsPage: function(query){
 			var lev;
 			var cur_el = this.search_el;
-			if (!cur_el || !cur_el.state('mp-has-focus') || !cur_el.lev.isOpened()){
+			if (!cur_el || !cur_el.state('mp_has_focus') || !cur_el.lev.isOpened()){
 				var md = this.createSearchPage();
 				var _this = this;
-				md.on('state-change.mp-show', function(e) {
+				md.on('state-change.mp_show', function(e) {
 					if (e.value){
 						_this.search_el = this;
 					}

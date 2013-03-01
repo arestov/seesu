@@ -83,7 +83,7 @@ var seesuPlayer;
 		.on('song-play-error', function(song, can_play) {
 			if (this.c_song == song){
 				if (!can_play){
-					if (song.isSearchAllowed() && song.state('search-complete')){
+					if (song.isSearchAllowed() && song.state('search_complete')){
 						this.playNext(this.c_song, true);
 					} else {
 						this.wantSong(song);
@@ -150,7 +150,7 @@ var seesuPlayer;
 			this.features_states[feature_name] = player_core;
 
 			//
-			//					su.updateState('flash-internet', true);
+			//					su.updateState('flash_internet', true);
 
 			//checkTracking(true)
 			this.checkReadyFeature();
@@ -181,7 +181,7 @@ var seesuPlayer;
 			checkTracking(feature_to_use, use_order_list.length == i);
 			if (feature_to_use){
 				su.p.setCore(feature_to_use);
-				su.updateState('flash-internet', true);
+				su.updateState('flash_internet', true);
 			}
 
 		}
@@ -313,7 +313,7 @@ var seesuPlayer;
 											pcon.addClass('sm2-complete');
 										}, 1000);
 										//
-										su.updateState('flash-internet', true);
+										su.updateState('flash_internet', true);
 
 									})
 									.fail(function(){

@@ -101,7 +101,7 @@ provoda.Model.extendTo(fileInTorrent, {
 			},
 			playing: function(opts){
 				var dec = opts.position/opts.duration;
-				this.updateState('playing-progress', dec);
+				this.updateState('playing_progress', dec);
 				this.updateState('loaded_duration', opts.duration);
 			},
 			buffering: function(state) {
@@ -115,7 +115,7 @@ provoda.Model.extendTo(fileInTorrent, {
 					factor = opts.fetched/opts.duration;
 				}
 				if (factor){
-					this.updateState('loading-progress', factor);
+					this.updateState('loading_progress', factor);
 				}
 				
 
@@ -150,13 +150,13 @@ provoda.Model.extendTo(fileInTorrent, {
 				var _this = this;
 				getInternetConnectionStatus(function(has_connection) {
 					if (has_connection) {
-						var pp = _this.state("playing-progress");
+						var pp = _this.state("playing_progress");
 						if (!pp){
 							_this.failPlaying();
 						} else {
 							
 							setTimeout(function() {
-								if (_this.state("playing-progress") == pp){
+								if (_this.state("playing_progress") == pp){
 									_this.failPlaying();
 								}
 							}, 3500);
@@ -214,8 +214,8 @@ provoda.Model.extendTo(fileInTorrent, {
 				}
 
 				this.updateState('play', false);
-				this.updateState('loading-progress', 0);
-				this.updateState('playing-progress', 0);
+				this.updateState('loading_progress', 0);
+				this.updateState('playing_progress', 0);
 				
 				this.sound = null;
 			}

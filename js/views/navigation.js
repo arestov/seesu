@@ -14,21 +14,21 @@ provoda.View.extendTo( baseNavUI, {
 	},
 	stack_types: ['top', 'bottom', 'middle'],
 	state_change: {
-		"mp-show": function(opts) {
+		"mp_show": function(opts) {
 			if (opts){
 				this.c.removeClass('hidden');
 			} else {
 				this.c.addClass('hidden');
 			}
 		},
-		'mp-has-focus': function(state) {
+		'mp_has_focus': function(state) {
 			if (!state){
 				this.c.addClass('nnav');
 			} else {
 				this.c.removeClass('nnav');
 			}
 		},
-		'mp-stack': function(state, old_state) {
+		'mp_stack': function(state, old_state) {
 			if (state){
 				if (this.stack_types.indexOf(state) != -1){
 					this.c.addClass('stack-' + state);
@@ -42,7 +42,7 @@ provoda.View.extendTo( baseNavUI, {
 				this.resetStackMark();
 			}
 		},
-		"nav-title": function(text) {
+		"nav_title": function(text) {
 			this.c.attr('title', text || '');
 			if (this.text_place){
 				this.text_place.text(text || '');
@@ -60,7 +60,7 @@ provoda.View.extendTo( baseNavUI, {
 		});
 		this.addWayPoint(this.c, {
 			canUse: function() {
-				return _this.state('mp-show') && (_this.state('mp-stack') || !_this.state('mp-has-focus'));
+				return _this.state('mp_show') && (_this.state('mp_stack') || !_this.state('mp_has_focus'));
 			}
 		});
 	}
@@ -74,14 +74,14 @@ baseNavUI.extendTo(StartPageNavView, {
 		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>');
 
 	},
-	'stch-mp-stack':function(state) {
+	'stch-mp_stack':function(state) {
 		if (state && state == !!state){
 			this.c.addClass('stacked');
 		} else {
 			this.c.removeClass('stacked');
 		}
 	},
-	'stch-mp-has-focus': function(state) {
+	'stch-mp_has_focus': function(state) {
 		if (!state){
 			this.c.addClass("nav-button");
 		} else {
@@ -95,9 +95,9 @@ investgNavUI = function() {};
 
 baseNavUI.extendTo(investgNavUI, {
 	createBase: function() {
-		this.c = $('<span class="nav-item nav-search-results" title="Search results"><b></b><span class="icon">.</span></span>');
+		this.c = $('<span class="nav-item nav-search_results" title="Search results"><b></b><span class="icon">.</span></span>');
 	},
-	"stch-nav-title": function(text) {
+	"stch-nav_title": function(text) {
 		this.c.attr('title', text || '');
 	}
 });

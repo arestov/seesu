@@ -4,9 +4,9 @@ var AllPAllTimeChart = function() {};
 EnhancedSongslist.extendTo(AllPAllTimeChart, {
 	init: function() {
 		this._super.apply(this, arguments);
-		//mp: 'url-part', 'nav-title'
-		this.updateState('nav-title', 'Популярные');
-		this.updateState('url-part', '/chart');
+		//mp: 'url_part', 'nav_title'
+		this.updateState('nav_title', 'Популярные');
+		this.updateState('url_part', '/chart');
 	},
 	sendMoreDataRequest: function(paging_opts) {
 		var request_info = {};
@@ -59,8 +59,8 @@ mapLevelModel.extendTo(SongsWagon, {
 		});
 		this.setChild('allp_allt_chart', this.allp_allt_chart);
 		
-		this.updateState('nav-title', 'Композиции');
-		this.updateState('url-part', '/songs');
+		this.updateState('nav_title', 'Композиции');
+		this.updateState('url_part', '/songs');
 	}
 });
 
@@ -89,8 +89,8 @@ mapLevelModel.extendTo(AllPlacesTrain, {
 			map_parent: this
 		});
 		this.setChild('wagn_songs', this.wagn_songs);
-		this.updateState('nav-title', 'Во всем мире');
-		this.updateState('url-part', '/all-places');
+		this.updateState('nav_title', 'Во всем мире');
+		this.updateState('url_part', '/all-places');
 
 	}
 });
@@ -139,11 +139,11 @@ mapLevelModel.extendTo(MusicConductor, {
 
 
 
-		this.updateState('nav-title', 'Музыкальный кондуктор');
-		this.updateState('url-part', '/conductor');
+		this.updateState('nav_title', 'Музыкальный кондуктор');
+		this.updateState('url_part', '/conductor');
 		//world_part
 		//countres
-		//mp: 'url-part', 'nav-title'
+		//mp: 'url_part', 'nav_title'
 		return this;
 	}
 });

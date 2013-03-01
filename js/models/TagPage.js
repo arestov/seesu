@@ -23,8 +23,8 @@ HypemTagPlaylist.extendTo(Fav25HypemTagSongs, {
 		this.tag_name = params.tag_name;
 
 		this.updateManyStates({
-			'nav-title': localize('Blogged-25-hypem'),
-			'url-part': '/blogged?fav_from=25&fav_to=250',
+			'nav_title': localize('Blogged-25-hypem'),
+			'url_part': '/blogged?fav_from=25&fav_to=250',
 			'browser_can_load': this.can_use
 		});
 
@@ -41,8 +41,8 @@ HypemTagPlaylist.extendTo(Fav250HypemTagSongs, {
 		this.tag_name = params.tag_name;
 
 		this.updateManyStates({
-			'nav-title': localize('Blogged-250-hypem'),
-			'url-part': '/blogged?fav_from=250&fav_to=100000',
+			'nav_title': localize('Blogged-250-hypem'),
+			'url_part': '/blogged?fav_from=250&fav_to=100000',
 			'browser_can_load': this.can_use
 		});
 
@@ -60,8 +60,8 @@ HypemTagPlaylist.extendTo(AllHypemTagSongs, {
 		this.tag_name = params.tag_name;
 
 		this.updateManyStates({
-			'nav-title': localize('Blogged-all-hypem'),
-			'url-part': '/blogged',
+			'nav_title': localize('Blogged-all-hypem'),
+			'url_part': '/blogged',
 			'loader_disallowed': !(this.app.env.cross_domain_allowed || this.app.env.xhr2)
 		});
 	}
@@ -73,8 +73,8 @@ songsList.extendTo(ExplorableTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav-title', localize('Explore-songs-exfm'));
-		this.updateState('url-part', '/explore:exfm');
+		this.updateState('nav_title', localize('Explore-songs-exfm'));
+		this.updateState('url_part', '/explore:exfm');
 	},
 	page_limit: 100,
 	sendMoreDataRequest: function(paging_opts) {
@@ -124,8 +124,8 @@ songsList.extendTo(TrendingTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav-title', localize('Trending-songs-exfm'));
-		this.updateState('url-part', '/trending:exfm');
+		this.updateState('nav_title', localize('Trending-songs-exfm'));
+		this.updateState('url_part', '/trending:exfm');
 	},
 	page_limit: 100,
 	sendMoreDataRequest: function(paging_opts) {
@@ -175,8 +175,8 @@ songsList.extendTo(FreeTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav-title', localize('Free-songs'));
-		this.updateState('url-part', '/free');
+		this.updateState('nav_title', localize('Free-songs'));
+		this.updateState('url_part', '/free');
 	},
 	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
@@ -240,8 +240,8 @@ songsList.extendTo(TopTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav-title', localize('Top'));
-		this.updateState('url-part', '/_');
+		this.updateState('nav_title', localize('Top'));
+		this.updateState('url_part', '/_');
 	},
 	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
@@ -288,8 +288,8 @@ mapLevelModel.extendTo(SongsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
-		this.updateState('nav-title', localize('Songs'));
-		this.updateState('url-part', '/songs');
+		this.updateState('nav_title', localize('Songs'));
+		this.updateState('url_part', '/songs');
 
 		var lists_list = [];
 
@@ -301,7 +301,7 @@ mapLevelModel.extendTo(SongsLists, {
 		lists_list.push(new Fav25HypemTagSongs());
 		lists_list.push(new Fav250HypemTagSongs());
 
-		this.on('state-change.mp-show', function(e) {
+		this.on('state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				for (var i = 0; i < lists_list.length; i++) {
 					lists_list[i].preloadStart();
@@ -326,8 +326,8 @@ ArtistsList.extendTo(WeekTagArtists, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav-title', localize('Week-chart'));
-		this.updateState('url-part', '/week');
+		this.updateState('nav_title', localize('Week-chart'));
+		this.updateState('url_part', '/week');
 	},
 	page_limit: 100,
 	getRqData: function(paging_opts) {
@@ -383,8 +383,8 @@ ArtistsList.extendTo(TagTopArtists, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav-title', localize('Top'));
-		this.updateState('url-part', '/_');
+		this.updateState('nav_title', localize('Top'));
+		this.updateState('url_part', '/_');
 	},
 	getRqData: function(paging_opts) {
 		return {
@@ -433,8 +433,8 @@ mapLevelModel.extendTo(ArtistsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
-		this.updateState('nav-title', localize('Artists'));
-		this.updateState('url-part', '/artists');
+		this.updateState('nav_title', localize('Artists'));
+		this.updateState('url_part', '/artists');
 
 		var lists_list = [];
 
@@ -447,7 +447,7 @@ mapLevelModel.extendTo(ArtistsLists, {
 			lists_list[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
 		}
 		
-		this.on('state-change.mp-show', function(e) {
+		this.on('state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				for (var i = 0; i < lists_list.length; i++) {
 					lists_list[i].preloadStart();
@@ -467,10 +467,9 @@ mapLevelModel.extendTo(TagPage, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
-		this.updateState('nav-title', 'Tag ' + this.tag_name);
-		this.updateState('url-part', '/tags/' + this.tag_name);
-		this.updateState('tag-name', this.tag_name);
-
+		this.updateState('nav_title', 'Tag ' + this.tag_name);
+		this.updateState('url_part', '/tags/' + this.tag_name);
+		this.updateState('tag_name', this.tag_name);
 
 		var artists_lists = new ArtistsLists();
 		artists_lists.init({app:this.app, map_parent:this}, {tag_name:this.tag_name});

@@ -9,20 +9,20 @@ provoda.View.extendTo(ListPreviewLine, {
 		this.text_c = $('<span class="desc_item-text"></span>').appendTo(this.c);
 
 	},
-	'compx-selected-title': {
-		depends_on: ['nav-title', 'nav-short-title'],
+	'compx-selected_title': {
+		depends_on: ['nav_title', 'nav-short-title'],
 		fn: function(title, short_title) {
 			return short_title || title;
 		}
 	},
-	'stch-selected-title': function(state) {
+	'stch-selected_title': function(state) {
 		this.text_c.text(state);
 	}
 });
 var ArtistsListPreviewLine = function() {};
 ListPreviewLine.extendTo(ArtistsListPreviewLine, {
 	extended_viewing: true,
-	'stch-selected-image': function(lfm_wrap) {
+	'stch-selected_image': function(lfm_wrap) {
 		if (!lfm_wrap){
 			return;
 		}
@@ -48,7 +48,7 @@ provoda.View.extendTo(ListPreview, {
 		this.bindBase();
 	},
 	bindBase: function() {
-		this.ancs = this.root_view.getPvAnchors(this.c);
+		this.createTemplate();
 		var _this = this;
 		this.c.click(function() {
 			_this.md.showOnMap();
@@ -59,9 +59,6 @@ provoda.View.extendTo(ListPreview, {
 	createBase: function() {
 		this.c = this.root_view.getSample('area_for_button');
 		this.bindBase();
-	},
-	'stch-nav-title': function(state) {
-		this.ancs.header.text(state);
 	}
 });
 
@@ -69,14 +66,14 @@ provoda.View.extendTo(ListPreview, {
 var ItemOfLL = function() {};
 ListPreview.extendTo(ItemOfLL, {
 	
-	'stch-list-loading': function(state) {
-		this.ancs.listc.toggleClass('list-loading', !!state);
+	'stch-list_loading': function(state) {
+		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
 	children_views: {
 		preview_list: ArtistsListPreviewLine
 	},
 	'collch-preview_list': {
-		place: 'ancs.listc',
+		place: 'tpl.ancs.listc',
 		limit: 9
 	}
 });
@@ -103,28 +100,17 @@ ListPreview.extendTo(LiListsPreview, {
 	children_views: {
 		lists_list: ListPreviewLine
 	},
-	'collch-lists_list': 'ancs.listc'
+	'collch-lists_list': 'tpl.ancs.listc'
 });
 
 var TagPageView = function() {};
 PageView.extendTo(TagPageView, {
 	createBase: function() {
-		this.c = $('<div class="tag_page usual_page"></div>');
-		this.header = $('<h2></h2>').appendTo(this.c);
-		this.artists_c = $('<div class="artists_lists"></div>').appendTo(this.c);
-		this.songs_c = $('<div class="songs_list"></div>').appendTo(this.c);
-	},
-	'stch-tag-name': function(state) {
-		this.header.text(state);
+		this.c = this.root_view.getSample('tag_page');
+		this.createTemplate();
 	},
 	children_views: {
-		artists_lists: {
-			main: LiListsPreview
-		},
-		songs_list: {
-			main: LiListsPreview
-		}
-	},
-	'collch-songs_list': 'songs_c',
-	'collch-artists_lists': 'artists_c'
+		artists_lists: LiListsPreview,
+		songs_list: LiListsPreview
+	}
 });

@@ -158,17 +158,43 @@
 
   		<div class="area_for_button">
 			<div class="area-button" pv-anchor='big_button'>
-				<span pv-anchor="header"></span>
+				<span pv-anchor="header" pv-text="{{nav_title}}"></span>
 			</div>
 			<div class="area-description desc" pv-anchor="listc"></div>
 		</div>
 
+		<div class="tag_page usual_page">
+			<h2 pv-anchor='header' pv-text="{{tag_name}}"></h2>
+			<div class="leftcol">
+				<div class="artists_lists">
+					<div class="area_for_button tag_artists-preview" pv-view='artists_lists'>
+						<div class="area-button" pv-anchor="big_button">
+							<span pv-anchor="header" pv-text="{{nav_title}}"></span>
+						</div>
+						<div class="area-description desc" pv-anchor="listc"></div>
+					</div>
+				</div>
+			</div>
+			<div class="rightcol">
+				<div class="songs_list">
+					<div class="area_for_button tag_artists-preview" pv-view='songs_list'>
+						<div class="area-button" pv-anchor="big_button">
+							<span pv-anchor="header" pv-text="{{nav_title}}"></span>
+						</div>
+						<div class="area-description desc" pv-anchor="listc"></div>
+					</div>
+				</div>
+			</div>
+			
+			
+		</div>
+
   		<div class="art_card">
 			
-			<div class="art_card_leftcol">
+			<div class="leftcol">
 				<div class="area_for_button" pv-view="top_songs">
 					<div class="area-button" pv-anchor='big_button'>
-						<span pv-anchor="header">
+						<span pv-anchor="header" pv-text="{{nav_title}}">
 							Top
 						</span>
 					</div>
@@ -177,7 +203,7 @@
 
 				<div class="area_for_button" pv-view="hypem_new">
 					<div class="area-button" pv-anchor='big_button'>
-						<span pv-anchor="header">
+						<span pv-anchor="header" pv-text="{{nav_title}}">
 							Свежее
 						</span>
 					</div>
@@ -186,7 +212,7 @@
 
 				<div class="area_for_button" pv-view="hypem_fav">
 					<div class="area-button" pv-anchor='big_button'>
-						<span pv-anchor="header">
+						<span pv-anchor="header" pv-text="{{nav_title}}">
 							В избранном
 						</span>
 					</div>
@@ -194,7 +220,7 @@
 				</div>
 				<div class="area_for_button" pv-view="hypem_reblog">
 					<div class="area-button" pv-anchor='big_button'>
-						<span pv-anchor="header">
+						<span pv-anchor="header" pv-text="{{nav_title}}">
 							Популярно в блогах
 						</span>
 					</div>
@@ -202,7 +228,7 @@
 				</div>
 				<div class="area_for_button" pv-view="soundc_prof">
 					<div class="area-button" pv-anchor='big_button'>
-						<span pv-anchor="header">
+						<span pv-anchor="header" pv-text="{{nav_title}}">
 							Из souncloud профиля
 						</span>
 					</div>
@@ -212,27 +238,33 @@
 
 				<div class="area_for_button" pv-view="soundc_likes">
 					<div class="area-button" pv-anchor='big_button'>
-						<span pv-anchor="header">
+						<span pv-anchor="header" pv-text="{{nav_title}}">
 							Понравившиеся артисту
 						</span>
 					</div>
 					<div class="area-description desc" pv-anchor="listc"></div>
 				</div>
 			</div>
-			<div class="art_card_rightcol">
+			<div class="rightcol">
 				<div class='art_card-tags'>
 					<h5 class="row-header lang localize-Tags">Tags</h5>
 					<div class="links-list"></div>
 				</div>
 				<div class="area_for_button" pv-view="similar_artists">
 					<div class="area-button" pv-anchor='big_button'>
-						<span pv-anchor="header"></span>
+						<span pv-anchor="header" pv-text="{{nav_title}}"></span>
 					</div>
 					<div class="area-description desc" pv-anchor="listc"></div>
 				</div>
 				<div class="area_for_button" pv-view="albums_list">
 					<div class="area-button" pv-anchor="big_button">
-						<span pv-anchor="header"></span>
+						<span pv-anchor="header" pv-text="{{nav_title}}"></span>
+					</div>
+					<div class="area-description desc albums_previews" pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-view="dgs_albums">
+					<div class="area-button" pv-anchor="big_button">
+						<span pv-anchor="header" pv-text="{{nav_title}}"></span>
 					</div>
 					<div class="area-description desc albums_previews" pv-anchor="listc"></div>
 				</div>

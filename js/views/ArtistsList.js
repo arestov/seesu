@@ -3,9 +3,22 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 	createBase: function() {
 		this.c = $('<img class="album_preview" src=""/>');
 	},
-	'stch-selected-image': function(lfm_wrap) {
+	'stch-selected_image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/64s/' + lfm_wrap.lfm_id : lfm_wrap.url;
-		this.c.attr('src', url);
+		if (url){
+			var req = this.root_view.loadImage({
+					node: this.c[0],
+					url: url,
+					cache_allowed: true
+				}).done(function(){
+				}).fail(function(){
+				});
+			this.on('die', function() {
+				req.abort();
+			});
+		} else {
+			this.c.attr('src', '');
+		}
 	}
 });
 
@@ -14,7 +27,7 @@ var BigAlbumPreview = function() {};
 provoda.View.extendTo(BigAlbumPreview, {
 	createBase: function() {
 		this.c = this.root_view.getSample('alb_prev_big');
-		this.ancs = this.root_view.getPvAnchors(this.c);
+		this.createTemplate();
 		var _this = this;
 
 		this.c.click(function() {
@@ -24,18 +37,32 @@ provoda.View.extendTo(BigAlbumPreview, {
 		this.addWayPoint(this.c);
 	},
 	'stch-can-hide-artist-name': function(state) {
-		this.ancs.artist_name_c.toggleClass('hidden', state);
+		this.tpl.ancs.artist_name_c.toggleClass('hidden', state);
 	},
 	'stch-album_name': function(state) {
 		this.c.attr('title', state);
-		this.ancs.album_name_c.text(state);
+		this.tpl.ancs.album_name_c.text(state);
 	},
 	'stch-album_artist': function(state) {
-		this.ancs.artist_name_c.text(state);
+		this.tpl.ancs.artist_name_c.text(state);
 	},
-	'stch-selected-image': function(lfm_wrap) {
+	'stch-selected_image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
-		this.ancs.imgc.attr('src', url);
+		if (url){
+			var req = this.root_view.loadImage({
+					node: this.tpl.ancs.imgc[0],
+					url: url,
+					cache_allowed: true
+				}).done(function(){
+				}).fail(function(){
+				});
+			this.on('die', function() {
+				req.abort();
+			});
+		} else {
+			this.tpl.ancs.imgc.attr('src', '');
+		}
+		
 	}
 });
 
@@ -43,10 +70,10 @@ var AlbumsListView = function() {};
 PageView.extendTo(AlbumsListView, {
 	createBase: function() {
 		this.c = this.root_view.getSample('albums_page');
-		this.ancs = this.root_view.getPvAnchors(this.c);
+		this.createTemplate();
 		
 		var _this = this;
-		this.ancs.load_m_b.click(function() {
+		this.tpl.ancs.load_m_b.click(function() {
 			_this.md.requestMoreData();
 			return false;
 		});
@@ -54,9 +81,9 @@ PageView.extendTo(AlbumsListView, {
 	children_views: {
 		preview_list: BigAlbumPreview
 	},
-	'collch-preview_list': 'ancs.albums_list_c',
+	'collch-preview_list': 'tpl.ancs.albums_list_c',
 	'stch-more_load_available': function(state) {
-		this.ancs.load_m_b.toggleClass('hidden', !state);
+		this.tpl.ancs.load_m_b.toggleClass('hidden', !state);
 	}
 });
 
@@ -64,13 +91,13 @@ var AlbumsListPreview = function() {};
 ItemOfLL.extendTo(AlbumsListPreview, {
 	createBase: function() {
 		this._super();
-		this.ancs.listc.addClass('albums_previews');
+		this.tpl.ancs.listc.addClass('albums_previews');
 	},
 	children_views: {
 		preview_list: AlbumsListPreviewItem
 	},
 	'collch-preview_list': {
-		place: 'ancs.listc',
+		place: 'tpl.ancs.listc',
 		limit: 15
 	}
 });
@@ -91,7 +118,7 @@ provoda.View.extendTo(ArtcardViewInList, {
 	'stch-artist-name': function(state) {
 		this.alink.text(state);
 	},
-	'stch-selected-image': function(lfm_wrap) {
+	'stch-selected_image': function(lfm_wrap) {
 		if (!lfm_wrap){
 			return;
 		}
@@ -120,10 +147,10 @@ provoda.View.extendTo(ArtistListView, {
 		this.addWayPoint(this.generate_button);
 	},
 
-	'stch-mp-show': function(opts) {
+	'stch-mp_show': function(opts) {
 		this.c.toggleClass('hidden', !opts);
 	},
-	'stch-list-loading': function(state){
+	'stch-list_loading': function(state){
 		this.c.toggleClass('list_loading_state', !!state);
 	},
 	children_views: {
@@ -148,12 +175,11 @@ provoda.View.extendTo(artCardUI, {
 		hypem_reblog: ItemOfLL,
 		soundc_likes: ItemOfLL,
 		similar_artists: ItemOfLL,
-		albums_list: {
-			main: AlbumsListPreview
-		}
+		albums_list: AlbumsListPreview,
+		dgs_albums: AlbumsListPreview
 	},
 	state_change: {
-		"mp-show": function(opts) {
+		"mp_show": function(opts) {
 			this.c.toggleClass('hidden', !opts);
 		},
 		"loading-baseinfo": function(state) {
@@ -165,7 +191,7 @@ provoda.View.extendTo(artCardUI, {
 				mark_loading_nodes.removeClass('loading');
 			}
 		},
-		'selected-image': function(lfm_wrap) {
+		'selected_image': function(lfm_wrap) {
 			if (!lfm_wrap){
 				return;
 			}
@@ -219,8 +245,7 @@ provoda.View.extendTo(artCardUI, {
 			tagsc: this.c.find('.art_card-tags'),
 			bioc: this.c.find('.art_card-bio')
 		};
-
-		this.ancs = this.root_view.getPvAnchors(this.c);
+		this.createTemplate();
 
 		
 	}

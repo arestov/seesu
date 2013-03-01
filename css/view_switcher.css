@@ -169,14 +169,14 @@
 	background-image:url(../i/seesu_logo.svg);
 	}
 	
-.nav-search-results{
+.nav-search_results{
 	padding:4px 1rem 4px 9px;
 	width:15px;
 	}
-.nav-search-results .icon{
+.nav-search_results .icon{
 	background-image:url(../i/nav/seesu-nav-search.png);
 	}
-	.nav-search-results:active .icon{
+	.nav-search_results:active .icon{
 		background-image:url(../i/nav/seesu-nav-search-active.png);
 		}
 
@@ -211,15 +211,17 @@
 	padding-bottom: 20px;
 	max-width: 750px;
 	}
-.full-page .art_card_leftcol{
+.full-page .leftcol{
 	width: 50%;
 	float:left;
 	min-width: 15rem;
+	box-sizing: border-box;
+	padding-right: 0.86rem;
 	}
-.full-page .art_card_rightcol{
+.full-page .rightcol{
 	width: 50%;
 	float:right;
-	padding-left: 1.72rem;
+	padding-left: 0.86rem;
 	box-sizing: border-box;
 	min-width: 15rem;
 	}
@@ -305,14 +307,14 @@
 		}
 		
 
-#slider .full-page-need#screens{
+#slider .full_page_need#screens{
 	max-width: 100%;
 	padding:0;
 }
-.full-page-need .page-scheme{
+.full_page_need .page-scheme{
 	display: none;
 	}
-.full-page-need .full-page{
+.full_page_need .full-page{
 	margin-left: 0;
 	max-width: none;
 }

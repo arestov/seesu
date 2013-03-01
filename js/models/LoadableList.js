@@ -4,22 +4,24 @@ mapLevelModel.extendTo(LoadableList, {
 		this._super(opts);
 		this[this.main_list_name] = [];
 		if (this.sendMoreDataRequest){
-			this.updateState("has-loader", true);
+			this.updateState("has_loader", true);
 		}
-		this.on('state-change.mp-show', function(e) {
+		this.on('state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				this.preloadStart();
 			}
 			
 		}, {skip_reg: true});
-		this.on('child-change.' + this.main_list_name, function(e) {
-			if (!e.no_changing_mark){
-				this.setChild(this.preview_mlist_name, e.value, true);
-			}
-		});
+		if (!this.manual_previews){
+			this.on('child-change.' + this.main_list_name, function(e) {
+				if (!e.no_changing_mark){
+					this.setChild(this.preview_mlist_name, e.value, true);
+				}
+			});
+		}
 	},
 	'compx-more_load_available': {
-		depends_on: ["has-loader", "list-loading", "loader_disallowed"],
+		depends_on: ["has_loader", "list_loading", "loader_disallowed"],
 		fn: function(can_load_more, loading, loader_disallowed) {
 			if (can_load_more){
 				return !loader_disallowed && !loading;
@@ -58,7 +60,7 @@ mapLevelModel.extendTo(LoadableList, {
 		}
 	},
 	setLoader: function(cb, trigger) {
-		this.updateState("has-loader", true);
+		this.updateState("has_loader", true);
 		this.sendMoreDataRequest = cb;
 
 		if (trigger){
@@ -67,7 +69,7 @@ mapLevelModel.extendTo(LoadableList, {
 
 	},
 	requestMoreData: function(force) {
-		if (this.state("has-loader") && this.sendMoreDataRequest){
+		if (this.state("has_loader") && this.sendMoreDataRequest){
 			if (!this.request_info || this.request_info.done){
 				this.markLoading();
 				this.request_info = this.sendMoreDataRequest.call(this, this.getPagingInfo());
@@ -82,10 +84,10 @@ mapLevelModel.extendTo(LoadableList, {
 		
 	},
 	setLoaderFinish: function() {
-		this.updateState("has-loader", false);
+		this.updateState("has_loader", false);
 	},
 	markLoading: function(){
-		this.updateState('list-loading', true);
+		this.updateState('list_loading', true);
 		return this;
 	},
 	putRequestedData: function(request, data_list, error) {
@@ -116,7 +118,7 @@ mapLevelModel.extendTo(LoadableList, {
 		if (!this.request_info || this.request_info.request == request){
 			var main_list = this[this.main_list_name];
 
-			this.updateState('list-loading', false);
+			this.updateState('list_loading', false);
 			if (error && !main_list.length) {
 				this.updateState('error', true);
 			} else {

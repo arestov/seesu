@@ -8,6 +8,10 @@
 */
 
 localizer = {
+	"no-dgs-id": {
+		"original": "Artist's discogs profile was not found",
+		"ru":"Discogs профиль артиста не был найден"
+	},
 	"Hypem-cant-load":{
 		"original": "Your browser does not support XHR2 to load data from hypem.com",
 		"ru": "Ваш браузер не поддерживает XHR2, необходимый что бы загружать данные с hypem.com"
@@ -535,7 +539,7 @@ localizer = {
 		"original": "find more",
 		"ru": 'Найти больше'
 	},
-	"now-playing": {
+	"now_playing": {
 		"original": "Now Playing",
 		"ru": 'Сейчас играет'
 	},

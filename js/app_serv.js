@@ -200,7 +200,7 @@ Panoramator.prototype = {
 			_this.handleUserStart(e);
 		});
 		this.lift = opts.lift;
-		this.ready_class_name = opts.ready_class_name || 'ready-to-use';
+		this.ready_class_name = opts.ready_class_name || 'ready_to_use';
 		this.lift_items = [];
 		this.mouseMove = function(e){
 			if (e.which && e.which != 1){
@@ -489,7 +489,9 @@ var getCleanDocumentBodyHTML = function(text) {
 };
 var loaded_images = {};
 var loadImage = function(opts) {
-	
+	if (typeof opts.cache_allowed != 'boolean'){
+		throw new Error('cache_allowed must be true or false');
+	}
 
 	//queue
 	var node = opts.node || new Image();

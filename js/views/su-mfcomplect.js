@@ -39,10 +39,10 @@ provoda.View.extendTo(mfComplectUI, {
 				var _this = this;
 				var header = $('<a class="js-serv"></a>').click(function() {
 					_this.md.toggleOverstocked();
-				}).text(this.state('complect-name'));
+				}).text(this.state('complect_name'));
 				this.addWayPoint(header, {
 					canUse: function() {
-						return _this.parent_view.state('want-more-songs');
+						return _this.parent_view.state('want_more_songs');
 					}
 				});
 				this.header_c.empty().append(header);
@@ -55,7 +55,7 @@ provoda.View.extendTo(mfComplectUI, {
 				this.c.removeClass('want-overstocked-songs');
 			}
 		},
-		'complect-name': function(state) {
+		'complect_name': function(state) {
 			this.header_c.text(state);
 		}
 	}
@@ -100,11 +100,11 @@ provoda.View.extendTo(mfCorUI, {
 		yt_videos: YoutubePreview
 	},
 	state_change: {
-		"want-more-songs": function(state) {
+		"want_more_songs": function(state) {
 			if (state){
-				this.c.addClass('want-more-songs');
+				this.c.addClass('want_more_songs');
 			} else {
-				this.c.removeClass('want-more-songs');
+				this.c.removeClass('want_more_songs');
 			}
 		},
 		"must-be-expandable": function(state) {

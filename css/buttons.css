@@ -251,7 +251,7 @@
 		background-image: none;
 		background-color: transparent;
 		}
-	.area-description.list-loading{
+	.area-description.list_loading{
 		background:url(../i/spinner.svg) no-repeat 0.5rem 1rem;
 		background-size: 1.143rem;
 		}

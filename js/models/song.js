@@ -9,7 +9,7 @@ var song;
 
 	baseSong.extendTo(song, {
 		page_name: 'song page',
-		'stch-can-expand': function(state) {
+		'stch-can_expand': function(state) {
 			if (state && !this.expanded){
 				this.expanded = true;
 				var _this = this;
@@ -23,7 +23,7 @@ var song;
 							bio: ai.bio,
 							tags: ai.tags,
 							similars: ai.similars,
-							'artist-image': ai.images && ai.images[2] || lfm_image_artist
+							'artist_image': ai.images && ai.images[2] || lfm_image_artist
 						});
 
 						
@@ -52,12 +52,12 @@ var song;
 			}
 			if (omo.lfm_image){
 				spec_image_wrap = su.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
-				//this.updateState('lfm-image', omo.lfm_image);
+				//this.updateState('lfm_image', omo.lfm_image);
 			}
 			var images_pack;
 
 			if (spec_image_wrap) {
-				this.updateState('lfm-image', spec_image_wrap);
+				this.updateState('lfm_image', spec_image_wrap);
 
 			} else if (this.state('track')){
 				images_pack = su.art_images.getTrackImagesModel({
@@ -65,25 +65,31 @@ var song;
 					track: this.state('track')
 				})
 					.on('state-change.image-to-use', function(e) {
-						_this.updateState('ext-lfm-image', e.value);
+						_this.updateState('ext_lfm_image', e.value);
 					});
 				
 
 			} else {
 				images_pack = su.art_images.getArtistImagesModel(this.state('artist'))
 					.on('state-change.image-to-use', function(e) {
-						_this.updateState('ext-lfm-image', e.value);
+						_this.updateState('ext_lfm_image', e.value);
 					});
 			}
 			_this.initHeavyPart();
 			
 		},
+		initOnShow: function() {
+			if (!this.onshow_inited){
+				this.onshow_inited = true;
+				var actionsrow = new TrackActionsRow(this);
+				this.setChild('actionsrow', actionsrow, true);
+				this.addChild(actionsrow);
+			}
+		},
 		initHeavyPart: function() {
 			var _this = this;
 			var omo = this.omo;
-			var actionsrow = new TrackActionsRow(this);
-			this.setChild('actionsrow', actionsrow, true);
-			this.addChild(actionsrow);
+			
 
 			this.mf_cor = new mfCor();
 			this.mf_cor.init({
@@ -111,7 +117,7 @@ var song;
 					_this.player.trigger("song-play-error", _this, can_play);
 				})
 				.on('state-change.mopla_to_use', function(e){
-					_this.updateState('mf_cor-has-available-tracks', !!e.value);
+					_this.updateState('mf_cor_has_available_tracks', !!e.value);
 				});
 
 			if (this.mf_cor.isSearchAllowed()){
@@ -128,16 +134,16 @@ var song;
 
 
 			
-			this.watchStates(['files_search', 'marked_as', 'mp-show'], function(files_search, marked_as, mp_show) {
+			this.watchStates(['files_search', 'marked_as', 'mp_show'], function(files_search, marked_as, mp_show) {
 				if (marked_as && files_search && files_search.search_complete){
-					this.updateState('can-expand', true);
+					this.updateState('can_expand', true);
 				} else if (mp_show){
-					this.updateState('can-expand', true);
+					this.updateState('can_expand', true);
 				} else {
-					this.updateState('can-expand', false);
+					this.updateState('can_expand', false);
 				}
 			});
-			this.on('state-change.mp-show', function(e) {
+			this.on('state-change.mp_show', function(e) {
 				
 				var
 					_this = this,
@@ -151,6 +157,7 @@ var song;
 						this.mp3_search.on('new-search', this.makePlayableOnNewSearch);
 						
 					}
+					_this.initOnShow();
 				} else {
 					if (oldCb){
 						this.mp3_search.off('new-search', oldCb);

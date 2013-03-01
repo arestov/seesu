@@ -64,15 +64,15 @@ provoda.Model.extendTo(ImagesPack, {
 		var best_data = $filter(this.all_images, 'data.lfm_id', function(value) {
 			return !!value;
 		});
-		if (!this.state('best-image')){
+		if (!this.state('best_image')){
 			if (best_data.length){
-				this.updateState('best-image', best_data[0].data);
+				this.updateState('best_image', best_data[0].data);
 			}
 			
 		}
-		if (!this.state('just-image')){
+		if (!this.state('just_image')){
 			if (best_data.not.length){
-				this.updateState('just-image', best_data.not[0].data);
+				this.updateState('just_image', best_data.not[0].data);
 			}
 			
 		}
@@ -89,13 +89,13 @@ ImagesPack.extendTo(TrackImages, {
 
 		var _this = this;
 		artmd.on('state-change.image-to-use', function(e) {
-			_this.updateState('artist-image', e.value);
+			_this.updateState('artist_image', e.value);
 		});
 
 	},
 	complex_states: {
 		'image-to-use': {
-			depends_on: ['best-image', 'just-image', 'artist-image'],
+			depends_on: ['best_image', 'just_image', 'artist_image'],
 			fn: function(bei, jui, arti){
 				return bei || jui || arti;
 			}
@@ -113,7 +113,7 @@ ImagesPack.extendTo(ArtistImages, {
 	},
 	complex_states: {
 		'image-to-use': {
-			depends_on: ['best-image', 'just-image'],
+			depends_on: ['best_image', 'just_image'],
 			fn: function(bei, jui){
 				return bei || jui;
 			}

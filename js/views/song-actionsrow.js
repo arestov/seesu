@@ -59,14 +59,14 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.bindClick();
 
 	},
-	'stch-share-url': {
+	'stch-share_url': {
 		fn: function(state){
 			this.getPart("share_input").val(state || "");
 		//	dep_vp
 		},
 		dep_vp: ['share_input']
 	},
-	'stch-can-post-to-own-wall':{
+	'stch-can_post_to_own_wall':{
 		fn: function(state){
 			this.requirePart("own-wall-button");
 		},
@@ -83,7 +83,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		},
 		dep_vp: ["own-wall-button"]
 	},
-	'stch-can-search-friends': {
+	'stch-can_search_friends': {
 		fn: function(state){
 			if (state){
 				var _this = this;
@@ -380,7 +380,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		this.arrow = this.row_context.children('.rc-arrow');
 		var _this = this;
 
-		this.parent_view.on('state-change.mp-show-end', function(e){
+		this.parent_view.on('state-change.mp_show-end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});
 	},

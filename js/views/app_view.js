@@ -11,6 +11,8 @@ provoda.View.extendTo(appModelView, {
 		this.root_view = this;
 		this.d = this.opts.d;
 
+		this.lfm_imgq = new funcsQueue(700);
+		this.dgs_imgq = new funcsQueue(1200);
 		var _this = this;
 		setTimeout(function() {
 			_this.buildAppDOM();
@@ -30,7 +32,7 @@ provoda.View.extendTo(appModelView, {
 		}
 		this.lev_containers = {};
 		
-		this.on('state-change.current-mp-md', function(e) {
+		this.on('state-change.current_mp_md', function(e) {
 			var cwp = this.state('vis-current_wpoint');
 			if (cwp){
 				if (cwp.canUse && !cwp.canUse()){
@@ -235,9 +237,9 @@ provoda.View.extendTo(appModelView, {
 					
 				}
 			};
-			checkFocus(view.state('mp-show-end'));
+			checkFocus(view.state('mp_show-end'));
 
-			view.on('state-change.mp-show-end', function(e) {
+			view.on('state-change.mp_show-end', function(e) {
 				checkFocus(e.value);
 			});
 		}
@@ -288,7 +290,7 @@ provoda.View.extendTo(appModelView, {
 	},
 	complex_states: {
 		'start-level': {
-			depends_on: ['current-mp-md'],
+			depends_on: ['current_mp_md'],
 			fn: function(md) {
 				if (!md || md.map_level_num == -1){
 					return true;
@@ -296,14 +298,14 @@ provoda.View.extendTo(appModelView, {
 			}
 		}
 	},
-	'stch-full-page-need': function(state) {
-		this.els.screens.toggleClass('full-page-need', !!state);
+	'stch-full_page_need': function(state) {
+		this.els.screens.toggleClass('full_page_need', !!state);
 	},
 	'stch-start-level': function(state) {
 		//this.els.start_screen.toggleClass('inactive-page', !state);
 	},
 	//
-	'stch-current-mp-md': function(md, old_md) {
+	'stch-current_mp_md': function(md, old_md) {
 
 		//map_level_num
 		//md.map_level_num
@@ -365,7 +367,7 @@ provoda.View.extendTo(appModelView, {
 		//var parent_md = md.getParentMapModel();
 		//this.getChildView()
 	},
-	'stch-map-animation': function(changes) {
+	'stch-map_animation': function(changes) {
 		if (!changes){
 			return;
 		}
@@ -376,7 +378,7 @@ provoda.View.extendTo(appModelView, {
 			var cur = all_changhes[i];
 
 			if (cur.type == 'move-view'){
-				cur.target.updateState('vis-mp-show', {
+				cur.target.updateState('vis-mp_show', {
 					anid: changes.anid,
 					value: cur.value
 				});
@@ -401,14 +403,14 @@ provoda.View.extendTo(appModelView, {
 	'stch-root-lev-search-form': function(state) {
 		this.els.search_form.toggleClass('root-lev-search-form', !!state);
 	},
-	'stch-show-search-form': function(state) {
+	'stch-show_search_form': function(state) {
 		this.els.search_form.toggleClass('hidden', !state);
 	},
 	"animation-type":{
-		"mp-has-focus": function(target, state) {
+		"mp_has_focus": function(target, state) {
 
 		},
-		"mp-show": function(target, state) {
+		"mp_show": function(target, state) {
 
 		}
 	},
@@ -425,10 +427,10 @@ provoda.View.extendTo(appModelView, {
 		"deep-sandbox": function(state){
 			this.toggleBodyClass(state, 'deep-sandbox');
 		},
-		"flash-internet":function(state){
-			this.toggleBodyClass(state, 'flash-internet');
+		"flash_internet":function(state){
+			this.toggleBodyClass(state, 'flash_internet');
 		},
-		"viewing-playing": function(state) {
+		"viewing_playing": function(state) {
 			if (this.now_playing_link){
 				if (state){
 					this.now_playing_link.removeClass("nav-button");
@@ -440,7 +442,7 @@ provoda.View.extendTo(appModelView, {
 		"search-query": function(state) {
 			this.search_input.val(state || '');
 		},
-		'now-playing': function(text) {
+		'now_playing': function(text) {
 
 			var md = this.md;
 			var _this = this;
@@ -451,12 +453,12 @@ provoda.View.extendTo(appModelView, {
 
 				this.addWayPoint(this.now_playing_link, {
 					canUse: function() {
-						return !_this.state('viewing-playing');
+						return !_this.state('viewing_playing');
 					}
 				});
 			}
 			if (this.now_playing_link){
-				this.now_playing_link.attr('title', (localize('now-playing','Now Playing') + ': ' + text));
+				this.now_playing_link.attr('title', (localize('now_playing','Now Playing') + ': ' + text));
 			}
 		},
 		playing: function(state) {
@@ -478,7 +480,7 @@ provoda.View.extendTo(appModelView, {
 				
 			}
 		},
-		"doc-title": function(title) {
+		"doc_title": function(title) {
 			this.d.title = title || "";
 		}
 	},
@@ -564,76 +566,11 @@ provoda.View.extendTo(appModelView, {
 		playing: 'icons/icon16p.png',
 		usual: 'icons/icon16.png'
 	},
-	getPvViews: function(array) {
-		var result = {};
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
-			var name_parts = cur.view_name.split(' ');
-			var real_name;
-			var space = 'main';
-			if (name_parts[1]){
-				throw new Error('uncomplete code; fixme');
-			} else {
-				real_name = name_parts[0];
-			}
-			
-			if (!result[real_name]){
-				result[real_name] = {};
-			}
-			if (!result[real_name][space]){
-				result[real_name][space] = [];
-			}
-
-			result[real_name][space] = cur;
-			cur.views = [];
-		}
-		return result;
-	},
-	getPvAnchors: function(vroot_node) {
-		var match_stack =[];
-		var pv_views = [];
-		var anchors = [];
-		var result = {
-			_views: null
-		};
-		vroot_node = vroot_node && vroot_node[0] || vroot_node;
-		match_stack.push(vroot_node);
-
-		while (match_stack.length){
-			var cur_node = match_stack.shift();
-			if (cur_node.nodeType != 1){
-				continue;
-			}
-			var view_name = vroot_node !== cur_node && cur_node.getAttribute('pv-view');
-			if (typeof view_name == 'string'){
-				pv_views.push({
-					node: cur_node,
-					view_name: view_name
-				});
-			} else {
-				var anchor_name = cur_node.getAttribute('pv-anchor');
-
-				if (typeof anchor_name == 'string'){
-					if (result[anchor_name]){
-						throw new Error('anchors exists');
-					} else {
-						result[anchor_name] = $(cur_node);
-					}
-				}
-				for (var i = 0; i < cur_node.childNodes.length; i++) {
-					match_stack.push(cur_node.childNodes[i]);
-				}
-
-			}
-
-		}
-		result._views = this.getPvViews(pv_views);
-
-
-		return result;
-	},
 	parts_builder: {
 		//samples
+		tag_page: function() {
+			return this.els.ui_samples.children('.tag_page');
+		},
 		alb_prev_big: function() {
 			return this.els.ui_samples.children('.album_preview-big');
 		},
@@ -692,7 +629,7 @@ provoda.View.extendTo(appModelView, {
 					//return Math.max(D.scrollHeight, D.offsetHeight, D.clientHeight);
 				};
 				var getCurrentNode = function() {
-					var current_md = _this.state('current-mp-md');
+					var current_md = _this.state('current_mp_md');
 					return current_md && current_md.getRooConPresentation(true, true).getC();
 				};
 
@@ -721,7 +658,7 @@ provoda.View.extendTo(appModelView, {
 					};
 
 					_this.md.rsd_rz = setInterval(recheckFunc,100);
-					_this.on('state-change.current-mp-md.resize-check', function(e) {
+					_this.on('state-change.current_mp_md.resize-check', function(e) {
 						recheckFunc();
 					}, {
 						exlusive: true
@@ -1510,7 +1447,7 @@ provoda.View.extendTo(appModelView, {
 	},
 	scrollToWP: function(cwp) {
 		if (cwp){
-			var cur_md_md = this.state('current-mp-md');
+			var cur_md_md = this.state('current_mp_md');
 			var parent_md = cur_md_md.getParentMapModel();
 			if (parent_md && cwp.view.getAncestorByRooViCon('main') == parent_md.getRooConPresentation()){
 				this.scrollTo(cwp.node, {
@@ -1537,7 +1474,7 @@ provoda.View.extendTo(appModelView, {
 	wayPointsNav: function(nav_type) {
 		var _this = this;
 
-		var cur_mp_md = this.state('current-mp-md');
+		var cur_mp_md = this.state('current_mp_md');
 		var roocon_view =  cur_mp_md && cur_mp_md.getRooConPresentation(true);
 		if (roocon_view){
 			var dems_storage = {};
@@ -1811,7 +1748,7 @@ provoda.View.extendTo(appModelView, {
 					var photoupreq_c = this.createPhotoUploadRequest();
 					c.append(photoupreq_c);
 
-					this.on('state-change.vk-info.song-listener', function(e) {
+					this.on('state-change.vk_info.song-listener', function(e) {
 						if (e.value && e.value.photo_big){
 							photoupreq_c.before(this.createLikeButton(lig).c);
 
@@ -1870,14 +1807,14 @@ provoda.View.extendTo(appModelView, {
 		
 		var li = $('<li class="song-listener"></li>').click(function() {
 			
-			if (!uc.isActive('user-info') || uc.D('user-info', 'current-user') != lig.user){
+			if (!uc.isActive('user_info') || uc.D('user_info', 'current-user') != lig.user){
 				
 				
 				
-				uc.D('user-info', 'current-user', lig.user);
+				uc.D('user_info', 'current-user', lig.user);
 
 				
-				var c = uc.C('user-info');
+				var c = uc.C('user_info');
 
 				_this.showBigListener(c, lig);
 				su.s.auth.regCallback('biglistener', function(){
@@ -1889,7 +1826,7 @@ provoda.View.extendTo(appModelView, {
 				//var li_pos = ;
 				// 5 /*(p.left + $(li[0]).outerWidth()/2) -13 */
 
-				uc.showPart('user-info', function() {
+				uc.showPart('user_info', function() {
 					return {
 						left: li.offset().left,
 						owidth: li.outerWidth()
@@ -1955,6 +1892,21 @@ provoda.View.extendTo(appModelView, {
 
 
 	
+	},
+	loadImage: function(opts) {
+		
+		if (opts.url){
+			var queue;
+			if (opts.url.indexOf('last.fm') != -1){
+				queue = this.lfm_imgq;
+			} else if (opts.url.indexOf('discogs.com') != -1) {
+				queue = this.dgs_imgq;
+			}
+			opts.timeout = opts.timeout || 40000;
+			opts.queue = opts.queue || queue;
+			return loadImage(opts);
+		}
+		
 	},
 	createNiceButton: function(position){
 		var c = $('<span class="button-hole"><a class="nicebutton"></a></span>');

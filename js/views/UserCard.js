@@ -13,13 +13,13 @@ provoda.View.extendTo(PlaylistPreview, {
 		this.auth_c = $('<div class="auth-con"></div>').appendTo(this.c);
 		//this.
 	},
-	'stch-has-access': function(state) {
+	'stch-has_access': function(state) {
 		this.prew_c.toggleClass('placeholdered-text', !state);
 	},
-	'stch-pmd-vswitched': function(state) {
+	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
 	},
-	'stch-nav-title': function(state) {
+	'stch-nav_title': function(state) {
 		this.prew_text.text(state);
 	},
 	'collch-auth_part': {
@@ -45,10 +45,10 @@ provoda.View.extendTo(UserCardView, {
 		this.plts_link_a = $(document.createComment('')).appendTo(this.c);
 		this.aqc_preview_c = $('<div class="aqc_preview"></div>').appendTo(this.c);
 	},
-	'stch-mp-show': function(state) {
+	'stch-mp_show': function(state) {
 		this.c.toggleClass('hidden', !state);
 	},
-	'stch-has-playlists': function(state){
+	'stch-has_playlists': function(state){
 		this.requirePart('plts_link').toggleClass('hidden', !state);
 	},
 	parts_builder: {
@@ -106,7 +106,7 @@ provoda.View.extendTo(UserCardPreview, {
 
 		
 	},
-	'stch-can-expand': function(state){
+	'stch-can_expand': function(state){
 		if (state){
 			this.requirePart('start-page-blocks');
 		}

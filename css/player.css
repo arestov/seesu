@@ -72,7 +72,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	}
 
 
-.flash-internet .flash-secur{
+.flash_internet .flash-secur{
 	display:none;
 }
 
@@ -239,7 +239,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	.playing-process.playing-song-mark{
 		background-image: url(../i/equalaizer.gif);
 	}
-.player-song .playing-song-mark{
+.player_song .playing-song-mark{
 	display: block;
 	}
 
@@ -562,7 +562,7 @@ a.track-name-loading:hover{
 
 }
 
-.show-zoom-to-track .player-song.v-song-sibling .full-song-title{
+.show-zoom-to-track .player_song.v-song-sibling .full-song-title{
 	padding-right: 22px;
 }
 

@@ -28,14 +28,14 @@ var songsList;
 			var _this = this;
 			
 			var doNotReptPl = function(state) {
-				_this.updateState('dont-rept-pl', state);
+				_this.updateState('dont_rept_pl', state);
 			};
 			if (su.settings['dont-rept-pl']){
 				doNotReptPl(true);
 			}
 			su.on('settings.dont-rept-pl', doNotReptPl);
 			if (this.playlist_type){
-				this.updateState('url-part', this.getURL());
+				this.updateState('url_part', this.getURL());
 			}
 			
 		},
@@ -47,7 +47,7 @@ var songsList;
 			}
 			if (params.type){
 				this.playlist_type = params.type;
-				this.updateState('nav-title', this.playlist_title);
+				this.updateState('nav_title', this.playlist_title);
 			}
 		},
 		getURL: function(){
@@ -148,7 +148,7 @@ var songsList;
 			var _this = this;
 
 			var doNotReptPl = function(state) {
-				_this.updateState('dont-rept-pl', state);
+				_this.updateState('dont_rept_pl', state);
 			};
 			if (su.settings['dont-rept-pl']){
 				doNotReptPl(true);
@@ -158,7 +158,7 @@ var songsList;
 
 		},
 		setDnRp: function(state) {
-			this.updateState('dont-rept-pl', state);
+			this.updateState('dont_rept_pl', state);
 			su.setSetting('dont-rept-pl', state);
 		},
 		model_name: 'row-pl-settings'

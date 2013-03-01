@@ -11,12 +11,12 @@ mapLevelModel.extendTo(YoutubeVideo, {
 		this.updateState('cant_show', params.cant_show);
 		this.updateState('previews', params.previews);
 
-		this.updateState('nav-title', params.title);
-		this.updateState('url-part', '/youtube/' + params.yt_id);
+		this.updateState('nav_title', params.title);
+		this.updateState('url_part', '/youtube/' + params.yt_id);
 
 		var _this = this;
 
-		this.on('state-change.mp-show', function(e) {
+		this.on('state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				su.trackEvent('Navigation', 'youtube video');
 				_this.mo.pause();
