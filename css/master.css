@@ -268,7 +268,7 @@ html.not-as-application, .not-as-application  body{
 	}
 
 
-.has-session .add-to-lfmfav{
+.has_session .add-to-lfmfav{
 	opacity: 1;
 	}
 .wait-love-done .add-to-lfmfav{
@@ -733,7 +733,7 @@ html.not-as-application, .not-as-application  body{
 		#promo a:hover{
 			
 		}
-.has-session .scrobbling-switches{ 
+.has_session .scrobbling-switches{ 
 	opacity:1;
 	}
 
@@ -773,7 +773,7 @@ html.not-as-application, .not-as-application  body{
 	margin-right: 1rem;
 	}
 	.chart-song .song-track-name, 
-	.chart-song .song-artist-name{
+	.chart-song .song-artist_name{
 		overflow:hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -1312,7 +1312,7 @@ iframe.you-tube-video,embed.you-tube-video{
 	}
 	.users-play-this .desc-row,
 	.song-by-user .song-track-name,
-	.song-by-user .song-artist-name{
+	.song-by-user .song-artist_name{
 		overflow: hidden;
 		height: 1.5rem;
 		text-overflow: ellipsis;

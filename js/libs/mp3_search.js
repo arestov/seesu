@@ -38,10 +38,10 @@ var FilesInvestg;
 		addFile: function(file) {
 			var new_array = [];
 
-			var inj_arr = this.state('injected-files') || [];
+			var inj_arr = this.state('injected_files') || [];
 			new_array = new_array.concat(inj_arr);
 			new_array.push(file);
-			this.updateState('injected-files', new_array);
+			this.updateState('injected_files', new_array);
 			
 		},
 		getFiles: function(type) {
@@ -59,7 +59,7 @@ var FilesInvestg;
 		},
 		complex_states: {
 			'files-list': {
-				depends_on: ['search_result', 'injected-files'],
+				depends_on: ['search_result', 'injected_files'],
 				fn: function(sarr, inj_f) {
 					var all = [];
 					if (sarr && sarr.length){

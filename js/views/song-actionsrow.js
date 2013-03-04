@@ -72,7 +72,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		},
 		dep_vp: ['pch-ws-own']
 	},
-	'stch-own-photo': {
+	'stch-own_photo': {
 		fn: function(state) {
 			if (state){
 				if (this.own_photo){
@@ -118,7 +118,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		},
 		dep_vp: ['pch-ws-input', "pch-ws-friends"]
 	},
-	'stch-needs-vk-auth': {
+	'stch-needs_vk_auth ': {
 		fn: function(state) {
 			if (state){
 				$(this.getAFreeCV('vk_auth')).insertBefore(this.getPart("pch-vk-auth"));

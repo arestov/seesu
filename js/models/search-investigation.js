@@ -151,7 +151,7 @@ var trackSuggest = function(data){
 		var track_dur = parseInt(this.duration);
 		var digits = track_dur % 60;
 		track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-		this.updateState('duration-text', track_dur);
+		this.updateState('duration_text', track_dur);
 	}
 	this.text_title = this.getTitle();
 };
@@ -318,7 +318,7 @@ investigation.extendTo(SearchPage, {
 		this.addSection('albums', new albumsSection());
 		this.addSection('tags', new tagsSection());
 		this.addSection('tracks', new tracksSection());
-		this.updateState('mp-freezed', false);
+		this.updateState('mp_freezed', false);
 		
 	},
 	setItemForEnter: function() {
@@ -326,7 +326,7 @@ investigation.extendTo(SearchPage, {
 	},
 	complex_states: {
 		"needs_search_from": {
-			depends_on: ['mp-freezed'],
+			depends_on: ['mp_freezed'],
 			fn: function(frzd) {
 				return !frzd;
 			}

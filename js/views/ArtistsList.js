@@ -1,106 +1,4 @@
-var AlbumsListPreviewItem = function() {};
-provoda.View.extendTo(AlbumsListPreviewItem, {
-	createBase: function() {
-		this.c = $('<img class="album_preview" src=""/>');
-	},
-	'stch-selected_image': function(lfm_wrap) {
-		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/64s/' + lfm_wrap.lfm_id : lfm_wrap.url;
-		if (url){
-			var req = this.root_view.loadImage({
-					node: this.c[0],
-					url: url,
-					cache_allowed: true
-				}).done(function(){
-				}).fail(function(){
-				});
-			this.on('die', function() {
-				req.abort();
-			});
-		} else {
-			this.c.attr('src', '');
-		}
-	}
-});
 
-
-var BigAlbumPreview = function() {};
-provoda.View.extendTo(BigAlbumPreview, {
-	createBase: function() {
-		this.c = this.root_view.getSample('alb_prev_big');
-		this.createTemplate();
-		var _this = this;
-
-		this.c.click(function() {
-			_this.md.showOnMap();
-			return false;
-		});
-		this.addWayPoint(this.c);
-	},
-	'stch-can-hide-artist-name': function(state) {
-		this.tpl.ancs.artist_name_c.toggleClass('hidden', state);
-	},
-	'stch-album_name': function(state) {
-		this.c.attr('title', state);
-		this.tpl.ancs.album_name_c.text(state);
-	},
-	'stch-album_artist': function(state) {
-		this.tpl.ancs.artist_name_c.text(state);
-	},
-	'stch-selected_image': function(lfm_wrap) {
-		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
-		if (url){
-			var req = this.root_view.loadImage({
-					node: this.tpl.ancs.imgc[0],
-					url: url,
-					cache_allowed: true
-				}).done(function(){
-				}).fail(function(){
-				});
-			this.on('die', function() {
-				req.abort();
-			});
-		} else {
-			this.tpl.ancs.imgc.attr('src', '');
-		}
-		
-	}
-});
-
-var AlbumsListView = function() {};
-PageView.extendTo(AlbumsListView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('albums_page');
-		this.createTemplate();
-		
-		var _this = this;
-		this.tpl.ancs.load_m_b.click(function() {
-			_this.md.requestMoreData();
-			return false;
-		});
-	},
-	children_views: {
-		preview_list: BigAlbumPreview
-	},
-	'collch-preview_list': 'tpl.ancs.albums_list_c',
-	'stch-more_load_available': function(state) {
-		this.tpl.ancs.load_m_b.toggleClass('hidden', !state);
-	}
-});
-
-var AlbumsListPreview = function() {};
-ItemOfLL.extendTo(AlbumsListPreview, {
-	createBase: function() {
-		this._super();
-		this.tpl.ancs.listc.addClass('albums_previews');
-	},
-	children_views: {
-		preview_list: AlbumsListPreviewItem
-	},
-	'collch-preview_list': {
-		place: 'tpl.ancs.listc',
-		limit: 15
-	}
-});
 
 var ArtcardViewInList = function() {};
 provoda.View.extendTo(ArtcardViewInList, {
@@ -115,7 +13,7 @@ provoda.View.extendTo(ArtcardViewInList, {
 		this.image_place = $('<span class="song-image-con"></span>').appendTo(this.c);
 		this.addWayPoint(this.c);
 	},
-	'stch-artist-name': function(state) {
+	'stch-artist_name': function(state) {
 		this.alink.text(state);
 	},
 	'stch-selected_image': function(lfm_wrap) {
@@ -182,7 +80,7 @@ provoda.View.extendTo(artCardUI, {
 		"mp_show": function(opts) {
 			this.c.toggleClass('hidden', !opts);
 		},
-		"loading-baseinfo": function(state) {
+		"loading_baseinfo": function(state) {
 			var mark_loading_nodes = this.ui.tagsc.add(this.ui.bioc);
 
 			if (state){

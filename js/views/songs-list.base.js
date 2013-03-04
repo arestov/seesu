@@ -18,7 +18,7 @@ provoda.addPrototype("songsListBaseView", {
 				}
 			}
 		},
-		"can-play": function(state) {
+		"can_play": function(state) {
 			if (state){
 				//make-trs-plable
 				this.c.addClass('has_files-in-songs');

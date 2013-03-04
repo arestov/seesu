@@ -1,4 +1,4 @@
-var
+var spv = {},
 	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
 	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
@@ -395,6 +395,7 @@ $filter = function(array, field, value_or_testfunc){
 	}
 	return r;
 };
+spv.filter = $filter;
 
 
 
@@ -602,6 +603,8 @@ debounce = function(fn, timeout, invokeAsap, ctx) {
 	};
 
 };
+spv.debounce = debounce;
+
 throttle = function(fn, timeout, ctx) {
 
 	var timer, args, needInvoke;
@@ -629,7 +632,7 @@ throttle = function(fn, timeout, ctx) {
 	};
 
 };
-
+spv.throttle = throttle;
 
 
 (function(){

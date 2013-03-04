@@ -511,7 +511,7 @@ provoda.View.extendTo(songUI, {
 
 		
 
-		this.artist_name_c = $('<span class="song-artist-name"></span>')
+		this.artist_name_c = $('<span class="song-artist_name"></span>')
 			.appendTo(this.titlec);
 		this.track_name_c = $('<span class="song-track-name"></span>')
 			.appendTo(this.titlec);

@@ -81,7 +81,7 @@ searchPageSuggestView.extendTo(trackSuggestUI, {
 	"stch-image": function(state) {
 		this.img_c.attr('src', state);
 	},
-	"stch-duration-text": function(state) {
+	"stch-duration_text": function(state) {
 		this.duration_c.text(state);
 	}
 	

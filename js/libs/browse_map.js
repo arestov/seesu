@@ -98,7 +98,7 @@ Class.extendTo(MapLevel, {
 	},
 	markAsFreezed: function() {
 		this.closed = true;
-		this.resident.updateState('mp-freezed', true);
+		this.resident.updateState('mp_freezed', true);
 	},
 	freeze: function(){
 		if (this.isOpened()){
@@ -798,7 +798,9 @@ provoda.Model.extendTo(mapLevelModel, {
 					throw new Error('who is your map parent model?');
 				}
 			}
+			this.map_children = [];
 		}
+
 		
 	},
 	assignMapLev: function(lev){
@@ -868,6 +870,17 @@ provoda.Model.extendTo(mapLevelModel, {
 	},
 	getURL: function() {
 		return '';
+	},
+	simplifyURL: function(url) {
+		return url;
+	},
+	findMapChildByURL: function(url) {
+		var surl = this.simplifyURL(url);
+		for (var i = 0; i < this.map_children.length; i++) {
+			if (surl == simplifyURL(this.map_children[i].state('url_part'))){
+				return this.map_children[i];
+			}
+		}
 	}
 });
 })();

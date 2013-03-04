@@ -496,7 +496,7 @@ provoda.Model.extendTo(appModel, {
 		return pl;
 	},
 	search: function(query){
-		var old_v = this.state('search-query');
+		var old_v = this.state('search_query');
 		if (query != old_v){
 			if (!query) {
 				this.showStartPage();
@@ -505,7 +505,7 @@ provoda.Model.extendTo(appModel, {
 			}
 
 		}
-		this.updateState('search-query', query);
+		this.updateState('search_query', query);
 		
 	}
 

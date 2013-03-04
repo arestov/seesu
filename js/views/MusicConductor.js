@@ -129,7 +129,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 								.click(uselisteningClick);
 
 							$('<span class="song-track-name"></span>').text(lig.title).appendTo(song_complect);
-							$('<span class="song-artist-name"></span>').text(lig.artist).appendTo(song_complect);
+							$('<span class="song-artist_name"></span>').text(lig.artist).appendTo(song_complect);
 							
 
 							list_item.append(song_complect).appendTo(uc);
@@ -187,7 +187,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 					.attr('src', getTargetField(track_obj, 'lfm_image.array.0.#text') || '')
 					.appendTo(chart_song);
 
-				$('<span class="song-artist-name"></span>').text(artist).appendTo(chart_song);
+				$('<span class="song-artist_name"></span>').text(artist).appendTo(chart_song);
 				$('<span class="song-track-name"></span>').text(track).appendTo(chart_song);
 				
 
