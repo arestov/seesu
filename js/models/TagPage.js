@@ -2,25 +2,26 @@ var TagsList = function() {};
 LoadableList.extendTo(TagsList, {
 	model_name: 'tagslist',
 	main_list_name: 'tags_list',
-	makeAlbum: function(obj, start_song) {
-		var pl = new ArtistAlbumSongs();
-		pl.init({
-			map_parent: this,
-			app: this.app
-		}, obj, start_song);
-		return pl;
-	},
 	addTag: function(name, silent) {
 		var main_list = this[this.main_list_name];
 		main_list.push(name);
 
 		if (!silent){
 			//this.setChild(this.main_list_name, main_list, true);
-			this.updateState(this.main_list_name, main_list);
+			this.updateState(this.main_list_name, [].concat(main_list));
 		}
 	},
 	addItemToDatalist: function(obj, silent) {
 		this.addTag(obj, silent);
+	},
+	'compx-data-list': {
+		depends_on: ['tags_list', 'preview_list'],
+		fn: function(tag_list, preview_list){
+			return tag_list || preview_list;
+		}
+	},
+	setPreview: function(list) {
+		this.updateState('preview_list', list);
 	}
 });
 
@@ -585,22 +586,28 @@ mapLevelModel.extendTo(TagPage, {
 		this.updateState('url_part', '/tags/' + this.tag_name);
 		this.updateState('tag_name', this.tag_name);
 
+
+		var common_init_children = [];
+
 		var artists_lists = new ArtistsLists();
-		artists_lists.init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
-		this.setChild('artists_lists', artists_lists);
-
 		var songs_list = new SongsLists();
-		songs_list.init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
-		this.setChild('songs_list', songs_list);
-
-
 		var albums_list = new TagAlbums();
-		albums_list.init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
+		var similar_tags = new SimilarTags();
+		common_init_children.push(artists_lists, songs_list, albums_list, similar_tags);
+
+		for (var i = 0; i < common_init_children.length; i++) {
+			common_init_children[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
+		}
+
+		this.setChild('artists_lists', artists_lists);
+		this.setChild('songs_list', songs_list);
 		this.setChild('albums_list', albums_list);
+		this.setChild('similar_tags', similar_tags);
 
 		this.on('state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				albums_list.preloadStart();
+				similar_tags.preloadStart();
 			}
 		});
 	},

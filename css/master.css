@@ -845,28 +845,31 @@ html.not-as-application, .not-as-application  body{
 
 
 .tags-hyped{
-	overflow:hidden;
+	
 	margin-top: 50px;
-	text-align: justify;
-	line-height: 2;
+	
 
 	}
 	.tags-hyped h3{
 		margin-bottom:10px;
 	}
-	.tags-hyped .hyped-tag{
+	
+	.full-page .tags-hyped{
+		
+		}
+.tags_list{
+	overflow:hidden;
+	text-align: justify;
+	line-height: 2;
+	}
+.full-page .tags_list{
+	line-height: 2.5;
+	}
+	.full-page .tags_list a{
+
 		margin-right:15px;
 		}
-	.full-page .tags-hyped{
-		line-height: 2.5;
-		}
-	.full-page .tags-hyped .hyped-tag{
-		
-		}
-		.full-page .tags-hyped .hyped-tag:hover{
-			
-			}
-		
+	
 
 #search #search-p{
 	overflow:hidden;

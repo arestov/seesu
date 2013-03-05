@@ -85,7 +85,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 			
 			
 			if (window.lastfm_toptags && lastfm_toptags.length){
-				var _c = $('<div class="block-for-startpage tags-hyped"></div>').appendTo(this.c);
+				var _c = $('<div class="block-for-startpage tags-hyped tags_list"></div>').appendTo(this.c);
 				$('<h3></h3>').appendTo(_c)
 								.append(localize('Pop-tags','Popular tags'));
 				for (var i=0; i < lastfm_toptags.length; i++) {
