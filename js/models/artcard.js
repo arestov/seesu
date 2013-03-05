@@ -50,7 +50,7 @@ songsList.extendTo(DiscogsAlbumSongs, {
 			'url_part': '/' + this.album_id
 		});
 	},
-	'compx-can-hide-artist-name': {
+	'compx-can-hide-artist_name': {
 		depends_on: ['album_artist', 'original_artist'],
 		fn: function(alb_artist, orgn_artist) {
 			return alb_artist == orgn_artist;
@@ -145,7 +145,7 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		this.map_parent.on('state-change.discogs_id_searching', function(e) {
 			_this.updateState('profile_searching', e.value);
 		});
-		this.map_parent.on('state-change.discogs-id', function(e) {
+		this.map_parent.on('state-change.discogs_id', function(e) {
 			_this.updateState('artist_id', e.value);
 		});
 	},
@@ -309,7 +309,7 @@ songsList.extendTo(ArtistAlbumSongs, {
 		}
 
 	},
-	'compx-can-hide-artist-name': {
+	'compx-can-hide-artist_name': {
 		depends_on: ['album_artist', 'original_artist'],
 		fn: function(alb_artist, orgn_artist) {
 			return alb_artist == orgn_artist;
@@ -323,12 +323,9 @@ songsList.extendTo(ArtistAlbumSongs, {
 	},
 	getAlbumURL: function() {
 		if (this.playlist_artist == this.original_artist){
-			return encodeURIComponent(this.album_name);
+			return this.app.encodeURLPart(this.album_name);
 		} else {
-			return stringifyParams({
-				artist: encodeURIComponent(this.playlist_artist),
-				album: encodeURIComponent(this.album_name)
-			}, false, '=', '&', {not_sort: true});
+			return this.app.encodeURLPart(this.playlist_artist) + ',+' + this.app.encodeURLPart(this.album_name);
 		}
 	},
 	sendMoreDataRequest: function(paging_opts) {
@@ -448,7 +445,7 @@ songsList.extendTo(SoundcloudArtcardSongs, {
 	init: function() {
 		this._super.apply(this, arguments);
 		var _this = this;
-		this.map_parent.on('state-change.sc-profile_searching', function(e) {
+		this.map_parent.on('state-change.sc_profile_searching', function(e) {
 			_this.updateState('profile_searching', e.value);
 		});
 		this.map_parent.on('state-change.soundcloud_profile', function(e) {
@@ -693,7 +690,7 @@ mapLevelModel.extendTo(ArtCard, {
 		this.artist = params.artist;
 		
 		this.updateState('nav_title', this.artist);
-		this.updateState('artist-name', this.artist);
+		this.updateState('artist_name', this.artist);
 
 
 
@@ -789,7 +786,7 @@ mapLevelModel.extendTo(ArtCard, {
 			this.info_loaded = true;
 		}
 		var _this = this;
-		this.updateState('sc-profile_searching', true);
+		this.updateState('sc_profile_searching', true);
 
 		var scid_search_stack = new funcsStack();
 		scid_search_stack
@@ -825,7 +822,7 @@ mapLevelModel.extendTo(ArtCard, {
 					
 				})
 				.fail(function() {
-					_this.updateState('sc-profile_searching', false);
+					_this.updateState('sc_profile_searching', false);
 				})
 			);
 		})
@@ -850,7 +847,7 @@ mapLevelModel.extendTo(ArtCard, {
 					}
 				})
 				.always(function() {
-					_this.updateState('sc-profile_searching', false);
+					_this.updateState('sc_profile_searching', false);
 					
 				})
 			);
@@ -883,7 +880,7 @@ mapLevelModel.extendTo(ArtCard, {
 					}
 				}
 				if (artist_info){
-					_this.updateState('discogs-id', artist_info.id);
+					_this.updateState('discogs_id', artist_info.id);
 					_this.dgs_albums.preloadStart();
 				}
 			})
@@ -904,10 +901,10 @@ mapLevelModel.extendTo(ArtCard, {
 	loadBaseInfo: function(){
 		var _this = this;
 
-		this.updateState('loading-baseinfo', true);
+		this.updateState('loading_baseinfo', true);
 		this.addRequest(this.app.lfm.get('artist.getInfo', {'artist': this.artist})
 			.done(function(r){
-				_this.updateState('loading-baseinfo', false);
+				_this.updateState('loading_baseinfo', false);
 				_this.updateState('profile-image', _this.app.art_images.getImageWrap(getTargetField(r, 'artist.image')));
 
 				var psai = parseArtistInfo(r);
@@ -937,7 +934,7 @@ mapLevelModel.extendTo(ArtCard, {
 				
 			})
 			.fail(function(){
-				_this.updateState('loading-baseinfo', false);
+				_this.updateState('loading_baseinfo', false);
 			}), {
 				order: 2
 			}

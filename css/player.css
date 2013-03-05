@@ -42,7 +42,7 @@ a.track-node{
 	#slider .track-node.surf_nav{
 		background: #000;
 		}
-		.track-node.surf_nav .full-song-title, .track-node.surf_nav .song-artist-name {
+		.track-node.surf_nav .full-song-title, .track-node.surf_nav .song-artist_name {
 			color:#fff;
 			}
 .playing-song a.track-node {
@@ -216,7 +216,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	margin-right:0.5rem;
 	}
 
-.song-artist-name {
+.song-artist_name {
 	display: block;
 	color: #6B6B6B;
 	font-size: 0.85rem;
@@ -250,7 +250,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	padding-left: 1rem;
 	min-height: 39px;
 	}
-.has-no-track-title .song-artist-name {
+.has-no-track-title .song-artist_name {
 	color: #8C8C8C;
 	font-size: 1rem;
 	}
@@ -363,7 +363,7 @@ a.track-name-loading:hover{
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	}
-.page-scheme .song-artist-name{
+.page-scheme .song-artist_name{
 	overflow: hidden;
 	height: 1.5rem;
 	text-overflow: ellipsis;
@@ -390,7 +390,7 @@ a.track-name-loading:hover{
 }
 
 	
-	.show-zoom-to-track .viewing-song .song-artist-name{
+	.show-zoom-to-track .viewing-song .song-artist_name{
 		color: #AAA;
 		
 		}
@@ -517,9 +517,9 @@ a.track-name-loading:hover{
 		height: 1.72rem;
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-track-name,
-	.show-zoom-to-track .v-song-sibling .track-node .song-artist-name,
+	.show-zoom-to-track .v-song-sibling .track-node .song-artist_name,
 	.page-scheme .tracks-for-play .track-node .song-track-name,
-	.page-scheme .tracks-for-play .track-node .song-artist-name{
+	.page-scheme .tracks-for-play .track-node .song-artist_name{
 		
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -534,16 +534,16 @@ a.track-name-loading:hover{
 		line-height: 1.4em;
 		
 	}
-	.show-zoom-to-track .v-song-sibling .track-node .song-artist-name,
-	.page-scheme .tracks-for-play .track-node .song-artist-name{
+	.show-zoom-to-track .v-song-sibling .track-node .song-artist_name,
+	.page-scheme .tracks-for-play .track-node .song-artist_name{
 		height: 1em;
 		line-height: 1em;
 		
 		}
-.show-zoom-to-track .has-no-track-title .song-artist-name{
+.show-zoom-to-track .has-no-track-title .song-artist_name{
 	margin-top: 0;
 	}
-.show-zoom-to-track .song-artist-name{
+.show-zoom-to-track .song-artist_name{
 	
 	}
 .show-zoom-to-track .viewing-song .files-load-states{

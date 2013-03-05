@@ -1,3 +1,118 @@
+var TagsList = function() {};
+LoadableList.extendTo(TagsList, {
+	model_name: 'tagslist',
+	main_list_name: 'tags_list',
+	addTag: function(name, silent) {
+		var main_list = this[this.main_list_name];
+		main_list.push(name);
+
+		if (!silent){
+			//this.setChild(this.main_list_name, main_list, true);
+			this.updateState(this.main_list_name, [].concat(main_list));
+		}
+	},
+	addItemToDatalist: function(obj, silent) {
+		this.addTag(obj, silent);
+	},
+	'compx-data-list': {
+		depends_on: ['tags_list', 'preview_list'],
+		fn: function(tag_list, preview_list){
+			return tag_list || preview_list;
+		}
+	},
+	setPreview: function(list) {
+		this.updateState('preview_list', list);
+	}
+});
+
+var SimilarTags = function() {};
+TagsList.extendTo(SimilarTags, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.tag_name = params.tag_name;
+		this.updateManyStates({
+			'nav_title': 'Similar to ' + this.tag_name + ' tags',
+			'url_part': '/similar'
+		});
+	},
+	sendMoreDataRequest: function(paging_opts) {
+		var tag_name = this.tag_name;
+		var _this = this;
+		var request_info = {};
+		request_info.request = this.app.lfm.get('tag.getSimilar', {
+			tag: tag_name
+		})
+			.done(function(r){
+				var res_list = toRealArray(getTargetField(r, 'similartags.tag'));
+				var data_list = spv.filter(res_list, 'name');
+				_this.putRequestedData(request_info.request, data_list, r.error);
+			})
+			.fail(function() {
+				_this.requestComplete(request_info.request, true);
+			})
+			.always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	}
+});
+
+var TagAlbums = function() {};
+AlbumsList.extendTo(TagAlbums, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.tag_name = params.tag_name;
+		this.updateManyStates({
+			'nav_title': 'Top ' + this.tag_name + ' ' + 'Albums',
+			'url_part': '/albums'
+		});
+	},
+	page_limit: 50,
+	sendMoreDataRequest: function(paging_opts) {
+		//artist.getTopAlbums
+		var tag_name = this.tag_name;
+		var _this = this;
+		var request_info = {};
+		request_info.request = this.app.lfm.get('tag.getTopAlbums', {
+			tag: tag_name,
+			limit: paging_opts.page_limit,
+			page: paging_opts.next_page
+		})
+			.done(function(r){
+				
+				var albums_data = toRealArray(getTargetField(r, 'topalbums.album'));
+
+
+				var data_list = [];
+				if (albums_data.length) {
+					var l = Math.min(albums_data.length, paging_opts.page_limit);
+					for (var i=paging_opts.remainder; i < l; i++) {
+						var cur = albums_data[i];
+						data_list.push({
+							album_artist: getTargetField(cur, 'artist.name'),
+							album_name: cur.name,
+							lfm_image: {
+								array: cur.image
+							},
+							playcount: cur.playcount
+						});
+					}
+					
+				}
+				_this.putRequestedData(request_info.request, data_list, r.error);
+				
+			})
+			.fail(function() {
+				_this.requestComplete(request_info.request, true);
+			})
+			.always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	}
+});
+
+
 var HypemTagPlaylist = function() {};
 HypemPlaylist.extendTo(HypemTagPlaylist, {
 	
@@ -74,7 +189,7 @@ songsList.extendTo(ExplorableTagSongs, {
 		this.tag_name = params.tag_name;
 
 		this.updateState('nav_title', localize('Explore-songs-exfm'));
-		this.updateState('url_part', '/explore:exfm');
+		this.updateState('url_part', '/explore_exfm');
 	},
 	page_limit: 100,
 	sendMoreDataRequest: function(paging_opts) {
@@ -125,7 +240,7 @@ songsList.extendTo(TrendingTagSongs, {
 		this.tag_name = params.tag_name;
 
 		this.updateState('nav_title', localize('Trending-songs-exfm'));
-		this.updateState('url_part', '/trending:exfm');
+		this.updateState('url_part', '/trending_exfm');
 	},
 	page_limit: 100,
 	sendMoreDataRequest: function(paging_opts) {
@@ -471,13 +586,30 @@ mapLevelModel.extendTo(TagPage, {
 		this.updateState('url_part', '/tags/' + this.tag_name);
 		this.updateState('tag_name', this.tag_name);
 
-		var artists_lists = new ArtistsLists();
-		artists_lists.init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
-		this.setChild('artists_lists', artists_lists);
 
+		var common_init_children = [];
+
+		var artists_lists = new ArtistsLists();
 		var songs_list = new SongsLists();
-		songs_list.init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
+		var albums_list = new TagAlbums();
+		var similar_tags = new SimilarTags();
+		common_init_children.push(artists_lists, songs_list, albums_list, similar_tags);
+
+		for (var i = 0; i < common_init_children.length; i++) {
+			common_init_children[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
+		}
+
+		this.setChild('artists_lists', artists_lists);
 		this.setChild('songs_list', songs_list);
+		this.setChild('albums_list', albums_list);
+		this.setChild('similar_tags', similar_tags);
+
+		this.on('state-change.mp_show', function(e) {
+			if (e.value && e.value.userwant){
+				albums_list.preloadStart();
+				similar_tags.preloadStart();
+			}
+		});
 	},
 	model_name: 'tag_page'
 

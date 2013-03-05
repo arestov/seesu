@@ -200,7 +200,7 @@ var songsList;
 			
 		},
 		markAsPlayable: function() {
-			this.updateState('can-play', true);
+			this.updateState('can_play', true);
 		},
 		
 		makePlayable: function(full_allowing) {

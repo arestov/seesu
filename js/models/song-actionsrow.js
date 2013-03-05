@@ -214,12 +214,12 @@ BaseCRow.extendTo(ShareRow, {
 		var cu_info = su.s.getInfo('vk');
 		if (cu_info){
 			if (cu_info.photo){
-				this.updateState("own-photo", cu_info.photo);
+				this.updateState("own_photo", cu_info.photo);
 			}
 		} else {
 			su.s.once("info-change.vk", function(cu_info) {
 				if (cu_info.photo){
-					_this.updateState("own-photo", cu_info.photo);
+					_this.updateState("own_photo", cu_info.photo);
 				}
 			});
 		}
@@ -255,7 +255,7 @@ BaseCRow.extendTo(ShareRow, {
 		//to find you friends
 
 
-		this.updateState("needs-vk-auth", true);
+		this.updateState("needs_vk_auth ", true);
 
 	},
 	removeVKAudioAuth: function() {
@@ -264,7 +264,7 @@ BaseCRow.extendTo(ShareRow, {
 			delete this.vk_auth_rqb;
 
 		}
-		this.updateState("needs-vk-auth", false);
+		this.updateState("needs_vk_auth ", false);
 
 	},
 	search: function(q) {

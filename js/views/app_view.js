@@ -439,7 +439,7 @@ provoda.View.extendTo(appModelView, {
 				}
 			}
 		},
-		"search-query": function(state) {
+		"search_query": function(state) {
 			this.search_input.val(state || '');
 		},
 		'now_playing': function(text) {
@@ -732,7 +732,7 @@ provoda.View.extendTo(appModelView, {
 		
 			_this.search_input.on('keyup change', function(e) {
 				var input_value = this.value;
-				_this.overrideStateSilently('search-query', input_value);
+				_this.overrideStateSilently('search_query', input_value);
 				_this.md.search(input_value);
 			});
 
@@ -1568,7 +1568,7 @@ provoda.View.extendTo(appModelView, {
 			
 			if (offset){
 				if (opts.animate){
-					$(img).animate({'margin-top':  offset + 'px'}, 200);
+					$(img).animate({'margin-top':  offset + 'px'}, opts.animate_time || 200);
 				} else {
 					$(img).css({'margin-top':  offset + 'px'});
 				}
@@ -1692,7 +1692,8 @@ provoda.View.extendTo(appModelView, {
 					algd = true;
 					_this.verticalAlign(img, {
 						target_height: 252,
-						animate: true
+						animate: true,
+						animate_time: 66
 					});
 				}
 					

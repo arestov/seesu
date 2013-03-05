@@ -218,6 +218,12 @@
 	box-sizing: border-box;
 	padding-right: 0.86rem;
 	}
+.full_wide_col{
+	clear:both;
+	}
+	.full_wide_col .area_for_button .albums_previews{
+		height: 4.6rem;
+		}
 .full-page .rightcol{
 	width: 50%;
 	float:right;
@@ -258,7 +264,7 @@
 				}
 		.area_for_button .albums_previews{
 			height: 9.4rem;
-		}
+			}
 	
 		
 

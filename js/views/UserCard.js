@@ -1,7 +1,7 @@
 var PlaylistPreview = function() {};
 provoda.View.extendTo(PlaylistPreview, {
 	createBase: function() {
-		this.c = $('<div class="playlist_preview-c"></div>');
+		this.c = $('<div class="playlist_preview-c no_arfb"></div>');
 		this.prew_c = $('<div class="area-button"></div>').appendTo(this.c);
 		this.prew_text = $('<span></span>').appendTo(this.prew_c);
 		//this.desc = $('<div class="area-description"></div>').appendTo(this.prew_c);
