@@ -96,13 +96,13 @@ mapLevelModel.extendTo(LoadableList, {
 			
 
 			if (!error && data_list && data_list.length){
-				var mlc_opts = this.getMainListChangeOpts();
 				
+				var mlc_opts = this.getMainListChangeOpts();
 				for (var i = 0; i < data_list.length; i++) {
 					this.addItemToDatalist(data_list[i], true);
 				}
+				this.dataListChange(mlc_opts);
 				
-				this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
 				
 			}
 			if (!error && request && data_list.length < this.page_limit){
@@ -113,6 +113,10 @@ mapLevelModel.extendTo(LoadableList, {
 		console.profileEnd();
 		return this;
 
+	},
+	dataListChange: function(mlc_opts) {
+		
+		this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
 	},
 	requestComplete: function(request, error) {
 		if (!this.request_info || this.request_info.request == request){

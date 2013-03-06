@@ -11,6 +11,11 @@ LoadableList.extendTo(TagsList, {
 			this.updateState(this.main_list_name, [].concat(main_list));
 		}
 	},
+	dataListChange: function() {
+		var main_list = this[this.main_list_name];
+		this.updateState(this.main_list_name, [].concat(main_list));
+
+	},
 	addItemToDatalist: function(obj, silent) {
 		this.addTag(obj, silent);
 	},

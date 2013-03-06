@@ -869,7 +869,15 @@ html.not-as-application, .not-as-application  body{
 
 		margin-right:15px;
 		}
-	
+.tags_list-preview{
+	font-size: 0.8em;
+	color:#707070;
+	}
+	.tags_list-preview span{
+		white-space: nowrap;
+		margin-right: 0.5em;
+
+		}
 
 #search #search-p{
 	overflow:hidden;
@@ -1434,8 +1442,11 @@ body .surf_nav{
 		}
 	.album_preview-big .full_album_name{
 		width:9rem;
-		height: 4.5rem;
+		height: 9.5rem;
 		padding:0.5rem 0;
 		overflow: hidden;
 		bottom:0;
+		}
+	.full_album_name .album_name{
+		color: #999;
 		}

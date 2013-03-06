@@ -124,7 +124,7 @@ searchPageSuggestView.extendTo(albumSuggestUI, {
 	},
 	"stch-image": function(state) {
 		this.img_c.attr('src', state);
-	},
+	}
 });
 
 
