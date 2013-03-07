@@ -401,13 +401,13 @@ provoda.View.extendTo(songFileModelUI, {
 				this.c.removeClass('overstocked');
 			}
 		},
-		"vis-loading-p": function(state){
+		"vis_loading-p": function(state){
 			this.cloading.css({
 				width: state
 			});
 			
 		},
-		"vis-playing-p": function(state){
+		"vis_playing-p": function(state){
 			this.cplayng.css({
 				width: state
 			});
@@ -441,7 +441,7 @@ provoda.View.extendTo(songFileModelUI, {
 	},
 	complex_states: {
 		"can-progress": {
-			depends_on: ['vis-is-visible', 'vis-con-appended', 'selected'],
+			depends_on: ['vis_is-visible', 'vis_con-appended', 'selected'],
 			fn: function(vis, apd, sel){
 				var can = vis && apd && sel;
 				if (can){
@@ -455,8 +455,8 @@ provoda.View.extendTo(songFileModelUI, {
 				return can;
 			}
 		},
-		'vis-wp-usable': {
-			depends_on: ['overstock', 'vis-pp-wmss', 'vis-p-show-ovst'],
+		'vis_wp-usable': {
+			depends_on: ['overstock', 'vis_pp-wmss', 'vis_p-show-ovst'],
 			fn: function(overstock, pp_wmss, p_show_overstock) {
 				
 				if (overstock){
@@ -467,8 +467,8 @@ provoda.View.extendTo(songFileModelUI, {
 			
 			}
 		},
-		"vis-progress-c-width": {
-			depends_on: ['can-progress', 'vis-pp-wmss', 'vis-win-resize-time'],
+		"vis_progress-c-width": {
+			depends_on: ['can-progress', 'vis_pp-wmss', 'vis_win-resize-time'],
 			fn: function(can, p_wmss, wrsz_time){
 				if (can){
 					return this.progress_c.width();
@@ -477,8 +477,8 @@ provoda.View.extendTo(songFileModelUI, {
 				}
 			}
 		},
-		"vis-loading-p": {
-			depends_on: ['vis-progress-c-width', 'loading_progress'],
+		"vis_loading-p": {
+			depends_on: ['vis_progress-c-width', 'loading_progress'],
 			fn: function(width, factor){
 				if (factor) {
 					if (width){
@@ -491,8 +491,8 @@ provoda.View.extendTo(songFileModelUI, {
 				}
 			}
 		},
-		"vis-playing-p": {
-			depends_on: ['vis-progress-c-width', 'playing_progress'],
+		"vis_playing-p": {
+			depends_on: ['vis_progress-c-width', 'playing_progress'],
 			fn: function(width, factor){
 				if (factor) {
 					if (width){
@@ -526,7 +526,7 @@ provoda.View.extendTo(songFileModelUI, {
 		});
 		this.addWayPoint(this.c, {
 			canUse: function() {
-				return !_this.state('selected') && _this.state('vis-wp-usable');
+				return !_this.state('selected') && _this.state('vis_wp-usable');
 			}
 		});
 		/*
@@ -542,7 +542,7 @@ provoda.View.extendTo(songFileModelUI, {
 		var positionChange = function(){
 			var last = path_points[path_points.length - 1];
 
-			var width = _this.state('vis-progress-c-width');
+			var width = _this.state('vis_progress-c-width');
 
 			if (!width){
 				console.log("no width for pb :!((");

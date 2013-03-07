@@ -33,7 +33,7 @@ provoda.View.extendTo(appModelView, {
 		this.lev_containers = {};
 		
 		this.on('state-change.current_mp_md', function(e) {
-			var cwp = this.state('vis-current_wpoint');
+			var cwp = this.state('vis_current_wpoint');
 			if (cwp){
 				if (cwp.canUse && !cwp.canUse()){
 					_this.setVisState('current_wpoint', false);
@@ -392,7 +392,7 @@ provoda.View.extendTo(appModelView, {
 			var cur = all_changhes[i];
 
 			if (cur.type == 'move-view'){
-				cur.target.updateState('vis-mp_show', {
+				cur.target.updateState('vis_mp_show', {
 					anid: changes.anid,
 					value: cur.value
 				});
@@ -1455,14 +1455,14 @@ provoda.View.extendTo(appModelView, {
 		}
 		
 
-		var cwp = this.state('vis-current_wpoint');
+		var cwp = this.state('vis_current_wpoint');
 		if (cwp && !this.getWPDemsForStorage(cwp, dems_storage)){
 			//this.current_wpoint.node.removeClass('surf_nav');
 			//delete this.current_wpoint;
 			this.setVisState('current_wpoint', false);
 		}
 
-		return this.state('vis-current_wpoint');
+		return this.state('vis_current_wpoint');
 
 	},
 	scrollToWP: function(cwp) {
@@ -1477,7 +1477,7 @@ provoda.View.extendTo(appModelView, {
 			this.scrollTo(cwp.node, false, {vp_limit: 0.6, animate: 117});
 		}
 	},
-	'stch-vis-current_wpoint': function(nst, ost) {
+	'stch-vis_current_wpoint': function(nst, ost) {
 		if (ost){
 			ost.node.removeClass('surf_nav');
 		}
@@ -1499,7 +1499,7 @@ provoda.View.extendTo(appModelView, {
 		if (roocon_view){
 			var dems_storage = {};
 
-			var cwp = this.state('vis-current_wpoint');
+			var cwp = this.state('vis_current_wpoint');
 			if (nav_type == 'Enter'){
 				if (cwp){
 					cwp.node.click();

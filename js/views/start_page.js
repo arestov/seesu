@@ -51,7 +51,7 @@ provoda.View.extendTo(StartPageView, {
 	},
 	complex_states: {
 		'mp_show-end': {
-			depends_on: ['map_animating', 'vis-mp_show', 'mp_show'],
+			depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
 			fn: function(anim, vis_mp_show, mp_show) {
 				if (anim) {
 					if (vis_mp_show && anim == vis_mp_show.anid){

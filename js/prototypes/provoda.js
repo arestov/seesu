@@ -1584,7 +1584,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	setVisState: function(name, value) {
 		this._updateProxy([{
-			name: 'vis-' + name,
+			name: 'vis_' + name,
 			value: value
 		}]);
 	},
