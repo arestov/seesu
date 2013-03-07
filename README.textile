@@ -222,7 +222,7 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 +Рефакторинг поиска файлов
 	+Возможность асинхронно добавлять песни группами в пределах одного источника
 Быстрые surface waypoints
-	vis-states
+	vis_states
 
 ....
 сохранение в избранное альбомов, артистов, 

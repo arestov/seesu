@@ -50,11 +50,18 @@ provoda.View.extendTo(ListPreview, {
 	bindBase: function() {
 		this.createTemplate();
 		var _this = this;
-		this.c.click(function() {
-			_this.md.showOnMap();
+		var button_area = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
+		button_area.click(function() {
+			_this.clickAction.call(_this);
 		});
 
-		this.addWayPoint(this.c);
+		this.addWayPoint(button_area);
+	},
+	clickAction: function() {
+		this.md.showOnMap();
+	},
+	'stch-list_loading': function(state) {
+		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
 	createBase: function() {
 		this.c = this.root_view.getSample('area_for_button');
@@ -65,10 +72,6 @@ provoda.View.extendTo(ListPreview, {
 
 var ItemOfLL = function() {};
 ListPreview.extendTo(ItemOfLL, {
-	
-	'stch-list_loading': function(state) {
-		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
-	},
 	children_views: {
 		preview_list: ArtistsListPreviewLine
 	},
@@ -207,6 +210,39 @@ ItemOfLL.extendTo(AlbumsListPreview, {
 	}
 });
 
+var tagListChange = function(array) {
+	this.tpl.ancs.listc.empty();
+	var df = document.createDocumentFragment();
+	for (var i = 0; i < array.length; i++) {
+		$(df).append(this.createTagLink(array[i]));
+		$(df).append(document.createTextNode(" "));
+	}
+	this.tpl.ancs.listc.append(df);
+};
+
+var TagsListPage = function() {};
+PageView.extendTo(TagsListPage, {
+	createBase: function() {
+		this.c = this.root_view.getSample('tags_list_page');
+		this.createTemplate();
+	},
+	'stch-data-list': tagListChange,
+	createTagLink: function(name) {
+		return $('<a class="js-serv"></a>').text(name).click(function() {
+			su.show_tag(name);
+		});
+	}
+});
+
+var TagsListPreview = function() {};
+ListPreview.extendTo(TagsListPreview, {
+	'stch-data-list': tagListChange,
+	createTagLink: function(name) {
+		return $('<span></span>').text(name);
+	}
+});
+
+
 
 var TagPageView = function() {};
 PageView.extendTo(TagPageView, {
@@ -217,6 +253,7 @@ PageView.extendTo(TagPageView, {
 	children_views: {
 		artists_lists: LiListsPreview,
 		songs_list: LiListsPreview,
-		albums_list: AlbumsListPreview
+		albums_list: AlbumsListPreview,
+		similar_tags: TagsListPreview
 	}
 });

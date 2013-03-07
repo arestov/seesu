@@ -252,16 +252,6 @@
 		clear: both;
 		padding-top:1rem;
 		}
-
-		.art_card-tags{
-			height: 7rem;
-			margin-bottom:1.72rem;
-			}
-			.art_card-tags.loading{
-				background: url(../i/spinner.svg) no-repeat;
-				background-position:  100% 4px;
-				background-size: 1.143rem;
-				}
 		.area_for_button .albums_previews{
 			height: 9.4rem;
 			}

@@ -130,7 +130,6 @@ html.not-as-application, .not-as-application  body{
 .moplas-block{
 	padding:0;
 	min-height:81px;
-	overflow: hidden;
 	}
 	.music-files-lists{
 		min-height: 33px;
@@ -335,6 +334,7 @@ html.not-as-application, .not-as-application  body{
 		border-radius: 1rem;
 		background: #4D4D4D;
 		color:#999;
+		min-height: 6.8rem;
 		}
 		.full-page .personal-stuff-preview .area-button{
 			margin: -0.5rem;
@@ -869,7 +869,15 @@ html.not-as-application, .not-as-application  body{
 
 		margin-right:15px;
 		}
-	
+.tags_list-preview{
+	font-size: 0.8em;
+	color:#707070;
+	}
+	.tags_list-preview span{
+		white-space: nowrap;
+		margin-right: 0.5em;
+
+		}
 
 #search #search-p{
 	overflow:hidden;
@@ -1049,6 +1057,7 @@ iframe.you-tube-video,embed.you-tube-video{
 .track-video{
 	padding: 0;
 	min-height: 48px;
+	overflow: hidden;
 	}
 	.track-video ul{
 		}
@@ -1343,27 +1352,33 @@ body .surf_nav{
 	.playlist_preview-c .area-button{
 		margin-bottom: 0;
 		}
-	.playlist_preview-c .auth-con{
-		display: none;	
+.pl-auth-con{
+	display: none;
+	color:#999;
+	padding: 0.5rem 1rem 0;
+	}
+	.pl-auth-con .vk-login-context{
+		padding: 0;
+		margin: 0;
 		}
-	.access-request .auth-con{
-		display: block;
-		padding: 1rem;
-		color:#999;
+.access-request .pl-auth-con{
+	display: block;
+	}
+	.pl-auth-con p {
+		margin:0;
+
 		}
-		.access-request .auth-con p {
-			margin:0;
-			}
-		.access-request .auth-con .vk-login-context{
-			margin: 0;
-			padding: 0;
-			background: transparent;
-			color:inherit;
-			}
-			.access-request .auth-con .vk-login-context a{
-				border-bottom-color: #ccc;
-				color:#ddd; 
-				}
+	
+.area_for_button .pl-auth-con .vk-login-context{
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	color:inherit;
+	}
+	.area_for_button .pl-auth-con .vk-login-context a{
+		border-bottom-color: #ccc;
+		color:#ddd; 
+		}
 
 .artists_list{
 	padding-top: 1rem;
@@ -1394,6 +1409,11 @@ body .surf_nav{
 		.artist_in_list .song-image-con img{
 			border-radius:inherit;
 			}
+.user_page .aqc_preview .user_acqes-preview{
+	margin-bottom: 1rem;
+	margin-top: 0;
+	padding: 0 0.5rem;
+	}
 .user_acqes-preview{
 	cursor: pointer;
 	opacity: 0.5;
@@ -1434,8 +1454,25 @@ body .surf_nav{
 		}
 	.album_preview-big .full_album_name{
 		width:9rem;
-		height: 4.5rem;
+		height: 9.5rem;
 		padding:0.5rem 0;
 		overflow: hidden;
 		bottom:0;
 		}
+	.full_album_name .album_name{
+		color: #999;
+		}
+.notify-closer{
+	display: none;
+	position: absolute;
+	bottom: 0.5rem;
+	left: 0;
+	background: #F53C35;
+	color: #fff;
+	text-align: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	font-size: 1.2rem;
+	border-radius: 0 40% 40% 0;
+	cursor: pointer;
+	}

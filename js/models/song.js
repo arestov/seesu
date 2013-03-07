@@ -191,7 +191,7 @@ var song;
 			if (this.plst_titl.playlist_artist && this.plst_titl.playlist_artist == this.artist){
 				url += '/' + this.app.encodeURLPart(this.track);
 			} else {
-				url += '/' + this.app.encodeURLPart(this.artist) + ',+' + this.app.encodeURLPart(this.track || '');
+				url += '/' + this.app.encodeURLPart(this.artist) + ',' + this.app.encodeURLPart(this.track || '');
 			}
 
 			return url;

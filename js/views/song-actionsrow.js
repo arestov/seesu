@@ -47,7 +47,7 @@ investigationView.extendTo(PlaylistAddSsearchView, {
 var ShareRowUI = function(){};
 BaseCRowUI.extendTo(ShareRowUI, {
 	children_views: {
-		vk_auth: vkLoginUI,
+		vk_auth: VkLoginUI,
 		searcher: ShareSearchView
 	},
 	createDetailes: function(){
@@ -404,27 +404,27 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			main: PlaylistAddRowUI
 		}
 	},
-	"stch-vis-volume": function(state) {
+	"stch-vis_volume": function(state) {
 		this.vol_bar.css({
 			width: state
 		});
 	},
 
 	complex_states: {
-		"vis-volume-hole-width": {
-			depends_on: ['vis-is-visible', 'vis-con-appended'],
+		"vis_volume-hole-width": {
+			depends_on: ['vis_is-visible', 'vis_con-appended'],
 			fn: function(visible, apd){
 				return !!(visible && apd) && this.vol_hole.width();
 			}
 		},
-		"vis-volume-bar-max-width": {
-			depends_on: ['vis-volume-hole-width'],
+		"vis_volume-bar-max-width": {
+			depends_on: ['vis_volume-hole-width'],
 			fn: function(vvh_w){
 				return vvh_w && vvh_w - ( this.vol_bar.outerWidth() - this.vol_bar.width());
 			}
 		},
-		"vis-volume": {
-			depends_on: ['volume', 'vis-volume-bar-max-width'],
+		"vis_volume": {
+			depends_on: ['volume', 'vis_volume-bar-max-width'],
 			fn: function(volume_fac, vvb_mw){
 				if (typeof volume_fac =='undefined'){
 					return 'auto';
@@ -455,7 +455,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 
 			//promiseStateUpdate
 			//setVisState
-			var hole_width = _this.state('vis-volume-hole-width');
+			var hole_width = _this.state('vis_volume-hole-width');
 			if (!hole_width){
 				console.log("no width :!((");
 			}

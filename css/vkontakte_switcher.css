@@ -5,12 +5,31 @@
 .vk-login-context{
 	clear:left;
 	overflow:hidden;
+	position: relative;
 	margin: 0.7rem 0 1rem;
 	padding:1rem;
 	border-radius:0.5rem;
-	background:#faebd7 no-repeat 100% 1rem;
-	color:#000;
+	
 	}
+
+	.vk-login-context.has_notify_closer{
+		padding-bottom: 1.5rem;
+		}
+		.vk-login-context.has_notify_closer .notify-closer{
+			display: block;
+			
+			}
+	.vk-login-context.notf-readed{
+		padding-bottom: 1rem;
+		}
+		.vk-login-context.notf-readed .notify-closer{
+			display: none;
+			}
+
+	.vk-login-context.attention-focuser{
+		background:#faebd7 no-repeat 100% 1rem;
+		color:#000;
+		}
 	.moplas-block .vk-login-context{
 		display: none;
 		clear:both;
@@ -43,18 +62,23 @@
 	.vk-login-context button{
 		margin:0;
 	}
-	.vk-login-context a{
+	.vk-login-context.attention-focuser a{
 		border-bottom-color:#dddba9;
 		color:#83ac1b;
 	}
-	.vk-login-context a:hover{
+	.vk-login-context.attention-focuser a:hover{
 		border-bottom-color:#e3e5a0;
 		color:#a1d404;
 	}
+	.vk-login-context.attention-focuser .js-serv{
+		background: #fff;
+		border-color: transparent;
+		}
 	.vk-login-reg-link{
 		float:right;
 		margin-left:1rem;
 		text-align:right;
+		padding-bottom: 0.2rem;
 		}
 		.vk-login-reg-link div{
 			margin-bottom:0.5rem;
