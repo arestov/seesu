@@ -976,8 +976,7 @@ Class.extendTo(Template, {
 				var all_vs = [];
 				all_vs = all_vs.concat.apply(all_vs, all_values);
 
-				console.log('all propsToWatch');
-				console.log(all_vs);
+;
 				var sfy_values = [];
 				for (var i = 0; i < all_vs.length; i++) {
 					var parts = all_vs[i].split('.');
