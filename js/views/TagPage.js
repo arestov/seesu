@@ -50,11 +50,15 @@ provoda.View.extendTo(ListPreview, {
 	bindBase: function() {
 		this.createTemplate();
 		var _this = this;
-		this.c.click(function() {
-			_this.md.showOnMap();
+		var button_area = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
+		button_area.click(function() {
+			_this.clickAction.call(_this);
 		});
 
-		this.addWayPoint(this.c);
+		this.addWayPoint(button_area);
+	},
+	clickAction: function() {
+		this.md.showOnMap();
 	},
 	'stch-list_loading': function(state) {
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);

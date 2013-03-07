@@ -416,11 +416,6 @@ appModel.extendTo(seesuApp, {
 		
 
 	},
-	checkPlaylists: function(){
-		if (this.gena){
-			this.start_page.updateState('have_playlists', !!this.gena.playlists.length);
-		}
-	},
 	showPlaylists: function() {
 		this.search(':playlists');
 	},
@@ -706,10 +701,12 @@ suReady(function(){
 });
 
 var UserPlaylists = function() {};
-provoda.Eventor.extendTo(UserPlaylists, {
-	init: function() {
-		this._super();
+mapLevelModel.extendTo(UserPlaylists, {
+	model_name: 'user_playlists',
+	init: function(opts) {
+		this._super(opts);
 		this.playlists = [];
+		this.setChild('lists_list', this.playlists);
 	},
 	savePlaylists: function(){
 		var _this = this;
@@ -726,7 +723,6 @@ provoda.Eventor.extendTo(UserPlaylists, {
 		},10);
 		
 	},
-	
 	createUserPlaylist: function(title){
 
 		var pl_r = this.createEnvPlaylist({
@@ -736,6 +732,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 		});
 		this.watchOwnPlaylist(pl_r);
 		this.playlists.push(pl_r);
+		this.setChild('lists_list', this.playlists, true);
 		this.trigger('playlsits-change', this.playlists);
 		return pl_r;
 	},
@@ -753,6 +750,7 @@ provoda.Eventor.extendTo(UserPlaylists, {
 		this.playlists = arrayExclude(this.playlists, pl);
 		if (this.playlists.length != length){
 			this.trigger('playlsits-change', this.playlists);
+			this.setChild('lists_list', this.playlists, true);
 			this.savePlaylists();
 		}
 		
@@ -780,42 +778,27 @@ provoda.Eventor.extendTo(UserPlaylists, {
 		
 		this.playlists = recovered;
 		this.trigger('playlsits-change', this.playlists);
+		this.setChild('lists_list', this.playlists, true);
 	}
 });
 
 SuUsersPlaylists = function() {};
 UserPlaylists.extendTo(SuUsersPlaylists, {
-	init: function() {
-		this._super();
+	init: function(opts) {
+		this._super(opts);
 		this
-			.on('playlsits-change', function(array) {
-				su.checkPlaylists(array);
-			})
 			.on('each-playlist-change', function() {
 				su.trackEvent('song actions', 'add to playlist');
 			});
+		this.updateManyStates({
+			'nav_title':  localize('playlists'),
+			'url_part': '/playlists'
+		});
 	},
 	saveToStore: function(value) {
 		suStore('user_playlists', value, true);
 	},
 	createEnvPlaylist: function(params) {
-		return su.createSonglist(su.start_page, params);
+		return su.createSonglist(this, params);
 	}
-});
-
-
-jsLoadComplete(function() {
-
-
-	su.gena = new SuUsersPlaylists();
-	su.gena.init();
-
-
-	var plsts_str = suStore('user_playlists');
-	if (plsts_str){
-		su.gena.setSavedPlaylists(plsts_str);
-	}
-
-	
-	jsLoadComplete.change();
 });

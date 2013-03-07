@@ -82,9 +82,6 @@ provoda.View.extendTo(StartPageView, {
 				this.requirePart('start-page-blocks');
 			}
 		},
-		"have_playlists": function(state){
-
-		},
 	
 		"ask-rating-help": function(link){
 			var _this = this;

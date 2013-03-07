@@ -205,6 +205,23 @@
 .get-vk-photo-request-b{
 	width: 15rem;
 	}
+.preview_area{
+	background: #545454;
+	border-radius: 0.5rem;
+	padding: 0 0 0.5rem;
+	margin-bottom: 1rem;
+	}
+	.preview_area .area_for_button{
+		background: #545454;
+		padding: 0;
+		margin-bottom: 0;
+		}
+
+	.page-scheme .preview_area{
+		margin-bottom: 0;
+		padding-bottom: 0;
+		}
+
 .area_for_button{
 	display: block;
 	cursor: pointer;
@@ -217,22 +234,30 @@
 		margin-bottom: 0;
 		}
 	.area_for_button .area-description {
-		padding:0.2rem 1rem;
+		
 		display: block;
 		font-size: 0.8em;
-		height: 2rem;
-		overflow: hidden;
+		
 		color: #707070;
 		}
-		.area_for_button .area-description .desc_item{
+	.access-request .area_for_button .area-description {
+		display: none;
+		}
+	.area_for_button .desc_prevw_list{
+		padding:0.2rem 1rem;
+		height: 2rem;
+		overflow: hidden;
+		}
+
+		.area_for_button .desc_prevw_list .desc_item{
 			white-space: nowrap;
 			margin-right: 1rem;
 			}
-		.area_for_button .area-description .desc_item:after{
+		.area_for_button .desc_prevw_list .desc_item:after{
 			content: " ";
 			white-space: normal;
 			}
-			.area_for_button .area-description .desc_item-imgcon{
+			.area_for_button .desc_prevw_list .desc_item-imgcon{
 				width: 1rem;
 				height: 1rem;
 				display: inline-block;
@@ -243,7 +268,7 @@
 				background: #666;
 				border-radius: 50%;
 			}
-			.area_for_button .area-description .desc_item img{
+			.area_for_button .desc_prevw_list .desc_item img{
 				width: 1rem;
 				height: 1rem;
 				border-radius: 50%;
@@ -253,7 +278,7 @@
 		background-image: none;
 		background-color: transparent;
 		}
-	.area-description.list_loading{
+	.desc_prevw_list.list_loading{
 		background:url(../i/spinner.svg) no-repeat 0.5rem 1rem;
 		background-size: 1.143rem;
 		}

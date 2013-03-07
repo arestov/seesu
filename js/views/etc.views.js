@@ -109,9 +109,9 @@ provoda.View.extendTo(AuthBlockView, {
 
 });
 
-var vkLoginUI = function() {};
+var VkLoginUI = function() {};
 
-provoda.View.extendTo(vkLoginUI, {
+provoda.View.extendTo(VkLoginUI, {
 	state_change: {
 		'data-wait': function(state) {
 			if (state){
@@ -128,6 +128,12 @@ provoda.View.extendTo(vkLoginUI, {
 		}
 	},
 
+	'stch-has_notify_closer': function(state) {
+		this.c.toggleClass('has_notify_closer', !!state);
+	},
+	'stch-notify_readed': function(state) {
+		this.c.toggleClass('notf-readed', !!state);
+	},
 	'stch-has_session': function(state){
 		if (!state){
 			this.c.removeClass("hidden");
@@ -163,6 +169,9 @@ provoda.View.extendTo(vkLoginUI, {
 			canUse: function() {
 
 			}
+		});
+		this.c.find('.notify-closer').click(function() {
+			_this.md.removeNotifyMark();
 		});
 
 	}

@@ -1,7 +1,7 @@
 
 
 var AllPAllTimeChart = function() {};
-EnhancedSongslist.extendTo(AllPAllTimeChart, {
+songsList.extendTo(AllPAllTimeChart, {
 	init: function() {
 		this._super.apply(this, arguments);
 		//mp: 'url_part', 'nav_title'

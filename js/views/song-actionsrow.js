@@ -47,7 +47,7 @@ investigationView.extendTo(PlaylistAddSsearchView, {
 var ShareRowUI = function(){};
 BaseCRowUI.extendTo(ShareRowUI, {
 	children_views: {
-		vk_auth: vkLoginUI,
+		vk_auth: VkLoginUI,
 		searcher: ShareSearchView
 	},
 	createDetailes: function(){

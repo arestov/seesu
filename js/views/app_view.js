@@ -126,7 +126,7 @@ provoda.View.extendTo(appModelView, {
 		},
 		usercard: {
 			nav: baseNavUI,
-			main: UserCardView
+			main: UserCardPage
 		},
 		song: {
 			nav: baseNavUI
@@ -158,6 +158,10 @@ provoda.View.extendTo(appModelView, {
 		},
 		tagslist: {
 			main: TagsListPage,
+			nav: baseNavUI
+		},
+		user_playlists: {
+			main: ListOfListsView,
 			nav: baseNavUI
 		},
 		tag_artists: {
@@ -194,6 +198,9 @@ provoda.View.extendTo(appModelView, {
 		place: viewOnLevelP
 	},
 	'collch-tag_songs': {
+		place: viewOnLevelP
+	},
+	'collch-user_playlists': {
 		place: viewOnLevelP
 	},
 	'collch-tag_artists': {
@@ -575,6 +582,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	parts_builder: {
 		//samples
+		user_page: function() {
+			return this.els.ui_samples.children('.user_page');
+		},
 		tags_list_page: function() {
 			return this.els.ui_samples.children('.tags_list_page');
 		},

@@ -74,14 +74,15 @@ provoda.View.extendTo(artCardUI, {
 		soundc_likes: ItemOfLL,
 		similar_artists: ItemOfLL,
 		albums_list: AlbumsListPreview,
-		dgs_albums: AlbumsListPreview
+		dgs_albums: AlbumsListPreview,
+		tags_list: TagsListPreview
 	},
 	state_change: {
 		"mp_show": function(opts) {
 			this.c.toggleClass('hidden', !opts);
 		},
 		"loading_baseinfo": function(state) {
-			var mark_loading_nodes = this.ui.tagsc.add(this.ui.bioc);
+			var mark_loading_nodes = this.ui.bioc;
 
 			if (state){
 				mark_loading_nodes.addClass('loading');
@@ -103,23 +104,7 @@ provoda.View.extendTo(artCardUI, {
 				);
 			}
 		},
-		tags: function(tags) {
-			var list_c = this.ui.tagsc.children('.links-list');
-			var _this = this;
-			$.each(tags, function(i, el){
-				if (el && el.name){
-					//var li = $('<li></li>');
-					var a = $('<a class="js-serv"></a>').click(function(){
-						su.show_tag(el.name);
-					}).text(el.name).attr('url', el.url).appendTo(list_c);
-					_this.addWayPoint(a);
-				//	li.appendTo(ul);
-					list_c.append(document.createTextNode(' '));
-				}
-				
-			});
-			list_c.removeClass('hidden');
-		},
+
 		bio: function(text) {
 
 			if (text){
@@ -140,7 +125,6 @@ provoda.View.extendTo(artCardUI, {
 		this.c = this.root_view.getSample('artcard');
 		this.ui = {
 			imagec: this.c.find('.art_card-image .art_card-image-padding'),
-			tagsc: this.c.find('.art_card-tags'),
 			bioc: this.c.find('.art_card-bio')
 		};
 		this.createTemplate();

@@ -95,7 +95,7 @@ var mfCorUI = function(md) {};
 provoda.View.extendTo(mfCorUI, {
 	children_views:{
 		notifier: notifyCounterUI,
-		vk_auth: vkLoginUI,
+		vk_auth: VkLoginUI,
 		complect: mfComplectUI,
 		yt_videos: YoutubePreview
 	},

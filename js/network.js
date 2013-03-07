@@ -20,6 +20,22 @@ provoda.Model.extendTo(VkLoginB, {
 				}
 			}
 			this.setRequestDesc(params.desc);
+
+			if (params.notf){
+				
+				this.notf = params.notf;
+				this.notf.on('read', function(value) {
+					if (value == 'vk_audio_auth '){
+						_this.updateState('notify_readed', true);
+					}
+					
+				});
+
+				if (params.notify_readed){
+					_this.updateState('notify_readed', true);
+				}
+				this.updateState('has_notify_closer', true);
+			}
 		} else {
 			this.setRequestDesc();
 		}
@@ -58,6 +74,9 @@ provoda.Model.extendTo(VkLoginB, {
 			});
 		}
 
+	},
+	removeNotifyMark: function() {
+		this.notf.markAsReaded('vk_audio_auth ');
 	},
 	bindAuthReady: function(exlusive_space, callback) {
 		this.auth.bindAuthReady(exlusive_space, callback, this.open_opts && this.open_opts.settings_bits);

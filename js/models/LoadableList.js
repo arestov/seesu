@@ -1,4 +1,9 @@
-var LoadableList = function() {};
+var LoadableList,
+	TagsList;
+
+(function(){
+"use strict";
+LoadableList = function() {};
 mapLevelModel.extendTo(LoadableList, {
 	init: function(opts, params) {
 		this._super(opts);
@@ -20,11 +25,17 @@ mapLevelModel.extendTo(LoadableList, {
 			});
 		}
 	},
+	'compx-list_loading': {
+		depends_on: ['main_list_loading', 'preview_loading'],
+		fn: function(main_list_loading, prevw_loading) {
+			return main_list_loading || prevw_loading;
+		}
+	},
 	'compx-more_load_available': {
-		depends_on: ["has_loader", "list_loading", "loader_disallowed"],
-		fn: function(can_load_more, loading, loader_disallowed) {
+		depends_on: ["has_loader", "list_loading", "loader_disallowed", 'has_no_access'],
+		fn: function(can_load_more, loading, loader_disallowed, has_no_access) {
 			if (can_load_more){
-				return !loader_disallowed && !loading;
+				return !loader_disallowed && !has_no_access && !loading;
 			} else {
 
 			}
@@ -87,11 +98,11 @@ mapLevelModel.extendTo(LoadableList, {
 		this.updateState("has_loader", false);
 	},
 	markLoading: function(){
-		this.updateState('list_loading', true);
+		this.updateState('main_list_loading', true);
 		return this;
 	},
 	putRequestedData: function(request, data_list, error) {
-		console.profile('data list inject');
+		//console.profile('data list inject');
 		if (!this.request_info || this.request_info.request == request){
 			
 
@@ -110,7 +121,7 @@ mapLevelModel.extendTo(LoadableList, {
 			}
 			this.requestComplete(request, error);
 		}
-		console.profileEnd();
+		//console.profileEnd();
 		return this;
 
 	},
@@ -122,7 +133,7 @@ mapLevelModel.extendTo(LoadableList, {
 		if (!this.request_info || this.request_info.request == request){
 			var main_list = this[this.main_list_name];
 
-			this.updateState('list_loading', false);
+			this.updateState('main_list_loading', false);
 			if (error && !main_list.length) {
 				this.updateState('error', true);
 			} else {
@@ -131,6 +142,103 @@ mapLevelModel.extendTo(LoadableList, {
 			delete this.request_info;
 		}
 		return this;
+	},
+
+	//auth things:
+
+	authInit: function() {
+		var _this = this;
+		if (this.map_parent){
+			this.switchPmd(false);
+			this.map_parent.on('state-change.mp_has_focus', function(e) {
+				if (!e.value){
+					_this.switchPmd(false);
+				}
+				
+			});
+		}
+	},
+	authSwitching: function(auth, AuthConstr, params) {
+		var auth_rqb = new AuthConstr();
+		auth_rqb.init({auth: auth, pmd: this}, params);
+		var _this = this;
+		
+		auth_rqb.on('state-change.has_session', function(e) {
+			_this.updateState('has_no_access', !e.value);
+			_this.switchPmd(false);
+		});
+
+		this.setChild('auth_part', auth_rqb);
+
+		this.map_parent.on('state-change.vswitched', function(e) {
+			_this.checkPMDSwiched(e.value);
+		});
+
+	},
+	switchPmd: function(toggle) {
+		var new_state;
+		if (typeof toggle == 'boolean')	{
+			new_state = toggle;
+		} else {
+			new_state = !this.state('pmd_vswitched');
+		}
+		if (new_state){
+			if (!this.state('pmd_vswitched')){
+				this.map_parent.updateState('vswitched', this._provoda_id);
+			}
+		} else {
+			if (this.state('pmd_vswitched')){
+				this.map_parent.updateState('vswitched', false);
+			}
+		}
+	},
+	checkPMDSwiched: function(value) {
+		this.updateState('pmd_vswitched', value == this._provoda_id);
+	},
+	requestPlaylist: function() {
+		if (!this.state('has_no_access')){
+			this.loadStart();
+			this.showOnMap();
+		} else {
+			this.map_parent.zoomOut();
+			this.switchPmd();
+		}
 	}
 
+
+	// :auth things
+
 });
+
+TagsList = function() {};
+LoadableList.extendTo(TagsList, {
+	model_name: 'tagslist',
+	main_list_name: 'tags_list',
+	addTag: function(name, silent) {
+		var main_list = this[this.main_list_name];
+		main_list.push(name);
+
+		if (!silent){
+			//this.setChild(this.main_list_name, main_list, true);
+			this.updateState(this.main_list_name, [].concat(main_list));
+		}
+	},
+	dataListChange: function() {
+		var main_list = this[this.main_list_name];
+		this.updateState(this.main_list_name, [].concat(main_list));
+
+	},
+	addItemToDatalist: function(obj, silent) {
+		this.addTag(obj, silent);
+	},
+	'compx-data-list': {
+		depends_on: ['tags_list', 'preview_list'],
+		fn: function(tag_list, preview_list){
+			return tag_list || preview_list;
+		}
+	},
+	setPreview: function(list) {
+		this.updateState('preview_list', list);
+	}
+});
+})();

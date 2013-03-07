@@ -269,6 +269,7 @@ getTargetField = function(obj, field){
 	}
 	return target;
 };
+spv.getTargetField = getTargetField;
 
 var getFieldValueByRule = function(obj, rule){
 	if (rule instanceof Function){

@@ -1,34 +1,3 @@
-var TagsList = function() {};
-LoadableList.extendTo(TagsList, {
-	model_name: 'tagslist',
-	main_list_name: 'tags_list',
-	addTag: function(name, silent) {
-		var main_list = this[this.main_list_name];
-		main_list.push(name);
-
-		if (!silent){
-			//this.setChild(this.main_list_name, main_list, true);
-			this.updateState(this.main_list_name, [].concat(main_list));
-		}
-	},
-	dataListChange: function() {
-		var main_list = this[this.main_list_name];
-		this.updateState(this.main_list_name, [].concat(main_list));
-
-	},
-	addItemToDatalist: function(obj, silent) {
-		this.addTag(obj, silent);
-	},
-	'compx-data-list': {
-		depends_on: ['tags_list', 'preview_list'],
-		fn: function(tag_list, preview_list){
-			return tag_list || preview_list;
-		}
-	},
-	setPreview: function(list) {
-		this.updateState('preview_list', list);
-	}
-});
 
 var SimilarTags = function() {};
 TagsList.extendTo(SimilarTags, {
@@ -41,11 +10,10 @@ TagsList.extendTo(SimilarTags, {
 		});
 	},
 	sendMoreDataRequest: function(paging_opts) {
-		var tag_name = this.tag_name;
 		var _this = this;
 		var request_info = {};
 		request_info.request = this.app.lfm.get('tag.getSimilar', {
-			tag: tag_name
+			tag: this.tag_name
 		})
 			.done(function(r){
 				var res_list = toRealArray(getTargetField(r, 'similartags.tag'));
@@ -553,8 +521,10 @@ mapLevelModel.extendTo(ArtistsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
-		this.updateState('nav_title', localize('Artists'));
-		this.updateState('url_part', '/artists');
+		this.updateManyStates({
+			'nav_title':  localize('Artists'),
+			'url_part': '/artists'
+		});
 
 		var lists_list = [];
 
