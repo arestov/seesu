@@ -389,7 +389,7 @@ mapLevelModel.extendTo(SongsLists, {
 		lists_list.push(new Fav25HypemTagSongs());
 		lists_list.push(new Fav250HypemTagSongs());
 
-		this.on('state-change.mp_show', function(e) {
+		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				for (var i = 0; i < lists_list.length; i++) {
 					lists_list[i].preloadStart();
@@ -537,7 +537,7 @@ mapLevelModel.extendTo(ArtistsLists, {
 			lists_list[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
 		}
 		
-		this.on('state-change.mp_show', function(e) {
+		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				for (var i = 0; i < lists_list.length; i++) {
 					lists_list[i].preloadStart();
@@ -579,7 +579,7 @@ mapLevelModel.extendTo(TagPage, {
 		this.setChild('albums_list', albums_list);
 		this.setChild('similar_tags', similar_tags);
 
-		this.on('state-change.mp_show', function(e) {
+		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				albums_list.preloadStart();
 				similar_tags.preloadStart();

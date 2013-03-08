@@ -126,11 +126,11 @@ var song;
 				});
 
 			if (this.mf_cor.isSearchAllowed()){
-				this.on('state-change.track', function(e) {
+				this.on('vip-state-change.track', function(e) {
 					if (e.value){
 						_this.bindFilesSearchChanges();
 					}
-				});
+				},{immediately: true});
 				
 				
 			}
@@ -148,7 +148,7 @@ var song;
 					this.updateState('can_expand', false);
 				}
 			});
-			this.on('state-change.mp_show', function(e) {
+			this.on('vip-state-change.mp_show', function(e) {
 				
 				var
 					_this = this,
@@ -170,7 +170,7 @@ var song;
 					}
 				}
 			});
-			this.on('state-change.is_important', function(e) {
+			this.on('vip-state-change.is_important', function(e) {
 				if (e.value){
 					this.loadSongListeners();
 				}

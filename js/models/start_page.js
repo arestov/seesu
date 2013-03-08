@@ -35,7 +35,7 @@ mapLevelModel.extendTo(StartPage, {
 		});
 		this.setChild('muco', muco);
 
-		this.on('state-change.can_expand', function(e) {
+		this.on('vip-state-change.can_expand', function(e) {
 			muco.updateState('can_expand', e.value);
 			personal_stuff.updateState('can_expand', e.value);
 		});

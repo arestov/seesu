@@ -767,11 +767,11 @@ mapLevelModel.extendTo(ArtCard, {
 		this.setChild('hypem_reblog', this.hypem_reblog);
 
 		var _this = this;
-		this.on('state-change.mp_show', function(e) {
+		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				_this.loadInfo();
 			}
-		});
+		},{immediately: true});
 
 		this.updateState('url_part', '/catalog/' + this.app.encodeURLPart(this.artist));
 	},

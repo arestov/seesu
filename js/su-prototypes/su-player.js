@@ -183,6 +183,9 @@ var seesuPlayer;
 				su.p.setCore(feature_to_use);
 				su.updateState('flash_internet', true);
 			}
+			if (!feature_to_use && use_order_list.length == i){
+				su.p.setFail();
+			}
 
 		}
 	};
