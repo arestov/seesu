@@ -3,7 +3,7 @@ var songsList;
 	"use strict";
 
 	var songsListBase = function() {};
-	provoda.extendFromTo("songsListBase", mapLevelModel, songsListBase);
+	provoda.extendFromTo("songsListBase", LoadableList, songsListBase);
 	
 
 	songsList = function(){};
@@ -24,20 +24,20 @@ var songsList;
 			plarow.init(this);
 
 			this.setChild('plarow', plarow);
-
-
-			this.changed();
 			
 			var _this = this;
 			
 			var doNotReptPl = function(state) {
-				_this.updateState('dont-rept-pl', state);
+				_this.updateState('dont_rept_pl', state);
 			};
 			if (su.settings['dont-rept-pl']){
 				doNotReptPl(true);
 			}
 			su.on('settings.dont-rept-pl', doNotReptPl);
-			this.updateState('url-part', this.getURL());
+			if (this.playlist_type){
+				this.updateState('url_part', this.getURL());
+			}
+			
 		},
 		page_name: 'playlist',
 		setBaseInfo: function(params) {
@@ -47,7 +47,7 @@ var songsList;
 			}
 			if (params.type){
 				this.playlist_type = params.type;
-				this.updateState('nav-title', this.playlist_title);
+				this.updateState('nav_title', this.playlist_title);
 			}
 		},
 		getURL: function(){
@@ -77,6 +77,8 @@ var songsList;
 			if (!(omo instanceof song)){
 				var mo = new song();
 				mo.init({
+					map_parent: this,
+					app: this.app,
 					omo: omo,
 					plst_titl: this,
 					player: this.player,
@@ -90,10 +92,11 @@ var songsList;
 			}
 		},
 		makeExternalPlaylist: function() {
-			if (!this.palist.length){return false;}
+			var songs_list = this.getMainList();
+			if (!songs_list.length){return false;}
 			var simple_playlist = [];
-			for (var i=0; i < this.palist.length; i++) {
-				var files = this.palist[i].mf_cor.getFilteredFiles();
+			for (var i=0; i < songs_list.length; i++) {
+				var files = songs_list[i].mf_cor.getFilteredFiles();
 				var song = files && files[0];
 				if (song){
 					simple_playlist.push({
@@ -145,7 +148,7 @@ var songsList;
 			var _this = this;
 
 			var doNotReptPl = function(state) {
-				_this.updateState('dont-rept-pl', state);
+				_this.updateState('dont_rept_pl', state);
 			};
 			if (su.settings['dont-rept-pl']){
 				doNotReptPl(true);
@@ -155,7 +158,7 @@ var songsList;
 
 		},
 		setDnRp: function(state) {
-			this.updateState('dont-rept-pl', state);
+			this.updateState('dont_rept_pl', state);
 			su.setSetting('dont-rept-pl', state);
 		},
 		model_name: 'row-pl-settings'
@@ -175,8 +178,69 @@ var songsList;
 		model_name: 'row-multiatcs'
 	});
 
+window.HypemPlaylist = function() {};
+songsList.extendTo(HypemPlaylist, {
+	init: function() {
+		this._super.apply(this, arguments);
+		this.can_use = this.app.hypem.can_send;
+		this.updateState('possible_loader_disallowing', localize('Hypem-cant-load'));
+	},
+	page_limit: 20,
+	makePlaylistRequest: function(paging_opts, path) {
+		var _this = this;
+		var request_info = {};
+		request_info.request = this.app.hypem.get(path, this.send_params)
+			.done(function(r) {
+				var result_list = [];
+				for (var num in r){
+					if (num == parseInt(num, 10) && r[num]){
+						result_list.push(r[num]);
+					}
+				}
+				var track_list = [];
+				for (var i = 0; i < result_list.length; i++) {
+					var cur = result_list[i];
+					var song_omo = {
+						artist: cur.artist,
+						track: cur.title
+					};
+					if (!song_omo.artist){
+						song_omo = guessArtist(cur.title);
+					}
+					song_omo.image_url = cur.thumb_url;
+					if (song_omo.artist && song_omo.track){
+						track_list.push(song_omo);
+					} else {
+						console.log('there is no needed attributes');
+						console.log(cur);
+					}
+					
+				}
+				_this.putRequestedData(request_info.request, track_list);
 
-
-	
+			})
+			.fail(function() {
+				_this.requestComplete(request_info.request, true);
+			})
+			.always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	},
+	'compx-loader_disallowing_desc': {
+		depends_on: ['loader_disallowed', 'possible_loader_disallowing'],
+		fn: function(disallowed, desc) {
+			if (disallowed){
+				return desc;
+			}
+		}
+	},
+	'compx-loader_disallowed': {
+		depends_on: ['browser_can_load'],
+		fn: function(can_load) {
+			return !can_load;
+		}
+	}
+});
 })();
 

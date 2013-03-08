@@ -67,6 +67,8 @@ var seesuPlayer;
 
 (function() {
 	"use strict";
+	var su = window.su;
+
 	var player = su.p = new seesuPlayer();
 
 
@@ -81,7 +83,7 @@ var seesuPlayer;
 		.on('song-play-error', function(song, can_play) {
 			if (this.c_song == song){
 				if (!can_play){
-					if (song.isSearchAllowed() && song.state('search-complete')){
+					if (song.isSearchAllowed() && song.state('search_complete')){
 						this.playNext(this.c_song, true);
 					} else {
 						this.wantSong(song);
@@ -110,6 +112,7 @@ var seesuPlayer;
 	su.on('settings.volume', setVolume);
 })();
 (function() {
+	var su = window.su;
 	"use strict";
 	var sm2opts = {};
 	if (su.env.opera_extension){
@@ -125,18 +128,68 @@ var seesuPlayer;
 	var done;
 	var useLib = function(cb){
 		if (!done){
-			done = true;
+			//done = true;
 			cb();
 			
 		}
 	};
-	var checkTracking = function(last_try){
+	var checkTracking = function(last_try, done){
 		if (done){
 			su.trackVar(3, 'canplay', 'yes', 1);
 		} else if (last_try){
 			su.trackVar(3, 'canplay', 'no', 1);
 		}
 	};
+
+	var use_order_list = ['sm2-proxy', 'html5mp3', 'wmpactivex'];
+
+
+	var features_storage = {
+		features_states: {},
+		setAsAccessible: function(feature_name, player_core) {
+			this.features_states[feature_name] = player_core;
+
+			//
+			//					su.updateState('flash_internet', true);
+
+			//checkTracking(true)
+			this.checkReadyFeature();
+		},
+		setAsInaccessible: function(feature_name) {
+			this.features_states[feature_name] = 'fail';
+			this.checkReadyFeature();
+			//checkTracking(true)
+		},
+		canLoad: function(feature_name) {
+			addFeature(feature_name);
+		},
+		checkReadyFeature: function() {
+			var feature_to_use;
+			for (var i = 0; i < use_order_list.length; i++) {
+				var cur = this.features_states[use_order_list[i]];
+
+				if (!cur){
+					break;
+				} else if (cur == 'fail') {
+					continue;
+				} else {
+					feature_to_use = cur;
+					break;
+				}
+				
+			}
+			checkTracking(feature_to_use, use_order_list.length == i);
+			if (feature_to_use){
+				su.p.setCore(feature_to_use);
+				su.updateState('flash_internet', true);
+			}
+
+		}
+	};
+
+
+
+
 	var addFeature = function(feature){
 		features[feature];
 		switch (feature){
@@ -146,8 +199,12 @@ var seesuPlayer;
 						yepnope({
 							load:  [bpath + 'js/prototypes/player.html5.js'],
 							complete: function() {
-								su.p.setCore(new html5AudioCore());
-								su.updateState('flash-internet', true);
+								if (window.html5AudioCore){
+									features_storage.setAsAccessible(feature, new html5AudioCore());
+								} else {
+									features_storage.setAsInaccessible(feature);
+								}
+								
 							}
 						});
 					});
@@ -159,8 +216,11 @@ var seesuPlayer;
 						yepnope({
 							load:  [bpath + 'js/prototypes/player.wmp.js'],
 							complete: function() {
-								su.p.setCore(new wmpAudioCore());
-								su.updateState('flash-internet', true);
+								if (window.wmpAudioCore){
+									features_storage.setAsAccessible(feature, new wmpAudioCore());
+								} else {
+									features_storage.setAsInaccessible(feature);
+								}
 							}
 						});
 					});
@@ -172,6 +232,10 @@ var seesuPlayer;
 						yepnope({
 							load:  [bpath + 'js/prototypes/player.sm2-proxy.js'],
 							complete: function(){
+								if (!window.sm2proxy){
+									features_storage.setAsInaccessible(feature);
+									return;
+								}
 								var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/?" + su.version, sm2opts);
 								var pcon = $(pcore.getC());
 								var complete;
@@ -185,6 +249,7 @@ var seesuPlayer;
 									setTimeout(function() {
 										if (!complete){
 											pcon.addClass('long-appearance');
+											features_storage.setAsInaccessible(feature);
 										}
 									}, 7000);
 								});
@@ -193,16 +258,17 @@ var seesuPlayer;
 								pcore
 									.done(function(){
 										complete = true;
-										su.p.setCore(pcore);
 										setTimeout(function(){
 											pcon.addClass('sm2-complete');
 										}, 1000);
-										su.updateState('flash-internet', true);
+										features_storage.setAsAccessible(feature, pcore);
+										
 
 									})
 									.fail(function(){
 										complete = true;
 										pcon.addClass('hidden');
+										features_storage.setAsInaccessible(feature);
 									});
 								$(function(){
 									$(document.body).append(pcon);
@@ -247,7 +313,7 @@ var seesuPlayer;
 											pcon.addClass('sm2-complete');
 										}, 1000);
 										//
-										su.updateState('flash-internet', true);
+										su.updateState('flash_internet', true);
 
 									})
 									.fail(function(){
@@ -267,6 +333,9 @@ var seesuPlayer;
 
 		}
 	};
+
+
+
 	
 
 
@@ -305,14 +374,18 @@ var seesuPlayer;
 		function(h5a){
 			h5a = (h5a = document.createElement('audio')) && !!(h5a.canPlayType && h5a.canPlayType('audio/mpeg;').replace(/no/, ''));
 			if (h5a){
-				addFeature("html5mp3");
+				features_storage.canLoad('html5mp3');
+			} else {
+				features_storage.setAsInaccessible('html5mp3');
 			}
 		},
 		function(awmp){
 			awmp = document.createElement('object');
 			awmp.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95";
 			if ( 'EnableContextMenu' in awmp && awmp.attachEvent ){
-				addFeature("wmpactivex");
+				features_storage.canLoad('wmpactivex');
+			} else {
+				features_storage.setAsInaccessible('wmpactivex');
 			}
 		}
 		
@@ -322,12 +395,14 @@ var seesuPlayer;
 	while (!done && detectors.length){
 		detectors.shift()();
 	}
-	checkTracking();
 	if (!done){
 		domReady(document, function(){
 			detectors.push(
 				function(){
-					return;
+					return; //code is not finished
+
+
+
 					var
 						can_use,
 						aqt = document.createElement("embed");
@@ -373,12 +448,17 @@ var seesuPlayer;
 					
 				},
 				function(){
-					if (su.env.iframe_support){
-						addFeature("sm2-proxy");
+					if (flash_plgs.length && su.env.iframe_support){
+						features_storage.canLoad('sm2-proxy');
+					} else {
+						features_storage.setAsInaccessible('sm2-proxy');
 					}
+					
 				},
 				function(){
-					return
+					return; //code is not finished
+
+
 					if (false && !su.env.cross_domain_allowed){
 						addFeature("sm2-internal");
 					}
@@ -387,7 +467,6 @@ var seesuPlayer;
 			while (!done && detectors.length){
 				detectors.shift()();
 			}
-			checkTracking(true);
 		});
 		
 	}

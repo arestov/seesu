@@ -24,103 +24,46 @@ Class.extendTo(vkCoreApi, {
 	},
 	cache_namespace: "vk_api",
 	send: function(method, params, options){ //nocache, after_ajax, cache_key, only_cache
-		var _this				= this,
-			deferred			= $.Deferred(),
-			complex_response	= {
-				abort: function(){
-					this.aborted = true;
-					deferred.reject('abort');
-					if (this.queued){
-						this.queued.abort();
-					}
-					if (this.xhr){
-						this.xhr.abort();
-					}
-				}
-			};
-		deferred.promise( complex_response );
-	
+		var _this = this;
 		
 		if (method) {
 			options = options || {};
-			options.nocache = options.nocache || !this.cache_ajax;
 			options.cache_key = options.cache_key || hex_md5(method + stringifyParams(params));
-			var cache_used;
 
 			var	params_full = params || {};
 			if (this.access_token){
 				params_full.access_token = this.access_token;
 			}
 
-
-			if (!options.nocache){
-				
-				cache_used = this.cache_ajax.get(this.cache_namespace, options.cache_key, function(r){
-					deferred.resolve(r);
-				});
-				if (cache_used) {
-					complex_response.cache_used = true;
-					return complex_response;
-				}
-			}
-			
-			if (!cache_used){
-				var success = function(r){
+			var wrap_def = wrapRequest({
+					url: this.link + method,
+					type: "GET",
+					dataType: this.jsonp ? 'jsonp' : 'json',
+					data: params_full,
+					timeout: 20000
+				}, {
+				cache_ajax: this.cache_ajax,
+				nocache: options.nocache,
+				cache_key: options.cache_key,
+				cache_timeout: options.cache_timeout,
+				cache_namespace: this.cache_namespace,
+				requestFn: function() {
+					return aReq.apply(this, arguments);
+				},
+				responseFn: function(r) {
 					if (r && r.error && r.error.error_code == 5){
 						if (_this.onAuthLost){
 							_this.onAuthLost();
 						}
 					}
-					deferred.resolve.apply(deferred, arguments);
-					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout);
-					}
-				};
+				},
+				queue: this.queue
+			});
 
-
-
-
-				var sendRequest = function() {
-					if (complex_response.aborted){
-						return;
-					}
-					if (!options.nocache){
-						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
-							deferred.resolve(r);
-						});
-					}
-					
-					if (!cache_used){
-						complex_response.xhr = aReq({
-							url: _this.link + method,
-							type: "GET",
-							dataType: _this.jsonp ? 'jsonp' : 'json',
-							data: params_full,
-							timeout: 20000
-						})
-						.done(success)
-						.fail(function(xhr, text){
-							deferred.reject.apply(deferred, arguments);
-						});
-						if (options.after_ajax){
-							options.after_ajax();
-						}
-						if (deferred.notify){
-							deferred.notify('just-requested');
-						}
-					}
-
-				};
-
-				if (this.queue){
-					complex_response.queued = this.queue.add(sendRequest, options.not_init_queue);
-				} else{
-					sendRequest();
-				}
-			}
+			return wrap_def.complex;
+			
 		}
 
-		return complex_response;
 	}
 });
 

@@ -1,9 +1,5 @@
-var LfmLovedLogin = function() {};
-LfmLogin.extendTo(LfmLovedLogin, {
-	init: function(opts) {
-		this._super(opts);
-		this.setRequestDesc(localize('grant-love-lfm-access'));
-	},
+var UserCardLFMLogin = function() {};
+LfmLogin.extendTo(UserCardLFMLogin, {
 	beforeRequest: function() {
 		this.bindAuthCallback();
 		
@@ -11,31 +7,29 @@ LfmLogin.extendTo(LfmLovedLogin, {
 	bindAuthCallback: function(){
 		var _this = this;
 		this.auth.once("session.input_click", function() {
-			_this.pmd.loadPlStart();
-			_this.pmd.showPlPage();
+			_this.pmd.loadStart();
+			_this.pmd.showOnMap();
 		}, {exlusive: true});
+	}
+});
+
+var LfmLovedLogin = function() {};
+UserCardLFMLogin.extendTo(LfmLovedLogin, {
+	init: function(opts) {
+		this._super(opts);
+		this.setRequestDesc(localize('grant-love-lfm-access'));
 	}
 });
 
 
 var LfmReccomsLogin = function(){};
-LfmLogin.extendTo(LfmReccomsLogin, {
+UserCardLFMLogin.extendTo(LfmReccomsLogin, {
 	init: function(opts){
 		this._super(opts);
 		this.setRequestDesc(localize('lastfm-reccoms-access'));
-	},
-	beforeRequest: function() {
-		this.bindAuthCallback();
-		
-	},
-	bindAuthCallback: function(){
-		var _this = this;
-		this.auth.once("session.input_click", function() {
-			_this.pmd.loadPlStart();
-			_this.pmd.showPlPage();
-		}, {exlusive: true});
 	}
 });
+
 var VkAudioLogin = function() {};
 VkLoginB.extendTo(VkAudioLogin, {
 	init: function(opts) {
@@ -47,114 +41,34 @@ VkLoginB.extendTo(VkAudioLogin, {
 	beforeRequest: function() {
 		var _this = this;
 		this.bindAuthReady('input_click', function() {
-			_this.pmd.loadPlStart();
-			_this.pmd.showPlPage();
+			_this.pmd.loadStart();
+			_this.pmd.showOnMap();
 		});
 		
 	}
 });
 
-var EnhancedSongslist = function() {};
-songsList.extendTo(EnhancedSongslist, {
-	init: function(opts) {
-		this._super(opts);
-		var _this = this;
-		
-		if (this.pmd){
-			this.switchPmd(false);
-			this.pmd.on('state-change.mp-has-focus', function(e) {
-				if (!e.value){
-					_this.switchPmd(false);
-				}
-				
-			});
-		}
-		
-	},
-	showPlPage: function() {
-		this.app.show_playlist_page(this, {
-			page_md: this.pmd,
-			source_md: this
-		});
-	},
-	switchPmd: function(toggle) {
-		var new_state;
-		if (typeof toggle == 'boolean')	{
-			new_state = toggle;
-		} else {
-			new_state = !this.state('pmd-vswitched');
-		}
-		if (new_state){
-			if (!this.state('pmd-vswitched')){
-				this.pmd.updateState('vswitched', this._provoda_id);
-			}
-		} else {
-			if (this.state('pmd-vswitched')){
-				this.pmd.updateState('vswitched', false);
-			}
-		}
-		
-		
-	},
-	loadPlStart: function() {
-		if (this.state('has-access')){
-			this._super.apply(this, arguments);
-		}
-	},
-
-	authSwitching: function(auth, AuthConstr, params) {
-		var auth_rqb = new AuthConstr();
-		auth_rqb.init({auth: auth, pmd: this}, params);
-		var _this = this;
-		
-		auth_rqb.on('state-change.has-session', function(e) {
-			_this.updateState('has-access', e.value);
-			_this.switchPmd(false);
-		});
-
-		this.setChild('auth_part', auth_rqb);
-
-		
-
-		this.pmd.on('state-change.vswitched', function(e) {
-			_this.checkPMDSwiched(e.value);
-		});
-
-	},
-	checkPMDSwiched: function(value) {
-		this.updateState('pmd-vswitched', value == this._provoda_id);
-	},
-	requestPlaylist: function() {
-		if (this.state('has-access')){
-			this.loadPlStart();
-			this.showPlPage();
-		} else {
-			this.pmd.zoomOut();
-			this.switchPmd();
-
-		}
-	}
-});
 
 
 var LfmLovedList = function() {};
-EnhancedSongslist.extendTo(LfmLovedList, {
+songsList.extendTo(LfmLovedList, {
 	init: function(opts, username) {
 		this._super(opts);
 		this.setBaseInfo({
 			title: localize('loved-tracks'),
 			type: 'artists by loved'
 		});
-		this.updateState('url-part', '/loved');
+		this.updateState('url_part', '/loved');
+		this.authInit();
 		if (username){
 			this.username = username;
-			this.updateState('has-access', true);
+			this.updateState('has_no_access', false);
 		} else {
 			this.permanent_md = true;
 			this.authSwitching(this.app.lfm_auth, LfmLovedLogin);
 		}
 	},
-	requestMoreSongs: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
 		var request_info = {};
 		request_info.request = lfm.get('user.getLovedTracks', {
@@ -176,15 +90,13 @@ EnhancedSongslist.extendTo(LfmLovedList, {
 						});
 					}
 				}
-				if (track_list.length < paging_opts.page_limit){
-					_this.setLoaderFinish();
-				}
+				
 
-				_this.injectExpectedSongs(track_list);
+				_this.putRequestedData(request_info.request, track_list, r.error);
 
 			})
 			.fail(function() {
-				_this.loadComplete(true);
+				_this.requestComplete(request_info.request, true);
 			})
 			.always(function() {
 				request_info.done = true;
@@ -194,8 +106,111 @@ EnhancedSongslist.extendTo(LfmLovedList, {
 	}
 });
 
+var RecommendatedToUserArtistsList = function() {};
+ArtistsList.extendTo(RecommendatedToUserArtistsList, {
+	page_limit: 30,
+	init: function(opts, username) {
+		this._super(opts);
+
+
+		this.updateManyStates({
+			'nav_title': username ? (localize('reccoms-for') + username) : localize('reccoms-for-you'),
+			'url_part': '/recommended_artists'
+		});
+		this.authInit();
+		this.authSwitching(this.app.lfm_auth, LfmReccomsLogin);
+		
+		var _this = this;
+		if (!username){
+			this.permanent_md = true;
+		}
+
+		if (username){
+			this.username = username;
+			if (this.app.env.cross_domain_allowed){
+				this.getRqData = this.getRqDataRss;
+				this.setLoader(this.loadMoreByRSS);
+			}
+		} else {
+			this.getRqData = this.getRqDataAPI;
+			this.setLoader(this.loadMoreByAPI);
+		}
+	},
+	getRqDataAPI: function(paging_opts) {
+		return {
+			sk: lfm.sk,
+			limit: paging_opts.page_limit,
+			page: paging_opts.next_page
+		};
+	},
+	getRqDataRss: function() {
+		return this.username;
+	},
+	loadMoreByAPI: function(paging_opts) {
+		var _this = this;
+		var request_info = {};
+
+		request_info.request = lfm.get('user.getRecommendedArtists', this.getRqData(paging_opts), {nocache: true})
+			.done(function(r){
+				var artists = toRealArray(getTargetField(r, 'recommendations.artist'));
+				var track_list = [];
+				if (artists && artists.length) {
+					
+					for (var i=0, l = Math.min(artists.length, paging_opts.page_limit); i < l; i++) {
+						track_list.push({
+							artist: artists[i].name,
+							lfm_image: {
+								array: artists[i].image
+							}
+						});
+					}
+				}
+				_this.putRequestedData(request_info.request, track_list, r.error);
+
+				
+			})
+			.fail(function(){
+				_this.requestComplete(request_info.request, true);
+			}).always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	},
+	loadMoreByRSS: function() {
+		var _this = this;
+		var request_info = {};
+		request_info.request = $.ajax({
+			url: 'http://ws.audioscrobbler.com/1.0/user/' + this.getRqData() + '/systemrecs.rss',
+			type: "GET",
+			dataType: "xml"
+		})
+			.done(function(xml) {
+				var artists = $(xml).find('channel item title');
+				if (artists && artists.length) {
+					var track_list_without_tracks = [];
+					for (var i=0, l = (artists.length < 30) ? artists.length : 30; i < l; i++) {
+						var artist = $(artists[i]).text();
+						track_list_without_tracks.push({
+							artist: artist
+						});
+					}
+					_this.putRequestedData(request_info.request, track_list_without_tracks);
+					_this.setLoaderFinish();
+				}
+			})
+			.fail(function() {
+				_this.requestComplete(request_info.request, true);
+			})
+			.always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	}
+});
+
+
 var MyVkAudioList = function() {};
-EnhancedSongslist.extendTo(MyVkAudioList, {
+songsList.extendTo(MyVkAudioList, {
 	init: function(opts, user_id) {
 		this._super(opts);
 
@@ -209,11 +224,11 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 			type: 'vk-audio'
 		});
 
-		this.updateState('url-part', '/vk-audio');
-		
+		this.updateState('url_part', '/vk-audio');
+		this.authInit();
 		this.authSwitching(this.app.vk_auth, VkAudioLogin);
 	},
-	requestMoreSongs: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts) {
 		
 		var request_info = {};
 		var _this = this;
@@ -225,7 +240,7 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 		}, {nocache: true})
 			.done(function(r){
 				if (!r || r.error){
-					_this.loadComplete(true);
+					_this.requestComplete(request_info.request, true);
 					return;
 				}
 				var vk_search = _this.app.mp3_search.getSearchByName('vk');
@@ -235,20 +250,18 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 				for (var i = 0; i < r.response.length; i++) {
 					var cur = r.response[i];
 					track_list.push({
-						artist: cur.artist,
-						track: cur.title,
+						artist: HTMLDecode(cur.artist),
+						track: HTMLDecode(cur.title),
 						file: vk_search.makeSongFile(cur)
 					});
 				}
 
-				_this.injectExpectedSongs(track_list);
+				_this.putRequestedData(request_info.request, track_list, r.error);
 
-				if (track_list.length < paging_opts.page_limit){
-					_this.setLoaderFinish();
-				}
+				
 			})
 			.fail(function(){
-				_this.loadComplete(true);
+				_this.requestComplete(request_info.request, true);
 			}).always(function() {
 				request_info.done = true;
 			});
@@ -257,7 +270,7 @@ EnhancedSongslist.extendTo(MyVkAudioList, {
 });
 
 var artistsRecommsList = function() {};
-EnhancedSongslist.extendTo(artistsRecommsList, {
+songsList.extendTo(artistsRecommsList, {
 	init: function(opts, username) {
 		this._super(opts);
 
@@ -265,8 +278,8 @@ EnhancedSongslist.extendTo(artistsRecommsList, {
 			title: username ? (localize('reccoms-for') + username) : localize('reccoms-for-you'),
 			type: 'artists by recommendations'
 		});
-		this.updateState('url-part', '/recommendations');
-		
+		this.updateState('url_part', '/recommendations');
+		this.authInit();
 		this.authSwitching(this.app.lfm_auth, LfmReccomsLogin);
 		
 		var _this = this;
@@ -306,14 +319,12 @@ EnhancedSongslist.extendTo(artistsRecommsList, {
 						});
 					}
 				}
-				_this.injectExpectedSongs(track_list);
+				_this.putRequestedData(request_info.request, track_list, r.error);
 
-				if (track_list.length < paging_opts.page_limit){
-					_this.setLoaderFinish();
-				}
+				
 			})
 			.fail(function(){
-				_this.loadComplete(true);
+				_this.requestComplete(request_info.request, true);
 			}).always(function() {
 				request_info.done = true;
 			});
@@ -337,12 +348,12 @@ EnhancedSongslist.extendTo(artistsRecommsList, {
 							artist: artist
 						});
 					}
-					_this.injectExpectedSongs(track_list_without_tracks);
+					_this.putRequestedData(request_info.request, track_list_without_tracks);
 					_this.setLoaderFinish();
 				}
 			})
 			.fail(function() {
-				_this.loadComplete(true);
+				_this.requestComplete(request_info.request, true);
 			})
 			.always(function() {
 				request_info.done = true;
@@ -357,6 +368,93 @@ var UsersList = function() {};
 mapLevelModel.extendTo(UsersList, {
 	
 });
+
+var UserNewReleases = function() {};
+AlbumsList.extendTo(UserNewReleases, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.authInit();
+		this.authSwitching(this.app.lfm_auth, LfmReccomsLogin);
+
+		/*
+		this._super(opts);
+		this.artist = params.artist;
+		this.updateManyStates({
+			'nav_title': 'Albums of ' + this.artist + ' from last.fm',
+			'url_part': '/albums_lfm'
+		});*/
+	},
+	page_limit: 50,
+	getRqData: function(paging_opts) {
+		return {
+			user: lfm.user_name,
+			limit: paging_opts.page_limit,
+			userecs: this.recomms ? 1 : 0
+		};
+	},
+	sendMoreDataRequest: function(paging_opts) {
+		var username = this.username;
+		var _this = this;
+		var request_info = {};
+		request_info.request = this.app.lfm.get('user.getNewReleases', this.getRqData(paging_opts))
+			.done(function(r){
+				
+				var albums_data = toRealArray(getTargetField(r, 'albums.album'));
+
+
+				var data_list = [];
+				if (albums_data.length) {
+					var l = Math.min(albums_data.length, paging_opts.page_limit);
+					for (var i=paging_opts.remainder; i < l; i++) {
+						var cur = albums_data[i];
+						data_list.push({
+							album_artist: getTargetField(cur, 'artist.name'),
+							album_name: cur.name,
+							lfm_image: {
+								array: cur.image
+							},
+							playcount: cur.playcount
+						});
+					}
+					
+				}
+				_this.setLoaderFinish();
+				_this.putRequestedData(request_info.request, data_list, r.error);
+				
+			})
+			.fail(function() {
+				_this.requestComplete(request_info.request, true);
+			})
+			.always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	}
+});
+
+var UserLibNewReleases= function() {};
+UserNewReleases.extendTo(UserLibNewReleases, {
+	init: function(opts, params) {
+		this._super(opts, params);
+		this.updateManyStates({
+			'nav_title': localize('reccoms-for-you') +': new releases of artists from your library',
+			'url_part': '/lib_releases'
+		});
+	}
+});
+
+var RecommNewReleases = function() {};
+UserNewReleases.extendTo(RecommNewReleases, {
+	init: function(opts, params) {
+		this._super(opts, params);
+		this.updateManyStates({
+			'nav_title': localize('reccoms-for-you') +': new releases of artists recommended for you',
+			'url_part': '/recommended_releases'
+		});
+	},
+	recomms: true
+});
+
 
 
 var UserCard = function() {};
@@ -378,18 +476,44 @@ mapLevelModel.extendTo(UserCard, {
 
 		var postInit = function() {
 
-			this.arts_recomms = new artistsRecommsList();
-			this.arts_recomms.init({pmd: this, app: this.app});
-			this.setChild('arts_recomms', this.arts_recomms);
+
+			this.arts_recomms = new RecommendatedToUserArtistsList();
+			this.arts_recomms.init({
+				app: this.app,
+				map_parent: this
+			});
+			this.setChild('arts_recomms', this.arts_recomms, true);
 
 
 			this.lfm_loved = new LfmLovedList();
-			this.lfm_loved.init({pmd: this, app: this.app});
-			this.setChild('lfm_loved', this.lfm_loved);
+			this.lfm_loved.init({
+				app: this.app,
+				map_parent: this
+			});
+			this.setChild('lfm_loved', this.lfm_loved, true);
 
 			this.my_vkaudio = new MyVkAudioList();
-			this.my_vkaudio.init({pmd: this, app: this.app});
-			this.setChild('vk_audio', this.my_vkaudio);
+			this.my_vkaudio.init({
+				app: this.app,
+				map_parent: this
+			});
+			this.setChild('vk_audio', this.my_vkaudio, true);
+
+			this.new_releases = new UserLibNewReleases();
+			this.new_releases.init({
+				app: this.app,
+				map_parent: this
+			});
+			this.setChild('new_releases', this.new_releases, true);
+
+			this.recomm_releases = new RecommNewReleases();
+			this.recomm_releases.init({
+				app: this.app,
+				map_parent: this
+			});
+			this.setChild('recomm_releases', this.recomm_releases, true);
+
+			
 		};
 		jsLoadComplete({
 			test: function() {
@@ -408,7 +532,7 @@ mapLevelModel.extendTo(UserCard, {
 					
 
 					var hasPlaylistCheck = function(items) {
-						_this.updateState('has-playlists', !!items.length);
+						_this.updateState('has_playlists', !!items.length);
 					};
 					hasPlaylistCheck(this.app.gena.playlists);
 					
@@ -418,9 +542,38 @@ mapLevelModel.extendTo(UserCard, {
 				}).call(_this);
 			}
 		});
-		this.updateState('url-part', '/users/' + (this.for_current_user ? 'me' : params.username));
+		jsLoadComplete(function() {
+			setTimeout(function() {
+				var gena = new SuUsersPlaylists();
+				gena.init({
+					app:_this.app,
+					map_parent: _this
+				});
+				_this.app.gena = gena;
 
-		this.updateState('nav-title', 'Персональная музыка, друзья и знакомства');
+				var plsts_str = suStore('user_playlists');
+				if (plsts_str){
+					gena.setSavedPlaylists(plsts_str);
+				}
+				_this.setChild('user-playlists', gena, true);
+
+				jsLoadComplete.change();
+			}, 150);
+			
+		});
+
+		var users_acqutes = new UserAcquaintancesLists();
+		users_acqutes.init({
+			app: this.app,
+			map_parent: this
+		});
+
+		this.setChild('users_acqutes', users_acqutes);
+		
+
+		this.updateState('url_part', '/users/' + (this.for_current_user ? 'me' : params.username));
+
+		this.updateState('nav_title', 'Персональная музыка, друзья и знакомства');
 		/*
 
 		аудиозаписи
@@ -428,16 +581,25 @@ mapLevelModel.extendTo(UserCard, {
 		рекомендации артистов, альбомов, любимые
 
 		последнее
-		библиотека */
+		библиотека
+
+		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=2803b2bcbc53f132b4d4117ec1509d65&format=json
+		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=2803b2bcbc53f132b4d4117ec1509d65&format=json&userecs=1
+
+		*/
 
 		return this;
 	},
-	'stch-mp-show': function(state) {
+	'stch-mp_show': function(state) {
 		if (state && state.userwant){
 			var list_to_preload = [
 				this.getChild('arts_recomms'),
 				this.getChild('lfm_loved'),
-				this.getChild('vk_audio')
+				this.getChild('vk_audio'),
+				this.getChild('new_releases'),
+				this.getChild('recomm_releases')
+				
+
 			];
 			for (var i = 0; i < list_to_preload.length; i++) {
 				var cur = list_to_preload[i];

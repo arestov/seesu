@@ -1,4 +1,4 @@
-var
+var spv = {},
 	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
 	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
@@ -269,6 +269,7 @@ getTargetField = function(obj, field){
 	}
 	return target;
 };
+spv.getTargetField = getTargetField;
 
 var getFieldValueByRule = function(obj, rule){
 	if (rule instanceof Function){
@@ -395,6 +396,7 @@ $filter = function(array, field, value_or_testfunc){
 	}
 	return r;
 };
+spv.filter = $filter;
 
 
 
@@ -438,7 +440,8 @@ getUnitBaseNum = function(_c){
 };
 
 
-stringifyParams= function(params, ignore_params, splitter, joiner){
+stringifyParams= function(params, ignore_params, splitter, joiner, opts){
+	opts = opts || {};
 	splitter = splitter || '';
 	if (typeof params == 'string'){
 		return params;
@@ -449,7 +452,10 @@ stringifyParams= function(params, ignore_params, splitter, joiner){
 			pv_signature_list.push(p + splitter + params[p]);
 		}
 	}
-	pv_signature_list.sort();
+	if (!opts.not_sort){
+		pv_signature_list.sort();
+	}
+	
 	return pv_signature_list.join(joiner || '');
 };
 
@@ -598,6 +604,8 @@ debounce = function(fn, timeout, invokeAsap, ctx) {
 	};
 
 };
+spv.debounce = debounce;
+
 throttle = function(fn, timeout, ctx) {
 
 	var timer, args, needInvoke;
@@ -625,7 +633,7 @@ throttle = function(fn, timeout, ctx) {
 	};
 
 };
-
+spv.throttle = throttle;
 
 
 (function(){

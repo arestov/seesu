@@ -1,6 +1,6 @@
 provoda.addPrototype("songsListBaseView", {
 	state_change: {
-		loading: function(loading){
+		'list_loading': function(loading){
 			if (loading){
 				this.lc.addClass('loading');
 			} else {
@@ -18,20 +18,20 @@ provoda.addPrototype("songsListBaseView", {
 				}
 			}
 		},
-		"can-play": function(state) {
+		"can_play": function(state) {
 			if (state){
 				//make-trs-plable
-				this.c.addClass('has-files-in-songs');
+				this.c.addClass('has_files-in-songs');
 			} else {
-				this.c.removeClass('has-files-in-songs');
+				this.c.removeClass('has_files-in-songs');
 			}
 		}
 	},
 	parts_builder: {
 		"load-more-b": function() {
 			var _this = this;
-			var node = $("<a class='load-more-songs'></a>").click(function() {
-				_this.md.loadMoreSongs(true);
+			var node = $("<a class='load-more-list-data'></a>").click(function() {
+				_this.md.requestMoreData(true);
 			}).text(localize("load-more")).appendTo(this.c);
 
 			this.addWayPoint(node, {
@@ -75,7 +75,7 @@ provoda.addPrototype("songsListBaseView", {
 		}
 
 	},
-	'collch-song': function(name, arr) {
+	'collch-songs-list': function(name, arr) {
 		for (var i = 0; i < arr.length; i++) {
 			var view = this.getFreeChildView(name, arr[i], 'main', {lite: this.opts && this.opts.overview});
 			if (view){

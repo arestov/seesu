@@ -20,6 +20,22 @@ provoda.Model.extendTo(VkLoginB, {
 				}
 			}
 			this.setRequestDesc(params.desc);
+
+			if (params.notf){
+				
+				this.notf = params.notf;
+				this.notf.on('read', function(value) {
+					if (value == 'vk_audio_auth '){
+						_this.updateState('notify_readed', true);
+					}
+					
+				});
+
+				if (params.notify_readed){
+					_this.updateState('notify_readed', true);
+				}
+				this.updateState('has_notify_closer', true);
+			}
 		} else {
 			this.setRequestDesc();
 		}
@@ -37,7 +53,7 @@ provoda.Model.extendTo(VkLoginB, {
 				if ((sts & settings_bits) * 1){
 					_this.triggerSession();
 				} else {
-					_this.updateState('has-session', false);
+					_this.updateState('has_session', false);
 				}
 			});
 			
@@ -59,11 +75,14 @@ provoda.Model.extendTo(VkLoginB, {
 		}
 
 	},
+	removeNotifyMark: function() {
+		this.notf.markAsReaded('vk_audio_auth ');
+	},
 	bindAuthReady: function(exlusive_space, callback) {
 		this.auth.bindAuthReady(exlusive_space, callback, this.open_opts && this.open_opts.settings_bits);
 	},
 	triggerSession: function() {
-		this.updateState('has-session', true);
+		this.updateState('has_session', true);
 	},
 	waitData: function() {
 		this.updateState('data-wait', true);
@@ -72,7 +91,7 @@ provoda.Model.extendTo(VkLoginB, {
 		this.updateState('data-wait', false);
 	},
 	setRequestDesc: function(text) {
-		this.updateState('request-description', text ? text + " " + localize("vk-auth-invitation") : "");
+		this.updateState('request_description', text ? text + " " + localize("vk-auth-invitation") : "");
 	},
 	useCode: function(auth_code){
 		if (this.bindAuthCallback){
@@ -259,26 +278,147 @@ try_mp3_providers = function(){
 };
 
 
-
-
-
-
-var findTorrentMP3Song = function(song) {
-	$.ajax({
-		global: false,
-		type: "GET",
-		dataType: "jsonp",
-		url: "http://ajax.googleapis.com/ajax/services/search/web?cx=001069742470440223270:ftotl-vgnbs",
-		data: {
-			v: "1.0",
-			q: "allintext:" + song + '.mp3'
-		},
-		error:function(){
-			console.log('google search requset error');
-		},
-		success: function(r){
-			console.log(r);
-			
+var HypemApi;
+var GoogleSoundcloud;
+(function() {
+"use strict";
+GoogleSoundcloud = function() {};
+Class.extendTo(GoogleSoundcloud, {
+	init: function(opts) {
+		this.cache_ajax = opts.cache_ajax;
+		this.queue = opts.queue;
+		this.crossdomain = opts.crossdomain;
+	},
+	thisOriginAllowed: true,
+	cache_namespace: 'goog_sc',
+	get: function(query, params, options) {
+		if (!query){
+			throw new Error('wrong query');
 		}
-	});
-};
+		var params_data = {
+			cx: "001069742470440223270:t1xni-63__0",
+			v: "1.0",
+			rsz: 1,
+			q: query //"allintext:" + song + '.mp3'
+		};
+		options = options || {};
+		options.cache_key = options.cache_key || hex_md5("https://ajax.googleapis.com/ajax/services/search/web" +  stringifyParams(params_data));
+
+
+		var wrap_def = wrapRequest({
+			url: "https://ajax.googleapis.com/ajax/services/search/web",
+			type: "GET",
+			dataType: this.crossdomain ? "json": "jsonp",
+			data: params_data,
+			timeout: 20000,
+			thisOriginAllowed: this.thisOriginAllowed
+		}, {
+			cache_ajax: this.cache_ajax,
+			nocache: options.nocache,
+			cache_key: options.cache_key,
+			cache_timeout: options.cache_timeout,
+			cache_namespace: this.cache_namespace,
+			requestFn: function() {
+				return aReq.apply(this, arguments);
+			},
+			queue: this.queue
+		});
+
+		return wrap_def.complex;
+	}
+});
+window.DiscogsApi = function() {};
+Class.extendTo(DiscogsApi, {
+	init: function(opts) {
+		this.cache_ajax = opts.cache_ajax;
+		this.queue = opts.queue;
+		this.crossdomain = opts.crossdomain;
+	},
+	cache_namespace: 'discogs',
+	get: function(path, params, options) {
+		var	_this = this;
+
+		if (!path){
+			throw new Error('wrong path');
+		}
+
+		options = options || {};
+		options.cache_key = options.cache_key || hex_md5("http://api.discogs.com" + path + stringifyParams(params));
+
+		var	params_full = params || {};
+
+		//cache_ajax.get('vk_api', p.cache_key, function(r){
+
+		var wrap_def = wrapRequest({
+			url: "http://api.discogs.com" + path,
+			type: "GET",
+			dataType: this.crossdomain ? "json": "jsonp",
+			data: params_full,
+			timeout: 20000,
+			resourceCachingAvailable: true
+		}, {
+			cache_ajax: this.cache_ajax,
+			nocache: options.nocache,
+			cache_key: options.cache_key,
+			cache_timeout: options.cache_timeout,
+			cache_namespace: this.cache_namespace,
+			requestFn: function() {
+				return aReq.apply(this, arguments);
+			},
+			queue: this.queue
+		});
+
+		return wrap_def.complex;
+		
+	}
+});
+
+HypemApi = function() {};
+Class.extendTo(HypemApi, {
+	init: function(opts) {
+		this.cache_ajax = opts.cache_ajax;
+		this.queue = opts.queue;
+		this.xhr2 = opts.xhr2;
+		this.crossdomain = opts.crossdomain;
+		this.can_send = this.xhr2 || this.crossdomain;
+
+	},
+	cache_namespace: 'hypem',
+	get: function(path, params, options) {
+		if (!path){
+			throw new Error('wrong path');
+		}
+		//path
+		var full_url = 'http://hypem.com' + path;
+		options = options || {};
+		options.cache_key = options.cache_key || hex_md5(full_url + stringifyParams(params));
+
+		var wrap_def = wrapRequest({
+			url: full_url,
+			type: "GET",
+			dataType: "json",
+			data: params,
+			timeout: 20000,
+			headers: null,
+			thisOriginAllowed: true,
+			afterChange: function(opts) {
+				if (opts.dataType == 'json'){
+					opts.headers = null;
+				}
+				
+			}
+		}, {
+			cache_ajax: this.cache_ajax,
+			nocache: options.nocache,
+			cache_key: options.cache_key,
+			cache_timeout: options.cache_timeout,
+			cache_namespace: this.cache_namespace,
+			queue: this.queue
+		});
+
+		return wrap_def.complex;
+	}
+});
+
+})();
+

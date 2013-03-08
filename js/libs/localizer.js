@@ -8,6 +8,42 @@
 */
 
 localizer = {
+	"no-dgs-id": {
+		"original": "Artist's discogs profile was not found",
+		"ru":"Discogs профиль артиста не был найден"
+	},
+	"Hypem-cant-load":{
+		"original": "Your browser does not support XHR2 to load data from hypem.com",
+		"ru": "Ваш браузер не поддерживает XHR2, необходимый что бы загружать данные с hypem.com"
+	},
+	"Art-sc-likes": {
+		"original": "Artist soundcloud likes",
+		"ru": "Понравившиеся композиции на soundcloud"
+	},
+	"Art-sc-songs": {
+		"original": "From soundcloud profle",
+		"ru": "Из soundcloud профиля"
+	},
+	"Sc-profile-not-found": {
+		"original": "Artist soundcloud profile was not found",
+		"ru": "Soundcloud профиль артиста не был найден"
+	},
+	"Blogged-all-hypem": {
+		"original": "Blogged, all and sundry (hypem.com)",
+		"ru": "Из блогов, все подряд (hypem.com)"
+	},
+	"Blogged-25-hypem": {
+		"original": "Blogged, 25-250 Favorites (hypem.com)",
+		"ru": "Из блогов, у 25-250 в избранном (hypem.com)"
+	},
+	"Blogged-250-hypem": {
+		"original": "Blogged, 250+ Favorites (hypem.com)",
+		"ru": "Из блогов, у 250+ в избранном (hypem.com)"
+	},
+	"Acquaintances": {
+		"original": "Acquaintances",
+		"ru": "Знакомства"
+	},
 	"vk_photo_meet_need": {
 		"original": "If you want to meet this man you need to upload photo to your vk.com profile and press \"%button_name%\" button",
 		"ru":  "Что бы познакомиться, необходимо загрузить фотографию в свой профиль во вконтакте, после чего нажать кнопку \"%button_name%\""
@@ -15,6 +51,10 @@ localizer = {
 	"vk_photo_update": {
 		"original": "Get photo from my vk.com profile",
 		"ru": "Получить фотографию из моего профиля вконтакте"
+	},
+	"play-random-best-of-arts": {
+		"original": "Play random best tracks of this artists",
+		"ru": "Играть случайные лучшие композиции этих артистов"
 	},
 	"your-pmus-f-aq": {
 		"original": "Your personal music, friends and acquaintances",
@@ -40,7 +80,18 @@ localizer = {
 		"original": "You want to meet this user",
 		"ru": "Ты хочешь познакомиться с этим пользователем"
 	},
-
+	"Free-songs": {
+		"original": "Free",
+		"ru": "Бесплатные"
+	},
+	"Explore-songs-exfm": {
+		"original": "Explorable from ex.fm",
+		"ru": "Ознакомляющие (ex.fm)"
+	},
+	"Trending-songs-exfm": {
+		"original": "Trending on ex.fm",
+		"ru": "Актуальные (ex.fm)"
+	},
 	"if-you-accept-one-i":{
 		"original": "If you accept invite from one of the users, then",
 		"ru": "Если ты примешь приглашение от одного из пользователей, то"
@@ -259,9 +310,17 @@ localizer = {
 		"original": "Best tracks",
 		"ru": "Лучшие треки"
 	},
-	"top-tracks":{
-		"original": "top tracks",
-		"ru": 'лучшие треки'
+	"Week-chart":{
+		"original": "Week chart",
+		"ru": "Недельный чарт"
+	},
+	"Top": {
+		"original": "Top",
+		"ru": "Лучшие"
+	},
+	"Top-tracks":{
+		"original": "Top tracks",
+		"ru": 'Лучшие треки'
 	},
 	"stop-flash": {
 		"original": "To stop annoing «Adobe Flash Player Security» window copy this address:",
@@ -416,6 +475,10 @@ localizer = {
 		"original": "in albums",
 		"ru": "в альбомах"
 	},
+	"Songs": {
+		"original": "Songs",
+		"ru": "Композиции"
+	},
 	"Artists": {
 		"original": "Artists",
 		"ru": 'Артисты'
@@ -476,7 +539,7 @@ localizer = {
 		"original": "find more",
 		"ru": 'Найти больше'
 	},
-	"now-playing": {
+	"now_playing": {
 		"original": "Now Playing",
 		"ru": 'Сейчас играет'
 	},
