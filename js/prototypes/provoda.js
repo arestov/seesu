@@ -155,7 +155,8 @@ Class.extendTo(provoda.Eventor, {
 		this.subscribes[opts.short_name].push({
 			namespace: opts.namespace,
 			cb: opts.cb,
-			once: opts.once
+			once: opts.once,
+			immediately: opts.immediately
 		});
 	},
 	getPossibleRegfires: function(namespace) {

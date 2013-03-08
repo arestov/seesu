@@ -251,7 +251,11 @@ html.not-as-application, .not-as-application  body{
 		.moplas-list .selected-mf .mf-progress{
 		
 			}
-
+.cant_play_music_message{
+	background: #D12E2E;
+	text-shadow: 1px 1px 1px #000;
+	padding: 0.5rem 1rem;
+	}
 
 
 #close-widget{
