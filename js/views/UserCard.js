@@ -1,7 +1,38 @@
+var SoftVkLoginUI = function() {};
+VkLoginUI.extendTo(SoftVkLoginUI, {
+	createBase: function() {
+		this._super();
+		this.c.removeClass('attention-focuser');
+	}
+});
+
+var PersonalListPreview = function() {};
+ListPreview.extendTo(PersonalListPreview, {
+	clickAction: function() {
+		this.md.requestPlaylist();
+	},
+	'stch-pmd_vswitched': function(state) {
+		this.c.toggleClass('access-request', state);
+	},
+	'collch-auth_part': {
+		place: 'tpl.ancs.auth_con',
+		by_model_name: true
+	},
+	children_views: {
+		auth_block_lfm: LfmLoginView,
+		auth_block_vk: SoftVkLoginUI,
+		preview_list: ArtistsListPreviewLine
+	},
+	'collch-preview_list': {
+		place: 'tpl.ancs.listc',
+		limit: 9
+	}
+});
+
 var PlaylistPreview = function() {};
 provoda.View.extendTo(PlaylistPreview, {
 	createBase: function() {
-		this.c = $('<div class="playlist_preview-c"></div>');
+		this.c = $('<div class="playlist_preview-c no_arfb"></div>');
 		this.prew_c = $('<div class="area-button"></div>').appendTo(this.c);
 		this.prew_text = $('<span></span>').appendTo(this.prew_c);
 		//this.desc = $('<div class="area-description"></div>').appendTo(this.prew_c);
@@ -9,16 +40,18 @@ provoda.View.extendTo(PlaylistPreview, {
 		this.prew_c.click(function() {
 			_this.md.requestPlaylist();
 		});
-		this.auth_c = $('<div class="auth-con"></div>').appendTo(this.c);
+
+		this.addWayPoint(this.prew_c);
+		this.auth_c = $('<div class="pl-auth-con"></div>').appendTo(this.c);
 		//this.
 	},
-	'stch-has-access': function(state) {
-		this.prew_c.toggleClass('placeholdered-text', !state);
+	'stch-has_no_access': function(state) {
+		//this.prew_c.toggleClass('placeholdered-text', !state);
 	},
-	'stch-pmd-vswitched': function(state) {
+	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
 	},
-	'stch-nav-title': function(state) {
+	'stch-nav_title': function(state) {
 		this.prew_text.text(state);
 	},
 	'collch-auth_part': {
@@ -30,53 +63,76 @@ provoda.View.extendTo(PlaylistPreview, {
 			main: LfmLoginView
 		},
 		auth_block_vk: {
-			main: vkLoginUI
+			main: VkLoginUI
 		}
 	}
 });
 
+var UserCardPage = function(){};
+PageView.extendTo(UserCardPage, {
+	useBase: function(node) {
+		this.c = node;
+		this.bindBase();
+	},
+	createBase: function() {
+		this.c = this.root_view.getSample('user_page');
+		this.bindBase();
+	},
+	bindBase: function() {
+		this.createTemplate();
+	},
+	children_views: {
+		'user-playlists': LiListsPreview,
+		users_acqutes: UserAcquaintancesListPreview,
+		vk_audio: PersonalListPreview,
+		arts_recomms: PersonalListPreview,
+		lfm_loved: PersonalListPreview,
+		new_releases: AlbumsListPreview,
+		recomm_releases: AlbumsListPreview
+	},
+	'collch-users_acqutes': 'tpl.ancs.users_acqutes'
+});
 
 var UserCardView = function() {};
 provoda.View.extendTo(UserCardView, {
 	createBase: function() {
 		this.c = $('<div class="usual_page"></div>');
 		this.items_c = $("<div></div>").appendTo(this.c);
-		this.plts_link_a = $(document.createComment('')).appendTo(this.c);
+		//this.plts_link_a = $(document.createComment('')).appendTo(this.c);
+		this.aqc_preview_c = $('<div class="aqc_preview"></div>').appendTo(this.c);
 	},
-	'stch-mp-show': function(state) {
+	'stch-mp_show': function(state) {
 		this.c.toggleClass('hidden', !state);
 	},
-	'stch-has-playlists': function(state){
-		this.requirePart('plts_link').toggleClass('hidden', !state);
+	'stch-has_playlists': function(state){
+		//this.requirePart('plts_link').toggleClass('hidden', !state);
 	},
 	parts_builder: {
 		plts_link: function() {
 			var wrap = $('<span class="button-hole"><a class="nicebutton"></a></span>');
 			var _this = this;
-			wrap.children('a').click(function(e){
+			var link = wrap.children('a');
+			link.click(function(e){
 				e.preventDefault();
 				_this.root_view.md.showPlaylists();
 			}).text(localize('playlists'));
 			this.plts_link_a.after(wrap);
 			this.plts_link_a.remove();
+			this.addWayPoint(link);
 			return wrap;
 		}
-	},
+	}
+	/*
 	'collch-arts_recomms': 'items_c',
 	'collch-lfm_loved': 'items_c',
-	'collch-vk_audio': 'items_c',
-
-	children_views: {
-		arts_recomms: {
-			main: PlaylistPreview
-		},
-		vk_audio: {
-			main: PlaylistPreview
-		},
-		lfm_loved: {
-			main: PlaylistPreview
-		}
-	}
+//	'collch-vk_audio': 'items_c',
+//	'collch-users_acqutes': 'aqc_preview_c',
+//	children_views: {
+		arts_recomms: PlaylistPreview,
+		vk_audio: PersonalListPreview,
+		lfm_loved: PlaylistPreview,
+		users_acqutes: UserAcquaintancesListPreview
+	}*/
 });
 
 
@@ -87,21 +143,29 @@ var UserCardPreview = function() {};
 provoda.View.extendTo(UserCardPreview, {
 	createBase: function() {
 		this.c = this.root_view.els.pestf_preview;
+		this.aqc_preview_c = this.c.find('.aqc_preview');
+
 		//this.c.text('Персональная музыка');
 		var _this = this;
-		this.c.find('.to-open-block').click(function() {
-			su.showModelPage(_this.md);
-			//_this.md
-		});
 
+		var button = this.c.find('.to-open-block').click(function() {
+			_this.md.showOnMap();
+		});
+		this.addWayPoint(button);
 
 		
 	},
-	'stch-can-expand': function(state){
+	'stch-can_expand': function(state){
 		if (state){
 			this.requirePart('start-page-blocks');
 		}
 	},
+	children_views: {
+		users_acqutes : {
+			main: UserAcquaintancesListPreview
+		}
+	},
+	'collch-users_acqutes': 'aqc_preview_c',
 	parts_builder: {
 		'start-page-blocks': function() {
 			var _this = this;
@@ -117,7 +181,7 @@ provoda.View.extendTo(UserCardPreview, {
 				var li = ui.c = $('<li class="people-list-item"></li>');
 				var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
 				
-					$('<img width="50" height="50"/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
+				$('<img/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
 				
 				ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
 				ui.lp = $('<div class="p-link-place"></div>').appendTo(li);
@@ -128,16 +192,15 @@ provoda.View.extendTo(UserCardPreview, {
 
 			
 			var buildPeopleLE = function(man, opts){
-				var o = opts || {};
-				var el_opts = {};
+				opts = opts || {};
 				
 				var pui = createPeopleListEl(man.info.photo);
 				
 				
-				if (o.links){
+				if (opts.links){
 					pui.lp.append(_this.root_view.getAcceptedDesc(man));
 				
-				} else if (o.accept_button){
+				} else if (opts.accept_button){
 					var nb = _this.root_view.createNiceButton();
 						nb.b.text( localize('accept-inv', 'Accept invite'));
 						nb.enable();
@@ -168,10 +231,10 @@ provoda.View.extendTo(UserCardPreview, {
 				return pui.c;
 			};
 			var createPeopleList = function(people, opts){
-				var o = opts || {};
+				opts = opts || {};
 				
 				var ul = $("<ul class='people-list'></ul>");
-				if (o.wide){
+				if (opts.wide){
 					ul.addClass('people-l-wide');
 				}
 				
@@ -182,8 +245,10 @@ provoda.View.extendTo(UserCardPreview, {
 				}
 				return ul;
 			};
-			var rl_place = this.root_view.els.start_screen.find('.relations-likes-wrap');
-			var ri_place = this.root_view.els.start_screen.find('.relations-invites-wrap');
+			return true;
+			var rl_place = this.root_view.els.start_screen.find('.relations-likes-wrap').removeClass('hidden');
+			var ri_place = this.root_view.els.start_screen.find('.relations-invites-wrap').removeClass('hidden');
+			
 			
 
 			su.s.susd.rl.regCallback('start-page', function(r){

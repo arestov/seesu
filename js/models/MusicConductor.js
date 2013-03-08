@@ -1,23 +1,14 @@
-var ArtistsList = function() {};
-mapLevelModel.extendTo(ArtistsList, {
-	requestArtists: function() {
-
-	},
-	generatePlaylist: function() {
-
-	}
-});
 
 
 var AllPAllTimeChart = function() {};
-EnhancedSongslist.extendTo(AllPAllTimeChart, {
+songsList.extendTo(AllPAllTimeChart, {
 	init: function() {
 		this._super.apply(this, arguments);
-		//mp: 'url-part', 'nav-title'
-		this.updateState('nav-title', 'Популярные');
-		this.updateState('url-part', '/chart');
+		//mp: 'url_part', 'nav_title'
+		this.updateState('nav_title', 'Популярные');
+		this.updateState('url_part', '/chart');
 	},
-	requestMoreSongs: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts) {
 		var request_info = {};
 		var _this = this;
 
@@ -40,14 +31,10 @@ EnhancedSongslist.extendTo(AllPAllTimeChart, {
 						});
 					}
 				}*/
-				_this.injectExpectedSongs(track_list);
-
-				if (track_list.length < paging_opts.page_limit){
-					_this.setLoaderFinish();
-				}
+				_this.putRequestedData(request_info.request, track_list, r.error);
 			})
 			.fail(function(){
-				_this.loadComplete(true);
+				_this.requestComplete(request_info.request, true);
 			}).always(function() {
 				request_info.done = true;
 			});
@@ -65,14 +52,15 @@ mapLevelModel.extendTo(SongsWagon, {
 		this._super.apply(this, arguments);
 		this.app = opts.app;
 
-		this.allp_allt_cart = new AllPAllTimeChart();
-		this.allp_allt_cart.init({
-			app: this.app
+		this.allp_allt_chart = new AllPAllTimeChart();
+		this.allp_allt_chart.init({
+			app: this.app,
+			map_parent: this
 		});
-		this.setChild('allp_allt_cart', this.allp_allt_cart);
+		this.setChild('allp_allt_chart', this.allp_allt_chart);
 		
-		this.updateState('nav-title', 'Композиции');
-		this.updateState('url-part', '/songs');
+		this.updateState('nav_title', 'Композиции');
+		this.updateState('url_part', '/songs');
 	}
 });
 
@@ -97,11 +85,12 @@ mapLevelModel.extendTo(AllPlacesTrain, {
 		this.app = opts.app;
 		this.wagn_songs = new SongsWagon();
 		this.wagn_songs.init({
-			app: this.app
+			app: this.app,
+			map_parent: this
 		});
 		this.setChild('wagn_songs', this.wagn_songs);
-		this.updateState('nav-title', 'Во всем мире');
-		this.updateState('url-part', '/all-places');
+		this.updateState('nav_title', 'Во всем мире');
+		this.updateState('url_part', '/all-places');
 
 	}
 });
@@ -138,7 +127,10 @@ mapLevelModel.extendTo(MusicConductor, {
 			},
 			fn: function() {
 				(function() {
-					this.allp_trn.init({app: this.app});
+					this.allp_trn.init({
+						app: this.app,
+						map_parent: this
+					});
 					this.setChild('allp_train', this.allp_trn);
 				}).call(_this);
 			}
@@ -147,11 +139,11 @@ mapLevelModel.extendTo(MusicConductor, {
 
 
 
-		this.updateState('nav-title', 'Музыкальный кондуктор');
-		this.updateState('url-part', '/conductor');
+		this.updateState('nav_title', 'Музыкальный кондуктор');
+		this.updateState('url_part', '/conductor');
 		//world_part
 		//countres
-		//mp: 'url-part', 'nav-title'
+		//mp: 'url_part', 'nav_title'
 		return this;
 	}
 });

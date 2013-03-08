@@ -9,7 +9,7 @@ provoda.View.extendTo(MusicConductorView, {
 		this.c = $('<div></div>');
 		this.header = $('<h4></h4>').appendTo(this.c);
 	},
-	'stch-nav-title': function(state) {
+	'stch-nav_title': function(state) {
 		this.header.text(state || '');
 	}
 });
@@ -35,7 +35,9 @@ provoda.View.extendTo(StartPageView, {
 
 		});
 		
-		
+		this.addWayPoint(hq_link, {
+			//simple_check: true
+		});
 	},
 	'collch-muco': true,
 	'collch-pstuff': true,
@@ -48,8 +50,8 @@ provoda.View.extendTo(StartPageView, {
 		}
 	},
 	complex_states: {
-		'mp-show-end': {
-			depends_on: ['map-animating', 'vis-mp-show', 'mp-show'],
+		'mp_show-end': {
+			depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
 			fn: function(anim, vis_mp_show, mp_show) {
 				if (anim) {
 					if (vis_mp_show && anim == vis_mp_show.anid){
@@ -65,7 +67,7 @@ provoda.View.extendTo(StartPageView, {
 		}
 	},
 	state_change: {
-		'mp-show': function(opts) {
+		'mp_show': function(opts) {
 			if (opts){
 				if (opts.userwant){
 			//		this.search_input[0].focus();
@@ -75,13 +77,10 @@ provoda.View.extendTo(StartPageView, {
 				
 			}
 		},
-		"can-expand": function(state) {
+		"can_expand": function(state) {
 			if (state){
 				this.requirePart('start-page-blocks');
 			}
-		},
-		"have-playlists": function(state){
-
 		},
 	
 		"ask-rating-help": function(link){

@@ -47,7 +47,7 @@ investigationView.extendTo(PlaylistAddSsearchView, {
 var ShareRowUI = function(){};
 BaseCRowUI.extendTo(ShareRowUI, {
 	children_views: {
-		vk_auth: vkLoginUI,
+		vk_auth: VkLoginUI,
 		searcher: ShareSearchView
 	},
 	createDetailes: function(){
@@ -59,20 +59,20 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.bindClick();
 
 	},
-	'stch-share-url': {
+	'stch-share_url': {
 		fn: function(state){
 			this.getPart("share_input").val(state || "");
 		//	dep_vp
 		},
 		dep_vp: ['share_input']
 	},
-	'stch-can-post-to-own-wall':{
+	'stch-can_post_to_own_wall':{
 		fn: function(state){
 			this.requirePart("own-wall-button");
 		},
 		dep_vp: ['pch-ws-own']
 	},
-	'stch-own-photo': {
+	'stch-own_photo': {
 		fn: function(state) {
 			if (state){
 				if (this.own_photo){
@@ -83,7 +83,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		},
 		dep_vp: ["own-wall-button"]
 	},
-	'stch-can-search-friends': {
+	'stch-can_search_friends': {
 		fn: function(state){
 			if (state){
 				var _this = this;
@@ -118,7 +118,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		},
 		dep_vp: ['pch-ws-input', "pch-ws-friends"]
 	},
-	'stch-needs-vk-auth': {
+	'stch-needs_vk_auth ': {
 		fn: function(state) {
 			if (state){
 				$(this.getAFreeCV('vk_auth')).insertBefore(this.getPart("pch-vk-auth"));
@@ -380,7 +380,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		this.arrow = this.row_context.children('.rc-arrow');
 		var _this = this;
 
-		this.parent_view.on('state-change.mp-show-end', function(e){
+		this.parent_view.on('state-change.mp_show-end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});
 	},
@@ -404,27 +404,27 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			main: PlaylistAddRowUI
 		}
 	},
-	"stch-vis-volume": function(state) {
+	"stch-vis_volume": function(state) {
 		this.vol_bar.css({
 			width: state
 		});
 	},
 
 	complex_states: {
-		"vis-volume-hole-width": {
-			depends_on: ['vis-is-visible', 'vis-con-appended'],
+		"vis_volume-hole-width": {
+			depends_on: ['vis_is-visible', 'vis_con-appended'],
 			fn: function(visible, apd){
 				return !!(visible && apd) && this.vol_hole.width();
 			}
 		},
-		"vis-volume-bar-max-width": {
-			depends_on: ['vis-volume-hole-width'],
+		"vis_volume-bar-max-width": {
+			depends_on: ['vis_volume-hole-width'],
 			fn: function(vvh_w){
 				return vvh_w && vvh_w - ( this.vol_bar.outerWidth() - this.vol_bar.width());
 			}
 		},
-		"vis-volume": {
-			depends_on: ['volume', 'vis-volume-bar-max-width'],
+		"vis_volume": {
+			depends_on: ['volume', 'vis_volume-bar-max-width'],
 			fn: function(volume_fac, vvb_mw){
 				if (typeof volume_fac =='undefined'){
 					return 'auto';
@@ -455,7 +455,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 
 			//promiseStateUpdate
 			//setVisState
-			var hole_width = _this.state('vis-volume-hole-width');
+			var hole_width = _this.state('vis_volume-hole-width');
 			if (!hole_width){
 				console.log("no width :!((");
 			}

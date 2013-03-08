@@ -24,103 +24,46 @@ Class.extendTo(vkCoreApi, {
 	},
 	cache_namespace: "vk_api",
 	send: function(method, params, options){ //nocache, after_ajax, cache_key, only_cache
-		var _this				= this,
-			deferred			= $.Deferred(),
-			complex_response	= {
-				abort: function(){
-					this.aborted = true;
-					deferred.reject('abort');
-					if (this.queued){
-						this.queued.abort();
-					}
-					if (this.xhr){
-						this.xhr.abort();
-					}
-				}
-			};
-		deferred.promise( complex_response );
-	
+		var _this = this;
 		
 		if (method) {
 			options = options || {};
-			options.nocache = options.nocache || !this.cache_ajax;
 			options.cache_key = options.cache_key || hex_md5(method + stringifyParams(params));
-			var cache_used;
 
 			var	params_full = params || {};
 			if (this.access_token){
 				params_full.access_token = this.access_token;
 			}
 
-
-			if (!options.nocache){
-				
-				cache_used = this.cache_ajax.get(this.cache_namespace, options.cache_key, function(r){
-					deferred.resolve(r);
-				});
-				if (cache_used) {
-					complex_response.cache_used = true;
-					return complex_response;
-				}
-			}
-			
-			if (!cache_used){
-				var success = function(r){
+			var wrap_def = wrapRequest({
+					url: this.link + method,
+					type: "GET",
+					dataType: this.jsonp ? 'jsonp' : 'json',
+					data: params_full,
+					timeout: 20000
+				}, {
+				cache_ajax: this.cache_ajax,
+				nocache: options.nocache,
+				cache_key: options.cache_key,
+				cache_timeout: options.cache_timeout,
+				cache_namespace: this.cache_namespace,
+				requestFn: function() {
+					return aReq.apply(this, arguments);
+				},
+				responseFn: function(r) {
 					if (r && r.error && r.error.error_code == 5){
 						if (_this.onAuthLost){
 							_this.onAuthLost();
 						}
 					}
-					deferred.resolve.apply(deferred, arguments);
-					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout);
-					}
-				};
+				},
+				queue: this.queue
+			});
 
-
-
-
-				var sendRequest = function() {
-					if (complex_response.aborted){
-						return;
-					}
-					if (!options.nocache){
-						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
-							deferred.resolve(r);
-						});
-					}
-					
-					if (!cache_used){
-						complex_response.xhr = aReq({
-							url: _this.link + method,
-							type: "GET",
-							dataType: _this.jsonp ? 'jsonp' : 'json',
-							data: params_full,
-							timeout: 20000
-						})
-						.done(success)
-						.fail(function(xhr, text){
-							deferred.reject.apply(deferred, arguments);
-						});
-						if (options.after_ajax){
-							options.after_ajax();
-						}
-						if (deferred.notify){
-							deferred.notify('just-requested');
-						}
-					}
-
-				};
-
-				if (this.queue){
-					complex_response.queued = this.queue.add(sendRequest, options.not_init_queue);
-				} else{
-					sendRequest();
-				}
-			}
+			return wrap_def.complex;
+			
 		}
 
-		return complex_response;
 	}
 });
 
@@ -138,7 +81,10 @@ var vkApi = function(vk_t, params) {
 
 	var _this = this;
 
-	this.asearch = new vkSearch(this);
+	this.asearch = new vkSearch({
+		api: this,
+		mp3_search: params.mp3_search
+	});
 
 
 
@@ -155,9 +101,9 @@ vkCoreApi.extendTo(vkApi, {
 
 
 
-var vkSearch = function(vk_api) {
-	this.vk_api = vk_api;
-	var _this = this;
+var vkSearch = function(opts) {
+	this.api = opts.api;
+	this.mp3_search = opts.mp3_search;
 };
 vkSearch.prototype = {
 	constructor: vkSearch,
@@ -185,11 +131,13 @@ vkSearch.prototype = {
 				downloadable: false,
 				_id			: cursor.owner_id + '_' + cursor.aid,
 				type: 'mp3',
+				media_type: 'mp3',
 				models: {},
 				getSongFileModel: getSongFileModel
 			};
 			if (msq){
-				entity.query_match_index = new SongQueryMatchIndex(entity, msq) * 1;
+				this.mp3_search.setFileQMI(entity, msq);
+				
 			}
 			return entity;
 		}
@@ -200,15 +148,13 @@ vkSearch.prototype = {
 			var entity = this.makeSong(r[i], msq);
 			
 			if (entity){
-				if (entity.query_match_index == -1){
+
+				if (this.mp3_search.getFileQMI(entity, msq) == -1){
 					//console.log(entity)
 				} else if (!entity.link.match(/audio\/.mp3$/) && !has_music_copy( music_list, entity)){
 					music_list.push(entity);
 				}
 			}
-		}
-		if (music_list.length){
-			sortMusicFilesArray(music_list);
 		}
 		
 		return music_list;
@@ -237,7 +183,7 @@ vkSearch.prototype = {
 			params_u.q = query;
 			params_u.count = 30;
 
-		var async_ans = this.vk_api.get('audio.search', params_u, opts)
+		var async_ans = this.api.get('audio.search', params_u, opts)
 			.done(function(r) {
 				if (r.error){
 					deferred.reject.apply(deferred, arguments);

@@ -23,36 +23,257 @@
   
   <body>
   	<div id="ui-samples" style="display:none">
+  		<div class="album_preview-big">
+  			<img src="" alt="" pv-anchor="imgc"/>
+  			<div class="full_album_name">
+  				<div class="artist_name_alb" pv-anchor="artist_name_c"></div>
+  				<div class="album_name" pv-anchor="album_name_c"></div>
+  			</div>
+  		</div>
+
+
+
+  		<div class="usual_page user_page">
+  			<div class="internal_pthgs">
+				<div class="area_for_button" pv-view='user-playlists'>
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">Playlists</span>
+					</div>
+					<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+				</div>
+				<div class="aqc_preview" pv-anchor="users_acqutes"></div>
+  			</div>
+  			<div class="vk_pthgs">
+  				<div class="preview_area" pv-view="vk_audio">
+  					<div class="area_for_button" pv-anchor="button_area">
+						<div class="area-button" pv-anchor='big_button'>
+							<span pv-text="{{nav_title}}">VK audio</span>
+						</div>
+						<div class="area-description" >
+							<div class="desc_prevw_list" pv-anchor="listc"></div>
+						</div>
+					</div>
+					<div class="pl-auth-con" pv-anchor="auth_con"></div>
+  				</div>
+				
+			</div>
+			<div class="lastfm_pthgs">
+				<div class="preview_area" pv-view="lfm_loved">
+  					<div class="area_for_button" pv-anchor="button_area">
+						<div class="area-button" pv-anchor='big_button'>
+							<span pv-text="{{nav_title}}">Loved</span>
+						</div>
+						<div class="area-description" >
+							<div class="desc_prevw_list" pv-anchor="listc"></div>
+						</div>
+					</div>
+					<div class="pl-auth-con" pv-anchor="auth_con"></div>
+  				</div>
+  				<div class="preview_area" pv-view="arts_recomms">
+  					<div class="area_for_button" pv-anchor="button_area">
+						<div class="area-button" pv-anchor='big_button'>
+							<span pv-text="{{nav_title}}">Recommendations</span>
+						</div>
+						<div class="area-description" >
+							<div class="desc_prevw_list" pv-anchor="listc"></div>
+						</div>
+					</div>
+					<div class="pl-auth-con" pv-anchor="auth_con"></div>
+  				</div>
+  				<div class="full_wide_col">
+  					<div class="area_for_button" pv-view="new_releases" >
+						<div class="area-button" pv-anchor="big_button">
+							<span pv-text="{{nav_title}}">Albums</span>
+						</div>
+						<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+					</div>
+					<div class="area_for_button" pv-view="recomm_releases" >
+						<div class="area-button" pv-anchor="big_button">
+							<span pv-text="{{nav_title}}">Albums</span>
+						</div>
+						<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+					</div>
+  				</div>
+  				
+			</div>
+			
+  		</div>
+
+
+
+
+  		<div class="usual_page albums_page">
+  			<div class="albums_list_con" pv-anchor="albums_list_c"></div>
+  			<div class="load-more-list-data hidden lang localize-load-more" pv-anchor='load_m_b'>Load more</div>
+  		</div>
+
+
+
+
+  		<div class="artists_list no_arfb">
+  			<div class="to-open-block area-button">
+				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
+			</div>
+			<ul>
+				
+			</ul>
+  		</div>
+
+
+
+
+  		<div class="area_for_button">
+			<div class="area-button" pv-anchor='big_button'>
+				<span pv-text="{{nav_title}}"></span>
+			</div>
+			<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+		</div>
+
+
+
+		<div class="tags_list_page usual_page">
+			<div class="tags_list" pv-anchor="listc"></div>
+		</div>
+
+
+
+
+		<div class="tag_page usual_page">
+			<h2 pv-text="{{tag_name}}"></h2>
+			<div class="leftcol">
+				<div class="artists_lists">
+					<div class="area_for_button tag_artists-preview" pv-view='artists_lists'>
+						<div class="area-button" pv-anchor="big_button">
+							<span pv-text="{{nav_title}}">Artists</span>
+						</div>
+						<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+			</div>
+			<div class="rightcol">
+				<div class="songs_list">
+					<div class="area_for_button tag_artists-preview" pv-view='songs_list'>
+						<div class="area-button" pv-anchor="big_button">
+							<span pv-text="{{nav_title}}">Songs</span>
+						</div>
+						<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+					</div>
+				</div>
+			</div>
+			<div class="full_wide_col">
+				<div class="area_for_button" pv-view="albums_list" >
+					<div class="area-button" pv-anchor="big_button">
+						<span pv-text="{{nav_title}}">Albums</span>
+					</div>
+					<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-view='similar_tags'>
+					<div class="area-button" pv-anchor="big_button">
+						<span pv-text="{{nav_title}}">Similar tags</span>
+					</div>
+					<div class="area-description desc_prevw_list  tags_list-preview" pv-anchor="listc"></div>
+				</div>
+			</div>
+			
+			
+		</div>
+
+
+
+
+
   		<div class="art_card">
 			
-			
-			<div class="art_card-meta">
-				<div class="top-tracks">
-			
-					<h5 class="row-header lang localize-Best-tracks">Best tracks</h5>
-					<ul class="hidden"></ul>
-				
-					
+			<div class="leftcol">
+				<div class="area_for_button" pv-view="top_songs">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">
+							Top
+						</span>
+					</div>
+					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
 				</div>
-				<div class='art_card-tags'>
-					<h5 class="row-header lang localize-Tags">Tags</h5>
-					<ul class="hidden"></ul>
+
+				<div class="area_for_button" pv-view="hypem_new">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">
+							Свежее
+						</span>
+					</div>
+					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+				</div>
+
+				<div class="area_for_button" pv-view="hypem_fav">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">
+							В избранном
+						</span>
+					</div>
+					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-view="hypem_reblog">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">
+							Популярно в блогах
+						</span>
+					</div>
+					<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-view="soundc_prof">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">
+							Из souncloud профиля
+						</span>
+					</div>
+					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+				</div>
+
+
+				<div class="area_for_button" pv-view="soundc_likes">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">
+							Понравившиеся артисту
+						</span>
+					</div>
+					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
 				</div>
 			</div>
-			<div class="art_card-similar">
-				<h5 class="row-header lang localize-similar-arts" >Similar artists</h5>
-				<ul class="hidden"></ul>
+			<div class="rightcol">
+				<div class="area_for_button" pv-view='tags_list'>
+					<div class="area-button" pv-anchor="big_button">
+						<span pv-text="{{nav_title}}">Tags</span>
+					</div>
+					<div class="area-description desc_prevw_list  tags_list-preview" pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-view="similar_artists">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">Similar Artists</span>
+					</div>
+					<div class="area-description desc_prevw_list " pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-view="albums_list">
+					<div class="area-button" pv-anchor="big_button">
+						<span pv-text="{{nav_title}}">Albums</span>
+					</div>
+					<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+				</div>
+				<div class="area_for_button" pv-view="dgs_albums">
+					<div class="area-button" pv-anchor="big_button">
+						<span pv-text="{{nav_title}}">Albums</span>
+					</div>
+					<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
+				</div>
 			</div>
-			<div class="art_card-albums">
-				<h5 class="row-header lang localize-Albums" >Albums</h5>				
+		
+			
+			
+			<div class="art_card-statinfo">
+				<div class="art_card-image">
+					<div class="art_card-image-padding"></div>
+				</div>
+				<div class="art_card-bio"></div>
 			</div>
 			
-			<div class="art_card-image">
-				<div class="art_card-image-padding">
-					
-				</div>
-			</div>
-			<div class="art_card-bio"></div>
 		</div>
   		
   		
@@ -63,6 +284,23 @@
 				
 				<div class="track-panel">
 					<div class="buttons-panel">
+						
+						<div class="nice-buttons-place">
+							<span class="pc-place">
+								<a class="pc pc-add "  title="add to playlist"></a>
+							</span>
+							<!--
+							<span class="pc-place">
+								<a class="pc pc-remove "  title="remove from playlist"></a>
+							</span>
+							-->
+							<span class="pc-place">
+								<a class="pc pc-rupor "  title="share song"></a>
+							</span>
+							<span class="pc-place">
+								<a class="pc pc-love "  title="love song"></a>
+							</span>
+						</div>
 						<ul class="track-buttons">
 
 							<li title="About «Adobe Flash Player Security»" class="flash-secur">
@@ -80,22 +318,6 @@
 								</div>
 							</li>
 						</ul>
-						<div class="nice-buttons-place">
-							<span class="pc-place">
-								<a class="pc pc-add "  title="add to playlist"></a>
-							</span>
-							<!--
-							<span class="pc-place">
-								<a class="pc pc-remove "  title="remove from playlist"></a>
-							</span>
-							-->
-							<span class="pc-place">
-								<a class="pc pc-rupor "  title="share song"></a>
-							</span>
-							<span class="pc-place">
-								<a class="pc pc-love "  title="love song"></a>
-							</span>
-						</div>
 
 						
 					</div>
@@ -223,7 +445,7 @@
 					
 				
 					
-  		<div class="vk-login-context">
+  		<div class="vk-login-context attention-focuser">
 			<div class="decor">
 				<div class="vk-login-reg-link">
 					<div>
@@ -245,6 +467,7 @@
 					<button class="use-vk-code lang localize-use-code">Use code</button>
 				</div>
 			</div>
+			<div class="notify-closer">&times;</div>
 		</div>
 		<div class="lfm-auth-module">
 			<div class="auth-block">
@@ -299,6 +522,7 @@
 					</div>
 				</div>
 			</div>
+			<div class="loader_disallowing_desc hidden"></div>
 			
 			
 		</div>
@@ -343,7 +567,7 @@
 					</form>
 				</div>
 				
-				<div class="complex-page full-page">
+				<div class="complex-page full-page root_level">
 					<div class="complex-page-scroll_con">
 
 						<div class="complex-page_material start-screen " id="start-screen">
@@ -356,7 +580,7 @@
 							
 							<div class="block-for-startpage start-page-messages"></div>
 							
-							<div class="personal-stuff-preview has-dark-buttons">
+							<div class="personal-stuff-preview has-dark-buttons no_arfb">
 								<div class="to-open-block area-button">
 									<span class="lang localize-your-pmus-f-aq">Your personal music, friends and acquaintances</span>
 									
@@ -366,10 +590,10 @@
 										<span class="lang localize-vk-audio">Vkontakte audio</span>
 									</div>
 								</div>
-								
+								<div class="aqc_preview"></div>
 
-								<div class="block-for-startpage relations-invites-wrap"></div>
-								<div class="block-for-startpage relations-likes-wrap"></div>
+								<div class="block-for-startpage relations-invites-wrap hidden"></div>
+								<div class="block-for-startpage relations-likes-wrap hidden"></div>
 
 							</div>
 							

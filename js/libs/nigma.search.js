@@ -13,8 +13,8 @@ NigmaAPI.prototype = {
 	get: function(method, params, options) {
 		var
 			_this				= this,
-			deferred 			= $.Deferred(),
-			complex_response 	= {
+			deferred			= $.Deferred(),
+			complex_response	= {
 				abort: function(){
 					this.aborted = true;
 					deferred.reject('abort');
@@ -54,13 +54,13 @@ NigmaAPI.prototype = {
 				var success = function(r){
 					deferred.resolve.apply(deferred, arguments);
 					if (_this.cache_ajax){
-						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout)
+						_this.cache_ajax.set(_this.cache_namespace, options.cache_key, r, options.cache_timeout);
 					}
 				};
 
 				var sendRequest = function() {
 					if (complex_response.aborted){
-						return
+						return;
 					}
 					if (!options.nocache){
 						cache_used = this.cache_ajax.get(_this.cache_namespace, options.cache_key, function(r){
@@ -74,14 +74,11 @@ NigmaAPI.prototype = {
 							type: "GET",
 							dataType: "text",
 							data: params_full,
-							timeout: 20000,
+							timeout: 20000
 						}).done(success).fail(function(xhr){
 							deferred.reject.apply(deferred, arguments);
 						});
 
-						if (options.after_ajax){
-							options.after_ajax();
-						}
 						if (deferred.notify){
 							deferred.notify('just-requested');
 						}
@@ -104,8 +101,9 @@ NigmaAPI.prototype = {
 };
 
 
-var NigmaMusicSearch = function(api) {
-	this.api = api;
+var NigmaMusicSearch = function(opts) {
+	this.api = opts.api;
+	this.mp3_search = opts.mp3_search;
 	var _this = this;
 };
 
@@ -119,7 +117,7 @@ NigmaMusicSearch.prototype = {
 	makeSong: function(cursor, sc_key){
 
 		var entity = {
-			artist  	: HTMLDecode(cursor.artist),
+			artist		: HTMLDecode(cursor.artist),
 			track		: HTMLDecode(cursor.title),
 			link		: cursor.url,
 			from		: 'exfm',
@@ -131,7 +129,7 @@ NigmaMusicSearch.prototype = {
 		};
 		
 		
-		return entity
+		return entity;
 	},
 	nigma_file: {
 		from: "nigma",
@@ -189,9 +187,9 @@ NigmaMusicSearch.prototype = {
 								var dur_and_size = $.trim(node.parent().siblings(".info").text()).split(/\s?\|\s?/gi);
 								var dur;
 								if (dur_and_size.length == 3){
-									dur = dur_and_size[1]
+									dur = dur_and_size[1];
 								} else if (dur_and_size.length == 2) {
-									dur = dur_and_size[0]
+									dur = dur_and_size[0];
 								}
 								if (dur){
 									dur = dur.split(":");
@@ -200,9 +198,11 @@ NigmaMusicSearch.prototype = {
 								} else {
 									//throw "shii!"
 								}
-								file.query_match_index = new SongQueryMatchIndex(file, msq) * 1;
+								file.media_type = 'mp3';
+								_this.mp3_search.setFileQMI(file, msq);
+								
 
-								if (file.query_match_index != -1){
+								if (_this.mp3_search.getFileQMI(file, msq) != -1){
 									music_list.push(file);
 								}
 
@@ -214,10 +214,6 @@ NigmaMusicSearch.prototype = {
 						
 
 						});
-
-						if (music_list.length){
-							sortMusicFilesArray(music_list);
-						}
 					}
 					result = music_list;
 				}

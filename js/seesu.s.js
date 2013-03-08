@@ -119,21 +119,21 @@ var seesuServerAPI = function(auth, url){
 	this.url  = url;
 	if (auth){
 		this.setAuth(auth, true);
-	};
+	}
 	
 	var update_interval = 1000 * 60 * 4;
 	
 	this.susd.rl = new asyncDataSteam(function(callback){
 		_this.api('relations.getLikes', function(r){
 			_this.susd.updateRelationsLikes(r.done);
-			if (callback){callback(r)};
+			if (callback){callback(r);}
 		});
 	}, update_interval,  update_interval);
 	
 	this.susd.ri = new asyncDataSteam(function(callback){
 		_this.api('relations.getInvites', function(r){
 			_this.susd.updateRelationsInvites(r.done);
-			if (callback){callback(r)};
+			if (callback){callback(r);}
 		});
 	}, update_interval,  update_interval);
 
@@ -143,17 +143,17 @@ var seesuServerAPI = function(auth, url){
 	});
 	
 	
-	this.susd.ligs =  new asyncDataSteam(function(callback){		
+	this.susd.ligs =  new asyncDataSteam(function(callback){
 		$.ajax({
-		  url: _this.url + 'last_listenings/',
-		  type: "GET",
-		  dataType: "json",
-		  error: function(){
-		  	callback();
-		  },
-		  success: function(r){
-			callback(r);
-		  }
+			url: _this.url + 'last_listenings/',
+			type: "GET",
+			dataType: "json",
+			error: function(){
+				callback();
+			},
+			success: function(r){
+				callback(r);
+			}
 		});
 	}, update_interval,  update_interval);
 	suReady(function(){
@@ -221,6 +221,7 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 			suStore('dg_auth', auth_data, true);
 		}
 		this.auth.setNewData(auth_data);
+		su.updateState('su_userid', auth_data.userid);
 	},
 
 	getAuth: function(vk_user_id, callback){
@@ -242,6 +243,7 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 
 							//su.s.api('user.update', su.vk.user_info);
 							su.trigger('dg-auth');
+							
 							if (callback){callback();}
 						}
 					});

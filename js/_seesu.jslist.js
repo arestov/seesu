@@ -23,6 +23,7 @@ var jsLoadComplete,
 	"js/libs/funcsStack.js",
 	"js/libs/funcsQueue.js",
 	//"js/libs/c_quene.js",
+	"js/libs/StatementsAngularParser.min.js",
 	"js/prototypes/provoda.js",
 	
 	//"js/common-libs/jquery.debounce-1.0.5.js", //remove!
@@ -37,26 +38,33 @@ var jsLoadComplete,
 	"js/libs/network.vk.api.js",
 	"js/libs/exfm.js",
 	"js/libs/lastfm.core.js",
-	"js/libs/lastfm.serv.js",
 	"js/network.lastfm.js",
 	"js/lastfm.data.js",
 	"js/su-prototypes/su.serv-prototypes.js",
 
-	"js/views/navigation.js",
+	
 
+	"js/models/LoadableList.js",
 	"js/models/songs-list.base.js",
 	"js/models/songs-list.js",
+	"js/models/artcard.js",
+	
+
+	"js/models/UserAcquaintances.js",
 	"js/models/UserCard.js",
 	"js/models/MusicConductor.js",
+	"js/models/TagPage.js",
+
 	"js/models/start_page.js",
 	"js/models/app_md.js",
 	
-	"js/models/artcard.js",
+	
 	"js/seesu.s.js",
 	"js/libs/mp3_search.js",
 	
 	"js/models/song.base.js",
 	"js/models/song.js",
+	"js/models/YoutubeVideo.js",
 	"js/models/mfcomplect.js",
 	"js/seesu.js",
 	
@@ -74,9 +82,15 @@ var jsLoadComplete,
 
 	"js/libs/c_buttmen.js",
 	
+	"js/views/navigation.js",
 	"js/views/etc.views.js",
+	"js/views/TagPage.js",
+	"js/views/ArtistsList.js",
+	"js/views/UserAcquaintances.js",
 	"js/views/UserCard.js",
 	"js/views/MusicConductor.js",
+	
+	"js/views/YoutubeVideo.js",
 	"js/views/su-mfcomplect.js",
 	"js/views/search-investigation.base.js",
 	"js/views/search-investigation.js",

@@ -75,12 +75,12 @@ playerBase.extendTo(playerComplex, {
 		if (last_mo != mo){
 			this.removeCurrentWantedSong();
 
-			if (last_mo && last_mo.state('mp-show') && this.c_song != mo){
-				mo.view();
+			if (last_mo && last_mo.state('mp_show') && this.c_song != mo){
+				mo.showOnMap();
 			}
 			if (last_mo){
 				last_mo.stop();
-				last_mo.updateState("player-song", false);
+				last_mo.updateState("player_song", false);
 			}
 			if (this.nowPlaying){
 				this.nowPlaying(mo);
@@ -90,8 +90,8 @@ playerBase.extendTo(playerComplex, {
 				mo.plst_titl.lev.freeze();
 			}
 			this.c_song = mo;
-			mo.updateState("player-song", true);
+			mo.updateState("player_song", true);
 		}
-		this.trigger('now-playing-signal', last_mo != mo, mo, last_mo);
+		this.trigger('now_playing-signal', last_mo != mo, mo, last_mo);
 	}
 });

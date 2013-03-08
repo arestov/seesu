@@ -101,7 +101,7 @@ provoda.Model.extendTo(fileInTorrent, {
 			},
 			playing: function(opts){
 				var dec = opts.position/opts.duration;
-				this.updateState('playing-progress', dec);
+				this.updateState('playing_progress', dec);
 				this.updateState('loaded_duration', opts.duration);
 			},
 			buffering: function(state) {
@@ -110,12 +110,12 @@ provoda.Model.extendTo(fileInTorrent, {
 			loading: function(opts){
 				var factor;
 				if (opts.loaded && opts.total){
-					factor = opts.loaded/opts.total
+					factor = opts.loaded/opts.total;
 				} else if (opts.duration && opts.fetched){
-					factor = opts.fetched/opts.duration
+					factor = opts.fetched/opts.duration;
 				}
 				if (factor){
-					this.updateState('loading-progress', factor);
+					this.updateState('loading_progress', factor);
 				}
 				
 
@@ -141,7 +141,7 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.updateState('play', false);
 			},
 			error: function() {
-				var d = new Date()
+				var d = new Date();
 				this.updateState("error", d);
 				if (this.parent){
 					this.parent.error = d;
@@ -150,13 +150,13 @@ provoda.Model.extendTo(fileInTorrent, {
 				var _this = this;
 				getInternetConnectionStatus(function(has_connection) {
 					if (has_connection) {
-						var pp = _this.state("playing-progress");
+						var pp = _this.state("playing_progress");
 						if (!pp){
 							_this.failPlaying();
 						} else {
 							
 							setTimeout(function() {
-								if (_this.state("playing-progress") == pp){
+								if (_this.state("playing_progress") == pp){
 									_this.failPlaying();
 								}
 							}, 3500);
@@ -182,14 +182,17 @@ provoda.Model.extendTo(fileInTorrent, {
 		},
 		_createSound: function(){
 			if (!this.sound){
-				this.player.create(this);
-				this.sound = true;
+				this.sound = !!this.player.create(this);
 			}
 		},
 		play: function(){
 			if (this.player){
 				this._createSound();
-				this.player.play(this);
+				if (this.sound){
+					this.player.play(this);
+					return true;
+				}
+				
 			}
 		},
 		removeCache: function(){
@@ -197,7 +200,7 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.unloadOutBox();
 			}
 			this.player.remove(this);
-			delete this.sound;
+			this.sound = null;
 		},
 		stop: function(){
 			if (this.player){
@@ -211,10 +214,10 @@ provoda.Model.extendTo(fileInTorrent, {
 				}
 
 				this.updateState('play', false);
-				this.updateState('loading-progress', 0);
-				this.updateState('playing-progress', 0);
+				this.updateState('loading_progress', 0);
+				this.updateState('playing_progress', 0);
 				
-				delete this.sound;
+				this.sound = null;
 			}
 		},
 		pause: function(){
@@ -253,7 +256,10 @@ provoda.Model.extendTo(fileInTorrent, {
 					this.loadOutBox();
 				}
 				this._createSound();
-				this.player.load(this);
+				if (this.sound){
+					this.player.load(this);
+				}
+				
 			}
 		},
 		activate: function() {
