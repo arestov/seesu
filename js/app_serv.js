@@ -1392,8 +1392,8 @@ jsLoadComplete(function() {
 	var getSimpleRules = function(sheet){
 		var simple_rules = [];
 
-		var iterating_rules = [].concat(Array.prototype.slice.call(sheet.cssRules));
-		while (iterating_rules.length){
+		var iterating_rules = sheet.cssRules && [].concat(Array.prototype.slice.call(sheet.cssRules));
+		while (iterating_rules && iterating_rules.length){
 			var cur = iterating_rules.shift();
 			if (cur.cssRules){
 				iterating_rules = [].concat(Array.prototype.slice.call(cur.cssRules), iterating_rules);
