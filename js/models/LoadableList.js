@@ -195,7 +195,7 @@ mapLevelModel.extendTo(LoadableList, {
 	checkPMDSwiched: function(value) {
 		this.updateState('pmd_vswitched', value == this._provoda_id);
 	},
-	requestPlaylist: function() {
+	requestList: function() {
 		if (!this.state('has_no_access')){
 			this.loadStart();
 			this.showOnMap();

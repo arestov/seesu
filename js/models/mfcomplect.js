@@ -353,6 +353,10 @@ provoda.Model.extendTo(mfCor, {
 	getCurrentMopla: function(){
 		return this.state('current_mopla');
 	},
+	showOnMap: function() {
+		this.mo.showOnMap();
+		this.updateState('want_more_songs', true);
+	},
 	switchMoreSongsView: function() {
 		if (!this.state('want_more_songs')){
 			this.updateState('want_more_songs', true);
