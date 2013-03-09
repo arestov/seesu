@@ -441,9 +441,6 @@ provoda.View.extendTo(appModelView, {
 		"deep-sandbox": function(state){
 			this.toggleBodyClass(state, 'deep-sandbox');
 		},
-		"flash_internet":function(state){
-			this.toggleBodyClass(state, 'flash_internet');
-		},
 		"viewing_playing": function(state) {
 			if (this.now_playing_link){
 				if (state){

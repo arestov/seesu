@@ -396,17 +396,6 @@ BaseCRow.extendTo(ScrobbleRow, {
 
 
 
-var FlashErrorRow = function(actionsrow){
-	this.init(actionsrow);
-};
-BaseCRow.extendTo(FlashErrorRow, {
-	init: function(actionsrow){
-		this.actionsrow = actionsrow;
-		this._super();
-	},
-	model_name: 'row-flash-error'
-});
-
 
 
 
@@ -456,7 +445,6 @@ PartsSwitcher.extendTo(TrackActionsRow, {
 
 		var initHeavyPart = function() {
 			this.addPart(new ScrobbleRow(this, mo));
-			this.addPart(new FlashErrorRow(this, mo));
 			this.addPart(new RepeatSongRow(this, mo));
 			this.addPart(new PlaylistAddRow(this, mo));
 			this.addPart(new ShareRow(this, mo));

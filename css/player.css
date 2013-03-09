@@ -72,29 +72,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	}
 
 
-.flash_internet .flash-secur{
-	display:none;
-}
-
-
-#message-flash-secur{
-	}
-	
-	#message-flash-secur
-	#widget-url{
-		width:80%;
-	}
-	#message-flash-secur
-	strong{
-		color:#333;
-		font-weight:700;
-		font-size:1.15rem;
-	}
-	#message-flash-secur
-	img{
-		max-width:100%;
-	}
-
 
 
 
@@ -205,11 +182,6 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 
 
-.flash-desandboxing{
-	width:446px;
-	height:150px;
-	background: url(http://img-fotki.yandex.ru/get/4603/gleb-arestov.0/0_55167_ceb4a878_orig) no-repeat 0 0;
-}
 
 .song-track-name {
 	display: block;

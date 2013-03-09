@@ -121,16 +121,7 @@
 	}
 	.scrobbling-button .trackbutton:active{
 	}
-.flash-security-status{
-	background-color:#0d8b2b;
-	text-decoration:blink;
-	}
-	.flash_internet
-	.flash-security-status{
-		color:inherit;
-		
-		text-decoration:none;
-		}
+
 
 .track-buttons{
 	position:relative;
