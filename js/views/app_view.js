@@ -32,7 +32,7 @@ provoda.View.extendTo(appModelView, {
 		}
 		this.lev_containers = {};
 		
-		this.on('state-change.current_mp_md', function(e) {
+		this.on('vip-state-change.current_mp_md', function(e) {
 			var cwp = this.state('vis_current_wpoint');
 			if (cwp){
 				if (cwp.canUse && !cwp.canUse()){
@@ -40,7 +40,7 @@ provoda.View.extendTo(appModelView, {
 				}
 			}
 			
-		}, {skip_reg: true});
+		}, {skip_reg: true, immediately: true});
 		
 	},
 	onDomBuild: function() {
@@ -582,6 +582,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	parts_builder: {
 		//samples
+		'moplas-block': function() {
+			return this.els.ui_samples.children('.moplas-block');
+		},
 		user_page: function() {
 			return this.els.ui_samples.children('.user_page');
 		},
@@ -678,10 +681,11 @@ provoda.View.extendTo(appModelView, {
 					};
 
 					_this.md.rsd_rz = setInterval(recheckFunc,100);
-					_this.on('state-change.current_mp_md.resize-check', function(e) {
+					_this.on('vip-state-change.current_mp_md.resize-check', function(e) {
 						recheckFunc();
 					}, {
-						exlusive: true
+						exlusive: true,
+						immediately: true
 					});
 				};
 				readySteadyResize();
@@ -1769,14 +1773,15 @@ provoda.View.extendTo(appModelView, {
 					var photoupreq_c = this.createPhotoUploadRequest();
 					c.append(photoupreq_c);
 
-					this.on('state-change.vk_info.song-listener', function(e) {
+					this.on('vip-state-change.vk_info.song-listener', function(e) {
 						if (e.value && e.value.photo_big){
 							photoupreq_c.before(this.createLikeButton(lig).c);
 
 							photoupreq_c.remove();
 						}
 					}, {
-						exlusive: true
+						exlusive: true,
+						immediately: true
 					});
 				}
 			}

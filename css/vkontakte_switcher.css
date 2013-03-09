@@ -32,10 +32,11 @@
 		}
 	.moplas-block .vk-login-context{
 		display: none;
-		clear:both;
+		
 		border-radius:0;
 
 		}
+
 	.moplas-block.want_more_songs .vk-login-context{
 		display: block;
 		}

@@ -194,18 +194,30 @@
 					<div class="pl-auth-con" pv-anchor="auth_con"></div>
   				</div>
   				<div class="full_wide_col">
-  					<div class="area_for_button" pv-view="new_releases" >
-						<div class="area-button" pv-anchor="big_button">
-							<span pv-text="{{nav_title}}">Albums</span>
+  					<div class="preview_area" pv-view="new_releases">
+	  					<div class="area_for_button" pv-anchor="button_area">
+							<div class="area-button" pv-anchor='big_button'>
+								<span pv-text="{{nav_title}}">Albums</span>
+							</div>
+							<div class="area-description" >
+								<div class="desc_prevw_list albums_previews" pv-anchor="listc"></div>
+							</div>
 						</div>
-						<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
-					</div>
-					<div class="area_for_button" pv-view="recomm_releases" >
-						<div class="area-button" pv-anchor="big_button">
-							<span pv-text="{{nav_title}}">Albums</span>
+						<div class="pl-auth-con" pv-anchor="auth_con"></div>
+	  				</div>
+	  				<div class="preview_area" pv-view="recomm_releases">
+	  					<div class="area_for_button" pv-anchor="button_area">
+							<div class="area-button" pv-anchor='big_button'>
+								<span pv-text="{{nav_title}}">Albums</span>
+							</div>
+							<div class="area-description" >
+								<div class="desc_prevw_list albums_previews" pv-anchor="listc"></div>
+							</div>
 						</div>
-						<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
-					</div>
+						<div class="pl-auth-con" pv-anchor="auth_con"></div>
+	  				</div>
+
+  					
   				</div>
   				
 			</div>
@@ -389,7 +401,22 @@
 			
 		</div>
   		
-  		
+  		<div class="song-row-content moplas-block">
+  			<div class="show-all-songs hidden" pv-anchor="sall_songs">
+  				<a pv-anchor='more_songs_b'><span class="lang localize-Files"></span></a>
+  				<span class="notifier hidden" pv-view='notifier' pv-text='{{counter}}'></span>
+  				
+  			</div>
+  			<div class="messages-c" pv-anchor='messages_c'>
+				<div class="cant_play_music_message hidden" pv-anchor='cant_play_music_message'>
+					Что бы приложение воспроизводило музыку установите флеш или воспользуйтесь браузером поддерживающим воспроизведение mp3 с помощью HTML5 audio (например Chrome или Safari)
+				</div>
+			</div>
+			<div class="music-files-lists" pv-anchor='mufils_c'></div>
+			<div class="track-video">
+				<ul pv-anchor='video_list'></ul>
+			</div>
+  		</div>
 			
 			
 		<div class="track-context" >

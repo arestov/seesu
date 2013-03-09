@@ -173,12 +173,12 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		});
 
 		var _this = this;
-		this.map_parent.on('state-change.discogs_id_searching', function(e) {
+		this.map_parent.on('vip-state-change.discogs_id_searching', function(e) {
 			_this.updateState('profile_searching', e.value);
-		});
-		this.map_parent.on('state-change.discogs_id', function(e) {
+		}, {immediately: true});
+		this.map_parent.on('vip-state-change.discogs_id', function(e) {
 			_this.updateState('artist_id', e.value);
-		});
+		}, {immediately: true});
 	},
 	'compx-loader_disallowing_desc': {
 		depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
@@ -476,12 +476,12 @@ songsList.extendTo(SoundcloudArtcardSongs, {
 	init: function() {
 		this._super.apply(this, arguments);
 		var _this = this;
-		this.map_parent.on('state-change.sc_profile_searching', function(e) {
+		this.map_parent.on('vip-state-change.sc_profile_searching', function(e) {
 			_this.updateState('profile_searching', e.value);
-		});
-		this.map_parent.on('state-change.soundcloud_profile', function(e) {
+		}, {immediately: true});
+		this.map_parent.on('vip-state-change.soundcloud_profile', function(e) {
 			_this.updateState('artist_id', e.value);
-		});
+		}, {immediately: true});
 	},
 	'compx-loader_disallowing_desc': {
 		depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
@@ -767,11 +767,11 @@ mapLevelModel.extendTo(ArtCard, {
 		this.setChild('hypem_reblog', this.hypem_reblog);
 
 		var _this = this;
-		this.on('state-change.mp_show', function(e) {
+		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				_this.loadInfo();
 			}
-		});
+		},{immediately: true});
 
 		this.updateState('url_part', '/catalog/' + this.app.encodeURLPart(this.artist));
 	},
@@ -866,6 +866,7 @@ mapLevelModel.extendTo(ArtCard, {
 					url: 'http://soundcloud.com/' + nick_name
 				})
 				.done(function(r) {
+					
 					if (r.location){
 						
 
@@ -874,6 +875,7 @@ mapLevelModel.extendTo(ArtCard, {
 
 
 						if (artist_scid){
+							_this.updateState('sc_profile_searching', false);
 							_this.updateState('soundcloud_profile', artist_scid);
 							_this.preloadChildren([_this.soundc_prof, _this.soundc_likes]);
 						}
@@ -896,6 +898,7 @@ mapLevelModel.extendTo(ArtCard, {
 		var artist_name = this.artist;
 		_this.addRequest(this.app.discogs.get('/database/search', {q: artist_name, type:"artist"})
 			.done(function(r) {
+
 				var artists_list = r && r.results;
 				var artist_info;
 				var simplified_artist = simplifyArtistName(artist_name);
@@ -913,6 +916,7 @@ mapLevelModel.extendTo(ArtCard, {
 					}
 				}
 				if (artist_info){
+					_this.updateState('discogs_id_searching', false);
 					_this.updateState('discogs_id', artist_info.id);
 					_this.dgs_albums.preloadStart();
 				}

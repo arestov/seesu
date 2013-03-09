@@ -113,7 +113,7 @@ provoda.Eventor.extendTo(vkAuth, {
 		return o;
 	},
 	waitData: function() {
-		this.trigger('data-wait');
+		this.trigger('data_wait');
 		this.data_wait = true;
 	},
 	createAuthFrame: function(first_key){

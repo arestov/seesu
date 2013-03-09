@@ -131,7 +131,7 @@
 	.search_results-container ul.active-section{
 		display: block;
 	}
-	.search_results-container ul.sugg-section.odd-section{
+	.search_results-container ul.sugg-section.odd_section{
 		background-color:#4d4d4d;
 	}
 	.search_results-container ul.playlist-results a{padding-left:47px;}

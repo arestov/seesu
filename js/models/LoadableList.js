@@ -11,7 +11,7 @@ mapLevelModel.extendTo(LoadableList, {
 		if (this.sendMoreDataRequest){
 			this.updateState("has_loader", true);
 		}
-		this.on('state-change.mp_show', function(e) {
+		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				this.preloadStart();
 			}
@@ -195,7 +195,7 @@ mapLevelModel.extendTo(LoadableList, {
 	checkPMDSwiched: function(value) {
 		this.updateState('pmd_vswitched', value == this._provoda_id);
 	},
-	requestPlaylist: function() {
+	requestList: function() {
 		if (!this.state('has_no_access')){
 			this.loadStart();
 			this.showOnMap();

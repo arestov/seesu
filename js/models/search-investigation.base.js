@@ -297,7 +297,7 @@
 			this.updateState('loading', false);
 		},
 		markOdd: function(remove){
-			this.updateState('odd-section', !remove)
+			this.updateState('odd_section', !remove)
 		},
 		getItems: function(no_button){
 			var r = [].concat(this.rendering_list);
