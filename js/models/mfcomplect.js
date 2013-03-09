@@ -155,13 +155,13 @@ provoda.Model.extendTo(mfCor, {
 			this.setChild('sorted_completcs', [complect], true);
 
 		} else {
-			this.mo.on('state-change.track', function(e) {
+			this.mo.on('vip-state-change.track', function(e) {
 				if (e.value){
 					_this.files_investg = _this.mo.mp3_search.getFilesInvestg({artist: _this.mo.artist, track: _this.mo.track});
 					_this.bindInvestgChanges();
 				}
 				
-			});
+			}, {immediately: true});
 			
 		}
 		
