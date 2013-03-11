@@ -6,67 +6,54 @@ VkLoginUI.extendTo(SoftVkLoginUI, {
 	}
 });
 
+
+
+
 var PersonalListPreview = function() {};
 ListPreview.extendTo(PersonalListPreview, {
 	clickAction: function() {
-		this.md.requestPlaylist();
+		this.md.requestList();
 	},
 	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
-	},
-	'collch-auth_part': {
-		place: 'tpl.ancs.auth_con',
-		by_model_name: true
 	},
 	children_views: {
 		auth_block_lfm: LfmLoginView,
 		auth_block_vk: SoftVkLoginUI,
 		preview_list: ArtistsListPreviewLine
 	},
+	'collch-auth_part': {
+		place: 'tpl.ancs.auth_con',
+		by_model_name: true
+	},
 	'collch-preview_list': {
 		place: 'tpl.ancs.listc',
 		limit: 9
 	}
 });
-
-var PlaylistPreview = function() {};
-provoda.View.extendTo(PlaylistPreview, {
-	createBase: function() {
-		this.c = $('<div class="playlist_preview-c no_arfb"></div>');
-		this.prew_c = $('<div class="area-button"></div>').appendTo(this.c);
-		this.prew_text = $('<span></span>').appendTo(this.prew_c);
-		//this.desc = $('<div class="area-description"></div>').appendTo(this.prew_c);
-		var _this = this;
-		this.prew_c.click(function() {
-			_this.md.requestPlaylist();
-		});
-
-		this.addWayPoint(this.prew_c);
-		this.auth_c = $('<div class="pl-auth-con"></div>').appendTo(this.c);
-		//this.
-	},
-	'stch-has_no_access': function(state) {
-		//this.prew_c.toggleClass('placeholdered-text', !state);
+var PersonalAlbumsListPreview = function() {};
+AlbumsListPreview.extendTo(PersonalAlbumsListPreview, {
+	clickAction: function() {
+		this.md.requestList();
 	},
 	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
 	},
-	'stch-nav_title': function(state) {
-		this.prew_text.text(state);
+	children_views: {
+		auth_block_lfm: LfmLoginView,
+		auth_block_vk: SoftVkLoginUI,
+		preview_list: AlbumsListPreviewItem
 	},
 	'collch-auth_part': {
-		place: 'auth_c',
+		place: 'tpl.ancs.auth_con',
 		by_model_name: true
 	},
-	children_views: {
-		auth_block_lfm: {
-			main: LfmLoginView
-		},
-		auth_block_vk: {
-			main: VkLoginUI
-		}
+	'collch-preview_list': {
+		place: 'tpl.ancs.listc',
+		limit: 15
 	}
 });
+
 
 var UserCardPage = function(){};
 PageView.extendTo(UserCardPage, {
@@ -87,57 +74,11 @@ PageView.extendTo(UserCardPage, {
 		vk_audio: PersonalListPreview,
 		arts_recomms: PersonalListPreview,
 		lfm_loved: PersonalListPreview,
-		new_releases: AlbumsListPreview,
-		recomm_releases: AlbumsListPreview
+		new_releases: PersonalAlbumsListPreview,
+		recomm_releases: PersonalAlbumsListPreview
 	},
 	'collch-users_acqutes': 'tpl.ancs.users_acqutes'
 });
-
-var UserCardView = function() {};
-provoda.View.extendTo(UserCardView, {
-	createBase: function() {
-		this.c = $('<div class="usual_page"></div>');
-		this.items_c = $("<div></div>").appendTo(this.c);
-		//this.plts_link_a = $(document.createComment('')).appendTo(this.c);
-		this.aqc_preview_c = $('<div class="aqc_preview"></div>').appendTo(this.c);
-	},
-	'stch-mp_show': function(state) {
-		this.c.toggleClass('hidden', !state);
-	},
-	'stch-has_playlists': function(state){
-		//this.requirePart('plts_link').toggleClass('hidden', !state);
-	},
-	parts_builder: {
-		plts_link: function() {
-			var wrap = $('<span class="button-hole"><a class="nicebutton"></a></span>');
-			var _this = this;
-			var link = wrap.children('a');
-			link.click(function(e){
-				e.preventDefault();
-				_this.root_view.md.showPlaylists();
-			}).text(localize('playlists'));
-			this.plts_link_a.after(wrap);
-			this.plts_link_a.remove();
-			this.addWayPoint(link);
-			return wrap;
-		}
-	}
-	/*
-	'collch-arts_recomms': 'items_c',
-	'collch-lfm_loved': 'items_c',
-//	'collch-vk_audio': 'items_c',
-//	'collch-users_acqutes': 'aqc_preview_c',
-//	children_views: {
-		arts_recomms: PlaylistPreview,
-		vk_audio: PersonalListPreview,
-		lfm_loved: PlaylistPreview,
-		users_acqutes: UserAcquaintancesListPreview
-	}*/
-});
-
-
-
-
 
 var UserCardPreview = function() {};
 provoda.View.extendTo(UserCardPreview, {

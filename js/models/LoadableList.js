@@ -1,4 +1,5 @@
 var LoadableList,
+	ListsModel,
 	TagsList;
 
 (function(){
@@ -11,7 +12,7 @@ mapLevelModel.extendTo(LoadableList, {
 		if (this.sendMoreDataRequest){
 			this.updateState("has_loader", true);
 		}
-		this.on('state-change.mp_show', function(e) {
+		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				this.preloadStart();
 			}
@@ -83,7 +84,7 @@ mapLevelModel.extendTo(LoadableList, {
 		if (this.state("has_loader") && this.sendMoreDataRequest){
 			if (!this.request_info || this.request_info.done){
 				this.markLoading();
-				this.request_info = this.sendMoreDataRequest.call(this, this.getPagingInfo());
+				this.request_info = this.sendMoreDataRequest.call(this, this.getPagingInfo(), {});
 				if (!this.request_info.request){
 					throw new Error('give me request');
 				} else {
@@ -144,6 +145,74 @@ mapLevelModel.extendTo(LoadableList, {
 		return this;
 	},
 
+
+	sendLFMDataRequest: function(paging_opts, request_info, opts) {
+		var
+			no_paging = opts.no_paging,
+			method = opts.method,
+			data = opts.data,
+			parser = opts.parser,
+			field_name = opts.field_name;
+
+		var _this = this;
+
+		var request_data = {
+			limit: paging_opts.page_limit,
+			page: paging_opts.next_page
+		};
+		if (data){
+			cloneObj(request_data, data);
+		}
+		request_info.request = this.app.lfm.get(method, request_data)
+			.done(function(r){
+				var data_list = parser.call(this, r, field_name, paging_opts);
+				if (no_paging && !r.error){
+					_this.setLoaderFinish();
+				}
+				_this.putRequestedData(request_info.request, data_list, r.error);
+			})
+			.fail(function(){
+				_this.requestComplete(request_info.request, true);
+			}).always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	},
+	getLastfmArtistsList: function(r, field_name, paging_opts) {
+		var artists = toRealArray(getTargetField(r, field_name));
+		var data_list = [];
+		if (artists && artists.length) {
+			var l = Math.min(artists.length, paging_opts.page_limit);
+			for (var i=0; i < l; i++) {
+				data_list.push({
+					artist: artists[i].name,
+					lfm_image: {
+						array: artists[i].image
+					}
+				});
+			}
+
+		}
+		return data_list;
+	},
+	getLastfmTracksList: function(r, field_name, paging_opts) {
+		var tracks = toRealArray(getTargetField(r, field_name));
+		var track_list = [];
+		if (tracks) {
+			for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
+				track_list.push({
+					'artist' : tracks[i].artist.name,
+					'track': tracks[i].name,
+					lfm_image:  {
+						array: tracks[i].image
+					}
+				});
+			}
+		}
+		return track_list;
+	},
+
+
 	//auth things:
 
 	authInit: function() {
@@ -195,7 +264,7 @@ mapLevelModel.extendTo(LoadableList, {
 	checkPMDSwiched: function(value) {
 		this.updateState('pmd_vswitched', value == this._provoda_id);
 	},
-	requestPlaylist: function() {
+	requestList: function() {
 		if (!this.state('has_no_access')){
 			this.loadStart();
 			this.showOnMap();
@@ -241,4 +310,21 @@ LoadableList.extendTo(TagsList, {
 		this.updateState('preview_list', list);
 	}
 });
+
+ListsModel = function() {};
+mapLevelModel.extendTo(ListsModel, {
+	init: function(opts) {
+		this._super(opts);
+		var _this = this;
+		this.on('vip-state-change.mp_show', function(e) {
+			if (e.value && e.value.userwant){
+				for (var i = 0; i < _this.lists_list.length; i++) {
+					_this.lists_list[i].preloadStart();
+				}
+			}
+		});
+	}
+});
+
+
 })();

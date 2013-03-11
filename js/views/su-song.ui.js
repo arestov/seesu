@@ -98,8 +98,8 @@ provoda.View.extendTo(songUI, {
 			this.node.toggleClass('search-mp3', searching);
 		
 		},
-		'track-name-loading': function(state) {
-			this.node.toggleClass('track-name-loading', state);
+		'track_name_loading': function(state) {
+			this.node.toggleClass('track_name_loading', state);
 		},
 		"player_song": function(state) {
 			this.c.toggleClass('player_song', !!state);

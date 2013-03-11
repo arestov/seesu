@@ -43,64 +43,109 @@ var songsList;
 				}, 1000/60);
 				
 			});
+			this.excess_data_items = [];
+			this.tumour_data_count = 0;
 		},
 		getMainList: function() {
 			return this[this.main_list_name];
 		},
 		main_list_name: 'songs-list',
-		addOmo: function(omo, skip_changes){
-			var mo = this.extendSong(omo);
-
-			var last_usable_song = this.getLastUsableSong();
-
-			if (this.first_song){
-				if (this.first_song==mo){
-					this[this.main_list_name].push(mo);
-				} else if (!this.firstsong_inseting_done){
-					if (mo.artist != this.first_song.artist || mo.track != this.first_song.track){
-						var fs = this[this.main_list_name].pop();
-						this[this.main_list_name].push(mo);
-						this[this.main_list_name].push(fs);
-					} else {
-						this.firstsong_inseting_done = true;
-					}
-					
-				} else{
-					this[this.main_list_name].push(mo);
-				}
-			} else {
-				this[this.main_list_name].push(mo);
-			}
-			
-			if (!skip_changes){
-				this.setChild(this.main_list_name, this[this.main_list_name], {
-					last_usable_song: last_usable_song
-				});
-				
-			}
-			return mo;
-		},
 		add: function(omo){
 			var mo = cloneObj({}, omo, false, ['track', 'artist', 'file']);
-			return this.addOmo(mo);
+			return this.addDataItem(mo);
 		},
-		findSongOwnPosition: function(first_song){
-			var can_find_context;
+		makeDataItem: function(obj) {
+			return this.extendSong(obj);
+		},
 
-			if (bN(['artist', 'album', 'cplaylist'].indexOf(this.playlist_type ))){
-				can_find_context = true;
-			}
-			
-			this.firstsong_inseting_done = !can_find_context;
-			
-			if (first_song && first_song.track && first_song.artist){
-				this.first_song = this.extendSong(first_song);;
-			}
-			if (this.first_song){
-				this.addOmo(this.first_song);
+		compareItemWithObj: function(song, omo, soft) {
+			var artist_match = song.artist == omo.artist;
+			if (artist_match){
+				if (song.track == omo.track || (soft && (!song.track || !omo.track))){
+					return true;
+				}
 			}
 		},
-		
+		compareItemsWithObj: function(array, omo, soft) {
+			for (var i = 0; i < array.length; i++) {
+				if (this.compareItemWithObj(array[i], omo, soft)){
+					return array[i];
+				}
+			}
+		},
+		addDataItem: function(obj, skip_changes) {
+			var
+				item,
+				excess_items,
+				work_array = this[this.main_list_name],
+				last_usable_song = skip_changes && this.getLastUsableSong();
+
+			if (this.excess_data_items && this.excess_data_items.length){
+				var matched = this.compareItemsWithObj(this.excess_data_items, obj);
+				/*
+				задача этого кода - сделать так, что бы при вставке новых данные всё что лежит в массиве
+				"излишек" должно оставаться в конце массива
+				*/
+				excess_items = this.excess_data_items;
+				if (matched){
+					item = matched;
+					/*если совпадает с предполагаемыми объектом, то ставим наш элемент в конец рабочего массива
+					и удаляем из массива "излишков", а сами излишки в самый конец */
+					work_array = arrayExclude(work_array, excess_items);
+					excess_items = arrayExclude(excess_items, matched);
+					work_array.push(matched);
+					work_array = work_array.concat(excess_items);
+
+				} else {
+					/*если объект не совпадает ни с одним элементом, то извлекаем все излишки,
+					вставляем объект, вставляем элементы обратно */
+					work_array = arrayExclude(work_array, excess_items);
+					work_array.push(item = this.makeDataItem(obj));
+					work_array = work_array.concat(excess_items);
+
+
+				}
+				this.excess_data_items = excess_items;
+			} else {
+				work_array.push(item = this.makeDataItem(obj));
+			}
+			
+			this[this.main_list_name] = work_array;
+			if (!skip_changes){
+				this.setChild(this.main_list_name, work_array, {
+					last_usable_song: last_usable_song
+				});
+			}
+			return item;
+		},
+		findMustBePresentDataItem: function(obj) {
+			var matched = this.compareItemsWithObj(this[this.main_list_name], obj);
+			return matched || this.injectExcessDataItem(obj);
+		},
+		injectExcessDataItem: function(obj) {
+			if (!obj.track && !obj.artist){
+				return;
+			}
+			var
+				work_array = this[this.main_list_name],
+				last_usable_song = this.getLastUsableSong(),
+				item = this.makeDataItem(obj);
+
+			if (this.can_find_dli_pos){
+				this.excess_data_items.push(item);
+				work_array.push(item);
+			} else {
+				++this.tumour_data_count;
+				work_array.unshift(item);
+			}
+
+			
+			
+			this.setChild(this.main_list_name, work_array, {
+				last_usable_song: last_usable_song
+			});
+			return item;
+		},		
 		getLastSong: function(){
 			return this[this.main_list_name].length ? this[this.main_list_name][this[this.main_list_name].length - 1] : false;
 		},
@@ -110,14 +155,10 @@ var songsList;
 			};
 		},
 		getLength: function() {
-			var length = this[this.main_list_name].length;
-			if (this.first_song && !this.firstsong_inseting_done){
-				--length;
-			}
-			return length;
+			return this[this.main_list_name].length - this.tumour_data_count - (this.excess_data_items && this.excess_data_items.length);
 		},
 		addItemToDatalist: function(obj, silent) {
-			this.addOmo(obj, silent);
+			this.addDataItem(obj, silent);
 		},
 		onChanges: function(last_usable_song){
 			if (last_usable_song && last_usable_song.isImportant()){

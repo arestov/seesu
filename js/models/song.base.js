@@ -309,7 +309,7 @@ provoda.addPrototype("baseSong",{
 		this.updateState('url_part', this.getURL());
 	},
 	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){
-		this.updateState('track-name-loading', true);
+		this.updateState('track_name_loading', true);
 		var _this = this;
 
 		/*
@@ -538,7 +538,7 @@ provoda.addPrototype("baseSong",{
 					
 				})
 				.always(function() {
-					_this.updateState('track-name-loading', false);
+					_this.updateState('track_name_loading', false);
 					if (_this.rtn_request == big_request){
 						delete _this.rtn_request;
 					}

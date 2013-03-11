@@ -186,11 +186,11 @@ provoda.addPrototype("searchSectionView", {
 				}
 			}
 		},
-		'odd-section': function(state){
+		'odd_section': function(state){
 			if (state){
-				this.c.addClass('odd-section');
+				this.c.addClass('odd_section');
 			} else {
-				this.c.removeClass('odd-section');
+				this.c.removeClass('odd_section');
 			}
 		}
 	},

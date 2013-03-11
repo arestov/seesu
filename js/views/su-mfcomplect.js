@@ -1,19 +1,15 @@
-
-
 var notifyCounterUI = function() {};
-
 provoda.View.extendTo(notifyCounterUI, {
+	useBase: function(node) {
+		this.c = node;
+		this.createTemplate();
+	},
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
 	state_change: {
 		counter: function(state) {
-			if (state){
-				this.c.text(state);
-				this.c.removeClass('hidden');
-			} else {
-				this.c.addClass('hidden');
-			}
+			this.c.toggleClass('hidden', !state);
 		}
 	}
 });
@@ -109,8 +105,11 @@ provoda.View.extendTo(mfCorUI, {
 		},
 		"must-be-expandable": function(state) {
 			if (state){
-				this.sall_songs.removeClass('hidden');
+				this.tpl.ancs.sall_songs.removeClass('hidden');
 			}
+		},
+		"cant_play_music": function(state) {
+			this.tpl.ancs.cant_play_music_message.toggleClass('hidden', !state);
 		}
 	},
 	'collch-sorted_completcs': function(name, array) {
@@ -127,7 +126,7 @@ provoda.View.extendTo(mfCorUI, {
 					if (next_dom_hook){
 						$(next_dom_hook).before(el_dom);
 					} else {
-						_this.mufils_c.append(el_dom);
+						_this.tpl.ancs.mufils_c.append(el_dom);
 					}
 				}
 
@@ -136,38 +135,18 @@ provoda.View.extendTo(mfCorUI, {
 		this.requestAll();
 	},
 	'collch-vk_auth': {
-		place: 'messages_c',
+		place: 'tpl.ancs.messages_c',
 		strict: true
 	},
-	'collch-yt_videos': 'video_list',
-	'collch-notifier': {
-		place: 'sall_songs',
-		strict: true
-	},
+	'collch-yt_videos': 'tpl.ancs.video_list',
 	createBase: function() {
-		this.c = $('<div class="song-row-content moplas-block"></div>');
+		this.c = this.root_view.getSample('moplas-block');
+		this.createTemplate();
 		var _this = this;
-
-		this.sall_songs = $('<div class="show-all-songs hidden"></div>');
-
-		this.more_songs_b = $('<a class=""></a>').appendTo(this.sall_songs);
-		this.more_songs_b.click(function() {
+		this.tpl.ancs.more_songs_b.click(function() {
 			_this.md.switchMoreSongsView();
 		});
-		this.addWayPoint(this.more_songs_b);
-		$('<span></span>').text(localize('Files')).appendTo(this.more_songs_b);
-		this.c.prepend(this.sall_songs);
-
-		
-
-		this.messages_c = $('<div class="messages-c"></div>').appendTo(this.c);
-		
-		this.video_c = $('<div class="track-video "></div>');
-
-		this.video_list =  $('<ul class=""></ul>').appendTo(this.video_c);
-
-		this.mufils_c = $("<div class='music-files-lists'></div>").appendTo(this.c);
-		this.c.append(this.video_c);
+		this.addWayPoint(this.tpl.ancs.more_songs_b);
 
 	},
 	getNextSemC: function(packs, start) {

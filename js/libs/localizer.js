@@ -8,6 +8,10 @@
 */
 
 localizer = {
+	"music-cond": {
+		"original": "Music Conductor",
+		"ru": "Музыкальный кондуктор"
+	},
 	"no-dgs-id": {
 		"original": "Artist's discogs profile was not found",
 		"ru":"Discogs профиль артиста не был найден"
@@ -337,10 +341,6 @@ localizer = {
 	"and-restart": {
 		"original": "and then restart Seesu",
 		"ru": "и перезапусти Сису"
-	},
-	"bad-flash-desc": {
-		"original": "About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.",
-		"ru": "О безопасности флеша: по умолчанию флеш плеер работает среди ограничений накладывающееся на виджеты, при этом не имеет доступа в интернет. Чтобы дать доступ к mp3 файлам располагающихся на сайтах тебе нужно изменить настройки на соответствующей странице. Там же ты можешь ограничить доступ."
 	},
 	"addto-lfm-favs": {
 		"original": "add to favorites",

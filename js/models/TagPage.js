@@ -379,30 +379,15 @@ mapLevelModel.extendTo(SongsLists, {
 		this.updateState('nav_title', localize('Songs'));
 		this.updateState('url_part', '/songs');
 
-		var lists_list = [];
+		this.lists_list = [
+			new TopTagSongs(), new FreeTagSongs(), new TrendingTagSongs(), new ExplorableTagSongs(),
+			new AllHypemTagSongs(), new Fav25HypemTagSongs(), new Fav250HypemTagSongs()
+		];
 
-		lists_list.push(new TopTagSongs());
-		lists_list.push(new FreeTagSongs());
-		lists_list.push(new TrendingTagSongs());
-		lists_list.push(new ExplorableTagSongs());
-		lists_list.push(new AllHypemTagSongs());
-		lists_list.push(new Fav25HypemTagSongs());
-		lists_list.push(new Fav250HypemTagSongs());
+		this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
 
-		this.on('state-change.mp_show', function(e) {
-			if (e.value && e.value.userwant){
-				for (var i = 0; i < lists_list.length; i++) {
-					lists_list[i].preloadStart();
-				}
-			}
-		});
-
-		for (var i = 0; i < lists_list.length; i++) {
-			lists_list[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
-		}
-
-		this.setChild('lists_list', lists_list);
-
+		this.setChild('lists_list', this.lists_list);
+		this.bindChildrenPreload();
 	},
 	model_name: 'tag_songs'
 });
@@ -526,27 +511,14 @@ mapLevelModel.extendTo(ArtistsLists, {
 			'url_part': '/artists'
 		});
 
-		var lists_list = [];
 
+		this.lists_list = [new TagTopArtists(), new WeekTagArtists()];
 
-		lists_list.push(new TagTopArtists());
-		lists_list.push(new WeekTagArtists());
+	
 
-
-		for (var i = 0; i < lists_list.length; i++) {
-			lists_list[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
-		}
-		
-		this.on('state-change.mp_show', function(e) {
-			if (e.value && e.value.userwant){
-				for (var i = 0; i < lists_list.length; i++) {
-					lists_list[i].preloadStart();
-				}
-			}
-		});
-
-		this.setChild('lists_list', lists_list);
-
+		this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
+		this.setChild('lists_list', this.lists_list);
+		this.bindChildrenPreload();
 	},
 	model_name: 'tag_artists'
 });
@@ -579,7 +551,7 @@ mapLevelModel.extendTo(TagPage, {
 		this.setChild('albums_list', albums_list);
 		this.setChild('similar_tags', similar_tags);
 
-		this.on('state-change.mp_show', function(e) {
+		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				albums_list.preloadStart();
 				similar_tags.preloadStart();

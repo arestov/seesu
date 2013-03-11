@@ -127,19 +127,17 @@ provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 
 var BindControl = function() {};
 Class.extendTo(BindControl, {
-	init: function(eventor, short_name, namespace, cb, once) {
+	init: function(eventor, opts) {
 		this.ev = eventor;
-		this.short_name = short_name;
-		this.namespace = namespace;
-		this.cb = cb;
-		this.once = once;
+		this.opts = opts;
 	},
 	subscribe: function() {
 		this.unsubcribe();
-		this.ev._pushCallbackToStack(this.short_name, this.namespace, this.cb, this.once);
+		
+		this.ev._pushCallbackToStack(this.opts);
 	},
 	unsubcribe: function() {
-		this.ev.off(this.namespace, this.cb);
+		this.ev.off(this.opts.namespace, this.opts.cb);
 	}
 });
 
@@ -150,14 +148,15 @@ Class.extendTo(provoda.Eventor, {
 		this.requests = {};
 		return this;
 	},
-	_pushCallbackToStack: function(short_name, namespace, cb, once) {
-		if (!this.subscribes[short_name]){
-			this.subscribes[short_name] = [];
+	_pushCallbackToStack: function(opts) {
+		if (!this.subscribes[opts.short_name]){
+			this.subscribes[opts.short_name] = [];
 		}
-		this.subscribes[short_name].push({
-			namespace: namespace,
-			cb: cb,
-			once: once
+		this.subscribes[opts.short_name].push({
+			namespace: opts.namespace,
+			cb: opts.cb,
+			once: opts.once,
+			immediately: opts.immediately
 		});
 	},
 	getPossibleRegfires: function(namespace) {
@@ -210,12 +209,21 @@ Class.extendTo(provoda.Eventor, {
 			this.reg_fires[short_name]
 			
 		}*/
+		var subscr_opts = {
+			short_name: short_name,
+			namespace: namespace,
+			cb: cb,
+			once: once,
+			immediately: opts && opts.immediately
+		};
+
 		if (!(once && fired)){
-			this._pushCallbackToStack(short_name, namespace, cb, once);
+			
+			this._pushCallbackToStack(subscr_opts);
 		}
 		if (opts && opts.easy_bind_control){
 			var bind_control = new BindControl();
-			bind_control.init(this, short_name, namespace, cb, once);
+			bind_control.init(this, subscr_opts);
 			return bind_control;
 		} else {
 			return this;
@@ -287,6 +295,17 @@ Class.extendTo(provoda.Eventor, {
 		}
 		return this;
 	},
+	callEventCallback: function(cur, args) {
+		var _this = this;
+		if (cur.immediately){
+			cur.cb.apply(_this, args);
+		} else {
+			setTimeout(function() {
+				cur.cb.apply(_this, args);
+			},1);
+		}
+		
+	},
 	trigger: function(){
 		var args = Array.prototype.slice.call(arguments);
 		var name = args.shift();
@@ -299,12 +318,10 @@ Class.extendTo(provoda.Eventor, {
 		if (cb_cs){
 			for (var i = 0; i < cb_cs.length; i++) {
 				var cur = cb_cs[i];
-				cur.cb.apply(this, args);
+				this.callEventCallback(cur, args);
 				if (cur.once){
 					this.off(name, false, cur);
 				}
-
-				
 			}
 		}
 		return this;
@@ -390,6 +407,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.complex_states_index = {};
 		this.complex_states_watchers = [];
 		this.states_changing_stack = [];
+		this.onRegistration('vip-state-change', function(cb, namespace, opts, name_parts) {
+			var state_name = name_parts[1];
+			cb({
+				value: this.state(state_name)
+			});
+		});
 
 		this.onRegistration('state-change', function(cb, namespace, opts, name_parts) {
 			var state_name = name_parts[1];
@@ -450,6 +473,17 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				return [old_value];
 			}
 		}
+	},
+	emmitStateChange: function(cur, original_state) {
+		var _this = this;
+		setTimeout(function() {
+			_this.trigger('state-change.' + cur.name, {
+				type: cur.name,
+				value: cur.value,
+				old_value: original_state
+			});
+		},1);
+		
 	},
 	_updateProxy: function(changes_list, opts) {
 		var i, cur;
@@ -515,13 +549,17 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			for (i = 0; i < result_changes_list.length; i++) {
 				cur = result_changes_list[i];
 
-
-				//вызов стандартного события
-				this.trigger('state-change.' + cur.name, {
+				//вызов внутреннего для самого объекта события
+				this.trigger('vip-state-change.' + cur.name, {
 					type: cur.name,
 					value: cur.value,
 					old_value: original_states[cur.name]
 				});
+
+				//вызов стандартного события
+				this.emmitStateChange(cur, original_states[cur.name]);
+
+				
 
 				//вызов комплексного наблюдателя
 				var watchers = this.complex_states_index[cur.name];

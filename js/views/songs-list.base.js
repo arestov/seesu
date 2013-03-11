@@ -54,9 +54,8 @@ provoda.addPrototype("songsListBaseView", {
 		this.createListBase();
 		
 	},
-	appendSongDOM: function(song_view, mo, array, current_index){
+	appendSongDOM: function(song_view, array, current_index){
 		var
-			moc,
 			song_dom = song_view.getA();
 		if (!song_dom){
 			return;
@@ -79,7 +78,7 @@ provoda.addPrototype("songsListBaseView", {
 		for (var i = 0; i < arr.length; i++) {
 			var view = this.getFreeChildView(name, arr[i], 'main', {lite: this.opts && this.opts.overview});
 			if (view){
-				this.appendSongDOM(view, arr[i], arr, i);
+				this.appendSongDOM(view, arr, i);
 			}
 		}
 		this.requestAll();

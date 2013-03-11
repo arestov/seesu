@@ -30,12 +30,11 @@ mapLevelModel.extendTo(StartPage, {
 
 		var muco = (new MusicConductor()).init({
 			app: su,
-			pmd: this,
 			map_parent: this
 		});
 		this.setChild('muco', muco);
 
-		this.on('state-change.can_expand', function(e) {
+		this.on('vip-state-change.can_expand', function(e) {
 			muco.updateState('can_expand', e.value);
 			personal_stuff.updateState('can_expand', e.value);
 		});
