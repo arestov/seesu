@@ -435,8 +435,12 @@ HypemPlaylist.extendTo(HypemArtistSeFreshSongs, {
 		});
 	},
 	send_params: {},
-	sendMoreDataRequest: function(paging_opts) {
-		return this.makePlaylistRequest(paging_opts, '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js');
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
 	}
 });
 var HypemArtistSeUFavSongs = function() {};
@@ -452,8 +456,12 @@ HypemPlaylist.extendTo(HypemArtistSeUFavSongs, {
 	send_params: {
 		sortby:'fav'
 	},
-	sendMoreDataRequest: function(paging_opts) {
-		return this.makePlaylistRequest(paging_opts, '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js');
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
 	}
 });
 var HypemArtistSeBlogged = function() {};
@@ -470,7 +478,11 @@ HypemPlaylist.extendTo(HypemArtistSeBlogged, {
 		sortby:'blogged'
 	},
 	sendMoreDataRequest: function(paging_opts) {
-		return this.makePlaylistRequest(paging_opts, '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js');
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
 	}
 });
 

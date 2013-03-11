@@ -100,8 +100,12 @@ HypemPlaylist.extendTo(HypemTagPlaylist, {
 			return this.tag_name;
 		}
 	},
-	sendMoreDataRequest: function(paging_opts) {
-		return this.makePlaylistRequest(paging_opts, '/playlist/tags/' + this.getHypeTagName() + '/json/' + paging_opts.next_page +'/data.js');
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/tags/' + this.getHypeTagName() + '/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
 	}
 });
 var Fav25HypemTagSongs = function() {};
