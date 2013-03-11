@@ -1,4 +1,4 @@
-var
+var spv = {},
 	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
 	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
@@ -27,6 +27,18 @@ if (!Array.prototype.indexOf) {
 		return -1;
 	};
 }
+spv.once = function(fn) {
+	var result;
+	return function(){
+		if (fn){
+			var fnn = fn;
+			fn = null;
+			return (result = fnn.apply(this, arguments));
+		} else {
+			return result;
+		}
+	};
+};
 
 addEvent = window.addEventListener ?
 function(elem, evType, fn){
@@ -269,6 +281,7 @@ getTargetField = function(obj, field){
 	}
 	return target;
 };
+spv.getTargetField = getTargetField;
 
 var getFieldValueByRule = function(obj, rule){
 	if (rule instanceof Function){
@@ -315,7 +328,7 @@ sortByRules = function(a, b, rules){
 	}
 };
 
-makeIndexByField = function(array, field){
+makeIndexByField = function(array, field, keep_case){
 	var r = {};
 	if (array && array.length){
 		for (var i=0; i < array.length; i++) {
@@ -325,7 +338,10 @@ makeIndexByField = function(array, field){
 			if (fv){
 				if (fv instanceof Array){
 					for (var k=0; k < fv.length; k++) {
-						simple_name = (fv[k] + '').toLowerCase();
+						simple_name = (fv[k] + '');
+						if (!keep_case){
+							simple_name = simple_name.toLowerCase();
+						}
 						if (!r[simple_name]){
 							r[simple_name] = [];
 							r[simple_name].real_name = fv[k];
@@ -336,7 +352,10 @@ makeIndexByField = function(array, field){
 						}
 					}
 				} else{
-					simple_name = (fv + '').toLowerCase();
+					simple_name = (fv + '');
+					if (!keep_case){
+						simple_name = simple_name.toLowerCase();
+					}
 					if (!r[simple_name]){
 						r[simple_name] = [];
 						r[simple_name].real_name = fv;
@@ -360,6 +379,7 @@ makeIndexByField = function(array, field){
 	
 	return r;
 };
+spv.makeIndexByField = makeIndexByField;
 
 $filter = function(array, field, value_or_testfunc){
 	var r = [];
@@ -395,6 +415,7 @@ $filter = function(array, field, value_or_testfunc){
 	}
 	return r;
 };
+spv.filter = $filter;
 
 
 
@@ -438,7 +459,8 @@ getUnitBaseNum = function(_c){
 };
 
 
-stringifyParams= function(params, ignore_params, splitter, joiner){
+stringifyParams= function(params, ignore_params, splitter, joiner, opts){
+	opts = opts || {};
 	splitter = splitter || '';
 	if (typeof params == 'string'){
 		return params;
@@ -449,7 +471,10 @@ stringifyParams= function(params, ignore_params, splitter, joiner){
 			pv_signature_list.push(p + splitter + params[p]);
 		}
 	}
-	pv_signature_list.sort();
+	if (!opts.not_sort){
+		pv_signature_list.sort();
+	}
+	
 	return pv_signature_list.join(joiner || '');
 };
 
@@ -598,6 +623,8 @@ debounce = function(fn, timeout, invokeAsap, ctx) {
 	};
 
 };
+spv.debounce = debounce;
+
 throttle = function(fn, timeout, ctx) {
 
 	var timer, args, needInvoke;
@@ -625,7 +652,7 @@ throttle = function(fn, timeout, ctx) {
 	};
 
 };
-
+spv.throttle = throttle;
 
 
 (function(){

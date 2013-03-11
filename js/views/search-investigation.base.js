@@ -29,7 +29,7 @@ provoda.addPrototype("baseSuggestView", {
 			}
 		}
 		if (this.autoscroll && state){
-			var active_invstg = this.parent_view.parent_view.state('mp-show');
+			var active_invstg = this.parent_view.parent_view.state('mp_show');
 			if (active_invstg && !active_invstg.transit){
 				this.root_view.scrollTo(this);
 			}
@@ -95,7 +95,7 @@ provoda.addPrototype("InvestigationView", {
 		this.requestAll();
 	},
 	state_change: {
-		"mp-show": function(opts) {
+		"mp_show": function(opts) {
 			if (opts){
 				if (!opts.transit){
 					this.expand();
@@ -105,14 +105,14 @@ provoda.addPrototype("InvestigationView", {
 			}
 			this.c.toggleClass('hidden', !opts);
 		},
-		"can-expand": function(state) {
+		"can_expand": function(state) {
 			if (state){
 				this.expand();
 			}
 		}
 	},
 	createBase: function() {
-		this.c = $('<div class="search-results-block"></div');
+		this.c = $('<div class="search_results-block"></div');
 	},
 	die: function() {
 		this._super();
@@ -186,11 +186,11 @@ provoda.addPrototype("searchSectionView", {
 				}
 			}
 		},
-		'odd-section': function(state){
+		'odd_section': function(state){
 			if (state){
-				this.c.addClass('odd-section');
+				this.c.addClass('odd_section');
 			} else {
-				this.c.removeClass('odd-section');
+				this.c.removeClass('odd_section');
 			}
 		}
 	},

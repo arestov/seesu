@@ -3,7 +3,7 @@ var songsListView;
 
 	var PlaylistSettingsRowView = function(){};
 	BaseCRowUI.extendTo(PlaylistSettingsRowView, {
-		"stch-dont-rept-pl": function(state) {
+		"stch-dont_rept_pl": function(state) {
 			this.dont_rept_pl_chbx.prop('checked', !!state);
 		},
 		createDetailes: function(){
@@ -65,6 +65,9 @@ var songsListView;
 			this.arrow = this.row_context.children('.rc-arrow');
 			this.buttons_panel = this.c.children().children('.pla-panel');
 		},
+		canUseWaypoints: function() {
+			return this.parent_view.state('mp_has_focus');
+		},
 		children_views: {
 			"row-multiatcs": {
 				main: MultiAtcsRowView
@@ -87,14 +90,10 @@ var songsListView;
 
 	songsListView = function(pl){};
 	songsListBaseView.extendTo(songsListView, {
-		'stch-mp-show': function(opts) {
-			if (opts){
-				this.c.removeClass('hidden');
-			} else {
-				this.c.addClass('hidden');
-			}
+		'stch-mp_show': function(opts) {
+			this.c.toggleClass('hidden', !opts);
 		},
-		'stch-mp-has-focus': function(state) {
+		'stch-mp_has_focus': function(state) {
 			this.lc.toggleClass('list-overview', !!state);
 			if (!this.opts || !this.opts.overview){
 				this.c.toggleClass('show-zoom-to-track', !state);
@@ -104,24 +103,24 @@ var songsListView;
 		'stch-error': function(error){
 			if (this.error_b && this.error_b.v !== error){
 				this.error_b.n.remove();
+				delete this.error_b;
 			}
-			if (error){
-				if (error == 'vk_auth'){
-					this.error_b = {
-						v: error,
-						n: $('<li></li>').append(this.root_view.samples.vk_login.clone()).prependTo(this.c)
-					};
-				} else {
-					this.error_b = {
-						v: error,
-						n: $('<li>' + localize('nothing-found','Nothing found') + '</li>').appendTo(this.c)
-					};
-				}
+			if (error && !this.error_b){
+				this.error_b = {
+					v: error,
+					n: $('<li>' + localize('nothing-found','Nothing found') + '</li>').appendTo(this.c)
+				};
+				
 			}
 		},
+		'stch-loader_disallowing_desc': function(state) {
+			this.loader_dis_c.toggleClass('hidden', !state);
+			this.loader_dis_c.text(state);
+		},
 		createPanel: function() {
-			this.panel = this.root_view.samples.playlist_panel.clone();
+			this.panel = this.root_view.getSample('playlist_panel');
 			this.panel.appendTo(this.c);
+			this.loader_dis_c = this.panel.find('.loader_disallowing_desc');
 			return this;
 		},
 		'collch-plarow': function(name, md) {
@@ -132,7 +131,7 @@ var songsListView;
 			plarow: {
 				main: PlARowView
 			},
-			'song': songUI
+			'songs-list': songUI
 		}
 
 	});

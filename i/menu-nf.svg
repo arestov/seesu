@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   preserveAspectRatio="none"
+   viewBox="0 0 17 28">
+  <metadata
+     id="metadata3007">
+
+  </metadata>
+  <defs
+     id="defs4">
+     <rect id="menu-part-rect" 
+       y="-0.5"
+       x="0"
+       height="29"
+       width="69"
+      />
+    <g id="menu-part-arrow">
+      <path
+       d="M 0.5,13 15,-0.5 l 54,0 0,29 -54,0 z"
+         id="main-figure"
+         style="fill-opacity:1;stroke:none" />
+      <path
+         d="M 69,28.5 15,28.5 0.5,13"
+         id="path3759"
+         style="fill:none;stroke:#4d0951;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         d="M 0.5,13 15,-0.5 l 54,0"
+         id="path3757"
+         style="fill:none;stroke:#c365c9;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+    </g>
+    <style>
+      #states-switcher{
+       pointer-events:none;
+      }
+
+      .figure-filler{
+        fill:url(#menu-grad);
+        }
+      .hover-state .figure-filler{
+        fill:url(#menu-grad-hover);
+        }
+      .active-state{
+
+      }
+      .active-state .figure-filler{
+        fill: #78177D;
+        }
+      .surf_nav-state .figure-filler{
+        fill: #000;
+      }
+    </style>
+    <linearGradient
+       x1="0"
+       y1="1"
+       x2="0"
+       y2="0"
+       id="menu-grad"
+       gradientUnits="objectBoundingBox">
+      <stop
+         id="stop5215"
+         style="stop-color:#6f0d75;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop5221"
+         style="stop-color:#710d77;stop-opacity:1"
+         offset="0.41999999" />
+      <stop
+         id="stop5223"
+         style="stop-color:#8c0f93;stop-opacity:1"
+         offset="0.51999998" />
+      <stop
+         id="stop5217"
+         style="stop-color:#b526be;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       x1="0"
+       y1="1"
+       x2="0"
+       y2="0"
+       id="menu-grad-hover"
+       gradientUnits="objectBoundingBox">
+      <stop
+         id="stop2993"
+         style="stop-color:#6e0c74;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop2995"
+         style="stop-color:#6e0a74;stop-opacity:1"
+         offset="0.41999999" />
+      <stop
+         id="stop2997"
+         style="stop-color:#910c99;stop-opacity:1"
+         offset="0.51999998" />
+      <stop
+         id="stop2999"
+         style="stop-color:#c82ad1;stop-opacity:1"
+         offset="1" />
+    </linearGradient>
+  </defs>
+ 
+
+  <g  id="states-switcher" class="">
+    <g class="figure-filler" >
+       <use
+         xlink:href="#menu-part-arrow" id="parts-switcher"/>
+    </g>
+   
+
+  </g >
+  
+</svg>

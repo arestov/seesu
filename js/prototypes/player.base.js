@@ -7,9 +7,28 @@ provoda.Eventor.extendTo(playerBase, {
 		this._super();
 		this.song_files = {};
 		this.attached = {};
+		var _this = this;
+		this.onRegistration('core-ready', function(cb) {
+			if (_this.core){
+				cb();
+			}
+		});
+		this.onRegistration('core-fail', function(cb) {
+			if (_this.core_failed){
+				cb();
+			}
+		});
 		// this.
 	},
+	setFail: function() {
+		this.core_failed = true;
+		this.trigger('core-fail');
+	},
 	setCore: function(core){
+		if (core == this.core){
+			return;
+		}
+		
 		if (!this.subscriber){
 			var _this = this;
 			this.subscriber = function(){
@@ -17,11 +36,13 @@ provoda.Eventor.extendTo(playerBase, {
 			};
 		}
 		if (this.core){
-			this.core.desubscribe(this.subscriber)
+			this.core.desubscribe(this.subscriber);
 		}
 
 		this.core = core;
 		core.subscribe(this.subscriber);
+		this.core_failed = null;
+		this.trigger('core-ready');
 	},
 	fireCoreEvent: function(event_name, id, opts){
 		var song_file = this.song_files[id],
@@ -60,6 +81,7 @@ provoda.Eventor.extendTo(playerBase, {
 			this.core.callSongMethod("create", song_file.uid, {
 				url: song_file.link
 			});
+			return true;
 		}
 	},
 	play: function(song_file){
@@ -68,17 +90,18 @@ provoda.Eventor.extendTo(playerBase, {
 			if (this.global_volume && (this.volume || this.volume_fac)){
 				this.setVolume(song_file, this.volume, this.volume_fac);
 			}
-			
+			return true;
 		}
 	},
 	pause: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("pause", song_file.uid);
+			return true;
 		}
 	},
 	setVolume: function(song_file, vol, fac){
 		vol = parseFloat(vol);
-		if (isNaN(vol)){
+		if ((!fac || (fac.length < 2)) && isNaN(vol)){
 			vol = 100;
 			console.log('wrong volume value')
 		}
@@ -89,25 +112,32 @@ provoda.Eventor.extendTo(playerBase, {
 			this.volume_fac = fac;
 			this.volume = vol;
 		}
+		if (this.core){
+			return true;
+		}
 	},
 	setPosition: function(song_file, pos, fac){
 		if (song_file && this.core){
 			this.core.callSongMethod("setPosition", song_file.uid, pos, fac);
+			return true;
 		}
 	},
 	load: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("load", song_file.uid);
+			return true;
 		}
 	},
 	unload: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("unload", song_file.uid);
+			return true;
 		}
 	},
 	remove: function(song_file){
 		if (song_file && this.core){
 			this.core.callSongMethod("remove", song_file.uid);
+			return true;
 		}
 	}
 });

@@ -27,9 +27,6 @@ Class.extendTo(MapLevel, {
 	getResident: function(){
 		return this.resident;
 	},
-	matchURL: function(url){
-		return this.url && this.url == url;
-	},
 	getParentLev: function(){
 		return this.parent_levels[0] || ((this.num > -1) && this.map.levels[-1].free);
 	},
@@ -72,7 +69,7 @@ Class.extendTo(MapLevel, {
 		this.resident.trigger('mpl-detach');
 		delete this.map;
 	},
-	_sliceTM: function(transit, url_restoring){ //private alike
+	_sliceTM: function(){ //private alike
 		var current_level = this.map.getCurrentLevel();
 		if (current_level == this){
 			return;
@@ -81,13 +78,10 @@ Class.extendTo(MapLevel, {
 		if (!aycocha){
 			this.map.startChangesCollecting();
 		}
-		
-
-
 
 		//this.map.clearShallow(this);
 		var just_started = this.map.startChangesGrouping('zoom-out', true);
-		this.map.sliceDeepUntil(this.num, true, transit, url_restoring);
+		this.map.sliceDeepUntil(this.num);
 		if (just_started){
 			this.map.finishChangesGrouping('zoom-out');
 		}
@@ -97,33 +91,20 @@ Class.extendTo(MapLevel, {
 		}
 	},
 	zoomOut: function() {
-		//this.map.clearShallow(this);
 		this._sliceTM();
 	},
-	sliceTillMe: function(transit, url_restoring){
-		this._sliceTM(transit, url_restoring);
+	sliceTillMe: function(){
+		this._sliceTM();
 	},
 	markAsFreezed: function() {
 		this.closed = true;
-		this.resident.updateState('mp-freezed', true);
+		this.resident.updateState('mp_freezed', true);
 	},
 	freeze: function(){
 		if (this.isOpened()){
 			this.map.freezeMapOfLevel(this.num);
 		}
 		
-	},
-	getResurrectedClone: function(){
-		var current = this;
-		while (current.clone && !current.canUse()) {
-			current = current.clone;
-			this.clone = current;
-		}
-		if (current.canUse()){
-			return current;
-		} else{
-			return null;
-		}
 	},
 	canUse: function(){
 		return !!this.map;
@@ -149,12 +130,7 @@ provoda.Eventor.extendTo(browseMap, {
 
 		this.cha_counter = 0;
 		this.chans_coll = [];
-		//zoom levels
-		
-		// -1, start page
-		//0 - search results
-		//1 - playlist page
-		//today seesu has no deeper level
+
 		return this;
 	},
 	isGroupingChanges: function() {
@@ -214,16 +190,16 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 	},
 	isCollectingChanges: function() {
-		return this.collecting_changes;
+		return !!this.collecting_changes;
 	},
-	startChangesCollecting: function(soft_allowed) {
+	startChangesCollecting: function(soft_allowed, opts) {
 		if (this.collecting_changes){
 			if (!soft_allowed){
 				throw new Error('already collecting');
 			}
 			
 		} else {
-			this.collecting_changes = true;
+			this.collecting_changes = opts || {};
 			return true;
 			
 		}
@@ -232,8 +208,9 @@ provoda.Eventor.extendTo(browseMap, {
 		if (!this.collecting_changes){
 			throw new Error('none to finish');
 		} else {
+			var opts = this.collecting_changes;
 			this.collecting_changes = false;
-			this.emitChanges();
+			this.emitChanges(opts);
 		}
 	},
 	addChange: function(change) {
@@ -267,9 +244,38 @@ provoda.Eventor.extendTo(browseMap, {
 			this.chans_coll = zipped;
 		}
 	},
-	emitChanges: function() {
+	emitChanges: function(opts) {
+		opts = opts || {};
 		if (this.chans_coll.length){
 			this.zipChanges();
+
+			var all_changes = $filter(this.chans_coll, 'changes');
+			var big_line = [];
+			for (var i = 0; i < all_changes.length; i++) {
+				big_line = big_line.concat(all_changes[i]);
+			}
+			var move_view_changes = $filter(big_line, 'type', 'move-view');
+
+			for (var jj = 0; jj < move_view_changes.length; jj++) {
+				var cur = move_view_changes[jj];
+				if (jj == move_view_changes.length -1){
+					cur.value = {
+						userwant: true
+					};
+					/*
+					if (opts.userwant && !opts.transit){
+						this.updateNav(lp, opts.skip_url_change);
+					}*/
+					this.updateNav(cur.target.lev, opts);
+				} else {
+					cur.value = {
+						userwant: false,
+						transit: true
+					};
+				}
+			}
+
+
 			this.trigger('changes', {
 				array: this.chans_coll,
 				anid: this.cha_counter
@@ -281,7 +287,7 @@ provoda.Eventor.extendTo(browseMap, {
 	},
 	makeMainLevel: function(){
 		this.startChangesGrouping('zoom-in');
-		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident), {userwant: true});
+		this.setLevelPartActive(this.getFreeLevel(-1, false, this.mainLevelResident));
 		this.finishChangesGrouping('zoom-in');
 		return this;
 	},
@@ -301,22 +307,11 @@ provoda.Eventor.extendTo(browseMap, {
 	getActiveLevelNum: function(){
 		return this.current_level_num;
 	},
-	setLevelPartActive: function(lp, opts){
-		opts = opts || {};
-		lp.show(opts);
-		if (opts.userwant && !opts.transit){
-			this.updateNav(lp, opts.url_restoring);
-		}
-		
+	setLevelPartActive: function(lp){
+		lp.show({});
 		this.current_level_num = lp.num;
 	},
-	resurrectLevel: function(lev, transit, url_restoring){
-		var resident = lev.getResident();
-
-		var nlev = lev.clone = this._goDeeper(resident.pamamo, resident, transit, url_restoring);
-		return nlev;
-	},
-	_goDeeper: function(parent_md, resident, transit, url_restoring){
+	_goDeeper: function(resident){
 		//var cl = this.getActiveLevelNum();
 		var cur_res = this.getCurrentResident();
 		if (cur_res == resident){
@@ -325,12 +320,15 @@ provoda.Eventor.extendTo(browseMap, {
 
 
 		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
+		var parent_md = resident.map_parent;
 		if (parent_md){
 			//this.sliceDeepUntil(cl, false, true);
 			parent_md.lev.sliceTillMe(true);
-		}  else{
+		}  else if (resident.zero_map_level){
 			//this.sliceDeepUntil(-1, false, true);
 			this.clearCurrent();
+		} else {
+			throw new Error('resident does not have map_parent');
 		}
 		if (just_started_zoomout){
 			this.finishChangesGrouping('zoom-out');
@@ -344,15 +342,15 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 
 		var just_started = this.startChangesGrouping('zoom-in');
-		this.setLevelPartActive(target_lev, {userwant: true, transit: transit, url_restoring: url_restoring});
+		this.setLevelPartActive(target_lev);
 		if (just_started){
 			this.finishChangesGrouping('zoom-in');
 		}
 		return target_lev;
 		
 	},
-	goDeeper: function(parent_md, resident){
-		return this._goDeeper(parent_md, resident);
+	goDeeper: function(resident){
+		return this._goDeeper(resident);
 	},
 	createLevel: function(num, parent_levels, resident){
 		return new MapLevel(num, parent_levels, resident, this);
@@ -381,7 +379,6 @@ provoda.Eventor.extendTo(browseMap, {
 		if (this.levels[num].free && this.levels[num].free != this.levels[num].freezed){
 			return this.levels[num].free;
 		} else{
-			//this.getCurrentShallowLevelsAsParents(num)
 			var parent_levels;
 
 			if (parent_md){
@@ -443,6 +440,36 @@ provoda.Eventor.extendTo(browseMap, {
 		this.finishChangesGrouping('freezing');
 		return fresh_freeze;
 	},
+	checkLRCI: function(lev, Constructor) { //checkLevelResidentInstance
+		if (lev && lev.getResident() instanceof Constructor){
+			return lev.getResident();
+		}
+	},
+	findViewingResInstance: function(Constructor) {
+		var matched = [];
+		var freezed;
+		var free;
+
+		for (var i = 0; i < this.levels.length; i++) {
+			var cur = this.levels[i];
+			if (!freezed){
+				freezed = this.checkLRCI(cur.freezed, Constructor);
+
+			}
+			if (!free){
+				free = this.checkLRCI(cur.free, Constructor);
+			}
+		}
+		if (free){
+			matched.push(free);
+		}
+		if (freezed){
+			matched.push(freezed);
+		}
+		
+
+		return matched;
+	},
 	findDeepestActiveFreezed: function() {
 		var
 			target,
@@ -455,16 +482,26 @@ provoda.Eventor.extendTo(browseMap, {
 				target = active_tree[i];
 				break;
 			}
-			
 		}
+
 		return target;
 
 	},
-	restoreFreezed: function(transit, url_restoring){
+	restoreFreezedLev: function(lev) {
 		//this.hideMap();
 		var defzactv = this.findDeepestActiveFreezed();
 		var f_lvs = $filter(this.levels, 'freezed');
 
+		var target_lev_pos;
+		if (lev) {
+			target_lev_pos = f_lvs.indexOf(lev);
+			if (target_lev_pos == -1){
+				throw new Error('lev was not freezed!?');
+			}
+		} else {
+			target_lev_pos = f_lvs.length - 1;
+		}
+		var stop_pos = target_lev_pos + 1;
 
 		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
 		if (defzactv){
@@ -478,19 +515,22 @@ provoda.Eventor.extendTo(browseMap, {
 
 		var dfa_pos = defzactv ? f_lvs.indexOf(defzactv) : 0;
 
-
 		var just_started_zoomin = this.startChangesGrouping('zoom-in', true);
-		for (var i=dfa_pos; i < f_lvs.length; i++) {
-			this.setLevelPartActive(f_lvs[i], {
-				userwant: (i == f_lvs.length - 1),
-				transit: transit,
-				url_restoring: url_restoring
-			});
+		for (var i= dfa_pos; i < stop_pos; i++) {
+			/*
+			если "замороженный" уже отображается, то его родителям
+			не нужно устанавливать "активный" статус
+
+			поэтому находим верхнего родителя и начинаем устанавливать статусы с него
+			*/
+			this.setLevelPartActive(f_lvs[i]);
 		}
 		if (just_started_zoomin){
 			this.finishChangesGrouping('zoom-in');
 		}
-
+	},
+	restoreFreezed: function(){
+		this.restoreFreezedLev();
 	},
 	hideFreeLevel: function(lev, exept) {
 		if (lev.free && lev.free != exept){
@@ -525,15 +565,9 @@ provoda.Eventor.extendTo(browseMap, {
 			return {nv: nv, ov: ov};
 		}
 	},
-	updateNav: function(tl, url_restoring){
+	updateNav: function(tl, urlop){
 		var lvls = [tl].concat(tl.parent_levels);
-		//if (tl != this.getLevel(-1)){
-		//	lvls.push(this.getLevel(-1));
-		//}
-		//if (tl){
-			tl.resident.stackNav(false);
-	//	}
-		
+		tl.resident.stackNav(false);
 
 		var prev = lvls[1];
 		if (prev){
@@ -549,17 +583,17 @@ provoda.Eventor.extendTo(browseMap, {
 		for (var i = 2; i < lvls.length; i++) {
 			lvls[i].resident.stackNav( i + 1 === lvls.length ? 'bottom' : 'middle');
 		}
-		this.setNavTree(lvls, url_restoring);
+		this.setNavTree(lvls, urlop);
 	},
-	setNavTree: function(tree, url_restoring) {
+	setNavTree: function(tree, urlop) {
 		var old_tree = this.nav_tree;
 		if (old_tree){
 			this.old_nav_tree = old_tree;
 		}
 		this.nav_tree = tree;
 		var
-			url_changed = this.setCurrentURL(tree, old_tree, url_restoring),
-			title_changed = this.setCurrentNav(tree, old_tree, url_restoring);
+			url_changed = this.setCurrentURL(tree, old_tree, urlop),
+			title_changed = this.setCurrentNav(tree, old_tree, urlop);
 		if (url_changed){
 				
 			this.trigger('nav-change',
@@ -571,7 +605,7 @@ provoda.Eventor.extendTo(browseMap, {
 					url: url_changed.ov || "",
 					map_level: this.getPrevMampL()
 				},
-				!!url_restoring, title_changed);
+				!!urlop.skip_url_change, title_changed);
 		}
 		this.trigger("map-tree-change", this.nav_tree, this.old_nav_tree);
 		
@@ -638,7 +672,7 @@ provoda.Eventor.extendTo(browseMap, {
 		this.setTitle(this.joinNavTitle(this.getTitleNav(this.nav_tree)));
 		return this;
 	},
-	setCurrentURL: function(new_tree, old_tree, url_restoring) {
+	setCurrentURL: function(new_tree, old_tree, urlop) {
 		var _this = this;
 		if (!this.onNavUrlChange){
 			this.onNavUrlChange = function() {
@@ -653,34 +687,37 @@ provoda.Eventor.extendTo(browseMap, {
 		var i;
 		if (old_tree){
 			for (i = 0; i < old_tree.length; i++) {
-				old_tree[i].off('url-part', this.onNavUrlChange); //unbind
+				old_tree[i].off('state-change.url_part', this.onNavUrlChange); //unbind
 			}
 		}
 
 		new_tree = this.getTreeResidents(new_tree);
 		for (i = 0; i < new_tree.length; i++) {
-			new_tree[i].on('url-part', this.onNavUrlChange);
+			new_tree[i].on('state-change.url_part', this.onNavUrlChange, {
+				skip_reg: true
+			});
 		}
-		return this.setURL(this.joinNavURL(new_tree), false, url_restoring);
+		return this.setURL(this.joinNavURL(new_tree), false, urlop);
 	},
 	joinNavURL: function(nav) {
 		var url = [];
 		nav = nav.slice().reverse();
 
 		for (var i = 0; i < nav.length; i++) {
-			var url_part = nav[i].state('url-part');
+			var url_part = nav[i].state('url_part');
 			if (url_part){
 				url.push(url_part);
 			}
-			nav[i].setFullUrl(url.join(''));
+			//nav[i].setFullUrl(url.join(''));
 		}
 		return url.join('');
 	},
-	setURL: function(url, replace, url_restoring) {
+	setURL: function(url, replace, urlop) {
+		urlop = urlop || {};
 		var _this = this;
 		return this.sProp('cur_url', url, function(nv, ov) {
-			if (!url_restoring){
-				_this.trigger('url-change', nv, ov || "", _this.getCurMapL(), replace);
+			if (!urlop.skip_url_change){
+				_this.trigger('url-change', nv, ov || "", _this.getCurMapL(), replace || urlop.replace_url);
 			}
 			_this.trigger(
 				'every-url-change',
@@ -703,26 +740,12 @@ provoda.Eventor.extendTo(browseMap, {
 	},
 
 	clearShallow: function(lev, only_free){
-	//	var exept_levels = [].concat(lev, lev.parent_levels);
-	//		exept_levels.reverse();
-
-
 		for (var i = this.levels.length - 1; i > lev.num; i--) {
 			this.hideLevel(this.levels[i], false, only_free);
 			
 		}
-			/*
-
-		for (var i = this.levels.length - 1; i >= 0; i--) {
-			this.levels[i]
-		}*/
-		
-	//	for (var i=0; i < this.levels.length; i++) {
-	//		var cur = this.levels[i];
-	//		this.hideLevel(cur, exept_levels[i], only_free);
-	//	}
 	},
-	sliceDeepUntil: function(num, fullhouse, transit, url_restoring){
+	sliceDeepUntil: function(num){
 		var
 			current_lev = this.getCurrentLevel(),
 			target_lev;
@@ -735,7 +758,7 @@ provoda.Eventor.extendTo(browseMap, {
 		target_lev = this.getLevel(num);
 		if (target_lev && target_lev != current_lev){
 		//	throw new Error('fix nav!');
-			this.setLevelPartActive(target_lev, {userwant: fullhouse, transit: transit, url_restoring: url_restoring, zoom_out: true});
+			this.setLevelPartActive(target_lev);
 		}
 	},
 	clearCurrent: function() {
@@ -747,127 +770,133 @@ provoda.Eventor.extendTo(browseMap, {
 			}
 		}
 	},
-	startNewBrowse: function(url_restoring){
+	startNewBrowse: function(){
 
 		var just_started_zoomout = this.startChangesGrouping('zoom-out', true);
 		
 		this.clearCurrent();
-		this.setLevelPartActive(this.getLevel(-1), {
-			userwant: true,
-			transit: false,
-			url_restoring: url_restoring
-		});
+		this.setLevelPartActive(this.getLevel(-1));
 		if (just_started_zoomout){
 			this.finishChangesGrouping('zoom-out');
 		}
-		/*var
-			current_lev = this.getLevel(this.getActiveLevelNum()),
-			current_levs = [current_lev].concat(current_lev.parent_levels);
-
-*/
-		//this.sliceDeepUntil(-1, true, false, url_restoring);
 	}
 	
 });
 mapLevelModel = function() {};
 
 provoda.Model.extendTo(mapLevelModel, {
+	init: function(opts) {
+		this._super();
+		if (opts && opts.app){
+			this.app = opts.app;
+		}
+		if (!this.skip_map_init){
+			if (opts && opts.map_parent){
+				this.map_parent = opts.map_parent;
+			} else {
+				if (!this.zero_map_level){
+					throw new Error('who is your map parent model?');
+				}
+			}
+			this.map_children = [];
+		}
+
+		
+	},
+	initItems: function(lists_list, opts, params) {
+		for (var i = 0; i < lists_list.length; i++) {
+			lists_list[i].init(opts, params);
+		}
+	},
+	bindChildrenPreload: function(array) {
+		var lists_list = array || this.lists_list;
+		var _this = this;
+		this.on('vip-state-change.mp_show', function(e) {
+			if (e.value && e.value.userwant){
+				for (var i = 0; i < lists_list.length; i++) {
+					lists_list[i].preloadStart();
+				}
+			}
+		});
+	},
 	assignMapLev: function(lev){
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
-		this.pamamo = this.getParentMapModel();
 		return this;
 	},
+	showOnMap: function() {
+		this.app.showMOnMap(this);
+	},
 	getParentMapModel: function() {
-		return this.lev.getParentResident();
+		return this.map_parent;
 	},
 	canUnfreeze: function() {
 		return this.lev && this.lev.canUse() && !this.lev.isOpened();
 	},
-	showMyPage: function(source_info, no_navi) {
-		source_info = source_info || {
-			source_md: this,
-			page_md: this.pmd
-		};
-		this.app.showModelPage(this, source_info, no_navi);
-	},
 	mlmDie: function(){
+		return;
 		if (!this.permanent_md){
 			this.die();
 		}
-		
-		/*this.lev.map.addChange({
-			target: this,
-			type: 'die'
-		});*/
+	},
+	hideOnMap: function() {
+		this.updateState('mp_show', false);
 	},
 	hide: function() {
-		this.updateState('mp-show', false);
-		/*
-		this.lev.map.addChange({
-			target: this,
-			type: 'mp-show',
-			value: false
-		});*/
+		debugger
+		this.updateState('mp_show', false);
 		return this;
 	},
 	show: function(opts, parent) {
+		debugger
 		this.focus();
-		this.updateState('mp-show', opts || true);
-		/*
-		this.lev.map.addChange({
-			target: this,
-			type: 'mp-show',
-			value: opts,
-			parent: parent
-		});*/
+		this.updateState('mp_show', opts || true);
 		return this;
 	},
 	blur: function() {
-		//this.stackNav(false);
-		this.updateState('mp-has-focus', false);
-		/*
-		this.lev.map.addChange({
-			target: this,
-			type: 'mp-has-focus',
-			value: false
-		});*/
+		debugger
+		this.updateState('mp_has_focus', false);
 		return this;
 	},
 	focus: function() {
-	//	this.stackNav(false);
-		this.updateState('mp-has-focus', true);
-		/*
-		this.lev.map.addChange({
-			target: this,
-			type: 'mp-has-focus',
-			value: true
-		});*/
+		debugger
+		this.updateState('mp_has_focus', true);
 		return this;
 	},
 	stackNav: function(stack_v){
-		this.updateState('mp-stack', stack_v);
+		this.updateState('mp_stack', stack_v);
 		return this;
 	},
 	zoomOut: function() {
-		if (this.lev && (this.state('mp-stack') || (this.state('mp-show')) )){
+		if (this.lev && (this.state('mp_stack') || (this.state('mp_show')) )){
 			this.lev.zoomOut();
 		}
 	},
 	setFullUrl: function(url) {
-		this.updateState('mp-full-url', url);
+		this.updateState('mp_full_url ', url);
 	},
 	getTitle: function() {
-		return this.state('nav-title');
+		return this.state('nav_title');
 	},
 	onTitleChange: function(cb) {
-		return this.on('state-change.nav-title', cb);
+		return this.on('vip-state-change.nav_title', cb, {skip_reg: true, immediately: true});
 	},
 	offTitleChange: function(cb) {
-		return this.off('state-change.nav-title', cb);
+		return this.off('vip-state-change.nav_title', cb);
 	},
 	getURL: function() {
 		return '';
+	},
+	simplifyURL: function(url) {
+		return url;
+	},
+	findMapChildByURL: function(url) {
+		var surl = this.simplifyURL(url);
+		for (var i = 0; i < this.map_children.length; i++) {
+			if (surl == simplifyURL(this.map_children[i].state('url_part'))){
+				return this.map_children[i];
+			}
+		}
 	}
 });
 })();

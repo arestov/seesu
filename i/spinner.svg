@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512">
+
+	<defs>
+		<style>
+			#rect {fill:#fff;opacity:0.81}
+			
+			#reuse1 { opacity:0.068 }
+			#reuse2 { opacity:0.167 }
+			#reuse3 { opacity:0.250 }
+			#reuse4 { opacity:0.333 }
+			#reuse5 { opacity:0.417 }
+			#reuse6 { opacity:0.500 }
+			#reuse7 { opacity:0.583 }
+			#reuse8 { opacity:0.667 }
+			#reuse9 { opacity:0.750 }
+			#reuse10 { opacity:0.833 }
+			#reuse11 { opacity:0.917 }
+			#reuse12 { opacity:1.000 }
+
+		</style>
+		<rect  x="256" y="0" width="52" height="138" rx="26"  id="original-rect"/>
+		<use transform="translate(-26,0)" xlink:href="#original-rect" id="rect"/>
+	</defs>
+
+	<g transform="rotate( 0, 250, 250 )">
+
+		<use transform="rotate( 30 , 250, 250 )" xlink:href="#rect" id="reuse1"/>
+		<use transform="rotate( 60 , 250, 250 )" xlink:href="#rect" id="reuse2"/>
+		<use transform="rotate( 90 , 250, 250 )" xlink:href="#rect" id="reuse3"/>
+		<use transform="rotate( 120, 250, 250 )" xlink:href="#rect" id="reuse4"/>
+		<use transform="rotate( 150, 250, 250 )" xlink:href="#rect" id="reuse5"/>
+		<use transform="rotate( 180, 250, 250 )" xlink:href="#rect" id="reuse6"/>
+		<use transform="rotate( 210, 250, 250 )" xlink:href="#rect" id="reuse7"/>
+		<use transform="rotate( 240, 250, 250 )" xlink:href="#rect" id="reuse8"/>
+		<use transform="rotate( 270, 250, 250 )" xlink:href="#rect" id="reuse9"/>
+		<use transform="rotate( 300, 250, 250 )" xlink:href="#rect" id="reuse10"/>
+		<use transform="rotate( 330, 250, 250 )" xlink:href="#rect" id="reuse11"/>
+		<use transform="rotate( 360, 250, 250 )" xlink:href="#rect" id="reuse12"/>
+
+		<animateTransform
+			attributeName="transform"
+			type="rotate"
+			values="30,250,250; 60,250,250; 90,250,250; 120,250,250; 150,250,250; 180,250,250; 210,250,250; 240,250,250; 270,250,250; 300,250,250; 330,250,250; 360,250,250"
+			dur="1.2s"
+			calcMode="discrete"
+			repeatCount="indefinite"
+		/>
+	</g>
+
+</svg>

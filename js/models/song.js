@@ -9,16 +9,7 @@ var song;
 
 	baseSong.extendTo(song, {
 		page_name: 'song page',
-		'stch-lfm-image': function(state) {
-			if (state){
-				if (state.lfm_id){
-					this.updateState('song-image', "http://userserve-ak.last.fm/serve/64s/" + state.lfm_id);
-				} else if (state.url){
-					this.updateState('song-image', state.url);
-				}
-			}
-		},
-		'stch-can-expand': function(state) {
+		'stch-can_expand': function(state) {
 			if (state && !this.expanded){
 				this.expanded = true;
 				var _this = this;
@@ -26,14 +17,16 @@ var song;
 					.done(function(r){
 
 						var ai = parseArtistInfo(r);
+						_this.updateManyStates({
+							listeners: getTargetField(r, 'artist.stats.listeners'),
+							playcount: getTargetField(r, 'artist.stats.playcount'),
+							bio: ai.bio,
+							tags: ai.tags,
+							similars: ai.similars,
+							'artist_image': ai.images && ai.images[2] || lfm_image_artist
+						});
 
-
-						_this.updateState('listeners', getTargetField(r, 'artist.stats.listeners'));
-						_this.updateState('playcount', getTargetField(r, 'artist.stats.playcount'));
-						_this.updateState('bio', ai.bio);
-						_this.updateState('tags', ai.tags);
-						_this.updateState('similars', ai.similars);
-						_this.updateState('artist-image', ai.images && ai.images[2] || lfm_image_artist)
+						
 
 
 					});
@@ -45,6 +38,9 @@ var song;
 			}
 		},
 		init: function(opts) {
+			var omo = opts.omo;
+			var passed_artist = omo.artist;
+			omo.artist = omo.artist || " ";
 
 			this._super.apply(this, arguments);
 			var _this = this;
@@ -53,86 +49,106 @@ var song;
 
 
 			var spec_image_wrap;
-			var omo = opts.omo;
+			
+			if (omo.image_url){
+				this.updateState('image_url', {url: omo.image_url});
+			}
 			if (omo.lfm_image){
-				spec_image_wrap = su.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
-				//this.updateState('lfm-image', omo.lfm_image);
+				spec_image_wrap = this.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
+				//this.updateState('lfm_image', omo.lfm_image);
 			}
 			var images_pack;
 
 			if (spec_image_wrap) {
-				this.updateState('lfm-image', spec_image_wrap);
+				this.updateState('lfm_image', spec_image_wrap);
 
-			} else if (this.state('track')){
-				images_pack = su.art_images.getTrackImagesModel({
-					artist: this.state('artist'),
-					track: this.state('track')
-				})
-					.on('state-change.image-to-use', function(e) {
-						_this.updateState('lfm-image', e.value);
-					});
-				this.updateState('lfm-image', images_pack.state('image-to-use'));
+			} else if (passed_artist) {
+				if (this.state('track')){
+					images_pack = this.app.art_images.getTrackImagesModel({
+						artist: this.state('artist'),
+						track: this.state('track')
+					})
+						.on('state-change.image-to-use', function(e) {
+							_this.updateState('ext_lfm_image', e.value);
+						});
+					
 
-			} else {
-				images_pack = su.art_images.getArtistImagesModel(this.state('artist'))
-					.on('state-change.image-to-use', function(e) {
-						_this.updateState('lfm-image', e.value);
-					});
-				this.updateState('lfm-image', images_pack.state('image-to-use'));
-			}
-
-			this.on('view', function(no_navi, user_want){
-				su.show_track_page(this, no_navi);
-				if (user_want){
-					//fixme - never true!
-					if (_this.wasMarkedAsPrev()){
-						su.trackEvent('Song click', 'previous song');
-					} else if (_this.wasMarkedAsNext()){
-						su.trackEvent('Song click', 'next song');
-					} else if (_this.state('play')){
-						su.trackEvent('Song click', 'zoom to itself');
-					}
+				} else {
+					images_pack = this.app.art_images.getArtistImagesModel(this.state('artist'))
+						.on('state-change.image-to-use', function(e) {
+							_this.updateState('ext_lfm_image', e.value);
+						});
 				}
-				
-			});
-			var actionsrow = new TrackActionsRow(this);
-			this.setChild('actionsrow', actionsrow);
-			this.addChild(actionsrow);
+			}
+			_this.initHeavyPart();
+			
+		},
+		initOnShow: function() {
+			if (!this.onshow_inited){
+				this.onshow_inited = true;
+				var actionsrow = new TrackActionsRow(this);
+				this.setChild('actionsrow', actionsrow, true);
+				this.addChild(actionsrow);
+			}
+		},
+		initHeavyPart: function() {
+			var _this = this;
+			var omo = this.omo;
+			
 
 			this.mf_cor = new mfCor();
 			this.mf_cor.init({
 				mo: this,
 				omo: this.omo
 			}, omo.file);
+
 			if (omo.file){
 				this.updateState('playable', true);
 				this.updateState('files_search', {
-					complete: true,
+					search_complete: true,
 					have_best_tracks: true,
-					have_tracks: true
+					have_mp3_tracks: true
 				});
 			}
-			this.setChild('mf_cor', this.mf_cor);
+			this.setChild('mf_cor', this.mf_cor, true);
 			this.addChild(this.mf_cor);
-			this.mf_cor.on('before-mf-play', function(mopla) {
+			this.mf_cor
+				.on('before-mf-play', function(mopla) {
 
-				_this.player.changeNowPlaying(_this);
-				_this.mopla = mopla;
-			});
-			this.mf_cor.on("error", function(can_play) {
-				_this.player.trigger("song-play-error", _this, can_play);
-			});
+					_this.player.changeNowPlaying(_this);
+					_this.mopla = mopla;
+				})
+				.on("error", function(can_play) {
+					_this.player.trigger("song-play-error", _this, can_play);
+				})
+				.on('state-change.mopla_to_use', function(e){
+					_this.updateState('mf_cor_has_available_tracks', !!e.value);
+				});
+
+			if (this.mf_cor.isSearchAllowed()){
+				this.on('vip-state-change.track', function(e) {
+					if (e.value){
+						_this.bindFilesSearchChanges();
+					}
+				},{immediately: true});
+				
+				
+			}
+
+
+
+
 			
-			this.watchStates(['files_search', 'marked_as', 'mp-show'], function(files_search, marked_as, mp_show) {
-				if (marked_as && files_search && files_search.complete){
-					this.updateState('can-expand', true);
+			this.watchStates(['files_search', 'marked_as', 'mp_show'], function(files_search, marked_as, mp_show) {
+				if (marked_as && files_search && files_search.search_complete){
+					this.updateState('can_expand', true);
 				} else if (mp_show){
-					this.updateState('can-expand', true);
+					this.updateState('can_expand', true);
 				} else {
-					this.updateState('can-expand', false);
+					this.updateState('can_expand', false);
 				}
 			});
-			this.on('state-change.mp-show', function(e) {
+			this.on('vip-state-change.mp_show', function(e) {
 				
 				var
 					_this = this,
@@ -146,6 +162,7 @@ var song;
 						this.mp3_search.on('new-search', this.makePlayableOnNewSearch);
 						
 					}
+					_this.initOnShow();
 				} else {
 					if (oldCb){
 						this.mp3_search.off('new-search', oldCb);
@@ -153,7 +170,7 @@ var song;
 					}
 				}
 			});
-			this.on('state-change.is_important', function(e) {
+			this.on('vip-state-change.is_important', function(e) {
 				if (e.value){
 					this.loadSongListeners();
 				}
@@ -166,29 +183,17 @@ var song;
 				return "";
 			}
 		},
-		updateFilesSearchState: function(complete, get_next){
-			this._super.apply(this, arguments);
-			if (this.isHaveTracks('mp3')){
-				this.plst_titl.markAsPlayable();
-			}
-		},
 		mlmDie: function() {
-			this.hide();
+			this.hideOnMap();
 		},
 		getURL: function(mopla){
-			var url ="";
-			if (mopla){
-				var s = mopla || this.omo;
-				url += "/" + su.encodeURLPart(s.from) + '/' + su.encodeURLPart(s._id);
-			} else{
-				if (this.plst_titl && this.plst_titl.playlist_type == 'artist'){
-					if (this.track){
-						url += '/' + su.encodeURLPart(this.track);
-					}
-				} else if (this.artist){
-					url += '/' + su.encodeURLPart(this.artist) + '/' + su.encodeURLPart(this.track || '_');
-				}
+			var url = '';
+			if (this.plst_titl.playlist_artist && this.plst_titl.playlist_artist == this.artist){
+				url += '/' + this.app.encodeURLPart(this.track);
+			} else {
+				url += '/' + this.app.encodeURLPart(this.artist) + ',' + this.app.encodeURLPart(this.track || '');
 			}
+
 			return url;
 		},
 		postToVKWall: function(uid){
@@ -258,7 +263,7 @@ var song;
 				}
 			}
 		},
-		submitNowPlaying: function(){
+		submitNowPlaying: spv.debounce(function(){
 			var duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
 			if (su.settings['lfm-scrobbling']){
 				lfm.nowplay({
@@ -276,7 +281,7 @@ var song;
 					timestamp: ((new Date()).getTime()/1000).toFixed(0)
 				});
 			}
-		},
+		},200),
 		loadSongListeners: function() {
 			
 		}

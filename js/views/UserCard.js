@@ -1,107 +1,112 @@
-var PlaylistPreview = function() {};
-provoda.View.extendTo(PlaylistPreview, {
+var SoftVkLoginUI = function() {};
+VkLoginUI.extendTo(SoftVkLoginUI, {
 	createBase: function() {
-		this.c = $('<div class="playlist_preview-c"></div>');
-		this.prew_c = $('<div class="area-button"></div>').appendTo(this.c);
-		this.prew_text = $('<span></span>').appendTo(this.prew_c);
-		//this.desc = $('<div class="area-description"></div>').appendTo(this.prew_c);
-		var _this = this;
-		this.prew_c.click(function() {
-			_this.md.requestPlaylist();
-		});
-		this.auth_c = $('<div class="auth-con"></div>').appendTo(this.c);
-		//this.
+		this._super();
+		this.c.removeClass('attention-focuser');
+	}
+});
+
+
+
+
+var PersonalListPreview = function() {};
+ListPreview.extendTo(PersonalListPreview, {
+	clickAction: function() {
+		this.md.requestList();
 	},
-	'stch-has-access': function(state) {
-		this.prew_c.toggleClass('placeholdered-text', !state);
-	},
-	'stch-pmd-vswitched': function(state) {
+	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
 	},
-	'stch-nav-title': function(state) {
-		this.prew_text.text(state);
+	children_views: {
+		auth_block_lfm: LfmLoginView,
+		auth_block_vk: SoftVkLoginUI,
+		preview_list: ArtistsListPreviewLine
 	},
 	'collch-auth_part': {
-		place: 'auth_c',
+		place: 'tpl.ancs.auth_con',
 		by_model_name: true
 	},
+	'collch-preview_list': {
+		place: 'tpl.ancs.listc',
+		limit: 9
+	}
+});
+var PersonalAlbumsListPreview = function() {};
+AlbumsListPreview.extendTo(PersonalAlbumsListPreview, {
+	clickAction: function() {
+		this.md.requestList();
+	},
+	'stch-pmd_vswitched': function(state) {
+		this.c.toggleClass('access-request', state);
+	},
 	children_views: {
-		auth_block_lfm: {
-			main: LfmLoginView
-		},
-		auth_block_vk: {
-			main: vkLoginUI
-		}
+		auth_block_lfm: LfmLoginView,
+		auth_block_vk: SoftVkLoginUI,
+		preview_list: AlbumsListPreviewItem
+	},
+	'collch-auth_part': {
+		place: 'tpl.ancs.auth_con',
+		by_model_name: true
+	},
+	'collch-preview_list': {
+		place: 'tpl.ancs.listc',
+		limit: 15
 	}
 });
 
 
-var UserCardView = function() {};
-provoda.View.extendTo(UserCardView, {
+var UserCardPage = function(){};
+PageView.extendTo(UserCardPage, {
+	useBase: function(node) {
+		this.c = node;
+		this.bindBase();
+	},
 	createBase: function() {
-		this.c = $('<div class="usual_page"></div>');
-		this.items_c = $("<div></div>").appendTo(this.c);
-		this.plts_link_a = $(document.createComment('')).appendTo(this.c);
+		this.c = this.root_view.getSample('user_page');
+		this.bindBase();
 	},
-	'stch-mp-show': function(state) {
-		this.c.toggleClass('hidden', !state);
+	bindBase: function() {
+		this.createTemplate();
 	},
-	'stch-has-playlists': function(state){
-		this.requirePart('plts_link').toggleClass('hidden', !state);
-	},
-	parts_builder: {
-		plts_link: function() {
-			var wrap = $('<span class="button-hole"><a class="nicebutton"></a></span>');
-			var _this = this;
-			wrap.children('a').click(function(e){
-				e.preventDefault();
-				_this.root_view.md.showPlaylists();
-			}).text(localize('playlists'));
-			this.plts_link_a.after(wrap);
-			this.plts_link_a.remove();
-			return wrap;
-		}
-	},
-	'collch-arts_recomms': 'items_c',
-	'collch-lfm_loved': 'items_c',
-	'collch-vk_audio': 'items_c',
-
 	children_views: {
-		arts_recomms: {
-			main: PlaylistPreview
-		},
-		vk_audio: {
-			main: PlaylistPreview
-		},
-		lfm_loved: {
-			main: PlaylistPreview
-		}
-	}
+		'user-playlists': LiListsPreview,
+		users_acqutes: UserAcquaintancesListPreview,
+		vk_audio: PersonalListPreview,
+		arts_recomms: PersonalListPreview,
+		lfm_loved: PersonalListPreview,
+		new_releases: PersonalAlbumsListPreview,
+		recomm_releases: PersonalAlbumsListPreview
+	},
+	'collch-users_acqutes': 'tpl.ancs.users_acqutes'
 });
-
-
-
-
 
 var UserCardPreview = function() {};
 provoda.View.extendTo(UserCardPreview, {
 	createBase: function() {
 		this.c = this.root_view.els.pestf_preview;
+		this.aqc_preview_c = this.c.find('.aqc_preview');
+
 		//this.c.text('Персональная музыка');
 		var _this = this;
-		this.c.find('.to-open-block').click(function() {
-			su.showModelPage(_this.md);
-			//_this.md
-		});
 
+		var button = this.c.find('.to-open-block').click(function() {
+			_this.md.showOnMap();
+		});
+		this.addWayPoint(button);
 
 		
 	},
-	'stch-can-expand': function(state){
+	'stch-can_expand': function(state){
 		if (state){
 			this.requirePart('start-page-blocks');
 		}
 	},
+	children_views: {
+		users_acqutes : {
+			main: UserAcquaintancesListPreview
+		}
+	},
+	'collch-users_acqutes': 'aqc_preview_c',
 	parts_builder: {
 		'start-page-blocks': function() {
 			var _this = this;
@@ -117,7 +122,7 @@ provoda.View.extendTo(UserCardPreview, {
 				var li = ui.c = $('<li class="people-list-item"></li>');
 				var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
 				
-					$('<img width="50" height="50"/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
+				$('<img/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
 				
 				ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
 				ui.lp = $('<div class="p-link-place"></div>').appendTo(li);
@@ -128,16 +133,15 @@ provoda.View.extendTo(UserCardPreview, {
 
 			
 			var buildPeopleLE = function(man, opts){
-				var o = opts || {};
-				var el_opts = {};
+				opts = opts || {};
 				
 				var pui = createPeopleListEl(man.info.photo);
 				
 				
-				if (o.links){
+				if (opts.links){
 					pui.lp.append(_this.root_view.getAcceptedDesc(man));
 				
-				} else if (o.accept_button){
+				} else if (opts.accept_button){
 					var nb = _this.root_view.createNiceButton();
 						nb.b.text( localize('accept-inv', 'Accept invite'));
 						nb.enable();
@@ -168,10 +172,10 @@ provoda.View.extendTo(UserCardPreview, {
 				return pui.c;
 			};
 			var createPeopleList = function(people, opts){
-				var o = opts || {};
+				opts = opts || {};
 				
 				var ul = $("<ul class='people-list'></ul>");
-				if (o.wide){
+				if (opts.wide){
 					ul.addClass('people-l-wide');
 				}
 				
@@ -182,8 +186,10 @@ provoda.View.extendTo(UserCardPreview, {
 				}
 				return ul;
 			};
-			var rl_place = this.root_view.els.start_screen.find('.relations-likes-wrap');
-			var ri_place = this.root_view.els.start_screen.find('.relations-invites-wrap');
+			return true;
+			var rl_place = this.root_view.els.start_screen.find('.relations-likes-wrap').removeClass('hidden');
+			var ri_place = this.root_view.els.start_screen.find('.relations-invites-wrap').removeClass('hidden');
+			
 			
 
 			su.s.susd.rl.regCallback('start-page', function(r){

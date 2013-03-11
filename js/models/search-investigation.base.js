@@ -6,13 +6,13 @@
 	provoda.addPrototype("Investigation", {
 		
 		model_name: 'invstg',
-		init: function() {
-			this._super();
+		init: function(opts) {
+			this._super(opts);
 			this.names = {};
 			this.enter_items = false;
 			this.setChild('section', []);
 			this.setInactiveAll();
-			this.updateState('url-part', this.getURL());
+			this.updateState('url_part', this.getURL());
 		},
 		page_name: "search results",
 		addCallback: function(event_name, func){
@@ -86,7 +86,7 @@
 					}
 					_this.bindItemsView();
 				})
-				.on('state-change', function(state){
+				.on('state-change.active', function(e){
 					_this.remarkStyles();
 				})
 				.on('request', function(rq){
@@ -172,7 +172,7 @@
 			if (this.q != q){
 				this.stopRequests();
 				if (this.getTitleString){
-					this.updateState('nav-title', this.getTitleString(q));
+					this.updateState('nav_title', this.getTitleString(q));
 				}
 				this.loaded();
 				this.setItemForEnter();
@@ -186,7 +186,7 @@
 				this.updateState('query', q);
 				this.changeResultsCounter();
 				this.doEverythingForQuery();
-				this.updateState('url-part', this.getURL());
+				this.updateState('url_part', this.getURL());
 			}
 			
 		},
@@ -285,12 +285,10 @@
 		},
 		setActive: function(){
 			this.updateState('active', true);
-			this.trigger('state-change', true);
 		},
 		setInactive: function(){
 			
 			this.updateState('active', false);
-			this.trigger('state-change', false);
 		},
 		loading: function(){
 			this.updateState('loading', true);
@@ -299,7 +297,7 @@
 			this.updateState('loading', false);
 		},
 		markOdd: function(remove){
-			this.updateState('odd-section', !remove)
+			this.updateState('odd_section', !remove)
 		},
 		getItems: function(no_button){
 			var r = [].concat(this.rendering_list);
