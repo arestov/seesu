@@ -586,6 +586,7 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistSongs, {
 
 var TopArtistSongs = function() {};
 songsList.extendTo(TopArtistSongs, {
+	can_find_dli_pos: true,
 	init: function(opts, params, start_song) {
 		this._super(opts, false, start_song);
 		this.artist = params.artist;
@@ -600,35 +601,16 @@ songsList.extendTo(TopArtistSongs, {
 		});
 		
 	},
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		var artist_name = this.playlist_artist;
 		var _this = this;
-		var request_info = {};
 		request_info.request = this.app.lfm.get('artist.getTopTracks', {
 			artist: artist_name,
 			limit: paging_opts.page_limit,
 			page: paging_opts.next_page
 		})
 			.done(function(r){
-				
-				var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
-
-
-				var track_list = [];
-				if (tracks.length) {
-					var l = Math.min(tracks.length, paging_opts.page_limit);
-					for (var i=paging_opts.remainder; i < l; i++) {
-						track_list.push({
-							artist : artist_name,
-							track: tracks[i].name,
-							lfm_image: {
-								array: tracks[i].image
-							}
-							
-						});
-					}
-					
-				}
+				var track_list = _this.getLastfmTracksList(r, 'toptracks.track', paging_opts);
 				_this.putRequestedData(request_info.request, track_list, r.error);
 				
 			})
@@ -787,7 +769,10 @@ mapLevelModel.extendTo(ArtCard, {
 		var pl = this.getTopTracks(start_song);
 		pl.showOnMap();
 		if (start_song){
-			pl.showTrack(start_song);
+			var song = pl.findMustBePresentDataItem(start_song);
+			song.showOnMap();
+			pl.preloadStart();
+			//pl.showTrack(start_song);
 		}
 		return pl;
 	},

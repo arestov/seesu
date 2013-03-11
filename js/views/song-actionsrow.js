@@ -318,15 +318,7 @@ BaseCRowUI.extendTo(ScrobbleRowUI, {
 });
 
 
-var FlashErrorRowUI = function(){};
-BaseCRowUI.extendTo(FlashErrorRowUI, {
-	createDetailes: function(){
-		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-		this.c = parent_c.children('.flash-error');
-		this.button = buttons_panel.find('.flash-secur-button');
-		this.bindClick();
-	}
-});
+
 
 var RepeatSongRowView = function(){};
 BaseCRowUI.extendTo(RepeatSongRowView, {
@@ -387,9 +379,6 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 	children_views: {
 		"row-repeat-song": {
 			main: RepeatSongRowView
-		},
-		"row-flash-error": {
-			main: FlashErrorRowUI
 		},
 		'row-lastfm': {
 			main: ScrobbleRowUI

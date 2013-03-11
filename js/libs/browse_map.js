@@ -803,6 +803,22 @@ provoda.Model.extendTo(mapLevelModel, {
 
 		
 	},
+	initItems: function(lists_list, opts, params) {
+		for (var i = 0; i < lists_list.length; i++) {
+			lists_list[i].init(opts, params);
+		}
+	},
+	bindChildrenPreload: function(array) {
+		var lists_list = array || this.lists_list;
+		var _this = this;
+		this.on('vip-state-change.mp_show', function(e) {
+			if (e.value && e.value.userwant){
+				for (var i = 0; i < lists_list.length; i++) {
+					lists_list[i].preloadStart();
+				}
+			}
+		});
+	},
 	assignMapLev: function(lev){
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
@@ -866,7 +882,7 @@ provoda.Model.extendTo(mapLevelModel, {
 		return this.on('vip-state-change.nav_title', cb, {skip_reg: true, immediately: true});
 	},
 	offTitleChange: function(cb) {
-		return this.off('state-change.nav_title', cb);
+		return this.off('vip-state-change.nav_title', cb);
 	},
 	getURL: function() {
 		return '';

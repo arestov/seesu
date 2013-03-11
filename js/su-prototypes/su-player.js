@@ -148,17 +148,11 @@ var seesuPlayer;
 		features_states: {},
 		setAsAccessible: function(feature_name, player_core) {
 			this.features_states[feature_name] = player_core;
-
-			//
-			//					su.updateState('flash_internet', true);
-
-			//checkTracking(true)
 			this.checkReadyFeature();
 		},
 		setAsInaccessible: function(feature_name) {
 			this.features_states[feature_name] = 'fail';
 			this.checkReadyFeature();
-			//checkTracking(true)
 		},
 		canLoad: function(feature_name) {
 			addFeature(feature_name);
@@ -181,7 +175,6 @@ var seesuPlayer;
 			checkTracking(feature_to_use, use_order_list.length == i);
 			if (feature_to_use){
 				su.p.setCore(feature_to_use);
-				su.updateState('flash_internet', true);
 			}
 			if (!feature_to_use && use_order_list.length == i){
 				su.p.setFail();
@@ -315,8 +308,6 @@ var seesuPlayer;
 										setTimeout(function(){
 											pcon.addClass('sm2-complete');
 										}, 1000);
-										//
-										su.updateState('flash_internet', true);
 
 									})
 									.fail(function(){
