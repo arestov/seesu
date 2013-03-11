@@ -5,7 +5,9 @@ songFileModel.extendTo(FileInTorque, {
 		this.file_in_torrent = opts.file_in_torrent;
 		this.file_name = opts.name;
 		this.torrent = opts.torrent;
-		this.link = this.file_in_torrent.get('properties').get('streaming_url');
+		this.link = opts.link;
+		this.getFileInTorrent = opts.getFileInTorrent;
+		//this.file_in_torrent.get('properties').get('streaming_url');
 		return this._super(opts);
 	},
 	getTitle: function() {
@@ -34,23 +36,31 @@ songFileModel.extendTo(FileInTorque, {
 	loadOutBox: function() {
 		var _this = this;
 
-		var download_started = this.file_in_torrent.get('properties').get('downloaded');
+		var complect = this.getFileInTorrent(this.file_in_torrent);
+
+		var file_in_torrent = complect && complect.file;
+		if (!file_in_torrent){
+			console.log('torrents api dishronization');
+			return;
+		}
+		var download_started = file_in_torrent.get('properties').get('downloaded');
+
 		if (!download_started){
-			this.torrent.get('file').each(function(file) {
-				if (file != _this.file_in_torrent){
+			complect.torrent.get('file').each(function(file) {
+				if (file != file_in_torrent){
 					//file.get('properties').save({priority: 0});
 				}
 
 			});
-			this.file_in_torrent.get('properties').save({priority: 15});
+			file_in_torrent.get('properties').save({priority: 15});
 			if (!download_started){
-				this.file_in_torrent.stream();
+				file_in_torrent.stream();
 			}
 
-			this.torrent.set_priority(Btapp.TORRENT.PRIORITY.MEDIUM);
-			this.torrent.start();
+			complect.torrent.set_priority(Btapp.TORRENT.PRIORITY.MEDIUM);
+			complect.torrent.start();
 		} else {
-			this.file_in_torrent.get('properties').save({priority: 15});
+			file_in_torrent.get('properties').save({priority: 15});
 		}
 
 		
@@ -125,6 +135,29 @@ TorqueSearch.prototype = {
 		}
 		var complex_search = new funcsStack();
 
+		var getTorrent = function(torrent_link){
+			var torrent;
+			var colln = btapp.get('torrent');
+			var array = colln && colln.models;
+			torrent = array && $filter(array, 'attributes.properties.attributes.download_url', torrent_link);
+			return torrent && torrent[0];
+		};
+
+		var getFileInTorrent = function(opts) {
+			var torrent = getTorrent(opts.torrent_link);
+			if (torrent){
+				var target_file;
+				torrent.get('file').each(function(file){
+					if (file.get('properties').get('name') == opts.file_path){
+						target_file = file;
+					}
+				});
+				return {
+					file: target_file,
+					torrent: torrent
+				};
+			}
+		};
 
 		complex_search
 		.next(function() {
@@ -151,13 +184,7 @@ TorqueSearch.prototype = {
 			var torrent_link = array[0].torrent_link;
 
 
-			var getTorrent = function(){
-				var torrent;
-				var colln = btapp.get('torrent');
-				var array = colln && colln.models;
-				torrent = array && $filter(array, 'attributes.properties.attributes.download_url', torrent_link);
-				return torrent && torrent[0];
-			};
+			
 
 			var getFiles = function(torrent, just_added) {
 				var files_array = [];
@@ -174,14 +201,15 @@ TorqueSearch.prototype = {
 							
 					_this.done({
 						files: files_array,
-						torrent: torrent
+						torrent: torrent,
+						torrent_link: torrent_link
 					});
 				});
 			};
 
 			var torrentAdding = function(add) {
 				var torrent ;
-				torrent = getTorrent();
+				torrent = getTorrent(torrent_link);
 				if (torrent){
 
 					getFiles(torrent);
@@ -191,7 +219,7 @@ TorqueSearch.prototype = {
 						url: torrent_link,
 						callback: function(trt){
 							setTimeout(function() {
-								torrent = getTorrent();
+								torrent = getTorrent(torrent_link);
 								if (torrent){
 									getFiles(torrent, true);
 								}
@@ -210,12 +238,12 @@ TorqueSearch.prototype = {
 			if (add){
 				torrentAdding(add);
 			} else {
-				btapp.on('add:add', function(add){
+				btapp.on('add:add', spv.once(function(add){
 					
 					//setTimeout(function(){
 						torrentAdding(add);
 					//},100)
-				});
+				}));
 			}
 
 			
@@ -241,9 +269,16 @@ TorqueSearch.prototype = {
 					getSongFileModel: function(mo, player) {
 						return this.models[mo.uid] = this.models[mo.uid] || (new FileInTorque()).init({
 							mo: mo,
-							file_in_torrent: this.file,
+							link: this.link,
+							file_in_torrent: {
+								torrent_link: obj.torrent_link,
+								file_path: this.name
+							},
+							getFileInTorrent: function() {
+								return getFileInTorrent.apply(this, arguments);
+							},
 							name: this.name,
-							torrent: this.torrent
+							torrent_link: obj.torrent_link
 						}).setPlayer(player);
 					}
 				};
