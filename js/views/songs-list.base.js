@@ -1,6 +1,6 @@
 provoda.addPrototype("songsListBaseView", {
 	state_change: {
-		loading: function(loading){
+		'list_loading': function(loading){
 			if (loading){
 				this.lc.addClass('loading');
 			} else {
@@ -18,22 +18,29 @@ provoda.addPrototype("songsListBaseView", {
 				}
 			}
 		},
-		"can-play": function(state) {
+		"can_play": function(state) {
 			if (state){
 				//make-trs-plable
-				this.c.addClass('has-files-in-songs');
+				this.c.addClass('has_files-in-songs');
 			} else {
-				this.c.removeClass('has-files-in-songs');
+				this.c.removeClass('has_files-in-songs');
 			}
 		}
 	},
 	parts_builder: {
 		"load-more-b": function() {
 			var _this = this;
+			var node = $("<a class='load-more-list-data'></a>").click(function() {
+				_this.md.requestMoreData(true);
+			}).text(localize("load-more")).appendTo(this.c);
+
+			this.addWayPoint(node, {
+				canUse: function() {
+					return _this.state('more_load_available');
+				}
+			});
 			
-			return $("<a class='load-more-songs'></a>").click(function() {
-					_this.md.loadMoreSongs(true);
-				}).text(localize("load-more")).appendTo(this.c);
+			return node;
 		}
 	},
 	createListBase: function() {
@@ -47,9 +54,8 @@ provoda.addPrototype("songsListBaseView", {
 		this.createListBase();
 		
 	},
-	appendSongDOM: function(song_view, mo, array, current_index){
+	appendSongDOM: function(song_view, array, current_index){
 		var
-			moc,
 			song_dom = song_view.getA();
 		if (!song_dom){
 			return;
@@ -68,11 +74,11 @@ provoda.addPrototype("songsListBaseView", {
 		}
 
 	},
-	'collch-song': function(name, arr) {
+	'collch-songs-list': function(name, arr) {
 		for (var i = 0; i < arr.length; i++) {
 			var view = this.getFreeChildView(name, arr[i], 'main', {lite: this.opts && this.opts.overview});
 			if (view){
-				this.appendSongDOM(view, arr[i], arr, i);
+				this.appendSongDOM(view, arr, i);
 			}
 		}
 		this.requestAll();

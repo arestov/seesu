@@ -3,7 +3,7 @@ var songsList;
 	"use strict";
 
 	var songsListBase = function() {};
-	provoda.extendFromTo("songsListBase", mapLevelModel, songsListBase);
+	provoda.extendFromTo("songsListBase", LoadableList, songsListBase);
 	
 
 	songsList = function(){};
@@ -17,27 +17,29 @@ var songsList;
 				this.setBaseInfo(params);
 			}
 			
+			if (first_song){
+				this.findSongOwnPosition(first_song);
+			}
 			
-			this.findSongOwnPosition(first_song);
 
 			var plarow = new PlARow();
 			plarow.init(this);
 
 			this.setChild('plarow', plarow);
-
-
-			this.changed();
 			
 			var _this = this;
 			
 			var doNotReptPl = function(state) {
-				_this.updateState('dont-rept-pl', state);
+				_this.updateState('dont_rept_pl', state);
 			};
 			if (su.settings['dont-rept-pl']){
 				doNotReptPl(true);
 			}
 			su.on('settings.dont-rept-pl', doNotReptPl);
-			this.updateState('url-part', this.getURL());
+			if (this.playlist_type){
+				this.updateState('url_part', this.getURL());
+			}
+			
 		},
 		page_name: 'playlist',
 		setBaseInfo: function(params) {
@@ -47,7 +49,7 @@ var songsList;
 			}
 			if (params.type){
 				this.playlist_type = params.type;
-				this.updateState('nav-title', this.playlist_title);
+				this.updateState('nav_title', this.playlist_title);
 			}
 		},
 		getURL: function(){
@@ -77,23 +79,27 @@ var songsList;
 			if (!(omo instanceof song)){
 				var mo = new song();
 				mo.init({
-					omo: omo, 
+					map_parent: this,
+					app: this.app,
+					omo: omo,
 					plst_titl: this,
 					player: this.player,
 					mp3_search: this.mp3_search
 				}, {
 					file: omo.file
-				})
+				});
 				return mo;
 			} else{
 				return omo;
 			}
 		},
 		makeExternalPlaylist: function() {
-			if (!this.palist.length){return false;}
+			var songs_list = this.getMainList();
+			if (!songs_list.length){return false;}
 			var simple_playlist = [];
-			for (var i=0; i < this.palist.length; i++) {
-				var song = this.palist[i].song();
+			for (var i=0; i < songs_list.length; i++) {
+				var files = songs_list[i].mf_cor.getFilteredFiles();
+				var song = files && files[0];
 				if (song){
 					simple_playlist.push({
 						track_title: song.track,
@@ -144,7 +150,7 @@ var songsList;
 			var _this = this;
 
 			var doNotReptPl = function(state) {
-				_this.updateState('dont-rept-pl', state);
+				_this.updateState('dont_rept_pl', state);
 			};
 			if (su.settings['dont-rept-pl']){
 				doNotReptPl(true);
@@ -154,7 +160,7 @@ var songsList;
 
 		},
 		setDnRp: function(state) {
-			this.updateState('dont-rept-pl', state);
+			this.updateState('dont_rept_pl', state);
 			su.setSetting('dont-rept-pl', state);
 		},
 		model_name: 'row-pl-settings'
@@ -174,8 +180,28 @@ var songsList;
 		model_name: 'row-multiatcs'
 	});
 
-
-
-	
+window.HypemPlaylist = function() {};
+songsList.extendTo(HypemPlaylist, {
+	init: function() {
+		this._super.apply(this, arguments);
+		this.can_use = this.app.hypem.can_send;
+		this.updateState('possible_loader_disallowing', localize('Hypem-cant-load'));
+	},
+	page_limit: 20,
+	'compx-loader_disallowing_desc': {
+		depends_on: ['loader_disallowed', 'possible_loader_disallowing'],
+		fn: function(disallowed, desc) {
+			if (disallowed){
+				return desc;
+			}
+		}
+	},
+	'compx-loader_disallowed': {
+		depends_on: ['browser_can_load'],
+		fn: function(can_load) {
+			return !can_load;
+		}
+	}
+});
 })();
 

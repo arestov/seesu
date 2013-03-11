@@ -5,9 +5,11 @@ var provoda;
 provoda = {
 	prototypes: {},
 	Eventor: function(){},
-	StatesEmitter: function() {},
+	StatesEmitter: function(){},
 	Model: function(){},
 	View: function(){},
+	ItemsEvents: function(){},
+	StatesArchiver: function(){},
 	addPrototype: function(name, obj){
 		if (!this.prototypes[name]){
 			this.prototypes[name] = obj;
@@ -24,6 +26,121 @@ provoda = {
 	}
 };
 
+Class.extendTo(provoda.ItemsEvents, {
+	init: function(event_name, eventCallback, skip_event_regf) {
+		this.controls_list = [];
+		this.event_name = event_name;
+		this.eventCallback = eventCallback;
+		this.skip_event_regf = skip_event_regf;
+	},
+	unsubcribeOld: function() {
+		if (this.controls_list.length){
+			for (var i = 0; i < this.controls_list.length; i++) {
+				this.controls_list[i].unsubcribe();
+			}
+		}
+	},
+	setItems: function(items_list) {
+		this.unsubcribeOld();
+		this.items_list = items_list;
+		this.controls_list = [];
+		for (var i = 0; i < items_list.length; i++) {
+			this.controls_list.push(
+				items_list[i].on(this.event_name, this.eventCallback, {
+					easy_bind_control: true,
+					skip_reg: this.skip_event_regf
+				})
+			);
+		}
+	}
+
+});
+
+provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
+	init: function(state_name, opts) {
+		var _this = this;
+		this.checkFunc = function(e) {
+			var item = this;
+			_this.getItemsValues(item);
+		};
+		this.state_name = state_name;
+		this._super('state-change.' + this.state_name, this.checkFunc, true);
+		
+		this.returnResult = opts.returnResult;
+		var calcR = opts.calculateResult;
+		if (calcR){
+			if (typeof calcR == 'function'){
+				this.calculateResult = calcR;
+			} else {
+				if (calcR == 'some'){
+					this.calculateResult = this.some;
+				} else if (calcR == 'every'){
+					this.calculateResult = this.every;
+				}
+			}
+
+			
+		} else {
+			this.calculateResult = this.some;
+		}
+	},
+	calculateResult: null,
+	every: function(values_array) {
+		for (var i = 0; i < values_array.length; i++) {
+			var cur = values_array[i];
+			if (!cur){
+				return false;
+			}
+		}
+		return true;
+	},
+	some: function(values_array, fn) {
+		for (var i = 0; i < values_array.length; i++) {
+			var cur = values_array[i];
+			if (cur){
+				return true;
+			}
+		}
+		return false;
+	},
+	getItemsValues: function(item) {
+		var values_list = [];
+		for (var i = 0; i < this.items_list.length; i++) {
+			values_list.push(this.items_list[i].state(this.state_name));
+		}
+
+		this.returnResult.call(this, this.calculateResult.call(this, values_list));
+		return values_list;
+	},
+	unsubcribeOld: function() {
+		if (this.controls_list.length){
+			for (var i = 0; i < this.controls_list.length; i++) {
+				this.controls_list[i].unsubcribe();
+			}
+		}
+	},
+	setItems: function(items_list) {
+		this._super(items_list);
+		this.checkFunc();
+	}
+});
+
+var BindControl = function() {};
+Class.extendTo(BindControl, {
+	init: function(eventor, opts) {
+		this.ev = eventor;
+		this.opts = opts;
+	},
+	subscribe: function() {
+		this.unsubcribe();
+		
+		this.ev._pushCallbackToStack(this.opts);
+	},
+	unsubcribe: function() {
+		this.ev.off(this.opts.namespace, this.opts.cb);
+	}
+});
+
 Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
@@ -31,36 +148,89 @@ Class.extendTo(provoda.Eventor, {
 		this.requests = {};
 		return this;
 	},
+	_pushCallbackToStack: function(opts) {
+		if (!this.subscribes[opts.short_name]){
+			this.subscribes[opts.short_name] = [];
+		}
+		this.subscribes[opts.short_name].push({
+			namespace: opts.namespace,
+			cb: opts.cb,
+			once: opts.once,
+			immediately: opts.immediately
+		});
+	},
+	getPossibleRegfires: function(namespace) {
+		var parts = namespace.split('.');
+		var funcs = [];
+		for (var i = parts.length - 1; i > -1; i--) {
+			var posb_namespace = parts.slice(0, i + 1).join('.');
+			if (this.reg_fires[posb_namespace]){
+				funcs.push(this.reg_fires[posb_namespace]);
+			}
+		}
+		return funcs;
+	},
 	_addEventHandler: function(namespace, cb, opts, once){
+		if (this.convertEventName){
+			namespace = this.convertEventName(name);
+		}
+
 		var
 			fired,
 			_this = this,
-			short_name = namespace.split('.')[0];
+			name_parts = namespace.split('.'),
+			short_name = name_parts[0];
 
 		if (opts && opts.exlusive){
 			this.off(namespace);
 		}
-
-		if (this.reg_fires[short_name]){
-			this.reg_fires[short_name].call(this,  function() {
-				cb.apply(_this, arguments);
-				fired = true;
-			});
-			
-		}
-		if (!(once && fired)){
-			if (!this.subscribes[short_name]){
-				this.subscribes[short_name] = [];
+		if (!opts || !opts.skip_reg){
+			var reg_fires = this.getPossibleRegfires(namespace);
+			if (reg_fires.length){
+				reg_fires[0].call(this, function() {
+					fired = true;
+					var args = arguments;
+					if (opts && opts.soft_reg){
+						setTimeout(function() {
+							cb.apply(_this, args);
+						}, 0);
+					} else {
+						cb.apply(_this, args);
+					}
+					
+					
+					
+				}, namespace, opts, name_parts);
 			}
-			this.subscribes[short_name].push({
-				namespace: namespace,
-				cb: cb,
-				once: once
-			});
 		}
 		
 
-		return this;
+		/*if (this.reg_fires[short_name]){
+			this.reg_fires[short_name]
+			
+		}*/
+		var subscr_opts = {
+			short_name: short_name,
+			namespace: namespace,
+			cb: cb,
+			once: once,
+			immediately: opts && opts.immediately
+		};
+
+		if (!(once && fired)){
+			
+			this._pushCallbackToStack(subscr_opts);
+		}
+		if (opts && opts.easy_bind_control){
+			var bind_control = new BindControl();
+			bind_control.init(this, subscr_opts);
+			return bind_control;
+		} else {
+			return this;
+		}
+		
+
+		
 	},
 	once: function(namespace, cb, opts){
 		return this._addEventHandler(namespace, cb, opts, true);
@@ -69,6 +239,9 @@ Class.extendTo(provoda.Eventor, {
 		return this._addEventHandler(namespace, cb, opts);
 	},
 	off: function(namespace, cb, obj){
+		if (this.convertEventName){
+			namespace = this.convertEventName(name);
+		}
 		var
 			clean = [],
 			short_name = namespace.split('.')[0],
@@ -122,20 +295,33 @@ Class.extendTo(provoda.Eventor, {
 		}
 		return this;
 	},
+	callEventCallback: function(cur, args) {
+		var _this = this;
+		if (cur.immediately){
+			cur.cb.apply(_this, args);
+		} else {
+			setTimeout(function() {
+				cur.cb.apply(_this, args);
+			},1);
+		}
+		
+	},
 	trigger: function(){
 		var args = Array.prototype.slice.call(arguments);
 		var name = args.shift();
+		if (this.convertEventName){
+			name = this.convertEventName(name);
+		}
+
 		var cb_cs = this.getMatchedCallbacks(name).matched;
 
 		if (cb_cs){
 			for (var i = 0; i < cb_cs.length; i++) {
 				var cur = cb_cs[i];
-				cur.cb.apply(this, args);
+				this.callEventCallback(cur, args);
 				if (cur.once){
 					this.off(name, false, cur);
 				}
-
-				
 			}
 		}
 		return this;
@@ -220,12 +406,41 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.states = {};
 		this.complex_states_index = {};
 		this.complex_states_watchers = [];
+		this.states_changing_stack = [];
+		this.onRegistration('vip-state-change', function(cb, namespace, opts, name_parts) {
+			var state_name = name_parts[1];
+			cb({
+				value: this.state(state_name)
+			});
+		});
+
+		this.onRegistration('state-change', function(cb, namespace, opts, name_parts) {
+			var state_name = name_parts[1];
+			cb({
+				value: this.state(state_name)
+			});
+		});
 		return this;
 	},
 	state: function(name){
 		return this.states[name];
 	},
-	replaceState: function(name, value, skip_handler) {
+	compressStatesChanges: function(changes_list) {
+		var result_changes = {};
+		var result_changes_list = [];
+
+		for (var i = 0; i < changes_list.length; i++) {
+			var cur = changes_list[i];
+			if (!result_changes[cur.name]){
+				var obj = {name: cur.name};
+				result_changes[cur.name] = obj;
+				result_changes_list.push(obj);
+			}
+			result_changes[cur.name].value = cur.value;
+		}
+		return result_changes_list;
+	},
+	_replaceState: function(name, value, skip_handler) {
 		if (name){
 			var obj_to_change	= this.states,
 				old_value		= obj_to_change && obj_to_change[name],
@@ -242,6 +457,10 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 					
 				}
 			}
+			//
+			value = value || false;
+			//less calculations? (since false and "" and null and undefinded now os equeal and do not triggering changes)
+			//
 			
 			if (old_value != value){
 				
@@ -255,37 +474,191 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
-	getTargetComplexStates: function(state) {
-		var r = [];
-		var states = toRealArray(state);
-		//.indexOf(state) != -1
-		for (var i in this.complex_states){
-			var cur = this.complex_states[i];
-			if (!states.length || states.length != arrayExclude(states, cur.depends_on).length ){
-				var temp_comx = {
-					name: i,
-					obj: this.complex_states[i]
-				};
-				this.compoundComplexState(temp_comx);
-				r.push(temp_comx);
+	emmitStateChange: function(cur, original_state) {
+		var _this = this;
+		setTimeout(function() {
+			_this.trigger('state-change.' + cur.name, {
+				type: cur.name,
+				value: cur.value,
+				old_value: original_state
+			});
+		},1);
+		
+	},
+	_updateProxy: function(changes_list, opts) {
+		var i, cur;
+		if (this.undetailed_states){
+			for (i = 0; i < changes_list.length; i++) {
+				cur = changes_list[i];
+				this.undetailed_states[cur.name] = cur.value;
+				
+			}
+			return this;
+		}
+		this.states_changing_stack.push({
+			list: changes_list,
+			opts: opts
+		});
+
+		if (this.collecting_states_changing){
+			return this;
+		}
+		this.collecting_states_changing = true;
+
+		var total_all_states_ch = [];
+
+		//пораждать события изменившихся состояний (в передлах одного стэка/вызова)
+		//для пользователя пока пользователь не перестанет изменять новые состояния
+		while (this.states_changing_stack.length){
+			var all_i_cg = [];
+			var original_states = cloneObj({}, this.states);
+			var cur_changes = this.states_changing_stack.shift();
+
+			//получить изменения для состояний, которые изменил пользователь через публичный метод
+			var changed_states = this.getChanges(cur_changes.list, cur_changes.opts);
+
+			var all_ch_compxs = [];
+			//проверить комплексные состояния
+			var first_compxs_chs = this.getComplexChanges(changed_states);
+			if (first_compxs_chs.length){
+				all_ch_compxs = all_ch_compxs.concat(first_compxs_chs);
+			}
+			
+			var current_compx_chs = first_compxs_chs;
+			
+			//довести изменения комплексных состояний до самого конца
+			while (current_compx_chs.length){
+				var cascade_part = this.getComplexChanges(current_compx_chs);
+				current_compx_chs = cascade_part;
+				if (cascade_part.length){
+					all_ch_compxs = all_ch_compxs.concat(cascade_part);
+				}
+				
+			}
+
+			//собираем все группы изменений
+			all_i_cg = all_i_cg.concat(changed_states, all_ch_compxs);
+
+			//устраняем измененное дважды и более
+			var result_changes_list = this.compressStatesChanges(all_i_cg);
+
+			
+
+
+			var called_watchers = [];
+			for (i = 0; i < result_changes_list.length; i++) {
+				cur = result_changes_list[i];
+
+				//вызов внутреннего для самого объекта события
+				this.trigger('vip-state-change.' + cur.name, {
+					type: cur.name,
+					value: cur.value,
+					old_value: original_states[cur.name]
+				});
+
+				//вызов стандартного события
+				this.emmitStateChange(cur, original_states[cur.name]);
+
+				
+
+				//вызов комплексного наблюдателя
+				var watchers = this.complex_states_index[cur.name];
+				if (watchers){
+					for (var jj = 0; jj < watchers.length; jj++) {
+						var watcher = watchers[jj];
+						if (called_watchers.indexOf(watcher) == -1){
+							this.callCSWatcher(watcher);
+							called_watchers.push(watcher);
+						}
+					}
+				}
+			}
+			total_all_states_ch = total_all_states_ch.concat(result_changes_list);
+		}
+		//устраняем измененное дважды и более
+		var total_result_changes = this.compressStatesChanges(total_all_states_ch);
+
+		if (this.sendStatesToViews){
+			this.sendStatesToViews(total_result_changes);
+		}
+
+
+		this.collecting_states_changing = false;
+		return this;
+	},
+	getComplexChanges: function(changes_list) {
+		return this.getChanges(this.checkComplexStates(changes_list));
+	},
+	getChanges: function(changes_list, opts) {
+		var changed_states = [];
+		for (var i = 0; i < changes_list.length; i++) {
+			var cur = changes_list[i];
+			
+			var old_value = this._replaceState(cur.name, cur.value, opts && opts.skip_handler);
+			if (old_value){
+				changed_states.push({
+					name: cur.name,
+					old_value: old_value[0],
+					value: cur.value
+				});
 			}
 		}
-		return r;
+		if (this.tpl){
+			this.tpl.setStates(this.states);
+		}
+		return changed_states;
+	},
+	checkComplexStates: function(changed_states) {
+		var list = $filter(changed_states, 'name');
+		var co_sts = this.getTargetComplexStates(list);
+		return co_sts;
+	},
+	getTargetComplexStates: function(state) {
+		var states = toRealArray(state);
+		if (!state){
+			throw new Error('something wrong');
+		}
+
+		var compx_check = {};
+		var full_comlxs_list = [];
+		var result_array = [];
+		var comlx_name;
+
+		for (comlx_name in this){
+			if (comlx_name.indexOf('compx-') === 0){
+				var name = comlx_name.replace('compx-', '');
+				compx_check[name] = true;
+				full_comlxs_list.push({
+					name: name,
+					obj: this[comlx_name]
+				});
+			}
+		}
+		for (comlx_name in this.complex_states){
+			if (!compx_check[comlx_name]){
+				full_comlxs_list.push({
+					name: comlx_name,
+					obj: this.complex_states[comlx_name]
+				});
+			}
+		}
+
+		for (var i = 0; i < full_comlxs_list.length; i++) {
+			var cur = full_comlxs_list[i];
+			if (states.length != arrayExclude(states, cur.obj.depends_on).length ){
+				cur.value = this.compoundComplexState(cur);
+				result_array.push(cur);
+			}
+		}
+
+		return result_array;
 	},
 	compoundComplexState: function(temp_comx) {
 		var values = [];
 		for (var i = 0; i < temp_comx.obj.depends_on.length; i++) {
 			values.push(this.state(temp_comx.obj.depends_on[i]));
 		}
-		var value = temp_comx.obj.fn.apply(this, values);
-		temp_comx.value = value;
-	},
-	checkComplexStates: function(state) {
-		var co_sts = this.getTargetComplexStates(state);
-		for (var i = 0; i < co_sts.length; i++) {
-			this._updateProxy(co_sts[i].name, co_sts[i].value);
-		}
-
+		return temp_comx.obj.fn.apply(this, values);
 	},
 	iterateCSWatchers: function(state_name) {
 		if (this.complex_states_index[state_name]){
@@ -339,7 +712,18 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	init: function(){
 
 		this._super();
-		this.provoda_id = models_counters++;
+
+		this.onRegistration('child-change', function(cb, namespace, opts, name_parts) {
+			var child_name = name_parts[1];
+			var child = this.getChild(child_name);
+			if (child){
+				cb({
+					value: child
+				});
+			}
+		});
+
+		this._provoda_id = models_counters++;
 		this.states = {};
 		this.views = [];
 		this.views_index = {};
@@ -398,18 +782,62 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.trigger('die');
 		return this;
 	},
+	watchChildrenStates: function(collection_name, state_name, callback) {
+		//
+		var _this = this;
+		var items_events = new provoda.ItemsEvents();
+		items_events.init('state-change.' + state_name, function() {
+			callback.call(_this, {
+				item: this,
+				args: arguments
+			});
+		}, true);
+		this.on('child-change.' + collection_name, function(e) {
+			items_events.setItems(e.value);
+		});
+	},
+	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
+		var _this = this;
+		var archiver = new provoda.StatesArchiver();
+		archiver.init(collection_state, {
+			returnResult: function(value) {
+				_this.updateState(result_state_name || collection_state, value);
+			},
+			calculateResult: statesCalcFunc
+		});
+		this.on('child-change.' + collection_name, function(e) {
+			archiver.setItems(e.value);
+		});
+	},
 	getChild: function(collection_name) {
 		return this.children_models[collection_name];
 	},
 	setChild: function(collection_name, array, changed) {
+		if (collection_name.indexOf('.') != -1){
+			throw new Error('remove "." (dot) from name');
+		}
 		this.children_models[collection_name] = array;
+
+		var event_obj = {};
+		if (typeof changed == 'object'){
+			cloneObj(event_obj, changed);
+		}
+		event_obj.value = array;
+		event_obj.no_changing_mark = !changed;
+		
+		this.trigger('child-change.' + collection_name, event_obj);
+
 		if (changed){
 			this.sendCollectionChange(collection_name, array);
 		}
+
 		return this;
 	},
 	addChild: function(md, name) {
-		this.children.push.call(this.children, md);
+		if (this.children.indexOf(md) == -1){
+			this.children.push.call(this.children, md);
+		}
+		
 	},
 	getRooConPresentation: function(mplev_view, get_ancestor) {
 		var views = this.getViews();
@@ -464,30 +892,45 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			this.views[i].collectionChange(collection_name, array);
 		}
 	},
-	_updateProxy: function(name, value){
-		value = value || false;
-		var old_value = this.replaceState(name, value);
-		if (old_value){
-			this.removeDeadViews();
-			for (var i = 0; i < this.views.length; i++) {
-				this.views[i].change(name, value);
-			}
-			this.trigger('state-change.' + name, {type: name, value: value, old_value: old_value[0]});
-		
-			this.checkComplexStates(name);
-			this.iterateCSWatchers(name);
-		
+	hasComplexStateFn: function(state_name) {
+		if (this.complex_states && this.complex_states[name]){
+			return true;
 		}
-		return this;
+		if (this['compx-' + state_name]){
+			return true;
+		}
 	},
-	toggleState: function(name){
-		this.updateState(name, !this.state(name));
+	sendStatesToView: function(view, states_list) {
+		view.recieveStatesChanges(states_list);
+	},
+	sendStatesToViews: function(states_list) {
+		for (var i = 0; i < this.views.length; i++) {
+			this.sendStatesToView(this.views[i], states_list);
+			
+		}
+	},
+	updateManyStates: function(obj) {
+		var changes_list = [];
+		for (var i in obj) {
+			changes_list.push({
+				name: i,
+				value: obj[i]
+			});
+			
+		}
+		this._updateProxy(changes_list);
 	},
 	updateState: function(name, value){
-		if (this.complex_states && this.complex_states[name]){
+		if (name.indexOf('-') != -1 && console.warn){
+			console.warn('fix prop name: ' + name);
+		}
+		if (this.hasComplexStateFn(name)){
 			throw new Error("you can't change complex state in this way");
 		}
-		return this._updateProxy(name, value);
+		return this._updateProxy([{
+			name: name,
+			value: value
+		}]);
 	}
 });
 
@@ -537,8 +980,195 @@ var
 }());
 
 
+var Template = function() {};
+var angbo = window.angbo;
+
+Class.extendTo(Template, {
+	init: function(opts) {
+		this.root_node = opts.node;
+		this.ancs = {};
+		this.children_templates = {};
+		this.directives_names_list = [];
+		this.states_watchers = [];
+		this.stwat_index = {};
+		
+		for (var directive_name in this.directives){
+			this.directives_names_list.push(directive_name);
+		}
+		this.getPvAnchors(this.root_node);
+		if (!window.angbo || !window.angbo.interpolateExpressions){
+			console.log('cant pasre statements');
+		}
+	},
+	bindStandartChange: function(node, attr_obj, getValue, setValue, simplifyValue) {
+		var text_statement = attr_obj.value;
+		if (text_statement){
+			var calculator = angbo.interpolateExpressions(text_statement);
+			if (calculator){
+				var original_value = getValue.call(this, node, attr_obj);
+				if (simplifyValue){
+					original_value = simplifyValue.call(this, original_value);
+				}
+
+				var all_values = $filter(calculator.parts,'propsToWatch');
+				var all_vs = [];
+				all_vs = all_vs.concat.apply(all_vs, all_values);
+
+;
+				var sfy_values = [];
+				for (var i = 0; i < all_vs.length; i++) {
+					var parts = all_vs[i].split('.');
+					var main_part = parts[0];
+					sfy_values.push(main_part);
+				}
+				var _this = this;
+
+				this.states_watchers.push({
+					values: all_vs,
+					sfy_values: sfy_values,
+					checkFunc: function(states) {
+						var new_value = calculator(states);
+						if (simplifyValue){
+							new_value = simplifyValue.call(_this, new_value);
+						}
+						if (original_value != new_value){
+							setValue.call(_this, node, attr_obj, new_value, original_value);
+							original_value = new_value;
+						}
+					}
+				});
+			}
+		}
+	},
+	dom_helpres: {
+		getTextValue: function(node) {
+			return $(node).text();
+		},
+		setTextValue: function(node, attr_obj, new_value, old_value) {
+			$(node).text(new_value);
+		},
+		getClass: function(node, attr_obj) {
+			return attr_obj.value;
+		},
+		setClass: function(node, attr_obj, new_value, old_value) {
+			attr_obj.value = new_value;
+		}
+	},
+	directives: {
+		'pv-text': function(node, attr_obj){
+			this.bindStandartChange(node, attr_obj, this.dom_helpres.getTextValue, this.dom_helpres.setTextValue);
+
+		},
+		'px-class': function(node, attr_obj) {
+			this.bindStandartChange(node, attr_obj, this.dom_helpres.getClass, this.dom_helpres.setClass, function(value) {
+				if (!value){
+					return value;
+				}
+				return value.replace(/\s+/gi,' ').replace(/^\s|\s$/gi,'');
+			});
+		},
+		'pv-anchor': function(node, attr_obj) {
+			var anchor_name = attr_obj.value;
+			//if (typeof anchor_name)
+
+			if (this.ancs[anchor_name]){
+				throw new Error('anchors exists');
+			} else {
+				this.ancs[anchor_name] = $(node);
+			}
+
+			/*
+			.getAttribute('pv-anchor');
+
+			if (typeof anchor_name == 'string'){
+				
+			}
+			*/
+
+		}
+	},
+	setStates: function(states) {
+		for (var i = 0; i < this.states_watchers.length; i++) {
+			this.states_watchers[i].checkFunc(states);
+		}
+	},
+	/*
+	checkValues: function(array, all_states) {
+		var checked = [];
+
+		for (var i = 0; i < array.length; i++) {
+			array[i]
+		}
+	},*/
+	handleDirective: function(directive_name, node, attr_obj, result_cache) {
+		this.directives[directive_name].call(this, node, attr_obj, result_cache);
+	},
+	getPvViews: function(array) {
+		var result = this.children_templates;
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			var name_parts = cur.view_name.split(' ');
+			var real_name;
+			var space = 'main';
+			if (name_parts[1]){
+				throw new Error('uncomplete code; fixme');
+			} else {
+				real_name = name_parts[0];
+			}
+			
+			if (!result[real_name]){
+				result[real_name] = {};
+			}
+			if (!result[real_name][space]){
+				result[real_name][space] = [];
+			}
+
+			result[real_name][space] = cur;
+			cur.views = [];
+		}
+		return result;
+	},
+	getPvAnchors: function(vroot_node) {
+		var match_stack =[];
+		var pv_views = [];
+		//var anchors = [];
+
+		vroot_node = vroot_node && vroot_node[0] || vroot_node;
+		match_stack.push(vroot_node);
+
+		while (match_stack.length){
+			var cur_node = match_stack.shift();
+			if (cur_node.nodeType != 1){
+				continue;
+			}
+			var view_name = vroot_node !== cur_node && cur_node.getAttribute('pv-view');
+			if (typeof view_name == 'string'){
+				pv_views.push({
+					node: cur_node,
+					view_name: view_name
+				});
+			} else {
+				var i, attributes = cur_node.attributes;
+				for (i = 0; i < attributes.length; i++) {
+					var attr_name = attributes[i].name;
+					if (this.directives_names_list.indexOf(attr_name) != -1){
+						this.handleDirective(attr_name, cur_node, attributes[i]);
+					}
+				}
+				for (i = 0; i < cur_node.childNodes.length; i++) {
+					match_stack.push(cur_node.childNodes[i]);
+				}
+
+			}
+
+		}
+		this.getPvViews(pv_views);
+		this.stwat_index = makeIndexByField(this.states_watchers, 'sfy_values');
+	}
+});
 
 var views_counter = 0;
+var way_points_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(view_otps, opts){
 		this.view_id = views_counter++;
@@ -587,11 +1217,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	getDeepWaypoints: function(exept) {
 		var all = [];
-		if (this.canUseDeepWaypoints()){
-			var views = this.getDeepChildren(exept);
+		if (this.canUseWaypoints() && this.canUseDeepWaypoints()){
+			//var views = this.getDeepChildren(exept);
 			
-			for (var i = 0; i < views.length; i++) {
-				all = all.concat(views[i].getWaypoints());
+			for (var i = 0; i < this.children.length; i++) {
+				var cur = this.children[i];
+				all = all.concat(cur.getAllWaypoints());
 			}
 		}
 		
@@ -601,12 +1232,26 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var obj = {
 			node: point,
 			canUse: opts && opts.canUse,
-			view: this
+			simple_check: opts && opts.simple_check,
+			view: this,
+			wpid: ++way_points_counter
 		};
 		if (!opts || (!opts.simple_check && !opts.canUse)){
 			//throw new Error('give me check tool!');
 		}
 		this.way_points.push(obj);
+	},
+	getTemplate: function(node) {
+		node = node[0] || node;
+		var template = new Template();
+		template.init({node: node});
+		return template;
+	},
+	createTemplate: function() {
+		if (!this.c){
+			throw new Error('cant create template');
+		}
+		this.tpl = this.getTemplate(this.c);
 	},
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;
@@ -621,9 +1266,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		
 	},
 	createDetailes: function() {
-		if (this.createBase){
+		if (this.opts && this.opts.pv_view){
+			if (this.useBase){
+				this.useBase(this.opts.pv_view);
+			}
+		} else if (this.createBase){
 			this.createBase();
 		}
+
+		
 		
 	},
 	requestDetailes: function(){
@@ -732,7 +1383,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.children.push.call(this.children, view);
 	},
 	addChild: function(view, child_name) {
-		this.children.push.call(this.children, view);
+		if (this.children.indexOf(view) == -1){
+			this.children.push.call(this.children, view);
+		}
 	},
 	removeChildViewsByMd: function(md) {
 		var views_to_remove = [];
@@ -789,17 +1442,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		
 		
-		return this;
-	},
-	setModel: function(md, puppet_model){
-		throw new Error('what do you do!?');
-
-		this.md = md;
-		var was;
-		if (puppet_model){
-			this.puppet_model = puppet_model;
-		}
-		this.setStates(md.states);
 		return this;
 	},
 	getT: function(){
@@ -885,21 +1527,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 
 		var states_list = [];
-		for (var name in states){
-			this.changeState(name, states[name], false);
-			states_list.push(name);
-		}
-		
-		this.checkComplexStates(states_list);
 
-		for (var i = 0; i < this.complex_states_watchers.length; i++) {
-			var watcher = this.complex_states_watchers[i];
-			if (this.checkCSWatcher(watcher)){
-				this.callCSWatcher(watcher);
-			}
-			
+		for (var name in states){
+			states_list.push({
+				name: name,
+				value: states[name]
+			});
 		}
+
+		this._updateProxy(states_list);
 		this._states_set_processing = false;
+
+		
 		return this;
 	},
 	
@@ -965,39 +1604,26 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return has_all_dependings;
 	},
-	_updateProxy: function(name, value){
-		this.changeState(name, value, true);
-	},
-	changeState: function(name, value, allow_complex_watchers, skip_handler) {
-		value = value || false;
-
-		if (this.undetailed_states){
-			this.undetailed_states[name] = value;
-			return this;
-		}
-
-		var old_value = this.replaceState(name, value, skip_handler);
-		if (old_value){
-			this.trigger('state-change.' + name, {type: name, value: value, old_value: old_value[0]});
-			if (allow_complex_watchers){
-				this.checkComplexStates(name);
-				this.iterateCSWatchers(name);
-			}
-		
-		}
-		return this;
-	},
-	change: function(name, value){
-		this._updateProxy(name, value);
+	recieveStatesChanges: function(changes_list) {
+		this._updateProxy(changes_list);
 	},
 	overrideStateSilently: function(name, value) {
-		this.changeState(name, value, true, true);
+		this._updateProxy([{
+			name: name,
+			value: value
+		}], {skip_handler: true});
 	},
 	promiseStateUpdate: function(name, value) {
-		this._updateProxy(name, value);
+		this._updateProxy([{
+			name: name,
+			value: value
+		}]);
 	},
 	setVisState: function(name, value) {
-		this._updateProxy('vis-' + name, value);
+		this._updateProxy([{
+			name: 'vis_' + name,
+			value: value
+		}]);
 	},
 	setMdChildren: function(collections) {
 		this._collections_set_processing = true;
@@ -1043,6 +1669,34 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			
 		}
 	},
+	checkCollchItemAgainstPvView: function(name, real_array, space_name, pv_view) {
+		if (real_array.length > 1){
+			throw new Error('uncomplete code; cant do this');
+		}
+
+		for (var mmm = 0; mmm < real_array.length; mmm++) {
+			var cur_md = real_array[mmm];
+			if (pv_view.done){
+				throw new Error('uncomplete');
+			}
+			pv_view.done = true;
+			if (mmm !== 0){
+				//document.createComment
+			}
+			var view = this.getFreeChildView(name, cur_md, space_name, {
+				pv_view: $(pv_view.node)
+			});
+			if (view){
+				pv_view.views.push(view.view_id);
+			}
+			
+		}
+	},
+	checkCollectionChange: function(name) {
+		if (this.children_models[name]){
+			this.collectionChange(name, this.children_models[name]);
+		}
+	},
 	collectionChange: function(name, array) {
 		if (this.undetailed_children_models){
 			this.undetailed_children_models[name] = array;
@@ -1051,15 +1705,29 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		var old_value = this.children_models[name];
 		this.children_models[name] = array;
+
+		var real_array;
+
+		var pv_views = getTargetField(this, 'tpl.children_templates.' + name);
+		if (pv_views){
+			for (var space_name in pv_views){
+				this.checkCollchItemAgainstPvView(name, toRealArray(array), space_name, pv_views[space_name]);
+			}
+			this.requestAll();
+		}
+
+
 		var collch = this['collch-' + name];//collectionChanger
 		if (collch){
 			if (typeof collch == 'function'){
 				collch.call(this, name, array, old_value);
 			} else {
 				var not_request, collchs;
+				var collchs_limit;
 				if (typeof collch == 'object'){
 					not_request = collch.not_request;
 					collchs = collch.spaces;
+					collchs_limit = collch.limit;
 				}
 
 				collchs = collchs || toRealArray(collch);
@@ -1068,8 +1736,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				for (var i = 0; i < collchs.length; i++) {
 					declarations.push(this.parseCollectionChangeDeclaration(collchs[i]));
 				}
-				var real_array = toRealArray(array);
-				for (var bb = 0; bb < real_array.length; bb++) {
+				real_array = toRealArray(array);
+				var array_limit;
+				if (collchs_limit){
+					array_limit = Math.min(collchs_limit, real_array.length);
+				} else {
+					array_limit = real_array.length;
+				}
+
+				for (var bb = 0; bb < array_limit; bb++) {
 					var cur = real_array[bb];
 					for (var jj = 0; jj < declarations.length; jj++) {
 						var declr = declarations[jj];

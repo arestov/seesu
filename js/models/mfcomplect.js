@@ -37,46 +37,54 @@ provoda.Model.extendTo(notifyCounter, {
 
 var mfComplect = function(opts, params) {
 	this.init();
-	this.sem_part = params.sem_part;
 	this.start_file = params.file;
 	this.mo = opts.mo;
 	this.mf_cor = opts.mf_cor;
 	this.moplas_list = [];
+	this.source_name = params.source_name;
 
 	var _this = this;
 	var selectMf = function() {
 		_this.mf_cor.playSelectedByUser(this);
 	};
 
+
+
 	var sf;
-
-	if (this.sem_part){
-		if (this.sem_part.t.length > this.overstock_limit){
-			this.updateState('overstock', true);
-		}
-		
-		for (var i = 0; i < this.sem_part.t.length; i++) {
-			sf =
-				this.sem_part.t[i]
-					.getSongFileModel(this.mo, this.mo.player)
-						.on('want-to-play-sf', selectMf);
-
-			if (i + 1 > this.overstock_limit){
-				sf.updateState('overstock', true);
-			}
-			this.addChild(sf);
-			this.moplas_list.push(sf);
-		}
-		this.setChild('moplas_list', this.moplas_list);
-	} else {
+	if (this.start_file){
 		sf = this.start_file
 			.getSongFileModel(this.mo, this.mo.player)
 				.on('want-to-play-sf', selectMf);
 		this.addChild(sf);
 		this.moplas_list.push(sf);
-		this.setChild('moplas_list', this.moplas_list);
+		this.setChild('moplas_list', this.moplas_list, true);
+	} else {
+		this.search_source = params.search_source;
+		this.search_source.on('state-change.files-list', function(e) {
+			var files_list = e.value;
+			if (!files_list){
+				return;
+			}
+			var moplas_list = [];
+			_this.updateState('overstock', files_list.length > _this.overstock_limit);
+			for (var i = 0; i < files_list.length; i++) {
+			
+				sf =
+					files_list[i]
+						.getSongFileModel(_this.mo, _this.mo.player)
+							.on('want-to-play-sf', selectMf);
+				sf.updateState('overstock', i + 1 > _this.overstock_limit);
+				_this.addChild(sf);
+				moplas_list.push(sf);
+				_this.setChild('moplas_list', moplas_list, true);
+			}
+			_this.moplas_list = moplas_list;
+
+		});
+
 	}
-	this.updateState('complect-name', opts.name || this.sem_part.name);
+
+	this.updateState('complect_name', this.source_name);
 	
 };
 
@@ -87,8 +95,10 @@ provoda.Model.extendTo(mfComplect, {
 	overstock_limit: 5,
 	hasManyFiles: function() {
 		return this.sem_part && this.sem_part.t && this.sem_part.t.length > 1;
+	},
+	getFiles: function(type) {
+		return this.search_source.getFiles(type);
 	}
-
 });
 
 
@@ -103,6 +113,7 @@ provoda.Model.extendTo(mfCor, {
 		this.subscribed_to = [];
 		this.preload_initors = [];
 
+		var _this = this;
 
 		this.mfPlayStateChange = function(e) {
 			if (_this.state('used_mopla') == this){
@@ -112,12 +123,21 @@ provoda.Model.extendTo(mfCor, {
 		this.mfError = function() {
 			_this.checkMoplas(this);
 		};
+		/*
 		this.semChange = function(val) {
 			_this.semChanged(val);
 		};
-		
+		*/
 
-		this.intMessages();
+
+		this.mo.on('state-change.is_important', function(e) {
+			if (e.value && e.value){
+				setTimeout(function() {
+					_this.loadVideos();
+				}, 100);
+			}
+		}, {skip_reg: true});
+		
 
 		if (file){
 			this.file = file;
@@ -125,20 +145,45 @@ provoda.Model.extendTo(mfCor, {
 			file.getSongFileModel = file.getSongFileModel || getSongFileModel;
 			var complect = new mfComplect({
 					mf_cor: this,
-					mo: this.mo,
-					name: 'vk'
+					mo: this.mo
 				}, {
-					file: this.file
+					file: this.file,
+					source_name: 'vk'
 				});
 			this.addMFComplect(complect, this.file.from);
 			this.updateDefaultMopla();
 			this.setChild('sorted_completcs', [complect], true);
 
+		} else {
+			this.mo.on('vip-state-change.track', function(e) {
+				if (e.value){
+					_this.files_investg = _this.mo.mp3_search.getFilesInvestg({artist: _this.mo.artist, track: _this.mo.track});
+					_this.bindInvestgChanges();
+				}
+				
+			}, {immediately: true});
+			
 		}
+		
+		this.archivateChildrenStates('sorted_completcs', 'moplas_list', function(values_array) {
+			var args = values_array;
+			var many;
+			for (var i = 0; i < args.length; i++) {
+				var cur = args[i];
+				if (cur && cur.length > 1){
+					return true;
+				}
+			}
+			return false;
+		}, 'has_files');
 
-		var _this = this;
+		this.intMessages();
+
+
+		
+
 		/*
-		this.watchStates(['has_files', 'vk-audio-auth'], function(has_files, vkaa) {
+		this.watchStates(['has_files', 'vk_audio_auth '], function(has_files, vkaa) {
 			if (has_files || vkaa){
 				_this.updateState('must-be-expandable', true);
 			}
@@ -146,11 +191,67 @@ provoda.Model.extendTo(mfCor, {
 
 		
 	},
+	loadVideos: function() {
+		if (this.videos_loaded){
+			return this;
+		}
+		this.videos_loaded = true;
+		var _this = this;
+		var q = this.mo.artist + " - " + this.mo.track;
+		get_youtube(q, function(r){
+			var vs = r && r.feed && r.feed.entry;
+			if (vs && vs.length){
+				
+			
+				
+				var preview_types = ["default","start","middle","end"];
+
+				//set up filter app$control.yt$state.reasonCode != limitedSyndication
+
+				var video_arr = [];
+
+				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
+					var
+						_v = vs[i],
+						tmn = {},
+						v_id = _v['media$group']['yt$videoid']['$t'],
+						v_title = _v['media$group']['media$title']['$t'];
+					var cant_show = getTargetField(_v, "app$control.yt$state.name") == "restricted";
+					cant_show = cant_show || getTargetField($filter(getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
+
+
+					var thmn_arr = getTargetField(_v, "media$group.media$thumbnail");
+					
+					$.each(preview_types, function(i, el) {
+						tmn[el] = $filter(thmn_arr, 'yt$name', el)[0].url;
+					});
+
+					var yt_v = new YoutubeVideo();
+					yt_v.init({
+						app: _this.mo.app,
+						map_parent: _this.mo
+					}, {
+						yt_id: v_id,
+						cant_show: cant_show,
+						previews: tmn,
+						title: v_title,
+						mo: _this.mo
+					});
+					video_arr.push(yt_v);
+				}
+
+				video_arr.sort(function(a, b){
+					return sortByRules(a, b, ["cant_show"]);
+				});
+				_this.setChild('yt_videos', video_arr, true);
+			}
+		});
+	},
 	complex_states: {
 		"must-be-expandable": {
-			depends_on: ['has_files', 'vk-audio-auth'],
-			fn: function(has_files, vk_a_auth){
-				return !!(has_files || vk_a_auth);
+			depends_on: ['has_files', 'vk_audio_auth ', 'few_sources', 'cant_play_music'],
+			fn: function(has_files, vk_a_auth, fsrs, cant_play){
+				return !!(has_files || vk_a_auth || fsrs || cant_play);
 			}
 		},
 		mopla_to_use: {
@@ -172,7 +273,7 @@ provoda.Model.extendTo(mfCor, {
 			}
 		},
 		mopla_to_preload: {
-			depends_on: ['current_mopla', 'search-ready', 'preload-allowed'],
+			depends_on: ['current_mopla', 'search_ready', 'preload_allowed'],
 			fn: function(current_mopla, search_ready, preload_allowed){
 				return !!(preload_allowed && search_ready && current_mopla) && current_mopla;
 			}
@@ -214,11 +315,15 @@ provoda.Model.extendTo(mfCor, {
 	},
 	intMessages: function() {
 		this.notifier = new notifyCounter();
-		this.setChild('notifier', this.notifier);
+		this.setChild('notifier', this.notifier, true);
 		this.sf_notf = su.notf.getStore('song-files');
 		var rd_msgs = this.sf_notf.getReadedMessages();
+
 		for (var i = 0; i < rd_msgs.length; i++) {
 			this.notifier.banMessage(rd_msgs[i]);
+			if (rd_msgs[i] == 'vk_audio_auth '){
+				this.vk_ntf_readed = true;
+			}
 		}
 		this.bindMessagesRecieving();
 		
@@ -228,25 +333,45 @@ provoda.Model.extendTo(mfCor, {
 		
 
 		this.checkVKAuthNeed();
+
+		var _this = this;
+		this.player = this.mo.player;
+		
+		this.player
+			.on('core-fail', function() {
+				
+				_this.updateState('cant_play_music', true);
+				_this.notifier.addMessage('player-fail');
+			})
+			.on('core-ready', function() {
+				_this.updateState('cant_play_music', false);
+				_this.notifier.banMessage('player-fail');
+			});
+
+
 	},
 	getCurrentMopla: function(){
 		return this.state('current_mopla');
 	},
+	showOnMap: function() {
+		this.mo.showOnMap();
+		this.updateState('want_more_songs', true);
+	},
 	switchMoreSongsView: function() {
-		if (!this.state('want-more-songs')){
-			this.updateState('want-more-songs', true);
-			this.markMessagesReaded();
+		if (!this.state('want_more_songs')){
+			this.updateState('want_more_songs', true);
+			//this.markMessagesReaded();
 		} else {
-			this.updateState('want-more-songs', false);
+			this.updateState('want_more_songs', false);
 		}
 		
 	},
 	markMessagesReaded: function() {
-		this.sf_notf.markAsReaded('vk-audio-auth');
-		//this.notifier.banMessage('vk-audio-auth');
+		this.sf_notf.markAsReaded('vk_audio_auth ');
+		//this.notifier.banMessage('vk_audio_auth ');
 	},
 	addVKAudioAuth: function() {
-		this.notifier.addMessage('vk-audio-auth');
+		this.notifier.addMessage('vk_audio_auth ');
 		if (!this.vk_auth_rqb){
 
 			this.vk_auth_rqb = new VkLoginB();
@@ -254,9 +379,11 @@ provoda.Model.extendTo(mfCor, {
 				auth: su.vk_auth
 			}, {
 				open_opts: {settings_bits: 8},
+				notf: this.sf_notf,
+				notify_readed: this.vk_ntf_readed,
 				desc:
 					(
-						this.isHaveTracks('mp3') ?
+						this.files_investg && this.files_investg.state('has_mp3_files') ?
 						localize('to-find-better') :
 						localize("to-find-and-play")
 					)  +
@@ -265,14 +392,14 @@ provoda.Model.extendTo(mfCor, {
 			this.setChild('vk_auth', this.vk_auth_rqb);
 			this.addChild(this.vk_auth_rqb);
 			this.updateState('changed', new Date());
-			this.updateState('vk-audio-auth', true);
+			this.updateState('vk_audio_auth ', true);
 		}
 
 	},
 	removeVKAudioAuth: function() {
-		this.notifier.removeMessage('vk-audio-auth');
+		this.notifier.removeMessage('vk_audio_auth ');
 		if (this.vk_auth_rqb){
-			this.updateState('vk-audio-auth', false);
+			this.updateState('vk_audio_auth ', false);
 			this.vk_auth_rqb.die();
 			delete this.vk_auth_rqb;
 		}
@@ -310,8 +437,9 @@ provoda.Model.extendTo(mfCor, {
 		
 	},
 	collapseExpanders: function() {
-		this.updateState('want-more-songs', false);
+		this.updateState('want_more_songs', false);
 	},
+	/*
 	setSem: function(sem) {
 		if (this.file){
 			throw new Error('already using single file instead of search');
@@ -324,12 +452,62 @@ provoda.Model.extendTo(mfCor, {
 			sem.on('changed', this.semChange);
 		}
 		
-	},
+	},*/
 	addMFComplect: function(complect, name, fire_collch) {
 		this.complects[name] = complect;
 		this.addChild(complect);
 	},
+	bindSource: function(f_investg_s) {
+		var _this = this;
+		var source_name = f_investg_s.search_name;
+		if (!this.complects[source_name]){
+			var complect = new mfComplect({
+				mf_cor: this,
+				mo: this.mo
+			}, {
+				//sem_part: songs_packs[i],
+				search_source: f_investg_s,
+				source_name: source_name
+			});
+			this.addMFComplect(complect, source_name);
+			f_investg_s.on('state-change.files-list', function(e) {
+				if (e.value){
+					_this.updateDefaultMopla();
+					_this.checkVKAuthNeed();
+				}
+				
+			}, {
+				soft_reg: true
+			});
+			
+		//	many_files = many_files || complect.hasManyFiles();
+		}
 
+	},
+	bindInvestgChanges: function() {
+		//
+		var _this = this;
+		var investg = this.files_investg;
+		if (!investg){
+			return;
+		}
+		investg
+		.on('state-change.search_ready_to_use', function(e) {
+			_this.updateState('search_ready', e.value);
+		}, {soft_reg: true})
+		.on('child-change.sources_list', function(e) {
+			var sorted_completcs = [];
+			for (var i = 0; i < e.value.length; i++) {
+				var cur = e.value[i];
+				_this.bindSource(cur);
+				sorted_completcs.push(_this.complects[cur.search_name]);
+			}
+			_this.setChild('sorted_completcs', sorted_completcs, true);
+			_this.updateState('few_sources', e.value.length > 1);
+		}, {soft_reg: true});
+
+	},
+	/*
 	semChanged: function(complete) {
 		this.checkVKAuthNeed();
 
@@ -362,13 +540,9 @@ provoda.Model.extendTo(mfCor, {
 		this.updateState('has_files', many_files);
 		this.updateDefaultMopla();
 
-		if (this.isHaveBestTracks() || this.isSearchCompleted()){
-			this.updateState('search-ready', true);
-		}
-
 		this.setChild('sorted_completcs', sorted_completcs, true);
 
-	},
+	},*/
 	listenMopla: function(mopla) {
 		if (this.subscribed_to.indexOf(mopla) == -1){
 			mopla.on('state-change.play', this.mfPlayStateChange);
@@ -390,7 +564,7 @@ provoda.Model.extendTo(mfCor, {
 		if (this.state("user_preferred") == unavailable_mopla){
 			this.updateState("selected_mopla_to_use", false);
 			var from = this.state("selected_mopla").from;
-			var available = this.compoundFiles(function(mf) {
+			var available = this.getFilteredFiles(from, function(mf) {
 				if (mf.from == from && !mf.unavailable){
 					return true;
 				}
@@ -414,7 +588,7 @@ provoda.Model.extendTo(mfCor, {
 
 	},
 	updateDefaultMopla: function() {
-		var available = this.compoundFiles(function(mf) {
+		var available = this.getFilteredFiles(false, function(mf) {
 			if (!mf.unavailable){
 				return true;
 			}
@@ -431,11 +605,11 @@ provoda.Model.extendTo(mfCor, {
 		if (this.preload_initors.indexOf(id) == -1){
 			this.preload_initors.push(id);
 		}
-		this.updateState('preload-allowed', true);
+		this.updateState('preload_allowed', true);
 	},
 	unloadFor: function(id){
 		this.preload_initors = arrayExclude(this.preload_initors, id);
-		this.updateState('preload-allowed', !!this.preload_initors.length);
+		this.updateState('preload_allowed', !!this.preload_initors.length);
 
 	},
 	setVolume: function(vol, fac){
@@ -500,16 +674,8 @@ provoda.Model.extendTo(mfCor, {
 		return !!this.omo && !!this.omo.raw;
 	},
 	isHaveAnyResultsFrom: function(source_name){
-		return !!this.raw() || !!this.sem && this.sem.isHaveAnyResultsFrom(source_name);
-	},
-	isHaveTracks: function(type){
-		return !!this.raw() || !!this.sem && this.sem.isHaveTracks(type);
-	},
-	isSearchCompleted: function(){
-		return !!this.raw() || !!this.sem && this.sem.isSearchCompleted();
-	},
-	isHaveBestTracks: function(){
-		return !!this.raw() || !!this.sem && this.sem.isHaveBestTracks();
+		var complect = this.complects[source_name];
+		return complect && complect.search_source && complect.search_source.state('search_complete');
 	},
 	song: function(){
 		if (this.raw()){
@@ -526,9 +692,47 @@ provoda.Model.extendTo(mfCor, {
 		if (file && file.from == 'vk'){
 			return file;
 		} else{
-			var files = this.getFiles(false, 'vk');
+			var files = this.getFilteredFiles('vk');
 			return files && files[0];
 		}
+	},
+	getFilteredFiles: function(source_name, fn, type) {
+		type = type || 'mp3';
+		var all_files = [];
+		var mfs = [];
+
+		if (this.file){
+			all_files.push(this.file);
+		} else {
+			if (source_name){
+				var complect = this.complects[source_name];
+				if (complect){
+					all_files = all_files.concat(complect.getFiles(type));
+				}
+				
+			} else {
+				var sources_list = this.getChild('sorted_completcs');
+				for (var i = 0; i < sources_list.length; i++) {
+					all_files = all_files.concat(sources_list[i].getFiles(type));
+				}
+				this.mo.mp3_search.sortMusicFilesArray(all_files, this.files_investg.msq);
+				
+
+
+			}
+			//all_files = this.files_investg.getFiles(source_name, type);
+		}
+		if (fn){
+			$.each(all_files, function(i, el) {
+				if (fn(el)){
+					mfs.push(el);
+				}
+			});
+			return mfs;
+		} else {
+			return all_files;
+		}
+
 	},
 	compoundFiles: function(fn, type) {
 		var
@@ -550,21 +754,6 @@ provoda.Model.extendTo(mfCor, {
 			return mfs;
 		}
 
-	},
-	getFiles: function(type, source_name){
-		var songs = this.sem.getAllSongTracks(type || 'mp3');
-		songs = $filter(songs, 'name', source_name);
-		return getTargetField(songs, '0.t');
-	},
-	songs: function(){
-		if (this.raw()){
-			return [{t:[this.omo.getSongFileModel(this.mo, this.mo.player)]}];
-		} else if (this.sem){
-			return this.sem.getAllSongTracks('mp3');
-		} else{
-			return false;
-		}
-		
 	},
 	canPlay: function() {
 		return !!this.state("mopla_to_use");

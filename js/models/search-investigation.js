@@ -52,10 +52,7 @@ baseSuggest.extendTo(artistSuggest, {
 		return this.artist;
 	},
 	onView: function(){
-		su.showArtcardPage(this.artist, {
-			page_md: this.invstg,
-			source_md: this
-		});
+		su.showArtcardPage(this.artist, this.invstg);
 		su.trackEvent('Music search', this.q, "artist: " + this.artist );
 	}
 });
@@ -71,10 +68,7 @@ baseSuggest.extendTo(playlistSuggest, {
 		return this.pl.playlist_title;
 	},
 	onView: function(){
-		su.showStaticPlaylist(this.pl, {
-			page_md: this.invstg,
-			source_md: this
-		});
+		this.pl.showOnMap();
 	}
 });
 
@@ -94,7 +88,7 @@ searchSection.extendTo(seesuSection, {
 				})
 				.on('state-change.disabled', function(e){
 					_this.trigger('items-change');
-				});
+				}, {skip_reg: true});
 			this.setButtonText();
 			this.setChild('button', this.button);
 		}
@@ -157,7 +151,7 @@ var trackSuggest = function(data){
 		var track_dur = parseInt(this.duration);
 		var digits = track_dur % 60;
 		track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
-		this.updateState('duration-text', track_dur);
+		this.updateState('duration_text', track_dur);
 	}
 	this.text_title = this.getTitle();
 };
@@ -166,12 +160,7 @@ baseSuggest.extendTo(trackSuggest, {
 		return this.artist + ' - ' + this.track;
 	},
 	onView: function(){
-		su.showTopTacks(this.artist, {
-			source_info: {
-				page_md: this.invstg,
-				source_md: this
-			}
-		}, {
+		su.showArtistTopTracks(this.artist, this.invstg, {
 			artist: this.artist,
 			track: this.track
 		});
@@ -226,12 +215,7 @@ baseSuggest.extendTo(tagSuggest, {
 		return this.tag;
 	},
 	onView: function(){
-		su.show_tag(this.tag, {
-			source_info: {
-				page_md: this.invstg,
-				source_md: this
-			}
-		});
+		su.show_tag(this.tag, this.invstg);
 		seesu.trackEvent('Music search', this.q, "tag: " + this.tag );
 	}
 });
@@ -288,16 +272,11 @@ baseSuggest.extendTo(albumSuggest, {
 		return '( ' + this.artist + ' ) ' + this.name;
 	},
 	onView: function(){
-		su.showAlbum({
-			artist: this.artist,
+		su.showArtistAlbum({
+			album_artist: this.artist,
 			album_name: this.name,
 			album_id: this.aid
-		}, {
-			source_info: {
-				page_md: this.invstg,
-				source_md: this
-			}
-		});
+		}, this.invstg);
 		seesu.trackEvent('Music search', this.q, "album: " + this.text_title);
 	}
 });
@@ -332,19 +311,22 @@ provoda.extendFromTo('Investigation', mapLevelModel, investigation);
 
 SearchPage = function() {};
 investigation.extendTo(SearchPage, {
-	init: function() {
-		this._super();
+	init: function(opts) {
+		this._super(opts);
 		this.addSection('playlists', new playlistsSection());
 		this.addSection('artists', new artistsSection());
 		this.addSection('albums', new albumsSection());
 		this.addSection('tags', new tagsSection());
 		this.addSection('tracks', new tracksSection());
-		this.updateState('mp-freezed', false);
+		this.updateState('mp_freezed', false);
+		
+	},
+	setItemForEnter: function() {
 		
 	},
 	complex_states: {
-		"needs-search-from": {
-			depends_on: ['mp-freezed'],
+		"needs_search_from": {
+			depends_on: ['mp_freezed'],
 			fn: function(frzd) {
 				return !frzd;
 			}

@@ -42,6 +42,33 @@ Class.extendTo(gMessagesStore, {
 	}
 });
 
+var BigContextNotify = function() {};
+provoda.Model.extendTo(BigContextNotify, {
+	init: function(opts, params) {
+		this._super(opts);
+		if (!this.cant_hide_notify){
+			if (!params.notf){
+				throw new Error('you must apply "notf"');
+			}
+
+			this.notf = params.notf;
+			this.notf.on('read', function(value) {
+				if (value == _this.notify_name){
+					_this.updateState('notify_readed', true);
+				}
+				
+			});
+
+			if (params.notify_readed){
+				_this.updateState('notify_readed', true);
+			}
+		}
+		
+	
+	},
+	cant_hide_notify: true,
+	notify_name: 'vk_audio_auth'
+});
 
 var ImagesPack = function() {};
 provoda.Model.extendTo(ImagesPack, {
@@ -64,20 +91,20 @@ provoda.Model.extendTo(ImagesPack, {
 		var best_data = $filter(this.all_images, 'data.lfm_id', function(value) {
 			return !!value;
 		});
-		if (!this.state('best-image')){
+		if (!this.state('best_image')){
 			if (best_data.length){
-				this.updateState('best-image', best_data[0].data);
+				this.updateState('best_image', best_data[0].data);
 			}
 			
 		}
-		if (!this.state('just-image')){
+		if (!this.state('just_image')){
 			if (best_data.not.length){
-				this.updateState('just-image', best_data.not[0].data);
+				this.updateState('just_image', best_data.not[0].data);
 			}
 			
 		}
 	}
-})
+});
 var TrackImages  = function() {};
 ImagesPack.extendTo(TrackImages, {
 	init: function(artmd, info) {
@@ -89,17 +116,13 @@ ImagesPack.extendTo(TrackImages, {
 
 		var _this = this;
 		artmd.on('state-change.image-to-use', function(e) {
-			_this.updateState('artist-image', e.value);
+			_this.updateState('artist_image', e.value);
 		});
-		var art_image = artmd.state('image-to-use');
-		if (art_image){
-			this.updateState('artist-image', art_image);
-		}
 
 	},
 	complex_states: {
 		'image-to-use': {
-			depends_on: ['best-image', 'just-image', 'artist-image'],
+			depends_on: ['best_image', 'just_image', 'artist_image'],
 			fn: function(bei, jui, arti){
 				return bei || jui || arti;
 			}
@@ -117,7 +140,7 @@ ImagesPack.extendTo(ArtistImages, {
 	},
 	complex_states: {
 		'image-to-use': {
-			depends_on: ['best-image', 'just-image'],
+			depends_on: ['best_image', 'just_image'],
 			fn: function(bei, jui){
 				return bei || jui;
 			}
@@ -133,22 +156,25 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		this.track_models = {};
 		this.unknown_methods = {};
 	},
+	convertEventName: function(event_name) {
+		return event_name.toLowerCase().replace(/^\s+|\s+$/, '');
+	},
 	getImageWrap: function(array) {
 		if (!array){
-			return
+			return;
 		}
 		var
 			url,
 			lfm_id;
 
 		if (typeof array == 'string'){
-			url = array
+			url = array;
 		} else {
 			url = getTargetField(array, '3.#text');
 		}
 		if (url){
 			if (url.indexOf('http://cdn.last.fm/flatness/catalogue/noimage') === 0){
-				return
+				return;
 			} else {
 				lfm_id = this.getLFMImageId(url);
 
@@ -193,8 +219,13 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 	},
 	getTrackImagesModel: function(info) {
 		if (!info.artist || !info.track){
-			throw new Error ('give me full track info')
+			throw new Error ('give me full track info');
 		}
+		info = cloneObj({}, info);
+		
+		info.artist = this.convertEventName(info.artist);
+		info.track = this.convertEventName(info.track);
+
 		var model_id = info.artist + ' - ' + info.track;
 		if (!this.track_models[model_id]){
 
@@ -208,10 +239,12 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		if (!artist_name){
 			throw new Error('give me artist name');
 		}
+		artist_name = this.convertEventName(artist_name);
+		
 		if (!this.art_models[artist_name]){
 			var md = new ArtistImages();
 			md.init(artist_name);
-			this.art_models[artist_name] = md
+			this.art_models[artist_name] = md;
 		}
 		return this.art_models[artist_name];
 	},
@@ -243,7 +276,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 				var cur = artists[i];
 				this.setArtistImage(cur.name, cur.image, method);
 			}
-		},	
+		},
 		'geo.getMetroUniqueTrackChart': function(r, method) {
 			var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
 			for (var i = 0; i < tracks.length; i++) {

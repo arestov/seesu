@@ -108,6 +108,7 @@ var StrusersRowSearch = function(rpl, mo) {
 	this.init(rpl, mo);
 };
 investigation.extendTo(StrusersRowSearch, {
+	skip_map_init: true,
 	init: function(rpl, mo) {
 		this._super();
 		this.rpl = rpl;
@@ -161,22 +162,22 @@ BaseCRow.extendTo(ShareRow, {
 		this.mo = mo;
 		this._super();
 		if (app_env.vkontakte || su.vk_api){
-			this.updateState("can-post-to-own-wall", true);
+			this.updateState("can_post_to_own_wall", true);
 		} else {
 			su.on("vk-api", function() {
-				_this.updateState("can-post-to-own-wall", true);
+				_this.updateState("can_post_to_own_wall", true);
 			});
 		}
 		if (!app_env.vkontakte){
 			if (su.vk_api){
-				this.updateState("can-search-friends", true);
+				this.updateState("can_search_friends", true);
 				this.removeVKAudioAuth();
 			} else {
 				this.addVKAudioAuth();
 				
 				su.on("vk-api", function() {
 					_this.removeVKAudioAuth();
-					_this.updateState("can-search-friends", true);
+					_this.updateState("can_search_friends", true);
 				});
 			}
 		} else {
@@ -202,11 +203,10 @@ BaseCRow.extendTo(ShareRow, {
 		this.addChild(this.searcher);
 
 		var updateSongURL = function(){
-			_this.updateState('share-url', _this.mo.getShareUrl());
+			_this.updateState('share_url', _this.mo.getShareUrl());
 		};
-		updateSongURL();
 
-		this.mo.on("state-change.url-part", function(){
+		this.mo.on("state-change.url_part", function(){
 			updateSongURL();
 		});
 
@@ -214,12 +214,12 @@ BaseCRow.extendTo(ShareRow, {
 		var cu_info = su.s.getInfo('vk');
 		if (cu_info){
 			if (cu_info.photo){
-				this.updateState("own-photo", cu_info.photo);
+				this.updateState("own_photo", cu_info.photo);
 			}
 		} else {
 			su.s.once("info-change.vk", function(cu_info) {
 				if (cu_info.photo){
-					_this.updateState("own-photo", cu_info.photo);
+					_this.updateState("own_photo", cu_info.photo);
 				}
 			});
 		}
@@ -229,7 +229,7 @@ BaseCRow.extendTo(ShareRow, {
 	},
 	checkVKFriendsAccess: function(vk_opts) {
 		var can = (vk_opts & 2) * 1;
-		this.updateState("can-search-friends", can);
+		this.updateState("can_search_friends", can);
 		if (!can){
 			this.addVKAudioAuth(true);
 		} else {
@@ -255,7 +255,7 @@ BaseCRow.extendTo(ShareRow, {
 		//to find you friends
 
 
-		this.updateState("needs-vk-auth", true);
+		this.updateState("needs_vk_auth ", true);
 
 	},
 	removeVKAudioAuth: function() {
@@ -264,7 +264,7 @@ BaseCRow.extendTo(ShareRow, {
 			delete this.vk_auth_rqb;
 
 		}
-		this.updateState("needs-vk-auth", false);
+		this.updateState("needs_vk_auth ", false);
 
 	},
 	search: function(q) {
@@ -312,6 +312,7 @@ var PlaylistRowSearch = function(rpl, mo) {
 	this.init(rpl, mo);
 };
 investigation.extendTo(PlaylistRowSearch, {
+	skip_map_init: true,
 	init: function(rpl, mo) {
 		this._super();
 		this.rpl = rpl;
@@ -395,17 +396,6 @@ BaseCRow.extendTo(ScrobbleRow, {
 
 
 
-var FlashErrorRow = function(actionsrow){
-	this.init(actionsrow);
-};
-BaseCRow.extendTo(FlashErrorRow, {
-	init: function(actionsrow){
-		this.actionsrow = actionsrow;
-		this._super();
-	},
-	model_name: 'row-flash-error'
-});
-
 
 
 
@@ -451,24 +441,28 @@ PartsSwitcher.extendTo(TrackActionsRow, {
 		this.mo = mo;
 		this.updateState('active_part', false);
 
-		this.addPart(new ScrobbleRow(this, mo));
-		this.addPart(new FlashErrorRow(this, mo));
-		this.addPart(new RepeatSongRow(this, mo));
-		this.addPart(new PlaylistAddRow(this, mo));
-		this.addPart(new ShareRow(this, mo));
-		this.addPart(new LoveRow(this, mo));
-
 		var _this = this;
 
-		var setVolume = function(fac) {
-			_this.updateState('volume', fac[0]/fac[1]);
-		};
-		if (su.settings['volume']){
-			setVolume(su.settings['volume']);
-		}
-		su.on('settings.volume', setVolume);
+		var initHeavyPart = function() {
+			this.addPart(new ScrobbleRow(this, mo));
+			this.addPart(new RepeatSongRow(this, mo));
+			this.addPart(new PlaylistAddRow(this, mo));
+			this.addPart(new ShareRow(this, mo));
+			this.addPart(new LoveRow(this, mo));
 
-		
+			var setVolume = function(fac) {
+				_this.updateState('volume', fac[0]/fac[1]);
+			};
+			if (su.settings['volume']){
+				setVolume(su.settings['volume']);
+			}
+			su.on('settings.volume', setVolume);
+
+		};
+
+		setTimeout(function() {
+			initHeavyPart.call(_this);
+		}, 100);
 	},
 	sendVolume: function(vol) {
 		su.setSetting('volume', vol);

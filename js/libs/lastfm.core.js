@@ -1,4 +1,4 @@
-function lastfm_api(apikey, s, stGet, stSet, cache_ajax, crossdomain, init, queue){
+var lastfm_api = function(apikey, s, stGet, stSet, cache_ajax, crossdomain, init, queue){
 	if (arguments.length){
 		this.init.apply(this, arguments);
 	}
@@ -58,122 +58,80 @@ lastfm_api.prototype= {
 	},
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
 	cache_namespace: "lastfm",
+	thisOriginAllowed: true,
 	get: function(method, data, options){
 		return this.send(method, data, options);
 	},
 	post: function(method, data, options){
 		return this.send(method, data, options, true);
 	},
-	send: function(method, params, options, post){
-		var _this				= this,
-			deferred			= $.Deferred(),
-			complex_response	= new depdc(true);
+	send: function(method, params, options, post) {
+		var _this = this,
+			complex_response = new depdc(true);
+
+
+		if (!method){
+			
+			throw new Error('no method');
+		}
+		options = options || {};
+		params	= params	|| {};
+
+		options.nocache = options.nocache || post;
+
+		var use_post_serv = post && !this.crossdomain;
+			
+		var apisig = ((params && (params.sk || params.token )) || (method == 'auth.getToken')) ? true : false; // yes, we need signature
 		
-		complex_response.abort = function(){
-			this.aborted = true;
-			deferred.reject('abort');
-			if (this.queued){
-				this.queued.abort();
-			}
-			if (this.xhr){
-				this.xhr.abort();
-			}
+		params.method = method;
+		params.api_key = this.apikey;
+		params.format = params.format || (use_post_serv ?	'' : 'json');
+
+
+		var apisig_hash =  hex_md5(stringifyParams(params, ['format', 'callback']) + this.s);
+
+		if (apisig || !options.nocache) {
+			params.api_sig = apisig_hash;
+		}
+		options.cache_key = options.cache_key || apisig_hash;
+
+
+		var wraprq_opts = {
+			cache_ajax: this.cache_ajax,
+			nocache: options.nocache,
+			cache_key: options.cache_key,
+			cache_timeout: options.cache_timeout,
+			cache_namespace: this.cache_namespace,
+			requestFn: function() {
+				return aReq.apply(this, arguments);
+			},
+			not_save_cache: post,
+			responseFn: function(r) {
+				if (!post && _this.checkMethodResponse){
+					_this.checkMethodResponse(method, params, r);
+				}
+			},
+			queue: this.queue
 		};
 
-		deferred.promise( complex_response );
-
-		if (method){
-			options = options || {};
-			params	= params	|| {};
-
-			options.nocache = options.nocache || !this.cache_ajax || post;
-
-
-			var use_post_serv = post && !this.crossdomain;
-			
-			var apisig = ((params && (params.sk || params.token )) || (method == 'auth.getToken')) ? true : false; // yes, we need signature
-			
-			params.method = method;
-			params.api_key = this.apikey;
-			params.format = params.format || (use_post_serv ?	'' : 'json');
-
-			if (apisig || !options.nocache) {
-				params.api_sig = hex_md5(stringifyParams(params, ['format', 'callback']) + this.s);
-			}
-
-			var cache_used;
-			if (!options.nocache){
-				cache_used = this.cache_ajax.get(this.cache_namespace, params.api_sig, function(r){
-					deferred.resolve(r);
-				});
-				if (cache_used) {
-					complex_response.cache_used = true;
-					return complex_response;
-				}
-			}
-	
-			if (!cache_used){
-				var sendRequest = function(){
-					if (complex_response.aborted){
-						return;
-					}
-					
-					if (!use_post_serv){
-						var cache_used;
-						if (!options.nocache){
-							cache_used = cache_ajax.get(_this.cache_namespace, params.api_sig, function(r){
-								deferred.resolve(r);
-							});
-						}
-						if (!cache_used){
-							complex_response.xhr = aReq({
-								url: _this.api_path,
-								global: false,
-								type: post ? "POST" : "GET",
-								dataType: _this.crossdomain ? 'json' : 'jsonp',
-								data: params,
-								resourceCachingAvailable: true,
-								thisOriginAllowed: true
-							})
-							.fail(function(r){
-								deferred.reject.apply(deferred, arguments);
-							})
-							.done(function(r){
-								if (!post && _this.checkMethodResponse){
-									_this.checkMethodResponse(method, params, r);
-								}
-								deferred.resolve.apply(deferred, arguments);
-								if (!post && _this.cache_ajax){
-									_this.cache_ajax.set(_this.cache_namespace, params.api_sig, r, options.cache_timeout);
-								}
-							});
-
-							if (options.after_ajax){
-								options.after_ajax();
-							}
-							//console.log(params)
-						}
-
-					} else{
-						_this.post_serv.post(params, function(){
-							deferred.resolve();
-						});
-					}
-					
-				};
-
-				if (this.queue){
-					complex_response.queued = this.queue.add(sendRequest, options.not_init_queue);
-				} else{
-					sendRequest();
-				}
-			}
-
-
-
-		} else{
-			deferred.reject();
+		if (use_post_serv){
+			wraprq_opts.manualSend = function(callback) {
+				_this.post_serv.post(params, callback);
+			};
 		}
-		return complex_response;
+
+		var wrap_def = wrapRequest({
+			url: this.api_path,
+			global: false,
+			type: post ? "POST" : "GET",
+			dataType: this.crossdomain ? 'json' : 'jsonp',
+			data: params,
+			resourceCachingAvailable: true,
+			thisOriginAllowed: this.thisOriginAllowed
+		}, wraprq_opts, complex_response);
+
+		return wrap_def.complex;
+
 	}
+	
 };
