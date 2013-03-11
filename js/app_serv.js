@@ -1140,6 +1140,7 @@ if (typeof console != 'object'){
 	}
 }
 
+var replaceComplexSVGImages;
 
 var handleDocument = function(d, tracking_opts) {
 	/*
@@ -1182,6 +1183,7 @@ var handleDocument = function(d, tracking_opts) {
 		},
 		fn: function() {
 			domReady(d, function() {
+				replaceComplexSVGImages(d);
 				d.head = d.head || d.getElementsByTagName('head')[0];
 
 				var emptyNode = function(node) {
@@ -1569,27 +1571,24 @@ jsLoadComplete(function() {
 		//var target
 	};
 
+	replaceComplexSVGImages = function(doc){
 
-	jsLoadComplete(function(){
-		domReady(window.document, function(){
+		var big_list = [];
+		for (var i = 0; i < doc.styleSheets.length; i++) {
+			big_list = big_list.concat(getSimpleRules(doc.styleSheets[i]));
 			
-			var big_list = [];
-			for (var i = 0; i < document.styleSheets.length; i++) {
-				big_list = big_list.concat(getSimpleRules(document.styleSheets[i]));
-				
-			}
-			var svg_hacked = $filter(big_list, 'style.backgroundImage', function(value){
-				return value && value.indexOf('data:text/plain;utf8,svg-hack,') !== -1;
-			});
-			var style = document.createElement('style');
-			$(document.documentElement.firstChild).append(style);
-			//console.log(svg_hacked);
-			$.each(svg_hacked, function(i, el){
-				replaceSVGHImage(el, style);
-			});
-
+		}
+		var svg_hacked = $filter(big_list, 'style.backgroundImage', function(value){
+			return value && value.indexOf('data:text/plain;utf8,svg-hack,') !== -1;
 		});
-	});
+		var style = doc.createElement('style');
+		$(doc.documentElement.firstChild).append(style);
+		//console.log(svg_hacked);
+		$.each(svg_hacked, function(i, el){
+			replaceSVGHImage(el, style);
+		});
+	};
+
 	
 	
 	

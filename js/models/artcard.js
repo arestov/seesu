@@ -477,7 +477,7 @@ HypemPlaylist.extendTo(HypemArtistSeBlogged, {
 	send_params: {
 		sortby:'blogged'
 	},
-	sendMoreDataRequest: function(paging_opts) {
+	sendMoreDataRequest: function(paging_opts, request_info) {
 		return this.sendHypemDataRequest(paging_opts, request_info, {
 			path: '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js',
 			parser: this.getHypemTracksList,
