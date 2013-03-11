@@ -444,6 +444,7 @@ provoda.Model.extendTo(appModel, {
 	},
 	
 	createMetroChartPlaylist: function(country, metro) {
+		//fixme (remove?)
 		var pl = this.createSonglist(this.start_page, {//can autoload
 			title: 'Chart of ' + metro,
 			type: 'chart',

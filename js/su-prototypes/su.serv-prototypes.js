@@ -42,6 +42,33 @@ Class.extendTo(gMessagesStore, {
 	}
 });
 
+var BigContextNotify = function() {};
+provoda.Model.extendTo(BigContextNotify, {
+	init: function(opts, params) {
+		this._super(opts);
+		if (!this.cant_hide_notify){
+			if (!params.notf){
+				throw new Error('you must apply "notf"');
+			}
+
+			this.notf = params.notf;
+			this.notf.on('read', function(value) {
+				if (value == _this.notify_name){
+					_this.updateState('notify_readed', true);
+				}
+				
+			});
+
+			if (params.notify_readed){
+				_this.updateState('notify_readed', true);
+			}
+		}
+		
+	
+	},
+	cant_hide_notify: true,
+	notify_name: 'vk_audio_auth'
+});
 
 var ImagesPack = function() {};
 provoda.Model.extendTo(ImagesPack, {

@@ -179,9 +179,9 @@ var FilesInvestg;
 
 
 
-			//this.on('state-change.search_progress', function(e) {
+			//this.on('vip-state-change.search_progress', function(e) {
 			//	console.log('search_progress: ' + e.value);
-			//});
+			//}, {immediately: true});
 			
 			this.mp3_search
 				.on('list-changed', function(list) {

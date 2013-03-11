@@ -113,7 +113,7 @@ var VkLoginUI = function() {};
 
 provoda.View.extendTo(VkLoginUI, {
 	state_change: {
-		'data-wait': function(state) {
+		'data_wait': function(state) {
 			if (state){
 				this.c.addClass("waiting-auth");
 			} else {
@@ -191,7 +191,7 @@ provoda.View.extendTo(LfmLoginView, {
 	'stch-deep-sandbox': function(state){
 		this.c.toggleClass('deep-sandbox', !!state);
 	},
-	'stch-data-wait': function(state) {
+	'stch-data_wait': function(state) {
 		if (state){
 			this.c.addClass("waiting-auth");
 		} else {

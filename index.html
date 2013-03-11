@@ -136,6 +136,20 @@
   
   <body>
   	<div id="ui-samples" style="display:none">
+  		<div class="usual_page music_conductor_page">
+  			<div class="area_for_button" pv-view='allpas'>
+				<div class="area-button" pv-anchor='big_button'>
+					<span pv-text="{{nav_title}}">World</span>
+				</div>
+				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			</div>
+			<div class="area_for_button" pv-view='countres'>
+				<div class="area-button" pv-anchor='big_button'>
+					<span pv-text="{{nav_title}}">Countres</span>
+				</div>
+				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			</div>
+  		</div>
   		<div class="album_preview-big">
   			<img src="" alt="" pv-anchor="imgc"/>
   			<div class="full_album_name">
@@ -194,18 +208,30 @@
 					<div class="pl-auth-con" pv-anchor="auth_con"></div>
   				</div>
   				<div class="full_wide_col">
-  					<div class="area_for_button" pv-view="new_releases" >
-						<div class="area-button" pv-anchor="big_button">
-							<span pv-text="{{nav_title}}">Albums</span>
+  					<div class="preview_area" pv-view="new_releases">
+	  					<div class="area_for_button" pv-anchor="button_area">
+							<div class="area-button" pv-anchor='big_button'>
+								<span pv-text="{{nav_title}}">Albums</span>
+							</div>
+							<div class="area-description" >
+								<div class="desc_prevw_list albums_previews" pv-anchor="listc"></div>
+							</div>
 						</div>
-						<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
-					</div>
-					<div class="area_for_button" pv-view="recomm_releases" >
-						<div class="area-button" pv-anchor="big_button">
-							<span pv-text="{{nav_title}}">Albums</span>
+						<div class="pl-auth-con" pv-anchor="auth_con"></div>
+	  				</div>
+	  				<div class="preview_area" pv-view="recomm_releases">
+	  					<div class="area_for_button" pv-anchor="button_area">
+							<div class="area-button" pv-anchor='big_button'>
+								<span pv-text="{{nav_title}}">Albums</span>
+							</div>
+							<div class="area-description" >
+								<div class="desc_prevw_list albums_previews" pv-anchor="listc"></div>
+							</div>
 						</div>
-						<div class="area-description desc_prevw_list  albums_previews" pv-anchor="listc"></div>
-					</div>
+						<div class="pl-auth-con" pv-anchor="auth_con"></div>
+	  				</div>
+
+  					
   				</div>
   				
 			</div>
@@ -389,7 +415,22 @@
 			
 		</div>
   		
-  		
+  		<div class="song-row-content moplas-block">
+  			<div class="show-all-songs hidden" pv-anchor="sall_songs">
+  				<a pv-anchor='more_songs_b'><span class="lang localize-Files"></span></a>
+  				<span class="notifier hidden" pv-view='notifier' pv-text='{{counter}}'></span>
+  				
+  			</div>
+  			<div class="messages-c" pv-anchor='messages_c'>
+				<div class="cant_play_music_message hidden" pv-anchor='cant_play_music_message'>
+					Что бы приложение воспроизводило музыку установите флеш или воспользуйтесь браузером поддерживающим воспроизведение mp3 с помощью HTML5 audio (например Chrome или Safari)
+				</div>
+			</div>
+			<div class="music-files-lists" pv-anchor='mufils_c'></div>
+			<div class="track-video">
+				<ul pv-anchor='video_list'></ul>
+			</div>
+  		</div>
 			
 			
 		<div class="track-context" >
@@ -415,10 +456,6 @@
 							</span>
 						</div>
 						<ul class="track-buttons">
-
-							<li title="About «Adobe Flash Player Security»" class="flash-secur">
-								<a  class="flash-security-status trackbutton flash-secur-button">fl</a>
-							</li>
 							<li class="scrobbling-button"  title="Last.fm scrobbling">
 								<a  class="trackbutton lfm-scrobbling-button"></a>
 							</li>
@@ -453,27 +490,6 @@
 
 					<div class="last-fm-scrobbling hidden"></div>
 					<div class="one-song-repeat hidden"></div>
-					<div class='flash-error hidden'>
-						<p class="lang localize-stop-flash">To stop annoing &laquo;Adobe Flash Player Security&raquo; window <strong>copy</strong> this address:</p>
-						<p><input type="text" value="" id="widget-url" readonly="readonly"></p>
-						<p>
-							<span class="lang localize-add-to-wl"><strong>add</strong> it to white list on  </span>
-							
-							<strong>
-								<a 
-									class="flash-s lang localize-flashpage external" 
-									href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager04.html"
-								>flash internet security page</a>
-								
-							</strong> 
-								
-							<span class="lang localize-and-restart">and then restart Seesu</span>
-								
-						</p>
-						<p class="flash-desandboxing" title="flash security steps"></p>
-						<p class="lang localize-bad-flash-desc">About flash security: usualy flash player works in widget sandbox on your computer. As deafult it has not access to internet. To give it access to mp3 which stores on vk.com you may need change settings on flash security page. On the same page you can deny access.</p>
-
-					</div>
 					<div class="rept-song hidden">
 						<label class="rept-song-label">
 							<input type="checkbox"/>
@@ -712,7 +728,11 @@
 							
 							<div class="for-startpage"></div>
 							<div class="block-for-startpage music-conductor-preview">
-								<h2 class="hidden">Музыкальный кондуктор</h2>
+								<div class="no_arfb">
+									<div class="to-open-block area-button hidden">
+										<span class="lang localize-music-cond">Music Conductor</span>
+									</div>
+								</div>
 							</div>
 							<div class="app-loading-mark"></div>
 							

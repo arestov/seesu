@@ -130,8 +130,6 @@ provoda.Model.extendTo(mfCor, {
 		*/
 
 
-
-
 		this.mo.on('state-change.is_important', function(e) {
 			if (e.value && e.value){
 				setTimeout(function() {
@@ -157,13 +155,13 @@ provoda.Model.extendTo(mfCor, {
 			this.setChild('sorted_completcs', [complect], true);
 
 		} else {
-			this.mo.on('state-change.track', function(e) {
+			this.mo.on('vip-state-change.track', function(e) {
 				if (e.value){
 					_this.files_investg = _this.mo.mp3_search.getFilesInvestg({artist: _this.mo.artist, track: _this.mo.track});
 					_this.bindInvestgChanges();
 				}
 				
-			});
+			}, {immediately: true});
 			
 		}
 		
@@ -251,9 +249,9 @@ provoda.Model.extendTo(mfCor, {
 	},
 	complex_states: {
 		"must-be-expandable": {
-			depends_on: ['has_files', 'vk_audio_auth ', 'few_sources'],
-			fn: function(has_files, vk_a_auth, fsrs){
-				return !!(has_files || vk_a_auth || fsrs);
+			depends_on: ['has_files', 'vk_audio_auth ', 'few_sources', 'cant_play_music'],
+			fn: function(has_files, vk_a_auth, fsrs, cant_play){
+				return !!(has_files || vk_a_auth || fsrs || cant_play);
 			}
 		},
 		mopla_to_use: {
@@ -335,9 +333,29 @@ provoda.Model.extendTo(mfCor, {
 		
 
 		this.checkVKAuthNeed();
+
+		var _this = this;
+		this.player = this.mo.player;
+		
+		this.player
+			.on('core-fail', function() {
+				
+				_this.updateState('cant_play_music', true);
+				_this.notifier.addMessage('player-fail');
+			})
+			.on('core-ready', function() {
+				_this.updateState('cant_play_music', false);
+				_this.notifier.banMessage('player-fail');
+			});
+
+
 	},
 	getCurrentMopla: function(){
 		return this.state('current_mopla');
+	},
+	showOnMap: function() {
+		this.mo.showOnMap();
+		this.updateState('want_more_songs', true);
 	},
 	switchMoreSongsView: function() {
 		if (!this.state('want_more_songs')){

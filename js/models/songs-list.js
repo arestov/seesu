@@ -17,8 +17,10 @@ var songsList;
 				this.setBaseInfo(params);
 			}
 			
+			if (first_song){
+				this.findSongOwnPosition(first_song);
+			}
 			
-			this.findSongOwnPosition(first_song);
 
 			var plarow = new PlARow();
 			plarow.init(this);

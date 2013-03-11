@@ -16,7 +16,7 @@ mapLevelModel.extendTo(YoutubeVideo, {
 
 		var _this = this;
 
-		this.on('state-change.mp_show', function(e) {
+		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				su.trackEvent('Navigation', 'youtube video');
 				_this.mo.pause();

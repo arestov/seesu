@@ -124,6 +124,13 @@ html.not-as-application, .not-as-application  body{
 		.moplas-block .show-all-songs a span{
 			border-bottom: 1px dotted;
 			}
+	.moplas-block .messages-c{
+		clear:both;
+		display: none;
+		}
+		.moplas-block.want_more_songs .messages-c{
+			display: block;
+			}
 	.moplas-block.want_more_songs .show-all-songs a{
 		border-bottom-left-radius: 0.5rem;
 		}
@@ -244,7 +251,11 @@ html.not-as-application, .not-as-application  body{
 		.moplas-list .selected-mf .mf-progress{
 		
 			}
-
+.cant_play_music_message{
+	background: #D12E2E;
+	text-shadow: 1px 1px 1px #000;
+	padding: 0.5rem 1rem;
+	}
 
 
 #close-widget{
