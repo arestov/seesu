@@ -127,6 +127,9 @@ songsList.extendTo(DiscogsAlbumSongs, {
 
 		request_info.request = this.app.discogs.get(discogs_url + this.album_id,{})
 			.done(function(r){
+				if (r.meta && r.data){
+					r = r.data;
+				}
 				var tracks = toRealArray(getTargetField(r, 'tracklist'));
 				var track_list = [];
 				var release_artist = compileArtistsArray(r.artists);
@@ -214,7 +217,9 @@ AlbumsList.extendTo(DiscogsAlbums, {
 			page: paging_opts.next_page
 		})
 			.done(function(r){
-				
+				if (r.meta && r.data){
+					r = r.data;
+				}
 				var albums_data = toRealArray(getTargetField(r, 'releases'));
 
 				
@@ -883,7 +888,9 @@ mapLevelModel.extendTo(ArtCard, {
 		var artist_name = this.artist;
 		_this.addRequest(this.app.discogs.get('/database/search', {q: artist_name, type:"artist"})
 			.done(function(r) {
-
+				if (r.meta && r.data){
+					r = r.data;
+				}
 				var artists_list = r && r.results;
 				var artist_info;
 				var simplified_artist = simplifyArtistName(artist_name);
