@@ -646,13 +646,6 @@ provoda.View.extendTo(songUI, {
 		
 		this.requestAll();
 	},
-	die: function(){
-		this.remove();
-		this.dead = true;
-	},
-	remove: function(){
-		this.c && this.c.remove();
-	},
 	updateSongContext: function(){
 		var artist = this.md.artist;
 		var a_info = this && this.a_info;
