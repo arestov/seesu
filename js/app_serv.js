@@ -1183,7 +1183,7 @@ var handleDocument = function(d, tracking_opts) {
 		},
 		fn: function() {
 			domReady(d, function() {
-				replaceComplexSVGImages(d);
+				
 				d.head = d.head || d.getElementsByTagName('head')[0];
 
 				var emptyNode = function(node) {
@@ -1214,6 +1214,16 @@ var handleDocument = function(d, tracking_opts) {
 				for (var i = 0; i < nodes_array.length; i++) {
 					translate(nodes_array[i]);
 				}
+			});
+		}
+	});
+	jsLoadComplete({
+		test: function() {
+			return !!window.$;
+		},
+		fn:function() {
+			domReady(d, function() {
+				replaceComplexSVGImages(d);
 			});
 		}
 	});
