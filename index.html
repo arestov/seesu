@@ -23,6 +23,20 @@
   
   <body>
   	<div id="ui-samples" style="display:none">
+  		<div class="usual_page music_conductor_page">
+  			<div class="area_for_button" pv-view='allpas'>
+				<div class="area-button" pv-anchor='big_button'>
+					<span pv-text="{{nav_title}}">World</span>
+				</div>
+				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			</div>
+			<div class="area_for_button" pv-view='countres'>
+				<div class="area-button" pv-anchor='big_button'>
+					<span pv-text="{{nav_title}}">Countres</span>
+				</div>
+				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			</div>
+  		</div>
   		<div class="album_preview-big">
   			<img src="" alt="" pv-anchor="imgc"/>
   			<div class="full_album_name">
@@ -601,7 +615,11 @@
 							
 							<div class="for-startpage"></div>
 							<div class="block-for-startpage music-conductor-preview">
-								<h2 class="hidden">Музыкальный кондуктор</h2>
+								<div class="no_arfb">
+									<div class="to-open-block area-button hidden">
+										<span class="lang localize-music-cond">Music Conductor</span>
+									</div>
+								</div>
 							</div>
 							<div class="app-loading-mark"></div>
 							

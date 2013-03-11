@@ -73,9 +73,14 @@ provoda.View.extendTo(ListPreview, {
 var ItemOfLL = function() {};
 ListPreview.extendTo(ItemOfLL, {
 	children_views: {
-		preview_list: ArtistsListPreviewLine
+		preview_list: ArtistsListPreviewLine,
+		lists_list: ListPreviewLine
 	},
 	'collch-preview_list': {
+		place: 'tpl.ancs.listc',
+		limit: 9
+	},
+	'collch-lists_list': {
 		place: 'tpl.ancs.listc',
 		limit: 9
 	}

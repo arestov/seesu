@@ -1,70 +1,48 @@
-var WagonItemPreview = function() {};
-provoda.View.extendTo(WagonItemPreview, {
-	createBase: function() {
-		this.c = $('<span></span>');
-	},
-	'stch-nav_title': function(state) {
-		this.c.text(state);
-	}
-});
-
-
-var WagonPreview = function() {};
-provoda.View.extendTo(WagonPreview, {
-	createBase: function() {
-		this.c = $('<div></div>');
-		this.header = $('<h4></h4>').appendTo(this.c);
-	},
-	'stch-nav_title': function(state) {
-		this.header.text(state);
-	},
-	'collch-allp_allt_chart': 'c',
+var AllPlacesPage = function() {};
+PageView.extendTo(AllPlacesPage, {
 	children_views: {
-		allp_allt_chart: WagonItemPreview
-	}
+		songs_lists: LiListsPreview,
+		artists_lists: LiListsPreview
+	},
+	'collch-songs_lists': 'c',
+	'collch-artists_lists': 'c'
 
 });
 
-var TrainPreview = function() {};
-provoda.View.extendTo(TrainPreview, {
+
+var MusicConductorPage = function() {};
+PageView.extendTo(MusicConductorPage, {
 	createBase: function() {
-		this.c = $('<div></div>');
-		this.header = $('<h3></h3>').appendTo(this.c);
+		this.c = this.root_view.getSample('music_conductor_page');
+		this.createTemplate();
 	},
-	'stch-nav_title': function(state) {
-		this.header.text(state);
-	},
-	'collch-wagn_songs': 'c',
 	children_views: {
-		wagn_songs: {
-			main: WagonPreview
-		}
+		allpas: LiListsPreview,
+		countres: LiListsPreview
 	}
 });
-
 
 var MusicConductorPreview = function() {};
 provoda.View.extendTo(MusicConductorPreview, {
 	createBase: function() {
 		this.c = this.root_view.els.start_screen.find('.music-conductor-preview');
-		this.header = this.c.find('h2');
 		var _this = this;
-		this.header.click(function() {
+
+		this.button = this.c.find('.area-button').removeClass('hidden');
+		this.button.click(function() {
 			_this.md.showOnMap();
 		});
-		this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
+		this.addWayPoint(this.button);
+
+		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
 	'stch-can_expand': function(state){
 		if (state){
 			this.requirePart('start-page-blocks');
 		}
 	},
-	children_views: {
-		allp_train: {
-			main: TrainPreview
-		}
-	},
-	'collch-allp_train': 'ww_c',
+
+	//'collch-allpas': 'ww_c',
 	parts_builder: {
 		'start-page-blocks': function() {
 			var _this = this;
@@ -170,141 +148,6 @@ provoda.View.extendTo(MusicConductorPreview, {
 			su.s.susd.ligs.regCallback('start-page', showUsersListenings, function(){
 				users_play.addClass('loading');
 			});
-			
-			var _cmetro = $('<div class="block-for-startpage random-metro-chart"></div>').appendTo(this.c);
-			var createTrackLink = function(artist, track, track_obj, playlist){
-
-
-				var chart_song = $('<a class="chart-song"></a>')
-					.attr('title', artist + ' - ' + track)
-					.click(function(e){
-						playlist.showTrack(track_obj);
-						e.preventDefault();
-					});
-
-
-				$('<img alt="artist image"/>')
-					.attr('src', getTargetField(track_obj, 'lfm_image.array.0.#text') || '')
-					.appendTo(chart_song);
-
-				$('<span class="song-artist_name"></span>').text(artist).appendTo(chart_song);
-				$('<span class="song-track-name"></span>').text(track).appendTo(chart_song);
-				
-
-
-				
-
-
-
-
-				return chart_song;
-			};
-			var current_chart;
-			var showMetroRandom = function(){
-				var random_metro = getSomething(lastfm_metros);
-				_cmetro.addClass('loading');
-				lfm.get('geo.getMetroUniqueTrackChart', {
-					country: random_metro.country,
-					metro: random_metro.name,
-					start: (new Date()) - 60*60*24*7})
-					.done(function(r){
-						_cmetro.removeClass('loading');
-						if (r && r.toptracks && r.toptracks.track){
-							
-							
-							jsLoadComplete({
-								test: function() {
-									return window.su && window.songsList;
-								},
-								fn: function() {
-									_cmetro.empty();
-
-									//var ppp = su.createMetroChartPlaylist(random_metro.country, random_metro.name);
-							
-									var plr = su.createSonglist(su.start_page, {//fix params for cache
-										title: 'Chart of ' + random_metro.name,
-										type: 'chart',
-										data: {country: random_metro.country, metro: random_metro.name}
-									});
-									
-
-									current_chart = plr;
-
-									var metro_tracks = r.toptracks.track;
-									var _header =  $('<h3></h3>').appendTo(_cmetro)
-										.append(localize('last-week-с') + ' ' + random_metro.name)
-										.append('<span class="desc"> (' + random_metro.country + ') </span>')
-										.append(localize('listen-this') + " ");
-
-									var canUseWP = function() {
-										return current_chart == plr;
-									};
-
-									var refresh_b = $('<a class="js-serv refresh-in-header"></a>').text(localize('refresh')).click(function(e){
-										showMetroRandom();
-										e.preventDefault();
-									}).appendTo(_header);
-									_this.addWayPoint(refresh_b, {
-										canUse: canUseWP
-									});
-
-
-									var show_pl_b = $('<a class="js-serv show-in-header"></a>').text(localize('show')).click(function(e){
-										plr.showOnMap();
-										e.preventDefault();
-									}).appendTo(_header);
-									_this.addWayPoint(show_pl_b, {
-										canUse: canUseWP
-									});
-									
-						
-									var ulm = $('<ul class="metro-tracks"></ul>');
-									var counter = 0;
-									for (var i=0; i < metro_tracks.length; i++) {
-										if (counter <30){
-											var _trm = metro_tracks[i];
-											
-											if (_trm.image){
-												var con = $('<li></li>').appendTo(ulm);
-												
-												
-												var tobj = {
-													artist: _trm.artist.name,
-													track: _trm.name,
-													lfm_image: {
-														array: _trm.image
-													}
-												};
-												plr.addOmo(tobj);
-												var track_link = createTrackLink(_trm.artist.name, _trm.name, tobj, plr);
-												
-												track_link.appendTo(con);
-												_this.addWayPoint(track_link, {canUse: canUseWP});
-
-												++counter;
-											
-											}
-										} else{
-											break;
-										}
-									}
-									_cmetro.append(ulm);
-								}
-							});
-							
-						} else{
-							showMetroRandom();
-						}
-					});
-					
-			};
-			showMetroRandom();
-			
-			
-			
-			
-			
-
 
 			return true;
 
@@ -313,4 +156,4 @@ provoda.View.extendTo(MusicConductorPreview, {
 });
 
 
-var MusicConductorView = MusicConductorPreview;
+

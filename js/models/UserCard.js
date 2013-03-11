@@ -573,7 +573,7 @@ mapLevelModel.extendTo(UserCard, {
 
 		this.updateState('url_part', '/users/' + (this.for_current_user ? 'me' : params.username));
 
-		this.updateState('nav_title', 'Персональная музыка, друзья и знакомства');
+		this.updateState('nav_title', localize('your-pmus-f-aq'));
 		/*
 
 		аудиозаписи

@@ -55,7 +55,7 @@ a.waiting-full-render.marked-for-play{
 a.song .nothing-toy, 
 a.search-mp3-failed .nothing-toy,
 a.search-mp3 .nothing-toy,
-a.track-name-loading .nothing-toy{
+a.track_name_loading .nothing-toy{
 	display: none;
 	}
 
@@ -314,13 +314,13 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	
 
 
-a.track-name-loading{
+a.track_name_loading{
 	background:url(../i/spinner.svg) no-repeat;
 	background-position:  78px 6px;
 	background-size: 1.714rem;
 	}
 	
-a.track-name-loading:hover{
+a.track_name_loading:hover{
 	background-image:url(../i/spinner.svg);
 	background-size: 1.714rem;
 }
@@ -522,13 +522,13 @@ a.track-name-loading:hover{
 		top: 11px;
 		left: 10px;
 		}
-.show-zoom-to-track a.track-name-loading{
+.show-zoom-to-track a.track_name_loading{
 		background-position: 64px 6px;
 		}
-	.show-zoom-to-track .viewing-song a.track-name-loading{
+	.show-zoom-to-track .viewing-song a.track_name_loading{
 		
 		}
-.show-zoom-to-track li.viewing-song a.track-name-loading{
+.show-zoom-to-track li.viewing-song a.track_name_loading{
 	background-image:url(../i/spinner.svg);
 	background-size: 1.714rem;
 

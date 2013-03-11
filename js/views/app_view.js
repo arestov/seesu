@@ -131,26 +131,13 @@ provoda.View.extendTo(appModelView, {
 		song: {
 			nav: baseNavUI
 		},
-		songswagon: {
-			nav: baseNavUI
-		},
-		artistswagon: {
-			nav: baseNavUI
-		},
-		tagswagon: {
-			nav: baseNavUI
-		},
-		allptrain: {
-			nav: baseNavUI
-		},
-		countytrain: {
-			nav: baseNavUI
-		},
-		citytrain: {
-			nav: baseNavUI
+		allplaces: {
+			nav: baseNavUI,
+			main: AllPlacesPage
 		},
 		mconductor: {
-			nav: baseNavUI
+			nav: baseNavUI,
+			main: MusicConductorPage
 		},
 		tag_page: {
 			main: TagPageView,
@@ -161,6 +148,30 @@ provoda.View.extendTo(appModelView, {
 			nav: baseNavUI
 		},
 		user_playlists: {
+			main: ListOfListsView,
+			nav: baseNavUI
+		},
+		songs_lists: {
+			main: ListOfListsView,
+			nav: baseNavUI
+		},
+		artists_lists:{
+			main: ListOfListsView,
+			nav: baseNavUI
+		},
+		countres_list: {
+			main: ListOfListsView,
+			nav: baseNavUI
+		},
+		city_place: {
+			main: ListOfListsView,
+			nav: baseNavUI
+		},
+		cities_list: {
+			main: ListOfListsView,
+			nav: baseNavUI
+		},
+		country_place: {
 			main: ListOfListsView,
 			nav: baseNavUI
 		},
@@ -185,6 +196,12 @@ provoda.View.extendTo(appModelView, {
 			nav: baseNavUI
 		}
 	},
+	'collch-allplaces': {
+		place: viewOnLevelP
+	},
+	'collch-mconductor': {
+		place: viewOnLevelP
+	},
 	'collch-tagslist': {
 		place: viewOnLevelP
 	},
@@ -197,15 +214,34 @@ provoda.View.extendTo(appModelView, {
 	'collch-youtube_video': {
 		place: viewOnLevelP
 	},
+	'collch-tag_artists': {
+		place: viewOnLevelP
+	},
 	'collch-tag_songs': {
+		place: viewOnLevelP
+	},
+	'collch-songs_lists': {
+		place: viewOnLevelP
+	},
+	'collch-artists_lists': {
+		place: viewOnLevelP
+	},
+	'collch-countres_list': {
+		place: viewOnLevelP
+	},
+	'collch-city_place': {
+		place: viewOnLevelP
+	},
+	'collch-cities_list': {
+		place: viewOnLevelP
+	},
+	'collch-country_place': {
 		place: viewOnLevelP
 	},
 	'collch-user_playlists': {
 		place: viewOnLevelP
 	},
-	'collch-tag_artists': {
-		place: viewOnLevelP
-	},
+
 	'collch-tag_page': {
 		place: viewOnLevelP
 	},
@@ -579,6 +615,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	parts_builder: {
 		//samples
+		'music_conductor_page': function() {
+			return this.els.ui_samples.children('.music_conductor_page');
+		},
 		'moplas-block': function() {
 			return this.els.ui_samples.children('.moplas-block');
 		},

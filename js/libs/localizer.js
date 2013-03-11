@@ -8,6 +8,10 @@
 */
 
 localizer = {
+	"music-cond": {
+		"original": "Music Conductor",
+		"ru": "Музыкальный кондуктор"
+	},
 	"no-dgs-id": {
 		"original": "Artist's discogs profile was not found",
 		"ru":"Discogs профиль артиста не был найден"

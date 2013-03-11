@@ -762,7 +762,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 			data: {name: saved_pl.playlist_title}
 		});
 		for (var i=0; i < saved_pl.length; i++) {
-			p.addOmo(saved_pl[i]);
+			p.addDataItem(saved_pl[i]);
 		}
 		this.watchOwnPlaylist(p);
 		return p;

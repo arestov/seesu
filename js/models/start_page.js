@@ -30,7 +30,6 @@ mapLevelModel.extendTo(StartPage, {
 
 		var muco = (new MusicConductor()).init({
 			app: su,
-			pmd: this,
 			map_parent: this
 		});
 		this.setChild('muco', muco);
