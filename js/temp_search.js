@@ -5,7 +5,9 @@ songFileModel.extendTo(FileInTorque, {
 		this.file_in_torrent = opts.file_in_torrent;
 		this.file_name = opts.name;
 		this.torrent = opts.torrent;
-		this.link = this.file_in_torrent.get('properties').get('streaming_url');
+		this.link = opts.link;
+		this.getFileInTorrent = opts.getFileInTorrent;
+		//this.file_in_torrent.get('properties').get('streaming_url');
 		return this._super(opts);
 	},
 	getTitle: function() {
@@ -34,23 +36,31 @@ songFileModel.extendTo(FileInTorque, {
 	loadOutBox: function() {
 		var _this = this;
 
-		var download_started = this.file_in_torrent.get('properties').get('downloaded');
+		var complect = this.getFileInTorrent(this.file_in_torrent);
+
+		var file_in_torrent = complect && complect.file;
+		if (!file_in_torrent){
+			console.log('torrents api dishronization');
+			return;
+		}
+		var download_started = file_in_torrent.get('properties').get('downloaded');
+
 		if (!download_started){
-			this.torrent.get('file').each(function(file) {
-				if (file != _this.file_in_torrent){
+			complect.torrent.get('file').each(function(file) {
+				if (file != file_in_torrent){
 					//file.get('properties').save({priority: 0});
 				}
 
 			});
-			this.file_in_torrent.get('properties').save({priority: 15});
+			file_in_torrent.get('properties').save({priority: 15});
 			if (!download_started){
-				this.file_in_torrent.stream();
+				file_in_torrent.stream();
 			}
 
-			this.torrent.set_priority(Btapp.TORRENT.PRIORITY.MEDIUM);
-			this.torrent.start();
+			complect.torrent.set_priority(Btapp.TORRENT.PRIORITY.MEDIUM);
+			complect.torrent.start();
 		} else {
-			this.file_in_torrent.get('properties').save({priority: 15});
+			file_in_torrent.get('properties').save({priority: 15});
 		}
 
 		
@@ -71,7 +81,6 @@ songFileModel.extendTo(FileInTorque, {
 });
 
 window.bap = new Btapp();
-
 bap.connect({
 	//mime_type: 'application/x-bittorrent-torquechrome'
 });
@@ -88,9 +97,9 @@ var torrentAdding = function(add) {
 
 
 
-var TorqueSearch = function() {
+var TorqueSearch = function(opts) {
 	var _this = this;
-
+	this.mp3_search = opts.mp3_search;
 	this.search = function() {
 		return _this.findAudio.apply(_this, arguments);
 	};
@@ -119,13 +128,36 @@ TorqueSearch.prototype = {
 				//	}
 				}
 			};
-
+		deferred.promise(complex_response);
 
 		if (typeof msq == 'string'){
 			msq = guessArtist(msq);
 		}
 		var complex_search = new funcsStack();
 
+		var getTorrent = function(torrent_link){
+			var torrent;
+			var colln = btapp.get('torrent');
+			var array = colln && colln.models;
+			torrent = array && $filter(array, 'attributes.properties.attributes.download_url', torrent_link);
+			return torrent && torrent[0];
+		};
+
+		var getFileInTorrent = function(opts) {
+			var torrent = getTorrent(opts.torrent_link);
+			if (torrent){
+				var target_file;
+				torrent.get('file').each(function(file){
+					if (file.get('properties').get('name') == opts.file_path){
+						target_file = file;
+					}
+				});
+				return {
+					file: target_file,
+					torrent: torrent
+				};
+			}
+		};
 
 		complex_search
 		.next(function() {
@@ -152,13 +184,7 @@ TorqueSearch.prototype = {
 			var torrent_link = array[0].torrent_link;
 
 
-			var getTorrent = function(){
-				var torrent;
-				var colln = btapp.get('torrent');
-				var array = colln && colln.models;
-				torrent = array && $filter(array, 'attributes.properties.attributes.download_url', torrent_link);
-				return torrent && torrent[0];
-			};
+			
 
 			var getFiles = function(torrent, just_added) {
 				var files_array = [];
@@ -175,14 +201,15 @@ TorqueSearch.prototype = {
 							
 					_this.done({
 						files: files_array,
-						torrent: torrent
+						torrent: torrent,
+						torrent_link: torrent_link
 					});
 				});
 			};
 
 			var torrentAdding = function(add) {
 				var torrent ;
-				torrent = getTorrent();
+				torrent = getTorrent(torrent_link);
 				if (torrent){
 
 					getFiles(torrent);
@@ -192,7 +219,7 @@ TorqueSearch.prototype = {
 						url: torrent_link,
 						callback: function(trt){
 							setTimeout(function() {
-								torrent = getTorrent();
+								torrent = getTorrent(torrent_link);
 								if (torrent){
 									getFiles(torrent, true);
 								}
@@ -211,12 +238,12 @@ TorqueSearch.prototype = {
 			if (add){
 				torrentAdding(add);
 			} else {
-				btapp.on('add:add', function(add){
+				btapp.on('add:add', spv.once(function(add){
 					
 					//setTimeout(function(){
 						torrentAdding(add);
 					//},100)
-				});
+				}));
 			}
 
 			
@@ -225,17 +252,64 @@ TorqueSearch.prototype = {
 		.next(function(obj) {
 			//find
 			console.log(obj.files);
-			var target = {
-				torrent: obj.torrent
+
+			var targets = [];
+
+			var makeSongFile = function(cur){
+				var file = {
+					file: cur.file,
+					name: cur.name,
+				//	query_match_index: new FileNameSQMatchIndex(cur.name, msq) * 1,
+					torrent: obj.torrent,
+					link: cur.file.get('properties').get('streaming_url'),
+					from: 'torq-torrents',
+					media_type: 'mp3',
+					models: {},
+					QMIConstr: FileNameSQMatchIndex,
+					getSongFileModel: function(mo, player) {
+						return this.models[mo.uid] = this.models[mo.uid] || (new FileInTorque()).init({
+							mo: mo,
+							link: this.link,
+							file_in_torrent: {
+								torrent_link: obj.torrent_link,
+								file_path: this.name
+							},
+							getFileInTorrent: function() {
+								return getFileInTorrent.apply(this, arguments);
+							},
+							name: this.name,
+							torrent_link: obj.torrent_link
+						}).setPlayer(player);
+					}
+				};
+				tse.mp3_search.setFileQMI(file, msq, FileNameSQMatchIndex);
+				return file;
 			};
-			
+
 			for (var i = 0; i < obj.files.length; i++) {
-				if (obj.files[i].name.match(/\.mp3$/)){
-					target.file = obj.files[i].file;
-					target.name = obj.files[i].name;
-					break;
+				var cur = obj.files[i];
+				if (cur.name.match(/\.mp3$/)){
+					var file = makeSongFile(cur);
+					targets.push(file);
 				}
 			}
+			var possible_files = [];
+			for (var i = 0; i < targets.length; i++) {
+				var cur = targets[i];
+				var qmi = tse.mp3_search.getFileQMI(cur, msq);
+				if (qmi !== -1){
+					possible_files.push(cur);
+				}
+				
+			}
+
+			//var possible = $filter(targets, 'query_match_index', -1).not;
+			//sortMusicFilesArray(possible_files);
+
+			deferred.resolve(possible_files, 'mp3');
+			/*
+			var target = possible[0];
+
 
 			if (target.file){
 				var array = [];
@@ -244,21 +318,15 @@ TorqueSearch.prototype = {
 				var pusher = {};
 				cloneObj(pusher, msq);
 				cloneObj(pusher, {
-					models: {},
-					getSongFileModel: function(mo, player) {
-						return this.models[mo.uid] = this.models[mo.uid] || (new FileInTorque()).init({
-							mo: mo,
-							file_in_torrent: target.file,
-							name: target.name,
-							torrent: target.torrent
-						}).setPlayer(player);
-					}
+					
 				});
 				array.push(pusher);
-				deferred.resolve(array, 'mp3');
+				
 			} else {
 				deferred.reject();
 			}
+			*/
+			tse.mp3_search.pushSomeResults(targets);
 		})
 		.start(function() {
 
@@ -268,7 +336,7 @@ TorqueSearch.prototype = {
 
 
 
-		return deferred;
+		return complex_response;
 	}
 };
 
@@ -283,4 +351,6 @@ TorqueSearch.prototype = {
 })();
 
 
-su.mp3_search.add(new TorqueSearch());
+su.mp3_search.add(new TorqueSearch({
+	mp3_search: su.mp3_search
+}));
