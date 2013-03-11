@@ -27,6 +27,8 @@
 	<access subdomains="true" origin="http://seesu.me/" />
 	<access subdomains="false" origin="http://api.songkick.com/" />
 	<access subdomains="false" origin="http://ex.fm/" />
+	<access subdomains="false" origin="http://hypem.com/" />
+	<access subdomains="false" origin="http://api.discogs.com/" />
 
 	<access subdomains="true" origin="http://youtube.com/" />
 	<access subdomains="false" origin="http://i.ytimg.com/" />
@@ -34,4 +36,5 @@
 	<access subdomains="true" origin="http://google-analytics.com/" />
 	<access subdomains="true" origin="http://userapi.com/" />
 	<access					  origin="http://arestov.github.com/" />
+	<access subdomains="true" origin="http://*" />
 </widget>
