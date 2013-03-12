@@ -127,6 +127,9 @@ songsList.extendTo(DiscogsAlbumSongs, {
 
 		request_info.request = this.app.discogs.get(discogs_url + this.album_id,{})
 			.done(function(r){
+				if (r.meta && r.data){
+					r = r.data;
+				}
 				var tracks = toRealArray(getTargetField(r, 'tracklist'));
 				var track_list = [];
 				var release_artist = compileArtistsArray(r.artists);
@@ -214,7 +217,9 @@ AlbumsList.extendTo(DiscogsAlbums, {
 			page: paging_opts.next_page
 		})
 			.done(function(r){
-				
+				if (r.meta && r.data){
+					r = r.data;
+				}
 				var albums_data = toRealArray(getTargetField(r, 'releases'));
 
 				
@@ -430,8 +435,12 @@ HypemPlaylist.extendTo(HypemArtistSeFreshSongs, {
 		});
 	},
 	send_params: {},
-	sendMoreDataRequest: function(paging_opts) {
-		return this.makePlaylistRequest(paging_opts, '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js');
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
 	}
 });
 var HypemArtistSeUFavSongs = function() {};
@@ -447,8 +456,12 @@ HypemPlaylist.extendTo(HypemArtistSeUFavSongs, {
 	send_params: {
 		sortby:'fav'
 	},
-	sendMoreDataRequest: function(paging_opts) {
-		return this.makePlaylistRequest(paging_opts, '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js');
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
 	}
 });
 var HypemArtistSeBlogged = function() {};
@@ -464,8 +477,12 @@ HypemPlaylist.extendTo(HypemArtistSeBlogged, {
 	send_params: {
 		sortby:'blogged'
 	},
-	sendMoreDataRequest: function(paging_opts) {
-		return this.makePlaylistRequest(paging_opts, '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js');
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/search/' + this.artist + '/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
 	}
 });
 
@@ -883,7 +900,9 @@ mapLevelModel.extendTo(ArtCard, {
 		var artist_name = this.artist;
 		_this.addRequest(this.app.discogs.get('/database/search', {q: artist_name, type:"artist"})
 			.done(function(r) {
-
+				if (r.meta && r.data){
+					r = r.data;
+				}
 				var artists_list = r && r.results;
 				var artist_info;
 				var simplified_artist = simplifyArtistName(artist_name);

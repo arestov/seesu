@@ -904,6 +904,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		view.recieveStatesChanges(states_list);
 	},
 	sendStatesToViews: function(states_list) {
+		this.removeDeadViews();
 		for (var i = 0; i < this.views.length; i++) {
 			this.sendStatesToView(this.views[i], states_list);
 			
