@@ -28,9 +28,12 @@ provoda.addPrototype("baseSong",{
 		states['url_part'] = this.getURL();
 		this.updateManyStates(states);
 
-
+		var _this = this;
 		this.on('request', function(rq) {
-			this.plst_titl.checkRequestsPriority();
+			setTimeout(function() {
+				_this.plst_titl.checkRequestsPriority();
+			},50);
+			
 		});
 	},
 	complex_states: {

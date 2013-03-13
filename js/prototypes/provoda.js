@@ -789,6 +789,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		items_events.init('state-change.' + state_name, function() {
 			callback.call(_this, {
 				item: this,
+				value: arguments && arguments[0] && arguments[0].value,
 				args: arguments
 			});
 		}, true);
