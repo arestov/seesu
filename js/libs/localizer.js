@@ -547,7 +547,7 @@ localizer = {
 		"original": "Nothing found",
 		"ru": 'Не найдено'
 	},
-	"Files": {
+	"files": {
 		"original":"Files",
 		"ru": "Файлы"
 	},
