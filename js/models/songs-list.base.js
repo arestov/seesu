@@ -28,6 +28,28 @@ var songsList;
 					},300);
 				}
 			});
+			this.watchChildrenStates(this.main_list_name, 'want_to_play', function(e) {
+				if (e.value){
+					this.idx_wplay_song = e.item;
+				} else if (this.idx_wplay_song == e.item) {
+					this.idx_wplay_song = null;
+				}
+			});
+			this.watchChildrenStates(this.main_list_name, 'mp_show', function(e) {
+				if (e.value){
+					this.idx_show_song = e.item;
+				} else if (this.idx_show_song == e.item) {
+					this.idx_show_song = null;
+				}
+				
+			});
+			this.watchChildrenStates(this.main_list_name, 'player_song', function(e) {
+				if (e.value){
+					this.idx_player_song = e.item;
+				} else if (this.idx_player_song == e.item) {
+					this.idx_player_song = null;
+				}
+			});
 			this.watchChildrenStates(this.main_list_name, 'can-use-as-neighbour', function(e) {
 				setTimeout(function() {
 					_this.checkNeighboursStatesCh(e.item);
@@ -78,7 +100,7 @@ var songsList;
 				item,
 				excess_items,
 				work_array = this[this.main_list_name],
-				last_usable_song = skip_changes && this.getLastUsableSong();
+				last_usable_song = !skip_changes && this.getLastUsableSong();
 
 			if (this.excess_data_items && this.excess_data_items.length){
 				var matched = this.compareItemsWithObj(this.excess_data_items, obj);
@@ -333,16 +355,17 @@ var songsList;
 		
 		},
 		getWantedSong: function(exept) {
-			return $filter(this[this.main_list_name], 'states.want_to_play', function(v) {return !!v;})[0];
-			return song != exept && song ;
+			
+			//return $filter(this[this.main_list_name], 'states.want_to_play', function(v) {return !!v;})[0];
+			return this.idx_wplay_song != exept && this.idx_wplay_song;
 		},
 		getViewingSong: function(exept) {
-			var song = $filter(this[this.main_list_name], 'states.mp_show', function(v) {return !!v;})[0];
-			return song != exept && song ;
+			//var song = $filter(this[this.main_list_name], 'states.mp_show', function(v) {return !!v;})[0];
+			return this.idx_show_song != exept && this.idx_show_song;
 		},
 		getPlayerSong: function(exept) {
-			var song = $filter(this[this.main_list_name], "states.player_song", true)[0];
-			return song != exept && song;
+			//var song = $filter(this[this.main_list_name], "states.player_song", true)[0];
+			return this.idx_player_song != exept && this.idx_player_song;
 		},
 		getLastUsableSong: function(){
 			for (var i = this[this.main_list_name].length - 1; i >= 0; i--) {
