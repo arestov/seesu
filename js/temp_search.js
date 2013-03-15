@@ -339,18 +339,22 @@ TorqueSearch.prototype = {
 		return complex_response;
 	}
 };
+suReady(function() {
+	setTimeout(function(){
+		(function() {
+			//removing other search sources!
+			var list = su.mp3_search.se_list;
+			for (var i = 0; i < list.length; i++) {
+				su.mp3_search.remove(list[i]);
+				
+			}
 
-(function() {
-	//removing other search sources!
-	var list = su.mp3_search.se_list;
-	for (var i = 0; i < list.length; i++) {
-		su.mp3_search.remove(list[i]);
-		
-	}
-
-})();
+		})();
 
 
-su.mp3_search.add(new TorqueSearch({
-	mp3_search: su.mp3_search
-}));
+		su.mp3_search.add(new TorqueSearch({
+			mp3_search: su.mp3_search
+		}));
+
+	},200);
+});
