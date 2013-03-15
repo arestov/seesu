@@ -27,7 +27,7 @@ html.opera-extension{
 	width:800px !important;
 }
 .pokki-app, .pokki-app body{
-	height:auto !important;
+	height:710px;
 	}
 	.pokki-app #slider{
 		padding-bottom:5px;

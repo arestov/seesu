@@ -2,6 +2,80 @@ var MusicConductor;
 (function (){
 "use strict";
 
+//http://hypem.com/latest
+
+var AllPHypemLatestSongs = function() {};
+HypemPlaylist.extendTo(AllPHypemLatestSongs, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.updateManyStates({
+			'nav_title': 'Latest Blogged music from hypem.com',
+			'url_part': '/latest'
+		});
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/latest/all/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
+	}
+});
+var AllPHypemLatestRemixesSongs = function() {};
+HypemPlaylist.extendTo(AllPHypemLatestRemixesSongs, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.updateManyStates({
+			'nav_title': 'Latest Blogged remixes from hypem.com',
+			'url_part': '/latest:remix'
+		});
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/latest/remix/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
+	}
+});
+
+var AllPHypemNowSongs = function() {};
+HypemPlaylist.extendTo(AllPHypemNowSongs, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.updateManyStates({
+			'nav_title': 'Popular Now on hypem.com',
+			'url_part': '/topnow_hypem'
+		});
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/popular/3day/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
+	}
+});
+var AllPHypemWeekSongs = function() {};
+HypemPlaylist.extendTo(AllPHypemWeekSongs, {
+	init: function(opts) {
+		this._super(opts);
+		this.updateManyStates({
+			'nav_title': 'Popular last Week on hypem.com',
+			'url_part': '/topweek_hypem'
+		});
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendHypemDataRequest(paging_opts, request_info, {
+			path: '/playlist/popular/lastweek/json/' + paging_opts.next_page +'/data.js',
+			parser: this.getHypemTracksList,
+			data: this.send_params
+		});
+	}
+});
+
+
+
 var AllPSongsChart = function() {};
 songsList.extendTo(AllPSongsChart, {
 	init: function(opts) {
@@ -66,7 +140,10 @@ mapLevelModel.extendTo(AllPlacesSongsLists, {
 			'url_part': '/songs'
 		});
 
-		this.lists_list = [new AllPSongsChart(), new AllPSongsHyped(), new AllPSongsLoved()];
+		this.lists_list = [
+			new AllPHypemLatestSongs(), new AllPHypemLatestRemixesSongs(), new AllPHypemNowSongs(),/*new AllPHypemWeekSongs(),*/
+			new AllPSongsChart(), new AllPSongsHyped(), new AllPSongsLoved()
+		];
 		
 		this.initItems(this.lists_list, {app:this.app, map_parent:this});
 
@@ -76,6 +153,9 @@ mapLevelModel.extendTo(AllPlacesSongsLists, {
 	},
 	model_name: 'songs_lists'
 });
+
+var AllPHypemWeekArtists = function() {};
+//ArtistsList.extendTo()
 
 var AllPArtistsHyped = function() {};
 ArtistsList.extendTo(AllPArtistsHyped, {
@@ -154,8 +234,8 @@ mapLevelModel.extendTo(AllPlaces, {
 		this.setChild('lists_list', [this.artists_lists, this.songs_lists]);
 
 		this.updateManyStates({
-			'nav_title': 'All places',
-			'url_part': '/all-places'
+			'nav_title': 'All around the World',
+			'url_part': '/world'
 		});
 
 	}
