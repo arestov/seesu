@@ -188,47 +188,6 @@ songsList.extendTo(HypemPlaylist, {
 		this.updateState('possible_loader_disallowing', localize('Hypem-cant-load'));
 	},
 	page_limit: 20,
-	makePlaylistRequest: function(paging_opts, path) {
-		var _this = this;
-		var request_info = {};
-		request_info.request = this.app.hypem.get(path, this.send_params)
-			.done(function(r) {
-				var result_list = [];
-				for (var num in r){
-					if (num == parseInt(num, 10) && r[num]){
-						result_list.push(r[num]);
-					}
-				}
-				var track_list = [];
-				for (var i = 0; i < result_list.length; i++) {
-					var cur = result_list[i];
-					var song_omo = {
-						artist: cur.artist,
-						track: cur.title
-					};
-					if (!song_omo.artist){
-						song_omo = guessArtist(cur.title);
-					}
-					song_omo.image_url = cur.thumb_url;
-					if (song_omo.artist && song_omo.track){
-						track_list.push(song_omo);
-					} else {
-						console.log('there is no needed attributes');
-						console.log(cur);
-					}
-					
-				}
-				_this.putRequestedData(request_info.request, track_list);
-
-			})
-			.fail(function() {
-				_this.requestComplete(request_info.request, true);
-			})
-			.always(function() {
-				request_info.done = true;
-			});
-		return request_info;
-	},
 	'compx-loader_disallowing_desc': {
 		depends_on: ['loader_disallowed', 'possible_loader_disallowing'],
 		fn: function(disallowed, desc) {

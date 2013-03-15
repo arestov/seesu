@@ -144,7 +144,58 @@ mapLevelModel.extendTo(LoadableList, {
 		}
 		return this;
 	},
+	getHypemArtistsList: function(r) {
 
+	},
+	getHypemTracksList: function(r) {
+		var result_list = [];
+		for (var num in r){
+			if (num == parseInt(num, 10) && r[num]){
+				result_list.push(r[num]);
+			}
+		}
+		var track_list = [];
+		for (var i = 0; i < result_list.length; i++) {
+			var cur = result_list[i];
+			var song_omo = {
+				artist: cur.artist,
+				track: cur.title
+			};
+			if (!song_omo.artist){
+				song_omo = guessArtist(cur.title);
+			}
+			song_omo.image_url = cur.thumb_url;
+			if (song_omo.artist && song_omo.track){
+				track_list.push(song_omo);
+			} else {
+				console.log('there is no needed attributes');
+				console.log(cur);
+			}
+			
+		}
+		return track_list;
+	},
+	sendHypemDataRequest: function(paging_opts, request_info, opts) {
+		var
+			no_paging = opts.no_paging,
+			path = opts.path,
+			parser = opts.parser;
+
+		var _this = this;
+		request_info.request = this.app.hypem.get(path, opts.data)
+			.done(function(r) {
+				var data_list = parser.call(this, r, paging_opts);
+				_this.putRequestedData(request_info.request, data_list);
+
+			})
+			.fail(function() {
+				_this.requestComplete(request_info.request, true);
+			})
+			.always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	},
 
 	sendLFMDataRequest: function(paging_opts, request_info, opts) {
 		var
