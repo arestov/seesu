@@ -574,6 +574,10 @@ createPrototype = function(constr, assi_prototype, clone_prototype){
 		// Enforce the constructor to be what we expect
 		namedClass.prototype.constructor = namedClass;
 
+		if (namedClass.prototype.onExtend){
+			namedClass.prototype.onExtend.call(namedClass.prototype);
+		}
+
 		// And make this class extendable
 		namedClass.extendTo = Class.extendTo;
 		namedClass.extend = Class.extend;

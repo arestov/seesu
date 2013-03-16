@@ -278,8 +278,9 @@ Class.extendTo(provoda.Eventor, {
 		if (cb_cs){
 			for (var i = 0; i < cb_cs.length; i++) {
 				var curn = cb_cs[i].namespace;
-				var canbe_matched = !curn.charAt(namespace.length) || curn.charAt(namespace.length) == '.';
-				if (canbe_matched &&  curn.indexOf(namespace) === 0){
+				var last_char = curn.charAt(namespace.length);
+				var canbe_matched = !last_char || last_char == '.';
+				if (canbe_matched &&  curn.indexOf(namespace) == 0){
 					r.matched.push(cb_cs[i]);
 				} else {
 					r.not_matched.push(cb_cs[i]);
@@ -399,6 +400,8 @@ Class.extendTo(provoda.Eventor, {
 	}
 });
 
+var compx_names_cache = {};
+
 var statesEmmiter = provoda.StatesEmitter;
 provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	init: function(){
@@ -420,7 +423,56 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				value: this.state(state_name)
 			});
 		});
+		//this.collectCompxs();
+
 		return this;
+	},
+	onExtend: function() {
+		this.collectCompxs();
+
+	},
+	getCompxName: function(original_name) {
+		if (typeof compx_names_cache[original_name] != 'undefined'){
+			return compx_names_cache[original_name];
+		}
+		var name = original_name.replace(this.compx_name_test, '');
+		if (original_name != name){
+			compx_names_cache[original_name] = name;
+			return name;
+		} else {
+			compx_names_cache[original_name] = null;
+		}
+	},
+	compx_name_test: /^compx\-/,
+	collectCompxs1part: function(compx_check) {
+		for (var comlx_name in this){
+			var name = this.getCompxName(comlx_name);
+			if (name){
+				compx_check[name] = true;
+				this.full_comlxs_list.push({
+					name: name,
+					obj: this[comlx_name]
+				});
+			}
+		}
+	},
+	collectCompxs2part: function(compx_check) {
+		for (var comlx_name in this.complex_states){
+			if (!compx_check[comlx_name]){
+				this.full_comlxs_list.push({
+					name: comlx_name,
+					obj: this.complex_states[comlx_name]
+				});
+			}
+		}
+	},
+	collectCompxs:function() {
+		var compx_check = {};
+		this.full_comlxs_list = [];
+	//	var comlx_name;
+		this.collectCompxs1part(compx_check);
+		this.collectCompxs2part(compx_check);
+		
 	},
 	state: function(name){
 		return this.states[name];
@@ -459,7 +511,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 			//
 			value = value || false;
-			//less calculations? (since false and "" and null and undefinded now os equeal and do not triggering changes)
+			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
 			//
 			
 			if (old_value != value){
@@ -619,32 +671,13 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			throw new Error('something wrong');
 		}
 
-		var compx_check = {};
-		var full_comlxs_list = [];
 		var result_array = [];
 		var comlx_name;
 
-		for (comlx_name in this){
-			if (comlx_name.indexOf('compx-') === 0){
-				var name = comlx_name.replace('compx-', '');
-				compx_check[name] = true;
-				full_comlxs_list.push({
-					name: name,
-					obj: this[comlx_name]
-				});
-			}
-		}
-		for (comlx_name in this.complex_states){
-			if (!compx_check[comlx_name]){
-				full_comlxs_list.push({
-					name: comlx_name,
-					obj: this.complex_states[comlx_name]
-				});
-			}
-		}
+		
 
-		for (var i = 0; i < full_comlxs_list.length; i++) {
-			var cur = full_comlxs_list[i];
+		for (var i = 0; i < this.full_comlxs_list.length; i++) {
+			var cur = this.full_comlxs_list[i];
 			if (states.length != arrayExclude(states, cur.obj.depends_on).length ){
 				cur.value = this.compoundComplexState(cur);
 				result_array.push(cur);
