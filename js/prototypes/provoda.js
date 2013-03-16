@@ -279,17 +279,17 @@ Class.extendTo(provoda.Eventor, {
 	},
 	getMatchedCallbacks: function(namespace){
 		var
-			short_name = namespace.split('.')[0],
-			r = {
-				matched: [],
-				not_matched: []
-			};
+			r, short_name = namespace.split('.')[0];
 
 		var cb_cs = this.subscribes[short_name];
 		if (cb_cs){
 			if (this.subscribes_cache[namespace]){
 				return this.subscribes_cache[namespace];
 			} else {
+				r = {
+					matched: [],
+					not_matched: []
+				};
 				for (var i = 0; i < cb_cs.length; i++) {
 					var curn = cb_cs[i].namespace;
 					var last_char = curn.charAt(namespace.length);
@@ -303,6 +303,11 @@ Class.extendTo(provoda.Eventor, {
 				this.subscribes_cache[namespace] = r;
 			}
 			
+		} else {
+			return {
+				matched: [],
+				not_matched: []
+			};
 		}
 		
 		return r;
