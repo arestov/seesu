@@ -549,24 +549,36 @@ mapLevelModel.extendTo(CountryPlace, {
 			}
 			
 		}, {immediately: true});
+
+		
 	},
+	sub_pa: {
+		'songs_top': {
+			constr: CountryTopSongs,
+			title: 'tt'
+		},
+		'artists_top': {
+			constr: CountryTopArtists
+		},
+		'cities': {
+			constr: CountryCitiesList
+		}
+	},
+
 	heavyInit: function() {
 		if (this.heavy_inited){
 			return;
 		} else {
 			this.heavy_inited = true;
 		}
-		var artists_top = new CountryTopArtists();
-		var songs_top = new CountryTopSongs();
-		this.lists_list = [artists_top, songs_top, new CountryCitiesList()];
-		this.initItems(this.lists_list, {
-			app: this.app,
-			map_parent: this
-		}, {country_name: this.country_name});
+		var artists_top = this.getSPI('artists_top');
+		var songs_top = this.getSPI('songs_top');
+		this.lists_list = [artists_top, songs_top, this.getSPI('cities')];
+		this.initSubPages(['artists_top', 'songs_top', 'cities'], {country_name: this.country_name});
 
 
 		this.setChild('lists_list', this.lists_list, true);
-		this.bindChildrenPreload([artists_top, songs_top]);
+		this.bindChildrenPreload([this.getSPI('artists_top'), this.getSPI('songs_top')]);
 	}
 });
 

@@ -791,6 +791,10 @@ provoda.Model.extendTo(mapLevelModel, {
 			this.app = opts.app;
 		}
 		if (!this.skip_map_init){
+			this.sub_pages = {};
+			if (!this.init_states){
+				this.init_states = {};
+			}
 			if (opts && opts.map_parent){
 				this.map_parent = opts.map_parent;
 			} else {
@@ -802,6 +806,48 @@ provoda.Model.extendTo(mapLevelModel, {
 		}
 
 		
+	},
+	getSPOpts: function(name) {
+		var obj = {
+			url_part: '/' + name
+		};
+		var target = this.sub_pa[name];
+		var title = target.title ||(target.getTitle && target.getTitle());
+		if (title){
+			obj['nav_title'] = title;
+		}
+		return obj;
+	},
+	getSPI: function(name) {
+
+		var target = this.sub_pa[name];
+		if (!target.many){
+			if (this.sub_pages[name]){
+				return this.sub_pages[name];
+			}
+		} else {
+			throw new Error('does no support this');
+		}
+
+		var Constr = target.constr || target.getConstr();
+		var instance = new Constr();
+		if (!target.many){
+			this.sub_pages[name] = instance;
+		}
+		return instance;
+	},
+	initSubPages: function(array, params) {
+		for (var i = 0; i < array.length; i++) {
+			var name = array[i];
+			var instance = this.getSPI(name);
+			
+			instance.init(cloneObj({
+				map_parent: this,
+				app: this.app
+			}, {
+				nav_opts: this.getSPOpts(name)
+			}), params);
+		}
 	},
 	initItems: function(lists_list, opts, params) {
 		for (var i = 0; i < lists_list.length; i++) {

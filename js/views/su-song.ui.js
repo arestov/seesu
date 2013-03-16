@@ -133,7 +133,7 @@ provoda.View.extendTo(songUI, {
 			this.artist_name_c.text(name);
 		},
 		'track': function(name) {
-			this.titlec.toggleClass('has-no-track-title', !name);
+			this.titlec.toggleClass('has-no_track_title', !name);
 			
 			this.track_name_c.text(name);
 		},
@@ -505,7 +505,7 @@ provoda.View.extendTo(songUI, {
 		this.song_imagec = $('<span class="song-image-con"></span>').appendTo(this.node);
 
 
-		this.titlec = $('<span class="full-song-title has-no-track-title"></span>')
+		this.titlec = $('<span class="full-song-title has-no_track_title"></span>')
 			.appendTo(this.node);
 		
 

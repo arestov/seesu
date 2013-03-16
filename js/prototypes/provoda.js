@@ -144,6 +144,7 @@ Class.extendTo(BindControl, {
 Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
+		this.subscribes_cache = {};
 		this.reg_fires = {};
 		this.requests = {};
 		return this;
@@ -158,6 +159,7 @@ Class.extendTo(provoda.Eventor, {
 			once: opts.once,
 			immediately: opts.immediately
 		});
+		this.resetSubscribesCache(opts.namespace);
 	},
 	getPossibleRegfires: function(namespace) {
 		var parts = namespace.split('.');
@@ -259,12 +261,21 @@ Class.extendTo(provoda.Eventor, {
 			clean.push.apply(clean, queried.not_matched);
 			if (clean.length != this.subscribes[short_name].length){
 				this.subscribes[short_name] = clean;
+				this.resetSubscribesCache(namespace);
 			}
 		}
 		
 	
 		
 		return this;
+	},
+	resetSubscribesCache: function(namespace) {
+		for (var cur_namespace in this.subscribes_cache){
+			var last_char = cur_namespace.charAt(namespace.length);
+			if ((!last_char || last_char == '.') && cur_namespace.indexOf(namespace) == 0){
+				this.subscribes_cache[cur_namespace] = null;
+			}
+		}
 	},
 	getMatchedCallbacks: function(namespace){
 		var
@@ -276,16 +287,22 @@ Class.extendTo(provoda.Eventor, {
 
 		var cb_cs = this.subscribes[short_name];
 		if (cb_cs){
-			for (var i = 0; i < cb_cs.length; i++) {
-				var curn = cb_cs[i].namespace;
-				var last_char = curn.charAt(namespace.length);
-				var canbe_matched = !last_char || last_char == '.';
-				if (canbe_matched &&  curn.indexOf(namespace) == 0){
-					r.matched.push(cb_cs[i]);
-				} else {
-					r.not_matched.push(cb_cs[i]);
+			if (this.subscribes_cache[namespace]){
+				return this.subscribes_cache[namespace];
+			} else {
+				for (var i = 0; i < cb_cs.length; i++) {
+					var curn = cb_cs[i].namespace;
+					var last_char = curn.charAt(namespace.length);
+					var canbe_matched = !last_char || last_char == '.';
+					if (canbe_matched &&  curn.indexOf(namespace) == 0){
+						r.matched.push(cb_cs[i]);
+					} else {
+						r.not_matched.push(cb_cs[i]);
+					}
 				}
+				this.subscribes_cache[namespace] = r;
 			}
+			
 		}
 		
 		return r;
