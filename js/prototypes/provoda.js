@@ -271,6 +271,9 @@ Class.extendTo(provoda.Eventor, {
 	},
 	resetSubscribesCache: function(namespace) {
 		for (var cur_namespace in this.subscribes_cache){
+			if (!this.subscribes_cache[cur_namespace]){
+				continue;
+			}
 			var last_char = cur_namespace.charAt(namespace.length);
 			if ((!last_char || last_char == '.') && cur_namespace.indexOf(namespace) == 0){
 				this.subscribes_cache[cur_namespace] = null;
