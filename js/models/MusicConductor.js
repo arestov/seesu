@@ -470,20 +470,48 @@ mapLevelModel.extendTo(CountryCitiesList, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.country_name = params.country_name;
-		this.updateManyStates({
-			'nav_title': 'Cities of ' + params.country_name,
-			'url_part': '/cities'
-		});
+		this.updateManyStates(this.init_states);
+		this.init_states = null;
 
 		var lists_list = [];
 
 		var citiesl = lastfm_countres[params.country_name];
+
+		for (var i = 0; i < citiesl.length; i++) {
+			var name = citiesl[i];
+			var instance = this.getSPI(name);
+			instance.init(instance.init_opts, {country_name: this.country_name, city_name: citiesl[i]});
+			lists_list.push(instance);
+		}
+		/*
 		for (var i = 0; i < citiesl.length; i++) {
 			var city = new CityPlace();
-			city.init({app: this.app, map_parent: this}, {country_name: this.country_name, city_name: citiesl[i]});
+			city.init({
+				app: this.app,
+				map_parent: this
+			}, {country_name: this.country_name, city_name: citiesl[i]});
 			lists_list.push(city);
 		}
+		*/
 		this.setChild('lists_list', lists_list);
+
+	},
+	subPager: function(sub_path_string){
+		var page_name = spv.capitalize(sub_path_string);
+		if (this.sub_pages[page_name]){
+			return this.sub_pages[page_name];
+		} else {
+			var instance = new CityPlace();
+			instance.init_opts = {
+				app: this.app,
+				map_parent: this,
+				nav_opts: {
+					nav_title: page_name + ', ' + this.country_name,
+					url_part: sub_path_string
+				}
+			};
+			return this.sub_pages[page_name] = instance;
+		}
 
 	}
 });
@@ -493,10 +521,8 @@ ArtistsList.extendTo(CountryTopArtists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.country_name = params.country_name;
-		this.updateManyStates({
-			'nav_title': 'Top Artists',
-			'url_part': '/artists_top'
-		});
+		this.updateManyStates(this.init_states);
+		this.init_states = null;
 	},
 	getRqData: function() {
 		return {
@@ -517,10 +543,8 @@ songsList.extendTo(CountryTopSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.country_name = params.country_name;
-		this.updateManyStates({
-			'nav_title': 'Top Songs',
-			'url_part': '/songs_top'
-		});
+		this.updateManyStates(this.init_states);
+		this.init_states = null;
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		return this.sendLFMDataRequest(paging_opts, request_info, {
@@ -549,6 +573,27 @@ mapLevelModel.extendTo(CountryPlace, {
 			}
 			
 		}, {immediately: true});
+
+		
+	},
+	sub_pa: {
+		'songs_top': {
+			constr: CountryTopSongs,
+			title: 'Top Songs'
+		},
+		'artists_top': {
+			constr: CountryTopArtists,
+			title: 'Top Artists'
+		},
+		'cities': {
+			constr: CountryCitiesList,
+			getTitle: function() {
+				return 'Cities of ' + this.country_name;
+			}
+		}
+	},
+	getSubPaParams: function() {
+		return {country_name: this.country_name};
 	},
 	heavyInit: function() {
 		if (this.heavy_inited){
@@ -556,17 +601,14 @@ mapLevelModel.extendTo(CountryPlace, {
 		} else {
 			this.heavy_inited = true;
 		}
-		var artists_top = new CountryTopArtists();
-		var songs_top = new CountryTopSongs();
-		this.lists_list = [artists_top, songs_top, new CountryCitiesList()];
-		this.initItems(this.lists_list, {
-			app: this.app,
-			map_parent: this
-		}, {country_name: this.country_name});
+		var artists_top = this.getSPI('artists_top');
+		var songs_top = this.getSPI('songs_top');
+		this.lists_list = [artists_top, songs_top, this.getSPI('cities')];
+		this.initSubPages(['artists_top', 'songs_top', 'cities'], this.getSubPaParams());
 
 
 		this.setChild('lists_list', this.lists_list, true);
-		this.bindChildrenPreload([artists_top, songs_top]);
+		this.bindChildrenPreload([this.getSPI('artists_top'), this.getSPI('songs_top')]);
 	}
 });
 

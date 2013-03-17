@@ -44,14 +44,14 @@ var song;
 
 			this._super.apply(this, arguments);
 			var _this = this;
-			this.updateNavTexts();
+			
 
 
 
 			var spec_image_wrap;
 			
 			if (omo.image_url){
-				this.updateState('image_url', {url: omo.image_url});
+				this.init_states['image_url'] = {url: omo.image_url};
 			}
 			if (omo.lfm_image){
 				spec_image_wrap = this.app.art_images.getImageWrap(omo.lfm_image.array || omo.lfm_image.item);
@@ -60,13 +60,14 @@ var song;
 			var images_pack;
 
 			if (spec_image_wrap) {
-				this.updateState('lfm_image', spec_image_wrap);
+				this.init_states['lfm_image'] = spec_image_wrap;
 
 			} else if (passed_artist) {
-				if (this.state('track')){
+				var still_init = true;
+				if (this.init_states['track']){
 					images_pack = this.app.art_images.getTrackImagesModel({
-						artist: this.state('artist'),
-						track: this.state('track')
+						artist: this.init_states['artist'],
+						track:this.init_states['track']
 					})
 						.on('state-change.image-to-use', function(e) {
 							_this.updateState('ext_lfm_image', e.value);
@@ -74,12 +75,15 @@ var song;
 					
 
 				} else {
-					images_pack = this.app.art_images.getArtistImagesModel(this.state('artist'))
+					images_pack = this.app.art_images.getArtistImagesModel(this.init_states['artist'])
 						.on('state-change.image-to-use', function(e) {
 							_this.updateState('ext_lfm_image', e.value);
 						});
 				}
+				still_init = false;
 			}
+			this.updateManyStates(this.init_states);
+			this.init_states = null;
 			_this.initHeavyPart();
 			
 		},
@@ -207,7 +211,7 @@ var song;
 				data.attachments = "audio" + file._id;
 			}
 			
-			data.message = this.state('full-title') + " " + encodeURI(this.getShareUrl());
+			data.message = this.state('nav_title') + " " + encodeURI(this.getShareUrl());
 			if (data.attachments){
 				data.attachment = data.attachments;
 			}

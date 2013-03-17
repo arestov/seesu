@@ -459,6 +459,7 @@ provoda.View.extendTo(ActionsRowUI, {
 
 var BaseCRowUI = function(){};
 provoda.View.extendTo(BaseCRowUI, {
+	dom_rp: true,
 	bindClick: function(){
 		if (this.button){
 			var md = this.md;

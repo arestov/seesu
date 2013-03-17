@@ -28,6 +28,7 @@ provoda.View.extendTo(mfComplectUI, {
 		this.c = $('<div class="moplas-list"></div>');
 		this.header_c = $('<h4></h4>').appendTo(this.c);
 		this.lc = $('<ul></ul>').appendTo(this.c);
+		this.dom_related_props = ['header_c', 'lc'];
 	},
 	state_change: {
 		overstock: function(state) {

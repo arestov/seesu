@@ -272,7 +272,6 @@ BaseCRow.extendTo(ShareRow, {
 		this.searcher.changeQuery(q);
 	},
 	model_name: 'row-share'
-//	ui_constr: ShareRowUI
 });
 })()
 
@@ -295,7 +294,6 @@ baseSuggest.extendTo(playlistSuggest, {
 		this.pl.add(this.mo);
 		this.rpl.hide();
 	}
-//	ui_constr: baseSuggestUI
 });
 
 
@@ -358,7 +356,6 @@ BaseCRow.extendTo(PlaylistAddRow, {
 		this.addChild(this.searcher);
 	},
 	model_name: 'row-playlist-add',
-//	ui_constr: PlaylistAddRowUI,
 	search: function(q) {
 		this.updateState('query', q);
 		this.searcher.changeQuery(q);
@@ -371,8 +368,6 @@ BaseCRow.extendTo(PlaylistAddRow, {
 		this.hide();
 	}
 });
-//su.gena.createUserPlaylist(searching_for).add(current_song);
-//playlist.add(song);
 
 })();
 
@@ -472,6 +467,4 @@ PartsSwitcher.extendTo(TrackActionsRow, {
 		this.sendVolume(fac);
 		
 	}
-//	ui_constr: TrackActionsRowUI
 });
-//song.prototype = song_methods;

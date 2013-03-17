@@ -144,6 +144,7 @@ Class.extendTo(BindControl, {
 Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
+		this.subscribes_cache = {};
 		this.reg_fires = {};
 		this.requests = {};
 		return this;
@@ -158,6 +159,7 @@ Class.extendTo(provoda.Eventor, {
 			once: opts.once,
 			immediately: opts.immediately
 		});
+		this.resetSubscribesCache(opts.namespace);
 	},
 	getPossibleRegfires: function(namespace) {
 		var parts = namespace.split('.');
@@ -259,6 +261,7 @@ Class.extendTo(provoda.Eventor, {
 			clean.push.apply(clean, queried.not_matched);
 			if (clean.length != this.subscribes[short_name].length){
 				this.subscribes[short_name] = clean;
+				this.resetSubscribesCache(namespace);
 			}
 		}
 		
@@ -266,25 +269,48 @@ Class.extendTo(provoda.Eventor, {
 		
 		return this;
 	},
+	resetSubscribesCache: function(namespace) {
+		for (var cur_namespace in this.subscribes_cache){
+			if (!this.subscribes_cache[cur_namespace]){
+				continue;
+			}
+			var last_char = cur_namespace.charAt(namespace.length);
+			if ((!last_char || last_char == '.') && cur_namespace.indexOf(namespace) == 0){
+				this.subscribes_cache[cur_namespace] = null;
+			}
+		}
+	},
 	getMatchedCallbacks: function(namespace){
 		var
-			short_name = namespace.split('.')[0],
-			r = {
-				matched: [],
-				not_matched: []
-			};
+			r, short_name = namespace.split('.')[0];
 
 		var cb_cs = this.subscribes[short_name];
 		if (cb_cs){
-			for (var i = 0; i < cb_cs.length; i++) {
-				var curn = cb_cs[i].namespace;
-				var canbe_matched = !curn.charAt(namespace.length) || curn.charAt(namespace.length) == '.';
-				if (canbe_matched &&  curn.indexOf(namespace) === 0){
-					r.matched.push(cb_cs[i]);
-				} else {
-					r.not_matched.push(cb_cs[i]);
+			if (this.subscribes_cache[namespace]){
+				return this.subscribes_cache[namespace];
+			} else {
+				r = {
+					matched: [],
+					not_matched: []
+				};
+				for (var i = 0; i < cb_cs.length; i++) {
+					var curn = cb_cs[i].namespace;
+					var last_char = curn.charAt(namespace.length);
+					var canbe_matched = !last_char || last_char == '.';
+					if (canbe_matched &&  curn.indexOf(namespace) == 0){
+						r.matched.push(cb_cs[i]);
+					} else {
+						r.not_matched.push(cb_cs[i]);
+					}
 				}
+				this.subscribes_cache[namespace] = r;
 			}
+			
+		} else {
+			return {
+				matched: [],
+				not_matched: []
+			};
 		}
 		
 		return r;
@@ -399,6 +425,8 @@ Class.extendTo(provoda.Eventor, {
 	}
 });
 
+var compx_names_cache = {};
+
 var statesEmmiter = provoda.StatesEmitter;
 provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	init: function(){
@@ -420,7 +448,56 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				value: this.state(state_name)
 			});
 		});
+		//this.collectCompxs();
+
 		return this;
+	},
+	onExtend: function() {
+		this.collectCompxs();
+
+	},
+	getCompxName: function(original_name) {
+		if (typeof compx_names_cache[original_name] != 'undefined'){
+			return compx_names_cache[original_name];
+		}
+		var name = original_name.replace(this.compx_name_test, '');
+		if (original_name != name){
+			compx_names_cache[original_name] = name;
+			return name;
+		} else {
+			compx_names_cache[original_name] = null;
+		}
+	},
+	compx_name_test: /^compx\-/,
+	collectCompxs1part: function(compx_check) {
+		for (var comlx_name in this){
+			var name = this.getCompxName(comlx_name);
+			if (name){
+				compx_check[name] = true;
+				this.full_comlxs_list.push({
+					name: name,
+					obj: this[comlx_name]
+				});
+			}
+		}
+	},
+	collectCompxs2part: function(compx_check) {
+		for (var comlx_name in this.complex_states){
+			if (!compx_check[comlx_name]){
+				this.full_comlxs_list.push({
+					name: comlx_name,
+					obj: this.complex_states[comlx_name]
+				});
+			}
+		}
+	},
+	collectCompxs:function() {
+		var compx_check = {};
+		this.full_comlxs_list = [];
+	//	var comlx_name;
+		this.collectCompxs1part(compx_check);
+		this.collectCompxs2part(compx_check);
+		
 	},
 	state: function(name){
 		return this.states[name];
@@ -459,7 +536,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 			//
 			value = value || false;
-			//less calculations? (since false and "" and null and undefinded now os equeal and do not triggering changes)
+			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
 			//
 			
 			if (old_value != value){
@@ -619,32 +696,13 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			throw new Error('something wrong');
 		}
 
-		var compx_check = {};
-		var full_comlxs_list = [];
 		var result_array = [];
 		var comlx_name;
 
-		for (comlx_name in this){
-			if (comlx_name.indexOf('compx-') === 0){
-				var name = comlx_name.replace('compx-', '');
-				compx_check[name] = true;
-				full_comlxs_list.push({
-					name: name,
-					obj: this[comlx_name]
-				});
-			}
-		}
-		for (comlx_name in this.complex_states){
-			if (!compx_check[comlx_name]){
-				full_comlxs_list.push({
-					name: comlx_name,
-					obj: this.complex_states[comlx_name]
-				});
-			}
-		}
+		
 
-		for (var i = 0; i < full_comlxs_list.length; i++) {
-			var cur = full_comlxs_list[i];
+		for (var i = 0; i < this.full_comlxs_list.length; i++) {
+			var cur = this.full_comlxs_list[i];
 			if (states.length != arrayExclude(states, cur.obj.depends_on).length ){
 				cur.value = this.compoundComplexState(cur);
 				result_array.push(cur);
@@ -888,7 +946,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		return this;
 	},
 	sendCollectionChange: function(collection_name, array) {
-		this.removeDeadViews();
+		//this.removeDeadViews();
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].collectionChange(collection_name, array);
 		}
@@ -905,7 +963,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		view.recieveStatesChanges(states_list);
 	},
 	sendStatesToViews: function(states_list) {
-		this.removeDeadViews();
+		//this.removeDeadViews();
 		for (var i = 0; i < this.views.length; i++) {
 			this.sendStatesToView(this.views[i], states_list);
 			
@@ -1377,6 +1435,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.undetailed_children_models = {};
 		this.children_viewed = {};
 		this.way_points = [];
+		if (this.dom_rp){
+			this.dom_related_props = [];
+		}
 
 		cloneObj(this.undetailed_states, this.md.states);
 		cloneObj(this.undetailed_children_models, this.md.children_models);
@@ -1485,16 +1546,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.setVisState('con-appended', true);
 		}
 	},
-	onDie: function(cb) {
-		this.on('die', cb);
-	},
-	markAsDead: function() {
-		this.dead = true;
-		this.trigger('die');
-		for (var i = 0; i < this.children.length; i++) {
-			this.children[i].markAsDead();
-		}
-	},
+
 	getFreeCV: function(child_name, view_space, opts) {
 		var md = this.getMdChild(child_name);
 		if (md){
@@ -1584,6 +1636,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			views_to_remove[i].die();
 		}
 		
+		this.children = arrayExclude(this.children, views_to_remove);
 
 	},
 	getDeepChildren: function(exept) {
@@ -1608,6 +1661,38 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return all;
 	},
+	onDie: function(cb) {
+		this.on('die', cb);
+	},
+	markAsDead: function() {
+		this.dead = true;
+
+		this.trigger('die');
+
+		this.md.removeDeadViews();
+
+		this.c = null;
+		this._anchor = null;
+		this.tpl = null;
+		this.way_points = null;
+
+
+		var i;
+		if (this.dom_related_props){
+			for (i = 0; i < this.dom_related_props.length; i++) {
+				this[this.dom_related_props[i]] = null;
+			}
+		}
+		var children = this.children;
+		this.children = [];
+		for (i = 0; i < children.length; i++) {
+			children[i].markAsDead();
+		}
+		//debugger?
+		this.view_parts = {};
+		
+
+	},
 	remove: function() {
 		var c = this.getC();
 		if (c){
@@ -1616,6 +1701,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (this._anchor){
 			$(this._anchor).remove();
 		}
+		
 	},
 	die: function(){
 		if (!this.marked_as_dead){
