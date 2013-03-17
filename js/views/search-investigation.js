@@ -51,6 +51,7 @@ searchPageSuggestView.extendTo(artistSuggestUI, {
 		$("<span></span>").text(that.text_title)
 			.appendTo(a);
 		this.a = a.appendTo(this.c);
+		this.dom_related_props.push('a');
 		return this;
 	}
 });
@@ -69,6 +70,7 @@ searchPageSuggestView.extendTo(trackSuggestUI, {
 
 
 		this.a = a.appendTo(this.c);
+		this.dom_related_props.push('a', 'img_c', 'duration_c', 'track_name_c', 'artist_name_c');
 		return this;
 	},
 	"stch-artist": function(state) {
@@ -95,6 +97,7 @@ searchPageSuggestView.extendTo(tagSuggestUI,  {
 		this.a = $("<a></a>")
 			.append("<span>" + that.text_title + "</span>")
 			.appendTo(this.c);
+		this.dom_related_props.push('a');
 		return this;
 	}
 });
@@ -111,6 +114,7 @@ searchPageSuggestView.extendTo(albumSuggestUI, {
 		this.album_name_c  = $('<span class="suggest-album_name"></span>').appendTo(a);
 
 		this.a = a.appendTo(this.c);
+		this.dom_related_props.push('a', 'img_c', 'artist_name_c', 'album_name_c');
 		return this;
 	},
 	"stch-name": function(state) {

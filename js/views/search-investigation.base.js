@@ -1,8 +1,10 @@
 provoda.addPrototype("baseSectionButtonView", {
+	dom_rp: true,
 	createItem: function(){
-
+		this.dom_related_props = this.dom_related_props || [];
 		this.a = $('<button type="button"></button>').appendTo(this.c);
 		this.text_span = $("<span></span>").appendTo(this.a);
+		this.dom_related_props.push('a', 'text_span');
 		return this;
 	},
 	"stch-button_text": function(text){
@@ -12,6 +14,7 @@ provoda.addPrototype("baseSectionButtonView", {
 
 
 provoda.addPrototype("baseSuggestView", {
+	dom_rp: true,
 	createDetailes: function(){
 		this.createBase();
 		if (this.createItem){
@@ -19,6 +22,7 @@ provoda.addPrototype("baseSuggestView", {
 				.createItem()
 				.bindClick();
 		}
+
 	},
 	'stch-active': function(state){
 		if (this.a){
@@ -55,6 +59,7 @@ provoda.addPrototype("baseSuggestView", {
 		this.a = $('<a></a>')
 			.text(that.text_title)
 			.appendTo(this.c);
+		this.dom_related_props.push('a');
 		return this;
 	},
 	createBase: function(){
@@ -120,11 +125,13 @@ provoda.addPrototype("InvestigationView", {
 });
 
 provoda.addPrototype("searchSectionView", {
+	dom_rp: true,
 	createDetailes: function(){
 		this.createCon();
 		this.createHead();
 
 		this.gc = this.header ? this.header.add(this.c) : this.c;
+		this.dom_related_props.push('gs', 'header', 'message');
 	},
 	getC: function(){
 		return this.gc;

@@ -946,7 +946,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		return this;
 	},
 	sendCollectionChange: function(collection_name, array) {
-		this.removeDeadViews();
+		//this.removeDeadViews();
 		for (var i = 0; i < this.views.length; i++) {
 			this.views[i].collectionChange(collection_name, array);
 		}
@@ -963,7 +963,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		view.recieveStatesChanges(states_list);
 	},
 	sendStatesToViews: function(states_list) {
-		this.removeDeadViews();
+		//this.removeDeadViews();
 		for (var i = 0; i < this.views.length; i++) {
 			this.sendStatesToView(this.views[i], states_list);
 			
@@ -1435,6 +1435,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.undetailed_children_models = {};
 		this.children_viewed = {};
 		this.way_points = [];
+		if (this.dom_rp){
+			this.dom_related_props = [];
+		}
 
 		cloneObj(this.undetailed_states, this.md.states);
 		cloneObj(this.undetailed_children_models, this.md.children_models);
@@ -1543,16 +1546,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.setVisState('con-appended', true);
 		}
 	},
-	onDie: function(cb) {
-		this.on('die', cb);
-	},
-	markAsDead: function() {
-		this.dead = true;
-		this.trigger('die');
-		for (var i = 0; i < this.children.length; i++) {
-			this.children[i].markAsDead();
-		}
-	},
+
 	getFreeCV: function(child_name, view_space, opts) {
 		var md = this.getMdChild(child_name);
 		if (md){
@@ -1642,6 +1636,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			views_to_remove[i].die();
 		}
 		
+		this.children = arrayExclude(this.children, views_to_remove);
 
 	},
 	getDeepChildren: function(exept) {
@@ -1666,6 +1661,38 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return all;
 	},
+	onDie: function(cb) {
+		this.on('die', cb);
+	},
+	markAsDead: function() {
+		this.dead = true;
+
+		this.trigger('die');
+
+		this.md.removeDeadViews();
+
+		this.c = null;
+		this._anchor = null;
+		this.tpl = null;
+		this.way_points = null;
+
+
+		var i;
+		if (this.dom_related_props){
+			for (i = 0; i < this.dom_related_props.length; i++) {
+				this[this.dom_related_props[i]] = null;
+			}
+		}
+		var children = this.children;
+		this.children = [];
+		for (i = 0; i < children.length; i++) {
+			children[i].markAsDead();
+		}
+		//debugger?
+		this.view_parts = {};
+		
+
+	},
 	remove: function() {
 		var c = this.getC();
 		if (c){
@@ -1674,6 +1701,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (this._anchor){
 			$(this._anchor).remove();
 		}
+		
 	},
 	die: function(){
 		if (!this.marked_as_dead){

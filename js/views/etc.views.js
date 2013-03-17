@@ -333,6 +333,7 @@ provoda.View.extendTo(fileInTorrentUI,{
 });
 var songFileModelUI = function() {};
 provoda.View.extendTo(songFileModelUI, {
+	dom_rp: true,
 	createDetailes: function(){
 		this.createBase();
 
@@ -519,6 +520,7 @@ provoda.View.extendTo(songFileModelUI, {
 		};
 
 		this.progress_c = $('<div class="mf-progress"></div>');
+
 		this.c.click(function() {
 			if (!_this.state('selected')){
 				_this.md.trigger('want-to-play-sf');
@@ -619,6 +621,7 @@ provoda.View.extendTo(songFileModelUI, {
 		this.track_title = $('<span class="main-mf-text"></span>').appendTo(this.track_text);
 		this.source_name = $('<span class="mf-source"></span>').appendTo(this.track_text);
 		
+		this.dom_related_props.push('progress_c', 'cloading','cplayng','track_text','duration_c','track_title','source_name');
 		this.c.append(this.progress_c);
 	},
 	createPlayButton: function() {

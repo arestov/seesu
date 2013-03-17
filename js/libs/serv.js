@@ -657,7 +657,12 @@ throttle = function(fn, timeout, ctx) {
 
 };
 spv.throttle = throttle;
-
+spv.capitalize = function(string, just_first) {
+	var test = just_first ? (/(^|\s)(.)/) : (/(^|\s)(.)/g);
+	return string.replace(test, function(m, p1, p2){
+		return p1+p2.toUpperCase();
+	});
+};
 
 (function(){
 	var splitter = new RegExp("\\%[^\\s\\%]+?\\%", 'gi');

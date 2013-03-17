@@ -27,6 +27,7 @@ provoda.addPrototype("songsListBaseView", {
 			}
 		}
 	},
+	dom_rp: true,
 	parts_builder: {
 		"load-more-b": function() {
 			var _this = this;
@@ -45,6 +46,7 @@ provoda.addPrototype("songsListBaseView", {
 	},
 	createListBase: function() {
 		this.lc = $('<ul class="tracks-for-play list-overview"></ul>').appendTo(this.c);
+		this.dom_related_props.push('lc');
 	},
 	createBase: function() {
 		this.c = $('<div class="playlist-container"></div>');

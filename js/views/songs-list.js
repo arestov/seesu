@@ -121,6 +121,7 @@ var songsListView;
 			this.panel = this.root_view.getSample('playlist_panel');
 			this.panel.appendTo(this.c);
 			this.loader_dis_c = this.panel.find('.loader_disallowing_desc');
+			this.dom_related_props.push('panel', 'loader_dis_c', 'error_b');
 			return this;
 		},
 		'collch-plarow': function(name, md) {
