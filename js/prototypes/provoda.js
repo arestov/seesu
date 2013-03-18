@@ -141,6 +141,8 @@ Class.extendTo(BindControl, {
 	}
 });
 
+var ev_na_cache = {};
+
 Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
@@ -293,11 +295,19 @@ Class.extendTo(provoda.Eventor, {
 					matched: [],
 					not_matched: []
 				};
+				var cac_space = ev_na_cache[namespace] = (ev_na_cache[namespace] || {});
 				for (var i = 0; i < cb_cs.length; i++) {
 					var curn = cb_cs[i].namespace;
-					var last_char = curn.charAt(namespace.length);
-					var canbe_matched = !last_char || last_char == '.';
-					if (canbe_matched &&  curn.indexOf(namespace) == 0){
+					var canbe_matched = cac_space[curn];
+					if (typeof canbe_matched =='undefined') {
+						var last_char = curn.charAt(namespace.length);
+						canbe_matched = (!last_char || last_char == '.') && curn.indexOf(namespace) == 0;
+						if (!ev_na_cache[namespace]){
+							ev_na_cache[namespace] = {};
+						}
+						ev_na_cache[namespace][curn] = canbe_matched;
+					}
+					if (canbe_matched){
 						r.matched.push(cb_cs[i]);
 					} else {
 						r.not_matched.push(cb_cs[i]);
