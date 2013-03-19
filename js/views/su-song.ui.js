@@ -819,6 +819,9 @@ provoda.View.extendTo(songUI, {
 									queue: _this.root_view.lfm_imgq,
 									cache_allowed: true
 								}).done(function(){
+									if (!_this.isAlive()){
+										return;
+									}
 									if (first_image && _this.first_image){
 										_this.first_image.remove();
 									}
