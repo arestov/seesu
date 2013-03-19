@@ -816,18 +816,29 @@ provoda.Model.extendTo(mapLevelModel, {
 
 		
 	},
+	initOnce: function() {
+		if (this.init_opts){
+			this.init.apply(this, this.init_opts);
+			this.init_opts = null;
+		}
+		return this;
+	},
+	initStates: function() {
+		this.updateManyStates(this.init_states);
+		this.init_states = null;
+	},
 	getSPOpts: function(name) {
 		var obj = {
 			url_part: '/' + name
 		};
 		var target = this.sub_pa[name];
-		var title = target.title ||(target.getTitle && target.getTitle.call(this));
+		var title = target.title || (target.getTitle && target.getTitle.call(this));
 		if (title){
 			obj['nav_title'] = title;
 		}
 		return obj;
 	},
-	getSPI: function(name) {
+	getSPI: function(name, opts) {
 		if (this.sub_pages[name]){
 			return this.sub_pages[name];
 		}
@@ -836,12 +847,15 @@ provoda.Model.extendTo(mapLevelModel, {
 			var Constr = target.constr || target.getConstr.call(this);
 			var instance = new Constr();
 
-			instance.init_opts = cloneObj({
+			instance.init_opts = [cloneObj({
 				map_parent: this,
 				app: this.app
 			}, {
 				nav_opts: this.getSPOpts(name)
-			});
+			})];
+			if (this.sub_pa_params){
+				instance.init_opts.push(this.sub_pa_params)
+			}
 
 			this.sub_pages[name] = instance;
 			return instance;
@@ -855,7 +869,7 @@ provoda.Model.extendTo(mapLevelModel, {
 		for (var i = 0; i < array.length; i++) {
 			var name = array[i];
 			var instance = this.getSPI(name);
-			instance.init(instance.init_opts, params);
+			instance.initOnce();
 		}
 	},
 	initItems: function(lists_list, opts, params) {

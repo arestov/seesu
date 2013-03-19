@@ -82,8 +82,7 @@ var song;
 				}
 				still_init = false;
 			}
-			this.updateManyStates(this.init_states);
-			this.init_states = null;
+			this.initStates();
 			_this.initHeavyPart();
 			
 		},
