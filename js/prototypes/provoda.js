@@ -302,10 +302,7 @@ Class.extendTo(provoda.Eventor, {
 					if (typeof canbe_matched =='undefined') {
 						var last_char = curn.charAt(namespace.length);
 						canbe_matched = (!last_char || last_char == '.') && curn.indexOf(namespace) == 0;
-						if (!ev_na_cache[namespace]){
-							ev_na_cache[namespace] = {};
-						}
-						ev_na_cache[namespace][curn] = canbe_matched;
+						cac_space[curn] = canbe_matched;
 					}
 					if (canbe_matched){
 						r.matched.push(cb_cs[i]);
