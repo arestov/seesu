@@ -288,8 +288,9 @@ Class.extendTo(provoda.Eventor, {
 
 		var cb_cs = this.subscribes[short_name];
 		if (cb_cs){
-			if (this.subscribes_cache[namespace]){
-				return this.subscribes_cache[namespace];
+			var cached_r = this.subscribes_cache[namespace]; 
+			if (cached_r){
+				return cached_r;
 			} else {
 				r = {
 					matched: [],
