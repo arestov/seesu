@@ -507,7 +507,7 @@ mapLevelModel.extendTo(CountryCitiesList, {
 				map_parent: this,
 				nav_opts: {
 					nav_title: page_name + ', ' + this.country_name,
-					url_part: sub_path_string
+					url_part: '/' + sub_path_string
 				}
 			}, {country_name: this.country_name, city_name: page_name}]
 			return this.sub_pages[page_name] = instance;

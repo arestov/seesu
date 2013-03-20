@@ -570,14 +570,15 @@ mapLevelModel.extendTo(UserCard, {
 
 		this.setChild('users_acqutes', users_acqutes);
 		
+		
+		this.init_states['nav_title'] = this.for_current_user ? localize('your-pmus-f-aq') : '';
+		this.initStates();
+		
 		if (this.for_current_user){
 			this.map_parent.on('state-change.can_expand', function(e) {
 				_this.updateState('can_expand', e.value);
 			});
 		}
-		this.updateState('url_part', '/users/' + (this.for_current_user ? 'me' : params.username));
-
-		this.updateState('nav_title', localize('your-pmus-f-aq'));
 		/*
 
 		аудиозаписи

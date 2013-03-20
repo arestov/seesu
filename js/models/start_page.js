@@ -19,15 +19,7 @@ mapLevelModel.extendTo(StartPage, {
 
 		
 
-
-
-		var personal_stuff = (new UserCard()).init({
-			app: su, 
-			pmd: this,
-			map_parent: this
-		}, {for_current_user: true});
-		this.setChild('pstuff', personal_stuff);
-
+		this.setChild('pstuff', this.getSPI('users/me').initOnce());
 		this.setChild('muco', this.getSPI('conductor').initOnce());
 
 
@@ -57,13 +49,29 @@ mapLevelModel.extendTo(StartPage, {
 				return;
 			}
 			var full_name = 'users/' + name;
+			if (this.sub_pages[full_name]){
+				return this.sub_pages[full_name];
+			} else {
+				if (name == 'me'){
+					var instance = new UserCard();
+					instance.init_opts = [{
+						app: this.app,
+						map_parent: this,
+						nav_opts: {
+							url_part: '/' + full_name
+						}
+					}, {for_current_user: true}];
+					return (this.sub_pages[full_name] = instance);
+				}
+			}
+
 		}
 	},
 	sub_pa: {
 		'conductor': {
 			title: 'Music Conductor',
 			constr: MusicConductor
-		} 
+		}
 	},
 	subPager: function(path_string) {
 		var parts = path_string.split('/');
