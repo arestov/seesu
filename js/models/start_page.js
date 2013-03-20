@@ -35,7 +35,17 @@ mapLevelModel.extendTo(StartPage, {
 			if (this.sub_pages[full_name]){
 				return this.sub_pages[full_name];
 			} else {
-
+				var instance = new ArtCard();
+				instance.init_opts = [{
+					app: this.app,
+					map_parent: this,
+					nav_opts: {
+						url_part: '/' + full_name
+					}
+				}, {
+					artist: name
+				}];
+				return (this.sub_pages[full_name] = instance);
 			}
 		},
 		'tags': function(name) {
@@ -43,6 +53,22 @@ mapLevelModel.extendTo(StartPage, {
 				return;
 			}
 			var full_name = 'tags/' + name;
+			if (this.sub_pages[full_name]){
+				return this.sub_pages[full_name];
+			} else {
+				var instance = new TagPage();
+				instance.init_opts = [{
+					app: this.app,
+					map_parent: this,
+					nav_opts: {
+						url_part: '/' + full_name
+					}
+				}, {
+					tag_name: name
+				}];
+				return (this.sub_pages[full_name] = instance);
+			}
+
 		},
 		'users': function(name) {
 			if (!name){
@@ -76,36 +102,7 @@ mapLevelModel.extendTo(StartPage, {
 	subPager: function(path_string) {
 		var parts = path_string.split('/');
 		var first_part = parts[0];
-		//catalog
-		//tags
-		//users
-		//conductor
-		/*
-		var target_name = parts[0];
-		if (parts[1]){
-			target_name += '/' + parts[1];
-		}
-		*/
 		return this.sub_pages_routes[first_part] &&  this.sub_pages_routes[first_part].call(this, parts[1]);
-
-		/*
-		var page_name = spv.capitalize(sub_path_string);
-		if (this.sub_pages[page_name]){
-			return this.sub_pages[page_name];
-		} else {
-			var instance = new CityPlace();
-			instance.init_opts = {
-				app: this.app,
-				map_parent: this,
-				nav_opts: {
-					nav_title: page_name + ', ' + this.country_name,
-					url_part: sub_path_string
-				}
-			};
-			return this.sub_pages[page_name] = instance;
-		}
-		*/
-
 	},
 	short_title: 'Seesu',
 	getTitle: function() {
