@@ -233,10 +233,8 @@ mapLevelModel.extendTo(AllPlaces, {
 		this.setChild('artists_lists', this.artists_lists);
 		this.setChild('lists_list', [this.artists_lists, this.songs_lists]);
 
-		this.updateManyStates({
-			'nav_title': 'All around the World',
-			'url_part': '/world'
-		});
+		this.initStates();
+
 
 	}
 });
@@ -473,9 +471,22 @@ mapLevelModel.extendTo(CountryCitiesList, {
 		this.initStates();
 		
 
+		var _this = this;
+		this.map_parent.on('state-change.mp_show', function(e) {
+			if (e.value && e.value.userwant){
+				_this.heavyInit();
+			}
+		});
+	},
+	heavyInit: function() {
+		if (this.heavy_inited){
+			return
+		}
+		this.heavy_inited = true;
+
 		var lists_list = [];
 
-		var citiesl = lastfm_countres[params.country_name];
+		var citiesl = lastfm_countres[this.country_name];
 
 		for (var i = 0; i < citiesl.length; i++) {
 			var name = citiesl[i];
@@ -483,18 +494,8 @@ mapLevelModel.extendTo(CountryCitiesList, {
 			instance.initOnce();
 			lists_list.push(instance);
 		}
-		/*
-		for (var i = 0; i < citiesl.length; i++) {
-			var city = new CityPlace();
-			city.init({
-				app: this.app,
-				map_parent: this
-			}, {country_name: this.country_name, city_name: citiesl[i]});
-			lists_list.push(city);
-		}
-		*/
-		this.setChild('lists_list', lists_list);
-
+		
+		this.setChild('lists_list', lists_list, true);
 	},
 	subPager: function(sub_path_string){
 		var page_name = spv.capitalize(sub_path_string);
@@ -561,18 +562,22 @@ mapLevelModel.extendTo(CountryPlace, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.country_name = params.country_name;
-		this.updateManyStates({
-			'nav_title': params.country_name,
-			'url_part': '/' + params.country_name
-		});
-		this.on('vip-state-change.mp_show', function(e) {
+		this.initStates();
+		this.sub_pa_params = {country_name: this.country_name};
+
+		this.on('state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				this.heavyInit();
+			}	
+		});
+		var _this = this;
+		this.map_parent.on('state-change.mp_show', function(e) {
+			if (e.value && e.value.userwant){
+				_this.heavyInit();
 			}
-			
-		}, {immediately: true});
+		});
 
-		this.sub_pa_params = {country_name: this.country_name};	
+			
 	},
 	sub_pa: {
 		'songs_top': {
@@ -614,26 +619,31 @@ mapLevelModel.extendTo(CountresList, {
 		this._super.apply(this, arguments);
 		this.lists_list = [];
 		for (var country in lastfm_countres){
-			var country_place = new CountryPlace();
-			country_place.init({
-				app: this.app,
-				map_parent: this
-			}, {country_name: country});
+			var country_place = this.getSPI(country);
+			country_place.initOnce();
 			this.lists_list.push(country_place);
 		}
 		this.setChild('lists_list', this.lists_list);
-		this.updateManyStates({
-			'nav_title': 'Countres',
-			'url_part': '/countres'
-		});
-		this.on('state-change.mp_show', function(e) {
-			if (e.value && e.value.userwant){
-				for (var i = 0; i < this.lists_list.length; i++) {
-					this.lists_list[i].heavyInit();
+		this.initStates();
+		
+	},
+	subPager: function(sub_path_string){
+		var page_name = spv.capitalize(sub_path_string);
+		if (this.sub_pages[page_name]){
+			return this.sub_pages[page_name];
+		} else {
+			var instance = new CountryPlace();
+			instance.init_opts = [{
+				app: this.app,
+				map_parent: this,
+				nav_opts: {
+					nav_title: page_name,
+					url_part: '/' + sub_path_string
 				}
-			}
-			
-		});
+			}, {country_name: page_name}];
+			return this.sub_pages[page_name] = instance;
+		}
+
 	}
 });
 
@@ -645,8 +655,8 @@ mapLevelModel.extendTo(MusicConductor, {
 	init: function(opts) {
 		this._super.apply(this, arguments);
 
-		this.allpas = new AllPlaces();
-		this.countres = new CountresList();
+		this.allpas = this.getSPI('world');
+		this.countres = this.getSPI('countres');
 
 
 		var _this = this;
@@ -656,16 +666,10 @@ mapLevelModel.extendTo(MusicConductor, {
 			},
 			fn: function() {
 				(function() {
-					this.allpas.init({
-						app: this.app,
-						map_parent: this
-					});
+					this.allpas.initOnce();
 					this.setChild('allpas', this.allpas, true);
 
-					this.countres.init({
-						app: this.app,
-						map_parent: this
-					});
+					this.countres.initOnce();
 					this.setChild('countres', this.countres, true);
 
 
@@ -681,6 +685,16 @@ mapLevelModel.extendTo(MusicConductor, {
 			_this.updateState('can_expand', e.value);
 		});
 		return this;
+	},
+	sub_pa: {
+		countres: {
+			title: 'Countres',
+			constr: CountresList
+		},
+		world: {
+			constr: AllPlaces,
+			title: 'All around the World'
+		}
 	}
 });
 })();
