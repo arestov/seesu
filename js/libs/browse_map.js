@@ -870,6 +870,7 @@ provoda.Model.extendTo(mapLevelModel, {
 			var name = array[i];
 			var instance = this.getSPI(name);
 			instance.initOnce();
+			array[i] = instance;
 		}
 	},
 	initItems: function(lists_list, opts, params) {

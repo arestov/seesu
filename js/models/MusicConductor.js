@@ -8,10 +8,7 @@ var AllPHypemLatestSongs = function() {};
 HypemPlaylist.extendTo(AllPHypemLatestSongs, {
 	init: function(opts, params) {
 		this._super(opts);
-		this.updateManyStates({
-			'nav_title': 'Latest Blogged music from hypem.com',
-			'url_part': '/latest'
-		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		return this.sendHypemDataRequest(paging_opts, request_info, {
@@ -25,10 +22,7 @@ var AllPHypemLatestRemixesSongs = function() {};
 HypemPlaylist.extendTo(AllPHypemLatestRemixesSongs, {
 	init: function(opts, params) {
 		this._super(opts);
-		this.updateManyStates({
-			'nav_title': 'Latest Blogged remixes from hypem.com',
-			'url_part': '/latest:remix'
-		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		return this.sendHypemDataRequest(paging_opts, request_info, {
@@ -43,10 +37,7 @@ var AllPHypemNowSongs = function() {};
 HypemPlaylist.extendTo(AllPHypemNowSongs, {
 	init: function(opts, params) {
 		this._super(opts);
-		this.updateManyStates({
-			'nav_title': 'Popular Now on hypem.com',
-			'url_part': '/topnow_hypem'
-		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		return this.sendHypemDataRequest(paging_opts, request_info, {
@@ -80,10 +71,7 @@ var AllPSongsChart = function() {};
 songsList.extendTo(AllPSongsChart, {
 	init: function(opts) {
 		this._super(opts);
-		this.updateManyStates({
-			'nav_title': localize('Top'),
-			'url_part': '/_'
-		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		return this.sendLFMDataRequest(paging_opts, request_info, {
@@ -97,10 +85,7 @@ var AllPSongsHyped = function() {};
 songsList.extendTo(AllPSongsHyped, {
 	init: function(opts) {
 		this._super(opts);
-		this.updateManyStates({
-			'nav_title': 'Hyped',
-			'url_part': '/hyped'
-		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		return this.sendLFMDataRequest(paging_opts, request_info, {
@@ -115,10 +100,7 @@ var AllPSongsLoved = function() {};
 songsList.extendTo(AllPSongsLoved, {
 	init: function(opts) {
 		this._super(opts);
-		this.updateManyStates({
-			'nav_title': 'Loved',
-			'url_part': '/loved'
-		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		return this.sendLFMDataRequest(paging_opts, request_info, {
@@ -139,17 +121,39 @@ mapLevelModel.extendTo(AllPlacesSongsLists, {
 			'nav_title': localize('Songs'),
 			'url_part': '/songs'
 		});
-
-		this.lists_list = [
-			new AllPHypemLatestSongs(), new AllPHypemLatestRemixesSongs(), new AllPHypemNowSongs(),/*new AllPHypemWeekSongs(),*/
-			new AllPSongsChart(), new AllPSongsHyped(), new AllPSongsLoved()
-		];
-		
-		this.initItems(this.lists_list, {app:this.app, map_parent:this});
+	
+		this.lists_list = ['latest', 'latest:remix', 'topnow_hypem', '_', 'hyped', 'loved'];
+		this.initSubPages(this.lists_list);
 
 		this.setChild('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 
+	},
+	sub_pa: {
+		latest: {
+			constr: AllPHypemLatestSongs,
+			title: 'Latest Blogged music from hypem.com'
+		},
+		'latest:remix': {
+			constr: AllPHypemLatestRemixesSongs,
+			title: 'Latest Blogged remixes from hypem.com'
+		},
+		'topnow_hypem': {
+			constr: AllPHypemNowSongs,
+			title: 'Popular Now on hypem.com'
+		},
+		'_': {
+			constr: AllPSongsChart,
+			title: localize('Top')
+		},
+		'hyped': {
+			constr: AllPSongsHyped,
+			title: 'Hyped'
+		},
+		'loved': {
+			constr: AllPSongsLoved,
+			title: 'Most Loved'
+		}
 	},
 	model_name: 'songs_lists'
 });
@@ -161,10 +165,7 @@ var AllPArtistsHyped = function() {};
 ArtistsList.extendTo(AllPArtistsHyped, {
 	init: function(opts, params) {
 		this._super(opts);
-		this.updateManyStates({
-			'nav_title': 'Hyped',
-			'url_part': '/hyped'
-		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		return this.sendLFMDataRequest(paging_opts, request_info, {
@@ -179,10 +180,7 @@ var AllPArtistsChart = function() {};
 ArtistsList.extendTo(AllPArtistsChart, {
 	init: function(opts, params) {
 		this._super(opts);
-		this.updateManyStates({
-			'nav_title': localize('Top'),
-			'url_part': '/_'
-		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
 		return this.sendLFMDataRequest(paging_opts, request_info, {
@@ -203,13 +201,23 @@ mapLevelModel.extendTo(AllPlacesArtistsLists, {
 			'url_part': '/artists'
 		});
 
-		this.lists_list = [new AllPArtistsChart(), new AllPArtistsHyped()];
-		this.initItems(this.lists_list, {app:this.app, map_parent:this});
+		this.lists_list = ['hyped', '_'];
+		this.initSubPages(this.lists_list);
 
 		this.setChild('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
-	model_name: 'artists_lists'
+	model_name: 'artists_lists',
+	sub_pa: {
+		'_': {
+			constr: AllPArtistsChart,
+			title: localize('Top')
+		},
+		'hyped': {
+			constr: AllPArtistsHyped,
+			title: 'Hyped'
+		}
+	}
 
 });
 
