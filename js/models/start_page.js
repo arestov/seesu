@@ -19,29 +19,93 @@ mapLevelModel.extendTo(StartPage, {
 
 		
 
-
-
-		var personal_stuff = (new UserCard()).init({
-			app: su, 
-			pmd: this,
-			map_parent: this
-		}, {for_current_user: true});
-		this.setChild('pstuff', personal_stuff);
-
-		var muco = (new MusicConductor()).init({
-			app: su,
-			map_parent: this
-		});
-		this.setChild('muco', muco);
-
-		this.on('vip-state-change.can_expand', function(e) {
-			muco.updateState('can_expand', e.value);
-			personal_stuff.updateState('can_expand', e.value);
-		});
+		this.setChild('pstuff', this.getSPI('users/me').initOnce());
+		this.setChild('muco', this.getSPI('conductor').initOnce());
 
 
 		this.closed_messages = suStore('closed-messages') || {};
 		return this;
+	},
+	sub_pages_routes: {
+		'catalog': function(name) {
+			if (!name){
+				return;
+			}
+			var full_name = 'catalog/' + name;
+			if (this.sub_pages[full_name]){
+				return this.sub_pages[full_name];
+			} else {
+
+			}
+		},
+		'tags': function(name) {
+			if (!name){
+				return;
+			}
+			var full_name = 'tags/' + name;
+		},
+		'users': function(name) {
+			if (!name){
+				return;
+			}
+			var full_name = 'users/' + name;
+			if (this.sub_pages[full_name]){
+				return this.sub_pages[full_name];
+			} else {
+				if (name == 'me'){
+					var instance = new UserCard();
+					instance.init_opts = [{
+						app: this.app,
+						map_parent: this,
+						nav_opts: {
+							url_part: '/' + full_name
+						}
+					}, {for_current_user: true}];
+					return (this.sub_pages[full_name] = instance);
+				}
+			}
+
+		}
+	},
+	sub_pa: {
+		'conductor': {
+			title: 'Music Conductor',
+			constr: MusicConductor
+		}
+	},
+	subPager: function(path_string) {
+		var parts = path_string.split('/');
+		var first_part = parts[0];
+		//catalog
+		//tags
+		//users
+		//conductor
+		/*
+		var target_name = parts[0];
+		if (parts[1]){
+			target_name += '/' + parts[1];
+		}
+		*/
+		return this.sub_pages_routes[first_part] &&  this.sub_pages_routes[first_part].call(this, parts[1]);
+
+		/*
+		var page_name = spv.capitalize(sub_path_string);
+		if (this.sub_pages[page_name]){
+			return this.sub_pages[page_name];
+		} else {
+			var instance = new CityPlace();
+			instance.init_opts = {
+				app: this.app,
+				map_parent: this,
+				nav_opts: {
+					nav_title: page_name + ', ' + this.country_name,
+					url_part: sub_path_string
+				}
+			};
+			return this.sub_pages[page_name] = instance;
+		}
+		*/
+
 	},
 	short_title: 'Seesu',
 	getTitle: function() {

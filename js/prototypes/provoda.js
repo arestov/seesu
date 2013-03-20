@@ -288,13 +288,11 @@ Class.extendTo(provoda.Eventor, {
 
 		var cb_cs = this.subscribes[short_name];
 		if (cb_cs){
-			if (this.subscribes_cache[namespace]){
-				return this.subscribes_cache[namespace];
+			var cached_r = this.subscribes_cache[namespace]; 
+			if (cached_r){
+				return cached_r;
 			} else {
-				r = {
-					matched: [],
-					not_matched: []
-				};
+				var matched = [], not_matched = [];
 				var cac_space = ev_na_cache[namespace] = (ev_na_cache[namespace] || {});
 				for (var i = 0; i < cb_cs.length; i++) {
 					var curn = cb_cs[i].namespace;
@@ -302,18 +300,15 @@ Class.extendTo(provoda.Eventor, {
 					if (typeof canbe_matched =='undefined') {
 						var last_char = curn.charAt(namespace.length);
 						canbe_matched = (!last_char || last_char == '.') && curn.indexOf(namespace) == 0;
-						if (!ev_na_cache[namespace]){
-							ev_na_cache[namespace] = {};
-						}
-						ev_na_cache[namespace][curn] = canbe_matched;
+						cac_space[curn] = canbe_matched;
 					}
 					if (canbe_matched){
-						r.matched.push(cb_cs[i]);
+						matched.push(cb_cs[i]);
 					} else {
-						r.not_matched.push(cb_cs[i]);
+						not_matched.push(cb_cs[i]);
 					}
 				}
-				this.subscribes_cache[namespace] = r;
+				this.subscribes_cache[namespace] = r = {matched: matched, not_matched: not_matched};
 			}
 			
 		} else {
@@ -832,7 +827,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 				alive.push(this.views[i]);
 			}
 			
-		};
+		}
 
 		if (alive.length != this.views.length){
 			this.views = alive;
@@ -846,9 +841,11 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		return this;
 	},
-	killViews: function(opts) {
-		for (var i = 0; i < this.views.length; i++) {
-			this.views[i].die(opts);
+	killViews: function() {
+		//this.views[i] can be changed in proccess, so cache it!
+		var views = this.views;
+		for (var i = 0; i < views.length; i++) {
+			views[i].die({skip_md_call: true});
 		}
 		this.removeDeadViews();
 		return this;
@@ -1705,13 +1702,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	onDie: function(cb) {
 		this.on('die', cb);
 	},
-	markAsDead: function() {
+	markAsDead: function(skip_md_call) {
 		this.dead = true;
 
 		this.trigger('die');
-
-		this.md.removeDeadViews();
-
+		if (!skip_md_call){
+			this.md.removeDeadViews();
+		}
+		
 		this.c = null;
 		this._anchor = null;
 		this.tpl = null;
@@ -1747,7 +1745,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	die: function(opts){
 		if (!this.marked_as_dead){
 			this.remove();
-			this.markAsDead();
+			this.markAsDead(opts && opts.skip_md_call);
 			this.marked_as_dead = true;
 		}
 		
