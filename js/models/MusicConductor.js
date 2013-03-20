@@ -680,12 +680,6 @@ mapLevelModel.extendTo(MusicConductor, {
 		this.map_parent.on('state-change.can_expand', function(e) {
 			_this.updateState('can_expand', e.value);
 		});
-
-		//this.updateState('nav_title', 'Music Conductor');
-		//this.updateState('url_part', '/conductor');
-		//world_part
-		//countres
-		//mp: 'url_part', 'nav_title'
 		return this;
 	}
 });
