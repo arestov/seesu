@@ -6,7 +6,7 @@ var viewOnLevelP = function(md, view) {
 
 var appModelView = function(){};
 provoda.View.extendTo(appModelView, {
-
+	dom_rp: true,
 	createDetailes: function(){
 		this.root_view = this;
 		this.d = this.opts.d;
@@ -668,7 +668,7 @@ provoda.View.extendTo(appModelView, {
 		var d = this.d;
 		domReady(this.d, function() {
 			console.log('dom ready');
-			
+			_this.dom_related_props.push('els', 'lev_containers', 'samples');
 
 			
 

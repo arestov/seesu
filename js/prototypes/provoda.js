@@ -7,6 +7,7 @@ provoda = {
 	Eventor: function(){},
 	StatesEmitter: function(){},
 	Model: function(){},
+	HModel: function() {},
 	View: function(){},
 	ItemsEvents: function(){},
 	StatesArchiver: function(){},
@@ -1017,7 +1018,40 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}]);
 	}
 });
-
+provoda.Model.extendTo(provoda.HModel, {
+	init: function(opts) {
+		this._super();
+		opts = opts || {};
+		if (opts.app){
+			this.app = opts.app;
+		}
+		if (!this.skip_map_init){
+			this.sub_pages = {};
+			if (!this.init_states){
+				this.init_states = {};
+			}
+			if (opts.map_parent){
+				this.map_parent = opts.map_parent;
+			} else {
+				if (!this.zero_map_level){
+					throw new Error('who is your map parent model?');
+				}
+			}
+			this.map_children = [];
+		}
+	},
+	initOnce: function() {
+		if (this.init_opts){
+			this.init.apply(this, this.init_opts);
+			this.init_opts = null;
+		}
+		return this;
+	},
+	initStates: function() {
+		this.updateManyStates(this.init_states);
+		this.init_states = null;
+	},
+});
 
 var
 	requestAnimationFrame,

@@ -784,18 +784,11 @@ provoda.Eventor.extendTo(browseMap, {
 });
 mapLevelModel = function() {};
 
-provoda.Model.extendTo(mapLevelModel, {
+provoda.HModel.extendTo(mapLevelModel, {
 	init: function(opts) {
-		this._super();
+		this._super(opts);
 		opts = opts || {};
-		if (opts.app){
-			this.app = opts.app;
-		}
 		if (!this.skip_map_init){
-			this.sub_pages = {};
-			if (!this.init_states){
-				this.init_states = {};
-			}
 			if (opts.nav_opts){
 				if (opts.nav_opts['url_part']){
 					this.init_states['url_part'] = opts.nav_opts['url_part'];
@@ -804,28 +797,10 @@ provoda.Model.extendTo(mapLevelModel, {
 					this.init_states['nav_title'] = opts.nav_opts['nav_title'];
 				}
 			}
-			if (opts.map_parent){
-				this.map_parent = opts.map_parent;
-			} else {
-				if (!this.zero_map_level){
-					throw new Error('who is your map parent model?');
-				}
-			}
-			this.map_children = [];
-		}
+		};
+		
 
 		
-	},
-	initOnce: function() {
-		if (this.init_opts){
-			this.init.apply(this, this.init_opts);
-			this.init_opts = null;
-		}
-		return this;
-	},
-	initStates: function() {
-		this.updateManyStates(this.init_states);
-		this.init_states = null;
 	},
 	getSPOpts: function(name) {
 		var obj = {
