@@ -532,7 +532,8 @@ var TagPage = function() {};
 mapLevelModel.extendTo(TagPage, {
 	init: function(opts, params) {
 		this._super(opts);
-		this.tag_name = params.tag_name;
+
+		this.tag_name = this.urp_name = params.urp_name || params.tag_name;
 		this.updateState('nav_title', 'Tag ' + this.tag_name);
 		this.updateState('url_part', '/tags/' + this.tag_name);
 		this.updateState('tag_name', this.tag_name);

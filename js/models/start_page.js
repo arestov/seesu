@@ -28,68 +28,55 @@ mapLevelModel.extendTo(StartPage, {
 	},
 	sub_pages_routes: {
 		'catalog': function(name) {
-			if (!name){
-				return;
-			}
 			var full_name = 'catalog/' + name;
-			if (this.sub_pages[full_name]){
-				return this.sub_pages[full_name];
-			} else {
-				var instance = new ArtCard();
-				instance.init_opts = [{
-					app: this.app,
-					map_parent: this,
-					nav_opts: {
-						url_part: '/' + full_name
-					}
-				}, {
-					artist: name
-				}];
-				return (this.sub_pages[full_name] = instance);
-			}
+			var instance = new ArtCard();
+			instance.init_opts = [{
+				app: this.app,
+				map_parent: this,
+				nav_opts: {
+					url_part: '/' + full_name
+				}
+			}, {
+				urp_name: name,
+				artist: name
+			}];
+			return instance;
 		},
 		'tags': function(name) {
-			if (!name){
-				return;
-			}
+	
 			var full_name = 'tags/' + name;
-			if (this.sub_pages[full_name]){
-				return this.sub_pages[full_name];
-			} else {
-				var instance = new TagPage();
-				instance.init_opts = [{
-					app: this.app,
-					map_parent: this,
-					nav_opts: {
-						url_part: '/' + full_name
-					}
-				}, {
-					tag_name: name
-				}];
-				return (this.sub_pages[full_name] = instance);
-			}
+		
+			var instance = new TagPage();
+			instance.init_opts = [{
+				app: this.app,
+				map_parent: this,
+				nav_opts: {
+					url_part: '/' + full_name
+				}
+			}, {
+				urp_name: name,
+				tag_name: name
+			}];
+			return instance;
+		
 
 		},
 		'users': function(name) {
-			if (!name){
-				return;
-			}
+
 			var full_name = 'users/' + name;
-			if (this.sub_pages[full_name]){
-				return this.sub_pages[full_name];
-			} else {
-				if (name == 'me'){
-					var instance = new UserCard();
-					instance.init_opts = [{
-						app: this.app,
-						map_parent: this,
-						nav_opts: {
-							url_part: '/' + full_name
-						}
-					}, {for_current_user: true}];
-					return (this.sub_pages[full_name] = instance);
-				}
+			
+			if (name == 'me'){
+				var instance = new UserCard();
+				instance.init_opts = [{
+					app: this.app,
+					map_parent: this,
+					nav_opts: {
+						url_part: '/' + full_name
+					}
+				}, {urp_name: name}];
+				return instance;
 			}
+			
 
 		}
 	},
@@ -102,7 +89,22 @@ mapLevelModel.extendTo(StartPage, {
 	subPager: function(path_string) {
 		var parts = path_string.split('/');
 		var first_part = parts[0];
-		return this.sub_pages_routes[first_part] &&  this.sub_pages_routes[first_part].call(this, parts[1]);
+		var full_name = parts[0];
+		if (parts[1]){
+			full_name += '/' + parts[1];
+		}
+		if (this.sub_pages[full_name]){
+			return this.sub_pages[full_name];
+		} else {
+			if (!parts[1]){
+				return;
+			}
+			var instance = this.sub_pages_routes[first_part] &&  this.sub_pages_routes[first_part].call(this, parts[1]);
+			if (instance){
+				this.sub_pages[full_name] = instance;
+			}
+			return instance;
+		}
 	},
 	short_title: 'Seesu',
 	getTitle: function() {

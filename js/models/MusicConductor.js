@@ -576,7 +576,7 @@ mapLevelModel.extendTo(CountryPlace, {
 		this.on('state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				this.heavyInit();
-			}	
+			}
 		});
 		var _this = this;
 		this.map_parent.on('state-change.mp_show', function(e) {

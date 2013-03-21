@@ -716,8 +716,8 @@ mapLevelModel.extendTo(ArtCard, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.app = opts.app;
-		
-		this.artist = params.artist;
+
+		this.artist = this.urp_name = params.urp_name || params.artist;
 		
 		this.updateState('nav_title', this.artist);
 		this.updateState('artist_name', this.artist);

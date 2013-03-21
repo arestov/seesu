@@ -467,7 +467,8 @@ mapLevelModel.extendTo(UserCard, {
 
 		//this.
 		//new
-		this.for_current_user = params.for_current_user;
+		this.urp_name = params.urp_name;
+		this.for_current_user = this.urp_name == 'me' || params.for_current_user;
 		if (this.for_current_user){
 			this.permanent_md = true;
 		}
