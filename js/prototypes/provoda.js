@@ -1335,7 +1335,7 @@ Class.extendTo(Template, {
 			this.bindStandartChange(node, attr_obj, this.dom_helpres.getTextValue, this.dom_helpres.setTextValue);
 
 		},
-		'px-class': function(node, attr_obj) {
+		'pv-class': function(node, attr_obj) {
 			this.bindStandartChange(node, attr_obj, this.dom_helpres.getAttrValue, this.dom_helpres.setAttrValue, function(value) {
 				if (!value){
 					return value;
