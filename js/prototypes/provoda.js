@@ -541,7 +541,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				}
 			}
 			//
-			value = value || false;
+			//value = value || false;
 			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
 			//
 			
