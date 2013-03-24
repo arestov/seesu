@@ -174,7 +174,7 @@ mapLevelModel.extendTo(UserAcquaintancesLists, {
 		this.removeChildren(array_name);
 		this.collectViewsGarbadge();
 
-		this.setChild(array_name, concated, true);
+		this.setChild(array_name, concated);
 
 	},
 	removeChildren: function(array_name) {

@@ -896,22 +896,24 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	getChild: function(collection_name) {
 		return this.children_models[collection_name];
 	},
-	setChild: function(collection_name, array, changed) {
+	setChild: function(collection_name, array, opts) {
 		if (collection_name.indexOf('.') != -1){
 			throw new Error('remove "." (dot) from name');
 		}
 		this.children_models[collection_name] = array;
+		//[].concat() !?
+
 
 		var event_obj = {};
-		if (typeof changed == 'object'){
-			cloneObj(event_obj, changed);
+		if (typeof opts == 'object'){
+			cloneObj(event_obj, opts);
 		}
+		opts = opts || {};
 		event_obj.value = array;
-		event_obj.no_changing_mark = !changed;
 		
 		this.trigger('child-change.' + collection_name, event_obj);
 
-		if (changed){
+		if (!opts.skip_report){
 			this.sendCollectionChange(collection_name, array);
 		}
 
@@ -1050,7 +1052,7 @@ provoda.Model.extendTo(provoda.HModel, {
 	initStates: function() {
 		this.updateManyStates(this.init_states);
 		this.init_states = null;
-	},
+	}
 });
 
 var

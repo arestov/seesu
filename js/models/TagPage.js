@@ -4,10 +4,7 @@ TagsList.extendTo(SimilarTags, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
-		this.updateManyStates({
-			'nav_title': 'Similar to ' + this.tag_name + ' tags',
-			'url_part': '/similar'
-		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
@@ -35,10 +32,7 @@ AlbumsList.extendTo(TagAlbums, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
-		this.updateManyStates({
-			'nav_title': 'Top ' + this.tag_name + ' ' + 'Albums',
-			'url_part': '/albums'
-		});
+		this.initStates();
 	},
 	page_limit: 50,
 	sendMoreDataRequest: function(paging_opts) {
@@ -114,11 +108,7 @@ HypemTagPlaylist.extendTo(Fav25HypemTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateManyStates({
-			'nav_title': localize('Blogged-25-hypem'),
-			'url_part': '/blogged?fav_from=25&fav_to=250',
-			'browser_can_load': this.can_use
-		});
+		this.initStates();
 
 	},
 	send_params: {
@@ -132,11 +122,8 @@ HypemTagPlaylist.extendTo(Fav250HypemTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateManyStates({
-			'nav_title': localize('Blogged-250-hypem'),
-			'url_part': '/blogged?fav_from=250&fav_to=100000',
-			'browser_can_load': this.can_use
-		});
+		this.initStates();
+
 
 	},
 	send_params: {
@@ -151,11 +138,7 @@ HypemTagPlaylist.extendTo(AllHypemTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateManyStates({
-			'nav_title': localize('Blogged-all-hypem'),
-			'url_part': '/blogged',
-			'loader_disallowed': !(this.app.env.cross_domain_allowed || this.app.env.xhr2)
-		});
+		this.initStates();
 	}
 });
 
@@ -165,8 +148,7 @@ songsList.extendTo(ExplorableTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav_title', localize('Explore-songs-exfm'));
-		this.updateState('url_part', '/explore_exfm');
+		this.initStates();
 	},
 	page_limit: 100,
 	sendMoreDataRequest: function(paging_opts) {
@@ -216,8 +198,7 @@ songsList.extendTo(TrendingTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav_title', localize('Trending-songs-exfm'));
-		this.updateState('url_part', '/trending_exfm');
+		this.initStates();
 	},
 	page_limit: 100,
 	sendMoreDataRequest: function(paging_opts) {
@@ -267,8 +248,7 @@ songsList.extendTo(FreeTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav_title', localize('Free-songs'));
-		this.updateState('url_part', '/free');
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
@@ -332,8 +312,7 @@ songsList.extendTo(TopTagSongs, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav_title', localize('Top'));
-		this.updateState('url_part', '/_');
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
@@ -380,20 +359,49 @@ mapLevelModel.extendTo(SongsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
-		this.updateState('nav_title', localize('Songs'));
-		this.updateState('url_part', '/songs');
+		this.initStates();
 
-		this.lists_list = [
-			new TopTagSongs(), new FreeTagSongs(), new TrendingTagSongs(), new ExplorableTagSongs(),
-			new AllHypemTagSongs(), new Fav25HypemTagSongs(), new Fav250HypemTagSongs()
-		];
+		this.sub_pa_params = {tag_name:this.tag_name};
+		this.lists_list = ['_', 'free', 'trending_exfm', 'explore_exfm',
+			'blogged', 'blogged?fav_from=25&fav_to=250', 'blogged?fav_from=250&fav_to=100000'];
+		this.initSubPages(this.lists_list);
 
-		this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
+		//this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
 
 		this.setChild('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
-	model_name: 'tag_songs'
+	model_name: 'tag_songs',
+	sub_pa: {
+		'_': {
+			constr: TopTagSongs,
+			title: localize('Top')
+		},
+		'free': {
+			constr: FreeTagSongs,
+			title: localize('Free-songs')
+		},
+		'trending_exfm': {
+			constr: TrendingTagSongs,
+			title: localize('Trending-songs-exfm')
+		},
+		'explore_exfm': {
+			constr: ExplorableTagSongs,
+			title: localize('Explore-songs-exfm')
+		},
+		'blogged': {
+			constr: AllHypemTagSongs,
+			title: localize('Blogged-all-hypem')
+		},
+		'blogged?fav_from=25&fav_to=250': {
+			constr: Fav25HypemTagSongs,
+			title: localize('Blogged-25-hypem')
+		},
+		'blogged?fav_from=250&fav_to=100000': {
+			constr: Fav250HypemTagSongs,
+			title: localize('Blogged-250-hypem')
+		}
+	}
 });
 
 
@@ -403,8 +411,7 @@ ArtistsList.extendTo(WeekTagArtists, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav_title', localize('Week-chart'));
-		this.updateState('url_part', '/week');
+		this.initStates();
 	},
 	page_limit: 100,
 	getRqData: function(paging_opts) {
@@ -460,8 +467,7 @@ ArtistsList.extendTo(TagTopArtists, {
 		this._super(opts);
 		this.tag_name = params.tag_name;
 
-		this.updateState('nav_title', localize('Top'));
-		this.updateState('url_part', '/_');
+		this.initStates();
 	},
 	getRqData: function(paging_opts) {
 		return {
@@ -510,21 +516,25 @@ mapLevelModel.extendTo(ArtistsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
-		this.updateManyStates({
-			'nav_title':  localize('Artists'),
-			'url_part': '/artists'
-		});
+		this.initStates();
 
-
-		this.lists_list = [new TagTopArtists(), new WeekTagArtists()];
-
-	
-
-		this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
+		this.sub_pa_params = {tag_name:this.tag_name};
+		this.lists_list = ['_', 'week'];
+		this.initSubPages(this.lists_list);
 		this.setChild('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
-	model_name: 'tag_artists'
+	model_name: 'tag_artists',
+	sub_pa: {
+		'_': {
+			constr: TagTopArtists,
+			title: localize('Top')
+		},
+		'week': {
+			constr: WeekTagArtists,
+			title: localize('Week-chart')
+		}
+	}
 });
 
 
@@ -534,22 +544,18 @@ mapLevelModel.extendTo(TagPage, {
 		this._super(opts);
 
 		this.tag_name = this.urp_name = params.urp_name || params.tag_name;
-		this.updateState('nav_title', 'Tag ' + this.tag_name);
-		this.updateState('url_part', '/tags/' + this.tag_name);
+		this.init_states['nav_title'] = 'Tag ' + this.tag_name;
+		this.initStates();
 		this.updateState('tag_name', this.tag_name);
 
+		this.sub_pa_params = {tag_name:this.tag_name};
 
-		var common_init_children = [];
+		var artists_lists = this.getSPI('artists', true);
+		var songs_list = this.getSPI('songs', true);
+		var albums_list = this.getSPI('albums', true);
 
-		var artists_lists = new ArtistsLists();
-		var songs_list = new SongsLists();
-		var albums_list = new TagAlbums();
-		var similar_tags = new SimilarTags();
-		common_init_children.push(artists_lists, songs_list, albums_list, similar_tags);
 
-		for (var i = 0; i < common_init_children.length; i++) {
-			common_init_children[i].init({app:this.app, map_parent:this}, {tag_name:this.tag_name});
-		}
+		var similar_tags = this.getSPI('similar', true);
 
 		this.setChild('artists_lists', artists_lists);
 		this.setChild('songs_list', songs_list);
@@ -563,6 +569,28 @@ mapLevelModel.extendTo(TagPage, {
 			}
 		});
 	},
-	model_name: 'tag_page'
+	model_name: 'tag_page',
+	sub_pa: {
+		'similar': {
+			constr: SimilarTags,
+			getTitle: function() {
+				return 'Similar to ' + this.tag_name + ' tags';
+			}
+		},
+		'artists': {
+			constr: ArtistsLists,
+			title: localize('Artists')
+		},
+		'songs': {
+			constr: SongsLists,
+			title: localize('Songs')
+		},
+		'albums': {
+			constr: TagAlbums,
+			getTitle: function() {
+				return 'Top ' + this.tag_name + ' ' + 'Albums';
+			}
+		}
+	}
 
 });

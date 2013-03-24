@@ -483,7 +483,7 @@ mapLevelModel.extendTo(UserCard, {
 				app: this.app,
 				map_parent: this
 			});
-			this.setChild('arts_recomms', this.arts_recomms, true);
+			this.setChild('arts_recomms', this.arts_recomms);
 
 
 			this.lfm_loved = new LfmLovedList();
@@ -491,28 +491,28 @@ mapLevelModel.extendTo(UserCard, {
 				app: this.app,
 				map_parent: this
 			});
-			this.setChild('lfm_loved', this.lfm_loved, true);
+			this.setChild('lfm_loved', this.lfm_loved);
 
 			this.my_vkaudio = new MyVkAudioList();
 			this.my_vkaudio.init({
 				app: this.app,
 				map_parent: this
 			});
-			this.setChild('vk_audio', this.my_vkaudio, true);
+			this.setChild('vk_audio', this.my_vkaudio);
 
 			this.new_releases = new UserLibNewReleases();
 			this.new_releases.init({
 				app: this.app,
 				map_parent: this
 			});
-			this.setChild('new_releases', this.new_releases, true);
+			this.setChild('new_releases', this.new_releases);
 
 			this.recomm_releases = new RecommNewReleases();
 			this.recomm_releases.init({
 				app: this.app,
 				map_parent: this
 			});
-			this.setChild('recomm_releases', this.recomm_releases, true);
+			this.setChild('recomm_releases', this.recomm_releases);
 
 			
 		};
@@ -556,7 +556,7 @@ mapLevelModel.extendTo(UserCard, {
 				if (plsts_str){
 					gena.setSavedPlaylists(plsts_str);
 				}
-				_this.setChild('user-playlists', gena, true);
+				_this.setChild('user-playlists', gena);
 
 				jsLoadComplete.change();
 			}, 150);

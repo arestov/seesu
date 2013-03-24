@@ -9,10 +9,7 @@ TagsList.extendTo(ArtistTagsList, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artist_name = params.artist;
-		this.updateManyStates({
-			'nav_title': localize('Tags'),
-			'url_part': '/tags'
-		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function() {
 		var _this = this;
@@ -39,24 +36,22 @@ AlbumsList = function() {};
 LoadableList.extendTo(AlbumsList, {
 	model_name: 'albslist',
 	main_list_name: 'albums_list',
-	makeAlbum: function(obj, start_song) {
+	makeDataItem: function(obj, start_song) {
 		var pl = new ArtistAlbumSongs();
 		pl.init({
 			map_parent: this,
 			app: this.app
-		}, obj, start_song);
+		}, obj);
 		return pl;
 	},
-	addAlbum: function(obj, silent) {
-		var main_list = this[this.main_list_name];
-		main_list.push(this.makeAlbum(obj));
-
-		if (!silent){
-			this.setChild(this.main_list_name, main_list, true);
+	compareItemWithObj: function(item, data) {
+		if (item.album_artist == data.album_artist){
+			if (item.album_name == data.album_name){
+				if (item.original_artist == data.original_artist){
+					return true;
+				}
+			}
 		}
-	},
-	addItemToDatalist: function(obj, silent) {
-		this.addAlbum(obj, silent);
 	}
 });
 var DiscogsAlbumSongs = function() {};
@@ -76,8 +71,8 @@ songsList.extendTo(DiscogsAlbumSongs, {
 			'album_artist': this.playlist_artist,
 			'album_name': this.album_name,
 		//	'original_artist': this.original_artist,
-			'nav_title': '(' + this.album_artist + ') ' + this.album_name,
 			'image_url': params.thumb && {url: params.thumb},
+			'nav_title': '(' + this.album_artist + ') ' + this.album_name,
 			'url_part': '/' + this.album_id
 		});
 	},
@@ -168,12 +163,12 @@ AlbumsList.extendTo(DiscogsAlbums, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artist_name = params.artist;
-		this.updateManyStates({
+
+		cloneObj(this.init_states, {
 			'artist_id': false,
 			'possible_loader_disallowing': localize('no-dgs-id'),
-			'nav_title': 'Albums from Discogs',
-			'url_part': '/albums'
 		});
+		this.initStates();
 
 		var _this = this;
 		this.map_parent.on('vip-state-change.discogs_id_searching', function(e) {
@@ -198,7 +193,7 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		}
 	},
 	page_limit: 50,
-	makeAlbum: function(obj, start_song) {
+	makeDataItem: function(obj, start_song) {
 		var pl = new DiscogsAlbumSongs();
 		pl.init({
 			map_parent: this,
@@ -261,10 +256,7 @@ AlbumsList.extendTo(ArtistAlbums, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artist = params.artist;
-		this.updateManyStates({
-			'nav_title': 'Albums of ' + this.artist + ' from last.fm',
-			'url_part': '/albums_lfm'
-		});
+		this.initStates();
 	},
 	page_limit: 50,
 	sendMoreDataRequest: function(paging_opts) {
@@ -309,6 +301,16 @@ AlbumsList.extendTo(ArtistAlbums, {
 				request_info.done = true;
 			});
 		return request_info;
+	},
+	subPager: function(string) {
+		var parts = this.app.getCommaParts(string);
+		var artist = parts[1] ? parts[0] : this.artist;
+
+		return this.findMustBePresentDataItem({
+			original_artist: this.artist,
+			album_artist: artist,
+			album_name: parts[1] ? parts[1] : parts[0]
+		});
 	}
 });
 
@@ -327,7 +329,6 @@ songsList.extendTo(ArtistAlbumSongs, {
 			'nav_title': '(' + params.album_artist + ') ' + params.album_name,
 			'url_part': '/' + this.getAlbumURL()
 		});
-
 
 		/*
 		var pl = this.app.createSonglist(this, {
@@ -357,12 +358,19 @@ songsList.extendTo(ArtistAlbumSongs, {
 			return pi_wrap || lfmi_wrap;
 		}
 	},
-	getAlbumURL: function() {
-		if (this.playlist_artist == this.original_artist){
-			return this.app.encodeURLPart(this.album_name);
+	getURLPart: function(params, app){
+		if (params.album_artist == params.original_artist){
+			return app.encodeURLPart(params.album_name);
 		} else {
-			return this.app.encodeURLPart(this.playlist_artist) + ',' + this.app.encodeURLPart(this.album_name);
+			return app.encodeURLPart(params.album_artist) + ',' + app.encodeURLPart(params.album_name);
 		}
+	},
+	getAlbumURL: function() {
+		return this.getURLPart({
+			original_artist: this.original_artist,
+			album_artist: this.playlist_artist,
+			album_name: this.album_name
+		}, this.app);
 	},
 	sendMoreDataRequest: function(paging_opts) {
 		/*
@@ -429,10 +437,7 @@ HypemPlaylist.extendTo(HypemArtistSeFreshSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artist = params.artist;
-		this.updateManyStates({
-			'nav_title': 'Fresh songs',
-			'url_part': '/fresh'
-		});
+		this.initStates();
 	},
 	send_params: {},
 	sendMoreDataRequest: function(paging_opts, request_info) {
@@ -448,10 +453,7 @@ HypemPlaylist.extendTo(HypemArtistSeUFavSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artist = params.artist;
-		this.updateManyStates({
-			'nav_title': 'Most Favorites',
-			'url_part': '/most_favorites'
-		});
+		this.initStates();
 	},
 	send_params: {
 		sortby:'fav'
@@ -469,10 +471,7 @@ HypemPlaylist.extendTo(HypemArtistSeBlogged, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artist = params.artist;
-		this.updateManyStates({
-			'nav_title': 'Most Reblogged',
-			'url_part': '/blogged'
-		});
+		this.initStates();
 	},
 	send_params: {
 		sortby:'blogged'
@@ -569,12 +568,11 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistLikes, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artcard_artist = params.artist;
-		this.updateManyStates({
+		cloneObj(this.init_states, {
 			'artist_id': '',
-			'nav_title': localize('Art-sc-likes'),
-			'url_part': '/soundcloud_likes',
 			'possible_loader_disallowing': localize('Sc-profile-not-found')
 		});
+		this.initStates();
 	},
 	sendMoreDataRequest: function(paging_opts) {
 		var artist_id = this.state('artist_id');
@@ -586,12 +584,11 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artcard_artist = params.artist;
-		this.updateManyStates({
+		cloneObj(this.init_states, {
 			'artist_id': '',
-			'nav_title': localize('Art-sc-songs'),
-			'url_part': '/soundcloud',
 			'possible_loader_disallowing': localize('Sc-profile-not-found')
 		});
+		this.initStates();
 		
 	},
 	allow_artist_guessing: true,
@@ -603,7 +600,6 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistSongs, {
 
 var TopArtistSongs = function() {};
 songsList.extendTo(TopArtistSongs, {
-	can_find_dli_pos: true,
 	init: function(opts, params, start_song) {
 		this._super(opts, false, start_song);
 		this.artist = params.artist;
@@ -612,10 +608,7 @@ songsList.extendTo(TopArtistSongs, {
 		this.playlist_type = 'artist';
 		this.playlist_artist = params.artist;
 
-		this.updateManyStates({
-			'nav_title': localize('Top-tracks'),
-			'url_part': '/_'
-		});
+		this.initStates();
 		
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
@@ -728,33 +721,72 @@ mapLevelModel.extendTo(ArtCard, {
 			this.app.art_images.getImageWrap(params.lfm_image.array));
 
 		this.heavyInit();
+
+		this.updateState('url_part', '/catalog/' + this.app.encodeURLPart(this.artist));
+	},
+	sub_pa: {
+		'_': {
+			constr: TopArtistSongs,
+			title:  localize('Top-tracks')
+		},
+		'+similar': {
+			getConstr: function(){
+				return SimilarArtists;
+			},
+			getTitle: function() {
+				return 'Similar to «' + this.artist + '» artists';
+			}
+		},
+		'tags': {
+			constr: ArtistTagsList,
+			title: localize('Tags')
+		},
+		'albums': {
+			constr: DiscogsAlbums,
+			title: 'Albums from Discogs'
+		},
+		'albums_lfm': {
+			constr: ArtistAlbums,
+			getTitle: function() {
+				return 'Albums of ' + this.artist + ' from last.fm';
+			}
+		},
+		'soundcloud': {
+			constr: SoundcloudArtistSongs,
+			title: localize('Art-sc-songs')
+		},
+		'soundcloud_likes': {
+			constr: SoundcloudArtistLikes,
+			title: localize('Art-sc-likes')
+		},
+		'fresh': {
+			constr: HypemArtistSeFreshSongs,
+			title: 'Fresh songs'
+		},
+		'most_favorites': {
+			constr: HypemArtistSeUFavSongs,
+			title: 'Most Favorites'
+		},
+		'blogged': {
+			constr: HypemArtistSeBlogged,
+			title: 'Most Reblogged'
+		}
 	},
 	heavyInit: function() {
 		this.albums_models = {};
+		this.sub_pa_params = {artist: this.artist};
+
 		this.getTopTracks();
 		this.getSimilarArtists();
-		var children_lists = [];
 
-		this.tags_list = new ArtistTagsList();
-		this.dgs_albums = new DiscogsAlbums();
-		this.albums = new ArtistAlbums();
-		this.soundc_prof = new SoundcloudArtistSongs();
-		this.soundc_likes = new SoundcloudArtistLikes();
-		this.hypem_new = new HypemArtistSeFreshSongs();
-		this.hypem_fav = new HypemArtistSeUFavSongs();
-		this.hypem_reblog = new HypemArtistSeBlogged();
-
-		children_lists.push(this.tags_list, this.dgs_albums, this.albums, this.soundc_prof, this.soundc_likes, this.hypem_new, this.hypem_fav, this.hypem_reblog);
-
-
-
-
-		for (var i = 0; i < children_lists.length; i++) {
-			children_lists[i].init({
-				map_parent: this,
-				app: this.app
-			}, {artist: this.artist});
-		}
+		this.tags_list = this.getSPI('tags', true);
+		this.dgs_albums = this.getSPI('albums', true);
+		this.albums = this.getSPI('albums_lfm', true);
+		this.soundc_prof = this.getSPI('soundcloud', true);
+		this.soundc_likes = this.getSPI('soundcloud_likes', true);
+		this.hypem_new = this.getSPI('fresh', true);
+		this.hypem_fav = this.getSPI('most_favorites', true);
+		this.hypem_reblog = this.getSPI('blogged', true);
 
 		this.setChild('tags_list', this.tags_list);
 		this.setChild('albums_list', this.albums);
@@ -772,7 +804,7 @@ mapLevelModel.extendTo(ArtCard, {
 			}
 		},{immediately: true});
 
-		this.updateState('url_part', '/catalog/' + this.app.encodeURLPart(this.artist));
+		
 	},
 	showTopTacks: function(track_name) {
 		var start_song;
@@ -783,7 +815,7 @@ mapLevelModel.extendTo(ArtCard, {
 			};
 		}
 
-		var pl = this.getTopTracks(start_song);
+		var pl = this.getTopTracks();
 		pl.showOnMap();
 		if (start_song){
 			var song = pl.findMustBePresentDataItem(start_song);
@@ -801,10 +833,14 @@ mapLevelModel.extendTo(ArtCard, {
 		return artl;
 	},
 	showAlbum: function(params, start_song) {
+
 		if (!params.album_artist){
 			params.album_artist = this.artist;
 		}
-		var pl = this.getAlbum(params, start_song);
+
+		var pl = this.getSPI('albums_lfm', true).getSPI(params.album_artist + ',' + params.album_name, true);
+		
+		//var pl = this.getAlbum(params, start_song);
 		pl.showOnMap();
 		return pl;
 	},
@@ -985,71 +1021,13 @@ mapLevelModel.extendTo(ArtCard, {
 		);
 	
 	},
-	getTopTracks: function(start_song) {
+	getTopTracks: function() {
 		if (this.top_songs){
 			return this.top_songs;
 		}
-
-
-		var pl = new TopArtistSongs();
-		pl.init({
-			app: this.app,
-			map_parent: this
-		}, {
-			artist: this.artist
-		}, start_song);
+		var pl = this.getSPI('_', true);
 		this.top_songs = pl;
-		this.setChild('top_songs', pl, true);
-		return pl;
-
-
-		var pl = this.app.createSonglist(this, {
-			title: localize('Top-tracks'),
-			type: 'artist',
-			data: {artist: this.artist}
-		}, start_song);
-		
-		
-		var artist = this.artist;
-		pl.setLoader(function(paging_opts) {
-			
-			var request_info = {};
-			request_info.request = this.app.lfm.get('artist.getTopTracks', {
-				artist: artist,
-				limit: paging_opts.page_limit,
-				page: paging_opts.next_page
-			})
-				.done(function(r){
-					
-					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
-
-
-					var track_list = [];
-					if (tracks.length) {
-						var l = Math.min(tracks.length, paging_opts.page_limit);
-						for (var i=paging_opts.remainder; i < l; i++) {
-							track_list.push({
-								artist : artist ,
-								track: tracks[i].name,
-								lfm_image: {
-									array: tracks[i].image
-								}
-								
-							});
-						}
-						
-					}
-					pl.putRequestedData(request_info.request, track_list, r.error);
-					
-				})
-				.fail(function() {
-					pl.requestComplete(request_info.request, true);
-				})
-				.always(function() {
-					request_info.done = true;
-				});
-			return request_info;
-		});
+		this.setChild('top_songs', pl);
 		return pl;
 	},
 	getAlbum: function(params, start_song) {
@@ -1084,14 +1062,9 @@ mapLevelModel.extendTo(ArtCard, {
 		if (this.similar_artists){
 			return this.similar_artists;
 		}
-		var artl = new SimilarArtists();
-		artl.init({
-			app: this.app,
-			map_parent: this
-		}, {
-			artist: this.artist
-		});
-		this.setChild('similar_artists', artl, true);
+
+		var artl = this.getSPI('+similar', true);
+		this.setChild('similar_artists', artl);
 		this.similar_artists = artl;
 		return artl;
 	}
@@ -1118,8 +1091,7 @@ songsList.extendTo(ArtistsListPlaylist, {
 		if (params.page_limit){
 			this.page_limit = params.page_limit;
 		}
-		this.updateState('nav_title', params.title);
-		this.updateState('url_part', '/~');
+		this.initStates();
 	},
 	sendMoreDataRequest: function() {
 		return this.artists_list.sendMoreDataRequest.apply(this, arguments);
@@ -1135,42 +1107,38 @@ window.ArtistsList = ArtistsList;
 LoadableList.extendTo(ArtistsList, {
 	model_name: 'artslist',
 	main_list_name: 'artists_list',
+	init: function() {
+		this._super.apply(this, arguments);
+		this.sub_pa_params = {
+			artists_list: this,
+			page_limit: this.page_limit
+		};
+	},
 	createRPlist: function() {
 		if (!this.ran_playlist){
-			var pl = new ArtistsListPlaylist();
-			pl.init({
-				app: this.app,
-				map_parent: this
-			}, {
-				title: this.state('nav_title'),
-				artists_list: this,
-				page_limit: this.page_limit
-			});
+			var pl = this.getSPI('~', true);
 			this.ran_playlist = pl;
 		}
 		return this;
+	},
+	sub_pa: {
+		'~': {
+			constr: ArtistsListPlaylist,
+			getTitle: function() {
+				return this.state('nav_title');
+			}
+		}
 	},
 	requestRandomPlaylist: function() {
 		this.createRPlist();
 		this.ran_playlist.showOnMap();
 	},
-	makeArtist: function(obj) {
+	makeDataItem: function(obj) {
 		var artcard = new ArtistInArtl();
 		artcard.init({
 			app: this.app
 		}, obj);
 		return artcard;
-	},
-	addArtist: function(obj, silent) {
-		var main_list = this[this.main_list_name];
-		main_list.push(this.makeArtist(obj));
-
-		if (!silent){
-			this.setChild(this.main_list_name, main_list, true);
-		}
-	},
-	addItemToDatalist: function(obj, silent) {
-		this.addArtist(obj, silent);
 	}
 });
 
@@ -1182,8 +1150,7 @@ ArtistsList.extendTo(SimilarArtists, {
 		this.original_artist = params.artist;
 
 
-		this.updateState('nav_title', 'Similar to «' + this.original_artist + '» artists');
-		this.updateState('url_part', '/+similar');
+		this.initStates();
 
 	},
 	getRqData: function(paging_opts) {
@@ -1233,10 +1200,10 @@ ArtistsList.extendTo(SimilarArtists, {
 		if (!preview_list || !preview_list.length){
 			preview_list = [];
 			for (var i = 0; i < raw_array.length; i++) {
-				preview_list.push(this.makeArtist(raw_array[i]));
+				preview_list.push(this.makeDataItem(raw_array[i]));
 				
 			}
-			this.setChild(this.preview_mlist_name, preview_list, true);
+			this.setChild(this.preview_mlist_name, preview_list);
 		}
 	}
 });

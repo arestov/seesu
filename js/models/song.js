@@ -90,7 +90,7 @@ var song;
 			if (!this.onshow_inited){
 				this.onshow_inited = true;
 				var actionsrow = new TrackActionsRow(this);
-				this.setChild('actionsrow', actionsrow, true);
+				this.setChild('actionsrow', actionsrow);
 				this.addChild(actionsrow);
 			}
 		},
@@ -113,7 +113,7 @@ var song;
 					have_mp3_tracks: true
 				});
 			}
-			this.setChild('mf_cor', this.mf_cor, true);
+			this.setChild('mf_cor', this.mf_cor);
 			this.addChild(this.mf_cor);
 			this.mf_cor
 				.on('before-mf-play', function(mopla) {

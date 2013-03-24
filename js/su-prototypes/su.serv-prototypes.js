@@ -409,7 +409,7 @@ provoda.Model.extendTo(PartsSwitcher, {
 
 			var array = this.getChild('context_parts') || [];
 			array.push(model);
-			this.setChild('context_parts', array, true);
+			this.setChild('context_parts', array);
 
 		}
 	},

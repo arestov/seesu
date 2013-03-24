@@ -95,7 +95,7 @@
 			var sections_array = this.getChild('section');
 
 			sections_array.push(s);
-			this.setChild('section', sections_array, true);
+			this.setChild('section', sections_array);
 
 			s.invstg = this;
 			this.names[name] = s;
@@ -349,7 +349,7 @@
 				this.rendering_list[i].die();
 			}
 			this.collectViewsGarbadge();
-			this.setChild('rendering_list', [], true);
+			this.setChild('rendering_list', []);
 			
 		},
 		renderSuggests: function(no_more_results, preview){
@@ -389,7 +389,7 @@
 
 			this.updateState('no_more_results', no_more_results);
 			this.updateState('preview', preview);
-			this.setChild('rendering_list', this.rendering_list, true);
+			this.setChild('rendering_list', this.rendering_list);
 			this.updateState('changed', new Date());
 
 			this.setButtonText(!!this.r.length, this.r.query);

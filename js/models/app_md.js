@@ -243,12 +243,12 @@ provoda.Model.extendTo(appModel, {
 
 			if (navigation.indexOf(md) == -1) {
 				navigation.push(md);
-				_this.setChild('navigation', navigation, true);
+				_this.setChild('navigation', navigation);
 			}
 			if (place){
 				if (target_array.indexOf(md) == -1){
 					target_array.push(md);
-					_this.setChild(place, target_array, true);
+					_this.setChild(place, target_array);
 				}
 			}
 
@@ -259,13 +259,13 @@ provoda.Model.extendTo(appModel, {
 
 			var new_nav = arrayExclude(navigation, md);
 			if (new_nav.length != navigation.length){
-				_this.setChild('navigation', new_nav, true);
+				_this.setChild('navigation', new_nav);
 			}
 			if (place){
 				var new_tarr = arrayExclude(target_array, md);
 
 				if (new_tarr.length != target_array.length){
-					_this.setChild(place, new_tarr, true);
+					_this.setChild(place, new_tarr);
 				}
 			}
 			
