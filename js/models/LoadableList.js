@@ -165,7 +165,7 @@ mapLevelModel.extendTo(LoadableList, {
 				work_array = work_array.concat(excess_items);
 
 			} else {
-				/*если объект не совпадает ни с одним элементом, то извлекаем все излишки,
+				/* если объект не совпадает ни с одним элементом, то извлекаем все излишки,
 				вставляем объект, вставляем элементы обратно */
 				work_array = arrayExclude(work_array, excess_items);
 				work_array.push(item = this.makeDataItem(obj));
@@ -352,7 +352,6 @@ mapLevelModel.extendTo(LoadableList, {
 				if (!e.value){
 					_this.switchPmd(false);
 				}
-				
 			});
 		}
 	},
@@ -360,7 +359,6 @@ mapLevelModel.extendTo(LoadableList, {
 		var auth_rqb = new AuthConstr();
 		auth_rqb.init({auth: auth, pmd: this}, params);
 		var _this = this;
-		
 		auth_rqb.on('state-change.has_session', function(e) {
 			_this.updateState('has_no_access', !e.value);
 			_this.switchPmd(false);
@@ -368,30 +366,8 @@ mapLevelModel.extendTo(LoadableList, {
 
 		this.setChild('auth_part', auth_rqb);
 
-		this.map_parent.on('state-change.vswitched', function(e) {
-			_this.checkPMDSwiched(e.value);
-		});
+		this.setPmdSwitcher(this.map_parent);
 
-	},
-	switchPmd: function(toggle) {
-		var new_state;
-		if (typeof toggle == 'boolean')	{
-			new_state = toggle;
-		} else {
-			new_state = !this.state('pmd_vswitched');
-		}
-		if (new_state){
-			if (!this.state('pmd_vswitched')){
-				this.map_parent.updateState('vswitched', this._provoda_id);
-			}
-		} else {
-			if (this.state('pmd_vswitched')){
-				this.map_parent.updateState('vswitched', false);
-			}
-		}
-	},
-	checkPMDSwiched: function(value) {
-		this.updateState('pmd_vswitched', value == this._provoda_id);
 	},
 	requestList: function() {
 		if (!this.state('has_no_access')){

@@ -1052,6 +1052,33 @@ provoda.Model.extendTo(provoda.HModel, {
 	initStates: function() {
 		this.updateManyStates(this.init_states);
 		this.init_states = null;
+	},
+	setPmdSwitcher: function(pmd) {
+		this.pmd_switch = pmd;
+		var _this = this;
+		pmd.on('state-change.vswitched', function(e) {
+			_this.checkPMDSwiched(e.value);
+		});
+	},
+	switchPmd: function(toggle) {
+		var new_state;
+		if (typeof toggle == 'boolean')	{
+			new_state = toggle;
+		} else {
+			new_state = !this.state('pmd_vswitched');
+		}
+		if (new_state){
+			if (!this.state('pmd_vswitched')){
+				this.pmd_switch.updateState('vswitched', this._provoda_id);
+			}
+		} else {
+			if (this.state('pmd_vswitched')){
+				this.pmd_switch.updateState('vswitched', false);
+			}
+		}
+	},
+	checkPMDSwiched: function(value) {
+		this.updateState('pmd_vswitched', value == this._provoda_id);
 	}
 });
 
