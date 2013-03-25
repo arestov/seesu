@@ -1211,6 +1211,12 @@ Class.extendTo(Template, {
 		setTextValue: function(node, attr_obj, new_value, old_value) {
 			$(node).text(new_value);
 		},
+		getClassName: function(node, attr_obj) {
+			return node.className;
+		},
+		setClassName: function(node, attr_obj, new_value, old_value) {
+			node.className = new_value;
+		},
 		getAttrValue: function(node, attr_obj) {
 			return attr_obj.value;
 		},
@@ -1365,7 +1371,7 @@ Class.extendTo(Template, {
 
 		},
 		'pv-class': function(node, attr_obj) {
-			this.bindStandartChange(node, attr_obj, this.dom_helpres.getAttrValue, this.dom_helpres.setAttrValue, function(value) {
+			this.bindStandartChange(node, attr_obj, this.dom_helpres.getClassName, this.dom_helpres.setClassName, function(value) {
 				if (!value){
 					return value;
 				}
@@ -1412,15 +1418,9 @@ Class.extendTo(Template, {
 		var result = this.children_templates;
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
-			var name_parts = cur.view_name.split(' ');
-			var real_name;
-			var space = 'main';
-			if (name_parts[1]){
-				throw new Error('uncomplete code; fixme');
-			} else {
-				real_name = name_parts[0];
-			}
-			
+			var real_name = cur.view_name;
+			var space = cur.space || 'main';
+				
 			if (!result[real_name]){
 				result[real_name] = {};
 			}
