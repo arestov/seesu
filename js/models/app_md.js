@@ -243,12 +243,12 @@ provoda.Model.extendTo(appModel, {
 
 			if (navigation.indexOf(md) == -1) {
 				navigation.push(md);
-				_this.setChild('navigation', navigation, true);
+				_this.setChild('navigation', navigation);
 			}
 			if (place){
 				if (target_array.indexOf(md) == -1){
 					target_array.push(md);
-					_this.setChild(place, target_array, true);
+					_this.setChild(place, target_array);
 				}
 			}
 
@@ -259,13 +259,13 @@ provoda.Model.extendTo(appModel, {
 
 			var new_nav = arrayExclude(navigation, md);
 			if (new_nav.length != navigation.length){
-				_this.setChild('navigation', new_nav, true);
+				_this.setChild('navigation', new_nav);
 			}
 			if (place){
 				var new_tarr = arrayExclude(target_array, md);
 
 				if (new_tarr.length != target_array.length){
-					_this.setChild(place, new_tarr, true);
+					_this.setChild(place, new_tarr);
 				}
 			}
 			
@@ -310,6 +310,9 @@ provoda.Model.extendTo(appModel, {
 			//
 		},
 		showArtcardPage: function(artist, page_md){
+			var md = this.start_page.getSPI('catalog/' + artist, true);
+			md.showOnMap();
+			/*
 			var md = new ArtCard();
 			md.init({
 				app: this,
@@ -317,7 +320,7 @@ provoda.Model.extendTo(appModel, {
 			}, {
 				artist: artist
 			});
-			md.showOnMap();
+			md.showOnMap();*/
 			return md;
 		},
 		showArtistAlbum: function(params, page_md, start_song){
@@ -359,8 +362,11 @@ provoda.Model.extendTo(appModel, {
 		},
 		
 		show_tag: function(tag, page_md, start_song){
+			var md = this.start_page.getSPI('tags/' + tag, true);
+			md.showOnMap();
+			return md;
 
-
+			/*
 			var tag_page = new TagPage();
 			tag_page.init({
 				app: this,
@@ -371,7 +377,7 @@ provoda.Model.extendTo(appModel, {
 			tag_page.showOnMap();
 			return tag_page;
 			
-			/*
+			
 			
 			var pl_r = this.createSonglist(page_md || this.start_page, {
 				title: 'Tag: ' + tag,

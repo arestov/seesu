@@ -7,6 +7,7 @@ provoda = {
 	Eventor: function(){},
 	StatesEmitter: function(){},
 	Model: function(){},
+	HModel: function() {},
 	View: function(){},
 	ItemsEvents: function(){},
 	StatesArchiver: function(){},
@@ -540,7 +541,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				}
 			}
 			//
-			value = value || false;
+			//value = value || false;
 			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
 			//
 			
@@ -895,22 +896,24 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	getChild: function(collection_name) {
 		return this.children_models[collection_name];
 	},
-	setChild: function(collection_name, array, changed) {
+	setChild: function(collection_name, array, opts) {
 		if (collection_name.indexOf('.') != -1){
 			throw new Error('remove "." (dot) from name');
 		}
 		this.children_models[collection_name] = array;
+		//[].concat() !?
+
 
 		var event_obj = {};
-		if (typeof changed == 'object'){
-			cloneObj(event_obj, changed);
+		if (typeof opts == 'object'){
+			cloneObj(event_obj, opts);
 		}
+		opts = opts || {};
 		event_obj.value = array;
-		event_obj.no_changing_mark = !changed;
 		
 		this.trigger('child-change.' + collection_name, event_obj);
 
-		if (changed){
+		if (!opts.skip_report){
 			this.sendCollectionChange(collection_name, array);
 		}
 
@@ -1017,7 +1020,40 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}]);
 	}
 });
-
+provoda.Model.extendTo(provoda.HModel, {
+	init: function(opts) {
+		this._super();
+		opts = opts || {};
+		if (opts.app){
+			this.app = opts.app;
+		}
+		if (!this.skip_map_init){
+			this.sub_pages = {};
+			if (!this.init_states){
+				this.init_states = {};
+			}
+			if (opts.map_parent){
+				this.map_parent = opts.map_parent;
+			} else {
+				if (!this.zero_map_level){
+					throw new Error('who is your map parent model?');
+				}
+			}
+			this.map_children = [];
+		}
+	},
+	initOnce: function() {
+		if (this.init_opts){
+			this.init.apply(this, this.init_opts);
+			this.init_opts = null;
+		}
+		return this;
+	},
+	initStates: function() {
+		this.updateManyStates(this.init_states);
+		this.init_states = null;
+	}
+});
 
 var
 	requestAnimationFrame,
@@ -1301,7 +1337,7 @@ Class.extendTo(Template, {
 			this.bindStandartChange(node, attr_obj, this.dom_helpres.getTextValue, this.dom_helpres.setTextValue);
 
 		},
-		'px-class': function(node, attr_obj) {
+		'pv-class': function(node, attr_obj) {
 			this.bindStandartChange(node, attr_obj, this.dom_helpres.getAttrValue, this.dom_helpres.setAttrValue, function(value) {
 				if (!value){
 					return value;

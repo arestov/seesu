@@ -57,7 +57,7 @@ var mfComplect = function(opts, params) {
 				.on('want-to-play-sf', selectMf);
 		this.addChild(sf);
 		this.moplas_list.push(sf);
-		this.setChild('moplas_list', this.moplas_list, true);
+		this.setChild('moplas_list', this.moplas_list);
 	} else {
 		this.search_source = params.search_source;
 		this.search_source.on('state-change.files-list', function(e) {
@@ -76,7 +76,7 @@ var mfComplect = function(opts, params) {
 				sf.updateState('overstock', i + 1 > _this.overstock_limit);
 				_this.addChild(sf);
 				moplas_list.push(sf);
-				_this.setChild('moplas_list', moplas_list, true);
+				_this.setChild('moplas_list', moplas_list);
 			}
 			_this.moplas_list = moplas_list;
 
@@ -152,7 +152,7 @@ provoda.Model.extendTo(mfCor, {
 				});
 			this.addMFComplect(complect, this.file.from);
 			this.updateDefaultMopla();
-			this.setChild('sorted_completcs', [complect], true);
+			this.setChild('sorted_completcs', [complect]);
 
 		} else {
 			this.mo.on('vip-state-change.track', function(e) {
@@ -243,7 +243,7 @@ provoda.Model.extendTo(mfCor, {
 				video_arr.sort(function(a, b){
 					return sortByRules(a, b, ["cant_show"]);
 				});
-				_this.setChild('yt_videos', video_arr, true);
+				_this.setChild('yt_videos', video_arr);
 			}
 		});
 	},
@@ -315,7 +315,7 @@ provoda.Model.extendTo(mfCor, {
 	},
 	intMessages: function() {
 		this.notifier = new notifyCounter();
-		this.setChild('notifier', this.notifier, true);
+		this.setChild('notifier', this.notifier);
 		this.sf_notf = su.notf.getStore('song-files');
 		var rd_msgs = this.sf_notf.getReadedMessages();
 
@@ -502,7 +502,7 @@ provoda.Model.extendTo(mfCor, {
 				_this.bindSource(cur);
 				sorted_completcs.push(_this.complects[cur.search_name]);
 			}
-			_this.setChild('sorted_completcs', sorted_completcs, true);
+			_this.setChild('sorted_completcs', sorted_completcs);
 			_this.updateState('few_sources', e.value.length > 1);
 		}, {soft_reg: true});
 

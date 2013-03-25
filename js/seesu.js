@@ -429,6 +429,20 @@ appModel.extendTo(seesuApp, {
 		});
 		return spaced.join("+");
 	},
+	decodeURLPart: function(part) {
+		var spaced = part.split("+");
+		$.each(spaced, function(i, el){
+			spaced[i] = decodeURIComponent(el);
+		});
+		return spaced.join(" ");
+	},
+	getCommaParts: function(string) {
+		var parts = string.split(',');
+		for (var i = 0; i < parts.length; i++) {
+			parts[i] = this.decodeURLPart(parts[i]);
+		}
+		return parts;
+	},
 	app_pages: {
 		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi",
 		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko",
@@ -732,7 +746,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 		});
 		this.watchOwnPlaylist(pl_r);
 		this.playlists.push(pl_r);
-		this.setChild('lists_list', this.playlists, true);
+		this.setChild('lists_list', this.playlists);
 		this.trigger('playlsits-change', this.playlists);
 		return pl_r;
 	},
@@ -750,7 +764,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 		this.playlists = arrayExclude(this.playlists, pl);
 		if (this.playlists.length != length){
 			this.trigger('playlsits-change', this.playlists);
-			this.setChild('lists_list', this.playlists, true);
+			this.setChild('lists_list', this.playlists);
 			this.savePlaylists();
 		}
 		
@@ -778,7 +792,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 		
 		this.playlists = recovered;
 		this.trigger('playlsits-change', this.playlists);
-		this.setChild('lists_list', this.playlists, true);
+		this.setChild('lists_list', this.playlists);
 	}
 });
 

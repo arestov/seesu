@@ -20,11 +20,13 @@ mapLevelModel.extendTo(LoadableList, {
 		}, {skip_reg: true});
 		if (!this.manual_previews){
 			this.on('child-change.' + this.main_list_name, function(e) {
-				if (!e.no_changing_mark){
-					this.setChild(this.preview_mlist_name, e.value, true);
+				if (!e.skip_report){
+					this.setChild(this.preview_mlist_name, e.value);
 				}
 			});
 		}
+		this.excess_data_items = [];
+		this.tumour_data_count = 0;
 	},
 	'compx-list_loading': {
 		depends_on: ['main_list_loading', 'preview_loading'],
@@ -63,8 +65,7 @@ mapLevelModel.extendTo(LoadableList, {
 		this.loadStart();
 	},
 	getLength: function() {
-		var main_list = this[this.main_list_name];
-		return main_list.length;
+		return this[this.main_list_name].length - this.tumour_data_count - (this.excess_data_items && this.excess_data_items.length);
 	},
 	loadStart: function() {
 		if (this.state('more_load_available') && !this.getLength()){
@@ -128,7 +129,84 @@ mapLevelModel.extendTo(LoadableList, {
 	},
 	dataListChange: function(mlc_opts) {
 		
-		this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
+		this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts);
+	},
+	compareItemsWithObj: function(array, omo, soft) {
+		for (var i = 0; i < array.length; i++) {
+			if (this.compareItemWithObj(array[i], omo, soft)){
+				return array[i];
+			}
+		}
+	},
+	addItemToDatalist: function(obj, silent) {
+		this.addDataItem(obj, silent);
+	},
+	addDataItem: function(obj, skip_changes) {
+		var
+			item,
+			excess_items,
+			work_array = this[this.main_list_name],
+			ml_ch_opts = !skip_changes && this.getMainListChangeOpts();
+
+		if (this.excess_data_items && this.excess_data_items.length){
+			var matched = this.compareItemsWithObj(this.excess_data_items, obj);
+			/*
+			задача этого кода - сделать так, что бы при вставке новых данные всё что лежит в массиве
+			"излишек" должно оставаться в конце массива
+			*/
+			excess_items = this.excess_data_items;
+			if (matched){
+				item = matched;
+				/*если совпадает с предполагаемыми объектом, то ставим наш элемент в конец рабочего массива
+				и удаляем из массива "излишков", а сами излишки в самый конец */
+				work_array = arrayExclude(work_array, excess_items);
+				excess_items = arrayExclude(excess_items, matched);
+				work_array.push(matched);
+				work_array = work_array.concat(excess_items);
+
+			} else {
+				/*если объект не совпадает ни с одним элементом, то извлекаем все излишки,
+				вставляем объект, вставляем элементы обратно */
+				work_array = arrayExclude(work_array, excess_items);
+				work_array.push(item = this.makeDataItem(obj));
+				work_array = work_array.concat(excess_items);
+
+
+			}
+			this.excess_data_items = excess_items;
+		} else {
+			work_array.push(item = this.makeDataItem(obj));
+		}
+		
+		this[this.main_list_name] = work_array;
+		if (!skip_changes){
+			this.setChild(this.main_list_name, work_array, ml_ch_opts);
+		}
+		return item;
+	},
+	findMustBePresentDataItem: function(obj) {
+		var matched = this.compareItemsWithObj(this[this.main_list_name], obj);
+		return matched || this.injectExcessDataItem(obj);
+	},
+	injectExcessDataItem: function(obj) {
+		if (this.isDataInjValid && !this.isDataInjValid(obj)){
+			return;
+		}
+		var
+			work_array = this[this.main_list_name],
+			ml_ch_opts = this.getMainListChangeOpts(),
+			item = this.makeDataItem(obj);
+
+		if (!this.cant_find_dli_pos){
+			this.excess_data_items.push(item);
+			work_array.push(item);
+		} else {
+			++this.tumour_data_count;
+			work_array.unshift(item);
+		}
+
+		this.setChild(this.main_list_name, work_array, ml_ch_opts);
+		return item;
 	},
 	requestComplete: function(request, error) {
 		if (!this.request_info || this.request_info.request == request){
@@ -182,10 +260,10 @@ mapLevelModel.extendTo(LoadableList, {
 			parser = opts.parser;
 
 		var _this = this;
-		request_info.request = this.app.hypem.get(path, opts.data)
+		request_info.request = this.app.hypem.get(path, opts.data, {nocache: this.state('error')})
 			.done(function(r) {
 				var data_list = parser.call(this, r, paging_opts);
-				_this.putRequestedData(request_info.request, data_list);
+				_this.putRequestedData(request_info.request, data_list, !r[0]);
 
 			})
 			.fail(function() {
