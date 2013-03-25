@@ -206,17 +206,17 @@
 	width: 15rem;
 	}
 .preview_area{
-	background: #545454;
+	1background: #545454;
 	border-radius: 0.5rem;
-	padding: 0 0 0.5rem;
 	margin-bottom: 1rem;
 	}
 	.preview_area .area_for_button{
-		background: #545454;
-		padding: 0;
+		1background: #545454;
 		margin-bottom: 0;
 		}
-
+	.preview_area .pl-auth-con{
+		padding-bottom: 0.5rem;
+		}
 	.page-scheme .preview_area{
 		margin-bottom: 0;
 		padding-bottom: 0;
@@ -227,11 +227,13 @@
 	cursor: pointer;
 	padding: 0 0 0.5rem;
 	border-radius: 0.5rem;
-	background: #545454;
+	11background: #545454;
 	margin-bottom: 1rem;
+	border: 1px dashed #616161;
 	}
 	.area_for_button .area-button{
 		margin-bottom: 0;
+		border-color: transparent;
 		}
 	.area_for_button .area-description {
 		
@@ -305,7 +307,7 @@
 	color: #aaa;
 	cursor: pointer;
 	}
-	.area_for_button:hover .area-button,
+	.area_for_button:hover,
 	.no_arfb .area-button:hover{
 		background: #4f4f4f;
 		border-color: transparent;
@@ -321,7 +323,7 @@
 		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#545454), to(#4D4D4D)) ;
 		background-image: linear-gradient(#545454,#4D4D4D);
 		}
-	.area_for_button:active .area-button,
+	.area_for_button:active,
 	.no_arfb .area-button:active{
 		
 		border-color:transparent;
