@@ -1976,6 +1976,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return has_all_dependings;
 	},
 	recieveStatesChanges: function(changes_list) {
+		if (this.dead){
+			return;
+		}
 		this._updateProxy(changes_list);
 	},
 	overrideStateSilently: function(name, value) {
@@ -2077,6 +2080,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	collectionChange: function(name, array) {
+		if (this.dead){
+			return;
+		}
 		if (this.undetailed_children_models){
 			this.undetailed_children_models[name] = array;
 			return this;
