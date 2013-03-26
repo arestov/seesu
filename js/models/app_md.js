@@ -164,6 +164,41 @@ provoda.Model.extendTo(appModelBase, {
 			}
 		});
 	},
+	showMOnMap: function(model) {
+
+		var aycocha = this.map.isCollectingChanges();
+		if (!aycocha){
+			this.map.startChangesCollecting();
+		}
+
+		if (!model.lev || !model.lev.canUse()){
+			//если модель не прикреплена к карте прежде чем что-то делать - отображаем "родительску" модель
+			this.showMOnMap(model.map_parent);
+		}
+		if (model.lev && model.lev.canUse()){//если модель прикреплена к карте
+
+			if (model.lev.closed){
+				//если замарожены - удаляем "незамороженное" и углубляемся до нужного уровня
+				this.map.restoreFreezedLev(model.lev);
+			}
+			//отсекаем всё более глубокое
+			model.lev.sliceTillMe();
+		} else {
+			if (!model.model_name){
+				throw new Error('model must have model_name prop');
+			}
+			this.bindMMapStateChanges(model, model.model_name);
+			this.map.goDeeper(model);
+
+		}
+
+		if (!aycocha){
+			this.map.finishChangesCollecting();
+		}
+
+		return model;
+		//
+	},
 	collectChanges: function(fn, args, opts) {
 		var aycocha = this.map.isCollectingChanges();
 		if (!aycocha){
@@ -285,30 +320,7 @@ appModelBase.extendTo(appModel, {
 
 	},
 	bmap_travel: {
-		showMOnMap: function(model) {
-			if (!model.lev || !model.lev.canUse()){
-				//если модель не прикреплена к карте прежде чем что-то делать - отображаем "родительску" модель
-				this.showMOnMap(model.map_parent);
-			}
-			if (model.lev && model.lev.canUse()){//если модель прикреплена к карте
-
-				if (model.lev.closed){
-					//если замарожены - удаляем "незамороженное" и углубляемся до нужного уровня
-					this.map.restoreFreezedLev(model.lev);
-				}
-				//отсекаем всё более глубокое
-				model.lev.sliceTillMe();
-			} else {
-				if (!model.model_name){
-					throw new Error('model must have model_name prop');
-				}
-				this.bindMMapStateChanges(model, model.model_name);
-				this.map.goDeeper(model);
-
-			}
-			return model;
-			//
-		},
+		
 		showArtcardPage: function(artist, page_md){
 			var md = this.start_page.getSPI('catalog/' + artist, true);
 			md.showOnMap();
