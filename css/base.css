@@ -208,6 +208,7 @@ a.desc{
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"hover-state"}');
 		}
 .nnav:active, .nav-button:active{
+	border-top-color: #666;
 	background-image:url(../i/nav/button-gradient-active.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"active-state"}');
 	text-shadow:none;
