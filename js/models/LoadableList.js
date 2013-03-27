@@ -4,8 +4,9 @@ var LoadableList,
 
 (function(){
 "use strict";
-LoadableList = function() {};
-mapLevelModel.extendTo(LoadableList, {
+
+var LoadableListBase = function() {};
+mapLevelModel.extendTo(LoadableListBase, {
 	init: function(opts, params) {
 		this._super(opts);
 		this[this.main_list_name] = [];
@@ -16,7 +17,7 @@ mapLevelModel.extendTo(LoadableList, {
 			if (e.value && e.value.userwant){
 				this.preloadStart();
 			}
-			
+
 		}, {skip_reg: true});
 		if (!this.manual_previews){
 			this.on('child-change.' + this.main_list_name, function(e) {
@@ -94,7 +95,6 @@ mapLevelModel.extendTo(LoadableList, {
 			}
 			//this.trigger("load-more");
 		}
-		
 	},
 	setLoaderFinish: function() {
 		this.updateState("has_loader", false);
@@ -106,17 +106,16 @@ mapLevelModel.extendTo(LoadableList, {
 	putRequestedData: function(request, data_list, error) {
 		//console.profile('data list inject');
 		if (!this.request_info || this.request_info.request == request){
-			
+
 
 			if (!error && data_list && data_list.length){
-				
+
 				var mlc_opts = this.getMainListChangeOpts();
 				for (var i = 0; i < data_list.length; i++) {
 					this.addItemToDatalist(data_list[i], true);
 				}
 				this.dataListChange(mlc_opts);
-				
-				
+
 			}
 			if (!error && request && data_list.length < this.page_limit){
 				this.setLoaderFinish();
@@ -128,7 +127,6 @@ mapLevelModel.extendTo(LoadableList, {
 
 	},
 	dataListChange: function(mlc_opts) {
-		
 		this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts);
 	},
 	compareItemsWithObj: function(array, omo, soft) {
@@ -177,7 +175,7 @@ mapLevelModel.extendTo(LoadableList, {
 		} else {
 			work_array.push(item = this.makeDataItem(obj));
 		}
-		
+
 		this[this.main_list_name] = work_array;
 		if (!skip_changes){
 			this.setChild(this.main_list_name, work_array, ml_ch_opts);
@@ -222,6 +220,52 @@ mapLevelModel.extendTo(LoadableList, {
 		}
 		return this;
 	},
+
+
+	//auth things:
+
+	authInit: function() {
+		var _this = this;
+		if (this.map_parent){
+			this.switchPmd(false);
+			this.map_parent.on('state-change.mp_has_focus', function(e) {
+				if (!e.value){
+					_this.switchPmd(false);
+				}
+			});
+		}
+	},
+	authSwitching: function(auth, AuthConstr, params) {
+		var auth_rqb = new AuthConstr();
+		auth_rqb.init({auth: auth, pmd: this}, params);
+		var _this = this;
+		auth_rqb.on('state-change.has_session', function(e) {
+			_this.updateState('has_no_access', !e.value);
+			_this.switchPmd(false);
+		});
+
+		this.setChild('auth_part', auth_rqb);
+
+		this.setPmdSwitcher(this.map_parent);
+
+	},
+	requestList: function() {
+		if (!this.state('has_no_access')){
+			this.loadStart();
+			this.showOnMap();
+		} else {
+			this.map_parent.zoomOut();
+			this.switchPmd();
+		}
+	}
+
+
+	// :auth things
+
+});
+
+LoadableList = function() {};
+LoadableListBase.extendTo(LoadableList, {
 	getHypemArtistsList: function(r) {
 
 	},
@@ -249,7 +293,7 @@ mapLevelModel.extendTo(LoadableList, {
 				console.log('there is no needed attributes');
 				console.log(cur);
 			}
-			
+
 		}
 		return track_list;
 	},
@@ -339,49 +383,7 @@ mapLevelModel.extendTo(LoadableList, {
 			}
 		}
 		return track_list;
-	},
-
-
-	//auth things:
-
-	authInit: function() {
-		var _this = this;
-		if (this.map_parent){
-			this.switchPmd(false);
-			this.map_parent.on('state-change.mp_has_focus', function(e) {
-				if (!e.value){
-					_this.switchPmd(false);
-				}
-			});
-		}
-	},
-	authSwitching: function(auth, AuthConstr, params) {
-		var auth_rqb = new AuthConstr();
-		auth_rqb.init({auth: auth, pmd: this}, params);
-		var _this = this;
-		auth_rqb.on('state-change.has_session', function(e) {
-			_this.updateState('has_no_access', !e.value);
-			_this.switchPmd(false);
-		});
-
-		this.setChild('auth_part', auth_rqb);
-
-		this.setPmdSwitcher(this.map_parent);
-
-	},
-	requestList: function() {
-		if (!this.state('has_no_access')){
-			this.loadStart();
-			this.showOnMap();
-		} else {
-			this.map_parent.zoomOut();
-			this.switchPmd();
-		}
 	}
-
-
-	// :auth things
-
 });
 
 TagsList = function() {};
