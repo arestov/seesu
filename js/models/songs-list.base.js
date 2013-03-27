@@ -82,7 +82,7 @@ var songsList;
 			if (!obj.track && !obj.artist){
 				return;
 			} else {
-				return false;
+				return true;
 			}
 		},
 		compareItemWithObj: function(song, omo, soft) {

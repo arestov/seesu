@@ -142,7 +142,6 @@ appModel.extendTo(seesuApp, {
 		}
 
 
-		
 		this.start_page = (new StartPage()).init({
 			app: this
 		});
@@ -155,6 +154,10 @@ appModel.extendTo(seesuApp, {
 			.init(this.start_page)
 			.on('map-tree-change', function(nav_tree) {
 				_this.changeNavTree(nav_tree);
+			})
+			.on('changes', function(changes) {
+				//console.log(changes);
+				_this.animateMapChanges(changes);
 			})
 			.on('title-change', function(title) {
 				_this.setDocTitle(title);
@@ -173,14 +176,10 @@ appModel.extendTo(seesuApp, {
 				if (replace){
 					//su.trackPage(nv.map_level.resident.page_name);
 				}
-				
+
 			})
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
 				_this.trackPage(nv.map_level.resident.page_name);
-			})
-			.on('changes', function(changes) {
-				//console.log(changes);
-				_this.animateMapChanges(changes);
 			})
 			.makeMainLevel();
 
