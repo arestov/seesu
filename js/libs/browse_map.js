@@ -797,10 +797,7 @@ provoda.HModel.extendTo(mapLevelModel, {
 					this.init_states['nav_title'] = opts.nav_opts['nav_title'];
 				}
 			}
-		};
-		
-
-		
+		}
 	},
 	getSPOpts: function(name) {
 		var obj = {
@@ -812,6 +809,9 @@ provoda.HModel.extendTo(mapLevelModel, {
 			obj['nav_title'] = title;
 		}
 		return obj;
+	},
+	findSPbyURLPart: function(name) {
+		return this.getSPI(name, true);
 	},
 	getSPI: function(name, init) {
 		var instance;
