@@ -48,7 +48,9 @@
 .page-scheme .art_card{
 	padding-top: 1rem;
 }
-
+.page-scheme .usual_page{
+	padding-top: 1rem;
+}
 #search {
 	margin: 0 auto;
 	max-width: 750px;
