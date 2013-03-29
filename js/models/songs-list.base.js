@@ -576,6 +576,15 @@ var songsList;
 				common[i].setPrio('highest', 'common');
 			}
 			
+		},
+		subPager: function(string) {
+			var parts = this.app.getCommaParts(string);
+			var artist = parts[1] ? parts[0] : this.playlist_artist;
+
+			return this.findMustBePresentDataItem({
+				artist: artist,
+				track: parts[1] ? parts[1] : parts[0]
+			});
 		}
 
 	});
