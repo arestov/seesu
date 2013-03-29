@@ -59,7 +59,6 @@ BaseCRow.extendTo(LoveRow, {
 		this.lfm_loveit.on('love-success', function() {
 			_this.hide();
 		});
-		this.addChild(this.lfm_loveit);
 		
 	},
 	model_name: 'row-love'
@@ -200,7 +199,6 @@ BaseCRow.extendTo(ShareRow, {
 
 		this.searcher = new StrusersRowSearch(this, mo);
 		this.setChild('searcher', this.searcher);
-		this.addChild(this.searcher);
 
 		var updateSongURL = function(){
 			_this.updateState('share_url', _this.mo.getShareUrl());
@@ -249,7 +247,6 @@ BaseCRow.extendTo(ShareRow, {
 				desc: improve ? localize('to-find-vk-friends') : localize("to-post-and-find-vk")
 			});
 			this.setChild('vk_auth', this.vk_auth_rqb);
-			this.addChild(this.vk_auth_rqb);
 
 		}
 		//to find you friends
@@ -353,7 +350,6 @@ BaseCRow.extendTo(PlaylistAddRow, {
 		this._super();
 		this.searcher = new PlaylistRowSearch(this, mo);
 		this.setChild('searcher', this.searcher);
-		this.addChild(this.searcher);
 	},
 	model_name: 'row-playlist-add',
 	search: function(q) {
@@ -382,7 +378,6 @@ BaseCRow.extendTo(ScrobbleRow, {
 		this._super();
 		this.lfm_scrobble = new LfmScrobble({auth: su.lfm_auth, pmd: this});
 		this.setChild('lfm_scrobble', this.lfm_scrobble);
-		this.addChild(this.lfm_scrobble);
 	},
 	model_name: 'row-lastfm'
 });

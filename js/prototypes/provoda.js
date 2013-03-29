@@ -373,6 +373,8 @@ Class.extendTo(provoda.Eventor, {
 			this.requests[space] = [];
 		}
 		var target_arr = this.requests[space];
+		var _this = this;
+
 
 
 		if (target_arr.indexOf(rq) == -1){
@@ -388,6 +390,9 @@ Class.extendTo(provoda.Eventor, {
 		//	console.groupEnd()
 			this.trigger('request', rq, space);
 		}
+		rq.always(function() {
+			_this.requests[space] = arrayExclude(_this.requests[space], rq);
+		});
 		return this;
 		
 	},
@@ -794,7 +799,6 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.states = {};
 		this.views = [];
 		this.views_index = {};
-		this.children = [];
 		this.children_models = {};
 		
 		return this;
@@ -854,9 +858,6 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	die: function(){
 		this.stopRequests();
 		this.killViews();
-		for (var i = 0; i < this.children.length; i++) {
-			this.children[i].die();
-		}
 		this.trigger('die');
 		return this;
 	},
@@ -918,12 +919,6 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 
 		return this;
-	},
-	addChild: function(md, name) {
-		if (this.children.indexOf(md) == -1){
-			this.children.push.call(this.children, md);
-		}
-		
 	},
 	getRooConPresentation: function(mplev_view, get_ancestor) {
 		var views = this.getViews();

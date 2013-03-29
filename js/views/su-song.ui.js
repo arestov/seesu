@@ -824,6 +824,7 @@ provoda.View.extendTo(songUI, {
 									}
 									if (first_image && _this.first_image){
 										_this.first_image.remove();
+										_this.first_image = null;
 									}
 									
 

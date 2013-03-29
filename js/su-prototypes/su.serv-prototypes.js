@@ -405,7 +405,6 @@ provoda.Model.extendTo(PartsSwitcher, {
 	addPart: function(model) {
 		if (!this.context_parts[model.model_name]){
 			this.context_parts[model.model_name] = model;
-			this.addChild(model);
 
 			var array = this.getChild('context_parts') || [];
 			array.push(model);
