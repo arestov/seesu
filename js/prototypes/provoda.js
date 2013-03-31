@@ -920,23 +920,26 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		return this;
 	},
-	getRooConPresentation: function(mplev_view, get_ancestor) {
+	getRooConPresentation: function(mplev_view, get_ancestor, only_by_ancestor) {
 		var views = this.getViews();
 		var cur;
-		for (var i = 0; i < views.length; i++) {
-			cur = views[i];
-			var target = cur.root_view.getChildView(this, 'main');
-			if (target == cur){
-				return cur;
+		if (!only_by_ancestor){
+			for (var i = 0; i < views.length; i++) {
+				cur = views[i];
+				var target = cur.root_view.getChildView(this, 'main');
+				if (target == cur){
+					return cur;
+				}
 			}
 		}
+		
 		for (var jj = 0; jj < views.length; jj++) {
 			cur = views[jj];
 			var ancestor;
 			if (mplev_view){
-				ancestor = cur.getAncestorByRooViCon('details');
+				ancestor = cur.getAncestorByRooViCon('details', only_by_ancestor);
 			} else {
-				ancestor = cur.getAncestorByRooViCon('main');
+				ancestor = cur.getAncestorByRooViCon('main', only_by_ancestor);
 			}
 			if (ancestor){
 				if (get_ancestor){
@@ -1647,10 +1650,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	
 	},
-	getAncestorByRooViCon: function(view_space) {
+	getAncestorByRooViCon: function(view_space, strict) {
 		//by root view connection
 		var target_ancestor;
 		var cur_ancestor = this;
+		if (strict){
+			cur_ancestor = cur_ancestor.parent_view;
+		}
 		while (!target_ancestor && cur_ancestor){
 			if (cur_ancestor == this.root_view){
 				break;
