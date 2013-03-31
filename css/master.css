@@ -109,7 +109,7 @@ html.not-as-application, .not-as-application  body{
 	.moplas-block .show-all-songs a{
 		display: inline-block;
 		padding:5px 10px;
-		color:gray;
+		color: hsl(0, 0%, 60%);
 		text-shadow: 0 1px 0 #4A4A4A;
 		cursor: pointer;
 		}
@@ -194,7 +194,7 @@ html.not-as-application, .not-as-application  body{
 				}
 			.moplas-block .moplas-list li .mf-source{
 				margin-left:10px;
-				color:#777;
+				color: hsl(0, 0%, 47%);
 				}
 				.moplas-block.want_more_songs ul .mf-source{
 					display: none;
@@ -615,7 +615,7 @@ html.not-as-application, .not-as-application  body{
 		padding: 0.5rem 10px;
 		border:0;
 		border-radius: 0 0 0 0.5rem;
-		color:#808080;
+		color: hsl(0, 0%, 60%);
 		text-shadow: 0 1px 0 #4A4A4A;
 		}
 		.track-context .extend-switcher .big-space{
