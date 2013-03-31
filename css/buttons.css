@@ -234,7 +234,10 @@
 		margin-bottom: 0;
 		border-color: transparent;
 		padding-bottom: 0rem;
-}
+		}
+	.page-scheme .area_for_button .area-button{
+		padding-bottom: 0.5rem;
+		}
 	.area_for_button .area-description {
 		
 		display: block;

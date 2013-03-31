@@ -356,10 +356,10 @@ BaseCRow.extendTo(PlaylistAddRow, {
 		this.updateState('query', q);
 		this.searcher.changeQuery(q);
 	},
-	createPlaylist: function() {
+	findAddPlaylist: function() {
 		var current_query = this.state('query');
 		if (current_query){
-			su.gena.createUserPlaylist(current_query).add(this.mo);
+			su.gena.findAddPlaylist(current_query, this.mo);
 		}
 		this.hide();
 	}
