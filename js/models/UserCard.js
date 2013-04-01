@@ -54,11 +54,7 @@ var LfmLovedList = function() {};
 songsList.extendTo(LfmLovedList, {
 	init: function(opts, username) {
 		this._super(opts);
-		this.setBaseInfo({
-			title: localize('loved-tracks'),
-			type: 'artists by loved'
-		});
-		this.updateState('url_part', '/loved');
+		this.initStates();
 		this.authInit();
 		if (username){
 			this.username = username;
@@ -216,12 +212,7 @@ songsList.extendTo(MyVkAudioList, {
 		if (!user_id){
 			this.permanent_md = true;
 		}
-		this.setBaseInfo({
-			title: localize('vk-audio'),
-			type: 'vk-audio'
-		});
-
-		this.updateState('url_part', '/vk-audio');
+		this.initStates();
 		this.authInit();
 		this.authSwitching(this.app.vk_auth, VkAudioLogin);
 	},
@@ -340,10 +331,7 @@ var UserLibNewReleases= function() {};
 UserNewReleases.extendTo(UserLibNewReleases, {
 	init: function(opts, params) {
 		this._super(opts, params);
-		this.updateManyStates({
-			'nav_title': localize('reccoms-for-you') +': new releases of artists from your library',
-			'url_part': '/lib_releases'
-		});
+		this.initStates();
 	}
 });
 
@@ -351,10 +339,7 @@ var RecommNewReleases = function() {};
 UserNewReleases.extendTo(RecommNewReleases, {
 	init: function(opts, params) {
 		this._super(opts, params);
-		this.updateManyStates({
-			'nav_title': localize('reccoms-for-you') +': new releases of artists recommended for you',
-			'url_part': '/recommended_releases'
-		});
+		this.initStates();
 	},
 	recomms: true
 });
@@ -371,6 +356,30 @@ mapLevelModel.extendTo(UserCard, {
 
 			getTitle: function() {
 				return this.username ? (localize('reccoms-for') + this.username) : localize('reccoms-for-you');
+			}
+		},
+		'recommended_releases': {
+			constr: RecommNewReleases,
+			getTitle: function() {
+				return localize('reccoms-for-you') +': new releases of artists recommended for you';
+			}
+		},
+		'lib_releases': {
+			constr: UserLibNewReleases,
+			getTitle: function() {
+				return localize('reccoms-for-you') +': new releases of artists from your library';
+			}
+		},
+		'vk-audio': {
+			constr: MyVkAudioList,
+			getTitle: function() {
+				return localize('vk-audio');
+			}
+		},
+		'loved': {
+			constr: LfmLovedList,
+			getTitle: function() {
+				return localize('loved-tracks');
 			}
 		}
 		
@@ -399,32 +408,17 @@ mapLevelModel.extendTo(UserCard, {
 			this.setChild('arts_recomms', this.arts_recomms);
 
 
-			this.lfm_loved = new LfmLovedList();
-			this.lfm_loved.init({
-				app: this.app,
-				map_parent: this
-			});
+			this.lfm_loved = this.getSPI('loved', true);
 			this.setChild('lfm_loved', this.lfm_loved);
 
-			this.my_vkaudio = new MyVkAudioList();
-			this.my_vkaudio.init({
-				app: this.app,
-				map_parent: this
-			});
+
+			this.my_vkaudio = this.getSPI('vk-audio', true);
 			this.setChild('vk_audio', this.my_vkaudio);
 
-			this.new_releases = new UserLibNewReleases();
-			this.new_releases.init({
-				app: this.app,
-				map_parent: this
-			});
+			this.new_releases = this.getSPI('lib_releases', true);
 			this.setChild('new_releases', this.new_releases);
 
-			this.recomm_releases = new RecommNewReleases();
-			this.recomm_releases.init({
-				app: this.app,
-				map_parent: this
-			});
+			this.recomm_releases = this.getSPI('recommended_releases', true);
 			this.setChild('recomm_releases', this.recomm_releases);
 
 			
