@@ -113,10 +113,7 @@ ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 		this._super(opts);
 
 
-		this.updateManyStates({
-			'nav_title': username ? (localize('reccoms-for') + username) : localize('reccoms-for-you'),
-			'url_part': '/recommended_artists'
-		});
+		this.initStates();
 		this.authInit();
 		this.authSwitching(this.app.lfm_auth, LfmReccomsLogin);
 		
@@ -368,6 +365,16 @@ var UserCard = function() {};
 
 mapLevelModel.extendTo(UserCard, {
 	model_name: 'usercard',
+	sub_pa: {
+		'recommended_artists': {
+			constr: RecommendatedToUserArtistsList,
+
+			getTitle: function() {
+				return this.username ? (localize('reccoms-for') + this.username) : localize('reccoms-for-you');
+			}
+		}
+		
+	},
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
 		this.app = opts.app;
@@ -385,11 +392,10 @@ mapLevelModel.extendTo(UserCard, {
 		var postInit = function() {
 
 
-			this.arts_recomms = new RecommendatedToUserArtistsList();
-			this.arts_recomms.init({
-				app: this.app,
-				map_parent: this
-			});
+
+
+
+			this.arts_recomms = this.getSPI('recommended_artists', true);
 			this.setChild('arts_recomms', this.arts_recomms);
 
 
