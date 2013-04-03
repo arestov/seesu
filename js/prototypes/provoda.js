@@ -28,11 +28,11 @@ provoda = {
 };
 
 Class.extendTo(provoda.ItemsEvents, {
-	init: function(event_name, eventCallback, skip_event_regf) {
+	init: function(event_name, eventCallback, soft_reg) {
 		this.controls_list = [];
 		this.event_name = event_name;
 		this.eventCallback = eventCallback;
-		this.skip_event_regf = skip_event_regf;
+		this.soft_reg = soft_reg;
 	},
 	unsubcribeOld: function() {
 		if (this.controls_list.length){
@@ -49,7 +49,7 @@ Class.extendTo(provoda.ItemsEvents, {
 			this.controls_list.push(
 				items_list[i].on(this.event_name, this.eventCallback, {
 					easy_bind_control: true,
-					skip_reg: this.skip_event_regf
+					soft_reg: this.soft_reg
 				})
 			);
 		}
