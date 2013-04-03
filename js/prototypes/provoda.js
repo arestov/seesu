@@ -1056,7 +1056,7 @@ provoda.Model.extendTo(provoda.HModel, {
 		var _this = this;
 		pmd.on('state-change.vswitched', function(e) {
 			_this.checkPMDSwiched(e.value);
-		});
+		}, {immediately: true});
 	},
 	switchPmd: function(toggle) {
 		var new_state;
@@ -1594,9 +1594,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		
 	},
 	createDetailes: function() {
-		if (this.opts && this.opts.pv_view){
+		if (this.opts && this.pv_view_node){
 			if (this.useBase){
-				this.useBase(this.opts.pv_view);
+				this.useBase(this.pv_view_node);
 			}
 		} else if (this.createBase){
 			this.createBase();
@@ -2049,7 +2049,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			pv_view.original_node = pv_view.node.cloneNode(true);
 		}
 		if (!pv_view.comment_anchor){
-			pv_view.comment_anchor = document.createComment('collch anchot for: ' + name + ", " + space_name);
+			pv_view.comment_anchor = document.createComment('collch anchor for: ' + name + ", " + space_name);
 			$(pv_view.node).before(pv_view.comment_anchor);
 		}
 
@@ -2057,22 +2057,22 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		for (var mmm = 0; mmm < filtered.length; mmm++) {
 			var cur_md = filtered[mmm];
-			var node_to_use = pv_view.node ? pv_view.node : pv_view.original_node.cloneNode(true);
-
-		//	var model_name = mmm.model_name;
-
-			pv_view.node = null;
 		
-			var view = this.getFreeChildView(name, cur_md, space_name, {
-				pv_view: $(node_to_use)
-			});
+			var view = this.getFreeChildView(name, cur_md, space_name);
 			if (view){
+				var node_to_use = pv_view.node ? pv_view.node : pv_view.original_node.cloneNode(true);//fixme - do not 
+				//do not clone if we do not have "view" (controller)
+				view.pv_view_node = $(node_to_use);
+				//var model_name = mmm.model_name;
+
+				pv_view.node = null;
 				pv_view.views.push(view.view_id);
+				if (pv_view.last_node){
+					$(pv_view.last_node).after(node_to_use);
+				}
+				pv_view.last_node = node_to_use;
 			}
-			if (pv_view.last_node){
-				$(pv_view.last_node).after(node_to_use);
-			}
-			pv_view.last_node = node_to_use;
+			
 		}
 	},
 	checkCollectionChange: function(name) {
