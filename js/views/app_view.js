@@ -282,7 +282,7 @@ provoda.View.extendTo(appModelView, {
 						_this.search_input[0].focus();
 						_this.search_input[0].select();
 					} else {
-						_this.search_input[0].blur();
+						//_this.search_input[0].blur();
 					}
 					
 				}
@@ -291,7 +291,7 @@ provoda.View.extendTo(appModelView, {
 
 			view.on('state-change.mp_show-end', function(e) {
 				checkFocus(e.value);
-			});
+			}, {immediately: true});
 		}
 		this.requestAll();
 	},
