@@ -1143,59 +1143,57 @@ Class.extendTo(Template, {
 		}
 		return sfy_values;
 	},
-	bindStandartChange: function(node, attr_obj, getValue, setValue, simplifyValue) {
-		var text_statement = attr_obj.value;
-		if (text_statement){
-			var calculator = angbo.interpolateExpressions(text_statement);
-			if (calculator){
-				var original_value = getValue.call(this, node, attr_obj);
-				if (simplifyValue){
-					original_value = simplifyValue.call(this, original_value);
-				}
-
+	bindStandartChange: function(node, opts) {
+		var calculator = opts.calculator;
+		var all_vs;
+		if (!calculator){
+			if (opts.complex_statement){
+				calculator = angbo.interpolateExpressions(opts.complex_statement);
 				var all_values = $filter(calculator.parts,'propsToWatch');
-				var all_vs = [];
+				all_vs = [];
 				all_vs = all_vs.concat.apply(all_vs, all_values);
-
-
-				var sfy_values = this.getFieldsTreesBases(all_vs);
-				var _this = this;
-
-				this.states_watchers.push({
-					values: all_vs,
-					sfy_values: sfy_values,
-					checkFunc: function(states) {
-						var new_value = calculator(states);
-						if (simplifyValue){
-							new_value = simplifyValue.call(_this, new_value);
-						}
-						if (original_value != new_value){
-							setValue.call(_this, node, attr_obj, new_value, original_value);
-							original_value = new_value;
-						}
-					}
-				});
+			} else if (opts.statement){
+				calculator = angbo.parseExpression(opts.statement);
+				all_vs = calculator.propsToWatch;
 			}
+		}
+		if (calculator){
+			var original_value = opts.getValue.call(this, node);
+			if (opts.simplifyValue){
+				original_value = opts.simplifyValue.call(this, original_value);
+			}
+
+			var sfy_values = this.getFieldsTreesBases(all_vs);
+			var _this = this;
+
+			this.states_watchers.push({
+				values: all_vs,
+				sfy_values: sfy_values,
+				checkFunc: function(states) {
+					var new_value = calculator(states);
+					if (opts.simplifyValue){
+						new_value = opts.simplifyValue.call(_this, new_value);
+					}
+					if (original_value != new_value){
+						opts.setValue.call(_this, node, new_value, original_value);
+						original_value = new_value;
+					}
+				}
+			});
 		}
 	},
 	dom_helpres: {
 		getTextValue: function(node) {
 			return $(node).text();
 		},
-		setTextValue: function(node, attr_obj, new_value, old_value) {
+		setTextValue: function(node, new_value, old_value) {
 			$(node).text(new_value);
 		},
-		getClassName: function(node, attr_obj) {
+		getClassName: function(node) {
 			return node.className;
 		},
-		setClassName: function(node, attr_obj, new_value, old_value) {
+		setClassName: function(node, new_value, old_value) {
 			node.className = new_value;
-		},
-		getAttrValue: function(node, attr_obj) {
-			return attr_obj.value;
-		},
-		setAttrValue: function(node, attr_obj, new_value, old_value) {
-			attr_obj.value = new_value;
 		}
 	},
 	scope_generators:{
@@ -1245,7 +1243,6 @@ Class.extendTo(Template, {
 			if (node == this.root_node){
 				return;
 			}
-		//	this.bindStandartChange(node, attr_obj, this.dom_helpres.getAttrValue, this.dom_helpres.setAttrValue);
 
 
 			//start of angular.js code
@@ -1340,17 +1337,32 @@ Class.extendTo(Template, {
 		}
 	},
 	directives: {
-		'pv-text': function(node, attr_obj){
-			this.bindStandartChange(node, attr_obj, this.dom_helpres.getTextValue, this.dom_helpres.setTextValue);
+		'pv-text': function(node, attr_obj){			
+			this.bindStandartChange(node, {
+				complex_statement: attr_obj.value,
+				getValue: this.dom_helpres.getTextValue,
+				setValue: this.dom_helpres.setTextValue
+			});
 
 		},
 		'pv-class': function(node, attr_obj) {
-			this.bindStandartChange(node, attr_obj, this.dom_helpres.getClassName, this.dom_helpres.setClassName, function(value) {
-				if (!value){
-					return value;
+			this.bindStandartChange(node, {
+				complex_statement: attr_obj.value,
+				getValue: this.dom_helpres.getClassName,
+				setValue: this.dom_helpres.setClassName,
+				simplifyValue: function(value) {
+					if (!value){
+						return value;
+					}
+					return value.replace(/\s+/gi,' ').replace(/^\s|\s$/gi,'');
 				}
-				return value.replace(/\s+/gi,' ').replace(/^\s|\s$/gi,'');
 			});
+		},
+		'pv-props': function(node, attr_obj) {
+			var complex_value = attr_obj.value;
+			var completcs = complex_value.match(/(.*?)\s*?:s*?\{\{[\S\s]*?\}\}/);
+			//"style.width: {{play_progress}} title: {{full_name}} style.background-image: {{album_cover_url}}".match(/([\S\s]*?:[\S\s]*?\{\{[\S\s]*?\}\})/gi);
+
 		},
 		'pv-anchor': function(node, attr_obj) {
 			var anchor_name = attr_obj.value;
