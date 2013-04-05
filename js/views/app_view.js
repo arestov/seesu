@@ -282,7 +282,7 @@ provoda.View.extendTo(appModelView, {
 						_this.search_input[0].focus();
 						_this.search_input[0].select();
 					} else {
-						_this.search_input[0].blur();
+						//_this.search_input[0].blur();
 					}
 					
 				}
@@ -291,7 +291,7 @@ provoda.View.extendTo(appModelView, {
 
 			view.on('state-change.mp_show-end', function(e) {
 				checkFocus(e.value);
-			});
+			}, {immediately: true});
 		}
 		this.requestAll();
 	},
@@ -405,11 +405,13 @@ provoda.View.extendTo(appModelView, {
 		}*/
 		var parent_md = md.getParentMapModel();
 		if (parent_md){
-			var mplev_item_view = md.getRooConPresentation();
-			if (mplev_item_view){
+			var mplev_item_view = md.getRooConPresentation(false, false, true);
+			if (mplev_item_view && mplev_item_view.getC().height()){
 				this.scrollTo(mplev_item_view.getC(), {
 					node: this.getLevByNum(md.map_level_num - 1).scroll_con
 				}, {vp_limit: 0.4, animate: 117});
+			} else {
+				this.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
 			}
 		}
 

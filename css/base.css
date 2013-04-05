@@ -48,7 +48,7 @@ h5{
 
 a.js-serv{
 	white-space: nowrap;
-	color:#ABABAB;
+	color: hsl(0, 0%, 75%);
 	cursor: pointer;
 	padding: 0.286rem;
 	background: #555;

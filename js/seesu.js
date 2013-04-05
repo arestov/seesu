@@ -736,6 +736,19 @@ mapLevelModel.extendTo(UserPlaylists, {
 		},10);
 		
 	},
+	findAddPlaylist: function(title, mo) {
+		var matched;
+		for (var i = 0; i < this.playlists.length; i++) {
+			var cur = this.playlists[i];
+			if (cur.info && cur.info.name == title){
+				matched = cur;
+				break;
+			}
+		}
+		matched = matched || this.createUserPlaylist(title);
+		matched.add(mo);
+	},
+	
 	createUserPlaylist: function(title){
 
 		var pl_r = this.createEnvPlaylist({

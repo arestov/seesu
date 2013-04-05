@@ -91,7 +91,6 @@ var song;
 				this.onshow_inited = true;
 				var actionsrow = new TrackActionsRow(this);
 				this.setChild('actionsrow', actionsrow);
-				this.addChild(actionsrow);
 			}
 		},
 		initHeavyPart: function() {
@@ -114,7 +113,6 @@ var song;
 				});
 			}
 			this.setChild('mf_cor', this.mf_cor);
-			this.addChild(this.mf_cor);
 			this.mf_cor
 				.on('before-mf-play', function(mopla) {
 

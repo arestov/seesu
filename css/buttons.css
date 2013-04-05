@@ -227,20 +227,23 @@
 	cursor: pointer;
 	padding: 0 0 0.5rem;
 	border-radius: 0.5rem;
-	11background: #545454;
 	margin-bottom: 1rem;
 	border: 1px dashed #616161;
 	}
 	.area_for_button .area-button{
 		margin-bottom: 0;
 		border-color: transparent;
+		padding-bottom: 0rem;
+		}
+	.page-scheme .area_for_button .area-button{
+		padding-bottom: 0.5rem;
 		}
 	.area_for_button .area-description {
 		
 		display: block;
 		font-size: 0.8em;
 		
-		color: #707070;
+		color: hsl(0, 0%, 55%);
 		}
 	.access-request .area_for_button .area-description {
 		display: none;
@@ -286,7 +289,7 @@
 		}
 	
 	.page-scheme .area_for_button{
-		margin-bottom: 0;
+		margin-bottom: 0.5rem;
 		padding-bottom: 0;
 		}
 		.page-scheme .area_for_button .area-description{
@@ -304,7 +307,7 @@
 
 
 	
-	color: #aaa;
+	color: hsl(0, 0%, 70%);
 	cursor: pointer;
 	}
 	.area_for_button:hover,

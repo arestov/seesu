@@ -55,7 +55,6 @@ var mfComplect = function(opts, params) {
 		sf = this.start_file
 			.getSongFileModel(this.mo, this.mo.player)
 				.on('want-to-play-sf', selectMf);
-		this.addChild(sf);
 		this.moplas_list.push(sf);
 		this.setChild('moplas_list', this.moplas_list);
 	} else {
@@ -74,7 +73,6 @@ var mfComplect = function(opts, params) {
 						.getSongFileModel(_this.mo, _this.mo.player)
 							.on('want-to-play-sf', selectMf);
 				sf.updateState('overstock', i + 1 > _this.overstock_limit);
-				_this.addChild(sf);
 				moplas_list.push(sf);
 				_this.setChild('moplas_list', moplas_list);
 			}
@@ -329,7 +327,6 @@ provoda.Model.extendTo(mfCor, {
 		
 
 
-		this.addChild(this.notifier);
 		
 
 		this.checkVKAuthNeed();
@@ -390,7 +387,6 @@ provoda.Model.extendTo(mfCor, {
 					" " +  localize('music-files-from-vk')
 			});
 			this.setChild('vk_auth', this.vk_auth_rqb);
-			this.addChild(this.vk_auth_rqb);
 			this.updateState('changed', new Date());
 			this.updateState('vk_audio_auth ', true);
 		}
@@ -455,7 +451,6 @@ provoda.Model.extendTo(mfCor, {
 	},*/
 	addMFComplect: function(complect, name, fire_collch) {
 		this.complects[name] = complect;
-		this.addChild(complect);
 	},
 	bindSource: function(f_investg_s) {
 		var _this = this;

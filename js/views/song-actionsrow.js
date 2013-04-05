@@ -219,7 +219,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 
 
 		this.pl_creation_b = $("<div class='create-named-playlist hidden suggest'></div>").click(function() {
-			_this.md.createPlaylist();
+			_this.md.findAddPlaylist();
 		});
 		this.addWayPoint(this.pl_creation_b);
 		this.pl_creation_b_text = $('<span></span>');
