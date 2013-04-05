@@ -9,7 +9,7 @@ provoda.View.extendTo(songUI, {
 	},
 	
 	complex_states: {
-		'mp_show-end': {
+		'mp_show_end': {
 			depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
 			fn: function(anim, vis_mp_show, mp_show) {
 				if (anim) {
@@ -44,7 +44,7 @@ provoda.View.extendTo(songUI, {
 		}
 	},
 	state_change : {
-		"mp_show-end": function(opts) {
+		"mp_show_end": function(opts) {
 			if (opts){
 				if (this.img_panorama){
 					this.img_panorama.checkSize();
@@ -482,17 +482,7 @@ provoda.View.extendTo(songUI, {
 
 	//	var actionsrow = this.getMdChild('actionsrow');
 	//	var track_row_view = this.getFreeChildView('actionsrow', actionsrow);
-
-
-
-
 		context.prepend(this.getAFreeCV('mf_cor'));
-		
-		
-		
-		
-
-
 		//
 		var tidominator = this.requirePart('tidominator');
 		//this.tidominator = this.context.children('.track-info-dominator');
@@ -519,9 +509,6 @@ provoda.View.extendTo(songUI, {
 		this.addWayPoint(artcard_link, {
 			
 		});
-			
-
-		
 		var users = context.children('.track-listeners');
 		var users_list = users.children('.song-listeners-list');
 		
@@ -564,24 +551,9 @@ provoda.View.extendTo(songUI, {
 	
 			}
 		};
-		
 		this.rowcs.users_context = users_context;
-
-
-
-		var getClickPosition = function(e, node){
-			//e.offsetX ||
-			var pos = e.pageX - $(node).offset().left;
-			return pos;
-		};
-
-
 		this.c.append(context);
-			
-	
-
 		this.updateSongContext(true);
-
 		this.dom_related_props.push('a_info', 't_info', 'dominator_head', 'song_actions_c', 'rowcs', 'extend_info', 't_users');
 		this.requestAll();
 	},
@@ -632,6 +604,9 @@ provoda.View.extendTo(songUI, {
 				
 			}
 			su.s.api('track.getListeners', d, function(r){
+				if (!_this.isAlive()){
+					return;
+				}
 				var raw_users = r && r.done && [].concat.apply([], r.done);
 				if (raw_users){
 					var users = $filter(raw_users, 'user', function(value){

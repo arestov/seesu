@@ -47,17 +47,17 @@ provoda.View.extendTo(appModelView, {
 		this.c = $(this.d.body);
 
 		this.c.addClass('app-loaded');
-		this.connectStates();
-		this.connectChildrenModels();
-
-		
 		var ext_search_query = this.els.search_input.val();
 		//must be before start_page view set its value to search_input
-
-		this.requestAll();
 		this.md.checkUserInput({
 			ext_search_query: ext_search_query
 		});
+
+		this.connectStates();
+		this.connectChildrenModels();
+
+		this.requestAll();
+		
 		
 	},
 	reportDomDeath: function() {
@@ -276,20 +276,14 @@ provoda.View.extendTo(appModelView, {
 		if (view){
 			var _this = this;
 
-			var checkFocus = function(opts) {
-				if (opts){
-					if (opts.userwant){
-						_this.search_input[0].focus();
-						_this.search_input[0].select();
-					} else {
-						//_this.search_input[0].blur();
-					}
-					
+			var checkFocus = function(state) {
+				if (state){
+					_this.search_input[0].focus();
+					_this.search_input[0].select();
 				}
 			};
-			checkFocus(view.state('mp_show-end'));
 
-			view.on('state-change.mp_show-end', function(e) {
+			view.on('state-change.autofocus', function(e) {
 				checkFocus(e.value);
 			}, {immediately: true});
 		}

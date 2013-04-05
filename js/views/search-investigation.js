@@ -207,7 +207,7 @@ investigationView.extendTo(searchPageView, {
 		this.c.toggleClass('does-not-need-search-from', !state);
 	},
 	complex_states: {
-		'mp_show-end': {
+		'mp_show_end': {
 			depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
 			fn: function(anim, vis_mp_show, mp_show) {
 				if (anim) {

@@ -351,7 +351,7 @@ provoda.View.extendTo(songFileModelUI, {
 
 
 		var song_view = mf_cor_view.parent_view;
-		song_view.on('state-change.mp_show-end', function(e){
+		song_view.on('state-change.mp_show_end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});
 		
