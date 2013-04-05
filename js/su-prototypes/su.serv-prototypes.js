@@ -405,11 +405,10 @@ provoda.Model.extendTo(PartsSwitcher, {
 	addPart: function(model) {
 		if (!this.context_parts[model.model_name]){
 			this.context_parts[model.model_name] = model;
-			this.addChild(model);
 
 			var array = this.getChild('context_parts') || [];
 			array.push(model);
-			this.setChild('context_parts', array, true);
+			this.setChild('context_parts', array);
 
 		}
 	},
@@ -459,6 +458,7 @@ provoda.View.extendTo(ActionsRowUI, {
 
 var BaseCRowUI = function(){};
 provoda.View.extendTo(BaseCRowUI, {
+	dom_rp: true,
 	bindClick: function(){
 		if (this.button){
 			var md = this.md;

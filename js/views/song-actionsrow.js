@@ -55,6 +55,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.c = parent_c.children('.share-song');
 		this.button = buttons_panel.find('.pc-place .pc-rupor');
 		this.users_c = $('<div class="users-list"></div>').appendTo(this.c);
+		this.dom_related_props.push('button','users_c');
 		$("<h3></h3>").text(localize('post-song')).appendTo(this.users_c);
 		this.bindClick();
 
@@ -193,9 +194,11 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		searcher: PlaylistAddSsearchView
 	},
 	createDetailes: function(){
-		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
+		var parent_c = this.parent_view.row_context; 
+		var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.addsong-to-playlist');
 		this.button = buttons_panel.find('.pc-place .pc-add');
+		this.dom_related_props.push('button');
 		this.bindClick();
 	},
 	expand: function() {
@@ -216,7 +219,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 
 
 		this.pl_creation_b = $("<div class='create-named-playlist hidden suggest'></div>").click(function() {
-			_this.md.createPlaylist();
+			_this.md.findAddPlaylist();
 		});
 		this.addWayPoint(this.pl_creation_b);
 		this.pl_creation_b_text = $('<span></span>');
@@ -278,6 +281,7 @@ BaseCRowUI.extendTo(LoveRowUI, {
 		var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.love-song');
 		this.button = buttons_panel.find('.pc-place .pc-love');
+		this.dom_related_props.push('button');
 
 		this.bindClick();
 	},
@@ -301,6 +305,7 @@ BaseCRowUI.extendTo(ScrobbleRowUI, {
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.last-fm-scrobbling');
 		this.button = buttons_panel.find('.lfm-scrobbling-button');
+		this.dom_related_props.push('button');
 		this.bindClick();
 
 	},
@@ -342,7 +347,7 @@ BaseCRowUI.extendTo(RepeatSongRowView, {
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c =  parent_c.children('.rept-song');
 		this.button = buttons_panel.find('.rept-song-button');
-
+		this.dom_related_props.push('button');
 		this.bindClick();
 	},
 	expand: function() {
@@ -360,8 +365,8 @@ BaseCRowUI.extendTo(RepeatSongRowView, {
 
 var TrackActionsRowUI = function() {};
 ActionsRowUI.extendTo(TrackActionsRowUI, {
+	dom_rp: true,
 	createBase: function(){
-
 		this.c = this.parent_view.song_actions_c;
 		this.row_context = this.c.children('.row-song-context');
 
@@ -375,6 +380,8 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		this.parent_view.on('state-change.mp_show-end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});
+		this.dom_related_props.push('row_context', 'buttons_panel', 'arrow');
+
 	},
 	children_views: {
 		"row-repeat-song": {
@@ -429,7 +436,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		this.vol_cc = this.buttons_panel.find('.volume-control');
 		this.vol_hole = this.vol_cc.find('.v-hole');
 		this.vol_bar = this.vol_hole.find('.v-bar');
-
+		this.dom_related_props.push('vol_cc', 'vol_hole', 'vol_bar');
 		var _this = this;
 
 		var getClickPosition = function(e, node){

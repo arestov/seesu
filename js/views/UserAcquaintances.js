@@ -99,9 +99,11 @@ PageView.extendTo(UserAcquaintancesListView, {
 
 var UserAcqPreview = function() {};
 provoda.View.extendTo(UserAcqPreview, {
+	dom_rp: true,
 	createBase: function() {
 		this.c = $("<span></span>");
 		this.userimg = $('<img/>').attr('src', 'http://vk.com/images/camera_b.gif').appendTo(this.c);
+		this.dom_related_props.push('userimg');
 		
 	},
 	'stch-user_photo': function(state) {
@@ -112,6 +114,7 @@ provoda.View.extendTo(UserAcqPreview, {
 });
 var UserAcquaintancesListPreview = function() {};
 provoda.View.extendTo(UserAcquaintancesListPreview, {
+	dom_rp: true,
 	createBase: function() {
 		this.c = $('<div class="user_acqes-preview"></div>');
 		this.sended_tome_c = $('<span></span>').appendTo(this.c);
@@ -125,6 +128,7 @@ provoda.View.extendTo(UserAcquaintancesListPreview, {
 		
 		this.acqs_frsmone_c = $('<span></span>').appendTo(this.c);
 		this.acqs_frme_c = $('<span></span>').appendTo(this.c);
+		this.dom_related_props.push('sended_tome_c', 'acqs_frsmone_c', 'acqs_frme_c');
 	},
 	children_views: {
 		acqs_from_someone: {

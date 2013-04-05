@@ -432,6 +432,43 @@ var gunm = function(lev){
 
 };
 
+var routePathByModels = function(pth_string, start_page) {
+	var pth = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
+
+	var cur_md = start_page;
+	var tree_parts_group = null;
+	for (var i = 0; i < pth.length; i++) {
+		if (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]]){
+			if (!tree_parts_group){
+				tree_parts_group = [];
+			}
+			tree_parts_group.push(pth[i]);
+			continue;
+		} else {
+			var path_full_string;
+			if (tree_parts_group){
+				path_full_string = [].concat(tree_parts_group, [pth[i]]).join('/');
+			} else {
+				path_full_string = pth[i];
+			}
+			tree_parts_group = null;
+			var md = cur_md.findSPbyURLPart(path_full_string);
+			if (md){
+				cur_md = md;
+			} else {
+				break;
+			}
+
+		}
+
+		
+	}
+	if (cur_md){
+		cur_md.showOnMap();
+	}
+	return cur_md;
+};
+
 var hashChangeRecover = function(e, soft){
 	var url = e.newURL;
 	su.map.startChangesCollecting({
@@ -442,7 +479,8 @@ var hashChangeRecover = function(e, soft){
 	if (state_from_history){
 		state_from_history.data.showOnMap();
 	} else{
-
+		routePathByModels(url.replace(/\ ?\$...$/, ''), su.start_page);
+		/*
 		var finded_path = routePath(url.replace(/\ ?\$...$/, ''), route_tree);
 		if (!finded_path.length){
 			if (!soft){
@@ -450,7 +488,7 @@ var hashChangeRecover = function(e, soft){
 			}
 		} else {
 			routeAppByPath(finded_path);
-		}
+		}*/
 	}
 	su.map.finishChangesCollecting();
 };

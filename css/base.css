@@ -48,7 +48,7 @@ h5{
 
 a.js-serv{
 	white-space: nowrap;
-	color:#ABABAB;
+	color: hsl(0, 0%, 75%);
 	cursor: pointer;
 	padding: 0.286rem;
 	background: #555;
@@ -145,16 +145,15 @@ a.desc{
 .nav-button{
 	display: inline-block;
 	padding:4px 8px;
-	border-left:1px solid #751679;
 	border-radius:6px;
 }	
 .nnav, .nav-button{
 
 	position:relative;
 	overflow: visible;
-	border-top:1px solid #C16CC6;
-	border-right:1px solid #751679;
-	border-bottom:1px solid #580A5C;
+	border-top:1px solid #777;
+	border-right:1px solid #333;
+	border-bottom:1px solid #111;
 	background:url(../i/nav/button-gradient.png) repeat-x 100% 0;
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect"}');
 	
@@ -191,7 +190,7 @@ a.desc{
 	left:0;
 	display:block;
 	height:28px;
-	border-bottom:1px solid #783B7D;
+	border-bottom:1px solid #444;
 	border-radius:0 0 6px 0;
 	content: " ";
 }
@@ -209,6 +208,7 @@ a.desc{
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"hover-state"}');
 		}
 .nnav:active, .nav-button:active{
+	border-top-color: #666;
 	background-image:url(../i/nav/button-gradient-active.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"active-state"}');
 	text-shadow:none;

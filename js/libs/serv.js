@@ -282,6 +282,23 @@ getTargetField = function(obj, field){
 	return target;
 };
 spv.getTargetField = getTargetField;
+spv.setTargetField = function(obj, field, value) {
+	var tree = field.split('.');
+	var cur_obj = obj;
+	for (var i=0; i < tree.length; i++) {
+		var cur = tree[i];
+		if (i != tree.length -1){
+			var target = cur_obj[cur];
+			if (!target){
+				target = cur_obj[cur] = {};
+			}
+			cur_obj = target;
+		} else {
+			cur_obj[cur] = value;
+		}
+	}
+	return true;
+};
 
 var getFieldValueByRule = function(obj, rule){
 	if (rule instanceof Function){
@@ -574,6 +591,10 @@ createPrototype = function(constr, assi_prototype, clone_prototype){
 		// Enforce the constructor to be what we expect
 		namedClass.prototype.constructor = namedClass;
 
+		if (namedClass.prototype.onExtend){
+			namedClass.prototype.onExtend.call(namedClass.prototype);
+		}
+
 		// And make this class extendable
 		namedClass.extendTo = Class.extendTo;
 		namedClass.extend = Class.extend;
@@ -653,7 +674,12 @@ throttle = function(fn, timeout, ctx) {
 
 };
 spv.throttle = throttle;
-
+spv.capitalize = function(string, just_first) {
+	var test = just_first ? (/(^|\s)(.)/) : (/(^|\s)(.)/g);
+	return string.replace(test, function(m, p1, p2){
+		return p1+p2.toUpperCase();
+	});
+};
 
 (function(){
 	var splitter = new RegExp("\\%[^\\s\\%]+?\\%", 'gi');
