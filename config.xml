@@ -39,5 +39,5 @@
 	<access subdomains="true" origin="http://google-analytics.com/" />
 	<access subdomains="true" origin="http://userapi.com/" />
 	<access subdomains="true" origin="http://vk.me/" />
-	<access					  origin="http://arestov.github.com/" />
+	<access					  origin="http://arestov.github.io/" />
 </widget>
