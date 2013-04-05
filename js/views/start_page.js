@@ -50,7 +50,7 @@ provoda.View.extendTo(StartPageView, {
 		}
 	},
 	complex_states: {
-		'mp_show-end': {
+		'mp_show_end': {
 			depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
 			fn: function(anim, vis_mp_show, mp_show) {
 				if (anim) {
@@ -63,6 +63,12 @@ provoda.View.extendTo(StartPageView, {
 				} else {
 					return mp_show;
 				}
+			}
+		},
+		autofocus: {
+			depends_on: ['mp_show_end', 'mp_has_focus'],
+			fn: function(shw_end, focus) {
+				return focus && shw_end && shw_end.userwant;
 			}
 		}
 	},

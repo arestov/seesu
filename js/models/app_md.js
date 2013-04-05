@@ -115,7 +115,7 @@ provoda.Model.extendTo(appModelBase, {
 		if (target_md){
 			target_md.updateState('mp_has_focus', true);
 
-			this.updateState('show_search_form', target_md.state('needs_search_from'));
+			this.updateState('show_search_form', !!target_md.state('needs_search_from'));
 			this.updateState('full_page_need', !!target_md.full_page_need);
 			this.updateState('current_mp_md', target_md);
 			//target_md.updateState('mp-highlight', false);
@@ -146,7 +146,7 @@ provoda.Model.extendTo(appModelBase, {
 				}
 			}
 
-		});
+		}, {immediately: true});
 		md.on('mpl-detach', function(){
 			var navigation = _this.getChild('navigation');
 			var target_array = _this.getChild(place) || [];
@@ -162,7 +162,7 @@ provoda.Model.extendTo(appModelBase, {
 					_this.setChild(place, new_tarr);
 				}
 			}
-		});
+		}, {immediately: true});
 	},
 	showMOnMap: function(model) {
 
@@ -359,7 +359,7 @@ appModelBase.extendTo(appModel, {
 					if (e.value){
 						_this.search_el = this;
 					}
-				});
+				}, {immediately: true});
 
 				md.showOnMap();
 				lev = md.lev;

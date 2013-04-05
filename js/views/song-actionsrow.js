@@ -377,7 +377,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		this.arrow = this.row_context.children('.rc-arrow');
 		var _this = this;
 
-		this.parent_view.on('state-change.mp_show-end', function(e){
+		this.parent_view.on('state-change.mp_show_end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});
 		this.dom_related_props.push('row_context', 'buttons_panel', 'arrow');
