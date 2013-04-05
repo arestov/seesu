@@ -206,17 +206,17 @@
 	width: 15rem;
 	}
 .preview_area{
-	background: #545454;
+	1background: #545454;
 	border-radius: 0.5rem;
-	padding: 0 0 0.5rem;
 	margin-bottom: 1rem;
 	}
 	.preview_area .area_for_button{
-		background: #545454;
-		padding: 0;
+		1background: #545454;
 		margin-bottom: 0;
 		}
-
+	.preview_area .pl-auth-con{
+		padding-bottom: 0.5rem;
+		}
 	.page-scheme .preview_area{
 		margin-bottom: 0;
 		padding-bottom: 0;
@@ -227,18 +227,23 @@
 	cursor: pointer;
 	padding: 0 0 0.5rem;
 	border-radius: 0.5rem;
-	background: #545454;
 	margin-bottom: 1rem;
+	border: 1px dashed #616161;
 	}
 	.area_for_button .area-button{
 		margin-bottom: 0;
+		border-color: transparent;
+		padding-bottom: 0rem;
+		}
+	.page-scheme .area_for_button .area-button{
+		padding-bottom: 0.5rem;
 		}
 	.area_for_button .area-description {
 		
 		display: block;
 		font-size: 0.8em;
 		
-		color: #707070;
+		color: hsl(0, 0%, 55%);
 		}
 	.access-request .area_for_button .area-description {
 		display: none;
@@ -284,7 +289,7 @@
 		}
 	
 	.page-scheme .area_for_button{
-		margin-bottom: 0;
+		margin-bottom: 0.5rem;
 		padding-bottom: 0;
 		}
 		.page-scheme .area_for_button .area-description{
@@ -294,27 +299,36 @@
 	display: block;
 	margin-bottom:1rem;
 	padding: 0.5rem 1rem;
-	border-top: 1px solid #595959;
-	border-bottom: 1px solid hsl(0, 0%, 29%);
-	border-radius: 1rem;
-	background: #4f4f4f;
+	
+	border-radius: 0.6rem;
+	
 
-	background-image: -o-linear-gradient(#525252,#4d4d4d);
-	background-image: -moz-linear-gradient(100% 0% 270deg, #525252, #4d4d4d);
-	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#525252), to(#4d4d4d)) ;
-	background-image: linear-gradient(#525252,#4d4d4d);
-	color: #aaa;
+	border: 1px dashed #616161;
+
+
+	
+	color: hsl(0, 0%, 70%);
 	cursor: pointer;
 	}
-	.area_for_button:hover .area-button,
+	.area_for_button:hover,
 	.no_arfb .area-button:hover{
-		background-image: -o-linear-gradient(#525252,#4d4d4d);
-		background-image: -moz-linear-gradient(100% 0% 270deg, #525252, #4d4d4d);
-		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#545454), to(#4f4f4f)) ;
-		background-image: linear-gradient(#525252,#4d4d4d);
+		background: #4f4f4f;
+		border-color: transparent;
+		border-top: 1px solid #5E5E5E;
+		/* 
+		#5E5E5E;
+		#545454), to(#4D4D4D));
+		#474747;
+		*/
+		border-bottom: 1px solid #474747;
+		background-image: -o-linear-gradient(#545454,#4D4D4D);
+		background-image: -moz-linear-gradient(100% 0% 270deg, #545454, #4D4D4D);
+		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#545454), to(#4D4D4D)) ;
+		background-image: linear-gradient(#545454,#4D4D4D);
 		}
-	.area_for_button:active .area-button,
+	.area_for_button:active,
 	.no_arfb .area-button:active{
+		
 		border-color:transparent;
 		background-image: none;
 		box-shadow: inset 0 0 10px 1px #454545;

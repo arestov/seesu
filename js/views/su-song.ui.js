@@ -1,6 +1,7 @@
 var songUI = function(){};
 
 provoda.View.extendTo(songUI, {
+	dom_rp: true,
 	createDetailes: function(){
 		this.rowcs = {};
 		this.createBase();
@@ -133,7 +134,7 @@ provoda.View.extendTo(songUI, {
 			this.artist_name_c.text(name);
 		},
 		'track': function(name) {
-			this.titlec.toggleClass('has-no-track-title', !name);
+			this.titlec.toggleClass('has-no_track_title', !name);
 			
 			this.track_name_c.text(name);
 		},
@@ -202,71 +203,6 @@ provoda.View.extendTo(songUI, {
 		this.expand();
 		this.updateSongListeners();
 		this.c.addClass('viewing-song');
-		
-	},
-	show_artist_info: function(r, ainf, oa){
-		var _mui = this;
-		var info	 = r.artist || false;
-		var similars, artist, tags, bio, image, has_some_info_extenders;
-		
-		if (info) {
-			var ai = parseArtistInfo(r);
-			
-			similars = ai.similars;
-			artist	 = ai.artist;
-			tags	 = ai.tags;
-			bio		 = ai.bio;
-		//	image	 = (ai.images && ai.images[2]) || lfm_image_artist;
-			this.photo_data.first_image = ai.images;
-
-		}
-			
-		if (artist && artist == oa) {
-			
-			
-		} else{
-			return false;
-		}
-
-		
-		//$(document.createDocumentFragment());//$(document.createTextNode(""));
-
-		if (listeners){
-		
-			
-		}
-		if (playcount){
-			
-		}
-
-		if (playcount || listeners){
-			
-			if (!has_some_info_extenders){
-				has_some_info_extenders = true;
-			}
-		}
-
-		if (bio){
-			
-			if (!has_some_info_extenders){
-				has_some_info_extenders = true;
-			}
-		}
-		
-		if (tags && tags.length) {
-			
-		}
-		
-		if (similars && similars.length) {
-			if (!has_some_info_extenders){
-				has_some_info_extenders = true;
-			}
-			
-		}
-		
-		if (has_some_info_extenders){
-			
-		}
 		
 	},
 	'stch-bio': {
@@ -405,7 +341,7 @@ provoda.View.extendTo(songUI, {
 		'tags-c': function() {
 			var tags_p = $("<p class='artist-tags hidden'></p>").append('<span class="simple-header"><em>'+localize('Tags')+':</em></span>');
 			this.tags_text_c = $('<span class=""></span>').appendTo(tags_p).append('<span class="forced-end"></span>');
-			
+			this.dom_related_props.push('tags_text_c');
 			return tags_p;
 			
 		},
@@ -424,6 +360,7 @@ provoda.View.extendTo(songUI, {
 			});
 
 			this.similars_text_c = $('<span class="desc-text"></span>').appendTo(similars_p).append('<span class="forced-end"></span>');
+			this.dom_related_props.push('similars_text_');
 			this.addWayPoint(similars_link, {
 				simple_check: true
 			});
@@ -466,7 +403,8 @@ provoda.View.extendTo(songUI, {
 		var _this = this;
 		this.c = $('<li></li>');
 		
-
+		this.dom_related_props.push('node', 'player_song_mark', 'fsearch_status_c', 'song_imagec', 'titlec', 'artist_name_c', 'track_name_c');
+		
 		this.node = $("<a></a>")
 			.addClass('track-node waiting-full-render')
 			.click(function(){
@@ -505,7 +443,7 @@ provoda.View.extendTo(songUI, {
 		this.song_imagec = $('<span class="song-image-con"></span>').appendTo(this.node);
 
 
-		this.titlec = $('<span class="full-song-title has-no-track-title"></span>')
+		this.titlec = $('<span class="full-song-title has-no_track_title"></span>')
 			.appendTo(this.node);
 		
 
@@ -643,7 +581,8 @@ provoda.View.extendTo(songUI, {
 	
 
 		this.updateSongContext(true);
-		
+
+		this.dom_related_props.push('a_info', 't_info', 'dominator_head', 'song_actions_c', 'rowcs', 'extend_info', 't_users');
 		this.requestAll();
 	},
 	updateSongContext: function(){
@@ -730,6 +669,9 @@ provoda.View.extendTo(songUI, {
 	},
 	update_artist_info: function(artist, a_info, show_link_to_artist_page){
 		var _this = this;
+		
+		this.dom_related_props.push('ainf', 'photo_c', 'photo_data', 'img_panorama');
+
 		if (artist && !this.has_artist_info){
 			this.has_artist_info = true;
 			this.ainf = {
@@ -812,8 +754,12 @@ provoda.View.extendTo(songUI, {
 									queue: _this.root_view.lfm_imgq,
 									cache_allowed: true
 								}).done(function(){
+									if (!_this.isAlive()){
+										return;
+									}
 									if (first_image && _this.first_image){
 										_this.first_image.remove();
+										_this.first_image = null;
 									}
 									
 

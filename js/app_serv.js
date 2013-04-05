@@ -1532,6 +1532,13 @@ jsLoadComplete(function() {
 		}
 		if (!structure){
 			try {
+				structure = JSON.parse(decodeURI(bgIString));
+			} catch (e){
+				errors.push(e);
+			}
+		}
+		if (!structure){
+			try {
 				structure = JSON.parse(bgIString.replace(/\\([\s\S])/gi, '$1'));
 			} catch (e) {
 				errors.push(e);

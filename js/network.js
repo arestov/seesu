@@ -310,8 +310,7 @@ Class.extendTo(GoogleSoundcloud, {
 			type: "GET",
 			dataType: this.crossdomain ? "json": "jsonp",
 			data: params_data,
-			timeout: 20000,
-			thisOriginAllowed: this.thisOriginAllowed
+			timeout: 20000
 		}, {
 			cache_ajax: this.cache_ajax,
 			nocache: options.nocache,

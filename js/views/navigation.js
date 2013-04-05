@@ -1,6 +1,7 @@
 var baseNavUI = function() {};
 
 provoda.View.extendTo( baseNavUI, {
+	dom_rp: true,
 	createBase: function() {
 		this.c = $('<span class="nav-item"><span>.</span><b></b></span>');
 	},
@@ -11,6 +12,7 @@ provoda.View.extendTo( baseNavUI, {
 		if (text_place){
 			this.text_place = text_place;
 		}
+		this.dom_related_props.push('text_place');
 	},
 	stack_types: ['top', 'bottom', 'middle'],
 	state_change: {
