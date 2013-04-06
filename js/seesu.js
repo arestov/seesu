@@ -154,15 +154,15 @@ appModel.extendTo(seesuApp, {
 			.init(this.start_page)
 			.on('map-tree-change', function(nav_tree) {
 				_this.changeNavTree(nav_tree);
-			})
+			}, {immediately: true})
 			.on('changes', function(changes) {
 				//console.log(changes);
 				_this.animateMapChanges(changes);
-			})
+			}, {immediately: true})
 			.on('title-change', function(title) {
 				_this.setDocTitle(title);
 
-			})
+			}, {immediately: true})
 			.on('url-change', function(nu, ou, data, replace) {
 				jsLoadComplete(function(){
 					if (replace){
@@ -171,16 +171,16 @@ appModel.extendTo(seesuApp, {
 						navi.set(nu, data.resident);
 					}
 				});
-			})
+			}, {immediately: true})
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
 					//su.trackPage(nv.map_level.resident.page_name);
 				}
 
-			})
+			}, {immediately: true})
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
 				_this.trackPage(nv.map_level.resident.page_name);
-			})
+			}, {immediately: true})
 			.makeMainLevel();
 
 
