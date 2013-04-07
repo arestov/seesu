@@ -401,7 +401,8 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		}
 	},
 	"stch-vis_volume": function(state) {
-		this.vol_bar.css({
+		return;
+		this.tpl.ancs['v-bar'].css({
 			width: state
 		});
 	},
@@ -410,13 +411,13 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		"vis_volume-hole-width": {
 			depends_on: ['vis_is-visible', 'vis_con-appended'],
 			fn: function(visible, apd){
-				return !!(visible && apd) && this.vol_hole.width();
+				return !!(visible && apd) && this.tpl.ancs['v-hole'].width();
 			}
 		},
 		"vis_volume-bar-max-width": {
 			depends_on: ['vis_volume-hole-width'],
 			fn: function(vvh_w){
-				return vvh_w && vvh_w - ( this.vol_bar.outerWidth() - this.vol_bar.width());
+				return vvh_w && vvh_w - ( this.tpl.ancs['v-bar'].outerWidth() - this.tpl.ancs['v-bar'].width());
 			}
 		},
 		"vis_volume": {
@@ -434,9 +435,13 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 	},
 	createVolumeControl: function() {
 		this.vol_cc = this.buttons_panel.find('.volume-control');
-		this.vol_hole = this.vol_cc.find('.v-hole');
-		this.vol_bar = this.vol_hole.find('.v-bar');
-		this.dom_related_props.push('vol_cc', 'vol_hole', 'vol_bar');
+		this.tpl = this.getTemplate(this.vol_cc);
+
+
+		var events_anchor = this.vol_cc;
+		var pos_con = this.tpl.ancs['v-hole'];
+
+		this.dom_related_props.push('vol_cc', 'tpl');
 		var _this = this;
 
 		var getClickPosition = function(e, node){
@@ -471,9 +476,9 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		var touchDown = function(e){
 			path_points = [];
 			e.preventDefault();
-			path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
+			path_points.push({cpos: getClickPosition(e, pos_con), time: e.timeStamp});
 			volumeChange();
-			_this.vol_cc.addClass('interactive-state');
+			events_anchor.addClass('interactive-state');
 		};
 		var touchMove = function(e){
 
@@ -481,7 +486,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 				return true;
 			}
 			e.preventDefault();
-			path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
+			path_points.push({cpos: getClickPosition(e, pos_con), time: e.timeStamp});
 			volumeChange();
 		};
 		var touchUp = function(e){
@@ -489,7 +494,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			if (e.which && e.which != 1){
 				return true;
 			}
-			$(_this.vol_cc[0].ownerDocument)
+			$(events_anchor[0].ownerDocument)
 				.off('mouseup', touchUp)
 				.off('mousemove', touchMove);
 
@@ -497,15 +502,15 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			if (!travel){
 				//
 			}
-			_this.vol_cc.removeClass('interactive-state');
+			events_anchor.removeClass('interactive-state');
 
 			path_points = null;
 
 			
 		};
-		_this.vol_cc.on('mousedown', function(e){
+		events_anchor.on('mousedown', function(e){
 
-			$(_this.vol_cc[0].ownerDocument)
+			$(events_anchor[0].ownerDocument)
 				.off('mouseup', touchUp)
 				.off('mousemove', touchMove);
 
@@ -513,7 +518,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 				return true;
 			}
 
-			$(_this.vol_cc[0].ownerDocument)
+			$(events_anchor[0].ownerDocument)
 				.on('mouseup', touchUp)
 				.on('mousemove', touchMove);
 
