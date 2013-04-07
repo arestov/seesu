@@ -1143,59 +1143,6 @@ Class.extendTo(Template, {
 		}
 		return sfy_values;
 	},
-	bindStandartChange: function(node, opts) {
-		var calculator = opts.calculator;
-		var all_vs;
-		if (!calculator){
-			if (opts.complex_statement){
-				calculator = angbo.interpolateExpressions(opts.complex_statement);
-				var all_values = $filter(calculator.parts,'propsToWatch');
-				all_vs = [];
-				all_vs = all_vs.concat.apply(all_vs, all_values);
-			} else if (opts.statement){
-				calculator = angbo.parseExpression(opts.statement);
-				all_vs = calculator.propsToWatch;
-			}
-		}
-		if (calculator){
-			var original_value = opts.getValue.call(this, node);
-			if (opts.simplifyValue){
-				original_value = opts.simplifyValue.call(this, original_value);
-			}
-
-			var sfy_values = this.getFieldsTreesBases(all_vs);
-			var _this = this;
-
-			this.states_watchers.push({
-				values: all_vs,
-				sfy_values: sfy_values,
-				checkFunc: function(states) {
-					var new_value = calculator(states);
-					if (opts.simplifyValue){
-						new_value = opts.simplifyValue.call(_this, new_value);
-					}
-					if (original_value != new_value){
-						opts.setValue.call(_this, node, new_value, original_value);
-						original_value = new_value;
-					}
-				}
-			});
-		}
-	},
-	dom_helpres: {
-		getTextValue: function(node) {
-			return $(node).text();
-		},
-		setTextValue: function(node, new_value, old_value) {
-			$(node).text(new_value);
-		},
-		getClassName: function(node) {
-			return node.className;
-		},
-		setClassName: function(node, new_value, old_value) {
-			node.className = new_value;
-		}
-	},
 	scope_generators:{
 		'pv-view': function(node, attr_obj) {
 			var attr_value = attr_obj.value;
@@ -1360,8 +1307,20 @@ Class.extendTo(Template, {
 		},
 		'pv-props': function(node, attr_obj) {
 			var complex_value = attr_obj.value;
-			var completcs = complex_value.match(/(.*?)\s*?:s*?\{\{[\S\s]*?\}\}/);
-			//"style.width: {{play_progress}} title: {{full_name}} style.background-image: {{album_cover_url}}".match(/([\S\s]*?:[\S\s]*?\{\{[\S\s]*?\}\})/gi);
+			var completcs = complex_value.match(/\S[\S\s]*?\:[\S\s]*?\{\{[\S\s]*?\}\}/gi);
+			for (var i = 0; i < completcs.length; i++) {
+				completcs[i] = completcs[i].replace(/^\s*|s*?$/,'').split(/\s*\:\s*/);
+				var prop = completcs[i][0];
+				var statement = completcs[i][1] && completcs[i][1].replace(/(^\{\{)|(\}\}$)/gi,'');
+				
+				if (!prop || !statement){
+					throw new Error('wrong declaration: ' + complex_value);
+					//return;
+				}
+				this.bindPropChange(node, prop, statement);
+			}
+			//sample
+			//"style.width: {{play_progress}} title: {{full_name}} style.background-image: {{album_cover_url}}"
 
 		},
 		'pv-anchor': function(node, attr_obj) {
@@ -1382,6 +1341,85 @@ Class.extendTo(Template, {
 			}
 			*/
 
+		}
+	},
+	dom_helpres: {
+		getTextValue: function(node) {
+			return $(node).text();
+		},
+		setTextValue: function(node, new_value, old_value) {
+			$(node).text(new_value);
+		},
+		getClassName: function(node) {
+			return node.className;
+		},
+		setClassName: function(node, new_value, old_value) {
+			node.className = new_value;
+		}
+	},
+	convertFieldname: function(prop_name) {
+		var parts = prop_name.replace(/^-/, '').split('-');
+		if (parts.length > 1){
+			for (var i = 1; i < parts.length; i++) {
+				parts[i] = spv.capitalize(parts[i]);
+			}
+		}
+		return parts.join('');
+	},
+	bindPropChange: function(node, prop, statement) {
+		var parts = prop.split('.');
+		for (var i = 0; i < parts.length; i++) {
+			parts[i] = this.convertFieldname(parts[i]);
+		}
+		prop = parts.join('.');
+
+		this.bindStandartChange(node, {
+			statement: statement,
+			getValue: function(node) {
+				return spv.getTargetField(node, prop);
+			},
+			setValue: function(node, value) {
+				return spv.setTargetField(node, prop, value);
+			}
+		});
+	},
+	bindStandartChange: function(node, opts) {
+		var calculator = opts.calculator;
+		var all_vs;
+		if (!calculator){
+			if (opts.complex_statement){
+				calculator = angbo.interpolateExpressions(opts.complex_statement);
+				var all_values = $filter(calculator.parts,'propsToWatch');
+				all_vs = [];
+				all_vs = all_vs.concat.apply(all_vs, all_values);
+			} else if (opts.statement){
+				calculator = angbo.parseExpression(opts.statement);
+				all_vs = calculator.propsToWatch;
+			}
+		}
+		if (calculator){
+			var original_value = opts.getValue.call(this, node);
+			if (opts.simplifyValue){
+				original_value = opts.simplifyValue.call(this, original_value);
+			}
+
+			var sfy_values = this.getFieldsTreesBases(all_vs);
+			var _this = this;
+
+			this.states_watchers.push({
+				values: all_vs,
+				sfy_values: sfy_values,
+				checkFunc: function(states) {
+					var new_value = calculator(states);
+					if (opts.simplifyValue){
+						new_value = opts.simplifyValue.call(_this, new_value);
+					}
+					if (original_value != new_value){
+						opts.setValue.call(_this, node, new_value, original_value);
+						original_value = new_value;
+					}
+				}
+			});
 		}
 	},
 	setStates: function(states) {
