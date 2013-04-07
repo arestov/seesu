@@ -452,7 +452,7 @@ provoda.View.extendTo(appModelView, {
 	'stch-show_search_form': function(state) {
 		this.els.search_form.toggleClass('hidden', !state);
 		if (!state){
-			//this.search_input[0].blur();
+			this.search_input[0].blur();
 		}
 	},
 	"animation-type":{
