@@ -204,7 +204,7 @@ var FilesInvestg;
 
 					//_this.trigger('child-change.sources_list', _this.sources_list);
 				})
-				.on('state-change.big-files-list', function(e) {
+				.on('state-change.big_files_list ', function(e) {
 					var array = e && e.value || [];
 					for (var i = 0; i < array.length; i++) {
 						_this.delayFileCheck(array[i]);
@@ -763,9 +763,9 @@ var getAverageDurations = function(mu_array, time_limit){
 				}
 				
 			}
-			var original_array = this.state('big-files-list') || [];
+			var original_array = this.state('big_files_list ') || [];
 			original_array = original_array.concat(allowed_files);
-			this.updateState('big-files-list', original_array);
+			this.updateState('big_files_list ', original_array);
 		},
 		haveSearch: function(search_name){
 			var o = this.getMasterSlaveSearch(search_name);
