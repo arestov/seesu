@@ -141,13 +141,15 @@ mapLevelModel.extendTo(UserAcquaintancesLists, {
 		if (!this.state('current_user')){
 			throw new Error('there is no current_user!');
 		}
+		
+
 		var filtered = $filter(new_array, 'item.accepted', function(v){
 			return !!v;
 		});
 
 		var concated = [].concat(filtered, filtered.not);
 
-		this.removeChildren(array_name);
+		
 
 		for (var i = 0; i < concated.length; i++) {
 			var cur = concated[i];
@@ -169,7 +171,11 @@ mapLevelModel.extendTo(UserAcquaintancesLists, {
 
 			concated[i] = user_acq;
 		}
-		this.setChild(array_name, concated, true);
+		this.removeChildren(array_name);
+		this.collectViewsGarbadge();
+
+		this.setChild(array_name, concated);
+
 	},
 	removeChildren: function(array_name) {
 		var array = this.getChild(array_name) || [];

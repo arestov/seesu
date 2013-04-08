@@ -16,17 +16,15 @@ provoda.addPrototype("baseSong",{
 		cloneObj(this, opts.omo, false, ['artist', 'track']);
 		this.omo = opts.omo;
 
-		var states = {
-			'no-track-title': false
-		};
+		this.init_states['no_track_title'] = false;
 		if (opts.omo.artist){
-			states['artist'] = opts.omo.artist;
+			this.init_states['artist'] = opts.omo.artist;
 		}
 		if (opts.omo.track){
-			states['track']= opts.omo.track;
+			this.init_states['track']= opts.omo.track;
 		}
-		states['url_part'] = this.getURL();
-		this.updateManyStates(states);
+		this.init_states['url_part'] = this.getURL();
+		//this.updateManyStates(states);
 
 		var _this = this;
 		this.on('request', function(rq) {
@@ -55,7 +53,7 @@ provoda.addPrototype("baseSong",{
 				return this.getFullName(artist, track, true);
 			}
 		},
-		'full-title': {
+		'nav_title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track){
 				return this.getFullName(artist, track);
@@ -87,7 +85,7 @@ provoda.addPrototype("baseSong",{
 			}
 		},
 		'has-none-files-to-play': {
-			depends_on: ['search_complete', 'no-track-title', 'mf_cor_has_available_tracks'],
+			depends_on: ['search_complete', 'no_track_title', 'mf_cor_has_available_tracks'],
 			fn: function(scomt, ntt, mf_cor_tracks) {	
 				if (this.mf_cor && !mf_cor_tracks){
 					if (this.mf_cor.isSearchAllowed()){
@@ -173,10 +171,6 @@ provoda.addPrototype("baseSong",{
 			n = this.track;
 		}
 		return n || 'no title';
-	},
-	updateNavTexts: function() {
-		var title = this.state('full-title');
-		this.updateState('nav_title', title);
 	},
 	playNext: function(auto) {
 		if (this.state('rept-song')){
@@ -301,15 +295,16 @@ provoda.addPrototype("baseSong",{
 	},
 	setSongName: function(song_name, full_allowing, from_collection, last_in_collection) {
 		this.track = song_name;
-		this.updateState('track', song_name);
-		this.updateNavTexts();
+		this.updateManyStates({
+			'track': song_name,
+			'url_part': this.getURL()
+		});
 
 		this.findFiles({
 			only_cache: !full_allowing,
 			collect_for: from_collection,
 			last_in_collection: last_in_collection
 		});
-		this.updateState('url_part', this.getURL());
 	},
 	getRandomTrackName: function(full_allowing, from_collection, last_in_collection){
 		this.updateState('track_name_loading', true);
@@ -475,7 +470,7 @@ provoda.addPrototype("baseSong",{
 							var some_track = tracks_list[Math.floor(Math.random()*tracks_list.length)];
 							_this.setSongName(some_track.track, full_allowing, from_collection, last_in_collection);
 						} else {
-							_this.updateState("no-track-title", true);
+							_this.updateState("no_track_title", true);
 							
 						}
 

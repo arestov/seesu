@@ -28,11 +28,11 @@
       <path
          d="M 69,28.5 15,28.5 0.5,13"
          id="path3759"
-         style="fill:none;stroke:#4d0951;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+         style="fill:none;stroke:#2a2a2a;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
       <path
          d="M 0.5,13 15,-0.5 l 54,0"
          id="path3757"
-         style="fill:none;stroke:#c365c9;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
+         style="fill:none;stroke:#6a6a6a;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
     </g>
     <style>
       #states-switcher{
@@ -49,7 +49,7 @@
 
       }
       .active-state .figure-filler{
-        fill: #78177D;
+        fill: #333;
         }
       .surf_nav-state .figure-filler{
         fill: #000;
@@ -64,19 +64,19 @@
        gradientUnits="objectBoundingBox">
       <stop
          id="stop5215"
-         style="stop-color:#6f0d75;stop-opacity:1"
+         style="stop-color:#2E2E2E;stop-opacity:1"
          offset="0" />
       <stop
          id="stop5221"
-         style="stop-color:#710d77;stop-opacity:1"
+         style="stop-color:#444;stop-opacity:1"
          offset="0.41999999" />
       <stop
          id="stop5223"
-         style="stop-color:#8c0f93;stop-opacity:1"
+         style="stop-color:#454545;stop-opacity:1"
          offset="0.51999998" />
       <stop
          id="stop5217"
-         style="stop-color:#b526be;stop-opacity:1"
+         style="stop-color:#555;stop-opacity:1"
          offset="1" />
     </linearGradient>
     <linearGradient
@@ -88,19 +88,19 @@
        gradientUnits="objectBoundingBox">
       <stop
          id="stop2993"
-         style="stop-color:#6e0c74;stop-opacity:1"
+         style="stop-color:#333;stop-opacity:1"
          offset="0" />
       <stop
          id="stop2995"
-         style="stop-color:#6e0a74;stop-opacity:1"
+         style="stop-color:#4A4A4A;stop-opacity:1"
          offset="0.41999999" />
       <stop
          id="stop2997"
-         style="stop-color:#910c99;stop-opacity:1"
+         style="stop-color:#4F4F4F;stop-opacity:1"
          offset="0.51999998" />
       <stop
          id="stop2999"
-         style="stop-color:#c82ad1;stop-opacity:1"
+         style="stop-color:#5c5c5c;stop-opacity:1"
          offset="1" />
     </linearGradient>
   </defs>

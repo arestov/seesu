@@ -185,6 +185,7 @@ songsList.extendTo(HypemPlaylist, {
 	init: function() {
 		this._super.apply(this, arguments);
 		this.can_use = this.app.hypem.can_send;
+		this.updateState('browser_can_load', this.can_use);
 		this.updateState('possible_loader_disallowing', localize('Hypem-cant-load'));
 	},
 	page_limit: 20,

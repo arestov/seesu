@@ -33,7 +33,7 @@ a.track-node{
 	overflow:hidden;
 	padding:6px 6px 6px 28px;
 	border:0 !important;
-	color:#8C8C8C;
+	color: hsl(0, 0%, 65%);
 	cursor:pointer;
 	}
 	a.track-node:hover{
@@ -100,7 +100,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 		}
 	.selected-mf .mf-text{
 		margin:0 4px;
-		color:#757575;
+		color: hsl(0, 0%, 55%);
 		}
 .track-progress, .moplas-block .moplas-list li .mf-progress{
 	line-height:1.2;
@@ -190,7 +190,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 
 .song-artist_name {
 	display: block;
-	color: #6B6B6B;
+	color: hsl(0, 0%, 50%);
 	font-size: 0.85rem;
 	}
 
@@ -222,7 +222,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	padding-left: 1rem;
 	min-height: 39px;
 	}
-.has-no-track-title .song-artist_name {
+.has-no_track_title .song-artist_name {
 	color: #8C8C8C;
 	font-size: 1rem;
 	}
@@ -325,7 +325,7 @@ a.track_name_loading:hover{
 	background-size: 1.714rem;
 }
 
-.page-scheme .has-no-track-title .song-track-name{
+.page-scheme .has-no_track_title .song-track-name{
 	display: none;
 }
 
@@ -512,7 +512,7 @@ a.track_name_loading:hover{
 		line-height: 1em;
 		
 		}
-.show-zoom-to-track .has-no-track-title .song-artist_name{
+.show-zoom-to-track .has-no_track_title .song-artist_name{
 	margin-top: 0;
 	}
 .show-zoom-to-track .song-artist_name{

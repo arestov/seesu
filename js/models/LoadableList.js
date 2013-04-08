@@ -4,8 +4,9 @@ var LoadableList,
 
 (function(){
 "use strict";
-LoadableList = function() {};
-mapLevelModel.extendTo(LoadableList, {
+
+var LoadableListBase = function() {};
+mapLevelModel.extendTo(LoadableListBase, {
 	init: function(opts, params) {
 		this._super(opts);
 		this[this.main_list_name] = [];
@@ -16,15 +17,17 @@ mapLevelModel.extendTo(LoadableList, {
 			if (e.value && e.value.userwant){
 				this.preloadStart();
 			}
-			
+
 		}, {skip_reg: true});
 		if (!this.manual_previews){
 			this.on('child-change.' + this.main_list_name, function(e) {
-				if (!e.no_changing_mark){
-					this.setChild(this.preview_mlist_name, e.value, true);
+				if (!e.skip_report){
+					this.setChild(this.preview_mlist_name, e.value);
 				}
 			});
 		}
+		this.excess_data_items = [];
+		this.tumour_data_count = 0;
 	},
 	'compx-list_loading': {
 		depends_on: ['main_list_loading', 'preview_loading'],
@@ -63,8 +66,7 @@ mapLevelModel.extendTo(LoadableList, {
 		this.loadStart();
 	},
 	getLength: function() {
-		var main_list = this[this.main_list_name];
-		return main_list.length;
+		return this[this.main_list_name].length - this.tumour_data_count - (this.excess_data_items && this.excess_data_items.length);
 	},
 	loadStart: function() {
 		if (this.state('more_load_available') && !this.getLength()){
@@ -93,7 +95,6 @@ mapLevelModel.extendTo(LoadableList, {
 			}
 			//this.trigger("load-more");
 		}
-		
 	},
 	setLoaderFinish: function() {
 		this.updateState("has_loader", false);
@@ -105,17 +106,16 @@ mapLevelModel.extendTo(LoadableList, {
 	putRequestedData: function(request, data_list, error) {
 		//console.profile('data list inject');
 		if (!this.request_info || this.request_info.request == request){
-			
+
 
 			if (!error && data_list && data_list.length){
-				
+
 				var mlc_opts = this.getMainListChangeOpts();
 				for (var i = 0; i < data_list.length; i++) {
 					this.addItemToDatalist(data_list[i], true);
 				}
 				this.dataListChange(mlc_opts);
-				
-				
+
 			}
 			if (!error && request && data_list.length < this.page_limit){
 				this.setLoaderFinish();
@@ -127,8 +127,84 @@ mapLevelModel.extendTo(LoadableList, {
 
 	},
 	dataListChange: function(mlc_opts) {
-		
-		this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts || true);
+		this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts);
+	},
+	compareItemsWithObj: function(array, omo, soft) {
+		for (var i = 0; i < array.length; i++) {
+			if (this.compareItemWithObj(array[i], omo, soft)){
+				return array[i];
+			}
+		}
+	},
+	addItemToDatalist: function(obj, silent) {
+		this.addDataItem(obj, silent);
+	},
+	addDataItem: function(obj, skip_changes) {
+		var
+			item,
+			excess_items,
+			work_array = this[this.main_list_name],
+			ml_ch_opts = !skip_changes && this.getMainListChangeOpts();
+
+		if (this.excess_data_items && this.excess_data_items.length){
+			var matched = this.compareItemsWithObj(this.excess_data_items, obj);
+			/*
+			задача этого кода - сделать так, что бы при вставке новых данные всё что лежит в массиве
+			"излишек" должно оставаться в конце массива
+			*/
+			excess_items = this.excess_data_items;
+			if (matched){
+				item = matched;
+				/*если совпадает с предполагаемыми объектом, то ставим наш элемент в конец рабочего массива
+				и удаляем из массива "излишков", а сами излишки в самый конец */
+				work_array = arrayExclude(work_array, excess_items);
+				excess_items = arrayExclude(excess_items, matched);
+				work_array.push(matched);
+				work_array = work_array.concat(excess_items);
+
+			} else {
+				/* если объект не совпадает ни с одним элементом, то извлекаем все излишки,
+				вставляем объект, вставляем элементы обратно */
+				work_array = arrayExclude(work_array, excess_items);
+				work_array.push(item = this.makeDataItem(obj));
+				work_array = work_array.concat(excess_items);
+
+
+			}
+			this.excess_data_items = excess_items;
+		} else {
+			work_array.push(item = this.makeDataItem(obj));
+		}
+
+		this[this.main_list_name] = work_array;
+		if (!skip_changes){
+			this.setChild(this.main_list_name, work_array, ml_ch_opts);
+		}
+		return item;
+	},
+	findMustBePresentDataItem: function(obj) {
+		var matched = this.compareItemsWithObj(this[this.main_list_name], obj);
+		return matched || this.injectExcessDataItem(obj);
+	},
+	injectExcessDataItem: function(obj) {
+		if (this.isDataInjValid && !this.isDataInjValid(obj)){
+			return;
+		}
+		var
+			work_array = this[this.main_list_name],
+			ml_ch_opts = this.getMainListChangeOpts(),
+			item = this.makeDataItem(obj);
+
+		if (!this.cant_find_dli_pos){
+			this.excess_data_items.push(item);
+			work_array.push(item);
+		} else {
+			++this.tumour_data_count;
+			work_array.unshift(item);
+		}
+
+		this.setChild(this.main_list_name, work_array, ml_ch_opts);
+		return item;
 	},
 	requestComplete: function(request, error) {
 		if (!this.request_info || this.request_info.request == request){
@@ -144,6 +220,52 @@ mapLevelModel.extendTo(LoadableList, {
 		}
 		return this;
 	},
+
+
+	//auth things:
+
+	authInit: function() {
+		var _this = this;
+		if (this.map_parent){
+			this.switchPmd(false);
+			this.map_parent.on('state-change.mp_has_focus', function(e) {
+				if (!e.value){
+					_this.switchPmd(false);
+				}
+			});
+		}
+	},
+	authSwitching: function(auth, AuthConstr, params) {
+		var auth_rqb = new AuthConstr();
+		auth_rqb.init({auth: auth, pmd: this}, params);
+		var _this = this;
+		auth_rqb.on('state-change.has_session', function(e) {
+			_this.updateState('has_no_access', !e.value);
+			_this.switchPmd(false);
+		});
+
+		this.setChild('auth_part', auth_rqb);
+
+		this.setPmdSwitcher(this.map_parent);
+
+	},
+	requestList: function() {
+		if (!this.state('has_no_access')){
+			this.loadStart();
+			this.showOnMap();
+		} else {
+			this.map_parent.zoomOut();
+			this.switchPmd();
+		}
+	}
+
+
+	// :auth things
+
+});
+
+LoadableList = function() {};
+LoadableListBase.extendTo(LoadableList, {
 	getHypemArtistsList: function(r) {
 
 	},
@@ -171,7 +293,7 @@ mapLevelModel.extendTo(LoadableList, {
 				console.log('there is no needed attributes');
 				console.log(cur);
 			}
-			
+
 		}
 		return track_list;
 	},
@@ -182,10 +304,10 @@ mapLevelModel.extendTo(LoadableList, {
 			parser = opts.parser;
 
 		var _this = this;
-		request_info.request = this.app.hypem.get(path, opts.data)
+		request_info.request = this.app.hypem.get(path, opts.data, {nocache: this.state('error')})
 			.done(function(r) {
 				var data_list = parser.call(this, r, paging_opts);
-				_this.putRequestedData(request_info.request, data_list);
+				_this.putRequestedData(request_info.request, data_list, !r[0]);
 
 			})
 			.fail(function() {
@@ -261,73 +383,7 @@ mapLevelModel.extendTo(LoadableList, {
 			}
 		}
 		return track_list;
-	},
-
-
-	//auth things:
-
-	authInit: function() {
-		var _this = this;
-		if (this.map_parent){
-			this.switchPmd(false);
-			this.map_parent.on('state-change.mp_has_focus', function(e) {
-				if (!e.value){
-					_this.switchPmd(false);
-				}
-				
-			});
-		}
-	},
-	authSwitching: function(auth, AuthConstr, params) {
-		var auth_rqb = new AuthConstr();
-		auth_rqb.init({auth: auth, pmd: this}, params);
-		var _this = this;
-		
-		auth_rqb.on('state-change.has_session', function(e) {
-			_this.updateState('has_no_access', !e.value);
-			_this.switchPmd(false);
-		});
-
-		this.setChild('auth_part', auth_rqb);
-
-		this.map_parent.on('state-change.vswitched', function(e) {
-			_this.checkPMDSwiched(e.value);
-		});
-
-	},
-	switchPmd: function(toggle) {
-		var new_state;
-		if (typeof toggle == 'boolean')	{
-			new_state = toggle;
-		} else {
-			new_state = !this.state('pmd_vswitched');
-		}
-		if (new_state){
-			if (!this.state('pmd_vswitched')){
-				this.map_parent.updateState('vswitched', this._provoda_id);
-			}
-		} else {
-			if (this.state('pmd_vswitched')){
-				this.map_parent.updateState('vswitched', false);
-			}
-		}
-	},
-	checkPMDSwiched: function(value) {
-		this.updateState('pmd_vswitched', value == this._provoda_id);
-	},
-	requestList: function() {
-		if (!this.state('has_no_access')){
-			this.loadStart();
-			this.showOnMap();
-		} else {
-			this.map_parent.zoomOut();
-			this.switchPmd();
-		}
 	}
-
-
-	// :auth things
-
 });
 
 TagsList = function() {};

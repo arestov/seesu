@@ -6,7 +6,7 @@ var viewOnLevelP = function(md, view) {
 
 var appModelView = function(){};
 provoda.View.extendTo(appModelView, {
-
+	dom_rp: true,
 	createDetailes: function(){
 		this.root_view = this;
 		this.d = this.opts.d;
@@ -47,17 +47,17 @@ provoda.View.extendTo(appModelView, {
 		this.c = $(this.d.body);
 
 		this.c.addClass('app-loaded');
-		this.connectStates();
-		this.connectChildrenModels();
-
-		
 		var ext_search_query = this.els.search_input.val();
 		//must be before start_page view set its value to search_input
-
-		this.requestAll();
 		this.md.checkUserInput({
 			ext_search_query: ext_search_query
 		});
+
+		this.connectStates();
+		this.connectChildrenModels();
+
+		this.requestAll();
+		
 		
 	},
 	reportDomDeath: function() {
@@ -276,22 +276,16 @@ provoda.View.extendTo(appModelView, {
 		if (view){
 			var _this = this;
 
-			var checkFocus = function(opts) {
-				if (opts){
-					if (opts.userwant){
-						_this.search_input[0].focus();
-						_this.search_input[0].select();
-					} else {
-						_this.search_input[0].blur();
-					}
-					
+			var checkFocus = function(state) {
+				if (state){
+					_this.search_input[0].focus();
+					_this.search_input[0].select();
 				}
 			};
-			checkFocus(view.state('mp_show-end'));
 
-			view.on('state-change.mp_show-end', function(e) {
+			view.on('state-change.autofocus', function(e) {
 				checkFocus(e.value);
-			});
+			}, {immediately: true});
 		}
 		this.requestAll();
 	},
@@ -405,11 +399,13 @@ provoda.View.extendTo(appModelView, {
 		}*/
 		var parent_md = md.getParentMapModel();
 		if (parent_md){
-			var mplev_item_view = md.getRooConPresentation();
-			if (mplev_item_view){
+			var mplev_item_view = md.getRooConPresentation(false, false, true);
+			if (mplev_item_view && mplev_item_view.getC().height()){
 				this.scrollTo(mplev_item_view.getC(), {
 					node: this.getLevByNum(md.map_level_num - 1).scroll_con
 				}, {vp_limit: 0.4, animate: 117});
+			} else {
+				this.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
 			}
 		}
 
@@ -455,6 +451,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	'stch-show_search_form': function(state) {
 		this.els.search_form.toggleClass('hidden', !state);
+		if (!state){
+			this.search_input[0].blur();
+		}
 	},
 	"animation-type":{
 		"mp_has_focus": function(target, state) {
@@ -668,7 +667,7 @@ provoda.View.extendTo(appModelView, {
 		var d = this.d;
 		domReady(this.d, function() {
 			console.log('dom ready');
-			
+			_this.dom_related_props.push('els', 'lev_containers', 'samples');
 
 			
 

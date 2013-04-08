@@ -21,12 +21,13 @@ provoda.addPrototype("songsListBaseView", {
 		"can_play": function(state) {
 			if (state){
 				//make-trs-plable
-				this.c.addClass('has_files-in-songs');
+				this.c.addClass('has-files-in-songs');
 			} else {
-				this.c.removeClass('has_files-in-songs');
+				this.c.removeClass('has-files-in-songs');
 			}
 		}
 	},
+	dom_rp: true,
 	parts_builder: {
 		"load-more-b": function() {
 			var _this = this;
@@ -45,6 +46,7 @@ provoda.addPrototype("songsListBaseView", {
 	},
 	createListBase: function() {
 		this.lc = $('<ul class="tracks-for-play list-overview"></ul>').appendTo(this.c);
+		this.dom_related_props.push('lc');
 	},
 	createBase: function() {
 		this.c = $('<div class="playlist-container"></div>');

@@ -784,24 +784,77 @@ provoda.Eventor.extendTo(browseMap, {
 });
 mapLevelModel = function() {};
 
-provoda.Model.extendTo(mapLevelModel, {
+provoda.HModel.extendTo(mapLevelModel, {
 	init: function(opts) {
-		this._super();
-		if (opts && opts.app){
-			this.app = opts.app;
-		}
+		this._super(opts);
+		opts = opts || {};
 		if (!this.skip_map_init){
-			if (opts && opts.map_parent){
-				this.map_parent = opts.map_parent;
-			} else {
-				if (!this.zero_map_level){
-					throw new Error('who is your map parent model?');
+			if (opts.nav_opts){
+				if (opts.nav_opts['url_part']){
+					this.init_states['url_part'] = opts.nav_opts['url_part'];
+				}
+				if (opts.nav_opts['nav_title']){
+					this.init_states['nav_title'] = opts.nav_opts['nav_title'];
 				}
 			}
-			this.map_children = [];
 		}
+	},
+	getSPOpts: function(name) {
+		var obj = {
+			url_part: '/' + name
+		};
+		var target = this.sub_pa[name];
+		var title = target.title || (target.getTitle && target.getTitle.call(this));
+		if (title){
+			obj['nav_title'] = title;
+		}
+		return obj;
+	},
+	findSPbyURLPart: function(name) {
+		return this.getSPI(name, true);
+	},
+	getSPI: function(name, init) {
+		var instance;
 
+		if (this.sub_pages[name]){
+			instance = this.sub_pages[name];
+
+		}
+		if (!instance){
+			var target = this.sub_pa && this.sub_pa[name];
+			if (target){
+				var Constr = target.constr || target.getConstr.call(this);
+				instance = new Constr();
+
+				instance.init_opts = [cloneObj({
+					map_parent: this,
+					app: this.app
+				}, {
+					nav_opts: this.getSPOpts(name)
+				})];
+				if (this.sub_pa_params){
+					instance.init_opts.push(this.sub_pa_params);
+				}
+
+				this.sub_pages[name] = instance;
+			} else {
+				if (this.subPager){
+					instance = this.subPager(name);
+				}
+			}
+		}
 		
+		if (instance && init){
+			instance.initOnce();
+		}
+		return instance;
+	},
+	initSubPages: function(array, params) {
+		for (var i = 0; i < array.length; i++) {
+			var instance = this.getSPI(array[i]);
+			instance.initOnce();
+			array[i] = instance;
+		}
 	},
 	initItems: function(lists_list, opts, params) {
 		for (var i = 0; i < lists_list.length; i++) {

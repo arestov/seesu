@@ -55,6 +55,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		this.c = parent_c.children('.share-song');
 		this.button = buttons_panel.find('.pc-place .pc-rupor');
 		this.users_c = $('<div class="users-list"></div>').appendTo(this.c);
+		this.dom_related_props.push('button','users_c');
 		$("<h3></h3>").text(localize('post-song')).appendTo(this.users_c);
 		this.bindClick();
 
@@ -193,9 +194,11 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		searcher: PlaylistAddSsearchView
 	},
 	createDetailes: function(){
-		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
+		var parent_c = this.parent_view.row_context; 
+		var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.addsong-to-playlist');
 		this.button = buttons_panel.find('.pc-place .pc-add');
+		this.dom_related_props.push('button');
 		this.bindClick();
 	},
 	expand: function() {
@@ -216,7 +219,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 
 
 		this.pl_creation_b = $("<div class='create-named-playlist hidden suggest'></div>").click(function() {
-			_this.md.createPlaylist();
+			_this.md.findAddPlaylist();
 		});
 		this.addWayPoint(this.pl_creation_b);
 		this.pl_creation_b_text = $('<span></span>');
@@ -278,6 +281,7 @@ BaseCRowUI.extendTo(LoveRowUI, {
 		var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.love-song');
 		this.button = buttons_panel.find('.pc-place .pc-love');
+		this.dom_related_props.push('button');
 
 		this.bindClick();
 	},
@@ -301,6 +305,7 @@ BaseCRowUI.extendTo(ScrobbleRowUI, {
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.last-fm-scrobbling');
 		this.button = buttons_panel.find('.lfm-scrobbling-button');
+		this.dom_related_props.push('button');
 		this.bindClick();
 
 	},
@@ -342,7 +347,7 @@ BaseCRowUI.extendTo(RepeatSongRowView, {
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c =  parent_c.children('.rept-song');
 		this.button = buttons_panel.find('.rept-song-button');
-
+		this.dom_related_props.push('button');
 		this.bindClick();
 	},
 	expand: function() {
@@ -360,8 +365,8 @@ BaseCRowUI.extendTo(RepeatSongRowView, {
 
 var TrackActionsRowUI = function() {};
 ActionsRowUI.extendTo(TrackActionsRowUI, {
+	dom_rp: true,
 	createBase: function(){
-
 		this.c = this.parent_view.song_actions_c;
 		this.row_context = this.c.children('.row-song-context');
 
@@ -372,9 +377,11 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		this.arrow = this.row_context.children('.rc-arrow');
 		var _this = this;
 
-		this.parent_view.on('state-change.mp_show-end', function(e){
+		this.parent_view.on('state-change.mp_show_end', function(e){
 			_this.setVisState('is-visible', !!e.value);
 		});
+		this.dom_related_props.push('row_context', 'buttons_panel', 'arrow');
+
 	},
 	children_views: {
 		"row-repeat-song": {
@@ -394,7 +401,8 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		}
 	},
 	"stch-vis_volume": function(state) {
-		this.vol_bar.css({
+		return;
+		this.tpl.ancs['v-bar'].css({
 			width: state
 		});
 	},
@@ -403,13 +411,13 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		"vis_volume-hole-width": {
 			depends_on: ['vis_is-visible', 'vis_con-appended'],
 			fn: function(visible, apd){
-				return !!(visible && apd) && this.vol_hole.width();
+				return !!(visible && apd) && this.tpl.ancs['v-hole'].width();
 			}
 		},
 		"vis_volume-bar-max-width": {
 			depends_on: ['vis_volume-hole-width'],
 			fn: function(vvh_w){
-				return vvh_w && vvh_w - ( this.vol_bar.outerWidth() - this.vol_bar.width());
+				return vvh_w && vvh_w - ( this.tpl.ancs['v-bar'].outerWidth() - this.tpl.ancs['v-bar'].width());
 			}
 		},
 		"vis_volume": {
@@ -427,9 +435,13 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 	},
 	createVolumeControl: function() {
 		this.vol_cc = this.buttons_panel.find('.volume-control');
-		this.vol_hole = this.vol_cc.find('.v-hole');
-		this.vol_bar = this.vol_hole.find('.v-bar');
+		this.tpl = this.getTemplate(this.vol_cc);
 
+
+		var events_anchor = this.vol_cc;
+		var pos_con = this.tpl.ancs['v-hole'];
+
+		this.dom_related_props.push('vol_cc', 'tpl');
 		var _this = this;
 
 		var getClickPosition = function(e, node){
@@ -464,9 +476,9 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		var touchDown = function(e){
 			path_points = [];
 			e.preventDefault();
-			path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
+			path_points.push({cpos: getClickPosition(e, pos_con), time: e.timeStamp});
 			volumeChange();
-			_this.vol_cc.addClass('interactive-state');
+			events_anchor.addClass('interactive-state');
 		};
 		var touchMove = function(e){
 
@@ -474,7 +486,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 				return true;
 			}
 			e.preventDefault();
-			path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
+			path_points.push({cpos: getClickPosition(e, pos_con), time: e.timeStamp});
 			volumeChange();
 		};
 		var touchUp = function(e){
@@ -482,7 +494,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			if (e.which && e.which != 1){
 				return true;
 			}
-			$(_this.vol_cc[0].ownerDocument)
+			$(events_anchor[0].ownerDocument)
 				.off('mouseup', touchUp)
 				.off('mousemove', touchMove);
 
@@ -490,15 +502,15 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			if (!travel){
 				//
 			}
-			_this.vol_cc.removeClass('interactive-state');
+			events_anchor.removeClass('interactive-state');
 
 			path_points = null;
 
 			
 		};
-		_this.vol_cc.on('mousedown', function(e){
+		events_anchor.on('mousedown', function(e){
 
-			$(_this.vol_cc[0].ownerDocument)
+			$(events_anchor[0].ownerDocument)
 				.off('mouseup', touchUp)
 				.off('mousemove', touchMove);
 
@@ -506,7 +518,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 				return true;
 			}
 
-			$(_this.vol_cc[0].ownerDocument)
+			$(events_anchor[0].ownerDocument)
 				.on('mouseup', touchUp)
 				.on('mousemove', touchMove);
 

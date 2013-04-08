@@ -232,7 +232,7 @@ var seesuPlayer;
 									features_storage.setAsInaccessible(feature);
 									return;
 								}
-								var pcore = new sm2proxy("http://arestov.github.com", "/SoundManager2/?" + su.version, sm2opts);
+								var pcore = new sm2proxy("http://arestov.github.io", "/SoundManager2/?" + su.version, sm2opts);
 								var pcon = $(pcore.getC());
 								var complete;
 
