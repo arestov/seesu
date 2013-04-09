@@ -54,7 +54,7 @@ provoda.addPrototype("songsListBaseView", {
 			this.createPanel();
 		}
 		this.createListBase();
-		
+
 	},
 	appendSongDOM: function(song_view, array, current_index){
 		var
@@ -78,7 +78,7 @@ provoda.addPrototype("songsListBaseView", {
 	},
 	'collch-songs-list': function(name, arr) {
 		for (var i = 0; i < arr.length; i++) {
-			var view = this.getFreeChildView(name, arr[i], 'main', {lite: this.opts && this.opts.overview});
+			var view = this.getFreeChildView({name: name, space: 'main'}, arr[i], {lite: this.opts && this.opts.overview});
 			if (view){
 				this.appendSongDOM(view, arr, i);
 			}

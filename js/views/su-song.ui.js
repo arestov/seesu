@@ -481,7 +481,7 @@ provoda.View.extendTo(songUI, {
 		this.checkCollectionChange('actionsrow');
 
 	//	var actionsrow = this.getMdChild('actionsrow');
-	//	var track_row_view = this.getFreeChildView('actionsrow', actionsrow);
+	//	var track_row_view = this.getFreeChildView({name: 'actionsrow'}, actionsrow);
 		context.prepend(this.getAFreeCV('mf_cor'));
 		//
 		var tidominator = this.requirePart('tidominator');
@@ -492,9 +492,9 @@ provoda.View.extendTo(songUI, {
 
 		var pl = this.md.plst_titl,
 			pl_type = pl.playlist_type;
-		
+
 		var artist_link_con = this.dominator_head.children('.closer-to-track');
-		
+
 		if (pl_type == 'artist'){
 			artist_link_con.addClass('one-artist-playlist');
 		}

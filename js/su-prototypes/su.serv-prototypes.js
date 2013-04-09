@@ -437,7 +437,7 @@ provoda.View.extendTo(ActionsRowUI, {
 		var _this = this;
 		$.each(arr, function(i, el){
 			var md_name = el.model_name;
-			_this.getFreeChildView(md_name, el, 'main');
+			_this.getFreeChildView({name: md_name}, el, 'main');
 		});
 
 		this.requestAll();

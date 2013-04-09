@@ -112,7 +112,7 @@ provoda.View.extendTo(mfCorUI, {
 	'collch-sorted_completcs': function(name, array) {
 		var _this = this;
 		$.each(array, function(i, el) {
-			var el_view = _this.getFreeChildView('complect', el);
+			var el_view = _this.getFreeChildView({name: 'complect'}, el);
 			var el_dom = el_view && el_view.getA();
 			if (el_dom){
 				var prev_dom_hook = _this.getPrevView(array, i);

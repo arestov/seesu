@@ -92,7 +92,7 @@ provoda.addPrototype("InvestigationView", {
 
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
-			var view = this.getFreeChildView(cur.model_name, cur);
+			var view = this.getFreeChildView({name: cur.model_name}, cur);
 			if (view){
 				this.c.append(view.getA());
 			}
@@ -205,7 +205,7 @@ provoda.addPrototype("searchSectionView", {
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
 
-			var cur_ui = this.getFreeChildView('item', cur);
+			var cur_ui = this.getFreeChildView({name: 'item'}, cur);
 			if (cur_ui){
 				var ccon = cur_ui.getA();
 
@@ -221,7 +221,7 @@ provoda.addPrototype("searchSectionView", {
 		this.requestAll();
 	},
 	'collch-button': function(name, md) {
-		var view = this.getFreeChildView(name, md);
+		var view = this.getFreeChildView({name: name}, md);
 		if (view){
 			this.button_view = view;
 			this.c.append(view.getA());

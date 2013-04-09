@@ -26,6 +26,7 @@ provoda = {
 		return fn;
 	}
 };
+provoda.Controller = provoda.View;
 
 Class.extendTo(provoda.ItemsEvents, {
 	init: function(event_name, eventCallback, soft_reg) {
@@ -1678,7 +1679,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	getFreeCV: function(child_name, view_space, opts) {
 		var md = this.getMdChild(child_name);
 		if (md){
-			var view = this.getFreeChildView(child_name, md, view_space, opts);
+			var view = this.getFreeChildView({name: child_name, space: view_space}, md, opts);
 			return view;
 		} else {
 			throw new Error('there is no ' + child_name + ' child model');
@@ -1720,10 +1721,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var complex_id = this.view_id  + '_' + view_space;
 		return md.getView(complex_id, true);
 	},
-	getFreeChildView: function(child_name, md, view_space, opts) {
-		view_space = view_space || 'main';
-		var complex_id = this.view_id  + '_' + view_space;
-		var view = md.getView(complex_id, true);
+	getFreeChildView: function(address_opts, md, opts) {
+		var
+			child_name = address_opts.name,
+			view_space = address_opts.space || 'main',
+			complex_id = this.view_id  + '_' + view_space,
+			view = md.getView(complex_id, true);
+
 		if (view){
 			return false;
 		} else {
@@ -1733,6 +1737,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				view = new ConstrObj();
 			} else {
 				view = new ConstrObj[view_space]();
+			}
+			if (!view && address_opts.sampleController){
+				view = address_opts.sampleController;
 			}
 			view.init({
 				md: md,
@@ -2089,7 +2096,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		for (var mmm = 0; mmm < filtered.length; mmm++) {
 			var cur_md = filtered[mmm];
-			var view = this.getFreeChildView(name, cur_md, space_name);
+			var view = this.getFreeChildView({
+				name: name,
+				space: space_name,
+				sampleController: provoda.Controller
+			}, cur_md);
 			if (view){
 				var node_to_use = pv_view.node ? pv_view.node : pv_view.original_node.cloneNode(true);//fixme - do not 
 				//do not clone if we do not have "view" (controller)
@@ -2215,7 +2226,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		};
 	},
 	appendFVAncorByVN: function(opts) {
-		var view = this.getFreeChildView(opts.name, opts.md, opts.space, opts.opts);
+		var view = this.getFreeChildView({name: opts.name, space: opts.space}, opts.md, opts.opts);
 		var place = opts.place;
 		if ((opts.strict || view) && place){
 			var complex_place;

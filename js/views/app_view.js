@@ -272,7 +272,7 @@ provoda.View.extendTo(appModelView, {
 		}
 	],
 	'collch-start_page': function(name, md) {
-		var view = this.getFreeChildView(name, md, 'main');
+		var view = this.getFreeChildView({name: name, space: 'main'}, md);
 		if (view){
 			var _this = this;
 

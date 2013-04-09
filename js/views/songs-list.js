@@ -31,7 +31,6 @@ var songsListView;
 			this.c =  parent_c.children('.pla-row');
 			this.button = buttons_panel.children('.pla-button');
 
-			
 
 			var _this = this;
 
@@ -40,7 +39,7 @@ var songsListView;
 				su.trackEvent('Controls', 'make playable all tracks in playlist');
 				//
 			});
-			
+
 			this.c.find('.open-external-playlist').click(function(e){
 				_this.md.actionsrow.pl.makeExternalPlaylist();
 				su.trackEvent('Controls', 'make *.m3u');
@@ -54,8 +53,6 @@ var songsListView;
 
 
 
-
-	
 	var PlARowView = function() {};
 	ActionsRowUI.extendTo(PlARowView, {
 		createBase: function(c){
@@ -84,7 +81,6 @@ var songsListView;
 
 	var songsListBaseView = function() {};
 	provoda.extendFromTo("songsListBaseView", provoda.View, songsListBaseView);
-	
 
 
 
@@ -98,7 +94,7 @@ var songsListView;
 			if (!this.opts || !this.opts.overview){
 				this.c.toggleClass('show-zoom-to-track', !state);
 			}
-			
+
 		},
 		'stch-error': function(error){
 			if (this.error_b && this.error_b.v !== error){
@@ -110,7 +106,7 @@ var songsListView;
 					v: error,
 					n: $('<li>' + localize('nothing-found','Nothing found') + '</li>').appendTo(this.c)
 				};
-				
+
 			}
 		},
 		'stch-loader_disallowing_desc': function(state) {
@@ -125,7 +121,7 @@ var songsListView;
 			return this;
 		},
 		'collch-plarow': function(name, md) {
-			var view = this.getFreeChildView(name, md, 'main', {lite: this.opts && this.opts.overview});
+			var view = this.getFreeChildView({name: name, space: 'main'}, md, {lite: this.opts && this.opts.overview});
 			this.requestAll();
 		},
 		children_views: {
@@ -137,7 +133,5 @@ var songsListView;
 
 	});
 
-	
-	
 
 })();
