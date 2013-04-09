@@ -1,9 +1,5 @@
 var notifyCounterUI = function() {};
 provoda.View.extendTo(notifyCounterUI, {
-	useBase: function(node) {
-		this.c = node;
-		this.createTemplate();
-	},
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},

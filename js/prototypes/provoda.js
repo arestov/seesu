@@ -1638,11 +1638,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._setStates(states);
 
 	},
+	useBase: function(node) {
+		this.c = node;
+		this.createTemplate();
+	},
 	createDetailes: function() {
 		if (this.pv_view_node){
-			if (this.useBase){
-				this.useBase(this.pv_view_node);
-			}
+			this.useBase(this.pv_view_node);
 		} else if (this.createBase){
 			this.createBase();
 		}
