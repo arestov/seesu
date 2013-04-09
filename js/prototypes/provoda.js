@@ -1144,8 +1144,8 @@ Class.extendTo(Template, {
 		return sfy_values;
 	},
 	scope_generators:{
-		'pv-view': function(node, attr_obj) {
-			var attr_value = attr_obj.value;
+		'pv-view': function(node, full_declaration) {
+			var attr_value = full_declaration;
 
 			var filter_parts = attr_value.split('|');
 
@@ -1186,14 +1186,14 @@ Class.extendTo(Template, {
 				});
 			}
 		},
-		'pv-repeat': function(node, attr_obj) {
+		'pv-repeat': function(node, full_declaration) {
 			if (node == this.root_node){
 				return;
 			}
 
 
 			//start of angular.js code
-			var expression = attr_obj.value;//attr.ngRepeat;
+			var expression = full_declaration;//attr.ngRepeat;
 			var match = expression.match(/^\s*(.+)\s+in\s+(.*)\s*$/),
 				lhs, rhs, valueIdent, keyIdent;
 			if (! match) {
@@ -1284,17 +1284,17 @@ Class.extendTo(Template, {
 		}
 	},
 	directives: {
-		'pv-text': function(node, attr_obj){			
+		'pv-text': function(node, full_declaration){			
 			this.bindStandartChange(node, {
-				complex_statement: attr_obj.value,
+				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getTextValue,
 				setValue: this.dom_helpres.setTextValue
 			});
 
 		},
-		'pv-class': function(node, attr_obj) {
+		'pv-class': function(node, full_declaration) {
 			this.bindStandartChange(node, {
-				complex_statement: attr_obj.value,
+				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getClassName,
 				setValue: this.dom_helpres.setClassName,
 				simplifyValue: function(value) {
@@ -1305,8 +1305,8 @@ Class.extendTo(Template, {
 				}
 			});
 		},
-		'pv-props': function(node, attr_obj) {
-			var complex_value = attr_obj.value;
+		'pv-props': function(node, full_declaration) {
+			var complex_value = full_declaration;
 			var completcs = complex_value.match(/\S[\S\s]*?\:[\S\s]*?\{\{[\S\s]*?\}\}/gi);
 			for (var i = 0; i < completcs.length; i++) {
 				completcs[i] = completcs[i].replace(/^\s*|s*?$/,'').split(/\s*\:\s*/);
@@ -1323,8 +1323,8 @@ Class.extendTo(Template, {
 			//"style.width: {{play_progress}} title: {{full_name}} style.background-image: {{album_cover_url}}"
 
 		},
-		'pv-anchor': function(node, attr_obj) {
-			var anchor_name = attr_obj.value;
+		'pv-anchor': function(node, full_declaration) {
+			var anchor_name = full_declaration;
 			//if (typeof anchor_name)
 
 			if (this.ancs[anchor_name]){
@@ -1341,6 +1341,14 @@ Class.extendTo(Template, {
 			}
 			*/
 
+		},
+		'pv-events': function(node, full_declaration) {
+			var declarations = full_declaration.split(/\s+/gi);
+			for (var i = 0; i < declarations.length; i++) {
+				var cur = declarations[i].split(':');
+				this.bindEvents(node, cur[0], cur[1]);
+			}
+			
 		}
 	},
 	dom_helpres: {
@@ -1422,6 +1430,18 @@ Class.extendTo(Template, {
 			});
 		}
 	},
+	bindEvents: function(node, event_name, callback_name) {
+		var _this = this;
+		if (!this.sendCallback){
+			throw new Error('provide the events callback handler to the Template init func');
+		}
+		$(node).on(event_name, function(e) {
+			_this.callEventCallback(callback_name, e);
+		});
+	},
+	callEventCallback: function(callback_name, e) {
+		this.sendCallback(callback_name, e);
+	},
 	setStates: function(states) {
 		for (var i = 0; i < this.states_watchers.length; i++) {
 			this.states_watchers[i].checkFunc(states);
@@ -1435,8 +1455,8 @@ Class.extendTo(Template, {
 			array[i]
 		}
 	},*/
-	handleDirective: function(directive_name, node, attr_obj, result_cache) {
-		this.directives[directive_name].call(this, node, attr_obj, result_cache);
+	handleDirective: function(directive_name, node, full_declaration, result_cache) {
+		this.directives[directive_name].call(this, node, full_declaration, result_cache);
 	},
 	getPvViews: function(array) {
 		var result = this.children_templates;
@@ -1494,7 +1514,7 @@ Class.extendTo(Template, {
 				for (i = 0; i < this.scope_g_list.length; i++) {
 					directive_name = this.scope_g_list[i];
 					if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
-						this.scope_generators[directive_name].call(this, cur_node, attrs_by_names[directive_name][0].node);
+						this.scope_generators[directive_name].call(this, cur_node, attrs_by_names[directive_name][0].node.value);
 						new_scope_generator = true;
 						break;
 					}
@@ -1504,7 +1524,7 @@ Class.extendTo(Template, {
 				for (i = 0; i < this.directives_names_list.length; i++) {
 					directive_name = this.directives_names_list[i];
 					if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
-						this.handleDirective(directive_name, cur_node, attrs_by_names[directive_name][0].node);
+						this.handleDirective(directive_name, cur_node, attrs_by_names[directive_name][0].node.value);
 					}
 				}
 
