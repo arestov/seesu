@@ -345,6 +345,14 @@ UserNewReleases.extendTo(RecommNewReleases, {
 });
 
 
+var LfmListened = function() {};
+mapLevelModel.extendTo(LfmListened, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	}
+});
+
 
 var UserCard = function() {};
 
@@ -369,6 +377,10 @@ mapLevelModel.extendTo(UserCard, {
 			getTitle: function() {
 				return localize('reccoms-for-you') +': new releases of artists from your library';
 			}
+		},
+		'listened': {
+			constr: LfmListened,
+			title: 'Listened music'
 		},
 		'vk-audio': {
 			constr: MyVkAudioList,
