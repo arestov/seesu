@@ -25,7 +25,7 @@ var songsList;
 			var plarow = new PlARow();
 			plarow.init(this);
 
-			this.setChild('plarow', plarow);
+			this.updateNesting('plarow', plarow);
 			
 			var _this = this;
 			

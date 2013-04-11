@@ -368,7 +368,7 @@ mapLevelModel.extendTo(SongsLists, {
 
 		//this.initItems(this.lists_list, {app:this.app, map_parent:this}, {tag_name:this.tag_name});
 
-		this.setChild('lists_list', this.lists_list);
+		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
 	model_name: 'tag_songs',
@@ -521,7 +521,7 @@ mapLevelModel.extendTo(ArtistsLists, {
 		this.sub_pa_params = {tag_name:this.tag_name};
 		this.lists_list = ['_', 'week'];
 		this.initSubPages(this.lists_list);
-		this.setChild('lists_list', this.lists_list);
+		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
 	model_name: 'tag_artists',
@@ -557,10 +557,10 @@ mapLevelModel.extendTo(TagPage, {
 
 		var similar_tags = this.getSPI('similar', true);
 
-		this.setChild('artists_lists', artists_lists);
-		this.setChild('songs_list', songs_list);
-		this.setChild('albums_list', albums_list);
-		this.setChild('similar_tags', similar_tags);
+		this.updateNesting('artists_lists', artists_lists);
+		this.updateNesting('songs_list', songs_list);
+		this.updateNesting('albums_list', albums_list);
+		this.updateNesting('similar_tags', similar_tags);
 
 		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){

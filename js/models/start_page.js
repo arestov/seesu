@@ -19,8 +19,8 @@ mapLevelModel.extendTo(StartPage, {
 
 		
 
-		this.setChild('pstuff', this.getSPI('users/me').initOnce());
-		this.setChild('muco', this.getSPI('conductor').initOnce());
+		this.updateNesting('pstuff', this.getSPI('users/me').initOnce());
+		this.updateNesting('muco', this.getSPI('conductor').initOnce());
 
 
 		this.closed_messages = suStore('closed-messages') || {};

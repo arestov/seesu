@@ -90,7 +90,7 @@ searchSection.extendTo(seesuSection, {
 					_this.trigger('items-change');
 				}, {skip_reg: true});
 			this.setButtonText();
-			this.setChild('button', this.button);
+			this.updateNesting('button', this.button);
 		}
 	}
 });

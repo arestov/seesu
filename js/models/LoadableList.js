@@ -22,7 +22,7 @@ mapLevelModel.extendTo(LoadableListBase, {
 		if (!this.manual_previews){
 			this.on('child-change.' + this.main_list_name, function(e) {
 				if (!e.skip_report){
-					this.setChild(this.preview_mlist_name, e.value);
+					this.updateNesting(this.preview_mlist_name, e.value);
 				}
 			});
 		}
@@ -127,7 +127,7 @@ mapLevelModel.extendTo(LoadableListBase, {
 
 	},
 	dataListChange: function(mlc_opts) {
-		this.setChild(this.main_list_name, this[this.main_list_name], mlc_opts);
+		this.updateNesting(this.main_list_name, this[this.main_list_name], mlc_opts);
 	},
 	compareItemsWithObj: function(array, omo, soft) {
 		for (var i = 0; i < array.length; i++) {
@@ -178,7 +178,7 @@ mapLevelModel.extendTo(LoadableListBase, {
 
 		this[this.main_list_name] = work_array;
 		if (!skip_changes){
-			this.setChild(this.main_list_name, work_array, ml_ch_opts);
+			this.updateNesting(this.main_list_name, work_array, ml_ch_opts);
 		}
 		return item;
 	},
@@ -203,7 +203,7 @@ mapLevelModel.extendTo(LoadableListBase, {
 			work_array.unshift(item);
 		}
 
-		this.setChild(this.main_list_name, work_array, ml_ch_opts);
+		this.updateNesting(this.main_list_name, work_array, ml_ch_opts);
 		return item;
 	},
 	requestComplete: function(request, error) {
@@ -244,7 +244,7 @@ mapLevelModel.extendTo(LoadableListBase, {
 			_this.switchPmd(false);
 		});
 
-		this.setChild('auth_part', auth_rqb);
+		this.updateNesting('auth_part', auth_rqb);
 
 		this.setPmdSwitcher(this.map_parent);
 
@@ -395,7 +395,7 @@ LoadableList.extendTo(TagsList, {
 		main_list.push(name);
 
 		if (!silent){
-			//this.setChild(this.main_list_name, main_list, true);
+			//this.updateNesting(this.main_list_name, main_list);
 			this.updateState(this.main_list_name, [].concat(main_list));
 		}
 	},

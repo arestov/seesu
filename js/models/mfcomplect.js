@@ -56,7 +56,7 @@ var mfComplect = function(opts, params) {
 			.getSongFileModel(this.mo, this.mo.player)
 				.on('want-to-play-sf', selectMf);
 		this.moplas_list.push(sf);
-		this.setChild('moplas_list', this.moplas_list);
+		this.updateNesting('moplas_list', this.moplas_list);
 	} else {
 		this.search_source = params.search_source;
 		this.search_source.on('state-change.files-list', function(e) {
@@ -74,7 +74,7 @@ var mfComplect = function(opts, params) {
 							.on('want-to-play-sf', selectMf);
 				sf.updateState('overstock', i + 1 > _this.overstock_limit);
 				moplas_list.push(sf);
-				_this.setChild('moplas_list', moplas_list);
+				_this.updateNesting('moplas_list', moplas_list);
 			}
 			_this.moplas_list = moplas_list;
 
@@ -150,7 +150,7 @@ provoda.Model.extendTo(mfCor, {
 				});
 			this.addMFComplect(complect, this.file.from);
 			this.updateDefaultMopla();
-			this.setChild('sorted_completcs', [complect]);
+			this.updateNesting('sorted_completcs', [complect]);
 
 		} else {
 			this.mo.on('vip-state-change.track', function(e) {
@@ -241,7 +241,7 @@ provoda.Model.extendTo(mfCor, {
 				video_arr.sort(function(a, b){
 					return sortByRules(a, b, ["cant_show"]);
 				});
-				_this.setChild('yt_videos', video_arr);
+				_this.updateNesting('yt_videos', video_arr);
 			}
 		});
 	},
@@ -313,7 +313,7 @@ provoda.Model.extendTo(mfCor, {
 	},
 	intMessages: function() {
 		this.notifier = new notifyCounter();
-		this.setChild('notifier', this.notifier);
+		this.updateNesting('notifier', this.notifier);
 		this.sf_notf = su.notf.getStore('song-files');
 		var rd_msgs = this.sf_notf.getReadedMessages();
 
@@ -386,7 +386,7 @@ provoda.Model.extendTo(mfCor, {
 					)  +
 					" " +  localize('music-files-from-vk')
 			});
-			this.setChild('vk_auth', this.vk_auth_rqb);
+			this.updateNesting('vk_auth', this.vk_auth_rqb);
 			this.updateState('changed', new Date());
 			this.updateState('vk_audio_auth ', true);
 		}
@@ -497,7 +497,7 @@ provoda.Model.extendTo(mfCor, {
 				_this.bindSource(cur);
 				sorted_completcs.push(_this.complects[cur.search_name]);
 			}
-			_this.setChild('sorted_completcs', sorted_completcs);
+			_this.updateNesting('sorted_completcs', sorted_completcs);
 			_this.updateState('few_sources', e.value.length > 1);
 		}, {soft_reg: true});
 
@@ -535,7 +535,7 @@ provoda.Model.extendTo(mfCor, {
 		this.updateState('has_files', many_files);
 		this.updateDefaultMopla();
 
-		this.setChild('sorted_completcs', sorted_completcs, true);
+		this.updateNesting('sorted_completcs', sorted_completcs);
 
 	},*/
 	listenMopla: function(mopla) {
@@ -706,7 +706,7 @@ provoda.Model.extendTo(mfCor, {
 				}
 				
 			} else {
-				var sources_list = this.getChild('sorted_completcs');
+				var sources_list = this.getNesting('sorted_completcs');
 				for (var i = 0; i < sources_list.length; i++) {
 					all_files = all_files.concat(sources_list[i].getFiles(type));
 				}

@@ -773,7 +773,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.onRegistration('child-change', function(cb, namespace, opts, name_parts) {
 			var child_name = name_parts[1];
-			var child = this.getChild(child_name);
+			var child = this.getNesting(child_name);
 			if (child){
 				cb({
 					value: child
@@ -877,10 +877,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			archiver.setItems(e.value);
 		});
 	},
-	getChild: function(collection_name) {
+	getNesting: function(collection_name) {
 		return this.children_models[collection_name];
 	},
-	setChild: function(collection_name, array, opts) {
+	updateNesting: function(collection_name, array, opts) {
 		if (collection_name.indexOf('.') != -1){
 			throw new Error('remove "." (dot) from name');
 		}
