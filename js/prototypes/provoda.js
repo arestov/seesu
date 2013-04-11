@@ -857,7 +857,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			callback.call(_this, {
 				item: this,
 				value: arguments && arguments[0] && arguments[0].value,
-				args: arguments
+				args: arguments,
+				items: items_events.items_list
 			});
 		}, true);
 		this.on('child-change.' + collection_name, function(e) {
