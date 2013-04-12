@@ -996,6 +996,57 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			name: name,
 			value: value
 		}]);
+	},
+	toSimpleStructure: function() {
+		var models_index = {};
+		var all_for_parse = [this];
+		var big_result = [];
+
+		var checkModel = function(md) {
+			var cur_id = md._provoda_id;
+			if (!models_index[cur_id]){
+				models_index[cur_id] = true;
+				all_for_parse.push(md);
+			}
+			return cur_id;
+		};
+
+		while (all_for_parse.length) {
+			var cur_md = all_for_parse.shift();
+			var result = {
+				name: cur_md.model_name,
+				states: cur_md.states,
+				map_parent: cur_md.map_parent && checkModel(cur_md.map_parent),
+				children_models: {}
+			};
+			for (var state_name in result.states){
+				var state = result.states[state_name];
+				if (state && state._provoda_id){
+					result.states[state_name] = {
+						_provoda_id: checkModel(state)
+					};
+				}
+			}
+
+			for (var nesting_name in cur_md.children_models){
+				var cur = cur_md.children_models[nesting_name];
+				if (cur){
+					if (cur._provoda_id){
+						result.children_models = checkModel(cur);
+					} else {
+						var array = [];
+						for (var i = 0; i < cur.length; i++) {
+							array.push(checkModel(cur[i]));
+						}
+						result.children_models[nesting_name] = array;
+					}
+				}
+			}
+			big_result.push(result);
+		}
+
+
+		return JSON.stringify(big_result.reverse());
 	}
 });
 provoda.Model.extendTo(provoda.HModel, {
