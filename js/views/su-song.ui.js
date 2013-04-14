@@ -429,9 +429,9 @@ provoda.View.extendTo(songUI, {
 	},
 	createBase: function(){
 		var _this = this;
-		var sonw = this.root_view.getSample('song-view');
-		window.dizi = sonw;
-		this.tpl = this.getTemplate(sonw);
+		//var sonw = this.root_view.getSample('song-view');
+		//window.dizi = sonw;
+		//this.tpl = this.getTemplate(sonw);
 
 		this.c = $('<li></li>');
 		
