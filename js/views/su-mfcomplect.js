@@ -136,14 +136,17 @@ provoda.View.extendTo(mfCorUI, {
 		strict: true
 	},
 	'collch-yt_videos': 'tpl.ancs.video_list',
-	createBase: function() {
-		this.c = this.root_view.getSample('moplas-block');
+	bindBase: function() {
 		this.createTemplate();
 		var _this = this;
 		this.tpl.ancs.more_songs_b.click(function() {
 			_this.RPCLegacy('switchMoreSongsView');
 		});
 		this.addWayPoint(this.tpl.ancs.more_songs_b);
+	},
+	createBase: function() {
+		this.c = this.root_view.getSample('moplas-block');
+		this.bindBase();
 
 	},
 	showYoutubeVideo: function(id, c, link){

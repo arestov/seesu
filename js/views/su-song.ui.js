@@ -79,7 +79,7 @@ provoda.View.extendTo(songUI, {
 			}
 			
 		},
-		'has-none-files-to-play': function(state){
+		'has_none_files_to_play': function(state){
 			this.fsearch_status_c.toggleClass('has-none-files', !!state);
 			this.node
 				.toggleClass('search-mp3-failed', !!state)
@@ -115,8 +115,7 @@ provoda.View.extendTo(songUI, {
 				this.node
 					.addClass('song')
 					.removeClass('search-mp3-failed')
-					.removeClass('waiting-full-render')
-					.removeClass('mp3-download-is-not-allowed');
+					.removeClass('waiting-full-render');
 			
 			}
 		},
@@ -138,7 +137,7 @@ provoda.View.extendTo(songUI, {
 			
 			this.track_name_c.text(name);
 		},
-		'song-title': function(title) {
+		'song_title': function(title) {
 			//this.titlec.text(title);
 			this.node.attr("title", title);
 		},
@@ -463,7 +462,7 @@ provoda.View.extendTo(songUI, {
 		this.song_imagec = $('<span class="song-image-con"></span>').appendTo(this.node);
 
 
-		this.titlec = $('<span class="full-song-title has-no_track_title"></span>')
+		this.titlec = $('<span class="full-song_title has-no_track_title"></span>')
 			.appendTo(this.node);
 		
 

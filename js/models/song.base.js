@@ -48,7 +48,7 @@ provoda.addPrototype("baseSong",{
 				return lfm_i || just_url || ext_lfm;
 			}
 		},
-		'song-title': {
+		'song_title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track){
 				return this.getFullName(artist, track);
@@ -81,7 +81,7 @@ provoda.addPrototype("baseSong",{
 			}
 		},
 		'can-use-as-neighbour':{
-			depends_on: ['has-none-files-to-play'],
+			depends_on: ['has_none_files_to_play'],
 			fn: function(h_nftp) {
 				if (h_nftp){
 					return false;
@@ -91,7 +91,7 @@ provoda.addPrototype("baseSong",{
 
 			}
 		},
-		'has-none-files-to-play': {
+		'has_none_files_to_play': {
 			depends_on: ['search_complete', 'no_track_title', 'mf_cor_has_available_tracks'],
 			fn: function(scomt, ntt, mf_cor_tracks) {	
 				if (this.mf_cor && !mf_cor_tracks){
