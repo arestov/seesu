@@ -12,7 +12,8 @@ VkLoginUI.extendTo(SoftVkLoginUI, {
 var PersonalListPreview = function() {};
 ListPreview.extendTo(PersonalListPreview, {
 	clickAction: function() {
-		this.md.requestList();
+		this.RPCLegacy('requestList');
+		//this.RPCLegacy('requestList');
 	},
 	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
@@ -34,7 +35,8 @@ ListPreview.extendTo(PersonalListPreview, {
 var PersonalAlbumsListPreview = function() {};
 AlbumsListPreview.extendTo(PersonalAlbumsListPreview, {
 	clickAction: function() {
-		this.md.requestList();
+		this.RPCLegacy('requestList');
+		//this.RPCLegacy('requestList');
 	},
 	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
@@ -90,7 +92,8 @@ provoda.View.extendTo(UserCardPreview, {
 		var _this = this;
 
 		var button = this.c.find('.to-open-block').click(function() {
-			_this.md.showOnMap();
+			_this.RPCLegacy('showOnMap');
+			//_this.RPCLegacy('showOnMap');
 		});
 		this.addWayPoint(button);
 

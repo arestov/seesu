@@ -2,8 +2,294 @@ var provoda;
 
 (function(){
 "use strict";
+
+var sync_sender = {
+	root_model: null,
+	sockets: {},
+	sockets_m_index: {},
+	setRootModel: function(md) {
+		this.root_model = md;
+	},
+	postTree: function(struc, has_root) {
+		window.postMessage({
+			protocol: 'provoda',
+			action: 'buildtree',
+			message: {
+				has_root: has_root,
+				value: struc
+			}
+		}, window.location.origin);
+	},
+	postNesting: function(md, name, value) {
+		var result = value;
+		if (value){
+			if (value._provoda_id){
+				result = value._provoda_id;
+			} else {
+				result = [];
+				for (var i = 0; i < value.length; i++) {
+					result.push(value[i]._provoda_id);
+				}
+			}
+		}
+		window.postMessage({
+			protocol: 'provoda',
+			action: 'update_nesting',
+			message: {
+				_provoda_id: md._provoda_id,
+				name: name,
+				value: result
+			}
+		}, window.location.origin);
+	},
+	postStates: function(id, states) {
+		var converted_states = [];
+		for (var i = 0; i < states.length; i++) {
+
+			//states[i]
+		}
+
+	},
+	connectSockect: function(api, socket_id) {
+		this.sockets_m_index[socket_id] = {};
+		this.sockets[socket_id] = api;
+		var struc = this.root_model.toSimpleStructure(this.sockets_m_index[socket_id]);
+		this.postTree(struc, true);
+		
+	},
+	checkModels: function(array, index) {
+		var big_result = [];
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			if (!index[cur._provoda_id]){
+				index[cur._provoda_id] = true;
+				cur.toSimpleStructure(index, big_result);
+			}
+			
+		}
+		if (big_result.length){
+			this.postTree(big_result);
+		}
+	},
+	pushNesting: function(md, name, value) {
+		var struc;
+		for (var socket_id in this.sockets) {
+			var index = this.sockets_m_index[socket_id];
+			if (!this.sockets_m_index[socket_id][md._provoda_id]){
+				if (!struc){
+					struc = md.toSimpleStructure(index);
+				}
+				this.postTree(struc);
+			} else {
+				if (value){
+					if (value._provoda_id){
+						this.checkModels([value], index);
+					} else {
+						this.checkModels(value, index);
+					}
+				}
+				this.postNesting(md, name, value);
+			}
+		}
+	},
+	pushStates: function(md, states) {
+		var struc;
+		for (var socket_id in this.sockets) {
+			if (!this.sockets_m_index[socket_id][md._provoda_id]){
+				if (!struc){
+					struc = md.toSimpleStructure(this.sockets_m_index[socket_id]);
+				}
+				this.postTree(struc);
+			} else {
+				this.postStates(md, states);
+			}
+		}
+	}
+};
+
+
+var MDProxy = function() {};
+MDProxy.prototype = {
+	init: function(_provoda_id, states, children_models, md) {
+		this._provoda_id = _provoda_id;
+		this.views = [];
+		this.views_index = {};
+		this.states = states;
+		this.children_models = children_models;
+		this.md = md;
+	},
+	RPCLegacy: function() {
+		this.md.RPCLegacy.apply(this.md, arguments);
+	},
+	setStates: function() {},
+	updateStates: function() {},
+	updateNesting: function() {},
+	removeView: function(view){
+		var views = [];
+		for (var i = 0; i < this.views.length; i++) {
+			if (views[i] !== view){
+				views.push(views[i]);
+			}
+		}
+		if (views.length != this.views.length){
+			this.views = views;
+		}
+	},
+	sendCollectionChange: function(collection_name, array) {
+		for (var i = 0; i < this.views.length; i++) {
+			this.views[i].collectionChange(collection_name, array);
+		}
+	},
+	sendStatesToView: function(view, states_list) {
+		view.recieveStatesChanges(states_list);
+	},
+	sendStatesToViews: function(states_list) {
+		for (var i = 0; i < this.views.length; i++) {
+			this.sendStatesToView(this.views[i], states_list);
+		}
+	},
+	removeDeadViews: function(hard_deads_check){
+		var i;
+		if (hard_deads_check){
+			for (i = 0; i < this.views.length; i++) {
+				if (this.views[i].isAlive){
+					this.views[i].isAlive();
+				}
+			}
+		}
+		var dead = [], alive = [];
+		for (i = 0; i < this.views.length; i++) {
+			if (this.views[i].dead){
+				dead.push(this.views[i]);
+			} else {
+				alive.push(this.views[i]);
+			}
+		}
+
+		if (alive.length != this.views.length){
+			this.views = alive;
+		}
+		if (dead.length){
+			for (var a in this.views_index){
+				this.views_index[a] = arrayExclude(this.views_index[a], dead);
+			}
+		}
+
+		return this;
+	},
+	die: function() {
+		this.killViews();
+	},
+	killViews: function() {
+		//this.views[i] can be changed in proccess, so cache it!
+		var views = this.views;
+		for (var i = 0; i < views.length; i++) {
+			views[i].die({skip_md_call: true});
+		}
+		this.removeDeadViews();
+		return this;
+	},
+	collectViewsGarbadge: function() {
+		for (var i = 0; i < this.views.length; i++) {
+			this.views[i].checkDeadChildren();
+		}
+	},
+	getViews: function(name, hard_deads_check) {
+		this.removeDeadViews(hard_deads_check);
+		if (name){
+			return this.views_index[name];
+		} else {
+			return this.views;
+		}
+	},
+	getView: function(complex_id){
+		this.removeDeadViews(true);
+		complex_id = complex_id || 'main';
+		return this.views_index[complex_id] && this.views_index[complex_id][0];
+	},
+	addView: function(v, complex_id) {
+		this.removeDeadViews(true);
+		this.views.push( v );
+		complex_id = complex_id || 'main';
+		(this.views_index[complex_id] = this.views_index[complex_id] || []).push(v);
+		return this;
+	},
+	getRooConPresentation: function(mplev_view, get_ancestor, only_by_ancestor) {
+		var views = this.getViews();
+		var cur;
+		if (!only_by_ancestor){
+			for (var i = 0; i < views.length; i++) {
+				cur = views[i];
+				var target = cur.root_view.getChildView(this, 'main');
+				if (target == cur){
+					return cur;
+				}
+			}
+		}
+		for (var jj = 0; jj < views.length; jj++) {
+			cur = views[jj];
+			var ancestor;
+			if (mplev_view){
+				ancestor = cur.getAncestorByRooViCon('details', only_by_ancestor);
+			} else {
+				ancestor = cur.getAncestorByRooViCon('main', only_by_ancestor);
+			}
+			if (ancestor){
+				if (get_ancestor){
+					return ancestor;
+				} else {
+					return cur;
+				}
+			}
+		}
+	}
+};
+
+window.big_index = {};
+var big_index = window.big_index;
+
+var sync_reciever = {
+	md_proxs_index: {},
+	actions: {
+		buildtree: function(message) {
+			for (var i = 0; i < message.value.length; i++) {
+				var cur = message.value[i];
+				if (!this.md_proxs_index[cur._provoda_id]){
+					this.md_proxs_index[cur._provoda_id] = new MDProxy();
+				}
+				big_index[cur._provoda_id] = true;
+
+			}
+		},
+		update_states: function(message) {
+			this.md_proxs_index[message._provoda_id].updateStates(message.states);
+		},
+		update_nesting: function(message) {
+			this.md_proxs_index[message._provoda_id].updateNesting(message.name, message.value);
+		}
+	},
+
+	connectAppRoot: function() {
+		//window.postMessage({});
+		var _this = this;
+		provoda.sync_s.connectSockect({}, Math.random());
+
+		addEvent(window, 'message', function(e) {
+			var data  = e.data;
+			if (data && data.protocol == 'provoda'){
+				if (_this.actions[data.action]){
+					_this.actions[data.action].call(_this, data.message);
+				}
+			}
+		});
+		//window.postMessage
+	}
+};
+
 provoda = {
 	prototypes: {},
+	sync_s: sync_sender,
+	sync_r: sync_reciever,
 	Eventor: function(){},
 	StatesEmitter: function(){},
 	Model: function(){},
@@ -783,71 +1069,42 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this._provoda_id = models_counters++;
 		this.states = {};
-		this.views = [];
-		this.views_index = {};
+		
 		this.children_models = {};
+		this.postStatesChanges = function(states) {
+			sync_sender.pushStates(this, states);
+		};
+		this.postNestingChange = function(nesting_name, value) {
+			sync_sender.pushNesting(this, nesting_name, value);
+		};
+	//	var _this = this;
+		this.MDReplace = function(){};
+		this.MDReplace.prototype = {
+			md: this,
+			getMD: function(){
+				return this.md;
+			}
+		};
+		this.md_replacer = new this.MDReplace();
+		this.md_replacer._provoda_id = this._provoda_id;
 
+		this.mpx = new MDProxy();
+		this.mpx.init(this._provoda_id, this.states, this.children_models, this);
 		return this;
 	},
-	removeView: function(view){
-		var views = [];
-		for (var i = 0; i < this.views.length; i++) {
-			if (views[i] !== view){
-				views.push(views[i]);
-			}
-		}
-		if (views.length != this.views.length){
-			this.views = views;
-		}
+	getMDReplacer: function() {
+		return this.md_replacer;
 	},
-	removeDeadViews: function(hard_deads_check){
-		var i;
-		if (hard_deads_check){
-			for (i = 0; i < this.views.length; i++) {
-				if (this.views[i].isAlive){
-					this.views[i].isAlive();
-				}
-			}
-		}
-		var dead = [], alive = [];
-		for (i = 0; i < this.views.length; i++) {
-			if (this.views[i].dead){
-				dead.push(this.views[i]);
-			} else {
-				alive.push(this.views[i]);
-			}
-		}
-
-		if (alive.length != this.views.length){
-			this.views = alive;
-		}
-		if (dead.length){
-			for (var a in this.views_index){
-				this.views_index[a] = arrayExclude(this.views_index[a], dead);
-			}
-		}
-
-		return this;
-	},
-	killViews: function() {
-		//this.views[i] can be changed in proccess, so cache it!
-		var views = this.views;
-		for (var i = 0; i < views.length; i++) {
-			views[i].die({skip_md_call: true});
-		}
-		this.removeDeadViews();
-		return this;
+	RPCLegacy: function() {
+		var args = Array.prototype.slice.call(arguments);
+		var method_name = args.shift();
+		this[method_name].apply(this, args);
 	},
 	die: function(){
 		this.stopRequests();
-		this.killViews();
+		this.mpx.die();
 		this.trigger('die');
 		return this;
-	},
-	collectViewsGarbadge: function() {
-		for (var i = 0; i < this.views.length; i++) {
-			this.views[i].checkDeadChildren();
-		}
 	},
 	watchChildrenStates: function(collection_name, state_name, callback) {
 		//
@@ -903,60 +1160,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		return this;
 	},
-	getRooConPresentation: function(mplev_view, get_ancestor, only_by_ancestor) {
-		var views = this.getViews();
-		var cur;
-		if (!only_by_ancestor){
-			for (var i = 0; i < views.length; i++) {
-				cur = views[i];
-				var target = cur.root_view.getChildView(this, 'main');
-				if (target == cur){
-					return cur;
-				}
-			}
-		}
-		for (var jj = 0; jj < views.length; jj++) {
-			cur = views[jj];
-			var ancestor;
-			if (mplev_view){
-				ancestor = cur.getAncestorByRooViCon('details', only_by_ancestor);
-			} else {
-				ancestor = cur.getAncestorByRooViCon('main', only_by_ancestor);
-			}
-			if (ancestor){
-				if (get_ancestor){
-					return ancestor;
-				} else {
-					return cur;
-				}
-			}
-		}
-	},
-	getViews: function(name, hard_deads_check) {
-		this.removeDeadViews(hard_deads_check);
-		if (name){
-			return this.views_index[name];
-		} else {
-			return this.views;
-		}
-	},
-	getView: function(complex_id){
-		this.removeDeadViews(true);
-		complex_id = complex_id || 'main';
-		return this.views_index[complex_id] && this.views_index[complex_id][0];
-	},
-	addView: function(v, complex_id) {
-		this.removeDeadViews(true);
-		this.views.push( v );
-		complex_id = complex_id || 'main';
-		(this.views_index[complex_id] = this.views_index[complex_id] || []).push(v);
-		return this;
-	},
 	sendCollectionChange: function(collection_name, array) {
 		//this.removeDeadViews();
-		for (var i = 0; i < this.views.length; i++) {
-			this.views[i].collectionChange(collection_name, array);
+		if (this.postNestingChange){
+			this.postNestingChange(collection_name, array);
 		}
+		this.mpx.sendCollectionChange(collection_name, array);
 	},
 	hasComplexStateFn: function(state_name) {
 		if (this.complex_states && this.complex_states[name]){
@@ -966,14 +1175,14 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			return true;
 		}
 	},
-	sendStatesToView: function(view, states_list) {
-		view.recieveStatesChanges(states_list);
-	},
+
 	sendStatesToViews: function(states_list) {
 		//this.removeDeadViews();
-		for (var i = 0; i < this.views.length; i++) {
-			this.sendStatesToView(this.views[i], states_list);
+		if (this.postStatesChanges){
+			this.postStatesChanges(states_list);
 		}
+
+		this.mpx.sendStatesToViews(states_list);
 	},
 	updateManyStates: function(obj) {
 		var changes_list = [];
@@ -997,10 +1206,10 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			value: value
 		}]);
 	},
-	toSimpleStructure: function() {
-		var models_index = {};
+	toSimpleStructure: function(models_index, big_result) {
+		models_index = models_index || {};
 		var all_for_parse = [this];
-		var big_result = [];
+		big_result = big_result || [];
 
 		var checkModel = function(md) {
 			var cur_id = md._provoda_id;
@@ -1014,8 +1223,9 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		while (all_for_parse.length) {
 			var cur_md = all_for_parse.shift();
 			var result = {
+				_provoda_id: cur_md._provoda_id,
 				name: cur_md.model_name,
-				states: cur_md.states,
+				states: cloneObj({}, cur_md.states),
 				map_parent: cur_md.map_parent && checkModel(cur_md.map_parent),
 				children_models: {}
 			};
@@ -1046,7 +1256,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 
 
-		return JSON.stringify(big_result.reverse());
+		return big_result.reverse();
 	}
 });
 provoda.Model.extendTo(provoda.HModel, {
@@ -1611,10 +1821,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.children = [];
 		this.children_models = {};
 		this.view_parts = {};
-		if (!view_otps.md){
+		if (!view_otps.mpx){
 			throw new Error('give me model!');
 		}
-		this.md = view_otps.md;
+		this.mpx = view_otps.mpx;
 		this.undetailed_states = {};
 		this.undetailed_children_models = {};
 		this.way_points = [];
@@ -1622,9 +1832,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.dom_related_props = [];
 		}
 
-		cloneObj(this.undetailed_states, this.md.states);
-		cloneObj(this.undetailed_children_models, this.md.children_models);
+		cloneObj(this.undetailed_states, this.mpx.states);
+		cloneObj(this.undetailed_children_models, this.mpx.children_models);
 		return this;
+	},
+	RPCLegacy: function() {
+		this.mpx.RPCLegacy.apply(this.mpx, arguments);
 	},
 	children_views: {},
 	canUseWaypoints: function() {
@@ -1758,7 +1971,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				break;
 			} else {
 				if (cur_ancestor.parent_view == this.root_view){
-					if (cur_ancestor == this.root_view.getChildView(cur_ancestor.md, view_space)){
+					if (cur_ancestor == this.root_view.getChildView(cur_ancestor.mpx, view_space)){
 						target_ancestor = cur_ancestor;
 						break;
 					}
@@ -1769,16 +1982,17 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		return target_ancestor;
 	},
-	getChildView: function(md, view_space) {
+	getChildView: function(mpx, view_space) {
 		var complex_id = this.view_id  + '_' + view_space;
-		return md.getView(complex_id, true);
+		return mpx.getView(complex_id, true);
 	},
 	getFreeChildView: function(address_opts, md, opts) {
+		var mpx = md.mpx;
 		var
 			child_name = address_opts.name,
 			view_space = address_opts.space || 'main',
 			complex_id = this.view_id  + '_' + view_space,
-			view = md.getView(complex_id, true);
+			view = mpx.getView(complex_id, true);
 
 		if (view){
 			return false;
@@ -1794,11 +2008,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				view = address_opts.sampleController;
 			}
 			view.init({
-				md: md,
+				mpx: mpx,
 				parent_view: this,
 				root_view: this.root_view
 			}, opts);
-			md.addView(view, complex_id);
+			mpx.addView(view, complex_id);
 			this.addChildView(view, child_name);
 			return view;
 		}
@@ -1811,17 +2025,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.children.push.call(this.children, view);
 		}
 	},
-	removeChildViewsByMd: function(md) {
+	removeChildViewsByMd: function(mpx) {
 		var views_to_remove = [];
-		var views = md.getViews();
-		for (var i = 0; i < this.children.length; i++) {
+		var views = mpx.getViews();
+		var i;
+		for (i = 0; i < this.children.length; i++) {
 			var cur = this.children[i];
 			if (views.indexOf(cur) != -1){
 				views_to_remove.push(cur);
 			}
 
 		}
-		for (var i = 0; i < views_to_remove.length; i++) {
+		for (i = 0; i < views_to_remove.length; i++) {
 			views_to_remove[i].die();
 		}
 		this.children = arrayExclude(this.children, views_to_remove);
@@ -1871,7 +2086,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		this.trigger('die');
 		if (!skip_md_call){
-			this.md.removeDeadViews();
+			this.mpx.removeDeadViews();
 		}
 
 		this.c = null;
@@ -2111,7 +2326,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return;
 		}
 		for (; i >= 0; i--) {
-			var view = array[i].getView(complex_id);
+			var view = array[i].mpx.getView(complex_id);
 			var dom_hook = view && view.getT();
 			if (dom_hook){
 				return dom_hook;
@@ -2128,7 +2343,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return;
 		}
 		for (; i < array.length; i++) {
-			var view = array[i].getView(complex_id);
+			var view = array[i].mpx.getView(complex_id);
 			var dom_hook = view && view.getT();
 			if (dom_hook){
 				return dom_hook;

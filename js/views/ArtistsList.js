@@ -7,7 +7,8 @@ provoda.View.extendTo(ArtcardViewInList, {
 		this.alink = $('<span class=""></span>').appendTo(this.c);
 		var _this = this;
 		this.c.click(function() {
-			_this.md.showArtcard();
+			_this.RPCLegacy('showArtcard');
+			//_this.RPCLegacy('showArtcard');
 			return false;
 		});
 		this.image_place = $('<span class="song-image-con"></span>').appendTo(this.c);
@@ -39,7 +40,8 @@ provoda.View.extendTo(ArtistListView, {
 		this.c = this.root_view.getSample('artists_list');
 		var _this = this;
 		this.generate_button = this.c.find('.to-open-block').click(function() {
-			_this.md.requestRandomPlaylist();
+			_this.RPCLegacy('requestRandomPlaylist');
+			//_this.RPCLegacy('requestRandomPlaylist');
 		});
 		this.listc = this.c.find('ul');
 		this.addWayPoint(this.generate_button);

@@ -31,7 +31,7 @@ provoda.View.extendTo(mfComplectUI, {
 			if (state){
 				var _this = this;
 				var header = $('<a class="js-serv"></a>').click(function() {
-					_this.md.toggleOverstocked();
+					_this.RPCLegacy('toggleOverstocked');
 				}).text(this.state('complect_name'));
 				this.addWayPoint(header, {
 					canUse: function() {
@@ -141,18 +141,10 @@ provoda.View.extendTo(mfCorUI, {
 		this.createTemplate();
 		var _this = this;
 		this.tpl.ancs.more_songs_b.click(function() {
-			_this.md.switchMoreSongsView();
+			_this.RPCLegacy('switchMoreSongsView');
 		});
 		this.addWayPoint(this.tpl.ancs.more_songs_b);
 
-	},
-	getNextSemC: function(packs, start) {
-		for (var i = start; i < packs.length; i++) {
-			var cur_name = packs[i];
-			var cur_mf = cur_name && this.md.complects[cur_name];
-			
-			return cur_mf && cur_mf.getThing();
-		}
 	},
 	showYoutubeVideo: function(id, c, link){
 		if (this.video){

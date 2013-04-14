@@ -101,6 +101,10 @@ var playlistsSection = function() {
 };
 searchSection.extendTo(playlistsSection, {
 	model_name: 'section-playlist',
+	init: function() {
+		this._super();
+		this.updateState('section_title', localize('playlists'));
+	},
 	resItem: playlistSuggest
 });
 
@@ -114,6 +118,10 @@ var artistsSection = function(){
 
 seesuSection.extendTo(artistsSection, {
 	model_name: 'section-artist',
+	init: function() {
+		this._super();
+		this.updateState('section_title', localize('Artists','Artists'));
+	},
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» ' + localize('oartists', 'artists');
@@ -178,6 +186,10 @@ var tracksSection = function() {
 };
 seesuSection.extendTo(tracksSection, {
 	model_name: 'section-track',
+	init: function() {
+		this._super();
+		this.updateState('section_title', localize('Tracks','Tracks'));
+	},
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('otracks', 'tracks');
@@ -227,6 +239,10 @@ var tagsSection = function() {
 };
 seesuSection.extendTo(tagsSection, {
 	model_name: 'section-tag',
+	init: function() {
+		this._super();
+		this.updateState('section_title',  localize('Tags'));
+	},
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('otags', 'tags');
@@ -287,6 +303,10 @@ var albumsSection = function() {
 };
 seesuSection.extendTo(albumsSection, {
 	model_name: 'section-album',
+	init: function() {
+		this._super();
+		this.updateState('section_title', localize('Albums', 'Albums'));
+	},
 	getButtonText: function(have_results, q){
 		if (have_results){
 			return localize('fine-more', 'find more') + ' «' + q + '» '+ localize('oalbums', 'albums');

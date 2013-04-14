@@ -14,10 +14,10 @@ var songsListView;
 
 			this.bindClick();
 			//var _this = this;
-			var md = this.md;
+			var _this = this;
 
 			this.dont_rept_pl_chbx = this.c.find('.dont-rept-pl input').click(function() {
-				md.setDnRp($(this).prop('checked'));
+				_this.RPCLegacy('setDnRp', $(this).prop('checked'));
 			});
 		}
 	});
@@ -35,14 +35,14 @@ var songsListView;
 			var _this = this;
 
 			this.c.find(".search-music-files").click(function(){
-				_this.md.actionsrow.pl.makePlayable(true);
-				su.trackEvent('Controls', 'make playable all tracks in playlist');
+				_this.RPCLegacy('makePlayable');
+				
 				//
 			});
 
 			this.c.find('.open-external-playlist').click(function(e){
-				_this.md.actionsrow.pl.makeExternalPlaylist();
-				su.trackEvent('Controls', 'make *.m3u');
+				_this.RPCLegacy('makeExternalPlaylist');
+			
 				//e.preventDefault();
 			});
 

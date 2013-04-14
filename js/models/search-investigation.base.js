@@ -348,7 +348,7 @@
 			for (var i = 0; i < this.rendering_list.length; i++) {
 				this.rendering_list[i].die();
 			}
-			this.collectViewsGarbadge();
+			this.mpx.collectViewsGarbadge();
 			this.updateNesting('rendering_list', []);
 			
 		},

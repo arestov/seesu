@@ -35,7 +35,7 @@ provoda.Model.extendTo(appModelBase, {
 			for (var i = array.length - 1; i >= 0; i--) {
 				var cur = array[i];
 				if (cur.type == 'move-view' && cur.value){
-					target = cur.target;
+					target = cur.target.getMD();
 					break;
 				}
 
@@ -47,7 +47,7 @@ provoda.Model.extendTo(appModelBase, {
 			for (var i = array.length - 1; i >= 0; i--) {
 				var cur = array[i];
 				if (cur.type == 'zoom-out' || cur.type == 'move-view'){//&& cur.value
-					target = cur.target;
+					target = cur.target.getMD();
 					break;
 				}
 
@@ -57,7 +57,7 @@ provoda.Model.extendTo(appModelBase, {
 	},
 	'model-mapch': {
 		'move-view': function(change) {
-			var parent = change.target.getParentMapModel();
+			var parent = change.target.getMD().getParentMapModel();
 			if (parent){
 				//mp-source
 				/*
@@ -67,18 +67,18 @@ provoda.Model.extendTo(appModelBase, {
 				}*/
 				parent.updateState('mp_has_focus', false);
 			}
-			change.target.updateState('mp_show', change.value);
+			change.target.getMD().updateState('mp_show', change.value);
 		},
 		'zoom-out': function(change) {
-			change.target.updateState('mp_show', false);
+			change.target.getMD().updateState('mp_show', false);
 		},
 		'destroy': function(change) {
-			change.target.mlmDie();
+			change.target.getMD().mlmDie();
 		}
 	},
 	animationMark: function(models, mark) {
 		for (var i = 0; i < models.length; i++) {
-			models[i].updateState('map_animating', mark);
+			models[i].getMD().updateState('map_animating', mark);
 		}
 	},
 	animateMapChanges: function(changes) {

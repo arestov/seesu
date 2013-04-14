@@ -22,7 +22,8 @@ provoda.View.extendTo(UserAcquaintanceView, {
 					nb.enable();
 				var _this = this;
 				nb.b.click(function() {
-					_this.md.acceptInvite();
+					_this.RPCLegacy('acceptInvite');
+					//_this.RPCLegacy('acceptInvite');
 				});
 				this.button_c = nb.c;
 				nb.c.appendTo(this.button_place);
@@ -122,7 +123,8 @@ provoda.View.extendTo(UserAcquaintancesListPreview, {
 		var _this = this;
 
 		this.c.click(function() {
-			_this.md.showOnMap();
+			//_this.RPCLegacy('showOnMap');
+			_this.RPCLegacy('showOnMap');
 		});
 
 		

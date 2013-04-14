@@ -255,6 +255,9 @@ BaseCRow.extendTo(ShareRow, {
 		this.updateState("needs_vk_auth ", true);
 
 	},
+	postToVKWall: function() {
+		this.mo.postToVKWall();
+	},
 	removeVKAudioAuth: function() {
 		if (this.vk_auth_rqb){
 			this.vk_auth_rqb.die();

@@ -49,7 +49,7 @@ provoda.View.extendTo(appModelView, {
 		this.c.addClass('app-loaded');
 		var ext_search_query = this.els.search_input.val();
 		//must be before start_page view set its value to search_input
-		this.md.checkUserInput({
+		this.RPCLegacy('checkUserInput', {
 			ext_search_query: ext_search_query
 		});
 
@@ -373,9 +373,9 @@ provoda.View.extendTo(appModelView, {
 		if (highlight && highlight.source_md){
 			var source_md = highlight.source_md;
 
-			var md_view = this.getChildView(md, 'main');
+			var md_view = this.getChildView(md.mpx, 'main');
 			if (md_view){
-				var hl_view = md_view.getChildView(source_md, 'main');
+				var hl_view = md_view.getChildView(source_md.mpx, 'main');
 				if (hl_view){
 					//this.scrollTo(hl_view.getC());
 				}
@@ -398,7 +398,7 @@ provoda.View.extendTo(appModelView, {
 		}*/
 		var parent_md = md.getParentMapModel();
 		if (parent_md){
-			var mplev_item_view = md.getRooConPresentation(false, false, true);
+			var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);
 			if (mplev_item_view && mplev_item_view.getC().height()){
 				this.scrollTo(mplev_item_view.getC(), {
 					node: this.getLevByNum(md.map_level_num - 1).scroll_con
@@ -410,7 +410,7 @@ provoda.View.extendTo(appModelView, {
 
 
 		//var parent_md = md.getParentMapModel();
-		//this.getChildView()
+		//this.getChildView(mpx)
 	},
 	'stch-map_animation': function(changes) {
 		if (!changes){
@@ -421,15 +421,16 @@ provoda.View.extendTo(appModelView, {
 
 		for (var i = 0; i < all_changhes.length; i++) {
 			var cur = all_changhes[i];
-
+			var target = cur.target.getMD();
 			if (cur.type == 'move-view'){
-				cur.target.updateState('vis_mp_show', {
+				
+				target.updateState('vis_mp_show', {
 					anid: changes.anid,
 					value: cur.value
 				});
 				//MUST UPDATE VIEW, NOT MODEL!!!!!
 			} else if (cur.type == 'destroy'){
-				this.removeChildViewsByMd(cur.target);
+				this.removeChildViewsByMd(target.mpx);
 			}
 
 		}
@@ -489,11 +490,10 @@ provoda.View.extendTo(appModelView, {
 		},
 		'now_playing': function(text) {
 
-			var md = this.md;
 			var _this = this;
 			if (!this.now_playing_link && this.nav){
 				this.now_playing_link = $('<a class="nav-item np-button"><span class="np"></span></a>').click(function(){
-					md.showNowPlaying();
+					_this.RPCLegacy('showNowPlaying');
 				}).appendTo(this.nav.daddy);
 
 				this.addWayPoint(this.now_playing_link, {
@@ -684,12 +684,12 @@ provoda.View.extendTo(appModelView, {
 				};
 				var getCurrentNode = function() {
 					var current_md = _this.state('current_mp_md');
-					return current_md && current_md.getRooConPresentation(true, true).getC();
+					return current_md && current_md.mpx.getRooConPresentation(true, true).getC();
 				};
 
 				var readySteadyResize = function(){
-					if (_this.md.rsd_rz){
-						clearInterval(_this.md.rsd_rz);
+					if (_this.rsd_rz){
+						clearInterval(_this.rsd_rz);
 					}
 
 					var oldsize = detectSize(getCurrentNode());
@@ -711,7 +711,7 @@ provoda.View.extendTo(appModelView, {
 						}
 					};
 
-					_this.md.rsd_rz = setInterval(recheckFunc,100);
+					_this.rsd_rz = setInterval(recheckFunc,100);
 					_this.on('vip-state-change.current_mp_md.resize-check', function(e) {
 						recheckFunc();
 					}, {
@@ -787,7 +787,7 @@ provoda.View.extendTo(appModelView, {
 			_this.search_input.on('keyup change', function(e) {
 				var input_value = this.value;
 				_this.overrideStateSilently('search_query', input_value);
-				_this.md.search(input_value);
+				_this.RPCLegacy('search', input_value);
 			});
 
 			/*
@@ -952,7 +952,7 @@ provoda.View.extendTo(appModelView, {
 			key_name = 'Up';
 		}
 		if (key_name){
-			//this.md.keyNav(key_name);
+			//this.RPCLegacy('keyNav', key_name);
 			this.wayPointsNav(key_name);
 		}
 	},
@@ -1491,7 +1491,7 @@ provoda.View.extendTo(appModelView, {
 		if (cwp){
 			var cur_md_md = this.state('current_mp_md');
 			var parent_md = cur_md_md.getParentMapModel();
-			if (parent_md && cwp.view.getAncestorByRooViCon('main') == parent_md.getRooConPresentation()){
+			if (parent_md && cwp.view.getAncestorByRooViCon('main') == parent_md.mpx.getRooConPresentation()){
 				this.scrollTo(cwp.node, {
 					node: this.getLevByNum(parent_md.map_level_num).scroll_con
 				}, {vp_limit: 0.6, animate: 117});
@@ -1516,7 +1516,7 @@ provoda.View.extendTo(appModelView, {
 		var _this = this;
 
 		var cur_mp_md = this.state('current_mp_md');
-		var roocon_view =  cur_mp_md && cur_mp_md.getRooConPresentation(true);
+		var roocon_view =  cur_mp_md && cur_mp_md.mpx.getRooConPresentation(true);
 		if (roocon_view){
 			var dems_storage = {};
 
@@ -1816,7 +1816,7 @@ provoda.View.extendTo(appModelView, {
 		nb.c.addClass('get-vk-photo-request-b');
 		var _this = this;
 		nb.b.click(function(){
-			_this.md.getPhotoFromVK();
+			_this.RPCLegacy('getPhotoFromVK');
 		});
 		con.append(nb.c);
 

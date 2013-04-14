@@ -32,7 +32,7 @@ provoda.addPrototype("songsListBaseView", {
 		"load-more-b": function() {
 			var _this = this;
 			var node = $("<a class='load-more-list-data'></a>").click(function() {
-				_this.md.requestMoreData(true);
+				_this.RPCLegacy('requestMoreData', true);
 			}).text(localize("load-more")).appendTo(this.c);
 
 			this.addWayPoint(node, {

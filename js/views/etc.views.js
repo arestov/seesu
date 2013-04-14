@@ -145,7 +145,7 @@ provoda.View.extendTo(VkLoginUI, {
 		this.c = this.root_view.getSample('vklc');
 		var _this = this;
 		var sign_link = this.c.find('.sign-in-to-vk').click(function(e){
-			_this.md.requestAuth();
+			_this.RPCLegacy('requestAuth');
 			e.preventDefault();
 		});
 		this.login_desc = this.c.find('.login-request-desc');
@@ -171,7 +171,7 @@ provoda.View.extendTo(VkLoginUI, {
 			}
 		});
 		this.c.find('.notify-closer').click(function() {
-			_this.md.removeNotifyMark();
+			_this.RPCLegacy('removeNotifyMark');
 		});
 
 	}
@@ -206,7 +206,7 @@ provoda.View.extendTo(LfmLoginView, {
 		this.auth_block = this.c.children(".auth-block");
 		var _this = this;
 		var auth_link = this.auth_block.find('.lastfm-auth-bp a').click(function(e){
-			_this.md.requestAuth();
+			_this.RPCLegacy('requestAuth');
 			e.preventDefault();
 		});
 		this.addWayPoint(auth_link);
@@ -214,7 +214,7 @@ provoda.View.extendTo(LfmLoginView, {
 		var use_code_button = this.auth_block.find('.use-lfm-code').click(function(){
 			var value = _this.code_input.val();
 			if (value){
-				_this.md.useCode(value);
+				_this.RPCLegacy('useCode', value);
 			}
 			return false;
 		});
@@ -233,7 +233,7 @@ LfmLoginView.extendTo(LfmLoveItView, {
 		this.nloveb.c.appendTo(wrap);
 		this.nloveb.b.click(function(){
 			if (_this.nloveb._enabled){
-				_this.md.makeLove();
+				_this.RPCLegacy('makeLove');
 			}
 		});
 		this.addWayPoint(this.nloveb.b);
@@ -265,10 +265,10 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 		
 
 		this.chbx_enabl.click(function() {
-			_this.md.setScrobbling(true);
+			_this.RPCLegacy('setScrobbling', true);
 		});
 		this.chbx_disabl.click(function() {
-			_this.md.setScrobbling(false);
+			_this.RPCLegacy('setScrobbling', false);
 		});
 		this.addWayPoint(this.chbx_enabl, {
 			
@@ -304,6 +304,13 @@ provoda.View.extendTo(fileInTorrentUI,{
 			} else {
 				this.c.removeClass('overstocked');
 			}
+		},
+		'full_title': function(state) {
+			this.f_text.text(state);
+
+		},
+		'torrent_link': function(state) {
+			this.downloadlink.attr('href', state);
 		}
 	},
 	createBase: function() {
@@ -315,13 +322,13 @@ provoda.View.extendTo(fileInTorrentUI,{
 		
 
 		var pg = $('<span class="mf-progress"></span>');
-		var f_text = $('<span class="mf-text"></span>').text(this.md.sr_item.title || getHTMLText(this.md.sr_item.HTMLTitle)).appendTo(pg);
+		this.f_text = $('<span class="mf-text"></span>').appendTo(pg);
 
 		this.downloadlink = $('<a class="external download-song-link"></a>').click(function(e) {
 			e.stopPropagation();
 			e.preventDefault();
-			_this.md.download();
-		}).text('torrent').attr('href', this.md.sr_item.torrent_link).appendTo(this.c);
+			_this.RPCLegacy('download');
+		}).text('torrent').appendTo(this.c);
 
 		this.addWayPoint(this.downloadlink, {
 			
@@ -430,11 +437,10 @@ provoda.View.extendTo(songFileModelUI, {
 		},
 		title: function(state) {
 			this.track_title.text(state || '');
-		//	.text(this.md.getTitle())
+		//	.text(this.RPCLegacy('getTitle'))
 		},
 		source_name: function(state) {
 			this.source_name.text(state || '');
-			//.text(this.md.from)
 		},
 		description: function(state) {
 			this.track_text.attr('title', state || '');
@@ -523,7 +529,7 @@ provoda.View.extendTo(songFileModelUI, {
 
 		this.c.click(function() {
 			if (!_this.state('selected')){
-				_this.md.trigger('want-to-play-sf');
+				_this.RPCLegacy('trigger', 'want-to-play-sf');
 			}
 		});
 		this.addWayPoint(this.c, {
@@ -550,7 +556,7 @@ provoda.View.extendTo(songFileModelUI, {
 				console.log("no width for pb :!((");
 			}
 			if (width){
-				_this.md.setPositionByFactor([last.cpos, width]);
+				_this.RPCLegacy('setPositionByFactor', [last.cpos, width]);
 			}
 			
 		};
@@ -632,13 +638,13 @@ provoda.View.extendTo(songFileModelUI, {
 			if (_this.state('selected')){
 
 				if (_this.state('play') == 'play'){
-					_this.md.pause();
+					_this.RPCLegacy('pause');
 				} else {
-					_this.md.trigger('want-to-play-sf');
-					//_this.md.play();
+					_this.RPCLegacy('trigger', 'want-to-play-sf');
+					//_this.RPCLegacy('play');
 				}
 			} else {
-				_this.md.trigger('want-to-play-sf');
+				_this.RPCLegacy('trigger', 'want-to-play-sf');
 			}
 		});
 		var pc_place = $('<span class="pc-indicator big-indicator play-indicator pc-place"></span>').appendTo(pb_place);

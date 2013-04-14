@@ -461,9 +461,9 @@ provoda.View.extendTo(BaseCRowUI, {
 	dom_rp: true,
 	bindClick: function(){
 		if (this.button){
-			var md = this.md;
+			var _this = this;
 			this.button.click(function(){
-				md.switchView();
+				_this.RPCLegacy('switchView');
 			});
 			this.addWayPoint(this.button);
 		}

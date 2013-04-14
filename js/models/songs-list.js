@@ -177,6 +177,14 @@ var songsList;
 			this.actionsrow = actionsrow;
 			this._super();
 		},
+		makePlayable: function() {
+			this.actionsrow.pl.makePlayable(true);
+			su.trackEvent('Controls', 'make playable all tracks in playlist');
+		},
+		makeExternalPlaylist: function() {
+			this.actionsrow.pl.makeExternalPlaylist();
+			su.trackEvent('Controls', 'make *.m3u');
+		},
 		model_name: 'row-multiatcs'
 	});
 

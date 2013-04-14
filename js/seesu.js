@@ -107,7 +107,7 @@ appModel.extendTo(seesuApp, {
 			
 		}, 1000 * 60 * 20);
 		setInterval(function(){
-			var rootvs = _this.getViews('root');
+			var rootvs = _this.mpx.getViews('root');
 			if (rootvs.length){
 				_this.updateLVTime();
 			}
@@ -655,6 +655,7 @@ appModel.extendTo(seesuApp, {
 
 window.seesu = window.su = new seesuApp();
 su.init(3.9);
+provoda.sync_s.setRootModel(su);
 
 
 

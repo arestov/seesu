@@ -84,7 +84,29 @@ var song;
 			}
 			this.initStates();
 			_this.initHeavyPart();
+
+			this.loadImages = spv.once(function() {
+				var images_request = lfm.get('artist.getImages',{'artist': _this.artist })
+					.done(function(r){
+						var images = toRealArray(getTargetField(r, 'images.image'));
+						_this.updateState('images', images);
+					});
+				this.addRequest(images_request, {
+					space: 'demonstration'
+				});
+			});
+			this.on('state-change.can_load_images', function(e) {
+				if (e.value){
+					_this.loadImages();
+				}
+			});
 			
+		},
+		'compx-can_load_images': {
+			depends_on: ['artist', 'can_expand'],
+			fn: function(artist, can_expand) {
+				return artist && can_expand;
+			}
 		},
 		initOnShow: function() {
 			if (!this.onshow_inited){

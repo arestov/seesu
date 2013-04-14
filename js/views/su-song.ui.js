@@ -234,11 +234,11 @@ provoda.View.extendTo(songUI, {
 		dep_vp: ['playcount-c']
 	},
 	bindTagClick: function(node, tag_name) {
-
+		var _this = this;
 		node.click(function(e) {
 			e.preventDefault();
-			su.show_tag(tag_name);
-			seesu.trackEvent('Artist navigation', 'tag', tag_name);
+			_this.RPCLegacy('showTag', tag_name);
+	
 		});
 		this.addWayPoint(node, {
 			simple_check: true
@@ -271,10 +271,11 @@ provoda.View.extendTo(songUI, {
 		dep_vp: ['tags-c']
 	},
 	bindSimArtistClick: function(node, artist_name) {
+		var _this = this;
 		node.click(function(e) {
 			e.preventDefault();
-			su.showArtcardPage(artist_name);
-			seesu.trackEvent('Artist navigation', 'artist', artist_name);
+			_this.RPCLegacy('showArtcardPage', artist_name);
+			
 		});
 		this.addWayPoint(node, {
 			simple_check: true
@@ -312,7 +313,7 @@ provoda.View.extendTo(songUI, {
 				}
 				if (!this.photo_data.cool_photos){
 					this.first_image = $('<img class="artist_image"/>').attr({'src': state ,'alt': this.state('artist')});
-					this.photo_c.append(this.first_image);
+					this.requirePart('photo_c').append(this.first_image);
 				}
 			}
 			
@@ -327,6 +328,13 @@ provoda.View.extendTo(songUI, {
 			}
 		},
 		dep_vp: ['artist-info']
+	},
+	'stch-one_artist_playlist': {
+		fn: function(state) {
+			this.getPart('artist_link_con').toggleClass('one-artist-playlist', state);
+
+		},
+		dep_vp: ['artist_link_con']
 	},
 	parts_builder: {
 		context: function() {
@@ -345,6 +353,28 @@ provoda.View.extendTo(songUI, {
 			return tags_p;
 			
 		},
+		'dominator_head': function() {
+
+			return this.requirePart('tidominator').children('.dominator-head');
+		},
+		'artist_link_con': function() {
+			var _this = this;
+			var artist_link_con = this.requirePart('dominator_head').children('.closer-to-track');
+			var artcard_link = $('<a class="js-serv">' + localize('artcard') + '</a>')
+					.appendTo(artist_link_con)
+					.click(function(){
+						_this.RPCLegacy('showArtcardPage');
+					});
+
+			this.addWayPoint(artcard_link, {
+				
+			});
+			return artist_link_con;
+
+		},
+		'photo_c': function() {
+			return this.requirePart('tidominator').find('.photo-cont-lift');
+		},
 		'similars-c': function() {
 
 			var artist = this.state('artist');
@@ -353,10 +383,9 @@ provoda.View.extendTo(songUI, {
 				similars_link = $('<a></a>').append(localize('similar-arts') + ":").attr({ 'class': 'similar-artists js-serv'}),
 				similars_a = $('<em></em>').append(similars_link);
 			$('<span class="desc-name"></span>').append(similars_a).appendTo(similars_p);
-
+			var _this = this;
 			similars_link.click(function() {
-				su.showArtistSimilarArtists(artist);
-				seesu.trackEvent('Artist navigation', 'similar artists to', artist);
+				_this.RPCLegacy('showArtistSimilarArtists');
 			});
 
 			this.similars_text_c = $('<span class="desc-text"></span>').appendTo(similars_p).append('<span class="forced-end"></span>');
@@ -404,16 +433,11 @@ provoda.View.extendTo(songUI, {
 		this.c = $('<li></li>');
 		
 		this.dom_related_props.push('node', 'player_song_mark', 'fsearch_status_c', 'song_imagec', 'titlec', 'artist_name_c', 'track_name_c');
-		
 		this.node = $("<a></a>")
 			.addClass('track-node waiting-full-render')
 			.click(function(){
-				var mo = _this.md;
-				if (mo.player){
-					mo.player.wantSong(mo);
-				}
-
-				mo.showOnMap();
+				_this.RPCLegacy('wantSong');
+				_this.RPCLegacy('showOnMap');
 				return false;
 			});
 
@@ -428,10 +452,6 @@ provoda.View.extendTo(songUI, {
 		});
 		//
 		this.player_song_mark = $('<span class="playing-song-mark"></span>').appendTo(this.node);
-		
-		/*var buttmen = this.root_view.els.play_controls.node.clone(true).data('mo', this.md);
-			buttmen.find('.pc').data('mo', this.md);
-		this.c.prepend(buttmen);*/
 
 
 		var filesload_states_c = $('<span class="files-load-states"></span>');
@@ -486,29 +506,12 @@ provoda.View.extendTo(songUI, {
 		//
 		var tidominator = this.requirePart('tidominator');
 		//this.tidominator = this.context.children('.track-info-dominator');
-		this.dominator_head = tidominator.children('.dominator-head');
+		this.dominator_head = this.requirePart('dominator_head');
 		this.a_info = tidominator.children('.artist-info');
 		this.t_info = tidominator.children('.track-info');
 
-		var pl = this.md.plst_titl,
-			pl_type = pl.playlist_type;
 
-		var artist_link_con = this.dominator_head.children('.closer-to-track');
-
-		if (pl_type == 'artist'){
-			artist_link_con.addClass('one-artist-playlist');
-		}
-
-		var artcard_link = $('<a class="js-serv">' + localize('artcard') + '</a>')
-				.appendTo(artist_link_con)
-				.click(function(){
-					su.showArtcardPage(_this.md.artist);
-					su.trackEvent('Artist navigation', 'art card', _this.md.artist);
-				});
-
-		this.addWayPoint(artcard_link, {
-			
-		});
+		
 		var users = context.children('.track-listeners');
 		var users_list = users.children('.song-listeners-list');
 		
@@ -553,17 +556,11 @@ provoda.View.extendTo(songUI, {
 		};
 		this.rowcs.users_context = users_context;
 		this.c.append(context);
-		this.updateSongContext(true);
+		this.update_artist_info();
 		this.dom_related_props.push('a_info', 't_info', 'dominator_head', 'song_actions_c', 'rowcs', 'extend_info', 't_users');
 		this.requestAll();
 	},
-	updateSongContext: function(){
-		var artist = this.md.artist;
-		var a_info = this && this.a_info;
-		if (a_info){
-			if (artist) {this.update_artist_info(artist, a_info, this.md.plst_titl.playlist_type != 'artist');}
-		}
-	},
+
 	createListenersHeader: function(){
 		if (this && this.t_users){
 			if (!this.t_users.header){
@@ -571,7 +568,7 @@ provoda.View.extendTo(songUI, {
 			}
 		}
 	},
-	createCurrentUserUI: function(mo, user_info){
+	createCurrentUserUI: function(user_info){
 		if (this.t_users && !this.t_users.current_user){
 			var div = this.t_users.current_user = $('<div class="song-listener current-user-listen"></div>');
 			this.root_view.createUserAvatar(user_info, div);
@@ -587,18 +584,18 @@ provoda.View.extendTo(songUI, {
 		var last_update = this.t_users.last_update;
 		//var current_user = su.s.getId();
 		
-		
-		if (this.md.artist && (!last_update || (new Date() - last_update) > 1000 * 60 * 1)){
-			var d = {artist: this.md.artist};
-			if (this.md.track){
-				d.title = this.md.track;
+		var artist = this.state('artist');
+		if (artist && (!last_update || (new Date() - last_update) > 1000 * 60 * 1)){
+			var d = {artist: artist};
+			if (this.state('track')){
+				d.title = this.state('track');
 			}
 			var current_user = su.s.getId('vk');
 			var user_info;
 			if (current_user){
 				user_info = su.s.getInfo('vk');
 				if (user_info){
-					_this.createCurrentUserUI(this.md, user_info);
+					_this.createCurrentUserUI(user_info);
 				}
 				_this.createListenersHeader();
 				
@@ -642,12 +639,12 @@ provoda.View.extendTo(songUI, {
 		}
 		
 	},
-	update_artist_info: function(artist, a_info, show_link_to_artist_page){
+	update_artist_info: function(){
 		var _this = this;
-		
-		this.dom_related_props.push('ainf', 'photo_c', 'photo_data', 'img_panorama');
+		var a_info = this.a_info;
+		this.dom_related_props.push('ainf', 'photo_data', 'img_panorama');
 
-		if (artist && !this.has_artist_info){
+		if (!this.has_artist_info){
 			this.has_artist_info = true;
 			this.ainf = {
 				bio: a_info.children('.artist-bio'),
@@ -659,143 +656,133 @@ provoda.View.extendTo(songUI, {
 			this.ainf.meta_info.empty();
 			
 			var tidominator = this.requirePart('tidominator');
-			this.photo_c = tidominator.find('.photo-cont-lift');
 			this.photo_data = {};
 
 			this.requirePart('artist-info');
-
-
-			var images_request = lfm.get('artist.getImages',{'artist': artist })
-				.done(function(r){
-					if (!_this.isAlive()){
-						return;
-					}
-
-					var images = toRealArray(getTargetField(r, 'images.image'));
-					if (images){
-						images = toRealArray(images);
-						_this.setVisState('cool_photos', true);//cool_photos
-						_this.photo_data.cool_photos = images;
-						
-						if (images.length){
-							var fragment = document.createDocumentFragment();
-
-							//var shuffled_images = [images.shift()];
-
-							//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
-							
-							_this.img_requests = [];
-							_this.img_panorama = new Panoramator();
-							var main_c = _this.photo_c.parent();
-				
-							_this.img_panorama.init({
-								viewport: main_c,
-								lift: _this.photo_c,
-								onUseEnd: function(){
-									seesu.trackEvent('Panoramator', 'artist photos');
-								}
-							});
-
-							var my_window = getDefaultView(_this.getC()[0].ownerDocument);
-							
-							var checkPanoramaSize = function(){
-								_this.img_panorama.checkSize();
-							};
-
-							$(my_window).on('resize', checkPanoramaSize);
-
-							_this.onDie(function(){
-								$(my_window).off('resize', checkPanoramaSize);
-							});
-
-							var images_collection = [];
-
-							var updatePanorama = function(){
-								images_collection.sort(function(a, b){
-									return sortByRules(a, b, ['num']);
-								});
-
-								_this.img_panorama.setCollection($filter(images_collection, 'item'));
-							};
-
-							var appendImage = function(el, index, first_image) {
-								var sizes = toRealArray(el.sizes.size);
-
-								var image_jnode = $('<img class="artist_image hidden" alt=""/>');
-								var req = loadImage({
-									node: image_jnode[0],
-									url: (sizes[5] || sizes[0])["#text"],
-									timeout: 40000,
-									queue: _this.root_view.lfm_imgq,
-									cache_allowed: true
-								}).done(function(){
-									if (!_this.isAlive()){
-										return;
-									}
-									if (first_image && _this.first_image){
-										_this.first_image.remove();
-										_this.first_image = null;
-									}
-									
-
-									image_jnode.removeClass("hidden");
-
-									images_collection.push({
-										num: index,
-										item: image_jnode
-									});
-
-									updatePanorama();
-								}).fail(function(){
-									image_jnode.remove();
-								});
-								/*
-								su.lfm_imgq.add(function(){
-									
-								});*/
-
-	
-								_this.img_requests.push(req);
-								
-
-								
-								fragment.appendChild(image_jnode[0]);
-								
-							};
-							if (images[0]){
-								appendImage(images[0], 0, true);
-							}
-							$.each(images.slice(1, 10), function(i, el){
-								appendImage(el, i + 1);
-							});
-							_this.photo_c.append(fragment);
-							
-							main_c.addClass('loading-images');
-
-							for (var i = _this.img_requests.length - 1; i >= 0; i--) {
-								_this.md.addRequest(_this.img_requests[i], {
-									space: 'demonstration'
-								});
-								
-							}
-
-							$.when.apply($, _this.img_requests).always(function(){
-								main_c.removeClass('loading-images');
-							});
-							_this.img_panorama.checkSize();
-							
-
-						}
-						
-					}
-
-				});
-			this.md.addRequest(images_request, {
-				space: 'demonstration'
-			});
-			
-
+			this.requirePart('artist_link_con');
 		}
 		
+	},
+	'stch-images': {
+		dep_vp: ['photo_c'],
+		fn: function(images) {
+			if (!images || !images.length){
+				return;
+			}
+			var _this = this;
+			images = toRealArray(images);
+			_this.setVisState('cool_photos', true);//cool_photos
+			_this.photo_data.cool_photos = images;
+			
+			if (images.length){
+				var fragment = document.createDocumentFragment();
+
+				//var shuffled_images = [images.shift()];
+
+				//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
+				var photo_c = this.getPart('photo_c');
+				_this.img_requests = [];
+				_this.img_panorama = new Panoramator();
+				var main_c = photo_c.parent();
+
+				_this.img_panorama.init({
+					viewport: main_c,
+					lift: photo_c,
+					onUseEnd: function(){
+						seesu.trackEvent('Panoramator', 'artist photos');
+					}
+				});
+
+				var my_window = getDefaultView(_this.getC()[0].ownerDocument);
+				
+				var checkPanoramaSize = function(){
+					_this.img_panorama.checkSize();
+				};
+
+				$(my_window).on('resize', checkPanoramaSize);
+
+				_this.onDie(function(){
+					$(my_window).off('resize', checkPanoramaSize);
+				});
+
+				var images_collection = [];
+
+				var updatePanorama = function(){
+					images_collection.sort(function(a, b){
+						return sortByRules(a, b, ['num']);
+					});
+
+					_this.img_panorama.setCollection($filter(images_collection, 'item'));
+				};
+
+				var appendImage = function(el, index, first_image) {
+					var sizes = toRealArray(el.sizes.size);
+
+					var image_jnode = $('<img class="artist_image hidden" alt=""/>');
+					var req = loadImage({
+						node: image_jnode[0],
+						url: (sizes[5] || sizes[0])["#text"],
+						timeout: 40000,
+						queue: _this.root_view.lfm_imgq,
+						cache_allowed: true
+					}).done(function(){
+						if (!_this.isAlive()){
+							return;
+						}
+						if (first_image && _this.first_image){
+							_this.first_image.remove();
+							_this.first_image = null;
+						}
+						
+
+						image_jnode.removeClass("hidden");
+
+						images_collection.push({
+							num: index,
+							item: image_jnode
+						});
+
+						updatePanorama();
+					}).fail(function(){
+						image_jnode.remove();
+					});
+					/*
+					su.lfm_imgq.add(function(){
+						
+					});*/
+
+
+					_this.img_requests.push(req);
+					
+
+					
+					fragment.appendChild(image_jnode[0]);
+					
+				};
+				if (images[0]){
+					appendImage(images[0], 0, true);
+				}
+				$.each(images.slice(1, 10), function(i, el){
+					appendImage(el, i + 1);
+				});
+				photo_c.append(fragment);
+				
+				main_c.addClass('loading-images');
+
+				for (var i = _this.img_requests.length - 1; i >= 0; i--) {
+					_this.mpx.RPCLegacy('addRequest', _this.img_requests[i], {
+						space: 'demonstration'
+					});
+					
+				}
+
+				$.when.apply($, _this.img_requests).always(function(){
+					main_c.removeClass('loading-images');
+				});
+				_this.img_panorama.checkSize();
+				
+
+			}
+		}
 	}
 });
