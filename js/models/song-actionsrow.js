@@ -29,14 +29,14 @@ LfmLogin.extendTo(LfmLoveIt, {
 
 		if (lfm.sk){
 			var _this = this;
-			this.updateState('wait-love-done', true);
+			this.updateState('wait_love_done', true);
 			lfm.post('Track.love', {
 				sk: lfm.sk,
 				artist: this.song.artist,
 				track: this.song.track
 			})
 				.always(function(){
-					_this.updateState('wait-love-done', false);
+					_this.updateState('wait_love_done', false);
 					_this.trigger('love-success');
 				})
 			seesu.trackEvent('song actions', 'love');

@@ -248,8 +248,8 @@ LfmLoginView.extendTo(LfmLoveItView, {
 		this.auth_block.toggleClass('hidden', state);
 		this.nloveb.toggle(state);
 	},
-	"stch-wait-love-done": function(state){
-		this.c.toggleClass('wait-love-done', !!state);
+	"stch-wait_love_done": function(state){
+		this.c.toggleClass('wait_love_done', !!state);
 	}
 });
 
