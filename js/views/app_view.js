@@ -613,6 +613,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	parts_builder: {
 		//samples
+		'song-view': function() {
+			return this.els.ui_samples.children('ul').children('.song-view');
+		},
 		'music_conductor_page': function() {
 			return this.els.ui_samples.children('.music_conductor_page');
 		},

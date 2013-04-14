@@ -429,6 +429,10 @@ provoda.View.extendTo(songUI, {
 	},
 	createBase: function(){
 		var _this = this;
+		var sonw = this.root_view.getSample('song-view');
+		window.dizi = sonw;
+		this.tpl = this.getTemplate(sonw);
+
 		this.c = $('<li></li>');
 		
 		this.dom_related_props.push('node', 'player_song_mark', 'fsearch_status_c', 'song_imagec', 'titlec', 'artist_name_c', 'track_name_c');

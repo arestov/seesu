@@ -1572,7 +1572,7 @@ Class.extendTo(Template, {
 			var complex_value = full_declaration;
 			var completcs = complex_value.match(/\S[\S\s]*?\:[\S\s]*?\{\{[\S\s]*?\}\}/gi);
 			for (var i = 0; i < completcs.length; i++) {
-				completcs[i] = completcs[i].replace(/^\s*|s*?$/,'').split(/\s*\:\s*/);
+				completcs[i] = completcs[i].replace(/^\s*|s*?$/,'').split(/\s*\:\s*?(?=\{\{)/);
 				var prop = completcs[i][0];
 				var statement = completcs[i][1] && completcs[i][1].replace(/(^\{\{)|(\}\}$)/gi,'');
 				
@@ -1650,7 +1650,7 @@ Class.extendTo(Template, {
 				return spv.getTargetField(node, prop);
 			},
 			setValue: function(node, value) {
-				return spv.setTargetField(node, prop, value);
+				return spv.setTargetField(node, prop, value || '');
 			}
 		});
 	},

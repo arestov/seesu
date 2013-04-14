@@ -318,7 +318,57 @@
 				<ul pv-anchor='video_list'></ul>
 			</div>
   		</div>
-			
+		<ul>
+			<li class="song-view">
+				<a 
+					class="track-node"
+					pv-class="
+						track-node
+						{{want_to_play && 'marked-for-play'}}
+						{{has_none_files_to_play && !playable && 'search-mp3-failed'}}
+						{{!has_none_files_to_play && !playable && 'waiting-full-render'}}
+						{{searching_files && 'search-mp3'}}
+						{{track_name_loading && 'track_name_loading'}}
+						{{playable && 'song'}}
+					"
+					pv-props="title: {{song_title}}"
+					>
+					<span
+						class="playing-song-mark"
+						pv-class="{{play == 'play' && 'playing-process'}} playing-song-mark"
+						>
+					</span>
+					<span class="files-load-states">
+						<span 
+							class="song-files-search-status"
+							pv-class="
+								song-files-search-status
+								{{has_none_files_to_play && 'has-none-files'}}
+								{{files_search.have_best_tracks && 'has_best_files'}}
+								{{files_search.have_mp3_tracks && 'has-some-files'}}
+								"
+						>
+						</span>
+						<span class="nothing-toy"></span>
+					</span>
+					<span class="song-image-con">
+						<img
+							alt=""
+							pv-props="
+								alt: {{song_title}}
+								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
+							"
+							pv-class="{{!selected_image && 'hidden'}}"
+						>
+					</span>
+					<span class="full-song_title" pv-class="full-song_title {{!track && 'has-no_track_title'}}">
+						<span class="song-artist_name" pv-text="{{artist}}"></span>
+						<span class="song-track-name" pv-text="{{track}}"></span>
+					</span>
+					<span class="placeholder-decor"></span>
+				</a>
+			</li>
+		</ul>
 			
 		<div class="track-context" >
 			<div class="song-actions">
