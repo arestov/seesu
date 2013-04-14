@@ -319,8 +319,17 @@
 			</div>
   		</div>
 		<ul>
-			<li class="song-view">
+			<li class="song-view" 
+				pv-class="
+					{{player_song && 'player_song'}}
+					{{play && 'playing-song'}}
+					{{marked_as && 'v-song-sibling'}}
+					{{marked_as == 'next' && 'to-play-next'}}
+					{{marked_as == 'prev' && 'to-play-previous'}}
+					{{mp_show && 'viewing-song'}}
+				">
 				<a 
+					pv-anchor="song-link"
 					class="track-node"
 					pv-class="
 						track-node

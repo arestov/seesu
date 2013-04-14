@@ -66,122 +66,16 @@ provoda.View.extendTo(songUI, {
 				tidominator.removeClass('want-more-info');
 			}
 		},
-		want_to_play: function(state, oldstate){
-			if (state){
-				this.node.addClass('marked-for-play');
-			} else if (oldstate){
-				this.node.removeClass('marked-for-play');
-			}
-		},
+
 		"can_expand": function(state) {
 			if (state){
 				this.expand();
 			}
 			
-		},
-		'has_none_files_to_play': function(state){
-			this.fsearch_status_c.toggleClass('has-none-files', !!state);
-			this.node
-				.toggleClass('search-mp3-failed', !!state)
-				.toggleClass('waiting-full-render', !state);
-
-		},
-		files_search: function(opts){
-			//this.fsearch_status_c.attr('class', 'song-files-search-status');
-
-			this.fsearch_status_c.toggleClass('has_best_files', !!opts.have_best_tracks);
-			this.fsearch_status_c.toggleClass('has-some-files', !!opts.have_mp3_tracks);
-
-
-			
-		},
-		'searching_files': function(searching){
-			this.node.toggleClass('search-mp3', searching);
-		
-		},
-		'track_name_loading': function(state) {
-			this.node.toggleClass('track_name_loading', state);
-		},
-		"player_song": function(state) {
-			this.c.toggleClass('player_song', !!state);
-		},
-		play: function(state, oldstate){
-			this.c.toggleClass('playing-song', !!state);
-			this.player_song_mark.toggleClass('playing-process', state == 'play');
-		},
-		playable: function(new_state, old_state){
-			if (new_state && (!!new_state) != (!!old_state)){
-				var _this = this;
-				this.node
-					.addClass('song')
-					.removeClass('search-mp3-failed')
-					.removeClass('waiting-full-render');
-			
-			}
-		},
-		marked_as: function(state, oldstate){
-			if (state){
-				if (oldstate){
-					this.unmark();
-				}
-				this.markAs(state);
-			} else {
-				this.unmark();
-			}
-		},
-		'artist': function(name) {
-			this.artist_name_c.text(name);
-		},
-		'track': function(name) {
-			this.titlec.toggleClass('has-no_track_title', !name);
-			
-			this.track_name_c.text(name);
-		},
-		'song_title': function(title) {
-			//this.titlec.text(title);
-			this.node.attr("title", title);
-		},
-		'selected_image': function(lfm_wrap) {
-			if (!lfm_wrap){
-				return;
-			}
-			var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/64s/' + lfm_wrap.lfm_id : lfm_wrap.url;
-
-
-			if (url){
-				this.song_imagec.empty();
-				this.song_imagec.append(
-					$('<img/>').attr({
-						'src': url,
-						alt: this.state('artist')
-					})
-				);
-			}
 		}
 	},
-	unmark: function(){
-		this.c.removeClass('to-play-next to-play-previous v-song-sibling');
-		
-	},
-	markAs: function(statev){
-	
-		switch (statev) {
-			case 'next':
-				this.c.addClass('to-play-next v-song-sibling');
-				break;
-			case 'prev':
-				this.c.addClass('to-play-previous v-song-sibling');
-				break;
-			default:
-		}
 
-		
-	},
 	deactivate: function(opts){
-		this.c.removeClass('viewing-song');
-		
-		
-
 		for (var a in this.rowcs) {
 			this.rowcs[a].hide();
 		}
@@ -201,8 +95,6 @@ provoda.View.extendTo(songUI, {
 	activate: function(opts){
 		this.expand();
 		this.updateSongListeners();
-		this.c.addClass('viewing-song');
-		
 	},
 	'stch-bio': {
 		fn: function(bio) {
@@ -429,60 +321,23 @@ provoda.View.extendTo(songUI, {
 	},
 	createBase: function(){
 		var _this = this;
-		//var sonw = this.root_view.getSample('song-view');
+		this.c = this.root_view.getSample('song-view');
 		//window.dizi = sonw;
 		//this.tpl = this.getTemplate(sonw);
-
-		this.c = $('<li></li>');
-		
-		this.dom_related_props.push('node', 'player_song_mark', 'fsearch_status_c', 'song_imagec', 'titlec', 'artist_name_c', 'track_name_c');
-		this.node = $("<a></a>")
-			.addClass('track-node waiting-full-render')
-			.click(function(){
-				_this.RPCLegacy('wantSong');
-				_this.RPCLegacy('showOnMap');
-				return false;
-			});
-
-
+		this.createTemplate();
+		this.tpl.ancs['song-link'].click(function(){
+			_this.RPCLegacy('wantSong');
+			_this.RPCLegacy('showOnMap');
+			return false;
+		});
 		this.canUseDeepWaypoints = function() {
 			return !(_this.opts && _this.opts.lite) && !!_this.state('mp_show');
 		};
-		this.addWayPoint(this.node, {
+		this.addWayPoint(this.tpl.ancs['song-link'], {
 			canUse: function() {
 				return (_this.opts && _this.opts.lite) || !_this.state('mp_show');
 			}
 		});
-		//
-		this.player_song_mark = $('<span class="playing-song-mark"></span>').appendTo(this.node);
-
-
-		var filesload_states_c = $('<span class="files-load-states"></span>');
-
-		this.fsearch_status_c = $('<span class="song-files-search-status"></span>').appendTo(filesload_states_c);
-		$('<span class="nothing-toy"></span>').appendTo(filesload_states_c);
-		filesload_states_c.appendTo(this.node);
-
-		this.song_imagec = $('<span class="song-image-con"></span>').appendTo(this.node);
-
-
-		this.titlec = $('<span class="full-song_title has-no_track_title"></span>')
-			.appendTo(this.node);
-		
-
-		
-
-		this.artist_name_c = $('<span class="song-artist_name"></span>')
-			.appendTo(this.titlec);
-		this.track_name_c = $('<span class="song-track-name"></span>')
-			.appendTo(this.titlec);
-		
-		
-
-		$('<span class="placeholder-decor"></span>').appendTo(this.node);
-	//	this.node.ap
-
-		this.c.append(this.node);
 	},
 	expand: function(){
 		if (this.opts && this.opts.lite){
