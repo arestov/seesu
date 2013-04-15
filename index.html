@@ -380,7 +380,7 @@
 		</ul>
 			
 		<div class="track-context" >
-			<div class="song-actions">
+			<div class="song-actions" pv-anchor="song-actions">
 				
 				<div class="track-panel">
 					<div class="buttons-panel">
@@ -447,36 +447,82 @@
 			</div>
 			
 			
-			<div class="track-info-dominator">
-
+			
+			<div class="track-info-dominator" pv-anchor="tidmt">
 				<div class="photo-cont">
-					<div class="photo-cont-lift"></div>
+					<div class="photo-cont-lift" pv-anchor="phocoli">
+						<img
+							class="artist_image"
+							pv-anchor="first-image" 
+							pv-class="{{!usable_artist_image && 'hidden'}} artist_image"
+							pv-props="
+								alt: {{artist}}
+								src: {{usable_artist_image}}" 
+							src="" alt=""
+							/>
+					</div>
 				</div>
 				<div class="dominator-head">
-					<div class="closer-to-track"></div>
-					<a class="extend-switcher" >
-						<span class="big-space"></span>
+					<div 
+						class="closer-to-track"
+						pv-class="{{one_artist_playlist && 'one-artist-playlist'}} closer-to-track">
+						<a 
+							class="js-serv lang localize-artcard"
+							pv-anchor="artcard-link"
+							>artcard</a>
+					</div>
+					<a 
+						class="extend-switcher"
+						pv-anchor="extend-switcher" 
+						pv-class="{{!infb_text && 'hidden'}} extend-switcher">
+						<span class="big-space" pv-text="{{infb_text}}"></span>
 					</a>
+					<p class="artist-tags hidden" pv-class="artist-tags {{(!tags || !tags.length) && 'hidden'}}">
+						<span class="simple-header">
+							<em class="lang localize-Tags">Tags</em>
+						</span>
+						<span pv-anchor="tags-c">
+							
+						</span>
+					</p>
 				</div>
 				<div class="artist-info">
-					<div class="artist-bio"></div>
-					<div class="artist-meta-info"></div>
-				</div>
-				<div class="track-info ">
-					<div class="track-video"></div>
+					<p class="artist-stat-in-song">
+						<span class="{{!listeners && 'hidden'}}" class="playcount">
+							<span class="desc">Listeners:</span>
+							<span pv-text="{{listeners}}"></span>
+						</span> 
+						<span class="{{!playcount && 'hidden'}}" class="hidden">
+							<span class="desc">Playcount:</span>
+							<span pv-text="{{playcount}}"></span>
+						</span>
+					</p>
+					<div class="artist-bio" pv-anchor="artbio">...</div>
+					<div class="artist-meta-info">
+						<p class="artist-similar">
+							<span class="desc-name">
+								<em>
+									<a 
+										pv-anchor="similar-a"
+										class="similar-artists js-serv lang localize-similar-arts"
+										>Similar artists:</a>
+								</em>
+							</span>
+							<span class="desc-text" pv-anchor="similars-c">
+								
+							</span>
+						</p>
+					</div>
 				</div>
 			</div>
-			<div class="track-listeners">
-				<div class="song-listeners-list">
-					
-				</div>
-				
+			<div class="track-listeners" pv-anchor="track-listeners">
+				<div class="song-listeners-list" pv-anchor="song-listeners-list"></div>
 			</div>
-			<div class="song-row-content row-listeners-context">
+			<div class="song-row-content row-listeners-context hidden" pv-anchor="row-listeners-context">
 				<span class="rc-arrow hidden">
 					<span class="tl-arrow  arrow-part"><span class="tl-arrow-bg arrow-part"></span></span>
 				</span>
-				<div class="big-listener-info"></div>
+				<div class="big-listener-info" pv-anchor="big-listener-info"></div>
 			</div>
 			
 		</div>
