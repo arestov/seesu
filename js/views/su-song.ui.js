@@ -113,74 +113,46 @@ provoda.View.extendTo(songUI, {
 
 		}
 	},
-	bindTagClick: function(node, tag_name) {
-		var _this = this;
-		node.click(function(e) {
-			e.preventDefault();
-			_this.RPCLegacy('showTag', tag_name);
-
-		});
-		this.addWayPoint(node, {
-			simple_check: true
-		});
-
+	tpl_r_events: {
+		'tags': {
+			showTag: function(e, scope){
+				e.preventDefault();
+				this.RPCLegacy('showTag', scope.tag.name);
+			},
+			showArtcardPage: function(e, scope) {
+				e.preventDefault();
+				this.RPCLegacy('showArtcardPage', scope.artist.name);
+			}
+		}
+	},
+	tpl_events: {
+		
 	},
 	'stch-tags': function(state) {
-		var tags = state;
-		var tags_c = this.tpl.ancs['tags-c'];
-		if (!tags_c){
-			return;
-		}
-		if (state && state.length){
-			for (var i=0, l = tags.length; i < l; i++) {
-				var tag = tags[i],
-					arts_tag_node = $("<a></a>")
-						.text(tag.name)
-						.attr({
-							href: tag.url,
-							'class': 'music-tag js-serv'
-						})
-						.appendTo(tags_c);
-				this.bindTagClick(arts_tag_node, tag.name);
-				tags_c.append(document.createTextNode(' '));
-			}
-
-		} else {
-
-		}
-	},
-	bindSimArtistClick: function(node, artist_name) {
 		var _this = this;
-		node.click(function(e) {
-			e.preventDefault();
-			_this.RPCLegacy('showArtcardPage', artist_name);
-
-		});
-		this.addWayPoint(node, {
-			simple_check: true
-		});
+		setTimeout(function() {
+			var nodes = spv.filter(_this.tpl.pv_repeats.tags || [], 'root_node');
+			for (var i = 0; i < nodes.length; i++) {
+				var node = $(nodes[i]);
+				node.after(document.createTextNode(' '));
+				_this.addWayPoint(node, {
+					simple_check: true
+				});
+			}
+		},100);
 	},
 	'stch-similars': function(state) {
-		var similars = state;
-		var similars_c = this.tpl.ancs['similars-c'];
-		if (!similars_c){
-			return;
-		}
-		if (state && state.length){
-			for (var i=0, l = similars.length; i < l; i++) {
-				var similar = similars[i],
-					arts_similar_node = $("<a class='js-serv'></a>")
-						.text(similar.name)
-						.attr({
-							href: similar.url,
-							'class' : 'artist js-serv'
-						})
-						.appendTo(similars_c);
-				this.bindSimArtistClick(arts_similar_node, similar.name);
-				similars_c.append(document.createTextNode(' '));
+		var _this = this;
+		setTimeout(function() {
+			var nodes = spv.filter(_this.tpl.pv_repeats.similars || [], 'root_node');
+			for (var i = 0; i < nodes.length; i++) {
+				var node = $(nodes[i]);
+				node.after(document.createTextNode(' '));
+				_this.addWayPoint(node, {
+					simple_check: true
+				});
 			}
-		}
-
+		},100);
 	},
 	parts_builder: {
 		context: function() {

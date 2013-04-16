@@ -951,7 +951,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	getChanges: function(changes_list, opts) {
 		var changed_states = [];
-		for (var i = 0; i < changes_list.length; i++) {
+		var i;
+		for (i = 0; i < changes_list.length; i++) {
 			var cur = changes_list[i];
 
 			var old_value = this._replaceState(cur.name, cur.value, opts && opts.skip_handler);
@@ -1370,14 +1371,26 @@ var angbo = window.angbo;
 Class.extendTo(Template, {
 	init: function(opts) {
 		this.root_node = opts.node;
+		if (opts.pv_repeat_context){
+			this.pv_repeat_context = opts.pv_repeat_context;
+		}
+		if (opts.scope){
+			this.scope = opts.scope;
+		}
+		if (opts.callCallbacks){
+			this.sendCallback = opts.callCallbacks;
+		}
 		this.ancs = {};
 		this.pv_views = [];
+		this.pv_repeats = {};
 		this.children_templates = {};
 		this.directives_names_list = [];
 		this.scope_g_list = [];
 
 		this.states_watchers = [];
 		this.stwat_index = {};
+
+
 
 
 		var directive_name;
@@ -1395,6 +1408,9 @@ Class.extendTo(Template, {
 		this.getPvDirectives(this.root_node);
 		if (!window.angbo || !window.angbo.interpolateExpressions){
 			console.log('cant pasre statements');
+		}
+		if (this.scope){
+			this.setStates(this.scope);
 		}
 	},
 	getFieldsTreesBases: function(all_vs) {
@@ -1504,6 +1520,7 @@ Class.extendTo(Template, {
 						new_value = simplifyValue.call(_this, new_value);
 					}*/
 					if (original_fv != new_fv){
+						var repeats_array = [];
 
 						$(old_nodes).remove();
 						old_nodes = [];
@@ -1512,6 +1529,12 @@ Class.extendTo(Template, {
 						var collection = calculator(states);
 
 						var prev_node;
+
+						var full_pv_context = '';
+						if (_this.pv_repeat_context){
+							full_pv_context = _this.pv_repeat_context + '.$.';
+						}
+						full_pv_context += field_name;
 
 						for (var i = 0; i < collection.length; i++) {
 							var scope = {};
@@ -1525,8 +1548,14 @@ Class.extendTo(Template, {
 
 							var cur_node = node.cloneNode(true);
 							var template = new Template();
-							template.init({node: cur_node});
-							template.setStates(scope);
+							
+							
+							template.init({
+								node: cur_node,
+								pv_repeat_context: full_pv_context,
+								scope: scope,
+								callCallbacks: _this.sendCallback
+							});
 							old_nodes.push(cur_node);
 							if (prev_node){
 								$(prev_node).after(cur_node);
@@ -1536,8 +1565,9 @@ Class.extendTo(Template, {
 
 
 							prev_node = cur_node;
+							repeats_array.push(template);
 						}
-
+						_this.pv_repeats[full_pv_context] = repeats_array;
 
 					//	setValue.call(_this, node, attr_obj, new_value, original_value);
 					//	original_value = new_value;
@@ -1699,11 +1729,16 @@ Class.extendTo(Template, {
 			throw new Error('provide the events callback handler to the Template init func');
 		}
 		$(node).on(event_name, function(e) {
-			_this.callEventCallback(callback_name, e);
+			_this.callEventCallback(e, callback_name);
 		});
 	},
-	callEventCallback: function(callback_name, e) {
-		this.sendCallback(callback_name, e);
+	callEventCallback: function(e, callback_name) {
+		this.sendCallback({
+			event: e,
+			callback_name: callback_name,
+			pv_repeat_context: this.pv_repeat_context,
+			scope: this.scope
+		});
 	},
 	setStates: function(states) {
 		for (var i = 0; i < this.states_watchers.length; i++) {
@@ -1834,6 +1869,17 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		cloneObj(this.undetailed_states, this.mpx.states);
 		cloneObj(this.undetailed_children_models, this.mpx.children_models);
+
+		var _this = this;
+		this.triggerTPLevents = function(e) {
+			if (!e.pv_repeat_context){
+				_this.tpl_events[e.callback_name].call(_this, e.event);
+			} else {
+				_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.scope);
+			}
+			
+			
+		};
 		return this;
 	},
 	RPCLegacy: function() {
@@ -1880,17 +1926,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		this.way_points.push(obj);
 	},
-	getTemplate: function(node) {
+	getTemplate: function(node, callCallbacks) {
 		node = node[0] || node;
 		var template = new Template();
-		template.init({node: node});
+		template.init({node: node, callCallbacks: callCallbacks});
+		
 		return template;
 	},
 	createTemplate: function() {
 		if (!this.c){
 			throw new Error('cant create template');
 		}
-		this.tpl = this.getTemplate(this.c);
+		this.tpl = this.getTemplate(this.c, this.triggerTPLevents);
 	},
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;

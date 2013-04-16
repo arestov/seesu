@@ -481,9 +481,7 @@
 						<span class="simple-header">
 							<em class="lang localize-Tags">Tags</em>
 						</span>
-						<span pv-anchor="tags-c">
-							
-						</span>
+						<span pv-anchor="tags-c"><a class="music-tag js-serv" pv-repeat="tag in tags" pv-events="click:showTag" pv-text="{{tag.name}}"></a></span>
 					</p>
 				</div>
 				<div class="artist-info">
@@ -508,9 +506,7 @@
 										>Similar artists:</a>
 								</em>
 							</span>
-							<span class="desc-text" pv-anchor="similars-c">
-								
-							</span>
+							<span class="desc-text" pv-anchor="similars-c"><a class="artist js-serv" pv-repeat="artist in similars" pv-events="click:showArtcardPage" pv-text="{{artist.name}}"></a></span>
 						</p>
 					</div>
 				</div>
