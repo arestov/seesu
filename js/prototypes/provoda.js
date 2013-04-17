@@ -1228,7 +1228,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 				name: cur_md.model_name,
 				states: cloneObj({}, cur_md.states),
 				map_parent: cur_md.map_parent && checkModel(cur_md.map_parent),
-				children_models: {}
+				children_models: {},
+				map_level_num: cur_md.map_level_num
 			};
 			for (var state_name in result.states){
 				var state = result.states[state_name];
