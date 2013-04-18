@@ -338,11 +338,11 @@ var seesuPlayer;
 
 	var flash_plgs = $filter(toRealArray(navigator.plugins),"name", "Shockwave Flash");
 	var vlc_plgs = $filter(plugins_list,"name", function(el){
-		return el.indexOf("VLC") != -1
+		return el && el.indexOf("VLC") != -1
 	});
 
 	var quick_time_plgs = $filter(plugins_list,"name", function(el){
-		return el.indexOf("QuickTime") != -1
+		return el && el.indexOf("QuickTime") != -1
 	});
 	var vlc_plugin = !!vlc_plgs.length;
 	var qt_plugin = !!quick_time_plgs.length;
