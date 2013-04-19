@@ -1568,8 +1568,15 @@ jsLoadComplete(function() {
 			if (structure.part){
 				$(r).find('#parts-switcher').attr('xlink:href', '#' + structure.part);
 			}
-			
-			var xml_text = new XMLSerializer().serializeToString(r);
+			var xml_text;
+			if (window.XMLSerializer){
+				xml_text = new XMLSerializer().serializeToString(r);
+			} else if (r.xml){
+				xml_text = r.xml;
+			}
+			if (!xml_text){
+				return;
+			}
 
 			var bg_image_string = 'url(\'data:image/svg+xml;base64,' + btoa(xml_text) + '\')';
 
