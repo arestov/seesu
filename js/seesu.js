@@ -443,8 +443,8 @@ appModel.extendTo(seesuApp, {
 		return parts;
 	},
 	app_pages: {
-		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi",
-		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko",
+		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi/reviews",
+		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko/reviews",
 		opera_widget: "http://widgets.opera.com/widget/15872/",
 		opera_extension: "https://addons.opera.com/addons/extensions/details/seesu-music",
 		pokki_app: "https://www.pokki.com/app/Seesu"

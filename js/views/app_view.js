@@ -423,7 +423,7 @@ provoda.View.extendTo(appModelView, {
 			var cur = all_changhes[i];
 			var target = cur.target.getMD();
 			if (cur.type == 'move-view'){
-				
+
 				target.updateState('vis_mp_show', {
 					anid: changes.anid,
 					value: cur.value

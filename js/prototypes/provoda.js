@@ -1549,8 +1549,8 @@ Class.extendTo(Template, {
 
 							var cur_node = node.cloneNode(true);
 							var template = new Template();
-							
-							
+
+
 							template.init({
 								node: cur_node,
 								pv_repeat_context: full_pv_context,
@@ -1578,7 +1578,7 @@ Class.extendTo(Template, {
 		}
 	},
 	directives: {
-		'pv-text': function(node, full_declaration){			
+		'pv-text': function(node, full_declaration){
 			this.bindStandartChange(node, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getTextValue,
@@ -1878,8 +1878,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			} else {
 				_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.scope);
 			}
-			
-			
+
+
 		};
 		return this;
 	},
@@ -1931,7 +1931,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		node = node[0] || node;
 		var template = new Template();
 		template.init({node: node, callCallbacks: callCallbacks});
-		
+
 		return template;
 	},
 	createTemplate: function() {
