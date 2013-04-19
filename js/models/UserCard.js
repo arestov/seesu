@@ -345,11 +345,62 @@ UserNewReleases.extendTo(RecommNewReleases, {
 });
 
 
+var LfmUserArtists = function() {};
+mapLevelModel.extendTo(LfmUserArtists, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	}
+});
+
+var LfmUserTracks = function() {};
+mapLevelModel.extendTo(LfmUserTracks, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	}
+});
+
+var LfmUserAlbums = function() {};
+mapLevelModel.extendTo(LfmUserAlbums, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	}
+});
+
+var LfmUserTags = function() {};
+mapLevelModel.extendTo(LfmUserTags, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	}
+});
+
+
 var LfmListened = function() {};
 mapLevelModel.extendTo(LfmListened, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
+	},
+	sub_pa: {
+		'artists': {
+			constr: LfmUserArtists,
+			title: 'Artists'
+		},
+		'tracks': {
+			constr: LfmUserTracks,
+			title: 'Tracks'
+		},
+		'tags': {
+			constr: LfmUserTags,
+			title: 'Tags'
+		},
+		'albums': {
+			constr: LfmUserAlbums,
+			title: 'Albums'
+		}
 	}
 });
 
