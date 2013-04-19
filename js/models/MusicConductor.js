@@ -121,7 +121,7 @@ mapLevelModel.extendTo(AllPlacesSongsLists, {
 		this.lists_list = ['latest', 'latest:remix', 'topnow_hypem', '_', 'hyped', 'loved'];
 		this.initSubPages(this.lists_list);
 
-		this.setChild('lists_list', this.lists_list);
+		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 
 	},
@@ -197,7 +197,7 @@ mapLevelModel.extendTo(AllPlacesArtistsLists, {
 		this.lists_list = ['hyped', '_'];
 		this.initSubPages(this.lists_list);
 
-		this.setChild('lists_list', this.lists_list);
+		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
 	model_name: 'artists_lists',
@@ -223,11 +223,11 @@ mapLevelModel.extendTo(AllPlaces, {
 
 
 		this.songs_lists = this.getSPI('songs', true);
-		this.setChild('songs_lists', this.songs_lists);
+		this.updateNesting('songs_lists', this.songs_lists);
 
 		this.artists_lists = this.getSPI('artists', true);
-		this.setChild('artists_lists', this.artists_lists);
-		this.setChild('lists_list', [this.artists_lists, this.songs_lists]);
+		this.updateNesting('artists_lists', this.artists_lists);
+		this.updateNesting('lists_list', [this.artists_lists, this.songs_lists]);
 
 		this.initStates();
 
@@ -331,7 +331,7 @@ mapLevelModel.extendTo(CityArtistsLists, {
 
 		this.lists_list = ['_', 'hyped', 'unique'];
 		this.initSubPages(this.lists_list);
-		this.setChild('lists_list', this.lists_list);
+		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
 	sub_pa: {
@@ -426,7 +426,7 @@ mapLevelModel.extendTo(CitySongsLists, {
 		};
 		this.lists_list = ['_', 'hyped', 'unique'];
 		this.initSubPages(this.lists_list);
-		this.setChild('lists_list', this.lists_list);
+		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
 	sub_pa: {
@@ -462,7 +462,7 @@ mapLevelModel.extendTo(CityPlace, {
 		this.lists_list = ['artists', 'songs'];
 		this.initSubPages(this.lists_list);
 
-		this.setChild('lists_list', this.lists_list);
+		this.updateNesting('lists_list', this.lists_list);
 	},
 	sub_pa: {
 		'artists': {
@@ -509,7 +509,7 @@ mapLevelModel.extendTo(CountryCitiesList, {
 			lists_list.push(instance);
 		}
 		
-		this.setChild('lists_list', lists_list);
+		this.updateNesting('lists_list', lists_list);
 	},
 	subPager: function(sub_path_string){
 		var page_name = spv.capitalize(sub_path_string);
@@ -621,7 +621,7 @@ mapLevelModel.extendTo(CountryPlace, {
 		this.initSubPages(['artists_top', 'songs_top', 'cities']);
 
 
-		this.setChild('lists_list', this.lists_list);
+		this.updateNesting('lists_list', this.lists_list);
 		this.bindChildrenPreload([this.getSPI('artists_top'), this.getSPI('songs_top')]);
 	}
 });
@@ -637,7 +637,7 @@ mapLevelModel.extendTo(CountresList, {
 			country_place.initOnce();
 			this.lists_list.push(country_place);
 		}
-		this.setChild('lists_list', this.lists_list);
+		this.updateNesting('lists_list', this.lists_list);
 		this.initStates();
 		
 	},
@@ -681,10 +681,10 @@ mapLevelModel.extendTo(MusicConductor, {
 			fn: function() {
 				(function() {
 					this.allpas.initOnce();
-					this.setChild('allpas', this.allpas);
+					this.updateNesting('allpas', this.allpas);
 
 					this.countres.initOnce();
-					this.setChild('countres', this.countres);
+					this.updateNesting('countres', this.countres);
 
 
 				}).call(_this);

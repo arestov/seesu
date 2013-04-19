@@ -107,7 +107,7 @@ appModel.extendTo(seesuApp, {
 			
 		}, 1000 * 60 * 20);
 		setInterval(function(){
-			var rootvs = _this.getViews('root');
+			var rootvs = _this.mpx.getViews('root');
 			if (rootvs.length){
 				_this.updateLVTime();
 			}
@@ -145,8 +145,8 @@ appModel.extendTo(seesuApp, {
 		this.start_page = (new StartPage()).init({
 			app: this
 		});
-		this.setChild('navigation', [this.start_page]);
-		this.setChild('start_page', this.start_page);
+		this.updateNesting('navigation', [this.start_page]);
+		this.updateNesting('start_page', this.start_page);
 
 
 
@@ -655,6 +655,7 @@ appModel.extendTo(seesuApp, {
 
 window.seesu = window.su = new seesuApp();
 su.init(3.9);
+provoda.sync_s.setRootModel(su);
 
 
 
@@ -719,7 +720,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 	init: function(opts) {
 		this._super(opts);
 		this.playlists = [];
-		this.setChild('lists_list', this.playlists);
+		this.updateNesting('lists_list', this.playlists);
 	},
 	savePlaylists: function(){
 		var _this = this;
@@ -758,7 +759,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 		});
 		this.watchOwnPlaylist(pl_r);
 		this.playlists.push(pl_r);
-		this.setChild('lists_list', this.playlists);
+		this.updateNesting('lists_list', this.playlists);
 		this.trigger('playlsits-change', this.playlists);
 		return pl_r;
 	},
@@ -776,7 +777,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 		this.playlists = arrayExclude(this.playlists, pl);
 		if (this.playlists.length != length){
 			this.trigger('playlsits-change', this.playlists);
-			this.setChild('lists_list', this.playlists);
+			this.updateNesting('lists_list', this.playlists);
 			this.savePlaylists();
 		}
 		
@@ -804,7 +805,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 		
 		this.playlists = recovered;
 		this.trigger('playlsits-change', this.playlists);
-		this.setChild('lists_list', this.playlists);
+		this.updateNesting('lists_list', this.playlists);
 	}
 });
 

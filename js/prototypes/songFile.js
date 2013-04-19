@@ -1,11 +1,17 @@
 var fileInTorrent = function(sr_item, mo){
-
-	this.init();
 	this.sr_item = sr_item;
+	this.init();
 };
 
 provoda.Model.extendTo(fileInTorrent, {
 	model_name: 'file-torrent',
+	init: function() {
+		this._super();
+		this.updateManyStates({
+			full_title: this.sr_item.title || getHTMLText(this.sr_item.HTMLTitle),
+			torrent_link: this.sr_item.torrent_link
+		});
+	},
 	setPlayer: function() {
 		return this;
 	},

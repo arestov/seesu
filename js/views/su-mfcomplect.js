@@ -1,9 +1,5 @@
 var notifyCounterUI = function() {};
 provoda.View.extendTo(notifyCounterUI, {
-	useBase: function(node) {
-		this.c = node;
-		this.createTemplate();
-	},
 	createBase: function() {
 		this.c = $('<span class="notifier hidden"></span>');
 	},
@@ -35,7 +31,7 @@ provoda.View.extendTo(mfComplectUI, {
 			if (state){
 				var _this = this;
 				var header = $('<a class="js-serv"></a>').click(function() {
-					_this.md.toggleOverstocked();
+					_this.RPCLegacy('toggleOverstocked');
 				}).text(this.state('complect_name'));
 				this.addWayPoint(header, {
 					canUse: function() {
@@ -116,7 +112,7 @@ provoda.View.extendTo(mfCorUI, {
 	'collch-sorted_completcs': function(name, array) {
 		var _this = this;
 		$.each(array, function(i, el) {
-			var el_view = _this.getFreeChildView('complect', el);
+			var el_view = _this.getFreeChildView({name: 'complect'}, el);
 			var el_dom = el_view && el_view.getA();
 			if (el_dom){
 				var prev_dom_hook = _this.getPrevView(array, i);
@@ -140,23 +136,18 @@ provoda.View.extendTo(mfCorUI, {
 		strict: true
 	},
 	'collch-yt_videos': 'tpl.ancs.video_list',
-	createBase: function() {
-		this.c = this.root_view.getSample('moplas-block');
+	bindBase: function() {
 		this.createTemplate();
 		var _this = this;
 		this.tpl.ancs.more_songs_b.click(function() {
-			_this.md.switchMoreSongsView();
+			_this.RPCLegacy('switchMoreSongsView');
 		});
 		this.addWayPoint(this.tpl.ancs.more_songs_b);
-
 	},
-	getNextSemC: function(packs, start) {
-		for (var i = start; i < packs.length; i++) {
-			var cur_name = packs[i];
-			var cur_mf = cur_name && this.md.complects[cur_name];
-			
-			return cur_mf && cur_mf.getThing();
-		}
+	createBase: function() {
+		this.c = this.root_view.getSample('moplas-block');
+		this.bindBase();
+
 	},
 	showYoutubeVideo: function(id, c, link){
 		if (this.video){

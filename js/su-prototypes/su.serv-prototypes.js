@@ -406,9 +406,9 @@ provoda.Model.extendTo(PartsSwitcher, {
 		if (!this.context_parts[model.model_name]){
 			this.context_parts[model.model_name] = model;
 
-			var array = this.getChild('context_parts') || [];
+			var array = this.getNesting('context_parts') || [];
 			array.push(model);
-			this.setChild('context_parts', array);
+			this.updateNesting('context_parts', array);
 
 		}
 	},
@@ -437,7 +437,7 @@ provoda.View.extendTo(ActionsRowUI, {
 		var _this = this;
 		$.each(arr, function(i, el){
 			var md_name = el.model_name;
-			_this.getFreeChildView(md_name, el, 'main');
+			_this.getFreeChildView({name: md_name}, el, 'main');
 		});
 
 		this.requestAll();
@@ -461,9 +461,9 @@ provoda.View.extendTo(BaseCRowUI, {
 	dom_rp: true,
 	bindClick: function(){
 		if (this.button){
-			var md = this.md;
+			var _this = this;
 			this.button.click(function(){
-				md.switchView();
+				_this.RPCLegacy('switchView');
 			});
 			this.addWayPoint(this.button);
 		}

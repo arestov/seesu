@@ -55,7 +55,7 @@ provoda.addPrototype("baseSuggestView", {
 		}
 	},
 	createItem: function() {
-		var that = this.md;
+		var that = this.mpx.md;
 		this.a = $('<a></a>')
 			.text(that.text_title)
 			.appendTo(this.c);
@@ -70,7 +70,7 @@ provoda.addPrototype("baseSuggestView", {
 		if (this.a){
 			var _this = this;
 			this.c.click(function(){
-				_this.md.view();
+				_this.RPCLegacy('view');
 			});
 			this.addWayPoint(this.c);
 		}
@@ -92,7 +92,7 @@ provoda.addPrototype("InvestigationView", {
 
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
-			var view = this.getFreeChildView(cur.model_name, cur);
+			var view = this.getFreeChildView({name: cur.model_name}, cur);
 			if (view){
 				this.c.append(view.getA());
 			}
@@ -136,11 +136,14 @@ provoda.addPrototype("searchSectionView", {
 	getC: function(){
 		return this.gc;
 	},
-	createHead: function(){
-		if (this.head_text){
-			this.header = $('<h4></h4>').hide().text(this.head_text);
-
+	'stch-section_title': function(state) {
+		if (this.header){
+			this.header.text(state);
 		}
+		
+	},
+	createHead: function(){
+		this.header = $('<h4></h4>').hide();
 	},
 	createCon: function(){
 		this.c = $('<ul></ul>');
@@ -205,7 +208,7 @@ provoda.addPrototype("searchSectionView", {
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
 
-			var cur_ui = this.getFreeChildView('item', cur);
+			var cur_ui = this.getFreeChildView({name: 'item'}, cur);
 			if (cur_ui){
 				var ccon = cur_ui.getA();
 
@@ -221,7 +224,7 @@ provoda.addPrototype("searchSectionView", {
 		this.requestAll();
 	},
 	'collch-button': function(name, md) {
-		var view = this.getFreeChildView(name, md);
+		var view = this.getFreeChildView({name: name}, md);
 		if (view){
 			this.button_view = view;
 			this.c.append(view.getA());

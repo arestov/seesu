@@ -29,14 +29,14 @@ LfmLogin.extendTo(LfmLoveIt, {
 
 		if (lfm.sk){
 			var _this = this;
-			this.updateState('wait-love-done', true);
+			this.updateState('wait_love_done', true);
 			lfm.post('Track.love', {
 				sk: lfm.sk,
 				artist: this.song.artist,
 				track: this.song.track
 			})
 				.always(function(){
-					_this.updateState('wait-love-done', false);
+					_this.updateState('wait_love_done', false);
 					_this.trigger('love-success');
 				})
 			seesu.trackEvent('song actions', 'love');
@@ -55,7 +55,7 @@ BaseCRow.extendTo(LoveRow, {
 		this.mo = mo;
 		this._super();
 		this.lfm_loveit = new LfmLoveIt({auth: su.lfm_auth, pmd: this}, this.mo);
-		this.setChild('lfm_loveit', this.lfm_loveit);
+		this.updateNesting('lfm_loveit', this.lfm_loveit);
 		this.lfm_loveit.on('love-success', function() {
 			_this.hide();
 		});
@@ -198,7 +198,7 @@ BaseCRow.extendTo(ShareRow, {
 		}
 
 		this.searcher = new StrusersRowSearch(this, mo);
-		this.setChild('searcher', this.searcher);
+		this.updateNesting('searcher', this.searcher);
 
 		var updateSongURL = function(){
 			_this.updateState('share_url', _this.mo.getShareUrl());
@@ -246,7 +246,7 @@ BaseCRow.extendTo(ShareRow, {
 				open_opts: {settings_bits: 2},
 				desc: improve ? localize('to-find-vk-friends') : localize("to-post-and-find-vk")
 			});
-			this.setChild('vk_auth', this.vk_auth_rqb);
+			this.updateNesting('vk_auth', this.vk_auth_rqb);
 
 		}
 		//to find you friends
@@ -254,6 +254,9 @@ BaseCRow.extendTo(ShareRow, {
 
 		this.updateState("needs_vk_auth ", true);
 
+	},
+	postToVKWall: function() {
+		this.mo.postToVKWall();
 	},
 	removeVKAudioAuth: function() {
 		if (this.vk_auth_rqb){
@@ -349,7 +352,7 @@ BaseCRow.extendTo(PlaylistAddRow, {
 		this.mo = mo;
 		this._super();
 		this.searcher = new PlaylistRowSearch(this, mo);
-		this.setChild('searcher', this.searcher);
+		this.updateNesting('searcher', this.searcher);
 	},
 	model_name: 'row-playlist-add',
 	search: function(q) {
@@ -377,7 +380,7 @@ BaseCRow.extendTo(ScrobbleRow, {
 		this.actionsrow = actionsrow;
 		this._super();
 		this.lfm_scrobble = new LfmScrobble({auth: su.lfm_auth, pmd: this});
-		this.setChild('lfm_scrobble', this.lfm_scrobble);
+		this.updateNesting('lfm_scrobble', this.lfm_scrobble);
 	},
 	model_name: 'row-lastfm'
 });

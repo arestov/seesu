@@ -23,6 +23,7 @@ provoda.addPrototype("baseSong",{
 		if (opts.omo.track){
 			this.init_states['track']= opts.omo.track;
 		}
+		this.init_states['playlist_type'] = this.plst_titl.playlist_type;
 		this.init_states['url_part'] = this.getURL();
 		//this.updateManyStates(states);
 
@@ -35,13 +36,19 @@ provoda.addPrototype("baseSong",{
 		});
 	},
 	complex_states: {
+		'one_artist_playlist': {
+			depends_on: ['playlist_type'],
+			fn: function(playlist_type) {
+				return playlist_type == 'artist';
+			}
+		},
 		'selected_image': {
 			depends_on: ['lfm_image', 'ext_lfm_image', 'image_url'],
 			fn: function(lfm_i, ext_lfm, just_url) {
 				return lfm_i || just_url || ext_lfm;
 			}
 		},
-		'song-title': {
+		'song_title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track){
 				return this.getFullName(artist, track);
@@ -74,7 +81,7 @@ provoda.addPrototype("baseSong",{
 			}
 		},
 		'can-use-as-neighbour':{
-			depends_on: ['has-none-files-to-play'],
+			depends_on: ['has_none_files_to_play'],
 			fn: function(h_nftp) {
 				if (h_nftp){
 					return false;
@@ -84,7 +91,7 @@ provoda.addPrototype("baseSong",{
 
 			}
 		},
-		'has-none-files-to-play': {
+		'has_none_files_to_play': {
 			depends_on: ['search_complete', 'no_track_title', 'mf_cor_has_available_tracks'],
 			fn: function(scomt, ntt, mf_cor_tracks) {	
 				if (this.mf_cor && !mf_cor_tracks){
@@ -137,6 +144,11 @@ provoda.addPrototype("baseSong",{
 					next_preload_song: false
 				});
 			}
+		}
+	},
+	wantSong: function() {
+		if (this.player){
+			this.player.wantSong(this);
 		}
 	},
 	prepareForPlaying: function() {
@@ -660,7 +672,20 @@ provoda.addPrototype("baseSong",{
 	},
 	getCurrentMopla: function(){
 		return this.mf_cor.getCurrentMopla();
+	},
+	showArtcardPage: function(artist_name) {
+		this.app.showArtcardPage(artist_name || this.artist);
+		this.app.trackEvent('Artist navigation', 'art card', artist_name || this.artist);
+	},
+	showArtistSimilarArtists: function() {
+		this.app.showArtistSimilarArtists(this.artist);
+		this.app.trackEvent('Artist navigation', 'similar artists to', this.artist);
+	},
+	showTag: function(tag_name) {
+		this.app.show_tag(tag_name);
+		this.app.trackEvent('Artist navigation', 'tag', tag_name);
 	}
+
 });
 
 

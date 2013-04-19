@@ -17,7 +17,7 @@ provoda.View.extendTo(appModelView, {
 		setTimeout(function() {
 			_this.buildAppDOM();
 		});
-		
+
 		if (this.opts.can_die && getDefaultView(this.d)){
 			this.can_die = true;
 			this.checkLiveState = function() {
@@ -28,10 +28,10 @@ provoda.View.extendTo(appModelView, {
 			};
 
 			this.lst_interval = setInterval(this.checkLiveState, 1000);
-			
+
 		}
 		this.lev_containers = {};
-		
+
 		this.on('vip-state-change.current_mp_md', function(e) {
 			var cwp = this.state('vis_current_wpoint');
 			if (cwp){
@@ -39,9 +39,9 @@ provoda.View.extendTo(appModelView, {
 					_this.setVisState('current_wpoint', false);
 				}
 			}
-			
+
 		}, {skip_reg: true, immediately: true});
-		
+
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);
@@ -49,7 +49,7 @@ provoda.View.extendTo(appModelView, {
 		this.c.addClass('app-loaded');
 		var ext_search_query = this.els.search_input.val();
 		//must be before start_page view set its value to search_input
-		this.md.checkUserInput({
+		this.RPCLegacy('checkUserInput', {
 			ext_search_query: ext_search_query
 		});
 
@@ -57,8 +57,8 @@ provoda.View.extendTo(appModelView, {
 		this.connectChildrenModels();
 
 		this.requestAll();
-		
-		
+
+
 	},
 	reportDomDeath: function() {
 		if (this.can_die && !this.dead){
@@ -67,9 +67,9 @@ provoda.View.extendTo(appModelView, {
 		//	var d = this.d;
 		//	delete this.d;
 			this.die();
-			
+
 			console.log('DOM dead! ' + this.nums);
-			
+
 		}
 	},
 	isAlive: function(){
@@ -272,7 +272,7 @@ provoda.View.extendTo(appModelView, {
 		}
 	],
 	'collch-start_page': function(name, md) {
-		var view = this.getFreeChildView(name, md, 'main');
+		var view = this.getFreeChildView({name: name, space: 'main'}, md);
 		if (view){
 			var _this = this;
 
@@ -303,7 +303,7 @@ provoda.View.extendTo(appModelView, {
 		} else {
 			return this.getLevelContainer(num);
 		}
-		
+
 	},
 	hideLevNum: function(num) {
 
@@ -311,14 +311,13 @@ provoda.View.extendTo(appModelView, {
 		if (levc){
 			levc.c.addClass('inactive-page').removeClass('full-page');
 		}
-		
+
 	},
 	showLevNum: function(num) {
 		var levc = this.getLevByNum(num);
 		if (levc){
 			levc.c.removeClass('inactive-page').addClass('full-page');
 		}
-		
 	},
 	removePageOverviewMark: function(num) {
 		var levc = this.getLevByNum(num);
@@ -363,7 +362,7 @@ provoda.View.extendTo(appModelView, {
 		if (md.map_level_num != -1 && (!old_md || old_md.map_level_num != -1)){
 			this.hideLevNum(-1);
 		}
-		
+
 		this.addPageOverviewMark(md.map_level_num - 1);
 		this.showLevNum(md.map_level_num);
 		if (oved_now_active){
@@ -374,9 +373,9 @@ provoda.View.extendTo(appModelView, {
 		if (highlight && highlight.source_md){
 			var source_md = highlight.source_md;
 
-			var md_view = this.getChildView(md, 'main');
+			var md_view = this.getChildView(md.mpx, 'main');
 			if (md_view){
-				var hl_view = md_view.getChildView(source_md, 'main');
+				var hl_view = md_view.getChildView(source_md.mpx, 'main');
 				if (hl_view){
 					//this.scrollTo(hl_view.getC());
 				}
@@ -399,7 +398,7 @@ provoda.View.extendTo(appModelView, {
 		}*/
 		var parent_md = md.getParentMapModel();
 		if (parent_md){
-			var mplev_item_view = md.getRooConPresentation(false, false, true);
+			var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);
 			if (mplev_item_view && mplev_item_view.getC().height()){
 				this.scrollTo(mplev_item_view.getC(), {
 					node: this.getLevByNum(md.map_level_num - 1).scroll_con
@@ -411,7 +410,7 @@ provoda.View.extendTo(appModelView, {
 
 
 		//var parent_md = md.getParentMapModel();
-		//this.getChildView()
+		//this.getChildView(mpx)
 	},
 	'stch-map_animation': function(changes) {
 		if (!changes){
@@ -419,20 +418,21 @@ provoda.View.extendTo(appModelView, {
 		}
 		var all_changhes = $filter(changes.array, 'changes');
 		all_changhes = [].concat.apply([], all_changhes);
-		
+
 		for (var i = 0; i < all_changhes.length; i++) {
 			var cur = all_changhes[i];
-
+			var target = cur.target.getMD();
 			if (cur.type == 'move-view'){
-				cur.target.updateState('vis_mp_show', {
+				
+				target.updateState('vis_mp_show', {
 					anid: changes.anid,
 					value: cur.value
 				});
 				//MUST UPDATE VIEW, NOT MODEL!!!!!
 			} else if (cur.type == 'destroy'){
-				this.removeChildViewsByMd(cur.target);
+				this.removeChildViewsByMd(target.mpx);
 			}
-			
+
 		}
 		console.log(all_changhes);
 		/*
@@ -451,6 +451,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	'stch-show_search_form': function(state) {
 		this.els.search_form.toggleClass('hidden', !state);
+		if (!state){
+			this.search_input[0].blur();
+		}
 	},
 	"animation-type":{
 		"mp_has_focus": function(target, state) {
@@ -487,11 +490,10 @@ provoda.View.extendTo(appModelView, {
 		},
 		'now_playing': function(text) {
 
-			var md = this.md;
 			var _this = this;
 			if (!this.now_playing_link && this.nav){
 				this.now_playing_link = $('<a class="nav-item np-button"><span class="np"></span></a>').click(function(){
-					md.showNowPlaying();
+					_this.RPCLegacy('showNowPlaying');
 				}).appendTo(this.nav.daddy);
 
 				this.addWayPoint(this.now_playing_link, {
@@ -512,7 +514,7 @@ provoda.View.extendTo(appModelView, {
 				if (app_env.need_favicon){
 					this.changeFavicon('playing');
 				}
-				
+
 			} else {
 				s.each(function(i, el){
 					$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
@@ -520,7 +522,7 @@ provoda.View.extendTo(appModelView, {
 				if (app_env.need_favicon){
 					this.changeFavicon('usual');
 				}
-				
+
 			}
 		},
 		"doc_title": function(title) {
@@ -555,7 +557,7 @@ provoda.View.extendTo(appModelView, {
 
 		var top_limit = scroll_top + padding,
 			bottom_limit = scroll_bottom - padding;
-		
+
 		var node_position;
 		var node_top_post =  jnode.offset().top;
 		if (svp.offset){
@@ -581,11 +583,11 @@ provoda.View.extendTo(appModelView, {
 					.animate({
 						scrollTop: new_position
 					}, opts.animate);
-				
+
 			} else {
 				scroll_c.scrollTop(new_position);
 			}
-			
+
 		}
 	},
 	toggleBodyClass: function(add, class_name){
@@ -603,7 +605,7 @@ provoda.View.extendTo(appModelView, {
 				changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
 			}
 		}
-		
+
 	},300),
 	favicon_states: {
 		playing: 'icons/icon16p.png',
@@ -611,6 +613,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	parts_builder: {
 		//samples
+		'song-view': function() {
+			return this.els.ui_samples.children('ul').children('.song-view');
+		},
 		'music_conductor_page': function() {
 			return this.els.ui_samples.children('.music_conductor_page');
 		},
@@ -666,12 +671,9 @@ provoda.View.extendTo(appModelView, {
 			console.log('dom ready');
 			_this.dom_related_props.push('els', 'lev_containers', 'samples');
 
-			
-
 			var slider = d.getElementById('slider');
 			var screens_block = $('#screens',d);
 
-			
 
 			if (app_env.check_resize){
 				var detectSize = function(D){
@@ -685,14 +687,14 @@ provoda.View.extendTo(appModelView, {
 				};
 				var getCurrentNode = function() {
 					var current_md = _this.state('current_mp_md');
-					return current_md && current_md.getRooConPresentation(true, true).getC();
+					return current_md && current_md.mpx.getRooConPresentation(true, true).getC();
 				};
 
 				var readySteadyResize = function(){
-					if (_this.md.rsd_rz){
-						clearInterval(_this.md.rsd_rz);
+					if (_this.rsd_rz){
+						clearInterval(_this.rsd_rz);
 					}
-					
+
 					var oldsize = detectSize(getCurrentNode());
 					var offset_top;
 
@@ -700,7 +702,7 @@ provoda.View.extendTo(appModelView, {
 					var recheckFunc = function(){
 						if (typeof documentScrollSizeChangeHandler == 'function'){
 							var newsize = detectSize(getCurrentNode());
-							
+
 							if (oldsize != newsize){
 								if (typeof offset_top == 'undefined'){
 									var offset = $(getCurrentNode()).offset();
@@ -708,11 +710,11 @@ provoda.View.extendTo(appModelView, {
 								}
 								documentScrollSizeChangeHandler((oldsize = newsize) + offset_top);
 							}
-							
+
 						}
 					};
 
-					_this.md.rsd_rz = setInterval(recheckFunc,100);
+					_this.rsd_rz = setInterval(recheckFunc,100);
 					_this.on('vip-state-change.current_mp_md.resize-check', function(e) {
 						recheckFunc();
 					}, {
@@ -721,20 +723,19 @@ provoda.View.extendTo(appModelView, {
 					});
 				};
 				readySteadyResize();
-				
-			}
-			
 
-			
+			}
+
+
+
 			var ui_samples = $('#ui-samples',d);
 
-			
+
 			var search_form = $('#search',d);
-			
 
 			var start_screen = $('#start-screen',d);
 
-			
+
 			var shared_parts_c = screens_block.children('.shared-parts');
 
 			var scrolling_viewport;
@@ -753,7 +754,7 @@ provoda.View.extendTo(appModelView, {
 						offset: true
 					};
 				}
-				
+
 				/*
 				*/
 			}
@@ -777,19 +778,19 @@ provoda.View.extendTo(appModelView, {
 				material: start_screen,
 				scroll_con: st_scr_scrl_con
 			};
-				
+
 
 			_this.els.search_form.find('#app_type').val(su.env.app_type);
-			
+
 			_this.els.search_form.submit(function(){return false;});
-			
-			
+
+
 			_this.search_input = _this.els.search_input;
-		
+
 			_this.search_input.on('keyup change', function(e) {
 				var input_value = this.value;
 				_this.overrideStateSilently('search_query', input_value);
-				_this.md.search(input_value);
+				_this.RPCLegacy('search', input_value);
 			});
 
 			/*
@@ -806,21 +807,21 @@ provoda.View.extendTo(appModelView, {
 
 				}
 			});*/
-			
-			
+
+
 			$('#widget-url',d).val(location.href.replace('index.html', ''));
-			
+
 
 			if (app_env.bro.browser.opera && ((typeof window.opera.version == 'function') && (parseFloat(window.opera.version()) <= 10.1))){
-				
+
 				$('<a id="close-widget">&times;</a>',d)
 					.click(function(){
 						window.close();
 					})
 					.prependTo(_this.els.slider);
 			}
-			
-			
+
+
 
 			var vklc = ui_samples.children('.vk-login-context');
 
@@ -847,7 +848,7 @@ provoda.View.extendTo(appModelView, {
 					},
 					finishing: function(){
 						su.vk.wait_for_finish = true;
-						
+
 						this.oos.addClass('vk-finishing');
 					},
 					vk_login_error: $(),
@@ -858,8 +859,8 @@ provoda.View.extendTo(appModelView, {
 						if (su.vk.wait_for_finish){
 							nvk.addClass('vk-finishing');
 						}
-						
-						
+
+
 						if (this.load_indicator){
 							nvk.addClass('waiting-auth');
 						}
@@ -870,23 +871,22 @@ provoda.View.extendTo(appModelView, {
 						nvk.find('.sign-in-to-vk').click(function(e){
 							var class_name = this.className;
 							var clicked_node = $(this);
-							
-				
+
 							var vkdomain = class_name.match(/sign-in-to-vk-ru/) ? 'vkontakte.ru' : 'vk.com';
 							if (su.vk_app_mode){
 								if (window.VK){
 									VK.callMethod('showSettingsBox', 8);
 								}
 							} else{
-								
+
 								su.vk_auth.requestAuth({
 									ru: class_name.match(/sign-in-to-vk-ru/) ? true: false,
 									c: _this
 								});
-							
+
 							}
-								
-							
+
+
 							e.preventDefault();
 						});
 						var input = nvk.find('.vk-code');
@@ -897,17 +897,15 @@ provoda.View.extendTo(appModelView, {
 								su.connectVKApi(vk_token, true);
 							}
 						});
-						
+
 						_this.oos =  _this.oos.add(nvk);
 						return nvk;
 					}
 				}
-				
+
 			};
-			
-			
+
 			_this.els.search_label = _this.els.search_form.find('#search-p').find('.lbl');
-			
 			var justhead = _this.els.navs;
 			_this.nav = {
 				justhead: justhead,
@@ -915,16 +913,14 @@ provoda.View.extendTo(appModelView, {
 			};
 
 			_this.nav.daddy.empty().removeClass('not-inited');
-			
+
 
 			$(d).on('click', '.external', function(e) {
 				e.preventDefault();
 				app_env.openURL($(this).attr('href'));
 				seesu.trackEvent('Links', 'just link');
 			});
-			
-		
-			
+
 			_this.onDomBuild();
 
 			$(d).keydown(function(e){
@@ -959,14 +955,13 @@ provoda.View.extendTo(appModelView, {
 			key_name = 'Up';
 		}
 		if (key_name){
-			//this.md.keyNav(key_name);
+			//this.RPCLegacy('keyNav', key_name);
 			this.wayPointsNav(key_name);
 		}
 	},
 	getWPEndPoint: function(cur_wayp, nav_type, dems_storage) {
 		var cur_dems = dems_storage[cur_wayp.wpid];
 		var end_point = {};
-		
 		if (this.wp_dirs.horizontal[nav_type]){
 			end_point.top = cur_dems.offset.top;
 			if (this.wp_dirs.forward[nav_type]){
@@ -993,7 +988,7 @@ provoda.View.extendTo(appModelView, {
 		return dems;
 	},
 	getWPDems: function(cur_wayp) {
-		
+
 		if (cur_wayp.canUse && !cur_wayp.canUse()){
 			return;
 		}
@@ -1034,7 +1029,7 @@ provoda.View.extendTo(appModelView, {
 
 		var height = dems.height;
 		var width = dems.width;
-		
+
 		var pos = cur.position();
 		if ((pos.top + height) <= 0){
 			return;
@@ -1052,12 +1047,13 @@ provoda.View.extendTo(appModelView, {
 		}
 
 		var break_of_disnone = false;
-		for (var ii = 0; ii < parents.length; ii++) {
+		var ii;
+		for (ii = 0; ii < parents.length; ii++) {
 			if (parents[ii].css('display') == 'none'){
 				break_of_disnone = true;
 				break;
 			}
-			
+
 		}
 		if (break_of_disnone){
 			return;
@@ -1077,7 +1073,7 @@ provoda.View.extendTo(appModelView, {
 
 
 		var ovh_parent = false;
-		for (var ii = 0; ii < parents.length; ii++) {
+		for (ii = 0; ii < parents.length; ii++) {
 			if (parents[ii].css('overflow') == 'hidden'){
 				ovh_parent = parents[ii];
 				break;
@@ -1085,7 +1081,6 @@ provoda.View.extendTo(appModelView, {
 			if (stop_parents.indexOf(parents[ii][0]) != -1){
 				break;
 			}
-			
 		}
 		var offset = cur.offset();
 
@@ -1103,7 +1098,7 @@ provoda.View.extendTo(appModelView, {
 			if (offset.left > (parent_offset.left + ovh_parent.width())){
 				return;
 			}
-			
+
 		}
 
 		return {
@@ -1126,7 +1121,6 @@ provoda.View.extendTo(appModelView, {
 					continue;
 				}
 			}
-			
 			/*
 			if (!dems){
 				cur.data('dems', null);
@@ -1145,9 +1139,6 @@ provoda.View.extendTo(appModelView, {
 			if (!dems_storage[cur_id].disabled){
 				wayp_pack.push(cur_wayp);
 			}
-			
-
-			
 		}
 		var _this = this;
 
@@ -1188,7 +1179,7 @@ provoda.View.extendTo(appModelView, {
 				function(el) {
 					var cur_dems = dems_storage[el.wpid];
 					var end_point = _this.getWPEndPoint(el, nav_type, dems_storage);
-					
+
 					var cathetus1 = Math.abs(end_point.top - start_point.top);
 					var cathetus2 = Math.abs(end_point.left - start_point.left);
 					var hypotenuse = Math.sqrt(Math.pow(cathetus1, 2) + Math.pow(cathetus2, 2));
@@ -1197,7 +1188,7 @@ provoda.View.extendTo(appModelView, {
 
 					return (hypotenuse + path)/2;
 
-				
+
 				}
 			]);
 		});
@@ -1222,7 +1213,7 @@ provoda.View.extendTo(appModelView, {
 		if (this.wp_dirs.horizontal[nav_type]){
 			point_a.top = curwp_dems.offset.top + curwp_dems.height;
 			shift_length = curwp_dems.height;
-			
+
 
 			point_c = {
 				left: point_t.left,
@@ -1246,7 +1237,7 @@ provoda.View.extendTo(appModelView, {
 		} else {
 			point_a.left = curwp_dems.offset.left + curwp_dems.width;
 			shift_length = curwp_dems.width;
-			
+
 
 			point_c = {
 				left: point_a.left,
@@ -1288,7 +1279,6 @@ provoda.View.extendTo(appModelView, {
 					return false;
 				}
 			}
-			
 		}
 		return true;
 	},
@@ -1303,7 +1293,7 @@ provoda.View.extendTo(appModelView, {
 		} else {
 			stat_field = 'top';
 			dyn_field = 'left';
-			
+
 		}
 
 		point_b[stat_field] = point_c[stat_field];
@@ -1334,7 +1324,7 @@ provoda.View.extendTo(appModelView, {
 	},
 	getLastDot: function(point_a, point_t, angle_alpha) {
 		var point_c;
-		
+
 		if (this.wp_dirs.horizontal[nav_type]){
 			point_c = {
 				left: point_t.left,
@@ -1345,7 +1335,7 @@ provoda.View.extendTo(appModelView, {
 				left: point_a.left,
 				top: point_t.top
 			};
-			
+
 		}
 
 		var a_length = this.getALength(point_a, point_c, angle_alpha);
@@ -1380,10 +1370,10 @@ provoda.View.extendTo(appModelView, {
 
 			var cenp_top;
 			var cenp_left;
-			
+
 			for (var i = 0; i < wayp_pack.length; i++) {
 				var cur = wayp_pack[i];
-				
+
 
 				if (!cur){
 					continue;
@@ -1392,7 +1382,6 @@ provoda.View.extendTo(appModelView, {
 				if (cur == cwp || cur.node == cwp.node){
 					continue;
 				}
-				
 				if (this.wp_dirs.forward[nav_type]){
 					if (pret_dems.offset.left + pret_dems.width <= target_dems.offset.left + target_dems.width){
 						//when move to Right - comparing Right edges
@@ -1418,7 +1407,7 @@ provoda.View.extendTo(appModelView, {
 					}
 				}
 
-				
+
 
 
 				corridor.push(cur);
@@ -1433,7 +1422,7 @@ provoda.View.extendTo(appModelView, {
 				if (cur == cwp || cur.node == cwp.node){
 					continue;
 				}
-				
+
 				if (this.wp_dirs.forward[nav_type]){
 					if (pret_dems.offset.top + pret_dems.height <= target_dems.offset.top + target_dems.height){
 						//when move to Bottom - comparing Bottom edges
@@ -1461,7 +1450,7 @@ provoda.View.extendTo(appModelView, {
 			}
 		}
 		this.sortWPCorridor(target_dems, corridor, nav_type, dems_storage);
-		
+
 		return corridor;
 	},
 	wp_dirs: {
@@ -1489,7 +1478,7 @@ provoda.View.extendTo(appModelView, {
 			clearTimeout(this.cwp_check);
 			delete this.cwp_check;
 		}
-		
+
 
 		var cwp = this.state('vis_current_wpoint');
 		if (cwp && !this.getWPDemsForStorage(cwp, dems_storage)){
@@ -1505,7 +1494,7 @@ provoda.View.extendTo(appModelView, {
 		if (cwp){
 			var cur_md_md = this.state('current_mp_md');
 			var parent_md = cur_md_md.getParentMapModel();
-			if (parent_md && cwp.view.getAncestorByRooViCon('main') == parent_md.getRooConPresentation()){
+			if (parent_md && cwp.view.getAncestorByRooViCon('main') == parent_md.mpx.getRooConPresentation()){
 				this.scrollTo(cwp.node, {
 					node: this.getLevByNum(parent_md.map_level_num).scroll_con
 				}, {vp_limit: 0.6, animate: 117});
@@ -1520,18 +1509,17 @@ provoda.View.extendTo(appModelView, {
 		if (nst) {
 			nst.node.addClass('surf_nav');
 			//if (nst.view.getRooConPresentation() ==)
-			
+
 			this.scrollToWP(nst);
-			
+
 			//
 		}
-		
 	},
 	wayPointsNav: function(nav_type) {
 		var _this = this;
 
 		var cur_mp_md = this.state('current_mp_md');
-		var roocon_view =  cur_mp_md && cur_mp_md.getRooConPresentation(true);
+		var roocon_view =  cur_mp_md && cur_mp_md.mpx.getRooConPresentation(true);
 		if (roocon_view){
 			var dems_storage = {};
 
@@ -1548,10 +1536,10 @@ provoda.View.extendTo(appModelView, {
 						}
 					},100);
 				}
-				
+
 			} else if (this.wp_dirs.all[nav_type]){
 				cwp = this.checkCurrentWPoint(dems_storage);
-				
+
 				if (!cwp){
 					var cur_view = roocon_view;
 					var wayp_pack =[];
@@ -1560,16 +1548,16 @@ provoda.View.extendTo(appModelView, {
 						wayp_pack = this.getWPPack(cur_view, dems_storage);
 						cur_view = cur_view.parent_view;
 					}
-					
+
 					this.setVisState('current_wpoint', wayp_pack[0]);
-					
+
 				} else {
 					var target_dems = cwp && dems_storage[cwp.wpid];
 					if (!target_dems){
 						throw new Error('there is no demensions!');
 					}
 					var corridor = this.getAnyPossibleWaypoints(cwp, nav_type, dems_storage);
-					
+
 					var new_wpoint = corridor[0];
 					if (new_wpoint ){
 						this.setVisState('current_wpoint', new_wpoint);
@@ -1577,7 +1565,7 @@ provoda.View.extendTo(appModelView, {
 
 				}
 			}
-			
+
 		}
 	},
 	getAnyPossibleWaypoints: function(cwp, nav_type, dems_storage) {
@@ -1597,7 +1585,7 @@ provoda.View.extendTo(appModelView, {
 			angle += 5;
 
 		}
-		
+
 
 		return corridor;
 	},
@@ -1614,21 +1602,21 @@ provoda.View.extendTo(appModelView, {
 		}
 
 		this.d.documentElement.firstChild.appendChild(style_node);
-			
+
 	},
 	verticalAlign: function(img, opts){
 		//target_height, fix
 		var real_height = opts.real_height || (img.naturalHeight ||  img.height);
 		if (real_height){
 			var offset = (opts.target_height - real_height)/2;
-			
+
 			if (offset){
 				if (opts.animate){
 					$(img).animate({'margin-top':  offset + 'px'}, opts.animate_time || 200);
 				} else {
 					$(img).css({'margin-top':  offset + 'px'});
 				}
-				
+
 			}
 			return offset;
 		}
@@ -1638,10 +1626,10 @@ provoda.View.extendTo(appModelView, {
 		if (alt){
 			image.alt= alt;
 		}
-		
+
 		image.onload = function(){
 			if (callback){
-				callback(image)
+				callback(image);
 			}
 		};
 		if (place){
@@ -1654,7 +1642,7 @@ provoda.View.extendTo(appModelView, {
 					callback(image);
 				}
 			}, 10);
-			
+
 		}
 		return image;
 	},
@@ -1676,7 +1664,6 @@ provoda.View.extendTo(appModelView, {
 			if (!pliking){
 				var p =
 				su.s.api('relations.setLike', {to: lig.user}, function(r){
-					
 					if (r.done){
 						su.trackEvent('people likes', 'liked');
 						var gc = $("<div></div>");
@@ -1689,9 +1676,9 @@ provoda.View.extendTo(appModelView, {
 				});
 				pliking = true;
 			}
-			
-			
-			
+
+
+
 		});
 		return nb;
 	},
@@ -1704,7 +1691,7 @@ provoda.View.extendTo(appModelView, {
 			if (!pliking){
 				var p =
 				su.s.api('relations.acceptInvite', {from: lig.user}, function(r){
-					
+
 					if (r.done){
 						su.trackEvent('people likes', 'accepted', false, 5);
 						nb.c.after(
@@ -1717,13 +1704,12 @@ provoda.View.extendTo(appModelView, {
 				});
 				pliking = true;
 			}
-			
-			
-			
+
+
+
 		});
 		return nb;
 	},
-	
 	getAcceptedDesc: function(rel){
 		var link = rel.info.domain && ('http://vk.com/' + rel.info.domain);
 		if (link && rel.info.full_name){
@@ -1733,11 +1719,9 @@ provoda.View.extendTo(appModelView, {
 		}
 	},
 	showBigListener: function(c, lig){
-		
 		var _this = this;
-		
 		c.empty();
-		
+
 		if (lig.info && lig.info.photo_big){
 			var algd;
 			var doAlign = function(){
@@ -1752,7 +1736,7 @@ provoda.View.extendTo(appModelView, {
 						animate_time: 66
 					});
 				}
-					
+
 			}, $('<div class="big-user-avatar"></div>').appendTo(c));
 
 			var real_height = (img.naturalHeight ||  img.height);
@@ -1766,26 +1750,24 @@ provoda.View.extendTo(appModelView, {
 			}
 
 		}
-		
+
 		if (su.s.loggedIn()){
 			var liked = su.s.susd.isUserLiked(lig.user);
 			var user_invites_me = su.s.susd.didUserInviteMe(lig.user);
-			
+
 			if (liked){
-				
-				
+
 				if (liked.item.accepted){
 					c.append(this.getAcceptedDesc(liked));
 				} else{
-					
+
 					c.append(localize('you-want-user'));
-					
 					c.append('<br/>');
-					
+
 					c.append($('<span class="desc people-list-desc"></span>').text(localize('if-user-accept-i') + " " + localize('will-get-link')));
 				}
-				
-				
+
+
 			} else if (user_invites_me){
 				if ( user_invites_me.item.accepted){
 					c.append(this.getAcceptedDesc(user_invites_me));
@@ -1795,7 +1777,7 @@ provoda.View.extendTo(appModelView, {
 					var lb = this.createAcceptInviteButton(lig);
 					lb.c.appendTo(c);
 				}
-				
+
 			} else {
 				var current_user_info = su.s.getInfo('vk');
 
@@ -1817,13 +1799,13 @@ provoda.View.extendTo(appModelView, {
 					});
 				}
 			}
-			
+
 		} else{
 			c.append(this.samples.vk_login.clone(localize('to-meet-man-vk')));
-			
+
 		}
-		
-		
+
+
 	},
 	createPhotoUploadRequest: function() {
 		var con = $('<div></div>');
@@ -1837,11 +1819,11 @@ provoda.View.extendTo(appModelView, {
 		nb.c.addClass('get-vk-photo-request-b');
 		var _this = this;
 		nb.b.click(function(){
-			_this.md.getPhotoFromVK();
+			_this.RPCLegacy('getPhotoFromVK');
 		});
 		con.append(nb.c);
 
-		
+
 		var big_string = vk_photo_meet_need.replace('%button_name%', vk_photo_update);
 		var desc = document.createTextNode(big_string);
 		con.append(desc);
@@ -1851,7 +1833,7 @@ provoda.View.extendTo(appModelView, {
 	getRtPP: function(node){
 		throw new Error('cant detect position');
 		var clicked_node = $(node);
-		
+
 		var target_offset = clicked_node.offset();
 		var container_offset = this.els.pllistlevel.offset();
 		return {
@@ -1862,23 +1844,23 @@ provoda.View.extendTo(appModelView, {
 	},
 	createSongListener: function(lig, uc){
 		var _this = this;
-		
+
 		var li = $('<li class="song-listener"></li>').click(function() {
-			
+
 			if (!uc.isActive('user_info') || uc.D('user_info', 'current-user') != lig.user){
-				
-				
-				
+
+
+
 				uc.D('user_info', 'current-user', lig.user);
 
-				
+
 				var c = uc.C('user_info');
 
 				_this.showBigListener(c, lig);
 				su.s.auth.regCallback('biglistener', function(){
 					_this.showBigListener(c, lig);
 				});
-				
+
 				//var p = _this.getRtPP(li[0]);
 
 				//var li_pos = ;
@@ -1897,11 +1879,11 @@ provoda.View.extendTo(appModelView, {
 
 		});
 		this.createUserAvatar(lig.info, li);
-		
-		
+
+
 		return li;
-				
-				
+
+
 	},
 	createSongListeners: function(listenings, place, above_limit_value, exlude_user, users_context){
 		var _this = this;
@@ -1920,13 +1902,12 @@ provoda.View.extendTo(appModelView, {
 		} else if (su.env.opera_extension){
 			youtube_video.setAttribute('wmode',"opaque");
 		}
-		
-		
-			youtube_video.setAttribute('type',"application/x-shockwave-flash");
-			youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id + '&autoplay=1');
-			youtube_video.setAttribute('allowfullscreen',"true");
-			youtube_video.setAttribute('class',"you-tube-video");
-			
+
+		youtube_video.setAttribute('type',"application/x-shockwave-flash");
+		youtube_video.setAttribute('src', 'https://www.youtube.com/v/' + id + '&autoplay=1');
+		youtube_video.setAttribute('allowfullscreen',"true");
+		youtube_video.setAttribute('class',"you-tube-video");
+
 		return youtube_video;
 	},
 	bindLfmTextClicks: function(con) {
@@ -1948,11 +1929,8 @@ provoda.View.extendTo(appModelView, {
 			seesu.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
 		});
 
-
-	
 	},
 	loadImage: function(opts) {
-		
 		if (opts.url){
 			var queue;
 			if (opts.url.indexOf('last.fm') != -1){
@@ -1964,12 +1942,11 @@ provoda.View.extendTo(appModelView, {
 			opts.queue = opts.queue || queue;
 			return loadImage(opts);
 		}
-		
 	},
 	createNiceButton: function(position){
 		var c = $('<span class="button-hole"><a class="nicebutton"></a></span>');
 		var b = c.children('a');
-		
+
 		if (position == 'left'){
 			c.addClass('bposition-l');
 		} else if (position == 'right'){
@@ -1987,7 +1964,7 @@ provoda.View.extendTo(appModelView, {
 					this._enabled = true;
 				}
 				return this;
-				
+
 			},
 			disable: function(){
 				if (this._enabled){
@@ -2005,7 +1982,7 @@ provoda.View.extendTo(appModelView, {
 						this.disable();
 					}
 				}
-				
+
 			}
 		};
 		bb.disable();

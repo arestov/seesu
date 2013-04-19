@@ -2,7 +2,7 @@
 var struserSuggestView = function() {};
 baseSuggestUI.extendTo(struserSuggestView, {
 	createItem: function() {
-		var that = this.md;
+		var that = this.mpx.md;
 		this.a = $('<a></a>')
 			.text(that.text_title)
 			.appendTo(this.c);
@@ -92,7 +92,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				var inputSearch = debounce(function(e) {
 					var newval = this.value;
 					if (oldv !== newval){
-						_this.md.search(newval);
+						_this.RPCLegacy('search', newval);
 						oldv = newval;
 					}
 					
@@ -113,7 +113,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				this.requestAll();
 				searcher_ui.expand();
 				
-				this.md.search("");
+				this.RPCLegacy('search', "");
 			}
 			
 		},
@@ -140,7 +140,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		"own-wall-button": function() {
 			var _this = this;
 			var ptmw_link = $("<div class='post-to-my-vk-wall'></div>").click(function(){
-				_this.md.mo.postToVKWall();
+				_this.RPCLegacy('postToVKWall');
 			}).text(localize("to-own-wall")).insertBefore(this.getPart("pch-ws-own"));
 			this.addWayPoint(ptmw_link);
 			return ptmw_link;
@@ -211,7 +211,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 
 		var _this = this;
 		var inputSearch = debounce(function(e) {
-			_this.md.search(this.value);
+			_this.RPCLegacy('search', this.value);
 		}, 100);
 		this.input = this.c.find('.playlist-query').bind('keyup change search mousemove', inputSearch);
 
@@ -219,7 +219,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 
 
 		this.pl_creation_b = $("<div class='create-named-playlist hidden suggest'></div>").click(function() {
-			_this.md.findAddPlaylist();
+			_this.RPCLegacy('findAddPlaylist');
 		});
 		this.addWayPoint(this.pl_creation_b);
 		this.pl_creation_b_text = $('<span></span>');
@@ -232,7 +232,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		this.requestAll();
 		searcher_ui.expand();
 		
-		this.md.search("");
+		this.RPCLegacy('search', "");
 
 		
 		
@@ -337,7 +337,7 @@ BaseCRowUI.extendTo(RepeatSongRowView, {
 		"rept-chbx": function() {
 			var _this = this;
 			var input = this.c.find('.rept-song-label input').click(function() {
-				_this.md.setDnRp($(this).prop('checked'));
+				_this.RPCLegacy('setDnRp', $(this).prop('checked'));
 			});
 			this.addWayPoint(input);
 			return input;
@@ -371,7 +371,6 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		this.row_context = this.c.children('.row-song-context');
 
 		this.buttons_panel = this.c.children('.track-panel');
-		this.buttons_panel.find('.pc').data('mo', this.md.mo);
 		this.createVolumeControl();
 		
 		this.arrow = this.row_context.children('.rc-arrow');
@@ -399,12 +398,6 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		'row-playlist-add': {
 			main: PlaylistAddRowUI
 		}
-	},
-	"stch-vis_volume": function(state) {
-		return;
-		this.tpl.ancs['v-bar'].css({
-			width: state
-		});
 	},
 
 	complex_states: {
@@ -463,12 +456,12 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			var twid = Math.min(hole_width, Math.max(0, last.cpos));
 
 			_this.promiseStateUpdate('volume', twid/hole_width);
-			_this.md.setVolume([twid, hole_width]);
+			_this.RPCLegacy('setVolume', [twid, hole_width]);
 			/*
 			if (!_this.width){
 				_this.fixWidth();
 			}
-			_this.md.setVolumeByFactor(_this.width && (last.cpos/_this.width));
+			_this.RPCLegacy('setVolumeByFactor', _this.width && (last.cpos/_this.width));
 			*/
 
 		};

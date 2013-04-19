@@ -200,7 +200,7 @@ var FilesInvestg;
 						return _this.byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
 					});
 
-					_this.setChild('sources_list', _this.sources_list);
+					_this.updateNesting('sources_list', _this.sources_list);
 
 					//_this.trigger('child-change.sources_list', _this.sources_list);
 				})
@@ -225,7 +225,7 @@ var FilesInvestg;
 					return _this.byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
 				});
 
-				this.setChild('sources_list', this.sources_list);
+				this.updateNesting('sources_list', this.sources_list);
 			}
 			
 		},

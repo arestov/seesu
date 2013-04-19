@@ -97,7 +97,7 @@ provoda.View.extendTo(StartPageView, {
 				this.message_arh_c = $('<div class="attention-message"></div>');
 
 				$("<a class='close-message'>×</a>").appendTo(this.message_arh_c).click(function() {
-					_this.md.closeMessage('rating-help');
+					_this.RPCLegacy('closeMessage', 'rating-help');
 				});
 				$('<img class="message-image"/>').attr({
 					src: 'http://cs9767.userapi.com/u198193/b_b379d470.jpg',

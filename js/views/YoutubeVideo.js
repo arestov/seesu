@@ -8,7 +8,7 @@ provoda.View.extendTo(YoutubePreview, {
 		this.c.click(function(e){
 			e.stopPropagation();
 			e.preventDefault();
-			_this.md.requestVideo();
+			_this.RPCLegacy('requestVideo');
 			
 			
 		});

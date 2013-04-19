@@ -281,7 +281,7 @@ html.not-as-application, .not-as-application  body{
 .has_session .add-to-lfmfav{
 	opacity: 1;
 	}
-.wait-love-done .add-to-lfmfav{
+.wait_love_done .add-to-lfmfav{
 	background: url(../i/spinner.svg) no-repeat;
 	background-position:  100% 0;
 	background-size: 1.714rem;

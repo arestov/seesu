@@ -84,13 +84,35 @@ var song;
 			}
 			this.initStates();
 			_this.initHeavyPart();
+
+			this.loadImages = spv.once(function() {
+				var images_request = lfm.get('artist.getImages',{'artist': _this.artist })
+					.done(function(r){
+						var images = toRealArray(getTargetField(r, 'images.image'));
+						_this.updateState('images', images);
+					});
+				this.addRequest(images_request, {
+					space: 'demonstration'
+				});
+			});
+			this.on('state-change.can_load_images', function(e) {
+				if (e.value){
+					_this.loadImages();
+				}
+			});
 			
+		},
+		'compx-can_load_images': {
+			depends_on: ['artist', 'can_expand'],
+			fn: function(artist, can_expand) {
+				return artist && can_expand;
+			}
 		},
 		initOnShow: function() {
 			if (!this.onshow_inited){
 				this.onshow_inited = true;
 				var actionsrow = new TrackActionsRow(this);
-				this.setChild('actionsrow', actionsrow);
+				this.updateNesting('actionsrow', actionsrow);
 			}
 		},
 		initHeavyPart: function() {
@@ -112,7 +134,7 @@ var song;
 					have_mp3_tracks: true
 				});
 			}
-			this.setChild('mf_cor', this.mf_cor);
+			this.updateNesting('mf_cor', this.mf_cor);
 			this.mf_cor
 				.on('before-mf-play', function(mopla) {
 

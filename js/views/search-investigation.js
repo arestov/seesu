@@ -41,7 +41,7 @@ baseSectionButtonUI.extendTo(searchPageButtonView, {
 var artistSuggestUI = function(sugg){};
 searchPageSuggestView.extendTo(artistSuggestUI, {
 	createItem: function(){
-		var that = this.md;
+		var that = this.mpx.md;
 
 		var a = $("<a></a>");
 		$("<img/>").attr({
@@ -59,7 +59,7 @@ searchPageSuggestView.extendTo(artistSuggestUI, {
 var trackSuggestUI = function(sugg){};
 searchPageSuggestView.extendTo(trackSuggestUI, {
 	createItem: function(){
-		var that = this.md;
+		var that = this.mpx.md;
 		var a = $('<a></a>');
 
 		this.img_c = $('<img/>').attr('src', default_sugg_artimage).appendTo(a);
@@ -93,7 +93,7 @@ searchPageSuggestView.extendTo(trackSuggestUI, {
 var tagSuggestUI = function(sugg){};
 searchPageSuggestView.extendTo(tagSuggestUI,  {
 	createItem: function() {
-		var that = this.md;
+		var that = this.mpx.md;
 		this.a = $("<a></a>")
 			.append("<span>" + that.text_title + "</span>")
 			.appendTo(this.c);
@@ -106,7 +106,7 @@ searchPageSuggestView.extendTo(tagSuggestUI,  {
 var albumSuggestUI = function(sugg){};
 searchPageSuggestView.extendTo(albumSuggestUI, {
 	createItem: function(){
-		var that = this.md;
+		var that = this.mpx.md;
 		var a = $("<a></a>");
 		this.img_c = $('<img/>').attr('src', default_sugg_artimage).appendTo(a);
 
@@ -141,7 +141,6 @@ provoda.extendFromTo("searchSectionView", provoda.View, searchSectionUI);
 
 var tracksSectionView = function(seasc){};
 searchSectionUI.extendTo(tracksSectionView, {
-	head_text: localize('Tracks','Tracks'),
 	c_class: "sugg-section results-suggests",
 	children_views:{
 		item: trackSuggestUI,
@@ -152,8 +151,7 @@ searchSectionUI.extendTo(tracksSectionView, {
 
 var tagsSectionView = function(seasc) {};
 searchSectionUI.extendTo(tagsSectionView, {
-	head_text: localize('Tags'),
-	c_class: "sugg-section results-suggests recommend-tags",
+	c_class: "sugg-section results-suggests",
 	children_views:{
 		item: tagSuggestUI,
 		button: searchPageButtonView
@@ -163,8 +161,7 @@ searchSectionUI.extendTo(tagsSectionView, {
 
 var albumsSectionView = function(seasc) {};
 searchSectionUI.extendTo(albumsSectionView, {
-	head_text: localize('Albums', 'Albums'),
-	c_class: 'sugg-section results-suggests recommend-albums',
+	c_class: 'sugg-section results-suggests',
 	children_views:{
 		item: albumSuggestUI,
 		button: searchPageButtonView
@@ -174,7 +171,6 @@ searchSectionUI.extendTo(albumsSectionView, {
 
 var artistsSectionView = function(seasc){};
 searchSectionUI.extendTo(artistsSectionView, {
-	head_text: localize('Artists','Artists'),
 	c_class: 'sugg-section results-suggests',
 	children_views:{
 		item: artistSuggestUI,
@@ -185,7 +181,6 @@ searchSectionUI.extendTo(artistsSectionView, {
 
 var playlistsSectionView = function(seasc) {};
 searchSectionUI.extendTo(playlistsSectionView, {
-	head_text: localize('playlists'),
 	c_class: 'sugg-section playlist-results',
 	children_views:{
 		item: searchPageSuggestView

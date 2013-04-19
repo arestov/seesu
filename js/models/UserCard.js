@@ -345,6 +345,65 @@ UserNewReleases.extendTo(RecommNewReleases, {
 });
 
 
+var LfmUserArtists = function() {};
+mapLevelModel.extendTo(LfmUserArtists, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	}
+});
+
+var LfmUserTracks = function() {};
+mapLevelModel.extendTo(LfmUserTracks, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	}
+});
+
+var LfmUserAlbums = function() {};
+mapLevelModel.extendTo(LfmUserAlbums, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	}
+});
+
+var LfmUserTags = function() {};
+mapLevelModel.extendTo(LfmUserTags, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	}
+});
+
+
+var LfmListened = function() {};
+mapLevelModel.extendTo(LfmListened, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	},
+	sub_pa: {
+		'artists': {
+			constr: LfmUserArtists,
+			title: 'Artists'
+		},
+		'tracks': {
+			constr: LfmUserTracks,
+			title: 'Tracks'
+		},
+		'tags': {
+			constr: LfmUserTags,
+			title: 'Tags'
+		},
+		'albums': {
+			constr: LfmUserAlbums,
+			title: 'Albums'
+		}
+	}
+});
+
 
 var UserCard = function() {};
 
@@ -369,6 +428,10 @@ mapLevelModel.extendTo(UserCard, {
 			getTitle: function() {
 				return localize('reccoms-for-you') +': new releases of artists from your library';
 			}
+		},
+		'listened': {
+			constr: LfmListened,
+			title: 'Listened music'
 		},
 		'vk-audio': {
 			constr: MyVkAudioList,
@@ -405,21 +468,21 @@ mapLevelModel.extendTo(UserCard, {
 
 
 			this.arts_recomms = this.getSPI('recommended_artists', true);
-			this.setChild('arts_recomms', this.arts_recomms);
+			this.updateNesting('arts_recomms', this.arts_recomms);
 
 
 			this.lfm_loved = this.getSPI('loved', true);
-			this.setChild('lfm_loved', this.lfm_loved);
+			this.updateNesting('lfm_loved', this.lfm_loved);
 
 
 			this.my_vkaudio = this.getSPI('vk-audio', true);
-			this.setChild('vk_audio', this.my_vkaudio);
+			this.updateNesting('vk_audio', this.my_vkaudio);
 
 			this.new_releases = this.getSPI('lib_releases', true);
-			this.setChild('new_releases', this.new_releases);
+			this.updateNesting('new_releases', this.new_releases);
 
 			this.recomm_releases = this.getSPI('recommended_releases', true);
-			this.setChild('recomm_releases', this.recomm_releases);
+			this.updateNesting('recomm_releases', this.recomm_releases);
 
 			
 		};
@@ -463,7 +526,7 @@ mapLevelModel.extendTo(UserCard, {
 				if (plsts_str){
 					gena.setSavedPlaylists(plsts_str);
 				}
-				_this.setChild('user-playlists', gena);
+				_this.updateNesting('user-playlists', gena);
 
 				jsLoadComplete.change();
 			}, 150);
@@ -476,7 +539,7 @@ mapLevelModel.extendTo(UserCard, {
 			map_parent: this
 		});
 
-		this.setChild('users_acqutes', users_acqutes);
+		this.updateNesting('users_acqutes', users_acqutes);
 		
 		
 		this.init_states['nav_title'] = this.for_current_user ? localize('your-pmus-f-aq') : '';
@@ -506,11 +569,11 @@ mapLevelModel.extendTo(UserCard, {
 	'stch-mp_show': function(state) {
 		if (state && state.userwant){
 			var list_to_preload = [
-				this.getChild('arts_recomms'),
-				this.getChild('lfm_loved'),
-				this.getChild('vk_audio'),
-				this.getChild('new_releases'),
-				this.getChild('recomm_releases')
+				this.getNesting('arts_recomms'),
+				this.getNesting('lfm_loved'),
+				this.getNesting('vk_audio'),
+				this.getNesting('new_releases'),
+				this.getNesting('recomm_releases')
 				
 
 			];

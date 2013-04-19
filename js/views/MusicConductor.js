@@ -30,7 +30,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 		this.button = this.c.find('.area-button').removeClass('hidden');
 		this.button.click(function() {
-			_this.md.showOnMap();
+			_this.RPCLegacy('showOnMap');
 		});
 		this.addWayPoint(this.button);
 
@@ -52,7 +52,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 				var link = $('<a class="hyped-tag js-serv"></a>')
 					.text(tag)
 					.click(function(e){
-						_this.root_view.md.show_tag(tag);
+						_this.root_view.RPCLegacy('show_tag', tag);
 						su.trackEvent('Navigation', 'hyped at start page', "tag: " + tag );
 						e.preventDefault();
 					}).appendTo(c);
@@ -80,7 +80,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 					var uselisteningClick = function(e) {
 						var a = $(this).data('artist');
 						var t = $(this).data('track');
-						_this.root_view.md.showArtistTopTracks(a, false, {artist: a, track: t});
+						_this.root_view.RPCLegacy('showArtistTopTracks', a, false, {artist: a, track: t});
 					};
 						
 					var uc = $('<ul></ul>');

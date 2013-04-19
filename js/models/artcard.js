@@ -788,14 +788,14 @@ mapLevelModel.extendTo(ArtCard, {
 		this.hypem_fav = this.getSPI('most_favorites', true);
 		this.hypem_reblog = this.getSPI('blogged', true);
 
-		this.setChild('tags_list', this.tags_list);
-		this.setChild('albums_list', this.albums);
-		this.setChild('dgs_albums', this.dgs_albums);
-		this.setChild('soundc_prof', this.soundc_prof);
-		this.setChild('soundc_likes', this.soundc_likes);
-		this.setChild('hypem_new', this.hypem_new);
-		this.setChild('hypem_fav', this.hypem_fav);
-		this.setChild('hypem_reblog', this.hypem_reblog);
+		this.updateNesting('tags_list', this.tags_list);
+		this.updateNesting('albums_list', this.albums);
+		this.updateNesting('dgs_albums', this.dgs_albums);
+		this.updateNesting('soundc_prof', this.soundc_prof);
+		this.updateNesting('soundc_likes', this.soundc_likes);
+		this.updateNesting('hypem_new', this.hypem_new);
+		this.updateNesting('hypem_fav', this.hypem_fav);
+		this.updateNesting('hypem_reblog', this.hypem_reblog);
 
 		var _this = this;
 		this.on('vip-state-change.mp_show', function(e) {
@@ -1027,7 +1027,7 @@ mapLevelModel.extendTo(ArtCard, {
 		}
 		var pl = this.getSPI('_', true);
 		this.top_songs = pl;
-		this.setChild('top_songs', pl);
+		this.updateNesting('top_songs', pl);
 		return pl;
 	},
 	getAlbum: function(params, start_song) {
@@ -1064,7 +1064,7 @@ mapLevelModel.extendTo(ArtCard, {
 		}
 
 		var artl = this.getSPI('+similar', true);
-		this.setChild('similar_artists', artl);
+		this.updateNesting('similar_artists', artl);
 		this.similar_artists = artl;
 		return artl;
 	}
@@ -1196,14 +1196,14 @@ ArtistsList.extendTo(SimilarArtists, {
 		return request_info;
 	},
 	setPreviewList: function(raw_array) {
-		var preview_list = this.getChild(this.preview_mlist_name);
+		var preview_list = this.getNesting(this.preview_mlist_name);
 		if (!preview_list || !preview_list.length){
 			preview_list = [];
 			for (var i = 0; i < raw_array.length; i++) {
 				preview_list.push(this.makeDataItem(raw_array[i]));
 				
 			}
-			this.setChild(this.preview_mlist_name, preview_list);
+			this.updateNesting(this.preview_mlist_name, preview_list);
 		}
 	}
 });
