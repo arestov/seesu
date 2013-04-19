@@ -1569,10 +1569,12 @@ jsLoadComplete(function() {
 				$(r).find('#parts-switcher').attr('xlink:href', '#' + structure.part);
 			}
 			var xml_text;
-			if (window.XMLSerializer){
+			try {
 				xml_text = new XMLSerializer().serializeToString(r);
-			} else if (r.xml){
-				xml_text = r.xml;
+			} catch (e){
+				if (r.xml){
+					xml_text = r.xml;
+				}
 			}
 			if (!xml_text){
 				return;
