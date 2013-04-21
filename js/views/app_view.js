@@ -1,5 +1,5 @@
 var viewOnLevelP = function(md, view) {
-	var lev_conj = this.getLevelContainer(md.map_level_num, view);
+	var lev_conj = this.getLevelContainer(md.map_level_num);
 	view.wayp_scan_stop = true;
 	return lev_conj.material;
 };
@@ -78,7 +78,7 @@ provoda.View.extendTo(appModelView, {
 		}
 		return !this.checkLiveState || !this.checkLiveState();
 	},
-	getLevelContainer: function(num, view) {
+	getLevelContainer: function(num) {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
@@ -121,7 +121,7 @@ provoda.View.extendTo(appModelView, {
 		},
 		playlist: {
 			main: songsListView,
-			details: songsListView,
+			'all-sufficient-details': songsListView,
 			nav: baseNavUI
 		},
 		usercard: {
@@ -196,81 +196,36 @@ provoda.View.extendTo(appModelView, {
 			nav: baseNavUI
 		}
 	},
-	'collch-allplaces': {
-		place: viewOnLevelP
-	},
-	'collch-mconductor': {
-		place: viewOnLevelP
-	},
-	'collch-tagslist': {
-		place: viewOnLevelP
-	},
-	'collch-albslist': {
-		place: viewOnLevelP
-	},
-	'collch-user_acqs_list': {
-		place: viewOnLevelP
-	},
-	'collch-youtube_video': {
-		place: viewOnLevelP
-	},
-	'collch-tag_artists': {
-		place: viewOnLevelP
-	},
-	'collch-tag_songs': {
-		place: viewOnLevelP
-	},
-	'collch-songs_lists': {
-		place: viewOnLevelP
-	},
-	'collch-artists_lists': {
-		place: viewOnLevelP
-	},
-	'collch-countres_list': {
-		place: viewOnLevelP
-	},
-	'collch-city_place': {
-		place: viewOnLevelP
-	},
-	'collch-cities_list': {
-		place: viewOnLevelP
-	},
-	'collch-country_place': {
-		place: viewOnLevelP
-	},
-	'collch-user_playlists': {
-		place: viewOnLevelP
-	},
-
-	'collch-tag_page': {
-		place: viewOnLevelP
-	},
-	'collch-usercard': {
-		place: viewOnLevelP
-	},
-	'collch-invstg': {
-		place: viewOnLevelP
-	},
-	'collch-artcard':  {
-		place: viewOnLevelP
-	},
-	'collch-artslist': {
-		place: viewOnLevelP
-	},
-	'collch-playlist': [
-		{
-			place: viewOnLevelP,
-			opts: {overview: true}
-		},
-		{
-			place: function(md, view){
-				var lev_conj = this.getLevelContainer(md.map_level_num + 1, view);
-				view.wayp_scan_stop = true;
-				return lev_conj.material;
-			},
-			space: 'details'
+	'collch-map_slice': function(nesname, array){
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			var model_name = cur.model_name;
+			if (this['spec-collch-' + model_name]){
+				this.callCollectionChangeDeclaration(this['spec-collch-' + model_name], model_name, cur);
+			} else {
+				this.callCollectionChangeDeclaration({
+					place: viewOnLevelP
+				}, model_name, cur);
+			}
 		}
-	],
+	},
+	'spec-collch-song': function(name, md) {
+		var playlist = md.getParentMapModel();
+
+		var playlist_mpx = playlist.mpx;
+
+		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
+		if (!view){
+			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
+			var place = viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
+			place.append(view.getA());
+			this.requestAll();
+		}
+	},
+	'spec-collch-playlist': {
+		place: viewOnLevelP,
+		opts: {overview: true}
+	},
 	'collch-start_page': function(name, md) {
 		var view = this.getFreeChildView({name: name, space: 'main'}, md);
 		if (view){

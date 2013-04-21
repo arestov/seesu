@@ -559,8 +559,8 @@ mapLevelModel.extendTo(UserCard, {
 		последнее
 		библиотека
 
-		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=2803b2bcbc53f132b4d4117ec1509d65&format=json
-		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=2803b2bcbc53f132b4d4117ec1509d65&format=json&userecs=1
+		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=&format=json
+		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=&format=json&userecs=1
 
 		*/
 

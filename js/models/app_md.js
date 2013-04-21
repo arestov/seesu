@@ -127,40 +127,36 @@ provoda.Model.extendTo(appModelBase, {
 		this.updateState('map_animation', false);
 		this.animationMark(models, false);
 	},
-	bindMMapStateChanges: function(md, place) {
+	bindMMapStateChanges: function(md) {
 		var _this = this;
 
 		md.on('mpl-attach', function() {
 			var navigation = _this.getNesting('navigation');
-			var target_array = _this.getNesting(place) || [];
+			var target_array = _this.getNesting('map_slice') || [];
 
 
 			if (navigation.indexOf(md) == -1) {
 				navigation.push(md);
 				_this.updateNesting('navigation', navigation);
 			}
-			if (place){
-				if (target_array.indexOf(md) == -1){
-					target_array.push(md);
-					_this.updateNesting(place, target_array);
-				}
+			if (target_array.indexOf(md) == -1){
+				target_array.push(md);
+				_this.updateNesting('map_slice', target_array);
 			}
 
 		}, {immediately: true});
 		md.on('mpl-detach', function(){
 			var navigation = _this.getNesting('navigation');
-			var target_array = _this.getNesting(place) || [];
+			var target_array = _this.getNesting('map_slice') || [];
 
 			var new_nav = arrayExclude(navigation, md);
 			if (new_nav.length != navigation.length){
 				_this.updateNesting('navigation', new_nav);
 			}
-			if (place){
-				var new_tarr = arrayExclude(target_array, md);
+			var new_tarr = arrayExclude(target_array, md);
 
-				if (new_tarr.length != target_array.length){
-					_this.updateNesting(place, new_tarr);
-				}
+			if (new_tarr.length != target_array.length){
+				_this.updateNesting('map_slice', new_tarr);
 			}
 		}, {immediately: true});
 	},
