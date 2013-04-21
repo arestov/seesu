@@ -230,7 +230,7 @@ MDProxy.prototype = {
 			cur = views[jj];
 			var ancestor;
 			if (mplev_view){
-				ancestor = cur.getAncestorByRooViCon('details', only_by_ancestor);
+				ancestor = cur.getAncestorByRooViCon('all-sufficient-details', only_by_ancestor);
 			} else {
 				ancestor = cur.getAncestorByRooViCon('main', only_by_ancestor);
 			}
@@ -1980,8 +1980,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var con = this.getC();
 		var anchor = this._anchor;
 		if (con && anchor && anchor.parentNode){
-			//$(anchor).after(con);
-			anchor.parentNode.insertBefore(con[0], anchor.nextSibling);
+			$(anchor).after(con);
+			//anchor.parentNode.insertBefore(con[0], anchor.nextSibling);
 			delete this._anchor;
 			$(anchor).remove();
 			this.setVisState('con-appended', true);
@@ -2597,7 +2597,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					var current_node = view.getT();
 					var prev_node = prev_view.getT();
 					if (!current_node.prev().is(prev_node)){
-						current_node.remove();
+						var parent_node = current_node[0] && current_node[0].parentNode;
+						if (parent_node){
+							parent_node.removeChild(current_node[0]);
+						}
+						
 						view.detached = true;
 					}
 				}

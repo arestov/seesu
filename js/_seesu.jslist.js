@@ -14,7 +14,7 @@ var jsLoadComplete,
 	"js/app_serv.js",
 	"js/libs/localizer.js",
 	"js/libs/w_storage.js",
-	"js/common-libs/jquery-1.8.0.mod.min.js",
+	"js/common-libs/jquery-2.0.0.min.js",
 	
 	
 	"js/libs/c_cache_ajax.js",
