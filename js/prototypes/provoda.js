@@ -2664,7 +2664,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				//
 				
 			}
-			append_data.complect.fragt.appendChild(view.getT()[0]);
+			$(append_data.complect.fragt).append(view.getT());
+			//append_data.complect.fragt.appendChild(view.getT()[0]);
 			//$(.fragt).append();
 		}
 		if (!not_request){
