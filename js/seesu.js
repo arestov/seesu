@@ -189,10 +189,10 @@ appModel.extendTo(seesuApp, {
 		var addBrowserView = function(Constr, name, opts) {
 			var view = new Constr();
 
-			_this.addView(view, name);
+			_this.mpx.addView(view, name);
 
 			view.init({
-				md: _this
+				mpx: _this.mpx
 			}, opts);
 			view.requestAll();
 
