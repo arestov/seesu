@@ -1229,6 +1229,7 @@ iframe.you-tube-video,embed.you-tube-video{
 	padding-top:1rem;
 	}
 	.share-song .song-link{
+		-moz-box-sizing:border-box;
 		box-sizing: border-box;
 		width:100%;
 		}
