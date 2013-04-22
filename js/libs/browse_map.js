@@ -37,7 +37,7 @@ Class.extendTo(MapLevel, {
 	show: function(opts){
 		this.map.addChange({
 			type: 'move-view',
-			target: this.resident,
+			target: this.resident.getMDReplacer(),
 			value: opts
 		});
 
@@ -56,14 +56,14 @@ Class.extendTo(MapLevel, {
 	hide: function(){
 		this.map.addChange({
 			type: 'zoom-out',
-			target: this.resident
+			target: this.resident.getMDReplacer()
 		});
 		//this.resident.hide();
 	},
 	die: function(){
 		this.map.addChange({
 			type: 'destroy',
-			target: this.resident
+			target: this.resident.getMDReplacer()
 		});
 		//this.resident.mlmDie();
 		this.resident.trigger('mpl-detach');
@@ -266,7 +266,7 @@ provoda.Eventor.extendTo(browseMap, {
 					if (opts.userwant && !opts.transit){
 						this.updateNav(lp, opts.skip_url_change);
 					}*/
-					this.updateNav(cur.target.lev, opts);
+					this.updateNav(cur.target.getMD().lev, opts);
 				} else {
 					cur.value = {
 						userwant: false,

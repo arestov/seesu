@@ -25,7 +25,7 @@ var songsList;
 			var plarow = new PlARow();
 			plarow.init(this);
 
-			this.setChild('plarow', plarow);
+			this.updateNesting('plarow', plarow);
 			
 			var _this = this;
 			
@@ -176,6 +176,14 @@ var songsList;
 		init: function(actionsrow){
 			this.actionsrow = actionsrow;
 			this._super();
+		},
+		makePlayable: function() {
+			this.actionsrow.pl.makePlayable(true);
+			su.trackEvent('Controls', 'make playable all tracks in playlist');
+		},
+		makeExternalPlaylist: function() {
+			this.actionsrow.pl.makeExternalPlaylist();
+			su.trackEvent('Controls', 'make *.m3u');
 		},
 		model_name: 'row-multiatcs'
 	});

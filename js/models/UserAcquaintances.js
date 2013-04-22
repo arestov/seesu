@@ -172,13 +172,13 @@ mapLevelModel.extendTo(UserAcquaintancesLists, {
 			concated[i] = user_acq;
 		}
 		this.removeChildren(array_name);
-		this.collectViewsGarbadge();
+		this.mpx.collectViewsGarbadge();
 
-		this.setChild(array_name, concated);
+		this.updateNesting(array_name, concated);
 
 	},
 	removeChildren: function(array_name) {
-		var array = this.getChild(array_name) || [];
+		var array = this.getNesting(array_name) || [];
 		for (var i = 0; i < array.length; i++) {
 			array[i].die();
 		}

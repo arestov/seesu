@@ -58,7 +58,7 @@ provoda.View.extendTo( baseNavUI, {
 	bindClick: function() {
 		var _this = this;
 		this.c.click(function(){
-			_this.md.zoomOut();
+			_this.RPCLegacy('zoomOut');
 		});
 		this.addWayPoint(this.c, {
 			canUse: function() {

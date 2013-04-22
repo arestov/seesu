@@ -58,7 +58,7 @@ provoda.View.extendTo(ListPreview, {
 		this.addWayPoint(button_area);
 	},
 	clickAction: function() {
-		this.md.showOnMap();
+		this.RPCLegacy('showOnMap');
 	},
 	'stch-list_loading': function(state) {
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
@@ -144,7 +144,7 @@ provoda.View.extendTo(BigAlbumPreview, {
 		var _this = this;
 
 		this.c.click(function() {
-			_this.md.showOnMap();
+			_this.RPCLegacy('showOnMap');
 			return false;
 		});
 		this.addWayPoint(this.c);
@@ -175,7 +175,6 @@ provoda.View.extendTo(BigAlbumPreview, {
 		} else {
 			this.tpl.ancs.imgc.attr('src', '');
 		}
-		
 	}
 });
 
@@ -187,7 +186,7 @@ PageView.extendTo(AlbumsListView, {
 		
 		var _this = this;
 		this.tpl.ancs.load_m_b.click(function() {
-			_this.md.requestMoreData();
+			_this.RPCLegacy('requestMoreData');
 			return false;
 		});
 	},

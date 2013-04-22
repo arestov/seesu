@@ -10,7 +10,7 @@
 			this._super(opts);
 			this.names = {};
 			this.enter_items = false;
-			this.setChild('section', []);
+			this.updateNesting('section', []);
 			this.setInactiveAll();
 			this.updateState('url_part', this.getURL());
 		},
@@ -20,7 +20,7 @@
 		},
 		changeResultsCounter: function(){
 			var rc = 0;
-			var sections_array = this.getChild('section');
+			var sections_array = this.getNesting('section');
 			for (var i = 0; i < sections_array.length; i++) {
 				rc += sections_array[i].r.length;
 			}
@@ -34,7 +34,7 @@
 		},
 		_changeActiveStatus: function(remove, except){
 			except = except && this.g(except);
-			var sections_array = this.getChild('section');
+			var sections_array = this.getNesting('section');
 
 			for (var i=0; i < sections_array.length; i++) {
 				var cur = sections_array[i];
@@ -62,7 +62,7 @@
 		},
 		remarkStyles: function(){
 			var c = 0;
-			var sections_array = this.getChild('section');
+			var sections_array = this.getNesting('section');
 			for (var i=0; i < sections_array.length; i++) {
 				var cur = sections_array[i];
 				if (!cur.nos){
@@ -92,10 +92,10 @@
 				.on('request', function(rq){
 					_this.addRequest(rq);
 				});
-			var sections_array = this.getChild('section');
+			var sections_array = this.getNesting('section');
 
 			sections_array.push(s);
-			this.setChild('section', sections_array);
+			this.updateNesting('section', sections_array);
 
 			s.invstg = this;
 			this.names[name] = s;
@@ -158,7 +158,7 @@
 		},
 		getAllItems: function(no_button){
 			var r = [];
-			var sections_array = this.getChild('section');
+			var sections_array = this.getNesting('section');
 			for (var i=0; i < sections_array.length; i++) {
 				var cur = sections_array[i];
 				var items = cur.getItems(no_button);
@@ -176,7 +176,7 @@
 				}
 				this.loaded();
 				this.setItemForEnter();
-				var sections_array = this.getChild('section');
+				var sections_array = this.getNesting('section');
 				for (var i=0; i < sections_array.length; i++) {
 					sections_array[i].changeQuery(q);
 				}
@@ -348,8 +348,8 @@
 			for (var i = 0; i < this.rendering_list.length; i++) {
 				this.rendering_list[i].die();
 			}
-			this.collectViewsGarbadge();
-			this.setChild('rendering_list', []);
+			this.mpx.collectViewsGarbadge();
+			this.updateNesting('rendering_list', []);
 			
 		},
 		renderSuggests: function(no_more_results, preview){
@@ -389,7 +389,7 @@
 
 			this.updateState('no_more_results', no_more_results);
 			this.updateState('preview', preview);
-			this.setChild('rendering_list', this.rendering_list);
+			this.updateNesting('rendering_list', this.rendering_list);
 			this.updateState('changed', new Date());
 
 			this.setButtonText(!!this.r.length, this.r.query);

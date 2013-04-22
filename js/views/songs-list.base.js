@@ -32,7 +32,7 @@ provoda.addPrototype("songsListBaseView", {
 		"load-more-b": function() {
 			var _this = this;
 			var node = $("<a class='load-more-list-data'></a>").click(function() {
-				_this.md.requestMoreData(true);
+				_this.RPCLegacy('requestMoreData', true);
 			}).text(localize("load-more")).appendTo(this.c);
 
 			this.addWayPoint(node, {
@@ -54,35 +54,13 @@ provoda.addPrototype("songsListBaseView", {
 			this.createPanel();
 		}
 		this.createListBase();
-		
-	},
-	appendSongDOM: function(song_view, array, current_index){
-		var
-			song_dom = song_view.getA();
-		if (!song_dom){
-			return;
-		}
-
-		var prev_dom_hook = this.getPrevView(array, current_index);
-		if (prev_dom_hook){
-			$(prev_dom_hook).after(song_dom);
-		} else {
-			var next_dom_hook = this.getNextView(array, current_index);
-			if (next_dom_hook){
-				$(next_dom_hook).before(song_dom);
-			} else {
-				this.lc.append(song_dom);
-			}
-		}
 
 	},
-	'collch-songs-list': function(name, arr) {
-		for (var i = 0; i < arr.length; i++) {
-			var view = this.getFreeChildView(name, arr[i], 'main', {lite: this.opts && this.opts.overview});
-			if (view){
-				this.appendSongDOM(view, arr, i);
-			}
+	'collch-songs-list': {
+		place: 'lc',
+		space: 'main',
+		opts: function(){
+			return {lite: this.opts && this.opts.overview};
 		}
-		this.requestAll();
 	}
 });

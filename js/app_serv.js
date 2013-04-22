@@ -357,110 +357,110 @@ Panoramator.prototype = {
 	setCollection: function(array){
 		this.lift_items = array;
 		this.checkSize();
-        this.lift.addClass(this.ready_class_name);
+		this.lift.addClass(this.ready_class_name);
 	},
 	checkSize: function(){
 		this.total_width = this.getTotalWidth();
 		this.lift.css({
-            width: this.total_width + 'px'
-        });
-        this.viewport_width = this.viewport.width();
+			width: this.total_width + 'px'
+		});
+		this.viewport_width = this.viewport.width();
 	},
 	isEdgeElem: function(el, mobil_pos_shift, next) {
-        var cur = $(el);
+		var cur = $(el);
 
-        var position = cur.position().left;
-        var width = cur.outerWidth();
+		var position = cur.position().left;
+		var width = cur.outerWidth();
 
 
-        if ( next ? ((position + width) > (this.viewport_width + mobil_pos_shift)) : (position < mobil_pos_shift)){
-            return {
-                el: cur,
-                left: position,
-                owidth: width
-            };
-        }
-    },
-    getTargetPos: function(last_visible, next) {
-        var pos = -last_visible.left + (this.viewport_width - last_visible.owidth)/2;
-        return next ? Math.max(pos, -(this.total_width - this.viewport_width)) : Math.min(pos, 0);
-    },
-    getLiftPos: function(){
+		if ( next ? ((position + width) > (this.viewport_width + mobil_pos_shift)) : (position < mobil_pos_shift)){
+			return {
+				el: cur,
+				left: position,
+				owidth: width
+			};
+		}
+	},
+	getTargetPos: function(last_visible, next) {
+		var pos = -last_visible.left + (this.viewport_width - last_visible.owidth)/2;
+		return next ? Math.max(pos, -(this.total_width - this.viewport_width)) : Math.min(pos, 0);
+	},
+	getLiftPos: function(){
 		return -parseFloat(this.lift.css("margin-left")) || 0;
-    },
-    getTotalWidth: function() {
-        var width = 0;
-        $.each(this.lift_items, function(i ,el) {
-            width += $(el).outerWidth(true);
-        });
-        return width;
-    },
-    toStart: function(){
+	},
+	getTotalWidth: function() {
+		var width = 0;
+		$.each(this.lift_items, function(i ,el) {
+			width += $(el).outerWidth(true);
+		});
+		return width;
+	},
+	toStart: function(){
 
-    },
-    toEnd: function(){
+	},
+	toEnd: function(){
 
-    },
-    getNextEdgeElem: function(lift_pos){
+	},
+	getNextEdgeElem: function(lift_pos){
 		var last_visible;
 
-        for (var i = 0; i < this.lift_items.length; i++) {
+		for (var i = 0; i < this.lift_items.length; i++) {
 
-            last_visible = this.isEdgeElem(this.lift_items[i], lift_pos, true);
-            if (last_visible){
-                break;
-            }
+			last_visible = this.isEdgeElem(this.lift_items[i], lift_pos, true);
+			if (last_visible){
+				break;
+			}
 
-        }
-        return last_visible;
-    },
-    getPrevEdgeElem: function(lift_pos){
+		}
+		return last_visible;
+	},
+	getPrevEdgeElem: function(lift_pos){
 		var last_visible;
 
-        for (var i = this.lift_items.length - 1; i >= 0; i--) {
-            last_visible = this.isEdgeElem(this.lift_items[i], lift_pos);
-            if (last_visible){
-                break;
-            }
-        }
-        return last_visible;
-    },
-    getAnimationTime: function(target_pos, lift_pos, speed){
+		for (var i = this.lift_items.length - 1; i >= 0; i--) {
+			last_visible = this.isEdgeElem(this.lift_items[i], lift_pos);
+			if (last_visible){
+				break;
+			}
+		}
+		return last_visible;
+	},
+	getAnimationTime: function(target_pos, lift_pos, speed){
 		return  ( target_pos - lift_pos )/(speed * 1.5);
-    },
-    next: function(speed, time){
+	},
+	next: function(speed, time){
 		this.lift.stop(false, true);
 		var lift_pos = this.getLiftPos();
 		var last_visible = this.getNextEdgeElem(lift_pos);
-       
-        if (last_visible){
+		 
+		if (last_visible){
 			var target_pos = this.getTargetPos(last_visible, true);
-            this.lift.animate({
-                "margin-left": target_pos + 'px'
-            },  speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
+			this.lift.animate({
+				"margin-left": target_pos + 'px'
+			},  speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
 			return true;
-        } else {
+		} else {
 			return false;
-        }
+		}
 
-        
+		
 	},
 	prev: function(speed, time){
 		this.lift.stop(false, true);
 		var lift_pos = this.getLiftPos();
 		var last_visible = this.getPrevEdgeElem(lift_pos);
-        
-        if (last_visible){
+		
+		if (last_visible){
 			var target_pos = this.getTargetPos(last_visible);
-            this.lift.animate({
-                "margin-left": target_pos + 'px'
-            }, speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
-            return true;
+			this.lift.animate({
+				"margin-left": target_pos + 'px'
+			}, speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
+			return true;
 
-        } else {
+		} else {
 			return false;
-        }
-        
+		}
+		
 	}
 
 };
@@ -1506,7 +1506,61 @@ jsLoadComplete(function() {
 		return big_string;
 
 	};
+	;(function () {
 
+	var
+		object = typeof window != 'undefined' ? window : exports,
+		chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
+		INVALID_CHARACTER_ERR = (function () {
+			// fabricate a suitable error object
+			try { document.createElement('$'); }
+			catch (error) { return error; }}());
+
+		// encoder
+		// [https://gist.github.com/999166] by [https://github.com/nignag]
+		object.btoa || (
+		object.btoa = function (input) {
+		for (
+			// initialize result and counter
+			var block, charCode, idx = 0, map = chars, output = '';
+			// if the next input index does not exist:
+			//   change the mapping table to "="
+			//   check if d has no fractional digits
+			input.charAt(idx | 0) || (map = '=', idx % 1);
+			// "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
+			output += map.charAt(63 & block >> 8 - idx % 1 * 8)
+		) {
+			charCode = input.charCodeAt(idx += 3/4);
+			if (charCode > 0xFF) throw INVALID_CHARACTER_ERR;
+			block = block << 8 | charCode;
+		}
+		return output;
+		});
+
+		// decoder
+		// [https://gist.github.com/1020396] by [https://github.com/atk]
+		object.atob || (
+		object.atob = function (input) {
+		input = input.replace(/=+$/, '')
+		if (input.length % 4 == 1) throw INVALID_CHARACTER_ERR;
+		for (
+			// initialize result and counters
+			var bc = 0, bs, buffer, idx = 0, output = '';
+			// get next character
+			buffer = input.charAt(idx++);
+			// character found in table? initialize bit storage and add its ascii value;
+			~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+			// and if not first of each 4 characters,
+			// convert the first 8 bits to one ascii character
+			bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+		) {
+			// try to find character in table (0-63, not found => -1)
+			buffer = chars.indexOf(buffer);
+		}
+		return output;
+		});
+
+	}());
 	var replaceSVGHImage = function(rule, style){
 
 		var bgIString = rule.style.backgroundImage;
@@ -1568,8 +1622,17 @@ jsLoadComplete(function() {
 			if (structure.part){
 				$(r).find('#parts-switcher').attr('xlink:href', '#' + structure.part);
 			}
-			
-			var xml_text = new XMLSerializer().serializeToString(r);
+			var xml_text;
+			try {
+				xml_text = new XMLSerializer().serializeToString(r);
+			} catch (e){
+				if (r.xml){
+					xml_text = r.xml;
+				}
+			}
+			if (!xml_text){
+				return;
+			}
 
 			var bg_image_string = 'url(\'data:image/svg+xml;base64,' + btoa(xml_text) + '\')';
 
@@ -1645,8 +1708,8 @@ for (var i = 0; i < fr.length; i++) {
 return API.audio.get({"uid": friends[0]});
 
 for (var i = 0; i < friends.length; i++) {
-    all[friends[i]] = API.audio.get({"uid": friends[i]});
-    
+	all[friends[i]] = API.audio.get({"uid": friends[i]});
+	
 }
 
 

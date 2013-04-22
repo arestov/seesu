@@ -2,7 +2,7 @@
 var struserSuggestView = function() {};
 baseSuggestUI.extendTo(struserSuggestView, {
 	createItem: function() {
-		var that = this.md;
+		var that = this.mpx.md;
 		this.a = $('<a></a>')
 			.text(that.text_title)
 			.appendTo(this.c);
@@ -92,7 +92,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				var inputSearch = debounce(function(e) {
 					var newval = this.value;
 					if (oldv !== newval){
-						_this.md.search(newval);
+						_this.RPCLegacy('search', newval);
 						oldv = newval;
 					}
 					
@@ -113,7 +113,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 				this.requestAll();
 				searcher_ui.expand();
 				
-				this.md.search("");
+				this.RPCLegacy('search', "");
 			}
 			
 		},
@@ -140,7 +140,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		"own-wall-button": function() {
 			var _this = this;
 			var ptmw_link = $("<div class='post-to-my-vk-wall'></div>").click(function(){
-				_this.md.mo.postToVKWall();
+				_this.RPCLegacy('postToVKWall');
 			}).text(localize("to-own-wall")).insertBefore(this.getPart("pch-ws-own"));
 			this.addWayPoint(ptmw_link);
 			return ptmw_link;
@@ -211,7 +211,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 
 		var _this = this;
 		var inputSearch = debounce(function(e) {
-			_this.md.search(this.value);
+			_this.RPCLegacy('search', this.value);
 		}, 100);
 		this.input = this.c.find('.playlist-query').bind('keyup change search mousemove', inputSearch);
 
@@ -219,7 +219,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 
 
 		this.pl_creation_b = $("<div class='create-named-playlist hidden suggest'></div>").click(function() {
-			_this.md.findAddPlaylist();
+			_this.RPCLegacy('findAddPlaylist');
 		});
 		this.addWayPoint(this.pl_creation_b);
 		this.pl_creation_b_text = $('<span></span>');
@@ -232,7 +232,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		this.requestAll();
 		searcher_ui.expand();
 		
-		this.md.search("");
+		this.RPCLegacy('search', "");
 
 		
 		
@@ -337,7 +337,7 @@ BaseCRowUI.extendTo(RepeatSongRowView, {
 		"rept-chbx": function() {
 			var _this = this;
 			var input = this.c.find('.rept-song-label input').click(function() {
-				_this.md.setDnRp($(this).prop('checked'));
+				_this.RPCLegacy('setDnRp', $(this).prop('checked'));
 			});
 			this.addWayPoint(input);
 			return input;
@@ -371,7 +371,6 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		this.row_context = this.c.children('.row-song-context');
 
 		this.buttons_panel = this.c.children('.track-panel');
-		this.buttons_panel.find('.pc').data('mo', this.md.mo);
 		this.createVolumeControl();
 		
 		this.arrow = this.row_context.children('.rc-arrow');
@@ -400,23 +399,18 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			main: PlaylistAddRowUI
 		}
 	},
-	"stch-vis_volume": function(state) {
-		this.vol_bar.css({
-			width: state
-		});
-	},
 
 	complex_states: {
 		"vis_volume-hole-width": {
 			depends_on: ['vis_is-visible', 'vis_con-appended'],
 			fn: function(visible, apd){
-				return !!(visible && apd) && this.vol_hole.width();
+				return !!(visible && apd) && this.tpl.ancs['v-hole'].width();
 			}
 		},
 		"vis_volume-bar-max-width": {
 			depends_on: ['vis_volume-hole-width'],
 			fn: function(vvh_w){
-				return vvh_w && vvh_w - ( this.vol_bar.outerWidth() - this.vol_bar.width());
+				return vvh_w && vvh_w - ( this.tpl.ancs['v-bar'].outerWidth() - this.tpl.ancs['v-bar'].width());
 			}
 		},
 		"vis_volume": {
@@ -434,9 +428,13 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 	},
 	createVolumeControl: function() {
 		this.vol_cc = this.buttons_panel.find('.volume-control');
-		this.vol_hole = this.vol_cc.find('.v-hole');
-		this.vol_bar = this.vol_hole.find('.v-bar');
-		this.dom_related_props.push('vol_cc', 'vol_hole', 'vol_bar');
+		this.tpl = this.getTemplate(this.vol_cc);
+
+
+		var events_anchor = this.vol_cc;
+		var pos_con = this.tpl.ancs['v-hole'];
+
+		this.dom_related_props.push('vol_cc', 'tpl');
 		var _this = this;
 
 		var getClickPosition = function(e, node){
@@ -458,12 +456,12 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			var twid = Math.min(hole_width, Math.max(0, last.cpos));
 
 			_this.promiseStateUpdate('volume', twid/hole_width);
-			_this.md.setVolume([twid, hole_width]);
+			_this.RPCLegacy('setVolume', [twid, hole_width]);
 			/*
 			if (!_this.width){
 				_this.fixWidth();
 			}
-			_this.md.setVolumeByFactor(_this.width && (last.cpos/_this.width));
+			_this.RPCLegacy('setVolumeByFactor', _this.width && (last.cpos/_this.width));
 			*/
 
 		};
@@ -471,9 +469,9 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		var touchDown = function(e){
 			path_points = [];
 			e.preventDefault();
-			path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
+			path_points.push({cpos: getClickPosition(e, pos_con), time: e.timeStamp});
 			volumeChange();
-			_this.vol_cc.addClass('interactive-state');
+			events_anchor.addClass('interactive-state');
 		};
 		var touchMove = function(e){
 
@@ -481,7 +479,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 				return true;
 			}
 			e.preventDefault();
-			path_points.push({cpos: getClickPosition(e, _this.vol_hole), time: e.timeStamp});
+			path_points.push({cpos: getClickPosition(e, pos_con), time: e.timeStamp});
 			volumeChange();
 		};
 		var touchUp = function(e){
@@ -489,7 +487,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			if (e.which && e.which != 1){
 				return true;
 			}
-			$(_this.vol_cc[0].ownerDocument)
+			$(events_anchor[0].ownerDocument)
 				.off('mouseup', touchUp)
 				.off('mousemove', touchMove);
 
@@ -497,15 +495,15 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 			if (!travel){
 				//
 			}
-			_this.vol_cc.removeClass('interactive-state');
+			events_anchor.removeClass('interactive-state');
 
 			path_points = null;
 
 			
 		};
-		_this.vol_cc.on('mousedown', function(e){
+		events_anchor.on('mousedown', function(e){
 
-			$(_this.vol_cc[0].ownerDocument)
+			$(events_anchor[0].ownerDocument)
 				.off('mouseup', touchUp)
 				.off('mousemove', touchMove);
 
@@ -513,7 +511,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 				return true;
 			}
 
-			$(_this.vol_cc[0].ownerDocument)
+			$(events_anchor[0].ownerDocument)
 				.on('mouseup', touchUp)
 				.on('mousemove', touchMove);
 

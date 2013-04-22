@@ -318,10 +318,69 @@
 				<ul pv-anchor='video_list'></ul>
 			</div>
   		</div>
-			
+		<ul>
+			<li class="song-view" 
+				pv-class="
+					{{player_song && 'player_song'}}
+					{{play && 'playing-song'}}
+					{{marked_as && 'v-song-sibling'}}
+					{{marked_as == 'next' && 'to-play-next'}}
+					{{marked_as == 'prev' && 'to-play-previous'}}
+					{{mp_show && 'viewing-song'}}
+				">
+				<a 
+					pv-anchor="song-link"
+					class="track-node"
+					pv-class="
+						track-node
+						{{want_to_play && 'marked-for-play'}}
+						{{has_none_files_to_play && !playable && 'search-mp3-failed'}}
+						{{!has_none_files_to_play && !playable && 'waiting-full-render'}}
+						{{searching_files && 'search-mp3'}}
+						{{track_name_loading && 'track_name_loading'}}
+						{{playable && 'song'}}
+					"
+					pv-props="title: {{song_title}}"
+					>
+					<span
+						class="playing-song-mark"
+						pv-class="{{play == 'play' && 'playing-process'}} playing-song-mark"
+						>
+					</span>
+					<span class="files-load-states">
+						<span 
+							class="song-files-search-status"
+							pv-class="
+								song-files-search-status
+								{{has_none_files_to_play && 'has-none-files'}}
+								{{files_search.have_best_tracks && 'has_best_files'}}
+								{{files_search.have_mp3_tracks && 'has-some-files'}}
+								"
+						>
+						</span>
+						<span class="nothing-toy"></span>
+					</span>
+					<span class="song-image-con">
+						<img
+							alt=""
+							pv-props="
+								alt: {{song_title}}
+								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
+							"
+							pv-class="{{!selected_image && 'hidden'}}"
+						>
+					</span>
+					<span class="full-song_title" pv-class="full-song_title {{!track && 'has-no_track_title'}}">
+						<span class="song-artist_name" pv-text="{{artist}}"></span>
+						<span class="song-track-name" pv-text="{{track}}"></span>
+					</span>
+					<span class="placeholder-decor"></span>
+				</a>
+			</li>
+		</ul>
 			
 		<div class="track-context" >
-			<div class="song-actions">
+			<div class="song-actions" pv-anchor="song-actions">
 				
 				<div class="track-panel">
 					<div class="buttons-panel">
@@ -350,8 +409,8 @@
 								<a  class="trackbutton rept-song-button"></a>
 							</li>
 							<li class="volume-control">
-								<div class="v-hole">
-									<div class="v-bar"></div>
+								<div class="v-hole" pv-anchor="v-hole">
+									<div class="v-bar" pv-anchor="v-bar" pv-props="style.width: {{vis_volume}}"></div>
 								</div>
 							</li>
 						</ul>
@@ -388,36 +447,78 @@
 			</div>
 			
 			
-			<div class="track-info-dominator">
-
+			
+			<div class="track-info-dominator" pv-anchor="tidmt">
 				<div class="photo-cont">
-					<div class="photo-cont-lift"></div>
+					<div class="photo-cont-lift" pv-anchor="phocoli">
+						<img
+							class="artist_image"
+							pv-anchor="first-image" 
+							pv-class="{{!usable_artist_image && 'hidden'}} artist_image"
+							pv-props="
+								alt: {{artist}}
+								src: {{usable_artist_image}}" 
+							src="" alt=""
+							/>
+					</div>
 				</div>
 				<div class="dominator-head">
-					<div class="closer-to-track"></div>
-					<a class="extend-switcher" >
-						<span class="big-space"></span>
+					<div 
+						class="closer-to-track"
+						pv-class="{{one_artist_playlist && 'one-artist-playlist'}} closer-to-track">
+						<a 
+							class="js-serv lang localize-artcard"
+							pv-anchor="artcard-link"
+							>artcard</a>
+					</div>
+					<a 
+						class="extend-switcher"
+						pv-anchor="extend-switcher" 
+						pv-class="{{!infb_text && 'hidden'}} extend-switcher">
+						<span class="big-space" pv-text="{{infb_text}}"></span>
 					</a>
+					<p class="artist-tags hidden" pv-class="artist-tags {{(!tags || !tags.length) && 'hidden'}}">
+						<span class="simple-header">
+							<em class="lang localize-Tags">Tags</em>
+						</span>
+						<span pv-anchor="tags-c"><a class="music-tag js-serv" pv-repeat="tag in tags" pv-events="click:showTag" pv-text="{{tag.name}}"></a></span>
+					</p>
 				</div>
 				<div class="artist-info">
-					<div class="artist-bio"></div>
-					<div class="artist-meta-info"></div>
-				</div>
-				<div class="track-info ">
-					<div class="track-video"></div>
+					<p class="artist-stat-in-song">
+						<span class="{{!listeners && 'hidden'}}" class="playcount">
+							<span class="desc">Listeners:</span>
+							<span pv-text="{{listeners}}"></span>
+						</span> 
+						<span class="{{!playcount && 'hidden'}}" class="hidden">
+							<span class="desc">Playcount:</span>
+							<span pv-text="{{playcount}}"></span>
+						</span>
+					</p>
+					<div class="artist-bio" pv-anchor="artbio">...</div>
+					<div class="artist-meta-info">
+						<p class="artist-similar">
+							<span class="desc-name">
+								<em>
+									<a 
+										pv-anchor="similar-a"
+										class="similar-artists js-serv lang localize-similar-arts"
+										>Similar artists:</a>
+								</em>
+							</span>
+							<span class="desc-text" pv-anchor="similars-c"><a class="artist js-serv" pv-repeat="artist in similars" pv-events="click:showArtcardPage" pv-text="{{artist.name}}"></a></span>
+						</p>
+					</div>
 				</div>
 			</div>
-			<div class="track-listeners">
-				<div class="song-listeners-list">
-					
-				</div>
-				
+			<div class="track-listeners" pv-anchor="track-listeners">
+				<div class="song-listeners-list" pv-anchor="song-listeners-list"></div>
 			</div>
-			<div class="song-row-content row-listeners-context">
+			<div class="song-row-content row-listeners-context hidden" pv-anchor="row-listeners-context">
 				<span class="rc-arrow hidden">
 					<span class="tl-arrow  arrow-part"><span class="tl-arrow-bg arrow-part"></span></span>
 				</span>
-				<div class="big-listener-info"></div>
+				<div class="big-listener-info" pv-anchor="big-listener-info"></div>
 			</div>
 			
 		</div>
@@ -628,6 +729,7 @@
 
 
 				</div>
+				
 				
 			</div>
 

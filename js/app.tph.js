@@ -6,11 +6,11 @@ appTelegrapher.prototype = {
 
 
 		var view = (new this.appView());
-		md.addView(view, 'root');
+		md.mpx.addView(view, 'root');
 		md.updateLVTime();
 
 		view.init({
-			md: md
+			mpx: md.mpx
 		}, {d: wd.document, allow_url_history: true, can_die: can_die});
 		view.requestAll();
 		this.app_view = view;
