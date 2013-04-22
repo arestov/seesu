@@ -722,8 +722,7 @@ provoda.View.extendTo(appModelView, {
 				start_screen: start_screen,
 				search_input: $('#q',d),
 				search_form: search_form,
-				pestf_preview: start_screen.children('.personal-stuff-preview'),
-				start_page_place: start_screen.children('.for-startpage')
+				pestf_preview: start_screen.children('.personal-stuff-preview')
 			};
 
 			var st_scr_scrl_con = start_screen.parent();

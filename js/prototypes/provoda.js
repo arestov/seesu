@@ -1637,12 +1637,15 @@ Class.extendTo(Template, {
 
 		},
 		'pv-events': function(node, full_declaration) {
+			/*
+			click:Callback
+			mousemove|(sp,pd):MovePoints
+			*/
 			var declarations = full_declaration.split(/\s+/gi);
 			for (var i = 0; i < declarations.length; i++) {
 				var cur = declarations[i].split(':');
 				this.bindEvents(node, cur[0], cur[1]);
 			}
-			
 		}
 	},
 	dom_helpres: {
@@ -2662,7 +2665,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				}, cur, (typeof view_opts == 'function' ? view_opts.call(this, cur) : view_opts));
 				//
 				//
-				
+
 			}
 			$(append_data.complect.fragt).append(view.getT());
 			//append_data.complect.fragt.appendChild(view.getT()[0]);

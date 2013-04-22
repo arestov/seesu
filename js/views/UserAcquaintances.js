@@ -105,7 +105,7 @@ provoda.View.extendTo(UserAcqPreview, {
 		this.c = $("<span></span>");
 		this.userimg = $('<img/>').attr('src', 'http://vk.com/images/camera_b.gif').appendTo(this.c);
 		this.dom_related_props.push('userimg');
-		
+
 	},
 	'stch-user_photo': function(state) {
 		if (state){
@@ -127,7 +127,6 @@ provoda.View.extendTo(UserAcquaintancesListPreview, {
 			_this.RPCLegacy('showOnMap');
 		});
 
-		
 		this.acqs_frsmone_c = $('<span></span>').appendTo(this.c);
 		this.acqs_frme_c = $('<span></span>').appendTo(this.c);
 		this.dom_related_props.push('sended_tome_c', 'acqs_frsmone_c', 'acqs_frme_c');
@@ -142,5 +141,5 @@ provoda.View.extendTo(UserAcquaintancesListPreview, {
 	},
 	'collch-acqs_from_someone': 'acqs_frsmone_c',
 	'collch-acqs_from_me': 'acqs_frme_c'
-	
+
 });
