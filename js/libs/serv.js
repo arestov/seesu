@@ -59,8 +59,9 @@ domReady = spv.domReady = function(d, callback){
 		var f = function(){
 			if (!done){
 				done = true;
+				spv.removeEvent(spv.getDefaultView(d), 'load', f);
+				spv.removeEvent(d, 'DOMContentLoaded', f);
 				callback();
-				
 			}
 		};
 		spv.addEvent(spv.getDefaultView(d), 'load', f);
@@ -461,7 +462,7 @@ getUnitBaseNum = function(_c){
 };
 
 
-stringifyParams= function(params, ignore_params, splitter, joiner, opts){
+stringifyParams = spv.stringifyParams = function(params, ignore_params, splitter, joiner, opts){
 	opts = opts || {};
 	splitter = splitter || '';
 	if (typeof params == 'string'){

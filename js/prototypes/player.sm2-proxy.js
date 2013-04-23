@@ -13,7 +13,7 @@ var sm2proxy = function(origin, path, opts) {
 	});
 
 	if (opts && opts === Object(opts)){
-		var params_string = stringifyParams(opts, false, '=', '&');
+		var params_string = spv.stringifyParams(opts, false, '=', '&');
 		if (params_string){
 			path = path + '#' + params_string
 		}

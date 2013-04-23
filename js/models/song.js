@@ -244,9 +244,9 @@ var song;
 
 				app_env.openURL( "http://seesu.me/vk/share.html" +
 					"?" + 
-					stringifyParams({app_id: su.vkappid}, false, '=', '&') +
+					spv.stringifyParams({app_id: su.vkappid}, false, '=', '&') +
 					"#?" + 
-					stringifyParams(data, false, '=', '&'));
+					spv.stringifyParams(data, false, '=', '&'));
 			}
 			seesu.trackEvent('song actions', 'vk share');
 

@@ -130,8 +130,8 @@ var songsList;
 
 		},
 		compare: function(puppet){
-			var key_string_o = stringifyParams(this.info);
-			var key_string_p = stringifyParams(puppet.info);
+			var key_string_o = spv.stringifyParams(this.info);
+			var key_string_p = spv.stringifyParams(puppet.info);
 			
 			return this.playlist_type == puppet.playlist_type && (key_string_o == key_string_p);
 		},

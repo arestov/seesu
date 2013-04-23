@@ -267,7 +267,7 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 				return false
 			} else {
 				params.sid = auth.sid;
-				params.sig = hex_md5(stringifyParams(params, ['sid']) + auth.secret);
+				params.sig = hex_md5(spv.stringifyParams(params, ['sid']) + auth.secret);
 			}
 			
 		}

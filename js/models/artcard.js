@@ -1031,7 +1031,7 @@ mapLevelModel.extendTo(ArtCard, {
 		return pl;
 	},
 	getAlbum: function(params, start_song) {
-		var kystring = stringifyParams({artist: params.album_artist, name: params.album_name}, false, '=', '&');
+		var kystring = spv.stringifyParams({artist: params.album_artist, name: params.album_name}, false, '=', '&');
 		if (this.albums_models[kystring]){
 			return this.albums_models[kystring];
 		}
