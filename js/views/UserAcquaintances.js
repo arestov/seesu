@@ -28,7 +28,7 @@ provoda.View.extendTo(UserAcquaintanceView, {
 				this.button_c = nb.c;
 				nb.c.appendTo(this.button_place);
 			}
-			
+
 		} else {
 			if (this.button_c){
 				this.button_c.remove();

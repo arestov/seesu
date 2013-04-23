@@ -143,7 +143,7 @@ mapLevelModel.extendTo(UserAcquaintancesLists, {
 		}
 		
 
-		var filtered = $filter(new_array, 'item.accepted', function(v){
+		var filtered = spv.filter(new_array, 'item.accepted', function(v){
 			return !!v;
 		});
 

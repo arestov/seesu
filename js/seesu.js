@@ -66,7 +66,7 @@ appModel.extendTo(seesuApp, {
 
 		this.trackStat = (function(){
 			window._gaq = window._gaq || [];
-			_gaq.sV = debounce(function(v){
+			_gaq.sV = spv.debounce(function(v){
 				suStore('ga_store', v, true);
 			},130);
 			_gaq.gV = function(){
@@ -240,12 +240,12 @@ appModel.extendTo(seesuApp, {
 
 
 
-		var reportSearchEngs = debounce(function(string){
+		var reportSearchEngs = spv.debounce(function(string){
 			_this.trackVar(4, 'search', string, 1);
 		}, 300);
 
 		this.mp3_search.on('list-changed', function(list){
-			list = $filter(list, 'name').sort();
+			list = spv.filter(list, 'name').sort();
 			for (var i = 0; i < list.length; i++) {
 				list[i] = list[i].slice(0, 2);
 			}
@@ -774,7 +774,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 	},
 	removePlaylist: function(pl) {
 		var length = this.playlists.length;
-		this.playlists = arrayExclude(this.playlists, pl);
+		this.playlists = spv.arrayExclude(this.playlists, pl);
 		if (this.playlists.length != length){
 			this.trigger('playlsits-change', this.playlists);
 			this.updateNesting('lists_list', this.playlists);

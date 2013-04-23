@@ -18,7 +18,7 @@ TagsList.extendTo(ArtistTagsList, {
 			artist: this.artist_name
 		})
 			.done(function(r){
-				var res_list = toRealArray(getTargetField(r, 'toptags.tag'));
+				var res_list = spv.toRealArray(spv.getTargetField(r, 'toptags.tag'));
 				var data_list = spv.filter(res_list, 'name');
 				_this.putRequestedData(request_info.request, data_list, r.error);
 			})
@@ -125,12 +125,12 @@ songsList.extendTo(DiscogsAlbumSongs, {
 				if (r.meta && r.data){
 					r = r.data;
 				}
-				var tracks = toRealArray(getTargetField(r, 'tracklist'));
+				var tracks = spv.toRealArray(spv.getTargetField(r, 'tracklist'));
 				var track_list = [];
 				var release_artist = compileArtistsArray(r.artists);
 				var image_url = _this.state('image_url');
 				image_url = image_url && image_url.url;
-				//var imgs = getTargetField(r, 'album.image');
+				//var imgs = spv.getTargetField(r, 'album.image');
 				for (var i = 0; i < tracks.length; i++) {
 					var cur = tracks[i];
 					var song_obj = {
@@ -215,7 +215,7 @@ AlbumsList.extendTo(DiscogsAlbums, {
 				if (r.meta && r.data){
 					r = r.data;
 				}
-				var albums_data = toRealArray(getTargetField(r, 'releases'));
+				var albums_data = spv.toRealArray(spv.getTargetField(r, 'releases'));
 
 				
 				var data_list = albums_data;
@@ -227,7 +227,7 @@ AlbumsList.extendTo(DiscogsAlbums, {
 						var cur = albums_data[i];
 						data_list.push({
 							original_artist: artist_name,
-							album_artist: getTargetField(cur, 'artist.name'),
+							album_artist: spv.getTargetField(cur, 'artist.name'),
 							album_name: cur.name,
 							lfm_image: {
 								array: cur.image
@@ -271,7 +271,7 @@ AlbumsList.extendTo(ArtistAlbums, {
 		})
 			.done(function(r){
 				
-				var albums_data = toRealArray(getTargetField(r, 'topalbums.album'));
+				var albums_data = spv.toRealArray(spv.getTargetField(r, 'topalbums.album'));
 
 
 				var data_list = [];
@@ -281,7 +281,7 @@ AlbumsList.extendTo(ArtistAlbums, {
 						var cur = albums_data[i];
 						data_list.push({
 							original_artist: artist_name,
-							album_artist: getTargetField(cur, 'artist.name'),
+							album_artist: spv.getTargetField(cur, 'artist.name'),
 							album_name: cur.name,
 							lfm_image: {
 								array: cur.image
@@ -380,7 +380,7 @@ songsList.extendTo(ArtistAlbumSongs, {
 					'playlistURL': 'lastfm://playlist/album/' + album_id
 				})
 					.done(function(r){
-						var playlist = toRealArray(getTargetField(r, 'playlist.trackList.track'));
+						var playlist = spv.toRealArray(spv.getTargetField(r, 'playlist.trackList.track'));
 						var music_list = [];
 						for (var i=0; i < playlist.length; i++) {
 							music_list.push({
@@ -400,9 +400,9 @@ songsList.extendTo(ArtistAlbumSongs, {
 		var _this = this;
 		request_info.request = this.app.lfm.get('album.getInfo',{'artist': this.playlist_artist, album : this.album_name})
 			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'album.tracks.track'));
+				var tracks = spv.toRealArray(spv.getTargetField(r, 'album.tracks.track'));
 				var track_list = [];
-				var imgs = getTargetField(r, 'album.image');
+				var imgs = spv.getTargetField(r, 'album.image');
 				for (var i = 0; i < tracks.length; i++) {
 					var cur = tracks[i];
 					track_list.push({
@@ -642,7 +642,7 @@ songsList.extendTo(FreeArtistTracks, {
 		var request_info = {};
 		request_info.request = this.app.lfm.get('artist.getPodcast', {artist: artist_name})
 			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'rss.channel.item'));
+				var tracks = spv.toRealArray(spv.getTargetField(r, 'rss.channel.item'));
 				
 				var track_list = [];
 				var files_list = [];
@@ -651,7 +651,7 @@ songsList.extendTo(FreeArtistTracks, {
 					for (var i = 0; i < tracks.length; i++) {
 						var cur = tracks[i];
 
-						var link = getTargetField(cur, 'enclosure.url');
+						var link = spv.getTargetField(cur, 'enclosure.url');
 						if (link){
 							continue;
 						}
@@ -867,7 +867,7 @@ mapLevelModel.extendTo(ArtCard, {
 				.done(function(r){
 					var artist_nickname;
 
-					var sresults = toRealArray(getTargetField(r, 'responseData.results'));
+					var sresults = spv.toRealArray(spv.getTargetField(r, 'responseData.results'));
 					for (var i = 0; i < sresults.length; i++) {
 						var url = sresults[i].url;
 						var link_node = document.createElement('a');
@@ -983,7 +983,7 @@ mapLevelModel.extendTo(ArtCard, {
 		this.addRequest(this.app.lfm.get('artist.getInfo', {'artist': this.artist})
 			.done(function(r){
 				_this.updateState('loading_baseinfo', false);
-				_this.updateState('profile-image', _this.app.art_images.getImageWrap(getTargetField(r, 'artist.image')));
+				_this.updateState('profile-image', _this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image')));
 
 				var psai = parseArtistInfo(r);
 
@@ -1165,7 +1165,7 @@ ArtistsList.extendTo(SimilarArtists, {
 		var _this = this;
 		request_info.request = this.app.lfm.get('artist.getSimilar',this.getRqData(paging_opts))
 			.done(function(r){
-				var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
+				var artists = spv.toRealArray(spv.getTargetField(r, 'similarartists.artist'));
 				var data_list = [];
 
 				if (artists && artists.length) {

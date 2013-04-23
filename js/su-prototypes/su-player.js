@@ -333,15 +333,15 @@ var seesuPlayer;
 	
 
 
-	var plugins_list = toRealArray(navigator.plugins);
+	var plugins_list = spv.toRealArray(navigator.plugins);
 
 
-	var flash_plgs = $filter(toRealArray(navigator.plugins),"name", "Shockwave Flash");
-	var vlc_plgs = $filter(plugins_list,"name", function(el){
+	var flash_plgs = spv.filter(spv.toRealArray(navigator.plugins),"name", "Shockwave Flash");
+	var vlc_plgs = spv.filter(plugins_list,"name", function(el){
 		return el && el.indexOf("VLC") != -1
 	});
 
-	var quick_time_plgs = $filter(plugins_list,"name", function(el){
+	var quick_time_plgs = spv.filter(plugins_list,"name", function(el){
 		return el && el.indexOf("QuickTime") != -1
 	});
 	var vlc_plugin = !!vlc_plgs.length;
@@ -349,15 +349,15 @@ var seesuPlayer;
 	if (qt_plugin){
 		var all_qt_mimetypes = [];
 		for (var i = 0; i < quick_time_plgs.length; i++) {
-			Array.prototype.push.apply(all_qt_mimetypes, toRealArray(quick_time_plgs[i]))
+			Array.prototype.push.apply(all_qt_mimetypes, spv.toRealArray(quick_time_plgs[i]))
 			//quick_time_plgs[i]
 		}
 		//"application/x-quicktimeplayer" || "video/quicktime";
 		//var ;
 
 		var best_mimetypes = [].concat(
-			$filter(all_qt_mimetypes, 'type', "application/x-quicktimeplayer"),
-			$filter(all_qt_mimetypes, 'type', "video/quicktime")
+			spv.filter(all_qt_mimetypes, 'type', "application/x-quicktimeplayer"),
+			spv.filter(all_qt_mimetypes, 'type', "video/quicktime")
 		);
 		console.log(best_mimetypes);
 	}
@@ -390,7 +390,7 @@ var seesuPlayer;
 		detectors.shift()();
 	}
 	if (!done){
-		domReady(document, function(){
+		spv.domReady(document, function(){
 			detectors.push(
 				function(){
 					return; //code is not finished
@@ -413,14 +413,14 @@ var seesuPlayer;
 
 					aqt.setAttribute("src", "http://www.google-analytics.com/__utm.gif?" + (new Date()).valueOf())
 
-					addEvent(aqt, "qt_error ", function(){
+					spv.addEvent(aqt, "qt_error ", function(){
 						console.log("error!");
 					});
 
-					addEvent(aqt, "qt_begin", function(){
+					spv.addEvent(aqt, "qt_begin", function(){
 						console.log("begin!");
 					});
-					addEvent(aqt, "load", function(){
+					spv.addEvent(aqt, "load", function(){
 						console.log("load!");
 					});
 

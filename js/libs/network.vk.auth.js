@@ -10,7 +10,7 @@ provoda.Eventor.extendTo(vkAuth, {
 
 		this.app_id = opts.app_id;
 		this.urls = opts.urls;
-		this.permissions = toRealArray(opts.permissions);
+		this.permissions = spv.toRealArray(opts.permissions);
 		if (opts.open_api){
 			this.open_api = true;
 		}
@@ -122,7 +122,7 @@ provoda.Eventor.extendTo(vkAuth, {
 			return false;
 		}
 		var i = this.auth_frame = document.createElement('iframe');
-		addEvent(window, 'message', function(e){
+		spv.addEvent(window, 'message', function(e){
 			if (e.data == 'vk_bridge_ready:'){
 			//	console.log('vk_bridge_ready');
 				_this.trigger('vk-bridge-ready');

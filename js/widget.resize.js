@@ -1,7 +1,7 @@
 window.resizeWindow = function(w){
 	var d = w.document;
 
-	domReady(d, function(){
+	spv.domReady(d, function(){
 		var wb = d.getElementById('wb');
 		if (!wb) {return false;}
 		var resz_b = d.createElement('img');
@@ -39,12 +39,12 @@ window.resizeWindow = function(w){
 			  }
 		  };
 		  var mouseup = function (e) {
-	 		removeEvent(d, 'mousemove', mousemove);
-	 		removeEvent(d, 'mouseup', mouseup);
+	 		spv.removeEvent(d, 'mousemove', mousemove);
+	 		spv.removeEvent(d, 'mouseup', mouseup);
 		  }
 		  
-		  addEvent(d, 'mousemove', mousemove);
-		  addEvent(d, 'mouseup',   mouseup);
+		  spv.addEvent(d, 'mousemove', mousemove);
+		  spv.addEvent(d, 'mouseup',   mouseup);
 		  
 		  
 		  
@@ -86,9 +86,9 @@ window.resizeWindow = function(w){
 		}
 			
 		
-		addEvent(w, "resize", debounce(save_size, 500));
+		spv.addEvent(w, "resize", spv.debounce(save_size, 500));
 		
-		addEvent(resz_b, "mousedown", function(e) {
+		spv.addEvent(resz_b, "mousedown", function(e) {
 			drag(e, 1, 1);
 		});
 

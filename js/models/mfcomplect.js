@@ -214,14 +214,14 @@ provoda.Model.extendTo(mfCor, {
 						tmn = {},
 						v_id = _v['media$group']['yt$videoid']['$t'],
 						v_title = _v['media$group']['media$title']['$t'];
-					var cant_show = getTargetField(_v, "app$control.yt$state.name") == "restricted";
-					cant_show = cant_show || getTargetField($filter(getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
+					var cant_show = spv.getTargetField(_v, "app$control.yt$state.name") == "restricted";
+					cant_show = cant_show || spv.getTargetField(spv.filter(spv.getTargetField(_v, "yt$accessControl"), "action", "syndicate"), "0.permission") == "denied";
 
 
-					var thmn_arr = getTargetField(_v, "media$group.media$thumbnail");
+					var thmn_arr = spv.getTargetField(_v, "media$group.media$thumbnail");
 					
 					$.each(preview_types, function(i, el) {
-						tmn[el] = $filter(thmn_arr, 'yt$name', el)[0].url;
+						tmn[el] = spv.filter(thmn_arr, 'yt$name', el)[0].url;
 					});
 
 					var yt_v = new YoutubeVideo();
@@ -239,7 +239,7 @@ provoda.Model.extendTo(mfCor, {
 				}
 
 				video_arr.sort(function(a, b){
-					return sortByRules(a, b, ["cant_show"]);
+					return spv.sortByRules(a, b, ["cant_show"]);
 				});
 				_this.updateNesting('yt_videos', video_arr);
 			}
@@ -508,7 +508,7 @@ provoda.Model.extendTo(mfCor, {
 
 		var songs_packs = this.songs_packs = this.sem.getAllSongTracks();
 
-		this.pa_o = $filter(songs_packs, 'name');
+		this.pa_o = spv.filter(songs_packs, 'name');
 
 		var many_files = this.pa_o.length > 1;
 
@@ -603,7 +603,7 @@ provoda.Model.extendTo(mfCor, {
 		this.updateState('preload_allowed', true);
 	},
 	unloadFor: function(id){
-		this.preload_initors = arrayExclude(this.preload_initors, id);
+		this.preload_initors = spv.arrayExclude(this.preload_initors, id);
 		this.updateState('preload_allowed', !!this.preload_initors.length);
 
 	},

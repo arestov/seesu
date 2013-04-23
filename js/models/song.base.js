@@ -199,8 +199,8 @@ provoda.addPrototype("baseSong",{
 		this.plst_titl.findNeighbours(this);
 	},
 	/*
-	downloadLazy: debounce(function(){
-		var song = getTargetField(this.mf_cor.songs(), "0.t.0");
+	downloadLazy: spv.debounce(function(){
+		var song = spv.getTargetField(this.mf_cor.songs(), "0.t.0");
 		if (song){
 			downloadFile(song.link);
 		}
@@ -361,7 +361,7 @@ provoda.addPrototype("baseSong",{
 			all_requests.push(def_top_tracks);
 			this.addRequest(lfm.get('artist.getTopTracks',{'artist': this.artist, limit: 30, page: 1 })
 				.done(function(r){
-					var tracks_list = toRealArray(getTargetField(r, 'toptracks.track'));
+					var tracks_list = spv.toRealArray(spv.getTargetField(r, 'toptracks.track'));
 					var tracks_list_clean = [];
 					for (var i = 0; i < tracks_list.length; i++) {
 						var cur = tracks_list[i];
@@ -389,7 +389,7 @@ provoda.addPrototype("baseSong",{
 				all_requests.push(def_podcast);
 				this.addRequest(lfm.get('artist.getPodcast', {artist: this.artist})
 					.done(function(r) {
-						var tracks_list = toRealArray(getTargetField(r, 'rss.channel.item'));
+						var tracks_list = spv.toRealArray(spv.getTargetField(r, 'rss.channel.item'));
 						var tracks_list_clean = [];
 						var files_list = [];
 						
@@ -502,7 +502,7 @@ provoda.addPrototype("baseSong",{
 							all_with_files = all_with_files.concat(exfm_list);
 						}
 
-						var single_files_store = makeIndexByField(all_with_files, 'track');
+						var single_files_store = spv.makeIndexByField(all_with_files, 'track');
 						var single_tracks_list = [];
 						for (var track_name in single_files_store){
 							single_tracks_list.push({
@@ -520,7 +520,7 @@ provoda.addPrototype("baseSong",{
 							
 						} else {
 							
-							var top_index = makeIndexByField(top_tracks, 'track');
+							var top_index = spv.makeIndexByField(top_tracks, 'track');
 							var both_match_tracks_list = [];
 							for (var track_name in top_index){
 								if (single_files_store[track_name]){

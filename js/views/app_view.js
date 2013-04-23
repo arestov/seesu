@@ -18,10 +18,10 @@ provoda.View.extendTo(appModelView, {
 			_this.buildAppDOM();
 		});
 
-		if (this.opts.can_die && getDefaultView(this.d)){
+		if (this.opts.can_die && spv.getDefaultView(this.d)){
 			this.can_die = true;
 			this.checkLiveState = function() {
-				if (!getDefaultView(_this.d)){
+				if (!spv.getDefaultView(_this.d)){
 					_this.reportDomDeath();
 					return true;
 				}
@@ -371,7 +371,7 @@ provoda.View.extendTo(appModelView, {
 		if (!changes){
 			return;
 		}
-		var all_changhes = $filter(changes.array, 'changes');
+		var all_changhes = spv.filter(changes.array, 'changes');
 		all_changhes = [].concat.apply([], all_changhes);
 
 		for (var i = 0; i < all_changhes.length; i++) {
@@ -552,7 +552,7 @@ provoda.View.extendTo(appModelView, {
 			this.c.removeClass(class_name);
 		}
 	},
-	changeFavicon: debounce(function(state){
+	changeFavicon: spv.debounce(function(state){
 		if (this.isAlive()){
 			if (state && this.favicon_states[state]){
 				changeFavicon(this.d, this.favicon_states[state], 'image/png');
@@ -622,7 +622,7 @@ provoda.View.extendTo(appModelView, {
 	buildAppDOM: function() {
 		var _this = this;
 		var d = this.d;
-		domReady(this.d, function() {
+		spv.domReady(this.d, function() {
 			console.log('dom ready');
 			_this.dom_related_props.push('els', 'lev_containers', 'samples');
 
@@ -1097,7 +1097,7 @@ provoda.View.extendTo(appModelView, {
 		var _this = this;
 
 		wayp_pack.sort(function(a, b) {
-			return sortByRules(a,b, [function(el) {
+			return spv.sortByRules(a,b, [function(el) {
 				var cur_dems = dems_storage[el.wpid];
 				return _this.getLenthBtwPoints({left:0, top:0}, cur_dems.offset);
 			}]);
@@ -1129,7 +1129,7 @@ provoda.View.extendTo(appModelView, {
 		}
 		var _this = this;
 		corridor.sort(function(a, b) {
-			return sortByRules(a, b, [
+			return spv.sortByRules(a, b, [
 				function(el) {
 					var cur_dems = dems_storage[el.wpid];
 					var end_point = _this.getWPEndPoint(el, nav_type, dems_storage);

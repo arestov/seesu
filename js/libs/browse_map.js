@@ -249,12 +249,12 @@ provoda.Eventor.extendTo(browseMap, {
 		if (this.chans_coll.length){
 			this.zipChanges();
 
-			var all_changes = $filter(this.chans_coll, 'changes');
+			var all_changes = spv.filter(this.chans_coll, 'changes');
 			var big_line = [];
 			for (var i = 0; i < all_changes.length; i++) {
 				big_line = big_line.concat(all_changes[i]);
 			}
-			var move_view_changes = $filter(big_line, 'type', 'move-view');
+			var move_view_changes = spv.filter(big_line, 'type', 'move-view');
 
 			for (var jj = 0; jj < move_view_changes.length; jj++) {
 				var cur = move_view_changes[jj];
@@ -473,7 +473,7 @@ provoda.Eventor.extendTo(browseMap, {
 	findDeepestActiveFreezed: function() {
 		var
 			target,
-			f_lvs = $filter(this.levels, 'freezed'),
+			f_lvs = spv.filter(this.levels, 'freezed'),
 			current_lev = this.getCurrentLevel(),
 			active_tree = [current_lev].concat(current_lev.parent_levels);
 
@@ -490,7 +490,7 @@ provoda.Eventor.extendTo(browseMap, {
 	restoreFreezedLev: function(lev) {
 		//this.hideMap();
 		var defzactv = this.findDeepestActiveFreezed();
-		var f_lvs = $filter(this.levels, 'freezed');
+		var f_lvs = spv.filter(this.levels, 'freezed');
 
 		var target_lev_pos;
 		if (lev) {
@@ -618,7 +618,7 @@ provoda.Eventor.extendTo(browseMap, {
 		return this.nav_tree[0];
 	},
 	getTreeResidents: function(n) {
-		return n && $filter(n, 'resident');
+		return n && spv.filter(n, 'resident');
 	},
 	getTitleNav: function(n) {
 		return n && (n = this.getTreeResidents(n)) && n.slice(0, 2);

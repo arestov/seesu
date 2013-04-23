@@ -88,7 +88,7 @@ provoda.Model.extendTo(ImagesPack, {
 		}
 	},
 	checkImages: function() {
-		var best_data = $filter(this.all_images, 'data.lfm_id', function(value) {
+		var best_data = spv.filter(this.all_images, 'data.lfm_id', function(value) {
 			return !!value;
 		});
 		if (!this.state('best_image')){
@@ -170,7 +170,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		if (typeof array == 'string'){
 			url = array;
 		} else {
-			url = getTargetField(array, '3.#text');
+			url = spv.getTargetField(array, '3.#text');
 		}
 		if (url){
 			if (url.indexOf('http://cdn.last.fm/flatness/catalogue/noimage') === 0){
@@ -257,12 +257,12 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 	},
 	resp_handlers: {
 		'artist.getInfo': function(r, method) {
-			var artist_name = getTargetField(r, 'artist.name');
+			var artist_name = spv.getTargetField(r, 'artist.name');
 			if (artist_name){
-				var images = getTargetField(r, 'artist.image');
+				var images = spv.getTargetField(r, 'artist.image');
 				this.setArtistImage(artist_name, images, method);
 			}
-			var artists = toRealArray(getTargetField(r, 'artist.similar.artist'));
+			var artists = spv.toRealArray(spv.getTargetField(r, 'artist.similar.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
 				this.setArtistImage(cur.name, cur.image, method + '.similar');
@@ -271,14 +271,14 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 			
 		},
 		'artist.getSimilar': function(r, method) {
-			var artists = toRealArray(getTargetField(r, 'similarartists.artist'));
+			var artists = spv.toRealArray(spv.getTargetField(r, 'similarartists.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 		},
 		'geo.getMetroUniqueTrackChart': function(r, method) {
-			var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+			var tracks = spv.toRealArray(spv.getTargetField(r, 'toptracks.track'));
 			for (var i = 0; i < tracks.length; i++) {
 				var cur = tracks[i];
 				this.setTrackImage({
@@ -289,8 +289,8 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 			}
 		},
 		'album.getInfo': function(r, method) {
-			var image = getTargetField(r, 'album.image');
-			var tracks = toRealArray(getTargetField(r, 'album.track'));
+			var image = spv.getTargetField(r, 'album.image');
+			var tracks = spv.toRealArray(spv.getTargetField(r, 'album.track'));
 			for (var i = 0; i < tracks.length; i++) {
 				var cur = tracks[i];
 				this.setTrackImage({
@@ -301,7 +301,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 			}
 		},
 		'playlist.fetch': function(r, method) {
-			var tracks = toRealArray(getTargetField(r, 'playlist.trackList.track'));
+			var tracks = spv.toRealArray(spv.getTargetField(r, 'playlist.trackList.track'));
 			for (var i = 0; i < tracks.length; i++) {
 				var cur = tracks[i];
 				this.setTrackImage({
@@ -312,7 +312,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 
 		},
 		'user.getLovedTracks': function(r, method, tracks) {
-			var tracks = toRealArray(getTargetField(r, 'lovedtracks.track'));
+			var tracks = spv.toRealArray(spv.getTargetField(r, 'lovedtracks.track'));
 
 			for (var i = 0; i < tracks.length; i++) {
 				var cur = tracks[i];
@@ -325,7 +325,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 
 		},
 		'user.getRecommendedArtists': function(r, method, artists) {
-			var artists = toRealArray(getTargetField(r, 'recommendations.artist'));
+			var artists = spv.toRealArray(spv.getTargetField(r, 'recommendations.artist'));
 
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
@@ -334,7 +334,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 
 		},
 		'track.search': function(r, method) {
-			var tracks = toRealArray(getTargetField(r, 'results.trackmatches.track'));
+			var tracks = spv.toRealArray(spv.getTargetField(r, 'results.trackmatches.track'));
 
 			for (var i = 0; i < tracks.length; i++) {
 				var cur = tracks[i];
@@ -347,14 +347,14 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 
 		},
 		'artist.search': function(r, method) {
-			var artists = toRealArray(getTargetField(r, 'results.artistmatches.artist'));
+			var artists = spv.toRealArray(spv.getTargetField(r, 'results.artistmatches.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
 				this.setArtistImage(cur.name, cur.image, method);
 			}
 		},
 		'artist.getTopTracks': function(r, method, tracks) {
-			tracks = tracks || toRealArray(getTargetField(r, 'toptracks.track'));
+			tracks = tracks || spv.toRealArray(spv.getTargetField(r, 'toptracks.track'));
 			for (var i = 0; i < tracks.length; i++) {
 				var cur = tracks[i];
 				this.setTrackImage({
@@ -365,7 +365,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 			}
 		},
 		'tag.getTopArtists': function(r, method, artists) {
-			artists = artists || toRealArray(getTargetField(r, 'topartists.artist'));
+			artists = artists || spv.toRealArray(spv.getTargetField(r, 'topartists.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
 				this.setArtistImage(cur.name, cur.image, method);
@@ -373,7 +373,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 
 		},
 		'tag.getWeeklyArtistChart': function(r, method, artists) {
-			artists = artists || toRealArray(getTargetField(r, 'weeklyartistchart.artist'));
+			artists = artists || spv.toRealArray(spv.getTargetField(r, 'weeklyartistchart.artist'));
 			for (var i = 0; i < artists.length; i++) {
 				var cur = artists[i];
 				this.setArtistImage(cur.name, cur.image, method);

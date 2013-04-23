@@ -2,7 +2,7 @@
 lfm.get('geo.getmetros', {}).done(function(r){
 
 
-	var nr = toRealArray(getTargetField(r, 'metros.metro'));
+	var nr = spv.toRealArray(spv.getTargetField(r, 'metros.metro'));
 	var countres = spv.makeIndexByField(nr, 'country', true);
 	for (var country in countres){
 		countres[country] = spv.filter(countres[country], 'name')

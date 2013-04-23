@@ -169,7 +169,7 @@ MDProxy.prototype = {
 		}
 		if (dead.length){
 			for (var a in this.views_index){
-				this.views_index[a] = arrayExclude(this.views_index[a], dead);
+				this.views_index[a] = spv.arrayExclude(this.views_index[a], dead);
 			}
 		}
 
@@ -272,7 +272,7 @@ var sync_reciever = {
 		var _this = this;
 		provoda.sync_s.connectSockect({}, Math.random());
 
-		addEvent(window, 'message', function(e) {
+		spv.addEvent(window, 'message', function(e) {
 			var data  = e.data;
 			if (data && data.protocol == 'provoda'){
 				if (_this.actions[data.action]){
@@ -664,13 +664,13 @@ Class.extendTo(provoda.Eventor, {
 			this.trigger('request', rq, space);
 		}
 		rq.always(function() {
-			_this.requests[space] = arrayExclude(_this.requests[space], rq);
+			_this.requests[space] = spv.arrayExclude(_this.requests[space], rq);
 		});
 		return this;
 
 	},
 	sortRequests: function(requests, space) {
-		return requests.sort(function(a,b ){return sortByRules(a, b, ['order']);});
+		return requests.sort(function(a,b ){return spv.sortByRules(a, b, ['order']);});
 	},
 	getAllRequests: function() {
 		var all_requests = [];
@@ -698,7 +698,7 @@ Class.extendTo(provoda.Eventor, {
 	},
 	getQueued: function(space) {
 		var requests = this.getRequests(space);
-		return $filter(requests, 'queued');
+		return spv.filter(requests, 'queued');
 	},
 	setPrio: function(type, space) {
 		var queued = this.getQueued(space);
@@ -976,7 +976,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		return co_sts;
 	},
 	getTargetComplexStates: function(state) {
-		var states = toRealArray(state);
+		var states = spv.toRealArray(state);
 		if (!state){
 			throw new Error('something wrong');
 		}
@@ -988,7 +988,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		for (var i = 0; i < this.full_comlxs_list.length; i++) {
 			var cur = this.full_comlxs_list[i];
-			if (states.length != arrayExclude(states, cur.obj.depends_on).length ){
+			if (states.length != spv.arrayExclude(states, cur.obj.depends_on).length ){
 				cur.value = this.compoundComplexState(cur);
 				result_array.push(cur);
 			}
@@ -1510,7 +1510,7 @@ Class.extendTo(Template, {
 				values: calculator.propsToWatch,
 				sfy_values: sfy_values,
 				checkFunc: function(states) {
-					var new_fv = getTargetField(states, field_name);
+					var new_fv = spv.getTargetField(states, field_name);
 
 
 
@@ -1692,7 +1692,7 @@ Class.extendTo(Template, {
 		if (!calculator){
 			if (opts.complex_statement){
 				calculator = angbo.interpolateExpressions(opts.complex_statement);
-				var all_values = $filter(calculator.parts,'propsToWatch');
+				var all_values = spv.filter(calculator.parts,'propsToWatch');
 				all_vs = [];
 				all_vs = all_vs.concat.apply(all_vs, all_values);
 			} else if (opts.statement){
@@ -1808,7 +1808,7 @@ Class.extendTo(Template, {
 
 			}
 			//создаём индекс по имени
-			var attrs_by_names = makeIndexByField(attributes_list, 'name');
+			var attrs_by_names = spv.makeIndexByField(attributes_list, 'name');
 
 
 			if (vroot_node !== cur_node){
@@ -1837,7 +1837,7 @@ Class.extendTo(Template, {
 
 		}
 		this.getPvViews(this.pv_views);
-		this.stwat_index = makeIndexByField(this.states_watchers, 'sfy_values');
+		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values');
 	}
 });
 
@@ -2094,13 +2094,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		for (i = 0; i < views_to_remove.length; i++) {
 			views_to_remove[i].die();
 		}
-		this.children = arrayExclude(this.children, views_to_remove);
+		this.children = spv.arrayExclude(this.children, views_to_remove);
 
 	},
 	getDeepChildren: function(exept) {
 		var all = [];
 		var big_tree = [];
-		exept = toRealArray(exept);
+		exept = spv.toRealArray(exept);
 
 		big_tree.push(this);
 		//var cursor = this;
@@ -2243,7 +2243,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		} else {
 			if (this.getC()){
 				var c = this.getCNode();
-				if (!c || (dead_doc && dead_doc === c.ownerDocument) || !getDefaultView(c.ownerDocument)){
+				if (!c || (dead_doc && dead_doc === c.ownerDocument) || !spv.getDefaultView(c.ownerDocument)){
 					this.markAsDead();
 					return false;
 				} else {
@@ -2256,7 +2256,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	requestAnimationFrame: function(cb, el, w) {
 		var c = this.getC() && (this.getC()[0] || this.getC());
-		requestAnimationFrame.call(w || getDefaultView(c.ownerDocument), cb);
+		requestAnimationFrame.call(w || spv.getDefaultView(c.ownerDocument), cb);
 	},
 	_setStates: function(states){
 		this._states_set_processing = true;
@@ -2428,10 +2428,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var old_value = this.children_models[name];
 		this.children_models[name] = array;
 
-		var pv_views = getTargetField(this, 'tpl.children_templates.' + name);
+		var pv_views = spv.getTargetField(this, 'tpl.children_templates.' + name);
 		if (pv_views){
 			for (var space_name in pv_views){
-				this.checkCollchItemAgainstPvView(name, toRealArray(array), space_name, pv_views[space_name]);
+				this.checkCollchItemAgainstPvView(name, spv.toRealArray(array), space_name, pv_views[space_name]);
 			}
 			this.requestAll();
 		}
@@ -2455,13 +2455,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				collchs_limit = collch.limit;
 			}
 
-			collchs = collchs || toRealArray(collch);
+			collchs = collchs || spv.toRealArray(collch);
 
 			var declarations = [];
 			for (var i = 0; i < collchs.length; i++) {
 				declarations.push(this.parseCollectionChangeDeclaration(collchs[i]));
 			}
-			var real_array = toRealArray(array);
+			var real_array = spv.toRealArray(array);
 			var array_limit;
 			if (collchs_limit){
 				array_limit = Math.min(collchs_limit, real_array.length);
@@ -2499,7 +2499,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			space: 'nav'
 		}*/
 		if (typeof collch.place == 'string'){
-			place = getTargetField(this, collch.place);
+			place = spv.getTargetField(this, collch.place);
 			if (!place){
 				throw new Error('wrong place declaration: "' + collch.place + '"');
 			}

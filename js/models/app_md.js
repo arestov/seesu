@@ -19,7 +19,7 @@ provoda.Model.extendTo(appModelBase, {
 		};
 	},
 	changeNavTree: function(nav_tree) {
-		this.nav_tree = $filter(nav_tree, 'resident');
+		this.nav_tree = spv.filter(nav_tree, 'resident');
 		this.checkNowPlayNav();
 	},
 	restoreFreezed: function(transit){
@@ -85,10 +85,10 @@ provoda.Model.extendTo(appModelBase, {
 		var
 			i,
 			target_md,
-			all_changhes = $filter(changes.array, 'changes');
+			all_changhes = spv.filter(changes.array, 'changes');
 
 		all_changhes = [].concat.apply([], all_changhes);
-		var models = $filter(all_changhes, 'target');
+		var models = spv.filter(all_changhes, 'target');
 		this.animationMark(models, changes.anid);
 
 		for (i = 0; i < all_changhes.length; i++) {
@@ -149,11 +149,11 @@ provoda.Model.extendTo(appModelBase, {
 			var navigation = _this.getNesting('navigation');
 			var target_array = _this.getNesting('map_slice') || [];
 
-			var new_nav = arrayExclude(navigation, md);
+			var new_nav = spv.arrayExclude(navigation, md);
 			if (new_nav.length != navigation.length){
 				_this.updateNesting('navigation', new_nav);
 			}
-			var new_tarr = arrayExclude(target_array, md);
+			var new_tarr = spv.arrayExclude(target_array, md);
 
 			if (new_tarr.length != target_array.length){
 				_this.updateNesting('map_slice', new_tarr);
@@ -277,7 +277,7 @@ appModelBase.extendTo(appModel, {
 		this.current_playing = mo;
 		this.checkNowPlayNav();
 	},
-	checkNowPlayNav: debounce(function() {
+	checkNowPlayNav: spv.debounce(function() {
 		if (this.current_playing){
 			this.updateState('viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
 		}
@@ -412,7 +412,7 @@ appModelBase.extendTo(appModel, {
 						return;
 					}
 
-					var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+					var tracks = spv.toRealArray(spv.getTargetField(r, 'toptracks.track'));
 					var track_list = [];
 					if (tracks.length) {
 						var l = Math.min(tracks.length, paging_opts.page_limit);

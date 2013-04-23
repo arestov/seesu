@@ -455,7 +455,7 @@ provoda.View.extendTo(songFileModelUI, {
 					var _this = this;
 
 					$(window).off('resize.song_file_progress');
-					$(window).on('resize.song_file_progress', debounce(function(e){
+					$(window).on('resize.song_file_progress', spv.debounce(function(e){
 						_this.setVisState('win-resize-time', e.timeStamp);
 					}, 100));
 				}
