@@ -1,8 +1,6 @@
-var provoda;
-
-(function(){
+(function(window){
 "use strict";
-
+var provoda;
 var sync_sender = {
 	root_model: null,
 	sockets: {},
@@ -2713,4 +2711,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	parts_builder: {}
 });
-})();
+if ( typeof module === "object" && typeof module.exports === "object" ) {
+	module.exports = provoda;
+} else {
+	if ( typeof define === "function" && define.amd ) {
+		define( "provoda", [], function () { return provoda; } );
+	}
+}
+
+if ( typeof window === "object" && typeof window.document === "object" ) {
+	window.provoda = provoda;
+}
+})(window);
