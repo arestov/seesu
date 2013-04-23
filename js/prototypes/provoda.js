@@ -1793,7 +1793,9 @@ Class.extendTo(Template, {
 			if (cur_node.nodeType != 1){
 				continue;
 			}
-			var i, attr_name, directive_name, attributes = cur_node.attributes, new_scope_generator = false;
+			var
+				i, attr_name, directive_name, attributes = cur_node.attributes,
+				new_scope_generator = false, current_data = {node: cur_node};
 
 			var attributes_list = [];
 			for (i = 0; i < attributes.length; i++) {
