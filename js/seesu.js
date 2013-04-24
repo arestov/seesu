@@ -66,7 +66,7 @@ appModel.extendTo(seesuApp, {
 
 		this.trackStat = (function(){
 			window._gaq = window._gaq || [];
-			_gaq.sV = debounce(function(v){
+			_gaq.sV = spv.debounce(function(v){
 				suStore('ga_store', v, true);
 			},130);
 			_gaq.gV = function(){
@@ -189,10 +189,10 @@ appModel.extendTo(seesuApp, {
 		var addBrowserView = function(Constr, name, opts) {
 			var view = new Constr();
 
-			_this.addView(view, name);
+			_this.mpx.addView(view, name);
 
 			view.init({
-				md: _this
+				mpx: _this.mpx
 			}, opts);
 			view.requestAll();
 
@@ -240,12 +240,12 @@ appModel.extendTo(seesuApp, {
 
 
 
-		var reportSearchEngs = debounce(function(string){
+		var reportSearchEngs = spv.debounce(function(string){
 			_this.trackVar(4, 'search', string, 1);
 		}, 300);
 
 		this.mp3_search.on('list-changed', function(list){
-			list = $filter(list, 'name').sort();
+			list = spv.filter(list, 'name').sort();
 			for (var i = 0; i < list.length; i++) {
 				list[i] = list[i].slice(0, 2);
 			}
@@ -443,8 +443,8 @@ appModel.extendTo(seesuApp, {
 		return parts;
 	},
 	app_pages: {
-		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi",
-		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko",
+		chrome_extension: "https://chrome.google.com/webstore/detail/nhonlochieibnkmfpombklkgjpkeckhi/reviews",
+		chrome_app: "https://chrome.google.com/webstore/detail/fagoonkbbneajjbhdlklhdammdfkjfko/reviews",
 		opera_widget: "http://widgets.opera.com/widget/15872/",
 		opera_extension: "https://addons.opera.com/addons/extensions/details/seesu-music",
 		pokki_app: "https://www.pokki.com/app/Seesu"
@@ -774,7 +774,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 	},
 	removePlaylist: function(pl) {
 		var length = this.playlists.length;
-		this.playlists = arrayExclude(this.playlists, pl);
+		this.playlists = spv.arrayExclude(this.playlists, pl);
 		if (this.playlists.length != length){
 			this.trigger('playlsits-change', this.playlists);
 			this.updateNesting('lists_list', this.playlists);

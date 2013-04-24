@@ -175,7 +175,6 @@ provoda.View.extendTo(BigAlbumPreview, {
 		} else {
 			this.tpl.ancs.imgc.attr('src', '');
 		}
-		
 	}
 });
 

@@ -103,7 +103,7 @@
 		},
 		bindItemsView: function(){
 			var r = this.getAllItems(true);
-			r = $filter(r, 'binvstg', true).not;
+			r = spv.filter(r, 'binvstg', true).not;
 			var _this = this;
 
 			var seiaclck = function(){

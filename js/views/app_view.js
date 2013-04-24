@@ -1,5 +1,5 @@
 var viewOnLevelP = function(md, view) {
-	var lev_conj = this.getLevelContainer(md.map_level_num, view);
+	var lev_conj = this.getLevelContainer(md.map_level_num);
 	view.wayp_scan_stop = true;
 	return lev_conj.material;
 };
@@ -18,10 +18,10 @@ provoda.View.extendTo(appModelView, {
 			_this.buildAppDOM();
 		});
 
-		if (this.opts.can_die && getDefaultView(this.d)){
+		if (this.opts.can_die && spv.getDefaultView(this.d)){
 			this.can_die = true;
 			this.checkLiveState = function() {
-				if (!getDefaultView(_this.d)){
+				if (!spv.getDefaultView(_this.d)){
 					_this.reportDomDeath();
 					return true;
 				}
@@ -78,7 +78,7 @@ provoda.View.extendTo(appModelView, {
 		}
 		return !this.checkLiveState || !this.checkLiveState();
 	},
-	getLevelContainer: function(num, view) {
+	getLevelContainer: function(num) {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
 		} else {
@@ -121,7 +121,7 @@ provoda.View.extendTo(appModelView, {
 		},
 		playlist: {
 			main: songsListView,
-			details: songsListView,
+			'all-sufficient-details': songsListView,
 			nav: baseNavUI
 		},
 		usercard: {
@@ -196,81 +196,36 @@ provoda.View.extendTo(appModelView, {
 			nav: baseNavUI
 		}
 	},
-	'collch-allplaces': {
-		place: viewOnLevelP
-	},
-	'collch-mconductor': {
-		place: viewOnLevelP
-	},
-	'collch-tagslist': {
-		place: viewOnLevelP
-	},
-	'collch-albslist': {
-		place: viewOnLevelP
-	},
-	'collch-user_acqs_list': {
-		place: viewOnLevelP
-	},
-	'collch-youtube_video': {
-		place: viewOnLevelP
-	},
-	'collch-tag_artists': {
-		place: viewOnLevelP
-	},
-	'collch-tag_songs': {
-		place: viewOnLevelP
-	},
-	'collch-songs_lists': {
-		place: viewOnLevelP
-	},
-	'collch-artists_lists': {
-		place: viewOnLevelP
-	},
-	'collch-countres_list': {
-		place: viewOnLevelP
-	},
-	'collch-city_place': {
-		place: viewOnLevelP
-	},
-	'collch-cities_list': {
-		place: viewOnLevelP
-	},
-	'collch-country_place': {
-		place: viewOnLevelP
-	},
-	'collch-user_playlists': {
-		place: viewOnLevelP
-	},
-
-	'collch-tag_page': {
-		place: viewOnLevelP
-	},
-	'collch-usercard': {
-		place: viewOnLevelP
-	},
-	'collch-invstg': {
-		place: viewOnLevelP
-	},
-	'collch-artcard':  {
-		place: viewOnLevelP
-	},
-	'collch-artslist': {
-		place: viewOnLevelP
-	},
-	'collch-playlist': [
-		{
-			place: viewOnLevelP,
-			opts: {overview: true}
-		},
-		{
-			place: function(md, view){
-				var lev_conj = this.getLevelContainer(md.map_level_num + 1, view);
-				view.wayp_scan_stop = true;
-				return lev_conj.material;
-			},
-			space: 'details'
+	'collch-map_slice': function(nesname, array){
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			var model_name = cur.model_name;
+			if (this['spec-collch-' + model_name]){
+				this.callCollectionChangeDeclaration(this['spec-collch-' + model_name], model_name, cur);
+			} else {
+				this.callCollectionChangeDeclaration({
+					place: viewOnLevelP
+				}, model_name, cur);
+			}
 		}
-	],
+	},
+	'spec-collch-song': function(name, md) {
+		var playlist = md.getParentMapModel();
+
+		var playlist_mpx = playlist.mpx;
+
+		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
+		if (!view){
+			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
+			var place = viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
+			place.append(view.getA());
+			this.requestAll();
+		}
+	},
+	'spec-collch-playlist': {
+		place: viewOnLevelP,
+		opts: {overview: true}
+	},
 	'collch-start_page': function(name, md) {
 		var view = this.getFreeChildView({name: name, space: 'main'}, md);
 		if (view){
@@ -416,14 +371,14 @@ provoda.View.extendTo(appModelView, {
 		if (!changes){
 			return;
 		}
-		var all_changhes = $filter(changes.array, 'changes');
+		var all_changhes = spv.filter(changes.array, 'changes');
 		all_changhes = [].concat.apply([], all_changhes);
 
 		for (var i = 0; i < all_changhes.length; i++) {
 			var cur = all_changhes[i];
 			var target = cur.target.getMD();
 			if (cur.type == 'move-view'){
-				
+
 				target.updateState('vis_mp_show', {
 					anid: changes.anid,
 					value: cur.value
@@ -597,7 +552,7 @@ provoda.View.extendTo(appModelView, {
 			this.c.removeClass(class_name);
 		}
 	},
-	changeFavicon: debounce(function(state){
+	changeFavicon: spv.debounce(function(state){
 		if (this.isAlive()){
 			if (state && this.favicon_states[state]){
 				changeFavicon(this.d, this.favicon_states[state], 'image/png');
@@ -667,7 +622,7 @@ provoda.View.extendTo(appModelView, {
 	buildAppDOM: function() {
 		var _this = this;
 		var d = this.d;
-		domReady(this.d, function() {
+		spv.domReady(this.d, function() {
 			console.log('dom ready');
 			_this.dom_related_props.push('els', 'lev_containers', 'samples');
 
@@ -767,8 +722,7 @@ provoda.View.extendTo(appModelView, {
 				start_screen: start_screen,
 				search_input: $('#q',d),
 				search_form: search_form,
-				pestf_preview: start_screen.children('.personal-stuff-preview'),
-				start_page_place: start_screen.children('.for-startpage')
+				pestf_preview: start_screen.children('.personal-stuff-preview')
 			};
 
 			var st_scr_scrl_con = start_screen.parent();
@@ -1143,7 +1097,7 @@ provoda.View.extendTo(appModelView, {
 		var _this = this;
 
 		wayp_pack.sort(function(a, b) {
-			return sortByRules(a,b, [function(el) {
+			return spv.sortByRules(a,b, [function(el) {
 				var cur_dems = dems_storage[el.wpid];
 				return _this.getLenthBtwPoints({left:0, top:0}, cur_dems.offset);
 			}]);
@@ -1175,7 +1129,7 @@ provoda.View.extendTo(appModelView, {
 		}
 		var _this = this;
 		corridor.sort(function(a, b) {
-			return sortByRules(a, b, [
+			return spv.sortByRules(a, b, [
 				function(el) {
 					var cur_dems = dems_storage[el.wpid];
 					var end_point = _this.getWPEndPoint(el, nav_type, dems_storage);

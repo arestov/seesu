@@ -152,16 +152,16 @@
 		
 
 		/*
-		addEvent(a, 'play', function(){
+		spv.addEvent(a, 'play', function(){
 			cb('play', id);
 		});
-		addEvent(a, 'pause', function(){
+		spv.addEvent(a, 'pause', function(){
 			cb('pause', id);
 		});
-		addEvent(a, 'ended', function(){
+		spv.addEvent(a, 'ended', function(){
 			cb('finish', id);
 		});
-		addEvent(a, 'timeupdate', function(){
+		spv.addEvent(a, 'timeupdate', function(){
 			cb('playing', id, {
 				duration:  a.duration,
 				position: a.currentTime
@@ -174,7 +174,7 @@
 				fetched: a.buffered.end(0)
 			});
 		};
-		addEvent(a, 'progress', function(e){
+		spv.addEvent(a, 'progress', function(e){
 			clearTimeout(at_finish);
 			if (a.buffered.length){
 				fireProgress();
@@ -185,7 +185,7 @@
 				}
 			}
 		});
-		addEvent(a, 'error', function(){
+		spv.addEvent(a, 'error', function(){
 			cb('error', id);
 		});*/
 		a.Open(url);

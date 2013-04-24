@@ -2,17 +2,9 @@ var spv = {},
 	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
 	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
-	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, createPrototype, Class, depdc,
+	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, Class, depdc,
 	debounce, throttle;
 
-function bN(num){
-	/*
-	special for opera browser
-	http://opera.com
-	http://friendfeed.com/yodapunk/935ad55d/o-rly-opera-cc-pepelsbey-foolip-erikdahlstrom
-	*/
-	return !!(1* (~num));
-}
 
 (function() {
 "use strict";
@@ -40,7 +32,7 @@ spv.once = function(fn) {
 	};
 };
 
-addEvent = window.addEventListener ?
+addEvent = spv.addEvent = window.addEventListener ?
 function(elem, evType, fn){
 	elem.addEventListener(evType, fn, false);
 	return fn;
@@ -49,17 +41,17 @@ function(elem, evType, fn){
 	elem.attachEvent('on' + evType, fn);
 	return fn;
 };
-removeEvent = window.addEventListener ?
+removeEvent = spv.removeEvent = window.addEventListener ?
 function(elem, evType, fn){
 	elem.removeEventListener(evType, fn, false);
 }:
 function(elem, evType, fn){
 	elem.detachEvent('on' + evType, fn);
 };
-getDefaultView = function(d) {
+getDefaultView = spv.getDefaultView = function(d) {
 	return d.defaultView || d.parentWindow;
 };
-domReady = function(d, callback){
+domReady = spv.domReady = function(d, callback){
 	if (d.readyState == 'complete' || d.readyState == 'loaded' || d.readyState == "interactive"){
 		callback();
 	} else{
@@ -67,16 +59,17 @@ domReady = function(d, callback){
 		var f = function(){
 			if (!done){
 				done = true;
+				spv.removeEvent(spv.getDefaultView(d), 'load', f);
+				spv.removeEvent(d, 'DOMContentLoaded', f);
 				callback();
-				
 			}
 		};
-		addEvent(getDefaultView(d), 'load', f);
-		addEvent(d, 'DOMContentLoaded', f);
+		spv.addEvent(spv.getDefaultView(d), 'load', f);
+		spv.addEvent(d, 'DOMContentLoaded', f);
 	}
 };
 
-doesContain = function(target, valueOf){
+doesContain = spv.doesContain = function(target, valueOf){
 	var cached_t_value = valueOf ? valueOf.call(target) : (target.valueOf());
 	
 	for (var i=0; i < this.length; i++) {
@@ -94,8 +87,8 @@ doesContain = function(target, valueOf){
 	}
 	return -1;
 };
-arrayExclude = function(arr, obj){
-	var r = []; obj = toRealArray(obj);
+arrayExclude = spv.arrayExclude = function(arr, obj){
+	var r = []; obj = spv.toRealArray(obj);
 	for (var i = 0; i < arr.length; i++) {
 		if (obj.indexOf(arr[i]) == -1){
 			r.push(arr[i]);
@@ -104,7 +97,7 @@ arrayExclude = function(arr, obj){
 	return r;
 };
 
-shuffleArray = function(obj) {
+shuffleArray = spv.shuffleArray = function(obj) {
 	var shuffled = [], rand, value;
 	for (var index = 0; index < obj.length; index++) {
 		value = obj[index];
@@ -119,8 +112,8 @@ getFields = function(obj, fields){
 	var r = [];
 	for (var i=0; i < fields.length; i++) {
 		var cur = fields[i];
-		
-		var value = (typeof cur == 'function') ? cur(obj) : getTargetField(obj, cur);
+
+		var value = (typeof cur == 'function') ? cur(obj) : spv.getTargetField(obj, cur);
 		if (value){
 			r.push(value);
 		}
@@ -190,7 +183,7 @@ searchInArray = function (array, query, fields) {
 
 	if (query){
 		r = [];
-		
+
 		if (fields){
 			for (i=0; i < array.length; i++) {
 				cur = array[i];
@@ -198,7 +191,7 @@ searchInArray = function (array, query, fields) {
 				if (fields_values.join(' ').search(query) > -1){
 					r.push(cur);
 				}
-				
+
 			}
 		} else{
 			for (i=0; i < array.length; i++) {
@@ -220,14 +213,14 @@ getStringPattern = function (str) {
 			str[i] = '((^\|\\s)' + str[i] + ')';
 		}
 		str = str.join('|');
-		
+
 		return new RegExp(str, 'gi');
 	}
 };
 
 ttime = function(f){
 	var d = +new Date();
-	
+
 	if (f){
 		f();
 		console.log(((new Date()) - d)/1000);
@@ -245,7 +238,7 @@ collapseAll = function(){
 				if (r.indexOf(c[ii]) == -1){
 					r.push(c[ii]);
 				}
-				
+
 			}
 		} else {
 			if (r.indexOf(c) == -1){
@@ -256,12 +249,12 @@ collapseAll = function(){
 	return r;
 };
 
-toRealArray = function(array, check_field){
+toRealArray = spv.toRealArray = function(array, check_field){
 	if (array instanceof Array){
 		return array;
 	} else if (array && (typeof array == 'object') && array.length){
 		return Array.prototype.slice.call(array);
-	} else if (array && (!check_field || getTargetField(array, check_field))){
+	} else if (array && (!check_field || spv.getTargetField(array, check_field))){
 		return [array];
 	} else{
 		return [];
@@ -281,7 +274,7 @@ getTargetField = function(obj, field){
 	}
 	return target;
 };
-spv.getTargetField = getTargetField;
+
 spv.setTargetField = function(obj, field, value) {
 	var tree = field.split('.');
 	var cur_obj = obj;
@@ -307,17 +300,17 @@ var getFieldValueByRule = function(obj, rule){
 		if (typeof rule.field =='function'){
 			return rule.field(obj);
 		} else {
-			return getTargetField(obj, rule.field);
+			return spv.getTargetField(obj, rule.field);
 		}
 	} else{
-		return getTargetField(obj, rule);
+		return spv.getTargetField(obj, rule);
 	}
 	
 	
 };
 
 
-sortByRules = function(a, b, rules){
+sortByRules = spv.sortByRules = function(a, b, rules){
 	if (a instanceof Object && b instanceof Object){
 		var shift = 0;
 		
@@ -328,30 +321,29 @@ sortByRules = function(a, b, rules){
 				var field_value_b = getFieldValueByRule(b, cr);
 				field_value_a = field_value_a || !!field_value_a; //true > undefined == false, but true > false == true
 				field_value_b = field_value_b || !!field_value_b; //so convert every "", null and undefined to false
-				
-				
-				
+
+
 				if (field_value_a > field_value_b){
 					shift = cr.reverse ? -1 : 1;
 				} else if (field_value_a < field_value_b){
 					shift = cr.reverse ? 1 : -1;
 				}
 			}
-			
+
 		}
-		
+
 		return shift;
-		
+
 	}
 };
 
-makeIndexByField = function(array, field, keep_case){
+makeIndexByField = spv.makeIndexByField = function(array, field, keep_case){
 	var r = {};
 	if (array && array.length){
 		for (var i=0; i < array.length; i++) {
 			var simple_name,
 				cur = array[i],
-				fv = getTargetField(cur, field);
+				fv = spv.getTargetField(cur, field);
 			if (fv){
 				if (fv instanceof Array){
 					for (var k=0; k < fv.length; k++) {
@@ -362,9 +354,8 @@ makeIndexByField = function(array, field, keep_case){
 						if (!r[simple_name]){
 							r[simple_name] = [];
 							r[simple_name].real_name = fv[k];
-							
 						}
-						if (!bN(r[simple_name].indexOf(cur))){
+						if (r[simple_name].indexOf(cur) == -1){
 							r[simple_name].push(cur);
 						}
 					}
@@ -377,7 +368,7 @@ makeIndexByField = function(array, field, keep_case){
 						r[simple_name] = [];
 						r[simple_name].real_name = fv;
 					}
-					if (!bN(r[simple_name].indexOf(cur))){
+					if (r[simple_name].indexOf(cur) == -1){
 						r[simple_name].push(cur);
 					}
 				}
@@ -385,18 +376,15 @@ makeIndexByField = function(array, field, keep_case){
 				if (!r['#other']){
 					r['#other'] = [];
 				}
-				if (!bN(r['#other'].indexOf(cur))){
+				if (r['#other'].indexOf(cur) == -1){
 					r['#other'].push(cur);
 				}
 			}
-	
-		
 		}
 	}
-	
 	return r;
 };
-spv.makeIndexByField = makeIndexByField;
+
 
 $filter = function(array, field, value_or_testfunc){
 	var r = [];
@@ -406,13 +394,13 @@ $filter = function(array, field, value_or_testfunc){
 		if (array[i]){
 			if (value_or_testfunc){
 				if (typeof value_or_testfunc == 'function'){
-					if (value_or_testfunc(getTargetField(array[i], field))){
+					if (value_or_testfunc(spv.getTargetField(array[i], field))){
 						r.push(array[i]);
 					} else{
 						r.not.push(array[i]);
 					}
 				} else{
-					if (getTargetField(array[i], field) === value_or_testfunc){
+					if (spv.getTargetField(array[i], field) === value_or_testfunc){
 						r.push(array[i]);
 					} else{
 						r.not.push(array[i]);
@@ -420,7 +408,7 @@ $filter = function(array, field, value_or_testfunc){
 				}
 				
 			} else{
-				var field_value = getTargetField(array[i], field);
+				var field_value = spv.getTargetField(array[i], field);
 				if (field_value){
 					r.push(field_value);
 				} else{
@@ -432,11 +420,10 @@ $filter = function(array, field, value_or_testfunc){
 	}
 	return r;
 };
-spv.filter = $filter;
 
 
 
-	
+
 cloneObj= function(acceptor, donor, black_list, white_list){
 	//not deep!
 	var _no = acceptor || {};
@@ -446,7 +433,6 @@ cloneObj= function(acceptor, donor, black_list, white_list){
 				_no[a] = donor[a];
 			}
 		}
-		
 	}
 	return _no;
 };
@@ -476,7 +462,7 @@ getUnitBaseNum = function(_c){
 };
 
 
-stringifyParams= function(params, ignore_params, splitter, joiner, opts){
+stringifyParams = spv.stringifyParams = function(params, ignore_params, splitter, joiner, opts){
 	opts = opts || {};
 	splitter = splitter || '';
 	if (typeof params == 'string'){
@@ -508,29 +494,6 @@ separateNum = function(num){
 	return  three_sep;
 };
 
-createPrototype = function(constr, assi_prototype, clone_prototype){
-	var parent_prototype = assi_prototype.constructor.prototype;
-	constr.prototype = assi_prototype;
-	cloneObj(constr.prototype, {
-		constructor: constr,
-		callParentMethod: function(){
-			var tmp = this.callParentMethod;
-			this.callParentMethod = parent_prototype.callParentMethod;
-			//console.log(constr)
-			//console.log(assi_prototype)
-			var args = Array.prototype.slice.call(arguments);
-			var method = args.shift();
-
-			var r = parent_prototype[method].apply(this, args);
-
-			this.callParentMethod = tmp;
-			
-			return r;
-		}
-	});
-	cloneObj(constr.prototype, clone_prototype);
-	return constr;
-};
 
 
 
@@ -644,7 +607,6 @@ debounce = function(fn, timeout, invokeAsap, ctx) {
 	};
 
 };
-spv.debounce = debounce;
 
 throttle = function(fn, timeout, ctx) {
 
@@ -673,7 +635,6 @@ throttle = function(fn, timeout, ctx) {
 	};
 
 };
-spv.throttle = throttle;
 spv.capitalize = function(string, just_first) {
 	var test = just_first ? (/(^|\s)(.)/) : (/(^|\s)(.)/g);
 	return string.replace(test, function(m, p1, p2){
@@ -763,5 +724,11 @@ depdc.prototype = {
 		}
 	}
 };
+spv.makeIndexByField = makeIndexByField;
+spv.getTargetField = getTargetField;
+spv.throttle = throttle;
+spv.debounce = debounce;
+spv.filter = $filter;
+
 })();
 

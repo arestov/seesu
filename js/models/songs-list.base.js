@@ -130,8 +130,8 @@ var songsList;
 
 		},
 		compare: function(puppet){
-			var key_string_o = stringifyParams(this.info);
-			var key_string_p = stringifyParams(puppet.info);
+			var key_string_o = spv.stringifyParams(this.info);
+			var key_string_p = spv.stringifyParams(puppet.info);
 			
 			return this.playlist_type == puppet.playlist_type && (key_string_o == key_string_p);
 		},
@@ -151,12 +151,6 @@ var songsList;
 		},
 		belongsToArtist: function(v){
 			return !!(this.info && this.info.artist) && (!v || this.info.artist == v);
-		},
-		showExactlyTrack: function(mo){
-			if (bN(this[this.main_list_name].indexOf(mo))){
-				mo.showOnMap();
-				return true;
-			}
 		},
 		showTrack: function(artist_track){
 			var will_ignore_artist;
@@ -277,15 +271,15 @@ var songsList;
 		},
 		getWantedSong: function(exept) {
 			
-			//return $filter(this[this.main_list_name], 'states.want_to_play', function(v) {return !!v;})[0];
+			//return spv.filter(this[this.main_list_name], 'states.want_to_play', function(v) {return !!v;})[0];
 			return this.idx_wplay_song != exept && this.idx_wplay_song;
 		},
 		getViewingSong: function(exept) {
-			//var song = $filter(this[this.main_list_name], 'states.mp_show', function(v) {return !!v;})[0];
+			//var song = spv.filter(this[this.main_list_name], 'states.mp_show', function(v) {return !!v;})[0];
 			return this.idx_show_song != exept && this.idx_show_song;
 		},
 		getPlayerSong: function(exept) {
-			//var song = $filter(this[this.main_list_name], "states.player_song", true)[0];
+			//var song = spv.filter(this[this.main_list_name], "states.player_song", true)[0];
 			return this.idx_player_song != exept && this.idx_player_song;
 		},
 		getLastUsableSong: function(){

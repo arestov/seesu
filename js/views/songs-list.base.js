@@ -56,33 +56,11 @@ provoda.addPrototype("songsListBaseView", {
 		this.createListBase();
 
 	},
-	appendSongDOM: function(song_view, array, current_index){
-		var
-			song_dom = song_view.getA();
-		if (!song_dom){
-			return;
+	'collch-songs-list': {
+		place: 'lc',
+		space: 'main',
+		opts: function(){
+			return {lite: this.opts && this.opts.overview};
 		}
-
-		var prev_dom_hook = this.getPrevView(array, current_index);
-		if (prev_dom_hook){
-			$(prev_dom_hook).after(song_dom);
-		} else {
-			var next_dom_hook = this.getNextView(array, current_index);
-			if (next_dom_hook){
-				$(next_dom_hook).before(song_dom);
-			} else {
-				this.lc.append(song_dom);
-			}
-		}
-
-	},
-	'collch-songs-list': function(name, arr) {
-		for (var i = 0; i < arr.length; i++) {
-			var view = this.getFreeChildView({name: name, space: 'main'}, arr[i], {lite: this.opts && this.opts.overview});
-			if (view){
-				this.appendSongDOM(view, arr, i);
-			}
-		}
-		this.requestAll();
 	}
 });

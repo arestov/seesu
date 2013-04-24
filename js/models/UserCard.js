@@ -73,7 +73,7 @@ songsList.extendTo(LfmLovedList, {
 			page: paging_opts.next_page
 		}, {nocache: true})
 			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'lovedtracks.track'));
+				var tracks = spv.toRealArray(spv.getTargetField(r, 'lovedtracks.track'));
 				var track_list = [];
 				if (tracks) {
 					for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
@@ -145,7 +145,7 @@ ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 
 		request_info.request = lfm.get('user.getRecommendedArtists', this.getRqData(paging_opts), {nocache: true})
 			.done(function(r){
-				var artists = toRealArray(getTargetField(r, 'recommendations.artist'));
+				var artists = spv.toRealArray(spv.getTargetField(r, 'recommendations.artist'));
 				var track_list = [];
 				if (artists && artists.length) {
 					
@@ -294,7 +294,7 @@ AlbumsList.extendTo(UserNewReleases, {
 		request_info.request = this.app.lfm.get('user.getNewReleases', this.getRqData(paging_opts))
 			.done(function(r){
 				
-				var albums_data = toRealArray(getTargetField(r, 'albums.album'));
+				var albums_data = spv.toRealArray(spv.getTargetField(r, 'albums.album'));
 
 
 				var data_list = [];
@@ -303,7 +303,7 @@ AlbumsList.extendTo(UserNewReleases, {
 					for (var i=paging_opts.remainder; i < l; i++) {
 						var cur = albums_data[i];
 						data_list.push({
-							album_artist: getTargetField(cur, 'artist.name'),
+							album_artist: spv.getTargetField(cur, 'artist.name'),
 							album_name: cur.name,
 							lfm_image: {
 								array: cur.image
@@ -559,8 +559,8 @@ mapLevelModel.extendTo(UserCard, {
 		последнее
 		библиотека
 
-		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=2803b2bcbc53f132b4d4117ec1509d65&format=json
-		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=2803b2bcbc53f132b4d4117ec1509d65&format=json&userecs=1
+		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=&format=json
+		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=&format=json&userecs=1
 
 		*/
 

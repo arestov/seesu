@@ -416,7 +416,7 @@ investigation.extendTo(SearchPage, {
 			this.searchNetwork(this.q);
 		}
 	},
-	searchOffline: debounce(function(q){
+	searchOffline: spv.debounce(function(q){
 		var tags = this.g('tags');
 		var r = this.searchTags(q);
 		if (r.length){
@@ -461,10 +461,10 @@ investigation.extendTo(SearchPage, {
 			}
 		}
 		:
-		debounce(function(q){
+		spv.debounce(function(q){
 			getLastfmSuggests('artist.search', {artist: q}, q, this.g('artists'), suParseArtistsResults);
 			getLastfmSuggests('track.search', {track: q}, q, this.g('tracks'), suParseTracksResults);
-			getLastfmSuggests('tag.search', {tag: q}, q, this.g('tags'), suParseTagsResults);	
+			getLastfmSuggests('tag.search', {tag: q}, q, this.g('tags'), suParseTagsResults);
 			getLastfmSuggests('album.search', {album: q}, q, this.g('albums'), suParseAlbumsResults);
 		}, 400),
 	getTitleString: function(text){

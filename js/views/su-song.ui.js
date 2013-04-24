@@ -294,7 +294,7 @@ provoda.View.extendTo(songUI, {
 				}
 				var raw_users = r && r.done && [].concat.apply([], r.done);
 				if (raw_users){
-					var users = $filter(raw_users, 'user', function(value){
+					var users = spv.filter(raw_users, 'user', function(value){
 						if (value != current_user){
 							return true;
 						}
@@ -358,7 +358,7 @@ provoda.View.extendTo(songUI, {
 			return;
 		}
 		var _this = this;
-		images = toRealArray(images);
+		images = spv.toRealArray(images);
 		_this.setVisState('cool_photos', true);//cool_photos
 		_this.photo_data.cool_photos = images;
 		this.dom_related_props.push('img_panorama');
@@ -380,7 +380,7 @@ provoda.View.extendTo(songUI, {
 				}
 			});
 
-			var my_window = getDefaultView(_this.getC()[0].ownerDocument);
+			var my_window = spv.getDefaultView(_this.getC()[0].ownerDocument);
 
 			var checkPanoramaSize = function(){
 				_this.img_panorama.checkSize();
@@ -396,14 +396,14 @@ provoda.View.extendTo(songUI, {
 
 			var updatePanorama = function(){
 				images_collection.sort(function(a, b){
-					return sortByRules(a, b, ['num']);
+					return spv.sortByRules(a, b, ['num']);
 				});
 
-				_this.img_panorama.setCollection($filter(images_collection, 'item'));
+				_this.img_panorama.setCollection(spv.filter(images_collection, 'item'));
 			};
 
 			var appendImage = function(el, index, first_image) {
-				var sizes = toRealArray(el.sizes.size);
+				var sizes = spv.toRealArray(el.sizes.size);
 
 				var image_jnode = $('<img class="artist_image hidden" alt=""/>');
 				var req = loadImage({

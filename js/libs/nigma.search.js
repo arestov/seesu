@@ -30,7 +30,7 @@ NigmaAPI.prototype = {
 		
 			options = options || {};
 			options.nocache = options.nocache || !this.cache_ajax;
-			options.cache_key = options.cache_key || hex_md5(method + stringifyParams(params));
+			options.cache_key = options.cache_key || hex_md5(method + spv.stringifyParams(params));
 			var cache_used;
 
 			var	params_full = params || {};

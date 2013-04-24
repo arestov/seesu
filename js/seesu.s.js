@@ -182,10 +182,10 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 			}
 		},
 		updateRelationsInvites: function(invites){
-			this.relations.invites = makeIndexByField(invites, 'user');
+			this.relations.invites = spv.makeIndexByField(invites, 'user');
 		},
 		updateRelationsLikes: function(likes){
-			this.relations.likes = makeIndexByField(likes, 'user');
+			this.relations.likes = spv.makeIndexByField(likes, 'user');
 		},
 		didUserInviteMe: function(user){
 			var rel = this.relations.invites[user];
@@ -267,7 +267,7 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 				return false
 			} else {
 				params.sid = auth.sid;
-				params.sig = hex_md5(stringifyParams(params, ['sid']) + auth.secret);
+				params.sig = hex_md5(spv.stringifyParams(params, ['sid']) + auth.secret);
 			}
 			
 		}

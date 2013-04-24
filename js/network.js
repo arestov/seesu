@@ -302,7 +302,7 @@ Class.extendTo(GoogleSoundcloud, {
 			q: query //"allintext:" + song + '.mp3'
 		};
 		options = options || {};
-		options.cache_key = options.cache_key || hex_md5("https://ajax.googleapis.com/ajax/services/search/web" +  stringifyParams(params_data));
+		options.cache_key = options.cache_key || hex_md5("https://ajax.googleapis.com/ajax/services/search/web" +  spv.stringifyParams(params_data));
 
 
 		var wrap_def = wrapRequest({
@@ -342,7 +342,7 @@ Class.extendTo(DiscogsApi, {
 		}
 
 		options = options || {};
-		options.cache_key = options.cache_key || hex_md5("http://api.discogs.com" + path + stringifyParams(params));
+		options.cache_key = options.cache_key || hex_md5("http://api.discogs.com" + path + spv.stringifyParams(params));
 
 		var	params_full = params || {};
 
@@ -390,7 +390,7 @@ Class.extendTo(HypemApi, {
 		//path
 		var full_url = 'http://hypem.com' + path;
 		options = options || {};
-		options.cache_key = options.cache_key || hex_md5(full_url + stringifyParams(params));
+		options.cache_key = options.cache_key || hex_md5(full_url + spv.stringifyParams(params));
 
 		var wrap_def = wrapRequest({
 			url: full_url,

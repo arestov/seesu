@@ -49,7 +49,7 @@ var FilesInvestg;
 			var array = this.state('files-list');
 			if (array && array.length){
 				if (type){
-					return $filter(array, 'media_type', type);
+					return spv.filter(array, 'media_type', type);
 				} else {
 					return array;
 				}
@@ -88,7 +88,7 @@ var FilesInvestg;
 				depends_on: ['files-list'],
 				fn: function(fslist) {
 					var field_name = 'query_match_index.' + this.mp3_search.getQueryString(this.msq).replace(/\./gi, '');
-					var best_songs = $filter(fslist, field_name, function(value){
+					var best_songs = spv.filter(fslist, field_name, function(value){
 						if (value !== -1 && value < 20){
 							return true;
 						}
@@ -298,7 +298,7 @@ var FilesInvestg;
 		checkFile: function(file) {
 			var search_name = file.from;
 			var file_id = file._id || file.link;
-			var checked = getTargetField(this.checked_files, search_name + '.' + file_id);
+			var checked = spv.getTargetField(this.checked_files, search_name + '.' + file_id);
 			if (!checked){
 				this.checked_files[search_name] = this.checked_files[search_name] || {};
 				this.checked_files[search_name][file_id] = true;
@@ -588,7 +588,7 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 var getAverageDurations = function(mu_array, time_limit){
 	var r = {};
 	for (var a in mu_array.qmi_index){
-		var durs = $filter($filter(mu_array.qmi_index[a], 'duration', function(value){
+		var durs = spv.filter(spv.filter(mu_array.qmi_index[a], 'duration', function(value){
 			if (value && value > time_limit){
 				return true;
 			}
@@ -637,12 +637,12 @@ var getAverageDurations = function(mu_array, time_limit){
 			time_limit = time_limit || 30000;
 
 			var field_name = "query_match_index." + query_string.replace(/\./gi, '');
-			music_list.qmi_index = makeIndexByField(music_list, field_name);
+			music_list.qmi_index = spv.makeIndexByField(music_list, field_name);
 			var average_durs = getAverageDurations(music_list, time_limit);
 			music_list.sort(function(a, b){
-				return sortByRules(a, b, [
+				return spv.sortByRules(a, b, [
 					function(item) {
-						var value = getTargetField(item, field_name);
+						var value = spv.getTargetField(item, field_name);
 						if (value === -1){
 							return Infinity;
 						} else {
@@ -651,7 +651,7 @@ var getAverageDurations = function(mu_array, time_limit){
 						
 					}, function(item){
 
-						var average_dur = average_durs[getTargetField(item, field_name)];
+						var average_dur = average_durs[spv.getTargetField(item, field_name)];
 						if (average_dur){
 							if (item.duration && item.duration > time_limit){
 								return Math.abs(average_dur - item.duration);
@@ -669,7 +669,7 @@ var getAverageDurations = function(mu_array, time_limit){
 		},
 		getFileQMI: function(file, msq) {
 			var query_string = this.getQueryString(msq);
-			return getTargetField(file, 'query_match_index.' + query_string.replace(/\./gi, ''));
+			return spv.getTargetField(file, 'query_match_index.' + query_string.replace(/\./gi, ''));
 		},
 		setFileQMI: function(file, msq, Constr) {
 			var query_string = this.getQueryString(msq);
@@ -810,7 +810,7 @@ var getAverageDurations = function(mu_array, time_limit){
 		},
 		remove: function(msearch) {
 			var se_list = this.se_list;
-			this.se_list = arrayExclude(this.se_list, msearch);
+			this.se_list = spv.arrayExclude(this.se_list, msearch);
 			if (se_list.length != this.se_list){
 				this.trigger('list-changed', this.se_list);
 			}

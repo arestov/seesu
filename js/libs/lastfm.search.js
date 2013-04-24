@@ -3,7 +3,7 @@ var parseArtistsResults = function(r, sectionItem){
 	var artists_results = [];
 	
 	var artists = r.results.artistmatches.artist || false; 
-	artists = artists && toRealArray(artists, 'name');
+	artists = artists && spv.toRealArray(artists, 'name');
 	for (var i=0; i < artists.length; i++) {
 		artists_results.push(    
 			{
@@ -19,7 +19,7 @@ var parseArtistsResults = function(r, sectionItem){
 var parseTracksResults = function(r, sectionItem){
 	var tracks_results = [];
 	var tracks = r.results.trackmatches.track || false; 
-	tracks = tracks && toRealArray(tracks, 'name');
+	tracks = tracks && spv.toRealArray(tracks, 'name');
 	for (var i=0; i < tracks.length; i++) {
 		tracks_results.push(    
 			{
@@ -38,7 +38,7 @@ var parseTagsResults = function(r, sectionItem){
 	var tags_results = [];
 	
 	var tags = r.results.tagmatches.tag || false; 
-	tags = tags && toRealArray(tags, 'name');
+	tags = tags && spv.toRealArray(tags, 'name');
 	for (var i=0; i < tags.length; i++) {
 		tags_results.push({
 			tag: tags[i].name
@@ -49,7 +49,7 @@ var parseTagsResults = function(r, sectionItem){
 var parseAlbumsResults = function(r, sectionItem){
 	var pdr= [];
 	var albums =  r.results.albummatches.album || false;
-	albums = albums && toRealArray(albums, 'name');
+	albums = albums && spv.toRealArray(albums, 'name');
 	for (var i=0; i < albums.length; i++) {
 		pdr.push({
 			artist: albums[i].artist,
@@ -89,7 +89,7 @@ var parseFastSuggests = function(r){
 	
 	
 	
-	var sugg_arts = $filter(r.response.docs, 'restype', 6);
+	var sugg_arts = spv.filter(r.response.docs, 'restype', 6);
 	$.each(sugg_arts, function(i, el){
 		sugg_arts[i] = {
 			artist: el.artist, 
@@ -97,7 +97,7 @@ var parseFastSuggests = function(r){
 		};
 	});
 
-	var sugg_tracks = $filter(r.response.docs, 'restype', 9);
+	var sugg_tracks = spv.filter(r.response.docs, 'restype', 9);
 	$.each(sugg_tracks, function(i, el){
 		sugg_tracks[i] ={
 			artist: el.artist, 
@@ -107,7 +107,7 @@ var parseFastSuggests = function(r){
 		};
 	});
 
-	var sugg_tags = $filter(r.response.docs, 'restype', 32);
+	var sugg_tags = spv.filter(r.response.docs, 'restype', 32);
 	$.each(sugg_tags, function(i, el){
 		sugg_tags[i] = {
 			tag: el.tag
@@ -115,7 +115,7 @@ var parseFastSuggests = function(r){
 	});
 
 	
-	var sugg_albums = $filter(r.response.docs, 'restype', 8);
+	var sugg_albums = spv.filter(r.response.docs, 'restype', 8);
 	$.each(sugg_albums, function(i, el){
 		sugg_albums[i] = {
 			artist: el.artist, 
@@ -157,7 +157,7 @@ var fast_suggestion = function(r, q, invstg){
 	}
 };
 
-var get_fast_suggests = debounce(function(q, callback, hash, invstg){
+var get_fast_suggests = spv.debounce(function(q, callback, hash, invstg){
 	var xhr = $.ajax({
 	  url: 'http://www.last.fm/search/autocomplete',
 	  global: false,

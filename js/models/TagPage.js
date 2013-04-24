@@ -13,7 +13,7 @@ TagsList.extendTo(SimilarTags, {
 			tag: this.tag_name
 		})
 			.done(function(r){
-				var res_list = toRealArray(getTargetField(r, 'similartags.tag'));
+				var res_list = spv.toRealArray(spv.getTargetField(r, 'similartags.tag'));
 				var data_list = spv.filter(res_list, 'name');
 				_this.putRequestedData(request_info.request, data_list, r.error);
 			})
@@ -47,7 +47,7 @@ AlbumsList.extendTo(TagAlbums, {
 		})
 			.done(function(r){
 				
-				var albums_data = toRealArray(getTargetField(r, 'topalbums.album'));
+				var albums_data = spv.toRealArray(spv.getTargetField(r, 'topalbums.album'));
 
 
 				var data_list = [];
@@ -56,7 +56,7 @@ AlbumsList.extendTo(TagAlbums, {
 					for (var i=paging_opts.remainder; i < l; i++) {
 						var cur = albums_data[i];
 						data_list.push({
-							album_artist: getTargetField(cur, 'artist.name'),
+							album_artist: spv.getTargetField(cur, 'artist.name'),
 							album_name: cur.name,
 							lfm_image: {
 								array: cur.image
@@ -160,7 +160,7 @@ songsList.extendTo(ExplorableTagSongs, {
 				start: paging_opts.next_page
 			})
 			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'songs'));
+				var tracks = spv.toRealArray(spv.getTargetField(r, 'songs'));
 				var track_list = [];
 				var files_list = [];
 
@@ -210,7 +210,7 @@ songsList.extendTo(TrendingTagSongs, {
 				start: paging_opts.next_page
 			})
 			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'songs'));
+				var tracks = spv.toRealArray(spv.getTargetField(r, 'songs'));
 				var track_list = [];
 				var files_list = [];
 
@@ -257,7 +257,7 @@ songsList.extendTo(FreeTagSongs, {
 			playlistURL: 'lastfm://playlist/tag/' + this.tag_name + '/freetracks'
 		})
 			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'playlist.trackList.track'));
+				var tracks = spv.toRealArray(spv.getTargetField(r, 'playlist.trackList.track'));
 				
 				var track_list = [];
 				var files_list = [];
@@ -323,7 +323,7 @@ songsList.extendTo(TopTagSongs, {
 			page: paging_opts.next_page
 		})
 			.done(function(r){
-				var tracks = toRealArray(getTargetField(r, 'toptracks.track'));
+				var tracks = spv.toRealArray(spv.getTargetField(r, 'toptracks.track'));
 				var track_list = [];
 				if (tracks) {
 					for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {
@@ -429,7 +429,7 @@ ArtistsList.extendTo(WeekTagArtists, {
 		request_info.request = lfm.get('tag.getWeeklyArtistChart', this.getRqData(paging_opts)).done(function(r){
 
 
-				var artists = toRealArray(getTargetField(r, 'weeklyartistchart.artist'));
+				var artists = spv.toRealArray(spv.getTargetField(r, 'weeklyartistchart.artist'));
 				var data_list = [];
 
 				if (artists && artists.length) {
@@ -483,7 +483,7 @@ ArtistsList.extendTo(TagTopArtists, {
 		var request_info = {};
 		request_info.request = lfm.get('tag.getTopArtists', this.getRqData(paging_opts))
 			.done(function(r){
-				var artists = toRealArray(getTargetField(r, 'topartists.artist'));
+				var artists = spv.toRealArray(spv.getTargetField(r, 'topartists.artist'));
 				var track_list = [];
 
 				if (artists && artists.length) {
