@@ -481,7 +481,12 @@
 						<span class="simple-header">
 							<em class="lang localize-Tags">Tags</em>
 						</span>
-						<span pv-anchor="tags-c"><a class="music-tag js-serv" pv-repeat="tag in tags" pv-events="click:showTag" pv-text="{{tag.name}}"></a></span>
+						<span pv-anchor="tags-c"><a 
+							class="music-tag js-serv" 
+							pv-repeat="tag in tags" 
+							pv-type="hard-way-point" 
+							pv-events="click:showTag" 
+							pv-text="{{tag.name}}"></a></span>
 					</p>
 				</div>
 				<div class="artist-info">
@@ -506,7 +511,12 @@
 										>Similar artists:</a>
 								</em>
 							</span>
-							<span class="desc-text" pv-anchor="similars-c"><a class="artist js-serv" pv-repeat="artist in similars" pv-events="click:showArtcardPage" pv-text="{{artist.name}}"></a></span>
+							<span class="desc-text" pv-anchor="similars-c"><a 
+								class="artist js-serv" 
+								pv-repeat="artist in similars" 
+								pv-events="click:showArtcardPage" 
+								pv-type="hard-way-point"
+								pv-text="{{artist.name}}"></a></span>
 						</p>
 					</div>
 				</div>
@@ -690,12 +700,18 @@
 						<div class="complex-page_material start-screen " id="start-screen">
 							<p class="search-desc">
 								<span class="lang localize-trysearches">try to search</span> 
-								<a id='hint-query'  class="hint-query js-serv">The Beatles</a>
+								<a 
+									id='hint-query'
+									class="hint-query js-serv"
+									pv-text="{{nice_artist_hint}}"
+									pv-anchor='hint-query'
+									pv-events="click::requestSearchHint">The Beatles</a>
 								
 							</p>
-
-							
-							<div class="block-for-startpage start-page-messages"></div>
+							<div 
+								class="block-for-startpage start-page-messages"
+								pv-anchor="start-page-messages">
+							</div>
 							<!--
 							<div class="area_for_button" pv-view="albums_list">
 								<div class="area-button" pv-anchor="big_button">

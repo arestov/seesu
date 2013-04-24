@@ -1097,7 +1097,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	RPCLegacy: function() {
 		var args = Array.prototype.slice.call(arguments);
 		var method_name = args.shift();
-		this[method_name].apply(this, args);
+		if (this.rpc_legacy && this.rpc_legacy[method_name]){
+			this.rpc_legacy[method_name].apply(this, args);
+		} else {
+			this[method_name].apply(this, args);
+
+		}
 	},
 	die: function(){
 		this.stopRequests();
@@ -1379,6 +1384,7 @@ Class.extendTo(Template, {
 		if (opts.callCallbacks){
 			this.sendCallback = opts.callCallbacks;
 		}
+		this.pvTypesChange = opts.pvTypesChange;
 		this.ancs = {};
 		this.pv_views = [];
 		this.pv_repeats = {};
@@ -1388,8 +1394,9 @@ Class.extendTo(Template, {
 
 		this.states_watchers = [];
 		this.stwat_index = {};
-
-
+		this.pv_types = {};
+		this.pv_types_counter = 0;
+		this.pv_repeats_data = [];
 
 
 		var directive_name;
@@ -1411,6 +1418,20 @@ Class.extendTo(Template, {
 		if (this.scope){
 			this.setStates(this.scope);
 		}
+	},
+	getTypedNodes: function() {
+		var result = [];
+		var objs = [this];
+		while (objs.length){
+			var cur = objs.shift();
+			if (cur.pv_types_counter){
+				result.push(cur.pv_types);
+			}
+			for (var i = 0; i < cur.pv_repeats_data.length; i++) {
+				objs = objs.concat(cur.pv_repeats_data[i].array);
+			}
+		}
+		return result;
 	},
 	getFieldsTreesBases: function(all_vs) {
 		var sfy_values = [];
@@ -1468,7 +1489,10 @@ Class.extendTo(Template, {
 			if (node == this.root_node){
 				return;
 			}
-
+			var repeat_data = {
+				array: null
+			};
+			this.pv_repeats_data.push(repeat_data);
 
 			//start of angular.js code
 			var expression = full_declaration;//attr.ngRepeat;
@@ -1520,6 +1544,7 @@ Class.extendTo(Template, {
 					}*/
 					if (original_fv != new_fv){
 						var repeats_array = [];
+						repeat_data.array = [];
 
 						$(old_nodes).remove();
 						old_nodes = [];
@@ -1565,6 +1590,7 @@ Class.extendTo(Template, {
 
 							prev_node = cur_node;
 							repeats_array.push(template);
+							repeat_data.array.push(template);
 						}
 						_this.pv_repeats[full_pv_context] = repeats_array;
 
@@ -1634,6 +1660,16 @@ Class.extendTo(Template, {
 			*/
 
 		},
+		'pv-type': function(node, full_declaration) {
+			var types = full_declaration.replace(/^\s+|\s+$/gi).split(/\s+/gi);
+			for (var i = 0; i < types.length; i++) {
+				var cur = types[i];
+				this.pv_types[cur] = this.pv_types[cur] || [];
+				this.pv_types[cur].push(node);
+				++this.pv_types_counter;
+			}
+			//
+		},
 		'pv-events': function(node, full_declaration) {
 			/*
 			click:Callback
@@ -1642,7 +1678,9 @@ Class.extendTo(Template, {
 			var declarations = full_declaration.split(/\s+/gi);
 			for (var i = 0; i < declarations.length; i++) {
 				var cur = declarations[i].split(':');
-				this.bindEvents(node, cur[0], cur[1]);
+				var dom_event = cur.shift();
+
+				this.bindEvents(node, dom_event, cur);
 			}
 		}
 	},
@@ -1725,19 +1763,20 @@ Class.extendTo(Template, {
 			});
 		}
 	},
-	bindEvents: function(node, event_name, callback_name) {
+	bindEvents: function(node, event_name, data) {
 		var _this = this;
 		if (!this.sendCallback){
 			throw new Error('provide the events callback handler to the Template init func');
 		}
 		$(node).on(event_name, function(e) {
-			_this.callEventCallback(e, callback_name);
+			_this.callEventCallback(e, data);
 		});
 	},
-	callEventCallback: function(e, callback_name) {
+	callEventCallback: function(e, data) {
 		this.sendCallback({
 			event: e,
-			callback_name: callback_name,
+			callback_name: data[0],
+			callback_data: data,
 			pv_repeat_context: this.pv_repeat_context,
 			scope: this.scope
 		});
@@ -1877,12 +1916,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var _this = this;
 		this.triggerTPLevents = function(e) {
 			if (!e.pv_repeat_context){
-				_this.tpl_events[e.callback_name].call(_this, e.event);
+				if (e.callback_data[1]){
+					_this.RPCLegacy(e.callback_data[1]);
+				} else {
+					_this.tpl_events[e.callback_name].call(_this, e.event);
+				}
 			} else {
 				_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.scope);
 			}
-
-
 		};
 		return this;
 	},
@@ -1958,6 +1999,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	useBase: function(node) {
 		this.c = node;
 		this.createTemplate();
+		if (this.bindBase){
+			this.bindBase();
+		}
 	},
 	createDetailes: function() {
 		if (this.pv_view_node){
