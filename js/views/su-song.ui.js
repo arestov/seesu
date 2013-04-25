@@ -118,7 +118,9 @@ provoda.View.extendTo(songUI, {
 			showTag: function(e, scope){
 				e.preventDefault();
 				this.RPCLegacy('showTag', scope.tag.name);
-			},
+			}
+		},
+		'similars': {
 			showArtcardPage: function(e, scope) {
 				e.preventDefault();
 				this.RPCLegacy('showArtcardPage', scope.artist.name);
@@ -126,7 +128,15 @@ provoda.View.extendTo(songUI, {
 		}
 	},
 	tpl_events: {
-		
+		showMoreInfo: function(e) {
+			this.tpl.ancs['tidmt'].toggleClass('want-more-info');
+			e.preventDefault();
+		},
+		showSong: function(e) {
+			e.preventDefault();
+			this.RPCLegacy('wantSong');
+			this.RPCLegacy('showOnMap');
+		}
 	},
 	'stch-tags': function(state) {
 		var _this = this;
@@ -135,9 +145,6 @@ provoda.View.extendTo(songUI, {
 			for (var i = 0; i < nodes.length; i++) {
 				var node = $(nodes[i]);
 				node.after(document.createTextNode(' '));
-				_this.addWayPoint(node, {
-					simple_check: true
-				});
 			}
 		},100);
 	},
@@ -148,9 +155,6 @@ provoda.View.extendTo(songUI, {
 			for (var i = 0; i < nodes.length; i++) {
 				var node = $(nodes[i]);
 				node.after(document.createTextNode(' '));
-				_this.addWayPoint(node, {
-					simple_check: true
-				});
 			}
 		},100);
 	},
@@ -161,6 +165,7 @@ provoda.View.extendTo(songUI, {
 	},
 	createBase: function(){
 		var _this = this;
+		this.setVisState('lite_view', this.opts && this.opts.lite);
 		this.c = this.root_view.getSample('song-view');
 		//window.dizi = sonw;
 		//this.tpl = this.getTemplate(sonw);
@@ -173,19 +178,9 @@ provoda.View.extendTo(songUI, {
 			this.createTemplate();
 		}
 
-		this.tpl.ancs['song-link'].click(function(){
-			_this.RPCLegacy('wantSong');
-			_this.RPCLegacy('showOnMap');
-			return false;
-		});
 		this.canUseDeepWaypoints = function() {
 			return !(_this.opts && _this.opts.lite) && !!_this.state('mp_show');
 		};
-		this.addWayPoint(this.tpl.ancs['song-link'], {
-			canUse: function() {
-				return (_this.opts && _this.opts.lite) || !_this.state('mp_show');
-			}
-		});
 
 	},
 	expand: function(){
@@ -199,14 +194,6 @@ provoda.View.extendTo(songUI, {
 		}
 
 		var _this = this;
-		this.tpl.ancs['artcard-link'].click(function(){
-			_this.RPCLegacy('showArtcardPage');
-		});
-		this.addWayPoint(this.tpl.ancs['artcard-link'], {});
-		this.tpl.ancs['similar-a'].click(function() {
-			_this.RPCLegacy('showArtistSimilarArtists');
-		});
-		this.addWayPoint(this.tpl.ancs['similar-a'], {simple_check: true});
 
 		var context = this.requirePart('context');
 
@@ -229,15 +216,6 @@ provoda.View.extendTo(songUI, {
 		var users_context = new contextRow(users_row_context);
 		var uinfo_part = this.tpl.ancs['big-listener-info'];
 		users_context.addPart(uinfo_part, 'user_info');
-
-
-		var extend_switcher = this.tpl.ancs['extend-switcher'].click(function(e){
-			tidominator.toggleClass('want-more-info');
-			e.preventDefault();
-		});
-		this.addWayPoint(extend_switcher, {
-
-		});
 
 		this.t_users= {
 			c: users,

@@ -22,27 +22,84 @@
   </head>
   
   <body>
-  	<div id="ui-samples" style="display:none">
-  		<!-- -->
-  		<span
-  			class="common-nav nav-item"
-  			pv-props="title:{{nav_title}}"
-  			pv-class="
-  				{{!mp_show && 'hidden'}}
-  				{{!mp_has_focus && 'nav'}}
-  				{{mp_stack == 'top' && 'stack-top'}}
-  				{{mp_stack == 'bottom' && 'stack-bottom'}}
-  				{{mp_stack == 'middle' && 'stack-middle'}}
-  			"
-  			><span
-  				pv-text="{{nav_title}}"
-  			>.</span><b></b></span>
-		<span class="start_page-nav nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>
-		<span class="search_page-nav nav-item nav-search_results" title="Search results"><b></b><span class="icon">.</span></span>
+	<div id="ui-samples" style="display:none">
 		<!-- -->
+		<span
+			class="common-nav nav-item"
+			pv-props="title:{{nav_title}}"
+			pv-events="click::zoomOut"
+			pv-type="{{(mp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 
-  		<div class="usual_page music_conductor_page">
-  			<div class="area_for_button" pv-view='allpas'>
+			pv-class="
+				nav-item
+				{{!mp_show && 'hidden'}}
+				{{!mp_has_focus && 'nnav'}}
+				{{mp_stack == 'top' && 'stack-top'}}
+				{{mp_stack == 'bottom' && 'stack-bottom'}}
+				{{mp_stack == 'middle' && 'stack-middle'}}
+			"
+			
+			><span
+				pv-text="{{nav_title}}"
+			>.</span><b></b></span>
+		<span 
+			class="search_page-nav nav-item nav-search_results" 
+			title="Search results"
+			pv-props="title:{{nav_title}}"
+			pv-events="click::zoomOut"
+			pv-type="{{(mp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			
+			pv-class="
+				nav-item nav-search_results
+				{{!mp_show && 'hidden'}}
+				{{!mp_has_focus && 'nnav'}}
+				{{mp_stack == 'top' && 'stack-top'}}
+				{{mp_stack == 'bottom' && 'stack-bottom'}}
+				{{mp_stack == 'middle' && 'stack-middle'}}
+			"
+			><b></b><span class="icon">.</span></span>
+		<span 
+			class="start_page-nav nav-item nav-start" 
+			title="Seesu start page"
+			pv-props="title:{{nav_title}}"
+			pv-events="click::zoomOut"
+			pv-type="{{(mp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			
+			pv-class="
+				nav-item nav-start
+				{{!mp_show && 'hidden'}}
+				{{!mp_has_focus && 'nav-button'}}
+				{{(mp_stack && mp_stack == !!mp_stack) && 'stacked'}}
+				
+			"
+			><b></b><span class="icon">.</span></span>
+
+		<!-- -->
+	
+
+
+		<div 
+			class="complex-page inactive-page"
+			pv-class="
+				complex-page 
+				{{'index-of-cp-is-' + $lev_num}}
+				{{current_lev_num != $lev_num && 'inactive-page'}}
+				{{current_lev_num == $lev_num && 'full-page'}}
+				{{(current_lev_num - 1) == $lev_num && 'page-scheme'}}"
+			pv-anchor="con">
+			<div 
+				class="complex-page-scroll_con"
+				pv-anchor="scroll_con">
+				<div 
+					class="complex-page_material"
+					pv-anchor="material">
+				</div>
+			</div>
+		</div>
+
+
+		<div class="usual_page music_conductor_page">
+			<div class="area_for_button" pv-view='allpas'>
 				<div class="area-button" pv-anchor='big_button'>
 					<span pv-text="{{nav_title}}">World</span>
 				</div>
@@ -54,19 +111,19 @@
 				</div>
 				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 			</div>
-  		</div>
-  		<div class="album_preview-big">
-  			<img src="" alt="" pv-anchor="imgc"/>
-  			<div class="full_album_name">
-  				<div class="artist_name_alb" pv-anchor="artist_name_c"></div>
-  				<div class="album_name" pv-anchor="album_name_c"></div>
-  			</div>
-  		</div>
+		</div>
+		<div class="album_preview-big">
+			<img src="" alt="" pv-anchor="imgc"/>
+			<div class="full_album_name">
+				<div class="artist_name_alb" pv-anchor="artist_name_c"></div>
+				<div class="album_name" pv-anchor="album_name_c"></div>
+			</div>
+		</div>
 
 
 
-  		<div class="usual_page user_page">
-  			<div class="internal_pthgs">
+		<div class="usual_page user_page">
+			<div class="internal_pthgs">
 				<div class="area_for_button" pv-view='user-playlists'>
 					<div class="area-button" pv-anchor='big_button'>
 						<span pv-text="{{nav_title}}">Playlists</span>
@@ -74,10 +131,10 @@
 					<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 				</div>
 				<div class="aqc_preview" pv-anchor="users_acqutes"></div>
-  			</div>
-  			<div class="vk_pthgs">
-  				<div class="preview_area" pv-view="vk_audio">
-  					<div class="area_for_button" pv-anchor="button_area">
+			</div>
+			<div class="vk_pthgs">
+				<div class="preview_area" pv-view="vk_audio">
+					<div class="area_for_button" pv-anchor="button_area">
 						<div class="area-button" pv-anchor='big_button'>
 							<span pv-text="{{nav_title}}">VK audio</span>
 						</div>
@@ -86,12 +143,12 @@
 						</div>
 					</div>
 					<div class="pl-auth-con" pv-anchor="auth_con"></div>
-  				</div>
+				</div>
 				
 			</div>
 			<div class="lastfm_pthgs">
 				<div class="preview_area" pv-view="lfm_loved">
-  					<div class="area_for_button" pv-anchor="button_area">
+					<div class="area_for_button" pv-anchor="button_area">
 						<div class="area-button" pv-anchor='big_button'>
 							<span pv-text="{{nav_title}}">Loved</span>
 						</div>
@@ -100,9 +157,9 @@
 						</div>
 					</div>
 					<div class="pl-auth-con" pv-anchor="auth_con"></div>
-  				</div>
-  				<div class="preview_area" pv-view="arts_recomms">
-  					<div class="area_for_button" pv-anchor="button_area">
+				</div>
+				<div class="preview_area" pv-view="arts_recomms">
+					<div class="area_for_button" pv-anchor="button_area">
 						<div class="area-button" pv-anchor='big_button'>
 							<span pv-text="{{nav_title}}">Recommendations</span>
 						</div>
@@ -111,10 +168,10 @@
 						</div>
 					</div>
 					<div class="pl-auth-con" pv-anchor="auth_con"></div>
-  				</div>
-  				<div class="full_wide_col">
-  					<div class="preview_area" pv-view="new_releases">
-	  					<div class="area_for_button" pv-anchor="button_area">
+				</div>
+				<div class="full_wide_col">
+					<div class="preview_area" pv-view="new_releases">
+						<div class="area_for_button" pv-anchor="button_area">
 							<div class="area-button" pv-anchor='big_button'>
 								<span pv-text="{{nav_title}}">Albums</span>
 							</div>
@@ -123,9 +180,9 @@
 							</div>
 						</div>
 						<div class="pl-auth-con" pv-anchor="auth_con"></div>
-	  				</div>
-	  				<div class="preview_area" pv-view="recomm_releases">
-	  					<div class="area_for_button" pv-anchor="button_area">
+					</div>
+					<div class="preview_area" pv-view="recomm_releases">
+						<div class="area_for_button" pv-anchor="button_area">
 							<div class="area-button" pv-anchor='big_button'>
 								<span pv-text="{{nav_title}}">Albums</span>
 							</div>
@@ -134,39 +191,39 @@
 							</div>
 						</div>
 						<div class="pl-auth-con" pv-anchor="auth_con"></div>
-	  				</div>
+					</div>
 
-  					
-  				</div>
-  				
+					
+				</div>
+				
 			</div>
 			
-  		</div>
+		</div>
 
 
 
 
-  		<div class="usual_page albums_page">
-  			<div class="albums_list_con" pv-anchor="albums_list_c"></div>
-  			<div class="load-more-list-data hidden lang localize-load-more" pv-anchor='load_m_b'>Load more</div>
-  		</div>
+		<div class="usual_page albums_page">
+			<div class="albums_list_con" pv-anchor="albums_list_c"></div>
+			<div class="load-more-list-data hidden lang localize-load-more" pv-anchor='load_m_b'>Load more</div>
+		</div>
 
 
 
 
-  		<div class="artists_list no_arfb">
-  			<div class="to-open-block area-button">
+		<div class="artists_list no_arfb">
+			<div class="to-open-block area-button">
 				<span class="lang localize-play-random-best-of-arts">Play random best tracks of this artists</span>
 			</div>
 			<ul>
 				
 			</ul>
-  		</div>
+		</div>
 
 
 
 
-  		<div class="area_for_button">
+		<div class="area_for_button">
 			<div class="area-button" pv-anchor='big_button'>
 				<span pv-text="{{nav_title}}"></span>
 			</div>
@@ -226,7 +283,7 @@
 
 
 
-  		<div class="art_card">
+		<div class="art_card">
 			
 			<div class="leftcol">
 				<div class="area_for_button" pv-view="top_songs">
@@ -319,14 +376,14 @@
 			</div>
 			
 		</div>
-  		
-  		<div class="song-row-content moplas-block">
-  			<div class="show-all-songs hidden" pv-anchor="sall_songs">
-  				<a pv-anchor='more_songs_b'><span class="lang localize-files">Files</span></a>
-  				<span class="notifier hidden" pv-view='notifier' pv-text='{{counter}}'></span>
-  				
-  			</div>
-  			<div class="messages-c" pv-anchor='messages_c'>
+		
+		<div class="song-row-content moplas-block">
+			<div class="show-all-songs hidden" pv-anchor="sall_songs">
+				<a pv-anchor='more_songs_b'><span class="lang localize-files">Files</span></a>
+				<span class="notifier hidden" pv-view='notifier' pv-text='{{counter}}'></span>
+				
+			</div>
+			<div class="messages-c" pv-anchor='messages_c'>
 				<div class="cant_play_music_message hidden" pv-anchor='cant_play_music_message'>
 					Что бы приложение воспроизводило музыку установите флеш или воспользуйтесь браузером поддерживающим воспроизведение mp3 с помощью HTML5 audio (например Chrome или Safari)
 				</div>
@@ -335,7 +392,7 @@
 			<div class="track-video">
 				<ul pv-anchor='video_list'></ul>
 			</div>
-  		</div>
+		</div>
 		<ul>
 			<li class="song-view" 
 				pv-class="
@@ -349,6 +406,7 @@
 				<a 
 					pv-anchor="song-link"
 					class="track-node"
+					pv-type="{{(vis_lite_view || !mp_show) && 'way-point'}}"
 					pv-class="
 						track-node
 						{{want_to_play && 'marked-for-play'}}
@@ -358,6 +416,7 @@
 						{{track_name_loading && 'track_name_loading'}}
 						{{playable && 'song'}}
 					"
+					pv-events="click:showSong"
 					pv-props="title: {{song_title}}"
 					>
 					<span
@@ -486,12 +545,15 @@
 						pv-class="{{one_artist_playlist && 'one-artist-playlist'}} closer-to-track">
 						<a 
 							class="js-serv lang localize-artcard"
-							pv-anchor="artcard-link"
+							
+							pv-type="way-point"
+							pv-events="click::showArtcardPage"
 							>artcard</a>
 					</div>
 					<a 
 						class="extend-switcher"
-						pv-anchor="extend-switcher" 
+						pv-events="click:showMoreInfo"
+						pv-type="way-point"
 						pv-class="{{!infb_text && 'hidden'}} extend-switcher">
 						<span class="big-space" pv-text="{{infb_text}}"></span>
 					</a>
@@ -524,8 +586,9 @@
 							<span class="desc-name">
 								<em>
 									<a 
-										pv-anchor="similar-a"
 										class="similar-artists js-serv lang localize-similar-arts"
+										pv-type="hard-way-point"
+										pv-events="click::showArtistSimilarArtists"
 										>Similar artists:</a>
 								</em>
 							</span>
@@ -554,7 +617,7 @@
 	
 
 
-  		<dl class="buttmen play-controls">
+		<dl class="buttmen play-controls">
 			<dt class="main-button">
 				<a class="pc pc-add "  title="add to playlist">
 				</a>
@@ -590,7 +653,7 @@
 					
 				
 					
-  		<div class="vk-login-context attention-focuser">
+		<div class="vk-login-context attention-focuser">
 			<div class="decor">
 				<div class="vk-login-reg-link">
 					<div>
@@ -680,7 +743,7 @@
 			<p><label><input type="radio"  disabled="disabled" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
 		</form>
 		<!-- // ui samples -->
-  	</div>
+	</div>
 <div id="slider">
 	<div class="navs ">
 		<div class="daddy not-inited">
@@ -711,11 +774,21 @@
 						
 					</form>
 				</div>
-				
-				<div class="complex-page full-page root_level">
-					<div class="complex-page-scroll_con">
+				<div 
+					id="root_level"
+					class="complex-page root_level full-page"
+					pv-class="
+						complex-page root_level
+						{{current_lev_num != $lev_num && 'inactive-page'}}
+						{{current_lev_num == $lev_num && 'full-page'}}
+						{{(current_lev_num - 1) == $lev_num && 'page-scheme'}}"
+					pv-anchor="con">
+					<div 
+						class="complex-page-scroll_con"
+						pv-anchor="scroll_con">
 
-						<div class="complex-page_material start-screen " id="start-screen">
+						<div class="complex-page_material start-screen" 
+							id="start-screen" pv-view="start-sreen">
 							<p class="search-desc">
 								<span class="lang localize-trysearches">try to search</span> 
 								<a 

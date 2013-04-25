@@ -568,6 +568,15 @@ provoda.View.extendTo(appModelView, {
 	},
 	parts_builder: {
 		//samples
+		'common-nav': function() {
+			return this.els.ui_samples.children('.common-nav');
+		},
+		'search_page-nav': function() {
+			return this.els.ui_samples.children('.search_page-nav');
+		},
+		'start_page-nav': function() {
+			return this.els.ui_samples.children('.start_page-nav');
+		},
 		'song-view': function() {
 			return this.els.ui_samples.children('ul').children('.song-view');
 		},
@@ -946,7 +955,7 @@ provoda.View.extendTo(appModelView, {
 		if (cur_wayp.canUse && !cur_wayp.canUse()){
 			return;
 		}
-		var cur = cur_wayp.node;
+		var cur = $(cur_wayp.node);
 		var height = cur.height();
 		if (!height){
 			return;
@@ -975,7 +984,7 @@ provoda.View.extendTo(appModelView, {
 		}
 	},
 	canUseWaypoint: function(cur_wayp, dems) {
-		var cur = cur_wayp.node;
+		var cur = $(cur_wayp.node);
 
 		if (cur.css('display') == 'none'){
 			return;
@@ -1067,7 +1076,7 @@ provoda.View.extendTo(appModelView, {
 
 		for (var i = 0; i < all_waypoints.length; i++) {
 			var cur_wayp = all_waypoints[i];
-			var cur = cur_wayp.node;
+
 			var cur_id = cur_wayp.wpid;
 			if (!dems_storage[cur_id]){
 				var dems = this.getWPDemsForStorage(cur_wayp, dems_storage);
@@ -1449,19 +1458,19 @@ provoda.View.extendTo(appModelView, {
 			var cur_md_md = this.state('current_mp_md');
 			var parent_md = cur_md_md.getParentMapModel();
 			if (parent_md && cwp.view.getAncestorByRooViCon('main') == parent_md.mpx.getRooConPresentation()){
-				this.scrollTo(cwp.node, {
+				this.scrollTo($(cwp.node), {
 					node: this.getLevByNum(parent_md.map_level_num).scroll_con
 				}, {vp_limit: 0.6, animate: 117});
 			}
-			this.scrollTo(cwp.node, false, {vp_limit: 0.6, animate: 117});
+			this.scrollTo($(cwp.node), false, {vp_limit: 0.6, animate: 117});
 		}
 	},
 	'stch-vis_current_wpoint': function(nst, ost) {
 		if (ost){
-			ost.node.removeClass('surf_nav');
+			$(ost.node).removeClass('surf_nav');
 		}
 		if (nst) {
-			nst.node.addClass('surf_nav');
+			$(nst.node).addClass('surf_nav');
 			//if (nst.view.getRooConPresentation() ==)
 
 			this.scrollToWP(nst);
@@ -1480,7 +1489,7 @@ provoda.View.extendTo(appModelView, {
 			var cwp = this.state('vis_current_wpoint');
 			if (nav_type == 'Enter'){
 				if (cwp){
-					cwp.node.click();
+					$(cwp.node).click();
 					var _this = this;
 
 					this.cwp_check = setTimeout(function() {

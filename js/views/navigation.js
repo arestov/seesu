@@ -3,8 +3,10 @@ var baseNavUI = function() {};
 provoda.View.extendTo( baseNavUI, {
 	dom_rp: true,
 	createBase: function() {
-		this.c = $('<span class="nav-item"><span>.</span><b></b></span>');
-	},
+		/**/
+		this.useBase(this.root_view.getSample('common-nav'));
+		//this.c = $('<span class="nav-item"><span>.</span><b></b></span>');
+	}/*,
 	createDetailes: function(){
 		this.createBase();
 		this.bindClick();
@@ -62,10 +64,12 @@ provoda.View.extendTo( baseNavUI, {
 		});
 		this.addWayPoint(this.c, {
 			canUse: function() {
+
+				//mp_show && mp_stack || !mp_has_focus
 				return _this.state('mp_show') && (_this.state('mp_stack') || !_this.state('mp_has_focus'));
 			}
 		});
-	}
+	}*/
 });
 
 
@@ -73,10 +77,11 @@ StartPageNavView = function(mal) {};
 
 baseNavUI.extendTo(StartPageNavView, {
 	createBase: function(){
-		this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>');
-
-	},
+		//this.c = $('<span class="nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>');
+		this.useBase(this.root_view.getSample('start_page-nav'));
+	}/*,
 	'stch-mp_stack':function(state) {
+		//mp_stack && mp_stack == !!mp_stack
 		if (state && state == !!state){
 			this.c.addClass('stacked');
 		} else {
@@ -89,7 +94,7 @@ baseNavUI.extendTo(StartPageNavView, {
 		} else {
 			this.c.removeClass("nav-button");
 		}
-	}
+	}*/
 });
 
 
@@ -97,10 +102,12 @@ investgNavUI = function() {};
 
 baseNavUI.extendTo(investgNavUI, {
 	createBase: function() {
-		this.c = $('<span class="nav-item nav-search_results" title="Search results"><b></b><span class="icon">.</span></span>');
-	},
+	//	this.c = $('<span class="nav-item nav-search_results" title="Search results"><b></b><span class="icon">.</span></span>');
+		this.useBase(this.root_view.getSample('search_page-nav'));
+
+	}/*,
 	"stch-nav_title": function(text) {
 		this.c.attr('title', text || '');
-	}
+	}*/
 });
 
