@@ -1394,8 +1394,7 @@ Class.extendTo(Template, {
 
 		this.states_watchers = [];
 		this.stwat_index = {};
-		this.pv_types = {};
-		this.pv_types_counter = 0;
+		this.pv_types = [];
 		this.pv_repeats_data = [];
 
 
@@ -1419,16 +1418,29 @@ Class.extendTo(Template, {
 			this.setStates(this.scope);
 		}
 	},
+	_pvTypesChange: function() {
+		if (this.pv_types_collecting){
+			return;
+		} else {
+			if (this.pvTypesChange){
+				this.pvTypesChange.call(this, this.getTypedNodes());
+			}
+		}
+	},
 	getTypedNodes: function() {
 		var result = [];
 		var objs = [this];
 		while (objs.length){
 			var cur = objs.shift();
-			if (cur.pv_types_counter){
+			if (cur.pv_types.length){
 				result.push(cur.pv_types);
 			}
+
 			for (var i = 0; i < cur.pv_repeats_data.length; i++) {
-				objs = objs.concat(cur.pv_repeats_data[i].array);
+				if (cur.pv_repeats_data[i].array){
+					objs = objs.concat(cur.pv_repeats_data[i].array);
+				}
+				
 			}
 		}
 		return result;
@@ -1545,6 +1557,7 @@ Class.extendTo(Template, {
 					if (original_fv != new_fv){
 						var repeats_array = [];
 						repeat_data.array = [];
+						_this.pv_types_collecting = true;
 
 						$(old_nodes).remove();
 						old_nodes = [];
@@ -1559,6 +1572,8 @@ Class.extendTo(Template, {
 							full_pv_context = _this.pv_repeat_context + '.$.';
 						}
 						full_pv_context += field_name;
+						
+						var fragt = document.createDocumentFragment();
 
 						for (var i = 0; i < collection.length; i++) {
 							var scope = {};
@@ -1581,18 +1596,15 @@ Class.extendTo(Template, {
 								callCallbacks: _this.sendCallback
 							});
 							old_nodes.push(cur_node);
-							if (prev_node){
-								$(prev_node).after(cur_node);
-							} else {
-								$(comment_anchor).after(cur_node);
-							}
-
-
+							$(fragt).append(cur_node);
 							prev_node = cur_node;
 							repeats_array.push(template);
 							repeat_data.array.push(template);
 						}
+						$(comment_anchor).after(fragt);
 						_this.pv_repeats[full_pv_context] = repeats_array;
+						_this.pv_types_collecting = false;
+						_this._pvTypesChange();
 
 					//	setValue.call(_this, node, attr_obj, new_value, original_value);
 					//	original_value = new_value;
@@ -1661,13 +1673,32 @@ Class.extendTo(Template, {
 
 		},
 		'pv-type': function(node, full_declaration) {
-			var types = full_declaration.replace(/^\s+|\s+$/gi).split(/\s+/gi);
-			for (var i = 0; i < types.length; i++) {
-				var cur = types[i];
-				this.pv_types[cur] = this.pv_types[cur] || [];
-				this.pv_types[cur].push(node);
-				++this.pv_types_counter;
+			if (!full_declaration){
+				return;
 			}
+			var pv_type_data = {node: node, marks: null};
+
+			this.bindStandartChange(node, {
+				complex_statement: full_declaration,
+				getValue: function(){return '';},
+				setValue: function(node, new_value, old_value){
+					var types = new_value.split(/\s+/gi);
+					pv_type_data.marks = {};
+					for (var i = 0; i < types.length; i++) {
+						pv_type_data.marks[types[i]] = true;
+					}
+					this._pvTypesChange();
+				},
+				simplifyValue: function(value) {
+					if (!value){
+						return value;
+					}
+					return value.replace(/\s+/gi,' ').replace(/^\s|\s$/gi,'');
+				},
+				direct_check: true
+			});
+
+			this.pv_types.push(pv_type_data);
 			//
 		},
 		'pv-events': function(node, full_declaration) {
@@ -1747,20 +1778,25 @@ Class.extendTo(Template, {
 			var sfy_values = this.getFieldsTreesBases(all_vs);
 			var _this = this;
 
+			var checkFunc = function(states) {
+				var new_value = calculator(states);
+				if (opts.simplifyValue){
+					new_value = opts.simplifyValue.call(_this, new_value);
+				}
+				if (original_value != new_value){
+					opts.setValue.call(_this, node, new_value, original_value);
+					original_value = new_value;
+				}
+			};
+
 			this.states_watchers.push({
 				values: all_vs,
 				sfy_values: sfy_values,
-				checkFunc: function(states) {
-					var new_value = calculator(states);
-					if (opts.simplifyValue){
-						new_value = opts.simplifyValue.call(_this, new_value);
-					}
-					if (original_value != new_value){
-						opts.setValue.call(_this, node, new_value, original_value);
-						original_value = new_value;
-					}
-				}
+				checkFunc: checkFunc
 			});
+			if (opts.direct_check){
+				checkFunc({});
+			}
 		}
 	},
 	bindEvents: function(node, event_name, data) {
@@ -1971,10 +2007,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		this.way_points.push(obj);
 	},
-	getTemplate: function(node, callCallbacks) {
+	getTemplate: function(node, callCallbacks, pvTypesChange) {
 		node = node[0] || node;
 		var template = new Template();
-		template.init({node: node, callCallbacks: callCallbacks});
+		template.init({node: node, callCallbacks: callCallbacks, pvTypesChange: pvTypesChange});
 
 		return template;
 	},
@@ -1982,7 +2018,33 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (!this.c){
 			throw new Error('cant create template');
 		}
-		this.tpl = this.getTemplate(this.c, this.triggerTPLevents);
+		var _this = this;
+		this.tpl = this.getTemplate(this.c, this.triggerTPLevents, function(arr_arr) {
+			//pvTypesChange
+			var old_waypoints = this.waypoints;
+			var total = [];
+			var i;
+			for (i = 0; i < arr_arr.length; i++) {
+				total = total.concat(arr_arr[i]);
+			}
+			var matched = [];
+			for (i = 0; i < total.length; i++) {
+				var cur = total[i].marks;
+				if (!cur){
+					continue;
+				}
+				if (cur['hard-way-point'] || cur['way-point']){
+					matched.push(cur);
+				}
+				
+			}
+			var to_remove = old_waypoints && spv.arrayExclude(old_waypoints, matched);
+			this.waypoints = matched;
+			this.updateTemplatedWaypoints(matched, to_remove);
+		});
+	},
+	updateTemplatedWaypoints: function(add, remove) {
+
 	},
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;

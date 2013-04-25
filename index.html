@@ -23,6 +23,24 @@
   
   <body>
   	<div id="ui-samples" style="display:none">
+  		<!-- -->
+  		<span
+  			class="common-nav nav-item"
+  			pv-props="title:{{nav_title}}"
+  			pv-class="
+  				{{!mp_show && 'hidden'}}
+  				{{!mp_has_focus && 'nav'}}
+  				{{mp_stack == 'top' && 'stack-top'}}
+  				{{mp_stack == 'bottom' && 'stack-bottom'}}
+  				{{mp_stack == 'middle' && 'stack-middle'}}
+  			"
+  			><span
+  				pv-text="{{nav_title}}"
+  			>.</span><b></b></span>
+		<span class="start_page-nav nav-item nav-start" title="Seesu start page"><b></b><span class="icon">.</span></span>
+		<span class="search_page-nav nav-item nav-search_results" title="Search results"><b></b><span class="icon">.</span></span>
+		<!-- -->
+
   		<div class="usual_page music_conductor_page">
   			<div class="area_for_button" pv-view='allpas'>
 				<div class="area-button" pv-anchor='big_button'>
