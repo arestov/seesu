@@ -51,9 +51,13 @@ provoda.View.extendTo(songUI, {
 	},
 	state_change : {
 		"mp_show_end": function(opts) {
+			var _this = this;
 			if (opts){
 				if (this.img_panorama){
-					this.img_panorama.checkSize();
+					setTimeout(function() {
+						_this.img_panorama.checkSize();
+					},50);
+					
 				}
 			}
 		},

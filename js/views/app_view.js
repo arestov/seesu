@@ -10,7 +10,7 @@ provoda.View.extendTo(appModelView, {
 	createDetailes: function(){
 		this.root_view = this;
 		this.d = this.opts.d;
-
+		this.tpls = [];
 		this.lfm_imgq = new funcsQueue(700);
 		this.dgs_imgq = new funcsQueue(1200);
 		var _this = this;
@@ -89,15 +89,22 @@ provoda.View.extendTo(appModelView, {
 			if (num == -1){
 				throw new Error('start_screen must exist');
 			}
+			var node = this.getSample('complex-page');
+			var tpl = this.buildTemplate();
+			tpl.init({
+				node: node,
+				spec_states: {
+					'$lev_num': num
+				}
+			});
 
-			var container = $('<div class="complex-page inactive-page"></div>').addClass('index-of-cp-is-' + num);
-			var scroll_con = $('<div class="complex-page-scroll_con"></div>').appendTo(container);
-			var material = $('<div class="complex-page_material"></div>').appendTo(scroll_con);
+			this.tpls.push(tpl);
+			tpl.setStates(this.states);
 
 			return this.lev_containers[num] = {
-				c: container.appendTo(this.els.screens),
-				scroll_con: scroll_con,
-				material: material
+				c: node.appendTo(this.els.screens),
+				scroll_con: tpl.ancs['scroll_con'],
+				material: tpl.ancs['material']
 			};
 		}
 	},
@@ -296,6 +303,12 @@ provoda.View.extendTo(appModelView, {
 			}
 		}
 	},
+	'compx-current_lev_num': {
+		depends_on: ['current_mp_md'],
+		fn: function(md) {
+			return md.map_level_num;
+		}
+	},
 	'stch-full_page_need': function(state) {
 		this.els.screens.toggleClass('full_page_need', !!state);
 	},
@@ -307,6 +320,10 @@ provoda.View.extendTo(appModelView, {
 
 		//map_level_num
 		//md.map_level_num
+
+
+
+		/*
 		var oved_now_active = old_md && (old_md.map_level_num-1 ===  md.map_level_num);
 		if (old_md){
 			this.hideLevNum(old_md.map_level_num);
@@ -323,6 +340,11 @@ provoda.View.extendTo(appModelView, {
 		if (oved_now_active){
 			this.removePageOverviewMark(old_md.map_level_num-1);
 		}
+
+*/
+
+
+
 		/*
 		var highlight = md.state('mp-highlight');
 		if (highlight && highlight.source_md){
@@ -351,17 +373,27 @@ provoda.View.extendTo(appModelView, {
 
 			
 		}*/
-		var parent_md = md.getParentMapModel();
-		if (parent_md){
-			var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);
-			if (mplev_item_view && mplev_item_view.getC().height()){
-				this.scrollTo(mplev_item_view.getC(), {
-					node: this.getLevByNum(md.map_level_num - 1).scroll_con
-				}, {vp_limit: 0.4, animate: 117});
-			} else {
-				this.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
+
+
+		var _this = this;
+		setTimeout(function() {
+			var parent_md = md.getParentMapModel();
+			if (parent_md){
+				var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);
+				if (mplev_item_view && mplev_item_view.getC().height()){
+					_this.scrollTo(mplev_item_view.getC(), {
+						node: _this.getLevByNum(md.map_level_num - 1).scroll_con
+					}, {vp_limit: 0.4, animate: 117});
+				} else {
+					_this.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
+				}
 			}
-		}
+		}, 150);
+
+		
+
+
+
 
 
 		//var parent_md = md.getParentMapModel();
@@ -484,6 +516,12 @@ provoda.View.extendTo(appModelView, {
 			this.d.title = title || "";
 		}
 	},
+	'compx-now_playing_text': {
+		depends_on: ['now_playing'],
+		fn: function(text) {
+			return localize('now_playing','Now Playing') + ': ' + text;
+		}
+	},
 	getScrollVP: function() {
 		return this.els.scrolling_viewport;
 	},
@@ -568,6 +606,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	parts_builder: {
 		//samples
+		'complex-page': function() {
+			return this.els.ui_samples.children('.complex-page');
+		},
 		'common-nav': function() {
 			return this.els.ui_samples.children('.common-nav');
 		},
@@ -697,7 +738,8 @@ provoda.View.extendTo(appModelView, {
 
 			var search_form = $('#search',d);
 
-			var start_screen = $('#start-screen',d);
+			
+
 
 
 			var shared_parts_c = screens_block.children('.shared-parts');
@@ -722,6 +764,9 @@ provoda.View.extendTo(appModelView, {
 				/*
 				*/
 			}
+
+			var start_screen = $('#start-screen',d);
+
 			_this.els = {
 				ui_samples: ui_samples,
 				screens: screens_block,
@@ -735,9 +780,18 @@ provoda.View.extendTo(appModelView, {
 			};
 
 			var st_scr_scrl_con = start_screen.parent();
+			var start_page_wrap = st_scr_scrl_con.parent();
+			var tpl = _this.buildTemplate();
+			tpl.init({
+				node: start_page_wrap,
+				spec_states: {
+					'$lev_num': -1
+				}
+			});
+			_this.tpls.push(tpl);
 
 			_this.lev_containers[-1] = {
-				c: st_scr_scrl_con.parent(),
+				c: start_page_wrap,
 				material: start_screen,
 				scroll_con: st_scr_scrl_con
 			};
@@ -870,6 +924,7 @@ provoda.View.extendTo(appModelView, {
 
 			_this.els.search_label = _this.els.search_form.find('#search-p').find('.lbl');
 			var justhead = _this.els.navs;
+			var np_button;
 			_this.nav = {
 				justhead: justhead,
 				daddy: justhead.children('.daddy')

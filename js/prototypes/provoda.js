@@ -962,8 +962,15 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				});
 			}
 		}
-		if (changes_list.length && this.tpl){
-			this.tpl.setStates(this.states);
+		if (changes_list.length){
+			if (this.tpl){
+				this.tpl.setStates(this.states);
+			}
+			if (this.tpls){
+				for (i = 0; i < this.tpls.length; i++) {
+					this.tpls[i].setStates(this.states);
+				}
+			}
 		}
 		return changed_states;
 	},
@@ -1415,12 +1422,10 @@ Class.extendTo(Template, {
 
 		this.getPvDirectives(this.root_node);
 		if (!window.angbo || !window.angbo.interpolateExpressions){
-			console.log('cant pasre statements');
+			console.log('cant parse statements');
 		}
 		if (this.scope){
 			this.setStates(this.scope);
-		} else if (this.spec_states){
-			this.setStates();
 		}
 	},
 	_pvTypesChange: function() {
@@ -1836,7 +1841,7 @@ Class.extendTo(Template, {
 			states_summ = states;
 		}
 		for (var i = 0; i < this.states_watchers.length; i++) {
-			this.states_watchers[i].checkFunc(states);
+			this.states_watchers[i].checkFunc(states_summ);
 		}
 	},
 	/*
@@ -2040,6 +2045,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 		}
 		this.way_points = stay;
+	},
+	buildTemplate: function() {
+		return new Template();
 	},
 	getTemplate: function(node, callCallbacks, pvTypesChange) {
 		node = node[0] || node;
