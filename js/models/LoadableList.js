@@ -157,15 +157,15 @@ mapLevelModel.extendTo(LoadableListBase, {
 				item = matched;
 				/*если совпадает с предполагаемыми объектом, то ставим наш элемент в конец рабочего массива
 				и удаляем из массива "излишков", а сами излишки в самый конец */
-				work_array = arrayExclude(work_array, excess_items);
-				excess_items = arrayExclude(excess_items, matched);
+				work_array = spv.arrayExclude(work_array, excess_items);
+				excess_items = spv.arrayExclude(excess_items, matched);
 				work_array.push(matched);
 				work_array = work_array.concat(excess_items);
 
 			} else {
 				/* если объект не совпадает ни с одним элементом, то извлекаем все излишки,
 				вставляем объект, вставляем элементы обратно */
-				work_array = arrayExclude(work_array, excess_items);
+				work_array = spv.arrayExclude(work_array, excess_items);
 				work_array.push(item = this.makeDataItem(obj));
 				work_array = work_array.concat(excess_items);
 
@@ -352,7 +352,7 @@ LoadableListBase.extendTo(LoadableList, {
 		return request_info;
 	},
 	getLastfmArtistsList: function(r, field_name, paging_opts) {
-		var artists = toRealArray(getTargetField(r, field_name));
+		var artists = spv.toRealArray(spv.getTargetField(r, field_name));
 		var data_list = [];
 		if (artists && artists.length) {
 			var l = Math.min(artists.length, paging_opts.page_limit);
@@ -369,7 +369,7 @@ LoadableListBase.extendTo(LoadableList, {
 		return data_list;
 	},
 	getLastfmTracksList: function(r, field_name, paging_opts) {
-		var tracks = toRealArray(getTargetField(r, field_name));
+		var tracks = spv.toRealArray(spv.getTargetField(r, field_name));
 		var track_list = [];
 		if (tracks) {
 			for (var i=paging_opts.remainder, l = Math.min(tracks.length, paging_opts.page_limit); i < l; i++) {

@@ -2,29 +2,29 @@
 	var createAE = function(id, url, cb) {
 		var a = new Audio(url);
 		a.volume = 1;
-		addEvent(a, 'play', function(){
+		spv.addEvent(a, 'play', function(){
 			cb('play', id);
 		});
-		addEvent(a, 'pause', function(){
+		spv.addEvent(a, 'pause', function(){
 			cb('pause', id);
 		});
-		addEvent(a, 'ended', function(){
+		spv.addEvent(a, 'ended', function(){
 			cb('finish', id);
 		});
 
 		/*
-		addEvent(a, 'suspend', function(){
+		spv.addEvent(a, 'suspend', function(){
 			console.log('suspend');
 		});
-		addEvent(a, 'emptied', function(){
+		spv.addEvent(a, 'emptied', function(){
 			console.log('emptied');
 		});
-		addEvent(a, 'waiting', function(){
+		spv.addEvent(a, 'waiting', function(){
 			console.log('waiting');
 		});
 		*/
 		
-		addEvent(a, 'timeupdate', function(){
+		spv.addEvent(a, 'timeupdate', function(){
 			var current_time = a.currentTime * 1000;
 			var duration = a.duration * 1000;
 			cb('playing', id, {
@@ -47,7 +47,7 @@
 				fetched: a.buffered.length && (a.buffered.end(0) * 1000)
 			});
 		};
-		addEvent(a, 'progress', function(e){
+		spv.addEvent(a, 'progress', function(e){
 			clearTimeout(at_finish);
 			if (a.buffered.length){
 				fireProgress();
@@ -58,7 +58,7 @@
 				}
 			}
 		});
-		addEvent(a, 'error', function(){
+		spv.addEvent(a, 'error', function(){
 			cb('error', id);
 		});
 		return a;

@@ -88,7 +88,7 @@ lastfm_api.prototype= {
 		params.format = params.format || (use_post_serv ?	'' : 'json');
 
 
-		var apisig_hash =  hex_md5(stringifyParams(params, ['format', 'callback']) + this.s);
+		var apisig_hash =  hex_md5(spv.stringifyParams(params, ['format', 'callback']) + this.s);
 
 		if (apisig || !options.nocache) {
 			params.api_sig = apisig_hash;

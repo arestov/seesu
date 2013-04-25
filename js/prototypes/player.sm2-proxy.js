@@ -4,7 +4,7 @@ var sm2proxy = function(origin, path, opts) {
 	this.origin = origin;
 	
 
-	addEvent(window, "message", function(e){
+	spv.addEvent(window, "message", function(e){
 		if (e.origin.indexOf(_this.origin) === 0){
 			_this.handleFrameMessage.apply(_this, (e.data === Object(e.data) ? e.data : JSON.parse(e.data)));
 		} else {
@@ -13,7 +13,7 @@ var sm2proxy = function(origin, path, opts) {
 	});
 
 	if (opts && opts === Object(opts)){
-		var params_string = stringifyParams(opts, false, '=', '&');
+		var params_string = spv.stringifyParams(opts, false, '=', '&');
 		if (params_string){
 			path = path + '#' + params_string
 		}

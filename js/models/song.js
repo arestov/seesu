@@ -18,8 +18,8 @@ var song;
 
 						var ai = parseArtistInfo(r);
 						_this.updateManyStates({
-							listeners: getTargetField(r, 'artist.stats.listeners'),
-							playcount: getTargetField(r, 'artist.stats.playcount'),
+							listeners: spv.getTargetField(r, 'artist.stats.listeners'),
+							playcount: spv.getTargetField(r, 'artist.stats.playcount'),
 							bio: ai.bio,
 							tags: ai.tags,
 							similars: ai.similars,
@@ -88,7 +88,7 @@ var song;
 			this.loadImages = spv.once(function() {
 				var images_request = lfm.get('artist.getImages',{'artist': _this.artist })
 					.done(function(r){
-						var images = toRealArray(getTargetField(r, 'images.image'));
+						var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
 						_this.updateState('images', images);
 					});
 				this.addRequest(images_request, {
@@ -244,9 +244,9 @@ var song;
 
 				app_env.openURL( "http://seesu.me/vk/share.html" +
 					"?" + 
-					stringifyParams({app_id: su.vkappid}, false, '=', '&') +
+					spv.stringifyParams({app_id: su.vkappid}, false, '=', '&') +
 					"#?" + 
-					stringifyParams(data, false, '=', '&'));
+					spv.stringifyParams(data, false, '=', '&'));
 			}
 			seesu.trackEvent('song actions', 'vk share');
 

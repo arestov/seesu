@@ -89,7 +89,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			if (state){
 				var _this = this;
 				var oldv;
-				var inputSearch = debounce(function(e) {
+				var inputSearch = spv.debounce(function(e) {
 					var newval = this.value;
 					if (oldv !== newval){
 						_this.RPCLegacy('search', newval);
@@ -210,7 +210,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		
 
 		var _this = this;
-		var inputSearch = debounce(function(e) {
+		var inputSearch = spv.debounce(function(e) {
 			_this.RPCLegacy('search', this.value);
 		}, 100);
 		this.input = this.c.find('.playlist-query').bind('keyup change search mousemove', inputSearch);
