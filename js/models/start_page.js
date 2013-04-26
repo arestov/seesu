@@ -16,8 +16,7 @@ mapLevelModel.extendTo(StartPage, {
 		this.su = opts.app;
 		this.updateState('needs_search_from', true);
 		this.updateState('nav_title', 'Seesu start page');
-
-		
+		this.updateState('nice_artist_hint', su.popular_artists[(Math.random()*10).toFixed(0)]);
 
 		this.updateNesting('pstuff', this.getSPI('users/me').initOnce());
 		this.updateNesting('muco', this.getSPI('conductor').initOnce());
@@ -25,6 +24,14 @@ mapLevelModel.extendTo(StartPage, {
 
 		this.closed_messages = suStore('closed-messages') || {};
 		return this;
+	},
+	rpc_legacy: {
+		requestSearchHint: function() {
+			var artist = this.state('nice_artist_hint');
+			this.app.search(artist);
+			this.updateState('nice_artist_hint', su.popular_artists[(Math.random()*10).toFixed(0)]);
+			su.trackEvent('Navigation', 'hint artist');
+		}
 	},
 	sub_pages_routes: {
 		'catalog': function(name) {
@@ -43,9 +50,9 @@ mapLevelModel.extendTo(StartPage, {
 			return instance;
 		},
 		'tags': function(name) {
-	
+
 			var full_name = 'tags/' + name;
-		
+
 			var instance = new TagPage();
 			instance.init_opts = [{
 				app: this.app,
@@ -58,13 +65,13 @@ mapLevelModel.extendTo(StartPage, {
 				tag_name: name
 			}];
 			return instance;
-		
+
 
 		},
 		'users': function(name) {
 
 			var full_name = 'users/' + name;
-			
+
 			if (name == 'me'){
 				var instance = new UserCard();
 				instance.init_opts = [{
@@ -76,7 +83,7 @@ mapLevelModel.extendTo(StartPage, {
 				}, {urp_name: name}];
 				return instance;
 			}
-			
+
 
 		}
 	},
@@ -118,7 +125,7 @@ mapLevelModel.extendTo(StartPage, {
 				} else {
 					this.updateState('ask-rating-help', false);
 				}
-				
+
 			}
 		}
 	},

@@ -424,7 +424,7 @@ $filter = function(array, field, value_or_testfunc){
 
 
 
-cloneObj= function(acceptor, donor, black_list, white_list){
+cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
 	//not deep!
 	var _no = acceptor || {};
 	for(var a in donor){

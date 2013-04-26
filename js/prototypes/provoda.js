@@ -962,8 +962,15 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				});
 			}
 		}
-		if (changes_list.length && this.tpl){
-			this.tpl.setStates(this.states);
+		if (changes_list.length){
+			if (this.tpl){
+				this.tpl.setStates(this.states);
+			}
+			if (this.tpls){
+				for (i = 0; i < this.tpls.length; i++) {
+					this.tpls[i].setStates(this.states);
+				}
+			}
 		}
 		return changed_states;
 	},
@@ -1097,7 +1104,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	RPCLegacy: function() {
 		var args = Array.prototype.slice.call(arguments);
 		var method_name = args.shift();
-		this[method_name].apply(this, args);
+		if (this.rpc_legacy && this.rpc_legacy[method_name]){
+			this.rpc_legacy[method_name].apply(this, args);
+		} else {
+			this[method_name].apply(this, args);
+
+		}
 	},
 	die: function(){
 		this.stopRequests();
@@ -1376,9 +1388,13 @@ Class.extendTo(Template, {
 		if (opts.scope){
 			this.scope = opts.scope;
 		}
+		if (opts.spec_states){
+			this.spec_states = opts.spec_states;
+		}
 		if (opts.callCallbacks){
 			this.sendCallback = opts.callCallbacks;
 		}
+		this.pvTypesChange = opts.pvTypesChange;
 		this.ancs = {};
 		this.pv_views = [];
 		this.pv_repeats = {};
@@ -1388,8 +1404,8 @@ Class.extendTo(Template, {
 
 		this.states_watchers = [];
 		this.stwat_index = {};
-
-
+		this.pv_types = [];
+		this.pv_repeats_data = [];
 
 
 		var directive_name;
@@ -1406,11 +1422,38 @@ Class.extendTo(Template, {
 
 		this.getPvDirectives(this.root_node);
 		if (!window.angbo || !window.angbo.interpolateExpressions){
-			console.log('cant pasre statements');
+			console.log('cant parse statements');
 		}
 		if (this.scope){
 			this.setStates(this.scope);
 		}
+	},
+	_pvTypesChange: function() {
+		if (this.pv_types_collecting){
+			return;
+		} else {
+			if (this.pvTypesChange){
+				this.pvTypesChange.call(this, this.getTypedNodes());
+			}
+		}
+	},
+	getTypedNodes: function() {
+		var result = [];
+		var objs = [this];
+		while (objs.length){
+			var cur = objs.shift();
+			if (cur.pv_types.length){
+				result.push(cur.pv_types);
+			}
+
+			for (var i = 0; i < cur.pv_repeats_data.length; i++) {
+				if (cur.pv_repeats_data[i].array){
+					objs = objs.concat(cur.pv_repeats_data[i].array);
+				}
+				
+			}
+		}
+		return result;
 	},
 	getFieldsTreesBases: function(all_vs) {
 		var sfy_values = [];
@@ -1468,7 +1511,10 @@ Class.extendTo(Template, {
 			if (node == this.root_node){
 				return;
 			}
-
+			var repeat_data = {
+				array: null
+			};
+			this.pv_repeats_data.push(repeat_data);
 
 			//start of angular.js code
 			var expression = full_declaration;//attr.ngRepeat;
@@ -1520,6 +1566,8 @@ Class.extendTo(Template, {
 					}*/
 					if (original_fv != new_fv){
 						var repeats_array = [];
+						repeat_data.array = [];
+						_this.pv_types_collecting = true;
 
 						$(old_nodes).remove();
 						old_nodes = [];
@@ -1534,6 +1582,8 @@ Class.extendTo(Template, {
 							full_pv_context = _this.pv_repeat_context + '.$.';
 						}
 						full_pv_context += field_name;
+						
+						var fragt = document.createDocumentFragment();
 
 						for (var i = 0; i < collection.length; i++) {
 							var scope = {};
@@ -1556,17 +1606,15 @@ Class.extendTo(Template, {
 								callCallbacks: _this.sendCallback
 							});
 							old_nodes.push(cur_node);
-							if (prev_node){
-								$(prev_node).after(cur_node);
-							} else {
-								$(comment_anchor).after(cur_node);
-							}
-
-
+							$(fragt).append(cur_node);
 							prev_node = cur_node;
 							repeats_array.push(template);
+							repeat_data.array.push(template);
 						}
+						$(comment_anchor).after(fragt);
 						_this.pv_repeats[full_pv_context] = repeats_array;
+						_this.pv_types_collecting = false;
+						_this._pvTypesChange();
 
 					//	setValue.call(_this, node, attr_obj, new_value, original_value);
 					//	original_value = new_value;
@@ -1634,6 +1682,36 @@ Class.extendTo(Template, {
 			*/
 
 		},
+		'pv-type': function(node, full_declaration) {
+			if (!full_declaration){
+				return;
+			}
+			var pv_type_data = {node: node, marks: null};
+			this.pv_types.push(pv_type_data);
+			this.bindStandartChange(node, {
+				complex_statement: full_declaration,
+				getValue: function(){return '';},
+				setValue: function(node, new_value, old_value){
+					var types = new_value.split(/\s+/gi);
+					pv_type_data.marks = {};
+					for (var i = 0; i < types.length; i++) {
+						if (types[i]){
+							pv_type_data.marks[types[i]] = true;
+						}
+					}
+					this._pvTypesChange();
+				},
+				simplifyValue: function(value) {
+					if (!value){
+						return value;
+					}
+					return value.replace(/\s+/gi,' ').replace(/^\s|\s$/gi,'');
+				},
+				direct_check: true
+			});
+
+			//
+		},
 		'pv-events': function(node, full_declaration) {
 			/*
 			click:Callback
@@ -1642,7 +1720,9 @@ Class.extendTo(Template, {
 			var declarations = full_declaration.split(/\s+/gi);
 			for (var i = 0; i < declarations.length; i++) {
 				var cur = declarations[i].split(':');
-				this.bindEvents(node, cur[0], cur[1]);
+				var dom_event = cur.shift();
+
+				this.bindEvents(node, dom_event, cur);
 			}
 		}
 	},
@@ -1709,42 +1789,59 @@ Class.extendTo(Template, {
 			var sfy_values = this.getFieldsTreesBases(all_vs);
 			var _this = this;
 
+			var checkFunc = function(states) {
+				var new_value = calculator(states);
+				if (opts.simplifyValue){
+					new_value = opts.simplifyValue.call(_this, new_value);
+				}
+				if (original_value != new_value){
+					opts.setValue.call(_this, node, new_value, original_value);
+					original_value = new_value;
+				}
+			};
+
 			this.states_watchers.push({
 				values: all_vs,
 				sfy_values: sfy_values,
-				checkFunc: function(states) {
-					var new_value = calculator(states);
-					if (opts.simplifyValue){
-						new_value = opts.simplifyValue.call(_this, new_value);
-					}
-					if (original_value != new_value){
-						opts.setValue.call(_this, node, new_value, original_value);
-						original_value = new_value;
-					}
-				}
+				checkFunc: checkFunc
 			});
+			if (opts.direct_check){
+				checkFunc({});
+			}
 		}
 	},
-	bindEvents: function(node, event_name, callback_name) {
+	bindEvents: function(node, event_name, data) {
 		var _this = this;
 		if (!this.sendCallback){
 			throw new Error('provide the events callback handler to the Template init func');
 		}
 		$(node).on(event_name, function(e) {
-			_this.callEventCallback(e, callback_name);
+			_this.callEventCallback(e, data);
 		});
 	},
-	callEventCallback: function(e, callback_name) {
+	callEventCallback: function(e, data) {
 		this.sendCallback({
 			event: e,
-			callback_name: callback_name,
+			callback_name: data[0],
+			callback_data: data,
 			pv_repeat_context: this.pv_repeat_context,
 			scope: this.scope
 		});
 	},
 	setStates: function(states) {
+		var states_summ;
+		if (this.spec_states){
+			states_summ = {};
+			if (states){
+				spv.cloneObj(states_summ, states);
+			}
+			spv.cloneObj(states_summ, this.spec_states);
+
+		} else {
+			states_summ = states;
+		}
 		for (var i = 0; i < this.states_watchers.length; i++) {
-			this.states_watchers[i].checkFunc(states);
+			this.states_watchers[i].checkFunc(states_summ);
 		}
 	},
 	/*
@@ -1877,12 +1974,14 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var _this = this;
 		this.triggerTPLevents = function(e) {
 			if (!e.pv_repeat_context){
-				_this.tpl_events[e.callback_name].call(_this, e.event);
+				if (e.callback_data[1]){
+					_this.RPCLegacy(e.callback_data[1]);
+				} else {
+					_this.tpl_events[e.callback_name].call(_this, e.event);
+				}
 			} else {
 				_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.scope);
 			}
-
-
 		};
 		return this;
 	},
@@ -1929,11 +2028,31 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			//throw new Error('give me check tool!');
 		}
 		this.way_points.push(obj);
+		return obj;
 	},
-	getTemplate: function(node, callCallbacks) {
+	hasWaypoint: function(point) {
+		var arr = spv.filter(this.way_points, 'node');
+		return arr.indexOf(point) != -1;
+	},
+	removeWaypoint: function(point) {
+		var stay = [];
+		for (var i = 0; i < this.way_points.length; i++) {
+			var cur = this.way_points[i];
+			if (cur.node != point){
+				stay.push(cur);
+			} else {
+				cur.removed = true;
+			}
+		}
+		this.way_points = stay;
+	},
+	buildTemplate: function() {
+		return new Template();
+	},
+	getTemplate: function(node, callCallbacks, pvTypesChange) {
 		node = node[0] || node;
 		var template = new Template();
-		template.init({node: node, callCallbacks: callCallbacks});
+		template.init({node: node, callCallbacks: callCallbacks, pvTypesChange: pvTypesChange});
 
 		return template;
 	},
@@ -1941,7 +2060,63 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (!this.c){
 			throw new Error('cant create template');
 		}
-		this.tpl = this.getTemplate(this.c, this.triggerTPLevents);
+		var _this = this;
+		this.tpl = this.getTemplate(this.c, this.triggerTPLevents, function(arr_arr) {
+			//pvTypesChange
+			var old_waypoints = this.waypoints;
+			var total = [];
+			var i;
+			for (i = 0; i < arr_arr.length; i++) {
+				total = total.concat(arr_arr[i]);
+			}
+			var matched = [];
+			for (i = 0; i < total.length; i++) {
+				var cur = total[i];
+				if (!cur.marks){
+					continue;
+				}
+				if (cur.marks['hard-way-point'] || cur.marks['way-point']){
+					matched.push(cur);
+				}
+			}
+			var to_remove = old_waypoints && spv.arrayExclude(old_waypoints, matched);
+			this.waypoints = matched;
+			_this.updateTemplatedWaypoints(matched, to_remove);
+		});
+	},
+	addTemplatedWaypoint: function(wp_wrap) {
+		if (!this.hasWaypoint(wp_wrap.node)){
+			//может быть баг! fixme!?
+			//не учитывается возможность при которой wp изменил свой mark
+			//он должен быть удалён и добавлен заново с новыми параметрами
+			var type;
+			if (wp_wrap.marks['hard-way-point']){
+				type = 'hard-way-point';
+			} else if (wp_wrap.marks['way-point']){
+				type = 'way-point';
+			}
+			this.addWayPoint(wp_wrap.node, {
+				canUse: function() {
+					return !!(wp_wrap.marks && wp_wrap.marks[type]);
+				},
+				simple_check: type == 'hard-way-point'
+			});
+		}
+	},
+	updateTemplatedWaypoints: function(add, remove) {
+		var i;
+		if (remove){
+			var nodes_to_remove = spv.filter(remove, 'node');
+			for (i = 0; i < nodes_to_remove.length; i++) {
+				this.removeWaypoint(nodes_to_remove[i]);
+			}
+		}
+		for (i = 0; i < add.length; i++) {
+			this.addTemplatedWaypoint(add[i]);
+		}
+		if (add.length){
+			//console.log(add);
+		}
 	},
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;
@@ -1958,6 +2133,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	useBase: function(node) {
 		this.c = node;
 		this.createTemplate();
+		if (this.bindBase){
+			this.bindBase();
+		}
 	},
 	createDetailes: function() {
 		if (this.pv_view_node){
@@ -2590,7 +2768,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				append_list.push(append_info);
 			}
 		}*/
-		
+		var detached = [];
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
 			view = this.getChildView(cur.mpx, declr.space);
@@ -2604,8 +2782,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 						if (parent_node){
 							parent_node.removeChild(current_node[0]);
 						}
-						
+
 						view.detached = true;
+						detached.push(view);
 					}
 				}
 			}
@@ -2683,7 +2862,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			} else if (complect.type =='direct'){
 				declr.place.append(complect.fragt);
 			}
-			
+		}
+		for (i = 0; i < detached.length; i++) {
+			detached[i].detached = null;
 		}
 		return complects;
 		//1 открепить неправильно прикреплённых

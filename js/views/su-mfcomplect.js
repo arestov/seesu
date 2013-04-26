@@ -81,7 +81,6 @@ var get_youtube = function(q, callback){
 			cache_ajax.set('youtube', q, r);
 		});
 	}
-	
 };
 
 var mfCorUI = function(md) {};

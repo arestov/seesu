@@ -23,7 +23,9 @@ provoda.View.extendTo(StartPageView, {
 
 		this.els = this.root_view.els;
 		this.c = this.els.start_screen;
+		this.createTemplate();
 
+		/*
 		var hq_link = this.c.find('#hint-query');
 		hq_link.text(su.popular_artists[(Math.random()*10).toFixed(0)]);
 		hq_link.click(function(e) {
@@ -34,8 +36,9 @@ provoda.View.extendTo(StartPageView, {
 			su.trackEvent('Navigation', 'hint artist');
 
 		});
-		
-		this.addWayPoint(hq_link, {
+		*/
+
+		this.addWayPoint(this.tpl.ancs['hint-query'], {
 			//simple_check: true
 		});
 	},
@@ -59,7 +62,7 @@ provoda.View.extendTo(StartPageView, {
 					} else {
 						return false;
 					}
-					
+
 				} else {
 					return mp_show;
 				}
@@ -80,7 +83,7 @@ provoda.View.extendTo(StartPageView, {
 				//	this.search_input[0].select();
 				}
 			} else {
-				
+
 			}
 		},
 		"can_expand": function(state) {
@@ -88,12 +91,11 @@ provoda.View.extendTo(StartPageView, {
 				this.requirePart('start-page-blocks');
 			}
 		},
-	
 		"ask-rating-help": function(link){
 			var _this = this;
 
 			if (link){
-				var spm_c = this.els.start_screen.find('.start-page-messages');
+				var spm_c = this.tpl.ancs['start-page-messages'];
 				this.message_arh_c = $('<div class="attention-message"></div>');
 
 				$("<a class='close-message'>×</a>").appendTo(this.message_arh_c).click(function() {
@@ -106,8 +108,6 @@ provoda.View.extendTo(StartPageView, {
 					alt: "Gleb Arestov"
 				}).appendTo(this.message_arh_c);
 
-
-				
 
 				var url = $("<a class='external'></a>").attr('href', link).text(localize('at-this-page'));
 				this.message_arh_c.append(createComlexText(localize("ask-rating-help")).setVar("app_url", url[0]));
@@ -122,7 +122,6 @@ provoda.View.extendTo(StartPageView, {
 			} else {
 				if (this.message_arh_c){
 					this.message_arh_c.remove();
-	
 				}
 			}
 		}

@@ -111,7 +111,7 @@ provoda.Model.extendTo(fileInTorrent, {
 				this.updateState('loaded_duration', opts.duration);
 			},
 			buffering: function(state) {
-				this.updateState('buffering-progress', !!state);
+				this.updateState('buffering_progress', !!state);
 			},
 			loading: function(opts){
 				var factor;
