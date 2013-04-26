@@ -962,8 +962,15 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				});
 			}
 		}
-		if (changes_list.length && this.tpl){
-			this.tpl.setStates(this.states);
+		if (changes_list.length){
+			if (this.tpl){
+				this.tpl.setStates(this.states);
+			}
+			if (this.tpls){
+				for (i = 0; i < this.tpls.length; i++) {
+					this.tpls[i].setStates(this.states);
+				}
+			}
 		}
 		return changed_states;
 	},
@@ -1381,6 +1388,9 @@ Class.extendTo(Template, {
 		if (opts.scope){
 			this.scope = opts.scope;
 		}
+		if (opts.spec_states){
+			this.spec_states = opts.spec_states;
+		}
 		if (opts.callCallbacks){
 			this.sendCallback = opts.callCallbacks;
 		}
@@ -1412,7 +1422,7 @@ Class.extendTo(Template, {
 
 		this.getPvDirectives(this.root_node);
 		if (!window.angbo || !window.angbo.interpolateExpressions){
-			console.log('cant pasre statements');
+			console.log('cant parse statements');
 		}
 		if (this.scope){
 			this.setStates(this.scope);
@@ -1677,7 +1687,7 @@ Class.extendTo(Template, {
 				return;
 			}
 			var pv_type_data = {node: node, marks: null};
-
+			this.pv_types.push(pv_type_data);
 			this.bindStandartChange(node, {
 				complex_statement: full_declaration,
 				getValue: function(){return '';},
@@ -1685,7 +1695,9 @@ Class.extendTo(Template, {
 					var types = new_value.split(/\s+/gi);
 					pv_type_data.marks = {};
 					for (var i = 0; i < types.length; i++) {
-						pv_type_data.marks[types[i]] = true;
+						if (types[i]){
+							pv_type_data.marks[types[i]] = true;
+						}
 					}
 					this._pvTypesChange();
 				},
@@ -1698,7 +1710,6 @@ Class.extendTo(Template, {
 				direct_check: true
 			});
 
-			this.pv_types.push(pv_type_data);
 			//
 		},
 		'pv-events': function(node, full_declaration) {
@@ -1818,8 +1829,19 @@ Class.extendTo(Template, {
 		});
 	},
 	setStates: function(states) {
+		var states_summ;
+		if (this.spec_states){
+			states_summ = {};
+			if (states){
+				spv.cloneObj(states_summ, states);
+			}
+			spv.cloneObj(states_summ, this.spec_states);
+
+		} else {
+			states_summ = states;
+		}
 		for (var i = 0; i < this.states_watchers.length; i++) {
-			this.states_watchers[i].checkFunc(states);
+			this.states_watchers[i].checkFunc(states_summ);
 		}
 	},
 	/*
@@ -2006,6 +2028,26 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			//throw new Error('give me check tool!');
 		}
 		this.way_points.push(obj);
+		return obj;
+	},
+	hasWaypoint: function(point) {
+		var arr = spv.filter(this.way_points, 'node');
+		return arr.indexOf(point) != -1;
+	},
+	removeWaypoint: function(point) {
+		var stay = [];
+		for (var i = 0; i < this.way_points.length; i++) {
+			var cur = this.way_points[i];
+			if (cur.node != point){
+				stay.push(cur);
+			} else {
+				cur.removed = true;
+			}
+		}
+		this.way_points = stay;
+	},
+	buildTemplate: function() {
+		return new Template();
 	},
 	getTemplate: function(node, callCallbacks, pvTypesChange) {
 		node = node[0] || node;
@@ -2029,22 +2071,52 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 			var matched = [];
 			for (i = 0; i < total.length; i++) {
-				var cur = total[i].marks;
-				if (!cur){
+				var cur = total[i];
+				if (!cur.marks){
 					continue;
 				}
-				if (cur['hard-way-point'] || cur['way-point']){
+				if (cur.marks['hard-way-point'] || cur.marks['way-point']){
 					matched.push(cur);
 				}
-				
 			}
 			var to_remove = old_waypoints && spv.arrayExclude(old_waypoints, matched);
 			this.waypoints = matched;
-			this.updateTemplatedWaypoints(matched, to_remove);
+			_this.updateTemplatedWaypoints(matched, to_remove);
 		});
 	},
+	addTemplatedWaypoint: function(wp_wrap) {
+		if (!this.hasWaypoint(wp_wrap.node)){
+			//может быть баг! fixme!?
+			//не учитывается возможность при которой wp изменил свой mark
+			//он должен быть удалён и добавлен заново с новыми параметрами
+			var type;
+			if (wp_wrap.marks['hard-way-point']){
+				type = 'hard-way-point';
+			} else if (wp_wrap.marks['way-point']){
+				type = 'way-point';
+			}
+			this.addWayPoint(wp_wrap.node, {
+				canUse: function() {
+					return !!(wp_wrap.marks && wp_wrap.marks[type]);
+				},
+				simple_check: type == 'hard-way-point'
+			});
+		}
+	},
 	updateTemplatedWaypoints: function(add, remove) {
-
+		var i;
+		if (remove){
+			var nodes_to_remove = spv.filter(remove, 'node');
+			for (i = 0; i < nodes_to_remove.length; i++) {
+				this.removeWaypoint(nodes_to_remove[i]);
+			}
+		}
+		for (i = 0; i < add.length; i++) {
+			this.addTemplatedWaypoint(add[i]);
+		}
+		if (add.length){
+			//console.log(add);
+		}
 	},
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;
@@ -2696,7 +2768,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				append_list.push(append_info);
 			}
 		}*/
-		
+		var detached = [];
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
 			view = this.getChildView(cur.mpx, declr.space);
@@ -2710,8 +2782,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 						if (parent_node){
 							parent_node.removeChild(current_node[0]);
 						}
-						
+
 						view.detached = true;
+						detached.push(view);
 					}
 				}
 			}
@@ -2789,7 +2862,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			} else if (complect.type =='direct'){
 				declr.place.append(complect.fragt);
 			}
-			
+		}
+		for (i = 0; i < detached.length; i++) {
+			detached[i].detached = null;
 		}
 		return complects;
 		//1 открепить неправильно прикреплённых
