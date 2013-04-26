@@ -922,16 +922,19 @@ provoda.View.extendTo(appModelView, {
 
 			};
 
-			_this.els.search_label = _this.els.search_form.find('#search-p').find('.lbl');
+			//_this.els.search_label = _this.els.search_form.find('#search-p').find('.lbl');
+
 			var justhead = _this.els.navs;
-			var np_button;
+			var daddy = justhead.children('.daddy');
+			var np_button = daddy.children('.np-button');
 			_this.nav = {
 				justhead: justhead,
-				daddy: justhead.children('.daddy')
+				daddy: daddy,
+				np_button: np_button.remove()
 			};
 
 			_this.nav.daddy.empty().removeClass('not-inited');
-
+			daddy.append(np_button);
 
 			$(d).on('click', '.external', function(e) {
 				e.preventDefault();
