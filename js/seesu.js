@@ -179,7 +179,9 @@ appModel.extendTo(seesuApp, {
 
 			}, {immediately: true})
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
-				_this.trackPage(nv.map_level.resident.page_name);
+				setTimeout(function() {
+					_this.trackPage(nv.map_level.resident.page_name);
+				},10);
 			}, {immediately: true})
 			.makeMainLevel();
 

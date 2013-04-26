@@ -58,10 +58,9 @@ provoda.View.extendTo(MusicConductorPreview, {
 					}).appendTo(c);
 				c.append(document.createTextNode(' '));
 				_this.addWayPoint(link);
-				
+
 			};
-			
-			
+
 			if (window.lastfm_toptags && lastfm_toptags.length){
 				var _c = $('<div class="block-for-startpage tags-hyped tags_list"></div>').appendTo(this.c);
 				$('<h3></h3>').appendTo(_c)
@@ -71,25 +70,25 @@ provoda.View.extendTo(MusicConductorPreview, {
 				}
 			}
 
-			
+
 			var users_play = $('<div class="block-for-startpage users-play-this"></div>').appendTo(this.c);
 			var users_limit = 6;
 			var showUsers = function(listenings,c, above_limit_value){
 				if (listenings.length){
-					
+
 					var uselisteningClick = function(e) {
 						var a = $(this).data('artist');
 						var t = $(this).data('track');
 						_this.root_view.RPCLegacy('showArtistTopTracks', a, false, {artist: a, track: t});
 					};
-						
+
 					var uc = $('<ul></ul>');
 					for (var i=0, l = Math.min(listenings.length, Math.max(users_limit, users_limit + above_limit_value)); i < l; i++) {
 						var lig = listenings[i];
 						if (lig.info){
 							var list_item = $('<li></li>')
 								.append("<div class='vk-ava'><img alt='user photo' src='" + lig.info.photo + "'/></div>");
-								
+
 
 
 							$('<div class="desc-row"></div>')
@@ -108,18 +107,17 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 							$('<span class="song-track-name"></span>').text(lig.title).appendTo(song_complect);
 							$('<span class="song-artist_name"></span>').text(lig.artist).appendTo(song_complect);
-							
+
 
 							list_item.append(song_complect).appendTo(uc);
-								
-								
+
 						}
 					}
 					uc.appendTo(c);
 				}
 				return Math.max(users_limit - listenings.length, 0);
 			};
-			
+
 			var showUsersListenings = function(r){
 				users_play.removeClass('loading');
 				if (r && r.length){
@@ -127,7 +125,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 						users_play.empty();
 						var _header = $('<h3></h3>').appendTo(users_play)
 						.append(localize('User-listening','Users are listening'));
-						
+
 						$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
 							su.s.susd.ligs.getData();
 						}).appendTo(_header);
@@ -138,11 +136,9 @@ provoda.View.extendTo(MusicConductorPreview, {
 							}
 						}
 					}
-					
-					
+
 				}
-				
-				
+
 
 			};
 			su.s.susd.ligs.regCallback('start-page', showUsersListenings, function(){

@@ -377,7 +377,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 		var _this = this;
 
 		this.parent_view.on('state-change.mp_show_end', function(e){
-			_this.setVisState('is-visible', !!e.value);
+			_this.setVisState('is_visible', !!e.value);
 		});
 		this.dom_related_props.push('row_context', 'buttons_panel', 'arrow');
 
@@ -402,7 +402,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 
 	complex_states: {
 		"vis_volume-hole-width": {
-			depends_on: ['vis_is-visible', 'vis_con-appended'],
+			depends_on: ['vis_is_visible', 'vis_con-appended'],
 			fn: function(visible, apd){
 				return !!(visible && apd) && this.tpl.ancs['v-hole'].width();
 			}
@@ -499,7 +499,6 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 
 			path_points = null;
 
-			
 		};
 		events_anchor.on('mousedown', function(e){
 
