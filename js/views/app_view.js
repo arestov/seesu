@@ -463,53 +463,17 @@ provoda.View.extendTo(appModelView, {
 		"deep-sandbox": function(state){
 			this.toggleBodyClass(state, 'deep-sandbox');
 		},
-		"viewing_playing": function(state) {
-			if (this.now_playing_link){
-				if (state){
-					this.now_playing_link.removeClass("nav-button");
-				} else {
-					this.now_playing_link.addClass("nav-button");
-				}
-			}
-		},
+
 		"search_query": function(state) {
 			this.search_input.val(state || '');
 		},
-		'now_playing': function(text) {
-
-			var _this = this;
-			if (!this.now_playing_link && this.nav){
-				this.now_playing_link = $('<a class="nav-item np-button"><span class="np"></span></a>').click(function(){
-					_this.RPCLegacy('showNowPlaying');
-				}).appendTo(this.nav.daddy);
-
-				this.addWayPoint(this.now_playing_link, {
-					canUse: function() {
-						return !_this.state('viewing_playing');
-					}
-				});
-			}
-			if (this.now_playing_link){
-				this.now_playing_link.attr('title', (localize('now_playing','Now Playing') + ': ' + text));
-			}
-		},
 		playing: function(state) {
-			var s = this.now_playing_link;
-			if (state){
-				s.addClass('player-played');
-
-				if (app_env.need_favicon){
+			if (app_env.need_favicon){
+				if (state){
 					this.changeFavicon('playing');
-				}
-
-			} else {
-				s.each(function(i, el){
-					$(el).attr('class', el.className.replace(/\s*player-[a-z]+ed/g, ''));
-				});
-				if (app_env.need_favicon){
+				} else {
 					this.changeFavicon('usual');
 				}
-
 			}
 		},
 		"doc_title": function(title) {
@@ -606,6 +570,9 @@ provoda.View.extendTo(appModelView, {
 	},
 	parts_builder: {
 		//samples
+		'song-file': function() {
+			return this.els.ui_samples.children('.song-file');
+		},
 		'complex-page': function() {
 			return this.els.ui_samples.children('.complex-page');
 		},
@@ -934,6 +901,23 @@ provoda.View.extendTo(appModelView, {
 			};
 
 			_this.nav.daddy.empty().removeClass('not-inited');
+
+			np_button.click(function(){
+				_this.RPCLegacy('showNowPlaying');
+			});
+
+			_this.addWayPoint(np_button, {
+				canUse: function() {
+					return !_this.state('viewing_playing');
+				}
+			});
+
+			var nptpl = _this.buildTemplate();
+			nptpl.init({
+				node: np_button
+			});
+			_this.tpls.push(nptpl);
+
 			daddy.append(np_button);
 
 			$(d).on('click', '.external', function(e) {

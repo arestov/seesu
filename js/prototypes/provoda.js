@@ -2768,7 +2768,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				append_list.push(append_info);
 			}
 		}*/
-		
+		var detached = [];
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
 			view = this.getChildView(cur.mpx, declr.space);
@@ -2782,8 +2782,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 						if (parent_node){
 							parent_node.removeChild(current_node[0]);
 						}
-						
+
 						view.detached = true;
+						detached.push(view);
 					}
 				}
 			}
@@ -2861,7 +2862,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			} else if (complect.type =='direct'){
 				declr.place.append(complect.fragt);
 			}
-			
+		}
+		for (i = 0; i < detached.length; i++) {
+			detached[i].detached = null;
 		}
 		return complects;
 		//1 открепить неправильно прикреплённых

@@ -614,7 +614,42 @@
 			
 		</div>
 	
-	
+		<li
+			class="song-file"
+			pv-type="{{!selected && vis_wp_usable && 'way-point'}}"
+			pv-events="click:selectFile"
+			pv-class="
+				{{unavailable && 'mf-unavailable'}}
+				{{buffering_progress && 'buffering-progress'}}
+				{{play == 'play' && 'playing-file'}}
+				{{selected && 'selected-mf'}}
+				{{overstock && 'overstocked'}}
+			">
+			<span 
+				class="play-button-place"
+				pv-type="{{selected && 'way-point'}}"
+				pv-events="click:switchPlay">
+				<span class="pc-indicator big-indicator play-indicator pc-place">
+					<span class="pc pc-play big-control"></span>
+				</span>
+				
+			</span>
+			<div class="mf-progress" pv-anchor="progress_c">
+				<div 
+					class="mf-load-progress"
+					pv-props="style.width:{{vis_loading_p}}"
+					></div>
+				<div
+					class="mf-play-progress"
+					pv-props="style.width:{{vis_playing_p}}"
+					></div>
+				<div class="mf-text">
+					<span class="mf-duration" pv-text="{{visible_duration_text}}"></span>
+					<span class="main-mf-text" pv-text="{{title}}" pv-props="title:{{description}}"></span>
+					<span class="mf-source" pv-text="{{source_name}}"></span>
+				</div>
+			</div>
+		</li>
 
 
 		<dl class="buttmen play-controls">
@@ -748,7 +783,15 @@
 	<div class="navs ">
 		<div class="daddy not-inited">
 			<span class="nnav nav-start" title="Seesu start page" id="start_search"><b></b></span>
-			<a class="nav-item np-button hidden"><span class="np"></span></a>
+			<a 
+				class="nav-item np-button hidden"
+				pv-props="title:{{now_playing_text}}"
+				pv-class="
+					nav-item np-button
+					{{!now_playing_text && 'hidden'}}
+					{{!viewing_playing && 'nav-button'}}
+					{{playing && 'player-played'}}
+				"><span class="np"></span></a>
 		</div>
 	</div>
 	<div id="slider-materail" class="shadowed">
