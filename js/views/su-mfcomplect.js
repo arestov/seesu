@@ -17,40 +17,8 @@ provoda.View.extendTo(mfComplectUI, {
 		'file-http': songFileModelUI
 	},
 	'collch-moplas_list': {
-		place: 'lc',
+		place: 'tpl.ancs.listc',
 		by_model_name: true
-	},
-	createBase: function() {
-		this.c = $('<div class="moplas-list"></div>');
-		this.header_c = $('<h4></h4>').appendTo(this.c);
-		this.lc = $('<ul></ul>').appendTo(this.c);
-		this.dom_related_props = ['header_c', 'lc'];
-	},
-	state_change: {
-		overstock: function(state) {
-			if (state){
-				var _this = this;
-				var header = $('<a class="js-serv"></a>').click(function() {
-					_this.RPCLegacy('toggleOverstocked');
-				}).text(this.state('complect_name'));
-				this.addWayPoint(header, {
-					canUse: function() {
-						return _this.parent_view.state('want_more_songs');
-					}
-				});
-				this.header_c.empty().append(header);
-			}
-		},
-		"show-overstocked": function(state, oldstate){
-			if (state){
-				this.c.addClass('want-overstocked-songs');
-			} else if (oldstate){
-				this.c.removeClass('want-overstocked-songs');
-			}
-		},
-		'complect_name': function(state) {
-			this.header_c.text(state);
-		}
 	}
 });
 
@@ -88,7 +56,7 @@ provoda.View.extendTo(mfCorUI, {
 	children_views:{
 		notifier: notifyCounterUI,
 		vk_auth: VkLoginUI,
-		complect: mfComplectUI,
+		sorted_completcs: mfComplectUI,
 		yt_videos: YoutubePreview
 	},
 	state_change: {
@@ -108,28 +76,6 @@ provoda.View.extendTo(mfCorUI, {
 			this.tpl.ancs.cant_play_music_message.toggleClass('hidden', !state);
 		}
 	},
-	'collch-sorted_completcs': function(name, array) {
-		var _this = this;
-		$.each(array, function(i, el) {
-			var el_view = _this.getFreeChildView({name: 'complect'}, el);
-			var el_dom = el_view && el_view.getA();
-			if (el_dom){
-				var prev_dom_hook = _this.getPrevView(array, i);
-				if (prev_dom_hook){
-					$(prev_dom_hook).after(el_dom);
-				} else {
-					var next_dom_hook = _this.getNextView(array, i);
-					if (next_dom_hook){
-						$(next_dom_hook).before(el_dom);
-					} else {
-						_this.tpl.ancs.mufils_c.append(el_dom);
-					}
-				}
-
-			}
-		});
-		this.requestAll();
-	},
 	'collch-vk_auth': {
 		place: 'tpl.ancs.messages_c',
 		strict: true
@@ -142,6 +88,9 @@ provoda.View.extendTo(mfCorUI, {
 			_this.RPCLegacy('switchMoreSongsView');
 		});
 		this.addWayPoint(this.tpl.ancs.more_songs_b);
+		this.parent_view.on('state-change.mp_show_end', function(e){
+			_this.setVisState('is_visible', !!e.value);
+		});
 	},
 	createBase: function() {
 		this.c = this.root_view.getSample('moplas-block');

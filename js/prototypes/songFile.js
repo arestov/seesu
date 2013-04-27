@@ -56,16 +56,18 @@ provoda.Model.extendTo(fileInTorrent, {
 			return this;
 		},
 		createTextStates: function() {
-			this.updateState('title', this.getTitle());
+			var states = {};
+			states['title'] = this.getTitle();
 			if (this.from){
-				this.updateState('source_name', this.from);
+				states['source_name'] = this.from;
 			}
 			if (this.description){
-				this.updateState('description', this.description);
+				states['description'] = this.description;
 			}
 			if (this.duration){
-				this.updateState('duration', this.duration);
+				states['duration'] = this.duration;
 			}
+			this.updateManyStates(states);
 		},
 		complex_states: {
 			"visible_duration": {

@@ -88,7 +88,7 @@ var mfComplect = function(opts, params) {
 
 provoda.Model.extendTo(mfComplect, {
 	toggleOverstocked: function() {
-		this.updateState('show-overstocked', !this.state('show-overstocked'));
+		this.updateState('show_overstocked', !this.state('show_overstocked'));
 	},
 	overstock_limit: 5,
 	hasManyFiles: function() {

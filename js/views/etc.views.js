@@ -352,15 +352,19 @@ provoda.View.extendTo(songFileModelUI, {
 		});
 
 		this.parent_view
-			.on('state-change.show-overstocked', function(e) {
+			.on('state-change.show_overstocked', function(e) {
 				_this.setVisState('p-show-ovst', e.value);
 			});
 
 
-		var song_view = mf_cor_view.parent_view;
-		song_view.on('state-change.mp_show_end', function(e){
+		//var song_view = mf_cor_view.parent_view;
+		mf_cor_view.on('state-change.vis_is_visible', function(e){
 			_this.setVisState('is_visible', !!e.value);
 		});
+		/*
+		song_view.on('state-change.mp_show_end', function(e){
+			_this.setVisState('is_visible', !!e.value);
+		});*/
 
 	},
 	complex_states: {

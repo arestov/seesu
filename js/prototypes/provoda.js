@@ -621,13 +621,25 @@ Class.extendTo(provoda.Eventor, {
 		var cb_cs = this.getMatchedCallbacks(name).matched;
 
 		if (cb_cs){
+			var collect = [];
+			var _this = this;
 			for (var i = 0; i < cb_cs.length; i++) {
 				var cur = cb_cs[i];
-				this.callEventCallback(cur, args);
+				if (cur.immediately){
+					this.callEventCallback(cur, args);
+				} else {
+					collect.push(cur);
+				}
+				
 				if (cur.once){
 					this.off(name, false, cur);
 				}
 			}
+			setTimeout(function() {
+				for (var i = 0; i < collect.length; i++) {
+					_this.callEventCallback(collect[i], args);
+				}
+			},1);
 		}
 		return this;
 	},
@@ -1078,9 +1090,11 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		
 		this.children_models = {};
 		this.postStatesChanges = function(states) {
+			return;
 			sync_sender.pushStates(this, states);
 		};
 		this.postNestingChange = function(nesting_name, value) {
+			return;
 			sync_sender.pushNesting(this, nesting_name, value);
 		};
 	//	var _this = this;
@@ -2143,13 +2157,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		} else if (this.createBase){
 			this.createBase();
 		}
-
-
+	},
+	requestDetailesCreating: function() {
+		if (!this.has_details){
+			this.has_details = true;
+			this.createDetailes();
+		}
 	},
 	requestDetailes: function(){
-
-		this.createDetailes();
-
+		this.requestDetailesCreating();
 		this._detailed = true;
 		if (!this.manual_states_connect){
 			this.connectChildrenModels();
@@ -2566,7 +2582,43 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		var filtered = pv_view.filterFn ? pv_view.filterFn(real_array) : real_array;
+		var _this = this;
+		var getFreeView = function(cur_md, node_to_use) {
+			var view = this.getFreeChildView({
+				name: name,
+				space: space_name,
+				sampleController: provoda.Controller
+			}, cur_md);
 
+			if (view){
+				if (!node_to_use){
+					node_to_use = pv_view.original_node.cloneNode(true);
+				}
+				view.pv_view_node = $(node_to_use);
+				//var model_name = mmm.model_name;
+
+				pv_view.node = null;
+				pv_view.views.push(view.view_id);
+
+				pv_view.last_node = node_to_use;
+				return view;
+			}
+		};
+
+		this.appendCollection(space_name, {
+			getView: function(cur_md) {
+				if (pv_view.node){
+					return getFreeView.call(this, cur_md, pv_view.node);
+				}
+			},
+			appendDirectly: function(fragt) {
+				$(pv_view.comment_anchor).after(fragt);
+			},
+			getFreeView: function(cur) {
+				return getFreeView.call(this, cur);
+			}
+		}, false, name, filtered);
+		/*
 		for (var mmm = 0; mmm < filtered.length; mmm++) {
 			var cur_md = filtered[mmm];
 			var view = this.getFreeChildView({
@@ -2575,8 +2627,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				sampleController: provoda.Controller
 			}, cur_md);
 			if (view){
-				var node_to_use = pv_view.node ? pv_view.node : pv_view.original_node.cloneNode(true);//fixme - do not 
-				//do not clone if we do not have "view" (controller)
+				var node_to_use = pv_view.node ? pv_view.node : pv_view.original_node.cloneNode(true);
 				view.pv_view_node = $(node_to_use);
 				//var model_name = mmm.model_name;
 
@@ -2587,7 +2638,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				}
 				pv_view.last_node = node_to_use;
 			}
-		}
+		}*/
 	},
 	checkCollectionChange: function(name) {
 		if (this.children_models[name]){
@@ -2751,29 +2802,27 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	appendNestingViews: function(declr, view_opts, name, array, not_request){
-	//	var append_list = [];
-		var cur, view, i, prev_view, next_view;
-		/*
-		for (var bb = 0; bb < array.length; bb++) {
-			cur = array[bb];
-			var append_info = this.appendFVAncorByVN({
-				md: cur,
-				name: (declr.by_model_name ? cur.model_name : name),
-				opts: (typeof opts == 'function' ? opts.call(this, cur) : opts),
-				place: declr.place,
-				space: declr.space,
-				strict: declr.strict
-			});
-			if (typeof opts.place != 'function'){
-				append_list.push(append_info);
+		this.appendCollection(declr.space, {
+			appendDirectly: function(fragt) {
+				declr.place.append(fragt);
+			},
+			getFreeView: function(cur) {
+				return this.getFreeChildView({
+					name: (declr.by_model_name ? cur.model_name : name),
+					space: declr.space
+				}, cur, (typeof view_opts == 'function' ? view_opts.call(this, cur) : view_opts));
 			}
-		}*/
+		}, view_opts, name, array, not_request);
+
+	},
+	appendCollection: function(space, funcs, view_opts, name, array, not_request) {
+		var cur, view, i, prev_view, next_view;
 		var detached = [];
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
-			view = this.getChildView(cur.mpx, declr.space);
+			view = this.getChildView(cur.mpx, space);
 			if (view){
-				prev_view = this.getPrevView(array, i, declr.space, true);
+				prev_view = this.getPrevView(array, i, space, true);
 				if (prev_view){
 					var current_node = view.getT();
 					var prev_node = prev_view.getT();
@@ -2808,18 +2857,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		//view_id + 'after'
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
-			view = this.getChildView(cur.mpx, declr.space);
+			view = this.getChildView(cur.mpx, space);
 			if (view && !view.detached){
 				continue;
 			}
-			prev_view = this.getPrevView(array, i, declr.space, true);
+			prev_view = this.getPrevView(array, i, space, true);
 			if (prev_view) {
 				append_list.push({
 					md: cur,
 					complect: createComplect(prev_view, 'after')
 				});
 			} else {
-				next_view = this.getNextView(array, i, declr.space, true);
+				next_view = this.getNextView(array, i, space, true);
 				if (next_view){
 					append_list.push({
 						md: cur,
@@ -2836,12 +2885,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		for (i = 0; i < append_list.length; i++) {
 			var append_data = append_list[i];
 			cur = append_data.md;
-			view = this.getChildView(cur.mpx, declr.space);
+			view = funcs.getView && funcs.getView.call(this, cur, space);
 			if (!view){
-				view = this.getFreeChildView({
-					name: (declr.by_model_name ? cur.model_name : name),
-					space: declr.space
-				}, cur, (typeof view_opts == 'function' ? view_opts.call(this, cur) : view_opts));
+				view = this.getChildView(cur.mpx, space);
+			}
+			if (!view){
+				view = funcs.getFreeView.call(this, cur);
 				//
 				//
 
@@ -2851,6 +2900,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			//$(.fragt).append();
 		}
 		if (!not_request){
+			//this._collections_set_processing
 			this.requestAll();
 		}
 		for (i = 0; i < ordered_complects.length; i++) {
@@ -2860,7 +2910,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			} else if (complect.type == 'before'){
 				complect.view.getT().before(complect.fragt);
 			} else if (complect.type =='direct'){
-				declr.place.append(complect.fragt);
+				funcs.appendDirectly.call(this, complect.fragt);
 			}
 		}
 		for (i = 0; i < detached.length; i++) {

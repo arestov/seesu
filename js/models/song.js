@@ -138,8 +138,10 @@ var song;
 			this.mf_cor
 				.on('before-mf-play', function(mopla) {
 
+
 					_this.player.changeNowPlaying(_this);
 					_this.mopla = mopla;
+					_this.updateState('play', mopla.state('play'));
 				})
 				.on("error", function(can_play) {
 					_this.player.trigger("song-play-error", _this, can_play);
@@ -201,7 +203,7 @@ var song;
 		},
 		getShareUrl: function() {
 			if (this.artist && this.track){
-				return "http://seesu.me/o" + "#/catalog/" + su.encodeURLPart(this.artist) + "/_/" + su.encodeURLPart(this.track);
+				return "http://seesu.me/o" + "#/catalog/" + this.app.encodeURLPart(this.artist) + "/_/" + this.app.encodeURLPart(this.track);
 			} else {
 				return "";
 			}
@@ -244,7 +246,7 @@ var song;
 
 				app_env.openURL( "http://seesu.me/vk/share.html" +
 					"?" + 
-					spv.stringifyParams({app_id: su.vkappid}, false, '=', '&') +
+					spv.stringifyParams({app_id: this.app.vkappid}, false, '=', '&') +
 					"#?" + 
 					spv.stringifyParams(data, false, '=', '&'));
 			}
@@ -268,15 +270,15 @@ var song;
 				delete this.start_time;
 
 
-				if (su.settings['lfm-scrobbling']){
+				if (this.app.settings['lfm-scrobbling']){
 					lfm.submit({
 						artist: this.artist,
 						track: this.track
 					}, duration, timestamp);
 				}
-				if (su.s.loggedIn()){
-					su.s.api('track.scrobble', {
-						client: su.env.app_type,
+				if (this.app.s.loggedIn()){
+					this.app.s.api('track.scrobble', {
+						client: this.app.env.app_type,
 						status: 'finished',
 						duration: duration,
 						artist: this.artist,
@@ -288,15 +290,15 @@ var song;
 		},
 		submitNowPlaying: spv.debounce(function(){
 			var duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
-			if (su.settings['lfm-scrobbling']){
+			if (this.app.settings['lfm-scrobbling']){
 				lfm.nowplay({
 					artist: this.artist,
 					track: this.track
 				}, duration);
 			}
-			if (su.s.loggedIn()){
-				su.s.api('track.scrobble', {
-					client: su.env.app_type,
+			if (this.app.s.loggedIn()){
+				this.app.s.api('track.scrobble', {
+					client: this.app.env.app_type,
 					status: 'playing',
 					duration: duration,
 					artist: this.artist,
