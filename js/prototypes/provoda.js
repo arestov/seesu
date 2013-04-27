@@ -2378,7 +2378,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this;
 	},
 	getT: function(){
-		return this.c || $(this.getA());
+		return this.c || this.pv_view_node || $(this.getA());
 	},
 	getC: function(){
 		return this.c;
@@ -2606,9 +2606,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		};
 
 		this.appendCollection(space_name, {
-			getView: function(cur_md) {
+			getView: pv_view.node && function(cur_md, space, preffered) {
 				if (pv_view.node){
-					return getFreeView.call(this, cur_md, pv_view.node);
+					if (!preffered || preffered.indexOf(cur_md) != -1){
+						return getFreeView.call(this, cur_md, pv_view.node);
+					}
+					
 				}
 			},
 			appendDirectly: function(fragt) {
@@ -2816,8 +2819,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 	},
 	appendCollection: function(space, funcs, view_opts, name, array, not_request) {
+		var getCollPriority = this['coll-prio-' + name];
+		var ordered_rend_list = getCollPriority && getCollPriority.call(this, array);
+		if (ordered_rend_list){
+			this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request, ordered_rend_list);
+		} else {
+			this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request);
+		}
+	},
+	appendOrderedCollection: function(space, funcs, view_opts, name, array, not_request, ordered_rend_list) {
 		var cur, view, i, prev_view, next_view;
 		var detached = [];
+		var ordered_part = ordered_rend_list && ordered_rend_list.shift();
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
 			view = this.getChildView(cur.mpx, space);
@@ -2855,10 +2868,23 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return complects[comt_id];
 		};
 		//view_id + 'after'
+
+		//создать контроллеры, которые уже имеют DOM в документе, но ещё не соединены с ним
+		//следующий итератор получит эти views через getChildView
+		if (funcs.getView){
+			for (i = 0; i < array.length; i++) {
+				funcs.getView.call(this, array[i], space, ordered_part);
+			}
+		}
+
+
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
 			view = this.getChildView(cur.mpx, space);
 			if (view && !view.detached){
+				continue;
+			}
+			if (!view && ordered_part && ordered_part.indexOf(cur) == -1){
 				continue;
 			}
 			prev_view = this.getPrevView(array, i, space, true);
@@ -2881,14 +2907,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					});
 				}
 			}
+			cur.append_list = append_list;
 		}
 		for (i = 0; i < append_list.length; i++) {
 			var append_data = append_list[i];
 			cur = append_data.md;
-			view = funcs.getView && funcs.getView.call(this, cur, space);
-			if (!view){
-				view = this.getChildView(cur.mpx, space);
-			}
+			
+			view = this.getChildView(cur.mpx, space);
 			if (!view){
 				view = funcs.getFreeView.call(this, cur);
 				//
@@ -2899,6 +2924,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			//append_data.complect.fragt.appendChild(view.getT()[0]);
 			//$(.fragt).append();
 		}
+		for (i = array.length - 1; i >= 0; i--) {
+			view = this.getChildView(array[i].mpx, space);
+			if (view){
+				view.requestDetailesCreating();
+			}
+		}
+		
 		if (!not_request){
 			//this._collections_set_processing
 			this.requestAll();
@@ -2915,6 +2947,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		for (i = 0; i < detached.length; i++) {
 			detached[i].detached = null;
+		}
+		if (ordered_rend_list && ordered_rend_list.length){
+			var _this = this;
+			setTimeout(function() {
+				_this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request, ordered_rend_list);
+			},1);
 		}
 		return complects;
 		//1 открепить неправильно прикреплённых

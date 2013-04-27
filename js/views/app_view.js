@@ -217,17 +217,7 @@ provoda.View.extendTo(appModelView, {
 		}
 	},
 	'spec-collch-song': function(name, md) {
-		var playlist = md.getParentMapModel();
-
-		var playlist_mpx = playlist.mpx;
-
-		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
-		if (!view){
-			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
-			var place = viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
-			place.append(view.getA());
-			this.requestAll();
-		}
+		
 	},
 	'spec-collch-playlist': {
 		place: viewOnLevelP,
@@ -399,6 +389,19 @@ provoda.View.extendTo(appModelView, {
 		//var parent_md = md.getParentMapModel();
 		//this.getChildView(mpx)
 	},
+	'detcoll-song': function(md) {
+		var playlist = md.getParentMapModel();
+
+		var playlist_mpx = playlist.mpx;
+
+		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
+		if (!view){
+			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
+			var place = viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
+			place.append(view.getA());
+			this.requestAll();
+		}
+	},
 	'stch-map_animation': function(changes) {
 		if (!changes){
 			return;
@@ -415,6 +418,10 @@ provoda.View.extendTo(appModelView, {
 					anid: changes.anid,
 					value: cur.value
 				});
+
+				if (this['detcoll-' + target.model_name]){
+					this['detcoll-' + target.model_name].call(this, target);
+				}
 				//MUST UPDATE VIEW, NOT MODEL!!!!!
 			} else if (cur.type == 'destroy'){
 				this.removeChildViewsByMd(target.mpx);
@@ -526,12 +533,17 @@ provoda.View.extendTo(appModelView, {
 
 			//node_position = jnode.position().top + scroll_top + this.c.parent().position().top;
 		}
+		/*
 
 		var el_bottom = jnode.height() + node_position;
 
 		var new_position;
 		if ( el_bottom > bottom_limit || el_bottom < top_limit){
 			new_position =  el_bottom - scrolling_viewport_height/2;
+		}*/
+		if (node_position < top_limit || node_position > bottom_limit){
+			//var allowed_height = Math.min(jnode.height(), scrolling_viewport_height);
+			new_position =  node_position - scrolling_viewport_height/2;
 		}
 		if (new_position){
 			if (opts.animate){

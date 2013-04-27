@@ -62,5 +62,41 @@ provoda.addPrototype("songsListBaseView", {
 		opts: function(){
 			return {lite: this.opts && this.opts.overview};
 		}
+	},
+	'coll-prio-songs-list': function(array) {
+		var viewing = [], prev_next = [], play = [], others = [];
+		for (var i = array.length - 1; i >= 0; i--) {
+			var cur = array[i];
+			//.mpx
+			var states = cur.states;
+			if (states.mp_show){
+				viewing.push(cur);
+			} else if (states.marked_as){
+				prev_next.push(cur);
+			} else if (states.player_song){
+				play.push(cur);
+			} else {
+				others.push(cur);
+			}
+		}
+		var result = [];
+		if (viewing.length){
+			result.push(viewing);
+		}
+		if (prev_next.length){
+			result.push(prev_next);
+		}
+		if (play.length){
+			result.push(play);
+		}
+		if (others.length){
+			result.push(others);
+		}
+		return result;
+		/*
+		player_song
+		marked_as
+		mp_show*/
+		
 	}
 });

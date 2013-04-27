@@ -95,7 +95,8 @@ var songsList;
 		},
 		
 		getLastSong: function(){
-			return this[this.main_list_name].length ? this[this.main_list_name][this[this.main_list_name].length - 1] : false;
+			var name = this.main_list_name;
+			return this[name].length ? this[name][this[name].length - 1] : false;
 		},
 		getMainListChangeOpts: function() {
 			return {
