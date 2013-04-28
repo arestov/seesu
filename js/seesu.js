@@ -72,7 +72,7 @@ appModel.extendTo(seesuApp, {
 			_gaq.gV = function(){
 				return suStore('ga_store');
 			};
-			suReady(function(){
+			app_serv.suReady(function(){
 				yepnope( {
 					
 					load: bpath + 'js/common-libs/ga.mod.min.js',
@@ -298,7 +298,7 @@ appModel.extendTo(seesuApp, {
 			_this.checkStats();
 		},100);
 
-		suReady(function() {
+		app_serv.suReady(function() {
 			_this.lfm_auth.try_to_login();
 			setTimeout(function(){
 				while (big_timer.q.length){
@@ -711,7 +711,7 @@ provoda.sync_s.setRootModel(su);
 	
 })();
 
-suReady(function(){
+app_serv.suReady(function(){
 	try_mp3_providers();
 	seesu.checkUpdates();
 });

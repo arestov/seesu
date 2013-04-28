@@ -35,7 +35,7 @@ Class.extendTo(vkCoreApi, {
 				params_full.access_token = this.access_token;
 			}
 
-			var wrap_def = wrapRequest({
+			var wrap_def = app_serv.wrapRequest({
 					url: this.link + method,
 					type: "GET",
 					dataType: this.jsonp ? 'jsonp' : 'json',

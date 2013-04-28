@@ -1,3 +1,7 @@
+var app_serv = {};
+
+
+
 (function(w) {
 	var ready = false;
 	jsLoadComplete(function(){
@@ -6,7 +10,7 @@
 			ready = true;
 		});
 	});
-	window.suReady = function(callback){
+	app_serv.suReady = function(callback){
 		if (ready){
 			setTimeout(callback, 30);
 		} else{
@@ -19,8 +23,7 @@
 	
 })(window);
 
-var wrapRequest = function(request_params, options, complex_response){
-	"use strict";
+app_serv.wrapRequest = function(request_params, options, complex_response){
 	complex_response = complex_response || {};
 	var deferred = $.Deferred();
 	
@@ -132,53 +135,6 @@ var wrapRequest = function(request_params, options, complex_response){
 	};
 
 };
-
-
-var tempTool = {
-	loadPlaylist: function() {
-		$.ajax({
-			url: "playlist.txt",
-			type: "text"
-		}).done(function(r) {
-			//var playlist = [];
-			var title ="крым,карпаты 2012";
-
-			var playlist = su.preparePlaylist({
-				title: title,
-				type: "cplaylist",
-				data: {name: title}
-			});
-
-			var arr = r.split(/\n/);
-			$.each(arr, function(i, el){
-				if (el){
-					var song = guessArtist(el);
-					if (!song.artist){
-						throw "Shhiii!";
-					}
-					playlist.add(song);
-				}
-			});
-			playlist.showOnMap();
-			dizi = playlist;
-		});
-	},
-	downloadFile: function(url) {
-		app_env.openURL(url);
-		return;
-		$(function() {
-			var iframe = document.createElement("iframe");
-			iframe.style.display = 'none';
-			iframe.src = url;
-			$(document.body).append(iframe);
-		});
-	}
-};
-
-var downloadFile = tempTool.downloadFile;
-
-
-
 
 var Panoramator = function(){};
 Panoramator.prototype = {

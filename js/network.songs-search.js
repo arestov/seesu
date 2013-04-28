@@ -20,7 +20,7 @@ isohuntTorrentSearch.prototype = {
 			options = options || {};
 			options.cache_key = options.cache_key || hex_md5('zzzzzzz' + query);
 
-			var wrap_def = wrapRequest({
+			var wrap_def = app_serv.wrapRequest({
 				url: "http://ca.isohunt.com/js/json.php",
 				type: "GET",
 				dataType: "json",
@@ -115,7 +115,7 @@ googleTorrentSearch.prototype = {
 			options.cache_key = options.cache_key || hex_md5('zzzzzzz' + query);
 
 
-			var wrap_def = wrapRequest({
+			var wrap_def = app_serv.wrapRequest({
 				url: "https://ajax.googleapis.com/ajax/services/search/web",
 				type: "GET",
 				dataType: this.crossdomain ? "json": "jsonp",

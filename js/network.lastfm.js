@@ -286,7 +286,7 @@ lastfm_api.prototype.initers.push(function(){
 	var _this = this;
 	
 	if (!this.sk) {
-		suReady(function(){
+		app_serv.suReady(function(){
 			su.lfm_auth.get_lfm_token();
 		});
 		

@@ -58,7 +58,7 @@ loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
 			} else if (window.opera && opera.extension && opera.extension.bgProcess){
 				cbp = opera.extension.bgProcess;
 			}
-
+			//если у приложения не бывает вспслывающих окон, то интерфейс должен создаваться на странице этого окна
 			if (!cbp || cbp != window){
 				//big_timer.sui_want = new Date();
 				jsLoadComplete({

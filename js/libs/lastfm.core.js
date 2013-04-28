@@ -123,7 +123,7 @@ lastfm_api.prototype= {
 			};
 		}
 
-		var wrap_def = wrapRequest({
+		var wrap_def = app_serv.wrapRequest({
 			url: this.api_path,
 			global: false,
 			type: post ? "POST" : "GET",

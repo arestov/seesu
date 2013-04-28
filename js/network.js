@@ -305,7 +305,7 @@ Class.extendTo(GoogleSoundcloud, {
 		options.cache_key = options.cache_key || hex_md5("https://ajax.googleapis.com/ajax/services/search/web" +  spv.stringifyParams(params_data));
 
 
-		var wrap_def = wrapRequest({
+		var wrap_def = app_serv.wrapRequest({
 			url: "https://ajax.googleapis.com/ajax/services/search/web",
 			type: "GET",
 			dataType: this.crossdomain ? "json": "jsonp",
@@ -348,7 +348,7 @@ Class.extendTo(DiscogsApi, {
 
 		//cache_ajax.get('vk_api', p.cache_key, function(r){
 
-		var wrap_def = wrapRequest({
+		var wrap_def = app_serv.wrapRequest({
 			url: "http://api.discogs.com" + path,
 			type: "GET",
 			dataType: this.crossdomain ? "json": "jsonp",
@@ -392,7 +392,7 @@ Class.extendTo(HypemApi, {
 		options = options || {};
 		options.cache_key = options.cache_key || hex_md5(full_url + spv.stringifyParams(params));
 
-		var wrap_def = wrapRequest({
+		var wrap_def = app_serv.wrapRequest({
 			url: full_url,
 			type: "GET",
 			dataType: "json",

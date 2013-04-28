@@ -20,7 +20,7 @@ scApi.prototype = {
 
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
 
-			var wrap_def = wrapRequest({
+			var wrap_def = app_serv.wrapRequest({
 				url: "http://api.soundcloud.com/" + method + ".js",
 				type: "GET",
 				dataType: this.crossdomain ? "json": "jsonp",
