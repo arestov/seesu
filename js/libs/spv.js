@@ -731,4 +731,4 @@ spv.debounce = debounce;
 spv.filter = $filter;
 
 })();
-
+define(function(){return spv;});

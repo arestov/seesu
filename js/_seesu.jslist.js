@@ -10,7 +10,7 @@ var jsLoadComplete,
 	}
 	
 	var js_toload = [
-	"js/libs/serv.js",
+	"js/libs/spv.js",
 	"js/app_serv.js",
 	"js/libs/localizer.js",
 	"js/libs/w_storage.js",
@@ -95,12 +95,11 @@ var jsLoadComplete,
 	"js/views/search-investigation.base.js",
 	"js/views/search-investigation.js",
 	"js/views/song-actionsrow.js",
-	"js/views/su-song.ui.js",
+	"js/views/SongUI.js",
 	"js/views/start_page.js",
 	"js/views/songs-list.base.js",
 	"js/views/songs-list.js",
-	"js/views/app_view.js",
-	"js/app.tph.js"
+	"js/views/AppView.js"
 	];
 	var bpathWrap = function(array){
 		if (base_path){
@@ -146,52 +145,58 @@ var jsLoadComplete,
 	jsLoadComplete.change = function() {
 		testCbs();
 	};
-	jsLoadComplete({
-		test: function(){
-			return window.app_env && (app_env.opera_widget || app_env.firefox_widget) && window.debounce && window.domReady && window.suStore;
-		},
-		fn: function() {
-			yepnope(base_path + "js/widget.resize.js");
-		}
-	});
+	require(['spv', 'js/app_serv'], function(spv, app_serv) {
 
-	jsLoadComplete({
-		test: function(){
-			return window.su;
-		},
-		fn: function() {
-			if (app_env.needs_url_history){
-				yepnope(base_path +  "js/seesu.url_games.js");
-			} else {
-				navi = {};
-				navi.set = navi.replace = function(){return false;};
-			}
-		}
-	});
-	jsLoadComplete({
-		test: function(){
-			return window.browseMap;
-		},
-		fn: function() {
-			if (!app_env.safe_data){
-				yepnope(base_path + "js/network.data.js");
-			}
-		}
-	});
-
-	yepnope([
-		{
-			load: bpathWrap(js_toload),
-			complete: function(){
-				completed = true;
-				big_timer.q.push([big_timer.base_category, 'ready-jsload', big_timer.comp('page-start'), 'All JSs loaded', 100]);
-				while (js_loadcomplete.length){
-					js_loadcomplete.shift()();
-				}
+		
+		jsLoadComplete({
+			test: function(){
+				return window.app_env && (app_env.opera_widget || app_env.firefox_widget) && window.debounce && window.domReady && window.suStore;
 			},
-			callback: function(url){
-				testCbs();
+			fn: function() {
+				yepnope(base_path + "js/widget.resize.js");
 			}
-		}
-	]);
+		});
+
+		jsLoadComplete({
+			test: function(){
+				return window.su;
+			},
+			fn: function() {
+				if (app_env.needs_url_history){
+					yepnope(base_path +  "js/seesu.url_games.js");
+				} else {
+					navi = {};
+					navi.set = navi.replace = function(){return false;};
+				}
+			}
+		});
+		jsLoadComplete({
+			test: function(){
+				return window.browseMap;
+			},
+			fn: function() {
+				if (!app_env.safe_data){
+					yepnope(base_path + "js/network.data.js");
+				}
+			}
+		});
+	
+		yepnope([
+			{
+				load: bpathWrap(js_toload),
+				complete: function(){
+					completed = true;
+					big_timer.q.push([big_timer.base_category, 'ready-jsload', big_timer.comp('page-start'), 'All JSs loaded', 100]);
+					while (js_loadcomplete.length){
+						js_loadcomplete.shift()();
+					}
+				},
+				callback: function(url){
+					testCbs();
+				}
+			}
+		]);
+	});
+
+	
 })();

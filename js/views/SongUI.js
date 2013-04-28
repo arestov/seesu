@@ -1,6 +1,9 @@
-var songUI = function(){};
+define(['provoda', 'spv', 'js/modules/Panoramator'], function(provoda, spv, Panoramator) {
+"use strict";
 
-provoda.View.extendTo(songUI, {
+var SongUI = function(){};
+
+provoda.View.extendTo(SongUI, {
 	dom_rp: true,
 	createDetailes: function(){
 		this.rowcs = {};
@@ -351,6 +354,7 @@ provoda.View.extendTo(songUI, {
 
 			//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
 			_this.img_requests = [];
+		
 			_this.img_panorama = new Panoramator();
 			var main_c = photo_c.parent();
 
@@ -450,8 +454,12 @@ provoda.View.extendTo(songUI, {
 				main_c.removeClass('loading-images');
 			});
 			_this.img_panorama.checkSize();
+			
+			
 
 
 		}
 	}
+});
+return SongUI;
 });

@@ -8,7 +8,6 @@ $.ajaxSetup({
 });
 $.support.cors = true;
 
-window.lfm_image_artist = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png';
 
 var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret'), function(key){
 	return suStore(key);
@@ -60,7 +59,7 @@ appModel.extendTo(seesuApp, {
 		this.version = version;
 		this.lfm = lfm;
 
-		this._url = get_url_parameters(location.search, true);
+		this._url = app_serv.get_url_parameters(location.search, true);
 		this.settings = {};
 		this.settings_timers = {};
 

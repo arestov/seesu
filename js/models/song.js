@@ -23,7 +23,7 @@ var song;
 							bio: ai.bio,
 							tags: ai.tags,
 							similars: ai.similars,
-							'artist_image': ai.images && ai.images[2] || lfm_image_artist
+							'artist_image': ai.images && ai.images[2] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png'
 						});
 
 						

@@ -181,7 +181,7 @@ var routePath = function(pth_string, route_tree) {
 			var path_name_parts = cur.split('?');
 			path_name = path_name_parts[0];
 			if (path_name_parts[1]){
-				path_opts = get_url_parameters(path_name_parts[1], true);
+				path_opts = app_serv.get_url_parameters(path_name_parts[1], true);
 			}
 		} else {
 			path_name = cur;

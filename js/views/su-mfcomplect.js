@@ -22,35 +22,6 @@ provoda.View.extendTo(mfComplectUI, {
 	}
 });
 
-var get_youtube = function(q, callback){
-	var cache_used = cache_ajax.get('youtube', q, callback);
-	if (!cache_used){
-		var data = {
-			q: q,
-			v: 2,
-			alt: 'json-in-script'
-			
-		};
-		aReq({
-			url: 'http://gdata.youtube.com/feeds/api/videos',
-			dataType: 'jsonp',
-			data: data,
-			resourceCachingAvailable: true,
-			afterChange: function(opts) {
-				if (opts.dataType == 'json'){
-					data.alt = 'json';
-					opts.headers = null;
-				}
-
-			},
-			thisOriginAllowed: true
-		}).done(function(r){
-			if (callback) {callback(r);}
-			cache_ajax.set('youtube', q, r);
-		});
-	}
-};
-
 var mfCorUI = function(md) {};
 provoda.View.extendTo(mfCorUI, {
 	children_views:{

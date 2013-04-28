@@ -128,7 +128,7 @@ var songsListView;
 			plarow: {
 				main: PlARowView
 			},
-			'songs-list': songUI
+			'songs-list': SongUI
 		}
 
 	});

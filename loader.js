@@ -1,3 +1,43 @@
+requirejs.config({
+	paths: {
+		provoda: 'js/prototype/provoda',
+		spv: 'js/libs/spv',
+		jquery: 'js/common-libs/jquery-2.0.0.min.js'
+	}
+});
+(function() {
+	var cbp;
+	if (window.chrome && chrome.extension){
+		cbp = chrome.extension.getBackgroundPage();
+	} else if (window.opera && opera.extension && opera.extension.bgProcess){
+		cbp = opera.extension.bgProcess;
+	}
+	//если у приложения не бывает вспслывающих окон, то интерфейс должен создаваться на странице этого окна
+	var need_ui = !cbp || cbp != window;
+
+	if (need_ui){
+		require(['spv', 'js/app_serv'], function(spv, app_serv) {
+			app_serv.handleDocument(window.document, {category: big_timer.base_category, start_time: "page-start"});
+		});
+		require(['js/seesu', 'js/views/AppView'], function(su, AppView) {
+			var can_die = false;
+			var md = su;
+			var view = new AppView();
+			md.mpx.addView(view, 'root');
+			md.updateLVTime();
+
+			view.init({
+				mpx: md.mpx
+			}, {d: window.document, allow_url_history: true, can_die: can_die});
+			view.requestAll();
+			provoda.sync_r.connectAppRoot();
+			window.app_view = view;
+			var tracking_opts =  {category: big_timer.base_category, start_time: "page-start"};
+		});
+	}
+})();
+
+
 var bpath = '';
 window._gaq = window._gaq || [];
 var big_timer = {
@@ -46,44 +86,26 @@ window.loadJS = function(src, callback){
 	p.parentNode.insertBefore(s, p);
 };
 })();
+
+
+
 loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
 	big_timer.q.push([big_timer.base_category, 'ready-yepnope', big_timer.comp('page-start'), 'yepnope loaded', 100]);
 
 	yepnope({
 		load: bpath + 'js/_seesu.jslist.js',
 		complete: function(){
-			var cbp;
-			if (window.chrome && chrome.extension){
-				cbp = chrome.extension.getBackgroundPage();
-			} else if (window.opera && opera.extension && opera.extension.bgProcess){
-				cbp = opera.extension.bgProcess;
-			}
-			//если у приложения не бывает вспслывающих окон, то интерфейс должен создаваться на странице этого окна
-			if (!cbp || cbp != window){
-				//big_timer.sui_want = new Date();
-				jsLoadComplete({
-					test: function() {
-						return window.app_env;
-					},
-					fn: function() {
-						handleDocument(window.document, {category: big_timer.base_category, start_time: "page-start"});
-						//
-					}
-				});
-				jsLoadComplete({
-					test: function() {
-						return window.appTelegrapher;
-					},
-					fn: function() {
+			require(['js/app_serv'], function(app_serv) {
+				
+				
+				if (need_ui){
+					//big_timer.sui_want = new Date();
 
-						var app_tph = new appTelegrapher();
-						app_tph.init(window, {category: big_timer.base_category, start_time: "page-start"});
-						//
-						provoda.sync_r.connectAppRoot();
-						window.app_view = app_tph.app_view;
-					}
-				});
-			}
+					
+
+				}
+			});
+			
 			
 		}
 	});

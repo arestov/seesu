@@ -1,7 +1,8 @@
+var app_env;
+var localize;
+define(['spv'], function(spv) {
+"use strict";
 var app_serv = {};
-
-
-
 (function(w) {
 	var ready = false;
 	jsLoadComplete(function(){
@@ -23,403 +24,6 @@ var app_serv = {};
 	
 })(window);
 
-app_serv.wrapRequest = function(request_params, options, complex_response){
-	complex_response = complex_response || {};
-	var deferred = $.Deferred();
-	
-	complex_response.abort = function(){
-		this.aborted = true;
-		deferred.reject('abort');
-		if (this.queued){
-			this.queued.abort();
-		}
-		if (this.xhr){
-			this.xhr.abort();
-		}
-	};
-
-	/*
-		var options = {
-			cache_ajax: cache_ajax
-			nocache: false,
-			cache_key: '',
-			cache_namespace: 'string',
-			requestFn
-			not_save_cache
-			manualSend: func,
-			responseFn: func,
-			queue
-		}
-
-	*/
-
-	deferred.promise( complex_response );
-
-	options.nocache = options.nocache || !options.cache_ajax;
-
-	var cache_used;
-	if (!options.nocache){
-		cache_used = options.cache_ajax.get(options.cache_namespace, options.cache_key, function(r){
-			deferred.resolve(r);
-		});
-		if (cache_used) {
-			complex_response.cache_used = true;
-			return {
-				defer: deferred,
-				complex: complex_response
-			};
-		}
-	}
-
-	if (!cache_used){
-		var sucessFn = function(r) {
-			if (options.responseFn){
-				options.responseFn(r);
-			}
-			deferred.resolve.apply(deferred, arguments);
-			if (!options.not_save_cache && options.cache_ajax){
-				options.cache_ajax.set(options.cache_namespace, options.cache_key, r, options.cache_timeout);
-			}
-		};
-		var sendRequest = function(){
-			if (complex_response.aborted){
-				return;
-			}
-			
-			if (!options.manualSend){
-				var cache_used;
-				if (!options.nocache){
-					cache_used = cache_ajax.get(options.cache_namespace, options.cache_key, function(r){
-						deferred.resolve(r);
-					});
-				}
-				if (!cache_used){
-
-					var request;
-					if (options.requestFn){
-						request = options.requestFn(request_params);
-					} else {
-						request = $.ajax(request_params);
-					}
-					complex_response.xhr = request;
-					request
-						.fail(function(r){
-							deferred.reject.apply(deferred, arguments);
-						})
-						.done(sucessFn);
-
-					if (deferred.notify){
-						deferred.notify('just-requested');
-					}
-				
-					//console.log(params)
-				}
-
-			} else{
-				options.manualSend(function(){
-					deferred.resolve();
-				});
-			}
-			
-		};
-
-		if (options.queue){
-			complex_response.queued = options.queue.add(sendRequest, options.not_init_queue);
-		} else{
-			sendRequest();
-		}
-	}
-	return {
-		defer: deferred,
-		complex: complex_response
-	};
-
-};
-
-var Panoramator = function(){};
-Panoramator.prototype = {
-	constructor: Panoramator,
-	init: function(opts){
-
-		if (opts.onUseEnd){
-			this.onUseEnd = opts.onUseEnd;
-		}
-		
-
-		var _this = this;
-		this.viewport = opts.viewport;
-		this.viewport.on('mousedown', function(e){
-			if (e.which && e.which != 1){
-				return true;
-			}
-			e.preventDefault();
-			_this.handleUserStart(e);
-		});
-		this.lift = opts.lift;
-		this.ready_class_name = opts.ready_class_name || 'ready_to_use';
-		this.lift_items = [];
-		this.mouseMove = function(e){
-			if (e.which && e.which != 1){
-				return true;
-			}
-			_this.cursorMove(e);
-		};
-		this.mouseUp = function(e){
-			if (e.which && e.which != 1){
-				return true;
-			}
-			_this.handleUserEnd(e);
-		};
-
-	},
-	limit_difficult: 3,
-	mininmal_speed: 0.5,
-	normal_speed: 0.7,
-	standart_animation_time: 150,
-	getMoveData: function(target_pos){
-		if (target_pos > 0 || (this.total_width < this.viewport_width)){
-			return {
-				main: 0,
-				above_limit: target_pos
-			};
-		} else {
-			var allowed_length = this.total_width - this.viewport_width;
-			if (-target_pos > allowed_length){
-				return {
-					main: -allowed_length,
-					above_limit: allowed_length + target_pos
-				};
-			} else {
-				return {
-					main: target_pos,
-					above_limit: 0
-				};
-			}
-		}
-	},
-	cursorMove: function(e){
-		//this.path_points
-		this.path_points.push({
-			cpos: e.pageX,
-			time: e.timeStamp
-		});
-		
-
-		var path_diff = this.path_points[0].cpos - e.pageX;
-		var target_pos = -this.path_points.lift_pos -path_diff;
-		var move_data = this.getMoveData(target_pos);
-
-		
-		//this.lift.stop();
-		this.lift.css("margin-left", (move_data.main + move_data.above_limit/this.limit_difficult) + 'px');
-		
-	},
-	checkVectorAndSpeed: function(){
-		var first = this.path_points[0];
-		var last = this.path_points[this.path_points.length-1];
-
-
-		var travel = last.cpos - first.cpos;
-		var speed = travel/(last.time - first.time);
-
-		if (Math.abs(travel) > 5){
-			if (Math.abs(speed) > this.mininmal_speed){
-				if (speed > 0 ){
-					return !this.prev(speed);
-				} else {
-					return !this.next(speed);
-				}
-			} else {
-
-				return true;
-			}
-			//
-			
-			//with speed or not?
-
-		} else {
-			var all_path = 0;
-			for (var i = 1; i < this.path_points.length; i++) {
-				all_path += Math.abs(this.path_points[i].cpos - this.path_points[i-1].cpos);
-			}
-			if (all_path > 5){
-			//	console.log(all_path)
-				return true;
-			} else {
-				var vwpp = this.viewport.offset().left;
-				var cur_pos = last.cpos - vwpp;
-				cur_pos = this.viewport_width/2 - cur_pos;
-				var center_factor = cur_pos * (1/(this.viewport_width/2));
-				if (center_factor > 0){
-
-					this.prev(false, 300 - 220 * Math.abs(center_factor));
-				} else if (center_factor < 0) {
-					this.next(false, 300 - 220 * Math.abs(center_factor));
-				}
-			//	console.log(center_factor);
-				
-			}
-
-			//click or big gesture like circle?
-			return true;
-		}
-	},
-	handleUserEnd: function(e){
-
-		var last_diff = this.path_points[0].cpos - this.path_points[this.path_points.length-1].cpos;
-		var lift_target_pos = -this.path_points.lift_pos -last_diff;
-
-		this.path_points.push({
-			cpos: e.pageX,
-			time: e.timeStamp
-		});
-
-		if (this.checkVectorAndSpeed()){
-			var move_data = this.getMoveData(lift_target_pos);
-			if (move_data.above_limit){
-				this.lift.animate({
-					"margin-left": move_data.main + 'px'
-				}, this.standart_animation_time);
-			}
-
-		}
-
-
-		$(this.viewport[0].ownerDocument)
-			.off('mouseup', this.mouseUp)
-			.off('mousemove', this.mouseMove);
-		this.viewport.removeClass('touching-this');
-		if (this.onUseEnd){
-			this.onUseEnd();
-		}
-		//this.viewport
-	},
-	handleUserStart: function(e){
-		
-	
-		this.lift.stop();
-		this.path_points = [];
-		this.path_points.lift_pos = this.getLiftPos();
-		this.path_points.push({
-			cpos: e.pageX,
-			time: e.timeStamp
-		});
-		this.viewport.addClass('touching-this');
-		$(this.viewport[0].ownerDocument)
-			.on('mousemove', this.mouseMove)
-			.on('mouseup', this.mouseUp);
-
-	},
-	setCollection: function(array){
-		this.lift_items = array;
-		this.checkSize();
-		this.lift.addClass(this.ready_class_name);
-	},
-	checkSize: function(){
-		this.total_width = this.getTotalWidth();
-		this.lift.css({
-			width: this.total_width + 'px'
-		});
-		this.viewport_width = this.viewport.width();
-	},
-	isEdgeElem: function(el, mobil_pos_shift, next) {
-		var cur = $(el);
-
-		var position = cur.position().left;
-		var width = cur.outerWidth();
-
-
-		if ( next ? ((position + width) > (this.viewport_width + mobil_pos_shift)) : (position < mobil_pos_shift)){
-			return {
-				el: cur,
-				left: position,
-				owidth: width
-			};
-		}
-	},
-	getTargetPos: function(last_visible, next) {
-		var pos = -last_visible.left + (this.viewport_width - last_visible.owidth)/2;
-		return next ? Math.max(pos, -(this.total_width - this.viewport_width)) : Math.min(pos, 0);
-	},
-	getLiftPos: function(){
-		return -parseFloat(this.lift.css("margin-left")) || 0;
-	},
-	getTotalWidth: function() {
-		var width = 0;
-		$.each(this.lift_items, function(i ,el) {
-			width += $(el).outerWidth(true);
-		});
-		return width;
-	},
-	toStart: function(){
-
-	},
-	toEnd: function(){
-
-	},
-	getNextEdgeElem: function(lift_pos){
-		var last_visible;
-
-		for (var i = 0; i < this.lift_items.length; i++) {
-
-			last_visible = this.isEdgeElem(this.lift_items[i], lift_pos, true);
-			if (last_visible){
-				break;
-			}
-
-		}
-		return last_visible;
-	},
-	getPrevEdgeElem: function(lift_pos){
-		var last_visible;
-
-		for (var i = this.lift_items.length - 1; i >= 0; i--) {
-			last_visible = this.isEdgeElem(this.lift_items[i], lift_pos);
-			if (last_visible){
-				break;
-			}
-		}
-		return last_visible;
-	},
-	getAnimationTime: function(target_pos, lift_pos, speed){
-		return  ( target_pos - lift_pos )/(speed * 1.5);
-	},
-	next: function(speed, time){
-		this.lift.stop(false, true);
-		var lift_pos = this.getLiftPos();
-		var last_visible = this.getNextEdgeElem(lift_pos);
-		 
-		if (last_visible){
-			var target_pos = this.getTargetPos(last_visible, true);
-			this.lift.animate({
-				"margin-left": target_pos + 'px'
-			},  speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
-			return true;
-		} else {
-			return false;
-		}
-
-		
-	},
-	prev: function(speed, time){
-		this.lift.stop(false, true);
-		var lift_pos = this.getLiftPos();
-		var last_visible = this.getPrevEdgeElem(lift_pos);
-		
-		if (last_visible){
-			var target_pos = this.getTargetPos(last_visible);
-			this.lift.animate({
-				"margin-left": target_pos + 'px'
-			}, speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
-			return true;
-
-		} else {
-			return false;
-		}
-		
-	}
-
-};
 
 
 var getTagRegExp = function(tag_name, simple, flags){
@@ -516,129 +120,6 @@ var getInternetConnectionStatus = function(cb) {
 		cb(false);
 	};
 	img.src = "http://www.google-analytics.com/__utm.gif?" + Math.random() + new Date();
-};
-var async_script_support = "async" in document.createElement("script");
-var xhr2_support = window.XMLHttpRequest && "withCredentials" in (new XMLHttpRequest());  //https://gist.github.com/1431660
-var aReq = function(options){
-	if (options.dataType != "jsonp"){
-		return $.ajax(options);
-	} else if (xhr2_support && options.thisOriginAllowed) {
-		options.dataType = "json";
-		options.crossDomain = true;
-		if (options.afterChange){
-			options.afterChange(options);
-		}
-		return $.ajax(options);
-	} else {
-		var
-			img,
-			script,
-			callback_func_name,
-			script_load_timeout,
-			deferred			= $.Deferred(),
-			cancelLoad = function() {
-				if (img){
-					img.src = null;
-					unbindImage();
-				}
-				if (script){
-					script.src = null;
-				}
-				if (callback_func_name && window[callback_func_name]){
-					window[callback_func_name] = $.noop();
-				}
-			},
-			complex_response	= {
-				abort: function(){
-					this.aborted = true;
-					cancelLoad();
-					
-
-				}
-			};
-		deferred.promise( complex_response );
-		
-		var timeout = options.timeout || ($.ajaxSettings && $.ajaxSettings.timeout);
-		if (timeout){
-			script_load_timeout = setTimeout(function() {
-				deferred.reject();
-			}, timeout);
-		}
-
-		var params = {};
-		$.extend(params, options.data || {});
-
-		var callback_param_name = options.callback || "callback";
-
-		if (!options.jsonpCallback && !params[callback_param_name]){
-			callback_func_name = create_jsonp_callback(function(r){
-				if (script_load_timeout){
-					clearTimeout(script_load_timeout);
-				}
-				
-				
-				deferred.resolve(r);
-			});
-			params[callback_param_name] = callback_func_name;
-		}
-
-
-		var params_url = $.param(params);
-		var full_url = (options.url || "") + (params_url ? "?" + params_url : "");
-
-		
-
-		
-		var done;
-		var loadScript = function(){
-			script = document.createElement("script");
-			script.async = true;
-			script.onload = function(){
-				//document.documentElement.firstChild.removeChild(script);
-				
-
-				
-			};
-			script.onerror = function(){
-				deferred.reject();
-			};
-			script.src = full_url;
-			document.documentElement.firstChild.insertBefore(script, document.documentElement.firstChild.firstChild);
-		};
-
-
-		var unbindImage = function(){
-			img.onload = null;
-			img.onerror = null;
-		};
-		if (async_script_support){
-			loadScript();
-		} else if (options.resourceCachingAvailable){
-			img = document.createElement("img");
-			var completeImage = function(){
-				if (!done){
-					done = true;
-					loadScript();
-				}
-			};
-
-			img.src = full_url;
-			
-			if (img.complete){
-				setTimeout(completeImage,0);
-			} else {
-				img.onload = completeImage;
-				img.onerror = completeImage;
-			}
-		} else {
-			loadScript();
-		}
-			
-		
-		
-		return complex_response;
-		
-	}
 };
 
 var getHTMLText = function(text) {
@@ -773,7 +254,7 @@ document_states.prototype = {
 window.dstates = new document_states(window.document);
 
 
-function get_url_parameters(str, decode_uri_c){
+var get_url_parameters = function(str, decode_uri_c){
 	var url_vars = str.replace(/^\?/,'').split('&');
 	var full_url = {};
 	for (var i=0; i < url_vars.length; i++) {
@@ -789,7 +270,8 @@ function get_url_parameters(str, decode_uri_c){
 		full_url[prop_name] = prop_value;
 	}
 	return full_url;
-}
+};
+app_serv.get_url_parameters = get_url_parameters;
 
 var detectBrowser;
 (function(w) {
@@ -813,8 +295,9 @@ var detectBrowser;
 	};
 	
 })(window);
+var xhr2_support = window.XMLHttpRequest && "withCredentials" in (new XMLHttpRequest());  //https://gist.github.com/1431660
 
-window.app_env = (function(wd){
+app_env = (function(wd){
 
 	var bro = detectBrowser();
 
@@ -1065,19 +548,6 @@ if (typeof widget != 'object'){
 
 
 
-// Forcing Opera full page reflow/repaint to fix page draw bugs
-var forceOperaRepaint = function() {
-	if (window.opera) {
-		var bs = window.document.body.style;
-		bs.position = 'relative';
-		setTimeout(function() {
-			bs.position = 'static';
-		}, 1);
-	}
-};
-
-
-
 
 if (typeof console != 'object'){
 	var console = {};
@@ -1098,7 +568,7 @@ if (typeof console != 'object'){
 
 var replaceComplexSVGImages;
 
-var handleDocument = function(d, tracking_opts) {
+app_serv.handleDocument = function(d, tracking_opts) {
 	/*
 	jsLoadComplete({
 		test: function() {
@@ -1213,8 +683,9 @@ var handleDocument = function(d, tracking_opts) {
 	*/
 };
 
-sviga = {};
-var localize= (function(){
+var sviga = {};
+
+localize= (function(){
 	var lang = app_env.lang;
 	return function(string, j){
 		if (localizer[string]){
@@ -1438,7 +909,7 @@ jsLoadComplete(function() {
 
 		return string ? big_result : complects;
 	};
-	global.checkPX = function(url) {
+	var checkPX = function(url) {
 		var complects = [];
 
 	
@@ -1691,3 +1162,6 @@ var parseArtistInfo = function(r){
 	}
 	return ai;
 };
+
+return app_serv;
+});
