@@ -542,8 +542,9 @@ provoda.View.extendTo(appModelView, {
 			new_position =  el_bottom - scrolling_viewport_height/2;
 		}*/
 		if (node_position < top_limit || node_position > bottom_limit){
-			//var allowed_height = Math.min(jnode.height(), scrolling_viewport_height);
-			new_position =  node_position - scrolling_viewport_height/2;
+			var allowed_height = Math.min(jnode.height(), scrolling_viewport_height);
+			new_position = node_position - allowed_height/2 - scrolling_viewport_height/2;
+			//new_position =  node_position - scrolling_viewport_height/2;
 		}
 		if (new_position){
 			if (opts.animate){

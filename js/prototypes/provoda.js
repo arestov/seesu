@@ -2924,17 +2924,20 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			//append_data.complect.fragt.appendChild(view.getT()[0]);
 			//$(.fragt).append();
 		}
-		for (i = array.length - 1; i >= 0; i--) {
-			view = this.getChildView(array[i].mpx, space);
-			if (view){
-				view.requestDetailesCreating();
+		if (!this._collections_set_processing){
+			for (i = array.length - 1; i >= 0; i--) {
+				view = this.getChildView(array[i].mpx, space);
+				if (view){
+					view.requestDetailesCreating();
+				}
+			}
+			
+			if (!not_request){
+				//this._collections_set_processing
+				this.requestAll();
 			}
 		}
 		
-		if (!not_request){
-			//this._collections_set_processing
-			this.requestAll();
-		}
 		for (i = 0; i < ordered_complects.length; i++) {
 			var complect = complects[ordered_complects[i]];
 			if (complect.type == 'after'){
