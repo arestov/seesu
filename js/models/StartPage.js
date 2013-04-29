@@ -1,8 +1,7 @@
-var StartPage;
-(function() {
+define(['js/libs/BrowseMap'], function(BrowseMap) {
 "use strict";
 
-StartPage = function() {};
+var StartPage = function() {};
 
 BrowseMap.Model.extendTo(StartPage, {
 	model_name: 'start_page',
@@ -142,5 +141,5 @@ BrowseMap.Model.extendTo(StartPage, {
 		}
 	}
 });
-
-})();
+return StartPage;
+});

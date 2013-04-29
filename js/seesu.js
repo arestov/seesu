@@ -1,9 +1,9 @@
 var su, seesu;
 define('su',
 ['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap',
-'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended', 'js/models/AppModel', 'js/models/comd'],
+'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended', 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth'],
 function(require, spv, app_serv, provoda, $, navi, BrowseMap,
-FuncsQueue, LastfmAPIExtended, AppModel, comd) {
+FuncsQueue, LastfmAPIExtended, AppModel, comd, LfmAuth) {
 'use strict';
 var localize = app_serv.localize;
 
@@ -148,7 +148,7 @@ AppModel.extendTo(SeesuApp, {
 
 
 		this.app_md = this;
-		this.art_images = new LastFMArtistImagesSelector();
+		this.art_images = new comd.LastFMArtistImagesSelector();
 		this.art_images.init();
 
 		if (app_env.check_resize){

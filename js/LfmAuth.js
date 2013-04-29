@@ -1,6 +1,10 @@
+define(['provoda', 'spv', 'app_serv', 'hex_md5'], function(provoda, spv, app_serv, hex_md5) {
+"use strict";
+var localize = app_serv.localize;
 
 
-var LfmLogin = function(auth) {};
+
+var LfmLogin = function() {};
 
 provoda.Model.extendTo(LfmLogin, {
 	model_name: 'auth_block_lfm',
@@ -227,3 +231,8 @@ provoda.Eventor.extendTo(LfmAuth, {
 	}
 });
 
+LfmAuth.LfmLogin =LfmLogin;
+LfmAuth.LfmScrobble =LfmScrobble;
+
+return LfmAuth;
+});
