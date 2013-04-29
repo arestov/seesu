@@ -441,7 +441,7 @@ app_env = (function(wd){
 			return r_value;
 		}
 	};
-	window.suStore = function(key, value, opts){
+	app_serv.suStore = window.suStore = function(key, value, opts){
 		var sensitive = !!key && sensitive_keys.indexOf(key) > -1;
 		if (typeof value != 'undefined'){
 			if (value && sensitive && app_env.pokki_app){
@@ -460,7 +460,7 @@ app_env = (function(wd){
 			return parse(value);
 		}
 	};
-	window.getPreloadedNK = function(key){
+	app_serv.getPreloadedNK = window.getPreloadedNK = function(key){
 		if (app_env.pokki_app){
 			var rv = pokki.getScrambled(key);
 			if (rv){

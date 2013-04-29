@@ -1,10 +1,10 @@
-var lastfm_api = function(apikey, s, stGet, stSet, cache_ajax, crossdomain, init, queue){
+var LastfmAPI = function(apikey, s, stGet, stSet, cache_ajax, crossdomain, init, queue){
 	if (arguments.length){
 		this.init.apply(this, arguments);
 	}
 };
 
-lastfm_api.prototype= {
+LastfmAPI.prototype= {
 	initers: [],
 	init: function(apikey, s, stGet, stSet, cache_ajax, crossdomain, queue){
 		this.apikey = apikey;

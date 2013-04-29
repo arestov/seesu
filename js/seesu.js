@@ -1,3 +1,6 @@
+define('su', ['require', 'spv', 'app_serv', 'provoda', 'localize'], function(require, spv, app_serv, provoda, localize) {
+'use strict';
+
 $.ajaxSetup({
   cache: true,
   global:false,
@@ -9,17 +12,23 @@ $.ajaxSetup({
 $.support.cors = true;
 
 
-var lfm = new lastfm_api(getPreloadedNK('lfm_key'), getPreloadedNK('lfm_secret'), function(key){
-	return suStore(key);
+var su;
+var app_env = app_serv.app_env;
+var
+	LastfmAPI = require('js/libs/LastfmAPI'),
+	cache_ajax, FuncsQueue;
+
+var lfm = new LastfmAPI(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret'), function(key){
+	return app_serv.suStore(key);
 }, function(key, value){
-	return suStore(key, value, true);
-}, cache_ajax, app_env.cross_domain_allowed, new funcsQueue(700));
+	return app_serv.suStore(key, value, true);
+}, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue(700));
 lfm.checkMethodResponse = function(method, data, r) {
 	su.art_images.checkLfmData(method, r);
 };
 
 
-
+var chrome = window.chrome;
 var ChromeExtensionButtonView = function() {};
 provoda.View.extendTo(ChromeExtensionButtonView, {
 	state_change: {
@@ -52,8 +61,8 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 });
 
 
-var seesuApp = function(version) {};
-appModel.extendTo(seesuApp, {
+var SeesuApp = function(version) {};
+appModel.extendTo(SeesuApp, {
 	init: function(version){
 		this._super();
 		this.version = version;
@@ -65,6 +74,7 @@ appModel.extendTo(seesuApp, {
 
 		this.trackStat = (function(){
 			window._gaq = window._gaq || [];
+			var _gaq = window._gaq;
 			_gaq.sV = spv.debounce(function(v){
 				suStore('ga_store', v, true);
 			},130);
@@ -128,6 +138,7 @@ appModel.extendTo(seesuApp, {
 			callback_url: 'http://seesu.me/lastfm/callbacker.html',
 			bridge_url: 'http://seesu.me/lastfm/bridge.html'
 		});
+
 
 		this.app_md = this;
 		this.art_images = new LastFMArtistImagesSelector();
@@ -306,6 +317,11 @@ appModel.extendTo(seesuApp, {
 				}
 			}, 300);
 		});
+		if (!lfm.sk) {
+			app_serv.suReady(function(){
+				_this.lfm_auth.get_lfm_token();
+			});
+		}
 
 		setTimeout(function() {
 			for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
@@ -654,7 +670,7 @@ appModel.extendTo(seesuApp, {
 
 });
 
-window.seesu = window.su = new seesuApp();
+window.seesu = window.su = new SeesuApp();
 su.init(3.9);
 provoda.sync_s.setRootModel(su);
 
@@ -829,4 +845,7 @@ UserPlaylists.extendTo(SuUsersPlaylists, {
 	createEnvPlaylist: function(params) {
 		return su.createSonglist(this, params);
 	}
+});
+
+
 });

@@ -1,7 +1,7 @@
-$.extend(lastfm_api.prototype, {
+$.extend(LastfmAPI.prototype, {
 	search_source:{
 		name:"lastfm",
-		key:0	
+		key:0
 	},
 	createLastfmTrack: function(tr, link, duration, id, downloadable){
 		return {
@@ -12,7 +12,7 @@ $.extend(lastfm_api.prototype, {
 			duration: duration,
 			downloadable: downloadable,
 			_id: id
-		}	
+		};
 	},
 	searchMp3: function(msq, callback, error, nocache, after_ajax, only_cache){
 		var _this = this;
@@ -59,7 +59,7 @@ $.extend(lastfm_api.prototype, {
 	}
 	
 });
-lastfm_api.prototype.initers.push(function(){
+LastfmAPI.prototype.initers.push(function(){
 	this.asearch = {
 		search: function(){
 			return _this.searchMp3.apply(_this, arguments);

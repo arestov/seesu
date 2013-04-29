@@ -1,4 +1,4 @@
-$.extend(lastfm_api.prototype, {
+$.extend(LastfmAPI.prototype, {
 	nowplay: function(omo, duration){
 		var _this = this;
 		if (!_this.sk){return false;}
@@ -48,7 +48,7 @@ $.extend(lastfm_api.prototype, {
 		
 	}
 });
-lastfm_api.prototype.initers.push(function(){
+LastfmAPI.prototype.initers.push(function(){
 	this.music = this.stGet && this.stGet('lfm_scrobble_music') || [];
 });
 
@@ -282,7 +282,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 });
 
 
-lastfm_api.prototype.initers.push(function(){
+LastfmAPI.prototype.initers.push(function(){
 	var _this = this;
 	
 	if (!this.sk) {
