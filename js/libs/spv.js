@@ -148,7 +148,7 @@ createObjClone = function(obj){
 	nobj.constructor = Clonner;
 	return nobj;
 };
-matchWords = function(source, query){
+matchWords = spv.matchWords = function(source, query){
 	var words = query.split(/[\s\.\—\-\—\–\_\|\+\(\)\*\&\!\?\@\,\\\/\❤\♡\'\"\[\]]+/gi);
 	var r = {};
 	if (words.length){

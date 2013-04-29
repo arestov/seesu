@@ -130,7 +130,7 @@ scMusicSearch.prototype = {
 							if (ent){
 								if (_this.mp3_search.getFileQMI(ent, msq) == -1){
 									//console.log(ent)
-								} else if (!has_music_copy(music_list,ent)){
+								} else if (!hasMusicCopy(music_list,ent)){
 									music_list.push(ent);
 								}
 							}

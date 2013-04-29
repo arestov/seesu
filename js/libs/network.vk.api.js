@@ -151,7 +151,7 @@ vkSearch.prototype = {
 
 				if (this.mp3_search.getFileQMI(entity, msq) == -1){
 					//console.log(entity)
-				} else if (!entity.link.match(/audio\/.mp3$/) && !has_music_copy( music_list, entity)){
+				} else if (!entity.link.match(/audio\/.mp3$/) && !hasMusicCopy( music_list, entity)){
 					music_list.push(entity);
 				}
 			}

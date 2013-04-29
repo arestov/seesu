@@ -1,6 +1,4 @@
-
-
-define(['./LoadableListBase', 'spv'], function(LoadableListBase, spv){
+define(['./LoadableListBase', 'spv', 'js/libs/Mp3Search'], function(LoadableListBase, spv, Mp3Search){
 "use strict";
 
 
@@ -25,7 +23,7 @@ LoadableListBase.extendTo(LoadableList, {
 				track: cur.title
 			};
 			if (!song_omo.artist){
-				song_omo = guessArtist(cur.title);
+				song_omo = Mp3Search.guessArtist(cur.title);
 			}
 			song_omo.image_url = cur.thumb_url;
 			if (song_omo.artist && song_omo.track){

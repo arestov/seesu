@@ -1,9 +1,4 @@
-var getSongFileModel = function(mo, player){
-	return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel()).init({file: this, mo: mo}).setPlayer(player);
-};
-
-
-define(['provoda', 'spv'], function(provoda, spv){
+define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, SongFileModel){
 	"use strict";
 
 	var FilesBySource = function() {};
@@ -322,7 +317,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 
 
 
-var has_music_copy = function (array, entity, from_position){
+var hasMusicCopy = function (array, entity, from_position){
 	var ess = /(^\s*)|(\s*$)/g;
 	if (!array.length) {return false;}
 	
@@ -381,7 +376,7 @@ var guessArtist = function(track_title, query_artist){
 };
 
 var QueryMatchIndex = function() {};
-Class.extendTo(QueryMatchIndex, {
+spv.Class.extendTo(QueryMatchIndex, {
 	init: function(file, query) {
 
 	},
@@ -515,7 +510,7 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 		},
 		byWordsInTrackField: function(file_song, query){
 			if (this.artist_in_full_title && query.track){
-				var match = matchWords(this.hardTrim(file_song.track, 3), this.hardTrim(query.track, 3));
+				var match = spv.matchWords(this.hardTrim(file_song.track, 3), this.hardTrim(query.track, 3));
 				if (match.forward){
 					return 0;
 				} else if (match.any){
@@ -527,7 +522,7 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 			if (this.artist_in_full_title && query.q || query.track){
 				var full_title = this.hardTrim(((file_song.artist || "" ) + ' ' + (file_song.track || "" )), 3);
 				var full_query =  query.q || ((query.artist || '') + ' - ' + (query.track || ''));
-				var match = matchWords(full_title, this.hardTrim(full_query, 3));
+				var match = spv.matchWords(full_title, this.hardTrim(full_query, 3));
 				if (match.forward){
 					return 0;
 				} else if (match.any){
@@ -619,6 +614,14 @@ var getAverageDurations = function(mu_array, time_limit){
 			}
 		});
 	};
+	Mp3Search.getSongFileModel = function(mo, player){
+		return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel()).init({file: this, mo: mo}).setPlayer(player);
+	};
+	Mp3Search.hasMusicCopy = hasMusicCopy;
+	Mp3Search.guessArtist = guessArtist;
+
+
+
 
 	provoda.Model.extendTo(Mp3Search,  {
 		getQueryString: function(msq) {
@@ -663,7 +666,7 @@ var getAverageDurations = function(mu_array, time_limit){
 			var query_string = this.getQueryString(msq);
 			return spv.getTargetField(file, 'query_match_index.' + query_string.replace(/\./gi, ''));
 		},
-		setFileQMI: function(file, msq, Constr) {
+		setFileQMI: function(file, msq) {
 			var query_string = this.getQueryString(msq);
 			file.query_match_index = file.query_match_index || {};
 			file.query_match_index[query_string.replace(/\./gi, '')] = new SongQueryMatchIndex(file, msq) * 1;
@@ -713,9 +716,10 @@ var getAverageDurations = function(mu_array, time_limit){
 				exist_alone_master: false,
 				exitst_master_of_slave: false
 			};
+			var i;
 			var exist_slave;
 			var exist_alone_master;
-			for (var i=0; i < this.se_list.length; i++) {
+			for (i=0; i < this.se_list.length; i++) {
 				var cmp3s = this.se_list[i];
 				if (!cmp3s.disabled && cmp3s.name == filter){
 					if (cmp3s.slave){
@@ -726,7 +730,7 @@ var getAverageDurations = function(mu_array, time_limit){
 					}
 				}
 			}
-			for (var i=0; i < this.se_list.length; i++) {
+			for (i=0; i < this.se_list.length; i++) {
 				var cmp3s = this.se_list[i];
 				if (!cmp3s.disabled && cmp3s.name == filter){
 					if (!cmp3s.slave){
@@ -778,7 +782,6 @@ var getAverageDurations = function(mu_array, time_limit){
 			return this.tools_by_name[tool_name];
 		},
 		add: function(asearch, force){
-			var push_later;
 			var o = this.getMasterSlaveSearch(asearch.name);
 			if (o.exist_slave){
 				if (force || !o.exitst_master_of_slave){
@@ -811,5 +814,5 @@ var getAverageDurations = function(mu_array, time_limit){
 
 	});
 
-
+return Mp3Search;
 });
