@@ -222,8 +222,8 @@ appModel.extendTo(SeesuApp, {
 		if (app_env.chrome_extension){
 			addBrowserView(ChromeExtensionButtonView, 'chrome_ext');
 		} else if (app_env.opera_extension && window.opera_extension_button){
-			this.opera_ext_b = opera_extension_button;
-			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: opera_extension_button});
+			this.opera_ext_b = window.opera_extension_button;
+			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: window.opera_extension_button});
 		}
 
 
@@ -598,7 +598,7 @@ appModel.extendTo(SeesuApp, {
 		return cur_md;
 	},
 	getPlaylists: function(query) {
-		var r = [];
+		var r = [],i;
 		if (this.gena){
 			for (i=0; i < this.gena.playlists.length; i++) {
 				var cur = this.gena.playlists[i];
@@ -633,7 +633,7 @@ appModel.extendTo(SeesuApp, {
 				if (info){
 					_this.s.vk_id = user_id;
 
-					var _d = cloneObj({data_source: 'vkontakte'}, info);
+					var _d = spv.cloneObj({data_source: 'vkontakte'}, info);
 
 					_this.s.setInfo('vk', _d);
 
