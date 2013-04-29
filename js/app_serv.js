@@ -93,7 +93,7 @@ var loadImage = function(opts) {
 };
 app_serv.loadImage = loadImage;
 
-var getInternetConnectionStatus = function(cb) {
+var getInternetConnectionStatus = app_serv.getInternetConnectionStatus = function(cb) {
 	var img = new Image();
 	img.onload = function() {
 		cb(true);
@@ -104,11 +104,10 @@ var getInternetConnectionStatus = function(cb) {
 	img.src = "http://www.google-analytics.com/__utm.gif?" + Math.random() + new Date();
 };
 
-var getHTMLText = function(text) {
+var getHTMLText = app_serv.getHTMLText = function(text) {
 	var safe_node = document.createElement('div');
 	safe_node.innerHTML = text;
 	return $(safe_node).text();
-
 };
 
 var changeFavicon = function(d, src, type) {

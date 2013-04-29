@@ -1,14 +1,18 @@
-var fileInTorrent = function(sr_item, mo){
+define(['provoda', 'app_serv'], function(provoda, app_serv){
+"use strict";
+var app_env = app_serv.app_env;
+
+var FileInTorrent = function(sr_item){
 	this.sr_item = sr_item;
 	this.init();
 };
 
-provoda.Model.extendTo(fileInTorrent, {
+provoda.Model.extendTo(FileInTorrent, {
 	model_name: 'file-torrent',
 	init: function() {
 		this._super();
 		this.updateManyStates({
-			full_title: this.sr_item.title || getHTMLText(this.sr_item.HTMLTitle),
+			full_title: this.sr_item.title || app_serv.getHTMLText(this.sr_item.HTMLTitle),
 			torrent_link: this.sr_item.torrent_link
 		});
 	},
@@ -31,10 +35,10 @@ provoda.Model.extendTo(fileInTorrent, {
 	}
 });
 
-(function(){
+
 	var counter = 0;
-	songFileModel = function(){};
-	provoda.Model.extendTo(songFileModel, {
+	var SongFileModel = function(){};
+	provoda.Model.extendTo(SongFileModel, {
 		model_name: 'file-http',
 		init: function(opts) {
 			this._super();
@@ -89,14 +93,14 @@ provoda.Model.extendTo(fileInTorrent, {
 			return title.join(' - ');
 		},
 		events: {
-			finish: function(opts){
+			finish: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
 					mo.updateState('play', false);
 				}
 				this.updateState('play', false);
 			},
-			play: function(opts){
+			play: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
 					mo.updateState('play', 'play');
@@ -133,14 +137,14 @@ provoda.Model.extendTo(fileInTorrent, {
 					mo.waitToLoadNext(factor > 0.8);
 				}
 			},
-			pause: function(opts){
+			pause: function(){
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
 					mo.updateState('play', false);
 				}
 				this.updateState('play', false);
 			},
-			stop: function(opts){
+			stop: function(){
 				//throw "Do not rely on stop event"
 				var mo = ((this == this.mo.mopla) && this.mo);
 				if (mo){
@@ -156,7 +160,7 @@ provoda.Model.extendTo(fileInTorrent, {
 				}
 				
 				var _this = this;
-				getInternetConnectionStatus(function(has_connection) {
+				app_serv.getInternetConnectionStatus(function(has_connection) {
 					if (has_connection) {
 						var pp = _this.state("playing_progress");
 						if (!pp){
@@ -283,6 +287,7 @@ provoda.Model.extendTo(fileInTorrent, {
 			
 		}
 	});
-})();
 
-
+SongFileModel.FileInTorrent = FileInTorrent;
+return SongFileModel;
+});

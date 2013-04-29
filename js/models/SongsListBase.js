@@ -1,8 +1,6 @@
-var songsList;
-(function(){
+define(['provoda', 'spv'], function(provoda, spv){
 	"use strict";
-	
-	provoda.addPrototype("songsListBase", {
+	provoda.addPrototype("SongsListBase", {
 		model_name: "playlist",
 		init: function(opts){
 			this._super(opts);
@@ -72,7 +70,7 @@ var songsList;
 		},
 		main_list_name: 'songs-list',
 		add: function(omo){
-			var mo = cloneObj({}, omo, false, ['track', 'artist', 'file']);
+			var mo = spv.cloneObj({}, omo, false, ['track', 'artist', 'file']);
 			return this.addDataItem(mo);
 		},
 		makeDataItem: function(obj) {
@@ -141,7 +139,7 @@ var songsList;
 			for (var i=0; i < npl.length; i++) {
 				npl[i] = npl[i].simplify();
 			}
-			npl = cloneObj({
+			npl = spv.cloneObj({
 				length: npl.length,
 				playlist_title: this.playlist_title,
 				playlist_type: this.playlist_type
@@ -211,7 +209,7 @@ var songsList;
 				}
 			});
 		},
-		switchTo: function(mo, direction, auto) {
+		switchTo: function(mo, direction) {
 	
 			var playlist = [];
 			for (var i=0; i < this[this.main_list_name].length; i++) {
@@ -256,7 +254,7 @@ var songsList;
 
 					
 				} else {
-					if ( current_number == 0 ) {
+					if ( current_number === 0 ) {
 						s = playlist[total-1];
 					} else {
 						s = playlist[current_number-1];
@@ -293,11 +291,11 @@ var songsList;
 			}
 		},
 		getNeighbours: function(mo, neitypes){
-			var obj = {};
+			var obj = {},i;
 			var c_num = this[this.main_list_name].indexOf(mo);
 
 			if (!neitypes || neitypes.prev_song){
-				for (var i = c_num - 1; i >= 0; i--) {
+				for (i = c_num - 1; i >= 0; i--) {
 					if (this[this.main_list_name][i].canUseAsNeighbour()){
 						obj.prev_song = this[this.main_list_name][i];
 						break;
@@ -306,7 +304,7 @@ var songsList;
 			}
 
 			if (!neitypes || neitypes.next_song){
-				for (var i = c_num + 1; i < this[this.main_list_name].length; i++) {
+				for (i = c_num + 1; i < this[this.main_list_name].length; i++) {
 					if (this[this.main_list_name][i].canUseAsNeighbour()){
 						obj.next_song = obj.next_preload_song = this[this.main_list_name][i];
 						break;
@@ -314,7 +312,7 @@ var songsList;
 				}
 			}
 			if ((!neitypes || neitypes.next_preload_song) && !obj.next_preload_song){
-				for (var i = 0; i < c_num; i++) {
+				for (i = 0; i < c_num; i++) {
 					if (this[this.main_list_name][i].canUseAsNeighbour()){
 						obj.next_preload_song = this[this.main_list_name][i];
 						break;
@@ -335,13 +333,12 @@ var songsList;
 				prev_song: true,
 				next_preload_song: true
 			});
-			cloneObj(mo, changes);
+			spv.cloneObj(mo, changes);
 		},
 		getNeighboursChanges: function(target_song, changed_song) {
 			var
+				i,
 				check_list = {},
-				need_list = {},
-				n_ste = {},
 				o_ste = {
 					next_song: target_song.next_song,
 					prev_song: target_song.prev_song,
@@ -359,7 +356,7 @@ var songsList;
 				то проверяем какое значение оно имеет для целевой песни,
 				если играет роль то проверяем их ухудшение иначе ищем все роли (улучшение состояние отвергнутых)
 				*/
-				for (var i in o_ste){
+				for (i in o_ste){
 					check_list[i] = o_ste[i] == changed_song;
 					if (o_ste[i] == changed_song){
 						changed_song_roles = changed_song_roles || true;
@@ -387,7 +384,7 @@ var songsList;
 				если нет, то ищем все (улучшение состояние отвергнутых)
 				*/
 
-				for (var i in o_ste){
+				for (i in o_ste){
 					if (o_ste[i] && !o_ste[i].canUseAsNeighbour()){
 						check_list[i] = true;
 						changed_song_roles = changed_song_roles || true;
@@ -403,21 +400,21 @@ var songsList;
 			}
 
 
-			var original_clone = cloneObj({}, o_ste);
+			var original_clone = spv.cloneObj({}, o_ste);
 			if (neighbours_changes){
-				cloneObj(original_clone, neighbours_changes);
+				spv.cloneObj(original_clone, neighbours_changes);
 			}
 
 			
 
 
-			return getDiffObj(o_ste, original_clone);
+			return spv.getDiffObj(o_ste, original_clone);
 		},
 		checkNeighboursChanges: function(target_song, changed_neighbour, viewing, log) {
-			var changes = this.getNeighboursChanges(target_song, changed_neighbour)
+			var changes = this.getNeighboursChanges(target_song, changed_neighbour);
 			//console.log("changes");
 			//console.log(); isImportant
-			cloneObj(target_song, changes);
+			spv.cloneObj(target_song, changes);
 
 			//this.findNeighbours();
 
@@ -464,7 +461,7 @@ var songsList;
 			}
 			
 		},
-		checkChangesSinceFS: function(target_song, opts) {
+		checkChangesSinceFS: function() {
 			if (this.waiting_next){
 				if (!this.waiting_next.next_preload_song){
 					delete this.waiting_next;
@@ -477,6 +474,7 @@ var songsList;
 			}
 		},
 		checkRequestsPriority: function() {
+			var i;
 			var common = [];
 			var demonstration = [];
 
@@ -564,10 +562,10 @@ var songsList;
 			demonstration.reverse();
 			common.reverse();
 			
-			for (var i = 0; i < demonstration.length; i++) {
+			for (i = 0; i < demonstration.length; i++) {
 				demonstration[i].setPrio('highest', 'demonstration');
 			}
-			for (var i = 0; i < common.length; i++) {
+			for (i = 0; i < common.length; i++) {
 				common[i].setPrio('highest', 'common');
 			}
 			
@@ -586,4 +584,4 @@ var songsList;
 	
 	
 
-})();
+});

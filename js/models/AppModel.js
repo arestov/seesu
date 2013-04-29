@@ -1,9 +1,3 @@
-/*
-freeze
-!restoreFreezed
-
-*/
-
 define(['./AppModelBase', 'spv', 'app_serv'], function(AppModelBase, spv, app_serv) {
 "use strict";
 

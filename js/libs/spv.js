@@ -120,7 +120,7 @@ getFields = function(obj, fields){
 	}
 	return r;
 };
-getDiffObj = function(one, two) {
+getDiffObj = spv.getDiffObj = function(one, two) {
 	var
 		i,
 		diff = {},

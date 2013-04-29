@@ -82,7 +82,7 @@ isohuntTorrentSearch.prototype = {
 			query: query,
 			models: {},
 			getSongFileModel: function(mo, player) {
-				return this.models[mo.uid] = this.models[mo.uid] || (new fileInTorrent(this, mo)).setPlayer(player);
+				return this.models[mo.uid] = this.models[mo.uid] || (new FileInTorrent(this, mo)).setPlayer(player);
 			}
 		});
 	}
@@ -182,7 +182,7 @@ googleTorrentSearch.prototype = {
 			item.title = item.titleNoFormatting = HTMLDecode(item.titleNoFormatting);
 			item.models = {};
 			item.getSongFileModel = function(mo, player) {
-				return this.models[mo.uid] = this.models[mo.uid] || (new fileInTorrent(this, mo)).setPlayer(player);
+				return this.models[mo.uid] = this.models[mo.uid] || (new FileInTorrent(this, mo)).setPlayer(player);
 			};
 		}
 		

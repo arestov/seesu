@@ -1,16 +1,10 @@
 var getSongFileModel = function(mo, player){
-	return this.models[mo.uid] = this.models[mo.uid] || (new songFileModel()).init({file: this, mo: mo}).setPlayer(player);
+	return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel()).init({file: this, mo: mo}).setPlayer(player);
 };
-var FileNameSQMatchIndex;
-var FilesInvestg;
-(function(){
-	"use strict";
-	var FilesSourceStorage = function() {};
-	provoda.Model.extendTo(FilesSourceStorage, {
-		init: function(opts, params) {
 
-		}
-	});
+
+define(['provoda', 'spv'], function(provoda, spv){
+	"use strict";
 
 	var FilesBySource = function() {};
 	provoda.Model.extendTo(FilesBySource, {
@@ -45,7 +39,7 @@ var FilesInvestg;
 			
 		},
 		getFiles: function(type) {
-			var result_array;
+
 			var array = this.state('files-list');
 			if (array && array.length){
 				if (type){
@@ -156,7 +150,7 @@ var FilesInvestg;
 		}
 	});
 
-	FilesInvestg = function() {};
+	var FilesInvestg = function() {};
 	provoda.Model.extendTo(FilesInvestg, {
 		init: function(opts, params) {
 			this._super();
@@ -322,7 +316,7 @@ var FilesInvestg;
 	
 
 
-})();
+
 
 
 
@@ -609,8 +603,6 @@ var getAverageDurations = function(mu_array, time_limit){
 
 
 
-(function() {
-	"use strict";
 
 	var Mp3Search = window.Mp3Search = function(searches_pr){
 		this.init();
@@ -818,5 +810,6 @@ var getAverageDurations = function(mu_array, time_limit){
 		}
 
 	});
-})();
 
+
+});

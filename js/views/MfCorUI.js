@@ -14,8 +14,8 @@ provoda.View.extendTo(notifyCounterUI, {
 });
 
 
-var fileInTorrentUI = function() {};
-provoda.View.extendTo(fileInTorrentUI,{
+var FileInTorrentUI = function() {};
+provoda.View.extendTo(FileInTorrentUI,{
 	state_change: {
 		"download-pressed": function(state) {
 			if (state){
@@ -62,8 +62,8 @@ provoda.View.extendTo(fileInTorrentUI,{
 
 	}
 });
-var songFileModelUI = function() {};
-provoda.View.extendTo(songFileModelUI, {
+var SongFileModelUI = function() {};
+provoda.View.extendTo(SongFileModelUI, {
 	dom_rp: true,
 	createDetailes: function(){
 		this.createBase();
@@ -284,8 +284,8 @@ provoda.View.extendTo(songFileModelUI, {
 var mfComplectUI = function() {};
 provoda.View.extendTo(mfComplectUI, {
 	children_views: {
-		'file-torrent': fileInTorrentUI,
-		'file-http': songFileModelUI
+		'file-torrent': FileInTorrentUI,
+		'file-http': SongFileModelUI
 	},
 	'collch-moplas_list': {
 		place: 'tpl.ancs.listc',

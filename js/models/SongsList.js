@@ -1,13 +1,93 @@
-var songsList;
-(function(){
+define(['provoda', 'app_serv','./LoadableList', './comd', 'Song', './SongsListBase'], function(provoda, app_serv, LoadableList, comd){
 	"use strict";
+	var localize = app_serv.localize;
+	var app_env = app_serv.app_env;
 
-	var songsListBase = function() {};
-	provoda.extendFromTo("songsListBase", LoadableList, songsListBase);
+	var ExternalTextedPlaylist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
+		this.result = this.header + '\n';
+		for (var i=0; i < array.length; i++) {
+			this.result += this.preline + ':' + (array[i].duration || '-1') + ',' + array[i].artist_name + ' - ' + array[i].track_title + '\n' + array[i].mp3link + '\n';
+		}
+		this.data_uri = this.request_header + escape(this.result);
+		
+	};
+	ExternalTextedPlaylist.prototype = {
+		header : '#EXTM3U',
+		preline: '#EXTINF',
+		request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
+	};
+
+
+
+	var PlARow = function(){};
+
+	comd.PartsSwitcher.extendTo(PlARow, {
+		init: function(pl) {
+			this._super();
+			this.pl = pl;
+			this.updateState('active_part', false);
+			this.addPart(new MultiAtcsRow(this, pl));
+			this.addPart(new PlaylistSettingsRow(this, pl));
+		}
+	});
+
+
+	var PlaylistSettingsRow = function(actionsrow){
+		this.init(actionsrow);
+	};
+	comd.BaseCRow.extendTo(PlaylistSettingsRow, {
+		init: function(actionsrow){
+			this.actionsrow = actionsrow;
+			this._super();
+
+			var _this = this;
+
+			var doNotReptPl = function(state) {
+				_this.updateState('dont_rept_pl', state);
+			};
+			if (su.settings['dont-rept-pl']){
+				doNotReptPl(true);
+			}
+			su.on('settings.dont-rept-pl', doNotReptPl);
+
+
+		},
+		setDnRp: function(state) {
+			this.updateState('dont_rept_pl', state);
+			su.setSetting('dont-rept-pl', state);
+		},
+		model_name: 'row-pl-settings'
+	});
+
+
+
+
+	var MultiAtcsRow = function(actionsrow){
+		this.init(actionsrow);
+	};
+	comd.BaseCRow.extendTo(MultiAtcsRow, {
+		init: function(actionsrow){
+			this.actionsrow = actionsrow;
+			this._super();
+		},
+		makePlayable: function() {
+			this.actionsrow.pl.makePlayable(true);
+			su.trackEvent('Controls', 'make playable all tracks in playlist');
+		},
+		makeExternalPlaylist: function() {
+			this.actionsrow.pl.makeExternalPlaylist();
+			su.trackEvent('Controls', 'make *.m3u');
+		},
+		model_name: 'row-multiatcs'
+	});
+
+
+	var SongsListBase = function() {};
+	provoda.extendFromTo("SongsListBase", LoadableList, SongsListBase);
 	
 
-	songsList = function(){};
-	songsListBase.extendTo(songsList, {
+	var SongsList = function(){};
+	SongsListBase.extendTo(SongsList, {
 		init: function(opts, params, first_song) {
 			//playlist_title, playlist_type, info
 			//params.title, params.type, params.data
@@ -32,10 +112,10 @@ var songsList;
 			var doNotReptPl = function(state) {
 				_this.updateState('dont_rept_pl', state);
 			};
-			if (su.settings['dont-rept-pl']){
+			if (this.app.settings['dont-rept-pl']){
 				doNotReptPl(true);
 			}
-			su.on('settings.dont-rept-pl', doNotReptPl);
+			this.app.on('settings.dont-rept-pl', doNotReptPl);
 			if (this.playlist_type){
 				this.updateState('url_part', this.getURL());
 			}
@@ -57,11 +137,11 @@ var songsList;
 			if (this.playlist_type == 'artist'){
 				url += '/_';
 			} else if (this.playlist_type == 'album'){
-				url += '/' + su.encodeURLPart(this.info.album);
+				url += '/' + this.app.encodeURLPart(this.info.album);
 			} else if (this.playlist_type == 'similar artists'){
 				url += '/+similar';
 			} else if (this.playlist_type == 'artists by tag'){
-				url += '/tags/' + su.encodeURLPart(this.info.tag);
+				url += '/tags/' + this.app.encodeURLPart(this.info.tag);
 			} else if (this.playlist_type == 'tracks'){
 				url += '/ds';
 			} else if (this.playlist_type == 'artists by recommendations'){
@@ -69,9 +149,9 @@ var songsList;
 			} else if (this.playlist_type == 'artists by loved'){
 				url += '/loved';
 			} else if (this.playlist_type == 'cplaylist'){
-				url += '/playlist/' + su.encodeURLPart(this.info.name);
+				url += '/playlist/' + this.app.encodeURLPart(this.info.name);
 			} else if (this.playlist_type == 'chart'){
-				url += '/chart/' +  su.encodeURLPart(this.info.country) + '/' + su.encodeURLPart(this.info.metro);
+				url += '/chart/' +  this.app.encodeURLPart(this.info.country) + '/' + this.app.encodeURLPart(this.info.metro);
 			}
 			return url;
 		},
@@ -113,7 +193,7 @@ var songsList;
 			}
 			
 			if (simple_playlist.length){
-				this.current_external_playlist = new external_playlist(simple_playlist);
+				this.current_external_playlist = new ExternalTextedPlaylist(simple_playlist);
 				//su.ui.els.export_playlist.attr('href', su.p.current_external_playlist.data_uri);
 				if (this.current_external_playlist.result) {
 					app_env.openURL(
@@ -126,70 +206,9 @@ var songsList;
 	});
 	
 
-	var PlARow = function(){};
 
-	PartsSwitcher.extendTo(PlARow, {
-		init: function(pl) {
-			this._super();
-			this.pl = pl;
-			this.updateState('active_part', false);
-			this.addPart(new MultiAtcsRow(this, pl));
-			this.addPart(new PlaylistSettingsRow(this, pl));
-		}
-	});
-
-
-	var PlaylistSettingsRow = function(actionsrow){
-		this.init(actionsrow);
-	};
-	BaseCRow.extendTo(PlaylistSettingsRow, {
-		init: function(actionsrow){
-			this.actionsrow = actionsrow;
-			this._super();
-
-			var _this = this;
-
-			var doNotReptPl = function(state) {
-				_this.updateState('dont_rept_pl', state);
-			};
-			if (su.settings['dont-rept-pl']){
-				doNotReptPl(true);
-			}
-			su.on('settings.dont-rept-pl', doNotReptPl);
-
-
-		},
-		setDnRp: function(state) {
-			this.updateState('dont_rept_pl', state);
-			su.setSetting('dont-rept-pl', state);
-		},
-		model_name: 'row-pl-settings'
-	});
-
-
-
-
-	var MultiAtcsRow = function(actionsrow){
-		this.init(actionsrow);
-	};
-	BaseCRow.extendTo(MultiAtcsRow, {
-		init: function(actionsrow){
-			this.actionsrow = actionsrow;
-			this._super();
-		},
-		makePlayable: function() {
-			this.actionsrow.pl.makePlayable(true);
-			su.trackEvent('Controls', 'make playable all tracks in playlist');
-		},
-		makeExternalPlaylist: function() {
-			this.actionsrow.pl.makeExternalPlaylist();
-			su.trackEvent('Controls', 'make *.m3u');
-		},
-		model_name: 'row-multiatcs'
-	});
-
-window.HypemPlaylist = function() {};
-songsList.extendTo(HypemPlaylist, {
+var HypemPlaylist = function() {};
+SongsList.extendTo(HypemPlaylist, {
 	init: function() {
 		this._super.apply(this, arguments);
 		this.can_use = this.app.hypem.can_send;
@@ -212,5 +231,7 @@ songsList.extendTo(HypemPlaylist, {
 		}
 	}
 });
-})();
+SongsList.HypemPlaylist = HypemPlaylist;
+return SongsList;
+});
 

@@ -1,5 +1,3 @@
-
-
 define(['provoda', 'spv'], function(provoda, spv) {
 "use strict";
 var MapLevel = function(num, parent_levels, resident, map){

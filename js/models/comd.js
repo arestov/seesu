@@ -1,11 +1,15 @@
-var commonMessagesStore = function(glob_store, store_name) {
+define(['provoda', 'spv'], function(provoda, spv){
+"use strict";
+
+
+var CommonMessagesStore = function(glob_store, store_name) {
 	this.init();
 	this.glob_store = glob_store;
 	this.store_name = store_name;
 };
 
 
-provoda.Eventor.extendTo(commonMessagesStore, {
+provoda.Eventor.extendTo(CommonMessagesStore, {
 	markAsReaded: function(message) {
 		var changed = this.glob_store.set(this.store_name, message);
 		if (changed){
@@ -25,7 +29,7 @@ var gMessagesStore = function(set, get) {
 	this.cm_store = {};
 };
 
-Class.extendTo(gMessagesStore, {
+spv.Class.extendTo(gMessagesStore, {
 	set: function(space, message) {
 		this.store[space] = this.store[space] || [];
 		if ( this.store[space].indexOf(message) == -1 ){
@@ -38,7 +42,7 @@ Class.extendTo(gMessagesStore, {
 		return this.store[space] || [];
 	},
 	getStore: function(name) {
-		return this.cm_store[name] || (this.cm_store[name] = new commonMessagesStore(this, name));
+		return this.cm_store[name] || (this.cm_store[name] = new CommonMessagesStore(this, name));
 	}
 });
 
@@ -46,6 +50,7 @@ var BigContextNotify = function() {};
 provoda.Model.extendTo(BigContextNotify, {
 	init: function(opts, params) {
 		this._super(opts);
+		var _this = this;
 		if (!this.cant_hide_notify){
 			if (!params.notf){
 				throw new Error('you must apply "notf"');
@@ -221,7 +226,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 		if (!info.artist || !info.track){
 			throw new Error ('give me full track info');
 		}
-		info = cloneObj({}, info);
+		info = spv.cloneObj({}, info);
 		
 		info.artist = this.convertEventName(info.artist);
 		info.track = this.convertEventName(info.track);
@@ -311,7 +316,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 			}
 
 		},
-		'user.getLovedTracks': function(r, method, tracks) {
+		'user.getLovedTracks': function(r, method) {
 			var tracks = spv.toRealArray(spv.getTargetField(r, 'lovedtracks.track'));
 
 			for (var i = 0; i < tracks.length; i++) {
@@ -324,7 +329,7 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 			}
 
 		},
-		'user.getRecommendedArtists': function(r, method, artists) {
+		'user.getRecommendedArtists': function(r, method) {
 			var artists = spv.toRealArray(spv.getTargetField(r, 'recommendations.artist'));
 
 			for (var i = 0; i < artists.length; i++) {
@@ -447,19 +452,10 @@ provoda.Model.extendTo(BaseCRow, {
 		this.updateState("active_view", true);
 	}
 });
-
-
-
-var external_playlist = function(array){ //array = [{artist_name: '', track_title: '', duration: '', mp3link: ''}]
-	this.result = this.header + '\n';
-	for (var i=0; i < array.length; i++) {
-		this.result += this.preline + ':' + (array[i].duration || '-1') + ',' + array[i].artist_name + ' - ' + array[i].track_title + '\n' + array[i].mp3link + '\n';
-	}
-	this.data_uri = this.request_header + escape(this.result);
-	
+return {
+	gMessagesStore:gMessagesStore,
+	LastFMArtistImagesSelector:LastFMArtistImagesSelector,
+	PartsSwitcher:PartsSwitcher,
+	BaseCRow:BaseCRow
 };
-external_playlist.prototype = {
-	header : '#EXTM3U',
-	preline: '#EXTINF',
-	request_header : 'data:audio/x-mpegurl; filename=seesu_playlist.m3u; charset=utf-8,'
-};
+});
