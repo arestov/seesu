@@ -1,8 +1,8 @@
 var su, seesu;
 define('su',
-['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi',
+['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap',
 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended'],
-function(require, spv, app_serv, provoda, $, navi,
+function(require, spv, app_serv, provoda, $, navi, BrowseMap,
 FuncsQueue, LastfmAPIExtended) {
 'use strict';
 var localize = app_serv.localize;
