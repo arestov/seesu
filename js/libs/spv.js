@@ -2,7 +2,7 @@ var spv = {},
 	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
 	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
-	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, Class, depdc,
+	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, Class,
 	debounce, throttle;
 
 
@@ -569,7 +569,7 @@ separateNum = function(num){
 
 })();
 
-
+spv.Class = Class;
 
 
 /**
@@ -697,13 +697,13 @@ spv.capitalize = function(string, just_first) {
 
 
 
-depdc = function(init) {
+spv.Depdc = function(init) {
 	if (init){
 		this.init();
 	}
 };
-depdc.prototype = {
-	constructor: depdc,
+spv.Depdc.prototype = {
+	constructor: Depdc,
 	init: function() {
 		this.dep_list = [];
 	},

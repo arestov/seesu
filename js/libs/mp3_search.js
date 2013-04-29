@@ -112,7 +112,7 @@ var FilesInvestg;
 			var
 				_this = this,
 				used_successful,
-				complex_response = new depdc(true);
+				complex_response = new spv.Depdc(true);
 
 			complex_response.abort = function() {
 				if (used_successful){

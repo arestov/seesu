@@ -1,5 +1,15 @@
-define('su', ['require', 'spv', 'app_serv', 'provoda', 'localize'], function(require, spv, app_serv, provoda, localize) {
+define('su',
+['require', 'spv', 'app_serv', 'provoda', 'localize', 'jquery'],
+function(require, spv, app_serv, provoda, localize, $) {
+
 'use strict';
+
+
+var
+	su, app_env = app_serv.app_env,
+	LastfmAPI = require('js/libs/LastfmAPIExtended'),
+	FuncsQueue = require('js/libs/FuncsQueue'),
+	cache_ajax;
 
 $.ajaxSetup({
   cache: true,
@@ -12,13 +22,9 @@ $.ajaxSetup({
 $.support.cors = true;
 
 
-var su;
-var app_env = app_serv.app_env;
-var
-	LastfmAPI = require('js/libs/LastfmAPI'),
-	cache_ajax, FuncsQueue;
+var lfm = new LastfmAPI();
 
-var lfm = new LastfmAPI(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret'), function(key){
+lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret'), function(key){
 	return app_serv.suStore(key);
 }, function(key, value){
 	return app_serv.suStore(key, value, true);
@@ -101,7 +107,7 @@ appModel.extendTo(SeesuApp, {
 
 		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
 		this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
-		
+
 		var _this = this;
 		setInterval(function(){
 
@@ -113,7 +119,7 @@ appModel.extendTo(SeesuApp, {
 				suStore('su-usage-counter', ++_this.usage_counter, true);
 			}
 
-			
+
 		}, 1000 * 60 * 20);
 		setInterval(function(){
 			var rootvs = _this.mpx.getViews('root');
@@ -217,12 +223,12 @@ appModel.extendTo(SeesuApp, {
 			this.opera_ext_b = opera_extension_button;
 			addBrowserView(OperaExtensionButtonView, 'opera_ext', {opera_ext_b: opera_extension_button});
 		}
-				
+
 
 
 		this.delayed_search = {
 			vk_api:{
-				queue:  new funcsQueue(700, 8000 , 7)
+				queue:  new FuncsQueue(700, 8000 , 7)
 			}
 		};
 
@@ -317,11 +323,6 @@ appModel.extendTo(SeesuApp, {
 				}
 			}, 300);
 		});
-		if (!lfm.sk) {
-			app_serv.suReady(function(){
-				_this.lfm_auth.get_lfm_token();
-			});
-		}
 
 		setTimeout(function() {
 			for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
@@ -370,19 +371,19 @@ appModel.extendTo(SeesuApp, {
 			xhr2: app_env.xhr2,
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
-			queue: new funcsQueue(1700, 4000, 4)
+			queue: new FuncsQueue(1700, 4000, 4)
 		});
 		this.goog_sc = new GoogleSoundcloud();
 		this.goog_sc.init({
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
-			queue: new funcsQueue(1000, 3000, 4)
+			queue: new FuncsQueue(1000, 3000, 4)
 		});
 		this.discogs = new DiscogsApi();
 		this.discogs.init({
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
-			queue: new funcsQueue(2000, 4000, 4)
+			queue: new FuncsQueue(2000, 4000, 4)
 		});
 
 	},
@@ -683,14 +684,14 @@ provoda.sync_s.setRootModel(su);
 (function(){
 	
 	//su.sc_api = sc_api;
-	su.sc_api = new scApi(getPreloadedNK('sc_key'), new funcsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+	su.sc_api = new scApi(getPreloadedNK('sc_key'), new FuncsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch({
 		api: su.sc_api,
 		mp3_search: su.mp3_search
 	}));
 
 
-	var exfm_api = new ExfmApi(new funcsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax);
+	var exfm_api = new ExfmApi(new FuncsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax);
 	su.exfm = exfm_api;
 
 	su.mp3_search.add(new ExfmMusicSearch({
@@ -708,7 +709,7 @@ provoda.sync_s.setRootModel(su);
 		/*yepnope({
 			load:  [bpath + 'js/libs/nigma.search.js'],
 			complete: function(){
-				window.nms = new NigmaMusicSearch(new NigmaAPI(new funcsQueue(5000, 10000, 4)))
+				window.nms = new NigmaMusicSearch(new NigmaAPI(new FuncsQueue(5000, 10000, 4)))
 				su.mp3_search.add(window.nms);
 				
 				//$(document.body).append(_this.c);

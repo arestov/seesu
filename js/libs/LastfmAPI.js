@@ -1,11 +1,8 @@
-var LastfmAPI = function(apikey, s, stGet, stSet, cache_ajax, crossdomain, init, queue){
-	if (arguments.length){
-		this.init.apply(this, arguments);
-	}
-};
+define(['jquery', 'spv', 'app_serv'], function($, spv, app_serv) {
+"use strict";
 
-LastfmAPI.prototype= {
-	initers: [],
+var LastfmAPI = function(){};
+spv.Class.extendTo(LastfmAPI, {
 	init: function(apikey, s, stGet, stSet, cache_ajax, crossdomain, queue){
 		this.apikey = apikey;
 		this.stGet = stGet;
@@ -18,10 +15,10 @@ LastfmAPI.prototype= {
 			$(document).ready(function(){
 				$(document.body).append(srvc);
 			});
-			
+
 			var _i = document.createElement('iframe'); _i.width='30'; _i.height= '30';
 			var _f = document.createElement('form'); _f.method ='POST'; _f.action=this.api_path; srvc.appendChild(_f);
-			
+
 			this.post_serv = {
 				name: 'lfmpost',
 				i: _i,
@@ -46,14 +43,10 @@ LastfmAPI.prototype= {
 		if (queue){
 			this.queue = queue;
 		}
-		
+
 		if (this.stGet){
-			
 			this.sk =	this.stGet('lfmsk') || false;
 			this.user_name = this.stGet('lfm_user_name') || false;
-		}
-		for (var i = 0; i < this.initers.length; i++) {
-			this.initers[i].call(this);
 		}
 	},
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
@@ -67,11 +60,11 @@ LastfmAPI.prototype= {
 	},
 	send: function(method, params, options, post) {
 		var _this = this,
-			complex_response = new depdc(true);
+			complex_response = new spv.Depdc(true);
 
 
 		if (!method){
-			
+
 			throw new Error('no method');
 		}
 		options = options || {};
@@ -80,9 +73,9 @@ LastfmAPI.prototype= {
 		options.nocache = options.nocache || post;
 
 		var use_post_serv = post && !this.crossdomain;
-			
+
 		var apisig = ((params && (params.sk || params.token )) || (method == 'auth.getToken')) ? true : false; // yes, we need signature
-		
+
 		params.method = method;
 		params.api_key = this.apikey;
 		params.format = params.format || (use_post_serv ?	'' : 'json');
@@ -136,5 +129,6 @@ LastfmAPI.prototype= {
 		return wrap_def.complex;
 
 	}
-	
-};
+});
+
+});

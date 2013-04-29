@@ -21,7 +21,7 @@ var jsLoadComplete,
 	"js/common-libs/md5.min.js",
 
 	"js/libs/funcsStack.js",
-	"js/libs/funcsQueue.js",
+	"js/libs/FuncsQueue.js",
 	//"js/libs/c_quene.js",
 	"js/libs/StatementsAngularParser.min.js",
 	"js/prototypes/provoda.js",

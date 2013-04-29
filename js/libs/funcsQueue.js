@@ -1,4 +1,4 @@
-var funcsQueue;
+var FuncsQueue;
 (function() {
 	"use strict";
 	var queueFunc = function(queue, atom){
@@ -22,7 +22,7 @@ var funcsQueue;
 	};
 
 
-	funcsQueue = function(small_delay, big_delay, big_delay_interval){
+	FuncsQueue = function(small_delay, big_delay, big_delay_interval){
 		var _this = this;
 		
 		var selectNext = function(prev, args) {
@@ -51,8 +51,8 @@ var funcsQueue;
 	};
 
 
-	funcsQueue.prototype = {
-		constructor: funcsQueue,
+	FuncsQueue.prototype = {
+		constructor: FuncsQueue,
 		getTopPrio: function(){
 			var nums = [];
 			var queue = this.fstack.getArr();
