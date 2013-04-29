@@ -703,7 +703,7 @@ spv.Depdc = function(init) {
 	}
 };
 spv.Depdc.prototype = {
-	constructor: Depdc,
+	constructor: spv.Depdc,
 	init: function() {
 		this.dep_list = [];
 	},

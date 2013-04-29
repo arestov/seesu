@@ -5,8 +5,8 @@ define(['spv'], function(spv) {
 var app_serv = {};
 (function(w) {
 	var ready = false;
-	jsLoadComplete(function(){
-		spv.domReady(w.document, function(){
+	spv.domReady(w.document, function(){
+		jsLoadComplete(function(){
 			big_timer.q.push([big_timer.base_category, 'ready-dom', big_timer.comp('page-start'), 'DOM loaded', 100]);
 			ready = true;
 		});
@@ -15,13 +15,11 @@ var app_serv = {};
 		if (ready){
 			setTimeout(callback, 30);
 		} else{
-			jsLoadComplete(function(){
-				spv.domReady(w.document, callback);
+			spv.domReady(w.document, function() {
+				jsLoadComplete(callback);
 			});
 		}
-		
 	};
-	
 })(window);
 
 

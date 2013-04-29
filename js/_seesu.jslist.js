@@ -163,7 +163,7 @@ var jsLoadComplete,
 			},
 			fn: function() {
 				if (app_env.needs_url_history){
-					yepnope(base_path +  "js/seesu.url_games.js");
+					yepnope(base_path +  "js/navi.js");
 				} else {
 					navi = {};
 					navi.set = navi.replace = function(){return false;};

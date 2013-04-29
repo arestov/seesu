@@ -9,7 +9,12 @@ var
 	su, app_env = app_serv.app_env,
 	LastfmAPI = require('js/libs/LastfmAPIExtended'),
 	FuncsQueue = require('js/libs/FuncsQueue'),
-	cache_ajax;
+	cache_ajax,
+	navi = require('nav');
+
+if (app_env.needs_url_history){
+	navi.init();
+}
 
 $.ajaxSetup({
   cache: true,
@@ -89,7 +94,6 @@ appModel.extendTo(SeesuApp, {
 			};
 			app_serv.suReady(function(){
 				yepnope( {
-					
 					load: bpath + 'js/common-libs/ga.mod.min.js',
 					complete: function(){
 						_gaq.push(['_setAccount', 'UA-17915703-1']);
@@ -180,13 +184,13 @@ appModel.extendTo(SeesuApp, {
 
 			}, {immediately: true})
 			.on('url-change', function(nu, ou, data, replace) {
-				jsLoadComplete(function(){
+				if (app_env.needs_url_history){
 					if (replace){
 						navi.replace(ou, nu, data.resident);
 					} else {
 						navi.set(nu, data.resident);
 					}
-				});
+				}
 			}, {immediately: true})
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
@@ -338,7 +342,7 @@ appModel.extendTo(SeesuApp, {
 			var last_ver = suStore('last-su-ver');
 			_this.migrateStorage(last_ver);
 			suStore('last-su-ver', version, true);
-			
+
 		}, 200);
 
 
@@ -400,7 +404,7 @@ appModel.extendTo(SeesuApp, {
 			this.setSetting('volume', [this.settings['volume'], 100]);
 		}
 	},
-	
+
 	checkStats: function() {
 		if (this.usage_counter > 2){
 			this.start_page.showMessage('rating-help');
@@ -421,16 +425,16 @@ appModel.extendTo(SeesuApp, {
 			}
 			suStore('settings.'+ name, value, true);
 		}, 333);
-		
+
 	},
 	setSetting: function(name, value){
 		if (this.supported_settings.indexOf(name) != -1){
 			this.letAppKnowSetting(name, value);
 			this.storeSetting(name, value);
 		} else{
-			
+
 		}
-		
+
 
 	},
 	showPlaylists: function() {
@@ -467,7 +471,7 @@ appModel.extendTo(SeesuApp, {
 		opera_extension: "https://addons.opera.com/addons/extensions/details/seesu-music",
 		pokki_app: "https://www.pokki.com/app/Seesu"
 	},
-	
+
 	trackEvent:function(){
 		var current_page = this.current_page || '(nonono)';
 		var args = Array.prototype.slice.call(arguments);
@@ -523,7 +527,7 @@ appModel.extendTo(SeesuApp, {
 				} else {
 					r.push(cur);
 				}
-				
+
 			}
 		}
 		return r;
@@ -538,7 +542,7 @@ appModel.extendTo(SeesuApp, {
 		vk_api.get('getProfiles', {
 			uids: user_id,
 			fields: 'uid, first_name, last_name, domain, sex, city, country, timezone, photo, photo_medium, photo_big'
-			
+
 		},{nocache: true})
 			.done(function(info) {
 				info = info.response && info.response[0];
@@ -557,11 +561,11 @@ appModel.extendTo(SeesuApp, {
 						_this.s.api('user.update', _d);
 					}
 				} else {
-					
+
 				}
 			})
 			.fail(function(r) {
-				
+
 			});
 	},
 	getPhotoFromVK: function() {
@@ -592,13 +596,13 @@ appModel.extendTo(SeesuApp, {
 
 
 		var lostAuth = function(vkapi) {
-			
+
 			_this.mp3_search.remove(vkapi.asearch);
 			vkapi.asearch.dead = vkapi.asearch.disabled = true;
 			if (_this.vk_api == vkapi){
 				delete _this.vkapi;
 			}
-			
+
 		};
 		var vkapi = new vkApi(vk_token, {
 			queue: _this.delayed_search.vk_api.queue,
@@ -615,7 +619,7 @@ appModel.extendTo(SeesuApp, {
 		if (access){
 			_this.mp3_search.add(vkapi.asearch, true);
 		}
-		
+
 		if (vk_token.expires_in){
 			setTimeout(function() {
 				lostAuth(vkapi);
@@ -652,7 +656,7 @@ appModel.extendTo(SeesuApp, {
 		}).done(function(r){
 			if (!r){return;}
 
-			
+
 			var cver = r.latest_version.number;
 			if (cver > _this.version) {
 				var message =
@@ -663,7 +667,7 @@ appModel.extendTo(SeesuApp, {
 					$('#promo').append('<a id="update-star" href="' + link + '" title="' + message + '"><img src="/i/update_star.png" alt="update start"/></a>');
 				}
 			}
-			
+
 			console.log('lv: ' +  cver + ' reg link: ' + (_this.vkReferer = r.vk_referer));
 
 		});
@@ -682,7 +686,7 @@ provoda.sync_s.setRootModel(su);
 
 
 (function(){
-	
+
 	//su.sc_api = sc_api;
 	su.sc_api = new scApi(getPreloadedNK('sc_key'), new FuncsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new scMusicSearch({
@@ -699,7 +703,7 @@ provoda.sync_s.setRootModel(su);
 		mp3_search: su.mp3_search
 	}));
 
-	
+
 	if (app_env.cross_domain_allowed){
 		su.mp3_search.add(new isohuntTorrentSearch({
 			cache_ajax: cache_ajax,
@@ -723,8 +727,8 @@ provoda.sync_s.setRootModel(su);
 		}));
 	}
 
-	
-	
+
+
 })();
 
 app_serv.suReady(function(){
@@ -743,7 +747,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 	savePlaylists: function(){
 		var _this = this;
 		if (this.save_timeout){clearTimeout(this.save_timeout);}
-		
+
 		this.save_timeout = setTimeout(function(){
 			var plsts = [];
 			var playlists = _this.playlists;
@@ -751,9 +755,9 @@ mapLevelModel.extendTo(UserPlaylists, {
 				plsts.push(playlists[i].simplify());
 			}
 			_this.saveToStore(plsts);
-			
+
 		},10);
-		
+
 	},
 	findAddPlaylist: function(title, mo) {
 		var matched;
@@ -767,7 +771,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 		matched = matched || this.createUserPlaylist(title);
 		matched.add(mo);
 	},
-	
+
 	createUserPlaylist: function(title){
 
 		var pl_r = this.createEnvPlaylist({
@@ -798,7 +802,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 			this.updateNesting('lists_list', this.playlists);
 			this.savePlaylists();
 		}
-		
+
 	},
 	rebuildPlaylist: function(saved_pl){
 		var p = this.createEnvPlaylist({
@@ -820,7 +824,7 @@ mapLevelModel.extendTo(UserPlaylists, {
 				recovered[i] = this.rebuildPlaylist(spls[i]);
 			}
 		}
-		
+
 		this.playlists = recovered;
 		this.trigger('playlsits-change', this.playlists);
 		this.updateNesting('lists_list', this.playlists);
