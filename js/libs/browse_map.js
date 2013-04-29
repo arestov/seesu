@@ -1,10 +1,7 @@
-var
-	browseMap,
-	mapLevelModel;
 
-(function() {
+
+define(['provoda', 'spv'], function(provoda, spv) {
 "use strict";
-
 var MapLevel = function(num, parent_levels, resident, map){
 	this.num = num;
 	this.map = map;
@@ -16,7 +13,7 @@ var MapLevel = function(num, parent_levels, resident, map){
 	return this;
 };
 
-Class.extendTo(MapLevel, {
+spv.Class.extendTo(MapLevel, {
 	setResident: function(resident){
 		this.resident = resident;
 		//resident.updateState('');
@@ -40,32 +37,18 @@ Class.extendTo(MapLevel, {
 			target: this.resident.getMDReplacer(),
 			value: opts
 		});
-
-		/*
-		var o = opts || {};
-		var parent;
-		if (!opts.zoom_out){
-			parent = this.getParentLev();
-			if (parent){
-				parent.resident.blur();
-			}
-		}
-		
-		this.resident.show(o, parent);*/
 	},
 	hide: function(){
 		this.map.addChange({
 			type: 'zoom-out',
 			target: this.resident.getMDReplacer()
 		});
-		//this.resident.hide();
 	},
 	die: function(){
 		this.map.addChange({
 			type: 'destroy',
 			target: this.resident.getMDReplacer()
 		});
-		//this.resident.mlmDie();
 		this.resident.trigger('mpl-detach');
 		delete this.map;
 	},
@@ -79,7 +62,6 @@ Class.extendTo(MapLevel, {
 			this.map.startChangesCollecting();
 		}
 
-		//this.map.clearShallow(this);
 		var just_started = this.map.startChangesGrouping('zoom-out', true);
 		this.map.sliceDeepUntil(this.num);
 		if (just_started){
@@ -116,9 +98,9 @@ Class.extendTo(MapLevel, {
 });
 
 
-browseMap = function (){};
+var BrowseMap = function (){};
 
-provoda.Eventor.extendTo(browseMap, {
+provoda.Eventor.extendTo(BrowseMap, {
 	init: function(maleres){
 		this._super();
 		this.levels = [];
@@ -181,11 +163,6 @@ provoda.Eventor.extendTo(browseMap, {
 				last_group.changes.push(change);
 			} else {
 				throw new Error('unknow changes');
-				/*
-				this.chans_coll.push({
-					name: '',
-					changes: [change]
-				});*/
 			}
 		}
 	},
@@ -262,10 +239,6 @@ provoda.Eventor.extendTo(browseMap, {
 					cur.value = {
 						userwant: true
 					};
-					/*
-					if (opts.userwant && !opts.transit){
-						this.updateNav(lp, opts.skip_url_change);
-					}*/
 					this.updateNav(cur.target.getMD().lev, opts);
 				} else {
 					cur.value = {
@@ -301,7 +274,7 @@ provoda.Eventor.extendTo(browseMap, {
 		if (this.levels[num]){
 			return this.levels[num].free || this.levels[num].freezed;
 		} else{
-			return false;// maybe better return this.getFreeLevel(num);
+			return false;
 		}
 	},
 	getActiveLevelNum: function(){
@@ -668,7 +641,7 @@ provoda.Eventor.extendTo(browseMap, {
 		}
 		return nav_t.join(' ← ');
 	},
-	refreshTitle: function(s_num) {
+	refreshTitle: function() {
 		this.setTitle(this.joinNavTitle(this.getTitleNav(this.nav_tree)));
 		return this;
 	},
@@ -734,7 +707,7 @@ provoda.Eventor.extendTo(browseMap, {
 
 		});
 	},
-	replaceURL: function(s_num) {
+	replaceURL: function() {
 		this.setURL(this.joinNavURL(this.getTreeResidents(this.nav_tree)), true);
 		return this;
 	},
@@ -782,9 +755,10 @@ provoda.Eventor.extendTo(browseMap, {
 	}
 	
 });
-mapLevelModel = function() {};
 
-provoda.HModel.extendTo(mapLevelModel, {
+BrowseMap.Model = function() {};
+
+provoda.HModel.extendTo(BrowseMap.Model, {
 	init: function(opts) {
 		this._super(opts);
 		opts = opts || {};
@@ -826,7 +800,7 @@ provoda.HModel.extendTo(mapLevelModel, {
 				var Constr = target.constr || target.getConstr.call(this);
 				instance = new Constr();
 
-				instance.init_opts = [cloneObj({
+				instance.init_opts = [spv.cloneObj({
 					map_parent: this,
 					app: this.app
 				}, {
@@ -888,33 +862,9 @@ provoda.HModel.extendTo(mapLevelModel, {
 	},
 	mlmDie: function(){
 		return;
-		if (!this.permanent_md){
-			this.die();
-		}
 	},
 	hideOnMap: function() {
 		this.updateState('mp_show', false);
-	},
-	hide: function() {
-		debugger
-		this.updateState('mp_show', false);
-		return this;
-	},
-	show: function(opts, parent) {
-		debugger
-		this.focus();
-		this.updateState('mp_show', opts || true);
-		return this;
-	},
-	blur: function() {
-		debugger
-		this.updateState('mp_has_focus', false);
-		return this;
-	},
-	focus: function() {
-		debugger
-		this.updateState('mp_has_focus', true);
-		return this;
 	},
 	stackNav: function(stack_v){
 		this.updateState('mp_stack', stack_v);
@@ -939,17 +889,7 @@ provoda.HModel.extendTo(mapLevelModel, {
 	},
 	getURL: function() {
 		return '';
-	},
-	simplifyURL: function(url) {
-		return url;
-	},
-	findMapChildByURL: function(url) {
-		var surl = this.simplifyURL(url);
-		for (var i = 0; i < this.map_children.length; i++) {
-			if (surl == simplifyURL(this.map_children[i].state('url_part'))){
-				return this.map_children[i];
-			}
-		}
 	}
 });
-})();
+return BrowseMap;
+});

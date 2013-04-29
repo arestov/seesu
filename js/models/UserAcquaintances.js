@@ -82,7 +82,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 });
 
 var UserAcquaintancesLists = function() {};
-mapLevelModel.extendTo(UserAcquaintancesLists, {
+BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 	model_name: 'user_acqs_list',
 	init: function(opts) {
 		this._super(opts);

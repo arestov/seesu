@@ -1,13 +1,5 @@
-var PageView = function() {};
-provoda.View.extendTo(PageView, {
-	'stch-mp_show': function(state) {
-		this.c.toggleClass('hidden', !state);
-	},
-	createBase: function() {
-		this.c = $('<div class="usual_page"></div>');
-	}
-});
-
+define(['provoda'], function(provoda) {
+"use strict";
 
 var contextRow = function(container){
 	this.m = {
@@ -48,7 +40,7 @@ contextRow.prototype = {
 	isActive: function(name){
 		return !!this.parts[name].active;
 	},
-	showPart: function(name, posFn, callback){
+	showPart: function(name, posFn){
 		
 
 		if (!this.parts[name].active){
@@ -290,271 +282,73 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 });
 
 
-var fileInTorrentUI = function() {};
-provoda.View.extendTo(fileInTorrentUI,{
+
+var ActionsRowUI = function(){};
+provoda.View.extendTo(ActionsRowUI, {
+	'collch-context_parts': function(name, arr) {
+		var _this = this;
+		$.each(arr, function(i, el){
+			var md_name = el.model_name;
+			_this.getFreeChildView({name: md_name}, el, 'main');
+		});
+
+		this.requestAll();
+	},
 	state_change: {
-		"download-pressed": function(state) {
-			if (state){
-				this.downloadlink.addClass('download-pressed');
-			}
-		},
-		overstock: function(state) {
-			if (state){
-				this.c.addClass('overstocked');
+		active_part: function(nv, ov) {
+			if (nv){
+				this.row_context.removeClass('hidden');
+				this.arrow.removeClass('hidden');
 			} else {
-				this.c.removeClass('overstocked');
+				this.row_context.addClass('hidden');
 			}
-		},
-		'full_title': function(state) {
-			this.f_text.text(state);
-
-		},
-		'torrent_link': function(state) {
-			this.downloadlink.attr('href', state);
 		}
-	},
-	createBase: function() {
-		var _this = this;
-		this.c = $('<li></li>');
-
-
-		$('<span class="play-button-place"></span>').appendTo(this.c);
-		
-
-		var pg = $('<span class="mf-progress"></span>');
-		this.f_text = $('<span class="mf-text"></span>').appendTo(pg);
-
-		this.downloadlink = $('<a class="external download-song-link"></a>').click(function(e) {
-			e.stopPropagation();
-			e.preventDefault();
-			_this.RPCLegacy('download');
-		}).text('torrent').appendTo(this.c);
-
-		this.addWayPoint(this.downloadlink, {
-			
-		});
-
-		pg.appendTo(this.c);
-
 	}
 });
-var songFileModelUI = function() {};
-provoda.View.extendTo(songFileModelUI, {
+
+
+
+var BaseCRowUI = function(){};
+provoda.View.extendTo(BaseCRowUI, {
 	dom_rp: true,
-	createDetailes: function(){
-		this.createBase();
-
-		var _this = this;
-
-		var mf_cor_view = this.parent_view.parent_view;
-		mf_cor_view.on('state-change.want_more_songs', function(e){
-			_this.setVisState('pp-wmss', !!e.value);
-		});
-
-		this.parent_view
-			.on('state-change.show_overstocked', function(e) {
-				_this.setVisState('p-show-ovst', e.value);
+	bindClick: function(){
+		if (this.button){
+			var _this = this;
+			this.button.click(function(){
+				_this.RPCLegacy('switchView');
 			});
-
-
-		//var song_view = mf_cor_view.parent_view;
-		mf_cor_view.on('state-change.vis_is_visible', function(e){
-			_this.setVisState('is_visible', !!e.value);
-		});
-		/*
-		song_view.on('state-change.mp_show_end', function(e){
-			_this.setVisState('is_visible', !!e.value);
-		});*/
-
-	},
-	complex_states: {
-		'visible_duration_text': {
-			depends_on: ['visible_duration'],
-			fn: function(state) {
-				if (state){
-					var duration = Math.floor(state/1000);
-					if (duration){
-						var digits = duration % 60;
-						return (Math.floor(duration/60)) + ':' + (digits < 10 ? '0'+ digits : digits );
-					}
-				}
-			}
-		},
-		"can-progress": {
-			depends_on: ['vis_is_visible', 'vis_con-appended', 'selected'],
-			fn: function(vis, apd, sel){
-				var can = vis && apd && sel;
-				if (can){
-					var _this = this;
-
-					$(window).off('resize.song_file_progress');
-					$(window).on('resize.song_file_progress', spv.debounce(function(e){
-						_this.setVisState('win-resize-time', e.timeStamp);
-					}, 100));
-				}
-				return can;
-			}
-		},
-		'vis_wp_usable': {
-			depends_on: ['overstock', 'vis_pp-wmss', 'vis_p-show-ovst'],
-			fn: function(overstock, pp_wmss, p_show_overstock) {
-
-				if (overstock){
-					return pp_wmss && p_show_overstock;
-				} else {
-					return pp_wmss;
-				}
-
-			}
-		},
-		"vis_progress-c-width": {
-			depends_on: ['can-progress', 'vis_pp-wmss', 'vis_win-resize-time'],
-			fn: function(can, p_wmss, wrsz_time){
-				if (can){
-					return this.tpl.ancs['progress_c'].width();
-				} else {
-					return 0;
-				}
-			}
-		},
-		"vis_loading_p": {
-			depends_on: ['vis_progress-c-width', 'loading_progress'],
-			fn: function(width, factor){
-				if (factor) {
-					if (width){
-						return Math.floor(factor * width) + 'px';
-					} else {
-						return (factor * 100) + '%';
-					}
-				} else {
-					return 'auto';
-				}
-			}
-		},
-		"vis_playing_p": {
-			depends_on: ['vis_progress-c-width', 'playing_progress'],
-			fn: function(width, factor){
-				if (factor) {
-					if (width){
-						return Math.floor(factor * width) + 'px';
-					} else {
-						return (factor * 100) + '%';
-					}
-				} else {
-					return 'auto';
-				}
-			}
+			this.addWayPoint(this.button);
 		}
 	},
-	createBase: function() {
-		var node = this.root_view.getSample('song-file');
-		this.useBase(node);
-
-		var progress_c = this.tpl.ancs['progress_c'];
-
-		var _this = this;
-
-		var path_points;
-		var positionChange = function(){
-			var last = path_points[path_points.length - 1];
-
-			var width = _this.state('vis_progress-c-width');
-
-			if (!width){
-				console.log("no width for pb :!((");
-			}
-			if (width){
-				_this.RPCLegacy('setPositionByFactor', [last.cpos, width]);
-			}
-		};
-		var getClickPosition = function(e, node){
-			//e.offsetX ||
-			var pos = e.pageX - $(node).offset().left;
-			return pos;
-		};
-
-		var touchDown = function(e){
-			path_points = [];
-			e.preventDefault();
-			path_points.push({cpos: getClickPosition(e, progress_c[0]), time: e.timeStamp});
-			positionChange();
-		};
-		var touchMove = function(e){
-			if (!_this.state('selected')){
-				return true;
-			}
-			if (e.which && e.which != 1){
-				return true;
-			}
-			e.preventDefault();
-			path_points.push({cpos: getClickPosition(e, progress_c[0]), time: e.timeStamp});
-			positionChange();
-		};
-		var touchUp = function(e){
-			if (!_this.state('selected')){
-				return true;
-			}
-			if (e.which && e.which != 1){
-				return true;
-			}
-			$(progress_c[0].ownerDocument)
-				.off('mouseup', touchUp)
-				.off('mousemove', touchMove);
-
-			var travel;
-			if (!travel){
-				//
-			}
-
-
-			path_points = null;
-
-		};
-		progress_c.on('mousedown', function(e){
-
-			$(progress_c[0].ownerDocument)
-				.off('mouseup', touchUp)
-				.off('mousemove', touchMove);
-
-			if (!_this.state('selected')){
-				return true;
-			}
-			if (e.which && e.which != 1){
-				return true;
-			}
-
-			$(progress_c[0].ownerDocument)
-				.on('mouseup', touchUp)
-				.on('mousemove', touchMove);
-
-			touchDown(e);
-
-		});
-
+	getButtonPos: function(){
+		var button_shift = this.button_shift || 0;
+		return this.button.offset().left + (this.button.outerWidth()/2) + button_shift;
 	},
-	tpl_events: {
-		'selectFile': function(e) {
-			if (!this.state('selected')){
-				this.RPCLegacy('trigger', 'want-to-play-sf');
+	"stch-active_view": function(state){
+		if (state){
+			if (this.expand){
+				this.expand();
 			}
-		},
-		'switchPlay': function(e) {
-			var _this = this;
-			e.stopPropagation();
-			if (_this.state('selected')){
-
-				if (_this.state('play') == 'play'){
-					_this.RPCLegacy('pause');
-				} else {
-					_this.RPCLegacy('trigger', 'want-to-play-sf');
-					//_this.RPCLegacy('play');
-				}
-			} else {
-				_this.RPCLegacy('trigger', 'want-to-play-sf');
+			var b_pos = this.getButtonPos();
+			if (b_pos){
+				var arrow = this.parent_view.arrow;
+				arrow.css('left', b_pos - arrow.offsetParent().offset().left + 'px');
 			}
+			this.c.removeClass('hidden');
+		} else {
+			this.c.addClass('hidden');
 		}
 	}
+
 });
 
 
-
+return {
+	LfmScrobbleView: LfmScrobbleView,
+	LfmLoveItView: LfmLoveItView,
+	VkLoginUI:VkLoginUI,
+	contextRow: contextRow,
+	ActionsRowUI:ActionsRowUI,
+	BaseCRowUI:BaseCRowUI
+};
+});

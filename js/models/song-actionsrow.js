@@ -115,7 +115,7 @@ investigation.extendTo(StrusersRowSearch, {
 		this.addSection('users', new StrusersRSSection());
 	},
 	handleVKFriendsSearch: function(list){
-		var r = (this.q ? searchInArray(list, this.q, ["first_name", "last_name"]) : list);
+		var r = (this.q ? spv.searchInArray(list, this.q, ["first_name", "last_name"]) : list);
 		if (r.length){
 			r = r.concat();
 			for (var i = 0; i < r.length; i++) {

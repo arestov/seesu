@@ -1,8 +1,9 @@
-var songsListView;
-(function() {
-
+define(['provoda', 'jquery', './SongUI', './songsListViewBase', './etc_views', 'app_serv'], function(provoda, $, SongUI, slbase, etc_views, app_serv) {
+	"use strict";
+	var songsListView;
+	var localize = app_serv.localize;
 	var PlaylistSettingsRowView = function(){};
-	BaseCRowUI.extendTo(PlaylistSettingsRowView, {
+	etc_views.BaseCRowUI.extendTo(PlaylistSettingsRowView, {
 		"stch-dont_rept_pl": function(state) {
 			this.dont_rept_pl_chbx.prop('checked', !!state);
 		},
@@ -24,7 +25,7 @@ var songsListView;
 
 
 	var MultiAtcsRowView = function(){};
-	BaseCRowUI.extendTo(MultiAtcsRowView, {
+	etc_views.BaseCRowUI.extendTo(MultiAtcsRowView, {
 		createDetailes: function(){
 			var parent_c = this.parent_view.row_context;
 			var buttons_panel = this.parent_view.buttons_panel;
@@ -40,7 +41,7 @@ var songsListView;
 				//
 			});
 
-			this.c.find('.open-external-playlist').click(function(e){
+			this.c.find('.open-external-playlist').click(function(){
 				_this.RPCLegacy('makeExternalPlaylist');
 			
 				//e.preventDefault();
@@ -54,8 +55,8 @@ var songsListView;
 
 
 	var PlARowView = function() {};
-	ActionsRowUI.extendTo(PlARowView, {
-		createBase: function(c){
+	etc_views.ActionsRowUI.extendTo(PlARowView, {
+		createBase: function(){
 		//	var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 			this.c = this.parent_view.panel;
 			this.row_context = this.c.find('.pla-row-content');
@@ -84,7 +85,7 @@ var songsListView;
 
 
 
-	songsListView = function(pl){};
+	songsListView = function(){};
 	songsListBaseView.extendTo(songsListView, {
 		'stch-mp_show': function(opts) {
 			this.c.toggleClass('hidden', !opts);
@@ -133,5 +134,5 @@ var songsListView;
 
 	});
 
-
-})();
+return songsListView;
+});

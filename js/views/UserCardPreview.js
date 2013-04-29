@@ -1,87 +1,5 @@
-var SoftVkLoginUI = function() {};
-VkLoginUI.extendTo(SoftVkLoginUI, {
-	createBase: function() {
-		this._super();
-		this.c.removeClass('attention-focuser');
-	}
-});
-
-
-
-
-var PersonalListPreview = function() {};
-ListPreview.extendTo(PersonalListPreview, {
-	clickAction: function() {
-		this.RPCLegacy('requestList');
-		//this.RPCLegacy('requestList');
-	},
-	'stch-pmd_vswitched': function(state) {
-		this.c.toggleClass('access-request', state);
-	},
-	children_views: {
-		auth_block_lfm: LfmLoginView,
-		auth_block_vk: SoftVkLoginUI,
-		preview_list: ArtistsListPreviewLine
-	},
-	'collch-auth_part': {
-		place: 'tpl.ancs.auth_con',
-		by_model_name: true
-	},
-	'collch-preview_list': {
-		place: 'tpl.ancs.listc',
-		limit: 9
-	}
-});
-var PersonalAlbumsListPreview = function() {};
-AlbumsListPreview.extendTo(PersonalAlbumsListPreview, {
-	clickAction: function() {
-		this.RPCLegacy('requestList');
-		//this.RPCLegacy('requestList');
-	},
-	'stch-pmd_vswitched': function(state) {
-		this.c.toggleClass('access-request', state);
-	},
-	children_views: {
-		auth_block_lfm: LfmLoginView,
-		auth_block_vk: SoftVkLoginUI,
-		preview_list: AlbumsListPreviewItem
-	},
-	'collch-auth_part': {
-		place: 'tpl.ancs.auth_con',
-		by_model_name: true
-	},
-	'collch-preview_list': {
-		place: 'tpl.ancs.listc',
-		limit: 15
-	}
-});
-
-
-var UserCardPage = function(){};
-PageView.extendTo(UserCardPage, {
-	useBase: function(node) {
-		this.c = node;
-		this.bindBase();
-	},
-	createBase: function() {
-		this.c = this.root_view.getSample('user_page');
-		this.bindBase();
-	},
-	bindBase: function() {
-		this.createTemplate();
-	},
-	children_views: {
-		'user-playlists': LiListsPreview,
-		users_acqutes: UserAcquaintancesListPreview,
-		vk_audio: PersonalListPreview,
-		arts_recomms: PersonalListPreview,
-		lfm_loved: PersonalListPreview,
-		new_releases: PersonalAlbumsListPreview,
-		recomm_releases: PersonalAlbumsListPreview
-	},
-	'collch-users_acqutes': 'tpl.ancs.users_acqutes'
-});
-
+define(['provoda', 'jquery'], function(provoda, $) {
+"use strict";
 var UserCardPreview = function() {};
 provoda.View.extendTo(UserCardPreview, {
 	createBase: function() {
@@ -192,4 +110,6 @@ provoda.View.extendTo(UserCardPreview, {
 			return true;
 		}
 	}
+});
+return UserCardPreview;
 });

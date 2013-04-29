@@ -6,7 +6,7 @@ var LoadableList,
 "use strict";
 
 var LoadableListBase = function() {};
-mapLevelModel.extendTo(LoadableListBase, {
+BrowseMap.Model.extendTo(LoadableListBase, {
 	init: function(opts, params) {
 		this._super(opts);
 		this[this.main_list_name] = [];
@@ -419,7 +419,7 @@ LoadableList.extendTo(TagsList, {
 });
 
 ListsModel = function() {};
-mapLevelModel.extendTo(ListsModel, {
+BrowseMap.Model.extendTo(ListsModel, {
 	init: function(opts) {
 		this._super(opts);
 		var _this = this;

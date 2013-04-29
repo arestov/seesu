@@ -78,28 +78,7 @@ var jsLoadComplete,
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
 
-	"js/su-prototypes/su-player.js",
-
-	"js/libs/c_buttmen.js",
-	
-	"js/views/navigation.js",
-	"js/views/etc.views.js",
-	"js/views/TagPage.js",
-	"js/views/ArtistsList.js",
-	"js/views/UserAcquaintances.js",
-	"js/views/UserCard.js",
-	"js/views/MusicConductor.js",
-	
-	"js/views/YoutubeVideo.js",
-	"js/views/su-mfcomplect.js",
-	"js/views/search-investigation.base.js",
-	"js/views/search-investigation.js",
-	"js/views/song-actionsrow.js",
-	"js/views/SongUI.js",
-	"js/views/start_page.js",
-	"js/views/songs-list.base.js",
-	"js/views/songs-list.js",
-	"js/views/AppView.js"
+	"js/su-prototypes/su-player.js"
 	];
 	var bpathWrap = function(array){
 		if (base_path){
@@ -145,7 +124,7 @@ var jsLoadComplete,
 	jsLoadComplete.change = function() {
 		testCbs();
 	};
-	require(['spv', 'js/app_serv'], function(spv, app_serv) {
+	require(['spv', 'app_serv'], function(spv, app_serv) {
 
 		
 		jsLoadComplete({
@@ -186,7 +165,7 @@ var jsLoadComplete,
 				load: bpathWrap(js_toload),
 				complete: function(){
 					completed = true;
-					big_timer.q.push([big_timer.base_category, 'ready-jsload', big_timer.comp('page-start'), 'All JSs loaded', 100]);
+
 					while (js_loadcomplete.length){
 						js_loadcomplete.shift()();
 					}

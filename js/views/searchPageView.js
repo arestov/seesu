@@ -1,21 +1,12 @@
-
-
-var 
+define(['provoda', 'jquery', 'app_serv', './searchPageViewBase'], function(provoda, $) {
+"use strict";
+var
+	default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
+var
 	baseSuggestUI,
 	baseSectionButtonUI,
 	searchSectionUI,
-	investigationView,
-	searchPageView;
-
-
-
-
-
-(function() {
-"use strict";
-var 
-	default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
-
+	investigationView;
 
 investigationView  = function(){};
 provoda.extendFromTo('InvestigationView', provoda.View, investigationView);
@@ -24,7 +15,7 @@ provoda.extendFromTo('InvestigationView', provoda.View, investigationView);
 baseSuggestUI = function(){};
 provoda.extendFromTo('baseSuggestView', provoda.View, baseSuggestUI);
 
-baseSectionButtonUI = function(sugg){};
+baseSectionButtonUI = function(){};
 provoda.extendFromTo('baseSectionButtonView', baseSuggestUI, baseSectionButtonUI);
 
 
@@ -38,7 +29,7 @@ baseSectionButtonUI.extendTo(searchPageButtonView, {
 	autoscroll: true
 });
 
-var artistSuggestUI = function(sugg){};
+var artistSuggestUI = function(){};
 searchPageSuggestView.extendTo(artistSuggestUI, {
 	createItem: function(){
 		var that = this.mpx.md;
@@ -56,10 +47,10 @@ searchPageSuggestView.extendTo(artistSuggestUI, {
 	}
 });
 
-var trackSuggestUI = function(sugg){};
+var trackSuggestUI = function(){};
 searchPageSuggestView.extendTo(trackSuggestUI, {
 	createItem: function(){
-		var that = this.mpx.md;
+
 		var a = $('<a></a>');
 
 		this.img_c = $('<img/>').attr('src', default_sugg_artimage).appendTo(a);
@@ -90,7 +81,7 @@ searchPageSuggestView.extendTo(trackSuggestUI, {
 });
 
 
-var tagSuggestUI = function(sugg){};
+var tagSuggestUI = function(){};
 searchPageSuggestView.extendTo(tagSuggestUI,  {
 	createItem: function() {
 		var that = this.mpx.md;
@@ -103,10 +94,10 @@ searchPageSuggestView.extendTo(tagSuggestUI,  {
 });
 
 
-var albumSuggestUI = function(sugg){};
+var albumSuggestUI = function(){};
 searchPageSuggestView.extendTo(albumSuggestUI, {
 	createItem: function(){
-		var that = this.mpx.md;
+
 		var a = $("<a></a>");
 		this.img_c = $('<img/>').attr('src', default_sugg_artimage).appendTo(a);
 
@@ -139,7 +130,7 @@ searchSectionUI = function(){};
 provoda.extendFromTo("searchSectionView", provoda.View, searchSectionUI);
 
 
-var tracksSectionView = function(seasc){};
+var tracksSectionView = function(){};
 searchSectionUI.extendTo(tracksSectionView, {
 	c_class: "sugg-section results-suggests",
 	children_views:{
@@ -149,7 +140,7 @@ searchSectionUI.extendTo(tracksSectionView, {
 });
 
 
-var tagsSectionView = function(seasc) {};
+var tagsSectionView = function() {};
 searchSectionUI.extendTo(tagsSectionView, {
 	c_class: "sugg-section results-suggests",
 	children_views:{
@@ -159,7 +150,7 @@ searchSectionUI.extendTo(tagsSectionView, {
 });
 
 
-var albumsSectionView = function(seasc) {};
+var albumsSectionView = function() {};
 searchSectionUI.extendTo(albumsSectionView, {
 	c_class: 'sugg-section results-suggests',
 	children_views:{
@@ -169,7 +160,7 @@ searchSectionUI.extendTo(albumsSectionView, {
 });
 
 
-var artistsSectionView = function(seasc){};
+var artistsSectionView = function(){};
 searchSectionUI.extendTo(artistsSectionView, {
 	c_class: 'sugg-section results-suggests',
 	children_views:{
@@ -179,7 +170,7 @@ searchSectionUI.extendTo(artistsSectionView, {
 });
 
 
-var playlistsSectionView = function(seasc) {};
+var playlistsSectionView = function() {};
 searchSectionUI.extendTo(playlistsSectionView, {
 	c_class: 'sugg-section playlist-results',
 	children_views:{
@@ -189,7 +180,7 @@ searchSectionUI.extendTo(playlistsSectionView, {
 
 
 
-searchPageView = function() {};
+var searchPageView = function() {};
 investigationView.extendTo(searchPageView, {
 	children_views: {
 		'section-artist': artistsSectionView,
@@ -213,7 +204,7 @@ investigationView.extendTo(searchPageView, {
 					}
 					
 				} else {
-					return mp_show
+					return mp_show;
 				}
 			}
 		}
@@ -223,5 +214,5 @@ investigationView.extendTo(searchPageView, {
 		$('<p class="search-desc"></p>').text(localize('search-control-hint')).appendTo(this.c);
 	}
 });
-
-})();
+return searchPageView;
+});

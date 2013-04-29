@@ -1,9 +1,18 @@
 requirejs.config({
 	paths: {
-		provoda: 'js/prototype/provoda',
+		provoda: 'js/prototypes/provoda',
 		spv: 'js/libs/spv',
 		su: 'js/seesu',
-		jquery: 'js/common-libs/jquery-2.0.0.min.js'
+		jquery: 'js/common-libs/jquery-2.0.0.min',
+		localizer: 'js/libs/localizer',
+		cache_ajax: 'js/libs/cache_ajax.js',
+		app_serv: "js/app_serv",
+		hex_md5: 'js/common-libs/md5.min'
+	},
+	shim: {
+		hex_md5: {
+			exports: 'shim'
+		}
 	}
 });
 (function() {
@@ -17,10 +26,10 @@ requirejs.config({
 	var need_ui = !cbp || cbp != window;
 
 	if (need_ui){
-		require(['spv', 'js/app_serv'], function(spv, app_serv) {
-			app_serv.handleDocument(window.document, {category: big_timer.base_category, start_time: "page-start"});
+		require(['spv', 'app_serv'], function(spv, app_serv) {
+			app_serv.handleDocument(window.document);
 		});
-		require(['js/seesu', 'js/views/AppView'], function(su, AppView) {
+		require(['su', 'js/views/AppView'], function(su, AppView) {
 			var can_die = false;
 			var md = su;
 			var view = new AppView();
@@ -33,7 +42,6 @@ requirejs.config({
 			view.requestAll();
 			provoda.sync_r.connectAppRoot();
 			window.app_view = view;
-			var tracking_opts =  {category: big_timer.base_category, start_time: "page-start"};
 		});
 	}
 })();
@@ -91,20 +99,12 @@ window.loadJS = function(src, callback){
 
 
 loadJS(bpath + 'js/common-libs/yepnope.1.5.4-min.js', function(){
-	big_timer.q.push([big_timer.base_category, 'ready-yepnope', big_timer.comp('page-start'), 'yepnope loaded', 100]);
+
 
 	yepnope({
 		load: bpath + 'js/_seesu.jslist.js',
 		complete: function(){
-			require(['js/app_serv'], function(app_serv) {
-				
-				
-				if (need_ui){
-					//big_timer.sui_want = new Date();
-
-					
-
-				}
+			require(['app_serv'], function(app_serv) {
 			});
 			
 			

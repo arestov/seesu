@@ -3,7 +3,7 @@ var song;
 	"use strict";
 
 	var baseSong = function() {};
-	provoda.extendFromTo("baseSong", mapLevelModel, baseSong);
+	provoda.extendFromTo("baseSong", BrowseMap.Model, baseSong);
 
 	song = function(){};
 

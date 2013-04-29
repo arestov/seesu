@@ -1,16 +1,15 @@
+var su, seesu;
 define('su',
-['require', 'spv', 'app_serv', 'provoda', 'localize', 'jquery'],
-function(require, spv, app_serv, provoda, localize, $) {
-
+['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi',
+'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended'],
+function(require, spv, app_serv, provoda, $, navi,
+FuncsQueue, LastfmAPIExtended) {
 'use strict';
-
+var localize = app_serv.localize;
 
 var
-	su, app_env = app_serv.app_env,
-	LastfmAPI = require('js/libs/LastfmAPIExtended'),
-	FuncsQueue = require('js/libs/FuncsQueue'),
-	cache_ajax,
-	navi = require('nav');
+	app_env = app_serv.app_env,
+	cache_ajax;
 
 
 
@@ -25,7 +24,7 @@ $.ajaxSetup({
 $.support.cors = true;
 
 
-var lfm = new LastfmAPI();
+var lfm = new LastfmAPIExtended();
 
 lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret'), function(key){
 	return app_serv.suStore(key);
@@ -90,7 +89,7 @@ appModel.extendTo(SeesuApp, {
 			_gaq.gV = function(){
 				return suStore('ga_store');
 			};
-			app_serv.suReady(function(){
+			spv.domReady(function(){
 				yepnope( {
 					load: bpath + 'js/common-libs/ga.mod.min.js',
 					complete: function(){
@@ -316,14 +315,19 @@ appModel.extendTo(SeesuApp, {
 			_this.checkStats();
 		},100);
 
-		app_serv.suReady(function() {
+		spv.domReady(function() {
 			_this.lfm_auth.try_to_login();
 			setTimeout(function(){
+				return;
 				while (big_timer.q.length){
 					_this.trackTime.apply(_this, big_timer.q.shift());
 					//console.log()
 				}
 			}, 300);
+			if (!lfm.sk) {
+				_this.lfm_auth.get_lfm_token();
+
+			}
 		});
 
 		setTimeout(function() {
@@ -759,7 +763,7 @@ appModel.extendTo(SeesuApp, {
 
 });
 
-window.seesu = window.su = new SeesuApp();
+seesu = su = new SeesuApp();
 su.init(3.9);
 provoda.sync_s.setRootModel(su);
 
@@ -815,13 +819,13 @@ provoda.sync_s.setRootModel(su);
 
 })();
 
-app_serv.suReady(function(){
+spv.domReady(function(){
 	try_mp3_providers();
 	seesu.checkUpdates();
 });
 
 var UserPlaylists = function() {};
-mapLevelModel.extendTo(UserPlaylists, {
+BrowseMap.Model.extendTo(UserPlaylists, {
 	model_name: 'user_playlists',
 	init: function(opts) {
 		this._super(opts);

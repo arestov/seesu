@@ -1,8 +1,7 @@
-var funcsStack;
-
-(function() {
+define(function() {
 "use strict";
-var fstackAtom = function(stack, func, done, data) {
+var FuncsStack;
+var FstackAtom = function(stack, func, done, data) {
 	this.stack = stack;
 	this.func = func;
 	this.done = done;
@@ -12,7 +11,7 @@ var fstackAtom = function(stack, func, done, data) {
 };
 
 
-funcsStack = function(selectNext, initAtom) {
+FuncsStack = function(selectNext, initAtom) {
 	this.arr = [];
 
 
@@ -50,11 +49,11 @@ funcsStack = function(selectNext, initAtom) {
 		};
 };
 
-funcsStack.prototype = {
-	constructor: funcsStack,
+FuncsStack.prototype = {
+	constructor: FuncsStack,
 	next: function(func, data) {
 		var _this = this;
-		var atom = new fstackAtom(this.arr, func, this.done, data);
+		var atom = new FstackAtom(this.arr, func, this.done, data);
 		if (this.initAtom){
 			this.initAtom(atom);
 		}
@@ -95,4 +94,5 @@ funcsStack.prototype = {
 		return this.arr;
 	}
 };
-})();
+return FuncsStack;
+});

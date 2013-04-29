@@ -431,64 +431,6 @@ provoda.Model.extendTo(PartsSwitcher, {
 	}
 });
 
-var ActionsRowUI = function(){};
-provoda.View.extendTo(ActionsRowUI, {
-	'collch-context_parts': function(name, arr) {
-		var _this = this;
-		$.each(arr, function(i, el){
-			var md_name = el.model_name;
-			_this.getFreeChildView({name: md_name}, el, 'main');
-		});
-
-		this.requestAll();
-	},
-	state_change: {
-		active_part: function(nv, ov) {
-			if (nv){
-				this.row_context.removeClass('hidden');
-				this.arrow.removeClass('hidden');
-			} else {
-				this.row_context.addClass('hidden');
-			}
-		}
-	}
-});
-
-
-
-var BaseCRowUI = function(){};
-provoda.View.extendTo(BaseCRowUI, {
-	dom_rp: true,
-	bindClick: function(){
-		if (this.button){
-			var _this = this;
-			this.button.click(function(){
-				_this.RPCLegacy('switchView');
-			});
-			this.addWayPoint(this.button);
-		}
-	},
-	getButtonPos: function(){
-		var button_shift = this.button_shift || 0;
-		return this.button.offset().left + (this.button.outerWidth()/2) + button_shift;
-	},
-	"stch-active_view": function(state){
-		if (state){
-			if (this.expand){
-				this.expand();
-			}
-			var b_pos = this.getButtonPos();
-			if (b_pos){
-				var arrow = this.parent_view.arrow;
-				arrow.css('left', b_pos - arrow.offsetParent().offset().left + 'px');
-			}
-			this.c.removeClass('hidden');
-		} else {
-			this.c.addClass('hidden');
-		}
-	}
-
-});
 
 var BaseCRow = function(){};
 provoda.Model.extendTo(BaseCRow, {

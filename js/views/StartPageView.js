@@ -1,25 +1,11 @@
-
-
-var MusicConductorView = function() {};
-provoda.View.extendTo(MusicConductorView, {
-	createDetailes: function() {
-		createBase();
-	},
-	createBase: function() {
-		this.c = $('<div></div>');
-		this.header = $('<h4></h4>').appendTo(this.c);
-	},
-	'stch-nav_title': function(state) {
-		this.header.text(state || '');
-	}
-});
-
+define(['provoda', 'spv', 'jquery', 'app_serv', './MusicConductorPreview', './uacq'], function(provoda, spv, $, app_serv, MusicConductorPreview, uacq) {
+"use strict";
+var localize = app_serv.localize;
 
 var StartPageView = function(){};
 
 provoda.View.extendTo(StartPageView, {
 	createDetailes: function(){
-		var _this = this;
 
 		this.els = this.root_view.els;
 		this.c = this.els.start_screen;
@@ -49,7 +35,7 @@ provoda.View.extendTo(StartPageView, {
 			main: MusicConductorPreview
 		},
 		pstuff: {
-			main: UserCardPreview
+			main: uacq.UserCardPreview
 		}
 	},
 	complex_states: {
@@ -110,7 +96,7 @@ provoda.View.extendTo(StartPageView, {
 
 
 				var url = $("<a class='external'></a>").attr('href', link).text(localize('at-this-page'));
-				this.message_arh_c.append(createComlexText(localize("ask-rating-help")).setVar("app_url", url[0]));
+				this.message_arh_c.append(spv.createComlexText(localize("ask-rating-help")).setVar("app_url", url[0]));
 				spm_c.append(this.message_arh_c);
 
 				/*
@@ -131,4 +117,6 @@ provoda.View.extendTo(StartPageView, {
 			return true;
 		}
 	}
+});
+return StartPageView;
 });

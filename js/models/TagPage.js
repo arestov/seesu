@@ -355,7 +355,7 @@ songsList.extendTo(TopTagSongs, {
 
 
 var SongsLists = function() {};
-mapLevelModel.extendTo(SongsLists, {
+BrowseMap.Model.extendTo(SongsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -512,7 +512,7 @@ ArtistsList.extendTo(TagTopArtists, {
 });
 
 var ArtistsLists = function() {};
-mapLevelModel.extendTo(ArtistsLists, {
+BrowseMap.Model.extendTo(ArtistsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -539,7 +539,7 @@ mapLevelModel.extendTo(ArtistsLists, {
 
 
 var TagPage = function() {};
-mapLevelModel.extendTo(TagPage, {
+BrowseMap.Model.extendTo(TagPage, {
 	init: function(opts, params) {
 		this._super(opts);
 

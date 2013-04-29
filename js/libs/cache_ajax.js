@@ -1,7 +1,6 @@
-var cache_ajax;
-(function(){
-	"use strict";
-	cache_ajax = {
+define(function(){
+"use strict";
+var cache_ajax = {
 		storage: {},
 		get: function(prefix, hash_key, callback){
 			var _this= this;
@@ -43,6 +42,6 @@ var cache_ajax;
 		}
 	}, 30000);
 
-
-})();
+return cache_ajax;
+});
 

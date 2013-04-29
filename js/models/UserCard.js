@@ -260,7 +260,7 @@ songsList.extendTo(MyVkAudioList, {
 
 
 var UsersList = function() {};
-mapLevelModel.extendTo(UsersList, {
+BrowseMap.Model.extendTo(UsersList, {
 	
 });
 
@@ -346,7 +346,7 @@ UserNewReleases.extendTo(RecommNewReleases, {
 
 
 var LfmUserArtists = function() {};
-mapLevelModel.extendTo(LfmUserArtists, {
+BrowseMap.Model.extendTo(LfmUserArtists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
@@ -354,7 +354,7 @@ mapLevelModel.extendTo(LfmUserArtists, {
 });
 
 var LfmUserTracks = function() {};
-mapLevelModel.extendTo(LfmUserTracks, {
+BrowseMap.Model.extendTo(LfmUserTracks, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
@@ -362,7 +362,7 @@ mapLevelModel.extendTo(LfmUserTracks, {
 });
 
 var LfmUserAlbums = function() {};
-mapLevelModel.extendTo(LfmUserAlbums, {
+BrowseMap.Model.extendTo(LfmUserAlbums, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
@@ -370,7 +370,7 @@ mapLevelModel.extendTo(LfmUserAlbums, {
 });
 
 var LfmUserTags = function() {};
-mapLevelModel.extendTo(LfmUserTags, {
+BrowseMap.Model.extendTo(LfmUserTags, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
@@ -379,7 +379,7 @@ mapLevelModel.extendTo(LfmUserTags, {
 
 
 var LfmListened = function() {};
-mapLevelModel.extendTo(LfmListened, {
+BrowseMap.Model.extendTo(LfmListened, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
@@ -407,7 +407,7 @@ mapLevelModel.extendTo(LfmListened, {
 
 var UserCard = function() {};
 
-mapLevelModel.extendTo(UserCard, {
+BrowseMap.Model.extendTo(UserCard, {
 	model_name: 'usercard',
 	sub_pa: {
 		'recommended_artists': {

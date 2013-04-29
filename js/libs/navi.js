@@ -1,4 +1,4 @@
-define(['app_env', 'spv'], function(app_env, spv) {
+define(['spv'], function(spv) {
 'use strict';
 
 var bindLocationChange = function(hashchangeHandler) {

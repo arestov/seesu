@@ -1,11 +1,18 @@
+define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
+'./StartPageView', './searchPageView', './ArtcardUI', './TagsListPage', './ArtistListView', './songsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView'],
+function(provoda, spv, $, app_serv, FuncsQueue, nav, StartPageView, coct, uacq,
+searchPageView, ArtcardUI, TagsListPage, ArtistListView, songsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView) {
+"use strict";
+var app_env = app_serv.app_env;
+var localize = app_serv.localize;
 var viewOnLevelP = function(md, view) {
 	var lev_conj = this.getLevelContainer(md.map_level_num);
 	view.wayp_scan_stop = true;
 	return lev_conj.material;
 };
 
-var appModelView = function(){};
-provoda.View.extendTo(appModelView, {
+var appView = function(){};
+provoda.View.extendTo(appView, {
 	dom_rp: true,
 	createDetailes: function(){
 		this.root_view = this;
@@ -111,96 +118,96 @@ provoda.View.extendTo(appModelView, {
 	children_views: {
 		start_page : {
 			main: StartPageView,
-			nav: StartPageNavView
+			nav: nav.StartPageNavView
 		},
 		invstg: {
 			main: searchPageView,
-			nav: investgNavUI
+			nav: nav.investgNavUI
 		},
 		artcard: {
-			main: artCardUI,
-			nav: baseNavUI
+			main: ArtcardUI,
+			nav: nav.baseNavUI
 		},
 
 		artslist: {
 			main: ArtistListView,
-			nav: baseNavUI
+			nav: nav.baseNavUI
 		},
 		playlist: {
 			main: songsListView,
 			'all-sufficient-details': songsListView,
-			nav: baseNavUI
+			nav: nav.baseNavUI
 		},
 		usercard: {
-			nav: baseNavUI,
+			nav: nav.baseNavUI,
 			main: UserCardPage
 		},
 		song: {
-			nav: baseNavUI
+			nav: nav.baseNavUI
 		},
 		allplaces: {
-			nav: baseNavUI,
-			main: AllPlacesPage
+			nav: nav.baseNavUI,
+			main: coct.AllPlacesPage
 		},
 		mconductor: {
-			nav: baseNavUI,
+			nav: nav.baseNavUI,
 			main: MusicConductorPage
 		},
 		tag_page: {
 			main: TagPageView,
-			nav: baseNavUI
+			nav: nav.baseNavUI
 		},
 		tagslist: {
 			main: TagsListPage,
-			nav: baseNavUI
+			nav: nav.baseNavUI
 		},
 		user_playlists: {
-			main: ListOfListsView,
-			nav: baseNavUI
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		},
 		songs_lists: {
-			main: ListOfListsView,
-			nav: baseNavUI
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		},
 		artists_lists:{
-			main: ListOfListsView,
-			nav: baseNavUI
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		},
 		countres_list: {
-			main: ListOfListsView,
-			nav: baseNavUI
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		},
 		city_place: {
-			main: ListOfListsView,
-			nav: baseNavUI
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		},
 		cities_list: {
-			main: ListOfListsView,
-			nav: baseNavUI
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		},
 		country_place: {
-			main: ListOfListsView,
-			nav: baseNavUI
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		},
 		tag_artists: {
-			main: ListOfListsView,
-			nav: baseNavUI
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		},
 		tag_songs: {
-			main: ListOfListsView,
-			nav: baseNavUI
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		},
 		youtube_video: {
 			main: YoutubeVideoView,
-			nav: baseNavUI
+			nav: nav.baseNavUI
 		},
 		user_acqs_list: {
-			main: UserAcquaintancesListView,
-			nav: baseNavUI
+			main: uacq.UserAcquaintancesListView,
+			nav: nav.baseNavUI
 		},
 		albslist: {
-			main: AlbumsListView,
-			nav: baseNavUI
+			main: coct.AlbumsListView,
+			nav: nav.baseNavUI
 		}
 	},
 	'collch-map_slice': function(nesname, array){
@@ -541,6 +548,7 @@ provoda.View.extendTo(appModelView, {
 		if ( el_bottom > bottom_limit || el_bottom < top_limit){
 			new_position =  el_bottom - scrolling_viewport_height/2;
 		}*/
+		var new_position;
 		if (node_position < top_limit || node_position > bottom_limit){
 			var allowed_height = Math.min(jnode.height(), scrolling_viewport_height);
 			new_position = node_position - allowed_height/2 - scrolling_viewport_height/2;
@@ -570,9 +578,9 @@ provoda.View.extendTo(appModelView, {
 	changeFavicon: spv.debounce(function(state){
 		if (this.isAlive()){
 			if (state && this.favicon_states[state]){
-				changeFavicon(this.d, this.favicon_states[state], 'image/png');
+				app_serv.changeFavicon(this.d, this.favicon_states[state], 'image/png');
 			} else{
-				changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
+				app_serv.changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
 			}
 		}
 
@@ -1278,7 +1286,7 @@ provoda.View.extendTo(appModelView, {
 			}
 		}
 
-		var a_length = this.getALength(cloneObj({},point_a), cloneObj({}, point_c), angle);
+		var a_length = this.getALength(spv.cloneObj({},point_a), spv.cloneObj({}, point_c), angle);
 
 		var matched = this.matchTrianglesByPoints(point_a, point_c, nav_type, a_length, false, point_t);
 		if (!matched){
@@ -1340,33 +1348,6 @@ provoda.View.extendTo(appModelView, {
 		Если они одинакового знака, то точка внутри треугольника, если что-то из этого - ноль, то точка лежит на стороне, иначе точка вне треугольника.
 		*/
 	},
-	getLastDot: function(point_a, point_t, angle_alpha) {
-		var point_c;
-
-		if (this.wp_dirs.horizontal[nav_type]){
-			point_c = {
-				left: point_t.left,
-				top: point_a.top
-			};
-		} else {
-			point_c = {
-				left: point_a.left,
-				top: point_t.top
-			};
-
-		}
-
-		var a_length = this.getALength(point_a, point_c, angle_alpha);
-		if (this.wp_dirs.horizontal[nav_type]){
-
-		} else {
-
-		}
-		var point_b = {
-			top: point_t.top,
-			left: point_c.left + a_length
-		};
-	},
 	getALength: function(point_a, point_c, angle_alpha) {
 		//var b_point_arg = point_j.left + a_length;
 		var sign;
@@ -1383,20 +1364,21 @@ provoda.View.extendTo(appModelView, {
 	},
 	getWPCorridor: function(cwp, nav_type, wayp_pack, dems_storage, angle) {
 		var corridor = [];
+		var i, cur, pret_dems;
 		var target_dems = dems_storage[cwp.wpid];
 		if (this.wp_dirs.horizontal[nav_type]){
 
 			var cenp_top;
 			var cenp_left;
 
-			for (var i = 0; i < wayp_pack.length; i++) {
-				var cur = wayp_pack[i];
+			for (i = 0; i < wayp_pack.length; i++) {
+				cur = wayp_pack[i];
 
 
 				if (!cur){
 					continue;
 				}
-				var pret_dems = dems_storage[cur.wpid];
+				pret_dems = dems_storage[cur.wpid];
 				if (cur == cwp || cur.node == cwp.node){
 					continue;
 				}
@@ -1431,12 +1413,12 @@ provoda.View.extendTo(appModelView, {
 				corridor.push(cur);
 			}
 		} else {
-			for (var i = 0; i < wayp_pack.length; i++) {
-				var cur = wayp_pack[i];
+			for (i = 0; i < wayp_pack.length; i++) {
+				cur = wayp_pack[i];
 				if (!cur){
 					continue;
 				}
-				var pret_dems = dems_storage[cur.wpid];
+				pret_dems = dems_storage[cur.wpid];
 				if (cur == cwp || cur.node == cwp.node){
 					continue;
 				}
@@ -1545,7 +1527,6 @@ provoda.View.extendTo(appModelView, {
 			if (nav_type == 'Enter'){
 				if (cwp){
 					$(cwp.node).click();
-					var _this = this;
 
 					this.cwp_check = setTimeout(function() {
 						var still_in_use = _this.checkCurrentWPoint(dems_storage);
@@ -1595,7 +1576,7 @@ provoda.View.extendTo(appModelView, {
 			var cur_view = cwp.view;
 			while (!inner_corr.length && cur_view){
 				//getting parent views until find some usable waypoints;
-				wayp_pack = this.getWPPack(cur_view, dems_storage);
+				var wayp_pack = this.getWPPack(cur_view, dems_storage);
 				inner_corr = this.getWPCorridor(cwp, nav_type, wayp_pack, dems_storage, Math.min(angle, 89));
 				cur_view = cur_view.parent_view;
 			}
@@ -1848,18 +1829,6 @@ provoda.View.extendTo(appModelView, {
 		return con;
 
 	},
-	getRtPP: function(node){
-		throw new Error('cant detect position');
-		var clicked_node = $(node);
-
-		var target_offset = clicked_node.offset();
-		var container_offset = this.els.pllistlevel.offset();
-		return {
-			left: target_offset.left - container_offset.left,
-			top: target_offset.top - container_offset.top,
-			cwidth: this.els.pllistlevel.width()
-		};
-	},
 	createSongListener: function(lig, uc){
 		var _this = this;
 
@@ -1879,10 +1848,6 @@ provoda.View.extendTo(appModelView, {
 					_this.showBigListener(c, lig);
 				});
 
-				//var p = _this.getRtPP(li[0]);
-
-				//var li_pos = ;
-				// 5 /*(p.left + $(li[0]).outerWidth()/2) -13 */
 
 				uc.showPart('user_info', function() {
 					return {
@@ -1958,7 +1923,7 @@ provoda.View.extendTo(appModelView, {
 			}
 			opts.timeout = opts.timeout || 40000;
 			opts.queue = opts.queue || queue;
-			return loadImage(opts);
+			return app_serv.loadImage(opts);
 		}
 	},
 	createNiceButton: function(position){
@@ -2006,4 +1971,7 @@ provoda.View.extendTo(appModelView, {
 		bb.disable();
 		return bb;
 	}
+});
+
+return appView;
 });

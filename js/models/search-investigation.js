@@ -1,25 +1,22 @@
-var 
+define(['provoda', 'js/modules/lfmhelp', 'app_serv', 'spv', 'jquery', 'cache_ajax', 'hex_md5', 'lastfm_data'], function(provoda, lfmhelp, app_serv, spv, $, cache_ajax, hex_md5, lastfm_data) {
+"use strict";
+var localize = app_serv.localize;
+var
 	investigation,
 	baseSuggest,
 	baseSectionButton,
 	searchSection,
 	SearchPage;
 
-
-
-(function() {
-"use strict";
-
-
-var suParseArtistsResults = function(r, item_constr, method) {
-	return parseArtistsResults.apply(this, arguments);
+var suParseArtistsResults = function() {
+	return lfmhelp.parseArtistsResults.apply(this, arguments);
 };
 
-var suParseTracksResults = function(r, item_constr, method) {
-	return parseTracksResults.apply(this, arguments);
+var suParseTracksResults = function() {
+	return lfmhelp.parseTracksResults.apply(this, arguments);
 };
-var suParseTagsResults = parseTagsResults;
-var suParseAlbumsResults = parseAlbumsResults;
+var suParseTagsResults = lfmhelp.parseTagsResults;
+var suParseAlbumsResults = lfmhelp.parseAlbumsResults;
 
 baseSuggest = function(){};
 provoda.extendFromTo('baseSuggest', provoda.Model, baseSuggest);
@@ -86,7 +83,7 @@ searchSection.extendTo(seesuSection, {
 					this.hide();
 					_this.loadMore();
 				})
-				.on('state-change.disabled', function(e){
+				.on('state-change.disabled', function(){
 					_this.trigger('items-change');
 				}, {skip_reg: true});
 			this.setButtonText();
@@ -96,10 +93,10 @@ searchSection.extendTo(seesuSection, {
 });
 
 
-var playlistsSection = function() {
+var PlaylistsSection = function() {
 	this.init();
 };
-searchSection.extendTo(playlistsSection, {
+searchSection.extendTo(PlaylistsSection, {
 	model_name: 'section-playlist',
 	init: function() {
 		this._super();
@@ -112,11 +109,11 @@ searchSection.extendTo(playlistsSection, {
 
 
 
-var artistsSection = function(){
+var ArtistsSection = function(){
 	this.init();
 };
 
-seesuSection.extendTo(artistsSection, {
+seesuSection.extendTo(ArtistsSection, {
 	model_name: 'section-artist',
 	init: function() {
 		this._super();
@@ -132,7 +129,7 @@ seesuSection.extendTo(artistsSection, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			getLastfmSuggests('artist.search', {artist: q}, q, this, suParseArtistsResults, true);
+			lfmhelp.getLastfmSuggests('artist.search', {artist: q}, q, this, suParseArtistsResults, true);
 		}
 	},
 	resItem: artistSuggest
@@ -156,7 +153,7 @@ var trackSuggest = function(data){
 
 	if (data.duration){
 		this.duration = data.duration;
-		var track_dur = parseInt(this.duration);
+		var track_dur = parseInt(this.duration, 10);
 		var digits = track_dur % 60;
 		track_dur = (Math.round(track_dur/60)) + ':' + (digits < 10 ? '0'+digits : digits );
 		this.updateState('duration_text', track_dur);
@@ -181,10 +178,10 @@ baseSuggest.extendTo(trackSuggest, {
 
 
 
-var tracksSection = function() {
+var TracksSection = function() {
 	this.init();
 };
-seesuSection.extendTo(tracksSection, {
+seesuSection.extendTo(TracksSection, {
 	model_name: 'section-track',
 	init: function() {
 		this._super();
@@ -200,7 +197,7 @@ seesuSection.extendTo(tracksSection, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			getLastfmSuggests('track.search', {track: q}, q, this, suParseTracksResults, true);
+			lfmhelp.getLastfmSuggests('track.search', {track: q}, q, this, suParseTracksResults, true);
 		}
 	},
 	resItem: trackSuggest
@@ -234,10 +231,10 @@ baseSuggest.extendTo(tagSuggest, {
 
 
 
-var tagsSection = function() {
+var TagsSection = function() {
 	this.init();
 };
-seesuSection.extendTo(tagsSection, {
+seesuSection.extendTo(TagsSection, {
 	model_name: 'section-tag',
 	init: function() {
 		this._super();
@@ -253,7 +250,7 @@ seesuSection.extendTo(tagsSection, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			getLastfmSuggests('tag.search', {tag: q}, q, this, suParseTagsResults, true);
+			lfmhelp.getLastfmSuggests('tag.search', {tag: q}, q, this, suParseTagsResults, true);
 		}
 	},
 	resItem: tagSuggest
@@ -298,10 +295,10 @@ baseSuggest.extendTo(albumSuggest, {
 });
 
 
-var albumsSection = function() {
+var AlbumsSection = function() {
 	this.init();
 };
-seesuSection.extendTo(albumsSection, {
+seesuSection.extendTo(AlbumsSection, {
 	model_name: 'section-album',
 	init: function() {
 		this._super();
@@ -317,7 +314,7 @@ seesuSection.extendTo(albumsSection, {
 	loadMore: function() {
 		var q = this.r.query;
 		if (q) {
-			getLastfmSuggests('album.search', {'album': q}, q, this, suParseAlbumsResults, true);
+			lfmhelp.getLastfmSuggests('album.search', {'album': q}, q, this, suParseAlbumsResults, true);
 		}
 	},
 	resItem: albumSuggest
@@ -326,18 +323,18 @@ seesuSection.extendTo(albumsSection, {
 
 
 investigation = function(){};
-provoda.extendFromTo('Investigation', mapLevelModel, investigation);
+provoda.extendFromTo('Investigation', BrowseMap.Model, investigation);
 
 
 SearchPage = function() {};
 investigation.extendTo(SearchPage, {
 	init: function(opts) {
 		this._super(opts);
-		this.addSection('playlists', new playlistsSection());
-		this.addSection('artists', new artistsSection());
-		this.addSection('albums', new albumsSection());
-		this.addSection('tags', new tagsSection());
-		this.addSection('tracks', new tracksSection());
+		this.addSection('playlists', new PlaylistsSection());
+		this.addSection('artists', new ArtistsSection());
+		this.addSection('albums', new AlbumsSection());
+		this.addSection('tags', new TagsSection());
+		this.addSection('tracks', new TracksSection());
 		this.updateState('mp_freezed', false);
 		
 	},
@@ -371,6 +368,7 @@ investigation.extendTo(SearchPage, {
 			pl_results = [],
 			pl_sec,
 			i;
+		var serplr;
 		if (':playlists'.match(new RegExp('\^' + this.q , 'i'))){
 			this.setInactiveAll('playlists');
 			pl_sec = this.g('playlists');
@@ -378,9 +376,9 @@ investigation.extendTo(SearchPage, {
 			pl_sec.changeQuery(this.q);
 
 
-			var serplr = su.getPlaylists();
+			serplr = su.getPlaylists();
 			if (serplr.length){
-				for (var i = 0; i < serplr.length; i++) {
+				for (i = 0; i < serplr.length; i++) {
 					pl_results.push({
 						playlist: serplr[i]
 					});
@@ -394,9 +392,9 @@ investigation.extendTo(SearchPage, {
 			//playlist search
 			
 
-			var serplr = su.getPlaylists(this.q);
+			serplr = su.getPlaylists(this.q);
 			if (serplr.length){
-				for (var i = 0; i < serplr.length; i++) {
+				for (i = 0; i < serplr.length; i++) {
 					pl_results.push({
 						playlist: serplr[i]
 					});
@@ -428,7 +426,7 @@ investigation.extendTo(SearchPage, {
 	searchTags: function(q){
 		var tags_results = [];
 		
-		var tags = searchInArray(lastfm_toptags, q);
+		var tags = spv.searchInArray(lastfm_data.toptags, q);
 		for (var i=0; i < tags.length; i++) {
 			tags_results.push({
 				tag: tags[i]
@@ -436,7 +434,7 @@ investigation.extendTo(SearchPage, {
 		}
 		return tags_results;
 	},
-	searchNetwork: seesu.env.cross_domain_allowed ?
+	searchNetwork: app_serv.app_env.cross_domain_allowed ?
 		function(q){
 			var _this = this;
 			this.loading();
@@ -444,28 +442,28 @@ investigation.extendTo(SearchPage, {
 			var cache_used = cache_ajax.get('lfm_fs', hash, function(r){
 				
 				_this.loaded();
-				fast_suggestion(r, q, _this);
+				lfmhelp.fast_suggestion(r, q, _this);
 			});
 			if (!cache_used) {
 				var all_parts = [this.g('artists'), this.g('tracks'), this.g('tags'), this.g('albums')];
 				$.each(all_parts, function(i, el) {
 					el.loading();
 				});
-				get_fast_suggests(q, function(r){	
+				lfmhelp.get_fast_suggests(q, function(r){
 					$.each(all_parts, function(i, el) {
 						el.loaded();
 					});
-					fast_suggestion(r, q, _this);
+					lfmhelp.fast_suggestion(r, q, _this);
 				}, hash, this);
 				
 			}
 		}
 		:
 		spv.debounce(function(q){
-			getLastfmSuggests('artist.search', {artist: q}, q, this.g('artists'), suParseArtistsResults);
-			getLastfmSuggests('track.search', {track: q}, q, this.g('tracks'), suParseTracksResults);
-			getLastfmSuggests('tag.search', {tag: q}, q, this.g('tags'), suParseTagsResults);
-			getLastfmSuggests('album.search', {album: q}, q, this.g('albums'), suParseAlbumsResults);
+			lfmhelp.getLastfmSuggests('artist.search', {artist: q}, q, this.g('artists'), suParseArtistsResults);
+			lfmhelp.getLastfmSuggests('track.search', {track: q}, q, this.g('tracks'), suParseTracksResults);
+			lfmhelp.getLastfmSuggests('tag.search', {tag: q}, q, this.g('tags'), suParseTagsResults);
+			lfmhelp.getLastfmSuggests('album.search', {album: q}, q, this.g('albums'), suParseAlbumsResults);
 		}, 400),
 	getTitleString: function(text){
 		var original = localize('Search-resuls');
@@ -480,4 +478,12 @@ investigation.extendTo(SearchPage, {
 	}
 });
 
-})();
+
+return {
+	investigation: investigation,
+	baseSuggest: baseSuggest,
+	baseSectionButton:baseSectionButton,
+	searchSection:searchSection,
+	SearchPage:SearchPage
+};
+});

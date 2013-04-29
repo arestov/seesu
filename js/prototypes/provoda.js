@@ -1304,7 +1304,6 @@ provoda.Model.extendTo(provoda.HModel, {
 					throw new Error('who is your map parent model?');
 				}
 			}
-			this.map_children = [];
 		}
 	},
 	initOnce: function() {

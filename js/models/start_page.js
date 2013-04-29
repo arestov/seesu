@@ -4,7 +4,7 @@ var StartPage;
 
 StartPage = function() {};
 
-mapLevelModel.extendTo(StartPage, {
+BrowseMap.Model.extendTo(StartPage, {
 	model_name: 'start_page',
 	page_name: 'start page',
 	zero_map_level: true,

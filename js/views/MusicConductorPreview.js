@@ -1,26 +1,5 @@
-var AllPlacesPage = function() {};
-PageView.extendTo(AllPlacesPage, {
-	children_views: {
-		songs_lists: LiListsPreview,
-		artists_lists: LiListsPreview
-	},
-	'collch-songs_lists': 'c',
-	'collch-artists_lists': 'c'
-
-});
-
-
-var MusicConductorPage = function() {};
-PageView.extendTo(MusicConductorPage, {
-	createBase: function() {
-		this.c = this.root_view.getSample('music_conductor_page');
-		this.createTemplate();
-	},
-	children_views: {
-		allpas: LiListsPreview,
-		countres: LiListsPreview
-	}
-});
+define(['provoda', 'jquery'], function(provoda, $) {
+"use strict";
 
 var MusicConductorPreview = function() {};
 provoda.View.extendTo(MusicConductorPreview, {
@@ -151,5 +130,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 	}
 });
 
+return MusicConductorPreview;
 
 
+});

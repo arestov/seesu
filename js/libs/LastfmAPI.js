@@ -1,4 +1,4 @@
-define(['jquery', 'spv', 'app_serv'], function($, spv, app_serv) {
+define(['jquery', 'spv', 'app_serv', 'js/modules/aReq', 'hex_md5'], function($, spv, app_serv, aReq, hex_md5) {
 "use strict";
 
 var LastfmAPI = function(){};
@@ -130,5 +130,5 @@ spv.Class.extendTo(LastfmAPI, {
 
 	}
 });
-
+return LastfmAPI;
 });

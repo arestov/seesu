@@ -1,4 +1,17 @@
-define(function(){
+define(['jquery'],function($){
+'use strict';
+var create_jsonp_callback;
+(function(){
+	var jsonp_counter = 0;
+	create_jsonp_callback = function(func){
+		var func_name = 'jspc_' + (++jsonp_counter);
+		window[func_name] = func;
+		
+		
+		
+		return func_name;
+	};
+})();
 var async_script_support = "async" in document.createElement("script");
 var xhr2_support = window.XMLHttpRequest && "withCredentials" in (new XMLHttpRequest());  //https://gist.github.com/1431660
 var aReq = function(options){

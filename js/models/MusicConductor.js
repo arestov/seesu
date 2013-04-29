@@ -114,7 +114,7 @@ songsList.extendTo(AllPSongsLoved, {
 
 
 var AllPlacesSongsLists = function() {};
-mapLevelModel.extendTo(AllPlacesSongsLists, {
+BrowseMap.Model.extendTo(AllPlacesSongsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
@@ -189,7 +189,7 @@ ArtistsList.extendTo(AllPArtistsChart, {
 
 
 var AllPlacesArtistsLists = function() {};
-mapLevelModel.extendTo(AllPlacesArtistsLists, {
+BrowseMap.Model.extendTo(AllPlacesArtistsLists, {
 	init: function(opts) {
 		this._super(opts);
 		this.initStates();
@@ -216,7 +216,7 @@ mapLevelModel.extendTo(AllPlacesArtistsLists, {
 
 
 var AllPlaces = function() {};
-mapLevelModel.extendTo(AllPlaces, {
+BrowseMap.Model.extendTo(AllPlaces, {
 	model_name:'allplaces',
 	init: function(opts) {
 		this._super.apply(this, arguments);
@@ -316,7 +316,7 @@ ArtistsList.extendTo(CityArtistsUnique, {
 });
 
 var CityArtistsLists = function() {};
-mapLevelModel.extendTo(CityArtistsLists, {
+BrowseMap.Model.extendTo(CityArtistsLists, {
 	model_name: 'artists_lists',
 	init: function(opts, params) {
 		this._super(opts);
@@ -413,7 +413,7 @@ songsList.extendTo(CitySongsUnique,{
 });
 
 var CitySongsLists = function() {};
-mapLevelModel.extendTo(CitySongsLists, {
+BrowseMap.Model.extendTo(CitySongsLists, {
 	model_name: 'songs_lists',
 	init: function(opts, params) {
 		this._super(opts);
@@ -446,7 +446,7 @@ mapLevelModel.extendTo(CitySongsLists, {
 });
 
 var CityPlace = function() {};
-mapLevelModel.extendTo(CityPlace, {
+BrowseMap.Model.extendTo(CityPlace, {
 	model_name: 'city_place',
 	init: function(opts, params) {
 		this._super(opts);
@@ -477,7 +477,7 @@ mapLevelModel.extendTo(CityPlace, {
 });
 
 var CountryCitiesList = function() {};
-mapLevelModel.extendTo(CountryCitiesList, {
+BrowseMap.Model.extendTo(CountryCitiesList, {
 	model_name: 'cities_list',
 	init: function(opts, params) {
 		this._super(opts);
@@ -571,7 +571,7 @@ songsList.extendTo(CountryTopSongs, {
 	}
 });
 var CountryPlace = function() {};
-mapLevelModel.extendTo(CountryPlace, {
+BrowseMap.Model.extendTo(CountryPlace, {
 	model_name: 'country_place',
 	init: function(opts, params) {
 		this._super(opts);
@@ -627,7 +627,7 @@ mapLevelModel.extendTo(CountryPlace, {
 });
 
 var CountresList = function() {};
-mapLevelModel.extendTo(CountresList, {
+BrowseMap.Model.extendTo(CountresList, {
 	model_name: 'countres_list',
 	init: function(opts) {
 		this._super.apply(this, arguments);
@@ -663,7 +663,7 @@ mapLevelModel.extendTo(CountresList, {
 
 
 MusicConductor = function() {};
-mapLevelModel.extendTo(MusicConductor, {
+BrowseMap.Model.extendTo(MusicConductor, {
 	model_name: 'mconductor',
 	permanent_md: true,
 	init: function(opts) {

@@ -1,3 +1,6 @@
+define(['provoda'], function(provoda) {
+"use strict";
+
 var baseNavUI = function() {};
 
 provoda.View.extendTo( baseNavUI, {
@@ -73,7 +76,7 @@ provoda.View.extendTo( baseNavUI, {
 });
 
 
-StartPageNavView = function(mal) {};
+var StartPageNavView = function() {};
 
 baseNavUI.extendTo(StartPageNavView, {
 	createBase: function(){
@@ -98,7 +101,7 @@ baseNavUI.extendTo(StartPageNavView, {
 });
 
 
-investgNavUI = function() {};
+var investgNavUI = function() {};
 
 baseNavUI.extendTo(investgNavUI, {
 	createBase: function() {
@@ -109,5 +112,11 @@ baseNavUI.extendTo(investgNavUI, {
 	"stch-nav_title": function(text) {
 		this.c.attr('title', text || '');
 	}*/
+});
+return {
+	baseNavUI:baseNavUI,
+	StartPageNavView:StartPageNavView,
+	investgNavUI:investgNavUI
+};
 });
 

@@ -1,3 +1,7 @@
+define(['provoda', 'jquery'], function(provoda, $) {
+"use strict";
+
+
 provoda.addPrototype("baseSectionButtonView", {
 	dom_rp: true,
 	createItem: function(){
@@ -231,4 +235,7 @@ provoda.addPrototype("searchSectionView", {
 		}
 		this.requestAll();
 	}
+});
+
+return {};
 });

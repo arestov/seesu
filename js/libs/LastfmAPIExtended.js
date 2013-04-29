@@ -7,11 +7,6 @@ LastfmAPI.extendTo(LastfmAPIExtended, {
 
 		this.music = this.stGet && this.stGet('lfm_scrobble_music') || [];
 		var _this = this;
-		if (!this.sk) {
-			app_serv.suReady(function(){
-				su.lfm_auth.get_lfm_token();
-			});
-		}
 	},
 	nowplay: function(omo, duration){
 		var _this = this;

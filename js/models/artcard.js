@@ -692,7 +692,7 @@ songsList.extendTo(FreeArtistTracks, {
 });
 
 ArtCard = function() {};
-mapLevelModel.extendTo(ArtCard, {
+BrowseMap.Model.extendTo(ArtCard, {
 	model_name: 'artcard',
 	page_name: "art card",
 	getURL: function() {

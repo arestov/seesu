@@ -1,6 +1,6 @@
-define(['provoda', 'spv', 'js/modules/Panoramator'], function(provoda, spv, Panoramator) {
+define(['provoda', 'spv', 'jquery', 'js/modules/Panoramator', 'app_serv', './TrackActionsRowUI', './MfCorUI'], function(provoda, spv, $, Panoramator, app_serv, TrackActionsRowUI, MfCorUI) {
 "use strict";
-
+var localize = app_serv.localize;
 var SongUI = function(){};
 
 provoda.View.extendTo(SongUI, {
@@ -86,7 +86,7 @@ provoda.View.extendTo(SongUI, {
 		}
 	},
 
-	deactivate: function(opts){
+	deactivate: function(){
 		for (var a in this.rowcs) {
 			this.rowcs[a].hide();
 		}
@@ -100,9 +100,9 @@ provoda.View.extendTo(SongUI, {
 	},
 	children_views: {
 		actionsrow: TrackActionsRowUI,
-		mf_cor: mfCorUI
+		mf_cor: MfCorUI
 	},
-	activate: function(opts){
+	activate: function(){
 		this.expand();
 		this.updateSongListeners();
 	},
@@ -312,7 +312,7 @@ provoda.View.extendTo(SongUI, {
 		}
 	},
 	update_artist_info: function(){
-		var _this = this;
+
 		var a_info = this.a_info;
 		this.dom_related_props.push('ainf', 'photo_data', 'img_panorama');
 
@@ -392,7 +392,7 @@ provoda.View.extendTo(SongUI, {
 				var sizes = spv.toRealArray(el.sizes.size);
 
 				var image_jnode = $('<img class="artist_image hidden" alt=""/>');
-				var req = loadImage({
+				var req = app_serv.loadImage({
 					node: image_jnode[0],
 					url: (sizes[5] || sizes[0])["#text"],
 					timeout: 40000,

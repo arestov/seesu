@@ -1,3 +1,7 @@
+define(['provoda', 'jquery', 'app_serv', './coct'], function(provoda, $, app_serv, coct) {
+'use strict';
+var localize = app_serv.localize;
+
 var UserAcquaintanceView = function() {};
 provoda.View.extendTo(UserAcquaintanceView, {
 	createBase: function() {
@@ -66,7 +70,7 @@ provoda.View.extendTo(UserAcquaintanceView, {
 });
 
 var UserAcquaintancesListView = function() {};
-PageView.extendTo(UserAcquaintancesListView, {
+coct.PageView.extendTo(UserAcquaintancesListView, {
 	createBase: function() {
 		this._super();
 
@@ -141,5 +145,15 @@ provoda.View.extendTo(UserAcquaintancesListPreview, {
 	},
 	'collch-acqs_from_someone': 'acqs_frsmone_c',
 	'collch-acqs_from_me': 'acqs_frme_c'
+
+});
+
+
+return {
+	UserAcquaintanceView:UserAcquaintanceView,
+	UserAcquaintancesListView:UserAcquaintancesListView,
+	UserAcqPreview:UserAcqPreview,
+	UserAcquaintancesListPreview:UserAcquaintancesListPreview
+};
 
 });

@@ -1,5 +1,5 @@
 var spv = {},
-	addEvent, removeEvent, getDefaultView, domReady, createComlexText,
+	addEvent, removeEvent, getDefaultView, domReady,
 	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
 	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
 	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, Class,
@@ -177,7 +177,7 @@ matchWords = function(source, query){
 	return r;
 };
 
-searchInArray = function (array, query, fields) {
+searchInArray = spv.searchInArray = function (array, query, fields) {
 	query = getStringPattern(query);
 	var r,i,cur;
 
@@ -669,7 +669,7 @@ spv.capitalize = function(string, just_first) {
 	
 		return this;
 	};
-	createComlexText = function(text, not_make_dom){
+	spv.createComlexText = function(text, not_make_dom){
 		var
 			vars = text.match(splitter),
 			parts = text.split(splitter),

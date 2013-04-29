@@ -1,3 +1,14 @@
+define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './searchPageViewBase'], function(provoda, $, spv, app_serv, etc_views, searchPageViewBase) {
+"use strict";
+var localize = app_serv.localize;
+
+var baseSuggestUI = function(){};
+provoda.extendFromTo('baseSuggestView', provoda.View, baseSuggestUI);
+var searchSectionUI = function(){};
+provoda.extendFromTo("searchSectionView", provoda.View, searchSectionUI);
+var investigationView  = function(){};
+provoda.extendFromTo('InvestigationView', provoda.View, investigationView);
+
 
 var struserSuggestView = function() {};
 baseSuggestUI.extendTo(struserSuggestView, {
@@ -45,9 +56,9 @@ investigationView.extendTo(PlaylistAddSsearchView, {
 
 
 var ShareRowUI = function(){};
-BaseCRowUI.extendTo(ShareRowUI, {
+etc_views.BaseCRowUI.extendTo(ShareRowUI, {
 	children_views: {
-		vk_auth: VkLoginUI,
+		vk_auth: etc_views.VkLoginUI,
 		searcher: ShareSearchView
 	},
 	createDetailes: function(){
@@ -68,7 +79,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		dep_vp: ['share_input']
 	},
 	'stch-can_post_to_own_wall':{
-		fn: function(state){
+		fn: function(){
 			this.requirePart("own-wall-button");
 		},
 		dep_vp: ['pch-ws-own']
@@ -89,7 +100,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 			if (state){
 				var _this = this;
 				var oldv;
-				var inputSearch = spv.debounce(function(e) {
+				var inputSearch = spv.debounce(function() {
 					var newval = this.value;
 					if (oldv !== newval){
 						_this.RPCLegacy('search', newval);
@@ -167,7 +178,7 @@ BaseCRowUI.extendTo(ShareRowUI, {
 		} else {
 			this.expanded = true;
 		}
-		var _this = this;
+
 
 		this.requirePart("share_input");
 		
@@ -189,12 +200,12 @@ BaseCRowUI.extendTo(ShareRowUI, {
 });
 
 var PlaylistAddRowUI = function() {};
-BaseCRowUI.extendTo(PlaylistAddRowUI, {
+etc_views.BaseCRowUI.extendTo(PlaylistAddRowUI, {
 	children_views: {
 		searcher: PlaylistAddSsearchView
 	},
 	createDetailes: function(){
-		var parent_c = this.parent_view.row_context; 
+		var parent_c = this.parent_view.row_context;
 		var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.addsong-to-playlist');
 		this.button = buttons_panel.find('.pc-place .pc-add');
@@ -210,7 +221,7 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 		
 
 		var _this = this;
-		var inputSearch = spv.debounce(function(e) {
+		var inputSearch = spv.debounce(function() {
 			_this.RPCLegacy('search', this.value);
 		}, 100);
 		this.input = this.c.find('.playlist-query').bind('keyup change search mousemove', inputSearch);
@@ -272,9 +283,9 @@ BaseCRowUI.extendTo(PlaylistAddRowUI, {
 
 
 var LoveRowUI = function(){};
-BaseCRowUI.extendTo(LoveRowUI, {
+etc_views.BaseCRowUI.extendTo(LoveRowUI, {
 	children_views: {
-		lfm_loveit: LfmLoveItView
+		lfm_loveit: etc_views.LfmLoveItView
 	},
 	createDetailes: function(){
 		var parent_c = this.parent_view.row_context;
@@ -297,9 +308,9 @@ BaseCRowUI.extendTo(LoveRowUI, {
 });
 
 var ScrobbleRowUI = function(){};
-BaseCRowUI.extendTo(ScrobbleRowUI, {
+etc_views.BaseCRowUI.extendTo(ScrobbleRowUI, {
 	children_views: {
-		lfm_scrobble: LfmScrobbleView
+		lfm_scrobble: etc_views.LfmScrobbleView
 	},
 	createDetailes: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
@@ -326,7 +337,7 @@ BaseCRowUI.extendTo(ScrobbleRowUI, {
 
 
 var RepeatSongRowView = function(){};
-BaseCRowUI.extendTo(RepeatSongRowView, {
+etc_views.BaseCRowUI.extendTo(RepeatSongRowView, {
 	"stch-rept-song": {
 		fn: function(state) {
 			this.getPart('rept-chbx').prop('checked', !!state);
@@ -356,7 +367,7 @@ BaseCRowUI.extendTo(RepeatSongRowView, {
 		} else {
 			this.expanded = true;
 		}
-		var _this = this;
+
 
 		this.requirePart("rept-chbx");
 	}
@@ -364,7 +375,7 @@ BaseCRowUI.extendTo(RepeatSongRowView, {
 
 
 var TrackActionsRowUI = function() {};
-ActionsRowUI.extendTo(TrackActionsRowUI, {
+etc_views.ActionsRowUI.extendTo(TrackActionsRowUI, {
 	dom_rp: true,
 	createBase: function(){
 		this.c = this.parent_view.song_actions_c;
@@ -518,4 +529,7 @@ ActionsRowUI.extendTo(TrackActionsRowUI, {
 
 		});
 	}
+});
+
+return TrackActionsRowUI;
 });

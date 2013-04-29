@@ -1,26 +1,9 @@
 var app_env;
 var localize;
-define(['spv'], function(spv) {
+define(['spv', 'localizer', 'js/libs/w_storage'], function(spv, localizer, w_storage) {
 "use strict";
 var app_serv = {};
-(function(w) {
-	var ready = false;
-	spv.domReady(w.document, function(){
-		jsLoadComplete(function(){
-			big_timer.q.push([big_timer.base_category, 'ready-dom', big_timer.comp('page-start'), 'DOM loaded', 100]);
-			ready = true;
-		});
-	});
-	app_serv.suReady = function(callback){
-		if (ready){
-			setTimeout(callback, 30);
-		} else{
-			spv.domReady(w.document, function() {
-				jsLoadComplete(callback);
-			});
-		}
-	};
-})(window);
+
 
 
 
@@ -108,6 +91,7 @@ var loadImage = function(opts) {
 	
 	return async_obj;
 };
+app_serv.loadImage = loadImage;
 
 var getInternetConnectionStatus = function(cb) {
 	var img = new Image();
@@ -142,7 +126,7 @@ var changeFavicon = function(d, src, type) {
 	}
 	d.head.appendChild(link);
 };
-
+app_serv.changeFavicon = changeFavicon;
 var abortage = {
 	addDependent: function(dependent) {
 		this.dep_objs = this.dep_objs || [];
@@ -164,17 +148,7 @@ var abortage = {
 
 
 
-(function(){
-	var jsonp_counter = 0;
-	window.create_jsonp_callback = function(func){
-		var func_name = 'jspc_' + (++jsonp_counter);
-		window[func_name] = func;
-		
-		
-		
-		return func_name;
-	};
-})();
+
 function getSomething(array){
 	return array[(Math.random()*(array.length-1)).toFixed(0)];
 }
@@ -419,6 +393,7 @@ app_env = (function(wd){
 	
 	return env;
 })(window);
+app_serv.app_env = app_env;
 (function(){
 	var sensitive_keys = ['vk_token_info', 'dg_auth', 'lfm_scrobble_s', 'lfmsk', 'big_vk_cookie'];
 	var parse = function(r_value){
@@ -567,21 +542,6 @@ if (typeof console != 'object'){
 var replaceComplexSVGImages;
 
 app_serv.handleDocument = function(d, tracking_opts) {
-	/*
-	jsLoadComplete({
-		test: function() {
-
-		},
-		fn: function() {
-			if (window.resizeWindow && d){
-				var dw = spv.getDefaultView(d);
-				if (dw && dw.window_resized){
-					resizeWindow(dw);
-				}
-				
-			}
-		};
-	});*/
 	var
 		done,
 		dom_opts,
@@ -601,84 +561,45 @@ app_serv.handleDocument = function(d, tracking_opts) {
 	});
 	
 
-	jsLoadComplete({
-		test: function() {
-			return window.localizer;
-		},
-		fn: function() {
-			spv.domReady(d, function() {
-				
-				d.head = d.head || d.getElementsByTagName('head')[0];
+	spv.domReady(d, function() {
+			
+		d.head = d.head || d.getElementsByTagName('head')[0];
 
-				var emptyNode = function(node) {
-					while (node.firstChild){
-						node.removeChild( node.firstChild );
+		var emptyNode = function(node) {
+			while (node.firstChild){
+				node.removeChild( node.firstChild );
+			}
+			return node;
+		};
+
+		var lang = app_env.lang;
+
+		var nodes_array = d.getElementsByClassName('lang');
+		var translate = function(el) {
+			var cn = el.className;
+			var classes = cn.split(/\s/);
+			for (var i = 0; i < classes.length; i++) {
+				var cl = classes[i];
+				if (cl.match(/localize/)){
+					var term = localizer[cl.replace('localize-','')];
+					if (term && term[lang]){
+						emptyNode(el).appendChild(d.createTextNode(term[lang]));
+						//$(el).text();
+						break;
 					}
-					return node;
-				};
-
-				var lang = app_env.lang;
-
-				var nodes_array = d.getElementsByClassName('lang');
-				var translate = function(el) {
-					var cn = el.className;
-					var classes = cn.split(/\s/);
-					for (var i = 0; i < classes.length; i++) {
-						var cl = classes[i];
-						if (cl.match(/localize/)){
-							var term = localizer[cl.replace('localize-','')];
-							if (term && term[lang]){
-								emptyNode(el).appendChild(d.createTextNode(term[lang]));
-								//$(el).text();
-								break;
-							}
-						}
-					}
-				};
-				for (var i = 0; i < nodes_array.length; i++) {
-					translate(nodes_array[i]);
 				}
-			});
+			}
+		};
+		for (var i = 0; i < nodes_array.length; i++) {
+			translate(nodes_array[i]);
 		}
 	});
-	jsLoadComplete({
-		test: function() {
-			return !!window.$;
-		},
-		fn:function() {
-			spv.domReady(d, function() {
-				replaceComplexSVGImages(d);
-			});
-		}
+	require(['jquery'], function($) {
+		spv.domReady(d, function() {
+			replaceComplexSVGImages(d, $);
+		});
 	});
-	/*
-	jsLoadComplete({
-		test: function() {
-			return window.connect_dom_to_som && window.jQuery;
-		},
-		fn: function() {
-			connect_dom_to_som(d, function(opts) {
-				big_timer.q.push([tracking_opts.category, 'ready-som', big_timer.comp(tracking_opts.start_time), 'SeesuOM loaded', 100]);
-				dom_opts = opts;
-				tryComplete();
-			});
-		}
-	});*/
-	/*
-	jsLoadComplete({
-		test: function() {
-			return window.su && window.seesu_ui;
-		},
-		fn: function() {
-			return;
-			var g = new seesu_ui(d, true);
-			//su.setUI(g);
-			ui = g;
-			big_timer.q.push([tracking_opts.category, 'created-sui', big_timer.comp(tracking_opts.start_time), 'new seesu ui created', 100]);
-			tryComplete();
-		}
-	});
-	*/
+
 };
 
 var sviga = {};
@@ -701,6 +622,7 @@ localize= (function(){
 		
 	};
 })();
+app_serv.localize = localize;
 
 
 
@@ -712,19 +634,6 @@ localize= (function(){
 
 
 
-
-/*
-
-jsLoadComplete(function() {
-	yepnope({
-		load: [ 'CSSOM/spec/utils.js', 'CSSOM/src/loader.js'],
-		complete: function() {
-			console.log('ddddd')
-		}
-	});
-});
-
-*/
 
 
 
@@ -1076,7 +985,7 @@ jsLoadComplete(function() {
 		//var target
 	};
 
-	replaceComplexSVGImages = function(doc){
+	replaceComplexSVGImages = function(doc, $){
 
 		var big_list = [];
 		for (var i = 0; i < doc.styleSheets.length; i++) {
