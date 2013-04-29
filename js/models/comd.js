@@ -1,6 +1,6 @@
-define(['provoda', 'spv'], function(provoda, spv){
+define(['provoda', 'spv', 'app_serv'], function(provoda, spv, app_serv){
 "use strict";
-
+var localize = app_serv.localize;
 
 var CommonMessagesStore = function(glob_store, store_name) {
 	this.init();
@@ -22,14 +22,14 @@ provoda.Eventor.extendTo(CommonMessagesStore, {
 });
 
 
-var gMessagesStore = function(set, get) {
+var GMessagesStore = function(set, get) {
 	this.sset = set;
 	this.sget = get;
 	this.store = this.sget() || {};
 	this.cm_store = {};
 };
 
-spv.Class.extendTo(gMessagesStore, {
+spv.Class.extendTo(GMessagesStore, {
 	set: function(space, message) {
 		this.store[space] = this.store[space] || [];
 		if ( this.store[space].indexOf(message) == -1 ){
@@ -452,10 +452,127 @@ provoda.Model.extendTo(BaseCRow, {
 		this.updateState("active_view", true);
 	}
 });
+
+
+var VkLoginB = function() {};
+provoda.Model.extendTo(VkLoginB, {
+	model_name: 'auth_block_vk',
+	init: function(opts, params) {
+		this._super();
+
+		var _this = this;
+		this.auth = opts.auth;
+		this.pmd = opts.pmd;
+
+		var settings_bits;
+
+		if (params){
+			if (params.open_opts){
+				this.open_opts = params.open_opts;
+				if (this.open_opts.settings_bits){
+					settings_bits = this.open_opts.settings_bits;
+				}
+			}
+			this.setRequestDesc(params.desc);
+
+			if (params.notf){
+				
+				this.notf = params.notf;
+				this.notf.on('read', function(value) {
+					if (value == 'vk_audio_auth '){
+						_this.updateState('notify_readed', true);
+					}
+					
+				});
+
+				if (params.notify_readed){
+					_this.updateState('notify_readed', true);
+				}
+				this.updateState('has_notify_closer', true);
+			}
+		} else {
+			this.setRequestDesc();
+		}
+
+		if (this.auth.deep_sanbdox){
+			_this.updateState('deep-sandbox', true);
+		}
+		
+
+		if (settings_bits){
+			if (this.auth.checkSettings(settings_bits)){
+				this.triggerSession();
+			}
+			this.auth.on('settings-change', function(sts) {
+				if ((sts & settings_bits) * 1){
+					_this.triggerSession();
+				} else {
+					_this.updateState('has_session', false);
+				}
+			});
+			
+		}
+
+		if (this.auth.has_session){
+			this.triggerSession();
+		}
+		this.auth.once('full-ready', function(){
+			_this.triggerSession();
+		});
+
+		if (this.auth && this.auth.data_wait){
+			this.waitData();
+		} else {
+			this.auth.on('data_wait', function(){
+				_this.waitData();
+			});
+		}
+
+	},
+	removeNotifyMark: function() {
+		this.notf.markAsReaded('vk_audio_auth ');
+	},
+	bindAuthReady: function(exlusive_space, callback) {
+		this.auth.bindAuthReady(exlusive_space, callback, this.open_opts && this.open_opts.settings_bits);
+	},
+	triggerSession: function() {
+		this.updateState('has_session', true);
+	},
+	waitData: function() {
+		this.updateState('data_wait', true);
+	},
+	notWaitData: function() {
+		this.updateState('data_wait', false);
+	},
+	setRequestDesc: function(text) {
+		this.updateState('request_description', text ? text + " " + localize("vk-auth-invitation") : "");
+	},
+	useCode: function(auth_code){
+		if (this.bindAuthCallback){
+			this.bindAuthCallback();
+		}
+		this.auth.setToken(auth_code);
+
+	},
+	requestAuth: function(opts) {
+		if (this.beforeRequest){
+			this.beforeRequest();
+		}
+		this.auth.requestAuth(opts || this.open_opts);
+	},
+	switchView: function(){
+		this.updateState('active', !this.state('active'));
+	}
+});
+
+
+
 return {
-	gMessagesStore:gMessagesStore,
+	GMessagesStore:GMessagesStore,
 	LastFMArtistImagesSelector:LastFMArtistImagesSelector,
 	PartsSwitcher:PartsSwitcher,
-	BaseCRow:BaseCRow
+	BaseCRow:BaseCRow,
+	VkLoginB: VkLoginB
 };
 });
+

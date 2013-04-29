@@ -156,7 +156,7 @@ var seesuServerAPI = function(auth, url){
 			}
 		});
 	}, update_interval,  update_interval);
-	spv.domReady(function(){
+	spv.domReady(window.document, function(){
 		_this.susd.ligs.init();
 	});
 	

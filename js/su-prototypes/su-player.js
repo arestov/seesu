@@ -224,7 +224,7 @@ var seesuPlayer;
 				break;
 			case "sm2-proxy": 
 				useLib(function(){
-					spv.domReady(function(){
+					spv.domReady(window.document,function(){
 						yepnope({
 							load:  [bpath + 'js/prototypes/player.sm2-proxy.js'],
 							complete: function(){
@@ -279,7 +279,7 @@ var seesuPlayer;
 				break;
 			case "sm2-internal":
 				useLib(function(){
-					spv.domReady(function(){
+					spv.domReady(window.document, function(){
 						yepnope({
 							load:  [bpath + 'js/common-libs/soundmanager2.mod.min.js', bpath + 'js/prototypes/player.sm2-internal.js'],
 							complete: function(){

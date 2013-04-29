@@ -583,5 +583,5 @@ define(['provoda', 'spv'], function(provoda, spv){
 	});
 	
 	
-
+return {};
 });

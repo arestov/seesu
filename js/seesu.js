@@ -1,9 +1,9 @@
 var su, seesu;
 define('su',
 ['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap',
-'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended'],
+'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended', 'js/models/AppModel', 'js/models/comd'],
 function(require, spv, app_serv, provoda, $, navi, BrowseMap,
-FuncsQueue, LastfmAPIExtended) {
+FuncsQueue, LastfmAPIExtended, AppModel, comd) {
 'use strict';
 var localize = app_serv.localize;
 
@@ -70,7 +70,7 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 
 
 var SeesuApp = function(version) {};
-appModel.extendTo(SeesuApp, {
+AppModel.extendTo(SeesuApp, {
 	init: function(version){
 		this._super();
 		this.version = version;
@@ -89,7 +89,7 @@ appModel.extendTo(SeesuApp, {
 			_gaq.gV = function(){
 				return suStore('ga_store');
 			};
-			spv.domReady(function(){
+			spv.domReady(window.document, function(){
 				yepnope( {
 					load: bpath + 'js/common-libs/ga.mod.min.js',
 					complete: function(){
@@ -132,7 +132,7 @@ appModel.extendTo(SeesuApp, {
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
 		this.vk = {};
 
-		this.notf = new gMessagesStore(
+		this.notf = new comd.GMessagesStore(
 			function(value) {
 				return suStore('notification', value, true);
 			},
@@ -315,7 +315,7 @@ appModel.extendTo(SeesuApp, {
 			_this.checkStats();
 		},100);
 
-		spv.domReady(function() {
+		spv.domReady(window.document, function() {
 			_this.lfm_auth.try_to_login();
 			setTimeout(function(){
 				return;
@@ -819,7 +819,7 @@ provoda.sync_s.setRootModel(su);
 
 })();
 
-spv.domReady(function(){
+spv.domReady(window.document, function(){
 	try_mp3_providers();
 	seesu.checkUpdates();
 });

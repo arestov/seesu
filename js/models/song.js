@@ -1,22 +1,26 @@
-var song;
-(function(){
+
+define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './TrackActionsRow','js/modules/lfmhelp', './SongBase'],
+function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow,  lfmhelp){
 	"use strict";
+	
 
-	var baseSong = function() {};
-	provoda.extendFromTo("baseSong", BrowseMap.Model, baseSong);
+	var app_env = app_serv.app_env;
+	var Song;
+	var SongBase = function() {};
+	provoda.extendFromTo("SongBase", BrowseMap.Model, SongBase);
 
-	song = function(){};
+	Song = function(){};
 
-	baseSong.extendTo(song, {
+	SongBase.extendTo(Song, {
 		page_name: 'song page',
 		'stch-can_expand': function(state) {
 			if (state && !this.expanded){
 				this.expanded = true;
 				var _this = this;
-				var info_request = lfm.get('artist.getInfo',{'artist': this.artist })
+				var info_request = this.app.lfm.get('artist.getInfo',{'artist': this.artist })
 					.done(function(r){
 
-						var ai = parseArtistInfo(r);
+						var ai = lfmhelp.parseArtistInfo(r);
 						_this.updateManyStates({
 							listeners: spv.getTargetField(r, 'artist.stats.listeners'),
 							playcount: spv.getTargetField(r, 'artist.stats.playcount'),
@@ -86,12 +90,12 @@ var song;
 			_this.initHeavyPart();
 
 			this.loadImages = spv.once(function() {
-				var images_request = lfm.get('artist.getImages',{'artist': _this.artist })
+				var images_request = _this.app.lfm.get('artist.getImages',{'artist': _this.artist })
 					.done(function(r){
 						var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
 						_this.updateState('images', images);
 					});
-				this.addRequest(images_request, {
+				_this.addRequest(images_request, {
 					space: 'demonstration'
 				});
 			});
@@ -120,7 +124,7 @@ var song;
 			var omo = this.omo;
 			
 
-			this.mf_cor = new mfCor();
+			this.mf_cor = new MfCor();
 			this.mf_cor.init({
 				mo: this,
 				omo: this.omo
@@ -211,7 +215,7 @@ var song;
 		mlmDie: function() {
 			this.hideOnMap();
 		},
-		getURL: function(mopla){
+		getURL: function(){
 			var url = '';
 			if (this.plst_titl.playlist_artist && this.plst_titl.playlist_artist == this.artist){
 				url += '/' + this.app.encodeURLPart(this.track);
@@ -271,7 +275,7 @@ var song;
 
 
 				if (this.app.settings['lfm-scrobbling']){
-					lfm.submit({
+					this.app.lfm.submit({
 						artist: this.artist,
 						track: this.track
 					}, duration, timestamp);
@@ -291,7 +295,7 @@ var song;
 		submitNowPlaying: spv.debounce(function(){
 			var duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
 			if (this.app.settings['lfm-scrobbling']){
-				lfm.nowplay({
+				this.app.lfm.nowplay({
 					artist: this.artist,
 					track: this.track
 				}, duration);

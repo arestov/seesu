@@ -1,4 +1,4 @@
-define(['provoda', 'spv', '../BrowseMap'], function(provoda, spv, BrowseMap) {
+define(['provoda', 'spv', '../libs/BrowseMap'], function(provoda, spv, BrowseMap) {
 "use strict";
 var AppModelBase = function() {};
 provoda.Model.extendTo(AppModelBase, {

@@ -1,3 +1,6 @@
+define(['js/libs/BrowseMap', 'app_serv'],function(BrowseMap, app_serv) {
+"use strict";
+var app_env = app_serv.app_env;
 var YoutubeVideo = function() {};
 BrowseMap.Model.extendTo(YoutubeVideo, {
 	model_name: 'youtube_video',
@@ -34,4 +37,8 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 			app_env.openURL(link);
 		}
 	}
+});
+
+
+return YoutubeVideo;
 });
