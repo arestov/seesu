@@ -1,4 +1,3 @@
-
 define(['spv', 'app_serv','./SongsList', './ArtCard', 'js/libs/BrowseMap', 'js/lastfm_data'],function (spv, app_serv, SongsList, ArtCard, BrowseMap, lastfm_data){
 "use strict";
 var MusicConductor;
@@ -676,22 +675,11 @@ BrowseMap.Model.extendTo(MusicConductor, {
 
 
 		var _this = this;
-		jsLoadComplete({
-			test: function() {
-				return _this.app.p && _this.app.mp3_search;
-			},
-			fn: function() {
-				(function() {
-					this.allpas.initOnce();
-					this.updateNesting('allpas', this.allpas);
+		this.allpas.initOnce();
+		this.updateNesting('allpas', this.allpas);
 
-					this.countres.initOnce();
-					this.updateNesting('countres', this.countres);
-
-
-				}).call(_this);
-			}
-		});
+		this.countres.initOnce();
+		this.updateNesting('countres', this.countres);
 
 
 

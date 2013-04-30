@@ -2986,7 +2986,7 @@ if ( typeof module === "object" && typeof module.exports === "object" ) {
 	module.exports = provoda;
 } else {
 	if ( typeof define === "function" && define.amd ) {
-		define( "provoda", [], function () { return provoda; } );
+		define( "provoda", ['angbo'], function (angbo) { return provoda; } );
 	}
 }
 

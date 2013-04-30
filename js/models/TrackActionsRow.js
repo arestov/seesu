@@ -376,7 +376,7 @@ comd.BaseCRow.extendTo(ScrobbleRow, {
 	init: function(actionsrow){
 		this.actionsrow = actionsrow;
 		this._super();
-		this.lfm_scrobble = new LfmScrobble({auth: su.lfm_auth, pmd: this});
+		this.lfm_scrobble = new LfmAuth.LfmScrobble({auth: su.lfm_auth, pmd: this});
 		this.updateNesting('lfm_scrobble', this.lfm_scrobble);
 	},
 	model_name: 'row-lastfm'

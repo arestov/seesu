@@ -1,6 +1,6 @@
 var app_env;
 var localize;
-define(['spv', 'localizer', 'js/libs/w_storage'], function(spv, localizer, w_storage) {
+define(['spv', 'localizer', 'js/libs/w_storage', 'js/preloaded_nk'], function(spv, localizer, w_storage, preloaded_nk) {
 "use strict";
 var app_serv = {};
 
@@ -439,7 +439,7 @@ app_serv.app_env = app_env;
 				return rv;
 			}
 		}
-		var nk = suStore('preloaded_nk');
+		var nk = preloaded_nk;
 		if (nk && nk[key]){
 			return nk[key];
 		}

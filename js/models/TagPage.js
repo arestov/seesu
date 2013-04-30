@@ -598,5 +598,5 @@ BrowseMap.Model.extendTo(TagPage, {
 
 });
 
-
+return TagPage;
 });

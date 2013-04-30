@@ -281,7 +281,8 @@ return {
 	AlbumsListPreviewItem:AlbumsListPreviewItem,
 	BigAlbumPreview:BigAlbumPreview,
 	AlbumsListView:AlbumsListView,
-	AlbumsListPreview:AlbumsListPreview
+	AlbumsListPreview:AlbumsListPreview,
+	TagsListPreview: TagsListPreview
 };
 
 });

@@ -75,6 +75,149 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 
 var SeesuApp = function() {};
 AppModel.extendTo(SeesuApp, {
+	initAPIs: function() {
+		var _this = this;
+		this.lfm_auth = new LfmAuth(lfm, {
+			deep_sanbdox: app_env.deep_sanbdox,
+			callback_url: 'http://seesu.me/lastfm/callbacker.html',
+			bridge_url: 'http://seesu.me/lastfm/bridge.html'
+		});
+		this.vk_auth = new VkAuth({
+			app_id: this.vkappid,
+			urls: {
+				bridge: 'http://seesu.me/vk/bridge.html',
+				callbacker: 'http://seesu.me/vk/callbacker.html'
+			},
+			permissions: ["friends", "video", "offline", "audio", "wall", "photos"],
+			open_api: false,
+			deep_sanbdox: app_env.deep_sanbdox,
+			vksite_app: app_env.vkontakte,
+			vksite_settings: this._url.api_settings
+		});
+
+
+		this.once("vk-site-api", function() {
+			window.documentScrollSizeChangeHandler = function(height){
+				VK.callMethod("resizeWindow", 800, Math.max(700, height));
+			};
+			_this.vk_auth.trigger('vk-site-api', VK);
+		});
+
+
+
+		this.hypem = new net_apis.HypemApi();
+		this.hypem.init({
+			xhr2: app_env.xhr2,
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new FuncsQueue(1700, 4000, 4)
+		});
+		this.goog_sc = new net_apis.GoogleSoundcloud();
+		this.goog_sc.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new FuncsQueue(1000, 3000, 4)
+		});
+		this.discogs = new net_apis.DiscogsApi();
+		this.discogs.init({
+			crossdomain: app_env.cross_domain_allowed,
+			cache_ajax: cache_ajax,
+			queue: new FuncsQueue(2000, 4000, 4)
+		});
+
+
+
+
+		this.delayed_search = {
+			vk_api:{
+				queue:  new FuncsQueue(700, 8000 , 7)
+			}
+		};
+
+
+
+		this.s  = new SeesuServerAPI(this, suStore('dg_auth'), this.server_url);
+		this.updateState('su_server_api', true);
+
+		this.s.on('info-change.vk', function(data) {
+			_this.updateState('vk_info', data);
+		});
+
+		this.on('vk-api', function(vkapi, user_id) {
+			_this.getAuthAndTransferVKInfo(vkapi, user_id);
+		});
+
+
+
+
+
+		var reportSearchEngs = spv.debounce(function(string){
+			_this.trackVar(4, 'search', string, 1);
+		}, 300);
+
+		this.mp3_search.on('list-changed', function(list){
+			list = spv.filter(list, 'name').sort();
+			for (var i = 0; i < list.length; i++) {
+				list[i] = list[i].slice(0, 2);
+			}
+			reportSearchEngs(list.join(','));
+		});
+
+		this.lfm_auth.on('session.ga_tracking', function(){
+			_this.trackEvent('Auth to lfm', 'end');
+		});
+		this.lfm_auth.on('want-open-url', function(wurl){
+			if (app_env.showWebPage){
+				app_env.openURL(wurl);
+				/*
+				var opend = app_env.showWebPage(wurl, function(url){
+					var path = url.split('/')[3];
+					if (!path || path == 'home'){
+						app_env.clearWebPageCookies();
+						return true
+					} else{
+						var sb = 'http://seesu.me/lastfm/callbacker.html';
+						if (url.indexOf(sb) == 0){
+							var params = get_url_parameters(url.replace(sb, ''));
+							if (params.token){
+								_this.lfm_auth.setToken(params.token);
+								
+							}
+							app_env.clearWebPageCookies();
+							return true;
+						}
+					}
+					
+				}, function(e){
+					app_env.openURL(wurl);
+					
+				}, 960, 750);
+				if (!opend){
+					app_env.openURL(wurl);
+				}
+				*/
+			} else{
+				app_env.openURL(wurl);
+			}
+			_this.trackEvent('Auth to lfm', 'start');
+
+		});
+		spv.domReady(window.document, function() {
+			_this.lfm_auth.try_to_login();
+			setTimeout(function(){
+				return;
+				while (big_timer.q.length){
+					_this.trackTime.apply(_this, big_timer.q.shift());
+					//console.log()
+				}
+			}, 300);
+			if (!lfm.sk) {
+				_this.lfm_auth.get_lfm_token();
+
+			}
+		});
+
+	},
 	init: function(version){
 		this._super();
 		this.version = version;
@@ -134,6 +277,16 @@ AppModel.extendTo(SeesuApp, {
 		}, 1000 * 60 * 2);
 
 		this.popular_artists = ["The Beatles", "Radiohead", "Muse", "Lady Gaga", "Eminem", "Coldplay", "Red Hot Chili Peppers", "Arcade Fire", "Metallica", "Katy Perry", "Linkin Park" ];
+		this.mp3_search = (new Mp3Search({
+			vk: 5,
+			nigma: 1,
+			exfm: 0,
+			soundcloud: -5,
+			lastfm:-10,
+			torrents: -15
+		}));
+
+
 		this.vk = {};
 
 		this.notf = new comd.GMessagesStore(
@@ -144,11 +297,15 @@ AppModel.extendTo(SeesuApp, {
 				return suStore('notification');
 			}
 		);
-		this.lfm_auth = new LfmAuth(lfm, {
-			deep_sanbdox: app_env.deep_sanbdox,
-			callback_url: 'http://seesu.me/lastfm/callbacker.html',
-			bridge_url: 'http://seesu.me/lastfm/bridge.html'
-		});
+
+		this.initAPIs();
+
+		
+
+
+
+
+
 
 		this.p = new PlayerSeesu();
 		this.p.init(this);
@@ -222,7 +379,7 @@ AppModel.extendTo(SeesuApp, {
 
 		};
 
-		var ext_view;
+		//var ext_view;
 		if (app_env.chrome_extension){
 			addBrowserView(ChromeExtensionButtonView, 'chrome_ext');
 		} else if (app_env.opera_extension && window.opera_extension_button){
@@ -232,109 +389,11 @@ AppModel.extendTo(SeesuApp, {
 
 
 
-		this.delayed_search = {
-			vk_api:{
-				queue:  new FuncsQueue(700, 8000 , 7)
-			}
-		};
-
-
-
-		this.s  = new SeesuServerAPI(this, suStore('dg_auth'), this.server_url);
-		this.updateState('su_server_api', true);
-
-		this.s.on('info-change.vk', function(data) {
-			_this.updateState('vk_info', data);
-		});
-
-		this.on('vk-api', function(vkapi, user_id) {
-			_this.getAuthAndTransferVKInfo(vkapi, user_id);
-		});
-
-
-		this.mp3_search = (new Mp3Search({
-			vk: 5,
-			nigma: 1,
-			exfm: 0,
-			soundcloud: -5,
-			lastfm:-10,
-			torrents: -15
-		}));
-
-
-
-
-		var reportSearchEngs = spv.debounce(function(string){
-			_this.trackVar(4, 'search', string, 1);
-		}, 300);
-
-		this.mp3_search.on('list-changed', function(list){
-			list = spv.filter(list, 'name').sort();
-			for (var i = 0; i < list.length; i++) {
-				list[i] = list[i].slice(0, 2);
-			}
-			reportSearchEngs(list.join(','));
-		});
-
-		this.lfm_auth.on('session.ga_tracking', function(){
-			_this.trackEvent('Auth to lfm', 'end');
-		});
-		this.lfm_auth.on('want-open-url', function(wurl){
-			if (app_env.showWebPage){
-				app_env.openURL(wurl);
-				/*
-				var opend = app_env.showWebPage(wurl, function(url){
-					var path = url.split('/')[3];
-					if (!path || path == 'home'){
-						app_env.clearWebPageCookies();
-						return true
-					} else{
-						var sb = 'http://seesu.me/lastfm/callbacker.html';
-						if (url.indexOf(sb) == 0){
-							var params = get_url_parameters(url.replace(sb, ''));
-							if (params.token){
-								_this.lfm_auth.setToken(params.token);
-								
-							}
-							app_env.clearWebPageCookies();
-							return true;
-						}
-					}
-					
-				}, function(e){
-					app_env.openURL(wurl);
-					
-				}, 960, 750);
-				if (!opend){
-					app_env.openURL(wurl);
-				}
-				*/
-			} else{
-				app_env.openURL(wurl);
-			}
-			_this.trackEvent('Auth to lfm', 'start');
-
-		});
-
 		setTimeout(function(){
 			_this.checkStats();
 		},100);
 
-		spv.domReady(window.document, function() {
-			_this.lfm_auth.try_to_login();
-			setTimeout(function(){
-				return;
-				while (big_timer.q.length){
-					_this.trackTime.apply(_this, big_timer.q.shift());
-					//console.log()
-				}
-			}, 300);
-			if (!lfm.sk) {
-				_this.lfm_auth.get_lfm_token();
-
-			}
-		});
-
+		
 		setTimeout(function() {
 			for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
 				var cur = _this.supported_settings[i];
@@ -353,50 +412,10 @@ AppModel.extendTo(SeesuApp, {
 		}, 200);
 
 
-		this.vk_auth = new VkAuth({
-			app_id: this.vkappid,
-			urls: {
-				bridge: 'http://seesu.me/vk/bridge.html',
-				callbacker: 'http://seesu.me/vk/callbacker.html'
-			},
-			permissions: ["friends", "video", "offline", "audio", "wall", "photos"],
-			open_api: false,
-			deep_sanbdox: app_env.deep_sanbdox,
-			vksite_app: app_env.vkontakte,
-			vksite_settings: this._url.api_settings
-		});
+		
 
 
-
-		this.once("vk-site-api", function() {
-			window.documentScrollSizeChangeHandler = function(height){
-				VK.callMethod("resizeWindow", 800, Math.max(700, height));
-			};
-			_this.vk_auth.trigger('vk-site-api', VK);
-		});
-
-
-
-		this.hypem = new net_apis.HypemApi();
-		this.hypem.init({
-			xhr2: app_env.xhr2,
-			crossdomain: app_env.cross_domain_allowed,
-			cache_ajax: cache_ajax,
-			queue: new FuncsQueue(1700, 4000, 4)
-		});
-		this.goog_sc = new net_apis.GoogleSoundcloud();
-		this.goog_sc.init({
-			crossdomain: app_env.cross_domain_allowed,
-			cache_ajax: cache_ajax,
-			queue: new FuncsQueue(1000, 3000, 4)
-		});
-		this.discogs = new net_apis.DiscogsApi();
-		this.discogs.init({
-			crossdomain: app_env.cross_domain_allowed,
-			cache_ajax: cache_ajax,
-			queue: new FuncsQueue(2000, 4000, 4)
-		});
-
+		
 		if (app_env.needs_url_history){
 			navi.init(function(e, soft){
 				var url = e.newURL;

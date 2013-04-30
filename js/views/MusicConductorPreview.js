@@ -1,6 +1,6 @@
-define(['provoda', 'jquery'], function(provoda, $) {
+define(['provoda', 'jquery', 'js/lastfm_data', 'app_serv'], function(provoda, $, lastfm_data, app_serv) {
 "use strict";
-
+var localize = app_serv.localize;
 var MusicConductorPreview = function() {};
 provoda.View.extendTo(MusicConductorPreview, {
 	createBase: function() {
@@ -40,12 +40,12 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 			};
 
-			if (window.lastfm_toptags && lastfm_toptags.length){
+			if (lastfm_data && lastfm_data.toptags.length){
 				var _c = $('<div class="block-for-startpage tags-hyped tags_list"></div>').appendTo(this.c);
 				$('<h3></h3>').appendTo(_c)
 								.append(localize('Pop-tags','Popular tags'));
-				for (var i=0; i < lastfm_toptags.length; i++) {
-					wow_tags(lastfm_toptags[i], _c);
+				for (var i=0; i < lastfm_data.toptags.length; i++) {
+					wow_tags(lastfm_data.toptags[i], _c);
 				}
 			}
 
@@ -105,7 +105,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 						var _header = $('<h3></h3>').appendTo(users_play)
 						.append(localize('User-listening','Users are listening'));
 
-						$('<a class="js-serv"></a>').text(localize('refresh')).click(function(e){
+						$('<a class="js-serv"></a>').text(localize('refresh')).click(function(){
 							su.s.susd.ligs.getData();
 						}).appendTo(_header);
 						var above_limit_value = 0;

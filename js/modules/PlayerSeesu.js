@@ -5,6 +5,7 @@ var app_env = app_serv.app_env;
 
 
 
+
 	var sm2opts = {};
 	if (app_env.opera_extension){
 		sm2opts.wmode = 'opaque';
@@ -82,7 +83,7 @@ var app_env = app_serv.app_env;
 			case "html5mp3":
 			//require('./')
 				useLib(function() {
-					require('./AudioCoreHTML5', function(AudioCoreHTML5) {
+					require(['js/modules/AudioCoreHTML5'], function(AudioCoreHTML5) {
 						features_storage.setAsAccessible(feature, new AudioCoreHTML5());
 					}, function() {
 						features_storage.setAsInaccessible(feature);
@@ -91,7 +92,7 @@ var app_env = app_serv.app_env;
 				break;
 			case "wmpactivex":
 				useLib(function() {
-					require('./AudioCoreHTML5', function(AudioCoreWmp) {
+					require(['js/modules/AudioCoreWmp'], function(AudioCoreWmp) {
 						features_storage.setAsAccessible(feature, new AudioCoreWmp());
 					}, function() {
 						features_storage.setAsInaccessible(feature);
@@ -100,7 +101,7 @@ var app_env = app_serv.app_env;
 				break;
 			case "sm2-proxy":
 				useLib(function() {
-					require('./AudioCoreSm2Proxy', function(AudioCoreSm2Proxy) {
+					require(['js/modules/AudioCoreSm2Proxy'], function(AudioCoreSm2Proxy) {
 						//features_storage.setAsAccessible(feature, new AudioCoreSm2Proxy());
 						spv.domReady(window.document, function(){
 							var pcore = new AudioCoreSm2Proxy("http://arestov.github.io", "/SoundManager2/?" + su.version, sm2opts);
@@ -253,6 +254,13 @@ var app_env = app_serv.app_env;
 		
 
 	];
+	var want_detecting;
+
+	var detectAudioCores = function() {
+		while (!done && detectors.length){
+			detectors.shift()();
+		}
+	};
 
 	
 	if (!done){
@@ -324,6 +332,9 @@ var app_env = app_serv.app_env;
 					}
 				}
 			);
+			if (want_detecting){
+				detectAudioCores();
+			}
 		});
 		
 	}
@@ -381,9 +392,9 @@ var app_env = app_serv.app_env;
 			}
 			su.on('settings.volume', setVolume);
 
-			while (!done && detectors.length){
-				detectors.shift()();
-			}
+
+			want_detecting = true;
+			detectAudioCores();
 		},
 		events: {
 			finish: function(e){

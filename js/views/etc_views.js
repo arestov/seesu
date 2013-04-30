@@ -340,6 +340,7 @@ provoda.View.extendTo(BaseCRowUI, {
 
 
 return {
+	LfmLoginView: LfmLoginView,
 	LfmScrobbleView: LfmScrobbleView,
 	LfmLoveItView: LfmLoveItView,
 	VkLoginUI:VkLoginUI,

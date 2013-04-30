@@ -1,4 +1,5 @@
-define(['provoda', 'spv', 'jquery', 'js/modules/Panoramator', 'app_serv', './TrackActionsRowUI', './MfCorUI'], function(provoda, spv, $, Panoramator, app_serv, TrackActionsRowUI, MfCorUI) {
+define(['provoda', 'spv', 'jquery', 'js/modules/Panoramator', 'app_serv', './TrackActionsRowUI', './MfCorUI', './etc_views'],
+function(provoda, spv, $, Panoramator, app_serv, TrackActionsRowUI, MfCorUI, etc_views) {
 "use strict";
 var localize = app_serv.localize;
 var SongUI = function(){};
@@ -220,7 +221,7 @@ provoda.View.extendTo(SongUI, {
 
 
 		var users_row_context =  this.tpl.ancs['row-listeners-context'];
-		var users_context = new contextRow(users_row_context);
+		var users_context = new etc_views.contextRow(users_row_context);
 		var uinfo_part = this.tpl.ancs['big-listener-info'];
 		users_context.addPart(uinfo_part, 'user_info');
 

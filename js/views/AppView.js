@@ -798,20 +798,7 @@ provoda.View.extendTo(appView, {
 				_this.RPCLegacy('search', input_value);
 			});
 
-			/*
-			jsLoadComplete({
-				test: function() {
-					return window.button_menu;
-				},
-				fn: function() {
-					var buttmen =  ui_samples.children('.play-controls.buttmen');
-					buttmen = new button_menu(buttmen, d);
 
-					_this.appendStyle(buttmen.style);
-					_this.els.play_controls = buttmen;
-
-				}
-			});*/
 
 
 			$('#widget-url',d).val(location.href.replace('index.html', ''));

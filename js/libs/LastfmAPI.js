@@ -1,4 +1,4 @@
-define(['jquery', 'spv', 'app_serv', 'js/modules/aReq', 'hex_md5'], function($, spv, app_serv, aReq, hex_md5) {
+define(['jquery', 'spv', 'app_serv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5'], function($, spv, app_serv, aReq, wrapRequest, hex_md5) {
 "use strict";
 
 var LastfmAPI = function(){};
@@ -116,7 +116,7 @@ spv.Class.extendTo(LastfmAPI, {
 			};
 		}
 
-		var wrap_def = app_serv.wrapRequest({
+		var wrap_def = wrapRequest({
 			url: this.api_path,
 			global: false,
 			type: post ? "POST" : "GET",

@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './TrackActionsRow','js/modules/lfmhelp', './SongBase'],
-function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow,  lfmhelp){
+define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './TrackActionsRow', './SongBase'],
+function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 	"use strict";
 	
 
@@ -19,7 +19,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow,  lfmhelp){
 				var info_request = this.app.lfm.get('artist.getInfo',{'artist': this.artist })
 					.done(function(r){
 
-						var ai = lfmhelp.parseArtistInfo(r);
+						var ai = app_serv.parseArtistInfo(r);
 						_this.updateManyStates({
 							listeners: spv.getTargetField(r, 'artist.stats.listeners'),
 							playcount: spv.getTargetField(r, 'artist.stats.playcount'),
@@ -248,9 +248,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow,  lfmhelp){
 				
 
 				app_env.openURL( "http://seesu.me/vk/share.html" +
-					"?" + 
+					"?" +
 					spv.stringifyParams({app_id: this.app.vkappid}, false, '=', '&') +
-					"#?" + 
+					"#?" +
 					spv.stringifyParams(data, false, '=', '&'));
 			}
 			seesu.trackEvent('song actions', 'vk share');

@@ -468,68 +468,48 @@ BrowseMap.Model.extendTo(UserCard, {
 
 		var _this = this;
 
-		var postInit = function() {
+		this.arts_recomms = this.getSPI('recommended_artists', true);
+		this.updateNesting('arts_recomms', this.arts_recomms);
 
 
+		this.lfm_loved = this.getSPI('loved', true);
+		this.updateNesting('lfm_loved', this.lfm_loved);
 
 
+		this.my_vkaudio = this.getSPI('vk-audio', true);
+		this.updateNesting('vk_audio', this.my_vkaudio);
 
-			this.arts_recomms = this.getSPI('recommended_artists', true);
-			this.updateNesting('arts_recomms', this.arts_recomms);
+		this.new_releases = this.getSPI('lib_releases', true);
+		this.updateNesting('new_releases', this.new_releases);
 
+		this.recomm_releases = this.getSPI('recommended_releases', true);
+		this.updateNesting('recomm_releases', this.recomm_releases);
 
-			this.lfm_loved = this.getSPI('loved', true);
-			this.updateNesting('lfm_loved', this.lfm_loved);
-
-
-			this.my_vkaudio = this.getSPI('vk-audio', true);
-			this.updateNesting('vk_audio', this.my_vkaudio);
-
-			this.new_releases = this.getSPI('lib_releases', true);
-			this.updateNesting('new_releases', this.new_releases);
-
-			this.recomm_releases = this.getSPI('recommended_releases', true);
-			this.updateNesting('recomm_releases', this.recomm_releases);
-
-			
-		};
-		jsLoadComplete({
-			test: function() {
-				return _this.app.p && _this.app.mp3_search;
-			},
-			fn: function() {
-				postInit.call(_this);
-			}
+		var gena = new SuUsersPlaylists();
+		gena.init({
+			app:_this.app,
+			map_parent: _this
 		});
+		_this.app.gena = gena;
 
-		setTimeout(function() {
-			var gena = new SuUsersPlaylists();
-			gena.init({
-				app:_this.app,
-				map_parent: _this
-			});
-			_this.app.gena = gena;
+		var plsts_str = suStore('user_playlists');
+		if (plsts_str){
+			gena.setSavedPlaylists(plsts_str);
+		}
+		_this.updateNesting('user-playlists', gena);
 
-			var plsts_str = suStore('user_playlists');
-			if (plsts_str){
-				gena.setSavedPlaylists(plsts_str);
-			}
-			_this.updateNesting('user-playlists', gena);
-
-			(function(){
-				
-
-				var hasPlaylistCheck = function(items) {
-					_this.updateState('has_playlists', !!items.length);
-				};
-				hasPlaylistCheck(this.app.gena.playlists);
-				
-				this.app.gena.on('playlsits-change', hasPlaylistCheck);
-
-
-			}).call(_this);
+		(function(){
 			
-		}, 150);
+
+			var hasPlaylistCheck = function(items) {
+				_this.updateState('has_playlists', !!items.length);
+			};
+			hasPlaylistCheck(this.app.gena.playlists);
+			
+			this.app.gena.on('playlsits-change', hasPlaylistCheck);
+
+
+		}).call(_this);
 
 		var users_acqutes = new UserAcquaintancesLists();
 		users_acqutes.init({
