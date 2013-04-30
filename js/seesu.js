@@ -3,11 +3,11 @@ define('su',
 ['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
 'js/libs/ScApi' ,'js/libs/ExfmApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk',
-'js/modules/PlayerSeesu'],
+'js/modules/PlayerSeesu', 'js/models/invstg'],
 function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
 ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
-PlayerSeesu) {
+PlayerSeesu, invstg) {
 'use strict';
 var localize = app_serv.localize;
 
@@ -560,7 +560,7 @@ AppModel.extendTo(SeesuApp, {
 		this.trigger('vk-api', vkapi, user_id);
 	},
 	createSearchPage: function() {
-		var sp = new SearchPage();
+		var sp = new invstg.SearchPage();
 		sp.init({
 			app: this,
 			map_parent: this.start_page
