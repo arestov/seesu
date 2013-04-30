@@ -1,4 +1,5 @@
-(function() {
+define(['spv'],function(spv){
+'use strict';
 	var createAE = function(id, url, cb) {
 		var a = new Audio(url);
 		a.volume = 1;
@@ -47,7 +48,7 @@
 				fetched: a.buffered.length && (a.buffered.end(0) * 1000)
 			});
 		};
-		spv.addEvent(a, 'progress', function(e){
+		spv.addEvent(a, 'progress', function(){
 			clearTimeout(at_finish);
 			if (a.buffered.length){
 				fireProgress();
@@ -63,19 +64,19 @@
 		});
 		return a;
 	};
-	var html5Sound = function(opts, cb) {
+	var Html5Sound = function(opts, cb) {
 		this.url = opts.url;
 		this.id = opts.id;
 		this.cb = cb;
 		this.requireAE();
 		
 	};
-	html5Sound.prototype = {
+	Html5Sound.prototype = {
 		requireAE: function() {
 			if (!this.a){
 				this.a = createAE(this.id, this.url, this.cb);
 			} else if (!this.a.src){
-				a.src = this.url;
+				this.a.src = this.url;
 			}
 		},
 		clearLoad: function() {
@@ -161,7 +162,7 @@
 	};
 
 
-	html5AudioCore = function(path, opts) {
+	var html5AudioCore = function(path, opts) {
 		var _this = this;
 		this.sounds_store = {};
 		this.feedBack = function() {
@@ -184,7 +185,7 @@
 
 		createSound: function(opts) {
 			if (!this.sounds_store[opts.id]){
-				this.sounds_store[opts.id] = new html5Sound(opts, this.feedBack);
+				this.sounds_store[opts.id] = new Html5Sound(opts, this.feedBack);
 			}
 		},
 		removeSound: function(id) {
@@ -247,14 +248,15 @@
 		callCore: function(method, id, opts, more_opts) {
 			if (method && this.plc[method] && id){
 				if (opts && opts === Object(opts)){
-					cloneObj(opts, {id: id});
+					spv.cloneObj(opts, {id: id});
 				}
 				this.plc[method].call(this, this.getSound(id), opts, more_opts);
-			}	
+			}
 		},
 		callSongMethod: function() {
 			this.callCore.apply(this, arguments);
 		}
 	};
-})();
 
+
+});
