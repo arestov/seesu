@@ -245,8 +245,8 @@ SongsList.extendTo(MyVkAudioList, {
 				for (var i = 0; i < r.response.length; i++) {
 					var cur = r.response[i];
 					track_list.push({
-						artist: htmlencoding.Decode(cur.artist),
-						track: htmlencoding.Decode(cur.title),
+						artist: htmlencoding.decode(cur.artist),
+						track: htmlencoding.decode(cur.title),
 						file: vk_search.makeSongFile(cur)
 					});
 				}

@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'jquery', 'app_serv', './MusicConductorPreview', './uacq'], function(provoda, spv, $, app_serv, MusicConductorPreview, uacq) {
+define(['provoda', 'spv', 'jquery', 'app_serv', './MusicConductorPreview', './UserCardPreview'], function(provoda, spv, $, app_serv, MusicConductorPreview, UserCardPreview) {
 "use strict";
 var localize = app_serv.localize;
 
@@ -35,7 +35,7 @@ provoda.View.extendTo(StartPageView, {
 			main: MusicConductorPreview
 		},
 		pstuff: {
-			main: uacq.UserCardPreview
+			main: UserCardPreview
 		}
 	},
 	complex_states: {

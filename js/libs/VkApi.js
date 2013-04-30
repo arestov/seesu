@@ -1,5 +1,10 @@
+define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search', 'jquery'],
+function(spv, aReq, wrapRequest, hex_md5, htmlencoding, Mp3Search, $) {
+"use strict";
+
+
 var vkCoreApi = function(){};
-Class.extendTo(vkCoreApi, {
+spv.Class.extendTo(vkCoreApi, {
 	init: function(params) {
 		params = params || {};
 		if (params.jsonp){
@@ -35,7 +40,7 @@ Class.extendTo(vkCoreApi, {
 				params_full.access_token = this.access_token;
 			}
 
-			var wrap_def = app_serv.wrapRequest({
+			var wrap_def = wrapRequest({
 					url: this.link + method,
 					type: "GET",
 					dataType: this.jsonp ? 'jsonp' : 'json',
@@ -67,46 +72,14 @@ Class.extendTo(vkCoreApi, {
 	}
 });
 
-var vkApi = function(vk_t, params) {
-	this.init(params);
-	var p = params || {};
-	if (p.cache_ajax){
-		this.cache_ajax = p.cache_ajax;
-	}
-	this.setAccessToken(vk_t.access_token);
-
-	if (p.queue){
-		this.queue = p.queue;
-	}
-
-	var _this = this;
-
-	this.asearch = new vkSearch({
-		api: this,
-		mp3_search: params.mp3_search
-	});
 
 
-
-
-
-};
-
-vkCoreApi.extendTo(vkApi, {
-	search_source: {
-		name: 'vk',
-		key: 'nice'
-	}
-});
-
-
-
-var vkSearch = function(opts) {
+var VkSearch = function(opts) {
 	this.api = opts.api;
 	this.mp3_search = opts.mp3_search;
 };
-vkSearch.prototype = {
-	constructor: vkSearch,
+VkSearch.prototype = {
+	constructor: VkSearch,
 	name: "vk",
 	description: 'vkontakte.ru',
 	slave: false,
@@ -123,17 +96,17 @@ vkSearch.prototype = {
 	makeSong: function(cursor, msq){
 		if (cursor && cursor.url){
 			var entity = {
-				artist	: HTMLDecode(cursor.artist ? cursor.artist : cursor.audio.artist),
+				artist	: htmlencoding.decode(cursor.artist ? cursor.artist : cursor.audio.artist),
 				duration	: parseFloat(typeof cursor.duration == 'number' ? cursor.duration : cursor.audio.duration) * 1000,
 				link		: cursor.url ? cursor.url : cursor.audio.url,
-				track		: HTMLDecode(cursor.title ? cursor.title : cursor.audio.title),
+				track		: htmlencoding.decode(cursor.title ? cursor.title : cursor.audio.title),
 				from		: 'vk',
 				downloadable: false,
 				_id			: cursor.owner_id + '_' + cursor.aid,
 				type: 'mp3',
 				media_type: 'mp3',
 				models: {},
-				getSongFileModel: getSongFileModel
+				getSongFileModel: Mp3Search.getSongFileModel
 			};
 			if (msq){
 				this.mp3_search.setFileQMI(entity, msq);
@@ -151,7 +124,7 @@ vkSearch.prototype = {
 
 				if (this.mp3_search.getFileQMI(entity, msq) == -1){
 					//console.log(entity)
-				} else if (!entity.link.match(/audio\/.mp3$/) && !hasMusicCopy( music_list, entity)){
+				} else if (!entity.link.match(/audio\/.mp3$/) && !Mp3Search.hasMusicCopy( music_list, entity)){
 					music_list.push(entity);
 				}
 			}
@@ -211,3 +184,42 @@ vkSearch.prototype = {
 		return complex_response;
 	}
 };
+
+
+
+
+var VkApi = function(vk_t, params) {
+	this.init(params);
+	var p = params || {};
+	if (p.cache_ajax){
+		this.cache_ajax = p.cache_ajax;
+	}
+	this.setAccessToken(vk_t.access_token);
+
+	if (p.queue){
+		this.queue = p.queue;
+	}
+
+
+	this.asearch = new VkSearch({
+		api: this,
+		mp3_search: params.mp3_search
+	});
+
+
+
+
+
+};
+
+vkCoreApi.extendTo(VkApi, {
+	search_source: {
+		name: 'vk',
+		key: 'nice'
+	}
+});
+VkApi.VkSearch = VkSearch;
+
+return VkApi;
+
+});

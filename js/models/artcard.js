@@ -549,7 +549,7 @@ SongsList.extendTo(SoundcloudArtcardSongs, {
 
 							
 						}
-						song_data.track = htmlencoding.Decode(song_data.track);
+						song_data.track = htmlencoding.decode(song_data.track);
 						song_data.image_url = cur.artwork_url;
 						song_data.file = _this.app.mp3_search.getSearchByName('soundcloud').makeSongFile(cur);
 						track_list.push(song_data);

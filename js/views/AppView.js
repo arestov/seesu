@@ -1,7 +1,7 @@
 define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
 './StartPageView', './searchPageView', './ArtcardUI', './TagsListPage', './ArtistListView', './songsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView'],
-function(provoda, spv, $, app_serv, FuncsQueue, nav, StartPageView, coct, uacq,
-searchPageView, ArtcardUI, TagsListPage, ArtistListView, songsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView) {
+function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
+StartPageView, searchPageView, ArtcardUI, TagsListPage, ArtistListView, songsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
@@ -897,10 +897,7 @@ provoda.View.extendTo(appView, {
 						var input = nvk.find('.vk-code');
 						nvk.find('.use-vk-code').click(function() {
 							var vk_t_raw = input.val();
-							if (vk_t_raw){
-								var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);
-								su.connectVKApi(vk_token, true);
-							}
+							_this.RPCLegacy('vkSessCode', vk_t_raw);
 						});
 
 						_this.oos =  _this.oos.add(nvk);

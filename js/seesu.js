@@ -1,9 +1,9 @@
 var su, seesu;
 define('su',
-['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
-'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended', 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth'],
-function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
-FuncsQueue, LastfmAPIExtended, AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth) {
+['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search', 'js/libs/ScApi' ,'js/libs/ExfmApi', 'js/modules/torrent_searches',
+'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended', 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk'],
+function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search, ScApi, ExfmApi, torrent_searches,
+FuncsQueue, LastfmAPIExtended, AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk) {
 'use strict';
 var localize = app_serv.localize;
 
@@ -679,6 +679,14 @@ AppModel.extendTo(SeesuApp, {
 	updateLVTime: function() {
 		this.last_view_time = new Date() * 1;
 	},
+	vkSessCode: function(vk_t_raw) {
+		if (vk_t_raw){
+			var vk_token = new VkAuth.VkTokenAuth(su.vkappid, vk_t_raw);
+			su.vk_auth.api = su.connectVKApi(vk_token, true);
+			su.vk_auth.trigger('full-ready', true);
+				
+		}
+	},
 	connectVKApi: function(vk_token, access, not_save) {
 		var _this = this;
 
@@ -692,7 +700,7 @@ AppModel.extendTo(SeesuApp, {
 			}
 
 		};
-		var vkapi = new vkApi(vk_token, {
+		var vkapi = new VkApi(vk_token, {
 			queue: _this.delayed_search.vk_api.queue,
 			jsonp: !app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
@@ -714,7 +722,7 @@ AppModel.extendTo(SeesuApp, {
 			}, vk_token.expires_in);
 		}
 		if (!not_save){
-			suStore('vk_token_info', cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
+			suStore('vk_token_info', spv.cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
 		}
 		return vkapi;
 	},
@@ -725,7 +733,7 @@ AppModel.extendTo(SeesuApp, {
 			track: track_name,
 			from:'lastfm',
 			media_type: 'mp3',
-			getSongFileModel: getSongFileModel,
+			getSongFileModel: Mp3Search.getSongFileModel,
 			models: {}
 		};
 	},
@@ -776,8 +784,8 @@ provoda.sync_s.setRootModel(su);
 (function(){
 
 	//su.sc_api = sc_api;
-	su.sc_api = new scApi(getPreloadedNK('sc_key'), new FuncsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
-	su.mp3_search.add(new scMusicSearch({
+	su.sc_api = new ScApi(app_serv.getPreloadedNK('sc_key'), new FuncsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+	su.mp3_search.add(new ScApi.ScMusicSearch({
 		api: su.sc_api,
 		mp3_search: su.mp3_search
 	}));
@@ -786,14 +794,14 @@ provoda.sync_s.setRootModel(su);
 	var exfm_api = new ExfmApi(new FuncsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax);
 	su.exfm = exfm_api;
 
-	su.mp3_search.add(new ExfmMusicSearch({
+	su.mp3_search.add(new ExfmApi.ExfmMusicSearch({
 		api: exfm_api,
 		mp3_search: su.mp3_search
 	}));
 
 
 	if (app_env.cross_domain_allowed){
-		su.mp3_search.add(new isohuntTorrentSearch({
+		su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
 			cache_ajax: cache_ajax,
 			mp3_search: su.mp3_search
 		}));
@@ -808,7 +816,7 @@ provoda.sync_s.setRootModel(su);
 			}
 		});*/
 	} else {
-		su.mp3_search.add(new googleTorrentSearch({
+		su.mp3_search.add(new torrent_searches.googleTorrentSearch({
 			crossdomain: app_env.cross_domain_allowed,
 			mp3_search: su.mp3_search,
 			cache_ajax: cache_ajax
@@ -820,11 +828,11 @@ provoda.sync_s.setRootModel(su);
 })();
 
 spv.domReady(window.document, function(){
-	try_mp3_providers();
-	seesu.checkUpdates();
+	initVk(su);
+	su.checkUpdates();
 });
 
 
 
-
+return su;
 });

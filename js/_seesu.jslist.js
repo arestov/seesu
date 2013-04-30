@@ -11,6 +11,7 @@ var jsLoadComplete,
 	
 	var js_toload = [
 	"js/libs/spv.js",
+	/*
 	"js/app_serv.js",
 	"js/libs/localizer.js",
 	"js/libs/w_storage.js",
@@ -77,7 +78,7 @@ var jsLoadComplete,
 	"js/models/song-actionsrow.js",
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
-
+*/
 	"js/su-prototypes/su-player.js"
 	];
 	var bpathWrap = function(array){
@@ -125,7 +126,7 @@ var jsLoadComplete,
 		testCbs();
 	};
 	require(['spv', 'app_serv'], function(spv, app_serv) {
-
+		return;
 		
 		jsLoadComplete({
 			test: function(){

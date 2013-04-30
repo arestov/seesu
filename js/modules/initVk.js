@@ -1,16 +1,7 @@
+define(['app_serv', 'js/libs/VkAuth'], function(app_serv, VkAuth) {
+"use strict";
+var app_env = app_serv.app_env;
 
-
-
-
-tryVKOAuth = function(){
-	var init_auth = vk_auth_box.requestAuth({not_open: true});
-	if (init_auth.bridgekey){
-		var i = window.document.createElement('iframe');
-		i.className = 'serv-container';
-		i.src = init_auth.link;
-		window.document.body.appendChild(i);
-	}
-};
 var checkDeadSavedToken = function(vk_token) {
 	var saved = suStore('vk_token_info');
 	if (saved && saved.access_token == vk_token) {
@@ -19,7 +10,7 @@ var checkDeadSavedToken = function(vk_token) {
 };
 
 
-var appendVKSiteApi = function(app_id) {
+var appendVKSiteApi = function(app_id, su) {
 	yepnope({
 		load: 'http://vk.com/js/api/openapi.js',
 		complete: function() {
@@ -34,13 +25,15 @@ var appendVKSiteApi = function(app_id) {
 		}
 	});
 };
-try_mp3_providers = function(){
+
+var initVk = function(su) {
+
 	var _u = su._url;
 	if (app_env.vkontakte){
 		su.vk_app_mode = true;
 
 		var
-			vkt = new vkTokenAuth(_u.api_id, {
+			vkt = new VkAuth.VkTokenAuth(_u.api_id, {
 				user_id: _u.user_id,
 				access_token: _u.access_token
 			}),
@@ -100,11 +93,11 @@ try_mp3_providers = function(){
 		var save_token = suStore('vk_token_info');
 		if (save_token){
 			//console.log('token!')
-			su.vk_auth.api = su.connectVKApi( new vkTokenAuth(su.vkappid, save_token), true);
+			su.vk_auth.api = su.connectVKApi( new VkAuth.VkTokenAuth(su.vkappid, save_token), true);
 
 			//console.log(save_token)
 			if (app_env.web_app){
-				appendVKSiteApi(su.vkappid);
+				appendVKSiteApi(su.vkappid, su);
 			}
 			su.vk_auth.trigger('full-ready', true);
 			
@@ -112,10 +105,10 @@ try_mp3_providers = function(){
 
 		su.vk_auth
 			.on('vk-token-receive', function(token){
-				var vk_token = new vkTokenAuth(su.vkappid, token);
+				var vk_token = new VkAuth.VkTokenAuth(su.vkappid, token);
 				this.api = su.connectVKApi(vk_token, true);
 				if (app_env.web_app){
-					appendVKSiteApi(su.vkappid);
+					appendVKSiteApi(su.vkappid, su);
 				}
 				
 				this.trigger('full-ready', true);
@@ -140,7 +133,7 @@ try_mp3_providers = function(){
 									at.expires_in = hashurlparams.expires_in;
 								}
 								at.user_id = hashurlparams.user_id;
-								var vk_token = new vkTokenAuth(su.vkappid, at);
+								var vk_token = new VkAuth.VkTokenAuth(su.vkappid, at);
 								su.connectVKApi(vk_token, true);
 
 							}
@@ -158,9 +151,11 @@ try_mp3_providers = function(){
 					app_env.openURL(wurl);
 				}
 				su.updateState('wait-vk-login', true);
-				seesu.trackEvent('Auth to vk', 'start');
+				su.trackEvent('Auth to vk', 'start');
 			});
 
 	}
-};
 
+};
+return initVk;
+});

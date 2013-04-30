@@ -1,6 +1,8 @@
-var playerComplex = function(){};
-playerBase.extendTo(playerComplex, {
-	constructor: playerComplex,
+define(['./PlayerBase'], function(PlayerBase) {
+'use strict';
+var PlayerComplex = function(){};
+PlayerBase.extendTo(PlayerComplex, {
+	constructor: PlayerComplex,
 	playNext: function(mo, auto){
 		mo.playNext(auto);
 	},
@@ -94,4 +96,8 @@ playerBase.extendTo(playerComplex, {
 		}
 		this.trigger('now_playing-signal', last_mo != mo, mo, last_mo);
 	}
+});
+
+
+return PlayerComplex;
 });

@@ -1,5 +1,6 @@
-define(['provoda', 'jquery'], function(provoda, $) {
+define(['provoda', 'jquery', 'app_serv', './uacq'], function(provoda, $, app_serv, uacq) {
 "use strict";
+var localize = app_serv.localize;
 var UserCardPreview = function() {};
 provoda.View.extendTo(UserCardPreview, {
 	createBase: function() {
@@ -24,7 +25,7 @@ provoda.View.extendTo(UserCardPreview, {
 	},
 	children_views: {
 		users_acqutes : {
-			main: UserAcquaintancesListPreview
+			main: uacq.UserAcquaintancesListPreview
 		}
 	},
 	'collch-users_acqutes': 'aqc_preview_c',
@@ -32,7 +33,7 @@ provoda.View.extendTo(UserCardPreview, {
 		'start-page-blocks': function() {
 			var _this = this;
 			var createPeopleListEl = function(img_src, opts){
-				var o = opts || {};
+				opts = opts || {};
 
 				var ui = {
 					c: false,
@@ -78,7 +79,7 @@ provoda.View.extendTo(UserCardPreview, {
 										su.trackEvent('people likes', 'accepted', false, 5);
 										$('<span class="desc"></span>').text(su.getRemainTimeText(r.done.est, true)).appendTo(pui.lp);
 										if (new Date(r.done.est) < new Date()){
-											checkRelationsInvites();
+											//checkRelationsInvites();
 										}
 										nb.c.remove();
 									}

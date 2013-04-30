@@ -1,7 +1,8 @@
-
-var playerBase = function(){};
-provoda.Eventor.extendTo(playerBase, {
-	constructor: playerBase,
+define(['provoda'], function(provoda) {
+'use strict';
+var PlayerBase = function(){};
+provoda.Eventor.extendTo(PlayerBase, {
+	constructor: PlayerBase,
 	global_volume: true,
 	init: function(){
 		this._super();
@@ -140,4 +141,6 @@ provoda.Eventor.extendTo(playerBase, {
 			return true;
 		}
 	}
+});
+return PlayerBase;
 });

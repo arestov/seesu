@@ -1,15 +1,18 @@
-var scApi = function(key, queue, crossdomain, cache_ajax) {
+define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'], function(spv, aReq, wrapRequest, hex_md5, htmlencoding, Mp3Search) {
+'use strict';
+var ScApi = function(key, queue, crossdomain, cache_ajax) {
 	this.queue = queue;
 	this.key = key;
 	this.crossdomain = crossdomain;
 	this.cache_ajax = cache_ajax;
 };
-scApi.prototype = {
-	constructor: scApi,
+
+ScApi.prototype = {
+	constructor: ScApi,
 	cache_namespace: "soundcloud_api",
 	thisOriginAllowed: true,
 	get: function(method, params, options) {
-		var	_this = this;
+
 		if (method) {
 			options = options || {};
 			options.cache_key = options.cache_key || hex_md5("http://api.soundcloud.com/" + method + spv.stringifyParams(params));
@@ -20,7 +23,7 @@ scApi.prototype = {
 
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
 
-			var wrap_def = app_serv.wrapRequest({
+			var wrap_def = wrapRequest({
 				url: "http://api.soundcloud.com/" + method + ".js",
 				type: "GET",
 				dataType: this.crossdomain ? "json": "jsonp",
@@ -51,13 +54,13 @@ scApi.prototype = {
 	}
 };
 
-var scMusicSearch = function(opts) {
+var ScMusicSearch = function(opts) {
 	this.sc_api = opts.api;
 	this.mp3_search = opts.mp3_search;
-	var _this = this;
+
 };
-scMusicSearch.prototype = {
-	constructor: scMusicSearch,
+ScMusicSearch.prototype = {
+	constructor: ScMusicSearch,
 	name: "soundcloud",
 	description:'soundcloud.com',
 	slave: false,
@@ -71,23 +74,23 @@ scMusicSearch.prototype = {
 		var entity;
 		if (search_string){
 
-			var guess_info = guessArtist(search_string, msq && msq.artist);
+			var guess_info = Mp3Search.guessArtist(search_string, msq && msq.artist);
 			
 			entity = {
-				artist		: HTMLDecode(guess_info.artist || cursor.user.permalink || ""),
-				track		: HTMLDecode(guess_info.track || search_string),
+				artist		: htmlencoding.decode(guess_info.artist || cursor.user.permalink || ""),
+				track		: htmlencoding.decode(guess_info.track || search_string),
 				duration	: cursor.duration,
 				link		: (cursor.download_url || cursor.stream_url) + '?consumer_key=' + this.sc_api.key,
 				from		: 'soundcloud',
 				real_title	: cursor.title,
 				page_link	: cursor.permalink_url,
-				description : HTMLDecode(cursor.description) || false,
+				description : htmlencoding.decode(cursor.description) || false,
 				downloadable: cursor.downloadable,
 				_id			: cursor.id,
 				type: 'mp3',
 				media_type: 'mp3',
 				models: {},
-				getSongFileModel: getSongFileModel
+				getSongFileModel: Mp3Search.getSongFileModel
 			};
 			if (msq){
 				this.mp3_search.setFileQMI(entity, msq);
@@ -104,10 +107,6 @@ scMusicSearch.prototype = {
 
 		opts = opts || {};
 		opts.cache_key = opts.cache_key || query;
-
-
-		var sc_key = this.key;
-
 
 		var params_u = {
 			filter:'streamable,downloadable',
@@ -130,7 +129,7 @@ scMusicSearch.prototype = {
 							if (ent){
 								if (_this.mp3_search.getFileQMI(ent, msq) == -1){
 									//console.log(ent)
-								} else if (!hasMusicCopy(music_list,ent)){
+								} else if (!Mp3Search.hasMusicCopy(music_list,ent)){
 									music_list.push(ent);
 								}
 							}
@@ -147,3 +146,6 @@ scMusicSearch.prototype = {
 	}
 };
 
+ScApi.ScMusicSearch = ScMusicSearch;
+return ScApi;
+});

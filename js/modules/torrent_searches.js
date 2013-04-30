@@ -1,3 +1,5 @@
+define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/models/SongFileModel'], function(spv, aReq, wrapRequest, hex_md5, htmlencoding, SongFileModel) {
+"use strict";
 var isohuntTorrentSearch = function(opts) {
 	//this.crossdomain = cross_domain_allowed;
 	this.mp3_search = opts.mp3_search;
@@ -20,7 +22,7 @@ isohuntTorrentSearch.prototype = {
 			options = options || {};
 			options.cache_key = options.cache_key || hex_md5('zzzzzzz' + query);
 
-			var wrap_def = app_serv.wrapRequest({
+			var wrap_def = wrapRequest({
 				url: "http://ca.isohunt.com/js/json.php",
 				type: "GET",
 				dataType: "json",
@@ -82,7 +84,7 @@ isohuntTorrentSearch.prototype = {
 			query: query,
 			models: {},
 			getSongFileModel: function(mo, player) {
-				return this.models[mo.uid] = this.models[mo.uid] || (new FileInTorrent(this, mo)).setPlayer(player);
+				return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
 			}
 		});
 	}
@@ -115,7 +117,7 @@ googleTorrentSearch.prototype = {
 			options.cache_key = options.cache_key || hex_md5('zzzzzzz' + query);
 
 
-			var wrap_def = app_serv.wrapRequest({
+			var wrap_def = wrapRequest({
 				url: "https://ajax.googleapis.com/ajax/services/search/web",
 				type: "GET",
 				dataType: this.crossdomain ? "json": "jsonp",
@@ -179,12 +181,19 @@ googleTorrentSearch.prototype = {
 			item.torrent_link = 'http://isohunt.com/download/' + item.isohunt_id;
 			item.query = query;
 			item.media_type = 'torrent';
-			item.title = item.titleNoFormatting = HTMLDecode(item.titleNoFormatting);
+			item.title = item.titleNoFormatting = htmlencoding.decode(item.titleNoFormatting);
 			item.models = {};
 			item.getSongFileModel = function(mo, player) {
-				return this.models[mo.uid] = this.models[mo.uid] || (new FileInTorrent(this, mo)).setPlayer(player);
+				return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel.FileInTorrent(this, mo)).setPlayer(player);
 			};
 		}
 		
 	}
 };
+
+
+return {
+	isohuntTorrentSearch: isohuntTorrentSearch,
+	googleTorrentSearch:googleTorrentSearch
+};
+});

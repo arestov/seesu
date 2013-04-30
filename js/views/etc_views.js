@@ -149,13 +149,9 @@ provoda.View.extendTo(VkLoginUI, {
 		var input = this.c.find('.vk-code');
 		var use_code_button = this.c.find('.use-vk-code').click(function() {
 			var vk_t_raw = input.val();
-			if (vk_t_raw){
-				var vk_token = new vkTokenAuth(su.vkappid, vk_t_raw);
-
-				su.vk_auth.api = su.connectVKApi(vk_token, true);
-				su.vk_auth.trigger('full-ready', true);
-					
-			}
+			_this.root_view.RPCLegacy('vkSessCode', vk_t_raw);
+			
+			
 		});
 		this.addWayPoint(input, {
 			canUse: function() {

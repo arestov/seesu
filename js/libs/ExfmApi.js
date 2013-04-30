@@ -1,3 +1,6 @@
+define(['spv', 'js/modules/aReq', 'js/modules/wrapRequest', 'hex_md5', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'], function(spv, aReq, wrapRequest, hex_md5, htmlencoding, Mp3Search) {
+"use strict";
+
 //http://ex.fm/api/v3/song/search/rameau
 
 var ExfmApi = function(queue, crossdomain, cache_ajax) {
@@ -10,7 +13,7 @@ ExfmApi.prototype = {
 	cache_namespace: "exfm_api",
 	thisOriginAllowed: true,
 	get: function(method, params, options) {
-		var _this = this;
+
 
 		if (method) {
 			options = options || {};
@@ -22,7 +25,7 @@ ExfmApi.prototype = {
 
 			//cache_ajax.get('vk_api', p.cache_key, function(r){
 
-			var wrap_def = app_serv.wrapRequest({
+			var wrap_def = wrapRequest({
 				url: "http://ex.fm/api/v3/" + method,
 				type: "GET",
 				dataType: this.crossdomain ? "json": "jsonp",
@@ -55,7 +58,7 @@ ExfmApi.prototype = {
 var ExfmMusicSearch = function(opts) {
 	this.api = opts.api;
 	this.mp3_search = opts.mp3_search;
-	var _this = this;
+
 
 };
 ExfmMusicSearch.prototype = {
@@ -71,8 +74,8 @@ ExfmMusicSearch.prototype = {
 	makeSong: function(cursor, msq){
 
 		var entity = {
-			artist		: HTMLDecode(cursor.artist),
-			track		: HTMLDecode(cursor.title),
+			artist		: htmlencoding.decode(cursor.artist),
+			track		: htmlencoding.decode(cursor.title),
 			link		: cursor.url,
 			from		: 'exfm',
 			page_link	: cursor.sources && cursor.sources[0],
@@ -80,10 +83,10 @@ ExfmMusicSearch.prototype = {
 			type: 'mp3',
 			media_type: 'mp3',
 			models: {},
-			getSongFileModel: getSongFileModel
+			getSongFileModel: Mp3Search.getSongFileModel
 		};
 		if (!entity.artist){
-			var guess_info = guessArtist(entity.track, msq && msq.artist);
+			var guess_info = Mp3Search.guessArtist(entity.track, msq && msq.artist);
 			if (guess_info.artist){
 				entity.artist = guess_info.artist;
 				entity.track = guess_info.track;
@@ -146,4 +149,6 @@ ExfmMusicSearch.prototype = {
 		return async_ans;
 	}
 };
-
+ExfmApi.ExfmMusicSearch = ExfmMusicSearch;
+return ExfmApi;
+});

@@ -157,7 +157,7 @@ var HTMLEncode = function encode(s) {
   return s || '';
 };
 return {
-  Encode: HTMLEncode,
-  Decode: HTMLDecode
+  encode: HTMLEncode,
+  decode: HTMLDecode
 };
 });
