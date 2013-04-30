@@ -1,11 +1,15 @@
+
+
+define(['spv', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'],
+function(spv, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search){
+"use strict";
+var localize = app_serv.localize;
 var ArtCard;
 var AlbumsList;
 
-(function(){
-"use strict";
 var ArtistAlbumSongs;
 var ArtistTagsList = function() {};
-TagsList.extendTo(ArtistTagsList, {
+LoadableList.TagsList.extendTo(ArtistTagsList, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artist_name = params.artist;
@@ -55,7 +59,7 @@ LoadableList.extendTo(AlbumsList, {
 	}
 });
 var DiscogsAlbumSongs = function() {};
-songsList.extendTo(DiscogsAlbumSongs, {
+SongsList.extendTo(DiscogsAlbumSongs, {
 	init: function(opts, params, start_song) {
 		this._super(opts, false, start_song);
 		this.playlist_artist = this.album_artist = params.artist;
@@ -315,7 +319,7 @@ AlbumsList.extendTo(ArtistAlbums, {
 });
 
 ArtistAlbumSongs = function() {};
-songsList.extendTo(ArtistAlbumSongs, {
+SongsList.extendTo(ArtistAlbumSongs, {
 	init: function(opts, params, start_song) {
 		this._super(opts, false, start_song);
 		this.playlist_artist = this.album_artist = params.album_artist;
@@ -433,7 +437,7 @@ songsList.extendTo(ArtistAlbumSongs, {
 
 
 var HypemArtistSeFreshSongs = function() {};
-HypemPlaylist.extendTo(HypemArtistSeFreshSongs, {
+SongsList.HypemPlaylist.extendTo(HypemArtistSeFreshSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artist = params.artist;
@@ -449,7 +453,7 @@ HypemPlaylist.extendTo(HypemArtistSeFreshSongs, {
 	}
 });
 var HypemArtistSeUFavSongs = function() {};
-HypemPlaylist.extendTo(HypemArtistSeUFavSongs, {
+SongsList.HypemPlaylist.extendTo(HypemArtistSeUFavSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artist = params.artist;
@@ -467,7 +471,7 @@ HypemPlaylist.extendTo(HypemArtistSeUFavSongs, {
 	}
 });
 var HypemArtistSeBlogged = function() {};
-HypemPlaylist.extendTo(HypemArtistSeBlogged, {
+SongsList.HypemPlaylist.extendTo(HypemArtistSeBlogged, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artist = params.artist;
@@ -488,7 +492,7 @@ HypemPlaylist.extendTo(HypemArtistSeBlogged, {
 
 
 var SoundcloudArtcardSongs = function() {};
-songsList.extendTo(SoundcloudArtcardSongs, {
+SongsList.extendTo(SoundcloudArtcardSongs, {
 	init: function() {
 		this._super.apply(this, arguments);
 		var _this = this;
@@ -529,7 +533,7 @@ songsList.extendTo(SoundcloudArtcardSongs, {
 					var l = Math.min(tracks.length, paging_opts.page_limit);
 					for (var i=paging_opts.remainder; i < l; i++) {
 						var cur = tracks[i];
-						var song_data = guessArtist(cur.title, artcard_artist);
+						var song_data = Mp3Search.guessArtist(cur.title, artcard_artist);
 						if (!song_data || !song_data.artist){
 							if (_this.allow_artist_guessing){
 								song_data = {
@@ -545,7 +549,7 @@ songsList.extendTo(SoundcloudArtcardSongs, {
 
 							
 						}
-						song_data.track = HTMLDecode(song_data.track);
+						song_data.track = htmlencoding.Decode(song_data.track);
 						song_data.image_url = cur.artwork_url;
 						song_data.file = _this.app.mp3_search.getSearchByName('soundcloud').makeSongFile(cur);
 						track_list.push(song_data);
@@ -568,7 +572,7 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistLikes, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artcard_artist = params.artist;
-		cloneObj(this.init_states, {
+		spv.cloneObj(this.init_states, {
 			'artist_id': '',
 			'possible_loader_disallowing': localize('Sc-profile-not-found')
 		});
@@ -584,7 +588,7 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artcard_artist = params.artist;
-		cloneObj(this.init_states, {
+		spv.cloneObj(this.init_states, {
 			'artist_id': '',
 			'possible_loader_disallowing': localize('Sc-profile-not-found')
 		});
@@ -599,7 +603,7 @@ SoundcloudArtcardSongs.extendTo(SoundcloudArtistSongs, {
 });
 
 var TopArtistSongs = function() {};
-songsList.extendTo(TopArtistSongs, {
+SongsList.extendTo(TopArtistSongs, {
 	init: function(opts, params, start_song) {
 		this._super(opts, false, start_song);
 		this.artist = params.artist;
@@ -635,7 +639,7 @@ songsList.extendTo(TopArtistSongs, {
 });
 
 var FreeArtistTracks = function() {};
-songsList.extendTo(FreeArtistTracks, {
+SongsList.extendTo(FreeArtistTracks, {
 	sendMoreDataRequest: function(paging_opts) {
 		var artist_name = this.playlist_artist;
 		var _this = this;
@@ -656,7 +660,7 @@ songsList.extendTo(FreeArtistTracks, {
 							continue;
 						}
 
-						var track_obj = guessArtist(cur.title, cur['itunes:author']);
+						var track_obj = Mp3Search.guessArtist(cur.title, cur['itunes:author']);
 						if (!track_obj.track){
 							continue;
 						}
@@ -859,7 +863,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 		var _this = this;
 		this.updateState('sc_profile_searching', true);
 
-		var scid_search_stack = new funcsStack();
+		var scid_search_stack = new FuncsStack();
 		scid_search_stack
 		.next(function() {
 			var stack_atom = this;
@@ -985,7 +989,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 				_this.updateState('loading_baseinfo', false);
 				_this.updateState('profile-image', _this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image')));
 
-				var psai = parseArtistInfo(r);
+				var psai = app_serv.parseArtistInfo(r);
 
 
 
@@ -1083,7 +1087,7 @@ ArtCard.extendTo(ArtistInArtl, {
 });
 
 var ArtistsListPlaylist = function() {};
-songsList.extendTo(ArtistsListPlaylist, {
+SongsList.extendTo(ArtistsListPlaylist, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.artists_list = params.artists_list;
@@ -1102,8 +1106,7 @@ songsList.extendTo(ArtistsListPlaylist, {
 });
 
 
-var ArtistsList = function() {}; 
-window.ArtistsList = ArtistsList;
+var ArtistsList = function() {};
 LoadableList.extendTo(ArtistsList, {
 	model_name: 'artslist',
 	main_list_name: 'artists_list',
@@ -1208,5 +1211,7 @@ ArtistsList.extendTo(SimilarArtists, {
 	}
 });
 
-
-})();
+ArtCard.AlbumsList = AlbumsList;
+ArtCard.ArtistsList = ArtistsList;
+return ArtCard;
+});

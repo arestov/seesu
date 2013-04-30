@@ -1,4 +1,8 @@
-var asyncDataSteam = function(getDataFunc, freshness, interval, data){
+define(['provoda', 'jquery', 'spv', 'hex_md5'], function(provoda, $, spv, hex_md5){
+"use strict";
+
+
+var AsyncDataSteam = function(getDataFunc, freshness, interval, data){
 	this._getDataFunc = getDataFunc;
 	this._interval = interval;
 	this._freshness = freshness;
@@ -15,7 +19,7 @@ var asyncDataSteam = function(getDataFunc, freshness, interval, data){
 	this._onetime_callbacks = [];
 	
 };
-asyncDataSteam.prototype = {
+AsyncDataSteam.prototype = {
 	_request: function(){
 		if (this._getDataFunc){
 			var _this = this;
@@ -33,7 +37,7 @@ asyncDataSteam.prototype = {
 	
 	},
 	setNewData: function(data){
-		this._timestamp = +new Date;
+		this._timestamp = 1*(new Date());
 		this._store = data;
 		this._fireCallbacks(true);
 	},
@@ -58,7 +62,7 @@ asyncDataSteam.prototype = {
 
 	getData: function(callback, force_newdata, loading_marking){
 		
-		if (!force_newdata && callback && this._freshness && this._store && (this._timestamp + this._freshness > (+ new Date))){
+		if (!force_newdata && callback && this._freshness && this._store && (this._timestamp + this._freshness > (1* new Date()))){
 			callback(this._store);
 		} else{
 			if (callback){
@@ -93,26 +97,23 @@ asyncDataSteam.prototype = {
 		}
 
 	},
-	_fireLoading: function(){
-		for (var i=0; i < this.length; i++) {
-			this[i]
-		};
-	},
 	_fireCallbacks: function(real){//real callbacks or just loading marks
+		var f;
 		for (var a in this._callbacks) {
-			var f = this._callbacks[a];
+			f = this._callbacks[a];
 			f = real ? f.cb : f.lcb;
-			if (f){f(this._store)}
-		};
+			if (f){f(this._store);}
+		}
 		for (var i = this._onetime_callbacks.length - 1; i >= 0; i--){
-			var f = this._onetime_callbacks.pop();
+			f = this._onetime_callbacks.pop();
 			f = real ? f.cb : f.lcb;
-			if (f){f(this._store)}
-		};
+			if (f){f(this._store);}
+		}
 	}
 };
 
-var seesuServerAPI = function(auth, url){
+var SeesuServerAPI = function(app, auth, url){
+	this.app = app;
 	this.init();
 	var _this = this;
 	
@@ -123,27 +124,27 @@ var seesuServerAPI = function(auth, url){
 	
 	var update_interval = 1000 * 60 * 4;
 	
-	this.susd.rl = new asyncDataSteam(function(callback){
+	this.susd.rl = new AsyncDataSteam(function(callback){
 		_this.api('relations.getLikes', function(r){
 			_this.susd.updateRelationsLikes(r.done);
 			if (callback){callback(r);}
 		});
 	}, update_interval,  update_interval);
 	
-	this.susd.ri = new asyncDataSteam(function(callback){
+	this.susd.ri = new AsyncDataSteam(function(callback){
 		_this.api('relations.getInvites', function(r){
 			_this.susd.updateRelationsInvites(r.done);
 			if (callback){callback(r);}
 		});
 	}, update_interval,  update_interval);
 
-	this.auth.regCallback('relations.likes', function(d){
+	this.auth.regCallback('relations.likes', function(){
 		_this.susd.rl.init();
 		_this.susd.ri.init();
 	});
 	
 	
-	this.susd.ligs =  new asyncDataSteam(function(callback){
+	this.susd.ligs =  new AsyncDataSteam(function(callback){
 		$.ajax({
 			url: _this.url + 'last_listenings/',
 			type: "GET",
@@ -162,7 +163,7 @@ var seesuServerAPI = function(auth, url){
 	
 };
 
-provoda.Eventor.extendTo(seesuServerAPI, {
+provoda.Eventor.extendTo(SeesuServerAPI, {
 	susd: {
 		rl: false,
 		ri: false,
@@ -197,7 +198,7 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 		},
 		user_info: {}
 	},
-	auth: new asyncDataSteam(false, false, false),
+	auth: new AsyncDataSteam(false, false, false),
 	getInfo: function(type){
 		return this.susd.user_info[type];
 	},
@@ -216,25 +217,26 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 	},
 
 	setAuth: function(auth_data, not_save){
-		var _this = this;
+
 		if (!not_save){
 			suStore('dg_auth', auth_data, true);
 		}
 		this.auth.setNewData(auth_data);
-		su.updateState('su_userid', auth_data.userid);
+		this.app.updateState('su_userid', auth_data.userid);
 	},
 
 	getAuth: function(vk_user_id, callback){
-		su.s.api('user.getAuth', {
+		var _this = this;
+		this.api('user.getAuth', {
 			type:'vk',
 			ver: 0.3,
 			vk_user: vk_user_id
 		}, function(su_sess){
 			if (su_sess.secret_container && su_sess.sid){
-				su.vk_api.get('storage.get', {key:su_sess.secret_container})
+				_this.app.vk_api.get('storage.get', {key:su_sess.secret_container})
 					.done(function(r){
 						if (r && r.response){
-							su.s.setAuth({
+							_this.setAuth({
 								userid: su_sess.userid,
 								secret: r.response,
 								sid: su_sess.sid
@@ -242,7 +244,7 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 							//su.s.setInfo('vk', su.vk.user_info);
 
 							//su.s.api('user.update', su.vk.user_info);
-							su.trigger('dg-auth');
+							_this.app.trigger('dg-auth');
 							
 							if (callback){callback();}
 						}
@@ -264,7 +266,7 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 		
 		if (['track.getListeners', 'user.getAuth'].indexOf(method) == -1){
 			if (!auth){
-				return false
+				return false;
 			} else {
 				params.sid = auth.sid;
 				params.sig = hex_md5(spv.stringifyParams(params, ['sid']) + auth.secret);
@@ -296,4 +298,9 @@ provoda.Eventor.extendTo(seesuServerAPI, {
 		});
 		
 	}
+});
+
+
+
+return SeesuServerAPI;
 });

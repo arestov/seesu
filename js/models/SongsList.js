@@ -1,4 +1,4 @@
-define(['provoda', 'app_serv','./LoadableList', './comd', 'Song', './SongsListBase'], function(provoda, app_serv, LoadableList, comd){
+define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsListBase'], function(provoda, app_serv, LoadableList, comd, Song, lb){
 	"use strict";
 	var localize = app_serv.localize;
 	var app_env = app_serv.app_env;
@@ -156,8 +156,8 @@ define(['provoda', 'app_serv','./LoadableList', './comd', 'Song', './SongsListBa
 			return url;
 		},
 		extendSong: function(omo){
-			if (!(omo instanceof song)){
-				var mo = new song();
+			if (!(omo instanceof Song)){
+				var mo = new Song();
 				mo.init({
 					map_parent: this,
 					app: this.app,

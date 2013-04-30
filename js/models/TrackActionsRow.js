@@ -1,17 +1,18 @@
-define(['spv', 'app_serv', './comd'], function(spv, app_serv, comd){
+define(['spv', 'app_serv', './comd', 'js/LfmAuth', './invstg'], function(spv, app_serv, comd, LfmAuth, invstg){
 "use strict";
 var localize = app_serv.localize;
-
+var app_env = app_serv.app_env;
 
 
 var LfmLoveIt = function(opts, mo) {
 	this.init(opts, mo);
 };
 
-LfmLogin.extendTo(LfmLoveIt, {
+LfmAuth.LfmLogin.extendTo(LfmLoveIt, {
 	init: function(opts, mo) {
 		this._super(opts);
 		this.song = mo;
+		this.app = mo.app;
 		this.setRequestDesc(localize('lastfm-loveit-access'));
 		this.updateState('active', true);
 	},
@@ -26,18 +27,18 @@ LfmLogin.extendTo(LfmLoveIt, {
 	},
 	makeLove: function() {
 
-		if (lfm.sk){
+		if (this.app.lfm.sk){
 			var _this = this;
 			this.updateState('wait_love_done', true);
-			lfm.post('Track.love', {
-				sk: lfm.sk,
+			this.app.lfm.post('Track.love', {
+				sk: this.app.lfm.sk,
 				artist: this.song.artist,
 				track: this.song.track
 			})
 				.always(function(){
 					_this.updateState('wait_love_done', false);
 					_this.trigger('love-success');
-				})
+				});
 			seesu.trackEvent('song actions', 'love');
 		}
 		
@@ -81,7 +82,7 @@ var struserSuggest = function(wrap) {
 	//this.name = user.name;
 	this.text_title = user.first_name + " " + user.last_name;
 };
-baseSuggest.extendTo(struserSuggest, {
+invstg.BaseSuggest.extendTo(struserSuggest, {
 	valueOf: function(){
 		return this.user_id;
 	},
@@ -95,7 +96,7 @@ baseSuggest.extendTo(struserSuggest, {
 var StrusersRSSection = function() {
 	this.init();
 };
-searchSection.extendTo(StrusersRSSection, {
+invstg.SearchSection.extendTo(StrusersRSSection, {
 	resItem: struserSuggest,
 	model_name: "section-vk-users"
 });
@@ -104,7 +105,7 @@ searchSection.extendTo(StrusersRSSection, {
 var StrusersRowSearch = function(rpl, mo) {
 	this.init(rpl, mo);
 };
-investigation.extendTo(StrusersRowSearch, {
+invstg.Investigation.extendTo(StrusersRowSearch, {
 	skip_map_init: true,
 	init: function(rpl, mo) {
 		this._super();
@@ -149,7 +150,7 @@ investigation.extendTo(StrusersRowSearch, {
 ShareRow = function(actionsrow, mo){
 	this.init(actionsrow, mo);
 };
-BaseCRow.extendTo(ShareRow, {
+comd.BaseCRow.extendTo(ShareRow, {
 	init: function(actionsrow, mo){
 
 		var su = window.su;
@@ -237,7 +238,7 @@ BaseCRow.extendTo(ShareRow, {
 		
 		if (!this.vk_auth_rqb){
 			
-			this.vk_auth_rqb = new VkLoginB();
+			this.vk_auth_rqb = new comd.VkLoginB();
 			this.vk_auth_rqb.init({
 				auth: su.vk_auth
 			}, {
@@ -282,7 +283,7 @@ var playlistSuggest = function(data){
 	this.rpl = data.rpl;
 	this.text_title = this.getTitle();
 };
-baseSuggest.extendTo(playlistSuggest, {
+invstg.BaseSuggest.extendTo(playlistSuggest, {
 	valueOf: function(){
 		return this.pl.playlist_title;
 	},
@@ -296,7 +297,7 @@ baseSuggest.extendTo(playlistSuggest, {
 var PlaylistRSSection = function() {
 	this.init();
 };
-searchSection.extendTo(PlaylistRSSection, {
+invstg.SearchSection.extendTo(PlaylistRSSection, {
 	resItem: playlistSuggest,
 	model_name: "section-playlist"
 });
@@ -305,7 +306,7 @@ searchSection.extendTo(PlaylistRSSection, {
 var PlaylistRowSearch = function(rpl, mo) {
 	this.init(rpl, mo);
 };
-investigation.extendTo(PlaylistRowSearch, {
+invstg.Investigation.extendTo(PlaylistRowSearch, {
 	skip_map_init: true,
 	init: function(rpl, mo) {
 		this._super();
@@ -342,7 +343,7 @@ investigation.extendTo(PlaylistRowSearch, {
 PlaylistAddRow = function(actionsrow, mo) {
 	this.init(actionsrow, mo);
 };
-BaseCRow.extendTo(PlaylistAddRow, {
+comd.BaseCRow.extendTo(PlaylistAddRow, {
 	init: function(actionsrow, mo){
 		this.actionsrow = actionsrow;
 		this.mo = mo;
@@ -371,7 +372,7 @@ BaseCRow.extendTo(PlaylistAddRow, {
 var ScrobbleRow = function(actionsrow){
 	this.init(actionsrow);
 };
-BaseCRow.extendTo(ScrobbleRow, {
+comd.BaseCRow.extendTo(ScrobbleRow, {
 	init: function(actionsrow){
 		this.actionsrow = actionsrow;
 		this._super();
@@ -392,7 +393,7 @@ BaseCRow.extendTo(ScrobbleRow, {
 var RepeatSongRow = function(actionsrow){
 	this.init(actionsrow);
 };
-BaseCRow.extendTo(RepeatSongRow, {
+comd.BaseCRow.extendTo(RepeatSongRow, {
 	init: function(actionsrow){
 		this.actionsrow = actionsrow;
 		this._super();
@@ -424,7 +425,7 @@ BaseCRow.extendTo(RepeatSongRow, {
 var TrackActionsRow = function(mo) {
 	this.init(mo);
 };
-PartsSwitcher.extendTo(TrackActionsRow, {
+comd.PartsSwitcher.extendTo(TrackActionsRow, {
 	init: function(mo) {
 		this._super();
 		this.mo = mo;
@@ -463,5 +464,5 @@ PartsSwitcher.extendTo(TrackActionsRow, {
 	}
 });
 
-
+return TrackActionsRow;
 });

@@ -318,5 +318,5 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow,  lfmhelp){
 
 
 	
-
-})();
+return Song;
+});

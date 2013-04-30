@@ -1,11 +1,10 @@
-define(['provoda', 'js/modules/lfmhelp', 'app_serv', 'spv', 'jquery', 'cache_ajax', 'hex_md5', 'lastfm_data'], function(provoda, lfmhelp, app_serv, spv, $, cache_ajax, hex_md5, lastfm_data) {
+define(['provoda', 'js/modules/lfmhelp', 'app_serv', 'spv', 'jquery', 'cache_ajax', 'hex_md5', 'js/lastfm_data', 'js/libs/BrowseMap', './Investigation'],
+function(provoda, lfmhelp, app_serv, spv, $, cache_ajax, hex_md5, lastfm_data, BrowseMap, obj) {
 "use strict";
 var localize = app_serv.localize;
 var
-	investigation,
-	baseSuggest,
-	baseSectionButton,
-	searchSection,
+	Investigation,
+	SearchSection,
 	SearchPage;
 
 var suParseArtistsResults = function() {
@@ -18,19 +17,19 @@ var suParseTracksResults = function() {
 var suParseTagsResults = lfmhelp.parseTagsResults;
 var suParseAlbumsResults = lfmhelp.parseAlbumsResults;
 
-baseSuggest = function(){};
-provoda.extendFromTo('baseSuggest', provoda.Model, baseSuggest);
+var BaseSuggest = function(){};
+provoda.extendFromTo('BaseSuggest', provoda.Model, BaseSuggest);
 
 
-
-baseSectionButton = function(){
+var BaseSectionButton;
+BaseSectionButton = function(){
 	this.init();
 };
-provoda.extendFromTo('baseSectionButton', baseSuggest, baseSectionButton);
+provoda.extendFromTo('BaseSectionButton', BaseSuggest, BaseSectionButton);
 
 
-searchSection = function(){};
-provoda.extendFromTo("searchSection", provoda.Model, searchSection);
+SearchSection = function(){};
+provoda.extendFromTo("SearchSection", provoda.Model, SearchSection);
 
 
 var artistSuggest = function(data){
@@ -44,7 +43,7 @@ var artistSuggest = function(data){
 
 
 
-baseSuggest.extendTo(artistSuggest, {
+BaseSuggest.extendTo(artistSuggest, {
 	valueOf: function(){
 		return this.artist;
 	},
@@ -60,7 +59,7 @@ var playlistSuggest = function(data){
 	this.pl = data.playlist;
 	this.text_title = this.getTitle();
 };
-baseSuggest.extendTo(playlistSuggest, {
+BaseSuggest.extendTo(playlistSuggest, {
 	valueOf: function(){
 		return this.pl.playlist_title;
 	},
@@ -72,13 +71,13 @@ baseSuggest.extendTo(playlistSuggest, {
 
 
 var seesuSection = function() {};
-searchSection.extendTo(seesuSection, {
+SearchSection.extendTo(seesuSection, {
 	no_results_text: localize('nothing-found'),
 	init: function() {
 		this._super();
 		if (this.loadMore){
 			var _this = this;
-			this.button = (new baseSectionButton())
+			this.button = (new BaseSectionButton())
 				.on('view', function(){
 					this.hide();
 					_this.loadMore();
@@ -96,7 +95,7 @@ searchSection.extendTo(seesuSection, {
 var PlaylistsSection = function() {
 	this.init();
 };
-searchSection.extendTo(PlaylistsSection, {
+SearchSection.extendTo(PlaylistsSection, {
 	model_name: 'section-playlist',
 	init: function() {
 		this._super();
@@ -160,7 +159,7 @@ var trackSuggest = function(data){
 	}
 	this.text_title = this.getTitle();
 };
-baseSuggest.extendTo(trackSuggest, {
+BaseSuggest.extendTo(trackSuggest, {
 	valueOf: function(){
 		return this.artist + ' - ' + this.track;
 	},
@@ -219,7 +218,7 @@ var tagSuggest = function(data){
 	this.text_title = this.getTitle();
 };
 
-baseSuggest.extendTo(tagSuggest, {
+BaseSuggest.extendTo(tagSuggest, {
 	valueOf: function(){
 		return this.tag;
 	},
@@ -280,7 +279,7 @@ var albumSuggest = function(data){
 	}
 	this.text_title = this.getTitle();
 };
-baseSuggest.extendTo(albumSuggest, {
+BaseSuggest.extendTo(albumSuggest, {
 	valueOf: function(){
 		return '( ' + this.artist + ' ) ' + this.name;
 	},
@@ -322,12 +321,12 @@ seesuSection.extendTo(AlbumsSection, {
 
 
 
-investigation = function(){};
-provoda.extendFromTo('Investigation', BrowseMap.Model, investigation);
+Investigation = function(){};
+provoda.extendFromTo('Investigation', BrowseMap.Model, Investigation);
 
 
 SearchPage = function() {};
-investigation.extendTo(SearchPage, {
+Investigation.extendTo(SearchPage, {
 	init: function(opts) {
 		this._super(opts);
 		this.addSection('playlists', new PlaylistsSection());
@@ -480,10 +479,10 @@ investigation.extendTo(SearchPage, {
 
 
 return {
-	investigation: investigation,
-	baseSuggest: baseSuggest,
-	baseSectionButton:baseSectionButton,
-	searchSection:searchSection,
+	Investigation: Investigation,
+	BaseSuggest: BaseSuggest,
+	baseSectionButton:BaseSectionButton,
+	SearchSection:SearchSection,
 	SearchPage:SearchPage
 };
 });

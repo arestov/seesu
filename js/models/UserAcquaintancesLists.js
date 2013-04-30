@@ -1,3 +1,6 @@
+define(['provoda', 'app_serv', 'spv', 'js/libs/BrowseMap'], function(provoda, app_serv, spv, BrowseMap){
+"use strict";
+var localize = app_serv.localize;
 var UserAcquaintance = function() {};
 provoda.Model.extendTo(UserAcquaintance, {
 	init: function(opts, params) {
@@ -183,4 +186,6 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 			array[i].die();
 		}
 	}
+});
+return UserAcquaintancesLists;
 });

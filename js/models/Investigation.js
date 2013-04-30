@@ -1,8 +1,5 @@
-(function(){
+define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 	"use strict";
-	
-
-
 	provoda.addPrototype("Investigation", {
 		
 		model_name: 'invstg',
@@ -86,7 +83,7 @@
 					}
 					_this.bindItemsView();
 				})
-				.on('state-change.active', function(e){
+				.on('state-change.active', function(){
 					_this.remarkStyles();
 				})
 				.on('request', function(rq){
@@ -192,7 +189,7 @@
 		},
 		query_regexp: /\ ?\%query\%\ ?/
 	});
-	provoda.addPrototype("baseSectionButton", {
+	provoda.addPrototype("BaseSectionButton", {
 		setText: function(text){
 			this.updateState('button_text', text);
 		},
@@ -207,7 +204,7 @@
 
 	
 
-	provoda.addPrototype("baseSuggest", {
+	provoda.addPrototype("BaseSuggest", {
 		setActive: function(){
 			this.updateState('active', true);
 		},
@@ -225,12 +222,6 @@
 		}
 	});
 
-
-})();
-(function(){
-	"use strict";
-
-
 	
 	var searchResults = function(query, prepared, valueOf){
 		if (query){
@@ -238,14 +229,14 @@
 		}
 		if (prepared){
 			this.append(prepared, valueOf);
-		};
+		}
 	};
 	searchResults.prototype = [];
-	cloneObj(searchResults.prototype, {
+	spv.cloneObj(searchResults.prototype, {
 		setQuery: function(q){
 			this.query=q;
 		},
-		doesContain: doesContain,
+		doesContain: spv.doesContain,
 		add: function(target, valueOf){
 			if (this.doesContain(target, valueOf) == -1){
 				target.q = this.query;
@@ -263,7 +254,7 @@
 	});
 
 	
-	provoda.addPrototype("searchSection", {
+	provoda.addPrototype("SearchSection", {
 		init: function(){
 			this._super();
 			this.edges_list = [];
@@ -275,7 +266,7 @@
 				var item = new this.resItem(arr[i]);
 				item.invstg = this.invstg;
 				r.push(item);
-			};
+			}
 
 			this.r.append(r);
 			if (render){
@@ -297,12 +288,12 @@
 			this.updateState('loading', false);
 		},
 		markOdd: function(remove){
-			this.updateState('odd_section', !remove)
+			this.updateState('odd_section', !remove);
 		},
 		getItems: function(no_button){
 			var r = [].concat(this.rendering_list);
 			if (!no_button && this.button && !this.button.state('disabled')){
-				r.push(this.button)
+				r.push(this.button);
 			}
 			return r;
 		},
@@ -337,7 +328,7 @@
 			
 			this.r = new searchResults(q);
 			this.rendering_list = [];
-			this.edges_list = []
+			this.edges_list = [];
 			this.updateState('query', q);
 			this.setButtonText(false, q);
 			this.showButton();
@@ -356,14 +347,14 @@
 
 			
 			var slice = preview && !this.edges_list.length,
-				last_rendered = this.edges_list && this.edges_list[this.edges_list.length-1], 
+				last_rendered = this.edges_list && this.edges_list[this.edges_list.length-1],
 				start = (last_rendered) || 0,
 				end   = (slice && Math.min(this.r.length, start + 5)) || this.r.length;
 			
 			if (this.r.length){
 				for (var i=start; i < end; i++) {
 					this.rendering_list.push(this.r[i]);
-				};
+				}
 				this.edges_list.push(end);
 			} else{
 				if (no_more_results){
@@ -385,7 +376,7 @@
 					cur.updateState('bordered', true)
 				}
 				
-			};
+			}
 
 			this.updateState('no_more_results', no_more_results);
 			this.updateState('preview', preview);
@@ -397,7 +388,8 @@
 			return this;
 		}
 	});
-})();
+return {};
+});
 
 
 

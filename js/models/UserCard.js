@@ -1,5 +1,12 @@
+define(['provoda', 'spv', 'app_serv', './comd', 'jquery',
+'js/libs/BrowseMap', './SongsList', 'js/LfmAuth', './ArtCard' , 'js/common-libs/htmlencoding', './UserAcquaintancesLists', './SuUsersPlaylists'],
+function(provoda, spv, app_serv, comd, $,
+BrowseMap, SongsList, LfmAuth, ArtCard, htmlencoding, UserAcquaintancesLists, SuUsersPlaylists){
+"use strict";
+var localize = app_serv.localize;
+
 var UserCardLFMLogin = function() {};
-LfmLogin.extendTo(UserCardLFMLogin, {
+LfmAuth.LfmLogin.extendTo(UserCardLFMLogin, {
 	beforeRequest: function() {
 		this.bindAuthCallback();
 		
@@ -31,7 +38,7 @@ UserCardLFMLogin.extendTo(LfmReccomsLogin, {
 });
 
 var VkAudioLogin = function() {};
-VkLoginB.extendTo(VkAudioLogin, {
+comd.VkLoginB.extendTo(VkAudioLogin, {
 	init: function(opts) {
 		this._super(opts,  {
 			open_opts: {settings_bits: 8},
@@ -51,7 +58,7 @@ VkLoginB.extendTo(VkAudioLogin, {
 
 
 var LfmLovedList = function() {};
-songsList.extendTo(LfmLovedList, {
+SongsList.extendTo(LfmLovedList, {
 	init: function(opts, username) {
 		this._super(opts);
 		this.initStates();
@@ -67,8 +74,8 @@ songsList.extendTo(LfmLovedList, {
 	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
 		var request_info = {};
-		request_info.request = lfm.get('user.getLovedTracks', {
-			user: (this.username || lfm.user_name),
+		request_info.request = this.app.lfm.get('user.getLovedTracks', {
+			user: (this.username || this.app.lfm.user_name),
 			limit: paging_opts.page_limit,
 			page: paging_opts.next_page
 		}, {nocache: true})
@@ -103,7 +110,7 @@ songsList.extendTo(LfmLovedList, {
 });
 
 var RecommendatedToUserArtistsList = function() {};
-ArtistsList.extendTo(RecommendatedToUserArtistsList, {
+ArtCard.ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 	page_limit: 30,
 	init: function(opts, username) {
 		this._super(opts);
@@ -131,7 +138,7 @@ ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 	},
 	getRqDataAPI: function(paging_opts) {
 		return {
-			sk: lfm.sk,
+			sk: this.app.lfm.sk,
 			limit: paging_opts.page_limit,
 			page: paging_opts.next_page
 		};
@@ -143,7 +150,7 @@ ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 		var _this = this;
 		var request_info = {};
 
-		request_info.request = lfm.get('user.getRecommendedArtists', this.getRqData(paging_opts), {nocache: true})
+		request_info.request = this.app.lfm.get('user.getRecommendedArtists', this.getRqData(paging_opts), {nocache: true})
 			.done(function(r){
 				var artists = spv.toRealArray(spv.getTargetField(r, 'recommendations.artist'));
 				var track_list = [];
@@ -203,7 +210,7 @@ ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 
 
 var MyVkAudioList = function() {};
-songsList.extendTo(MyVkAudioList, {
+SongsList.extendTo(MyVkAudioList, {
 	init: function(opts, user_id) {
 		this._super(opts);
 
@@ -222,7 +229,7 @@ songsList.extendTo(MyVkAudioList, {
 		var _this = this;
 
 		request_info.request = this.app.vk_api.get('audio.get', {
-			sk: lfm.sk,
+			sk: this.app.lfm.sk,
 			count: paging_opts.page_limit,
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
 		}, {nocache: true})
@@ -238,8 +245,8 @@ songsList.extendTo(MyVkAudioList, {
 				for (var i = 0; i < r.response.length; i++) {
 					var cur = r.response[i];
 					track_list.push({
-						artist: HTMLDecode(cur.artist),
-						track: HTMLDecode(cur.title),
+						artist: htmlencoding.Decode(cur.artist),
+						track: htmlencoding.Decode(cur.title),
 						file: vk_search.makeSongFile(cur)
 					});
 				}
@@ -265,7 +272,7 @@ BrowseMap.Model.extendTo(UsersList, {
 });
 
 var UserNewReleases = function() {};
-AlbumsList.extendTo(UserNewReleases, {
+ArtCard.AlbumsList.extendTo(UserNewReleases, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.authInit();
@@ -282,7 +289,7 @@ AlbumsList.extendTo(UserNewReleases, {
 	page_limit: 50,
 	getRqData: function(paging_opts) {
 		return {
-			user: lfm.user_name,
+			user: this.app.lfm.user_name,
 			limit: paging_opts.page_limit,
 			userecs: this.recomms ? 1 : 0
 		};
@@ -494,44 +501,35 @@ BrowseMap.Model.extendTo(UserCard, {
 				postInit.call(_this);
 			}
 		});
-		jsLoadComplete({
-			test: function() {
-				return _this.app && _this.app.gena;
-			},
-			fn: function() {
-				(function(){
-					
 
-					var hasPlaylistCheck = function(items) {
-						_this.updateState('has_playlists', !!items.length);
-					};
-					hasPlaylistCheck(this.app.gena.playlists);
-					
-					this.app.gena.on('playlsits-change', hasPlaylistCheck);
+		setTimeout(function() {
+			var gena = new SuUsersPlaylists();
+			gena.init({
+				app:_this.app,
+				map_parent: _this
+			});
+			_this.app.gena = gena;
 
-
-				}).call(_this);
+			var plsts_str = suStore('user_playlists');
+			if (plsts_str){
+				gena.setSavedPlaylists(plsts_str);
 			}
-		});
-		jsLoadComplete(function() {
-			setTimeout(function() {
-				var gena = new SuUsersPlaylists();
-				gena.init({
-					app:_this.app,
-					map_parent: _this
-				});
-				_this.app.gena = gena;
+			_this.updateNesting('user-playlists', gena);
 
-				var plsts_str = suStore('user_playlists');
-				if (plsts_str){
-					gena.setSavedPlaylists(plsts_str);
-				}
-				_this.updateNesting('user-playlists', gena);
+			(function(){
+				
 
-				jsLoadComplete.change();
-			}, 150);
+				var hasPlaylistCheck = function(items) {
+					_this.updateState('has_playlists', !!items.length);
+				};
+				hasPlaylistCheck(this.app.gena.playlists);
+				
+				this.app.gena.on('playlsits-change', hasPlaylistCheck);
+
+
+			}).call(_this);
 			
-		});
+		}, 150);
 
 		var users_acqutes = new UserAcquaintancesLists();
 		users_acqutes.init({
@@ -602,4 +600,7 @@ provoda.Model.extendTo(SongListener, {
 	showFullPreview: function() {
 
 	}
+});
+
+return UserCard;
 });

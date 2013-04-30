@@ -1,9 +1,9 @@
 var su, seesu;
 define('su',
 ['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap',
-'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended', 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth'],
+'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended', 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth'],
 function(require, spv, app_serv, provoda, $, navi, BrowseMap,
-FuncsQueue, LastfmAPIExtended, AppModel, comd, LfmAuth) {
+FuncsQueue, LastfmAPIExtended, AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth) {
 'use strict';
 var localize = app_serv.localize;
 
@@ -235,7 +235,7 @@ AppModel.extendTo(SeesuApp, {
 
 
 
-		this.s  = new seesuServerAPI(suStore('dg_auth'), this.server_url);
+		this.s  = new SeesuServerAPI(this, suStore('dg_auth'), this.server_url);
 		this.updateState('su_server_api', true);
 
 		this.s.on('info-change.vk', function(data) {
@@ -348,7 +348,7 @@ AppModel.extendTo(SeesuApp, {
 		}, 200);
 
 
-		this.vk_auth = new vkAuth({
+		this.vk_auth = new VkAuth({
 			app_id: this.vkappid,
 			urls: {
 				bridge: 'http://seesu.me/vk/bridge.html',
@@ -824,121 +824,7 @@ spv.domReady(window.document, function(){
 	seesu.checkUpdates();
 });
 
-var UserPlaylists = function() {};
-BrowseMap.Model.extendTo(UserPlaylists, {
-	model_name: 'user_playlists',
-	init: function(opts) {
-		this._super(opts);
-		this.playlists = [];
-		this.updateNesting('lists_list', this.playlists);
-	},
-	savePlaylists: function(){
-		var _this = this;
-		if (this.save_timeout){clearTimeout(this.save_timeout);}
 
-		this.save_timeout = setTimeout(function(){
-			var plsts = [];
-			var playlists = _this.playlists;
-			for (var i=0; i < playlists.length; i++) {
-				plsts.push(playlists[i].simplify());
-			}
-			_this.saveToStore(plsts);
-
-		},10);
-
-	},
-	findAddPlaylist: function(title, mo) {
-		var matched;
-		for (var i = 0; i < this.playlists.length; i++) {
-			var cur = this.playlists[i];
-			if (cur.info && cur.info.name == title){
-				matched = cur;
-				break;
-			}
-		}
-		matched = matched || this.createUserPlaylist(title);
-		matched.add(mo);
-	},
-
-	createUserPlaylist: function(title){
-
-		var pl_r = this.createEnvPlaylist({
-			title: title,
-			type: "cplaylist",
-			data: {name: title}
-		});
-		this.watchOwnPlaylist(pl_r);
-		this.playlists.push(pl_r);
-		this.updateNesting('lists_list', this.playlists);
-		this.trigger('playlsits-change', this.playlists);
-		return pl_r;
-	},
-	watchOwnPlaylist: function(pl) {
-		var _this = this;
-		pl.on('child-change.songs-list', function(e) {
-			this.trigger('each-playlist-change');
-			_this.savePlaylists();
-		}, {
-			skip_reg: true
-		});
-	},
-	removePlaylist: function(pl) {
-		var length = this.playlists.length;
-		this.playlists = spv.arrayExclude(this.playlists, pl);
-		if (this.playlists.length != length){
-			this.trigger('playlsits-change', this.playlists);
-			this.updateNesting('lists_list', this.playlists);
-			this.savePlaylists();
-		}
-
-	},
-	rebuildPlaylist: function(saved_pl){
-		var p = this.createEnvPlaylist({
-			title: saved_pl.playlist_title,
-			type: saved_pl.playlist_type,
-			data: {name: saved_pl.playlist_title}
-		});
-		for (var i=0; i < saved_pl.length; i++) {
-			p.addDataItem(saved_pl[i]);
-		}
-		this.watchOwnPlaylist(p);
-		return p;
-	},
-	setSavedPlaylists: function(spls) {
-		var recovered = [];
-
-		if (spls){
-			for (var i=0; i < spls.length; i++) {
-				recovered[i] = this.rebuildPlaylist(spls[i]);
-			}
-		}
-
-		this.playlists = recovered;
-		this.trigger('playlsits-change', this.playlists);
-		this.updateNesting('lists_list', this.playlists);
-	}
-});
-
-SuUsersPlaylists = function() {};
-UserPlaylists.extendTo(SuUsersPlaylists, {
-	init: function(opts) {
-		this._super(opts);
-		this
-			.on('each-playlist-change', function() {
-				su.trackEvent('song actions', 'add to playlist');
-			});
-		this.updateManyStates({
-			'nav_title':  localize('playlists'),
-			'url_part': '/playlists'
-		});
-	},
-	saveToStore: function(value) {
-		suStore('user_playlists', value, true);
-	},
-	createEnvPlaylist: function(params) {
-		return su.createSonglist(this, params);
-	}
-});
 
 
 });

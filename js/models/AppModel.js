@@ -1,4 +1,4 @@
-define(['./AppModelBase', 'spv', 'app_serv'], function(AppModelBase, spv, app_serv) {
+define(['./AppModelBase', 'spv', 'app_serv', './SongsList'], function(AppModelBase, spv, app_serv, SongsList) {
 "use strict";
 
 var localize = app_serv.localize;
@@ -85,7 +85,7 @@ AppModelBase.extendTo(AppModel, {
 		this.updateState('doc_title', title);
 	},
 	createSonglist: function(map_parent, params, first_song) {
-		var pl = new songsList();
+		var pl = new SongsList();
 		pl.init({
 			app: this,
 			map_parent: map_parent
@@ -93,7 +93,7 @@ AppModelBase.extendTo(AppModel, {
 		return pl;
 	},
 	preparePlaylist: function(params, first_song){
-		var pl = new songsList();
+		var pl = new SongsList();
 		pl.init({
 			app: this
 		}, params, first_song);

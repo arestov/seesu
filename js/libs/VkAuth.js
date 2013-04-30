@@ -1,7 +1,18 @@
-var vkAuth = function(opts) {
+define(['provoda', 'jquery', 'spv', 'hex_md5'], function(provoda, $, spv, hex_md5){
+"use strict";
+
+var VkTokenAuth = function(app_id, vk_t) {
+	vk_t = (vk_t ===  Object(vk_t)) ? vk_t : JSON.parse(vk_t);
+	vk_t.expires_in = parseFloat(vk_t.expires_in) * 1000;
+	spv.cloneObj(this, vk_t);
+	this.app_id = app_id;
+};
+
+
+var VkAuth = function(opts) {
 	this.init(opts);
 };
-provoda.Eventor.extendTo(vkAuth, {
+provoda.Eventor.extendTo(VkAuth, {
 	init: function(opts) {
 
 		//app_id, urls, permissions, open_api, deep_sanbdox
@@ -177,12 +188,7 @@ provoda.Eventor.extendTo(vkAuth, {
 	
 });
 
-var vkTokenAuth = function(app_id, vk_t) {
-	vk_t = (vk_t ===  Object(vk_t)) ? vk_t : JSON.parse(vk_t);
-	vk_t.expires_in = parseFloat(vk_t.expires_in) * 1000;
-	cloneObj(this, vk_t);
-	this.app_id = app_id;
-};
+VkAuth.VkTokenAuth = VkTokenAuth;
+return VkAuth;
 
-
-
+});

@@ -1,6 +1,6 @@
-define(['js/libs/BrowseMap'], function(BrowseMap) {
+define(['js/libs/BrowseMap', './ArtCard', './TagPage', './UserCard', './MusicConductor'],
+function(BrowseMap, ArtCard, TagPage, UserCard, MusicConductor) {
 "use strict";
-
 var StartPage = function() {};
 
 BrowseMap.Model.extendTo(StartPage, {
@@ -15,7 +15,7 @@ BrowseMap.Model.extendTo(StartPage, {
 		this.su = opts.app;
 		this.updateState('needs_search_from', true);
 		this.updateState('nav_title', 'Seesu start page');
-		this.updateState('nice_artist_hint', su.popular_artists[(Math.random()*10).toFixed(0)]);
+		this.updateState('nice_artist_hint', this.app.popular_artists[(Math.random()*10).toFixed(0)]);
 
 		this.updateNesting('pstuff', this.getSPI('users/me').initOnce());
 		this.updateNesting('muco', this.getSPI('conductor').initOnce());
@@ -28,7 +28,7 @@ BrowseMap.Model.extendTo(StartPage, {
 		requestSearchHint: function() {
 			var artist = this.state('nice_artist_hint');
 			this.app.search(artist);
-			this.updateState('nice_artist_hint', su.popular_artists[(Math.random()*10).toFixed(0)]);
+			this.updateState('nice_artist_hint', this.ap.popular_artists[(Math.random()*10).toFixed(0)]);
 			su.trackEvent('Navigation', 'hint artist');
 		}
 	},

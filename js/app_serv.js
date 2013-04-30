@@ -1053,7 +1053,7 @@ su.vk_api
 })
 .done(function(r){console.log(r)});
 */
-var parseArtistInfo = function(r){
+var parseArtistInfo = app_serv.parseArtistInfo = function(r){
 	var ai = {};
 	if (r && r.artist){
 		var info = r.artist;

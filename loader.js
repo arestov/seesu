@@ -5,13 +5,13 @@ requirejs.config({
 		su: 'js/seesu',
 		jquery: 'js/common-libs/jquery-2.0.0.min',
 		localizer: 'js/libs/localizer',
-		cache_ajax: 'js/libs/cache_ajax.js',
+		cache_ajax: 'js/libs/cache_ajax',
 		app_serv: "js/app_serv",
 		hex_md5: 'js/common-libs/md5.min'
 	},
 	shim: {
 		hex_md5: {
-			exports: 'shim'
+			exports: 'hex_md5'
 		}
 	}
 });
