@@ -1,5 +1,5 @@
 define(['provoda', 'js/modules/lfmhelp', 'app_serv', 'spv', 'jquery', 'cache_ajax', 'hex_md5', 'js/lastfm_data', 'js/libs/BrowseMap', './Investigation'],
-function(provoda, lfmhelp, app_serv, spv, $, cache_ajax, hex_md5, lastfm_data, BrowseMap, obj) {
+function(provoda, lfmhelp, app_serv, spv, $, cache_ajax, hex_md5, lastfm_data, BrowseMap, invstg_obj) {
 "use strict";
 var localize = app_serv.localize;
 var

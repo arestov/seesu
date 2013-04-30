@@ -1,7 +1,6 @@
 define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 	"use strict";
 	provoda.addPrototype("Investigation", {
-		
 		model_name: 'invstg',
 		init: function(opts) {
 			this._super(opts);
@@ -388,7 +387,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 			return this;
 		}
 	});
-return {};
+return {testdata: true};
 });
 
 

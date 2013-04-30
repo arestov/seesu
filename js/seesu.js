@@ -1,8 +1,8 @@
 var su, seesu;
 define('su',
-['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap',
+['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended', 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth'],
-function(require, spv, app_serv, provoda, $, navi, BrowseMap,
+function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
 FuncsQueue, LastfmAPIExtended, AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth) {
 'use strict';
 var localize = app_serv.localize;
@@ -69,7 +69,7 @@ provoda.View.extendTo(OperaExtensionButtonView, {
 });
 
 
-var SeesuApp = function(version) {};
+var SeesuApp = function() {};
 AppModel.extendTo(SeesuApp, {
 	init: function(version){
 		this._super();
@@ -372,20 +372,20 @@ AppModel.extendTo(SeesuApp, {
 
 
 
-		this.hypem = new HypemApi();
+		this.hypem = new net_apis.HypemApi();
 		this.hypem.init({
 			xhr2: app_env.xhr2,
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
 			queue: new FuncsQueue(1700, 4000, 4)
 		});
-		this.goog_sc = new GoogleSoundcloud();
+		this.goog_sc = new net_apis.GoogleSoundcloud();
 		this.goog_sc.init({
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
 			queue: new FuncsQueue(1000, 3000, 4)
 		});
-		this.discogs = new DiscogsApi();
+		this.discogs = new net_apis.DiscogsApi();
 		this.discogs.init({
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
@@ -652,7 +652,7 @@ AppModel.extendTo(SeesuApp, {
 
 				}
 			})
-			.fail(function(r) {
+			.fail(function() {
 
 			});
 	},
