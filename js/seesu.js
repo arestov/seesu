@@ -1,9 +1,13 @@
 var su, seesu;
 define('su',
-['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search', 'js/libs/ScApi' ,'js/libs/ExfmApi', 'js/modules/torrent_searches',
-'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended', 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk'],
-function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search, ScApi, ExfmApi, torrent_searches,
-FuncsQueue, LastfmAPIExtended, AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk) {
+['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
+'js/libs/ScApi' ,'js/libs/ExfmApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
+'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk',
+'js/modules/PlayerSeesu'],
+function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
+ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
+AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
+PlayerSeesu) {
 'use strict';
 var localize = app_serv.localize;
 
@@ -146,7 +150,8 @@ AppModel.extendTo(SeesuApp, {
 			bridge_url: 'http://seesu.me/lastfm/bridge.html'
 		});
 
-
+		this.p = new PlayerSeesu();
+		this.p.init(this);
 		this.app_md = this;
 		this.art_images = new comd.LastFMArtistImagesSelector();
 		this.art_images.init();

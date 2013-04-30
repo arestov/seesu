@@ -1,11 +1,12 @@
-(function() {
+define(['spv', 'jquery'], function(spv, $) {
+'use strict';
 	var createAObj = function() {
 		var au = window.document.createElement('object');
 			au.classid = "CLSID:22d6f312-b0f6-11d0-94ab-0080c74c7e95";
 			au.width=1;
 			au.height=1;
 			au.style.display='none';
-			$(window.document.body).append(au);	
+			$(window.document.body).append(au);
 			au.EnableContextMenu = false;
 			au.SendPlayStateChangeEvents = true;
 			au.ShowControls = false;
@@ -13,7 +14,7 @@
 			au.Volume = 0;
 		return au;
 	};
-	var 
+	var
 		r_states = {
 			0: 'nothing',
 			1: 'loading',
@@ -36,24 +37,24 @@
 	var createAE = function(id, url, cb) {
 		var a = createAObj();//new Audio(url);
 
-		var tplaying
+		var tplaying;
 		var checkPlayingProgress = function() {
 			if (tplaying){
-				clearTimeout(tplaying)
+				clearTimeout(tplaying);
 			}
 			tplaying = setInterval(function(){
 				if (a.IsDurationValid){
 					cb('playing', id, {
 						duration:  a.Duration * 1000,
 						position: a.CurrentPosition * 1000
-					});						
+					});
 				}
 			},250);
 		};
 
 
 		a.attachEvent('ReadyStateChange', function(e){
-			console.log('ReadyStateChange: ' + r_states[e])
+			console.log('ReadyStateChange: ' + r_states[e]);
 		//	if (_this.current_song != aud){console.log('wrong event');return false}
 			
 			/*
@@ -79,9 +80,9 @@
 		});
 		
 		
-		a.attachEvent('EndOfStream', function(e){
+		a.attachEvent('EndOfStream', function(){
 			cb('finish', id);
-			console.log('EndOfStream')
+			console.log('EndOfStream');
 			//if (_this.current_song != aud){console.log('wrong event');return false}
 			
 			
@@ -106,7 +107,7 @@
 			
 			
 			if (pstate == 'stopped'){
-				cb('stop', id)
+				cb('stop', id);
 				//_this.wmp_p_events.stopped(_this);
 			}
 			if (pstate == 'paused'){
@@ -120,12 +121,12 @@
 				//_this.wmp_p_events.playing(_this);
 			} else {
 				if (tplaying){
-					clearTimeout(tplaying)
+					clearTimeout(tplaying);
 				}
 			}
 		});
 			
-		var bf;
+		//var bf;
 		a.attachEvent('Buffering', function(buffering_started){
 			cb('buffering', id, buffering_started);
 			/*
@@ -191,14 +192,14 @@
 		a.Open(url);
 		return a;
 	};
-	var wmpSound = function(opts, cb) {
+	var WmpSound = function(opts, cb) {
 		this.url = opts.url;
 		this.id = opts.id;
 		this.cb = cb;
 		//this.requireAE();
 		
 	};
-	wmpSound.prototype = {
+	WmpSound.prototype = {
 		requireAE: function() {
 			if (!this.a){
 				this.a = createAE(this.id, this.url, this.cb);
@@ -245,7 +246,7 @@
 	};
 
 
-	wmpAudioCore = function(path, opts) {
+	var AudioCoreWmp = function() {
 		var _this = this;
 		this.sounds_store = {};
 		this.feedBack = function() {
@@ -255,7 +256,7 @@
 		};
 	};
 
-	wmpAudioCore.prototype = {
+	AudioCoreWmp.prototype = {
 		subscribe: function(cb){
 			this.subr = cb;
 			return this;
@@ -268,7 +269,7 @@
 
 		createSound: function(opts) {
 			if (!this.sounds_store[opts.id]){
-				this.sounds_store[opts.id] = new wmpSound(opts, this.feedBack);
+				this.sounds_store[opts.id] = new WmpSound(opts, this.feedBack);
 			}
 		},
 		removeSound: function(id) {
@@ -331,14 +332,15 @@
 		callCore: function(method, id, opts, more) {
 			if (method && this.plc[method] && id){
 				if (opts && opts === Object(opts)){
-					cloneObj(opts, {id: id});
+					spv.cloneObj(opts, {id: id});
 				}
 				this.plc[method].call(this, this.getSound(id), opts, more);
-			}	
+			}
 		},
 		callSongMethod: function() {
 			this.callCore.apply(this, arguments);
 		}
 	};
-})();
+return AudioCoreWmp;
+});
 

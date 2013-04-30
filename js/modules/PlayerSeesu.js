@@ -1,130 +1,20 @@
-var seesuPlayer;
-(function() {
-	"use strict";
-	seesuPlayer = function(){
-		this.init();
-	};
+define(['./playerComplex', 'app_serv', 'jquery', 'spv'], function(playerComplex, app_serv, $, spv){
+'use strict';
+var app_env = app_serv.app_env;
+	var su;
 
 
-	playerComplex.extendTo(seesuPlayer, {
-		init: function(){
-			this._super();
-		},
-		events: {
-			finish: function(e){
-				if (this.c_song == e.song_file.mo){
-					this.playNext(this.c_song, true);
-				}
-			},
-			play: function(e){
-				if (this.c_song == e.song_file.mo){
-					this.playing();
-					if (this.c_song.next_preload_song){
-						this.c_song.next_preload_song.prefindFiles();
-					}
-					this.changeAppMode(true);
-				}
-			},
-			pause: function(e){
-				if (this.c_song == e.song_file.mo){
-					this.notPlaying();
-					this.changeAppMode();
-				}
-			},
-			stop: function(e){
-				if (this.c_song == e.song_file.mo){
-					this.notPlaying();
-					this.changeAppMode();
-				}
-			},
-			playing: function(e){
-				
-			}
-		},
-		notPlaying: function(){
-			su.notPlaying();
-			
-		},
-		playing: function(){
-			su.playing();
-		},
-		changeAppMode: function(playing){
-			if (playing){
-				if (window.btapp){
-					btapp.properties.set('background', true);
-				}
-			} else{
-				if (window.btapp){
-					btapp.properties.set('background', false);
-				}
-			}
-		},
-		nowPlaying: function(mo){
-			su.nowPlaying(mo);
-		}
-	});
-})();
 
-(function() {
-	"use strict";
-	var su = window.su;
-
-	var player = su.p = new seesuPlayer();
-
-
-	var canSubmit = function(mo){
-
-	};
-
-	player
-		.on('finish', function(e){
-			var mo = e.song_file.mo.submitPlayed();
-		})
-		.on('song-play-error', function(song, can_play) {
-			if (this.c_song == song){
-				if (!can_play){
-					if (song.isSearchAllowed() && song.state('search_complete')){
-						this.playNext(this.c_song, true);
-					} else {
-						this.wantSong(song);
-					}
-					
-				} else {
-					song.play();
-				}
-			}
-		})
-		.on('play', function(e){
-			e.song_file.mo.submitNowPlaying();
-		});
-
-	var setVolume = function(fac){
-		if (su.p.c_song){
-			su.p.c_song.setVolume(false, fac);
-		} else {
-			su.p.setVolume(false, false, fac);
-		}
-		
-	};
-	if (su.settings['volume']){
-		setVolume(su.settings['volume'])
-	}
-	su.on('settings.volume', setVolume);
-})();
-(function() {
-	var su = window.su;
-	"use strict";
 	var sm2opts = {};
-	if (su.env.opera_extension){
+	if (app_env.opera_extension){
 		sm2opts.wmode = 'opaque';
 		sm2opts.useHighPerformance = false;
 	} else {
-		if (su.env.opera_widget){
+		if (app_env.opera_widget){
 			sm2opts.wmode = 'transparent';
 		}
 	}
 
-	var features = {};
 	var done;
 	var useLib = function(cb){
 		if (!done){
@@ -187,97 +77,74 @@ var seesuPlayer;
 
 
 	var addFeature = function(feature){
-		features[feature];
+		//features[feature];
 		switch (feature){
-			case "html5mp3": 
-				useLib(function(){
-					jsLoadComplete(function() {
-						yepnope({
-							load:  [bpath + 'js/prototypes/player.html5.js'],
-							complete: function() {
-								if (window.html5AudioCore){
-									features_storage.setAsAccessible(feature, new html5AudioCore());
-								} else {
-									features_storage.setAsInaccessible(feature);
-								}
-								
-							}
-						});
+			case "html5mp3":
+			//require('./')
+				useLib(function() {
+					require('./AudioCoreHTML5', function(AudioCoreHTML5) {
+						features_storage.setAsAccessible(feature, new AudioCoreHTML5());
+					}, function() {
+						features_storage.setAsInaccessible(feature);
 					});
 				});
 				break;
 			case "wmpactivex":
-				useLib(function(){
-					jsLoadComplete(function() {
-						yepnope({
-							load:  [bpath + 'js/prototypes/player.wmp.js'],
-							complete: function() {
-								if (window.wmpAudioCore){
-									features_storage.setAsAccessible(feature, new wmpAudioCore());
-								} else {
-									features_storage.setAsInaccessible(feature);
-								}
-							}
-						});
+				useLib(function() {
+					require('./AudioCoreHTML5', function(AudioCoreWmp) {
+						features_storage.setAsAccessible(feature, new AudioCoreWmp());
+					}, function() {
+						features_storage.setAsInaccessible(feature);
 					});
 				});
 				break;
-			case "sm2-proxy": 
-				useLib(function(){
-					spv.domReady(window.document,function(){
-						yepnope({
-							load:  [bpath + 'js/prototypes/player.sm2-proxy.js'],
-							complete: function(){
-								if (!window.sm2proxy){
-									features_storage.setAsInaccessible(feature);
-									return;
-								}
-								var pcore = new sm2proxy("http://arestov.github.io", "/SoundManager2/?" + su.version, sm2opts);
-								var pcon = $(pcore.getC());
-								var complete;
+			case "sm2-proxy":
+				useLib(function() {
+					require('./AudioCoreSm2Proxy', function(AudioCoreSm2Proxy) {
+						//features_storage.setAsAccessible(feature, new AudioCoreSm2Proxy());
+						spv.domReady(window.document, function(){
+							var pcore = new AudioCoreSm2Proxy("http://arestov.github.io", "/SoundManager2/?" + su.version, sm2opts);
+							var pcon = $(pcore.getC());
+							var complete;
+							pcon
+								.addClass('sm2proxy')
+								.attr('scrolling', 'no');
 
-
-								pcon
-									.addClass('sm2proxy')
-									.attr('scrolling', 'no');
-								
-								pcon.on('load', function() {
-									setTimeout(function() {
-										if (!complete){
-											pcon.addClass('long-appearance');
-											features_storage.setAsInaccessible(feature);
-										}
-									}, 7000);
-								});
-								
-								
-								pcore
-									.done(function(){
-										complete = true;
-										setTimeout(function(){
-											pcon.addClass('sm2-complete');
-										}, 1000);
-										features_storage.setAsAccessible(feature, pcore);
-										
-
-									})
-									.fail(function(){
-										complete = true;
-										pcon.addClass('hidden');
+							pcon.on('load', function() {
+								setTimeout(function() {
+									if (!complete){
+										pcon.addClass('long-appearance');
 										features_storage.setAsInaccessible(feature);
-									});
-								$(function(){
-									$(document.body).append(pcon);
-								});
-								
-							}
-						});
+									}
+								}, 7000);
+							});
+							
+							pcore
+								.done(function(){
+									complete = true;
+									setTimeout(function(){
+										pcon.addClass('sm2-complete');
+									}, 1000);
+									features_storage.setAsAccessible(feature, pcore);
+									
 
-						
+								})
+								.fail(function(){
+									complete = true;
+									pcon.addClass('hidden');
+									features_storage.setAsInaccessible(feature);
+								});
+							$(function(){
+								$(document.body).append(pcon);
+							});
+						});
+					}, function() {
+						features_storage.setAsInaccessible(feature);
 					});
 				});
 				break;
 			case "sm2-internal":
+				/*
 				useLib(function(){
 					spv.domReady(window.document, function(){
 						yepnope({
@@ -286,8 +153,6 @@ var seesuPlayer;
 								var pcore = new sm2internal(bpath + "swf/", sm2opts);
 								var pcon = $(pcore.getC());
 								var complete;
-
-
 								pcon
 									.addClass('sm2proxy')
 									.attr('scrolling', 'no');
@@ -299,8 +164,6 @@ var seesuPlayer;
 										}
 									}, 7000);
 								});
-								
-								
 								pcore
 									.done(function(){
 										complete = true;
@@ -322,7 +185,7 @@ var seesuPlayer;
 						});
 					});
 
-				});
+				});*/
 				
 
 		}
@@ -333,23 +196,28 @@ var seesuPlayer;
 	
 
 
-	var plugins_list = spv.toRealArray(navigator.plugins);
+	
 
 
 	var flash_plgs = spv.filter(spv.toRealArray(navigator.plugins),"name", "Shockwave Flash");
+	/*
+	var plugins_list = spv.toRealArray(navigator.plugins);
 	var vlc_plgs = spv.filter(plugins_list,"name", function(el){
-		return el && el.indexOf("VLC") != -1
+		return el && el.indexOf("VLC") != -1;
 	});
 
+	var vlc_plugin = !!vlc_plgs.length;*/
+	/*
 	var quick_time_plgs = spv.filter(plugins_list,"name", function(el){
-		return el && el.indexOf("QuickTime") != -1
+		return el && el.indexOf("QuickTime") != -1;
 	});
-	var vlc_plugin = !!vlc_plgs.length;
+	
+	
 	var qt_plugin = !!quick_time_plgs.length;
 	if (qt_plugin){
 		var all_qt_mimetypes = [];
 		for (var i = 0; i < quick_time_plgs.length; i++) {
-			Array.prototype.push.apply(all_qt_mimetypes, spv.toRealArray(quick_time_plgs[i]))
+			Array.prototype.push.apply(all_qt_mimetypes, spv.toRealArray(quick_time_plgs[i]));
 			//quick_time_plgs[i]
 		}
 		//"application/x-quicktimeplayer" || "video/quicktime";
@@ -360,7 +228,7 @@ var seesuPlayer;
 			spv.filter(all_qt_mimetypes, 'type', "video/quicktime")
 		);
 		console.log(best_mimetypes);
-	}
+	}*/
 
 	
 
@@ -386,9 +254,7 @@ var seesuPlayer;
 
 	];
 
-	while (!done && detectors.length){
-		detectors.shift()();
-	}
+	
 	if (!done){
 		spv.domReady(document, function(){
 			detectors.push(
@@ -411,17 +277,17 @@ var seesuPlayer;
 					aqt.setAttribute("EnableJavaScript", true);
 					aqt.setAttribute("postdomevents", true);
 
-					aqt.setAttribute("src", "http://www.google-analytics.com/__utm.gif?" + (new Date()).valueOf())
+					aqt.setAttribute("src", "http://www.google-analytics.com/__utm.gif?" + (new Date()).valueOf());
 
 					spv.addEvent(aqt, "qt_error ", function(){
-						console.log("error!");
+					//	console.log("error!");
 					});
 
 					spv.addEvent(aqt, "qt_begin", function(){
-						console.log("begin!");
+					//	console.log("begin!");
 					});
 					spv.addEvent(aqt, "load", function(){
-						console.log("load!");
+					//	console.log("load!");
 					});
 
 					//check preffered mimetype!!!
@@ -442,7 +308,7 @@ var seesuPlayer;
 					
 				},
 				function(){
-					if (flash_plgs.length && su.env.iframe_support){
+					if (flash_plgs.length && app_env.iframe_support){
 						features_storage.canLoad('sm2-proxy');
 					} else {
 						features_storage.setAsInaccessible('sm2-proxy');
@@ -453,16 +319,131 @@ var seesuPlayer;
 					return; //code is not finished
 
 
-					if (false && !su.env.cross_domain_allowed){
+					if (false && !app_env.cross_domain_allowed){
 						addFeature("sm2-internal");
 					}
 				}
 			);
-			while (!done && detectors.length){
-				detectors.shift()();
-			}
 		});
 		
 	}
-})();
 
+
+
+
+
+
+
+
+
+
+
+	var PlayerSeesu = function(){};
+	playerComplex.extendTo(PlayerSeesu, {
+		init: function(app){
+			this._super();
+			this.app = app;
+			su = app;
+				
+			this
+			.on('finish', function(){
+				//var mo = e.song_file.mo.submitPlayed();
+			})
+			.on('song-play-error', function(song, can_play) {
+				if (this.c_song == song){
+					if (!can_play){
+						if (song.isSearchAllowed() && song.state('search_complete')){
+							this.playNext(this.c_song, true);
+						} else {
+							this.wantSong(song);
+						}
+						
+					} else {
+						song.play();
+					}
+				}
+			})
+			.on('play', function(e){
+				e.song_file.mo.submitNowPlaying();
+			});
+
+
+			var setVolume = function(fac){
+				if (su.p.c_song){
+					su.p.c_song.setVolume(false, fac);
+				} else {
+					su.p.setVolume(false, false, fac);
+				}
+				
+			};
+			if (su.settings['volume']){
+				setVolume(su.settings['volume']);
+			}
+			su.on('settings.volume', setVolume);
+
+			while (!done && detectors.length){
+				detectors.shift()();
+			}
+		},
+		events: {
+			finish: function(e){
+				if (this.c_song == e.song_file.mo){
+					this.playNext(this.c_song, true);
+				}
+			},
+			play: function(e){
+				if (this.c_song == e.song_file.mo){
+					this.playing();
+					if (this.c_song.next_preload_song){
+						this.c_song.next_preload_song.prefindFiles();
+					}
+					this.changeAppMode(true);
+				}
+			},
+			pause: function(e){
+				if (this.c_song == e.song_file.mo){
+					this.notPlaying();
+					this.changeAppMode();
+				}
+			},
+			stop: function(e){
+				if (this.c_song == e.song_file.mo){
+					this.notPlaying();
+					this.changeAppMode();
+				}
+			},
+			playing: function(){
+				
+			}
+		},
+		notPlaying: function(){
+			su.notPlaying();
+			
+		},
+		playing: function(){
+			su.playing();
+		},
+		changeAppMode: function(playing){
+			if (playing){
+				if (window.btapp){
+					btapp.properties.set('background', true);
+				}
+			} else{
+				if (window.btapp){
+					btapp.properties.set('background', false);
+				}
+			}
+		},
+		nowPlaying: function(mo){
+			su.nowPlaying(mo);
+		}
+	});
+
+		
+
+	
+
+
+
+return PlayerSeesu;
+});

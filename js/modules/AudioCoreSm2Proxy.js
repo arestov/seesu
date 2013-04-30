@@ -1,5 +1,6 @@
-
-var sm2proxy = function(origin, path, opts) {
+define(['spv', 'jquery'], function(spv, $) {
+'use strict';
+var AudioCoreSm2Proxy = function(origin, path, opts) {
 	var _this = this;
 	this.origin = origin;
 	
@@ -15,7 +16,7 @@ var sm2proxy = function(origin, path, opts) {
 	if (opts && opts === Object(opts)){
 		var params_string = spv.stringifyParams(opts, false, '=', '&');
 		if (params_string){
-			path = path + '#' + params_string
+			path = path + '#' + params_string;
 		}
 	}
 
@@ -25,7 +26,7 @@ var sm2proxy = function(origin, path, opts) {
 	
 };
 
-sm2proxy.prototype = {
+AudioCoreSm2Proxy.prototype = {
 	fail: function(cb){
 		this.def.fail(cb);
 		return this;
@@ -37,13 +38,13 @@ sm2proxy.prototype = {
 	getC: function(){
 		return this.frame;
 	},
-	handleFrameMessage: function(func, arg){
+	handleFrameMessage: function(func){
 		if (func){
 			if (func === 'sm2loaded'){
 				if (func){
-					this.def.resolve()
+					this.def.resolve();
 				} else {
-					this.def.reject()
+					this.def.reject();
 				}
 			} else {
 				if (this.subr){
@@ -62,13 +63,16 @@ sm2proxy.prototype = {
 			delete this.subr;
 		}
 	},
-	sendMsg: function(msg){
+	sendMsg: function(){
 		var args = Array.prototype.slice.call(arguments);
 		if (args.length){
 			this.frame.contentWindow.postMessage(JSON.stringify(args), '*');
 		}
 	},
-	callSongMethod: function(method, id) {
-		this.sendMsg.apply(this, arguments)
+	callSongMethod: function() {
+		//method, id
+		this.sendMsg.apply(this, arguments);
 	}
 };
+return AudioCoreSm2Proxy;
+});

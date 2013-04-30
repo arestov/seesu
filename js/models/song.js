@@ -1,4 +1,3 @@
-
 define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './TrackActionsRow','js/modules/lfmhelp', './SongBase'],
 function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow,  lfmhelp){
 	"use strict";

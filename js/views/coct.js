@@ -29,20 +29,6 @@ provoda.View.extendTo(ListPreview, {
 	}
 });
 
-
-var LiListsPreview = function() {};
-ListPreview.extendTo(LiListsPreview, {
-	createBase: function() {
-		this._super();
-		this.c.addClass('tag_artists-preview');
-	},
-	children_views: {
-		lists_list: ListPreviewLine
-	},
-	'collch-lists_list': 'tpl.ancs.listc'
-});
-
-
 var ListPreviewLine = function() {};
 provoda.View.extendTo(ListPreviewLine, {
 	createBase: function() {
@@ -64,6 +50,21 @@ provoda.View.extendTo(ListPreviewLine, {
 		this.text_c.text(state);
 	}
 });
+
+
+var LiListsPreview = function() {};
+ListPreview.extendTo(LiListsPreview, {
+	createBase: function() {
+		this._super();
+		this.c.addClass('tag_artists-preview');
+	},
+	children_views: {
+		lists_list: ListPreviewLine
+	},
+	'collch-lists_list': 'tpl.ancs.listc'
+});
+
+
 
 var PageView = function() {};
 provoda.View.extendTo(PageView, {

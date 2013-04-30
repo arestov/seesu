@@ -1,4 +1,4 @@
-define(['provoda', './coct', function(provoda, coct) {
+define(['./coct'], function(coct) {
 "use strict";
 
 var MusicConductorPage = function() {};
@@ -14,4 +14,4 @@ coct.PageView.extendTo(MusicConductorPage, {
 });
 
 return MusicConductorPage;
-}]);
+});

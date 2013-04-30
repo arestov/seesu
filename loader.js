@@ -1,6 +1,6 @@
 requirejs.config({
 	paths: {
-		provoda: 'js/prototypes/provoda',
+		provoda: 'js/libs/provoda',
 		spv: 'js/libs/spv',
 		su: 'js/seesu',
 		jquery: 'js/common-libs/jquery-2.0.0.min',
