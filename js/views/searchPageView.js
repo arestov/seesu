@@ -1,5 +1,6 @@
-define(['provoda', 'jquery', 'app_serv', './searchPageViewBase'], function(provoda, $) {
+define(['provoda', 'jquery', 'app_serv', './searchPageViewBase'], function(provoda, $, app_serv) {
 "use strict";
+var localize = app_serv.localize;
 var
 	default_sugg_artimage = 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png';
 var

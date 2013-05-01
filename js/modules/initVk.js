@@ -1,4 +1,4 @@
-define(['app_serv', 'js/libs/VkAuth'], function(app_serv, VkAuth) {
+define(['app_serv', 'js/libs/VkAuth', 'jquery'], function(app_serv, VkAuth, $) {
 "use strict";
 var app_env = app_serv.app_env;
 
@@ -11,18 +11,15 @@ var checkDeadSavedToken = function(vk_token) {
 
 
 var appendVKSiteApi = function(app_id, su) {
-	yepnope({
-		load: 'http://vk.com/js/api/openapi.js',
-		complete: function() {
-			VK.init({
-				apiId: app_id
-			}, function(){
+	app_serv.loadJS('http://vk.com/js/api/openapi.js', function() {
+		VK.init({
+			apiId: app_id
+		}, function(){
 
-			});
-			setTimeout(function() {
-				su.trigger("vk-site-api");
-			}, 500);
-		}
+		});
+		setTimeout(function() {
+			su.trigger("vk-site-api");
+		}, 500);
 	});
 };
 
@@ -59,16 +56,10 @@ var initVk = function(su) {
 		});
 		*/
 
-
-		yepnope({
-			load: 'http://vk.com/js/api/xd_connection.js',
-			complete: function() {
-				VK.init(function(){
-					su.trigger("vk-site-api");
-				});
-				
-				
-			}
+		app_serv.loadJS('http://vk.com/js/api/xd_connection.js', function(){
+			VK.init(function(){
+				su.trigger("vk-site-api");
+			});
 		});
 
 		su.vk_auth.on('settings-change', function(sts) {

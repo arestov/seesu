@@ -229,25 +229,23 @@ AppModel.extendTo(SeesuApp, {
 
 		this.trackStat = (function(){
 			window._gaq = window._gaq || [];
-			var _gaq = window._gaq;
-			_gaq.sV = spv.debounce(function(v){
+			//var _gaq = window._gaq;
+			window._gaq.sV = spv.debounce(function(v){
 				suStore('ga_store', v, true);
 			},130);
-			_gaq.gV = function(){
+			window._gaq.gV = function(){
 				return suStore('ga_store');
 			};
+			window._gaq.push(['_setAccount', 'UA-17915703-1']);
+			window._gaq.push(['_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1]);
+			window._gaq.push(['_setCustomVar', 2, 'version', version, 1]);
 			spv.domReady(window.document, function(){
-				yepnope( {
-					load: bpath + 'js/common-libs/ga.mod.min.js',
-					complete: function(){
-						_gaq.push(['_setAccount', 'UA-17915703-1']);
-						_gaq.push(['_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1]);
-						_gaq.push(['_setCustomVar', 2, 'version', version, 1]);
-					}
+				app_serv.loadJS('js/common-libs/ga.mod.min.js', function(){
+					console.log('ga done');
 				});
 			});
 			return function(data_array){
-				_gaq.push(data_array);
+				window._gaq.push(data_array);
 			};
 		})();
 
@@ -829,16 +827,6 @@ provoda.sync_s.setRootModel(su);
 			cache_ajax: cache_ajax,
 			mp3_search: su.mp3_search
 		}));
-
-		/*yepnope({
-			load:  [bpath + 'js/libs/nigma.search.js'],
-			complete: function(){
-				window.nms = new NigmaMusicSearch(new NigmaAPI(new FuncsQueue(5000, 10000, 4)))
-				su.mp3_search.add(window.nms);
-				
-				//$(document.body).append(_this.c);
-			}
-		});*/
 	} else {
 		su.mp3_search.add(new torrent_searches.googleTorrentSearch({
 			crossdomain: app_env.cross_domain_allowed,

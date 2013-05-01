@@ -166,9 +166,9 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		this._super(opts);
 		this.artist_name = params.artist;
 
-		cloneObj(this.init_states, {
+		spv.cloneObj(this.init_states, {
 			'artist_id': false,
-			'possible_loader_disallowing': localize('no-dgs-id'),
+			'possible_loader_disallowing': localize('no-dgs-id')
 		});
 		this.initStates();
 

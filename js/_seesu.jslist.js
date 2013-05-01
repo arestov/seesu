@@ -78,8 +78,9 @@ var jsLoadComplete,
 	"js/models/song-actionsrow.js",
 	"js/prototypes/player.base.js",
 	"js/prototypes/player.complex.js",
-*/
+
 	"js/su-prototypes/su-player.js"
+	*/
 	];
 	var bpathWrap = function(array){
 		if (base_path){

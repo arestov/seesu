@@ -30,6 +30,11 @@ requirejs.config({
 		require(['spv', 'app_serv'], function(spv, app_serv) {
 			app_serv.handleDocument(window.document);
 		});
+	}
+	require(['su'], function(su) {
+		//app thread;
+	});
+	if (need_ui){
 		require(['su', 'js/views/AppView', 'angbo'], function(su, AppView, angbo) {
 			var can_die = false;
 			var md = su;
@@ -41,10 +46,11 @@ requirejs.config({
 				mpx: md.mpx
 			}, {d: window.document, allow_url_history: true, can_die: can_die, angbo: angbo});
 			view.requestAll();
-			provoda.sync_r.connectAppRoot();
+			//provoda.sync_r.connectAppRoot();
 			window.app_view = view;
 		});
 	}
+
 })();
 
 
