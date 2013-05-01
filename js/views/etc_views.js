@@ -1,6 +1,6 @@
-define(['provoda'], function(provoda) {
+define(['provoda', 'app_serv', 'jquery'], function(provoda, app_serv, $) {
 "use strict";
-
+var localize = app_serv.localize;
 var contextRow = function(container){
 	this.m = {
 		c: container.addClass('hidden'),
@@ -147,7 +147,7 @@ provoda.View.extendTo(VkLoginUI, {
 			}
 		});
 		var input = this.c.find('.vk-code');
-		var use_code_button = this.c.find('.use-vk-code').click(function() {
+		this.c.find('.use-vk-code').click(function() {
 			var vk_t_raw = input.val();
 			_this.root_view.RPCLegacy('vkSessCode', vk_t_raw);
 			
