@@ -427,6 +427,13 @@ var app_env = app_serv.app_env;
 				
 			}
 		},
+		setPlayMark: function(playing){
+			if (playing){
+				this.playing();
+			} else {
+				this.notPlaying();
+			}
+		},
 		notPlaying: function(){
 			su.notPlaying();
 			

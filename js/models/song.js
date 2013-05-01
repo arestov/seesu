@@ -142,7 +142,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				.on('before-mf-play', function(mopla) {
 
 
-					_this.player.changeNowPlaying(_this);
+					_this.player.changeNowPlaying(_this, mopla.state('play'));
 					_this.mopla = mopla;
 					_this.updateState('play', mopla.state('play'));
 				})

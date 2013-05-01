@@ -72,7 +72,10 @@ PlayerBase.extendTo(PlayerComplex, {
 			
 		}
 	},
-	changeNowPlaying: function(mo){
+	changeNowPlaying: function(mo, playing){
+		if (this.setPlayMark){
+			this.setPlayMark(playing);
+		}
 		var last_mo = this.c_song;
 		if (last_mo != mo){
 			this.removeCurrentWantedSong();
