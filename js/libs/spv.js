@@ -1,14 +1,13 @@
-var spv = {},
-	addEvent, removeEvent, getDefaultView, domReady,
-	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
-	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
-	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, Class,
-	debounce, throttle;
+var spv = {};
 
 
 (function() {
 "use strict";
-
+var addEvent, removeEvent, getDefaultView, domReady,
+	doesContain, shuffleArray, arrayExclude, getFields, matchWords, searchInArray, getStringPattern,
+	ttime, collapseAll, toRealArray, getTargetField, sortByRules, makeIndexByField, $filter,
+	cloneObj, createObjClone, getDiffObj, getUnitBaseNum, stringifyParams, separateNum, Class,
+	debounce, throttle;
 if (!Array.prototype.indexOf) {
 	Array.prototype.indexOf = function (obj, start) {
 		for (var i = (start || 0); i < this.length; i++) {

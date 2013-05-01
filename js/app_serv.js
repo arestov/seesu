@@ -1,5 +1,3 @@
-var app_env;
-var localize;
 define(['spv', 'localizer', 'js/libs/w_storage', 'js/preloaded_nk'], function(spv, localizer, w_storage, preloaded_nk) {
 "use strict";
 var app_serv = {};
