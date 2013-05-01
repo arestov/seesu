@@ -3,9 +3,9 @@ define(['app_serv', 'js/libs/VkAuth', 'jquery'], function(app_serv, VkAuth, $) {
 var app_env = app_serv.app_env;
 
 var checkDeadSavedToken = function(vk_token) {
-	var saved = suStore('vk_token_info');
+	var saved = app_serv.store('vk_token_info');
 	if (saved && saved.access_token == vk_token) {
-		suStore("vk_token_info", "", true);
+		app_serv.store("vk_token_info", "", true);
 	}
 };
 
@@ -81,7 +81,7 @@ var initVk = function(su) {
 	
 		
 
-		var save_token = suStore('vk_token_info');
+		var save_token = app_serv.store('vk_token_info');
 		if (save_token){
 			//console.log('token!')
 			su.vk_auth.api = su.connectVKApi( new VkAuth.VkTokenAuth(su.vkappid, save_token), true);

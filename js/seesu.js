@@ -31,9 +31,9 @@ $.support.cors = true;
 var lfm = new LastfmAPIExtended();
 
 lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret'), function(key){
-	return app_serv.suStore(key);
+	return app_serv.store(key);
 }, function(key, value){
-	return app_serv.suStore(key, value, true);
+	return app_serv.store(key, value, true);
 }, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue(700));
 lfm.checkMethodResponse = function(method, data, r) {
 	su.art_images.checkLfmData(method, r);
@@ -136,7 +136,7 @@ AppModel.extendTo(SeesuApp, {
 
 
 
-		this.s  = new SeesuServerAPI(this, suStore('dg_auth'), this.server_url);
+		this.s  = new SeesuServerAPI(this, app_serv.store('dg_auth'), this.server_url);
 		this.updateState('su_server_api', true);
 
 		this.s.on('info-change.vk', function(data) {
@@ -231,10 +231,10 @@ AppModel.extendTo(SeesuApp, {
 			window._gaq = window._gaq || [];
 			//var _gaq = window._gaq;
 			window._gaq.sV = spv.debounce(function(v){
-				suStore('ga_store', v, true);
+				app_serv.store('ga_store', v, true);
 			},130);
 			window._gaq.gV = function(){
-				return suStore('ga_store');
+				return app_serv.store('ga_store');
 			};
 			window._gaq.push(['_setAccount', 'UA-17915703-1']);
 			window._gaq.push(['_setCustomVar', 1, 'environmental', (!app_env.unknown_app ? app_env.app_type : 'unknown_app'), 1]);
@@ -249,10 +249,10 @@ AppModel.extendTo(SeesuApp, {
 			};
 		})();
 
-		var lu = suStore('su-usage-last');
+		var lu = app_serv.store('su-usage-last');
 
 		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
-		this.usage_counter = parseFloat(suStore('su-usage-counter')) || 0;
+		this.usage_counter = parseFloat(app_serv.store('su-usage-counter')) || 0;
 
 		var _this = this;
 		setInterval(function(){
@@ -261,8 +261,8 @@ AppModel.extendTo(SeesuApp, {
 
 			if ((now - _this.last_usage)/ (1000 * 60 * 60) > 4){
 				_this.checkStats();
-				suStore('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
-				suStore('su-usage-counter', ++_this.usage_counter, true);
+				app_serv.store('su-usage-last', (_this.last_usage = new Date()).toUTCString(), true);
+				app_serv.store('su-usage-counter', ++_this.usage_counter, true);
 			}
 
 
@@ -289,10 +289,10 @@ AppModel.extendTo(SeesuApp, {
 
 		this.notf = new comd.GMessagesStore(
 			function(value) {
-				return suStore('notification', value, true);
+				return app_serv.store('notification', value, true);
 			},
 			function() {
-				return suStore('notification');
+				return app_serv.store('notification');
 			}
 		);
 
@@ -395,7 +395,7 @@ AppModel.extendTo(SeesuApp, {
 		setTimeout(function() {
 			for (var i = _this.supported_settings.length - 1; i >= 0; i--) {
 				var cur = _this.supported_settings[i];
-				var value = suStore('settings.' + cur);
+				var value = app_serv.store('settings.' + cur);
 				if (value){
 					try {
 						value = JSON.parse(value);
@@ -403,9 +403,9 @@ AppModel.extendTo(SeesuApp, {
 				}
 				_this.letAppKnowSetting(cur, value);
 			}
-			var last_ver = suStore('last-su-ver');
+			var last_ver = app_serv.store('last-su-ver');
 			_this.migrateStorage(last_ver);
-			suStore('last-su-ver', version, true);
+			app_serv.store('last-su-ver', version, true);
 
 		}, 200);
 
@@ -445,10 +445,10 @@ AppModel.extendTo(SeesuApp, {
 	},
 	migrateStorage: function(ver){
 		if (!ver){
-			var lfm_scrobbling_enabled = suStore('lfm_scrobbling_enabled');
+			var lfm_scrobbling_enabled = app_serv.store('lfm_scrobbling_enabled');
 			if (lfm_scrobbling_enabled){
 
-				suStore('lfm_scrobbling_enabled', '', true);
+				app_serv.store('lfm_scrobbling_enabled', '', true);
 				this.setSetting('lfm-scrobbling', lfm_scrobbling_enabled);
 			}
 		}
@@ -475,7 +475,7 @@ AppModel.extendTo(SeesuApp, {
 			if (typeof value != 'number'){
 				value = value || '';
 			}
-			suStore('settings.'+ name, value, true);
+			app_serv.store('settings.'+ name, value, true);
 		}, 333);
 
 	},
@@ -744,7 +744,7 @@ AppModel.extendTo(SeesuApp, {
 			}, vk_token.expires_in);
 		}
 		if (!not_save){
-			suStore('vk_token_info', spv.cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
+			app_serv.store('vk_token_info', spv.cloneObj({}, vk_token, false, ['access_token', 'expires_in', 'user_id']), true);
 		}
 		return vkapi;
 	},

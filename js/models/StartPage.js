@@ -1,5 +1,5 @@
-define(['js/libs/BrowseMap', './ArtCard', './TagPage', './UserCard', './MusicConductor'],
-function(BrowseMap, ArtCard, TagPage, UserCard, MusicConductor) {
+define(['js/libs/BrowseMap', './ArtCard', './TagPage', './UserCard', './MusicConductor', 'app_serv'],
+function(BrowseMap, ArtCard, TagPage, UserCard, MusicConductor, app_serv) {
 "use strict";
 var StartPage = function() {};
 
@@ -21,7 +21,7 @@ BrowseMap.Model.extendTo(StartPage, {
 		this.updateNesting('muco', this.getSPI('conductor').initOnce());
 
 
-		this.closed_messages = suStore('closed-messages') || {};
+		this.closed_messages = app_serv.store('closed-messages') || {};
 		return this;
 	},
 	rpc_legacy: {
@@ -131,7 +131,7 @@ BrowseMap.Model.extendTo(StartPage, {
 	closeMessage: function(message_name) {
 		if (this.messages[message_name] && !this.closed_messages[message_name]){
 			this.closed_messages[message_name] = true;
-			suStore('closed-messages', this.closed_messages, true);
+			app_serv.store('closed-messages', this.closed_messages, true);
 			this.messages[message_name].call(this, false);
 		}
 	},

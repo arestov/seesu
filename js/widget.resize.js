@@ -16,8 +16,8 @@ window.resizeWindow = function(w){
 		var size_shift = old_win_height - w.innerHeight;
 	
 		var save_size = function(){
-			suStore('width', w.innerWidth, true);
-			suStore('height', w.innerHeight, true);
+			app_serv.store('width', w.innerWidth, true);
+			app_serv.store('height', w.innerHeight, true);
 	
 		}
 		var drag = function(e0, x, y) {
@@ -73,8 +73,8 @@ window.resizeWindow = function(w){
 		var min_height = 610;
 
 		
-		var width = parseFloat(suStore('width')) || min_width;
-		var height = parseFloat(suStore('height')) || min_height;
+		var width = parseFloat(app_serv.store('width')) || min_width;
+		var height = parseFloat(app_serv.store('height')) || min_height;
 		
 		var timeout = 0;
 		function resizeWindow() {

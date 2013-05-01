@@ -440,7 +440,7 @@ app_serv.app_env = app_env;
 			return r_value;
 		}
 	};
-	app_serv.suStore = window.suStore = function(key, value, opts){
+	app_serv.store = function(key, value, opts){
 		var sensitive = !!key && sensitive_keys.indexOf(key) > -1;
 		if (typeof value != 'undefined'){
 			if (value && sensitive && app_env.pokki_app){

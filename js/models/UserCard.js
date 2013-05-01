@@ -492,7 +492,7 @@ BrowseMap.Model.extendTo(UserCard, {
 		});
 		_this.app.gena = gena;
 
-		var plsts_str = suStore('user_playlists');
+		var plsts_str = app_serv.store('user_playlists');
 		if (plsts_str){
 			gena.setSavedPlaylists(plsts_str);
 		}

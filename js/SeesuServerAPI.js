@@ -1,4 +1,4 @@
-define(['provoda', 'jquery', 'spv', 'hex_md5'], function(provoda, $, spv, hex_md5){
+define(['provoda', 'jquery', 'spv', 'hex_md5', 'app_serv'], function(provoda, $, spv, hex_md5, app_serv){
 "use strict";
 
 
@@ -219,7 +219,7 @@ provoda.Eventor.extendTo(SeesuServerAPI, {
 	setAuth: function(auth_data, not_save){
 
 		if (!not_save){
-			suStore('dg_auth', auth_data, true);
+			app_serv.store('dg_auth', auth_data, true);
 		}
 		this.auth.setNewData(auth_data);
 		this.app.updateState('su_userid', auth_data.userid);

@@ -15,7 +15,7 @@ UserPlaylists.extendTo(SuUsersPlaylists, {
 		});
 	},
 	saveToStore: function(value) {
-		suStore('user_playlists', value, true);
+		app_serv.store('user_playlists', value, true);
 	},
 	createEnvPlaylist: function(params) {
 		return su.createSonglist(this, params);
