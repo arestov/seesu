@@ -417,7 +417,7 @@ AppModel.extendTo(SeesuApp, {
 
 		
 		if (app_env.needs_url_history){
-			navi.init(function(e, soft){
+			navi.init(function(e){
 				var url = e.newURL;
 				_this.map.startChangesCollecting({
 					skip_url_change: true

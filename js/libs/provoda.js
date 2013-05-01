@@ -1,4 +1,5 @@
-(function(window){
+define('provoda', ['spv', 'angbo', 'jquery'], function(spv, angbo, $){
+
 "use strict";
 var provoda;
 var sync_sender = {
@@ -312,7 +313,7 @@ provoda = {
 };
 provoda.Controller = provoda.View;
 
-Class.extendTo(provoda.ItemsEvents, {
+spv.Class.extendTo(provoda.ItemsEvents, {
 	init: function(event_name, eventCallback, soft_reg) {
 		this.controls_list = [];
 		this.event_name = event_name;
@@ -345,7 +346,7 @@ Class.extendTo(provoda.ItemsEvents, {
 provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 	init: function(state_name, opts) {
 		var _this = this;
-		this.checkFunc = function(e) {
+		this.checkFunc = function() {
 			var item = this;
 			_this.getItemsValues(item);
 		};
@@ -411,7 +412,7 @@ provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 });
 
 var BindControl = function() {};
-Class.extendTo(BindControl, {
+spv.Class.extendTo(BindControl, {
 	init: function(eventor, opts) {
 		this.ev = eventor;
 		this.opts = opts;
@@ -427,7 +428,7 @@ Class.extendTo(BindControl, {
 
 var ev_na_cache = {};
 
-Class.extendTo(provoda.Eventor, {
+spv.Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
 		this.subscribes_cache = {};
@@ -881,7 +882,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		//для пользователя пока пользователь не перестанет изменять новые состояния
 		while (this.states_changing_stack.length){
 			var all_i_cg = [];
-			var original_states = cloneObj({}, this.states);
+			var original_states = spv.cloneObj({}, this.states);
 			var cur_changes = this.states_changing_stack.shift();
 
 			//получить изменения для состояний, которые изменил пользователь через публичный метод
@@ -999,11 +1000,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		if (!state){
 			throw new Error('something wrong');
 		}
-
 		var result_array = [];
-		var comlx_name;
-
-
 
 		for (var i = 0; i < this.full_comlxs_list.length; i++) {
 			var cur = this.full_comlxs_list[i];
@@ -1173,7 +1170,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		var event_obj = {};
 		if (typeof opts == 'object'){
-			cloneObj(event_obj, opts);
+			spv.cloneObj(event_obj, opts);
 		}
 		opts = opts || {};
 		event_obj.value = array;
@@ -1250,7 +1247,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			var result = {
 				_provoda_id: cur_md._provoda_id,
 				name: cur_md.model_name,
-				states: cloneObj({}, cur_md.states),
+				states: spv.cloneObj({}, cur_md.states),
 				map_parent: cur_md.map_parent && checkModel(cur_md.map_parent),
 				children_models: {},
 				map_level_num: cur_md.map_level_num
@@ -1390,9 +1387,8 @@ var
 
 
 var Template = function() {};
-var angbo = window.angbo;
 
-Class.extendTo(Template, {
+spv.Class.extendTo(Template, {
 	init: function(opts) {
 		this.root_node = opts.node;
 		if (opts.pv_repeat_context){
@@ -1434,7 +1430,7 @@ Class.extendTo(Template, {
 		}
 
 		this.getPvDirectives(this.root_node);
-		if (!window.angbo || !window.angbo.interpolateExpressions){
+		if (!angbo || !angbo.interpolateExpressions){
 			console.log('cant parse statements');
 		}
 		if (this.scope){
@@ -1554,9 +1550,6 @@ Class.extendTo(Template, {
 
 			var _this = this;
 			var calculator = angbo.parseExpression(rhs);
-
-			var simplifyValue;
-			var setValue;
 
 			var all_values = calculator.propsToWatch;
 			var sfy_values = this.getFieldsTreesBases(all_values);
@@ -1981,8 +1974,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.dom_related_props = [];
 		}
 
-		cloneObj(this.undetailed_states, this.mpx.states);
-		cloneObj(this.undetailed_children_models, this.mpx.children_models);
+		spv.cloneObj(this.undetailed_states, this.mpx.states);
+		spv.cloneObj(this.undetailed_children_models, this.mpx.children_models);
 
 		var _this = this;
 		this.triggerTPLevents = function(e) {
@@ -2456,10 +2449,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		//disallow chilren request untill all states will be setted
 
 		this.states = {};
-		var _this = this;
+		//var _this = this;
 
 
-		var complex_states = [];
+		//var complex_states = [];
 
 
 		var states_list = [];
@@ -2568,7 +2561,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		this._collections_set_processing = false;
 	},
-	getMdChild: function(name, one_thing) {
+	getMdChild: function(name) {
 		return this.children_models[name];
 	},
 	checkCollchItemAgainstPvView: function(name, real_array, space_name, pv_view) {
@@ -2581,7 +2574,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		var filtered = pv_view.filterFn ? pv_view.filterFn(real_array) : real_array;
-		var _this = this;
+
 		var getFreeView = function(cur_md, node_to_use) {
 			var view = this.getFreeChildView({
 				name: name,
@@ -2982,15 +2975,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	parts_builder: {}
 });
-if ( typeof module === "object" && typeof module.exports === "object" ) {
-	module.exports = provoda;
-} else {
-	if ( typeof define === "function" && define.amd ) {
-		define( "provoda", ['angbo'], function (angbo) { return provoda; } );
-	}
-}
+
 
 if ( typeof window === "object" && typeof window.document === "object" ) {
 	window.provoda = provoda;
 }
-})(window);
+return provoda;
+});

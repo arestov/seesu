@@ -266,7 +266,7 @@ var detectBrowser;
 })(window);
 var xhr2_support = window.XMLHttpRequest && "withCredentials" in (new XMLHttpRequest());  //https://gist.github.com/1431660
 
-app_env = (function(wd){
+var app_env = (function(wd){
 
 	var bro = detectBrowser();
 
@@ -601,7 +601,7 @@ app_serv.handleDocument = function(d, tracking_opts) {
 
 var sviga = {};
 
-localize= (function(){
+var localize= (function(){
 	var lang = app_env.lang;
 	return function(string, j){
 		if (localizer[string]){
