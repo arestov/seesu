@@ -1,5 +1,5 @@
-define(['./playerComplex', 'app_serv', 'jquery', 'spv',
-'js/modules/AudioCoreHTML5', 'js/modules/AudioCoreWmp', 'js/modules/AudioCoreSm2Proxy'], function(playerComplex, app_serv, $, spv,
+define(['./PlayerComplex', 'app_serv', 'jquery', 'spv',
+'js/modules/AudioCoreHTML5', 'js/modules/AudioCoreWmp', 'js/modules/AudioCoreSm2Proxy'], function(PlayerComplex, app_serv, $, spv,
 AudioCoreHTML5, AudioCoreWmp, AudioCoreSm2Proxy){
 'use strict';
 var app_env = app_serv.app_env;
@@ -339,7 +339,7 @@ var app_env = app_serv.app_env;
 
 
 	var PlayerSeesu = function(){};
-	playerComplex.extendTo(PlayerSeesu, {
+	PlayerComplex.extendTo(PlayerSeesu, {
 		init: function(app){
 			this._super();
 			this.app = app;
