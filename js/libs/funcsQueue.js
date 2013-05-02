@@ -1,12 +1,12 @@
-var funcsQueue;
-(function() {
+define(['./FuncsStack'], function(FuncsStack) {
 	"use strict";
-	var queueFunc = function(queue, atom){
+	var FuncsQueue;
+	var QueueFunc = function(queue, atom){
 		this.q = queue;
 		this.atom = atom;
 	};
-	queueFunc.prototype = {
-		constructor: queueFunc,
+	QueueFunc.prototype = {
+		constructor: QueueFunc,
 		abort: function(){
 			this.aborted = true;
 		},
@@ -22,17 +22,17 @@ var funcsQueue;
 	};
 
 
-	funcsQueue = function(small_delay, big_delay, big_delay_interval){
+	FuncsQueue = function(small_delay, big_delay, big_delay_interval){
 		var _this = this;
 		
 		var selectNext = function(prev, args) {
 			_this.goAhead(prev);
 		};
 		var initAtom = function(atom) {
-			atom.qf = new queueFunc(_this, atom);
+			atom.qf = new QueueFunc(_this, atom);
 		};
 
-		this.fstack = new funcsStack(selectNext, initAtom);
+		this.fstack = new FuncsStack(selectNext, initAtom);
 		
 
 		if (small_delay) {
@@ -51,8 +51,8 @@ var funcsQueue;
 	};
 
 
-	funcsQueue.prototype = {
-		constructor: funcsQueue,
+	FuncsQueue.prototype = {
+		constructor: FuncsQueue,
 		getTopPrio: function(){
 			var nums = [];
 			var queue = this.fstack.getArr();
@@ -180,4 +180,5 @@ var funcsQueue;
 			return this;
 		}
 	};
-})();
+	return FuncsQueue;
+});

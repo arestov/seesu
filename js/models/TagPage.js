@@ -1,6 +1,9 @@
+define(['spv', 'app_serv','js/libs/BrowseMap', './ArtCard', './LoadableList', './SongsList'], function(spv, app_serv, BrowseMap, ArtCard, LoadableList, SongsList){
+"use strict";
+var localize = app_serv.localize;
 
 var SimilarTags = function() {};
-TagsList.extendTo(SimilarTags, {
+LoadableList.TagsList.extendTo(SimilarTags, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -28,7 +31,7 @@ TagsList.extendTo(SimilarTags, {
 });
 
 var TagAlbums = function() {};
-AlbumsList.extendTo(TagAlbums, {
+ArtCard.AlbumsList.extendTo(TagAlbums, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -81,7 +84,7 @@ AlbumsList.extendTo(TagAlbums, {
 
 
 var HypemTagPlaylist = function() {};
-HypemPlaylist.extendTo(HypemTagPlaylist, {
+SongsList.HypemPlaylist.extendTo(HypemTagPlaylist, {
 	
 	getHypeTagName: function() {
 		// instrumental hip-hop >> instrumental hip hop,
@@ -143,7 +146,7 @@ HypemTagPlaylist.extendTo(AllHypemTagSongs, {
 });
 
 var ExplorableTagSongs = function() {};
-songsList.extendTo(ExplorableTagSongs, {
+SongsList.extendTo(ExplorableTagSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -193,7 +196,7 @@ songsList.extendTo(ExplorableTagSongs, {
 });
 
 var TrendingTagSongs = function() {};
-songsList.extendTo(TrendingTagSongs, {
+SongsList.extendTo(TrendingTagSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -243,7 +246,7 @@ songsList.extendTo(TrendingTagSongs, {
 });
 
 var FreeTagSongs = function() {};
-songsList.extendTo(FreeTagSongs, {
+SongsList.extendTo(FreeTagSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -253,7 +256,7 @@ songsList.extendTo(FreeTagSongs, {
 	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
 		var request_info = {};
-		request_info.request = lfm.get('playlist.fetch', {
+		request_info.request = this.app.lfm.get('playlist.fetch', {
 			playlistURL: 'lastfm://playlist/tag/' + this.tag_name + '/freetracks'
 		})
 			.done(function(r){
@@ -306,7 +309,7 @@ songsList.extendTo(FreeTagSongs, {
 
 
 var TopTagSongs = function() {};
-songsList.extendTo(TopTagSongs, {
+SongsList.extendTo(TopTagSongs, {
 	init: function(opts, params) {
 
 		this._super(opts);
@@ -317,7 +320,7 @@ songsList.extendTo(TopTagSongs, {
 	sendMoreDataRequest: function(paging_opts) {
 		var _this = this;
 		var request_info = {};
-		request_info.request = lfm.get('tag.getTopTracks', {
+		request_info.request = this.app.lfm.get('tag.getTopTracks', {
 			tag: (this.tag_name),
 			limit: paging_opts.page_limit,
 			page: paging_opts.next_page
@@ -355,7 +358,7 @@ songsList.extendTo(TopTagSongs, {
 
 
 var SongsLists = function() {};
-mapLevelModel.extendTo(SongsLists, {
+BrowseMap.Model.extendTo(SongsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -406,7 +409,7 @@ mapLevelModel.extendTo(SongsLists, {
 
 
 var WeekTagArtists = function() {};
-ArtistsList.extendTo(WeekTagArtists, {
+ArtCard.ArtistsList.extendTo(WeekTagArtists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -426,7 +429,7 @@ ArtistsList.extendTo(WeekTagArtists, {
 		var _this = this;
 
 		var request_info = {};
-		request_info.request = lfm.get('tag.getWeeklyArtistChart', this.getRqData(paging_opts)).done(function(r){
+		request_info.request = this.app.lfm.get('tag.getWeeklyArtistChart', this.getRqData(paging_opts)).done(function(r){
 
 
 				var artists = spv.toRealArray(spv.getTargetField(r, 'weeklyartistchart.artist'));
@@ -462,7 +465,7 @@ ArtistsList.extendTo(WeekTagArtists, {
 });
 
 var TagTopArtists = function() {};
-ArtistsList.extendTo(TagTopArtists, {
+ArtCard.ArtistsList.extendTo(TagTopArtists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -481,7 +484,7 @@ ArtistsList.extendTo(TagTopArtists, {
 		var _this = this;
 
 		var request_info = {};
-		request_info.request = lfm.get('tag.getTopArtists', this.getRqData(paging_opts))
+		request_info.request = this.app.lfm.get('tag.getTopArtists', this.getRqData(paging_opts))
 			.done(function(r){
 				var artists = spv.toRealArray(spv.getTargetField(r, 'topartists.artist'));
 				var track_list = [];
@@ -512,7 +515,7 @@ ArtistsList.extendTo(TagTopArtists, {
 });
 
 var ArtistsLists = function() {};
-mapLevelModel.extendTo(ArtistsLists, {
+BrowseMap.Model.extendTo(ArtistsLists, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -539,7 +542,7 @@ mapLevelModel.extendTo(ArtistsLists, {
 
 
 var TagPage = function() {};
-mapLevelModel.extendTo(TagPage, {
+BrowseMap.Model.extendTo(TagPage, {
 	init: function(opts, params) {
 		this._super(opts);
 
@@ -593,4 +596,7 @@ mapLevelModel.extendTo(TagPage, {
 		}
 	}
 
+});
+
+return TagPage;
 });

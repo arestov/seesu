@@ -102,7 +102,7 @@ createPrototype(muAns, new provoda.Eventor(), {
 	}
 });
 
-var fileInTorrent = function(query, torrent_link){
+var FileInTorrent = function(query, torrent_link){
 
 }
 /*
