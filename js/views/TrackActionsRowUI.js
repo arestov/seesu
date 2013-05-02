@@ -1,4 +1,4 @@
-define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './searchPageViewBase'], function(provoda, $, spv, app_serv, etc_views, searchPageViewBase) {
+define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './SearchPageViewBase'], function(provoda, $, spv, app_serv, etc_views, SearchPageViewBase) {
 "use strict";
 var localize = app_serv.localize;
 
