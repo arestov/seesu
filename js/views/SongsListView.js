@@ -1,6 +1,6 @@
-define(['provoda', 'jquery', './SongUI', './songsListViewBase', './etc_views', 'app_serv'], function(provoda, $, SongUI, slbase, etc_views, app_serv) {
+define(['provoda', 'jquery', './SongUI', './SongsListViewBase', './etc_views', 'app_serv'], function(provoda, $, SongUI, slbase, etc_views, app_serv) {
 	"use strict";
-	var songsListView;
+	var SongsListView;
 	var localize = app_serv.localize;
 	var PlaylistSettingsRowView = function(){};
 	etc_views.BaseCRowUI.extendTo(PlaylistSettingsRowView, {
@@ -80,13 +80,13 @@ define(['provoda', 'jquery', './SongUI', './songsListViewBase', './etc_views', '
 
 
 
-	var songsListBaseView = function() {};
-	provoda.extendFromTo("songsListBaseView", provoda.View, songsListBaseView);
+	var SongsListViewBase = function() {};
+	provoda.extendFromTo("SongsListViewBase", provoda.View, SongsListViewBase);
 
 
 
-	songsListView = function(){};
-	songsListBaseView.extendTo(songsListView, {
+	SongsListView = function(){};
+	SongsListViewBase.extendTo(SongsListView, {
 		'stch-mp_show': function(opts) {
 			this.c.toggleClass('hidden', !opts);
 		},
@@ -134,5 +134,5 @@ define(['provoda', 'jquery', './SongUI', './songsListViewBase', './etc_views', '
 
 	});
 
-return songsListView;
+return SongsListView;
 });
