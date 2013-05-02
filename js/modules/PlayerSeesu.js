@@ -1,4 +1,6 @@
-define(['./playerComplex', 'app_serv', 'jquery', 'spv'], function(playerComplex, app_serv, $, spv){
+define(['./playerComplex', 'app_serv', 'jquery', 'spv',
+'js/modules/AudioCoreHTML5', 'js/modules/AudioCoreWmp', 'js/modules/AudioCoreSm2Proxy'], function(playerComplex, app_serv, $, spv,
+AudioCoreHTML5, AudioCoreWmp, AudioCoreSm2Proxy){
 'use strict';
 var app_env = app_serv.app_env;
 	var su;
@@ -83,64 +85,51 @@ var app_env = app_serv.app_env;
 			case "html5mp3":
 			//require('./')
 				useLib(function() {
-					require(['js/modules/AudioCoreHTML5'], function(AudioCoreHTML5) {
-						features_storage.setAsAccessible(feature, new AudioCoreHTML5());
-					}, function() {
-						features_storage.setAsInaccessible(feature);
-					});
+					features_storage.setAsAccessible(feature, new AudioCoreHTML5());
 				});
 				break;
 			case "wmpactivex":
 				useLib(function() {
-					require(['js/modules/AudioCoreWmp'], function(AudioCoreWmp) {
-						features_storage.setAsAccessible(feature, new AudioCoreWmp());
-					}, function() {
-						features_storage.setAsInaccessible(feature);
-					});
+					features_storage.setAsAccessible(feature, new AudioCoreWmp());
 				});
 				break;
 			case "sm2-proxy":
 				useLib(function() {
-					require(['js/modules/AudioCoreSm2Proxy'], function(AudioCoreSm2Proxy) {
-						//features_storage.setAsAccessible(feature, new AudioCoreSm2Proxy());
-						spv.domReady(window.document, function(){
-							var pcore = new AudioCoreSm2Proxy("http://arestov.github.io", "/SoundManager2/?" + su.version, sm2opts);
-							var pcon = $(pcore.getC());
-							var complete;
-							pcon
-								.addClass('sm2proxy')
-								.attr('scrolling', 'no');
+					spv.domReady(window.document, function(){
+						var pcore = new AudioCoreSm2Proxy("http://arestov.github.io", "/SoundManager2/?" + su.version, sm2opts);
+						var pcon = $(pcore.getC());
+						var complete;
+						pcon
+							.addClass('sm2proxy')
+							.attr('scrolling', 'no');
 
-							pcon.on('load', function() {
-								setTimeout(function() {
-									if (!complete){
-										pcon.addClass('long-appearance');
-										features_storage.setAsInaccessible(feature);
-									}
-								}, 7000);
-							});
-							
-							pcore
-								.done(function(){
-									complete = true;
-									setTimeout(function(){
-										pcon.addClass('sm2-complete');
-									}, 1000);
-									features_storage.setAsAccessible(feature, pcore);
-									
-
-								})
-								.fail(function(){
-									complete = true;
-									pcon.addClass('hidden');
+						pcon.on('load', function() {
+							setTimeout(function() {
+								if (!complete){
+									pcon.addClass('long-appearance');
 									features_storage.setAsInaccessible(feature);
-								});
-							$(function(){
-								$(document.body).append(pcon);
-							});
+								}
+							}, 7000);
 						});
-					}, function() {
-						features_storage.setAsInaccessible(feature);
+						
+						pcore
+							.done(function(){
+								complete = true;
+								setTimeout(function(){
+									pcon.addClass('sm2-complete');
+								}, 1000);
+								features_storage.setAsAccessible(feature, pcore);
+								
+
+							})
+							.fail(function(){
+								complete = true;
+								pcon.addClass('hidden');
+								features_storage.setAsInaccessible(feature);
+							});
+						$(function(){
+							$(document.body).append(pcon);
+						});
 					});
 				});
 				break;

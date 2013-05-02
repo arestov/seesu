@@ -601,6 +601,7 @@ app_serv.handleDocument = function(d, tracking_opts) {
 		var lang = app_env.lang;
 
 		var nodes_array = d.getElementsByClassName('lang');
+		var translatable = [];
 		var translate = function(el) {
 			var cn = el.className;
 			var classes = cn.split(/\s/);
@@ -609,15 +610,21 @@ app_serv.handleDocument = function(d, tracking_opts) {
 				if (cl.match(/localize/)){
 					var term = localizer[cl.replace('localize-','')];
 					if (term && term[lang]){
-						emptyNode(el).appendChild(d.createTextNode(term[lang]));
+						translatable.push([el, term[lang]]);
 						//$(el).text();
 						break;
 					}
 				}
 			}
 		};
-		for (var i = 0; i < nodes_array.length; i++) {
+		var i;
+		for (i = 0; i < nodes_array.length; i++) {
 			translate(nodes_array[i]);
+		}
+		for (i = 0; i < translatable.length; i++) {
+			var cur = translatable[i];
+			emptyNode(cur[0]).appendChild(d.createTextNode(cur[1]));
+			
 		}
 	});
 	require(['jquery'], function($) {
