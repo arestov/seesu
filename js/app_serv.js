@@ -588,8 +588,9 @@ app_serv.handleDocument = function(d, tracking_opts) {
 	
 
 	spv.domReady(d, function() {
-			
-		d.head = d.head || d.getElementsByTagName('head')[0];
+		if (!d.head){
+			d.head = d.getElementsByTagName('head')[0];
+		}
 
 		var emptyNode = function(node) {
 			while (node.firstChild){
