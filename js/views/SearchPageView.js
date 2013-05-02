@@ -1,4 +1,4 @@
-define(['provoda', 'jquery', 'app_serv', './searchPageViewBase'], function(provoda, $, app_serv) {
+define(['provoda', 'jquery', 'app_serv', './SearchPageViewBase'], function(provoda, $, app_serv) {
 "use strict";
 var localize = app_serv.localize;
 var
@@ -181,8 +181,8 @@ searchSectionUI.extendTo(playlistsSectionView, {
 
 
 
-var searchPageView = function() {};
-investigationView.extendTo(searchPageView, {
+var SearchPageView = function() {};
+investigationView.extendTo(SearchPageView, {
 	children_views: {
 		'section-artist': artistsSectionView,
 		'section-album': albumsSectionView,
@@ -215,5 +215,5 @@ investigationView.extendTo(searchPageView, {
 		$('<p class="search-desc"></p>').text(localize('search-control-hint')).appendTo(this.c);
 	}
 });
-return searchPageView;
+return SearchPageView;
 });

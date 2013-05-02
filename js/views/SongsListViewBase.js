@@ -1,7 +1,7 @@
 define(['provoda', 'jquery', 'app_serv'], function(provoda, $, app_serv) {
 "use strict";
 var localize = app_serv.localize;
-provoda.addPrototype("songsListBaseView", {
+provoda.addPrototype("SongsListViewBase", {
 	state_change: {
 		'list_loading': function(loading){
 			if (loading){
