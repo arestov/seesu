@@ -877,7 +877,11 @@ app_serv.localize = localize;
 	;(function () {
 
 	var
-		object = typeof window != 'undefined' ? window : exports,
+		object = typeof window != 'undefined' ? window : exports;
+	if (object.btoa){
+		return;
+	}
+	var
 		chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
 		INVALID_CHARACTER_ERR = (function () {
 			// fabricate a suitable error object
