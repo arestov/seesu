@@ -388,7 +388,25 @@
 					Что бы приложение воспроизводило музыку установите флеш или воспользуйтесь браузером поддерживающим воспроизведение mp3 с помощью HTML5 audio (например Chrome или Safari)
 				</div>
 			</div>
-			<div class="music-files-lists" pv-anchor='mufils_c'></div>
+			<div class="music-files-lists" pv-anchor='mufils_c'>
+				<div
+					class="moplas-list"
+					pv-class="moplas-list {{show_overstocked && 'want-overstocked-songs'}}"
+					pv-view="sorted_completcs"
+					>
+					<h4>
+						<a
+							class=""
+							pv-class="{{overstock && 'js-serv'}}"
+							pv-text="{{complect_name}}"
+							pv-type="{{overstock && 'way-point'}}"
+							pv-events="click::toggleOverstocked"
+							></a>
+					</h4>
+					<ul pv-anchor='listc'></ul>
+				</div>
+
+			</div>
 			<div class="track-video">
 				<ul pv-anchor='video_list'></ul>
 			</div>
