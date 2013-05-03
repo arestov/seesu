@@ -224,7 +224,17 @@ provoda.View.extendTo(appView, {
 		}
 	},
 	'spec-collch-song': function(name, md) {
-		
+		var playlist = md.getParentMapModel();
+
+		var playlist_mpx = playlist.mpx;
+
+		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
+		if (!view){
+			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
+			var place = viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
+			place.append(view.getA());
+			this.requestAll();
+		}
 	},
 	'spec-collch-playlist': {
 		place: viewOnLevelP,
@@ -397,17 +407,7 @@ provoda.View.extendTo(appView, {
 		//this.getChildView(mpx)
 	},
 	'detcoll-song': function(md) {
-		var playlist = md.getParentMapModel();
-
-		var playlist_mpx = playlist.mpx;
-
-		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
-		if (!view){
-			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
-			var place = viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
-			place.append(view.getA());
-			this.requestAll();
-		}
+		
 	},
 	'stch-map_animation': function(changes) {
 		if (!changes){
