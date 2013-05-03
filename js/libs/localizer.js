@@ -1,13 +1,4 @@
-
-
-/*
-"":{
-		"original": "",
-		"ru": ""
-	},
-*/
-
-localizer = {
+define({
 	"music-cond": {
 		"original": "Music Conductor",
 		"ru": "Музыкальный кондуктор"
@@ -609,4 +600,4 @@ localizer = {
 		"original": "",
 		"ru": ""
 	}
-};
+});
