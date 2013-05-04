@@ -1,5 +1,5 @@
 define(['provoda', 'spv', 'app_serv', './comd', 'jquery',
-'js/libs/BrowseMap', './SongsList', 'js/LfmAuth', './ArtCard' , 'js/common-libs/htmlencoding', './UserAcquaintancesLists', './SuUsersPlaylists'],
+'js/libs/BrowseMap', './SongsList', 'js/LfmAuth', './ArtCard' , 'js/common-libs/htmlencoding', './UserAcquaintancesLists', './SuUsersPlaylists', './LfmUserListened'],
 function(provoda, spv, app_serv, comd, $,
 BrowseMap, SongsList, LfmAuth, ArtCard, htmlencoding, UserAcquaintancesLists, SuUsersPlaylists){
 "use strict";
@@ -352,65 +352,6 @@ UserNewReleases.extendTo(RecommNewReleases, {
 });
 
 
-var LfmUserArtists = function() {};
-BrowseMap.Model.extendTo(LfmUserArtists, {
-	init: function(opts, params) {
-		this._super(opts);
-		this.initStates();
-	}
-});
-
-var LfmUserTracks = function() {};
-BrowseMap.Model.extendTo(LfmUserTracks, {
-	init: function(opts, params) {
-		this._super(opts);
-		this.initStates();
-	}
-});
-
-var LfmUserAlbums = function() {};
-BrowseMap.Model.extendTo(LfmUserAlbums, {
-	init: function(opts, params) {
-		this._super(opts);
-		this.initStates();
-	}
-});
-
-var LfmUserTags = function() {};
-BrowseMap.Model.extendTo(LfmUserTags, {
-	init: function(opts, params) {
-		this._super(opts);
-		this.initStates();
-	}
-});
-
-
-var LfmListened = function() {};
-BrowseMap.Model.extendTo(LfmListened, {
-	init: function(opts, params) {
-		this._super(opts);
-		this.initStates();
-	},
-	sub_pa: {
-		'artists': {
-			constr: LfmUserArtists,
-			title: 'Artists'
-		},
-		'tracks': {
-			constr: LfmUserTracks,
-			title: 'Tracks'
-		},
-		'tags': {
-			constr: LfmUserTags,
-			title: 'Tags'
-		},
-		'albums': {
-			constr: LfmUserAlbums,
-			title: 'Albums'
-		}
-	}
-});
-
 
 var UserCard = function() {};
 
@@ -437,7 +378,7 @@ BrowseMap.Model.extendTo(UserCard, {
 			}
 		},
 		'listened': {
-			constr: LfmListened,
+			constr: LfmUserListened,
 			title: 'Listened music'
 		},
 		'vk-audio': {

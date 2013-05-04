@@ -72,7 +72,7 @@ provoda.addPrototype("SongsListViewBase", {
 			var cur = array[i];
 			//.mpx
 			var states = cur.states;
-			if (states.mp_show){
+			if (states.mp_show || states.mpl_attached){
 				viewing.push(cur);
 			} else if (states.marked_as){
 				prev_next.push(cur);

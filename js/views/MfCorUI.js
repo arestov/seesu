@@ -389,30 +389,6 @@ provoda.View.extendTo(MfCorUI, {
 		this.c = this.root_view.getSample('moplas-block');
 		this.bindBase();
 
-	},
-	showYoutubeVideo: function(id, c, link){
-		if (this.video){
-			this.hideYoutubeVideo();
-		}
-		this.video = {
-			link: link.addClass('active'),
-			node: $(this.root_view.create_youtube_video(id)).appendTo(c)
-		};
-	},
-	hideYoutubeVideo: function(){
-		if (this.video){
-			if (this.video.link){
-				this.video.link.removeClass('active');
-				this.video.link[0].showed = false;
-				this.video.link = false;
-				
-			}
-			if (this.video.node){
-				this.video.node.remove();
-				this.video.node = false;
-			}
-			delete this.video;
-		}
 	}
 });
 

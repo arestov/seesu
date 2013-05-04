@@ -125,6 +125,7 @@ provoda.Model.extendTo(AppModelBase, {
 		var _this = this;
 
 		md.on('mpl-attach', function() {
+			md.updateState('mpl_attached', true);
 			var navigation = _this.getNesting('navigation');
 			var target_array = _this.getNesting('map_slice') || [];
 
@@ -140,6 +141,7 @@ provoda.Model.extendTo(AppModelBase, {
 
 		}, {immediately: true});
 		md.on('mpl-detach', function(){
+			md.updateState('mpl_attached', false);
 			var navigation = _this.getNesting('navigation');
 			var target_array = _this.getNesting('map_slice') || [];
 
