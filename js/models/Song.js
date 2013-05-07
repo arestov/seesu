@@ -145,7 +145,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					_this.player.changeNowPlaying(_this, mopla.state('play'));
 					_this.mopla = mopla;
 					_this.updateState('play', mopla.state('play'));
-				})
+				}, {immediately: true})
 				.on("error", function(can_play) {
 					_this.player.trigger("song-play-error", _this, can_play);
 				})
@@ -266,7 +266,10 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
 
 
-			if ((!duration && !careful) || ((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
+			if (
+				(!duration && !careful) ||
+				((timestamp - starttime)/duration > 0.2) ||
+				(last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
 
 				this.start_time = false;
 				this.last_scrobble = timestamp;
@@ -289,6 +292,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 						timestamp: timestamp
 					});
 				}
+			} else {
 			}
 		},
 		submitNowPlaying: spv.debounce(function(){
