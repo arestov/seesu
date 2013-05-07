@@ -1,7 +1,7 @@
 define(['provoda', 'spv', 'app_serv', './comd', 'jquery',
 'js/libs/BrowseMap', './SongsList', 'js/LfmAuth', './ArtCard' , 'js/common-libs/htmlencoding', './UserAcquaintancesLists', './SuUsersPlaylists', './LfmUserListened'],
 function(provoda, spv, app_serv, comd, $,
-BrowseMap, SongsList, LfmAuth, ArtCard, htmlencoding, UserAcquaintancesLists, SuUsersPlaylists){
+BrowseMap, SongsList, LfmAuth, ArtCard, htmlencoding, UserAcquaintancesLists, SuUsersPlaylists, LfmUserListened ){
 "use strict";
 var localize = app_serv.localize;
 

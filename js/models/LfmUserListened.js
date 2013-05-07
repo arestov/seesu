@@ -2,11 +2,40 @@ define(['js/libs/BrowseMap'], function(BrowseMap) {
 "use strict";
 //
 
-var LfmUserLibraryArtists = function() {};
-BrowseMap.Model.extendTo(LfmUserLibraryArtists, {
-	init: function(opts, params) {
+//LULA - LfmUserLibraryArtist
+//
+var LULATracks = function() {};
+BrowseMap.Model.extendTo(LULATracks, {
+	model_name: 'lula_tracks',
+	init: function() {
+
+	},
+	subPager: function() {
+		//daterange
+	}
+});
+
+
+var LULA = function() {};//artist
+BrowseMap.Model.extendTo(LULA, {
+	model_name: 'lula',
+	init: function() {
+
+	},
+	subPager: function() {
+		//daterange
+	}
+});
+
+var LULAs = function() {};//artists
+BrowseMap.Model.extendTo(LULAs, {
+	model_name: 'lulas',
+	init: function(opts) {
 		this._super(opts);
 		this.initStates();
+	},
+	subPager: function() {
+		//artist
 	},
 	sub_pa: {
 		
@@ -15,7 +44,8 @@ BrowseMap.Model.extendTo(LfmUserLibraryArtists, {
 
 var LfmUserArtists = function() {};
 BrowseMap.Model.extendTo(LfmUserArtists, {
-	init: function(opts, params) {
+	model_name: 'lfm_listened_artists',
+	init: function(opts) {
 		this._super(opts);
 		this.initStates();
 	},
@@ -30,7 +60,8 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 
 var LfmUserTracks = function() {};
 BrowseMap.Model.extendTo(LfmUserTracks, {
-	init: function(opts, params) {
+	model_name: 'lfm_listened_tracks',
+	init: function(opts) {
 		this._super(opts);
 		this.initStates();
 	}
@@ -38,7 +69,8 @@ BrowseMap.Model.extendTo(LfmUserTracks, {
 
 var LfmUserAlbums = function() {};
 BrowseMap.Model.extendTo(LfmUserAlbums, {
-	init: function(opts, params) {
+	model_name: 'lfm_listened_albums',
+	init: function(opts) {
 		this._super(opts);
 		this.initStates();
 	}
@@ -46,7 +78,8 @@ BrowseMap.Model.extendTo(LfmUserAlbums, {
 
 var LfmUserTags = function() {};
 BrowseMap.Model.extendTo(LfmUserTags, {
-	init: function(opts, params) {
+	model_name: 'lfm_listened_tags',
+	init: function(opts) {
 		this._super(opts);
 		this.initStates();
 	}
@@ -55,10 +88,11 @@ BrowseMap.Model.extendTo(LfmUserTags, {
 
 var LfmUserListened = function() {};
 BrowseMap.Model.extendTo(LfmUserListened, {
-	init: function(opts, params) {
+	init: function(opts) {
 		this._super(opts);
 		this.initStates();
 	},
+	model_name: 'lfm_listened',
 	sub_pa: {
 		'artists': {
 			constr: LfmUserArtists,
