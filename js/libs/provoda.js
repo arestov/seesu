@@ -604,7 +604,8 @@ spv.Class.extendTo(provoda.Eventor, {
 	},
 	callEventCallback: function(cur, args) {
 		var _this = this;
-		if (cur.immediately){
+		var opts = args && args[0];
+		if (cur.immediately && (!opts || !opts.force_async)){
 			cur.cb.apply(_this, args);
 		} else {
 			setTimeout(function() {
@@ -631,7 +632,7 @@ spv.Class.extendTo(provoda.Eventor, {
 				} else {
 					collect.push(cur);
 				}
-				
+
 				if (cur.once){
 					this.off(name, false, cur);
 				}
@@ -848,13 +849,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	emmitStateChange: function(cur, original_state) {
 		var _this = this;
-		setTimeout(function() {
-			_this.trigger('state-change.' + cur.name, {
-				type: cur.name,
-				value: cur.value,
-				old_value: original_state
-			});
-		},1);
+		_this.trigger('state-change.' + cur.name, {
+			type: cur.name,
+			value: cur.value,
+			old_value: original_state,
+			force_async: true
+		});
 	},
 	_updateProxy: function(changes_list, opts) {
 		var i, cur;
