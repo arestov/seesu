@@ -201,6 +201,26 @@ provoda.View.extendTo(appView, {
 			main: YoutubeVideoView,
 			nav: nav.baseNavUI
 		},
+		lfm_listened: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		lfm_listened_artists: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		lfm_listened_tracks: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		lfm_listened_albums: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		lfm_listened_tags: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
 		user_acqs_list: {
 			main: uacq.UserAcquaintancesListView,
 			nav: nav.baseNavUI

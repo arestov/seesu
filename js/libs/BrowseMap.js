@@ -835,11 +835,14 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	},
 	bindChildrenPreload: function(array) {
 		var lists_list = array || this.lists_list;
-		var _this = this;
 		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				for (var i = 0; i < lists_list.length; i++) {
-					lists_list[i].preloadStart();
+					var cur = lists_list[i];
+					if (cur.preloadStart){
+						cur.preloadStart();
+					}
+
 				}
 			}
 		});
@@ -848,6 +851,9 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
 		return this;
+	},
+	requestPage: function() {
+		this.showOnMap();
 	},
 	showOnMap: function() {
 		this.app.showMOnMap(this);

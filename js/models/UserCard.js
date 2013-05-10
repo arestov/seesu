@@ -412,11 +412,13 @@ BrowseMap.Model.extendTo(UserCard, {
 		this.arts_recomms = this.getSPI('recommended_artists', true);
 		this.updateNesting('arts_recomms', this.arts_recomms);
 
+		this.lfm_listened = this.getSPI('listened', true);
+		this.updateNesting('lfm_listened', this.lfm_listened);
 
 		this.lfm_loved = this.getSPI('loved', true);
 		this.updateNesting('lfm_loved', this.lfm_loved);
 
-
+		
 		this.my_vkaudio = this.getSPI('vk-audio', true);
 		this.updateNesting('vk_audio', this.my_vkaudio);
 

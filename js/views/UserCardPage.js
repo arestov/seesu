@@ -15,8 +15,7 @@ etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
 var PersonalListPreview = function() {};
 coct.ListPreview.extendTo(PersonalListPreview, {
 	clickAction: function() {
-		this.RPCLegacy('requestList');
-		//this.RPCLegacy('requestList');
+		this.RPCLegacy('requestPage');
 	},
 	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
@@ -38,8 +37,7 @@ coct.ListPreview.extendTo(PersonalListPreview, {
 var PersonalAlbumsListPreview = function() {};
 coct.AlbumsListPreview.extendTo(PersonalAlbumsListPreview, {
 	clickAction: function() {
-		this.RPCLegacy('requestList');
-		//this.RPCLegacy('requestList');
+		this.RPCLegacy('requestPage');
 	},
 	'stch-pmd_vswitched': function(state) {
 		this.c.toggleClass('access-request', state);
@@ -78,6 +76,7 @@ coct.PageView.extendTo(UserCardPage, {
 		users_acqutes: uacq.UserAcquaintancesListPreview,
 		vk_audio: PersonalListPreview,
 		arts_recomms: PersonalListPreview,
+		lfm_listened: PersonalListPreview,
 		lfm_loved: PersonalListPreview,
 		new_releases: PersonalAlbumsListPreview,
 		recomm_releases: PersonalAlbumsListPreview

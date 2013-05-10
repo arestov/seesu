@@ -91,6 +91,11 @@ BrowseMap.Model.extendTo(LfmUserListened, {
 	init: function(opts) {
 		this._super(opts);
 		this.initStates();
+		this.lists_list = ['artists', 'tracks', 'tags', 'albums'];
+		this.initSubPages(this.lists_list);
+
+		this.updateNesting('lists_list', this.lists_list);
+		this.bindChildrenPreload();
 	},
 	model_name: 'lfm_listened',
 	sub_pa: {

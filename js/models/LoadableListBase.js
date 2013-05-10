@@ -244,7 +244,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		this.setPmdSwitcher(this.map_parent);
 
 	},
-	requestList: function() {
+	requestPage: function() {
 		if (!this.state('has_no_access')){
 			this.loadStart();
 			this.showOnMap();
