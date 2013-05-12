@@ -30,7 +30,7 @@ var LULATracks = function() {};//непосредственно список к�
 BrowseMap.Model.extendTo(LULATracks, {
 	model_name: 'lula_tracks',
 	init: function() {
-		
+
 	},
 	subPager: function() {
 		//daterange
@@ -48,7 +48,8 @@ BrowseMap.Model.extendTo(LULA, {
 		spv.cloneObj(states, {
 			'url_part': artist,
 			'nav_title': artist,
-			'artist_name': artist
+			'artist_name': artist,
+			'playcount': params.data.playcount
 		});
 		this.updateManyStates(states);
 	},

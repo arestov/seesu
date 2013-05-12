@@ -2240,7 +2240,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			var Constr;
 			if (typeof ConstrObj == 'function' && view_space == 'main'){
 				Constr = ConstrObj;
-			} else {
+			} else if (ConstrObj) {
 				Constr = ConstrObj[view_space];
 			}
 			if (!Constr && address_opts.sampleController){
