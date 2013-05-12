@@ -19,6 +19,8 @@ Alexander Belov <porqz@mesquite.ru>
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
 
+необходим рефакторинг lfm_image
+
 проверять работоспособность "истории"
 представление треков и альбомов в поиске
 представление альбомов в карточке артиста

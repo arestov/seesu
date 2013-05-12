@@ -49,9 +49,16 @@ BrowseMap.Model.extendTo(LULA, {
 			'url_part': artist,
 			'nav_title': artist,
 			'artist_name': artist,
-			'playcount': params.data.playcount
+			'playcount': params.data.playcount,
+			'lfm_image': this.app.art_images.getImageWrap(params.data.lfm_image.array)
 		});
 		this.updateManyStates(states);
+	},
+	'compx-selected_image': {
+		depends_on: ['lfm_image'],
+		fn: function(lfm_i) {
+			return lfm_i;
+		}
 	},
 	subPager: function() {
 		//daterange
@@ -86,7 +93,7 @@ LoadableList.extendTo(LULAs, {
 		var item = new LULA();
 		item.init({
 			map_parent: this,
-			app: this
+			app: this.app
 		}, {
 			data: data
 		});

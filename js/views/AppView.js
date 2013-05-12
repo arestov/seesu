@@ -238,6 +238,11 @@ provoda.View.extendTo(appView, {
 			nav: nav.baseNavUI
 		}
 	},
+	'collch-navigation': {
+		place: 'nav.daddy',
+		space: 'nav',
+		by_model_name: true
+	},
 	'collch-map_slice': function(nesname, array){
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
@@ -285,11 +290,6 @@ provoda.View.extendTo(appView, {
 			}, {immediately: true});
 		}
 		this.requestAll();
-	},
-	'collch-navigation': {
-		place: 'nav.daddy',
-		space: 'nav',
-		by_model_name: true
 	},
 	manual_states_connect: true,
 	getLevByNum: function(num, exclude_start_lev) {

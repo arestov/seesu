@@ -1492,3 +1492,11 @@ body .surf_nav{
 	border-radius: 0 40% 40% 0;
 	cursor: pointer;
 	}
+
+
+.lulas_page{
+	overflow: hidden;
+	}
+.lulas_page .user_artist{
+	float:left;
+	}
