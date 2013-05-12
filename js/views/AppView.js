@@ -228,6 +228,10 @@ provoda.View.extendTo(appView, {
 		albslist: {
 			main: coct.AlbumsListView,
 			nav: nav.baseNavUI
+		},
+		lulas: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
 		}
 	},
 	'collch-map_slice': function(nesname, array){
@@ -611,6 +615,15 @@ provoda.View.extendTo(appView, {
 	},
 	parts_builder: {
 		//samples
+		'playlist-container': function() {
+			return this.els.ui_samples.children('.playlist-container');
+		},
+		'playlist_panel': function() {
+			return this.els.ui_samples.children('.play-list-panel');
+		},
+		'lulas_page': function() {
+			return this.els.ui_samples.children('.lulas_page');
+		},
 		'song-file': function() {
 			return this.els.ui_samples.children('.song-file');
 		},
@@ -652,9 +665,6 @@ provoda.View.extendTo(appView, {
 		},
 		track_c: function() {
 			return this.els.ui_samples.children('.track-context');
-		},
-		playlist_panel: function() {
-			return this.els.ui_samples.children('.play-list-panel');
 		},
 		lfm_authsampl: function() {
 			return this.els.ui_samples.children('.lfm-auth-module');

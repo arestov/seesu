@@ -2899,7 +2899,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					});
 				}
 			}
-			cur.append_list = append_list;
+			//cur.append_list = append_list;
 		}
 		for (i = 0; i < append_list.length; i++) {
 			var append_data = append_list[i];

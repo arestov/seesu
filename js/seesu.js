@@ -162,6 +162,14 @@ AppModel.extendTo(SeesuApp, {
 			}
 			reportSearchEngs(list.join(','));
 		});
+		if (this.lfm.username){
+			this.updateState('lfm_username', this.lfm.username);
+		} else {
+			this.lfm_auth.on('session', function() {
+				_this.updateState('lfm_username', _this.lfm.username);
+			});
+		}
+		
 
 		this.lfm_auth.on('session.ga_tracking', function(){
 			_this.trackEvent('Auth to lfm', 'end');

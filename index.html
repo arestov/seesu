@@ -96,9 +96,78 @@
 				</div>
 			</div>
 		</div>
+		
+		<div class="lulas_page usual_page">
+			<ul>
+				<li pv-view="artists">
+					<span pv-text="artist_name"></span>
+				</li>
+			</ul>
+		</div>
+		<div class="play-list-panel" pv-anchor="panel">
+			<div class="playlist-actions">
+				<div class="pla-panel">
+					<span class="pla-button">● ● ●</span>
+					<span class="pl-settings-button" title="Playlists settings"></span>
+				</div>
+				<div class="pla-row-content has-dark-buttons hidden" style="position:relative">
+					<span class="rc-arrow hidden">
+						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
+					</span>
+					<div class="pla-row hidden">
+						<div class="left-buttons-group">
+							<span class="button-hole"><a class="search-music-files nicebutton lang localize-playlist-getmp3">Find files for compositions</a></span>
 
+							<!-- href="http://seesu.me/generated_files/seesu_playlist.m3u"-->
+							<span class="button-hole">
+								<a class="open-external-playlist nicebutton lang localize-playlist-export">Save playlist to *.m3u file</a>
+							</span>
 
-		<div class="usual_page music_conductor_page">
+						</div>
+						
+					</div>
+					<div class="pla-settings hidden">
+						<label class="dont-rept-pl">
+							<input type="checkbox"/>
+							<span class="lang localize-dont-rept-pl">Do not repeat playlist</span>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div 
+				class="loader_disallowing_desc hidden"
+				pv-class="loader_disallowing_desc {{!loader_disallowing_desc && 'hidden'}}"
+				pv-text="{{loader_disallowing_desc}}"
+			></div>
+			
+			
+		</div>
+		<div class="playlist-container"
+			pv-class="
+				playlist-container 
+				{{can_play && 'has-files-in-songs'}}
+				{{!mp_show && 'hidden'}}
+				{{!vis_overview && !mp_has_focus && 'show-zoom-to-track'}}
+				">
+			
+			<ul
+				class="tracks-for-play"
+				pv-anchor="lc"
+				pv-class="
+					tracks-for-play
+					{{list_loading && 'loading'}}
+					{{mp_has_focus && 'list-overview'}}
+				"
+				></ul>
+			<div class="lang localize-nothing-found" pv-class="{{!error && 'hidden'}}"></div>
+
+			<a 
+				class='load-more-list-data lang localize-load-more'
+				pv-events="click::requestMoreData"
+				pv-type="{{more_load_available && 'way-point'}}"
+				pv-class="load-more-list-data {{!more_load_available && 'hidden'}}"></a>
+		</div>
+		<div class="music_conductor_page usual_page">
 			<div class="area_for_button" pv-view='allpas'>
 				<div class="area-button" pv-anchor='big_button'>
 					<span pv-text="{{nav_title}}">World</span>
@@ -763,43 +832,7 @@
 					</div>	
 				</div>
 			</div>
-		</div>
-
-		<div class="play-list-panel">
-			<div class="playlist-actions">
-				<div class="pla-panel">
-					<span class="pla-button">● ● ●</span>
-					<span class="pl-settings-button" title="Playlists settings"></span>
-				</div>
-				<div class="pla-row-content has-dark-buttons hidden" style="position:relative">
-					<span class="rc-arrow hidden">
-						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
-					</span>
-					<div class="pla-row hidden">
-						<div class="left-buttons-group">
-							<span class="button-hole"><a class="search-music-files nicebutton lang localize-playlist-getmp3">Find files for compositions</a></span>
-
-							<!-- href="http://seesu.me/generated_files/seesu_playlist.m3u"-->
-							<span class="button-hole">
-								<a class="open-external-playlist nicebutton lang localize-playlist-export">Save playlist to *.m3u file</a>
-							</span>
-
-						</div>
-						
-					</div>
-					<div class="pla-settings hidden">
-						<label class="dont-rept-pl">
-							<input type="checkbox"/>
-							<span class="lang localize-dont-rept-pl">Do not repeat playlist</span>
-						</label>
-					</div>
-				</div>
-			</div>
-			<div class="loader_disallowing_desc hidden"></div>
-			
-			
-		</div>
-		
+		</div>		
 		
 		<form class="scrobbling-switches">
 			<p>scrobbling to last.fm</p>

@@ -14,6 +14,13 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			}
 
 		}, {skip_reg: true});
+		this.on('state-change.more_load_available', function(e) {
+			var mp_show = this.state('mp_show');
+			if (e.value && mp_show && mp_show.userwant){
+				this.preloadStart();
+			}
+			
+		});
 		if (!this.manual_previews){
 			this.on('child-change.' + this.main_list_name, function(e) {
 				if (!e.skip_report){
@@ -77,7 +84,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 
 	},
-	requestMoreData: function(force) {
+	requestMoreData: function() {
 		if (this.state("has_loader") && this.sendMoreDataRequest){
 			if (!this.request_info || this.request_info.done){
 				this.markLoading();

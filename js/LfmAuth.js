@@ -130,7 +130,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 	},
 	login: function(r, callback){
 		this.api.sk = r.session.key;
-		this.api.user_name = r.session.name;
+		this.api.username = r.session.name;
 		this.api.stSet('lfm_user_name', r.session.name, true);
 		this.api.stSet('lfmsk', this.api.sk, true);
 		if (callback){callback();}

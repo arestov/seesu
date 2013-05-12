@@ -59,12 +59,12 @@ comd.VkLoginB.extendTo(VkAudioLogin, {
 
 var LfmLovedList = function() {};
 SongsList.extendTo(LfmLovedList, {
-	init: function(opts, username) {
+	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
 		this.authInit();
-		if (username){
-			this.username = username;
+		if (params.lfm_username){
+			this.username = params.lfm_username;
 			this.updateState('has_no_access', false);
 		} else {
 			this.permanent_md = true;
@@ -75,7 +75,7 @@ SongsList.extendTo(LfmLovedList, {
 		var _this = this;
 		var request_info = {};
 		request_info.request = this.app.lfm.get('user.getLovedTracks', {
-			user: (this.username || this.app.lfm.user_name),
+			user: (this.username || this.app.lfm.username),
 			limit: paging_opts.page_limit,
 			page: paging_opts.next_page
 		}, {nocache: true})
@@ -112,21 +112,16 @@ SongsList.extendTo(LfmLovedList, {
 var RecommendatedToUserArtistsList = function() {};
 ArtCard.ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 	page_limit: 30,
-	init: function(opts, username) {
+	init: function(opts, params) {
 		this._super(opts);
 
 
 		this.initStates();
 		this.authInit();
 		this.authSwitching(this.app.lfm_auth, LfmReccomsLogin);
-		
-		var _this = this;
-		if (!username){
-			this.permanent_md = true;
-		}
 
-		if (username){
-			this.username = username;
+		if (params.lfm_username){
+			this.username = params.lfm_username;
 			if (this.app.env.cross_domain_allowed){
 				this.getRqData = this.getRqDataRss;
 				this.setLoader(this.loadMoreByRSS);
@@ -289,7 +284,7 @@ ArtCard.AlbumsList.extendTo(UserNewReleases, {
 	page_limit: 50,
 	getRqData: function(paging_opts) {
 		return {
-			user: this.app.lfm.user_name,
+			user: this.app.lfm.username,
 			limit: paging_opts.page_limit,
 			userecs: this.recomms ? 1 : 0
 		};
@@ -406,6 +401,14 @@ BrowseMap.Model.extendTo(UserCard, {
 		if (this.for_current_user){
 			this.permanent_md = true;
 		}
+		if (this.urp_name.search(/^lfm\:/) != -1){
+			this.lfm_username = this.urp_name.replace(/^lfm\:/,'');
+		}
+		this.sub_pa_params = {
+			lfm_username: this.lfm_username,
+			for_current_user: this.for_current_user,
+			vk_id: null
+		};
 
 		var _this = this;
 

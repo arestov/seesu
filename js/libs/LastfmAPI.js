@@ -46,7 +46,7 @@ spv.Class.extendTo(LastfmAPI, {
 
 		if (this.stGet){
 			this.sk =	this.stGet('lfmsk') || false;
-			this.user_name = this.stGet('lfm_user_name') || false;
+			this.username = this.stGet('lfm_user_name') || false;
 		}
 	},
 	api_path: 'http://ws.audioscrobbler.com/2.0/',
