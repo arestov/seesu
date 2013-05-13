@@ -233,6 +233,10 @@ provoda.View.extendTo(appView, {
 			main: coct.AlbumsListView,
 			nav: nav.baseNavUI
 		},
+		lula: {
+			main: lul.LULAPageVIew,
+			nav: nav.baseNavUI
+		},
 		lulas: {
 			main: lul.LULAsPageVIew,
 			nav: nav.baseNavUI
@@ -624,6 +628,9 @@ provoda.View.extendTo(appView, {
 		},
 		'playlist_panel': function() {
 			return this.els.ui_samples.children('.play-list-panel');
+		},
+		lula_page: function() {
+			return this.els.ui_samples.children('.lula_page');
 		},
 		'lulas_page': function() {
 			return this.els.ui_samples.children('.lulas_page');

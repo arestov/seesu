@@ -1,5 +1,17 @@
-define(['provoda'], function(provoda) {
+define(['provoda', './coct'], function(provoda, coct) {
 "use strict";
+var LULAPageVIew = function() {};
+provoda.View.extendTo(LULAPageVIew, {
+	createBase: function() {
+		this.c = this.root_view.getSample('lula_page');
+		this.createTemplate();
+	},
+	children_views: {
+		all_time: coct.ListPreview
+	}
+
+});
+
 var LULAsPageVIew = function() {};
 provoda.View.extendTo(LULAsPageVIew, {
 	createBase: function() {
@@ -9,6 +21,7 @@ provoda.View.extendTo(LULAsPageVIew, {
 });
 
 return {
+	LULAPageVIew: LULAPageVIew,
 	LULAsPageVIew: LULAsPageVIew
 };
 });

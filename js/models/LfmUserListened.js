@@ -32,6 +32,7 @@ SongsList.extendTo(LULATracks, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.username = params.lfm_username;
+		connectUsername.call(this, params);
 		this.artist = params.artist;
 		this.initStates();
 	},
@@ -48,7 +49,8 @@ SongsList.extendTo(LULATracks, {
 			data: this.getRqData(),
 			parser: this.getLastfmTracksList
 		});
-	}
+	},
+	'compx-has_no_access': no_access_compx
 });
 
 
@@ -62,8 +64,10 @@ BrowseMap.Model.extendTo(LULA, {
 		var artist = params.data.artist;
 		this.sub_pa_params = {
 			lfm_username: params.lfm_username,
+			for_current_user: params.for_current_user,
 			artist: artist
 		};
+		connectUsername.call(this, params);
 		spv.cloneObj(states, {
 			'url_part': artist,
 			'nav_title': artist,
@@ -72,11 +76,21 @@ BrowseMap.Model.extendTo(LULA, {
 			'lfm_image': this.app.art_images.getImageWrap(params.data.lfm_image.array)
 		});
 		this.updateManyStates(states);
+
+		var all_time = this.getSPI('all_time', true);
+		this.updateNesting('all_time', all_time);
 	},
+	'compx-has_no_access': no_access_compx,
 	'compx-selected_image': {
 		depends_on: ['lfm_image'],
 		fn: function(lfm_i) {
 			return lfm_i;
+		}
+	},
+	sub_pa: {
+		'all_time': {
+			constr: LULATracks,
+			title: 'All Time'
 		}
 	},
 	subPager: function() {
@@ -113,9 +127,9 @@ LoadableList.extendTo(LULAs, {
 		item.init({
 			map_parent: this,
 			app: this.app
-		}, {
+		}, spv.cloneObj({
 			data: data
-		});
+		}, this.sub_pa_params));
 		return item;
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
