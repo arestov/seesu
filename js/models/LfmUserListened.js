@@ -1,4 +1,5 @@
-define(['js/libs/BrowseMap', './LoadableList', 'spv'], function(BrowseMap, LoadableList, spv) {
+define(['js/libs/BrowseMap', './LoadableList', 'spv', './SongsList'],
+function(BrowseMap, LoadableList, spv, SongsList) {
 "use strict";
 //
 
@@ -27,13 +28,26 @@ var connectUsername = function(params) {
 //LULA - LfmUserLibraryArtist
 //
 var LULATracks = function() {};//непосредственно список композиций артиста, которые слушал пользователь
-BrowseMap.Model.extendTo(LULATracks, {
-	model_name: 'lula_tracks',
-	init: function() {
-
+SongsList.extendTo(LULATracks, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.username = params.lfm_username;
+		this.artist = params.artist;
+		this.initStates();
 	},
-	subPager: function() {
-		//daterange
+	getRqData: function() {
+		return {
+			user: this.state('username'),
+			artist: this.artist
+		};
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendLFMDataRequest(paging_opts, request_info, {
+			method: 'library.getTracks',
+			field_name: 'tracks.track',
+			data: this.getRqData(),
+			parser: this.getLastfmTracksList
+		});
 	}
 });
 
@@ -44,7 +58,12 @@ BrowseMap.Model.extendTo(LULA, {
 	init: function(opts, params) {
 		this._super(opts);
 		var states = {};
+
 		var artist = params.data.artist;
+		this.sub_pa_params = {
+			lfm_username: params.lfm_username,
+			artist: artist
+		};
 		spv.cloneObj(states, {
 			'url_part': artist,
 			'nav_title': artist,

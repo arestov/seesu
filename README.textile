@@ -18,7 +18,7 @@ Alexander Belov <porqz@mesquite.ru>
 
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
-
+баг con-appended
 необходим рефакторинг lfm_image
 
 проверять работоспособность "истории"

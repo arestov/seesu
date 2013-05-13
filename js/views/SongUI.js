@@ -312,29 +312,6 @@ provoda.View.extendTo(SongUI, {
 			this.t_users.last_update = (+new Date());
 		}
 	},
-	update_artist_info: function(){
-
-		var a_info = this.a_info;
-		this.dom_related_props.push('ainf', 'photo_data', 'img_panorama');
-
-		if (!this.has_artist_info){
-			this.has_artist_info = true;
-			this.ainf = {
-				bio: a_info.children('.artist-bio'),
-				meta_info: a_info.children('.artist-meta-info'),
-				c : a_info
-			};
-
-			this.ainf.bio.text('...');
-			this.ainf.meta_info.empty();
-
-			var tidominator = this.requirePart('tidominator');
-
-			this.requirePart('artist-info');
-			this.requirePart('artist_link_con');
-		}
-
-	},
 	'stch-images': function(images) {
 		if (!images || !images.length){
 			return;
