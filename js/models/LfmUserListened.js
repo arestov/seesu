@@ -157,6 +157,21 @@ LoadableList.extendTo(LULAs, {
 	'compx-has_no_access': no_access_compx
 });
 
+var TopLUArt = function() {};
+LoadableList.extendTo(TopLUArt, {
+	model_name: 'lulas',
+	main_list_name: 'artists',
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+		this.sub_pa_params = {
+			lfm_username: params.lfm_username,
+			for_current_user: params.for_current_user
+		};
+		connectUsername.call(this, params);
+	}
+});
+
 var LfmUserArtists = function() {};
 BrowseMap.Model.extendTo(LfmUserArtists, {
 	model_name: 'lfm_listened_artists',
@@ -168,12 +183,25 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 			for_current_user: params.for_current_user
 		};
 		this.updateNesting('library', this.getSPI('library', true));
-		this.updateNesting('lists_list', [this.getSPI('library', true)]);
+		//this.updateNesting('week', this.getSPI('library', true));
+		this.updateNesting('7day', this.getSPI('top:7day', true));
+		this.updateNesting('1month', this.getSPI('top:1month', true));
+		this.updateNesting('3month', this.getSPI('top:3month', true));
+		//this.updateNesting('lists_list', [this.getSPI('library', true)]);
 	},
 	sub_pa: {
 		'library': {
 			constr: LULAs,
 			title: 'library'
+		},
+		'top:7day': {
+			constr: TopLUArt
+		},
+		'top:1month':{
+			constr: TopLUArt
+		},
+		'top:3month':{
+			constr: TopLUArt
 		}
 		//артисты в библиотеке
 		//недельный чарт
