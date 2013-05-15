@@ -772,8 +772,11 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		}
 	},
 	getSPOpts: function(name) {
+		var parts = name.split(':');
 		var obj = {
-			url_part: '/' + name
+			url_part: '/' + name,
+			simple_name: name,
+			name_spaced: parts[1]
 		};
 		var target = this.sub_pa[name];
 		var title = target.title || (target.getTitle && target.getTitle.call(this));

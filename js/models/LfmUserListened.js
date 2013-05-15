@@ -98,30 +98,11 @@ BrowseMap.Model.extendTo(LULA, {
 	}
 });
 
-var LULAs = function() {};//artists, список артистов
-LoadableList.extendTo(LULAs, {
+
+var UserArtists = function() {};
+LoadableList.extendTo(UserArtists, {
 	model_name: 'lulas',
 	main_list_name: 'artists',
-	init: function(opts, params) {
-		this._super(opts);
-		this.initStates();
-		this.sub_pa_params = {
-			lfm_username: params.lfm_username,
-			for_current_user: params.for_current_user
-		};
-		connectUsername.call(this, params);
-	},
-	subPager: function() {
-		//artist
-	},
-	sub_pa: {
-		
-	},
-	getRqData: function() {
-		return {
-			user: this.state('username')
-		};
-	},
 	makeDataItem:function(data) {
 		var item = new LULA();
 		item.init({
@@ -132,35 +113,26 @@ LoadableList.extendTo(LULAs, {
 		}, this.sub_pa_params));
 		return item;
 	},
-	sendMoreDataRequest: function(paging_opts, request_info) {
-		return this.sendLFMDataRequest(paging_opts, request_info, {
-			method: 'library.getArtists',
-			field_name: 'artists.artist',
-			data: this.getRqData(),
-			parser: function(r, field_name) {
-				var result = [];
-				var array = spv.toRealArray(spv.getTargetField(r, field_name));
-				for (var i = 0; i < array.length; i++) {
-					result.push({
-						artist: array[i].name,
-						lfm_image: {
-							array: array[i].image
-						},
-						playcount: array[i].playcount
-					});
-				}
-				return result;
-				//console.log(r);
-			}
-		});
+	artistListPlaycountParser: function(r, field_name) {
+		var result = [];
+		var array = spv.toRealArray(spv.getTargetField(r, field_name));
+		for (var i = 0; i < array.length; i++) {
+			result.push({
+				artist: array[i].name,
+				lfm_image: {
+					array: array[i].image
+				},
+				playcount: array[i].playcount
+			});
+		}
+		return result;
+		//console.log(r);
 	},
 	'compx-has_no_access': no_access_compx
 });
 
-var TopLUArt = function() {};
-LoadableList.extendTo(TopLUArt, {
-	model_name: 'lulas',
-	main_list_name: 'artists',
+var LULAs = function() {};//artists, список артистов
+UserArtists.extendTo(LULAs, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
@@ -169,6 +141,48 @@ LoadableList.extendTo(TopLUArt, {
 			for_current_user: params.for_current_user
 		};
 		connectUsername.call(this, params);
+	},
+	getRqData: function() {
+		return {
+			user: this.state('username')
+		};
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendLFMDataRequest(paging_opts, request_info, {
+			method: 'library.getArtists',
+			field_name: 'artists.artist',
+			data: this.getRqData(),
+			parser: this.artistListPlaycountParser
+		});
+	}
+	
+});
+
+var TopLUArt = function() {};
+UserArtists.extendTo(TopLUArt, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+		this.timeword = this.init_opts[0].nav_opts.name_spaced;
+		this.sub_pa_params = {
+			lfm_username: params.lfm_username,
+			for_current_user: params.for_current_user
+		};
+		connectUsername.call(this, params);
+	},
+	getRqData: function() {
+		return {
+			user: this.state('username'),
+			period: this.timeword
+		};
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendLFMDataRequest(paging_opts, request_info, {
+			method: 'user.getTopArtists',
+			field_name: 'topartists.artist',
+			data: this.getRqData(),
+			parser: this.artistListPlaycountParser
+		});
 	}
 });
 
@@ -187,7 +201,12 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 		this.updateNesting('7day', this.getSPI('top:7day', true));
 		this.updateNesting('1month', this.getSPI('top:1month', true));
 		this.updateNesting('3month', this.getSPI('top:3month', true));
-		//this.updateNesting('lists_list', [this.getSPI('library', true)]);
+		this.updateNesting('lists_list', [
+			this.getSPI('library', true),
+			this.getSPI('top:7day', true),
+			this.getSPI('top:1month', true),
+			this.getSPI('top:3month', true)
+		]);
 	},
 	sub_pa: {
 		'library': {
@@ -195,13 +214,16 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 			title: 'library'
 		},
 		'top:7day': {
-			constr: TopLUArt
+			constr: TopLUArt,
+			title: 'top of 7day'
 		},
 		'top:1month':{
-			constr: TopLUArt
+			constr: TopLUArt,
+			title: 'top of month'
 		},
 		'top:3month':{
-			constr: TopLUArt
+			constr: TopLUArt,
+			title: 'top of 3 months'
 		}
 		//артисты в библиотеке
 		//недельный чарт
