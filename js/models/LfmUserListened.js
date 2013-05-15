@@ -186,6 +186,33 @@ UserArtists.extendTo(TopLUArt, {
 	}
 });
 
+
+var TopUserTracks = function() {};
+SongsList.extendTo(TopUserTracks, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.username = params.lfm_username;
+		connectUsername.call(this, params);
+		this.timeword = this.init_opts[0].nav_opts.name_spaced;
+		this.initStates();
+	},
+	getRqData: function() {
+		return {
+			user: this.state('username'),
+			period: this.timeword
+		};
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendLFMDataRequest(paging_opts, request_info, {
+			method: 'user.getTopTracks',
+			field_name: 'toptracks.track',
+			data: this.getRqData(),
+			parser: this.getLastfmTracksList
+		});
+	},
+	'compx-has_no_access': no_access_compx
+});
+
 var LfmUserArtists = function() {};
 BrowseMap.Model.extendTo(LfmUserArtists, {
 	model_name: 'lfm_listened_artists',
@@ -236,9 +263,40 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 var LfmUserTracks = function() {};
 BrowseMap.Model.extendTo(LfmUserTracks, {
 	model_name: 'lfm_listened_tracks',
-	init: function(opts) {
+	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
+
+		this.sub_pa_params = {
+			lfm_username: params.lfm_username,
+			for_current_user: params.for_current_user
+		};
+
+		this.updateNesting('7day', this.getSPI('top:7day', true));
+		this.updateNesting('1month', this.getSPI('top:1month', true));
+		this.updateNesting('3month', this.getSPI('top:3month', true));
+
+		this.updateNesting('lists_list', [
+			this.getSPI('top:7day', true),
+			this.getSPI('top:1month', true),
+			this.getSPI('top:3month', true)
+		]);
+	},
+	sub_pa: {
+		'top:7day': {
+			constr: TopUserTracks,
+			title: 'top of 7day'
+		},
+		'top:1month':{
+			constr: TopUserTracks,
+			title: 'top of month'
+		},
+		'top:3month':{
+			constr: TopUserTracks,
+			title: 'top of 3 months'
+		}
+		//лучшие за последние  7 днея, лучше за 3 месяца, полгода, год
+		//недельные чарты - отрезки по 7 дней
 	}
 });
 
