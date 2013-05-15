@@ -275,6 +275,7 @@ BrowseMap.Model.extendTo(LfmUserListened, {
 		this.initSubPages(this.lists_list);
 
 		this.updateNesting('lists_list', this.lists_list);
+		this.updateNesting('preview_list', this.lists_list);
 		this.bindChildrenPreload();
 	},
 	model_name: 'lfm_listened',
