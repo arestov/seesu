@@ -1,5 +1,5 @@
-define(['js/libs/BrowseMap', './LoadableList', 'spv', './SongsList'],
-function(BrowseMap, LoadableList, spv, SongsList) {
+define(['js/libs/BrowseMap', './LoadableList', 'spv', './SongsList', './ArtCard'],
+function(BrowseMap, LoadableList, spv, SongsList, ArtCard) {
 "use strict";
 //
 
@@ -310,7 +310,7 @@ BrowseMap.Model.extendTo(LfmUserAlbums, {
 
 
 var TaggedSongs = function() {};
-LoadableList.extendTo(TaggedSongs, {
+SongsList.extendTo(TaggedSongs, {
 	init: function(opts, params) {
 		this._super(opts);
 
@@ -338,11 +338,28 @@ LoadableList.extendTo(TaggedSongs, {
 });
 
 var TaggedArtists = function() {};
-LoadableList.extendTo(TaggedArtists, {
+ArtCard.ArtistsList.extendTo(TaggedArtists, {
 	init: function(opts, params) {
 		this._super(opts);
+		this.tag_name = params.tag_name;
+		connectUsername.call(this, params);
+
 		this.initStates();
-		
+	},
+	getRqData: function() {
+		return {
+			user: this.state('username'),
+			taggingtype: 'artist',
+			tag: this.tag_name
+		};
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendLFMDataRequest(paging_opts, request_info, {
+			method: 'user.getPersonalTags',
+			field_name: 'taggings.artists.artist',
+			data: this.getRqData(),
+			parser: this.getLastfmArtistsList
+		});
 	}
 });
 
