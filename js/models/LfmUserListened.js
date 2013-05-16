@@ -365,10 +365,28 @@ ArtCard.ArtistsList.extendTo(TaggedArtists, {
 
 
 var TaggedAlbums = function() {};
-LoadableList.extendTo(TaggedAlbums, {
+ArtCard.AlbumsList.extendTo(TaggedAlbums, {
 	init: function(opts, params) {
 		this._super(opts);
+		this.tag_name = params.tag_name;
+		connectUsername.call(this, params);
 		this.initStates();
+	},
+	page_limit: 50,
+	getRqData: function() {
+		return {
+			user: this.state('username'),
+			taggingtype: 'album',
+			tag: this.tag_name
+		};
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendLFMDataRequest(paging_opts, request_info, {
+			method: 'user.getPersonalTags',
+			field_name: 'taggings.albums.album',
+			data: this.getRqData(),
+			parser: this.getLastfmAlbumsList
+		});
 	}
 });
 

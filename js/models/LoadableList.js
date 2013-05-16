@@ -90,6 +90,26 @@ LoadableListBase.extendTo(LoadableList, {
 			});
 		return request_info;
 	},
+	getLastfmAlbumsList: function(r, field_name, paging_opts) {
+		var albums_data = spv.toRealArray(spv.getTargetField(r, field_name));
+		var data_list = [];
+		if (albums_data.length) {
+			var l = Math.min(albums_data.length, paging_opts.page_limit);
+			for (var i=paging_opts.remainder; i < l; i++) {
+				var cur = albums_data[i];
+				data_list.push({
+					album_artist: spv.getTargetField(cur, 'artist.name'),
+					album_name: cur.name,
+					lfm_image: {
+						array: cur.image
+					},
+					playcount: cur.playcount
+				});
+			}
+			
+		}
+		return data_list;
+	},
 	getLastfmArtistsList: function(r, field_name, paging_opts) {
 		var artists = spv.toRealArray(spv.getTargetField(r, field_name));
 		var data_list = [];
