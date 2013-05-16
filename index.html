@@ -100,12 +100,49 @@
 
 
 
-
+		<div
+			class="user_tag_page usual_page"
+			pv-class="lula_page usual_page {{!mp_show && 'hidden'}}"
+			>
+			<div class="preview_area" pv-view="tracks">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">Tracks</span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-view="artists">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">Artists</span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-view="albums">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">Albums</span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+		</div>
 		<div
 			class="user_tags_page usual_page"
 			pv-class="lula_page usual_page {{!mp_show && 'hidden'}}">
 			<ul>
-				<li pv-view="tags" class="user_tag">
+				<li pv-view="tags" class="user_tag" pv-events="click::showOnMap">
 					<span class="user_tag-count" pv-text="{{count}}"></span>
 					<span class="user_tag-name" pv-text="{{tag_name}}"></span>
 				</li>

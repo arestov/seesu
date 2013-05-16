@@ -307,15 +307,94 @@ BrowseMap.Model.extendTo(LfmUserAlbums, {
 	}
 });
 
-var UserTag = function() {};
-BrowseMap.Model.extendTo(UserTag, {
+
+
+var TaggedSongs = function() {};
+LoadableList.extendTo(TaggedSongs, {
 	init: function(opts, params) {
 		this._super(opts);
+
+		this.tag_name = params.tag_name;
+		connectUsername.call(this, params);
+
+		this.initStates();
+	},
+	getRqData: function() {
+		return {
+			user: this.state('username'),
+			taggingtype: 'track',
+			tag: this.tag_name
+		};
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendLFMDataRequest(paging_opts, request_info, {
+			method: 'user.getPersonalTags',
+			field_name: 'taggings.tracks.track',
+			data: this.getRqData(),
+			parser: this.getLastfmTracksList
+		});
+	},
+	'compx-has_no_access': no_access_compx
+});
+
+var TaggedArtists = function() {};
+LoadableList.extendTo(TaggedArtists, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+		
+	}
+});
+
+
+var TaggedAlbums = function() {};
+LoadableList.extendTo(TaggedAlbums, {
+	init: function(opts, params) {
+		this._super(opts);
+		this.initStates();
+	}
+});
+
+var UserTag = function() {};
+BrowseMap.Model.extendTo(UserTag, {
+	model_name: 'lfm_user_tag',
+	init: function(opts, params) {
+		this._super(opts);
+		var tag_name = params.data.tag_name;
+		this.sub_pa_params = {
+			lfm_username: params.lfm_username,
+			for_current_user: params.for_current_user,
+			tag_name: tag_name
+		};
 		spv.cloneObj(this.init_states, {
-			tag_name: params.data.tag_name,
-			count: params.data.count
+			tag_name: tag_name,
+			count: params.data.count,
+			nav_title: tag_name,
+			url_part: tag_name
 		});
 		this.initStates();
+
+
+		this.lists_list = ['artists', 'tracks', 'albums'];
+		this.initSubPages(this.lists_list);
+
+		this.updateNesting('lists_list', this.lists_list);
+		this.updateNesting('preview_list', this.lists_list);
+		this.bindChildrenPreload();
+	},
+	sub_pa: {
+		'tracks': {
+			constr: TaggedSongs,
+			title: 'Tracks'
+		},
+		'artists': {
+			constr: TaggedArtists,
+			title: 'Artists'
+		},
+		'albums': {
+			constr: TaggedAlbums,
+			title: "Albums"
+		}
 	}
 });
 

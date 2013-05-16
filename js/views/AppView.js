@@ -225,6 +225,10 @@ provoda.View.extendTo(appView, {
 			main: lul.UserTagsPageView,
 			nav: nav.baseNavUI
 		},
+		lfm_user_tag: {
+			main: lul.UserTagPageVIew,
+			nav: nav.baseNavUI
+		},
 		user_acqs_list: {
 			main: uacq.UserAcquaintancesListView,
 			nav: nav.baseNavUI
@@ -623,6 +627,9 @@ provoda.View.extendTo(appView, {
 	},
 	parts_builder: {
 		//samples
+		'user_tag_page': function() {
+			return this.els.ui_samples.children('.user_tag_page');
+		},
 		'user_tags_page': function() {
 			return this.els.ui_samples.children('.user_tags_page');
 		},
