@@ -1523,3 +1523,10 @@ body .surf_nav{
 	.user_artist-counter{
 		font-size: 0.8em;
 		}
+.user_tag{
+
+	}
+	.user_tag-count{
+		display: inline-block;
+		width: 50px;
+	}

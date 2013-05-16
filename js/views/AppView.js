@@ -222,7 +222,7 @@ provoda.View.extendTo(appView, {
 			nav: nav.baseNavUI
 		},
 		lfm_listened_tags: {
-			main: coct.ListOfListsView,
+			main: lul.UserTagsPageView,
 			nav: nav.baseNavUI
 		},
 		user_acqs_list: {
@@ -623,6 +623,9 @@ provoda.View.extendTo(appView, {
 	},
 	parts_builder: {
 		//samples
+		'user_tags_page': function() {
+			return this.els.ui_samples.children('.user_tags_page');
+		},
 		'playlist-container': function() {
 			return this.els.ui_samples.children('.playlist-container');
 		},

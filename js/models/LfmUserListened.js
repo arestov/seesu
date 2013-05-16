@@ -31,7 +31,6 @@ var LULATracks = function() {};//непосредственно список к�
 SongsList.extendTo(LULATracks, {
 	init: function(opts, params) {
 		this._super(opts);
-		this.username = params.lfm_username;
 		connectUsername.call(this, params);
 		this.artist = params.artist;
 		this.initStates();
@@ -191,7 +190,6 @@ var TopUserTracks = function() {};
 SongsList.extendTo(TopUserTracks, {
 	init: function(opts, params) {
 		this._super(opts);
-		this.username = params.lfm_username;
 		connectUsername.call(this, params);
 		this.timeword = this.init_opts[0].nav_opts.name_spaced;
 		this.initStates();
@@ -309,13 +307,69 @@ BrowseMap.Model.extendTo(LfmUserAlbums, {
 	}
 });
 
-var LfmUserTags = function() {};
-BrowseMap.Model.extendTo(LfmUserTags, {
-	model_name: 'lfm_listened_tags',
-	init: function(opts) {
+var UserTag = function() {};
+BrowseMap.Model.extendTo(UserTag, {
+	init: function(opts, params) {
 		this._super(opts);
+		spv.cloneObj(this.init_states, {
+			tag_name: params.data.tag_name,
+			count: params.data.count
+		});
 		this.initStates();
 	}
+});
+
+var LfmUserTags = function() {};
+LoadableList.extendTo(LfmUserTags, {
+	model_name: 'lfm_listened_tags',
+	main_list_name: 'tags',
+	init: function(opts, params) {
+		this._super(opts);
+		connectUsername.call(this, params);
+		this.sub_pa_params = {
+			lfm_username: params.lfm_username,
+			for_current_user: params.for_current_user
+		};
+		this.initStates();
+	},
+	page_limit: 3000,
+	getRqData: function() {
+		return {
+			user: this.state('username')
+		};
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendLFMDataRequest(paging_opts, request_info, {
+			method: 'user.getTopTags',
+			field_name: 'toptags.tag',
+			data: this.getRqData(),
+			parser: this.tagsParser
+		});
+	},
+	
+	makeDataItem:function(data) {
+		var item = new UserTag();
+		item.init({
+			map_parent: this,
+			app: this.app
+		}, spv.cloneObj({
+			data: data
+		}, this.sub_pa_params));
+		return item;
+	},
+	tagsParser: function(r, field_name) {
+		var result = [];
+		var array = spv.toRealArray(spv.getTargetField(r, field_name));
+		for (var i = 0; i < array.length; i++) {
+			result.push({
+				tag_name: array[i].name,
+				count: array[i].count
+			});
+		}
+		return result;
+		//console.log(r);
+	},
+	'compx-has_no_access': no_access_compx
 });
 
 

@@ -96,6 +96,22 @@
 				</div>
 			</div>
 		</div>
+
+
+
+
+
+		<div
+			class="user_tags_page usual_page"
+			pv-class="lula_page usual_page {{!mp_show && 'hidden'}}">
+			<ul>
+				<li pv-view="tags" class="user_tag">
+					<span class="user_tag-count" pv-text="{{count}}"></span>
+					<span class="user_tag-name" pv-text="{{tag_name}}"></span>
+				</li>
+			</ul>
+		</div>
+
 		<div class="lula_page usual_page" pv-class="lula_page usual_page {{!mp_show && 'hidden'}}">
 			<div class="preview_area" pv-view="all_time">
 				<div class="area_for_button" pv-anchor="button_area">
@@ -109,6 +125,7 @@
 				<div class="pl-auth-con" pv-anchor="auth_con"></div>
 			</div>
 		</div>
+
 		<div class="lulas_page usual_page" pv-class="lulas_page usual_page {{!mp_show && 'hidden'}}">
 			<ul>
 				<li pv-view="artists" pv-events="click::showOnMap" class="user_artist">
@@ -345,7 +362,7 @@
 		<div class="tags_list_page usual_page">
 			<div class="tags_list" pv-anchor="listc"></div>
 		</div>
-
+		
 
 
 

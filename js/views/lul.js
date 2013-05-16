@@ -20,8 +20,18 @@ provoda.View.extendTo(LULAsPageVIew, {
 	}
 });
 
+
+var UserTagsPageView = function() {};
+provoda.View.extendTo(UserTagsPageView, {
+	createBase: function() {
+		this.c = this.root_view.getSample('user_tags_page');
+		this.createTemplate();
+	}
+});
+
 return {
 	LULAPageVIew: LULAPageVIew,
-	LULAsPageVIew: LULAsPageVIew
+	LULAsPageVIew: LULAsPageVIew,
+	UserTagsPageView: UserTagsPageView
 };
 });
