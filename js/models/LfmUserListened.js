@@ -221,17 +221,16 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 			lfm_username: params.lfm_username,
 			for_current_user: params.for_current_user
 		};
-		this.updateNesting('library', this.getSPI('library', true));
-		//this.updateNesting('week', this.getSPI('library', true));
-		this.updateNesting('7day', this.getSPI('top:7day', true));
-		this.updateNesting('1month', this.getSPI('top:1month', true));
-		this.updateNesting('3month', this.getSPI('top:3month', true));
-		this.updateNesting('lists_list', [
-			this.getSPI('library', true),
-			this.getSPI('top:7day', true),
-			this.getSPI('top:1month', true),
-			this.getSPI('top:3month', true)
-		]);
+
+		this.lists_list = ['library', 'top:7day', 'top:1month',
+		'top:3month', 'top:6month', 'top:12month', 'top:overall'];
+
+		this.initSubPages(this.lists_list);
+
+		this.updateNesting('lists_list', this.lists_list);
+		this.updateNesting('preview_list', this.lists_list);
+		this.bindChildrenPreload();
+
 	},
 	sub_pa: {
 		'library': {
@@ -249,6 +248,18 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 		'top:3month':{
 			constr: TopLUArt,
 			title: 'top of 3 months'
+		},
+		'top:6month':{
+			constr: TopLUArt,
+			title: 'top of 6 months'
+		},
+		'top:12month':{
+			constr: TopLUArt,
+			title: 'top of 12 months'
+		},
+		'top:overall':{
+			constr: TopLUArt,
+			title: ' overall top'
 		}
 		//артисты в библиотеке
 		//недельный чарт
@@ -270,15 +281,15 @@ BrowseMap.Model.extendTo(LfmUserTracks, {
 			for_current_user: params.for_current_user
 		};
 
-		this.updateNesting('7day', this.getSPI('top:7day', true));
-		this.updateNesting('1month', this.getSPI('top:1month', true));
-		this.updateNesting('3month', this.getSPI('top:3month', true));
+		this.lists_list = ['top:7day', 'top:1month',
+		'top:3month', 'top:6month', 'top:12month', 'top:overall'];
 
-		this.updateNesting('lists_list', [
-			this.getSPI('top:7day', true),
-			this.getSPI('top:1month', true),
-			this.getSPI('top:3month', true)
-		]);
+		this.initSubPages(this.lists_list);
+
+		this.updateNesting('lists_list', this.lists_list);
+		this.updateNesting('preview_list', this.lists_list);
+		this.bindChildrenPreload();
+
 	},
 	sub_pa: {
 		'top:7day': {
@@ -292,6 +303,18 @@ BrowseMap.Model.extendTo(LfmUserTracks, {
 		'top:3month':{
 			constr: TopUserTracks,
 			title: 'top of 3 months'
+		},
+		'top:6month':{
+			constr: TopUserTracks,
+			title: 'top of 6 months'
+		},
+		'top:12month':{
+			constr: TopUserTracks,
+			title: 'top of 12 months'
+		},
+		'top:overall':{
+			constr: TopUserTracks,
+			title: 'overall top'
 		}
 		//лучшие за последние  7 днея, лучше за 3 месяца, полгода, год
 		//недельные чарты - отрезки по 7 дней
