@@ -2947,7 +2947,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			var _this = this;
 			setTimeout(function() {
 				_this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request, ordered_rend_list);
-			},1);
+			},100);//fixme can be bug
 		}
 		return complects;
 		//1 открепить неправильно прикреплённых
