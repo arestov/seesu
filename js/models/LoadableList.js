@@ -58,7 +58,7 @@ LoadableListBase.extendTo(LoadableList, {
 		return request_info;
 	},
 
-	sendLFMDataRequest: function(paging_opts, request_info, opts) {
+	sendLFMDataRequest: function(paging_opts, request_info, opts, rqop) {
 		var
 			no_paging = opts.no_paging,
 			method = opts.method,
@@ -75,7 +75,7 @@ LoadableListBase.extendTo(LoadableList, {
 		if (data){
 			spv.cloneObj(request_data, data);
 		}
-		request_info.request = this.app.lfm.get(method, request_data)
+		request_info.request = this.app.lfm.get(method, request_data, rqop)
 			.done(function(r){
 				var data_list = parser.call(this, r, field_name, paging_opts);
 				if (no_paging && !r.error){

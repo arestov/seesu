@@ -72,14 +72,13 @@ coct.PageView.extendTo(UserCardPage, {
 		this.createTemplate();
 	},
 	children_views: {
-		'user-playlists': coct.LiListsPreview,
+		'user-playlists': coct.ListSimplePreview,
 		users_acqutes: uacq.UserAcquaintancesListPreview,
-		vk_audio: PersonalListPreview,
-		arts_recomms: PersonalListPreview,
-		lfm_listened: PersonalListPreview,
-		lfm_loved: PersonalListPreview,
-		new_releases: PersonalAlbumsListPreview,
-		recomm_releases: PersonalAlbumsListPreview
+		vk__tracks: coct.ListSimplePreview,
+		lfm__artists: coct.ListSimplePreview,
+		lfm__tracks: coct.ListSimplePreview,
+		lfm__tags: coct.ListSimplePreview,
+		lfm__albums: coct.ListSimplePreview
 	},
 	'collch-users_acqutes': 'tpl.ancs.users_acqutes'
 });

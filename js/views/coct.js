@@ -114,6 +114,29 @@ ListPreviewLine.extendTo(ArtistsListPreviewLine, {
 	}
 });
 
+var ListSimplePreview = function() {};
+ListPreview.extendTo(ListSimplePreview, {
+	children_views: {
+		preview_list: ListPreviewLine,
+		lists_list: ListPreviewLine
+	},
+	'collch-preview_list': {
+		place: 'tpl.ancs.listc',
+		limit: 9
+	},
+	'collch-lists_list': {
+		place: 'tpl.ancs.listc',
+		limit: 9
+	}
+});
+
+var ImagedListPreview = function() {};
+ListSimplePreview.extendTo(ImagedListPreview, {
+	children_views: {
+		preview_list: ArtistsListPreviewLine,
+		lists_list: ListPreviewLine
+	}
+});
 
 var ItemOfLL = function() {};
 ListPreview.extendTo(ItemOfLL, {
@@ -282,7 +305,9 @@ return {
 	BigAlbumPreview:BigAlbumPreview,
 	AlbumsListView:AlbumsListView,
 	AlbumsListPreview:AlbumsListPreview,
-	TagsListPreview: TagsListPreview
+	TagsListPreview: TagsListPreview,
+	ListSimplePreview: ListSimplePreview,
+	ImagedListPreview: ImagedListPreview
 };
 
 });

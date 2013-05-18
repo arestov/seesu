@@ -225,6 +225,10 @@ provoda.View.extendTo(appView, {
 			main: lul.UserTagsPageView,
 			nav: nav.baseNavUI
 		},
+		listoflists: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
 		lfm_user_tag: {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
