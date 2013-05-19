@@ -817,6 +817,7 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 			username: data.username,
 			registered: data.registered,
 
+			gender: data.gender,
 			lfm_image: image,
 			big_desc: data.big_desc,
 			song: song,
@@ -887,6 +888,18 @@ LoadableList.extendTo(LfmFriendsList, {
 	main_list_name: 'list_items',
 	beforeReportChange: function(list) {
 		list.sort(function(a,b ){return spv.sortByRules(a, b, [
+			{
+				field: function(item) {
+					switch (item.states.gender) {
+						case 'f':
+							return 1;
+						case 'm':
+							return 2;
+						default:
+							return 3;
+					}
+				}
+			},
 			{
 				field: 'states.song_time_raw',
 				reverse: true
