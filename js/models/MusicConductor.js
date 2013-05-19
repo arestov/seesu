@@ -666,7 +666,6 @@ BrowseMap.Model.extendTo(CountresList, {
 MusicConductor = function() {};
 BrowseMap.Model.extendTo(MusicConductor, {
 	model_name: 'mconductor',
-	permanent_md: true,
 	init: function(opts) {
 		this._super.apply(this, arguments);
 

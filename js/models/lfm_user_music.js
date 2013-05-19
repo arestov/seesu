@@ -254,7 +254,6 @@ SongsList.extendTo(LfmLovedList, {
 			this.username = params.lfm_username;
 			this.updateState('has_no_access', false);
 		} else {
-			this.permanent_md = true;
 			this.authSwitching(this.app.lfm_auth, LfmLovedLogin);
 		}
 	},
@@ -574,6 +573,8 @@ BrowseMap.Model.extendTo(LfmUserAlbums, {
 			lfm_username: params.lfm_username,
 			for_current_user: params.for_current_user
 		};
+		this.username = params.lfm_username;
+		this.fcuser = params.for_current_user;
 
 		this.initListedModels(['recommended', 'new_releases', 'top:7day', 'top:1month',
 		'top:3month', 'top:6month', 'top:12month', 'top:overall']);
@@ -582,13 +583,15 @@ BrowseMap.Model.extendTo(LfmUserAlbums, {
 		'recommended': {
 			constr: RecommNewReleases,
 			getTitle: function() {
-				return localize('reccoms-for-you') +': new releases of artists recommended for you';
+				var base = 'new releases of artists recommended for ';
+				return base + (this.fcuser ? 'you' : this.username);
 			}
 		},
 		'new_releases': {
 			constr: UserLibNewReleases,
 			getTitle: function() {
-				return localize('reccoms-for-you') +': new releases of artists from your library';
+				var base = 'new releases of artists from %user% library';
+				return base.replace('%user%', this.fcuser ? 'your' : this.username);
 			}
 		},
 		'top:7day':{
@@ -791,10 +794,149 @@ LoadableList.extendTo(LfmUserTags, {
 	'compx-has_no_access': no_access_compx
 });
 
+var LfmUserPreview = function() {};
+BrowseMap.Model.extendTo(LfmUserPreview, {
+	init: function(opts, params) {
+		this._super(opts);
+		var data = params.data;
+
+		var song, song_time;
+		var artist = spv.getTargetField(data, 'recenttrack.artist.name');
+		if (artist){
+			song = artist + ' - ' + spv.getTargetField(data, 'recenttrack.name');
+			song_time = spv.getTargetField(data, 'recenttrack.@attr.uts');
+			if (song_time){
+				song_time = new Date(song_time * 1000);
+			}
+		}
+		var image = this.app.art_images.getImageRewrap(data.lfm_image);
+
+		spv.cloneObj(this.init_states, {
+			selected_image: image,
+			nav_title: data.username,
+			username: data.username,
+			registered: data.registered,
+
+			lfm_image: image,
+			big_desc: data.big_desc,
+			song: song,
+			song_time: song_time && song_time.toLocaleString(),
+			song_time_raw: song_time,
+			scrobbler: data.scrobblesource
+		});
+		this.initStates();
+		this.rawdata = data;
+	},
+	showOnMap: function() {
+		var md = this.app.getLastfmUser(this.state('username'));
+		md.setProfileData(this.rawdata);
+		md.showOnMap();
+		//this.app.showLastfmUser(this.state('username'));
+		//this.app.
+	}
+});
+
+var LfmFriendsList = function() {};
+LfmFriendsList.parseUserInfo = function(cur) {
+	var data = {
+		username: cur.name,
+		realname: cur.realname,
+		country: cur.country,
+		age: cur.age,
+		gender: cur.gender,
+		playcount: cur.playcount,
+		playlists: cur.playlists,
+		lfm_image: {
+			array: cur.image
+		},
+		registered: cur.registered.unixtime*1000,
+		scrobblesource: cur.scrobblesource,
+		recenttrack: cur.recenttrack,
+
+		big_desc: null
+	};
+
+	var big_desc = [];
+	var bide_items = [data.realname, data.age, data.gender, data.country];
+	for (var i = 0; i < bide_items.length; i++) {
+		if (bide_items[i]){
+			big_desc.push(bide_items[i]);
+		}
+	}
+	data.big_desc =  big_desc.join(', ');
+
+	return data;
+};
+LoadableList.extendTo(LfmFriendsList, {
+	friendsParser: function(r, field_name) {
+		var result = [];
+		var array = spv.toRealArray(spv.getTargetField(r, field_name));
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			result.push(LfmFriendsList.parseUserInfo(cur));
+			/*
+			result.push({
+				tag_name: array[i].name,
+				count: array[i].count
+			});*/
+		}
+		return result;
+		//console.log(r);
+	},
+	model_name: 'lfm_friends',
+	main_list_name: 'list_items',
+	beforeReportChange: function(list) {
+		list.sort(function(a,b ){return spv.sortByRules(a, b, [
+			{
+				field: 'states.song_time_raw',
+				reverse: true
+			}
+		]);});
+	},
+	init: function(opts, params) {
+		this._super(opts);
+		connectUsername.call(this, params);
+		this.sub_pa_params = {
+			lfm_username: params.lfm_username,
+			for_current_user: params.for_current_user
+		};
+		this.initStates();
+	},
+	getRqData: function() {
+		return {
+			recenttracks: true,
+			user: this.state('username')
+		};
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendLFMDataRequest(paging_opts, request_info, {
+			method: 'user.getFriends',
+			field_name: 'friends.user',
+			data: this.getRqData(),
+			parser: this.friendsParser
+		});
+	},
+	
+	makeDataItem:function(data) {
+		var item = new LfmUserPreview();
+		item.init({
+			map_parent: this,
+			app: this.app
+		}, spv.cloneObj({
+			data: data
+		}, this.sub_pa_params));
+		return item;
+	},
+	page_limit: 200,
+	'compx-has_no_access': no_access_compx
+});
+
 return {
 	LfmUserArtists:LfmUserArtists,
 	LfmUserTracks:LfmUserTracks,
 	LfmUserTags:LfmUserTags,
-	LfmUserAlbums:LfmUserAlbums
+	LfmUserAlbums:LfmUserAlbums,
+	LfmFriendsList: LfmFriendsList
 };
+
 });

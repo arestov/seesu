@@ -123,13 +123,13 @@ provoda.View.extendTo(SongUI, {
 	},
 	tpl_r_events: {
 		'tags': {
-			showTag: function(e, scope){
+			showTag: function(e, node, scope){
 				e.preventDefault();
 				this.RPCLegacy('showTag', scope.tag.name);
 			}
 		},
 		'similars': {
-			showArtcardPage: function(e, scope) {
+			showArtcardPage: function(e, node, scope) {
 				e.preventDefault();
 				this.RPCLegacy('showArtcardPage', scope.artist.name);
 			}

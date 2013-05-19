@@ -159,6 +159,14 @@ AppModelBase.extendTo(AppModel, {
 			return invstg;
 
 		},
+		getLastfmUser: function(username) {
+			return this.start_page.getSPI('users/lfm:' + username, true);
+		},
+		showLastfmUser: function(username) {
+			var md = this.getLastfmUser(username);
+			md.showOnMap();
+			return md;
+		},
 		show_tag: function(tag){
 			var md = this.start_page.getSPI('tags/' + tag, true);
 			md.showOnMap();

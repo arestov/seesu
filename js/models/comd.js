@@ -164,6 +164,12 @@ provoda.Eventor.extendTo(LastFMArtistImagesSelector, {
 	convertEventName: function(event_name) {
 		return event_name.toLowerCase().replace(/^\s+|\s+$/, '');
 	},
+	getImageRewrap: function(obj) {
+		if (!obj.array && !obj.item){
+			return;
+		}
+		return this.getImageWrap(obj.array || obj.item);
+	},
 	getImageWrap: function(array) {
 		if (!array){
 			return;

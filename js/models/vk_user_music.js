@@ -34,9 +34,6 @@ SongsList.extendTo(VkSongList, {
 
 		this.user_id = user_id;
 
-		if (!user_id){
-			this.permanent_md = true;
-		}
 		this.initStates();
 		this.authInit();
 		this.authSwitching(this.app.vk_auth, VkAudioLogin);

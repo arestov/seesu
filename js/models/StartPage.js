@@ -68,11 +68,20 @@ BrowseMap.Model.extendTo(StartPage, {
 
 		},
 		'users': function(name) {
-
 			var full_name = 'users/' + name;
-
+			var instance;
 			if (name == 'me'){
-				var instance = new UserCard();
+				instance = new UserCard();
+				instance.init_opts = [{
+					app: this.app,
+					map_parent: this,
+					nav_opts: {
+						url_part: '/' + full_name
+					}
+				}, {urp_name: name}];
+				return instance;
+			} else if (name.indexOf('lfm:') === 0){
+				instance = new UserCard.LfmUserCard();
 				instance.init_opts = [{
 					app: this.app,
 					map_parent: this,

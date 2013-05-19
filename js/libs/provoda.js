@@ -1725,10 +1725,12 @@ spv.Class.extendTo(Template, {
 			*/
 			var declarations = full_declaration.split(/\s+/gi);
 			for (var i = 0; i < declarations.length; i++) {
-				var cur = declarations[i].split(':');
+				var decr_parts =  declarations[i].split('|');
+				var cur = decr_parts[0].split(':');
+
 				var dom_event = cur.shift();
 
-				this.bindEvents(node, dom_event, cur);
+				this.bindEvents(node, dom_event, cur, decr_parts[1]);
 			}
 		}
 	},
@@ -1816,18 +1818,32 @@ spv.Class.extendTo(Template, {
 			}
 		}
 	},
-	bindEvents: function(node, event_name, data) {
+	bindEvents: function(node, event_name, data, event_opts) {
+		event_opts = event_opts && event_opts.split(',');
+		var event_handling = {};
+		if (event_opts){
+			for (var i = 0; i < event_opts.length; i++) {
+				event_handling[event_opts[i]] = true;
+			}
+		}
 		var _this = this;
 		if (!this.sendCallback){
 			throw new Error('provide the events callback handler to the Template init func');
 		}
 		$(node).on(event_name, function(e) {
-			_this.callEventCallback(e, data);
+			if (event_handling.sp){
+				e.stopPropagation();
+			}
+			if (event_handling.pd){
+				e.preventDefault();
+			}
+			_this.callEventCallback(this, e, data);
 		});
 	},
-	callEventCallback: function(e, data) {
+	callEventCallback: function(node, e, data) {
 		this.sendCallback({
 			event: e,
+			node: node,
 			callback_name: data[0],
 			callback_data: data,
 			pv_repeat_context: this.pv_repeat_context,
@@ -1983,10 +1999,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				if (e.callback_data[1]){
 					_this.RPCLegacy(e.callback_data[1]);
 				} else {
-					_this.tpl_events[e.callback_name].call(_this, e.event);
+					_this.tpl_events[e.callback_name].call(_this, e.event, e.node);
 				}
 			} else {
-				_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.scope);
+				_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.node, e.scope);
 			}
 		};
 		return this;

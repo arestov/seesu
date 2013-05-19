@@ -2,7 +2,7 @@ define(['js/libs/BrowseMap', 'spv'], function(BrowseMap, spv) {
 "use strict";
 var LoadableListBase = function() {};
 BrowseMap.Model.extendTo(LoadableListBase, {
-	init: function(opts, params) {
+	init: function(opts) {
 		this._super(opts);
 		this[this.main_list_name] = [];
 		if (this.sendMoreDataRequest){
@@ -109,26 +109,33 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		//console.profile('data list inject');
 		if (!this.request_info || this.request_info.request == request){
 
-
+			var items_list = [];
 			if (!error && data_list && data_list.length){
 
 				var mlc_opts = this.getMainListChangeOpts();
 				for (var i = 0; i < data_list.length; i++) {
-					this.addItemToDatalist(data_list[i], true);
+					var item = this.addItemToDatalist(data_list[i], true);
+					items_list.push(item);
 				}
-				this.dataListChange(mlc_opts);
+				this.dataListChange(mlc_opts, items_list);
 
 			}
 			if (!error && request && data_list.length < this.page_limit){
 				this.setLoaderFinish();
 			}
 			this.requestComplete(request, error);
+			if (items_list.length){
+				return items_list;
+			}
 		}
 		//console.profileEnd();
 		return this;
 
 	},
-	dataListChange: function(mlc_opts) {
+	dataListChange: function(mlc_opts, items) {
+		if (this.beforeReportChange){
+			this.beforeReportChange(this[this.main_list_name], items);
+		}
 		this.updateNesting(this.main_list_name, this[this.main_list_name], mlc_opts);
 	},
 	compareItemsWithObj: function(array, omo, soft) {
@@ -139,7 +146,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 	},
 	addItemToDatalist: function(obj, silent) {
-		this.addDataItem(obj, silent);
+		return this.addDataItem(obj, silent);
 	},
 	addDataItem: function(obj, skip_changes) {
 		var
@@ -180,6 +187,9 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 
 		this[this.main_list_name] = work_array;
 		if (!skip_changes){
+			if (this.beforeReportChange){
+				this.beforeReportChange(work_array, [item]);
+			}
 			this.updateNesting(this.main_list_name, work_array, ml_ch_opts);
 		}
 		return item;
@@ -203,6 +213,9 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		} else {
 			++this.tumour_data_count;
 			work_array.unshift(item);
+		}
+		if (this.beforeReportChange){
+			this.beforeReportChange(work_array, [item]);
 		}
 
 		this.updateNesting(this.main_list_name, work_array, ml_ch_opts);

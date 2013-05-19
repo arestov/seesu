@@ -29,6 +29,10 @@ BrowseMap.Model.extendTo(UserCard, {
 		'acquaintances':{
 
 		},
+		'lfm:friends': {
+			constr: lfm_user_music.LfmFriendsList,
+			title: "Last.fm friends"
+		},
 		'lfm:artists':{
 			constr: lfm_user_music.LfmUserArtists,
 			title:'Artists'
@@ -48,94 +52,58 @@ BrowseMap.Model.extendTo(UserCard, {
 	},
 	init: function(opts, params) {
 		this._super.apply(this, arguments);
-		this.app = opts.app;
 
-		//this.
-		//new
 		this.urp_name = params.urp_name;
-		this.for_current_user = this.urp_name == 'me' || params.for_current_user;
-		if (this.for_current_user){
-			this.permanent_md = true;
-		}
-		if (this.urp_name.search(/^lfm\:/) != -1){
-			this.lfm_username = this.urp_name.replace(/^lfm\:/,'');
-		}
+		this.for_current_user = true;//this.urp_name == 'me' || params.for_current_user;
 		this.sub_pa_params = {
-			lfm_username: this.lfm_username,
-			for_current_user: this.for_current_user,
-			vk_id: null
+			for_current_user: this.for_current_user
 		};
+		this.init_states['nav_title'] = localize('your-pmus-f-aq');
+		this.initStates();
 
 		var _this = this;
-
-		this.lists_list = ['playlists', 'vk:tracks', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
-		this.initSubPages(this.lists_list);
-
-		//this.updateNesting('lists_list', this.lists_list);
-		//this.updateNesting('preview_list', this.lists_list);
-
-
-		var networks_pages = ['vk:tracks', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
-		for (var i = 0; i < networks_pages.length; i++) {
-			var cur = networks_pages[i];
-			this.updateNesting(cur.replace(':', '__'), this.getSPI(cur));
-		}
-
-		var gena = this.getSPI('playlists', true);
-		
-		this.updateNesting('user-playlists', gena);
-
-		(function(){
-			
-
-			var hasPlaylistCheck = function(items) {
-				_this.updateState('has_playlists', !!items.length);
-			};
-			hasPlaylistCheck(this.app.gena.playlists);
-			
-			this.app.gena.on('playlsits-change', hasPlaylistCheck);
-
-
-		}).call(_this);
-
-		var users_acqutes = new UserAcquaintancesLists();
-		users_acqutes.init({
-			app: this.app,
-			map_parent: this
-		});
-
-		this.updateNesting('users_acqutes', users_acqutes);
-		
-		
-		this.init_states['nav_title'] = this.for_current_user ? localize('your-pmus-f-aq') : '';
-		this.initStates();
-		
 		if (this.for_current_user){
 			this.map_parent.on('state-change.can_expand', function(e) {
 				_this.updateState('can_expand', e.value);
 			});
 		}
-		/*
 
-		аудиозаписи
+		
 
-		рекомендации артистов, альбомов, любимые
+		this.lists_list = ['playlists', 'vk:tracks', 'lfm:friends', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
+		this.initSubPages(this.lists_list);
 
-		последнее
-		библиотека
+		var networks_pages = ['vk:tracks', 'lfm:friends', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
+		for (var i = 0; i < networks_pages.length; i++) {
+			var cur = networks_pages[i];
+			this.updateNesting(cur.replace(':', '__'), this.getSPI(cur));
+		}
 
-		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=&format=json
-		//http://ws.audioscrobbler.com/2.0/?method=user.getnewreleases&user=yodapunk&api_key=&format=json&userecs=1
+		//плейлисты
+		var gena = this.getSPI('playlists', true);
+		this.updateNesting('user-playlists', gena);
+		var hasPlaylistCheck = function(items) {
+			_this.updateState('has_playlists', !!items.length);
+		};
+		hasPlaylistCheck(this.app.gena.playlists);
+		this.app.gena.on('playlsits-change', hasPlaylistCheck);
 
-		*/
-
+		//знакомства
+		var users_acqutes = new UserAcquaintancesLists();
+		users_acqutes.init({
+			app: this.app,
+			map_parent: this
+		});
+		this.updateNesting('users_acqutes', users_acqutes);
+		
+		
 		return this;
 	},
 	'stch-mp_show': function(state) {
 		if (state && state.userwant){
 			var list_to_preload = [
-				this.getNesting('lfm__tags')
-				
+				this.getNesting('lfm__tags'),
+				this.getNesting('lfm__friends')
 
 			];
 			for (var i = 0; i < list_to_preload.length; i++) {
@@ -144,14 +112,117 @@ BrowseMap.Model.extendTo(UserCard, {
 					cur.preloadStart();
 				}
 			}
-
-			
 		}
 	}
 });
 
+var LfmUserCard = function() {};
+BrowseMap.Model.extendTo(LfmUserCard, {
+	model_name: 'lfm_usercard',
+	sub_pa: {
+		'friends': {
+			constr: lfm_user_music.LfmFriendsList,
+			title: "Last.fm friends"
+		},
+		'artists':{
+			constr: lfm_user_music.LfmUserArtists,
+			title:'Artists'
+		},
+		'tracks':{
+			constr: lfm_user_music.LfmUserTracks,
+			title:'Tracks'
+		},
+		'tags':{
+			constr: lfm_user_music.LfmUserTags,
+			title:'Tags'
+		},
+		'albums':{
+			constr: lfm_user_music.LfmUserAlbums,
+			title:'Albums'
+		}
+	},
+	setProfileData: function(data) {
+		if (data.lfm_image){
+			data.lfm_image = this.app.art_images.getImageRewrap(data.lfm_image);
+		}
+		var result = {};
+		for (var state in data){
+			if (!this.state(state)){
+				result[state] = data[state];
+			}
+		}
 
+		this.updateManyStates(result);
+	},
+	init: function(opts, params) {
+		this._super(opts);
+		this.urp_name = params.urp_name;
+		if (this.urp_name.search(/^lfm\:/) != -1){
+			this.lfm_username = this.urp_name.replace(/^lfm\:/,'');
+		}
+		this.sub_pa_params = {
+			lfm_username: this.lfm_username
+		};
+		this.init_states['username'] = this.lfm_username;
+		this.init_states['nav_title'] = 'Last.fm user: ' + this.lfm_username;
+		this.initStates();
+		this.rq_b = {};
+		this.lists_list = ['friends', 'artists', 'tracks', 'tags', 'albums'];
+		this.initSubPages(this.lists_list);
 
+		var networks_pages = ['friends', 'artists', 'tracks', 'tags', 'albums'];
+		for (var i = 0; i < networks_pages.length; i++) {
+			var cur = networks_pages[i];
+			this.updateNesting('lfm__' + cur, this.getSPI(cur));
+		}
+	},
+	loadInfo: function() {
+		if (!this.rq_b.done && !this.rq_b.progress){
+			if (!this.state('registered')){
+				this.rq_b.progress = true;
+				this.updateState('loading_info', true);
+				var _this = this;
+				this.addRequest(this.app.lfm.get('user.getInfo', {'user': this.lfm_username})
+					.done(function(r){
+						if (!r.error){
+							_this.rq_b.done = true;
+							var data = lfm_user_music.LfmFriendsList.parseUserInfo(r.user);
+							if (data.lfm_image){
+								data.lfm_image = _this.app.art_images.getImageRewrap(data.lfm_image);
+							}
+								
+							_this.updateManyStates(data);
+						}
+					})
+					.fail(function(){
+
+					})
+					.always(function() {
+						_this.updateState('loading_info', false);
+						_this.rq_b.progress = false;
+					})
+				);
+			}
+		}
+	},
+	'stch-mp_show': function(state) {
+		if (state && state.userwant){
+			this.loadInfo();
+			var list_to_preload = [
+				this.getNesting('lfm__tags'),
+				this.getNesting('lfm__friends')
+
+			];
+			for (var i = 0; i < list_to_preload.length; i++) {
+				var cur = list_to_preload[i];
+				if (cur){
+					cur.preloadStart();
+				}
+			}
+		}
+	}
+});
+UserCard.LfmUserCard = LfmUserCard;
 
 var SongListener = function() {};
 provoda.Model.extendTo(SongListener, {

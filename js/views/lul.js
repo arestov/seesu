@@ -1,5 +1,6 @@
-define(['provoda', './coct'], function(provoda, coct) {
+define(['provoda', './coct', 'app_serv', 'jquery'], function(provoda, coct, app_serv, $) {
 "use strict";
+var app_env = app_serv.app_env;
 var LULAPageVIew = function() {};
 provoda.View.extendTo(LULAPageVIew, {
 	createBase: function() {
@@ -40,10 +41,34 @@ provoda.View.extendTo(UserTagsPageView, {
 	}
 });
 
+var LfmFriendPreview = function() {};
+provoda.View.extendTo(LfmFriendPreview, {
+	tpl_events: {
+		open_link: function(e, node) {
+			e.preventDefault();
+			e.stopPropagation();
+			app_env.openURL($(node).attr('href'));
+			seesu.trackEvent('Links', 'just link');
+		}
+	}
+});
+
+var LfmFriendsPageView = function() {};
+provoda.View.extendTo(LfmFriendsPageView, {
+	createBase: function() {
+		this.c = this.root_view.getSample('lfm_friends_page');
+		this.createTemplate();
+	},
+	children_views: {
+		list_items: LfmFriendPreview
+	}
+});
+
 return {
 	LULAPageVIew: LULAPageVIew,
 	LULAsPageVIew: LULAsPageVIew,
 	UserTagsPageView: UserTagsPageView,
-	UserTagPageView: UserTagPageView
+	UserTagPageView: UserTagPageView,
+	LfmFriendsPageView: LfmFriendsPageView
 };
 });
