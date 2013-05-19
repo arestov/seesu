@@ -891,9 +891,9 @@ LoadableList.extendTo(LfmFriendsList, {
 			{
 				field: function(item) {
 					switch (item.states.gender) {
-						case 'f':
+						case 'f'://female
 							return 1;
-						case 'm':
+						case 'm'://male
 							return 2;
 						default:
 							return 3;
