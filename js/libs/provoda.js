@@ -2182,6 +2182,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.appendCon();
 	},
 	appendCon: function(){
+		if (this.skip_anchor_appending){
+			return;
+		}
 		var con = this.getC();
 		var anchor = this._anchor;
 		if (con && anchor && anchor.parentNode){
@@ -2920,7 +2923,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		for (i = 0; i < append_list.length; i++) {
 			var append_data = append_list[i];
 			cur = append_data.md;
-			
+
 			view = this.getChildView(cur.mpx, space);
 			if (!view){
 				view = funcs.getFreeView.call(this, cur);
@@ -2928,6 +2931,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				//
 
 			}
+			append_data.view = view;
+			view.skip_anchor_appending = true;
 			$(append_data.complect.fragt).append(view.getT());
 			//append_data.complect.fragt.appendChild(view.getT()[0]);
 			//$(.fragt).append();
@@ -2964,6 +2969,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			setTimeout(function() {
 				_this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request, ordered_rend_list);
 			},100);//fixme can be bug
+		}
+		for (i = 0; i < append_list.length; i++) {
+			cur = append_list[i].view;
+			delete cur.skip_anchor_appending;
+			cur.appendCon();
 		}
 		return complects;
 		//1 открепить неправильно прикреплённых
