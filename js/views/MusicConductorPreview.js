@@ -3,6 +3,7 @@ define(['provoda', 'jquery', 'js/lastfm_data', 'app_serv'], function(provoda, $,
 var localize = app_serv.localize;
 var MusicConductorPreview = function() {};
 provoda.View.extendTo(MusicConductorPreview, {
+	dom_rp: true,
 	createBase: function() {
 		this.c = this.root_view.els.start_screen.find('.music-conductor-preview');
 		var _this = this;
@@ -12,8 +13,12 @@ provoda.View.extendTo(MusicConductorPreview, {
 			_this.RPCLegacy('showOnMap');
 		});
 		this.addWayPoint(this.button);
+		this.dom_related_props.push('button');
 
 		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
+	},
+	'stch-mp_show': function(state) {
+		this.button.toggleClass('button_selected', !!state);
 	},
 	'stch-can_expand': function(state){
 		if (state){

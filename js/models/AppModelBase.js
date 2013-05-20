@@ -67,7 +67,9 @@ provoda.Model.extendTo(AppModelBase, {
 			change.target.getMD().updateState('mp_show', false);
 		},
 		'destroy': function(change) {
-			change.target.getMD().mlmDie();
+			var md = change.target.getMD();
+			md.mlmDie();
+			md.updateState('mp_show', false);
 		}
 	},
 	animationMark: function(models, mark) {

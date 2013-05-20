@@ -230,11 +230,13 @@
 	margin-bottom: 1rem;
 	border: 1px dashed #616161;
 	}
+
 	.area_for_button .area-button{
 		margin-bottom: 0;
 		border-color: transparent;
 		padding-bottom: 0rem;
 		}
+	
 	.page-scheme .area_for_button .area-button{
 		padding-bottom: 0.5rem;
 		}
@@ -308,8 +310,14 @@
 
 	
 	color: hsl(0, 0%, 70%);
-	cursor: pointer;
+	
 	}
+	.no_arfb .area-button{
+		cursor: pointer;
+	}
+	.button_selected .area-button{
+		cursor: default;
+		}
 	.area_for_button:hover,
 	.no_arfb .area-button:hover{
 		background: #4f4f4f;
@@ -345,7 +353,13 @@
 	.page-scheme .area-button .area-description{
 		display: none;
 		}
-
+.button_selected{
+	background-color: #444;
+	border: 1px solid transparent;
+	border-top: 1px solid #404040;
+	border-bottom: 1px solid #555;
+	cursor: default;
+	}
 
 .button-hole{
 	display:inline-block;
