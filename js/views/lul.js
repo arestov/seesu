@@ -53,10 +53,10 @@ provoda.View.extendTo(LfmFriendPreview, {
 	}
 });
 
-var LfmFriendsPageView = function() {};
-provoda.View.extendTo(LfmFriendsPageView, {
+var LfmUsersPageView = function() {};
+provoda.View.extendTo(LfmUsersPageView, {
 	createBase: function() {
-		this.c = this.root_view.getSample('lfm_friends_page');
+		this.c = this.root_view.getSample('lfm_users_page');
 		this.createTemplate();
 	},
 	children_views: {
@@ -69,6 +69,6 @@ return {
 	LULAsPageVIew: LULAsPageVIew,
 	UserTagsPageView: UserTagsPageView,
 	UserTagPageView: UserTagPageView,
-	LfmFriendsPageView: LfmFriendsPageView
+	LfmUsersPageView: LfmUsersPageView
 };
 });

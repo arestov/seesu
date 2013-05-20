@@ -839,6 +839,10 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 
 var LfmFriendsList = function() {};
 LfmFriendsList.parseUserInfo = function(cur) {
+	var registered = spv.getTargetField(cur, 'registered.unixtime');
+	if (registered){
+		registered = registered * 1000;
+	}
 	var data = {
 		username: cur.name,
 		realname: cur.realname,
@@ -850,10 +854,10 @@ LfmFriendsList.parseUserInfo = function(cur) {
 		lfm_image: {
 			array: cur.image
 		},
-		registered: cur.registered.unixtime*1000,
+		registered: registered,
 		scrobblesource: cur.scrobblesource,
 		recenttrack: cur.recenttrack,
-
+		
 		big_desc: null
 	};
 
@@ -868,7 +872,9 @@ LfmFriendsList.parseUserInfo = function(cur) {
 
 	return data;
 };
-LoadableList.extendTo(LfmFriendsList, {
+
+var LfmUsersList = function() {};
+LoadableList.extendTo(LfmUsersList, {
 	friendsParser: function(r, field_name) {
 		var result = [];
 		var array = spv.toRealArray(spv.getTargetField(r, field_name));
@@ -884,8 +890,33 @@ LoadableList.extendTo(LfmFriendsList, {
 		return result;
 		//console.log(r);
 	},
-	model_name: 'lfm_friends',
+	init: function(opts, params) {
+		this._super(opts);
+		connectUsername.call(this, params);
+		this.sub_pa_params = {
+			lfm_username: params.lfm_username,
+			for_current_user: params.for_current_user
+		};
+		this.initStates();
+	},
+	makeDataItem:function(data) {
+		var item = new this.itemConstr();
+		item.init({
+			map_parent: this,
+			app: this.app
+		}, spv.cloneObj({
+			data: data
+		}, this.sub_pa_params));
+		return item;
+	},
 	main_list_name: 'list_items',
+	model_name: 'lfm_users',
+	page_limit: 200,
+	'compx-has_no_access': no_access_compx
+});
+
+
+LfmUsersList.extendTo(LfmFriendsList, {
 	beforeReportChange: function(list) {
 		list.sort(function(a,b ){return spv.sortByRules(a, b, [
 			{
@@ -906,15 +937,7 @@ LoadableList.extendTo(LfmFriendsList, {
 			}
 		]);});
 	},
-	init: function(opts, params) {
-		this._super(opts);
-		connectUsername.call(this, params);
-		this.sub_pa_params = {
-			lfm_username: params.lfm_username,
-			for_current_user: params.for_current_user
-		};
-		this.initStates();
-	},
+	
 	getRqData: function() {
 		return {
 			recenttracks: true,
@@ -929,19 +952,24 @@ LoadableList.extendTo(LfmFriendsList, {
 			parser: this.friendsParser
 		});
 	},
-	
-	makeDataItem:function(data) {
-		var item = new LfmUserPreview();
-		item.init({
-			map_parent: this,
-			app: this.app
-		}, spv.cloneObj({
-			data: data
-		}, this.sub_pa_params));
-		return item;
+	itemConstr: LfmUserPreview
+});
+var LfmNeighboursList = function() {};
+LfmUsersList.extendTo(LfmNeighboursList, {
+	itemConstr: LfmUserPreview,
+	getRqData: function() {
+		return {
+			user: this.state('username')
+		};
 	},
-	page_limit: 200,
-	'compx-has_no_access': no_access_compx
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		return this.sendLFMDataRequest(paging_opts, request_info, {
+			method: 'user.getNeighbours',
+			field_name: 'neighbours.user',
+			data: this.getRqData(),
+			parser: this.friendsParser
+		});
+	}
 });
 
 return {
@@ -949,7 +977,8 @@ return {
 	LfmUserTracks:LfmUserTracks,
 	LfmUserTags:LfmUserTags,
 	LfmUserAlbums:LfmUserAlbums,
-	LfmFriendsList: LfmFriendsList
+	LfmFriendsList: LfmFriendsList,
+	LfmNeighboursList: LfmNeighboursList
 };
 
 });

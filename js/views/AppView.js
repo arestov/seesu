@@ -209,8 +209,8 @@ provoda.View.extendTo(appView, {
 			main: YoutubeVideoView,
 			nav: nav.baseNavUI
 		},
-		lfm_friends:{
-			main: lul.LfmFriendsPageView,
+		lfm_users:{
+			main: lul.LfmUsersPageView,
 			nav: nav.baseNavUI
 		},
 		lfm_listened_artists: {
@@ -641,8 +641,8 @@ provoda.View.extendTo(appView, {
 		'lastfm_pthgs': function(){
 			return this.els.ui_samples.children('.lastfm_pthgs');
 		},
-		'lfm_friends_page': function() {
-			return this.els.ui_samples.children('.lfm_friends_page');
+		'lfm_users_page': function() {
+			return this.els.ui_samples.children('.lfm_users_page');
 		},
 		'user_tag_page': function() {
 			return this.els.ui_samples.children('.user_tag_page');

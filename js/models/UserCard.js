@@ -33,6 +33,10 @@ BrowseMap.Model.extendTo(UserCard, {
 			constr: lfm_user_music.LfmFriendsList,
 			title: "Last.fm friends"
 		},
+		'lfm:neighbours':{
+			constr: lfm_user_music.LfmNeighboursList,
+			title: 'Neighbours'
+		},
 		'lfm:artists':{
 			constr: lfm_user_music.LfmUserArtists,
 			title:'Artists'
@@ -70,10 +74,10 @@ BrowseMap.Model.extendTo(UserCard, {
 
 		
 
-		this.lists_list = ['playlists', 'vk:tracks', 'lfm:friends', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
+		this.lists_list = ['playlists', 'vk:tracks', 'lfm:friends', 'lfm:neighbours','lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
 		this.initSubPages(this.lists_list);
 
-		var networks_pages = ['vk:tracks', 'lfm:friends', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
+		var networks_pages = ['vk:tracks', 'lfm:friends', 'lfm:neighbours', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
 		for (var i = 0; i < networks_pages.length; i++) {
 			var cur = networks_pages[i];
 			this.updateNesting(cur.replace(':', '__'), this.getSPI(cur));
@@ -103,7 +107,8 @@ BrowseMap.Model.extendTo(UserCard, {
 		if (state && state.userwant){
 			var list_to_preload = [
 				this.getNesting('lfm__tags'),
-				this.getNesting('lfm__friends')
+				this.getNesting('lfm__friends'),
+				this.getNesting('lfm__neighbours')
 
 			];
 			for (var i = 0; i < list_to_preload.length; i++) {
@@ -122,7 +127,11 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 	sub_pa: {
 		'friends': {
 			constr: lfm_user_music.LfmFriendsList,
-			title: "Last.fm friends"
+			title: "Friends"
+		},
+		'neighbours':{
+			constr: lfm_user_music.LfmNeighboursList,
+			title: 'Neighbours'
 		},
 		'artists':{
 			constr: lfm_user_music.LfmUserArtists,
@@ -167,10 +176,10 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 		this.init_states['nav_title'] = 'Last.fm user: ' + this.lfm_username;
 		this.initStates();
 		this.rq_b = {};
-		this.lists_list = ['friends', 'artists', 'tracks', 'tags', 'albums'];
+		this.lists_list = ['friends', 'neighbours', 'artists', 'tracks', 'tags', 'albums'];
 		this.initSubPages(this.lists_list);
 
-		var networks_pages = ['friends', 'artists', 'tracks', 'tags', 'albums'];
+		var networks_pages = ['friends', 'neighbours', 'artists', 'tracks', 'tags', 'albums'];
 		for (var i = 0; i < networks_pages.length; i++) {
 			var cur = networks_pages[i];
 			this.updateNesting('lfm__' + cur, this.getSPI(cur));
@@ -210,7 +219,8 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 			this.loadInfo();
 			var list_to_preload = [
 				this.getNesting('lfm__tags'),
-				this.getNesting('lfm__friends')
+				this.getNesting('lfm__friends'),
+				this.getNesting('lfm__neighbours')
 
 			];
 			for (var i = 0; i < list_to_preload.length; i++) {

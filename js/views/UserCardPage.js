@@ -78,6 +78,7 @@ coct.PageView.extendTo(UserCardPage, {
 		users_acqutes: uacq.UserAcquaintancesListPreview,
 		vk__tracks: coct.ListSimplePreview,
 		lfm__friends: coct.ImagedListPreview,
+		lfm__neighbours: coct.ImagedListPreview,
 		lfm__artists: coct.ListSimplePreview,
 		lfm__tracks: coct.ListSimplePreview,
 		lfm__tags: coct.ListSimplePreview,
@@ -98,6 +99,7 @@ provoda.View.extendTo(LfmUsercardPageView, {
 	},
 	children_views: {
 		lfm__friends: coct.ImagedListPreview,
+		lfm__neighbours: coct.ImagedListPreview,
 		lfm__artists: coct.ListSimplePreview,
 		lfm__tracks: coct.ListSimplePreview,
 		lfm__tags: coct.ListSimplePreview,
