@@ -1946,22 +1946,26 @@ provoda.View.extendTo(appView, {
 		return youtube_video;
 	},
 	bindLfmTextClicks: function(con) {
+		con.on('click', 'a', function(e) {
+			var node = $(this);
+			var link = node.attr('href');
+			if (node.is('.bbcode_artist')){
+				e.preventDefault();
 
-		con.on('click', '.bbcode_artist', function(e) {
-			e.preventDefault();
+				var artist_name = decodeURIComponent(link.replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
+				su.showArtcardPage(artist_name);
+				seesu.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
+			} else if (node.is('.bbcode_tag')){
+				e.preventDefault();
 
-			var artist_name = decodeURIComponent($(this).attr('href').replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
-			su.showArtcardPage(artist_name);
-			seesu.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
-
-		});
-
-		con.on('click', '.bbcode_tag', function(e) {
-			e.preventDefault();
-
-			var tag_name = decodeURIComponent($(this).attr('href').replace('http://www.last.fm/tag/','').replace(/\+/g, ' '));
-			su.show_tag(tag_name);
-			seesu.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
+				var tag_name = decodeURIComponent(link.replace('http://www.last.fm/tag/','').replace(/\+/g, ' '));
+				su.show_tag(tag_name);
+				seesu.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
+			} else {
+				e.preventDefault();
+				app_env.openURL(link);
+				seesu.trackEvent('Links', 'just link');
+			}
 		});
 
 	},
