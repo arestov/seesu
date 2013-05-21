@@ -8,7 +8,7 @@ provoda.View.extendTo(LULAPageVIew, {
 		this.createTemplate();
 	},
 	children_views: {
-		all_time: coct.ListPreview
+		all_time: coct.ImagedListPreview
 	}
 
 });
@@ -20,18 +20,7 @@ provoda.View.extendTo(LULAsPageVIew, {
 		this.createTemplate();
 	}
 });
-var UserTagPageView = function() {};
-provoda.View.extendTo(UserTagPageView, {
-	createBase: function() {
-		this.c = this.root_view.getSample('user_tag_page');
-		this.createTemplate();
-	},
-	children_views: {
-		tracks: coct.ListPreview,
-		artists: coct.ListPreview,
-		albums: coct.ListPreview
-	}
-});
+
 
 var UserTagsPageView = function() {};
 provoda.View.extendTo(UserTagsPageView, {
@@ -68,7 +57,6 @@ return {
 	LULAPageVIew: LULAPageVIew,
 	LULAsPageVIew: LULAsPageVIew,
 	UserTagsPageView: UserTagsPageView,
-	UserTagPageView: UserTagPageView,
 	LfmUsersPageView: LfmUsersPageView
 };
 });

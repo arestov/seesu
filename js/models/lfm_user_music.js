@@ -110,6 +110,7 @@ BrowseMap.Model.extendTo(LULA, {
 
 		var all_time = this.getSPI('all_time', true);
 		this.updateNesting('all_time', all_time);
+		this.bindChildrenPreload([all_time]);
 	},
 	'compx-has_no_access': no_access_compx,
 	'compx-selected_image': {

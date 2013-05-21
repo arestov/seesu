@@ -24,7 +24,8 @@ provoda.View.extendTo(ListPreview, {
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
 	},
 	'stch-mp_show': function(state) {
-		this.c.toggleClass('button_selected', !!state);
+		var node = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
+		node.toggleClass('button_selected', !!state);
 	},
 	createBase: function() {
 		this.c = this.root_view.getSample('area_for_button');
