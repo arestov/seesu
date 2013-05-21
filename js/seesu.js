@@ -3,17 +3,15 @@ define('su',
 ['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
 'js/libs/ScApi' ,'js/libs/ExfmApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk',
-'js/modules/PlayerSeesu', 'js/models/invstg'],
+'js/modules/PlayerSeesu', 'js/models/invstg', 'cache_ajax'],
 function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
 ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
-PlayerSeesu, invstg) {
+PlayerSeesu, invstg, cache_ajax) {
 'use strict';
-var localize = app_serv.localize;
-
 var
-	app_env = app_serv.app_env,
-	cache_ajax;
+	localize = app_serv.localize,
+	app_env = app_serv.app_env;
 
 
 
