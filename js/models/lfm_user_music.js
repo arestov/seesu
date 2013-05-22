@@ -309,7 +309,7 @@ ArtCard.ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 			field_name: 'recommendations.artist',
 			data: this.getRqData(),
 			parser: this.getLastfmArtistsList
-		}, {nocache: true});
+		});
 	},
 	loadMoreByRSS: function() {
 		var _this = this;

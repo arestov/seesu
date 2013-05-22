@@ -17,7 +17,6 @@ comd.VkLoginB.extendTo(VkAudioLogin, {
 			_this.pmd.loadStart();
 			_this.pmd.showOnMap();
 		});
-		
 	}
 });
 
@@ -43,7 +42,6 @@ SongsList.extendTo(VkSongList, {
 var VkRecommendedTracks = function() {};
 VkSongList.extendTo(VkRecommendedTracks, {
 	sendMoreDataRequest: function(paging_opts) {
-		
 		var request_info = {};
 		var _this = this;
 
@@ -51,14 +49,13 @@ VkSongList.extendTo(VkRecommendedTracks, {
 			sk: this.app.lfm.sk,
 			count: paging_opts.page_limit,
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		}, {nocache: true})
+		})
 			.done(function(r){
 				if (!r || r.error){
 					_this.requestComplete(request_info.request, true);
 					return;
 				}
 				var vk_search = _this.app.mp3_search.getSearchByName('vk');
-			
 				var track_list = [];
 
 				for (var i = 0; i < r.response.length; i++) {
@@ -72,7 +69,6 @@ VkSongList.extendTo(VkRecommendedTracks, {
 
 				_this.putRequestedData(request_info.request, track_list, r.error);
 
-				
 			})
 			.fail(function(){
 				_this.requestComplete(request_info.request, true);
@@ -86,7 +82,6 @@ VkSongList.extendTo(VkRecommendedTracks, {
 var MyVkAudioList = function() {};
 VkSongList.extendTo(MyVkAudioList, {
 	sendMoreDataRequest: function(paging_opts) {
-		
 		var request_info = {};
 		var _this = this;
 
@@ -94,14 +89,13 @@ VkSongList.extendTo(MyVkAudioList, {
 			sk: this.app.lfm.sk,
 			count: paging_opts.page_limit,
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
-		}, {nocache: true})
+		})
 			.done(function(r){
 				if (!r || r.error){
 					_this.requestComplete(request_info.request, true);
 					return;
 				}
 				var vk_search = _this.app.mp3_search.getSearchByName('vk');
-			
 				var track_list = [];
 
 				for (var i = 0; i < r.response.length; i++) {
@@ -112,10 +106,7 @@ VkSongList.extendTo(MyVkAudioList, {
 						file: vk_search.makeSongFile(cur)
 					});
 				}
-
 				_this.putRequestedData(request_info.request, track_list, r.error);
-
-				
 			})
 			.fail(function(){
 				_this.requestComplete(request_info.request, true);
