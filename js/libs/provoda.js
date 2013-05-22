@@ -733,7 +733,7 @@ spv.Class.extendTo(provoda.Eventor, {
 			if (rqd.before){
 				rqd.before.call(this);
 			}
-			var request = rqd.send.call(this);
+			var request = rqd.send.call(this, {has_error: rqd.error});
 			request
 				.always(function() {
 					rqd.process = false;

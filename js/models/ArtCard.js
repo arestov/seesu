@@ -985,9 +985,9 @@ BrowseMap.Model.extendTo(ArtCard, {
 				this.updateState('loading_baseinfo', false);
 				this.tags_list.updateState('preview_loading', false);
 			},
-			send: function() {
+			send: function(opts) {
 				var _this = this;
-				return this.app.lfm.get('artist.getInfo', {'artist': this.artist})
+				return this.app.lfm.get('artist.getInfo', {'artist': this.artist}, {nocache: opts.has_error})
 					.done(function(r){
 						_this.updateState('profile-image',
 							_this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image')));
