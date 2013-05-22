@@ -720,6 +720,47 @@ spv.Class.extendTo(provoda.Eventor, {
 			queued[i].setPrio(type);
 		}
 		return this;
+	},
+	loaDDD: function(name) {
+		//завершено?
+		//есть ошибки?
+		//в процессе?
+
+		var _this = this;
+		var rqd = this.requests_desc[name];
+		if (!rqd.process && (!rqd.done || rqd.error)){
+			rqd.process = true;
+			if (rqd.before){
+				rqd.before.call(this);
+			}
+			var request = rqd.send.call(this);
+			request
+				.always(function() {
+					rqd.process = false;
+					if (rqd.after){
+						rqd.after.call(_this);
+					}
+				})
+				.done(function(r) {
+					var has_error;
+					for (var i = 0; i < rqd.errors.length; i++) {
+						var cur = rqd.errors[i];
+						has_error = spv.getTargetField(r, cur);
+						if (has_error){
+							break;
+						}
+					}
+					if (has_error){
+						rqd.error = true;
+					} else {
+						rqd.error = null;
+						rqd.done = true;
+					}
+
+				});
+			this.addRequest(request, rqd.rq_opts);
+			return request;
+		}
 	}
 });
 

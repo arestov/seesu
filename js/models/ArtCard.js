@@ -971,57 +971,58 @@ BrowseMap.Model.extendTo(ArtCard, {
 
 
 		this.preloadChildren();
-		
 		this.loadBaseInfo();
-		
 		this.setPrio('highest');
-		
+
 	},
-	loadBaseInfo: function(){
-		var _this = this;
+	requests_desc: {
+		base_info: {
+			before: function() {
+				this.updateState('loading_baseinfo', true);
+				this.tags_list.updateState('preview_loading', true);
+			},
+			after: function() {
+				this.updateState('loading_baseinfo', false);
+				this.tags_list.updateState('preview_loading', false);
+			},
+			send: function() {
+				var _this = this;
+				return this.app.lfm.get('artist.getInfo', {'artist': this.artist})
+					.done(function(r){
+						_this.updateState('profile-image',
+							_this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image')));
+						var psai = app_serv.parseArtistInfo(r);
+						_this.tags_list.setPreview(spv.filter(psai.tags, 'name'));
 
-		this.updateState('loading_baseinfo', true);
-		_this.tags_list.updateState('preview_loading', true);
-		this.addRequest(this.app.lfm.get('artist.getInfo', {'artist': this.artist})
-			.done(function(r){
-				_this.updateState('loading_baseinfo', false);
-				_this.updateState('profile-image', _this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image')));
+						if (psai.bio){
+							_this.updateState('bio', psai.bio);
+						}
 
-				var psai = app_serv.parseArtistInfo(r);
+						if (psai.similars){
+							var data_list = [];
+							for (var i = 0; i < psai.similars.length; i++) {
+								var cur = psai.similars[i];
+								data_list.push({
+									artist: cur.name,
+									lfm_image: {
+										array: cur.image
+									}
+								});
 
-
-
-				_this.tags_list.updateState('preview_loading', false);
-				_this.tags_list.setPreview(spv.filter(psai.tags, 'name'));
-	
-				if (psai.bio){
-					_this.updateState('bio', psai.bio);
-				}
-
-				
-				if (psai.similars){
-					var data_list = [];
-					for (var i = 0; i < psai.similars.length; i++) {
-						var cur = psai.similars[i];
-						data_list.push({
-							artist: cur.name,
-							lfm_image: {
-								array: cur.image
 							}
-						});
-						
-					}
-					_this.similar_artists.setPreviewList(data_list);
-				}
-				
-			})
-			.fail(function(){
-				_this.updateState('loading_baseinfo', false);
-			}), {
+							_this.similar_artists.setPreviewList(data_list);
+						}
+					});
+			},
+			//done: ['states.bio'],
+			errors: ['error'],
+			rq_opts: {
 				order: 2
 			}
-		);
-	
+		}
+	},
+	loadBaseInfo: function(){
+		this.loaDDD('base_info');
 	},
 	getTopTracks: function() {
 		if (this.top_songs){

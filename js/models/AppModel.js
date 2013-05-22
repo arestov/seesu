@@ -108,9 +108,8 @@ AppModelBase.extendTo(AppModel, {
 
 	},
 	bmap_travel: {
-		
 		showArtcardPage: function(artist){
-			var md = this.start_page.getSPI('catalog/' + artist, true);
+			var md = this.getArtcard(artist);
 			md.showOnMap();
 			/*
 			var md = new ArtCard();
@@ -159,9 +158,6 @@ AppModelBase.extendTo(AppModel, {
 			return invstg;
 
 		},
-		getLastfmUser: function(username) {
-			return this.start_page.getSPI('users/lfm:' + username, true);
-		},
 		showLastfmUser: function(username) {
 			var md = this.getLastfmUser(username);
 			md.showOnMap();
@@ -184,6 +180,12 @@ AppModelBase.extendTo(AppModel, {
 			var artcard = this.showArtcardPage(artist, this.start_page);
 			return artcard.showSimilarArtists();
 		}
+	},
+	getLastfmUser: function(username) {
+		return this.start_page.getSPI('users/lfm:' + username, true);
+	},
+	getArtcard: function(artist_name) {
+		return this.start_page.getSPI('catalog/' + artist_name, true);
 	},
 	search: function(query){
 		var old_v = this.state('search_query');
