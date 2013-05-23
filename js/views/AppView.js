@@ -479,7 +479,7 @@ provoda.View.extendTo(appView, {
 			}
 
 		}
-		console.log(all_changhes);
+		//console.log(all_changhes);
 		/*
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];

@@ -85,7 +85,7 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 		}
 	},
 	'compx-selected_image': {
-		depends_on: ['lfm_image', 'profile-image', 'image_url'],
+		depends_on: ['lfm_image', 'profile_image', 'image_url'],
 		fn: function(lfmi_wrap, pi_wrap, image_url) {
 			return pi_wrap || lfmi_wrap || image_url;
 		}
@@ -355,7 +355,7 @@ SongsList.extendTo(ArtistAlbumSongs, {
 		}
 	},
 	'compx-selected_image': {
-		depends_on: ['lfm_image', 'profile-image'],
+		depends_on: ['lfm_image', 'profile_image'],
 		fn: function(lfmi_wrap, pi_wrap) {
 			return pi_wrap || lfmi_wrap;
 		}
@@ -702,7 +702,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 	},
 	complex_states: {
 		'selected_image': {
-			depends_on: ['lfm_image', 'profile-image'],
+			depends_on: ['lfm_image', 'profile_image'],
 			fn: function(lfmi_wrap, pi_wrap) {
 				return pi_wrap || lfmi_wrap;
 			}
@@ -989,7 +989,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 				var _this = this;
 				return this.app.lfm.get('artist.getInfo', {'artist': this.artist}, {nocache: opts.has_error})
 					.done(function(r){
-						_this.updateState('profile-image',
+						_this.updateState('profile_image',
 							_this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image')));
 						var psai = app_serv.parseArtistInfo(r);
 						_this.tags_list.setPreview(spv.filter(psai.tags, 'name'));
