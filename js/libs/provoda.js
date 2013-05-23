@@ -429,8 +429,10 @@ spv.Class.extendTo(BindControl, {
 var ev_na_cache = {};
 var callbacks_flow = [];
 var callbacks_busy;
+var iteration_delayed;
 var iterateCallbacksFlow = function() {
 	var start = new Date();
+	iteration_delayed = false;
 	callbacks_busy = true;
 	while (callbacks_flow.length){
 		if (start - new Date() > 100){
@@ -445,8 +447,9 @@ var iterateCallbacksFlow = function() {
 	}
 };
 var checkCallbacksFlow = function() {
-	if (!callbacks_busy){
+	if (!iteration_delayed && !callbacks_busy){
 		setTimeout(iterateCallbacksFlow,4);
+		iteration_delayed = true;
 	}
 };
 
