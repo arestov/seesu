@@ -434,7 +434,7 @@ var iterateCallbacksFlow = function() {
 	callbacks_busy = true;
 	while (callbacks_flow.length){
 		if (start - new Date() > 100){
-			setTimeout(iterateCallbacksFlow,0);
+			setTimeout(iterateCallbacksFlow,4);
 			break;
 		}
 		var cur = callbacks_flow.shift();
@@ -446,7 +446,7 @@ var iterateCallbacksFlow = function() {
 };
 var checkCallbacksFlow = function() {
 	if (!callbacks_busy){
-		setTimeout(iterateCallbacksFlow,0);
+		setTimeout(iterateCallbacksFlow,4);
 	}
 };
 
