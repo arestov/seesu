@@ -427,6 +427,28 @@ spv.Class.extendTo(BindControl, {
 });
 
 var ev_na_cache = {};
+var callbacks_flow = [];
+var callbacks_busy;
+var iterateCallbacksFlow = function() {
+	var start = new Date();
+	callbacks_busy = true;
+	while (callbacks_flow.length){
+		if (start - new Date() > 100){
+			setTimeout(iterateCallbacksFlow,0);
+			break;
+		}
+		var cur = callbacks_flow.shift();
+		cur.fn.apply(cur.context, cur.args);
+	}
+	if (!callbacks_flow.length){
+		callbacks_busy = false;
+	}
+};
+var checkCallbacksFlow = function() {
+	if (!callbacks_busy){
+		setTimeout(iterateCallbacksFlow,0);
+	}
+};
 
 spv.Class.extendTo(provoda.Eventor, {
 	init: function(){
@@ -480,9 +502,12 @@ spv.Class.extendTo(provoda.Eventor, {
 					fired = true;
 					var args = arguments;
 					if (opts && opts.soft_reg){
-						setTimeout(function() {
-							cb.apply(_this, args);
-						}, 0);
+						callbacks_flow.push({
+							fn: cb,
+							context: _this,
+							args: args
+						});
+						checkCallbacksFlow();
 					} else {
 						cb.apply(_this, args);
 					}
@@ -603,14 +628,21 @@ spv.Class.extendTo(provoda.Eventor, {
 		return this;
 	},
 	callEventCallback: function(cur, args) {
-		var _this = this;
+	//	var _this = this;
 		var opts = args && args[0];
 		if (cur.immediately && (!opts || !opts.force_async)){
-			cur.cb.apply(_this, args);
+			cur.cb.apply(this, args);
 		} else {
+			callbacks_flow.push({
+				context: this,
+				args: args,
+				fn: cur.cb
+			});
+			checkCallbacksFlow();
+			/*
 			setTimeout(function() {
 				cur.cb.apply(_this, args);
-			},1);
+			},1);*/
 		}
 	},
 	trigger: function(){
@@ -623,25 +655,13 @@ spv.Class.extendTo(provoda.Eventor, {
 		var cb_cs = this.getMatchedCallbacks(name).matched;
 
 		if (cb_cs){
-			var collect = [];
-			var _this = this;
 			for (var i = 0; i < cb_cs.length; i++) {
 				var cur = cb_cs[i];
-				if (cur.immediately){
-					this.callEventCallback(cur, args);
-				} else {
-					collect.push(cur);
-				}
-
+				this.callEventCallback(cur, args);
 				if (cur.once){
 					this.off(name, false, cur);
 				}
 			}
-			setTimeout(function() {
-				for (var i = 0; i < collect.length; i++) {
-					_this.callEventCallback(collect[i], args);
-				}
-			},1);
 		}
 		return this;
 	},
