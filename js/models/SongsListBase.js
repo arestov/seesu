@@ -49,18 +49,14 @@ define(['provoda', 'spv'], function(provoda, spv){
 				}
 			});
 			this.watchChildrenStates(this.main_list_name, 'can-use-as-neighbour', function(e) {
-				setTimeout(function() {
-					_this.checkNeighboursStatesCh(e.item);
-				}, 1000/60);
+				_this.checkNeighboursStatesCh(e.item);
 				
 			});
 			this.watchChildrenStates(this.main_list_name, 'is_important', function(e) {
-				setTimeout(function() {
-					if (e.item.isImportant()){
-						_this.checkNeighboursChanges(e.item);
-					}
-					_this.checkRequestsPriority();
-				}, 1000/60);
+				if (e.item.isImportant()){
+					_this.checkNeighboursChanges(e.item);
+				}
+				_this.checkRequestsPriority();
 				
 			});
 			
