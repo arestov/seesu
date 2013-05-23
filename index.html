@@ -122,7 +122,23 @@
 			</div>
 		</div>
 
-
+		<span class="desc_item preview_line">
+			<span class="preview_line-wrap">
+				<span 
+					class="desc_item-imgcon hidden" 
+					pv-class="desc_item-imgcon {{!vis_img_allowed && 'hidden'}}">
+					<img src="" alt=""
+						pv-class="{{!selected_image && 'hidden'}}" 
+						pv-props=
+						"src: {{
+						(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) 
+						|| selected_image.url
+						}}">
+				</span>
+				<span class="desc_item-text" pv-text="{{selected_title}}"></span>
+			</span>
+			
+		</span>
 
 
 		<div

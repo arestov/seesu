@@ -36,22 +36,15 @@ provoda.View.extendTo(ListPreview, {
 var ListPreviewLine = function() {};
 provoda.View.extendTo(ListPreviewLine, {
 	createBase: function() {
-		this.c = $('<span class="desc_item"></span>');
-		if (this.extended_viewing){
-			this.image_c = $('<span class="desc_item-imgcon"></span>').appendTo(this.c);
-		}
-		
-		this.text_c = $('<span class="desc_item-text"></span>').appendTo(this.c);
-
+		this.setVisState('img_allowed', this.extended_viewing);
+		this.c = this.root_view.getSample('preview_line');
+		this.createTemplate();
 	},
 	'compx-selected_title': {
-		depends_on: ['nav_title', 'nav-short-title'],
+		depends_on: ['nav_title', 'nav_short_title'],
 		fn: function(title, short_title) {
 			return short_title || title;
 		}
-	},
-	'stch-selected_title': function(state) {
-		this.text_c.text(state);
 	}
 });
 
@@ -98,24 +91,7 @@ PageView.extendTo(AllPlacesPage, {
 
 var ArtistsListPreviewLine = function() {};
 ListPreviewLine.extendTo(ArtistsListPreviewLine, {
-	extended_viewing: true,
-	'stch-selected_image': function(lfm_wrap) {
-		if (!lfm_wrap){
-			return;
-		}
-		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/64s/' + lfm_wrap.lfm_id : lfm_wrap.url;
-
-
-		if (url){
-			this.image_c.empty();
-			this.image_c.append(
-				$('<img/>').attr({
-					'src': url,
-					alt: this.state('artist')
-				})
-			);
-		}
-	}
+	extended_viewing: true
 });
 
 var ListSimplePreview = function() {};

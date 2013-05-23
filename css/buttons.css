@@ -257,11 +257,15 @@
 		}
 
 		.area_for_button .desc_prevw_list .desc_item{
-			white-space: nowrap;
+			
 			margin-right: 1rem;
 			}
+			.preview_line-wrap{
+				white-space: nowrap;
+				}
 		.area_for_button .desc_prevw_list .desc_item:after{
-			content: " ";
+			content: " |";
+			visibility: hidden;
 			white-space: normal;
 			}
 			.area_for_button .desc_prevw_list .desc_item-imgcon{

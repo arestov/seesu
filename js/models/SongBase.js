@@ -29,9 +29,7 @@ provoda.addPrototype("SongBase",{
 
 		var _this = this;
 		this.on('request', function() {
-			setTimeout(function() {
-				_this.plst_titl.checkRequestsPriority();
-			},50);
+			_this.plst_titl.checkRequestsPriority();
 			
 		});
 	},
@@ -54,7 +52,7 @@ provoda.addPrototype("SongBase",{
 				return this.getFullName(artist, track);
 			}
 		},
-		'nav-short-title': {
+		'nav_short_title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track) {
 				return this.getFullName(artist, track, true);

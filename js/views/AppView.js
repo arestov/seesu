@@ -635,6 +635,9 @@ provoda.View.extendTo(appView, {
 	},
 	parts_builder: {
 		//samples
+		'preview_line': function() {
+			return this.els.ui_samples.children('.preview_line');
+		},
 		'lfm_user_page': function() {
 			return this.els.ui_samples.children('.lfm_user_page');
 		},
