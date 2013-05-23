@@ -459,6 +459,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		this.subscribes_cache = {};
 		this.reg_fires = {};
 		this.requests = {};
+		this.drequests = {};
 		return this;
 	},
 	_pushCallbackToStack: function(opts) {
@@ -751,15 +752,19 @@ spv.Class.extendTo(provoda.Eventor, {
 
 		var _this = this;
 		var rqd = this.requests_desc[name];
-		if (!rqd.process && (!rqd.done || rqd.error)){
-			rqd.process = true;
+		if (!this.drequests[name]){
+			this.drequests[name] = {};
+		}
+		var store = this.drequests[name];
+		if (!store.process && (!store.done || store.error)){
+			store.process = true;
 			if (rqd.before){
 				rqd.before.call(this);
 			}
-			var request = rqd.send.call(this, {has_error: rqd.error});
+			var request = rqd.send.call(this, {has_error: store.error});
 			request
 				.always(function() {
-					rqd.process = false;
+					store.process = false;
 					if (rqd.after){
 						rqd.after.call(_this);
 					}
@@ -774,10 +779,10 @@ spv.Class.extendTo(provoda.Eventor, {
 						}
 					}
 					if (has_error){
-						rqd.error = true;
+						store.error = true;
 					} else {
-						rqd.error = null;
-						rqd.done = true;
+						store.error = null;
+						store.done = true;
 					}
 
 				});
