@@ -504,15 +504,15 @@ spv.Class.extendTo(provoda.Eventor, {
 				reg_fires[0].call(this, function() {
 					fired = true;
 					var args = arguments;
-					if (opts && opts.soft_reg){
+					if (opts && 'soft_reg' in opts && !opts.soft_reg){
+						cb.apply(_this, args);
+					} else {
 						callbacks_flow.push({
 							fn: cb,
 							context: _this,
 							args: args
 						});
 						checkCallbacksFlow();
-					} else {
-						cb.apply(_this, args);
 					}
 				}, namespace, opts, name_parts);
 			}
