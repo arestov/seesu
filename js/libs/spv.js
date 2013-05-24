@@ -426,11 +426,18 @@ $filter = function(array, field, value_or_testfunc){
 cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
 	//not deep!
 	var _no = acceptor || {};
-	for(var a in donor){
-		if (!white_list || !!~white_list.indexOf(a)){
-			if (!black_list || !~black_list.indexOf(a)){
-				_no[a] = donor[a];
+	var prop;
+	if (black_list || white_list){
+		for(prop in donor){
+			if (!white_list || !!~white_list.indexOf(prop)){
+				if (!black_list || !~black_list.indexOf(prop)){
+					_no[prop] = donor[prop];
+				}
 			}
+		}
+	} else {
+		for(prop in donor){
+			_no[prop] = donor[prop];
 		}
 	}
 	return _no;
