@@ -1,8 +1,6 @@
 define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './TrackActionsRow', './SongBase'],
 function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 	"use strict";
-	
-
 	var app_env = app_serv.app_env;
 	var Song;
 	var SongBase = function() {};
@@ -68,12 +66,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 
 			this._super.apply(this, arguments);
 			var _this = this;
-			
-
 
 
 			var spec_image_wrap;
-			
 			if (omo.image_url){
 				this.init_states['image_url'] = {url: omo.image_url};
 			}
@@ -96,8 +91,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 						.on('state-change.image-to-use', function(e) {
 							_this.updateState('ext_lfm_image', e.value);
 						});
-					
-
 				} else {
 					images_pack = this.app.art_images.getArtistImagesModel(this.init_states['artist'])
 						.on('state-change.image-to-use', function(e) {
@@ -113,7 +106,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					_this.loaDDD('artist_images');
 				}
 			});
-			
 		},
 		'compx-can_load_images': {
 			depends_on: ['artist', 'can_expand'],
@@ -131,7 +123,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 		initHeavyPart: function() {
 			var _this = this;
 			var omo = this.omo;
-			
 
 			this.mf_cor = new MfCor();
 			this.mf_cor.init({
@@ -150,8 +141,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			this.updateNesting('mf_cor', this.mf_cor);
 			this.mf_cor
 				.on('before-mf-play', function(mopla) {
-
-
 					_this.player.changeNowPlaying(_this, mopla.state('play'));
 					_this.mopla = mopla;
 					_this.updateState('play', mopla.state('play'));
@@ -169,14 +158,8 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 						_this.bindFilesSearchChanges();
 					}
 				},{immediately: true});
-				
-				
+
 			}
-
-
-
-
-			
 			this.watchStates(['files_search', 'marked_as', 'mp_show'], function(files_search, marked_as, mp_show) {
 				if (marked_as && files_search && files_search.search_complete){
 					this.updateState('can_expand', true);
@@ -187,7 +170,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				}
 			});
 			this.on('vip-state-change.mp_show', function(e) {
-				
 				var
 					_this = this,
 					oldCb = this.makePlayableOnNewSearch;
@@ -198,7 +180,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 							_this.makeSongPlayalbe(true);
 						};
 						this.mp3_search.on('new-search', this.makePlayableOnNewSearch);
-						
 					}
 					_this.initOnShow();
 				} else {
@@ -208,9 +189,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					}
 				}
 			});
-			this.on('vip-state-change.is_important', function(e) {
+			this.on('state-change.is_important', function(e) {
 				if (e.value){
-					this.loadSongListeners();
+					this.initRelativeData();
 				}
 			});
 		},
@@ -244,7 +225,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			if (file){
 				data.attachments = "audio" + file._id;
 			}
-			
 			data.message = this.state('nav_title') + " " + encodeURI(this.getShareUrl());
 			if (data.attachments){
 				data.attachment = data.attachments;
@@ -255,8 +235,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 
 				});
 			} else {
-				
-
 				app_env.openURL( "http://seesu.me/vk/share.html" +
 					"?" +
 					spv.stringifyParams({app_id: this.app.vkappid}, false, '=', '&') +
@@ -324,12 +302,13 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				});
 			}
 		},200),
-		loadSongListeners: function() {
-			
+		initRelativeData: function() {
+			if (this.artist){
+				var artcard = this.app.getArtcard(this.artist);
+				this.updateNesting('artist', artcard);
+			}
+			//this.loadSongListeners();
 		}
 	});
-
-
-	
 return Song;
 });
