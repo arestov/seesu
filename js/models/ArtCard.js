@@ -971,7 +971,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 
 
 		this.preloadChildren();
-		this.loadBaseInfo();
+		this.loaDDD('base_info');
 		this.setPrio('highest');
 
 	},
@@ -1020,9 +1020,6 @@ BrowseMap.Model.extendTo(ArtCard, {
 				order: 2
 			}
 		}
-	},
-	loadBaseInfo: function(){
-		this.loaDDD('base_info');
 	},
 	getTopTracks: function() {
 		if (this.top_songs){

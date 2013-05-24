@@ -11,12 +11,32 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 	Song = function(){};
 
 	SongBase.extendTo(Song, {
-		page_name: 'song page',
-		'stch-can_expand': function(state) {
-			if (state && !this.expanded){
-				this.expanded = true;
-				var _this = this;
-				var info_request = this.app.lfm.get('artist.getInfo',{'artist': this.artist })
+		requests_desc: {
+			artist_images: {
+				errors: ['error'],
+				send: function() {
+					var _this = this;
+					return this.app.lfm.get('artist.getImages',{'artist': _this.artist })
+						.done(function(r){
+							var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
+							_this.updateState('images', images);
+						});
+				},
+				rq_opts: {
+					space: 'demonstration'
+				}
+			},
+			artist_base_info: {
+				errors: ['error'],
+				before: function() {
+
+				},
+				after: function() {
+
+				},
+				send: function() {
+					var _this = this;
+					return this.app.lfm.get('artist.getInfo',{'artist': this.artist })
 					.done(function(r){
 
 						var ai = app_serv.parseArtistInfo(r);
@@ -28,16 +48,17 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 							similars: ai.similars,
 							'artist_image': ai.images && ai.images[2] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png'
 						});
-
-						
-
-
 					});
-
-				this.addRequest(info_request, {
+				},
+				rq_opts: {
 					space: 'demonstration'
-				});
-				
+				}
+			}
+		},
+		page_name: 'song page',
+		'stch-can_expand': function(state) {
+			if (state){
+				this.loaDDD('artist_base_info');
 			}
 		},
 		init: function(opts) {
@@ -87,20 +108,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			}
 			this.initStates();
 			_this.initHeavyPart();
-
-			this.loadImages = spv.once(function() {
-				var images_request = _this.app.lfm.get('artist.getImages',{'artist': _this.artist })
-					.done(function(r){
-						var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
-						_this.updateState('images', images);
-					});
-				_this.addRequest(images_request, {
-					space: 'demonstration'
-				});
-			});
 			this.on('state-change.can_load_images', function(e) {
 				if (e.value){
-					_this.loadImages();
+					_this.loaDDD('artist_images');
 				}
 			});
 			

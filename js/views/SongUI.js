@@ -321,6 +321,32 @@ provoda.View.extendTo(SongUI, {
 			return;
 		}
 		var _this = this;
+
+		var prepareImageAppend = function(index) {
+			if (index === 0){
+				_this.tpl.ancs['first-image'].remove();
+				_this.tpl.ancs['first-image'] = null;
+			}
+		};
+		var canUse = function() {
+			return _this.isAlive();
+		};
+		var bindPanoramaResizeByWindow = function(img_panorama) {
+			var my_window = spv.getDefaultView(_this.getC()[0].ownerDocument);
+
+			var checkPanoramaSize = function(){
+				img_panorama.checkSize();
+			};
+
+			$(my_window).on('resize', checkPanoramaSize);
+
+			_this.onDie(function(){
+				$(my_window).off('resize', checkPanoramaSize);
+			});
+		};
+
+		var queue = this.root_view.lfm_imgq;
+
 		images = spv.toRealArray(images);
 		_this.setVisState('cool_photos', true);//cool_photos
 		_this.photo_data.cool_photos = images;
@@ -332,30 +358,22 @@ provoda.View.extendTo(SongUI, {
 
 			//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
 			_this.img_requests = [];
+			var img_requests = _this.img_requests;
 		
 			_this.img_panorama = new Panoramator();
+			var img_panorama = _this.img_panorama;
 			var main_c = photo_c.parent();
 
-			_this.img_panorama.init({
+			img_panorama.init({
 				viewport: main_c,
 				lift: photo_c,
 				onUseEnd: function(){
 					seesu.trackEvent('Panoramator', 'artist photos');
 				}
 			});
+			bindPanoramaResizeByWindow(img_panorama);
 
-			var my_window = spv.getDefaultView(_this.getC()[0].ownerDocument);
-
-			var checkPanoramaSize = function(){
-				_this.img_panorama.checkSize();
-			};
-
-			$(my_window).on('resize', checkPanoramaSize);
-
-			_this.onDie(function(){
-				$(my_window).off('resize', checkPanoramaSize);
-			});
-
+			
 			var images_collection = [];
 
 			var updatePanorama = function(){
@@ -363,10 +381,10 @@ provoda.View.extendTo(SongUI, {
 					return spv.sortByRules(a, b, ['num']);
 				});
 
-				_this.img_panorama.setCollection(spv.filter(images_collection, 'item'));
+				img_panorama.setCollection(spv.filter(images_collection, 'item'));
 			};
 
-			var appendImage = function(el, index, first_image) {
+			var appendImage = function(el, index) {
 				var sizes = spv.toRealArray(el.sizes.size);
 
 				var image_jnode = $('<img class="artist_image hidden" alt=""/>');
@@ -374,18 +392,13 @@ provoda.View.extendTo(SongUI, {
 					node: image_jnode[0],
 					url: (sizes[5] || sizes[0])["#text"],
 					timeout: 40000,
-					queue: _this.root_view.lfm_imgq,
+					queue: queue,
 					cache_allowed: true
 				}).done(function(){
-					if (!_this.isAlive()){
+					if (!canUse()){
 						return;
 					}
-					if (first_image){
-						first_image = _this.tpl.ancs['first-image'];
-						first_image.remove();
-						_this.tpl.ancs['first-image'] = null;
-					}
-
+					prepareImageAppend(index);
 
 					image_jnode.removeClass("hidden");
 
@@ -398,44 +411,33 @@ provoda.View.extendTo(SongUI, {
 				}).fail(function(){
 					image_jnode.remove();
 				});
-				/*
-				su.lfm_imgq.add(function(){
-					
-				});*/
-
-
-				_this.img_requests.push(req);
-
-
 
 				fragment.appendChild(image_jnode[0]);
+				return req;
 
 			};
 			if (images[0]){
-				appendImage(images[0], 0, true);
+				img_requests.push(appendImage(images[0], 0));
 			}
 			$.each(images.slice(1, 10), function(i, el){
-				appendImage(el, i + 1);
+				img_requests.push(appendImage(el, i + 1));
 			});
 			photo_c.append(fragment);
 
 			main_c.addClass('loading-images');
 
-			for (var i = _this.img_requests.length - 1; i >= 0; i--) {
-				_this.mpx.RPCLegacy('addRequest', _this.img_requests[i], {
+			for (var i = img_requests.length - 1; i >= 0; i--) {
+				_this.mpx.RPCLegacy('addRequest', img_requests[i], {
 					space: 'demonstration'
 				});
-
 			}
-
-			$.when.apply($, _this.img_requests).always(function(){
+			$.when.apply($, img_requests).always(function(){
+				if (!canUse()){
+					return;
+				}
 				main_c.removeClass('loading-images');
 			});
-			_this.img_panorama.checkSize();
-			
-			
-
-
+			img_panorama.checkSize();
 		}
 	}
 });
