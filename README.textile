@@ -58,7 +58,7 @@ Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) lice
 + загрузка изображений с last.fm
 	+ панорамный просмотр
 
-
+http://api.soundcloud.com/tracks/9985952/stream
 
 +количество прослушиваний данного артиста	
 
