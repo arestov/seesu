@@ -431,7 +431,7 @@ var callbacks_flow = [];
 var callbacks_busy;
 var iteration_delayed;
 var iterateCallbacksFlow = function() {
-	var start = new Date();
+	var start = Date.now();
 	iteration_delayed = false;
 	callbacks_busy = true;
 	while (callbacks_flow.length){
@@ -1233,8 +1233,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		if (collection_name.indexOf('.') != -1){
 			throw new Error('remove "." (dot) from name');
 		}
+		if (Array.isArray(array)){
+			array = [].concat(array);
+		}
+		var old_value = this.children_models[collection_name];
 		this.children_models[collection_name] = array;
-		//[].concat() !?
+		// !?
 
 
 		var event_obj = {};
@@ -1243,6 +1247,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 		opts = opts || {};
 		event_obj.value = array;
+		event_obj.old_value = old_value;
 		this.trigger('child-change.' + collection_name, event_obj);
 
 		if (!opts.skip_report){
