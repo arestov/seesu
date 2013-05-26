@@ -535,12 +535,15 @@ html.not-as-application, .not-as-application  body{
 	
 	.artist-similar a.artist{
 		margin-right:8px;
+		display: inline-block;
+		line-height: 1.2;
 		}
 	
 	.artist-tags a.music-tag{
 		margin-right:0.5rem;
 		white-space: nowrap;
-
+		display: inline-block;
+		line-height: 1.2;
 		}
 .artist-stat-in-song span{
 	

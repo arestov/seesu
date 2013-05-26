@@ -128,9 +128,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			});
 		},
 		'compx-can_load_baseinfo': {
-			depends_on: ['mp_show', 'has_nested_artist'],
-			fn: function(mp_show, hna) {
-				return mp_show && hna;
+			depends_on: ['can_expand', 'has_nested_artist'],
+			fn: function(can_expand, hna) {
+				return can_expand && hna;
 			}
 		},
 		'compx-can_load_images': {
@@ -220,6 +220,10 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					this.initRelativeData();
 				}
 			});
+			setTimeout(function() {
+				_this.initRelativeData();//fixme
+			},16);
+
 		},
 		getShareUrl: function() {
 			if (this.artist && this.track){
