@@ -670,10 +670,6 @@ provoda.addPrototype("SongBase",{
 	showArtistSimilarArtists: function() {
 		this.app.showArtistSimilarArtists(this.artist);
 		this.app.trackEvent('Artist navigation', 'similar artists to', this.artist);
-	},
-	showTag: function(tag_name) {
-		this.app.show_tag(tag_name);
-		this.app.trackEvent('Artist navigation', 'tag', tag_name);
 	}
 
 });

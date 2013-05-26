@@ -856,7 +856,7 @@ provoda.View.extendTo(appView, {
 			};
 
 
-			_this.els.search_form.find('#app_type').val(su.env.app_type);
+			_this.els.search_form.find('#app_type').val(app_env.app_type);
 
 			_this.els.search_form.submit(function(){return false;});
 
@@ -1935,9 +1935,9 @@ provoda.View.extendTo(appView, {
 	},
 	create_youtube_video: function(id, transparent){
 		var youtube_video = document.createElement('embed');
-		if (su.env.opera_widget){
+		if (app_env.opera_widget){
 			youtube_video.setAttribute('wmode',"transparent");
-		} else if (su.env.opera_extension){
+		} else if (app_env.opera_extension){
 			youtube_video.setAttribute('wmode',"opaque");
 		}
 

@@ -1687,6 +1687,7 @@ spv.Class.extendTo(Template, {
 							});
 							old_nodes.push(cur_node);
 							$(fragt).append(cur_node);
+							$(fragt).append(document.createTextNode(' '));
 							prev_node = cur_node;
 							repeats_array.push(template);
 							repeat_data.array.push(template);
@@ -3007,7 +3008,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 			append_data.view = view;
 			view.skip_anchor_appending = true;
-			$(append_data.complect.fragt).append(view.getT());
+			var fragt = $(append_data.complect.fragt);
+			fragt.append(view.getT());
+			fragt.append(document.createTextNode(' '));
 			//append_data.complect.fragt.appendChild(view.getT()[0]);
 			//$(.fragt).append();
 		}
@@ -3067,6 +3070,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					throw new Error('give me place');
 				} else {
 					place.append(view.getA());
+					place.append(document.createTextNode(' '));
 				}
 			}
 			

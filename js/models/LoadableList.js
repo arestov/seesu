@@ -174,6 +174,9 @@ LoadableList.extendTo(TagsList, {
 	},
 	setPreview: function(list) {
 		this.updateState('preview_list', list);
+	},
+	showTag: function(tag_name) {
+		this.app.show_tag(tag_name);
 	}
 });
 LoadableList.TagsList = TagsList;

@@ -976,6 +976,17 @@ BrowseMap.Model.extendTo(ArtCard, {
 
 	},
 	requests_desc: {
+		images: {
+			errors: ['error'],
+			send: function() {
+				var _this = this;
+				return this.app.lfm.get('artist.getImages',{'artist': _this.artist })
+					.done(function(r){
+						var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
+						_this.updateState('images', images);
+					});
+			}
+		},
 		base_info: {
 			before: function() {
 				this.updateState('loading_baseinfo', true);
@@ -989,14 +1000,16 @@ BrowseMap.Model.extendTo(ArtCard, {
 				var _this = this;
 				return this.app.lfm.get('artist.getInfo', {'artist': this.artist}, {nocache: opts.has_error})
 					.done(function(r){
-						_this.updateState('profile_image',
-							_this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image')));
 						var psai = app_serv.parseArtistInfo(r);
+						var profile_image = _this.app.art_images.getImageWrap(spv.getTargetField(r, 'artist.image'));
+						_this.updateManyStates({
+							profile_image: profile_image,
+							bio: psai.bio,
+							listeners: spv.getTargetField(r, 'artist.stats.listeners'),
+							playcount: spv.getTargetField(r, 'artist.stats.playcount')
+						});
+						
 						_this.tags_list.setPreview(spv.filter(psai.tags, 'name'));
-
-						if (psai.bio){
-							_this.updateState('bio', psai.bio);
-						}
 
 						if (psai.similars){
 							var data_list = [];

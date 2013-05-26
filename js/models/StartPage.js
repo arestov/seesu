@@ -2,7 +2,7 @@ define(['js/libs/BrowseMap', './ArtCard', './TagPage', './UserCard', './MusicCon
 function(BrowseMap, ArtCard, TagPage, UserCard, MusicConductor, app_serv) {
 "use strict";
 var StartPage = function() {};
-
+var app_env = app_serv.app_env;
 BrowseMap.Model.extendTo(StartPage, {
 	model_name: 'start_page',
 	page_name: 'start page',
@@ -127,9 +127,9 @@ BrowseMap.Model.extendTo(StartPage, {
 	},
 	messages: {
 		"rating-help": function(state){
-			if (su.app_pages[su.env.app_type]){
+			if (this.app.app_pages[app_env.app_type]){
 				if (state){
-					this.updateState('ask-rating-help', su.app_pages[su.env.app_type]);
+					this.updateState('ask-rating-help', this.app.app_pages[app_env.app_type]);
 				} else {
 					this.updateState('ask-rating-help', false);
 				}

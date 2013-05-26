@@ -11,15 +11,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 	SongBase.extendTo(Song, {
 		requests_desc: {
 			artist_images: {
-				errors: ['error'],
-				send: function() {
-					var _this = this;
-					return this.app.lfm.get('artist.getImages',{'artist': _this.artist })
-						.done(function(r){
-							var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
-							_this.updateState('images', images);
-						});
-				},
+				
 				rq_opts: {
 					space: 'demonstration'
 				}
@@ -54,11 +46,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			}
 		},
 		page_name: 'song page',
-		'stch-can_expand': function(state) {
-			if (state){
-				this.loaDDD('artist_base_info');
-			}
-		},
+
 		init: function(opts) {
 			var omo = opts.omo;
 			var passed_artist = omo.artist;
@@ -101,16 +89,54 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			}
 			this.initStates();
 			_this.initHeavyPart();
+			this.on('state-change.can_load_baseinfo', function(e) {
+				if (e.value){
+					var artcard = _this.getNesting('artist');
+					if (artcard){
+						var req = artcard.loaDDD('base_info');
+						if (req){
+							this.addRequest(req, {
+								space: 'demonstration'
+							});
+						}
+					} else {
+						console.warn('no nested artcard');
+					}
+					
+
+					//_this.loaDDD('artist_base_info');
+				}
+			});
 			this.on('state-change.can_load_images', function(e) {
 				if (e.value){
-					_this.loaDDD('artist_images');
+					var artcard = _this.getNesting('artist');
+					if (artcard){
+						var req = artcard.loaDDD('images');
+						if (req){
+							this.addRequest(req, {
+								space: 'demonstration'
+							});
+						}
+						
+					} else {
+						console.warn('no nested artcard');
+					}
+					
+					//
+					//_this.loaDDD('artist_images');
 				}
 			});
 		},
+		'compx-can_load_baseinfo': {
+			depends_on: ['mp_show', 'has_nested_artist'],
+			fn: function(mp_show, hna) {
+				return mp_show && hna;
+			}
+		},
 		'compx-can_load_images': {
-			depends_on: ['artist', 'can_expand'],
-			fn: function(artist, can_expand) {
-				return artist && can_expand;
+			depends_on: ['artist', 'can_expand', 'has_nested_artist'],
+			fn: function(artist, can_expand, hna) {
+				return artist && can_expand && hna;
 			}
 		},
 		initOnShow: function() {
@@ -306,6 +332,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			if (this.artist){
 				var artcard = this.app.getArtcard(this.artist);
 				this.updateNesting('artist', artcard);
+				this.updateState('has_nested_artist', true);
 			}
 			//this.loadSongListeners();
 		}
