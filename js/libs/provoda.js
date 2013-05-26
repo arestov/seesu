@@ -372,22 +372,14 @@ provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 	},
 	calculateResult: null,
 	every: function(values_array) {
-		for (var i = 0; i < values_array.length; i++) {
-			var cur = values_array[i];
-			if (!cur){
-				return false;
-			}
-		}
-		return true;
+		return values_array.every(function(cur) {
+			return !!cur;
+		});
 	},
-	some: function(values_array, fn) {
-		for (var i = 0; i < values_array.length; i++) {
-			var cur = values_array[i];
-			if (cur){
-				return true;
-			}
-		}
-		return false;
+	some: function(values_array) {
+		return values_array.some(function(cur) {
+			return !!cur;
+		});
 	},
 	getItemsValues: function(item) {
 		var values_list = [];

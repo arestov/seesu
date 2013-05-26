@@ -184,6 +184,12 @@ AppModelBase.extendTo(AppModel, {
 	getLastfmUser: function(username) {
 		return this.start_page.getSPI('users/lfm:' + username, true);
 	},
+	getSongcard: function(artist_name, track_name) {
+		if (!artist_name || !track_name){
+			return false;
+		}
+		return this.start_page.getSPI('tracks/' + this.joinCommaParts([artist_name, track_name]), true);
+	},
 	getArtcard: function(artist_name) {
 		return this.start_page.getSPI('catalog/' + artist_name, true);
 	},

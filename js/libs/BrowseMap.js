@@ -814,7 +814,8 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 				this.sub_pages[name] = instance;
 			} else {
 				if (this.subPager){
-					instance = this.subPager(name);
+
+					instance = this.subPager(decodeURIComponent(name), name);
 				}
 			}
 		}

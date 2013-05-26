@@ -6,8 +6,10 @@ BrowseMap.Model.extendTo(SongCard, {
 	model_name: 'songcard',
 	init: function(opts, params) {
 		this._super(opts);
+		spv.cloneObj(this.init_states, params);
+		
 		this.initStates();
 	}
 });
-
+return SongCard;
 });

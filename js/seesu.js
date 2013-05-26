@@ -515,6 +515,11 @@ AppModel.extendTo(SeesuApp, {
 		});
 		return spaced.join(" ");
 	},
+	joinCommaParts: function(array) {
+		return array.map(function(item) {
+			return this.encodeURLPart(item);
+		}, this).join(',');
+	},
 	getCommaParts: function(string) {
 		var parts = string.split(',');
 		for (var i = 0; i < parts.length; i++) {

@@ -126,6 +126,20 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					//_this.loaDDD('artist_images');
 				}
 			});
+			this.on('state-change.has_full_title', function(e) {
+				if (e.value){
+					var songcard = _this.app.getSongcard(_this.artist, _this.track);
+					if (songcard){
+						_this.updateNesting('songcard', songcard);
+					}
+				}
+			});
+		},
+		'compx-has_full_title':{
+			depends_on: ['artist', 'track'],
+			fn: function(artist_name, track_name) {
+				return artist_name && track_name;
+			}
 		},
 		'compx-can_load_baseinfo': {
 			depends_on: ['can_expand', 'has_nested_artist'],

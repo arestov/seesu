@@ -1,5 +1,5 @@
-define(['js/libs/BrowseMap', './ArtCard', './TagPage', './UserCard', './MusicConductor', 'app_serv'],
-function(BrowseMap, ArtCard, TagPage, UserCard, MusicConductor, app_serv) {
+define(['js/libs/BrowseMap', './ArtCard', './SongCard', './TagPage', './UserCard', './MusicConductor', 'app_serv'],
+function(BrowseMap, ArtCard, SongCard, TagPage, UserCard, MusicConductor, app_serv) {
 "use strict";
 var StartPage = function() {};
 var app_env = app_serv.app_env;
@@ -32,67 +32,52 @@ BrowseMap.Model.extendTo(StartPage, {
 			su.trackEvent('Navigation', 'hint artist');
 		}
 	},
+	subPageInitWrap: function(Constr, full_name, params) {
+		var instance = new Constr();
+			instance.init_opts = [{
+				app: this.app,
+				map_parent: this,
+				nav_opts: {
+					url_part: '/' + full_name
+				}
+			}, params];
+		return instance;
+	},
 	sub_pages_routes: {
 		'catalog': function(name) {
 			var full_name = 'catalog/' + name;
-			var instance = new ArtCard();
-			instance.init_opts = [{
-				app: this.app,
-				map_parent: this,
-				nav_opts: {
-					url_part: '/' + full_name
-				}
-			}, {
+			return this.subPageInitWrap(ArtCard, full_name, {
 				urp_name: name,
 				artist: name
-			}];
-			return instance;
+			});
+		},
+		'tracks': function(complex_string, raw_str) {
+			var full_name = 'tracks/' + raw_str;
+			var parts = this.app.getCommaParts(raw_str);
+			if (!parts[1] || !parts[0]){
+				return;
+			} else {
+				return this.subPageInitWrap(SongCard, full_name, {
+					artist_name: parts[0],
+					track_name: parts[1]
+				});
+			}
+		
 		},
 		'tags': function(name) {
-
 			var full_name = 'tags/' + name;
-
-			var instance = new TagPage();
-			instance.init_opts = [{
-				app: this.app,
-				map_parent: this,
-				nav_opts: {
-					url_part: '/' + full_name
-				}
-			}, {
+			return this.subPageInitWrap(TagPage, full_name, {
 				urp_name: name,
 				tag_name: name
-			}];
-			return instance;
-
-
+			});
 		},
 		'users': function(name) {
 			var full_name = 'users/' + name;
-			var instance;
 			if (name == 'me'){
-				instance = new UserCard();
-				instance.init_opts = [{
-					app: this.app,
-					map_parent: this,
-					nav_opts: {
-						url_part: '/' + full_name
-					}
-				}, {urp_name: name}];
-				return instance;
+				return this.subPageInitWrap(UserCard, full_name, {urp_name: name});
 			} else if (name.indexOf('lfm:') === 0){
-				instance = new UserCard.LfmUserCard();
-				instance.init_opts = [{
-					app: this.app,
-					map_parent: this,
-					nav_opts: {
-						url_part: '/' + full_name
-					}
-				}, {urp_name: name}];
-				return instance;
+				return this.subPageInitWrap(UserCard.LfmUserCard, full_name, {urp_name: name});
 			}
-
-
 		}
 	},
 	sub_pa: {
@@ -101,10 +86,11 @@ BrowseMap.Model.extendTo(StartPage, {
 			constr: MusicConductor
 		}
 	},
-	subPager: function(path_string) {
+	subPager: function(parsed_str, path_string) {
 		var parts = path_string.split('/');
 		var first_part = parts[0];
-		var full_name = parts[0];
+		var full_name;
+
 		if (parts[1]){
 			full_name += '/' + parts[1];
 		}
@@ -114,7 +100,8 @@ BrowseMap.Model.extendTo(StartPage, {
 			if (!parts[1]){
 				return;
 			}
-			var instance = this.sub_pages_routes[first_part] &&  this.sub_pages_routes[first_part].call(this, parts[1]);
+			var handler = this.sub_pages_routes[first_part];
+			var instance = handler && handler.call(this, decodeURIComponent(parts[1]), parts[1]);
 			if (instance){
 				this.sub_pages[full_name] = instance;
 			}

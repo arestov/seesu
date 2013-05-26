@@ -566,7 +566,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 			}
 			
 		},
-		subPager: function(string) {
+		subPager: function(pstr, string) {
 			var parts = this.app.getCommaParts(string);
 			var artist = parts[1] ? parts[0] : this.playlist_artist;
 
