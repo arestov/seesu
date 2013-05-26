@@ -9,6 +9,12 @@ BrowseMap.Model.extendTo(SongCard, {
 		spv.cloneObj(this.init_states, params);
 		
 		this.initStates();
+	},
+	'compx-nav_title': {
+		depends_on: ['artist_name', 'track_name'],
+		fn: function(artist_name, track_name) {
+			return artist_name + ' - ' + track_name;
+		}
 	}
 });
 return SongCard;
