@@ -571,14 +571,16 @@ html.not-as-application, .not-as-application  body{
 	height:1.7rem;
 	background:url(../i/img_forced_end.png) repeat-y 0 0;
 }
+.track-context .track-info-dominator{
+	border-top:1px solid #555555;
+	border-bottom:1px solid #6e6e6e;
+	background:#5a5a5a;
+}
 .track-info-dominator{
 	clear: both;
 	margin:0 -13px;
 	padding:0;
 	min-height:170px;
-	border-top:1px solid #555555;
-	border-bottom:1px solid #6e6e6e;
-	background:#5a5a5a;
 	}	
 	@media (min-height:600px) {
 		.track-info-dominator{
