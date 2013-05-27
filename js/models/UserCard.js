@@ -1,9 +1,9 @@
 define(['provoda', 'spv', 'app_serv', './comd', 'jquery',
 'js/libs/BrowseMap', './SongsList', './ArtCard' , 'js/common-libs/htmlencoding',
-'./UserAcquaintancesLists', './SuUsersPlaylists', './user_music_lfm', './vk_user_music'],
+'./UserAcquaintancesLists', './SuUsersPlaylists', './user_music_lfm', './user_music_vk'],
 function(provoda, spv, app_serv, comd, $,
 BrowseMap, SongsList, ArtCard, htmlencoding,
-UserAcquaintancesLists, SuUsersPlaylists, user_music_lfm, vk_user_music){
+UserAcquaintancesLists, SuUsersPlaylists, user_music_lfm, user_music_vk){
 "use strict";
 var localize = app_serv.localize;
 
@@ -20,7 +20,7 @@ BrowseMap.Model.extendTo(UserCard, {
 	model_name: 'usercard',
 	sub_pa: {
 		'vk:tracks': {
-			constr: vk_user_music.VkUserTracks,
+			constr: user_music_vk.VkUserTracks,
 			title: 'Tracks'
 		},
 		'playlists':{
