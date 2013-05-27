@@ -228,7 +228,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="play-list-panel" pv-anchor="panel">
+		<div class="playlist_panel" pv-anchor="panel">
 			<div class="playlist-actions">
 				<div class="pla-panel">
 					<span class="pla-button">● ● ●</span>
@@ -329,7 +329,9 @@
 						pv-class="external {{!scrobbler.url && 'hidden'}}"
 						pv-events="click:open_link"
 						>
-						<img src="" alt="" pv-props="src: {{scrobbler.image}}" pv-class="{{!scrobbler.image && 'hidden'}}">
+						<img src="" alt="" 
+							pv-props="src: {{scrobbler.image}}" 
+							pv-class="{{!scrobbler.image && 'hidden'}}">
 						<span pv-text="{{scrobbler.name}}"></span>
 					</a>
 					<span
@@ -503,8 +505,7 @@
 		</div>
 
 
-
-
+		
 
 		<div class="art_card">
 			<div class="leftcol">
@@ -598,6 +599,94 @@
 			</div>
 
 			
+		</div>
+
+		<div 
+		class="artist_preview-base"
+		pv-class="artist_preview-base {{vis_wamo_info && 'want-more-info'}}"
+		>
+			<div class="photo-cont">
+				<div class="photo-cont-lift" pv-anchor="phocoli">
+					<img
+						class="artist_image"
+						pv-anchor="first-image" 
+						pv-class="{{!selected_image && 'hidden'}} artist_image"
+						pv-props="
+							alt: {{artist_name}}
+							src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + selected_image.lfm_id) || selected_image.url}}
+						"
+						src="" alt=""
+						/>
+				</div>
+			</div>
+			<div class="dominator-head">
+				<div 
+					class="closer-to-track"
+					pv-class="{{one_artist_playlist && 'one-artist-playlist'}} closer-to-track">
+					<a 
+						class="js-serv lang localize-artcard"
+						
+						pv-type="way-point"
+						pv-events="click::showOnMap"
+						>artcard</a>
+				</div>
+				<a 
+					class="extend-switcher"
+					pv-events="click:showMoreInfo"
+					pv-type="way-point"
+					pv-class="{{!infb_text && 'hidden'}} extend-switcher">
+					<span class="big-space" pv-text="{{infb_text}}"></span>
+				</a>
+				<p 
+				pv-view="tags_list"
+				class="artist-tags hidden" 
+				pv-class="artist-tags {{(!preview_list || !preview_list.length) && 'hidden'}}" >
+					<span class="simple-header">
+						<em class="lang localize-Tags">Tags</em>
+					</span>
+					<span pv-anchor="tags-c"><a 
+						class="music-tag js-serv" 
+						pv-repeat="tag in preview_list" 
+						pv-type="hard-way-point" 
+						pv-events="click:showTag" 
+						pv-text="{{tag}}"></a></span>
+				</p>
+			</div>
+			<div class="artist-info">
+				<p class="artist-stat-in-song">
+					<span pv-class="{{!listeners && 'hidden'}}" class="playcount">
+						<span class="desc">Listeners:</span>
+						<span pv-text="{{listeners}}"></span>
+					</span> 
+					<span pv-class="{{!playcount && 'hidden'}}" class="hidden">
+						<span class="desc">Playcount:</span>
+						<span pv-text="{{playcount}}"></span>
+					</span>
+				</p>
+				<div class="artist-bio" pv-anchor="artbio">...</div>
+				<div class="artist-meta-info">
+					<p 
+						pv-view="similar_artists"
+						class="artist-similar">
+						<span class="desc-name">
+							<em>
+								<a 
+									class="similar-artists js-serv lang localize-similar-arts"
+									pv-type="hard-way-point"
+									pv-events="click::showOnMap"
+									>Similar artists:</a>
+							</em>
+						</span>
+						<span class="desc-text" pv-anchor="similars-c"><a 
+							pv-view="preview_list"
+
+							class="artist js-serv" 
+							pv-events="click::showArtcard" 
+							pv-type="hard-way-point"
+							pv-text="{{artist_name}}"></a></span>
+					</p>
+				</div>
+			</div>
 		</div>
 		
 		<div class="song-row-content moplas-block">
@@ -700,10 +789,8 @@
 			
 		<div class="track-context" >
 			<div class="song-actions" pv-anchor="song-actions">
-				
 				<div class="track-panel">
 					<div class="buttons-panel">
-						
 						<div class="nice-buttons-place">
 							<span class="pc-place">
 								<a class="pc pc-add "  title="add to playlist"></a>
@@ -764,92 +851,7 @@
 					</div>
 				</div>
 			</div>
-			
-			
-			
-			<div class="track-info-dominator" pv-anchor="tidmt" pv-view="artist" pv-class="track-info-dominator {{vis_wamo_info && 'want-more-info'}}">
-				<div class="photo-cont">
-					<div class="photo-cont-lift" pv-anchor="phocoli">
-						<img
-							class="artist_image"
-							pv-anchor="first-image" 
-							pv-class="{{!selected_image && 'hidden'}} artist_image"
-							pv-props="
-								alt: {{artist_name}}
-								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + selected_image.lfm_id) || selected_image.url}}
-							"
-							src="" alt=""
-							/>
-					</div>
-				</div>
-				<div class="dominator-head">
-					<div 
-						class="closer-to-track"
-						pv-class="{{one_artist_playlist && 'one-artist-playlist'}} closer-to-track">
-						<a 
-							class="js-serv lang localize-artcard"
-							
-							pv-type="way-point"
-							pv-events="click::showOnMap"
-							>artcard</a>
-					</div>
-					<a 
-						class="extend-switcher"
-						pv-events="click:showMoreInfo"
-						pv-type="way-point"
-						pv-class="{{!infb_text && 'hidden'}} extend-switcher">
-						<span class="big-space" pv-text="{{infb_text}}"></span>
-					</a>
-					<p 
-					pv-view="tags_list"
-					class="artist-tags hidden" pv-class="artist-tags {{(!preview_list || !preview_list.length) && 'hidden'}}" >
-						<span class="simple-header">
-							<em class="lang localize-Tags">Tags</em>
-						</span>
-						<span pv-anchor="tags-c"><a 
-							class="music-tag js-serv" 
-							pv-repeat="tag in preview_list" 
-							pv-type="hard-way-point" 
-							pv-events="click:showTag" 
-							pv-text="{{tag}}"></a></span>
-					</p>
-				</div>
-				<div class="artist-info">
-					<p class="artist-stat-in-song">
-						<span pv-class="{{!listeners && 'hidden'}}" class="playcount">
-							<span class="desc">Listeners:</span>
-							<span pv-text="{{listeners}}"></span>
-						</span> 
-						<span pv-class="{{!playcount && 'hidden'}}" class="hidden">
-							<span class="desc">Playcount:</span>
-							<span pv-text="{{playcount}}"></span>
-						</span>
-					</p>
-					<div class="artist-bio" pv-anchor="artbio">...</div>
-					<div class="artist-meta-info">
-						<p 
-							pv-view="similar_artists"
-							class="artist-similar">
-							<span class="desc-name">
-								<em>
-									<a 
-										class="similar-artists js-serv lang localize-similar-arts"
-										pv-type="hard-way-point"
-										pv-events="click::showOnMap"
-										>Similar artists:</a>
-								</em>
-							</span>
-							<span class="desc-text" pv-anchor="similars-c"><a 
-								pv-view="preview_list"
-
-								class="artist js-serv" 
-								pv-events="click::showArtcard" 
-								pv-type="hard-way-point"
-								pv-text="{{artist_name}}"></a></span>
-						</p>
-					</div>
-				</div>
-			</div>
+			<div pv-view="artist" class="nested_artist"></div>
 			<div pv-view="songcard">
 				<div class="track-listeners" pv-anchor="track-listeners">
 					<div class="song-listeners-list" pv-anchor="song-listeners-list"></div>
@@ -861,8 +863,6 @@
 					<div class="big-listener-info" pv-anchor="big-listener-info"></div>
 				</div>
 			</div>
-			
-			
 		</div>
 	
 		<li
