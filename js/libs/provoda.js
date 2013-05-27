@@ -427,7 +427,7 @@ var iterateCallbacksFlow = function() {
 	iteration_delayed = false;
 	callbacks_busy = true;
 	while (callbacks_flow.length){
-		if (start - new Date() > 100){
+		if (new Date() - start > 100){
 			setTimeout(iterateCallbacksFlow,4);
 			break;
 		}
