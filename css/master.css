@@ -499,7 +499,7 @@ html.not-as-application, .not-as-application  body{
 		}
 
 
-.track-info-dominator .artist-tags{
+.artist_preview-base .artist-tags{
 	margin:0;
 	padding:0.25rem 0 0;
 	
@@ -512,7 +512,7 @@ html.not-as-application, .not-as-application  body{
 
 
 
-.track-info-dominator .artist-tags, .track-info-dominator .artist-similar{
+.artist_preview-base .artist-tags, .artist_preview-base .artist-similar{
 	position:relative;
 	height:2rem;
 	line-height: 2rem;
@@ -571,7 +571,7 @@ html.not-as-application, .not-as-application  body{
 	height:1.7rem;
 	background:url(../i/img_forced_end.png) repeat-y 0 0;
 }
-.track-info-dominator{
+.artist_preview-base{
 	clear: both;
 	margin:0 -13px;
 	padding:0;
@@ -581,21 +581,21 @@ html.not-as-application, .not-as-application  body{
 	background:#5a5a5a;
 	}	
 	@media (min-height:600px) {
-		.track-info-dominator{
+		.artist_preview-base{
 			min-height:207px;
 		}
 	}
 
-	.track-info-dominator > .vk-login-context, .track-context > .vk-login-context{
+	.artist_preview-base > .vk-login-context, .track-context > .vk-login-context{
 		margin:5px -13px 1.72rem;
 		border-radius:0;
 		}	
-	.track-info-dominator .dominator-head{
+	.artist_preview-base .dominator-head{
 			overflow:hidden;
 			padding:0;
 			min-height: 2rem;
 		}
-		.track-info-dominator .dominator-head .closer-to-track{
+		.artist_preview-base .dominator-head .closer-to-track{
 			float:left;
 			margin-right:1rem;
 			padding-top:0.25rem;
@@ -644,10 +644,10 @@ html.not-as-application, .not-as-application  body{
 		}
 	
 
-	.track-info-dominator.want-more-info{
+	.artist_preview-base.want-more-info{
 		padding-bottom:1rem;
 	}
-	.track-info-dominator .artist-info, .track-info-dominator .track-info {
+	.artist_preview-base .artist-info, .artist_preview-base .track-info {
 		display: none;
 		}	
 
@@ -655,14 +655,14 @@ html.not-as-application, .not-as-application  body{
 			display: block;
 			}
 
-	.track-info-dominator .extending-info{
+	.artist_preview-base .extending-info{
 		display:none;
 		}	
-	.track-info-dominator .artist-info, .track-info-dominator .track-info{
+	.artist_preview-base .artist-info, .artist_preview-base .track-info{
 		padding:0 13px;
 		
 	}	
-	.track-info-dominator .track-info{
+	.artist_preview-base .track-info{
 		margin-top:1rem;
 	}
 	
