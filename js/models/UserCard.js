@@ -1,9 +1,9 @@
 define(['provoda', 'spv', 'app_serv', './comd', 'jquery',
 'js/libs/BrowseMap', './SongsList', './ArtCard' , 'js/common-libs/htmlencoding',
-'./UserAcquaintancesLists', './SuUsersPlaylists', './lfm_user_music', './vk_user_music'],
+'./UserAcquaintancesLists', './SuUsersPlaylists', './user_music_lfm', './vk_user_music'],
 function(provoda, spv, app_serv, comd, $,
 BrowseMap, SongsList, ArtCard, htmlencoding,
-UserAcquaintancesLists, SuUsersPlaylists, lfm_user_music, vk_user_music){
+UserAcquaintancesLists, SuUsersPlaylists, user_music_lfm, vk_user_music){
 "use strict";
 var localize = app_serv.localize;
 
@@ -30,27 +30,27 @@ BrowseMap.Model.extendTo(UserCard, {
 
 		},
 		'lfm:friends': {
-			constr: lfm_user_music.LfmFriendsList,
+			constr: user_music_lfm.LfmFriendsList,
 			title: "Last.fm friends"
 		},
 		'lfm:neighbours':{
-			constr: lfm_user_music.LfmNeighboursList,
+			constr: user_music_lfm.LfmNeighboursList,
 			title: 'Neighbours'
 		},
 		'lfm:artists':{
-			constr: lfm_user_music.LfmUserArtists,
+			constr: user_music_lfm.LfmUserArtists,
 			title:'Artists'
 		},
 		'lfm:tracks':{
-			constr: lfm_user_music.LfmUserTracks,
+			constr: user_music_lfm.LfmUserTracks,
 			title:'Tracks'
 		},
 		'lfm:tags':{
-			constr: lfm_user_music.LfmUserTags,
+			constr: user_music_lfm.LfmUserTags,
 			title:'Tags'
 		},
 		'lfm:albums':{
-			constr: lfm_user_music.LfmUserAlbums,
+			constr: user_music_lfm.LfmUserAlbums,
 			title:'Albums'
 		}
 	},
@@ -126,27 +126,27 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 	model_name: 'lfm_usercard',
 	sub_pa: {
 		'friends': {
-			constr: lfm_user_music.LfmFriendsList,
+			constr: user_music_lfm.LfmFriendsList,
 			title: "Friends"
 		},
 		'neighbours':{
-			constr: lfm_user_music.LfmNeighboursList,
+			constr: user_music_lfm.LfmNeighboursList,
 			title: 'Neighbours'
 		},
 		'artists':{
-			constr: lfm_user_music.LfmUserArtists,
+			constr: user_music_lfm.LfmUserArtists,
 			title:'Artists'
 		},
 		'tracks':{
-			constr: lfm_user_music.LfmUserTracks,
+			constr: user_music_lfm.LfmUserTracks,
 			title:'Tracks'
 		},
 		'tags':{
-			constr: lfm_user_music.LfmUserTags,
+			constr: user_music_lfm.LfmUserTags,
 			title:'Tags'
 		},
 		'albums':{
-			constr: lfm_user_music.LfmUserAlbums,
+			constr: user_music_lfm.LfmUserAlbums,
 			title:'Albums'
 		}
 	},
@@ -195,7 +195,7 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 					.done(function(r){
 						if (!r.error){
 							_this.rq_b.done = true;
-							var data = lfm_user_music.LfmFriendsList.parseUserInfo(r.user);
+							var data = user_music_lfm.LfmFriendsList.parseUserInfo(r.user);
 							if (data.lfm_image){
 								data.lfm_image = _this.app.art_images.getImageRewrap(data.lfm_image);
 							}

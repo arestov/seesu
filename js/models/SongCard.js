@@ -15,6 +15,15 @@ BrowseMap.Model.extendTo(SongCard, {
 		fn: function(artist_name, track_name) {
 			return artist_name + ' - ' + track_name;
 		}
+	},
+	initForSong: function() {
+		
+	},
+	fullInit: function() {
+		var artcard = this.app.getArtcard(this.state('artist_name'));
+		if (artcard){
+			this.updateNesting('artist', artcard);
+		}
 	}
 });
 return SongCard;
