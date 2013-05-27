@@ -22,6 +22,8 @@ provoda.View.extendTo(appView, {
 		this.root_view = this;
 		this.d = this.opts.d;
 		this.tpls = [];
+		this.samples = {};
+		this.dom_related_props.push('samples');
 		this.lfm_imgq = new FuncsQueue(700);
 		this.dgs_imgq = new FuncsQueue(1200);
 		var _this = this;
@@ -635,71 +637,11 @@ provoda.View.extendTo(appView, {
 	},
 	parts_builder: {
 		//samples
-		'preview_line': function() {
-			return this.els.ui_samples.children('.preview_line');
-		},
-		'lfm_user_page': function() {
-			return this.els.ui_samples.children('.lfm_user_page');
-		},
-		'lastfm_pthgs': function(){
-			return this.els.ui_samples.children('.lastfm_pthgs');
-		},
-		'lfm_users_page': function() {
-			return this.els.ui_samples.children('.lfm_users_page');
-		},
-		'user_tag_page': function() {
-			return this.els.ui_samples.children('.user_tag_page');
-		},
-		'user_tags_page': function() {
-			return this.els.ui_samples.children('.user_tags_page');
-		},
-		'playlist-container': function() {
-			return this.els.ui_samples.children('.playlist-container');
-		},
-		'playlist_panel': function() {
-			return this.els.ui_samples.children('.play-list-panel');
-		},
-		lula_page: function() {
-			return this.els.ui_samples.children('.lula_page');
-		},
-		'lulas_page': function() {
-			return this.els.ui_samples.children('.lulas_page');
-		},
-		'song-file': function() {
-			return this.els.ui_samples.children('.song-file');
-		},
-		'complex-page': function() {
-			return this.els.ui_samples.children('.complex-page');
-		},
-		'common-nav': function() {
-			return this.els.ui_samples.children('.common-nav');
-		},
-		'search_page-nav': function() {
-			return this.els.ui_samples.children('.search_page-nav');
-		},
-		'start_page-nav': function() {
-			return this.els.ui_samples.children('.start_page-nav');
+		alb_prev_big: function() {
+			return this.els.ui_samples.children('.album_preview-big');
 		},
 		'song-view': function() {
 			return this.els.ui_samples.children('ul').children('.song-view');
-		},
-		'music_conductor_page': function() {
-			return this.els.ui_samples.children('.music_conductor_page');
-		},
-		'moplas-block': function() {
-			return this.els.ui_samples.children('.moplas-block');
-		},
-		user_page: function() {
-			return this.els.ui_samples.children('.user_page');
-		},
-		tags_list_page: function() {
-			return this.els.ui_samples.children('.tags_list_page');
-		},
-		tag_page: function() {
-			return this.els.ui_samples.children('.tag_page');
-		},
-		alb_prev_big: function() {
-			return this.els.ui_samples.children('.album_preview-big');
 		},
 		artcard: function() {
 			return this.els.ui_samples.children('.art_card');
@@ -712,20 +654,19 @@ provoda.View.extendTo(appView, {
 		},
 		lfm_scrobling: function() {
 			return this.els.ui_samples.children('.scrobbling-switches');
-		},
-		artists_list: function() {
-			return this.els.ui_samples.children('.artists_list');
-		},
-		albums_page: function() {
-			return this.els.ui_samples.children('.albums_page');
-		},
-		area_for_button: function() {
-			return this.els.ui_samples.children('.area_for_button');
 		}
 	},
 	getSample: function(name) {
-		var sample_node = this.samples[name] || this.requirePart(name);
-
+		var sample_node = this.samples[name];
+		if (!sample_node){
+			sample_node = this.samples[name] = this.els.ui_samples.children('.' + name);
+		}
+		if (!sample_node[0]){
+			sample_node = this.samples[name] = this.requirePart(name);
+		}
+		if (!sample_node[0]){
+			throw new Error('no such sample');
+		}
 		return $(sample_node).clone();
 	},
 	buildAppDOM: function() {
@@ -733,7 +674,7 @@ provoda.View.extendTo(appView, {
 		var d = this.d;
 		spv.domReady(this.d, function() {
 			console.log('dom ready');
-			_this.dom_related_props.push('els', 'lev_containers', 'samples');
+			_this.dom_related_props.push('els', 'lev_containers');
 
 			var slider = d.getElementById('slider');
 			var screens_block = $('#screens',d);
@@ -888,7 +829,7 @@ provoda.View.extendTo(appView, {
 
 			var vklc = ui_samples.children('.vk-login-context');
 
-			_this.samples = {
+			spv.cloneObj(_this.samples, {
 				vklc: vklc,
 				vk_login: {
 					o: vklc,
@@ -963,7 +904,7 @@ provoda.View.extendTo(appView, {
 					}
 				}
 
-			};
+			});
 
 			//_this.els.search_label = _this.els.search_form.find('#search-p').find('.lbl');
 

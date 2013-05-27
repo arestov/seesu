@@ -391,7 +391,6 @@ var SongUI = function(){};
 provoda.View.extendTo(SongUI, {
 	dom_rp: true,
 	createDetailes: function(){
-		
 		this.createBase();
 	},
 	complex_states: {
@@ -469,6 +468,10 @@ provoda.View.extendTo(SongUI, {
 		if (!(this.opts && this.opts.lite)){
 			var context = this.requirePart('context');
 			this.c.append(context);
+
+			var nart_dom = this.root_view.getSample('artist_preview-base');
+			context.children('.nested_artist').append(nart_dom);
+
 			this.createTemplate();
 			//this.bigBind();
 		} else {
@@ -501,7 +504,6 @@ provoda.View.extendTo(SongUI, {
 
 		context.prepend(this.getAFreeCV('mf_cor'));
 
-		
 		this.dom_related_props.push('song_actions_c');
 		this.requestAll();
 	}

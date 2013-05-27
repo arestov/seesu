@@ -412,7 +412,7 @@ a.track_name_loading:hover{
 	}
 
 
-	.show-zoom-to-track .play-list-panel{
+	.show-zoom-to-track .playlist_panel{
 		display:none;
 	}
 	.show-zoom-to-track ul.tracks-for-play .play-controls{
