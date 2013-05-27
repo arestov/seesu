@@ -183,7 +183,7 @@
 			class="user_tags_page usual_page"
 			pv-class="lula_page usual_page {{!mp_show && 'hidden'}}">
 			<ul>
-				<li pv-view="tags" class="user_tag" pv-events="click::showOnMap">
+				<li pv-view="tags" class="user_tag" pv-events="click::showOnMap" pv-type="way-point">
 					<span class="user_tag-count" pv-text="{{count}}"></span>
 					<span class="user_tag-name" pv-text="{{tag_name}}"></span>
 				</li>
@@ -206,7 +206,7 @@
 
 		<div class="lulas_page usual_page" pv-class="lulas_page usual_page {{!mp_show && 'hidden'}}">
 			<ul>
-				<li pv-view="artists" pv-events="click::showOnMap" class="user_artist">
+				<li pv-view="artists" pv-events="click::showOnMap" class="user_artist" pv-type="way-point">
 					<div class="user_artist-image_con">
 						<img
 							alt=""
@@ -314,7 +314,7 @@
 		</div>
 
 		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page {{!mp_show && 'hidden'}}">
-			<div pv-view="list_items" class="lfm_friend-base-preview" pv-events="click::showOnMap">
+			<div pv-view="list_items" class="lfm_friend-base-preview" pv-events="click::showOnMap" pv-type="way-point">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
 				<span class="lfm_friend-name" pv-text="{{username}}"></span>

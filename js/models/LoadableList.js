@@ -72,10 +72,13 @@ LoadableListBase.extendTo(LoadableList, {
 			limit: paging_opts.page_limit,
 			page: paging_opts.next_page
 		};
-		if (data){
-			spv.cloneObj(request_data, data);
+		if (!opts.disallow_paging){
+			if (data){
+				spv.cloneObj(data, request_data);
+			}
 		}
-		request_info.request = this.app.lfm.get(method, request_data, rqop)
+		
+		request_info.request = this.app.lfm.get(method, data, rqop)
 			.done(function(r){
 				var data_list = parser.call(this, r, field_name, paging_opts);
 				if (no_paging && !r.error){

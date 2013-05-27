@@ -362,7 +362,7 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 		'recommended': {
 			constr: RecommendatedToUserArtistsList,
 			getTitle: function() {
-				return this.username ? (localize('reccoms-for') + this.username) : localize('reccoms-for-you');
+				return this.username ? (localize('reccoms-for') + ' ' + this.username) : localize('reccoms-for-you');
 			}
 		},
 		'library': {
@@ -891,15 +891,7 @@ LoadableList.extendTo(LfmUsersList, {
 		return result;
 		//console.log(r);
 	},
-	init: function(opts, params) {
-		this._super(opts);
-		connectUsername.call(this, params);
-		this.sub_pa_params = {
-			lfm_username: params.lfm_username,
-			for_current_user: params.for_current_user
-		};
-		this.initStates();
-	},
+	itemConstr: LfmUserPreview,
 	makeDataItem:function(data) {
 		var item = new this.itemConstr();
 		item.init({
@@ -915,9 +907,20 @@ LoadableList.extendTo(LfmUsersList, {
 	page_limit: 200,
 	'compx-has_no_access': no_access_compx
 });
+var LfmUsersListOfUser = function() {};
+LfmUsersList.extendTo(LfmUsersListOfUser, {
+	init: function(opts, params) {
+		this._super(opts);
+		connectUsername.call(this, params);
+		this.sub_pa_params = {
+			lfm_username: params.lfm_username,
+			for_current_user: params.for_current_user
+		};
+		this.initStates();
+	}
+});
 
-
-LfmUsersList.extendTo(LfmFriendsList, {
+LfmUsersListOfUser.extendTo(LfmFriendsList, {
 	beforeReportChange: function(list) {
 		list.sort(function(a,b ){return spv.sortByRules(a, b, [
 			{
@@ -952,12 +955,10 @@ LfmUsersList.extendTo(LfmFriendsList, {
 			data: this.getRqData(),
 			parser: this.friendsParser
 		});
-	},
-	itemConstr: LfmUserPreview
+	}
 });
 var LfmNeighboursList = function() {};
-LfmUsersList.extendTo(LfmNeighboursList, {
-	itemConstr: LfmUserPreview,
+LfmUsersListOfUser.extendTo(LfmNeighboursList, {
 	getRqData: function() {
 		return {
 			user: this.state('username')
@@ -978,6 +979,7 @@ return {
 	LfmUserTracks:LfmUserTracks,
 	LfmUserTags:LfmUserTags,
 	LfmUserAlbums:LfmUserAlbums,
+	LfmUsersList: LfmUsersList,
 	LfmFriendsList: LfmFriendsList,
 	LfmNeighboursList: LfmNeighboursList
 };
