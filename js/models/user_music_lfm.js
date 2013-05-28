@@ -904,8 +904,7 @@ LoadableList.extendTo(LfmUsersList, {
 	},
 	main_list_name: 'list_items',
 	model_name: 'lfm_users',
-	page_limit: 200,
-	'compx-has_no_access': no_access_compx
+	page_limit: 200
 });
 var LfmUsersListOfUser = function() {};
 LfmUsersList.extendTo(LfmUsersListOfUser, {
@@ -921,6 +920,7 @@ LfmUsersList.extendTo(LfmUsersListOfUser, {
 });
 
 LfmUsersListOfUser.extendTo(LfmFriendsList, {
+	'compx-has_no_access': no_access_compx,
 	beforeReportChange: function(list) {
 		list.sort(function(a,b ){return spv.sortByRules(a, b, [
 			{

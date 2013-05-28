@@ -40,9 +40,11 @@ BrowseMap.Model.extendTo(SongCard, {
 		this.initStates();
 		this.on('state-change.mp_show', function(e) {
 			if (e.value){
-				var artist_name = this.state('artist_name');
-				if (artist_name){
-					this.fullInit();
+				this.fullInit();
+
+				var fans = this.getNesting('fans');
+				if (fans){
+					fans.preloadStart();
 				}
 			}
 		});
@@ -57,10 +59,14 @@ BrowseMap.Model.extendTo(SongCard, {
 
 	},
 	fullInit: function() {
-		var artcard = this.app.getArtcard(this.state('artist_name'));
-		if (artcard){
-			this.updateNesting('artist', artcard);
+		var artist_name = this.state('artist_name');
+		if (artist_name){
+			var artcard = this.app.getArtcard(this.state('artist_name'));
+			if (artcard){
+				this.updateNesting('artist', artcard);
+			}
 		}
+		this.updateNesting('fans', this.getSPI('fans', true));
 	},
 	sub_pa: {
 		'fans':{

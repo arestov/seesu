@@ -575,10 +575,11 @@ html.not-as-application, .not-as-application  body{
 	border-top:1px solid #555555;
 	border-bottom:1px solid #6e6e6e;
 	background:#5a5a5a;
+	margin:0 -13px;
 }
 .artist_preview-base{
 	clear: both;
-	margin:0 -13px;
+	
 	padding:0;
 	min-height:170px;
 	}	
@@ -612,7 +613,7 @@ html.not-as-application, .not-as-application  body{
 			.one-artist-playlist a:hover{
 				color:#777;
 				}
-	.track-context .extend-switcher{
+	.artist_preview-base .extend-switcher{
 		float:right;
 		cursor: pointer;
 		max-width: 20rem;
@@ -626,16 +627,16 @@ html.not-as-application, .not-as-application  body{
 		text-overflow: ellipsis;
 		overflow: hidden;
 		}
-		.track-context .extend-switcher .big-space{
+		.artist_preview-base .extend-switcher .big-space{
 			padding-bottom: 1px;
 			border-bottom: 1px dotted #696969;
 		}
 
 		
-		.track-context .extend-switcher:hover{
+		.artist_preview-base .extend-switcher:hover{
 			background-color:#555;
 			}
-			.track-context .extend-switcher:hover .big-space{
+			.artist_preview-base .extend-switcher:hover .big-space{
 				border-bottom-color:transparent; 
 				}
 		.track-context .want-more-info .extend-switcher{
@@ -1569,3 +1570,10 @@ body .surf_nav{
 	overflow: hidden;
 	margin-bottom: 1rem;
 }
+.songcard_page .nested_artist{
+	background: #474747;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	border-top: 1px solid #414141;
+	border-bottom: 1px solid #5A5A5A;
+	}

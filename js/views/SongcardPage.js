@@ -1,5 +1,5 @@
-define(['provoda', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI'],
-function(provoda, etc_views, app_serv, $, spv, ArtcardUI) {
+define(['provoda', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI', './coct'],
+function(provoda, etc_views, app_serv, $, spv, ArtcardUI, coct) {
 'use strict';
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
@@ -15,6 +15,7 @@ provoda.View.extendTo(SongcardPage, {
 		this.createTemplate();
 	},
 	children_views: {
+		fans: coct.ListSimplePreview,
 		artist: ArtcardUI.ArtistInSongConstroller
 	}
 });
