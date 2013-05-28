@@ -449,7 +449,10 @@ spv.Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
 		this.subscribes_cache = {};
-		this.reg_fires = {};
+		this.reg_fires = {
+			by_namespace: {},
+			by_test: []
+		};
 		this.requests = {};
 		this.drequests = {};
 		return this;
@@ -469,10 +472,16 @@ spv.Class.extendTo(provoda.Eventor, {
 	getPossibleRegfires: function(namespace) {
 		var parts = namespace.split('.');
 		var funcs = [];
-		for (var i = parts.length - 1; i > -1; i--) {
+		var i;
+		for (i = parts.length - 1; i > -1; i--) {
 			var posb_namespace = parts.slice(0, i + 1).join('.');
-			if (this.reg_fires[posb_namespace]){
-				funcs.push(this.reg_fires[posb_namespace]);
+			if (this.reg_fires.by_namespace[posb_namespace]){
+				funcs.push(this.reg_fires.by_namespace[posb_namespace]);
+			}
+		}
+		for (i = 0; i < this.reg_fires.by_test.length; i++) {
+			if (this.reg_fires.by_test[i].test.call(this, namespace)){
+				funcs.push(this.reg_fires.by_test[i].fn);
 			}
 		}
 		return funcs;
@@ -618,8 +627,13 @@ spv.Class.extendTo(provoda.Eventor, {
 		return r;
 	},
 	onRegistration: function(name, cb) {
-		if (name){
-			this.reg_fires[name] = cb;
+		if (typeof name == 'string'){
+			this.reg_fires.by_namespace[name] = cb;
+		} else if (typeof name =='function'){
+			this.reg_fires.by_test.push({
+				test: name,
+				fn: cb
+			});
 		}
 		return this;
 	},
