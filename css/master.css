@@ -507,7 +507,6 @@ html.not-as-application, .not-as-application  body{
 .want-more-info .artist-tags{
 	clear:both;
 	margin-bottom:1rem;
-	padding-left:1rem;
 	}
 
 
@@ -562,27 +561,24 @@ html.not-as-application, .not-as-application  body{
 			
 		}
 
-.artist-info .forced-end{
-	position:absolute;
-	right: 0;
-	bottom: 0;
-	width:76px;
-	
-	height:1.7rem;
-	background:url(../i/img_forced_end.png) repeat-y 0 0;
-}
+
 .track-context .artist_preview-base{
 	border-top:1px solid #555555;
 	border-bottom:1px solid #6e6e6e;
 	background:#5a5a5a;
 	margin:0 -13px;
 }
+
+.track-context .artist_preview-texcon{
+	padding: 0 1rem;
+	}
 .artist_preview-base{
 	clear: both;
 	
 	padding:0;
 	min-height:170px;
-	}	
+	}
+		
 	@media (min-height:600px) {
 		.artist_preview-base{
 			min-height:207px;
@@ -602,7 +598,6 @@ html.not-as-application, .not-as-application  body{
 			float:left;
 			margin-right:1rem;
 			padding-top:0.25rem;
-			padding-left:1rem;
 			width:126px;
 			line-height: 2rem;
 
@@ -618,9 +613,9 @@ html.not-as-application, .not-as-application  body{
 		cursor: pointer;
 		max-width: 20rem;
 		margin-left:-0.5rem;
-		padding: 0.5rem 10px;
+		padding: 0.5rem 0.6rem;
 		border:0;
-		border-radius: 0 0 0 0.5rem;
+		border-radius: 0 0  0.5rem 0.5rem;
 		color: hsl(0, 0%, 60%);
 		text-shadow: 0 1px 0 #4A4A4A;
 		white-space: nowrap;
@@ -650,38 +645,29 @@ html.not-as-application, .not-as-application  body{
 	.artist_preview-base.want-more-info{
 		padding-bottom:1rem;
 	}
-	.artist_preview-base .artist-info, .artist_preview-base .track-info {
+	.artist_preview-base .artist-info {
 		display: none;
 		}	
 
-		.want-more-info .artist-info,  .want-more-info .track-info{
+		.want-more-info .artist-info{
 			display: block;
 			}
 
 	.artist_preview-base .extending-info{
 		display:none;
-		}	
-	.artist_preview-base .artist-info, .artist_preview-base .track-info{
-		padding:0 13px;
-		
-	}	
-	.artist_preview-base .track-info{
-		margin-top:1rem;
-	}
-	
+		}
+
 	
 	
 	.want-more-info .extending-info{
 		display:block;
 		}	
-	.track-context .want-more-info .artist-bio,
-	.track-context .want-more-info .artist-tags,
-	.track-context .want-more-info .artist-similar{
+	.want-more-info .artist-bio,
+	.want-more-info .artist-tags,
+	.want-more-info .artist-similar{
 		height:auto;
 		}
-	.track-context .want-more-info .forced-end{
-		display:none;
-		}
+
 
 	.track-context .want-more-info .image img.artist_image{
 		position:static;
@@ -1571,9 +1557,16 @@ body .surf_nav{
 	margin-bottom: 1rem;
 }
 .songcard_page .nested_artist{
-	background: #474747;
+	background: #4D4D4D;
+	border-top: 1px solid #464646;
+	border-bottom: 1px solid #5C5C5C;
 	padding: 1rem;
 	border-radius: 0.5rem;
-	border-top: 1px solid #414141;
-	border-bottom: 1px solid #5A5A5A;
+	margin-top:2rem;
+	margin-bottom:2rem;
 	}
+	.songcard_page-header{
+		font-weight: 400;
+		font-size: 1.5rem;
+		margin: 0;
+		}

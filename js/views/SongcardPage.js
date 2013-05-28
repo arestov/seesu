@@ -5,7 +5,7 @@ var localize = app_serv.localize;
 var app_env = app_serv.app_env;
 
 var SongcardPage = function() {};
-provoda.View.extendTo(SongcardPage, {
+coct.SPView.extendTo(SongcardPage, {
 	createBase: function() {
 		this.c = this.root_view.getSample('songcard_page');
 

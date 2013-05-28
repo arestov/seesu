@@ -153,7 +153,6 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 
 			bioc.empty().append(safe_node);
 			this.root_view.bindLfmTextClicks(bioc);
-			bioc.append('<span class="forced-end"></span>');
 		} else {
 
 		}

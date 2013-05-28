@@ -592,8 +592,8 @@ define({
 		"ru": "Принять приглашение"
 	},
 	"more-ab-info":{
-		"original": "more «%s» info",
-		"ru": "больше о «%s»"
+		"original": "more about artist",
+		"ru": "больше об артисте"
 	},
 	
 	"":{

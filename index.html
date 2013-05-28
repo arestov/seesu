@@ -602,10 +602,10 @@
 		</div>
 		<div class="songcard_page usual_page"
 			pv-class="songcard_page usual_page {{!mp_show && 'hidden'}}">
-			<div pv-text="{{track_name}}"></div>
-			<div pv-text="{{artist_name}}"></div>
+			<h4 class="songcard_page-header">
+				<span pv-text="{{track_name}}"></span> - <span pv-text="{{artist_name}}"></span>
+			</h4>
 			<div class="nested_artist" pv-view="artist"></div>
-
 			<div class="area_for_button" pv-view='fans'>
 				<div class="area-button" pv-anchor='big_button'>
 					<span pv-text="{{nav_title}}"></span>
@@ -632,74 +632,77 @@
 						/>
 				</div>
 			</div>
-			<div class="dominator-head">
-				<div 
-					class="closer-to-track"
-					pv-class="{{one_artist_playlist && 'one-artist-playlist'}} closer-to-track">
+			<div class="artist_preview-texcon">
+				<div class="dominator-head">
+					<div 
+						class="closer-to-track"
+						pv-class="{{one_artist_playlist && 'one-artist-playlist'}} closer-to-track">
+						<a 
+							class="js-serv lang localize-artcard"
+							
+							pv-type="way-point"
+							pv-events="click::showOnMap"
+							>artcard</a>
+					</div>
 					<a 
-						class="js-serv lang localize-artcard"
-						
+						class="extend-switcher"
+						pv-events="click:showMoreInfo"
 						pv-type="way-point"
-						pv-events="click::showOnMap"
-						>artcard</a>
-				</div>
-				<a 
-					class="extend-switcher"
-					pv-events="click:showMoreInfo"
-					pv-type="way-point"
-					pv-class="{{!infb_text && 'hidden'}} extend-switcher">
-					<span class="big-space" pv-text="{{infb_text}}"></span>
-				</a>
-				<p 
-				pv-view="tags_list"
-				class="artist-tags hidden" 
-				pv-class="artist-tags {{(!preview_list || !preview_list.length) && 'hidden'}}" >
-					<span class="simple-header">
-						<em class="lang localize-Tags">Tags</em>
-					</span>
-					<span pv-anchor="tags-c"><a 
-						class="music-tag js-serv" 
-						pv-repeat="tag in preview_list" 
-						pv-type="hard-way-point" 
-						pv-events="click:showTag" 
-						pv-text="{{tag}}"></a></span>
-				</p>
-			</div>
-			<div class="artist-info">
-				<p class="artist-stat-in-song">
-					<span pv-class="{{!listeners && 'hidden'}}" class="playcount">
-						<span class="desc">Listeners:</span>
-						<span pv-text="{{listeners}}"></span>
-					</span> 
-					<span pv-class="{{!playcount && 'hidden'}}" class="hidden">
-						<span class="desc">Playcount:</span>
-						<span pv-text="{{playcount}}"></span>
-					</span>
-				</p>
-				<div class="artist-bio" pv-anchor="artbio">...</div>
-				<div class="artist-meta-info">
+						pv-class="{{!infb_text && 'hidden'}} extend-switcher">
+						<span class="big-space" pv-text="{{infb_text}}"></span>
+					</a>
 					<p 
-						pv-view="similar_artists"
-						class="artist-similar">
-						<span class="desc-name">
-							<em>
-								<a 
-									class="similar-artists js-serv lang localize-similar-arts"
-									pv-type="hard-way-point"
-									pv-events="click::showOnMap"
-									>Similar artists:</a>
-							</em>
+					pv-view="tags_list"
+					class="artist-tags hidden" 
+					pv-class="artist-tags {{(!preview_list || !preview_list.length) && 'hidden'}}" >
+						<span class="simple-header">
+							<em class="lang localize-Tags">Tags</em>
 						</span>
-						<span class="desc-text" pv-anchor="similars-c"><a 
-							pv-view="preview_list"
-
-							class="artist js-serv" 
-							pv-events="click::showArtcard" 
-							pv-type="hard-way-point"
-							pv-text="{{artist_name}}"></a></span>
+						<span pv-anchor="tags-c"><a 
+							class="music-tag js-serv" 
+							pv-repeat="tag in preview_list" 
+							pv-type="hard-way-point" 
+							pv-events="click:showTag" 
+							pv-text="{{tag}}"></a></span>
 					</p>
 				</div>
+				<div class="artist-info">
+					<p class="artist-stat-in-song">
+						<span pv-class="{{!listeners && 'hidden'}}" class="playcount">
+							<span class="desc">Listeners:</span>
+							<span pv-text="{{listeners}}"></span>
+						</span> 
+						<span pv-class="{{!playcount && 'hidden'}}" class="hidden">
+							<span class="desc">Playcount:</span>
+							<span pv-text="{{playcount}}"></span>
+						</span>
+					</p>
+					<div class="artist-bio" pv-anchor="artbio">...</div>
+					<div class="artist-meta-info">
+						<p 
+							pv-view="similar_artists"
+							class="artist-similar">
+							<span class="desc-name">
+								<em>
+									<a 
+										class="similar-artists js-serv lang localize-similar-arts"
+										pv-type="hard-way-point"
+										pv-events="click::showOnMap"
+										>Similar artists:</a>
+								</em>
+							</span>
+							<span class="desc-text" pv-anchor="similars-c"><a 
+								pv-view="preview_list"
+
+								class="artist js-serv" 
+								pv-events="click::showArtcard" 
+								pv-type="hard-way-point"
+								pv-text="{{artist_name}}"></a></span>
+						</p>
+					</div>
+				</div>
 			</div>
+			
 		</div>
 		
 		<div class="song-row-content moplas-block">
