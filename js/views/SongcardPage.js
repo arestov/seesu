@@ -13,6 +13,9 @@ provoda.View.extendTo(SongcardPage, {
 		this.c.children('.nested_artist').append(nart_dom);
 
 		this.createTemplate();
+	},
+	children_views: {
+		artist: ArtcardUI.ArtistInSongConstroller
 	}
 });
 
