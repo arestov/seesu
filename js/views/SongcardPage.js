@@ -1,5 +1,5 @@
-define(['provoda', './etc_views', 'app_serv', 'jquery', 'spv'],
-function(provoda, etc_views, app_serv, $, spv) {
+define(['provoda', './etc_views', 'app_serv', 'jquery', 'spv', './ArtcardUI'],
+function(provoda, etc_views, app_serv, $, spv, ArtcardUI) {
 'use strict';
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
@@ -20,6 +20,9 @@ provoda.View.extendTo(SongcardPage, {
 var SongcardController = function() {};
 provoda.View.extendTo(SongcardController, {
 	dom_rp: true,
+	children_views:{
+		artist: ArtcardUI.ArtistInSongConstroller
+	},
 	bindBase: function() {
 		this.rowcs = {};
 		var _this = this;

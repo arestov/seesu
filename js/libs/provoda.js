@@ -423,11 +423,11 @@ var callbacks_flow = [];
 var callbacks_busy;
 var iteration_delayed;
 var iterateCallbacksFlow = function() {
-	var start = Date.now();
+	var start = Date.now() + 100;
 	iteration_delayed = false;
 	callbacks_busy = true;
 	while (callbacks_flow.length){
-		if (start - new Date() > 100){
+		if (Date.now() > start){
 			setTimeout(iterateCallbacksFlow,4);
 			break;
 		}
