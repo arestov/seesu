@@ -643,21 +643,18 @@ var getAverageDurations = function(mu_array, time_limit){
 						} else {
 							return value;
 						}
-						
 					}, function(item){
 
 						var average_dur = average_durs[spv.getTargetField(item, field_name)];
 						if (average_dur){
 							if (item.duration && item.duration > time_limit){
 								return Math.abs(average_dur - item.duration);
-								
 							} else {
 								return average_dur * 1000;
 							}
 						} else {
 							return Infinity;
 						}
-						
 					}
 				]);
 			});
