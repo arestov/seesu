@@ -1,4 +1,4 @@
-define(['provoda', 'jquery', 'app_serv', './SearchPageViewBase'], function(provoda, $, app_serv) {
+define(['provoda', 'jquery', 'app_serv', './SearchPageViewBase', './coct'], function(provoda, $, app_serv, coct) {
 "use strict";
 var localize = app_serv.localize;
 var
@@ -10,7 +10,7 @@ var
 	investigationView;
 
 investigationView  = function(){};
-provoda.extendFromTo('InvestigationView', provoda.View, investigationView);
+provoda.extendFromTo('InvestigationView', coct.SPView, investigationView);
 
 
 baseSuggestUI = function(){};
@@ -192,23 +192,6 @@ investigationView.extendTo(SearchPageView, {
 	},
 	'stch-needs_search_from': function(state) {
 		this.c.toggleClass('does-not-need-search-from', !state);
-	},
-	complex_states: {
-		'mp_show_end': {
-			depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
-			fn: function(anim, vis_mp_show, mp_show) {
-				if (anim) {
-					if (vis_mp_show && anim == vis_mp_show.anid){
-						return vis_mp_show.value;
-					} else {
-						return false;
-					}
-					
-				} else {
-					return mp_show;
-				}
-			}
-		}
 	},
 	createBase: function() {
 		this.c = $('<div class="search_results-container"></div>');

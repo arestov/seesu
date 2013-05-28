@@ -89,6 +89,11 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		tags_list: TagsController,
 		similar_artists: SimilarsController
 	},
+	checkPanoramaSize: function() {
+		if (this.img_panorama){
+			this.img_panorama.checkSize();
+		}
+	},
 	bindBase: function() {
 
 		this.photo_data = {};
@@ -97,11 +102,10 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		var _this = this;
 		this.parent_view.on('state-change.mp_show_end', function(e) {
 			if (e.value){
-				if (_this.img_panorama){
-					setTimeout(function() {
-						_this.img_panorama.checkSize();
-					},50);
-				}
+				setTimeout(function() {
+					_this.checkPanoramaSize();
+				},50);
+				
 			}
 		});
 		this.parent_view.on('state-change.mp_show', function(e) {

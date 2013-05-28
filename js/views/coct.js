@@ -62,9 +62,26 @@ ListPreview.extendTo(LiListsPreview, {
 });
 
 
+var SPView = function() {};
+provoda.View.extendTo(SPView, {
+	'compx-mp_show_end': {
+		depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
+		fn: function(anim, vis_mp_show, mp_show) {
+			if (anim) {
+				if (vis_mp_show && anim == vis_mp_show.anid){
+					return vis_mp_show.value;
+				} else {
+					return false;
+				}
+			} else {
+				return mp_show;
+			}
+		}
+	}
+});
 
 var PageView = function() {};
-provoda.View.extendTo(PageView, {
+SPView.extendTo(PageView, {
 	'stch-mp_show': function(state) {
 		this.c.toggleClass('hidden', !state);
 	},
@@ -276,6 +293,7 @@ return {
 	ListPreview:ListPreview,
 	LiListsPreview:LiListsPreview,
 	ListPreviewLine:ListPreviewLine,
+	SPView: SPView,
 	PageView:PageView,
 	AllPlacesPage:AllPlacesPage,
 	ArtistsListPreviewLine: ArtistsListPreviewLine,

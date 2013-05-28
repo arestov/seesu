@@ -1,33 +1,17 @@
 define(['provoda', 'spv', 'jquery', 'app_serv',
-'./TrackActionsRowUI', './MfCorUI', './ArtcardUI', './SongcardPage'],
+'./TrackActionsRowUI', './MfCorUI', './ArtcardUI', './SongcardPage', './coct'],
 function(provoda, spv, $, app_serv,
-TrackActionsRowUI, MfCorUI, ArtcardUI, SongcardPage) {
+TrackActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
 "use strict";
 
 
 
 var SongUI = function(){};
 
-provoda.View.extendTo(SongUI, {
+coct.SPView.extendTo(SongUI, {
 	dom_rp: true,
 	createDetailes: function(){
 		this.createBase();
-	},
-	complex_states: {
-		'mp_show_end': {
-			depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
-			fn: function(anim, vis_mp_show, mp_show) {
-				if (anim) {
-					if (vis_mp_show && anim == vis_mp_show.anid){
-						return vis_mp_show.value;
-					} else {
-						return false;
-					}
-				} else {
-					return mp_show;
-				}
-			}
-		}
 	},
 	state_change : {
 		"mp_show": function(opts, old_opts) {
