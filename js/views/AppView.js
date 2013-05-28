@@ -1,11 +1,11 @@
 define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
 './StartPageView', './searchPageView', './ArtcardUI', './TagsListPage', './ArtistListView',
 './songsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
-'./lul'],
+'./lul', './SongcardPage'],
 function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
 StartPageView, searchPageView, ArtcardUI, TagsListPage, ArtistListView,
 songsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
-lul) {
+lul, SongcardPage) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
@@ -253,6 +253,10 @@ provoda.View.extendTo(appView, {
 		},
 		lulas: {
 			main: lul.LULAsPageVIew,
+			nav: nav.baseNavUI
+		},
+		songcard: {
+			main: SongcardPage,
 			nav: nav.baseNavUI
 		}
 	},

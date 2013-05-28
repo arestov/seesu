@@ -600,7 +600,13 @@
 
 			
 		</div>
+		<div class="songcard_page usual_page"
+			pv-class="songcard_page usual_page {{!mp_show && 'hidden'}}">
+			<div pv-text="{{track_name}}"></div>
+			<div pv-text="{{artist_name}}"></div>
+			<div class="nested_artist" pv-view="artist"></div>
 
+		</div>
 		<div 
 		class="artist_preview-base"
 		pv-class="artist_preview-base {{vis_wamo_info && 'want-more-info'}}"

@@ -38,6 +38,14 @@ BrowseMap.Model.extendTo(SongCard, {
 			track_name: params.track_name
 		};
 		this.initStates();
+		this.on('state-change.mp_show', function(e) {
+			if (e.value){
+				var artist_name = this.state('artist_name');
+				if (artist_name){
+					this.fullInit();
+				}
+			}
+		});
 	},
 	'compx-nav_title': {
 		depends_on: ['artist_name', 'track_name'],

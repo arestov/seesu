@@ -6,7 +6,14 @@ var app_env = app_serv.app_env;
 
 var SongcardPage = function() {};
 provoda.View.extendTo(SongcardPage, {
+	createBase: function() {
+		this.c = this.root_view.getSample('songcard_page');
 
+		var nart_dom = this.root_view.getSample('artist_preview-base');
+		this.c.children('.nested_artist').append(nart_dom);
+
+		this.createTemplate();
+	}
 });
 
 

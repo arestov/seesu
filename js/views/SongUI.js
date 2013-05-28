@@ -38,7 +38,6 @@ provoda.View.extendTo(SongUI, {
 			//	this.parent_view.c.removeClass("show-zoom-to-track");
 				this.deactivate();
 			}
-			
 		},
 		"can_expand": function(state) {
 			if (state){
