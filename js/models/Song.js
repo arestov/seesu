@@ -142,6 +142,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				return artist_name && track_name;
 			}
 		},
+		'compx-can_load_songcard':{
+			depends_on:['can_expand']
+		},
 		'compx-can_load_baseinfo': {
 			depends_on: ['can_expand', 'has_nested_artist'],
 			fn: function(can_expand, hna) {
