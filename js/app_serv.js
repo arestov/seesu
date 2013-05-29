@@ -56,11 +56,26 @@ var getCleanDocumentBodyHTML = function(text) {
 	}
 };
 var loaded_images = {};
+var images_callbacks = {};
+var addImageLoadCallback = function(url, cb) {
+	if (!images_callbacks[url]){
+		images_callbacks[url] = [];
+	}
+	images_callbacks[url].push(cb);
+};
+var triggerImagesCallback = function(url) {
+	var array = images_callbacks[url];
+	if (array){
+		while (array.length){
+			var cb = array.shift();
+			cb.call();
+		}
+	}
+};
 var loadImage = function(opts) {
 	if (typeof opts.cache_allowed != 'boolean'){
 		throw new Error('cache_allowed must be true or false');
 	}
-
 	//queue
 	var node = opts.node || new Image();
 	var deferred = $.Deferred();
@@ -69,9 +84,15 @@ var loadImage = function(opts) {
 		spv.removeEvent(node, "load", loadCb);
 		spv.removeEvent(node, "error", errorCb);
 	};
-	var loadCb = function() {
+	var loadCb = function(assistance_load) {
 		deferred.resolve(node);
 		unbindEvents();
+		if (async_obj && async_obj.queued){
+			async_obj.queued.abort();
+		}
+		if (!assistance_load){
+			triggerImagesCallback(opts.url);
+		}
 	};
 	var errorCb = function() {
 		deferred.reject(node);
@@ -87,8 +108,6 @@ var loadImage = function(opts) {
 			unbindEvents();
 		}
 	});
-
-
 	spv.addEvent(node, "load", loadCb);
 	spv.addEvent(node, "error", errorCb);
 	if (opts.timeout){
@@ -98,24 +117,23 @@ var loadImage = function(opts) {
 		}, opts.timeout);
 	}
 
-	var completeLoad = function() {
+	var accomplishLoad = function(assistance_load) {
 		node.src = opts.url;
 		if (node.complete){
 			if (opts.cache_allowed){
 				loaded_images[opts.url] = true;
 			}
-			deferred.resolve(node);
-			unbindEvents();
+			loadCb(assistance_load);
 		}
 	};
 	if (opts.queue && !loaded_images[opts.url]){
-		async_obj.queued = opts.queue.add(completeLoad);
-		
+		async_obj.queued = opts.queue.add(accomplishLoad);
+		addImageLoadCallback(opts.url, function(){
+			accomplishLoad(true);
+		});
 	} else {
-		completeLoad();
+		accomplishLoad();
 	}
-	
-	
 	return async_obj;
 };
 app_serv.loadImage = loadImage;
