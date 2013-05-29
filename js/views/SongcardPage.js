@@ -15,7 +15,7 @@ coct.SPView.extendTo(SongcardPage, {
 		this.createTemplate();
 	},
 	children_views: {
-		fans: coct.ListSimplePreview,
+		fans: coct.ImagedListPreview,
 		artist: ArtcardUI.ArtistInSongConstroller
 	}
 });
