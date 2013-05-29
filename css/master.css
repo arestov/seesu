@@ -1000,7 +1000,7 @@ html.not-as-application, .not-as-application  body{
 .song-listeners-list{
 	position: relative;
 	overflow: hidden;
-	padding-top: 10px;
+	padding-top: 0.5rem;
 	height: 56px;
 	}
 	.song-listener{
@@ -1573,9 +1573,19 @@ body .surf_nav{
 	.full-page .songcard_page-header{
 		font-size: 1.5rem;
 		}
+.song_fans-b-intrack{
+	margin: 1rem -13px 0;
+	border-top: 1px solid #555555;
+	border-bottom: 1px solid #6e6e6e;
+	background: #5a5a5a;
+	}
+.song_fans-h-intrack{
+	margin-left: 1rem;
+}
 .song_fans-l-intrack{
 	max-height: 3.57rem;
 	overflow: hidden;
+	margin-top: 0.5rem;
 	}
 .song_fan-b-tck{
 	float:left;
@@ -1592,12 +1602,17 @@ body .surf_nav{
 .song_fan-h-tck{
 	position: absolute;
 	top: 0;
+	visibility: hidden;
 	z-index: 2;
 	width: inherit;
 	text-overflow: ellipsis;
 	text-shadow: #333 1px 1px 1px;
-	opacity: 0.2;
 	word-wrap: break-word;
 	line-height: 1;
 	padding: 0.3rem;
+	-moz-box-sizing:border-box;
+	box-sizing: border-box;
+	}
+	.song_fan-b-tck:hover .song_fan-h-tck{
+		visibility: visible;
 	}
