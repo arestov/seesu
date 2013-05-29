@@ -1578,6 +1578,7 @@ body .surf_nav{
 	border-top: 1px solid #555555;
 	border-bottom: 1px solid #6e6e6e;
 	background: #5a5a5a;
+	padding:0.2rem 0 0.3rem;
 	}
 .song_fans-h-intrack{
 	margin-left: 1rem;
