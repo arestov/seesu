@@ -55,8 +55,11 @@ BrowseMap.Model.extendTo(SongCard, {
 			return artist_name + ' - ' + track_name;
 		}
 	},
-	initForSong: function() {
 
+	initForSong: function() {
+		var fans = this.getSPI('fans', true);
+		this.updateNesting('fans', fans);
+		fans.preloadStart();
 	},
 	fullInit: function() {
 		var artist_name = this.state('artist_name');

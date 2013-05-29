@@ -130,6 +130,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				if (e.value){
 					var songcard = _this.app.getSongcard(_this.artist, _this.track);
 					if (songcard){
+					//	songcard.initForSong();
 						_this.updateNesting('songcard', songcard);
 					}
 				}
