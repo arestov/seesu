@@ -126,11 +126,11 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					//_this.loaDDD('artist_images');
 				}
 			});
-			this.on('state-change.has_full_title', function(e) {
+			this.on('state-change.can_load_songcard', function(e) {
 				if (e.value){
 					var songcard = _this.app.getSongcard(_this.artist, _this.track);
 					if (songcard){
-					//	songcard.initForSong();
+						songcard.initForSong();
 						_this.updateNesting('songcard', songcard);
 					}
 				}
@@ -143,7 +143,10 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			}
 		},
 		'compx-can_load_songcard':{
-			depends_on:['can_expand']
+			depends_on:['can_expand', 'has_full_title'],
+			fn: function(can_expand, has_full_title) {
+				return can_expand && has_full_title;
+			}
 		},
 		'compx-can_load_baseinfo': {
 			depends_on: ['can_expand', 'has_nested_artist'],
