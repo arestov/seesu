@@ -24,6 +24,23 @@ user_music_lfm.LfmUsersList.extendTo(SongFansList, {
 			no_paging: true,
 			disallow_paging: true
 		});
+	},
+	beforeReportChange: function(list) {
+		list.sort(function(a,b ){return spv.sortByRules(a, b, [
+			{
+				field: function(item) {
+					var image = item.state('lfm_image');
+					image = image && (image.lfm_id || image.url);
+					if (image && image.search(/gif$/) == -1){
+						return 1;
+					} else if (!image) {
+						return 2;
+					} else {
+						return 3;
+					}
+				}
+			}
+		]);});
 	}
 });
 

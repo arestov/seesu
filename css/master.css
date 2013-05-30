@@ -1579,6 +1579,7 @@ body .surf_nav{
 	border-bottom: 1px solid #6e6e6e;
 	background: #5a5a5a;
 	padding:0.2rem 0 0.3rem;
+	min-height: 5.57rem;
 	}
 .song_fans-h-intrack{
 	margin-left: 1rem;
