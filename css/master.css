@@ -1579,7 +1579,7 @@ body .surf_nav{
 	border-bottom: 1px solid #6e6e6e;
 	background: #5a5a5a;
 	padding:0.2rem 0 0.3rem;
-	min-height: 5.57rem;
+	min-height: 3rem;
 	cursor: pointer;
 	}
 	.song_fans-b-intrack:hover {
@@ -1588,23 +1588,24 @@ body .surf_nav{
 		}
 .song_fans-h-intrack{
 	margin-left: 1rem;
+	margin-right: 0.5rem;
+	float: left
 }
 .song_fans-l-intrack{
-	max-height: 3.57rem;
+	max-height: 3rem;
 	overflow: hidden;
-	margin-top: 0.5rem;
 	}
 .song_fan-b-tck{
 	float:left;
-	height: 3.57rem;
-	width: 3.57rem;
+	height: 3rem;
+	width: 3rem;
 	overflow: hidden;
 	position: relative;
 	}
 
 	.song_fan-b-tck img{
-		height: 3.57rem;
-		width: 3.57rem;
+		height: 100%;
+		width: 100%;
 		}
 .song_fan-h-tck{
 	position: absolute;
@@ -1616,6 +1617,7 @@ body .surf_nav{
 	text-shadow: #333 1px 1px 1px;
 	word-wrap: break-word;
 	line-height: 1;
+	font-size: 0.8em;
 	padding: 0.3rem;
 	-moz-box-sizing:border-box;
 	box-sizing: border-box;
