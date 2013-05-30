@@ -1601,6 +1601,10 @@ body .surf_nav{
 	width: 3rem;
 	overflow: hidden;
 	position: relative;
+	background-size:60%;
+	background-position: 50% 50%;
+	background-image: url(../i/user.svg);
+	background-repeat: no-repeat;
 	}
 
 	.song_fan-b-tck img{
