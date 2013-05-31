@@ -984,7 +984,7 @@ html.not-as-application, .not-as-application  body{
 
 .track-listeners{
 	margin:0.5rem 0 0;
-	min-height:10px;
+	min-height:6rem;
 }
 .big-user-avatar {
 	float:left;
