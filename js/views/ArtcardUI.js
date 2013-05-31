@@ -233,9 +233,9 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 				var sizes = spv.toRealArray(el.sizes.size);
 
 				var image_jnode = $('<img class="artist_image hidden" alt=""/>');
+				var url = (sizes[5] || sizes[0])["#text"];
 				var req = app_serv.loadImage({
-					node: image_jnode[0],
-					url: (sizes[5] || sizes[0])["#text"],
+					url: url,
 					timeout: 40000,
 					queue: queue,
 					cache_allowed: true
@@ -243,6 +243,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 					if (!canUse()){
 						return;
 					}
+					image_jnode[0].src = url;
 					prepareImageAppend(index);
 
 					image_jnode.removeClass("hidden");

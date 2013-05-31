@@ -20,12 +20,40 @@ coct.SPView.extendTo(SongcardPage, {
 	}
 });
 
+var FanPreview = function() {};
+provoda.View.extendTo(FanPreview, {
+	'stch-selected_image': function(state) {
+		var image_node = this.tpl.ancs['user-image'];
+		this.setVisState('cant_use_image', true);
+		image_node.src = '';
+		var _this = this;
+		if (state){
+			var url = state.lfm_id ?
+				'http://userserve-ak.last.fm/serve/64s/' + state.lfm_id : state.url;
+			this.root_view.loadImage({
+				url: url,
+				cache_allowed: true
+			}).done(function() {
+				image_node[0].src = url;
+				_this.setVisState('cant_use_image', false);
+			});
+		}
+	}
+});
+
+var FansList = function() {};
+provoda.View.extendTo(FansList, {
+	children_views: {
+		list_items: FanPreview
+	}
+});
 
 var SongcardController = function() {};
 provoda.View.extendTo(SongcardController, {
 	dom_rp: true,
 	children_views:{
-		artist: ArtcardUI.ArtistInSongConstroller
+		artist: ArtcardUI.ArtistInSongConstroller,
+		fans: FansList
 	},
 	bindBase: function() {
 		this.rowcs = {};

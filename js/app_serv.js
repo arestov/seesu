@@ -63,6 +63,10 @@ var addImageLoadCallback = function(url, cb) {
 	}
 	images_callbacks[url].push(cb);
 };
+var removeImageLoadCallback = function(url, cb) {
+
+};
+
 var triggerImagesCallback = function(url) {
 	var array = images_callbacks[url];
 	if (array){
@@ -77,27 +81,9 @@ var loadImage = function(opts) {
 		throw new Error('cache_allowed must be true or false');
 	}
 	//queue
+	var done;
 	var node = opts.node || new Image();
 	var deferred = $.Deferred();
-
-	var unbindEvents = function() {
-		spv.removeEvent(node, "load", loadCb);
-		spv.removeEvent(node, "error", errorCb);
-	};
-	var loadCb = function(assistance_load) {
-		deferred.resolve(node);
-		unbindEvents();
-		if (async_obj && async_obj.queued){
-			async_obj.queued.abort();
-		}
-		if (!assistance_load){
-			triggerImagesCallback(opts.url);
-		}
-	};
-	var errorCb = function() {
-		deferred.reject(node);
-		unbindEvents();
-	};
 
 	var async_obj = deferred.promise({
 		abort: function() {
@@ -108,28 +94,58 @@ var loadImage = function(opts) {
 			unbindEvents();
 		}
 	});
+
+	var unbindEvents = function() {
+		spv.removeEvent(node, "load", loadCb);
+		spv.removeEvent(node, "error", errorCb);
+	};
+	var loadCb = function(e) {
+		if (done){
+			return;
+		}
+		done = true;
+		deferred.resolve(node);
+		unbindEvents();
+		if (async_obj && async_obj.queued){
+			async_obj.queued.abort();
+		}
+		if (async_obj.timeout_num){
+			clearTimeout(async_obj.timeout_num);
+		}
+		if (e && e.type == 'load'){
+			triggerImagesCallback(opts.url);
+		}
+	};
+	var errorCb = function() {
+		deferred.reject(node);
+		unbindEvents();
+	};
+
 	spv.addEvent(node, "load", loadCb);
 	spv.addEvent(node, "error", errorCb);
-	if (opts.timeout){
-		setTimeout(function() {
-			deferred.reject(node, 'timeout');
-			unbindEvents();
-		}, opts.timeout);
-	}
 
-	var accomplishLoad = function(assistance_load) {
+
+	var accomplishLoad = function() {
+		
 		node.src = opts.url;
 		if (node.complete){
 			if (opts.cache_allowed){
 				loaded_images[opts.url] = true;
 			}
-			loadCb(assistance_load);
+			loadCb();
+		} else {
+			if (opts.timeout){
+				async_obj.timeout_num = setTimeout(function() {
+					deferred.reject(node, 'timeout');
+					unbindEvents();
+				}, opts.timeout);
+			}
 		}
 	};
 	if (opts.queue && !loaded_images[opts.url]){
 		async_obj.queued = opts.queue.add(accomplishLoad);
 		addImageLoadCallback(opts.url, function(){
-			accomplishLoad(true);
+			accomplishLoad();
 		});
 	} else {
 		accomplishLoad();

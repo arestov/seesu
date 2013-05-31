@@ -173,11 +173,12 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 	'stch-selected_image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
+			var node = this.c[0];
 			var req = this.root_view.loadImage({
-					node: this.c[0],
 					url: url,
 					cache_allowed: true
 				}).done(function(){
+					node.src = url;
 				}).fail(function(){
 				});
 			this.on('die', function() {
@@ -216,11 +217,12 @@ provoda.View.extendTo(BigAlbumPreview, {
 	'stch-selected_image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
+			var node = this.tpl.ancs.imgc[0];
 			var req = this.root_view.loadImage({
-					node: this.tpl.ancs.imgc[0],
 					url: url,
 					cache_allowed: true
 				}).done(function(){
+					node.src = url;
 				}).fail(function(){
 				});
 			this.on('die', function() {
