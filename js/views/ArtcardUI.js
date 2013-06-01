@@ -273,9 +273,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 			main_c.addClass('loading-images');
 
 			for (var i = img_requests.length - 1; i >= 0; i--) {
-				_this.parent_view.mpx.RPCLegacy('addRequest', img_requests[i], {
-					space: 'demonstration'
-				});
+				_this.parent_view.mpx.RPCLegacy('addRequest', img_requests[i]);
 			}
 			$.when.apply($, img_requests).always(function(){
 				if (!canUse()){

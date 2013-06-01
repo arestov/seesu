@@ -9,42 +9,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 	Song = function(){};
 
 	SongBase.extendTo(Song, {
-		requests_desc: {
-			artist_images: {
-				
-				rq_opts: {
-					space: 'demonstration'
-				}
-			},
-			artist_base_info: {
-				errors: ['error'],
-				before: function() {
-
-				},
-				after: function() {
-
-				},
-				send: function() {
-					var _this = this;
-					return this.app.lfm.get('artist.getInfo',{'artist': this.artist })
-					.done(function(r){
-
-						var ai = app_serv.parseArtistInfo(r);
-						_this.updateManyStates({
-							listeners: spv.getTargetField(r, 'artist.stats.listeners'),
-							playcount: spv.getTargetField(r, 'artist.stats.playcount'),
-							bio: ai.bio,
-							tags: ai.tags,
-							similars: ai.similars,
-							'artist_image': ai.images && ai.images[2] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png'
-						});
-					});
-				},
-				rq_opts: {
-					space: 'demonstration'
-				}
-			}
-		},
 		page_name: 'song page',
 
 		init: function(opts) {
@@ -95,16 +59,12 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					if (artcard){
 						var req = artcard.loaDDD('base_info');
 						if (req){
-							this.addRequest(req, {
-								space: 'demonstration'
-							});
+							this.addRequest(req);
 						}
 					} else {
 						console.warn('no nested artcard');
 					}
 					
-
-					//_this.loaDDD('artist_base_info');
 				}
 			});
 			this.on('state-change.can_load_images', function(e) {
@@ -113,9 +73,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					if (artcard){
 						var req = artcard.loaDDD('images');
 						if (req){
-							this.addRequest(req, {
-								space: 'demonstration'
-							});
+							this.addRequest(req);
 						}
 						
 					} else {

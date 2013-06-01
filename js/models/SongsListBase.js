@@ -558,10 +558,10 @@ define(['provoda', 'spv'], function(provoda, spv){
 			common.reverse();
 			
 			for (i = 0; i < demonstration.length; i++) {
-				demonstration[i].setPrio('highest', 'demonstration');
+				demonstration[i].setPrio('highest');
 			}
 			for (i = 0; i < common.length; i++) {
-				common[i].setPrio('highest', 'common');
+				common[i].setPrio('highest', 'acting');
 			}
 			
 		},

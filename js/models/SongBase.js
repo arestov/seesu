@@ -372,7 +372,7 @@ provoda.addPrototype("SongBase",{
 				})
 				.fail(function() {
 					def_top_tracks.resolve();
-				}));
+				}), {space: 'acting'});
 
 
 
@@ -406,7 +406,7 @@ provoda.addPrototype("SongBase",{
 					})
 					.fail(function() {
 						def_podcast.resolve();
-					}));
+					}), {space: 'acting'});
 
 
 
@@ -441,7 +441,8 @@ provoda.addPrototype("SongBase",{
 						})
 						.fail(function() {
 							def_soundcloud.resolve();
-						})
+						}),
+					{space: 'acting'}
 					);
 				}
 
@@ -457,7 +458,8 @@ provoda.addPrototype("SongBase",{
 						})
 						.fail(function() {
 							def_exfm.resolve();
-						})
+						}),
+					{space: 'acting'}
 					);
 				}
 			}
@@ -581,7 +583,8 @@ provoda.addPrototype("SongBase",{
 		investg
 			.on('requests', function(array) {
 				_this.addRequests(array, {
-					depend: true
+					depend: true,
+					space: 'acting'
 				});
 			}, {immediately: true})
 			.on('state-change.search_complete', function(e) {
