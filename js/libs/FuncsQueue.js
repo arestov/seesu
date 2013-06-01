@@ -133,6 +133,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 			if (!not_init) {
 				this.init();
 			}
+			this.valid_sort = false;
 			return _ob;
 		},
 		init: function(force){
@@ -145,6 +146,13 @@ define(['./FuncsStack'], function(FuncsStack) {
 			return this;
 		},
 		selectNext: function(){
+			if (!this.valid_sort){
+				if (this.resortQueue){
+					this.resortQueue.call();
+				}
+				this.valid_sort = true;
+			}
+
 			var
 				q = this.fstack.getArr(),
 				prior_num = 0,
