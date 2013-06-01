@@ -22,9 +22,18 @@ define(['./FuncsStack'], function(FuncsStack) {
 	};
 
 
-	FuncsQueue = function(small_delay, big_delay, big_delay_interval){
+	FuncsQueue = function(opts){
 		var _this = this;
-		
+
+		var time_opts = opts.time,
+			small_delay = time_opts[0],
+			big_delay = time_opts[1],
+			big_delay_interval = time_opts[2];
+
+		if ( opts.resortQueue ){
+			this.resortQueue = opts.resortQueue;
+		}
+
 		var selectNext = function(prev, args) {
 			_this.goAhead(prev);
 		};

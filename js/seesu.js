@@ -32,7 +32,9 @@ lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret
 	return app_serv.store(key);
 }, function(key, value){
 	return app_serv.store(key, value, true);
-}, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue(700));
+}, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue({
+	time: [700]
+}));
 lfm.checkMethodResponse = function(method, data, r) {
 	su.art_images.checkLfmData(method, r);
 };
@@ -108,19 +110,25 @@ AppModel.extendTo(SeesuApp, {
 			xhr2: app_env.xhr2,
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
-			queue: new FuncsQueue(1700, 4000, 4)
+			queue: new FuncsQueue({
+				time: [1700, 4000, 4]
+			})
 		});
 		this.goog_sc = new net_apis.GoogleSoundcloud();
 		this.goog_sc.init({
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
-			queue: new FuncsQueue(1000, 3000, 4)
+			queue: new FuncsQueue({
+				time: [1000, 3000, 4]
+			})
 		});
 		this.discogs = new net_apis.DiscogsApi();
 		this.discogs.init({
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
-			queue: new FuncsQueue(2000, 4000, 4)
+			queue: new FuncsQueue({
+				time: [2000, 4000, 4]
+			})
 		});
 
 
@@ -128,7 +136,9 @@ AppModel.extendTo(SeesuApp, {
 
 		this.delayed_search = {
 			vk_api:{
-				queue:  new FuncsQueue(700, 8000 , 7)
+				queue:  new FuncsQueue({
+					time: [700, 8000 , 7]
+				})
 			}
 		};
 
@@ -817,14 +827,18 @@ provoda.sync_s.setRootModel(su);
 (function(){
 
 	//su.sc_api = sc_api;
-	su.sc_api = new ScApi(app_serv.getPreloadedNK('sc_key'), new FuncsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+	su.sc_api = new ScApi(app_serv.getPreloadedNK('sc_key'), new FuncsQueue({
+		time: [3500, 5000 , 4]
+	}), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new ScApi.ScMusicSearch({
 		api: su.sc_api,
 		mp3_search: su.mp3_search
 	}));
 
 
-	var exfm_api = new ExfmApi(new FuncsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax);
+	var exfm_api = new ExfmApi(new FuncsQueue({
+		time: [3500, 5000, 4]
+	}), app_env.cross_domain_allowed, cache_ajax);
 	su.exfm = exfm_api;
 
 	su.mp3_search.add(new ExfmApi.ExfmMusicSearch({

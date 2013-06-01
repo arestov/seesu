@@ -33,8 +33,12 @@ provoda.View.extendTo(appView, {
 		this.tpls = [];
 		this.samples = {};
 		this.dom_related_props.push('samples');
-		this.lfm_imgq = new FuncsQueue(700);
-		this.dgs_imgq = new FuncsQueue(1200);
+		this.lfm_imgq = new FuncsQueue({
+			time: [700]
+		});
+		this.dgs_imgq = new FuncsQueue({
+			time: [1200]
+		});
 		var _this = this;
 		setTimeout(function() {
 			_this.buildAppDOM();
