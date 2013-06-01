@@ -205,6 +205,12 @@ provoda.Model.extendTo(AppModelBase, {
 			this.map.finishChangesCollecting();
 		}
 		return result;
+	},
+	resortQueue: function() {
+		var md = this.state('current_mp_md');
+		if (md.checkRequestsPriority){
+			md.checkRequestsPriority();
+		}
 	}
 });
 

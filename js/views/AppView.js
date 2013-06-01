@@ -23,6 +23,9 @@ var viewOnLevelP = function(md, view) {
 	view.wayp_scan_stop = true;
 	return lev_conj.material;
 };
+var resortQueue = function() {
+
+};
 
 var appView = function(){};
 provoda.View.extendTo(appView, {
@@ -32,14 +35,18 @@ provoda.View.extendTo(appView, {
 		this.d = this.opts.d;
 		this.tpls = [];
 		this.samples = {};
+		var _this = this;
+
 		this.dom_related_props.push('samples');
 		this.lfm_imgq = new FuncsQueue({
-			time: [700]
+			time: [700],
+			resortQueue: resortQueue
 		});
 		this.dgs_imgq = new FuncsQueue({
-			time: [1200]
+			time: [1200],
+			resortQueue: resortQueue
 		});
-		var _this = this;
+		
 		setTimeout(function() {
 			_this.buildAppDOM();
 		});

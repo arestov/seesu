@@ -13,7 +13,9 @@ var
 	localize = app_serv.localize,
 	app_env = app_serv.app_env;
 
-
+var resortQueue = function() {
+	su.resortQueue();
+};
 
 $.ajaxSetup({
   cache: true,
@@ -33,7 +35,8 @@ lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret
 }, function(key, value){
 	return app_serv.store(key, value, true);
 }, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue({
-	time: [700]
+	time: [700],
+	resortQueue: resortQueue
 }));
 lfm.checkMethodResponse = function(method, data, r) {
 	su.art_images.checkLfmData(method, r);
@@ -111,7 +114,8 @@ AppModel.extendTo(SeesuApp, {
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
 			queue: new FuncsQueue({
-				time: [1700, 4000, 4]
+				time: [1700, 4000, 4],
+				resortQueue: resortQueue
 			})
 		});
 		this.goog_sc = new net_apis.GoogleSoundcloud();
@@ -119,7 +123,8 @@ AppModel.extendTo(SeesuApp, {
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
 			queue: new FuncsQueue({
-				time: [1000, 3000, 4]
+				time: [1000, 3000, 4],
+				resortQueue: resortQueue
 			})
 		});
 		this.discogs = new net_apis.DiscogsApi();
@@ -127,7 +132,8 @@ AppModel.extendTo(SeesuApp, {
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
 			queue: new FuncsQueue({
-				time: [2000, 4000, 4]
+				time: [2000, 4000, 4],
+				resortQueue: resortQueue
 			})
 		});
 
@@ -137,7 +143,8 @@ AppModel.extendTo(SeesuApp, {
 		this.delayed_search = {
 			vk_api:{
 				queue:  new FuncsQueue({
-					time: [700, 8000 , 7]
+					time: [700, 8000 , 7],
+					resortQueue: resortQueue
 				})
 			}
 		};
@@ -828,7 +835,8 @@ provoda.sync_s.setRootModel(su);
 
 	//su.sc_api = sc_api;
 	su.sc_api = new ScApi(app_serv.getPreloadedNK('sc_key'), new FuncsQueue({
-		time: [3500, 5000 , 4]
+		time: [3500, 5000 , 4],
+		resortQueue: resortQueue
 	}), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new ScApi.ScMusicSearch({
 		api: su.sc_api,
@@ -837,7 +845,8 @@ provoda.sync_s.setRootModel(su);
 
 
 	var exfm_api = new ExfmApi(new FuncsQueue({
-		time: [3500, 5000, 4]
+		time: [3500, 5000, 4],
+		resortQueue: resortQueue
 	}), app_env.cross_domain_allowed, cache_ajax);
 	su.exfm = exfm_api;
 

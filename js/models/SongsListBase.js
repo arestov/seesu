@@ -468,12 +468,11 @@ define(['provoda', 'spv'], function(provoda, spv){
 				}
 			}
 		},
-		checkRequestsPriority: function() {
+		checkActingRequestsPriority: function() {
 			var i;
-			var common = [];
+			
 			var demonstration = [];
 
-			var w_song = this.getWantedSong();
 			var waiting_next = this.waiting_next;
 			var v_song = this.getViewingSong();
 			var p_song = this.getPlayerSong();
@@ -485,47 +484,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 					return true;
 				}
 			};
-			if (w_song){
-				addToArray(common, w_song);
-			}
-
-			if (waiting_next){
-				if (waiting_next.next_song){
-					addToArray(common, waiting_next.next_song);
-				} else if (this.state('has_loader')){
-					addToArray(common, this);
-				} else if (waiting_next.next_preload_song){
-					addToArray(common, waiting_next.next_preload_song);
-					
-				}
-				addToArray(common, waiting_next);
 			
-			}
-			if (v_song){
-				if (v_song.next_song){
-					addToArray(common, v_song.next_song);
-				} else if (this.state('has_loader')){
-					addToArray(common, this);
-				} else if (v_song.next_preload_song){
-					addToArray(common, v_song.next_preload_song);
-					
-				}
-				addToArray(common, v_song);
-			}
-			if (p_song){
-				if (p_song.next_song){
-					addToArray(common, p_song.next_song);
-				} else if (this.state('has_loader')){
-					addToArray(common, this);
-				} else if (p_song.next_preload_song){
-					addToArray(common, p_song.next_preload_song);
-					
-				}
-				addToArray(common, p_song);
-			}
-			if (v_song && v_song.prev_song){
-				addToArray(common, v_song.prev_song);
-			}
+			
 
 			
 			
@@ -555,14 +515,82 @@ define(['provoda', 'spv'], function(provoda, spv){
 			}
 
 			demonstration.reverse();
-			common.reverse();
-			
 			for (i = 0; i < demonstration.length; i++) {
 				demonstration[i].setPrio('highest');
 			}
+
+		},
+		checkRequestsPriority: function() {
+			
+			var common = [];
+			var i;
+
+			var w_song = this.getWantedSong();
+			var waiting_next = this.waiting_next;
+			var v_song = this.getViewingSong();
+			var p_song = this.getPlayerSong();
+
+			var addToArray = function(arr, item) {
+				if (arr.indexOf(item) == -1){
+					arr.push(item);
+					return true;
+				}
+			};
+
+			if (w_song){
+				addToArray(common, w_song);
+			}
+
+			if (waiting_next){
+				if (waiting_next.next_song){
+					addToArray(common, waiting_next.next_song);
+				} else if (this.state('has_loader')){
+					addToArray(common, this);
+				} else if (waiting_next.next_preload_song){
+					addToArray(common, waiting_next.next_preload_song);
+					
+				}
+				addToArray(common, waiting_next);
+			
+			}
+
+			if (v_song){
+				if (v_song.next_song){
+					addToArray(common, v_song.next_song);
+				} else if (this.state('has_loader')){
+					addToArray(common, this);
+				} else if (v_song.next_preload_song){
+					addToArray(common, v_song.next_preload_song);
+					
+				}
+				addToArray(common, v_song);
+			}
+
+
+			if (p_song){
+				if (p_song.next_song){
+					addToArray(common, p_song.next_song);
+				} else if (this.state('has_loader')){
+					addToArray(common, this);
+				} else if (p_song.next_preload_song){
+					addToArray(common, p_song.next_preload_song);
+					
+				}
+				addToArray(common, p_song);
+			}
+			if (v_song && v_song.prev_song){
+				addToArray(common, v_song.prev_song);
+			}
+
+			common.reverse();
+			
+			
 			for (i = 0; i < common.length; i++) {
 				common[i].setPrio('highest', 'acting');
 			}
+
+			this.checkActingRequestsPriority();
+			
 			
 		},
 		subPager: function(pstr, string) {
