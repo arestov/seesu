@@ -28,10 +28,10 @@ provoda.addPrototype("SongBase",{
 		//this.updateManyStates(states);
 
 		var _this = this;
-		this.on('request', function() {
+		this.on('requests', function() {
 			_this.plst_titl.checkRequestsPriority();
 			
-		});
+		}, {immediately: true});
 	},
 	complex_states: {
 		'one_artist_playlist': {
@@ -579,11 +579,11 @@ provoda.addPrototype("SongBase",{
 		var investg = this.mf_cor.files_investg;
 		var _this = this;
 		investg
-			.on('request', function(rq) {
-				_this.addRequest(rq, {
+			.on('requests', function(array) {
+				_this.addRequests(array, {
 					depend: true
 				});
-			})
+			}, {immediately: true})
 			.on('state-change.search_complete', function(e) {
 				_this.updateState('search_complete', e.value);
 			})

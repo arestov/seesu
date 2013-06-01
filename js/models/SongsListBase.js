@@ -6,9 +6,9 @@ define(['provoda', 'spv'], function(provoda, spv){
 			this._super(opts);
 			
 			var _this = this;
-			this.on('request', function() {
+			this.on('requests', function() {
 				_this.checkRequestsPriority();
-			});
+			}, {immediately: true});
 			this.app = opts.app;
 			this.player = this.app.p;
 			this.mp3_search = this.app.mp3_search;
@@ -57,7 +57,6 @@ define(['provoda', 'spv'], function(provoda, spv){
 					_this.checkNeighboursChanges(e.item);
 				}
 				_this.checkRequestsPriority();
-				
 			});
 			
 		},

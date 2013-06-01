@@ -1,14 +1,23 @@
-define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
+define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq', './filters',
 './StartPageView', './searchPageView', './ArtcardUI', './TagsListPage', './ArtistListView',
 './songsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
 './lul', './SongcardPage'],
-function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
+function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq, filters,
 StartPageView, searchPageView, ArtcardUI, TagsListPage, ArtistListView,
 songsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
 lul, SongcardPage) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
+
+provoda.setTplFilterGetFn(function(filter_name) {
+	if (filters[filter_name]){
+		return filters[filter_name];
+	} else {
+		throw new Error( 'no filter: ' + filter_name );
+	}
+});
+
 var viewOnLevelP = function(md, view) {
 	var lev_conj = this.getLevelContainer(md.map_level_num);
 	view.wayp_scan_stop = true;

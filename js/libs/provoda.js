@@ -287,6 +287,9 @@ var sync_reciever = {
 
 provoda = {
 	prototypes: {},
+	setTplFilterGetFn: function(fn) {
+		angbo.getFilterFn = fn;
+	},
 	sync_s: sync_sender,
 	sync_r: sync_reciever,
 	Eventor: function(){},
@@ -679,42 +682,65 @@ spv.Class.extendTo(provoda.Eventor, {
 		space = space || 'common';
 		return this.requests[space] || [];
 	},
-	addRequest: function(rq, opts){
+	addRequests: function(array, opts) {
 		opts = opts || {};
 		//space, depend
-		var space = opts.space || 'common';
+		var space = opts.space || 'nav';
+		var i, req;
+		
 		if (opts.order){
-			rq.order = opts.order;
+			for (i = 0; i < array.length; i++) {
+				req = array[i];
+				if (!req.mdata){
+					req.mdata = {};
+				}
+				spv.setTargetField(req, 'mdata.' + this._provoda_id + '.order', opts.order);
+				req.order = opts.order;
+			}
 		}
+
 		if (!this.requests[space]){
 			this.requests[space] = [];
 		}
+
 		var target_arr = this.requests[space];
 		var _this = this;
 
+		var added = [];
+		var bindRemove = function(req) {
+			req.always(function() {
+				_this.requests[space] = spv.arrayExclude(_this.requests[space], req);
+			});
+		};
 
-
-		if (target_arr.indexOf(rq) == -1){
+		for (i = 0; i < array.length; i++) {
+			req = array[i];
+			if (target_arr.indexOf(req) != -1){
+				continue;
+			}
 			if (opts.depend){
-				if (rq){
-					rq.addDepend(this);
+				if (req){
+					req.addDepend(this);
 				}
 			}
-		//	console.group(target_arr);
-			target_arr.push(rq);
-			this.sortRequests(target_arr, space);
-		//	console.group(target_arr);
-		//	console.groupEnd()
-			this.trigger('request', rq, space);
+			target_arr.push(req);
+			bindRemove(req);
+			
 		}
-		rq.always(function() {
-			_this.requests[space] = spv.arrayExclude(_this.requests[space], rq);
-		});
-		return this;
+		if (added.length){
+			this.sortRequests(target_arr, space);
+			this.trigger('requests', added, space);
+		}
+
 
 	},
+	addRequest: function(rq, opts){
+		this.addRequests([rq], opts);
+		return this;
+	},
 	sortRequests: function(requests, space) {
-		return requests.sort(function(a,b ){return spv.sortByRules(a, b, ['order']);});
+		var _provoda_id = this._provoda_id;
+		return requests.sort(function(a,b ){return spv.sortByRules(a, b, ['mdata.' + _provoda_id + '.order']);});
 	},
 	getAllRequests: function() {
 		var all_requests = [];
@@ -1578,12 +1604,19 @@ spv.Class.extendTo(Template, {
 			for (var i = 0; i < parts.length; i++) {
 
 				var cur_part = parts[i];
+				if (!cur_part){
+					continue;
+				}
 				if (cur_part.indexOf('for_model:') == 0){
 					for_model = cur_part.replace('for_model:', '');
 				} else {
 					var space_parts = cur_part.split(':');
-					coll_name = space_parts[0];
-					space = space_parts[1] || '';
+					if (!coll_name){
+						coll_name = space_parts[0];
+					}
+					if (!space){
+						space = space_parts[1] || '';
+					}
 				}
 
 			}
