@@ -61,6 +61,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 				if (typeof cur == 'number'){
 					nums.push(cur);
 				}
+				//fixme - use cache
 			}
 			if (nums.length){
 				return Math.max.apply(Math, nums);
