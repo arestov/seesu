@@ -9,6 +9,27 @@ PlayerBase.extendTo(PlayerComplex, {
 	playPrev: function(mo){
 		mo.playPrev();
 	},
+	checkChangesSinceFS: function() {
+		if (this.waiting_next){
+			if (!this.waiting_next.next_preload_song){
+				delete this.waiting_next;
+			} else {
+				if (this.waiting_next.next_preload_song.canPlay()){
+					this.wantSong(this.waiting_next.next_preload_song);
+				}
+				
+			}
+		}
+	},
+	setWaitingNextSong: function(mo) {
+		this.waiting_next = mo;
+		var _this = this;
+		this.once('now_playing-signal', function() {
+			if (_this.waiting_next == mo){
+				delete _this.waiting_next;
+			}
+		});
+	},
 	removeCurrentWantedSong: function(){
 		if (this.wanted_song){
 			this.wanted_song.updateState('want_to_play', false);

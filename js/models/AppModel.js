@@ -204,6 +204,48 @@ AppModelBase.extendTo(AppModel, {
 
 		}
 		this.updateState('search_query', query);
+	},
+	checkActingRequestsPriority: function() {
+		var raw_array = [];
+		var acting = [];
+		var i;
+
+		var w_song = this.p.wanted_song;
+
+		var addToArray = function(arr, item) {
+			if (arr.indexOf(item) == -1){
+				arr.push(item);
+			}
+		};
+
+		if (w_song){
+			addToArray(acting, w_song);
+		}
+		var imporant_models = [ this.p.waiting_next, this.state('current_mp_md'), this.p.c_song ];
+		for (i = 0; i < imporant_models.length; i++) {
+			var cur = imporant_models[i];
+			if (cur){
+				if (cur.getActingPriorityModels){
+					var models = cur.getActingPriorityModels();
+					if (models.length){
+						raw_array = raw_array.concat(models);
+					}
+				} else {
+					raw_array.push(cur);
+				}
+			}
+		}
+
+		for (i = 0; i < raw_array.length; i++) {
+			addToArray(acting, raw_array[i]);
+			
+		}
+
+		acting.reverse();
+		for (i = 0; i < acting.length; i++) {
+			acting[i].setPrio('highest', 'acting');
+		}
+
 	}
 
 });

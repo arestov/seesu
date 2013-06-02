@@ -631,9 +631,24 @@ provoda.addPrototype("SongBase",{
 			});
 		}
 	},
-
+	checkRequestsPriority: function() {
+		this.plst_titl.checkRequestsPriority();
+	},
+	getActingPriorityModels: function() {
+		var result = [];
+		if (this.next_song){
+			result.push(this.next_song);
+		} else if (this.plst_titl.state('has_loader')){
+			result.push( this.plst_titl );
+		} else if ( this.next_preload_song ){
+			result.push( this.next_preload_song );
+			
+		}
+		result.push( this );
+		return result;
+	},
 	checkChangesSinceFS: function(opts){
-		this.plst_titl.checkChangesSinceFS(this, opts);
+		this.player.checkChangesSinceFS(this, opts);
 	},
 	view: function(no_navi, userwant){
 		if (!this.state('mp_show')){

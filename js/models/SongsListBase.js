@@ -7,7 +7,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 			
 			var _this = this;
 			this.on('requests', function() {
-				_this.checkRequestsPriority();
+				//_this.checkRequestsPriority();
 			}, {immediately: true});
 			this.app = opts.app;
 			this.player = this.app.p;
@@ -56,7 +56,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 				if (e.item.isImportant()){
 					_this.checkNeighboursChanges(e.item);
 				}
-				_this.checkRequestsPriority();
+				//_this.checkRequestsPriority();
 			});
 			
 		},
@@ -196,13 +196,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 			return this;
 		},
 		setWaitingNextSong: function(mo) {
-			this.waiting_next = mo;
-			var _this = this;
-			this.player.once('now_playing-signal', function() {
-				if (_this.waiting_next == mo){
-					delete _this.waiting_next;
-				}
-			});
+			this.player.setWaitingNextSong(mo);
 		},
 		switchTo: function(mo, direction) {
 	
@@ -456,24 +450,12 @@ define(['provoda', 'spv'], function(provoda, spv){
 			}
 			
 		},
-		checkChangesSinceFS: function() {
-			if (this.waiting_next){
-				if (!this.waiting_next.next_preload_song){
-					delete this.waiting_next;
-				} else {
-					if (this.waiting_next.next_preload_song.canPlay()){
-						this.player.wantSong(this.waiting_next.next_preload_song);
-					}
-					
-				}
-			}
-		},
-		checkActingRequestsPriority: function() {
+		checkNavRequestsPriority: function() {
 			var i;
 			
 			var demonstration = [];
 
-			var waiting_next = this.waiting_next;
+			var waiting_next = this.player.waiting_next;
 			var v_song = this.getViewingSong();
 			var p_song = this.getPlayerSong();
 
@@ -484,11 +466,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 					return true;
 				}
 			};
-			
-			
 
-			
-			
+
 			if (v_song){
 				addToArray(demonstration, v_song);
 				if (v_song.next_song){
@@ -514,6 +493,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 				}
 			}
 
+			addToArray(demonstration, this);
+
 			demonstration.reverse();
 			for (i = 0; i < demonstration.length; i++) {
 				demonstration[i].setPrio('highest');
@@ -521,77 +502,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 
 		},
 		checkRequestsPriority: function() {
-			
-			var common = [];
-			var i;
-
-			var w_song = this.getWantedSong();
-			var waiting_next = this.waiting_next;
-			var v_song = this.getViewingSong();
-			var p_song = this.getPlayerSong();
-
-			var addToArray = function(arr, item) {
-				if (arr.indexOf(item) == -1){
-					arr.push(item);
-					return true;
-				}
-			};
-
-			if (w_song){
-				addToArray(common, w_song);
-			}
-
-			if (waiting_next){
-				if (waiting_next.next_song){
-					addToArray(common, waiting_next.next_song);
-				} else if (this.state('has_loader')){
-					addToArray(common, this);
-				} else if (waiting_next.next_preload_song){
-					addToArray(common, waiting_next.next_preload_song);
-					
-				}
-				addToArray(common, waiting_next);
-			
-			}
-
-			if (v_song){
-				if (v_song.next_song){
-					addToArray(common, v_song.next_song);
-				} else if (this.state('has_loader')){
-					addToArray(common, this);
-				} else if (v_song.next_preload_song){
-					addToArray(common, v_song.next_preload_song);
-					
-				}
-				addToArray(common, v_song);
-			}
-
-
-			if (p_song){
-				if (p_song.next_song){
-					addToArray(common, p_song.next_song);
-				} else if (this.state('has_loader')){
-					addToArray(common, this);
-				} else if (p_song.next_preload_song){
-					addToArray(common, p_song.next_preload_song);
-					
-				}
-				addToArray(common, p_song);
-			}
-			if (v_song && v_song.prev_song){
-				addToArray(common, v_song.prev_song);
-			}
-
-			common.reverse();
-			
-			
-			for (i = 0; i < common.length; i++) {
-				common[i].setPrio('highest', 'acting');
-			}
-
-			this.checkActingRequestsPriority();
-			
-			
+			this.checkNavRequestsPriority();
 		},
 		subPager: function(pstr, string) {
 			var parts = this.app.getCommaParts(string);

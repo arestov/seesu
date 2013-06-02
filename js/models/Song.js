@@ -216,7 +216,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 		},
 		getURL: function(){
 			var url = '';
-			if (this.plst_titl.playlist_artist && this.plst_titl.playlist_artist == this.artist){
+			if (this.map_parent.playlist_artist && this.map_parent.playlist_artist == this.artist){
 				url += '/' + this.app.encodeURLPart(this.track);
 			} else {
 				url += '/' + this.app.encodeURLPart(this.artist) + ',' + this.app.encodeURLPart(this.track || '');

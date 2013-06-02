@@ -59,7 +59,7 @@ provoda.View.extendTo(SongcardController, {
 		this.rowcs = {};
 		var _this = this;
 		this.parent_view.on('state-change.mp_show', function(e) {
-			if (!e.value && _this.rowcs.users_context){
+			if (!e.value && _this.rowcs && _this.rowcs.users_context){
 				_this.rowcs.users_context.hide();
 			}
 		});

@@ -118,7 +118,9 @@ provoda.Model.extendTo(AppModelBase, {
 
 
 		}
-
+		this.on('state-change.current_mp_md', function() {
+			this.resortQueue();
+		});
 		this.updateState('map_animation', changes);
 		this.updateState('map_animation', false);
 		this.animationMark(models, false);
@@ -210,7 +212,10 @@ provoda.Model.extendTo(AppModelBase, {
 		var md = this.state('current_mp_md');
 		if (md.checkRequestsPriority){
 			md.checkRequestsPriority();
+		} else if (md.setPrio){
+			md.setPrio('highest');
 		}
+		this.checkActingRequestsPriority();
 	}
 });
 

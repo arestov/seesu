@@ -679,7 +679,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		return this;
 	},
 	getRequests: function(space) {
-		space = space || 'common';
+		space = space || 'nav';
 		return this.requests[space] || [];
 	},
 	addRequests: function(array, opts) {
