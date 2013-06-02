@@ -972,7 +972,6 @@ BrowseMap.Model.extendTo(ArtCard, {
 
 		this.preloadChildren();
 		this.loaDDD('base_info');
-		this.setPrio('highest');
 
 	},
 	requests_desc: {
