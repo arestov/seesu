@@ -692,9 +692,6 @@ spv.Class.extendTo(provoda.Eventor, {
 		if (opts.order){
 			for (i = 0; i < array.length; i++) {
 				req = array[i];
-				if (!req.mdata){
-					req.mdata = {};
-				}
 				spv.setTargetField(req, 'mdata.' + this._provoda_id + '.order', opts.order);
 				req.order = opts.order;
 			}
@@ -716,6 +713,10 @@ spv.Class.extendTo(provoda.Eventor, {
 
 		for (i = 0; i < array.length; i++) {
 			req = array[i];
+			if (req.queued){
+				spv.setTargetField(req.queued, 'mdata.' + this._provoda_id, this);
+				
+			}
 			if (target_arr.indexOf(req) != -1){
 				continue;
 			}
@@ -798,7 +799,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		queued.reverse();
 		return queued;
 	},
-	setPrio: function(type, space) {
+	setPrio: function(space) {
 		var groups = [];
 		var immediate = this.getModelImmediateRequests(space);
 		if (immediate){

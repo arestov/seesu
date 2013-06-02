@@ -614,7 +614,7 @@ provoda.addPrototype("SongBase",{
 			opts = opts || {};
 			opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this);
 		
-			this.mf_cor.files_investg.startSearch(opts);
+			this.mf_cor.startSearch(opts);
 		}
 	},
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){

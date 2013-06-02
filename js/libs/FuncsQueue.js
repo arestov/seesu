@@ -12,6 +12,9 @@ define(['./FuncsStack'], function(FuncsStack) {
 		},
 		setPrio: function(){
 			this.pr = this.q.getTopPrio() + 1;
+		},
+		removePr: function() {
+			this.pr = null;
 		}
 	};
 
@@ -65,8 +68,9 @@ define(['./FuncsStack'], function(FuncsStack) {
 		removePrioMarks: function() {
 			var queue = this.fstack.getArr();
 			for (var i = 0; i < queue.length; i++) {
-				queue[i].qf.pr = null;
+				queue[i].qf.removePr();
 			}
+			this.valid_sort = false;
 		},
 		getTopPrio: function(){
 			var nums = [];
@@ -164,7 +168,7 @@ define(['./FuncsStack'], function(FuncsStack) {
 		selectNext: function(){
 			if (!this.valid_sort){
 				if (this.resortQueue){
-					this.resortQueue.call();
+					this.resortQueue.call(null, this);
 				}
 				this.valid_sort = true;
 			}

@@ -193,7 +193,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 					_this.updateNesting('sources_list', _this.sources_list);
 
 					//_this.trigger('child-change.sources_list', _this.sources_list);
-				})
+				}, {soft_reg: false})
 				.on('state-change.big_files_list ', function(e) {
 					var array = e && e.value || [];
 					for (var i = 0; i < array.length; i++) {

@@ -157,14 +157,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					_this.updateState('mf_cor_has_available_tracks', !!e.value);
 				});
 
-			if (this.mf_cor.isSearchAllowed()){
-				this.on('vip-state-change.track', function(e) {
-					if (e.value){
-						_this.bindFilesSearchChanges();
-					}
-				},{immediately: true});
-
-			}
+			
 			this.watchStates(['files_search', 'marked_as', 'mp_show'], function(files_search, marked_as, mp_show) {
 				if (marked_as && files_search && files_search.search_complete){
 					this.updateState('can_expand', true);
