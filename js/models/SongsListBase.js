@@ -493,7 +493,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 
 			demonstration.reverse();
 			for (i = 0; i < demonstration.length; i++) {
-				demonstration[i].setPrio('highest');
+				demonstration[i].setPrio();
 			}
 
 		},

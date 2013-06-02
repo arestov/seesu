@@ -13,7 +13,16 @@ var
 	localize = app_serv.localize,
 	app_env = app_serv.app_env;
 
+var all_queues = [];
+var addQueue = function() {
+	this.reverse_default_prio = true;
+	all_queues.push(this);
+	return this;
+};
 var resortQueue = function() {
+	for (var i = 0; i < all_queues.length; i++) {
+		all_queues[i].removePrioMarks();
+	}
 	su.resortQueue();
 };
 
@@ -36,7 +45,8 @@ lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret
 	return app_serv.store(key, value, true);
 }, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue({
 	time: [700],
-	resortQueue: resortQueue
+	resortQueue: resortQueue,
+	init: addQueue
 }));
 lfm.checkMethodResponse = function(method, data, r) {
 	su.art_images.checkLfmData(method, r);
@@ -115,7 +125,8 @@ AppModel.extendTo(SeesuApp, {
 			cache_ajax: cache_ajax,
 			queue: new FuncsQueue({
 				time: [1700, 4000, 4],
-				resortQueue: resortQueue
+				resortQueue: resortQueue,
+				init: addQueue
 			})
 		});
 		this.goog_sc = new net_apis.GoogleSoundcloud();
@@ -124,7 +135,8 @@ AppModel.extendTo(SeesuApp, {
 			cache_ajax: cache_ajax,
 			queue: new FuncsQueue({
 				time: [1000, 3000, 4],
-				resortQueue: resortQueue
+				resortQueue: resortQueue,
+				init: addQueue
 			})
 		});
 		this.discogs = new net_apis.DiscogsApi();
@@ -133,7 +145,8 @@ AppModel.extendTo(SeesuApp, {
 			cache_ajax: cache_ajax,
 			queue: new FuncsQueue({
 				time: [2000, 4000, 4],
-				resortQueue: resortQueue
+				resortQueue: resortQueue,
+				init: addQueue
 			})
 		});
 
@@ -144,7 +157,8 @@ AppModel.extendTo(SeesuApp, {
 			vk_api:{
 				queue:  new FuncsQueue({
 					time: [700, 8000 , 7],
-					resortQueue: resortQueue
+					resortQueue: resortQueue,
+					init: addQueue
 				})
 			}
 		};
@@ -836,7 +850,8 @@ provoda.sync_s.setRootModel(su);
 	//su.sc_api = sc_api;
 	su.sc_api = new ScApi(app_serv.getPreloadedNK('sc_key'), new FuncsQueue({
 		time: [3500, 5000 , 4],
-		resortQueue: resortQueue
+		resortQueue: resortQueue,
+		init: addQueue
 	}), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new ScApi.ScMusicSearch({
 		api: su.sc_api,
@@ -846,7 +861,8 @@ provoda.sync_s.setRootModel(su);
 
 	var exfm_api = new ExfmApi(new FuncsQueue({
 		time: [3500, 5000, 4],
-		resortQueue: resortQueue
+		resortQueue: resortQueue,
+		init: addQueue
 	}), app_env.cross_domain_allowed, cache_ajax);
 	su.exfm = exfm_api;
 

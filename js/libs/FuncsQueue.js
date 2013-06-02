@@ -10,14 +10,8 @@ define(['./FuncsStack'], function(FuncsStack) {
 		abort: function(){
 			this.aborted = true;
 		},
-		setPrio: function(num){
-			if (typeof num == 'number'){
-				this.pr = num;
-			} else if (num == 'as-top'){
-				this.pr = this.q.getTopPrio() || 1;
-			} else if (num == 'highest'){
-				this.pr = this.q.getTopPrio() + 1;
-			}
+		setPrio: function(){
+			this.pr = this.q.getTopPrio() + 1;
 		}
 	};
 
@@ -32,6 +26,9 @@ define(['./FuncsStack'], function(FuncsStack) {
 
 		if ( opts.resortQueue ){
 			this.resortQueue = opts.resortQueue;
+		}
+		if ( opts.reverse_default_prio ) {
+			this.reverse_default_prio = true;
 		}
 
 		var selectNext = function(prev, args) {
@@ -57,11 +54,20 @@ define(['./FuncsStack'], function(FuncsStack) {
 			this.nobigdelay = true;
 		}
 		this.using_stat = [];
+		if (opts.init){
+			opts.init.call(this);
+		}
 	};
 
 
 	FuncsQueue.prototype = {
 		constructor: FuncsQueue,
+		removePrioMarks: function() {
+			var queue = this.fstack.getArr();
+			for (var i = 0; i < queue.length; i++) {
+				queue[i].qf.pr = null;
+			}
+		},
 		getTopPrio: function(){
 			var nums = [];
 			var queue = this.fstack.getArr();
@@ -164,25 +170,38 @@ define(['./FuncsStack'], function(FuncsStack) {
 			}
 
 			var
+				i,
+				atom,
 				q = this.fstack.getArr(),
+				clean_quene = [],
 				prior_num = 0,
 				prior_el = null,
-				first_num = q.length,
-				first_el = null;
-			
-			for (var i=0; i < q.length; i++) {
-				var atom = q[i];
+				preferred_by_default = null;
+
+			for (i = 0; i < q.length; i++) {
+				atom = q[i];
 				if (!atom.complete && !atom.qf.aborted){
-					if (atom.qf.pr && (atom.qf.pr > prior_num)){ //check priority
-						prior_num = atom.qf.pr;
-						prior_el = atom;
-					} else if (!first_el && (i < first_num)){// else check order
-						first_num = i;
-						first_el = atom;
-					}
+					clean_quene.push(atom);
 				}
 			}
-			var vip = prior_el || first_el;
+
+			for (i = 0; i < clean_quene.length; i++) {
+				atom = clean_quene[i];
+				if (atom.qf.pr && (atom.qf.pr > prior_num)){
+					prior_num = atom.qf.pr;
+					prior_el = atom;
+				}
+			}
+
+			if (!prior_el){
+				if (this.reverse_default_prio){
+					preferred_by_default = clean_quene[ clean_quene.length - 1 ];
+				} else {
+					preferred_by_default = clean_quene[0];
+				}
+			}
+
+			var vip = prior_el || preferred_by_default;
 			
 			if (vip){
 				vip.func();

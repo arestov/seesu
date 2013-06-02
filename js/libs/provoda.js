@@ -809,7 +809,7 @@ spv.Class.extendTo(provoda.Eventor, {
 			groups = groups.concat(relative);
 		}
 		var setPrio = function(el) {
-			el.setPrio(type);
+			el.setPrio();
 		};
 		groups.reverse();
 		for (var i = 0; i < groups.length; i++) {

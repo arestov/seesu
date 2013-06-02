@@ -213,7 +213,7 @@ provoda.Model.extendTo(AppModelBase, {
 		if (md.checkRequestsPriority){
 			md.checkRequestsPriority();
 		} else if (md.setPrio){
-			md.setPrio('highest');
+			md.setPrio();
 		}
 		this.checkActingRequestsPriority();
 	}

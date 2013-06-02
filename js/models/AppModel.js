@@ -243,7 +243,7 @@ AppModelBase.extendTo(AppModel, {
 
 		acting.reverse();
 		for (i = 0; i < acting.length; i++) {
-			acting[i].setPrio('highest', 'acting');
+			acting[i].setPrio('acting');
 		}
 
 	}
