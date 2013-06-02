@@ -6,6 +6,9 @@ provoda.Model.extendTo(AppModelBase, {
 		this._super();
 		this.navigation = [];
 		this.map = new BrowseMap();
+		this.on('state-change.current_mp_md', function() {
+			this.resortQueue();
+		});
 	},
 	getBMapTravelFunc: function(func, context) {
 		return function() {
@@ -118,9 +121,6 @@ provoda.Model.extendTo(AppModelBase, {
 
 
 		}
-		this.on('state-change.current_mp_md', function() {
-			this.resortQueue();
-		});
 		this.updateState('map_animation', changes);
 		this.updateState('map_animation', false);
 		this.animationMark(models, false);

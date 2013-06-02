@@ -678,14 +678,15 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		return this;
 	},
+	default_requests_space: 'nav',
 	getRequests: function(space) {
-		space = space || 'nav';
+		space = space || this.default_requests_space;
 		return this.requests[space] || [];
 	},
 	addRequests: function(array, opts) {
 		opts = opts || {};
 		//space, depend
-		var space = opts.space || 'nav';
+		var space = opts.space || this.default_requests_space;
 		var i, req;
 		
 		if (opts.order){
@@ -728,7 +729,10 @@ spv.Class.extendTo(provoda.Eventor, {
 			
 		}
 		if (added.length){
-			this.sortRequests(target_arr, space);
+			if (!opts.skip_sort){
+				this.sortRequests(space);
+			}
+			
 			this.trigger('requests', added, space);
 		}
 
@@ -738,9 +742,24 @@ spv.Class.extendTo(provoda.Eventor, {
 		this.addRequests([rq], opts);
 		return this;
 	},
-	sortRequests: function(requests, space) {
+	sortRequests: function(space) {
+		var requests = this.requests[space || this.default_requests_space];
 		var _provoda_id = this._provoda_id;
-		return requests.sort(function(a,b ){return spv.sortByRules(a, b, ['mdata.' + _provoda_id + '.order']);});
+
+		var field_name = 'mdata.' + _provoda_id + '.order';
+
+		return requests.sort(function(a,b){
+			return spv.sortByRules(a, b, [
+				function(el){
+					if (typeof spv.getTargetField(el, field_name) == 'number'){
+						return false;
+					} else {
+						return true;
+					}
+				},
+				field_name
+			]);
+		});
 	},
 	getAllRequests: function() {
 		var all_requests = [];
@@ -770,10 +789,31 @@ spv.Class.extendTo(provoda.Eventor, {
 		var requests = this.getRequests(space);
 		return spv.filter(requests, 'queued');
 	},
-	setPrio: function(type, space) {
+	getRelativeRequestsGroups: function() {
+
+	},
+	getModelImmediateRequests: function(space) {
 		var queued = this.getQueued(space);
-		for (var i = 0; i < queued.length; i++) {
-			queued[i].setPrio(type);
+		queued = queued.slice();
+		queued.reverse();
+		return queued;
+	},
+	setPrio: function(type, space) {
+		var groups = [];
+		var immediate = this.getModelImmediateRequests(space);
+		if (immediate){
+			groups.push(immediate);
+		}
+		var relative = this.getRelativeRequestsGroups();
+		if (relative){
+			groups = groups.concat(relative);
+		}
+		var setPrio = function(el) {
+			el.setPrio(type);
+		};
+		groups.reverse();
+		for (var i = 0; i < groups.length; i++) {
+			groups[i].forEach(setPrio);
 		}
 		return this;
 	},
@@ -1187,6 +1227,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.states = {};
 		
 		this.children_models = {};
+		/*
 		this.postStatesChanges = function(states) {
 			return;
 			sync_sender.pushStates(this, states);
@@ -1194,7 +1235,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.postNestingChange = function(nesting_name, value) {
 			return;
 			sync_sender.pushNesting(this, nesting_name, value);
-		};
+		};*/
 	//	var _this = this;
 		this.MDReplace = function(){};
 		this.MDReplace.prototype = {

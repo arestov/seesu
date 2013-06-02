@@ -343,7 +343,7 @@ makeIndexByField = spv.makeIndexByField = function(array, field, keep_case){
 			var simple_name,
 				cur = array[i],
 				fv = spv.getTargetField(cur, field);
-			if (fv){
+			if (fv || typeof fv == 'number'){
 				if (fv instanceof Array){
 					for (var k=0; k < fv.length; k++) {
 						simple_name = (fv[k] + '');

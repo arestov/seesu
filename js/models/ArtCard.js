@@ -1027,10 +1027,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 					});
 			},
 			//done: ['states.bio'],
-			errors: ['error'],
-			rq_opts: {
-				order: 2
-			}
+			errors: ['error']
 		}
 	},
 	getTopTracks: function() {
