@@ -10,6 +10,9 @@ lul, SongcardPage) {
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
 
+
+
+
 provoda.setTplFilterGetFn(function(filter_name) {
 	if (filters[filter_name]){
 		return filters[filter_name];
@@ -23,9 +26,6 @@ var viewOnLevelP = function(md, view) {
 	view.wayp_scan_stop = true;
 	return lev_conj.material;
 };
-var resortQueue = function() {
-
-};
 
 var appView = function(){};
 provoda.View.extendTo(appView, {
@@ -37,16 +37,29 @@ provoda.View.extendTo(appView, {
 		this.samples = {};
 		var _this = this;
 
+		this.all_queues = [];
+		var addQueue = function() {
+			this.reverse_default_prio = true;
+			_this.all_queues.push(this);
+			return this;
+		};
+		var resortQueue = function(queue) {
+			_this.resortQueue(queue);
+		};
+
+
 		this.dom_related_props.push('samples');
 		this.lfm_imgq = new FuncsQueue({
 			time: [700],
+			init: addQueue,
 			resortQueue: resortQueue
 		});
 		this.dgs_imgq = new FuncsQueue({
 			time: [1200],
+			init: addQueue,
 			resortQueue: resortQueue
 		});
-		
+
 		setTimeout(function() {
 			_this.buildAppDOM();
 		});
@@ -65,7 +78,7 @@ provoda.View.extendTo(appView, {
 		}
 		this.lev_containers = {};
 
-		this.on('vip-state-change.current_mp_md', function(e) {
+		this.on('vip-state-change.current_mp_md', function() {
 			var cwp = this.state('vis_current_wpoint');
 			if (cwp){
 				if (cwp.canUse && !cwp.canUse()){
@@ -75,6 +88,24 @@ provoda.View.extendTo(appView, {
 
 		}, {skip_reg: true, immediately: true});
 
+		this.on('state-change.current_mp_md', function() {
+			_this.resortQueue();
+		});
+
+	},
+	resortQueue: function(queue) {
+		if (queue){
+			queue.removePrioMarks();
+		} else {
+			for (var i = 0; i < this.all_queues.length; i++) {
+				this.all_queues[i].removePrioMarks();
+			}
+		}
+		var md = this.state('current_mp_md');
+		var view = md && md.mpx.getRooConPresentation(true);
+		if (view){
+			view.setPrio();
+		}
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);

@@ -181,6 +181,7 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 					node.src = url;
 				}).fail(function(){
 				});
+			this.addRequest(req);
 			this.on('die', function() {
 				req.abort();
 			});
@@ -225,6 +226,7 @@ provoda.View.extendTo(BigAlbumPreview, {
 					node.src = url;
 				}).fail(function(){
 				});
+			this.addRequest(req);
 			this.on('die', function() {
 				req.abort();
 			});

@@ -30,13 +30,14 @@ provoda.View.extendTo(FanPreview, {
 		if (state){
 			var url = state.lfm_id ?
 				'http://userserve-ak.last.fm/serve/64s/' + state.lfm_id : state.url;
-			this.root_view.loadImage({
+			var req = this.root_view.loadImage({
 				url: url,
 				cache_allowed: true
 			}).done(function() {
 				image_node[0].src = url;
 				_this.setVisState('cant_use_image', false);
 			});
+			this.addRequest(req);
 		}
 	}
 });

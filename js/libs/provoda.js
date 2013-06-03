@@ -2435,6 +2435,27 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return view;
 		}
 	},
+	getRelativeRequestsGroups: function() {
+		var all_views = [];
+		var all_requests = [];
+		var iterating = [this];
+		var i, cur;
+		while (iterating.length){
+			cur = iterating.shift();
+			for (i = 0; i < cur.children.length; i++) {
+				iterating.push(cur.children[i]);
+				all_views.push(cur.children[i]);
+			}
+		}
+
+		for (i = 0; i < all_views.length; i++) {
+			var reqs = all_views[i].getModelImmediateRequests();
+			if (reqs && reqs.length){
+				all_requests.push(reqs);
+			}
+		}
+		return all_requests;
+	},
 	addChildView: function(view, child_name) {
 		this.children.push.call(this.children, view);
 	},
