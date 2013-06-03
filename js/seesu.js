@@ -19,11 +19,8 @@ var addQueue = function() {
 	all_queues.push(this);
 	return this;
 };
-var resortQueue = function() {
-	for (var i = 0; i < all_queues.length; i++) {
-		all_queues[i].removePrioMarks();
-	}
-	su.resortQueue();
+var resortQueue = function(queue) {
+	su.resortQueue(queue);
 };
 
 $.ajaxSetup({
@@ -263,6 +260,8 @@ AppModel.extendTo(SeesuApp, {
 		this._url = app_serv.get_url_parameters(location.search, true);
 		this.settings = {};
 		this.settings_timers = {};
+
+		this.all_queues = all_queues;
 
 		this.trackStat = (function(){
 			window._gaq = window._gaq || [];

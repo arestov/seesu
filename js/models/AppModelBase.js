@@ -208,7 +208,14 @@ provoda.Model.extendTo(AppModelBase, {
 		}
 		return result;
 	},
-	resortQueue: function() {
+	resortQueue: function(queue) {
+		if (queue){
+			queue.removePrioMarks();
+		} else {
+			for (var i = 0; i < this.all_queues.length; i++) {
+				this.all_queues[i].removePrioMarks();
+			}
+		}
 		var md = this.state('current_mp_md');
 		if (md.checkRequestsPriority){
 			md.checkRequestsPriority();

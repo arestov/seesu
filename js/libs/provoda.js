@@ -688,7 +688,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		//space, depend
 		var space = opts.space || this.default_requests_space;
 		var i, req;
-		
+
 		if (opts.order){
 			for (i = 0; i < array.length; i++) {
 				req = array[i];
@@ -713,10 +713,9 @@ spv.Class.extendTo(provoda.Eventor, {
 
 		for (i = 0; i < array.length; i++) {
 			req = array[i];
-			if (req.queued){
+			/*if (req.queued){
 				spv.setTargetField(req.queued, 'mdata.' + this._provoda_id, this);
-				
-			}
+			}*/
 			if (target_arr.indexOf(req) != -1){
 				continue;
 			}
@@ -727,13 +726,13 @@ spv.Class.extendTo(provoda.Eventor, {
 			}
 			target_arr.push(req);
 			bindRemove(req);
-			
+			added.push(req);
 		}
 		if (added.length){
 			if (!opts.skip_sort){
 				this.sortRequests(space);
 			}
-			
+
 			this.trigger('requests', added, space);
 		}
 
