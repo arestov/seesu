@@ -1450,6 +1450,9 @@ body .surf_nav{
 .album_preview-big{
 	cursor: pointer;
 	}
+	.album_preview-big:hover{
+		background: #555;
+		}
 .full-page .album_preview-big{
 	float:left;
 	}
@@ -1461,11 +1464,21 @@ body .surf_nav{
 		background-color: #666;
 		}
 	.album_preview-big .full_album_name{
-		width:9rem;
-		height: 9.5rem;
+		
 		padding:0.5rem 0;
 		overflow: hidden;
 		bottom:0;
+		}
+	.full-page .album_preview-big .full_album_name{
+		width:9rem;
+		height: 9.5rem;
+		}
+	.page-scheme .album_preview-big img{
+		height: 6rem;
+		width: 6rem;
+		}
+	.page-scheme .album_preview-big .full_album_name{
+		margin-bottom: 1rem;
 		}
 	.full_album_name .album_name{
 		color: #999;
