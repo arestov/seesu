@@ -8,12 +8,16 @@ var LfmLogin = function() {};
 
 provoda.Model.extendTo(LfmLogin, {
 	model_name: 'auth_block_lfm',
-	init: function(opts) {
+	init: function(opts, params) {
 		this._super();
 
 		var _this = this;
 		this.auth = opts.auth;
 		this.pmd = opts.pmd;
+
+		if (params && params.desc){
+			this.setRequestDesc(params.desc);
+		}
 
 		if (this.auth.deep_sanbdox){
 			_this.updateState('deep-sandbox', true);

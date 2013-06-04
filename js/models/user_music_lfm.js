@@ -18,23 +18,6 @@ LfmAuth.LfmLogin.extendTo(UserCardLFMLogin, {
 	}
 });
 
-var LfmLovedLogin = function() {};
-UserCardLFMLogin.extendTo(LfmLovedLogin, {
-	init: function(opts) {
-		this._super(opts);
-		this.setRequestDesc(localize('grant-love-lfm-access'));
-	}
-});
-
-
-var LfmReccomsLogin = function(){};
-UserCardLFMLogin.extendTo(LfmReccomsLogin, {
-	init: function(opts){
-		this._super(opts);
-		this.setRequestDesc(localize('lastfm-reccoms-access'));
-	}
-});
-
 var no_access_compx = {
 	depends_on: ['username'],
 	fn: function(username) {
@@ -255,7 +238,7 @@ SongsList.extendTo(LfmLovedList, {
 			this.username = params.lfm_username;
 			this.updateState('has_no_access', false);
 		} else {
-			this.authSwitching(this.app.lfm_auth, LfmLovedLogin);
+			this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: localize('grant-love-lfm-access')});
 		}
 	},
 	getRqData: function() {
@@ -282,7 +265,7 @@ ArtCard.ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 
 		this.initStates();
 		this.authInit();
-		this.authSwitching(this.app.lfm_auth, LfmReccomsLogin);
+		this.authSwitching(this.app.lfm_auth, UserCardLFMLogin,{desc: localize('lastfm-reccoms-access')});
 
 		if (params.lfm_username){
 			this.username = params.lfm_username;
@@ -493,7 +476,7 @@ ArtCard.AlbumsList.extendTo(UserNewReleases, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.authInit();
-		this.authSwitching(this.app.lfm_auth, LfmReccomsLogin);
+		this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: localize('lastfm-reccoms-access')});
 
 		/*
 		this._super(opts);
