@@ -18,6 +18,16 @@ if (!Array.prototype.indexOf) {
 		return -1;
 	};
 }
+spv.getArrayNoDubs = function(array, clean_array) {
+	clean_array = clean_array || [];
+	for (var i = 0; i < array.length; i++) {
+		if (clean_array.indexOf( array[i] ) == -1){
+			clean_array.push( array[i] );
+		}
+	}
+	return clean_array;
+};
+
 spv.once = function(fn) {
 	var result;
 	return function(){

@@ -789,7 +789,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		var requests = this.getRequests(space);
 		return spv.filter(requests, 'queued');
 	},
-	getRelativeRequestsGroups: function() {
+	getRelativeRequestsGroups: function(space) {
 
 	},
 	getModelImmediateRequests: function(space) {
@@ -804,7 +804,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		if (immediate){
 			groups.push(immediate);
 		}
-		var relative = this.getRelativeRequestsGroups();
+		var relative = this.getRelativeRequestsGroups(space);
 		if (relative){
 			groups = groups.concat(relative);
 		}
@@ -1298,6 +1298,33 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.on('child-change.' + collection_name, function(e) {
 			archiver.setItems(e.value);
 		});
+	},
+	getRelativeRequestsGroups: function(space, only_models) {
+		var all_models = [];
+		var groups = [];
+
+		var i, cur;
+		for (var collection_name in this.children_models){
+			cur = this.children_models[collection_name];
+			if (Array.isArray(cur)){
+				all_models = all_models.concat(cur);
+			} else {
+				all_models.push(cur);
+			}
+		}
+		var clean_models = spv.getArrayNoDubs(all_models);
+
+		if (only_models){
+			return clean_models;
+		} else {
+			for (i = 0; i < clean_models.length; i++) {
+				var reqs = clean_models[i].getModelImmediateRequests(space);
+				if (reqs && reqs.length){
+					groups.push(reqs);
+				}
+			}
+			return groups;
+		}
 	},
 	getNesting: function(collection_name) {
 		return this.children_models[collection_name];
@@ -2435,7 +2462,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return view;
 		}
 	},
-	getRelativeRequestsGroups: function() {
+	getRelativeRequestsGroups: function(space) {
 		var all_views = [];
 		var all_requests = [];
 		var iterating = [this];
@@ -2449,7 +2476,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		for (i = 0; i < all_views.length; i++) {
-			var reqs = all_views[i].getModelImmediateRequests();
+			var reqs = all_views[i].getModelImmediateRequests(space);
 			if (reqs && reqs.length){
 				all_requests.push(reqs);
 			}

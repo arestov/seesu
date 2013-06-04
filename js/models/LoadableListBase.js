@@ -132,6 +132,27 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		return this;
 
 	},
+	getRelativeRequestsGroups: function(space) {
+		var main_models = this.getNesting(this.main_list_name);
+		if (!main_models || !main_models.length){
+			return;
+		} else {
+			main_models = main_models.slice();
+			var more_models = this._super(space, true);
+			if (more_models){
+				main_models = main_models.concat(more_models);
+			}
+			var clean_array = spv.getArrayNoDubs(main_models);
+			var groups = [];
+			for (var i = 0; i < clean_array.length; i++) {
+				var reqs = clean_array[i].getModelImmediateRequests(space);
+				if (reqs && reqs.length){
+					groups.push(reqs);
+				}
+			}
+			return groups;
+		}
+	},
 	dataListChange: function(mlc_opts, items) {
 		if (this.beforeReportChange){
 			this.beforeReportChange(this[this.main_list_name], items);
