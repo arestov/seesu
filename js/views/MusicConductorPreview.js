@@ -10,7 +10,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 		this.button = this.c.find('.area-button').removeClass('hidden');
 		this.button.click(function() {
-			_this.RPCLegacy('showOnMap');
+			_this.RPCLegacy('requestPage');
 		});
 		this.addWayPoint(this.button);
 		this.dom_related_props.push('button');

@@ -31,19 +31,26 @@ var connectUsername = function(params) {
 		this.updateState('username', params.lfm_username);
 	} else {
 		if (params.for_current_user){
+			this.updateState('username', false);
 			this.app.on('state-change.lfm_username', function(e) {
 				_this.updateState('username', e.value);
 			});
+			this.authInit();
+			this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: this.access_desc});
 		} else {
 			throw new Error('only for current user or defined user');
 		}
 	}
+
+	/*
+	*/
 };
 
 //LULA - LfmUserLibraryArtist
 //
 var LULATracks = function() {};//непосредственно список композиций артиста, которые слушал пользователь
 SongsList.extendTo(LULATracks, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		connectUsername.call(this, params);
@@ -63,14 +70,14 @@ SongsList.extendTo(LULATracks, {
 			data: this.getRqData(),
 			parser: this.getLastfmTracksList
 		});
-	},
-	'compx-has_no_access': no_access_compx
+	}
 });
 
 
 var LULA = function() {};//artist, один артист с треками
 BrowseMap.Model.extendTo(LULA, {
 	model_name: 'lula',
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		var states = {};
@@ -95,7 +102,7 @@ BrowseMap.Model.extendTo(LULA, {
 		this.updateNesting('all_time', all_time);
 		this.bindChildrenPreload([all_time]);
 	},
-	'compx-has_no_access': no_access_compx,
+	
 	'compx-selected_image': {
 		depends_on: ['lfm_image'],
 		fn: function(lfm_i) {
@@ -148,6 +155,7 @@ LoadableList.extendTo(UserArtists, {
 
 var LULAs = function() {};//artists, список артистов
 UserArtists.extendTo(LULAs, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
@@ -175,6 +183,7 @@ UserArtists.extendTo(LULAs, {
 
 var TopLUArt = function() {};
 UserArtists.extendTo(TopLUArt, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
@@ -204,6 +213,7 @@ UserArtists.extendTo(TopLUArt, {
 
 var TopUserTracks = function() {};
 SongsList.extendTo(TopUserTracks, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		connectUsername.call(this, params);
@@ -223,27 +233,23 @@ SongsList.extendTo(TopUserTracks, {
 			data: this.getRqData(),
 			parser: this.getLastfmTracksList
 		});
-	},
-	'compx-has_no_access': no_access_compx
+	}
 });
 
 
 var LfmLovedList = function() {};
 SongsList.extendTo(LfmLovedList, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		this.initStates();
-		this.authInit();
-		if (params.lfm_username){
-			this.username = params.lfm_username;
-			this.updateState('has_no_access', false);
-		} else {
-			this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: localize('grant-love-lfm-access')});
-		}
+		connectUsername.call(this, params);
+		
 	},
+	access_desc: localize('grant-love-lfm-access'),
 	getRqData: function() {
 		return {
-			user: (this.username || this.app.lfm.username)
+			user: this.state('username')
 		};
 	},
 	sendMoreDataRequest: function(paging_opts, request_info) {
@@ -259,16 +265,16 @@ SongsList.extendTo(LfmLovedList, {
 var RecommendatedToUserArtistsList = function() {};
 ArtCard.ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 	page_limit: 30,
+	access_desc: localize('lastfm-reccoms-access'),
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 
 
 		this.initStates();
-		this.authInit();
-		this.authSwitching(this.app.lfm_auth, UserCardLFMLogin,{desc: localize('lastfm-reccoms-access')});
+		connectUsername.call(this, params);
 
 		if (params.lfm_username){
-			this.username = params.lfm_username;
 			if (this.app.env.cross_domain_allowed){
 				this.getRqData = this.getRqDataRss;
 				this.setLoader(this.loadMoreByRSS);
@@ -284,7 +290,7 @@ ArtCard.ArtistsList.extendTo(RecommendatedToUserArtistsList, {
 		};
 	},
 	getRqDataRss: function() {
-		return this.username;
+		return this.state('username');
 	},
 	loadMoreByAPI: function(paging_opts, request_info) {
 		return this.sendLFMDataRequest(paging_opts, request_info, {
@@ -385,6 +391,7 @@ BrowseMap.Model.extendTo(LfmUserArtists, {
 });
 var LfmRecentUserTracks = function() {};
 SongsList.extendTo(LfmRecentUserTracks, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 
@@ -410,8 +417,7 @@ SongsList.extendTo(LfmRecentUserTracks, {
 			data: this.getRqData(),
 			parser: this.getLastfmTracksList
 		});
-	},
-	'compx-has_no_access': no_access_compx
+	}
 });
 
 var LfmUserTracks = function() {};
@@ -473,10 +479,10 @@ BrowseMap.Model.extendTo(LfmUserTracks, {
 
 var UserNewReleases = function() {};
 ArtCard.AlbumsList.extendTo(UserNewReleases, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
-		this.authInit();
-		this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: localize('lastfm-reccoms-access')});
+		connectUsername.call(this, params);
 
 		/*
 		this._super(opts);
@@ -486,10 +492,11 @@ ArtCard.AlbumsList.extendTo(UserNewReleases, {
 			'url_part': '/albums_lfm'
 		});*/
 	},
+	access_desc: localize('lastfm-reccoms-access'),
 	page_limit: 50,
 	getRqData: function() {
 		return {
-			user: this.app.lfm.username,
+			user: this.state('username'),
 			userecs: this.recomms ? 1 : 0
 		};
 	},
@@ -523,6 +530,7 @@ UserNewReleases.extendTo(RecommNewReleases, {
 
 var LfmUserTopAlbums = function() {};
 ArtCard.AlbumsList.extendTo(LfmUserTopAlbums, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		connectUsername.call(this, params);
@@ -542,8 +550,7 @@ ArtCard.AlbumsList.extendTo(LfmUserTopAlbums, {
 			data: this.getRqData(),
 			parser: this.getLastfmAlbumsList
 		});
-	},
-	'compx-has_no_access': no_access_compx
+	}
 });
 
 var LfmUserAlbums = function() {};
@@ -609,6 +616,7 @@ BrowseMap.Model.extendTo(LfmUserAlbums, {
 
 var TaggedSongs = function() {};
 SongsList.extendTo(TaggedSongs, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 
@@ -631,12 +639,12 @@ SongsList.extendTo(TaggedSongs, {
 			data: this.getRqData(),
 			parser: this.getLastfmTracksList
 		});
-	},
-	'compx-has_no_access': no_access_compx
+	}
 });
 
 var TaggedArtists = function() {};
 ArtCard.ArtistsList.extendTo(TaggedArtists, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -664,6 +672,7 @@ ArtCard.ArtistsList.extendTo(TaggedArtists, {
 
 var TaggedAlbums = function() {};
 ArtCard.AlbumsList.extendTo(TaggedAlbums, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		this.tag_name = params.tag_name;
@@ -729,6 +738,7 @@ var LfmUserTags = function() {};
 LoadableList.extendTo(LfmUserTags, {
 	model_name: 'lfm_listened_tags',
 	main_list_name: 'tags',
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		connectUsername.call(this, params);
@@ -774,8 +784,7 @@ LoadableList.extendTo(LfmUserTags, {
 		}
 		return result;
 		//console.log(r);
-	},
-	'compx-has_no_access': no_access_compx
+	}
 });
 
 var LfmUserPreview = function() {};
@@ -891,6 +900,7 @@ LoadableList.extendTo(LfmUsersList, {
 });
 var LfmUsersListOfUser = function() {};
 LfmUsersList.extendTo(LfmUsersListOfUser, {
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 		connectUsername.call(this, params);

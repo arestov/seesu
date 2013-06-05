@@ -127,8 +127,8 @@ provoda.View.extendTo(UserAcquaintancesListPreview, {
 		var _this = this;
 
 		this.c.click(function() {
-			//_this.RPCLegacy('showOnMap');
-			_this.RPCLegacy('showOnMap');
+			//_this.RPCLegacy('requestPage');
+			_this.RPCLegacy('requestPage');
 		});
 
 		this.acqs_frsmone_c = $('<span></span>').appendTo(this.c);

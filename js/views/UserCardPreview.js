@@ -12,8 +12,8 @@ provoda.View.extendTo(UserCardPreview, {
 		var _this = this;
 
 		var button = this.c.find('.to-open-block').click(function() {
-			_this.RPCLegacy('showOnMap');
-			//_this.RPCLegacy('showOnMap');
+			_this.RPCLegacy('requestPage');
+			//_this.RPCLegacy('requestPage');
 		});
 		this.addWayPoint(button);
 		this.button = button;

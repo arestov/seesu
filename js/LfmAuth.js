@@ -17,6 +17,8 @@ provoda.Model.extendTo(LfmLogin, {
 
 		if (params && params.desc){
 			this.setRequestDesc(params.desc);
+		} else {
+			this.setRequestDesc(localize('to-get-access'));
 		}
 
 		if (this.auth.deep_sanbdox){

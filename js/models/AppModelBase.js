@@ -217,11 +217,14 @@ provoda.Model.extendTo(AppModelBase, {
 			}
 		}
 		var md = this.state('current_mp_md');
-		if (md.checkRequestsPriority){
-			md.checkRequestsPriority();
-		} else if (md.setPrio){
-			md.setPrio();
+		if (md){
+			if (md.checkRequestsPriority){
+				md.checkRequestsPriority();
+			} else if (md.setPrio){
+				md.setPrio();
+			}
 		}
+		
 		this.checkActingRequestsPriority();
 	}
 });

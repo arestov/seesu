@@ -53,7 +53,7 @@ coct.SPView.extendTo(SongUI, {
 		showSong: function(e) {
 			e.preventDefault();
 			this.RPCLegacy('wantSong');
-			this.RPCLegacy('showOnMap');
+			this.RPCLegacy('requestPage');
 		}
 	},
 

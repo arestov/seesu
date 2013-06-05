@@ -1,5 +1,14 @@
-define(['spv', 'provoda', 'jquery'], function(spv, provoda, $) {
+define(['spv', 'provoda', 'jquery', './etc_views'], function(spv, provoda, $, etc_views) {
 "use strict";
+var SoftVkLoginUI = function() {};
+etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
+	createBase: function() {
+		this._super();
+		this.c.removeClass('attention-focuser');
+	}
+});
+
+
 
 var ListPreview = function() {};
 provoda.View.extendTo(ListPreview, {
@@ -18,7 +27,7 @@ provoda.View.extendTo(ListPreview, {
 		this.addWayPoint(button_area);
 	},
 	clickAction: function() {
-		this.RPCLegacy('showOnMap');
+		this.RPCLegacy('requestPage');
 	},
 	'stch-list_loading': function(state) {
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
@@ -115,7 +124,12 @@ var ListSimplePreview = function() {};
 ListPreview.extendTo(ListSimplePreview, {
 	children_views: {
 		preview_list: ListPreviewLine,
-		lists_list: ListPreviewLine
+		lists_list: ListPreviewLine,
+		auth_block_lfm: etc_views.LfmLoginView,
+		auth_block_vk: SoftVkLoginUI
+	},
+	'stch-pmd_vswitched': function(state) {
+		this.c.toggleClass('access-request', state);
 	},
 	'collch-preview_list': {
 		place: 'tpl.ancs.listc',
@@ -124,6 +138,10 @@ ListPreview.extendTo(ListSimplePreview, {
 	'collch-lists_list': {
 		place: 'tpl.ancs.listc',
 		limit: 9
+	},
+	'collch-auth_part': {
+		place: 'tpl.ancs.auth_con',
+		by_model_name: true
 	}
 });
 
@@ -131,7 +149,9 @@ var ImagedListPreview = function() {};
 ListSimplePreview.extendTo(ImagedListPreview, {
 	children_views: {
 		preview_list: ArtistsListPreviewLine,
-		lists_list: ListPreviewLine
+		lists_list: ListPreviewLine,
+		auth_block_lfm: etc_views.LfmLoginView,
+		auth_block_vk: SoftVkLoginUI
 	}
 });
 
@@ -200,7 +220,7 @@ provoda.View.extendTo(BigAlbumPreview, {
 		var _this = this;
 
 		this.c.click(function() {
-			_this.RPCLegacy('showOnMap');
+			_this.RPCLegacy('requestPage');
 			return false;
 		});
 		this.addWayPoint(this.c);

@@ -210,7 +210,7 @@ AppModelBase.extendTo(AppModel, {
 		var acting = [];
 		var i;
 
-		var w_song = this.p.wanted_song;
+		var w_song = this.p && this.p.wanted_song;
 
 		var addToArray = function(arr, item) {
 			if (arr.indexOf(item) == -1){
@@ -221,7 +221,7 @@ AppModelBase.extendTo(AppModel, {
 		if (w_song){
 			addToArray(acting, w_song);
 		}
-		var imporant_models = [ this.p.waiting_next, this.state('current_mp_md'), this.p.c_song ];
+		var imporant_models = [ this.p && this.p.waiting_next, this.state('current_mp_md'), this.p && this.p.c_song ];
 		for (i = 0; i < imporant_models.length; i++) {
 			var cur = imporant_models[i];
 			if (cur){
