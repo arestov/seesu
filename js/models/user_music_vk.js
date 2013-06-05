@@ -1,0 +1,148 @@
+define(['provoda', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlencoding', 'js/libs/BrowseMap'],
+function(provoda, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap){
+'use strict';
+var localize = app_serv.localize;
+
+var VkAudioLogin = function() {};
+comd.VkLoginB.extendTo(VkAudioLogin, {
+	init: function(opts) {
+		this._super(opts,  {
+			open_opts: {settings_bits: 8},
+			desc: localize('to-play-vk-audio')
+		});
+	},
+	beforeRequest: function() {
+		var _this = this;
+		this.bindAuthReady('input_click', function() {
+			_this.pmd.loadStart();
+			_this.pmd.showOnMap();
+		});
+	}
+});
+
+var VkSongList = function() {};
+SongsList.extendTo(VkSongList, {
+	init: function(opts, params) {
+		this._super(opts);
+
+		var user_id = params.vk_id;
+		this.sub_pa_params = {
+			vk_id: params.vk_id,
+			for_current_user: params.for_current_user
+		};
+
+		this.user_id = user_id;
+
+		this.initStates();
+		this.authInit();
+		this.authSwitching(this.app.vk_auth, VkAudioLogin);
+	}
+});
+
+var VkRecommendedTracks = function() {};
+VkSongList.extendTo(VkRecommendedTracks, {
+	sendMoreDataRequest: function(paging_opts) {
+		var request_info = {};
+		var _this = this;
+
+		request_info.request = this.app.vk_api.get('audio.getRecommendations', {
+			sk: this.app.lfm.sk,
+			count: paging_opts.page_limit,
+			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
+		})
+			.done(function(r){
+				if (!r || r.error){
+					_this.requestComplete(request_info.request, true);
+					return;
+				}
+				var vk_search = _this.app.mp3_search.getSearchByName('vk');
+				var track_list = [];
+
+				for (var i = 0; i < r.response.length; i++) {
+					var cur = r.response[i];
+					track_list.push({
+						artist: htmlencoding.decode(cur.artist),
+						track: htmlencoding.decode(cur.title),
+						file: vk_search.makeSongFile(cur)
+					});
+				}
+
+				_this.putRequestedData(request_info.request, track_list, r.error);
+
+			})
+			.fail(function(){
+				_this.requestComplete(request_info.request, true);
+			}).always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	}
+});
+
+var MyVkAudioList = function() {};
+VkSongList.extendTo(MyVkAudioList, {
+	sendMoreDataRequest: function(paging_opts) {
+		var request_info = {};
+		var _this = this;
+
+		request_info.request = this.app.vk_api.get('audio.get', {
+			sk: this.app.lfm.sk,
+			count: paging_opts.page_limit,
+			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
+		})
+			.done(function(r){
+				if (!r || r.error){
+					_this.requestComplete(request_info.request, true);
+					return;
+				}
+				var vk_search = _this.app.mp3_search.getSearchByName('vk');
+				var track_list = [];
+
+				for (var i = 0; i < r.response.length; i++) {
+					var cur = r.response[i];
+					track_list.push({
+						artist: htmlencoding.decode(cur.artist),
+						track: htmlencoding.decode(cur.title),
+						file: vk_search.makeSongFile(cur)
+					});
+				}
+				_this.putRequestedData(request_info.request, track_list, r.error);
+			})
+			.fail(function(){
+				_this.requestComplete(request_info.request, true);
+			}).always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	}
+});
+
+var VkUserTracks = function() {};
+BrowseMap.Model.extendTo(VkUserTracks, {
+	model_name: 'listoflists',
+	init: function(opts, params) {
+		this._super(opts);
+		this.sub_pa_params = {
+			vk_id: params.vk_id,
+			for_current_user: params.for_current_user
+		};
+		this.initStates();
+		this.initListedModels(['my', 'recommended']);
+	},
+	sub_pa: {
+		'my': {
+			constr: MyVkAudioList,
+			getTitle: function() {
+				return localize('vk-audio');
+			}
+		},
+		'recommended':{
+			constr: VkRecommendedTracks,
+			title: "Recommended"
+		}
+	}
+});
+return {
+	VkUserTracks: VkUserTracks
+};
+});

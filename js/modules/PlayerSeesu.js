@@ -346,8 +346,8 @@ var app_env = app_serv.app_env;
 			su = app;
 				
 			this
-			.on('finish', function(){
-				//var mo = e.song_file.mo.submitPlayed();
+			.on('finish', function(e){
+				e.song_file.mo.submitPlayed();
 			})
 			.on('song-play-error', function(song, can_play) {
 				if (this.c_song == song){

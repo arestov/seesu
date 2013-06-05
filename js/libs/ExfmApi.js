@@ -127,6 +127,9 @@ ExfmMusicSearch.prototype = {
 					var music_list = [];
 					if (r && r.songs.length){
 						for (var i=0; i < r.songs.length; i++) {
+							if (!r.songs[i] || r.songs[i].url.indexOf('api.soundcloud.com/tracks/') != -1){
+								continue;
+							}
 							var ent = _this.makeSong(r.songs[i], msq);
 							if (_this.mp3_search.getFileQMI(ent, msq) == -1){
 								//console.log(ent)

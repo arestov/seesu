@@ -85,9 +85,9 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 				.on('state-change.active', function(){
 					_this.remarkStyles();
 				})
-				.on('request', function(rq){
-					_this.addRequest(rq);
-				});
+				.on('requests', function(array){
+					_this.addRequests(array);
+				}, {immediately: true});
 			var sections_array = this.getNesting('section');
 
 			sections_array.push(s);

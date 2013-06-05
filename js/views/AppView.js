@@ -1,10 +1,26 @@
-define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
-'./StartPageView', './searchPageView', './ArtcardUI', './TagsListPage', './ArtistListView', './songsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView'],
-function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
-StartPageView, searchPageView, ArtcardUI, TagsListPage, ArtistListView, songsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView) {
+define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq', './filters',
+'./StartPageView', './searchPageView', './ArtcardUI', './TagsListPage', './ArtistListView',
+'./songsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
+'./lul', './SongcardPage'],
+function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq, filters,
+StartPageView, searchPageView, ArtcardUI, TagsListPage, ArtistListView,
+songsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
+lul, SongcardPage) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
+
+
+
+
+provoda.setTplFilterGetFn(function(filter_name) {
+	if (filters[filter_name]){
+		return filters[filter_name];
+	} else {
+		throw new Error( 'no filter: ' + filter_name );
+	}
+});
+
 var viewOnLevelP = function(md, view) {
 	var lev_conj = this.getLevelContainer(md.map_level_num);
 	view.wayp_scan_stop = true;
@@ -18,9 +34,32 @@ provoda.View.extendTo(appView, {
 		this.root_view = this;
 		this.d = this.opts.d;
 		this.tpls = [];
-		this.lfm_imgq = new FuncsQueue(700);
-		this.dgs_imgq = new FuncsQueue(1200);
+		this.samples = {};
 		var _this = this;
+
+		this.all_queues = [];
+		var addQueue = function() {
+			this.reverse_default_prio = true;
+			_this.all_queues.push(this);
+			return this;
+		};
+		var resortQueue = function(queue) {
+			_this.resortQueue(queue);
+		};
+
+
+		this.dom_related_props.push('samples');
+		this.lfm_imgq = new FuncsQueue({
+			time: [700],
+			init: addQueue,
+			resortQueue: resortQueue
+		});
+		this.dgs_imgq = new FuncsQueue({
+			time: [1200],
+			init: addQueue,
+			resortQueue: resortQueue
+		});
+
 		setTimeout(function() {
 			_this.buildAppDOM();
 		});
@@ -39,7 +78,7 @@ provoda.View.extendTo(appView, {
 		}
 		this.lev_containers = {};
 
-		this.on('vip-state-change.current_mp_md', function(e) {
+		this.on('vip-state-change.current_mp_md', function() {
 			var cwp = this.state('vis_current_wpoint');
 			if (cwp){
 				if (cwp.canUse && !cwp.canUse()){
@@ -49,6 +88,24 @@ provoda.View.extendTo(appView, {
 
 		}, {skip_reg: true, immediately: true});
 
+		this.on('state-change.current_mp_md', function() {
+			_this.resortQueue();
+		});
+
+	},
+	resortQueue: function(queue) {
+		if (queue){
+			queue.removePrioMarks();
+		} else {
+			for (var i = 0; i < this.all_queues.length; i++) {
+				this.all_queues[i].removePrioMarks();
+			}
+		}
+		var md = this.state('current_mp_md');
+		var view = md && md.mpx.getRooConPresentation(true);
+		if (view){
+			view.setPrio();
+		}
 	},
 	onDomBuild: function() {
 		this.c = $(this.d.body);
@@ -138,6 +195,10 @@ provoda.View.extendTo(appView, {
 			'all-sufficient-details': songsListView,
 			nav: nav.baseNavUI
 		},
+		lfm_usercard:{
+			nav: nav.baseNavUI,
+			main: UserCardPage.LfmUsercardPageView
+		},
 		usercard: {
 			nav: nav.baseNavUI,
 			main: UserCardPage
@@ -201,6 +262,34 @@ provoda.View.extendTo(appView, {
 			main: YoutubeVideoView,
 			nav: nav.baseNavUI
 		},
+		lfm_users:{
+			main: lul.LfmUsersPageView,
+			nav: nav.baseNavUI
+		},
+		lfm_listened_artists: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		lfm_listened_tracks: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		lfm_listened_albums: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		lfm_listened_tags: {
+			main: lul.UserTagsPageView,
+			nav: nav.baseNavUI
+		},
+		listoflists: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
+		lfm_user_tag: {
+			main: coct.ListOfListsView,
+			nav: nav.baseNavUI
+		},
 		user_acqs_list: {
 			main: uacq.UserAcquaintancesListView,
 			nav: nav.baseNavUI
@@ -208,7 +297,24 @@ provoda.View.extendTo(appView, {
 		albslist: {
 			main: coct.AlbumsListView,
 			nav: nav.baseNavUI
+		},
+		lula: {
+			main: lul.LULAPageVIew,
+			nav: nav.baseNavUI
+		},
+		lulas: {
+			main: lul.LULAsPageVIew,
+			nav: nav.baseNavUI
+		},
+		songcard: {
+			main: SongcardPage,
+			nav: nav.baseNavUI
 		}
+	},
+	'collch-navigation': {
+		place: 'nav.daddy',
+		space: 'nav',
+		by_model_name: true
 	},
 	'collch-map_slice': function(nesname, array){
 		for (var i = 0; i < array.length; i++) {
@@ -224,7 +330,17 @@ provoda.View.extendTo(appView, {
 		}
 	},
 	'spec-collch-song': function(name, md) {
-		
+		var playlist = md.getParentMapModel();
+
+		var playlist_mpx = playlist.mpx;
+
+		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
+		if (!view){
+			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
+			var place = viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
+			place.append(view.getA());
+			this.requestAll();
+		}
 	},
 	'spec-collch-playlist': {
 		place: viewOnLevelP,
@@ -247,11 +363,6 @@ provoda.View.extendTo(appView, {
 			}, {immediately: true});
 		}
 		this.requestAll();
-	},
-	'collch-navigation': {
-		place: 'nav.daddy',
-		space: 'nav',
-		by_model_name: true
 	},
 	manual_states_connect: true,
 	getLevByNum: function(num, exclude_start_lev) {
@@ -397,17 +508,7 @@ provoda.View.extendTo(appView, {
 		//this.getChildView(mpx)
 	},
 	'detcoll-song': function(md) {
-		var playlist = md.getParentMapModel();
-
-		var playlist_mpx = playlist.mpx;
-
-		var view = this.getChildView(playlist_mpx, 'all-sufficient-details');
-		if (!view){
-			view = this.getFreeChildView({name: playlist.model_name, space: 'all-sufficient-details'}, playlist);
-			var place = viewOnLevelP.call(this, {map_level_num: md.map_level_num}, view);
-			place.append(view.getA());
-			this.requestAll();
-		}
+		
 	},
 	'stch-map_animation': function(changes) {
 		if (!changes){
@@ -435,7 +536,7 @@ provoda.View.extendTo(appView, {
 			}
 
 		}
-		console.log(all_changhes);
+		//console.log(all_changhes);
 		/*
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
@@ -591,41 +692,11 @@ provoda.View.extendTo(appView, {
 	},
 	parts_builder: {
 		//samples
-		'song-file': function() {
-			return this.els.ui_samples.children('.song-file');
-		},
-		'complex-page': function() {
-			return this.els.ui_samples.children('.complex-page');
-		},
-		'common-nav': function() {
-			return this.els.ui_samples.children('.common-nav');
-		},
-		'search_page-nav': function() {
-			return this.els.ui_samples.children('.search_page-nav');
-		},
-		'start_page-nav': function() {
-			return this.els.ui_samples.children('.start_page-nav');
+		alb_prev_big: function() {
+			return this.els.ui_samples.children('.album_preview-big');
 		},
 		'song-view': function() {
 			return this.els.ui_samples.children('ul').children('.song-view');
-		},
-		'music_conductor_page': function() {
-			return this.els.ui_samples.children('.music_conductor_page');
-		},
-		'moplas-block': function() {
-			return this.els.ui_samples.children('.moplas-block');
-		},
-		user_page: function() {
-			return this.els.ui_samples.children('.user_page');
-		},
-		tags_list_page: function() {
-			return this.els.ui_samples.children('.tags_list_page');
-		},
-		tag_page: function() {
-			return this.els.ui_samples.children('.tag_page');
-		},
-		alb_prev_big: function() {
-			return this.els.ui_samples.children('.album_preview-big');
 		},
 		artcard: function() {
 			return this.els.ui_samples.children('.art_card');
@@ -633,28 +704,24 @@ provoda.View.extendTo(appView, {
 		track_c: function() {
 			return this.els.ui_samples.children('.track-context');
 		},
-		playlist_panel: function() {
-			return this.els.ui_samples.children('.play-list-panel');
-		},
 		lfm_authsampl: function() {
 			return this.els.ui_samples.children('.lfm-auth-module');
 		},
 		lfm_scrobling: function() {
 			return this.els.ui_samples.children('.scrobbling-switches');
-		},
-		artists_list: function() {
-			return this.els.ui_samples.children('.artists_list');
-		},
-		albums_page: function() {
-			return this.els.ui_samples.children('.albums_page');
-		},
-		area_for_button: function() {
-			return this.els.ui_samples.children('.area_for_button');
 		}
 	},
 	getSample: function(name) {
-		var sample_node = this.samples[name] || this.requirePart(name);
-
+		var sample_node = this.samples[name];
+		if (!sample_node){
+			sample_node = this.samples[name] = this.els.ui_samples.children('.' + name);
+		}
+		if (!sample_node[0]){
+			sample_node = this.samples[name] = this.requirePart(name);
+		}
+		if (!sample_node[0]){
+			throw new Error('no such sample');
+		}
 		return $(sample_node).clone();
 	},
 	buildAppDOM: function() {
@@ -662,7 +729,7 @@ provoda.View.extendTo(appView, {
 		var d = this.d;
 		spv.domReady(this.d, function() {
 			console.log('dom ready');
-			_this.dom_related_props.push('els', 'lev_containers', 'samples');
+			_this.dom_related_props.push('els', 'lev_containers');
 
 			var slider = d.getElementById('slider');
 			var screens_block = $('#screens',d);
@@ -785,7 +852,7 @@ provoda.View.extendTo(appView, {
 			};
 
 
-			_this.els.search_form.find('#app_type').val(su.env.app_type);
+			_this.els.search_form.find('#app_type').val(app_env.app_type);
 
 			_this.els.search_form.submit(function(){return false;});
 
@@ -817,7 +884,7 @@ provoda.View.extendTo(appView, {
 
 			var vklc = ui_samples.children('.vk-login-context');
 
-			_this.samples = {
+			spv.cloneObj(_this.samples, {
 				vklc: vklc,
 				vk_login: {
 					o: vklc,
@@ -892,7 +959,7 @@ provoda.View.extendTo(appView, {
 					}
 				}
 
-			};
+			});
 
 			//_this.els.search_label = _this.els.search_form.find('#search-p').find('.lbl');
 
@@ -1864,9 +1931,9 @@ provoda.View.extendTo(appView, {
 	},
 	create_youtube_video: function(id, transparent){
 		var youtube_video = document.createElement('embed');
-		if (su.env.opera_widget){
+		if (app_env.opera_widget){
 			youtube_video.setAttribute('wmode',"transparent");
-		} else if (su.env.opera_extension){
+		} else if (app_env.opera_extension){
 			youtube_video.setAttribute('wmode',"opaque");
 		}
 
@@ -1878,22 +1945,26 @@ provoda.View.extendTo(appView, {
 		return youtube_video;
 	},
 	bindLfmTextClicks: function(con) {
+		con.on('click', 'a', function(e) {
+			var node = $(this);
+			var link = node.attr('href');
+			if (node.is('.bbcode_artist')){
+				e.preventDefault();
 
-		con.on('click', '.bbcode_artist', function(e) {
-			e.preventDefault();
+				var artist_name = decodeURIComponent(link.replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
+				su.showArtcardPage(artist_name);
+				seesu.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
+			} else if (node.is('.bbcode_tag')){
+				e.preventDefault();
 
-			var artist_name = decodeURIComponent($(this).attr('href').replace('http://www.last.fm/music/','').replace(/\+/g, ' '));
-			su.showArtcardPage(artist_name);
-			seesu.trackEvent('Artist navigation', 'bbcode_artist', artist_name);
-
-		});
-
-		con.on('click', '.bbcode_tag', function(e) {
-			e.preventDefault();
-
-			var tag_name = decodeURIComponent($(this).attr('href').replace('http://www.last.fm/tag/','').replace(/\+/g, ' '));
-			su.show_tag(tag_name);
-			seesu.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
+				var tag_name = decodeURIComponent(link.replace('http://www.last.fm/tag/','').replace(/\+/g, ' '));
+				su.show_tag(tag_name);
+				seesu.trackEvent('Artist navigation', 'bbcode_tag', tag_name);
+			} else {
+				e.preventDefault();
+				app_env.openURL(link);
+				seesu.trackEvent('Links', 'just link');
+			}
 		});
 
 	},

@@ -28,12 +28,10 @@ provoda.addPrototype("SongBase",{
 		//this.updateManyStates(states);
 
 		var _this = this;
-		this.on('request', function() {
-			setTimeout(function() {
-				_this.plst_titl.checkRequestsPriority();
-			},50);
+		this.on('requests', function() {
+			_this.plst_titl.checkRequestsPriority();
 			
-		});
+		}, {immediately: true});
 	},
 	complex_states: {
 		'one_artist_playlist': {
@@ -54,7 +52,7 @@ provoda.addPrototype("SongBase",{
 				return this.getFullName(artist, track);
 			}
 		},
-		'nav-short-title': {
+		'nav_short_title': {
 			depends_on: ['artist', 'track'],
 			fn: function(artist, track) {
 				return this.getFullName(artist, track, true);
@@ -374,7 +372,7 @@ provoda.addPrototype("SongBase",{
 				})
 				.fail(function() {
 					def_top_tracks.resolve();
-				}));
+				}), {space: 'acting'});
 
 
 
@@ -408,7 +406,7 @@ provoda.addPrototype("SongBase",{
 					})
 					.fail(function() {
 						def_podcast.resolve();
-					}));
+					}), {space: 'acting'});
 
 
 
@@ -443,7 +441,8 @@ provoda.addPrototype("SongBase",{
 						})
 						.fail(function() {
 							def_soundcloud.resolve();
-						})
+						}),
+					{space: 'acting'}
 					);
 				}
 
@@ -459,7 +458,8 @@ provoda.addPrototype("SongBase",{
 						})
 						.fail(function() {
 							def_exfm.resolve();
-						})
+						}),
+					{space: 'acting'}
 					);
 				}
 			}
@@ -581,11 +581,12 @@ provoda.addPrototype("SongBase",{
 		var investg = this.mf_cor.files_investg;
 		var _this = this;
 		investg
-			.on('request', function(rq) {
-				_this.addRequest(rq, {
-					depend: true
+			.on('requests', function(array) {
+				_this.addRequests(array, {
+					depend: true,
+					space: 'acting'
 				});
-			})
+			}, {immediately: true})
 			.on('state-change.search_complete', function(e) {
 				_this.updateState('search_complete', e.value);
 			})
@@ -613,7 +614,7 @@ provoda.addPrototype("SongBase",{
 			opts = opts || {};
 			opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this);
 		
-			this.mf_cor.files_investg.startSearch(opts);
+			this.mf_cor.startSearch(opts);
 		}
 	},
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
@@ -630,9 +631,24 @@ provoda.addPrototype("SongBase",{
 			});
 		}
 	},
-
+	checkRequestsPriority: function() {
+		this.plst_titl.checkRequestsPriority();
+	},
+	getActingPriorityModels: function() {
+		var result = [];
+		if (this.next_song){
+			result.push(this.next_song);
+		} else if (this.plst_titl.state('has_loader')){
+			result.push( this.plst_titl );
+		} else if ( this.next_preload_song ){
+			result.push( this.next_preload_song );
+			
+		}
+		result.push( this );
+		return result;
+	},
 	checkChangesSinceFS: function(opts){
-		this.plst_titl.checkChangesSinceFS(this, opts);
+		this.player.checkChangesSinceFS(this, opts);
 	},
 	view: function(no_navi, userwant){
 		if (!this.state('mp_show')){
@@ -672,10 +688,6 @@ provoda.addPrototype("SongBase",{
 	showArtistSimilarArtists: function() {
 		this.app.showArtistSimilarArtists(this.artist);
 		this.app.trackEvent('Artist navigation', 'similar artists to', this.artist);
-	},
-	showTag: function(tag_name) {
-		this.app.show_tag(tag_name);
-		this.app.trackEvent('Artist navigation', 'tag', tag_name);
 	}
 
 });

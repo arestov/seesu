@@ -6,9 +6,6 @@ define(['provoda', 'spv'], function(provoda, spv){
 			this._super(opts);
 			
 			var _this = this;
-			this.on('request', function() {
-				_this.checkRequestsPriority();
-			});
 			this.app = opts.app;
 			this.player = this.app.p;
 			this.mp3_search = this.app.mp3_search;
@@ -49,19 +46,13 @@ define(['provoda', 'spv'], function(provoda, spv){
 				}
 			});
 			this.watchChildrenStates(this.main_list_name, 'can-use-as-neighbour', function(e) {
-				setTimeout(function() {
-					_this.checkNeighboursStatesCh(e.item);
-				}, 1000/60);
+				_this.checkNeighboursStatesCh(e.item);
 				
 			});
 			this.watchChildrenStates(this.main_list_name, 'is_important', function(e) {
-				setTimeout(function() {
-					if (e.item.isImportant()){
-						_this.checkNeighboursChanges(e.item);
-					}
-					_this.checkRequestsPriority();
-				}, 1000/60);
-				
+				if (e.item.isImportant()){
+					_this.checkNeighboursChanges(e.item);
+				}
 			});
 			
 		},
@@ -201,13 +192,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 			return this;
 		},
 		setWaitingNextSong: function(mo) {
-			this.waiting_next = mo;
-			var _this = this;
-			this.player.once('now_playing-signal', function() {
-				if (_this.waiting_next == mo){
-					delete _this.waiting_next;
-				}
-			});
+			this.player.setWaitingNextSong(mo);
 		},
 		switchTo: function(mo, direction) {
 	
@@ -461,25 +446,12 @@ define(['provoda', 'spv'], function(provoda, spv){
 			}
 			
 		},
-		checkChangesSinceFS: function() {
-			if (this.waiting_next){
-				if (!this.waiting_next.next_preload_song){
-					delete this.waiting_next;
-				} else {
-					if (this.waiting_next.next_preload_song.canPlay()){
-						this.player.wantSong(this.waiting_next.next_preload_song);
-					}
-					
-				}
-			}
-		},
-		checkRequestsPriority: function() {
+		checkNavRequestsPriority: function() {
 			var i;
-			var common = [];
+			
 			var demonstration = [];
 
-			var w_song = this.getWantedSong();
-			var waiting_next = this.waiting_next;
+			var waiting_next = this.player.waiting_next;
 			var v_song = this.getViewingSong();
 			var p_song = this.getPlayerSong();
 
@@ -490,50 +462,8 @@ define(['provoda', 'spv'], function(provoda, spv){
 					return true;
 				}
 			};
-			if (w_song){
-				addToArray(common, w_song);
-			}
 
-			if (waiting_next){
-				if (waiting_next.next_song){
-					addToArray(common, waiting_next.next_song);
-				} else if (this.state('has_loader')){
-					addToArray(common, this);
-				} else if (waiting_next.next_preload_song){
-					addToArray(common, waiting_next.next_preload_song);
-					
-				}
-				addToArray(common, waiting_next);
-			
-			}
-			if (v_song){
-				if (v_song.next_song){
-					addToArray(common, v_song.next_song);
-				} else if (this.state('has_loader')){
-					addToArray(common, this);
-				} else if (v_song.next_preload_song){
-					addToArray(common, v_song.next_preload_song);
-					
-				}
-				addToArray(common, v_song);
-			}
-			if (p_song){
-				if (p_song.next_song){
-					addToArray(common, p_song.next_song);
-				} else if (this.state('has_loader')){
-					addToArray(common, this);
-				} else if (p_song.next_preload_song){
-					addToArray(common, p_song.next_preload_song);
-					
-				}
-				addToArray(common, p_song);
-			}
-			if (v_song && v_song.prev_song){
-				addToArray(common, v_song.prev_song);
-			}
 
-			
-			
 			if (v_song){
 				addToArray(demonstration, v_song);
 				if (v_song.next_song){
@@ -559,18 +489,18 @@ define(['provoda', 'spv'], function(provoda, spv){
 				}
 			}
 
+			addToArray(demonstration, this);
+
 			demonstration.reverse();
-			common.reverse();
-			
 			for (i = 0; i < demonstration.length; i++) {
-				demonstration[i].setPrio('highest', 'demonstration');
+				demonstration[i].setPrio();
 			}
-			for (i = 0; i < common.length; i++) {
-				common[i].setPrio('highest', 'common');
-			}
-			
+
 		},
-		subPager: function(string) {
+		checkRequestsPriority: function() {
+			this.checkNavRequestsPriority();
+		},
+		subPager: function(pstr, string) {
 			var parts = this.app.getCommaParts(string);
 			var artist = parts[1] ? parts[0] : this.playlist_artist;
 

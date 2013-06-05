@@ -412,7 +412,7 @@ a.track_name_loading:hover{
 	}
 
 
-	.show-zoom-to-track .play-list-panel{
+	.show-zoom-to-track .playlist_panel{
 		display:none;
 	}
 	.show-zoom-to-track ul.tracks-for-play .play-controls{
@@ -537,7 +537,9 @@ a.track_name_loading:hover{
 .show-zoom-to-track .player_song.v-song-sibling .full-song_title{
 	padding-right: 22px;
 }
-
+.playlist-container ul.tracks-for-play > li.selected_song a.track-node {
+	background: #444;
+	}
 
 
 

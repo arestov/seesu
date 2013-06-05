@@ -1,5 +1,14 @@
-define(['spv', 'provoda', 'jquery'], function(spv, provoda, $) {
+define(['spv', 'provoda', 'jquery', './etc_views'], function(spv, provoda, $, etc_views) {
 "use strict";
+var SoftVkLoginUI = function() {};
+etc_views.VkLoginUI.extendTo(SoftVkLoginUI, {
+	createBase: function() {
+		this._super();
+		this.c.removeClass('attention-focuser');
+	}
+});
+
+
 
 var ListPreview = function() {};
 provoda.View.extendTo(ListPreview, {
@@ -18,10 +27,14 @@ provoda.View.extendTo(ListPreview, {
 		this.addWayPoint(button_area);
 	},
 	clickAction: function() {
-		this.RPCLegacy('showOnMap');
+		this.RPCLegacy('requestPage');
 	},
 	'stch-list_loading': function(state) {
 		this.tpl.ancs.listc.toggleClass('list_loading', !!state);
+	},
+	'stch-mp_show': function(state) {
+		var node = spv.getTargetField(this, 'tpl.ancs.button_area') || this.c;
+		node.toggleClass('button_selected', !!state);
 	},
 	createBase: function() {
 		this.c = this.root_view.getSample('area_for_button');
@@ -32,22 +45,15 @@ provoda.View.extendTo(ListPreview, {
 var ListPreviewLine = function() {};
 provoda.View.extendTo(ListPreviewLine, {
 	createBase: function() {
-		this.c = $('<span class="desc_item"></span>');
-		if (this.extended_viewing){
-			this.image_c = $('<span class="desc_item-imgcon"></span>').appendTo(this.c);
-		}
-		
-		this.text_c = $('<span class="desc_item-text"></span>').appendTo(this.c);
-
+		this.setVisState('img_allowed', this.extended_viewing);
+		this.c = this.root_view.getSample('preview_line');
+		this.createTemplate();
 	},
 	'compx-selected_title': {
-		depends_on: ['nav_title', 'nav-short-title'],
+		depends_on: ['nav_title', 'nav_short_title'],
 		fn: function(title, short_title) {
 			return short_title || title;
 		}
-	},
-	'stch-selected_title': function(state) {
-		this.text_c.text(state);
 	}
 });
 
@@ -65,9 +71,26 @@ ListPreview.extendTo(LiListsPreview, {
 });
 
 
+var SPView = function() {};
+provoda.View.extendTo(SPView, {
+	'compx-mp_show_end': {
+		depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
+		fn: function(anim, vis_mp_show, mp_show) {
+			if (anim) {
+				if (vis_mp_show && anim == vis_mp_show.anid){
+					return vis_mp_show.value;
+				} else {
+					return false;
+				}
+			} else {
+				return mp_show;
+			}
+		}
+	}
+});
 
 var PageView = function() {};
-provoda.View.extendTo(PageView, {
+SPView.extendTo(PageView, {
 	'stch-mp_show': function(state) {
 		this.c.toggleClass('hidden', !state);
 	},
@@ -94,26 +117,43 @@ PageView.extendTo(AllPlacesPage, {
 
 var ArtistsListPreviewLine = function() {};
 ListPreviewLine.extendTo(ArtistsListPreviewLine, {
-	extended_viewing: true,
-	'stch-selected_image': function(lfm_wrap) {
-		if (!lfm_wrap){
-			return;
-		}
-		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/64s/' + lfm_wrap.lfm_id : lfm_wrap.url;
+	extended_viewing: true
+});
 
-
-		if (url){
-			this.image_c.empty();
-			this.image_c.append(
-				$('<img/>').attr({
-					'src': url,
-					alt: this.state('artist')
-				})
-			);
-		}
+var ListSimplePreview = function() {};
+ListPreview.extendTo(ListSimplePreview, {
+	children_views: {
+		preview_list: ListPreviewLine,
+		lists_list: ListPreviewLine,
+		auth_block_lfm: etc_views.LfmLoginView,
+		auth_block_vk: SoftVkLoginUI
+	},
+	'stch-pmd_vswitched': function(state) {
+		this.c.toggleClass('access-request', state);
+	},
+	'collch-preview_list': {
+		place: 'tpl.ancs.listc',
+		limit: 9
+	},
+	'collch-lists_list': {
+		place: 'tpl.ancs.listc',
+		limit: 9
+	},
+	'collch-auth_part': {
+		place: 'tpl.ancs.auth_con',
+		by_model_name: true
 	}
 });
 
+var ImagedListPreview = function() {};
+ListSimplePreview.extendTo(ImagedListPreview, {
+	children_views: {
+		preview_list: ArtistsListPreviewLine,
+		lists_list: ListPreviewLine,
+		auth_block_lfm: etc_views.LfmLoginView,
+		auth_block_vk: SoftVkLoginUI
+	}
+});
 
 var ItemOfLL = function() {};
 ListPreview.extendTo(ItemOfLL, {
@@ -153,13 +193,15 @@ provoda.View.extendTo(AlbumsListPreviewItem, {
 	'stch-selected_image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
+			var node = this.c[0];
 			var req = this.root_view.loadImage({
-					node: this.c[0],
 					url: url,
 					cache_allowed: true
 				}).done(function(){
+					node.src = url;
 				}).fail(function(){
 				});
+			this.addRequest(req);
 			this.on('die', function() {
 				req.abort();
 			});
@@ -178,7 +220,7 @@ provoda.View.extendTo(BigAlbumPreview, {
 		var _this = this;
 
 		this.c.click(function() {
-			_this.RPCLegacy('showOnMap');
+			_this.RPCLegacy('requestPage');
 			return false;
 		});
 		this.addWayPoint(this.c);
@@ -196,13 +238,15 @@ provoda.View.extendTo(BigAlbumPreview, {
 	'stch-selected_image': function(lfm_wrap) {
 		var url = lfm_wrap.lfm_id ? 'http://userserve-ak.last.fm/serve/126s/' + lfm_wrap.lfm_id : lfm_wrap.url;
 		if (url){
+			var node = this.tpl.ancs.imgc[0];
 			var req = this.root_view.loadImage({
-					node: this.tpl.ancs.imgc[0],
 					url: url,
 					cache_allowed: true
 				}).done(function(){
+					node.src = url;
 				}).fail(function(){
 				});
+			this.addRequest(req);
 			this.on('die', function() {
 				req.abort();
 			});
@@ -273,6 +317,7 @@ return {
 	ListPreview:ListPreview,
 	LiListsPreview:LiListsPreview,
 	ListPreviewLine:ListPreviewLine,
+	SPView: SPView,
 	PageView:PageView,
 	AllPlacesPage:AllPlacesPage,
 	ArtistsListPreviewLine: ArtistsListPreviewLine,
@@ -282,7 +327,9 @@ return {
 	BigAlbumPreview:BigAlbumPreview,
 	AlbumsListView:AlbumsListView,
 	AlbumsListPreview:AlbumsListPreview,
-	TagsListPreview: TagsListPreview
+	TagsListPreview: TagsListPreview,
+	ListSimplePreview: ListSimplePreview,
+	ImagedListPreview: ImagedListPreview
 };
 
 });

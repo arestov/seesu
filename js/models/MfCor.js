@@ -191,9 +191,14 @@ provoda.Model.extendTo(MfCor, {
 				if (e.value){
 					_this.files_investg = _this.mo.mp3_search.getFilesInvestg({artist: _this.mo.artist, track: _this.mo.track});
 					_this.bindInvestgChanges();
+					_this.mo.bindFilesSearchChanges();
+					if (_this.last_search_opts){
+						_this.files_investg.startSearch(_this.last_search_opts);
+						_this.last_search_opts = null;
+					}
 				}
 				
-			}, {immediately: true});
+			}, {immediately: true, soft_reg: false});
 			
 		}
 		
@@ -512,6 +517,13 @@ provoda.Model.extendTo(MfCor, {
 		}
 
 	},
+	startSearch: function(opts) {
+		if (this.files_investg){
+			this.files_investg.startSearch(opts);
+		} else {
+			this.last_search_opts = opts;
+		}
+	},
 	bindInvestgChanges: function() {
 		//
 		var _this = this;
@@ -533,6 +545,8 @@ provoda.Model.extendTo(MfCor, {
 			_this.updateNesting('sorted_completcs', sorted_completcs);
 			_this.updateState('few_sources', e.value.length > 1);
 		}, {soft_reg: true});
+		
+		
 
 	},
 	/*

@@ -18,6 +18,16 @@ if (!Array.prototype.indexOf) {
 		return -1;
 	};
 }
+spv.getArrayNoDubs = function(array, clean_array) {
+	clean_array = clean_array || [];
+	for (var i = 0; i < array.length; i++) {
+		if (clean_array.indexOf( array[i] ) == -1){
+			clean_array.push( array[i] );
+		}
+	}
+	return clean_array;
+};
+
 spv.once = function(fn) {
 	var result;
 	return function(){
@@ -343,7 +353,7 @@ makeIndexByField = spv.makeIndexByField = function(array, field, keep_case){
 			var simple_name,
 				cur = array[i],
 				fv = spv.getTargetField(cur, field);
-			if (fv){
+			if (fv || typeof fv == 'number'){
 				if (fv instanceof Array){
 					for (var k=0; k < fv.length; k++) {
 						simple_name = (fv[k] + '');
@@ -426,11 +436,18 @@ $filter = function(array, field, value_or_testfunc){
 cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
 	//not deep!
 	var _no = acceptor || {};
-	for(var a in donor){
-		if (!white_list || !!~white_list.indexOf(a)){
-			if (!black_list || !~black_list.indexOf(a)){
-				_no[a] = donor[a];
+	var prop;
+	if (black_list || white_list){
+		for(prop in donor){
+			if (!white_list || !!~white_list.indexOf(prop)){
+				if (!black_list || !~black_list.indexOf(prop)){
+					_no[prop] = donor[prop];
+				}
 			}
+		}
+	} else {
+		for(prop in donor){
+			_no[prop] = donor[prop];
 		}
 	}
 	return _no;

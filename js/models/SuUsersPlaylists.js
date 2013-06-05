@@ -13,12 +13,18 @@ UserPlaylists.extendTo(SuUsersPlaylists, {
 			'nav_title':  localize('playlists'),
 			'url_part': '/playlists'
 		});
+		this.app.gena = this;
+
+		var plsts_str = app_serv.store('user_playlists');
+		if (plsts_str){
+			this.setSavedPlaylists(plsts_str);
+		}
 	},
 	saveToStore: function(value) {
 		app_serv.store('user_playlists', value, true);
 	},
 	createEnvPlaylist: function(params) {
-		return su.createSonglist(this, params);
+		return this.app.createSonglist(this, params);
 	}
 });
 

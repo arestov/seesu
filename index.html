@@ -31,7 +31,7 @@
 	<meta property="og:title" content="Seesu Music (online version)" />
 	<meta property="og:description" content="Seesu is a small mashup application which combines last.fm catalog, vk.com mp3 and soundcloud mp3 libraries to lets you listen to music and meet new people." />
 	<meta property="og:image" content="http://seesu.me/i/page-poster.png" />
-	<script data-main="loader" src="js/common-libs/require-2.1.5.js"></script>
+	<script data-main="loader" src="js/common-libs/require-2.1.6.min.js"></script>
 	<script type="text/javascript">
 	/*<![CDATA[*/
 	var openstat = { counter: 2101409, next: openstat };
@@ -43,6 +43,32 @@
 	})();
 	/* ]]>*/
 	</script>
+	
+
+<!--
+<div class="preview_area" pv-view="vk_audio">
+	<div class="area_for_button" pv-anchor="button_area">
+		<div class="area-button" pv-anchor='big_button'>
+			<span pv-text="{{nav_title}}">VK audio</span>
+		</div>
+		<div class="area-description" >
+			<div class="desc_prevw_list" pv-anchor="listc"></div>
+		</div>
+	</div>
+	<div class="pl-auth-con" pv-anchor="auth_con"></div>
+</div>
+<div class="preview_area" pv-view="recomm_releases">
+	<div class="area_for_button" pv-anchor="button_area">
+		<div class="area-button" pv-anchor='big_button'>
+			<span pv-text="{{nav_title}}">Albums</span>
+		</div>
+		<div class="area-description" >
+			<div class="desc_prevw_list albums_previews" pv-anchor="listc"></div>
+		</div>
+	</div>
+	<div class="pl-auth-con" pv-anchor="auth_con"></div>
+</div>
+-->
   </head>
   
   <body>
@@ -100,7 +126,7 @@
 
 		<!-- -->
 	
-
+		
 
 		<div 
 			class="complex-page inactive-page"
@@ -121,8 +147,176 @@
 			</div>
 		</div>
 
+		<span class="desc_item preview_line">
+			<span class="preview_line-wrap">
+				<span 
+					class="desc_item-imgcon hidden" 
+					pv-class="desc_item-imgcon {{!vis_img_allowed && 'hidden'}}">
+					<img src="" alt=""
+						pv-class="{{!selected_image && 'hidden'}}" 
+						pv-props=
+						"src: {{
+						(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) 
+						|| selected_image.url
+						}}">
+				</span>
+				<span class="desc_item-text" pv-text="{{selected_title}}"></span>
+			</span>
+			
+		</span>
 
-		<div class="usual_page music_conductor_page">
+
+		<div
+			class="user_tag_page usual_page"
+			pv-class="lula_page usual_page {{!mp_show && 'hidden'}}"
+			>
+			<div class="preview_area" pv-view="tracks">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">Tracks</span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-view="artists">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">Artists</span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-view="albums">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">Albums</span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+		</div>
+		<div
+			class="user_tags_page usual_page"
+			pv-class="lula_page usual_page {{!mp_show && 'hidden'}}">
+			<ul>
+				<li pv-view="tags" class="user_tag" pv-events="click::requestPage" pv-type="way-point">
+					<span class="user_tag-count" pv-text="{{count}}"></span>
+					<span class="user_tag-name" pv-text="{{tag_name}}"></span>
+				</li>
+			</ul>
+		</div>
+
+		<div class="lula_page usual_page" pv-class="lula_page usual_page {{!mp_show && 'hidden'}}">
+			<div class="preview_area" pv-view="all_time">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}">All Time</span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+		</div>
+
+		<div class="lulas_page usual_page" pv-class="lulas_page usual_page {{!mp_show && 'hidden'}}">
+			<ul>
+				<li pv-view="artists" pv-events="click::requestPage" class="user_artist" pv-type="way-point">
+					<div class="user_artist-image_con">
+						<img
+							alt=""
+							pv-props="
+								alt: {{artist_name}}
+								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) || selected_image.url}}
+							"
+							pv-class="{{!selected_image && 'hidden'}}"
+						>
+					</div>
+					<div 
+						class="user_artist-name"
+						pv-text="{{artist_name}}"
+						pv-props="title:{{artist_name}}"
+						>
+					</div>
+					<div class="user_artist-counter" pv-text="{{playcount}}"></div>
+
+				</li>
+			</ul>
+		</div>
+		<div class="playlist_panel" pv-anchor="panel">
+			<div class="playlist-actions">
+				<div class="pla-panel">
+					<span class="pla-button">● ● ●</span>
+					<span class="pl-settings-button" title="Playlists settings"></span>
+				</div>
+				<div class="pla-row-content has-dark-buttons hidden" style="position:relative">
+					<span class="rc-arrow hidden">
+						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
+					</span>
+					<div class="pla-row hidden">
+						<div class="left-buttons-group">
+							<span class="button-hole"><a class="search-music-files nicebutton lang localize-playlist-getmp3">Find files for compositions</a></span>
+
+							<!-- href="http://seesu.me/generated_files/seesu_playlist.m3u"-->
+							<span class="button-hole">
+								<a class="open-external-playlist nicebutton lang localize-playlist-export">Save playlist to *.m3u file</a>
+							</span>
+
+						</div>
+						
+					</div>
+					<div class="pla-settings hidden">
+						<label class="dont-rept-pl">
+							<input type="checkbox"/>
+							<span class="lang localize-dont-rept-pl">Do not repeat playlist</span>
+						</label>
+					</div>
+				</div>
+			</div>
+			<div 
+				class="loader_disallowing_desc hidden"
+				pv-class="loader_disallowing_desc {{!loader_disallowing_desc && 'hidden'}}"
+				pv-text="{{loader_disallowing_desc}}"
+			></div>
+			
+			
+		</div>
+		<div class="playlist-container"
+			pv-class="
+				playlist-container 
+				{{can_play && 'has-files-in-songs'}}
+				{{!mp_show && 'hidden'}}
+				{{!vis_overview && !mp_has_focus && 'show-zoom-to-track'}}
+				">
+			
+			<ul
+				class="tracks-for-play"
+				pv-anchor="lc"
+				pv-class="
+					tracks-for-play
+					{{list_loading && 'loading'}}
+					{{mp_has_focus && 'list-overview'}}
+				"
+				></ul>
+			<div class="lang localize-nothing-found" pv-class="{{!error && 'hidden'}}"></div>
+
+			<a 
+				class='load-more-list-data lang localize-load-more'
+				pv-events="click::requestMoreData"
+				pv-type="{{more_load_available && 'way-point'}}"
+				pv-class="load-more-list-data {{!more_load_available && 'hidden'}}"></a>
+		</div>
+		<div class="music_conductor_page usual_page">
 			<div class="area_for_button" pv-view='allpas'>
 				<div class="area-button" pv-anchor='big_button'>
 					<span pv-text="{{nav_title}}">World</span>
@@ -144,8 +338,127 @@
 			</div>
 		</div>
 
+		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page {{!mp_show && 'hidden'}}">
+			<div pv-view="list_items" class="lfm_friend-base-preview" pv-events="click::requestPage" pv-type="way-point">
+				<img class="lfm_friend-ava" src="" alt="" pv-props="
+					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
+				<span class="lfm_friend-name" pv-text="{{username}}"></span>
+				<div class="lfm_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+				<div class="lfm_friend-scrobbler" pv-class="lfm_friend-scrobbler {{!scrobbler && 'hidden'}}">
+					<a 
+						href=""
+						class="external"
+						pv-props="href: {{scrobbler.url}}"
+						pv-class="external {{!scrobbler.url && 'hidden'}}"
+						pv-events="click:open_link"
+						>
+						<img src="" alt="" 
+							pv-props="src: {{scrobbler.image}}" 
+							pv-class="{{!scrobbler.image && 'hidden'}}">
+						<span pv-text="{{scrobbler.name}}"></span>
+					</a>
+					<span
+						class="desc" 
+						pv-text="{{scrobbler.name}}" 
+						pv-class="desc {{scrobbler.url && 'hidden'}}"></span>
+				</div>
+				<div class="lfm_friend-recent_song">
+					<span pv-text="{{song}}"></span>
+					<div>
+						<span class="desc" pv-text="{{song_time}}"></span>
+					</div>
+					
+				</div>
+				
+			</div>
+		</div>
+		<div class="lastfm_pthgs">
+			<div class="preview_area" pv-view="lfm__friends">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}"></span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-view="lfm__neighbours">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}"></span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-view="lfm__artists">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}"></span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-view="lfm__tracks">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}"></span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-view="lfm__tags">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}"></span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			<div class="preview_area" pv-view="lfm__albums">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}"></span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
 
-
+			
+			
+		</div>
+		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page {{!mp_show && 'hidden'}}">
+			<div class="lfm_user_page-header">
+				<img class="lfm_friend-ava" src="" alt="" pv-props="
+					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
+				<span class="lfm_friend-name" pv-text="{{username}}"></span>
+				<div class="lfm_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+				<div>
+					<a class="external" pv-props="href:{{'http://last.fm/user/' + username}}">last.fm profile</a>
+				</div>
+			</div>
+			
+		</div>
 		<div class="usual_page user_page">
 			<div class="internal_pthgs">
 				<div class="area_for_button" pv-view='user-playlists'>
@@ -157,70 +470,15 @@
 				<div class="aqc_preview" pv-anchor="users_acqutes"></div>
 			</div>
 			<div class="vk_pthgs">
-				<div class="preview_area" pv-view="vk_audio">
-					<div class="area_for_button" pv-anchor="button_area">
-						<div class="area-button" pv-anchor='big_button'>
-							<span pv-text="{{nav_title}}">VK audio</span>
-						</div>
-						<div class="area-description" >
-							<div class="desc_prevw_list" pv-anchor="listc"></div>
-						</div>
+				<div class="area_for_button" pv-view='vk__tracks'>
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}"></span>
 					</div>
-					<div class="pl-auth-con" pv-anchor="auth_con"></div>
+					<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 				</div>
 				
 			</div>
-			<div class="lastfm_pthgs">
-				<div class="preview_area" pv-view="lfm_loved">
-					<div class="area_for_button" pv-anchor="button_area">
-						<div class="area-button" pv-anchor='big_button'>
-							<span pv-text="{{nav_title}}">Loved</span>
-						</div>
-						<div class="area-description" >
-							<div class="desc_prevw_list" pv-anchor="listc"></div>
-						</div>
-					</div>
-					<div class="pl-auth-con" pv-anchor="auth_con"></div>
-				</div>
-				<div class="preview_area" pv-view="arts_recomms">
-					<div class="area_for_button" pv-anchor="button_area">
-						<div class="area-button" pv-anchor='big_button'>
-							<span pv-text="{{nav_title}}">Recommendations</span>
-						</div>
-						<div class="area-description" >
-							<div class="desc_prevw_list" pv-anchor="listc"></div>
-						</div>
-					</div>
-					<div class="pl-auth-con" pv-anchor="auth_con"></div>
-				</div>
-				<div class="full_wide_col">
-					<div class="preview_area" pv-view="new_releases">
-						<div class="area_for_button" pv-anchor="button_area">
-							<div class="area-button" pv-anchor='big_button'>
-								<span pv-text="{{nav_title}}">Albums</span>
-							</div>
-							<div class="area-description" >
-								<div class="desc_prevw_list albums_previews" pv-anchor="listc"></div>
-							</div>
-						</div>
-						<div class="pl-auth-con" pv-anchor="auth_con"></div>
-					</div>
-					<div class="preview_area" pv-view="recomm_releases">
-						<div class="area_for_button" pv-anchor="button_area">
-							<div class="area-button" pv-anchor='big_button'>
-								<span pv-text="{{nav_title}}">Albums</span>
-							</div>
-							<div class="area-description" >
-								<div class="desc_prevw_list albums_previews" pv-anchor="listc"></div>
-							</div>
-						</div>
-						<div class="pl-auth-con" pv-anchor="auth_con"></div>
-					</div>
-
-					
-				</div>
-				
-			</div>
+			
 			
 		</div>
 
@@ -259,7 +517,7 @@
 		<div class="tags_list_page usual_page">
 			<div class="tags_list" pv-anchor="listc"></div>
 		</div>
-
+		
 
 
 
@@ -304,11 +562,9 @@
 		</div>
 
 
-
-
+		
 
 		<div class="art_card">
-			
 			<div class="leftcol">
 				<div class="area_for_button" pv-view="top_songs">
 					<div class="area-button" pv-anchor='big_button'>
@@ -394,9 +650,114 @@
 			
 			<div class="art_card-statinfo">
 				<div class="art_card-image">
-					<div class="art_card-image-padding"></div>
+					<div class="art_card-image-padding" pv-anchor="bigimagec"></div>
 				</div>
-				<div class="art_card-bio"></div>
+				<div class="art_card-bio" pv-anchor="bio" pv-class="art_card-bio {{loading_baseinfo && 'loading'}}"></div>
+			</div>
+
+			
+		</div>
+		<div class="songcard_page usual_page"
+			pv-class="songcard_page usual_page {{!mp_show && 'hidden'}}">
+			<h4 class="songcard_page-header">
+				<span pv-text="{{track_name}}"></span> - <span pv-text="{{artist_name}}"></span>
+			</h4>
+			<div class="nested_artist" pv-view="artist"></div>
+			<div class="area_for_button" pv-view='fans'>
+				<div class="area-button" pv-anchor='big_button'>
+					<span pv-text="{{nav_title}}"></span>
+				</div>
+				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			</div>
+
+		</div>
+		<div 
+		class="artist_preview-base"
+		pv-class="artist_preview-base {{vis_wamo_info && 'want-more-info'}}"
+		>
+			<div class="photo-cont">
+				<div class="photo-cont-lift" pv-anchor="phocoli">
+					<img
+						class="artist_image"
+						pv-anchor="first-image" 
+						pv-class="{{!selected_image && 'hidden'}} artist_image"
+						pv-props="
+							alt: {{artist_name}}
+							src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/252/' + selected_image.lfm_id) || selected_image.url}}
+						"
+						src="" alt=""
+						/>
+				</div>
+			</div>
+			<div class="artist_preview-texcon">
+				<div class="dominator-head">
+					<div 
+						class="closer-to-track"
+						pv-class="{{one_artist_playlist && 'one-artist-playlist'}} closer-to-track">
+						<a 
+							class="js-serv lang localize-artcard"
+							
+							pv-type="way-point"
+							pv-events="click::requestPage"
+							>artcard</a>
+					</div>
+					<a 
+						class="extend-switcher"
+						pv-events="click:showMoreInfo"
+						pv-type="way-point"
+						pv-class="{{!infb_text && 'hidden'}} extend-switcher">
+						<span class="big-space" pv-text="{{infb_text}}"></span>
+					</a>
+					<p 
+					pv-view="tags_list"
+					class="artist-tags hidden" 
+					pv-class="artist-tags {{(!preview_list || !preview_list.length) && 'hidden'}}" >
+						<span class="simple-header">
+							<em class="lang localize-Tags">Tags</em>
+						</span>
+						<span pv-anchor="tags-c"><a 
+							class="music-tag js-serv" 
+							pv-repeat="tag in preview_list" 
+							pv-type="hard-way-point" 
+							pv-events="click:showTag" 
+							pv-text="{{tag}}"></a></span>
+					</p>
+				</div>
+				<div class="artist-info">
+					<p class="artist-stat-in-song">
+						<span pv-class="{{!listeners && 'hidden'}}" class="playcount">
+							<span class="desc">Listeners:</span>
+							<span pv-text="{{listeners}}"></span>
+						</span> 
+						<span pv-class="{{!playcount && 'hidden'}}" class="hidden">
+							<span class="desc">Playcount:</span>
+							<span pv-text="{{playcount}}"></span>
+						</span>
+					</p>
+					<div class="artist-bio" pv-anchor="artbio">...</div>
+					<div class="artist-meta-info">
+						<p 
+							pv-view="similar_artists"
+							class="artist-similar">
+							<span class="desc-name">
+								<em>
+									<a 
+										class="similar-artists js-serv lang localize-similar-arts"
+										pv-type="hard-way-point"
+										pv-events="click::requestPage"
+										>Similar artists:</a>
+								</em>
+							</span>
+							<span class="desc-text" pv-anchor="similars-c"><a 
+								pv-view="preview_list"
+
+								class="artist js-serv" 
+								pv-events="click::showArtcard" 
+								pv-type="hard-way-point"
+								pv-text="{{artist_name}}"></a></span>
+						</p>
+					</div>
+				</div>
 			</div>
 			
 		</div>
@@ -444,6 +805,7 @@
 					{{marked_as == 'next' && 'to-play-next'}}
 					{{marked_as == 'prev' && 'to-play-previous'}}
 					{{mp_show && 'viewing-song'}}
+					{{vis_lite_view && mp_show && 'selected_song'}}
 				">
 				<a 
 					pv-anchor="song-link"
@@ -500,10 +862,8 @@
 			
 		<div class="track-context" >
 			<div class="song-actions" pv-anchor="song-actions">
-				
 				<div class="track-panel">
 					<div class="buttons-panel">
-						
 						<div class="nice-buttons-place">
 							<span class="pc-place">
 								<a class="pc pc-add "  title="add to playlist"></a>
@@ -564,96 +924,38 @@
 					</div>
 				</div>
 			</div>
-			
-			
-			
-			<div class="track-info-dominator" pv-anchor="tidmt">
-				<div class="photo-cont">
-					<div class="photo-cont-lift" pv-anchor="phocoli">
-						<img
-							class="artist_image"
-							pv-anchor="first-image" 
-							pv-class="{{!usable_artist_image && 'hidden'}} artist_image"
-							pv-props="
-								alt: {{artist}}
-								src: {{usable_artist_image}}" 
-							src="" alt=""
-							/>
-					</div>
+			<div pv-view="artist" class="nested_artist"></div>
+			<div pv-view="songcard">
+				<div class="track-listeners" pv-anchor="track-listeners">
+					<div class="song-listeners-list" pv-anchor="song-listeners-list"></div>
 				</div>
-				<div class="dominator-head">
-					<div 
-						class="closer-to-track"
-						pv-class="{{one_artist_playlist && 'one-artist-playlist'}} closer-to-track">
-						<a 
-							class="js-serv lang localize-artcard"
-							
-							pv-type="way-point"
-							pv-events="click::showArtcardPage"
-							>artcard</a>
-					</div>
-					<a 
-						class="extend-switcher"
-						pv-events="click:showMoreInfo"
-						pv-type="way-point"
-						pv-class="{{!infb_text && 'hidden'}} extend-switcher">
-						<span class="big-space" pv-text="{{infb_text}}"></span>
-					</a>
-					<p class="artist-tags hidden" pv-class="artist-tags {{(!tags || !tags.length) && 'hidden'}}">
-						<span class="simple-header">
-							<em class="lang localize-Tags">Tags</em>
-						</span>
-						<span pv-anchor="tags-c"><a 
-							class="music-tag js-serv" 
-							pv-repeat="tag in tags" 
-							pv-type="hard-way-point" 
-							pv-events="click:showTag" 
-							pv-text="{{tag.name}}"></a></span>
-					</p>
+				<div class="song-row-content row-listeners-context hidden" pv-anchor="row-listeners-context">
+					<span class="rc-arrow hidden">
+						<span class="tl-arrow  arrow-part"><span class="tl-arrow-bg arrow-part"></span></span>
+					</span>
+					<div class="big-listener-info" pv-anchor="big-listener-info"></div>
 				</div>
-				<div class="artist-info">
-					<p class="artist-stat-in-song">
-						<span class="{{!listeners && 'hidden'}}" class="playcount">
-							<span class="desc">Listeners:</span>
-							<span pv-text="{{listeners}}"></span>
-						</span> 
-						<span class="{{!playcount && 'hidden'}}" class="hidden">
-							<span class="desc">Playcount:</span>
-							<span pv-text="{{playcount}}"></span>
-						</span>
-					</p>
-					<div class="artist-bio" pv-anchor="artbio">...</div>
-					<div class="artist-meta-info">
-						<p class="artist-similar">
-							<span class="desc-name">
-								<em>
-									<a 
-										class="similar-artists js-serv lang localize-similar-arts"
-										pv-type="hard-way-point"
-										pv-events="click::showArtistSimilarArtists"
-										>Similar artists:</a>
-								</em>
-							</span>
-							<span class="desc-text" pv-anchor="similars-c"><a 
-								class="artist js-serv" 
-								pv-repeat="artist in similars" 
-								pv-events="click:showArtcardPage" 
-								pv-type="hard-way-point"
-								pv-text="{{artist.name}}"></a></span>
-						</p>
+				<div class="song_fans-b-intrack" pv-view="fans" pv-events="click::requestPage">
+					<div class="song_fans-h-intrack">
+						Last.fm <br/> song fans
 					</div>
+					<div class="song_fans-l-intrack" >
+						<div
+							pv-view="list_items | limitTo: 13"
+							class="song_fan-b-tck hidden" 
+							pv-class="song_fan-b-tck {{!username && 'hidden'}}"
+							pv-props="title:{{username}}"
+							>
+							<div pv-text="{{username}}" class="song_fan-h-tck"></div>
+							<img src="" alt=""
+								class="hidden"
+								pv-anchor="user-image"
+								pv-class="{{vis_cant_use_image && 'hidden'}}">
+						</div>
+					</div>
+					
 				</div>
 			</div>
-			<div class="track-listeners" pv-anchor="track-listeners">
-				<div class="song-listeners-list" pv-anchor="song-listeners-list"></div>
-			</div>
-			<div class="song-row-content row-listeners-context hidden" pv-anchor="row-listeners-context">
-				<span class="rc-arrow hidden">
-					<span class="tl-arrow  arrow-part"><span class="tl-arrow-bg arrow-part"></span></span>
-				</span>
-				<div class="big-listener-info" pv-anchor="big-listener-info"></div>
-			</div>
-			
 		</div>
 	
 		<li
@@ -775,43 +1077,7 @@
 					</div>	
 				</div>
 			</div>
-		</div>
-
-		<div class="play-list-panel">
-			<div class="playlist-actions">
-				<div class="pla-panel">
-					<span class="pla-button">● ● ●</span>
-					<span class="pl-settings-button" title="Playlists settings"></span>
-				</div>
-				<div class="pla-row-content has-dark-buttons hidden" style="position:relative">
-					<span class="rc-arrow hidden">
-						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
-					</span>
-					<div class="pla-row hidden">
-						<div class="left-buttons-group">
-							<span class="button-hole"><a class="search-music-files nicebutton lang localize-playlist-getmp3">Find files for compositions</a></span>
-
-							<!-- href="http://seesu.me/generated_files/seesu_playlist.m3u"-->
-							<span class="button-hole">
-								<a class="open-external-playlist nicebutton lang localize-playlist-export">Save playlist to *.m3u file</a>
-							</span>
-
-						</div>
-						
-					</div>
-					<div class="pla-settings hidden">
-						<label class="dont-rept-pl">
-							<input type="checkbox"/>
-							<span class="lang localize-dont-rept-pl">Do not repeat playlist</span>
-						</label>
-					</div>
-				</div>
-			</div>
-			<div class="loader_disallowing_desc hidden"></div>
-			
-			
-		</div>
-		
+		</div>		
 		
 		<form class="scrobbling-switches">
 			<p>scrobbling to last.fm</p>

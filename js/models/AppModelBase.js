@@ -6,6 +6,9 @@ provoda.Model.extendTo(AppModelBase, {
 		this._super();
 		this.navigation = [];
 		this.map = new BrowseMap();
+		this.on('state-change.current_mp_md', function() {
+			this.resortQueue();
+		});
 	},
 	getBMapTravelFunc: function(func, context) {
 		return function() {
@@ -67,7 +70,9 @@ provoda.Model.extendTo(AppModelBase, {
 			change.target.getMD().updateState('mp_show', false);
 		},
 		'destroy': function(change) {
-			change.target.getMD().mlmDie();
+			var md = change.target.getMD();
+			md.mlmDie();
+			md.updateState('mp_show', false);
 		}
 	},
 	animationMark: function(models, mark) {
@@ -116,7 +121,6 @@ provoda.Model.extendTo(AppModelBase, {
 
 
 		}
-
 		this.updateState('map_animation', changes);
 		this.updateState('map_animation', false);
 		this.animationMark(models, false);
@@ -125,6 +129,7 @@ provoda.Model.extendTo(AppModelBase, {
 		var _this = this;
 
 		md.on('mpl-attach', function() {
+			md.updateState('mpl_attached', true);
 			var navigation = _this.getNesting('navigation');
 			var target_array = _this.getNesting('map_slice') || [];
 
@@ -140,6 +145,7 @@ provoda.Model.extendTo(AppModelBase, {
 
 		}, {immediately: true});
 		md.on('mpl-detach', function(){
+			md.updateState('mpl_attached', false);
 			var navigation = _this.getNesting('navigation');
 			var target_array = _this.getNesting('map_slice') || [];
 
@@ -201,6 +207,25 @@ provoda.Model.extendTo(AppModelBase, {
 			this.map.finishChangesCollecting();
 		}
 		return result;
+	},
+	resortQueue: function(queue) {
+		if (queue){
+			queue.removePrioMarks();
+		} else {
+			for (var i = 0; i < this.all_queues.length; i++) {
+				this.all_queues[i].removePrioMarks();
+			}
+		}
+		var md = this.state('current_mp_md');
+		if (md){
+			if (md.checkRequestsPriority){
+				md.checkRequestsPriority();
+			} else if (md.setPrio){
+				md.setPrio();
+			}
+		}
+		
+		this.checkActingRequestsPriority();
 	}
 });
 

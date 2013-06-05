@@ -772,8 +772,11 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		}
 	},
 	getSPOpts: function(name) {
+		var parts = name.split(':');
 		var obj = {
-			url_part: '/' + name
+			url_part: '/' + name,
+			simple_name: name,
+			name_spaced: parts[1]
 		};
 		var target = this.sub_pa[name];
 		var title = target.title || (target.getTitle && target.getTitle.call(this));
@@ -811,7 +814,8 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 				this.sub_pages[name] = instance;
 			} else {
 				if (this.subPager){
-					instance = this.subPager(name);
+
+					instance = this.subPager(decodeURIComponent(name), name);
 				}
 			}
 		}
@@ -821,7 +825,14 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		}
 		return instance;
 	},
-	initSubPages: function(array, params) {
+	initListedModels: function(array) {
+		this.lists_list = array;
+		this.initSubPages(this.lists_list);
+		this.updateNesting('lists_list', this.lists_list);
+		this.updateNesting('preview_list', this.lists_list);
+		this.bindChildrenPreload();
+	},
+	initSubPages: function(array) {
 		for (var i = 0; i < array.length; i++) {
 			var instance = this.getSPI(array[i]);
 			instance.initOnce();
@@ -835,11 +846,14 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	},
 	bindChildrenPreload: function(array) {
 		var lists_list = array || this.lists_list;
-		var _this = this;
 		this.on('vip-state-change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				for (var i = 0; i < lists_list.length; i++) {
-					lists_list[i].preloadStart();
+					var cur = lists_list[i];
+					if (cur.preloadStart){
+						cur.preloadStart();
+					}
+
 				}
 			}
 		});
@@ -848,6 +862,9 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		this.lev = lev;
 		this.map_level_num = this.lev.num;
 		return this;
+	},
+	requestPage: function() {
+		this.showOnMap();
 	},
 	showOnMap: function() {
 		this.app.showMOnMap(this);

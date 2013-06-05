@@ -58,7 +58,7 @@ LoadableListBase.extendTo(LoadableList, {
 		return request_info;
 	},
 
-	sendLFMDataRequest: function(paging_opts, request_info, opts) {
+	sendLFMDataRequest: function(paging_opts, request_info, opts, rqop) {
 		var
 			no_paging = opts.no_paging,
 			method = opts.method,
@@ -72,10 +72,13 @@ LoadableListBase.extendTo(LoadableList, {
 			limit: paging_opts.page_limit,
 			page: paging_opts.next_page
 		};
-		if (data){
-			spv.cloneObj(request_data, data);
+		if (!opts.disallow_paging){
+			if (data){
+				spv.cloneObj(data, request_data);
+			}
 		}
-		request_info.request = this.app.lfm.get(method, request_data)
+		
+		request_info.request = this.app.lfm.get(method, data, rqop)
 			.done(function(r){
 				var data_list = parser.call(this, r, field_name, paging_opts);
 				if (no_paging && !r.error){
@@ -89,6 +92,26 @@ LoadableListBase.extendTo(LoadableList, {
 				request_info.done = true;
 			});
 		return request_info;
+	},
+	getLastfmAlbumsList: function(r, field_name, paging_opts) {
+		var albums_data = spv.toRealArray(spv.getTargetField(r, field_name));
+		var data_list = [];
+		if (albums_data.length) {
+			var l = Math.min(albums_data.length, paging_opts.page_limit);
+			for (var i=paging_opts.remainder; i < l; i++) {
+				var cur = albums_data[i];
+				data_list.push({
+					album_artist: spv.getTargetField(cur, 'artist.name'),
+					album_name: cur.name,
+					lfm_image: {
+						array: cur.image
+					},
+					playcount: cur.playcount
+				});
+			}
+			
+		}
+		return data_list;
 	},
 	getLastfmArtistsList: function(r, field_name, paging_opts) {
 		var artists = spv.toRealArray(spv.getTargetField(r, field_name));
@@ -154,6 +177,9 @@ LoadableList.extendTo(TagsList, {
 	},
 	setPreview: function(list) {
 		this.updateState('preview_list', list);
+	},
+	showTag: function(tag_name) {
+		this.app.show_tag(tag_name);
 	}
 });
 LoadableList.TagsList = TagsList;
