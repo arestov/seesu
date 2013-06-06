@@ -2062,7 +2062,7 @@ spv.Class.extendTo(Template, {
 	handleDirective: function(directive_name, node, full_declaration, result_cache) {
 		this.directives[directive_name].call(this, node, full_declaration, result_cache);
 	},
-	getPvViews: function(array) {
+	indexPvViews: function(array) {
 		var result = this.children_templates;
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
@@ -2140,7 +2140,7 @@ spv.Class.extendTo(Template, {
 			}
 
 		}
-		this.getPvViews(this.pv_views);
+		this.indexPvViews(this.pv_views);
 		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values');
 	}
 });
