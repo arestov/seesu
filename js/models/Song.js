@@ -192,9 +192,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					this.initRelativeData();
 				}
 			});
-			setTimeout(function() {
-				_this.initRelativeData();//fixme
-			},16);
+			this.nextTick(function() {
+				this.initRelativeData();
+			});
 
 		},
 		getShareUrl: function() {

@@ -171,13 +171,23 @@ ListPreview.extendTo(ItemOfLL, {
 	}
 });
 
+
+var AuthListPreview = function() {};
+ImagedListPreview.extendTo(AuthListPreview, {
+	createBase: function() {
+		this.c = this.root_view.getSample('preview_area');
+		this.bindBase();
+	}
+});
+
+
 var ListOfListsView = function() {};
 PageView.extendTo(ListOfListsView, {
 	createBase: function() {
 		this.c = $('<div class="usual_page lilists"></div>');
 	},
 	children_views: {
-		lists_list: ItemOfLL
+		lists_list: AuthListPreview
 	},
 	'collch-lists_list': 'c'
 });

@@ -447,6 +447,14 @@ var checkCallbacksFlow = function() {
 		iteration_delayed = true;
 	}
 };
+var pushToCbsFlow = function(fn, context, args) {
+	callbacks_flow.push({
+		fn: fn,
+		context: context,
+		args: args
+	});
+	checkCallbacksFlow();
+};
 
 spv.Class.extendTo(provoda.Eventor, {
 	init: function(){
@@ -489,6 +497,9 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		return funcs;
 	},
+	nextTick: function(fn) {
+		pushToCbsFlow(fn, this);
+	},
 	_addEventHandler: function(namespace, cb, opts, once){
 		if (this.convertEventName){
 			namespace = this.convertEventName(name);
@@ -512,12 +523,7 @@ spv.Class.extendTo(provoda.Eventor, {
 					if (opts && 'soft_reg' in opts && !opts.soft_reg){
 						cb.apply(_this, args);
 					} else {
-						callbacks_flow.push({
-							fn: cb,
-							context: _this,
-							args: args
-						});
-						checkCallbacksFlow();
+						pushToCbsFlow(cb, _this, args);
 					}
 				}, namespace, opts, name_parts);
 			}
@@ -646,12 +652,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		if (cur.immediately && (!opts || !opts.force_async)){
 			cur.cb.apply(this, args);
 		} else {
-			callbacks_flow.push({
-				context: this,
-				args: args,
-				fn: cur.cb
-			});
-			checkCallbacksFlow();
+			pushToCbsFlow(cur.cb, this, args);
 			/*
 			setTimeout(function() {
 				cur.cb.apply(_this, args);
@@ -1568,6 +1569,7 @@ var Template = function() {};
 spv.Class.extendTo(Template, {
 	init: function(opts) {
 		this.root_node = opts.node;
+		this.root_node_raw = this.root_node[0] || this.root_node;
 		if (opts.pv_repeat_context){
 			this.pv_repeat_context = opts.pv_repeat_context;
 		}
@@ -1583,6 +1585,7 @@ spv.Class.extendTo(Template, {
 		this.pvTypesChange = opts.pvTypesChange;
 		this.ancs = {};
 		this.pv_views = [];
+		this.parsed_pv_views = [];
 		this.pv_repeats = {};
 		this.children_templates = {};
 		this.directives_names_list = [];
@@ -1606,7 +1609,7 @@ spv.Class.extendTo(Template, {
 			this.scope_g_list.push(directive_name);
 		}
 
-		this.getPvDirectives(this.root_node);
+		this.parsePvDirectives(this.root_node);
 		if (!angbo || !angbo.interpolateExpressions){
 			console.log('cant parse statements');
 		}
@@ -1691,7 +1694,7 @@ spv.Class.extendTo(Template, {
 
 			//coll_name for_model filter
 			if (typeof coll_name == 'string'){
-				this.pv_views.push({
+				this.parsed_pv_views.push({
 					node: node,
 					for_model: for_model,
 					view_name: coll_name,
@@ -2062,7 +2065,7 @@ spv.Class.extendTo(Template, {
 	handleDirective: function(directive_name, node, full_declaration, result_cache) {
 		this.directives[directive_name].call(this, node, full_declaration, result_cache);
 	},
-	getPvViews: function(array) {
+	indexPvViews: function(array) {
 		var result = this.children_templates;
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
@@ -2081,14 +2084,19 @@ spv.Class.extendTo(Template, {
 		}
 		return result;
 	},
-
-	getPvDirectives: function(vroot_node) {
+	parseAppended: function(node) {
+		this.parsePvDirectives(node);
+	},
+	parsePvDirectives: function(start_node) {
 		var match_stack =[];
 
 		//var anchors = [];
 
-		vroot_node = vroot_node && vroot_node[0] || vroot_node;
-		match_stack.push(vroot_node);
+
+		start_node = start_node && start_node[0] || start_node;
+		match_stack.push(start_node);
+
+		var vroot_node = this.root_node_raw;
 
 		while (match_stack.length){
 			var cur_node = match_stack.shift();
@@ -2140,7 +2148,11 @@ spv.Class.extendTo(Template, {
 			}
 
 		}
-		this.getPvViews(this.pv_views);
+		this.indexPvViews(this.parsed_pv_views);
+
+		this.pv_views = this.pv_views.concat(this.parsed_pv_views);
+		this.parsed_pv_views = [];
+
 		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values');
 	}
 });
@@ -2262,6 +2274,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		template.init({node: node, callCallbacks: callCallbacks, pvTypesChange: pvTypesChange});
 
 		return template;
+	},
+	parseAppendedTPLPart: function(node) {
+		this.tpl.parseAppended(node);
+		this.tpl.setStates(this.states);
 	},
 	createTemplate: function() {
 		if (!this.c){

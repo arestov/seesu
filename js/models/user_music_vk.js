@@ -22,6 +22,12 @@ comd.VkLoginB.extendTo(VkAudioLogin, {
 
 var VkSongList = function() {};
 SongsList.extendTo(VkSongList, {
+	'compx-has_no_access': {
+		depends_on: ['has_no_auth'],
+		fn: function(no_auth) {
+			return no_auth;
+		}
+	},
 	init: function(opts, params) {
 		this._super(opts);
 
@@ -86,7 +92,6 @@ VkSongList.extendTo(MyVkAudioList, {
 		var _this = this;
 
 		request_info.request = this.app.vk_api.get('audio.get', {
-			sk: this.app.lfm.sk,
 			count: paging_opts.page_limit,
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
 		})

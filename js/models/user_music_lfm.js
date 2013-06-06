@@ -35,8 +35,13 @@ var connectUsername = function(params) {
 			this.app.on('state-change.lfm_username', function(e) {
 				_this.updateState('username', e.value);
 			});
-			this.authInit();
-			this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: this.access_desc});
+			if (this.authInit){
+				this.authInit();
+			}
+			if (this.authSwitching){
+				this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: this.access_desc});
+			}
+			
 		} else {
 			throw new Error('only for current user or defined user');
 		}
