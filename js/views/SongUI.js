@@ -68,19 +68,8 @@ coct.SPView.extendTo(SongUI, {
 		this.c = this.root_view.getSample('song-view');
 		//window.dizi = sonw;
 		//this.tpl = this.getTemplate(sonw);
-		if (!(this.opts && this.opts.lite)){
-			var context = this.requirePart('context');
-			this.c.append(context);
 
-			var nart_dom = this.root_view.getSample('artist_preview-base');
-			context.children('.nested_artist').append(nart_dom);
-
-			this.createTemplate();
-			//this.bigBind();
-		} else {
-			this.createTemplate();
-		}
-
+		this.createTemplate();
 		this.canUseDeepWaypoints = function() {
 			return !(_this.opts && _this.opts.lite) && !!_this.state('mp_show');
 		};
@@ -96,9 +85,15 @@ coct.SPView.extendTo(SongUI, {
 			this.expanded = true;
 		}
 
-
-
 		var context = this.requirePart('context');
+		
+
+		var nart_dom = this.root_view.getSample('artist_preview-base');
+		context.children('.nested_artist').append(nart_dom);
+
+		
+		this.parseAppendedTPLPart(context);
+		this.c.append(context);
 
 		this.song_actions_c =  this.tpl.ancs['song-actions'];
 
