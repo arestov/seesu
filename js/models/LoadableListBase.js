@@ -275,8 +275,8 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		var auth_rqb = new AuthConstr();
 		auth_rqb.init({auth: auth, pmd: this}, params);
 		var _this = this;
-		auth_rqb.on('state-change.has_session', function() {
-			//_this.updateState('has_no_access', !e.value);
+		auth_rqb.on('state-change.has_session', function(e) {
+			_this.updateState('has_no_auth', !e.value);
 			_this.switchPmd(false);
 		});
 
