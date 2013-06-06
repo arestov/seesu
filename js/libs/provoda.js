@@ -447,6 +447,14 @@ var checkCallbacksFlow = function() {
 		iteration_delayed = true;
 	}
 };
+var pushToCbsFlow = function(fn, context, args) {
+	callbacks_flow.push({
+		fn: fn,
+		context: context,
+		args: args
+	});
+	checkCallbacksFlow();
+};
 
 spv.Class.extendTo(provoda.Eventor, {
 	init: function(){
@@ -489,6 +497,9 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		return funcs;
 	},
+	nextTick: function(fn) {
+		pushToCbsFlow(fn, this);
+	},
 	_addEventHandler: function(namespace, cb, opts, once){
 		if (this.convertEventName){
 			namespace = this.convertEventName(name);
@@ -512,12 +523,7 @@ spv.Class.extendTo(provoda.Eventor, {
 					if (opts && 'soft_reg' in opts && !opts.soft_reg){
 						cb.apply(_this, args);
 					} else {
-						callbacks_flow.push({
-							fn: cb,
-							context: _this,
-							args: args
-						});
-						checkCallbacksFlow();
+						pushToCbsFlow(cb, _this, args);
 					}
 				}, namespace, opts, name_parts);
 			}
@@ -646,12 +652,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		if (cur.immediately && (!opts || !opts.force_async)){
 			cur.cb.apply(this, args);
 		} else {
-			callbacks_flow.push({
-				context: this,
-				args: args,
-				fn: cur.cb
-			});
-			checkCallbacksFlow();
+			pushToCbsFlow(cur.cb, this, args);
 			/*
 			setTimeout(function() {
 				cur.cb.apply(_this, args);

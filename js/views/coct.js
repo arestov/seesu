@@ -173,7 +173,7 @@ ListPreview.extendTo(ItemOfLL, {
 
 
 var AuthListPreview = function() {};
-ListSimplePreview.extendTo(AuthListPreview, {
+ImagedListPreview.extendTo(AuthListPreview, {
 	createBase: function() {
 		this.c = this.root_view.getSample('preview_area');
 		this.bindBase();
