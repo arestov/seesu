@@ -86,7 +86,6 @@ VkSongList.extendTo(MyVkAudioList, {
 		var _this = this;
 
 		request_info.request = this.app.vk_api.get('audio.get', {
-			sk: this.app.lfm.sk,
 			count: paging_opts.page_limit,
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
 		})
