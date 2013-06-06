@@ -2274,6 +2274,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		return template;
 	},
+	parseAppendedTPLPart: function(node) {
+		this.tpl.parseAppended(node);
+		this.tpl.setStates(this.states);
+	},
 	createTemplate: function() {
 		if (!this.c){
 			throw new Error('cant create template');
