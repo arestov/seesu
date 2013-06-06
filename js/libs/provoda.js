@@ -1568,6 +1568,7 @@ var Template = function() {};
 spv.Class.extendTo(Template, {
 	init: function(opts) {
 		this.root_node = opts.node;
+		this.root_node_raw = this.root_node[0] || this.root_node;
 		if (opts.pv_repeat_context){
 			this.pv_repeat_context = opts.pv_repeat_context;
 		}
@@ -1583,6 +1584,7 @@ spv.Class.extendTo(Template, {
 		this.pvTypesChange = opts.pvTypesChange;
 		this.ancs = {};
 		this.pv_views = [];
+		this.parsed_pv_views = [];
 		this.pv_repeats = {};
 		this.children_templates = {};
 		this.directives_names_list = [];
@@ -1606,7 +1608,7 @@ spv.Class.extendTo(Template, {
 			this.scope_g_list.push(directive_name);
 		}
 
-		this.getPvDirectives(this.root_node);
+		this.parsePvDirectives(this.root_node);
 		if (!angbo || !angbo.interpolateExpressions){
 			console.log('cant parse statements');
 		}
@@ -1691,7 +1693,7 @@ spv.Class.extendTo(Template, {
 
 			//coll_name for_model filter
 			if (typeof coll_name == 'string'){
-				this.pv_views.push({
+				this.parsed_pv_views.push({
 					node: node,
 					for_model: for_model,
 					view_name: coll_name,
@@ -2081,14 +2083,19 @@ spv.Class.extendTo(Template, {
 		}
 		return result;
 	},
-
-	getPvDirectives: function(vroot_node) {
+	parseAppended: function(node) {
+		this.parsePvDirectives(node);
+	},
+	parsePvDirectives: function(start_node) {
 		var match_stack =[];
 
 		//var anchors = [];
 
-		vroot_node = vroot_node && vroot_node[0] || vroot_node;
-		match_stack.push(vroot_node);
+
+		start_node = start_node && start_node[0] || start_node;
+		match_stack.push(start_node);
+
+		var vroot_node = this.root_node_raw;
 
 		while (match_stack.length){
 			var cur_node = match_stack.shift();
@@ -2140,7 +2147,11 @@ spv.Class.extendTo(Template, {
 			}
 
 		}
-		this.indexPvViews(this.pv_views);
+		this.indexPvViews(this.parsed_pv_views);
+
+		this.pv_views = this.pv_views.concat(this.parsed_pv_views);
+		this.parsed_pv_views = [];
+
 		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values');
 	}
 });
