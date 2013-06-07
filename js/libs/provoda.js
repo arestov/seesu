@@ -3051,9 +3051,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}, view_opts, name, array, not_request);
 
 	},
-	appendCollection: function(space, funcs, view_opts, name, array, not_request) {
+	getRendOrderedNesting: function(name, array) {
 		var getCollPriority = this['coll-prio-' + name];
-		var ordered_rend_list = getCollPriority && getCollPriority.call(this, array);
+		return getCollPriority && getCollPriority.call(this, array);
+	},
+	appendCollection: function(space, funcs, view_opts, name, array, not_request) {
+		var ordered_rend_list = this.getRendOrderedNesting(name, array);
 		if (ordered_rend_list){
 			this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request, ordered_rend_list);
 		} else {
