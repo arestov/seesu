@@ -77,6 +77,9 @@ provoda.View.extendTo(appView, {
 
 		}
 		this.lev_containers = {};
+		this.on('die', function() {
+			this.RPCLegacy('detachUI');
+		});
 
 		this.on('vip-state-change.current_mp_md', function() {
 			var cwp = this.state('vis_current_wpoint');
@@ -131,7 +134,6 @@ provoda.View.extendTo(appView, {
 		//	var d = this.d;
 		//	delete this.d;
 			this.die();
-
 			console.log('DOM dead! ' + this.nums);
 
 		}
@@ -316,7 +318,12 @@ provoda.View.extendTo(appView, {
 		space: 'nav',
 		by_model_name: true
 	},
+	'coll-prio-map_slice': function(array) {
+	//	console.log(array);
+		return array;
+	},
 	'collch-map_slice': function(nesname, array){
+		array = this.getRendOrderedNesting(nesname, array) || array;
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
 			var model_name = cur.model_name;

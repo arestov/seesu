@@ -21,10 +21,8 @@ AppModelBase.extendTo(AppModel, {
 
 		var state_recovered;
 		if (this.p && this.p.c_song){
-			if (this.p.c_song){
-				this.showNowPlaying(true);
-				state_recovered = true;
-			}
+			this.showNowPlaying(true);
+			state_recovered = true;
 		}
 
 		if (state_recovered){

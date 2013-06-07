@@ -683,6 +683,11 @@ AppModel.extendTo(SeesuApp, {
 		}
 		return r;
 	},
+	detachUI: function() {
+		if (this.p && this.p.c_song){
+			this.showNowPlaying(true);
+		}
+	},
 	vkappid: 2271620,
 	getAuthAndTransferVKInfo: function(vk_api, user_id) {
 		if (!user_id){
