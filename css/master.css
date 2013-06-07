@@ -1060,6 +1060,9 @@ iframe.you-tube-video,embed.you-tube-video{
 	.youtube-video-page iframe.you-tube-video,
 	.youtube-video-page embed.you-tube-video{
 		height: 100%;
+		position: absolute;
+		top:0;
+		bottom:0;
 		}
 .track-video{
 	padding: 0;
