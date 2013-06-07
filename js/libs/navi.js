@@ -20,7 +20,7 @@ var bindLocationChange = function(hashchangeHandler) {
 					};
 
 
-					var too_fast_hash_change = (o.newURL != newhash);
+					var too_fast_hash_change = (decodeURI(o.newURL) != decodeURI(newhash));
 					if (!too_fast_hash_change){
 						if (typeof hashchangeHandler == 'function'){
 							hashchangeHandler(o);
