@@ -1768,7 +1768,7 @@ provoda.View.extendTo(appView, {
 		return nb;
 	},
 	getAcceptedDesc: function(rel){
-		var link = rel.info.domain && ('http://vk.com/' + rel.info.domain);
+		var link = rel.info.domain && ('https://vk.com/' + rel.info.domain);
 		if (link && rel.info.full_name){
 			return $('<a class="external"></a>').attr('href', link).text(rel.info.full_name);
 		}  else if (rel.item.est){

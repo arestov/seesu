@@ -11,7 +11,7 @@ var checkDeadSavedToken = function(vk_token) {
 
 
 var appendVKSiteApi = function(app_id, su) {
-	app_serv.loadJS('http://vk.com/js/api/openapi.js', function() {
+	app_serv.loadJS('https://vk.com/js/api/openapi.js', function() {
 		VK.init({
 			apiId: app_id
 		}, function(){
@@ -56,7 +56,7 @@ var initVk = function(su) {
 		});
 		*/
 
-		app_serv.loadJS('http://vk.com/js/api/xd_connection.js', function(){
+		app_serv.loadJS('https://vk.com/js/api/xd_connection.js', function(){
 			VK.init(function(){
 				su.trigger("vk-site-api");
 			});

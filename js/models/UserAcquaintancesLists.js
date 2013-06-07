@@ -37,7 +37,7 @@ provoda.Model.extendTo(UserAcquaintance, {
 				if (accepted){
 					if (user_info && user_info.full_name && (user_info.domain || user_info.uid)){
 						return {
-							href: 'http://vk.com/' + user_info.domain,
+							href: 'https://vk.com/' + user_info.domain,
 							text: user_info.full_name
 						};
 					}

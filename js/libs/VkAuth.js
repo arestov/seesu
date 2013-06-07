@@ -106,16 +106,13 @@ provoda.Eventor.extendTo(VkAuth, {
 		
 	},
 	getInitAuthData: function(p){
-		var ru = p && p.ru;
-		
 		var o = {};
-		
-		var domain = ru ? "vkontakte.ru" :  'vk.com';
-		var base = this.open_api ? 'http://api.' + domain + "/oauth/authorize?" : "http://oauth." + domain + "/authorize?" ;
+
+		var base = this.open_api ? 'https://api.vk.com/oauth/authorize?' : "http://oauth.vk.com/authorize?" ;
 
 		o.link = base + 'client_id=' + this.app_id +'&scope=' + this.permissions.join(',')+ '&display=page&response_type=token';
 		var link_tag = this.urls.callbacker;
-		
+
 		if (!this.deep_sanbdox){
 			o.bridgekey = hex_md5(Math.random() + 'bridgekey'+ Math.random());
 			link_tag += '?key=' + o.bridgekey;

@@ -76,7 +76,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 							$('<div class="desc-row"></div>')
-								.append($('<a class="external"></a>').attr('href', 'http://vk.com/id' + lig.vk_id).text(lig.info.first_name))
+								.append($('<a class="external"></a>').attr('href', 'https://vk.com/id' + lig.vk_id).text(lig.info.first_name))
 								.append(document.createTextNode(' ' + localize ('listening') + ' '))
 								.appendTo(list_item);
 
