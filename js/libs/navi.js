@@ -140,10 +140,10 @@ var navi;
 
 		},
 		set: function(url, data){
-			this._saveHistory(url, data);
+			this._saveHistory(decodeURI(url), data);
 		},
 		replace: function(oldurl, url, data){
-			this._saveHistory(url, data, oldurl);
+			this._saveHistory(decodeURI(url), data, decodeURI(oldurl));
 		},
 		findHistory: function(url){
 			return this.states_index[url];
