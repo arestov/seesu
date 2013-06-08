@@ -103,6 +103,7 @@ coct.SPView.extendTo(SongUI, {
 		context.prepend(this.getAFreeCV('mf_cor'));
 
 		this.dom_related_props.push('song_actions_c');
+		this.checkChildrenModelsRendering();
 		this.requestAll();
 	}
 });
