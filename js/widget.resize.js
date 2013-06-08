@@ -1,7 +1,7 @@
 window.resizeWindow = function(w){
 	var d = w.document;
 
-	domReady(d, function(){
+	spv.domReady(d, function(){
 		var wb = d.getElementById('wb');
 		if (!wb) {return false;}
 		var resz_b = d.createElement('img');
@@ -16,8 +16,8 @@ window.resizeWindow = function(w){
 		var size_shift = old_win_height - w.innerHeight;
 	
 		var save_size = function(){
-			suStore('width', w.innerWidth, true);
-			suStore('height', w.innerHeight, true);
+			app_serv.store('width', w.innerWidth, true);
+			app_serv.store('height', w.innerHeight, true);
 	
 		}
 		var drag = function(e0, x, y) {
@@ -39,12 +39,12 @@ window.resizeWindow = function(w){
 			  }
 		  };
 		  var mouseup = function (e) {
-	 		removeEvent(d, 'mousemove', mousemove);
-	 		removeEvent(d, 'mouseup', mouseup);
+	 		spv.removeEvent(d, 'mousemove', mousemove);
+	 		spv.removeEvent(d, 'mouseup', mouseup);
 		  }
 		  
-		  addEvent(d, 'mousemove', mousemove);
-		  addEvent(d, 'mouseup',   mouseup);
+		  spv.addEvent(d, 'mousemove', mousemove);
+		  spv.addEvent(d, 'mouseup',   mouseup);
 		  
 		  
 		  
@@ -73,8 +73,8 @@ window.resizeWindow = function(w){
 		var min_height = 610;
 
 		
-		var width = parseFloat(suStore('width')) || min_width;
-		var height = parseFloat(suStore('height')) || min_height;
+		var width = parseFloat(app_serv.store('width')) || min_width;
+		var height = parseFloat(app_serv.store('height')) || min_height;
 		
 		var timeout = 0;
 		function resizeWindow() {
@@ -86,9 +86,9 @@ window.resizeWindow = function(w){
 		}
 			
 		
-		addEvent(w, "resize", debounce(save_size, 500));
+		spv.addEvent(w, "resize", spv.debounce(save_size, 500));
 		
-		addEvent(resz_b, "mousedown", function(e) {
+		spv.addEvent(resz_b, "mousedown", function(e) {
 			drag(e, 1, 1);
 		});
 

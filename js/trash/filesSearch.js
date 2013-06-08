@@ -55,7 +55,7 @@ createPrototype(muAns, new provoda.Eventor(), {
 	},
 	resolve: function(files) {
 		delete this.error;
-		files = toRealArray(files);
+		files = spv.toRealArray(files);
 		if (files.length){
 			this.t = files;
 		}
@@ -102,7 +102,7 @@ createPrototype(muAns, new provoda.Eventor(), {
 	}
 });
 
-var fileInTorrent = function(query, torrent_link){
+var FileInTorrent = function(query, torrent_link){
 
 }
 /*

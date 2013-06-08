@@ -281,7 +281,7 @@ html.not-as-application, .not-as-application  body{
 .has_session .add-to-lfmfav{
 	opacity: 1;
 	}
-.wait-love-done .add-to-lfmfav{
+.wait_love_done .add-to-lfmfav{
 	background: url(../i/spinner.svg) no-repeat;
 	background-position:  100% 0;
 	background-size: 1.714rem;
@@ -499,7 +499,7 @@ html.not-as-application, .not-as-application  body{
 		}
 
 
-.track-info-dominator .artist-tags{
+.artist_preview-base .artist-tags{
 	margin:0;
 	padding:0.25rem 0 0;
 	
@@ -507,12 +507,11 @@ html.not-as-application, .not-as-application  body{
 .want-more-info .artist-tags{
 	clear:both;
 	margin-bottom:1rem;
-	padding-left:1rem;
 	}
 
 
 
-.track-info-dominator .artist-tags, .track-info-dominator .artist-similar{
+.artist_preview-base .artist-tags, .artist_preview-base .artist-similar{
 	position:relative;
 	height:2rem;
 	line-height: 2rem;
@@ -535,12 +534,15 @@ html.not-as-application, .not-as-application  body{
 	
 	.artist-similar a.artist{
 		margin-right:8px;
+		display: inline-block;
+		line-height: 1.2;
 		}
 	
 	.artist-tags a.music-tag{
 		margin-right:0.5rem;
 		white-space: nowrap;
-
+		display: inline-block;
+		line-height: 1.2;
 		}
 .artist-stat-in-song span{
 	
@@ -559,44 +561,43 @@ html.not-as-application, .not-as-application  body{
 			
 		}
 
-.artist-info .forced-end{
-	position:absolute;
-	right: 0;
-	bottom: 0;
-	width:76px;
-	
-	height:1.7rem;
-	background:url(../i/img_forced_end.png) repeat-y 0 0;
-}
-.track-info-dominator{
-	clear: both;
-	margin:0 -13px;
-	padding:0;
-	min-height:170px;
+
+.track-context .artist_preview-base{
 	border-top:1px solid #555555;
 	border-bottom:1px solid #6e6e6e;
 	background:#5a5a5a;
-	}	
+	margin:0 -13px;
+}
+
+.track-context .artist_preview-texcon{
+	padding: 0 1rem;
+	}
+.artist_preview-base{
+	clear: both;
+	
+	padding:0;
+	min-height:170px;
+	}
+		
 	@media (min-height:600px) {
-		.track-info-dominator{
+		.artist_preview-base{
 			min-height:207px;
 		}
 	}
 
-	.track-info-dominator > .vk-login-context, .track-context > .vk-login-context{
+	.artist_preview-base > .vk-login-context, .track-context > .vk-login-context{
 		margin:5px -13px 1.72rem;
 		border-radius:0;
 		}	
-	.track-info-dominator .dominator-head{
+	.artist_preview-base .dominator-head{
 			overflow:hidden;
 			padding:0;
 			min-height: 2rem;
 		}
-		.track-info-dominator .dominator-head .closer-to-track{
+		.artist_preview-base .dominator-head .closer-to-track{
 			float:left;
 			margin-right:1rem;
 			padding-top:0.25rem;
-			padding-left:1rem;
 			width:126px;
 			line-height: 2rem;
 
@@ -607,27 +608,30 @@ html.not-as-application, .not-as-application  body{
 			.one-artist-playlist a:hover{
 				color:#777;
 				}
-	.track-context .extend-switcher{
+	.artist_preview-base .extend-switcher{
 		float:right;
 		cursor: pointer;
 		max-width: 20rem;
 		margin-left:-0.5rem;
-		padding: 0.5rem 10px;
+		padding: 0.5rem 0.6rem;
 		border:0;
-		border-radius: 0 0 0 0.5rem;
+		border-radius: 0 0  0.5rem 0.5rem;
 		color: hsl(0, 0%, 60%);
 		text-shadow: 0 1px 0 #4A4A4A;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
 		}
-		.track-context .extend-switcher .big-space{
+		.artist_preview-base .extend-switcher .big-space{
 			padding-bottom: 1px;
 			border-bottom: 1px dotted #696969;
 		}
 
 		
-		.track-context .extend-switcher:hover{
+		.artist_preview-base .extend-switcher:hover{
 			background-color:#555;
 			}
-			.track-context .extend-switcher:hover .big-space{
+			.artist_preview-base .extend-switcher:hover .big-space{
 				border-bottom-color:transparent; 
 				}
 		.track-context .want-more-info .extend-switcher{
@@ -638,41 +642,32 @@ html.not-as-application, .not-as-application  body{
 		}
 	
 
-	.track-info-dominator.want-more-info{
+	.artist_preview-base.want-more-info{
 		padding-bottom:1rem;
 	}
-	.track-info-dominator .artist-info, .track-info-dominator .track-info {
+	.artist_preview-base .artist-info {
 		display: none;
 		}	
 
-		.want-more-info .artist-info,  .want-more-info .track-info{
+		.want-more-info .artist-info{
 			display: block;
 			}
 
-	.track-info-dominator .extending-info{
+	.artist_preview-base .extending-info{
 		display:none;
-		}	
-	.track-info-dominator .artist-info, .track-info-dominator .track-info{
-		padding:0 13px;
-		
-	}	
-	.track-info-dominator .track-info{
-		margin-top:1rem;
-	}
-	
+		}
+
 	
 	
 	.want-more-info .extending-info{
 		display:block;
 		}	
-	.track-context .want-more-info .artist-bio,
-	.track-context .want-more-info .artist-tags,
-	.track-context .want-more-info .artist-similar{
+	.want-more-info .artist-bio,
+	.want-more-info .artist-tags,
+	.want-more-info .artist-similar{
 		height:auto;
 		}
-	.track-context .want-more-info .forced-end{
-		display:none;
-		}
+
 
 	.track-context .want-more-info .image img.artist_image{
 		position:static;
@@ -989,7 +984,7 @@ html.not-as-application, .not-as-application  body{
 
 .track-listeners{
 	margin:0.5rem 0 0;
-	min-height:10px;
+	min-height:6rem;
 }
 .big-user-avatar {
 	float:left;
@@ -1005,7 +1000,7 @@ html.not-as-application, .not-as-application  body{
 .song-listeners-list{
 	position: relative;
 	overflow: hidden;
-	padding-top: 10px;
+	padding-top: 0.5rem;
 	height: 56px;
 	}
 	.song-listener{
@@ -1065,6 +1060,9 @@ iframe.you-tube-video,embed.you-tube-video{
 	.youtube-video-page iframe.you-tube-video,
 	.youtube-video-page embed.you-tube-video{
 		height: 100%;
+		position: absolute;
+		top:0;
+		bottom:0;
 		}
 .track-video{
 	padding: 0;
@@ -1229,6 +1227,7 @@ iframe.you-tube-video,embed.you-tube-video{
 	padding-top:1rem;
 	}
 	.share-song .song-link{
+		-moz-box-sizing:border-box;
 		box-sizing: border-box;
 		width:100%;
 		}
@@ -1454,6 +1453,9 @@ body .surf_nav{
 .album_preview-big{
 	cursor: pointer;
 	}
+	.album_preview-big:hover{
+		background: #555;
+		}
 .full-page .album_preview-big{
 	float:left;
 	}
@@ -1465,11 +1467,21 @@ body .surf_nav{
 		background-color: #666;
 		}
 	.album_preview-big .full_album_name{
-		width:9rem;
-		height: 9.5rem;
+		
 		padding:0.5rem 0;
 		overflow: hidden;
 		bottom:0;
+		}
+	.full-page .album_preview-big .full_album_name{
+		width:9rem;
+		height: 9.5rem;
+		}
+	.page-scheme .album_preview-big img{
+		height: 6rem;
+		width: 6rem;
+		}
+	.page-scheme .album_preview-big .full_album_name{
+		margin-bottom: 1rem;
 		}
 	.full_album_name .album_name{
 		color: #999;
@@ -1487,4 +1499,149 @@ body .surf_nav{
 	font-size: 1.2rem;
 	border-radius: 0 40% 40% 0;
 	cursor: pointer;
+	}
+
+
+.lulas_page{
+	overflow: hidden;
+	}
+.user_artist{
+	display: inline-block;
+	width: 8rem;
+	border: 2px dotted #777;
+	margin-bottom: 0.5rem;
+	border-radius: 0.5rem;
+	padding: 0.2rem;
+	margin-right: 0.5rem;
+	cursor: pointer;
+	}
+	.full-page .user_artist{
+		margin-bottom: 2.5rem;
+	}
+	.user_artist-image_con{
+		
+		}
+
+	.user_artist-name{
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow:ellipsis;
+		}
+
+	.user_artist-counter{
+		font-size: 0.8em;
+		}
+.user_tag{
+
+	}
+	.user_tag-count{
+		display: inline-block;
+		width: 50px;
+	}
+.lfm_friend-base-preview{
+	overflow: hidden;
+	margin-bottom: 1rem;
+	padding: 0.5rem;
+	border-radius: 0.2rem;
+	cursor: pointer;
+	}
+	.lfm_friend-base-preview:hover{
+		background-color:#555;	
+	}
+	.lfm_friend-ava{
+		float:left;
+		height: 4.58rem;
+		width: 4.58rem;
+		margin-right:1rem;
+		}
+	.lfm_friend-desc{
+		font-size: 0.8em;
+		color:#8C8C8C;
+	}
+	.lfm_friend-scrobbler{
+		float:right;
+		font-size:0.8em;
+		}
+		.lfm_friend-scrobbler img{
+			height: 1.143rem;
+			width: 1.143rem;
+			position: relative;
+			top: 0.2rem;
+		}
+.lfm_user_page-header{
+	overflow: hidden;
+	margin-bottom: 1rem;
+}
+.songcard_page .nested_artist{
+	background: #4D4D4D;
+	border-top: 1px solid #464646;
+	border-bottom: 1px solid #5C5C5C;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	margin-top:2rem;
+	margin-bottom:2rem;
+	}
+	.songcard_page-header{
+		font-weight: 400;
+		
+		margin: 0;
+		}
+	.full-page .songcard_page-header{
+		font-size: 1.5rem;
+		}
+.song_fans-b-intrack{
+	margin: 1rem -13px 0;
+	border-top: 1px solid #555555;
+	border-bottom: 1px solid #6e6e6e;
+	background: #5a5a5a;
+	padding:0.2rem 0 0.3rem;
+	min-height: 3rem;
+	cursor: pointer;
+	}
+	.song_fans-b-intrack:hover {
+		background-color: #555;
+		border-top-color: #505050;
+		}
+.song_fans-h-intrack{
+	margin-left: 1rem;
+	margin-right: 0.5rem;
+	float: left
+}
+.song_fans-l-intrack{
+	max-height: 3rem;
+	overflow: hidden;
+	}
+.song_fan-b-tck{
+	float:left;
+	height: 3rem;
+	width: 3rem;
+	overflow: hidden;
+	position: relative;
+	background-size:60%;
+	background-position: 50% 50%;
+	background-image: url(../i/user.svg);
+	background-repeat: no-repeat;
+	}
+
+	.song_fan-b-tck img{
+		height: 100%;
+		width: 100%;
+		}
+.song_fan-h-tck{
+	position: absolute;
+	top: 0;
+	visibility: hidden;
+	z-index: 2;
+	width: inherit;
+	text-overflow: ellipsis;
+	text-shadow: #333 1px 1px 1px;
+	word-wrap: break-word;
+	line-height: 1;
+	font-size: 0.8em;
+	padding: 0.3rem;
+	-moz-box-sizing:border-box;
+	box-sizing: border-box;
+	}
+	.song_fan-b-tck:hover .song_fan-h-tck{
+		visibility: visible;
 	}
