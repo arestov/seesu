@@ -8,12 +8,18 @@ var LfmLogin = function() {};
 
 provoda.Model.extendTo(LfmLogin, {
 	model_name: 'auth_block_lfm',
-	init: function(opts) {
+	init: function(opts, params) {
 		this._super();
 
 		var _this = this;
 		this.auth = opts.auth;
 		this.pmd = opts.pmd;
+
+		if (params && params.desc){
+			this.setRequestDesc(params.desc);
+		} else {
+			this.setRequestDesc(localize('to-get-access'));
+		}
 
 		if (this.auth.deep_sanbdox){
 			_this.updateState('deep-sandbox', true);
@@ -130,7 +136,7 @@ provoda.Eventor.extendTo(LfmAuth, {
 	},
 	login: function(r, callback){
 		this.api.sk = r.session.key;
-		this.api.user_name = r.session.name;
+		this.api.username = r.session.name;
 		this.api.stSet('lfm_user_name', r.session.name, true);
 		this.api.stSet('lfmsk', this.api.sk, true);
 		if (callback){callback();}

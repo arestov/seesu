@@ -18,7 +18,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 		},
 		startSearch: function(opts) {
 			if ((!this.state('search_complete') || this.state('search_fail') ) && !this.state('search_progress')){
-				this.makeRequest(this.msq, {
+				return this.makeRequest(this.msq, {
 					only_cache: opts.only_cache,
 					nocache: opts.nocache
 				});
@@ -133,14 +133,15 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 					_this.updateState('has_request', false);
 				});
 
-
+			var req;
 			if (used_successful){
 				complex_response.queued = used_successful.queued;
 				used_successful.promise( complex_response );
+				req = complex_response;
 				this.addRequest(complex_response);
 			}
 			this.updateState('has_request', true);
-
+			return req;
 
 		}
 	});
@@ -192,7 +193,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 					_this.updateNesting('sources_list', _this.sources_list);
 
 					//_this.trigger('child-change.sources_list', _this.sources_list);
-				})
+				}, {soft_reg: false})
 				.on('state-change.big_files_list ', function(e) {
 					var array = e && e.value || [];
 					for (var i = 0; i < array.length; i++) {
@@ -223,10 +224,6 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			files_by_source.init({
 				mp3_search: mp3_search
 			}, params, name);
-			var _this = this;
-			files_by_source.on('request', function(rq) {
-				_this.addRequest(rq);
-			});
 			return files_by_source;
 		},
 		complex_states: {
@@ -249,8 +246,15 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			}
 		},
 		startSearch: function(opts) {
+			var requests = [];
 			for (var i = 0; i < this.sources_list.length; i++) {
-				this.sources_list[i].startSearch(opts || {});
+				var req = this.sources_list[i].startSearch(opts || {});
+				if (req){
+					requests.push(req);
+				}
+			}
+			if (requests.length){
+				this.addRequests(requests);
 			}
 		},
 		byBestSearchIndex: function(g,f, searches_pr){
@@ -643,21 +647,18 @@ var getAverageDurations = function(mu_array, time_limit){
 						} else {
 							return value;
 						}
-						
 					}, function(item){
 
 						var average_dur = average_durs[spv.getTargetField(item, field_name)];
 						if (average_dur){
 							if (item.duration && item.duration > time_limit){
 								return Math.abs(average_dur - item.duration);
-								
 							} else {
 								return average_dur * 1000;
 							}
 						} else {
 							return Infinity;
 						}
-						
 					}
 				]);
 			});

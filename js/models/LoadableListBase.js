@@ -2,7 +2,7 @@ define(['js/libs/BrowseMap', 'spv'], function(BrowseMap, spv) {
 "use strict";
 var LoadableListBase = function() {};
 BrowseMap.Model.extendTo(LoadableListBase, {
-	init: function(opts, params) {
+	init: function(opts) {
 		this._super(opts);
 		this[this.main_list_name] = [];
 		if (this.sendMoreDataRequest){
@@ -14,6 +14,13 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			}
 
 		}, {skip_reg: true});
+		this.on('state-change.more_load_available', function(e) {
+			var mp_show = this.state('mp_show');
+			if (e.value && mp_show && mp_show.userwant){
+				this.preloadStart();
+			}
+			
+		});
 		if (!this.manual_previews){
 			this.on('child-change.' + this.main_list_name, function(e) {
 				if (!e.skip_report){
@@ -77,7 +84,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 
 	},
-	requestMoreData: function(force) {
+	requestMoreData: function() {
 		if (this.state("has_loader") && this.sendMoreDataRequest){
 			if (!this.request_info || this.request_info.done){
 				this.markLoading();
@@ -102,26 +109,54 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		//console.profile('data list inject');
 		if (!this.request_info || this.request_info.request == request){
 
-
+			var items_list = [];
 			if (!error && data_list && data_list.length){
 
 				var mlc_opts = this.getMainListChangeOpts();
 				for (var i = 0; i < data_list.length; i++) {
-					this.addItemToDatalist(data_list[i], true);
+					var item = this.addItemToDatalist(data_list[i], true);
+					items_list.push(item);
 				}
-				this.dataListChange(mlc_opts);
+				this.dataListChange(mlc_opts, items_list);
 
 			}
 			if (!error && request && data_list.length < this.page_limit){
 				this.setLoaderFinish();
 			}
 			this.requestComplete(request, error);
+			if (items_list.length){
+				return items_list;
+			}
 		}
 		//console.profileEnd();
 		return this;
 
 	},
-	dataListChange: function(mlc_opts) {
+	getRelativeRequestsGroups: function(space) {
+		var main_models = this.getNesting(this.main_list_name);
+		if (!main_models || !main_models.length){
+			return;
+		} else {
+			main_models = main_models.slice();
+			var more_models = this._super(space, true);
+			if (more_models){
+				main_models = main_models.concat(more_models);
+			}
+			var clean_array = spv.getArrayNoDubs(main_models);
+			var groups = [];
+			for (var i = 0; i < clean_array.length; i++) {
+				var reqs = clean_array[i].getModelImmediateRequests(space);
+				if (reqs && reqs.length){
+					groups.push(reqs);
+				}
+			}
+			return groups;
+		}
+	},
+	dataListChange: function(mlc_opts, items) {
+		if (this.beforeReportChange){
+			this.beforeReportChange(this[this.main_list_name], items);
+		}
 		this.updateNesting(this.main_list_name, this[this.main_list_name], mlc_opts);
 	},
 	compareItemsWithObj: function(array, omo, soft) {
@@ -132,7 +167,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		}
 	},
 	addItemToDatalist: function(obj, silent) {
-		this.addDataItem(obj, silent);
+		return this.addDataItem(obj, silent);
 	},
 	addDataItem: function(obj, skip_changes) {
 		var
@@ -173,6 +208,9 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 
 		this[this.main_list_name] = work_array;
 		if (!skip_changes){
+			if (this.beforeReportChange){
+				this.beforeReportChange(work_array, [item]);
+			}
 			this.updateNesting(this.main_list_name, work_array, ml_ch_opts);
 		}
 		return item;
@@ -196,6 +234,9 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		} else {
 			++this.tumour_data_count;
 			work_array.unshift(item);
+		}
+		if (this.beforeReportChange){
+			this.beforeReportChange(work_array, [item]);
 		}
 
 		this.updateNesting(this.main_list_name, work_array, ml_ch_opts);
@@ -235,7 +276,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		auth_rqb.init({auth: auth, pmd: this}, params);
 		var _this = this;
 		auth_rqb.on('state-change.has_session', function(e) {
-			_this.updateState('has_no_access', !e.value);
+			_this.updateState('has_no_auth', !e.value);
 			_this.switchPmd(false);
 		});
 
@@ -244,7 +285,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		this.setPmdSwitcher(this.map_parent);
 
 	},
-	requestList: function() {
+	requestPage: function() {
 		if (!this.state('has_no_access')){
 			this.loadStart();
 			this.showOnMap();

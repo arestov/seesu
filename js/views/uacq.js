@@ -9,7 +9,7 @@ provoda.View.extendTo(UserAcquaintanceView, {
 		var li = this.c;
 
 		this.userphoto_c = $('<div class="people-image"></div>').appendTo(li);
-		this.userphoto_img = $('<img/>').attr('src', 'http://vk.com/images/camera_b.gif').appendTo(this.userphoto_c);
+		this.userphoto_img = $('<img/>').attr('src', 'https://vk.com/images/camera_b.gif').appendTo(this.userphoto_c);
 		this.button_place = $('<div class="button-place-people-el"></div>').appendTo(li);
 		this.link_place = $('<div class="p-link-place"></div>').appendTo(li);
 	},
@@ -107,7 +107,7 @@ provoda.View.extendTo(UserAcqPreview, {
 	dom_rp: true,
 	createBase: function() {
 		this.c = $("<span></span>");
-		this.userimg = $('<img/>').attr('src', 'http://vk.com/images/camera_b.gif').appendTo(this.c);
+		this.userimg = $('<img/>').attr('src', 'https://vk.com/images/camera_b.gif').appendTo(this.c);
 		this.dom_related_props.push('userimg');
 
 	},
@@ -127,8 +127,8 @@ provoda.View.extendTo(UserAcquaintancesListPreview, {
 		var _this = this;
 
 		this.c.click(function() {
-			//_this.RPCLegacy('showOnMap');
-			_this.RPCLegacy('showOnMap');
+			//_this.RPCLegacy('requestPage');
+			_this.RPCLegacy('requestPage');
 		});
 
 		this.acqs_frsmone_c = $('<span></span>').appendTo(this.c);

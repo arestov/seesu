@@ -21,10 +21,8 @@ AppModelBase.extendTo(AppModel, {
 
 		var state_recovered;
 		if (this.p && this.p.c_song){
-			if (this.p.c_song){
-				this.showNowPlaying(true);
-				state_recovered = true;
-			}
+			this.showNowPlaying(true);
+			state_recovered = true;
 		}
 
 		if (state_recovered){
@@ -108,9 +106,8 @@ AppModelBase.extendTo(AppModel, {
 
 	},
 	bmap_travel: {
-		
 		showArtcardPage: function(artist){
-			var md = this.start_page.getSPI('catalog/' + artist, true);
+			var md = this.getArtcard(artist);
 			md.showOnMap();
 			/*
 			var md = new ArtCard();
@@ -159,6 +156,11 @@ AppModelBase.extendTo(AppModel, {
 			return invstg;
 
 		},
+		showLastfmUser: function(username) {
+			var md = this.getLastfmUser(username);
+			md.showOnMap();
+			return md;
+		},
 		show_tag: function(tag){
 			var md = this.start_page.getSPI('tags/' + tag, true);
 			md.showOnMap();
@@ -177,6 +179,18 @@ AppModelBase.extendTo(AppModel, {
 			return artcard.showSimilarArtists();
 		}
 	},
+	getLastfmUser: function(username) {
+		return this.start_page.getSPI('users/lfm:' + username, true);
+	},
+	getSongcard: function(artist_name, track_name) {
+		if (!artist_name || !track_name){
+			return false;
+		}
+		return this.start_page.getSPI('tracks/' + this.joinCommaParts([artist_name, track_name]), true);
+	},
+	getArtcard: function(artist_name) {
+		return this.start_page.getSPI('catalog/' + artist_name, true);
+	},
 	search: function(query){
 		var old_v = this.state('search_query');
 		if (query != old_v){
@@ -188,6 +202,48 @@ AppModelBase.extendTo(AppModel, {
 
 		}
 		this.updateState('search_query', query);
+	},
+	checkActingRequestsPriority: function() {
+		var raw_array = [];
+		var acting = [];
+		var i;
+
+		var w_song = this.p && this.p.wanted_song;
+
+		var addToArray = function(arr, item) {
+			if (arr.indexOf(item) == -1){
+				arr.push(item);
+			}
+		};
+
+		if (w_song){
+			addToArray(acting, w_song);
+		}
+		var imporant_models = [ this.p && this.p.waiting_next, this.state('current_mp_md'), this.p && this.p.c_song ];
+		for (i = 0; i < imporant_models.length; i++) {
+			var cur = imporant_models[i];
+			if (cur){
+				if (cur.getActingPriorityModels){
+					var models = cur.getActingPriorityModels();
+					if (models.length){
+						raw_array = raw_array.concat(models);
+					}
+				} else {
+					raw_array.push(cur);
+				}
+			}
+		}
+
+		for (i = 0; i < raw_array.length; i++) {
+			addToArray(acting, raw_array[i]);
+			
+		}
+
+		acting.reverse();
+		for (i = 0; i < acting.length; i++) {
+			acting[i].setPrio('acting');
+		}
+
 	}
 
 });

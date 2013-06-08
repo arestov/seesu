@@ -1,10 +1,11 @@
-define(['provoda', 'spv', 'jquery', 'app_serv', './MusicConductorPreview', './UserCardPreview'], function(provoda, spv, $, app_serv, MusicConductorPreview, UserCardPreview) {
+define(['provoda', 'spv', 'jquery', 'app_serv', './MusicConductorPreview', './UserCardPreview', './coct'],
+function(provoda, spv, $, app_serv, MusicConductorPreview, UserCardPreview, coct) {
 "use strict";
 var localize = app_serv.localize;
 
 var StartPageView = function(){};
 
-provoda.View.extendTo(StartPageView, {
+coct.SPView.extendTo(StartPageView, {
 	createDetailes: function(){
 
 		this.els = this.root_view.els;
@@ -39,21 +40,6 @@ provoda.View.extendTo(StartPageView, {
 		}
 	},
 	complex_states: {
-		'mp_show_end': {
-			depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
-			fn: function(anim, vis_mp_show, mp_show) {
-				if (anim) {
-					if (vis_mp_show && anim == vis_mp_show.anid){
-						return vis_mp_show.value;
-					} else {
-						return false;
-					}
-
-				} else {
-					return mp_show;
-				}
-			}
-		},
 		autofocus: {
 			depends_on: ['mp_show_end', 'mp_has_focus'],
 			fn: function(shw_end, focus) {

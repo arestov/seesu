@@ -3,17 +3,22 @@ define(['provoda', 'jquery', 'js/lastfm_data', 'app_serv'], function(provoda, $,
 var localize = app_serv.localize;
 var MusicConductorPreview = function() {};
 provoda.View.extendTo(MusicConductorPreview, {
+	dom_rp: true,
 	createBase: function() {
 		this.c = this.root_view.els.start_screen.find('.music-conductor-preview');
 		var _this = this;
 
 		this.button = this.c.find('.area-button').removeClass('hidden');
 		this.button.click(function() {
-			_this.RPCLegacy('showOnMap');
+			_this.RPCLegacy('requestPage');
 		});
 		this.addWayPoint(this.button);
+		this.dom_related_props.push('button');
 
 		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
+	},
+	'stch-mp_show': function(state) {
+		this.button.toggleClass('button_selected', !!state);
 	},
 	'stch-can_expand': function(state){
 		if (state){
@@ -71,7 +76,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 
 							$('<div class="desc-row"></div>')
-								.append($('<a class="external"></a>').attr('href', 'http://vk.com/id' + lig.vk_id).text(lig.info.first_name))
+								.append($('<a class="external"></a>').attr('href', 'https://vk.com/id' + lig.vk_id).text(lig.info.first_name))
 								.append(document.createTextNode(' ' + localize ('listening') + ' '))
 								.appendTo(list_item);
 

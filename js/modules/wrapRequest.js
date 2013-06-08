@@ -66,7 +66,7 @@ return function(request_params, options, complex_response){
 			if (!options.manualSend){
 				var cache_used;
 				if (!options.nocache){
-					cache_used = cache_ajax.get(options.cache_namespace, options.cache_key, function(r){
+					cache_used = options.cache_ajax.get(options.cache_namespace, options.cache_key, function(r){
 						deferred.resolve(r);
 					});
 				}

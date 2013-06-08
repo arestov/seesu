@@ -9,8 +9,8 @@ var bindLocationChange = function(hashchangeHandler) {
 				e = e || window.Event;
 				var newhash = location.hash.replace(/^\#/, '');
 				if (newhash != hash){
-					var hnew = e.newURL || newhash;
-					var hold = e.oldURL || hash;
+					var hnew = decodeURI(e.newURL || newhash);
+					var hold = decodeURI(e.oldURL || hash);
 					var have_new_hash = hnew.indexOf('#')+1;
 					var have_old_hash = hold.indexOf('#')+1;
 
@@ -20,7 +20,7 @@ var bindLocationChange = function(hashchangeHandler) {
 					};
 
 
-					var too_fast_hash_change = (o.newURL != newhash);
+					var too_fast_hash_change = o.newURL != decodeURI(newhash);
 					if (!too_fast_hash_change){
 						if (typeof hashchangeHandler == 'function'){
 							hashchangeHandler(o);
@@ -140,16 +140,16 @@ var navi;
 
 		},
 		set: function(url, data){
-			this._saveHistory(url, data);
+			this._saveHistory(decodeURI(url), data);
 		},
 		replace: function(oldurl, url, data){
-			this._saveHistory(url, data, oldurl);
+			this._saveHistory(decodeURI(url), data, decodeURI(oldurl));
 		},
 		findHistory: function(url){
 			return this.states_index[url];
 		},
 		hashchangeHandler: function(e, soft){
-			if (e.newURL != this.getFakeURL()){
+			if (e.newURL != decodeURI(this.getFakeURL())){
 				this.setFakeURL(e.newURL);
 				if (e.oldURL != e.newURL){
 					this.hashChangeRecover(e, soft);

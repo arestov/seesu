@@ -1,8 +1,6 @@
 define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './TrackActionsRow', './SongBase'],
 function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 	"use strict";
-	
-
 	var app_env = app_serv.app_env;
 	var Song;
 	var SongBase = function() {};
@@ -12,34 +10,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 
 	SongBase.extendTo(Song, {
 		page_name: 'song page',
-		'stch-can_expand': function(state) {
-			if (state && !this.expanded){
-				this.expanded = true;
-				var _this = this;
-				var info_request = this.app.lfm.get('artist.getInfo',{'artist': this.artist })
-					.done(function(r){
 
-						var ai = app_serv.parseArtistInfo(r);
-						_this.updateManyStates({
-							listeners: spv.getTargetField(r, 'artist.stats.listeners'),
-							playcount: spv.getTargetField(r, 'artist.stats.playcount'),
-							bio: ai.bio,
-							tags: ai.tags,
-							similars: ai.similars,
-							'artist_image': ai.images && ai.images[2] || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_large.png'
-						});
-
-						
-
-
-					});
-
-				this.addRequest(info_request, {
-					space: 'demonstration'
-				});
-				
-			}
-		},
 		init: function(opts) {
 			var omo = opts.omo;
 			var passed_artist = omo.artist;
@@ -47,12 +18,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 
 			this._super.apply(this, arguments);
 			var _this = this;
-			
-
 
 
 			var spec_image_wrap;
-			
 			if (omo.image_url){
 				this.init_states['image_url'] = {url: omo.image_url};
 			}
@@ -75,8 +43,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 						.on('state-change.image-to-use', function(e) {
 							_this.updateState('ext_lfm_image', e.value);
 						});
-					
-
 				} else {
 					images_pack = this.app.art_images.getArtistImagesModel(this.init_states['artist'])
 						.on('state-change.image-to-use', function(e) {
@@ -87,28 +53,69 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			}
 			this.initStates();
 			_this.initHeavyPart();
-
-			this.loadImages = spv.once(function() {
-				var images_request = _this.app.lfm.get('artist.getImages',{'artist': _this.artist })
-					.done(function(r){
-						var images = spv.toRealArray(spv.getTargetField(r, 'images.image'));
-						_this.updateState('images', images);
-					});
-				_this.addRequest(images_request, {
-					space: 'demonstration'
-				});
+			this.on('state-change.can_load_baseinfo', function(e) {
+				if (e.value){
+					var artcard = _this.getNesting('artist');
+					if (artcard){
+						var req = artcard.loaDDD('base_info');
+						if (req){
+							this.addRequest(req);
+						}
+					} else {
+						console.warn('no nested artcard');
+					}
+					
+				}
 			});
 			this.on('state-change.can_load_images', function(e) {
 				if (e.value){
-					_this.loadImages();
+					var artcard = _this.getNesting('artist');
+					if (artcard){
+						var req = artcard.loaDDD('images');
+						if (req){
+							this.addRequest(req);
+						}
+						
+					} else {
+						console.warn('no nested artcard');
+					}
+					
+					//
+					//_this.loaDDD('artist_images');
 				}
 			});
-			
+			this.on('state-change.can_load_songcard', function(e) {
+				if (e.value){
+					var songcard = _this.app.getSongcard(_this.artist, _this.track);
+					if (songcard){
+						songcard.initForSong();
+						_this.updateNesting('songcard', songcard);
+					}
+				}
+			});
+		},
+		'compx-has_full_title':{
+			depends_on: ['artist', 'track'],
+			fn: function(artist_name, track_name) {
+				return artist_name && track_name;
+			}
+		},
+		'compx-can_load_songcard':{
+			depends_on:['can_expand', 'has_full_title'],
+			fn: function(can_expand, has_full_title) {
+				return can_expand && has_full_title;
+			}
+		},
+		'compx-can_load_baseinfo': {
+			depends_on: ['can_expand', 'has_nested_artist'],
+			fn: function(can_expand, hna) {
+				return can_expand && hna;
+			}
 		},
 		'compx-can_load_images': {
-			depends_on: ['artist', 'can_expand'],
-			fn: function(artist, can_expand) {
-				return artist && can_expand;
+			depends_on: ['artist', 'can_expand', 'has_nested_artist'],
+			fn: function(artist, can_expand, hna) {
+				return artist && can_expand && hna;
 			}
 		},
 		initOnShow: function() {
@@ -121,7 +128,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 		initHeavyPart: function() {
 			var _this = this;
 			var omo = this.omo;
-			
 
 			this.mf_cor = new MfCor();
 			this.mf_cor.init({
@@ -140,31 +146,16 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			this.updateNesting('mf_cor', this.mf_cor);
 			this.mf_cor
 				.on('before-mf-play', function(mopla) {
-
-
 					_this.player.changeNowPlaying(_this, mopla.state('play'));
 					_this.mopla = mopla;
 					_this.updateState('play', mopla.state('play'));
-				})
+				}, {immediately: true})
 				.on("error", function(can_play) {
 					_this.player.trigger("song-play-error", _this, can_play);
 				})
 				.on('state-change.mopla_to_use', function(e){
 					_this.updateState('mf_cor_has_available_tracks', !!e.value);
 				});
-
-			if (this.mf_cor.isSearchAllowed()){
-				this.on('vip-state-change.track', function(e) {
-					if (e.value){
-						_this.bindFilesSearchChanges();
-					}
-				},{immediately: true});
-				
-				
-			}
-
-
-
 
 			
 			this.watchStates(['files_search', 'marked_as', 'mp_show'], function(files_search, marked_as, mp_show) {
@@ -177,7 +168,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				}
 			});
 			this.on('vip-state-change.mp_show', function(e) {
-				
 				var
 					_this = this,
 					oldCb = this.makePlayableOnNewSearch;
@@ -188,7 +178,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 							_this.makeSongPlayalbe(true);
 						};
 						this.mp3_search.on('new-search', this.makePlayableOnNewSearch);
-						
 					}
 					_this.initOnShow();
 				} else {
@@ -198,11 +187,15 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 					}
 				}
 			});
-			this.on('vip-state-change.is_important', function(e) {
+			this.on('state-change.is_important', function(e) {
 				if (e.value){
-					this.loadSongListeners();
+					this.initRelativeData();
 				}
 			});
+			this.nextTick(function() {
+				this.initRelativeData();
+			});
+
 		},
 		getShareUrl: function() {
 			if (this.artist && this.track){
@@ -216,7 +209,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 		},
 		getURL: function(){
 			var url = '';
-			if (this.plst_titl.playlist_artist && this.plst_titl.playlist_artist == this.artist){
+			if (this.map_parent.playlist_artist && this.map_parent.playlist_artist == this.artist){
 				url += '/' + this.app.encodeURLPart(this.track);
 			} else {
 				url += '/' + this.app.encodeURLPart(this.artist) + ',' + this.app.encodeURLPart(this.track || '');
@@ -234,7 +227,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			if (file){
 				data.attachments = "audio" + file._id;
 			}
-			
 			data.message = this.state('nav_title') + " " + encodeURI(this.getShareUrl());
 			if (data.attachments){
 				data.attachment = data.attachments;
@@ -245,8 +237,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 
 				});
 			} else {
-				
-
 				app_env.openURL( "http://seesu.me/vk/share.html" +
 					"?" +
 					spv.stringifyParams({app_id: this.app.vkappid}, false, '=', '&') +
@@ -266,7 +256,10 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
 
 
-			if ((!duration && !careful) || ((timestamp - starttime)/duration > 0.2) || (last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
+			if (
+				(!duration && !careful) ||
+				((timestamp - starttime)/duration > 0.2) ||
+				(last_scrobble && ((timestamp - last_scrobble)/duration > 0.6)) ){
 
 				this.start_time = false;
 				this.last_scrobble = timestamp;
@@ -289,6 +282,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 						timestamp: timestamp
 					});
 				}
+			} else {
 			}
 		},
 		submitNowPlaying: spv.debounce(function(){
@@ -310,12 +304,14 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				});
 			}
 		},200),
-		loadSongListeners: function() {
-			
+		initRelativeData: function() {
+			if (this.artist){
+				var artcard = this.app.getArtcard(this.artist);
+				this.updateNesting('artist', artcard);
+				this.updateState('has_nested_artist', true);
+			}
+			//this.loadSongListeners();
 		}
 	});
-
-
-	
 return Song;
 });

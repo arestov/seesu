@@ -3,6 +3,7 @@ define(['provoda', 'jquery', 'app_serv', './uacq'], function(provoda, $, app_ser
 var localize = app_serv.localize;
 var UserCardPreview = function() {};
 provoda.View.extendTo(UserCardPreview, {
+	dom_rp: true,
 	createBase: function() {
 		this.c = this.root_view.els.pestf_preview;
 		this.aqc_preview_c = this.c.find('.aqc_preview');
@@ -11,12 +12,16 @@ provoda.View.extendTo(UserCardPreview, {
 		var _this = this;
 
 		var button = this.c.find('.to-open-block').click(function() {
-			_this.RPCLegacy('showOnMap');
-			//_this.RPCLegacy('showOnMap');
+			_this.RPCLegacy('requestPage');
+			//_this.RPCLegacy('requestPage');
 		});
 		this.addWayPoint(button);
+		this.button = button;
+		this.dom_related_props.push('button');
 
-
+	},
+	'stch-mp_show': function(state) {
+		this.button.toggleClass('button_selected', !!state);
 	},
 	'stch-can_expand': function(state){
 		if (state){
@@ -44,7 +49,7 @@ provoda.View.extendTo(UserCardPreview, {
 				var li = ui.c = $('<li class="people-list-item"></li>');
 				var img_c = ui.imgc = $('<div class="people-image"></div>').appendTo(li);
 
-				$('<img/>').attr('src', img_src || 'http://vk.com/images/camera_b.gif').appendTo(img_c);
+				$('<img/>').attr('src', img_src || 'https://vk.com/images/camera_b.gif').appendTo(img_c);
 
 				ui.bp = $('<div class="button-place-people-el"></div>').appendTo(li);
 				ui.lp = $('<div class="p-link-place"></div>').appendTo(li);

@@ -9,7 +9,7 @@ define({
 	},
 	"Hypem-cant-load":{
 		"original": "Your browser does not support XHR2 to load data from hypem.com",
-		"ru": "Ваш браузер не поддерживает XHR2, необходимый что бы загружать данные с hypem.com"
+		"ru": "Ваш браузер не поддерживает XHR2, необходимый чтобы загружать данные с hypem.com"
 	},
 	"Art-sc-likes": {
 		"original": "Artist soundcloud likes",
@@ -41,7 +41,7 @@ define({
 	},
 	"vk_photo_meet_need": {
 		"original": "If you want to meet this man you need to upload photo to your vk.com profile and press \"%button_name%\" button",
-		"ru":  "Что бы познакомиться, необходимо загрузить фотографию в свой профиль во вконтакте, после чего нажать кнопку \"%button_name%\""
+		"ru":  "Чтобы познакомиться, необходимо загрузить фотографию в свой профиль во вконтакте, после чего нажать кнопку \"%button_name%\""
 	},
 	"vk_photo_update": {
 		"original": "Get photo from my vk.com profile",
@@ -319,7 +319,7 @@ define({
 	},
 	"stop-flash": {
 		"original": "To stop annoing «Adobe Flash Player Security» window copy this address:",
-		"ru": "Что бы убрать сообщение об  «Adobe Flash Player Security» скопируй следующий адрес"
+		"ru": "Чтобы убрать сообщение об  «Adobe Flash Player Security» скопируй следующий адрес"
 	},
 	"add-to-wl": {
 		"original": "add it to white list on",
@@ -347,11 +347,15 @@ define({
 	},
 	"lastfm-reccoms-access": {
 		"original": "To get your music recommendations",
-		"ru": "Что бы получить рекомендации"
+		"ru": "Чтобы получить рекомендации"
 	},
 	"grant-love-lfm-access": {
 		"original": "To get your favorite tracks",
-		"ru": "Что бы получить свои любимые треки"
+		"ru": "Чтобы получить свои любимые треки"
+	},
+	"to-get-access":{
+		"original": "To get access",
+		"ru": "Чтобы получить доступ"
 	},
 	"lfm-auth-invitation": {
 		"original": "you must grant access to Seesu from last.fm",
@@ -360,11 +364,11 @@ define({
 	"to-find-and-play":{
 		
 		"original": "To find and play",
-		"ru": "Что бы найти и прослушать"
+		"ru": "Чтобы найти и прослушать"
 	},
 	"to-find-better":{
 		"original": "To find better",
-		"ru": "Что бы найти более подходящие"
+		"ru": "Чтобы найти более подходящие"
 	},
 	"music-files-from-vk":{
 		"original": "music files you",
@@ -387,11 +391,11 @@ define({
 	},
 	"to-get-mp3-sign-to-vk": {
 		"original": "To get mp3 files you need to sign in to vk.com (vkontakte.ru)",
-		"ru": "Что бы получить доступ к mp3 файлам ты должен войти во vkontakte.ru (vk.com)"
+		"ru": "Чтобы получить доступ к mp3 файлам ты должен войти во vkontakte.ru (vk.com)"
 	},
 	"to-get-mp3-login-to-vk": {
 		"original": "To get mp3 files you need to login to vk.com or to vkontakte.ru",
-		"ru": "Что бы получить доступ к mp3 файлам ты должен дать доступ к своей учётной записи vkontakte.ru или vk.com"
+		"ru": "Чтобы получить доступ к mp3 файлам ты должен дать доступ к своей учётной записи vkontakte.ru или vk.com"
 	},
 	"sign": {
 		"original": "sign in",
@@ -592,8 +596,8 @@ define({
 		"ru": "Принять приглашение"
 	},
 	"more-ab-info":{
-		"original": "more «%s» info",
-		"ru": "больше о «%s»"
+		"original": "more about artist",
+		"ru": "больше об артисте"
 	},
 	
 	"":{

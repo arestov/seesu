@@ -3,19 +3,25 @@ define('su',
 ['require', 'spv', 'app_serv', 'provoda', 'jquery', 'js/libs/navi', 'js/libs/BrowseMap', 'js/modules/net_apis', 'js/libs/Mp3Search',
 'js/libs/ScApi' ,'js/libs/ExfmApi', 'js/modules/torrent_searches', 'js/libs/FuncsQueue', 'js/libs/LastfmAPIExtended',
 'js/models/AppModel', 'js/models/comd', 'js/LfmAuth', 'js/models/StartPage', 'js/SeesuServerAPI', 'js/libs/VkAuth', 'js/libs/VkApi', 'js/modules/initVk',
-'js/modules/PlayerSeesu', 'js/models/invstg'],
+'js/modules/PlayerSeesu', 'js/models/invstg', 'cache_ajax'],
 function(require, spv, app_serv, provoda, $, navi, BrowseMap, net_apis, Mp3Search,
 ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
-PlayerSeesu, invstg) {
+PlayerSeesu, invstg, cache_ajax) {
 'use strict';
-var localize = app_serv.localize;
-
 var
-	app_env = app_serv.app_env,
-	cache_ajax;
+	localize = app_serv.localize,
+	app_env = app_serv.app_env;
 
-
+var all_queues = [];
+var addQueue = function() {
+	this.reverse_default_prio = true;
+	all_queues.push(this);
+	return this;
+};
+var resortQueue = function(queue) {
+	su.resortQueue(queue);
+};
 
 $.ajaxSetup({
   cache: true,
@@ -34,7 +40,11 @@ lfm.init(app_serv.getPreloadedNK('lfm_key'), app_serv.getPreloadedNK('lfm_secret
 	return app_serv.store(key);
 }, function(key, value){
 	return app_serv.store(key, value, true);
-}, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue(700));
+}, cache_ajax, app_env.cross_domain_allowed, new FuncsQueue({
+	time: [700],
+	resortQueue: resortQueue,
+	init: addQueue
+}));
 lfm.checkMethodResponse = function(method, data, r) {
 	su.art_images.checkLfmData(method, r);
 };
@@ -110,19 +120,31 @@ AppModel.extendTo(SeesuApp, {
 			xhr2: app_env.xhr2,
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
-			queue: new FuncsQueue(1700, 4000, 4)
+			queue: new FuncsQueue({
+				time: [1700, 4000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
+			})
 		});
 		this.goog_sc = new net_apis.GoogleSoundcloud();
 		this.goog_sc.init({
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
-			queue: new FuncsQueue(1000, 3000, 4)
+			queue: new FuncsQueue({
+				time: [1000, 3000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
+			})
 		});
 		this.discogs = new net_apis.DiscogsApi();
 		this.discogs.init({
 			crossdomain: app_env.cross_domain_allowed,
 			cache_ajax: cache_ajax,
-			queue: new FuncsQueue(2000, 4000, 4)
+			queue: new FuncsQueue({
+				time: [2000, 4000, 4],
+				resortQueue: resortQueue,
+				init: addQueue
+			})
 		});
 
 
@@ -130,7 +152,11 @@ AppModel.extendTo(SeesuApp, {
 
 		this.delayed_search = {
 			vk_api:{
-				queue:  new FuncsQueue(700, 8000 , 7)
+				queue:  new FuncsQueue({
+					time: [700, 8000 , 7],
+					resortQueue: resortQueue,
+					init: addQueue
+				})
 			}
 		};
 
@@ -162,6 +188,14 @@ AppModel.extendTo(SeesuApp, {
 			}
 			reportSearchEngs(list.join(','));
 		});
+		if (this.lfm.username){
+			this.updateState('lfm_username', this.lfm.username);
+		} else {
+			this.lfm_auth.on('session', function() {
+				_this.updateState('lfm_username', _this.lfm.username);
+			});
+		}
+		
 
 		this.lfm_auth.on('session.ga_tracking', function(){
 			_this.trackEvent('Auth to lfm', 'end');
@@ -226,6 +260,8 @@ AppModel.extendTo(SeesuApp, {
 		this._url = app_serv.get_url_parameters(location.search, true);
 		this.settings = {};
 		this.settings_timers = {};
+
+		this.all_queues = all_queues;
 
 		this.trackStat = (function(){
 			window._gaq = window._gaq || [];
@@ -509,6 +545,11 @@ AppModel.extendTo(SeesuApp, {
 		});
 		return spaced.join(" ");
 	},
+	joinCommaParts: function(array) {
+		return array.map(function(item) {
+			return this.encodeURLPart(item);
+		}, this).join(',');
+	},
 	getCommaParts: function(string) {
 		var parts = string.split(',');
 		for (var i = 0; i < parts.length; i++) {
@@ -641,6 +682,11 @@ AppModel.extendTo(SeesuApp, {
 			}
 		}
 		return r;
+	},
+	detachUI: function() {
+		if (this.p && this.p.c_song){
+			this.showNowPlaying(true);
+		}
 	},
 	vkappid: 2271620,
 	getAuthAndTransferVKInfo: function(vk_api, user_id) {
@@ -806,14 +852,22 @@ provoda.sync_s.setRootModel(su);
 (function(){
 
 	//su.sc_api = sc_api;
-	su.sc_api = new ScApi(app_serv.getPreloadedNK('sc_key'), new FuncsQueue(3500, 5000 , 4), app_env.cross_domain_allowed, cache_ajax);
+	su.sc_api = new ScApi(app_serv.getPreloadedNK('sc_key'), new FuncsQueue({
+		time: [3500, 5000 , 4],
+		resortQueue: resortQueue,
+		init: addQueue
+	}), app_env.cross_domain_allowed, cache_ajax);
 	su.mp3_search.add(new ScApi.ScMusicSearch({
 		api: su.sc_api,
 		mp3_search: su.mp3_search
 	}));
 
 
-	var exfm_api = new ExfmApi(new FuncsQueue(3500, 5000, 4), app_env.cross_domain_allowed, cache_ajax);
+	var exfm_api = new ExfmApi(new FuncsQueue({
+		time: [3500, 5000, 4],
+		resortQueue: resortQueue,
+		init: addQueue
+	}), app_env.cross_domain_allowed, cache_ajax);
 	su.exfm = exfm_api;
 
 	su.mp3_search.add(new ExfmApi.ExfmMusicSearch({

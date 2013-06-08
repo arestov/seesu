@@ -58,6 +58,7 @@ big_timer = {
 		//app thread;
 	});
 	if (need_ui){
+		//ui thread;
 		require(['su', 'js/views/AppView', 'angbo'], function(su, AppView, angbo) {
 			var can_die = false;
 			var md = su;
