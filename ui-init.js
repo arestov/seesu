@@ -11,11 +11,17 @@ cbp.big_timer.setN('popup-start');
 var need_ui = true;
 if (need_ui){
 	cbp.require(['spv', 'app_serv'], function(spv, app_serv) {
+		if (!window){
+			return;
+		}
 		app_serv.handleDocument(window.document);
 	});
 }
 if (need_ui){
 	cbp.require(['su', 'js/views/AppView', 'angbo'], function(su, AppView, angbo) {
+		if (!window){
+			return;
+		}
 		var can_die = true;
 		var md = su;
 		var view = new AppView();
