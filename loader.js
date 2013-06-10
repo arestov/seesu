@@ -49,8 +49,7 @@ big_timer = {
 		cbp = opera.extension.bgProcess;
 	}
 	//если у приложения не бывает вспслывающих окон, то интерфейс должен создаваться на странице этого окна
-	var need_ui = (!cbp || cbp != window) && !opera;
-
+	var need_ui = (!cbp || cbp != window) && (!opera || !opera.contexts);
 	if (need_ui){
 		require(['spv', 'app_serv'], function(spv, app_serv) {
 			app_serv.handleDocument(window.document);
