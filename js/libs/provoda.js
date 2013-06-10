@@ -2795,6 +2795,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			value: value
 		}]);
 	},
+	checkChildrenModelsRendering: function() {
+		var obj = spv.cloneObj(false, this.children_models);
+		this.setMdChildren(obj);
+	},
 	setMdChildren: function(collections) {
 		this._collections_set_processing = true;
 		for (var i in collections) {
