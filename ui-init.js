@@ -2,8 +2,10 @@
 "use strict";
 //var d = window.document;
 var cbp;
+var chrome = window.chrome;
+var opera = window.opera;
 if (window.chrome && chrome.extension){
-	cbp = chrome.extension.getBackgroundPage();	
+	cbp = chrome.extension.getBackgroundPage();
 } else if (window.opera && opera.extension && opera.extension.bgProcess){
 	cbp = opera.extension.bgProcess;
 }
