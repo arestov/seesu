@@ -41,20 +41,36 @@ big_timer = {
 
 (function() {
 	var cbp;
+	var opera = window.opera;
+	var chrome = window.chrome;
 	if (window.chrome && chrome.extension){
 		cbp = chrome.extension.getBackgroundPage();
 	} else if (window.opera && opera.extension && opera.extension.bgProcess){
 		cbp = opera.extension.bgProcess;
 	}
 	//если у приложения не бывает вспслывающих окон, то интерфейс должен создаваться на странице этого окна
-	var need_ui = !cbp || cbp != window;
-
+	var need_ui = (!cbp || cbp != window) && (!opera || !opera.contexts);
 	if (need_ui){
 		require(['spv', 'app_serv'], function(spv, app_serv) {
 			app_serv.handleDocument(window.document);
 		});
 	}
-	require(['su'], function(su) {
+	require(['su'], function() {
+		if (!need_ui){
+			if (opera){
+				var opera_extension_button = opera.contexts.toolbar.createItem( {
+						disabled: false,
+						title: "Seesu - search and listen music",
+						icon: "icons/icon18.png",
+						popup:{
+							href: "index.html",
+							width: 600,
+							height: 570
+						}
+					} );
+				opera.contexts.toolbar.addItem( opera_extension_button );
+			}
+		}
 		//app thread;
 	});
 	if (need_ui){
