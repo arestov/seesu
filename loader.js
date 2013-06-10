@@ -55,22 +55,23 @@ big_timer = {
 			app_serv.handleDocument(window.document);
 		});
 	}
-	require(['su'], function() {
-		if (!need_ui){
-			if (opera){
-				var opera_extension_button = opera.contexts.toolbar.createItem( {
-						disabled: false,
-						title: "Seesu - search and listen music",
-						icon: "icons/icon18.png",
-						popup:{
-							href: "index.html",
-							width: 600,
-							height: 570
-						}
-					} );
-				opera.contexts.toolbar.addItem( opera_extension_button );
-			}
+	if (!need_ui){
+		if (opera){
+			window.opera_extension_button = opera.contexts.toolbar.createItem( {
+					disabled: false,
+					title: "Seesu - search and listen music",
+					icon: "icons/icon18.png",
+					popup:{
+						href: "index.html",
+						width: 600,
+						height: 570
+					}
+				} );
+			opera.contexts.toolbar.addItem( window.opera_extension_button );
 		}
+	}
+	require(['su'], function() {
+		
 		//app thread;
 	});
 	if (need_ui){
