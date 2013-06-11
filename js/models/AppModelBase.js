@@ -6,8 +6,11 @@ provoda.Model.extendTo(AppModelBase, {
 		this._super();
 		this.navigation = [];
 		this.map = new BrowseMap();
-		this.on('state-change.current_mp_md', function() {
-			this.resortQueue();
+		this.on('state-change.current_mp_md', function(e) {
+			if (e.value){
+				this.resortQueue();
+			}
+			
 		});
 	},
 	getBMapTravelFunc: function(func, context) {
