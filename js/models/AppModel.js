@@ -79,9 +79,6 @@ AppModelBase.extendTo(AppModel, {
 	notPlaying: function() {
 		this.updateState('playing', false);
 	},
-	setDocTitle: function(title) {
-		this.updateState('doc_title', title);
-	},
 	createSonglist: function(map_parent, params, first_song) {
 		var pl = new SongsList();
 		pl.init({

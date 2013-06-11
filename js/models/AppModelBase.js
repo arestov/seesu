@@ -10,8 +10,11 @@ provoda.Model.extendTo(AppModelBase, {
 			if (e.value){
 				this.resortQueue();
 			}
-			
+
 		});
+	},
+	setDocTitle: function(title) {
+		this.updateState('doc_title', title);
 	},
 	getBMapTravelFunc: function(func, context) {
 		return function() {
