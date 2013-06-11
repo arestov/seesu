@@ -212,10 +212,6 @@ provoda.View.extendTo(AppBaseView, {
 					anid: changes.anid,
 					value: cur.value
 				});
-
-				if (this['detcoll-' + target.model_name]){
-					this['detcoll-' + target.model_name].call(this, target);
-				}
 				//MUST UPDATE VIEW, NOT MODEL!!!!!
 			} else if (cur.type == 'destroy'){
 				this.removeChildViewsByMd(target.mpx);

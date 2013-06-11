@@ -198,17 +198,6 @@ AppBaseView.extendTo(AppView, {
 		}
 		this.requestAll();
 	},
-
-
-	'stch-start-level': function(state) {
-		//this.els.start_screen.toggleClass('inactive-page', !state);
-	},
-	//
-	
-	'detcoll-song': function(md) {
-		
-	},
-	
 	'stch-root-lev-search-form': function(state) {
 		this.els.search_form.toggleClass('root-lev-search-form', !!state);
 	},
