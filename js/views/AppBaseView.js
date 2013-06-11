@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'jquery','./filters'], function(provoda, spv, $, filters){
-
+define(['provoda', 'spv', 'jquery','./modules/filters'], function(provoda, spv, $, filters){
+"use strict";
 
 
 provoda.setTplFilterGetFn(function(filter_name) {
