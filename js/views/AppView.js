@@ -1,11 +1,11 @@
 define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
 './StartPageView', './searchPageView', './ArtcardUI', './TagsListPage', './ArtistListView',
 './songsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
-'./lul', './SongcardPage', './AppBaseView'],
+'./lul', './SongcardPage', './AppBaseView', './modules/WPBox'],
 function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
 StartPageView, searchPageView, ArtcardUI, TagsListPage, ArtistListView,
 songsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
-lul, SongcardPage, AppBaseView) {
+lul, SongcardPage, AppBaseView, WPBox) {
 "use strict";
 var app_env = app_serv.app_env;
 var localize = app_serv.localize;
@@ -14,119 +14,6 @@ var localize = app_serv.localize;
 
 var AppView = function(){};
 AppBaseView.extendTo(AppView, {
-	dom_rp: true,
-	createDetailes: function(){
-		this._super();
-		var _this = this;
-
-		this.all_queues = [];
-		var addQueue = function() {
-			this.reverse_default_prio = true;
-			_this.all_queues.push(this);
-			return this;
-		};
-		var resortQueue = function(queue) {
-			_this.resortQueue(queue);
-		};
-
-
-		this.dom_related_props.push('samples');
-		this.lfm_imgq = new FuncsQueue({
-			time: [700],
-			init: addQueue,
-			resortQueue: resortQueue
-		});
-		this.dgs_imgq = new FuncsQueue({
-			time: [1200],
-			init: addQueue,
-			resortQueue: resortQueue
-		});
-
-		setTimeout(function() {
-			_this.buildAppDOM();
-		});
-
-		if (this.opts.can_die && spv.getDefaultView(this.d)){
-			this.can_die = true;
-			this.checkLiveState = function() {
-				if (!spv.getDefaultView(_this.d)){
-					_this.reportDomDeath();
-					return true;
-				}
-			};
-
-			this.lst_interval = setInterval(this.checkLiveState, 1000);
-
-		}
-		this.lev_containers = {};
-		this.on('die', function() {
-			this.RPCLegacy('detachUI');
-		});
-
-		this.on('vip-state-change.current_mp_md', function() {
-			var cwp = this.state('vis_current_wpoint');
-			if (cwp){
-				if (cwp.canUse && !cwp.canUse()){
-					_this.setVisState('current_wpoint', false);
-				}
-			}
-
-		}, {skip_reg: true, immediately: true});
-
-		this.on('state-change.current_mp_md', function() {
-			_this.resortQueue();
-		});
-
-	},
-	resortQueue: function(queue) {
-		if (queue){
-			queue.removePrioMarks();
-		} else {
-			for (var i = 0; i < this.all_queues.length; i++) {
-				this.all_queues[i].removePrioMarks();
-			}
-		}
-		var md = this.state('current_mp_md');
-		var view = md && md.mpx.getRooConPresentation(true);
-		if (view){
-			view.setPrio();
-		}
-	},
-	onDomBuild: function() {
-		this.c = $(this.d.body);
-
-		this.c.addClass('app-loaded');
-		var ext_search_query = this.els.search_input.val();
-		//must be before start_page view set its value to search_input
-		this.RPCLegacy('checkUserInput', {
-			ext_search_query: ext_search_query
-		});
-
-		this.connectStates();
-		this.connectChildrenModels();
-
-		this.requestAll();
-
-
-	},
-	reportDomDeath: function() {
-		if (this.can_die && !this.dead){
-			this.dead = true;
-			clearInterval(this.lst_interval);
-		//	var d = this.d;
-		//	delete this.d;
-			this.die();
-			console.log('DOM dead! ' + this.nums);
-
-		}
-	},
-	isAlive: function(){
-		if (this.dead){
-			return false;
-		}
-		return !this.checkLiveState || !this.checkLiveState();
-	},
-	
 	children_views: {
 		start_page : {
 			main: StartPageView,
@@ -275,20 +162,7 @@ AppBaseView.extendTo(AppView, {
 	//	console.log(array);
 		return array;
 	},
-	'collch-map_slice': function(nesname, array){
-		array = this.getRendOrderedNesting(nesname, array) || array;
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
-			var model_name = cur.model_name;
-			if (this['spec-collch-' + model_name]){
-				this.callCollectionChangeDeclaration(this['spec-collch-' + model_name], model_name, cur);
-			} else {
-				this.callCollectionChangeDeclaration({
-					place: AppBaseView.viewOnLevelP
-				}, model_name, cur);
-			}
-		}
-	},
+
 	'spec-collch-song': function(name, md) {
 		var playlist = md.getParentMapModel();
 
@@ -324,14 +198,11 @@ AppBaseView.extendTo(AppView, {
 		}
 		this.requestAll();
 	},
-	
-	complex_states: {
-		'start-level': {
-			depends_on: ['current_mp_md'],
-			fn: function(md) {
-				if (!md || md.map_level_num == -1){
-					return true;
-				}
+	'compx-start-level': {
+		depends_on: ['current_mp_md'],
+		fn: function(md) {
+			if (!md || md.map_level_num == -1){
+				return true;
 			}
 		}
 	},
@@ -341,137 +212,16 @@ AppBaseView.extendTo(AppView, {
 			return md.map_level_num;
 		}
 	},
-	'stch-full_page_need': function(state) {
-		this.els.screens.toggleClass('full_page_need', !!state);
-	},
+
 	'stch-start-level': function(state) {
 		//this.els.start_screen.toggleClass('inactive-page', !state);
 	},
 	//
-	'stch-current_mp_md': function(md, old_md) {
-
-		//map_level_num
-		//md.map_level_num
-
-
-
-		/*
-		var oved_now_active = old_md && (old_md.map_level_num-1 ===  md.map_level_num);
-		if (old_md){
-			this.hideLevNum(old_md.map_level_num);
-			if (!oved_now_active){
-				this.removePageOverviewMark(old_md.map_level_num-1);
-			}
-		}
-		if (md.map_level_num != -1 && (!old_md || old_md.map_level_num != -1)){
-			this.hideLevNum(-1);
-		}
-
-		this.addPageOverviewMark(md.map_level_num - 1);
-		this.showLevNum(md.map_level_num);
-		if (oved_now_active){
-			this.removePageOverviewMark(old_md.map_level_num-1);
-		}
-
-*/
-
-
-
-		/*
-		var highlight = md.state('mp-highlight');
-		if (highlight && highlight.source_md){
-			var source_md = highlight.source_md;
-
-			var md_view = this.getChildView(md.mpx, 'main');
-			if (md_view){
-				var hl_view = md_view.getChildView(source_md.mpx, 'main');
-				if (hl_view){
-					//this.scrollTo(hl_view.getC());
-				}
-			}
-		}*/
-		/*
-
-		var ov_md = md.getParentMapModel();
-		var ov_highlight = ov_md && ov_md.state('mp-highlight');
-		if (ov_highlight && ov_highlight.source_md){
-			var source_md = ov_highlight.source_md;
-			var mplev_item_view = source_md.getRooConPresentation();
-			if (mplev_item_view){
-				this.scrollTo(mplev_item_view.getC(), {
-					node: this.getLevByNum(md.map_level_num - 1).scroll_con
-				}, {vp_limit: 0.4, animate: 117});
-			}
-
-			
-		}*/
-
-
-		var _this = this;
-		setTimeout(function() {
-			var parent_md = md.getParentMapModel();
-			if (parent_md){
-				var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);
-				if (mplev_item_view && mplev_item_view.getC().height()){
-					_this.scrollTo(mplev_item_view.getC(), {
-						node: _this.getLevByNum(md.map_level_num - 1).scroll_con
-					}, {vp_limit: 0.4, animate: 117});
-				} else {
-					_this.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
-				}
-			}
-		}, 150);
-
-		
-
-
-
-
-
-		//var parent_md = md.getParentMapModel();
-		//this.getChildView(mpx)
-	},
+	
 	'detcoll-song': function(md) {
 		
 	},
-	'stch-map_animation': function(changes) {
-		if (!changes){
-			return;
-		}
-		var all_changhes = spv.filter(changes.array, 'changes');
-		all_changhes = [].concat.apply([], all_changhes);
-
-		for (var i = 0; i < all_changhes.length; i++) {
-			var cur = all_changhes[i];
-			var target = cur.target.getMD();
-			if (cur.type == 'move-view'){
-
-				target.updateState('vis_mp_show', {
-					anid: changes.anid,
-					value: cur.value
-				});
-
-				if (this['detcoll-' + target.model_name]){
-					this['detcoll-' + target.model_name].call(this, target);
-				}
-				//MUST UPDATE VIEW, NOT MODEL!!!!!
-			} else if (cur.type == 'destroy'){
-				this.removeChildViewsByMd(target.mpx);
-			}
-
-		}
-		//console.log(all_changhes);
-		/*
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
-			var handler = this["animation-type"][cur.type];
-
-			if (handler){
-				handler.call(this, cur.target, cur.type);
-			}
-			//array[i]
-		};*/
-	},
+	
 	'stch-root-lev-search-form': function(state) {
 		this.els.search_form.toggleClass('root-lev-search-form', !!state);
 	},
@@ -525,6 +275,119 @@ AppBaseView.extendTo(AppView, {
 			return localize('now_playing','Now Playing') + ': ' + text;
 		}
 	},
+	createDetailes: function(){
+		this._super();
+		var _this = this;
+		this.wp_box = new WPBox();
+		this.wp_box.init(this);
+		this.all_queues = [];
+		var addQueue = function() {
+			this.reverse_default_prio = true;
+			_this.all_queues.push(this);
+			return this;
+		};
+		var resortQueue = function(queue) {
+			_this.resortQueue(queue);
+		};
+
+		this.lfm_imgq = new FuncsQueue({
+			time: [700],
+			init: addQueue,
+			resortQueue: resortQueue
+		});
+		this.dgs_imgq = new FuncsQueue({
+			time: [1200],
+			init: addQueue,
+			resortQueue: resortQueue
+		});
+
+		setTimeout(function() {
+			_this.buildAppDOM();
+		});
+
+		if (this.opts.can_die && spv.getDefaultView(this.d)){
+			this.can_die = true;
+			this.checkLiveState = function() {
+				if (!spv.getDefaultView(_this.d)){
+					_this.reportDomDeath();
+					return true;
+				}
+			};
+
+			this.lst_interval = setInterval(this.checkLiveState, 1000);
+
+		}
+		
+		this.on('die', function() {
+			this.RPCLegacy('detachUI');
+		});
+
+		this.on('vip-state-change.current_mp_md', function() {
+			var cwp = this.state('vis_current_wpoint');
+			if (cwp){
+				if (cwp.canUse && !cwp.canUse()){
+					_this.setVisState('current_wpoint', false);
+				}
+			}
+
+		}, {skip_reg: true, immediately: true});
+
+		this.on('state-change.current_mp_md', function() {
+			_this.resortQueue();
+		});
+
+	},
+	resortQueue: function(queue) {
+		if (queue){
+			queue.removePrioMarks();
+		} else {
+			for (var i = 0; i < this.all_queues.length; i++) {
+				this.all_queues[i].removePrioMarks();
+			}
+		}
+		var md = this.state('current_mp_md');
+		var view = md && md.mpx.getRooConPresentation(true);
+		if (view){
+			view.setPrio();
+		}
+	},
+	onDomBuild: function() {
+		this.c = $(this.d.body);
+
+		this.c.addClass('app-loaded');
+		var ext_search_query = this.els.search_input.val();
+		//must be before start_page view set its value to search_input
+		this.RPCLegacy('checkUserInput', {
+			ext_search_query: ext_search_query
+		});
+
+		this.connectStates();
+		this.connectChildrenModels();
+
+		this.requestAll();
+
+
+	},
+	reportDomDeath: function() {
+		if (this.can_die && !this.dead){
+			this.dead = true;
+			clearInterval(this.lst_interval);
+		//	var d = this.d;
+		//	delete this.d;
+			this.die();
+			console.log('DOM dead! ' + this.nums);
+
+		}
+	},
+	isAlive: function(){
+		if (this.dead){
+			return false;
+		}
+		return !this.checkLiveState || !this.checkLiveState();
+	},
+	
+	
+	
 	
 	toggleBodyClass: function(add, class_name){
 		if (add){
@@ -574,7 +437,7 @@ AppBaseView.extendTo(AppView, {
 		var d = this.d;
 		spv.domReady(this.d, function() {
 			console.log('dom ready');
-			_this.dom_related_props.push('els', 'lev_containers');
+			_this.dom_related_props.push('els');
 
 			var slider = d.getElementById('slider');
 			var screens_block = $('#screens',d);
@@ -878,514 +741,11 @@ AppBaseView.extendTo(AppView, {
 		}
 		if (key_name){
 			//this.RPCLegacy('keyNav', key_name);
-			this.wayPointsNav(key_name);
+			this.wp_box.wayPointsNav(key_name);
 		}
 	},
-	getWPEndPoint: function(cur_wayp, nav_type, dems_storage) {
-		var cur_dems = dems_storage[cur_wayp.wpid];
-		var end_point = {};
-		if (this.wp_dirs.horizontal[nav_type]){
-			end_point.top = cur_dems.offset.top;
-			if (this.wp_dirs.forward[nav_type]){
-				end_point.left = cur_dems.offset.left;
-			} else {
-				end_point.left = cur_dems.offset.left + cur_dems.width;
-			}
-		} else {
-			end_point.left = cur_dems.offset.left;
-			if (this.wp_dirs.forward[nav_type]){
-				end_point.top = cur_dems.offset.top;
-			} else {
-				end_point.top = cur_dems.offset.top + cur_dems.height;
-			}
-		}
-		return end_point;
-	},
-	getWPDemsForStorage: function(cur_wayp, dems_storage) {
-		if (!cur_wayp.wpid){
-			throw new Error('waypoint must have ID (".wpid")');
-		}
-		var dems = this.getWPDems(cur_wayp);
-		dems_storage[cur_wayp.wpid] = dems || {disabled: true};
-		return dems;
-	},
-	getWPDems: function(cur_wayp) {
-
-		if (cur_wayp.canUse && !cur_wayp.canUse()){
-			return;
-		}
-		var cur = $(cur_wayp.node);
-		var height = cur.height();
-		if (!height){
-			return;
-		}
-		var width = cur.width();
-		if (!width){
-			return;
-		}
-
-		var offset = cur.offset();
-		if (!offset.top && !offset.left){
-			return;
-		}
-
-		var dems = {
-			height: height,
-			width: width,
-			offset: offset
-		};
-
-
-		if (cur_wayp.simple_check){
-			return this.canUseWaypoint(cur_wayp, dems);
-		} else {
-			return dems;
-		}
-	},
-	canUseWaypoint: function(cur_wayp, dems) {
-		var cur = $(cur_wayp.node);
-
-		if (cur.css('display') == 'none'){
-			return;
-		}
-
-		var height = dems.height;
-		var width = dems.width;
-
-		var pos = cur.position();
-		if ((pos.top + height) <= 0){
-			return;
-		}
-		if ((pos.left + width) <= 0){
-			return;
-		}
-
-
-		var parents = [];
-		var p_cur = cur.parent();
-		while (p_cur[0]){
-			parents.push(p_cur);
-			p_cur = p_cur.parent();
-		}
-
-		var break_of_disnone = false;
-		var ii;
-		for (ii = 0; ii < parents.length; ii++) {
-			if (parents[ii].css('display') == 'none'){
-				break_of_disnone = true;
-				break;
-			}
-
-		}
-		if (break_of_disnone){
-			return;
-		}
-
-		var stop_parents = [];
-		var view_cur = cur_wayp.view;
-		while (view_cur){
-			if (view_cur.wayp_scan_stop){
-				var con = view_cur.getC();
-				if (con){
-					stop_parents.push(con[0] || con);
-				}
-			}
-			view_cur = view_cur.parent_view;
-		}
-
-
-		var ovh_parent = false;
-		for (ii = 0; ii < parents.length; ii++) {
-			if (parents[ii].css('overflow') == 'hidden'){
-				ovh_parent = parents[ii];
-				break;
-			}
-			if (stop_parents.indexOf(parents[ii][0]) != -1){
-				break;
-			}
-		}
-		var offset = cur.offset();
-
-		if (ovh_parent){
-			var parent_offset = ovh_parent.offset();
-			if ((offset.top + height) < parent_offset.top){
-				return;
-			}
-			if ((offset.left + width) < parent_offset.left){
-				return;
-			}
-			if (offset.top > (parent_offset.top + ovh_parent.height())){
-				return;
-			}
-			if (offset.left > (parent_offset.left + ovh_parent.width())){
-				return;
-			}
-
-		}
-
-		return {
-			height: height,
-			width: width,
-			offset: offset
-		};
-	},
-	getWPPack: function(view, dems_storage) {
-		var all_waypoints = view.getAllWaypoints();
-		var wayp_pack = [];
-
-		for (var i = 0; i < all_waypoints.length; i++) {
-			var cur_wayp = all_waypoints[i];
-
-			var cur_id = cur_wayp.wpid;
-			if (!dems_storage[cur_id]){
-				var dems = this.getWPDemsForStorage(cur_wayp, dems_storage);
-				if (!dems){
-					continue;
-				}
-			}
-			/*
-			if (!dems){
-				cur.data('dems', null);
-				cloneObj(cur_wayp, {
-					height: null,
-					width: null,
-					offset: null
-				});
-				continue;
-			} else {
-				cloneObj(cur_wayp, dems);
-			}
-
-			cur.data('dems', cur_wayp);
-			*/
-			if (!dems_storage[cur_id].disabled){
-				wayp_pack.push(cur_wayp);
-			}
-		}
-		var _this = this;
-
-		wayp_pack.sort(function(a, b) {
-			return spv.sortByRules(a,b, [function(el) {
-				var cur_dems = dems_storage[el.wpid];
-				return _this.getLenthBtwPoints({left:0, top:0}, cur_dems.offset);
-			}]);
-		});
-
-		return wayp_pack;
-	},
-	sortWPCorridor: function(target_dems, corridor, nav_type, dems_storage) {
-		var start_point = {};
-		if (this.wp_dirs.horizontal[nav_type]){
-			start_point.top = target_dems.offset.top;
-			if (this.wp_dirs.forward[nav_type]){
-				//when moving to Right - start from left edge
-				start_point.left = target_dems.offset.left;
-			} else {
-				//when moving to Left - start from right edge
-				start_point.left = target_dems.offset.left + target_dems.width;
-			}
-		} else {
-			start_point.left = target_dems.offset.left;
-			if (this.wp_dirs.forward[nav_type]){
-				//when moving to Bottom - start from top edge
-				start_point.top = target_dems.offset.top;
-			} else {
-				//when moving to Top - start from bottom edge
-				start_point.top = target_dems.offset.top + target_dems.height;
-			}
-
-		}
-		var _this = this;
-		corridor.sort(function(a, b) {
-			return spv.sortByRules(a, b, [
-				function(el) {
-					var cur_dems = dems_storage[el.wpid];
-					var end_point = _this.getWPEndPoint(el, nav_type, dems_storage);
-
-					var cathetus1 = Math.abs(end_point.top - start_point.top);
-					var cathetus2 = Math.abs(end_point.left - start_point.left);
-					var hypotenuse = Math.sqrt(Math.pow(cathetus1, 2) + Math.pow(cathetus2, 2));
-
-					var path = _this.wp_dirs.horizontal[nav_type] ? cathetus2 : cathetus1;
-
-					return (hypotenuse + path)/2;
-
-
-				}
-			]);
-		});
-	},
-	getLenthBtwPoints: function(start_point, end_point) {
-		var cathetus1 = Math.abs(end_point.top - start_point.top);
-		var cathetus2 = Math.abs(end_point.left - start_point.left);
-		var hypotenuse = Math.sqrt(Math.pow(cathetus1, 2) + Math.pow(cathetus2, 2));
-		return hypotenuse;
-	},
-	matchWPForTriangles: function(dems_storage, nav_type, cur_wayp, target_wp, angle) {
-		var curwp_dems = dems_storage[cur_wayp.wpid];
-		var tagwp_dems = dems_storage[cur_wayp.wpid];
-
-		var point_a = {},
-			point_t = {},
-			point_c = {},
-			shift_length;
-
-		point_t = this.getWPEndPoint(target_wp, nav_type, dems_storage);
-
-		if (this.wp_dirs.horizontal[nav_type]){
-			point_a.top = curwp_dems.offset.top + curwp_dems.height;
-			shift_length = curwp_dems.height;
-
-
-			point_c = {
-				left: point_t.left,
-				top: point_a.top
-			};
-
-			if (this.wp_dirs.forward[nav_type]){
-				point_a.left  = curwp_dems.offset.left + curwp_dems.width;
-				if (point_c.left < point_a.left){
-					return false;
-					//throw new Error('bad left position');
-				}
-
-			} else {
-				point_a.left = curwp_dems.offset.left;
-				if (point_c.left > point_a.left){
-					return false;
-					//throw new Error('bad left position');
-				}
-			}
-		} else {
-			point_a.left = curwp_dems.offset.left + curwp_dems.width;
-			shift_length = curwp_dems.width;
-
-
-			point_c = {
-				left: point_a.left,
-				top: point_t.top
-			};
-
-			if (this.wp_dirs.forward[nav_type]){
-				point_a.top  = curwp_dems.offset.top + curwp_dems.height;
-				if (point_c.top < point_a.top){
-					return false;
-					//throw new Error('bad top position');
-				}
-
-			} else {
-				point_a.top = curwp_dems.offset.top;
-				if (point_c.top > point_a.top){
-					return false;
-					//throw new Error('bad top position');
-				}
-			}
-		}
-
-		var a_length = this.getALength(spv.cloneObj({},point_a), spv.cloneObj({}, point_c), angle);
-
-		var matched = this.matchTrianglesByPoints(point_a, point_c, nav_type, a_length, false, point_t);
-		if (!matched){
-			matched = this.matchTrianglesByPoints(point_a, point_c, nav_type, a_length, shift_length, point_t);
-		}
-		return matched;
-
-	},
-	matchTriaPoArray: function(arr) {
-		for (var i = 0; i < arr.length ; i++) {
-
-			if (arr[i] === 0){
-				return true;
-			} else {
-				if (arr[i + 1] && (arr[i + 1] * arr[i] <= 0)){
-					return false;
-				}
-			}
-		}
-		return true;
-	},
-	matchTrianglesByPoints: function(point_a, point_c, nav_type, a_length, shift_length, point_t) {
-		var point_b = {};
-
-		var dyn_field;
-		var stat_field;
-		if (this.wp_dirs.horizontal[nav_type]){
-			stat_field = 'left';
-			dyn_field = 'top';
-		} else {
-			stat_field = 'top';
-			dyn_field = 'left';
-
-		}
-
-		point_b[stat_field] = point_c[stat_field];
-		if (typeof shift_length == 'number'){
-			point_c[dyn_field] -= shift_length;
-			point_a[dyn_field] -= shift_length;
-			point_b[dyn_field] = point_c[dyn_field] - a_length;
-		} else {
-			point_b[dyn_field] = point_c[dyn_field] + a_length;
-		}
-
-		var arr = this.triangleHasPoint(point_a, point_b, point_c, point_t);
-
-		return this.matchTriaPoArray(arr);
-	},
-	triangleHasPoint: function(point_a, point_b, point_c, point_t) {
-		var line1 = (point_a.left - point_t.left) * (point_b.top - point_a.top) - (point_b.left - point_a.left) * (point_a.top - point_t.top);
-		var line2 = (point_b.left - point_t.left) * (point_c.top - point_b.top) - (point_c.left - point_b.left) * (point_b.top - point_t.top);
-		var line3 = (point_c.left - point_t.left) * (point_a.top - point_c.top) - (point_a.left - point_c.left) * (point_c.top - point_t.top);
-		return [line1, line2, line3];
-		/*
-		считаются произведения (1, 2, 3 - вершины треугольника, 0 - точка):
-		(x1 - x0) * (y2 - y1) - (x2 - x1) * (y1 - y0)
-		(x2 - x0) * (y3 - y2) - (x3 - x2) * (y2 - y0)
-		(x3 - x0) * (y1 - y3) - (x1 - x3) * (y3 - y0)
-		Если они одинакового знака, то точка внутри треугольника, если что-то из этого - ноль, то точка лежит на стороне, иначе точка вне треугольника.
-		*/
-	},
-	getALength: function(point_a, point_c, angle_alpha) {
-		//var b_point_arg = point_j.left + a_length;
-		var sign;
-
-		var toRad = function(angle){
-			return angle * (Math.PI/180);
-		};
-
-		var angle_gamma = 90;
-		var angle_beta = 180 - angle_gamma - angle_alpha;
-		var a_length = (this.getLenthBtwPoints(point_a, point_c) * Math.sin(toRad(angle_alpha)) )/ Math.sin(toRad(angle_beta));
-
-		return a_length;
-	},
-	getWPCorridor: function(cwp, nav_type, wayp_pack, dems_storage, angle) {
-		var corridor = [];
-		var i, cur, pret_dems;
-		var target_dems = dems_storage[cwp.wpid];
-		if (this.wp_dirs.horizontal[nav_type]){
-
-			var cenp_top;
-			var cenp_left;
-
-			for (i = 0; i < wayp_pack.length; i++) {
-				cur = wayp_pack[i];
-
-
-				if (!cur){
-					continue;
-				}
-				pret_dems = dems_storage[cur.wpid];
-				if (cur == cwp || cur.node == cwp.node){
-					continue;
-				}
-				if (this.wp_dirs.forward[nav_type]){
-					if (pret_dems.offset.left + pret_dems.width <= target_dems.offset.left + target_dems.width){
-						//when move to Right - comparing Right edges
-						continue;
-					}
-				} else {
-					if (pret_dems.offset.left >= target_dems.offset.left){
-						//when move to Left - comparing left edges
-						continue;
-					}
-				}
-				if (!angle){
-					if ((pret_dems.offset.top + pret_dems.height) <= target_dems.offset.top){
-						continue;
-					}
-
-					if (pret_dems.offset.top >= (target_dems.offset.top + target_dems.height)){
-						continue;
-					}
-				} else {
-					if (!this.matchWPForTriangles(dems_storage, nav_type, cwp, cur, angle)){
-						continue;
-					}
-				}
-
-
-
-
-				corridor.push(cur);
-			}
-		} else {
-			for (i = 0; i < wayp_pack.length; i++) {
-				cur = wayp_pack[i];
-				if (!cur){
-					continue;
-				}
-				pret_dems = dems_storage[cur.wpid];
-				if (cur == cwp || cur.node == cwp.node){
-					continue;
-				}
-
-				if (this.wp_dirs.forward[nav_type]){
-					if (pret_dems.offset.top + pret_dems.height <= target_dems.offset.top + target_dems.height){
-						//when move to Bottom - comparing Bottom edges
-						continue;
-					}
-				} else {
-					if (pret_dems.offset.top >= target_dems.offset.top){
-						//when move to Top - comparing Top edges
-						continue;
-					}
-				}
-				if (!angle){
-					if ((pret_dems.offset.left + pret_dems.width ) <= target_dems.offset.left){
-					continue;
-					}
-					if (pret_dems.offset.left >= (target_dems.offset.left + target_dems.width)){
-						continue;
-					}
-				} else {
-					if (!this.matchWPForTriangles(dems_storage, nav_type, cwp, cur, angle)){
-						continue;
-					}
-				}
-				corridor.push(cur);
-			}
-		}
-		this.sortWPCorridor(target_dems, corridor, nav_type, dems_storage);
-
-		return corridor;
-	},
-	wp_dirs: {
-		all: {
-			'Up': true,
-			'Down': true,
-			'Left': true,
-			'Right': true
-		},
-		horizontal: {
-			'Left': true,
-			'Right': true
-		},
-		backward: {
-			'Up': true,
-			'Left': true
-		},
-		forward: {
-			'Down': true,
-			'Right': true
-		}
-	},
-	checkCurrentWPoint: function(dems_storage) {
-		if (this.cwp_check){
-			clearTimeout(this.cwp_check);
-			delete this.cwp_check;
-		}
-
-
-		var cwp = this.state('vis_current_wpoint');
-		if (cwp && !this.getWPDemsForStorage(cwp, dems_storage)){
-			//this.current_wpoint.node.removeClass('surf_nav');
-			//delete this.current_wpoint;
-			this.setVisState('current_wpoint', false);
-		}
-
-		return this.state('vis_current_wpoint');
-
-	},
+	
+	
 	scrollToWP: function(cwp) {
 		if (cwp){
 			var cur_md_md = this.state('current_mp_md');
@@ -1411,79 +771,7 @@ AppBaseView.extendTo(AppView, {
 			//
 		}
 	},
-	wayPointsNav: function(nav_type) {
-		var _this = this;
-
-		var cur_mp_md = this.state('current_mp_md');
-		var roocon_view =  cur_mp_md && cur_mp_md.mpx.getRooConPresentation(true);
-		if (roocon_view){
-			var dems_storage = {};
-
-			var cwp = this.state('vis_current_wpoint');
-			if (nav_type == 'Enter'){
-				if (cwp){
-					$(cwp.node).click();
-
-					this.cwp_check = setTimeout(function() {
-						var still_in_use = _this.checkCurrentWPoint(dems_storage);
-						if (still_in_use){
-							_this.scrollToWP(still_in_use);
-						}
-					},100);
-				}
-
-			} else if (this.wp_dirs.all[nav_type]){
-				cwp = this.checkCurrentWPoint(dems_storage);
-
-				if (!cwp){
-					var cur_view = roocon_view;
-					var wayp_pack =[];
-
-					while (!wayp_pack.length && cur_view){
-						wayp_pack = this.getWPPack(cur_view, dems_storage);
-						cur_view = cur_view.parent_view;
-					}
-
-					this.setVisState('current_wpoint', wayp_pack[0]);
-
-				} else {
-					var target_dems = cwp && dems_storage[cwp.wpid];
-					if (!target_dems){
-						throw new Error('there is no demensions!');
-					}
-					var corridor = this.getAnyPossibleWaypoints(cwp, nav_type, dems_storage);
-
-					var new_wpoint = corridor[0];
-					if (new_wpoint ){
-						this.setVisState('current_wpoint', new_wpoint);
-					}
-
-				}
-			}
-
-		}
-	},
-	getAnyPossibleWaypoints: function(cwp, nav_type, dems_storage) {
-		var corridor = [];
-		var angle = 0;
-
-		while (!corridor.length && angle < 90){
-			var inner_corr = [];
-			var cur_view = cwp.view;
-			while (!inner_corr.length && cur_view){
-				//getting parent views until find some usable waypoints;
-				var wayp_pack = this.getWPPack(cur_view, dems_storage);
-				inner_corr = this.getWPCorridor(cwp, nav_type, wayp_pack, dems_storage, Math.min(angle, 89));
-				cur_view = cur_view.parent_view;
-			}
-			corridor = inner_corr;
-			angle += 5;
-
-		}
-
-
-		return corridor;
-	},
+	
 	appendStyle: function(style_text){
 		//fixme - check volume ondomready
 		var style_node = this.d.createElement('style');

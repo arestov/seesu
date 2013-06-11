@@ -19,11 +19,15 @@ var viewOnLevelP = function(md, view) {
 var AppBaseView = function() {};
 AppBaseView.viewOnLevelP = viewOnLevelP;
 provoda.View.extendTo(AppBaseView, {
+	dom_rp: true,
 	createDetailes: function() {
 		this.root_view = this;
 		this.d = this.opts.d;
 		this.tpls = [];
 		this.samples = {};
+		this.lev_containers = {};
+		this.dom_related_props.push('samples');
+		this.dom_related_props.push('lev_containers');
 	},
 	getLevelContainer: function(num) {
 		if (this.lev_containers[num]){
@@ -173,6 +177,145 @@ provoda.View.extendTo(AppBaseView, {
 		}
 		return $(sample_node).clone();
 	},
+	'collch-map_slice': function(nesname, array){
+		array = this.getRendOrderedNesting(nesname, array) || array;
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			var model_name = cur.model_name;
+			if (this['spec-collch-' + model_name]){
+				this.callCollectionChangeDeclaration(this['spec-collch-' + model_name], model_name, cur);
+			} else {
+				this.callCollectionChangeDeclaration({
+					place: AppBaseView.viewOnLevelP
+				}, model_name, cur);
+			}
+		}
+	},
+	'stch-map_animation': function(changes) {
+		if (!changes){
+			return;
+		}
+		var all_changhes = spv.filter(changes.array, 'changes');
+		all_changhes = [].concat.apply([], all_changhes);
+
+		for (var i = 0; i < all_changhes.length; i++) {
+			var cur = all_changhes[i];
+			var target = cur.target.getMD();
+			if (cur.type == 'move-view'){
+
+				target.updateState('vis_mp_show', {
+					anid: changes.anid,
+					value: cur.value
+				});
+
+				if (this['detcoll-' + target.model_name]){
+					this['detcoll-' + target.model_name].call(this, target);
+				}
+				//MUST UPDATE VIEW, NOT MODEL!!!!!
+			} else if (cur.type == 'destroy'){
+				this.removeChildViewsByMd(target.mpx);
+			}
+
+		}
+		//console.log(all_changhes);
+		/*
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			var handler = this["animation-type"][cur.type];
+
+			if (handler){
+				handler.call(this, cur.target, cur.type);
+			}
+			//array[i]
+		};*/
+	},
+	'stch-current_mp_md': function(md, old_md) {
+
+		//map_level_num
+		//md.map_level_num
+
+
+
+		/*
+		var oved_now_active = old_md && (old_md.map_level_num-1 ===  md.map_level_num);
+		if (old_md){
+			this.hideLevNum(old_md.map_level_num);
+			if (!oved_now_active){
+				this.removePageOverviewMark(old_md.map_level_num-1);
+			}
+		}
+		if (md.map_level_num != -1 && (!old_md || old_md.map_level_num != -1)){
+			this.hideLevNum(-1);
+		}
+
+		this.addPageOverviewMark(md.map_level_num - 1);
+		this.showLevNum(md.map_level_num);
+		if (oved_now_active){
+			this.removePageOverviewMark(old_md.map_level_num-1);
+		}
+
+*/
+
+
+
+		/*
+		var highlight = md.state('mp-highlight');
+		if (highlight && highlight.source_md){
+			var source_md = highlight.source_md;
+
+			var md_view = this.getChildView(md.mpx, 'main');
+			if (md_view){
+				var hl_view = md_view.getChildView(source_md.mpx, 'main');
+				if (hl_view){
+					//this.scrollTo(hl_view.getC());
+				}
+			}
+		}*/
+		/*
+
+		var ov_md = md.getParentMapModel();
+		var ov_highlight = ov_md && ov_md.state('mp-highlight');
+		if (ov_highlight && ov_highlight.source_md){
+			var source_md = ov_highlight.source_md;
+			var mplev_item_view = source_md.getRooConPresentation();
+			if (mplev_item_view){
+				this.scrollTo(mplev_item_view.getC(), {
+					node: this.getLevByNum(md.map_level_num - 1).scroll_con
+				}, {vp_limit: 0.4, animate: 117});
+			}
+
+			
+		}*/
+
+
+		var _this = this;
+		setTimeout(function() {
+			var parent_md = md.getParentMapModel();
+			if (parent_md){
+				var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);
+				if (mplev_item_view && mplev_item_view.getC().height()){
+					_this.scrollTo(mplev_item_view.getC(), {
+						node: _this.getLevByNum(md.map_level_num - 1).scroll_con
+					}, {vp_limit: 0.4, animate: 117});
+				} else {
+					_this.getLevByNum(md.map_level_num - 1).scroll_con.scrollTop(0);
+				}
+			}
+		}, 150);
+
+		
+
+
+
+
+
+		//var parent_md = md.getParentMapModel();
+		//this.getChildView(mpx)
+	},
+	'stch-full_page_need': function(state) {
+		this.els.screens.toggleClass('full_page_need', !!state);
+	},
+
 });
 return AppBaseView;
 });
