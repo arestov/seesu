@@ -229,6 +229,29 @@ provoda.View.extendTo(AppBaseView, {
 			//array[i]
 		};*/
 	},
+	/*
+	"animation-type":{
+		"mp_has_focus": function(target, state) {
+
+		},
+		"mp_show": function(target, state) {
+
+		}
+	},*/
+	'compx-start-level': {
+		depends_on: ['current_mp_md'],
+		fn: function(md) {
+			if (!md || md.map_level_num == -1){
+				return true;
+			}
+		}
+	},
+	'compx-current_lev_num': {
+		depends_on: ['current_mp_md'],
+		fn: function(md) {
+			return md.map_level_num;
+		}
+	},
 	'stch-current_mp_md': function(md, old_md) {
 
 		//map_level_num
@@ -315,6 +338,9 @@ provoda.View.extendTo(AppBaseView, {
 	'stch-full_page_need': function(state) {
 		this.els.screens.toggleClass('full_page_need', !!state);
 	},
+	"stch-doc_title": function(title) {
+		this.d.title = title || "";
+	}
 
 });
 return AppBaseView;

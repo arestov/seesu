@@ -198,20 +198,7 @@ AppBaseView.extendTo(AppView, {
 		}
 		this.requestAll();
 	},
-	'compx-start-level': {
-		depends_on: ['current_mp_md'],
-		fn: function(md) {
-			if (!md || md.map_level_num == -1){
-				return true;
-			}
-		}
-	},
-	'compx-current_lev_num': {
-		depends_on: ['current_mp_md'],
-		fn: function(md) {
-			return md.map_level_num;
-		}
-	},
+
 
 	'stch-start-level': function(state) {
 		//this.els.start_screen.toggleClass('inactive-page', !state);
@@ -231,14 +218,7 @@ AppBaseView.extendTo(AppView, {
 			this.search_input[0].blur();
 		}
 	},
-	"animation-type":{
-		"mp_has_focus": function(target, state) {
-
-		},
-		"mp_show": function(target, state) {
-
-		}
-	},
+	
 	state_change: {
 		"wait-vk-login": function(state) {
 			this.toggleBodyClass(state, 'wait-vk-login');
@@ -264,10 +244,8 @@ AppBaseView.extendTo(AppView, {
 					this.changeFavicon('usual');
 				}
 			}
-		},
-		"doc_title": function(title) {
-			this.d.title = title || "";
 		}
+		
 	},
 	'compx-now_playing_text': {
 		depends_on: ['now_playing'],
