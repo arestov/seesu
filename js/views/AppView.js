@@ -339,10 +339,7 @@ AppBaseView.extendTo(AppView, {
 			ext_search_query: ext_search_query
 		});
 
-		this.connectStates();
-		this.connectChildrenModels();
-
-		this.requestAll();
+		this.completeDomBuilding();
 
 
 	},

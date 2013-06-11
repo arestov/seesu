@@ -29,6 +29,11 @@ provoda.View.extendTo(AppBaseView, {
 		this.dom_related_props.push('samples');
 		this.dom_related_props.push('lev_containers');
 	},
+	completeDomBuilding: function() {
+		this.connectStates();
+		this.connectChildrenModels();
+		this.requestAll();
+	},
 	getLevelContainer: function(num) {
 		if (this.lev_containers[num]){
 			return this.lev_containers[num];
