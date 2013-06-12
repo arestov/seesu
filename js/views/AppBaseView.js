@@ -20,14 +20,14 @@ var AppBaseView = function() {};
 AppBaseView.viewOnLevelP = viewOnLevelP;
 provoda.View.extendTo(AppBaseView, {
 	dom_rp: true,
-	createDetailes: function() {
+	createDetails: function() {
 		this.root_view = this;
 		this.d = this.opts.d;
 		this.tpls = [];
+		this.els = {};
 		this.samples = {};
 		this.lev_containers = {};
-		this.dom_related_props.push('samples');
-		this.dom_related_props.push('lev_containers');
+		this.dom_related_props.push('samples', 'lev_containers', 'els');
 	},
 	completeDomBuilding: function() {
 		this.connectStates();
@@ -335,9 +335,6 @@ provoda.View.extendTo(AppBaseView, {
 
 		//var parent_md = md.getParentMapModel();
 		//this.getChildView(mpx)
-	},
-	'stch-full_page_need': function(state) {
-		this.els.screens.toggleClass('full_page_need', !!state);
 	},
 	"stch-doc_title": function(title) {
 		this.d.title = title || "";

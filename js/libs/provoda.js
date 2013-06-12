@@ -1654,7 +1654,7 @@ spv.Class.extendTo(Template, {
 		return sfy_values;
 	},
 	scope_generators:{
-		'pv-view': function(node, full_declaration) {
+		'pv-nest': function(node, full_declaration) {
 			var attr_value = full_declaration;
 
 			var filter_parts = attr_value.split('|');
@@ -2360,7 +2360,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.bindBase();
 		}
 	},
-	createDetailes: function() {
+	createDetails: function() {
 		if (this.pv_view_node){
 			this.useBase(this.pv_view_node);
 		} else if (this.createBase){
@@ -2370,7 +2370,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	requestDetailesCreating: function() {
 		if (!this.has_details){
 			this.has_details = true;
-			this.createDetailes();
+			this.createDetails();
 		}
 	},
 	requestDetailes: function(){

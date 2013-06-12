@@ -198,6 +198,9 @@ AppBaseView.extendTo(AppView, {
 		}
 		this.requestAll();
 	},
+	'stch-full_page_need': function(state) {
+		this.els.screens.toggleClass('full_page_need', !!state);
+	},
 	'stch-root-lev-search-form': function(state) {
 		this.els.search_form.toggleClass('root-lev-search-form', !!state);
 	},
@@ -242,7 +245,7 @@ AppBaseView.extendTo(AppView, {
 			return localize('now_playing','Now Playing') + ': ' + text;
 		}
 	},
-	createDetailes: function(){
+	createDetails: function(){
 		this._super();
 		var _this = this;
 		this.wp_box = new WPBox();
@@ -269,7 +272,9 @@ AppBaseView.extendTo(AppView, {
 		});
 
 		setTimeout(function() {
-			_this.buildAppDOM();
+			spv.domReady(_this.d, function() {
+				_this.buildAppDOM();
+			});
 		});
 
 		if (this.opts.can_die && spv.getDefaultView(this.d)){
@@ -395,11 +400,28 @@ AppBaseView.extendTo(AppView, {
 			return this.els.ui_samples.children('.scrobbling-switches');
 		}
 	},
-	
+	handleStartScreen: function(start_screen) {
+		var st_scr_scrl_con = start_screen.parent();
+		var start_page_wrap = st_scr_scrl_con.parent();
+		var tpl = this.buildTemplate();
+		tpl.init({
+			node: start_page_wrap,
+			spec_states: {
+				'$lev_num': -1
+			}
+		});
+		this.tpls.push(tpl);
+
+		this.lev_containers[-1] = {
+			c: start_page_wrap,
+			material: start_screen,
+			scroll_con: st_scr_scrl_con
+		};
+	},
 	buildAppDOM: function() {
 		var _this = this;
 		var d = this.d;
-		spv.domReady(this.d, function() {
+		
 			console.log('dom ready');
 			_this.dom_related_props.push('els');
 
@@ -493,8 +515,8 @@ AppBaseView.extendTo(AppView, {
 			}
 
 			var start_screen = $('#start-screen',d);
-
-			_this.els = {
+			_this.handleStartScreen(start_screen);
+			spv.cloneObj(_this.els, {
 				ui_samples: ui_samples,
 				screens: screens_block,
 				scrolling_viewport: scrolling_viewport,
@@ -504,24 +526,8 @@ AppBaseView.extendTo(AppView, {
 				search_input: $('#q',d),
 				search_form: search_form,
 				pestf_preview: start_screen.children('.personal-stuff-preview')
-			};
-
-			var st_scr_scrl_con = start_screen.parent();
-			var start_page_wrap = st_scr_scrl_con.parent();
-			var tpl = _this.buildTemplate();
-			tpl.init({
-				node: start_page_wrap,
-				spec_states: {
-					'$lev_num': -1
-				}
 			});
-			_this.tpls.push(tpl);
 
-			_this.lev_containers[-1] = {
-				c: start_page_wrap,
-				material: start_screen,
-				scroll_con: st_scr_scrl_con
-			};
 
 
 			_this.els.search_form.find('#app_type').val(app_env.app_type);
@@ -676,7 +682,7 @@ AppBaseView.extendTo(AppView, {
 				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
 				_this.arrowsKeysNav(e);
 			});
-		});
+	
 	},
 	arrowsKeysNav: function(e) {
 		var

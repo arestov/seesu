@@ -6,7 +6,7 @@ var localize = app_serv.localize;
 var StartPageView = function(){};
 
 coct.SPView.extendTo(StartPageView, {
-	createDetailes: function(){
+	createDetails: function(){
 
 		this.els = this.root_view.els;
 		this.c = this.els.start_screen;
@@ -39,12 +39,10 @@ coct.SPView.extendTo(StartPageView, {
 			main: UserCardPreview
 		}
 	},
-	complex_states: {
-		autofocus: {
-			depends_on: ['mp_show_end', 'mp_has_focus'],
-			fn: function(shw_end, focus) {
-				return focus && shw_end && shw_end.userwant;
-			}
+	'compx-autofocus': {
+		depends_on: ['mp_show_end', 'mp_has_focus'],
+		fn: function(shw_end, focus) {
+			return focus && shw_end && shw_end.userwant;
 		}
 	},
 	state_change: {

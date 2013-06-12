@@ -11,7 +11,12 @@ AppModelBase.extendTo(AppModel, {
 		for (var func_name in this.bmap_travel){
 			this[func_name] = this.getBMapTravelFunc(this.bmap_travel[func_name], this);
 		}
+		this.on('state-change.current_mp_md', function(e) {
+			if (e.value){
+				this.resortQueue();
+			}
 
+		});
 		return this;
 	},
 	checkUserInput: function(opts) {
@@ -65,9 +70,9 @@ AppModelBase.extendTo(AppModel, {
 	nowPlaying: function(mo) {
 		this.updateState('now_playing', mo.getTitle());
 		this.current_playing = mo;
-		this.checkNowPlayNav();
+		this.matchNav();
 	},
-	checkNowPlayNav: spv.debounce(function() {
+	matchNav: spv.debounce(function() {
 		if (this.current_playing){
 			this.updateState('viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
 		}
