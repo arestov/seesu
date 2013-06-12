@@ -56,46 +56,13 @@
 	max-width: 750px;
 
 	}
-.complex-page{
-	
-
-	max-width: 750px;
-	}
-.inactive-page{
-	display: none;
-}
-
-.page-scheme{
-	
-	float:left;
-	
-
-	}
-.complex-page.page-scheme .complex-page-scroll_con{
-	overflow-x: hidden;
-	overflow-y: auto;
-	
-	margin-right: -30px;
-	height: 100%;
-	}
-	.complex-page.page-scheme .complex-page_material{
-		width: 200px;
-		}
 
 @media (min-width:760px) {
-	
-	.complex-page{
-		margin-left: 240px;
-		}
 	#search {
 		margin-left: 240px;
 		}
-	.page-scheme{
-		display: block;
-		margin-left:0;
-		width: 200px;
-		}
 }
+
 
 
 .block-for-startpage, .for-startpage{
@@ -300,25 +267,9 @@
 }
 
 
-
-
-
-.page-scheme{
-
-	}
-	.page-scheme .art_card{
-
-		}
 		
 
 #slider .full_page_need#screens{
 	max-width: 100%;
 	padding:0;
-}
-.full_page_need .page-scheme{
-	display: none;
-	}
-.full_page_need .full-page{
-	margin-left: 0;
-	max-width: none;
 }
