@@ -648,7 +648,7 @@ spv.Class.extendTo(provoda.Eventor, {
 	},
 	callEventCallback: function(cur, args) {
 	//	var _this = this;
-		var opts = args && args[0];
+		var opts = args && args[ args.length -1 ];
 		if (cur.immediately && (!opts || !opts.force_async)){
 			cur.cb.apply(this, args);
 		} else {
@@ -868,6 +868,15 @@ spv.Class.extendTo(provoda.Eventor, {
 });
 
 var compx_names_cache = {};
+var wipeObj = function (obj){
+	for (var p in obj){
+		if (obj.hasOwnProperty(p)){
+			delete obj[p];
+		}
+	}
+};
+
+var std_event_opt = {force_async: true};
 
 var statesEmmiter = provoda.StatesEmitter;
 provoda.Eventor.extendTo(provoda.StatesEmitter, {
@@ -943,9 +952,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	state: function(name){
 		return this.states[name];
 	},
-	compressStatesChanges: function(changes_list) {
+	compressStatesChanges: function(changes_list, result_changes_list) {
 		var result_changes = {};
-		var result_changes_list = [];
+		result_changes_list = result_changes_list || [];
 
 		for (var i = 0; i < changes_list.length; i++) {
 			var cur = changes_list[i];
@@ -991,14 +1000,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
-	emmitStateChange: function(cur, original_state) {
-		this.trigger('state-change.' + cur.name, {
-			type: cur.name,
-			value: cur.value,
-			old_value: original_state,
-			force_async: true
-		});
-	},
 	_updateProxy: function(changes_list, opts) {
 		var i, cur;
 		if (this.undetailed_states){
@@ -1023,15 +1024,41 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		//порождать события изменившихся состояний (в передлах одного стэка/вызова)
 		//для пользователя пока пользователь не перестанет изменять новые состояния
+		if (!this.zdsv){
+			this.zdsv = {
+				original_states: {},
+				all_i_cg: [],
+				all_ch_compxs: [],
+				changed_states: [],
+				result_changes_list: [],
+				called_watchers: []
+			};
+		}
+		var original_states = this.zdsv.original_states;
+		var all_i_cg = this.zdsv.all_i_cg;
+		var all_ch_compxs = this.zdsv.all_ch_compxs;
+		var changed_states = this.zdsv.changed_states;
+		var result_changes_list = this.zdsv.result_changes_list;
+		var called_watchers = this.zdsv.called_watchers;
 		while (this.states_changing_stack.length){
-			var all_i_cg = [];
-			var original_states = spv.cloneObj({}, this.states);
+
+			wipeObj(original_states);
+			all_i_cg.length = 0;
+			all_ch_compxs.length = 0;
+			changed_states.length = 0;
+			result_changes_list.length = 0;
+			called_watchers.length = 0;
+			//объекты используются повторно, ради выиграша в производительности
+			//которые заключается в исчезновении пауз на сборку мусора 
+
+			spv.cloneObj(original_states, this.states);
+
 			var cur_changes = this.states_changing_stack.shift();
 
-			var all_ch_compxs = [];
-
 			//получить изменения для состояний, которые изменил пользователь через публичный метод
-			var changed_states = this.getChanges(cur_changes.list, cur_changes.opts);
+			this.getChanges(cur_changes.list, cur_changes.opts, changed_states);
+			//var changed_states = ... ↑
+
 			cur_changes = null;
 
 			//проверить комплексные состояния
@@ -1059,27 +1086,23 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			if (all_ch_compxs.length){
 				all_i_cg.push.apply(all_i_cg, all_ch_compxs);
 			}
-			changed_states = null;all_ch_compxs = null;
 			//устраняем измененное дважды и более
-			var result_changes_list = this.compressStatesChanges(all_i_cg);
+			this.compressStatesChanges(all_i_cg, result_changes_list);
 
 
-
-
-			var called_watchers = [];
 			for (i = 0; i < result_changes_list.length; i++) {
 				cur = result_changes_list[i];
 
-				//вызов внутреннего для самого объекта события
-				this.trigger('vip-state-change.' + cur.name, {
+				var event_data = {
 					type: cur.name,
 					value: cur.value,
 					old_value: original_states[cur.name]
-				});
+				};
+				//вызов внутреннего для самого объекта события
+				this.trigger('vip-state-change.' + cur.name, event_data);
 
 				//вызов стандартного события
-				this.emmitStateChange(cur, original_states[cur.name]);
-
+				this.trigger('state-change.' + cur.name, event_data, std_event_opt);
 
 
 				//вызов комплексного наблюдателя
@@ -1097,8 +1120,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			if (result_changes_list.length){
 				total_all_states_ch.push.apply(total_all_states_ch, result_changes_list);
 			}
-			result_changes_list = null;
-			original_states = null;
 		}
 
 		//устраняем измененное дважды и более
@@ -1106,11 +1127,18 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		total_all_states_ch = null;
 
+		wipeObj(original_states);
+		all_i_cg.length = 0;
+		all_ch_compxs.length = 0;
+		changed_states.length = 0;
+		result_changes_list.length = 0;
+		called_watchers.length = 0;
 
 		if (this.sendStatesToViews){
 			this.sendStatesToViews(total_result_changes);
 		}
 
+		
 
 		this.collecting_states_changing = false;
 		return this;
