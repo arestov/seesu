@@ -990,8 +990,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 	},
 	emmitStateChange: function(cur, original_state) {
-		var _this = this;
-		_this.trigger('state-change.' + cur.name, {
+		this.trigger('state-change.' + cur.name, {
 			type: cur.name,
 			value: cur.value,
 			old_value: original_state,
@@ -1029,6 +1028,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 			//получить изменения для состояний, которые изменил пользователь через публичный метод
 			var changed_states = this.getChanges(cur_changes.list, cur_changes.opts);
+			cur_changes = null;
 
 			var all_ch_compxs = [];
 			//проверить комплексные состояния
@@ -1038,7 +1038,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 
 			var current_compx_chs = first_compxs_chs;
-
 			//довести изменения комплексных состояний до самого конца
 			while (current_compx_chs.length){
 				var cascade_part = this.getComplexChanges(current_compx_chs);
@@ -1048,10 +1047,11 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				}
 
 			}
+			current_compx_chs = null;
 
 			//собираем все группы изменений
 			all_i_cg = all_i_cg.concat(changed_states, all_ch_compxs);
-
+			changed_states = null;all_ch_compxs = null;
 			//устраняем измененное дважды и более
 			var result_changes_list = this.compressStatesChanges(all_i_cg);
 
@@ -1087,9 +1087,14 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				}
 			}
 			total_all_states_ch = total_all_states_ch.concat(result_changes_list);
+			result_changes_list = null;
 		}
+
 		//устраняем измененное дважды и более
 		var total_result_changes = this.compressStatesChanges(total_all_states_ch);
+
+		total_all_states_ch = null;
+
 
 		if (this.sendStatesToViews){
 			this.sendStatesToViews(total_result_changes);
