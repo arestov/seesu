@@ -765,7 +765,9 @@ spv.Class.extendTo(provoda.Eventor, {
 	getAllRequests: function() {
 		var all_requests = [];
 		for (var space in this.requests){
-			all_requests = all_requests.concat(this.requests[space]);
+			if (this.requests[space].length){
+				all_requests.push.apply(all_requests, this.requests[space]);
+			}
 		}
 		return all_requests;
 	},
@@ -806,8 +808,8 @@ spv.Class.extendTo(provoda.Eventor, {
 			groups.push(immediate);
 		}
 		var relative = this.getRelativeRequestsGroups(space);
-		if (relative){
-			groups = groups.concat(relative);
+		if (relative && relative.length){
+			groups.push.apply(groups, relative);
 		}
 		var setPrio = function(el) {
 			el.setPrio();
@@ -1026,15 +1028,16 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			var original_states = spv.cloneObj({}, this.states);
 			var cur_changes = this.states_changing_stack.shift();
 
+			var all_ch_compxs = [];
+
 			//получить изменения для состояний, которые изменил пользователь через публичный метод
 			var changed_states = this.getChanges(cur_changes.list, cur_changes.opts);
 			cur_changes = null;
 
-			var all_ch_compxs = [];
 			//проверить комплексные состояния
 			var first_compxs_chs = this.getComplexChanges(changed_states);
 			if (first_compxs_chs.length){
-				all_ch_compxs = all_ch_compxs.concat(first_compxs_chs);
+				all_ch_compxs.push.apply(all_ch_compxs, first_compxs_chs);
 			}
 
 			var current_compx_chs = first_compxs_chs;
@@ -1043,14 +1046,19 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				var cascade_part = this.getComplexChanges(current_compx_chs);
 				current_compx_chs = cascade_part;
 				if (cascade_part.length){
-					all_ch_compxs = all_ch_compxs.concat(cascade_part);
+					all_ch_compxs.push.apply(all_ch_compxs, cascade_part);
 				}
 
 			}
 			current_compx_chs = null;
 
 			//собираем все группы изменений
-			all_i_cg = all_i_cg.concat(changed_states, all_ch_compxs);
+			if (changed_states.length){
+				all_i_cg.push.apply(all_i_cg, changed_states);
+			}
+			if (all_ch_compxs.length){
+				all_i_cg.push.apply(all_i_cg, all_ch_compxs);
+			}
 			changed_states = null;all_ch_compxs = null;
 			//устраняем измененное дважды и более
 			var result_changes_list = this.compressStatesChanges(all_i_cg);
@@ -1086,8 +1094,11 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 					}
 				}
 			}
-			total_all_states_ch = total_all_states_ch.concat(result_changes_list);
+			if (result_changes_list.length){
+				total_all_states_ch.push.apply(total_all_states_ch, result_changes_list);
+			}
 			result_changes_list = null;
+			original_states = null;
 		}
 
 		//устраняем измененное дважды и более
@@ -1107,8 +1118,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	getComplexChanges: function(changes_list) {
 		return this.getChanges(this.checkComplexStates(changes_list));
 	},
-	getChanges: function(changes_list, opts) {
-		var changed_states = [];
+	getChanges: function(changes_list, opts, result_arr) {
+		var changed_states = result_arr || [];
 		var i;
 		for (i = 0; i < changes_list.length; i++) {
 			var cur = changes_list[i];
@@ -1345,7 +1356,6 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		var old_value = this.children_models[collection_name];
 		this.children_models[collection_name] = array;
 		// !?
-
 
 		var event_obj = {};
 		if (typeof opts == 'object'){
@@ -1644,7 +1654,7 @@ spv.Class.extendTo(Template, {
 				if (cur.pv_repeats_data[i].array){
 					objs = objs.concat(cur.pv_repeats_data[i].array);
 				}
-				
+
 			}
 		}
 		return result;
@@ -1780,7 +1790,7 @@ spv.Class.extendTo(Template, {
 							full_pv_context = _this.pv_repeat_context + '.$.';
 						}
 						full_pv_context += field_name;
-						
+
 						var fragt = document.createDocumentFragment();
 
 						for (var i = 0; i < collection.length; i++) {
@@ -1851,7 +1861,7 @@ spv.Class.extendTo(Template, {
 				complects[i] = complects[i].replace(/^\s*|s*?$/,'').split(/\s*\:\s*?(?=\{\{)/);
 				var prop = complects[i][0];
 				var statement = complects[i][1] && complects[i][1].replace(/(^\{\{)|(\}\}$)/gi,'');
-				
+
 				if (!prop || !statement){
 					throw new Error('wrong declaration: ' + complex_value);
 					//return;
@@ -2853,7 +2863,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					if (!preffered || preffered.indexOf(cur_md) != -1){
 						return getFreeView.call(this, cur_md, pv_view.node);
 					}
-					
 				}
 			},
 			appendDirectly: function(fragt) {
@@ -2954,9 +2963,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				} else {
 					this.appendNestingViews(declr, opts, name, min_array, not_request);
 				}
-				
 			}
-			
 		}
 	},
 	parseCollectionChangeDeclaration: function(collch) {
@@ -3021,7 +3028,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				} else {
 					return dom_hook;
 				}
-				
 			}
 
 		}
@@ -3180,13 +3186,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					view.requestDetailesCreating();
 				}
 			}
-			
 			if (!not_request){
 				//this._collections_set_processing
 				this.requestAll();
 			}
 		}
-		
+
 		for (i = 0; i < ordered_complects.length; i++) {
 			var complect = complects[ordered_complects[i]];
 			if (complect.type == 'after'){
@@ -3232,9 +3237,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					appendSpace(place);
 				}
 			}
-			
+
 		}
-		
 	},
 	parts_builder: {}
 });
