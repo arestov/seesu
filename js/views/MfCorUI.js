@@ -65,7 +65,7 @@ provoda.View.extendTo(FileInTorrentUI,{
 var SongFileModelUI = function() {};
 provoda.View.extendTo(SongFileModelUI, {
 	dom_rp: true,
-	createDetailes: function(){
+	createDetails: function(){
 		this.createBase();
 
 		var _this = this;

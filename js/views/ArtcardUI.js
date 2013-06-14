@@ -1,4 +1,4 @@
-define(['provoda', 'jquery', './coct', 'app_serv', 'js/modules/Panoramator', 'spv'],
+define(['provoda', 'jquery', './coct', 'app_serv', './modules/Panoramator', 'spv'],
 function(provoda, $, coct, app_serv, Panoramator, spv) {
 "use strict";
 var localize = app_serv.localize;

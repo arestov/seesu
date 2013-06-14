@@ -10,7 +10,7 @@ var SongUI = function(){};
 
 coct.SPView.extendTo(SongUI, {
 	dom_rp: true,
-	createDetailes: function(){
+	createDetails: function(){
 		this.createBase();
 	},
 	state_change : {
