@@ -972,6 +972,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			var obj_to_change	= this.states,
 				old_value		= obj_to_change && obj_to_change[name],
 				method;
+			if (old_value != value){
 
 			var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
 			if (stateChanger){
@@ -988,7 +989,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
 			//
 
-			if (old_value != value){
+			
 
 				obj_to_change[name] = value;
 
@@ -1178,8 +1179,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		for (var i = 0; i < changed_states.length; i++) {
 			list.push(changed_states[i].name);
 		}
-		var co_sts = this.getTargetComplexStates(list);
-		return co_sts;
+		return this.getTargetComplexStates(list);
 	},
 	getTargetComplexStates: function(state) {
 		var states = spv.toRealArray(state);
