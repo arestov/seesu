@@ -962,7 +962,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		result_changes_list = result_changes_list || [];
 
 		iterateChList(changes_list, this, function(i, name, value) {
-		//	delete result_changes[name]; //reorder fields! hack!?
+			delete result_changes[name]; //reorder fields! hack!?
 			result_changes[name] = value;
 		});
 
@@ -1178,11 +1178,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 		return this.getTargetComplexStates(list);
 	},
-	getTargetComplexStates: function(state) {
-		var states = spv.toRealArray(state);
-		if (!state){
-			throw new Error('something wrong');
-		}
+	getTargetComplexStates: function(states) {
 		var result_array = [];
 
 		for (var i = 0; i < this.full_comlxs_list.length; i++) {
