@@ -120,19 +120,6 @@ html.opera-extension{
 		left: 0;
 		min-height: 100%;
 		}
-		.page-scheme{
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			overflow: hidden;
-			
-			}
-		.complex-page{
-			-webkit-transition: margin-left 0.12s ease-out;
-			-moz-transition: margin-left 0.12s ease-out;
-			-o-transition: margin-left 0.12s ease-out;
-			transition: margin-left 0.12s ease-out;
-			}
 
 
 

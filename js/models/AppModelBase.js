@@ -6,9 +6,9 @@ provoda.Model.extendTo(AppModelBase, {
 		this._super();
 		this.navigation = [];
 		this.map = new BrowseMap();
-		this.on('state-change.current_mp_md', function() {
-			this.resortQueue();
-		});
+	},
+	setDocTitle: function(title) {
+		this.updateState('doc_title', title);
 	},
 	getBMapTravelFunc: function(func, context) {
 		return function() {
@@ -17,7 +17,10 @@ provoda.Model.extendTo(AppModelBase, {
 	},
 	changeNavTree: function(nav_tree) {
 		this.nav_tree = spv.filter(nav_tree, 'resident');
-		this.checkNowPlayNav();
+		if (this.matchNav){
+			this.matchNav();
+		}
+		
 	},
 	restoreFreezed: function(transit){
 		this.map.restoreFreezed(transit);

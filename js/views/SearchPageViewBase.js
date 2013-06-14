@@ -19,7 +19,7 @@ provoda.addPrototype("baseSectionButtonView", {
 
 provoda.addPrototype("baseSuggestView", {
 	dom_rp: true,
-	createDetailes: function(){
+	createDetails: function(){
 		this.createBase();
 		if (this.createItem){
 			this
@@ -130,7 +130,7 @@ provoda.addPrototype("InvestigationView", {
 
 provoda.addPrototype("searchSectionView", {
 	dom_rp: true,
-	createDetailes: function(){
+	createDetails: function(){
 		this.createCon();
 		this.createHead();
 

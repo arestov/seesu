@@ -7,7 +7,7 @@ function(provoda, $, SongUI, etc_views, app_serv) {
 		"stch-dont_rept_pl": function(state) {
 			this.dont_rept_pl_chbx.prop('checked', !!state);
 		},
-		createDetailes: function(){
+		createDetails: function(){
 			var parent_c = this.parent_view.row_context;
 			var buttons_panel = this.parent_view.buttons_panel;
 			this.c =  parent_c.children('.pla-settings');
@@ -26,7 +26,7 @@ function(provoda, $, SongUI, etc_views, app_serv) {
 
 	var MultiAtcsRowView = function(){};
 	etc_views.BaseCRowUI.extendTo(MultiAtcsRowView, {
-		createDetailes: function(){
+		createDetails: function(){
 			var parent_c = this.parent_view.row_context;
 			var buttons_panel = this.parent_view.buttons_panel;
 			this.c =  parent_c.children('.pla-row');
