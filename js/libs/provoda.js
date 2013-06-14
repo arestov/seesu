@@ -977,23 +977,24 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			var obj_to_change	= this.states,
 				old_value		= obj_to_change[name],
 				method;
+			if (old_value != value){
 
-			var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
-			if (stateChanger){
-				if (typeof stateChanger == 'function'){
-					method = stateChanger;
-				} else if (this.checkDepVP){
-					if (this.checkDepVP(stateChanger)){
-						method = stateChanger.fn;
+				var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
+				if (stateChanger){
+					if (typeof stateChanger == 'function'){
+						method = stateChanger;
+					} else if (this.checkDepVP){
+						if (this.checkDepVP(stateChanger)){
+							method = stateChanger.fn;
+						}
 					}
 				}
-			}
-			//
-			//value = value || false;
-			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
-			//
+				//
+				//value = value || false;
+				//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
+				//
 
-			if (old_value != value){
+				
 
 				obj_to_change[name] = value;
 
@@ -1175,8 +1176,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		for (var i = 0; i < changed_states.length; i+=3) {
 			list.push(changed_states[i]);
 		}
-		var co_sts = this.getTargetComplexStates(list);
-		return co_sts;
+		return this.getTargetComplexStates(list);
 	},
 	getTargetComplexStates: function(state) {
 		var states = spv.toRealArray(state);
