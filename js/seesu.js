@@ -9,6 +9,7 @@ ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax) {
 'use strict';
+var seesu_version = 4.0;
 var
 	localize = app_serv.localize,
 	app_env = app_serv.app_env;
@@ -840,7 +841,7 @@ AppModel.extendTo(SeesuApp, {
 });
 
 seesu = su = new SeesuApp();
-su.init(3.9);
+su.init(seesu_version);
 provoda.sync_s.setRootModel(su);
 
 
