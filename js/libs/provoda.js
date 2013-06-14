@@ -1135,7 +1135,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		result_changes_list.length = 0;
 		called_watchers.length = 0;
 
-		if (this.sendStatesToViews){
+		if (this.sendStatesToViews && total_result_changes.length){
 			this.sendStatesToViews(total_result_changes);
 		}
 
