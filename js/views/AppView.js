@@ -1,10 +1,10 @@
 define(['provoda', 'spv', 'jquery', 'app_serv', 'js/libs/FuncsQueue', './nav', './coct' ,'./uacq',
-'./StartPageView', './searchPageView', './ArtcardUI', './TagsListPage', './ArtistListView',
-'./songsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
+'./StartPageView', './SearchPageView', './ArtcardUI', './TagsListPage', './ArtistListView',
+'./SongsListView', './UserCardPage', './MusicConductorPage', './TagPageView' ,'./YoutubeVideoView',
 './lul', './SongcardPage', './AppBaseView', './modules/WPBox'],
 function(provoda, spv, $, app_serv, FuncsQueue, nav, coct, uacq,
-StartPageView, searchPageView, ArtcardUI, TagsListPage, ArtistListView,
-songsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
+StartPageView, SearchPageView, ArtcardUI, TagsListPage, ArtistListView,
+SongsListView, UserCardPage, MusicConductorPage, TagPageView, YoutubeVideoView,
 lul, SongcardPage, AppBaseView, WPBox) {
 "use strict";
 var app_env = app_serv.app_env;
@@ -20,7 +20,7 @@ AppBaseView.extendTo(AppView, {
 			nav: nav.StartPageNavView
 		},
 		invstg: {
-			main: searchPageView,
+			main: SearchPageView,
 			nav: nav.investgNavUI
 		},
 		artcard: {
@@ -33,8 +33,8 @@ AppBaseView.extendTo(AppView, {
 			nav: nav.baseNavUI
 		},
 		playlist: {
-			main: songsListView,
-			'all-sufficient-details': songsListView,
+			main: SongsListView,
+			'all-sufficient-details': SongsListView,
 			nav: nav.baseNavUI
 		},
 		lfm_usercard:{
