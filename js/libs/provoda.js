@@ -648,7 +648,7 @@ spv.Class.extendTo(provoda.Eventor, {
 	},
 	callEventCallback: function(cur, args) {
 	//	var _this = this;
-		var opts = args && args[0];
+		var opts = args && args[ args.length -1 ];
 		if (cur.immediately && (!opts || !opts.force_async)){
 			cur.cb.apply(this, args);
 		} else {
@@ -765,7 +765,9 @@ spv.Class.extendTo(provoda.Eventor, {
 	getAllRequests: function() {
 		var all_requests = [];
 		for (var space in this.requests){
-			all_requests = all_requests.concat(this.requests[space]);
+			if (this.requests[space].length){
+				all_requests.push.apply(all_requests, this.requests[space]);
+			}
 		}
 		return all_requests;
 	},
@@ -806,8 +808,8 @@ spv.Class.extendTo(provoda.Eventor, {
 			groups.push(immediate);
 		}
 		var relative = this.getRelativeRequestsGroups(space);
-		if (relative){
-			groups = groups.concat(relative);
+		if (relative && relative.length){
+			groups.push.apply(groups, relative);
 		}
 		var setPrio = function(el) {
 			el.setPrio();
@@ -866,6 +868,15 @@ spv.Class.extendTo(provoda.Eventor, {
 });
 
 var compx_names_cache = {};
+var wipeObj = function (obj){
+	for (var p in obj){
+		if (obj.hasOwnProperty(p)){
+			delete obj[p];
+		}
+	}
+};
+
+var std_event_opt = {force_async: true};
 
 var statesEmmiter = provoda.StatesEmitter;
 provoda.Eventor.extendTo(provoda.StatesEmitter, {
@@ -941,9 +952,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	state: function(name){
 		return this.states[name];
 	},
-	compressStatesChanges: function(changes_list) {
+	compressStatesChanges: function(changes_list, result_changes_list) {
 		var result_changes = {};
-		var result_changes_list = [];
+		result_changes_list = result_changes_list || [];
 
 		for (var i = 0; i < changes_list.length; i++) {
 			var cur = changes_list[i];
@@ -989,15 +1000,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
-	emmitStateChange: function(cur, original_state) {
-		var _this = this;
-		_this.trigger('state-change.' + cur.name, {
-			type: cur.name,
-			value: cur.value,
-			old_value: original_state,
-			force_async: true
-		});
-	},
 	_updateProxy: function(changes_list, opts) {
 		var i, cur;
 		if (this.undetailed_states){
@@ -1022,56 +1024,85 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		//порождать события изменившихся состояний (в передлах одного стэка/вызова)
 		//для пользователя пока пользователь не перестанет изменять новые состояния
+		if (!this.zdsv){
+			this.zdsv = {
+				original_states: {},
+				all_i_cg: [],
+				all_ch_compxs: [],
+				changed_states: [],
+				result_changes_list: [],
+				called_watchers: []
+			};
+		}
+		var original_states = this.zdsv.original_states;
+		var all_i_cg = this.zdsv.all_i_cg;
+		var all_ch_compxs = this.zdsv.all_ch_compxs;
+		var changed_states = this.zdsv.changed_states;
+		var result_changes_list = this.zdsv.result_changes_list;
+		var called_watchers = this.zdsv.called_watchers;
 		while (this.states_changing_stack.length){
-			var all_i_cg = [];
-			var original_states = spv.cloneObj({}, this.states);
+
+			wipeObj(original_states);
+			all_i_cg.length = 0;
+			all_ch_compxs.length = 0;
+			changed_states.length = 0;
+			result_changes_list.length = 0;
+			called_watchers.length = 0;
+			//объекты используются повторно, ради выиграша в производительности
+			//которые заключается в исчезновении пауз на сборку мусора 
+
+			spv.cloneObj(original_states, this.states);
+
 			var cur_changes = this.states_changing_stack.shift();
 
 			//получить изменения для состояний, которые изменил пользователь через публичный метод
-			var changed_states = this.getChanges(cur_changes.list, cur_changes.opts);
+			this.getChanges(cur_changes.list, cur_changes.opts, changed_states);
+			//var changed_states = ... ↑
 
-			var all_ch_compxs = [];
+			cur_changes = null;
+
 			//проверить комплексные состояния
 			var first_compxs_chs = this.getComplexChanges(changed_states);
 			if (first_compxs_chs.length){
-				all_ch_compxs = all_ch_compxs.concat(first_compxs_chs);
+				all_ch_compxs.push.apply(all_ch_compxs, first_compxs_chs);
 			}
 
 			var current_compx_chs = first_compxs_chs;
-
 			//довести изменения комплексных состояний до самого конца
 			while (current_compx_chs.length){
 				var cascade_part = this.getComplexChanges(current_compx_chs);
 				current_compx_chs = cascade_part;
 				if (cascade_part.length){
-					all_ch_compxs = all_ch_compxs.concat(cascade_part);
+					all_ch_compxs.push.apply(all_ch_compxs, cascade_part);
 				}
 
 			}
+			current_compx_chs = null;
 
 			//собираем все группы изменений
-			all_i_cg = all_i_cg.concat(changed_states, all_ch_compxs);
-
+			if (changed_states.length){
+				all_i_cg.push.apply(all_i_cg, changed_states);
+			}
+			if (all_ch_compxs.length){
+				all_i_cg.push.apply(all_i_cg, all_ch_compxs);
+			}
 			//устраняем измененное дважды и более
-			var result_changes_list = this.compressStatesChanges(all_i_cg);
+			this.compressStatesChanges(all_i_cg, result_changes_list);
 
 
-
-
-			var called_watchers = [];
 			for (i = 0; i < result_changes_list.length; i++) {
 				cur = result_changes_list[i];
 
-				//вызов внутреннего для самого объекта события
-				this.trigger('vip-state-change.' + cur.name, {
+				var event_data = {
 					type: cur.name,
 					value: cur.value,
 					old_value: original_states[cur.name]
-				});
+				};
+				//вызов внутреннего для самого объекта события
+				this.trigger('vip-state-change.' + cur.name, event_data);
 
 				//вызов стандартного события
-				this.emmitStateChange(cur, original_states[cur.name]);
-
+				this.trigger('state-change.' + cur.name, event_data, std_event_opt);
 
 
 				//вызов комплексного наблюдателя
@@ -1086,15 +1117,28 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 					}
 				}
 			}
-			total_all_states_ch = total_all_states_ch.concat(result_changes_list);
+			if (result_changes_list.length){
+				total_all_states_ch.push.apply(total_all_states_ch, result_changes_list);
+			}
 		}
+
 		//устраняем измененное дважды и более
 		var total_result_changes = this.compressStatesChanges(total_all_states_ch);
+
+		total_all_states_ch = null;
+
+		wipeObj(original_states);
+		all_i_cg.length = 0;
+		all_ch_compxs.length = 0;
+		changed_states.length = 0;
+		result_changes_list.length = 0;
+		called_watchers.length = 0;
 
 		if (this.sendStatesToViews){
 			this.sendStatesToViews(total_result_changes);
 		}
 
+		
 
 		this.collecting_states_changing = false;
 		return this;
@@ -1102,8 +1146,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	getComplexChanges: function(changes_list) {
 		return this.getChanges(this.checkComplexStates(changes_list));
 	},
-	getChanges: function(changes_list, opts) {
-		var changed_states = [];
+	getChanges: function(changes_list, opts, result_arr) {
+		var changed_states = result_arr || [];
 		var i;
 		for (i = 0; i < changes_list.length; i++) {
 			var cur = changes_list[i];
@@ -1340,7 +1384,6 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		var old_value = this.children_models[collection_name];
 		this.children_models[collection_name] = array;
 		// !?
-
 
 		var event_obj = {};
 		if (typeof opts == 'object'){
@@ -1639,7 +1682,7 @@ spv.Class.extendTo(Template, {
 				if (cur.pv_repeats_data[i].array){
 					objs = objs.concat(cur.pv_repeats_data[i].array);
 				}
-				
+
 			}
 		}
 		return result;
@@ -1654,7 +1697,7 @@ spv.Class.extendTo(Template, {
 		return sfy_values;
 	},
 	scope_generators:{
-		'pv-view': function(node, full_declaration) {
+		'pv-nest': function(node, full_declaration) {
 			var attr_value = full_declaration;
 
 			var filter_parts = attr_value.split('|');
@@ -1775,7 +1818,7 @@ spv.Class.extendTo(Template, {
 							full_pv_context = _this.pv_repeat_context + '.$.';
 						}
 						full_pv_context += field_name;
-						
+
 						var fragt = document.createDocumentFragment();
 
 						for (var i = 0; i < collection.length; i++) {
@@ -1846,7 +1889,7 @@ spv.Class.extendTo(Template, {
 				complects[i] = complects[i].replace(/^\s*|s*?$/,'').split(/\s*\:\s*?(?=\{\{)/);
 				var prop = complects[i][0];
 				var statement = complects[i][1] && complects[i][1].replace(/(^\{\{)|(\}\}$)/gi,'');
-				
+
 				if (!prop || !statement){
 					throw new Error('wrong declaration: ' + complex_value);
 					//return;
@@ -2360,7 +2403,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.bindBase();
 		}
 	},
-	createDetailes: function() {
+	createDetails: function() {
 		if (this.pv_view_node){
 			this.useBase(this.pv_view_node);
 		} else if (this.createBase){
@@ -2370,7 +2413,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	requestDetailesCreating: function() {
 		if (!this.has_details){
 			this.has_details = true;
-			this.createDetailes();
+			this.createDetails();
 		}
 	},
 	requestDetailes: function(){
@@ -2848,7 +2891,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					if (!preffered || preffered.indexOf(cur_md) != -1){
 						return getFreeView.call(this, cur_md, pv_view.node);
 					}
-					
 				}
 			},
 			appendDirectly: function(fragt) {
@@ -2949,9 +2991,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				} else {
 					this.appendNestingViews(declr, opts, name, min_array, not_request);
 				}
-				
 			}
-			
 		}
 	},
 	parseCollectionChangeDeclaration: function(collch) {
@@ -3016,7 +3056,6 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				} else {
 					return dom_hook;
 				}
-				
 			}
 
 		}
@@ -3175,13 +3214,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					view.requestDetailesCreating();
 				}
 			}
-			
 			if (!not_request){
 				//this._collections_set_processing
 				this.requestAll();
 			}
 		}
-		
+
 		for (i = 0; i < ordered_complects.length; i++) {
 			var complect = complects[ordered_complects[i]];
 			if (complect.type == 'after'){
@@ -3227,9 +3265,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 					appendSpace(place);
 				}
 			}
-			
+
 		}
-		
 	},
 	parts_builder: {}
 });

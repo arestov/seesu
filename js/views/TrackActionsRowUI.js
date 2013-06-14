@@ -61,7 +61,7 @@ etc_views.BaseCRowUI.extendTo(ShareRowUI, {
 		vk_auth: etc_views.VkLoginUI,
 		searcher: ShareSearchView
 	},
-	createDetailes: function(){
+	createDetails: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.share-song');
 		this.button = buttons_panel.find('.pc-place .pc-rupor');
@@ -204,7 +204,7 @@ etc_views.BaseCRowUI.extendTo(PlaylistAddRowUI, {
 	children_views: {
 		searcher: PlaylistAddSsearchView
 	},
-	createDetailes: function(){
+	createDetails: function(){
 		var parent_c = this.parent_view.row_context;
 		var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.addsong-to-playlist');
@@ -287,7 +287,7 @@ etc_views.BaseCRowUI.extendTo(LoveRowUI, {
 	children_views: {
 		lfm_loveit: etc_views.LfmLoveItView
 	},
-	createDetailes: function(){
+	createDetails: function(){
 		var parent_c = this.parent_view.row_context;
 		var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.love-song');
@@ -312,7 +312,7 @@ etc_views.BaseCRowUI.extendTo(ScrobbleRowUI, {
 	children_views: {
 		lfm_scrobble: etc_views.LfmScrobbleView
 	},
-	createDetailes: function(){
+	createDetails: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.last-fm-scrobbling');
 		this.button = buttons_panel.find('.lfm-scrobbling-button');
@@ -354,7 +354,7 @@ etc_views.BaseCRowUI.extendTo(RepeatSongRowView, {
 			return input;
 		}
 	},
-	createDetailes: function(){
+	createDetails: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c =  parent_c.children('.rept-song');
 		this.button = buttons_panel.find('.rept-song-button');
