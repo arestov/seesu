@@ -974,22 +974,22 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				method;
 			if (old_value != value){
 
-			var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
-			if (stateChanger){
-				if (typeof stateChanger == 'function'){
-					method = stateChanger;
-				} else if (this.checkDepVP){
-					if (this.checkDepVP(stateChanger)){
-						method = stateChanger.fn;
+				var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
+				if (stateChanger){
+					if (typeof stateChanger == 'function'){
+						method = stateChanger;
+					} else if (this.checkDepVP){
+						if (this.checkDepVP(stateChanger)){
+							method = stateChanger.fn;
+						}
 					}
 				}
-			}
-			//
-			//value = value || false;
-			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
-			//
+				//
+				//value = value || false;
+				//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
+				//
 
-			
+				
 
 				obj_to_change[name] = value;
 
