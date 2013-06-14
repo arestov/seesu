@@ -962,23 +962,14 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		result_changes_list = result_changes_list || [];
 
 		iterateChList(changes_list, this, function(i, name, value) {
-			if (!result_changes[name]){
-				result_changes_list.push(name, value, old_value);
-				var obj = {name: cur.name};
-				result_changes[cur.name] = obj;
-				result_changes_list.push(obj);
-			}
+			delete result_changes[name]; //reorder fields! hack!?
+			result_changes[name] = value;
 		});
 
-		for (var i = 0; i < changes_list.length; i++) {
-			var cur = changes_list[i];
-			if (!result_changes[cur.name]){
-				var obj = {name: cur.name};
-				result_changes[cur.name] = obj;
-				result_changes_list.push(obj);
-			}
-			result_changes[cur.name].value = cur.value;
+		for ( var name in result_changes ){
+			result_changes_list.push( name, result_changes[name] );
 		}
+
 		return result_changes_list;
 	},
 	_replaceState: function(name, value, skip_handler, stack) {
@@ -1014,14 +1005,40 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
+	_triggerStChanges: function(i, name, value) {
+		var event_data = {
+			type: name,
+			value: value,
+			old_value: this.zdsv.original_states[name]
+		};
+
+		//вызов внутреннего для самого объекта события
+		this.trigger('vip-state-change.' + name, event_data);
+
+		//вызов стандартного события
+		this.trigger('state-change.' + name, event_data, std_event_opt);
+
+
+		//вызов комплексного наблюдателя
+		var watchers = this.complex_states_index[name];
+		if (watchers){
+			for (var jj = 0; jj < watchers.length; jj++) {
+				var watcher = watchers[jj];
+				if (called_watchers.indexOf(watcher) == -1){
+					this.callCSWatcher(watcher);
+					called_watchers.push(watcher);
+				}
+			}
+		}
+
+	},
+	_setUndetailedState: function(i, name, value) {
+		this.undetailed_states[name] = value;
+	},
 	_updateProxy: function(changes_list, opts) {
 		var i, cur;
 		if (this.undetailed_states){
-			for (i = 0; i < changes_list.length; i++) {
-				cur = changes_list[i];
-				this.undetailed_states[cur.name] = cur.value;
-
-			}
+			iterateChList(changes_list, this, this._setUndetailedState);
 			return this;
 		}
 		this.states_changing_stack.push({
@@ -1104,33 +1121,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			this.compressStatesChanges(all_i_cg, result_changes_list);
 
 
-			for (i = 0; i < result_changes_list.length; i++) {
-				cur = result_changes_list[i];
+			iterateChList(result_changes_list, this, this._triggerStChanges);
 
-				var event_data = {
-					type: cur.name,
-					value: cur.value,
-					old_value: original_states[cur.name]
-				};
-				//вызов внутреннего для самого объекта события
-				this.trigger('vip-state-change.' + cur.name, event_data);
-
-				//вызов стандартного события
-				this.trigger('state-change.' + cur.name, event_data, std_event_opt);
-
-
-				//вызов комплексного наблюдателя
-				var watchers = this.complex_states_index[cur.name];
-				if (watchers){
-					for (var jj = 0; jj < watchers.length; jj++) {
-						var watcher = watchers[jj];
-						if (called_watchers.indexOf(watcher) == -1){
-							this.callCSWatcher(watcher);
-							called_watchers.push(watcher);
-						}
-					}
-				}
-			}
 			if (result_changes_list.length){
 				total_all_states_ch.push.apply(total_all_states_ch, result_changes_list);
 			}
@@ -1164,7 +1156,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		var changed_states = result_arr || [];
 		var i;
 		for (i = 0; i < changes_list.length; i+=3) {
-			this._replaceState(changes_list[i], changes_list[i]+1, opts && opts.skip_handler, changed_states);
+			this._replaceState(changes_list[i], changes_list[i+1], opts && opts.skip_handler, changed_states);
 		}
 		if (changes_list.length){
 			if (this.tpl){
@@ -1196,8 +1188,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		for (var i = 0; i < this.full_comlxs_list.length; i++) {
 			var cur = this.full_comlxs_list[i];
 			if (states.length != spv.arrayExclude(states, cur.obj.depends_on).length ){
-				cur.value = this.compoundComplexState(cur);
-				result_array.push(cur);
+				result_array.push(cur.name, this.compoundComplexState(cur));
 			}
 		}
 
