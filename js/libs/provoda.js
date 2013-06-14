@@ -1422,8 +1422,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	},
 	updateManyStates: function(obj) {
 		var changes_list = [];
-		for (var i in obj) {
-			changes_list.push(i, obj[i]);
+		for (var name in obj) {
+			changes_list.push(name, obj[name]);
 		}
 		this._updateProxy(changes_list);
 	},
