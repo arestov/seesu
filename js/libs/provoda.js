@@ -962,7 +962,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		result_changes_list = result_changes_list || [];
 
 		iterateChList(changes_list, this, function(i, name, value) {
-			delete result_changes[name]; //reorder fields! hack!?
+		//	delete result_changes[name]; //reorder fields! hack!?
 			result_changes[name] = value;
 		});
 
@@ -1024,9 +1024,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		if (watchers){
 			for (var jj = 0; jj < watchers.length; jj++) {
 				var watcher = watchers[jj];
-				if (called_watchers.indexOf(watcher) == -1){
+				if (this.zdsv.called_watchers.indexOf(watcher) == -1){
 					this.callCSWatcher(watcher);
-					called_watchers.push(watcher);
+					this.zdsv.called_watchers.push(watcher);
 				}
 			}
 		}
@@ -1155,7 +1155,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	getChanges: function(changes_list, opts, result_arr) {
 		var changed_states = result_arr || [];
 		var i;
-		for (i = 0; i < changes_list.length; i+=3) {
+		for (i = 0; i < changes_list.length; i+=2) {
 			this._replaceState(changes_list[i], changes_list[i+1], opts && opts.skip_handler, changed_states);
 		}
 		if (changes_list.length){
