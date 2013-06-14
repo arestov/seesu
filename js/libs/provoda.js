@@ -1173,7 +1173,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	checkComplexStates: function(changed_states) {
 		var list = [];
-		for (var i = 0; i < changed_states.length; i+=3) {
+		for (var i = 0; i < changed_states.length; i+=2) {
 			list.push(changed_states[i]);
 		}
 		return this.getTargetComplexStates(list);
