@@ -651,9 +651,8 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		return this;
 	},
-	callEventCallback: function(cur, args) {
+	callEventCallback: function(cur, args, opts) {
 	//	var _this = this;
-		var opts = args && args[ args.length -1 ];
 		if (cur.immediately && (!opts || !opts.force_async)){
 			cur.cb.apply(this, args);
 		} else {
@@ -664,8 +663,14 @@ spv.Class.extendTo(provoda.Eventor, {
 			},1);*/
 		}
 	},
-	triggerCallbacks: function(){
-
+	triggerCallbacks: function(cb_cs, args, opts, name){
+		for (var i = 0; i < cb_cs.length; i++) {
+			var cur = cb_cs[i];
+			this.callEventCallback(cur, args, opts);
+			if (cur.once){
+				this.off(name, false, cur);
+			}
+		}
 	},
 	trigger: function(name){
 		var cb_cs = this.getMatchedCallbacks(name).matched;
@@ -673,7 +678,7 @@ spv.Class.extendTo(provoda.Eventor, {
 			var args = Array.prototype.slice.call(arguments, 1);
 			for (var i = 0; i < cb_cs.length; i++) {
 				var cur = cb_cs[i];
-				this.callEventCallback(cur, args);
+				this.callEventCallback(cur, args, (args && args[ args.length -1 ]));
 				if (cur.once){
 					this.off(name, false, cur);
 				}
@@ -1009,17 +1014,27 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 	},
 	_triggerStChanges: function(i, name, value) {
-		var event_data = {
-			type: name,
-			value: value,
-			old_value: this.zdsv.original_states[name]
-		};
 
-		//вызов внутреннего для самого объекта события
-		this.trigger('vip-state-change.' + name, event_data);
+		var vip_name = 'vip-state-change.' + name;
+		var default_name = 'state-change.' + name;
 
-		//вызов стандартного события
-		this.trigger('state-change.' + name, event_data, std_event_opt);
+		var vip_cb_cs = this.getMatchedCallbacks(vip_name).matched;
+		var default_cb_cs = this.getMatchedCallbacks(default_name).matched;
+		if (vip_cb_cs.length || default_cb_cs.length){
+			var event_args = [{
+				type: name,
+				value: value,
+				old_value: this.zdsv.original_states[name]
+			}];
+			if (vip_cb_cs.length){
+				//вызов внутреннего для самого объекта события
+				this.triggerCallbacks(vip_cb_cs, event_args, false, vip_name);
+			}
+			if (default_cb_cs.length){
+				//вызов стандартного события
+				this.triggerCallbacks(default_cb_cs, event_args, std_event_opt, default_name);
+			}
+		}
 
 
 		//вызов комплексного наблюдателя
@@ -1383,12 +1398,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		if (typeof opts == 'object'){
 			spv.cloneObj(event_obj, opts);
 		}
-		opts = opts || {};
+		//opts = opts || {};
 		event_obj.value = array;
 		event_obj.old_value = old_value;
 		this.trigger('child-change.' + collection_name, event_obj);
 
-		if (!opts.skip_report){
+		if (!opts || !opts.skip_report){
 			this.sendCollectionChange(collection_name, array);
 		}
 
