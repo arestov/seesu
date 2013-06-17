@@ -1074,6 +1074,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		var changed_states = this.zdsv.changed_states;
 		var result_changes_list = this.zdsv.result_changes_list;
 		var called_watchers = this.zdsv.called_watchers;
+		var push = Array.prototype.push;
 		while (this.states_changing_stack.length){
 
 			wipeObj(original_states);
@@ -1098,7 +1099,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			//проверить комплексные состояния
 			var first_compxs_chs = this.getComplexChanges(changed_states);
 			if (first_compxs_chs.length){
-				all_ch_compxs.push.apply(all_ch_compxs, first_compxs_chs);
+				push.apply(all_ch_compxs, first_compxs_chs);
 			}
 
 			var current_compx_chs = first_compxs_chs;
@@ -1107,7 +1108,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				var cascade_part = this.getComplexChanges(current_compx_chs);
 				current_compx_chs = cascade_part;
 				if (cascade_part.length){
-					all_ch_compxs.push.apply(all_ch_compxs, cascade_part);
+					push.apply(all_ch_compxs, cascade_part);
 				}
 
 			}
@@ -1115,10 +1116,10 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 			//собираем все группы изменений
 			if (changed_states.length){
-				all_i_cg.push.apply(all_i_cg, changed_states);
+				push.apply(all_i_cg, changed_states);
 			}
 			if (all_ch_compxs.length){
-				all_i_cg.push.apply(all_i_cg, all_ch_compxs);
+				push.apply(all_i_cg, all_ch_compxs);
 			}
 			//устраняем измененное дважды и более
 			this.compressStatesChanges(all_i_cg, result_changes_list);
@@ -1127,7 +1128,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			iterateChList(result_changes_list, this, this._triggerStChanges);
 
 			if (result_changes_list.length){
-				total_all_states_ch.push.apply(total_all_states_ch, result_changes_list);
+				push.apply(total_all_states_ch, result_changes_list);
 			}
 		}
 
@@ -1147,7 +1148,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			this.sendStatesToViews(total_result_changes);
 		}
 
-		
 
 		this.collecting_states_changing = false;
 		return this;
