@@ -672,8 +672,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		var cb_cs = this.getMatchedCallbacks(name).matched;
 
 		if (cb_cs){
-			var args = Array.prototype.slice.call(arguments);
-			args.shift();
+			var args = Array.prototype.slice.call(arguments, 1);
 			for (var i = 0; i < cb_cs.length; i++) {
 				var cur = cb_cs[i];
 				this.callEventCallback(cur, args);
