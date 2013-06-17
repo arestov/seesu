@@ -331,6 +331,7 @@ spv.Class.extendTo(provoda.ItemsEvents, {
 		}
 	},
 	setItems: function(items_list) {
+		items_list = items_list && spv.toRealArray(items_list);
 		this.unsubcribeOld();
 		this.items_list = items_list;
 		this.controls_list = [];
@@ -401,6 +402,7 @@ provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 		}
 	},
 	setItems: function(items_list) {
+		items_list = items_list && spv.toRealArray(items_list);
 		this._super(items_list);
 		this.checkFunc();
 	}
@@ -598,6 +600,9 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 	},
 	getMatchedCallbacks: function(namespace){
+		if (this.convertEventName){
+			namespace = this.convertEventName(namespace);
+		}
 		var
 			r, short_name = namespace.split('.')[0];
 
@@ -646,9 +651,8 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		return this;
 	},
-	callEventCallback: function(cur, args) {
+	callEventCallback: function(cur, args, opts) {
 	//	var _this = this;
-		var opts = args && args[ args.length -1 ];
 		if (cur.immediately && (!opts || !opts.force_async)){
 			cur.cb.apply(this, args);
 		} else {
@@ -659,19 +663,22 @@ spv.Class.extendTo(provoda.Eventor, {
 			},1);*/
 		}
 	},
-	trigger: function(){
-		var args = Array.prototype.slice.call(arguments);
-		var name = args.shift();
-		if (this.convertEventName){
-			name = this.convertEventName(name);
+	triggerCallbacks: function(cb_cs, args, opts, name){
+		for (var i = 0; i < cb_cs.length; i++) {
+			var cur = cb_cs[i];
+			this.callEventCallback(cur, args, opts);
+			if (cur.once){
+				this.off(name, false, cur);
+			}
 		}
-
+	},
+	trigger: function(name){
 		var cb_cs = this.getMatchedCallbacks(name).matched;
-
 		if (cb_cs){
+			var args = Array.prototype.slice.call(arguments, 1);
 			for (var i = 0; i < cb_cs.length; i++) {
 				var cur = cb_cs[i];
-				this.callEventCallback(cur, args);
+				this.callEventCallback(cur, args, (args && args[ args.length -1 ]));
 				if (cur.once){
 					this.off(name, false, cur);
 				}
@@ -957,20 +964,20 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	state: function(name){
 		return this.states[name];
 	},
-	compressStatesChanges: function(changes_list, result_changes_list) {
+	compressStatesChanges: function(changes_list) {
 		var result_changes = {};
-		result_changes_list = result_changes_list || [];
 
 		iterateChList(changes_list, this, function(i, name, value) {
 			delete result_changes[name]; //reorder fields! hack!?
 			result_changes[name] = value;
 		});
+		changes_list.length = 0;
 
 		for ( var name in result_changes ){
-			result_changes_list.push( name, result_changes[name] );
+			changes_list.push( name, result_changes[name] );
 		}
 
-		return result_changes_list;
+		return changes_list;
 	},
 	_replaceState: function(name, value, skip_handler, stack) {
 		if (name){
@@ -1007,17 +1014,27 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 	},
 	_triggerStChanges: function(i, name, value) {
-		var event_data = {
-			type: name,
-			value: value,
-			old_value: this.zdsv.original_states[name]
-		};
 
-		//вызов внутреннего для самого объекта события
-		this.trigger('vip-state-change.' + name, event_data);
+		var vip_name = 'vip-state-change.' + name;
+		var default_name = 'state-change.' + name;
 
-		//вызов стандартного события
-		this.trigger('state-change.' + name, event_data, std_event_opt);
+		var vip_cb_cs = this.getMatchedCallbacks(vip_name).matched;
+		var default_cb_cs = this.getMatchedCallbacks(default_name).matched;
+		if (vip_cb_cs.length || default_cb_cs.length){
+			var event_args = [{
+				type: name,
+				value: value,
+				old_value: this.zdsv.original_states[name]
+			}];
+			if (vip_cb_cs.length){
+				//вызов внутреннего для самого объекта события
+				this.triggerCallbacks(vip_cb_cs, event_args, false, vip_name);
+			}
+			if (default_cb_cs.length){
+				//вызов стандартного события
+				this.triggerCallbacks(default_cb_cs, event_args, std_event_opt, default_name);
+			}
+		}
 
 
 		//вызов комплексного наблюдателя
@@ -1052,8 +1069,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 		this.collecting_states_changing = true;
 
-		var total_all_states_ch = [];
-
 		//порождать события изменившихся состояний (в передлах одного стэка/вызова)
 		//для пользователя пока пользователь не перестанет изменять новые состояния
 		if (!this.zdsv){
@@ -1062,23 +1077,23 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				all_i_cg: [],
 				all_ch_compxs: [],
 				changed_states: [],
-				result_changes_list: [],
-				called_watchers: []
+				called_watchers: [],
+				total_ch: []
 			};
 		}
+		var total_ch = this.zdsv.total_ch;
 		var original_states = this.zdsv.original_states;
 		var all_i_cg = this.zdsv.all_i_cg;
 		var all_ch_compxs = this.zdsv.all_ch_compxs;
 		var changed_states = this.zdsv.changed_states;
-		var result_changes_list = this.zdsv.result_changes_list;
 		var called_watchers = this.zdsv.called_watchers;
+		var push = Array.prototype.push;
 		while (this.states_changing_stack.length){
 
 			wipeObj(original_states);
 			all_i_cg.length = 0;
 			all_ch_compxs.length = 0;
 			changed_states.length = 0;
-			result_changes_list.length = 0;
 			called_watchers.length = 0;
 			//объекты используются повторно, ради выиграша в производительности
 			//которые заключается в исчезновении пауз на сборку мусора 
@@ -1096,7 +1111,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			//проверить комплексные состояния
 			var first_compxs_chs = this.getComplexChanges(changed_states);
 			if (first_compxs_chs.length){
-				all_ch_compxs.push.apply(all_ch_compxs, first_compxs_chs);
+				push.apply(all_ch_compxs, first_compxs_chs);
 			}
 
 			var current_compx_chs = first_compxs_chs;
@@ -1105,7 +1120,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				var cascade_part = this.getComplexChanges(current_compx_chs);
 				current_compx_chs = cascade_part;
 				if (cascade_part.length){
-					all_ch_compxs.push.apply(all_ch_compxs, cascade_part);
+					push.apply(all_ch_compxs, cascade_part);
 				}
 
 			}
@@ -1113,39 +1128,41 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 			//собираем все группы изменений
 			if (changed_states.length){
-				all_i_cg.push.apply(all_i_cg, changed_states);
+				push.apply(all_i_cg, changed_states);
 			}
 			if (all_ch_compxs.length){
-				all_i_cg.push.apply(all_i_cg, all_ch_compxs);
+				push.apply(all_i_cg, all_ch_compxs);
 			}
 			//устраняем измененное дважды и более
-			this.compressStatesChanges(all_i_cg, result_changes_list);
+			this.compressStatesChanges(all_i_cg);
 
 
-			iterateChList(result_changes_list, this, this._triggerStChanges);
+			iterateChList(all_i_cg, this, this._triggerStChanges);
 
-			if (result_changes_list.length){
-				total_all_states_ch.push.apply(total_all_states_ch, result_changes_list);
+			if (all_i_cg.length){
+				push.apply(total_ch, all_i_cg);
 			}
 		}
 
 		//устраняем измененное дважды и более
-		var total_result_changes = this.compressStatesChanges(total_all_states_ch);
+		this.compressStatesChanges(total_ch);
 
-		total_all_states_ch = null;
 
 		wipeObj(original_states);
 		all_i_cg.length = 0;
 		all_ch_compxs.length = 0;
 		changed_states.length = 0;
-		result_changes_list.length = 0;
 		called_watchers.length = 0;
 
-		if (this.sendStatesToViews && total_result_changes.length){
-			this.sendStatesToViews(total_result_changes);
+		if (this.sendStatesToViews && total_ch.length){
+			this.nextTick(function() {
+				if (total_ch.length){
+					this.sendStatesToViews(total_ch);
+					total_ch.length = 0;
+				}
+			});
 		}
 
-		
 
 		this.collecting_states_changing = false;
 		return this;
@@ -1381,12 +1398,12 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		if (typeof opts == 'object'){
 			spv.cloneObj(event_obj, opts);
 		}
-		opts = opts || {};
+		//opts = opts || {};
 		event_obj.value = array;
 		event_obj.old_value = old_value;
 		this.trigger('child-change.' + collection_name, event_obj);
 
-		if (!opts.skip_report){
+		if (!opts || !opts.skip_report){
 			this.sendCollectionChange(collection_name, array);
 		}
 
