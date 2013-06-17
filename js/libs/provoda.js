@@ -331,6 +331,7 @@ spv.Class.extendTo(provoda.ItemsEvents, {
 		}
 	},
 	setItems: function(items_list) {
+		items_list = items_list && spv.toRealArray(items_list);
 		this.unsubcribeOld();
 		this.items_list = items_list;
 		this.controls_list = [];
@@ -401,6 +402,7 @@ provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 		}
 	},
 	setItems: function(items_list) {
+		items_list = items_list && spv.toRealArray(items_list);
 		this._super(items_list);
 		this.checkFunc();
 	}
