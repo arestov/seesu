@@ -967,6 +967,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			delete result_changes[name]; //reorder fields! hack!?
 			result_changes[name] = value;
 		});
+		result_changes_list.length = 0;
 
 		for ( var name in result_changes ){
 			result_changes_list.push( name, result_changes[name] );
@@ -1054,8 +1055,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 		this.collecting_states_changing = true;
 
-		var total_all_states_ch = [];
-
 		//порождать события изменившихся состояний (в передлах одного стэка/вызова)
 		//для пользователя пока пользователь не перестанет изменять новые состояния
 		if (!this.zdsv){
@@ -1064,15 +1063,15 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				all_i_cg: [],
 				all_ch_compxs: [],
 				changed_states: [],
-				result_changes_list: [],
-				called_watchers: []
+				called_watchers: [],
+				total_ch: []
 			};
 		}
+		var total_ch = this.zdsv.total_ch;
 		var original_states = this.zdsv.original_states;
 		var all_i_cg = this.zdsv.all_i_cg;
 		var all_ch_compxs = this.zdsv.all_ch_compxs;
 		var changed_states = this.zdsv.changed_states;
-		var result_changes_list = this.zdsv.result_changes_list;
 		var called_watchers = this.zdsv.called_watchers;
 		var push = Array.prototype.push;
 		while (this.states_changing_stack.length){
@@ -1081,7 +1080,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			all_i_cg.length = 0;
 			all_ch_compxs.length = 0;
 			changed_states.length = 0;
-			result_changes_list.length = 0;
 			called_watchers.length = 0;
 			//объекты используются повторно, ради выиграша в производительности
 			//которые заключается в исчезновении пауз на сборку мусора 
@@ -1122,30 +1120,33 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				push.apply(all_i_cg, all_ch_compxs);
 			}
 			//устраняем измененное дважды и более
-			this.compressStatesChanges(all_i_cg, result_changes_list);
+			this.compressStatesChanges(all_i_cg, all_i_cg);
 
 
-			iterateChList(result_changes_list, this, this._triggerStChanges);
+			iterateChList(all_i_cg, this, this._triggerStChanges);
 
-			if (result_changes_list.length){
-				push.apply(total_all_states_ch, result_changes_list);
+			if (all_i_cg.length){
+				push.apply(total_ch, all_i_cg);
 			}
 		}
 
 		//устраняем измененное дважды и более
-		var total_result_changes = this.compressStatesChanges(total_all_states_ch);
+		this.compressStatesChanges(total_ch, total_ch);
 
-		total_all_states_ch = null;
 
 		wipeObj(original_states);
 		all_i_cg.length = 0;
 		all_ch_compxs.length = 0;
 		changed_states.length = 0;
-		result_changes_list.length = 0;
 		called_watchers.length = 0;
 
-		if (this.sendStatesToViews && total_result_changes.length){
-			this.sendStatesToViews(total_result_changes);
+		if (this.sendStatesToViews && total_ch.length){
+			this.nextTick(function() {
+				if (total_ch.length){
+					this.sendStatesToViews(total_ch);
+					total_ch.length = 0;
+				}
+			});
 		}
 
 
