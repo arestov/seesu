@@ -875,6 +875,11 @@ var wipeObj = function (obj){
 		}
 	}
 };
+var iterateChList = function(changes_list, context, cb) {
+	for (var i = 0; i < changes_list.length; i+=2) {
+		cb.call(context, i, changes_list[i], changes_list[i+1]);
+	}
+};
 
 var std_event_opt = {force_async: true};
 
@@ -956,58 +961,85 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		var result_changes = {};
 		result_changes_list = result_changes_list || [];
 
-		for (var i = 0; i < changes_list.length; i++) {
-			var cur = changes_list[i];
-			if (!result_changes[cur.name]){
-				var obj = {name: cur.name};
-				result_changes[cur.name] = obj;
-				result_changes_list.push(obj);
-			}
-			result_changes[cur.name].value = cur.value;
+		iterateChList(changes_list, this, function(i, name, value) {
+			delete result_changes[name]; //reorder fields! hack!?
+			result_changes[name] = value;
+		});
+
+		for ( var name in result_changes ){
+			result_changes_list.push( name, result_changes[name] );
 		}
+
 		return result_changes_list;
 	},
-	_replaceState: function(name, value, skip_handler) {
+	_replaceState: function(name, value, skip_handler, stack) {
 		if (name){
 			var obj_to_change	= this.states,
-				old_value		= obj_to_change && obj_to_change[name],
+				old_value		= obj_to_change[name],
 				method;
+			if (old_value != value){
 
-			var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
-			if (stateChanger){
-				if (typeof stateChanger == 'function'){
-					method = stateChanger;
-				} else if (this.checkDepVP){
-					if (this.checkDepVP(stateChanger)){
-						method = stateChanger.fn;
+				var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
+				if (stateChanger){
+					if (typeof stateChanger == 'function'){
+						method = stateChanger;
+					} else if (this.checkDepVP){
+						if (this.checkDepVP(stateChanger)){
+							method = stateChanger.fn;
+						}
 					}
 				}
-			}
-			//
-			//value = value || false;
-			//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
-			//
+				//
+				//value = value || false;
+				//less calculations? (since false and "" and null and undefined now os equeal and do not triggering changes)
+				//
 
-			if (old_value != value){
+				
 
 				obj_to_change[name] = value;
 
 				if (method){
 					method.call(this, value, old_value);
 				}
-
-				return [old_value];
+				stack.push(name, value);
+				//return [old_value];
 			}
 		}
+	},
+	_triggerStChanges: function(i, name, value) {
+		var event_data = {
+			type: name,
+			value: value,
+			old_value: this.zdsv.original_states[name]
+		};
+
+		//вызов внутреннего для самого объекта события
+		this.trigger('vip-state-change.' + name, event_data);
+
+		//вызов стандартного события
+		this.trigger('state-change.' + name, event_data, std_event_opt);
+
+
+		//вызов комплексного наблюдателя
+		var watchers = this.complex_states_index[name];
+		if (watchers){
+			for (var jj = 0; jj < watchers.length; jj++) {
+				var watcher = watchers[jj];
+				if (this.zdsv.called_watchers.indexOf(watcher) == -1){
+					this.callCSWatcher(watcher);
+					this.zdsv.called_watchers.push(watcher);
+				}
+			}
+		}
+
+	},
+	_setUndetailedState: function(i, name, value) {
+		this.undetailed_states[name] = value;
 	},
 	_updateProxy: function(changes_list, opts) {
 		var i, cur;
 		if (this.undetailed_states){
-			for (i = 0; i < changes_list.length; i++) {
-				cur = changes_list[i];
-				this.undetailed_states[cur.name] = cur.value;
-
-			}
+			iterateChList(changes_list, this, this._setUndetailedState);
 			return this;
 		}
 		this.states_changing_stack.push({
@@ -1090,33 +1122,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			this.compressStatesChanges(all_i_cg, result_changes_list);
 
 
-			for (i = 0; i < result_changes_list.length; i++) {
-				cur = result_changes_list[i];
+			iterateChList(result_changes_list, this, this._triggerStChanges);
 
-				var event_data = {
-					type: cur.name,
-					value: cur.value,
-					old_value: original_states[cur.name]
-				};
-				//вызов внутреннего для самого объекта события
-				this.trigger('vip-state-change.' + cur.name, event_data);
-
-				//вызов стандартного события
-				this.trigger('state-change.' + cur.name, event_data, std_event_opt);
-
-
-				//вызов комплексного наблюдателя
-				var watchers = this.complex_states_index[cur.name];
-				if (watchers){
-					for (var jj = 0; jj < watchers.length; jj++) {
-						var watcher = watchers[jj];
-						if (called_watchers.indexOf(watcher) == -1){
-							this.callCSWatcher(watcher);
-							called_watchers.push(watcher);
-						}
-					}
-				}
-			}
 			if (result_changes_list.length){
 				total_all_states_ch.push.apply(total_all_states_ch, result_changes_list);
 			}
@@ -1134,7 +1141,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		result_changes_list.length = 0;
 		called_watchers.length = 0;
 
-		if (this.sendStatesToViews){
+		if (this.sendStatesToViews && total_result_changes.length){
 			this.sendStatesToViews(total_result_changes);
 		}
 
@@ -1149,17 +1156,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	getChanges: function(changes_list, opts, result_arr) {
 		var changed_states = result_arr || [];
 		var i;
-		for (i = 0; i < changes_list.length; i++) {
-			var cur = changes_list[i];
-
-			var old_value = this._replaceState(cur.name, cur.value, opts && opts.skip_handler);
-			if (old_value){
-				changed_states.push({
-					name: cur.name,
-					old_value: old_value[0],
-					value: cur.value
-				});
-			}
+		for (i = 0; i < changes_list.length; i+=2) {
+			this._replaceState(changes_list[i], changes_list[i+1], opts && opts.skip_handler, changed_states);
 		}
 		if (changes_list.length){
 			if (this.tpl){
@@ -1175,24 +1173,18 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	checkComplexStates: function(changed_states) {
 		var list = [];
-		for (var i = 0; i < changed_states.length; i++) {
-			list.push(changed_states[i].name);
+		for (var i = 0; i < changed_states.length; i+=2) {
+			list.push(changed_states[i]);
 		}
-		var co_sts = this.getTargetComplexStates(list);
-		return co_sts;
+		return this.getTargetComplexStates(list);
 	},
-	getTargetComplexStates: function(state) {
-		var states = spv.toRealArray(state);
-		if (!state){
-			throw new Error('something wrong');
-		}
+	getTargetComplexStates: function(states) {
 		var result_array = [];
 
 		for (var i = 0; i < this.full_comlxs_list.length; i++) {
 			var cur = this.full_comlxs_list[i];
 			if (states.length != spv.arrayExclude(states, cur.obj.depends_on).length ){
-				cur.value = this.compoundComplexState(cur);
-				result_array.push(cur);
+				result_array.push(cur.name, this.compoundComplexState(cur));
 			}
 		}
 
@@ -1426,11 +1418,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	},
 	updateManyStates: function(obj) {
 		var changes_list = [];
-		for (var i in obj) {
-			changes_list.push({
-				name: i,
-				value: obj[i]
-			});
+		for (var name in obj) {
+			changes_list.push(name, obj[name]);
 		}
 		this._updateProxy(changes_list);
 	},
@@ -1441,10 +1430,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		if (this.hasComplexStateFn(name)){
 			throw new Error("you can't change complex state in this way");
 		}
-		return this._updateProxy([{
-			name: name,
-			value: value
-		}]);
+		return this._updateProxy([name, value]);
 	},
 	toSimpleStructure: function(models_index, big_result) {
 		models_index = models_index || {};
@@ -2742,10 +2728,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var states_list = [];
 
 		for (var name in states){
-			states_list.push({
-				name: name,
-				value: states[name]
-			});
+			states_list.push(name, states[name]);
 		}
 
 		this._updateProxy(states_list);
@@ -2821,22 +2804,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._updateProxy(changes_list);
 	},
 	overrideStateSilently: function(name, value) {
-		this._updateProxy([{
-			name: name,
-			value: value
-		}], {skip_handler: true});
+		this._updateProxy([name, value], {skip_handler: true});
 	},
 	promiseStateUpdate: function(name, value) {
-		this._updateProxy([{
-			name: name,
-			value: value
-		}]);
+		this._updateProxy([name, value]);
 	},
 	setVisState: function(name, value) {
-		this._updateProxy([{
-			name: 'vis_' + name,
-			value: value
-		}]);
+		this._updateProxy(['vis_' + name, value]);
 	},
 	checkChildrenModelsRendering: function() {
 		var obj = spv.cloneObj(false, this.children_models);
