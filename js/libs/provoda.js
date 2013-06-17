@@ -959,21 +959,20 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	state: function(name){
 		return this.states[name];
 	},
-	compressStatesChanges: function(changes_list, result_changes_list) {
+	compressStatesChanges: function(changes_list) {
 		var result_changes = {};
-		result_changes_list = result_changes_list || [];
 
 		iterateChList(changes_list, this, function(i, name, value) {
 			delete result_changes[name]; //reorder fields! hack!?
 			result_changes[name] = value;
 		});
-		result_changes_list.length = 0;
+		changes_list.length = 0;
 
 		for ( var name in result_changes ){
-			result_changes_list.push( name, result_changes[name] );
+			changes_list.push( name, result_changes[name] );
 		}
 
-		return result_changes_list;
+		return changes_list;
 	},
 	_replaceState: function(name, value, skip_handler, stack) {
 		if (name){
@@ -1120,7 +1119,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				push.apply(all_i_cg, all_ch_compxs);
 			}
 			//устраняем измененное дважды и более
-			this.compressStatesChanges(all_i_cg, all_i_cg);
+			this.compressStatesChanges(all_i_cg);
 
 
 			iterateChList(all_i_cg, this, this._triggerStChanges);
@@ -1131,7 +1130,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 
 		//устраняем измененное дважды и более
-		this.compressStatesChanges(total_ch, total_ch);
+		this.compressStatesChanges(total_ch);
 
 
 		wipeObj(original_states);
