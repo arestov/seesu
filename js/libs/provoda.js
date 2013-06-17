@@ -600,6 +600,9 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 	},
 	getMatchedCallbacks: function(namespace){
+		if (this.convertEventName){
+			namespace = this.convertEventName(namespace);
+		}
 		var
 			r, short_name = namespace.split('.')[0];
 
@@ -665,12 +668,7 @@ spv.Class.extendTo(provoda.Eventor, {
 
 	},
 	trigger: function(name){
-		if (this.convertEventName){
-			name = this.convertEventName(name);
-		}
-
 		var cb_cs = this.getMatchedCallbacks(name).matched;
-
 		if (cb_cs){
 			var args = Array.prototype.slice.call(arguments, 1);
 			for (var i = 0; i < cb_cs.length; i++) {
