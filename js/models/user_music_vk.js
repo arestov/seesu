@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlencoding', 'js/libs/BrowseMap'],
-function(provoda, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap){
+define(['provoda', 'spv', 'app_serv', './comd','./SongsList', 'js/common-libs/htmlencoding', 'js/libs/BrowseMap', './LoadableList'],
+function(provoda, spv, app_serv, comd, SongsList, htmlencoding, BrowseMap, LoadableList){
 'use strict';
 var localize = app_serv.localize;
 
@@ -147,7 +147,44 @@ BrowseMap.Model.extendTo(VkUserTracks, {
 		}
 	}
 });
+
+var VKFriendsList = function(){};
+
+var LfmUsersList = function() {};
+LoadableList.extendTo(LfmUsersList, {
+	friendsParser: function(r, field_name) {
+		var result = [];
+		var array = spv.toRealArray(spv.getTargetField(r, field_name));
+		for (var i = 0; i < array.length; i++) {
+			var cur = array[i];
+			result.push(LfmFriendsList.parseUserInfo(cur));
+			/*
+			result.push({
+				tag_name: array[i].name,
+				count: array[i].count
+			});*/
+		}
+		return result;
+		//console.log(r);
+	},
+	itemConstr: LfmUserPreview,
+	makeDataItem:function(data) {
+		var item = new this.itemConstr();
+		item.init({
+			map_parent: this,
+			app: this.app
+		}, spv.cloneObj({
+			data: data
+		}, this.sub_pa_params));
+		return item;
+	},
+	main_list_name: 'list_items',
+	model_name: 'lfm_users',
+	page_limit: 200
+});
+
 return {
-	VkUserTracks: VkUserTracks
+	VkUserTracks: VkUserTracks,
+	VKFriendsList: VKFriendsList
 };
 });

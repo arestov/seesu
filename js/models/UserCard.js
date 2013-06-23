@@ -23,6 +23,10 @@ BrowseMap.Model.extendTo(UserCard, {
 			constr: user_music_vk.VkUserTracks,
 			title: 'Tracks'
 		},
+		'vk:friends': {
+			constr: user_music_vk.VKFriendsList,
+			title: 'friends'
+		},
 		'playlists':{
 			constr: SuUsersPlaylists
 		},
@@ -74,10 +78,10 @@ BrowseMap.Model.extendTo(UserCard, {
 
 		
 
-		this.lists_list = ['playlists', 'vk:tracks', 'lfm:friends', 'lfm:neighbours','lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
+		this.lists_list = ['playlists', 'vk:tracks', 'vk:friends', 'lfm:friends', 'lfm:neighbours','lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
 		this.initSubPages(this.lists_list);
 
-		var networks_pages = ['vk:tracks', 'lfm:friends', 'lfm:neighbours', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
+		var networks_pages = ['vk:tracks', 'vk:friends', 'lfm:friends', 'lfm:neighbours', 'lfm:artists', 'lfm:tracks', 'lfm:tags', 'lfm:albums'];
 		for (var i = 0; i < networks_pages.length; i++) {
 			var cur = networks_pages[i];
 			this.updateNesting(cur.replace(':', '__'), this.getSPI(cur));
@@ -106,6 +110,7 @@ BrowseMap.Model.extendTo(UserCard, {
 	'stch-mp_show': function(state) {
 		if (state && state.userwant){
 			var list_to_preload = [
+				this.getNesting('vk__friends'),
 				this.getNesting('lfm__tags'),
 				this.getNesting('lfm__friends'),
 				this.getNesting('lfm__neighbours')
