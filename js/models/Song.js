@@ -225,9 +225,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				data.owner_id = uid;
 			}
 			if (file){
-				data.attachments = "audio" + file._id;
+				data.attachments = ["audio" + file._id, encodeURIComponent(this.getShareUrl())].join(',');
 			}
-			data.message = this.state('nav_title') + " " + encodeURI(this.getShareUrl());
+			data.message = this.state('nav_title');
 			if (data.attachments){
 				data.attachment = data.attachments;
 			}
