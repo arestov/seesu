@@ -1,5 +1,6 @@
 //https://github.com/tmpvar/jsdom/raw/master/lib/jsdom/browser/htmlencoding.js
-(function(){
+define(function(){
+"use strict";
 var entityCharCodes = {
   'nbsp': '160',
   'iexcl': '161',
@@ -137,7 +138,7 @@ function entityToChar(s, name) {
   return code ? String.fromCharCode(code) : (specialChar || s);
 }
 
-HTMLDecode = function decode(s) {
+var HTMLDecode = function decode(s) {
     if (s) {
       s = s.replace(entityRegExp, entityToChar);
     }
@@ -149,10 +150,14 @@ function specialCharToEntity(s) {
   return entity ? entity : s;
 }
 
-HTMLEncode = function encode(s) {
+var HTMLEncode = function encode(s) {
   if (s) {
     s = s.replace(specialCharRegExp, specialCharToEntity);
   }
   return s || '';
 };
-})()
+return {
+  encode: HTMLEncode,
+  decode: HTMLDecode
+};
+});

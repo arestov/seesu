@@ -42,7 +42,7 @@ a.track-node{
 	#slider .track-node.surf_nav{
 		background: #000;
 		}
-		.track-node.surf_nav .full-song-title, .track-node.surf_nav .song-artist_name {
+		.track-node.surf_nav .full-song_title, .track-node.surf_nav .song-artist_name {
 			color:#fff;
 			}
 .playing-song a.track-node {
@@ -215,7 +215,7 @@ ul.tracks-for-play.list-overview > li > a.track-node:hover,
 	display: block;
 	}
 
-.full-song-title{
+.full-song_title{
 	position: relative;
 	display: block;
 	overflow: hidden;
@@ -412,7 +412,7 @@ a.track_name_loading:hover{
 	}
 
 
-	.show-zoom-to-track .play-list-panel{
+	.show-zoom-to-track .playlist_panel{
 		display:none;
 	}
 	.show-zoom-to-track ul.tracks-for-play .play-controls{
@@ -479,8 +479,8 @@ a.track_name_loading:hover{
 .show-zoom-to-track .track-node {
 
 	}
-	.show-zoom-to-track .v-song-sibling .track-node .full-song-title,
-	.page-scheme .tracks-for-play .track-node .full-song-title{
+	.show-zoom-to-track .v-song-sibling .track-node .full-song_title,
+	.page-scheme .tracks-for-play .track-node .full-song_title{
 		min-height: 28px;
 		}
 	.show-zoom-to-track .v-song-sibling .track-node .song-image-con,
@@ -534,10 +534,12 @@ a.track_name_loading:hover{
 
 }
 
-.show-zoom-to-track .player_song.v-song-sibling .full-song-title{
+.show-zoom-to-track .player_song.v-song-sibling .full-song_title{
 	padding-right: 22px;
 }
-
+.playlist-container ul.tracks-for-play > li.selected_song a.track-node {
+	background: #444;
+	}
 
 
 
