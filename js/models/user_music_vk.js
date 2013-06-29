@@ -148,7 +148,50 @@ BrowseMap.Model.extendTo(VkUserTracks, {
 	}
 });
 
+var LfmUserPreview = function() {};
+BrowseMap.Model.extendTo(LfmUserPreview, {
+	init: function(opts, params) {
+		this._super(opts);
+		var data = params.data;
+
+		var song, song_time;
+		var artist = spv.getTargetField(data, 'recenttrack.artist.name');
+		if (artist){
+			song = artist + ' - ' + spv.getTargetField(data, 'recenttrack.name');
+			song_time = spv.getTargetField(data, 'recenttrack.@attr.uts');
+			if (song_time){
+				song_time = new Date(song_time * 1000);
+			}
+		}
+		var image = this.app.art_images.getImageRewrap(data.lfm_image);
+
+		spv.cloneObj(this.init_states, {
+			selected_image: image,
+			nav_title: data.username,
+			username: data.username,
+			registered: data.registered,
+
+			gender: data.gender,
+			lfm_image: image,
+			big_desc: data.big_desc,
+			song: song,
+			song_time: song_time && song_time.toLocaleString(),
+			song_time_raw: song_time,
+			scrobbler: data.scrobblesource
+		});
+		this.initStates();
+		this.rawdata = data;
+	},
+	showOnMap: function() {
+		var md = this.app.getLastfmUser(this.state('username'));
+		md.setProfileData(this.rawdata);
+		md.showOnMap();
+		//this.app.showLastfmUser(this.state('username'));
+		//this.app.
+	}
+});
 var VKFriendsList = function(){};
+LoadableList.extendTo(VKFriendsList, {});
 
 var LfmUsersList = function() {};
 LoadableList.extendTo(LfmUsersList, {

@@ -835,8 +835,7 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 	}
 });
 
-var LfmFriendsList = function() {};
-LfmFriendsList.parseUserInfo = function(cur) {
+var parseUserInfo = function(cur) {
 	var registered = spv.getTargetField(cur, 'registered.unixtime');
 	if (registered){
 		registered = registered * 1000;
@@ -871,6 +870,8 @@ LfmFriendsList.parseUserInfo = function(cur) {
 	return data;
 };
 
+
+
 var LfmUsersList = function() {};
 LoadableList.extendTo(LfmUsersList, {
 	friendsParser: function(r, field_name) {
@@ -878,7 +879,7 @@ LoadableList.extendTo(LfmUsersList, {
 		var array = spv.toRealArray(spv.getTargetField(r, field_name));
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
-			result.push(LfmFriendsList.parseUserInfo(cur));
+			result.push(parseUserInfo(cur));
 			/*
 			result.push({
 				tag_name: array[i].name,
@@ -917,8 +918,9 @@ LfmUsersList.extendTo(LfmUsersListOfUser, {
 	}
 });
 
+var LfmFriendsList = function() {};
+LfmFriendsList.parseUserInfo = parseUserInfo;
 LfmUsersListOfUser.extendTo(LfmFriendsList, {
-	'compx-has_no_access': no_access_compx,
 	beforeReportChange: function(list) {
 		list.sort(function(a,b ){return spv.sortByRules(a, b, [
 			{
