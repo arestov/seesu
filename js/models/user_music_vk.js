@@ -52,7 +52,6 @@ VkSongList.extendTo(VkRecommendedTracks, {
 		var _this = this;
 
 		request_info.request = this.app.vk_api.get('audio.getRecommendations', {
-			sk: this.app.lfm.sk,
 			count: paging_opts.page_limit,
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
 		})
@@ -148,69 +147,100 @@ BrowseMap.Model.extendTo(VkUserTracks, {
 	}
 });
 
-var LfmUserPreview = function() {};
-BrowseMap.Model.extendTo(LfmUserPreview, {
+
+var VkUserPreview = function() {};
+BrowseMap.Model.extendTo(VkUserPreview, {
+	init_stmp: {
+		userid: 'uid',
+		first_name: 'first_name',
+		last_name: 'last_name',
+		photo: 'photo',
+		'selected_image.url': 'photo'
+	},
+	'compx-big_desc': {
+		depends_on: ['nav_title'],
+		fn: function(nav_title){
+			return nav_title;
+		}
+	},
+	'compx-nav_title': {
+		depends_on: ['first_name', 'last_name'],
+		fn: function(first_name, last_name){
+			return [first_name, last_name].join(' ');
+		}
+	},
 	init: function(opts, params) {
 		this._super(opts);
 		var data = params.data;
-
-		var song, song_time;
-		var artist = spv.getTargetField(data, 'recenttrack.artist.name');
-		if (artist){
-			song = artist + ' - ' + spv.getTargetField(data, 'recenttrack.name');
-			song_time = spv.getTargetField(data, 'recenttrack.@attr.uts');
-			if (song_time){
-				song_time = new Date(song_time * 1000);
-			}
-		}
-		var image = this.app.art_images.getImageRewrap(data.lfm_image);
-
-		spv.cloneObj(this.init_states, {
-			selected_image: image,
-			nav_title: data.username,
-			username: data.username,
-			registered: data.registered,
-
-			gender: data.gender,
-			lfm_image: image,
-			big_desc: data.big_desc,
-			song: song,
-			song_time: song_time && song_time.toLocaleString(),
-			song_time_raw: song_time,
-			scrobbler: data.scrobblesource
-		});
+		this.mapStates(this.init_stmp, data, true);
 		this.initStates();
 		this.rawdata = data;
 	},
 	showOnMap: function() {
-		var md = this.app.getLastfmUser(this.state('username'));
+		var md = this.app.getVkUser(this.state('userid'));
 		md.setProfileData(this.rawdata);
 		md.showOnMap();
-		//this.app.showLastfmUser(this.state('username'));
+		//this.app.showLastfmUser(this.state('userid'));
 		//this.app.
 	}
-});
-var VKFriendsList = function(){};
-LoadableList.extendTo(VKFriendsList, {});
 
-var LfmUsersList = function() {};
-LoadableList.extendTo(LfmUsersList, {
+});
+
+var no_access_compx = {
+	depends_on: ['userid'],
+	fn: function(userid) {
+		return !userid;
+	}
+};
+
+var connectUserid = function(params) {
+	var _this = this;
+	if (params.vk_userid){
+		this.updateState('userid', params.vk_userid);
+	} else {
+		if (params.for_current_user){
+			this.updateState('userid', false);
+			this.app.on('state-change.vk_userid', function(e) {
+				_this.updateState('userid', e.value);
+			});
+			if (this.authInit){
+				this.authInit();
+			}
+			if (this.authSwitching){
+				//this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: this.access_desc});
+			}
+			
+		} else {
+			throw new Error('only for current user or defined user');
+		}
+	}
+
+	/*
+	*/
+};
+
+var VKFriendsList = function(){};
+LoadableList.extendTo(VKFriendsList, {
+	'compx-has_no_access': no_access_compx,
+	init: function(opts, params) {
+		this._super(opts);
+		connectUserid.call(this, params);
+		this.sub_pa_params = {
+			vk_userid: params.vk_userid,
+			for_current_user: params.for_current_user
+		};
+		this.initStates();
+	},
 	friendsParser: function(r, field_name) {
 		var result = [];
 		var array = spv.toRealArray(spv.getTargetField(r, field_name));
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
-			result.push(LfmFriendsList.parseUserInfo(cur));
-			/*
-			result.push({
-				tag_name: array[i].name,
-				count: array[i].count
-			});*/
+			result.push(cur);
 		}
 		return result;
-		//console.log(r);
 	},
-	itemConstr: LfmUserPreview,
+	itemConstr: VkUserPreview,
 	makeDataItem:function(data) {
 		var item = new this.itemConstr();
 		item.init({
@@ -222,9 +252,42 @@ LoadableList.extendTo(LfmUsersList, {
 		return item;
 	},
 	main_list_name: 'list_items',
-	model_name: 'lfm_users',
-	page_limit: 200
+	model_name: 'vk_users',
+	page_limit: 200,
+	getRqData: function() {
+		return {
+			recenttracks: true,
+			user: this.state('userid')
+		};
+	},
+	sendMoreDataRequest: function(paging_opts, request_info) {
+		var _this = this;
+
+		request_info.request = this.app.vk_api.get('friends.get', {
+			uid: this.state('userid'),
+			fields: ['uid', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(','),
+			count: paging_opts.page_limit,
+			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
+		})
+			.done(function(r){
+				if (!r || r.error){
+					_this.requestComplete(request_info.request, true);
+					return;
+				}
+
+
+				_this.putRequestedData(request_info.request, r.response, r.error);
+
+			})
+			.fail(function(){
+				_this.requestComplete(request_info.request, true);
+			}).always(function() {
+				request_info.done = true;
+			});
+		return request_info;
+	}
 });
+
 
 return {
 	VkUserTracks: VkUserTracks,

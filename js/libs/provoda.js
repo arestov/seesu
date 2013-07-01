@@ -1524,6 +1524,12 @@ provoda.Model.extendTo(provoda.HModel, {
 			}
 		}
 	},
+	mapStates: function(states_map, donor, acceptor) {
+		if (acceptor && typeof acceptor == 'boolean'){
+			acceptor = this.init_states;
+		}
+		return spv.mapProps(states_map, donor, acceptor);
+	},
 	initOnce: function() {
 		if (this.init_opts){
 			this.init.apply(this, this.init_opts);

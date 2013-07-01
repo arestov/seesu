@@ -168,6 +168,7 @@ AppModel.extendTo(SeesuApp, {
 
 		this.s.on('info-change.vk', function(data) {
 			_this.updateState('vk_info', data);
+			_this.updateState('vk_userid', data && data.uid);
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
@@ -190,10 +191,10 @@ AppModel.extendTo(SeesuApp, {
 			reportSearchEngs(list.join(','));
 		});
 		if (this.lfm.username){
-			this.updateState('lfm_username', this.lfm.username);
+			this.updateState('lfm_userid', this.lfm.username);
 		} else {
 			this.lfm_auth.on('session', function() {
-				_this.updateState('lfm_username', _this.lfm.username);
+				_this.updateState('lfm_userid', _this.lfm.username);
 			});
 		}
 		
@@ -775,7 +776,7 @@ AppModel.extendTo(SeesuApp, {
 			cache_ajax: cache_ajax,
 			onAuthLost: function() {
 				lostAuth(vkapi);
-				checkDeadSavedToken(vk_token);
+				initVk.checkDeadSavedToken(vk_token);
 			},
 			mp3_search: _this.mp3_search
 		});

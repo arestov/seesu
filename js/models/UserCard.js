@@ -21,11 +21,11 @@ BrowseMap.Model.extendTo(UserCard, {
 	sub_pa: {
 		'vk:tracks': {
 			constr: user_music_vk.VkUserTracks,
-			title: 'Tracks'
+			title: 'vk.com tracks'
 		},
 		'vk:friends': {
 			constr: user_music_vk.VKFriendsList,
-			title: 'friends'
+			title: 'vk.com friends'
 		},
 		'playlists':{
 			constr: SuUsersPlaylists
@@ -125,6 +125,69 @@ BrowseMap.Model.extendTo(UserCard, {
 		}
 	}
 });
+var VkUserCard = function() {};
+BrowseMap.Model.extendTo(VkUserCard, {
+	model_name: 'vk_usercard',
+	sub_pa: {
+		'tracks': {
+			constr: user_music_vk.VkUserTracks,
+			title: 'Tracks'
+		},
+		'friends': {
+			constr: user_music_vk.VKFriendsList,
+			title: 'Friends'
+		}
+	},
+	setProfileData: function(data) {
+		/*if (data.lfm_image){
+			data.lfm_image = this.app.art_images.getImageRewrap(data.lfm_image);
+		}*/
+		var result = {};
+		for (var state in data){
+			if (!this.state(state)){
+				result[state] = data[state];
+			}
+		}
+
+		this.updateManyStates(result);
+	},
+	init: function(opts, params) {
+		this._super(opts);
+		this.urp_name = params.urp_name;
+		if (this.urp_name.search(/^vk\:/) != -1){
+			this.vk_userid = this.urp_name.replace(/^vk\:/,'');
+		}
+		this.sub_pa_params = {
+			vk_userid: this.vk_userid
+		};
+		this.init_states['userid'] = this.vk_userid;
+		this.init_states['nav_title'] = 'Vk.com user: ' + this.vk_userid;
+		this.initStates();
+		this.rq_b = {};
+		this.lists_list = ['friends', 'tracks'];
+		this.initSubPages(this.lists_list);
+
+		var networks_pages = ['friends', 'tracks'];
+		for (var i = 0; i < networks_pages.length; i++) {
+			var cur = networks_pages[i];
+			this.updateNesting('vk__' + cur, this.getSPI(cur));
+		}
+	},
+	'stch-mp_show': function(state) {
+		if (state && state.userwant){
+			var list_to_preload = [
+				this.getNesting('vk__friends')
+
+			];
+			for (var i = 0; i < list_to_preload.length; i++) {
+				var cur = list_to_preload[i];
+				if (cur){
+					cur.preloadStart();
+				}
+			}
+		}
+	}
+});
 
 var LfmUserCard = function() {};
 BrowseMap.Model.extendTo(LfmUserCard, {
@@ -172,13 +235,13 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 		this._super(opts);
 		this.urp_name = params.urp_name;
 		if (this.urp_name.search(/^lfm\:/) != -1){
-			this.lfm_username = this.urp_name.replace(/^lfm\:/,'');
+			this.lfm_userid = this.urp_name.replace(/^lfm\:/,'');
 		}
 		this.sub_pa_params = {
-			lfm_username: this.lfm_username
+			lfm_userid: this.lfm_userid
 		};
-		this.init_states['username'] = this.lfm_username;
-		this.init_states['nav_title'] = 'Last.fm user: ' + this.lfm_username;
+		this.init_states['userid'] = this.lfm_userid;
+		this.init_states['nav_title'] = 'Last.fm user: ' + this.lfm_userid;
 		this.initStates();
 		this.rq_b = {};
 		this.lists_list = ['friends', 'neighbours', 'artists', 'tracks', 'tags', 'albums'];
@@ -196,7 +259,7 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 				this.rq_b.progress = true;
 				this.updateState('loading_info', true);
 				var _this = this;
-				this.addRequest(this.app.lfm.get('user.getInfo', {'user': this.lfm_username})
+				this.addRequest(this.app.lfm.get('user.getInfo', {'user': this.lfm_userid})
 					.done(function(r){
 						if (!r.error){
 							_this.rq_b.done = true;
@@ -238,6 +301,7 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 	}
 });
 UserCard.LfmUserCard = LfmUserCard;
+UserCard.VkUserCard = VkUserCard;
 
 var SongListener = function() {};
 provoda.Model.extendTo(SongListener, {

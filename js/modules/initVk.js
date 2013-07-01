@@ -148,5 +148,6 @@ var initVk = function(su) {
 	}
 
 };
+initVk.checkDeadSavedToken = checkDeadSavedToken;
 return initVk;
 });

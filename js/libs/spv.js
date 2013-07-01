@@ -452,8 +452,15 @@ cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
 	}
 	return _no;
 };
-
-
+spv.mapProps = function(props_map, donor, acceptor) {
+	for (var name in props_map){
+		var value = spv.getTargetField(donor, props_map[name]);
+		if (typeof value != 'undefined'){
+			spv.setTargetField(acceptor, name, value);
+		}
+	}
+	return acceptor;
+};
 getUnitBaseNum = function(_c){
 	if (_c > 0){
 		if (_c > 10 && _c < 20){
