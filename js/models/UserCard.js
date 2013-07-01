@@ -138,6 +138,18 @@ BrowseMap.Model.extendTo(VkUserCard, {
 			title: 'Friends'
 		}
 	},
+	'compx-big_desc': {
+		depends_on: ['first_name', 'last_name'],
+		fn: function(first_name, last_name){
+			return [first_name, last_name].join(' ');
+		}
+	},
+	'compx-nav_title': {
+		depends_on: ['big_desc', 'p_nav_title'],
+		fn: function(big_desc, p_nav_title){
+			return (big_desc && 'Vk.com user: ' + big_desc) || p_nav_title;
+		}
+	},
 	setProfileData: function(data) {
 		/*if (data.lfm_image){
 			data.lfm_image = this.app.art_images.getImageRewrap(data.lfm_image);
@@ -161,7 +173,7 @@ BrowseMap.Model.extendTo(VkUserCard, {
 			vk_userid: this.vk_userid
 		};
 		this.init_states['userid'] = this.vk_userid;
-		this.init_states['nav_title'] = 'Vk.com user: ' + this.vk_userid;
+		this.init_states['p_nav_title'] = 'Vk.com user: ' + this.vk_userid;
 		this.initStates();
 		this.rq_b = {};
 		this.lists_list = ['friends', 'tracks'];

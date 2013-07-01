@@ -180,6 +180,7 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 		first_name: 'first_name',
 		last_name: 'last_name',
 		photo: 'photo',
+		'ava_image.url': 'photo_medium',
 		'selected_image.url': 'photo'
 	},
 	'compx-big_desc': {
@@ -203,7 +204,7 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 	},
 	showOnMap: function() {
 		var md = this.app.getVkUser(this.state('userid'));
-		md.setProfileData(this.rawdata);
+		md.setProfileData(this.mapStates(this.init_stmp, this.rawdata, {}));
 		md.showOnMap();
 		//this.app.showLastfmUser(this.state('userid'));
 		//this.app.
