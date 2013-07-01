@@ -5,12 +5,6 @@ var localize = app_serv.localize;
 
 var VkAudioLogin = function() {};
 comd.VkLoginB.extendTo(VkAudioLogin, {
-	init: function(opts) {
-		this._super(opts,  {
-			open_opts: {settings_bits: 8},
-			desc: localize('to-play-vk-audio')
-		});
-	},
 	beforeRequest: function() {
 		var _this = this;
 		this.bindAuthReady('input_click', function() {
@@ -20,28 +14,57 @@ comd.VkLoginB.extendTo(VkAudioLogin, {
 	}
 });
 
+var no_access_compx = {
+	depends_on: ['userid'],
+	fn: function(userid) {
+		return !userid;
+	}
+};
+
+var connectUserid = function(params) {
+	var _this = this;
+	if (params.vk_userid){
+		this.updateState('userid', params.vk_userid);
+	} else {
+		if (params.for_current_user){
+			this.updateState('userid', false);
+			this.app.on('state-change.vk_userid', function(e) {
+				_this.updateState('userid', e.value);
+			});
+			if (this.authInit){
+				this.authInit();
+			}
+			if (this.authSwitching){
+				this.authSwitching(this.app.vk_auth, VkAudioLogin, {desc: localize('to-play-vk-audio')});
+				//this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: this.access_desc});
+			}
+			
+		} else {
+			throw new Error('only for current user or defined user');
+		}
+	}
+
+	/*
+	*/
+};
+
 var VkSongList = function() {};
 SongsList.extendTo(VkSongList, {
-	'compx-has_no_access': {
-		depends_on: ['has_no_auth'],
-		fn: function(no_auth) {
-			return no_auth;
-		}
-	},
+	'compx-has_no_access': no_access_compx,
 	init: function(opts, params) {
 		this._super(opts);
 
-		var user_id = params.vk_userid;
+		//var user_id = params.vk_userid;
 		this.sub_pa_params = {
 			vk_userid: params.vk_userid,
 			for_current_user: params.for_current_user
 		};
-
-		this.user_id = user_id;
+		connectUserid.call(this, params);
+		//this.user_id = user_id;
 
 		this.initStates();
-		this.authInit();
-		this.authSwitching(this.app.vk_auth, VkAudioLogin);
+		//this.authInit();
+		//this.authSwitching(this.app.vk_auth, VkAudioLogin);
 	}
 });
 
@@ -53,6 +76,7 @@ VkSongList.extendTo(VkRecommendedTracks, {
 
 		request_info.request = this.app.vk_api.get('audio.getRecommendations', {
 			count: paging_opts.page_limit,
+			uid: this.state('userid'),
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
 		})
 			.done(function(r){
@@ -92,6 +116,7 @@ VkSongList.extendTo(MyVkAudioList, {
 
 		request_info.request = this.app.vk_api.get('audio.get', {
 			count: paging_opts.page_limit,
+			oid: this.state('userid'),
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
 		})
 			.done(function(r){
@@ -102,7 +127,7 @@ VkSongList.extendTo(MyVkAudioList, {
 				var vk_search = _this.app.mp3_search.getSearchByName('vk');
 				var track_list = [];
 
-				for (var i = 0; i < r.response.length; i++) {
+				for (var i = 1; i < r.response.length; i++) {
 					var cur = r.response[i];
 					track_list.push({
 						artist: htmlencoding.decode(cur.artist),
@@ -186,38 +211,6 @@ BrowseMap.Model.extendTo(VkUserPreview, {
 
 });
 
-var no_access_compx = {
-	depends_on: ['userid'],
-	fn: function(userid) {
-		return !userid;
-	}
-};
-
-var connectUserid = function(params) {
-	var _this = this;
-	if (params.vk_userid){
-		this.updateState('userid', params.vk_userid);
-	} else {
-		if (params.for_current_user){
-			this.updateState('userid', false);
-			this.app.on('state-change.vk_userid', function(e) {
-				_this.updateState('userid', e.value);
-			});
-			if (this.authInit){
-				this.authInit();
-			}
-			if (this.authSwitching){
-				//this.authSwitching(this.app.lfm_auth, UserCardLFMLogin, {desc: this.access_desc});
-			}
-			
-		} else {
-			throw new Error('only for current user or defined user');
-		}
-	}
-
-	/*
-	*/
-};
 
 var VKFriendsList = function(){};
 LoadableList.extendTo(VKFriendsList, {
