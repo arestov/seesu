@@ -31,9 +31,9 @@ SongsList.extendTo(VkSongList, {
 	init: function(opts, params) {
 		this._super(opts);
 
-		var user_id = params.vk_id;
+		var user_id = params.vk_userid;
 		this.sub_pa_params = {
-			vk_id: params.vk_id,
+			vk_userid: params.vk_userid,
 			for_current_user: params.for_current_user
 		};
 
@@ -127,7 +127,7 @@ BrowseMap.Model.extendTo(VkUserTracks, {
 	init: function(opts, params) {
 		this._super(opts);
 		this.sub_pa_params = {
-			vk_id: params.vk_id,
+			vk_userid: params.vk_userid,
 			for_current_user: params.for_current_user
 		};
 		this.initStates();
