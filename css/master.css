@@ -1420,6 +1420,9 @@ body .surf_nav{
 		.artist_in_list .song-image-con img{
 			border-radius:inherit;
 			}
+.aqc_preview{
+	min-height: 31px;
+}
 .user_page .aqc_preview .user_acqes-preview{
 	margin-bottom: 1rem;
 	margin-top: 0;
