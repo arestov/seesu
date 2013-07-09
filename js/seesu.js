@@ -264,7 +264,7 @@ AppModel.extendTo(SeesuApp, {
 		this.settings_timers = {};
 
 		this.all_queues = all_queues;
-
+		var _this = this;
 		this.trackStat = (function(){
 			window._gaq = window._gaq || [];
 			//var _gaq = window._gaq;
@@ -283,7 +283,9 @@ AppModel.extendTo(SeesuApp, {
 				});
 			});
 			return function(data_array){
-				window._gaq.push(data_array);
+				_this.nextTick(function(){
+					window._gaq.push(data_array);
+				});
 			};
 		})();
 
@@ -292,7 +294,7 @@ AppModel.extendTo(SeesuApp, {
 		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
 		this.usage_counter = parseFloat(app_serv.store('su-usage-counter')) || 0;
 
-		var _this = this;
+		
 		setInterval(function(){
 
 			var now = new Date();
@@ -394,9 +396,7 @@ AppModel.extendTo(SeesuApp, {
 
 			}, {immediately: true})
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
-				setTimeout(function() {
-					_this.trackPage(nv.map_level.resident.page_name);
-				},10);
+				_this.trackPage(nv.map_level.resident.page_name);
 			}, {immediately: true})
 			.makeMainLevel();
 
