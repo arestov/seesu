@@ -72,6 +72,7 @@ SongsList.extendTo(DiscogsAlbumSongs, {
 		this.updateManyStates({
 			'album_artist': this.playlist_artist,
 			'album_name': this.album_name,
+			'album_year': params.year,
 		//	'original_artist': this.original_artist,
 			'image_url': params.thumb && {url: params.thumb},
 			'nav_title': '(' + this.album_artist + ') ' + this.album_name,

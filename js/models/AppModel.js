@@ -181,6 +181,9 @@ AppModelBase.extendTo(AppModel, {
 			return artcard.showSimilarArtists();
 		}
 	},
+	getVkUser: function(userid) {
+		return this.start_page.getSPI('users/vk:' + userid, true);
+	},
 	getLastfmUser: function(username) {
 		return this.start_page.getSPI('users/lfm:' + username, true);
 	},

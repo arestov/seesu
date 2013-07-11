@@ -333,9 +333,9 @@
 				</div>
 				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 			</div>
-			<div class="area_for_button" pv-nest='countres'>
+			<div class="area_for_button" pv-nest='сountries'>
 				<div class="area-button" pv-anchor='big_button'>
-					<span pv-text="{{nav_title}}">Countres</span>
+					<span pv-text="{{nav_title}}">Countries</span>
 				</div>
 				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 			</div>
@@ -343,16 +343,29 @@
 		<div class="album_preview-big">
 			<img src="" alt="" pv-anchor="imgc"/>
 			<div class="full_album_name">
+				<div class="desc hidden" pv-class="desc {{!album_year && 'hidden'}}" pv-text="{{album_year}}"></div>
 				<div class="artist_name_alb" pv-anchor="artist_name_c"></div>
 				<div class="album_name" pv-anchor="album_name_c"></div>
 			</div>
 		</div>
+		
+		<!-- userslist -->
+		<div class="vk_users_page usual_page" pv-class="vk_users_page usual_page {{!mp_show && 'hidden'}}">
+			<div pv-nest="list_items" class="vk_friend-base-preview" pv-events="click::requestPage" pv-type="way-point">
+				<img class="vk_friend-ava" src="" alt="" pv-props="
+					src: {{ava_image.url}}">
+				<div class="vk_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+			</div>
+		</div>
 
+		<!-- userslist -->
 		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page {{!mp_show && 'hidden'}}">
 			<div pv-nest="list_items" class="lfm_friend-base-preview" pv-events="click::requestPage" pv-type="way-point">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
-				<span class="lfm_friend-name" pv-text="{{username}}"></span>
+				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
 				<div class="lfm_friend-desc">
 					<span pv-text="{{big_desc}}"></span>
 				</div>
@@ -383,6 +396,28 @@
 				</div>
 				
 			</div>
+		</div>
+
+
+		<div class="vk_pthgs">
+			<div class="area_for_button" pv-nest='vk__tracks'>
+				<div class="area-button" pv-anchor='big_button'>
+					<span pv-text="{{nav_title}}"></span>
+				</div>
+				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			</div>
+			<div class="preview_area" pv-nest="vk__friends">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}"></span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			
 		</div>
 		<div class="lastfm_pthgs">
 			<div class="preview_area" pv-nest="lfm__friends">
@@ -455,20 +490,7 @@
 			
 			
 		</div>
-		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page {{!mp_show && 'hidden'}}">
-			<div class="lfm_user_page-header">
-				<img class="lfm_friend-ava" src="" alt="" pv-props="
-					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
-				<span class="lfm_friend-name" pv-text="{{username}}"></span>
-				<div class="lfm_friend-desc">
-					<span pv-text="{{big_desc}}"></span>
-				</div>
-				<div>
-					<a class="external" pv-props="href:{{'http://last.fm/user/' + username}}">last.fm profile</a>
-				</div>
-			</div>
-			
-		</div>
+
 		<div class="usual_page user_page">
 			<div class="internal_pthgs">
 				<div class="area_for_button" pv-nest='user-playlists'>
@@ -479,20 +501,33 @@
 				</div>
 				<div class="aqc_preview" pv-anchor="users_acqutes"></div>
 			</div>
-			<div class="vk_pthgs">
-				<div class="area_for_button" pv-nest='vk__tracks'>
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}"></span>
-					</div>
-					<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
-				</div>
-				
-			</div>
-			
-			
 		</div>
-
-
+		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page {{!mp_show && 'hidden'}}">
+			<div class="lfm_user_page-header">
+				<img class="lfm_friend-ava" src="" alt="" pv-props="
+					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
+				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
+				<div class="#_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+				<div>
+					<a class="external" pv-props="href:{{'http://last.fm/user/' + userid}}">last.fm profile</a>
+				</div>
+			</div>
+		</div>
+		
+		<div class="vk_user_page usual_page" pv-class="vk_user_page usual_page {{!mp_show && 'hidden'}}">
+			<div class="vk_user_page-header">
+				<img class="vk_friend-ava" src="" alt="" pv-props="
+					src: {{ava_image.url}}">
+				<div class="vk_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+				<div>
+					<a class="external" pv-props="href:{{'https://vk.com/id' + userid}}">vk.com profile</a>
+				</div>
+			</div>
+		</div>
 
 
 		<div class="usual_page albums_page">
@@ -942,10 +977,10 @@
 						<div
 							pv-nest="list_items | limitTo: 13"
 							class="song_fan-b-tck hidden" 
-							pv-class="song_fan-b-tck {{!username && 'hidden'}}"
-							pv-props="title:{{username}}"
+							pv-class="song_fan-b-tck {{!userid && 'hidden'}}"
+							pv-props="title:{{userid}}"
 							>
-							<div pv-text="{{username}}" class="song_fan-h-tck"></div>
+							<div pv-text="{{userid}}" class="song_fan-h-tck"></div>
 							<img src="" alt=""
 								class="hidden"
 								pv-anchor="user-image"

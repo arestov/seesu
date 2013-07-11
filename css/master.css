@@ -1420,6 +1420,9 @@ body .surf_nav{
 		.artist_in_list .song-image-con img{
 			border-radius:inherit;
 			}
+.aqc_preview{
+	min-height: 31px;
+}
 .user_page .aqc_preview .user_acqes-preview{
 	margin-bottom: 1rem;
 	margin-top: 0;
@@ -1568,7 +1571,31 @@ body .surf_nav{
 			position: relative;
 			top: 0.2rem;
 		}
+.vk_friend-base-preview{
+	overflow: hidden;
+	margin-bottom: 1rem;
+	padding: 0.5rem;
+	border-radius: 0.2rem;
+	cursor: pointer;
+	}
+	.vk_friend-base-preview:hover{
+		background-color:#555;	
+	}
+	.vk_friend-ava{
+		float:left;
+		height: 4.58rem;
+		width: 4.58rem;
+		margin-right:1rem;
+		}
+	.vk_friend-desc{
+		font-size: 0.8em;
+		color:#8C8C8C;
+	}
 .lfm_user_page-header{
+	overflow: hidden;
+	margin-bottom: 1rem;
+}
+.vk_user_page-header{
 	overflow: hidden;
 	margin-bottom: 1rem;
 }

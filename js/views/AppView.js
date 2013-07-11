@@ -37,6 +37,10 @@ AppBaseView.extendTo(AppView, {
 			'all-sufficient-details': SongsListView,
 			nav: nav.baseNavUI
 		},
+		vk_usercard: {
+			nav: nav.baseNavUI,
+			main: UserCardPage.VkUsercardPageView
+		},
 		lfm_usercard:{
 			nav: nav.baseNavUI,
 			main: UserCardPage.LfmUsercardPageView
@@ -76,7 +80,7 @@ AppBaseView.extendTo(AppView, {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
 		},
-		countres_list: {
+		сountries_list: {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
 		},
@@ -102,6 +106,10 @@ AppBaseView.extendTo(AppView, {
 		},
 		youtube_video: {
 			main: YoutubeVideoView,
+			nav: nav.baseNavUI
+		},
+		vk_users:{
+			main: UserCardPage.VkUsersPageView,
 			nav: nav.baseNavUI
 		},
 		lfm_users:{
