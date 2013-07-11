@@ -80,7 +80,7 @@ AppBaseView.extendTo(AppView, {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
 		},
-		countres_list: {
+		сountries_list: {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
 		},

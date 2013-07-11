@@ -501,7 +501,7 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 
 		var lists_list = [];
 
-		var citiesl = lastfm_data.countres[this.country_name];
+		var citiesl = lastfm_data.сountries[this.country_name];
 
 		for (var i = 0; i < citiesl.length; i++) {
 			var name = citiesl[i];
@@ -627,13 +627,13 @@ BrowseMap.Model.extendTo(CountryPlace, {
 	}
 });
 
-var CountresList = function() {};
-BrowseMap.Model.extendTo(CountresList, {
-	model_name: 'countres_list',
+var CountriesList = function() {};
+BrowseMap.Model.extendTo(CountriesList, {
+	model_name: 'сountries_list',
 	init: function(opts) {
 		this._super.apply(this, arguments);
 		this.lists_list = [];
-		for (var country in lastfm_data.countres){
+		for (var country in lastfm_data.сountries){
 			var country_place = this.getSPI(country);
 			country_place.initOnce();
 			this.lists_list.push(country_place);
@@ -670,15 +670,15 @@ BrowseMap.Model.extendTo(MusicConductor, {
 		this._super.apply(this, arguments);
 
 		this.allpas = this.getSPI('world');
-		this.countres = this.getSPI('countres');
+		this.сountries = this.getSPI('сountries');
 
 
 		var _this = this;
 		this.allpas.initOnce();
 		this.updateNesting('allpas', this.allpas);
 
-		this.countres.initOnce();
-		this.updateNesting('countres', this.countres);
+		this.сountries.initOnce();
+		this.updateNesting('сountries', this.сountries);
 
 
 
@@ -690,9 +690,9 @@ BrowseMap.Model.extendTo(MusicConductor, {
 		return this;
 	},
 	sub_pa: {
-		countres: {
-			title: 'Countres',
-			constr: CountresList
+		сountries: {
+			title: 'Countries',
+			constr: CountriesList
 		},
 		world: {
 			constr: AllPlaces,
