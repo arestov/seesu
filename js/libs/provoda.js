@@ -1161,6 +1161,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 					total_ch.length = 0;
 				}
 			});
+		} else {
+			total_ch.length = 0;
 		}
 
 
