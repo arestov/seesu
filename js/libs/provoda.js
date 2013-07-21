@@ -440,7 +440,7 @@ var iterateCallbacksFlow = function() {
 		if (fn.cbf_args && fn.cbf_args.length){
 			fn.apply(fn.cbf_context, fn.cbf_args);
 		} else {
-			fn.call(fn.cbf_context);
+			fn.call(fn.cbf_context, fn.cbf_arg);
 		}
 		
 	}
@@ -454,9 +454,10 @@ var checkCallbacksFlow = function() {
 		iteration_delayed = true;
 	}
 };
-var pushToCbsFlow = function(fn, context, args) {
+var pushToCbsFlow = function(fn, context, args, cbf_arg) {
 	fn.cbf_context = context;
 	fn.cbf_args = args;
+	fn.cbf_arg = cbf_arg;
 	callbacks_flow.push(fn);
 	checkCallbacksFlow();
 };
@@ -502,8 +503,8 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		return funcs;
 	},
-	nextTick: function(fn) {
-		pushToCbsFlow(fn, this);
+	nextTick: function(fn, args, arg) {
+		pushToCbsFlow(fn, this, args, arg);
 	},
 	_addEventHandler: function(namespace, cb, opts, once){
 		if (this.convertEventName){
@@ -654,22 +655,27 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		return this;
 	},
-	callEventCallback: function(cur, args, opts) {
+	callEventCallback: function(cur, args, opts, arg) {
 	//	var _this = this;
 		if (cur.immediately && (!opts || !opts.force_async)){
-			cur.cb.apply(this, args);
+			if (args){
+				cur.cb.apply(this, args);
+			} else {
+				cur.cb.call(this, arg);
+			}
+			
 		} else {
-			pushToCbsFlow(cur.cb, this, args);
+			pushToCbsFlow(cur.cb, this, args, arg);
 			/*
 			setTimeout(function() {
 				cur.cb.apply(_this, args);
 			},1);*/
 		}
 	},
-	triggerCallbacks: function(cb_cs, args, opts, name){
+	triggerCallbacks: function(cb_cs, args, opts, name, arg){
 		for (var i = 0; i < cb_cs.length; i++) {
 			var cur = cb_cs[i];
-			this.callEventCallback(cur, args, opts);
+			this.callEventCallback(cur, args, opts, arg);
 			if (cur.once){
 				this.off(name, false, cur);
 			}
@@ -1016,26 +1022,28 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
+	st_event_name_default: 'state-change.',
+	st_event_name_vip: 'vip-state-change.',
 	_triggerStChanges: function(i, name, value) {
 
-		var vip_name = 'vip-state-change.' + name;
-		var default_name = 'state-change.' + name;
+		var vip_name = this.st_event_name_vip + name;
+		var default_name = this.st_event_name_default + name;
 
 		var vip_cb_cs = this.getMatchedCallbacks(vip_name).matched;
 		var default_cb_cs = this.getMatchedCallbacks(default_name).matched;
 		if (vip_cb_cs.length || default_cb_cs.length){
-			var event_args = [{
+			var event_arg = {
 				type: name,
 				value: value,
 				old_value: this.zdsv.original_states[name]
-			}];
+			};
 			if (vip_cb_cs.length){
 				//вызов внутреннего для самого объекта события
-				this.triggerCallbacks(vip_cb_cs, event_args, false, vip_name);
+				this.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg);
 			}
 			if (default_cb_cs.length){
 				//вызов стандартного события
-				this.triggerCallbacks(default_cb_cs, event_args, std_event_opt, default_name);
+				this.triggerCallbacks(default_cb_cs, false, std_event_opt, default_name, event_arg);
 			}
 		}
 
