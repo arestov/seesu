@@ -436,11 +436,11 @@ var iterateCallbacksFlow = function() {
 			setTimeout(iterateCallbacksFlow,4);
 			break;
 		}
-		var fn = callbacks_flow.shift();
-		if (fn.cbf_args && fn.cbf_args.length){
-			fn.apply(fn.cbf_context, fn.cbf_args);
+		var cur = callbacks_flow.shift();
+		if (cur.args){
+			cur.fn.apply(cur.context, cur.args);
 		} else {
-			fn.call(fn.cbf_context, fn.cbf_arg);
+			cur.fn.call(cur.context, cur.arg);
 		}
 		
 	}
@@ -455,10 +455,12 @@ var checkCallbacksFlow = function() {
 	}
 };
 var pushToCbsFlow = function(fn, context, args, cbf_arg) {
-	fn.cbf_context = context;
-	fn.cbf_args = args;
-	fn.cbf_arg = cbf_arg;
-	callbacks_flow.push(fn);
+	callbacks_flow.push({
+		fn: fn,
+		context: context,
+		args: args,
+		arg: cbf_arg
+	});
 	checkCallbacksFlow();
 };
 
@@ -503,8 +505,8 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		return funcs;
 	},
-	nextTick: function(fn, args, arg) {
-		pushToCbsFlow(fn, this, args, arg);
+	nextTick: function(fn) {
+		pushToCbsFlow(fn, this);
 	},
 	_addEventHandler: function(namespace, cb, opts, once){
 		if (this.convertEventName){
