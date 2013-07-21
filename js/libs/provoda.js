@@ -436,8 +436,13 @@ var iterateCallbacksFlow = function() {
 			setTimeout(iterateCallbacksFlow,4);
 			break;
 		}
-		var cur = callbacks_flow.shift();
-		cur.fn.apply(cur.context, cur.args);
+		var fn = callbacks_flow.shift();
+		if (fn.cbf_args && fn.cbf_args.length){
+			fn.apply(fn.cbf_context, fn.cbf_args);
+		} else {
+			fn.call(fn.cbf_context);
+		}
+		
 	}
 	if (!callbacks_flow.length){
 		callbacks_busy = false;
@@ -450,11 +455,9 @@ var checkCallbacksFlow = function() {
 	}
 };
 var pushToCbsFlow = function(fn, context, args) {
-	callbacks_flow.push({
-		fn: fn,
-		context: context,
-		args: args
-	});
+	fn.cbf_context = context;
+	fn.cbf_args = args;
+	callbacks_flow.push(fn);
 	checkCallbacksFlow();
 };
 
