@@ -1,6 +1,7 @@
 define('provoda', ['spv', 'angbo', 'jquery'], function(spv, angbo, $){
 
 "use strict";
+var DOT = '.';
 var provoda;
 var sync_sender = {
 	root_model: null,
@@ -489,11 +490,11 @@ spv.Class.extendTo(provoda.Eventor, {
 		this.resetSubscribesCache(opts.namespace);
 	},
 	getPossibleRegfires: function(namespace) {
-		var parts = namespace.split('.');
+		var parts = namespace.split(DOT);
 		var funcs = [];
 		var i;
 		for (i = parts.length - 1; i > -1; i--) {
-			var posb_namespace = parts.slice(0, i + 1).join('.');
+			var posb_namespace = parts.slice(0, i + 1).join(DOT);
 			if (this.reg_fires.by_namespace[posb_namespace]){
 				funcs.push(this.reg_fires.by_namespace[posb_namespace]);
 			}
@@ -505,8 +506,8 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		return funcs;
 	},
-	nextTick: function(fn) {
-		pushToCbsFlow(fn, this);
+	nextTick: function(fn, args, arg) {
+		pushToCbsFlow(fn, this, args, arg);
 	},
 	_addEventHandler: function(namespace, cb, opts, once){
 		if (this.convertEventName){
@@ -516,7 +517,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		var
 			fired,
 			_this = this,
-			name_parts = namespace.split('.'),
+			name_parts = namespace.split(DOT),
 			short_name = name_parts[0];
 
 		if (opts && opts.exlusive){
@@ -573,7 +574,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		var
 			clean = [],
-			short_name = namespace.split('.')[0],
+			short_name = namespace.split(DOT)[0],
 			queried = this.getMatchedCallbacks(namespace);
 
 		if (this.subscribes[short_name]){
@@ -600,7 +601,7 @@ spv.Class.extendTo(provoda.Eventor, {
 				continue;
 			}
 			var last_char = cur_namespace.charAt(namespace.length);
-			if ((!last_char || last_char == '.') && cur_namespace.indexOf(namespace) == 0){
+			if ((!last_char || last_char == DOT) && cur_namespace.indexOf(namespace) == 0){
 				this.subscribes_cache[cur_namespace] = null;
 			}
 		}
@@ -610,7 +611,7 @@ spv.Class.extendTo(provoda.Eventor, {
 			namespace = this.convertEventName(namespace);
 		}
 		var
-			r, short_name = namespace.split('.')[0];
+			r, short_name = namespace.split(DOT)[0];
 
 		var cb_cs = this.subscribes[short_name];
 		if (cb_cs){
@@ -625,7 +626,7 @@ spv.Class.extendTo(provoda.Eventor, {
 					var canbe_matched = cac_space[curn];
 					if (typeof canbe_matched =='undefined') {
 						var last_char = curn.charAt(namespace.length);
-						canbe_matched = (!last_char || last_char == '.') && curn.indexOf(namespace) == 0;
+						canbe_matched = (!last_char || last_char == DOT) && curn.indexOf(namespace) == 0;
 						cac_space[curn] = canbe_matched;
 					}
 					if (canbe_matched){
@@ -990,6 +991,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		return changes_list;
 	},
+	state_ch_h_prefix: 'stch-',
 	_replaceState: function(name, value, skip_handler, stack) {
 		if (name){
 			var obj_to_change	= this.states,
@@ -997,7 +999,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 				method;
 			if (old_value != value){
 
-				var stateChanger = !skip_handler && (this['stch-' + name] || (this.state_change && this.state_change[name]));
+				var stateChanger = !skip_handler && (this[ this.state_ch_h_prefix + name] || (this.state_change && this.state_change[name]));
 				if (stateChanger){
 					if (typeof stateChanger == 'function'){
 						method = stateChanger;
@@ -1399,7 +1401,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		return this.children_models[collection_name];
 	},
 	updateNesting: function(collection_name, array, opts) {
-		if (collection_name.indexOf('.') != -1){
+		if (collection_name.indexOf(DOT) != -1){
 			throw new Error('remove "." (dot) from name');
 		}
 		if (Array.isArray(array)){
@@ -1431,11 +1433,13 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		}
 		this.mpx.sendCollectionChange(collection_name, array);
 	},
+	complex_st_prefix: 'compx-',
 	hasComplexStateFn: function(state_name) {
+
 		if (this.complex_states && this.complex_states[name]){
 			return true;
 		}
-		if (this['compx-' + state_name]){
+		if (this[ this.complex_st_prefix + state_name ]){
 			return true;
 		}
 	},
@@ -1714,7 +1718,7 @@ spv.Class.extendTo(Template, {
 	getFieldsTreesBases: function(all_vs) {
 		var sfy_values = [];
 		for (var i = 0; i < all_vs.length; i++) {
-			var parts = all_vs[i].split('.');
+			var parts = all_vs[i].split(DOT);
 			var main_part = parts[0];
 			sfy_values.push(main_part);
 		}
@@ -2013,11 +2017,11 @@ spv.Class.extendTo(Template, {
 		return parts.join('');
 	},
 	bindPropChange: function(node, prop, statement) {
-		var parts = prop.split('.');
+		var parts = prop.split(DOT);
 		for (var i = 0; i < parts.length; i++) {
 			parts[i] = this.convertFieldname(parts[i]);
 		}
-		prop = parts.join('.');
+		prop = parts.join(DOT);
 
 		this.bindStandartChange(node, {
 			statement: statement,
@@ -2631,6 +2635,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.on('die', cb);
 	},
 	markAsDead: function(skip_md_call) {
+		if (this.autoremove){
+			this.remove();
+		}
 		this.dead = true;
 
 		this.trigger('die');
@@ -2939,6 +2946,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.collectionChange(name, this.children_models[name]);
 		}
 	},
+	tpl_children_prefix: 'tpl.children_templates.',
+	collch_h_prefix: 'collch-',
 	collectionChange: function(name, array) {
 		if (this.dead){
 			return;
@@ -2951,7 +2960,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var old_value = this.children_models[name];
 		this.children_models[name] = array;
 
-		var pv_views = spv.getTargetField(this, 'tpl.children_templates.' + name);
+		var pv_views = spv.getTargetField(this, this.tpl_children_prefix + name);
 		if (pv_views){
 			for (var space_name in pv_views){
 				this.checkCollchItemAgainstPvView(name, spv.toRealArray(array), space_name, pv_views[space_name]);
@@ -2960,7 +2969,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 
-		var collch = this['collch-' + name];//collectionChanger
+		var collch = this[ this.collch_h_prefix + name];//collectionChanger
 		if (collch){
 			this.callCollectionChangeDeclaration(collch, name, array, old_value);
 		}
@@ -3106,8 +3115,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}, view_opts, name, array, not_request);
 
 	},
+	coll_r_prio_prefix: 'coll-prio-',
 	getRendOrderedNesting: function(name, array) {
-		var getCollPriority = this['coll-prio-' + name];
+		var getCollPriority = this[this.coll_r_prio_prefix + name];
 		return getCollPriority && getCollPriority.call(this, array);
 	},
 	appendCollection: function(space, funcs, view_opts, name, array, not_request) {
