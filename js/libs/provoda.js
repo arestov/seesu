@@ -972,6 +972,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	//	var comlx_name;
 		this.collectCompxs1part(compx_check);
 		this.collectCompxs2part(compx_check);
+		this.compx_check = compx_check;
 	},
 	state: function(name){
 		return this.states[name];
@@ -1435,13 +1436,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	},
 	complex_st_prefix: 'compx-',
 	hasComplexStateFn: function(state_name) {
-
-		if (this.complex_states && this.complex_states[name]){
-			return true;
-		}
-		if (this[ this.complex_st_prefix + state_name ]){
-			return true;
-		}
+		return this.compx_check[state_name];
 	},
 
 	sendStatesToViews: function(states_list) {
