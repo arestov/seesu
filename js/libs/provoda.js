@@ -712,7 +712,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		if (opts.order){
 			for (i = 0; i < array.length; i++) {
 				req = array[i];
-				spv.setTargetField(req, 'mdata.' + this._provoda_id + '.order', opts.order);
+				spv.setTargetField(req, this.req_order_field, opts.order);
 				req.order = opts.order;
 			}
 		}
@@ -766,7 +766,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		var requests = this.requests[space || this.default_requests_space];
 		var _provoda_id = this._provoda_id;
 
-		var field_name = 'mdata.' + _provoda_id + '.order';
+		var field_name = ['mdata', _provoda_id, 'order'];
 
 		return requests.sort(function(a,b){
 			return spv.sortByRules(a, b, [
@@ -1296,6 +1296,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		});
 
 		this._provoda_id = models_counters++;
+		this.req_order_field = ['mdata', this._provoda_id, 'order'];
 		this.states = {};
 		
 		this.children_models = {};
@@ -2237,6 +2238,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (opts){
 			this.opts = opts;
 		}
+		this.req_order_field = ['mdata', this.view_id, 'order'];
 
 		this._super();
 		this.children = [];

@@ -291,7 +291,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 		checkFile: function(file) {
 			var search_name = file.from;
 			var file_id = file._id || file.link;
-			var checked = spv.getTargetField(this.checked_files, search_name + '.' + file_id);
+			var checked = spv.getTargetField(this.checked_files, [search_name , file_id]);
 			if (!checked){
 				this.checked_files[search_name] = this.checked_files[search_name] || {};
 				this.checked_files[search_name][file_id] = true;
@@ -635,7 +635,7 @@ var getAverageDurations = function(mu_array, time_limit){
 			var query_string = this.getQueryString(msq);
 			time_limit = time_limit || 30000;
 
-			var field_name = "query_match_index." + query_string.replace(/\./gi, '');
+			var field_name = ['query_match_index', query_string.replace(/\./gi, '')];
 			music_list.qmi_index = spv.makeIndexByField(music_list, field_name);
 			var average_durs = getAverageDurations(music_list, time_limit);
 			music_list.sort(function(a, b){
@@ -665,7 +665,7 @@ var getAverageDurations = function(mu_array, time_limit){
 		},
 		getFileQMI: function(file, msq) {
 			var query_string = this.getQueryString(msq);
-			return spv.getTargetField(file, 'query_match_index.' + query_string.replace(/\./gi, ''));
+			return spv.getTargetField(file, ['query_match_index', query_string.replace(/\./gi, '')]);
 		},
 		setFileQMI: function(file, msq) {
 			var query_string = this.getQueryString(msq);
