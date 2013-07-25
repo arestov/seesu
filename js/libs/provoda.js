@@ -764,9 +764,8 @@ spv.Class.extendTo(provoda.Eventor, {
 	},
 	sortRequests: function(space) {
 		var requests = this.requests[space || this.default_requests_space];
-		var _provoda_id = this._provoda_id;
 
-		var field_name = ['mdata', _provoda_id, 'order'];
+		var field_name = this.req_order_field;
 
 		return requests.sort(function(a,b){
 			return spv.sortByRules(a, b, [
@@ -1296,7 +1295,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		});
 
 		this._provoda_id = models_counters++;
-		this.req_order_field = ['mdata', this._provoda_id, 'order'];
+		this.req_order_field = ['mdata', 'm', this._provoda_id, 'order'];
 		this.states = {};
 		
 		this.children_models = {};
@@ -2238,7 +2237,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (opts){
 			this.opts = opts;
 		}
-		this.req_order_field = ['mdata', this.view_id, 'order'];
+		this.req_order_field = ['mdata', 'v', this.view_id, 'order'];
 
 		this._super();
 		this.children = [];
