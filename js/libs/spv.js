@@ -270,8 +270,8 @@ toRealArray = spv.toRealArray = function(array, check_field){
 	}
 };
 
-getTargetField = function(obj, field){
-	var tree = field.split('.');
+getTargetField = function(obj, tree){
+	tree= Array.isArray(tree) ? tree : tree.split('.');
 	var nothing;
 	var target = obj;
 	for (var i=0; i < tree.length; i++) {
@@ -284,8 +284,8 @@ getTargetField = function(obj, field){
 	return target;
 };
 
-spv.setTargetField = function(obj, field, value) {
-	var tree = field.split('.');
+spv.setTargetField = function(obj, tree, value) {
+	tree = Array.isArray(tree) ? tree : tree.split('.');
 	var cur_obj = obj;
 	for (var i=0; i < tree.length; i++) {
 		var cur = tree[i];
@@ -305,6 +305,8 @@ spv.setTargetField = function(obj, field, value) {
 var getFieldValueByRule = function(obj, rule){
 	if (rule instanceof Function){
 		return rule(obj);
+	} else if (Array.isArray(rule)){
+		return spv.getTargetField(obj, rule);
 	} else if (rule instanceof Object){
 		if (typeof rule.field =='function'){
 			return rule.field(obj);
@@ -314,6 +316,7 @@ var getFieldValueByRule = function(obj, rule){
 	} else{
 		return spv.getTargetField(obj, rule);
 	}
+	
 	
 	
 };
@@ -452,8 +455,15 @@ cloneObj= spv.cloneObj = function(acceptor, donor, black_list, white_list){
 	}
 	return _no;
 };
-
-
+spv.mapProps = function(props_map, donor, acceptor) {
+	for (var name in props_map){
+		var value = spv.getTargetField(donor, props_map[name]);
+		if (typeof value != 'undefined'){
+			spv.setTargetField(acceptor, name, value);
+		}
+	}
+	return acceptor;
+};
 getUnitBaseNum = function(_c){
 	if (_c > 0){
 		if (_c > 10 && _c < 20){

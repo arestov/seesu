@@ -37,6 +37,10 @@ AppBaseView.extendTo(AppView, {
 			'all-sufficient-details': SongsListView,
 			nav: nav.baseNavUI
 		},
+		vk_usercard: {
+			nav: nav.baseNavUI,
+			main: UserCardPage.VkUsercardPageView
+		},
 		lfm_usercard:{
 			nav: nav.baseNavUI,
 			main: UserCardPage.LfmUsercardPageView
@@ -76,7 +80,7 @@ AppBaseView.extendTo(AppView, {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
 		},
-		countres_list: {
+		сountries_list: {
 			main: coct.ListOfListsView,
 			nav: nav.baseNavUI
 		},
@@ -102,6 +106,10 @@ AppBaseView.extendTo(AppView, {
 		},
 		youtube_video: {
 			main: YoutubeVideoView,
+			nav: nav.baseNavUI
+		},
+		vk_users:{
+			main: UserCardPage.VkUsersPageView,
 			nav: nav.baseNavUI
 		},
 		lfm_users:{
@@ -682,40 +690,36 @@ AppBaseView.extendTo(AppView, {
 				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
 				_this.arrowsKeysNav(e);
 			});
-	
+	},
+	inputs_names: ['input'],
+	key_codes_map:{
+		'13': 'Enter',
+		'37': 'Left',
+		'39': 'Right',
+		'40': 'Down',
+		'63233': 'Down',
+		'38': 'Up',
+		'63232': 'Up'
 	},
 	arrowsKeysNav: function(e) {
 		var
 			key_name,
 			_key = e.keyCode;
 
-		if (_key == '13'){
+		var allow_pd;
+		if (this.inputs_names.indexOf(e.target.nodeName.toLowerCase()) == -1){
+			allow_pd = true;
+		}
+		key_name = this.key_codes_map[e.keyCode];
+
+		if (key_name && allow_pd){
 			e.preventDefault();
-			key_name = 'Enter';
-		} else
-		if (_key == '37'){
-			e.preventDefault();
-			key_name = 'Left';
-		} else
-		if (_key == '39'){
-			e.preventDefault();
-			key_name = 'Right';
-		} else
-		if((_key == '40') || (_key == '63233')){
-			e.preventDefault();
-			key_name = 'Down';
-		} else
-		if((_key == '38') || (_key == '63232')){
-			e.preventDefault();
-			key_name = 'Up';
 		}
 		if (key_name){
 			//this.RPCLegacy('keyNav', key_name);
 			this.wp_box.wayPointsNav(key_name);
 		}
 	},
-	
-	
 	scrollToWP: function(cwp) {
 		if (cwp){
 			var cur_md_md = this.state('current_mp_md');

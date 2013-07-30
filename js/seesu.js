@@ -168,6 +168,7 @@ AppModel.extendTo(SeesuApp, {
 
 		this.s.on('info-change.vk', function(data) {
 			_this.updateState('vk_info', data);
+			_this.updateState('vk_userid', data && data.uid);
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
@@ -190,10 +191,10 @@ AppModel.extendTo(SeesuApp, {
 			reportSearchEngs(list.join(','));
 		});
 		if (this.lfm.username){
-			this.updateState('lfm_username', this.lfm.username);
+			this.updateState('lfm_userid', this.lfm.username);
 		} else {
 			this.lfm_auth.on('session', function() {
-				_this.updateState('lfm_username', _this.lfm.username);
+				_this.updateState('lfm_userid', _this.lfm.username);
 			});
 		}
 		
@@ -263,7 +264,7 @@ AppModel.extendTo(SeesuApp, {
 		this.settings_timers = {};
 
 		this.all_queues = all_queues;
-
+		var _this = this;
 		this.trackStat = (function(){
 			window._gaq = window._gaq || [];
 			//var _gaq = window._gaq;
@@ -282,7 +283,9 @@ AppModel.extendTo(SeesuApp, {
 				});
 			});
 			return function(data_array){
-				window._gaq.push(data_array);
+				_this.nextTick(function(){
+					window._gaq.push(data_array);
+				});
 			};
 		})();
 
@@ -291,7 +294,7 @@ AppModel.extendTo(SeesuApp, {
 		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
 		this.usage_counter = parseFloat(app_serv.store('su-usage-counter')) || 0;
 
-		var _this = this;
+		
 		setInterval(function(){
 
 			var now = new Date();
@@ -393,9 +396,7 @@ AppModel.extendTo(SeesuApp, {
 
 			}, {immediately: true})
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
-				setTimeout(function() {
-					_this.trackPage(nv.map_level.resident.page_name);
-				},10);
+				_this.trackPage(nv.map_level.resident.page_name);
 			}, {immediately: true})
 			.makeMainLevel();
 
@@ -576,8 +577,14 @@ AppModel.extendTo(SeesuApp, {
 			pageTracker._trackEvent.apply(pageTracker, args);
 		});
 	},
+	'rootv_field': ['mpx', 'views_index', 'root', 'length'],
 	trackPage:function(page_name){
 		this.current_page = page_name;
+		
+		var has_app_view = !!spv.getTargetField(this, this.rootv_field);
+		if (!has_app_view){
+			return;
+		}
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
 		this.trackStat.call(this, args);
@@ -775,7 +782,7 @@ AppModel.extendTo(SeesuApp, {
 			cache_ajax: cache_ajax,
 			onAuthLost: function() {
 				lostAuth(vkapi);
-				checkDeadSavedToken(vk_token);
+				initVk.checkDeadSavedToken(vk_token);
 			},
 			mp3_search: _this.mp3_search
 		});

@@ -199,7 +199,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 		},
 		getShareUrl: function() {
 			if (this.artist && this.track){
-				return "http://seesu.me/o" + "#/catalog/" + this.app.encodeURLPart(this.artist) + "/_/" + this.app.encodeURLPart(this.track);
+				return "http://seesu.me/o#/catalog/" + (this.app.encodeURLPart(this.artist) + "/_/" + this.app.encodeURLPart(this.track)).replace(/\'/gi, '%27');
 			} else {
 				return "";
 			}
@@ -227,9 +227,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 			if (file){
 				data.attachments = "audio" + file._id;
 			}
-			data.message = this.state('nav_title') + " " + encodeURI(this.getShareUrl());
+			data.message = this.state('nav_title') + " \n" + this.getShareUrl();
 			if (data.attachments){
-				data.attachment = data.attachments;
+				//data.attachment = data.attachments;
 			}
 
 			if (window.VK){
@@ -237,6 +237,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 
 				});
 			} else {
+				for (var prop in data){
+					data[prop] = encodeURIComponent(data[prop]);
+				}
 				app_env.openURL( "http://seesu.me/vk/share.html" +
 					"?" +
 					spv.stringifyParams({app_id: this.app.vkappid}, false, '=', '&') +

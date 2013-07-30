@@ -181,33 +181,12 @@
 
 </defs>
 
-<g id="states-switcher" class="link-icon-state">
-	<use
-		id="drop-shadow-icon"
-		xlink:href="#color-filled-icon" />
 
-	<g id="icon-main-wrap">
-		<g id="color-filled-icon">
-			<use
-				id="icon-path"
-				xlink:href="#parts-switcher" />
-		</g>
-		<g id="gradient-layer">
-			<use
-				id="use6134"
-				xlink:href="#icon-path" />
-		</g>
-	</g>
-
-	<use
-		id="inner-shadow-icon"
-		xlink:href="#icon-main-wrap" />
-</g>
 
 
 
 <g	id="g3104" style="display:none">
-	<use id="parts-switcher" xlink:href="#tag-button"/>
+	
 
 	<path
 		id="button-highlight"
@@ -266,5 +245,28 @@
 		style="fill-rule:evenodd"
 		
 		d="m 11.500001,10 c 0,0.828427 -0.671574,1.5 -1.500001,1.5 -0.8284269,0 -1.5,-0.671573 -1.5,-1.5 0,-0.828427 0.6715731,-1.4999998 1.5,-1.4999998 0.828427,0 1.500001,0.6715728 1.500001,1.4999998 z M 13,1 C 6.372088,1 1,6.3725281 1,13 1,19.626549 6.3730109,25 13,25 19.62699,25 25,19.627472 25,13 25,6.3725281 19.62699,1 13,1 z m 2.5,19.5 -8.4999994,-8.5 0,-4.9999999 5.0000004,0 L 20.5,15.5 z"/>
+	<use id="parts-switcher" xlink:href="#tag-button"/>
+</g>
+<g id="states-switcher" class="link-icon-state">
+	<use
+		id="drop-shadow-icon"
+		xlink:href="#color-filled-icon" />
+
+	<g id="icon-main-wrap">
+		<g id="color-filled-icon">
+			<use
+				id="icon-path"
+				xlink:href="#parts-switcher" />
+		</g>
+		<g id="gradient-layer">
+			<use
+				id="use6134"
+				xlink:href="#icon-path" />
+		</g>
+	</g>
+
+	<use
+		id="inner-shadow-icon"
+		xlink:href="#icon-main-wrap" />
 </g>
 </svg>
