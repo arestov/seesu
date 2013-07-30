@@ -106,6 +106,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		return this;
 	},
 	putRequestedData: function(request, data_list, error) {
+
 		//console.profile('data list inject');
 		if (!this.request_info || this.request_info.request == request){
 
