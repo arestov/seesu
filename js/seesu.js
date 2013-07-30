@@ -577,8 +577,14 @@ AppModel.extendTo(SeesuApp, {
 			pageTracker._trackEvent.apply(pageTracker, args);
 		});
 	},
+	'rootv_field': ['mpx', 'views_index', 'root', 'length'],
 	trackPage:function(page_name){
 		this.current_page = page_name;
+		
+		var has_app_view = !!spv.getTargetField(this, this.rootv_field);
+		if (!has_app_view){
+			return;
+		}
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
 		this.trackStat.call(this, args);
