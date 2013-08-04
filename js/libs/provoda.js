@@ -2089,7 +2089,7 @@ spv.Class.extendTo(Template, {
 			if (event_handling.pd){
 				e.preventDefault();
 			}
-			_this.callEventCallback(this, e, data);
+			_this.callEventCallback(this, e, data.slice());
 		});
 	},
 	callEventCallback: function(node, e, data) {
@@ -2257,10 +2257,11 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var _this = this;
 		this.triggerTPLevents = function(e) {
 			if (!e.pv_repeat_context){
-				if (e.callback_data[1]){
-					_this.RPCLegacy(e.callback_data[1]);
+				if (!e.callback_data[0] && e.callback_data[1]){
+					e.callback_data.shift();
+					_this.RPCLegacy.apply(_this, e.callback_data);
 				} else {
-					_this.tpl_events[e.callback_name].call(_this, e.event, e.node);
+					_this.tpl_events[e.callback_name].call(_this, e.event, e.node, e.callback_data);
 				}
 			} else {
 				_this.tpl_r_events[e.pv_repeat_context][e.callback_name].call(_this, e.event, e.node, e.scope);

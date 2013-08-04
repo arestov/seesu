@@ -1672,3 +1672,38 @@ body .surf_nav{
 	.song_fan-b-tck:hover .song_fan-h-tck{
 		visibility: visible;
 	}
+.shareb-base{
+	background: #545454;
+	border: 1px solid transparent;
+	border-top: 1px solid #4E4E4E;
+	border-bottom: 1px solid #646464;
+	border-radius: 0.5rem;
+	margin-bottom: 0.2rem;
+	padding: 0 0.7rem;
+	overflow: hidden;
+	}
+	.shareb-button{
+		margin-left:-13px;
+		padding: 0.5rem 0.7rem;
+		background: #5F5F5F;
+		cursor: pointer;
+		display: inline-block;
+		
+		min-width: 5rem;
+		}
+	.shareb-button:hover{
+		background-color: #6D6D6D;
+	}
+	.shareb-con{
+		display: none;
+		}
+	.shareb-base.sharebopened{
+		
+
+		}
+		.shareb-base.sharebopened .shareb-button{
+			border-radius: 0 0 0.4rem 0;
+			}
+		.shareb-base.sharebopened .shareb-con{
+			display: block;
+			}

@@ -66,7 +66,7 @@ comd.BaseCRow.extendTo(LoveRow, {
 
 
 
-var ShareRow;
+
 
 
 
@@ -147,7 +147,7 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 
 
 
-ShareRow = function(actionsrow, mo){
+var ShareRow = function(actionsrow, mo){
 	this.init(actionsrow, mo);
 };
 comd.BaseCRow.extendTo(ShareRow, {

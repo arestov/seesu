@@ -871,8 +871,8 @@
 		</ul>
 			
 		<div class="track-context" >
-			<div class="song-actions" pv-anchor="song-actions">
-				<div class="track-panel">
+			<div class="song-actions" pv-anchor="song-actions" pv-nest="actionsrow">
+				<div class="track-panel" pv-anchor="buttons_panel">
 					<div class="buttons-panel">
 						<div class="nice-buttons-place">
 							<span class="pc-place">
@@ -897,7 +897,7 @@
 							<li class="rept-song-button-wrap">
 								<a  class="trackbutton rept-song-button"></a>
 							</li>
-							<li class="volume-control">
+							<li class="volume-control" pv-anchor="volume-control">
 								<div class="v-hole" pv-anchor="v-hole">
 									<div class="v-bar" pv-anchor="v-bar" pv-props="style.width: {{vis_volume}}"></div>
 								</div>
@@ -908,8 +908,8 @@
 					</div>
 					
 				</div>
-				<div class="song-row-content row-song-context hidden">
-					<span class="rc-arrow hidden">
+				<div class="song-row-content row-song-context hidden" pv-anchor="row_context">
+					<span class="rc-arrow hidden" pv-anchor="arrow">
 						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
 					</span>
 					<div class="addsong-to-playlist hidden">
@@ -920,6 +920,16 @@
 					</div>
 					<div class="share-song hidden">
 						<input type="text" readonly="readonly" class="song-link"/>
+						<div class="shareb-base vk_share users-list" pv-anchor="vk_share_b">
+							<span class="shareb-button" pv-events="click:switchClass:sharebopened:vk_share_b">vk.com</span>
+							<span class="shareb-desc"></span>
+							<div class="shareb-con" pv-anchor="vk_share"></div>
+						</div>
+						<div class="shareb-base lfm_share" pv-anchor="lfm_share_b">
+							<span class="shareb-button" pv-events="click:switchClass:sharebopened:lfm_share_b">last.fm</span>
+							<span class="shareb-desc"></span>
+							<div class="shareb-con" pv-anchor="lfm_share"></div>
+						</div>
 					</div>
 					<div class="love-song hidden"></div>
 

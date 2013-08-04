@@ -65,7 +65,9 @@ etc_views.BaseCRowUI.extendTo(ShareRowUI, {
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
 		this.c = parent_c.children('.share-song');
 		this.button = buttons_panel.find('.pc-place .pc-rupor');
-		this.users_c = $('<div class="users-list"></div>').appendTo(this.c);
+
+		this.users_c = this.parent_view.tpl.ancs['vk_share'];
+
 		this.dom_related_props.push('button','users_c');
 		$("<h3></h3>").text(localize('post-song')).appendTo(this.users_c);
 		this.bindClick();
@@ -377,14 +379,15 @@ etc_views.BaseCRowUI.extendTo(RepeatSongRowView, {
 var TrackActionsRowUI = function() {};
 etc_views.ActionsRowUI.extendTo(TrackActionsRowUI, {
 	dom_rp: true,
-	createBase: function(){
-		this.c = this.parent_view.song_actions_c;
-		this.row_context = this.c.children('.row-song-context');
+	useBase: function(node){
+		this.c = node;
+		this.createTemplate();
+		this.row_context = this.tpl.ancs['row_context'];//this.c.children('.row-song-context');
 
-		this.buttons_panel = this.c.children('.track-panel');
+		this.buttons_panel = this.tpl.ancs['buttons_panel'];
 		this.createVolumeControl();
 		
-		this.arrow = this.row_context.children('.rc-arrow');
+		this.arrow = this.tpl.ancs['arrow'];
 		var _this = this;
 
 		this.parent_view.on('state-change.mp_show_end', function(e){
@@ -392,6 +395,13 @@ etc_views.ActionsRowUI.extendTo(TrackActionsRowUI, {
 		});
 		this.dom_related_props.push('row_context', 'buttons_panel', 'arrow');
 
+	},
+	tpl_events: {
+		switchClass: function(e, node, data) {
+		//	var anc_name = ;
+			this.tpl.ancs[data[2]].toggleClass(data[1]);
+		//	console.log(data);
+		}
 	},
 	children_views: {
 		"row-repeat-song": {
@@ -438,8 +448,8 @@ etc_views.ActionsRowUI.extendTo(TrackActionsRowUI, {
 		}
 	},
 	createVolumeControl: function() {
-		this.vol_cc = this.buttons_panel.find('.volume-control');
-		this.tpl = this.getTemplate(this.vol_cc);
+		this.vol_cc = this.tpl.ancs['volume-control'];
+		//this.tpl = this.getTemplate(this.vol_cc);
 
 
 		var events_anchor = this.vol_cc;

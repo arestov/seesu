@@ -95,14 +95,11 @@ coct.SPView.extendTo(SongUI, {
 		this.parseAppendedTPLPart(context);
 		this.c.append(context);
 
-		this.song_actions_c =  this.tpl.ancs['song-actions'];
-
 		this['collch-actionsrow'] = true;
 		this.checkCollectionChange('actionsrow');
 
 		context.prepend(this.getAFreeCV('mf_cor'));
 
-		this.dom_related_props.push('song_actions_c');
 		this.checkChildrenModelsRendering();
 		this.requestAll();
 	}
