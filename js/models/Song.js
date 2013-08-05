@@ -52,7 +52,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 				still_init = false;
 			}
 			this.initStates();
-			_this.initHeavyPart();
+			this.nextTick(function() {
+				this.initHeavyPart();
+			});
 			this.on('state-change.can_load_baseinfo', function(e) {
 				if (e.value){
 					var artcard = _this.getNesting('artist');
