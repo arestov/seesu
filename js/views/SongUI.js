@@ -98,7 +98,15 @@ coct.SPView.extendTo(SongUI, {
 		this['collch-actionsrow'] = true;
 		this.checkCollectionChange('actionsrow');
 
-		context.prepend(this.getAFreeCV('mf_cor'));
+		this['collch-mf_cor'] = function(){
+			var ancor = this.getAFreeCV('mf_cor');
+			if (ancor){
+				context.prepend(ancor);
+			}
+			
+		};
+		this.checkCollectionChange('mf_cor');
+		
 
 		this.checkChildrenModelsRendering();
 		this.requestAll();

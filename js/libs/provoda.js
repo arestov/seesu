@@ -2482,12 +2482,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	getAFreeCV: function(child_name, view_space, opts) {
 		var view = this.getFreeCV(child_name, view_space, opts);
-		var anchor = view.getA();
-		if (anchor){
-			return anchor;
-		} else {
-			throw new Error('there is no anchor for view of ' + child_name + ' child model');
+		if (view){
+			var anchor = view.getA();
+			if (anchor){
+				return anchor;
+			} else {
+				throw new Error('there is no anchor for view of ' + child_name + ' child model');
+			}
 		}
+		
 	},
 	getAncestorByRooViCon: function(view_space, strict) {
 		//by root view connection
