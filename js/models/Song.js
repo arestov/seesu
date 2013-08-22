@@ -1,5 +1,5 @@
-define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './TrackActionsRow', './SongBase'],
-function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
+define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './SongActionsRow', './SongBase'],
+function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 	"use strict";
 	var app_env = app_serv.app_env;
 	var Song;
@@ -18,7 +18,6 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 
 			this._super.apply(this, arguments);
 			var _this = this;
-
 
 			var spec_image_wrap;
 			if (omo.image_url){
@@ -121,9 +120,20 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, TrackActionsRow, sbase){
 		initOnShow: function() {
 			if (!this.onshow_inited){
 				this.onshow_inited = true;
-				var actionsrow = new TrackActionsRow(this);
+				var actionsrow = new SongActionsRow(this);
 				this.updateNesting('actionsrow', actionsrow);
 			}
+		},
+		onceCall: function(propcheck, callback) {
+			var _this;
+			return function(){
+				if (_this[propcheck]){
+					return;
+				} else {
+					callback.apply(_this, arguments);
+				}
+			};
+			
 		},
 		initHeavyPart: function() {
 			var _this = this;

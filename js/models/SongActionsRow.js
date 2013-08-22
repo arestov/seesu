@@ -422,10 +422,10 @@ comd.BaseCRow.extendTo(RepeatSongRow, {
 
 
 
-var TrackActionsRow = function(mo) {
+var SongActionsRow = function(mo) {
 	this.init(mo);
 };
-comd.PartsSwitcher.extendTo(TrackActionsRow, {
+comd.PartsSwitcher.extendTo(SongActionsRow, {
 	init: function(mo) {
 		this._super();
 		this.mo = mo;
@@ -464,5 +464,5 @@ comd.PartsSwitcher.extendTo(TrackActionsRow, {
 	}
 });
 
-return TrackActionsRow;
+return SongActionsRow;
 });

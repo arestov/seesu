@@ -376,8 +376,8 @@ etc_views.BaseCRowUI.extendTo(RepeatSongRowView, {
 });
 
 
-var TrackActionsRowUI = function() {};
-etc_views.ActionsRowUI.extendTo(TrackActionsRowUI, {
+var SongActionsRowUI = function() {};
+etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 	dom_rp: true,
 	useBase: function(node){
 		this.c = node;
@@ -541,5 +541,5 @@ etc_views.ActionsRowUI.extendTo(TrackActionsRowUI, {
 	}
 });
 
-return TrackActionsRowUI;
+return SongActionsRowUI;
 });

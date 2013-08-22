@@ -1684,10 +1684,11 @@ body .surf_nav{
 	}
 	.shareb-button{
 		margin-left:-13px;
+		margin-right: -13px;
 		padding: 0.5rem 0.7rem;
 		background: #5F5F5F;
 		cursor: pointer;
-		display: inline-block;
+		display: block;
 		
 		min-width: 5rem;
 		}
@@ -1702,7 +1703,6 @@ body .surf_nav{
 
 		}
 		.shareb-base.sharebopened .shareb-button{
-			border-radius: 0 0 0.4rem 0;
 			}
 		.shareb-base.sharebopened .shareb-con{
 			display: block;

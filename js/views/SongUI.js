@@ -1,7 +1,7 @@
 define(['provoda', 'spv', 'jquery', 'app_serv',
-'./TrackActionsRowUI', './MfCorUI', './ArtcardUI', './SongcardPage', './coct'],
+'./SongActionsRowUI', './MfCorUI', './ArtcardUI', './SongcardPage', './coct'],
 function(provoda, spv, $, app_serv,
-TrackActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
+SongActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
 "use strict";
 
 
@@ -40,7 +40,7 @@ coct.SPView.extendTo(SongUI, {
 		this.getMdChild('mf_cor').collapseExpanders();
 	},
 	children_views: {
-		actionsrow: TrackActionsRowUI,
+		actionsrow: SongActionsRowUI,
 		mf_cor: MfCorUI,
 		artist: ArtcardUI.ArtistInSongConstroller,
 		songcard: SongcardPage.SongcardController
