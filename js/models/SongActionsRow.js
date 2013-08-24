@@ -1,4 +1,6 @@
-define(['spv', 'app_serv', './comd', 'js/LfmAuth', './invstg', './PlaylistAddRow'], function(spv, app_serv, comd, LfmAuth, invstg, PlaylistAddRow){
+define(['spv', 'app_serv', './comd', 'js/LfmAuth', './invstg',
+'./PlaylistAddRow'], function(spv, app_serv, comd, LfmAuth, invstg,
+PlaylistAddRow){
 "use strict";
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
@@ -76,7 +78,7 @@ var struserSuggest = function(wrap) {
 	this.init();
 	this.mo = wrap.mo;
 	this.row = wrap.row;
-	this.user_id = user.uid;
+	this.user_id = user.id;
 	this.photo = user.photo;
 	this.online = this.online;
 	//this.name = user.name;

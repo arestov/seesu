@@ -37,6 +37,7 @@ spv.Class.extendTo(vkCoreApi, {
 
 			var	params_full = params || {};
 			if (this.access_token){
+				params_full.v = '5.0';
 				params_full.access_token = this.access_token;
 			}
 
@@ -102,7 +103,7 @@ VkSearch.prototype = {
 				track		: htmlencoding.decode(cursor.title ? cursor.title : cursor.audio.title),
 				from		: 'vk',
 				downloadable: false,
-				_id			: cursor.owner_id + '_' + cursor.aid,
+				_id			: cursor.owner_id + '_' + cursor.id,
 				type: 'mp3',
 				media_type: 'mp3',
 				models: {},
@@ -161,8 +162,8 @@ VkSearch.prototype = {
 				if (r.error){
 					deferred.reject.apply(deferred, arguments);
 				} else{
-					if (r.response && (r.response.length > 1 )){
-						var ml = _this.makeMusicList(r.response, msq);
+					if (r.response.items && r.response.items.length){
+						var ml = _this.makeMusicList(r.response.items, msq);
 
 						deferred.resolve.call(deferred, !!ml.length && ml, 'mp3');
 					} else {

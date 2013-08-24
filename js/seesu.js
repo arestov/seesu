@@ -168,7 +168,7 @@ AppModel.extendTo(SeesuApp, {
 
 		this.s.on('info-change.vk', function(data) {
 			_this.updateState('vk_info', data);
-			_this.updateState('vk_userid', data && data.uid);
+			_this.updateState('vk_userid', data && data.id);
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
@@ -745,7 +745,7 @@ AppModel.extendTo(SeesuApp, {
 		}
 		this.vk_fr_req
 			.done(function(r){
-				_this.trigger("vk-friends", r && r.response);
+				_this.trigger("vk-friends", r && r.response.items);
 			})
 			.fail(function(){
 

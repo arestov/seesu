@@ -127,8 +127,8 @@ VkSongList.extendTo(MyVkAudioList, {
 				var vk_search = _this.app.mp3_search.getSearchByName('vk');
 				var track_list = [];
 
-				for (var i = 1; i < r.response.length; i++) {
-					var cur = r.response[i];
+				for (var i = 0; i < r.response.items.length; i++) {
+					var cur = r.response.items[i];
 					track_list.push({
 						artist: htmlencoding.decode(cur.artist),
 						track: htmlencoding.decode(cur.title),
@@ -270,7 +270,7 @@ LoadableList.extendTo(VKFriendsList, {
 				}
 
 
-				_this.putRequestedData(request_info.request, r.response, r.error);
+				_this.putRequestedData(request_info.request, r.response.items, r.error);
 
 			})
 			.fail(function(){
