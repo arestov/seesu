@@ -1,6 +1,6 @@
 define(['spv', 'app_serv', './comd', 'js/LfmAuth', './invstg',
-'./PlaylistAddRow'], function(spv, app_serv, comd, LfmAuth, invstg,
-PlaylistAddRow){
+'./SongActPlaylisting', './SongActTaging'], function(spv, app_serv, comd, LfmAuth, invstg,
+SongActPlaylisting, SongActTaging){
 "use strict";
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
@@ -348,9 +348,10 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		var initHeavyPart = function() {
 			this.addPart(new ScrobbleRow(this, mo));
 			this.addPart(new RepeatSongRow(this, mo));
-			this.addPart(new PlaylistAddRow(this, mo));
+			this.addPart(new SongActPlaylisting(this, mo));
 			this.addPart(new ShareRow(this, mo));
 			this.addPart(new LoveRow(this, mo));
+			this.addPart(new SongActTaging(this, mo));
 
 			var setVolume = function(fac) {
 				_this.updateState('volume', fac[0]/fac[1]);

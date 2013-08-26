@@ -1,4 +1,4 @@
-define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './SearchPageViewBase'], function(provoda, $, spv, app_serv, etc_views, SearchPageViewBase) {
+define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './SearchPageViewBase', './SongActTaggingControl'], function(provoda, $, spv, app_serv, etc_views, SearchPageViewBase, SongActTaggingControl) {
 "use strict";
 var localize = app_serv.localize;
 
@@ -201,8 +201,8 @@ etc_views.BaseCRowUI.extendTo(ShareRowUI, {
 
 });
 
-var PlaylistAddRowUI = function() {};
-etc_views.BaseCRowUI.extendTo(PlaylistAddRowUI, {
+var SongActPlaylistingUI = function() {};
+etc_views.BaseCRowUI.extendTo(SongActPlaylistingUI, {
 	children_views: {
 		searcher: PlaylistAddSsearchView
 	},
@@ -416,8 +416,11 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 		'row-share': {
 			main: ShareRowUI
 		},
+		'row-tag': {
+			main: SongActTaggingControl
+		},
 		'row-playlist-add': {
-			main: PlaylistAddRowUI
+			main: SongActPlaylistingUI
 		}
 	},
 

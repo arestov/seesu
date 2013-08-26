@@ -13,15 +13,19 @@ provoda.addPrototype("SongBase",{
 		this.player = opts.player;
 		
 		this.uid = ++counter;
+		if (opts.omo.track){
+			opts.omo.track = opts.omo.track.trim();
+		}
+		
 		spv.cloneObj(this, opts.omo, false, ['artist', 'track']);
 		this.omo = opts.omo;
 
 		this.init_states['no_track_title'] = false;
 		if (opts.omo.artist){
-			this.init_states['artist'] = opts.omo.artist;
+			this.init_states['artist'] = opts.omo.artist && opts.omo.artist.trim();
 		}
 		if (opts.omo.track){
-			this.init_states['track']= opts.omo.track;
+			this.init_states['track'] = opts.omo.track;
 		}
 		this.init_states['playlist_type'] = this.plst_titl.playlist_type;
 		this.init_states['url_part'] = this.getURL();
@@ -304,6 +308,7 @@ provoda.addPrototype("SongBase",{
 		return !!this.next_song;
 	},
 	setSongName: function(song_name, full_allowing, from_collection, last_in_collection) {
+		song_name = song_name && song_name.trim();
 		this.track = song_name;
 		this.updateManyStates({
 			'track': song_name,

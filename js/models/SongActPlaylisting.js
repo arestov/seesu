@@ -1,6 +1,6 @@
 define(['./invstg', './comd'], function(invstg, comd) {
 "use strict";
-var PlaylistAddRow;
+var SongActPlaylisting;
 
 
 var playlistSuggest = function(data){
@@ -68,10 +68,10 @@ invstg.Investigation.extendTo(PlaylistRowSearch, {
 
 
 
-PlaylistAddRow = function(actionsrow, mo) {
+SongActPlaylisting = function(actionsrow, mo) {
 	this.init(actionsrow, mo);
 };
-comd.BaseCRow.extendTo(PlaylistAddRow, {
+comd.BaseCRow.extendTo(SongActPlaylisting, {
 	init: function(actionsrow, mo){
 		this.actionsrow = actionsrow;
 		this.mo = mo;
@@ -92,5 +92,5 @@ comd.BaseCRow.extendTo(PlaylistAddRow, {
 		this.hide();
 	}
 });
-return PlaylistAddRow;
+return SongActPlaylisting;
 });
