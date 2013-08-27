@@ -96,8 +96,8 @@ provoda.addPrototype("SongBase",{
 		'has_none_files_to_play': {
 			depends_on: ['search_complete', 'no_track_title', 'mf_cor_has_available_tracks'],
 			fn: function(scomt, ntt, mf_cor_tracks) {
-				if (this.mf_cor && !mf_cor_tracks){
-					if (this.mf_cor.isSearchAllowed()){
+				if (this.getMFCore() && !mf_cor_tracks){
+					if (this.getMFCore().isSearchAllowed()){
 						if (scomt){
 							return true;
 						}
@@ -208,28 +208,28 @@ provoda.addPrototype("SongBase",{
 		}
 	}, 200),*/
 	canPlay: function() {
-		return this.mf_cor.canPlay();
+		return this.getMFCore().canPlay();
 	},
 	preloadFor: function(id){
-		this.mf_cor.preloadFor(id);
+		this.getMFCore().preloadFor(id);
 	},
 	unloadFor: function(id){
-		this.mf_cor.unloadFor(id);
+		this.getMFCore().unloadFor(id);
 	},
 	setVolume: function(vol, fac){
-		this.mf_cor.setVolume(vol, fac);
+		this.getMFCore().setVolume(vol, fac);
 	},
 	stop: function(){
-		this.mf_cor.stop();
+		this.getMFCore().stop();
 	},
 	switchPlay: function(){
-		this.mf_cor.switchPlay();
+		this.getMFCore().switchPlay();
 	},
 	pause: function(){
-		this.mf_cor.pause();
+		this.getMFCore().pause();
 	},
 	play: function(mopla){
-		this.mf_cor.play(mopla);
+		this.getMFCore().play(mopla);
 
 	},
 	markAs: function(neighbour, mo){
@@ -583,7 +583,7 @@ provoda.addPrototype("SongBase",{
 		this.checkChangesSinceFS(opts);
 	},
 	bindFilesSearchChanges: function() {
-		var investg = this.mf_cor.files_investg;
+		var investg = this.getMFCore().files_investg;
 		var _this = this;
 		investg
 			.on('requests', function(array) {
@@ -609,7 +609,7 @@ provoda.addPrototype("SongBase",{
 			});
 	},
 	isSearchAllowed: function() {
-		return this.mf_cor && this.mf_cor.isSearchAllowed();
+		return this.getMFCore() && this.getMFCore().isSearchAllowed();
 	},
 	findFiles: function(opts){
 		if (!this.artist || !this.track || !this.isSearchAllowed()){
@@ -619,7 +619,7 @@ provoda.addPrototype("SongBase",{
 			opts = opts || {};
 			opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this);
 		
-			this.mf_cor.startSearch(opts);
+			this.getMFCore().startSearch(opts);
 		}
 	},
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
@@ -684,7 +684,7 @@ provoda.addPrototype("SongBase",{
 		}
 	},
 	getCurrentMopla: function(){
-		return this.mf_cor.getCurrentMopla();
+		return this.getMFCore().getCurrentMopla();
 	},
 	showArtcardPage: function(artist_name) {
 		this.app.showArtcardPage(artist_name || this.artist);

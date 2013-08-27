@@ -51,7 +51,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 				still_init = false;
 			}
 			this.initStates();
-			this.initHeavyPart();
+			this.nextTick(this.initHeavyPart);
 			this.on('state-change.can_load_baseinfo', function(e) {
 				if (e.value){
 					var artcard = _this.getNesting('artist');
@@ -122,7 +122,10 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			var actionsrow = new SongActionsRow(this);
 			this.updateNesting('actionsrow', actionsrow);
 		}),
-
+		getMFCore: function(){
+			this.initHeavyPart();
+			return this.mf_cor;
+		},
 		initHeavyPart: provoda.getOCF('izheavy', function() {
 			var _this = this;
 			var omo = this.omo;
@@ -190,9 +193,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 					this.initRelativeData();
 				}
 			});
-			this.nextTick(function() {
-				this.initRelativeData();
-			});
+			this.nextTick(this.initRelativeData);
 
 		}),
 		getShareUrl: function() {
@@ -218,7 +219,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 		postToVKWall: function(uid){
 			var
 				data = {},
-				file = this.mf_cor.getVKFile();
+				file = this.getMFCore().getVKFile();
 			if (uid){
 				data.owner_id = uid;
 			}
