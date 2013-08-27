@@ -313,6 +313,17 @@ provoda = {
 		}
 		base.extendTo(fn, this.prototypes[name]);
 		return fn;
+	},
+	getOCF: function(propcheck, callback) {
+		return function(){
+			if (this[propcheck]){
+				return this;
+			} else {
+				this[propcheck] = true;
+				callback.apply(this, arguments);
+				return this;
+			}
+		};
 	}
 };
 provoda.Controller = provoda.View;
@@ -1061,7 +1072,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.undetailed_states[name] = value;
 	},
 	_updateProxy: function(changes_list, opts) {
-		var i, cur;
 		if (this.undetailed_states){
 			iterateChList(changes_list, this, this._setUndetailedState);
 			return this;

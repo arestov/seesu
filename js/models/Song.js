@@ -117,25 +117,13 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 				return artist && can_expand && hna;
 			}
 		},
-		initOnShow: function() {
-			if (!this.onshow_inited){
-				this.onshow_inited = true;
-				var actionsrow = new SongActionsRow(this);
-				this.updateNesting('actionsrow', actionsrow);
-			}
-		},
-		onceCall: function(propcheck, callback) {
-			var _this;
-			return function(){
-				if (_this[propcheck]){
-					return;
-				} else {
-					callback.apply(_this, arguments);
-				}
-			};
-			
-		},
-		initHeavyPart: function() {
+
+		initOnShow: provoda.getOCF('izonshow', function() {
+			var actionsrow = new SongActionsRow(this);
+			this.updateNesting('actionsrow', actionsrow);
+		}),
+
+		initHeavyPart: provoda.getOCF('izheavy', function() {
 			var _this = this;
 			var omo = this.omo;
 
@@ -206,7 +194,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 				this.initRelativeData();
 			});
 
-		},
+		}),
 		getShareUrl: function() {
 			if (this.artist && this.track){
 				return "http://seesu.me/o#/catalog/" + (this.app.encodeURLPart(this.artist) + "/_/" + this.app.encodeURLPart(this.track)).replace(/\'/gi, '%27');
@@ -317,14 +305,14 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 				});
 			}
 		},200),
-		initRelativeData: function() {
+		initRelativeData: provoda.getOCF('izrelative', function() {
 			if (this.artist){
 				var artcard = this.app.getArtcard(this.artist);
 				this.updateNesting('artist', artcard);
 				this.updateState('has_nested_artist', true);
 			}
 			//this.loadSongListeners();
-		}
+		})
 	});
 return Song;
 });
