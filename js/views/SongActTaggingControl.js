@@ -8,6 +8,13 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 	createBase: function() {
 		this._super();
 		var _this = this;
+		//
+
+		var tpl_con = this.root_view.getSample('song-act-tagging');
+
+		this.createTemplate(tpl_con);
+
+		this.c.append(tpl_con);
 		/*
 		var wrap = $('<div class="add-to-lfmfav"></div>');
 
@@ -28,10 +35,15 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 		state = !!state;
 		this.c.toggleClass('has_session', state);
 		this.auth_block.toggleClass('hidden', state);
+		/*
+		
+		
+		
 		this.nloveb.toggle(state);
+		*/
 	},
 	"stch-wait_love_done": function(state){
-		this.c.toggleClass('wait_love_done', !!state);
+		//this.c.toggleClass('wait_love_done', !!state);
 	}
 });
 

@@ -2361,12 +2361,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.tpl.parseAppended(node);
 		this.tpl.setStates(this.states);
 	},
-	createTemplate: function() {
-		if (!this.c){
+	createTemplate: function(con) {
+		con = con || this.c;
+		if (!con){
 			throw new Error('cant create template');
 		}
 		var _this = this;
-		this.tpl = this.getTemplate(this.c, this.triggerTPLevents, function(arr_arr) {
+		this.tpl = this.getTemplate(con, this.triggerTPLevents, function(arr_arr) {
 			//pvTypesChange
 			var old_waypoints = this.waypoints;
 			var total = [];

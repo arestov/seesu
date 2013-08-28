@@ -1101,7 +1101,10 @@
 					</div>	
 				</div>
 			</div>
-		</div>		
+		</div>
+		<div class="song-act-tagging">
+			<span pv-repeat="tag in toptags" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}"></span>
+		</div>
 		
 		<form class="scrobbling-switches">
 			<p>scrobbling to last.fm</p>
