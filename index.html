@@ -730,7 +730,7 @@
 							pv-repeat="tag in preview_list" 
 							pv-type="hard-way-point" 
 							pv-events="click:showTag" 
-							pv-text="{{tag}}"></a></span>
+							pv-text="{{tag.name}}"></a></span>
 					</p>
 				</div>
 				<div class="artist-info">
@@ -1103,18 +1103,24 @@
 			</div>
 		</div>
 		<div class="song-act-tagging">
-			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags"/>
+			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags" pv-anchor="tags-input"/>
 			<div class="possible_tags">
 				<span pv-repeat="tag in possible_tags" pv-text="{{tag}}"></span>
 			</div>
-			<div class="setted_tags">
-				<span pv-repeat="tag in setted_tags" pv-text="{{tag}}"></span>
+			<div>Your tags</div>
+			<div class="personal_tags">
+				<span pv-repeat="tag in personal_tags | limitTo:25" pv-text="{{tag}}" pv-events="click:addTag"></span>
 			</div>
+
+			<div>Top tags of track</div>
 			<div class="top_tags">
-				<span pv-repeat="tag in toptags" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}"></span>
+
+				<span pv-repeat="tag in toptags | limitTo:25" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}" pv-events="click:addTag"></span>
 			</div>
+			<div>Artist tags</div>
 			<div class="artist_tags">
-				<span pv-repeat="tag in artist_tags" pv-text="{{tag}}"></span>
+				
+				<span pv-repeat="tag in artist_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag"></span>
 			</div>
 		</div>
 		

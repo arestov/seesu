@@ -21,7 +21,7 @@ LoadableList.TagsList.extendTo(ArtistTagsList, {
 		})
 			.done(function(r){
 				var res_list = spv.toRealArray(spv.getTargetField(r, 'toptags.tag'));
-				var data_list = spv.filter(res_list, 'name');
+				var data_list = res_list;
 				_this.putRequestedData(request_info.request, data_list, r.error);
 			})
 			.fail(function() {
@@ -809,6 +809,9 @@ BrowseMap.Model.extendTo(ArtCard, {
 
 		
 	},
+	getTagsModel: function() {
+		return this.tags_list;
+	},
 	showTopTacks: function(track_name) {
 		var start_song;
 		if (track_name){
@@ -1009,7 +1012,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 							playcount: spv.getTargetField(r, 'artist.stats.playcount')
 						});
 						
-						_this.tags_list.setPreview(spv.filter(psai.tags, 'name'));
+						_this.tags_list.setPreview(psai.tags);
 
 						if (psai.similars){
 							var data_list = [];

@@ -1707,6 +1707,11 @@ body .surf_nav{
 		.shareb-base.sharebopened .shareb-con{
 			display: block;
 			}
+.song-act-tagging input{
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+}
 .song-tagging{
 	margin-top: 1rem;
 	}
@@ -1717,4 +1722,18 @@ body .surf_nav{
 			border: 1px solid #666;
 			border-radius: 0.2rem;
 			margin-right: 1rem;
+		}
+.top_tags{
+	margin-top:2rem;
+	}
+	.top_tags span,.artist_tags span{
+		margin-right: 1rem;
+		background: rgb(48, 73, 90);
+		border: 1px dotted #686868;
+		border-radius: 0.3rem;
+		padding: 0 0.3rem;
+		display: inline-block;
+		margin-bottom: 0.3rem;
+		color: #eee;
+		cursor: pointer;
 		}

@@ -8,6 +8,7 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 		this._super(opts);
 		this.mo = mo;
 		this.app = mo.app;
+
 		this.setRequestDesc(localize('lastfm-tagging-access'));
 		this.updateState('active', true);
 
@@ -22,11 +23,34 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 			_this.updateState('viewing', e.value);
 		});
 
+
 		this.on('state-change.user_tags_string', function(e) {
-			var array = (e.value && e.value.trim().split(/\s*\,\s*/)) || [];
+			var array = (e.value && e.value.trim().split(this.comma_regx)) || [];
 			this.updateState('possible_tags', array);
 		});
+		this.app.getArtcard(this.mo.state('artist')).getTagsModel().on('state-change.data-list', function(e) {
+			//console.log(e);
+			_this.updateState('artist_tags',e.value);
+			
+		});
 
+	},
+	comma_regx: /\s*\,\s*/,
+	comma_regx_end: /\s*\,\s*$/,
+	addTag: function(tag_name) {
+		var current_tags = this.state('possible_tags');
+		if (!current_tags || current_tags.indexOf(tag_name) == -1){
+
+			var full_string = (this.state('user_tags_string') || '');
+			if (current_tags && current_tags.length){
+				full_string += ', ';
+			}
+			full_string += tag_name;
+
+			this.updateState('user_tags_string', full_string);
+		}
+		
+		//console.log(tag_name);
 	},
 	changeTags: function(string) {
 		this.updateState('user_tags_string', string);
@@ -56,6 +80,9 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 					});
 			},
 			errors: ['error']
+		},
+		personal_tags:{
+
 		}
 	},
 	'compx-has_no_access': function(userid) {

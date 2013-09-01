@@ -1,13 +1,19 @@
 define(['./etc_views', 'jquery', 'app_serv', 'spv'], function(etc_views, $, app_serv, spv){
 "use strict";
 
-var localize = app_serv.localize;
+//var localize = app_serv.localize;
+
+
+var addTag = function(e, node, scope) {
+	e.preventDefault();
+	this.RPCLegacy('addTag', scope.tag.name || scope.tag);
+};
 
 var LfmTagItView = function() {};
 etc_views.LfmLoginView.extendTo(LfmTagItView, {
 	createBase: function() {
 		this._super();
-		var _this = this;
+	//	var _this = this;
 		//
 
 		var tpl_con = this.root_view.getSample('song-act-tagging');
@@ -31,11 +37,28 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 		*/
 	
 	},
+	tpl_r_events: {
+		'personal_tags': {
+			addTag: addTag
+		},
+		'toptags': {
+			addTag: addTag
+		},
+		'artist_tags': {
+			addTag: addTag
+		}
+	},
+
 	tpl_events:{
 		changeTags: spv.debounce(function(e, input) {
-			this.RPCLegacy('changeTags', input.value);
+			var value = input.value;
+			this.overrideStateSilently('user_tags_string', value);
+			this.RPCLegacy('changeTags', value);
 			//console.log(arguments);
 		})
+	},
+	"stch-user_tags_string": function(state) {
+		this.tpl.ancs['tags-input'].val(state);
 	},
 	"stch-has_session": function(state) {
 		state = !!state;

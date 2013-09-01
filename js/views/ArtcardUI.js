@@ -63,7 +63,7 @@ provoda.View.extendTo(TagsController, {
 		'preview_list': {
 			showTag: function(e, node, scope){
 				e.preventDefault();
-				this.RPCLegacy('showTag', scope.tag);
+				this.RPCLegacy('showTag', scope.tag.name);
 			}
 		}
 	}
