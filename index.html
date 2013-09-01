@@ -1103,7 +1103,19 @@
 			</div>
 		</div>
 		<div class="song-act-tagging">
-			<span pv-repeat="tag in toptags" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}"></span>
+			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags"/>
+			<div class="possible_tags">
+				<span pv-repeat="tag in possible_tags" pv-text="{{tag}}"></span>
+			</div>
+			<div class="setted_tags">
+				<span pv-repeat="tag in setted_tags" pv-text="{{tag}}"></span>
+			</div>
+			<div class="top_tags">
+				<span pv-repeat="tag in toptags" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}"></span>
+			</div>
+			<div class="artist_tags">
+				<span pv-repeat="tag in artist_tags" pv-text="{{tag}}"></span>
+			</div>
 		</div>
 		
 		<form class="scrobbling-switches">

@@ -22,7 +22,14 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 			_this.updateState('viewing', e.value);
 		});
 
+		this.on('state-change.user_tags_string', function(e) {
+			var array = (e.value && e.value.trim().split(/\s*\,\s*/)) || [];
+			this.updateState('possible_tags', array);
+		});
 
+	},
+	changeTags: function(string) {
+		this.updateState('user_tags_string', string);
 	},
 	'stch-viewing': function(state) {
 		if (state){

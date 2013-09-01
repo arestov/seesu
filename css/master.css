@@ -1707,3 +1707,14 @@ body .surf_nav{
 		.shareb-base.sharebopened .shareb-con{
 			display: block;
 			}
+.song-tagging{
+	margin-top: 1rem;
+	}
+	.possible_tags{
+		margin-top: 1rem;
+		}
+		.possible_tags span{
+			border: 1px solid #666;
+			border-radius: 0.2rem;
+			margin-right: 1rem;
+		}

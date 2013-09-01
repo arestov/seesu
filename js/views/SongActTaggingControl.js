@@ -1,4 +1,4 @@
-define(['./etc_views', 'jquery', 'app_serv'], function(etc_views, $, app_serv){
+define(['./etc_views', 'jquery', 'app_serv', 'spv'], function(etc_views, $, app_serv, spv){
 "use strict";
 
 var localize = app_serv.localize;
@@ -30,6 +30,12 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 		this.c.append(wrap);
 		*/
 	
+	},
+	tpl_events:{
+		changeTags: spv.debounce(function(e, input) {
+			this.RPCLegacy('changeTags', input.value);
+			//console.log(arguments);
+		})
 	},
 	"stch-has_session": function(state) {
 		state = !!state;
