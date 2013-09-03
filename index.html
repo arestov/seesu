@@ -483,11 +483,11 @@
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
 				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
-				<div class="#_friend-desc">
+				<div class="lfm_friend-desc">
 					<span pv-text="{{big_desc}}"></span>
 				</div>
 				<div>
-					<a class="external" pv-props="href:{{'http://last.fm/user/' + userid}}">last.fm profile</a>
+					<a pv-type="way-point" class="external" pv-props="href:{{'http://last.fm/user/' + userid}}">last.fm profile</a>
 				</div>
 			</div>
 		</div>
@@ -500,7 +500,7 @@
 					<span pv-text="{{big_desc}}"></span>
 				</div>
 				<div>
-					<a class="external" pv-props="href:{{'https://vk.com/id' + userid}}">vk.com profile</a>
+					<a pv-type="way-point" class="external" pv-props="href:{{'https://vk.com/id' + userid}}">vk.com profile</a>
 				</div>
 			</div>
 		</div>
@@ -959,7 +959,7 @@
 					</span>
 					<div class="big-listener-info" pv-anchor="big-listener-info"></div>
 				</div>
-				<div class="song_fans-b-intrack" pv-nest="fans" pv-events="click::requestPage">
+				<div class="song_fans-b-intrack" pv-nest="fans" pv-events="click::requestPage" pv-type="way-point">
 					<div class="song_fans-h-intrack">
 						Last.fm <br/> song fans
 					</div>
