@@ -1104,23 +1104,41 @@
 		</div>
 		<div class="song-act-tagging">
 			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags" pv-anchor="tags-input"/>
+			<div class="save_tags_b">
+				<span class="button-hole">
+					<span class="nicebutton">save</span>
+				</span>
+			</div>
+			
 			<div class="possible_tags">
-				<span pv-repeat="tag in possible_tags" pv-text="{{tag}}"></span>
+				<div class="tagging_help">
+					<span pv-repeat="tag in possible_tags" pv-text="{{tag}}"></span>
+				</div>
+
 			</div>
-			<div>Your tags</div>
+			
 			<div class="personal_tags">
-				<span pv-repeat="tag in personal_tags | limitTo:25" pv-text="{{tag}}" pv-events="click:addTag"></span>
-			</div>
-
-			<div>Top tags of track</div>
-			<div class="top_tags">
-
-				<span pv-repeat="tag in toptags | limitTo:25" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}" pv-events="click:addTag"></span>
-			</div>
-			<div>Artist tags</div>
-			<div class="artist_tags">
+				<h4 class="tagging_header" pv-class="{{personal_tags.length && 'has_tags'}}  tagging_header" >Your tags</h4>
+				<div class="tagging_help">
+					<span pv-repeat="tag in personal_tags | limitTo:25" pv-text="{{tag}}" pv-events="click:addTag"></span>
+				</div>
 				
-				<span pv-repeat="tag in artist_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag"></span>
+			</div>
+
+			
+			<div class="top_tags">
+				<h4 class="tagging_header" pv-class="{{toptags.length && 'has_tags'}}  tagging_header">Top tags of track</h4>
+				<div class="tagging_help">
+					<span pv-repeat="tag in toptags | limitTo:25" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}" pv-events="click:addTag"></span>
+				</div>
+				
+			</div>
+			
+			<div class="artist_tags">
+				<h4 class="tagging_header" pv-class="{{artist_tags.length && 'has_tags'}} tagging_header">Artist tags</h4>
+				<div class="tagging_help">
+					<span pv-repeat="tag in artist_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag"></span>
+				</div>
 			</div>
 		</div>
 		

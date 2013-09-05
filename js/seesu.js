@@ -714,6 +714,7 @@ AppModel.extendTo(SeesuApp, {
 					_this.s.vk_id = user_id;
 
 					var _d = spv.cloneObj({data_source: 'vkontakte'}, info);
+					
 
 					_this.s.setInfo('vk', _d);
 
