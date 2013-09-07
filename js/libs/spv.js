@@ -40,6 +40,10 @@ spv.once = function(fn) {
 		}
 	};
 };
+var hasArg = function(el) {return el;};
+spv.hasEveryArgs = function() {
+	return Array.prototype.every.call(arguments, hasArg);
+};
 
 addEvent = spv.addEvent = window.addEventListener ?
 function(elem, evType, fn){

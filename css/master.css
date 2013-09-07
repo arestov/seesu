@@ -1726,7 +1726,7 @@ body .surf_nav{
 .top_tags{
 	
 	}
-	.top_tags span,.artist_tags span{
+	.top_tags span,.artist_tags span,.personal_tags span{
 		margin-right: 1rem;
 		background: rgb(48, 73, 90);
 		border: 1px dotted #686868;

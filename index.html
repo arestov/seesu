@@ -1120,7 +1120,7 @@
 			<div class="personal_tags">
 				<h4 class="tagging_header" pv-class="{{personal_tags.length && 'has_tags'}}  tagging_header" >Your tags</h4>
 				<div class="tagging_help">
-					<span pv-repeat="tag in personal_tags | limitTo:25" pv-text="{{tag}}" pv-events="click:addTag"></span>
+					<span pv-repeat="tag in personal_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag"></span>
 				</div>
 				
 			</div>

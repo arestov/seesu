@@ -38,14 +38,20 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 			
 		});
 
+		this.on('state-change.canload_personal', function(e) {
+			if (e.value){
+				this.loaDDD('personal_tags');
+			}
+			
+		});
+
+
 	},
 	comma_regx: /\s*\,\s*/,
 	comma_regx_end: /\s*\,\s*$/,
-	'compx-canload': {
+	'compx-canload_personal': {
 		depends_on: ['userid', 'viewing'],
-		fn: function() {
-
-		}
+		fn: spv.hasEveryArgs
 	},
 	addTag: function(tag_name) {
 		var current_tags = this.state('possible_tags');
@@ -92,7 +98,25 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 			errors: ['error']
 		},
 		personal_tags:{
-
+			before: function() {
+				this.updateState('loading_personal_tags', true);
+			},
+			after: function() {
+				this.updateState('loading_personal_tags', false);
+			},
+			send: function() {
+				var _this = this;
+				return this.app.lfm.get('track.getTags', {
+					'artist': this.mo.state('artist'),
+					'track': this.mo.state('track'),
+					'user': this.state('userid')
+				}, {nocache: true})
+					.done(function(r){
+						var array = spv.toRealArray(spv.getTargetField(r, 'tags.tag'));
+						_this.updateState('personal_tags', array);
+					});
+			},
+			errors: ['error']
 		}
 	}
 	//_this.trigger('tagged-success');
