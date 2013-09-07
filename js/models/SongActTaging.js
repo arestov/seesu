@@ -24,6 +24,10 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 		});
 
 
+		this.app.on('state-change.lfm_userid', function(e) {
+			_this.updateState('userid', e.value);
+		});
+
 		this.on('state-change.user_tags_string', function(e) {
 			var array = (e.value && e.value.trim().split(this.comma_regx)) || [];
 			this.updateState('possible_tags', array);
@@ -37,6 +41,12 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 	},
 	comma_regx: /\s*\,\s*/,
 	comma_regx_end: /\s*\,\s*$/,
+	'compx-canload': {
+		depends_on: ['userid', 'viewing'],
+		fn: function() {
+
+		}
+	},
 	addTag: function(tag_name) {
 		var current_tags = this.state('possible_tags');
 		if (!current_tags || current_tags.indexOf(tag_name) == -1){
@@ -84,9 +94,6 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 		personal_tags:{
 
 		}
-	},
-	'compx-has_no_access': function(userid) {
-		return !userid;
 	}
 	//_this.trigger('tagged-success');
 });

@@ -359,6 +359,8 @@ spv.Class.extendTo(provoda.ItemsEvents, {
 
 });
 
+var hasargfn = function(cur) {return cur};
+
 provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 	init: function(state_name, opts) {
 		var _this = this;
@@ -388,14 +390,10 @@ provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 	},
 	calculateResult: null,
 	every: function(values_array) {
-		return values_array.every(function(cur) {
-			return !!cur;
-		});
+		return !!values_array.every(hasargfn);
 	},
 	some: function(values_array) {
-		return values_array.some(function(cur) {
-			return !!cur;
-		});
+		return !!values_array.some(hasargfn);
 	},
 	getItemsValues: function(item) {
 		var values_list = [];
@@ -1172,12 +1170,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		called_watchers.length = 0;
 
 		if (this.sendStatesToViews && total_ch.length){
-			this.nextTick(function() {
-				if (total_ch.length){
-					this.sendStatesToViews(total_ch);
-					total_ch.length = 0;
-				}
-			});
+			this.nextTick(this.sendChangesAfterDelay);
 		} else {
 			total_ch.length = 0;
 		}
@@ -1185,6 +1178,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		this.collecting_states_changing = false;
 		return this;
+	},
+	sendChangesAfterDelay: function() {
+		if (this.zdsv.total_ch.length){
+			this.sendStatesToViews(this.zdsv.total_ch);
+			this.zdsv.total_ch.length = 0;
+		}
 	},
 	getComplexChanges: function(changes_list) {
 		return this.getChanges(this.checkComplexStates(changes_list));
