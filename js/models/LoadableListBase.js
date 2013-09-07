@@ -106,30 +106,33 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		return this;
 	},
 	putRequestedData: function(request, data_list, error) {
+		this.nextTick(function() {
+			//console.profile('data list inject');
+			if (!this.request_info || this.request_info.request == request){
 
-		//console.profile('data list inject');
-		if (!this.request_info || this.request_info.request == request){
+				var items_list = [];
+				if (!error && data_list && data_list.length){
 
-			var items_list = [];
-			if (!error && data_list && data_list.length){
+					var mlc_opts = this.getMainListChangeOpts();
+					for (var i = 0; i < data_list.length; i++) {
+						var item = this.addItemToDatalist(data_list[i], true);
+						items_list.push(item);
+					}
+					this.dataListChange(mlc_opts, items_list);
 
-				var mlc_opts = this.getMainListChangeOpts();
-				for (var i = 0; i < data_list.length; i++) {
-					var item = this.addItemToDatalist(data_list[i], true);
-					items_list.push(item);
 				}
-				this.dataListChange(mlc_opts, items_list);
+				if (!error && request && data_list.length < this.page_limit){
+					this.setLoaderFinish();
+				}
+				this.requestComplete(request, error);
+				if (items_list.length){
+					return items_list;
+				}
+			}
+			//console.profileEnd();
+		});
 
-			}
-			if (!error && request && data_list.length < this.page_limit){
-				this.setLoaderFinish();
-			}
-			this.requestComplete(request, error);
-			if (items_list.length){
-				return items_list;
-			}
-		}
-		//console.profileEnd();
+		
 		return this;
 
 	},
