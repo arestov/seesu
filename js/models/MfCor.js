@@ -142,6 +142,27 @@ provoda.Model.extendTo(MfComplect, {
 
 var MfCor = function() {};
 provoda.Model.extendTo(MfCor, {
+	hndMoImportant: function(e) {
+			
+		if (e.value && e.value){
+			var _this = this;
+			setTimeout(function() {
+				_this.loadVideos();
+			}, 100);
+		}
+	},
+	hndTrackNameCh: function(e) {
+		if (e.value){
+			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track});
+			this.bindInvestgChanges();
+			this.mo.bindFilesSearchChanges();
+			if (this.last_search_opts){
+				this.files_investg.startSearch(this.last_search_opts);
+				this.last_search_opts = null;
+			}
+		}
+		
+	},
 	init: function(opts, file) {
 		this._super();
 		this.omo = opts.omo;
@@ -165,16 +186,8 @@ provoda.Model.extendTo(MfCor, {
 			_this.semChanged(val);
 		};
 		*/
+		this.wch(this.mo, 'is_important', this.hndMoImportant);
 
-
-		this.mo.on('state-change.is_important', function(e) {
-			var _this = this;
-			if (e.value && e.value){
-				setTimeout(function() {
-					_this.loadVideos();
-				}, 100);
-			}
-		}, {skip_reg: true, context: this});
 		
 
 		if (file){
@@ -193,18 +206,8 @@ provoda.Model.extendTo(MfCor, {
 			this.updateNesting('sorted_completcs', [complect]);
 
 		} else {
-			this.mo.on('vip-state-change.track', function(e) {
-				if (e.value){
-					this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track});
-					this.bindInvestgChanges();
-					this.mo.bindFilesSearchChanges();
-					if (this.last_search_opts){
-						this.files_investg.startSearch(this.last_search_opts);
-						this.last_search_opts = null;
-					}
-				}
-				
-			}, {immediately: true, soft_reg: false, context: this});
+			//this.wch(this.mo, 'track', )
+			this.mo.on('vip-state-change.track', this.hndTrackNameCh, {immediately: true, soft_reg: false, context: this});
 			
 		}
 		
