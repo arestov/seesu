@@ -38,23 +38,18 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 					images_pack = this.app.art_images.getTrackImagesModel({
 						artist: this.init_states['artist'],
 						track:this.init_states['track']
-					})
-						.on('state-change.image-to-use', function(e) {
-							_this.updateState('ext_lfm_image', e.value);
-						});
+					});
 				} else {
-					images_pack = this.app.art_images.getArtistImagesModel(this.init_states['artist'])
-						.on('state-change.image-to-use', function(e) {
-							_this.updateState('ext_lfm_image', e.value);
-						});
+					images_pack = this.app.art_images.getArtistImagesModel(this.init_states['artist']);
 				}
+				this.wch(images_pack, 'image-to-use', 'ext_lfm_image');
 				still_init = false;
 			}
 			this.initStates();
 			this.nextTick(this.initHeavyPart);
 			this.on('state-change.can_load_baseinfo', function(e) {
 				if (e.value){
-					var artcard = _this.getNesting('artist');
+					var artcard = this.getNesting('artist');
 					if (artcard){
 						var req = artcard.loaDDD('base_info');
 						if (req){
@@ -68,7 +63,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			});
 			this.on('state-change.can_load_images', function(e) {
 				if (e.value){
-					var artcard = _this.getNesting('artist');
+					var artcard = this.getNesting('artist');
 					if (artcard){
 						var req = artcard.loaDDD('images');
 						if (req){
@@ -85,10 +80,10 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			});
 			this.on('state-change.can_load_songcard', function(e) {
 				if (e.value){
-					var songcard = _this.app.getSongcard(_this.artist, _this.track);
+					var songcard = this.app.getSongcard(_this.artist, _this.track);
 					if (songcard){
 						songcard.initForSong();
-						_this.updateNesting('songcard', songcard);
+						this.updateNesting('songcard', songcard);
 					}
 				}
 			});
@@ -147,16 +142,17 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			this.updateNesting('mf_cor', this.mf_cor);
 			this.mf_cor
 				.on('before-mf-play', function(mopla) {
-					_this.player.changeNowPlaying(_this, mopla.state('play'));
-					_this.mopla = mopla;
-					_this.updateState('play', mopla.state('play'));
-				}, {immediately: true})
+					this.player.changeNowPlaying(this, mopla.state('play'));
+					this.mopla = mopla;
+					this.updateState('play', mopla.state('play'));
+				}, {immediately: true, context: this})
 				.on("error", function(can_play) {
-					_this.player.trigger("song-play-error", _this, can_play);
-				})
-				.on('state-change.mopla_to_use', function(e){
-					_this.updateState('mf_cor_has_available_tracks', !!e.value);
-				});
+					this.player.trigger("song-play-error", this, can_play);
+				}, {context: this});
+
+			this.wch(this.mf_cor, 'mopla_to_use', function(e){
+				this.updateState('mf_cor_has_available_tracks', !!e.value);
+			});
 
 			
 			this.watchStates(['files_search', 'marked_as', 'mp_show'], function(files_search, marked_as, mp_show) {
@@ -187,7 +183,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 						delete this.makePlayableOnNewSearch;
 					}
 				}
-			});
+			}, {immediately: true});
 			this.on('state-change.is_important', function(e) {
 				if (e.value){
 					this.initRelativeData();

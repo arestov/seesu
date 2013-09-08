@@ -582,31 +582,30 @@ provoda.addPrototype("SongBase",{
 		this.updateState('files_search', opts);
 		this.checkChangesSinceFS(opts);
 	},
+	investg_rq_opts: {
+		depend: true,
+		space: 'acting'
+	},
 	bindFilesSearchChanges: function() {
 		var investg = this.getMFCore().files_investg;
-		var _this = this;
 		investg
 			.on('requests', function(array) {
-				_this.addRequests(array, {
-					depend: true,
-					space: 'acting'
-				});
-			}, {immediately: true})
-			.on('state-change.search_complete', function(e) {
-				_this.updateState('search_complete', e.value);
+				this.addRequests(array, this.investg_rq_opts);
+			}, {immediately: true, context: this});
+
+		this
+			.wch(investg, 'search_complete')
+			.wch(investg, 'has_request', 'searching_files')
+			.wch(investg, 'legacy-files-search', function(e) {
+				this.updateFilesSearchState(e.value);
 			})
-			.on('state-change.has_request', function(e) {
-				_this.updateState('searching_files', e.value);
-			})
-			.on('state-change.legacy-files-search', function(e) {
-				_this.updateFilesSearchState(e.value);
-			})
-			.on('state-change.has_mp3_files', function(e) {
-				_this.updateState('playable', e.value);
+			.wch(investg, 'has_mp3_files', function(e) {
+				this.updateState('playable', e.value);
 				if (e.value){
-					_this.plst_titl.markAsPlayable();
+					this.plst_titl.markAsPlayable();
 				}
 			});
+
 	},
 	isSearchAllowed: function() {
 		return this.getMFCore() && this.getMFCore().isSearchAllowed();

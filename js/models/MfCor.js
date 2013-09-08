@@ -93,24 +93,24 @@ var MfComplect = function(opts, params) {
 		this.updateNesting('moplas_list', this.moplas_list);
 	} else {
 		this.search_source = params.search_source;
-		this.search_source.on('state-change.files-list', function(e) {
+		this.wch(this.search_source, 'files-list', function(e) {
 			var files_list = e.value;
 			if (!files_list){
 				return;
 			}
 			var moplas_list = [];
-			_this.updateState('overstock', files_list.length > _this.overstock_limit);
+			this.updateState('overstock', files_list.length > this.overstock_limit);
 			for (var i = 0; i < files_list.length; i++) {
 			
 				sf =
 					files_list[i]
-						.getSongFileModel(_this.mo, _this.mo.player)
+						.getSongFileModel(this.mo, this.mo.player)
 							.on('want-to-play-sf', selectMf);
-				sf.updateState('overstock', i + 1 > _this.overstock_limit);
+				sf.updateState('overstock', i + 1 > this.overstock_limit);
 				moplas_list.push(sf);
-				_this.updateNesting('moplas_list', moplas_list);
+				this.updateNesting('moplas_list', moplas_list);
 			}
-			_this.moplas_list = moplas_list;
+			this.moplas_list = moplas_list;
 
 		});
 
@@ -163,12 +163,13 @@ provoda.Model.extendTo(MfCor, {
 
 
 		this.mo.on('state-change.is_important', function(e) {
+			var _this = this;
 			if (e.value && e.value){
 				setTimeout(function() {
 					_this.loadVideos();
 				}, 100);
 			}
-		}, {skip_reg: true});
+		}, {skip_reg: true, context: this});
 		
 
 		if (file){
@@ -189,16 +190,16 @@ provoda.Model.extendTo(MfCor, {
 		} else {
 			this.mo.on('vip-state-change.track', function(e) {
 				if (e.value){
-					_this.files_investg = _this.mo.mp3_search.getFilesInvestg({artist: _this.mo.artist, track: _this.mo.track});
-					_this.bindInvestgChanges();
-					_this.mo.bindFilesSearchChanges();
-					if (_this.last_search_opts){
-						_this.files_investg.startSearch(_this.last_search_opts);
-						_this.last_search_opts = null;
+					this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track});
+					this.bindInvestgChanges();
+					this.mo.bindFilesSearchChanges();
+					if (this.last_search_opts){
+						this.files_investg.startSearch(this.last_search_opts);
+						this.last_search_opts = null;
 					}
 				}
 				
-			}, {immediately: true, soft_reg: false});
+			}, {immediately: true, soft_reg: false, context: this});
 			
 		}
 		

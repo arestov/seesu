@@ -917,25 +917,6 @@ var getConnector = function(state_name) {
 	return connects_store[state_name];
 };
 
-var syncState = function(donor, donor_state, acceptor_state, immediately) {
-	
-	var cb;
-	if (typeof acceptor_state == 'function'){
-		cb = acceptor_state;
-	} else {
-		acceptor_state = acceptor_state || donor_state;
-		cb = getConnector(acceptor_state);
-		
-	}
-	var opts = {context: this};
-	if (immediately){
-		opts.immediately = true;
-		donor.on('vip-state-change.' + donor_state, cb, opts);
-	} else {
-		donor.on('state-change.' + donor_state, cb, opts);
-	}
-
-};
 
 var statesEmmiter = provoda.StatesEmitter;
 provoda.Eventor.extendTo(provoda.StatesEmitter, {
@@ -952,7 +933,26 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		return this;
 	},
-	wch: syncState,
+	wch: function(donor, donor_state, acceptor_state, immediately) {
+	
+		var cb;
+		if (typeof acceptor_state == 'function'){
+			cb = acceptor_state;
+		} else {
+			acceptor_state = acceptor_state || donor_state;
+			cb = getConnector(acceptor_state);
+			
+		}
+		var opts = {context: this};
+		if (immediately){
+			opts.immediately = true;
+			donor.on('vip-state-change.' + donor_state, cb, opts);
+		} else {
+			donor.on('state-change.' + donor_state, cb, opts);
+		}
+		return this;
+
+	},
 	stEvRegHandler: function(cb, namespace, opts, name_parts) {
 		cb({
 			value: this.state(name_parts[1])
