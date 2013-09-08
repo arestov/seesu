@@ -514,6 +514,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		pushToCbsFlow(fn, this, args, arg);
 	},
 	_addEventHandler: function(namespace, cb, opts, once){
+		//common opts allowed
 		if (this.convertEventName){
 			namespace = this.convertEventName(name);
 		}
@@ -933,6 +934,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		return this;
 	},
+	getContextOpts: function() {
+		if (!this.conx_opts){
+			this.conx_opts = {context: this};
+		}
+		return this.conx_opts;
+	},
 	wch: function(donor, donor_state, acceptor_state, immediately) {
 	
 		var cb;
@@ -943,19 +950,18 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			cb = getConnector(acceptor_state);
 			
 		}
-		var opts = {context: this};
 		if (immediately){
-			opts.immediately = true;
-			donor.on('vip-state-change.' + donor_state, cb, opts);
+			donor.on('vip-state-change.' + donor_state, cb, {context: this, immediately: true});
 		} else {
-			donor.on('state-change.' + donor_state, cb, opts);
+			donor.on('state-change.' + donor_state, cb, this.getContextOpts());
 		}
 		return this;
 
 	},
 	stEvRegHandler: function(cb, namespace, opts, name_parts) {
 		cb({
-			value: this.state(name_parts[1])
+			value: this.state(name_parts[1]),
+			target: this
 		});
 	},
 	onExtend: function() {
@@ -1071,6 +1077,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			var event_arg = {
 				type: name,
 				value: value,
+				target: this,
 				old_value: this.zdsv.original_states[name]
 			};
 			if (vip_cb_cs.length){
@@ -1321,7 +1328,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			var child = this.getNesting(child_name);
 			if (child){
 				cb({
-					value: child
+					value: child,
+					target: this
 				});
 			}
 		});
@@ -1457,6 +1465,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		//opts = opts || {};
 		event_obj.value = array;
 		event_obj.old_value = old_value;
+		event_obj.target = this;
 		this.trigger('child-change.' + collection_name, event_obj);
 
 		if (!opts || !opts.skip_report){

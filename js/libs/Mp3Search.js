@@ -156,7 +156,6 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			this.mp3_search = opts.mp3_search;
 			this.msq = params.msq;
 			this.query_string = params.query_string;
-			var _this = this;
 
 			this.archivateChildrenStates('sources_list', 'has_request');
 			this.archivateChildrenStates('sources_list', 'search_progress');
@@ -173,35 +172,38 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 			//	console.log('search_progress: ' + e.value);
 			//}, {immediately: true});
 			
-			this.mp3_search
-				.on('list-changed', function(list) {
-					for (var i = 0; i < list.length; i++) {
-						var cur = list[i].name;
-						if (!_this.sources[cur]){
-							_this.sources[cur] = _this.bindSource(cur, {
-								msq: _this.msq,
-								query_string: _this.query_string
-							}, this);
-							_this.sources_list.push(_this.sources[cur]);
-						}
-					}
+			this.mp3_search.on('list-changed', this.hndListChange, {soft_reg: false, context: this});
 
-					_this.sources_list.sort(function(g,f){
-						return _this.byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
-					});
-
-					_this.updateNesting('sources_list', _this.sources_list);
-
-					//_this.trigger('child-change.sources_list', _this.sources_list);
-				}, {soft_reg: false})
-				.on('state-change.big_files_list ', function(e) {
-					var array = e && e.value || [];
-					for (var i = 0; i < array.length; i++) {
-						_this.delayFileCheck(array[i]);
-					}
-
-				});
+			this.wch(this.mp3_search, 'big_files_list', this.hndBigFilesList);
 			
+		},
+		hndBigFilesList: function(e) {
+			var array = e && e.value || [];
+			for (var i = 0; i < array.length; i++) {
+				this.delayFileCheck(array[i]);
+			}
+
+		},
+		hndListChange: function(list) {
+			var _this = this;
+			for (var i = 0; i < list.length; i++) {
+				var cur = list[i].name;
+				if (!this.sources[cur]){
+					this.sources[cur] = this.bindSource(cur, {
+						msq: this.msq,
+						query_string: this.query_string
+					}, this.mp3_search);
+					this.sources_list.push(this.sources[cur]);
+				}
+			}
+
+			this.sources_list.sort(function(g,f){
+				return _this.byBestSearchIndex(g, f, _this.mp3_search.searches_pr);
+			});
+
+			this.updateNesting('sources_list', this.sources_list);
+
+			//_this.trigger('child-change.sources_list', _this.sources_list);
 		},
 		addFbS: function(search_name) {
 			var _this = this;
@@ -583,12 +585,13 @@ QueryMatchIndex.extendTo(SongQueryMatchIndex, {
 
 var getAverageDurations = function(mu_array, time_limit){
 	var r = {};
+	var filtr = function(value){
+		if (value && value > time_limit){
+			return true;
+		}
+	};
 	for (var a in mu_array.qmi_index){
-		var durs = spv.filter(spv.filter(mu_array.qmi_index[a], 'duration', function(value){
-			if (value && value > time_limit){
-				return true;
-			}
-		}), "duration");
+		var durs = spv.filter(spv.filter(mu_array.qmi_index[a], 'duration', filtr), "duration");
 
 		
 		var summ = 0;
@@ -615,11 +618,7 @@ var getAverageDurations = function(mu_array, time_limit){
 		this.investgs_by_artist = {};
 		this.files_ids = {};
 		this.pushed_files_by_artist = {};
-		this.onRegistration('list-changed', function(cb) {
-			if (this.se_list.length){
-				cb(this.se_list);
-			}
-		});
+		this.onRegistration('list-changed', this.hndRegListChange);
 	};
 	Mp3Search.getSongFileModel = function(mo, player){
 		return this.models[mo.uid] = this.models[mo.uid] || (new SongFileModel()).init({file: this, mo: mo}).setPlayer(player);
@@ -631,6 +630,11 @@ var getAverageDurations = function(mu_array, time_limit){
 
 
 	provoda.Model.extendTo(Mp3Search,  {
+		hndRegListChange: function(cb) {
+			if (this.se_list.length){
+				cb(this.se_list);
+			}
+		},
 		getQueryString: function(msq) {
 			return (msq.artist || '') + (msq.track ?  (' - ' + msq.track) : '');
 		},

@@ -78,7 +78,7 @@ var MfComplect = function(opts, params) {
 	this.source_name = params.source_name;
 
 	var _this = this;
-	var selectMf = function() {
+	this.selectMf = function() {
 		_this.mf_cor.playSelectedByUser(this);
 	};
 
@@ -88,31 +88,12 @@ var MfComplect = function(opts, params) {
 	if (this.start_file){
 		sf = this.start_file
 			.getSongFileModel(this.mo, this.mo.player)
-				.on('want-to-play-sf', selectMf);
+				.on('want-to-play-sf', this.selectMf);
 		this.moplas_list.push(sf);
 		this.updateNesting('moplas_list', this.moplas_list);
 	} else {
 		this.search_source = params.search_source;
-		this.wch(this.search_source, 'files-list', function(e) {
-			var files_list = e.value;
-			if (!files_list){
-				return;
-			}
-			var moplas_list = [];
-			this.updateState('overstock', files_list.length > this.overstock_limit);
-			for (var i = 0; i < files_list.length; i++) {
-			
-				sf =
-					files_list[i]
-						.getSongFileModel(this.mo, this.mo.player)
-							.on('want-to-play-sf', selectMf);
-				sf.updateState('overstock', i + 1 > this.overstock_limit);
-				moplas_list.push(sf);
-				this.updateNesting('moplas_list', moplas_list);
-			}
-			this.moplas_list = moplas_list;
-
-		});
+		this.wch(this.search_source, 'files-list', this.hndFilesListCh);
 
 	}
 
@@ -121,6 +102,30 @@ var MfComplect = function(opts, params) {
 };
 
 provoda.Model.extendTo(MfComplect, {
+	flchwp_opts: {
+		exlusive: true
+	},
+	hndFilesListCh: function(e) {
+		var files_list = e.value;
+		if (!files_list){
+			return;
+		}
+		var moplas_list = [];
+		this.updateState('overstock', files_list.length > this.overstock_limit);
+		var sf;
+		for (var i = 0; i < files_list.length; i++) {
+		
+			sf =
+				files_list[i]
+					.getSongFileModel(this.mo, this.mo.player)
+						.on('want-to-play-sf.mfcomp', this.selectMf, this.flchwp_opts);
+			sf.updateState('overstock', i + 1 > this.overstock_limit);
+			moplas_list.push(sf);
+			this.updateNesting('moplas_list', moplas_list);
+		}
+		this.moplas_list = moplas_list;
+
+	},
 	toggleOverstocked: function() {
 		this.updateState('show_overstocked', !this.state('show_overstocked'));
 	},
@@ -488,11 +493,16 @@ provoda.Model.extendTo(MfCor, {
 		}
 		
 	},*/
-	addMFComplect: function(complect, name, fire_collch) {
+	addMFComplect: function(complect, name) {
 		this.complects[name] = complect;
 	},
+	hndFilesListCh: function(e) {
+		if (e.value){
+			this.updateDefaultMopla();
+			this.checkVKAuthNeed();
+		}
+	},
 	bindSource: function(f_investg_s) {
-		var _this = this;
 		var source_name = f_investg_s.search_name;
 		if (!this.complects[source_name]){
 			var complect = new MfComplect({
@@ -504,15 +514,7 @@ provoda.Model.extendTo(MfCor, {
 				source_name: source_name
 			});
 			this.addMFComplect(complect, source_name);
-			f_investg_s.on('state-change.files-list', function(e) {
-				if (e.value){
-					_this.updateDefaultMopla();
-					_this.checkVKAuthNeed();
-				}
-				
-			}, {
-				soft_reg: true
-			});
+			this.wch(f_investg_s, 'files-list', this.hndFilesListCh);
 			
 		//	many_files = many_files || complect.hasManyFiles();
 		}
@@ -525,27 +527,24 @@ provoda.Model.extendTo(MfCor, {
 			this.last_search_opts = opts;
 		}
 	},
+	hndSourcesList: function(e) {
+		var sorted_completcs = [];
+		for (var i = 0; i < e.value.length; i++) {
+			var cur = e.value[i];
+			this.bindSource(cur);
+			sorted_completcs.push(this.complects[cur.search_name]);
+		}
+		this.updateNesting('sorted_completcs', sorted_completcs);
+		this.updateState('few_sources', e.value.length > 1);
+	},
 	bindInvestgChanges: function() {
 		//
-		var _this = this;
 		var investg = this.files_investg;
 		if (!investg){
 			return;
 		}
-		investg
-		.on('state-change.search_ready_to_use', function(e) {
-			_this.updateState('search_ready', e.value);
-		}, {soft_reg: true})
-		.on('child-change.sources_list', function(e) {
-			var sorted_completcs = [];
-			for (var i = 0; i < e.value.length; i++) {
-				var cur = e.value[i];
-				_this.bindSource(cur);
-				sorted_completcs.push(_this.complects[cur.search_name]);
-			}
-			_this.updateNesting('sorted_completcs', sorted_completcs);
-			_this.updateState('few_sources', e.value.length > 1);
-		}, {soft_reg: true});
+		this.wch(investg, 'search_ready_to_use', 'search_ready');
+		investg.on('child-change.sources_list', this.hndSourcesList, this.getContextOpts());
 		
 		
 
