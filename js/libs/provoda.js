@@ -907,6 +907,36 @@ var iterateChList = function(changes_list, context, cb) {
 var push = Array.prototype.push;
 var std_event_opt = {force_async: true};
 
+var connects_store = {};
+var getConnector = function(state_name) {
+	if (!connects_store[state_name]){
+		connects_store[state_name] = function(e) {
+			this.updateState(state_name, e.value);
+		};
+	}
+	return connects_store[state_name];
+};
+
+var syncState = function(donor, donor_state, acceptor_state, immediately) {
+	
+	var cb;
+	if (typeof acceptor_state == 'function'){
+		cb = acceptor_state;
+	} else {
+		acceptor_state = acceptor_state || donor_state;
+		cb = getConnector(acceptor_state);
+		
+	}
+	var opts = {context: this};
+	if (immediately){
+		opts.immediately = true;
+		donor.on('vip-state-change.' + donor_state, cb, opts);
+	} else {
+		donor.on('state-change.' + donor_state, cb, opts);
+	}
+
+};
+
 var statesEmmiter = provoda.StatesEmitter;
 provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	init: function(){
@@ -922,6 +952,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		return this;
 	},
+	wch: syncState,
 	stEvRegHandler: function(cb, namespace, opts, name_parts) {
 		cb({
 			value: this.state(name_parts[1])
@@ -3271,9 +3302,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		if (ordered_rend_list && ordered_rend_list.length){
 			var _this = this;
-			setTimeout(function() {
-				_this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request, ordered_rend_list);
-			},100);//fixme can be bug
+			this.nextTick(function() {
+				this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request, ordered_rend_list);
+			});
+			//fixme can be bug
 		}
 		for (i = 0; i < append_list.length; i++) {
 			cur = append_list[i].view;

@@ -337,6 +337,9 @@ var guessArtist = function(track_title, query_artist){
 
 
 	var r = {};
+	if (!track_title){
+		return r;
+	}
 	var remove_digits = !query_artist || query_artist.search(/^\d+?\s?\S*?\s/) === 0;
 
 	if (remove_digits){
