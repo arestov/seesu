@@ -32,7 +32,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 		},
 		hndLoadSongcard: function(e) {
 			if (e.value){
-				var songcard = this.app.getSongcard(_this.artist, _this.track);
+				var songcard = this.app.getSongcard(this.artist, this.track);
 				if (songcard){
 					songcard.initForSong();
 					this.updateNesting('songcard', songcard);
@@ -106,9 +106,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			}
 			this.initStates();
 			this.nextTick(this.initHeavyPart);
-			this.on('state-change.can_load_baseinfo', hndLoadBaseArtInfo);
-			this.on('state-change.can_load_images', hndLoadArtImages);
-			this.on('state-change.can_load_songcard', hndLoadSongcard);
+			this.on('state-change.can_load_baseinfo', this.hndLoadBaseArtInfo);
+			this.on('state-change.can_load_images', this.hndLoadArtImages);
+			this.on('state-change.can_load_songcard', this.hndLoadSongcard);
 		},
 		'compx-has_full_title':{
 			depends_on: ['artist', 'track'],
@@ -151,7 +151,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			} else {
 				this.updateState('can_expand', false);
 			}
-		}
+		},
 		initHeavyPart: provoda.getOCF('izheavy', function() {
 			var _this = this;
 			var omo = this.omo;
@@ -196,7 +196,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 		},
 		hndMfcError: function(can_play) {
 			this.player.trigger("song-play-error", this, can_play);
-		}
+		},
 		getShareUrl: function() {
 			if (this.artist && this.track){
 				return "http://seesu.me/o#/catalog/" + (this.app.encodeURLPart(this.artist) + "/_/" + this.app.encodeURLPart(this.track)).replace(/\'/gi, '%27');

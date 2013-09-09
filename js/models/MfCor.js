@@ -211,16 +211,7 @@ provoda.Model.extendTo(MfCor, {
 			
 		}
 		
-		this.archivateChildrenStates('sorted_completcs', 'moplas_list', function(values_array) {
-			var args = values_array;
-			for (var i = 0; i < args.length; i++) {
-				var cur = args[i];
-				if (cur && cur.length > 1){
-					return true;
-				}
-			}
-			return false;
-		}, 'has_files');
+		this.archivateChildrenStates('sorted_completcs', 'moplas_list', this.chldStHasFiles, 'has_files');
 
 		this.intMessages();
 
@@ -235,6 +226,16 @@ provoda.Model.extendTo(MfCor, {
 		});*/
 
 		
+	},
+	chldStHasFiles: function(values_array) {
+		var args = values_array;
+		for (var i = 0; i < args.length; i++) {
+			var cur = args[i];
+			if (cur && cur.length > 1){
+				return true;
+			}
+		}
+		return false;
 	},
 	loadVideos: function() {
 		if (this.videos_loaded){
@@ -470,20 +471,22 @@ provoda.Model.extendTo(MfCor, {
 		}
 		return this;
 	},
+	hndNFSearch: function(search, name) {
+		if (name == 'vk'){
+			this.removeVKAudioAuth();
+		}
+	},
+	hndNtfRead: function(message_id) {
+		this.notifier.banMessage(message_id);
+	},
 	bindMessagesRecieving: function() {
 
 		var _this = this;
 		if (this.mo.mp3_search){
 			
-			this.mo.mp3_search.on('new-search', function(search, name) {
-				if (name == 'vk'){
-					_this.removeVKAudioAuth();
-				}
-			});
+			this.mo.mp3_search.on('new-search', this.hndNFSearch, this.getContextOpts());
 		}
-		this.sf_notf.on('read', function(message_id) {
-			_this.notifier.banMessage(message_id);
-		});
+		this.sf_notf.on('read', this.hndNtfRead, this.getContextOpts());
 		
 	},
 	collapseExpanders: function() {
