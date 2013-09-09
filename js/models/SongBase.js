@@ -31,7 +31,6 @@ provoda.addPrototype("SongBase",{
 		this.init_states['url_part'] = this.getURL();
 		//this.updateManyStates(states);
 
-		var _this = this;
 		this.on('requests', this.hndRequestsPrio, this.getContextOptsI());
 	},
 	hndRequestsPrio: function() {
@@ -128,7 +127,6 @@ provoda.addPrototype("SongBase",{
 			}
 		},
 		"player_song": function(state){
-			var _this = this;
 
 			if (state){
 				this.mp3_search.on("new-search.player_song", this.findFiles, {exlusive: true, context: this});
@@ -152,7 +150,6 @@ provoda.addPrototype("SongBase",{
 		}
 	},
 	prepareForPlaying: function() {
-		var _this = this;
 
 		this.makeSongPlayalbe(true);
 
