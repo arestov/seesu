@@ -299,6 +299,12 @@ provoda.Model.extendTo(MfCor, {
 				return !!(has_files || vk_a_auth || fsrs || cant_play);
 			}
 		},
+		has_available_tracks: {
+			depends_on: ['mopla_to_use'],
+			fn: function(mopla_to_use) {
+				return !!mopla_to_use
+			}
+		},
 		mopla_to_use: {
 			depends_on: ["user_preferred", "default_mopla"],
 			fn: function(user_preferred, default_mopla){
@@ -382,17 +388,18 @@ provoda.Model.extendTo(MfCor, {
 		this.player = this.mo.player;
 		
 		this.player
-			.on('core-fail', function() {
-				
-				_this.updateState('cant_play_music', true);
-				_this.notifier.addMessage('player-fail');
-			})
-			.on('core-ready', function() {
-				_this.updateState('cant_play_music', false);
-				_this.notifier.banMessage('player-fail');
-			});
+			.on('core-fail', this.hndPCoreFail, this.getContextOpts())
+			.on('core-ready', this.hndPCoreReady, this.getContextOpts());
 
 
+	},
+	hndPCoreFail: function() {
+		this.updateState('cant_play_music', true);
+		this.notifier.addMessage('player-fail');
+	},
+	hndPCoreReady: function() {
+		this.updateState('cant_play_music', false);
+		this.notifier.banMessage('player-fail');
 	},
 	getCurrentMopla: function(){
 		return this.state('current_mopla');

@@ -10,7 +10,66 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 
 	SongBase.extendTo(Song, {
 		page_name: 'song page',
+		hndMpshowImp: function(e) {
+			var
+				_this = this,
+				oldCb = this.makePlayableOnNewSearch;
 
+			if (e.value){
+				if (!oldCb){
+					this.makePlayableOnNewSearch = function() {
+						_this.makeSongPlayalbe(true);
+					};
+					this.mp3_search.on('new-search', this.makePlayableOnNewSearch);
+				}
+				_this.initOnShow();
+			} else {
+				if (oldCb){
+					this.mp3_search.off('new-search', oldCb);
+					delete this.makePlayableOnNewSearch;
+				}
+			}
+		},
+		hndLoadSongcard: function(e) {
+			if (e.value){
+				var songcard = this.app.getSongcard(_this.artist, _this.track);
+				if (songcard){
+					songcard.initForSong();
+					this.updateNesting('songcard', songcard);
+				}
+			}
+		},
+		hndLoadBaseArtInfo: function(e) {
+			if (e.value){
+				var artcard = this.getNesting('artist');
+				if (artcard){
+					var req = artcard.loaDDD('base_info');
+					if (req){
+						this.addRequest(req);
+					}
+				} else {
+					console.warn('no nested artcard');
+				}
+				
+			}
+		},
+		hndLoadArtImages: function(e) {
+			if (e.value){
+				var artcard = this.getNesting('artist');
+				if (artcard){
+					var req = artcard.loaDDD('images');
+					if (req){
+						this.addRequest(req);
+					}
+					
+				} else {
+					console.warn('no nested artcard');
+				}
+				
+				//
+				//_this.loaDDD('artist_images');
+			}
+		},
 		init: function(opts) {
 			var omo = opts.omo;
 			var passed_artist = omo.artist;
@@ -47,46 +106,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			}
 			this.initStates();
 			this.nextTick(this.initHeavyPart);
-			this.on('state-change.can_load_baseinfo', function(e) {
-				if (e.value){
-					var artcard = this.getNesting('artist');
-					if (artcard){
-						var req = artcard.loaDDD('base_info');
-						if (req){
-							this.addRequest(req);
-						}
-					} else {
-						console.warn('no nested artcard');
-					}
-					
-				}
-			});
-			this.on('state-change.can_load_images', function(e) {
-				if (e.value){
-					var artcard = this.getNesting('artist');
-					if (artcard){
-						var req = artcard.loaDDD('images');
-						if (req){
-							this.addRequest(req);
-						}
-						
-					} else {
-						console.warn('no nested artcard');
-					}
-					
-					//
-					//_this.loaDDD('artist_images');
-				}
-			});
-			this.on('state-change.can_load_songcard', function(e) {
-				if (e.value){
-					var songcard = this.app.getSongcard(_this.artist, _this.track);
-					if (songcard){
-						songcard.initForSong();
-						this.updateNesting('songcard', songcard);
-					}
-				}
-			});
+			this.on('state-change.can_load_baseinfo', hndLoadBaseArtInfo);
+			this.on('state-change.can_load_images', hndLoadArtImages);
+			this.on('state-change.can_load_songcard', hndLoadSongcard);
 		},
 		'compx-has_full_title':{
 			depends_on: ['artist', 'track'],
@@ -121,6 +143,15 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			this.initHeavyPart();
 			return this.mf_cor;
 		},
+		hndCanExpand: function(files_search, marked_as, mp_show) {
+			if (marked_as && files_search && files_search.search_complete){
+				this.updateState('can_expand', true);
+			} else if (mp_show){
+				this.updateState('can_expand', true);
+			} else {
+				this.updateState('can_expand', false);
+			}
+		}
 		initHeavyPart: provoda.getOCF('izheavy', function() {
 			var _this = this;
 			var omo = this.omo;
@@ -141,57 +172,31 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			}
 			this.updateNesting('mf_cor', this.mf_cor);
 			this.mf_cor
-				.on('before-mf-play', function(mopla) {
-					this.player.changeNowPlaying(this, mopla.state('play'));
-					this.mopla = mopla;
-					this.updateState('play', mopla.state('play'));
-				}, {immediately: true, context: this})
-				.on("error", function(can_play) {
-					this.player.trigger("song-play-error", this, can_play);
-				}, {context: this});
+				.on('before-mf-play', this.hndMfcBeforePlay, this.getContextOptsI())
+				.on("error", this.hndMfcError, this.getContextOpts());
 
-			this.wch(this.mf_cor, 'mopla_to_use', function(e){
-				this.updateState('mf_cor_has_available_tracks', !!e.value);
-			});
+			this.wch(this.mf_cor, 'has_available_tracks', 'mf_cor_has_available_tracks');
 
 			
-			this.watchStates(['files_search', 'marked_as', 'mp_show'], function(files_search, marked_as, mp_show) {
-				if (marked_as && files_search && files_search.search_complete){
-					this.updateState('can_expand', true);
-				} else if (mp_show){
-					this.updateState('can_expand', true);
-				} else {
-					this.updateState('can_expand', false);
-				}
-			});
-			this.on('vip-state-change.mp_show', function(e) {
-				var
-					_this = this,
-					oldCb = this.makePlayableOnNewSearch;
-
-				if (e.value){
-					if (!oldCb){
-						this.makePlayableOnNewSearch = function() {
-							_this.makeSongPlayalbe(true);
-						};
-						this.mp3_search.on('new-search', this.makePlayableOnNewSearch);
-					}
-					_this.initOnShow();
-				} else {
-					if (oldCb){
-						this.mp3_search.off('new-search', oldCb);
-						delete this.makePlayableOnNewSearch;
-					}
-				}
-			}, {immediately: true});
-			this.on('state-change.is_important', function(e) {
-				if (e.value){
-					this.initRelativeData();
-				}
-			});
+			this.watchStates(['files_search', 'marked_as', 'mp_show'], this.hndCanExpand);
+			this.on('vip-state-change.mp_show', this.hndMpshowImp, this.getContextOptsI());
+			this.on('state-change.is_important', this.hndImportant);
 			this.nextTick(this.initRelativeData);
 
 		}),
+		hndImportant: function(e) {
+			if (e.value){
+				this.initRelativeData();
+			}
+		},
+		hndMfcBeforePlay: function(mopla) {
+			this.player.changeNowPlaying(this, mopla.state('play'));
+			this.mopla = mopla;
+			this.updateState('play', mopla.state('play'));
+		},
+		hndMfcError: function(can_play) {
+			this.player.trigger("song-play-error", this, can_play);
+		}
 		getShareUrl: function() {
 			if (this.artist && this.track){
 				return "http://seesu.me/o#/catalog/" + (this.app.encodeURLPart(this.artist) + "/_/" + this.app.encodeURLPart(this.track)).replace(/\'/gi, '%27');

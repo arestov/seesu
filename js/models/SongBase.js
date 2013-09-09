@@ -32,10 +32,11 @@ provoda.addPrototype("SongBase",{
 		//this.updateManyStates(states);
 
 		var _this = this;
-		this.on('requests', function() {
-			_this.plst_titl.checkRequestsPriority();
-			
-		}, {immediately: true});
+		this.on('requests', this.hndRequestsPrio, this.getContextOptsI());
+	},
+	hndRequestsPrio: function() {
+		this.plst_titl.checkRequestsPriority();
+		
 	},
 	complex_states: {
 		'one_artist_playlist': {
@@ -130,10 +131,7 @@ provoda.addPrototype("SongBase",{
 			var _this = this;
 
 			if (state){
-				this.mp3_search.on("new-search.player_song", function(){
-					_this.findFiles();
-					
-				}, {exlusive: true});
+				this.mp3_search.on("new-search.player_song", this.findFiles, {exlusive: true, context: this});
 			}
 		},
 		"is_important": function(state){
@@ -158,9 +156,7 @@ provoda.addPrototype("SongBase",{
 
 		this.makeSongPlayalbe(true);
 
-		this.mp3_search.on("new-search.viewing-song", function(){
-			_this.findFiles();
-		}, {exlusive: true});
+		this.mp3_search.on("new-search.viewing-song", this.findFiles, {exlusive: true, context: this});
 	},
 	simplify: function() {
 		return spv.cloneObj({}, this, false, ['track', 'artist']);
@@ -586,25 +582,28 @@ provoda.addPrototype("SongBase",{
 		depend: true,
 		space: 'acting'
 	},
+	hndInvestgReqs: function(array) {
+		this.addRequests(array, this.investg_rq_opts);
+	},
+	hndLegacyFSearch: function(e) {
+		this.updateFilesSearchState(e.value);
+	},
+	hndHasMp3Files: function(e) {
+		this.updateState('playable', e.value);
+		if (e.value){
+			this.plst_titl.markAsPlayable();
+		}
+	},
 	bindFilesSearchChanges: function() {
 		var investg = this.getMFCore().files_investg;
 		investg
-			.on('requests', function(array) {
-				this.addRequests(array, this.investg_rq_opts);
-			}, {immediately: true, context: this});
+			.on('requests', this.hndInvestgReqs, this.getContextOptsI());
 
 		this
 			.wch(investg, 'search_complete')
 			.wch(investg, 'has_request', 'searching_files')
-			.wch(investg, 'legacy-files-search', function(e) {
-				this.updateFilesSearchState(e.value);
-			})
-			.wch(investg, 'has_mp3_files', function(e) {
-				this.updateState('playable', e.value);
-				if (e.value){
-					this.plst_titl.markAsPlayable();
-				}
-			});
+			.wch(investg, 'legacy-files-search', this.hndLegacyFSearch)
+			.wch(investg, 'has_mp3_files', this.hndHasMp3Files);
 
 	},
 	isSearchAllowed: function() {

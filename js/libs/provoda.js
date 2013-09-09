@@ -934,6 +934,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		return this;
 	},
+	getContextOptsI: function() {
+		if (!this.conx_optsi){
+			this.conx_optsi = {context: this, immediately: true};
+		}
+		return this.conx_optsi;
+	},
 	getContextOpts: function() {
 		if (!this.conx_opts){
 			this.conx_opts = {context: this};
@@ -951,7 +957,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			
 		}
 		if (immediately){
-			donor.on('vip-state-change.' + donor_state, cb, {context: this, immediately: true});
+			donor.on('vip-state-change.' + donor_state, cb, this.getContextOptsI());
 		} else {
 			donor.on('state-change.' + donor_state, cb, this.getContextOpts());
 		}
