@@ -1104,7 +1104,7 @@
 		</div>
 		<div class="song-act-tagging">
 			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags" pv-anchor="tags-input"/>
-			<div class="save_tags_b">
+			<div class="save_tags_b hidden" pv-class="save_tags_b {{!has_changes && 'hidden'}}">
 				<span class="button-hole">
 					<span class="nicebutton">save</span>
 				</span>

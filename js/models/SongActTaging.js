@@ -12,31 +12,13 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 		this.setRequestDesc(localize('lastfm-tagging-access'));
 		this.updateState('active', true);
 
-		var _this = this;
 		this.updateState('userid', false);
-		this.app.on('state-change.lfm_userid', function(e) {
-			_this.updateState('userid', e.value);
-		});
+		this.wch(this.app, 'lfm_userid', 'userid');
+		this.wch(opts.pmd, 'active_view', 'viewing');
+		
 
+		this.wch(this.app.getArtcard(this.mo.state('artist')).getTagsModel(), 'data-list', 'artist_tags');
 
-		opts.pmd.on('state-change.active_view', function(e) {
-			_this.updateState('viewing', e.value);
-		});
-
-
-		this.app.on('state-change.lfm_userid', function(e) {
-			_this.updateState('userid', e.value);
-		});
-
-		this.on('state-change.user_tags_string', function(e) {
-			var array = (e.value && e.value.trim().split(this.comma_regx)) || [];
-			this.updateState('possible_tags', array);
-		});
-		this.app.getArtcard(this.mo.state('artist')).getTagsModel().on('state-change.data-list', function(e) {
-			//console.log(e);
-			_this.updateState('artist_tags',e.value);
-			
-		});
 
 		this.on('state-change.canload_personal', function(e) {
 			if (e.value){
@@ -46,9 +28,40 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 		});
 
 
+
 	},
 	comma_regx: /\s*\,\s*/,
 	comma_regx_end: /\s*\,\s*$/,
+	'compx-possible_tags':{
+		depends_on: ['user_tags_string'],
+		fn: function(user_tags_string) {
+			return (user_tags_string && user_tags_string.trim().split(this.comma_regx)) || [];
+		}
+	},
+	'compx-petags': {
+		depends_on: ['personal_tags'],
+		fn: function(personal_tags) {
+			return spv.filter(personal_tags, 'name');
+		}
+	},
+	'compx-tags_toadd': {
+		depends_on: ['petags', 'possible_tags'],
+		fn: function(petags, possible_tags) {
+			return spv.arrayExclude(petags, possible_tags);
+		}
+	},
+	'compx-tags_toremove': {
+		depends_on: ['petags', 'possible_tags'],
+		fn: function(petags, possible_tags) {
+			return spv.arrayExclude(possible_tags, petags);
+		}
+	},
+	'compx-has_changes': {
+		depends_on: ['tags_toadd', 'tags_toremove'],
+		fn: function(tags_toadd, tags_toremove) {
+			return !!((tags_toadd && tags_toadd.length) || (tags_toremove && tags_toremove.length));
+		}
+	},
 	'compx-canload_personal': {
 		depends_on: ['userid', 'viewing'],
 		fn: spv.hasEveryArgs
@@ -114,6 +127,11 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 					.done(function(r){
 						var array = spv.toRealArray(spv.getTargetField(r, 'tags.tag'));
 						_this.updateState('personal_tags', array);
+
+						var petags = _this.state('petags');
+						if (petags.length && !_this.state('user_tags_string')){
+							_this.updateState('user_tags_string', petags.join(', '));
+						}
 					});
 			},
 			errors: ['error']

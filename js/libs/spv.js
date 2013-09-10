@@ -101,7 +101,12 @@ doesContain = spv.doesContain = function(target, valueOf){
 	return -1;
 };
 arrayExclude = spv.arrayExclude = function(arr, obj){
-	var r = []; obj = spv.toRealArray(obj);
+	var r = [];
+	if (!arr){
+		return r;
+	}
+
+	obj = spv.toRealArray(obj);
 	for (var i = 0; i < arr.length; i++) {
 		if (obj.indexOf(arr[i]) == -1){
 			r.push(arr[i]);
