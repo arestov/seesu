@@ -201,13 +201,9 @@ comd.BaseCRow.extendTo(ShareRow, {
 		this.searcher = new StrusersRowSearch(this, mo);
 		this.updateNesting('searcher', this.searcher);
 
-		var updateSongURL = function(){
-			_this.updateState('share_url', _this.mo.getShareUrl());
-		};
 
-		this.mo.on("state-change.url_part", function(){
-			updateSongURL();
-		});
+		this.wch(this.mo, 'url_part', this.hndUpdateShareURL);
+
 
 		
 		var cu_info = su.s.getInfo('vk');
@@ -225,6 +221,9 @@ comd.BaseCRow.extendTo(ShareRow, {
 
 		//this.share_url = this.mo.getShareUrl();
 		
+	},
+	hndUpdateShareURL: function() {
+		this.updateState('share_url', this.mo.getShareUrl());
 	},
 	checkVKFriendsAccess: function(vk_opts) {
 		var can = (vk_opts & 2) * 1;
@@ -342,33 +341,28 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		this._super();
 		this.mo = mo;
 		this.updateState('active_part', false);
+		this.app = mo.app;
 
-		var _this = this;
+		this.nextTick(this.initHeavyPart);
+	},
+	initHeavyPart: function() {
+		this.addPart(new ScrobbleRow(this, this.mo));
+		this.addPart(new RepeatSongRow(this, this.mo));
+		this.addPart(new SongActPlaylisting(this, this.mo));
+		this.addPart(new ShareRow(this, this.mo));
+		this.addPart(new LoveRow(this, this.mo));
+		this.addPart(new SongActTaging(this, this.mo));
 
-		var initHeavyPart = function() {
-			this.addPart(new ScrobbleRow(this, mo));
-			this.addPart(new RepeatSongRow(this, mo));
-			this.addPart(new SongActPlaylisting(this, mo));
-			this.addPart(new ShareRow(this, mo));
-			this.addPart(new LoveRow(this, mo));
-			this.addPart(new SongActTaging(this, mo));
-
-			var setVolume = function(fac) {
-				_this.updateState('volume', fac[0]/fac[1]);
-			};
-			if (su.settings['volume']){
-				setVolume(su.settings['volume']);
-			}
-			su.on('settings.volume', setVolume);
-
-		};
-
-		setTimeout(function() {
-			initHeavyPart.call(_this);
-		}, 100);
+		if (this.app.settings['volume']){
+			this.setVolumeState(this.app.settings['volume']);
+		}
+		this.app.on('settings.volume', this.setVolumeState, this.getContextOpts());
+	},
+	setVolumeState: function(fac) {
+		this.updateState('volume', fac[0]/fac[1]);
 	},
 	sendVolume: function(vol) {
-		su.setSetting('volume', vol);
+		this.app.setSetting('volume', vol);
 	},
 	setVolume: function(fac) {
 		this.updateState('volume', fac[0]/fac[1]);
