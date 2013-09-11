@@ -426,7 +426,7 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 
 	complex_states: {
 		"vis_volume-hole-width": {
-			depends_on: ['vis_is_visible', 'vis_con-appended'],
+			depends_on: ['vis_is_visible', 'vis_con_appended'],
 			fn: function(visible, apd){
 				return !!(visible && apd) && this.tpl.ancs['v-hole'].width();
 			}

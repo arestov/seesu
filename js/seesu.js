@@ -369,17 +369,21 @@ AppModel.extendTo(SeesuApp, {
 
 		this.map
 			.init(this.start_page)
+			.on('residents-tree', function(tree) {
+				this.updateNesting('navigation', tree);
+				this.updateNesting('map_slice', tree);
+			}, this.getContextOptsI())
 			.on('map-tree-change', function(nav_tree) {
-				_this.changeNavTree(nav_tree);
-			}, {immediately: true})
+				this.changeNavTree(nav_tree);
+			}, this.getContextOptsI())
 			.on('changes', function(changes) {
 				//console.log(changes);
-				_this.animateMapChanges(changes);
-			}, {immediately: true})
+				this.animateMapChanges(changes);
+			}, this.getContextOptsI())
 			.on('title-change', function(title) {
-				_this.setDocTitle(title);
+				this.setDocTitle(title);
 
-			}, {immediately: true})
+			}, this.getContextOptsI())
 			.on('url-change', function(nu, ou, data, replace) {
 				if (app_env.needs_url_history){
 					if (replace){
@@ -388,7 +392,7 @@ AppModel.extendTo(SeesuApp, {
 						navi.set(nu, data.resident);
 					}
 				}
-			}, {immediately: true})
+			}, this.getContextOptsI())
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
 					//su.trackPage(nv.map_level.resident.page_name);
@@ -396,8 +400,8 @@ AppModel.extendTo(SeesuApp, {
 
 			}, {immediately: true})
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
-				_this.trackPage(nv.map_level.resident.page_name);
-			}, {immediately: true})
+				this.trackPage(nv.map_level.resident.page_name);
+			}, this.getContextOptsI())
 			.makeMainLevel();
 
 

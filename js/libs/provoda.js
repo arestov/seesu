@@ -2521,9 +2521,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			//anchor.parentNode.insertBefore(con[0], anchor.nextSibling);
 			delete this._anchor;
 			$(anchor).remove();
-			this.setVisState('con-appended', true);
-		} else if (con && con.parent()){
-			this.setVisState('con-appended', true);
+			this.setVisState('con_appended', true);
+		} else if (con && con.parent()[0]){
+			this.setVisState('con_appended', true);
+
 		}
 	},
 
@@ -2936,6 +2937,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	setMdChildren: function(collections) {
 		this._collections_set_processing = true;
+		//вью только что создана, присоединяем подчинённые views без деталей (детали создаются позже)
 		for (var i in collections) {
 			this.collectionChange(i, collections[i]);
 		}
@@ -3218,6 +3220,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 						if (parent_node){
 							parent_node.removeChild(current_node[0]);
 						}
+						view.setVisState('con_appended', false);
 
 						view.detached = true;
 						detached.push(view);
@@ -3262,14 +3265,15 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				continue;
 			}
 			prev_view = this.getPrevView(array, i, space, true);
-			if (prev_view) {
+
+			if (prev_view && prev_view.state('vis_con_appended')) {
 				append_list.push({
 					md: cur,
 					complect: createComplect(prev_view, 'after')
 				});
 			} else {
 				next_view = this.getNextView(array, i, space, true);
-				if (next_view){
+				if (next_view && next_view.state('vis_con_appended')){
 					append_list.push({
 						md: cur,
 						complect: createComplect(next_view, 'before')
@@ -3329,11 +3333,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			detached[i].detached = null;
 		}
 		if (ordered_rend_list && ordered_rend_list.length){
-			var _this = this;
 			this.nextTick(function() {
 				this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request, ordered_rend_list);
 			});
-			//fixme can be bug
+			//fixme can be bug (если nesting изменён, то измнения могут конфликтовать)
 		}
 		for (i = 0; i < append_list.length; i++) {
 			cur = append_list[i].view;
