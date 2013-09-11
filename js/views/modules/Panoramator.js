@@ -1,4 +1,4 @@
-define(function(){
+define(['jquery'], function($){
 'use strict';
 
 var Panoramator = function(){};
@@ -20,6 +20,7 @@ Panoramator.prototype = {
 			e.preventDefault();
 			_this.handleUserStart(e);
 		});
+		this.improved_con = opts.improved_con;
 		this.lift = opts.lift;
 		this.ready_class_name = opts.ready_class_name || 'ready_to_use';
 		this.lift_items = [];
@@ -181,10 +182,13 @@ Panoramator.prototype = {
 		this.lift.addClass(this.ready_class_name);
 	},
 	checkSize: function(){
-		this.total_width = this.getTotalWidth();
-		this.lift.css({
-			width: this.total_width + 'px'
-		});
+		this.total_width = this.checkTotalWidth();
+		if (!this.improved_con){
+			this.lift.css({
+				width: this.total_width + 'px'
+			});
+		}
+		
 		this.viewport_width = this.viewport.width();
 	},
 	isEdgeElem: function(el, mobil_pos_shift, next) {
@@ -209,12 +213,17 @@ Panoramator.prototype = {
 	getLiftPos: function(){
 		return -parseFloat(this.lift.css("margin-left")) || 0;
 	},
-	getTotalWidth: function() {
-		var width = 0;
-		$.each(this.lift_items, function(i ,el) {
-			width += $(el).outerWidth(true);
-		});
-		return width;
+	checkTotalWidth: function() {
+		if (this.improved_con){
+			return this.lift.outerWidth(true);
+		} else {
+			var width = 0;
+			$.each(this.lift_items, function(i ,el) {
+				width += $(el).outerWidth(true);
+			});
+			return width;
+		}
+		
 	},
 	toStart: function(){
 

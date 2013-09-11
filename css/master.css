@@ -481,8 +481,8 @@ html.not-as-application, .not-as-application  body{
 	}
 
 	.photo-cont-lift{
-		width:200%;
 		height:100%;
+		white-space: nowrap;
 	}
 	.photo-cont-lift.ready_to_use{
         position: absolute;
@@ -495,7 +495,7 @@ html.not-as-application, .not-as-application  body{
 	}
 	.photo-cont .artist_image{
 		height:100%;
-		
+		display: inline-block;
 		}
 
 
