@@ -2758,17 +2758,30 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	requestAll: function(){
 		return this.requestDeepDetLevels();
 	},
+	__tickDetRequest: function() {
+		this.dettree_incomplete = this.requestDetalizationLevel(this.detltree_depth);
+		this.detltree_depth++;
+		if (this.dettree_incomplete){
+			this.nextTick(this.__tickDetRequest);
+		}
+	},
 	requestDeepDetLevels: function(){
 		if (this._states_set_processing || this._collections_set_processing){
 			return this;
 		}
 		//iterate TREE
-		var depth = 1;
-		var incomplete = true;
-		while (incomplete) {
-			incomplete = this.requestDetalizationLevel(depth);
-			depth++;
-		}
+		this.detltree_depth = 1;
+		this.dettree_incomplete = true;
+
+		
+		/*
+		while (this.dettree_incomplete) {
+			this.dettree_incomplete = this.requestDetalizationLevel(this.detltree_depth);
+			this.detltree_depth++;
+		}*/
+
+		this.nextTick(this.__tickDetRequest);
+		
 		return this;
 	},
 	softRequestChildrenDetLev: function(rel_depth) {
@@ -2789,7 +2802,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			return incomplete;
 		}
 	},
-	requestDetalizationLevel: function(rel_depth, last_request){
+	requestDetalizationLevel: function(rel_depth){
 		if (!this._detailed){
 			this.requestDetailes();
 		}
