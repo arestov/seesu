@@ -222,11 +222,18 @@ searchInArray = spv.searchInArray = function (array, query, fields) {
 	}
 	return r;
 };
+var regexp_escaper = /([$\^*()+\[\]{}|.\/?\\])/g;
+spv.escapeRegExp = function(str, clean) {
+	if (clean){
+		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
+	}
+	return str.replace(regexp_escaper, '\\$1'); //escaping regexp symbols
+};
 
 getStringPattern = function (str) {
 	if (str.replace(/\s/g, '')){
-		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
-		str = str.replace(/([$\^*()+\[\]{}|.\/?\\])/g, '\\$1').split(/\s/g);  //escaping regexp symbols
+		
+		str = spv.escapeRegExp(str, true).split(/\s/g);
 		for (var i=0; i < str.length; i++) {
 			str[i] = '((^\|\\s)' + str[i] + ')';
 		}
@@ -235,6 +242,7 @@ getStringPattern = function (str) {
 		return new RegExp(str, 'gi');
 	}
 };
+spv.getStringPattern = getStringPattern;
 
 ttime = function(f){
 	var d = +new Date();

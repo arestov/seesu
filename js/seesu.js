@@ -684,7 +684,8 @@ AppModel.extendTo(SeesuApp, {
 				if (query){
 					if (cur.playlist_title == query){
 						r.unshift(cur);
-					} else if (cur.playlist_title.match(new  RegExp('\\b' + query))){
+
+					} else if (cur.playlist_title.match(spv.getStringPattern(query))){
 						r.push(cur);
 					}
 				} else {
