@@ -474,6 +474,14 @@ var pushToCbsFlow = function(fn, context, args, cbf_arg) {
 	checkCallbacksFlow();
 };
 
+var cached_parsed_namespace = {};
+var parseNamespace = function(namespace) {
+	if (!cached_parsed_namespace[namespace]){
+		cached_parsed_namespace[namespace] = namespace.split(DOT);
+	}
+	return cached_parsed_namespace[namespace];
+};
+
 spv.Class.extendTo(provoda.Eventor, {
 	init: function(){
 		this.subscribes = {};
@@ -494,7 +502,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		this.resetSubscribesCache(opts.namespace);
 	},
 	getPossibleRegfires: function(namespace) {
-		var parts = namespace.split(DOT);
+		var parts = parseNamespace(namespace);
 		var funcs = [];
 		var i;
 		for (i = parts.length - 1; i > -1; i--) {
@@ -522,7 +530,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		var
 			fired,
 			_this = this,
-			name_parts = namespace.split(DOT),
+			name_parts = parseNamespace(namespace),
 			short_name = name_parts[0];
 
 		if (opts && opts.exlusive){
@@ -580,7 +588,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		var
 			clean = [],
-			short_name = namespace.split(DOT)[0],
+			short_name = parseNamespace(namespace)[0],
 			queried = this.getMatchedCallbacks(namespace);
 
 		if (this.subscribes[short_name]){
@@ -617,7 +625,7 @@ spv.Class.extendTo(provoda.Eventor, {
 			namespace = this.convertEventName(namespace);
 		}
 		var
-			r, short_name = namespace.split(DOT)[0];
+			r, short_name = parseNamespace(namespace)[0];
 
 		var cb_cs = this.subscribes[short_name];
 		if (cb_cs){
