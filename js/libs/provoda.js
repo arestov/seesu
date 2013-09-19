@@ -135,9 +135,9 @@ MDProxy.prototype = {
 			this.views = views;
 		}
 	},
-	sendCollectionChange: function(collection_name, array) {
+	sendCollectionChange: function(collection_name, array, old_value, removed) {
 		for (var i = 0; i < this.views.length; i++) {
-			this.views[i].collectionChange(collection_name, array);
+			this.views[i].collectionChange(collection_name, array, old_value, removed);
 		}
 	},
 	sendStatesToView: function(view, states_list) {
@@ -1463,6 +1463,21 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		var old_value = this.children_models[collection_name];
 		this.children_models[collection_name] = array;
 		// !?
+		var removed;
+		if (Array.isArray(old_value)){
+			if (!array){
+				removed = [].concat(old_value);
+			} else {
+				removed = [];
+				for (var i = 0; i < old_value.length; i++) {
+					var cur = old_value[i];
+					if (array.indexOf(cur) == -1){
+						removed.push(cur);
+					}
+				}
+			}
+			//console.log(removed);
+		}
 
 		var event_obj = {};
 		if (typeof opts == 'object'){
@@ -1475,17 +1490,17 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.trigger('child-change.' + collection_name, event_obj);
 
 		if (!opts || !opts.skip_report){
-			this.sendCollectionChange(collection_name, array);
+			this.sendCollectionChange(collection_name, array, old_value, removed);
 		}
 
 		return this;
 	},
-	sendCollectionChange: function(collection_name, array) {
+	sendCollectionChange: function(collection_name, array, old_value, removed) {
 		//this.removeDeadViews();
 		if (this.postNestingChange){
-			this.postNestingChange(collection_name, array);
+			this.postNestingChange(collection_name, array, old_value, removed);
 		}
-		this.mpx.sendCollectionChange(collection_name, array);
+		this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
 	},
 	complex_st_prefix: 'compx-',
 	hasComplexStateFn: function(state_name) {
@@ -2949,12 +2964,18 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	checkCollchItemAgainstPvView: function(name, real_array, space_name, pv_view) {
 		if (!pv_view.original_node){
 			pv_view.original_node = pv_view.node.cloneNode(true);
+			
 		}
 		if (!pv_view.comment_anchor){
 			pv_view.comment_anchor = document.createComment('collch anchor for: ' + name + ", " + space_name);
 			$(pv_view.node).before(pv_view.comment_anchor);
 		}
 
+		if (pv_view.node){
+			$(pv_view.node).remove();
+			pv_view.node = null;
+		}
+		
 		var filtered = pv_view.filterFn ? pv_view.filterFn(real_array) : real_array;
 
 		var getFreeView = function(cur_md, node_to_use) {
@@ -3023,7 +3044,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	tpl_children_prefix: 'tpl.children_templates.',
 	collch_h_prefix: 'collch-',
-	collectionChange: function(name, array) {
+	collectionChange: function(name, array, rold_value, removed) {
 		if (this.dead){
 			return;
 		}
@@ -3038,6 +3059,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var pv_views = spv.getTargetField(this, this.tpl_children_prefix + name);
 		if (pv_views){
 			for (var space_name in pv_views){
+				this.removeViewsByMds(removed, space_name);
 				this.checkCollchItemAgainstPvView(name, spv.toRealArray(array), space_name, pv_views[space_name]);
 			}
 			this.requestAll();
@@ -3046,13 +3068,29 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 		var collch = this[ this.collch_h_prefix + name];//collectionChanger
 		if (collch){
-			this.callCollectionChangeDeclaration(collch, name, array, old_value);
+			this.callCollectionChangeDeclaration(collch, name, array, old_value, removed);
+		}
+		if (this['after-collch-' + name]){
+			this['after-collch-' + name].call(this, array);
 		}
 		return this;
 	},
-	callCollectionChangeDeclaration: function(collch, name, array, old_value) {
+	removeViewsByMds: function(array, space) {
+		if (!array){
+			return;
+		}
+		for (var i = 0; i < array.length; i++) {
+			var view = this.getChildView(array[i].mpx, space || 'main');
+			if (view){
+				view.die();
+			} else {
+				//throw 'wrong';
+			}
+		}
+	},
+	callCollectionChangeDeclaration: function(collch, name, array, old_value, removed) {
 		if (typeof collch == 'function'){
-			collch.call(this, name, array, old_value);
+			collch.call(this, name, array, old_value, removed);
 		} else {
 			var not_request, collchs;
 			var collchs_limit;
@@ -3079,6 +3117,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			for (var jj = 0; jj < declarations.length; jj++) {
 				var declr = declarations[jj];
 				var opts = declr.opts;
+				this.removeViewsByMds(removed, declr.space);
 				if (typeof declr.place == 'function' || !declr.place){
 					this.simpleAppendNestingViews(declr, opts, name, min_array);
 					if (!not_request){

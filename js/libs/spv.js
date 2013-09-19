@@ -287,8 +287,20 @@ toRealArray = spv.toRealArray = function(array, check_field){
 	}
 };
 
+
+var fields_cache = {};
+var getFieldsTree = function(string) {
+	if (Array.isArray(string)){
+		return string;
+	} else {
+		if (!fields_cache[string]){
+			fields_cache[string] = string.split('.');
+		}
+		return fields_cache[string];
+	}
+};
 getTargetField = function(obj, tree){
-	tree= Array.isArray(tree) ? tree : tree.split('.');
+	tree = getFieldsTree(tree);
 	var nothing;
 	var target = obj;
 	for (var i=0; i < tree.length; i++) {
@@ -302,7 +314,7 @@ getTargetField = function(obj, tree){
 };
 
 spv.setTargetField = function(obj, tree, value) {
-	tree = Array.isArray(tree) ? tree : tree.split('.');
+	tree = getFieldsTree(tree);
 	var cur_obj = obj;
 	for (var i=0; i < tree.length; i++) {
 		var cur = tree[i];
@@ -503,7 +515,7 @@ getUnitBaseNum = function(_c){
 		return 2;
 	}
 };
-
+spv.getUnitBaseNum = getUnitBaseNum;
 
 stringifyParams = spv.stringifyParams = function(params, ignore_params, splitter, joiner, opts){
 	opts = opts || {};
