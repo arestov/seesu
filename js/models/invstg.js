@@ -368,7 +368,9 @@ Investigation.extendTo(SearchPage, {
 			pl_sec,
 			i;
 		var serplr;
-		if (':playlists'.match(new RegExp('\^' + this.q , 'i'))){
+		
+
+		if (':playlists'.match(spv.getStringPattern(this.q))){
 			this.setInactiveAll('playlists');
 			pl_sec = this.g('playlists');
 			pl_sec.setActive();

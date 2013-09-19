@@ -72,12 +72,12 @@ AppModelBase.extendTo(AppModel, {
 		this.current_playing = mo;
 		this.matchNav();
 	},
-	matchNav: spv.debounce(function() {
+	matchNav: function() {
 		if (this.current_playing){
 			this.updateState('viewing_playing', this.nav_tree.indexOf(this.current_playing) != -1);
 		}
 
-	}, 30),
+	},
 	playing: function() {
 		this.updateState('playing', true);
 	},

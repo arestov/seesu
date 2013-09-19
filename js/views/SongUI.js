@@ -1,7 +1,7 @@
 define(['provoda', 'spv', 'jquery', 'app_serv',
-'./TrackActionsRowUI', './MfCorUI', './ArtcardUI', './SongcardPage', './coct'],
+'./SongActionsRowUI', './MfCorUI', './ArtcardUI', './SongcardPage', './coct'],
 function(provoda, spv, $, app_serv,
-TrackActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
+SongActionsRowUI, MfCorUI, ArtcardUI, SongcardPage, coct) {
 "use strict";
 
 
@@ -40,7 +40,7 @@ coct.SPView.extendTo(SongUI, {
 		this.getMdChild('mf_cor').collapseExpanders();
 	},
 	children_views: {
-		actionsrow: TrackActionsRowUI,
+		actionsrow: SongActionsRowUI,
 		mf_cor: MfCorUI,
 		artist: ArtcardUI.ArtistInSongConstroller,
 		songcard: SongcardPage.SongcardController
@@ -95,14 +95,19 @@ coct.SPView.extendTo(SongUI, {
 		this.parseAppendedTPLPart(context);
 		this.c.append(context);
 
-		this.song_actions_c =  this.tpl.ancs['song-actions'];
-
 		this['collch-actionsrow'] = true;
 		this.checkCollectionChange('actionsrow');
 
-		context.prepend(this.getAFreeCV('mf_cor'));
+		this['collch-mf_cor'] = function(){
+			var ancor = this.getAFreeCV('mf_cor');
+			if (ancor){
+				context.prepend(ancor);
+			}
+			
+		};
+		this.checkCollectionChange('mf_cor');
+		
 
-		this.dom_related_props.push('song_actions_c');
 		this.checkChildrenModelsRendering();
 		this.requestAll();
 	}

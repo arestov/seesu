@@ -17,7 +17,7 @@ LoadableList.TagsList.extendTo(SimilarTags, {
 		})
 			.done(function(r){
 				var res_list = spv.toRealArray(spv.getTargetField(r, 'similartags.tag'));
-				var data_list = spv.filter(res_list, 'name');
+				var data_list = res_list;
 				_this.putRequestedData(request_info.request, data_list, r.error);
 			})
 			.fail(function() {

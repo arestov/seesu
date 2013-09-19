@@ -105,7 +105,7 @@ provoda.View.extendTo(SongFileModelUI, {
 			}
 		},
 		"can-progress": {
-			depends_on: ['vis_is_visible', 'vis_con-appended', 'selected'],
+			depends_on: ['vis_is_visible', 'vis_con_appended', 'selected'],
 			fn: function(vis, apd, sel){
 				var can = vis && apd && sel;
 				if (can){

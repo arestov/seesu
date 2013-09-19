@@ -1,4 +1,6 @@
-define(['spv', 'app_serv', './comd', 'js/LfmAuth', './invstg'], function(spv, app_serv, comd, LfmAuth, invstg){
+define(['spv', 'app_serv', './comd', 'js/LfmAuth', './invstg',
+'./SongActPlaylisting', './SongActTaging'], function(spv, app_serv, comd, LfmAuth, invstg,
+SongActPlaylisting, SongActTaging){
 "use strict";
 var localize = app_serv.localize;
 var app_env = app_serv.app_env;
@@ -66,7 +68,7 @@ comd.BaseCRow.extendTo(LoveRow, {
 
 
 
-var ShareRow;
+
 
 
 
@@ -76,7 +78,7 @@ var struserSuggest = function(wrap) {
 	this.init();
 	this.mo = wrap.mo;
 	this.row = wrap.row;
-	this.user_id = user.uid;
+	this.user_id = user.id;
 	this.photo = user.photo;
 	this.online = this.online;
 	//this.name = user.name;
@@ -147,7 +149,7 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 
 
 
-ShareRow = function(actionsrow, mo){
+var ShareRow = function(actionsrow, mo){
 	this.init(actionsrow, mo);
 };
 comd.BaseCRow.extendTo(ShareRow, {
@@ -199,13 +201,9 @@ comd.BaseCRow.extendTo(ShareRow, {
 		this.searcher = new StrusersRowSearch(this, mo);
 		this.updateNesting('searcher', this.searcher);
 
-		var updateSongURL = function(){
-			_this.updateState('share_url', _this.mo.getShareUrl());
-		};
 
-		this.mo.on("state-change.url_part", function(){
-			updateSongURL();
-		});
+		this.wch(this.mo, 'url_part', this.hndUpdateShareURL);
+
 
 		
 		var cu_info = su.s.getInfo('vk');
@@ -223,6 +221,9 @@ comd.BaseCRow.extendTo(ShareRow, {
 
 		//this.share_url = this.mo.getShareUrl();
 		
+	},
+	hndUpdateShareURL: function() {
+		this.updateState('share_url', this.mo.getShareUrl());
 	},
 	checkVKFriendsAccess: function(vk_opts) {
 		var can = (vk_opts & 2) * 1;
@@ -274,96 +275,6 @@ comd.BaseCRow.extendTo(ShareRow, {
 });
 
 
-var PlaylistAddRow;
-
-var playlistSuggest = function(data){
-	this.init();
-	this.pl = data.playlist;
-	this.mo = data.mo;
-	this.rpl = data.rpl;
-	this.text_title = this.getTitle();
-};
-invstg.BaseSuggest.extendTo(playlistSuggest, {
-	valueOf: function(){
-		return this.pl.playlist_title;
-	},
-	onView: function(){
-		this.pl.add(this.mo);
-		this.rpl.hide();
-	}
-});
-
-
-var PlaylistRSSection = function() {
-	this.init();
-};
-invstg.SearchSection.extendTo(PlaylistRSSection, {
-	resItem: playlistSuggest,
-	model_name: "section-playlist"
-});
-
-
-var PlaylistRowSearch = function(rpl, mo) {
-	this.init(rpl, mo);
-};
-invstg.Investigation.extendTo(PlaylistRowSearch, {
-	skip_map_init: true,
-	init: function(rpl, mo) {
-		this._super();
-		this.rpl = rpl;
-		this.mo = mo;
-		this.addSection('playlists', new PlaylistRSSection());
-	},
-	searchf: function() {
-		var
-			pl_results = [],
-			pl_sec = this.g('playlists');
-
-		pl_sec.setActive();
-		pl_sec.changeQuery(this.q);
-
-
-		var serplr = su.getPlaylists(this.q);
-		if (serplr.length){
-			for (var i = 0; i < serplr.length; i++) {
-				pl_results.push({
-					playlist: serplr[i],
-					mo: this.mo,
-					rpl: this.rpl
-				});
-			}
-		}
-
-		pl_sec.appendResults(pl_results, true, true);
-	}
-});
-
-
-
-PlaylistAddRow = function(actionsrow, mo) {
-	this.init(actionsrow, mo);
-};
-comd.BaseCRow.extendTo(PlaylistAddRow, {
-	init: function(actionsrow, mo){
-		this.actionsrow = actionsrow;
-		this.mo = mo;
-		this._super();
-		this.searcher = new PlaylistRowSearch(this, mo);
-		this.updateNesting('searcher', this.searcher);
-	},
-	model_name: 'row-playlist-add',
-	search: function(q) {
-		this.updateState('query', q);
-		this.searcher.changeQuery(q);
-	},
-	findAddPlaylist: function() {
-		var current_query = this.state('query');
-		if (current_query){
-			su.gena.findAddPlaylist(current_query, this.mo);
-		}
-		this.hide();
-	}
-});
 
 
 
@@ -422,40 +333,36 @@ comd.BaseCRow.extendTo(RepeatSongRow, {
 
 
 
-var TrackActionsRow = function(mo) {
+var SongActionsRow = function(mo) {
 	this.init(mo);
 };
-comd.PartsSwitcher.extendTo(TrackActionsRow, {
+comd.PartsSwitcher.extendTo(SongActionsRow, {
 	init: function(mo) {
 		this._super();
 		this.mo = mo;
 		this.updateState('active_part', false);
+		this.app = mo.app;
 
-		var _this = this;
+		this.nextTick(this.initHeavyPart);
+	},
+	initHeavyPart: function() {
+		this.addPart(new ScrobbleRow(this, this.mo));
+		this.addPart(new RepeatSongRow(this, this.mo));
+		this.addPart(new SongActPlaylisting(this, this.mo));
+		this.addPart(new ShareRow(this, this.mo));
+		this.addPart(new LoveRow(this, this.mo));
+		this.addPart(new SongActTaging(this, this.mo));
 
-		var initHeavyPart = function() {
-			this.addPart(new ScrobbleRow(this, mo));
-			this.addPart(new RepeatSongRow(this, mo));
-			this.addPart(new PlaylistAddRow(this, mo));
-			this.addPart(new ShareRow(this, mo));
-			this.addPart(new LoveRow(this, mo));
-
-			var setVolume = function(fac) {
-				_this.updateState('volume', fac[0]/fac[1]);
-			};
-			if (su.settings['volume']){
-				setVolume(su.settings['volume']);
-			}
-			su.on('settings.volume', setVolume);
-
-		};
-
-		setTimeout(function() {
-			initHeavyPart.call(_this);
-		}, 100);
+		if (this.app.settings['volume']){
+			this.setVolumeState(this.app.settings['volume']);
+		}
+		this.app.on('settings.volume', this.setVolumeState, this.getContextOpts());
+	},
+	setVolumeState: function(fac) {
+		this.updateState('volume', fac[0]/fac[1]);
 	},
 	sendVolume: function(vol) {
-		su.setSetting('volume', vol);
+		this.app.setSetting('volume', vol);
 	},
 	setVolume: function(fac) {
 		this.updateState('volume', fac[0]/fac[1]);
@@ -464,5 +371,5 @@ comd.PartsSwitcher.extendTo(TrackActionsRow, {
 	}
 });
 
-return TrackActionsRow;
+return SongActionsRow;
 });

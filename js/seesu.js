@@ -168,7 +168,7 @@ AppModel.extendTo(SeesuApp, {
 
 		this.s.on('info-change.vk', function(data) {
 			_this.updateState('vk_info', data);
-			_this.updateState('vk_userid', data && data.uid);
+			_this.updateState('vk_userid', data && data.id);
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
@@ -369,17 +369,21 @@ AppModel.extendTo(SeesuApp, {
 
 		this.map
 			.init(this.start_page)
+			.on('residents-tree', function(tree) {
+				this.updateNesting('navigation', tree);
+				this.updateNesting('map_slice', tree);
+			}, this.getContextOptsI())
 			.on('map-tree-change', function(nav_tree) {
-				_this.changeNavTree(nav_tree);
-			}, {immediately: true})
+				this.changeNavTree(nav_tree);
+			}, this.getContextOptsI())
 			.on('changes', function(changes) {
 				//console.log(changes);
-				_this.animateMapChanges(changes);
-			}, {immediately: true})
+				this.animateMapChanges(changes);
+			}, this.getContextOptsI())
 			.on('title-change', function(title) {
-				_this.setDocTitle(title);
+				this.setDocTitle(title);
 
-			}, {immediately: true})
+			}, this.getContextOptsI())
 			.on('url-change', function(nu, ou, data, replace) {
 				if (app_env.needs_url_history){
 					if (replace){
@@ -388,7 +392,7 @@ AppModel.extendTo(SeesuApp, {
 						navi.set(nu, data.resident);
 					}
 				}
-			}, {immediately: true})
+			}, this.getContextOptsI())
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
 					//su.trackPage(nv.map_level.resident.page_name);
@@ -396,8 +400,8 @@ AppModel.extendTo(SeesuApp, {
 
 			}, {immediately: true})
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
-				_this.trackPage(nv.map_level.resident.page_name);
-			}, {immediately: true})
+				this.trackPage(nv.map_level.resident.page_name);
+			}, this.getContextOptsI())
 			.makeMainLevel();
 
 
@@ -680,7 +684,8 @@ AppModel.extendTo(SeesuApp, {
 				if (query){
 					if (cur.playlist_title == query){
 						r.unshift(cur);
-					} else if (cur.playlist_title.match(new  RegExp('\\b' + query))){
+
+					} else if (cur.playlist_title.match(spv.getStringPattern(query))){
 						r.push(cur);
 					}
 				} else {
@@ -714,6 +719,7 @@ AppModel.extendTo(SeesuApp, {
 					_this.s.vk_id = user_id;
 
 					var _d = spv.cloneObj({data_source: 'vkontakte'}, info);
+					
 
 					_this.s.setInfo('vk', _d);
 
@@ -745,7 +751,7 @@ AppModel.extendTo(SeesuApp, {
 		}
 		this.vk_fr_req
 			.done(function(r){
-				_this.trigger("vk-friends", r && r.response);
+				_this.trigger("vk-friends", r && r.response.items);
 			})
 			.fail(function(){
 

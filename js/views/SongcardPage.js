@@ -95,7 +95,7 @@ provoda.View.extendTo(SongcardController, {
 		};
 
 		this.rowcs.users_context = users_context;
-		this.dom_related_props.push('song_actions_c', 'rowcs', 't_users');
+		this.dom_related_props.push('rowcs', 't_users');
 	},
 	createListenersHeader: function(){
 		if (this && this.t_users){

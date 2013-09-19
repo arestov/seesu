@@ -40,6 +40,10 @@ spv.once = function(fn) {
 		}
 	};
 };
+var hasArg = function(el) {return el;};
+spv.hasEveryArgs = function() {
+	return Array.prototype.every.call(arguments, hasArg);
+};
 
 addEvent = spv.addEvent = window.addEventListener ?
 function(elem, evType, fn){
@@ -97,7 +101,12 @@ doesContain = spv.doesContain = function(target, valueOf){
 	return -1;
 };
 arrayExclude = spv.arrayExclude = function(arr, obj){
-	var r = []; obj = spv.toRealArray(obj);
+	var r = [];
+	if (!arr){
+		return r;
+	}
+
+	obj = spv.toRealArray(obj);
 	for (var i = 0; i < arr.length; i++) {
 		if (obj.indexOf(arr[i]) == -1){
 			r.push(arr[i]);
@@ -213,11 +222,18 @@ searchInArray = spv.searchInArray = function (array, query, fields) {
 	}
 	return r;
 };
+var regexp_escaper = /([$\^*()+\[\]{}|.\/?\\])/g;
+spv.escapeRegExp = function(str, clean) {
+	if (clean){
+		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
+	}
+	return str.replace(regexp_escaper, '\\$1'); //escaping regexp symbols
+};
 
 getStringPattern = function (str) {
 	if (str.replace(/\s/g, '')){
-		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
-		str = str.replace(/([$\^*()+\[\]{}|.\/?\\])/g, '\\$1').split(/\s/g);  //escaping regexp symbols
+		
+		str = spv.escapeRegExp(str, true).split(/\s/g);
 		for (var i=0; i < str.length; i++) {
 			str[i] = '((^\|\\s)' + str[i] + ')';
 		}
@@ -226,6 +242,7 @@ getStringPattern = function (str) {
 		return new RegExp(str, 'gi');
 	}
 };
+spv.getStringPattern = getStringPattern;
 
 ttime = function(f){
 	var d = +new Date();
@@ -270,8 +287,20 @@ toRealArray = spv.toRealArray = function(array, check_field){
 	}
 };
 
+
+var fields_cache = {};
+var getFieldsTree = function(string) {
+	if (Array.isArray(string)){
+		return string;
+	} else {
+		if (!fields_cache[string]){
+			fields_cache[string] = string.split('.');
+		}
+		return fields_cache[string];
+	}
+};
 getTargetField = function(obj, tree){
-	tree= Array.isArray(tree) ? tree : tree.split('.');
+	tree = getFieldsTree(tree);
 	var nothing;
 	var target = obj;
 	for (var i=0; i < tree.length; i++) {
@@ -285,7 +314,7 @@ getTargetField = function(obj, tree){
 };
 
 spv.setTargetField = function(obj, tree, value) {
-	tree = Array.isArray(tree) ? tree : tree.split('.');
+	tree = getFieldsTree(tree);
 	var cur_obj = obj;
 	for (var i=0; i < tree.length; i++) {
 		var cur = tree[i];
@@ -486,7 +515,7 @@ getUnitBaseNum = function(_c){
 		return 2;
 	}
 };
-
+spv.getUnitBaseNum = getUnitBaseNum;
 
 stringifyParams = spv.stringifyParams = function(params, ignore_params, splitter, joiner, opts){
 	opts = opts || {};

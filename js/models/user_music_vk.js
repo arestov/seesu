@@ -76,7 +76,7 @@ VkSongList.extendTo(VkRecommendedTracks, {
 
 		request_info.request = this.app.vk_api.get('audio.getRecommendations', {
 			count: paging_opts.page_limit,
-			uid: this.state('userid'),
+			user_id: this.state('userid'),
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
 		})
 			.done(function(r){
@@ -127,8 +127,8 @@ VkSongList.extendTo(MyVkAudioList, {
 				var vk_search = _this.app.mp3_search.getSearchByName('vk');
 				var track_list = [];
 
-				for (var i = 1; i < r.response.length; i++) {
-					var cur = r.response[i];
+				for (var i = 0; i < r.response.items.length; i++) {
+					var cur = r.response.items[i];
 					track_list.push({
 						artist: htmlencoding.decode(cur.artist),
 						track: htmlencoding.decode(cur.title),
@@ -176,7 +176,7 @@ BrowseMap.Model.extendTo(VkUserTracks, {
 var VkUserPreview = function() {};
 BrowseMap.Model.extendTo(VkUserPreview, {
 	init_stmp: {
-		userid: 'uid',
+		userid: 'id',
 		first_name: 'first_name',
 		last_name: 'last_name',
 		photo: 'photo',
@@ -258,8 +258,8 @@ LoadableList.extendTo(VKFriendsList, {
 		var _this = this;
 
 		request_info.request = this.app.vk_api.get('friends.get', {
-			uid: this.state('userid'),
-			fields: ['uid', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(','),
+			user_id: this.state('userid'),
+			fields: ['id', 'first_name', 'last_name', 'sex', 'photo', 'photo_medium', 'photo_big'].join(','),
 			count: paging_opts.page_limit,
 			offset: (paging_opts.next_page - 1) * paging_opts.page_limit
 		})
@@ -270,7 +270,7 @@ LoadableList.extendTo(VKFriendsList, {
 				}
 
 
-				_this.putRequestedData(request_info.request, r.response, r.error);
+				_this.putRequestedData(request_info.request, r.response.items, r.error);
 
 			})
 			.fail(function(){

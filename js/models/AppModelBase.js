@@ -133,7 +133,7 @@ provoda.Model.extendTo(AppModelBase, {
 
 		md.on('mpl-attach', function() {
 			md.updateState('mpl_attached', true);
-			var navigation = _this.getNesting('navigation');
+			/*var navigation = _this.getNesting('navigation');
 			var target_array = _this.getNesting('map_slice') || [];
 
 
@@ -145,11 +145,11 @@ provoda.Model.extendTo(AppModelBase, {
 				target_array.push(md);
 				_this.updateNesting('map_slice', target_array);
 			}
-
+*/
 		}, {immediately: true});
 		md.on('mpl-detach', function(){
 			md.updateState('mpl_attached', false);
-			var navigation = _this.getNesting('navigation');
+		/*	var navigation = _this.getNesting('navigation');
 			var target_array = _this.getNesting('map_slice') || [];
 
 			var new_nav = spv.arrayExclude(navigation, md);
@@ -160,7 +160,7 @@ provoda.Model.extendTo(AppModelBase, {
 
 			if (new_tarr.length != target_array.length){
 				_this.updateNesting('map_slice', new_tarr);
-			}
+			}*/
 		}, {immediately: true});
 	},
 	showMOnMap: function(model) {

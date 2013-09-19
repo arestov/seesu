@@ -17,7 +17,7 @@ spv.Class.extendTo(MapLevel, {
 		//resident.updateState('');
 		resident.assignMapLev(this);
 		resident.trigger('mpl-attach');
-
+		this.map.addResident(this.resident);
 	},
 	getResident: function(){
 		return this.resident;
@@ -48,6 +48,7 @@ spv.Class.extendTo(MapLevel, {
 			target: this.resident.getMDReplacer()
 		});
 		this.resident.trigger('mpl-detach');
+		this.map.removeResident(this.resident);
 		delete this.map;
 	},
 	_sliceTM: function(){ //private alike
@@ -110,8 +111,23 @@ provoda.Eventor.extendTo(BrowseMap, {
 
 		this.cha_counter = 0;
 		this.chans_coll = [];
+		this.residents = [];
 
 		return this;
+	},
+	addResident: function(resident) {
+		if (this.residents.indexOf(resident) == -1){
+			this.residents.push(resident);
+			this.residents_tree_change = true;
+		}
+	},
+	removeResident: function(resident) {
+		var clean_array = spv.arrayExclude(this.residents, resident);
+		if (clean_array.length != this.residents){
+			this.residents = clean_array;
+			this.residents_tree_change = true;
+		}
+
 	},
 	isGroupingChanges: function() {
 		return this.grouping_changes;
@@ -126,7 +142,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 			this.changes_group = {
 				name: group_name,
 				changes: []
-			},
+			};
 			this.grouping_changes = true;
 			return true;
 		}
@@ -245,7 +261,11 @@ provoda.Eventor.extendTo(BrowseMap, {
 					};
 				}
 			}
-
+			
+			if (this.residents_tree_change){
+				this.residents_tree_change = false;
+				this.trigger('residents-tree', this.residents);
+			}
 
 			this.trigger('changes', {
 				array: this.chans_coll,
@@ -253,6 +273,7 @@ provoda.Eventor.extendTo(BrowseMap, {
 			});
 			this.chans_coll = [];
 			this.chans_coll.anid = ++this.cha_counter;
+
 		}
 		
 	},
