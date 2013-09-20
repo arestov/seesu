@@ -121,6 +121,11 @@ provoda.addPrototype("InvestigationView", {
 			if (state){
 				this.expand();
 			}
+		},
+		vis_must_be_expanded: function(state) {
+			if (state){
+				this.expand();
+			}
 		}
 	},
 	createBase: function() {

@@ -124,7 +124,7 @@ etc_views.BaseCRowUI.extendTo(ShareRowUI, {
 				var searcher_ui = this.getFreeCV('searcher');
 				$(searcher_ui.getA()).insertBefore(this.getPart("pch-ws-friends"));
 				this.requestAll();
-				searcher_ui.expand();
+				searcher_ui.setVisState('must_be_expanded', true);
 				
 				this.RPCLegacy('search', "");
 			}
@@ -243,7 +243,7 @@ etc_views.BaseCRowUI.extendTo(SongActPlaylistingUI, {
 		var searcher_ui = this.getFreeCV('searcher');
 		this.lpl.append(searcher_ui.getA());
 		this.requestAll();
-		searcher_ui.expand();
+		searcher_ui.setVisState('must_be_expanded', true);
 		
 		this.RPCLegacy('search', "");
 
