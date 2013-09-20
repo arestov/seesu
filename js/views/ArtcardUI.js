@@ -270,7 +270,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 			main_c.addClass('loading-images');
 
 			for (var i = 0; i < img_requests.length; i++) {
-				_this.addRequest( img_requests[i], { order: i +1 } );
+				_this.addRequest( img_requests[i], { order: (img_requests.length - i) +1 } );
 			}
 
 			$.when.apply($, img_requests).always(function(){
