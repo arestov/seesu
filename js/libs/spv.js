@@ -100,6 +100,17 @@ doesContain = spv.doesContain = function(target, valueOf){
 	}
 	return -1;
 };
+spv.hasCommonItems = function(arr1, arr2) {
+	if (!arr2){
+		return false;
+	}
+	for (var i = 0; i < arr1.length; i++) {
+		if (arr2.indexOf(arr1[i]) != -1){
+			return true;
+		}
+	}
+	return false;
+};
 arrayExclude = spv.arrayExclude = function(arr, obj){
 	var r = [];
 	if (!arr){

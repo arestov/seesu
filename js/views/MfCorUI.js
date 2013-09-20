@@ -352,23 +352,6 @@ provoda.View.extendTo(MfCorUI, {
 		sorted_completcs: mfComplectUI,
 		yt_videos: YoutubePreview
 	},
-	state_change: {
-		"want_more_songs": function(state) {
-			if (state){
-				this.c.addClass('want_more_songs');
-			} else {
-				this.c.removeClass('want_more_songs');
-			}
-		},
-		"must-be-expandable": function(state) {
-			if (state){
-				this.tpl.ancs.sall_songs.removeClass('hidden');
-			}
-		},
-		"cant_play_music": function(state) {
-			this.tpl.ancs.cant_play_music_message.toggleClass('hidden', !state);
-		}
-	},
 	'collch-vk_auth': {
 		place: 'tpl.ancs.messages_c',
 		strict: true

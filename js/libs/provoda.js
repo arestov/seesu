@@ -1270,7 +1270,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		for (var i = 0; i < this.full_comlxs_list.length; i++) {
 			var cur = this.full_comlxs_list[i];
-			if (states.length != spv.arrayExclude(states, cur.obj.depends_on).length ){
+			if ( spv.hasCommonItems(states, cur.obj.depends_on) ){
 				result_array.push(cur.name, this.compoundComplexState(cur));
 			}
 		}

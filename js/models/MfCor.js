@@ -221,7 +221,7 @@ provoda.Model.extendTo(MfCor, {
 		/*
 		this.watchStates(['has_files', 'vk_audio_auth '], function(has_files, vkaa) {
 			if (has_files || vkaa){
-				_this.updateState('must-be-expandable', true);
+				_this.updateState('must_be_expandable', true);
 			}
 		});*/
 
@@ -294,7 +294,7 @@ provoda.Model.extendTo(MfCor, {
 		});
 	},
 	complex_states: {
-		"must-be-expandable": {
+		"must_be_expandable": {
 			depends_on: ['has_files', 'vk_audio_auth ', 'few_sources', 'cant_play_music'],
 			fn: function(has_files, vk_a_auth, fsrs, cant_play){
 				return !!(has_files || vk_a_auth || fsrs || cant_play);
