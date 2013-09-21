@@ -22,7 +22,7 @@ Panoramator.prototype = {
 		});
 		this.improved_con = opts.improved_con;
 		this.lift = opts.lift;
-		this.ready_class_name = opts.ready_class_name || 'ready_to_use';
+
 		this.lift_items = [];
 		this.mouseMove = function(e){
 			if (e.which && e.which != 1){
@@ -180,20 +180,27 @@ Panoramator.prototype = {
 		this.lift_items = array;
 		if (!manual){
 			this.checkSize();
-			this.lift.addClass(this.ready_class_name);
 		}
 		
 		
 	},
-	checkSize: function(){
-		this.total_width = this.checkTotalWidth();
+	setTotalWidth: function(total_width) {
+		if (this.total_width == total_width){
+			return;
+		}
+		this.total_width = total_width;
 		if (!this.improved_con){
 			this.lift.css({
 				width: this.total_width + 'px'
 			});
 		}
-		
-		this.viewport_width = this.viewport.width();
+	},
+	setViewportWidth: function(viewport_width) {
+		this.viewport_width = viewport_width;
+	},
+	checkSize: function(){
+		this.setTotalWidth(this.checkTotalWidth());
+		this.setViewportWidth(this.viewport.width());
 	},
 	isEdgeElem: function(el, mobil_pos_shift, next) {
 		var cur = $(el);

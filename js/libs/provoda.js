@@ -961,6 +961,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	wch: function(donor, donor_state, acceptor_state, immediately) {
 	
 		var cb;
+		var event_name = (immediately ? 'vip-state-change.' : 'state-change.') + donor_state;
 		if (typeof acceptor_state == 'function'){
 			cb = acceptor_state;
 		} else {
@@ -969,10 +970,21 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			
 		}
 		if (immediately){
-			donor.on('vip-state-change.' + donor_state, cb, this.getContextOptsI());
+			donor.on(event_name, cb, this.getContextOptsI());
 		} else {
-			donor.on('state-change.' + donor_state, cb, this.getContextOpts());
+			donor.on(event_name, cb, this.getContextOpts());
 		}
+
+		/*
+
+		if (this != donor && this instanceof provoda.View){
+			this.onDie(function() {
+				donor.off(event_name, cb, this);
+			});
+		}
+
+		*/
+
 		return this;
 
 	},

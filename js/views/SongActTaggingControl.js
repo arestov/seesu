@@ -51,6 +51,7 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 
 	tpl_events:{
 		changeTags: spv.debounce(function(e, input) {
+			//shared debounce! fixme? одна функция рассеивает вызовы которые могут относится к разным объектам
 			var value = input.value;
 			this.overrideStateSilently('user_tags_string', value);
 			this.RPCLegacy('changeTags', value);

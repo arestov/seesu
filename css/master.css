@@ -486,8 +486,7 @@ html.not-as-application, .not-as-application  body{
 		position: relative;
 		overflow: hidden;
 	}
-
-	.photo-cont-lift.ready_to_use .artist_image{
+	.photo-cont-lift .artist_image{
 		position: relative;
 	}
 	.photo-cont .artist_image{
