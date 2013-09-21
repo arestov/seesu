@@ -315,6 +315,7 @@ provoda = {
 		return fn;
 	},
 	getOCF: function(propcheck, callback) {
+		//init once
 		return function(){
 			if (this[propcheck]){
 				return this;

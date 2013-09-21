@@ -1,5 +1,5 @@
-define(['spv', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'],
-function(spv, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search){
+define(['spv', 'provoda', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'],
+function(spv, provoda, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search){
 "use strict";
 var localize = app_serv.localize;
 var ArtCard;
@@ -723,7 +723,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 		this.updateState('lfm_image', params.lfm_image &&
 			this.app.art_images.getImageWrap(params.lfm_image.array));
 
-		this.heavyInit();
+		this.extendedInit();
 
 		this.updateState('url_part', '/catalog/' + this.app.encodeURLPart(this.artist));
 	},
@@ -775,14 +775,12 @@ BrowseMap.Model.extendTo(ArtCard, {
 			title: 'Most Reblogged'
 		}
 	},
-	heavyInit: function() {
+	initHeavy: provoda.getOCF('heavy_oi', function() {
 		this.albums_models = {};
-		this.sub_pa_params = {artist: this.artist};
-
 		this.getTopTracks();
-		this.getSimilarArtists();
+		
 
-		this.tags_list = this.getSPI('tags', true);
+		
 		this.dgs_albums = this.getSPI('albums', true);
 		this.albums = this.getSPI('albums_lfm', true);
 		this.soundc_prof = this.getSPI('soundcloud', true);
@@ -791,7 +789,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 		this.hypem_fav = this.getSPI('most_favorites', true);
 		this.hypem_reblog = this.getSPI('blogged', true);
 
-		this.updateNesting('tags_list', this.tags_list);
+		
 		this.updateNesting('albums_list', this.albums);
 		this.updateNesting('dgs_albums', this.dgs_albums);
 		this.updateNesting('soundc_prof', this.soundc_prof);
@@ -799,15 +797,20 @@ BrowseMap.Model.extendTo(ArtCard, {
 		this.updateNesting('hypem_new', this.hypem_new);
 		this.updateNesting('hypem_fav', this.hypem_fav);
 		this.updateNesting('hypem_reblog', this.hypem_reblog);
+	}),
+	extendedInit: function() {
+		this.sub_pa_params = {artist: this.artist};
+		this.tags_list = this.getSPI('tags', true);
+		this.updateNesting('tags_list', this.tags_list);
+		this.getSimilarArtists();
 
-		var _this = this;
-		this.on('vip-state-change.mp_show', function(e) {
+
+		this.wch(this, 'mp_show', function(e) {
 			if (e.value && e.value.userwant){
-				_this.loadInfo();
+				this.initHeavy();
+				this.loadInfo();
 			}
-		},{immediately: true});
-
-		
+		}, true);
 	},
 	getTagsModel: function() {
 		return this.tags_list;
@@ -1089,7 +1092,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 var ArtistInArtl = function() {};
 ArtCard.extendTo(ArtistInArtl, {
 	skip_map_init: true,
-	heavyInit: function() {},
+	extendedInit: function() {},
 	showArtcard: function() {
 		this.app.showArtcardPage(this.artist);
 	}

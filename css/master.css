@@ -1693,7 +1693,10 @@ body .surf_nav{
 		min-width: 5rem;
 		}
 	.shareb-button:hover{
-		background-color: #6D6D6D;
+		background-color: #636363;
+	}
+	.shareb-button:active{
+		background-color: #555;
 	}
 	.shareb-con{
 		display: none;
