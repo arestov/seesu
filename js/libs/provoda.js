@@ -583,7 +583,7 @@ spv.Class.extendTo(provoda.Eventor, {
 	on: function(namespace, cb, opts){
 		return this._addEventHandler(namespace, cb, opts);
 	},
-	off: function(namespace, cb, obj){
+	off: function(namespace, cb, obj, context){
 		if (this.convertEventName){
 			namespace = this.convertEventName(name);
 		}
@@ -596,9 +596,21 @@ spv.Class.extendTo(provoda.Eventor, {
 			if (cb || obj){
 				for (var i = 0; i < queried.matched.length; i++) {
 					var cur = queried.matched[i];
-					if (obj ? (obj !== cur) : (cur.cb !== cb)){
-						clean.push(queried.matched[i]);
+					if (obj && obj == cur){
+						continue;
 					}
+					if (cb){
+						if (cur.cb == cb){
+							if (!context || cur.context == context){
+								continue;
+							}
+							
+						}
+					}
+					if (obj ? (obj !== cur) : (cur.cb !== cb)){
+						
+					}
+					clean.push(queried.matched[i]);
 				}
 			}
 			clean.push.apply(clean, queried.not_matched);
@@ -979,7 +991,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		if (this != donor && this instanceof provoda.View){
 			this.onDie(function() {
-				donor.off(event_name, cb, this);
+				donor.off(event_name, cb, false, this);
 			});
 		}
 
