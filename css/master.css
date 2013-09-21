@@ -1168,25 +1168,25 @@ iframe.you-tube-video,embed.you-tube-video{
 /* Custom CSS scrollbar */
 
 .pokki-app ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    border-radius: 5px;
+	width: 8px;
+	height: 8px;
+	border-radius: 5px;
 	background: none;
 }
 
 
 .pokki-app ::-webkit-scrollbar-track:vertical { 
-    background: none; 
+	background: none; 
 }
 .pokki-app ::-webkit-scrollbar-thumb {
-    width: 8px; 
-    height: 20px;
-    border-radius: 5px;
-    background: #999;
+	width: 8px; 
+	height: 20px;
+	border-radius: 5px;
+	background: #999;
 }
 
 .pokki-app ::-webkit-scrollbar-button: { 
-    display: none; 
+	display: none; 
 }
 .attention-message{
 	overflow: hidden;
