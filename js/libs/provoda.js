@@ -822,6 +822,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		return this;
 	},
 	getQueued: function(space) {
+		//must return new array;
 		var requests = this.getRequests(space);
 		return spv.filter(requests, 'queued');
 	},
@@ -830,8 +831,10 @@ spv.Class.extendTo(provoda.Eventor, {
 	},
 	getModelImmediateRequests: function(space) {
 		var queued = this.getQueued(space);
-		queued = queued.slice();
-		queued.reverse();
+		if (queued){
+			queued.reverse();
+		}
+		
 		return queued;
 	},
 	setPrio: function(space) {
@@ -2319,9 +2322,16 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.children = [];
 		this.children_models = {};
 		this.view_parts = {};
+
+		if (this.parent_view && !view_otps.location_name){
+			throw new Error('give me location name!');
+			//используется для идентификации использования одной и тойже view внутри разнородных родительских view или разных пространств внутри одного view
+		}
+		this.location_name = view_otps.location_name;
 		if (!view_otps.mpx){
 			throw new Error('give me model!');
 		}
+		
 		this.mpx = view_otps.mpx;
 		this.undetailed_states = {};
 		this.undetailed_children_models = {};
@@ -2347,6 +2357,19 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 		};
 		return this;
+	},
+	demensions_cache: {},
+	getBoxDemension: function(cb) {
+		var args = Array.prototype.slice.call(arguments, 2);
+		if (!this.demensions_key_start){
+			this.demensions_key_start = this.location_name + "-" + this.parent_view.location_name + '-';
+		}
+		var key = this.demensions_key_start.concat(args.join('-'));
+		if (typeof this.demensions_cache[key] == 'undefined'){
+			this.demensions_cache[key] = cb.call(this);
+		}
+		return this.demensions_cache[key];
+
 	},
 	getReqsOrderField: function() {
 		if (this.req_order_field){
@@ -2627,7 +2650,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			view.init({
 				mpx: mpx,
 				parent_view: this,
-				root_view: this.root_view
+				root_view: this.root_view,
+				location_name: child_name + '-' + view_space
 			}, opts);
 			mpx.addView(view, complex_id);
 			this.addChildView(view, child_name);
@@ -2875,7 +2899,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		this._updateProxy(states_list);
-		this._states_set_processing = false;
+		this._states_set_processing = null;
 		return this;
 	},
 	requireAllParts: function() {
@@ -2965,7 +2989,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		for (var i in collections) {
 			this.collectionChange(i, collections[i]);
 		}
-		this._collections_set_processing = false;
+		this._collections_set_processing = null;
 	},
 	getMdChild: function(name) {
 		return this.children_models[name];

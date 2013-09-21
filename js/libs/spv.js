@@ -439,35 +439,40 @@ makeIndexByField = spv.makeIndexByField = function(array, field, keep_case){
 
 
 $filter = function(array, field, value_or_testfunc){
-	var r = [];
+	var i, r = [];
 	r.not = [];
 	if (!array){return r;}
-	for (var i=0; i < array.length; i++) {
-		if (array[i]){
-			if (value_or_testfunc){
-				if (typeof value_or_testfunc == 'function'){
-					if (value_or_testfunc(spv.getTargetField(array[i], field))){
-						r.push(array[i]);
-					} else{
-						r.not.push(array[i]);
-					}
+
+	if (value_or_testfunc){
+		for (i = 0; i < array.length; i++) {
+			if (!array[i]){
+				continue;
+			}
+			if (typeof value_or_testfunc == 'function'){
+				if (value_or_testfunc(spv.getTargetField(array[i], field))){
+					r.push(array[i]);
 				} else{
-					if (spv.getTargetField(array[i], field) === value_or_testfunc){
-						r.push(array[i]);
-					} else{
-						r.not.push(array[i]);
-					}
+					r.not.push(array[i]);
 				}
-				
 			} else{
-				var field_value = spv.getTargetField(array[i], field);
-				if (field_value){
-					r.push(field_value);
+				if (spv.getTargetField(array[i], field) === value_or_testfunc){
+					r.push(array[i]);
 				} else{
 					r.not.push(array[i]);
 				}
 			}
-			
+		}
+	} else {
+		for (i = 0; i < array.length; i++) {
+			if (!array[i]){
+				continue;
+			}
+			var field_value = spv.getTargetField(array[i], field);
+			if (field_value){
+				r.push(field_value);
+			} else{
+				r.not.push(array[i]);
+			}
 		}
 	}
 	return r;
