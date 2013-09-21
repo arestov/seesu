@@ -423,18 +423,32 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 			main: SongActPlaylistingUI
 		}
 	},
-
+	getVHoleWidth: function() {
+		return this.tpl.ancs['v-hole'].width();
+	},
+	getVBarOuterWidth: function() {
+		return this.tpl.ancs['v-bar'].outerWidth();
+	},
+	getVBarWidth: function() {
+		return this.tpl.ancs['v-bar'].width();
+	},
 	complex_states: {
 		"vis_volume-hole-width": {
 			depends_on: ['vis_is_visible', 'vis_con_appended'],
 			fn: function(visible, apd){
-				return !!(visible && apd) && this.tpl.ancs['v-hole'].width();
+				if (visible && apd){
+					return this.getBoxDemension(this.getVHoleWidth, 'volume-hole-width');
+				}
+				
 			}
 		},
 		"vis_volume-bar-max-width": {
 			depends_on: ['vis_volume-hole-width'],
 			fn: function(vvh_w){
-				return vvh_w && vvh_w - ( this.tpl.ancs['v-bar'].outerWidth() - this.tpl.ancs['v-bar'].width());
+				if (vvh_w){
+					return  vvh_w - ( this.getBoxDemension(this.getVBarOuterWidth, 'v-bar-o-width') - this.getBoxDemension(this.getVBarWidth, 'v-bar-width'));
+				}
+				
 			}
 		},
 		"vis_volume": {

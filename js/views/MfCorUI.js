@@ -91,6 +91,9 @@ provoda.View.extendTo(SongFileModelUI, {
 		});*/
 
 	},
+	getProgressWidth: function() {
+		return this.tpl.ancs['progress_c'].width();
+	},
 	complex_states: {
 		'visible_duration_text': {
 			depends_on: ['visible_duration'],
@@ -112,8 +115,8 @@ provoda.View.extendTo(SongFileModelUI, {
 					var _this = this;
 
 					$(window).off('resize.song_file_progress');
-					$(window).on('resize.song_file_progress', spv.debounce(function(e){
-						_this.setVisState('win-resize-time', e.timeStamp);
+					$(window).on('resize.song_file_progress', spv.debounce(function(){
+						_this.setVisState('window_width', window.innerWidth);
 					}, 100));
 				}
 				return can;
@@ -132,10 +135,10 @@ provoda.View.extendTo(SongFileModelUI, {
 			}
 		},
 		"vis_progress-c-width": {
-			depends_on: ['can-progress', 'vis_pp-wmss', 'vis_win-resize-time'],
-			fn: function(can, p_wmss, wrsz_time){
+			depends_on: ['can-progress', 'vis_pp-wmss', 'vis_window_width'],
+			fn: function(can, p_wmss, window_width){
 				if (can){
-					return this.tpl.ancs['progress_c'].width();
+					return this.getBoxDemension(this.getProgressWidth, 'progress_c-width', window_width, !!p_wmss);
 				} else {
 					return 0;
 				}
