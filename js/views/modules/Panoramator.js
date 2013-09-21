@@ -176,10 +176,14 @@ Panoramator.prototype = {
 			.on('mouseup', this.mouseUp);
 
 	},
-	setCollection: function(array){
+	setCollection: function(array, manual){
 		this.lift_items = array;
-		this.checkSize();
-		this.lift.addClass(this.ready_class_name);
+		if (!manual){
+			this.checkSize();
+			this.lift.addClass(this.ready_class_name);
+		}
+		
+		
 	},
 	checkSize: function(){
 		this.total_width = this.checkTotalWidth();

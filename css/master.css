@@ -483,13 +483,10 @@ html.not-as-application, .not-as-application  body{
 	.photo-cont-lift{
 		height:100%;
 		white-space: nowrap;
-	}
-	.photo-cont-lift.ready_to_use{
-        position: absolute;
-        top: 0;
-        left: 0;
+		position: relative;
 		overflow: hidden;
 	}
+
 	.photo-cont-lift.ready_to_use .artist_image{
 		position: relative;
 	}

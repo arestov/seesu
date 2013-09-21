@@ -2360,7 +2360,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	demensions_cache: {},
 	getBoxDemension: function(cb) {
-		var args = Array.prototype.slice.call(arguments, 2);
+		var args = Array.prototype.slice.call(arguments, 1);
 		if (!this.demensions_key_start){
 			this.demensions_key_start = this.location_name + "-" + this.parent_view.location_name + '-';
 		}
