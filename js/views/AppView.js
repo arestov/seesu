@@ -393,12 +393,25 @@ AppBaseView.extendTo(AppView, {
 			this.c.removeClass(class_name);
 		}
 	},
+	changeFaviconNode: function(d, src, type) {
+		var link = d.createElement('link'),
+			oldLink = this.favicon_node || d.getElementById('dynamic-favicon');
+		link.id = 'dynamic-favicon';
+		link.rel = 'shortcut icon';
+		if (type){
+			link.type = type;
+		}
+		
+		link.href = src;
+		d.head.replaceChild(link, oldLink);
+		this.favicon_node = link;
+	},
 	changeFavicon: spv.debounce(function(state){
 		if (this.isAlive()){
 			if (state && this.favicon_states[state]){
-				app_serv.changeFavicon(this.d, this.favicon_states[state], 'image/png');
+				this.changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
 			} else{
-				app_serv.changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
+				this.changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
 			}
 		}
 

@@ -171,22 +171,6 @@ var getHTMLText = app_serv.getHTMLText = function(text) {
 	return $(safe_node).text();
 };
 
-var changeFavicon = function(d, src, type) {
-	var link = d.createElement('link'),
-		oldLink = d.getElementById('dynamic-favicon');
-	link.id = 'dynamic-favicon';
-	link.rel = 'shortcut icon';
-	if (type){
-		link.type = type;
-	}
-	
-	link.href = src;
-	if (oldLink) {
-		d.head.removeChild(oldLink);
-	}
-	d.head.appendChild(link);
-};
-app_serv.changeFavicon = changeFavicon;
 var abortage = {
 	addDependent: function(dependent) {
 		this.dep_objs = this.dep_objs || [];
