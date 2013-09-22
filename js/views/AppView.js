@@ -317,6 +317,7 @@ AppBaseView.extendTo(AppView, {
 		});
 
 
+
 		var wd = this.getWindow();
 		var checkWindowSizes = spv.debounce(function() {
 			_this.updateManyStates({
@@ -462,6 +463,13 @@ AppBaseView.extendTo(AppView, {
 	buildAppDOM: function() {
 		var _this = this;
 		var d = this.d;
+
+
+		var wd = this.getWindow();
+		_this.updateManyStates({
+			window_height: wd.innerHeight,
+			window_width: wd.innerWidth
+		});
 		
 			console.log('dom ready');
 			_this.dom_related_props.push('els');

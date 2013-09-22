@@ -620,6 +620,8 @@ spv.Class.extendTo(provoda.Eventor, {
 		return this;
 	},
 	resetSubscribesCache: function(namespace) {
+
+		//fixme - bug for "state-change.window_width.song_file_progress" ( "state-change.window_width" stays valid, but must be invalid)
 		for (var cur_namespace in this.subscribes_cache){
 			if (!this.subscribes_cache[cur_namespace]){
 				continue;
@@ -1160,6 +1162,10 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		}
 		return this._updateProxy([name, value]);
 	},
+	hasComplexStateFn: function(state_name) {
+		return this.compx_check[state_name];
+	},
+
 	_updateProxy: function(changes_list, opts) {
 		if (this.undetailed_states){
 			iterateChList(changes_list, this, this._setUndetailedState);
@@ -1550,9 +1556,6 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.mpx.sendCollectionChange(collection_name, array, old_value, removed);
 	},
 	complex_st_prefix: 'compx-',
-	hasComplexStateFn: function(state_name) {
-		return this.compx_check[state_name];
-	},
 
 	sendStatesToViews: function(states_list) {
 		//this.removeDeadViews();
