@@ -124,9 +124,18 @@ provoda.Model.extendTo(AppModelBase, {
 
 
 		}
-		this.updateState('map_animation', changes);
-		this.updateState('map_animation', false);
-		this.animationMark(models, false);
+		this.nextTick(function() {
+			this.updateState('map_animation', changes);
+			this.nextTick(function() {
+				//отложить изменение через nextTick необходимо, потому что изменения накапливаются и сжимаются,
+				//поэтому несколько синхронных изменений состояний дойдут до view только в виде последнего изменения
+				this.updateState('map_animation', false); //fixme анимация могла изменится. мы отменяем не то
+				this.animationMark(models, false);//fixme анимация могла изменится. мы маркируем то (1вую анимацию), что ещё может находится в анимации (2ая анмация)
+			});
+		});
+		
+		
+		
 	},
 	bindMMapStateChanges: function(md) {
 		var _this = this;

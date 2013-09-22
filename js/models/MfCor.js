@@ -145,10 +145,7 @@ provoda.Model.extendTo(MfCor, {
 	hndMoImportant: function(e) {
 			
 		if (e.value && e.value){
-			var _this = this;
-			setTimeout(function() {
-				_this.loadVideos();
-			}, 100);
+			this.nextTick(this.loadVideos);
 		}
 	},
 	hndTrackNameCh: function(e) {

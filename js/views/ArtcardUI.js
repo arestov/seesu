@@ -89,11 +89,11 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		tags_list: TagsController,
 		similar_artists: SimilarsController
 	},
-	checkPanoramaSize: spv.debounce(function() {
+	checkPanoramaSize: function() {
 		if (this.img_panorama){
 			this.img_panorama.checkSize();
 		}
-	}, 100),
+	},
 	bindBase: function() {
 
 		this.photo_data = {};
@@ -173,12 +173,14 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		var canUse = function() {
 			return _this.isAlive();
 		};
-		var bindPanoramaResizeByWindow = function(img_panorama) {
-			var my_window = spv.getDefaultView(_this.getC()[0].ownerDocument);
 
-			var checkPanoramaSize = function(){
-				_this.checkPanoramaSize();
-			};
+
+		var checkPanoramaSize = spv.debounce(function(){
+			_this.checkPanoramaSize();
+		}, 100);
+
+		var bindPanoramaResizeByWindow = function() {
+			var my_window = _this.getWindow();
 
 			$(my_window).on('resize', checkPanoramaSize);
 
@@ -279,7 +281,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 				}
 				main_c.removeClass('loading-images');
 			});
-			_this.nextTick(_this.checkPanoramaSize);
+			_this.nextTick(checkPanoramaSize);
 		}
 	},
 	tpl_events: {

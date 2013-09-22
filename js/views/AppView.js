@@ -316,6 +316,26 @@ AppBaseView.extendTo(AppView, {
 			_this.resortQueue();
 		});
 
+
+		var wd = this.getWindow();
+		var checkWindowSizes = spv.debounce(function() {
+			_this.updateManyStates({
+				window_height: wd.innerHeight,
+				window_width: wd.innerWidth
+			});
+		}, 150);
+
+		$(wd).on('resize', checkWindowSizes);
+		this.onDie(function(){
+			$(wd).off('resize', checkWindowSizes);
+		});
+
+	},
+	'compx-window_demensions_key': {
+		depends_on: ['window_width', 'window_height'],
+		fn: function(window_width, window_height) {
+			return window_width + '-' + window_height;
+		}
 	},
 	resortQueue: function(queue) {
 		if (queue){

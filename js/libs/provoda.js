@@ -607,9 +607,6 @@ spv.Class.extendTo(provoda.Eventor, {
 							
 						}
 					}
-					if (obj ? (obj !== cur) : (cur.cb !== cb)){
-						
-					}
 					clean.push(queried.matched[i]);
 				}
 			}
@@ -987,15 +984,13 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			donor.on(event_name, cb, this.getContextOpts());
 		}
 
-		/*
+		
 
 		if (this != donor && this instanceof provoda.View){
 			this.onDie(function() {
 				donor.off(event_name, cb, false, this);
 			});
 		}
-
-		*/
 
 		return this;
 
@@ -1148,6 +1143,22 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	_setUndetailedState: function(i, name, value) {
 		this.undetailed_states[name] = value;
+	},
+	updateManyStates: function(obj) {
+		var changes_list = [];
+		for (var name in obj) {
+			changes_list.push(name, obj[name]);
+		}
+		this._updateProxy(changes_list);
+	},
+	updateState: function(name, value){
+		if (name.indexOf('-') != -1 && console.warn){
+			console.warn('fix prop name: ' + name);
+		}
+		if (this.hasComplexStateFn(name)){
+			throw new Error("you can't change complex state in this way");
+		}
+		return this._updateProxy([name, value]);
 	},
 	_updateProxy: function(changes_list, opts) {
 		if (this.undetailed_states){
@@ -1551,22 +1562,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.mpx.sendStatesToViews(states_list);
 	},
-	updateManyStates: function(obj) {
-		var changes_list = [];
-		for (var name in obj) {
-			changes_list.push(name, obj[name]);
-		}
-		this._updateProxy(changes_list);
-	},
-	updateState: function(name, value){
-		if (name.indexOf('-') != -1 && console.warn){
-			console.warn('fix prop name: ' + name);
-		}
-		if (this.hasComplexStateFn(name)){
-			throw new Error("you can't change complex state in this way");
-		}
-		return this._updateProxy([name, value]);
-	},
+
 	toSimpleStructure: function(models_index, big_result) {
 		models_index = models_index || {};
 		var all_for_parse = [this];
@@ -2381,6 +2377,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 		};
 		return this;
+	},
+	getWindow: function() {
+		return spv.getDefaultView(this.d || this.getC()[0].ownerDocument);
 	},
 	demensions_cache: {},
 	getBoxDemension: function(cb) {
