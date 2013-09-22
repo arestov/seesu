@@ -154,6 +154,12 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 
 		}
 	},
+	'compx-loaded_images_key': {
+		depends_on: ['artist_name', 'images_combination'],
+		fn: function(artist_name, images_combination) {
+			return artist_name + '-' + images_combination;
+		}
+	},
 	'stch-images': function(images) {
 		if (!images || !images.length){
 			return;
@@ -224,9 +230,12 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 				images_collection.sort(function(a, b){
 					return spv.sortByRules(a, b, ['num']);
 				});
-
+				var images_combination = spv.filter(images_collection, 'num').join('-');
+				_this.updateState('images_combination', images_combination);
 				img_panorama.setCollection(spv.filter(images_collection, 'item'));
 			}, 100);
+			//ширина лифта  зависит от комбинации загруженных картинок + артиста + высоты экрана
+			//ширина иллюминатора - от ширины экрана
 
 			var appendImage = function(el, index) {
 				var sizes = spv.toRealArray(el.sizes.size);

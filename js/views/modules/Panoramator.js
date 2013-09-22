@@ -200,7 +200,7 @@ Panoramator.prototype = {
 	},
 	checkSize: function(){
 		this.setTotalWidth(this.checkTotalWidth());
-		this.setViewportWidth(this.viewport.width());
+		this.setViewportWidth(this.checkViewportWidth());
 	},
 	isEdgeElem: function(el, mobil_pos_shift, next) {
 		var cur = $(el);
@@ -223,6 +223,9 @@ Panoramator.prototype = {
 	},
 	getLiftPos: function(){
 		return -parseFloat(this.lift.css("margin-left")) || 0;
+	},
+	checkViewportWidth: function() {
+		return this.viewport.width();
 	},
 	checkTotalWidth: function() {
 		if (this.improved_con){
