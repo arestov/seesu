@@ -552,7 +552,7 @@ define({
 	},
 	"ask-rating-help":{
 		"original": "Hi! My name is Gleb. I've created seesu and I have been developing it since september 2009. If you like it, than set rating %app_url% please. This is very important for me.",
-		"ru": "Привет, меня зовут Глеб, я создал сису и развиваю её с сентября 2009 года. Если она тебе нравится прошу поставить оценку %app_url% — это очень важно для меня."
+		"ru": "Привет, меня зовут Глеб, я создал сису и развиваю её с сентября 2009 года. Если она тебе нравится прошу поставить оценку %app_url% — это очень важно для меня. Довольные люди обычно не ставят оценок, при этом недовольных никакая лень не остановит :("
 	},
 	"at-this-page": {
 		"original": "at this page",

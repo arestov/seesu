@@ -231,8 +231,12 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 					return spv.sortByRules(a, b, ['num']);
 				});
 				var images_combination = spv.filter(images_collection, 'num').join('-');
-				_this.updateState('images_combination', images_combination);
-				img_panorama.setCollection(spv.filter(images_collection, 'item'));
+				
+				_this.nextTick(function() {
+					_this.updateState('images_combination', images_combination);
+					img_panorama.setCollection(spv.filter(images_collection, 'item'));
+				});
+				
 			}, 100);
 			//ширина лифта  зависит от комбинации загруженных картинок + артиста + высоты экрана
 			//ширина иллюминатора - от ширины экрана
