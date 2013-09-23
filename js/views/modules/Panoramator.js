@@ -179,7 +179,7 @@ Panoramator.prototype = {
 	setCollection: function(array, manual){
 		this.lift_items = array;
 		if (!manual){
-			this.checkSize();
+			this.setTotalWidth(this.checkTotalWidth());
 		}
 		
 		

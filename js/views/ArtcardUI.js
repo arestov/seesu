@@ -89,22 +89,22 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		tags_list: TagsController,
 		similar_artists: SimilarsController
 	},
-	checkPanoramaSize: function() {
-		if (this.img_panorama){
-			this.img_panorama.checkSize();
-		}
-	},
+
 	bindBase: function() {
 
 		this.photo_data = {};
 		this.dom_related_props.push('photo_data');
 
 		var _this = this;
-		this.parent_view.on('state-change.mp_show_end', function(e) {
+		this.wch(this.root_view, 'window_height');
+		this.wch(this.root_view, 'window_width');
+		this.wch(this.parent_view, 'mp_show_end', 'parent_viewing_mode');
+
+	/*	this.parent_view.on('state-change.mp_show_end', function(e) {
 			if (e.value){
 				_this.nextTick(_this.checkPanoramaSize);
 			}
-		});
+		});*/
 		this.parent_view.on('state-change.mp_show', function(e) {
 			if (!e.value){
 				_this.setVisState('wamo_info', false);
@@ -154,10 +154,61 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 
 		}
 	},
-	'compx-loaded_images_key': {
-		depends_on: ['artist_name', 'images_combination'],
-		fn: function(artist_name, images_combination) {
-			return artist_name + '-' + images_combination;
+	'compx-pvm_key':{
+		depends_on: ['parent_viewing_mode'],
+		fn: function(parent_viewing_mode) {
+			if (parent_viewing_mode){
+				return parent_viewing_mode.userwant ? 1 : 2;
+			}
+		}
+	},
+	getPamoramaWidth: function() {
+		return this.img_panorama.checkViewportWidth();
+	},
+	'compx-panorama_width':{
+		depends_on: ['panorama', 'window_width', 'pvm_key'],
+		fn: function(panorama, window_width, pvm_key) {
+			if (panorama && pvm_key){
+				//ширина иллюминатора - от ширины экрана + состояния mp-show
+				return this.getBoxDemension(this.getPamoramaWidth, 'panorama_width', window_width, pvm_key);
+			}
+		}
+	},
+	'stch-panorama_width': function(state) {
+		if (state && this.img_panorama){
+			this.img_panorama.setViewportWidth(state);
+		}
+	},
+	getPamoramaLiftWidth: function() {
+		return this.img_panorama.checkTotalWidth();
+	},
+
+/*	checkPanoramaSize: function() {
+		if (this.img_panorama){
+			this.img_panorama.setViewportWidth(this.img_panorama.checkViewportWidth());
+			this.img_panorama.setTotalWidth(this.img_panorama.checkTotalWidth());
+			//this.img_panorama.checkSize();
+		}
+	},*/
+	'compx-panorama_lift_width':{
+		depends_on: ['panorama', 'artist_name', 'images_combination', 'window_height', 'pvm_key'],
+		fn: function(panorama,artist_name, images_combination, window_height, pvm_key) {
+			if (!panorama || !artist_name || !images_combination || !pvm_key){
+				return;
+			}
+			//ширина лифта  зависит от артиста, комбинации загруженных картинок, высоты экрана + состояния mp-show
+			return this.getBoxDemension(this.getPamoramaLiftWidth, 'panorama_lift_width', artist_name, window_height, pvm_key, images_combination);
+		//	var pvm_key = 
+
+			
+
+			
+			//return artist_name + '-' + images_combination;
+		}
+	},
+	'stch-panorama_lift_width': function(state) {
+		if (state && this.img_panorama){
+			this.img_panorama.setTotalWidth(state);
 		}
 	},
 	'stch-images': function(images) {
@@ -181,7 +232,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		};
 
 
-		var checkPanoramaSize = spv.debounce(function(){
+		/*var checkPanoramaSize = spv.debounce(function(){
 			_this.checkPanoramaSize();
 		}, 100);
 
@@ -193,7 +244,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 			_this.onDie(function(){
 				$(my_window).off('resize', checkPanoramaSize);
 			});
-		};
+		};*/
 
 		var queue = this.root_view.lfm_imgq;
 
@@ -221,8 +272,8 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 					seesu.trackEvent('Panoramator', 'artist photos');
 				}
 			});
-			bindPanoramaResizeByWindow(img_panorama);
-
+			//bindPanoramaResizeByWindow(img_panorama);
+			_this.updateState('panorama', true);
 			
 			var images_collection = [];
 
@@ -230,16 +281,18 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 				images_collection.sort(function(a, b){
 					return spv.sortByRules(a, b, ['num']);
 				});
-				var images_combination = spv.filter(images_collection, 'num').join('-');
+				var images_combination = spv.filter(images_collection, 'num').join('_');
 				
 				_this.nextTick(function() {
+					
+					img_panorama.setCollection(spv.filter(images_collection, 'item'), true);
+					//this.img_panorama.setTotalWidth(this.img_panorama.checkTotalWidth());
+
 					_this.updateState('images_combination', images_combination);
-					img_panorama.setCollection(spv.filter(images_collection, 'item'));
 				});
 				
 			}, 100);
-			//ширина лифта  зависит от комбинации загруженных картинок + артиста + высоты экрана
-			//ширина иллюминатора - от ширины экрана
+			
 
 			var appendImage = function(el, index) {
 				var sizes = spv.toRealArray(el.sizes.size);
@@ -294,7 +347,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 				}
 				main_c.removeClass('loading-images');
 			});
-			_this.nextTick(checkPanoramaSize);
+			//_this.nextTick(checkPanoramaSize);
 		}
 	},
 	tpl_events: {
