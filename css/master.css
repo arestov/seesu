@@ -1727,7 +1727,7 @@ body .surf_nav{
 	}
 	.top_tags span,.artist_tags span,.personal_tags span{
 		margin-right: 1rem;
-		background: rgb(48, 73, 90);
+		background: #3A473D;
 		border: 1px dotted #686868;
 		border-radius: 0.3rem;
 		padding: 0 0.3rem;
@@ -1743,6 +1743,7 @@ body .surf_nav{
 	}
 	.tagging_help{
 		min-height: 2.5rem;
+		margin-bottom: 0.3rem;
 		}
 	.tagging_header{
 		margin: 0;
