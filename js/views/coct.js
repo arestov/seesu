@@ -307,7 +307,7 @@ var tagListChange = function(array) {
 	this.tpl.ancs.listc.empty();
 	var df = document.createDocumentFragment();
 	for (var i = 0; i < array.length; i++) {
-		$(df).append(this.createTagLink(array[i]));
+		$(df).append(this.createTagLink(array[i].name));
 		$(df).append(document.createTextNode(" "));
 	}
 	this.tpl.ancs.listc.append(df);

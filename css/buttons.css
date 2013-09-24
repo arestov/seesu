@@ -147,12 +147,18 @@
 	
 .pc-tag{
 	background-image:url(../i/buttons/pc-m-tag-l.png);
+	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"link-icon-state","part":"tag-button"}');
 	}
 	.pc-tag:hover{
 		background-image:url(../i/buttons/pc-m-tag-h.png);
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"hover-icon-state","part":"tag-button"}');
 		}
 	.pc-tag:active{
 		background-image:url(../i/buttons/pc-m-tag-a.png);
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"active-icon-state","part":"tag-button"}');
+		}
+	.pc-tag.surf_nav{
+		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/all.size26.original.svg","state":"surf_nav-icon-state","part":"tag-button"}');
 		}
 .pc-next{
 	background-image:url(../i/buttons/pc-m-next-l.png);

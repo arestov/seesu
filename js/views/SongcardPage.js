@@ -58,18 +58,16 @@ provoda.View.extendTo(SongcardController, {
 	},
 	bindBase: function() {
 		this.rowcs = {};
-		var _this = this;
-		this.parent_view.on('state-change.mp_show', function(e) {
-			if (!e.value && _this.rowcs && _this.rowcs.users_context){
-				_this.rowcs.users_context.hide();
+		this.wch(this.parent_view, 'mp_show', function(e) {
+			if (!e.value && this.rowcs && this.rowcs.users_context){
+				this.rowcs.users_context.hide();
 			}
-		});
-		this.parent_view.on('state-change.mp_show', function(e) {
 			if (e.value){
-				_this.expand();
-				_this.updateSongListeners();
+				this.expand();
+				this.updateSongListeners();
 			}
 		});
+
 
 
 	},
@@ -95,7 +93,7 @@ provoda.View.extendTo(SongcardController, {
 		};
 
 		this.rowcs.users_context = users_context;
-		this.dom_related_props.push('song_actions_c', 'rowcs', 't_users');
+		this.dom_related_props.push('rowcs', 't_users');
 	},
 	createListenersHeader: function(){
 		if (this && this.t_users){

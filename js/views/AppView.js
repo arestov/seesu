@@ -316,6 +316,27 @@ AppBaseView.extendTo(AppView, {
 			_this.resortQueue();
 		});
 
+
+
+		var wd = this.getWindow();
+		var checkWindowSizes = spv.debounce(function() {
+			_this.updateManyStates({
+				window_height: wd.innerHeight,
+				window_width: wd.innerWidth
+			});
+		}, 150);
+
+		$(wd).on('resize', checkWindowSizes);
+		this.onDie(function(){
+			$(wd).off('resize', checkWindowSizes);
+		});
+
+	},
+	'compx-window_demensions_key': {
+		depends_on: ['window_width', 'window_height'],
+		fn: function(window_width, window_height) {
+			return window_width + '-' + window_height;
+		}
 	},
 	resortQueue: function(queue) {
 		if (queue){
@@ -373,12 +394,25 @@ AppBaseView.extendTo(AppView, {
 			this.c.removeClass(class_name);
 		}
 	},
+	changeFaviconNode: function(d, src, type) {
+		var link = d.createElement('link'),
+			oldLink = this.favicon_node || d.getElementById('dynamic-favicon');
+		link.id = 'dynamic-favicon';
+		link.rel = 'shortcut icon';
+		if (type){
+			link.type = type;
+		}
+		
+		link.href = src;
+		d.head.replaceChild(link, oldLink);
+		this.favicon_node = link;
+	},
 	changeFavicon: spv.debounce(function(state){
 		if (this.isAlive()){
 			if (state && this.favicon_states[state]){
-				app_serv.changeFavicon(this.d, this.favicon_states[state], 'image/png');
+				this.changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
 			} else{
-				app_serv.changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
+				this.changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
 			}
 		}
 
@@ -429,6 +463,13 @@ AppBaseView.extendTo(AppView, {
 	buildAppDOM: function() {
 		var _this = this;
 		var d = this.d;
+
+
+		var wd = this.getWindow();
+		_this.updateManyStates({
+			window_height: wd.innerHeight,
+			window_width: wd.innerWidth
+		});
 		
 			console.log('dom ready');
 			_this.dom_related_props.push('els');

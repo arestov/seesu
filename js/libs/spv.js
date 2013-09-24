@@ -40,6 +40,19 @@ spv.once = function(fn) {
 		}
 	};
 };
+var hasArg = function(el) {return el;};
+spv.hasEveryArgs = function() {
+	return Array.prototype.every.call(arguments, hasArg);
+};
+spv.getExistingItems = function(arr) {
+	var result = [];
+	for (var i = 0; i < arr.length; i++) {
+		if (arr[i]){
+			result.push(arr[i]);
+		}
+	}
+	return result;
+};
 
 addEvent = spv.addEvent = window.addEventListener ?
 function(elem, evType, fn){
@@ -96,8 +109,24 @@ doesContain = spv.doesContain = function(target, valueOf){
 	}
 	return -1;
 };
+spv.hasCommonItems = function(arr1, arr2) {
+	if (!arr2){
+		return false;
+	}
+	for (var i = 0; i < arr1.length; i++) {
+		if (arr2.indexOf(arr1[i]) != -1){
+			return true;
+		}
+	}
+	return false;
+};
 arrayExclude = spv.arrayExclude = function(arr, obj){
-	var r = []; obj = spv.toRealArray(obj);
+	var r = [];
+	if (!arr){
+		return r;
+	}
+
+	obj = spv.toRealArray(obj);
 	for (var i = 0; i < arr.length; i++) {
 		if (obj.indexOf(arr[i]) == -1){
 			r.push(arr[i]);
@@ -213,11 +242,18 @@ searchInArray = spv.searchInArray = function (array, query, fields) {
 	}
 	return r;
 };
+var regexp_escaper = /([$\^*()+\[\]{}|.\/?\\])/g;
+spv.escapeRegExp = function(str, clean) {
+	if (clean){
+		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
+	}
+	return str.replace(regexp_escaper, '\\$1'); //escaping regexp symbols
+};
 
 getStringPattern = function (str) {
 	if (str.replace(/\s/g, '')){
-		str = str.replace(/\s+/g, ' ').replace(/(^\s)|(\s$)/g, ''); //removing spaces
-		str = str.replace(/([$\^*()+\[\]{}|.\/?\\])/g, '\\$1').split(/\s/g);  //escaping regexp symbols
+		
+		str = spv.escapeRegExp(str, true).split(/\s/g);
 		for (var i=0; i < str.length; i++) {
 			str[i] = '((^\|\\s)' + str[i] + ')';
 		}
@@ -226,6 +262,7 @@ getStringPattern = function (str) {
 		return new RegExp(str, 'gi');
 	}
 };
+spv.getStringPattern = getStringPattern;
 
 ttime = function(f){
 	var d = +new Date();
@@ -270,8 +307,20 @@ toRealArray = spv.toRealArray = function(array, check_field){
 	}
 };
 
+
+var fields_cache = {};
+var getFieldsTree = function(string) {
+	if (Array.isArray(string)){
+		return string;
+	} else {
+		if (!fields_cache[string]){
+			fields_cache[string] = string.split('.');
+		}
+		return fields_cache[string];
+	}
+};
 getTargetField = function(obj, tree){
-	tree= Array.isArray(tree) ? tree : tree.split('.');
+	tree = getFieldsTree(tree);
 	var nothing;
 	var target = obj;
 	for (var i=0; i < tree.length; i++) {
@@ -285,7 +334,7 @@ getTargetField = function(obj, tree){
 };
 
 spv.setTargetField = function(obj, tree, value) {
-	tree = Array.isArray(tree) ? tree : tree.split('.');
+	tree = getFieldsTree(tree);
 	var cur_obj = obj;
 	for (var i=0; i < tree.length; i++) {
 		var cur = tree[i];
@@ -399,35 +448,40 @@ makeIndexByField = spv.makeIndexByField = function(array, field, keep_case){
 
 
 $filter = function(array, field, value_or_testfunc){
-	var r = [];
+	var i, r = [];
 	r.not = [];
 	if (!array){return r;}
-	for (var i=0; i < array.length; i++) {
-		if (array[i]){
-			if (value_or_testfunc){
-				if (typeof value_or_testfunc == 'function'){
-					if (value_or_testfunc(spv.getTargetField(array[i], field))){
-						r.push(array[i]);
-					} else{
-						r.not.push(array[i]);
-					}
+
+	if (value_or_testfunc){
+		for (i = 0; i < array.length; i++) {
+			if (!array[i]){
+				continue;
+			}
+			if (typeof value_or_testfunc == 'function'){
+				if (value_or_testfunc(spv.getTargetField(array[i], field))){
+					r.push(array[i]);
 				} else{
-					if (spv.getTargetField(array[i], field) === value_or_testfunc){
-						r.push(array[i]);
-					} else{
-						r.not.push(array[i]);
-					}
+					r.not.push(array[i]);
 				}
-				
 			} else{
-				var field_value = spv.getTargetField(array[i], field);
-				if (field_value){
-					r.push(field_value);
+				if (spv.getTargetField(array[i], field) === value_or_testfunc){
+					r.push(array[i]);
 				} else{
 					r.not.push(array[i]);
 				}
 			}
-			
+		}
+	} else {
+		for (i = 0; i < array.length; i++) {
+			if (!array[i]){
+				continue;
+			}
+			var field_value = spv.getTargetField(array[i], field);
+			if (field_value){
+				r.push(field_value);
+			} else{
+				r.not.push(array[i]);
+			}
 		}
 	}
 	return r;
@@ -486,7 +540,7 @@ getUnitBaseNum = function(_c){
 		return 2;
 	}
 };
-
+spv.getUnitBaseNum = getUnitBaseNum;
 
 stringifyParams = spv.stringifyParams = function(params, ignore_params, splitter, joiner, opts){
 	opts = opts || {};

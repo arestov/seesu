@@ -481,21 +481,17 @@ html.not-as-application, .not-as-application  body{
 	}
 
 	.photo-cont-lift{
-		width:200%;
 		height:100%;
-	}
-	.photo-cont-lift.ready_to_use{
-        position: absolute;
-        top: 0;
-        left: 0;
+		white-space: nowrap;
+		position: relative;
 		overflow: hidden;
 	}
-	.photo-cont-lift.ready_to_use .artist_image{
+	.photo-cont-lift .artist_image{
 		position: relative;
 	}
 	.photo-cont .artist_image{
 		height:100%;
-		
+		display: inline-block;
 		}
 
 
@@ -1171,25 +1167,25 @@ iframe.you-tube-video,embed.you-tube-video{
 /* Custom CSS scrollbar */
 
 .pokki-app ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    border-radius: 5px;
+	width: 8px;
+	height: 8px;
+	border-radius: 5px;
 	background: none;
 }
 
 
 .pokki-app ::-webkit-scrollbar-track:vertical { 
-    background: none; 
+	background: none; 
 }
 .pokki-app ::-webkit-scrollbar-thumb {
-    width: 8px; 
-    height: 20px;
-    border-radius: 5px;
-    background: #999;
+	width: 8px; 
+	height: 20px;
+	border-radius: 5px;
+	background: #999;
 }
 
 .pokki-app ::-webkit-scrollbar-button: { 
-    display: none; 
+	display: none; 
 }
 .attention-message{
 	overflow: hidden;
@@ -1672,3 +1668,92 @@ body .surf_nav{
 	.song_fan-b-tck:hover .song_fan-h-tck{
 		visibility: visible;
 	}
+.shareb-base{
+	background: #545454;
+	border: 1px solid transparent;
+	border-top: 1px solid #4E4E4E;
+	border-bottom: 1px solid #646464;
+	border-radius: 0.5rem;
+	margin-bottom: 0.2rem;
+	padding: 0 0.7rem;
+	overflow: hidden;
+	}
+	.shareb-button{
+		margin-left:-13px;
+		margin-right: -13px;
+		padding: 0.5rem 0.7rem;
+		background: #5F5F5F;
+		cursor: pointer;
+		display: block;
+		
+		min-width: 5rem;
+		}
+	.shareb-button:hover{
+		background-color: #636363;
+	}
+	.shareb-button:active{
+		background-color: #555;
+	}
+	.shareb-con{
+		display: none;
+		}
+	.shareb-base.sharebopened{
+		
+
+		}
+		.shareb-base.sharebopened .shareb-button{
+			}
+		.shareb-base.sharebopened .shareb-con{
+			display: block;
+			}
+.song-act-tagging input{
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	margin-bottom: 1rem;
+}
+.song-tagging{
+	margin-top: 1rem;
+	}
+	.possible_tags{
+		}
+		.possible_tags span{
+			border: 1px solid #666;
+			border-radius: 0.2rem;
+			margin-right: 1rem;
+		}
+.top_tags{
+	
+	}
+	.top_tags span,.artist_tags span,.personal_tags span{
+		margin-right: 1rem;
+		background: #3A473D;
+		border: 1px dotted #686868;
+		border-radius: 0.3rem;
+		padding: 0 0.3rem;
+		display: inline-block;
+		margin-bottom: 0.3rem;
+		color: #eee;
+		cursor: pointer;
+		}
+.song_tagging_help{
+	background: rgb(85, 85, 85);
+	padding: 1rem 13px;
+	margin: 0 -13px;
+	}
+	.tagging_help{
+		min-height: 2.5rem;
+		margin-bottom: 0.3rem;
+		}
+	.tagging_header{
+		margin: 0;
+		padding: 0;
+		font-weight: 400;
+		color:#777;
+		}
+		.tagging_header.has_tags{
+			color:#eee;
+			}
+.save_tags_b{
+	float:right;
+}

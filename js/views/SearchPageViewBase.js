@@ -85,14 +85,17 @@ provoda.addPrototype("baseSuggestView", {
 
 provoda.addPrototype("InvestigationView", {
 	expand: function(){
+		var array;
 		if (this.expanded){
 			return;
 		} else {
+			array = this.getMdChild('section');
+			if (!array){
+				return;
+			}
 			this.expanded = true;
 		}
-
-		var array = this.getMdChild('section');
-
+	
 
 		for (var i = 0; i < array.length; i++) {
 			var cur = array[i];
@@ -115,6 +118,11 @@ provoda.addPrototype("InvestigationView", {
 			this.c.toggleClass('hidden', !opts);
 		},
 		"can_expand": function(state) {
+			if (state){
+				this.expand();
+			}
+		},
+		vis_must_be_expanded: function(state) {
 			if (state){
 				this.expand();
 			}
