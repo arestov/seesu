@@ -38,7 +38,7 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 	
 	},
 	tpl_r_events: {
-		'personal_tags': {
+		'petags_result': {
 			addTag: addTag
 		},
 		'toptags': {

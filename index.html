@@ -1106,7 +1106,7 @@
 			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags" pv-anchor="tags-input"/>
 			<div class="save_tags_b hidden" pv-class="save_tags_b {{!has_changes && 'hidden'}}">
 				<span class="button-hole">
-					<span class="nicebutton">save</span>
+					<span class="nicebutton" pv-events="click::saveTagsChanges">save</span>
 				</span>
 			</div>
 			
@@ -1118,9 +1118,9 @@
 			</div>
 			<div class="song_tagging_help">
 				<div class="personal_tags">
-					<h4 class="tagging_header" pv-class="{{personal_tags.length && 'has_tags'}}  tagging_header" >Your tags</h4>
+					<h4 class="tagging_header" pv-class="{{petags_result.length && 'has_tags'}}  tagging_header" >Your tags</h4>
 					<div class="tagging_help">
-						<span pv-repeat="tag in personal_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag"></span>
+						<span pv-repeat="tag in petags_result | limitTo:25" pv-text="{{tag}}" pv-events="click:addTag"></span>
 					</div>
 					
 				</div>
