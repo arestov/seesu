@@ -339,7 +339,11 @@ define({
 	},
 	"lastfm-loveit-access": {
 		"original": "To add song to your favorites",
-		"ru": "Чтобы добавить песню в избранное"
+		"ru": "Чтобы добавить композицию в избранное"
+	},
+	"lastfm-tagging-access": {
+		"original": "To add tags to song",
+		"ru": "Чтобы присвоить композиции тэги"
 	},
 	"lastfm-scrobble-access": {
 		"original": "To scrobble to last.fm",

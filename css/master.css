@@ -1711,49 +1711,56 @@ body .surf_nav{
 	width: 100%;
 	box-sizing: border-box;
 	margin-bottom: 1rem;
-}
-.song-tagging{
-	margin-top: 1rem;
-	}
-	.possible_tags{
-		}
-		.possible_tags span{
-			border: 1px solid #666;
-			border-radius: 0.2rem;
-			margin-right: 1rem;
-		}
-.top_tags{
 	
-	}
-	.top_tags span,.artist_tags span,.personal_tags span{
-		margin-right: 1rem;
-		background: #3A473D;
-		border: 1px dotted #686868;
-		border-radius: 0.3rem;
-		padding: 0 0.3rem;
-		display: inline-block;
-		margin-bottom: 0.3rem;
-		color: #eee;
-		cursor: pointer;
-		}
-.song_tagging_help{
-	background: rgb(85, 85, 85);
-	padding: 1rem 13px;
-	margin: 0 -13px;
-	}
-	.tagging_help{
-		min-height: 2.5rem;
-		margin-bottom: 0.3rem;
-		}
-	.tagging_header{
-		margin: 0;
-		padding: 0;
-		font-weight: 400;
-		color:#777;
-		}
-		.tagging_header.has_tags{
-			color:#eee;
-			}
-.save_tags_b{
-	float:right;
 }
+.song-act-tagging{
+	display: none;
+	}
+.has_session .song-act-tagging{
+	display: block;
+	}
+	.song-tagging{
+		margin-top: 1rem;
+		}
+		.possible_tags{
+			}
+			.possible_tags span{
+				border: 1px solid #666;
+				border-radius: 0.2rem;
+				margin-right: 1rem;
+			}
+	.top_tags{
+		
+		}
+		.top_tags span,.artist_tags span,.personal_tags span{
+			margin-right: 1rem;
+			background: #3A473D;
+			border: 1px dotted #686868;
+			border-radius: 0.3rem;
+			padding: 0 0.3rem;
+			display: inline-block;
+			margin-bottom: 0.3rem;
+			color: #eee;
+			cursor: pointer;
+			}
+	.song_tagging_help{
+		background: rgb(85, 85, 85);
+		padding: 1rem 13px;
+		margin: 0 -13px;
+		}
+		.tagging_help{
+			min-height: 2.5rem;
+			margin-bottom: 0.3rem;
+			}
+		.tagging_header{
+			margin: 0;
+			padding: 0;
+			font-weight: 400;
+			color:#777;
+			}
+			.tagging_header.has_tags{
+				color:#eee;
+				}
+	.save_tags_b{
+		float:right;
+	}
