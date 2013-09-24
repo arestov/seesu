@@ -177,21 +177,26 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 	getPamoramaLiftWidth: function() {
 		return this.img_panorama.checkTotalWidth();
 	},
+	getFastPamoramaLiftWidth: function() {
+		return this.getBoxDemensionByKey(this.getPamoramaLiftWidth, this.state('panorama_lift_width_key'));
+	},
 
-	'compx-panorama_lift_width':{
+	'compx-panorama_lift_width_key':{
 		depends_on: ['panorama', 'artist_name', 'images_combination', 'window_height', 'pvm_key'],
 		fn: function(panorama,artist_name, images_combination, window_height, pvm_key) {
 			if (!panorama || !artist_name || !images_combination || !pvm_key){
 				return;
 			}
+			
+			return this.getBoxDemensionKey('panorama_lift_width', artist_name, window_height, pvm_key, images_combination);
 			//ширина лифта  зависит от артиста, комбинации загруженных картинок, высоты экрана + состояния mp-show
-			return this.getBoxDemension(this.getPamoramaLiftWidth, 'panorama_lift_width', artist_name, window_height, pvm_key, images_combination);
+			//return this.getBoxDemension(this.getPamoramaLiftWidth, 'panorama_lift_width', artist_name, window_height, pvm_key, images_combination);
 
 		}
 	},
 	'stch-panorama_lift_width': function(state) {
 		if (state && this.img_panorama){
-			this.img_panorama.setTotalWidth(state);
+			//this.img_panorama.setTotalWidth(state);
 		}
 	},
 	'stch-images': function(images) {
@@ -237,6 +242,10 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 			img_panorama.init({
 				viewport: main_c,
 				lift: photo_c,
+				improved_con: true,
+				getFastLiftWidth: function() {
+					return _this.getFastPamoramaLiftWidth();
+				},
 				onUseEnd: function(){
 					seesu.trackEvent('Panoramator', 'artist photos');
 				}

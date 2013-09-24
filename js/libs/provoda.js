@@ -2385,17 +2385,25 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return spv.getDefaultView(this.d || this.getC()[0].ownerDocument);
 	},
 	demensions_cache: {},
-	getBoxDemension: function(cb) {
-		var args = Array.prototype.slice.call(arguments, 1);
+	getBoxDemensionKey: function() {
+		var args = Array.prototype.slice.call(arguments, 0);
 		if (!this.demensions_key_start){
 			this.demensions_key_start = this.location_name + "-" + this.parent_view.location_name + '-';
 		}
-		var key = this.demensions_key_start.concat(args.join('-'));
+		return this.demensions_key_start.concat(args.join('-'));
+
+	},
+	getBoxDemensionByKey: function(cb, key) {
 		if (typeof this.demensions_cache[key] == 'undefined'){
 			this.demensions_cache[key] = cb.call(this);
 		}
 		return this.demensions_cache[key];
-
+	},
+	getBoxDemension: function(cb) {
+		var args = Array.prototype.slice.call(arguments, 1);
+		var key = this.getBoxDemensionKey.apply(this, args);
+		
+		return this.getBoxDemensionByKey(cb, key);
 	},
 	getReqsOrderField: function() {
 		if (this.req_order_field){

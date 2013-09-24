@@ -9,6 +9,9 @@ Panoramator.prototype = {
 		if (opts.onUseEnd){
 			this.onUseEnd = opts.onUseEnd;
 		}
+		if (opts.getFastLiftWidth){
+			this.getFastLiftWidth = opts.getFastLiftWidth;
+		}
 		
 
 		var _this = this;
@@ -17,6 +20,7 @@ Panoramator.prototype = {
 			if (e.which && e.which != 1){
 				return true;
 			}
+			_this.refreshLiftWidth();
 			e.preventDefault();
 			_this.handleUserStart(e);
 		});
@@ -178,10 +182,33 @@ Panoramator.prototype = {
 	},
 	setCollection: function(array, manual){
 		this.lift_items = array;
-		if (!manual){
-			this.setTotalWidth(this.checkTotalWidth());
+		if (!manual && !this.improved_con){
+			//this.setTotalWidth(this.checkTotalWidth());
 		}
 		
+		
+	},
+	checkViewportWidth: function() {
+		return this.viewport.width();
+	},
+	checkTotalWidth: function() {
+		if (this.improved_con){
+			return this.lift[0].scrollWidth;
+		} else {
+			var width = 0;
+			$.each(this.lift_items, function(i ,el) {
+				width += $(el).outerWidth(true);
+			});
+			return width;
+		}
+		
+	},
+	refreshLiftWidth: function() {
+		if (this.getFastLiftWidth){
+			this.setTotalWidth(this.getFastLiftWidth());
+		} else {
+			this.setTotalWidth(this.checkTotalWidth());
+		}
 		
 	},
 	setTotalWidth: function(total_width) {
@@ -199,7 +226,7 @@ Panoramator.prototype = {
 		this.viewport_width = viewport_width;
 	},
 	checkSize: function(){
-		this.setTotalWidth(this.checkTotalWidth());
+		//this.setTotalWidth(this.checkTotalWidth());
 		this.setViewportWidth(this.checkViewportWidth());
 	},
 	isEdgeElem: function(el, mobil_pos_shift, next) {
@@ -223,21 +250,6 @@ Panoramator.prototype = {
 	},
 	getLiftPos: function(){
 		return -parseFloat(this.lift.css("margin-left")) || 0;
-	},
-	checkViewportWidth: function() {
-		return this.viewport.width();
-	},
-	checkTotalWidth: function() {
-		if (this.improved_con){
-			return this.lift.outerWidth(true);
-		} else {
-			var width = 0;
-			$.each(this.lift_items, function(i ,el) {
-				width += $(el).outerWidth(true);
-			});
-			return width;
-		}
-		
 	},
 	toStart: function(){
 
