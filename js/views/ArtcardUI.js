@@ -199,6 +199,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 			//this.img_panorama.setTotalWidth(state);
 		}
 	},
+	img_sample: $('<img class="artist_image hidden" alt=""/>'),
 	'stch-images': function(images) {
 		if (!images || !images.length){
 			return;
@@ -270,12 +271,11 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 				});
 				
 			}, 100);
-			
 
 			var appendImage = function(el, index) {
 				var sizes = spv.toRealArray(el.sizes.size);
 
-				var image_jnode = $('<img class="artist_image hidden" alt=""/>');
+				var image_jnode = _this.img_sample.clone();
 				var url = (sizes[5] || sizes[0])["#text"];
 				var req = app_serv.loadImage({
 					url: url,
