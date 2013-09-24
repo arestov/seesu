@@ -1116,30 +1116,33 @@
 				</div>
 
 			</div>
-			
-			<div class="personal_tags">
-				<h4 class="tagging_header" pv-class="{{personal_tags.length && 'has_tags'}}  tagging_header" >Your tags</h4>
-				<div class="tagging_help">
-					<span pv-repeat="tag in personal_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag"></span>
+			<div class="song_tagging_help">
+				<div class="personal_tags">
+					<h4 class="tagging_header" pv-class="{{personal_tags.length && 'has_tags'}}  tagging_header" >Your tags</h4>
+					<div class="tagging_help">
+						<span pv-repeat="tag in personal_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag"></span>
+					</div>
+					
 				</div>
-				
-			</div>
 
-			
-			<div class="top_tags">
-				<h4 class="tagging_header" pv-class="{{toptags.length && 'has_tags'}}  tagging_header">Top tags of track</h4>
-				<div class="tagging_help">
-					<span pv-repeat="tag in toptags | limitTo:25" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}" pv-events="click:addTag"></span>
+				
+				<div class="top_tags">
+					<h4 class="tagging_header" pv-class="{{toptags.length && 'has_tags'}}  tagging_header">Top tags of track</h4>
+					<div class="tagging_help">
+						<span pv-repeat="tag in toptags | limitTo:25" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}" pv-events="click:addTag"></span>
+					</div>
+					
 				</div>
 				
-			</div>
-			
-			<div class="artist_tags">
-				<h4 class="tagging_header" pv-class="{{artist_tags.length && 'has_tags'}} tagging_header">Artist tags</h4>
-				<div class="tagging_help">
-					<span pv-repeat="tag in artist_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag"></span>
+				<div class="artist_tags">
+					<h4 class="tagging_header" pv-class="{{artist_tags.length && 'has_tags'}} tagging_header">Artist tags</h4>
+					<div class="tagging_help">
+						<span pv-repeat="tag in artist_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag"></span>
+					</div>
 				</div>
 			</div>
+			
+			
 		</div>
 		
 		<form class="scrobbling-switches">

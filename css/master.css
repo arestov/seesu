@@ -1736,18 +1736,23 @@ body .surf_nav{
 		color: #eee;
 		cursor: pointer;
 		}
-.tagging_help{
-	min-height: 2.5rem;
+.song_tagging_help{
+	background: rgb(85, 85, 85);
+	padding: 1rem 13px;
+	margin: 0 -13px;
 	}
-.tagging_header{
-	margin: 0;
-	padding: 0;
-	font-weight: 400;
-	color:#777;
-	}
-	.tagging_header.has_tags{
-		color:#eee;
+	.tagging_help{
+		min-height: 2.5rem;
 		}
+	.tagging_header{
+		margin: 0;
+		padding: 0;
+		font-weight: 400;
+		color:#777;
+		}
+		.tagging_header.has_tags{
+			color:#eee;
+			}
 .save_tags_b{
 	float:right;
 }
