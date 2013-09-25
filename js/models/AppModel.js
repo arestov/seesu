@@ -182,10 +182,10 @@ AppModelBase.extendTo(AppModel, {
 		}
 	},
 	getVkUser: function(userid) {
-		return this.start_page.getSPI('users/vk:' + userid, true);
+		return this.start_page.getSPI('users/vk:' + encodeURIComponent(userid), true);
 	},
 	getLastfmUser: function(username) {
-		return this.start_page.getSPI('users/lfm:' + username, true);
+		return this.start_page.getSPI('users/lfm:' + encodeURIComponent(username), true);
 	},
 	getSongcard: function(artist_name, track_name) {
 		if (!artist_name || !track_name){
@@ -194,7 +194,8 @@ AppModelBase.extendTo(AppModel, {
 		return this.start_page.getSPI('tracks/' + this.joinCommaParts([artist_name, track_name]), true);
 	},
 	getArtcard: function(artist_name) {
-		return this.start_page.getSPI('catalog/' + artist_name, true);
+
+		return this.start_page.getSPI('catalog/' + encodeURIComponent(artist_name), true);
 	},
 	search: function(query){
 		var old_v = this.state('search_query');
