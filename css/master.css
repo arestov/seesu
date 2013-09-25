@@ -46,7 +46,10 @@ html.not-as-application, .not-as-application  body{
 #search #search-p label span.loading:after,
 .search_results-container h4.loading:after,
 .art_card-bio.loading:after,
-.vk-login-context.waiting-auth .deco:after{
+.vk-login-context.waiting-auth .deco:after,
+.desc_prevw_list.list_loading:after,
+.search-mp3 .files-load-states:after,
+a.track_name_loading .song-track-name{
 	position: absolute;
 	top:0;
 	left:0;

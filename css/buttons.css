@@ -296,10 +296,13 @@
 		background-color: transparent;
 		}
 	.desc_prevw_list.list_loading{
-		background:url(../i/spinner.svg) no-repeat 0.5rem 1rem;
-		background-size: 1.143rem;
+		position: relative;
 		}
-	
+	.desc_prevw_list.list_loading:after{
+		left:1rem !important;
+		top:0.5rem !important;
+
+		}
 	.page-scheme .area_for_button{
 		margin-bottom: 0.5rem;
 		padding-bottom: 0;
