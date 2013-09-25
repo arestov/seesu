@@ -168,6 +168,7 @@ AppModel.extendTo(SeesuApp, {
 
 		this.s.on('info-change.vk', function(data) {
 			_this.updateState('vk_info', data);
+			_this.updateState('vk_userid', data && data.id);
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
@@ -190,10 +191,10 @@ AppModel.extendTo(SeesuApp, {
 			reportSearchEngs(list.join(','));
 		});
 		if (this.lfm.username){
-			this.updateState('lfm_username', this.lfm.username);
+			this.updateState('lfm_userid', this.lfm.username);
 		} else {
 			this.lfm_auth.on('session', function() {
-				_this.updateState('lfm_username', _this.lfm.username);
+				_this.updateState('lfm_userid', _this.lfm.username);
 			});
 		}
 		
@@ -263,7 +264,7 @@ AppModel.extendTo(SeesuApp, {
 		this.settings_timers = {};
 
 		this.all_queues = all_queues;
-
+		var _this = this;
 		this.trackStat = (function(){
 			window._gaq = window._gaq || [];
 			//var _gaq = window._gaq;
@@ -282,7 +283,9 @@ AppModel.extendTo(SeesuApp, {
 				});
 			});
 			return function(data_array){
-				window._gaq.push(data_array);
+				_this.nextTick(function(){
+					window._gaq.push(data_array);
+				});
 			};
 		})();
 
@@ -291,7 +294,7 @@ AppModel.extendTo(SeesuApp, {
 		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
 		this.usage_counter = parseFloat(app_serv.store('su-usage-counter')) || 0;
 
-		var _this = this;
+		
 		setInterval(function(){
 
 			var now = new Date();
@@ -366,17 +369,21 @@ AppModel.extendTo(SeesuApp, {
 
 		this.map
 			.init(this.start_page)
+			.on('residents-tree', function(tree) {
+				this.updateNesting('navigation', tree);
+				this.updateNesting('map_slice', tree);
+			}, this.getContextOptsI())
 			.on('map-tree-change', function(nav_tree) {
-				_this.changeNavTree(nav_tree);
-			}, {immediately: true})
+				this.changeNavTree(nav_tree);
+			}, this.getContextOptsI())
 			.on('changes', function(changes) {
 				//console.log(changes);
-				_this.animateMapChanges(changes);
-			}, {immediately: true})
+				this.animateMapChanges(changes);
+			}, this.getContextOptsI())
 			.on('title-change', function(title) {
-				_this.setDocTitle(title);
+				this.setDocTitle(title);
 
-			}, {immediately: true})
+			}, this.getContextOptsI())
 			.on('url-change', function(nu, ou, data, replace) {
 				if (app_env.needs_url_history){
 					if (replace){
@@ -385,7 +392,7 @@ AppModel.extendTo(SeesuApp, {
 						navi.set(nu, data.resident);
 					}
 				}
-			}, {immediately: true})
+			}, this.getContextOptsI())
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
 					//su.trackPage(nv.map_level.resident.page_name);
@@ -393,10 +400,8 @@ AppModel.extendTo(SeesuApp, {
 
 			}, {immediately: true})
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
-				setTimeout(function() {
-					_this.trackPage(nv.map_level.resident.page_name);
-				},10);
-			}, {immediately: true})
+				this.trackPage(nv.map_level.resident.page_name);
+			}, this.getContextOptsI())
 			.makeMainLevel();
 
 
@@ -576,8 +581,14 @@ AppModel.extendTo(SeesuApp, {
 			pageTracker._trackEvent.apply(pageTracker, args);
 		});
 	},
+	'rootv_field': ['mpx', 'views_index', 'root', 'length'],
 	trackPage:function(page_name){
 		this.current_page = page_name;
+		
+		var has_app_view = !!spv.getTargetField(this, this.rootv_field);
+		if (!has_app_view){
+			return;
+		}
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
 		this.trackStat.call(this, args);
@@ -673,7 +684,8 @@ AppModel.extendTo(SeesuApp, {
 				if (query){
 					if (cur.playlist_title == query){
 						r.unshift(cur);
-					} else if (cur.playlist_title.match(new  RegExp('\\b' + query))){
+
+					} else if (cur.playlist_title.match(spv.getStringPattern(query))){
 						r.push(cur);
 					}
 				} else {
@@ -707,6 +719,7 @@ AppModel.extendTo(SeesuApp, {
 					_this.s.vk_id = user_id;
 
 					var _d = spv.cloneObj({data_source: 'vkontakte'}, info);
+					
 
 					_this.s.setInfo('vk', _d);
 
@@ -738,7 +751,7 @@ AppModel.extendTo(SeesuApp, {
 		}
 		this.vk_fr_req
 			.done(function(r){
-				_this.trigger("vk-friends", r && r.response);
+				_this.trigger("vk-friends", r && r.response.items);
 			})
 			.fail(function(){
 
@@ -775,7 +788,7 @@ AppModel.extendTo(SeesuApp, {
 			cache_ajax: cache_ajax,
 			onAuthLost: function() {
 				lostAuth(vkapi);
-				checkDeadSavedToken(vk_token);
+				initVk.checkDeadSavedToken(vk_token);
 			},
 			mp3_search: _this.mp3_search
 		});

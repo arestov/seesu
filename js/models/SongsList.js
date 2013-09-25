@@ -178,7 +178,7 @@ define(['provoda', 'app_serv','./LoadableList', './comd', './Song', './SongsList
 			if (!songs_list.length){return false;}
 			var simple_playlist = [];
 			for (var i=0; i < songs_list.length; i++) {
-				var files = songs_list[i].mf_cor.getFilteredFiles();
+				var files = songs_list[i].getMFCore().getFilteredFiles();
 				var song = files && files[0];
 				if (song){
 					simple_playlist.push({

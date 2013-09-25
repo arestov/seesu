@@ -77,6 +77,8 @@ BrowseMap.Model.extendTo(StartPage, {
 				return this.subPageInitWrap(UserCard, full_name, {urp_name: name});
 			} else if (name.indexOf('lfm:') === 0){
 				return this.subPageInitWrap(UserCard.LfmUserCard, full_name, {urp_name: name});
+			} else if (name.indexOf('vk:') === 0){
+				return this.subPageInitWrap(UserCard.VkUserCard, full_name, {urp_name: name});
 			}
 		}
 	},

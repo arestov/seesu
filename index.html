@@ -56,7 +56,7 @@
 			
 			><span
 				pv-text="{{nav_title}}"
-			>.</span><b></b></span>
+			>&nbsp;</span><b></b></span>
 		<span 
 			class="search_page-nav nav-item nav-search_results" 
 			title="Search results"
@@ -72,7 +72,7 @@
 				{{mp_stack == 'bottom' && 'stack-bottom'}}
 				{{mp_stack == 'middle' && 'stack-middle'}}
 			"
-			><b></b><span class="icon">.</span></span>
+			><b></b><span class="icon">&nbsp;</span></span>
 		<span 
 			class="start_page-nav nav-item nav-start" 
 			title="Seesu start page"
@@ -87,7 +87,7 @@
 				{{(mp_stack && mp_stack == !!mp_stack) && 'stacked'}}
 				
 			"
-			><b></b><span class="icon">.</span></span>
+			><b></b><span class="icon">&nbsp;</span></span>
 
 		<!-- -->
 	
@@ -308,9 +308,9 @@
 				</div>
 				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 			</div>
-			<div class="area_for_button" pv-nest='countres'>
+			<div class="area_for_button" pv-nest='сountries'>
 				<div class="area-button" pv-anchor='big_button'>
-					<span pv-text="{{nav_title}}">Countres</span>
+					<span pv-text="{{nav_title}}">Countries</span>
 				</div>
 				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
 			</div>
@@ -318,16 +318,29 @@
 		<div class="album_preview-big">
 			<img src="" alt="" pv-anchor="imgc"/>
 			<div class="full_album_name">
+				<div class="desc hidden" pv-class="desc {{!album_year && 'hidden'}}" pv-text="{{album_year}}"></div>
 				<div class="artist_name_alb" pv-anchor="artist_name_c"></div>
 				<div class="album_name" pv-anchor="album_name_c"></div>
 			</div>
 		</div>
+		
+		<!-- userslist -->
+		<div class="vk_users_page usual_page" pv-class="vk_users_page usual_page {{!mp_show && 'hidden'}}">
+			<div pv-nest="list_items" class="vk_friend-base-preview" pv-events="click::requestPage" pv-type="way-point">
+				<img class="vk_friend-ava" src="" alt="" pv-props="
+					src: {{ava_image.url}}">
+				<div class="vk_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+			</div>
+		</div>
 
+		<!-- userslist -->
 		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page {{!mp_show && 'hidden'}}">
 			<div pv-nest="list_items" class="lfm_friend-base-preview" pv-events="click::requestPage" pv-type="way-point">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
-				<span class="lfm_friend-name" pv-text="{{username}}"></span>
+				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
 				<div class="lfm_friend-desc">
 					<span pv-text="{{big_desc}}"></span>
 				</div>
@@ -358,6 +371,28 @@
 				</div>
 				
 			</div>
+		</div>
+
+
+		<div class="vk_pthgs">
+			<div class="area_for_button" pv-nest='vk__tracks'>
+				<div class="area-button" pv-anchor='big_button'>
+					<span pv-text="{{nav_title}}"></span>
+				</div>
+				<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
+			</div>
+			<div class="preview_area" pv-nest="vk__friends">
+				<div class="area_for_button" pv-anchor="button_area">
+					<div class="area-button" pv-anchor='big_button'>
+						<span pv-text="{{nav_title}}"></span>
+					</div>
+					<div class="area-description" >
+						<div class="desc_prevw_list" pv-anchor="listc"></div>
+					</div>
+				</div>
+				<div class="pl-auth-con" pv-anchor="auth_con"></div>
+			</div>
+			
 		</div>
 		<div class="lastfm_pthgs">
 			<div class="preview_area" pv-nest="lfm__friends">
@@ -430,20 +465,7 @@
 			
 			
 		</div>
-		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page {{!mp_show && 'hidden'}}">
-			<div class="lfm_user_page-header">
-				<img class="lfm_friend-ava" src="" alt="" pv-props="
-					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
-				<span class="lfm_friend-name" pv-text="{{username}}"></span>
-				<div class="lfm_friend-desc">
-					<span pv-text="{{big_desc}}"></span>
-				</div>
-				<div>
-					<a class="external" pv-props="href:{{'http://last.fm/user/' + username}}">last.fm profile</a>
-				</div>
-			</div>
-			
-		</div>
+
 		<div class="usual_page user_page">
 			<div class="internal_pthgs">
 				<div class="area_for_button" pv-nest='user-playlists'>
@@ -454,20 +476,33 @@
 				</div>
 				<div class="aqc_preview" pv-anchor="users_acqutes"></div>
 			</div>
-			<div class="vk_pthgs">
-				<div class="area_for_button" pv-nest='vk__tracks'>
-					<div class="area-button" pv-anchor='big_button'>
-						<span pv-text="{{nav_title}}"></span>
-					</div>
-					<div class="area-description desc_prevw_list" pv-anchor="listc"></div>
-				</div>
-				
-			</div>
-			
-			
 		</div>
-
-
+		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page {{!mp_show && 'hidden'}}">
+			<div class="lfm_user_page-header">
+				<img class="lfm_friend-ava" src="" alt="" pv-props="
+					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
+				<span class="lfm_friend-name" pv-text="{{userid}}"></span>
+				<div class="lfm_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+				<div>
+					<a pv-type="way-point" class="external" pv-props="href:{{'http://last.fm/user/' + userid}}">last.fm profile</a>
+				</div>
+			</div>
+		</div>
+		
+		<div class="vk_user_page usual_page" pv-class="vk_user_page usual_page {{!mp_show && 'hidden'}}">
+			<div class="vk_user_page-header">
+				<img class="vk_friend-ava" src="" alt="" pv-props="
+					src: {{ava_image.url}}">
+				<div class="vk_friend-desc">
+					<span pv-text="{{big_desc}}"></span>
+				</div>
+				<div>
+					<a pv-type="way-point" class="external" pv-props="href:{{'https://vk.com/id' + userid}}">vk.com profile</a>
+				</div>
+			</div>
+		</div>
 
 
 		<div class="usual_page albums_page">
@@ -694,7 +729,7 @@
 							pv-repeat="tag in preview_list" 
 							pv-type="hard-way-point" 
 							pv-events="click:showTag" 
-							pv-text="{{tag}}"></a></span>
+							pv-text="{{tag.name}}"></a></span>
 					</p>
 				</div>
 				<div class="artist-info">
@@ -736,14 +771,14 @@
 			
 		</div>
 		
-		<div class="song-row-content moplas-block">
-			<div class="show-all-songs hidden" pv-anchor="sall_songs">
+		<div class="song-row-content moplas-block" pv-class="song-row-content moplas-block {{want_more_songs && 'want_more_songs'}}">
+			<div class="show-all-songs hidden" pv-class="show-all-songs {{!must_be_expandable && 'hidden'}}">
 				<a pv-anchor='more_songs_b'><span class="lang localize-files">Files</span></a>
 				<span class="notifier hidden" pv-nest='notifier' pv-text='{{counter}}'></span>
 				
 			</div>
 			<div class="messages-c" pv-anchor='messages_c'>
-				<div class="cant_play_music_message hidden" pv-anchor='cant_play_music_message'>
+				<div class="cant_play_music_message hidden" pv-class="cant_play_music_message {{!cant_play_music && 'hidden'}}" >
 					Что бы приложение воспроизводило музыку установите флеш или воспользуйтесь браузером поддерживающим воспроизведение mp3 с помощью HTML5 audio (например Chrome или Safari)
 				</div>
 			</div>
@@ -835,8 +870,8 @@
 		</ul>
 			
 		<div class="track-context" >
-			<div class="song-actions" pv-anchor="song-actions">
-				<div class="track-panel">
+			<div class="song-actions" pv-anchor="song-actions" pv-nest="actionsrow">
+				<div class="track-panel" pv-anchor="buttons_panel">
 					<div class="buttons-panel">
 						<div class="nice-buttons-place">
 							<span class="pc-place">
@@ -853,6 +888,10 @@
 							<span class="pc-place">
 								<a class="pc pc-love "  title="love song"></a>
 							</span>
+							<span class="pc-place">
+								<a class="pc pc-tag "  title="tag song"></a>
+							</span>
+							
 						</div>
 						<ul class="track-buttons">
 							<li class="scrobbling-button"  title="Last.fm scrobbling">
@@ -861,7 +900,7 @@
 							<li class="rept-song-button-wrap">
 								<a  class="trackbutton rept-song-button"></a>
 							</li>
-							<li class="volume-control">
+							<li class="volume-control" pv-anchor="volume-control">
 								<div class="v-hole" pv-anchor="v-hole">
 									<div class="v-bar" pv-anchor="v-bar" pv-props="style.width: {{vis_volume}}"></div>
 								</div>
@@ -872,8 +911,8 @@
 					</div>
 					
 				</div>
-				<div class="song-row-content row-song-context hidden">
-					<span class="rc-arrow hidden">
+				<div class="song-row-content row-song-context hidden" pv-anchor="row_context">
+					<span class="rc-arrow hidden" pv-anchor="arrow">
 						<span class=" rc-s-arrow arrow-part"><span class="rc-s-arrow-bg arrow-part"></span></span>
 					</span>
 					<div class="addsong-to-playlist hidden">
@@ -884,9 +923,19 @@
 					</div>
 					<div class="share-song hidden">
 						<input type="text" readonly="readonly" class="song-link"/>
+						<div class="shareb-base vk_share users-list" pv-anchor="vk_share_b">
+							<span class="shareb-button" pv-events="click:switchClass:sharebopened:vk_share_b">vk.com</span>
+							<span class="shareb-desc"></span>
+							<div class="shareb-con" pv-anchor="vk_share"></div>
+						</div>
+						<div class="shareb-base lfm_share" pv-anchor="lfm_share_b">
+							<span class="shareb-button" pv-events="click:switchClass:sharebopened:lfm_share_b">last.fm</span>
+							<span class="shareb-desc"></span>
+							<div class="shareb-con" pv-anchor="lfm_share"></div>
+						</div>
 					</div>
 					<div class="love-song hidden"></div>
-
+					<div class="song-tagging hidden"></div>
 					<div class="last-fm-scrobbling hidden"></div>
 					<div class="one-song-repeat hidden"></div>
 					<div class="rept-song hidden">
@@ -909,7 +958,7 @@
 					</span>
 					<div class="big-listener-info" pv-anchor="big-listener-info"></div>
 				</div>
-				<div class="song_fans-b-intrack" pv-nest="fans" pv-events="click::requestPage">
+				<div class="song_fans-b-intrack" pv-nest="fans" pv-events="click::requestPage" pv-type="way-point">
 					<div class="song_fans-h-intrack">
 						Last.fm <br/> song fans
 					</div>
@@ -917,10 +966,10 @@
 						<div
 							pv-nest="list_items | limitTo: 13"
 							class="song_fan-b-tck hidden" 
-							pv-class="song_fan-b-tck {{!username && 'hidden'}}"
-							pv-props="title:{{username}}"
+							pv-class="song_fan-b-tck {{!userid && 'hidden'}}"
+							pv-props="title:{{userid}}"
 							>
-							<div pv-text="{{username}}" class="song_fan-h-tck"></div>
+							<div pv-text="{{userid}}" class="song_fan-h-tck"></div>
 							<img src="" alt=""
 								class="hidden"
 								pv-anchor="user-image"
@@ -1051,7 +1100,49 @@
 					</div>	
 				</div>
 			</div>
-		</div>		
+		</div>
+		<div class="song-act-tagging">
+			<input type="text" pv-events="keyup:changeTags change:changeTags search:changeTags mousemove:changeTags" pv-anchor="tags-input"/>
+			<div class="save_tags_b hidden" pv-class="save_tags_b {{!has_changes && 'hidden'}}">
+				<span class="button-hole">
+					<span class="nicebutton" pv-events="click::saveTagsChanges">save</span>
+				</span>
+			</div>
+			
+			<div class="possible_tags">
+				<div class="tagging_help">
+					<span pv-repeat="tag in possible_tags" pv-text="{{tag}}"></span>
+				</div>
+
+			</div>
+			<div class="song_tagging_help">
+				<div class="personal_tags">
+					<h4 class="tagging_header" pv-class="{{petags_result.length && 'has_tags'}}  tagging_header" >Your tags</h4>
+					<div class="tagging_help">
+						<span pv-repeat="tag in petags_result | limitTo:25" pv-text="{{tag}}" pv-events="click:addTag"></span>
+					</div>
+					
+				</div>
+
+				
+				<div class="top_tags">
+					<h4 class="tagging_header" pv-class="{{toptags.length && 'has_tags'}}  tagging_header">Top tags of track</h4>
+					<div class="tagging_help">
+						<span pv-repeat="tag in toptags | limitTo:25" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}" pv-events="click:addTag"></span>
+					</div>
+					
+				</div>
+				
+				<div class="artist_tags">
+					<h4 class="tagging_header" pv-class="{{artist_tags.length && 'has_tags'}} tagging_header">Artist tags</h4>
+					<div class="tagging_help">
+						<span pv-repeat="tag in artist_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag"></span>
+					</div>
+				</div>
+			</div>
+			
+			
+		</div>
 		
 		<form class="scrobbling-switches">
 			<p>scrobbling to last.fm</p>

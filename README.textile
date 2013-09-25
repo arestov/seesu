@@ -1,6 +1,6 @@
 h1. Seesu (Music app)
 
-!http://img-fotki.yandex.ru/get/6311/58926335.1/0_9f637_ad801063_orig!:http://seesu.me/
+!http://img-fotki.yandex.ru/get/9110/58926335.1/0_b696a_5cce2c26_orig!:http://seesu.me/
 
 Get music you like from last.fm and play it with vk.com
 
@@ -18,7 +18,7 @@ Alexander Belov <porqz@mesquite.ru>
 
 Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php) license.
 
-баг con-appended
+баг con_appended
 необходим рефакторинг lfm_image
 
 проверять работоспособность "истории"
