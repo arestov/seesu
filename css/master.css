@@ -31,7 +31,29 @@ html.not-as-application, .not-as-application  body{
 .not-as-application .slider-materail{
 	padding-bottom:15px;
 }
-
+.big_spinner:after, .app-loading-mark:after, .wait_love_done .add-to-lfmfav:after, .artists_list.list_loading_state:after, ul.tracks-for-play.loading:after, .photo-cont.loading-images:after{
+	position: absolute;
+	top:0;
+	left:0;
+	content: url(../i/spinner.svg);
+	height: 1.72rem;
+	width: 1.72rem;
+	pointer-events: none;
+}
+.small_spiner:after,
+.selected-mf.buffering-progress .mf-progress:after,
+.block-for-startpage.loading:after,
+#search #search-p label span.loading:after,
+.search_results-container h4.loading:after,
+.art_card-bio.loading:after{
+	position: absolute;
+	top:0;
+	left:0;
+	content: url(../i/spinner.svg);
+	height: 1.143rem;
+	width: 1.143rem;
+	pointer-events: none;
+}
 
 .keys-navigation-focus{
 	box-shadow: 0 0 3pt 2pt orange;
@@ -40,9 +62,10 @@ html.not-as-application, .not-as-application  body{
 .app-loading-mark{
 	margin: 1rem 0;
 	height: 1.72rem;
-	background: url(../i/spinner.svg) no-repeat;
-	background-size: 1.714rem;
+	
+	position: relative;
 	}
+
 	.app-loaded .app-loading-mark{
 		display: none;
 		}
@@ -232,9 +255,12 @@ html.not-as-application, .not-as-application  body{
 				font-size: inherit;
 				}
 		.selected-mf.buffering-progress .mf-progress{
-			background:url(../i/spinner.svg) no-repeat ;
-			background-position: 95% 50%;
-			background-size: 1.143rem;
+			position: relative;
+			}
+		.selected-mf.buffering-progress .mf-progress:after{
+			right: 5%;
+			top:50%;
+			left:auto;
 			}
 	.moplas-block .moplas-list li.overstocked{
 		display: none;
@@ -281,11 +307,15 @@ html.not-as-application, .not-as-application  body{
 .has_session .add-to-lfmfav{
 	opacity: 1;
 	}
+
 .wait_love_done .add-to-lfmfav{
-	background: url(../i/spinner.svg) no-repeat;
-	background-position:  100% 0;
-	background-size: 1.714rem;
-}
+	position: relative;
+	}
+	.wait_love_done .add-to-lfmfav:after{
+		right:0;
+		top:0;
+		left:auto;
+		}
 .add-to-lfmfav{
 	margin-top:1rem;
 	opacity: 0.3;
@@ -445,20 +475,26 @@ html.not-as-application, .not-as-application  body{
 
 
 .artists_list.list_loading_state{
+	position: relative;
 	padding-bottom: 2rem;
-	background: url(../i/spinner.svg) no-repeat ;
-	background-position: 0.5rem 100%;
-	background-size: 1.714rem;
+	}
+	.artists_list.list_loading_state:after{
+		left:0.5rem;
+		top:auto;
+		bottom: 0;
 	}
 .tracks-for-play{
 	clear:both;
 	}
 	ul.tracks-for-play.loading{
+		position: relative;
 		padding-bottom: 30px;
-		background: url(../i/spinner.svg) no-repeat ;
-		background-position: 4px 100%;
-		background-size: 1.714rem;
 	}
+	ul.tracks-for-play.loading:after{
+		left:0.3rem;
+		top:auto;
+		bottom: 0;
+		}
 	ul.tracks-for-play > li{
 		position:relative;
 		margin: 0 0 0 0;
@@ -468,10 +504,11 @@ html.not-as-application, .not-as-application  body{
 	overflow: hidden;
 	height:135px;
 	}
-	.photo-cont.loading-images{
-		background: url(../i/spinner.svg) no-repeat ;
-		background-position: 100% 0;
-		background-size: 1.714rem;
+
+	.photo-cont.loading-images:after{
+		left:auto;
+		right:0;
+
 		}
 	@media (min-height:600px) {
 		.photo-cont{
@@ -832,9 +869,12 @@ html.not-as-application, .not-as-application  body{
 
 .block-for-startpage.loading{
 	min-height:30px;
-	background: url(../i/spinner.svg) no-repeat ;
-	background-position: 100% 4px;
-	background-size: 1.143rem;
+	position: relative;
+}
+.block-for-startpage.loading:after{
+	left:auto;
+	right:0;
+	top:0.2rem;
 }
 .block-for-startpage h3{
 	overflow:hidden;
@@ -895,9 +935,13 @@ html.not-as-application, .not-as-application  body{
 		font-style:normal;
 	}
 	#search #search-p label span.loading{
-		background: url(../i/spinner.svg) no-repeat ;
-		background-position: 100% 50%;
-		background-size: 1.143rem;
+		position: relative;
+	}
+	#search #search-p label span.loading:after{
+		left:auto;
+		right:0;
+		top:50%;
+		margin-top: -0.6rem;
 	}
 	#search #search-p label span.inpt{
 		display:block;
