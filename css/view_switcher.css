@@ -240,11 +240,14 @@
 		float: right;
 		width: 50%;
 		}
+
 		.art_card-bio.loading{
 			min-height:20px;
-			background: url(../i/spinner.svg) no-repeat ;
-			background-position: 100% 0%;
-			background-size: 1.143rem;
+			position: relative;
+			}
+			.art_card-bio.loading:after{
+				left: auto;
+				right: 0;
 			}
 	.page-scheme .art_card-bio{
 		display: none;
