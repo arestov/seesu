@@ -45,7 +45,8 @@ html.not-as-application, .not-as-application  body{
 .block-for-startpage.loading:after,
 #search #search-p label span.loading:after,
 .search_results-container h4.loading:after,
-.art_card-bio.loading:after{
+.art_card-bio.loading:after,
+.vk-login-context.waiting-auth .deco:after{
 	position: absolute;
 	top:0;
 	left:0;
