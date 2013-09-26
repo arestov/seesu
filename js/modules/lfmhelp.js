@@ -7,7 +7,7 @@ var parseArtistsResults = function(r, sectionItem){
 	var artists = r.results.artistmatches.artist || false; 
 	artists = artists && spv.toRealArray(artists, 'name');
 	for (var i=0; i < artists.length; i++) {
-		artists_results.push(    
+		artists_results.push(
 			{
 				artist: artists[i].name,
 				image:artists[i].image && artists[i].image[1]['#text'].replace('/serve/64/','/serve/64s/')
@@ -23,13 +23,13 @@ var parseTracksResults = function(r, sectionItem){
 	var tracks = r.results.trackmatches.track || false; 
 	tracks = tracks && spv.toRealArray(tracks, 'name');
 	for (var i=0; i < tracks.length; i++) {
-		tracks_results.push(    
+		tracks_results.push(
 			{
 				artist: tracks[i].artist,
 				track: tracks[i].name,
 				image: tracks[i].image && tracks[i].image[1]['#text'].replace('/serve/64/','/serve/64s/')
 
-			}   
+			}
 		);
 	}
 	return tracks_results;
@@ -120,8 +120,8 @@ var parseFastSuggests = function(r){
 	var sugg_albums = spv.filter(r.response.docs, 'restype', 8);
 	$.each(sugg_albums, function(i, el){
 		sugg_albums[i] = {
-			artist: el.artist, 
-			album: el.album, 
+			artist: el.artist,
+			album: el.album,
 			image: el.image ? ('http://userserve-ak.last.fm/serve/34s/' + el.image) : false,
 			resid: el.resid
 		};

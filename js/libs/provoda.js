@@ -2243,7 +2243,7 @@ spv.Class.extendTo(Template, {
 			var space = cur.space || 'main';
 			if (cur.for_model){
 				var field = [real_name, 'by_model_name', space];
-				var storage = this.getTargetField(result, field);
+				var storage = spv.getTargetField(result, field);
 				if (!storage){
 					storage = {index: {}};
 					spv.setTargetField(result, field, storage);
@@ -2254,7 +2254,7 @@ spv.Class.extendTo(Template, {
 					$(cur.node).before(storage.comment_anchor);
 				}
 				cur.original_node = cur.node;
-				cur.node.remove();
+				$(cur.node).remove();
 
 				storage.index[cur.for_model] = cur;
 			} else {
@@ -3041,6 +3041,60 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	getMdChild: function(name) {
 		return this.children_models[name];
 	},
+	checkCollchItemAgainstPvViewByModelName: function(name, real_array, space_name, pv_v_data) {
+		var filtered = [];
+
+		for (var i = 0; i < real_array.length; i++) {
+			var cur = real_array[i];
+			if (cur.model_name && pv_v_data.index[cur.model_name]){
+				filtered.push(cur);
+			}
+		}
+
+		var getFreeView = function(cur_md, node_to_use) {
+			var pv_view = pv_v_data.index[cur_md.model_name];
+			if (!pv_view){
+				return;
+			}
+
+			var view = this.getFreeChildView({
+				name: cur_md.model_name,
+				space: space_name,
+				sampleController: provoda.Controller
+			}, cur_md);
+
+			if (view){
+				if (!node_to_use){
+					node_to_use = pv_view.original_node.cloneNode(true);
+				}
+				view.pv_view_node = $(node_to_use);
+				//var model_name = mmm.model_name;
+
+				pv_view.node = null;
+				pv_view.views.push(view.view_id);
+
+				pv_view.last_node = node_to_use;
+				return view;
+			}
+		};
+		//var filtered = pv_view.filterFn ? pv_view.filterFn(real_array) : real_array;
+
+		this.appendCollection(space_name, {
+			/*getView: pv_view.node && function(cur_md, space, preffered) {
+				if (pv_view.node){
+					if (!preffered || preffered.indexOf(cur_md) != -1){
+						return getFreeView.call(this, cur_md, pv_view.node);
+					}
+				}
+			},*/
+			appendDirectly: function(fragt) {
+				$(pv_v_data.comment_anchor).after(fragt);
+			},
+			getFreeView: function(cur) {
+				return getFreeView.call(this, cur);
+			}
+		}, false, name, filtered);
+	},
 	checkCollchItemAgainstPvView: function(name, real_array, space_name, pv_view) {
 		if (!pv_view.original_node){
 			pv_view.original_node = pv_view.node.cloneNode(true);
@@ -3119,6 +3173,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var pv_views_complex_index = spv.getTargetField(this, this.tpl_children_prefix + name);
 		if (pv_views_complex_index){
 			var space_name;
+			array = spv.toRealArray(array);
 			for (space_name in pv_views_complex_index.usual){
 				this.removeViewsByMds(removed, space_name);
 			}
@@ -3127,10 +3182,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			}
 
 			for (space_name in pv_views_complex_index.usual){
-				this.checkCollchItemAgainstPvView(name, spv.toRealArray(array), space_name, pv_views_complex_index.usual[space_name]);
+				this.checkCollchItemAgainstPvView(name, array, space_name, pv_views_complex_index.usual[space_name]);
 			}
 			for (space_name in pv_views_complex_index.by_model_name){
-
+				this.checkCollchItemAgainstPvViewByModelName(name, array, space_name, pv_views_complex_index.by_model_name[space_name]);
 			}
 			/*
 			for (var 

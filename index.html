@@ -1151,8 +1151,204 @@
 			<p><label><input type="radio"  disabled="disabled" class="enable-scrobbling" /> enabled</label></p>	
 			<p><label><input type="radio"  disabled="disabled" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
 		</form>
-		<div class="search_results-container" pv-class="search_results-container {{!mp_show && 'hidden'}}">
+		<div class="search_results-container" pv-class="search_results-container {{!mp_show && 'hidden'}} {{!needs_search_from && 'does-not-need-search-from'}}">
 			<p class="search-desc lang localize-search-control-hint"></p>
+			<!--<div pv-nest="section for_model:section-tag">
+				<h4 class="" style="display: block;" pv-text="{{section_title}}">Артисты</h4>
+				<ul class="sugg-section results-suggests active-section">
+					<li pv-nest="rendering_list" pv-text="{{}}">
+						11
+					</li>
+					<li class="suggest"><a><img src="http://userserve-ak.last.fm/serve/34s/364727.jpg" alt="Beastie Boys"><span>Beastie Boys</span></a></li>
+					<li class="suggest"><a><img src="http://userserve-ak.last.fm/serve/34s/2566314.jpg" alt="Wild Beasts"><span>Wild Beasts</span></a></li>
+					<li class="suggest"><button type="button"><span>Найти больше «beas» артистов</span></button></li>
+				</ul>
+			</div>-->
+			<div
+				pv-nest="section for_model:section-tag"
+				pv-class="{{!active && 'hidden'}}">
+				<h4 pv-text="{{section_title}}" pv-class="{{loading && 'loading'}}"></h4>
+				<ul
+					class="sugg-section results-suggests"
+					pv-class="sugg-section results-suggests {{odd_section && 'odd_section'}} {{active && 'active-section'}}">
+					<li
+						pv-nest="rendering_list"
+						class="suggest text_title"
+						pv-type="way-point" pv-events="click::view"
+						pv-class="suggest 
+							{{!text_title && 'hidden'}}
+							{{bordered && 'searched-bordered'}}
+							{{disabled && 'hidden'}}
+						">
+						<a pv-class="{{active && 'active'}}" >
+							<span pv-text="{{text_title}}"></span>
+						</a>
+					</li>
+					<li class="suggest" pv-nest="button"
+						pv-type="way-point" pv-events="click::view"
+						pv-class="
+							suggest
+							{{bordered && 'searched-bordered'}}
+							{{disabled && 'hidden'}}
+						">
+						<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+					</li>
+					<li  pv-class="{{!no_results_text && 'hidden'}}">
+						<a pv-text="{{no_results_text}}"></a>
+					</li>
+				</ul>
+			</div>
+			<div
+				pv-nest="section for_model:section-artist"
+				pv-class="{{!active && 'hidden'}}">
+				<h4 pv-text="{{section_title}}" pv-class="{{loading && 'loading'}}"></h4>
+				<ul
+					class="sugg-section results-suggests"
+					pv-class="sugg-section results-suggests {{odd_section && 'odd_section'}} {{active && 'active-section'}}">
+					<li
+						pv-nest="rendering_list"
+						class="suggest text_title"
+						pv-type="way-point" pv-events="click::view"
+						pv-class="suggest 
+							{{!text_title && 'hidden'}}
+							{{bordered && 'searched-bordered'}}
+							{{disabled && 'hidden'}}
+						">
+
+						<a pv-class="{{active && 'active'}}" >
+							<img
+								pv-props="
+									src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
+									alt: {{text_title}}
+								"
+								src="http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png">
+							<span pv-text="{{text_title}}"></span>							
+						</a>
+					</li>
+					<li class="suggest" pv-nest="button"
+						pv-type="way-point" pv-events="click::view"
+						pv-class="
+							suggest
+							{{bordered && 'searched-bordered'}}
+							{{disabled && 'hidden'}}
+						">
+						<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+					</li>
+					<li  pv-class="{{!no_results_text && 'hidden'}}">
+						<a pv-text="{{no_results_text}}"></a>
+					</li>
+				</ul>
+			</div>
+			<div
+				pv-nest="section for_model:section-album"
+				pv-class="{{!active && 'hidden'}}">
+				<h4 pv-text="{{section_title}}" pv-class="{{loading && 'loading'}}"></h4>
+				<ul
+					class="sugg-section results-suggests"
+					pv-class="sugg-section results-suggests {{odd_section && 'odd_section'}} {{active && 'active-section'}}">
+					<li
+						pv-nest="rendering_list"
+						class="suggest text_title"
+						pv-type="way-point" pv-events="click::view"
+						pv-class="suggest 
+							{{!text_title && 'hidden'}}
+							{{bordered && 'searched-bordered'}}
+							{{disabled && 'hidden'}}
+						">
+
+						<a pv-class="{{active && 'active'}}" >
+							<img
+								pv-props="
+									src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
+									alt: {{text_title}}
+								"
+								src="http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png">
+							<span class="suggest-artist_name" pv-text="{{artist}}"></span>
+							<span class="suggest-suggest-album_name" pv-text="{{name}}"></span>						
+						</a>
+					</li>
+					<li class="suggest" pv-nest="button"
+						pv-type="way-point" pv-events="click::view"
+						pv-class="
+							suggest
+							{{bordered && 'searched-bordered'}}
+							{{disabled && 'hidden'}}
+						">
+						<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+					</li>
+					<li  pv-class="{{!no_results_text && 'hidden'}}">
+						<a pv-text="{{no_results_text}}"></a>
+					</li>
+				</ul>
+			</div>
+			<div
+				pv-nest="section for_model:section-track"
+				pv-class="{{!active && 'hidden'}}">
+				<h4 pv-text="{{section_title}}" pv-class="{{loading && 'loading'}}"></h4>
+				<ul
+					class="sugg-section results-suggests"
+					pv-class="sugg-section results-suggests {{odd_section && 'odd_section'}} {{active && 'active-section'}}">
+					<li
+						pv-nest="rendering_list"
+						class="suggest text_title"
+						pv-type="way-point" pv-events="click::view"
+						pv-class="suggest 
+							{{!text_title && 'hidden'}}
+							{{bordered && 'searched-bordered'}}
+							{{disabled && 'hidden'}}
+						">
+
+						<a pv-class="{{active && 'active'}}" >
+							<img
+								pv-props="
+									src: {{image || 'http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png'}}
+									alt: {{text_title}}
+								"
+								src="http://cdn.last.fm/flatness/catalogue/noimage/2/default_artist_medium.png">
+							<span class="sugg-track-dur" pv-text="{{duration_text}}"></span>
+							<span class="suggest-track_name" pv-text="{{track}}"></span>
+							<span class="suggest-artist_name" pv-text="{{artist}}"></span>					
+						</a>
+					</li>
+					<li class="suggest" pv-nest="button"
+						pv-type="way-point" pv-events="click::view"
+						pv-class="
+							suggest
+							{{bordered && 'searched-bordered'}}
+							{{disabled && 'hidden'}}
+						">
+						<button type="button"  ><span pv-text="{{button_text}}"></span></button>
+					</li>
+					<li  pv-class="{{!no_results_text && 'hidden'}}">
+						<a pv-text="{{no_results_text}}"></a>
+					</li>
+				</ul>
+			</div>
+			<div
+				pv-nest="section for_model:section-playlist"
+				pv-class="{{!active && 'hidden'}}"
+				class="hidden">
+				<h4 pv-text="{{section_title}}" pv-class="{{loading && 'loading'}}"></h4>
+				<ul
+					class="sugg-section results-suggests playlist-results"
+					pv-class="sugg-section results-suggests playlist-results {{odd_section && 'odd_section'}} {{active && 'active-section'}}">
+					<li
+						pv-nest="rendering_list"
+						class="suggest text_title"
+						pv-type="way-point" pv-events="click::view"
+						pv-class="suggest 
+							{{!text_title && 'hidden'}}
+							{{bordered && 'searched-bordered'}}
+							{{disabled && 'hidden'}}
+						">
+						<a pv-class="{{active && 'active'}}" >
+							<span pv-text="{{text_title}}"></span>
+						</a>
+					</li>
+
+				</ul>
+			</div>
+
 		</div>
 		<!-- // ui samples -->
 	</div>

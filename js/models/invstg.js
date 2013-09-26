@@ -38,6 +38,11 @@ var artistSuggest = function(data){
 	this.artist = data.artist;
 	this.image = data.image;
 	this.text_title = this.getTitle();
+	this.updateManyStates({
+		artist: data.artist,
+		image: data.image,
+		text_title: this.text_title
+	});
 };
 
 
@@ -58,6 +63,9 @@ var playlistSuggest = function(data){
 	this.init();
 	this.pl = data.playlist;
 	this.text_title = this.getTitle();
+	this.updateManyStates({
+		text_title: this.text_title
+	});
 };
 BaseSuggest.extendTo(playlistSuggest, {
 	valueOf: function(){
@@ -88,6 +96,7 @@ SearchSection.extendTo(seesuSection, {
 			this.setButtonText();
 			this.updateNesting('button', this.button);
 		}
+
 	}
 });
 
@@ -158,6 +167,7 @@ var trackSuggest = function(data){
 		this.updateState('duration_text', track_dur);
 	}
 	this.text_title = this.getTitle();
+	this.updateState('text_title', this.text_title);
 };
 BaseSuggest.extendTo(trackSuggest, {
 	valueOf: function(){
@@ -216,6 +226,12 @@ var tagSuggest = function(data){
 		this.image = data.image;
 	}
 	this.text_title = this.getTitle();
+
+	this.updateManyStates({
+		tag: data.tag,
+		image: data.image,
+		text_title: this.text_title
+	});
 };
 
 BaseSuggest.extendTo(tagSuggest, {
@@ -278,6 +294,9 @@ var albumSuggest = function(data){
 		this.aid = data.resid;
 	}
 	this.text_title = this.getTitle();
+	this.updateManyStates({
+		text_title: this.text_title
+	});
 };
 BaseSuggest.extendTo(albumSuggest, {
 	valueOf: function(){
