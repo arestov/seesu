@@ -164,8 +164,8 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 			}
 			return r;
 		},
-		changeQuery: function(q){
-			if (this.q != q){
+		changeQuery: function(q, force){
+			if (this.q != q || force){
 				this.stopRequests();
 				if (this.getTitleString){
 					this.updateState('nav_title', this.getTitleString(q));

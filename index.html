@@ -1151,19 +1151,25 @@
 			<p><label><input type="radio"  disabled="disabled" class="enable-scrobbling" /> enabled</label></p>	
 			<p><label><input type="radio"  disabled="disabled" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
 		</form>
+		<div class="song_acting_playlist_add">
+			<ul pv-nest="section for_model:section-playlist">
+				<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="suggest">
+					<a pv-text="{{text_title}}"></a>
+				</li>
+			</ul>
+		</div>
+		<div class="song_acting_vk_search">
+			<ul pv-nest="section for_model:section-vk-users">
+				<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+					<a>
+						<img pv-props="src:{{photo}}">
+						<span pv-text="{{text_title}}"></span>
+					</a>
+				</li>
+			</ul>
+		</div>
 		<div class="search_results-container" pv-class="search_results-container {{!mp_show && 'hidden'}} {{!needs_search_from && 'does-not-need-search-from'}}">
 			<p class="search-desc lang localize-search-control-hint"></p>
-			<!--<div pv-nest="section for_model:section-tag">
-				<h4 class="" style="display: block;" pv-text="{{section_title}}">Артисты</h4>
-				<ul class="sugg-section results-suggests active-section">
-					<li pv-nest="rendering_list" pv-text="{{}}">
-						11
-					</li>
-					<li class="suggest"><a><img src="http://userserve-ak.last.fm/serve/34s/364727.jpg" alt="Beastie Boys"><span>Beastie Boys</span></a></li>
-					<li class="suggest"><a><img src="http://userserve-ak.last.fm/serve/34s/2566314.jpg" alt="Wild Beasts"><span>Wild Beasts</span></a></li>
-					<li class="suggest"><button type="button"><span>Найти больше «beas» артистов</span></button></li>
-				</ul>
-			</div>-->
 			<div
 				pv-nest="section for_model:section-tag"
 				pv-class="{{!active && 'hidden'}}">

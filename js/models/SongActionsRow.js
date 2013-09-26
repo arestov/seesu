@@ -83,6 +83,10 @@ var struserSuggest = function(wrap) {
 	this.online = this.online;
 	//this.name = user.name;
 	this.text_title = user.first_name + " " + user.last_name;
+	this.updateManyStates({
+		photo: user.photo,
+		text_title: this.text_title
+	});
 };
 invstg.BaseSuggest.extendTo(struserSuggest, {
 	valueOf: function(){

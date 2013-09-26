@@ -1279,14 +1279,14 @@ iframe.you-tube-video,embed.you-tube-video{
 		
 		margin-top:1.72rem;
 		}
-		.share-song .users-list .search_results-block{
+		.share-song .song_acting_vk_search{
 			overflow: hidden;
 			}
 		.share-song .users-list .vk-login-context{
 			margin:1rem -1rem 0;
 			border-radius: 0;
 		}
-		.share-song .users-list .search_results-block{
+		.share-song .song_acting_vk_search{
 			margin-top:1rem;
 		}
 		.share-song .users-list .suggest{

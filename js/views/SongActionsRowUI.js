@@ -1,57 +1,23 @@
-define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './SearchPageViewBase', './SongActTaggingControl'], function(provoda, $, spv, app_serv, etc_views, SearchPageViewBase, SongActTaggingControl) {
+define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(provoda, $, spv, app_serv, etc_views, SongActTaggingControl) {
 "use strict";
 var localize = app_serv.localize;
 
-var baseSuggestUI = function(){};
-provoda.extendFromTo('baseSuggestView', provoda.View, baseSuggestUI);
-var searchSectionUI = function(){};
-provoda.extendFromTo("searchSectionView", provoda.View, searchSectionUI);
-var investigationView  = function(){};
-provoda.extendFromTo('InvestigationView', provoda.View, investigationView);
 
-
-var struserSuggestView = function() {};
-baseSuggestUI.extendTo(struserSuggestView, {
-	createItem: function() {
-		var that = this.mpx.md;
-		this.a = $('<a></a>')
-			.text(that.text_title)
-			.appendTo(this.c);
-		$('<img />').attr("src", that.photo).prependTo(this.a);
-		this.c.addClass('share-user-suggest');
-		return this;
+var PlaylistAddSearchCtr = function() {};
+provoda.View.extendTo(PlaylistAddSearchCtr, {
+	createBase: function() {
+		this.c = this.root_view.getSample('song_acting_playlist_add');
+		this.createTemplate();
 	}
 });
 
-var ShSSectionView = function() {};
-searchSectionUI.extendTo(ShSSectionView, {
-	children_views: {
-		item: struserSuggestView
+var VkShareSearchCtr = function() {};
+provoda.View.extendTo(VkShareSearchCtr, {
+	createBase: function() {
+		this.c = this.root_view.getSample('song_acting_vk_search');
+		this.createTemplate();
 	}
 });
-
-var ShareSearchView = function() {};
-investigationView.extendTo(ShareSearchView, {
-	children_views: {
-		"section-vk-users": ShSSectionView
-	}
-});
-
-var PASSectionView = function() {};
-searchSectionUI.extendTo(PASSectionView, {
-	children_views: {
-		item: baseSuggestUI
-	}
-	
-});
-
-var PlaylistAddSsearchView = function() {};
-investigationView.extendTo(PlaylistAddSsearchView, {
-	children_views: {
-		"section-playlist": PASSectionView
-	}
-});
-
 
 
 
@@ -59,7 +25,7 @@ var ShareRowUI = function(){};
 etc_views.BaseCRowUI.extendTo(ShareRowUI, {
 	children_views: {
 		vk_auth: etc_views.VkLoginUI,
-		searcher: ShareSearchView
+		searcher: VkShareSearchCtr
 	},
 	createDetails: function(){
 		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
@@ -124,7 +90,7 @@ etc_views.BaseCRowUI.extendTo(ShareRowUI, {
 				var searcher_ui = this.getFreeCV('searcher');
 				$(searcher_ui.getA()).insertBefore(this.getPart("pch-ws-friends"));
 				this.requestAll();
-				searcher_ui.setVisState('must_be_expanded', true);
+				//searcher_ui.setVisState('must_be_expanded', true);
 				
 				this.RPCLegacy('search', "");
 			}
@@ -204,7 +170,7 @@ etc_views.BaseCRowUI.extendTo(ShareRowUI, {
 var SongActPlaylistingUI = function() {};
 etc_views.BaseCRowUI.extendTo(SongActPlaylistingUI, {
 	children_views: {
-		searcher: PlaylistAddSsearchView
+		searcher: PlaylistAddSearchCtr
 	},
 	createDetails: function(){
 		var parent_c = this.parent_view.row_context;
@@ -239,11 +205,9 @@ etc_views.BaseCRowUI.extendTo(SongActPlaylistingUI, {
 		this.pl_creation_b.append(localize("cr-new-playlist") + ' "').append(this.pl_creation_b_text).append('"');
 		this.lpl.append(this.pl_creation_b);
 
+		this['collch-searcher'] = 'lpl';
+		this.checkCollectionChange('searcher');
 
-		var searcher_ui = this.getFreeCV('searcher');
-		this.lpl.append(searcher_ui.getA());
-		this.requestAll();
-		searcher_ui.setVisState('must_be_expanded', true);
 		
 		this.RPCLegacy('search', "");
 
@@ -262,16 +226,15 @@ etc_views.BaseCRowUI.extendTo(SongActPlaylistingUI, {
 		}
 	},
 	state_change: {
-		query: function(state) {
+		need_creation_button: function(state) {
 			if (this.pl_creation_b){
-				if (state){
-					this.pl_creation_b_text.text(state);
-					this.pl_creation_b.removeClass('hidden');
-				} else {
-					this.pl_creation_b.addClass('hidden');
-				}
+				this.pl_creation_b.toggleClass('hidden', !state);
 			}
-			
+		},
+		query: function(state) {
+			if (this.pl_creation_b_text){
+				this.pl_creation_b_text.text(state);
+			}
 		}
 	}
 	
