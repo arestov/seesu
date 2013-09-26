@@ -195,8 +195,20 @@ investigationView.extendTo(SearchPageView, {
 		this.c.toggleClass('does-not-need-search-from', !state);
 	},
 	createBase: function() {
-		this.c = $('<div class="search_results-container"></div>');
-		$('<p class="search-desc"></p>').text(localize('search-control-hint')).appendTo(this.c);
+		this.c = this.root_view.getSample('search_results-container');
+		this.createTemplate();
+
+		//this.c = $('<div class="search_results-container"></div>');
+		//$('<p class="search-desc"></p>').text(localize('search-control-hint')).appendTo(this.c);
+	},
+	'stch-mp_show': function(opts) {
+		if (opts){
+			if (!opts.transit){
+				this.expand();
+			}
+		} else {
+
+		}
 	}
 });
 return SearchPageView;
