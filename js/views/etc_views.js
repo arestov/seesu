@@ -317,8 +317,7 @@ provoda.View.extendTo(BaseCRowUI, {
 		}
 	},
 	getButtonPos: function(){
-		var button_shift = this.button_shift || 0;
-		return this.button.offset().left + (this.button.outerWidth()/2) + button_shift;
+		return this.button.offset().left + (this.button.outerWidth()/2);
 	},
 	"stch-active_view": function(state){
 		if (state){

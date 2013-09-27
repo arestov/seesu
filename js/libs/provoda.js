@@ -2805,7 +2805,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._anchor = null;
 		this.tpl = null;
 		this.way_points = null;
-
+		if (this.pv_view_node){
+			this.pv_view_node = null;
+		}
+		
 
 		var i;
 		if (this.dom_related_props){

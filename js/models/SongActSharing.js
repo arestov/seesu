@@ -85,7 +85,9 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 
 
 var VKSongSharing = function() {};
+invstg.Investigation.extendTo(VKSongSharing, {
 
+});
 
 
 var SongActSharing = function(actionsrow, mo){
@@ -101,6 +103,11 @@ comd.BaseCRow.extendTo(SongActSharing, {
 		this.app = mo.app;
 		this.mo = mo;
 		this._super();
+
+		this.wch(this.mo, 'url_part', this.hndUpdateShareURL);
+
+		
+
 		if (app_env.vkontakte || su.vk_api){
 			this.updateState("can_post_to_own_wall", true);
 		} else {
@@ -142,7 +149,7 @@ comd.BaseCRow.extendTo(SongActSharing, {
 		this.updateNesting('searcher', this.searcher);
 
 
-		this.wch(this.mo, 'url_part', this.hndUpdateShareURL);
+		
 
 
 		
@@ -192,7 +199,7 @@ comd.BaseCRow.extendTo(SongActSharing, {
 		//to find you friends
 
 
-		this.updateState("needs_vk_auth ", true);
+		this.updateState("needs_vk_auth", true);
 
 	},
 	postToVKWall: function() {
@@ -204,7 +211,7 @@ comd.BaseCRow.extendTo(SongActSharing, {
 			delete this.vk_auth_rqb;
 
 		}
-		this.updateState("needs_vk_auth ", false);
+		this.updateState("needs_vk_auth", false);
 
 	},
 	search: function(q) {
