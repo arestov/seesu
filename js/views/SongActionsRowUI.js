@@ -16,6 +16,12 @@ provoda.View.extendTo(VkShareSearchCtr, {
 	createBase: function() {
 		this.c = this.root_view.getSample('song_acting_vk_search');
 		this.createTemplate();
+	},
+	tpl_events:{
+		requestFullView: function() {
+
+			this.parent_view.toggleVisState('full_view_mode', true);
+		}
 	}
 });
 
@@ -28,6 +34,7 @@ provoda.View.extendTo(ShareRowUI, {
 		vk_auth: etc_views.VkLoginUI,
 		searcher: VkShareSearchCtr
 	},
+
 	bindBase: function(){
 		var oldv;
 		var _this = this;
@@ -45,6 +52,11 @@ provoda.View.extendTo(ShareRowUI, {
 		this.tpl.ancs['share_input'].bind("click focus", function() {
 			this.select();
 		});
+		this.wch(this, 'query', function(e) {
+			if (e.value){
+				this.setVisState('full_view_mode', true);
+			}
+		});
 	},
 	"stch-active_view": function(state){
 		if (state){
@@ -60,11 +72,27 @@ provoda.View.extendTo(ShareRowUI, {
 			});
 		}
 	},
+	toggleVisState: function(state, boolen) {
+		var new_value;
+		if (typeof boolen == 'undefined'){
+			new_value = !this.state('vis_' + state);
+		} else {
+			new_value = !!boolen;
+		}
+		this.setVisState(state, new_value);
+	},
+	toggleVisStateTPL: function(e, node, data) {
+		var boolen = data[2];
+		this.toggleVisState(data[1], boolen);
+	},
 	tpl_events: {
 		switchClass: function(e, node, data) {
 		//	var anc_name = ;
 			this.tpl.ancs[data[2]].toggleClass(data[1]);
 		//	console.log(data);
+		},
+		toggleVisState: function(e, node, data) {
+			this.toggleVisStateTPL(e, node, data);
 		}
 	},
 

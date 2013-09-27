@@ -926,7 +926,10 @@
 					</div>
 					<div class="share-song hidden" pv-nest="context_parts for_model:row-share" pv-class="share-song {{!active_view && 'hidden'}}">
 						<input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
-						<div class="shareb-base vk_share users-list" pv-anchor="vk_share_b">
+						<div
+							class="shareb-base vk_share users-list compact_share"
+							pv-class="shareb-base vk_share users-list {{!vis_full_view_mode && 'compact_share'}}"
+							pv-anchor="vk_share_b">
 							<span class="shareb-button" >vk.com</span>
 							<span class="shareb-desc"></span>
 							<div class="shareb-con" pv-anchor="vk_share">
@@ -941,9 +944,19 @@
 										<span class="lang localize-to-own-wall"></span>
 									</div>
 									<div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
-									<div class="details_switch" pv-events="click:switchClass:sharebopened:vk_share_b">
-										<div class="min_details"><span class="icon"></span></div>
-										<div class="max_details"><span class="icon"></span></div>
+									<div class="details_switch" >
+										<div 
+											class="min_details"
+											pv-class="min_details {{!vis_full_view_mode && 'active'}}"
+											pv-events="click:toggleVisState:full_view_mode::">
+											<span class="icon"></span>
+										</div>
+										<div
+											class="max_details"
+											pv-class="max_details {{vis_full_view_mode && 'active'}}"
+											pv-events="click:toggleVisState:full_view_mode:true">
+											<span class="icon"></span>
+										</div>
 									</div>
 								</div>
 								
@@ -1180,7 +1193,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="song_acting_vk_search">
+		<div class="song_acting_vk_search protect_clicks">
 			<ul pv-nest="section for_model:section-vk-users">
 				<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
 					<a>
@@ -1189,6 +1202,7 @@
 					</a>
 				</li>
 			</ul>
+			<div class="clicks_protecter" pv-events="click:requestFullView"></div>
 		</div>
 		<div class="search_results-container" pv-class="search_results-container {{!mp_show && 'hidden'}} {{!needs_search_from && 'does-not-need-search-from'}}">
 			<p class="search-desc lang localize-search-control-hint"></p>
