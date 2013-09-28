@@ -467,7 +467,10 @@ AppModel.extendTo(SeesuApp, {
 				if (state_from_history){
 					state_from_history.data.showOnMap();
 				} else{
-					_this.routePathByModels(url.replace(/\ ?\$...$/, ''), _this.start_page);
+					var md = _this.routePathByModels(url.replace(/\ ?\$...$/, ''));
+					if (md){
+						md.showOnMap();
+					}
 				}
 				_this.map.finishChangesCollecting();
 			});
@@ -628,7 +631,7 @@ AppModel.extendTo(SeesuApp, {
 		});
 		return sp;
 	},
-	routePathByModels: function(pth_string, start_page) {
+	routePathByModels: function(pth_string) {
 
 	/*
 	catalog
@@ -653,7 +656,7 @@ AppModel.extendTo(SeesuApp, {
 	*/
 		var pth = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
 
-		var cur_md = start_page;
+		var cur_md = this.start_page;
 		var tree_parts_group = null;
 		for (var i = 0; i < pth.length; i++) {
 			if (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]]){
@@ -680,9 +683,6 @@ AppModel.extendTo(SeesuApp, {
 			}
 
 
-		}
-		if (cur_md){
-			cur_md.showOnMap();
 		}
 		return cur_md;
 	},
