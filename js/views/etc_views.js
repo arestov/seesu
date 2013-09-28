@@ -284,15 +284,6 @@ provoda.View.extendTo(ActionsRowUI, {
 	bindBase: function() {
 		this.wch(this.root_view, 'window_width');
 	},
-	'collch-context_parts': function(name, arr) {
-		var _this = this;
-		$.each(arr, function(i, el){
-			var md_name = el.model_name;
-			_this.getFreeChildView({name: md_name}, el, 'main');
-		});
-
-		this.requestAll();
-	},
 	getCurrentButton: function() {
 		var active_part = this.state('active_part');
 		if (active_part){
