@@ -83,7 +83,8 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 	}
 });
 
-
+//su.routePathByModels('/users/me/lfm:neighbours')
+//requestMoreData
 var VKSongSharing = function() {};
 invstg.Investigation.extendTo(VKSongSharing, {
 
