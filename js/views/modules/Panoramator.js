@@ -1,6 +1,45 @@
 define(['jquery'], function($){
 'use strict';
 
+var dom_style_obj = document.body.style;
+var has_transform_prop;
+['transform', '-o-transform', '-webkit-transform', '-moz-transform'].forEach(function(el) {
+	if (!has_transform_prop && el in dom_style_obj){
+		has_transform_prop = el;
+	}
+});
+var getLeftPos, setLeftPos, animateLeftPos;
+var simple_replace = /(px)|\(|\)/gi;
+if (false && has_transform_prop){
+	/*getLeftPos = function(node) {
+		var value = $(node).css(has_transform_prop);
+		return parseFloat(value.replace('translateX', '').replace(simple_replace,''));
+
+	};
+	setLeftPos = function(node, value) {
+
+	};
+	animateLeftPos = function() {
+
+	};*/
+} else {
+	getLeftPos = function(node) {
+		var value = $(node).css('margin-left');
+		return parseFloat(value.replace(simple_replace,''));
+	};
+	setLeftPos = function(node, value) {
+		node.css('margin-left', value + 'px');
+	};
+	animateLeftPos = function(node, value, time) {
+		node.animate({
+			'margin-left': value + 'px'
+		}, time);
+	};
+}
+//  transform: translate(350px,0);
+
+
+
 var Panoramator = function(){};
 Panoramator.prototype = {
 	constructor: Panoramator,
@@ -81,7 +120,7 @@ Panoramator.prototype = {
 
 		
 		//this.lift.stop();
-		this.lift.css("margin-left", (move_data.main + move_data.above_limit/this.limit_difficult) + 'px');
+		setLeftPos(this.lift, (move_data.main + move_data.above_limit/this.limit_difficult));
 		
 	},
 	checkVectorAndSpeed: function(){
@@ -147,9 +186,7 @@ Panoramator.prototype = {
 		if (this.checkVectorAndSpeed()){
 			var move_data = this.getMoveData(lift_target_pos);
 			if (move_data.above_limit){
-				this.lift.animate({
-					"margin-left": move_data.main + 'px'
-				}, this.standart_animation_time);
+				animateLeftPos(this.lift, move_data.main, this.standart_animation_time);
 			}
 
 		}
@@ -248,8 +285,16 @@ Panoramator.prototype = {
 		var pos = -last_visible.left + (this.viewport_width - last_visible.owidth)/2;
 		return next ? Math.max(pos, -(this.total_width - this.viewport_width)) : Math.min(pos, 0);
 	},
+	getBestLiftPos: function() {
+		//transform
+		//transform: translate(350px,0);
+
+	},
+	setBestLiftPos: function() {
+
+	},
 	getLiftPos: function(){
-		return -parseFloat(this.lift.css("margin-left")) || 0;
+		return -getLeftPos(this.lift) || 0;
 	},
 	toStart: function(){
 
@@ -291,9 +336,7 @@ Panoramator.prototype = {
 		 
 		if (last_visible){
 			var target_pos = this.getTargetPos(last_visible, true);
-			this.lift.animate({
-				"margin-left": target_pos + 'px'
-			},  speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
+			animateLeftPos(this.lift, target_pos, speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
 			return true;
 		} else {
 			return false;
@@ -308,9 +351,8 @@ Panoramator.prototype = {
 		
 		if (last_visible){
 			var target_pos = this.getTargetPos(last_visible);
-			this.lift.animate({
-				"margin-left": target_pos + 'px'
-			}, speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
+			animateLeftPos(this.lift, target_pos, speed ? this.getAnimationTime(target_pos, -lift_pos, speed) :  (time || this.standart_animation_time));
+
 			return true;
 
 		} else {
