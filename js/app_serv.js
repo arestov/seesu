@@ -278,7 +278,22 @@ var app_env = (function(wd){
 	
 	env.cross_domain_allowed = !wd.location.protocol.match(/(http\:)|(file\:)/);
 	env.xhr2 = !!xhr2_support;
+
 	
+	
+	var has_transform_prop;
+	var dom_style_obj = wd.document.body.style;
+	['transform', '-o-transform', '-webkit-transform', '-moz-transform'].forEach(function(el) {
+		if (!has_transform_prop && el in dom_style_obj){
+			has_transform_prop = el;
+		}
+	});
+	if (has_transform_prop){
+		env.transform = has_transform_prop;
+	}
+	
+
+
 	if (typeof widget == 'object' && !window.widget.fake_widget){
 		if (bro.browser == 'opera'){
 			if (window.opera.extension){
@@ -373,6 +388,11 @@ var app_env = (function(wd){
 	if (!env.unknown_app_type){dstates.addState(env.app_type.replace('_','-'));}
 	if (env.cross_domain_allowed) {dstates.addState('cross-domain-allowed');}
 	
+	if (env.transform){
+		dstates.addState('yes-transform_support');
+	} else {
+		dstates.addState('no-transform_upport');
+	}
 	
 	if (env.vkontakte){
 		if (env.url.language === '0'){
