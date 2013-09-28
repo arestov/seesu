@@ -584,14 +584,24 @@ AppModel.extendTo(SeesuApp, {
 	'rootv_field': ['mpx', 'views_index', 'root', 'length'],
 	trackPage:function(page_name){
 		this.current_page = page_name;
-		
-		var has_app_view = !!spv.getTargetField(this, this.rootv_field);
-		if (!has_app_view){
-			return;
-		}
+
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
-		this.trackStat.call(this, args);
+
+		if (!this.app_view_id){
+			this.last_page_tracking_data = args;
+			return;
+		} else {
+			this.trackStat.call(this, args);
+		}
+		
+	},
+	checkPageTracking: function() {
+		if (this.app_view_id && this.last_page_tracking_data){
+			this.trackStat.call(this, this.last_page_tracking_data);
+			this.last_page_tracking_data = null;
+
+		}
 	},
 	trackTime: function(){
 		var args = Array.prototype.slice.call(arguments);
@@ -696,9 +706,16 @@ AppModel.extendTo(SeesuApp, {
 		}
 		return r;
 	},
-	detachUI: function() {
+	attachUI: function(app_view_id) {
+		this.app_view_id = app_view_id;
+		this.checkPageTracking();
+	},
+	detachUI: function(app_view_id) {
 		if (this.p && this.p.c_song){
 			this.showNowPlaying(true);
+		}
+		if (this.app_view_id === app_view_id){
+			this.app_view_id = null;
 		}
 	},
 	vkappid: 2271620,

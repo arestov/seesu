@@ -299,7 +299,7 @@ AppBaseView.extendTo(AppView, {
 		}
 		
 		this.on('die', function() {
-			this.RPCLegacy('detachUI');
+			this.RPCLegacy('detachUI', this.view_id);
 		});
 
 		this.on('vip-state-change.current_mp_md', function() {
@@ -731,6 +731,8 @@ AppBaseView.extendTo(AppView, {
 				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
 				_this.arrowsKeysNav(e);
 			});
+
+			_this.RPCLegacy('attachUI', this.view_id);
 	},
 	inputs_names: ['input'],
 	key_codes_map:{

@@ -1376,7 +1376,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	}
 });
 
-var models_counters = 0;
+var models_counters = 1;
 provoda.StatesEmitter.extendTo(provoda.Model, {
 	init: function(){
 
@@ -2339,7 +2339,7 @@ spv.Class.extendTo(Template, {
 	}
 });
 
-var views_counter = 0;
+var views_counter = 1;
 var way_points_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(view_otps, opts){
