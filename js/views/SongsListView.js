@@ -1,81 +1,31 @@
-define(['provoda', 'jquery', './SongUI', './etc_views', 'app_serv'],
-function(provoda, $, SongUI, etc_views, app_serv) {
+define(['provoda', 'jquery', './SongUI', './etc_views', ],
+function(provoda, $, SongUI, etc_views) {
 	"use strict";
-	var localize = app_serv.localize;
 	var PlaylistSettingsRowView = function(){};
-	etc_views.BaseCRowUI.extendTo(PlaylistSettingsRowView, {
+	provoda.View.extendTo(PlaylistSettingsRowView, {
 		"stch-dont_rept_pl": function(state) {
 			this.dont_rept_pl_chbx.prop('checked', !!state);
 		},
-		createDetails: function(){
-			var parent_c = this.parent_view.row_context;
-			var buttons_panel = this.parent_view.buttons_panel;
-			this.c =  parent_c.children('.pla-settings');
-			this.button = buttons_panel.children('.pl-settings-button');
-
-			this.bindClick();
-			//var _this = this;
+		bindBase: function() {
 			var _this = this;
-
-			this.dont_rept_pl_chbx = this.c.find('.dont-rept-pl input').click(function() {
+			this.dont_rept_pl_chbx = this.tpl.ancs['dont-rept-pl'].click(function() {
 				_this.RPCLegacy('setDnRp', $(this).prop('checked'));
 			});
+
 		}
 	});
-
-
-	var MultiAtcsRowView = function(){};
-	etc_views.BaseCRowUI.extendTo(MultiAtcsRowView, {
-		createDetails: function(){
-			var parent_c = this.parent_view.row_context;
-			var buttons_panel = this.parent_view.buttons_panel;
-			this.c =  parent_c.children('.pla-row');
-			this.button = buttons_panel.children('.pla-button');
-
-
-			var _this = this;
-
-			this.c.find(".search-music-files").click(function(){
-				_this.RPCLegacy('makePlayable');
-				
-				//
-			});
-
-			this.c.find('.open-external-playlist').click(function(){
-				_this.RPCLegacy('makeExternalPlaylist');
-			
-				//e.preventDefault();
-			});
-
-
-			this.bindClick();
-		}
-	});
-
-
 
 	var PlARowView = function() {};
 	etc_views.ActionsRowUI.extendTo(PlARowView, {
-		createBase: function(){
-		//	var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-			this.c = this.parent_view.tpl.ancs.panel;
-			this.row_context = this.c.find('.pla-row-content');
-			this.arrow = this.row_context.children('.rc-arrow');
-			this.buttons_panel = this.c.children().children('.pla-panel');
-		},
+
 		canUseWaypoints: function() {
 			return this.parent_view.state('mp_has_focus');
 		},
 		children_views: {
-			"row-multiatcs": {
-				main: MultiAtcsRowView
-			},
-			"row-pl-settings": {
-				main: PlaylistSettingsRowView
-			}
+			"row-multiatcs": provoda.View,
+			"row-pl-settings": PlaylistSettingsRowView
 		}
 	});
-
 
 
 	var SongsListView = function(){};
@@ -89,18 +39,9 @@ function(provoda, $, SongUI, etc_views, app_serv) {
 			this.createTemplate();
 			
 		},
-		
-		'collch-plarow': function(name, md) {
-			if (!this.tpl.ancs.panel){
-				return;
-			}
-			var view = this.getFreeChildView({name: name, space: 'main'}, md, {lite: this.opts && this.opts.overview});
-			this.requestAll();
-		},
+
 		children_views: {
-			plarow: {
-				main: PlARowView
-			},
+			plarow: PlARowView,
 			'songs-list': SongUI
 		},
 		'collch-songs-list': {

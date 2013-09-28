@@ -281,6 +281,9 @@ LfmLoginView.extendTo(LfmScrobbleView, {
 
 var ActionsRowUI = function(){};
 provoda.View.extendTo(ActionsRowUI, {
+	bindBase: function() {
+		this.wch(this.root_view, 'window_width');
+	},
 	'collch-context_parts': function(name, arr) {
 		var _this = this;
 		$.each(arr, function(i, el){
@@ -290,52 +293,43 @@ provoda.View.extendTo(ActionsRowUI, {
 
 		this.requestAll();
 	},
-	state_change: {
-		active_part: function(nv, ov) {
-			if (nv){
-				this.row_context.removeClass('hidden');
-				this.arrow.removeClass('hidden');
-			} else {
-				this.row_context.addClass('hidden');
+	getCurrentButton: function() {
+		var active_part = this.state('active_part');
+		if (active_part){
+			return this.tpl.ancs['bt' + active_part];
+		}
+	},
+	getArPaOffset: function() {
+		return this.tpl.ancs['arrow'].offsetParent().offset();
+	},
+	getCurrentButtonOWidth: function() {
+		var current_button = this.getCurrentButton();
+		return current_button.outerWidth();
+	},
+	getCurrentButtonOffset: function() {
+		var current_button = this.getCurrentButton();
+		return current_button.offset();
+	},
+	'compx-arrow_pos':{
+		depends_on: ['window_width', 'active_part'],
+		fn: function(window_width, active_part) {
+			if (window_width && active_part){
+				var button_width = this.getBoxDemension(this.getCurrentButtonOWidth, 'button_owidth', active_part);
+				//ширина кнопки, зависит типа вьюхи и активной части
+
+				var button_offset = this.getBoxDemension(this.getCurrentButtonOffset, 'button_offset', window_width, active_part);
+				//расположение кнопки, зависит от ширины окна и названия части
+
+				var parent_offset = this.getBoxDemension(this.getArPaOffset, 'arrow_parent_offset', window_width);
+				//расположенние позиционного родителя стрелки, зависит от ширины окна
+
+				return ((button_offset.left + button_width/2) - parent_offset.left) + 'px';
 			}
 		}
 	}
 });
 
 
-
-var BaseCRowUI = function(){};
-provoda.View.extendTo(BaseCRowUI, {
-	dom_rp: true,
-	bindClick: function(){
-		if (this.button){
-			var _this = this;
-			this.button.click(function(){
-				_this.RPCLegacy('switchView');
-			});
-			this.addWayPoint(this.button);
-		}
-	},
-	getButtonPos: function(){
-		return this.button.offset().left + (this.button.outerWidth()/2);
-	},
-	"stch-active_view": function(state){
-		if (state){
-			if (this.expand){
-				this.expand();
-			}
-			var b_pos = this.getButtonPos();
-			if (b_pos){
-				var arrow = this.parent_view.arrow;
-				arrow.css('left', b_pos - arrow.offsetParent().offset().left + 'px');
-			}
-			this.c.removeClass('hidden');
-		} else {
-			this.c.addClass('hidden');
-		}
-	}
-
-});
 
 
 return {
@@ -344,7 +338,6 @@ return {
 	LfmLoveItView: LfmLoveItView,
 	VkLoginUI:VkLoginUI,
 	contextRow: contextRow,
-	ActionsRowUI:ActionsRowUI,
-	BaseCRowUI:BaseCRowUI
+	ActionsRowUI:ActionsRowUI
 };
 });
