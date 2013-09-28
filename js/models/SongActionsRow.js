@@ -1,5 +1,5 @@
-define(['spv', 'app_serv', './comd', 'js/LfmAuth',
-'./SongActPlaylisting', './SongActTaging', './SongActSharing'], function(spv, app_serv, comd, LfmAuth,
+define(['provoda', 'spv', 'app_serv', './comd', 'js/LfmAuth',
+'./SongActPlaylisting', './SongActTaging', './SongActSharing'], function(provoda, spv, app_serv, comd, LfmAuth,
 SongActPlaylisting, SongActTaging, SongActSharing){
 "use strict";
 var localize = app_serv.localize;
@@ -139,17 +139,23 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		this.nextTick(this.initHeavyPart);
 	},
 	initHeavyPart: function() {
+		if (this.app.settings['volume']){
+			this.setVolumeState(this.app.settings['volume']);
+		}
+		this.app.on('settings.volume', this.setVolumeState, this.getContextOpts());
+	},
+
+	realyHeavyPart: provoda.getOCF('parts', function() {
 		this.addPart(new ScrobbleRow(this, this.mo));
 		this.addPart(new RepeatSongRow(this, this.mo));
 		this.addPart(new SongActPlaylisting(this, this.mo));
 		this.addPart(new SongActSharing(this, this.mo));
 		this.addPart(new LoveRow(this, this.mo));
 		this.addPart(new SongActTaging(this, this.mo));
-
-		if (this.app.settings['volume']){
-			this.setVolumeState(this.app.settings['volume']);
-		}
-		this.app.on('settings.volume', this.setVolumeState, this.getContextOpts());
+	}),
+	switchPart: function(name) {
+		this.realyHeavyPart();
+		this._super(name);
 	},
 	setVolumeState: function(fac) {
 		this.updateState('volume', fac[0]/fac[1]);
