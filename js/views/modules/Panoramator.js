@@ -10,6 +10,11 @@ var has_transform_prop;
 });
 var getLeftPos, setLeftPos, animateLeftPos;
 var simple_replace = /(px)|\(|\)/gi;
+var cached_value;
+
+var changeCache = function(step_value) {
+	cached_value = step_value;
+};
 if (false && has_transform_prop){
 	/*getLeftPos = function(node) {
 		var value = $(node).css(has_transform_prop);
@@ -24,16 +29,23 @@ if (false && has_transform_prop){
 	};*/
 } else {
 	getLeftPos = function(node) {
-		var value = $(node).css('margin-left');
-		return parseFloat(value.replace(simple_replace,''));
+		if (typeof cached_value == 'undefined'){
+			var value = $(node).css('margin-left');
+			cached_value = parseFloat(value.replace(simple_replace,''));
+		}
+		return cached_value;
 	};
 	setLeftPos = function(node, value) {
+		cached_value = value;
 		node.css('margin-left', value + 'px');
 	};
 	animateLeftPos = function(node, value, time) {
 		node.animate({
 			'margin-left': value + 'px'
-		}, time);
+		}, {
+			step: changeCache,
+			duration: time
+		});
 	};
 }
 //  transform: translate(350px,0);
