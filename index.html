@@ -1214,10 +1214,13 @@
 		</div>
 		<div class="song_acting_lfm_search">
 			test lfm users
-			<ul pv-nest="section for_model:section-friends">
+			<ul pv-nest="section for_model:section-lfm-friends">
 				<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
 					<a>
-						<img pv-props="src:{{photo}}">
+						<img pv-props="
+								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/34s/' + selected_image.lfm_id) || selected_image.url}}
+							">
+
 						<span pv-text="{{text_title}}" class="text_part"></span>
 					</a>
 				</li>

@@ -90,8 +90,8 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 
 
 
-var LFMUserSuggest = function(wrap) {
-	var user = wrap.user;
+var LFMUserSuggest = function(params) {
+	var user = params.user;
 
 	this.init();
 	/*this.mo = wrap.mo;
@@ -100,15 +100,16 @@ var LFMUserSuggest = function(wrap) {
 	this.photo = user.photo;
 	this.online = this.online;
 	//this.name = user.name;*/
-	this.text_title = user.first_name + " " + user.last_name;
+	this.userid = user.state('userid');
+	this.text_title = this.userid;
 	this.updateManyStates({
-		photo: user.photo,
+		selected_image: user.state('selected_image'),
 		text_title: this.text_title
 	});
 };
 invstg.BaseSuggest.extendTo(LFMUserSuggest, {
 	valueOf: function(){
-		return this.user_id;
+		return this.userid;
 	},
 	onView: function(){
 		this.mo.postToVKWall(this.user_id);
@@ -144,6 +145,11 @@ invstg.Investigation.extendTo(LfmSongSharing, {
 
 		this.lfm_friends.on('child_change-list_items', function(e) {
 			this.updateNesting('friends', e.value);
+			var section = this.g('friends');
+			section.changeQuery('');
+			section.changeQuery(this.q);
+			this.searchLFMFriends();
+
 		}, this.getContextOpts());
 
 		this.wch(this.app, 'lfm_userid');
@@ -175,8 +181,8 @@ invstg.Investigation.extendTo(LfmSongSharing, {
 				};
 			}
 		}
-
-		this.g('friends').appendResults(r, true);
+		var section = this.g('friends');
+		section.appendResults(r, true);
 	},
 	searchf: function() {
 		var
