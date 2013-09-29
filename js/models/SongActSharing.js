@@ -93,7 +93,8 @@ invstg.Investigation.extendTo(VKSongSharing, {
 });
 
 var LfmSongSharing = function() {};
-invstg.Investigation.extendTo(VKSongSharing, {
+invstg.Investigation.extendTo(LfmSongSharing, {
+	skip_map_init: true,
 	init: function(opts, actionsrow, mo) {
 		this._super();
 		this.app = opts.app;
