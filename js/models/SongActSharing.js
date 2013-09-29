@@ -34,9 +34,7 @@ invstg.BaseSuggest.extendTo(struserSuggest, {
 
 
 
-var StrusersRSSection = function() {
-	this.init();
-};
+var StrusersRSSection = function() {};
 invstg.SearchSection.extendTo(StrusersRSSection, {
 	resItem: struserSuggest,
 	model_name: "section-vk-users"
@@ -53,7 +51,7 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 		this.rpl = rpl;
 		this.mo = mo;
 		this.app = mo.app;
-		this.addSection('users', new StrusersRSSection());
+		this.addSection('users', StrusersRSSection);
 	},
 	handleVKFriendsSearch: function(list){
 		var r = (this.q ? spv.searchInArray(list, this.q, ["first_name", "last_name"]) : list);
@@ -112,16 +110,14 @@ invstg.BaseSuggest.extendTo(LFMUserSuggest, {
 		return this.userid;
 	},
 	onView: function(){
-		this.mo.postToVKWall(this.user_id);
+		this.mo.shareWithLFMUser(this.userid);
 		this.row.hide();
 	}
 });
 
 
 
-var LFMFriendsSection = function() {
-	this.init();
-};
+var LFMFriendsSection = function() {};
 invstg.SearchSection.extendTo(LFMFriendsSection, {
 	resItem: LFMUserSuggest,
 	model_name: "section-lfm-friends"
@@ -160,7 +156,7 @@ invstg.Investigation.extendTo(LfmSongSharing, {
 			}
 		});
 
-		this.addSection('friends', new LFMFriendsSection());
+		this.addSection('friends', LFMFriendsSection);
 	},
 	'compx-can_load_friends':{
 		depends_on: ['active_view', 'lfm_userid'],

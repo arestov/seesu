@@ -13,13 +13,8 @@ provoda.View.extendTo(PlaylistAddSearchCtr, {
 
 var VkShareSearchCtr = function() {};
 provoda.View.extendTo(VkShareSearchCtr, {
-	createBase: function() {
-		this.c = this.root_view.getSample('song_acting_vk_search');
-		this.createTemplate();
-	},
 	tpl_events:{
 		requestFullView: function() {
-
 			this.parent_view.toggleVisState('full_view_mode', true);
 		}
 	}
@@ -28,13 +23,8 @@ provoda.View.extendTo(VkShareSearchCtr, {
 
 var LFMShareSearchCtr = function() {};
 provoda.View.extendTo(LFMShareSearchCtr, {
-	createBase: function() {
-		this.c = this.root_view.getSample('song_acting_lfm_search');
-		this.createTemplate();
-	},
 	tpl_events:{
 		requestFullView: function() {
-
 			this.parent_view.toggleVisState('full_view_mode', true);
 		}
 	}
@@ -104,9 +94,7 @@ provoda.View.extendTo(ShareRowUI, {
 	},
 	tpl_events: {
 		switchClass: function(e, node, data) {
-		//	var anc_name = ;
 			this.tpl.ancs[data[2]].toggleClass(data[1]);
-		//	console.log(data);
 		},
 		toggleVisState: function(e, node, data) {
 			this.toggleVisStateTPL(e, node, data);
@@ -114,46 +102,20 @@ provoda.View.extendTo(ShareRowUI, {
 	},
 
 
-	'stch-can_search_friends': {
-		fn: function(state){
-			if (state){
-
-				var searcher_ui = this.getFreeCV('searcher');
-				$(searcher_ui.getA()).insertBefore(this.getPart("pch-ws-friends"));
-				this.requestAll();
-				//searcher_ui.setVisState('must_be_expanded', true);	
-				this.RPCLegacy('search', "");
-			}
-		},
-		dep_vp: [ "pch-ws-friends"]
+	'stch-can_search_friends': function(state){
+		if (state){
+			this.RPCLegacy('search', '');
+		}
 	},
-	'stch-needs_vk_auth': {
-		fn: function(state) {
-			if (state){
-				$(this.getAFreeCV('vk_auth')).insertBefore(this.getPart("pch-vk-auth"));
-				this.requestAll();
-			}
-		},
-		dep_vp: ["pch-vk-auth"]
-	},
-	parts_builder: {
-		"pch-vk-auth": function() {
-			return this.addWSChunk();
-		},
-		"pch-ws-friends": function(){
-			return this.addWSChunk();
+	'stch-needs_vk_auth': function(state) {
+		if (state){
+			this.tpl.ancs['vk_auth'].append(this.getAFreeCV('vk_auth'));
+			this.requestAll();
 		}
 	},
 	addWSChunk: function() {
 		return $(document.createTextNode("")).appendTo(this.tpl.ancs['vk_share']);
 	},
-	/*"stch-active_view": function(state){
-		if (state){
-			if (this.expand){
-				this.expand();
-			}
-		}
-	},*/
 	expand: function(){
 		if (this.expanded){
 			return;
@@ -161,15 +123,6 @@ provoda.View.extendTo(ShareRowUI, {
 			this.expanded = true;
 		}
 
-
-		/*
-		this.share_input = this.c.find('.song-link').val();
-		this.share_input.bind("click focus", function() {
-			this.select();
-		});
-*/
-		this.requirePart("pch-vk-auth");
-		this.requirePart("pch-ws-friends");
 
 		this['collch-lfmsharing'] = 'tpl.ancs.lfm_share';
 		this.checkCollectionChange('lfmsharing');

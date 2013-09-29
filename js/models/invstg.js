@@ -101,9 +101,7 @@ SearchSection.extendTo(seesuSection, {
 });
 
 
-var PlaylistsSection = function() {
-	this.init();
-};
+var PlaylistsSection = function() {};
 SearchSection.extendTo(PlaylistsSection, {
 	model_name: 'section-playlist',
 	init: function() {
@@ -117,9 +115,7 @@ SearchSection.extendTo(PlaylistsSection, {
 
 
 
-var ArtistsSection = function(){
-	this.init();
-};
+var ArtistsSection = function(){};
 
 seesuSection.extendTo(ArtistsSection, {
 	model_name: 'section-artist',
@@ -187,9 +183,7 @@ BaseSuggest.extendTo(trackSuggest, {
 
 
 
-var TracksSection = function() {
-	this.init();
-};
+var TracksSection = function() {};
 seesuSection.extendTo(TracksSection, {
 	model_name: 'section-track',
 	init: function() {
@@ -246,9 +240,7 @@ BaseSuggest.extendTo(tagSuggest, {
 
 
 
-var TagsSection = function() {
-	this.init();
-};
+var TagsSection = function() {};
 seesuSection.extendTo(TagsSection, {
 	model_name: 'section-tag',
 	init: function() {
@@ -313,9 +305,7 @@ BaseSuggest.extendTo(albumSuggest, {
 });
 
 
-var AlbumsSection = function() {
-	this.init();
-};
+var AlbumsSection = function() {};
 seesuSection.extendTo(AlbumsSection, {
 	model_name: 'section-album',
 	init: function() {
@@ -348,11 +338,11 @@ SearchPage = function() {};
 Investigation.extendTo(SearchPage, {
 	init: function(opts) {
 		this._super(opts);
-		this.addSection('playlists', new PlaylistsSection());
-		this.addSection('artists', new ArtistsSection());
-		this.addSection('albums', new AlbumsSection());
-		this.addSection('tags', new TagsSection());
-		this.addSection('tracks', new TracksSection());
+		this.addSection('playlists', PlaylistsSection);
+		this.addSection('artists', ArtistsSection);
+		this.addSection('albums', AlbumsSection);
+		this.addSection('tags', TagsSection);
+		this.addSection('tracks', TracksSection);
 		this.updateState('mp_freezed', false);
 		
 	},

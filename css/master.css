@@ -1327,7 +1327,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		}
 
 	.shareb-con{
-
+		clear: both;
 		}
 
 
@@ -1391,7 +1391,7 @@ iframe.you-tube-video,embed.you-tube-video{
 	.compact_share .clicks_protecter{
 		display: block;
 	}
-	.compact_share .song_acting_vk_search{
+	.share-song .compact_share .protect_clicks{
 		height: 4.5rem;
 		}
 	.compact_share .share-user-suggest{

@@ -952,17 +952,21 @@
 							<span class="shareb-button" >vk.com</span>
 							<span class="shareb-desc"></span>
 							<div class="shareb-con" pv-anchor="vk_share">
-								<div class="vk_auth"></div>
+								<div class="vk_auth" pv-anchor="vk_auth"></div>
 								<div pv-class="{{needs_vk_auth && 'hidden'}}">
 									<h3 class="lang localize-post-song"></h3>
 									<div class="list-search-input-place">
 										<input type="text" pv-anchor="vk_share_search">
 									</div>
+
+
 									<div class="post-to-my-vk-wall" pv-class="post-to-my-vk-wall {{!own_photo && 'hidden'}}" pv-events="click::postToVKWall" pv-type="way-point">
 										<img pv-props="src: {{own_photo}}">
 										<span class="lang localize-to-own-wall"></span>
 									</div>
 									<div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
+
+
 									<div class="details_switch" >
 										<div 
 											class="min_details"
@@ -977,17 +981,57 @@
 											<span class="icon"></span>
 										</div>
 									</div>
+									<div class="song_acting_vk_search protect_clicks" pv-nest="searcher">
+										<ul pv-nest="section for_model:section-vk-users">
+											<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+												<a>
+													<img pv-props="src:{{photo}}">
+													<span pv-text="{{text_title}}" class="text_part"></span>
+												</a>
+											</li>
+										</ul>
+										<div class="clicks_protecter" pv-events="click:requestFullView"></div>
+									</div>
+
+
+									<div class="details_switch" >
+										<div 
+											class="min_details"
+											pv-class="min_details {{!vis_full_view_mode && 'active'}}"
+											pv-events="click:toggleVisState:full_view_mode::">
+											<span class="icon"></span>
+										</div>
+										<div
+											class="max_details"
+											pv-class="max_details {{vis_full_view_mode && 'active'}}"
+											pv-events="click:toggleVisState:full_view_mode:true">
+											<span class="icon"></span>
+										</div>
+									</div>
+									<div class="song_acting_lfm_search protect_clicks" pv-nest="lfmsharing">
+										<ul pv-nest="section for_model:section-lfm-friends">
+											<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+												<a>
+													<img pv-props="
+															src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/34s/' + selected_image.lfm_id) || selected_image.url}}
+														">
+
+													<span pv-text="{{text_title}}" class="text_part"></span>
+												</a>
+											</li>
+										</ul>
+										<div class="clicks_protecter" pv-events="click:requestFullView"></div>
+									</div>
+									
 								</div>
-								
-
-	
-
 							</div>
 						</div>
-						<div class="shareb-base lfm_share" pv-anchor="lfm_share_b">
+						<div class="shareb-base lfm_share compact_share" pv-anchor="lfm_share_b">
 							<span class="shareb-button" pv-events="click:switchClass:sharebopened:lfm_share_b">last.fm</span>
 							<span class="shareb-desc"></span>
-							<div class="shareb-con" pv-anchor="lfm_share"></div>
+							<div class="shareb-con" pv-anchor="lfm_share">
+								
+							</div>
 						</div>
 					</div>
 					<div class="love-song hidden" pv-nest="context_parts for_model:row-love" pv-class="love-song {{!active_view && 'hidden'}}"></div>
@@ -1212,31 +1256,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="song_acting_lfm_search">
-			test lfm users
-			<ul pv-nest="section for_model:section-lfm-friends">
-				<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
-					<a>
-						<img pv-props="
-								src: {{(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/34s/' + selected_image.lfm_id) || selected_image.url}}
-							">
-
-						<span pv-text="{{text_title}}" class="text_part"></span>
-					</a>
-				</li>
-			</ul>
-		</div>
-		<div class="song_acting_vk_search protect_clicks">
-			<ul pv-nest="section for_model:section-vk-users">
-				<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
-					<a>
-						<img pv-props="src:{{photo}}">
-						<span pv-text="{{text_title}}" class="text_part"></span>
-					</a>
-				</li>
-			</ul>
-			<div class="clicks_protecter" pv-events="click:requestFullView"></div>
-		</div>
+		
 		<div class="search_results-container" pv-class="search_results-container {{!mp_show && 'hidden'}} {{!needs_search_from && 'does-not-need-search-from'}}">
 			<p class="search-desc lang localize-search-control-hint"></p>
 			<div

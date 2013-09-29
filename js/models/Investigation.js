@@ -74,6 +74,10 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 		},
 		addSection: function(name, s){
 			var _this = this;
+			s.init({
+				map_parent: this,
+				app: this.app
+			});
 			s
 				.on('items-change', function(results){
 					_this.refreshEnterItems();

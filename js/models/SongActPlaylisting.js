@@ -22,9 +22,7 @@ invstg.BaseSuggest.extendTo(playlistSuggest, {
 });
 
 
-var PlaylistRSSection = function() {
-	this.init();
-};
+var PlaylistRSSection = function() {};
 invstg.SearchSection.extendTo(PlaylistRSSection, {
 	resItem: playlistSuggest,
 	model_name: "section-playlist"
@@ -40,7 +38,7 @@ invstg.Investigation.extendTo(PlaylistRowSearch, {
 		this._super();
 		this.rpl = rpl;
 		this.mo = mo;
-		this.addSection('playlists', new PlaylistRSSection());
+		this.addSection('playlists', PlaylistRSSection);
 	},
 	searchf: function() {
 		var
