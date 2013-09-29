@@ -83,11 +83,35 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 	}
 });
 
+
+
 //su.routePathByModels('/users/me/lfm:neighbours')
-//requestMoreData
+//preloadStart
 var VKSongSharing = function() {};
 invstg.Investigation.extendTo(VKSongSharing, {
 
+});
+
+var LfmSongSharing = function() {};
+invstg.Investigation.extendTo(VKSongSharing, {
+	init: function(opts, actionsrow, mo) {
+		this._super();
+		this.app = opts.app;
+		this.map_parent = opts.map_parent;
+
+		this.mo = mo;
+		this.actionsrow = actionsrow;
+
+		this.lfm_friends = this.app.routePathByModels('/users/me/lfm:friends');
+		this.wch(this.map_parent, 'active_view');
+		this.wch(this, 'active_view', function(e) {
+			if (e.value){
+				this.lfm_friends.preloadStart();
+			}
+		});
+
+		//this.lfm_friends.on('child-change.')
+	}
 });
 
 
@@ -148,7 +172,12 @@ comd.BaseCRow.extendTo(SongActSharing, {
 
 		this.searcher = new StrusersRowSearch(this, mo);
 		this.updateNesting('searcher', this.searcher);
-
+		var lfm_sharing = new LfmSongSharing();
+		lfm_sharing.init({
+			app: this.app,
+			map_parent: this
+		}, actionsrow, mo);
+		this.updateNesting('lfmsharing', lfm_sharing);
 
 		
 
