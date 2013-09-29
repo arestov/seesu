@@ -168,7 +168,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 
 
 
-			//this.on('vip-state_change.search_progress', function(e) {
+			//this.on('vip_state_change-search_progress', function(e) {
 			//	console.log('search_progress: ' + e.value);
 			//}, {immediately: true});
 			
@@ -203,7 +203,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 
 			this.updateNesting('sources_list', this.sources_list);
 
-			//_this.trigger('child-change.sources_list', _this.sources_list);
+			//_this.trigger('child_change-sources_list', _this.sources_list);
 		},
 		addFbS: function(search_name) {
 			var _this = this;

@@ -204,7 +204,7 @@ provoda.Model.extendTo(MfCor, {
 
 		} else {
 			//this.wch(this.mo, 'track', )
-			this.mo.on('vip-state_change.track', this.hndTrackNameCh, {immediately: true, soft_reg: false, context: this});
+			this.mo.on('vip_state_change-track', this.hndTrackNameCh, {immediately: true, soft_reg: false, context: this});
 			
 		}
 		
@@ -554,7 +554,7 @@ provoda.Model.extendTo(MfCor, {
 			return;
 		}
 		this.wch(investg, 'search_ready_to_use', 'search_ready');
-		investg.on('child-change.sources_list', this.hndSourcesList, this.getContextOpts());
+		investg.on('child_change-sources_list', this.hndSourcesList, this.getContextOpts());
 		
 		
 
@@ -597,7 +597,7 @@ provoda.Model.extendTo(MfCor, {
 	},*/
 	listenMopla: function(mopla) {
 		if (this.subscribed_to.indexOf(mopla) == -1){
-			mopla.on('state_change.play', this.mfPlayStateChange);
+			mopla.on('state_change-play', this.mfPlayStateChange);
 			mopla.on('unavailable', this.mfError);
 
 			this.subscribed_to.push(mopla);

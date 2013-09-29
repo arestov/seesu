@@ -80,7 +80,7 @@ comd.BaseCRow.extendTo(SongActPlaylisting, {
 		this._super();
 		this.searcher = new PlaylistRowSearch(this, mo);
 		this.updateNesting('searcher', this.searcher);
-		this.mo.app.gena.on('child-change.lists_list', this.checkFullMatch, this.getContextOpts());
+		this.mo.app.gena.on('child_change-lists_list', this.checkFullMatch, this.getContextOpts());
 	},
 	model_name: 'row-playlist-add',
 	search: function(q) {

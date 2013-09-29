@@ -90,7 +90,7 @@ SearchSection.extendTo(seesuSection, {
 					this.hide();
 					_this.loadMore();
 				})
-				.on('state_change.disabled', function(){
+				.on('state_change-disabled', function(){
 					_this.trigger('items-change');
 				}, {skip_reg: true});
 			this.setButtonText();

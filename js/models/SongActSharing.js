@@ -110,7 +110,7 @@ invstg.Investigation.extendTo(VKSongSharing, {
 			}
 		});
 
-		//this.lfm_friends.on('child-change.')
+		//this.lfm_friends.on('child_change-')
 	}
 });
 

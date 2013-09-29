@@ -82,7 +82,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 					}
 					_this.bindItemsView();
 				})
-				.on('state_change.active', function(){
+				.on('state_change-active', function(){
 					_this.remarkStyles();
 				})
 				.on('requests', function(array){

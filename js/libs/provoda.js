@@ -370,7 +370,7 @@ provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 			_this.getItemsValues(item);
 		};
 		this.state_name = state_name;
-		this._super('state_change.' + this.state_name, this.checkFunc, true);
+		this._super('state_change-' + this.state_name, this.checkFunc, true);
 
 		this.returnResult = opts.returnResult;
 		var calcR = opts.calculateResult;
@@ -500,7 +500,7 @@ spv.Class.extendTo(provoda.Eventor, {
 			this.subscribes[opts.short_name] = [];
 		}
 		this.subscribes[opts.short_name].push(opts);
-		this.resetSubscribesCache(opts.namespace);
+		this.resetSubscribesCache(opts.short_name);
 	},
 	getPossibleRegfires: function(namespace) {
 		var parts = parseNamespace(namespace);
@@ -613,21 +613,21 @@ spv.Class.extendTo(provoda.Eventor, {
 			clean.push.apply(clean, queried.not_matched);
 			if (clean.length != this.subscribes[short_name].length){
 				this.subscribes[short_name] = clean;
-				this.resetSubscribesCache(namespace);
+				this.resetSubscribesCache(short_name);
 			}
 		}
 
 		return this;
 	},
-	resetSubscribesCache: function(namespace) {
+	resetSubscribesCache: function(short_name) {
 
-		//fixme - bug for "state_change.window_width.song_file_progress" ( "state_change.window_width" stays valid, but must be invalid)
+		//fixme - bug for "state_change-window_width.song_file_progress" ( "state_change-window_width" stays valid, but must be invalid)
 		for (var cur_namespace in this.subscribes_cache){
 			if (!this.subscribes_cache[cur_namespace]){
 				continue;
 			}
-			var last_char = cur_namespace.charAt(namespace.length);
-			if ((!last_char || last_char == DOT) && cur_namespace.indexOf(namespace) == 0){
+			var last_char = cur_namespace.charAt(short_name.length);
+			if ((!last_char || last_char == DOT) && cur_namespace.indexOf(short_name) == 0){
 				this.subscribes_cache[cur_namespace] = null;
 			}
 		}
@@ -950,12 +950,32 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.complex_states_index = {};
 		this.complex_states_watchers = [];
 		this.states_changing_stack = [];
-		this.onRegistration('vip-state_change', this.stEvRegHandler);
+		this.onRegistration(this.checkVIPStReg, this.stVIPEvRegHandler);
 
-		this.onRegistration('state_change', this.stEvRegHandler);
+		this.onRegistration(this.checkStReg, this.stEvRegHandler);
 		//this.collectCompxs();
 
 		return this;
+	},
+	stVIPEvRegHandler: function(cb, namespace) {
+		var state_name = namespace.replace('vip_state_change-', '');
+		cb({
+			value: this.state(state_name),
+			target: this
+		});
+	},
+	stEvRegHandler: function(cb, namespace) {
+		var state_name = namespace.replace('state_change-', '');
+		cb({
+			value: this.state(state_name),
+			target: this
+		});
+	},
+	checkVIPStReg: function(namespace) {
+		return namespace.indexOf('vip_state_change-') === 0;
+	},
+	checkStReg: function(namespace) {
+		return namespace.indexOf('state_change-') === 0;
 	},
 	getContextOptsI: function() {
 		if (!this.conx_optsi){
@@ -972,7 +992,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	wch: function(donor, donor_state, acceptor_state, immediately) {
 	
 		var cb;
-		var event_name = (immediately ? 'vip-state_change.' : 'state_change.') + donor_state;
+		var event_name = (immediately ? 'vip_state_change-' : 'state_change-') + donor_state;
 		if (typeof acceptor_state == 'function'){
 			cb = acceptor_state;
 		} else {
@@ -996,12 +1016,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		return this;
 
-	},
-	stEvRegHandler: function(cb, namespace, opts, name_parts) {
-		cb({
-			value: this.state(name_parts[1]),
-			target: this
-		});
 	},
 	onExtend: function() {
 		this.collectCompxs();
@@ -1103,8 +1117,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
-	st_event_name_default: 'state_change.',
-	st_event_name_vip: 'vip-state_change.',
+	st_event_name_default: 'state_change-',
+	st_event_name_vip: 'vip_state_change-',
 	_triggerStChanges: function(i, name, value) {
 
 		var vip_name = this.st_event_name_vip + name;
@@ -1378,20 +1392,24 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 var models_counters = 1;
 provoda.StatesEmitter.extendTo(provoda.Model, {
+	checkChildChangeReg: function(namespace) {
+		return namespace.indexOf('child_change-') === 0;
+	},
+	stChildChEvRegHandler: function(cb, namespace) {
+		var nesting_name = namespace.replace('child_change-', '');
+		var child = this.getNesting(nesting_name);
+		if (child){
+			cb({
+				value: child,
+				target: this
+			});
+		}
+	},
 	init: function(){
 
 		this._super();
 
-		this.onRegistration('child-change', function(cb, namespace, opts, name_parts) {
-			var child_name = name_parts[1];
-			var child = this.getNesting(child_name);
-			if (child){
-				cb({
-					value: child,
-					target: this
-				});
-			}
-		});
+		this.onRegistration(this.checkChildChangeReg, this.stChildChEvRegHandler);
 
 		this._provoda_id = models_counters++;
 		this.states = {};
@@ -1451,7 +1469,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		//
 		var _this = this;
 		var items_events = new provoda.ItemsEvents();
-		items_events.init('state_change.' + state_name, function() {
+		items_events.init('state_change-' + state_name, function() {
 			callback.call(_this, {
 				item: this,
 				value: arguments && arguments[0] && arguments[0].value,
@@ -1459,7 +1477,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 				items: items_events.items_list
 			});
 		}, true);
-		this.on('child-change.' + collection_name, function(e) {
+		this.on('child_change-' + collection_name, function(e) {
 			items_events.setItems(e.value);
 		});
 	},
@@ -1472,7 +1490,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			},
 			calculateResult: statesCalcFunc
 		});
-		this.on('child-change.' + collection_name, function(e) {
+		this.on('child_change-' + collection_name, function(e) {
 			archiver.setItems(e.value);
 		});
 	},
@@ -1540,7 +1558,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		event_obj.value = array;
 		event_obj.old_value = old_value;
 		event_obj.target = this;
-		this.trigger('child-change.' + collection_name, event_obj);
+		this.trigger('child_change-' + collection_name, event_obj);
 
 		if (!opts || !opts.skip_report){
 			this.sendCollectionChange(collection_name, array, old_value, removed);
@@ -1661,7 +1679,7 @@ provoda.Model.extendTo(provoda.HModel, {
 	setPmdSwitcher: function(pmd) {
 		this.pmd_switch = pmd;
 		var _this = this;
-		pmd.on('state_change.vswitched', function(e) {
+		pmd.on('state_change-vswitched', function(e) {
 			_this.checkPMDSwiched(e.value);
 		}, {immediately: true});
 	},

@@ -8,13 +8,13 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		if (this.sendMoreDataRequest){
 			this.updateState("has_loader", true);
 		}
-		this.on('vip-state_change.mp_show', function(e) {
+		this.on('vip_state_change-mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				this.preloadStart();
 			}
 
 		}, {skip_reg: true});
-		this.on('state_change.more_load_available', function(e) {
+		this.on('state_change-more_load_available', function(e) {
 			var mp_show = this.state('mp_show');
 			if (e.value && mp_show && mp_show.userwant){
 				this.preloadStart();
@@ -22,7 +22,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			
 		});
 		if (!this.manual_previews){
-			this.on('child-change.' + this.main_list_name, function(e) {
+			this.on('child_change-' + this.main_list_name, function(e) {
 				if (!e.skip_report){
 					this.updateNesting(this.preview_mlist_name, e.value);
 				}
@@ -268,7 +268,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		var _this = this;
 		if (this.map_parent){
 			this.switchPmd(false);
-			this.map_parent.on('state_change.mp_has_focus', function(e) {
+			this.map_parent.on('state_change-mp_has_focus', function(e) {
 				if (!e.value){
 					_this.switchPmd(false);
 				}
@@ -279,7 +279,7 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		var auth_rqb = new AuthConstr();
 		auth_rqb.init({auth: auth, pmd: this}, params);
 		var _this = this;
-		auth_rqb.on('state_change.has_session', function(e) {
+		auth_rqb.on('state_change-has_session', function(e) {
 			_this.updateState('has_no_auth', !e.value);
 			_this.switchPmd(false);
 		});

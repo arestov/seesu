@@ -55,7 +55,7 @@ BrowseMap.Model.extendTo(SongCard, {
 			track_name: params.track_name
 		};
 		this.initStates();
-		this.on('state_change.mp_show', function(e) {
+		this.on('state_change-mp_show', function(e) {
 			if (e.value){
 				this.fullInit();
 

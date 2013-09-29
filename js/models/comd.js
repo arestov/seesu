@@ -120,7 +120,7 @@ ImagesPack.extendTo(TrackImages, {
 		this.track = info.track;
 
 		var _this = this;
-		artmd.on('state_change.image-to-use', function(e) {
+		artmd.on('state_change-image-to-use', function(e) {
 			_this.updateState('artist_image', e.value);
 		});
 

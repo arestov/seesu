@@ -345,7 +345,7 @@ provoda.View.extendTo(MfCorUI, {
 			_this.RPCLegacy('switchMoreSongsView');
 		});
 		this.addWayPoint(this.tpl.ancs.more_songs_b);
-		this.parent_view.on('state_change.mp_show_end', function(e){
+		this.parent_view.on('state_change-mp_show_end', function(e){
 			_this.setVisState('is_visible', !!e.value);
 		});
 	},

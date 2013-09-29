@@ -56,7 +56,7 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 	},
 	watchOwnPlaylist: function(pl) {
 		var _this = this;
-		pl.on('child-change.songs-list', function() {
+		pl.on('child_change-songs-list', function() {
 			this.trigger('each-playlist-change');
 			_this.savePlaylists();
 		}, {
