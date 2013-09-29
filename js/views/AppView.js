@@ -200,7 +200,7 @@ AppBaseView.extendTo(AppView, {
 				}
 			};
 
-			view.on('state-change.autofocus', function(e) {
+			view.on('state_change.autofocus', function(e) {
 				checkFocus(e.value);
 			}, {immediately: true});
 		}
@@ -302,7 +302,7 @@ AppBaseView.extendTo(AppView, {
 			this.RPCLegacy('detachUI', this.view_id);
 		});
 
-		this.on('vip-state-change.current_mp_md', function() {
+		this.on('vip-state_change.current_mp_md', function() {
 			var cwp = this.state('vis_current_wpoint');
 			if (cwp){
 				if (cwp.canUse && !cwp.canUse()){
@@ -312,7 +312,7 @@ AppBaseView.extendTo(AppView, {
 
 		}, {skip_reg: true, immediately: true});
 
-		this.on('state-change.current_mp_md', function() {
+		this.on('state_change.current_mp_md', function() {
 			_this.resortQueue();
 		});
 
@@ -518,7 +518,7 @@ AppBaseView.extendTo(AppView, {
 					};
 
 					_this.rsd_rz = setInterval(recheckFunc,100);
-					_this.on('vip-state-change.current_mp_md.resize-check', function(e) {
+					_this.on('vip-state_change.current_mp_md.resize-check', function(e) {
 						recheckFunc();
 					}, {
 						exlusive: true,
@@ -987,7 +987,7 @@ AppBaseView.extendTo(AppView, {
 					var photoupreq_c = this.createPhotoUploadRequest();
 					c.append(photoupreq_c);
 
-					this.on('vip-state-change.vk_info.song-listener', function(e) {
+					this.on('vip-state_change.vk_info.song-listener', function(e) {
 						if (e.value && e.value.photo_big){
 							photoupreq_c.before(this.createLikeButton(lig).c);
 

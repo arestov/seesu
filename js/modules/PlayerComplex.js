@@ -70,10 +70,10 @@ PlayerBase.extendTo(PlayerComplex, {
 						}
 						
 					} else {
-						mo.off('state-change.files_search', filesSearch);
+						mo.off('state_change.files_search', filesSearch);
 					}
 				};
-				mo.on('state-change.files_search', filesSearch, {skip_reg: true});
+				mo.on('state_change.files_search', filesSearch, {skip_reg: true});
 			}
 			
 		}

@@ -204,7 +204,7 @@ provoda.Model.extendTo(MfCor, {
 
 		} else {
 			//this.wch(this.mo, 'track', )
-			this.mo.on('vip-state-change.track', this.hndTrackNameCh, {immediately: true, soft_reg: false, context: this});
+			this.mo.on('vip-state_change.track', this.hndTrackNameCh, {immediately: true, soft_reg: false, context: this});
 			
 		}
 		
@@ -597,7 +597,7 @@ provoda.Model.extendTo(MfCor, {
 	},*/
 	listenMopla: function(mopla) {
 		if (this.subscribed_to.indexOf(mopla) == -1){
-			mopla.on('state-change.play', this.mfPlayStateChange);
+			mopla.on('state_change.play', this.mfPlayStateChange);
 			mopla.on('unavailable', this.mfError);
 
 			this.subscribed_to.push(mopla);

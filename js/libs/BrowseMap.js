@@ -679,13 +679,13 @@ provoda.Eventor.extendTo(BrowseMap, {
 		var i;
 		if (old_tree){
 			for (i = 0; i < old_tree.length; i++) {
-				old_tree[i].off('state-change.url_part', this.onNavUrlChange); //unbind
+				old_tree[i].off('state_change.url_part', this.onNavUrlChange); //unbind
 			}
 		}
 
 		new_tree = this.getTreeResidents(new_tree);
 		for (i = 0; i < new_tree.length; i++) {
-			new_tree[i].on('state-change.url_part', this.onNavUrlChange, {
+			new_tree[i].on('state_change.url_part', this.onNavUrlChange, {
 				skip_reg: true
 			});
 		}
@@ -867,7 +867,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	},
 	bindChildrenPreload: function(array) {
 		var lists_list = array || this.lists_list;
-		this.on('vip-state-change.mp_show', function(e) {
+		this.on('vip-state_change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				for (var i = 0; i < lists_list.length; i++) {
 					var cur = lists_list[i];
@@ -918,10 +918,10 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		return this.state('nav_title');
 	},
 	onTitleChange: function(cb) {
-		return this.on('vip-state-change.nav_title', cb, {skip_reg: true, immediately: true});
+		return this.on('vip-state_change.nav_title', cb, {skip_reg: true, immediately: true});
 	},
 	offTitleChange: function(cb) {
-		return this.off('vip-state-change.nav_title', cb);
+		return this.off('vip-state_change.nav_title', cb);
 	},
 	getURL: function() {
 		return '';

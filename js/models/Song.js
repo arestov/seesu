@@ -106,9 +106,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			}
 			this.initStates();
 			this.nextTick(this.initHeavyPart);
-			this.on('state-change.can_load_baseinfo', this.hndLoadBaseArtInfo);
-			this.on('state-change.can_load_images', this.hndLoadArtImages);
-			this.on('state-change.can_load_songcard', this.hndLoadSongcard);
+			this.on('state_change.can_load_baseinfo', this.hndLoadBaseArtInfo);
+			this.on('state_change.can_load_images', this.hndLoadArtImages);
+			this.on('state_change.can_load_songcard', this.hndLoadSongcard);
 		},
 		'compx-has_full_title':{
 			depends_on: ['artist', 'track'],
@@ -179,8 +179,8 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 
 			
 			this.watchStates(['files_search', 'marked_as', 'mp_show'], this.hndCanExpand);
-			this.on('vip-state-change.mp_show', this.hndMpshowImp, this.getContextOptsI());
-			this.on('state-change.is_important', this.hndImportant);
+			this.on('vip-state_change.mp_show', this.hndMpshowImp, this.getContextOptsI());
+			this.on('state_change.is_important', this.hndImportant);
 			this.nextTick(this.initRelativeData);
 
 		}),

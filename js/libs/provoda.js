@@ -370,7 +370,7 @@ provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 			_this.getItemsValues(item);
 		};
 		this.state_name = state_name;
-		this._super('state-change.' + this.state_name, this.checkFunc, true);
+		this._super('state_change.' + this.state_name, this.checkFunc, true);
 
 		this.returnResult = opts.returnResult;
 		var calcR = opts.calculateResult;
@@ -621,7 +621,7 @@ spv.Class.extendTo(provoda.Eventor, {
 	},
 	resetSubscribesCache: function(namespace) {
 
-		//fixme - bug for "state-change.window_width.song_file_progress" ( "state-change.window_width" stays valid, but must be invalid)
+		//fixme - bug for "state_change.window_width.song_file_progress" ( "state_change.window_width" stays valid, but must be invalid)
 		for (var cur_namespace in this.subscribes_cache){
 			if (!this.subscribes_cache[cur_namespace]){
 				continue;
@@ -950,9 +950,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.complex_states_index = {};
 		this.complex_states_watchers = [];
 		this.states_changing_stack = [];
-		this.onRegistration('vip-state-change', this.stEvRegHandler);
+		this.onRegistration('vip-state_change', this.stEvRegHandler);
 
-		this.onRegistration('state-change', this.stEvRegHandler);
+		this.onRegistration('state_change', this.stEvRegHandler);
 		//this.collectCompxs();
 
 		return this;
@@ -972,7 +972,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	wch: function(donor, donor_state, acceptor_state, immediately) {
 	
 		var cb;
-		var event_name = (immediately ? 'vip-state-change.' : 'state-change.') + donor_state;
+		var event_name = (immediately ? 'vip-state_change.' : 'state_change.') + donor_state;
 		if (typeof acceptor_state == 'function'){
 			cb = acceptor_state;
 		} else {
@@ -1103,8 +1103,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
-	st_event_name_default: 'state-change.',
-	st_event_name_vip: 'vip-state-change.',
+	st_event_name_default: 'state_change.',
+	st_event_name_vip: 'vip-state_change.',
 	_triggerStChanges: function(i, name, value) {
 
 		var vip_name = this.st_event_name_vip + name;
@@ -1451,7 +1451,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		//
 		var _this = this;
 		var items_events = new provoda.ItemsEvents();
-		items_events.init('state-change.' + state_name, function() {
+		items_events.init('state_change.' + state_name, function() {
 			callback.call(_this, {
 				item: this,
 				value: arguments && arguments[0] && arguments[0].value,
@@ -1661,7 +1661,7 @@ provoda.Model.extendTo(provoda.HModel, {
 	setPmdSwitcher: function(pmd) {
 		this.pmd_switch = pmd;
 		var _this = this;
-		pmd.on('state-change.vswitched', function(e) {
+		pmd.on('state_change.vswitched', function(e) {
 			_this.checkPMDSwiched(e.value);
 		}, {immediately: true});
 	},

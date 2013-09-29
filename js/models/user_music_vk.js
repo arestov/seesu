@@ -28,7 +28,7 @@ var connectUserid = function(params) {
 	} else {
 		if (params.for_current_user){
 			this.updateState('userid', false);
-			this.app.on('state-change.vk_userid', function(e) {
+			this.app.on('state_change.vk_userid', function(e) {
 				_this.updateState('userid', e.value);
 			});
 			if (this.authInit){

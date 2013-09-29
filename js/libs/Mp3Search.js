@@ -168,7 +168,7 @@ define(['provoda', 'spv', '../models/SongFileModel'], function(provoda, spv, Son
 
 
 
-			//this.on('vip-state-change.search_progress', function(e) {
+			//this.on('vip-state_change.search_progress', function(e) {
 			//	console.log('search_progress: ' + e.value);
 			//}, {immediately: true});
 			

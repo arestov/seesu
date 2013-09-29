@@ -100,7 +100,7 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		this.wch(this.root_view, 'window_width');
 		this.wch(this.parent_view, 'mp_show_end', 'parent_viewing_mode');
 
-		this.parent_view.on('state-change.mp_show', function(e) {
+		this.parent_view.on('state_change.mp_show', function(e) {
 			if (!e.value){
 				_this.setVisState('wamo_info', false);
 			}

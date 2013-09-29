@@ -487,7 +487,7 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 		
 
 		var _this = this;
-		this.map_parent.on('state-change.mp_show', function(e) {
+		this.map_parent.on('state_change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				_this.heavyInit();
 			}
@@ -580,13 +580,13 @@ BrowseMap.Model.extendTo(CountryPlace, {
 		this.initStates();
 		this.sub_pa_params = {country_name: this.country_name};
 
-		this.on('state-change.mp_show', function(e) {
+		this.on('state_change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				this.heavyInit();
 			}
 		});
 		var _this = this;
-		this.map_parent.on('state-change.mp_show', function(e) {
+		this.map_parent.on('state_change.mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				_this.heavyInit();
 			}
@@ -684,7 +684,7 @@ BrowseMap.Model.extendTo(MusicConductor, {
 
 		
 		this.initStates();
-		this.map_parent.on('state-change.can_expand', function(e) {
+		this.map_parent.on('state_change.can_expand', function(e) {
 			_this.updateState('can_expand', e.value);
 		});
 		return this;

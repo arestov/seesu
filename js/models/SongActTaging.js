@@ -20,7 +20,7 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 		this.wch(this.app.getArtcard(this.mo.state('artist')).getTagsModel(), 'data-list', 'artist_tags');
 
 
-		this.on('state-change.canload_personal', function(e) {
+		this.on('state_change.canload_personal', function(e) {
 			if (e.value){
 				this.loaDDD('personal_tags');
 			}
