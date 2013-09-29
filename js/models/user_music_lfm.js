@@ -814,7 +814,7 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 			nav_title: data.userid,
 			userid: data.userid,
 			registered: data.registered,
-
+			realname: data.realname,
 			gender: data.gender,
 			lfm_image: image,
 			big_desc: data.big_desc,

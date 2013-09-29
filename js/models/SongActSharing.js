@@ -118,7 +118,9 @@ invstg.BaseSuggest.extendTo(LFMUserSuggest, {
 
 
 
-var LFMFriendsSection = function() {};
+var LFMFriendsSection = function() {
+	this.init();
+};
 invstg.SearchSection.extendTo(LFMFriendsSection, {
 	resItem: LFMUserSuggest,
 	model_name: "section-lfm-friends"
@@ -160,8 +162,9 @@ invstg.Investigation.extendTo(LfmSongSharing, {
 			return lfm_userid && active_view;
 		}
 	},
-	searchLFMFriends: function(list){
-		var r = (this.q ? spv.searchInArray(list, this.q, ["first_name", "last_name"]) : list);
+	searchLFMFriends: function(){
+		var list = this.getNesting('friends') || [];
+		var r = (this.q ? spv.searchInArray(list, this.q, ["states.userid", "states.realname"]) : list);
 		if (r.length){
 			r = r.concat();
 			for (var i = 0; i < r.length; i++) {
@@ -173,21 +176,17 @@ invstg.Investigation.extendTo(LfmSongSharing, {
 			}
 		}
 
-		this.g('users').appendResults(r, true);
+		this.g('friends').appendResults(r, true);
 	},
 	searchf: function() {
 		var
 			_this = this,
-			pl_sec = this.g('users');
+			pl_sec = this.g('friends');
 
 		pl_sec.setActive();
 		pl_sec.changeQuery(this.q);
 
-		this.app
-			.once("vk-friends.share-row", function(list){
-				_this.handleVKFriendsSearch(list);
-			}, {exlusive: true})
-			.getVKFriends();
+		this.searchLFMFriends();
 	}
 });
 
@@ -249,13 +248,14 @@ comd.BaseCRow.extendTo(SongActSharing, {
 
 		this.searcher = new StrusersRowSearch(this, mo);
 		this.updateNesting('searcher', this.searcher);
-		var lfm_sharing = new LfmSongSharing();
-		lfm_sharing.init({
+
+		var lfmsharing = new LfmSongSharing();
+		lfmsharing.init({
 			app: this.app,
 			map_parent: this
 		}, actionsrow, mo);
-		this.updateNesting('lfmsharing', lfm_sharing);
-
+		this.updateNesting('lfmsharing', lfmsharing);
+		this.lfmsharing = lfmsharing;
 		
 
 
@@ -324,6 +324,7 @@ comd.BaseCRow.extendTo(SongActSharing, {
 	search: function(q) {
 		this.updateState('query', q);
 		this.searcher.changeQuery(q);
+		this.lfmsharing.changeQuery(q);
 	},
 	model_name: 'row-share'
 });

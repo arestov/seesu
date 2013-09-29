@@ -26,13 +26,30 @@ provoda.View.extendTo(VkShareSearchCtr, {
 });
 
 
+var LFMShareSearchCtr = function() {};
+provoda.View.extendTo(LFMShareSearchCtr, {
+	createBase: function() {
+		this.c = this.root_view.getSample('song_acting_lfm_search');
+		this.createTemplate();
+	},
+	tpl_events:{
+		requestFullView: function() {
+
+			this.parent_view.toggleVisState('full_view_mode', true);
+		}
+	}
+});
+
+
+
 
 var ShareRowUI = function(){};
 provoda.View.extendTo(ShareRowUI, {
 	dom_rp: true,
 	children_views: {
 		vk_auth: etc_views.VkLoginUI,
-		searcher: VkShareSearchCtr
+		searcher: VkShareSearchCtr,
+		lfmsharing: LFMShareSearchCtr
 	},
 
 	bindBase: function(){
@@ -153,8 +170,9 @@ provoda.View.extendTo(ShareRowUI, {
 */
 		this.requirePart("pch-vk-auth");
 		this.requirePart("pch-ws-friends");
-		
 
+		this['collch-lfmsharing'] = 'tpl.ancs.lfm_share';
+		this.checkCollectionChange('lfmsharing');
 		
 	}
 
