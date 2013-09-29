@@ -43,7 +43,7 @@
 		<span
 			class="common-nav nav-item"
 			pv-props="title:{{nav_title}}"
-			pv-events="click::zoomOut"
+			pv-events="click:zoomOut"
 			pv-type="{{(mp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 
 			pv-class="
@@ -53,6 +53,7 @@
 				{{mp_stack == 'top' && 'stack-top'}}
 				{{mp_stack == 'bottom' && 'stack-bottom'}}
 				{{mp_stack == 'middle' && 'stack-middle'}}
+				{{nav_clickable && 'nav_clickable'}}
 			"
 			
 			><span
@@ -62,7 +63,7 @@
 			class="search_page-nav nav-item nav-search_results" 
 			title="Search results"
 			pv-props="title:{{nav_title}}"
-			pv-events="click::zoomOut"
+			pv-events="click:zoomOut"
 			pv-type="{{(mp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 			
 			pv-class="
@@ -72,13 +73,14 @@
 				{{mp_stack == 'top' && 'stack-top'}}
 				{{mp_stack == 'bottom' && 'stack-bottom'}}
 				{{mp_stack == 'middle' && 'stack-middle'}}
+				{{nav_clickable && 'nav_clickable'}}
 			"
 			><b></b><span class="icon">&nbsp;</span></span>
 		<span 
 			class="start_page-nav nav-item nav-start" 
 			title="Seesu start page"
 			pv-props="title:{{nav_title}}"
-			pv-events="click::zoomOut"
+			pv-events="click:zoomOut"
 			pv-type="{{(mp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 			
 			pv-class="
@@ -86,6 +88,7 @@
 				{{!mp_show && 'hidden'}}
 				{{!mp_has_focus && 'nav-button'}}
 				{{(mp_stack && mp_stack == !!mp_stack) && 'stacked'}}
+				{{nav_clickable && 'nav_clickable'}}
 				
 			"
 			><b></b><span class="icon">&nbsp;</span></span>

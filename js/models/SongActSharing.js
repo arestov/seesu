@@ -31,6 +31,9 @@ invstg.BaseSuggest.extendTo(struserSuggest, {
 });
 
 
+
+
+
 var StrusersRSSection = function() {
 	this.init();
 };
@@ -85,12 +88,42 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 
 
 
-//su.routePathByModels('/users/me/lfm:neighbours')
-//preloadStart
-var VKSongSharing = function() {};
-invstg.Investigation.extendTo(VKSongSharing, {
 
+
+var LFMUserSuggest = function(wrap) {
+	var user = wrap.user;
+
+	this.init();
+	/*this.mo = wrap.mo;
+	this.row = wrap.row;
+	this.user_id = user.id;
+	this.photo = user.photo;
+	this.online = this.online;
+	//this.name = user.name;*/
+	this.text_title = user.first_name + " " + user.last_name;
+	this.updateManyStates({
+		photo: user.photo,
+		text_title: this.text_title
+	});
+};
+invstg.BaseSuggest.extendTo(LFMUserSuggest, {
+	valueOf: function(){
+		return this.user_id;
+	},
+	onView: function(){
+		this.mo.postToVKWall(this.user_id);
+		this.row.hide();
+	}
 });
+
+
+
+var LFMFriendsSection = function() {};
+invstg.SearchSection.extendTo(LFMFriendsSection, {
+	resItem: LFMUserSuggest,
+	model_name: "section-lfm-friends"
+});
+
 
 var LfmSongSharing = function() {};
 invstg.Investigation.extendTo(LfmSongSharing, {
@@ -104,14 +137,57 @@ invstg.Investigation.extendTo(LfmSongSharing, {
 		this.actionsrow = actionsrow;
 
 		this.lfm_friends = this.app.routePathByModels('/users/me/lfm:friends');
+		//su.routePathByModels('/users/me/lfm:neighbours')
+		//preloadStart
+
+		this.lfm_friends.on('child_change-list_items', function(e) {
+			this.updateNesting('friends', e.value);
+		}, this.getContextOpts());
+
+		this.wch(this.app, 'lfm_userid');
 		this.wch(this.map_parent, 'active_view');
-		this.wch(this, 'active_view', function(e) {
+		this.wch(this, 'can_load_friends', function(e) {
 			if (e.value){
 				this.lfm_friends.preloadStart();
 			}
 		});
 
-		//this.lfm_friends.on('child_change-')
+		this.addSection('friends', new LFMFriendsSection());
+	},
+	'compx-can_load_friends':{
+		depends_on: ['active_view', 'lfm_userid'],
+		fn: function(active_view, lfm_userid) {
+			return lfm_userid && active_view;
+		}
+	},
+	searchLFMFriends: function(list){
+		var r = (this.q ? spv.searchInArray(list, this.q, ["first_name", "last_name"]) : list);
+		if (r.length){
+			r = r.concat();
+			for (var i = 0; i < r.length; i++) {
+				r[i] = {
+					mo: this.mo,
+					user: r[i],
+					row: this.rpl
+				};
+			}
+		}
+
+		this.g('users').appendResults(r, true);
+	},
+	searchf: function() {
+		var
+			_this = this,
+			pl_sec = this.g('users');
+
+		pl_sec.setActive();
+		pl_sec.changeQuery(this.q);
+
+		this.app
+			.once("vk-friends.share-row", function(list){
+				_this.handleVKFriendsSearch(list);
+			}, {exlusive: true})
+			.getVKFriends();
 	}
 });
 
