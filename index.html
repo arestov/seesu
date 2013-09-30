@@ -958,45 +958,49 @@
 									<div class="">
 										<input type="text" pv-anchor="vk_share_search">
 									</div>
-
 									
-									
-									
-									<div>
-										<h3 class="vk_share_header lang localize-post-song"></h3>
-										<div class="post-to-my-vk-wall" pv-class="post-to-my-vk-wall {{!own_photo && 'hidden'}}" pv-events="click::postToVKWall" pv-type="way-point">
-											<img pv-props="src: {{own_photo}}">
-											<span class="lang localize-to-own-wall"></span>
+									<div pv-nest="searcher">
+										
+										<div pv-nest="section for_model:section-vk-users">
+											<div>
+												<h3 class="vk_share_header lang localize-post-song"></h3>
+												<div class="post-to-my-vk-wall" pv-class="post-to-my-vk-wall {{!own_photo && 'hidden'}}" pv-events="click::postToVKWall" pv-type="way-point">
+													<img pv-props="src: {{own_photo}}">
+													<span class="lang localize-to-own-wall"></span>
+												</div>
+												<div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
+											</div>
+											<div class="details_switch" >
+												<div 
+													class="min_details"
+													pv-class="min_details {{!vis_full_view_mode && 'active'}}"
+													pv-events="click:toggleVisState:full_view_mode::">
+													<span class="icon"></span>
+												</div>
+												<div
+													class="max_details"
+													pv-class="max_details {{vis_full_view_mode && 'active'}}"
+													pv-events="click:toggleVisState:full_view_mode:true">
+													<span class="icon"></span>
+												</div>
+											</div>
+	
+											<div class="song_acting_vk_search protect_clicks details_for_switcher">
+												<ul  >
+													<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
+														<a>
+															<img pv-props="src:{{photo}}">
+															<span pv-text="{{text_title}}" class="text_part"></span>
+														</a>
+													</li>
+												</ul>
+												<div class="clicks_protecter" pv-events="click:requestFullView"></div>
+											</div>
+											
 										</div>
-										<div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
-									</div>
-
-									<div class="details_switch" >
-										<div 
-											class="min_details"
-											pv-class="min_details {{!vis_full_view_mode && 'active'}}"
-											pv-events="click:toggleVisState:full_view_mode::">
-											<span class="icon"></span>
-										</div>
-										<div
-											class="max_details"
-											pv-class="max_details {{vis_full_view_mode && 'active'}}"
-											pv-events="click:toggleVisState:full_view_mode:true">
-											<span class="icon"></span>
-										</div>
 									</div>
 									
-									<div class="song_acting_vk_search protect_clicks details_for_switcher" pv-nest="searcher">
-										<ul pv-nest="section for_model:section-vk-users">
-											<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
-												<a>
-													<img pv-props="src:{{photo}}">
-													<span pv-text="{{text_title}}" class="text_part"></span>
-												</a>
-											</li>
-										</ul>
-										<div class="clicks_protecter" pv-events="click:requestFullView"></div>
-									</div>
+									
 	
 
 									<div class="details_switch" >

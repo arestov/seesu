@@ -37,7 +37,133 @@ invstg.BaseSuggest.extendTo(struserSuggest, {
 var StrusersRSSection = function() {};
 invstg.SearchSection.extendTo(StrusersRSSection, {
 	resItem: struserSuggest,
-	model_name: "section-vk-users"
+	model_name: "section-vk-users",
+	init: function(opts) {
+		this._super(opts);
+
+		var _this = this;
+		if (app_env.vkontakte || this.app.vk_api){
+			this.updateState("can_post_to_own_wall", true);
+		} else {
+			this.app.on("vk-api", function() {
+				_this.updateState("can_post_to_own_wall", true);
+			});
+		}
+		if (!app_env.vkontakte){
+			if (this.app.vk_api){
+				this.updateState("can_search_friends", true);
+				this.removeVKAudioAuth();
+			} else {
+				this.addVKAudioAuth();
+				
+				this.app.on("vk-api", function() {
+					_this.removeVKAudioAuth();
+					_this.updateState("can_search_friends", true);
+				});
+			}
+		} else {
+			this.checkVKFriendsAccess(this.app._url.api_settings);
+
+			var binded;
+			var bindFriendsAccessChange = function() {
+				if (!binded && window.VK){
+					binded = true;
+					this.app.vk_auth.on('settings-change', function(vk_opts) {
+						_this.checkVKFriendsAccess(vk_opts);
+					});
+				}
+			};
+			bindFriendsAccessChange();
+			if (!binded){
+				this.app.once("vk-site-api", bindFriendsAccessChange);
+			}
+		}
+
+		var cu_info = this.app.s.getInfo('vk');
+		if (cu_info){
+			if (cu_info.photo){
+				this.updateState("own_photo", cu_info.photo);
+			}
+		} else {
+			this.app.s.once("info-change.vk", function(cu_info) {
+				if (cu_info.photo){
+					_this.updateState("own_photo", cu_info.photo);
+				}
+			});
+		}
+	},
+	'stch-can_search_friends': function(state) {
+		if (state){
+			this.searchByQuery(this.q);
+		}
+	},
+	searchByQuery: function(query) {
+		this.changeQuery(query);
+		var _this = this;
+		this.app
+			.once("vk-friends.share-row", function(list){
+				_this.handleVKFriendsSearch(list);
+			}, {exlusive: true})
+			.getVKFriends();
+	},
+	handleVKFriendsSearch: function(list){
+		var r = (this.q ? spv.searchInArray(list, this.q, ["first_name", "last_name"]) : list);
+		if (r.length){
+			r = r.concat();
+			for (var i = 0; i < r.length; i++) {
+				r[i] = {
+					mo: this.mo,
+					user: r[i],
+					row: this.rpl
+				};
+			}
+		}
+
+		this.appendResults(r, true);
+	},
+	checkVKFriendsAccess: function(vk_opts) {
+		var can = (vk_opts & 2) * 1;
+		this.updateState("can_search_friends", can);
+		if (!can){
+			this.addVKAudioAuth(true);
+		} else {
+			this.removeVKAudioAuth();
+		}
+	},
+	addVKAudioAuth: function(improve) {
+
+		
+		if (!this.vk_auth_rqb){
+			
+			this.vk_auth_rqb = new comd.VkLoginB();
+			this.vk_auth_rqb.init({
+				auth: this.app.vk_auth
+			}, {
+				open_opts: {settings_bits: 2},
+				desc: improve ? localize('to-find-vk-friends') : localize("to-post-and-find-vk")
+			});
+			this.updateNesting('vk_auth', this.vk_auth_rqb);
+
+		}
+		//to find you friends
+
+
+		this.updateState("needs_vk_auth", true);
+
+	},
+	postToVKWall: function() {
+		this.mo.postToVKWall();
+	},
+	removeVKAudioAuth: function() {
+		if (this.vk_auth_rqb){
+			this.vk_auth_rqb.die();
+			delete this.vk_auth_rqb;
+
+		}
+		this.updateState("needs_vk_auth", false);
+
+	},
+
 });
 
 
@@ -53,34 +179,13 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 		this.app = mo.app;
 		this.addSection('users', StrusersRSSection);
 	},
-	handleVKFriendsSearch: function(list){
-		var r = (this.q ? spv.searchInArray(list, this.q, ["first_name", "last_name"]) : list);
-		if (r.length){
-			r = r.concat();
-			for (var i = 0; i < r.length; i++) {
-				r[i] = {
-					mo: this.mo,
-					user: r[i],
-					row: this.rpl
-				};
-			}
-		}
-
-		this.g('users').appendResults(r, true);
-	},
+	
 	searchf: function() {
-		var
-			_this = this,
-			pl_sec = this.g('users');
-
+		var pl_sec = this.g('users');
 		pl_sec.setActive();
-		pl_sec.changeQuery(this.q);
+		pl_sec.searchByQuery(this.q);
 
-		this.app
-			.once("vk-friends.share-row", function(list){
-				_this.handleVKFriendsSearch(list);
-			}, {exlusive: true})
-			.getVKFriends();
+		
 	}
 });
 
@@ -199,9 +304,8 @@ var SongActSharing = function(actionsrow, mo){
 comd.BaseCRow.extendTo(SongActSharing, {
 	init: function(actionsrow, mo){
 
-		var su = window.su;
 		
-		var _this = this;
+		
 		this.actionsrow = actionsrow;
 		this.app = mo.app;
 		this.mo = mo;
@@ -211,44 +315,11 @@ comd.BaseCRow.extendTo(SongActSharing, {
 
 		
 
-		if (app_env.vkontakte || su.vk_api){
-			this.updateState("can_post_to_own_wall", true);
-		} else {
-			su.on("vk-api", function() {
-				_this.updateState("can_post_to_own_wall", true);
-			});
-		}
-		if (!app_env.vkontakte){
-			if (su.vk_api){
-				this.updateState("can_search_friends", true);
-				this.removeVKAudioAuth();
-			} else {
-				this.addVKAudioAuth();
-				
-				su.on("vk-api", function() {
-					_this.removeVKAudioAuth();
-					_this.updateState("can_search_friends", true);
-				});
-			}
-		} else {
-			this.checkVKFriendsAccess(su._url.api_settings);
-
-			var binded;
-			var bindFriendsAccessChange = function() {
-				if (!binded && window.VK){
-					binded = true;
-					su.vk_auth.on('settings-change', function(vk_opts) {
-						_this.checkVKFriendsAccess(vk_opts);
-					});
-				}
-			};
-			bindFriendsAccessChange();
-			if (!binded){
-				su.once("vk-site-api", bindFriendsAccessChange);
-			}
-		}
-
+		
 		this.searcher = new StrusersRowSearch(this, mo);
+
+
+		
 		this.updateNesting('searcher', this.searcher);
 
 		var lfmsharing = new LfmSongSharing();
@@ -258,22 +329,7 @@ comd.BaseCRow.extendTo(SongActSharing, {
 		}, actionsrow, mo);
 		this.updateNesting('lfmsharing', lfmsharing);
 		this.lfmsharing = lfmsharing;
-		
-
-
-		
-		var cu_info = su.s.getInfo('vk');
-		if (cu_info){
-			if (cu_info.photo){
-				this.updateState("own_photo", cu_info.photo);
-			}
-		} else {
-			su.s.once("info-change.vk", function(cu_info) {
-				if (cu_info.photo){
-					_this.updateState("own_photo", cu_info.photo);
-				}
-			});
-		}
+		this.search('');
 
 		//this.share_url = this.mo.getShareUrl();
 		
@@ -281,48 +337,7 @@ comd.BaseCRow.extendTo(SongActSharing, {
 	hndUpdateShareURL: function() {
 		this.updateState('share_url', this.mo.getShareUrl());
 	},
-	checkVKFriendsAccess: function(vk_opts) {
-		var can = (vk_opts & 2) * 1;
-		this.updateState("can_search_friends", can);
-		if (!can){
-			this.addVKAudioAuth(true);
-		} else {
-			this.removeVKAudioAuth();
-		}
-	},
-	addVKAudioAuth: function(improve) {
 
-		
-		if (!this.vk_auth_rqb){
-			
-			this.vk_auth_rqb = new comd.VkLoginB();
-			this.vk_auth_rqb.init({
-				auth: this.app.vk_auth
-			}, {
-				open_opts: {settings_bits: 2},
-				desc: improve ? localize('to-find-vk-friends') : localize("to-post-and-find-vk")
-			});
-			this.updateNesting('vk_auth', this.vk_auth_rqb);
-
-		}
-		//to find you friends
-
-
-		this.updateState("needs_vk_auth", true);
-
-	},
-	postToVKWall: function() {
-		this.mo.postToVKWall();
-	},
-	removeVKAudioAuth: function() {
-		if (this.vk_auth_rqb){
-			this.vk_auth_rqb.die();
-			delete this.vk_auth_rqb;
-
-		}
-		this.updateState("needs_vk_auth", false);
-
-	},
 	search: function(q) {
 		this.updateState('query', q);
 		this.searcher.changeQuery(q);

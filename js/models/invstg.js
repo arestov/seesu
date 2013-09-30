@@ -82,7 +82,7 @@ var seesuSection = function() {};
 SearchSection.extendTo(seesuSection, {
 	no_results_text: localize('nothing-found'),
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		if (this.loadMore){
 			var _this = this;
 			this.button = (new BaseSectionButton())
@@ -105,7 +105,7 @@ var PlaylistsSection = function() {};
 SearchSection.extendTo(PlaylistsSection, {
 	model_name: 'section-playlist',
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		this.updateState('section_title', localize('playlists'));
 	},
 	resItem: playlistSuggest

@@ -11,8 +11,30 @@ provoda.View.extendTo(PlaylistAddSearchCtr, {
 	}
 });
 
+
+var VkSectionView = function() {};
+provoda.View.extendTo(VkSectionView, {
+	children_views:{
+		vk_auth: etc_views.VkLoginUI
+	},
+	tpl_events:{
+		requestFullView: function() {
+			this.parent_view.toggleVisState('full_view_mode', true);
+		}
+	},
+	'stch-needs_vk_auth': function(state) {
+		if (state){
+			this.tpl.ancs['vk_auth'].append(this.getAFreeCV('vk_auth'));
+			this.requestAll();
+		}
+	},
+});
+
 var VkShareSearchCtr = function() {};
 provoda.View.extendTo(VkShareSearchCtr, {
+	children_views:{
+		'section-vk-users': VkSectionView
+	},
 	tpl_events:{
 		requestFullView: function() {
 			this.parent_view.toggleVisState('full_view_mode', true);
@@ -37,7 +59,7 @@ var ShareRowUI = function(){};
 provoda.View.extendTo(ShareRowUI, {
 	dom_rp: true,
 	children_views: {
-		vk_auth: etc_views.VkLoginUI,
+		
 		searcher: VkShareSearchCtr,
 		lfmsharing: LFMShareSearchCtr
 	},
@@ -107,12 +129,7 @@ provoda.View.extendTo(ShareRowUI, {
 			this.RPCLegacy('search', '');
 		}
 	},
-	'stch-needs_vk_auth': function(state) {
-		if (state){
-			this.tpl.ancs['vk_auth'].append(this.getAFreeCV('vk_auth'));
-			this.requestAll();
-		}
-	},
+
 	addWSChunk: function() {
 		return $(document.createTextNode("")).appendTo(this.tpl.ancs['vk_share']);
 	},

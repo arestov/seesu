@@ -259,8 +259,10 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 
 	
 	provoda.addPrototype("SearchSection", {
-		init: function(){
+		init: function(opts){
 			this._super();
+			this.app = opts.app;
+			this.map_parent = opts.map_parent;
 			this.edges_list = [];
 			this.rendering_list = [];
 		},
