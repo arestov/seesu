@@ -1279,9 +1279,7 @@ iframe.you-tube-video,embed.you-tube-video{
 		
 		margin-top:1.72rem;
 		}
-		.shareb-base.vk_share .details_switch{
-			margin-top: 1rem;
-		}
+
 		.share-song .song_acting_vk_search{
 			overflow: hidden;
 			}
@@ -1296,6 +1294,14 @@ iframe.you-tube-video,embed.you-tube-video{
 			float:left;
 			width:50%;
 			margin-bottom:7px;
+		}
+.shareb-base .details_switch{
+	float: right;
+	margin-bottom: 0.2rem;
+	margin-top: 0.2rem;
+	}
+	.shareb-base .details_for_switcher{
+		clear: both;
 		}
 
 

@@ -72,7 +72,8 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 		setInactiveAll: function(except){
 			this._changeActiveStatus(true, except);
 		},
-		addSection: function(name, s){
+		addSection: function(name, Section){
+			var s = new Section();
 			var _this = this;
 			s.init({
 				map_parent: this,
