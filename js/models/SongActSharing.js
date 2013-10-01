@@ -40,7 +40,8 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 	model_name: "section-vk-users",
 	init: function(opts) {
 		this._super(opts);
-
+		this.mo = this.map_parent.mo;
+		this.rpl = this.map_parent.map_parent;
 		var _this = this;
 		if (app_env.vkontakte || this.app.vk_api){
 			this.updateState("can_post_to_own_wall", true);
@@ -94,7 +95,7 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 	},
 	'stch-can_search_friends': function(state) {
 		if (state){
-			this.searchByQuery(this.q);
+			this.searchByQuery(this.state('query'));
 		}
 	},
 	searchByQuery: function(query) {
@@ -107,7 +108,8 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 			.getVKFriends();
 	},
 	handleVKFriendsSearch: function(list){
-		var r = (this.q ? spv.searchInArray(list, this.q, ["first_name", "last_name"]) : list);
+		var query = this.state('query');
+		var r = (query ? spv.searchInArray(list, query, ["first_name", "last_name"]) : list);
 		if (r.length){
 			r = r.concat();
 			for (var i = 0; i < r.length; i++) {
@@ -172,11 +174,13 @@ var StrusersRowSearch = function(rpl, mo) {
 };
 invstg.Investigation.extendTo(StrusersRowSearch, {
 	skip_map_init: true,
-	init: function(rpl, mo) {
+	init: function(opts, mo) {
 		this._super();
-		this.rpl = rpl;
+		//this.rpl = rpl;
+		this.app = opts.app;
+		this.map_parent = opts.map_parent;
 		this.mo = mo;
-		this.app = mo.app;
+
 		this.addSection('users', StrusersRSSection);
 	},
 	
@@ -224,6 +228,62 @@ invstg.BaseSuggest.extendTo(LFMUserSuggest, {
 
 var LFMFriendsSection = function() {};
 invstg.SearchSection.extendTo(LFMFriendsSection, {
+	init: function(opts) {
+		this._super(opts);
+
+
+
+		this.lfm_friends = this.app.routePathByModels('/users/me/lfm:friends');
+		//su.routePathByModels('/users/me/lfm:neighbours')
+		//preloadStart
+
+		this.lfm_friends.on('child_change-list_items', function(e) {
+			this.updateNesting('friends', e.value);
+			this.changeQuery('');
+			this.searchByQuery(this.state('query'));
+			
+
+		}, this.getContextOpts());
+
+		var row_part = this.map_parent.map_parent;
+
+		this.wch(this.app, 'lfm_userid');
+		this.wch(row_part, 'active_view');
+		this.wch(this, 'can_load_friends', function(e) {
+			if (e.value){
+				this.lfm_friends.preloadStart();
+			}
+		});
+
+
+
+	},
+	searchByQuery: function(query) {
+		this.changeQuery(query);
+		this.searchLFMFriends();
+	},
+	'compx-can_load_friends':{
+		depends_on: ['active_view', 'lfm_userid'],
+		fn: function(active_view, lfm_userid) {
+			return lfm_userid && active_view;
+		}
+	},
+	searchLFMFriends: function(){
+		var list = this.getNesting('friends') || [];
+		var query = this.state('query');
+		var r = (query ? spv.searchInArray(list, query, ["states.userid", "states.realname"]) : list);
+		if (r.length){
+			r = r.concat();
+			for (var i = 0; i < r.length; i++) {
+				r[i] = {
+					mo: this.mo,
+					user: r[i],
+					row: this.rpl
+				};
+			}
+		}
+		this.appendResults(r, true);
+	},
 	resItem: LFMUserSuggest,
 	model_name: "section-lfm-friends"
 });
@@ -240,60 +300,14 @@ invstg.Investigation.extendTo(LfmSongSharing, {
 		this.mo = mo;
 		this.actionsrow = actionsrow;
 
-		this.lfm_friends = this.app.routePathByModels('/users/me/lfm:friends');
-		//su.routePathByModels('/users/me/lfm:neighbours')
-		//preloadStart
-
-		this.lfm_friends.on('child_change-list_items', function(e) {
-			this.updateNesting('friends', e.value);
-			var section = this.g('friends');
-			section.changeQuery('');
-			section.changeQuery(this.q);
-			this.searchLFMFriends();
-
-		}, this.getContextOpts());
-
-		this.wch(this.app, 'lfm_userid');
-		this.wch(this.map_parent, 'active_view');
-		this.wch(this, 'can_load_friends', function(e) {
-			if (e.value){
-				this.lfm_friends.preloadStart();
-			}
-		});
-
 		this.addSection('friends', LFMFriendsSection);
 	},
-	'compx-can_load_friends':{
-		depends_on: ['active_view', 'lfm_userid'],
-		fn: function(active_view, lfm_userid) {
-			return lfm_userid && active_view;
-		}
-	},
-	searchLFMFriends: function(){
-		var list = this.getNesting('friends') || [];
-		var r = (this.q ? spv.searchInArray(list, this.q, ["states.userid", "states.realname"]) : list);
-		if (r.length){
-			r = r.concat();
-			for (var i = 0; i < r.length; i++) {
-				r[i] = {
-					mo: this.mo,
-					user: r[i],
-					row: this.rpl
-				};
-			}
-		}
-		var section = this.g('friends');
-		section.appendResults(r, true);
-	},
+	
 	searchf: function() {
-		var
-			_this = this,
-			pl_sec = this.g('friends');
+		var pl_sec = this.g('friends');
 
 		pl_sec.setActive();
-		pl_sec.changeQuery(this.q);
-
-		this.searchLFMFriends();
+		pl_sec.searchByQuery(this.q);
 	}
 });
 
@@ -316,7 +330,10 @@ comd.BaseCRow.extendTo(SongActSharing, {
 		
 
 		
-		this.searcher = new StrusersRowSearch(this, mo);
+		this.searcher = new StrusersRowSearch({
+			app: this.app,
+			map_parent: this
+		}, mo);
 
 
 		

@@ -12,14 +12,30 @@ provoda.View.extendTo(PlaylistAddSearchCtr, {
 });
 
 
-var VkSectionView = function() {};
-provoda.View.extendTo(VkSectionView, {
+var VkShareSectionView = function() {};
+provoda.View.extendTo(VkShareSectionView, {
 	children_views:{
 		vk_auth: etc_views.VkLoginUI
 	},
+	toggleVisState: function(state, boolen) {
+		var new_value;
+		if (typeof boolen == 'undefined'){
+			new_value = !this.state('vis_' + state);
+		} else {
+			new_value = !!boolen;
+		}
+		this.setVisState(state, new_value);
+	},
+	toggleVisStateTPL: function(e, node, data) {
+		var boolen = data[2];
+		this.toggleVisState(data[1], boolen);
+	},
 	tpl_events:{
 		requestFullView: function() {
-			this.parent_view.toggleVisState('full_view_mode', true);
+			this.toggleVisState('full_view_mode', true);
+		},
+		toggleVisState: function(e, node, data) {
+			this.toggleVisStateTPL(e, node, data);
 		}
 	},
 	'stch-needs_vk_auth': function(state) {
@@ -33,7 +49,7 @@ provoda.View.extendTo(VkSectionView, {
 var VkShareSearchCtr = function() {};
 provoda.View.extendTo(VkShareSearchCtr, {
 	children_views:{
-		'section-vk-users': VkSectionView
+		'section-vk-users': VkShareSectionView
 	},
 	tpl_events:{
 		requestFullView: function() {
@@ -43,8 +59,38 @@ provoda.View.extendTo(VkShareSearchCtr, {
 });
 
 
+
+var LFMShareSectionView = function() {};
+provoda.View.extendTo(LFMShareSectionView, {
+	toggleVisState: function(state, boolen) {
+		var new_value;
+		if (typeof boolen == 'undefined'){
+			new_value = !this.state('vis_' + state);
+		} else {
+			new_value = !!boolen;
+		}
+		this.setVisState(state, new_value);
+	},
+	toggleVisStateTPL: function(e, node, data) {
+		var boolen = data[2];
+		this.toggleVisState(data[1], boolen);
+	},
+	tpl_events:{
+		requestFullView: function() {
+			this.toggleVisState('full_view_mode', true);
+		},
+		toggleVisState: function(e, node, data) {
+			this.toggleVisStateTPL(e, node, data);
+		}
+	}
+});
+
+
 var LFMShareSearchCtr = function() {};
 provoda.View.extendTo(LFMShareSearchCtr, {
+	children_views:{
+		'section-lfm-friends': LFMShareSectionView
+	},
 	tpl_events:{
 		requestFullView: function() {
 			this.parent_view.toggleVisState('full_view_mode', true);
