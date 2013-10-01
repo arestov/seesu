@@ -1419,6 +1419,7 @@ iframe.you-tube-video,embed.you-tube-video{
 
 .friends-search-desc{
 	clear: both;
+	float: left;
 	}
 
 .row-song-context input{
