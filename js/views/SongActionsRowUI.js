@@ -12,11 +12,9 @@ provoda.View.extendTo(PlaylistAddSearchCtr, {
 });
 
 
-var VkShareSectionView = function() {};
-provoda.View.extendTo(VkShareSectionView, {
-	children_views:{
-		vk_auth: etc_views.VkLoginUI
-	},
+var ShareSearchSection = function() {};
+provoda.View.extendTo(ShareSearchSection, {
+
 	toggleVisState: function(state, boolen) {
 		var new_value;
 		if (typeof boolen == 'undefined'){
@@ -37,6 +35,14 @@ provoda.View.extendTo(VkShareSectionView, {
 		toggleVisState: function(e, node, data) {
 			this.toggleVisStateTPL(e, node, data);
 		}
+	}
+});
+
+
+var VkShareSectionView = function() {};
+ShareSearchSection.extendTo(VkShareSectionView, {
+	children_views:{
+		vk_auth: etc_views.VkLoginUI
 	},
 	'stch-needs_vk_auth': function(state) {
 		if (state){
@@ -46,49 +52,15 @@ provoda.View.extendTo(VkShareSectionView, {
 	},
 });
 
-var VkShareSearchCtr = function() {};
-provoda.View.extendTo(VkShareSearchCtr, {
-	children_views:{
-		'section-vk-users': VkShareSectionView
-	},
-	tpl_events:{
-		requestFullView: function() {
-			this.parent_view.toggleVisState('full_view_mode', true);
-		}
-	}
-});
-
-
-
 var LFMShareSectionView = function() {};
-provoda.View.extendTo(LFMShareSectionView, {
-	toggleVisState: function(state, boolen) {
-		var new_value;
-		if (typeof boolen == 'undefined'){
-			new_value = !this.state('vis_' + state);
-		} else {
-			new_value = !!boolen;
-		}
-		this.setVisState(state, new_value);
-	},
-	toggleVisStateTPL: function(e, node, data) {
-		var boolen = data[2];
-		this.toggleVisState(data[1], boolen);
-	},
-	tpl_events:{
-		requestFullView: function() {
-			this.toggleVisState('full_view_mode', true);
-		},
-		toggleVisState: function(e, node, data) {
-			this.toggleVisStateTPL(e, node, data);
-		}
-	}
+ShareSearchSection.extendTo(LFMShareSectionView, {
+
 });
 
-
-var LFMShareSearchCtr = function() {};
-provoda.View.extendTo(LFMShareSearchCtr, {
+var ShareSearchCtr = function() {};
+provoda.View.extendTo(ShareSearchCtr, {
 	children_views:{
+		'section-vk-users': VkShareSectionView,
 		'section-lfm-friends': LFMShareSectionView
 	},
 	tpl_events:{
@@ -101,13 +73,13 @@ provoda.View.extendTo(LFMShareSearchCtr, {
 
 
 
+
 var ShareRowUI = function(){};
 provoda.View.extendTo(ShareRowUI, {
 	dom_rp: true,
 	children_views: {
 		
-		searcher: VkShareSearchCtr,
-		lfmsharing: LFMShareSearchCtr
+		searcher: ShareSearchCtr
 	},
 
 	bindBase: function(){

@@ -169,30 +169,6 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 });
 
 
-var StrusersRowSearch = function(rpl, mo) {
-	this.init(rpl, mo);
-};
-invstg.Investigation.extendTo(StrusersRowSearch, {
-	skip_map_init: true,
-	init: function(opts, mo) {
-		this._super();
-		//this.rpl = rpl;
-		this.app = opts.app;
-		this.map_parent = opts.map_parent;
-		this.mo = mo;
-
-		this.addSection('users', StrusersRSSection);
-	},
-	
-	searchf: function() {
-		var pl_sec = this.g('users');
-		pl_sec.setActive();
-		pl_sec.searchByQuery(this.q);
-
-		
-	}
-});
-
 
 
 
@@ -287,27 +263,30 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 	resItem: LFMUserSuggest,
 	model_name: "section-lfm-friends"
 });
-
-
-var LfmSongSharing = function() {};
-invstg.Investigation.extendTo(LfmSongSharing, {
+var StrusersRowSearch = function(rpl, mo) {
+	this.init(rpl, mo);
+};
+invstg.Investigation.extendTo(StrusersRowSearch, {
 	skip_map_init: true,
-	init: function(opts, actionsrow, mo) {
+	init: function(opts, mo) {
 		this._super();
+		//this.rpl = rpl;
 		this.app = opts.app;
 		this.map_parent = opts.map_parent;
-
 		this.mo = mo;
-		this.actionsrow = actionsrow;
 
+		this.addSection('users', StrusersRSSection);
 		this.addSection('friends', LFMFriendsSection);
 	},
 	
 	searchf: function() {
-		var pl_sec = this.g('friends');
-
-		pl_sec.setActive();
-		pl_sec.searchByQuery(this.q);
+		var query = this.q;
+		var _this = this;
+		['users', 'friends'].forEach(function(el) {
+			var section = _this.g(el);
+			section.setActive();
+			section.searchByQuery(query);
+		});
 	}
 });
 
@@ -339,13 +318,7 @@ comd.BaseCRow.extendTo(SongActSharing, {
 		
 		this.updateNesting('searcher', this.searcher);
 
-		var lfmsharing = new LfmSongSharing();
-		lfmsharing.init({
-			app: this.app,
-			map_parent: this
-		}, actionsrow, mo);
-		this.updateNesting('lfmsharing', lfmsharing);
-		this.lfmsharing = lfmsharing;
+
 		this.search('');
 
 		//this.share_url = this.mo.getShareUrl();
@@ -358,7 +331,6 @@ comd.BaseCRow.extendTo(SongActSharing, {
 	search: function(q) {
 		this.updateState('query', q);
 		this.searcher.changeQuery(q);
-		this.lfmsharing.changeQuery(q);
 	},
 	model_name: 'row-share'
 });
