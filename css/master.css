@@ -1300,6 +1300,14 @@ iframe.you-tube-video,embed.you-tube-video{
 	margin-bottom: 0.2rem;
 	margin-top: 0.2rem;
 	}
+	.shareb-base .details_switch_block .desc{
+		float:left;
+		margin-right: 0.5rem;
+		}
+	.shareb-base .details_switch_block  .details_switch{
+		float: right;	
+		}
+
 	.shareb-base .details_for_switcher{
 		clear: both;
 		}
@@ -1307,14 +1315,27 @@ iframe.you-tube-video,embed.you-tube-video{
 
 .vk_share{
 
-}
+	}
 	.vk_share h3{
-		margin-top: 0;
-		color: #999;
+		
 		}
-.post-to-my-vk-wall{
-
+	.share_header_wrap{
+		overflow: hidden;
+		margin-top: 1.5rem;
+	}
+	.vk_share_header{
+		float:left;
+		color: #999;
+		padding-top: 0.1rem;
+		margin: 0 1rem 0 0;
+	}
+	.post-to-my-vk-wall{
+		float:left;
+	}
+.lfm_share{
+	margin-top: 0.5rem;
 }
+
 .song_acting_vk_search{
 	overflow: hidden;
 }
@@ -1420,6 +1441,8 @@ iframe.you-tube-video,embed.you-tube-video{
 .friends-search-desc{
 	clear: both;
 	float: left;
+	margin-bottom: 0.2rem;
+	margin-top: 0.2rem;
 	}
 
 .row-song-context input{

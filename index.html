@@ -946,12 +946,12 @@
 					<div class="share-song hidden" pv-nest="context_parts for_model:row-share" pv-class="share-song {{!active_view && 'hidden'}}">
 						<input type="text" readonly="readonly" class="song-link" pv-props="value: {{share_url}}" pv-anchor="share_input" pv-type="way-point"/>
 						<div
-							class="shareb-base vk_share users-list"
-							pv-class="shareb-base vk_share users-list "
+							class="shareb-base  users-list"
+							pv-class="shareb-base  users-list "
 							pv-anchor="vk_share_b">
 							<span class="shareb-button" >vk.com</span>
 							<span class="shareb-desc"></span>
-							<div class="shareb-con" pv-anchor="vk_share">
+							<div class="shareb-con">
 								
 								<div >
 									
@@ -961,15 +961,18 @@
 									
 									<div pv-nest="searcher">
 										
-										<div pv-nest="section for_model:section-vk-users" >
+										<div pv-nest="section for_model:section-vk-users" class="vk_share">
 											<div class="vk_auth" pv-anchor="vk_auth"></div>
 											<div pv-class="{{needs_vk_auth && 'hidden'}}">
 												<div>
-													<h3 class="vk_share_header lang localize-post-song"></h3>
-													<div class="post-to-my-vk-wall" pv-class="post-to-my-vk-wall {{!own_photo && 'hidden'}}" pv-events="click::postToVKWall" pv-type="way-point">
-														<img pv-props="src: {{own_photo}}">
-														<span class="lang localize-to-own-wall"></span>
+													<div class="share_header_wrap">
+														<h3 class="vk_share_header lang localize-post-song"></h3>
+														<div class="post-to-my-vk-wall" pv-class="post-to-my-vk-wall {{!own_photo && 'hidden'}}" pv-events="click::postToVKWall" pv-type="way-point">
+															<img pv-props="src: {{own_photo}}">
+															<span class="lang localize-to-own-wall"></span>
+														</div>
 													</div>
+													
 													<div class="friends-search-desc desc lang localize-or-wall-of-f"></div>
 												</div>
 												<div class="details_switch_block">
@@ -1010,7 +1013,7 @@
 											
 											
 										</div>
-										<div pv-nest="section for_model:section-lfm-friends">
+										<div pv-nest="section for_model:section-lfm-friends" class="lfm_share">
 											<div class="details_switch_block">
 												<span class="desc">last.fm</span>
 												

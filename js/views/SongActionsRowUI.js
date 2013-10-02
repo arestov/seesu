@@ -147,10 +147,6 @@ provoda.View.extendTo(ShareRowUI, {
 			this.RPCLegacy('search', '');
 		}
 	},
-
-	addWSChunk: function() {
-		return $(document.createTextNode("")).appendTo(this.tpl.ancs['vk_share']);
-	},
 	expand: function(){
 		if (this.expanded){
 			return;
