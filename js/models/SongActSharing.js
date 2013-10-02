@@ -309,6 +309,9 @@ invstg.SearchSection.extendTo(LFMOneUserSection, {
 		var _this = this;
 
 		var q = this.state('query');
+		if (!q){
+			return;
+		}
 
 		this.loading();
 		this.addRequest(
@@ -325,7 +328,7 @@ invstg.SearchSection.extendTo(LFMOneUserSection, {
 							});
 						}
 						//r = r && parser(r, this.resItem, method);
-						_this.appendResults(r, true);
+						_this.appendResults(result, true);
 
 						
 					})
