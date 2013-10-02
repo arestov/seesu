@@ -122,7 +122,15 @@ comd.BaseCRow.extendTo(RepeatSongRow, {
 	model_name: 'row-repeat-song'
 });
 
-
+var parts_storage = {};
+[ScrobbleRow,
+RepeatSongRow,
+SongActPlaylisting,
+SongActSharing,
+LoveRow,
+SongActTaging].forEach(function(el) {
+	parts_storage[el.prototype.model_name] = el;
+});
 
 
 
@@ -135,6 +143,7 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		this.mo = mo;
 		this.updateState('active_part', false);
 		this.app = mo.app;
+		this.inited_parts = {};
 
 		this.nextTick(this.initHeavyPart);
 	},
@@ -145,17 +154,27 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		this.app.on('settings.volume', this.setVolumeState, this.getContextOpts());
 	},
 
-	realyHeavyPart: provoda.getOCF('parts', function() {
+	/*realyHeavyPart: provoda.getOCF('parts', function() {
 		this.addPart(new ScrobbleRow(this, this.mo));
 		this.addPart(new RepeatSongRow(this, this.mo));
 		this.addPart(new SongActPlaylisting(this, this.mo));
 		this.addPart(new SongActSharing(this, this.mo));
 		this.addPart(new LoveRow(this, this.mo));
 		this.addPart(new SongActTaging(this, this.mo));
-	}),
+	}),*/
 	switchPart: function(name) {
-		this.realyHeavyPart();
+		this.initPart(name);
+		//this.realyHeavyPart();
 		this._super(name);
+	},
+	initPart: function(name) {
+		if (name){
+			if (!this.inited_parts[name]){
+				var part = new parts_storage[name](this, this.mo);
+				this.inited_parts[name] = true;
+				this.addPart(part);
+			}
+		}
 	},
 	setVolumeState: function(fac) {
 		this.updateState('volume', fac[0]/fac[1]);
