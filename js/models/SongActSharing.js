@@ -177,12 +177,7 @@ var LFMUserSuggest = function(params) {
 	var user = params.user;
 
 	this.init();
-	/*this.mo = wrap.mo;
-	this.row = wrap.row;
-	this.user_id = user.id;
-	this.photo = user.photo;
-	this.online = this.online;
-	//this.name = user.name;*/
+
 	this.userid = user.state('userid');
 	this.text_title = this.userid;
 	this.updateManyStates({
@@ -263,6 +258,78 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 	resItem: LFMUserSuggest,
 	model_name: "section-lfm-friends"
 });
+
+
+
+var LFMOneUserSuggest = function(params) {
+	var user = params.user;
+
+	this.init();
+
+	this.userid = user.state('userid');
+	this.text_title = this.userid;
+	this.updateManyStates({
+		selected_image: user.state('selected_image'),
+		text_title: this.text_title
+	});
+};
+invstg.BaseSuggest.extendTo(LFMUserSuggest, {
+	valueOf: function(){
+		return this.userid;
+	},
+	onView: function(){
+		this.mo.shareWithLFMUser(this.userid);
+		this.row.hide();
+	}
+});
+
+
+
+
+var LFMOneUserSection = function() {};
+invstg.SearchSection.extendTo(LFMFriendsSection, {
+	init: function(opts) {
+		this._super(opts);
+		var row_part = this.map_parent.map_parent;
+		this.wch(this.app, 'lfm_userid');
+		this.wch(row_part, 'active_view');
+
+	},
+	searchByQuery: function(query) {
+		this.changeQuery(query);
+		this.searchOneUser();
+	},
+	'compx-can_load_friends':{
+		depends_on: ['active_view', 'lfm_userid'],
+		fn: function(active_view, lfm_userid) {
+			return lfm_userid && active_view;
+		}
+	},
+	searchOneUser: function() {
+		
+	},
+	searchLFMFriends: function(){
+		var list = this.getNesting('friends') || [];
+		var query = this.state('query');
+		var r = (query ? spv.searchInArray(list, query, ["states.userid", "states.realname"]) : list);
+		if (r.length){
+			r = r.concat();
+			for (var i = 0; i < r.length; i++) {
+				r[i] = {
+					mo: this.mo,
+					user: r[i],
+					row: this.rpl
+				};
+			}
+		}
+		this.appendResults(r, true);
+	},
+	resItem: LFMUserSuggest,
+	model_name: "section-lfm-friends"
+});
+
+
+
 var StrusersRowSearch = function(rpl, mo) {
 	this.init(rpl, mo);
 };
