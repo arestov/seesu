@@ -266,14 +266,14 @@ var LFMOneUserSuggest = function(params) {
 
 	this.init();
 
-	this.userid = user.state('userid');
+	this.userid = user.name;
 	this.text_title = this.userid;
 	this.updateManyStates({
-		selected_image: user.state('selected_image'),
+	//	selected_image: user.state('selected_image'),
 		text_title: this.text_title
 	});
 };
-invstg.BaseSuggest.extendTo(LFMUserSuggest, {
+invstg.BaseSuggest.extendTo(LFMOneUserSuggest, {
 	valueOf: function(){
 		return this.userid;
 	},
@@ -287,7 +287,7 @@ invstg.BaseSuggest.extendTo(LFMUserSuggest, {
 
 
 var LFMOneUserSection = function() {};
-invstg.SearchSection.extendTo(LFMFriendsSection, {
+invstg.SearchSection.extendTo(LFMOneUserSection, {
 	init: function(opts) {
 		this._super(opts);
 		var row_part = this.map_parent.map_parent;
@@ -305,9 +305,35 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 			return lfm_userid && active_view;
 		}
 	},
-	searchOneUser: function() {
-		
-	},
+	searchOneUser: spv.debounce(function() {
+		var _this = this;
+
+		var q = this.state('query');
+
+		this.loading();
+		this.addRequest(
+			this.app.lfm
+				.get('user.getInfo', {user: q})
+					.done(function(r){
+						if (!_this.doesNeed(q)){return;}
+						_this.loaded();
+
+						var result = [];
+						if (r.user && r.user.name){
+							result.push({
+								user: r.user
+							});
+						}
+						//r = r && parser(r, this.resItem, method);
+						_this.appendResults(r, true);
+
+						
+					})
+					.fail(function(){
+						if (!_this.doesNeed(q)){return;}
+						_this.loaded();
+					}));
+	}, 200),
 	searchLFMFriends: function(){
 		var list = this.getNesting('friends') || [];
 		var query = this.state('query');
@@ -324,8 +350,8 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 		}
 		this.appendResults(r, true);
 	},
-	resItem: LFMUserSuggest,
-	model_name: "section-lfm-friends"
+	resItem: LFMOneUserSuggest,
+	model_name: "section-lfm-user"
 });
 
 
@@ -344,12 +370,14 @@ invstg.Investigation.extendTo(StrusersRowSearch, {
 
 		this.addSection('users', StrusersRSSection);
 		this.addSection('friends', LFMFriendsSection);
+		this.addSection('one-user', LFMOneUserSection);
+		
 	},
 	
 	searchf: function() {
 		var query = this.q;
 		var _this = this;
-		['users', 'friends'].forEach(function(el) {
+		['users', 'friends', 'one-user'].forEach(function(el) {
 			var section = _this.g(el);
 			section.setActive();
 			section.searchByQuery(query);
