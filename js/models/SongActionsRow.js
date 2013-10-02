@@ -123,12 +123,7 @@ comd.BaseCRow.extendTo(RepeatSongRow, {
 });
 
 var parts_storage = {};
-[ScrobbleRow,
-RepeatSongRow,
-SongActPlaylisting,
-SongActSharing,
-LoveRow,
-SongActTaging].forEach(function(el) {
+[ScrobbleRow, RepeatSongRow, SongActPlaylisting, SongActSharing, LoveRow, SongActTaging].forEach(function(el) {
 	parts_storage[el.prototype.model_name] = el;
 });
 
@@ -153,15 +148,6 @@ comd.PartsSwitcher.extendTo(SongActionsRow, {
 		}
 		this.app.on('settings.volume', this.setVolumeState, this.getContextOpts());
 	},
-
-	/*realyHeavyPart: provoda.getOCF('parts', function() {
-		this.addPart(new ScrobbleRow(this, this.mo));
-		this.addPart(new RepeatSongRow(this, this.mo));
-		this.addPart(new SongActPlaylisting(this, this.mo));
-		this.addPart(new SongActSharing(this, this.mo));
-		this.addPart(new LoveRow(this, this.mo));
-		this.addPart(new SongActTaging(this, this.mo));
-	}),*/
 	switchPart: function(name) {
 		this.initPart(name);
 		//this.realyHeavyPart();
