@@ -62,11 +62,6 @@ provoda.View.extendTo(ShareSearchCtr, {
 	children_views:{
 		'section-vk-users': VkShareSectionView,
 		'section-lfm-friends': LFMShareSectionView
-	},
-	tpl_events:{
-		requestFullView: function() {
-			this.parent_view.toggleVisState('full_view_mode', true);
-		}
 	}
 });
 
@@ -81,7 +76,6 @@ provoda.View.extendTo(ShareRowUI, {
 		
 		searcher: ShareSearchCtr
 	},
-
 	bindBase: function(){
 		var oldv;
 		var _this = this;
@@ -95,14 +89,8 @@ provoda.View.extendTo(ShareRowUI, {
 		}, 100);
 
 		this.tpl.ancs['vk_share_search'].bind('keyup change search mousemove', inputSearch);
-
 		this.tpl.ancs['share_input'].bind("click focus", function() {
 			this.select();
-		});
-		this.wch(this, 'query', function(e) {
-			if (e.value){
-				this.setVisState('full_view_mode', true);
-			}
 		});
 	},
 	"stch-active_view": function(state){
@@ -119,45 +107,12 @@ provoda.View.extendTo(ShareRowUI, {
 			});
 		}
 	},
-	toggleVisState: function(state, boolen) {
-		var new_value;
-		if (typeof boolen == 'undefined'){
-			new_value = !this.state('vis_' + state);
-		} else {
-			new_value = !!boolen;
-		}
-		this.setVisState(state, new_value);
-	},
-	toggleVisStateTPL: function(e, node, data) {
-		var boolen = data[2];
-		this.toggleVisState(data[1], boolen);
-	},
-	tpl_events: {
-		switchClass: function(e, node, data) {
-			this.tpl.ancs[data[2]].toggleClass(data[1]);
-		},
-		toggleVisState: function(e, node, data) {
-			this.toggleVisStateTPL(e, node, data);
-		}
-	},
-
-
-	'stch-can_search_friends': function(state){
-		if (state){
-			this.RPCLegacy('search', '');
-		}
-	},
 	expand: function(){
 		if (this.expanded){
 			return;
 		} else {
 			this.expanded = true;
 		}
-
-
-		this['collch-lfmsharing'] = 'tpl.ancs.lfm_share';
-		this.checkCollectionChange('lfmsharing');
-		
 	}
 
 });
