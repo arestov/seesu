@@ -126,9 +126,10 @@
 					color: #777;
 					line-height: 1.2rem;
 					}
-	.search_results-container	ul.sugg-section:last-child{
+	.search_results-container > ul.sugg-section:last-child, .search_results-container > div:last-of-type > ul.sugg-section{
 		border-bottom:0;
 	}
+
 	.search_results-container ul{
 		display:none;
 	}

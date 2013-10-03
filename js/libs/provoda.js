@@ -370,7 +370,7 @@ provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 			_this.getItemsValues(item);
 		};
 		this.state_name = state_name;
-		this._super('state-change.' + this.state_name, this.checkFunc, true);
+		this._super('state_change-' + this.state_name, this.checkFunc, true);
 
 		this.returnResult = opts.returnResult;
 		var calcR = opts.calculateResult;
@@ -500,7 +500,7 @@ spv.Class.extendTo(provoda.Eventor, {
 			this.subscribes[opts.short_name] = [];
 		}
 		this.subscribes[opts.short_name].push(opts);
-		this.resetSubscribesCache(opts.namespace);
+		this.resetSubscribesCache(opts.short_name);
 	},
 	getPossibleRegfires: function(namespace) {
 		var parts = parseNamespace(namespace);
@@ -613,21 +613,21 @@ spv.Class.extendTo(provoda.Eventor, {
 			clean.push.apply(clean, queried.not_matched);
 			if (clean.length != this.subscribes[short_name].length){
 				this.subscribes[short_name] = clean;
-				this.resetSubscribesCache(namespace);
+				this.resetSubscribesCache(short_name);
 			}
 		}
 
 		return this;
 	},
-	resetSubscribesCache: function(namespace) {
+	resetSubscribesCache: function(short_name) {
 
-		//fixme - bug for "state-change.window_width.song_file_progress" ( "state-change.window_width" stays valid, but must be invalid)
+		//fixme - bug for "state_change-window_width.song_file_progress" ( "state_change-window_width" stays valid, but must be invalid)
 		for (var cur_namespace in this.subscribes_cache){
 			if (!this.subscribes_cache[cur_namespace]){
 				continue;
 			}
-			var last_char = cur_namespace.charAt(namespace.length);
-			if ((!last_char || last_char == DOT) && cur_namespace.indexOf(namespace) == 0){
+			var last_char = cur_namespace.charAt(short_name.length);
+			if ((!last_char || last_char == DOT) && cur_namespace.indexOf(short_name) == 0){
 				this.subscribes_cache[cur_namespace] = null;
 			}
 		}
@@ -950,12 +950,32 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.complex_states_index = {};
 		this.complex_states_watchers = [];
 		this.states_changing_stack = [];
-		this.onRegistration('vip-state-change', this.stEvRegHandler);
+		this.onRegistration(this.checkVIPStReg, this.stVIPEvRegHandler);
 
-		this.onRegistration('state-change', this.stEvRegHandler);
+		this.onRegistration(this.checkStReg, this.stEvRegHandler);
 		//this.collectCompxs();
 
 		return this;
+	},
+	stVIPEvRegHandler: function(cb, namespace) {
+		var state_name = namespace.replace('vip_state_change-', '');
+		cb({
+			value: this.state(state_name),
+			target: this
+		});
+	},
+	stEvRegHandler: function(cb, namespace) {
+		var state_name = namespace.replace('state_change-', '');
+		cb({
+			value: this.state(state_name),
+			target: this
+		});
+	},
+	checkVIPStReg: function(namespace) {
+		return namespace.indexOf('vip_state_change-') === 0;
+	},
+	checkStReg: function(namespace) {
+		return namespace.indexOf('state_change-') === 0;
 	},
 	getContextOptsI: function() {
 		if (!this.conx_optsi){
@@ -972,7 +992,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	wch: function(donor, donor_state, acceptor_state, immediately) {
 	
 		var cb;
-		var event_name = (immediately ? 'vip-state-change.' : 'state-change.') + donor_state;
+		var event_name = (immediately ? 'vip_state_change-' : 'state_change-') + donor_state;
 		if (typeof acceptor_state == 'function'){
 			cb = acceptor_state;
 		} else {
@@ -996,12 +1016,6 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		return this;
 
-	},
-	stEvRegHandler: function(cb, namespace, opts, name_parts) {
-		cb({
-			value: this.state(name_parts[1]),
-			target: this
-		});
 	},
 	onExtend: function() {
 		this.collectCompxs();
@@ -1103,8 +1117,8 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 			}
 		}
 	},
-	st_event_name_default: 'state-change.',
-	st_event_name_vip: 'vip-state-change.',
+	st_event_name_default: 'state_change-',
+	st_event_name_vip: 'vip_state_change-',
 	_triggerStChanges: function(i, name, value) {
 
 		var vip_name = this.st_event_name_vip + name;
@@ -1376,22 +1390,26 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	}
 });
 
-var models_counters = 0;
+var models_counters = 1;
 provoda.StatesEmitter.extendTo(provoda.Model, {
+	checkChildChangeReg: function(namespace) {
+		return namespace.indexOf('child_change-') === 0;
+	},
+	stChildChEvRegHandler: function(cb, namespace) {
+		var nesting_name = namespace.replace('child_change-', '');
+		var child = this.getNesting(nesting_name);
+		if (child){
+			cb({
+				value: child,
+				target: this
+			});
+		}
+	},
 	init: function(){
 
 		this._super();
 
-		this.onRegistration('child-change', function(cb, namespace, opts, name_parts) {
-			var child_name = name_parts[1];
-			var child = this.getNesting(child_name);
-			if (child){
-				cb({
-					value: child,
-					target: this
-				});
-			}
-		});
+		this.onRegistration(this.checkChildChangeReg, this.stChildChEvRegHandler);
 
 		this._provoda_id = models_counters++;
 		this.states = {};
@@ -1451,7 +1469,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		//
 		var _this = this;
 		var items_events = new provoda.ItemsEvents();
-		items_events.init('state-change.' + state_name, function() {
+		items_events.init('state_change-' + state_name, function() {
 			callback.call(_this, {
 				item: this,
 				value: arguments && arguments[0] && arguments[0].value,
@@ -1459,7 +1477,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 				items: items_events.items_list
 			});
 		}, true);
-		this.on('child-change.' + collection_name, function(e) {
+		this.on('child_change-' + collection_name, function(e) {
 			items_events.setItems(e.value);
 		});
 	},
@@ -1472,7 +1490,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			},
 			calculateResult: statesCalcFunc
 		});
-		this.on('child-change.' + collection_name, function(e) {
+		this.on('child_change-' + collection_name, function(e) {
 			archiver.setItems(e.value);
 		});
 	},
@@ -1540,7 +1558,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		event_obj.value = array;
 		event_obj.old_value = old_value;
 		event_obj.target = this;
-		this.trigger('child-change.' + collection_name, event_obj);
+		this.trigger('child_change-' + collection_name, event_obj);
 
 		if (!opts || !opts.skip_report){
 			this.sendCollectionChange(collection_name, array, old_value, removed);
@@ -1661,7 +1679,7 @@ provoda.Model.extendTo(provoda.HModel, {
 	setPmdSwitcher: function(pmd) {
 		this.pmd_switch = pmd;
 		var _this = this;
-		pmd.on('state-change.vswitched', function(e) {
+		pmd.on('state_change-vswitched', function(e) {
 			_this.checkPMDSwiched(e.value);
 		}, {immediately: true});
 	},
@@ -1864,6 +1882,7 @@ spv.Class.extendTo(Template, {
 			//coll_name for_model filter
 			if (typeof coll_name == 'string'){
 				this.parsed_pv_views.push({
+					views: [],
 					node: node,
 					for_model: for_model,
 					view_name: coll_name,
@@ -2240,16 +2259,28 @@ spv.Class.extendTo(Template, {
 			var cur = array[i];
 			var real_name = cur.view_name;
 			var space = cur.space || 'main';
+			if (cur.for_model){
+				var field = [real_name, 'by_model_name', space];
+				var storage = spv.getTargetField(result, field);
+				if (!storage){
+					storage = {index: {}};
+					spv.setTargetField(result, field, storage);
+				}
+				if (!storage.first){
+					storage.first = cur;
+					storage.comment_anchor = document.createComment('collch anchor for: ' + real_name + ", " + space + ' (by_model_name)');
+					$(cur.node).before(storage.comment_anchor);
+				}
+				cur.original_node = cur.node;
+				$(cur.node).remove();
 
-			if (!result[real_name]){
-				result[real_name] = {};
-			}
-			if (!result[real_name][space]){
-				result[real_name][space] = [];
-			}
+				storage.index[cur.for_model] = cur;
+			} else {
+				spv.setTargetField(result, [real_name, 'usual', space], cur);
 
-			result[real_name][space] = cur;
-			cur.views = [];
+				//result[real_name][space] = cur;
+			}
+			
 		}
 		return result;
 	},
@@ -2274,7 +2305,7 @@ spv.Class.extendTo(Template, {
 			}
 			var
 				i, attr_name, directive_name, attributes = cur_node.attributes,
-				new_scope_generator = false, current_data = {node: cur_node};
+				new_scope_generator = false;// current_data = {node: cur_node};
 
 			var attributes_list = [];
 			for (i = 0; i < attributes.length; i++) {
@@ -2326,7 +2357,7 @@ spv.Class.extendTo(Template, {
 	}
 });
 
-var views_counter = 0;
+var views_counter = 1;
 var way_points_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(view_otps, opts){
@@ -2792,7 +2823,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._anchor = null;
 		this.tpl = null;
 		this.way_points = null;
-
+		if (this.pv_view_node){
+			this.pv_view_node = null;
+		}
+		
 
 		var i;
 		if (this.dom_related_props){
@@ -3028,6 +3062,60 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	getMdChild: function(name) {
 		return this.children_models[name];
 	},
+	checkCollchItemAgainstPvViewByModelName: function(name, real_array, space_name, pv_v_data) {
+		var filtered = [];
+
+		for (var i = 0; i < real_array.length; i++) {
+			var cur = real_array[i];
+			if (cur.model_name && pv_v_data.index[cur.model_name]){
+				filtered.push(cur);
+			}
+		}
+
+		var getFreeView = function(cur_md, node_to_use) {
+			var pv_view = pv_v_data.index[cur_md.model_name];
+			if (!pv_view){
+				return;
+			}
+
+			var view = this.getFreeChildView({
+				name: cur_md.model_name,
+				space: space_name,
+				sampleController: provoda.Controller
+			}, cur_md);
+
+			if (view){
+				if (!node_to_use){
+					node_to_use = pv_view.original_node.cloneNode(true);
+				}
+				view.pv_view_node = $(node_to_use);
+				//var model_name = mmm.model_name;
+
+				pv_view.node = null;
+				pv_view.views.push(view.view_id);
+
+				pv_view.last_node = node_to_use;
+				return view;
+			}
+		};
+		//var filtered = pv_view.filterFn ? pv_view.filterFn(real_array) : real_array;
+
+		this.appendCollection(space_name, {
+			/*getView: pv_view.node && function(cur_md, space, preffered) {
+				if (pv_view.node){
+					if (!preffered || preffered.indexOf(cur_md) != -1){
+						return getFreeView.call(this, cur_md, pv_view.node);
+					}
+				}
+			},*/
+			appendDirectly: function(fragt) {
+				$(pv_v_data.comment_anchor).after(fragt);
+			},
+			getFreeView: function(cur) {
+				return getFreeView.call(this, cur);
+			}
+		}, false, name, filtered);
+	},
 	checkCollchItemAgainstPvView: function(name, real_array, space_name, pv_view) {
 		if (!pv_view.original_node){
 			pv_view.original_node = pv_view.node.cloneNode(true);
@@ -3082,27 +3170,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 				return getFreeView.call(this, cur);
 			}
 		}, false, name, filtered);
-		/*
-		for (var mmm = 0; mmm < filtered.length; mmm++) {
-			var cur_md = filtered[mmm];
-			var view = this.getFreeChildView({
-				name: name,
-				space: space_name,
-				sampleController: provoda.Controller
-			}, cur_md);
-			if (view){
-				var node_to_use = pv_view.node ? pv_view.node : pv_view.original_node.cloneNode(true);
-				view.pv_view_node = $(node_to_use);
-				//var model_name = mmm.model_name;
 
-				pv_view.node = null;
-				pv_view.views.push(view.view_id);
-				if (pv_view.last_node){
-					$(pv_view.last_node).after(node_to_use);
-				}
-				pv_view.last_node = node_to_use;
-			}
-		}*/
 	},
 	checkCollectionChange: function(name) {
 		if (this.children_models[name]){
@@ -3123,12 +3191,30 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var old_value = this.children_models[name];
 		this.children_models[name] = array;
 
-		var pv_views = spv.getTargetField(this, this.tpl_children_prefix + name);
-		if (pv_views){
-			for (var space_name in pv_views){
+		var pv_views_complex_index = spv.getTargetField(this, this.tpl_children_prefix + name);
+		if (pv_views_complex_index){
+			var space_name;
+			array = spv.toRealArray(array);
+			for (space_name in pv_views_complex_index.usual){
 				this.removeViewsByMds(removed, space_name);
-				this.checkCollchItemAgainstPvView(name, spv.toRealArray(array), space_name, pv_views[space_name]);
 			}
+			for (space_name in pv_views_complex_index.by_model_name){
+				this.removeViewsByMds(removed, space_name);
+			}
+
+			for (space_name in pv_views_complex_index.usual){
+				this.checkCollchItemAgainstPvView(name, array, space_name, pv_views_complex_index.usual[space_name]);
+			}
+			for (space_name in pv_views_complex_index.by_model_name){
+				this.checkCollchItemAgainstPvViewByModelName(name, array, space_name, pv_views_complex_index.by_model_name[space_name]);
+			}
+			/*
+			for (var 
+				i = 0; i < space.length; i++) {
+				space[i]
+			};*/
+
+
 			this.requestAll();
 		}
 
@@ -3304,12 +3390,12 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	appendCollection: function(space, funcs, view_opts, name, array, not_request) {
 		var ordered_rend_list = this.getRendOrderedNesting(name, array);
 		if (ordered_rend_list){
-			this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request, ordered_rend_list);
+			this.appendOrderedCollection(space, funcs, view_opts, array, not_request, ordered_rend_list);
 		} else {
-			this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request);
+			this.appendOrderedCollection(space, funcs, view_opts, array, not_request);
 		}
 	},
-	appendOrderedCollection: function(space, funcs, view_opts, name, array, not_request, ordered_rend_list) {
+	appendOrderedCollection: function(space, funcs, view_opts, array, not_request, ordered_rend_list) {
 		var cur, view, i, prev_view, next_view;
 		var detached = [];
 		var ordered_part = ordered_rend_list && ordered_rend_list.shift();
@@ -3440,7 +3526,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		if (ordered_rend_list && ordered_rend_list.length){
 			this.nextTick(function() {
-				this.appendOrderedCollection(space, funcs, view_opts, name, array, not_request, ordered_rend_list);
+				this.appendOrderedCollection(space, funcs, view_opts, array, not_request, ordered_rend_list);
 			});
 			//fixme can be bug (если nesting изменён, то измнения могут конфликтовать)
 		}

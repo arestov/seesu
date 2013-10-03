@@ -106,9 +106,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			}
 			this.initStates();
 			this.nextTick(this.initHeavyPart);
-			this.on('state-change.can_load_baseinfo', this.hndLoadBaseArtInfo);
-			this.on('state-change.can_load_images', this.hndLoadArtImages);
-			this.on('state-change.can_load_songcard', this.hndLoadSongcard);
+			this.on('state_change-can_load_baseinfo', this.hndLoadBaseArtInfo);
+			this.on('state_change-can_load_images', this.hndLoadArtImages);
+			this.on('state_change-can_load_songcard', this.hndLoadSongcard);
 		},
 		'compx-has_full_title':{
 			depends_on: ['artist', 'track'],
@@ -179,8 +179,8 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 
 			
 			this.watchStates(['files_search', 'marked_as', 'mp_show'], this.hndCanExpand);
-			this.on('vip-state-change.mp_show', this.hndMpshowImp, this.getContextOptsI());
-			this.on('state-change.is_important', this.hndImportant);
+			this.on('vip_state_change-mp_show', this.hndMpshowImp, this.getContextOptsI());
+			this.on('state_change-is_important', this.hndImportant);
 			this.nextTick(this.initRelativeData);
 
 		}),
@@ -216,6 +216,25 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			}
 
 			return url;
+		},
+		shareWithLFMUser: function(userid) {
+			var artist = this.state('artist');
+			var track = this.state('track');
+			if (!artist || !track){
+				return;
+			}
+			var req = this.app.lfm.post('track.share', {
+				sk: this.app.lfm.sk,
+
+				artist: artist,
+				track: track,
+
+				recipient: userid,
+				message: this.getShareUrl()
+			});
+			this.addRequest(req);
+			return req;
+			
 		},
 		postToVKWall: function(uid){
 			var

@@ -1,4 +1,4 @@
-define(['./etc_views', 'jquery', 'app_serv', 'spv'], function(etc_views, $, app_serv, spv){
+define(['./etc_views', 'jquery', 'app_serv', 'spv', 'provoda'], function(etc_views, $, app_serv, spv, provoda){
 "use strict";
 
 //var localize = app_serv.localize;
@@ -72,7 +72,7 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 		this.nloveb.toggle(state);
 		*/
 	},
-	"stch-wait_love_done": function(state){
+	"stch-wait_love_done": function(){
 		//this.c.toggleClass('wait_love_done', !!state);
 	}
 });
@@ -80,18 +80,9 @@ etc_views.LfmLoginView.extendTo(LfmTagItView, {
 
 
 var SongActTaggingControl = function(){};
-etc_views.BaseCRowUI.extendTo(SongActTaggingControl, {
+provoda.View.extendTo(SongActTaggingControl, {
 	children_views: {
 		lfm_tagsong: LfmTagItView
-	},
-	createDetails: function(){
-		var parent_c = this.parent_view.row_context;
-		var buttons_panel = this.parent_view.buttons_panel;
-		this.c = parent_c.children('.song-tagging');
-		this.button = buttons_panel.find('.pc-place .pc-tag');
-		this.dom_related_props.push('button');
-
-		this.bindClick();
 	},
 	expand: function(){
 		if (this.expanded){
@@ -101,7 +92,14 @@ etc_views.BaseCRowUI.extendTo(SongActTaggingControl, {
 		}
 		this.c.append(this.getAFreeCV('lfm_tagsong'));
 		this.requestAll();
-	}
+	},
+	"stch-active_view": function(state){
+		if (state){
+			if (this.expand){
+				this.expand();
+			}
+		}
+	},
 });
 return SongActTaggingControl;
 
