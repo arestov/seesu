@@ -1,6 +1,16 @@
 define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './SongActionsRow', './SongBase'],
 function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 	"use strict";
+var lfm_share_url_replacers = ['[',']','(',')'];
+lfm_share_url_replacers.forEach(function(el, i) {
+	lfm_share_url_replacers[i] = {
+		regexp: new RegExp(spv.escapeRegExp(el), 'gi'),
+		str: el
+	};
+});
+
+
+
 	var app_env = app_serv.app_env;
 	var Song;
 	var SongBase = function() {};
@@ -223,6 +233,12 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			if (!artist || !track){
 				return;
 			}
+
+			var url = this.getShareUrl();
+			lfm_share_url_replacers.forEach(function(el) {
+				url = url.replace(el.regexp, el.str);
+			});
+
 			var req = this.app.lfm.post('track.share', {
 				sk: this.app.lfm.sk,
 
@@ -230,7 +246,8 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 				track: track,
 
 				recipient: userid,
-				message: '[url]' + this.getShareUrl() + '[/url]'//.replace(/\(/gi, '%28').replace(/\)/gi, '%29')
+				message: url
+				//message: '[url]' + this.getShareUrl() + '[/url]'//.replace(/\(/gi, '%28').replace(/\)/gi, '%29')
 			});
 			this.addRequest(req);
 			return req;
