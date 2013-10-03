@@ -53,16 +53,9 @@
 }
 #search {
 	margin: 0 auto;
-	max-width: 750px;
+	
 
 	}
-
-@media (min-width:760px) {
-	#search {
-		margin-left: 240px;
-		}
-}
-
 
 
 .block-for-startpage, .for-startpage{
