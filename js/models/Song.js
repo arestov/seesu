@@ -217,6 +217,25 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 
 			return url;
 		},
+		shareWithLFMUser: function(userid) {
+			var artist = this.state('artist');
+			var track = this.state('track');
+			if (!artist || !track){
+				return;
+			}
+			var req = this.app.lfm.post('track.share', {
+				sk: this.app.lfm.sk,
+
+				artist: artist,
+				track: track,
+
+				recipient: userid,
+				message: this.getShareUrl()
+			});
+			this.addRequest(req);
+			return req;
+			
+		},
 		postToVKWall: function(uid){
 			var
 				data = {},

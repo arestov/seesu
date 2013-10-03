@@ -78,7 +78,7 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 		var tags_toremove = this.state('tags_toremove');
 		if (tags_toremove && tags_toremove.length){
 			tags_toremove.forEach(function(tag) {
-				_this.app.lfm.post('track.removeTag', {
+				var req = _this.app.lfm.post('track.removeTag', {
 					sk: _this.app.lfm.sk,
 					artist: _this.mo.state('artist'),
 					track: _this.mo.state('track'),
@@ -91,6 +91,7 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 
 						_this.updateState('petags_fixed', petags_result);
 					});
+				_this.addRequest(req);
 					/*
 					.always(function(){
 						//_this.updateState('wait_love_done', false);
@@ -102,7 +103,7 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 
 		var tags_toadd = this.state('tags_toadd');
 		if (tags_toadd && tags_toadd.length){
-			_this.app.lfm.post('track.addTags', {
+			var req = _this.app.lfm.post('track.addTags', {
 				sk: _this.app.lfm.sk,
 				artist: _this.mo.state('artist'),
 				track: _this.mo.state('track'),
@@ -122,6 +123,7 @@ LfmAuth.LfmLogin.extendTo(LfmTagSong, {
 
 					_this.updateState('petags_fixed', petags_result);
 				});
+			_this.addRequest(req);
 				/*.always(function(){
 					//_this.updateState('wait_love_done', false);
 					//_this.trigger('love-success');

@@ -1017,6 +1017,13 @@
 											<ul >
 												<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
 													<a>
+														<img src="" alt=""
+															
+															pv-props=
+															"src: {{
+															(selected_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + selected_image.lfm_id) 
+															|| selected_image.url
+															}}">
 														<span pv-text="{{text_title}}" class="text_part"></span>
 													</a>
 												</li>

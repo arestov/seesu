@@ -174,9 +174,13 @@ invstg.SearchSection.extendTo(StrusersRSSection, {
 
 
 var LFMUserSuggest = function(params) {
-	var user = params.user;
+	
 
 	this.init();
+	var user = params.user;
+	this.app = params.app;
+	this.mo = params.mo;
+	this.row = params.row;
 
 	this.userid = user.state('userid');
 	this.text_title = this.userid;
@@ -190,8 +194,11 @@ invstg.BaseSuggest.extendTo(LFMUserSuggest, {
 		return this.userid;
 	},
 	onView: function(){
-		this.mo.shareWithLFMUser(this.userid);
-		this.row.hide();
+		var _this = this;
+		this.mo.shareWithLFMUser(this.userid)
+		.done(function() {
+			_this.row.hide();
+		});
 	}
 });
 
@@ -201,7 +208,8 @@ var LFMFriendsSection = function() {};
 invstg.SearchSection.extendTo(LFMFriendsSection, {
 	init: function(opts) {
 		this._super(opts);
-
+		this.mo = this.map_parent.mo;
+		this.rpl = this.map_parent.map_parent;
 
 
 		this.lfm_friends = this.app.routePathByModels('/users/me/lfm:friends');
@@ -262,14 +270,18 @@ invstg.SearchSection.extendTo(LFMFriendsSection, {
 
 
 var LFMOneUserSuggest = function(params) {
-	var user = params.user;
-
 	this.init();
+	var user = params.user;
+//	
+	this.app = params.app;
+	this.mo = params.mo;
+	this.row = params.row;
+	
 
 	this.userid = user.name;
 	this.text_title = this.userid;
 	this.updateManyStates({
-	//	selected_image: user.state('selected_image'),
+		selected_image: this.app.art_images.getImageWrap(user.image),
 		text_title: this.text_title
 	});
 };
@@ -278,8 +290,12 @@ invstg.BaseSuggest.extendTo(LFMOneUserSuggest, {
 		return this.userid;
 	},
 	onView: function(){
-		this.mo.shareWithLFMUser(this.userid);
-		this.row.hide();
+		var _this = this;
+		this.mo.shareWithLFMUser(this.userid)
+		.done(function() {
+			_this.row.hide();
+		});
+		
 	}
 });
 
@@ -290,6 +306,9 @@ var LFMOneUserSection = function() {};
 invstg.SearchSection.extendTo(LFMOneUserSection, {
 	init: function(opts) {
 		this._super(opts);
+		this.mo = this.map_parent.mo;
+		this.rpl = this.map_parent.map_parent;
+
 		var row_part = this.map_parent.map_parent;
 		this.wch(this.app, 'lfm_userid');
 		this.wch(row_part, 'active_view');
@@ -324,8 +343,14 @@ invstg.SearchSection.extendTo(LFMOneUserSection, {
 						var result = [];
 						if (r.user && r.user.name){
 							result.push({
+								mo: _this.mo,
+								row: _this.rpl,
+								app: _this.app,
+
 								user: r.user
+								
 							});
+					
 						}
 						//r = r && parser(r, this.resItem, method);
 						_this.appendResults(result, true);
