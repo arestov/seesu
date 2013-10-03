@@ -230,7 +230,7 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 				track: track,
 
 				recipient: userid,
-				message: this.getShareUrl()
+				message: this.getShareUrl().replace(/\(/gi, '%28').replace(/\)/gi, '%29')
 			});
 			this.addRequest(req);
 			return req;
