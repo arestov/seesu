@@ -5,7 +5,7 @@ var lfm_share_url_replacers = ['[',']','(',')'];
 lfm_share_url_replacers.forEach(function(el, i) {
 	lfm_share_url_replacers[i] = {
 		regexp: new RegExp(spv.escapeRegExp(el), 'gi'),
-		str: el
+		str: window.escape(el)
 	};
 });
 
@@ -85,7 +85,16 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			var passed_artist = omo.artist;
 			omo.artist = omo.artist || " ";
 
+
 			this._super.apply(this, arguments);
+
+			this.mf_cor = null;
+			this.mopla = null;
+			this.start_time = null;
+			this.last_scrobble = null;
+			this.makePlayableOnNewSearch = null;
+
+
 			var _this = this;
 
 			var spec_image_wrap;
