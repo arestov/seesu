@@ -174,10 +174,10 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		this.initStates();
 
 		var _this = this;
-		this.map_parent.on('vip-state-change.discogs_id_searching', function(e) {
+		this.map_parent.on('vip_state_change-discogs_id_searching', function(e) {
 			_this.updateState('profile_searching', e.value);
 		}, {immediately: true});
-		this.map_parent.on('vip-state-change.discogs_id', function(e) {
+		this.map_parent.on('vip_state_change-discogs_id', function(e) {
 			_this.updateState('artist_id', e.value);
 		}, {immediately: true});
 	},
@@ -495,10 +495,10 @@ SongsList.extendTo(SoundcloudArtcardSongs, {
 	init: function() {
 		this._super.apply(this, arguments);
 		var _this = this;
-		this.map_parent.on('vip-state-change.sc_profile_searching', function(e) {
+		this.map_parent.on('vip_state_change-sc_profile_searching', function(e) {
 			_this.updateState('profile_searching', e.value);
 		}, {immediately: true});
-		this.map_parent.on('vip-state-change.soundcloud_profile', function(e) {
+		this.map_parent.on('vip_state_change-soundcloud_profile', function(e) {
 			_this.updateState('artist_id', e.value);
 		}, {immediately: true});
 	},
@@ -523,7 +523,7 @@ SongsList.extendTo(SoundcloudArtcardSongs, {
 		var request_info = {};
 		request_info.request = this.app.sc_api.get(path, {
 			limit: paging_opts.page_limit,
-			offset: paging_opts.next_page -1
+			offset: paging_opts.page_limit * (paging_opts.next_page -1)
 		})
 			.done(function(tracks){
 

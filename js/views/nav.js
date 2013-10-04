@@ -7,6 +7,19 @@ provoda.View.extendTo( baseNavUI, {
 	dom_rp: true,
 	createBase: function() {
 		this.useBase(this.root_view.getSample('common-nav'));
+	},
+	'compx-nav_clickable':{
+		depends_on: ['mp_stack'],
+		fn : function(mp_stack) {
+			return (mp_stack == !!mp_stack) || mp_stack == 'top';
+		}
+	},
+	tpl_events:{
+		zoomOut: function() {
+			if (this.state('nav_clickable')){
+				this.RPCLegacy('zoomOut');
+			}
+		}
 	}
 });
 

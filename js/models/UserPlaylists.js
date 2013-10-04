@@ -24,7 +24,7 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 		},10);
 
 	},
-	findAddPlaylist: function(title, mo) {
+	matchTitleStrictly: function(title) {
 		var matched;
 		for (var i = 0; i < this.playlists.length; i++) {
 			var cur = this.playlists[i];
@@ -33,6 +33,10 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 				break;
 			}
 		}
+		return matched;
+	},
+	findAddPlaylist: function(title, mo) {
+		var matched = this.matchTitleStrictly(title);
 		matched = matched || this.createUserPlaylist(title);
 		matched.add(mo);
 	},
@@ -52,7 +56,7 @@ BrowseMap.Model.extendTo(UserPlaylists, {
 	},
 	watchOwnPlaylist: function(pl) {
 		var _this = this;
-		pl.on('child-change.songs-list', function(e) {
+		pl.on('child_change-songs-list', function() {
 			this.trigger('each-playlist-change');
 			_this.savePlaylists();
 		}, {

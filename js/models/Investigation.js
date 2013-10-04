@@ -72,8 +72,13 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 		setInactiveAll: function(except){
 			this._changeActiveStatus(true, except);
 		},
-		addSection: function(name, s){
+		addSection: function(name, Section){
+			var s = new Section();
 			var _this = this;
+			s.init({
+				map_parent: this,
+				app: this.app
+			});
 			s
 				.on('items-change', function(results){
 					_this.refreshEnterItems();
@@ -82,7 +87,7 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 					}
 					_this.bindItemsView();
 				})
-				.on('state-change.active', function(){
+				.on('state_change-active', function(){
 					_this.remarkStyles();
 				})
 				.on('requests', function(array){
@@ -164,8 +169,8 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 			}
 			return r;
 		},
-		changeQuery: function(q){
-			if (this.q != q){
+		changeQuery: function(q, force){
+			if (this.q != q || force){
 				this.stopRequests();
 				if (this.getTitleString){
 					this.updateState('nav_title', this.getTitleString(q));
@@ -254,8 +259,10 @@ define(['provoda', 'spv', 'jquery'],function(provoda, spv, $){
 
 	
 	provoda.addPrototype("SearchSection", {
-		init: function(){
+		init: function(opts){
 			this._super();
+			this.app = opts && opts.app;
+			this.map_parent = opts && opts.map_parent;
 			this.edges_list = [];
 			this.rendering_list = [];
 		},

@@ -47,7 +47,7 @@ html.opera-extension{
 		z-index:2;
 		
 		
-		padding:0 1rem 0;
+		margin:0 1rem 0;
 		-apple-dashboard-region: dashboard-region(control rectangle 0 0 0 0);
 		}
 

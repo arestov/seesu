@@ -13,7 +13,7 @@ define(['provoda', 'spv'], function(provoda, spv){
 				this.pmd = opts.pmd;
 			}
 		
-			this.on('child-change.' + this.main_list_name, function(e) {
+			this.on('child_change-' + this.main_list_name, function(e) {
 				if (!e.skip_report){
 					this.onChanges(e.last_usable_song);
 					this.markTracksForFilesPrefinding();

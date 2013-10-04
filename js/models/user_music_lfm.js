@@ -32,7 +32,7 @@ var connectUserid = function(params) {
 	} else {
 		if (params.for_current_user){
 			this.updateState('userid', false);
-			this.app.on('state-change.lfm_userid', function(e) {
+			this.app.on('state_change-lfm_userid', function(e) {
 				_this.updateState('userid', e.value);
 			});
 			if (this.authInit){
@@ -814,7 +814,7 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 			nav_title: data.userid,
 			userid: data.userid,
 			registered: data.registered,
-
+			realname: data.realname,
 			gender: data.gender,
 			lfm_image: image,
 			big_desc: data.big_desc,

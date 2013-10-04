@@ -324,7 +324,7 @@ getTargetField = function(obj, tree){
 	var nothing;
 	var target = obj;
 	for (var i=0; i < tree.length; i++) {
-		if (target[tree[i]] !== nothing){
+		if (target[tree[i]] != nothing){
 			target = target[tree[i]];
 		} else{
 			return;

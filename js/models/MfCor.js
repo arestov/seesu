@@ -81,7 +81,7 @@ var MfComplect = function(opts, params) {
 	this.selectMf = function() {
 		_this.mf_cor.playSelectedByUser(this);
 	};
-
+	this.search_source = null;
 
 
 	var sf;
@@ -162,11 +162,24 @@ provoda.Model.extendTo(MfCor, {
 	},
 	init: function(opts, file) {
 		this._super();
+		this.files_investg = null;
+		this.last_search_opts = null;
+		this.file = null;
+		this.videos_loaded = null;
+		this.notifier = null;
+		this.sf_notf = null;
+		this.vk_ntf_readed = null;
+		this.player = null;
+		this.vk_auth_rqb = null;
+		this.preload_initors = null;
+
+
 		this.omo = opts.omo;
 		this.mo = opts.mo;
 		this.complects = {};
 		this.subscribed_to = [];
 		this.preload_initors = [];
+
 
 		var _this = this;
 
@@ -204,7 +217,7 @@ provoda.Model.extendTo(MfCor, {
 
 		} else {
 			//this.wch(this.mo, 'track', )
-			this.mo.on('vip-state-change.track', this.hndTrackNameCh, {immediately: true, soft_reg: false, context: this});
+			this.mo.on('vip_state_change-track', this.hndTrackNameCh, {immediately: true, soft_reg: false, context: this});
 			
 		}
 		
@@ -554,7 +567,7 @@ provoda.Model.extendTo(MfCor, {
 			return;
 		}
 		this.wch(investg, 'search_ready_to_use', 'search_ready');
-		investg.on('child-change.sources_list', this.hndSourcesList, this.getContextOpts());
+		investg.on('child_change-sources_list', this.hndSourcesList, this.getContextOpts());
 		
 		
 
@@ -597,7 +610,7 @@ provoda.Model.extendTo(MfCor, {
 	},*/
 	listenMopla: function(mopla) {
 		if (this.subscribed_to.indexOf(mopla) == -1){
-			mopla.on('state-change.play', this.mfPlayStateChange);
+			mopla.on('state_change-play', this.mfPlayStateChange);
 			mopla.on('unavailable', this.mfError);
 
 			this.subscribed_to.push(mopla);

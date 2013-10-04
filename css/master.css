@@ -1279,55 +1279,170 @@ iframe.you-tube-video,embed.you-tube-video{
 		
 		margin-top:1.72rem;
 		}
-		.share-song .users-list .search_results-block{
+
+		.share-song .song_acting_vk_search{
 			overflow: hidden;
 			}
 		.share-song .users-list .vk-login-context{
 			margin:1rem -1rem 0;
 			border-radius: 0;
 		}
-		.share-song .users-list .search_results-block{
-			margin-top:1rem;
+		.share-song .song_acting_vk_search{
+			
 		}
-		.share-song .users-list .suggest{
+		.share-user-suggest{
 			float:left;
 			width:50%;
-			}
-.post-to-my-vk-wall{
+			margin-bottom:7px;
+		}
+.shareb-base .details_switch_block{
+	float: right;
+	margin-bottom: 0.2rem;
+	margin-top: 0.2rem;
+	}
+	.shareb-base .details_switch_block .desc{
+		float:left;
+		margin-right: 0.5rem;
+		}
+	.shareb-base .details_switch_block  .details_switch{
+		float: right;	
+		}
 
+	.shareb-base .details_for_switcher{
+		clear: both;
+		}
+
+
+.vk_share{
+
+	}
+	.vk_share h3{
+		
+		}
+	.share_header_wrap{
+		overflow: hidden;
+		margin-top: 1.5rem;
+	}
+	.vk_share_header{
+		float:left;
+		color: #999;
+		padding-top: 0.1rem;
+		margin: 0 1rem 0 0;
+	}
+	.post-to-my-vk-wall{
+		float:left;
+	}
+.lfm_share{
+	margin-top: 0.5rem;
 }
+
+.song_acting_vk_search{
+	overflow: hidden;
+}
+.shareb-base{
+	background: #545454;
+	border: 1px solid transparent;
+	border-top: 1px solid #4E4E4E;
+	border-bottom: 1px solid #646464;
+	border-radius: 0.5rem;
+	margin-bottom: 0.2rem;
+	padding: 0.7rem;
+	overflow: hidden;
+	}
+	.shareb-button{
+		float:right;
+		}
+
+	.shareb-con{
+		clear: both;
+		}
+
+
 .list-search-input-place{
 	float:left;
 	margin-bottom:7px;
 	width:50%;
 }
-.share-user-suggest{
+
+
+.shareb-base.sharebopened .share-user-suggest{
 	
-	margin-bottom:7px;
+	
 	
 	}
-	.share-user-suggest a{
+	.shareb-base .share-user-suggest a{
 		min-width:200px;
 	}
-	.share-user-suggest a, .post-to-my-vk-wall{
+	.shareb-base .share-user-suggest a, .post-to-my-vk-wall{
 		display: block;
 		overflow: hidden;
 		padding: 3px 6px 3px 3px;
 		border-radius:3px;
 		cursor: pointer;
 		}
-
-	.share-user-suggest img, .post-to-my-vk-wall img{
-		float:left;
-		margin-right:7px;
+	.share-user-suggest img{
 		width:25px;
 		height:25px;
+		float: left;
+	}
+	.shareb-base .share-user-suggest img, .post-to-my-vk-wall img{
+		float:left;
+		margin-right:7px;
+		width:1.8rem;
+		height:1.8rem;
 		}
-	.share-user-suggest:hover a,.post-to-my-vk-wall:hover{
+	.shareb-base .share-user-suggest:hover a,.post-to-my-vk-wall:hover{
 		background-color: #494949;	
-		}		
+		}
+.protect_clicks{
+	position: relative;
+	
+	}
+.clicks_protecter{
+	position: absolute;
+	display: none;
+	left:0;
+	top:0;
+	bottom: 0;
+	right: 0;
+	background: #333;
+	opacity: 0.5;
+	}
+	.clicks_protecter:hover{
+		cursor: pointer;
+		border-bottom: 0.2rem solid #fff;
+		}
+.compact_share {
+
+	}
+	.compact_share .clicks_protecter{
+		display: block;
+	}
+	.share-song .compact_share .protect_clicks{
+		height: 4.5rem;
+		}
+	.compact_share .share-user-suggest{
+		width: auto;
+		margin-bottom:0;
+	}
+	.compact_share .share-user-suggest a{
+		padding: 0;
+		border-radius: 0;
+		cursor: default;
+		min-width: 0;
+		}
+	.compact_share .share-user-suggest img{
+		margin-right:0;
+		}
+	.compact_share .text_part{
+		display: none;
+		}
+
 .friends-search-desc{
 	clear: both;
+	float: left;
+	margin-bottom: 0.2rem;
+	margin-top: 0.2rem;
 	}
 
 .row-song-context input{
@@ -1716,44 +1831,7 @@ body .surf_nav{
 	.song_fan-b-tck:hover .song_fan-h-tck{
 		visibility: visible;
 	}
-.shareb-base{
-	background: #545454;
-	border: 1px solid transparent;
-	border-top: 1px solid #4E4E4E;
-	border-bottom: 1px solid #646464;
-	border-radius: 0.5rem;
-	margin-bottom: 0.2rem;
-	padding: 0 0.7rem;
-	overflow: hidden;
-	}
-	.shareb-button{
-		margin-left:-13px;
-		margin-right: -13px;
-		padding: 0.5rem 0.7rem;
-		background: #5F5F5F;
-		cursor: pointer;
-		display: block;
-		
-		min-width: 5rem;
-		}
-	.shareb-button:hover{
-		background-color: #595959;
-	}
-	.shareb-button:active{
-		background-color: #555;
-	}
-	.shareb-con{
-		display: none;
-		}
-	.shareb-base.sharebopened{
-		
 
-		}
-		.shareb-base.sharebopened .shareb-button{
-			}
-		.shareb-base.sharebopened .shareb-con{
-			display: block;
-			}
 .song-act-tagging input{
 	display: block;
 	width: 100%;

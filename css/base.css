@@ -146,6 +146,7 @@ a.desc{
 	display: inline-block;
 	padding:4px 8px;
 	border-radius:6px;
+	cursor:pointer;
 }	
 .nnav, .nav-button{
 
@@ -158,7 +159,7 @@ a.desc{
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect"}');
 	
 	text-shadow:0 1px 0 #000;
-	cursor:pointer;
+	
 }
 
 .nnav{
@@ -197,24 +198,26 @@ a.desc{
 .nav-button:after{
 	border-radius:0 0 6px 6px !important;
 }
-
-.nnav:hover,.nav-button:hover{
+.nav_clickable{
+	cursor: pointer;
+}
+.nnav.nav_clickable:hover,.nav-button:hover{
 	background-image:url(../i/nav/button-gradient-hover.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"hover-state"}');
 	color:#fff;
 	}
-	.nnav:hover b{
+	.nnav.nav_clickable:hover b{
 		background-image:url(../i/nav/button-arrow-hover.png) ;
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"hover-state"}');
 		}
-.nnav:active, .nav-button:active{
+.nnav.nav_clickable:active, .nav-button:active{
 	border-top-color: #666;
 	background-image:url(../i/nav/button-gradient-active.png);
 	background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg","part":"menu-part-rect", "state":"active-state"}');
 	text-shadow:none;
 	
 	}
-	.nnav:active b{
+	.nnav.nav_clickable:active b{
 		background-image:url(../i/nav/button-arrow-active.png) ;
 		background-image: url('data:text/plain;utf8,svg-hack,{"file":"i/menu-nf.svg", "state":"active-state"}');
 		}

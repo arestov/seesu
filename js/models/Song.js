@@ -1,6 +1,16 @@
 define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './MfCor', './SongActionsRow', './SongBase'],
 function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 	"use strict";
+var lfm_share_url_replacers = ['[',']','(',')'];
+lfm_share_url_replacers.forEach(function(el, i) {
+	lfm_share_url_replacers[i] = {
+		regexp: new RegExp(spv.escapeRegExp(el), 'gi'),
+		str: window.escape(el)
+	};
+});
+
+
+
 	var app_env = app_serv.app_env;
 	var Song;
 	var SongBase = function() {};
@@ -75,7 +85,16 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			var passed_artist = omo.artist;
 			omo.artist = omo.artist || " ";
 
+
 			this._super.apply(this, arguments);
+
+			this.mf_cor = null;
+			this.mopla = null;
+			this.start_time = null;
+			this.last_scrobble = null;
+			this.makePlayableOnNewSearch = null;
+
+
 			var _this = this;
 
 			var spec_image_wrap;
@@ -106,9 +125,9 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			}
 			this.initStates();
 			this.nextTick(this.initHeavyPart);
-			this.on('state-change.can_load_baseinfo', this.hndLoadBaseArtInfo);
-			this.on('state-change.can_load_images', this.hndLoadArtImages);
-			this.on('state-change.can_load_songcard', this.hndLoadSongcard);
+			this.on('state_change-can_load_baseinfo', this.hndLoadBaseArtInfo);
+			this.on('state_change-can_load_images', this.hndLoadArtImages);
+			this.on('state_change-can_load_songcard', this.hndLoadSongcard);
 		},
 		'compx-has_full_title':{
 			depends_on: ['artist', 'track'],
@@ -179,8 +198,8 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 
 			
 			this.watchStates(['files_search', 'marked_as', 'mp_show'], this.hndCanExpand);
-			this.on('vip-state-change.mp_show', this.hndMpshowImp, this.getContextOptsI());
-			this.on('state-change.is_important', this.hndImportant);
+			this.on('vip_state_change-mp_show', this.hndMpshowImp, this.getContextOptsI());
+			this.on('state_change-is_important', this.hndImportant);
 			this.nextTick(this.initRelativeData);
 
 		}),
@@ -216,6 +235,32 @@ function(provoda, spv, app_serv, BrowseMap, MfCor, SongActionsRow, sbase){
 			}
 
 			return url;
+		},
+		shareWithLFMUser: function(userid) {
+			var artist = this.state('artist');
+			var track = this.state('track');
+			if (!artist || !track){
+				return;
+			}
+
+			var url = this.getShareUrl();
+			lfm_share_url_replacers.forEach(function(el) {
+				url = url.replace(el.regexp, el.str);
+			});
+
+			var req = this.app.lfm.post('track.share', {
+				sk: this.app.lfm.sk,
+
+				artist: artist,
+				track: track,
+
+				recipient: userid,
+				message: url
+				//message: '[url]' + this.getShareUrl() + '[/url]'//.replace(/\(/gi, '%28').replace(/\)/gi, '%29')
+			});
+			this.addRequest(req);
+			return req;
+			
 		},
 		postToVKWall: function(uid){
 			var
