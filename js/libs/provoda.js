@@ -1533,7 +1533,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	getNesting: function(collection_name) {
 		return this.children_models[collection_name];
 	},
-	updateNesting: function(collection_name, array, opts) {
+	updateNesting: function(collection_name, array, opts, spec_data) {
 		if (collection_name.indexOf(DOT) != -1){
 			throw new Error('remove "." (dot) from name');
 		}

@@ -98,13 +98,14 @@
 		
 
 		<div 
-			class="complex-page inactive-page"
+			class="complex-page inactive-page can_be_animated"
 			pv-class="
 				complex-page 
 				{{'index-of-cp-is-' + $lev_num}}
 				{{current_lev_num != $lev_num && 'inactive-page'}}
 				{{current_lev_num == $lev_num && 'full-page'}}
-				{{(current_lev_num - 1) == $lev_num && 'page-scheme'}}"
+				{{(current_lev_num - 1) == $lev_num && 'page-scheme'}}
+				{{!disallow_animation && 'can_be_animated'}}"
 			pv-anchor="con">
 			<div 
 				class="complex-page-scroll_con"
@@ -1528,12 +1529,13 @@
 				</div>
 				<div 
 					id="root_level"
-					class="complex-page root_level full-page"
+					class="complex-page root_level full-page can_be_animated"
 					pv-class="
 						complex-page root_level
 						{{current_lev_num != $lev_num && 'inactive-page'}}
 						{{current_lev_num == $lev_num && 'full-page'}}
-						{{(current_lev_num - 1) == $lev_num && 'page-scheme'}}"
+						{{(current_lev_num - 1) == $lev_num && 'page-scheme'}}
+						{{!disallow_animation && 'can_be_animated'}}"
 					pv-anchor="con">
 					<div 
 						class="complex-page-scroll_con"

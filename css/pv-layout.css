@@ -96,7 +96,7 @@
 		overflow: hidden;
 		
 		}
-	.app-loaded .complex-page{
+	.app-loaded .can_be_animated.complex-page{
 		-webkit-transition: left 0.12s ease-out, -webkit-transform 0.12s ease-out;
 		-moz-transition: left 0.12s ease-out, -moz-transform 0.12s ease-out;
 		-o-transition: left 0.12s ease-out, -o-transform 0.12s ease-out;

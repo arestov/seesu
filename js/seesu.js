@@ -370,16 +370,16 @@ AppModel.extendTo(SeesuApp, {
 		this.map
 			.init(this.start_page)
 			.on('residents-tree', function(tree) {
-				this.updateNesting('navigation', tree);
-				this.updateNesting('map_slice', tree);
+				
+			}, this.getContextOptsI())
+			.on('changes', function(changes, tree, residents) {
+				//console.log(changes);
+				this.animateMapChanges(changes, tree, residents);
 			}, this.getContextOptsI())
 			.on('map-tree-change', function(nav_tree) {
 				this.changeNavTree(nav_tree);
 			}, this.getContextOptsI())
-			.on('changes', function(changes) {
-				//console.log(changes);
-				this.animateMapChanges(changes);
-			}, this.getContextOptsI())
+
 			.on('title-change', function(title) {
 				this.setDocTitle(title);
 

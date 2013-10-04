@@ -60,7 +60,8 @@ provoda.View.extendTo(AppBaseView, {
 			return this.lev_containers[num] = {
 				c: node.appendTo(this.els.screens),
 				scroll_con: tpl.ancs['scroll_con'],
-				material: tpl.ancs['material']
+				material: tpl.ancs['material'],
+				tpl: tpl
 			};
 		}
 	},
@@ -182,10 +183,19 @@ provoda.View.extendTo(AppBaseView, {
 		}
 		return $(sample_node).clone();
 	},
-	'collch-map_slice': function(nesname, array){
+	animationMark: function(models, prop, anid) {
+		for (var i = 0; i < models.length; i++) {
+			models[i].getMD().updateState(prop, anid);
+		}
+	},
+	'collch-map_slice': function(nesname, nesting_data){
+		var array = nesting_data.items;
+		var transaction_data = nesting_data.transaction;
 		array = this.getRendOrderedNesting(nesname, array) || array;
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
+		var i, cur;
+
+		for (i = 0; i < array.length; i++) {
+			cur = array[i];
 			var model_name = cur.model_name;
 			if (this['spec-collch-' + model_name]){
 				this.callCollectionChangeDeclaration(this['spec-collch-' + model_name], model_name, cur);
@@ -195,64 +205,87 @@ provoda.View.extendTo(AppBaseView, {
 				}, model_name, cur);
 			}
 		}
-	},
-	'stch-map_animation': function(changes) {
-		if (!changes){
-			return;
-		}
-		var all_changhes = spv.filter(changes.array, 'changes');
-		all_changhes = [].concat.apply([], all_changhes);
-
-		for (var i = 0; i < all_changhes.length; i++) {
-			var cur = all_changhes[i];
-			var target = cur.target.getMD();
-			if (cur.type == 'move-view'){
-
-				target.updateState('vis_mp_show', {
-					anid: changes.anid,
-					value: cur.value
-				});
-				//MUST UPDATE VIEW, NOT MODEL!!!!!
-			} else if (cur.type == 'destroy'){
-				this.removeChildViewsByMd(target.mpx);
-			}
-
-		}
-		//console.log(all_changhes);
 		/*
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
-			var handler = this["animation-type"][cur.type];
 
-			if (handler){
-				handler.call(this, cur.target, cur.type);
-			}
-			//array[i]
-		};*/
-	},
-	/*
-	"animation-type":{
-		"mp_has_focus": function(target, state) {
-
-		},
-		"mp_show": function(target, state) {
-
-		}
-	},*/
-	'compx-start-level': {
-		depends_on: ['current_mp_md'],
-		fn: function(md) {
-			if (!md || md.map_level_num == -1){
-				return true;
-			}
-		}
-	},
-	'compx-current_lev_num': {
+			'compx-current_lev_num': {
 		depends_on: ['current_mp_md'],
 		fn: function(md) {
 			return md.map_level_num;
 		}
 	},
+		
+		spec_states
+
+
+		map_animating, mp_show_end
+		используется для того, что бы понять - можно ли считывать координаты элементов views или они в анимации ()
+		*/
+		if (transaction_data){
+			var all_changhes = spv.filter(transaction_data.array, 'changes');
+			all_changhes = [].concat.apply([], all_changhes);
+			var models = spv.filter(all_changhes, 'target');
+
+			this.animationMark(models, 'animation_started', transaction_data.anid);
+
+			for (i = 0; i < all_changhes.length; i++) {
+				cur = all_changhes[i];
+				var target = cur.target.getMD();
+
+				/*if (cur.type == 'move-view'){
+
+					target.updateState('vis_mp_show', {
+						anid: transaction_data.anid,
+						value: cur.value
+					});
+					//MUST UPDATE VIEW, NOT MODEL!!!!!
+				} else */
+
+				if (cur.type == 'destroy'){
+					this.removeChildViewsByMd(target.mpx);
+				}
+
+			}
+			if (transaction_data.target){
+				var current_lev_num = transaction_data.target.getMD().map_level_num;
+				var lc;
+				/*
+				if (current_lev_num != -1){
+					lc = this.getLevelContainer(current_lev_num);
+					this.updateState('disallow_animation', true);
+
+					lc.c.css({
+						'-webkit-transform': 'translate(5px, 5px)  scale(0.1)'
+					});
+					//lc.tpl.spec_states['disallow_animation'] = true;
+
+
+
+					//lc.tpl.spec_states['disallow_animation'] = false;
+
+					this.updateState('disallow_animation', false);
+				}*/
+
+				this.updateState('current_lev_num', current_lev_num);
+				/*
+
+				if (lc){
+					this.nextTick(function() {
+						lc.c.css('-webkit-transform', '');
+					});
+					
+				}*/
+
+				//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
+			}
+			this.nextTick(function() {
+				this.animationMark(models, 'animation_completed', transaction_data.anid);
+			});
+			
+		}
+
+
+	},
+
 	'stch-current_mp_md': function(md, old_md) {
 
 		//map_level_num
