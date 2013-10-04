@@ -195,10 +195,11 @@ invstg.BaseSuggest.extendTo(LFMUserSuggest, {
 	},
 	onView: function(){
 		var _this = this;
-		this.mo.shareWithLFMUser(this.userid)
-		.done(function() {
+		this.mo.shareWithLFMUser(this.userid);
+		_this.row.hide();
+		/*.done(function() {
 			_this.row.hide();
-		});
+		});*/
 	}
 });
 
@@ -291,10 +292,11 @@ invstg.BaseSuggest.extendTo(LFMOneUserSuggest, {
 	},
 	onView: function(){
 		var _this = this;
-		this.mo.shareWithLFMUser(this.userid)
-		.done(function() {
+		this.mo.shareWithLFMUser(this.userid);
+		_this.row.hide();
+		/*.done(function() {
 			_this.row.hide();
-		});
+		});*/
 		
 	}
 });

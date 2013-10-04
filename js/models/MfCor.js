@@ -81,7 +81,7 @@ var MfComplect = function(opts, params) {
 	this.selectMf = function() {
 		_this.mf_cor.playSelectedByUser(this);
 	};
-
+	this.search_source = null;
 
 
 	var sf;
@@ -162,11 +162,24 @@ provoda.Model.extendTo(MfCor, {
 	},
 	init: function(opts, file) {
 		this._super();
+		this.files_investg = null;
+		this.last_search_opts = null;
+		this.file = null;
+		this.videos_loaded = null;
+		this.notifier = null;
+		this.sf_notf = null;
+		this.vk_ntf_readed = null;
+		this.player = null;
+		this.vk_auth_rqb = null;
+		this.preload_initors = null;
+
+
 		this.omo = opts.omo;
 		this.mo = opts.mo;
 		this.complects = {};
 		this.subscribed_to = [];
 		this.preload_initors = [];
+
 
 		var _this = this;
 

@@ -331,6 +331,7 @@ provoda.Controller = provoda.View;
 
 spv.Class.extendTo(provoda.ItemsEvents, {
 	init: function(event_name, eventCallback, soft_reg) {
+		this.items_list =null;
 		this.controls_list = [];
 		this.event_name = event_name;
 		this.eventCallback = eventCallback;
@@ -347,7 +348,7 @@ spv.Class.extendTo(provoda.ItemsEvents, {
 		items_list = items_list && spv.toRealArray(items_list);
 		this.unsubcribeOld();
 		this.items_list = items_list;
-		this.controls_list = [];
+		this.controls_list.length = 0;
 		for (var i = 0; i < items_list.length; i++) {
 			this.controls_list.push(
 				items_list[i].on(this.event_name, this.eventCallback, {
@@ -829,7 +830,7 @@ spv.Class.extendTo(provoda.Eventor, {
 				}
 			}
 		}
-		this.requests = {};
+		wipeObj(this.requests);
 		return this;
 	},
 	getQueued: function(space) {
@@ -946,6 +947,12 @@ var statesEmmiter = provoda.StatesEmitter;
 provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	init: function(){
 		this._super();
+		this.conx_optsi = null;
+		this.conx_opts = null;
+		this.collecting_states_changing = null;
+		this.zdsv = null;
+
+
 		this.states = {};
 		this.complex_states_index = {};
 		this.complex_states_watchers = [];
@@ -1409,6 +1416,8 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this._super();
 
+		this.req_order_field = null;
+
 		this.onRegistration(this.checkChildChangeReg, this.stChildChEvRegHandler);
 
 		this._provoda_id = models_counters++;
@@ -1642,9 +1651,16 @@ provoda.Model.extendTo(provoda.HModel, {
 	init: function(opts) {
 		this._super();
 		opts = opts || {};
+		this.app = null;
 		if (opts.app){
 			this.app = opts.app;
 		}
+		this.sub_pages = null;
+		this.init_states = null;
+		this.map_parent = null;
+		//this.init_opts = null;
+		this.pmd_switch = null;
+
 		if (!this.skip_map_init){
 			this.sub_pages = {};
 			if (!this.init_states){
@@ -1755,14 +1771,25 @@ var Template = function() {};
 
 spv.Class.extendTo(Template, {
 	init: function(opts) {
+		this.pv_types_collecting = null;
+		this.waypoints = null;
+
+		this.pv_views = null;
+		this.parsed_pv_views = null;
+
+		this.stwat_index = null;
+
 		this.root_node = opts.node;
 		this.root_node_raw = this.root_node[0] || this.root_node;
+		this.pv_repeat_context = null;
 		if (opts.pv_repeat_context){
 			this.pv_repeat_context = opts.pv_repeat_context;
 		}
+		this.scope = null;
 		if (opts.scope){
 			this.scope = opts.scope;
 		}
+		this.spec_states = null;
 		if (opts.spec_states){
 			this.spec_states = opts.spec_states;
 		}
@@ -2361,13 +2388,32 @@ var views_counter = 1;
 var way_points_counter = 0;
 provoda.StatesEmitter.extendTo(provoda.View, {
 	init: function(view_otps, opts){
+		this.demensions_key_start = null;
+		this.req_order_field = null;
+		this.tpl = null;
+		this.c = null;
+		this.has_details = null;
+		this._detailed = null;
+		this.dead = null;
+		this.pv_view_node = null;
+		this._anchor = null;
+		this.marked_as_dead = null;
+		this.dettree_incomplete = null;
+		this.detltree_depth = null;
+		this._states_set_processing = null;
+		this._collections_set_processing = null;
+
+
 		this.view_id = views_counter++;
+		this.parent_view = null;
 		if (view_otps.parent_view){
 			this.parent_view = view_otps.parent_view;
 		}
+		this.root_view = null;
 		if (view_otps.root_view){
 			this.root_view = view_otps.root_view;
 		}
+		this.opts = null;
 		if (opts){
 			this.opts = opts;
 		}
@@ -2390,6 +2436,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.undetailed_states = {};
 		this.undetailed_children_models = {};
 		this.way_points = [];
+		this.dom_related_props = null;
 		if (this.dom_rp){
 			this.dom_related_props = [];
 		}
@@ -2526,6 +2573,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var _this = this;
 		this.tpl = this.getTemplate(con, this.triggerTPLevents, function(arr_arr) {
 			//pvTypesChange
+			//this == template
+			//this != provoda.View
 			var old_waypoints = this.waypoints;
 			var total = [];
 			var i;
@@ -2583,13 +2632,13 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	connectChildrenModels: function() {
 		var udchm = this.undetailed_children_models;
-		delete this.undetailed_children_models;
+		this.undetailed_children_models = null;
 		this.setMdChildren(udchm);
 
 	},
 	connectStates: function() {
 		var states = this.undetailed_states;
-		delete this.undetailed_states;
+		this.undetailed_states = null;
 		this._setStates(states);
 
 	},
@@ -2631,7 +2680,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (con && anchor && anchor.parentNode){
 			$(anchor).after(con);
 			//anchor.parentNode.insertBefore(con[0], anchor.nextSibling);
-			delete this._anchor;
+			this._anchor = null;
 			$(anchor).remove();
 			this.setVisState('con_appended', true);
 		} else if (con && con.parent()[0]){
@@ -2876,6 +2925,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this.requestDeepDetLevels();
 	},
 	__tickDetRequest: function() {
+		if (!this.isAlive()){
+			return;
+		}
 		this.dettree_incomplete = this.requestDetalizationLevel(this.detltree_depth);
 		this.detltree_depth++;
 		if (this.dettree_incomplete){
@@ -3396,6 +3448,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	appendOrderedCollection: function(space, funcs, view_opts, array, not_request, ordered_rend_list) {
+		if (!this.isAlive()){
+			return;
+		}
 		var cur, view, i, prev_view, next_view;
 		var detached = [];
 		var ordered_part = ordered_rend_list && ordered_rend_list.shift();
@@ -3532,7 +3587,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		for (i = 0; i < append_list.length; i++) {
 			cur = append_list[i].view;
-			delete cur.skip_anchor_appending;
+			cur.skip_anchor_appending = null;
 			cur.appendCon();
 		}
 		return complects;

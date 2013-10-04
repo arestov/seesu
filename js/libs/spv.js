@@ -74,6 +74,10 @@ getDefaultView = spv.getDefaultView = function(d) {
 	return d.defaultView || d.parentWindow;
 };
 domReady = spv.domReady = function(d, callback){
+	var wndw = spv.getDefaultView(d);
+	if (!wndw){
+		return;
+	}
 	if (d.readyState == 'complete' || d.readyState == 'loaded' || d.readyState == "interactive"){
 		callback();
 	} else{
@@ -81,12 +85,12 @@ domReady = spv.domReady = function(d, callback){
 		var f = function(){
 			if (!done){
 				done = true;
-				spv.removeEvent(spv.getDefaultView(d), 'load', f);
+				spv.removeEvent(wndw, 'load', f);
 				spv.removeEvent(d, 'DOMContentLoaded', f);
 				callback();
 			}
 		};
-		spv.addEvent(spv.getDefaultView(d), 'load', f);
+		spv.addEvent(wndw, 'load', f);
 		spv.addEvent(d, 'DOMContentLoaded', f);
 	}
 };
@@ -324,7 +328,7 @@ getTargetField = function(obj, tree){
 	var nothing;
 	var target = obj;
 	for (var i=0; i < tree.length; i++) {
-		if (target[tree[i]] !== nothing){
+		if (target[tree[i]] != nothing){
 			target = target[tree[i]];
 		} else{
 			return;
