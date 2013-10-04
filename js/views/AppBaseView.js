@@ -317,7 +317,8 @@ provoda.View.extendTo(AppBaseView, {
 			var parent_md = md.getParentMapModel();
 			if (parent_md){
 				var mplev_item_view = md.mpx.getRooConPresentation(false, false, true);
-				if (mplev_item_view && mplev_item_view.getC().height()){
+				var con = mplev_item_view && mplev_item_view.getC();
+				if (con && con.height()){
 					_this.scrollTo(mplev_item_view.getC(), {
 						node: _this.getLevByNum(md.map_level_num - 1).scroll_con
 					}, {vp_limit: 0.4, animate: 117});

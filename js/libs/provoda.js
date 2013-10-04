@@ -2925,6 +2925,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		return this.requestDeepDetLevels();
 	},
 	__tickDetRequest: function() {
+		if (!this.isAlive()){
+			return;
+		}
 		this.dettree_incomplete = this.requestDetalizationLevel(this.detltree_depth);
 		this.detltree_depth++;
 		if (this.dettree_incomplete){
@@ -3445,6 +3448,9 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	appendOrderedCollection: function(space, funcs, view_opts, array, not_request, ordered_rend_list) {
+		if (!this.isAlive()){
+			return;
+		}
 		var cur, view, i, prev_view, next_view;
 		var detached = [];
 		var ordered_part = ordered_rend_list && ordered_rend_list.shift();
