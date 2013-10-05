@@ -2,6 +2,10 @@
 	position: relative;
 
 	max-width: 750px;
+	-webkit-transform-origin: 0 0;
+	-moz-transform-origin: 0 0;
+	-o-transform-origin: 0 0;
+	transform-origin: 0 0;
 	}
 .shared-parts{
 	position: relative;
@@ -49,8 +53,8 @@
 	.yes-transform_support .complex-page{
 		left: auto;
 
-		-moz-transform: translateX(240px);
 		-webkit-transform: translateX(240px);
+		-moz-transform: translateX(240px);
 		-o-transform: translateX(240px);
 		transform: translateX(240px);
 
@@ -58,16 +62,16 @@
 	.yes-transform_support .shared-parts {
 		left: auto;
 
-		-moz-transform: translateX(240px);
 		-webkit-transform: translateX(240px);
+		-moz-transform: translateX(240px);
 		-o-transform: translateX(240px);
 		transform: translateX(240px);
 		}
 	.yes-transform_support .page-scheme{
 		left: auto;
-
-		-moz-transform: translateX(0);
+	
 		-webkit-transform: translateX(0);
+		-moz-transform: translateX(0);
 		-o-transform: translateX(0);
 		transform: translateX(0);
 	}

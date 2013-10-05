@@ -2801,17 +2801,22 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.children.push.call(this.children, view);
 		}
 	},
-	removeChildViewsByMd: function(mpx) {
-		var views_to_remove = [];
+	getChildViewsByMpx: function(mpx) {
+		var result = [];
 		var views = mpx.getViews();
 		var i;
 		for (i = 0; i < this.children.length; i++) {
 			var cur = this.children[i];
 			if (views.indexOf(cur) != -1){
-				views_to_remove.push(cur);
+				result.push(cur);
 			}
 
 		}
+		return result;
+	},
+	removeChildViewsByMd: function(mpx) {
+		var views_to_remove = this.getChildViewsByMpx(mpx);
+		var i;
 		for (i = 0; i < views_to_remove.length; i++) {
 			views_to_remove[i].die();
 		}

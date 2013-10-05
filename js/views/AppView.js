@@ -171,6 +171,12 @@ AppBaseView.extendTo(AppView, {
 		return array;
 	},
 
+	'spec-vget-song': function(md) {
+		var playlist = md.getParentMapModel();
+		var playlist_mpx = playlist.mpx;
+		var playlist_view = this.getChildView(playlist_mpx, 'all-sufficient-details');
+		return playlist_view && playlist_view.getChildView(md.mpx);
+	},
 	'spec-collch-song': function(name, md) {
 		var playlist = md.getParentMapModel();
 
