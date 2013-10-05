@@ -21,11 +21,11 @@ BrowseMap.Model.extendTo(UserCard, {
 	sub_pa: {
 		'vk:tracks': {
 			constr: user_music_vk.VkUserTracks,
-			title: 'vk.com tracks'
+			title: localize('vk.com tracks')
 		},
 		'vk:friends': {
 			constr: user_music_vk.VKFriendsList,
-			title: 'vk.com friends'
+			title: localize('vk.com friends')
 		},
 		'playlists':{
 			constr: SuUsersPlaylists
@@ -35,27 +35,27 @@ BrowseMap.Model.extendTo(UserCard, {
 		},
 		'lfm:friends': {
 			constr: user_music_lfm.LfmFriendsList,
-			title: "Last.fm friends"
+			title: localize("Last.fm friends")
 		},
 		'lfm:neighbours':{
 			constr: user_music_lfm.LfmNeighboursList,
-			title: 'Neighbours'
+			title: localize("Neighbours")
 		},
 		'lfm:artists':{
 			constr: user_music_lfm.LfmUserArtists,
-			title:'Artists'
+			title: localize('Artists')
 		},
 		'lfm:tracks':{
 			constr: user_music_lfm.LfmUserTracks,
-			title:'Tracks'
+			title: localize('Tracks')
 		},
 		'lfm:tags':{
 			constr: user_music_lfm.LfmUserTags,
-			title:'Tags'
+			title: localize('Tags')
 		},
 		'lfm:albums':{
 			constr: user_music_lfm.LfmUserAlbums,
-			title:'Albums'
+			title: localize('Albums')
 		}
 	},
 	init: function(opts, params) {
@@ -131,11 +131,11 @@ BrowseMap.Model.extendTo(VkUserCard, {
 	sub_pa: {
 		'tracks': {
 			constr: user_music_vk.VkUserTracks,
-			title: 'Tracks'
+			title: localize('Tracks')
 		},
 		'friends': {
 			constr: user_music_vk.VKFriendsList,
-			title: 'Friends'
+			title: localize('Friends')
 		}
 	},
 	'compx-big_desc': {
@@ -207,27 +207,27 @@ BrowseMap.Model.extendTo(LfmUserCard, {
 	sub_pa: {
 		'friends': {
 			constr: user_music_lfm.LfmFriendsList,
-			title: "Friends"
+			title: localize("Friends")
 		},
 		'neighbours':{
 			constr: user_music_lfm.LfmNeighboursList,
-			title: 'Neighbours'
+			title: localize('Neighbours')
 		},
 		'artists':{
 			constr: user_music_lfm.LfmUserArtists,
-			title:'Artists'
+			title: localize('Artists')
 		},
 		'tracks':{
 			constr: user_music_lfm.LfmUserTracks,
-			title:'Tracks'
+			title: localize('Tracks')
 		},
 		'tags':{
 			constr: user_music_lfm.LfmUserTags,
-			title:'Tags'
+			title: localize('Tags')
 		},
 		'albums':{
 			constr: user_music_lfm.LfmUserAlbums,
-			title:'Albums'
+			title: localize('Albums')
 		}
 	},
 	setProfileData: function(data) {

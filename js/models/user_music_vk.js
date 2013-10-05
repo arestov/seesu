@@ -167,7 +167,7 @@ BrowseMap.Model.extendTo(VkUserTracks, {
 		},
 		'recommended':{
 			constr: VkRecommendedTracks,
-			title: "Recommended"
+			title: localize('VK-Recommended')
 		}
 	}
 });
