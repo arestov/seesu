@@ -74,16 +74,16 @@ ListPreview.extendTo(LiListsPreview, {
 var SPView = function() {};
 provoda.View.extendTo(SPView, {
 	'compx-mp_show_end': {
-		depends_on: ['map_animating', 'vis_mp_show', 'mp_show'],
-		fn: function(anim, vis_mp_show, mp_show) {
-			if (anim) {
-				if (vis_mp_show && anim == vis_mp_show.anid){
-					return vis_mp_show.value;
+		depends_on: ['animation_started', 'animation_completed', 'mp_show'],
+		fn: function(animation_started, animation_completed, mp_show) {
+			if (!animation_started){
+				return mp_show;
+			} else {
+				if (animation_started == animation_completed){
+					return mp_show;
 				} else {
 					return false;
 				}
-			} else {
-				return mp_show;
 			}
 		}
 	}

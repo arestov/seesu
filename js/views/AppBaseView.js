@@ -1,5 +1,10 @@
-define(['provoda', 'spv', 'jquery','./modules/filters'], function(provoda, spv, $, filters){
+define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv'], function(provoda, spv, $, filters, app_serv){
 "use strict";
+var transform_props = ['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
+var empty_transform_props = {};
+transform_props.forEach(function(el) {
+	empty_transform_props[el] = '';
+});
 
 
 provoda.setTplFilterGetFn(function(filter_name) {
@@ -60,7 +65,8 @@ provoda.View.extendTo(AppBaseView, {
 			return this.lev_containers[num] = {
 				c: node.appendTo(this.els.screens),
 				scroll_con: tpl.ancs['scroll_con'],
-				material: tpl.ancs['material']
+				material: tpl.ancs['material'],
+				tpl: tpl
 			};
 		}
 	},
@@ -182,10 +188,41 @@ provoda.View.extendTo(AppBaseView, {
 		}
 		return $(sample_node).clone();
 	},
-	'collch-map_slice': function(nesname, array){
+	animationMark: function(models, prop, anid) {
+		for (var i = 0; i < models.length; i++) {
+			models[i].getMD().updateState(prop, anid);
+			////MUST UPDATE VIEW, NOT MODEL!!!!!
+		}
+	},
+	getMapSliceView: function(md) {
+		var model_name = md.model_name;
+		if (this['spec-vget-' + model_name]){
+			return this['spec-vget-' + model_name](md);
+		} else {
+			return this.getChildView(md.mpx, 'main');
+		}
+	},
+	getMapSliceChildInParenView: function(md) {
+		var parent_md = md.map_parent;
+
+
+		var parent_view = this.getMapSliceView(parent_md);
+
+		var target_in_parent = parent_view.getChildView(md.mpx, 'main');
+		if (!target_in_parent){
+			var view = parent_view.getChildViewsByMpx(md.mpx);
+			target_in_parent = view && view[0];
+		}
+		return target_in_parent;
+	},
+	'collch-map_slice': function(nesname, nesting_data){
+		var array = nesting_data.items;
+		var transaction_data = nesting_data.transaction;
 		array = this.getRendOrderedNesting(nesname, array) || array;
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
+		var i, cur;
+
+		for (i = 0; i < array.length; i++) {
+			cur = array[i];
 			var model_name = cur.model_name;
 			if (this['spec-collch-' + model_name]){
 				this.callCollectionChangeDeclaration(this['spec-collch-' + model_name], model_name, cur);
@@ -195,64 +232,96 @@ provoda.View.extendTo(AppBaseView, {
 				}, model_name, cur);
 			}
 		}
-	},
-	'stch-map_animation': function(changes) {
-		if (!changes){
-			return;
-		}
-		var all_changhes = spv.filter(changes.array, 'changes');
-		all_changhes = [].concat.apply([], all_changhes);
 
-		for (var i = 0; i < all_changhes.length; i++) {
-			var cur = all_changhes[i];
-			var target = cur.target.getMD();
-			if (cur.type == 'move-view'){
+		if (transaction_data){
+			var all_changhes = spv.filter(transaction_data.array, 'changes');
+			all_changhes = [].concat.apply([], all_changhes);
+			var models = spv.filter(all_changhes, 'target');
 
-				target.updateState('vis_mp_show', {
-					anid: changes.anid,
-					value: cur.value
-				});
-				//MUST UPDATE VIEW, NOT MODEL!!!!!
-			} else if (cur.type == 'destroy'){
-				this.removeChildViewsByMd(target.mpx);
+			this.animationMark(models, 'animation_started', transaction_data.anid);
+
+			for (i = 0; i < all_changhes.length; i++) {
+				cur = all_changhes[i];
+				var target = cur.target.getMD();
+				if (cur.type == 'destroy'){
+					this.removeChildViewsByMd(target.mpx);
+				}
+
 			}
+			if (transaction_data.target){
+				var target_md = transaction_data.target.getMD();
+				var current_lev_num = target_md.map_level_num;
+				var lc;
+				
+				var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in";
+				if (app_serv.app_env.transform && current_lev_num != -1 && one_zoom_in){
+					
+					//найти view внутри предыдущего target
+					//прочитать позицию, высоту (может не надо), ширину
+					var target_in_parent = this.getMapSliceChildInParenView(target_md);
+					if (target_in_parent){
+						var targt_con = target_in_parent.getC();
 
-		}
-		//console.log(all_changhes);
-		/*
-		for (var i = 0; i < array.length; i++) {
-			var cur = array[i];
-			var handler = this["animation-type"][cur.type];
+						var offset_parent_node = targt_con.offsetParent();
+						var parent_offset = offset_parent_node.offset();
+						var offset = targt_con.offset();
 
-			if (handler){
-				handler.call(this, cur.target, cur.type);
+						var top = offset.top- parent_offset.top;
+						var width = targt_con.outerWidth();
+						var height = targt_con.outerHeight();
+
+						//var con_height = this.els.screens.height();
+						var con_height = window.innerHeight - this.els.navs.height();
+						var con_width = this.els.screens.width();
+
+
+						var scale_x = width/con_width;
+						var scale_y = height/con_height;
+
+
+						lc = this.getLevelContainer(current_lev_num);
+						this.updateState('disallow_animation', true);
+
+						var transform_values = {};
+						var value = 'translate(' + offset.left + 'px, ' + top + 'px)  scale(' + scale_x + ',' + scale_y + ')';
+						transform_props.forEach(function(el) {
+							transform_values[el] = value;
+						});
+
+						lc.c.css(transform_values);
+						//lc.tpl.spec_states['disallow_animation'] = true;
+
+
+
+						//lc.tpl.spec_states['disallow_animation'] = false;
+
+						this.updateState('disallow_animation', false);
+					}
+					
+				}
+
+				this.updateState('current_lev_num', current_lev_num);
+
+
+				if (lc){
+					this.nextTick(function() {
+						lc.c.css(empty_transform_props);
+					});
+					
+				}
+
+				//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
 			}
-			//array[i]
-		};*/
-	},
-	/*
-	"animation-type":{
-		"mp_has_focus": function(target, state) {
+			this.nextTick(function() {
+				this.animationMark(models, 'animation_completed', transaction_data.anid);
+			});
+			
+		}
 
-		},
-		"mp_show": function(target, state) {
 
-		}
-	},*/
-	'compx-start-level': {
-		depends_on: ['current_mp_md'],
-		fn: function(md) {
-			if (!md || md.map_level_num == -1){
-				return true;
-			}
-		}
 	},
-	'compx-current_lev_num': {
-		depends_on: ['current_mp_md'],
-		fn: function(md) {
-			return md.map_level_num;
-		}
-	},
+
+	transform_props: transform_props,
 	'stch-current_mp_md': function(md, old_md) {
 
 		//map_level_num
