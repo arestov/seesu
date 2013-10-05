@@ -262,31 +262,37 @@ provoda.View.extendTo(AppBaseView, {
 					if (target_in_parent){
 						var targt_con = target_in_parent.getC();
 
-						var offset_parent_node = targt_con.offsetParent();
-						var parent_offset = offset_parent_node.offset();
-						var offset = targt_con.offset();
+						//var offset_parent_node = targt_con.offsetParent();
+						var parent_offset = this.els.screens.offset();//offset_parent_node.offset(); //domread, can_be_cached
+						var offset = targt_con.offset(); //domread
 
 						var top = offset.top- parent_offset.top;
-						var width = targt_con.outerWidth();
-						var height = targt_con.outerHeight();
+						var width = targt_con.outerWidth();  //domread
+						var height = targt_con.outerHeight(); //domread
 
 						//var con_height = this.els.screens.height();
-						var con_height = window.innerHeight - this.els.navs.height();
-						var con_width = this.els.screens.width();
+						var con_height = window.innerHeight - this.els.navs.height(); //domread, can_be_cached
+						var con_width = this.els.screens.width(); //domread, can_be_cached
 
 
 						var scale_x = width/con_width;
 						var scale_y = height/con_height;
+						var min_scale = Math.min(scale_x, scale_y);
+
+
+						var shift_x = width/2 - min_scale * con_width/2;
+						var shift_y = height/2 - min_scale * con_height/2;
 
 
 						lc = this.getLevelContainer(current_lev_num);
 						this.updateState('disallow_animation', true);
 
 						var transform_values = {};
-						var value = 'translate(' + offset.left + 'px, ' + top + 'px)  scale(' + scale_x + ',' + scale_y + ')';
+						var value = 'translate(' + (offset.left + shift_x) + 'px, ' + (top + shift_y) + 'px)  scale(' + min_scale + ')';
 						transform_props.forEach(function(el) {
 							transform_values[el] = value;
 						});
+						console.log(value);
 
 						lc.c.css(transform_values);
 						//lc.tpl.spec_states['disallow_animation'] = true;
