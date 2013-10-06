@@ -1552,7 +1552,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 			throw new Error('remove "." (dot) from name');
 		}
 		if (Array.isArray(array)){
-			array = [].concat(array);
+			array = array.slice(0);
 		}
 		var old_value = this.children_models[collection_name];
 		this.children_models[collection_name] = array;
@@ -1560,7 +1560,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		var removed;
 		if (Array.isArray(old_value)){
 			if (!array){
-				removed = [].concat(old_value);
+				removed = old_value.slice(0);
 			} else {
 				removed = [];
 				for (var i = 0; i < old_value.length; i++) {
