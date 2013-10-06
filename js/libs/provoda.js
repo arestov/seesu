@@ -958,7 +958,6 @@ var PVStateChangeEvent = function(type, value, old_value, target) {
 	this.target = target;
 };
 
-var statesEmmiter = provoda.StatesEmitter;
 provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	init: function(){
 		this._super();
