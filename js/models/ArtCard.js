@@ -737,7 +737,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 				return SimilarArtists;
 			},
 			getTitle: function() {
-				return 'Similar to «' + this.artist + '» artists';
+				return localize("Similar to «%artist%» artists").replace('%artist%', this.artist);
 			}
 		},
 		'tags': {
@@ -746,12 +746,12 @@ BrowseMap.Model.extendTo(ArtCard, {
 		},
 		'albums': {
 			constr: DiscogsAlbums,
-			title: 'Albums from Discogs'
+			title: localize('Albums from Discogs')
 		},
 		'albums_lfm': {
 			constr: ArtistAlbums,
 			getTitle: function() {
-				return 'Albums of ' + this.artist + ' from last.fm';
+				return localize('Albums of %artist% from last.fm').replace('%artist%', this.artist);
 			}
 		},
 		'soundcloud': {
@@ -764,15 +764,15 @@ BrowseMap.Model.extendTo(ArtCard, {
 		},
 		'fresh': {
 			constr: HypemArtistSeFreshSongs,
-			title: 'Fresh songs'
+			title: localize('Fresh songs')
 		},
 		'most_favorites': {
 			constr: HypemArtistSeUFavSongs,
-			title: 'Most Favorites'
+			title: localize('Most Favorites')
 		},
 		'blogged': {
 			constr: HypemArtistSeBlogged,
-			title: 'Most Reblogged'
+			title: localize('Most Reblogged')
 		}
 	},
 	initHeavy: provoda.getOCF('heavy_oi', function() {

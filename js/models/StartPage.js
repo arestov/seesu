@@ -3,6 +3,7 @@ function(BrowseMap, ArtCard, SongCard, TagPage, UserCard, MusicConductor, app_se
 "use strict";
 var StartPage = function() {};
 var app_env = app_serv.app_env;
+var localize = app_serv.localize;
 BrowseMap.Model.extendTo(StartPage, {
 	model_name: 'start_page',
 	page_name: 'start page',
@@ -84,7 +85,7 @@ BrowseMap.Model.extendTo(StartPage, {
 	},
 	sub_pa: {
 		'conductor': {
-			title: 'Music Conductor',
+			title: localize('music-cond'),
 			constr: MusicConductor
 		}
 	},

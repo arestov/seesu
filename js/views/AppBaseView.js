@@ -292,7 +292,6 @@ provoda.View.extendTo(AppBaseView, {
 						transform_props.forEach(function(el) {
 							transform_values[el] = value;
 						});
-						console.log(value);
 
 						lc.c.css(transform_values);
 						//lc.tpl.spec_states['disallow_animation'] = true;
