@@ -37,6 +37,7 @@
 @media (min-width:760px) {
 	.screens{
 		padding-right: 240px;
+		-moz-box-sizing:border-box;
 		box-sizing: border-box;
 	}
 
