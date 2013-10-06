@@ -465,13 +465,16 @@ var checkCallbacksFlow = function() {
 		iteration_delayed = true;
 	}
 };
+
+var FlowStep = function(fn, context, args, arg) {
+	this.fn = fn;
+	this.context = context;
+	this.args = args;
+	this.arg = arg;
+};
+
 var pushToCbsFlow = function(fn, context, args, cbf_arg) {
-	callbacks_flow.push({
-		fn: fn,
-		context: context,
-		args: args,
-		arg: cbf_arg
-	});
+	callbacks_flow.push(new FlowStep(fn, context, args, cbf_arg));
 	checkCallbacksFlow();
 };
 
@@ -481,6 +484,14 @@ var parseNamespace = function(namespace) {
 		cached_parsed_namespace[namespace] = namespace.split(DOT);
 	}
 	return cached_parsed_namespace[namespace];
+};
+var EventSubscribingOpts = function(short_name, namespace, cb, once, context, immediately) {
+	this.short_name = short_name;
+	this.namespace = namespace;
+	this.cb = cb;
+	this.once = once;
+	this.context = context;
+	this.immediately = immediately;
 };
 
 spv.Class.extendTo(provoda.Eventor, {
@@ -557,14 +568,9 @@ spv.Class.extendTo(provoda.Eventor, {
 			this.reg_fires[short_name]
 			
 		}*/
-		var subscr_opts = {
-			short_name: short_name,
-			namespace: namespace,
-			cb: cb,
-			once: once,
-			context: opts && opts.context,
-			immediately: opts && opts.immediately
-		};
+
+
+		var subscr_opts = new EventSubscribingOpts(short_name, namespace, cb, once, opts && opts.context, opts && opts.immediately);
 
 		if (!(once && fired)){
 			this._pushCallbackToStack(subscr_opts);

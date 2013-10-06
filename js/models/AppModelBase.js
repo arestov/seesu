@@ -134,11 +134,13 @@ provoda.Model.extendTo(AppModelBase, {
 		if (target_md){
 			changes.target = target_md && target_md.getMDReplacer();
 		}
-		
-		this.updateNesting('map_slice', {
-			items: residents,
-			transaction: changes
+		this.nextTick(function() {
+			this.updateNesting('map_slice', {
+				items: residents,
+				transaction: changes
+			});
 		});
+		
 
 
 

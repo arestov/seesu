@@ -215,6 +215,96 @@ provoda.View.extendTo(AppBaseView, {
 		}
 		return target_in_parent;
 	},
+	animateMapSlice: function(transaction_data) {
+		var all_changhes = spv.filter(transaction_data.array, 'changes');
+			all_changhes = [].concat.apply([], all_changhes);
+		var models = spv.filter(all_changhes, 'target');
+		var i, cur;
+
+		this.animationMark(models, 'animation_started', transaction_data.anid);
+
+		for (i = 0; i < all_changhes.length; i++) {
+			cur = all_changhes[i];
+			var target = cur.target.getMD();
+			if (cur.type == 'destroy'){
+				this.removeChildViewsByMd(target.mpx);
+			}
+
+		}
+		if (transaction_data.target){
+			var target_md = transaction_data.target.getMD();
+			var current_lev_num = target_md.map_level_num;
+			var lc;
+			
+			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in";
+			if (app_serv.app_env.transform && current_lev_num != -1 && one_zoom_in){
+				
+				//найти view внутри предыдущего target
+				//прочитать позицию, высоту (может не надо), ширину
+				var target_in_parent = this.getMapSliceChildInParenView(target_md);
+				if (target_in_parent){
+					var targt_con = target_in_parent.getC();
+
+					//var offset_parent_node = targt_con.offsetParent();
+					var parent_offset = this.els.screens.offset();//offset_parent_node.offset(); //domread, can_be_cached
+					var offset = targt_con.offset(); //domread
+
+					var top = offset.top- parent_offset.top;
+					var width = targt_con.outerWidth();  //domread
+					var height = targt_con.outerHeight(); //domread
+
+					//var con_height = this.els.screens.height();
+					var con_height = window.innerHeight - this.els.navs.height(); //domread, can_be_cached
+					var con_width = this.els.screens.width(); //domread, can_be_cached
+
+
+					var scale_x = width/con_width;
+					var scale_y = height/con_height;
+					var min_scale = Math.min(scale_x, scale_y);
+
+
+					var shift_x = width/2 - min_scale * con_width/2;
+					var shift_y = height/2 - min_scale * con_height/2;
+
+
+					lc = this.getLevelContainer(current_lev_num);
+					this.updateState('disallow_animation', true);
+
+					var transform_values = {};
+					var value = 'translate(' + (offset.left + shift_x) + 'px, ' + (top + shift_y) + 'px)  scale(' + min_scale + ')';
+					transform_props.forEach(function(el) {
+						transform_values[el] = value;
+					});
+
+					lc.c.css(transform_values);
+					//lc.tpl.spec_states['disallow_animation'] = true;
+
+
+
+					//lc.tpl.spec_states['disallow_animation'] = false;
+
+					this.updateState('disallow_animation', false);
+				}
+				
+			}
+
+			this.updateState('current_lev_num', current_lev_num);
+
+
+			if (lc){
+				this.nextTick(function() {
+					lc.c.css(empty_transform_props);
+				});
+				
+			}
+
+			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
+
+			this.nextTick(function() {
+				this.animationMark(models, 'animation_completed', transaction_data.anid);
+			});
+		}
+	},
 	'collch-map_slice': function(nesname, nesting_data){
 		var array = nesting_data.items;
 		var transaction_data = nesting_data.transaction;
@@ -234,93 +324,7 @@ provoda.View.extendTo(AppBaseView, {
 		}
 
 		if (transaction_data){
-			var all_changhes = spv.filter(transaction_data.array, 'changes');
-			all_changhes = [].concat.apply([], all_changhes);
-			var models = spv.filter(all_changhes, 'target');
-
-			this.animationMark(models, 'animation_started', transaction_data.anid);
-
-			for (i = 0; i < all_changhes.length; i++) {
-				cur = all_changhes[i];
-				var target = cur.target.getMD();
-				if (cur.type == 'destroy'){
-					this.removeChildViewsByMd(target.mpx);
-				}
-
-			}
-			if (transaction_data.target){
-				var target_md = transaction_data.target.getMD();
-				var current_lev_num = target_md.map_level_num;
-				var lc;
-				
-				var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in";
-				if (app_serv.app_env.transform && current_lev_num != -1 && one_zoom_in){
-					
-					//найти view внутри предыдущего target
-					//прочитать позицию, высоту (может не надо), ширину
-					var target_in_parent = this.getMapSliceChildInParenView(target_md);
-					if (target_in_parent){
-						var targt_con = target_in_parent.getC();
-
-						//var offset_parent_node = targt_con.offsetParent();
-						var parent_offset = this.els.screens.offset();//offset_parent_node.offset(); //domread, can_be_cached
-						var offset = targt_con.offset(); //domread
-
-						var top = offset.top- parent_offset.top;
-						var width = targt_con.outerWidth();  //domread
-						var height = targt_con.outerHeight(); //domread
-
-						//var con_height = this.els.screens.height();
-						var con_height = window.innerHeight - this.els.navs.height(); //domread, can_be_cached
-						var con_width = this.els.screens.width(); //domread, can_be_cached
-
-
-						var scale_x = width/con_width;
-						var scale_y = height/con_height;
-						var min_scale = Math.min(scale_x, scale_y);
-
-
-						var shift_x = width/2 - min_scale * con_width/2;
-						var shift_y = height/2 - min_scale * con_height/2;
-
-
-						lc = this.getLevelContainer(current_lev_num);
-						this.updateState('disallow_animation', true);
-
-						var transform_values = {};
-						var value = 'translate(' + (offset.left + shift_x) + 'px, ' + (top + shift_y) + 'px)  scale(' + min_scale + ')';
-						transform_props.forEach(function(el) {
-							transform_values[el] = value;
-						});
-
-						lc.c.css(transform_values);
-						//lc.tpl.spec_states['disallow_animation'] = true;
-
-
-
-						//lc.tpl.spec_states['disallow_animation'] = false;
-
-						this.updateState('disallow_animation', false);
-					}
-					
-				}
-
-				this.updateState('current_lev_num', current_lev_num);
-
-
-				if (lc){
-					this.nextTick(function() {
-						lc.c.css(empty_transform_props);
-					});
-					
-				}
-
-				//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
-			}
-			this.nextTick(function() {
-				this.animationMark(models, 'animation_completed', transaction_data.anid);
-			});
-			
+			this.animateMapSlice(transaction_data);
 		}
 
 
