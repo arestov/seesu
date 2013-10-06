@@ -78,6 +78,7 @@ var MfComplect = function(opts, params) {
 	this.source_name = params.source_name;
 
 	var _this = this;
+	this.selectMf = null;
 	this.selectMf = function() {
 		_this.mf_cor.playSelectedByUser(this);
 	};
@@ -263,10 +264,10 @@ provoda.Model.extendTo(MfCor, {
 				var preview_types = ["default","start","middle","end"];
 
 				//set up filter app$control.yt$state.reasonCode != limitedSyndication
+				var length = Math.min(vs.length, 3);
+				var video_arr = new Array(length);
 
-				var video_arr = [];
-
-				for (var i=0, l = Math.min(vs.length, 3); i < l; i++) {
+				for (var i=0, l = length; i < l; i++) {
 					var
 						_v = vs[i],
 						tmn = {},
@@ -293,7 +294,7 @@ provoda.Model.extendTo(MfCor, {
 						title: v_title,
 						mo: _this.mo
 					});
-					video_arr.push(yt_v);
+					video_arr[i] = yt_v;
 				}
 
 				video_arr.sort(function(a, b){
@@ -551,11 +552,11 @@ provoda.Model.extendTo(MfCor, {
 		}
 	},
 	hndSourcesList: function(e) {
-		var sorted_completcs = [];
+		var sorted_completcs = new Array(e.value.length || 0);
 		for (var i = 0; i < e.value.length; i++) {
 			var cur = e.value[i];
 			this.bindSource(cur);
-			sorted_completcs.push(this.complects[cur.search_name]);
+			sorted_completcs[i] = this.complects[cur.search_name];
 		}
 		this.updateNesting('sorted_completcs', sorted_completcs);
 		this.updateState('few_sources', e.value.length > 1);

@@ -945,7 +945,12 @@ var getConnector = function(state_name) {
 	}
 	return connects_store[state_name];
 };
-
+var PVStateChangeEvent = function(type, value, old_value, target) {
+	this.type = type;
+	this.value = value;
+	this.old_value = old_value;
+	this.target = target;
+};
 
 var statesEmmiter = provoda.StatesEmitter;
 provoda.Eventor.extendTo(provoda.StatesEmitter, {
@@ -1137,13 +1142,12 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		var vip_cb_cs = this.getMatchedCallbacks(vip_name).matched;
 		var default_cb_cs = this.getMatchedCallbacks(default_name).matched;
+
+
+
 		if (vip_cb_cs.length || default_cb_cs.length){
-			var event_arg = {
-				type: name,
-				value: value,
-				target: this,
-				old_value: this.zdsv.original_states[name]
-			};
+			var event_arg = new PVStateChangeEvent(name, value, this.zdsv.original_states[name], this);
+
 			if (vip_cb_cs.length){
 				//вызов внутреннего для самого объекта события
 				this.triggerCallbacks(vip_cb_cs, false, false, vip_name, event_arg);

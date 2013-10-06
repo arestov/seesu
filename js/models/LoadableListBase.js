@@ -110,13 +110,13 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 			//console.profile('data list inject');
 			if (!this.request_info || this.request_info.request == request){
 
-				var items_list = [];
+				var items_list = new Array(data_list.length || 0);
 				if (!error && data_list && data_list.length){
 
 					var mlc_opts = this.getMainListChangeOpts();
 					for (var i = 0; i < data_list.length; i++) {
 						var item = this.addItemToDatalist(data_list[i], true);
-						items_list.push(item);
+						items_list[i] = item;
 					}
 					this.dataListChange(mlc_opts, items_list);
 
