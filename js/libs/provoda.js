@@ -298,8 +298,6 @@ provoda = {
 	Model: function(){},
 	HModel: function() {},
 	View: function(){},
-	ItemsEvents: function(){},
-	StatesArchiver: function(){},
 	addPrototype: function(name, obj){
 		if (!this.prototypes[name]){
 			this.prototypes[name] = obj;
@@ -329,14 +327,30 @@ provoda = {
 };
 provoda.Controller = provoda.View;
 
-spv.Class.extendTo(provoda.ItemsEvents, {
-	init: function(event_name, eventCallback, soft_reg) {
-		this.items_list =null;
-		this.controls_list = [];
-		this.event_name = event_name;
-		this.eventCallback = eventCallback;
-		this.soft_reg = soft_reg;
-	},
+
+var setEvLiItems = function(items_list) {
+	items_list = items_list && spv.toRealArray(items_list);
+	this.unsubcribeOld();
+	this.items_list = items_list;
+	this.controls_list.length = 0;
+	this.controls_list.length = items_list.length;
+	for (var i = 0; i < items_list.length; i++) {
+		this.controls_list[i] = items_list[i].on(this.event_name, this.eventCallback, {
+			easy_bind_control: true,
+			context: this.event_context,
+			skip_reg: this.skip_reg
+		});
+	}
+};
+var ItemsEvents = function(event_name, eventCallback) {
+	this.items_list = null;
+	this.controls_list = [];
+	this.event_name = event_name;
+	this.eventCallback = eventCallback;
+	this.skip_reg = null;
+	this.event_context = this;
+};
+ItemsEvents.prototype = {
 	unsubcribeOld: function() {
 		if (this.controls_list.length){
 			for (var i = 0; i < this.controls_list.length; i++) {
@@ -344,59 +358,51 @@ spv.Class.extendTo(provoda.ItemsEvents, {
 			}
 		}
 	},
-	setItems: function(items_list) {
-		items_list = items_list && spv.toRealArray(items_list);
-		this.unsubcribeOld();
-		this.items_list = items_list;
-		this.controls_list.length = 0;
-		this.controls_list.length = items_list.length;
-		for (var i = 0; i < items_list.length; i++) {
-			this.controls_list[i] = items_list[i].on(this.event_name, this.eventCallback, {
-				easy_bind_control: true,
-				soft_reg: this.soft_reg
-			});
+	setItems: setEvLiItems
+};
+
+var hasargfn = function(cur) {return cur;};
+var StatesArchiver = function(state_name, opts) {
+	this.items_list = null;
+	this.controls_list = [];
+
+	var _this = this;
+	this.checkFunc = function() {
+		var item = this;
+		_this.getItemsValues(item);
+	};
+	this.state_name = state_name;
+	this.event_name = 'state_change-' + this.state_name;
+	this.eventCallback = this.checkFunc;
+	this.skip_reg = true;
+
+	this.returnResult = opts.returnResult;
+	var calcR = opts.calculateResult;
+	if (calcR){
+		if (typeof calcR == 'function'){
+			this.calculateResult = calcR;
+		} else {
+			if (calcR == 'some'){
+				this.calculateResult = this.some;
+			} else if (calcR == 'every'){
+				this.calculateResult = this.every;
+			}
 		}
+
+	} else {
+		this.calculateResult = this.some;
 	}
 
-});
 
-var hasargfn = function(cur) {return cur};
-
-provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
-	init: function(state_name, opts) {
-		var _this = this;
-		this.checkFunc = function() {
-			var item = this;
-			_this.getItemsValues(item);
-		};
-		this.state_name = state_name;
-		this._super('state_change-' + this.state_name, this.checkFunc, true);
-
-		this.returnResult = opts.returnResult;
-		var calcR = opts.calculateResult;
-		if (calcR){
-			if (typeof calcR == 'function'){
-				this.calculateResult = calcR;
-			} else {
-				if (calcR == 'some'){
-					this.calculateResult = this.some;
-				} else if (calcR == 'every'){
-					this.calculateResult = this.every;
-				}
-			}
-
-		} else {
-			this.calculateResult = this.some;
-		}
-	},
-	calculateResult: null,
+};
+StatesArchiver.prototype = {
 	every: function(values_array) {
 		return !!values_array.every(hasargfn);
 	},
 	some: function(values_array) {
 		return !!values_array.some(hasargfn);
 	},
-	getItemsValues: function(item) {
+	getItemsValues: function() {
 		var values_list = new Array(this.items_list.length);
 		for (var i = 0; i < this.items_list.length; i++) {
 			values_list[i] = this.items_list[i].state(this.state_name);
@@ -412,12 +418,13 @@ provoda.ItemsEvents.extendTo(provoda.StatesArchiver, {
 			}
 		}
 	},
+	setItemsReal: setEvLiItems,
 	setItems: function(items_list) {
 		items_list = items_list && spv.toRealArray(items_list);
-		this._super(items_list);
+		this.setItemsReal(items_list);
 		this.checkFunc();
 	}
-});
+};
 
 var BindControl = function(evcompanion, opts) {
 	this.evcompanion = evcompanion;
@@ -1539,23 +1546,21 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 	watchChildrenStates: function(collection_name, state_name, callback) {
 		//
 		var _this = this;
-		var items_events = new provoda.ItemsEvents();
-		items_events.init('state_change-' + state_name, function() {
+		var items_events = new ItemsEvents('state_change-' + state_name, function(e) {
 			callback.call(_this, {
-				item: this,
+				item: e.target,
 				value: arguments && arguments[0] && arguments[0].value,
 				args: arguments,
-				items: items_events.items_list
+				items: this.items_list
 			});
-		}, true);
+		});
 		this.on('child_change-' + collection_name, function(e) {
 			items_events.setItems(e.value);
 		});
 	},
 	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
 		var _this = this;
-		var archiver = new provoda.StatesArchiver();
-		archiver.init(collection_state, {
+		var archiver = new StatesArchiver(collection_state, {
 			returnResult: function(value) {
 				_this.updateState(result_state_name || collection_state, value);
 			},
