@@ -89,7 +89,7 @@ provoda.Model.extendTo(AppModelBase, {
 			target_md,
 			all_changhes = spv.filter(changes.array, 'changes');
 
-		all_changhes = [].concat.apply([], all_changhes);
+		all_changhes = Array.prototype.concat.apply(Array.prototype, all_changhes);
 		//var models = spv.filter(all_changhes, 'target');
 		//this.animationMark(models, changes.anid);
 
@@ -134,11 +134,11 @@ provoda.Model.extendTo(AppModelBase, {
 		if (target_md){
 			changes.target = target_md && target_md.getMDReplacer();
 		}
-		
 		this.updateNesting('map_slice', {
 			items: residents,
 			transaction: changes
 		});
+		
 
 
 

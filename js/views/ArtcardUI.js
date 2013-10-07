@@ -235,12 +235,10 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 			//shuffled_images.push.apply(shuffled_images, shuffleArray(images));
 			_this.img_requests = [];
 			var img_requests = _this.img_requests;
-		
-			_this.img_panorama = new Panoramator();
-			var img_panorama = _this.img_panorama;
+
 			var main_c = photo_c.parent();
 
-			img_panorama.init({
+			_this.img_panorama = new Panoramator({
 				viewport: main_c,
 				lift: photo_c,
 				improved_con: true,
@@ -251,6 +249,9 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 					seesu.trackEvent('Panoramator', 'artist photos');
 				}
 			});
+			var img_panorama = _this.img_panorama;
+			
+
 			//bindPanoramaResizeByWindow(img_panorama);
 			_this.updateState('panorama', true);
 			

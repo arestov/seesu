@@ -453,8 +453,11 @@ provoda.Model.extendTo(MfCor, {
 					" " +  localize('music-files-from-vk')
 			});
 			this.updateNesting('vk_auth', this.vk_auth_rqb);
-			this.updateState('changed', new Date());
-			this.updateState('vk_audio_auth ', true);
+			this.updateManyStates({
+				'changed': new Date(),
+				'vk_audio_auth': true
+			});
+
 		}
 
 	},
@@ -707,8 +710,11 @@ provoda.Model.extendTo(MfCor, {
 	},
 	playSelectedByUser: function(mopla) {
 		mopla.use_once = true;
-		this.updateState("selected_mopla_to_use", mopla);
-		this.updateState('selected_mopla', mopla);
+		this.updateManyStates({
+			'selected_mopla_to_use': mopla,
+			'selected_mopla': mopla
+		});
+
 
 		var t_mopla = this.state("mopla_to_use");
 		if (t_mopla){

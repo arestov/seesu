@@ -477,6 +477,7 @@
 		cursor: pointer;
 		height: 1.5rem;
 		line-height: 1.5rem;
+		-moz-box-sizing:border-box;
 		box-sizing:border-box;
 		border: 0.125rem solid #454545;
 		float:left;
@@ -520,6 +521,7 @@
 		
 		border: 0.2rem solid #333;
 		vertical-align: middle;
+		-moz-box-sizing:border-box;
 		box-sizing: border-box;
 	}
 
