@@ -7,31 +7,44 @@ provoda.addPrototype("SongBase",{
 	init: function(opts, params){
 
 		this._super(opts);
+
+		this.neighbour_for = null;
+		this.marked_prev_song = null;
+		this.marked_next_song = null;
+		this.ready_to_preload = null;
+		this.waiting_to_load_next = null;
+		this.track = null;
+		this.rtn_request = null;
+		this.playable_info = null;
 		
 		this.plst_titl = opts.plst_titl;
 		this.mp3_search = opts.mp3_search;
 		this.player = opts.player;
 		
 		this.uid = ++counter;
+		if (opts.omo.track){
+			opts.omo.track = opts.omo.track.trim();
+		}
+		
 		spv.cloneObj(this, opts.omo, false, ['artist', 'track']);
 		this.omo = opts.omo;
 
 		this.init_states['no_track_title'] = false;
 		if (opts.omo.artist){
-			this.init_states['artist'] = opts.omo.artist;
+			this.init_states['artist'] = opts.omo.artist && opts.omo.artist.trim();
 		}
 		if (opts.omo.track){
-			this.init_states['track']= opts.omo.track;
+			this.init_states['track'] = opts.omo.track;
 		}
 		this.init_states['playlist_type'] = this.plst_titl.playlist_type;
 		this.init_states['url_part'] = this.getURL();
 		//this.updateManyStates(states);
 
-		var _this = this;
-		this.on('requests', function() {
-			_this.plst_titl.checkRequestsPriority();
-			
-		}, {immediately: true});
+		this.on('requests', this.hndRequestsPrio, this.getContextOptsI());
+	},
+	hndRequestsPrio: function() {
+		this.plst_titl.checkRequestsPriority();
+		
 	},
 	complex_states: {
 		'one_artist_playlist': {
@@ -92,8 +105,8 @@ provoda.addPrototype("SongBase",{
 		'has_none_files_to_play': {
 			depends_on: ['search_complete', 'no_track_title', 'mf_cor_has_available_tracks'],
 			fn: function(scomt, ntt, mf_cor_tracks) {
-				if (this.mf_cor && !mf_cor_tracks){
-					if (this.mf_cor.isSearchAllowed()){
+				if (this.getMFCore() && !mf_cor_tracks){
+					if (this.getMFCore().isSearchAllowed()){
 						if (scomt){
 							return true;
 						}
@@ -123,13 +136,9 @@ provoda.addPrototype("SongBase",{
 			}
 		},
 		"player_song": function(state){
-			var _this = this;
 
 			if (state){
-				this.mp3_search.on("new-search.player_song", function(){
-					_this.findFiles();
-					
-				}, {exlusive: true});
+				this.mp3_search.on("new-search.player_song", this.findFiles, {exlusive: true, context: this});
 			}
 		},
 		"is_important": function(state){
@@ -150,13 +159,10 @@ provoda.addPrototype("SongBase",{
 		}
 	},
 	prepareForPlaying: function() {
-		var _this = this;
 
 		this.makeSongPlayalbe(true);
 
-		this.mp3_search.on("new-search.viewing-song", function(){
-			_this.findFiles();
-		}, {exlusive: true});
+		this.mp3_search.on("new-search.viewing-song", this.findFiles, {exlusive: true, context: this});
 	},
 	simplify: function() {
 		return spv.cloneObj({}, this, false, ['track', 'artist']);
@@ -204,28 +210,28 @@ provoda.addPrototype("SongBase",{
 		}
 	}, 200),*/
 	canPlay: function() {
-		return this.mf_cor.canPlay();
+		return this.getMFCore().canPlay();
 	},
 	preloadFor: function(id){
-		this.mf_cor.preloadFor(id);
+		this.getMFCore().preloadFor(id);
 	},
 	unloadFor: function(id){
-		this.mf_cor.unloadFor(id);
+		this.getMFCore().unloadFor(id);
 	},
 	setVolume: function(vol, fac){
-		this.mf_cor.setVolume(vol, fac);
+		this.getMFCore().setVolume(vol, fac);
 	},
 	stop: function(){
-		this.mf_cor.stop();
+		this.getMFCore().stop();
 	},
 	switchPlay: function(){
-		this.mf_cor.switchPlay();
+		this.getMFCore().switchPlay();
 	},
 	pause: function(){
-		this.mf_cor.pause();
+		this.getMFCore().pause();
 	},
 	play: function(mopla){
-		this.mf_cor.play(mopla);
+		this.getMFCore().play(mopla);
 
 	},
 	markAs: function(neighbour, mo){
@@ -304,6 +310,7 @@ provoda.addPrototype("SongBase",{
 		return !!this.next_song;
 	},
 	setSongName: function(song_name, full_allowing, from_collection, last_in_collection) {
+		song_name = song_name && song_name.trim();
 		this.track = song_name;
 		this.updateManyStates({
 			'track': song_name,
@@ -577,34 +584,36 @@ provoda.addPrototype("SongBase",{
 		this.updateState('files_search', opts);
 		this.checkChangesSinceFS(opts);
 	},
+	investg_rq_opts: {
+		depend: true,
+		space: 'acting'
+	},
+	hndInvestgReqs: function(array) {
+		this.addRequests(array, this.investg_rq_opts);
+	},
+	hndLegacyFSearch: function(e) {
+		this.updateFilesSearchState(e.value);
+	},
+	hndHasMp3Files: function(e) {
+		this.updateState('playable', e.value);
+		if (e.value){
+			this.plst_titl.markAsPlayable();
+		}
+	},
 	bindFilesSearchChanges: function() {
-		var investg = this.mf_cor.files_investg;
-		var _this = this;
+		var investg = this.getMFCore().files_investg;
 		investg
-			.on('requests', function(array) {
-				_this.addRequests(array, {
-					depend: true,
-					space: 'acting'
-				});
-			}, {immediately: true})
-			.on('state-change.search_complete', function(e) {
-				_this.updateState('search_complete', e.value);
-			})
-			.on('state-change.has_request', function(e) {
-				_this.updateState('searching_files', e.value);
-			})
-			.on('state-change.legacy-files-search', function(e) {
-				_this.updateFilesSearchState(e.value);
-			})
-			.on('state-change.has_mp3_files', function(e) {
-				_this.updateState('playable', e.value);
-				if (e.value){
-					_this.plst_titl.markAsPlayable();
-				}
-			});
+			.on('requests', this.hndInvestgReqs, this.getContextOptsI());
+
+		this
+			.wch(investg, 'search_complete')
+			.wch(investg, 'has_request', 'searching_files')
+			.wch(investg, 'legacy-files-search', this.hndLegacyFSearch)
+			.wch(investg, 'has_mp3_files', this.hndHasMp3Files);
+
 	},
 	isSearchAllowed: function() {
-		return this.mf_cor && this.mf_cor.isSearchAllowed();
+		return this.getMFCore() && this.getMFCore().isSearchAllowed();
 	},
 	findFiles: function(opts){
 		if (!this.artist || !this.track || !this.isSearchAllowed()){
@@ -614,7 +623,7 @@ provoda.addPrototype("SongBase",{
 			opts = opts || {};
 			opts.only_cache = opts.only_cache && !this.state('want_to_play') && (!this.player.c_song || this.player.c_song.next_preload_song != this);
 		
-			this.mf_cor.startSearch(opts);
+			this.getMFCore().startSearch(opts);
 		}
 	},
 	makeSongPlayalbe: function(full_allowing,  from_collection, last_in_collection){
@@ -679,7 +688,7 @@ provoda.addPrototype("SongBase",{
 		}
 	},
 	getCurrentMopla: function(){
-		return this.mf_cor.getCurrentMopla();
+		return this.getMFCore().getCurrentMopla();
 	},
 	showArtcardPage: function(artist_name) {
 		this.app.showArtcardPage(artist_name || this.artist);

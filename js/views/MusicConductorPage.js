@@ -9,7 +9,7 @@ coct.PageView.extendTo(MusicConductorPage, {
 	},
 	children_views: {
 		allpas: coct.LiListsPreview,
-		countres: coct.LiListsPreview
+		сountries: coct.LiListsPreview
 	}
 });
 

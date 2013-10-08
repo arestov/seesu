@@ -269,7 +269,9 @@ spv.Class.extendTo(WPBox, {
 
 		for (var i = 0; i < all_waypoints.length; i++) {
 			var cur_wayp = all_waypoints[i];
-
+			if (!cur_wayp){
+				continue;
+			}
 			var cur_id = cur_wayp.wpid;
 			if (!dems_storage[cur_id]){
 				var dems = this.getWPDemsForStorage(cur_wayp, dems_storage);

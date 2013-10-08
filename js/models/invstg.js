@@ -38,6 +38,11 @@ var artistSuggest = function(data){
 	this.artist = data.artist;
 	this.image = data.image;
 	this.text_title = this.getTitle();
+	this.updateManyStates({
+		artist: data.artist,
+		image: data.image,
+		text_title: this.text_title
+	});
 };
 
 
@@ -58,6 +63,9 @@ var playlistSuggest = function(data){
 	this.init();
 	this.pl = data.playlist;
 	this.text_title = this.getTitle();
+	this.updateManyStates({
+		text_title: this.text_title
+	});
 };
 BaseSuggest.extendTo(playlistSuggest, {
 	valueOf: function(){
@@ -74,7 +82,7 @@ var seesuSection = function() {};
 SearchSection.extendTo(seesuSection, {
 	no_results_text: localize('nothing-found'),
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		if (this.loadMore){
 			var _this = this;
 			this.button = (new BaseSectionButton())
@@ -82,23 +90,22 @@ SearchSection.extendTo(seesuSection, {
 					this.hide();
 					_this.loadMore();
 				})
-				.on('state-change.disabled', function(){
+				.on('state_change-disabled', function(){
 					_this.trigger('items-change');
 				}, {skip_reg: true});
 			this.setButtonText();
 			this.updateNesting('button', this.button);
 		}
+
 	}
 });
 
 
-var PlaylistsSection = function() {
-	this.init();
-};
+var PlaylistsSection = function() {};
 SearchSection.extendTo(PlaylistsSection, {
 	model_name: 'section-playlist',
 	init: function() {
-		this._super();
+		this._super.apply(this, arguments);
 		this.updateState('section_title', localize('playlists'));
 	},
 	resItem: playlistSuggest
@@ -108,9 +115,7 @@ SearchSection.extendTo(PlaylistsSection, {
 
 
 
-var ArtistsSection = function(){
-	this.init();
-};
+var ArtistsSection = function(){};
 
 seesuSection.extendTo(ArtistsSection, {
 	model_name: 'section-artist',
@@ -158,6 +163,7 @@ var trackSuggest = function(data){
 		this.updateState('duration_text', track_dur);
 	}
 	this.text_title = this.getTitle();
+	this.updateState('text_title', this.text_title);
 };
 BaseSuggest.extendTo(trackSuggest, {
 	valueOf: function(){
@@ -177,9 +183,7 @@ BaseSuggest.extendTo(trackSuggest, {
 
 
 
-var TracksSection = function() {
-	this.init();
-};
+var TracksSection = function() {};
 seesuSection.extendTo(TracksSection, {
 	model_name: 'section-track',
 	init: function() {
@@ -216,6 +220,12 @@ var tagSuggest = function(data){
 		this.image = data.image;
 	}
 	this.text_title = this.getTitle();
+
+	this.updateManyStates({
+		tag: data.tag,
+		image: data.image,
+		text_title: this.text_title
+	});
 };
 
 BaseSuggest.extendTo(tagSuggest, {
@@ -230,9 +240,7 @@ BaseSuggest.extendTo(tagSuggest, {
 
 
 
-var TagsSection = function() {
-	this.init();
-};
+var TagsSection = function() {};
 seesuSection.extendTo(TagsSection, {
 	model_name: 'section-tag',
 	init: function() {
@@ -278,6 +286,9 @@ var albumSuggest = function(data){
 		this.aid = data.resid;
 	}
 	this.text_title = this.getTitle();
+	this.updateManyStates({
+		text_title: this.text_title
+	});
 };
 BaseSuggest.extendTo(albumSuggest, {
 	valueOf: function(){
@@ -294,9 +305,7 @@ BaseSuggest.extendTo(albumSuggest, {
 });
 
 
-var AlbumsSection = function() {
-	this.init();
-};
+var AlbumsSection = function() {};
 seesuSection.extendTo(AlbumsSection, {
 	model_name: 'section-album',
 	init: function() {
@@ -329,11 +338,11 @@ SearchPage = function() {};
 Investigation.extendTo(SearchPage, {
 	init: function(opts) {
 		this._super(opts);
-		this.addSection('playlists', new PlaylistsSection());
-		this.addSection('artists', new ArtistsSection());
-		this.addSection('albums', new AlbumsSection());
-		this.addSection('tags', new TagsSection());
-		this.addSection('tracks', new TracksSection());
+		this.addSection('playlists', PlaylistsSection);
+		this.addSection('artists', ArtistsSection);
+		this.addSection('albums', AlbumsSection);
+		this.addSection('tags', TagsSection);
+		this.addSection('tracks', TracksSection);
 		this.updateState('mp_freezed', false);
 		
 	},
@@ -368,7 +377,9 @@ Investigation.extendTo(SearchPage, {
 			pl_sec,
 			i;
 		var serplr;
-		if (':playlists'.match(new RegExp('\^' + this.q , 'i'))){
+		
+
+		if (':playlists'.match(spv.getStringPattern(this.q))){
 			this.setInactiveAll('playlists');
 			pl_sec = this.g('playlists');
 			pl_sec.setActive();

@@ -168,6 +168,7 @@ AppModel.extendTo(SeesuApp, {
 
 		this.s.on('info-change.vk', function(data) {
 			_this.updateState('vk_info', data);
+			_this.updateState('vk_userid', data && data.id);
 		});
 
 		this.on('vk-api', function(vkapi, user_id) {
@@ -190,10 +191,10 @@ AppModel.extendTo(SeesuApp, {
 			reportSearchEngs(list.join(','));
 		});
 		if (this.lfm.username){
-			this.updateState('lfm_username', this.lfm.username);
+			this.updateState('lfm_userid', this.lfm.username);
 		} else {
 			this.lfm_auth.on('session', function() {
-				_this.updateState('lfm_username', _this.lfm.username);
+				_this.updateState('lfm_userid', _this.lfm.username);
 			});
 		}
 		
@@ -263,7 +264,7 @@ AppModel.extendTo(SeesuApp, {
 		this.settings_timers = {};
 
 		this.all_queues = all_queues;
-
+		var _this = this;
 		this.trackStat = (function(){
 			window._gaq = window._gaq || [];
 			//var _gaq = window._gaq;
@@ -282,7 +283,9 @@ AppModel.extendTo(SeesuApp, {
 				});
 			});
 			return function(data_array){
-				window._gaq.push(data_array);
+				_this.nextTick(function(){
+					window._gaq.push(data_array);
+				});
 			};
 		})();
 
@@ -291,7 +294,7 @@ AppModel.extendTo(SeesuApp, {
 		this.last_usage = (lu && new Date(lu)) || ((new Date() * 1) - 1000*60*60*0.75);
 		this.usage_counter = parseFloat(app_serv.store('su-usage-counter')) || 0;
 
-		var _this = this;
+		
 		setInterval(function(){
 
 			var now = new Date();
@@ -366,17 +369,21 @@ AppModel.extendTo(SeesuApp, {
 
 		this.map
 			.init(this.start_page)
-			.on('map-tree-change', function(nav_tree) {
-				_this.changeNavTree(nav_tree);
-			}, {immediately: true})
-			.on('changes', function(changes) {
+			.on('residents-tree', function(tree) {
+				
+			}, this.getContextOptsI())
+			.on('changes', function(changes, tree, residents) {
 				//console.log(changes);
-				_this.animateMapChanges(changes);
-			}, {immediately: true})
-			.on('title-change', function(title) {
-				_this.setDocTitle(title);
+				this.animateMapChanges(changes, tree, residents);
+			}, this.getContextOptsI())
+			.on('map-tree-change', function(nav_tree) {
+				this.changeNavTree(nav_tree);
+			}, this.getContextOptsI())
 
-			}, {immediately: true})
+			.on('title-change', function(title) {
+				this.setDocTitle(title);
+
+			}, this.getContextOptsI())
 			.on('url-change', function(nu, ou, data, replace) {
 				if (app_env.needs_url_history){
 					if (replace){
@@ -385,7 +392,7 @@ AppModel.extendTo(SeesuApp, {
 						navi.set(nu, data.resident);
 					}
 				}
-			}, {immediately: true})
+			}, this.getContextOptsI())
 			.on('every-url-change', function(nv, ov, replace) {
 				if (replace){
 					//su.trackPage(nv.map_level.resident.page_name);
@@ -393,10 +400,8 @@ AppModel.extendTo(SeesuApp, {
 
 			}, {immediately: true})
 			.on('nav-change', function(nv, ov, history_restoring, title_changed){
-				setTimeout(function() {
-					_this.trackPage(nv.map_level.resident.page_name);
-				},10);
-			}, {immediately: true})
+				this.trackPage(nv.map_level.resident.page_name);
+			}, this.getContextOptsI())
 			.makeMainLevel();
 
 
@@ -462,7 +467,10 @@ AppModel.extendTo(SeesuApp, {
 				if (state_from_history){
 					state_from_history.data.showOnMap();
 				} else{
-					_this.routePathByModels(url.replace(/\ ?\$...$/, ''), _this.start_page);
+					var md = _this.routePathByModels(url.replace(/\ ?\$...$/, ''));
+					if (md){
+						md.showOnMap();
+					}
 				}
 				_this.map.finishChangesCollecting();
 			});
@@ -576,11 +584,27 @@ AppModel.extendTo(SeesuApp, {
 			pageTracker._trackEvent.apply(pageTracker, args);
 		});
 	},
+	'rootv_field': ['mpx', 'views_index', 'root', 'length'],
 	trackPage:function(page_name){
 		this.current_page = page_name;
+
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
-		this.trackStat.call(this, args);
+
+		if (!this.app_view_id){
+			this.last_page_tracking_data = args;
+			return;
+		} else {
+			this.trackStat.call(this, args);
+		}
+		
+	},
+	checkPageTracking: function() {
+		if (this.app_view_id && this.last_page_tracking_data){
+			this.trackStat.call(this, this.last_page_tracking_data);
+			this.last_page_tracking_data = null;
+
+		}
 	},
 	trackTime: function(){
 		var args = Array.prototype.slice.call(arguments);
@@ -607,7 +631,7 @@ AppModel.extendTo(SeesuApp, {
 		});
 		return sp;
 	},
-	routePathByModels: function(pth_string, start_page) {
+	routePathByModels: function(pth_string) {
 
 	/*
 	catalog
@@ -632,7 +656,7 @@ AppModel.extendTo(SeesuApp, {
 	*/
 		var pth = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
 
-		var cur_md = start_page;
+		var cur_md = this.start_page;
 		var tree_parts_group = null;
 		for (var i = 0; i < pth.length; i++) {
 			if (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]]){
@@ -660,9 +684,6 @@ AppModel.extendTo(SeesuApp, {
 
 
 		}
-		if (cur_md){
-			cur_md.showOnMap();
-		}
 		return cur_md;
 	},
 	getPlaylists: function(query) {
@@ -673,7 +694,8 @@ AppModel.extendTo(SeesuApp, {
 				if (query){
 					if (cur.playlist_title == query){
 						r.unshift(cur);
-					} else if (cur.playlist_title.match(new  RegExp('\\b' + query))){
+
+					} else if (cur.playlist_title.match(spv.getStringPattern(query))){
 						r.push(cur);
 					}
 				} else {
@@ -684,9 +706,16 @@ AppModel.extendTo(SeesuApp, {
 		}
 		return r;
 	},
-	detachUI: function() {
+	attachUI: function(app_view_id) {
+		this.app_view_id = app_view_id;
+		this.checkPageTracking();
+	},
+	detachUI: function(app_view_id) {
 		if (this.p && this.p.c_song){
 			this.showNowPlaying(true);
+		}
+		if (this.app_view_id === app_view_id){
+			this.app_view_id = null;
 		}
 	},
 	vkappid: 2271620,
@@ -707,6 +736,7 @@ AppModel.extendTo(SeesuApp, {
 					_this.s.vk_id = user_id;
 
 					var _d = spv.cloneObj({data_source: 'vkontakte'}, info);
+					
 
 					_this.s.setInfo('vk', _d);
 
@@ -730,6 +760,9 @@ AppModel.extendTo(SeesuApp, {
 	},
 	getVKFriends: function(){
 		var _this = this;
+		if (!this.vk_api){
+			return;
+		}
 		if (!this.vk_fr_req){
 			this.vk_fr_req = this.vk_api.get("friends.get", {fields: "uid, photo"}, {cache_timeout: 1000*60*5})
 				.done(function(){
@@ -738,7 +771,7 @@ AppModel.extendTo(SeesuApp, {
 		}
 		this.vk_fr_req
 			.done(function(r){
-				_this.trigger("vk-friends", r && r.response);
+				_this.trigger("vk-friends", r && r.response.items);
 			})
 			.fail(function(){
 
@@ -775,7 +808,7 @@ AppModel.extendTo(SeesuApp, {
 			cache_ajax: cache_ajax,
 			onAuthLost: function() {
 				lostAuth(vkapi);
-				checkDeadSavedToken(vk_token);
+				initVk.checkDeadSavedToken(vk_token);
 			},
 			mp3_search: _this.mp3_search
 		});

@@ -154,7 +154,7 @@ var loadImage = function(opts) {
 };
 app_serv.loadImage = loadImage;
 
-var getInternetConnectionStatus = app_serv.getInternetConnectionStatus = function(cb) {
+app_serv.getInternetConnectionStatus = function(cb) {
 	var img = new Image();
 	img.onload = function() {
 		cb(true);
@@ -165,53 +165,15 @@ var getInternetConnectionStatus = app_serv.getInternetConnectionStatus = functio
 	img.src = "http://www.google-analytics.com/__utm.gif?" + Math.random() + new Date();
 };
 
-var getHTMLText = app_serv.getHTMLText = function(text) {
+app_serv.getHTMLText = function(text) {
 	var safe_node = document.createElement('div');
 	safe_node.innerHTML = text;
 	return $(safe_node).text();
 };
 
-var changeFavicon = function(d, src, type) {
-	var link = d.createElement('link'),
-		oldLink = d.getElementById('dynamic-favicon');
-	link.id = 'dynamic-favicon';
-	link.rel = 'shortcut icon';
-	if (type){
-		link.type = type;
-	}
-	
-	link.href = src;
-	if (oldLink) {
-		d.head.removeChild(oldLink);
-	}
-	d.head.appendChild(link);
-};
-app_serv.changeFavicon = changeFavicon;
-var abortage = {
-	addDependent: function(dependent) {
-		this.dep_objs = this.dep_objs || [];
-		this.dep_objs.push(dependent);
-	},
-	canAbort: function(dependent) {
-		if (!this.dep_objs){
-			return true;
-		} else {
-			if (!this.dep_objs.length){
-				return true;
-			} else {
-				this.dep_objs = spv.arrayExclude(this.dep_objs, dependent);
-				return !this.dep_objs.length;
-			}
-		}
-	}
-};
 
 
 
-
-function getSomething(array){
-	return array[(Math.random()*(array.length-1)).toFixed(0)];
-}
 
 
 var addClass = function(old_c, cl){
@@ -221,7 +183,7 @@ var addClass = function(old_c, cl){
 	for (var i=0; i < add_c.length; i++) {
 		var re = new RegExp("(^|\\s)" + add_c[i] + "(\\s|$)", "g");
 		if (!old_c.match(re)){
-			var b = (" " + add_c[i]);
+		//	var b = (" " + add_c[i]);
 			new_c = (new_c + " " + add_c[i]).replace(/\s+/g, " ").replace(/(^ | $)/g, "");
 		}
 	}
@@ -239,51 +201,27 @@ var toggleClass = function(old_c, toggle_class){
 		return removeClass(old_c, toggle_class);
 	}
 };
-var document_states = function(d){
-	this.ui = {
-		d: d
-	};
-	this.html_el_state= d.documentElement.className || '';
+var NodeClassStates = function(node){
+	this.node = node;
+	this.html_el_state = node.className || '';
 
 };
-document_states.prototype = {
-	add_state: function(state_of, state){
-		if (state_of == 'html_el'){
-			this.html_el_state = addClass(this.html_el_state, state);
-			if (this.dub) {
-				this.dub.documentElement.className = this.html_el_state;
-			}
-			
-		}
+NodeClassStates.prototype = {
+	addState: function(state){
+		this.html_el_state = addClass(this.html_el_state, state);
 	},
-	toggleState: function(state_of, state){
-		if (state_of == 'html_el'){
-			this.html_el_state = toggleClass(this.html_el_state, state);
-			if (this.dub) {
-				this.dub.documentElement.className  = this.html_el_state;
-			}
-			
-		}
+	toggleState: function(state){
+		this.html_el_state = toggleClass(this.html_el_state, state);
 	},
-	remove_state: function(state_of, state){
-		if (state_of == 'html_el'){
-			this.html_el_state = removeClass(this.html_el_state, state);
-			if (this.dub) {
-				this.dub.documentElement.className  = this.html_el_state;
-			}
-			
-		}
+	removeState: function(state){
+		this.html_el_state = removeClass(this.html_el_state, state);
 	},
-	connect_ui: function(dub){
-		if (dub.documentElement){
-			dub.documentElement.className =  this.html_el_state;
-		}
-		this.dub = dub;
-	//	this.ui = ui;
+	applyStates: function(){
+		this.node.className = this.html_el_state;
 	}
 };
 
-window.dstates = new document_states(window.document);
+var dstates = new NodeClassStates(window.document.documentElement);
 
 
 var get_url_parameters = function(str, decode_uri_c){
@@ -340,10 +278,25 @@ var app_env = (function(wd){
 	
 	env.cross_domain_allowed = !wd.location.protocol.match(/(http\:)|(file\:)/);
 	env.xhr2 = !!xhr2_support;
+
 	
-	if (typeof widget == 'object' && !widget.fake_widget){
+	
+	var has_transform_prop;
+	var dom_style_obj = wd.document.body.style;
+	['transform', '-o-transform', '-webkit-transform', '-moz-transform'].forEach(function(el) {
+		if (!has_transform_prop && el in dom_style_obj){
+			has_transform_prop = el;
+		}
+	});
+	if (has_transform_prop){
+		env.transform = has_transform_prop;
+	}
+	
+
+
+	if (typeof widget == 'object' && !window.widget.fake_widget){
 		if (bro.browser == 'opera'){
-			if (opera.extension){
+			if (window.opera.extension){
 				env.app_type = 'opera_extension';
 			} else{
 				env.app_type = 'opera_widget';
@@ -357,13 +310,14 @@ var app_env = (function(wd){
 		env.as_application = true;
 	} else
 	if (typeof chrome === 'object' && wd.location.protocol == 'chrome-extension:'){
+		var opera = navigator.userAgent.indexOf('OPR') != -1;
 		if (wd.location.pathname == '/index.html'){
-			env.app_type = 'chrome_app';
+			env.app_type = opera ? 'opera_app' : 'chrome_app';
 			env.as_application = false;
 			env.needs_url_history = true;
 			env.need_favicon = true;
 		} else{
-			env.app_type = 'chrome_extension';
+			env.app_type = opera ? 'opera_extension' : 'chrome_extension';
 			env.as_application = true;
 		}
 		
@@ -424,17 +378,22 @@ var app_env = (function(wd){
 	env.iframe_support = !env.utorrent_app && (!env.unknown_app_type || wd.location.protocol == 'file:');
 	
 	
-	if (env.touch_support){dstates.add_state('html_el', 'touch-screen');}
+	if (env.touch_support){dstates.addState('touch-screen');}
 	if (env.as_application){
 		
-		dstates.add_state('html_el', 'as-application');
-		dstates.remove_state('html_el', 'not-as-application');
+		dstates.addState('as-application');
+		dstates.removeState('not-as-application');
 	} else{
-		dstates.add_state('html_el', 'not-as-application');
+		dstates.addState('not-as-application');
 	}
-	if (!env.unknown_app_type){dstates.add_state('html_el', env.app_type.replace('_','-'));}
-	if (env.cross_domain_allowed) {dstates.add_state('html_el', 'cross-domain-allowed');}
+	if (!env.unknown_app_type){dstates.addState(env.app_type.replace('_','-'));}
+	if (env.cross_domain_allowed) {dstates.addState('cross-domain-allowed');}
 	
+	if (env.transform){
+		dstates.addState('yes-transform_support');
+	} else {
+		dstates.addState('no-transform_upport');
+	}
 	
 	if (env.vkontakte){
 		if (env.url.language === '0'){
@@ -617,7 +576,7 @@ app_serv.handleDocument = function(d, tracking_opts) {
 	};
 
 	spv.domReady(d, function() {
-		dstates.connect_ui(d);
+		dstates.applyStates();
 	});
 	
 

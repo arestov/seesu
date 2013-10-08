@@ -3,6 +3,7 @@ function(BrowseMap, ArtCard, SongCard, TagPage, UserCard, MusicConductor, app_se
 "use strict";
 var StartPage = function() {};
 var app_env = app_serv.app_env;
+var localize = app_serv.localize;
 BrowseMap.Model.extendTo(StartPage, {
 	model_name: 'start_page',
 	page_name: 'start page',
@@ -77,12 +78,14 @@ BrowseMap.Model.extendTo(StartPage, {
 				return this.subPageInitWrap(UserCard, full_name, {urp_name: name});
 			} else if (name.indexOf('lfm:') === 0){
 				return this.subPageInitWrap(UserCard.LfmUserCard, full_name, {urp_name: name});
+			} else if (name.indexOf('vk:') === 0){
+				return this.subPageInitWrap(UserCard.VkUserCard, full_name, {urp_name: name});
 			}
 		}
 	},
 	sub_pa: {
 		'conductor': {
-			title: 'Music Conductor',
+			title: localize('music-cond'),
 			constr: MusicConductor
 		}
 	},
