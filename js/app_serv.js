@@ -310,13 +310,14 @@ var app_env = (function(wd){
 		env.as_application = true;
 	} else
 	if (typeof chrome === 'object' && wd.location.protocol == 'chrome-extension:'){
+		var opera = navigator.userAgent.indexOf('OPR') != -1;
 		if (wd.location.pathname == '/index.html'){
-			env.app_type = 'chrome_app';
+			env.app_type = opera ? 'opera_app' : 'chrome_app';
 			env.as_application = false;
 			env.needs_url_history = true;
 			env.need_favicon = true;
 		} else{
-			env.app_type = 'chrome_extension';
+			env.app_type = opera ? 'opera_extension' : 'chrome_extension';
 			env.as_application = true;
 		}
 		
