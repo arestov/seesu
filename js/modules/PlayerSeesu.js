@@ -261,7 +261,6 @@ var app_env = app_serv.app_env;
 
 
 					var
-						can_use,
 						aqt = document.createElement("embed");
 
 					aqt.style.position = "absolute";
@@ -433,11 +432,11 @@ var app_env = app_serv.app_env;
 		changeAppMode: function(playing){
 			if (playing){
 				if (window.btapp){
-					btapp.properties.set('background', true);
+					window.btapp.properties.set('background', true);
 				}
 			} else{
 				if (window.btapp){
-					btapp.properties.set('background', false);
+					window.btapp.properties.set('background', false);
 				}
 			}
 		},

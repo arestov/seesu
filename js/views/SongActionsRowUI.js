@@ -60,9 +60,11 @@ ShareSearchSection.extendTo(LFMShareSectionView, {
 var ShareSearchCtr = function() {};
 provoda.View.extendTo(ShareSearchCtr, {
 	children_views:{
+		'lfm_auth': etc_views.LfmLoginView,
 		'section-vk-users': VkShareSectionView,
 		'section-lfm-friends': LFMShareSectionView
-	}
+	},
+	'collch-lfm_auth': 'tpl.ancs.lfm_auth_con'
 });
 
 

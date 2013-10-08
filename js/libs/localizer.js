@@ -345,6 +345,11 @@ define({
 		"original": "add to favorites",
 		"ru": "добавить в избранное"
 	},
+
+	"lastfm-sharing-access":{
+		"original": "To share by last.fm",
+		"ru": "Что бы делиться музыкой с помощью last.fm"
+	},
 	"lastfm-loveit-access": {
 		"original": "To add song to your favorites",
 		"ru": "Чтобы добавить композицию в избранное"

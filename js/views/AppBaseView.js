@@ -207,7 +207,9 @@ provoda.View.extendTo(AppBaseView, {
 
 
 		var parent_view = this.getMapSliceView(parent_md);
-
+		if (!parent_view){
+			return;
+		}
 		var target_in_parent = parent_view.getChildView(md.mpx, 'main');
 		if (!target_in_parent){
 			var view = parent_view.getChildViewsByMpx(md.mpx);

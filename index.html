@@ -974,8 +974,7 @@
 							class="shareb-base  users-list"
 							pv-class="shareb-base  users-list "
 							pv-anchor="vk_share_b">
-							<span class="shareb-button" >vk.com</span>
-							<span class="shareb-desc"></span>
+							
 							<div class="shareb-con">
 								
 								<div >
@@ -1038,7 +1037,11 @@
 											
 											
 										</div>
-										<div pv-nest="section for_model:section-lfm-user" class="lfm_share">
+
+										<div pv-anchor="lfm_auth_con"></div>
+										<div pv-nest="section for_model:section-lfm-user"
+											class="lfm_share"
+											pv-class="lfm_share {{!can_share && 'hidden'}}">
 											<ul >
 												<li pv-nest="rendering_list" pv-type="way-point" pv-events="click::view" class="share-user-suggest suggest ">
 													<a>
@@ -1054,7 +1057,11 @@
 												</li>
 											</ul>
 										</div>
-										<div pv-nest="section for_model:section-lfm-friends" class="lfm_share">
+										<div pv-nest="section for_model:section-lfm-friends"
+											class="lfm_share"
+											pv-class="lfm_share {{!can_share && 'hidden'}}"
+		
+										>
 											<div class="details_switch_block">
 												<span class="desc">last.fm</span>
 												
