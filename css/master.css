@@ -1791,7 +1791,8 @@ body .surf_nav{
 .song_fans-h-intrack{
 	margin-left: 1rem;
 	margin-right: 0.5rem;
-	float: left
+	float: left;
+	white-space: pre-line;
 }
 .song_fans-l-intrack{
 	max-height: 3rem;

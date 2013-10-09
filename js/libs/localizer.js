@@ -683,7 +683,7 @@ define({
 
 	"Similar to «%artist%» artists":{
 		"original": "Similar to «%artist%» artists",
-		"ru": "Аристы похожие на «%artist%»"
+		"ru": "Артисты похожие на «%artist%»"
 	},
 	"Fresh songs":{
 		"original": "Fresh songs",
@@ -725,7 +725,26 @@ define({
 		"original": "«My audio»",
 		"ru": "«Мои аудиозаписи»"
 	},
-
+	"Top fans":{
+		"original": "Top fans",
+		"ru": "Большие фанаты"
+	},
+	"lastfm_fans":{
+		"original": "Last.fm \n song fans",
+		"ru": "Фанаты \n на last.fm"
+	},
+	"enabled":{
+		"original": "enabled",
+		"ru": "включить"
+	},
+	"disabled":{
+		"original": "disabled",
+		"ru": "отключить"
+	},
+	"lfm_scrobbling":{
+		"original": "scrobbling to last.fm",
+		"ru": "last.fm скроблинг"
+	},
 
 	"":{
 		"original": "",

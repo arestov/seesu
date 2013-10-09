@@ -1,6 +1,7 @@
 define(['provoda', 'spv', 'app_serv', 'js/libs/BrowseMap', './user_music_lfm'],
 function(provoda, spv, app_serv, BrowseMap, user_music_lfm) {
 'use strict';
+var localize = app_serv.localize;
 
 var SongFansList = function(){};
 user_music_lfm.LfmUsersList.extendTo(SongFansList, {
@@ -91,7 +92,7 @@ BrowseMap.Model.extendTo(SongCard, {
 	sub_pa: {
 		'fans':{
 			constr: SongFansList,
-			title: 'Top fans'
+			title: localize('Top fans')
 		}
 	}
 });

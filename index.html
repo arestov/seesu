@@ -1106,8 +1106,7 @@
 					<div class="big-listener-info" pv-anchor="big-listener-info"></div>
 				</div>
 				<div class="song_fans-b-intrack" pv-nest="fans" pv-events="click::requestPage" pv-type="way-point">
-					<div class="song_fans-h-intrack">
-						Last.fm <br/> song fans
+					<div class="song_fans-h-intrack lang localize-lastfm_fans">
 					</div>
 					<div class="song_fans-l-intrack" >
 						<div
@@ -1292,10 +1291,16 @@
 		</div>
 		
 		<form class="scrobbling-switches">
-			<p>scrobbling to last.fm</p>
+			<p class="lang localize-lfm_scrobbling">
+				scrobbling to last.fm
+			</p>
 		
-			<p><label><input type="radio"  disabled="disabled" class="enable-scrobbling" /> enabled</label></p>	
-			<p><label><input type="radio"  disabled="disabled" class="disable-scrobbling"  checked="checked" /> disabled</label></p>
+			<p><label><input type="radio"  disabled="disabled" class="enable-scrobbling" /> 
+				<span class="lang localize-enabled">enabled</span>
+			</label></p>	
+			<p><label><input type="radio"  disabled="disabled" class="disable-scrobbling"  checked="checked" /> 
+				<span class="lang localize-disabled">disabled</span>
+			</label></p>
 		</form>
 		<div class="song_acting_playlist_add">
 			<ul pv-nest="section for_model:section-playlist">
