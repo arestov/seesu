@@ -25,6 +25,7 @@ var AppBaseView = function() {};
 AppBaseView.viewOnLevelP = viewOnLevelP;
 provoda.View.extendTo(AppBaseView, {
 	dom_rp: true,
+	location_name: 'root_view',
 	createDetails: function() {
 		this.root_view = this;
 		this.d = this.opts.d;
@@ -217,7 +218,72 @@ provoda.View.extendTo(AppBaseView, {
 		}
 		return target_in_parent;
 	},
-	animateMapSlice: function(transaction_data) {
+	getNavOHeight: function() {
+		return this.els.navs.outerHeight();
+	},
+	getScreensWidth: function() {
+		return this.els.screens.width();
+	},
+	getScreensOffset: function() {
+		return this.els.screens.offset();
+	},
+	readMapSliceAnimationData: function(transaction_data) {
+		if (transaction_data && transaction_data.target){
+			var target_md = transaction_data.target.getMD();
+			var current_lev_num = target_md.map_level_num;
+			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in";
+			var lc;
+			if (app_serv.app_env.transform && current_lev_num != -1 && one_zoom_in){
+				var target_in_parent = this.getMapSliceChildInParenView(target_md);
+				if (target_in_parent){
+					var targt_con = target_in_parent.getC();
+
+					//var offset_parent_node = targt_con.offsetParent();
+					var parent_offset = this.getBoxDemension(this.getScreensOffset, 'screens_offset');
+					//или ни о чего не зависит или зависит от позиции скрола, если шапка не скролится
+					//this.els.screens.offset();//offset_parent_node.offset(); //domread, can_be_cached
+					var offset = targt_con.offset(); //domread
+
+					var top = offset.top - parent_offset.top;
+					var width = targt_con.outerWidth();  //domread
+					var height = targt_con.outerHeight(); //domread
+
+					//var con_height = this.els.screens.height();
+
+					//return ;
+
+					var con_height = this.state('window_height') - this.getBoxDemension(this.getNavOHeight, 'navs_height'); //domread, can_be_cached
+					var con_width = this.getBoxDemension(this.getScreensWidth, 'screens_width', this.state('window_width'));
+					//this.els.screens.width(); //domread, can_be_cached
+
+
+					var scale_x = width/con_width;
+					var scale_y = height/con_height;
+					var min_scale = Math.min(scale_x, scale_y);
+
+
+					var shift_x = width/2 - min_scale * con_width/2;
+					var shift_y = height/2 - min_scale * con_height/2;
+
+
+					lc = this.getLevelContainer(current_lev_num);
+
+
+					var transform_values = {};
+					var value = 'translate(' + (offset.left + shift_x) + 'px, ' + (top + shift_y) + 'px)  scale(' + min_scale + ')';
+					transform_props.forEach(function(el) {
+						transform_values[el] = value;
+					});
+
+					return {
+						lc: lc,
+						transform_values: transform_values
+					};
+				}
+			}
+		}
+	},
+	animateMapSlice: function(transaction_data, animation_data) {
 		var all_changhes = spv.filter(transaction_data.array, 'changes');
 			all_changhes = [].concat.apply([], all_changhes);
 		var models = spv.filter(all_changhes, 'target');
@@ -236,66 +302,21 @@ provoda.View.extendTo(AppBaseView, {
 		if (transaction_data.target){
 			var target_md = transaction_data.target.getMD();
 			var current_lev_num = target_md.map_level_num;
-			var lc;
 			
-			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in";
-			if (app_serv.app_env.transform && current_lev_num != -1 && one_zoom_in){
-				
-				//найти view внутри предыдущего target
-				//прочитать позицию, высоту (может не надо), ширину
-				var target_in_parent = this.getMapSliceChildInParenView(target_md);
-				if (target_in_parent){
-					var targt_con = target_in_parent.getC();
-
-					//var offset_parent_node = targt_con.offsetParent();
-					var parent_offset = this.els.screens.offset();//offset_parent_node.offset(); //domread, can_be_cached
-					var offset = targt_con.offset(); //domread
-
-					var top = offset.top- parent_offset.top;
-					var width = targt_con.outerWidth();  //domread
-					var height = targt_con.outerHeight(); //domread
-
-					//var con_height = this.els.screens.height();
-					var con_height = window.innerHeight - this.els.navs.height(); //domread, can_be_cached
-					var con_width = this.els.screens.width(); //domread, can_be_cached
-
-
-					var scale_x = width/con_width;
-					var scale_y = height/con_height;
-					var min_scale = Math.min(scale_x, scale_y);
-
-
-					var shift_x = width/2 - min_scale * con_width/2;
-					var shift_y = height/2 - min_scale * con_height/2;
-
-
-					lc = this.getLevelContainer(current_lev_num);
-					this.updateState('disallow_animation', true);
-
-					var transform_values = {};
-					var value = 'translate(' + (offset.left + shift_x) + 'px, ' + (top + shift_y) + 'px)  scale(' + min_scale + ')';
-					transform_props.forEach(function(el) {
-						transform_values[el] = value;
-					});
-
-					lc.c.css(transform_values);
-					//lc.tpl.spec_states['disallow_animation'] = true;
-
-
-
-					//lc.tpl.spec_states['disallow_animation'] = false;
-
-					this.updateState('disallow_animation', false);
-				}
-				
+			if (animation_data){
+				this.updateState('disallow_animation', true);
+				animation_data.lc.c.css(animation_data.transform_values);
+				//lc.tpl.spec_states['disallow_animation'] = true;
+				//lc.tpl.spec_states['disallow_animation'] = false;
+				this.updateState('disallow_animation', false);
 			}
 
 			this.updateState('current_lev_num', current_lev_num);
 
 
-			if (lc){
+			if (animation_data && animation_data.lc){
 				this.nextTick(function() {
-					lc.c.css(empty_transform_props);
+					animation_data.lc.c.css(empty_transform_props);
 				});
 				
 			}
@@ -313,6 +334,9 @@ provoda.View.extendTo(AppBaseView, {
 		array = this.getRendOrderedNesting(nesname, array) || array;
 		var i, cur;
 
+
+		var animation_data = this.readMapSliceAnimationData(transaction_data);
+
 		for (i = 0; i < array.length; i++) {
 			cur = array[i];
 			var model_name = cur.model_name;
@@ -326,7 +350,7 @@ provoda.View.extendTo(AppBaseView, {
 		}
 
 		if (transaction_data){
-			this.animateMapSlice(transaction_data);
+			this.animateMapSlice(transaction_data, animation_data);
 		}
 
 

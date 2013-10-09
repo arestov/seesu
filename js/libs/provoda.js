@@ -2532,7 +2532,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	demensions_cache: {},
 	checkDemensionsKeyStart: function() {
 		if (!this.demensions_key_start){
-			this.demensions_key_start = this.location_name + "-" + this.parent_view.location_name + '-';
+			this.demensions_key_start = this.location_name + '-' + (this.parent_view && this.parent_view.location_name + '-');
 		}
 	},
 	getBoxDemensionKey: function() {
