@@ -124,6 +124,21 @@ MDProxy.prototype = {
 	setStates: function() {},
 	updateStates: function() {},
 	updateNesting: function() {},
+	updateManyStates: function(obj) {
+		var changes_list = [];
+		for (var name in obj) {
+			changes_list.push(name, obj[name]);
+		}
+		this.sendStatesToViews(changes_list);
+		return this;
+	},
+	updateState: function(name, value){
+		if (name.indexOf('-') != -1 && console.warn){
+			console.warn('fix prop name: ' + name);
+		}
+		this.sendStatesToViews([name, value]);
+		return this;
+	},
 	removeView: function(view){
 		var views = [];
 		for (var i = 0; i < this.views.length; i++) {

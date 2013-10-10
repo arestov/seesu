@@ -191,7 +191,7 @@ provoda.View.extendTo(AppBaseView, {
 	},
 	animationMark: function(models, prop, anid) {
 		for (var i = 0; i < models.length; i++) {
-			models[i].getMD().updateState(prop, anid);
+			models[i].getMD().mpx.updateState(prop, anid);
 			////MUST UPDATE VIEW, NOT MODEL!!!!!
 		}
 	},
@@ -283,6 +283,23 @@ provoda.View.extendTo(AppBaseView, {
 			}
 		}
 	},
+	'model-mapch': {
+		'move-view': function(change) {
+			var parent = change.target.getMD().getParentMapModel();
+			if (parent){
+			//	parent.updateState('mp_has_focus', false);
+			}
+			change.target.getMD().updateState('vmp_show', change.value);
+		},
+		'zoom-out': function(change) {
+			change.target.getMD().updateState('vmp_show', false);
+		},
+		'destroy': function(change) {
+			var md = change.target.getMD();
+		//	md.mlmDie();
+			md.updateState('vmp_show', false);
+		}
+	},
 	animateMapSlice: function(transaction_data, animation_data) {
 		var all_changhes = spv.filter(transaction_data.array, 'changes');
 			all_changhes = [].concat.apply([], all_changhes);
@@ -297,8 +314,21 @@ provoda.View.extendTo(AppBaseView, {
 			if (cur.type == 'destroy'){
 				this.removeChildViewsByMd(target.mpx);
 			}
-
 		}
+
+		for (i = 0; i < all_changhes.length; i++) {
+			var change = all_changhes[i];
+		//	change.anid = changes.anid;
+			var handler = this['model-mapch'][change.type];
+			if (handler){
+				handler.call(this, change);
+			}
+		}
+
+
+
+
+
 		if (transaction_data.target){
 			var target_md = transaction_data.target.getMD();
 			var current_lev_num = target_md.map_level_num;
@@ -323,10 +353,12 @@ provoda.View.extendTo(AppBaseView, {
 
 			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
 
-			this.nextTick(function() {
-				this.animationMark(models, 'animation_completed', transaction_data.anid);
-			});
+			
 		}
+
+		this.nextTick(function() {
+			this.animationMark(models, 'animation_completed', transaction_data.anid);
+		});
 	},
 	'collch-map_slice': function(nesname, nesting_data){
 		var array = nesting_data.items;

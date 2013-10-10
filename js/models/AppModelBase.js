@@ -59,12 +59,6 @@ provoda.Model.extendTo(AppModelBase, {
 		'move-view': function(change) {
 			var parent = change.target.getMD().getParentMapModel();
 			if (parent){
-				//mp-source
-				/*
-				var mp_source = change.target.state('mp-source');
-				if (mp_source){
-					parent.updateState('mp-highlight', mp_source);
-				}*/
 				parent.updateState('mp_has_focus', false);
 			}
 			change.target.getMD().updateState('mp_show', change.value);

@@ -84,7 +84,7 @@ function(provoda, $, SongUI, etc_views) {
 			/*
 			player_song
 			marked_as
-			mp_show*/
+			vmp_show*/
 			
 		}
 

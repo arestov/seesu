@@ -67,7 +67,7 @@ provoda.View.extendTo(SongcardController, {
 	},
 	bindBase: function() {
 		this.rowcs = {};
-		this.wch(this.parent_view, 'mp_show', function(e) {
+		this.wch(this.parent_view, 'vmp_show', function(e) {
 			if (!e.value && this.rowcs && this.rowcs.users_context){
 				this.rowcs.users_context.hide();
 			}

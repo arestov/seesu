@@ -8,12 +8,12 @@ BrowseMap.Model.extendTo(LoadableListBase, {
 		if (this.sendMoreDataRequest){
 			this.updateState("has_loader", true);
 		}
-		this.on('vip_state_change-mp_show', function(e) {
+		this.wch(this, 'mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				this.preloadStart();
 			}
 
-		}, {skip_reg: true});
+		});
 		this.on('state_change-more_load_available', function(e) {
 			var mp_show = this.state('mp_show');
 			if (e.value && mp_show && mp_show.userwant){

@@ -891,7 +891,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	},
 	bindChildrenPreload: function(array) {
 		var lists_list = array || this.lists_list;
-		this.on('vip_state_change-mp_show', function(e) {
+		this.wch(this, 'mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				for (var i = 0; i < lists_list.length; i++) {
 					var cur = lists_list[i];
