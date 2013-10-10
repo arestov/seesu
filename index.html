@@ -1263,7 +1263,9 @@
 			</div>
 			<div class="song_tagging_help">
 				<div class="personal_tags">
-					<h4 class="tagging_header" pv-class="{{petags_result.length && 'has_tags'}}  tagging_header" >Your tags</h4>
+					<h4 class="tagging_header" pv-class="{{petags_result.length && 'has_tags'}}  tagging_header" >
+						<span class="lang localize-your_tags">Your tags</span>
+					</h4>
 					<div class="tagging_help">
 						<span pv-repeat="tag in petags_result | limitTo:25" pv-text="{{tag}}" pv-events="click:addTag" pv-type="way-point"></span>
 					</div>
@@ -1272,7 +1274,9 @@
 
 				
 				<div class="top_tags">
-					<h4 class="tagging_header" pv-class="{{toptags.length && 'has_tags'}}  tagging_header">Top tags of track</h4>
+					<h4 class="tagging_header" pv-class="{{toptags.length && 'has_tags'}}  tagging_header">
+						<span class="lang localize-top_track_tags">Top tags of track</span>
+					</h4>
 					<div class="tagging_help">
 						<span pv-repeat="tag in toptags | limitTo:25" pv-text="{{tag.name}}" pv-props="title:{{tag.count}}" pv-events="click:addTag" pv-type="way-point"></span>
 					</div>
@@ -1280,7 +1284,10 @@
 				</div>
 				
 				<div class="artist_tags">
-					<h4 class="tagging_header" pv-class="{{artist_tags.length && 'has_tags'}} tagging_header">Artist tags</h4>
+					<h4 class="tagging_header" pv-class="{{artist_tags.length && 'has_tags'}} tagging_header">
+						<span class="lang localize-artist_tags">Artist tags</span>
+						
+					</h4>
 					<div class="tagging_help">
 						<span pv-repeat="tag in artist_tags | limitTo:25" pv-text="{{tag.name}}" pv-events="click:addTag" pv-type="way-point"></span>
 					</div>

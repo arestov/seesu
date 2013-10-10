@@ -1860,7 +1860,7 @@ body .surf_nav{
 	.top_tags{
 		
 		}
-		.top_tags span,.artist_tags span,.personal_tags span{
+		.song_tagging_help .tagging_help span{
 			margin-right: 1rem;
 			background: #3A473D;
 			border: 1px dotted #686868;

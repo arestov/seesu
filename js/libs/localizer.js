@@ -356,7 +356,7 @@ define({
 	},
 	"lastfm-tagging-access": {
 		"original": "To add tags to song",
-		"ru": "Чтобы присвоить композиции тэги"
+		"ru": "Чтобы присвоить композиции теги"
 	},
 	"lastfm-scrobble-access": {
 		"original": "To scrobble to last.fm",
@@ -481,7 +481,7 @@ define({
 	},
 	"in-tags": {
 		"original": "in tags",
-		"ru": "в тэгах"
+		"ru": "в тегах"
 	},
 	"in-albums": {
 		"original": "in albums",
@@ -744,6 +744,18 @@ define({
 	"lfm_scrobbling":{
 		"original": "scrobbling to last.fm",
 		"ru": "last.fm скроблинг"
+	},
+	"your_tags":{
+		"original": "Your tags",
+		"ru": "Твои теги"
+	},
+	"top_track_tags":{
+		"original": "Top tags of track",
+		"ru": "Теги композиции"
+	},
+	"artist_tags":{
+		"original": "Artist tags",
+		"ru": "Теги артиста"
 	},
 
 	"":{
