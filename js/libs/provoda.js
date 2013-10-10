@@ -164,7 +164,7 @@ MDProxy.prototype = {
 		}
 	},
 	removeDeadViews: function(hard_deads_check){
-		var i;
+		var i = 0;
 		if (hard_deads_check){
 			for (i = 0; i < this.views.length; i++) {
 				if (this.views[i].isAlive){
@@ -539,7 +539,7 @@ FastEventor.prototype = {
 	getPossibleRegfires: function(namespace) {
 		var parts = parseNamespace(namespace);
 		var funcs = [];
-		var i;
+		var i = 0;
 		for (i = parts.length - 1; i > -1; i--) {
 			var posb_namespace = parts.slice(0, i + 1).join(DOT);
 			if (this.reg_fires.by_namespace[posb_namespace]){
@@ -738,7 +738,7 @@ FastEventor.prototype = {
 	trigger: function(name){
 		var cb_cs = this.getMatchedCallbacks(name).matched;
 		if (cb_cs){
-			var i;
+			var i = 0;
 			var args = new Array(arguments.length - 1);
 			for (i = 1; i < arguments.length; i++) {
 				args[ i - 1 ]= arguments[i];
@@ -772,7 +772,7 @@ FastEventor.prototype = {
 		opts = opts || {};
 		//space, depend
 		var space = opts.space || this.default_requests_space;
-		var i, req;
+		var i = 0, req = null;
 
 		if (opts.order){
 			for (i = 0; i < array.length; i++) {
@@ -1392,7 +1392,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	getChanges: function(changes_list, opts, result_arr) {
 		var changed_states = result_arr || [];
-		var i;
+		var i = 0;
 		for (i = 0; i < changes_list.length; i+=2) {
 			this._replaceState(changes_list[i], changes_list[i+1], opts && opts.skip_handler, changed_states);
 		}
@@ -1589,7 +1589,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		var all_models = [];
 		var groups = [];
 
-		var i, cur;
+		var i = 0, cur = null;
 		for (var collection_name in this.children_models){
 			cur = this.children_models[collection_name];
 			if (Array.isArray(cur)){
@@ -2413,7 +2413,7 @@ spv.Class.extendTo(Template, {
 				continue;
 			}
 			var
-				i, attr_name, directive_name, attributes = cur_node.attributes,
+				i = 0, attr_name = '', directive_name = '', attributes = cur_node.attributes,
 				new_scope_generator = false;// current_data = {node: cur_node};
 
 			var attributes_list = [];
@@ -2670,7 +2670,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			//this != provoda.View
 			var old_waypoints = this.waypoints;
 			var total = [];
-			var i;
+			var i = 0;
 			for (i = 0; i < arr_arr.length; i++) {
 				total = total.concat(arr_arr[i]);
 			}
@@ -2709,7 +2709,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 	},
 	updateTemplatedWaypoints: function(add, remove) {
-		var i;
+		var i = 0;
 		if (remove){
 			var nodes_to_remove = spv.filter(remove, 'node');
 			for (i = 0; i < nodes_to_remove.length; i++) {
@@ -2869,7 +2869,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		var all_views = [];
 		var all_requests = [];
 		var iterating = [this];
-		var i, cur;
+		var i = 0, cur = null;
 		while (iterating.length){
 			cur = iterating.shift();
 			for (i = 0; i < cur.children.length; i++) {
@@ -2897,7 +2897,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	getChildViewsByMpx: function(mpx) {
 		var result = [];
 		var views = mpx.getViews();
-		var i;
+		var i = 0;
 		for (i = 0; i < this.children.length; i++) {
 			var cur = this.children[i];
 			if (views.indexOf(cur) != -1){
@@ -2909,7 +2909,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 	removeChildViewsByMd: function(mpx) {
 		var views_to_remove = this.getChildViewsByMpx(mpx);
-		var i;
+		var i = 0;
 		for (i = 0; i < views_to_remove.length; i++) {
 			views_to_remove[i].die();
 		}
@@ -2939,7 +2939,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 	},
 
 	checkDeadChildren: function() {
-		var i, alive = [];
+		var i = 0, alive = [];
 		for (i = 0; i < this.children.length; i++) {
 			if (this.children[i].dead){
 				//dead.push(this.children[i]);
@@ -2975,7 +2975,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 		
 
-		var i;
+		var i = 0;
 		if (this.dom_related_props){
 			for (i = 0; i < this.dom_related_props.length; i++) {
 				this[this.dom_related_props[i]] = null;
@@ -3549,7 +3549,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		if (!this.isAlive()){
 			return;
 		}
-		var cur, view, i, prev_view, next_view;
+		var cur = null, view = null, i = 0, prev_view = null, next_view = null;
 		var detached = [];
 		var ordered_part = ordered_rend_list && ordered_rend_list.shift();
 		for (i = 0; i < array.length; i++) {
