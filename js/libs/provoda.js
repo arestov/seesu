@@ -2158,6 +2158,10 @@ spv.Class.extendTo(Template, {
 		
 		//return value.replace(this.regxp_spaces,' ').replace(this.regxp_edge_spaces,'');
 	},
+	regxp_props_com: /\S[\S\s]*?\:[\S\s]*?\{\{[\S\s]*?\}\}/gi,
+	regxp_props_spaces: /^\s*|s*?$/,
+	regxp_props_coms_part: /\s*\:\s*?(?=\{\{)/,
+	regxp_props_statement: /(^\{\{)|(\}\}$)/gi,
 	directives: {
 		'pv-text': function(node, full_declaration){
 			this.bindStandartChange(node, {
@@ -2178,11 +2182,11 @@ spv.Class.extendTo(Template, {
 		},
 		'pv-props': function(node, full_declaration) {
 			var complex_value = full_declaration;
-			var complects = complex_value.match(/\S[\S\s]*?\:[\S\s]*?\{\{[\S\s]*?\}\}/gi);
+			var complects = complex_value.match(this.regxp_props_com);
 			for (var i = 0; i < complects.length; i++) {
-				complects[i] = complects[i].replace(/^\s*|s*?$/,'').split(/\s*\:\s*?(?=\{\{)/);
+				complects[i] = complects[i].replace(this.regxp_props_spaces,'').split(this.regxp_props_coms_part);
 				var prop = complects[i][0];
-				var statement = complects[i][1] && complects[i][1].replace(/(^\{\{)|(\}\}$)/gi,'');
+				var statement = complects[i][1] && complects[i][1].replace(this.regxp_props_statement,'');
 
 				if (!prop || !statement){
 					throw new Error('wrong declaration: ' + complex_value);
