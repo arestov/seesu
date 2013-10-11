@@ -1,6 +1,7 @@
 define('provoda', ['spv', 'angbo', 'jquery'], function(spv, angbo, $){
 
 "use strict";
+var push = Array.prototype.push;
 var DOT = '.';
 var provoda;
 var sync_sender = {
@@ -1016,7 +1017,7 @@ var reversedIterateChList = function(changes_list, context, cb) {
 };
 
 
-var push = Array.prototype.push;
+
 var std_event_opt = {force_async: true};
 
 var connects_store = {};
@@ -1419,19 +1420,11 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	getChanges: function(changes_list, opts, result_arr) {
 		var changed_states = result_arr || [];
-		var i = 0;
-		for (i = 0; i < changes_list.length; i+=2) {
+		for (var i = 0; i < changes_list.length; i+=2) {
 			this._replaceState(changes_list[i], changes_list[i+1], opts && opts.skip_handler, changed_states);
 		}
-		if (changes_list.length){
-			if (this.tpl){
-				this.tpl.setStates(this.states);
-			}
-			if (this.tpls){
-				for (i = 0; i < this.tpls.length; i++) {
-					this.tpls[i].setStates(this.states);
-				}
-			}
+		if (this.updateTemplatesStates){
+			this.updateTemplatesStates(changes_list);
 		}
 		return changed_states;
 	},
@@ -1880,7 +1873,8 @@ var Template = function() {};
 
 spv.Class.extendTo(Template, {
 	init: function(opts) {
-		this.pv_types_collecting = null;
+		this.pv_types_collecting = false;
+		this.states_inited = false;
 		this.waypoints = null;
 
 		this.pv_views = null;
@@ -2144,6 +2138,7 @@ spv.Class.extendTo(Template, {
 	regxp_spaces: /\s+/gi,
 	regxp_edge_spaces: /^\s|\s$/gi,
 	hlpSimplifyValue: function(value) {
+		//this is optimization!
 		if (!value){
 			return value;
 		}
@@ -2360,7 +2355,37 @@ spv.Class.extendTo(Template, {
 			scope: this.scope
 		});
 	},
-	setStates: function(states) {
+	checkChanges: function(changes, full_states) {
+		//вместо того что бы собирать новый хэш на основе массива изменений используются объект всеъ состояний
+		var matched = [], i = 0;
+		for (i = 0; i < changes.length; i+= 2 ) { //ищем подходящие директивы
+			var name = changes[i];
+			if (this.stwat_index[name]){
+				push.apply(matched, this.stwat_index[name]);
+			}
+		}
+
+		matched = spv.getArrayNoDubs(matched);//устраняем повторяющиеся директивы
+
+		var states_summ = this.getStatesSumm(full_states);
+
+		if (!this.states_inited){
+			this.states_inited = true;
+
+			var remainded_stwats = spv.arrayExclude(this.states_watchers, matched);
+			for (i = 0; i < remainded_stwats.length; i++) {
+				remainded_stwats[i].checkFunc(states_summ);
+			}
+		}
+
+		for (i = 0; i < matched.length; i++) {
+			matched[i].checkFunc(states_summ);
+		}
+
+		
+
+	},
+	getStatesSumm: function(states) {
 		var states_summ;
 		if (this.spec_states){
 			states_summ = {};
@@ -2372,6 +2397,10 @@ spv.Class.extendTo(Template, {
 		} else {
 			states_summ = states;
 		}
+		return states_summ;
+	},
+	setStates: function(states) {
+		var states_summ = this.getStatesSumm(states);
 		for (var i = 0; i < this.states_watchers.length; i++) {
 			this.states_watchers[i].checkFunc(states_summ);
 		}
@@ -3144,6 +3173,19 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this._updateProxy(states_list);
 		this._states_set_processing = null;
 		return this;
+	},
+	updateTemplatesStates: function(total_ch) {
+		var i = 0;
+		//var states = this.states;
+
+		if (this.tpl){
+			this.tpl.checkChanges(total_ch, this.states);
+		}
+		if (this.tpls){
+			for (i = 0; i < this.tpls.length; i++) {
+				this.tpls[i].checkChanges(total_ch, this.states);
+			}
+		}
 	},
 	requireAllParts: function() {
 		for (var a in this.parts_builder){
