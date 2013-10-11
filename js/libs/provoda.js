@@ -1009,6 +1009,12 @@ var iterateChList = function(changes_list, context, cb) {
 		cb.call(context, i, changes_list[i], changes_list[i+1]);
 	}
 };
+var reversedIterateChList = function(changes_list, context, cb) {
+	for (var i = changes_list.length - 1; i >= 0; i-=2) {
+		cb.call(context, i, changes_list[i-1], changes_list[i]);
+	}
+};
+
 
 var push = Array.prototype.push;
 var std_event_opt = {force_async: true};
@@ -1161,16 +1167,37 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 	},
 	compressStatesChanges: function(changes_list) {
 		var result_changes = {};
+		var counter = 0;
 
-		iterateChList(changes_list, this, function(i, name, value) {
-			delete result_changes[name]; //reorder fields! hack!?
-			result_changes[name] = value;
+		//reversedIterateChList()
+
+		/*iterateChList(changes_list, result_changes, function(i, name, value) {
+			delete this[name]; //reorder fields! hack!?
+			this[name] = value;
+		});*/
+		reversedIterateChList(changes_list, result_changes, function(i, name, value) {
+			if (!this.hasOwnProperty(name)){
+				
+
+				var num = (changes_list.length - 1) - counter * 2;
+				changes_list[ num - 1 ] = name;
+				changes_list[ num ] = value;
+
+				counter++;
+				this[name] = true;
+			}
+			//delete this[name]; //reorder fields! hack!?
+			//this[name] = value;
 		});
-		changes_list.length = 0;
-
-		for ( var name in result_changes ){
-			changes_list.push( name, result_changes[name] );
+		//changes_list.length = 0;
+		counter = counter * 2;
+		while (changes_list.length != counter){
+			changes_list.shift();
 		}
+
+		/*for ( var name in result_changes ){
+			changes_list.push( name, result_changes[name] );
+		}*/
 
 		return changes_list;
 	},
