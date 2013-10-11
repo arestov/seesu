@@ -2141,6 +2141,14 @@ spv.Class.extendTo(Template, {
 			});
 		}
 	},
+	regxp_spaces: /\s+/gi,
+	regxp_edge_spaces: /^\s|\s$/gi,
+	hlpSimplifyValue: function(value) {
+		if (!value){
+			return value;
+		}
+		return value.replace(this.regxp_spaces,' ').replace(this.regxp_edge_spaces,'');
+	},
 	directives: {
 		'pv-text': function(node, full_declaration){
 			this.bindStandartChange(node, {
@@ -2155,12 +2163,7 @@ spv.Class.extendTo(Template, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getClassName,
 				setValue: this.dom_helpres.setClassName,
-				simplifyValue: function(value) {
-					if (!value){
-						return value;
-					}
-					return value.replace(/\s+/gi,' ').replace(/^\s|\s$/gi,'');
-				}
+				simplifyValue: this.hlpSimplifyValue
 			});
 		},
 		'pv-props': function(node, full_declaration) {
@@ -2219,12 +2222,7 @@ spv.Class.extendTo(Template, {
 					}
 					this._pvTypesChange();
 				},
-				simplifyValue: function(value) {
-					if (!value){
-						return value;
-					}
-					return value.replace(/\s+/gi,' ').replace(/^\s|\s$/gi,'');
-				},
+				simplifyValue: this.hlpSimplifyValue,
 				direct_check: true
 			});
 
