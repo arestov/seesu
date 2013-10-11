@@ -2136,7 +2136,8 @@ spv.Class.extendTo(Template, {
 		}
 	},
 	regxp_spaces: /\s+/gi,
-	regxp_edge_spaces: /^\s|\s$/gi,
+	regxp_edge_spaces: /^\s+|\s+$/gi,
+	regxp_complex_spaces: /s/,
 	hlpSimplifyValue: function(value) {
 		//this is optimization!
 		if (!value){
