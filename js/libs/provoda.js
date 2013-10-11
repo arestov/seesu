@@ -2137,13 +2137,26 @@ spv.Class.extendTo(Template, {
 	},
 	regxp_spaces: /\s+/gi,
 	regxp_edge_spaces: /^\s+|\s+$/gi,
-	regxp_complex_spaces: /s/,
+	regxp_complex_spaces: /(^\s+)|(\s+$)|(\s{2,})/gi,
+	hlpFixStringSpaces: function(str, p1, p2, p3) {
+		if (p1 || p2){
+			return '';
+		}
+		if (p3){
+			return ' ';
+		}
+		return '';
+		//console.log(arguments);
+	},
+
 	hlpSimplifyValue: function(value) {
 		//this is optimization!
 		if (!value){
 			return value;
 		}
-		return value.replace(this.regxp_spaces,' ').replace(this.regxp_edge_spaces,'');
+		return value.replace(this.regxp_complex_spaces, this.hlpFixStringSpaces);
+		
+		//return value.replace(this.regxp_spaces,' ').replace(this.regxp_edge_spaces,'');
 	},
 	directives: {
 		'pv-text': function(node, full_declaration){
@@ -2155,6 +2168,7 @@ spv.Class.extendTo(Template, {
 
 		},
 		'pv-class': function(node, full_declaration) {
+			full_declaration = this.hlpSimplifyValue(full_declaration);
 			this.bindStandartChange(node, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getClassName,
@@ -2203,13 +2217,14 @@ spv.Class.extendTo(Template, {
 			if (!full_declaration){
 				return;
 			}
+			full_declaration = this.hlpSimplifyValue(full_declaration);
 			var pv_type_data = {node: node, marks: null};
 			this.pv_types.push(pv_type_data);
 			this.bindStandartChange(node, {
 				complex_statement: full_declaration,
 				getValue: function(){return '';},
-				setValue: function(node, new_value, old_value){
-					var types = new_value.split(/\s+/gi);
+				setValue: function(node, new_value){
+					var types = new_value.split(this.regxp_spaces);
 					pv_type_data.marks = {};
 					for (var i = 0; i < types.length; i++) {
 						if (types[i]){
@@ -2229,7 +2244,7 @@ spv.Class.extendTo(Template, {
 			click:Callback
 			mousemove|(sp,pd):MovePoints
 			*/
-			var declarations = full_declaration.split(/\s+/gi);
+			var declarations = full_declaration.split(this.regxp_spaces);
 			for (var i = 0; i < declarations.length; i++) {
 				var decr_parts =  declarations[i].split('|');
 				var cur = decr_parts[0].split(':');
