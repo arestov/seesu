@@ -6,8 +6,8 @@ var app_serv = {};
 (function(){
 
 function isFileReady ( readyState ) {
-    // Check to see if any of the ways a file can be ready are available as properties on the file's element
-    return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
+	// Check to see if any of the ways a file can be ready are available as properties on the file's element
+	return ( ! readyState || readyState == 'loaded' || readyState == 'complete' );
 }
 
 var p = document.getElementsByTagName('script');
@@ -280,14 +280,39 @@ var app_env = (function(wd){
 	env.xhr2 = !!xhr2_support;
 
 	
-	
-	var has_transform_prop;
 	var dom_style_obj = wd.document.body.style;
+	var has_transform_prop;
+	var has_transition_prop;
+	
+
+	var transition_props = {
+		//https://github.com/ai/transition-events/blob/master/lib/transition-events.js
+		// Webkit must be on bottom, because Opera try to use webkit
+		// prefix.
+		'transition':		'transitionend',
+		'OTransition':		'oTransitionEnd',
+		'WebkitTransition':	'webkitTransitionEnd',
+		'MozTransition':	'transitionend'
+	};
+	
+
+	for ( var prop in transition_props ) {
+		if (prop in dom_style_obj){
+			has_transition_prop = transition_props[prop];
+			break;
+		}
+	}
+
 	['transform', '-o-transform', '-webkit-transform', '-moz-transform'].forEach(function(el) {
 		if (!has_transform_prop && el in dom_style_obj){
 			has_transform_prop = el;
 		}
 	});
+
+	if (has_transition_prop){
+		env.transition = has_transition_prop;
+	}
+
 	if (has_transform_prop){
 		env.transform = has_transform_prop;
 	}

@@ -5,6 +5,7 @@ var empty_transform_props = {};
 transform_props.forEach(function(el) {
 	empty_transform_props[el] = '';
 });
+var can_animate = app_serv.app_env.transform && app_serv.app_env.transition;
 
 
 provoda.setTplFilterGetFn(function(filter_name) {
@@ -20,6 +21,37 @@ var viewOnLevelP = function(md, view) {
 	view.wayp_scan_stop = true;
 	return lev_conj.material;
 };
+
+
+var LevContainer = function(con, scroll_con, material, tpl, context) {
+	this.c = con;
+	this.scroll_con = scroll_con;
+	this.material = material;
+	this.tpl = tpl;
+	this.context = context;
+	this.callbacks = [];
+	var _this = this;
+	if (can_animate){
+		spv.addEvent(this.c[0], can_animate, function(e) {
+			console.log(e);
+			_this.completeAnimation();
+		});
+	}
+};
+
+LevContainer.prototype = {
+	onTransitionEnd: function(cb) {
+		this.callbacks.push(cb);
+	},
+	completeAnimation: function() {
+		while (this.callbacks.length){
+			var cb = this.callbacks.shift();
+			this.context.nextTick(cb);
+		}
+	}
+};
+
+
 
 var AppBaseView = function() {};
 AppBaseView.viewOnLevelP = viewOnLevelP;
@@ -62,13 +94,14 @@ provoda.View.extendTo(AppBaseView, {
 
 			this.tpls.push(tpl);
 			tpl.setStates(this.states);
-
-			return this.lev_containers[num] = {
-				c: node.appendTo(this.els.screens),
-				scroll_con: tpl.ancs['scroll_con'],
-				material: tpl.ancs['material'],
-				tpl: tpl
-			};
+			var lev_con = new LevContainer
+					(node.appendTo(this.els.screens),
+					tpl.ancs['scroll_con'],
+					tpl.ancs['material'],
+					tpl,
+					this);
+			this.lev_containers[num] = lev_con;
+			return lev_con;
 		}
 	},
 	manual_states_connect: true,
@@ -233,7 +266,7 @@ provoda.View.extendTo(AppBaseView, {
 			var current_lev_num = target_md.map_level_num;
 			var one_zoom_in = transaction_data.array.length == 1 && transaction_data.array[0].name == "zoom-in";
 			var lc;
-			if (app_serv.app_env.transform && current_lev_num != -1 && one_zoom_in){
+			if (can_animate && current_lev_num != -1 && one_zoom_in){
 				var target_in_parent = this.getMapSliceChildInParenView(target_md);
 				if (target_in_parent){
 					var targt_con = target_in_parent.getC();
@@ -325,10 +358,6 @@ provoda.View.extendTo(AppBaseView, {
 			}
 		}
 
-
-
-
-
 		if (transaction_data.target){
 			var target_md = transaction_data.target.getMD();
 			var current_lev_num = target_md.map_level_num;
@@ -342,6 +371,7 @@ provoda.View.extendTo(AppBaseView, {
 			}
 
 			this.updateState('current_lev_num', current_lev_num);
+			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
 
 
 			if (animation_data && animation_data.lc){
@@ -351,14 +381,18 @@ provoda.View.extendTo(AppBaseView, {
 				
 			}
 
-			//сейчас анимация происходит в связи с сменой класса при изменении состояния current_lev_num
-
-			
+		}
+		if (!animation_data){
+			this.nextTick(function() {
+				this.animationMark(models, 'animation_completed', transaction_data.anid);
+			});
+		} else {
+			animation_data.lc.onTransitionEnd(function() {
+				this.animationMark(models, 'animation_completed', transaction_data.anid);
+			});
 		}
 
-		this.nextTick(function() {
-			this.animationMark(models, 'animation_completed', transaction_data.anid);
-		});
+		
 	},
 	'collch-map_slice': function(nesname, nesting_data){
 		var array = nesting_data.items;
