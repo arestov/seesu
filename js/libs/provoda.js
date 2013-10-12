@@ -109,16 +109,16 @@ var sync_sender = {
 };
 
 
-var MDProxy = function() {};
+var MDProxy = function(_provoda_id, states, children_models, md) {
+	this._provoda_id = _provoda_id;
+	this.views = [];
+	this.views_index = {};
+	this.states = states;
+	this.vstates = {};
+	this.children_models = children_models;
+	this.md = md;
+};
 MDProxy.prototype = {
-	init: function(_provoda_id, states, children_models, md) {
-		this._provoda_id = _provoda_id;
-		this.views = [];
-		this.views_index = {};
-		this.states = states;
-		this.children_models = children_models;
-		this.md = md;
-	},
 	RPCLegacy: function() {
 		this.md.RPCLegacy.apply(this.md, arguments);
 	},
@@ -128,15 +128,19 @@ MDProxy.prototype = {
 	updateManyStates: function(obj) {
 		var changes_list = [];
 		for (var name in obj) {
+			this.vstates[name] = obj[name];
 			changes_list.push(name, obj[name]);
 		}
 		this.sendStatesToViews(changes_list);
 		return this;
 	},
 	updateState: function(name, value){
+		//fixme если вьюха ещё не создана у неё не будет этого состояния
+		//эклюзивные состояния для вьюх не хранятся и не передаются при создании
 		if (name.indexOf('-') != -1 && console.warn){
 			console.warn('fix prop name: ' + name);
 		}
+		this.vstates[name] = value;
 		this.sendStatesToViews([name, value]);
 		return this;
 	},
@@ -1548,8 +1552,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		this.md_replacer = new this.MDReplace();
 		this.md_replacer._provoda_id = this._provoda_id;
 
-		this.mpx = new MDProxy();
-		this.mpx.init(this._provoda_id, this.states, this.children_models, this);
+		this.mpx = new MDProxy(this._provoda_id, this.states, this.children_models, this);
 		return this;
 	},
 	getReqsOrderField: function() {
@@ -2598,6 +2601,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		spv.cloneObj(this.undetailed_states, this.mpx.states);
+		spv.cloneObj(this.undetailed_states, this.mpx.vstates);
 		spv.cloneObj(this.undetailed_children_models, this.mpx.children_models);
 
 		var _this = this;

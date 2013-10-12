@@ -109,7 +109,6 @@ provoda.Model.extendTo(AppModelBase, {
 			проскроллить к источнику при отдалении
 			просроллить к источнику при приближении
 		*/
-		
 
 		if (target_md){
 			target_md.updateState('mp_has_focus', true);
@@ -132,56 +131,16 @@ provoda.Model.extendTo(AppModelBase, {
 			items: residents,
 			transaction: changes
 		});
-		
-
-
-
-		/*this.nextTick(function() {
-			this.updateState('map_animation', changes);
-			this.nextTick(function() {
-				//отложить изменение через nextTick необходимо, потому что изменения накапливаются и сжимаются,
-				//поэтому несколько синхронных изменений состояний дойдут до view только в виде последнего изменения
-				this.updateState('map_animation', false); //fixme анимация могла изменится. мы отменяем не то
-				this.animationMark(models, false);//fixme анимация могла изменится. мы маркируем то (1вую анимацию), что ещё может находится в анимации (2ая анмация)
-			});
-		});*/
-		
-		
+	
 		
 	},
 	bindMMapStateChanges: function(md) {
-		var _this = this;
-
 		md.on('mpl-attach', function() {
 			md.updateState('mpl_attached', true);
-			/*var navigation = _this.getNesting('navigation');
-			var target_array = _this.getNesting('map_slice') || [];
 
-
-			if (navigation.indexOf(md) == -1) {
-				navigation.push(md);
-				_this.updateNesting('navigation', navigation);
-			}
-			if (target_array.indexOf(md) == -1){
-				target_array.push(md);
-				_this.updateNesting('map_slice', target_array);
-			}
-*/
 		}, {immediately: true});
 		md.on('mpl-detach', function(){
 			md.updateState('mpl_attached', false);
-		/*	var navigation = _this.getNesting('navigation');
-			var target_array = _this.getNesting('map_slice') || [];
-
-			var new_nav = spv.arrayExclude(navigation, md);
-			if (new_nav.length != navigation.length){
-				_this.updateNesting('navigation', new_nav);
-			}
-			var new_tarr = spv.arrayExclude(target_array, md);
-
-			if (new_tarr.length != target_array.length){
-				_this.updateNesting('map_slice', new_tarr);
-			}*/
 		}, {immediately: true});
 	},
 	showMOnMap: function(model) {

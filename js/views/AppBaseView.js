@@ -1,6 +1,7 @@
 define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv'], function(provoda, spv, $, filters, app_serv){
 "use strict";
-var transform_props = ['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
+var transform_props = [app_serv.app_env.transform];
+//['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
 var empty_transform_props = {};
 transform_props.forEach(function(el) {
 	empty_transform_props[el] = '';
@@ -33,7 +34,7 @@ var LevContainer = function(con, scroll_con, material, tpl, context) {
 	var _this = this;
 	if (can_animate){
 		spv.addEvent(this.c[0], can_animate, function(e) {
-			console.log(e);
+			//console.log(e);
 			_this.completeAnimation();
 		});
 	}
@@ -322,15 +323,17 @@ provoda.View.extendTo(AppBaseView, {
 			if (parent){
 			//	parent.updateState('mp_has_focus', false);
 			}
-			change.target.getMD().updateState('vmp_show', change.value);
+			//mpx.updateState(prop, anid);
+
+			change.target.getMD().mpx.updateState('vmp_show', change.value);
 		},
 		'zoom-out': function(change) {
-			change.target.getMD().updateState('vmp_show', false);
+			change.target.getMD().mpx.updateState('vmp_show', false);
 		},
 		'destroy': function(change) {
 			var md = change.target.getMD();
 		//	md.mlmDie();
-			md.updateState('vmp_show', false);
+			md.mpx.updateState('vmp_show', false);
 		}
 	},
 	animateMapSlice: function(transaction_data, animation_data) {
@@ -375,6 +378,7 @@ provoda.View.extendTo(AppBaseView, {
 
 
 			if (animation_data && animation_data.lc){
+				
 				this.nextTick(function() {
 					animation_data.lc.c.css(empty_transform_props);
 				});
@@ -417,6 +421,8 @@ provoda.View.extendTo(AppBaseView, {
 
 		if (transaction_data){
 			this.animateMapSlice(transaction_data, animation_data);
+			
+			
 		}
 
 

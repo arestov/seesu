@@ -44,11 +44,11 @@
 			class="common-nav nav-item"
 			pv-props="title:{{nav_title}}"
 			pv-events="click:zoomOut"
-			pv-type="{{(mp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			pv-type="{{(vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 
 			pv-class="
 				nav-item
-				{{!mp_show && 'hidden'}}
+				{{!vmp_show && 'hidden'}}
 				{{!mp_has_focus && 'nnav'}}
 				{{mp_stack == 'top' && 'stack-top'}}
 				{{mp_stack == 'bottom' && 'stack-bottom'}}
@@ -64,11 +64,11 @@
 			title="Search results"
 			pv-props="title:{{nav_title}}"
 			pv-events="click:zoomOut"
-			pv-type="{{(mp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			pv-type="{{(vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 			
 			pv-class="
 				nav-item nav-search_results
-				{{!mp_show && 'hidden'}}
+				{{!vmp_show && 'hidden'}}
 				{{!mp_has_focus && 'nnav'}}
 				{{mp_stack == 'top' && 'stack-top'}}
 				{{mp_stack == 'bottom' && 'stack-bottom'}}
@@ -81,11 +81,11 @@
 			title="Seesu start page"
 			pv-props="title:{{nav_title}}"
 			pv-events="click:zoomOut"
-			pv-type="{{(mp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
+			pv-type="{{(vmp_show && mp_stack || !mp_has_focus) && 'way-point'}}"
 			
 			pv-class="
 				nav-item nav-start
-				{{!mp_show && 'hidden'}}
+				{{!vmp_show && 'hidden'}}
 				{{!mp_has_focus && 'nav-button'}}
 				{{(mp_stack && mp_stack == !!mp_stack) && 'stacked'}}
 				{{nav_clickable && 'nav_clickable'}}
@@ -158,7 +158,7 @@
 
 		<div
 			class="user_tag_page usual_page"
-			pv-class="lula_page usual_page {{!mp_show && 'hidden'}}"
+			pv-class="lula_page usual_page {{!vmp_show && 'hidden'}}"
 			>
 			<div class="preview_area" pv-nest="tracks">
 				<div class="area_for_button" pv-anchor="button_area">
@@ -196,7 +196,7 @@
 		</div>
 		<div
 			class="user_tags_page usual_page"
-			pv-class="lula_page usual_page {{!mp_show && 'hidden'}}">
+			pv-class="lula_page usual_page {{!vmp_show && 'hidden'}}">
 			<ul>
 				<li pv-nest="tags" class="user_tag" pv-events="click::requestPage" pv-type="way-point">
 					<span class="user_tag-count" pv-text="{{count}}"></span>
@@ -205,7 +205,7 @@
 			</ul>
 		</div>
 
-		<div class="lula_page usual_page" pv-class="lula_page usual_page {{!mp_show && 'hidden'}}">
+		<div class="lula_page usual_page" pv-class="lula_page usual_page {{!vmp_show && 'hidden'}}">
 			<div class="preview_area" pv-nest="all_time">
 				<div class="area_for_button" pv-anchor="button_area">
 					<div class="area-button" pv-anchor='big_button'>
@@ -219,7 +219,7 @@
 			</div>
 		</div>
 
-		<div class="lulas_page usual_page" pv-class="lulas_page usual_page {{!mp_show && 'hidden'}}">
+		<div class="lulas_page usual_page" pv-class="lulas_page usual_page {{!vmp_show && 'hidden'}}">
 			<ul>
 				<li pv-nest="artists" pv-events="click::requestPage" class="user_artist" pv-type="way-point">
 					<div class="user_artist-image_con">
@@ -297,7 +297,7 @@
 			pv-class="
 				playlist-container 
 				{{can_play && 'has-files-in-songs'}}
-				{{!mp_show && 'hidden'}}
+				{{!vmp_show && 'hidden'}}
 				{{!vis_overview && !mp_has_focus && 'show-zoom-to-track'}}
 				">
 			
@@ -342,7 +342,7 @@
 		</div>
 		
 		<!-- userslist -->
-		<div class="vk_users_page usual_page" pv-class="vk_users_page usual_page {{!mp_show && 'hidden'}}">
+		<div class="vk_users_page usual_page" pv-class="vk_users_page usual_page {{!vmp_show && 'hidden'}}">
 			<div pv-nest="list_items" class="vk_friend-base-preview" pv-events="click::requestPage" pv-type="way-point">
 				<img class="vk_friend-ava" src="" alt="" pv-props="
 					src: {{ava_image.url}}">
@@ -353,7 +353,7 @@
 		</div>
 
 		<!-- userslist -->
-		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page {{!mp_show && 'hidden'}}">
+		<div class="lfm_users_page usual_page" pv-class="lfm_users_page usual_page {{!vmp_show && 'hidden'}}">
 			<div pv-nest="list_items" class="lfm_friend-base-preview" pv-events="click::requestPage" pv-type="way-point">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
@@ -494,7 +494,7 @@
 				<div class="aqc_preview" pv-anchor="users_acqutes"></div>
 			</div>
 		</div>
-		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page {{!mp_show && 'hidden'}}">
+		<div class="lfm_user_page usual_page" pv-class="lfm_user_page usual_page {{!vmp_show && 'hidden'}}">
 			<div class="lfm_user_page-header">
 				<img class="lfm_friend-ava" src="" alt="" pv-props="
 					src: {{(lfm_image.lfm_id && 'http://userserve-ak.last.fm/serve/64s/' + lfm_image.lfm_id) || lfm_image.url}}">
@@ -508,7 +508,7 @@
 			</div>
 		</div>
 		
-		<div class="vk_user_page usual_page" pv-class="vk_user_page usual_page {{!mp_show && 'hidden'}}">
+		<div class="vk_user_page usual_page" pv-class="vk_user_page usual_page {{!vmp_show && 'hidden'}}">
 			<div class="vk_user_page-header">
 				<img class="vk_friend-ava" src="" alt="" pv-props="
 					src: {{ava_image.url}}">
@@ -684,7 +684,7 @@
 			
 		</div>
 		<div class="songcard_page usual_page"
-			pv-class="songcard_page usual_page {{!mp_show && 'hidden'}}">
+			pv-class="songcard_page usual_page {{!vmp_show && 'hidden'}}">
 			<h4 class="songcard_page-header">
 				<span pv-text="{{track_name}}"></span> - <span pv-text="{{artist_name}}"></span>
 			</h4>
@@ -830,13 +830,13 @@
 					{{marked_as && 'v-song-sibling'}}
 					{{marked_as == 'next' && 'to-play-next'}}
 					{{marked_as == 'prev' && 'to-play-previous'}}
-					{{mp_show && 'viewing-song'}}
-					{{vis_lite_view && mp_show && 'selected_song'}}
+					{{vmp_show && 'viewing-song'}}
+					{{vis_lite_view && vmp_show && 'selected_song'}}
 				">
 				<a 
 					pv-anchor="song-link"
 					class="track-node"
-					pv-type="{{(vis_lite_view || !mp_show) && 'way-point'}}"
+					pv-type="{{(vis_lite_view || !vmp_show) && 'way-point'}}"
 					pv-class="
 						track-node
 						{{want_to_play && 'marked-for-play'}}
@@ -1318,7 +1318,7 @@
 			</ul>
 		</div>
 		
-		<div class="search_results-container" pv-class="search_results-container {{!mp_show && 'hidden'}} {{!needs_search_from && 'does-not-need-search-from'}}">
+		<div class="search_results-container" pv-class="search_results-container {{!vmp_show && 'hidden'}} {{!needs_search_from && 'does-not-need-search-from'}}">
 			<p class="search-desc lang localize-search-control-hint"></p>
 			<div
 				pv-nest="section for_model:section-tag"
