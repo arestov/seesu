@@ -666,7 +666,7 @@ BrowseMap.Model.extendTo(CountriesList, {
 MusicConductor = function() {};
 BrowseMap.Model.extendTo(MusicConductor, {
 	model_name: 'mconductor',
-	init: function(opts) {
+	init: function() {
 		this._super.apply(this, arguments);
 
 		this.allpas = this.getSPI('world');
@@ -684,9 +684,7 @@ BrowseMap.Model.extendTo(MusicConductor, {
 
 		
 		this.initStates();
-		this.map_parent.on('state_change-can_expand', function(e) {
-			_this.updateState('can_expand', e.value);
-		});
+		this.wch(this.map_parent, 'can_expand');
 		return this;
 	},
 	sub_pa: {

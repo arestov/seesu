@@ -987,7 +987,7 @@ spv.Class.extendTo(provoda.Eventor, {
 	stopRequests: function() {
 		return this.evcompanion.stopRequests.apply(this.evcompanion, arguments);
 	},
-	getRelativeRequestsGroups: function(space) {
+	getRelativeRequestsGroups: function() {
 
 	},
 	getModelImmediateRequests: function() {

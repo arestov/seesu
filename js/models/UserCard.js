@@ -71,9 +71,8 @@ BrowseMap.Model.extendTo(UserCard, {
 
 		var _this = this;
 		if (this.for_current_user){
-			this.map_parent.on('state_change-can_expand', function(e) {
-				_this.updateState('can_expand', e.value);
-			});
+			this.wch(this.map_parent, 'can_expand');
+
 		}
 
 		

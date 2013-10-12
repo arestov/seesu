@@ -95,14 +95,12 @@ provoda.View.extendTo(ArtistInSongConstroller, {
 		this.photo_data = {};
 		this.dom_related_props.push('photo_data');
 
-		var _this = this;
 		this.wch(this.root_view, 'window_height');
 		this.wch(this.root_view, 'window_width');
 		this.wch(this.parent_view, 'mp_show_end', 'parent_viewing_mode');
-
-		this.parent_view.on('state_change-vmp_show', function(e) {
+		this.wch(this.parent_view, 'vmp_show', function(e) {
 			if (!e.value){
-				_this.setVisState('wamo_info', false);
+				this.setVisState('wamo_info', false);
 			}
 		});
 

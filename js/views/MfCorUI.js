@@ -345,9 +345,14 @@ provoda.View.extendTo(MfCorUI, {
 			_this.RPCLegacy('switchMoreSongsView');
 		});
 		this.addWayPoint(this.tpl.ancs.more_songs_b);
-		this.parent_view.on('state_change-mp_show_end', function(e){
-			_this.setVisState('is_visible', !!e.value);
-		});
+
+		this.wch(this.parent_view, 'mp_show_end', 'parent_mp_show_end');
+	},
+	'compx-vis_is_visible':{
+		'depends_on': ['parent_mp_show_end'],
+		fn: function(mp_show_end) {
+			return !!mp_show_end;
+		}
 	},
 	createBase: function() {
 		this.c = this.root_view.getSample('moplas-block');

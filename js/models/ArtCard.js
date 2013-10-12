@@ -173,13 +173,9 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		});
 		this.initStates();
 
-		var _this = this;
-		this.map_parent.on('vip_state_change-discogs_id_searching', function(e) {
-			_this.updateState('profile_searching', e.value);
-		}, {immediately: true});
-		this.map_parent.on('vip_state_change-discogs_id', function(e) {
-			_this.updateState('artist_id', e.value);
-		}, {immediately: true});
+		this.wch(this.map_parent, 'discogs_id_searching', 'profile_searching', true);
+		this.wch(this.map_parent, 'discogs_id', 'artist_id', true);
+
 	},
 	'compx-loader_disallowing_desc': {
 		depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
@@ -494,13 +490,9 @@ var SoundcloudArtcardSongs = function() {};
 SongsList.extendTo(SoundcloudArtcardSongs, {
 	init: function() {
 		this._super.apply(this, arguments);
-		var _this = this;
-		this.map_parent.on('vip_state_change-sc_profile_searching', function(e) {
-			_this.updateState('profile_searching', e.value);
-		}, {immediately: true});
-		this.map_parent.on('vip_state_change-soundcloud_profile', function(e) {
-			_this.updateState('artist_id', e.value);
-		}, {immediately: true});
+		this.wch(this.map_parent, 'sc_profile_searching', 'profile_searching', true);
+		this.wch(this.map_parent, 'soundcloud_profile', 'artist_id', true);
+
 	},
 	'compx-loader_disallowing_desc': {
 		depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
