@@ -27,13 +27,13 @@ var cache_ajax = {
 		set: function(prefix, hash_key, value, timeout){
 			value = {
 				v: value,
-				t: ((+new Date()) + (timeout || (1000 * 60 * 60 * 5)))
+				t: (Date.now() + (timeout || (1000 * 60 * 60 * 5)))
 			};
 			this.storage['c_' + prefix + '_' + hash_key] = value;
 		}
 	};
 	setInterval(function(){
-		var now = new Date();
+		var now = Date.now();
 		for (var a in cache_ajax.storage){
 			var timeout = cache_ajax.storage[a].t;
 			if (timeout < now){

@@ -124,7 +124,6 @@ var navi;
 				if (!this.states_index[ud.uniq_url]){
 					this.setFakeURL(ud.uniq_url);
 					this.states_index[ud.uniq_url] = {
-						date: new Date(),
 						url: ud.clear_url,
 						data: data
 					};

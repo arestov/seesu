@@ -300,7 +300,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			var
 				starttime = this.start_time,
 				last_scrobble = this.last_scrobble,
-				timestamp = ((new Date() * 1)/1000).toFixed(0),
+				timestamp = (Date.now()/1000).toFixed(0),
 				duration = Math.round(this.getCurrentMopla().getDuration()/1000) || '';
 
 
@@ -348,7 +348,7 @@ lfm_share_url_replacers.forEach(function(el, i) {
 					duration: duration,
 					artist: this.artist,
 					title: this.track,
-					timestamp: ((new Date()).getTime()/1000).toFixed(0)
+					timestamp: (Date.now()/1000).toFixed(0)
 				});
 			}
 		},200),

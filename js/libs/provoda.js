@@ -476,11 +476,8 @@ var iterateCallbacksFlow = function() {
 			break;
 		}
 		var cur = callbacks_flow.shift();
-		if (cur.args){
-			cur.fn.apply(cur.context, cur.args);
-		} else {
-			cur.fn.call(cur.context, cur.arg);
-		}
+		cur.call();
+		
 		
 	}
 	if (!callbacks_flow.length){
@@ -493,16 +490,31 @@ var checkCallbacksFlow = function() {
 		iteration_delayed = true;
 	}
 };
+var flow_steps_counter = 1;
 
-var FlowStep = function(fn, context, args, arg) {
+var FlowStep = function(fn, context, args, arg, cb_wrapper) {
+	this.num = flow_steps_counter++;
 	this.fn = fn;
 	this.context = context;
 	this.args = args;
-	this.arg = arg;
+	this.arg = arg || null;
+	this.cb_wrapper = cb_wrapper || null;
+};
+FlowStep.prototype.call = function() {
+	if (this.cb_wrapper){
+		this.cb_wrapper.call(this.context, this, this.fn, this.args, this.arg);
+	} else {
+		if (this.args){
+			this.fn.apply(this.context, this.args);
+		} else {
+			this.fn.call(this.context, this.arg);
+		}
+	}
+	
 };
 
-var pushToCbsFlow = function(fn, context, args, cbf_arg) {
-	callbacks_flow.push(new FlowStep(fn, context, args, cbf_arg));
+var pushToCbsFlow = function(fn, context, args, cbf_arg, cb_wrapper) {
+	callbacks_flow.push(new FlowStep(fn, context, args, cbf_arg, cb_wrapper));
 	checkCallbacksFlow();
 };
 
@@ -513,13 +525,14 @@ var parseNamespace = function(namespace) {
 	}
 	return cached_parsed_namespace[namespace];
 };
-var EventSubscribingOpts = function(short_name, namespace, cb, once, context, immediately) {
+var EventSubscribingOpts = function(short_name, namespace, cb, once, context, immediately, wrapper) {
 	this.short_name = short_name;
 	this.namespace = namespace;
 	this.cb = cb;
 	this.once = once;
 	this.context = context;
 	this.immediately = immediately;
+	this.wrapper = wrapper || null;
 };
 
 var FastEventor = function(context) {
@@ -553,21 +566,29 @@ FastEventor.prototype = {
 		}
 		for (i = 0; i < this.reg_fires.by_test.length; i++) {
 			if (this.reg_fires.by_test[i].test.call(this.sputnik, namespace)){
-				funcs.push(this.reg_fires.by_test[i].fn);
+				funcs.push(this.reg_fires.by_test[i]);
 			}
 		}
 		return funcs;
 	},
-	onRegistration: function(name, cb) {
+	onRegistration: function(name, cb, callbacks_wrapper) {
 		if (typeof name == 'string'){
-			this.reg_fires.by_namespace[name] = cb;
+			this.reg_fires.by_namespace[name] = {fn: cb};
 		} else if (typeof name =='function'){
 			this.reg_fires.by_test.push({
 				test: name,
-				fn: cb
+				fn: cb,
+				wrapper: callbacks_wrapper || null
 			});
 		}
 		return this.sputnik;
+	},
+	hndUsualEvCallbacksWrapper: function(motivator, fn, args, arg) {
+		if (args){
+			fn.apply(this, args);
+		} else {
+			fn.call(this, arg);
+		}
 	},
 	_addEventHandler: function(namespace, cb, opts, once){
 		//common opts allowed
@@ -576,7 +597,7 @@ FastEventor.prototype = {
 		}
 
 		var
-			fired,
+			fired = false,
 			_this = this,
 			name_parts = parseNamespace(namespace),
 			short_name = name_parts[0];
@@ -584,29 +605,34 @@ FastEventor.prototype = {
 		if (opts && opts.exlusive){
 			this.off(namespace);
 		}
-		if (!opts || !opts.skip_reg){
-			var reg_fires = this.getPossibleRegfires(namespace);
-			if (reg_fires.length){
-				reg_fires[0].call(this.sputnik, function() {
-					fired = true;
-					var args = arguments;
-					var context = (opts && opts.context) || _this.sputnik;
-					if (opts && 'soft_reg' in opts && !opts.soft_reg){
-						cb.apply(context, args);
-					} else {
-						pushToCbsFlow(cb, context, args);
-					}
-				}, namespace, opts, name_parts);
+
+		var reg_args = null;
+
+		var callbacks_wrapper = this.hndUsualEvCallbacksWrapper;
+
+		var reg_fires = this.getPossibleRegfires(namespace);
+		if (reg_fires.length){
+			reg_fires[0].fn.call(this.sputnik, function() {
+				reg_args = arguments;
+				fired = true;
+			}, namespace, opts, name_parts);
+		}
+		if (fired){
+			if (reg_fires[0].wrapper){
+				callbacks_wrapper = reg_fires[0].wrapper;
+			}
+			if (!opts || !opts.skip_reg){
+				var context = (opts && opts.context) || _this.sputnik;
+				if (opts && 'soft_reg' in opts && !opts.soft_reg){
+					cb.apply(context, reg_args);
+				} else {
+					pushToCbsFlow(cb, context, reg_args, false, callbacks_wrapper);
+				}
 			}
 		}
 
-		/*if (this.reg_fires[short_name]){
-			this.reg_fires[short_name]
-			
-		}*/
 
-
-		var subscr_opts = new EventSubscribingOpts(short_name, namespace, cb, once, opts && opts.context, opts && opts.immediately);
+		var subscr_opts = new EventSubscribingOpts(short_name, namespace, cb, once, opts && opts.context, opts && opts.immediately, callbacks_wrapper);
 
 		if (!(once && fired)){
 			this._pushCallbackToStack(subscr_opts);
@@ -724,7 +750,7 @@ FastEventor.prototype = {
 			}
 			
 		} else {
-			pushToCbsFlow(cur.cb, cur.context || this.sputnik, args, arg);
+			pushToCbsFlow(cur.cb, cur.context || this.sputnik, args, arg, cur.wrapper);
 			/*
 			setTimeout(function() {
 				cur.cb.apply(_this, args);
@@ -1047,6 +1073,7 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.conx_opts = null;
 		this.collecting_states_changing = null;
 		this.zdsv = null;
+		this.current_motivator = null;
 
 
 		this.states = {};
@@ -1059,6 +1086,19 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		//this.collectCompxs();
 
 		return this;
+	},
+	hndStateChEvCallbacksWrappper: function(motivator, fn, args, arg) {
+		var old_value = this.current_motivator;
+		this.current_motivator = motivator;
+		if (args){
+			fn.apply(this, args);
+		} else {
+			fn.call(this, arg);
+		}
+		if (this.current_motivator != motivator){
+			throw new Error('wrong motivator'); //fixme
+		}
+		this.current_motivator = old_value;
 	},
 	stVIPEvRegHandler: function(cb, namespace) {
 		var state_name = namespace.replace('vip_state_change-', '');

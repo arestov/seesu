@@ -269,7 +269,7 @@ getStringPattern = function (str) {
 spv.getStringPattern = getStringPattern;
 
 ttime = function(f){
-	var d = +new Date();
+	var d = Date.now();
 
 	if (f){
 		f();
@@ -814,5 +814,16 @@ spv.throttle = throttle;
 spv.debounce = debounce;
 spv.filter = $filter;
 
+
+
+spv.zerofyString = function(string, length) {
+	if (typeof string != 'string'){
+		string = '' + string;
+	}
+	while (string.length < length){
+		string = '0' + string;
+	}
+	return string;
+};
 })();
 define(function(){return spv;});
