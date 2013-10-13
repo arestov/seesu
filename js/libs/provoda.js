@@ -466,6 +466,35 @@ var ev_na_cache = {};
 var callbacks_flow = [];
 var callbacks_busy;
 var iteration_delayed;
+var flow_steps_counter = 1;
+var flow_steps_sorted = false;
+
+
+var sortFlows = function(item_one, item_two) {
+	var max_length = Math.max(item_one.complex_order.length, item_two.complex_order.length);
+	//
+	for (var i = 0; i < max_length; i++) {
+		var item_one_step = item_one.complex_order[i];
+		var item_two_step = item_two.complex_order[i];
+		if (typeof item_one_step == 'undefined' && typeof item_two_step == 'undefined'){
+			return;
+		}
+		if (typeof item_one_step == 'undefined'){
+			return -1;
+		}
+		if (typeof item_two_step == 'undefined'){
+			return 1;
+		}
+		if (item_one_step > item_two_step){
+			return 1;
+		}
+		if (item_one_step < item_two_step){
+			return -1;
+		}
+	}
+
+
+};
 var iterateCallbacksFlow = function() {
 	var start = Date.now() + 100;
 	iteration_delayed = false;
@@ -474,6 +503,10 @@ var iterateCallbacksFlow = function() {
 		if (Date.now() > start){
 			setTimeout(iterateCallbacksFlow,4);
 			break;
+		}
+		if (!flow_steps_sorted){
+			flow_steps_sorted = true;
+			callbacks_flow.sort(sortFlows);
 		}
 		var cur = callbacks_flow.shift();
 		cur.call();
@@ -490,15 +523,17 @@ var checkCallbacksFlow = function() {
 		iteration_delayed = true;
 	}
 };
-var flow_steps_counter = 1;
 
-var FlowStep = function(fn, context, args, arg, cb_wrapper) {
+
+var FlowStep = function(fn, context, args, arg, cb_wrapper, parent_motivator) {
 	this.num = flow_steps_counter++;
 	this.fn = fn;
 	this.context = context;
 	this.args = args;
 	this.arg = arg || null;
 	this.cb_wrapper = cb_wrapper || null;
+	this.complex_order = ( parent_motivator && parent_motivator.complex_order.slice() ) || [];
+	this.complex_order.push(this.num);
 };
 FlowStep.prototype.call = function() {
 	if (this.cb_wrapper){
@@ -513,8 +548,11 @@ FlowStep.prototype.call = function() {
 	
 };
 
-var pushToCbsFlow = function(fn, context, args, cbf_arg, cb_wrapper) {
-	callbacks_flow.push(new FlowStep(fn, context, args, cbf_arg, cb_wrapper));
+var pushToCbsFlow = function(fn, context, args, cbf_arg, cb_wrapper, motivator) {
+	callbacks_flow.push(new FlowStep(fn, context, args, cbf_arg, cb_wrapper, motivator));
+	if (motivator){
+		flow_steps_sorted = false;
+	}
 	checkCallbacksFlow();
 };
 
@@ -750,7 +788,7 @@ FastEventor.prototype = {
 			}
 			
 		} else {
-			pushToCbsFlow(cur.cb, cur.context || this.sputnik, args, arg, cur.wrapper);
+			pushToCbsFlow(cur.cb, cur.context || this.sputnik, args, arg, cur.wrapper, this.current_motivator);
 			/*
 			setTimeout(function() {
 				cur.cb.apply(_this, args);
