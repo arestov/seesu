@@ -788,7 +788,7 @@ FastEventor.prototype = {
 			}
 			
 		} else {
-			pushToCbsFlow(cur.cb, cur.context || this.sputnik, args, arg, cur.wrapper, this.current_motivator);
+			pushToCbsFlow(cur.cb, cur.context || this.sputnik, args, arg, cur.wrapper, this.sputnik.current_motivator);
 			/*
 			setTimeout(function() {
 				cur.cb.apply(_this, args);
@@ -1040,7 +1040,7 @@ spv.Class.extendTo(provoda.Eventor, {
 	},
 	
 	onRegistration: function(name, cb) {
-		return this.evcompanion.onRegistration(name, cb);
+		return this.evcompanion.onRegistration.apply(this.evcompanion, arguments);
 	},
 	addRequest: function() {
 		return this.evcompanion.addRequest.apply(this.evcompanion, arguments);
@@ -1118,9 +1118,9 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.complex_states_index = {};
 		this.complex_states_watchers = [];
 		this.states_changing_stack = [];
-		this.onRegistration(this.checkVIPStReg, this.stVIPEvRegHandler);
+		this.onRegistration(this.checkVIPStReg, this.stVIPEvRegHandler, this.hndStateChEvCallbacksWrappper);
 
-		this.onRegistration(this.checkStReg, this.stEvRegHandler);
+		this.onRegistration(this.checkStReg, this.stEvRegHandler, this.hndStateChEvCallbacksWrappper);
 		//this.collectCompxs();
 
 		return this;
