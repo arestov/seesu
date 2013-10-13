@@ -1039,7 +1039,7 @@ spv.Class.extendTo(provoda.Eventor, {
 		this.evcompanion.trigger.apply(this.evcompanion, arguments);
 	},
 	
-	onRegistration: function(name, cb) {
+	onRegistration: function() {
 		return this.evcompanion.onRegistration.apply(this.evcompanion, arguments);
 	},
 	addRequest: function() {
