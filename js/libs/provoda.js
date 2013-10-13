@@ -1604,7 +1604,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.req_order_field = null;
 
-		this.onRegistration(this.checkChildChangeReg, this.stChildChEvRegHandler);
+		this.onRegistration(this.checkChildChangeReg, this.stChildChEvRegHandler, this.hndStateChEvCallbacksWrappper);
 
 		this._provoda_id = models_counters++;
 		this.states = {};
