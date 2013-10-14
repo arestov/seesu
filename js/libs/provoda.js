@@ -348,19 +348,27 @@ provoda = {
 provoda.Controller = provoda.View;
 
 
-var setEvLiItems = function(items_list) {
+var setEvLiItems = function(items_list, current_motivator) {
+	var old_value = this.current_motivator;
+	this.current_motivator = this.current_motivator;
+
 	items_list = items_list && spv.toRealArray(items_list);
 	this.unsubcribeOld();
 	this.items_list = items_list;
 	this.controls_list.length = 0;
 	this.controls_list.length = items_list.length;
 	for (var i = 0; i < items_list.length; i++) {
-		this.controls_list[i] = items_list[i].on(this.event_name, this.eventCallback, {
+		var cur = items_list[i];
+		var oldv = cur.current_motivator;
+		cur.current_motivator = this.current_motivator;
+		this.controls_list[i] = cur.on(this.event_name, this.eventCallback, {
 			easy_bind_control: true,
 			context: this.event_context,
 			skip_reg: this.skip_reg
 		});
+		cur.current_motivator = oldv;
 	}
+	this.current_motivator = old_value;
 };
 var ItemsEvents = function(event_name, eventCallback) {
 	this.items_list = null;
@@ -369,6 +377,7 @@ var ItemsEvents = function(event_name, eventCallback) {
 	this.eventCallback = eventCallback;
 	this.skip_reg = null;
 	this.event_context = this;
+	this.current_motivator = null;
 };
 ItemsEvents.prototype = {
 	unsubcribeOld: function() {
@@ -385,11 +394,11 @@ var hasargfn = function(cur) {return cur;};
 var StatesArchiver = function(state_name, opts) {
 	this.items_list = null;
 	this.controls_list = [];
+	this.current_motivator = null;
 
 	var _this = this;
-	this.checkFunc = function() {
-		var item = this;
-		_this.getItemsValues(item);
+	this.checkFunc = function(e) {
+		_this.getItemsValues(e && e.target);
 	};
 	this.state_name = state_name;
 	this.event_name = 'state_change-' + this.state_name;
@@ -422,13 +431,16 @@ StatesArchiver.prototype = {
 	some: function(values_array) {
 		return !!values_array.some(hasargfn);
 	},
-	getItemsValues: function() {
+	getItemsValues: function(item) {
+		var current_motivator = (item && item.current_motivator) || this.current_motivator;
 		var values_list = new Array(this.items_list.length);
 		for (var i = 0; i < this.items_list.length; i++) {
 			values_list[i] = this.items_list[i].state(this.state_name);
 		}
-
+		var old_value = this.current_motivator;
+		this.current_motivator = current_motivator;
 		this.returnResult.call(this, this.calculateResult.call(this, values_list));
+		this.current_motivator = old_value;
 		return values_list;
 	},
 	unsubcribeOld: function() {
@@ -525,19 +537,20 @@ var checkCallbacksFlow = function() {
 };
 
 
-var FlowStep = function(fn, context, args, arg, cb_wrapper, parent_motivator) {
+var FlowStep = function(fn, context, args, arg, cb_wrapper, real_context, parent_motivator) {
 	this.num = flow_steps_counter++;
 	this.fn = fn;
 	this.context = context;
 	this.args = args;
 	this.arg = arg || null;
 	this.cb_wrapper = cb_wrapper || null;
+	this.real_context = real_context;
 	this.complex_order = ( parent_motivator && parent_motivator.complex_order.slice() ) || [];
 	this.complex_order.push(this.num);
 };
 FlowStep.prototype.call = function() {
 	if (this.cb_wrapper){
-		this.cb_wrapper.call(this.context, this, this.fn, this.args, this.arg);
+		this.cb_wrapper.call(this.real_context, this, this.fn, this.context, this.args, this.arg);
 	} else {
 		if (this.args){
 			this.fn.apply(this.context, this.args);
@@ -548,8 +561,8 @@ FlowStep.prototype.call = function() {
 	
 };
 
-var pushToCbsFlow = function(fn, context, args, cbf_arg, cb_wrapper, motivator) {
-	callbacks_flow.push(new FlowStep(fn, context, args, cbf_arg, cb_wrapper, motivator));
+var pushToCbsFlow = function(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator) {
+	callbacks_flow.push(new FlowStep(fn, context, args, cbf_arg, cb_wrapper, real_context, motivator));
 	if (motivator){
 		flow_steps_sorted = false;
 	}
@@ -621,11 +634,11 @@ FastEventor.prototype = {
 		}
 		return this.sputnik;
 	},
-	hndUsualEvCallbacksWrapper: function(motivator, fn, args, arg) {
+	hndUsualEvCallbacksWrapper: function(motivator, fn, context, args, arg) {
 		if (args){
-			fn.apply(this, args);
+			fn.apply(context, args);
 		} else {
-			fn.call(this, arg);
+			fn.call(context, arg);
 		}
 	},
 	_addEventHandler: function(namespace, cb, opts, once){
@@ -664,7 +677,7 @@ FastEventor.prototype = {
 				if (opts && 'soft_reg' in opts && !opts.soft_reg){
 					cb.apply(context, reg_args);
 				} else {
-					pushToCbsFlow(cb, context, reg_args, false, callbacks_wrapper);
+					pushToCbsFlow(cb, context, reg_args, false, callbacks_wrapper, this.sputnik);
 				}
 			}
 		}
@@ -788,7 +801,9 @@ FastEventor.prototype = {
 			}
 			
 		} else {
-			pushToCbsFlow(cur.cb, cur.context || this.sputnik, args, arg, cur.wrapper, this.sputnik.current_motivator);
+			var callback_context = cur.context || this.sputnik;
+			var wrapper_context = this.sputnik;
+			pushToCbsFlow(cur.cb, callback_context, args, arg, cur.wrapper, wrapper_context, this.sputnik.current_motivator);
 			/*
 			setTimeout(function() {
 				cur.cb.apply(_this, args);
@@ -1125,13 +1140,13 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 
 		return this;
 	},
-	hndStateChEvCallbacksWrappper: function(motivator, fn, args, arg) {
+	hndStateChEvCallbacksWrappper: function(motivator, fn, context, args, arg) {
 		var old_value = this.current_motivator;
 		this.current_motivator = motivator;
 		if (args){
-			fn.apply(this, args);
+			fn.apply(context, args);
 		} else {
-			fn.call(this, arg);
+			fn.call(context, arg);
 		}
 		if (this.current_motivator != motivator){
 			throw new Error('wrong motivator'); //fixme
@@ -1663,27 +1678,33 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 		//
 		var _this = this;
 		var items_events = new ItemsEvents('state_change-' + state_name, function(e) {
+			var old_value = _this.current_motivator;
+			_this.current_motivator = e.target.current_motivator;
 			callback.call(_this, {
 				item: e.target,
 				value: arguments && arguments[0] && arguments[0].value,
 				args: arguments,
 				items: this.items_list
 			});
+			_this.current_motivator = old_value;
 		});
 		this.on('child_change-' + collection_name, function(e) {
-			items_events.setItems(e.value);
+			items_events.setItems(e.value, this.current_motivator);
 		});
 	},
 	archivateChildrenStates: function(collection_name, collection_state, statesCalcFunc, result_state_name) {
 		var _this = this;
 		var archiver = new StatesArchiver(collection_state, {
 			returnResult: function(value) {
+				var old_value = _this.current_motivator;
+				_this.current_motivator = this.current_motivator;
 				_this.updateState(result_state_name || collection_state, value);
+				_this.current_motivator = old_value;
 			},
 			calculateResult: statesCalcFunc
 		});
 		this.on('child_change-' + collection_name, function(e) {
-			archiver.setItems(e.value);
+			archiver.setItems(e.value, this.current_motivator);
 		});
 	},
 	getRelativeRequestsGroups: function(space, only_models) {
