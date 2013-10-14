@@ -677,7 +677,7 @@ FastEventor.prototype = {
 				if (opts && 'soft_reg' in opts && !opts.soft_reg){
 					cb.apply(context, reg_args);
 				} else {
-					pushToCbsFlow(cb, context, reg_args, false, callbacks_wrapper, this.sputnik);
+					pushToCbsFlow(cb, context, reg_args, false, callbacks_wrapper, this.sputnik, this.current_motivator);
 				}
 			}
 		}
@@ -1029,17 +1029,30 @@ FastEventor.prototype = {
 
 spv.Class.extendTo(provoda.Eventor, {
 	init: function(){
-		
 		this.evcompanion = new FastEventor(this);
-
-
-
 		return this;
 	},
-	
-	
-	nextTick: function(fn, args, arg) {
-		pushToCbsFlow(fn, this, args, arg);
+	hndMotivationWrappper: function(motivator, fn, context, args, arg) {
+		var old_value = this.current_motivator;
+		this.current_motivator = motivator;
+		if (args){
+			fn.apply(context, args);
+		} else {
+			fn.call(context, arg);
+		}
+		if (this.current_motivator != motivator){
+			throw new Error('wrong motivator'); //fixme
+		}
+		this.current_motivator = old_value;
+	},
+	useMotivator: function(item, motivator, fn) {
+		var old_value = item.current_motivator;
+		item.current_motivator = motivator;
+		fn.call(this);
+		item.current_motivator = old_value;
+	},
+	nextTick: function(fn, use_current_motivator) {
+		pushToCbsFlow(fn, this, false, false, this.hndMotivationWrappper, this, use_current_motivator && this.current_motivator);
 	},
 	once: function(namespace, cb, opts) {
 		return this.evcompanion.once(namespace, cb, opts);
@@ -1126,32 +1139,19 @@ provoda.Eventor.extendTo(provoda.StatesEmitter, {
 		this.conx_opts = null;
 		this.collecting_states_changing = null;
 		this.zdsv = null;
-		this.current_motivator = null;
+		this.current_motivator = this.current_motivator || null;
 
 
 		this.states = {};
 		this.complex_states_index = {};
 		this.complex_states_watchers = [];
 		this.states_changing_stack = [];
-		this.onRegistration(this.checkVIPStReg, this.stVIPEvRegHandler, this.hndStateChEvCallbacksWrappper);
+		this.onRegistration(this.checkVIPStReg, this.stVIPEvRegHandler, this.hndMotivationWrappper);
 
-		this.onRegistration(this.checkStReg, this.stEvRegHandler, this.hndStateChEvCallbacksWrappper);
+		this.onRegistration(this.checkStReg, this.stEvRegHandler, this.hndMotivationWrappper);
 		//this.collectCompxs();
 
 		return this;
-	},
-	hndStateChEvCallbacksWrappper: function(motivator, fn, context, args, arg) {
-		var old_value = this.current_motivator;
-		this.current_motivator = motivator;
-		if (args){
-			fn.apply(context, args);
-		} else {
-			fn.call(context, arg);
-		}
-		if (this.current_motivator != motivator){
-			throw new Error('wrong motivator'); //fixme
-		}
-		this.current_motivator = old_value;
 	},
 	stVIPEvRegHandler: function(cb, namespace) {
 		var state_name = namespace.replace('vip_state_change-', '');
@@ -1619,7 +1619,7 @@ provoda.StatesEmitter.extendTo(provoda.Model, {
 
 		this.req_order_field = null;
 
-		this.onRegistration(this.checkChildChangeReg, this.stChildChEvRegHandler, this.hndStateChEvCallbacksWrappper);
+		this.onRegistration(this.checkChildChangeReg, this.stChildChEvRegHandler, this.hndMotivationWrappper);
 
 		this._provoda_id = models_counters++;
 		this.states = {};
