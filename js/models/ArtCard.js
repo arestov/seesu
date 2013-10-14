@@ -38,12 +38,15 @@ AlbumsList = function() {};
 LoadableList.extendTo(AlbumsList, {
 	model_name: 'albslist',
 	main_list_name: 'albums_list',
-	makeDataItem: function(obj, start_song) {
+	makeDataItem: function(obj) {
 		var pl = new ArtistAlbumSongs();
-		pl.init({
-			map_parent: this,
-			app: this.app
-		}, obj);
+		this.useMotivator(pl, function() {
+			pl.init({
+				map_parent: this,
+				app: this.app
+			}, obj);
+		});
+		
 		return pl;
 	},
 	compareItemWithObj: function(item, data) {

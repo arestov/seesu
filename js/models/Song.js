@@ -172,14 +172,16 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			}
 		},
 		initHeavyPart: provoda.getOCF('izheavy', function() {
-			var _this = this;
 			var omo = this.omo;
 
 			this.mf_cor = new MfCor();
-			this.mf_cor.init({
-				mo: this,
-				omo: this.omo
-			}, omo.file);
+			this.useMotivator(this.mf_cor, function() {
+				this.mf_cor.init({
+					mo: this,
+					omo: this.omo
+				}, omo.file);
+			});
+			
 
 			if (omo.file){
 				this.updateState('playable', true);

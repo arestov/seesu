@@ -151,7 +151,7 @@ provoda.Model.extendTo(MfCor, {
 	},
 	hndTrackNameCh: function(e) {
 		if (e.value){
-			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track});
+			this.files_investg = this.mo.mp3_search.getFilesInvestg({artist: this.mo.artist, track: this.mo.track}, this.current_motivator);
 			this.bindInvestgChanges();
 			this.mo.bindFilesSearchChanges();
 			if (this.last_search_opts){

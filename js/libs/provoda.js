@@ -1045,10 +1045,11 @@ spv.Class.extendTo(provoda.Eventor, {
 		}
 		this.current_motivator = old_value;
 	},
-	useMotivator: function(item, motivator, fn) {
+	useMotivator: function(item, fn, motivator) {
 		var old_value = item.current_motivator;
+		motivator = motivator || this.current_motivator;
 		item.current_motivator = motivator;
-		fn.call(this);
+		fn.call(this, item);
 		item.current_motivator = old_value;
 	},
 	nextTick: function(fn, use_current_motivator) {
