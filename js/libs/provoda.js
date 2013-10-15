@@ -2008,8 +2008,6 @@ spv.Class.extendTo(Template, {
 		this.parsed_pv_views = [];
 		this.pv_repeats = {};
 		this.children_templates = {};
-		this.directives_names_list = [];
-		this.scope_g_list = [];
 
 		this.states_watchers = [];
 		this.stwat_index = {};
@@ -2017,6 +2015,19 @@ spv.Class.extendTo(Template, {
 		this.pv_repeats_data = [];
 
 
+		
+
+		this.parsePvDirectives(this.root_node);
+		if (!angbo || !angbo.interpolateExpressions){
+			console.log('cant parse statements');
+		}
+		if (this.scope){
+			this.setStates(this.scope);
+		}
+	},
+	directives_names_list: [],
+	scope_g_list: [],
+	makeOrderedDirectives: function() {
 		var directive_name;
 		for (directive_name in this.directives){
 			//порядок директив важен, по идее
@@ -2027,14 +2038,6 @@ spv.Class.extendTo(Template, {
 			//порядок директив важен, по идее
 			//должен в результате быть таким каким он задекларирован
 			this.scope_g_list.push(directive_name);
-		}
-
-		this.parsePvDirectives(this.root_node);
-		if (!angbo || !angbo.interpolateExpressions){
-			console.log('cant parse statements');
-		}
-		if (this.scope){
-			this.setStates(this.scope);
 		}
 	},
 	_pvTypesChange: function() {
@@ -2573,6 +2576,52 @@ spv.Class.extendTo(Template, {
 	parseAppended: function(node) {
 		this.parsePvDirectives(node);
 	},
+	getDirectivesData: function(cur_node) {
+		var
+			directives_data = {},
+			i = 0, attr_name = '', directive_name = '', attributes = cur_node.attributes,
+			new_scope_generator = false;// current_data = {node: cur_node};
+
+		var attributes_list = [];
+		for (i = 0; i < attributes.length; i++) {
+			//создаём кэш, список "pv-*" атрибутов
+			attr_name = attributes[i].name;
+			if (attr_name.indexOf('pv-') == 0){
+				attributes_list.push({
+					name: attr_name,
+					node: attributes[i]
+				});
+			}
+
+		}
+		//создаём индекс по имени
+		var attrs_by_names = spv.makeIndexByField(attributes_list, 'name');
+		var value;
+
+		for (i = 0; i < this.scope_g_list.length; i++) {
+			//проверяем есть ли среди атрибутов директивы создающие новую область видимости
+			directive_name = this.scope_g_list[i];
+			if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
+				if (new_scope_generator){
+					throw new Error('can\'t be mulpyiply scrope generators on one node');
+				}
+				value = attrs_by_names[directive_name][0].node.value;
+				
+				directives_data[directive_name] = value;
+				directives_data.new_scope_generator = true;
+				new_scope_generator = true;
+			}
+		}
+		for (i = 0; i < this.directives_names_list.length; i++) {
+			//проверяем остальные директивы нода
+			directive_name = this.directives_names_list[i];
+			if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
+				value = attrs_by_names[directive_name][0].node.value;
+				directives_data[directive_name] = value;
+			}
+		}
+		return directives_data;
+	},
 	parsePvDirectives: function(start_node) {
 		var match_stack =[];
 
@@ -2584,56 +2633,56 @@ spv.Class.extendTo(Template, {
 
 		var vroot_node = this.root_node_raw;
 
+
+		var list_for_binding = [];
+
 		while (match_stack.length){
 			var cur_node = match_stack.shift();
 			if (cur_node.nodeType != 1){
 				continue;
 			}
-			var
-				i = 0, attr_name = '', directive_name = '', attributes = cur_node.attributes,
-				new_scope_generator = false;// current_data = {node: cur_node};
+			var i = 0, directives_data = this.getDirectivesData(cur_node),
+				is_root_node = vroot_node === cur_node;
 
-			var attributes_list = [];
-			for (i = 0; i < attributes.length; i++) {
-				//создаём кэш, список "pv-*" атрибутов
-				attr_name = attributes[i].name;
-				if (attr_name.indexOf('pv-') == 0){
-					attributes_list.push({
-						name: attr_name,
-						node: attributes[i]
-					});
-				}
-
-			}
-			//создаём индекс по имени
-			var attrs_by_names = spv.makeIndexByField(attributes_list, 'name');
-
-
-			if (vroot_node !== cur_node){
-				//проверяем есть ли среди атрибутов директивы создающие новую область видимости
-				for (i = 0; i < this.scope_g_list.length; i++) {
-					directive_name = this.scope_g_list[i];
-					if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
-						this.scope_generators[directive_name].call(this, cur_node, attrs_by_names[directive_name][0].node.value);
-						new_scope_generator = true;
-						break;
-					}
-				}
-			}
-			if (!new_scope_generator){
-				for (i = 0; i < this.directives_names_list.length; i++) {
-					directive_name = this.directives_names_list[i];
-					if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
-						this.handleDirective(directive_name, cur_node, attrs_by_names[directive_name][0].node.value);
-					}
-				}
-
+			if (!directives_data.new_scope_generator || is_root_node){
+				//получаем потомков
 				for (i = 0; i < cur_node.childNodes.length; i++) {
 					match_stack.push(cur_node.childNodes[i]);
 				}
 			}
+			list_for_binding.push({
+				is_root_node: is_root_node,
+				node: cur_node,
+				data: directives_data
+			});
 
 		}
+		var _this = this;
+		list_for_binding.forEach(function(el) {
+			var i = 0;
+			var directive_name;
+			if (!el.is_root_node){
+				//используем директивы генерирующие scope только если это не корневой элемент шаблона
+				for (i = 0; i < _this.scope_g_list.length; i++) {
+					directive_name = _this.scope_g_list[i];
+					if (el.data[directive_name]){
+						_this.scope_generators[directive_name].call(_this, el.node, el.data[directive_name]);
+					}
+					
+				}
+			}
+			if (!el.data.new_scope_generator || el.is_root_node){
+				//используем директивы если это node не генерирующий scope или это корневой элемент шаблона 
+				for (i = 0; i < _this.directives_names_list.length; i++) {
+					directive_name = _this.directives_names_list[i];
+					if (el.data[directive_name]){
+						_this.handleDirective(directive_name, el.node, el.data[directive_name]);
+					}
+					
+				}
+			}
+		});
+
 		this.indexPvViews(this.parsed_pv_views);
 
 		this.pv_views = this.pv_views.concat(this.parsed_pv_views);
@@ -2642,6 +2691,7 @@ spv.Class.extendTo(Template, {
 		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values');
 	}
 });
+Template.prototype.makeOrderedDirectives();
 
 var views_counter = 1;
 var way_points_counter = 0;
