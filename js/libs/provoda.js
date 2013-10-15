@@ -3207,7 +3207,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.dettree_incomplete = this.requestDetalizationLevel(this.detltree_depth);
 		this.detltree_depth++;
 		if (this.dettree_incomplete){
-			this.nextTick(this.__tickDetRequest);
+			this.nextTick(this.__tickDetRequest, true);
 		}
 	},
 	requestDeepDetLevels: function(){
@@ -3225,7 +3225,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.detltree_depth++;
 		}*/
 
-		this.nextTick(this.__tickDetRequest);
+		this.nextTick(this.__tickDetRequest, true);
 		
 		return this;
 	},
