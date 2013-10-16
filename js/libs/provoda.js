@@ -2300,7 +2300,7 @@ spv.Class.extendTo(Template, {
 				}
 				this.bindPropChange(node, prop, statement);
 			}
-			//sample
+			//пример:
 			//"style.width: {{play_progress}} title: {{full_name}} style.background-image: {{album_cover_url}}"
 
 		},
