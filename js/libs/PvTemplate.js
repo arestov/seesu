@@ -29,6 +29,15 @@ var hlpSimplifyValue = function(value) {
 	
 	//return value.replace(this.regxp_spaces,' ').replace(this.regxp_edge_spaces,'');
 };
+var getFieldsTreesBases = function(all_vs) {
+	var sfy_values = new Array(all_vs.length);
+	for (var i = 0; i < all_vs.length; i++) {
+		var parts = all_vs[i].split(DOT);
+		var main_part = parts[0];
+		sfy_values[i] = main_part;
+	}
+	return sfy_values;
+};
 
 spv.Class.extendTo(PvTemplate, {
 	init: function(opts) {
@@ -123,15 +132,6 @@ spv.Class.extendTo(PvTemplate, {
 		}
 		return result;
 	},
-	getFieldsTreesBases: function(all_vs) {
-		var sfy_values = new Array(all_vs.length);
-		for (var i = 0; i < all_vs.length; i++) {
-			var parts = all_vs[i].split(DOT);
-			var main_part = parts[0];
-			sfy_values[i] = main_part;
-		}
-		return sfy_values;
-	},
 	scope_generators:{
 		'pv-nest': function(node, full_declaration) {
 			var attr_value = full_declaration;
@@ -219,7 +219,7 @@ spv.Class.extendTo(PvTemplate, {
 			var calculator = angbo.parseExpression(rhs);
 
 			var all_values = calculator.propsToWatch;
-			var sfy_values = this.getFieldsTreesBases(all_values);
+			var sfy_values = getFieldsTreesBases(all_values);
 			var field_name = sfy_values[0];
 
 			var original_fv;
@@ -460,6 +460,7 @@ spv.Class.extendTo(PvTemplate, {
 			this.all_vs = all_vs;
 			this.simplifyValue = opts.simplifyValue;
 			this.setValue = opts.setValue;
+			this.sfy_values = calculator ? getFieldsTreesBases(this.all_vs) : null;
 
 		};
 		StandartChange.prototype = {
@@ -493,11 +494,11 @@ spv.Class.extendTo(PvTemplate, {
 			}
 			twchd.current_value = original_value;
 
-			var sfy_values = this.getFieldsTreesBases(standch.all_vs);
+			//var sfy_values = getFieldsTreesBases(standch.all_vs);
 
 			this.states_watchers.push({
 				values: standch.all_vs,
-				sfy_values: sfy_values,
+				sfy_values: standch.sfy_values,
 				checkFunc: function(states) {
 					standch.checkFunc(states, twchd);
 				}
