@@ -132,6 +132,11 @@ spv.Class.extendTo(PvTemplate, {
 		}
 		return result;
 	},
+	scope_generators_:{
+		'pv-nest': function(node, full_declaration) {
+
+		}
+	},
 	scope_generators:{
 		'pv-nest': function(node, full_declaration) {
 			var attr_value = full_declaration;
@@ -212,8 +217,7 @@ spv.Class.extendTo(PvTemplate, {
 			//end of angular.js code
 
 
-			var comment_anchor = document.createComment('pv-repeat anchor for: ' + expression);
-			$(node).after(comment_anchor).remove();
+			
 
 			var _this = this;
 			var calculator = angbo.parseExpression(rhs);
@@ -225,6 +229,9 @@ spv.Class.extendTo(PvTemplate, {
 			var original_fv;
 			var old_nodes = [];
 
+			var comment_anchor = document.createComment('pv-repeat anchor for: ' + expression);
+			$(node).after(comment_anchor).remove();
+			
 			this.states_watchers.push({
 				values: calculator.propsToWatch,
 				sfy_values: sfy_values,
@@ -297,6 +304,15 @@ spv.Class.extendTo(PvTemplate, {
 			});
 		}
 	},
+	convertFieldname: function(prop_name) {
+		var parts = prop_name.replace(/^-/, '').split('-');
+		if (parts.length > 1){
+			for (var i = 1; i < parts.length; i++) {
+				parts[i] = spv.capitalize(parts[i]);
+			}
+		}
+		return parts.join('');
+	},
 	regxp_spaces: /\s+/gi,
 	regxp_edge_spaces: /^\s+|\s+$/gi,
 	regxp_props_com: /\S[\S\s]*?\:[\S\s]*?\{\{[\S\s]*?\}\}/gi,
@@ -320,6 +336,47 @@ spv.Class.extendTo(PvTemplate, {
 				simplifyValue: hlpSimplifyValue
 			});
 		},
+		'pv-props': function(node, full_declaration) {
+			var result = [];
+			var complex_value = full_declaration;
+			var complects = complex_value.match(this.regxp_props_com);
+			for (var i = 0; i < complects.length; i++) {
+				complects[i] = complects[i].replace(this.regxp_props_spaces,'').split(this.regxp_props_coms_part);
+				var prop = complects[i][0];
+				var statement = complects[i][1] && complects[i][1].replace(this.regxp_props_statement,'');
+
+				if (!prop || !statement){
+					throw new Error('wrong declaration: ' + complex_value);
+					//return;
+				}
+				var item = this.createPropChange(node, prop, statement);
+				if (item){
+					result.push(item);
+				}
+				
+			}
+			return result;
+			//пример:
+			//"style.width: {{play_progress}} title: {{full_name}} style.background-image: {{album_cover_url}}"
+		}
+	},
+
+	createPropChange: function(node, prop, statement) {
+		var parts = prop.split(DOT);
+		for (var i = 0; i < parts.length; i++) {
+			parts[i] = this.convertFieldname(parts[i]);
+		}
+		prop = parts.join(DOT);
+
+		return this.createStandCh(node, {
+			statement: statement,
+			getValue: function(node) {
+				return spv.getTargetField(node, prop);
+			},
+			setValue: function(node, value) {
+				return spv.setTargetField(node, prop, value || '');
+			}
+		});
 	},
 	createStandCh: function(node, opts) {
 		var standch = new this.StandartChange(opts, this, node);
@@ -340,42 +397,21 @@ spv.Class.extendTo(PvTemplate, {
 				this.states_watchers.push(wwtch);
 			}
 		},
-		'pv-props': function(node, full_declaration) {
-			var complex_value = full_declaration;
-			var complects = complex_value.match(this.regxp_props_com);
-			for (var i = 0; i < complects.length; i++) {
-				complects[i] = complects[i].replace(this.regxp_props_spaces,'').split(this.regxp_props_coms_part);
-				var prop = complects[i][0];
-				var statement = complects[i][1] && complects[i][1].replace(this.regxp_props_statement,'');
-
-				if (!prop || !statement){
-					throw new Error('wrong declaration: ' + complex_value);
-					//return;
+		'pv-props': function(node, standches) {
+			if (standches){
+				for (var i = 0; i < standches.length; i++) {
+					var wwtch = standches[i].createBinding(node);
+					this.states_watchers.push(wwtch);
 				}
-				this.bindPropChange(node, prop, statement);
 			}
-			//пример:
-			//"style.width: {{play_progress}} title: {{full_name}} style.background-image: {{album_cover_url}}"
-
 		},
 		'pv-anchor': function(node, full_declaration) {
 			var anchor_name = full_declaration;
-			//if (typeof anchor_name)
-
 			if (this.ancs[anchor_name]){
 				throw new Error('anchors exists');
 			} else {
 				this.ancs[anchor_name] = $(node);
 			}
-
-			/*
-			.getAttribute('pv-anchor');
-
-			if (typeof anchor_name == 'string'){
-				
-			}
-			*/
-
 		},
 		'pv-type': function(node, full_declaration) {
 			if (!full_declaration){
@@ -432,32 +468,7 @@ spv.Class.extendTo(PvTemplate, {
 			node.className = new_value;
 		}
 	},
-	convertFieldname: function(prop_name) {
-		var parts = prop_name.replace(/^-/, '').split('-');
-		if (parts.length > 1){
-			for (var i = 1; i < parts.length; i++) {
-				parts[i] = spv.capitalize(parts[i]);
-			}
-		}
-		return parts.join('');
-	},
-	bindPropChange: function(node, prop, statement) {
-		var parts = prop.split(DOT);
-		for (var i = 0; i < parts.length; i++) {
-			parts[i] = this.convertFieldname(parts[i]);
-		}
-		prop = parts.join(DOT);
 
-		this.bindStandartChange(node, {
-			statement: statement,
-			getValue: function(node) {
-				return spv.getTargetField(node, prop);
-			},
-			setValue: function(node, value) {
-				return spv.setTargetField(node, prop, value || '');
-			}
-		});
-	},
 	StandartChange: (function() {
 		var StandartChange = function(opts, context, node) {
 			var calculator = opts.calculator;
