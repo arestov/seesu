@@ -303,23 +303,42 @@ spv.Class.extendTo(PvTemplate, {
 	regxp_props_spaces: /^\s*|s*?$/,
 	regxp_props_coms_part: /\s*\:\s*?(?=\{\{)/,
 	regxp_props_statement: /(^\{\{)|(\}\}$)/gi,
-	directives: {
-		'pv-text': function(node, full_declaration){
-			this.bindStandartChange(node, {
+	directives_p: {
+		'pv-text': function(node, full_declaration) {
+			return this.createStandCh(node, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getTextValue,
 				setValue: this.dom_helpres.setTextValue
 			});
-
 		},
 		'pv-class': function(node, full_declaration) {
 			full_declaration = hlpSimplifyValue(full_declaration);
-			this.bindStandartChange(node, {
+			return this.createStandCh(node, {
 				complex_statement: full_declaration,
 				getValue: this.dom_helpres.getClassName,
 				setValue: this.dom_helpres.setClassName,
 				simplifyValue: hlpSimplifyValue
 			});
+		},
+	},
+	createStandCh: function(node, opts) {
+		var standch = new this.StandartChange(opts, this, node);
+		if (standch.calculator){
+			return standch;
+		}
+	},
+	directives: {
+		'pv-text': function(node, standch){
+			if (standch){
+				var wwtch = standch.createBinding(node);
+				this.states_watchers.push(wwtch);
+			}
+		},
+		'pv-class': function(node, standch) {
+			if (standch){
+				var wwtch = standch.createBinding(node);
+				this.states_watchers.push(wwtch);
+			}
 		},
 		'pv-props': function(node, full_declaration) {
 			var complex_value = full_declaration;
@@ -602,8 +621,8 @@ spv.Class.extendTo(PvTemplate, {
 			array[i]
 		}
 	},*/
-	handleDirective: function(directive_name, node, full_declaration, result_cache) {
-		this.directives[directive_name].call(this, node, full_declaration, result_cache);
+	handleDirective: function(directive_name, node, full_declaration) {
+		this.directives[directive_name].call(this, node, full_declaration);
 	},
 	indexPvViews: function(array) {
 		var result = this.children_templates;
@@ -680,7 +699,12 @@ spv.Class.extendTo(PvTemplate, {
 			directive_name = this.directives_names_list[i];
 			if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
 				value = attrs_by_names[directive_name][0].node.value;
+				
+				if (this.directives_p[directive_name]){
+					value = this.directives_p[directive_name].call(this, cur_node, value);
+				}
 				directives_data[directive_name] = value;
+				
 			}
 		}
 		return directives_data;
