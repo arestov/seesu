@@ -378,9 +378,8 @@ spv.Class.extendTo(PvTemplate, {
 					}
 					this._pvTypesChange();
 				},
-				simplifyValue: hlpSimplifyValue,
-				direct_check: true
-			});
+				simplifyValue: hlpSimplifyValue
+			}, true);
 
 			//
 		},
@@ -441,7 +440,7 @@ spv.Class.extendTo(PvTemplate, {
 		});
 	},
 	StandartChange: (function() {
-		var StandartChange = function(opts, context) {
+		var StandartChange = function(opts, context, node) {
 			var calculator = opts.calculator;
 			var all_vs;
 			if (!calculator){
@@ -460,7 +459,16 @@ spv.Class.extendTo(PvTemplate, {
 			this.all_vs = all_vs;
 			this.simplifyValue = opts.simplifyValue;
 			this.setValue = opts.setValue;
+			this.getValue = opts.getValue;
 			this.sfy_values = calculator ? getFieldsTreesBases(this.all_vs) : null;
+
+			if (calculator){
+				var original_value = this.getValue.call(this.context, node);
+				if (this.simplifyValue){
+					original_value = this.simplifyValue.call(this, original_value);
+				}
+				this.original_value = original_value;
+			}
 
 		};
 		StandartChange.prototype = {
@@ -474,38 +482,37 @@ spv.Class.extendTo(PvTemplate, {
 					this.setValue.call(_this, twchd.node, new_value, twchd.current_value);
 					twchd.current_value = new_value;
 				}
+			},
+			createBinding: function(node, check_at_once) {
+				var nothing;
+				var twchd = {
+					node: node,
+					current_value: nothing
+				};
+				twchd.current_value = this.original_value;
+				//var sfy_values = getFieldsTreesBases(standch.all_vs);
+				var _this = this;
+				var wwtch = {
+					values: this.all_vs,
+					sfy_values: this.sfy_values,
+					twchd: twchd,
+					checkFunc: function(states) {
+						_this.checkFunc(states, twchd);
+					}
+				};
+				if (check_at_once){
+					this.checkFunc({}, twchd);
+				}
+				return wwtch;
 			}
 		};
 		return StandartChange;
 	})(),
-	bindStandartChange: function(node, opts) {
-		var nothing;
-		var twchd = {
-			node: node,
-			current_value: nothing
-		};
-
-		var standch = new this.StandartChange(opts, this);
-
+	bindStandartChange: function(node, opts, check_at_once) {
+		var standch = new this.StandartChange(opts, this, node);
 		if (standch.calculator){
-			var original_value = opts.getValue.call(this, twchd.node);
-			if (opts.simplifyValue){
-				original_value = opts.simplifyValue.call(this, original_value);
-			}
-			twchd.current_value = original_value;
-
-			//var sfy_values = getFieldsTreesBases(standch.all_vs);
-
-			this.states_watchers.push({
-				values: standch.all_vs,
-				sfy_values: standch.sfy_values,
-				checkFunc: function(states) {
-					standch.checkFunc(states, twchd);
-				}
-			});
-			if (opts.direct_check){
-				standch.checkFunc({}, twchd);
-			}
+			var wwtch = standch.createBinding(node, check_at_once);
+			this.states_watchers.push(wwtch);
 		}
 	},
 	bindEvents: function(node, event_name, data, event_opts) {
@@ -566,9 +573,6 @@ spv.Class.extendTo(PvTemplate, {
 		for (i = 0; i < matched.length; i++) {
 			matched[i].checkFunc(states_summ);
 		}
-
-		
-
 	},
 	getStatesSumm: function(states) {
 		var states_summ;
