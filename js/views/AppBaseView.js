@@ -1,4 +1,4 @@
-define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv'], function(provoda, spv, $, filters, app_serv){
+define(['provoda', 'spv', 'jquery','./modules/filters', 'app_serv', 'js/libs/PvTemplate'], function(provoda, spv, $, filters, app_serv, PvTemplate){
 "use strict";
 var transform_props = [app_serv.app_env.transform];
 //['-webkit-transform', '-moz-transform', '-o-transform', 'transform'];
@@ -211,17 +211,33 @@ provoda.View.extendTo(AppBaseView, {
 		}
 	},
 	getSample: function(name) {
-		var sample_node = this.samples[name];
-		if (!sample_node){
-			sample_node = this.samples[name] = this.els.ui_samples.children('.' + name);
+		var sampler = this.samples[name], sample_node;
+
+		//
+		if (!sampler){
+			sample_node = this.els.ui_samples.children('.' + name);
+			sample_node = sample_node[0];
+			if (sample_node){
+				sampler = this.samples[name] = new PvTemplate.SimplePVSampler(sample_node);
+			}
+			
 		}
-		if (!sample_node[0]){
-			sample_node = this.samples[name] = this.requirePart(name);
+		if (!sampler){
+			sample_node = $(this.requirePart(name));
+			sample_node = sample_node[0];
+			if (sample_node){
+				sampler = this.samples[name] = new PvTemplate.SimplePVSampler(sample_node);
+			}
+			
 		}
-		if (!sample_node[0]){
+		if (!sampler){
 			throw new Error('no such sample');
 		}
-		return $(sample_node).clone();
+		if (sampler.getClone){
+			return $(sampler.getClone());
+		} else {
+			return $(sampler).clone();
+		}
 	},
 	animationMark: function(models, prop, anid) {
 		for (var i = 0; i < models.length; i++) {

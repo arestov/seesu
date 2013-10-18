@@ -2282,7 +2282,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			$(anchor).after(con);
 			//anchor.parentNode.insertBefore(con[0], anchor.nextSibling);
 			this._anchor = null;
-			$(anchor).remove();
+			$(anchor).detach();
 			this.setVisState('con_appended', true);
 		} else if (con && con.parent()[0]){
 			this.setVisState('con_appended', true);
@@ -2798,7 +2798,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}
 
 		if (pv_view.node){
-			$(pv_view.node).remove();
+			$(pv_view.node).detach();
 			pv_view.node = null;
 		}
 		
@@ -2813,7 +2813,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 			if (view){
 				if (!node_to_use){
-					node_to_use = pv_view.original_node.cloneNode(true);
+					//node_to_use = pv_view.original_node.cloneNode(true);
+					node_to_use = pv_view.sampler.getClone();
 				}
 				view.pv_view_node = $(node_to_use);
 				//var model_name = mmm.model_name;

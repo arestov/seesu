@@ -29,6 +29,81 @@ var hlpSimplifyValue = function(value) {
 	
 	//return value.replace(this.regxp_spaces,' ').replace(this.regxp_edge_spaces,'');
 };
+var hndPVRepeat = function(states) {
+	var wwtch = this;
+	var new_fv = spv.getTargetField(states, wwtch.field_name);
+	var context = wwtch.context;
+	var node = wwtch.node;
+	var old_nodes = wwtch.old_nodes;
+	var repeat_data = wwtch.repeat_data;
+	var field_name = wwtch.field_name;
+	var valueIdent = wwtch.valueIdent;
+	var keyIdent = wwtch.keyIdent;
+	var comment_anchor = wwtch.comment_anchor;
+	var sampler = wwtch.sampler;
+	/*var new_value = calculator(states);
+	if (simplifyValue){
+		new_value = simplifyValue.call(_this, new_value);
+	}*/
+
+	if (wwtch.original_fv != new_fv){
+		var repeats_array = [];
+		repeat_data.array = [];
+		context.pv_types_collecting = true;
+
+		$(old_nodes).detach();
+		old_nodes.length = 0;
+
+		wwtch.original_fv = new_fv;
+		var collection = wwtch.calculator(states);
+
+		var prev_node;
+
+		var full_pv_context = '';
+		if (context.pv_repeat_context){
+			full_pv_context = context.pv_repeat_context + '.$.';
+		}
+		full_pv_context += field_name;
+
+		var fragt = document.createDocumentFragment();
+
+		for (var i = 0; i < collection.length; i++) {
+			var scope = {};
+			scope[valueIdent] = collection[i];
+			if (keyIdent) {scope[keyIdent] = i;}
+			scope.$index = i;
+
+			scope.$first = (i === 0);
+			scope.$last = (i === (collection.length - 1));
+			scope.$middle = !(scope.$first || scope.$last);
+
+			var cur_node = sampler.getClone();
+			var template = new PvTemplate();
+
+
+			template.init({
+				node: cur_node,
+				pv_repeat_context: full_pv_context,
+				scope: scope,
+				callCallbacks: context.sendCallback
+			});
+			old_nodes.push(cur_node);
+			$(fragt).append(cur_node);
+			appendSpace(fragt);
+			prev_node = cur_node;
+			repeats_array.push(template);
+			repeat_data.array.push(template);
+		}
+		$(comment_anchor).after(fragt);
+		context.pv_repeats[full_pv_context] = repeats_array;
+		context.pv_types_collecting = false;
+		context._pvTypesChange();
+
+	//	setValue.call(_this, node, attr_obj, new_value, original_value);
+	//	original_value = new_value;
+	}
+};
+
 var getFieldsTreesBases = function(all_vs) {
 	var sfy_values = new Array(all_vs.length);
 	for (var i = 0; i < all_vs.length; i++) {
@@ -38,59 +113,23 @@ var getFieldsTreesBases = function(all_vs) {
 	}
 	return sfy_values;
 };
+var template_struc_store = {};
+var template_struc_counter = 0;
 
-spv.Class.extendTo(PvTemplate, {
-	init: function(opts) {
-		this.pv_types_collecting = false;
-		this.states_inited = false;
-		this.waypoints = null;
-
-		this.pv_views = null;
-		this.parsed_pv_views = null;
-
-		this.stwat_index = null;
-
-		this.root_node = opts.node;
-		this.root_node_raw = this.root_node[0] || this.root_node;
-		this.pv_repeat_context = null;
-		if (opts.pv_repeat_context){
-			this.pv_repeat_context = opts.pv_repeat_context;
-		}
-		this.scope = null;
-		if (opts.scope){
-			this.scope = opts.scope;
-		}
-		this.spec_states = null;
-		if (opts.spec_states){
-			this.spec_states = opts.spec_states;
-		}
-		if (opts.callCallbacks){
-			this.sendCallback = opts.callCallbacks;
-		}
-		this.pvTypesChange = opts.pvTypesChange;
-		this.ancs = {};
-		this.pv_views = [];
-		this.parsed_pv_views = [];
-		this.pv_repeats = {};
-		this.children_templates = {};
-
-		this.states_watchers = [];
-		this.stwat_index = {};
-		this.pv_types = [];
-		this.pv_repeats_data = [];
-
-
-		
-
-		this.parsePvDirectives(this.root_node);
-		if (!angbo || !angbo.interpolateExpressions){
-			console.log('cant parse statements');
-		}
-		if (this.scope){
-			this.setStates(this.scope);
-		}
-	},
+var parser = {
 	directives_names_list: [],
+	scope_generators: {
+		'pv-nest': true,
+		'pv-repeat': true
+	},
+	directives: {
+		'pv-text': true,
+		'pv-class': true,
+		'pv-props': true,
+		'pv-anchor': true,
+		'pv-type': true,
+		'pv-events': true
+	},
 	scope_g_list: [],
 	makeOrderedDirectives: function() {
 		var directive_name;
@@ -105,32 +144,110 @@ spv.Class.extendTo(PvTemplate, {
 			this.scope_g_list.push(directive_name);
 		}
 	},
-	_pvTypesChange: function() {
-		if (this.pv_types_collecting){
-			return;
-		} else {
-			if (this.pvTypesChange){
-				this.pvTypesChange.call(this, this.getTypedNodes());
+	regxp_spaces: /\s+/gi,
+	regxp_edge_spaces: /^\s+|\s+$/gi,
+	regxp_props_com: /\S[\S\s]*?\:[\S\s]*?\{\{[\S\s]*?\}\}/gi,
+	regxp_props_spaces: /^\s*|s*?$/,
+	regxp_props_coms_part: /\s*\:\s*?(?=\{\{)/,
+	regxp_props_statement: /(^\{\{)|(\}\}$)/gi,
+	dom_helpres: {
+		getTextValue: function(node) {
+			return $(node).text();
+		},
+		setTextValue: function(node, new_value) {
+			$(node).text(new_value);
+		},
+		getClassName: function(node) {
+			return node.className;
+		},
+		setClassName: function(node, new_value) {
+			node.className = new_value;
+		},
+		getPVTypes: function() {
+			return '';
+		},
+		setPVTypes: function(node, new_value, ov, wwtch){
+			var types = new_value.split(this.regxp_spaces);
+			wwtch.pv_type_data.marks = {};
+			for (var i = 0; i < types.length; i++) {
+				if (types[i]){
+					wwtch.pv_type_data.marks[types[i]] = true;
+				}
 			}
+			wwtch.context._pvTypesChange();
 		}
 	},
-	getTypedNodes: function() {
-		var result = [];
-		var objs = [this];
-		while (objs.length){
-			var cur = objs.shift();
-			if (cur.pv_types.length){
-				result.push(cur.pv_types);
-			}
+	directives_p: {
+		'pv-text': function(node, full_declaration) {
+			return this.createStandCh(node, {
+				complex_statement: full_declaration,
+				getValue: this.dom_helpres.getTextValue,
+				setValue: this.dom_helpres.setTextValue
+			});
+		},
+		'pv-class': function(node, full_declaration) {
+			full_declaration = hlpSimplifyValue(full_declaration);
+			return this.createStandCh(node, {
+				complex_statement: full_declaration,
+				getValue: this.dom_helpres.getClassName,
+				setValue: this.dom_helpres.setClassName,
+				simplifyValue: hlpSimplifyValue
+			});
+		},
+		'pv-props': function(node, full_declaration) {
+			var result = [];
+			var complex_value = full_declaration;
+			var complects = complex_value.match(this.regxp_props_com);
+			for (var i = 0; i < complects.length; i++) {
+				complects[i] = complects[i].replace(this.regxp_props_spaces,'').split(this.regxp_props_coms_part);
+				var prop = complects[i][0];
+				var statement = complects[i][1] && complects[i][1].replace(this.regxp_props_statement,'');
 
-			for (var i = 0; i < cur.pv_repeats_data.length; i++) {
-				if (cur.pv_repeats_data[i].array){
-					objs = objs.concat(cur.pv_repeats_data[i].array);
+				if (!prop || !statement){
+					throw new Error('wrong declaration: ' + complex_value);
+					//return;
 				}
-
+				var item = this.createPropChange(node, prop, statement);
+				if (item){
+					result.push(item);
+				}
+				
 			}
+			return result;
+			//пример:
+			//"style.width: {{play_progress}} title: {{full_name}} style.background-image: {{album_cover_url}}"
+		},
+		'pv-type': function(node, full_declaration) {
+			if (!full_declaration){
+				return;
+			}
+			full_declaration = hlpSimplifyValue(full_declaration);
+
+			//если pv-types не требует постоянных вычислений (не зависит ни от одного из состояний)
+			//то использующие шаблон ноды могут выдавать общий результирующий объект - это нужно реализовать fixme
+
+			return this.createStandCh(node, {
+				complex_statement: full_declaration,
+				getValue: this.dom_helpres.getPVTypes,
+				setValue: this.dom_helpres.setPVTypes,
+				simplifyValue: hlpSimplifyValue
+			});
+		},
+		'pv-events': function(node, full_declaration) {
+			/*
+			click:Callback
+			mousemove|(sp,pd):MovePoints
+			*/
+			var result = [];
+			var declarations = full_declaration.split(this.regxp_spaces);
+			for (var i = 0; i < declarations.length; i++) {
+				var decr_parts =  declarations[i].split('|');
+				var cur = decr_parts[0].split(':');
+				var dom_event = cur.shift();
+				result.push(this.createPVEventData(dom_event, cur, decr_parts[1]));
+			}
+			return result;
 		}
-		return result;
 	},
 	scope_generators_p:{
 		'pv-nest': function(node, full_declaration) {
@@ -215,138 +332,6 @@ spv.Class.extendTo(PvTemplate, {
 			
 		}
 	},
-	
-	scope_generators:{
-		'pv-nest': function(node, data) {
-			
-
-			//coll_name for_model filter
-			if (typeof data.coll_name == 'string'){
-				this.parsed_pv_views.push({
-					views: [],
-					node: node,
-
-					for_model: data.for_model,
-					view_name: data.view_name,
-					space: data.space,
-					filterFn: data.filterFn
-				});
-			}
-		},
-		'pv-repeat': function(node, data) {
-			if (node == this.root_node){
-				return;
-			}
-			
-			var
-				expression = data.expression,
-				valueIdent = data.valueIdent,
-				keyIdent = data.keyIdent,
-				calculator = data.calculator,
-				sfy_values = data.sfy_values;
-			
-
-
-			var comment_anchor = document.createComment('pv-repeat anchor for: ' + expression);
-			$(node).after(comment_anchor).remove();
-			var repeat_data = {
-				array: null
-			};
-			this.pv_repeats_data.push(repeat_data);
-			var nothing;
-			this.states_watchers.push({
-				node: node,
-				context: this,
-				original_fv: nothing,
-				old_nodes: [],
-				
-				repeat_data: repeat_data,
-				comment_anchor: comment_anchor,
-
-				valueIdent: valueIdent,
-				keyIdent: keyIdent,
-				calculator: calculator,
-				field_name: sfy_values[0],
-
-				values: calculator.propsToWatch,
-				sfy_values: sfy_values,
-				checkFunc: this.hndPVRepeat
-			});
-		}
-	},
-	hndPVRepeat: function(states) {
-		var wwtch = this;
-		var new_fv = spv.getTargetField(states, wwtch.field_name);
-		var context = wwtch.context;
-		var node = wwtch.node;
-		var old_nodes = wwtch.old_nodes;
-		var repeat_data = wwtch.repeat_data;
-		var field_name = wwtch.field_name;
-		var valueIdent = wwtch.valueIdent;
-		var keyIdent = wwtch.keyIdent;
-		var comment_anchor = wwtch.comment_anchor;
-		/*var new_value = calculator(states);
-		if (simplifyValue){
-			new_value = simplifyValue.call(_this, new_value);
-		}*/
-
-		if (wwtch.original_fv != new_fv){
-			var repeats_array = [];
-			repeat_data.array = [];
-			context.pv_types_collecting = true;
-
-			$(old_nodes).remove();
-			old_nodes.length = 0;
-
-			wwtch.original_fv = new_fv;
-			var collection = wwtch.calculator(states);
-
-			var prev_node;
-
-			var full_pv_context = '';
-			if (context.pv_repeat_context){
-				full_pv_context = context.pv_repeat_context + '.$.';
-			}
-			full_pv_context += field_name;
-
-			var fragt = document.createDocumentFragment();
-
-			for (var i = 0; i < collection.length; i++) {
-				var scope = {};
-				scope[valueIdent] = collection[i];
-				if (keyIdent) {scope[keyIdent] = i;}
-				scope.$index = i;
-
-				scope.$first = (i === 0);
-				scope.$last = (i === (collection.length - 1));
-				scope.$middle = !(scope.$first || scope.$last);
-
-				var cur_node = node.cloneNode(true);
-				var template = new PvTemplate();
-
-
-				template.init({
-					node: cur_node,
-					pv_repeat_context: full_pv_context,
-					scope: scope,
-					callCallbacks: context.sendCallback
-				});
-				old_nodes.push(cur_node);
-				$(fragt).append(cur_node);
-				appendSpace(fragt);
-				prev_node = cur_node;
-				repeats_array.push(template);
-				repeat_data.array.push(template);
-			}
-			$(comment_anchor).after(fragt);
-			context.pv_repeats[full_pv_context] = repeats_array;
-			context.pv_types_collecting = false;
-			context._pvTypesChange();
-
-		//	setValue.call(_this, node, attr_obj, new_value, original_value);
-		//	original_value = new_value;
-		}
-	},
 	convertFieldname: function(prop_name) {
 		var parts = prop_name.replace(/^-/, '').split('-');
 		if (parts.length > 1){
@@ -356,84 +341,8 @@ spv.Class.extendTo(PvTemplate, {
 		}
 		return parts.join('');
 	},
-	regxp_spaces: /\s+/gi,
-	regxp_edge_spaces: /^\s+|\s+$/gi,
-	regxp_props_com: /\S[\S\s]*?\:[\S\s]*?\{\{[\S\s]*?\}\}/gi,
-	regxp_props_spaces: /^\s*|s*?$/,
-	regxp_props_coms_part: /\s*\:\s*?(?=\{\{)/,
-	regxp_props_statement: /(^\{\{)|(\}\}$)/gi,
-	directives_p: {
-		'pv-text': function(node, full_declaration) {
-			return this.createStandCh(node, {
-				complex_statement: full_declaration,
-				getValue: this.dom_helpres.getTextValue,
-				setValue: this.dom_helpres.setTextValue
-			});
-		},
-		'pv-class': function(node, full_declaration) {
-			full_declaration = hlpSimplifyValue(full_declaration);
-			return this.createStandCh(node, {
-				complex_statement: full_declaration,
-				getValue: this.dom_helpres.getClassName,
-				setValue: this.dom_helpres.setClassName,
-				simplifyValue: hlpSimplifyValue
-			});
-		},
-		'pv-props': function(node, full_declaration) {
-			var result = [];
-			var complex_value = full_declaration;
-			var complects = complex_value.match(this.regxp_props_com);
-			for (var i = 0; i < complects.length; i++) {
-				complects[i] = complects[i].replace(this.regxp_props_spaces,'').split(this.regxp_props_coms_part);
-				var prop = complects[i][0];
-				var statement = complects[i][1] && complects[i][1].replace(this.regxp_props_statement,'');
 
-				if (!prop || !statement){
-					throw new Error('wrong declaration: ' + complex_value);
-					//return;
-				}
-				var item = this.createPropChange(node, prop, statement);
-				if (item){
-					result.push(item);
-				}
-				
-			}
-			return result;
-			//пример:
-			//"style.width: {{play_progress}} title: {{full_name}} style.background-image: {{album_cover_url}}"
-		},
-		'pv-type': function(node, full_declaration) {
-			if (!full_declaration){
-				return;
-			}
-			full_declaration = hlpSimplifyValue(full_declaration);
-
-			//если pv-types не требует постоянных вычислений (не зависит ни от одного из состояний)
-			//то использующие шаблон ноды могут выдавать общий результирующий объект - это нужно реализовать fixme
-
-			return this.createStandCh(node, {
-				complex_statement: full_declaration,
-				getValue: this.dom_helpres.getPVTypes,
-				setValue: this.dom_helpres.setPVTypes,
-				simplifyValue: hlpSimplifyValue
-			});
-		},
-		'pv-events': function(node, full_declaration) {
-			/*
-			click:Callback
-			mousemove|(sp,pd):MovePoints
-			*/
-			var result = [];
-			var declarations = full_declaration.split(this.regxp_spaces);
-			for (var i = 0; i < declarations.length; i++) {
-				var decr_parts =  declarations[i].split('|');
-				var cur = decr_parts[0].split(':');
-				var dom_event = cur.shift();
-				result.push(this.createPVEventData(dom_event, cur, decr_parts[1]));
-			}
-			return result;
-		}
-	},
+	
 
 	createPropChange: function(node, prop, statement) {
 		var parts = prop.split(DOT);
@@ -458,117 +367,6 @@ spv.Class.extendTo(PvTemplate, {
 			return standch;
 		}
 	},
-	empty_state_obj: {},
-	directives: {
-		'pv-text': function(node, standch){
-			if (standch){
-				var wwtch = standch.createBinding(node);
-				this.states_watchers.push(wwtch);
-			}
-		},
-		'pv-class': function(node, standch) {
-			if (standch){
-				var wwtch = standch.createBinding(node);
-				this.states_watchers.push(wwtch);
-			}
-		},
-		'pv-props': function(node, standches) {
-			if (standches){
-				for (var i = 0; i < standches.length; i++) {
-					var wwtch = standches[i].createBinding(node);
-					this.states_watchers.push(wwtch);
-				}
-			}
-		},
-		'pv-anchor': function(node, full_declaration) {
-			var anchor_name = full_declaration;
-			if (this.ancs[anchor_name]){
-				throw new Error('anchors exists');
-			} else {
-				this.ancs[anchor_name] = $(node);
-			}
-		},
-		'pv-type': function(node, standch) {
-			if (standch){
-				var pv_type_data = {node: node, marks: null};
-				this.pv_types.push(pv_type_data);
-
-				var wwtch = standch.createBinding(node);
-				wwtch.pv_type_data = pv_type_data;
-				this.states_watchers.push(wwtch);
-				wwtch.checkFunc(this.empty_state_obj);
-
-			}
-			//
-		},
-		'pv-events': function(node, pvevents_data) {
-			if (pvevents_data){
-				for (var i = 0; i < pvevents_data.length; i++) {
-					var evdata = pvevents_data[i];
-					this.bindPVEvent(node, evdata);
-				}
-			}
-		}
-	},
-	bindPVEvent: function(node, evdata) {
-		$(node).on(evdata.event_name, evdata.fn);
-	},
-	createPVEventData: function(event_name, data, event_opts) {
-		
-		event_opts = event_opts && event_opts.split(',');
-		var event_handling = {};
-		if (event_opts){
-			for (var i = 0; i < event_opts.length; i++) {
-				event_handling[event_opts[i]] = true;
-			}
-		}
-		
-		if (!this.sendCallback){
-			throw new Error('provide the events callback handler to the Template init func');
-		}
-		var _this = this;
-
-		return {
-			event_name: event_name,
-			fn: function(e) {
-				if (event_handling.sp){
-					e.stopPropagation();
-				}
-				if (event_handling.pd){
-					e.preventDefault();
-				}
-				_this.callEventCallback(this, e, data.slice());
-			}
-		};
-	},
-	dom_helpres: {
-		getTextValue: function(node) {
-			return $(node).text();
-		},
-		setTextValue: function(node, new_value) {
-			$(node).text(new_value);
-		},
-		getClassName: function(node) {
-			return node.className;
-		},
-		setClassName: function(node, new_value) {
-			node.className = new_value;
-		},
-		getPVTypes: function() {
-			return '';
-		},
-		setPVTypes: function(node, new_value, ov, wwtch){
-			var types = new_value.split(this.regxp_spaces);
-			wwtch.pv_type_data.marks = {};
-			for (var i = 0; i < types.length; i++) {
-				if (types[i]){
-					wwtch.pv_type_data.marks[types[i]] = true;
-				}
-			}
-			this._pvTypesChange();
-		}
-	},
-
 	StandartChange: (function() {
 		var StandartChange = function(opts, context, node) {
 			var calculator = opts.calculator;
@@ -613,11 +411,12 @@ spv.Class.extendTo(PvTemplate, {
 					wwtch.current_value = new_value;
 				}
 			},
-			createBinding: function(node) {
+			createBinding: function(node, context) {
 
 				//var sfy_values = getFieldsTreesBases(standch.all_vs);
 				var _this = this;
 				var wwtch = {
+					context: context,
 					node: node,
 					current_value: this.original_value,
 					pv_type_data: null,
@@ -633,6 +432,396 @@ spv.Class.extendTo(PvTemplate, {
 		};
 		return StandartChange;
 	})(),
+	getDirectivesData: function(cur_node) {
+		var
+			directives_data = {},
+			i = 0, attr_name = '', directive_name = '', attributes = cur_node.attributes,
+			new_scope_generator = false;// current_data = {node: cur_node};
+
+		var attributes_list = [];
+		for (i = 0; i < attributes.length; i++) {
+			//создаём кэш, список "pv-*" атрибутов
+			attr_name = attributes[i].name;
+			if (attr_name.indexOf('pv-') == 0){
+				attributes_list.push({
+					name: attr_name,
+					node: attributes[i]
+				});
+			}
+
+		}
+		//создаём индекс по имени
+		var attrs_by_names = spv.makeIndexByField(attributes_list, 'name');
+		var value;
+
+		for (i = 0; i < this.scope_g_list.length; i++) {
+			//проверяем есть ли среди атрибутов директивы создающие новую область видимости
+			directive_name = this.scope_g_list[i];
+			if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
+				if (new_scope_generator){
+					throw new Error('can\'t be mulpyiply scrope generators on one node');
+				}
+				value = attrs_by_names[directive_name][0].node.value;
+
+				if (this.scope_generators_p[directive_name]){
+					value = this.scope_generators_p[directive_name].call(this, cur_node, value);
+				}
+				
+				directives_data[directive_name] = value;
+				directives_data.new_scope_generator = true;
+				new_scope_generator = true;
+			}
+		}
+		for (i = 0; i < this.directives_names_list.length; i++) {
+			//проверяем остальные директивы нода
+			directive_name = this.directives_names_list[i];
+			if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
+				value = attrs_by_names[directive_name][0].node.value;
+				
+				if (this.directives_p[directive_name]){
+					value = this.directives_p[directive_name].call(this, cur_node, value);
+				}
+				directives_data[directive_name] = value;
+				
+			}
+		}
+		return directives_data;
+	},
+	createPVEventData: function(event_name, data, event_opts) {
+		
+		event_opts = event_opts && event_opts.split(',');
+		var event_handling = {};
+		if (event_opts){
+			for (var i = 0; i < event_opts.length; i++) {
+				event_handling[event_opts[i]] = true;
+			}
+		}
+
+
+		return {
+			event_name: event_name,
+			fn: function(e, context) {
+				if (event_handling.sp){
+					e.stopPropagation();
+				}
+				if (event_handling.pd){
+					e.preventDefault();
+				}
+				context.callEventCallback(this, e, data.slice());
+			}
+		};
+	},
+	getPVData: function(cur_node) {
+		var directives_data = null;
+		var pvprsd = cur_node.pvprsd;
+		if (typeof pvprsd != 'undefined'){
+			if (pvprsd){
+				directives_data = template_struc_store[pvprsd];
+			}
+			
+		} else {
+			directives_data = this.getDirectivesData(cur_node);
+			pvprsd = ++template_struc_counter;
+			template_struc_store[pvprsd] = directives_data;
+			cur_node.pvprsd = pvprsd;
+		}
+		return directives_data;
+	},
+	parse: function(start_node) {
+		var match_stack = [start_node], i = 0;
+		while (match_stack.length){
+			var cur_node = match_stack.shift();
+			if (cur_node.nodeType != 1){
+				continue;
+			}
+			this.getPVData(cur_node);
+			for (i = 0; i < cur_node.childNodes.length; i++) {
+				match_stack.push(cur_node.childNodes[i]);
+			}
+		}
+	},
+	parseEasy: function(start_node, vroot_node) {
+		var list_for_binding = [];
+
+		var match_stack = [start_node];
+
+		while (match_stack.length){
+			var cur_node = match_stack.shift();
+			if (cur_node.nodeType != 1){
+				continue;
+			}
+			var i = 0, is_root_node = vroot_node === cur_node,
+				directives_data = this.getPVData(cur_node);
+
+			if (!directives_data.new_scope_generator || is_root_node){
+				//получаем потомков
+				for (i = 0; i < cur_node.childNodes.length; i++) {
+					match_stack.push(cur_node.childNodes[i]);
+				}
+			}
+			list_for_binding.push({
+				is_root_node: is_root_node,
+				node: cur_node,
+				data: directives_data
+			});
+
+		}
+		return list_for_binding;
+	}
+};
+parser.makeOrderedDirectives();
+
+var getAll = function(node) {
+	var result = [];
+	var iteration_list = [ node ];
+	var i = 0;
+	while( iteration_list.length ){
+		var cur_node = iteration_list.shift();
+		if ( cur_node.nodeType != 1 ){
+			continue;
+		}
+		for ( i = 0; i < cur_node.childNodes.length; i++ ) {
+			iteration_list.push( cur_node.childNodes[i] );
+		}
+		result.push( cur_node );
+	}
+	return result;
+};
+
+var SimplePVSampler = function(node) {
+	node = $(node);
+	node = node[0];
+	if (!node){
+		throw new Error('wrong node');
+	}
+	this.onode = node;
+	
+	this.parsed = false;
+};
+SimplePVSampler.prototype.getClone = function() {
+	if (!this.parsed){
+		this.parsed = true;
+		parser.parse(this.onode);
+	}
+	var cloned = this.onode.cloneNode(true);
+
+	var all_onodes = getAll(this.onode);
+	var all_cnodes = getAll(cloned);
+
+	if (all_onodes.length !== all_cnodes.length){
+		throw new Error('something wrong');
+	}
+	for (var i = 0; i < all_onodes.length; i++) {
+		all_cnodes[i].pvprsd = all_onodes[i].pvprsd;
+	}
+	return cloned;
+};
+SimplePVSampler.prototype.clone = SimplePVSampler.prototype.getClone;
+
+spv.Class.extendTo(PvTemplate, {
+	init: function(opts) {
+		this.pv_types_collecting = false;
+		this.states_inited = false;
+		this.waypoints = null;
+
+		this.pv_views = null;
+		this.parsed_pv_views = null;
+
+		this.stwat_index = null;
+
+		this.root_node = opts.node;
+		this.root_node_raw = this.root_node[0] || this.root_node;
+		this.pv_repeat_context = null;
+		if (opts.pv_repeat_context){
+			this.pv_repeat_context = opts.pv_repeat_context;
+		}
+		this.scope = null;
+		if (opts.scope){
+			this.scope = opts.scope;
+		}
+		this.spec_states = null;
+		if (opts.spec_states){
+			this.spec_states = opts.spec_states;
+		}
+		if (opts.callCallbacks){
+			this.sendCallback = opts.callCallbacks;
+		}
+		this.pvTypesChange = opts.pvTypesChange;
+		this.ancs = {};
+		this.pv_views = [];
+		this.parsed_pv_views = [];
+		this.pv_repeats = {};
+		this.children_templates = {};
+
+		this.states_watchers = [];
+		this.stwat_index = {};
+		this.pv_types = [];
+		this.pv_repeats_data = [];
+
+
+		
+
+		this.parsePvDirectives(this.root_node);
+		if (!angbo || !angbo.interpolateExpressions){
+			console.log('cant parse statements');
+		}
+		if (this.scope){
+			this.setStates(this.scope);
+		}
+	},
+	_pvTypesChange: function() {
+		if (this.pv_types_collecting){
+			return;
+		} else {
+			if (this.pvTypesChange){
+				this.pvTypesChange.call(this, this.getTypedNodes());
+			}
+		}
+	},
+	getTypedNodes: function() {
+		var result = [];
+		var objs = [this];
+		while (objs.length){
+			var cur = objs.shift();
+			if (cur.pv_types.length){
+				result.push(cur.pv_types);
+			}
+
+			for (var i = 0; i < cur.pv_repeats_data.length; i++) {
+				if (cur.pv_repeats_data[i].array){
+					objs = objs.concat(cur.pv_repeats_data[i].array);
+				}
+
+			}
+		}
+		return result;
+	},
+	
+	
+	scope_generators:{
+		'pv-nest': function(node, data) {
+			//coll_name for_model filter
+			if (typeof data.coll_name == 'string'){
+				this.parsed_pv_views.push({
+					views: [],
+					node: node,
+					sampler: new SimplePVSampler(node),
+
+					for_model: data.for_model,
+					view_name: data.view_name,
+					space: data.space,
+					filterFn: data.filterFn
+				});
+			}
+		},
+		'pv-repeat': function(node, data) {
+			if (node == this.root_node){
+				return;
+			}
+			
+			var
+				expression = data.expression,
+				valueIdent = data.valueIdent,
+				keyIdent = data.keyIdent,
+				calculator = data.calculator,
+				sfy_values = data.sfy_values;
+			
+
+
+			var comment_anchor = document.createComment('pv-repeat anchor for: ' + expression);
+			$(node).after(comment_anchor).detach();
+			var repeat_data = {
+				array: null
+			};
+			this.pv_repeats_data.push(repeat_data);
+			var nothing;
+			this.states_watchers.push({
+				node: node,
+				context: this,
+				original_fv: nothing,
+				old_nodes: [],
+
+				
+				repeat_data: repeat_data,
+				comment_anchor: comment_anchor,
+
+				
+				sampler: new SimplePVSampler(node),
+				valueIdent: valueIdent,
+				keyIdent: keyIdent,
+				calculator: calculator,
+				field_name: sfy_values[0],
+
+				values: calculator.propsToWatch,
+				sfy_values: sfy_values,
+				checkFunc: hndPVRepeat
+			});
+		}
+	},
+	
+	empty_state_obj: {},
+	directives: {
+		'pv-text': function(node, standch){
+			if (standch){
+				var wwtch = standch.createBinding(node, this);
+				this.states_watchers.push(wwtch);
+			}
+		},
+		'pv-class': function(node, standch) {
+			if (standch){
+				var wwtch = standch.createBinding(node, this);
+				this.states_watchers.push(wwtch);
+			}
+		},
+		'pv-props': function(node, standches) {
+			if (standches){
+				for (var i = 0; i < standches.length; i++) {
+					var wwtch = standches[i].createBinding(node, this);
+					this.states_watchers.push(wwtch);
+				}
+			}
+		},
+		'pv-anchor': function(node, full_declaration) {
+			var anchor_name = full_declaration;
+			if (this.ancs[anchor_name]){
+				throw new Error('anchors exists');
+			} else {
+				this.ancs[anchor_name] = $(node);
+			}
+		},
+		'pv-type': function(node, standch) {
+			if (standch){
+				var pv_type_data = {node: node, marks: null};
+				this.pv_types.push(pv_type_data);
+
+				var wwtch = standch.createBinding(node, this);
+				wwtch.pv_type_data = pv_type_data;
+				this.states_watchers.push(wwtch);
+				wwtch.checkFunc(this.empty_state_obj);
+
+			}
+			//
+		},
+		'pv-events': function(node, pvevents_data) {
+			if (pvevents_data){
+
+				if (!this.sendCallback){
+					throw new Error('provide the events callback handler to the Template init func');
+				}
+				for (var i = 0; i < pvevents_data.length; i++) {
+					var evdata = pvevents_data[i];
+					this.bindPVEvent(node, evdata);
+				}
+			}
+		}
+	},
+	bindPVEvent: function(node, evdata) {
+		var _this = this;
+		$(node).on(evdata.event_name, function(e) {
+			evdata.fn.call(this, e, _this);
+		});
+	},
+	
 
 	callEventCallback: function(node, e, data) {
 		this.sendCallback({
@@ -720,8 +909,10 @@ spv.Class.extendTo(PvTemplate, {
 					storage.comment_anchor = document.createComment('collch anchor for: ' + real_name + ", " + space + ' (by_model_name)');
 					$(cur.node).before(storage.comment_anchor);
 				}
+				//cur.sampler 
 				cur.original_node = cur.node;
-				$(cur.node).remove();
+				//cur.sampler = 
+				$(cur.node).detach();
 
 				storage.index[cur.for_model] = cur;
 			} else {
@@ -736,104 +927,21 @@ spv.Class.extendTo(PvTemplate, {
 	parseAppended: function(node) {
 		this.parsePvDirectives(node);
 	},
-	getDirectivesData: function(cur_node) {
-		var
-			directives_data = {},
-			i = 0, attr_name = '', directive_name = '', attributes = cur_node.attributes,
-			new_scope_generator = false;// current_data = {node: cur_node};
-
-		var attributes_list = [];
-		for (i = 0; i < attributes.length; i++) {
-			//создаём кэш, список "pv-*" атрибутов
-			attr_name = attributes[i].name;
-			if (attr_name.indexOf('pv-') == 0){
-				attributes_list.push({
-					name: attr_name,
-					node: attributes[i]
-				});
-			}
-
-		}
-		//создаём индекс по имени
-		var attrs_by_names = spv.makeIndexByField(attributes_list, 'name');
-		var value;
-
-		for (i = 0; i < this.scope_g_list.length; i++) {
-			//проверяем есть ли среди атрибутов директивы создающие новую область видимости
-			directive_name = this.scope_g_list[i];
-			if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
-				if (new_scope_generator){
-					throw new Error('can\'t be mulpyiply scrope generators on one node');
-				}
-				value = attrs_by_names[directive_name][0].node.value;
-
-				if (this.scope_generators_p[directive_name]){
-					value = this.scope_generators_p[directive_name].call(this, cur_node, value);
-				}
-				
-				directives_data[directive_name] = value;
-				directives_data.new_scope_generator = true;
-				new_scope_generator = true;
-			}
-		}
-		for (i = 0; i < this.directives_names_list.length; i++) {
-			//проверяем остальные директивы нода
-			directive_name = this.directives_names_list[i];
-			if (attrs_by_names[directive_name] && attrs_by_names[directive_name].length){
-				value = attrs_by_names[directive_name][0].node.value;
-				
-				if (this.directives_p[directive_name]){
-					value = this.directives_p[directive_name].call(this, cur_node, value);
-				}
-				directives_data[directive_name] = value;
-				
-			}
-		}
-		return directives_data;
-	},
 	parsePvDirectives: function(start_node) {
-		var match_stack =[];
-
-		//var anchors = [];
-
-
 		start_node = start_node && start_node[0] || start_node;
-		match_stack.push(start_node);
 
 		var vroot_node = this.root_node_raw;
 
 
-		var list_for_binding = [];
-
-		while (match_stack.length){
-			var cur_node = match_stack.shift();
-			if (cur_node.nodeType != 1){
-				continue;
-			}
-			var i = 0, directives_data = this.getDirectivesData(cur_node),
-				is_root_node = vroot_node === cur_node;
-
-			if (!directives_data.new_scope_generator || is_root_node){
-				//получаем потомков
-				for (i = 0; i < cur_node.childNodes.length; i++) {
-					match_stack.push(cur_node.childNodes[i]);
-				}
-			}
-			list_for_binding.push({
-				is_root_node: is_root_node,
-				node: cur_node,
-				data: directives_data
-			});
-
-		}
+		var list_for_binding = parser.parseEasy(start_node, vroot_node);
 		var _this = this;
 		list_for_binding.forEach(function(el) {
 			var i = 0;
 			var directive_name;
 			if (!el.is_root_node){
 				//используем директивы генерирующие scope только если это не корневой элемент шаблона
-				for (i = 0; i < _this.scope_g_list.length; i++) {
-					directive_name = _this.scope_g_list[i];
+				for (i = 0; i < parser.scope_g_list.length; i++) {
+					directive_name = parser.scope_g_list[i];
 					if (el.data[directive_name]){
 						_this.scope_generators[directive_name].call(_this, el.node, el.data[directive_name]);
 					}
@@ -842,8 +950,8 @@ spv.Class.extendTo(PvTemplate, {
 			}
 			if (!el.data.new_scope_generator || el.is_root_node){
 				//используем директивы если это node не генерирующий scope или это корневой элемент шаблона 
-				for (i = 0; i < _this.directives_names_list.length; i++) {
-					directive_name = _this.directives_names_list[i];
+				for (i = 0; i < parser.directives_names_list.length; i++) {
+					directive_name = parser.directives_names_list[i];
 					if (el.data[directive_name]){
 						_this.handleDirective(directive_name, el.node, el.data[directive_name]);
 					}
@@ -860,7 +968,7 @@ spv.Class.extendTo(PvTemplate, {
 		this.stwat_index = spv.makeIndexByField(this.states_watchers, 'sfy_values');
 	}
 });
-PvTemplate.prototype.makeOrderedDirectives();
+PvTemplate.SimplePVSampler = SimplePVSampler;
 
 
 return PvTemplate;
