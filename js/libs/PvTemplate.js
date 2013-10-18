@@ -178,6 +178,100 @@ spv.Class.extendTo(PvTemplate, {
 				space: space,
 				filterFn: filterFn
 			};
+		},
+		'pv-repeat': function(node, full_declaration) {
+			
+
+			//start of angular.js code
+			var expression = full_declaration;//attr.ngRepeat;
+			var match = expression.match(/^\s*(.+)\s+in\s+(.*)\s*$/),
+				lhs, rhs, valueIdent, keyIdent;
+			if (! match) {
+				throw new Error("Expected ngRepeat in form of '_item_ in _collection_' but got '" +
+				expression + "'.");
+			}
+			lhs = match[1];
+			rhs = match[2];
+			match = lhs.match(/^(?:([\$\w]+)|\(([\$\w]+)\s*,\s*([\$\w]+)\))$/);
+			if (!match) {
+				throw new Error("'item' in 'item in collection' should be identifier or (key, value) but got '" +
+				lhs + "'.");
+			}
+			valueIdent = match[3] || match[1];
+			keyIdent = match[2];
+			//end of angular.js code
+
+			var calculator = angbo.parseExpression(rhs);
+			var all_values = calculator.propsToWatch;
+			var sfy_values = getFieldsTreesBases(all_values);
+
+			return {
+				expression: expression,
+				valueIdent: valueIdent,
+				keyIdent: keyIdent,
+				calculator: calculator,
+				sfy_values: sfy_values
+			};
+			
+		}
+	},
+	
+	scope_generators:{
+		'pv-nest': function(node, data) {
+			
+
+			//coll_name for_model filter
+			if (typeof data.coll_name == 'string'){
+				this.parsed_pv_views.push({
+					views: [],
+					node: node,
+
+					for_model: data.for_model,
+					view_name: data.view_name,
+					space: data.space,
+					filterFn: data.filterFn
+				});
+			}
+		},
+		'pv-repeat': function(node, data) {
+			if (node == this.root_node){
+				return;
+			}
+			
+			var
+				expression = data.expression,
+				valueIdent = data.valueIdent,
+				keyIdent = data.keyIdent,
+				calculator = data.calculator,
+				sfy_values = data.sfy_values;
+			
+
+
+			var comment_anchor = document.createComment('pv-repeat anchor for: ' + expression);
+			$(node).after(comment_anchor).remove();
+			var repeat_data = {
+				array: null
+			};
+			this.pv_repeats_data.push(repeat_data);
+			var nothing;
+			this.states_watchers.push({
+				node: node,
+				context: this,
+				original_fv: nothing,
+				old_nodes: [],
+				
+				repeat_data: repeat_data,
+				comment_anchor: comment_anchor,
+
+				valueIdent: valueIdent,
+				keyIdent: keyIdent,
+				calculator: calculator,
+				field_name: sfy_values[0],
+
+				values: calculator.propsToWatch,
+				sfy_values: sfy_values,
+				checkFunc: this.hndPVRepeat
+			});
 		}
 	},
 	hndPVRepeat: function(states) {
@@ -251,80 +345,6 @@ spv.Class.extendTo(PvTemplate, {
 
 		//	setValue.call(_this, node, attr_obj, new_value, original_value);
 		//	original_value = new_value;
-		}
-	},
-	scope_generators:{
-		'pv-nest': function(node, data) {
-			
-
-			//coll_name for_model filter
-			if (typeof data.coll_name == 'string'){
-				this.parsed_pv_views.push({
-					views: [],
-					node: node,
-
-					for_model: data.for_model,
-					view_name: data.view_name,
-					space: data.space,
-					filterFn: data.filterFn
-				});
-			}
-		},
-		'pv-repeat': function(node, full_declaration) {
-			if (node == this.root_node){
-				return;
-			}
-			
-
-			//start of angular.js code
-			var expression = full_declaration;//attr.ngRepeat;
-			var match = expression.match(/^\s*(.+)\s+in\s+(.*)\s*$/),
-				lhs, rhs, valueIdent, keyIdent;
-			if (! match) {
-				throw new Error("Expected ngRepeat in form of '_item_ in _collection_' but got '" +
-				expression + "'.");
-			}
-			lhs = match[1];
-			rhs = match[2];
-			match = lhs.match(/^(?:([\$\w]+)|\(([\$\w]+)\s*,\s*([\$\w]+)\))$/);
-			if (!match) {
-				throw new Error("'item' in 'item in collection' should be identifier or (key, value) but got '" +
-				lhs + "'.");
-			}
-			valueIdent = match[3] || match[1];
-			keyIdent = match[2];
-			//end of angular.js code
-
-			var calculator = angbo.parseExpression(rhs);
-			var all_values = calculator.propsToWatch;
-			var sfy_values = getFieldsTreesBases(all_values);
-
-
-			var comment_anchor = document.createComment('pv-repeat anchor for: ' + expression);
-			$(node).after(comment_anchor).remove();
-			var repeat_data = {
-				array: null
-			};
-			this.pv_repeats_data.push(repeat_data);
-			var nothing;
-			this.states_watchers.push({
-				node: node,
-				context: this,
-				original_fv: nothing,
-				old_nodes: [],
-				
-				repeat_data: repeat_data,
-				comment_anchor: comment_anchor,
-
-				valueIdent: valueIdent,
-				keyIdent: keyIdent,
-				calculator: calculator,
-				field_name: sfy_values[0],
-
-				values: calculator.propsToWatch,
-				sfy_values: sfy_values,
-				checkFunc: this.hndPVRepeat
-			});
 		}
 	},
 	convertFieldname: function(prop_name) {
