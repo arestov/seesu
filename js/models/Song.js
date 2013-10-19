@@ -67,10 +67,10 @@ lfm_share_url_replacers.forEach(function(el, i) {
 			if (e.value){
 				var artcard = this.getNesting('artist');
 				if (artcard){
-					var req = artcard.loaDDD('images');
+					/*var req = artcard.loaDDD('images');
 					if (req){
 						this.addRequest(req);
-					}
+					}*/
 					
 				} else {
 					console.warn('no nested artcard');
