@@ -2537,7 +2537,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		this.dettree_incomplete = this.requestDetalizationLevel(this.detltree_depth);
 		this.detltree_depth++;
 		if (this.dettree_incomplete){
-			this.nextTick(this.__tickDetRequest, true);
+			this.nextTick(this.__tickDetRequest);
 		}
 	},
 	requestDeepDetLevels: function(){
@@ -2555,7 +2555,7 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 			this.detltree_depth++;
 		}*/
 
-		this.nextTick(this.__tickDetRequest, true);
+		this.nextTick(this.__tickDetRequest);
 		
 		return this;
 	},
@@ -2757,7 +2757,8 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 
 			if (view){
 				if (!node_to_use){
-					node_to_use = pv_view.original_node.cloneNode(true);
+					node_to_use = pv_view.sampler.getClone();
+					//node_to_use = pv_view.original_node.cloneNode(true);
 				}
 				view.pv_view_node = $(node_to_use);
 				//var model_name = mmm.model_name;
@@ -2788,10 +2789,10 @@ provoda.StatesEmitter.extendTo(provoda.View, {
 		}, false, name, filtered);
 	},
 	checkCollchItemAgainstPvView: function(name, real_array, space_name, pv_view) {
-		if (!pv_view.original_node){
-			pv_view.original_node = pv_view.node.cloneNode(true);
+	//	if (!pv_view.original_node){
+	//		pv_view.original_node = pv_view.node.cloneNode(true);
 			
-		}
+	//	}
 		if (!pv_view.comment_anchor){
 			pv_view.comment_anchor = document.createComment('collch anchor for: ' + name + ", " + space_name);
 			$(pv_view.node).before(pv_view.comment_anchor);
