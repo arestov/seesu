@@ -6,19 +6,16 @@ var hash_start = /^\#/;
 
 var bindLocationChange = function(hashchangeHandler) {
 	if (history_api){
-		var hash = decodeURI(location.hash).replace(hash_start, '');
+		
 		spv.addEvent(window, 'popstate', function(e){
 			
 			if (!e.state){
 				var newhash = decodeURI(location.hash).replace(hash_start, '');
-				if (newhash != hash){
-					if (typeof hashchangeHandler == 'function'){
-						hashchangeHandler({
-							newURL: newhash
-						});
-					}
+				if (typeof hashchangeHandler == 'function'){
+					hashchangeHandler({
+						newURL: newhash
+					});
 				}
-				hash = newhash;
 			} else {
 				if (typeof hashchangeHandler == 'function'){
 					hashchangeHandler({
