@@ -6,44 +6,10 @@ var hash_start = /^\#/;
 
 var bindLocationChange = function(hashchangeHandler) {
 	if (history_api){
+		var hash = location.hash.replace(hash_start, '');
 		spv.addEvent(window, 'popstate', function(e){
-			console.log(e.state);
-		});
-	} else if ('onhashchange' in window){
-		(function(){
-			var hash = location.hash.replace(hash_start, '');
-			spv.addEvent(window, 'hashchange', function(e){
-				e = e || window.Event;
-				var newhash = location.hash.replace(hash_start, '');
-				if (newhash != hash){
-					var hnew = decodeURI(e.newURL || newhash);
-					var hold = decodeURI(e.oldURL || hash);
-					var have_new_hash = hnew.indexOf('#')+1;
-					var have_old_hash = hold.indexOf('#')+1;
-
-					var o = {
-						newURL: have_new_hash ? hnew.slice(have_new_hash) : '',
-						oldURL: have_old_hash ? hold.slice(have_old_hash) : ''
-					};
-
-
-					var too_fast_hash_change = o.newURL != decodeURI(newhash);
-					if (!too_fast_hash_change){
-						if (typeof hashchangeHandler == 'function'){
-							hashchangeHandler(o);
-						}
-						hash = newhash;
-					}
-
-				}
-			});
-		})();
-
-	} else{
-		(function(){
-			var hash = location.hash.replace(hash_start, '');
-			setInterval(function(){
-				var newhash = location.hash.replace(hash_start, '');
+			var newhash = location.hash.replace(hash_start, '');
+			if (!e.state){
 				if (newhash != hash){
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
@@ -51,7 +17,46 @@ var bindLocationChange = function(hashchangeHandler) {
 							oldURL: hash
 						});
 					}
+				}
+			}
+			
+			hash = newhash;
+			//console.log(e.state);
+		});
+	} else if ('onhashchange' in window){
+		(function(){
+			var hash = decodeURI(location.hash).replace(hash_start, '');
+			spv.addEvent(window, 'hashchange', function(e){
+				e = e || window.Event;
+				var newhash = decodeURI(location.hash).replace(hash_start, '');
+				if (newhash != hash){
+					
+					if (typeof hashchangeHandler == 'function'){
+						hashchangeHandler({
+							newURL: newhash,
+							oldURL: hash
+						});
+					}
+					hash = newhash;
 
+
+				}
+			});
+		})();
+
+	} else{
+		(function(){
+			var hash = decodeURI(location.hash).replace(hash_start, '');
+			setInterval(function(){
+				var newhash = decodeURI(location.hash).replace(hash_start, '');
+				if (newhash != hash){
+					
+					if (typeof hashchangeHandler == 'function'){
+						hashchangeHandler({
+							newURL: newhash,
+							oldURL: hash
+						});
+					}
 					hash = newhash;
 				}
 
