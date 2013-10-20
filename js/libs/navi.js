@@ -1,8 +1,14 @@
 define(['spv'], function(spv) {
 'use strict';
 
+var history_api = !!(window.history && window.history.pushState);
+
 var bindLocationChange = function(hashchangeHandler) {
-	if ('onhashchange' in window){
+	if (history_api){
+		spv.addEvent(window, 'popstate', function(e){
+			console.log(e.state);
+		});
+	} else if ('onhashchange' in window){
 		(function(){
 			var hash = location.hash.replace(/^\#/, '');
 			spv.addEvent(window, 'hashchange', function(e){
@@ -34,7 +40,7 @@ var bindLocationChange = function(hashchangeHandler) {
 
 	} else{
 		(function(){
-			var hash = location.hash;
+			var hash = location.hash.replace(/^\#/, '');
 			setInterval(function(){
 				var newhash = location.hash;
 				if (newhash != hash){
@@ -158,6 +164,13 @@ var navi;
 
 	};
 })();
+
+spv.addEvent(window, 'tizenhwkey', function(e) {
+	if(e.keyName == "back"){
+		//tizen.application.getCurrentApplication().exit();
+		window.history.back();
+	}
+});
 
 return navi;
 });
