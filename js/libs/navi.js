@@ -8,8 +8,9 @@ var bindLocationChange = function(hashchangeHandler) {
 	if (history_api){
 		var hash = location.hash.replace(hash_start, '');
 		spv.addEvent(window, 'popstate', function(e){
-			var newhash = location.hash.replace(hash_start, '');
+			
 			if (!e.state){
+				var newhash = location.hash.replace(hash_start, '');
 				if (newhash != hash){
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
@@ -18,9 +19,8 @@ var bindLocationChange = function(hashchangeHandler) {
 						});
 					}
 				}
+				hash = newhash;
 			}
-			
-			hash = newhash;
 			//console.log(e.state);
 		});
 	} else if ('onhashchange' in window){
