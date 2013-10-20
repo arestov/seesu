@@ -2,6 +2,7 @@ define(['spv'], function(spv) {
 'use strict';
 
 var history_api = !!(window.history && window.history.pushState);
+var hash_start = /^\#/;
 
 var bindLocationChange = function(hashchangeHandler) {
 	if (history_api){
@@ -10,10 +11,10 @@ var bindLocationChange = function(hashchangeHandler) {
 		});
 	} else if ('onhashchange' in window){
 		(function(){
-			var hash = location.hash.replace(/^\#/, '');
+			var hash = location.hash.replace(hash_start, '');
 			spv.addEvent(window, 'hashchange', function(e){
 				e = e || window.Event;
-				var newhash = location.hash.replace(/^\#/, '');
+				var newhash = location.hash.replace(hash_start, '');
 				if (newhash != hash){
 					var hnew = decodeURI(e.newURL || newhash);
 					var hold = decodeURI(e.oldURL || hash);
@@ -40,14 +41,14 @@ var bindLocationChange = function(hashchangeHandler) {
 
 	} else{
 		(function(){
-			var hash = location.hash;
+			var hash = location.hash.replace(hash_start, '');
 			setInterval(function(){
-				var newhash = location.hash;
+				var newhash = location.hash.replace(hash_start, '');
 				if (newhash != hash){
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
-							newURL: newhash.replace(/^\#/, ''),
-							oldURL: hash.replace(/^\#/, '')
+							newURL: newhash,
+							oldURL: hash
 						});
 					}
 
