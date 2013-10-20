@@ -6,20 +6,25 @@ var hash_start = /^\#/;
 
 var bindLocationChange = function(hashchangeHandler) {
 	if (history_api){
-		var hash = location.hash.replace(hash_start, '');
+		var hash = decodeURI(location.hash).replace(hash_start, '');
 		spv.addEvent(window, 'popstate', function(e){
 			
 			if (!e.state){
-				var newhash = location.hash.replace(hash_start, '');
+				var newhash = decodeURI(location.hash).replace(hash_start, '');
 				if (newhash != hash){
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
-							newURL: newhash,
-							oldURL: hash
+							newURL: newhash
 						});
 					}
 				}
 				hash = newhash;
+			} else {
+				if (typeof hashchangeHandler == 'function'){
+					hashchangeHandler({
+						newURL: e.state.uniq_url
+					});
+				}
 			}
 			//console.log(e.state);
 		});
@@ -33,8 +38,7 @@ var bindLocationChange = function(hashchangeHandler) {
 					
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
-							newURL: newhash,
-							oldURL: hash
+							newURL: newhash
 						});
 					}
 					hash = newhash;
@@ -53,8 +57,7 @@ var bindLocationChange = function(hashchangeHandler) {
 					
 					if (typeof hashchangeHandler == 'function'){
 						hashchangeHandler({
-							newURL: newhash,
-							oldURL: hash
+							newURL: newhash
 						});
 					}
 					hash = newhash;
@@ -140,9 +143,19 @@ var navi;
 						data: data
 					};
 					if (!replace){
-						location.assign(getURLBase() + '#' + ud.uniq_url);
+						if (history_api){
+							window.history.pushState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
+						} else {
+							location.assign(getURLBase() + '#' + ud.uniq_url);
+						}
+						
 					} else{
-						location.replace(getURLBase() + '#' + ud.uniq_url);
+						if (history_api){
+							window.history.replaceState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
+						} else {
+							location.replace(getURLBase() + '#' + ud.uniq_url);
+						}
+						
 					}
 
 				}
@@ -162,9 +175,7 @@ var navi;
 		hashchangeHandler: function(e, soft){
 			if (e.newURL != decodeURI(this.getFakeURL())){
 				this.setFakeURL(e.newURL);
-				if (e.oldURL != e.newURL){
-					this.hashChangeRecover(e, soft);
-				}
+				this.hashChangeRecover(e, soft);
 			}
 		}
 
