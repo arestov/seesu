@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets" id="http://seesu.me/app" version="3.2" viewmodes="fullscreen">
-    <access origin="https://vk.com/" subdomains="true"></access>
-    <access origin="http://vk.com/" subdomains="true"></access>
-    <access origin="http://last.fm/" subdomains="true"></access>
-    <access origin="http://audioscrobbler.com/" subdomains="true"></access>
-    <access origin="http://api.soundcloud.com/" subdomains="true"></access>
-    <access origin="http://nigma.ru/" subdomains="true"></access>
-    <access origin="https://ajax.googleapis.com/" subdomains="false"></access>
-    <access origin="http://gdata.youtube.com/" subdomains="false"></access>
-    <access origin="http://isohunt.com/" subdomains="true"></access>
-    <access origin="http://seesu.me/" subdomains="true"></access>
-    <access origin="http://api.songkick.com/" subdomains="false"></access>
-    <access origin="http://ex.fm/" subdomains="false"></access>
-    <access origin="http://hypem.com/" subdomains="false"></access>
-    <access origin="http://hypem.net/" subdomains="true"></access>
-    <access origin="http://api.discogs.com/" subdomains="false"></access>
-    <access origin="http://youtube.com/" subdomains="true"></access>
-    <access origin="http://sndcdn.com/" subdomains="true"></access>
-    <access origin="http://i.ytimg.com/" subdomains="false"></access>
-    <access origin="https://google-analytics.com/" subdomains="true"></access>
-    <access origin="http://google-analytics.com/" subdomains="true"></access>
-    <access origin="http://userapi.com/" subdomains="true"></access>
-    <access origin="http://vk.me/" subdomains="true"></access>
-    <access origin="http://arestov.github.io/"></access>
+    <access origin="https://vk.com/" subdomains="true"/>
+    <access origin="http://vk.com/" subdomains="true"/>
+    <access origin="http://last.fm/" subdomains="true"/>
+    <access origin="http://audioscrobbler.com/" subdomains="true"/>
+    <access origin="http://api.soundcloud.com/" subdomains="true"/>
+    <access origin="http://nigma.ru/" subdomains="true"/>
+    <access origin="https://ajax.googleapis.com/" subdomains="false"/>
+    <access origin="http://gdata.youtube.com/" subdomains="false"/>
+    <access origin="http://isohunt.com/" subdomains="true"/>
+    <access origin="http://seesu.me/" subdomains="true"/>
+    <access origin="http://api.songkick.com/" subdomains="false"/>
+    <access origin="http://ex.fm/" subdomains="false"/>
+    <access origin="http://hypem.com/" subdomains="false"/>
+    <access origin="http://hypem.net/" subdomains="true"/>
+    <access origin="http://api.discogs.com/" subdomains="false"/>
+    <access origin="http://youtube.com/" subdomains="true"/>
+    <access origin="http://sndcdn.com/" subdomains="true"/>
+    <access origin="http://i.ytimg.com/" subdomains="false"/>
+    <access origin="https://google-analytics.com/" subdomains="true"/>
+    <access origin="http://google-analytics.com/" subdomains="true"/>
+    <access origin="http://userapi.com/" subdomains="true"/>
+    <access origin="http://vk.me/" subdomains="true"/>
+    <access origin="*"/>
     <tizen:application id="us8eqvo1kX.SeesuMusic" package="us8eqvo1kX" required_version="2.2"/>
     <content src="index.html"/>
     <description>Music search, player and meetings. Powered by last.fm and others.</description>
