@@ -317,8 +317,12 @@ var app_env = (function(wd){
 		env.transform = has_transform_prop;
 	}
 	
-
-
+	if (window.tizen){
+		env.app_type = 'tizen_app';
+		env.as_application = false;
+		env.deep_sanbdox = true;
+		env.needs_url_history = true;
+	} else
 	if (typeof widget == 'object' && !window.widget.fake_widget){
 		if (bro.browser == 'opera'){
 			if (window.opera.extension){

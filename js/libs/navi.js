@@ -179,13 +179,5 @@ var navi;
 	};
 })();
 
-//https://developer.tizen.org/
-spv.addEvent(window, 'tizenhwkey', function(e) {
-	if(e.keyName == "back"){
-		//tizen.application.getCurrentApplication().exit();
-		window.history.back();
-	}
-});
-
 return navi;
 });

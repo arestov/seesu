@@ -404,6 +404,18 @@ AppModel.extendTo(SeesuApp, {
 			}, this.getContextOptsI())
 			.makeMainLevel();
 
+		if (app_env.tizen_app){
+			//https://developer.tizen.org/
+			spv.addEvent(window, 'tizenhwkey', function(e) {
+				if(e.keyName == "back"){
+					//tizen.application.getCurrentApplication().exit();
+					window.history.back();
+				}
+			});
+		}
+
+		
+
 
 
 
