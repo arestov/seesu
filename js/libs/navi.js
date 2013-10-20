@@ -40,7 +40,7 @@ var bindLocationChange = function(hashchangeHandler) {
 
 	} else{
 		(function(){
-			var hash = location.hash.replace(/^\#/, '');
+			var hash = location.hash;
 			setInterval(function(){
 				var newhash = location.hash;
 				if (newhash != hash){
