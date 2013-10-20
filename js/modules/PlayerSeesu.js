@@ -304,7 +304,7 @@ var app_env = app_serv.app_env;
 					
 				},
 				function(){
-					if (flash_plgs.length && app_env.iframe_support){
+					if (flash_plgs.length && app_env.iframe_support && !app_env.tizen_app){
 						features_storage.canLoad('sm2-proxy');
 					} else {
 						features_storage.setAsInaccessible('sm2-proxy');
