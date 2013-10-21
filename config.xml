@@ -6,14 +6,8 @@
     <description>Music search, player and meetings. Powered by last.fm and others.</description>
     <description xml:lang="en">Music search, player and meetings. Powered by last.fm and others.</description>
     <description xml:lang="ru">Музыкальные поиск, проигрыватель и знакомства. Технологии last.fm и др. сервисов</description>
-    
-    <icon src="icons/icon128.png" height="128" width="128"/>
-    <icon src="icons/icon64.png" height="64" width="64"/>
-    <icon src="icons/icon48.png" height="48" width="48"/>
-    <icon src="icons/icon32.png" height="32" width="32"/>
-    <icon src="icons/icon19.png" height="19" width="19"/>
-    <icon src="icons/icon16.png" height="16" width="16"/>
-    <icon src="icons/icon128.png"/>
+
+    <icon src="tizen/icon-117.png"/>
     <name>Seesu Music</name>
     <name xml:lang="en">Seesu Music</name>
     <name xml:lang="ru">Сису музыкальная</name>
