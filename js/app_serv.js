@@ -615,9 +615,13 @@ app_serv.handleDocument = function(d, tracking_opts) {
 		}
 
 		var emptyNode = function(node) {
-			while (node.firstChild){
-				node.removeChild( node.firstChild );
+			var length = node && node.childNodes.length;
+			for (var i = length - 1; i >= 0; i--) {
+				node.removeChild( node.childNodes[i] );
 			}
+			/*while (node.firstChild){
+				node.removeChild( node.firstChild );
+			}*/
 			return node;
 		};
 
@@ -632,8 +636,9 @@ app_serv.handleDocument = function(d, tracking_opts) {
 				var cl = classes[i];
 				if (cl.match(/localize/)){
 					var term = localizer[cl.replace('localize-','')];
-					if (term && term[lang]){
-						translatable.push([el, term[lang]]);
+					var string = term && (term[lang] || term['original']);
+					if (string){
+						translatable.push([el, string]);
 						//$(el).text();
 						break;
 					}
