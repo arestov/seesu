@@ -800,11 +800,18 @@
 				</div>
 			</div>
 			<div class="music-files-lists" pv-anchor='mufils_c'>
+				<div class="dmca_notice lang localize-dmca_notice">
+					Seesu follows terms of service of each api it uses. Seesu does not store any content. Each service follows DMCA, feel free to report abuse.
+				</div>
 				<div
 					class="moplas-list"
 					pv-class="moplas-list {{show_overstocked && 'want-overstocked-songs'}}"
 					pv-nest="sorted_completcs"
 					>
+					<a 
+						pv-props="href: {{dmca_url}}" 
+						pv-class="external {{!dmca_url && 'hidden'}} {{dmca_url && 'dmca_url'}}"
+						class="external hidden lang localize-report-abuse"></a>
 					<h4>
 						<a
 							class=""

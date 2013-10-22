@@ -921,19 +921,24 @@ provoda.sync_s.setRootModel(su);
 		mp3_search: su.mp3_search
 	}));
 
+	var allow_torrents = false;
 
-	if (app_env.cross_domain_allowed){
-		su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
-			cache_ajax: cache_ajax,
-			mp3_search: su.mp3_search
-		}));
-	} else {
-		su.mp3_search.add(new torrent_searches.googleTorrentSearch({
-			crossdomain: app_env.cross_domain_allowed,
-			mp3_search: su.mp3_search,
-			cache_ajax: cache_ajax
-		}));
+	if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
+		if (app_env.cross_domain_allowed){
+			su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
+				cache_ajax: cache_ajax,
+				mp3_search: su.mp3_search
+			}));
+		} else {
+			su.mp3_search.add(new torrent_searches.googleTorrentSearch({
+				crossdomain: app_env.cross_domain_allowed,
+				mp3_search: su.mp3_search,
+				cache_ajax: cache_ajax
+			}));
+		}
 	}
+
+	
 
 
 

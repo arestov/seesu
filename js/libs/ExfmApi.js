@@ -67,6 +67,7 @@ ExfmMusicSearch.prototype = {
 	description:'ex.fm',
 	slave: false,
 	s: {name: 'exfm', key: 0, type:'mp3'},
+	dmca_url: 'http://ex.fm/dmca',
 	preferred: null,
 	makeSongFile: function(item) {
 		return this.makeSong(item);

@@ -74,6 +74,7 @@ var MfComplect = function(opts, params) {
 	this.start_file = params.file;
 	this.mo = opts.mo;
 	this.mf_cor = opts.mf_cor;
+
 	this.moplas_list = [];
 	this.source_name = params.source_name;
 
@@ -98,7 +99,11 @@ var MfComplect = function(opts, params) {
 
 	}
 
-	this.updateState('complect_name', this.source_name);
+	var search = this.mo.app.mp3_search.getSearchByName(params.source_name);
+	this.updateManyStates({
+		'dmca_url': search && search.dmca_url,
+		'complect_name': this.source_name
+	});
 	
 };
 

@@ -757,7 +757,14 @@ define({
 		"original": "Artist tags",
 		"ru": "Теги артиста"
 	},
-
+	"dmca_notice":{
+		"original": "Seesu follows terms of service of each api it uses. Seesu does not store any content. Each service follows DMCA. Feel free to report abuse.",
+		"ru": "Сису соблюдает условия использования каждого сервиса, которого она использует и не хранит какого-либо контента. Каждый сервис соблюдает DMCA. Вы имеете возможность направить им жалобы на нарушения копирайта."
+	},
+	"report-abuse":{
+		"original": "report abuse",
+		"ru": "подать жалобу"
+	},
 	"":{
 		"original": "",
 		"ru": ""
