@@ -127,8 +127,9 @@ provoda.Model.extendTo(MfComplect, {
 						.on('want-to-play-sf.mfcomp', this.selectMf, this.flchwp_opts);
 			sf.updateState('overstock', i + 1 > this.overstock_limit);
 			moplas_list.push(sf);
-			this.updateNesting('moplas_list', moplas_list);
+			
 		}
+		this.updateNesting('moplas_list', moplas_list);
 		this.moplas_list = moplas_list;
 
 	},
