@@ -409,7 +409,14 @@ AppModel.extendTo(SeesuApp, {
 			spv.addEvent(window, 'tizenhwkey', function(e) {
 				if(e.keyName == "back"){
 					//tizen.application.getCurrentApplication().exit();
-					window.history.back();
+					var history = window.history;
+					if (!history.state){
+						var app = window.tizen.application.getCurrentApplication();
+						app.exit();
+					} else {
+						history.back();
+					}
+					
 				}
 			});
 		}
