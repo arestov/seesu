@@ -763,7 +763,7 @@ define({
 	},
 	"report-abuse":{
 		"original": "report abuse",
-		"ru": "подать жалобу"
+		"ru": "пожаловаться"
 	},
 	"":{
 		"original": "",
