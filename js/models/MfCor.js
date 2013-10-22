@@ -130,6 +130,7 @@ provoda.Model.extendTo(MfComplect, {
 			
 		}
 		this.updateNesting('moplas_list', moplas_list);
+		this.updateState('list_length', moplas_list.length);
 		this.moplas_list = moplas_list;
 
 	},
