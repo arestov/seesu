@@ -618,6 +618,62 @@ SimplePVSampler.prototype.getClone = function() {
 };
 SimplePVSampler.prototype.clone = SimplePVSampler.prototype.getClone;
 
+
+var directives_h = {
+		'pv-text': function(node, standch){
+			if (standch){
+				var wwtch = standch.createBinding(node, this);
+				this.states_watchers.push(wwtch);
+			}
+		},
+		'pv-class': function(node, standch) {
+			if (standch){
+				var wwtch = standch.createBinding(node, this);
+				this.states_watchers.push(wwtch);
+			}
+		},
+		'pv-props': function(node, standches) {
+			if (standches){
+				for (var i = 0; i < standches.length; i++) {
+					var wwtch = standches[i].createBinding(node, this);
+					this.states_watchers.push(wwtch);
+				}
+			}
+		},
+		'pv-anchor': function(node, full_declaration) {
+			var anchor_name = full_declaration;
+			if (this.ancs[anchor_name]){
+				throw new Error('anchors exists');
+			} else {
+				this.ancs[anchor_name] = $(node);
+			}
+		},
+		'pv-type': function(node, standch) {
+			if (standch){
+				var pv_type_data = {node: node, marks: null};
+				this.pv_types.push(pv_type_data);
+
+				var wwtch = standch.createBinding(node, this);
+				wwtch.pv_type_data = pv_type_data;
+				this.states_watchers.push(wwtch);
+				wwtch.checkFunc(this.empty_state_obj);
+
+			}
+			//
+		},
+		'pv-events': function(node, pvevents_data) {
+			if (pvevents_data){
+
+				if (!this.sendCallback){
+					throw new Error('provide the events callback handler to the Template init func');
+				}
+				for (var i = 0; i < pvevents_data.length; i++) {
+					var evdata = pvevents_data[i];
+					this.bindPVEvent(node, evdata);
+				}
+			}
+		}
+	};
 spv.Class.extendTo(PvTemplate, {
 	init: function(opts) {
 		this.pv_types_collecting = false;
@@ -760,61 +816,7 @@ spv.Class.extendTo(PvTemplate, {
 	},
 	
 	empty_state_obj: {},
-	directives: {
-		'pv-text': function(node, standch){
-			if (standch){
-				var wwtch = standch.createBinding(node, this);
-				this.states_watchers.push(wwtch);
-			}
-		},
-		'pv-class': function(node, standch) {
-			if (standch){
-				var wwtch = standch.createBinding(node, this);
-				this.states_watchers.push(wwtch);
-			}
-		},
-		'pv-props': function(node, standches) {
-			if (standches){
-				for (var i = 0; i < standches.length; i++) {
-					var wwtch = standches[i].createBinding(node, this);
-					this.states_watchers.push(wwtch);
-				}
-			}
-		},
-		'pv-anchor': function(node, full_declaration) {
-			var anchor_name = full_declaration;
-			if (this.ancs[anchor_name]){
-				throw new Error('anchors exists');
-			} else {
-				this.ancs[anchor_name] = $(node);
-			}
-		},
-		'pv-type': function(node, standch) {
-			if (standch){
-				var pv_type_data = {node: node, marks: null};
-				this.pv_types.push(pv_type_data);
-
-				var wwtch = standch.createBinding(node, this);
-				wwtch.pv_type_data = pv_type_data;
-				this.states_watchers.push(wwtch);
-				wwtch.checkFunc(this.empty_state_obj);
-
-			}
-			//
-		},
-		'pv-events': function(node, pvevents_data) {
-			if (pvevents_data){
-
-				if (!this.sendCallback){
-					throw new Error('provide the events callback handler to the Template init func');
-				}
-				for (var i = 0; i < pvevents_data.length; i++) {
-					var evdata = pvevents_data[i];
-					this.bindPVEvent(node, evdata);
-				}
-			}
-		}
-	},
+	
 	bindPVEvent: function(node, evdata) {
 		var _this = this;
 		$(node).on(evdata.event_name, function(e) {
@@ -889,7 +891,15 @@ spv.Class.extendTo(PvTemplate, {
 		}
 	},*/
 	handleDirective: function(directive_name, node, full_declaration) {
-		this.directives[directive_name].call(this, node, full_declaration);
+		var method = directives_h[directive_name];
+		if (!method){
+			window.dizi = [directive_name, node, full_declaration]
+			window.dizi2 = directives_h;
+			window.dizi3 = directives_h[directive_name];
+			console.log(directive_name, node, full_declaration);
+			console.log(directives_h);
+		}
+		method.call(this, node, full_declaration);
 	},
 	indexPvViews: function(array) {
 		var result = this.children_templates;
