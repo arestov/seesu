@@ -119,10 +119,9 @@ ImagesPack.extendTo(TrackImages, {
 		this.artist = info.artist;
 		this.track = info.track;
 
-		var _this = this;
-		artmd.on('state-change.image-to-use', function(e) {
-			_this.updateState('artist_image', e.value);
-		});
+
+		this.wch(artmd, 'image-to-use', 'artist_image');
+
 
 	},
 	complex_states: {

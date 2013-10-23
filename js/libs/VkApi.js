@@ -91,6 +91,7 @@ VkSearch.prototype = {
 		key: 'nice',
 		type: 'mp3'
 	},
+	dmca_url: 'https://vk.com/dmca',
 	makeSongFile: function(item) {
 		return this.makeSong(item);
 	},

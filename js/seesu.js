@@ -9,7 +9,7 @@ ScApi, ExfmApi, torrent_searches, FuncsQueue, LastfmAPIExtended,
 AppModel, comd, LfmAuth, StartPage, SeesuServerAPI, VkAuth, VkApi, initVk,
 PlayerSeesu, invstg, cache_ajax) {
 'use strict';
-var seesu_version = 4.0;
+var seesu_version = 4.2;
 var
 	localize = app_serv.localize,
 	app_env = app_serv.app_env;
@@ -370,16 +370,16 @@ AppModel.extendTo(SeesuApp, {
 		this.map
 			.init(this.start_page)
 			.on('residents-tree', function(tree) {
-				this.updateNesting('navigation', tree);
-				this.updateNesting('map_slice', tree);
+				
+			}, this.getContextOptsI())
+			.on('changes', function(changes, tree, residents) {
+				//console.log(changes);
+				this.animateMapChanges(changes, tree, residents);
 			}, this.getContextOptsI())
 			.on('map-tree-change', function(nav_tree) {
 				this.changeNavTree(nav_tree);
 			}, this.getContextOptsI())
-			.on('changes', function(changes) {
-				//console.log(changes);
-				this.animateMapChanges(changes);
-			}, this.getContextOptsI())
+
 			.on('title-change', function(title) {
 				this.setDocTitle(title);
 
@@ -403,6 +403,25 @@ AppModel.extendTo(SeesuApp, {
 				this.trackPage(nv.map_level.resident.page_name);
 			}, this.getContextOptsI())
 			.makeMainLevel();
+
+		if (app_env.tizen_app){
+			//https://developer.tizen.org/
+			spv.addEvent(window, 'tizenhwkey', function(e) {
+				if(e.keyName == "back"){
+					//tizen.application.getCurrentApplication().exit();
+					var history = window.history;
+					if (!history.state){
+						var app = window.tizen.application.getCurrentApplication();
+						app.exit();
+					} else {
+						history.back();
+					}
+					
+				}
+			});
+		}
+
+		
 
 
 
@@ -467,7 +486,10 @@ AppModel.extendTo(SeesuApp, {
 				if (state_from_history){
 					state_from_history.data.showOnMap();
 				} else{
-					_this.routePathByModels(url.replace(/\ ?\$...$/, ''), _this.start_page);
+					var md = _this.routePathByModels(url.replace(/\ ?\$...$/, ''));
+					if (md){
+						md.showOnMap();
+					}
 				}
 				_this.map.finishChangesCollecting();
 			});
@@ -584,14 +606,24 @@ AppModel.extendTo(SeesuApp, {
 	'rootv_field': ['mpx', 'views_index', 'root', 'length'],
 	trackPage:function(page_name){
 		this.current_page = page_name;
-		
-		var has_app_view = !!spv.getTargetField(this, this.rootv_field);
-		if (!has_app_view){
-			return;
-		}
+
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift('_trackPageview');
-		this.trackStat.call(this, args);
+
+		if (!this.app_view_id){
+			this.last_page_tracking_data = args;
+			return;
+		} else {
+			this.trackStat.call(this, args);
+		}
+		
+	},
+	checkPageTracking: function() {
+		if (this.app_view_id && this.last_page_tracking_data){
+			this.trackStat.call(this, this.last_page_tracking_data);
+			this.last_page_tracking_data = null;
+
+		}
 	},
 	trackTime: function(){
 		var args = Array.prototype.slice.call(arguments);
@@ -618,7 +650,7 @@ AppModel.extendTo(SeesuApp, {
 		});
 		return sp;
 	},
-	routePathByModels: function(pth_string, start_page) {
+	routePathByModels: function(pth_string) {
 
 	/*
 	catalog
@@ -643,7 +675,7 @@ AppModel.extendTo(SeesuApp, {
 	*/
 		var pth = pth_string.replace(/^\//, '').replace(/([^\/])\+/g, '$1 ')/*.replace(/^\//,'')*/.split('/');
 
-		var cur_md = start_page;
+		var cur_md = this.start_page;
 		var tree_parts_group = null;
 		for (var i = 0; i < pth.length; i++) {
 			if (cur_md.sub_pages_routes && cur_md.sub_pages_routes[pth[i]]){
@@ -671,9 +703,6 @@ AppModel.extendTo(SeesuApp, {
 
 
 		}
-		if (cur_md){
-			cur_md.showOnMap();
-		}
 		return cur_md;
 	},
 	getPlaylists: function(query) {
@@ -696,9 +725,16 @@ AppModel.extendTo(SeesuApp, {
 		}
 		return r;
 	},
-	detachUI: function() {
+	attachUI: function(app_view_id) {
+		this.app_view_id = app_view_id;
+		this.checkPageTracking();
+	},
+	detachUI: function(app_view_id) {
 		if (this.p && this.p.c_song){
 			this.showNowPlaying(true);
+		}
+		if (this.app_view_id === app_view_id){
+			this.app_view_id = null;
 		}
 	},
 	vkappid: 2271620,
@@ -743,6 +779,9 @@ AppModel.extendTo(SeesuApp, {
 	},
 	getVKFriends: function(){
 		var _this = this;
+		if (!this.vk_api){
+			return;
+		}
 		if (!this.vk_fr_req){
 			this.vk_fr_req = this.vk_api.get("friends.get", {fields: "uid, photo"}, {cache_timeout: 1000*60*5})
 				.done(function(){
@@ -889,19 +928,24 @@ provoda.sync_s.setRootModel(su);
 		mp3_search: su.mp3_search
 	}));
 
+	var allow_torrents = false;
 
-	if (app_env.cross_domain_allowed){
-		su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
-			cache_ajax: cache_ajax,
-			mp3_search: su.mp3_search
-		}));
-	} else {
-		su.mp3_search.add(new torrent_searches.googleTorrentSearch({
-			crossdomain: app_env.cross_domain_allowed,
-			mp3_search: su.mp3_search,
-			cache_ajax: cache_ajax
-		}));
+	if (allow_torrents && !(app_env.chrome_app || app_env.chrome_ext || app_env.tizen_app)){
+		if (app_env.cross_domain_allowed){
+			su.mp3_search.add(new torrent_searches.isohuntTorrentSearch({
+				cache_ajax: cache_ajax,
+				mp3_search: su.mp3_search
+			}));
+		} else {
+			su.mp3_search.add(new torrent_searches.googleTorrentSearch({
+				crossdomain: app_env.cross_domain_allowed,
+				mp3_search: su.mp3_search,
+				cache_ajax: cache_ajax
+			}));
+		}
 	}
+
+	
 
 
 

@@ -1,5 +1,5 @@
-define(['spv', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'],
-function(spv, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search){
+define(['spv', 'provoda', 'app_serv', 'js/libs/FuncsStack', 'js/libs/BrowseMap','./LoadableList', './SongsList', 'js/common-libs/htmlencoding', 'js/libs/Mp3Search'],
+function(spv, provoda, app_serv, FuncsStack, BrowseMap, LoadableList, SongsList, htmlencoding, Mp3Search){
 "use strict";
 var localize = app_serv.localize;
 var ArtCard;
@@ -38,12 +38,15 @@ AlbumsList = function() {};
 LoadableList.extendTo(AlbumsList, {
 	model_name: 'albslist',
 	main_list_name: 'albums_list',
-	makeDataItem: function(obj, start_song) {
+	makeDataItem: function(obj) {
 		var pl = new ArtistAlbumSongs();
-		pl.init({
-			map_parent: this,
-			app: this.app
-		}, obj);
+		this.useMotivator(pl, function() {
+			pl.init({
+				map_parent: this,
+				app: this.app
+			}, obj);
+		});
+		
 		return pl;
 	},
 	compareItemWithObj: function(item, data) {
@@ -173,13 +176,9 @@ AlbumsList.extendTo(DiscogsAlbums, {
 		});
 		this.initStates();
 
-		var _this = this;
-		this.map_parent.on('vip-state-change.discogs_id_searching', function(e) {
-			_this.updateState('profile_searching', e.value);
-		}, {immediately: true});
-		this.map_parent.on('vip-state-change.discogs_id', function(e) {
-			_this.updateState('artist_id', e.value);
-		}, {immediately: true});
+		this.wch(this.map_parent, 'discogs_id_searching', 'profile_searching', true);
+		this.wch(this.map_parent, 'discogs_id', 'artist_id', true);
+
 	},
 	'compx-loader_disallowing_desc': {
 		depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
@@ -494,13 +493,9 @@ var SoundcloudArtcardSongs = function() {};
 SongsList.extendTo(SoundcloudArtcardSongs, {
 	init: function() {
 		this._super.apply(this, arguments);
-		var _this = this;
-		this.map_parent.on('vip-state-change.sc_profile_searching', function(e) {
-			_this.updateState('profile_searching', e.value);
-		}, {immediately: true});
-		this.map_parent.on('vip-state-change.soundcloud_profile', function(e) {
-			_this.updateState('artist_id', e.value);
-		}, {immediately: true});
+		this.wch(this.map_parent, 'sc_profile_searching', 'profile_searching', true);
+		this.wch(this.map_parent, 'soundcloud_profile', 'artist_id', true);
+
 	},
 	'compx-loader_disallowing_desc': {
 		depends_on: ['profile_searching', 'loader_disallowed', 'possible_loader_disallowing'],
@@ -523,7 +518,7 @@ SongsList.extendTo(SoundcloudArtcardSongs, {
 		var request_info = {};
 		request_info.request = this.app.sc_api.get(path, {
 			limit: paging_opts.page_limit,
-			offset: paging_opts.next_page -1
+			offset: paging_opts.page_limit * (paging_opts.next_page -1)
 		})
 			.done(function(tracks){
 
@@ -723,7 +718,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 		this.updateState('lfm_image', params.lfm_image &&
 			this.app.art_images.getImageWrap(params.lfm_image.array));
 
-		this.heavyInit();
+		this.extendedInit();
 
 		this.updateState('url_part', '/catalog/' + this.app.encodeURLPart(this.artist));
 	},
@@ -737,7 +732,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 				return SimilarArtists;
 			},
 			getTitle: function() {
-				return 'Similar to «' + this.artist + '» artists';
+				return localize("Similar to «%artist%» artists").replace('%artist%', this.artist);
 			}
 		},
 		'tags': {
@@ -746,12 +741,12 @@ BrowseMap.Model.extendTo(ArtCard, {
 		},
 		'albums': {
 			constr: DiscogsAlbums,
-			title: 'Albums from Discogs'
+			title: localize('Albums from Discogs')
 		},
 		'albums_lfm': {
 			constr: ArtistAlbums,
 			getTitle: function() {
-				return 'Albums of ' + this.artist + ' from last.fm';
+				return localize('Albums of %artist% from last.fm').replace('%artist%', this.artist);
 			}
 		},
 		'soundcloud': {
@@ -764,25 +759,23 @@ BrowseMap.Model.extendTo(ArtCard, {
 		},
 		'fresh': {
 			constr: HypemArtistSeFreshSongs,
-			title: 'Fresh songs'
+			title: localize('Fresh songs')
 		},
 		'most_favorites': {
 			constr: HypemArtistSeUFavSongs,
-			title: 'Most Favorites'
+			title: localize('Most Favorites')
 		},
 		'blogged': {
 			constr: HypemArtistSeBlogged,
-			title: 'Most Reblogged'
+			title: localize('Most Reblogged')
 		}
 	},
-	heavyInit: function() {
+	initHeavy: provoda.getOCF('heavy_oi', function() {
 		this.albums_models = {};
-		this.sub_pa_params = {artist: this.artist};
-
 		this.getTopTracks();
-		this.getSimilarArtists();
+		
 
-		this.tags_list = this.getSPI('tags', true);
+		
 		this.dgs_albums = this.getSPI('albums', true);
 		this.albums = this.getSPI('albums_lfm', true);
 		this.soundc_prof = this.getSPI('soundcloud', true);
@@ -791,7 +784,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 		this.hypem_fav = this.getSPI('most_favorites', true);
 		this.hypem_reblog = this.getSPI('blogged', true);
 
-		this.updateNesting('tags_list', this.tags_list);
+		
 		this.updateNesting('albums_list', this.albums);
 		this.updateNesting('dgs_albums', this.dgs_albums);
 		this.updateNesting('soundc_prof', this.soundc_prof);
@@ -799,15 +792,20 @@ BrowseMap.Model.extendTo(ArtCard, {
 		this.updateNesting('hypem_new', this.hypem_new);
 		this.updateNesting('hypem_fav', this.hypem_fav);
 		this.updateNesting('hypem_reblog', this.hypem_reblog);
+	}),
+	extendedInit: function() {
+		this.sub_pa_params = {artist: this.artist};
+		this.tags_list = this.getSPI('tags', true);
+		this.updateNesting('tags_list', this.tags_list);
+		this.getSimilarArtists();
 
-		var _this = this;
-		this.on('vip-state-change.mp_show', function(e) {
+
+		this.wch(this, 'mp_show', function(e) {
 			if (e.value && e.value.userwant){
-				_this.loadInfo();
+				this.initHeavy();
+				this.loadInfo();
 			}
-		},{immediately: true});
-
-		
+		}, true);
 	},
 	getTagsModel: function() {
 		return this.tags_list;
@@ -1089,7 +1087,7 @@ BrowseMap.Model.extendTo(ArtCard, {
 var ArtistInArtl = function() {};
 ArtCard.extendTo(ArtistInArtl, {
 	skip_map_init: true,
-	heavyInit: function() {},
+	extendedInit: function() {},
 	showArtcard: function() {
 		this.app.showArtcardPage(this.artist);
 	}

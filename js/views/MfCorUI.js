@@ -68,28 +68,17 @@ provoda.View.extendTo(SongFileModelUI, {
 	createDetails: function(){
 		this.createBase();
 
-		var _this = this;
 
 		var mf_cor_view = this.parent_view.parent_view;
-		mf_cor_view.on('state-change.want_more_songs', function(e){
-			_this.setVisState('pp-wmss', !!e.value);
-		});
 
-		this.parent_view
-			.on('state-change.show_overstocked', function(e) {
-				_this.setVisState('p-show-ovst', e.value);
-			});
+		this.wch(mf_cor_view, 'want_more_songs', 'vis_pp_wmss');
+		this.wch(this.parent_view, 'show_overstocked', 'vis_p_show_ovst');
+		this.wch(mf_cor_view, 'vis_is_visible');
+		this.wch(this.root_view, 'window_width', 'vis_window_width');
 
-
-		//var song_view = mf_cor_view.parent_view;
-		mf_cor_view.on('state-change.vis_is_visible', function(e){
-			_this.setVisState('is_visible', !!e.value);
-		});
-		/*
-		song_view.on('state-change.mp_show_end', function(e){
-			_this.setVisState('is_visible', !!e.value);
-		});*/
-
+	},
+	getProgressWidth: function() {
+		return this.tpl.ancs['progress_c'].width();
 	},
 	complex_states: {
 		'visible_duration_text': {
@@ -108,19 +97,11 @@ provoda.View.extendTo(SongFileModelUI, {
 			depends_on: ['vis_is_visible', 'vis_con_appended', 'selected'],
 			fn: function(vis, apd, sel){
 				var can = vis && apd && sel;
-				if (can){
-					var _this = this;
-
-					$(window).off('resize.song_file_progress');
-					$(window).on('resize.song_file_progress', spv.debounce(function(e){
-						_this.setVisState('win-resize-time', e.timeStamp);
-					}, 100));
-				}
 				return can;
 			}
 		},
 		'vis_wp_usable': {
-			depends_on: ['overstock', 'vis_pp-wmss', 'vis_p-show-ovst'],
+			depends_on: ['overstock', 'vis_pp_wmss', 'vis_p_show_ovst'],
 			fn: function(overstock, pp_wmss, p_show_overstock) {
 
 				if (overstock){
@@ -132,10 +113,10 @@ provoda.View.extendTo(SongFileModelUI, {
 			}
 		},
 		"vis_progress-c-width": {
-			depends_on: ['can-progress', 'vis_pp-wmss', 'vis_win-resize-time'],
-			fn: function(can, p_wmss, wrsz_time){
+			depends_on: ['can-progress', 'vis_pp_wmss', 'vis_window_width'],
+			fn: function(can, p_wmss, window_width){
 				if (can){
-					return this.tpl.ancs['progress_c'].width();
+					return this.getBoxDemension(this.getProgressWidth, 'progress_c-width', window_width, !!p_wmss);
 				} else {
 					return 0;
 				}
@@ -352,23 +333,6 @@ provoda.View.extendTo(MfCorUI, {
 		sorted_completcs: mfComplectUI,
 		yt_videos: YoutubePreview
 	},
-	state_change: {
-		"want_more_songs": function(state) {
-			if (state){
-				this.c.addClass('want_more_songs');
-			} else {
-				this.c.removeClass('want_more_songs');
-			}
-		},
-		"must-be-expandable": function(state) {
-			if (state){
-				this.tpl.ancs.sall_songs.removeClass('hidden');
-			}
-		},
-		"cant_play_music": function(state) {
-			this.tpl.ancs.cant_play_music_message.toggleClass('hidden', !state);
-		}
-	},
 	'collch-vk_auth': {
 		place: 'tpl.ancs.messages_c',
 		strict: true
@@ -381,9 +345,14 @@ provoda.View.extendTo(MfCorUI, {
 			_this.RPCLegacy('switchMoreSongsView');
 		});
 		this.addWayPoint(this.tpl.ancs.more_songs_b);
-		this.parent_view.on('state-change.mp_show_end', function(e){
-			_this.setVisState('is_visible', !!e.value);
-		});
+
+		this.wch(this.parent_view, 'mp_show_end', 'parent_mp_show_end');
+	},
+	'compx-vis_is_visible':{
+		'depends_on': ['parent_mp_show_end'],
+		fn: function(mp_show_end) {
+			return !!mp_show_end;
+		}
 	},
 	createBase: function() {
 		this.c = this.root_view.getSample('moplas-block');

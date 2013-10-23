@@ -171,6 +171,12 @@ AppBaseView.extendTo(AppView, {
 		return array;
 	},
 
+	'spec-vget-song': function(md) {
+		var playlist = md.getParentMapModel();
+		var playlist_mpx = playlist.mpx;
+		var playlist_view = this.getChildView(playlist_mpx, 'all-sufficient-details');
+		return playlist_view && playlist_view.getChildView(md.mpx);
+	},
 	'spec-collch-song': function(name, md) {
 		var playlist = md.getParentMapModel();
 
@@ -195,12 +201,17 @@ AppBaseView.extendTo(AppView, {
 
 			var checkFocus = function(state) {
 				if (state){
-					_this.search_input[0].focus();
-					_this.search_input[0].select();
+					_this.nextTick(function() {
+						if (this.isAlive()){
+							this.search_input[0].focus();
+							this.search_input[0].select();
+						}
+					});
+					
 				}
 			};
 
-			view.on('state-change.autofocus', function(e) {
+			view.on('state_change-autofocus', function(e) {
 				checkFocus(e.value);
 			}, {immediately: true});
 		}
@@ -299,10 +310,10 @@ AppBaseView.extendTo(AppView, {
 		}
 		
 		this.on('die', function() {
-			this.RPCLegacy('detachUI');
+			this.RPCLegacy('detachUI', this.view_id);
 		});
 
-		this.on('vip-state-change.current_mp_md', function() {
+		this.on('vip_state_change-current_mp_md', function() {
 			var cwp = this.state('vis_current_wpoint');
 			if (cwp){
 				if (cwp.canUse && !cwp.canUse()){
@@ -312,10 +323,31 @@ AppBaseView.extendTo(AppView, {
 
 		}, {skip_reg: true, immediately: true});
 
-		this.on('state-change.current_mp_md', function() {
+		this.on('state_change-current_mp_md', function() {
 			_this.resortQueue();
 		});
 
+
+
+		var wd = this.getWindow();
+		var checkWindowSizes = spv.debounce(function() {
+			_this.updateManyStates({
+				window_height: wd.innerHeight,
+				window_width: wd.innerWidth
+			});
+		}, 150);
+
+		$(wd).on('resize', checkWindowSizes);
+		this.onDie(function(){
+			$(wd).off('resize', checkWindowSizes);
+		});
+
+	},
+	'compx-window_demensions_key': {
+		depends_on: ['window_width', 'window_height'],
+		fn: function(window_width, window_height) {
+			return window_width + '-' + window_height;
+		}
 	},
 	resortQueue: function(queue) {
 		if (queue){
@@ -373,12 +405,25 @@ AppBaseView.extendTo(AppView, {
 			this.c.removeClass(class_name);
 		}
 	},
+	changeFaviconNode: function(d, src, type) {
+		var link = d.createElement('link'),
+			oldLink = this.favicon_node || d.getElementById('dynamic-favicon');
+		link.id = 'dynamic-favicon';
+		link.rel = 'shortcut icon';
+		if (type){
+			link.type = type;
+		}
+		
+		link.href = src;
+		d.head.replaceChild(link, oldLink);
+		this.favicon_node = link;
+	},
 	changeFavicon: spv.debounce(function(state){
 		if (this.isAlive()){
 			if (state && this.favicon_states[state]){
-				app_serv.changeFavicon(this.d, this.favicon_states[state], 'image/png');
+				this.changeFaviconNode(this.d, this.favicon_states[state], 'image/png');
 			} else{
-				app_serv.changeFavicon(this.d, this.favicon_states['usual'], 'image/png');
+				this.changeFaviconNode(this.d, this.favicon_states['usual'], 'image/png');
 			}
 		}
 
@@ -429,6 +474,13 @@ AppBaseView.extendTo(AppView, {
 	buildAppDOM: function() {
 		var _this = this;
 		var d = this.d;
+
+
+		var wd = this.getWindow();
+		_this.updateManyStates({
+			window_height: wd.innerHeight,
+			window_width: wd.innerWidth
+		});
 		
 			console.log('dom ready');
 			_this.dom_related_props.push('els');
@@ -477,7 +529,7 @@ AppBaseView.extendTo(AppView, {
 					};
 
 					_this.rsd_rz = setInterval(recheckFunc,100);
-					_this.on('vip-state-change.current_mp_md.resize-check', function(e) {
+					_this.on('vip_state_change-current_mp_md.resize-check', function(e) {
 						recheckFunc();
 					}, {
 						exlusive: true,
@@ -690,6 +742,8 @@ AppBaseView.extendTo(AppView, {
 				if (d.activeElement && d.activeElement.nodeName == 'BUTTON'){return;}
 				_this.arrowsKeysNav(e);
 			});
+
+			_this.RPCLegacy('attachUI', this.view_id);
 	},
 	inputs_names: ['input'],
 	key_codes_map:{
@@ -944,7 +998,7 @@ AppBaseView.extendTo(AppView, {
 					var photoupreq_c = this.createPhotoUploadRequest();
 					c.append(photoupreq_c);
 
-					this.on('vip-state-change.vk_info.song-listener', function(e) {
+					this.on('vip_state_change-vk_info.song-listener', function(e) {
 						if (e.value && e.value.photo_big){
 							photoupreq_c.before(this.createLikeButton(lig).c);
 

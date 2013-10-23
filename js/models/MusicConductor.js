@@ -129,15 +129,15 @@ BrowseMap.Model.extendTo(AllPlacesSongsLists, {
 	sub_pa: {
 		latest: {
 			constr: AllPHypemLatestSongs,
-			title: 'Latest Blogged music from hypem.com'
+			title: localize('Latest Blogged music from hypem.com')
 		},
 		'latest:remix': {
 			constr: AllPHypemLatestRemixesSongs,
-			title: 'Latest Blogged remixes from hypem.com'
+			title: localize('Latest Blogged remixes from hypem.com')
 		},
 		'topnow_hypem': {
 			constr: AllPHypemNowSongs,
-			title: 'Popular Now on hypem.com'
+			title: localize('Popular Now on hypem.com')
 		},
 		'_': {
 			constr: AllPSongsChart,
@@ -145,11 +145,11 @@ BrowseMap.Model.extendTo(AllPlacesSongsLists, {
 		},
 		'hyped': {
 			constr: AllPSongsHyped,
-			title: 'Hyped'
+			title: localize('Hyped')
 		},
 		'loved': {
 			constr: AllPSongsLoved,
-			title: 'Most Loved'
+			title: localize('Most Loved')
 		}
 	},
 	model_name: 'songs_lists'
@@ -209,7 +209,7 @@ BrowseMap.Model.extendTo(AllPlacesArtistsLists, {
 		},
 		'hyped': {
 			constr: AllPArtistsHyped,
-			title: 'Hyped'
+			title: localize('Hyped')
 		}
 	}
 
@@ -342,11 +342,11 @@ BrowseMap.Model.extendTo(CityArtistsLists, {
 		},
 		'hyped': {
 			constr: CityArtistsHype,
-			title: 'Hyped'
+			title: localize('Hyped')
 		},
 		'unique': {
 			constr: CityArtistsUnique,
-			title: 'Unique'
+			title: localize('Unique')
 		}
 	}
 });
@@ -437,11 +437,11 @@ BrowseMap.Model.extendTo(CitySongsLists, {
 		},
 		'hyped': {
 			constr: CitySongsHype,
-			title: 'Hyped'
+			title: localize('Hyped')
 		},
 		'unique': {
 			constr: CitySongsUnique,
-			title: 'Unique'
+			title: localize('Unique')
 		}
 	}
 });
@@ -468,11 +468,11 @@ BrowseMap.Model.extendTo(CityPlace, {
 	sub_pa: {
 		'artists': {
 			constr: CityArtistsLists,
-			title: "Artists lists"
+			title: localize("Artists lists")
 		},
 		'songs': {
 			constr: CitySongsLists,
-			title: "Songs lists"
+			title: localize("Songs lists")
 		}
 	}
 });
@@ -487,7 +487,7 @@ BrowseMap.Model.extendTo(CountryCitiesList, {
 		
 
 		var _this = this;
-		this.map_parent.on('state-change.mp_show', function(e) {
+		this.map_parent.on('state_change-mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				_this.heavyInit();
 			}
@@ -580,13 +580,13 @@ BrowseMap.Model.extendTo(CountryPlace, {
 		this.initStates();
 		this.sub_pa_params = {country_name: this.country_name};
 
-		this.on('state-change.mp_show', function(e) {
+		this.on('state_change-mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				this.heavyInit();
 			}
 		});
 		var _this = this;
-		this.map_parent.on('state-change.mp_show', function(e) {
+		this.map_parent.on('state_change-mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				_this.heavyInit();
 			}
@@ -597,16 +597,16 @@ BrowseMap.Model.extendTo(CountryPlace, {
 	sub_pa: {
 		'songs_top': {
 			constr: CountryTopSongs,
-			title: 'Top Songs'
+			title: localize('Top Songs')
 		},
 		'artists_top': {
 			constr: CountryTopArtists,
-			title: 'Top Artists'
+			title: localize('Top Artists')
 		},
 		'cities': {
 			constr: CountryCitiesList,
 			getTitle: function() {
-				return 'Cities of ' + this.country_name;
+				return localize('Cities of %county%').replace('%county%', this.country_name);
 			}
 		}
 	},
@@ -666,7 +666,7 @@ BrowseMap.Model.extendTo(CountriesList, {
 MusicConductor = function() {};
 BrowseMap.Model.extendTo(MusicConductor, {
 	model_name: 'mconductor',
-	init: function(opts) {
+	init: function() {
 		this._super.apply(this, arguments);
 
 		this.allpas = this.getSPI('world');
@@ -684,19 +684,17 @@ BrowseMap.Model.extendTo(MusicConductor, {
 
 		
 		this.initStates();
-		this.map_parent.on('state-change.can_expand', function(e) {
-			_this.updateState('can_expand', e.value);
-		});
+		this.wch(this.map_parent, 'can_expand');
 		return this;
 	},
 	sub_pa: {
 		сountries: {
-			title: 'Countries',
+			title: localize('Countries'),
 			constr: CountriesList
 		},
 		world: {
 			constr: AllPlaces,
-			title: 'All around the World'
+			title: localize('All-a-world')
 		}
 	}
 });

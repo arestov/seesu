@@ -1,178 +1,113 @@
-define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './SearchPageViewBase', './SongActTaggingControl'], function(provoda, $, spv, app_serv, etc_views, SearchPageViewBase, SongActTaggingControl) {
+define(['provoda', 'jquery', 'spv', 'app_serv', './etc_views', './SongActTaggingControl'], function(provoda, $, spv, app_serv, etc_views, SongActTaggingControl) {
 "use strict";
 var localize = app_serv.localize;
 
-var baseSuggestUI = function(){};
-provoda.extendFromTo('baseSuggestView', provoda.View, baseSuggestUI);
-var searchSectionUI = function(){};
-provoda.extendFromTo("searchSectionView", provoda.View, searchSectionUI);
-var investigationView  = function(){};
-provoda.extendFromTo('InvestigationView', provoda.View, investigationView);
 
-
-var struserSuggestView = function() {};
-baseSuggestUI.extendTo(struserSuggestView, {
-	createItem: function() {
-		var that = this.mpx.md;
-		this.a = $('<a></a>')
-			.text(that.text_title)
-			.appendTo(this.c);
-		$('<img />').attr("src", that.photo).prependTo(this.a);
-		this.c.addClass('share-user-suggest');
-		return this;
+var PlaylistAddSearchCtr = function() {};
+provoda.View.extendTo(PlaylistAddSearchCtr, {
+	createBase: function() {
+		this.c = this.root_view.getSample('song_acting_playlist_add');
+		this.createTemplate();
 	}
 });
 
-var ShSSectionView = function() {};
-searchSectionUI.extendTo(ShSSectionView, {
-	children_views: {
-		item: struserSuggestView
+
+var ShareSearchSection = function() {};
+provoda.View.extendTo(ShareSearchSection, {
+
+	toggleVisState: function(state, boolen) {
+		var new_value;
+		if (typeof boolen == 'undefined'){
+			new_value = !this.state('vis_' + state);
+		} else {
+			new_value = !!boolen;
+		}
+		this.setVisState(state, new_value);
+	},
+	toggleVisStateTPL: function(e, node, data) {
+		var boolen = data[2];
+		this.toggleVisState(data[1], boolen);
+	},
+	tpl_events:{
+		requestFullView: function() {
+			this.toggleVisState('full_view_mode', true);
+		},
+		toggleVisState: function(e, node, data) {
+			this.toggleVisStateTPL(e, node, data);
+		}
 	}
 });
 
-var ShareSearchView = function() {};
-investigationView.extendTo(ShareSearchView, {
-	children_views: {
-		"section-vk-users": ShSSectionView
-	}
+
+var VkShareSectionView = function() {};
+ShareSearchSection.extendTo(VkShareSectionView, {
+	children_views:{
+		vk_auth: etc_views.VkLoginUI
+	},
+	'stch-needs_vk_auth': function(state) {
+		if (state){
+			this.tpl.ancs['vk_auth'].append(this.getAFreeCV('vk_auth'));
+			this.requestAll();
+		}
+	},
 });
 
-var PASSectionView = function() {};
-searchSectionUI.extendTo(PASSectionView, {
-	children_views: {
-		item: baseSuggestUI
-	}
-	
+var LFMShareSectionView = function() {};
+ShareSearchSection.extendTo(LFMShareSectionView, {
+
 });
 
-var PlaylistAddSsearchView = function() {};
-investigationView.extendTo(PlaylistAddSsearchView, {
-	children_views: {
-		"section-playlist": PASSectionView
-	}
+var ShareSearchCtr = function() {};
+provoda.View.extendTo(ShareSearchCtr, {
+	children_views:{
+		'lfm_auth': etc_views.LfmLoginView,
+		'section-vk-users': VkShareSectionView,
+		'section-lfm-friends': LFMShareSectionView
+	},
+	'collch-lfm_auth': 'tpl.ancs.lfm_auth_con'
 });
+
 
 
 
 
 var ShareRowUI = function(){};
-etc_views.BaseCRowUI.extendTo(ShareRowUI, {
+provoda.View.extendTo(ShareRowUI, {
+	dom_rp: true,
 	children_views: {
-		vk_auth: etc_views.VkLoginUI,
-		searcher: ShareSearchView
+		
+		searcher: ShareSearchCtr
 	},
-	createDetails: function(){
-		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-		this.c = parent_c.children('.share-song');
-		this.button = buttons_panel.find('.pc-place .pc-rupor');
-
-		this.users_c = this.parent_view.tpl.ancs['vk_share'];
-
-		this.dom_related_props.push('button','users_c');
-		$("<h3></h3>").text(localize('post-song')).appendTo(this.users_c);
-		this.bindClick();
-
-	},
-	'stch-share_url': {
-		fn: function(state){
-			this.getPart("share_input").val(state || "");
-		//	dep_vp
-		},
-		dep_vp: ['share_input']
-	},
-	'stch-can_post_to_own_wall':{
-		fn: function(){
-			this.requirePart("own-wall-button");
-		},
-		dep_vp: ['pch-ws-own']
-	},
-	'stch-own_photo': {
-		fn: function(state) {
-			if (state){
-				if (this.own_photo){
-					this.own_photo.remove();
-				}
-				this.own_photo = $("<img />").attr("src", state).prependTo(this.getPart("own-wall-button"));
-			}
-		},
-		dep_vp: ["own-wall-button"]
-	},
-	'stch-can_search_friends': {
-		fn: function(state){
-			if (state){
-				var _this = this;
-				var oldv;
-				var inputSearch = spv.debounce(function() {
-					var newval = this.value;
-					if (oldv !== newval){
-						_this.RPCLegacy('search', newval);
-						oldv = newval;
-					}
-					
-				}, 100);
-
-				var input_place = $("<div class='list-search-input-place'></div>").insertBefore(this.getPart("pch-ws-input"));
-
-				this.input = $("<input type='text'/>").appendTo(input_place)
-					.bind('keyup change search mousemove', inputSearch);
-
-				$("<div class='friends-search-desc desc'></div>")
-					.text(localize("or-wall-of-f"))
-					.insertBefore(this.getPart("pch-ws-friends"));
-
-				this.getPart("pch-ws-friends").after();
-				var searcher_ui = this.getFreeCV('searcher');
-				$(searcher_ui.getA()).insertBefore(this.getPart("pch-ws-friends"));
-				this.requestAll();
-				searcher_ui.expand();
-				
-				this.RPCLegacy('search', "");
+	bindBase: function(){
+		var oldv;
+		var _this = this;
+		var inputSearch = spv.debounce(function() {
+			var newval = this.value;
+			if (oldv !== newval){
+				_this.RPCLegacy('search', newval);
+				oldv = newval;
 			}
 			
-		},
-		dep_vp: ['pch-ws-input', "pch-ws-friends"]
+		}, 100);
+
+		this.tpl.ancs['vk_share_search'].bind('keyup change search mousemove', inputSearch);
+		this.tpl.ancs['share_input'].bind("click focus", function() {
+			this.select();
+		});
 	},
-	'stch-needs_vk_auth ': {
-		fn: function(state) {
-			if (state){
-				$(this.getAFreeCV('vk_auth')).insertBefore(this.getPart("pch-vk-auth"));
-				this.requestAll();
+	"stch-active_view": function(state){
+		if (state){
+			if (this.expand){
+				this.expand();
 			}
-		},
-		dep_vp: ["pch-vk-auth"]
-	},
-	parts_builder: {
-		share_input: function(){
-			var share_input = this.c.find('.song-link');
-			share_input.bind("click focus", function() {
-				this.select();
-			});
-			this.addWayPoint(share_input);
-			return share_input;
-		},
-		"own-wall-button": function() {
-			var _this = this;
-			var ptmw_link = $("<div class='post-to-my-vk-wall'></div>").click(function(){
-				_this.RPCLegacy('postToVKWall');
-			}).text(localize("to-own-wall")).insertBefore(this.getPart("pch-ws-own"));
-			this.addWayPoint(ptmw_link);
-			return ptmw_link;
-		},
-		"pch-vk-auth": function() {
-			return this.addWSChunk();
-		},
-		"pch-ws-own": function(){
-			return this.addWSChunk();
-		},
-		"pch-ws-input": function(){
-			return this.addWSChunk();
-		},
-		"pch-ws-friends": function(){
-			return this.addWSChunk();
 		}
-	},
-	addWSChunk: function() {
-		return $(document.createTextNode("")).appendTo(this.users_c);
+
+		if (state){
+			var inp = this.tpl.ancs['share_input'][0];
+			this.nextTick(function() {
+				inp.focus();
+			});
+		}
 	},
 	expand: function(){
 		if (this.expanded){
@@ -180,39 +115,21 @@ etc_views.BaseCRowUI.extendTo(ShareRowUI, {
 		} else {
 			this.expanded = true;
 		}
-
-
-		this.requirePart("share_input");
-		
-		/*
-		this.share_input = this.c.find('.song-link').val();
-		this.share_input.bind("click focus", function() {
-			this.select();
-		});
-*/
-		this.requirePart("pch-ws-input");
-		this.requirePart("pch-ws-own");
-		this.requirePart("pch-vk-auth");
-		this.requirePart("pch-ws-friends");
-		
-
-		
 	}
 
 });
 
 var SongActPlaylistingUI = function() {};
-etc_views.BaseCRowUI.extendTo(SongActPlaylistingUI, {
+provoda.View.extendTo(SongActPlaylistingUI, {
 	children_views: {
-		searcher: PlaylistAddSsearchView
+		searcher: PlaylistAddSearchCtr
 	},
-	createDetails: function(){
-		var parent_c = this.parent_view.row_context;
-		var buttons_panel = this.parent_view.buttons_panel;
-		this.c = parent_c.children('.addsong-to-playlist');
-		this.button = buttons_panel.find('.pc-place .pc-add');
-		this.dom_related_props.push('button');
-		this.bindClick();
+	"stch-active_view": function(state){
+		if (state){
+			if (this.expand){
+				this.expand();
+			}
+		}
 	},
 	expand: function() {
 		if (this.expanded){
@@ -239,11 +156,9 @@ etc_views.BaseCRowUI.extendTo(SongActPlaylistingUI, {
 		this.pl_creation_b.append(localize("cr-new-playlist") + ' "').append(this.pl_creation_b_text).append('"');
 		this.lpl.append(this.pl_creation_b);
 
+		this['collch-searcher'] = 'lpl';
+		this.checkCollectionChange('searcher');
 
-		var searcher_ui = this.getFreeCV('searcher');
-		this.lpl.append(searcher_ui.getA());
-		this.requestAll();
-		searcher_ui.expand();
 		
 		this.RPCLegacy('search', "");
 
@@ -251,27 +166,17 @@ etc_views.BaseCRowUI.extendTo(SongActPlaylistingUI, {
 		
 		
 	},
-	"stch-active_view": function(state){
-		this._super.apply(this, arguments);//(state);
-		if (state){
-			var inp = this.input[0];
-			setTimeout(function() {
-				inp.focus();
-			}, 100);
-			
-		}
-	},
+
 	state_change: {
-		query: function(state) {
+		need_creation_button: function(state) {
 			if (this.pl_creation_b){
-				if (state){
-					this.pl_creation_b_text.text(state);
-					this.pl_creation_b.removeClass('hidden');
-				} else {
-					this.pl_creation_b.addClass('hidden');
-				}
+				this.pl_creation_b.toggleClass('hidden', !state);
 			}
-			
+		},
+		query: function(state) {
+			if (this.pl_creation_b_text){
+				this.pl_creation_b_text.text(state);
+			}
 		}
 	}
 	
@@ -285,18 +190,17 @@ etc_views.BaseCRowUI.extendTo(SongActPlaylistingUI, {
 
 
 var LoveRowUI = function(){};
-etc_views.BaseCRowUI.extendTo(LoveRowUI, {
+provoda.View.extendTo(LoveRowUI, {
 	children_views: {
 		lfm_loveit: etc_views.LfmLoveItView
 	},
-	createDetails: function(){
-		var parent_c = this.parent_view.row_context;
-		var buttons_panel = this.parent_view.buttons_panel;
-		this.c = parent_c.children('.love-song');
-		this.button = buttons_panel.find('.pc-place .pc-love');
-		this.dom_related_props.push('button');
 
-		this.bindClick();
+	"stch-active_view": function(state){
+		if (state){
+			if (this.expand){
+				this.expand();
+			}
+		}
 	},
 	expand: function(){
 		if (this.expanded){
@@ -310,17 +214,16 @@ etc_views.BaseCRowUI.extendTo(LoveRowUI, {
 });
 
 var ScrobbleRowUI = function(){};
-etc_views.BaseCRowUI.extendTo(ScrobbleRowUI, {
+provoda.View.extendTo(ScrobbleRowUI, {
 	children_views: {
 		lfm_scrobble: etc_views.LfmScrobbleView
 	},
-	createDetails: function(){
-		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-		this.c = parent_c.children('.last-fm-scrobbling');
-		this.button = buttons_panel.find('.lfm-scrobbling-button');
-		this.dom_related_props.push('button');
-		this.bindClick();
-
+	"stch-active_view": function(state){
+		if (state){
+			if (this.expand){
+				this.expand();
+			}
+		}
 	},
 	expand: function() {
 		if (this.expanded){
@@ -339,7 +242,7 @@ etc_views.BaseCRowUI.extendTo(ScrobbleRowUI, {
 
 
 var RepeatSongRowView = function(){};
-etc_views.BaseCRowUI.extendTo(RepeatSongRowView, {
+provoda.View.extendTo(RepeatSongRowView, {
 	"stch-rept-song": {
 		fn: function(state) {
 			this.getPart('rept-chbx').prop('checked', !!state);
@@ -356,12 +259,13 @@ etc_views.BaseCRowUI.extendTo(RepeatSongRowView, {
 			return input;
 		}
 	},
-	createDetails: function(){
-		var parent_c = this.parent_view.row_context; var buttons_panel = this.parent_view.buttons_panel;
-		this.c =  parent_c.children('.rept-song');
-		this.button = buttons_panel.find('.rept-song-button');
-		this.dom_related_props.push('button');
-		this.bindClick();
+
+	"stch-active_view": function(state){
+		if (state){
+			if (this.expand){
+				this.expand();
+			}
+		}
 	},
 	expand: function() {
 		if (this.expanded){
@@ -379,30 +283,17 @@ etc_views.BaseCRowUI.extendTo(RepeatSongRowView, {
 var SongActionsRowUI = function() {};
 etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 	dom_rp: true,
-	useBase: function(node){
-		this.c = node;
-		this.createTemplate();
-		this.row_context = this.tpl.ancs['row_context'];//this.c.children('.row-song-context');
+	bindBase: function(){
+		this._super();
 
-		this.buttons_panel = this.tpl.ancs['buttons_panel'];
 		this.createVolumeControl();
 		
-		this.arrow = this.tpl.ancs['arrow'];
-		var _this = this;
-
-		this.parent_view.on('state-change.mp_show_end', function(e){
-			_this.setVisState('is_visible', !!e.value);
+		this.wch(this.parent_view, 'mp_show_end', function(e){
+			this.setVisState('is_visible', !!e.value);
 		});
-		this.dom_related_props.push('row_context', 'buttons_panel', 'arrow');
 
 	},
-	tpl_events: {
-		switchClass: function(e, node, data) {
-		//	var anc_name = ;
-			this.tpl.ancs[data[2]].toggleClass(data[1]);
-		//	console.log(data);
-		}
-	},
+
 	children_views: {
 		"row-repeat-song": {
 			main: RepeatSongRowView
@@ -424,17 +315,33 @@ etc_views.ActionsRowUI.extendTo(SongActionsRowUI, {
 		}
 	},
 
+	getVHoleWidth: function() {
+		return this.tpl.ancs['v-hole'].width();
+	},
+	getVBarOuterWidth: function() {
+		return this.tpl.ancs['v-bar'].outerWidth();
+	},
+	getVBarWidth: function() {
+		return this.tpl.ancs['v-bar'].width();
+	},
+
 	complex_states: {
 		"vis_volume-hole-width": {
 			depends_on: ['vis_is_visible', 'vis_con_appended'],
 			fn: function(visible, apd){
-				return !!(visible && apd) && this.tpl.ancs['v-hole'].width();
+				if (visible && apd){
+					return this.getBoxDemension(this.getVHoleWidth, 'volume-hole-width');
+				}
+				
 			}
 		},
 		"vis_volume-bar-max-width": {
 			depends_on: ['vis_volume-hole-width'],
 			fn: function(vvh_w){
-				return vvh_w && vvh_w - ( this.tpl.ancs['v-bar'].outerWidth() - this.tpl.ancs['v-bar'].width());
+				if (vvh_w){
+					return  vvh_w - ( this.getBoxDemension(this.getVBarOuterWidth, 'v-bar-o-width') - this.getBoxDemension(this.getVBarWidth, 'v-bar-width'));
+				}
+				
 			}
 		},
 		"vis_volume": {

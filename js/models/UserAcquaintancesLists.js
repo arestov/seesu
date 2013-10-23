@@ -91,14 +91,11 @@ BrowseMap.Model.extendTo(UserAcquaintancesLists, {
 		this._super(opts);
 		var _this = this;
 
-		this.app.on('state-change.su_userid', function(e) {
-			if (e.value){
-				_this.updateState('current_user', e.value);
-			}
-		});
+		this.wch(this.app, 'su_userid', 'current_user');
+
 		var su = this.app;
 
-		su.on('state-change.su_server_api', function(e) {
+		su.on('state_change-su_server_api', function(e) {
 			if (e.value){
 				_this.bindDataSteams();
 			}

@@ -1,6 +1,8 @@
 define(['provoda', 'spv'], function(provoda, spv) {
 "use strict";
 var MapLevel = function(num, parent_levels, resident, map){
+	this.closed = null;
+	this.resident = null;
 	this.num = num;
 	this.map = map;
 	this.parent_levels = parent_levels;
@@ -102,6 +104,19 @@ var BrowseMap = function (){};
 provoda.Eventor.extendTo(BrowseMap, {
 	init: function(maleres){
 		this._super();
+
+		this.changes_group = null;
+		this.grouping_changes = null;
+		this.residents_tree_change = null;
+		this.collecting_changes = null;
+		this.current_level_num = null;
+		this.old_nav_tree = null;
+		this.nav_tree = null;
+		this.onNavTitleChange = null;
+		this.onNavUrlChange = null;
+
+
+		
 		this.levels = [];
 		if (!maleres){
 			throw new Error('give me 0 index level (start screen)');
@@ -112,6 +127,8 @@ provoda.Eventor.extendTo(BrowseMap, {
 		this.cha_counter = 0;
 		this.chans_coll = [];
 		this.residents = [];
+
+
 
 		return this;
 	},
@@ -261,16 +278,18 @@ provoda.Eventor.extendTo(BrowseMap, {
 					};
 				}
 			}
+
+			var changed_residents;
 			
 			if (this.residents_tree_change){
 				this.residents_tree_change = false;
-				this.trigger('residents-tree', this.residents);
+				changed_residents = this.residents;
 			}
 
 			this.trigger('changes', {
 				array: this.chans_coll,
 				anid: this.cha_counter
-			});
+			}, changed_residents, this.residents);
 			this.chans_coll = [];
 			this.chans_coll.anid = ++this.cha_counter;
 
@@ -679,13 +698,13 @@ provoda.Eventor.extendTo(BrowseMap, {
 		var i;
 		if (old_tree){
 			for (i = 0; i < old_tree.length; i++) {
-				old_tree[i].off('state-change.url_part', this.onNavUrlChange); //unbind
+				old_tree[i].off('state_change-url_part', this.onNavUrlChange); //unbind
 			}
 		}
 
 		new_tree = this.getTreeResidents(new_tree);
 		for (i = 0; i < new_tree.length; i++) {
-			new_tree[i].on('state-change.url_part', this.onNavUrlChange, {
+			new_tree[i].on('state_change-url_part', this.onNavUrlChange, {
 				skip_reg: true
 			});
 		}
@@ -780,6 +799,11 @@ BrowseMap.Model = function() {};
 provoda.HModel.extendTo(BrowseMap.Model, {
 	init: function(opts) {
 		this._super(opts);
+
+		this.lists_list = null;
+		this.lev = null;
+		this.map_level_num = null;
+
 		opts = opts || {};
 		if (!this.skip_map_init){
 			if (opts.nav_opts){
@@ -867,7 +891,7 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 	},
 	bindChildrenPreload: function(array) {
 		var lists_list = array || this.lists_list;
-		this.on('vip-state-change.mp_show', function(e) {
+		this.wch(this, 'mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				for (var i = 0; i < lists_list.length; i++) {
 					var cur = lists_list[i];
@@ -918,10 +942,10 @@ provoda.HModel.extendTo(BrowseMap.Model, {
 		return this.state('nav_title');
 	},
 	onTitleChange: function(cb) {
-		return this.on('vip-state-change.nav_title', cb, {skip_reg: true, immediately: true});
+		return this.on('vip_state_change-nav_title', cb, {skip_reg: true, immediately: true});
 	},
 	offTitleChange: function(cb) {
-		return this.off('vip-state-change.nav_title', cb);
+		return this.off('vip_state_change-nav_title', cb);
 	},
 	getURL: function() {
 		return '';

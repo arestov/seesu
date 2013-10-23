@@ -53,16 +53,9 @@
 }
 #search {
 	margin: 0 auto;
-	max-width: 750px;
+	
 
 	}
-
-@media (min-width:760px) {
-	#search {
-		margin-left: 240px;
-		}
-}
-
 
 
 .block-for-startpage, .for-startpage{
@@ -184,29 +177,34 @@
 	padding-bottom: 20px;
 	max-width: 750px;
 	}
-.full-page .leftcol{
-	width: 50%;
-	float:left;
-	min-width: 15rem;
-	-moz-box-sizing:border-box;
-	box-sizing: border-box;
-	padding-right: 0.86rem;
-	}
+
+
 .full_wide_col{
 	clear:both;
 	}
 	.full_wide_col .area_for_button .albums_previews{
 		height: 4.6rem;
 		}
-.full-page .rightcol{
-	width: 50%;
-	float:right;
-	padding-left: 0.86rem;
-	-moz-box-sizing:border-box;
-	box-sizing: border-box;
-	min-width: 15rem;
-	}
 
+@media (min-width:490px) {
+
+	.full-page .leftcol{
+		width: 50%;
+		float:left;
+		min-width: 15rem;
+		-moz-box-sizing:border-box;
+		box-sizing: border-box;
+		padding-right: 0.86rem;
+		}
+	.full-page .rightcol{
+		width: 50%;
+		float:right;
+		padding-left: 0.86rem;
+		-moz-box-sizing:border-box;
+		box-sizing: border-box;
+		min-width: 15rem;
+		}
+}
 .full-page .art_card{
 	padding: 1.72rem 10px;
 	}
@@ -240,11 +238,14 @@
 		float: right;
 		width: 50%;
 		}
+
 		.art_card-bio.loading{
 			min-height:20px;
-			background: url(../i/spinner.svg) no-repeat ;
-			background-position: 100% 0%;
-			background-size: 1.143rem;
+			position: relative;
+			}
+			.art_card-bio.loading:after{
+				left: auto;
+				right: 0;
 			}
 	.page-scheme .art_card-bio{
 		display: none;

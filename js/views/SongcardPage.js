@@ -22,20 +22,29 @@ coct.SPView.extendTo(SongcardPage, {
 
 var FanPreview = function() {};
 provoda.View.extendTo(FanPreview, {
+	'compx-can_use_image':{
+		depends_on: ['vis_image_loaded', 'selected_image'],
+		fn: function(vis_image_loaded, selected_image) {
+			return !!(vis_image_loaded && selected_image);
+		}
+	},
 	'stch-selected_image': function(state) {
 		var image_node = this.tpl.ancs['user-image'];
-		this.setVisState('cant_use_image', true);
 		image_node.src = '';
 		var _this = this;
 		if (state){
 			var url = state.lfm_id ?
 				'http://userserve-ak.last.fm/serve/64s/' + state.lfm_id : state.url;
+
+			if (url.lastIndexOf('.gif') == url.length - 4){
+				return;
+			}
 			var req = this.root_view.loadImage({
 				url: url,
 				cache_allowed: true
 			}).done(function() {
 				image_node[0].src = url;
-				_this.setVisState('cant_use_image', false);
+				_this.setVisState('image_loaded', true);
 			});
 			this.addRequest(req);
 		}
@@ -58,18 +67,16 @@ provoda.View.extendTo(SongcardController, {
 	},
 	bindBase: function() {
 		this.rowcs = {};
-		var _this = this;
-		this.parent_view.on('state-change.mp_show', function(e) {
-			if (!e.value && _this.rowcs && _this.rowcs.users_context){
-				_this.rowcs.users_context.hide();
+		this.wch(this.parent_view, 'vmp_show', function(e) {
+			if (!e.value && this.rowcs && this.rowcs.users_context){
+				this.rowcs.users_context.hide();
 			}
-		});
-		this.parent_view.on('state-change.mp_show', function(e) {
 			if (e.value){
-				_this.expand();
-				_this.updateSongListeners();
+				this.expand();
+				this.updateSongListeners();
 			}
 		});
+
 
 
 	},

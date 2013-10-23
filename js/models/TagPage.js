@@ -547,7 +547,7 @@ BrowseMap.Model.extendTo(TagPage, {
 		this._super(opts);
 
 		this.tag_name = this.urp_name = params.urp_name || params.tag_name;
-		this.init_states['nav_title'] = 'Tag ' + this.tag_name;
+		this.init_states['nav_title'] = localize('Tag') + ' ' + this.tag_name;
 		this.initStates();
 		this.updateState('tag_name', this.tag_name);
 
@@ -565,7 +565,7 @@ BrowseMap.Model.extendTo(TagPage, {
 		this.updateNesting('albums_list', albums_list);
 		this.updateNesting('similar_tags', similar_tags);
 
-		this.on('vip-state-change.mp_show', function(e) {
+		this.on('vip_state_change-mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				albums_list.preloadStart();
 				similar_tags.preloadStart();
@@ -577,7 +577,7 @@ BrowseMap.Model.extendTo(TagPage, {
 		'similar': {
 			constr: SimilarTags,
 			getTitle: function() {
-				return 'Similar to ' + this.tag_name + ' tags';
+				return localize('Similar-to') + ' ' + this.tag_name + ' ' + localize('Tags').toLowerCase();
 			}
 		},
 		'artists': {
@@ -591,7 +591,7 @@ BrowseMap.Model.extendTo(TagPage, {
 		'albums': {
 			constr: TagAlbums,
 			getTitle: function() {
-				return 'Top ' + this.tag_name + ' ' + 'Albums';
+				return localize('Top') + ' ' + this.tag_name + ' ' + localize('Albums');
 			}
 		}
 	}

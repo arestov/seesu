@@ -44,6 +44,15 @@ var hasArg = function(el) {return el;};
 spv.hasEveryArgs = function() {
 	return Array.prototype.every.call(arguments, hasArg);
 };
+spv.getExistingItems = function(arr) {
+	var result = [];
+	for (var i = 0; i < arr.length; i++) {
+		if (arr[i]){
+			result.push(arr[i]);
+		}
+	}
+	return result;
+};
 
 addEvent = spv.addEvent = window.addEventListener ?
 function(elem, evType, fn){
@@ -65,6 +74,10 @@ getDefaultView = spv.getDefaultView = function(d) {
 	return d.defaultView || d.parentWindow;
 };
 domReady = spv.domReady = function(d, callback){
+	var wndw = spv.getDefaultView(d);
+	if (!wndw){
+		return;
+	}
 	if (d.readyState == 'complete' || d.readyState == 'loaded' || d.readyState == "interactive"){
 		callback();
 	} else{
@@ -72,12 +85,12 @@ domReady = spv.domReady = function(d, callback){
 		var f = function(){
 			if (!done){
 				done = true;
-				spv.removeEvent(spv.getDefaultView(d), 'load', f);
+				spv.removeEvent(wndw, 'load', f);
 				spv.removeEvent(d, 'DOMContentLoaded', f);
 				callback();
 			}
 		};
-		spv.addEvent(spv.getDefaultView(d), 'load', f);
+		spv.addEvent(wndw, 'load', f);
 		spv.addEvent(d, 'DOMContentLoaded', f);
 	}
 };
@@ -99,6 +112,17 @@ doesContain = spv.doesContain = function(target, valueOf){
 		
 	}
 	return -1;
+};
+spv.hasCommonItems = function(arr1, arr2) {
+	if (!arr2){
+		return false;
+	}
+	for (var i = 0; i < arr1.length; i++) {
+		if (arr2.indexOf(arr1[i]) != -1){
+			return true;
+		}
+	}
+	return false;
 };
 arrayExclude = spv.arrayExclude = function(arr, obj){
 	var r = [];
@@ -245,7 +269,7 @@ getStringPattern = function (str) {
 spv.getStringPattern = getStringPattern;
 
 ttime = function(f){
-	var d = +new Date();
+	var d = Date.now();
 
 	if (f){
 		f();
@@ -304,7 +328,7 @@ getTargetField = function(obj, tree){
 	var nothing;
 	var target = obj;
 	for (var i=0; i < tree.length; i++) {
-		if (target[tree[i]] !== nothing){
+		if (target[tree[i]] != nothing){
 			target = target[tree[i]];
 		} else{
 			return;
@@ -428,35 +452,40 @@ makeIndexByField = spv.makeIndexByField = function(array, field, keep_case){
 
 
 $filter = function(array, field, value_or_testfunc){
-	var r = [];
+	var i, r = [];
 	r.not = [];
 	if (!array){return r;}
-	for (var i=0; i < array.length; i++) {
-		if (array[i]){
-			if (value_or_testfunc){
-				if (typeof value_or_testfunc == 'function'){
-					if (value_or_testfunc(spv.getTargetField(array[i], field))){
-						r.push(array[i]);
-					} else{
-						r.not.push(array[i]);
-					}
+
+	if (value_or_testfunc){
+		for (i = 0; i < array.length; i++) {
+			if (!array[i]){
+				continue;
+			}
+			if (typeof value_or_testfunc == 'function'){
+				if (value_or_testfunc(spv.getTargetField(array[i], field))){
+					r.push(array[i]);
 				} else{
-					if (spv.getTargetField(array[i], field) === value_or_testfunc){
-						r.push(array[i]);
-					} else{
-						r.not.push(array[i]);
-					}
+					r.not.push(array[i]);
 				}
-				
 			} else{
-				var field_value = spv.getTargetField(array[i], field);
-				if (field_value){
-					r.push(field_value);
+				if (spv.getTargetField(array[i], field) === value_or_testfunc){
+					r.push(array[i]);
 				} else{
 					r.not.push(array[i]);
 				}
 			}
-			
+		}
+	} else {
+		for (i = 0; i < array.length; i++) {
+			if (!array[i]){
+				continue;
+			}
+			var field_value = spv.getTargetField(array[i], field);
+			if (field_value){
+				r.push(field_value);
+			} else{
+				r.not.push(array[i]);
+			}
 		}
 	}
 	return r;
@@ -785,5 +814,16 @@ spv.throttle = throttle;
 spv.debounce = debounce;
 spv.filter = $filter;
 
+
+
+spv.zerofyString = function(string, length) {
+	if (typeof string != 'string'){
+		string = '' + string;
+	}
+	while (string.length < length){
+		string = '0' + string;
+	}
+	return string;
+};
 })();
 define(function(){return spv;});

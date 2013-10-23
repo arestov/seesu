@@ -11,7 +11,7 @@ AppModelBase.extendTo(AppModel, {
 		for (var func_name in this.bmap_travel){
 			this[func_name] = this.getBMapTravelFunc(this.bmap_travel[func_name], this);
 		}
-		this.on('state-change.current_mp_md', function(e) {
+		this.on('state_change-current_mp_md', function(e) {
 			if (e.value){
 				this.resortQueue();
 			}
@@ -142,7 +142,7 @@ AppModelBase.extendTo(AppModel, {
 			if (!cur_el || !cur_el.state('mp_has_focus') || !cur_el.lev.isOpened()){
 				var md = this.createSearchPage();
 				var _this = this;
-				md.on('state-change.mp_show', function(e) {
+				md.on('state_change-mp_show', function(e) {
 					if (e.value){
 						_this.search_el = this;
 					}
@@ -182,10 +182,10 @@ AppModelBase.extendTo(AppModel, {
 		}
 	},
 	getVkUser: function(userid) {
-		return this.start_page.getSPI('users/vk:' + userid, true);
+		return this.start_page.getSPI('users/vk:' + encodeURIComponent(userid), true);
 	},
 	getLastfmUser: function(username) {
-		return this.start_page.getSPI('users/lfm:' + username, true);
+		return this.start_page.getSPI('users/lfm:' + encodeURIComponent(username), true);
 	},
 	getSongcard: function(artist_name, track_name) {
 		if (!artist_name || !track_name){
@@ -194,7 +194,8 @@ AppModelBase.extendTo(AppModel, {
 		return this.start_page.getSPI('tracks/' + this.joinCommaParts([artist_name, track_name]), true);
 	},
 	getArtcard: function(artist_name) {
-		return this.start_page.getSPI('catalog/' + artist_name, true);
+
+		return this.start_page.getSPI('catalog/' + encodeURIComponent(artist_name), true);
 	},
 	search: function(query){
 		var old_v = this.state('search_query');

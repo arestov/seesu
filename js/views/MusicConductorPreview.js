@@ -17,7 +17,7 @@ provoda.View.extendTo(MusicConductorPreview, {
 
 		//this.ww_c = $('<div class="hidden"></div>').appendTo(this.c);
 	},
-	'stch-mp_show': function(state) {
+	'stch-vmp_show': function(state) {
 		this.button.toggleClass('button_selected', !!state);
 	},
 	'stch-can_expand': function(state){

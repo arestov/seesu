@@ -7,6 +7,15 @@ provoda.addPrototype("SongBase",{
 	init: function(opts, params){
 
 		this._super(opts);
+
+		this.neighbour_for = null;
+		this.marked_prev_song = null;
+		this.marked_next_song = null;
+		this.ready_to_preload = null;
+		this.waiting_to_load_next = null;
+		this.track = null;
+		this.rtn_request = null;
+		this.playable_info = null;
 		
 		this.plst_titl = opts.plst_titl;
 		this.mp3_search = opts.mp3_search;
@@ -674,7 +683,7 @@ provoda.addPrototype("SongBase",{
 			this.submitNowPlaying();
 
 			if (!this.start_time){
-				this.start_time = ((new Date() * 1)/1000).toFixed(0);
+				this.start_time = (Date.now()/1000).toFixed(0);
 			}
 		}
 	},

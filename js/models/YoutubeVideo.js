@@ -19,7 +19,7 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 
 		var _this = this;
 
-		this.on('vip-state-change.mp_show', function(e) {
+		this.on('vip_state_change-mp_show', function(e) {
 			if (e.value && e.value.userwant){
 				su.trackEvent('Navigation', 'youtube video');
 				_this.mo.pause();
@@ -30,7 +30,7 @@ BrowseMap.Model.extendTo(YoutubeVideo, {
 	requestVideo: function() {
 		var cant_show = this.state('cant_show');
 		var link = 'http://www.youtube.com/watch?v=' + this.state('yt_id');
-		if (!cant_show){
+		if (!cant_show && !app_env.tizen_app){
 			this.showOnMap();
 			
 		} else{

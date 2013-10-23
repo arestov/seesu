@@ -31,7 +31,33 @@ html.not-as-application, .not-as-application  body{
 .not-as-application .slider-materail{
 	padding-bottom:15px;
 }
-
+.big_spinner:after, .app-loading-mark:after, .wait_love_done .add-to-lfmfav:after, .artists_list.list_loading_state:after, ul.tracks-for-play.loading:after, .photo-cont.loading-images:after{
+	position: absolute;
+	top:0;
+	left:0;
+	content: url(../i/spinner.svg);
+	height: 1.72rem;
+	width: 1.72rem;
+	pointer-events: none;
+}
+.small_spiner:after,
+.selected-mf.buffering-progress .mf-progress:after,
+.block-for-startpage.loading:after,
+#search #search-p label span.loading:after,
+.search_results-container h4.loading:after,
+.art_card-bio.loading:after,
+.vk-login-context.waiting-auth .deco:after,
+.desc_prevw_list.list_loading:after,
+.search-mp3 .files-load-states:after,
+a.track_name_loading .song-track-name{
+	position: absolute;
+	top:0;
+	left:0;
+	content: url(../i/spinner.svg);
+	height: 1.143rem;
+	width: 1.143rem;
+	pointer-events: none;
+}
 
 .keys-navigation-focus{
 	box-shadow: 0 0 3pt 2pt orange;
@@ -40,9 +66,10 @@ html.not-as-application, .not-as-application  body{
 .app-loading-mark{
 	margin: 1rem 0;
 	height: 1.72rem;
-	background: url(../i/spinner.svg) no-repeat;
-	background-size: 1.714rem;
+	
+	position: relative;
 	}
+
 	.app-loaded .app-loading-mark{
 		display: none;
 		}
@@ -232,9 +259,12 @@ html.not-as-application, .not-as-application  body{
 				font-size: inherit;
 				}
 		.selected-mf.buffering-progress .mf-progress{
-			background:url(../i/spinner.svg) no-repeat ;
-			background-position: 95% 50%;
-			background-size: 1.143rem;
+			position: relative;
+			}
+		.selected-mf.buffering-progress .mf-progress:after{
+			right: 5%;
+			top:50%;
+			left:auto;
 			}
 	.moplas-block .moplas-list li.overstocked{
 		display: none;
@@ -281,11 +311,15 @@ html.not-as-application, .not-as-application  body{
 .has_session .add-to-lfmfav{
 	opacity: 1;
 	}
+
 .wait_love_done .add-to-lfmfav{
-	background: url(../i/spinner.svg) no-repeat;
-	background-position:  100% 0;
-	background-size: 1.714rem;
-}
+	position: relative;
+	}
+	.wait_love_done .add-to-lfmfav:after{
+		right:0;
+		top:0;
+		left:auto;
+		}
 .add-to-lfmfav{
 	margin-top:1rem;
 	opacity: 0.3;
@@ -445,20 +479,26 @@ html.not-as-application, .not-as-application  body{
 
 
 .artists_list.list_loading_state{
+	position: relative;
 	padding-bottom: 2rem;
-	background: url(../i/spinner.svg) no-repeat ;
-	background-position: 0.5rem 100%;
-	background-size: 1.714rem;
+	}
+	.artists_list.list_loading_state:after{
+		left:0.5rem;
+		top:auto;
+		bottom: 0;
 	}
 .tracks-for-play{
 	clear:both;
 	}
 	ul.tracks-for-play.loading{
+		position: relative;
 		padding-bottom: 30px;
-		background: url(../i/spinner.svg) no-repeat ;
-		background-position: 4px 100%;
-		background-size: 1.714rem;
 	}
+	ul.tracks-for-play.loading:after{
+		left:0.3rem;
+		top:auto;
+		bottom: 0;
+		}
 	ul.tracks-for-play > li{
 		position:relative;
 		margin: 0 0 0 0;
@@ -468,10 +508,11 @@ html.not-as-application, .not-as-application  body{
 	overflow: hidden;
 	height:135px;
 	}
-	.photo-cont.loading-images{
-		background: url(../i/spinner.svg) no-repeat ;
-		background-position: 100% 0;
-		background-size: 1.714rem;
+
+	.photo-cont.loading-images:after{
+		left:auto;
+		right:0;
+
 		}
 	@media (min-height:600px) {
 		.photo-cont{
@@ -483,14 +524,10 @@ html.not-as-application, .not-as-application  body{
 	.photo-cont-lift{
 		height:100%;
 		white-space: nowrap;
-	}
-	.photo-cont-lift.ready_to_use{
-        position: absolute;
-        top: 0;
-        left: 0;
+		position: relative;
 		overflow: hidden;
 	}
-	.photo-cont-lift.ready_to_use .artist_image{
+	.photo-cont-lift .artist_image{
 		position: relative;
 	}
 	.photo-cont .artist_image{
@@ -836,9 +873,12 @@ html.not-as-application, .not-as-application  body{
 
 .block-for-startpage.loading{
 	min-height:30px;
-	background: url(../i/spinner.svg) no-repeat ;
-	background-position: 100% 4px;
-	background-size: 1.143rem;
+	position: relative;
+}
+.block-for-startpage.loading:after{
+	left:auto;
+	right:0;
+	top:0.2rem;
 }
 .block-for-startpage h3{
 	overflow:hidden;
@@ -899,9 +939,13 @@ html.not-as-application, .not-as-application  body{
 		font-style:normal;
 	}
 	#search #search-p label span.loading{
-		background: url(../i/spinner.svg) no-repeat ;
-		background-position: 100% 50%;
-		background-size: 1.143rem;
+		position: relative;
+	}
+	#search #search-p label span.loading:after{
+		left:auto;
+		right:0;
+		top:50%;
+		margin-top: -0.6rem;
 	}
 	#search #search-p label span.inpt{
 		display:block;
@@ -1171,25 +1215,25 @@ iframe.you-tube-video,embed.you-tube-video{
 /* Custom CSS scrollbar */
 
 .pokki-app ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-    border-radius: 5px;
+	width: 8px;
+	height: 8px;
+	border-radius: 5px;
 	background: none;
 }
 
 
 .pokki-app ::-webkit-scrollbar-track:vertical { 
-    background: none; 
+	background: none; 
 }
 .pokki-app ::-webkit-scrollbar-thumb {
-    width: 8px; 
-    height: 20px;
-    border-radius: 5px;
-    background: #999;
+	width: 8px; 
+	height: 20px;
+	border-radius: 5px;
+	background: #999;
 }
 
 .pokki-app ::-webkit-scrollbar-button: { 
-    display: none; 
+	display: none; 
 }
 .attention-message{
 	overflow: hidden;
@@ -1235,55 +1279,170 @@ iframe.you-tube-video,embed.you-tube-video{
 		
 		margin-top:1.72rem;
 		}
-		.share-song .users-list .search_results-block{
+
+		.share-song .song_acting_vk_search{
 			overflow: hidden;
 			}
 		.share-song .users-list .vk-login-context{
 			margin:1rem -1rem 0;
 			border-radius: 0;
 		}
-		.share-song .users-list .search_results-block{
-			margin-top:1rem;
+		.share-song .song_acting_vk_search{
+			
 		}
-		.share-song .users-list .suggest{
+		.share-user-suggest{
 			float:left;
 			width:50%;
-			}
-.post-to-my-vk-wall{
+			margin-bottom:7px;
+		}
+.shareb-base .details_switch_block{
+	float: right;
+	margin-bottom: 0.2rem;
+	margin-top: 0.2rem;
+	}
+	.shareb-base .details_switch_block .desc{
+		float:left;
+		margin-right: 0.5rem;
+		}
+	.shareb-base .details_switch_block  .details_switch{
+		float: right;	
+		}
 
+	.shareb-base .details_for_switcher{
+		clear: both;
+		}
+
+
+.vk_share{
+
+	}
+	.vk_share h3{
+		
+		}
+	.share_header_wrap{
+		overflow: hidden;
+		margin-top: 1.5rem;
+	}
+	.vk_share_header{
+		float:left;
+		color: #999;
+		padding-top: 0.1rem;
+		margin: 0 1rem 0 0;
+	}
+	.post-to-my-vk-wall{
+		float:left;
+	}
+.lfm_share{
+	margin-top: 0.5rem;
 }
+
+.song_acting_vk_search{
+	overflow: hidden;
+}
+.shareb-base{
+	background: #545454;
+	border: 1px solid transparent;
+	border-top: 1px solid #4E4E4E;
+	border-bottom: 1px solid #646464;
+	border-radius: 0.5rem;
+	margin-bottom: 0.2rem;
+	padding: 0.7rem;
+	overflow: hidden;
+	}
+	.shareb-button{
+		float:right;
+		}
+
+	.shareb-con{
+		clear: both;
+		}
+
+
 .list-search-input-place{
 	float:left;
 	margin-bottom:7px;
 	width:50%;
 }
-.share-user-suggest{
+
+
+.shareb-base.sharebopened .share-user-suggest{
 	
-	margin-bottom:7px;
+	
 	
 	}
-	.share-user-suggest a{
+	.shareb-base .share-user-suggest a{
 		min-width:200px;
 	}
-	.share-user-suggest a, .post-to-my-vk-wall{
+	.shareb-base .share-user-suggest a, .post-to-my-vk-wall{
 		display: block;
 		overflow: hidden;
 		padding: 3px 6px 3px 3px;
 		border-radius:3px;
 		cursor: pointer;
 		}
-
-	.share-user-suggest img, .post-to-my-vk-wall img{
-		float:left;
-		margin-right:7px;
+	.share-user-suggest img{
 		width:25px;
 		height:25px;
+		float: left;
+	}
+	.shareb-base .share-user-suggest img, .post-to-my-vk-wall img{
+		float:left;
+		margin-right:7px;
+		width:1.8rem;
+		height:1.8rem;
 		}
-	.share-user-suggest:hover a,.post-to-my-vk-wall:hover{
+	.shareb-base .share-user-suggest:hover a,.post-to-my-vk-wall:hover{
 		background-color: #494949;	
-		}		
+		}
+.protect_clicks{
+	position: relative;
+	
+	}
+.clicks_protecter{
+	position: absolute;
+	display: none;
+	left:0;
+	top:0;
+	bottom: 0;
+	right: 0;
+	background: #333;
+	opacity: 0.5;
+	}
+	.clicks_protecter:hover{
+		cursor: pointer;
+		border-bottom: 0.2rem solid #fff;
+		}
+.compact_share {
+
+	}
+	.compact_share .clicks_protecter{
+		display: block;
+	}
+	.share-song .compact_share .protect_clicks{
+		height: 4.5rem;
+		}
+	.compact_share .share-user-suggest{
+		width: auto;
+		margin-bottom:0;
+	}
+	.compact_share .share-user-suggest a{
+		padding: 0;
+		border-radius: 0;
+		cursor: default;
+		min-width: 0;
+		}
+	.compact_share .share-user-suggest img{
+		margin-right:0;
+		}
+	.compact_share .text_part{
+		display: none;
+		}
+
 .friends-search-desc{
 	clear: both;
+	float: left;
+	margin-bottom: 0.2rem;
+	margin-top: 0.2rem;
 	}
 
 .row-song-context input{
@@ -1632,7 +1791,8 @@ body .surf_nav{
 .song_fans-h-intrack{
 	margin-left: 1rem;
 	margin-right: 0.5rem;
-	float: left
+	float: left;
+	white-space: pre-line;
 }
 .song_fans-l-intrack{
 	max-height: 3rem;
@@ -1672,83 +1832,82 @@ body .surf_nav{
 	.song_fan-b-tck:hover .song_fan-h-tck{
 		visibility: visible;
 	}
-.shareb-base{
-	background: #545454;
-	border: 1px solid transparent;
-	border-top: 1px solid #4E4E4E;
-	border-bottom: 1px solid #646464;
-	border-radius: 0.5rem;
-	margin-bottom: 0.2rem;
-	padding: 0 0.7rem;
-	overflow: hidden;
-	}
-	.shareb-button{
-		margin-left:-13px;
-		margin-right: -13px;
-		padding: 0.5rem 0.7rem;
-		background: #5F5F5F;
-		cursor: pointer;
-		display: block;
-		
-		min-width: 5rem;
-		}
-	.shareb-button:hover{
-		background-color: #6D6D6D;
-	}
-	.shareb-con{
-		display: none;
-		}
-	.shareb-base.sharebopened{
-		
 
-		}
-		.shareb-base.sharebopened .shareb-button{
-			}
-		.shareb-base.sharebopened .shareb-con{
-			display: block;
-			}
 .song-act-tagging input{
 	display: block;
 	width: 100%;
+	-moz-box-sizing:border-box;
 	box-sizing: border-box;
 	margin-bottom: 1rem;
-}
-.song-tagging{
-	margin-top: 1rem;
-	}
-	.possible_tags{
-		}
-		.possible_tags span{
-			border: 1px solid #666;
-			border-radius: 0.2rem;
-			margin-right: 1rem;
-		}
-.top_tags{
 	
-	}
-	.top_tags span,.artist_tags span,.personal_tags span{
-		margin-right: 1rem;
-		background: rgb(48, 73, 90);
-		border: 1px dotted #686868;
-		border-radius: 0.3rem;
-		padding: 0 0.3rem;
-		display: inline-block;
-		margin-bottom: 0.3rem;
-		color: #eee;
-		cursor: pointer;
-		}
-.tagging_help{
-	min-height: 2.5rem;
-	}
-.tagging_header{
-	margin: 0;
-	padding: 0;
-	font-weight: 400;
-	color:#777;
-	}
-	.tagging_header.has_tags{
-		color:#eee;
-		}
-.save_tags_b{
-	float:right;
 }
+.song-act-tagging{
+	display: none;
+	}
+.has_session .song-act-tagging{
+	display: block;
+	}
+	.song-tagging{
+		margin-top: 1rem;
+		}
+		.possible_tags{
+			}
+			.possible_tags span{
+				border: 1px solid #666;
+				border-radius: 0.2rem;
+				margin-right: 1rem;
+			}
+	.top_tags{
+		
+		}
+		.song_tagging_help .tagging_help span{
+			margin-right: 1rem;
+			background: #3A473D;
+			border: 1px dotted #686868;
+			border-radius: 0.3rem;
+			padding: 0 0.3rem;
+			display: inline-block;
+			margin-bottom: 0.3rem;
+			color: #eee;
+			cursor: pointer;
+			}
+	.song_tagging_help{
+		background: rgb(85, 85, 85);
+		padding: 1rem 13px;
+		margin: 0 -13px;
+		}
+		.tagging_help{
+			min-height: 2.5rem;
+			margin-bottom: 0.3rem;
+			}
+		.tagging_header{
+			margin: 0;
+			padding: 0;
+			font-weight: 400;
+			color:#777;
+			}
+			.tagging_header.has_tags{
+				color:#eee;
+				}
+	.save_tags_b{
+		float:right;
+	}
+.dmca_notice{
+	font-size: 0.8rem;
+	color:#999;
+	display: none;
+	padding: 0.5rem 1rem 1rem;
+	padding-left: 52px;
+	}
+	.want_more_songs .dmca_notice{
+		display: block;
+	}
+.dmca_url{
+	float: right;
+	margin-right: 1rem;
+	display: none;
+	font-size: 0.8rem;
+	}
+	.want_more_songs .dmca_url{
+		display: block;
+	}

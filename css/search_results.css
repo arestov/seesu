@@ -21,10 +21,14 @@
 		height:1.4rem;
 		}
 	.search_results-container h4.loading{
-		background: url(../i/spinner.svg) no-repeat ;
-		background-position: 100% 50%;
-		background-size: 1.143rem;
-	}
+		
+		}
+		.search_results-container h4.loading:after{
+			left:auto;
+			right:0;
+			top:50%;
+			margin-top: -0.6rem;
+			}
 	.search_results-container ul.sugg-section{
 		position:relative;
 		overflow:hidden;
@@ -122,9 +126,10 @@
 					color: #777;
 					line-height: 1.2rem;
 					}
-	.search_results-container	ul.sugg-section:last-child{
+	.search_results-container > ul.sugg-section:last-child, .search_results-container > div:last-of-type > ul.sugg-section{
 		border-bottom:0;
 	}
+
 	.search_results-container ul{
 		display:none;
 	}

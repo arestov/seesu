@@ -296,10 +296,13 @@
 		background-color: transparent;
 		}
 	.desc_prevw_list.list_loading{
-		background:url(../i/spinner.svg) no-repeat 0.5rem 1rem;
-		background-size: 1.143rem;
+		position: relative;
 		}
-	
+	.desc_prevw_list.list_loading:after{
+		left:1rem !important;
+		top:0.5rem !important;
+
+		}
 	.page-scheme .area_for_button{
 		margin-bottom: 0.5rem;
 		padding-bottom: 0;
@@ -462,3 +465,78 @@
 
 
 
+.details_switch{
+		
+		border-radius: 0.3rem;
+		width: 100px;
+		display: inline-block;
+		text-align: center;
+		font-size: 0;
+		}
+	.min_details, .max_details{
+		cursor: pointer;
+		height: 1.5rem;
+		line-height: 1.5rem;
+		-moz-box-sizing:border-box;
+		box-sizing:border-box;
+		border: 0.125rem solid #454545;
+		float:left;
+		width: 50%;
+		position: relative;
+
+
+
+		background-image: -o-linear-gradient(#535353,#4B4B4B);
+		background-image: -moz-linear-gradient(100% 0% 270deg, #535353, #4B4B4B);
+		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#535353), to(#4B4B4B));
+		background-image: linear-gradient(#535353,#4B4B4B);
+	}
+	.min_details:hover,.max_details:hover{
+		background-image: -o-linear-gradient(#666,#555);
+		background-image: -moz-linear-gradient(100% 0% 270deg, #666, #555);
+		background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#666), to(#555));
+		background-image: linear-gradient(#666,#555);
+		}
+	.min_details:active,.min_details.active,.max_details:active,.max_details.active{
+			box-shadow: inset 0 0 10px 1px #3F3F3F;
+		}
+	.min_details:after, .max_details:after{
+		content: "";
+		height: 1px;
+		width: 100%;
+		position: absolute;
+		bottom:-.125rem;
+		left:0;
+		border-bottom:  0.125rem solid #5C5C5C;
+		}
+		.min_details:after{
+			border-radius: 0 0 0 0.3rem;
+			}
+
+		.max_details:after{
+			border-radius: 0 0 0.3rem 0 ;
+			}
+	.min_details .icon, .max_details .icon{
+		display: inline-block;
+		
+		border: 0.2rem solid #333;
+		vertical-align: middle;
+		-moz-box-sizing:border-box;
+		box-sizing: border-box;
+	}
+
+	.min_details{
+		border-radius: 0.3rem 0 0 0.3rem;
+		}
+		.min_details .icon{
+			height: 0.4rem;
+			width: 0.9rem;
+			}
+	.max_details{
+		border-radius: 0 0.3rem 0.3rem 0;
+		border-left: 0;
+		}
+		.max_details .icon{
+			height: 0.8rem;
+			width: 1.2rem;
+			}

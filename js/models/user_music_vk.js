@@ -22,15 +22,13 @@ var no_access_compx = {
 };
 
 var connectUserid = function(params) {
-	var _this = this;
 	if (params.vk_userid){
 		this.updateState('userid', params.vk_userid);
 	} else {
 		if (params.for_current_user){
 			this.updateState('userid', false);
-			this.app.on('state-change.vk_userid', function(e) {
-				_this.updateState('userid', e.value);
-			});
+			this.wch(this.app, 'vk_userid', 'userid');
+
 			if (this.authInit){
 				this.authInit();
 			}
@@ -167,7 +165,7 @@ BrowseMap.Model.extendTo(VkUserTracks, {
 		},
 		'recommended':{
 			constr: VkRecommendedTracks,
-			title: "Recommended"
+			title: localize('VK-Recommended')
 		}
 	}
 });

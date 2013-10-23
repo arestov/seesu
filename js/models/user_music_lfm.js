@@ -26,15 +26,13 @@ var no_access_compx = {
 };
 
 var connectUserid = function(params) {
-	var _this = this;
 	if (params.lfm_userid){
 		this.updateState('userid', params.lfm_userid);
 	} else {
 		if (params.for_current_user){
 			this.updateState('userid', false);
-			this.app.on('state-change.lfm_userid', function(e) {
-				_this.updateState('userid', e.value);
-			});
+			this.wch(this.app, 'lfm_userid', 'userid');
+
 			if (this.authInit){
 				this.authInit();
 			}
@@ -814,7 +812,7 @@ BrowseMap.Model.extendTo(LfmUserPreview, {
 			nav_title: data.userid,
 			userid: data.userid,
 			registered: data.registered,
-
+			realname: data.realname,
 			gender: data.gender,
 			lfm_image: image,
 			big_desc: data.big_desc,
