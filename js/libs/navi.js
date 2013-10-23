@@ -95,6 +95,7 @@ var navi;
 	var current_histate = null;
 
 	navi = {
+		disallow_native_history: false,
 		counter: Math.round((Math.random() * parseInt('zzz', 36))),
 		states_index: {},
 		fake_current_url:'',
@@ -156,11 +157,15 @@ var navi;
 						history_obj.num = history_array.length;
 						history_array[history_obj.num] = history_obj;
 
-						if (history_api){
-							window.history.pushState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
-						} else {
-							location.assign(getURLBase() + '#' + ud.uniq_url);
+						if (!this.disallow_native_history){
+							if (history_api){
+								window.history.pushState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
+							} else {
+								location.assign(getURLBase() + '#' + ud.uniq_url);
+							}
 						}
+
+						
 						
 						
 					} else {
@@ -175,11 +180,14 @@ var navi;
 						history_array.length = num + 1;
 						history_array[num] = history_obj;
 
-						if (history_api){
-							window.history.replaceState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
-						} else {
-							location.replace(getURLBase() + '#' + ud.uniq_url);
+						if (!this.disallow_native_history){
+							if (history_api){
+								window.history.replaceState({uniq_url: ud.uniq_url}, '', getURLBase() + '#' + ud.clear_url);
+							} else {
+								location.replace(getURLBase() + '#' + ud.uniq_url);
+							}
 						}
+						
 						
 
 					}
@@ -207,7 +215,7 @@ var navi;
 		},
 		trickyBack: function() {
 			//можно использовать только, когда гарантированного параллельно не будет использоваться другие способы навигации (вызвать браузером кнопку назад, или ввести другой url)
-		};
+		}
 
 	};
 })();
