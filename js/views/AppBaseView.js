@@ -96,7 +96,7 @@ provoda.View.extendTo(AppBaseView, {
 			this.tpls.push(tpl);
 			tpl.setStates(this.states);
 			var lev_con = new LevContainer
-					(node.appendTo(this.els.screens),
+					(node.appendTo(this.els.app_map_con),
 					tpl.ancs['scroll_con'],
 					tpl.ancs['material'],
 					tpl,
@@ -271,11 +271,11 @@ provoda.View.extendTo(AppBaseView, {
 	getNavOHeight: function() {
 		return this.els.navs.outerHeight();
 	},
-	getScreensWidth: function() {
-		return this.els.screens.width();
+	getAMCWidth: function() {
+		return this.els.app_map_con.width();
 	},
-	getScreensOffset: function() {
-		return this.els.screens.offset();
+	getAMCOffset: function() {
+		return this.els.app_map_con.offset();
 	},
 	readMapSliceAnimationData: function(transaction_data) {
 		if (transaction_data && transaction_data.target){
@@ -289,22 +289,19 @@ provoda.View.extendTo(AppBaseView, {
 					var targt_con = target_in_parent.getC();
 
 					//var offset_parent_node = targt_con.offsetParent();
-					var parent_offset = this.getBoxDemension(this.getScreensOffset, 'screens_offset');
+					var parent_offset = this.getBoxDemension(this.getAMCOffset, 'screens_offset');
 					//или ни о чего не зависит или зависит от позиции скрола, если шапка не скролится
-					//this.els.screens.offset();//offset_parent_node.offset(); //domread, can_be_cached
 					var offset = targt_con.offset(); //domread
 
 					var top = offset.top - parent_offset.top;
 					var width = targt_con.outerWidth();  //domread
 					var height = targt_con.outerHeight(); //domread
 
-					//var con_height = this.els.screens.height();
 
 					//return ;
 
 					var con_height = this.state('window_height') - this.getBoxDemension(this.getNavOHeight, 'navs_height'); //domread, can_be_cached
-					var con_width = this.getBoxDemension(this.getScreensWidth, 'screens_width', this.state('window_width'));
-					//this.els.screens.width(); //domread, can_be_cached
+					var con_width = this.getBoxDemension(this.getAMCWidth, 'screens_width', this.state('window_width'));
 
 
 					var scale_x = width/con_width;

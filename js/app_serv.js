@@ -201,9 +201,9 @@ var toggleClass = function(old_c, toggle_class){
 		return removeClass(old_c, toggle_class);
 	}
 };
-var NodeClassStates = function(node){
+var NodeClassStates = function(node, init_state){
 	this.node = node;
-	this.html_el_state = node.className || '';
+	this.html_el_state = init_state || node.className || '';
 
 };
 NodeClassStates.prototype = {
@@ -218,6 +218,9 @@ NodeClassStates.prototype = {
 	},
 	applyStates: function(){
 		this.node.className = this.html_el_state;
+	},
+	getFullState: function() {
+		return this.html_el_state;
 	}
 };
 
@@ -605,7 +608,8 @@ app_serv.handleDocument = function(d, tracking_opts) {
 	};
 
 	spv.domReady(d, function() {
-		dstates.applyStates();
+		var current_dst = new NodeClassStates(d.documentElement, dstates.getFullState());
+		current_dst.applyStates();
 	});
 	
 

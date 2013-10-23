@@ -529,7 +529,7 @@ AppBaseView.extendTo(AppView, {
 					};
 
 					_this.rsd_rz = setInterval(recheckFunc,100);
-					_this.on('vip_state_change-current_mp_md.resize-check', function(e) {
+					_this.on('vip_state_change-current_mp_md.resize-check', function() {
 						recheckFunc();
 					}, {
 						exlusive: true,
@@ -548,10 +548,10 @@ AppBaseView.extendTo(AppView, {
 			var search_form = $('#search',d);
 
 			
+			var app_map_con = screens_block.children('.app_map_con');
 
 
-
-			var shared_parts_c = screens_block.children('.shared-parts');
+			//var shared_parts_c = app_map_con.children('.shared-parts');
 
 			var scrolling_viewport;
 			if (app_env.as_application){
@@ -579,6 +579,7 @@ AppBaseView.extendTo(AppView, {
 			spv.cloneObj(_this.els, {
 				ui_samples: ui_samples,
 				screens: screens_block,
+				app_map_con: app_map_con,
 				scrolling_viewport: scrolling_viewport,
 				slider: slider,
 				navs: $(slider).children('.navs'),
